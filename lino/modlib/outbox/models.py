@@ -275,6 +275,7 @@ class Recipient(dd.Model):
         Recipients of a Mail may not be edited if the Mail is read-only.
         """
         if self.mail_id and not self.mail.get_row_permission(user,state,action):
+            #~ logger.info("20120920 Recipient.get_row_permission()")
             return False
         return super(Recipient,self).get_row_permission(user,state,action)
       
@@ -453,6 +454,7 @@ class Mail(mixins.AutoUser,mixins.Printable,mixins.ProjectRelated,mixins.Control
         Mails may not be edited after they have been sent.
         """
         if self.sent and not action.readonly:
+            #~ logger.info("20120920 Mail.get_row_permission()")
             return False
         return super(Mail,self).get_row_permission(user,state,action)
       

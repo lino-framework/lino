@@ -742,8 +742,8 @@ class CachedPrintable(Duplicable,Printable):
             #~ return False
         #~ return super(CachedPrintable,self).get_row_permission(user,state,action)
       
-    def print_from_posting(self,posting,ar):
-        return self.do_print.run(self,ar)
+    def print_from_posting(self,posting,ar,**kw):
+        return self.do_print.run(self,ar,**kw)
         
     def on_duplicate(self,ar,master):
         super(CachedPrintable,self).on_duplicate(ar,master)

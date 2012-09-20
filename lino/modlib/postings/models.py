@@ -13,7 +13,7 @@
 ## along with Lino; if not, see <http://www.gnu.org/licenses/>.
 
 """
-Defines models for :mod:`lino.modlib.outbox`.
+Defines models for :mod:`lino.modlib.postings`.
 """
 
 import logging
@@ -51,13 +51,13 @@ from django.conf import settings
 
 from lino.utils.choicelists import ChoiceList
 
-class PostingState(ChoiceList):
+class PostingStates(ChoiceList):
     """
     List of possible values for the `state` field of a 
     :class:`Posting`.
     """
     label = _("State")
-add = PostingState.add_item
+add = PostingStates.add_item
 add('10',_("Open"),'open') # owner still working on it
 add('20',_("Ready to print"),'ready') # secretary can send it out
 add('30',_("Printed"),'printed')
@@ -78,7 +78,7 @@ class Posting(mixins.AutoUser,mixins.ProjectRelated,mixins.Controllable):
     partner = models.ForeignKey('contacts.Partner',
         verbose_name=_("Recipient"),
         blank=True,null=True)
-    state = PostingState.field(blank=True)
+    state = PostingStates.field(blank=True)
     #~ sender = models.ForeignKey(settings.LINO.user_model)
     date = models.DateField()
     
@@ -88,20 +88,42 @@ class Posting(mixins.AutoUser,mixins.ProjectRelated,mixins.Controllable):
         super(Posting,self).save(*args,**kw)
 
     @dd.action(_("Print"))
-    def print_action(self,ar):
-        return self.owner.print_from_posting(self,ar)
+    def print_action(self,ar,**kw):
+        kw.update(refresh=True)
+        r = self.owner.print_from_posting(self,ar,**kw)
+        if self.state in (None,PostingStates.open,PostingStates.ready):
+            self.state = PostingStates.printed
+        self.save()
+        return r
     
 
 class Postings(dd.Table):
     required=dict(user_level='manager')
     model = Posting
     column_names = 'date user owner partner *'
+    order_by = ['date']
     
 class MyPostings(Postings,mixins.ByUser):
     required = dict()
-    master_key = 'owner'
+    #~ master_key = 'owner'
     column_names = 'date partner state workflow_buttons *'
   
+class PostingsByState(Postings):
+    required = dict(user_level='secretary')
+    column_names = 'date user partner workflow_buttons *'
+    
+class PostingsReady(PostingsByState):
+    label = _("Postings ready to print")
+    known_values = dict(state=PostingStates.ready)
+    
+class PostingsPrinted(PostingsByState):
+    label = _("Postings printed")
+    known_values = dict(state=PostingStates.printed)
+    
+class PostingsSent(PostingsByState):
+    label = _("Postings sent")
+    known_values = dict(state=PostingStates.sent)
+    
 class PostingsByController(Postings):
     required = dict()
     master_key = 'owner'
@@ -120,9 +142,14 @@ class PostingsByProject(Postings):
     
 class CreatePostings(dd.RowAction):
     """
-    Creates a new Posting from this Postable. 
+    Creates a series of new Posting from this Postable. 
     The Postable gives the list of recipients, and there will 
     be one Posting for each recipient.
+    
+    Author of each Posting will be the user who issued the action request,
+    even if that user is acting as someone else.
+    You cannot create a Posting in someone else's name.
+    
     """
   
     url_action_name = 'post'
@@ -140,7 +167,7 @@ class CreatePostings(dd.RowAction):
           _("Going to create %(num)d postings for %(elem)s") 
           % dict(num=len(recs),elem=elem))
         for p in recs:
-            p = Posting(owner=elem,partner=p,date=datetime.date.today())
+            p = Posting(user=ar.user,owner=elem,partner=p,date=datetime.date.today())
             p.full_clean()
             p.save()
         kw.update(refresh=True)
@@ -158,20 +185,24 @@ class Postable(dd.Model):
         
     create_postings = CreatePostings()
     
-    def print_from_posting(self,posting,ar):
+    def print_from_posting(self,posting,ar,**kw):
         return ar.error_response("Not implemented")
         
 
   
 
-MODULE_LABEL = _("Outbox")
+#~ MODULE_LABEL = _("Outbox")
+MODULE_LABEL = _("Postings")
   
 def setup_main_menu(site,ui,user,m): pass
 
 def setup_my_menu(site,ui,user,m): 
-    m  = m.add_menu("outbox",MODULE_LABEL)
+    m  = m.add_menu("postings",MODULE_LABEL)
     #~ m.add_action(MyInbox)
     m.add_action(MyPostings)
+    m.add_action(PostingsReady)
+    m.add_action(PostingsPrinted)
+    m.add_action(PostingsSent)
     #~ m.add_action(MySent)
   
 def setup_config_menu(site,ui,user,m):
@@ -182,6 +213,6 @@ def setup_config_menu(site,ui,user,m):
   
 def setup_explorer_menu(site,ui,user,m):
     #~ if user.level >= UserLevels.manager:
-    m  = m.add_menu("outbox",MODULE_LABEL)
+    m  = m.add_menu("postings",MODULE_LABEL)
     m.add_action(Postings)
   

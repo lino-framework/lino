@@ -211,6 +211,10 @@ class GridColumn(jsgen.Component):
             #~ if editor.editable:
             if editor.editable and not isinstance(editor,BooleanFieldElement):
                 kw.update(editor=editor)
+            #~ if str(editor.layout_handle.layout._table) == 'pcsw.CoachingsByProject':
+              #~ if editor.name == 'user':
+                #~ print 20120919, editor.field.__class__, editor.field.editable
+                #~ print 20120919, editor.field.model, kw['editable']
         else:
             kw.update(editable=False)
         jsgen.Component.__init__(self,editor.name,**kw)
@@ -273,7 +277,7 @@ class VisibleComponent(jsgen.Component):
             return name + ":%d" % self.width
         return name + ":%dx%d" % (self.width,self.height)
         
-    def __repr__(self):
+    def unused__repr__(self):
         return str(self)
         
     def pprint(self,level=0):

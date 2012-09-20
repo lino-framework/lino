@@ -15,3 +15,26 @@ Migrate: wenn coach1 == coach2 ist, nur ein Coaching erstellen.
 broker und faculty zurück in den Reiter Status.
 
 Im Reiter Kompetenzen zeigten alle drei tabellen die gleiche Info.
+
+
+Ein Bug, nach dem ich ca. 2 Stunden gesucht habe:
+das Feld "Begleiter" in der Tabelle "Begleitungen" eines Klienten 
+war schreibgeschützt.
+Erklärung:
+An einer anderen Stelle, in UsersWithClients, hatte ich 
+ein virtuelles Feld "user" wie folgt definiert::
+
+    @dd.virtualfield('pcsw.Coaching.user')
+    def user(self,obj,ar):
+        return obj
+        
+Dieses sehr subtile Feature bedeutet: mach mir ein neues virtuelles Feld, 
+das alle Eigenschaften des angegebenen existierenden Feldes kopiert.
+Dieses Feature hatte seit kurzem den Nebeneffekt, 
+dass besagtes andere Feld, das als Kopievorlage dient, 
+bei der Gelegenheit auf schreibgeschützt gesetzt wurde::
+
+  self.return_type.editable = self.editable
+        
+Das darf er natürlich nicht. Raus damit. 
+Falls es tatsächlich nötig war, sehen wir weiter. 

@@ -124,6 +124,7 @@ class Note(mixins.TypedPrintable,
     """
     Deserves more documentation.
     """
+    
     class Meta:
         #~ abstract = True
         verbose_name = _("Event/Note") 

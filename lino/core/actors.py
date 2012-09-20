@@ -710,7 +710,7 @@ class Actor(object):
         Application developers should not need to override this method.
         
         Default implementation returns an empty dictionary.
-        Overridden by
+        Overridden by :class:`lino.core.dbtables.Table`
         """
         return {}
         

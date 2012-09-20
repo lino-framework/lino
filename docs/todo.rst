@@ -4,6 +4,12 @@ To-do list
 Short-term
 ----------
 
+#.  User stories: 
+    Alicia: Hubert hatte in meinem Urlaub eine Telefonnotiz auf einem meiner 
+    Klienten gemacht, und mir nun mündlich noch ein paar Zusatzinfos gesagt, 
+    die er nur vergessen hatte, rein zu schreiben. Ich will jetzt an seiner Stelle seine 
+    Notiz nachträglich korrigieren, damit das direkt beim ersten Lesen deutlich ist.
+
 #.  Bestehende Person zu einem Klienten machen. 
     Statt "AJAX communication failed" sollte er zumindest sagen 
     "IntegrityError: column national_id is not unique", oder (die Luxus-Version) 

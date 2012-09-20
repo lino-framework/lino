@@ -370,6 +370,7 @@ class Variable(Value):
         #~ self.ext_name = id2js(name) + self.ext_suffix
         
     def __str__(self):
+        #~ if self.ext_name is None: raise Exception("20120920"+str(self.name))
         #~ assert self.ext_name is not None
         return self.ext_name
         

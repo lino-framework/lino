@@ -19,6 +19,7 @@ from django.db.models.base import signals, ModelState, DeferredAttribute, ManyTo
 
 
 from lino.core import fields
+from lino.core import modeltools
 
 class Model(models.Model):
     """
@@ -228,3 +229,5 @@ class Model(models.Model):
         return ', '.join(l)
         
         
+    def __repr__(self):
+        return modeltools.obj2str(self)

@@ -263,11 +263,13 @@ def load_workflows(self):
                 required.update(actor.update_required)
             required.update(a.required)
             #~ print 20120628, str(a), required
-            def wrap(a,required,fn):
-                return fn
+            #~ def wrap(a,required,fn):
+                #~ return fn
                 
-            a.allow = curry(wrap(a,required,perms.make_permission_handler(
-                a,actor,a.readonly,actor.debug_permissions,**required)),a)
+            #~ a.allow = curry(wrap(a,required,perms.make_permission_handler(
+                #~ a,actor,a.readonly,actor.debug_permissions,**required)),a)
+            a.allow = curry(perms.make_permission_handler(
+                a,actor,a.readonly,actor.debug_permissions,**required),a)
             
 
     if False:

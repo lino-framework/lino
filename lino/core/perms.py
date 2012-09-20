@@ -55,7 +55,8 @@ class UserLevels(choicelists.ChoiceList):
         
 add = UserLevels.add_item
 add('10', _("Guest"),'guest')
-add('20', _("Restricted"),'restricted')
+#~ add('20', _("Restricted"),'restricted')
+add('20', _("Secretary"),'secretary')
 add('30', _("User"), "user")
 add('40', _("Manager"), "manager")
 add('50', _("Administrator"), "admin")
@@ -248,6 +249,7 @@ def make_permission_handler(
     Return a function that will test whether permission is given or not.
     
     `elem` is either an Action or a Permittable.
+    
     `readonly`
     
     The generated function will always expect three arguments user, obj and state.
@@ -375,10 +377,9 @@ Cannot specify `states` when `workflow_state_field` is %r.
                         #~ print '20120630 not readonly:', elem
                     return False
                 return True
-            
-        
         
         if debug_permissions: # False:
+            #~ logger.info("20120920 debug_permissions %r",elem)
             allow4 = allow
             def allow(action,user,obj,state):
                 v = allow4(action,user,obj,state)
@@ -387,7 +388,9 @@ Cannot specify `states` when `workflow_state_field` is %r.
                       actor,action.name,user_level,user_groups,states,user.username,obj2str(obj),state,v)
                 return v
         return allow
+        
     except Exception,e:
+      
         raise Exception("Exception while making permissions for %s: %s" % (actor,e))
 
         

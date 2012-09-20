@@ -528,6 +528,8 @@ class Table(AbstractTable):
                 if a.show_in_bbar and not obj.get_row_permission(u,state,a):
                 #~ if a.show_in_bbar and not a.get_action_permission(ar.get_user(),obj,state):
                     d[a.name] = True
+            #~ if obj.__class__.__name__ == 'Note':
+                #~ logger.info("20120920 %s %s %r", obj, d,obj.__class__.get_row_permission)
         return d
         
             

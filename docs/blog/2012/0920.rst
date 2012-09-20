@@ -1,0 +1,48 @@
+20120920
+========
+
+In :class:`lino.mixins.UserAuthored` war ein Bug::
+
+    def get_row_permission(self,user,state,action):
+        """
+        Only system managers can edit other users' work.
+        """
+        if self.user != user and user.profile.level < UserLevels.manager:
+            return False
+        if not super(UserAuthored,self).get_row_permission(user,state,action):
+            return False
+        return True
+
+Das musste stattdessen lauten::
+
+    def get_row_permission(self,user,state,action):
+        """
+        Only system managers can edit other users' work.
+        """
+        if not super(UserAuthored,self).get_row_permission(user,state,action):
+            return False
+        if self.user != user and user.profile.level < UserLevels.manager:
+            return action.readonly
+        return True
+
+
+Denn sonst bekamen normale Benutzer nicht die Erlaubnis, 
+die Notizen anderer Benutzer zu drucken oder zu duplizieren 
+(also Aktionen mit :attr:`readonly <lino.core.actions.Action.readonly>` auszuführen).
+
+
+Kleine Änderungen in :mod:`lino.modlib.postings`:
+
+- :class:`CreatePostings` vergaß, den `user` zu setzen.
+
+- `Posting.print_action` setzt jetzt den Status des Posting auf "printed".
+
+- `Printable.print_from_posting` akzeptiert jetzt keyword arguments, 
+  und `Posting.print_action` nutzt das, um mit refresh=True zu antworten
+
+- MyPostings funktionierte nicht. War immer leer. 
+  Hatte versehentlich master_key = 'owner'.
+
+- Neue Menübefehle PostingsReady, PostingsPrinted und PostingsSent. 
+  Neuer UserLevel "Secretary". 
+  Ein Sekretär ist weniger als ein Benutzer und mehr als ein Gast. 

@@ -27,6 +27,7 @@ from django.db.models.fields.related import ForeignRelatedObjectsDescriptor
 
 from lino import dd
 from lino.core.modeltools import obj2str
+from lino.core import actions
 
 
 #~ def duplicate_row(obj,**kw):
@@ -37,46 +38,19 @@ from lino.core.modeltools import obj2str
 
 #~ from lino.core.coretools import get_data_elem
 
-class Duplicable(dd.Model):
-    """
-    Adds a row action "Duplicate" which duplicates (creates a clone of) 
-    the object it was called on.
-    
-    Subclasses may override :meth:`on_duplicate` to customize the default 
-    behaviour,
-    which is to copy all fields except the primary key 
-    and all related objects that are duplicable.
-    
-    """
-    class Meta:
-        abstract = True
+class Duplicate(actions.RowAction):
+  
+    label = _("Duplicate")
+    sort_index = 60
+    show_in_workflow = False
+    readonly = True # like InsertRow. See docs/blog/2012/0726
+  
+    def get_action_permission(self,user,obj,state):
+        if user.profile.readonly: 
+            return False
+        return super(Duplicate,self).get_action_permission(user,obj,state)
         
-    #~ duplicated_fields = None
-    
-    #~ @classmethod
-    #~ def site_setup(self,site):
-        #~ """
-        #~ Converts the magic model attribute `duplicate_fields` from a string
-        #~ to a list of tuples (name,data element). We do this during site_setup 
-        #~ (1) to identify typo's or wrong field names directly at startup
-        #~ and (2) to save lookups during each request.
-        #~ """
-        #~ if self.duplicated_fields is not None:
-            #~ if isinstance(self.duplicated_fields,basestring):
-                #~ l = []
-                #~ for name in self.duplicated_fields.split():
-                    #~ de = get_data_elem(self,name)
-                    #~ if de is None:
-                        #~ raise Exception(
-                            #~ "Unknown data element name %r for %s" % (
-                              #~ name,self))
-                    #~ l.append((name,de))
-                #~ self.duplicated_fields = l
-      
-        
-    
-    @dd.action(_("Duplicate"),sort_index=60,show_in_workflow=False)
-    def duplicate_row(self,ar,**kw):
+    def run(self,ar,**kw):
         #~ if not isinstance(ar,actions.ActionRequest):
             #~ raise Exception("Expected and ActionRequest but got %r" % ar)
         #~ related = dict()
@@ -165,4 +139,61 @@ class Duplicable(dd.Model):
         #~ kw.update(new_status=dict(record_id=new.pk))
         kw.update(goto_record_id=new.pk)
         return ar.success_response(**kw)
+        
+        
+  
+
+class Duplicable(dd.Model):
+    """
+    Adds a row action "Duplicate" which duplicates (creates a clone of) 
+    the object it was called on.
+    
+    Subclasses may override :meth:`on_duplicate` to customize the default 
+    behaviour,
+    which is to copy all fields except the primary key 
+    and all related objects that are duplicable.
+    
+    """
+    class Meta:
+        abstract = True
+        
+    duplicate_row = Duplicate()
+        
+    #~ @dd.action(_("Duplicate"),sort_index=60,show_in_workflow=False,readonly=True)
+    #~ def duplicate_row(self,ar,**kw):
+        #~ related = []
+        #~ for m,fk in self._lino_ddh.fklist:
+            #~ if m.allow_cascaded_delete:
+                #~ related.append((fk,m.objects.filter(**{fk.name:self})))
+        #~ if True:
+            #~ for f in self._meta.fields:
+                #~ if not f.primary_key:
+                    #~ kw[f.name] = getattr(self,f.name)
+            #~ new = self.__class__(**kw)
+            #~ """
+            #~ 20120704 create_instances causes fill_from_person() on a CBSS request.
+            #~ """
+        #~ else:
+            #~ # doesn't seem to want to work
+            #~ new = self
+            #~ for f in self._meta.fields:
+                #~ if f.primary_key:
+                    #~ setattr(new,f.name,None) # causes Django to consider this an unsaved instance
+            #~ new.pk = None # causes Django to consider this an unsaved instance
+        
+        #~ new.save(force_insert=True)
+        #~ new.on_duplicate(ar,None)
+        
+        #~ for fk,qs in related:
+            #~ for obj in qs:
+                #~ obj.pk = None # causes Django to save a copy
+                #~ setattr(obj,fk.name,new)
+                #~ obj.on_duplicate(ar,new)
+                #~ obj.save(force_insert=True)
+        
+        #~ kw = dict()
+        #~ kw.update(refresh=True)
+        #~ kw.update(message=_("Duplicated %(old)s to %(new)s.") % dict(old=self,new=new))
+        #~ kw.update(goto_record_id=new.pk)
+        #~ return ar.success_response(**kw)
         

@@ -13,7 +13,7 @@ Server machte einen Traceback
 "Cannot re-execute Tx25-Anfrage #9 with non-empty ticket.".
 
 Der Fehler war, dass der Speichern-Button 
-trotz `disable_editing`aktiv war. Das lag an einem Bug in 
+trotz `disable_editing` aktiv war. Das lag an einem Bug in 
 :meth:`lino.core.actors.Actor.disabled_actions`: die rief 
 `a.get_action_permission(ar.get_user(),obj,state)` statt 
 `obj.get_row_permission(u,state,a)`. Behoben.

@@ -257,7 +257,7 @@ class VirtualField(FakeField): # (Field):
         if isinstance(self.return_type,models.ForeignKey):
             self.return_type.rel.to = resolve_model(self.return_type.rel.to)
 
-        self.return_type.editable = self.editable
+        #~ removed 20120919 self.return_type.editable = self.editable
         for k in ('''to_python choices save_form_data 
           value_to_string verbose_name max_length rel
           max_digits decimal_places
@@ -322,9 +322,6 @@ def virtualfield(return_type):
     Decorator to turn a method into a VirtualField.
     """
     def decorator(fn):
-        #~ def wrapped(*args):
-            #~ return fn(*args)
-        #~ return VirtualField(return_type,wrapped)
         return VirtualField(return_type,fn)
     return decorator
     

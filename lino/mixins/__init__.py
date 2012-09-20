@@ -195,10 +195,12 @@ class UserAuthored(dd.Model):
         """
         Only system managers can edit other users' work.
         """
-        if self.user != user and user.profile.level < UserLevels.manager:
-            return False
         if not super(UserAuthored,self).get_row_permission(user,state,action):
+            #~ logger.info("20120919 no permission to %s on %s for %r",action,self,user)
             return False
+        if self.user != user and user.profile.level < UserLevels.manager:
+            #~ logger.info("20120919 no permission to %s on %r because %r != %r",action,self,self.user,user)
+            return action.readonly
         return True
 
 AutoUser = UserAuthored # backwards compatibility

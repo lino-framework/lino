@@ -213,7 +213,18 @@ class Action(object):
     readonly = True
     """
     Whether this action possibly modifies data *in the given object*.
+    
     This means that :class:`InsertRow` is a `readonly` action.
+    Actions like :class:`InsertRow` and :class:`Duplicable <lino.mixins.duplicable.Duplicate>` 
+    which do not modify the given object but *do* modify the database,
+    must override their `get_action_permission`::
+    
+      def get_action_permission(self,user,obj,state):
+          if user.profile.readonly: 
+              return False
+          return super(Duplicate,self).get_action_permission(user,obj,state)
+        
+    
     """
     
     opens_a_window = False
