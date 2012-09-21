@@ -1,6 +1,13 @@
 20120920
 ========
 
+Endspurt vorm Release.
+
+Diverses Kleinvieh in Lino/Welfare.
+z.B. newcomers.Newcomers war noch nicht an die neue pcsw.Clients 
+mit parameters angepasst.
+
+
 In :class:`lino.mixins.UserAuthored` war ein Bug::
 
     def get_row_permission(self,user,state,action):
@@ -46,3 +53,9 @@ Kleine Änderungen in :mod:`lino.modlib.postings`:
 - Neue Menübefehle PostingsReady, PostingsPrinted und PostingsSent. 
   Neuer UserLevel "Secretary". 
   Ein Sekretär ist weniger als ein Benutzer und mehr als ein Gast. 
+  
+  
+:class:`lino.core.actions.ActionRequest` macht jetzt eine 
+Exception "Invalid key %r in param_values"
+wenn man Werte angibt für Parameter, die gar nicht existieren. 
+Statt die dann wie bisher zu ignorieren.

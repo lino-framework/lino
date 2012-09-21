@@ -668,8 +668,10 @@ class ActionRequest(object):
         """
         See 20120825
         """
-        if self.actor.parameters:
-          
+        if self.actor.parameters is None:
+            if param_values is not None:
+                raise Exception("Cannot request param_values on %s" % self.actor)
+        else:
             pv = self.actor.param_defaults(self)
             
             """
@@ -694,6 +696,9 @@ class ActionRequest(object):
                 pv.update(self.ui.parse_params(self.ah,request))
                 
             if param_values is not None:
+                for k in param_values.keys(): 
+                    if not pv.has_key(k):
+                        raise Exception("Invalid key %r in param_values" % k)
                 pv.update(param_values)
                 
             self.param_values = AttrDict(**pv)

@@ -1,7 +1,7 @@
 20120919
 ========
 
-Endspurt vor Release 1.5.0:
+Endspurt vorm Release.
 Fehlersuche "Keine weiteren Records" (Lino.show_detail muss pv nach base_params setzen).
 Übersetzungen.
 Clients.get_title.
