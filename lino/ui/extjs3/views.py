@@ -42,6 +42,8 @@ from lino.utils import dblogger
 from lino.core import actions
 from lino.core import actors
 from lino.core import dbtables
+from lino.core import changes
+
 from lino.core.modeltools import obj2str, obj2unicode
 
 from lino.ui import requests as ext_requests
@@ -270,7 +272,9 @@ def form2obj_and_save(ar,data,elem,is_new,restful,file_upload=False): # **kw2sav
     
     #~ logger.info('20120228 before store.form2obj , elem is %s' % obj2str(elem))
     # store normal form data (POST or PUT)
-    original_state = dict(elem.__dict__)
+    #~ original_state = dict(elem.__dict__)
+    #~ watcher = dblogger.get_watcher(elem,is_new)
+    watcher = changes.Watcher(elem,is_new)
     try:
         rh.store.form2obj(ar,data,elem,is_new)
     except exceptions.ValidationError,e:
@@ -281,12 +285,13 @@ def form2obj_and_save(ar,data,elem,is_new,restful,file_upload=False): # **kw2sav
     
     kw = dict(success=True)
     
-    dirty = False
-    missing = object()
-    for k, v in original_state.iteritems():
-        if v != elem.__dict__.get(k, missing):
-            dirty = True
-    if not dirty:
+    #~ dirty = False
+    #~ missing = object()
+    #~ for k, v in original_state.iteritems():
+        #~ if v != elem.__dict__.get(k, missing):
+            #~ dirty = True
+    #~ if not dirty:
+    if not watcher.is_dirty():
       
         kw.update(message=_("%s : nothing to save.") % obj2unicode(elem))
         
@@ -294,8 +299,8 @@ def form2obj_and_save(ar,data,elem,is_new,restful,file_upload=False): # **kw2sav
     
         elem.before_ui_save(ar)
         
-        if not is_new:
-            dblogger.log_changes(request,elem)
+        #~ if not is_new:
+            #~ dblogger.log_changes(request,elem)
             
         try:
             elem.full_clean()
@@ -316,8 +321,11 @@ def form2obj_and_save(ar,data,elem,is_new,restful,file_upload=False): # **kw2sav
             return settings.LINO.ui.error_response(e) # ,_("There was a problem while saving your data : "))
             #~ return views.json_response_kw(success=False,
                   #~ msg=_("There was a problem while saving your data:\n%s") % e)
+                  
+        watcher.log_changes(request)
+        
         if is_new:
-            dblogger.log_created(request,elem)
+            #~ dblogger.log_created(request,elem)
             kw.update(
                 message=_("%s has been created.") % obj2unicode(elem))
                 #~ record_id=elem.pk)

@@ -260,7 +260,7 @@ class Voucher(mixins.UserAuthored):
     journal = JournalRef()
     year = FiscalYears.field(blank=True)
     number = VoucherNumber(blank=True)
-    date = models.DateField()
+    date = models.DateField(default=datetime.date.today)
     #~ ledger_remark = models.CharField("Remark for ledger",
       #~ max_length=200,blank=True)
     narration = models.CharField(_("Narration"),max_length=200,blank=True)
@@ -288,7 +288,7 @@ class Voucher(mixins.UserAuthored):
             
         
     def __unicode__(self):
-        return "%s-%s/%s" % (self.journal,self.year,self.number)
+        return "%s-%s/%s" % (self.journal.pk,self.year,self.number)
         
     def full_clean(self,*args,**kw):
         #~ logger.info('Voucher.full_clean')
@@ -549,11 +549,21 @@ def site_setup(site):
 
 
 def setup_main_menu(site,ui,user,m): 
-    m = m.add_menu("ledger",MODULE_LABEL)
+    m = m.add_menu(vat.TradeTypes.purchases.name,vat.TradeTypes.purchases.text)
+    
     for jnl in Journal.objects.all():
-        m.add_action(jnl.voucher_type.table_class,
-            label=unicode(jnl),
-            params=dict(master_instance=jnl))
+        if jnl.trade_type == vat.TradeTypes.purchases:
+            m.add_action(jnl.voucher_type.table_class,
+                label=unicode(jnl),
+                params=dict(master_instance=jnl))
+
+
+#~ def setup_main_menu(site,ui,user,m): 
+    #~ m = m.add_menu("ledger",MODULE_LABEL)
+    #~ for jnl in Journal.objects.all():
+        #~ m.add_action(jnl.voucher_type.table_class,
+            #~ label=unicode(jnl),
+            #~ params=dict(master_instance=jnl))
     
 def setup_my_menu(site,ui,user,m): 
     pass

@@ -1,0 +1,36 @@
+20120921
+========
+
+
+DiffingMixin replaced by :mod:`lino.core.changes`
+-------------------------------------------------
+
+If an application wanted database changes to be logged,
+it had to subclass DiffingMixin when declaring a Model.
+
+This approach was used by 
+:class:`lino.modlib.notes.models.Note`,
+:class:`lino_welfare.modlib.pcsw.models.Partner`
+and
+:class:`lino_welfare.modlib.isip.models.ContractBase`.
+
+It had certain disadvantages and limits: 
+no hook to locally change the rules, 
+it didn't allow to watch only the changes to certain fields,
+the user couldn't easily see the history of changes to a given object.
+
+That's why we now have the new module :mod:`lino.core.changes`
+which replaces :mod:`lino.utils.dblogger`.
+
+Instead of inheriting from DiffingMixin, 
+application programmers now define an
+:meth:`on_site_startup <lino.Lino.on_site_startup>`
+method for their :class:`lino.Lino`
+where they call 
+:meth:`watch_changes <lino.core.model.Model.watch_changes>`.
+
+
+Continued on Presto
+--------------------
+
+There's still much to do.

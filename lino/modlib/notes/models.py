@@ -118,8 +118,8 @@ class Note(mixins.TypedPrintable,
       #~ contacts.PartnerDocument,
       mixins.ProjectRelated,
       outbox.Mailable,
-      postings.Postable,
-      mixins.DiffingMixin):
+      postings.Postable, #~ mixins.DiffingMixin
+      ):
       
     """
     Deserves more documentation.

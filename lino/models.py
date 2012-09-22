@@ -26,7 +26,9 @@ from django.conf import settings
 #~ from django.contrib.auth import models as auth
 #~ from django.contrib.sessions import models as sessions
 from django.contrib.contenttypes import models as contenttypes
+from django.contrib.contenttypes.models import ContentType
 from django.utils.encoding import force_unicode 
+
 
 #~ from django import forms
 from django.db import models
@@ -46,8 +48,7 @@ from lino.utils.choosers import chooser, get_for_field
 from lino.utils.restify import restify
 from lino.core import actions
 
-
-
+#~ from lino.core.changes import Change, Changes, ChangesByObject
 
 
 
@@ -75,6 +76,7 @@ Please report any anomalies.""",
     
 
 
+    
 class SiteConfig(dd.Model):
     """
     This model should have exactly one instance, 
@@ -262,6 +264,28 @@ if settings.LINO.user_model:
     class MyTextFieldTemplates(TextFieldTemplates,mixins.ByUser):
         pass
         
+
+
+
+class Change(dd.Model):
+    time = models.DateTimeField()
+    if settings.LINO.user_model:
+        user = dd.ForeignKey(settings.LINO.user_model)
+    object_type = models.ForeignKey(ContentType)
+    object_id = dd.GenericForeignKeyIdField(object_type)
+    object = dd.GenericForeignKey('object_type','object_id')
+    description = dd.RichTextField(format='plain')
+    diff = dd.RichTextField(format='plain')
+    
+class Changes(dd.Table):
+    model = Change
+    order_by = ['time']
+    
+class ChangesByObject(Changes):
+    column_names = 'time user description'
+    master_key = 'object'
+
+
 
 
 
@@ -596,6 +620,7 @@ class Home(mixins.EmptyTable):
 
 
 
+  
 def setup_main_menu(site,ui,user,m): pass
 
 def setup_my_menu(site,ui,user,m): pass

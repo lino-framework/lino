@@ -223,7 +223,7 @@ class VirtualField(FakeField): # (Field):
         self.get = get
         VIRTUAL_FIELDS.append(self)
         """
-        Normal VirtualFields are *by definition* read-only and not editable.
+        Normal VirtualFields are read-only and not editable.
         We don't want to require application developers to explicitly 
         specify `editable=False` in their return_type::
         

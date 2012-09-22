@@ -17,7 +17,6 @@ from django.utils.translation import ugettext as _
 
 from django.db.models.base import signals, ModelState, DeferredAttribute, ManyToOneRel, izip
 
-
 from lino.core import fields
 from lino.core import modeltools
 
@@ -89,6 +88,31 @@ class Model(models.Model):
     value for :attr:`lino.core.table.Table.workflow_owner_field` 
     on all tables based on this Model.
     """
+    
+    _watch_changes_specs = None
+    
+    @classmethod
+    def watch_changes(model,fields_spec=None,**options):
+        """
+        Declare a set of fields of this model to be "observed" or "watched".
+        Each change to an object comprising at least one watched 
+        will lead to an entry to the ChangesByObject table.
+        
+        All calls to watch_changes will be grouped by model.
+        
+        See also :mod:`lino.core.changes`.
+        """
+        from lino import dd
+        if isinstance(fields_spec,basestring):
+            fields_spec = dd.fields_list(model,fields_spec)
+        if model._watch_changes_specs is None:
+            model._watch_changes_specs = (fields_spec,options)
+        else:
+            raise NotImplementedError()
+  
+        
+        
+    
     
     
     def disable_delete(self,ar):

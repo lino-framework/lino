@@ -11,6 +11,7 @@
 
     lino.core.actions
     lino.core.actors
+    lino.core.changes
     lino.core.dbtables
     lino.core.fields
     lino.core.layouts

@@ -50,6 +50,7 @@ vat = dd.resolve_app('vat')
 #~ from lino.modlib.journals import models as journals
 from lino.modlib.products import models as products
 from lino.modlib.contacts import models as contacts
+#~ from lino.modlib.vat.models import TradeTypes
 #~ products = models.get_app('products')
 #~ ledger = resolve_app('ledger')
 #~ products = resolve_app('products')
@@ -168,8 +169,8 @@ class SalesRule(dd.Model):
     shipping_mode = models.ForeignKey(ShippingMode,blank=True,null=True)
     payment_term = models.ForeignKey(PaymentTerm,blank=True,null=True)
     
-    def __unicode__(self):
-        return u"SalesRule %d" % (self.id)
+    #~ def __unicode__(self):
+        #~ return u"SalesRule %d" % (self.id)
         
 #~ def get_sales_rule(doc):
     #~ for r in SalesRule.objects.all().order_by("id"):
@@ -257,7 +258,7 @@ class SalesDocument(
         #~ blank=True,null=True,
         #~ related_name="shipTo_%(class)s")
     your_ref = models.CharField(max_length=200,blank=True)
-    imode = models.ForeignKey(InvoicingMode)
+    imode = models.ForeignKey(InvoicingMode,blank=True)
     shipping_mode = models.ForeignKey(ShippingMode,blank=True,null=True)
     payment_term = models.ForeignKey(PaymentTerm,blank=True,null=True)
     sales_remark = models.CharField("Remark for sales",
@@ -320,6 +321,8 @@ class SalesDocument(
 
             
     def full_clean(self,*args,**kw):
+        if self.imode_id is None:
+            self.imode_id = 1 # self.partner
         super(SalesDocument,self).full_clean(*args,**kw)
         #~ r = get_sales_rule(self)
         #~ if r is None:
@@ -592,6 +595,10 @@ class ProductDocItem(vat.VatItemBase):
     def get_base_account(self,tt):
         return settings.LINO.get_product_base_account(tt,self.product)
         
+    def get_vat_class(self,tt):
+        name = settings.LINO.get_product_vat_class(tt,self.product)
+        return VatClasses.get_by_name(name)
+        
     def full_clean(self,*args,**kw):
         if self.product:
             if not self.title:
@@ -614,20 +621,25 @@ class InvoiceItem(ProductDocItem):
 class InvoiceDetail(dd.FormLayout):
     main = "general ledger"
     
-    totals = """
-    
+    totals = dd.Panel("""
     discount
     total_excl
     total_vat
     total_incl
-    workflow_buttons
-    """
+    state
+    # workflow_buttons
+    """,label=_("Totals"))
+    
+    invoice_header = dd.Panel("""
+    id date partner language
+    order your_ref sales_remark subject 
+    imode due_date:20 shipping_mode payment_term  vat_regime item_vat
+    user project 
+    """,label=_("Header"))
     
     general = dd.Panel("""
-    id date partner language user project state
-    due_date order your_ref sales_remark subject 
-    imode shipping_mode payment_term  vat_regime item_vat
-    ItemsByInvoice:60 totals:20
+    invoice_header:60 totals:20
+    ItemsByInvoice
     """,label=_("General"))
     
     ledger = dd.Panel("""
@@ -644,6 +656,10 @@ class Invoices(SalesDocuments):
     order_by = ["id"]
     column_names = "id date partner total_incl user *" 
     detail_layout = InvoiceDetail()
+    insert_layout = dd.FormLayout("""
+    partner date 
+    subject
+    """,window_size=(40,'auto'))
     
     @classmethod
     def get_request_queryset(cls,ar):
@@ -721,7 +737,7 @@ class InvoicesByOrder(SalesDocuments):
     #~ main = "pos:3 title_box description:20x1 discount unit_price qty total"
 
 class ItemsByDocument(dd.Table):
-    column_names = "seqno:3 product title description:20x1 discount unit_price qty total_incl"
+    column_names = "seqno:3 product title description:20x1 discount unit_price qty total_incl *"
     master_key = 'document'
     order_by = ["seqno"]
     
@@ -833,8 +849,16 @@ def site_setup(site):
 
 
 def setup_main_menu(site,ui,user,m): 
-    m = m.add_menu("sales",MODULE_LABEL)
+    #~ m = m.add_menu("sales",MODULE_LABEL)
+    m = m.add_menu(vat.TradeTypes.sales.name,vat.TradeTypes.sales.text)
     m.add_action(Orders)
+    
+    for jnl in ledger.Journal.objects.all():
+        if jnl.trade_type == vat.TradeTypes.sales:
+            m.add_action(jnl.voucher_type.table_class,
+                label=unicode(jnl),
+                params=dict(master_instance=jnl))
+    
     #~ m.add_action(Invoices)
     #~ m.add_action(DocumentsToSign)
     #~ m.add_action(PendingOrders)

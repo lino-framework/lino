@@ -76,6 +76,7 @@ class StoreField(object):
     list_values_count = 1
     "Necessary to compute :attr:`Store.pk_index`."
     
+    
     def __init__(self,field,name,**options):
         self.field = field
         self.name = name
@@ -512,9 +513,13 @@ class DisabledFieldsStoreField(SpecialStoreField):
         SpecialStoreField.__init__(self,store)
         self.disabled_fields = set()
         for f in self.store.all_fields:
-            if f.field is not None and not isinstance(f.field,generic.GenericForeignKey):
-                if not f.field.editable:
-                    self.disabled_fields.add(f.name)
+            if f.field is not None:
+                if isinstance(f,VirtStoreField):
+                    if not f.vf.editable:
+                        self.disabled_fields.add(f.name)
+                elif not isinstance(f.field,generic.GenericForeignKey):
+                    if not f.field.editable:
+                        self.disabled_fields.add(f.name)
         
     def full_value_from_object(self,obj,ar):
         #~ l = [ f.name for f in self.store.actor.disabled_fields(request,obj)]

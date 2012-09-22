@@ -879,10 +879,11 @@ def setup_master_menu(site,ui,user,m):
     """
     m = m.add_menu("contacts",MODULE_NAME)
     #~ actors = (Persons,Companies,Partners)
-    for m in (Person,Company,Partner):
-        if m._meta.abstract: 
-            return 
-    for a in (Persons,Companies,Partners):
+    #~ for m in (Person,Company,Partner):
+        #~ if m._meta.abstract: 
+            #~ return 
+    #~ for a in (Persons,Companies,Partners):
+    for a in ('contacts.Persons','contacts.Companies','contacts.Partners'):
         m.add_action(a)
     
 def setup_config_menu(site,ui,user,m): 

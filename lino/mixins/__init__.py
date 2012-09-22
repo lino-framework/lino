@@ -83,7 +83,7 @@ class Controllable(dd.Model):
     class Meta:
         abstract = True
         
-    owner_type = models.ForeignKey(ContentType,
+    owner_type = dd.ForeignKey(ContentType,
         editable=True,
         blank=controller_is_optional,null=controller_is_optional,
         verbose_name=string_concat(owner_label,' ',_('(type)')))
@@ -383,7 +383,7 @@ class ProjectRelated(dd.Model):
 from lino.mixins.printable import Printable, PrintableType, CachedPrintable, TypedPrintable, DirectPrintAction
 from lino.mixins.uploadable import Uploadable
 #~ from lino.mixins.mails import Recipient, Mail
-from lino.utils.dblogger import DiffingMixin
+#~ from lino.utils.dblogger import DiffingMixin
 #~ from lino.mixins.personal import SexField, PersonMixin
 
 from lino.core import actions

@@ -1,4 +1,4 @@
-## Copyright 2008-2011 Luc Saffre
+## Copyright 2008-2012 Luc Saffre
 ## This file is part of the Lino project.
 ## Lino is free software; you can redistribute it and/or modify 
 ## it under the terms of the GNU General Public License as published by
@@ -79,7 +79,7 @@ class ProductsByCategory(Products):
     
 MODULE_LABEL = _("Products")
 
-def setup_main_menu(site,ui,user,m): 
+def setup_master_menu(site,ui,user,m): 
     m  = m.add_menu("products",MODULE_LABEL)
     m.add_action(Products)
     m.add_action(ProductCats)

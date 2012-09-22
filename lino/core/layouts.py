@@ -137,8 +137,12 @@ class LayoutHandle:
         #assert desc != 'Countries_choices2'
         
         if isinstance(desc,Panel):
-            assert len(kw) == 0
-            kw = desc.options
+            if len(kw):
+                newkw = dict(desc.options)
+                newkw.update(kw)
+                kw = newkw
+            else:
+                kw = desc.options
             desc = desc.desc
         
         # flatten continued lines:

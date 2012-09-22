@@ -64,18 +64,17 @@ add('2',_("Normal"),'normal')
 
 class VatRegimes(ChoiceList):
     """
-    While the VAT rate is determined using :class:`VatClasses`,
-    the VAT regime determines *how the VAT is being handled*,
+    The VAT regime determines how the VAT is being handled,
     i.e. whether and how it is to be paid.
     """
-    label = _("VAT Regimes")
+    label = _("VAT Regime")
 add = VatRegimes.add_item
 add('10',_("Private person"),'private')
 add('20',_("Subject to VAT"),'subject')
 add('25',_("Co-contractor"),'cocontractor')
 add('30',_("Intra-community"),'intracom')
 add('40',_("Outside EU"),'outside')
-add('50',_("Exemt"),'exempt')
+add('50',_("Exempt"),'exempt')
 
 
     
@@ -180,11 +179,15 @@ class VatItemBase(mixins.Sequenced,VatTotal):
         #~ return True
         
     def get_siblings(self):
-        return self.document.items      
+        return self.document.items.all()
     
     def full_clean(self,*args,**kw):
+        tt = self.document.get_trade_type()
+        if self.vat_class is None:
+            #~ self.vat_class = VatClasses.normal
+            self.vat_class = self.get_vat_class(tt)
+            
         if self.unit_price is not None and self.qty is not None:
-            tt = self.document.get_trade_type()
             rate = settings.LINO.get_vat_rate(tt,
                 self.vat_class,
                 self.document.vat_regime)

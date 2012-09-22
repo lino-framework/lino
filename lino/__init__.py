@@ -677,6 +677,8 @@ class Lino(object):
         
         #~ self.version = __version__
         
+        #~ self._watch_changes_requests = []
+        
         self.project_dir = normpath(dirname(project_file))
         self.project_name = os.path.split(self.project_dir)[-1]
         
@@ -1161,6 +1163,9 @@ class Lino(object):
         """
         return None
 
+    def get_product_vat_class(self,tt,product):
+        return 'normal'
+        
 
     def get_product_base_account(self,tt,product):
         #~ from lino.modlib.ledger.models import JournalTypes
@@ -1398,3 +1403,26 @@ class Lino(object):
         return name + ' ' + version
         #~ return "Lino " + __version__
 
+
+    #~ def watch_changes(self,model,fields=None,**options):
+        #~ """
+        #~ Declare a set of fields of a model to be "observed" or "watched".
+        #~ Each change to an object comprising at least one watched 
+        #~ will lead to an entry to the ChangesByObject table.
+        
+        #~ `model` may be a string `app.Model`.
+        #~ It will be resolved during kernel startup.
+        #~ All calls to watch_changes will be grouped by model.
+        
+        #~ See also :mod:`lino.utils.dblogger`.
+        #~ """
+        #~ self._watch_changes_requests.append((model,fields,options))
+        
+        
+    #~ def setup_changelog(self):
+    def on_site_startup(self):
+        """
+        This method is called during site startup
+        """
+        pass
+        

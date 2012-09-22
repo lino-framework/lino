@@ -63,7 +63,7 @@ Calendar = resolve_model('cal.Calendar')
 Event = resolve_model('cal.Event')
 RecurrenceSet = resolve_model('cal.RecurrenceSet')
 
-REQUEST = dblogger.PseudoRequest('watch_calendars')
+#~ REQUEST = dblogger.PseudoRequest('watch_calendars')
 
 # dblogger.log_changes(REQUEST,obj)
 

@@ -1229,13 +1229,13 @@ function obj2str(o) {
   return s;
 }
 
-Lino.on_store_exception = function (store,type,action,options,reponse,arg) {
-  //~ throw reponse;
+Lino.on_store_exception = function (store,type,action,options,response,arg) {
+  //~ throw response;
   console.log("on_store_exception: store=",store,
     "type=",type,
     "action=",action,
     "options=",options,
-    "reponse=",reponse,
+    "response=",response,
     "arg=",arg);
   if (arg) { console.log(arg.stack)};
 };

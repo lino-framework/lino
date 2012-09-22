@@ -48,6 +48,7 @@ from django.utils.safestring import mark_safe
 
 import lino
         
+from lino import dd
 from lino.core import actions
 from lino.core import fields
 from lino.core import actors
@@ -348,11 +349,6 @@ def startup_site(self):
     #~ logger.info(lino.welcome_text())
     #~ raise Exception("20111229")
     
-    if self.build_js_cache_on_startup is None:
-        self.build_js_cache_on_startup = not is_devserver()
-      
-
-
     #~ write_lock.acquire()
     try:
     
@@ -426,9 +422,11 @@ def startup_site(self):
                     #~ logger.info("20120128 Found module %s",v)
                 if k.startswith('setup_'):
                     self.modules.define(app_label,k,v)
+                    
         for m in models.get_models():
-            if not m._meta.abstract:
-                self.modules.define(m._meta.app_label,m.__name__,m)
+            if m._meta.abstract:
+                raise Exception("Aha?")
+            self.modules.define(m._meta.app_label,m.__name__,m)
                 
         #~ for a in actors.actors_list:
             #~ self.modules.define(a.app_label,a.__name__,a)
@@ -447,8 +445,8 @@ def startup_site(self):
         #~ logger.info("settings.LINO.modules is %s" ,pprint.pformat(self.modules))
         #~ logger.info("settings.LINO.modules['cal']['main'] is %r" ,self.modules['cal']['main'])
                     
-        for a in models.get_apps():
-            fn = getattr(a,'site_setup',None)
+        for app in models.get_apps():
+            fn = getattr(app,'site_setup',None)
             if fn is not None:
                 fn(self)
 
@@ -476,12 +474,33 @@ def startup_site(self):
             #~ a.setup()
             a.after_site_setup(self)
             
+        self.on_site_startup()
+            
         """
         resolve_virtual_fields() comes after after_site_setup() because after_site_setup()
         may add more virtual fields in custom setup_columns methods.
         """
                 
         fields.resolve_virtual_fields()
+        
+        #~ self._watch_changes_specs = {}
+        #~ print "20120921 kernel", self._watch_changes_requests
+        #~ for model,fields_spec,options in self._watch_changes_requests:
+            #~ model = resolve_model(model)
+            #~ if isinstance(fields_spec,basestring):
+                #~ fields_spec = dd.fields_list(model,fields_spec)
+            #~ if model._watch_changes_specs is None:
+                #~ model._watch_changes_specs = (fields_spec,options)
+            #~ else:
+                #~ raise NotImplementedError()
+                #~ model._watch_changes_specs = (fields,options)
+        #~ del self._watch_changes_requests
+        
+        if self.build_js_cache_on_startup is None:
+            self.build_js_cache_on_startup = not is_devserver()
+          
+
+        
     
         """
         `after_site_setup()` definitively collects actions of each actor.
@@ -502,6 +521,8 @@ def startup_site(self):
         #~ cls = type("Modules",tuple(),d)
         #~ self.modules = cls()
         #~ logger.info("20120102 modules: %s",self.modules)
+        
+        
         
         
         logger.info("Lino Site %r started. Languages: %s. %s actors.", 
