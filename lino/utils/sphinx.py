@@ -32,17 +32,17 @@ from docutils import nodes
 from docutils.parsers.rst import directives
 
 
-class ScreenshotDirective(directives.images.Image):
-    """
-    Directive to insert a screenshot.
-    """
-    def run(self):
-        assert len(self.arguments) == 1
-        #~ name = '/../gen/screenshots/' + self.arguments[0]
-        name = '/gen/screenshots/' + self.arguments[0]
-        self.arguments = [name]
-        (image_node,) = directives.images.Image.run(self)
-        return [image_node]
+#~ class ScreenshotDirective(directives.images.Image):
+    #~ """
+    #~ Directive to insert a screenshot.
+    #~ """
+    #~ def run(self):
+        #~ assert len(self.arguments) == 1
+        #~ # name = '/../gen/screenshots/' + self.arguments[0]
+        #~ name = '/gen/screenshots/' + self.arguments[0]
+        #~ self.arguments = [name]
+        #~ (image_node,) = directives.images.Image.run(self)
+        #~ return [image_node]
 
 
 
@@ -50,7 +50,7 @@ class ScreenshotDirective(directives.images.Image):
 
 def srcref(mod):
     """
-    Return the `source file name` for usageby Sphinx's ``srcref`` role.
+    Return the `source file name` for usage by Sphinx's ``srcref`` role.
     Returns None if the source file is empty (which happens e.g. for __init__.py 
     files whose only purpose is to mark a package).
     
@@ -65,6 +65,10 @@ def srcref(mod):
     >>> from lino.management import commands
     >>> print srcref(commands)
     None
+
+    >>> from lino_welfare import settings
+    >>> print srcref(settings)
+    lino_welfare/settings.py
 
     """
     if not mod.__name__.startswith('lino.'): 

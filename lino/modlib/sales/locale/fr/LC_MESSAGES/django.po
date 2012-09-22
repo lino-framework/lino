@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2012-09-19 09:54+0100\n"
+"POT-Creation-Date: 2012-09-22 06:22+0100\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -17,114 +17,126 @@ msgstr ""
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=(n > 1)\n"
 
-#: .\models.py:67
-msgid "State"
+#: .\dummy_messages.py:5
+msgid "Recipient"
 msgstr ""
 
-#: .\models.py:69
-msgid "Booked"
-msgstr ""
-
-#: .\models.py:69
-msgid "Ready to sign"
-msgstr ""
-
-#: .\models.py:70
-msgid "Signed"
-msgstr ""
-
-#: .\models.py:71
-msgid "Sent"
-msgstr ""
-
-#: .\models.py:72
-msgid "Paid"
-msgstr ""
-
-#: .\models.py:82
-msgid "Payment Term"
-msgstr ""
-
-#: .\models.py:83
-msgid "Payment Terms"
-msgstr ""
-
-#: .\models.py:109
-msgid "Invoicing Mode"
-msgstr ""
-
-#: .\models.py:110
-msgid "Invoicing Modes"
-msgstr ""
-
-#: .\models.py:113
-msgid "Additional fee charged when using this invoicing mode."
-msgstr ""
-
-#: .\models.py:141
-msgid "Shipping Mode"
-msgstr ""
-
-#: .\models.py:142
-msgid "Shipping Modes"
-msgstr ""
-
-#: .\models.py:163
-msgid "Sales Rule"
-msgstr ""
-
-#: .\models.py:164
-msgid "Sales Rules"
-msgstr ""
-
-#: .\models.py:186
-msgid "Customer"
-msgstr ""
-
-#: .\models.py:187
-msgid "Customers"
-msgstr ""
-
-#: .\models.py:273 .\models.py:590
-msgid "Discount"
-msgstr ""
-
-#: .\models.py:360
-msgid "Order"
-msgstr ""
-
-#: .\models.py:361
-msgid "Orders"
-msgstr ""
-
-#: .\models.py:542
-msgid "Invoice"
-msgstr ""
-
-#: .\models.py:543
-msgid "Invoices"
-msgstr ""
-
-#: .\models.py:553
+#: .\dummy_messages.py:6 .\models.py:556
 msgid "Date of payment"
 msgstr ""
 
-#: .\models.py:589
+#: .\models.py:68
+msgid "State"
+msgstr ""
+
+#: .\models.py:70
+msgid "Booked"
+msgstr ""
+
+#: .\models.py:70
+msgid "Ready to sign"
+msgstr ""
+
+#: .\models.py:71
+msgid "Signed"
+msgstr ""
+
+#: .\models.py:72
+msgid "Sent"
+msgstr ""
+
+#: .\models.py:73
+msgid "Paid"
+msgstr ""
+
+#: .\models.py:83
+msgid "Payment Term"
+msgstr ""
+
+#: .\models.py:84
+msgid "Payment Terms"
+msgstr ""
+
+#: .\models.py:110
+msgid "Invoicing Mode"
+msgstr ""
+
+#: .\models.py:111
+msgid "Invoicing Modes"
+msgstr ""
+
+#: .\models.py:114
+msgid "Additional fee charged when using this invoicing mode."
+msgstr ""
+
+#: .\models.py:142
+msgid "Shipping Mode"
+msgstr ""
+
+#: .\models.py:143
+msgid "Shipping Modes"
+msgstr ""
+
+#: .\models.py:164
+msgid "Sales Rule"
+msgstr ""
+
+#: .\models.py:165
+msgid "Sales Rules"
+msgstr ""
+
+#: .\models.py:187
+msgid "Customer"
+msgstr ""
+
+#: .\models.py:188
+msgid "Customers"
+msgstr ""
+
+#: .\models.py:274 .\models.py:593
+msgid "Discount"
+msgstr ""
+
+#: .\models.py:363
+msgid "Order"
+msgstr ""
+
+#: .\models.py:364
+msgid "Orders"
+msgstr ""
+
+#: .\models.py:545
+msgid "Invoice"
+msgstr ""
+
+#: .\models.py:546
+msgid "Invoices"
+msgstr ""
+
+#: .\models.py:592
 msgid "Description"
 msgstr ""
 
 #: .\models.py:631
+msgid "Totals"
+msgstr ""
+
+#: .\models.py:638
+msgid "Header"
+msgstr ""
+
+#: .\models.py:643
 msgid "General"
 msgstr ""
 
-#: .\models.py:636
+#: .\models.py:648
 msgid "Ledger"
 msgstr ""
 
-#: .\models.py:814
+#: .\models.py:830
 msgid "is Customer"
 msgstr ""
 
-#: .\models.py:819
+#: .\models.py:835
 msgid "Sales"
 msgstr ""

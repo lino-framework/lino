@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: lino.modlib.mails\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2012-09-19 10:13+0100\n"
+"POT-Creation-Date: 2012-09-22 06:21+0100\n"
 "PO-Revision-Date: 2012-06-28 11:43+0200\n"
 "Last-Translator: Luc Saffre <luc.saffre@gmail.com>\n"
 "Language-Team: de\n"
@@ -48,7 +48,7 @@ msgstr "per E-Mail"
 msgid "Recipient"
 msgstr "Empfänger"
 
-#: .\models.py:245 .\models.py:449
+#: .\models.py:245 .\models.py:450
 msgid "Recipients"
 msgstr "Empfänger"
 
@@ -60,61 +60,61 @@ msgstr "Adresse"
 msgid "Name"
 msgstr ""
 
-#: .\models.py:306
+#: .\models.py:307
 msgid "Send email"
 msgstr "E-Mail senden"
 
-#: .\models.py:352
+#: .\models.py:353
 msgid "There are recipients without address: "
 msgstr ""
 
-#: .\models.py:371
+#: .\models.py:372
 #, python-format
 msgid "Couldn't find target file of %s"
 msgstr ""
 
-#: .\models.py:387
+#: .\models.py:388
 #, python-format
 msgid "Email %(id)s from %(sender)s has been sent to %(num)d recipients."
 msgstr "Email %(id)s von %(sender)s wurde verschickt an %(num)d Empfänger."
 
-#: .\models.py:404
+#: .\models.py:405
 msgid "Outgoing Mail"
 msgstr "E-Mail-Ausgang"
 
-#: .\models.py:405
+#: .\models.py:406
 msgid "Outgoing Mails"
 msgstr "E-Mail-Ausgänge"
 
-#: .\models.py:409
+#: .\models.py:410
 msgid "Date"
 msgstr "Datum"
 
-#: .\models.py:415
+#: .\models.py:416
 msgid "Subject"
 msgstr "Betreff"
 
-#: .\models.py:419
+#: .\models.py:420
 msgid "Body"
 msgstr "Inhalt"
 
-#: .\models.py:485
+#: .\models.py:487
 msgid "My Outbox"
 msgstr "Mein E-Mail-Ausgang"
 
-#: .\models.py:508 .\models.py:516 .\models.py:525 .\models.py:586
+#: .\models.py:510 .\models.py:518 .\models.py:527 .\models.py:588
 msgid "Outbox"
 msgstr "E-Mail-Ausgang"
 
-#: .\models.py:544
+#: .\models.py:546
 msgid "Attachment"
 msgstr "Anhang"
 
-#: .\models.py:545
+#: .\models.py:547
 msgid "Attachments"
 msgstr "Anhänge"
 
-#: .\models.py:611
+#: .\models.py:613
 #, fuzzy
 msgid "Sender"
 msgstr "E-Mail senden"

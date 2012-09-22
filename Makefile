@@ -2,7 +2,7 @@ DJANGO_ADMIN = python l:\\snapshots\\django\\django\\bin\\django-admin.py
 LINO_ROOT := /cygdrive/t/hgwork/lino
 LINO_ROOT := `cygpath -m $(LINO_ROOT)`
 #~ APPS = presto
-MODULES = accounts ledger households outbox cal thirds products properties contacts countries notes sales finan uploads users postings
+MODULES = vat accounts ledger households outbox cal thirds products properties contacts countries notes sales finan uploads users postings
 TESTS_OPTIONS = --verbosity=2 --traceback
 MMOPTS := -s -a --settings lino.apps.sphinxdocs.settings
 CMOPTS := --settings lino.apps.sphinxdocs.settings
@@ -68,9 +68,3 @@ sdist:
 	#~ python setup.py register sdist --formats=gztar,zip --dist-dir=docs/dist upload 
 	#~ python setup.py sdist --formats=gztar,zip --dist-dir=docs/dist
   
-html:
-	cd docs ; export DJANGO_SETTINGS_MODULE=lino.apps.std.settings ; make html
-
-upload:
-	cd docs ; make upload
-	

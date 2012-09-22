@@ -1,0 +1,8 @@
+20120922
+========
+
+Übersetzungen.
+
+Habe gemerkt, dass meine `srcref`-Direktive (:mod:`lino.utils.sphinx`
+nicht funktioniert in :mod:`lino_welfare`...
+

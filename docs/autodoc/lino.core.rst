@@ -16,6 +16,7 @@
     lino.core.fields
     lino.core.layouts
     lino.core.menus
+    lino.core.model
     lino.core.modeltools
     lino.core.perms
     lino.core.tables

@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2012-09-19 10:13+0100\n"
+"POT-Creation-Date: 2012-09-22 06:21+0100\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -49,7 +49,7 @@ msgstr ""
 msgid "Recipient"
 msgstr ""
 
-#: .\models.py:245 .\models.py:449
+#: .\models.py:245 .\models.py:450
 msgid "Recipients"
 msgstr ""
 
@@ -61,60 +61,60 @@ msgstr ""
 msgid "Name"
 msgstr ""
 
-#: .\models.py:306
+#: .\models.py:307
 msgid "Send email"
 msgstr ""
 
-#: .\models.py:352
+#: .\models.py:353
 msgid "There are recipients without address: "
 msgstr ""
 
-#: .\models.py:371
+#: .\models.py:372
 #, python-format
 msgid "Couldn't find target file of %s"
 msgstr ""
 
-#: .\models.py:387
+#: .\models.py:388
 #, python-format
 msgid "Email %(id)s from %(sender)s has been sent to %(num)d recipients."
 msgstr ""
 
-#: .\models.py:404
+#: .\models.py:405
 msgid "Outgoing Mail"
 msgstr ""
 
-#: .\models.py:405
+#: .\models.py:406
 msgid "Outgoing Mails"
 msgstr ""
 
-#: .\models.py:409
+#: .\models.py:410
 msgid "Date"
 msgstr ""
 
-#: .\models.py:415
+#: .\models.py:416
 msgid "Subject"
 msgstr ""
 
-#: .\models.py:419
+#: .\models.py:420
 msgid "Body"
 msgstr ""
 
-#: .\models.py:485
+#: .\models.py:487
 msgid "My Outbox"
 msgstr ""
 
-#: .\models.py:508 .\models.py:516 .\models.py:525 .\models.py:586
+#: .\models.py:510 .\models.py:518 .\models.py:527 .\models.py:588
 msgid "Outbox"
 msgstr ""
 
-#: .\models.py:544
+#: .\models.py:546
 msgid "Attachment"
 msgstr ""
 
-#: .\models.py:545
+#: .\models.py:547
 msgid "Attachments"
 msgstr ""
 
-#: .\models.py:611
+#: .\models.py:613
 msgid "Sender"
 msgstr ""

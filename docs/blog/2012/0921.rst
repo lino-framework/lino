@@ -29,8 +29,12 @@ method for their :class:`lino.Lino`
 where they call 
 :meth:`watch_changes <lino.core.model.Model.watch_changes>`.
 
+Example usage see 
+:meth:`lino_welfare.settings.Lino.on_site_startup`.
 
-Continued on Presto
---------------------
+
+Continued on :mod:`lino.apps.presto`
+------------------------------------
 
 There's still much to do.
+
