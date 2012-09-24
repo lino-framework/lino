@@ -6,3 +6,50 @@
 Habe gemerkt, dass meine `srcref`-Direktive (:mod:`lino.utils.sphinx`
 nicht funktioniert in :mod:`lino_welfare`...
 
+
+
+
+- Neues Attribut :attr:`lino.core.actor.allow_create`.
+
+  In :class:`lino_welfare.modlib.pcsw.models.IntegClients` 
+  oder deren subclass MyClients Klienten zu *erstellen* hieße,  
+  dass Lino auch automatisch ein Coaching erstellen müsste. Das wäre zu 
+  automagisch. Neue Klienten soll man nur erstellen können 
+  über die Gesamtliste aller Kunden 
+  (:class:`Clients <lino_welfare.modlib.pcsw.models.Clients>`,
+  in der die DSBE-spezifischen Reiter nicht existieren).
+
+  Das hat nichts mit Benutzerrechten zu tun, denn:
+
+  - die Leute vom DSBE dürfen ja Klienten erstellen, nur eben nicht in dieser Liste
+  - das ist eine statische Sache, die für alle Benutzer gilt
+
+
+Customize or Consider?
+----------------------
+
+When different modules need to collaborate and live together, 
+there are two basic mechanisms for handling changes: 
+*customize* (i.e. "I change something in another module if it is installed")
+and *consider* (i.e. "I change my own behaviour if another module is installed").
+
+A concrete example. 
+In a Lino-Welfare application, when the 
+:mod:`cbss <lino_welfare.modlib.cbss>`
+module is installed, 
+there should be an additional tab panel "CBSS" in the detail of a client.
+
+This used to be done by the `site_setup()` 
+function of the :mod:`lino_welfare.modlib.cbss` module::
+
+  def site_setup(self):
+      self.modules.pcsw.Clients.add_detail_tab('cbss',"""
+      cbss_identify_person cbss_manage_access cbss_retrieve_ti_groups
+      cbss_summary
+      """,MODULE_LABEL,required=dict(user_groups='cbss')
+      )
+
+But then we decided that the Clients table 
+is subclassed into different views with different detail layouts.
+
+

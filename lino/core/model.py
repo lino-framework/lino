@@ -11,6 +11,9 @@
 ## You should have received a copy of the GNU General Public License
 ## along with Lino; if not, see <http://www.gnu.org/licenses/>.
 
+import logging
+logger = logging.getLogger(__name__)
+
 from django.db import models
 #~ from django.conf import settings
 from django.utils.translation import ugettext as _
@@ -90,9 +93,12 @@ class Model(models.Model):
     """
     
     _watch_changes_specs = None
+    """
+    Internally used by :meth:`watch_changes`
+    """
     
     @classmethod
-    def watch_changes(model,fields_spec=None,**options):
+    def watch_changes(model,ignore=[],**options):
         """
         Declare a set of fields of this model to be "observed" or "watched".
         Each change to an object comprising at least one watched 
@@ -102,13 +108,23 @@ class Model(models.Model):
         
         See also :mod:`lino.core.changes`.
         """
+        #~ if ignore is None:
+            #~ model._watch_changes_specs = None
+            #~ return
         from lino import dd
-        if isinstance(fields_spec,basestring):
-            fields_spec = dd.fields_list(model,fields_spec)
-        if model._watch_changes_specs is None:
-            model._watch_changes_specs = (fields_spec,options)
-        else:
-            raise NotImplementedError()
+        if isinstance(ignore,basestring):
+            ignore = dd.fields_list(model,ignore)
+        ignore = set(ignore)
+        if model._watch_changes_specs is not None:
+            ignore += model._watch_changes_specs
+        for f in model._meta.fields:
+            if not f.editable:
+                ignore.add(f.name)
+        model._watch_changes_specs = ignore
+        #~ logger.info("20120924 %s ignore %s", model, ignore)
+        #~ model._watch_changes_specs = (fields_spec,options)
+        #~ else:
+            #~ raise NotImplementedError()
   
         
         

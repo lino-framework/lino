@@ -539,25 +539,6 @@ class Table(AbstractTable):
     def wildcard_data_elems(self):
         return wildcard_data_elems(self.model)
           
-    @classmethod
-    def unused_get_shared_actions(self):
-        a = []
-        if self.model is not None:
-            if self.detail_action:
-                if self.editable:
-                    a.append(actions.UPDATE)
-                    if not self.hide_top_toolbar:
-                        #~ self.insert_action = actions.InsertRow()
-                        #~ a.append(actions.InsertRow())
-                        #~ self.add_action(actions.DuplicateRow(self))
-                        #~ self.add_action(actions.SubmitInsert())
-                        a.append(actions.CREATE)
-              
-            if self.editable and not self.hide_top_toolbar:
-                #~ self.add_action(actions.DeleteSelected())
-                a.append(actions.DELETE)
-        return a
-
                     
     @classmethod
     def is_valid_row(self,row):

@@ -860,8 +860,7 @@ class ApiList(View):
             #~ total_count = len(ar.data_iterator)
             total_count = ar.get_total_count()
             #~ if ar.create_rows:
-            row = ar.create_phantom_row()
-            if row is not None:
+            for row in ar.create_phantom_rows():
                 d = rh.store.row2list(ar,row)
                 rows.append(d)
                 total_count += 1

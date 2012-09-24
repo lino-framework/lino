@@ -1654,46 +1654,12 @@ class ParamsPanel(Panel):
         #~ return ext_elems.FormPanel(**fkw)
     
 
-class unused_ParamsPanel(DetailMainPanel):
-    #~ value_template = "new Ext.form.FormPanel(%s)"
-    value_template = "new Ext.form.FormPanel({layout:'fit', autoHeight: true, frame: true, items:new Ext.Panel(%s)})"
-    #~ pass
-    
-class unused_ParameterPanel(DetailMainPanel):
-    #~ value_template = "new Ext.Container(%s)"
-    #~ value_template = "new Ext.Panel(%s)"
-    def __init__(self,layout_handle,name,vertical,*elements,**kw):
-        DetailMainPanel.__init__(self,layout_handle,name,vertical,*elements,**kw)
-        self.fields = []
-        for e in self.walk():
-            if isinstance(e,FieldElement):
-                #~ logger.info("20120114 ")
-                self.fields.append(e)
-        #~ self.fields = [e for e in self.walk() if isinstance(e,FieldElement)]
-        #~ print '20120115 ParameterPanel.elements =', self.elements
-    def ext_options(self,**kw):
-        kw = super(ParameterPanel,self).ext_options(**kw)
-        kw.update(fields=self.fields)
-        return kw
-    
 
 class TabPanel(Panel):
-#~ class TabPanel(Panel,MainPanel):
-#~ class TabPanel(jsgen.Component):
-#~ class TabPanel(jsgen.Value):
     value_template = "new Ext.TabPanel(%s)"
-    #~ width = None
-    #~ height = None
 
     def __init__(self,layout_handle,name,*elems,**kw):
-        #~ self.rh = layout_handle.datalink
-        #~ 20111126 self.report = layout_handle.rh.report
-        #~ MainPanel.__init__(self)
-        #~ DataElementMixin.__init__(self,layout_handle.link)
         kw.update(autoScroll=True)
-        #~ kw.update(height=800, autoScroll=True)
-        
-        #~ self.tabs = elems
         
         kw.update(
           split=True,
@@ -1710,13 +1676,6 @@ class TabPanel(Panel):
         Container.__init__(self,layout_handle,name,*elems,**kw)
         #~ jsgen.Permittable.__init__(self)
         
-    #~ def __init__(self,tabs,**kw):
-        #~ self.active_children = []
-        #~ for t in tabs:
-            #~ self.active_children += t.active_children
-            #~ t.update(listeners=dict(activate=js_code("Lino.on_tab_activate")))
-      
-        #~ super(TabPanel,self).__init__(kw)
         
 
 

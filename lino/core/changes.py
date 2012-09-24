@@ -15,10 +15,11 @@
 :mod:`lino.core.changes` -- Watching database changes
 ------------------------------------------------------
 
-This module contains utilities for logging changes in a 
-Django database.
-Since logging of database changes will inevitably cause some extra work, 
-this feature is optional per site and per model.
+This module contains utilities for logging changes in a Django database.
+
+See also :doc:`/topics/changes`
+
+
 """
 
 import logging
@@ -69,20 +70,21 @@ class Watcher(object):
         
     def log_changes(self,request):
       
-        #~ cs = settings.LINO._watch_changes_specs.get(self.watched.__class__)
-        cs = self.watched._watch_changes_specs
+        #~ cs = self.watched._watch_changes_specs
+        ignored_fields = self.watched._watch_changes_specs
         #~ print 20120921, cs
-        if cs is None:
+        if ignored_fields is None:
             return
         
-        watched_fields, options = cs
+        #~ watched_fields, options = cs
         
         if self.is_new:
             msg = u"%s created by %s." % (obj2str(self.watched),request.user)
         else:
             changes = []
             for k,old in self.original_state.iteritems():
-                if watched_fields is None or k in watched_fields:
+                #~ if watched_fields is None or k in watched_fields:
+                if not k in ignored_fields:
                     new = self.watched.__dict__.get(k, NOT_GIVEN)
                     if old != new:
                         changes.append("%s : %s --> %s" % (k,obj2str(old),obj2str(new)))
@@ -92,7 +94,7 @@ class Watcher(object):
             elif len(changes) == 1:
                 msg = changes[0]
             else:
-                msg = '\n- ' + ('\n- '.join(changes))
+                msg = '- ' + ('\n- '.join(changes))
             
         Change(
             time=datetime.datetime.now(),

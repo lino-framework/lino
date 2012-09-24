@@ -1,3 +1,4 @@
+=========
 Community
 =========
 
@@ -9,6 +10,22 @@ Lino is :doc:`published under the GPL </about/why_gpl>`
 because we want to make sure that our invested work will always 
 belong to the general public and never be misused 
 by some proprietary organisation.
+
+Mailing lists
+-------------
+
+- `lino-announce <https://groups.google.com/d/forum/lino-announce>`_
+  (lino-announce@googlegroups.com): 
+  Low traffic read-only mailing list.
+  Subscribe to this group if you want to get notified about important news.
+
+- `lino-discuss <https://groups.google.com/d/forum/lino-discuss>`_
+  (lino-discuss@googlegroups.com):
+  Subscribe to this group if you potentially want to discuss 
+  about milestones and priorities of the Lino framework.
+
+- `lino-users <https://groups.google.com/d/forum/lino-users>`_
+  (lino-users@googlegroups.com).
 
 How you can help
 ----------------

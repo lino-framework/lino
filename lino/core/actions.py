@@ -234,7 +234,8 @@ class Action(object):
     
     hide_top_toolbar = False
     """
-    Used internally if :attr:`opens_a_window` to say whether the window has a top toolbar.
+    Used internally if :attr:`opens_a_window` to say whether 
+    the window has a top toolbar.
     """
     
     hide_navigator = False
@@ -771,8 +772,8 @@ class ActionRequest(object):
             return
         raise ConfirmationRequired(self.step,messages)
         
-    def create_phantom_row(self,**kw):
-        if self.create_kw is None or not self.actor.editable:
+    def create_phantom_rows(self,**kw):
+        if self.create_kw is None or not self.actor.editable or not self.actor.allow_create:
             #~ logger.info('20120519 %s.create_phantom_row(), %r', self,self.create_kw)
             return 
         #~ if not self.actor.get_permission(self.get_user(),self.actor.create_action):
@@ -780,7 +781,7 @@ class ActionRequest(object):
         if self.actor.create_action is not None:
             if not self.actor.create_action.allow(self.get_user(),None,None):
                 return
-        return PhantomRow(self,**kw)
+        yield PhantomRow(self,**kw)
       
     def create_instance(self,**kw):
         if self.create_kw:

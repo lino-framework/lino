@@ -327,22 +327,30 @@ class BaseLayout(object):
     The `height` value can also be the string ``'auto'``.
     """
     
+    main = None
+    
     #~ panel_options = {}
     #~ """
     #~ A dict of 
     #~ """
     
+    #~ 20120923 
+    #~ _added_panels = dict()
+    #~ _labels = dict()
+    #~ _element_options = dict()
+    
     #~ def __init__(self,table=None,main=None,hidden_elements=frozenset(),window_size=None):
     def __init__(self,main=None,table=None,hidden_elements=frozenset(),**kw):
         self._table = table
         self._labels = dict()
-        self._added_panels = dict() # 20120914c
+        self._added_panels = dict()
         #~ self._window_size = window_size
         self.hidden_elements = hidden_elements 
         self._element_options = dict()
         if main is not None:
             self.main = main
-        elif not hasattr(self,'main'):
+        #~ elif not hasattr(self,'main'):
+        elif self.main is None:
             raise Exception("Cannot instantiate %s without `main`." % self.__class__)
         for k,v in kw.items():
             #~ if not hasattr(self,k):
@@ -355,12 +363,13 @@ class BaseLayout(object):
     def setup_handle(self,lh):
         pass
         
+    #~ @classmethod    
     def update(self,**kw):
         """
         Update the template of one or more panels.
         """
-        if hasattr(self,'_extjs3_handle'):
-            raise Exception("Cannot update form layout after UI has been set up.")
+        #~ if hasattr(self,'_extjs3_handle'):
+            #~ raise Exception("Cannot update form layout after UI has been set up.")
         for k,v in kw.items():
             if DEBUG_LAYOUTS(self):
                 msg = """\
@@ -373,6 +382,7 @@ In %s, updating attribute %r:
                 logger.info(msg)
             setattr(self,k,v)
             
+    #~ @classmethod    
     def add_panel(self,name,tpl,label=None,**options):
         """
         Adds a new panel to this layout.
@@ -384,8 +394,8 @@ In %s, updating attribute %r:
         - `label` an optional label
         - any further keyword are passed as options to the new panel
         """
-        if hasattr(self,'_extjs3_handle'):
-            raise Exception("Cannot update for layout after UI has been set up.")
+        #~ if hasattr(self,'_extjs3_handle'):
+            #~ raise Exception("Cannot update for layout after UI has been set up.")
         if '\n' in name:
            raise Exception("name may not contain any newline") 
         if ' ' in name:
@@ -394,6 +404,7 @@ In %s, updating attribute %r:
            raise Exception("name %r already defined in %s" % (name,self)) 
         self._add_panel(name,tpl,label,options)
         
+    #~ @classmethod    
     def _add_panel(self,name,tpl,label,options):
         if tpl is None:
             return # when does this occur?
@@ -411,7 +422,8 @@ Adding panel %r to %s ---:
             self._labels[name] = label
         if options:
             self._element_options[name] = options
-        
+            
+    #~ @classmethod    
     def add_tabpanel(self,name,tpl=None,label=None,**options):
         """
         Add a tab panel to an existing layout.
@@ -426,8 +438,8 @@ Adding panel %r to %s ---:
         - `label` an optional label
         """
         #~ print "20120526 add_detail_tab", self, name
-        if hasattr(self,'_extjs3_handle'):
-            raise Exception("Cannot update form layout after UI has been set up.")
+        #~ if hasattr(self,'_extjs3_handle'):
+            #~ raise Exception("Cannot update form layout after UI has been set up.")
         if '\n' in name:
            raise Exception("name may not contain any newline") 
         if ' ' in name:

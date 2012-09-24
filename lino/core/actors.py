@@ -241,7 +241,6 @@ class Actor(object):
     default_list_action_name = 'grid'
     default_elem_action_name =  'detail'
     
-    #~ hide_top_toolbar = False
     
     debug_permissions = False
     """
@@ -357,6 +356,11 @@ class Actor(object):
     This is set to `True` in home pages
     (e.g. :class:`lino.apps.pcsw.models.Home`).
     """
+    
+    allow_create = True
+    """
+    If this is False, then then Actor won't have neither create_action  nor insert_action.
+    """
 
     #~ has_navigator = True
     hide_top_toolbar = False
@@ -366,8 +370,9 @@ class Actor(object):
     the current element without prefixing the Tables's title.
     
     This option is True in 
-    :class:`lino.models.SiteConfigs`.
-    :class:`lino.apps.pcsw.model.Home`.
+    :class:`lino.models.SiteConfigs`,
+    :class:`lino_welfare.pcsw.models.Home`,
+    :class:`lino.modlib.users.models.Mysettings`.
     """
     
     known_values = {}
@@ -444,8 +449,8 @@ class Actor(object):
     help_text = None
     
     detail_action = None
-    insert_action = None
     update_action = None
+    insert_action = None
     create_action = None
     delete_action = None
     
@@ -595,7 +600,7 @@ class Actor(object):
                 cls.detail_action = cls.default_action
             else:
                 cls.detail_action = actions.ShowDetailAction()
-        if cls.detail_action and cls.editable:
+        if cls.detail_action and cls.editable and cls.allow_create:
             if not cls.hide_top_toolbar:
                 cls.insert_action = actions.InsertRow()
                 cls.create_action = actions.SubmitInsert(sort_index=1)

@@ -24,7 +24,9 @@ from lino.core.modeltools import obj2str
 class UserLevels(choicelists.ChoiceList):
     """
     The level of a user is one way of differenciating users when 
-    giving access permissions. User levels are a graduation: 
+    defining access permissions and workflows. 
+    Lino speaks about user *level* where Plone speaks about user *role*.
+    Unlike user roles in Plone, user levels are hierarchic:
     a "Manager" is higher than a simple "User" and thus 
     can do everything for which a simple "User" level has permission.
     
@@ -42,6 +44,7 @@ class UserLevels(choicelists.ChoiceList):
     
     """
     label = _("User Level")
+    
     
     @classmethod
     def field(cls,module_name=None,**kw):
@@ -61,27 +64,25 @@ add('30', _("User"), "user")
 add('40', _("Manager"), "manager")
 add('50', _("Administrator"), "admin")
 add('90', _("Expert"), "expert")
+UserLevels.SHORT_NAMES = dict(A='admin',U='user',_='',M='manager',G='guest',S='secretary')
 
 class UserGroups(choicelists.ChoiceList):
     """
-    This list is cleared and re-filled in lino.apps.pcsw.models. 
-    applications may want to clear() this list and add longer 
-    names than the only default "system".
-    Since this redefinitions happens at a moment where database 
-    fields have already been instantiated, 
-    it is too late to change their max_length.
+    User Groups are another way of differenciating users when 
+    defining access permissions and workflows. 
+    
+    Applications will 
+    
     """
     label = _("User Group")
     show_values = True
     max_length = 20 
     """
     """
-    
         
 #~ add = UserGroups.add_item
 #~ add('system', _("System"))
 
-SHORT_LEVELS = dict(A='admin',U='user',_='',M='manager',G='guest')
 
 class UserProfile(choicelists.Choice):
   
@@ -105,7 +106,7 @@ class UserProfile(choicelists.Choice):
                     "Invalid memberships specification %r : must contain %d letters" 
                     % (memberships,len(cls.membership_keys)))
             for i,k in enumerate(memberships.split()):
-                kw[cls.membership_keys[i]] = UserLevels.get_by_name(SHORT_LEVELS[k])
+                kw[cls.membership_keys[i]] = UserLevels.get_by_name(UserLevels.SHORT_NAMES[k])
                 
         #~ print 20120705, value, kw
         

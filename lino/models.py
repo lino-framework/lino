@@ -268,21 +268,39 @@ if settings.LINO.user_model:
 
 
 class Change(dd.Model):
+    """
+    Each `save()` of a watched object will generate one Change record.
+    """
+    class Meta:
+        verbose_name = _("Change")
+        verbose_name_plural = _("Changes")
+            
     time = models.DateTimeField()
     if settings.LINO.user_model:
         user = dd.ForeignKey(settings.LINO.user_model)
     object_type = models.ForeignKey(ContentType)
     object_id = dd.GenericForeignKeyIdField(object_type)
-    object = dd.GenericForeignKey('object_type','object_id')
-    description = dd.RichTextField(format='plain')
-    diff = dd.RichTextField(format='plain')
+    object = dd.GenericForeignKey('object_type','object_id',_("Object"))
+    summary = models.CharField(_("Summary"),max_length=200,blank=True)
+    #~ description = dd.RichTextField(format='plain')
+    diff = dd.RichTextField(_("Changes"),format='plain')
+    
+    def __unicode__(self):
+        #~ return "#%s - %s" % (self.id,self.time)
+        return "#%s" % self.id
     
 class Changes(dd.Table):
+    editable = False
     model = Change
-    order_by = ['time']
+    order_by = ['-time']
+    detail_layout = """
+    time user object id
+    summary
+    diff
+    """
     
 class ChangesByObject(Changes):
-    column_names = 'time user description'
+    column_names = 'time user summary'
     master_key = 'object'
 
 
@@ -643,6 +661,7 @@ def setup_config_menu(site,ui,user,m):
 def setup_explorer_menu(site,ui,user,m):
     if site.user_model:
         m.add_action(site.modules.users.Authorities)
+    m.add_action(Changes)
   
   
 def setup_site_menu(site,ui,user,m): 

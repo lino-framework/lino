@@ -983,6 +983,14 @@ class Lino(object):
         Local site administrators may again override this in their 
         :xfile:`settings.py`.
         
+        Note that you may not specify values longer 
+        than `max_length` when redefining your choicelists.
+        This limitation is because these redefinitions happen at a 
+        moment where database fields have already been instantiated, 
+        so it is too late to change their max_length.        
+        Not that this limitation is only for the *values*, not for the names 
+        or texts of choices.
+        
         """
         pass
         

@@ -96,6 +96,7 @@ from lino.utils.choicelists import DoYouLike, HowWell
 STRENGTH_CHOICES = DoYouLike.get_choices()
 KNOWLEDGE_CHOICES = HowWell.get_choices()
 
+NOT_GIVEN = object()
 
 if settings.LINO.user_model:
     from lino.modlib.users import models as users
@@ -573,12 +574,19 @@ class ExtUI(base.UI):
         
         
     def create_layout_panel(self,lh,name,vertical,elems,**kw):
+        """
+        This also must translate ui-agnostic parameters 
+        like `label_align` to their ExtJS equivalent `labelAlign`.
+        """
         pkw = dict()
         pkw.update(labelAlign=kw.pop('label_align','top'))
         pkw.update(hideCheckBoxLabels=kw.pop('hideCheckBoxLabels',True))
         pkw.update(label=kw.pop('label',None))
         pkw.update(width=kw.pop('width',None))
         pkw.update(height=kw.pop('height',None))
+        v = kw.pop('required',NOT_GIVEN)
+        if v is not NOT_GIVEN:
+            pkw.update(required=v)
         if kw:
             raise Exception("Unknown panel attributes %r" % kw)
         if name == 'main':

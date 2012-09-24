@@ -1,0 +1,7 @@
+20120923
+========
+
+
+Finished the first implementation of the new 
+:doc:`/topics/changes` feature.
+
