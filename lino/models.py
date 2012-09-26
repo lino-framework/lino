@@ -300,6 +300,9 @@ class Changes(dd.Table):
     """
     
 class ChangesByObject(Changes):
+    """
+    Slave Table showing the changes related to the current object
+    """
     column_names = 'time user summary'
     master_key = 'object'
 

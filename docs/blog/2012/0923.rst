@@ -1,7 +1,9 @@
-20120923
-========
-
+20120923...26
+=============
 
 Finished the first implementation of the new 
 :doc:`/topics/changes` feature.
 
+Discovered and fixed a bug that caused panels 
+of a TabPanel to be visible 
+also for users who don't have permission to see them.

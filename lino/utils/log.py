@@ -12,14 +12,66 @@
 ## along with Lino; if not, see <http://www.gnu.org/licenses/>.
 
 """
+Provides the default logging configuration interface 
+shipped with Lino applications
+for out-of-the-box usage in typical situations.
+    
+It defines a  :func:`configure` function which
+will be called by Django when you have your
+:setting:`LOGGING_CONFIG` set to ``'lino.utils.log.configure'``
+(the default value when you import your settings from 
+:mod:`lino.apps.std.settings`)
 
-Default logging configuration shipped with Lino.
 
-To use it, define the following in your :xfile:`settings.py`::
+Examples
+--------
 
-  LOGGING_CONFIG = 'lino.utils.log.configure'
-  LOGGING = None
- 
+A simple common example::
+
+  LOGGING = dict(filename='/var/log/lino/system.log',level='INFO')
+  
+Another example using :attr:`lino.Lino.project_dir`::
+
+  ...
+  LINO = Lino(__file__,globals()) 
+  ...
+  LOGGING = dict(filename=join(LINO.project_dir,'log','system.log'),level='DEBUG')
+
+  
+Example to use date-based log files 
+(this trick is suboptimal since the filename is computed 
+once per process, causing a long-running server process to log to an old file
+even though a newer file has been created by another process)::
+
+  import datetime
+  filename = datetime.date.today().strftime('/var/log/lino/%Y-%m-%d.log')
+  LOGGING = dict(filename=filename,level='DEBUG',rotate=False)
+  
+
+Remarks
+-------
+
+**Logfile rotation** is no longer supported here since with Django 
+it is possible to have several processes using the same `settings.py` file.
+That might cause problems when they all try to rotate at the same time.
+On Linux systems, we use WatchedFileHandler so that
+system administrators can install system-wide log rotation with `logrotate`.
+
+
+Yes, we read the `mod_wsgi documentation 
+<http://code.google.com/p/modwsgi/wiki/ApplicationIssues>`_ 
+saying "code should ideally not be making assumptions about the environment it is 
+executing in, eg., whether it is running in an interactive mode, by asking whether 
+standard output is a tty. In other words, calling 'isatty()' will cause a similar error 
+with mod_wsgi. If such code is a library module, the code should be providing a way to 
+specifically flag that it is a non interactive application and not use magic to 
+determine whether that is the case or not.".
+Any comments are welcome.
+
+
+
+
+
 See also :doc:`/tickets/15`
 """
 
@@ -27,31 +79,26 @@ import os
 import sys
 import logging
 
-from logging.handlers import RotatingFileHandler, TimedRotatingFileHandler, WatchedFileHandler
+#~ from logging.handlers import RotatingFileHandler, TimedRotatingFileHandler, WatchedFileHandler
+from logging.handlers import WatchedFileHandler
 
 from django.utils.log import AdminEmailHandler
 
 def file_handler(filename,rotate,**kw):
-    """
-    See also :doc:`/blog/2010/1129`
-    """
+    #~ See also :doc:`/blog/2010/1129`
     kw.setdefault('encoding','UTF-8')
     if sys.platform == 'win32': 
         cl = logging.FileHandler
     else:
-        if kw.has_key('when'):
-            cl = TimedRotatingFileHandler
-        elif rotate:
-            cl = RotatingFileHandler
-            kw.setdefault('maxBytes',1000000)
-            #~ kw.setdefault('backupCount',10)
-        else:
-            cl = WatchedFileHandler
+        cl = WatchedFileHandler
+        #~ if kw.has_key('when'):
+            #~ cl = TimedRotatingFileHandler
+        #~ elif rotate:
+            #~ cl = RotatingFileHandler
+            #~ kw.setdefault('maxBytes',1000000)
+        #~ else:
+            #~ cl = WatchedFileHandler
     h = cl(filename,**kw)
-    #~ if hasattr(logging,'RotatingFileHandler'):
-        #~ h = logging.RotatingFileHandler(filename,maxBytes=10000,backupCount=5)
-    #~ else:
-        #~ h = logging.FileHandler(filename)
     fmt = logging.Formatter(
         fmt='%(asctime)s %(levelname)s %(module)s : %(message)s',
         datefmt='%Y%m-%d %H:%M:%S'
@@ -62,73 +109,44 @@ def file_handler(filename,rotate,**kw):
 
 def configure(config):
     """
-    This provides a simplified logging configuration interface 
-    for out-of-the-box usage in typical situations.
     
-    It will be called by Django when you have your
-    :setting:`LOGGING_CONFIG` set to ``'lino.utils.log.configure'``.
-    If you use it, then your :setting:`LOGGING` setting must be a dictionary 
-    with the following keys:
-    
-    :param logfile:  the full path of the lino `system.log` file.
-                     If absent or `None`, there will be no `system.log` file.
-                     
-                     
-    :param level:    the overall verbosity level for both console and logfile.
-    :param mode:     the opening mode for the logfile
-    :param encoding: the encoding for the logfile
-    
-    :param rotate:   if `logfile` specified, set this to `False` if you 
-                     don't want a rotating logfile.
-                     Ignored on Windows where this feature is not available.
-                     
-    :param when:     If this is specified, Lino will create a `TimedRotatingFileHandler
-                     <http://docs.python.org/library/logging.handlers.html#timedrotatingfilehandler>`_
-                     
-    :param interval: If `when` is specified, you can also specify an `interval` to forward to 
-                     `TimedRotatingFileHandler`
-                     
-    :param maxBytes: rotate if logfile's size gets bigger than this.
-    :param backupCount: number of rotated logfiles to keep.
-    :param loggers: A list or tuple of names of loggers to configure.
-                    Default is ['lino']
-    
-    Example::
-    
-      LOGGING = dict(filename='/var/log/lino/system.log',level='INFO')
-      
-    Another example using :attr:`lino.Lino.project_dir`::
-    
-      ...
-      LINO = Lino(__file__,globals()) 
-      ...
-      LOGGING = dict(filename=join(LINO.project_dir,'log','system.log'),level='DEBUG')
+When using Lino's default method,
+the :setting:`LOGGING` setting in your :xfile:`settings.py`
+must be a dictionary containing 
+the parameters you want to set. 
+Available parameters are:
 
-      
-    Example to use date-based log files::
-    
-      import datetime
-      filename = datetime.date.today().strftime('/var/log/lino/%Y-%m-%d.log')
-      LOGGING = dict(filename=filename,level='DEBUG',rotate=False)  
+:param logfile:  the full path of the lino `system.log` file.
+                 If absent or `None`, there will be no `system.log` file.
+                 
+:param level:    the overall verbosity level for both console and logfile.
+:param mode:     the opening mode for the logfile
+:param encoding: the encoding for the logfile
 
-    If there is a logfile, then console messages will never be more verbose than INFO
-    because too many messages on the screen are disturbing, 
-    and if the level is DEBUG you will better analyze them in the logfile.
-    
-    Note that the `mod_wsgi documentation 
-    <http://code.google.com/p/modwsgi/wiki/ApplicationIssues>`_ 
-    says "code should ideally not be making assumptions about the environment it is 
-    executing in, eg., whether it is running in an interactive mode, by asking whether 
-    standard output is a tty. In other words, calling 'isatty()' will cause a similar error 
-    with mod_wsgi. If such code is a library module, the code should be providing a way to 
-    specifically flag that it is a non interactive application and not use magic to 
-    determine whether that is the case or not.".
-    
-    Automatically adds an AdminEmailHandler with level ERROR to all specified loggers
-    *and* to the 'django' logger (even if 'django' is not specified in `loggers`).
-    Because that's rather necessary on a production server with :setting:`DEBUG` False.
+:param loggers:  A list or tuple of names of loggers to configure.
+                 Default is ['lino']
+                
+:param rotate:   [deprecated] if `logfile` specified, set this to `False` if you 
+                 don't want a rotating logfile.
+                 Ignored on Windows where this feature is not available.
+                 
+:param when:     [deprecated] If this is specified, Lino will create a `TimedRotatingFileHandler
+                 <http://docs.python.org/library/logging.handlers.html#timedrotatingfilehandler>`_
+                 
+:param interval: [deprecated] If `when` is specified, you can also specify an `interval` to forward to 
+                 `TimedRotatingFileHandler`
+                 
+:param maxBytes:    [deprecated] rotate if logfile's size gets bigger than this.
+:param backupCount: [deprecated] number of rotated logfiles to keep.
 
-    
+If there is a logfile, then console messages will never be more verbose than INFO
+because too many messages on the screen are disturbing, 
+and if the level is DEBUG you will better analyze them in the logfile.
+
+Automatically adds an AdminEmailHandler with level ERROR to all specified loggers
+*and* to the 'django' logger (even if 'django' is not specified in `loggers`).
+Because that's rather necessary on a production server with :setting:`DEBUG` False.
+
     """
     
     djangoLogger = logging.getLogger('django')

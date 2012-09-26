@@ -117,9 +117,9 @@ def set_for_user(u):
     
 def declare_vars(v):
     """
-    Yield the Javascript lines that declare the passed :class:`Variable` `v`.
+    Yields the Javascript lines that declare the given  :class:`Variable` `v`.
     If `v` is a :class:`Component`, `list`, `tuple` or `dict` which contains
-    other variables, yield also the lines to declare these.
+    other variables, recursively yields also the lines to declare these.
     """
     #~ assert _for_user is not None
     if isinstance(v,(list,tuple)): 
@@ -139,7 +139,7 @@ def declare_vars(v):
             for ln in declare_vars(sub):
                 yield ln
         # DON'T return
-    elif isinstance(v,Value): 
+    if isinstance(v,Value): 
         #~ 20120616 if not v.get_view_permission(_for_user): return
         #~ ok = True
         for ln in declare_vars(v.value):

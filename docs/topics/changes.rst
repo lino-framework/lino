@@ -14,9 +14,9 @@ Usage instructions for application developers:
         self.modules.contacts.Person.watch_changes()
         super(Lino,self).on_site_startup()
         
-  See :meth:`lino.core.model.watch_changes` for possible parameters.
+  See :meth:`lino.core.model.Model.watch_changes` for possible parameters.
         
-- In the :attr:`lino.core.actors.detail_layout` of 
+- In the :attr:`lino.core.actors.Actor.detail_layout` of 
   your `contact.Person` include the ``lino.ChangesByObject`` 
   slave table.
   

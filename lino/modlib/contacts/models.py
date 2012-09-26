@@ -280,21 +280,21 @@ class PartnerDetail(dd.FormLayout):
     bottom_box
     """
     
-    address_box = """
+    address_box = dd.Panel("""
     name_box
     country region city zip_code:10
     addr1
     street_prefix street:25 street_no street_box
     addr2
-    """
+    """,label = _("Address"))
     
-    contact_box = """
+    contact_box = dd.Panel("""
     info_box
     email:40 
     url
     phone
     gsm fax
-    """
+    """,label = _("Contact"))
 
     bottom_box = """
     remarks 
@@ -305,9 +305,9 @@ class PartnerDetail(dd.FormLayout):
     info_box = "id language"
     
     
-    def setup_handle(self,dh):
-        dh.address_box.label = _("Address")
-        dh.contact_box.label = _("Contact")
+    #~ def setup_handle(self,dh):
+        #~ dh.address_box.label = _("Address")
+        #~ dh.contact_box.label = _("Contact")
   
     
     

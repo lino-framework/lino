@@ -137,6 +137,10 @@ class LayoutHandle:
         #assert desc != 'Countries_choices2'
         
         if isinstance(desc,Panel):
+            #~ assert not self.layout._element_options.has_key(elemname)
+            #~ self.layout._element_options[elemname] = desc.options
+            #~ d = self._element_options.setdefault(elemname,{})
+            #~ d.update(desc.options)
             if len(kw):
                 newkw = dict(desc.options)
                 newkw.update(kw)
@@ -172,13 +176,13 @@ class LayoutHandle:
             for x in desc.splitlines():
                 x = x.strip()
                 if len(x) > 0 and not x.startswith("# "):
-                    if x.startswith(':'): # unused feature 
-                        a = x.split(':',2)
-                        if len(a) != 3:
-                            raise LayoutError('Expected attribute `:attr: value` ')
-                        attname = a[1]
-                        kw[attname] = a[2].strip()
-                    else:
+                    #~ if x.startswith(':'): # unused feature 
+                        #~ a = x.split(':',2)
+                        #~ if len(a) != 3:
+                            #~ raise LayoutError('Expected attribute `:attr: value` ')
+                        #~ attname = a[1]
+                        #~ kw[attname] = a[2].strip()
+                    #~ else:
                         i += 1
                         e = self.desc2elem(elemname+'_'+str(i),x)
                         if e is not None:

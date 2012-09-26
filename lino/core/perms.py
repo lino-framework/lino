@@ -208,12 +208,14 @@ add('900', _("Administrator"), name='admin', level='admin')
 
 class Permittable(object):  
     """
-    Base class for Components that have permissions control.
+    Base class for Components that have view permissions control.
     """
+    
     required = {}
     """
     Conditions required to read (view) this component.
     """
+    
     workflow_state_field = None # internally needed for make_permission_handler
     workflow_owner_field = None # internally needed for make_permission_handler
     #~ readonly = True
@@ -222,16 +224,20 @@ class Permittable(object):
     #~ def allow_read(self,user,obj,state):
         #~ return True
     
-    def __init__(self,actor):
-        #~ super(PermissionComponent,self).__init__(self,*args,**kw)
-        self.required = {}
+    def __init__(self,debug_permissions):
+        #~ if type(debug_permissions) != bool:
+            #~ raise Exception("20120925 %s %r",self,self)
+        #~ self.required = {}
         self.allow_read = curry(make_permission_handler(
             self,self,True,
-            actor.debug_permissions,
+            debug_permissions,
             **self.required),self)
 
         
     def get_view_permission(self,user):
+        #~ if str(self.layout_handle.layout) == 'ClientDetail on pcsw.Clients':
+            #~ if self.name == 'cbss':
+                #~ logger.info("20120925 %s Permittable.get_view_permission(%s)", self,self.required)
         #~ logger.info("20120622 %s.get_view_permission",self)
         return self.allow_read(user,None,None)
         
@@ -249,7 +255,9 @@ def make_permission_handler(
     """
     Return a function that will test whether permission is given or not.
     
-    `elem` is either an Action or a Permittable.
+    `elem` is not used (either an Action or a Permittable.)
+    
+    `actor` is who contains the workflow state field
     
     `readonly`
     

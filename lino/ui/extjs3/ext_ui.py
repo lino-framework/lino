@@ -588,7 +588,7 @@ class ExtUI(base.UI):
         if v is not NOT_GIVEN:
             pkw.update(required=v)
         if kw:
-            raise Exception("Unknown panel attributes %r" % kw)
+            raise Exception("Unknown panel attributes %r for %s" % (kw,lh))
         if name == 'main':
             if isinstance(lh.layout,layouts.ListLayout):
                 #~ return ext_elems.GridMainPanel(lh,name,vertical,*elems,**pkw)
@@ -1567,25 +1567,6 @@ tinymce.init({
             kw.update(tooltip=a.help_text)
         return kw
         
-    def unused_setup_detail_handle(self,dh):
-        """
-        Adds UI-specific information to a DetailHandle.
-        """
-        lh_list = dh.lh_list
-        if len(lh_list) == 1:
-            dh.tabbed = False
-            lh = lh_list[0]
-            #~ lh.label = None
-            dh.main = lh.main
-            #~ main.update(autoScroll=True)
-        else:
-            dh.tabbed = True
-            tabs = [lh.main for lh in lh_list]
-            #~ for t in tabs: t.update(autoScroll=True)
-            dh.main = ext_elems.TabPanel(tabs)
-            
-        dh.on_render = self.build_on_render(dh.main)
-            
     def build_on_render(self,main):
         "dh is a FormLayout or a ListLayout"
         on_render = []

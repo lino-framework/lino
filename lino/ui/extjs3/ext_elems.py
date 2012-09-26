@@ -240,8 +240,9 @@ class Calendar(jsgen.Component):
     
                     
         
+NOT_GIVEN = object()
         
-class VisibleComponent(jsgen.Component):
+class VisibleComponent(jsgen.Component,jsgen.Permittable):
     vflex = False
     hflex = True
     width = None
@@ -252,10 +253,15 @@ class VisibleComponent(jsgen.Component):
     
     def __init__(self,name,**kw):
         jsgen.Component.__init__(self,name)
+        # install `allow_read` permission handler:
+        #~ jsgen.Permittable.__init__(self,layout_handle.layout._table)
         self.setup(**kw)
+        jsgen.Permittable.__init__(self,False) # name.startswith('cbss'))
         
-    def setup(self,width=None,height=None,label=None,preferred_width=None,**kw):
-        #~ ):
+    def setup(self,width=None,height=None,label=None,
+        preferred_width=None,
+        required=NOT_GIVEN,
+        **kw):
         self.value.update(kw)
         #~ jsgen.Component.__init__(self,name,**kw)
         if preferred_width is not None:
@@ -266,6 +272,9 @@ class VisibleComponent(jsgen.Component):
             self.height = height
         if label is not None:
             self.label = label
+        if required is not NOT_GIVEN:
+            self.required = required
+            #~ logger.info("20120925 VisibleComponent.setup() %s",self)
     
 
     def __str__(self):
@@ -329,12 +338,13 @@ class LayoutElement(VisibleComponent):
         #self.parent = parent
         #~ name = layout_handle.layout._actor_name + '_' + name
         assert isinstance(layout_handle,layouts.LayoutHandle)
-        VisibleComponent.__init__(self,name,**kw)
         opts  = layout_handle.layout._element_options.get(name,{})
         for k,v in opts.items():
             if not hasattr(self,k):
                 raise Exception("%s has no attribute %s" % (self,k))
             setattr(self,k,v)
+            
+        VisibleComponent.__init__(self,name,**kw)
         #~ if opts:
             #~ print "20120525 apply _element_options", opts, 'to', self.__class__, self
         self.layout_handle = layout_handle
@@ -343,6 +353,13 @@ class LayoutElement(VisibleComponent):
 
     #~ def submit_fields(self):
         #~ return []
+        
+    def get_view_permission(self,user):
+        #~ if not super(GridElement,self).get_view_permission():
+        if not super(LayoutElement,self).get_view_permission(user): 
+            return False
+        return self.layout_handle.layout._table.get_view_permission(user)
+        #~ return self.actor.get_permission(actions.VIEW,jsgen._for_user,None)
         
     def get_property(self,name):
         v = getattr(self,name,None)
@@ -1077,7 +1094,7 @@ class HtmlBoxElement(DisplayElement):
         
 
 
-class Container(LayoutElement,jsgen.Permittable):
+class Container(LayoutElement):
     """
     Base class for Layout Elements that can contain other Layout Elements:
     :class:`Panel`,
@@ -1100,6 +1117,8 @@ class Container(LayoutElement,jsgen.Permittable):
     
     
     def __init__(self,layout_handle,name,*elements,**kw):
+        #~ if name == 'cbss':
+            #~ logger.info("20120925 Container.__init__() 1 %r",kw)
         #~ self.has_frame = layout_handle.layout.has_frame
         #~ self.labelAlign = layout_handle.layout.label_align
         #~ self.hideCheckBoxLabels = layout_handle.layout.hideCheckBoxLabels
@@ -1124,8 +1143,13 @@ class Container(LayoutElement,jsgen.Permittable):
                     #~ self.has_fields = True
             #~ kw.update(items=elements)
                 
-        jsgen.Permittable.__init__(self,layout_handle.layout._table)
         LayoutElement.__init__(self,layout_handle,name,**kw)
+        
+        #~ if self.required:
+            #~ if layout_handle.layout._table.__name__.startswith('IntegClient'):
+                #~ print 20120924, layout_handle, self.required
+        #~ if name == 'cbss':
+            #~ logger.info("20120925 Container.__init__() 2 %r",self.required)
         
         
     def subvars(self):
@@ -1164,12 +1188,21 @@ class Container(LayoutElement,jsgen.Permittable):
 
     def get_view_permission(self,user):
         """
-        A Panel which doesn't contain a single visible element gets also hidden.
+        A Panel which doesn't contain a single visible element 
+        becomes itself hidden.
         """
         #~ if self.value.get("title") == "CBSS":
+        #~ if str(self.layout_handle.layout) == 'ClientDetail on pcsw.Clients':
+            #~ if self.name == 'cbss':
+                #~ print '20120925 ext_elems', self.name, 
+                #~ if jsgen.Permittable.get_view_permission(self,user):
+                #~ if super(Container,self).get_view_permission(user): 
+                    #~ logger.warning("Expected %r to be invisible for %s", self,user)
             #~ print "20120525 Container.get_view_permission()", self
+            
         # if the Panel itself is invisble, no need to loop through the children
         if not super(Container,self).get_view_permission(user): 
+        #~ if not jsgen.Permittable.get_view_permission(self,user):
             return False
         #~ if self.value.get("title") == "CBSS":
             #~ print "20120525 Container.get_view_permission() passed", self
@@ -1177,6 +1210,7 @@ class Container(LayoutElement,jsgen.Permittable):
             if (not isinstance(e,jsgen.Permittable)) or e.get_view_permission(user):
                 # one visble child is enough, no need to continue loop 
                 return True
+        #~ logger.info("20120925 not a single visible element in %s",self)
         return False
         
 class Wrapper(VisibleComponent):
@@ -1232,7 +1266,8 @@ class Panel(Container):
     
     def __init__(self,layout_handle,name,vertical,*elements,**kw):
         self.vertical = vertical
-            
+        #~ if name == 'cbss':
+            #~ logger.info("20120925 Panel.__init__() %r",kw)
         #~ if self.vertical:
             #~ vflex_elems = [e for e in elements if e.vflex]
             #~ if len(flex_elems) > 0:
@@ -1331,8 +1366,15 @@ class Panel(Container):
                 self.collapsible = True
                 self.label = label
             
-        Container.__init__(self,layout_handle,name,*elements,**kw)
+        #~ if str(layout_handle.layout) == 'ClientDetail on pcsw.Clients':
+            #~ if name == 'cbss':
+                #~ print '20120925 ext_elems', name, kw
 
+        Container.__init__(self,layout_handle,name,*elements,**kw)
+        
+        #~ if name == 'cbss':
+            #~ logger.info("20120925 Panel.__init__() 2 %r",self.required)
+        
         w = h = 0
         has_height = False # 20120210
         for e in self.elements:
@@ -1590,6 +1632,9 @@ class GridElement(Container):
             
     def get_view_permission(self,user):
         #~ if not super(GridElement,self).get_view_permission():
+        # skip Container parent:
+        #~ return super(Container,self).get_view_permission(user)
+        #~ return LayoutElement.get_view_permission(self,user)
         if not super(Container,self).get_view_permission(user): 
             return False
         return self.actor.get_view_permission(user)
@@ -1660,7 +1705,6 @@ class TabPanel(Panel):
 
     def __init__(self,layout_handle,name,*elems,**kw):
         kw.update(autoScroll=True)
-        
         kw.update(
           split=True,
           activeTab=0, 
@@ -1675,7 +1719,6 @@ class TabPanel(Panel):
         )
         Container.__init__(self,layout_handle,name,*elems,**kw)
         #~ jsgen.Permittable.__init__(self)
-        
         
 
 
