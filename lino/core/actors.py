@@ -101,11 +101,8 @@ class ActorMetaClass(type):
         
         cls = type.__new__(meta, classname, bases, classDict)
         
-        if cls.parameters:
-            for k,v in cls.parameters.items():
-                v.set_attributes_from_name(k)
-                v.table = cls
-                
+        cls.register_params()
+        
         """
         On 20110822 I thought "A Table always gets the app_label of its model,
         you cannot set this yourself in a subclass
@@ -212,7 +209,7 @@ class ActorMetaClass(type):
 
 #~ class Actor(Handled,ViewPermission):
 #~ class Actor(ViewPermissionClass):
-class Actor(object):
+class Actor(actions.Parametrizable):
     """
     Base class for Tables and Frames. 
     An alternative name for "Actor" is "Resource".
@@ -386,20 +383,6 @@ class Actor(object):
     
     """
     
-    parameters = None
-    """
-    User-definable parameter fields for this table.
-    Set this to a `dict` of `name = models.XyzField()` pairs.
-    """
-    
-    #~ params_template = None # no longer used
-    
-    params_layout = None
-    """
-    If this table has parameters, specify here how they should be 
-    laid out in the parameters panel.
-    """
-    
     params_panel_hidden = False
     """
     If this table has parameters, set this to False if the parameters 
@@ -471,6 +454,7 @@ class Actor(object):
     
     @classmethod
     def set_required(self,**kw):
+        logger.info("20120927 actors.set_required %r",kw)
         new = dict()
         new.update(self.required)
         new.update(kw)
@@ -844,14 +828,10 @@ class Actor(object):
         self._setup_doing = True
         
         self._collect_actions()
-            
-        if self.parameters:
-            from lino.utils.choosers import check_for_chooser
-            for k,v in self.parameters.items():
-                if isinstance(v,models.ForeignKey):
-                    v.rel.to = resolve_model(v.rel.to)
-                check_for_chooser(self,v)
         
+        #~ Parametrizable.after_site_setup(self)
+        super(Actor,self).after_site_setup(site)
+            
         self.do_setup()
         #~ self.setup_permissions()
         self._setup_doing = False
@@ -874,14 +854,6 @@ class Actor(object):
         return [a for a in self._actions_list 
           if a.callable_from is None or isinstance(callable_from,a.callable_from)]
     
-    @classmethod
-    def get_param_elem(self,name):
-        if self.parameters:
-            return self.parameters.get(name,None)
-        #~ for pf in self.params:
-            #~ if pf.name == name:  return pf
-        return None
-      
     @classmethod
     def get_data_elem(self,name):
         c = self._constants.get(name,None)
@@ -945,8 +917,6 @@ class Actor(object):
                   kw.update(coached_since=amonthago())
                   return kw
         
-            
-
         """
         for k,pf in self.parameters.items():
             #~ if not param_values.has_key(k):

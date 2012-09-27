@@ -20,6 +20,7 @@ from django.utils.translation import ugettext_lazy as _
 from django.utils.encoding import force_unicode
 from django.conf import settings
 from django import http
+from django.db import models
 
 
 import lino
@@ -120,9 +121,51 @@ class ConfirmationRequired(Exception):
         self.step = step
         self.messages = messages
         Exception.__init__(self)
+        
+class Parametrizable(object):        
+  
+    parameters = None
+    """
+    User-definable parameter fields for this table.
+    Set this to a `dict` of `name = models.XyzField()` pairs.
+    """
+    
+    #~ params_template = None # no longer used
+    
+    params_layout = None
+    """
+    If this table has parameters, specify here how they should be 
+    laid out in the parameters panel.
+    """
+    
+    @classmethod
+    def register_params(cls):
+        if cls.parameters:
+            for k,v in cls.parameters.items():
+                v.set_attributes_from_name(k)
+                v.table = cls
+                
+    @classmethod
+    def after_site_setup(self,site):
+        if self.parameters:
+            from lino.utils.choosers import check_for_chooser
+            for k,v in self.parameters.items():
+                if isinstance(v,models.ForeignKey):
+                    v.rel.to = resolve_model(v.rel.to)
+                check_for_chooser(self,v)
+        
+    @classmethod
+    def get_param_elem(self,name):
+        if self.parameters:
+            return self.parameters.get(name,None)
+        #~ for pf in self.params:
+            #~ if pf.name == name:  return pf
+        return None
+      
+        
 
 
-class Action(object):
+class Action(Parametrizable):
     """
     Abstract base class for all Actions
     """
@@ -287,6 +330,8 @@ class Action(object):
         #~ self.set_required(**required)
         assert self.callable_from is None or isinstance(
             self.callable_from,(tuple,type)), "%s" % self
+            
+        self.register_params()
 
         
     def set_required(self,**kw):

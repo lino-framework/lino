@@ -211,7 +211,7 @@ class Permittable(object):
     Base class for Components that have view permissions control.
     """
     
-    required = {}
+    required = None # not {}, see blog/2012/0923
     """
     Conditions required to read (view) this component.
     """
@@ -227,11 +227,15 @@ class Permittable(object):
     def __init__(self,debug_permissions):
         #~ if type(debug_permissions) != bool:
             #~ raise Exception("20120925 %s %r",self,self)
-        #~ self.required = {}
-        self.allow_read = curry(make_permission_handler(
-            self,self,True,
-            debug_permissions,
-            **self.required),self)
+        if self.required is None:
+            self.allow_read = curry(make_permission_handler(
+                self,self,True,
+                debug_permissions),self)
+        else:
+            self.allow_read = curry(make_permission_handler(
+                self,self,True,
+                debug_permissions,
+                **self.required),self)
 
         
     def get_view_permission(self,user):

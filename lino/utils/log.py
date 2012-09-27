@@ -124,7 +124,9 @@ Available parameters are:
 :param encoding: the encoding for the logfile
 
 :param loggers:  A list or tuple of names of loggers to configure.
-                 Default is ['lino']
+                 Default is ['lino'].
+                 If this is a string, Lino converts it to a list 
+                 (expecting it to be a space-separated list of names).
                 
 :param rotate:   [deprecated] if `logfile` specified, set this to `False` if you 
                  don't want a rotating logfile.

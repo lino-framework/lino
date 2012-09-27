@@ -4,6 +4,36 @@
 Finished the first implementation of the new 
 :doc:`/topics/changes` feature.
 
-Discovered and fixed a bug that caused panels 
-of a TabPanel to be visible 
-also for users who don't have permission to see them.
+Discovered and fixed a series of bugs that occured only 
+for non-admin users. 
+
+#.  One of them caused panels of a TabPanel to be visible 
+    also for users who don't have permission to see them.
+    Every `VisibleComponent` is now a `Permittable`.
+
+#.  A second bug caused some panels to not be rendered for non-admin 
+    user profiles.
+    Der kam, weil ich in der `setup_handle` von 
+    :class:`lino_welfare.modlib.cbss.models.CBSSRequestDetail`
+    irgendwann mal folgendes geschrieben hatte::
+
+        def setup_handle(self,lh):
+            ...
+            lh.technical.required.update(user_level='admin')
+
+    Aber `required` ist ein Klassenattribut,
+    definiert in :class:`lino.core.perms.Permittable`. 
+    Solange das nicht neu definiert wurde, ist es für alle Elemente das gleiche.
+    Also ab dem Moment wo setup_handle ausgeführt worden war, hatten 
+    plötzlich alle Elemente dieses requirement.
+    Die Ausführungsreihenfolge dieser setup_handle war außerdem unbestimmt, 
+    d.h. konnte sich von compile zu compile ändern.
+    Also da hatte ich was zu tun!
+
+#.  Dann hatten wir noch einen Fehler 
+    "Uncaught ReferenceError: cbss_summary_htmlbox1239 is not defined"
+    beim Öffnen des ClientDetail.
+
+    Das virtuelle Feld `cbss_summary` ist eine einfache HtmlBox ohne requirements.
+    Aber sie ist enthalten im cbss-Reiter, also nur sichtbar für KBSS-Benutzer. 
+

@@ -1361,7 +1361,13 @@ tinymce.init({
             return _(s)
         tpl._ = mytranslate
         f.write(jscompress(unicode(tpl)+'\n'))
-        make_dummy_messages_file(self.linolib_template_name(),messages)
+        
+        """
+        make the dummy messages file.
+        but only when generating for root user.
+        """
+        if jsgen._for_user.profile == dd.UserProfiles.admin:
+            make_dummy_messages_file(self.linolib_template_name(),messages)
         
         actors_list = [
             rpt for rpt in dbtables.master_reports \
@@ -1375,12 +1381,18 @@ tinymce.init({
         is defined in ns outbox.Mails which is not directly used by non-expert users.
         """
         
+        assert user == jsgen._for_user
+        
         f.write("Lino.main_menu = %s;\n" % py2js(settings.LINO.get_site_menu(self,user)))
 
         for a in actors_list:
             f.write("Ext.namespace('Lino.%s')\n" % a)
             
-        # actors with an own `get_handle_name` don't have a js implementation
+        assert user == jsgen._for_user
+        
+        """
+        actors with their own `get_handle_name` don't have a js implementation
+        """
         #~ print '20120605 dynamic actors',[a for a in actors_list if a.get_handle_name is not None]
         actors_list = [a for a in actors_list if a.get_handle_name is None]
 
@@ -1396,6 +1408,8 @@ tinymce.init({
                     fl._formpanel_name = nametpl % actor
                     details.add(fl)
                     
+        assert user == jsgen._for_user
+        
         for a in actors_list:
             #~ if a._replaced_by is None:
             add(a,a.detail_layout, "Lino.%s.DetailFormPanel")
@@ -1427,6 +1441,8 @@ tinymce.init({
                 elif a.custom_handler:
                     for ln in self.js_render_custom_action(rh,a,user):
                         f.write(ln + '\n')
+        assert user == jsgen._for_user
+        
         return 1
           
         
@@ -1574,12 +1590,13 @@ tinymce.init({
         field_elems = []
         for e in main.active_children:
             if isinstance(e,ext_elems.FieldElement):
-                field_elems.append(e)
-                l = elems_by_field.get(e.field.name,None)
-                if l is None:
-                    l = []
-                    elems_by_field[e.field.name] = l
-                l.append(e)
+                if e.get_view_permission(jsgen._for_user):
+                    field_elems.append(e)
+                    l = elems_by_field.get(e.field.name,None)
+                    if l is None:
+                        l = []
+                        elems_by_field[e.field.name] = l
+                    l.append(e)
             
         for e in field_elems:
             #~ if isinstance(e,FileFieldElement):
@@ -1608,6 +1625,8 @@ tinymce.init({
       
     def js_render_FormPanel(self,dh,user):
         
+        if not dh.main.get_view_permission(jsgen._for_user):
+            raise Exception("20120927 no view permission for %s ?! required is %s" % (dh,dh.main.required))
         tbl = dh.layout._table
         
         yield ""
@@ -1620,8 +1639,12 @@ tinymce.init({
             yield "  content_type: %s," % py2js(ContentType.objects.get_for_model(tbl.model).pk)
         yield "  initComponent : function() {"
         yield "    var containing_panel = this;"
+        lc = 0
         for ln in jsgen.declare_vars(dh.main):
             yield "    " + ln
+            lc += 1
+        if lc == 0:
+            raise Exception("%r of %s has no variables" % (dh.main,dh))
         yield "    this.items = %s;" % dh.main.as_ext()
         yield "    this.before_row_edit = function(record) {"
         for ln in ext_elems.before_row_edit(dh.main):

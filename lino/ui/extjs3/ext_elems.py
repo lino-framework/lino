@@ -90,6 +90,9 @@ def before_row_edit(panel):
     for e in panel.active_children:
         if isinstance(e,jsgen.Permittable) and not e.get_view_permission(jsgen._for_user):
             continue
+        if e.parent is not None:
+            if isinstance(e.parent,jsgen.Permittable) and not e.parent.get_view_permission(jsgen._for_user):
+                continue # bug 3 (bcss_summary) blog/2012/09/27
         #~ if not e.get_view_permission(jsgen._for_user): 
         if isinstance(e,GridElement):
             l.append("%s.on_master_changed();" % e.as_ext())
@@ -350,16 +353,23 @@ class LayoutElement(VisibleComponent):
         self.layout_handle = layout_handle
         #~ if layout_handle is not None:
         #~ layout_handle.setup_element(self)
+        #~ if str(self.layout_handle.layout._table) == 'lino.Home':
+            #~ logger.info("20120927 LayoutElement.__init__ %r required is %s, kw was %s, opts was %s",
+              #~ self,self.required,kw,opts)
 
     #~ def submit_fields(self):
         #~ return []
         
-    def get_view_permission(self,user):
-        #~ if not super(GridElement,self).get_view_permission():
+    def unused_get_view_permission(self,user):
         if not super(LayoutElement,self).get_view_permission(user): 
+            #~ if str(self.layout_handle.layout._table) == 'users.Users':
+                #~ logger.info("20120927 LayoutElement.get_view_permission super %r ",self)
             return False
-        return self.layout_handle.layout._table.get_view_permission(user)
-        #~ return self.actor.get_permission(actions.VIEW,jsgen._for_user,None)
+        if not self.layout_handle.layout._table.get_view_permission(user):
+            #~ if str(self.layout_handle.layout._table) == 'users.Users':
+                #~ logger.info("20120927 LayoutElement.get_view_permission table %r",self)
+            return False
+        return True
         
     def get_property(self,name):
         v = getattr(self,name,None)
