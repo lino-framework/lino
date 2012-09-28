@@ -1360,6 +1360,9 @@ Lino.action_handler = function (panel,on_success,on_confirm) {
           Ext.MessageBox.show(config);
           return;
       }
+      if (result.dialog_fn) {
+          console.log('20120928 TODO',result.dialog_fn);
+      }
       if (result.message) {
           //~ if (result.alert && ! gridmode) {
           if (result.alert) { // 20120628b 
@@ -1884,8 +1887,6 @@ Lino.do_on_current_record = function(panel,fn,phantom_fn) {
 
 
 Lino.call_row_action = function(panel,url,actionName,step,fn) {
-//~ Lino.call_row_action = function(panel,rec_id,actionName,step,fn) {
-  //~ var url = panel.get_record_url(rec_id);
   var p = {$ext_requests.URL_PARAM_ACTION_NAME : actionName};
   if (!panel) panel = Lino.viewport;
   Ext.apply(p,panel.get_base_params());

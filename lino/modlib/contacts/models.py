@@ -578,22 +578,23 @@ class Companies(Partners):
 # class ContactType(babel.BabelNamed):
 class RoleType(babel.BabelNamed):
     """
-    Deserves more documentation.
+    TODO: rename "RoleType" to "Function".
     """
     class Meta:
-        verbose_name = _("Role Type")
-        verbose_name_plural = _("Role Types")
+        verbose_name = _("Function")
+        verbose_name_plural = _("Functions")
 
 
 class RoleTypes(dd.Table):
     required = dict(user_level='manager')
-    model = 'contacts.RoleType'
+    model = RoleType
 
 
 #~ class Contact(dd.Model):
 class Role(dd.Model):
     """
-    The role of a given :class:`Person` in a given :class:`Company`.
+    Represents a given :class:`Person` having a given Function 
+    in a given :class:`Company`.
     TODO: rename "Role" to "Contact".
     """
   
@@ -601,12 +602,6 @@ class Role(dd.Model):
         verbose_name = _("Contact Person")
         verbose_name_plural = _("Contact Persons")
         
-    #~ parent = models.ForeignKey('contacts.Contact',
-        #~ verbose_name=_("Parent Contact"),
-        #~ related_name='rolesbyparent')
-    #~ child = models.ForeignKey('contacts.Contact',
-        #~ verbose_name=_("Child Contact"),
-        #~ related_name='rolesbychild')
     type = models.ForeignKey('contacts.RoleType',
       blank=True,null=True,
       verbose_name=_("Contact Role"))
@@ -763,7 +758,7 @@ class PartnerDocument(dd.Model):
 
 
 
-class CompanyContact(dd.Model):
+class OldCompanyContact(dd.Model):
     """
     Abstract class which adds two fields `company` and `contact`.
     """
@@ -803,6 +798,72 @@ class CompanyContact(dd.Model):
                     #~ print "20120227 clear contact!"
                     self.contact = None
         super(CompanyContact,self).full_clean(*args,**kw)
+
+
+class ContactRelated(dd.Model):
+    """
+    Abstract class for things that relate to a company represented by a person as a given role.
+    Adds 3 fields `company`, `contact_person` and `contact_role`.
+    """
+    class Meta:
+        abstract = True
+        
+    company = models.ForeignKey(settings.LINO.company_model,
+        related_name="%(app_label)s_%(class)s_set_by_company",
+        verbose_name=_("Company"),
+        blank=True,null=True)
+        
+    contact_person = models.ForeignKey("contacts.Person",
+      related_name="%(app_label)s_%(class)s_set_by_contact_person",
+      blank=True,null=True,
+      verbose_name=_("represented by"))
+      
+    contact_role = models.ForeignKey("contacts.RoleType",
+      related_name="%(app_label)s_%(class)s_set_by_contact_role",
+      blank=True,null=True,
+      verbose_name=_("represented as"))
+      
+    @chooser()
+    def contact_person_choices(cls,company):
+        if company is not None:
+            return cls.contact_person_choices_queryset(company)
+        return []
+        
+    def get_contact(self):
+        roles = Role.objects.filter(company=self.company,person=self.contact_person)
+        #~ print '20120929 get_contact', roles
+        if roles.count() == 1:
+            return roles[0]
+        
+    def contact_person_changed(self,ar):
+        #~ print '20120929 contact_person_changed'
+        if self.company and not self.contact_person_id:
+            roles = Role.objects.filter(company=self.company)
+            if roles.count() == 1:
+                self.contact_person = roles[0].person
+                self.contact_role = roles[0].type
+            return 
+        contact = self.get_contact()
+        if contact is not None:
+            self.contact_role = contact.type
+            print '20120929b', contact.type
+      
+    @classmethod
+    def contact_person_choices_queryset(cls,company):
+    #~ def contact_choices_queryset(cls,company):
+        return Person.objects.filter(rolesbyperson__company=company).distinct()
+
+    def full_clean(self,*args,**kw):
+        if self.company and self.contact_person is None:
+            qs = self.contact_person_choices_queryset(self.company)
+            #~ qs = self.company.rolesbyparent.all()
+            if qs.count() == 1:
+                self.contact_person = qs[0]
+                
+            else:
+                #~ print "20120227 clear contact!"
+                self.contact = None
+        super(ContactRelated,self).full_clean(*args,**kw)
 
 
     

@@ -35,6 +35,7 @@ from lino.ui import base
 from lino.core import fields
 from lino.core import actions
 from lino.core import layouts
+from lino.core import changes
 from lino.core.modeltools import resolve_model
 from lino.utils import curry, AttrDict
 from lino.utils import choicelists
@@ -82,7 +83,58 @@ def discover():
     for a in actors_list:
         a.class_init()
         
+
+
+class StateAction(actions.RowAction):
+    """
+    This is the class used when generating automatic 
+    "state actions". For each possible value of the Actor's 
+    :attr:`workflow_state_field` there will be an automatic action called 
+    `mark_XXX`
+    """
+    ajax = True
+    def __init__(self,actor,target_state,**kw):
+        self.target_state = target_state
+        kw.update(label=getattr(target_state,'action_label',target_state.text))
+        required = getattr(target_state,'required',None)
+        if required is not None:
+            if target_state.name:
+                m = getattr(actor.model,'allow_state_'+target_state.name,None)
+                if m is not None:
+                    def allow(action,user,obj,state):
+                        return m(obj,user)
+                    required.update(allow=allow)
+            kw.update(required=required)
+        help_text = getattr(target_state,'help_text',None)
+        if help_text:
+            kw.update(help_text=help_text)
+        super(StateAction,self).__init__(**kw)
+        #~ print 20120709, self, self.show_in_workflow
         
+    def run(self,row,ar,**kw):
+        state_field_name = self.actor.workflow_state_field.attname
+        assert isinstance(state_field_name,basestring)
+        #~ old = row.state
+        old = getattr(row,state_field_name)
+        
+        watcher = changes.Watcher(row,False)
+        
+        self.target_state.choicelist.before_state_change(row,ar,kw,old,self.target_state)
+        row.before_state_change(ar,kw,old,self.target_state)
+        #~ row.state = self.target_state
+        setattr(row,state_field_name,self.target_state)
+        row.save()
+        self.target_state.choicelist.after_state_change(row,ar,kw,old,self.target_state)
+        row.after_state_change(ar,kw,old,self.target_state)
+        
+        watcher.log_changes(ar.request)
+        
+        return ar.ui.success_response(**kw)
+        
+    
+
+
+
 
 class ActorMetaClass(type):
     def __new__(meta, classname, bases, classDict):
@@ -640,7 +692,7 @@ class Actor(actions.Parametrizable):
         for st in self.workflow_state_field.choicelist.items():
             if hasattr(st,'required'):
                 name = 'mark_' + st.value
-                a = actions.StateAction(self,st,sort_index=i)
+                a = StateAction(self,st,sort_index=i)
                 #~ print 20120709, self, name, a
                 yield name,a
                 i += 1

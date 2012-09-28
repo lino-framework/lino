@@ -418,6 +418,13 @@ Django creates copies of them when inheriting models.
         #~ return unicode(self.stored_name) # babel_get(self.names)
 
 
+    @classmethod
+    def before_state_change(cls,obj,ar,kw,oldstate,newstate):
+        pass
+
+    @classmethod
+    def after_state_change(cls,obj,ar,kw,oldstate,newstate):
+        pass
 
         
     

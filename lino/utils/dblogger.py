@@ -32,9 +32,14 @@ debug = logger.debug
 #~ getLevel = logger.getLevel
 #~ setLevel = logger.setLevel
 
+from lino.core.modeltools import obj2str
+
+def log_deleted(request,elem):
+    #~ on_user_change(request,elem)
+    logger.info(u"%s deleted by %s.",obj2str(elem),request.user)
+        
 if False:
 
-    from lino.core.modeltools import obj2str
 
 
     class DiffingMixin(object):
@@ -80,10 +85,6 @@ if False:
     def log_created(request,elem):
         #~ on_user_change(request,elem)
         logger.info(u"%s created by %s.",obj2str(elem),request.user)
-        
-    def log_deleted(request,elem):
-        #~ on_user_change(request,elem)
-        logger.info(u"%s deleted by %s.",obj2str(elem),request.user)
         
     def log_changes(request,elem):
         """

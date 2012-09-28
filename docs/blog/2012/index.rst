@@ -294,6 +294,8 @@ As long as nobody protests, I'll save some time by writing in German.
   :doc:`24 <0923>`
   :doc:`25 <0923>`
   :doc:`26 <0923>`
+  :doc:`27 <0927>`
+  :doc:`28 <0928>`
   
   
 .. |Oct| replace::  **October**

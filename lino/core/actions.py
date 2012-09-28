@@ -122,6 +122,16 @@ class ConfirmationRequired(Exception):
         self.messages = messages
         Exception.__init__(self)
         
+class DialogRequired(Exception):
+    """
+    This is the special exception risen when an Action calls 
+    :meth:`ActionRequest.dialog`.
+    """
+    def __init__(self,step,dlg):
+        self.step = step
+        self.dialog = dlg
+        Exception.__init__(self)
+        
 class Parametrizable(object):        
   
     parameters = None
@@ -462,39 +472,6 @@ class RowAction(Action):
             self.url_action_name = name 
 
 
-class StateAction(RowAction):
-    ajax = True
-    def __init__(self,actor,target_state,**kw):
-        self.target_state = target_state
-        kw.update(label=getattr(target_state,'action_label',target_state.text))
-        required = getattr(target_state,'required',None)
-        if required is not None:
-            if target_state.name:
-                m = getattr(actor.model,'allow_state_'+target_state.name,None)
-                if m is not None:
-                    def allow(action,user,obj,state):
-                        return m(obj,user)
-                    required.update(allow=allow)
-            kw.update(required=required)
-        help_text = getattr(target_state,'help_text',None)
-        if help_text:
-            kw.update(help_text=help_text)
-        super(StateAction,self).__init__(**kw)
-        #~ print 20120709, self, self.show_in_workflow
-        
-    def run(self,row,ar,**kw):
-        state_field_name = self.actor.workflow_state_field.attname
-        assert isinstance(state_field_name,basestring)
-        #~ old = row.state
-        old = getattr(row,state_field_name)
-        row.before_state_change(ar,kw,old,self.target_state)
-        #~ row.state = self.target_state
-        setattr(row,state_field_name,self.target_state)
-        row.save()
-        row.after_state_change(ar,kw,old,self.target_state)
-        return ar.ui.success_response(**kw)
-        
-    
 
 class RedirectAction(Action):
     
@@ -796,6 +773,12 @@ class ActionRequest(object):
             kw.update(known_values)
         self.known_values = kw
         
+        
+    def dialog(self,dlg):
+        self.step += 1
+        if int(self.request.REQUEST.get(ext_requests.URL_PARAM_ACTION_STEP,'0')) >= self.step:
+            return
+        raise DialogRequired(self.step,dlg)
         
     def confirm(self,*messages):
         """

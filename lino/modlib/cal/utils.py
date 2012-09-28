@@ -225,7 +225,7 @@ add('20', _("Suggested"), 'suggested',
   )
 add('30', _("Notified"),'notified',
     required=dict(states=['draft']),
-    action_name=_("Notify guests"),
+    action_label=_("Notify guests"),
     help_text=_("Invitations have been sent. Waiting for feedback from guests.")
     )
 #~ add('20', _("Suggested"),'suggested')

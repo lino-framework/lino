@@ -11,19 +11,21 @@
 ## You should have received a copy of the GNU General Public License
 ## along with Lino; if not, see <http://www.gnu.org/licenses/>.
 """
-Defines classes :class:`Frame` and :class:`FrameHandle`
+Defines the :class:`Dialog` class.
 """
 
 import logging
 logger = logging.getLogger(__name__)
 
+from django.utils.translation import ugettext as _
+
 from lino.ui import base
 from lino.core import actors
 from lino.core import actions
 
-class FrameHandle(base.Handle): 
+class DialogHandle(base.Handle): 
     """
-    Deserves more documentation.
+    
     """
     def __init__(self,ui,frame):
         #~ assert issubclass(frame,Frame)
@@ -37,28 +39,17 @@ class FrameHandle(base.Handle):
         return "%s on %s" %(self.__class__.__name__,self.actor)
 
 
+class OK(actions.Action):
+    label = _("OK")
 
-class Frame(actors.Actor): 
+class Cancel(actions.Action):
+    label = _("Cancel")
+
+class Dialog(actors.Actor): 
     """
     Deserves more documentation.
     """
-    _handle_class = FrameHandle
-    #~ default_action_class = None
-    editable = False
+    _handle_class = DialogHandle
     
-    @classmethod
-    def do_setup(self):
-        #~ logger.info("%s.__init__()",self.__class__)
-        #~ if not self.__class__ is Frame:
-        #~ if self.default_action_class:
-            #~ self.default_action = self.default_action_class(self)
-        if not self.label:
-            self.label = self.default_action.label
-            #~ self.default_action.actor = self
-        super(Frame,self).do_setup()
-        #~ self.set_actions([])
-        #~ self.setup_actions()
-        #~ if self.default_action:
-            #~ self.add_action(self.default_action)
-
-
+    ok = OK()
+    cancel = Cancel()

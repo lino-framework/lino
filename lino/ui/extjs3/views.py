@@ -750,6 +750,12 @@ class ApiElement(View):
                   confirm_message='\n'.join([unicode(m) for m in e.messages]),
                   step=e.step)
                 return ui.action_response(r)
+            except actions.DialogRequired,e:
+                r = dict(
+                  success=True,
+                  dialog_fn=e.dialog,
+                  step=e.step)
+                return ui.action_response(r)
             except actions.Warning,e:
                 r = dict(
                   success=False,

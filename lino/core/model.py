@@ -97,6 +97,11 @@ class Model(models.Model):
     Internally used by :meth:`watch_changes`
     """
     
+    _change_summary = ''
+    """
+    Internally used by :meth:`watch_changes`
+    """
+    
     @classmethod
     def watch_changes(model,ignore=[],**options):
         """
@@ -128,6 +133,8 @@ class Model(models.Model):
   
         
         
+    def set_change_summary(self,text):
+        self._change_summary = text
     
     
     

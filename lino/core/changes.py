@@ -41,10 +41,10 @@ from django.db import models
 from django.utils.translation import ugettext_lazy as _
 
 
-from lino import dd
 from lino.core.modeltools import obj2str
 
-from lino.models import Change
+
+#~ from lino import models as lino_models
 
 NOT_GIVEN = object()
 
@@ -52,8 +52,6 @@ NOT_GIVEN = object()
 class PseudoRequest:
     def __init__(self,user):
         self.user = user
-
-
 
 
 class Watcher(object):
@@ -79,7 +77,8 @@ class Watcher(object):
         #~ watched_fields, options = cs
         
         if self.is_new:
-            msg = u"%s created by %s." % (obj2str(self.watched),request.user)
+            msg = u"%s created." % obj2str(self.watched)
+            #~ msg = u"%s created by %s." % (obj2str(self.watched),request.user)
         else:
             changes = []
             for k,old in self.original_state.iteritems():
@@ -95,9 +94,12 @@ class Watcher(object):
                 msg = changes[0]
             else:
                 msg = '- ' + ('\n- '.join(changes))
-            
+                
+        from lino.models import Change            
+        
         Change(
             time=datetime.datetime.now(),
             user=request.user,
+            summary=self.watched._change_summary,
             object=self.watched,
             diff=msg).save()

@@ -1,0 +1,60 @@
+20120928
+========
+
+Neuzugänge
+----------
+
+Im Modul Neuzugänge wird langsam einiges klarer,
+nachdem Gerd und ich über Klienten-Workflows geredet haben.
+
+Die Liste "Neue Klienten" zeigt eine "andere" Liste von Klienten, 
+speziell auf die Bedürfnisse der Neuantragsverwaltung zugeschnitten.
+Hat ein eigenes Parameter-Panel mit folgenden Optionen:
+
+- auch abgewiesene Klienten 
+- auch veraltete Klienten 
+- neu begleitete Klienten seit
+
+Insbesondere auch einen Reiter "Neuzugänge", in dem man eine Liste der 
+verfügbaren Agenten für diesen Klienten sehen kann.
+Diese Tabelle hat eine Zeilenaktion "Attribute" ("Zuweisen"): 
+momentan wird dann 
+(1) ein Coaching erstellt und 
+(2) der Status des Klienten auf "Begleitet" gesetzt.
+(TODO: auch Mails verschicken)
+
+Der Button "[Refuse]" ("Abweisen") ist zwar schon da und versucht schon das 
+Dialogfenster zur Eingabe der Begründung zu öffnen, 
+aber dieses zerknallt bevor es überhaupt da ist:
+der entsprechende Code JS-wird z.B. momentan noch nicht mal generiert.
+  
+
+Kontaktpersonen und Verträge
+----------------------------
+
+Fallbeispiel: 
+Bei Firma Soundso wechselt der Direktor. 
+In den Kontaktpersonen der Firma wollen wir den alten Direktor nicht mehr sehen.
+Aber es gibt Verträge, bei denen der die Firma vertritt.
+Diese Situation war bisher nicht gut gehandhabt.
+Man musste eine neue Kontaktperson anlegen und durfte den alten Direktor nicht löschen.
+Und oops: wenn man in der bestehenden Kontaktperson die Person änderte, 
+wurde der alte Direktor auch in bestehenden Verträgen rückwirkend ersetzt.
+Nicht sehr legal...
+
+Deshalb ersetzen wir
+:class:`CompanyContact`
+durch das neue Mixin
+:class:`lino.modlib.contacts.models.ContactRelated`.
+En passant (wo wir ja jetzt doch migrieren müssen) benennen 
+wir das Feld `person` nach `client` um.
+
+=============== =============== ===============================
+Vorher          Nachher        
+=============== =============== ===============================
+company         company         die Firma
+person          client          der Klient
+contact         get_contact()   der Record aus der Tabelle Firmenkontakte
+contact.person  contact_person  die vertretende Person
+contact.type    contact_role    die Rolle ("Direktor")
+=============== =============== ===============================
