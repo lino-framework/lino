@@ -846,12 +846,12 @@ class ContactRelated(dd.Model):
         contact = self.get_contact()
         if contact is not None:
             self.contact_role = contact.type
-            print '20120929b', contact.type
+            #~ print '20120929b', contact.type
       
     @classmethod
     def contact_person_choices_queryset(cls,company):
     #~ def contact_choices_queryset(cls,company):
-        return Person.objects.filter(rolesbyperson__company=company).distinct()
+        return settings.LINO.person_model.objects.filter(rolesbyperson__company=company).distinct()
 
     def full_clean(self,*args,**kw):
         if self.company and self.contact_person is None:
@@ -859,7 +859,6 @@ class ContactRelated(dd.Model):
             #~ qs = self.company.rolesbyparent.all()
             if qs.count() == 1:
                 self.contact_person = qs[0]
-                
             else:
                 #~ print "20120227 clear contact!"
                 self.contact = None

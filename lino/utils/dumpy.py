@@ -317,8 +317,8 @@ class FakeDeserializedObject(base.DeserializedObject):
             return True
         #~ except ValidationError,e:
         #~ except ObjectDoesNotExist,e:
-        except (ValidationError,ObjectDoesNotExist,IntegrityError), e:
         #~ except (ValidationError,ObjectDoesNotExist), e:
+        except (ValidationError,ObjectDoesNotExist,IntegrityError), e:
         #~ except Exception, e:
             if not settings.LINO.loading_from_dump:
                 # hand-written fixtures are expected to not raise any exception
