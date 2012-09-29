@@ -71,13 +71,13 @@ The natural approach would be something like::
     
     def create_isip_contract(id, user_id, ...):
         contact = find_contact(contact_id)
-        return isip_Contract(id=id,user_id=user_id,build_time=build_time,
+        return isip_Contract(id=id,...
           client_id=person_id,
           company_id=company_id,
           contact_person=contact.person,
           contact_role=contact.type,
           #~ contact_id=contact_id,
-          language=language,applies_from=applies_from,applies_until=applies_until,date_decided=date_decided,date_issued=date_issued,user_asd_id=user_asd_id,exam_policy_id=exam_policy_id,ending_id=ending_id,date_ended=date_ended,type_id=type_id,stages=stages,goals=goals,duties_asd=duties_asd,duties_dsbe=duties_dsbe,duties_company=duties_company,duties_person=duties_person)    
+          language=language,...)    
           
 
 But that fails because 
@@ -85,8 +85,9 @@ the contacts.Role entries aren't guaranteed to exist
 when a person is being deserialized. 
 
 The most elegant solution seems a way to add 
-a possibility of adding custom code per instance 
-which will be deferred and try again if it fails.
+a possibility of specifying custom code per instance 
+to be run from
+:meth:`lino.utils.dumpy.FakeDeserializedObject.try_save`.
 to `before_dumpy_save`
 
 
@@ -98,11 +99,15 @@ to `before_dumpy_save`
         return fn
 
     def create_isip_contract(id, user_id, build_time, person_id, company_id, contact_id, language, applies_from, applies_until, date_decided, date_issued, user_asd_id, exam_policy_id, ending_id, date_ended, type_id, stages, goals, duties_asd, duties_dsbe, duties_company, duties_person):
-        obj = isip_Contract(id=id,user_id=user_id,build_time=build_time,
+        obj = isip_Contract(id=id,...
           client_id=person_id,
           company_id=company_id,
-          #~ contact_id=contact_id,
-          language=language,applies_from=applies_from,applies_until=applies_until,date_decided=date_decided,date_issued=date_issued,user_asd_id=user_asd_id,exam_policy_id=exam_policy_id,ending_id=ending_id,date_ended=date_ended,type_id=type_id,stages=stages,goals=goals,duties_asd=duties_asd,duties_dsbe=duties_dsbe,duties_company=duties_company,duties_person=duties_person)    
+          #~ contact_id=contact_id, 
+          language=language,...)
         obj.before_dumpy_save = add_contact_fields(obj,contact_id)
         return obj
           
+
+Controller of a Posting must be a Postable
+------------------------------------------
+

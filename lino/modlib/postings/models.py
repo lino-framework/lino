@@ -82,11 +82,11 @@ class Posting(mixins.AutoUser,mixins.ProjectRelated,mixins.Controllable):
     #~ sender = models.ForeignKey(settings.LINO.user_model)
     date = models.DateField()
     
-    def save(self,*args,**kw):
-        if not isinstance(self.owner,Postable):
-            #~ raise Exception("Controller of a Posting must be a Postable.")
-            raise Exception("Controller %s is not a Postable." % obj2str(self.owner))
-        super(Posting,self).save(*args,**kw)
+    #~ def save(self,*args,**kw):
+        #~ if not isinstance(self.owner,Postable):
+            #~ # raise Exception("Controller of a Posting must be a Postable.")
+            #~ raise Exception("Controller %s is not a Postable." % obj2str(self.owner))
+        #~ super(Posting,self).save(*args,**kw)
 
     @dd.action(_("Print"))
     def print_action(self,ar,**kw):
