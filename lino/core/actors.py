@@ -809,7 +809,7 @@ class Actor(actions.Parametrizable):
                 if existing is not None: # added for 20120914c but it wasn't the problem
                     if not isinstance(dtl,existing.__class__):
                         raise NotImplementedError(
-                            "Cannot replace existing %s %s by %s" % (attname,existing,dtl))
+                            "Cannot replace existing %s %r by %r" % (attname,existing,dtl))
                     if existing._added_panels:
                         if '\n' in dtl.main:
                             raise NotImplementedError(

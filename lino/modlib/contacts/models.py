@@ -327,11 +327,11 @@ class Partners(dd.Table):
         return self.model.objects.select_related('country','city')
 
 
-class AllPartners(Partners):
+#~ class AllPartners(Partners):
   
-    @classmethod
-    def get_actor_label(self):
-        return _("All %s") % self.model._meta.verbose_name_plural
+    #~ @classmethod
+    #~ def get_actor_label(self):
+        #~ return _("All %s") % self.model._meta.verbose_name_plural
         
 class PartnersByCity(Partners):
     master_key = 'city'
