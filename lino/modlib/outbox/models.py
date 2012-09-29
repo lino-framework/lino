@@ -32,6 +32,7 @@ from django.contrib.contenttypes.models import ContentType
 from django.contrib.contenttypes import generic
 from django.db import IntegrityError
 from django.utils.encoding import force_unicode
+from django.core.exceptions import ValidationError
 
 
 from lino import mixins
@@ -555,7 +556,7 @@ class Attachment(mixins.Controllable):
         
     def save(self,*args,**kw):
         if not hasattr(self.owner,'get_target_url'):
-            raise Exception("Controller %r has no method `get_target_url`." % self.owner)
+            raise ValidationError("Controller %r has no method `get_target_url`." % self.owner)
         super(Attachment,self).save(*args,**kw)
         
     def summary_row(self,ar,**kw):

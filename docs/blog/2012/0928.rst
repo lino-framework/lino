@@ -111,3 +111,30 @@ to `before_dumpy_save`
 Controller of a Posting must be a Postable
 ------------------------------------------
 
+There was a warning "Controller None is not a Postable"
+when loading current dump. 
+It was caused by the following code on 
+:model:`postings.Postable <lino.modlib.postings.models.Postable>`::
+
+    def save(self,*args,**kw):
+        if not isinstance(self.owner,Postable):
+            raise Exception("Controller %s is not a Postable." % obj2str(self.owner))
+        super(Posting,self).save(*args,**kw)
+
+
+from django.contrib.contenttypes.models import ContentType
+
+def new_content_type_id(m):
+    if m is None: return m
+    ct = ContentType.objects.get_for_model(m)
+    if ct is None: return None
+    return ct.pk
+
+def create_postings_posting(id, owner_type_id, owner_id, user_id, project_id, partner_id, state, date):
+    owner_type_id = new_content_type_id(owner_type_id)
+    return postings_Posting(id=id,owner_type_id=owner_type_id,owner_id=owner_id,user_id=user_id,project_id=project_id,partner_id=partner_id,state=state,date=date)
+    
+def postings_posting_objects():
+    yield create_postings_posting(2,notes_Note,3722,200099,20966,None,'',date(2012,9,5))
+    
+    

@@ -353,9 +353,6 @@ class FakeDeserializedObject(base.DeserializedObject):
         #~ except Exception,e:
             #~ dblogger.exception(e)
             #~ raise Exception("Failed to save %s. Abandoned." % obj2str(obj))
-        
-
-
 
 
 
@@ -376,8 +373,7 @@ class FlushDeferredObjects:
     """
     Indicator class object. 
     Fixture may yield a ``dumpy.FlushDeferredObjects`` 
-    to indicate that all deferred objects should get 
-    saved before going on.
+    to indicate that all deferred objects should get saved before going on.
     """
     pass
 
