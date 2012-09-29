@@ -58,3 +58,51 @@ contact         get_contact()   der Record aus der Tabelle Firmenkontakte
 contact.person  contact_person  die vertretende Person
 contact.type    contact_role    die Rolle ("Direktor")
 =============== =============== ===============================
+
+
+This change caused a new challenge for migrating the database.
+The natural approach would be something like::
+
+    def find_contact(contact_id):
+        try:
+            return contacts_Role.objects.get(pk=contact_id)
+        except contacts_Role.DoesNotExist:
+            return None
+    
+    def create_isip_contract(id, user_id, ...):
+        contact = find_contact(contact_id)
+        return isip_Contract(id=id,user_id=user_id,build_time=build_time,
+          client_id=person_id,
+          company_id=company_id,
+          contact_person=contact.person,
+          contact_role=contact.type,
+          #~ contact_id=contact_id,
+          language=language,applies_from=applies_from,applies_until=applies_until,date_decided=date_decided,date_issued=date_issued,user_asd_id=user_asd_id,exam_policy_id=exam_policy_id,ending_id=ending_id,date_ended=date_ended,type_id=type_id,stages=stages,goals=goals,duties_asd=duties_asd,duties_dsbe=duties_dsbe,duties_company=duties_company,duties_person=duties_person)    
+          
+
+But that fails because 
+the contacts.Role entries aren't guaranteed to exist 
+when a person is being deserialized. 
+
+The most elegant solution seems a way to add 
+a possibility of adding custom code per instance 
+which will be deferred and try again if it fails.
+to `before_dumpy_save`
+
+
+    def add_contact_fields(obj,contact_id):
+        def fn():
+            contact = find_contact(contact_id)
+            obj.contact_person=contact.person
+            obj.contact_role=contact.type
+        return fn
+
+    def create_isip_contract(id, user_id, build_time, person_id, company_id, contact_id, language, applies_from, applies_until, date_decided, date_issued, user_asd_id, exam_policy_id, ending_id, date_ended, type_id, stages, goals, duties_asd, duties_dsbe, duties_company, duties_person):
+        obj = isip_Contract(id=id,user_id=user_id,build_time=build_time,
+          client_id=person_id,
+          company_id=company_id,
+          #~ contact_id=contact_id,
+          language=language,applies_from=applies_from,applies_until=applies_until,date_decided=date_decided,date_issued=date_issued,user_asd_id=user_asd_id,exam_policy_id=exam_policy_id,ending_id=ending_id,date_ended=date_ended,type_id=type_id,stages=stages,goals=goals,duties_asd=duties_asd,duties_dsbe=duties_dsbe,duties_company=duties_company,duties_person=duties_person)    
+        obj.before_dumpy_save = add_contact_fields(obj,contact_id)
+        return obj
+          

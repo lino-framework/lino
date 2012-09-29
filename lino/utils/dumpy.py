@@ -305,7 +305,9 @@ class FakeDeserializedObject(base.DeserializedObject):
         """
         obj = self.object
         try:
-            m = getattr(obj,'_before_dumpy_save',None)
+            """
+            """
+            m = getattr(obj,'before_dumpy_save',None)
             if m is not None:
                 m()
             obj.full_clean()

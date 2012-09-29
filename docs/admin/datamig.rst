@@ -110,3 +110,13 @@ If there's no difference between the two dumps, then the test succeeded!
   <https://docs.djangoproject.com/en/dev/ref/models/fields/#django.db.models.DateField.auto_now>`_
   fields.
   
+  
+Designing data migrations for your application
+----------------------------------------------
+
+
+A magical `before_dumpy_save` attribute may contain custom 
+code to apply inside the try...except block. 
+If that code fails, the deserializer will simply 
+defer the save operation and try it again.
+    
