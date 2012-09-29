@@ -318,8 +318,8 @@ class FakeDeserializedObject(base.DeserializedObject):
         #~ except ValidationError,e:
         #~ except ObjectDoesNotExist,e:
         #~ except (ValidationError,ObjectDoesNotExist), e:
-        except (ValidationError,ObjectDoesNotExist,IntegrityError), e:
-        #~ except Exception, e:
+        #~ except (ValidationError,ObjectDoesNotExist,IntegrityError), e:
+        except Exception, e:
             if not settings.LINO.loading_from_dump:
                 # hand-written fixtures are expected to not raise any exception
                 dblogger.warning("Failed to save %s:" % obj2str(obj))
