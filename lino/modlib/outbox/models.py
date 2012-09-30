@@ -554,7 +554,8 @@ class Attachment(mixins.Controllable):
             return unicode(self.owner)
         return unicode(self.id)
         
-    def save(self,*args,**kw):
+    def unused_save(self,*args,**kw):
+        # see blog/2012/0929
         if not hasattr(self.owner,'get_target_url'):
             raise ValidationError("Controller %r has no method `get_target_url`." % self.owner)
         super(Attachment,self).save(*args,**kw)

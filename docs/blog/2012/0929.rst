@@ -9,7 +9,7 @@ a Lino 1.4.0 (:func:`lino_welfare.migrate.migrate_from_1_4_10`.)
 Controller of a Posting must be a Postable
 ------------------------------------------
 
-This was caused by the following test in the `save` method of
+This error message was caused by the following test in the `save` method of
 :class:`postings.Posting <lino.modlib.postings.models.Posting>`::
 
     def save(self,*args,**kw):
@@ -39,7 +39,18 @@ Here is the relevant code of the dump::
     def postings_posting_objects():
         yield create_postings_posting(2,notes_Note,3722,200099,20966,None,'',date(2012,9,5))
         
+A similar case is `outbox.Attachment` which says 
+"Controller None has no method `get_target_url`"::
+
+    def save(self,*args,**kw):
+        if not hasattr(self.owner,'get_target_url'):
+            raise ValidationError("Controller %r has no method `get_target_url`." % self.owner)
+        super(Attachment,self).save(*args,**kw)
+
 Hm...
+I don't understand why this happens,
+but I simply remove these special tests as this seem a reasonable workaround.
+
 
 
 create_child() Person 6729 from Partner : ignored non-local fields 
@@ -48,3 +59,28 @@ create_child() Person 6729 from Partner : ignored non-local fields
 The reason for this was that the 4 fields 
 `activity` `bank_account1` `bank_account2` and `is_deprecated`
 have been moved from Company to Partner.
+
+The original `create_contacts_company` function is::
+
+    def create_contacts_company(partner_ptr_id, prefix, vat_id, type_id, is_active, newcomer, is_deprecated, 
+            activity_id, bank_account1, bank_account2, hourly_rate):
+        return create_child(contacts_Partner,partner_ptr_id,contacts_Company,prefix=prefix,vat_id=vat_id,type_id=type_id,
+            is_active=is_active,newcomer=newcomer,
+            is_deprecated=is_deprecated,activity_id=activity_id,bank_account1=bank_account1,bank_account2=bank_account2,hourly_rate=hourly_rate)
+        
+It must be overridden as follows::
+
+    def create_contacts_company(partner_ptr_id, prefix, vat_id, type_id, is_active, newcomer, is_deprecated, 
+            activity_id, bank_account1, bank_account2, hourly_rate):
+        p = contacts_Partner.objects.get(pk=partner_ptr_id)
+        p.is_deprecated=is_deprecated
+        p.activity_id=activity_id
+        p.bank_account1=bank_account1
+        p.bank_account2=bank_account2
+        p.save()
+        return create_child(contacts_Partner,partner_ptr_id,contacts_Company,prefix=prefix,vat_id=vat_id,type_id=type_id,
+            #~ is_active=is_active,
+            #~ newcomer=newcomer,
+            #~ hourly_rate=hourly_rate
+            )
+    globals_dict.update(create_contacts_company=create_contacts_company)

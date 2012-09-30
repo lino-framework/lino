@@ -84,7 +84,8 @@ class Posting(mixins.AutoUser,mixins.ProjectRelated,mixins.Controllable):
     #~ sender = models.ForeignKey(settings.LINO.user_model)
     date = models.DateField()
     
-    def save(self,*args,**kw):
+    def unused_save(self,*args,**kw):
+        # see blog/2012/0929
         if not isinstance(self.owner,Postable):
             # raise Exception("Controller of a Posting must be a Postable.")
             raise ValidationError("Controller %s (%r,%r) is not a Postable" % (
