@@ -10,7 +10,7 @@ Controller of a Posting must be a Postable
 ------------------------------------------
 
 This was caused by the following test in the `save` method of
-:model:`postings.Posting <lino.modlib.postings.models.Posting>`::
+:class:`postings.Posting <lino.modlib.postings.models.Posting>`::
 
     def save(self,*args,**kw):
         if not isinstance(self.owner,Postable):
@@ -40,3 +40,11 @@ Here is the relevant code of the dump::
         yield create_postings_posting(2,notes_Note,3722,200099,20966,None,'',date(2012,9,5))
         
 Hm...
+
+
+create_child() Person 6729 from Partner : ignored non-local fields 
+------------------------------------------------------------------
+
+The reason for this was that the 4 fields 
+`activity` `bank_account1` `bank_account2` and `is_deprecated`
+have been moved from Company to Partner.
