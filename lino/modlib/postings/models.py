@@ -86,7 +86,9 @@ class Posting(mixins.AutoUser,mixins.ProjectRelated,mixins.Controllable):
     def save(self,*args,**kw):
         if not isinstance(self.owner,Postable):
             # raise Exception("Controller of a Posting must be a Postable.")
-            raise ValidationError("Controller %s is not a Postable" % obj2str(self.owner))
+            raise ValidationError("Controller %s (%r,&r) is not a Postable" % (
+                obj2str(self.owner),self.owner_type,self.owner_id))
+            #~ raise ValidationError("Controller %s is not a Postable" % obj2str(self.owner))
         super(Posting,self).save(*args,**kw)
 
     @dd.action(_("Print"))
