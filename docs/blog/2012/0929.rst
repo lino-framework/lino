@@ -1,8 +1,7 @@
 20120929
 ========
 
-Tested some non-fatal warnings
-which occured 
+Removed some non-fatal warnings which occured 
 when loading the dump of a real database created using 
 a Lino 1.4.0 (:func:`lino_welfare.migrate.migrate_from_1_4_10`.)
 
@@ -84,3 +83,7 @@ It must be overridden as follows::
             #~ hourly_rate=hourly_rate
             )
     globals_dict.update(create_contacts_company=create_contacts_company)
+
+
+The "ignored non-local fields" message is now an Exception, no longer a warning,
+because backwards compatibility is no longer needed.

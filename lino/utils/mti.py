@@ -267,12 +267,12 @@ def create_child(parent_model,pk_,child_model,**kw):
                 ignored[f.name] = kw.pop(f.name)
         kw[parent_link_field.name+"_id"] = pk_ 
         if ignored:
-            logging.warning(
-              "create_child() %s %s from %s : ignored non-local fields %s",
+            raise Exception(
+              "create_child() %s %s from %s : ignored non-local fields %s" % (
               child_model.__name__,
               pk_,
               parent_model.__name__, 
-              ignored)
+              ignored))
         child_obj = child_model(**kw)
     else:
         attrs = {}

@@ -325,8 +325,8 @@ we must re-read an instance:
 Note that 
 create_child() doesn't allow to also change the `name`
 because that field is defined in the Place model, 
-not in Restaurant. If you nevertheless do it, 
-it will be silently ignored
+not in Restaurant. 
+(Until 20120930 this it was silently ignored
 for backwards compatibility (:doc:`/blog/2011/1210`):
 
 >>> obj = Place(id=4,name="Fourth")
