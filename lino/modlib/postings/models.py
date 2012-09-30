@@ -46,6 +46,7 @@ from lino import dd
 #~ from lino.utils import printable
 from lino.utils import babel
 from lino.core import actions
+from lino.core.modeltools import obj2str
 #~ from lino.utils import call_optional_super
 from django.conf import settings
 
