@@ -39,7 +39,7 @@ from lino.core import changes
 from lino.core.modeltools import resolve_model
 from lino.utils import curry, AttrDict
 from lino.utils import choicelists
-#~ from lino.core import perms
+from lino.core import perms
 #~ from lino.utils import jsgen
 
         
@@ -85,31 +85,38 @@ def discover():
         
 
 
-class StateAction(actions.RowAction):
+class ChangeStateAction(actions.RowAction):
     """
     This is the class used when generating automatic 
     "state actions". For each possible value of the Actor's 
     :attr:`workflow_state_field` there will be an automatic action called 
     `mark_XXX`
     """
+    
     ajax = True
-    def __init__(self,actor,target_state,**kw):
+    
+    show_in_workflow = True
+    
+    def __init__(self,target_state,required,**kw):
         self.target_state = target_state
-        kw.update(label=getattr(target_state,'action_label',target_state.text))
-        required = getattr(target_state,'required',None)
-        if required is not None:
-            if target_state.name:
-                m = getattr(actor.model,'allow_state_'+target_state.name,None)
-                if m is not None:
-                    def allow(action,user,obj,state):
-                        return m(obj,user)
-                    required.update(allow=allow)
-            kw.update(required=required)
+        #~ kw.update(label=getattr(target_state,'action_label',target_state.text))
+        #~ kw.setdefault('label',target_state.text)
+        #~ required = getattr(target_state,'required',None)
+        #~ if required is not None:
+        if target_state.name:
+            m = getattr(target_state.choicelist,'allow_state_'+target_state.name,None)
+            #~ m = getattr(actor.model,'allow_state_'+target_state.name,None)
+            if m is not None:
+                assert not required.has_key('allowed')
+                def allow(action,user,obj,state):
+                    return m(obj,user)
+                required.update(allow=allow)
+        kw.update(required=required)
         help_text = getattr(target_state,'help_text',None)
         if help_text:
             kw.update(help_text=help_text)
-        super(StateAction,self).__init__(**kw)
-        #~ print 20120709, self, self.show_in_workflow
+        super(ChangeStateAction,self).__init__(**kw)
+        #~ logger.info('20120930 ChangeStateAction %s %s', actor,target_state)
         
     def run(self,row,ar,**kw):
         state_field_name = self.actor.workflow_state_field.attname
@@ -132,8 +139,54 @@ class StateAction(actions.RowAction):
         return ar.ui.success_response(**kw)
         
     
+class State(choicelists.Choice):        
+        
+    def add_workflow(self,label=None,help_text=None,**required):
+        self.choicelist.workflow_actions = list(self.choicelist.workflow_actions)
+        
+        def fn():
+            return ChangeStateAction(self,required,
+                label=label or self.text,help_text=help_text,
+                sort_index=10+len(self.choicelist.workflow_actions))
+        name = 'mark_' + self.value
+        #~ print 20120709, self, name, a
+        self.choicelist.workflow_actions.append((name,fn))
+        #~ yield name,a
+        
+        #~ if action_label is not None:
+            #~ self.action_label = action_label
+        #~ if help_text is not None:
+            #~ self.help_text = help_text
+        #~ self.required = required
+        
+    #~ def set_required(self,**kw):
+        #~ from lino.core import perms
+        #~ perms.set_required(self,**kw)
+        
 
 
+class Workflow(choicelists.ChoiceList):
+  
+    workflow_actions = []
+    
+    item_class = State
+  
+    #~ @classmethod
+    #~ def add_statechange(self,newstate,action_label=None,states=None,**kw):
+        #~ old = self.get_by_name()
+    
+    @classmethod
+    def before_state_change(cls,obj,ar,kw,oldstate,newstate):
+        pass
+
+    @classmethod
+    def after_state_change(cls,obj,ar,kw,oldstate,newstate):
+        pass
+
+        
+ #~ def set_required(self,**kw):
+        #~ from lino.core import perms
+        #~ perms.set_required(self,**kw)
 
 
 class ActorMetaClass(type):
@@ -506,11 +559,7 @@ class Actor(actions.Parametrizable):
     
     @classmethod
     def set_required(self,**kw):
-        logger.info("20120927 actors.set_required %r",kw)
-        new = dict()
-        new.update(self.required)
-        new.update(kw)
-        self.required = new
+        perms.set_required(self,**kw)
         
     
     
@@ -688,14 +737,16 @@ class Actor(actions.Parametrizable):
         
     @classmethod
     def get_state_actions(self):
-        i = 10
-        for st in self.workflow_state_field.choicelist.items():
-            if hasattr(st,'required'):
-                name = 'mark_' + st.value
-                a = StateAction(self,st,sort_index=i)
+        for name, fn in self.workflow_state_field.choicelist.workflow_actions:
+            yield (name,fn())
+        #~ i = 10
+        #~ for st in self.workflow_state_field.choicelist.items():
+            #~ if hasattr(st,'required'):
+                #~ name = 'mark_' + st.value
+                #~ a = ChangeStateAction(self,st,sort_index=i)
                 #~ print 20120709, self, name, a
-                yield name,a
-                i += 1
+                #~ yield name,a
+                #~ i += 1
             
     @classmethod
     def _attach_action(self,name,a):

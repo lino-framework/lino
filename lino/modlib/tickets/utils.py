@@ -21,6 +21,25 @@ class TicketStates(ChoiceList):
     The state of a ticket (new, open, closed, ...)
     """
     label = _("Ticket State")
+    
+    @classmethod
+    def allow_state_accepted(cls,self,user):
+        if not self.reported:
+            return False
+        return True
+        
+    @classmethod
+    def allow_state_working(cls,self,user):
+        if not self.user:
+            return False
+        return True
+        
+    @classmethod
+    def allow_state_fixed(cls,self,user):
+        if not self.fixed:
+            return False
+        return True
+    
 
 add = TicketStates.add_item
 

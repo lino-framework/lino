@@ -53,7 +53,7 @@ from django.conf import settings
 
 from lino.utils.choicelists import ChoiceList
 
-class PostingStates(ChoiceList):
+class PostingStates(dd.Workflow):
     """
     List of possible values for the `state` field of a 
     :class:`Posting`.

@@ -1,0 +1,59 @@
+20121001
+========
+
+In einem Workflow können jetzt verschiedene Aktionen zu einem gleichen Zustand führen.
+Z.B. auf einer Begleitung im Status "Vorgeschlagen" führt ein Klick auf "[akzeptieren]" zum Status "Aktiv", 
+auf einer Begleitung im Status "Standby" führt ein Klick auf "[reaktivieren]" zum gleichen Status "Aktiv".
+
+Überhaupt ist die Beschreibung jetzt intuitiver.
+Der Lebenzyklus einer Begleitung sieht im Code jetzt so aus::
+
+  class CoachingStates(dd.Workflow):
+      ...
+      
+  add = CoachingStates.add_item
+  add('10', _("Suggested"),'suggested')
+  add('20', _("Refused"),'refused')
+  add('30', _("Active"),'active')
+  add('40', _("Standby"),'standby')
+  add('50', _("Ended"),'ended')
+
+  CoachingStates.refused.add_workflow(states='suggested standby',owner=True)
+  CoachingStates.active.add_workflow(_("Accept"),states='suggested',owner=True)
+  CoachingStates.active.add_workflow(_("Reactivate"),
+      states='standby',owner=True,
+      help_text=_("Client has become active again after having been standby."))
+  CoachingStates.standby.add_workflow(states='active',owner=True)
+  CoachingStates.ended.add_workflow(_("End coaching"),
+      states='active standby',owner=True,
+      help_text=_("User no longer coaches this client."))
+
+
+Ein Bild sagt mehr als tausend Worte:
+
+.. graphviz:: 
+   :caption: Lifecycle of a coaching
+   
+   digraph foo {
+      suggested -> refused [label="[ablehnen]"];
+      standby -> refused;
+      suggested -> active [label="[akzeptieren]"];
+      standby -> active [label="[reaktivieren]"];
+      active -> standby;
+      standby -> ended [label="[beenden]"];
+      active -> ended [label="[beenden]"];
+      
+      active [label="Aktiv"];
+      suggested [label="Vorgeschlagen"];
+      refused [label="Abgelehnt"];
+      standby [label="Standby"];
+      ended [label="Beendet"];
+   }
+   
+
+TODO: 
+
+- Ja, solche Grafiken könnte Lino automatisch generieren...
+- Kann man Doppelpfeil zwischen Aktiv und Standby was schöner hinkriegen?
+  http://www.graphviz.org/Documentation/dotguide.pdf 
+

@@ -95,8 +95,6 @@ from django.db import models
 from lino.utils import curry, unicode_string
 
 
-
-
 class Choice(object):
     """
     A constant (hard-coded) value whose unicode representation 
@@ -141,6 +139,7 @@ class Choice(object):
         # make it callable so it can be used as `default` of a field.
         # see blog/2012/0527
         return self
+        
 
 #~ class UnresolvedValue(Choice):
     #~ def __init__(self,choicelist,value):
@@ -381,7 +380,8 @@ Django creates copies of them when inheriting models.
     @classmethod
     def get_by_name(self,name):
         if name:
-            return getattr(self,name,None)
+            #~ return getattr(self,name,None)
+            return getattr(self,name)
         else:
             #~ return self.blank_item
             return None
@@ -417,7 +417,6 @@ Django creates copies of them when inheriting models.
     #~ def __unicode__(self):
         #~ return unicode(self.stored_name) # babel_get(self.names)
 
-
     @classmethod
     def before_state_change(cls,obj,ar,kw,oldstate,newstate):
         pass
@@ -425,8 +424,6 @@ Django creates copies of them when inheriting models.
     @classmethod
     def after_state_change(cls,obj,ar,kw,oldstate,newstate):
         pass
-
-        
     
 class ChoiceListField(models.CharField):
     """

@@ -263,16 +263,20 @@ class Model(models.Model):
         """
         Displays the workflow buttons for this row and this user.
         """
+        #~ logger.info('20120930 workflow_buttons %r', obj)
         actor = ar.actor
         #~ print 20120621 , actor,  self
         #~ print 20120618, ar
         l = []
         state = actor.get_row_state(obj)
         for a in actor.get_actions(ar.action):
-            #~ print 20120709, a.name
             if a.show_in_workflow:
+                #~ logger.info('20120930 %s show in workflow', a.name)
                 if obj.get_row_permission(ar.get_user(),state,a):
                     l.append(ar.renderer.action_button(obj,ar,a))
+            #~ else:
+                #~ logger.info('20120930 %s NOT in workflow', a.name)
+              
         return ', '.join(l)
         
         

@@ -63,11 +63,11 @@ Create some data:
 Here is our data:
 
 >>> Person.objects.all()
-[<Person: Alfred>, <Person: Bert>, <Person: Claude>, <Person: Dirk>]
+[Person #1 (u'Alfred'), Person #2 (u'Bert'), Person #3 (u'Claude'), Person #4 (u'Dirk')]
 >>> Restaurant.objects.all()
-[<Restaurant: #1 (name=First,owners=Alfred,Bert,cooks=Claude,Dirk)>]
+[Restaurant #1 (u'#1 (name=First,owners=Alfred,Bert,cooks=Claude,Dirk)')]
 >>> Place.objects.all()
-[<Place: #1 (name=First,owners=Alfred,Bert)>]
+[Place #1 (u'#1 (name=First,owners=Alfred,Bert)')]
 
 Now the user discovers that Place #1 isn't actually a Restaurant, 
 and would like to "remove it's Restaurant data" from the database.
@@ -94,7 +94,7 @@ is done using :func:`insert_child`:
 >>> obj.owners.add(Person.objects.get(pk=2))
 >>> obj.save()
 >>> obj
-<Place: #2 (name=Second,owners=Bert)>
+Place #2 (u'#2 (name=Second,owners=Bert)')
 
 We just created a new Place #2 with a single owner.
 Later this Place becomes a Restaurant and hires 2 cooks:
@@ -104,7 +104,7 @@ Later this Place becomes a Restaurant and hires 2 cooks:
 >>> for i in 3,4:
 ...     obj.cooks.add(Person.objects.get(pk=i))
 >>> obj
-<Restaurant: #2 (name=Second,owners=Bert,cooks=Claude,Dirk)>
+Restaurant #2 (u'#2 (name=Second,owners=Bert,cooks=Claude,Dirk)')
 
 If you try to promote a Person to a Restaurant, you'll get an exception:
 
@@ -124,15 +124,15 @@ used by Lino, and thus is Lino-specific.
 After the above examples our database looks like this:
 
 >>> Place.objects.all()
-[<Place: #1 (name=First,owners=Alfred,Bert)>, <Place: #2 (name=Second,owners=Bert)>]
+[Place #1 (u'#1 (name=First,owners=Alfred,Bert)'), Place #2 (u'#2 (name=Second,owners=Bert)')]
 >>> Restaurant.objects.all()
-[<Restaurant: #2 (name=Second,owners=Bert,cooks=Claude,Dirk)>]
+[Restaurant #2 (u'#2 (name=Second,owners=Bert,cooks=Claude,Dirk)')]
 
 Let's take Place #1 and look at it.
 
 >>> obj = Place.objects.get(pk=1)
 >>> obj
-<Place: #1 (name=First,owners=Alfred,Bert)>
+Place #1 (u'#1 (name=First,owners=Alfred,Bert)')
 
 
 Before using virtual fields, we must setup 
@@ -166,7 +166,7 @@ Let's promote First (currently a simple Place) to a Restaurant:
 
 >>> Place.is_restaurant.set_value_in_object(None,obj,True)
 >>> Restaurant.objects.get(pk=1)
-<Restaurant: #1 (name=First,owners=Alfred,Bert,cooks=)>
+Restaurant #1 (u'#1 (name=First,owners=Alfred,Bert,cooks=)')
 
 And Second stops being a Restaurant:
 
@@ -196,7 +196,7 @@ Now we can see this place again as a Restaurant
 >>> second = Restaurant.objects.get(pk=2)
 >>> second.cooks.add(bert)
 >>> second
-<Restaurant: #2 (name=Second,owners=Bert,cooks=Bert)>
+Restaurant #2 (u'#2 (name=Second,owners=Bert,cooks=Bert)')
 
 
 
@@ -230,21 +230,21 @@ Bert, the owner of Restaurant #2 does two visits:
 >>> Visit(purpose="Say hello",person=bert,place=second).save()
 >>> Visit(purpose="Hang around",person=bert,place=second).save()
 >>> second.visit_set.all()
-[<Visit: Say hello visit by Bert at Second>, <Visit: Hang around visit by Bert at Second>]
+[Visit #1 (u'Say hello visit by Bert at Second'), Visit #2 (u'Hang around visit by Bert at Second')]
 
 Claude and Dirk, now workless, still go to eat in restaurants:
 
 >>> Meal(what="Fish",person=Person.objects.get(pk=3),restaurant=second).save()
 >>> Meal(what="Meat",person=Person.objects.get(pk=4),restaurant=second).save()
 >>> second.meal_set.all()
-[<Meal: Claude eats Fish at Second>, <Meal: Dirk eats Meat at Second>]
+[Meal #1 (u'Claude eats Fish at Second'), Meal #2 (u'Dirk eats Meat at Second')]
 
 Now we reduce Second to a Place:
 
 >>> second = Place.objects.get(pk=2)
 >>> second.is_restaurant = False
 >>> second
-<Place: #2 (name=Second,owners=Bert)>
+Place #2 (u'#2 (name=Second,owners=Bert)')
 
 Setting an EnableChild virtual field doesn't 
 wait until you call `save()` on the instance. It is executed immediately. 
@@ -270,7 +270,7 @@ The owner and visits have been taken over:
 
 >>> second = Place.objects.get(pk=2)
 >>> second.visit_set.all()
-[<Visit: Say hello visit by Bert at Second>, <Visit: Hang around visit by Bert at Second>]
+[Visit #1 (u'Say hello visit by Bert at Second'), Visit #2 (u'Hang around visit by Bert at Second')]
 
 
 The :func:`create_child <lino.utils.mti.create_child>` function
@@ -298,7 +298,7 @@ That's why :func:`create_child` was written for.
 >>> obj.owners.add(Person.objects.get(pk=2))
 >>> obj.save()
 >>> obj
-<Place: #3 (name=Third,owners=Bert)>
+Place #3 (u'#3 (name=Third,owners=Bert)')
 
 >>> from lino.utils.mti import create_child
 >>> obj = create_child(Place,3,Restaurant)
@@ -320,21 +320,22 @@ To test whether `create_child` did her job,
 we must re-read an instance:
 
 >>> Restaurant.objects.get(pk=3)
-<Restaurant: #3 (name=Third,owners=Bert,cooks=)>
+Restaurant #3 (u'#3 (name=Third,owners=Bert,cooks=)')
 
 Note that 
 create_child() doesn't allow to also change the `name`
 because that field is defined in the Place model, 
 not in Restaurant. 
-(Until 20120930 this it was silently ignored
-for backwards compatibility (:doc:`/blog/2011/1210`):
 
 >>> obj = Place(id=4,name="Fourth")
 >>> obj.save()
->>> ow = create_child(Place,4,Restaurant,name="Cannot set new name for Fourth")
->>> ow.save()
->>> Restaurant.objects.get(pk=4)
-<Restaurant: #4 (name=Fourth,owners=,cooks=)>
+>>> ow = create_child(Place,4,Restaurant,name="A new name")
+Traceback (most recent call last):
+...
+Exception: create_child() Restaurant 4 from Place : ignored non-local fields {'name': 'A new name'}
+
+(Until 20120930 this it was silently ignored
+for backwards compatibility (:doc:`/blog/2011/1210`).
 
 
 

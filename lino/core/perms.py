@@ -64,7 +64,7 @@ add('30', _("User"), "user")
 add('40', _("Manager"), "manager")
 add('50', _("Administrator"), "admin")
 add('90', _("Expert"), "expert")
-UserLevels.SHORT_NAMES = dict(A='admin',U='user',_='',M='manager',G='guest',S='secretary')
+UserLevels.SHORT_NAMES = dict(A='admin',U='user',_=None,M='manager',G='guest',S='secretary')
 
 class UserGroups(choicelists.ChoiceList):
     """
@@ -265,11 +265,15 @@ def make_permission_handler(
     
     `readonly`
     
+    `debug_permissions`
+    
     The generated function will always expect three arguments user, obj and state.
     The latter two may be None depending on the context
     (for example a read_required is expected to not test on obj or 
     state because these values are not known when generating the 
     :xfile:`lino*.js` files.).
+    
+    The remaining keyword arguments are aka "requirements":
     
     `user_level`
         A string (e.g. ``'manager'``, ``'user'``,...) 
@@ -296,8 +300,9 @@ def make_permission_handler(
     `owner`
         If True, permission is given only to the author of the object. 
         If False, permission is given only to users who are not the author of the object. 
-        To be used on models that have a field `user` which 
-        contains the "owner" (usually a subclass of UserAuthored,
+        This requirement is allowed only on models that have a field `user` 
+        which is supposed to contain the author.
+        Usually a subclass of :class:`lino.mixins.UserAuthored`,
         but e.g. :class:`lino.modlib.cal.models.Guest` 
         defines a property `user` because it has no own `user` field).
     
@@ -364,8 +369,15 @@ Cannot specify `states` when `workflow_state_field` is %r.
             #~ states = frozenset([getattr(lst,n) for n in states])
             #~ possible_states = [st.name for st in lst.items()] + [BLANK_STATE]
             ns = []
+            if isinstance(states,basestring):
+                states = states.split()
             for n in states:
-                ns.append(lst.get_by_name(n))
+                if n is not None:
+                    if n == '_':
+                        n = None
+                    else:
+                        n = lst.get_by_name(n)
+                ns.append(n)
                 #~ if n:
                     #~ ns.append(getattr(lst,n))
                 #~ else:
@@ -407,3 +419,21 @@ Cannot specify `states` when `workflow_state_field` is %r.
         raise Exception("Exception while making permissions for %s: %s" % (actor,e))
 
         
+
+def set_required(obj,**kw):
+    """
+    Add the specified requirements to `obj`.
+    `obj` can be an 
+    :class:`lino.core.actors.Actor` or a 
+    :class:`lino.utils.choicelists.Choice`.
+    Application code uses this indirectly through the shortcut methods
+    :meth:`lino.core.actors.Actor.set_required` or a 
+    :meth:`lino.utils.choicelists.Choice.set_required`.
+    
+    """
+    #~ logger.info("20120927 perms.set_required %r",kw)
+    new = dict()
+    new.update(getattr(obj,'required',{}))
+    new.update(kw)
+    obj.required = new
+    

@@ -231,20 +231,6 @@ class Ticket(mixins.AutoUser,mixins.CreatedModified,mixins.ProjectRelated):
         return project.tickets_milestone_set_by_project.all()
         
 
-    def allow_state_accepted(self,user):
-        if not self.reported:
-            return False
-        return True
-        
-    def allow_state_working(self,user):
-        if not self.user:
-            return False
-        return True
-        
-    def allow_state_fixed(self,user):
-        if not self.fixed:
-            return False
-        return True
         
 
 class Tickets(dd.Table):

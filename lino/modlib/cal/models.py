@@ -49,7 +49,7 @@ from lino.core.modeltools import resolve_model, obj2str
 
 from lino.modlib.cal.utils import \
     Weekday, DurationUnits, setkw, dt2kw, \
-    EventState, GuestState, TaskState, AccessClasses, \
+    EventStates, GuestState, TaskState, AccessClasses, \
     CalendarAction
 
 from lino.utils.babel import dtosl
@@ -877,7 +877,7 @@ Indicates that this Event shouldn't prevent other Events at the same time."""))
     place = models.ForeignKey(Place,null=True,blank=True) # iCal:LOCATION
     priority = models.ForeignKey(Priority,null=True,blank=True)
     #~ priority = Priority.field(_("Priority"),blank=True) # iCal:PRIORITY
-    state = EventState.field(blank=True) # iCal:STATUS
+    state = EventStates.field(blank=True) # iCal:STATUS
     #~ status = models.ForeignKey(EventStatus,verbose_name=_("Status"),blank=True,null=True) # iCal:STATUS
     #~ duration = dd.FieldSet(_("Duration"),'duration_value duration_unit')
     #~ duration_value = models.IntegerField(_("Duration value"),null=True,blank=True) # iCal:DURATION
@@ -890,11 +890,11 @@ Indicates that this Event shouldn't prevent other Events at the same time."""))
     
     def save(self,*args,**kw):
         #~ if not self.state and self.start_date and self.start_date < datetime.date.today():
-            #~ self.state = EventState.obsolete
+            #~ self.state = EventStates.obsolete
         super(Event,self).save(*args,**kw)
         if self.calendar and self.calendar.invite_team_members:
-            #~ if not self.state in (EventState.blank_item, EventState.draft): 20120829
-            if not self.state in (None, EventState.draft):
+            #~ if not self.state in (EventStates.blank_item, EventStates.draft): 20120829
+            if not self.state in (None, EventStates.draft):
                 if self.guest_set.all().count() == 0:
                     #~ print 20120711
                     for obj in Membership.objects.filter(user=self.user):
@@ -911,8 +911,8 @@ Indicates that this Event shouldn't prevent other Events at the same time."""))
                 kw.update(alert=True,message=_("You should now inform the guests about this state change."))
                 
     def after_send_mail(self,mail,ar,kw):
-        if self.state == EventState.suggested:
-            self.state = EventState.notified
+        if self.state == EventStates.suggested:
+            self.state = EventStates.notified
             kw['message'] += '\n('  +_("Event %s has been marked *notified*.") % self + ')'
             self.save()
         #~ else:
@@ -925,10 +925,10 @@ Indicates that this Event shouldn't prevent other Events at the same time."""))
         """
         if self.state is None:
             if ar.request.subst_user:
-                self.state = EventState.suggested
-                #~ self.state = EventState.reserved
+                self.state = EventStates.suggested
+                #~ self.state = EventStates.reserved
             else:
-                self.state = EventState.draft
+                self.state = EventStates.draft
         return super(Event,self).before_ui_save(ar,**kw)
         
     def on_create(self,ar):
@@ -936,10 +936,6 @@ Indicates that this Event shouldn't prevent other Events at the same time."""))
         self.start_time = datetime.datetime.now().time()
         super(Event,self).on_create(ar)
         
-        
-    def allow_state_suggest(self,user):
-        if not self.start_time: return False
-        return True
         
       
         
@@ -1058,7 +1054,7 @@ if settings.LINO.user_model:
         #~ label = _("Reserved Events")
         #~ required = dict(user_groups='office',user_level='manager')
         #~ column_names = 'start_date start_time user project summary workflow_buttons *'
-        #~ known_values = dict(state=EventState.reserved)
+        #~ known_values = dict(state=EventStates.reserved)
         
     #~ class MyEventsReserved(EventsReserved,MyEvents):
         #~ help_text = _("Table of my reserved events (to become scheduled).")
@@ -1072,7 +1068,7 @@ if settings.LINO.user_model:
         label = _("Suggested Events")
         required = dict(user_groups='office',user_level='manager')
         column_names = 'start_date start_time user project summary workflow_buttons *'
-        known_values = dict(state=EventState.suggested)
+        known_values = dict(state=EventStates.suggested)
         
     class MyEventsSuggested(EventsSuggested,MyEvents):
         help_text = _("Table of my suggested events (to become notified).")
@@ -1085,7 +1081,7 @@ if settings.LINO.user_model:
         label = _("Notified Events")
         required = dict(user_groups='office',user_level='manager')
         column_names = 'start_date start_time user project summary workflow_buttons *'
-        known_values = dict(state=EventState.notified)
+        known_values = dict(state=EventStates.notified)
         
     class MyEventsNotified(EventsNotified,MyEvents):
         help_text = _("Table of my notified events (waiting to become scheduled).")
@@ -1107,7 +1103,7 @@ if settings.LINO.user_model:
         #~ column_names = 'start_date start_time user project summary workflow_buttons *'
         #~ label = _("Events to notify")
         #~ order_by = ["start_date","start_time"]
-        #~ filter = models.Q(state=EventState.scheduled)
+        #~ filter = models.Q(state=EventStates.scheduled)
         
     #~ class MyEventsToNotify(EventsToNotify,MyEvents):
         #~ help_text = _("Table of all my events that need to be communicated to guests.")
@@ -1130,7 +1126,7 @@ if settings.LINO.user_model:
         #~ label = _("Events to schedule")
         #~ required = dict(user_groups='office',user_level='manager')
         #~ column_names = 'start_date start_time user project summary workflow_buttons *'
-        #~ filter = models.Q(state__in=(EventState.blank_item,EventState.draft))
+        #~ filter = models.Q(state__in=(EventStates.blank_item,EventStates.draft))
         
     #~ class MyEventsToSchedule(EventsToSchedule,MyEvents):
         #~ help_text = _("Table of all my events that need to be scheduled.")
@@ -1149,7 +1145,7 @@ if settings.LINO.user_model:
         #~ column_names = 'start_date start_time project user summary workflow_buttons *'
         #~ label = _("Events to confirm")
         #~ order_by = ["start_date","start_time"]
-        #~ filter = models.Q(state=EventState.scheduled)
+        #~ filter = models.Q(state=EventStates.scheduled)
         
     #~ class MyEventsToConfirm(EventsToConfirm):
         #~ help_text = _("Table of all my events that are waiting for confirmation from guests.")
@@ -1539,7 +1535,7 @@ def tasks_summary(ui,user,days_back=None,days_forward=None,**kw):
     
     for o in Event.objects.filter(
         #~ models.Q(status=None) | models.Q(status__reminder=True),
-        models.Q(state=None) | models.Q(state__lte=EventState.scheduled),
+        models.Q(state=None) | models.Q(state__lte=EventStates.scheduled),
         **filterkw).order_by('start_date'):
         add(o)
         
@@ -1903,7 +1899,7 @@ def reminders_as_html(ar,days_back=None,days_forward=None,**kw):
     
     events = ar.spawn(MyEvents,
         master_instance=user,
-        filter=flt & (models.Q(state=None) | models.Q(state__lte=EventState.scheduled)))
+        filter=flt & (models.Q(state=None) | models.Q(state__lte=EventStates.scheduled)))
     tasks = ar.spawn(MyTasks,master_instance=user,
         #~ filter=flt & models.Q(state__in=[TaskState.blank_item,TaskState.todo])) 20120829
         filter=flt & models.Q(state__in=[None,TaskState.todo]))
@@ -1917,7 +1913,7 @@ def reminders_as_html(ar,days_back=None,days_forward=None,**kw):
         add(o)
         
     #~ for o in Event.objects.filter(
-        #~ models.Q(state=None) | models.Q(state__lte=EventState.scheduled),
+        #~ models.Q(state=None) | models.Q(state__lte=EventStates.scheduled),
         #~ **filterkw).order_by('start_date'):
         #~ add(o)
         

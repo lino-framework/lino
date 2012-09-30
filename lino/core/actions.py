@@ -306,7 +306,7 @@ class Action(Parametrizable):
     """
     Used internally.
     Whether this action should be displayed 
-    as the :meth:`workflow_buttons <lino.core.actors.Actor.workflow_buttons>`.
+    as the :meth:`workflow_buttons <lino.core.model.Model.workflow_buttons>`.
     """
     
     custom_handler = False
@@ -341,7 +341,7 @@ class Action(Parametrizable):
         assert self.callable_from is None or isinstance(
             self.callable_from,(tuple,type)), "%s" % self
             
-        self.register_params()
+        #~ self.register_params()
 
         
     def set_required(self,**kw):
@@ -354,13 +354,17 @@ class Action(Parametrizable):
         new.update(self.required)
         new.update(kw)
         self.required = new
-        #~ if isinstance(self,StateAction):
-        if self.required.has_key('states'):
-            self.show_in_workflow = True
+        #~ if self.required.has_key('states'):
+            #~ self.show_in_workflow = True
+            #~ self.custom_handler = True
+            #~ self.show_in_bbar = False
+        #~ else:
+            #~ self.show_in_workflow = False
+            #~ self.show_in_bbar = True
+        if self.show_in_workflow:
             self.custom_handler = True
             self.show_in_bbar = False
         else:
-            self.show_in_workflow = False
             self.show_in_bbar = True
         
     def __str__(self):

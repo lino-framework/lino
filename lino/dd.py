@@ -76,6 +76,9 @@ Miscellaneous:
 - :class:`UserProfiles <lino.core.perms.UserProfiles>`
 - :class:`UserGroups <lino.core.perms.UserGroups>`
 - :class:`UserLevels <lino.core.perms.UserLevels>`
+- :class:`ChoiceList <lino.utils.choicelists.ChoiceList>`
+- :class:`Workflow <lino.core.actors.Workflow>`
+
 
 
 """
@@ -112,6 +115,8 @@ from lino.core.actions import GridEdit, ShowDetailAction
 from lino.core.actions import InsertRow, DeleteSelected
 from lino.core.actions import SubmitDetail, SubmitInsert
 #~ from lino.core.actions import Calendar
+
+from lino.core.actors import Workflow
 
 from lino.core.fields import DummyField
 from lino.core.fields import RecurrenceField

@@ -23,6 +23,7 @@ from django.utils.translation import pgettext_lazy
 
 from lino.utils.choicelists import ChoiceList, Choice
 from lino.core import actions
+from lino.core.actors import Workflow
 
 from dateutil.tz import tzlocal
 
@@ -151,11 +152,12 @@ def amonthago():
     return DurationUnits.months.add_duration(datetime.date.today(),-1)
         
 
-class TaskState(ChoiceList):
+class TaskState(Workflow):
     """
     State of a Calendar Task. Used as Workflow selector.
     """
     label = _("State")
+    
     @classmethod
     def migrate(cls,status_id):
         """
@@ -172,18 +174,36 @@ class TaskState(ChoiceList):
         return cv[status_id]
     
 add = TaskState.add_item
-add('10', _("To do"),'todo',required=dict(states=['']))
-add('20', pgettext_lazy(u"cal",u"Started"),'started',required=dict(states=['','todo']))
-add('30', _("Done"),'done',required=dict(states=['','todo','started']))
-add('40', _("Sleeping"),'sleeping',required=dict(states=['','todo']))
-add('50', _("Cancelled"),'cancelled',required=dict(states=['todo','sleeping']))
+#~ add('10', _("To do"),'todo',required=dict(states=['']))
+#~ add('20', pgettext_lazy(u"cal",u"Started"),'started',required=dict(states=['','todo']))
+#~ add('30', _("Done"),'done',required=dict(states=['','todo','started']))
+#~ add('40', _("Sleeping"),'sleeping',required=dict(states=['','todo']))
+#~ add('50', _("Cancelled"),'cancelled',required=dict(states=['todo','sleeping']))
 
-class EventState(ChoiceList):
+add('10', _("To do"),'todo')
+add('20', pgettext_lazy(u"cal",u"Started"),'started')
+add('30', _("Done"),'done')
+add('40', _("Sleeping"),'sleeping')
+add('50', _("Cancelled"),'cancelled')
+
+TaskState.todo.add_workflow(states='_')
+TaskState.started.add_workflow(states='_ todo')
+TaskState.done.add_workflow(states='_ todo started')
+TaskState.sleeping.add_workflow(states='_ todo')
+TaskState.cancelled.add_workflow(states='todo sleeping')
+
+#~ class EventStates(ChoiceList):
+class EventStates(Workflow):
     """
     State of a Calendar Event. Used as Workflow selector.
     """
     label = _("State")
     
+    @classmethod
+    def allow_state_suggest(cls,self,user):
+        if not self.start_time: return False
+        return True
+        
     @classmethod
     def migrate(cls,status_id):
         """
@@ -192,11 +212,11 @@ class EventState(ChoiceList):
         #~ if status_id is None: return cls.blank_item
         cv = {
           None: '',
-          1:EventState.suggested,
-          2:EventState.scheduled,
-          3:EventState.cancelled,
-          4:EventState.rescheduled,
-          5:EventState.absent,
+          1:EventStates.suggested,
+          2:EventStates.scheduled,
+          3:EventStates.cancelled,
+          4:EventStates.rescheduled,
+          5:EventStates.absent,
         }
         return cv[status_id]
         
@@ -205,60 +225,67 @@ class EventState(ChoiceList):
     #~ return True
     
     
-add = EventState.add_item
-add('10', _("Draft"), 'draft',
-  required=dict(states=['']),
-  #~ required=dict(states=['','notified','suggested','scheduled']),
-  help_text=_("Default state of a new event.")
-  ) # is_user_modified
-#~ add('11', _("Reserved"), 'reserved',
-  #~ required=dict(states=['']),
-  #~ help_text=_("Created by colleague. External guests are notified, but user must confirm.")
-  #~ ) # is_user_modified
-add('20', _("Suggested"), 'suggested',
-  #~ required=dict(states=['','notified','suggested','scheduled']),
-  required=dict(states=['']),
-  help_text=_("Created by colleague. External guests are notified, but user must confirm.")
-  #~ required=dict(allow=allow_scheduled,states=['','draft']),
-  #~ required=dict(states=['','draft']),
-  #~ help_text=_("Waiting for feedback from colleagues.")
-  )
-add('30', _("Notified"),'notified',
-    required=dict(states=['draft']),
-    action_label=_("Notify guests"),
-    help_text=_("Invitations have been sent. Waiting for feedback from guests.")
-    )
-#~ add('20', _("Suggested"),'suggested')
-#~ add('30', _("Published"),'published')
-add('40', _("Scheduled"), 'scheduled',
-  #~ required=dict(allow=allow_scheduled,states=['','draft']),
-  required=dict(states=['','draft','suggested']),
-  help_text=_("Confirmed. All participants have been informed.")
-  )
-#~ add('40', _("Confirmed"),'confirmed',
-    #~ required=dict(states=['scheduled','notified']),
-    #~ help_text=_("""Confirmed. Events in this state are read-only."""))
-add('50', _("Took place"),'took_place',required=dict(states=['scheduled','notified']))
-add('60', _("Rescheduled"),'rescheduled',required=dict(states=['suggested','scheduled','notified']))
-add('70', _("Cancelled"),'cancelled',required=dict(states=['suggested','scheduled','notified']))
-add('80', _("Absent"),'absent',required=dict(states=['scheduled','notified']))
-add('90', _("Obsolete"),'obsolete',required=dict(states=[]))
+add = EventStates.add_item
+add('10', _("Draft"), 'draft',help_text=_("Default state of a new event."))
+add('20', _("Suggested"), 'suggested',help_text=_("Created by colleague. External guests are notified, but user must confirm."))
+add('30', _("Notified"),'notified')
+add('40', _("Scheduled"), 'scheduled')
+add('50', _("Took place"),'took_place')
+add('60', _("Rescheduled"),'rescheduled')
+add('70', _("Cancelled"),'cancelled')
+add('80', _("Absent"),'absent')
+add('90', _("Obsolete"),'obsolete')
 
+EventStates.draft.add_workflow(_("Restart"),
+    states='notified scheduled',
+    help_text=_("Return to Draft state and restart workflow for this event."))
+EventStates.suggested.add_workflow(_("Suggest"),
+    states='_ draft',
+    owner=False,
+    help_text=_("Notify the user and ask to confirm (event was created by colleague for a client)."))
+EventStates.notified.add_workflow(_("Notify guests"), 
+    states='draft',
+    help_text=_("Invitations have been sent. Waiting for feedback from guests."))
+EventStates.scheduled.add_workflow(_("Confirm"), 
+    states=[None,'draft','suggested'],
+    help_text=_("Confirmed. All participants have been informed."))
+EventStates.took_place.add_workflow(states='scheduled notified')
+EventStates.rescheduled.add_workflow(_("Reschedule"),states='suggested scheduled notified')
+EventStates.cancelled.add_workflow(_("Cancel"),states='suggested scheduled notified')
+EventStates.absent.add_workflow(states='scheduled notified')
+EventStates.obsolete.add_workflow()
+
+#~ EventStates.add_statechange('draft',help_text=_("Default state of a new event."))
+#~ EventStates.add_statechange('suggested',_("Suggest"),states='_ draft')
+#~ EventStates.add_statechange('notified',_("Notify guests"), states='draft')
+#~ EventStates.add_statechange('scheduled',_("Confirm"), states='_draft suggested'
+    #~ help_text=_("Confirmed. All participants have been informed."))
+#~ EventStates.add_statechange('took_place',states='scheduled notified')
+#~ EventStates.add_statechange('rescheduled',_("Reschedule"),states='suggested scheduled notified')
+#~ EventStates.add_statechange('cancelled',_("Cancel"),states='suggested scheduled notified')
+#~ EventStates.add_statechange('absent',states='scheduled notified')
+#~ EventStates.add_statechange('obsolete')
+    
 
     
-class GuestState(ChoiceList):
+class GuestState(Workflow):
     """
     State of a Calendar Event Guest. Used as Workflow selector.
     """
     #~ label = _("Guest State")
     label = _("State")
 add = GuestState.add_item
-add('10', _("Invited"),'invited',required=dict(states=[''],owner=True),action_label=_("Invite"))
-#~ add('20', _("Confirmed"),'confirmed',required=dict(states=['','invited'],owner=False),action_label=_("Confirm"))
-add('20', _("Accepted"),'accepted',required=dict(states=['','invited'],owner=False),action_label=_("Accept"))
-add('30', _("Rejected"),'rejected',required=dict(states=['','invited'],owner=False),action_label=_("Reject"))
-add('40', _("Present"),'present',required=dict(states=['invited','accepted'],owner=True))
-add('50', _("Absent"),'absent',required=dict(states=['invited','accepted'],owner=True))
+add('10', _("Invited"),'invited')
+add('20', _("Accepted"),'accepted') #,required=dict(states=['','invited'],owner=False),action_label=_("Accept"))
+add('30', _("Rejected"),'rejected')# ,required=dict(states=['','invited'],owner=False),action_label=_("Reject"))
+add('40', _("Present"),'present')# ,required=dict(states=['invited','accepted'],owner=True))
+add('50', _("Absent"),'absent')# ,required=dict(states=['invited','accepted'],owner=True))
+
+GuestState.invited.add_workflow(_("Invite"),states='_',owner=True)
+GuestState.accepted.add_workflow(_("Accept"),states='_ invited',owner=False)
+GuestState.rejected.add_workflow(_("Reject"),states='_ invited',owner=False)
+GuestState.present.add_workflow(states='invited accepted',owner=True)
+GuestState.absent.add_workflow(states='invited accepted',owner=True)
 
 
 class AccessClasses(ChoiceList):

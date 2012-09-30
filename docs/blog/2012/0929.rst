@@ -84,6 +84,7 @@ It must be overridden as follows::
             )
     globals_dict.update(create_contacts_company=create_contacts_company)
 
+The same applies to Person and Household.
 
 The "ignored non-local fields" message is now an Exception, no longer a warning,
 because backwards compatibility is no longer needed.
