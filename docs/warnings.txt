@@ -1,51 +1,6 @@
-t:\hgwork\lino\lino\modlib\contacts\models.py:docstring of lino.modlib.contacts.models.PartnerDocument.summary_row:1: (ERROR/3) Unknown interpreted text role "modmeth".
+T:\hgwork\lino\docs\blog\2012\0928.rst:99: (WARNING/2) Definition list ends without a blank line; unexpected unindent.
+T:\hgwork\lino\docs\blog\2012\0928.rst:107: (WARNING/2) Definition list ends without a blank line; unexpected unindent.
 T:\hgwork\lino\docs\casts\lino_intro.rst:: WARNING: document isn't included in any toctree
-T:\hgwork\lino\docs\autodoc\lino.core.actions.rst:11: WARNING: py:class reference target not found: lino.core.actions.Parametrizable
-T:\hgwork\lino\docs\autodoc\lino.core.actions.rst:126: WARNING: py:class reference target not found: lino.mixins.duplicable.Duplicate
-T:\hgwork\lino\docs\autodoc\lino.core.actions.rst:166: WARNING: py:meth reference target not found: lino.core.actors.Actor.workflow_buttons
-T:\hgwork\lino\docs\autodoc\lino.core.actions.rst:184: WARNING: py:attr reference target not found: lino.mixins.duplicable.Duplicable.duplicate_row
-T:\hgwork\lino\docs\autodoc\lino.core.actions.rst:207: WARNING: py:class reference target not found: object
-T:\hgwork\lino\docs\autodoc\lino.core.actions.rst:230: WARNING: py:meth reference target not found: Action.run
-T:\hgwork\lino\docs\autodoc\lino.core.actions.rst:271: WARNING: py:class reference target not found: exceptions.Exception
-T:\hgwork\lino\docs\autodoc\lino.core.actions.rst:288: WARNING: py:class reference target not found: exceptions.Exception
-T:\hgwork\lino\docs\autodoc\lino.core.actions.rst:290: WARNING: py:meth reference target not found: ActionRequest.dialog
-T:\hgwork\lino\docs\autodoc\lino.core.actions.rst:297: WARNING: py:class reference target not found: lino.core.actions.VirtualRow
-T:\hgwork\lino\docs\autodoc\lino.core.actions.rst:299: WARNING: py:class reference target not found: EmptyTable
-T:\hgwork\lino\docs\autodoc\lino.core.actions.rst:358: WARNING: py:meth reference target not found: Action.__init__
-T:\hgwork\lino\docs\autodoc\lino.modlib.cal.rst:44: WARNING: py:class reference target not found: lino.modlib.cal.models.Started
-T:\hgwork\lino\docs\autodoc\lino.modlib.cal.rst:53: WARNING: py:class reference target not found: lino.modlib.cal.models.Ended
-T:\hgwork\lino\docs\autodoc\lino.modlib.cal.rst:84: WARNING: py:class reference target not found: isip.Contract
-T:\hgwork\lino\docs\autodoc\lino.modlib.cal.rst:84: WARNING: py:class reference target not found: jobs.Contract
-T:\hgwork\lino\docs\autodoc\lino.modlib.cal.rst:84: WARNING: py:class reference target not found: schools.Course
-T:\hgwork\lino\docs\autodoc\lino.modlib.cal.rst:103: WARNING: py:class reference target not found: lino.modlib.cal.models.Events
-T:\hgwork\lino\docs\autodoc\lino.modlib.cal.rst:181: WARNING: py:class reference target not found: lino.modlib.cal.models.Events
-T:\hgwork\lino\docs\autodoc\lino.modlib.cal.rst:207: WARNING: py:class reference target not found: lino.modlib.cal.models.Ended
-T:\hgwork\lino\docs\autodoc\lino.modlib.cal.rst:253: WARNING: py:class reference target not found: lino.modlib.cal.models.Tasks
-T:\hgwork\lino\docs\autodoc\lino.modlib.cal.rst:276: WARNING: py:mod reference target not found: lino.apps.pcsw.migrate
-T:\hgwork\lino\docs\autodoc\lino.modlib.cal.rst:299: WARNING: xfile reference target not found: welcome.html
-T:\hgwork\lino\docs\autodoc\lino.modlib.cal.rst:317: WARNING: py:func reference target not found: update_auto_task
-T:\hgwork\lino\docs\autodoc\lino.modlib.cal.rst:15: WARNING: py:class reference target not found: Event
-T:\hgwork\lino\docs\autodoc\lino.modlib.cal.rst:30: WARNING: py:meth reference target not found: lino.apps.pcsw.migrate.migrate_from_1_4_4
-T:\hgwork\lino\docs\autodoc\lino.modlib.cal.rst:53: WARNING: py:meth reference target not found: lino.apps.pcsw.migrate.migrate_from_1_4_4
-T:\hgwork\lino\docs\autodoc\lino.modlib.contacts.rst:86: WARNING: py:class reference target not found: lino.modlib.countries.models.CountryRegionCity
-T:\hgwork\lino\docs\autodoc\lino.modlib.contacts.rst:172: WARNING: py:attr reference target not found: Partner.name
-T:\hgwork\lino\docs\autodoc\lino.modlib.contacts.rst:199: WARNING: py:func reference target not found: lino.apps.pcsw.tests.pcsw_tests.test04
-T:\hgwork\lino\docs\autodoc\lino.modlib.contacts.rst:199: WARNING: py:func reference target not found: lino.modlib.contacts.tests.test01
-T:\hgwork\lino\docs\autodoc\lino.modlib.contacts.rst:215: WARNING: py:func reference target not found: lino.apps.pcsw.tests.pcsw_tests.test04
-T:\hgwork\lino\docs\autodoc\lino.modlib.contacts.rst:215: WARNING: py:func reference target not found: lino.modlib.contacts.tests.test01
-T:\hgwork\lino\docs\autodoc\lino.ui.rst:4: WARNING: py:mod reference target not found: lino.ui.extjs
-T:\hgwork\lino\docs\autodoc\lino.utils.rst:41: WARNING: py:class reference target not found: dict
-T:\hgwork\lino\docs\autodoc\lino.utils.rst:162: WARNING: py:class reference target not found: exceptions.Exception
-T:\hgwork\lino\docs\autodoc\lino.utils.rst:175: WARNING: unknown document: /blog/2011/0914
-T:\hgwork\lino\docs\autodoc\lino.utils.rst:185: WARNING: unknown document: /blog/2011/0914
-T:\hgwork\lino\docs\autodoc\lino.utils.rst:40: WARNING: py:mod reference target not found: dbfreader
-T:\hgwork\lino\docs\autodoc\lino.utils.rst:48: WARNING: py:mod reference target not found: instantiator
-T:\hgwork\lino\docs\autodoc\lino.utils.rst:23: WARNING: py:class reference target not found: exceptions.Exception
-T:\hgwork\lino\docs\autodoc\lino.utils.rst:56: WARNING: py:mod reference target not found: latex
-T:\hgwork\lino\docs\autodoc\lino.utils.rst:65: WARNING: py:mod reference target not found: restify
-T:\hgwork\lino\docs\autodoc\lino.utils.rst:7: WARNING: py:mod reference target not found: docutils.examples
-T:\hgwork\lino\docs\autodoc\lino.utils.rst:17: WARNING: py:class reference target not found: docutils.writers.html4css1.HTMLTranslator
-T:\hgwork\lino\docs\autodoc\lino.utils.rst:29: WARNING: py:class reference target not found: docutils.writers.html4css1.Writer
-T:\hgwork\lino\docs\autodoc\lino.utils.rst:82: WARNING: unknown document: /blog/2011/0525
-T:\hgwork\lino\docs\autodoc\lino.utils.rst:73: WARNING: py:mod reference target not found: ucsv
 T:\hgwork\lino\docs\blog\2012\0928.rst:45: WARNING: py:class reference target not found: CompanyContact
+T:\hgwork\lino\docs\blog\2012\0929.rst:4: WARNING: py:func reference target not found: lino_welfare.migrate.migrate_from_1_4_10
+T:\hgwork\lino\docs\blog\2012\0929.rst:12: WARNING: model reference target not found: lino.modlib.postings.models.Posting

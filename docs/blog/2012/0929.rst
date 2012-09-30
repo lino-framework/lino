@@ -1,0 +1,42 @@
+20120929
+========
+
+Tested some non-fatal warnings
+which occured 
+when loading the dump of a real database created using 
+a Lino 1.4.0 (:func:`lino_welfare.migrate.migrate_from_1_4_10`.)
+
+Controller of a Posting must be a Postable
+------------------------------------------
+
+This was caused by the following test in the `save` method of
+:model:`postings.Posting <lino.modlib.postings.models.Posting>`::
+
+    def save(self,*args,**kw):
+        if not isinstance(self.owner,Postable):
+            raise Exception("Controller %s is not a Postable." % obj2str(self.owner))
+        super(Posting,self).save(*args,**kw)
+
+Removing the test caused everything to load correctly. 
+Which means that the above test failed only during the deserialization.
+Here is the relevant code of the dump::
+
+    from django.contrib.contenttypes.models import ContentType
+
+    def new_content_type_id(m):
+        if m is None: return m
+        ct = ContentType.objects.get_for_model(m)
+        if ct is None: return None
+        return ct.pk
+
+    def create_postings_posting(id, owner_type_id, owner_id, user_id, 
+            project_id, partner_id, state, date):
+        owner_type_id = new_content_type_id(owner_type_id)
+        return postings_Posting(id=id,owner_type_id=owner_type_id,
+            owner_id=owner_id,user_id=user_id,project_id=project_id,
+            partner_id=partner_id,state=state,date=date)
+        
+    def postings_posting_objects():
+        yield create_postings_posting(2,notes_Note,3722,200099,20966,None,'',date(2012,9,5))
+        
+Hm...
