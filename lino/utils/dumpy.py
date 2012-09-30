@@ -13,6 +13,10 @@
 
 "Documented in :doc:`/topics/dumpy`."
 
+import logging
+logger = logging.getLogger(__name__)
+
+
 from StringIO import StringIO
 import os
 import imp
@@ -397,7 +401,7 @@ class DpyDeserializer:
             for msg_objlist in self.save_later.values():
                 for objlist in msg_objlist.values():
                     try_again += objlist
-            dblogger.info("Trying again with %d unsaved instances.",
+            logger.info("Trying again with %d unsaved instances.",
                 len(try_again))
             self.save_later = {}
             self.saved = 0
