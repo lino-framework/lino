@@ -187,6 +187,7 @@ add('40', _("Sleeping"),'sleeping')
 add('50', _("Cancelled"),'cancelled')
 
 TaskState.todo.add_workflow(states='_')
+TaskState.todo.add_workflow(_("Wake up"),states='sleeping')
 TaskState.started.add_workflow(states='_ todo')
 TaskState.done.add_workflow(states='_ todo started')
 TaskState.sleeping.add_workflow(states='_ todo')

@@ -206,8 +206,8 @@ class HtmlRenderer(object):
         url = self.instance_handler(ar,obj)
         if text is None: text = force_unicode(obj)
         if url is None:
-            return xghtml.E.p(xghtml.E.b(text))
-        return xghtml.E.p(xghtml.E.a(text,href=url))
+            return xghtml.E.b(text)
+        return xghtml.E.a(text,href=url)
         
 class TextRenderer(HtmlRenderer):
     def instance_handler(self,ar,obj):
@@ -216,7 +216,7 @@ class TextRenderer(HtmlRenderer):
         return None
     def get_request_url(self,ar,*args,**kw):
         return None
-    def href_to_request(self,rr,text=None):
+    def href_to_request(self,sar,tar,text=None):
         if text is None:
             text = '#'
         return text
@@ -377,17 +377,30 @@ class ExtRenderer(HtmlRenderer):
             return self.action_href_js(a,after_show,label or a.label)
         return self.row_action_button(obj,ar.request,a,label)
         
+    #~ def row_action_button(self,obj,ar,a,label=None):
+        #~ """
+        #~ Return a HTML fragment that displays a button-like link 
+        #~ which runs the action when clicked.
+        #~ """
+        #~ label = cgi.escape(unicode(label or a.label))
+        #~ url = self.js2url(
+            #~ 'Lino.%s(%r,%s)' % (
+                #~ a,str(ar.requesting_panel),
+                #~ py2js(obj.pk)))
+        #~ return self.href_button(url,label,a.help_text)
+        
     def row_action_button(self,obj,request,a,label=None):
         """
         Return a HTML fragment that displays a button-like link 
         which runs the action when clicked.
         """
-        label = cgi.escape(unicode(label or a.label))
-        url = self.js2url(
-            'Lino.%s(%r,%s)' % (
+        label = "[%s]" % unicode(label or a.label)
+        url = 'javascript:Lino.%s(%r,%s)' % (
                 a,str(request.requesting_panel),
-                py2js(obj.pk)))
-        return self.href_button(url,label,a.help_text)
+                py2js(obj.pk))
+        if a.help_text:
+            return xghtml.E.a(label,href=url,title=unicode(a.help_text))
+        return xghtml.E.a(label,href=url)
         
     def instance_handler(self,ar,obj):
         a = getattr(obj,'_detail_action',None)
@@ -401,9 +414,9 @@ class ExtRenderer(HtmlRenderer):
         h = self.instance_handler(ar,obj)
         if text is None: text = force_unicode(obj)
         if h is None:
-            return xghtml.E.p(xghtml.E.b(text))
+            return xghtml.E.b(text)
         url = 'javascript:' + h
-        return xghtml.E.p(xghtml.E.a(text,href=url))
+        return xghtml.E.a(text,href=url)
         
         
     def request_handler(self,ar,*args,**kw):
@@ -411,11 +424,15 @@ class ExtRenderer(HtmlRenderer):
         st = ar.get_status(self.ui,**kw)
         return self.action_call(ar.request,ar.action,st)
         
-    def href_to_request(self,rr,text=None):
-        url = self.js2url(self.request_handler(rr))
+    def href_to_request(self,sar,tar,text=None):
+        #~ url = self.js2url(self.request_handler(tar))
+        url = 'javascript:'+self.request_handler(tar)
         #~ if 'Lino.pcsw.MyPersonsByGroup' in url:
         #~ print 20120618, url
-        return self.href(url,text or cgi.escape(force_unicode(rr.label)))
+        #~ return self.href(url,text or cgi.escape(force_unicode(rr.label)))
+        if text is None:
+            text = unicode(tar.get_title())
+        return xghtml.E.a(text,href=url)
         #~ return self.href_button(url,text or cgi.escape(force_unicode(rr.label)))
             
     def action_href_http(self,a,label=None,**params):

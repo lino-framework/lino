@@ -289,7 +289,8 @@ class ForeignKeyStoreField(RelatedMixin,ComboStoreField):
         #~ return req.ui.href_to(obj)
         
     def value2html(self,ar,v):
-        return ar.renderer.obj2html(ar,v)
+        #~ return ar.renderer.obj2html(ar,v)
+        return xghtml.E.p(ar.obj2html(v))
         
         
     def get_value_text(self,v,obj):
@@ -443,7 +444,7 @@ class RequestStoreField(StoreField):
             return ''
         #~ if n == 6:
             #~ logger.info("20120914 format_value(%s) --> %s",v,n)
-        return ar.renderer.href_to_request(v,str(n))
+        return ar.href_to_request(v,str(n))
 
 
 

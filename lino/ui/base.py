@@ -15,6 +15,8 @@
 This is not a docstring.
 """
 
+from django.utils.translation import ugettext_lazy as _
+
 import lino
 from urllib import urlencode
 from django.conf import settings
@@ -126,11 +128,13 @@ class UI:
         #~ kw.update(ui=self)
         return actor.request(self,**kw)
         
-    def success_response(self,message=None,**kw):
+    def success_response(self,message=None,alert=None,**kw):
         """
         Shortcut for building a success response.
         """
         kw.update(success=True)
+        if alert is True:
+            alert = _("Success")
         if message:
             kw.update(message=message)
         return self.action_response(kw)

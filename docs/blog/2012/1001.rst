@@ -1,6 +1,9 @@
 20121001
 ========
 
+Defining Workflows
+------------------
+
 In einem Workflow können jetzt verschiedene Aktionen zu einem gleichen Zustand führen.
 Z.B. auf einer Begleitung im Status "Vorgeschlagen" führt ein Klick auf "[akzeptieren]" zum Status "Aktiv", 
 auf einer Begleitung im Status "Standby" führt ein Klick auf "[reaktivieren]" zum gleichen Status "Aktiv".
@@ -56,4 +59,18 @@ TODO:
 - Ja, solche Grafiken könnte Lino automatisch generieren...
 - Kann man Doppelpfeil zwischen Aktiv und Standby was schöner hinkriegen?
   http://www.graphviz.org/Documentation/dotguide.pdf 
+
+
+Der Willkommensgruß
+-------------------
+
+Ich habe heute Morgen noch eine geniale Idee gehabt: Statt dass Caroline
+dem Hubert eine E-Mail schickt, wenn er einen Neuen zugewiesen bekommen
+hat, sieht Hubert das direkt in seinem Willkommensbildschirm. Das
+Welcome-Panel. Ein Willkommensgruß mit einer Übersicht dessen, was der
+Benutzer jetzt dringend mal anschauen müsste. Der Willkommensgruß ersett
+wahrscheinlich bald die beiden Panels "Ausblick" und "Rückblick". Zeigt
+nicht nur Termine und Aufgaben, sondern auch z.B. die zu bestätigenden
+Einladungen und eben (das war der Auslöser) unsere neue Liste der "zu
+bestätigenden Begleitungsvorschlägen".
 

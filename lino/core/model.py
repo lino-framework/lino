@@ -22,6 +22,7 @@ from django.db.models.base import signals, ModelState, DeferredAttribute, ManyTo
 
 from lino.core import fields
 from lino.core import modeltools
+from lino.utils.xmlgen import html as xghtml
 
 class Model(models.Model):
     """
@@ -258,7 +259,7 @@ class Model(models.Model):
     def summary_row(self,ar,**kw):
         return ar.href_to(self)
         
-    @fields.displayfield(_("Workflows"))
+    @fields.displayfield(_("Workflow"))
     def workflow_buttons(obj,ar):
         """
         Displays the workflow buttons for this row and this user.
@@ -268,16 +269,11 @@ class Model(models.Model):
         #~ print 20120621 , actor,  self
         #~ print 20120618, ar
         l = []
-        state = actor.get_row_state(obj)
-        for a in actor.get_actions(ar.action):
-            if a.show_in_workflow:
-                #~ logger.info('20120930 %s show in workflow', a.name)
-                if obj.get_row_permission(ar.get_user(),state,a):
-                    l.append(ar.renderer.action_button(obj,ar,a))
-            #~ else:
-                #~ logger.info('20120930 %s NOT in workflow', a.name)
-              
-        return ', '.join(l)
+        for a in ar.actor.get_workflow_actions(ar,obj):
+            l.append(ar.renderer.action_button(obj,ar,a))
+            l.append(' ')
+        #~ return ', '.join(l)
+        return xghtml.E.p(*l)
         
         
     def __repr__(self):

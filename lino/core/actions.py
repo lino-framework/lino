@@ -890,6 +890,9 @@ class ActionRequest(object):
     def href_to(self,*args,**kw): return self.renderer.href_to(self,*args,**kw)
     def pk2url(self,*args,**kw): return self.renderer.pk2url(self,*args,**kw)
     def get_request_url(self,*args,**kw): return self.renderer.get_request_url(self,*args,**kw)
+    def obj2html(self,*args,**kw): return self.renderer.obj2html(self,*args,**kw)
+    def href_to_request(self,*args,**kw): return self.renderer.href_to_request(self,*args,**kw)
+    def row_action_button(self,obj,a,*args,**kw): return self.renderer.row_action_button(obj,self.request,a,*args,**kw)
         
     def absolute_uri(self,*args,**kw):
         ar = self.spawn(*args,**kw)

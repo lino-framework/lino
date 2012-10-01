@@ -702,7 +702,7 @@ class Component(ComponentBase,
         
     calendar = models.ForeignKey(Calendar,verbose_name=_("Calendar"),blank=True,null=True)
         
-    access_class = AccessClasses.field(help_text=_("""\
+    access_class = AccessClasses.field(blank=True,help_text=_("""\
 Whether this is private, public or between.""")) # iCal:CLASS
     #~ access_class = models.ForeignKey(AccessClass,
         #~ blank=True,null=True,
@@ -1006,7 +1006,7 @@ class EventInsertLayout(EventDetailLayout):
 class Events(dd.Table):
     model = 'cal.Event'
     required = dict(user_groups='office',user_level='manager')
-    column_names = 'start_date start_time user summary calendar state *'
+    column_names = 'start_date start_time user summary state workflow_buttons calendar *'
     #~ active_fields = ['all_day']
     order_by = ["start_date","start_time"]
     
@@ -1856,6 +1856,7 @@ if settings.LINO.use_extensible:
             
 
 from lino.utils.babel import dtosl
+
     
 def reminders_as_html(ar,days_back=None,days_forward=None,**kw):
     """
@@ -1985,15 +1986,15 @@ class Home(lino.Home):
     coming_reminders:40x16 missed_reminders:40x16
     """
     
-    @dd.virtualfield(dd.HtmlBox(_('Missed reminders')))
-    def missed_reminders(cls,self,ar):
-        return reminders_as_html(ar,days_back=90,
-          max_items=10,before='<ul><li>',separator='</li><li>',after="</li></ul>")
-
     @dd.virtualfield(dd.HtmlBox(_('Upcoming reminders')))
     def coming_reminders(cls,self,ar):
         return reminders_as_html(ar,days_forward=30,
             max_items=10,before='<ul><li>',separator='</li><li>',after="</li></ul>")
+
+    @dd.virtualfield(dd.HtmlBox(_('Missed reminders')))
+    def missed_reminders(cls,self,ar):
+        return reminders_as_html(ar,days_back=90,
+          max_items=10,before='<ul><li>',separator='</li><li>',after="</li></ul>")
 
 
 #~ class MissedReminders(dd.Frame):

@@ -143,12 +143,13 @@ class State(choicelists.Choice):
         
     def add_workflow(self,label=None,help_text=None,**required):
         self.choicelist.workflow_actions = list(self.choicelist.workflow_actions)
-        
+        i = len(self.choicelist.workflow_actions)
         def fn():
             return ChangeStateAction(self,required,
                 label=label or self.text,help_text=help_text,
-                sort_index=10+len(self.choicelist.workflow_actions))
-        name = 'mark_' + self.value
+                sort_index=10+i)
+        #~ name = 'mark_' + self.value
+        name = 'wf' + str(i)
         #~ print 20120709, self, name, a
         self.choicelist.workflow_actions.append((name,fn))
         #~ yield name,a
@@ -710,9 +711,10 @@ class Actor(actions.Parametrizable):
             cls.workflow_state_field = cls.get_data_elem(cls.workflow_state_field)
             #~ note that fld may be none e.g. cal.Component
         if cls.workflow_state_field is not None:
-            for name,a in cls.get_state_actions():
+            #~ for name,a in cls.get_state_actions():
+            for name, fn in cls.workflow_state_field.choicelist.workflow_actions:
                 #~ print 20120709, cls,name,a
-                setattr(cls,name,a)
+                setattr(cls,name,fn())
 
         #~ if cls.__name__.startswith('OutboxBy'):
             #~ print '20120524 collect_actions',cls, cls.insert_action, cls.detail_action, cls.editable
@@ -736,9 +738,19 @@ class Actor(actions.Parametrizable):
         
         
     @classmethod
-    def get_state_actions(self):
-        for name, fn in self.workflow_state_field.choicelist.workflow_actions:
-            yield (name,fn())
+    def get_workflow_actions(self,ar,obj):
+        state = self.get_row_state(obj)
+        u = ar.get_user()
+        for a in self.get_actions(ar.action):
+            if a.show_in_workflow:
+                #~ logger.info('20120930 %s show in workflow', a.name)
+                if obj.get_row_permission(u,state,a):
+                    yield a
+        
+    #~ @classmethod
+    #~ def get_state_actions(self):
+        #~ for name, fn in self.workflow_state_field.choicelist.workflow_actions:
+            #~ yield (name,fn())
         #~ i = 10
         #~ for st in self.workflow_state_field.choicelist.items():
             #~ if hasattr(st,'required'):
