@@ -1308,7 +1308,9 @@ if settings.LINO.user_model:
         column_names = 'start_date summary state workflow_buttons *'
         label = _("To-do list")
         #~ filter = models.Q(state__in=(TaskState.blank_item,TaskState.todo,TaskState.started))
-        filter = models.Q(state__in=(TaskState.todo,TaskState.started))
+        filter = models.Q(
+            start_date__lte=datetime.date.today()+dateutil.relativedelta.relativedelta(days=7),
+            state__in=(None,TaskState.todo,TaskState.started))
     
 if settings.LINO.project_model:    
   

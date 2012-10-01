@@ -157,7 +157,7 @@ class HtmlRenderer(object):
             s += ' ' + self.action_href_js(
                 ar.ah.actor.detail_action,after_show,_("Show Last"))
             #~ s += ' ' + self.href_to_request(ar,"[%s]" % unicode(_("Show All")))
-            s += ' ' + self.href_to_request(None,ar,_("Show All"))
+            s += ' ' + xghtml.E.tostring(self.href_to_request(None,ar,_("Show All")))
         #~ return '<p>%s</p>' % s
         return s
                 
