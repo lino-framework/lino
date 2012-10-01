@@ -74,3 +74,79 @@ nicht nur Termine und Aufgaben, sondern auch z.B. die zu bestätigenden
 Einladungen und eben (das war der Auslöser) unsere neue Liste der "zu
 bestätigenden Begleitungsvorschlägen".
 
+Endspurt
+--------
+
+Viele Kleinigkeiten sind noch zu regeln. Aber langsam kommt Land in Sicht...
+
+Ich habe auch eine neue Regel ausgedacht: dass Klienten nur dann im Status 
+"Begleitet" sein können, wenn sie eine gültige NISS haben. 
+Also besagte Klienten werden bei der Datenübernahme (wenn sie nicht in TIM schon unter Inaktive standen)
+Es gibt auch einen neuen Status "Ungültig" : für Klienten ohne NISS, die bisher weder inaktiv noch neu waren.
+So was ist jetzt nicht mehr erlaubt.
+
+Ein subtiler Bug war folgender: Wenn ich als root eingeloggt war und als Mélanie arbeitete, 
+hatte ich in meinem Welcome-Panel
+
+"You have 2 entries in Suggested coachings" 
+Und wenn ich drauf klickte, hatte ich korrekterweise die MySuggestedCoachings von Mélanie,
+aber die `workflow_buttons` waren leer. 
+
+Erklärung: das Fenster wurde mit folgender url aufgerufen::
+
+  javascript:Lino.pcsw.MySuggestedCoachings.default_action.run({ "base_params": { "mt": 7, "mk": 5 } })
+
+Also das :data:`su <lino.ui.base.requests.URL_PARAM_SUBST_USER>` 
+war verloren gegangen. Eigentlich musste die url sein::
+
+  javascript:Lino.pcsw.MySuggestedCoachings.default_action.run({ "base_params": { "su": 5 } })
+
+Der Fehler war hier::
+
+    @dd.virtualfield(dd.HtmlBox(_('Welcome')))
+    def welcome(cls,self,ar):
+        u = ar.get_user()
+        story = []
+        story.append(xghtml.E.p(_("Hi, "),u.first_name,'! '))
+        ...
+        for T in (MySuggestedCoachings,cal.MyTasksToDo):
+            r = T.request(user=u) #          <<< (1) BAD
+            r = T.request(subst_user=u) #    <<< (2) GOOD
+            r = ar.spawn(T) #                <<< (3) BETTER
+            if r.get_total_count() != 0:
+                ...
+
+Yes, it is recommended to use 
+:meth:`spawn <lino.core.actions.ActionRequest.spawn>` 
+here instead of building a new :class:`ActionRequest <lino.core.actions.ActionRequest>` 
+from scratch.
+
+TODO:
+
+- Klient 23363 ist seit 01.09.2012 begleitet, 
+  coach1 ist Elmar, coach2 ist Mélanie. 
+  Sollen beide Coachings am 01.09.2012 beginnen?
+
+- Die mit :meth:`assign_coach <lino_welfare.modlib.newcomers.models.AvailableCoachesByClient.assign_coach>`
+  erstellten Begleitungen haben eine leere Begleitungsart.
+  Ha! Ein Puzzlestück, nach dem wir lange gesucht haben! 
+  CoachingTypes und Faculties sind das Gleiche!
+  (à confirmer)
+
+- watch_tim ist noch nicht fertig. Krankenkasse und Apotheke. get_object() 
+
+- user-Listen oder Teams, oder irgendwie konfigurierbar machen, 
+  wer bei assign_coach eine Mail geschickt kriegen soll.
+  Am einfachsten wäre vielleicht ein bestimmtes Benutzerprofil...
+
+- Was mach ich mit den vorgeschlagenen Begleitungen, 
+  deren Benutzer gar nicht in Lino arbeiten? 
+  Erstens müssen die ebenfalls per Mail benachrichtigt werden 
+  und zweitens sollte deren Coaching direkt im Status "Aktiv" stehen.
+
+- Es sollte zwei Versionen von assign_coach geben: die erste schickt ihre 
+  Mail im Hintergrund ohne vorherigen Dialog, die andere zeigt die 
+  generierte outbox.Mail vor dem Abschicken an.
+  
+
+  
