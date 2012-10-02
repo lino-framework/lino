@@ -117,6 +117,8 @@ from lino.core.actions import SubmitDetail, SubmitInsert
 #~ from lino.core.actions import Calendar
 
 from lino.core.actors import Workflow
+from lino.core.actors import ChangeStateAction
+
 
 from lino.core.fields import DummyField
 from lino.core.fields import RecurrenceField

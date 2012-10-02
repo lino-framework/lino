@@ -151,7 +151,7 @@ class Countries(dd.Table):
     model = 'countries.Country'
     order_by = ["name","isocode"]
     column_names = "name isocode *"
-    detail_template = """
+    detail_layout = """
     isocode name short_code
     countries.CitiesByCountry
     """

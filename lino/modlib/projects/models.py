@@ -68,7 +68,7 @@ class Projects(dd.Table):
     model = 'projects.Project'
     order_by = ["name"]
     #~ button_label = _("Projects")
-    detail_template = """
+    detail_layout = """
     name type user
     started stopped
     text

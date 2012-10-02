@@ -47,6 +47,7 @@ from lino.utils.choosers import chooser, get_for_field
 #~ from lino.modlib.users.models import UserLevels
 from lino.utils.restify import restify
 from lino.core import actions
+from lino.utils.xmlgen import html as xghtml
 
 #~ from lino.core.changes import Change, Changes, ChangesByObject
 
@@ -123,7 +124,7 @@ class SiteConfigs(dd.Table):
     #~ has_navigator = False
     hide_top_toolbar = True
     #~ can_delete = perms.never
-    detail_template = """
+    detail_layout = """
     default_build_method
     # lino.ModelsBySite
     """
@@ -139,7 +140,7 @@ if settings.LINO.is_installed('contenttypes'):
       """
       model = contenttypes.ContentType
       
-      detail_template = """
+      detail_layout = """
       id name app_label model base_classes
       lino.HelpTextsByModel
       """
@@ -254,7 +255,7 @@ if settings.LINO.user_model:
             return self.name
             
     class TextFieldTemplates(dd.Table):
-        detail_template = """
+        detail_layout = """
         id name user
         description
         text
@@ -547,7 +548,7 @@ class About(mixins.EmptyTable):
     #~ window_size = (700,400)
     #~ detail_layout = AboutDetail(window_size = (700,400))
     detail_layout = AboutDetail()
-    #~ detail_template = """
+    #~ detail_layout = """
     #~ versions:40x5 startup_time:30
     #~ lino.Models:70x10
     #~ """
@@ -590,7 +591,7 @@ class Home(mixins.EmptyTable):
     hide_window_title = True
     hide_top_toolbar = True
     #~ detail_layout = HomeDetail()
-    detail_template = """
+    detail_layout = """
     quick_links:80x1
     welcome
     """
@@ -609,10 +610,15 @@ class Home(mixins.EmptyTable):
         quicklinks = settings.LINO.get_quicklinks(self,req.get_user())
         if quicklinks.items:
             #~ assert mi.params is None
-            return 'Quick Links: ' + ' '.join(
-              [req.ui.ext_renderer.action_href_js(mi.action) 
-                for mi in quicklinks.items]
-              )
+            #~ return 'Quick Links: ' + ' '.join(
+              #~ [req.ui.ext_renderer.action_href_js(mi.action) 
+                #~ for mi in quicklinks.items]
+              #~ )
+            chunks = []
+            for mi in quicklinks.items:
+                chunks.append(' ')
+                chunks.append(req.ui.ext_renderer.action_href_js(mi.action))
+            return xghtml.E.p('Quick Links:',*chunks)
       
     #~ @dd.virtualfield(dd.HtmlBox())
     #~ def missed_reminders(cls,self,req):

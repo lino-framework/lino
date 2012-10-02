@@ -470,7 +470,7 @@ class Mails(dd.Table):
     model = Mail
     column_names = "sent recipients subject * body"
     order_by = ["sent"]
-    detail_template = """
+    detail_layout = """
     subject project date 
     user sent #build_time id owner
     RecipientsByMail:50x5 AttachmentsByMail:20x5 uploads.UploadsByController:20x5
@@ -478,7 +478,7 @@ class Mails(dd.Table):
     """
     
 if not settings.LINO.project_model:
-    Mails.detail_template.replace('project','')
+    Mails.detail_layout.replace('project','')
     
     
 class MyOutbox(Mails):
@@ -573,7 +573,7 @@ class Attachments(dd.Table):
     model = Attachment
     required = dict(user_groups='office')
     #~ window_size = (400,500)
-    #~ detail_template = """
+    #~ detail_layout = """
     #~ mail owner
     #~ """
     

@@ -138,6 +138,7 @@ valign
 href
 type
 rel
+target
 """)
 
 def table_header_row(*headers,**kw):

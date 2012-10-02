@@ -107,7 +107,7 @@ class Content(babel.BabelNamed):
         
 class Contents(dd.Table):
     model = Content
-    detail_template = """
+    detail_layout = """
     id name
     school.CoursesByContent
     """
@@ -196,7 +196,7 @@ class Pupils(contacts.Persons):
   
 #~ class Slots(dd.Table):
     #~ model = Slot
-    #~ detail_template = """
+    #~ detail_layout = """
     #~ weekday start_time end_time
     #~ school.CoursesBySlot
     #~ """

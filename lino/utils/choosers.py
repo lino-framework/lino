@@ -199,7 +199,6 @@ def check_for_chooser(model,field):
     methname = field.name + "_choices"
     m = get_class_attr(model,methname)
     if m is not None:
-        #~ n += 1
         ch = Chooser(model,field,m)
         setattr(field,'_lino_chooser',ch)
         #~ logger.debug("Installed %s",ch)

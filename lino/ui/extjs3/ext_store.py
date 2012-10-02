@@ -941,7 +941,7 @@ class Store:
         self.param_fields = []
         
         if rh.actor.parameters:
-            for pf in rh.params_layout._store_fields:
+            for pf in rh.params_layout_handle._store_fields:
             #~ for pf in rh.report.params:
                 self.param_fields.append(self.create_field(pf,pf.name))
         

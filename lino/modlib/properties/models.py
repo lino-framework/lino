@@ -260,14 +260,14 @@ class PropertyOccurence(dd.Model):
 
 class PropGroups(dd.Table):
     model = PropGroup
-    detail_template = """
+    detail_layout = """
     id name 
     PropsByGroup
     """
 
 class PropTypes(dd.Table):
     model = PropType
-    detail_template = """
+    detail_layout = """
     id name choicelist default_value
     ChoicesByType
     PropsByType

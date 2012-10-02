@@ -1,1 +1,0 @@
-The files below this directory are unmodified copies from http://www.ksz-bcss.fgov.be/fr/bcss/docutheque/content/websites/belgium/services/docutheque.html

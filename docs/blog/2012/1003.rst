@@ -1,0 +1,9 @@
+20121003
+========
+
+- Aktionsdialogfenster geht weiter, ist aber noch nicht fertig.
+
+- :mod:`lino.utils.niss` enthält die Utilities zur belgischen NISS, 
+  die bisher in :mod:`lino_welfare.modlib.pcsw.models` standen.
+  Neue neue Funktion gen_niss, die ich zum Generieren 
+  fiktiver, aber syntaktisch gültiger NISS brauche.

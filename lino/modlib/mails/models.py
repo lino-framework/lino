@@ -353,7 +353,7 @@ class AttachmentsByMail(Attachments):
 
 class Mails(dd.Table):
     model = Mail
-    detail_template = """
+    detail_layout = """
     id sender type sent received build_time
     subject
     RecipientsByMail:50x5 uploads.UploadsByController:20x5 AttachmentsByMail:20x5

@@ -119,7 +119,7 @@ class Uploads(dd.Table):
     model = Upload
     order_by = ["modified"]
     column_names = "file user created modified *"
-    detail_template = """
+    detail_layout = """
     file user
     type description 
     # person company

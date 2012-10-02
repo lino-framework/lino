@@ -121,32 +121,76 @@ Yes, it is recommended to use
 here instead of building a new :class:`ActionRequest <lino.core.actions.ActionRequest>` 
 from scratch.
 
+
+Baustellenbesichtigung
+----------------------
+
+Folgende Änderungen sind Resultat einer Baustellenbesichtigung mit Gerd.
+
+- Die mit :meth:`assign_coach <lino_welfare.modlib.newcomers.models.AvailableCoachesByClient.assign_coach>`
+  erstellten Begleitungen haben eine leere Begleitungsart.
+  
+  --> Neues Feld einen FK zu CoachingType in User einfügen. 
+  Also jeder Benutzer kriegt seinen CoachingType zugewiesen.
+
+- Was mach ich mit den vorgeschlagenen Begleitungen, 
+  deren Benutzer gar nicht in Lino arbeiten? 
+  Erstens müssen die ebenfalls per Mail benachrichtigt werden 
+  und zweitens sollte deren Coaching direkt im Status "Aktiv" stehen.
+  
+  Antwort: neue Regel: wenn user.profile leer ist, wird Coaching.state 
+  sogleich auf `active` gesetzt. 
+  Außerdem kriegt der Begleiter jetzt auch immer eine Mail.
+
+- Irgendwie konfigurierbar machen, 
+  wer bei assign_coach (außer evtl. dem Agenten selber) eine 
+  Benachrichtigung per Mail geschickt kriegen soll.
+  Konkret handelt es sich um Theresia und evtl. Isabelle.
+  Nennen wir sie die Coaching-Supervisoren.
+  Die müssen nichts anderes tun als dann in TIM das Attribut N ausschalten 
+  und PAR->IdUsr auffüllen.
+  
+  --> Ankreuzfeld "Coaching-Supervisor"
+
+- Es sollte zwei Versionen von assign_coach geben: die erste schickt ihre 
+  Mail im Hintergrund ohne vorherigen Dialog, die andere zeigt die 
+  generierte outbox.Mail vor dem Abschicken an.
+  
+  --> Eigentlich ist das auch ein Fall für die kommenden 
+  (aber noch nicht fertigen) action dialogs.
+  Provisorischer Workaround: abhängig vom UserLevel: normale User kriegen 
+  die erstellte Mail nicht zu sehen.
+
 TODO:
 
 - Klient 23363 ist seit 01.09.2012 begleitet, 
   coach1 ist Elmar, coach2 ist Mélanie. 
   Sollen beide Coachings am 01.09.2012 beginnen?
 
-- Die mit :meth:`assign_coach <lino_welfare.modlib.newcomers.models.AvailableCoachesByClient.assign_coach>`
-  erstellten Begleitungen haben eine leere Begleitungsart.
-  Ha! Ein Puzzlestück, nach dem wir lange gesucht haben! 
-  CoachingTypes und Faculties sind das Gleiche!
-  (à confirmer)
-
 - watch_tim ist noch nicht fertig. Krankenkasse und Apotheke. get_object() 
 
-- user-Listen oder Teams, oder irgendwie konfigurierbar machen, 
-  wer bei assign_coach eine Mail geschickt kriegen soll.
-  Am einfachsten wäre vielleicht ein bestimmtes Benutzerprofil...
+- Coachings sollte nur der Systemverwalter löschen können.
 
-- Was mach ich mit den vorgeschlagenen Begleitungen, 
-  deren Benutzer gar nicht in Lino arbeiten? 
-  Erstens müssen die ebenfalls per Mail benachrichtigt werden 
-  und zweitens sollte deren Coaching direkt im Status "Aktiv" stehen.
-
-- Es sollte zwei Versionen von assign_coach geben: die erste schickt ihre 
-  Mail im Hintergrund ohne vorherigen Dialog, die andere zeigt die 
-  generierte outbox.Mail vor dem Abschicken an.
+- virtuelle Tabelle HistoryByClient : notes.Notes, outbox.Mails, cal.Events, postings.Postings
   
+- MySettings : Speichern funktioniert nicht::
 
-  
+    Http404
+    users.MySettings has no url action u''
+
+    TRACEBACK:
+      File "l:\snapshots\django\django\core\handlers\base.py", line 111, in get_response
+        response = callback(request, *callback_args, **callback_kwargs)
+
+      File "l:\snapshots\django\django\views\generic\base.py", line 58, in view
+        return self.dispatch(request, *args, **kwargs)
+
+      File "l:\snapshots\django\django\views\generic\base.py", line 79, in dispatch
+        return handler(request, *args, **kwargs)
+
+      File "t:\hgwork\lino\lino\ui\extjs3\views.py", line 786, in put
+        ar = action_request(app_label,actor,request,data)
+
+      File "t:\hgwork\lino\lino\ui\extjs3\views.py", line 92, in action_request
+        raise http.Http404("%s has no url action %r" % (rpt,action_name))
+      

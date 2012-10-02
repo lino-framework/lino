@@ -108,7 +108,7 @@ class EntryTypes(dd.Table):
     column_names = 'name build_method template *'
     order_by = ["name"]
     
-    detail_template = """
+    detail_layout = """
     id name
     build_method template
     remark:60x5

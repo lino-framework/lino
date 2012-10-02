@@ -32,6 +32,7 @@ from lino.utils import Warning
 from lino.ui import requests as ext_requests
 
 from lino.core.modeltools import resolve_model
+from lino.core import layouts
 
 #~ from lino.core.perms import UserLevels
 #~ from lino.core import perms 
@@ -133,7 +134,7 @@ class DialogRequired(Exception):
         Exception.__init__(self)
         
 class Parametrizable(object):        
-  
+    
     parameters = None
     """
     User-definable parameter fields for this table.
@@ -148,6 +149,13 @@ class Parametrizable(object):
     laid out in the parameters panel.
     """
     
+    params_panel_hidden = False
+    """
+    If this table has parameters, set this to False if the parameters 
+    panel should be visible when this table is being displayed.
+    """
+    
+    
     @classmethod
     def register_params(cls):
         if cls.parameters:
@@ -156,13 +164,23 @@ class Parametrizable(object):
                 v.table = cls
                 
     @classmethod
+    def make_params_layout_handle(self,ui):
+        if self.params_layout:
+            params_layout = self.params_layout
+        else:
+            #~ params_layout= ' '.join([pf.name for pf in h.actor.params])
+            params_layout = ' '.join(self.parameters.keys())
+        pl = layouts.ParamsLayout(params_layout,self)
+        return pl.get_layout_handle(ui)
+            
+    @classmethod
     def after_site_setup(self,site):
         if self.parameters:
             from lino.utils.choosers import check_for_chooser
-            for k,v in self.parameters.items():
-                if isinstance(v,models.ForeignKey):
-                    v.rel.to = resolve_model(v.rel.to)
-                check_for_chooser(self,v)
+            for k,fld in self.parameters.items():
+                if isinstance(fld,models.ForeignKey):
+                    fld.rel.to = resolve_model(fld.rel.to)
+                check_for_chooser(self,fld)
         
     @classmethod
     def get_param_elem(self,name):
@@ -172,13 +190,25 @@ class Parametrizable(object):
             #~ if pf.name == name:  return pf
         return None
       
+    @classmethod
+    def get_window_layout(self):
+        return self.params_layout
         
+        
+class ActionMetaClass(type):
+    def __new__(meta, classname, bases, classDict):
+        cls = type.__new__(meta, classname, bases, classDict)
+        cls.register_params()
+        return cls
+      
 
 
 class Action(Parametrizable):
     """
     Abstract base class for all Actions
     """
+    
+    __metaclass__ = ActionMetaClass
     
     sort_index = 90
     """
@@ -341,7 +371,6 @@ class Action(Parametrizable):
         assert self.callable_from is None or isinstance(
             self.callable_from,(tuple,type)), "%s" % self
             
-        #~ self.register_params()
 
         
     def set_required(self,**kw):

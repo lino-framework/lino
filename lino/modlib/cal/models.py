@@ -182,7 +182,7 @@ class Calendars(dd.Table):
     model = 'cal.Calendar'
     column_names = "name type color readonly build_method template *"
     
-    detail_template = """
+    detail_layout = """
     type name id 
     # description
     url_template username password
@@ -345,7 +345,7 @@ class Priorities(dd.Table):
     #~ model = EventType
     #~ required = dict(user_groups='office')
     #~ column_names = 'name build_method template *'
-    #~ detail_template = """
+    #~ detail_layout = """
     #~ id name
     #~ build_method template email_template attach_to_email
     #~ cal.EventsByType
@@ -676,7 +676,7 @@ class RecurrenceSets(dd.Table):
     model = RecurrenceSet
     required = dict(user_groups='office')
     
-    detail_template = """
+    detail_layout = """
     id calendar uid summary start_date start_time
     description
     """
@@ -1260,13 +1260,13 @@ class Tasks(dd.Table):
     order_by = ["-start_date","-start_time"]
     #~ hidden_columns = set('owner_id owner_type'.split())
     
-    #~ detail_template = """
+    #~ detail_layout = """
     #~ start_date status due_date user  
     #~ summary 
     #~ created:20 modified:20 owner #owner_type #owner_id
     #~ description #notes.NotesByTask    
     #~ """
-    detail_template = """
+    detail_layout = """
     start_date due_date id state workflow_buttons 
     summary 
     user project 
@@ -1337,7 +1337,7 @@ class GuestRoles(dd.Table):
     """
     model = GuestRole
     required = dict(user_groups='office')
-    detail_template = """
+    detail_layout = """
     id name
     build_method template email_template attach_to_email
     cal.GuestsByRole
@@ -1983,7 +1983,7 @@ class Home(lino.Home):
 
     label = lino.Home.label
     app_label = 'lino'
-    detail_template = """
+    detail_layout = """
     quick_links:80x1
     coming_reminders:40x16 missed_reminders:40x16
     """

@@ -76,7 +76,7 @@ class NoteTypes(dd.Table):
     column_names = 'name build_method template *'
     order_by = ["name"]
     
-    detail_template = """
+    detail_layout = """
     id name
     build_method template email_template attach_to_email
     remark:60x5
@@ -106,7 +106,7 @@ class EventTypes(dd.Table):
     column_names = 'name *'
     order_by = ["name"]
     
-    detail_template = """
+    detail_layout = """
     id name
     remark:60x3
     notes.NotesByEventType:60x6

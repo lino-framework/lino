@@ -138,16 +138,23 @@ class ChangeStateAction(actions.RowAction):
         
         return ar.ui.success_response(**kw)
         
-    
+from django.utils.functional import Promise
+
 class State(choicelists.Choice):        
         
     def add_workflow(self,label=None,help_text=None,**required):
         self.choicelist.workflow_actions = list(self.choicelist.workflow_actions)
         i = len(self.choicelist.workflow_actions)
-        def fn():
-            return ChangeStateAction(self,required,
-                label=label or self.text,help_text=help_text,
-                sort_index=10+i)
+        if label and not isinstance(label,(basestring,Promise)):#issubclass(label,ChangeStateAction):
+            def fn():
+                return label(self,required,
+                    help_text=help_text,
+                    sort_index=10+i)
+        else:
+            def fn():
+                return ChangeStateAction(self,required,
+                    label=label or self.text,help_text=help_text,
+                    sort_index=10+i)
         #~ name = 'mark_' + self.value
         name = 'wf' + str(i)
         #~ print 20120709, self, name, a
@@ -256,14 +263,13 @@ class ActorMetaClass(type):
                 #~ cls.params.append(v)
                 
         
-        
         dt = classDict.get('detail_template',None)
         dl = classDict.get('detail_layout',None)
         if dt is not None:
-            if dl is not None:
-                raise Exception("%r has both detail_template and detail_layout" % cls)
-            dl = dt
-            #~ cls.detail_layout = layouts.FormLayout(dt,cls)
+            raise Exception("Rename detail_template to detail_layout")
+            #~ if dl is not None:
+                #~ raise Exception("%r has both detail_template and detail_layout" % cls)
+            #~ dl = dt
             
         if dl is not None:
             if isinstance(dl,basestring):
@@ -488,13 +494,6 @@ class Actor(actions.Parametrizable):
     these values set.
     
     """
-    
-    params_panel_hidden = False
-    """
-    If this table has parameters, set this to False if the parameters 
-    panel should be visible when this table is being displayed.
-    """
-    
     
     
     title = None
@@ -1044,3 +1043,13 @@ class Actor(actions.Parametrizable):
 
         
 
+#~ def workflow(target_state,**kw):
+    #~ """
+    #~ Decorator to define workflow actions.
+    #~ """
+    #~ req = kw.pop('required',{})
+    #~ def decorator(fn):
+        #~ a = ChangeStateAction(target_state,req,**kw)
+        #~ a.run = fn
+        #~ return a
+    #~ return decorator

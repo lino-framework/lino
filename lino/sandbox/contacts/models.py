@@ -249,7 +249,7 @@ class Contact(dd.Model):
 class Contacts(dd.Table):
     model = Contact
     #~ column_names = '*'
-    detail_template = """
+    detail_layout = """
     person company role
     email url
     phone gsm fax

@@ -173,7 +173,7 @@ if settings.LINO.user_model and settings.LINO.is_installed('contenttypes'):
   class Rules(dd.Table):
       model = Rule
       column_names = "actor_name:20 action_name:20 state user_level user_group owned_only *"
-      #~ detail_template = """
+      #~ detail_layout = """
       #~ content_type seqno id 
       #~ name 
       #~ user_level user_groups owned_only

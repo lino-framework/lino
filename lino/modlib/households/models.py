@@ -53,7 +53,7 @@ class Type(babel.BabelNamed):
 
 class Types(dd.Table):
     model = Type
-    detail_template = """
+    detail_layout = """
     name 
     HouseholdsByType
     """
@@ -180,7 +180,7 @@ of all name-giving members with a dash ("-").
 
 class Roles(dd.Table):
     model = Role
-    detail_template = """
+    detail_layout = """
     name name_giving
     #male
     #female

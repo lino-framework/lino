@@ -23,7 +23,7 @@ class Provider(dd.Model):
 class Providers(dd.Table):
     model = Provider
     
-    detail_template = """
+    detail_layout = """
     id name place email
     OffersByProvider
     """
@@ -40,7 +40,7 @@ class Customer(dd.Model):
 class Customers(dd.Table):
     model = Customer
     
-    detail_template = """
+    detail_layout = """
     id name place email
     DemandsByCustomer
     """
@@ -55,7 +55,7 @@ class Product(dd.Model):
 class Products(dd.Table):
     model = Product
     
-    detail_template = """
+    detail_layout = """
     id name
     OffersByProduct DemandsByProduct
     """

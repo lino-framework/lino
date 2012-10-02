@@ -116,10 +116,13 @@ class HtmlRenderer(object):
         return '<a href="%s">%s</a>' % (url,text)
         
     def href_button(self,url,text,title=None):
+        #~ logger.info('20121002 href_button %r',unicode(text))
         if title:
-            return '[<a href="%s" title="%s">%s</a>]' % (
-                url,cgi.escape(unicode(title)),text)
-        return '[<a href="%s">%s</a>]' % (url,text)
+            return xghtml.E.a(text,href=url,title=title)
+        return xghtml.E.a(text,href=url)
+            #~ return '[<a href="%s" title="%s">%s</a>]' % (
+                #~ url,cgi.escape(unicode(title)),text)
+        #~ return '[<a href="%s">%s</a>]' % (url,text)
         
     def quick_add_buttons(self,ar):
         """
@@ -140,6 +143,7 @@ class HtmlRenderer(object):
         #~ params = ar.get_status(self)
         #~ after_show = dict()
         #~ a = ar.actor.get_action('insert')
+        buttons = []
         a = ar.actor.insert_action
         if a is not None:
             if a.get_action_permission(ar.get_user(),None,None):
@@ -147,19 +151,24 @@ class HtmlRenderer(object):
                 after_show.update(data_record=views.elem2rec_insert(ar,ar.ah,elem))
                 #~ after_show.update(record_id=-99999)
                 # see tickets/56
-                s += self.action_href_js(a,after_show,_("New"))
+                #~ s += self.action_href_js(a,after_show,_("New"))
+                buttons.append(self.action_href_js(a,after_show,_("New")))
+                buttons.append(' ')
                 after_show = ar.get_status(self)
         n = ar.get_total_count()
         #~ print 20120702, [o for o in ar]
         if n > 0:
             obj = ar.data_iterator[n-1]
             after_show.update(record_id=obj.pk)
-            s += ' ' + self.action_href_js(
-                ar.ah.actor.detail_action,after_show,_("Show Last"))
+            buttons.append(self.action_href_js(
+                ar.ah.actor.detail_action,after_show,_("Show Last")))
+            buttons.append(' ')
+            #~ s += ' ' + self.action_href_js(
+                #~ ar.ah.actor.detail_action,after_show,_("Show Last"))
             #~ s += ' ' + self.href_to_request(ar,"[%s]" % unicode(_("Show All")))
-            s += ' ' + xghtml.E.tostring(self.href_to_request(None,ar,_("Show All")))
+            buttons.append(self.href_to_request(None,ar,_("Show All")))
         #~ return '<p>%s</p>' % s
-        return s
+        return xghtml.E.p(*buttons)
                 
     def quick_upload_buttons(self,rr):
         """
@@ -190,15 +199,23 @@ class HtmlRenderer(object):
                 return self.action_href_js(a,after_show,_("Upload"))
         if rr.get_total_count() == 1:
             obj = rr.data_iterator[0]
-            s = ''
-            s += ' [<a href="%s" target="_blank">show</a>]' % (self.ui.media_url(obj.file.name))
-            if True:
-                after_show.update(record_id=obj.pk)
-                s += ' ' + self.action_href_js(rr.ah.actor.detail_action,after_show,_("Edit"))
-            else:
-                after_show.update(record_id=obj.pk)
-                s += ' ' + self.action_href_http(rr.ah.actor.detail_action,_("Edit"),params,after_show)
-            return s
+            chunks = []
+            chunks.append(xghtml.E.a(_("show"),
+              href=self.ui.media_url(obj.file.name),target='_blank'))
+            chunks.append(' ')
+            after_show.update(record_id=obj.pk)
+            chunks.append(self.action_href_js(rr.ah.actor.detail_action,after_show,_("Edit")))
+            return xghtml.E.p(*chunks)
+            
+            #~ s = ''
+            #~ s += ' [<a href="%s" target="_blank">show</a>]' % (self.ui.media_url(obj.file.name))
+            #~ if True:
+                #~ after_show.update(record_id=obj.pk)
+                #~ s += ' ' + self.action_href_js(rr.ah.actor.detail_action,after_show,_("Edit"))
+            #~ else:
+                #~ after_show.update(record_id=obj.pk)
+                #~ s += ' ' + self.action_href_http(rr.ah.actor.detail_action,_("Edit"),params,after_show)
+            #~ return s
         return '[?!]'
 
   
@@ -257,6 +274,8 @@ class PlainRenderer(HtmlRenderer):
         #~ print '20120901 TODO get_request_url'
         return ar.ui.build_url('api',ar.actor.app_label,ar.actor.__name__,*args,**kw)
         
+    def request_handler(self,ar,*args,**kw):
+        return ''
   
 class ExtRenderer(HtmlRenderer):
     """
@@ -340,7 +359,8 @@ class ExtRenderer(HtmlRenderer):
         return v
         
     def action_call(self,request,a,after_show):
-        if a.opens_a_window:
+        if a.opens_a_window or a.parameters:
+        #~ if a.opens_a_window:
             #~ if after_show is None:
                 #~ after_show = {}
             if request and request.subst_user:
@@ -360,22 +380,27 @@ class ExtRenderer(HtmlRenderer):
     #~ def action_url_js(self,a,after_show):
         #~ return self.js2url(self.action_call(a,after_show))
 
+    def action_button(self,obj,ar,a,label=None):
+        if a.opens_a_window or a.parameters:
+        #~ if a.opens_a_window:
+            #~ raise Exception('20121002 %s %r' % (a,unicode(label)))
+            after_show = ar.get_status(self)
+            after_show.update(record_id=obj.pk)
+            return self.action_href_js(a,after_show,label or a.label)
+        return self.row_action_button(obj,ar.request,a,label)
+        
     def action_href_js(self,a,after_show={},label=None):
         """
         Return a HTML chunk for a button that will execute this 
         action using a *Javascript* link to this action.
         """
-        label = cgi.escape(force_unicode(label or a.get_button_label()))
+        #~ label = cgi.escape(force_unicode(label or a.get_button_label()))
+        label = unicode(label or a.get_button_label())
         #~ url = self.action_url_js(a,after_show)
-        url = self.js2url(self.action_call(None,a,after_show))
+        #~ url = self.js2url(self.action_call(None,a,after_show))
+        url = 'javascript:'+self.action_call(None,a,after_show)
+        #~ logger.info('20121002 action_href_js %s %r',a,unicode(label))
         return self.href_button(url,label,a.help_text)
-        
-    def action_button(self,obj,ar,a,label=None):
-        if a.opens_a_window:
-            after_show = ar.get_status(self)
-            after_show.update(record_id=obj.pk)
-            return self.action_href_js(a,after_show,label or a.label)
-        return self.row_action_button(obj,ar.request,a,label)
         
     #~ def row_action_button(self,obj,ar,a,label=None):
         #~ """
@@ -1448,7 +1473,7 @@ tinymce.init({
                     f.write(ln + '\n')
                 
             for a in rpt.get_actions():
-                if a.opens_a_window:
+                if a.opens_a_window or a.parameters:
                     if isinstance(a,(actions.ShowDetailAction,actions.InsertRow)):
                         for ln in self.js_render_detail_action_FormPanel(rh,a):
                               f.write(ln + '\n')
@@ -1531,18 +1556,8 @@ tinymce.init({
             h.list_layout = None
                 
         if h.actor.parameters:
-            #~ if h.actor.params_layout:
-                #~ raise Exception("20120918 rename params_template to params_layout!")
-            if h.actor.params_layout:
-                params_layout = h.actor.params_layout
-            else:
-                #~ params_layout= ' '.join([pf.name for pf in h.actor.params])
-                params_layout= ' '.join(h.actor.parameters.keys())
-            pl = layouts.ParamsLayout(params_layout,h.actor)
-            h.params_layout = pl.get_layout_handle(self)
-            #~ h.params_layout.main.update(hidden = h.actor.params_panel_hidden)
-            #~ h.params_layout = layouts.LayoutHandle(self,pl)
-            #~ logger.info("20120121 %s params_layout is %s",h,h.params_layout)
+            h.params_layout_handle = h.actor.make_params_layout_handle(self)
+            #~ logger.info("20120121 %s params_layout_handle is %s",h,h.params_layout_handle)
         
         h.store = ext_store.Store(h)
         
@@ -1829,6 +1844,7 @@ tinymce.init({
         """
         Defines the non-window action handler used by :meth:`row_action_button`
         """
+        
         # 20120723 : removed useless js param "action"
         yield "Lino.%s = function(rp,pk) { " % action
         #~ panel = "Lino.%s.GridPanel.ls_url" % action 
@@ -1843,7 +1859,7 @@ tinymce.init({
         rpt = rh.actor
         
         if rpt.parameters and action.use_param_panel:
-            params = rh.params_layout.main
+            params = rh.params_layout_handle.main
         else:
             params = None
         #~ params = None
@@ -1855,11 +1871,14 @@ tinymce.init({
         elif isinstance(action,actions.GridEdit):
             mainPanelClass = "Lino.%s.GridPanel" % rpt
             #~ if rh.actor.parameters:
-                #~ params = rh.params_layout.main
+                #~ params = rh.params_layout_handle.main
         elif isinstance(action,CalendarAction):
             mainPanelClass = "Lino.CalendarPanel"
             #~ mainPanelClass = "Lino.CalendarAppPanel"
             #~ mainPanelClass = "Ext.ensible.cal.CalendarPanel"
+        elif action.parameters:
+            mainPanelClass = "Lino.%sPanel" % action
+            params = action.make_params_layout_handle(self).main
         else:
             return 
         if action.actor is None:
