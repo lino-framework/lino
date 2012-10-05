@@ -28,3 +28,34 @@ verursacht hatte:
 - Und dann müssen die Werte der Aktionsparameter noch in eine Variable 
   `ar.action_param_values` übergeben werden.
 
+
+Miscellaneous
+-------------
+
+- Documented :class:`lino.core.layouts.Panel`.
+
+
+
+Nachmittags habe ich dann bemerkt, dass die Entwicklungslawine 
+noch nicht fertig war. Die StateChangeActions müssen einfach 
+in ihrer ChoiceList gespeichert werden, 
+nicht in der Tabelle, die sie benutzt. 
+Denn wie soll man sonst ihren Namen rausfinden.
+
+Dazu musste 
+ChoiceList zu einer Unterklasse von Actor werden.
+Was viel Hin- und Herschieberei erforderte. 
+Unter Anderem haben ChoiceLists jetzt nicht mehr einfache 
+Namen, sondern sind einem app_label zugeordnet:
+
+- Gender --> contacts.Gender
+- HowWell --> properties.HowWell
+- HowDoYouLike --> properties.HowDoYouLike
+
+(Zu beachten bei der Datenmigration)
+
+Aber es hat sich gelohnt:
+z.B. werden ChoiceLists jetzt nur noch ein einziges Mal 
+in den `lino*.js` definiert, 
+statt bei jeder Verwendung inline in den Code geklebt zu werden.
+

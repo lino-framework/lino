@@ -92,9 +92,9 @@ from lino.core.modeltools import app_labels
 
 from lino.utils.babel import LANGUAGE_CHOICES
 
-from lino.utils.choicelists import DoYouLike, HowWell
-STRENGTH_CHOICES = DoYouLike.get_choices()
-KNOWLEDGE_CHOICES = HowWell.get_choices()
+#~ from lino.utils.choicelists import DoYouLike, HowWell
+#~ STRENGTH_CHOICES = DoYouLike.get_choices()
+#~ KNOWLEDGE_CHOICES = HowWell.get_choices()
 
 NOT_GIVEN = object()
 
@@ -299,10 +299,10 @@ class ExtRenderer(HtmlRenderer):
         """
         if v is LANGUAGE_CHOICES:
             return js_code('LANGUAGE_CHOICES')
-        if v is STRENGTH_CHOICES:
-            return js_code('STRENGTH_CHOICES')
-        if v is KNOWLEDGE_CHOICES:
-            return js_code('KNOWLEDGE_CHOICES')
+        #~ if v is STRENGTH_CHOICES:
+            #~ return js_code('STRENGTH_CHOICES')
+        #~ if v is KNOWLEDGE_CHOICES:
+            #~ return js_code('KNOWLEDGE_CHOICES')
         if isinstance(v,choicelists.Choice):
             """
             This is special. We don't render the text but the value. 
@@ -1261,8 +1261,8 @@ tinymce.init({
             yield "Ext.BLANK_IMAGE_URL = '%s/extjs/resources/images/default/s.gif';" % self.media_url()
             yield "LANGUAGE_CHOICES = %s;" % py2js(list(LANGUAGE_CHOICES))
             # TODO: replace the following lines by a generic method for all ChoiceLists
-            yield "STRENGTH_CHOICES = %s;" % py2js(list(STRENGTH_CHOICES))
-            yield "KNOWLEDGE_CHOICES = %s;" % py2js(list(KNOWLEDGE_CHOICES))
+            #~ yield "STRENGTH_CHOICES = %s;" % py2js(list(STRENGTH_CHOICES))
+            #~ yield "KNOWLEDGE_CHOICES = %s;" % py2js(list(KNOWLEDGE_CHOICES))
             yield "MEDIA_URL = %r;" % (self.media_url())
             #~ yield "ROOT_URL = %r;" % settings.LINO.root_url
             yield "ROOT_URL = %r;" % self.root_url
@@ -1441,11 +1441,17 @@ tinymce.init({
 
         actors_list = [a for a in actors_list if a.get_view_permission(jsgen._for_user)]
           
+        f.write("\n// ChoiceLists: \n")
+        for a in choicelists.CHOICELISTS.values():
+            #~ if issubclass(a,choicelists.ChoiceList):
+            f.write("Lino.%s = %s;\n" % (a.actor_id,py2js(a.get_choices())))
+                
         #~ logger.info('20120120 dbtables.all_details:\n%s',
             #~ '\n'.join([str(d) for d in dbtables.all_details]))
         
         details = set()
         def add(actor,fl,nametpl):
+            # fl : a FormLayout
             if fl is not None:
                 #~ if details.has_key():
                 if fl in details:
@@ -1498,6 +1504,7 @@ tinymce.init({
             for a in rpt.get_actions():
                 if a.parameters:
                     if not a in actions_written:
+                        #~ logger.info("20121005 %r is not in %r",a,actions_written)
                         actions_written.add(a)
                         for ln in self.js_render_window_action(rh,a,user):
                             f.write(ln + '\n')
@@ -1743,13 +1750,14 @@ tinymce.init({
         
     def js_render_detail_action_FormPanel(self,rh,action):
         rpt = rh.actor
+        #~ logger.info('20121005 js_render_detail_action_FormPanel(%s,%s)',rpt,action.full_name(rpt))
         yield ""
         #~ yield "// js_render_detail_action_FormPanel %s" % action
         action = actions.BoundAction(rpt,action)
         dtl = action.get_window_layout()
         #~ dtl = rpt.detail_layout
         if dtl is None:
-            raise Exception("action %r on table %r == %r without detail?" % (action,action.actor,rpt))
+            raise Exception("action %s without detail?" % action.full_name())
         #~ yield "Lino.%sPanel = Ext.extend(Lino.%s.FormPanel,{" % (action,dtl._table)
         yield "Lino.%sPanel = Ext.extend(Lino.%s,{" % (action.full_name(),dtl._formpanel_name)
         yield "  empty_title: %s," % py2js(action.get_button_label())
@@ -1909,7 +1917,7 @@ tinymce.init({
             #~ mainPanelClass = "Lino.CalendarAppPanel"
             #~ mainPanelClass = "Ext.ensible.cal.CalendarPanel"
         elif action.parameters:
-            mainPanelClass = "Lino.ActionParamsPanel"
+            #~ mainPanelClass = "Lino.ActionParamsPanel"
             params_panel = action.make_params_layout_handle(self).main
             #~ logger.info("20121003 %r %s", action, params_panel)
         else:
@@ -1962,11 +1970,15 @@ tinymce.init({
             if params_panel:
                 for ln in jsgen.declare_vars(params_panel):
                     yield '  '  + ln
-                yield "  p.params_panel = %s;" % params_panel
-                yield "  p.params_panel.fields = %s;" % py2js(
-                  [e for e in params_panel.walk() if isinstance(e,ext_elems.FieldElement)])
-            
-            yield "  return new %s(p);" % mainPanelClass
+                if action.parameters:
+                    yield "  return %s;" % params_panel
+                else:
+                    yield "  p.params_panel = %s;" % params_panel
+                    yield "  p.params_panel.fields = %s;" % py2js(
+                      [e for e in params_panel.walk() if isinstance(e,ext_elems.FieldElement)])
+                    yield "  return new %s(p);" % mainPanelClass
+            else:
+                yield "  return new %s(p);" % mainPanelClass
         #~ yield "  console.log('20120625 rv is',rv);" 
         #~ yield "  return rv;"
         yield "});" 

@@ -703,16 +703,18 @@ class ComboFieldElement(FieldElement):
 class ChoicesFieldElement(ComboFieldElement):
     value_template = "new Lino.ChoicesFieldElement(%s)"
   
-    #~ def __init__(self,*args,**kw):
-        #~ self.preferred_width = 20
-        #~ FieldElement.__init__(self,*args,**kw)
-        
     def get_field_options(self,**kw):
         kw = ComboFieldElement.get_field_options(self,**kw)
         kw.update(store=tuple(self.field.choices))
         #~ kw.update(hiddenName=self.field.name+ext_requests.CHOICES_HIDDEN_SUFFIX)
         return kw
         
+class ChoiceListFieldElement(ChoicesFieldElement):
+    def get_field_options(self,**kw):
+        kw = ComboFieldElement.get_field_options(self,**kw)
+        #~ kw.update(store=js_code('Lino.%s.choices' % self.field.choicelist.actor_id))
+        kw.update(store=js_code('Lino.%s' % self.field.choicelist.actor_id))
+        return kw
 
 class RemoteComboFieldElement(ComboFieldElement):
     value_template = "new Lino.RemoteComboFieldElement(%s)"
@@ -1695,9 +1697,10 @@ class ActionParamsPanel(Panel):
     The optional Panel for `parameters` of an Action. 
     """
     xtype = None
-    value_template = "new Ext.form.FormPanel(%s)"
+    #~ value_template = "%s"
+    #~ value_template = "new Ext.form.FormPanel(%s)"
     #~ value_template = "new Lino.ActionParamsPanel({layout:'fit', autoHeight: true, frame: true, items:new Ext.Panel(%s)})"
-    #~ value_template = "new Lino.ActionParamsPanel(%s)"
+    value_template = "new Lino.ActionParamsPanel(%s)"
     
 class ParamsPanel(Panel):
     """
@@ -1798,9 +1801,10 @@ def field2elem(layout_handle,field,**kw):
         if isinstance(field,choicelists.ChoiceListField):
             kw.setdefault('preferred_width',field.choicelist.preferred_width)
             kw.update(forceSelection=field.force_selection)
+            return ChoiceListFieldElement(layout_handle,field,**kw)
         else:
             kw.setdefault('preferred_width',20)
-        return ChoicesFieldElement(layout_handle,field,**kw)
+            return ChoicesFieldElement(layout_handle,field,**kw)
     
     selector_field = field
     if isinstance(field,dd.VirtualField):

@@ -2272,12 +2272,12 @@ Lino.RichTextPanel = Ext.extend(Lino.RichTextPanel,{
 Lino.ActionParamsPanel = Ext.extend(Ext.form.FormPanel,Lino.MainPanel);
 Lino.ActionParamsPanel = Ext.extend(Lino.ActionParamsPanel,Lino.MainPanel);
 Lino.ActionParamsPanel = Ext.extend(Lino.ActionParamsPanel,{
-  layout:'fit'
-  ,autoHeight: true
-  ,frame: true
-  ,constructor : function(config){
+  //~ layout:'fit'
+  //~ ,autoHeight: true
+  //~ ,frame: true
+  constructor : function(config){
     config.bbar = [{text:'OK'},{text:'Cancel'}]
-    config.items = config.params_panel;
+    //~ config.items = config.params_panel;
     Lino.ActionParamsPanel.superclass.constructor.call(this, config);
   }
   ,initComponent : function(){

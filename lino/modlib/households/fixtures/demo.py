@@ -29,7 +29,8 @@ from django.db import models
 from django.conf import settings
 from lino.utils.babel import babel_values
 from lino.utils import Cycler
-from lino.utils.choicelists import Gender
+#~ from lino.utils.choicelists import Gender
+from lino.modlib.contacts.utils import Gender
 
 
 

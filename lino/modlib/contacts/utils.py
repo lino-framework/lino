@@ -20,6 +20,22 @@ import re
 #~ from django.db import models
 #~ from django.conf import settings
 
+from django.utils.translation import ugettext_lazy as _
+
+from lino.utils.choicelists import ChoiceList
+
+class Gender(ChoiceList):
+    """
+    Defines choices for the "Gender" of a person.
+
+    """
+    label = _("Gender")
+add = Gender.add_item
+add('M',_("Male"),'male')
+add('F',_("Female"),'female')
+
+
+
 
 name_prefixes1 = ("HET", "'T",'VAN','DER', 'TER',
   'VOM','VON','OF', "DE", "DU", "EL", "AL")

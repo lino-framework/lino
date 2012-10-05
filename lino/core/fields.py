@@ -37,7 +37,7 @@ from lino.core.modeltools import resolve_field
 from lino.core.modeltools import resolve_model
 
 #~ from lino.utils import choosers
-from lino.utils import choicelists
+#~ from lino.utils import choicelists
 from lino.utils import IncompleteDate, d2iso
 #~ from lino.utils.quantities import Duration
 from lino.utils import quantities 

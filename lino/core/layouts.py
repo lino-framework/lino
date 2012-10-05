@@ -47,10 +47,30 @@ def DEBUG_LAYOUTS(lo):
     return False
     
 class Panel(object):
+    """
+    This is available as `dd.Panel`.
+    Used when a panel is more complex than what can be expressed 
+    using a simple template string.     
+    
+    The `options` parameter can be:
+    
+    - label
+    - required
+    
+    Unlike a :class:`FormPanel` it cannot have any child panels 
+    and cannot become a tabbed panel.
+    
+    See :doc:`/topics/layouts`.
+    """
     def __init__(self,desc,**options):
         self.desc = desc
-        self.options = options    
+        self.options = options
+        
     def replace(self,*args,**kw):
+        """
+        Calls the standard :meth:`string.replace` 
+        method on this Panel's template.
+        """
         self.desc = self.desc.replace(*args,**kw)
 
 class LayoutHandle:

@@ -34,7 +34,7 @@ from lino import dd
 from lino import mixins
 from lino.utils import join_words
 from lino.utils.choosers import chooser
-from lino.utils.choicelists import Gender
+#~ from lino.modlib.contacts.utils import Gender
 from lino.utils import babel
 
 from lino.utils import mti

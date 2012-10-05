@@ -35,7 +35,7 @@ from lino.core import actions
 
 #~ contacts = dd.resolve_app('contacts')
 
-from lino.core.perms import UserLevels, UserProfiles
+#~ from lino.core.perms import UserLevels
 
 #~ if settings.LINO.is_installed('users') and settings.LINO.user_model != 'users.User':
     #~ raise Exception("""\
@@ -74,7 +74,7 @@ class User(mixins.CreatedModified):
         Required. Must be unique. 
         """))
         
-    profile = UserProfiles.field(blank=True)
+    profile = dd.UserProfiles.field(blank=True)
     
     first_name = models.CharField(_('First name'), max_length=30, blank=True)
     last_name = models.CharField(_('Last name'), max_length=30, blank=True)
@@ -127,9 +127,9 @@ class User(mixins.CreatedModified):
         """
         #~ print 20120621, self, user, state, action
         if action.readonly: return True
-        if user.profile.level >= UserLevels.admin: return True
+        if user.profile.level >= dd.UserLevels.admin: return True
         #~ print 20120621, user.profile.level, 'is not', UserLevels.admin
-        if user.profile.level >= UserLevels.user: 
+        if user.profile.level >= dd.UserLevels.user: 
             if user == self: return True
         return super(User,self).get_row_permission(user,state,action)
         #~ return False
@@ -141,7 +141,7 @@ class User(mixins.CreatedModified):
         """
         #~ if ar.get_user().is_superuser: 
         #~ if request.user.is_superuser: 
-        if ar.get_user().profile.level < UserLevels.admin:
+        if ar.get_user().profile.level < dd.UserLevels.admin:
             l = ['profile']
         else:
             l = []

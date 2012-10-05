@@ -21,9 +21,9 @@ import datetime
 from django.utils.translation import ugettext_lazy as _
 from django.utils.translation import pgettext_lazy 
 
-from lino.utils.choicelists import ChoiceList, Choice
+from lino.utils.choicelists import ChoiceList, Choice, Workflow
 from lino.core import actions
-from lino.core.actors import Workflow
+#~ from lino.core.actors import 
 
 from dateutil.tz import tzlocal
 

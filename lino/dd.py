@@ -73,11 +73,11 @@ Utilities:
 
 Miscellaneous:
 
-- :class:`UserProfiles <lino.core.perms.UserProfiles>`
-- :class:`UserGroups <lino.core.perms.UserGroups>`
-- :class:`UserLevels <lino.core.perms.UserLevels>`
+- :class:`UserProfiles <lino.utils.choicelists.UserProfiles>`
+- :class:`UserGroups <lino.utils.choicelists.UserGroups>`
+- :class:`UserLevels <lino.utils.choicelists.UserLevels>`
 - :class:`ChoiceList <lino.utils.choicelists.ChoiceList>`
-- :class:`Workflow <lino.core.actors.Workflow>`
+- :class:`Workflow <lino.utils.choicelists.Workflow>`
 
 
 
@@ -116,8 +116,8 @@ from lino.core.actions import InsertRow, DeleteSelected
 from lino.core.actions import SubmitDetail, SubmitInsert
 #~ from lino.core.actions import Calendar
 
-from lino.core.actors import Workflow
-from lino.core.actors import ChangeStateAction
+from lino.utils.choicelists import Workflow, ChoiceList, Choice
+from lino.core.actions import ChangeStateAction
 
 
 from lino.core.fields import DummyField
@@ -140,7 +140,9 @@ from lino.utils.babel import BabelCharField, BabelTextField
 
 from lino.utils.choosers import chooser
 
-from lino.core.perms import UserLevels, UserGroups, UserProfiles
+from lino.utils.choicelists import UserLevels, UserProfiles, UserGroups
+
+#~ from lino.base.utils import UserLevels, UserGroups, UserProfiles
 
 from lino.core.layouts import FormLayout, Panel
 #~ DetailLayout = InsertLayout = FormLayout

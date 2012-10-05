@@ -87,12 +87,16 @@ automatically available as a property value in
 
 import sys
 
+from django.utils.functional import Promise
 from django.utils.translation import ugettext_lazy as _
 from django.utils.translation import string_concat
 from django.utils.functional import lazy
 from django.db import models
 
 from lino.utils import curry, unicode_string
+
+from lino.core import actions
+from lino.core import actors
 
 
 class Choice(object):
@@ -153,7 +157,8 @@ class Choice(object):
 CHOICELISTS = {}
 
 def register_choicelist(cl):
-    k = cl.stored_name or cl.__name__
+    #~ k = cl.stored_name or cl.__name__
+    k = cl.stored_name or cl.actor_id
     if CHOICELISTS.has_key(k):
         raise Exception("ChoiceList name '%s' already defined by %s" % 
             (k,CHOICELISTS[k]))
@@ -168,7 +173,7 @@ def choicelist_choices():
     return l
       
     
-class ChoiceListMeta(type):
+class ChoiceListMeta(actors.ActorMetaClass):
     def __new__(meta, classname, bases, classDict):
         #~ if not classDict.has_key('app_label'):
             #~ classDict['app_label'] = cls.__module__.split('.')[-2]
@@ -178,7 +183,7 @@ class ChoiceListMeta(type):
         but applications may want to add longer group names
         """
         classDict.setdefault('max_length',1)
-        cls = type.__new__(meta, classname, bases, classDict)
+        cls = actors.ActorMetaClass.__new__(meta, classname, bases, classDict)
         
         cls.items_dict = {}
         cls.clear()
@@ -187,12 +192,13 @@ class ChoiceListMeta(type):
         #~ assert not hasattr(cls,'items') 20120620
         #~ for i in cls.items:
             #~ cls.add_item(i)
-        if classname not in ('ChoiceList',):
+        if classname not in ('ChoiceList','Workflow'):
             register_choicelist(cls)
         return cls
   
 
-class ChoiceList(object):
+#~ class ChoiceList(object):
+class ChoiceList(actors.Actor):
     """
     Used-defined choice lists must inherit from this base class.
     """
@@ -239,8 +245,16 @@ class ChoiceList(object):
     is not the default site language.
     """
     
-    def __init__(self,*args,**kw):
-        raise Exception("ChoiceList may not be instantiated")
+    #~ def __init__(self,*args,**kw):
+        #~ raise Exception("ChoiceList may not be instantiated")
+        
+    grid = actions.GridEdit()
+    
+    @classmethod
+    def get_default_action(cls):
+        return actions.BoundAction(cls,cls.grid)
+        
+        
         
     @classmethod
     def clear(cls):
@@ -561,49 +575,259 @@ class MultiChoiceListField(ChoiceListField):
 
 
 
-class DoYouLike(ChoiceList):
-    """
-    A list of possible answers to questions of type "How much do you like ...?".
-    """
-    label = _("certainly not...very much")
+
+
+
+
+class State(Choice):
+        
+    def add_workflow(self,label=None,help_text=None,**required):
+        """
+        `label` can be either a string or a subclass of ChangeStateAction
+        """
+        i = len(self.choicelist.workflow_actions)
+        #~ if label and issubclass(label,actions.Action):
+        if label and not isinstance(label,(basestring,Promise)):#issubclass(label,ChangeStateAction):
+            a = label(self,required,
+                help_text=help_text,
+                sort_index=10+i)
+        else:
+            a = actions.ChangeStateAction(self,required,
+                label=label or self.text,
+                help_text=help_text,
+                sort_index=10+i)
+        #~ name = 'mark_' + self.value
+        name = 'wf' + str(i+1)
+        a.attach_to_workflow(self,name)
+        #~ print 20120709, self, name, a
+        self.choicelist.workflow_actions = self.choicelist.workflow_actions + [ a ]
+        #~ self.choicelist.workflow_actions.append(a) 
+        #~ yield name,a
+        
+        #~ if action_label is not None:
+            #~ self.action_label = action_label
+        #~ if help_text is not None:
+            #~ self.help_text = help_text
+        #~ self.required = required
+        
+    #~ def set_required(self,**kw):
+        #~ from lino.core import perms
+        #~ perms.set_required(self,**kw)
+        
+
+
+class Workflow(ChoiceList):
+  
+    workflow_actions = []
     
-add = DoYouLike.add_item
-add('0',_("certainly not"))
-add('1',_("rather not"))
-add('2',_("normally"),"default")
-add('3',_("quite much"))
-add('4',_("very much"))
-
-class HowWell(ChoiceList):
-    """
-    A list of possible answers to questions of type "How well ...?":
-    "not at all", "a bit", "moderate", "quite well" and "very well" 
+    item_class = State
+  
+    #~ @classmethod
+    #~ def add_statechange(self,newstate,action_label=None,states=None,**kw):
+        #~ old = self.get_by_name()
     
-    which are stored in the database as '0' to '4',
-    and whose `__unicode__()` returns their translated text.
+    @classmethod
+    def before_state_change(cls,obj,ar,kw,oldstate,newstate):
+        pass
 
-    `lino.apps.pcsw.models.Languageknowledge.spoken` 
-    `lino.apps.pcsw.models.Languageknowledge.written` 
+    @classmethod
+    def after_state_change(cls,obj,ar,kw,oldstate,newstate):
+        pass
+
+        
+ #~ def set_required(self,**kw):
+        #~ from lino.core import perms
+        #~ perms.set_required(self,**kw)
+
+
+class UserLevels(ChoiceList):
     """
-    label = _("not at all...very well")
+    The level of a user is one way of differenciating users when 
+    defining access permissions and workflows. 
+    Lino speaks about user *level* where Plone speaks about user *role*.
+    Unlike user roles in Plone, user levels are hierarchic:
+    a "Manager" is higher than a simple "User" and thus 
+    can do everything for which a simple "User" level has permission.
     
-add = HowWell.add_item
-add('0',_("not at all"))
-add('1',_("a bit"))
-add('2',_("moderate"),"default")
-add('3',_("quite well"))
-add('4',_("very well"))
-
-
-class Gender(ChoiceList):
+    About the difference between "Administrator" and "Manager":
+    
+    - "Management is closer to the employees. 
+      Admin is over the management and more over the money 
+      of the organization and lilscencing of an organization. 
+      Mananagement manages employees. 
+      Admin manages the outside contacts and the 
+      facitlity as a whole." (`answerbag.com <http://www.answerbag.com/q_view/295182>`__)
+    
+    - See also a more detailed overview at
+      http://www.differencebetween.com/difference-between-manager-and-vs-administrator/
+    
     """
-    Defines choices for the "Gender" of a person.
+    label = _("User Level")
+    app_label = 'lino'
+    
+    
+    @classmethod
+    def field(cls,module_name=None,**kw):
+        """
+        Shortcut to create a :class:`lino.core.fields.ChoiceListField` in a Model.
+        """
+        kw.setdefault('blank',True)
+        if module_name is not None:
+            kw.update(verbose_name=string_concat(cls.label,' (',module_name,')'))
+        return super(UserLevels,cls).field(**kw)
+        
+add = UserLevels.add_item
+add('10', _("Guest"),'guest')
+#~ add('20', _("Restricted"),'restricted')
+add('20', _("Secretary"),'secretary')
+add('30', _("User"), "user")
+add('40', _("Manager"), "manager")
+add('50', _("Administrator"), "admin")
+add('90', _("Expert"), "expert")
+UserLevels.SHORT_NAMES = dict(A='admin',U='user',_=None,M='manager',G='guest',S='secretary')
 
+class UserGroups(ChoiceList):
     """
-    label = _("Gender")
-add = Gender.add_item
-add('M',_("Male"),'male')
-add('F',_("Female"),'female')
+    User Groups are another way of differenciating users when 
+    defining access permissions and workflows. 
+    
+    Applications will 
+    
+    """
+    label = _("User Group")
+    app_label = 'lino'
+    show_values = True
+    max_length = 20 
+    """
+    """
+        
+#~ add = UserGroups.add_item
+#~ add('system', _("System"))
+
+
+class UserProfile(Choice):
+  
+    def __init__(self,cls,value,text,name=None,memberships=None,readonly=False,**kw):
+      
+        super(UserProfile,self).__init__(cls,value,text,name)
+        
+        #~ keys = ['level'] + [g+'_level' for g in choicelist.groups_list]
+        #~ keys = ['level'] + [g+'_level' for g in choicelist.membership_keys]
+        self.readonly = readonly
+
+        if memberships is None:
+            for k in cls.membership_keys:
+                #~ kw[k] = UserLevels.blank_item
+                #~ kw.setdefault(k,UserLevels.blank_item) 20120829
+                kw.setdefault(k,None)
+        else:
+        #~ if memberships is not None:
+            if len(memberships.split()) != len(cls.membership_keys):
+                raise Exception(
+                    "Invalid memberships specification %r : must contain %d letters" 
+                    % (memberships,len(cls.membership_keys)))
+            for i,k in enumerate(memberships.split()):
+                kw[cls.membership_keys[i]] = UserLevels.get_by_name(UserLevels.SHORT_NAMES[k])
+                
+        #~ print 20120705, value, kw
+        
+        assert kw.has_key('level')
+            
+        for k,v in kw.items():
+            setattr(self,k,v)
+            
+        
+        #~ for grp in enumerate(UserGroups.items()):
+            #~ attname = grp.value + '_level'
+            #~ setattr(self,attname,kw.pop(attname,''))
+        #~ if kw:
+            #~ raise Exception("UserProfile got unexpected arguments %s" % kw)
+            
+        #~ dd.UserProfiles.add_item(value,label,None,**kw)
+      
+    #~ def __init__(self,level='',*args,**kw):
+    #~ def __init__(self,level='',*args):
+    #~ def __init__(self,**kw):
+        #~ if level:
+            #~ self.level = getattr(UserLevels,level)
+        #~ else:
+            #~ self.level = UserLevels.blank_item
+        #~ self.level = UserLevels.get_by_name(level)
+        #~ groups = UserGroups.items()
+        #~ if len(args) > len(groups):
+            #~ raise Exception("More arguments than user groups.")
+        #~ for i,levelname in enumerate(args):
+            #~ attname = groups[i].value + '_level'
+            #~ v = UserLevels.get_by_name(levelname)
+            #~ setattr(self,attname,v)
+        #~ kw.setdefault('readonly',False)
+        #~ for k,v in kw.items():
+            #~ setattr(self,k,v)
+            
+    def __repr__(self):
+        s = self.__class__.__name__ + ":" + self.value + "("
+        s += "level=%s" % self.level.name
+        for g in UserGroups.items():
+            if g.value: # no level for UserGroups.blank_item
+                v = getattr(self,g.value+'_level',None)
+                if v is not None:
+                    s += ",%s=%s" % (g.value,v.name)
+        s += ")"
+        return s
+        
+
+        
+class UserProfiles(ChoiceList):
+    """
+    
+    """
+    #~ item_class = UserProfile
+    label = _("User Profile")
+    app_label = 'lino'
+    show_values = True
+    max_length = 20
+    membership_keys = ('level',)
+    
+    #~ @classmethod
+    #~ def clear(cls):
+        #~ cls.groups_list = [g.value for g in UserGroups.items()]
+        #~ super(UserProfiles,cls).clear()
+          
+
+    #~ @classmethod
+    #~ def clear(cls,groups='*'):
+    @classmethod
+    def reset(cls,groups):
+        #~ cls.groups_list = [g.value for g in UserGroups.items()]
+        s = []
+        expected_names = set(['*']+[g.value for g in UserGroups.items() if g.value])
+        for g in groups.split():
+            if not g in expected_names:
+                raise Exception("Unexpected name %r (UserGroups are: %s)" % (
+                    g,[g.value for g in UserGroups.items() if g.value]))
+            else:
+                expected_names.remove(g)
+                if g == '*':
+                    s.append('level')
+                else:
+                    if not UserGroups.get_by_value(g):
+                        raise Exception("Unknown group %r" % g)
+                    s.append(g+'_level')
+        if len(expected_names) > 0:
+            raise Exception("Missing name(s) %s in %r" % (expected_names,groups))
+        cls.membership_keys = tuple(s)
+        cls.clear()
+
+    @classmethod
+    def add_item(cls,value,text,memberships=None,name=None,**kw):
+        return cls.add_item_instance(UserProfile(cls,value,text,name,memberships,**kw))
+          
+    
+add = UserProfiles.add_item
+add('100', _("User"), name='user', level='user')
+add('900', _("Administrator"), name='admin', level='admin')
+
+
 
 
 

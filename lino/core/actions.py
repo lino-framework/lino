@@ -168,13 +168,13 @@ class Parametrizable(object):
             for k,v in cls.parameters.items():
                 v.set_attributes_from_name(k)
                 v.table = cls
+            if cls.params_layout is None:
+                cls.params_layout = cls._layout_class.join_str.join(cls.parameters.keys())
+            if isinstance(cls.params_layout,basestring):
+                cls.params_layout = cls._layout_class(cls.params_layout,cls)
                 
     @classmethod
     def make_params_layout_handle(cls,ui):
-        if cls.params_layout is None:
-            cls.params_layout = cls._layout_class.join_str.join(cls.parameters.keys())
-        if isinstance(cls.params_layout,basestring):
-            cls.params_layout = cls._layout_class(cls.params_layout,cls)
         return cls.params_layout.get_layout_handle(ui)
         
     @classmethod
@@ -420,6 +420,10 @@ class Action(Parametrizable):
         
     #~ def set_permissions(self,*args,**kw)
         #~ self.permission = perms.factory(*args,**kw)
+        
+    def attach_to_workflow(self,fwl,name):
+        self.action_name = name
+        self.defining_actor = fwl
         
     def attach_to_actor(self,actor,name):
         #~ if self.name is not None:
@@ -680,6 +684,67 @@ class SubmitInsert(SubmitDetail):
     label = _("Create")
     #~ label = _("Insert")
     callable_from = (InsertRow,)
+    
+    
+class ChangeStateAction(RowAction):
+    """
+    This is the class used when generating automatic 
+    "state actions". For each possible value of the Actor's 
+    :attr:`workflow_state_field` there will be an automatic action called 
+    `mark_XXX`
+    """
+    
+    ajax = True
+    
+    show_in_workflow = True
+    
+    def __init__(self,target_state,required,**kw):
+        self.target_state = target_state
+        #~ kw.update(label=getattr(target_state,'action_label',target_state.text))
+        #~ kw.setdefault('label',target_state.text)
+        #~ required = getattr(target_state,'required',None)
+        #~ if required is not None:
+        if target_state.name:
+            m = getattr(target_state.choicelist,'allow_state_'+target_state.name,None)
+            #~ m = getattr(actor.model,'allow_state_'+target_state.name,None)
+            if m is not None:
+                assert not required.has_key('allowed')
+                def allow(action,user,obj,state):
+                    return m(obj,user)
+                required.update(allow=allow)
+        kw.update(required=required)
+        help_text = getattr(target_state,'help_text',None)
+        if help_text:
+            kw.update(help_text=help_text)
+        super(ChangeStateAction,self).__init__(**kw)
+        #~ logger.info('20120930 ChangeStateAction %s %s', actor,target_state)
+        
+    def full_name(self,actor):
+        if self.action_name is None or self.defining_actor is None:
+            return repr(self)
+        return self.defining_actor.choicelist.actor_id + '.' + self.action_name
+        
+    def run(self,row,ar,**kw):
+        state_field_name = self.defining_actor.workflow_state_field.attname
+        assert isinstance(state_field_name,basestring)
+        #~ old = row.state
+        old = getattr(row,state_field_name)
+        
+        watcher = changes.Watcher(row,False)
+        
+        self.target_state.choicelist.before_state_change(row,ar,kw,old,self.target_state)
+        row.before_state_change(ar,kw,old,self.target_state)
+        #~ row.state = self.target_state
+        setattr(row,state_field_name,self.target_state)
+        row.save()
+        self.target_state.choicelist.after_state_change(row,ar,kw,old,self.target_state)
+        row.after_state_change(ar,kw,old,self.target_state)
+        
+        watcher.log_changes(ar.request)
+        
+        return ar.ui.success_response(**kw)
+        
+    
 
 
 
@@ -979,9 +1044,10 @@ class BoundAction(object):
         return self.action.get_window_layout(self.actor)
         
     def full_name(self):
-        if self.action.action_name is None:
-            raise Exception("%r action_name is None" % self.action)
-        return str(self.actor) + '.' + self.action.action_name
+        return self.action.full_name(self.actor)
+        #~ if self.action.action_name is None:
+            #~ raise Exception("%r action_name is None" % self.action)
+        #~ return str(self.actor) + '.' + self.action.action_name
         
     def request(self,*args,**kw):
         kw.update(action=self)

@@ -36,8 +36,7 @@ from lino.core import frames
 from lino.core import actions
 from lino.utils.choosers import chooser
 from lino.mixins.duplicable import Duplicable
-    
-from lino.core.perms import UserLevels
+
 
 #~ class Owned(dd.Model):
 class Controllable(dd.Model):
@@ -198,7 +197,7 @@ class UserAuthored(dd.Model):
         if not super(UserAuthored,self).get_row_permission(user,state,action):
             #~ logger.info("20120919 no permission to %s on %s for %r",action,self,user)
             return False
-        if self.user != user and user.profile.level < UserLevels.manager:
+        if self.user != user and user.profile.level < dd.UserLevels.manager:
             #~ logger.info("20120919 no permission to %s on %r because %r != %r",action,self,self.user,user)
             return action.readonly
         return True

@@ -16,11 +16,13 @@ from django.conf import settings
 from lino.core.modeltools import resolve_model, obj2str
 from lino.utils.instantiator import Instantiator
 from lino.utils.babel import default_language
-from lino.utils.choicelists import Gender
+from lino.modlib.contacts.utils import Gender
 from lino.utils import dblogger
 #~ from lino import dd
 #from lino import reports
-#contacts = reports.get_app('contacts')
+
+#~ contacts = reports.get_app('contacts')
+#~ Gender = contacts.Gender
 
 def objects():
     #~ dblogger.info("Installing contacts demo fixture") # use --verbosity=2

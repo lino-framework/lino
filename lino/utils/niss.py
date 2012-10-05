@@ -49,7 +49,7 @@ from django.core.exceptions import ValidationError
 from django.utils.encoding import force_unicode 
 from django.utils.translation import ugettext_lazy as _
 
-from lino.utils.choicelists import Gender
+from lino.modlib.contacts.utils import Gender
 
 def gen_niss(birth_date,gender,seq=None):
     """

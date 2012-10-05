@@ -1,5 +1,5 @@
 # -*- coding: UTF-8 -*-
-## Copyright 2011 Luc Saffre
+## Copyright 2011-2012 Luc Saffre
 ## This file is part of the Lino project.
 ## Lino is free software; you can redistribute it and/or modify 
 ## it under the terms of the GNU General Public License as published by
@@ -17,7 +17,8 @@ from django.utils.translation import ugettext as _
 
 from lino.utils.instantiator import Instantiator
 from lino.utils.babel import babel_values
-from lino.utils.choicelists import HowWell
+#~ from lino.utils.choicelists import HowWell
+from lino.modlib.properties import models as properties
 
 #~ def objects():
     #~ ptype = Instantiator('properties.PropType').build
@@ -38,8 +39,8 @@ def objects():
         nl=u"Ja of niet",
         )))
     yield ptype(id=2,
-        choicelist=HowWell.__name__,
-        default_value=HowWell.default.value,
+        choicelist=properties.HowWell.actor_id,
+        default_value=properties.HowWell.default.value,
         **babel_values('name',**dict(
             en="Appraisal",
             de=u"Bewertung",
