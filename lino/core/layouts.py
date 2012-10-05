@@ -50,6 +50,8 @@ class Panel(object):
     def __init__(self,desc,**options):
         self.desc = desc
         self.options = options    
+    def replace(self,*args,**kw):
+        self.desc = self.desc.replace(*args,**kw)
 
 class LayoutHandle:
     """
