@@ -78,16 +78,25 @@ class Uploadable(Model):
         
         #~ if not ispure(uf.name):
             #~ raise Exception('uf.name is a %s!' % type(uf.name))
+            
+        """
+        Certain Python versions or systems don't manage non-ascii filenames,
+        so we replace any non-ascii char by "_"
+        """
+            
+        #~ logger.info('20121004 handle_uploaded_files() %r',uf.name)
+        name = uf.name.encode('ascii','replace')
+        name = name.replace('?','_')
         
         # Django magics: 
-        self.file = uf.name # assign a string
+        self.file = name # assign a string
         ff = self.file  # get back a FileField instance !
         #~ print 'uf=',repr(uf),'ff=',repr(ff)
         
         #~ if not ispure(uf.name):
             #~ raise Exception('uf.name is a %s!' % type(uf.name))
             
-        ff.save(uf.name,uf,save=False)
+        ff.save(name,uf,save=False)
         
         # The expression `self.file` 
         # now yields a FieldFile instance that has been created from `uf`.

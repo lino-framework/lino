@@ -755,10 +755,16 @@ class AbstractTable(actors.Actor):
         return kw
     
         
+    grid = actions.GridEdit()
+    
+    @classmethod
+    def get_default_action(cls):
+        return actions.BoundAction(cls,cls.grid)
+        
     @classmethod
     def class_init(self):
-        if self.default_action is None:
-            self.default_action = actions.GridEdit()
+        #~ if self.default_action is None:
+            #~ self.default_action = actions.GridEdit()
     
         if self.get_data_rows is not None:
             self.show_detail_navigator = False
@@ -874,7 +880,8 @@ class AbstractTable(actors.Actor):
         """
         def meth(master,ar):
             ar = self.request(ui,request=ar.request,
-                action=self.default_action,master_instance=master)
+                #~ action=self.default_action,
+                master_instance=master)
             ar.renderer = ui.ext_renderer
             #~ s = ui.table2xhtml(ar).tostring()
             return ui.table2xhtml(ar)

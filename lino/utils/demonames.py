@@ -64,8 +64,8 @@ Aaro Vasiliev & Aili Petrov
 Aaron Kask & Aili Kukk
 
 This module is used by 
-the :mod:`garble <lino.apps.pcsw.management.commands.garble>` 
-command that comes with :mod:`lino.apps.pcsw`.
+the :mod:`garble <lino_welfare.modlib.pcsw.management.commands.garble>` 
+command that comes with :mod:`lino_welfare`.
 
 Sources:
 
@@ -79,11 +79,15 @@ The raw data was originally copied from:
 - African, Muslim and Russian names from  
   http://www.babynames.org.uk
   and http://genealogy.familyeducation.com
+  
 - Streets of Liège from 
   http://fr.wikipedia.org/wiki/Liste_des_rues_de_Li%C3%A8ge
+  
 - Estonian last names:
-  http://www.ekspress.ee/news/paevauudised/eestiuudised/top-500-eesti-koige-levinumad-perekonnanimed.d?id=27677149
-- Estonian first last names are extracted from my personal database.
+  `www.ekspress.ee <http://www.ekspress.ee/news/paevauudised/eestiuudised/top-500-eesti-koige-levinumad-perekonnanimed.d?id=27677149>`_  
+  (I manually added some less frequent names)
+  
+- Estonian first names are extracted from my personal database.
 
 
 
@@ -7267,20 +7271,20 @@ Zashawn
 """
 
 LAST_NAMES_ESTONIA = u"""
-Ivanov	6 789
-Tamm	5 241
-Saar	4 352
-Sepp	3 624
-Mägi	3 613
-Smirnov	3 402
-Vasiliev	3 153
-Petrov	2 937
-Kask	2 847
-Kukk	2 728
-Kuznetsov	2 339
-Rebane	2 265
-Ilves	2 165
-Mihhailov	1 968
+Ivanov	6789
+Tamm	5241
+Saar	4352
+Sepp	3624
+Mägi	3613
+Smirnov	3402
+Vasiliev	3153
+Petrov	2937
+Kask	2847
+Kukk	2728
+Kuznetsov	2339
+Rebane	2265
+Ilves	2165
+Mihhailov	1968
 Pärn	1 933
 Pavlov	1 927
 Semenov	1 909
@@ -7767,6 +7771,7 @@ Anissimov	301
 Karpov	300
 Kivilo	300
 Püvi	300
+Lehismets 1
 """
 
 FEMALE_FIRST_NAMES_ESTONIA = u"""

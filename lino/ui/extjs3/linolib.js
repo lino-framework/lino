@@ -922,7 +922,7 @@ Lino.FileField = Ext.extend(Ext.form.TriggerField,{
 
 Lino.file_field_handler = function(panel,config) {
   //~ if (instanceof Lino.DetailWrapper) {
-  if (panel.action_name == 'insert') {
+  if (panel.action_name == 'insert_action') {
   //~ if (panel.get_current_record().phantom) {
       panel.has_file_upload = true;
 #if $settings.LINO.use_awesome_uploader
@@ -2269,6 +2269,22 @@ Lino.RichTextPanel = Ext.extend(Lino.RichTextPanel,{
 
 #end if
 
+Lino.ActionParamsPanel = Ext.extend(Ext.form.FormPanel,Lino.MainPanel);
+Lino.ActionParamsPanel = Ext.extend(Lino.ActionParamsPanel,Lino.MainPanel);
+Lino.ActionParamsPanel = Ext.extend(Lino.ActionParamsPanel,{
+  layout:'fit'
+  ,autoHeight: true
+  ,frame: true
+  ,constructor : function(config){
+    config.bbar = [{text:'OK'},{text:'Cancel'}]
+    config.items = config.params_panel;
+    Lino.ActionParamsPanel.superclass.constructor.call(this, config);
+  }
+  ,initComponent : function(){
+    Lino.ActionParamsPanel.superclass.initComponent.call(this);
+  }
+});
+
 Lino.FormPanel = Ext.extend(Ext.form.FormPanel,Lino.MainPanel);
 Lino.FormPanel = Ext.extend(Lino.FormPanel,Lino.PanelMixin);
 Lino.FormPanel = Ext.extend(Lino.FormPanel,{
@@ -2364,7 +2380,7 @@ Lino.FormPanel = Ext.extend(Lino.FormPanel,{
       ]);
           
     }
-    if (config.content_type && this.action_name != 'insert') {
+    if (config.content_type && this.action_name != 'insert_action') {
       config.bbar = config.bbar.concat([
         '->',
         { text: "[$_('Help Text Editor')]",
@@ -2405,7 +2421,7 @@ Lino.FormPanel = Ext.extend(Lino.FormPanel,{
       //~ }
     //~ });
     
-    if (this.action_name == 'insert') {
+    if (this.action_name == 'insert_action') {
       this.cascade(function(cmp){
         // console.log('20110613 cascade',cmp);
         if (cmp.disabled_in_insert_window) {
@@ -2489,7 +2505,7 @@ Lino.FormPanel = Ext.extend(Lino.FormPanel,{
   },
     
   get_base_params : function() {
-    // needed for insert action
+    // needed for insert_action
     var p = Ext.apply({},this.base_params);
     Lino.insert_subst_user(p);
     return p;
@@ -2775,7 +2791,7 @@ Lino.FormPanel = Ext.extend(Lino.FormPanel,{
       p.$ext_requests.URL_PARAM_REQUESTING_PANEL = this.getId();
       p.$ext_requests.URL_PARAM_ACTION_NAME = this.action_name;
       if (rec.phantom) {
-        if (this.action_name != 'insert') 
+        if (this.action_name != 'insert_action') 
             console.log("Warning: phantom record, but action_name is",this.action_name)
         this.form.submit({
           url: ROOT_URL + '/api' + this.ls_url,

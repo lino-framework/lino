@@ -115,11 +115,12 @@ class HtmlRenderer(object):
     def href(self,url,text):
         return '<a href="%s">%s</a>' % (url,text)
         
-    def href_button(self,url,text,title=None):
+    def href_button(self,url,text,**kw):
+    #~ def href_button(self,url,text,title=None):
         #~ logger.info('20121002 href_button %r',unicode(text))
-        if title:
-            return xghtml.E.a(text,href=url,title=title)
-        return xghtml.E.a(text,href=url)
+        #~ if title:
+            #~ return xghtml.E.a(text,href=url,title=title)
+        return xghtml.E.a('[',text,']',href=url,**kw)
             #~ return '[<a href="%s" title="%s">%s</a>]' % (
                 #~ url,cgi.escape(unicode(title)),text)
         #~ return '[<a href="%s">%s</a>]' % (url,text)
@@ -142,11 +143,11 @@ class HtmlRenderer(object):
         
         #~ params = ar.get_status(self)
         #~ after_show = dict()
-        #~ a = ar.actor.get_action('insert')
+        a = ar.actor.get_url_action('insert_action')
         buttons = []
-        a = ar.actor.insert_action
+        #~ a = ar.actor.insert_action
         if a is not None:
-            if a.get_action_permission(ar.get_user(),None,None):
+            if a.action.get_action_permission(ar.get_user(),None,None):
                 elem = ar.create_instance()
                 after_show.update(data_record=views.elem2rec_insert(ar,ar.ah,elem))
                 #~ after_show.update(record_id=-99999)
@@ -189,8 +190,8 @@ class HtmlRenderer(object):
         #~ after_show = dict(base_params=rr.get_status(self))
         #~ after_show = dict()
         if rr.get_total_count() == 0:
-            #~ a = rr.actor.get_action('insert')
-            a = rr.actor.insert_action
+            a = rr.actor.get_url_action('insert_action')
+            #~ a = rr.actor.insert_action
             if a is not None:
                 elem = rr.create_instance()
                 after_show.update(data_record=views.elem2rec_insert(rr,rr.ah,elem))
@@ -200,11 +201,12 @@ class HtmlRenderer(object):
         if rr.get_total_count() == 1:
             obj = rr.data_iterator[0]
             chunks = []
-            chunks.append(xghtml.E.a(_("show"),
-              href=self.ui.media_url(obj.file.name),target='_blank'))
+            #~ chunks.append(xghtml.E.a(_("show"),
+              #~ href=self.ui.media_url(obj.file.name),target='_blank'))
+            chunks.append(self.href_button(self.ui.media_url(obj.file.name),_("show"),target='_blank'))
             chunks.append(' ')
             after_show.update(record_id=obj.pk)
-            chunks.append(self.action_href_js(rr.ah.actor.detail_action,after_show,_("Edit")))
+            chunks.append(self.action_href_js(rr.ah.actor.get_url_action('detail_action'),after_show,_("Edit")))
             return xghtml.E.p(*chunks)
             
             #~ s = ''
@@ -242,9 +244,9 @@ class PlainRenderer(HtmlRenderer):
     def instance_handler(self,ar,obj):
         a = getattr(obj,'_detail_action',None)
         if a is None:
-            a = obj.__class__._lino_default_table.detail_action
+            a = obj.__class__._lino_default_table.get_url_action('detail_action')
         if a is not None:
-            if ar is None or a.get_action_permission(ar.get_user(),obj,None):
+            if ar is None or a.action.get_action_permission(ar.get_user(),obj,None):
                 return self.get_detail_url(obj)
   
     def pk2url(self,ar,pk,**kw):
@@ -323,11 +325,11 @@ class ExtRenderer(HtmlRenderer):
         if isinstance(v,menus.MenuItem):
             if v.params is not None:
                 #~ ar = v.action.actor.request(self.ui,None,v.action,**v.params)
-                ar = v.action.request(self.ui,**v.params)
-                return handler_item(v,self.request_handler(ar),v.action.help_text)
+                ar = v.bound_action.request(self.ui,**v.params)
+                return handler_item(v,self.request_handler(ar),v.bound_action.action.help_text)
                 #~ return dict(text=prepare_label(v),handler=js_code(handler))
-            if v.action:
-                return handler_item(v,self.action_call(None,v.action,{}),v.action.help_text)
+            if v.bound_action:
+                return handler_item(v,self.action_call(None,v.bound_action,{}),v.bound_action.action.help_text)
                 #~ ar = v.action.request(self.ui)
                 #~ return handler_item(v,self.request_handler(ar),v.action.help_text)
             elif v.href is not None:
@@ -358,18 +360,20 @@ class ExtRenderer(HtmlRenderer):
             return dict(text=prepare_label(v),href=url)
         return v
         
-    def action_call(self,request,a,after_show):
-        if a.opens_a_window or a.parameters:
+    def action_call(self,request,bound_action,after_show):
+        if bound_action.action.opens_a_window or bound_action.action.parameters:
         #~ if a.opens_a_window:
             #~ if after_show is None:
                 #~ after_show = {}
             if request and request.subst_user:
                 after_show[ext_requests.URL_PARAM_SUBST_USER] = request.subst_user
-            if isinstance(a,actions.ShowEmptyTable):
+            if isinstance(bound_action.action,actions.ShowEmptyTable):
                 after_show.update(record_id=-99998)
             if after_show:
-                return "Lino.%s.run(%s)" % (a,py2js(after_show))
-            return "Lino.%s.run()" % a
+                #~ return "Lino.%s.run(%s)" % (action.full_name(a.actor),py2js(after_show))
+                return "Lino.%s.run(%s)" % (
+                  bound_action.full_name(),py2js(after_show))
+            return "Lino.%s.run()" % bound_action.full_name()
         return "?"
 
     def js2url(self,js):
@@ -381,12 +385,12 @@ class ExtRenderer(HtmlRenderer):
         #~ return self.js2url(self.action_call(a,after_show))
 
     def action_button(self,obj,ar,a,label=None):
-        if a.opens_a_window or a.parameters:
+        if a.action.opens_a_window or a.action.parameters:
         #~ if a.opens_a_window:
             #~ raise Exception('20121002 %s %r' % (a,unicode(label)))
             after_show = ar.get_status(self)
             after_show.update(record_id=obj.pk)
-            return self.action_href_js(a,after_show,label or a.label)
+            return self.action_href_js(a,after_show,label or a.action.label)
         return self.row_action_button(obj,ar.request,a,label)
         
     def action_href_js(self,a,after_show={},label=None):
@@ -400,39 +404,32 @@ class ExtRenderer(HtmlRenderer):
         #~ url = self.js2url(self.action_call(None,a,after_show))
         url = 'javascript:'+self.action_call(None,a,after_show)
         #~ logger.info('20121002 action_href_js %s %r',a,unicode(label))
-        return self.href_button(url,label,a.help_text)
-        
-    #~ def row_action_button(self,obj,ar,a,label=None):
-        #~ """
-        #~ Return a HTML fragment that displays a button-like link 
-        #~ which runs the action when clicked.
-        #~ """
-        #~ label = cgi.escape(unicode(label or a.label))
-        #~ url = self.js2url(
-            #~ 'Lino.%s(%r,%s)' % (
-                #~ a,str(ar.requesting_panel),
-                #~ py2js(obj.pk)))
-        #~ return self.href_button(url,label,a.help_text)
+        if a.action.help_text:
+            return self.href_button(url,label,title=a.action.help_text)
+        return self.href_button(url,label)
         
     def row_action_button(self,obj,request,a,label=None):
         """
         Return a HTML fragment that displays a button-like link 
         which runs the action when clicked.
         """
-        label = "[%s]" % unicode(label or a.label)
+        #~ label = "[%s]" % unicode(label or a.action.label)
+        label = label or a.action.label
         url = 'javascript:Lino.%s(%r,%s)' % (
-                a,str(request.requesting_panel),
+                a.full_name(),str(request.requesting_panel),
                 py2js(obj.pk))
-        if a.help_text:
-            return xghtml.E.a(label,href=url,title=unicode(a.help_text))
-        return xghtml.E.a(label,href=url)
+        if a.action.help_text:
+            return self.href_button(url,label,title=a.action.help_text)
+        return self.href_button(url,label)
+            #~ return xghtml.E.a(label,href=url,title=unicode(a.action.help_text))
+        #~ return xghtml.E.a(label,href=url)
         
     def instance_handler(self,ar,obj):
         a = getattr(obj,'_detail_action',None)
         if a is None:
-            a = obj.__class__._lino_default_table.detail_action
+            a = obj.__class__._lino_default_table.get_url_action('detail_action')
         if a is not None:
-            if ar is None or a.get_action_permission(ar.get_user(),obj,None):
+            if ar is None or a.action.get_action_permission(ar.get_user(),obj,None):
                 return self.action_call(None,a,dict(record_id=obj.pk))
                 
     def obj2html(self,ar,obj,text=None):
@@ -447,7 +444,7 @@ class ExtRenderer(HtmlRenderer):
     def request_handler(self,ar,*args,**kw):
         #~ bp = rr.request2kw(self.ui,**kw)
         st = ar.get_status(self.ui,**kw)
-        return self.action_call(ar.request,ar.action,st)
+        return self.action_call(ar.request,ar.bound_action,st)
         
     def href_to_request(self,sar,tar,text=None):
         #~ url = self.js2url(self.request_handler(tar))
@@ -636,6 +633,8 @@ class ExtUI(base.UI):
                 #~ return ext_elems.GridMainPanel(lh,name,vertical,*elems,**pkw)
                 #~ return ext_elems.GridMainPanel(lh,name,lh.layout._table,*elems,**pkw)
                 return ext_elems.GridElement(lh,name,lh.layout._table,*elems,**pkw)
+            if isinstance(lh.layout,layouts.ActionParamsLayout) : 
+                return ext_elems.ActionParamsPanel(lh,name,vertical,*elems,**pkw)
             if isinstance(lh.layout,layouts.ParamsLayout) : 
                 return ext_elems.ParamsPanel(lh,name,vertical,*elems,**pkw)
                 #~ fkw = dict(layout='fit', autoHeight= True, frame= True, items=pp)
@@ -704,7 +703,7 @@ class ExtUI(base.UI):
             if isinstance(lh.layout,layouts.FormLayout):
                 """a Table in a DetailWindow"""
                 kw.update(tools=[
-                  js_code("Lino.show_in_own_window_button(Lino.%s)" % de.default_action)
+                  js_code("Lino.show_in_own_window_button(Lino.%s)" % de.default_action.full_name())
                   #~ js_code("Lino.report_window_button(Lino.%s)" % de.default_action)
                   #~ js_code("Lino.report_window_button(ww,Lino.%s)" % de.default_action)
                 ])
@@ -719,7 +718,7 @@ class ExtUI(base.UI):
                     #~ a = de.get_action('insert')
                     a = de.insert_action
                     if a is not None:
-                        kw.update(ls_insert_handler=js_code("Lino.%s" % a))
+                        kw.update(ls_insert_handler=js_code("Lino.%s" % a.full_name(de)))
                         kw.update(ls_bbar_actions=[self.a2btn(a)])
                     #~ else:
                         #~ print 20120619, de, 'has no insert_action'
@@ -734,7 +733,7 @@ class ExtUI(base.UI):
                     #~ a = de.get_action('insert')
                     a = de.insert_action
                     if a is not None:
-                        kw.update(ls_insert_handler=js_code("Lino.%s" % a))
+                        kw.update(ls_insert_handler=js_code("Lino.%s" % a.full_name(de)))
                         kw.update(ls_bbar_actions=[self.a2btn(a)])
                     field = fields.HtmlBox(verbose_name=de.label)
                     field.name = de.__name__
@@ -933,6 +932,7 @@ class ExtUI(base.UI):
     def html_page_lines(self,request,title=None,on_ready='',run_jasmine=False):
         """Generates the lines of Lino's HTML reponse.
         """
+        #~ logger.info("20121003 html_page_lines %r",on_ready)
         yield '<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">'
         yield '<html><head>'
         yield '<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />'
@@ -1136,6 +1136,7 @@ tinymce.init({
                     for a in users.Authority.objects.filter(authorized=user)]
             
             #~ handler = self.ext_renderer.instance_handler(user)
+            #~ a = users.MySettings.get_url_action('default_action')
             a = users.MySettings.default_action
             handler = self.ext_renderer.action_call(None,a,dict(record_id=user.pk))
             handler = "function(){%s}" % handler
@@ -1446,21 +1447,32 @@ tinymce.init({
         details = set()
         def add(actor,fl,nametpl):
             if fl is not None:
-                if not fl in details:
+                #~ if details.has_key():
+                if fl in details:
+                    pass
+                    #~ fl._using_actors.append(actor)
+                else:
                     fl._formpanel_name = nametpl % actor
+                    #~ fl._using_actors = [actor]
                     details.add(fl)
                     
         assert user == jsgen._for_user
         
         for a in actors_list:
-            #~ if a._replaced_by is None:
-            add(a,a.detail_layout, "Lino.%s.DetailFormPanel")
-            add(a,a.insert_layout, "Lino.%s.InsertFormPanel")
+            add(a,a.detail_layout, "%s.DetailFormPanel")
+            add(a,a.insert_layout, "%s.InsertFormPanel")
+
+        if False:
+            logger.debug('FormPanels')
+            for fl in details:
+                logger.debug('- ' + fl._formpanel_name + ' : ' + ','.join([a.actor_id for a in fl._using_actors]))
             
         for fl in details:
             lh = fl.get_layout_handle(self)
             for ln in self.js_render_FormPanel(lh,user):
                 f.write(ln + '\n')
+        
+        actions_written = set()
         
         for rpt in actors_list:
             rh = rpt.get_handle(self) 
@@ -1472,8 +1484,24 @@ tinymce.init({
                 for ln in self.js_render_GridPanel_class(rh,user):
                     f.write(ln + '\n')
                 
+            #~ for a in rpt.get_actions():
+                #~ if a.opens_a_window or a.parameters:
+                    #~ if isinstance(a,(actions.ShowDetailAction,actions.InsertRow)):
+                        #~ for ln in self.js_render_detail_action_FormPanel(rh,a):
+                              #~ f.write(ln + '\n')
+                    #~ for ln in self.js_render_window_action(rh,a,user):
+                        #~ f.write(ln + '\n')
+                #~ elif a.custom_handler:
+                    #~ for ln in self.js_render_custom_action(rh,a,user):
+                        #~ f.write(ln + '\n')
+        
             for a in rpt.get_actions():
-                if a.opens_a_window or a.parameters:
+                if a.parameters:
+                    if not a in actions_written:
+                        actions_written.add(a)
+                        for ln in self.js_render_window_action(rh,a,user):
+                            f.write(ln + '\n')
+                elif a.opens_a_window:
                     if isinstance(a,(actions.ShowDetailAction,actions.InsertRow)):
                         for ln in self.js_render_detail_action_FormPanel(rh,a):
                               f.write(ln + '\n')
@@ -1483,6 +1511,8 @@ tinymce.init({
                 elif a.custom_handler:
                     for ln in self.js_render_custom_action(rh,a,user):
                         f.write(ln + '\n')
+            
+        
         assert user == jsgen._for_user
         
         return 1
@@ -1591,16 +1621,18 @@ tinymce.init({
         elif isinstance(a,actions.DeleteSelected):
             kw.update(panel_btn_handler=js_code("Lino.delete_selected"))
         elif isinstance(a,actions.RowAction):
-            if a.url_action_name is None:
-                raise Exception("Action %r has no url_action_name" % a)
+            #~ if a.url_action_name is None:
+                #~ raise Exception("Action %r has no url_action_name" % a)
             kw.update(must_save=True)
             kw.update(
-              panel_btn_handler=js_code("Lino.row_action_handler(%r)" % a.url_action_name))
+              panel_btn_handler=js_code("Lino.row_action_handler(%r)" % a.action_name))
+              #~ panel_btn_handler=js_code("Lino.row_action_handler(%r)" % a.url_action_name))
         elif isinstance(a,actions.ListAction):
-            if a.url_action_name is None:
-                raise Exception("Action %r has no url_action_name" % a)
+            #~ if a.url_action_name is None:
+                #~ raise Exception("Action %r has no url_action_name" % a)
             kw.update(
-              panel_btn_handler=js_code("Lino.list_action_handler(%r)" % a.url_action_name))
+              #~ panel_btn_handler=js_code("Lino.list_action_handler(%r)" % a.url_action_name))
+              panel_btn_handler=js_code("Lino.list_action_handler(%r)" % a.action_name))
             kw.update(must_save=True)
         else:
             kw.update(panel_btn_handler=js_code("Lino.%s" % a))
@@ -1608,7 +1640,7 @@ tinymce.init({
           text=a.label,
           #~ name=a.name,
           auto_save=a.auto_save,
-          itemId=a.name,
+          itemId=a.action_name,
           #~ text=unicode(a.label),
         )
         if a.help_text:
@@ -1662,7 +1694,7 @@ tinymce.init({
         tbl = dh.layout._table
         
         yield ""
-        yield "%s = Ext.extend(Lino.FormPanel,{" % dh.layout._formpanel_name
+        yield "Lino.%s = Ext.extend(Lino.FormPanel,{" % dh.layout._formpanel_name
         yield "  layout: 'fit',"
         yield "  auto_save: true,"
         if dh.layout.window_size and dh.layout.window_size[1] == 'auto':
@@ -1688,11 +1720,11 @@ tinymce.init({
             for ln in on_render:
                 yield "      " + ln
             #~ yield "      Lino.%s.FormPanel.superclass.onRender.call(this, ct, position);" % tbl
-            yield "      %s.superclass.onRender.call(this, ct, position);" % dh.layout._formpanel_name
+            yield "      Lino.%s.superclass.onRender.call(this, ct, position);" % dh.layout._formpanel_name
             yield "    }"
 
         #~ yield "    Lino.%s.FormPanel.superclass.initComponent.call(this);" % tbl
-        yield "    %s.superclass.initComponent.call(this);" % dh.layout._formpanel_name
+        yield "    Lino.%s.superclass.initComponent.call(this);" % dh.layout._formpanel_name
         
         if tbl.active_fields:
             yield '    // active_fields:'
@@ -1713,36 +1745,37 @@ tinymce.init({
         rpt = rh.actor
         yield ""
         #~ yield "// js_render_detail_action_FormPanel %s" % action
+        action = actions.BoundAction(rpt,action)
         dtl = action.get_window_layout()
         #~ dtl = rpt.detail_layout
         if dtl is None:
-            raise Exception("action %s on table %r == %r without detail?" % (action,action.actor,rpt))
+            raise Exception("action %r on table %r == %r without detail?" % (action,action.actor,rpt))
         #~ yield "Lino.%sPanel = Ext.extend(Lino.%s.FormPanel,{" % (action,dtl._table)
-        yield "Lino.%sPanel = Ext.extend(%s,{" % (action,dtl._formpanel_name)
+        yield "Lino.%sPanel = Ext.extend(Lino.%s,{" % (action.full_name(),dtl._formpanel_name)
         yield "  empty_title: %s," % py2js(action.get_button_label())
         #~ if not isinstance(action,actions.InsertRow):
-        if action.hide_navigator:
+        if action.action.hide_navigator:
             yield "  hide_navigator: true,"
             
         if rh.actor.params_panel_hidden:
             yield "  params_panel_hidden: true,"
 
         yield "  ls_bbar_actions: %s," % py2js([
-            rh.ui.a2btn(a) for a in rpt.get_actions(action) 
+            rh.ui.a2btn(a) for a in rpt.get_actions(action.action) 
                 if a.show_in_bbar and a.get_action_permission(jsgen._for_user,None,None)]) 
         yield "  ls_url: %s," % py2js(ext_elems.rpt2url(rpt))
-        if action != rpt.default_action:
-            yield "  action_name: %s," % py2js(action.url_action_name)
+        if action.action != rpt.default_action.action:
+            yield "  action_name: %s," % py2js(action.action.action_name)
         #~ yield "  active_fields: %s," % py2js(rpt.active_fields)
         yield "  initComponent : function() {"
         a = rpt.detail_action
         if a:
-            yield "    this.ls_detail_handler = Lino.%s;" % a
+            yield "    this.ls_detail_handler = Lino.%s;" % a.full_name(rpt)
         a = rpt.insert_action
         if a:
-            yield "    this.ls_insert_handler = Lino.%s;" % a
+            yield "    this.ls_insert_handler = Lino.%s;" % a.full_name(rpt)
             
-        yield "    Lino.%sPanel.superclass.initComponent.call(this);" % action
+        yield "    Lino.%sPanel.superclass.initComponent.call(this);" % action.full_name()
         yield "  }"
         yield "});"
         yield ""
@@ -1796,11 +1829,11 @@ tinymce.init({
         #~ a = rh.actor.get_action('detail')
         a = rh.actor.detail_action
         if a:
-            yield "    this.ls_detail_handler = Lino.%s;" % a
+            yield "    this.ls_detail_handler = Lino.%s;" % a.full_name(rh.actor)
         #~ a = rh.actor.get_action('insert')
         a = rh.actor.insert_action
         if a:
-            yield "    this.ls_insert_handler = Lino.%s;" % a
+            yield "    this.ls_insert_handler = Lino.%s;" % a.full_name(rh.actor)
         
         
         yield "    var ww = this.containing_window;"
@@ -1846,11 +1879,11 @@ tinymce.init({
         """
         
         # 20120723 : removed useless js param "action"
-        yield "Lino.%s = function(rp,pk) { " % action
+        yield "Lino.%s = function(rp,pk) { " % action.full_name(rh.actor)
         #~ panel = "Lino.%s.GridPanel.ls_url" % action 
         url = ext_elems.rpt2url(rh.actor)
         yield "  Lino.run_row_action(rp,%s,pk,%s);" % (
-            py2js(url),py2js(action.url_action_name))
+            py2js(url),py2js(action.action_name))
         yield "};"
 
 
@@ -1859,33 +1892,34 @@ tinymce.init({
         rpt = rh.actor
         
         if rpt.parameters and action.use_param_panel:
-            params = rh.params_layout_handle.main
+            params_panel = rh.params_layout_handle.main
         else:
-            params = None
-        #~ params = None
+            params_panel = None
         
         if isinstance(action,actions.ShowDetailAction):
-            mainPanelClass = "Lino.%sPanel" % action
+            mainPanelClass = "Lino.%sPanel" % action.full_name(rh.actor)
         elif isinstance(action,actions.InsertRow): 
-            mainPanelClass = "Lino.%sPanel" % action
+            mainPanelClass = "Lino.%sPanel" % action.full_name(rh.actor)
         elif isinstance(action,actions.GridEdit):
             mainPanelClass = "Lino.%s.GridPanel" % rpt
             #~ if rh.actor.parameters:
-                #~ params = rh.params_layout_handle.main
+                #~ params_panel = rh.params_layout_handle.main
         elif isinstance(action,CalendarAction):
             mainPanelClass = "Lino.CalendarPanel"
             #~ mainPanelClass = "Lino.CalendarAppPanel"
             #~ mainPanelClass = "Ext.ensible.cal.CalendarPanel"
         elif action.parameters:
-            mainPanelClass = "Lino.%sPanel" % action
-            params = action.make_params_layout_handle(self).main
+            mainPanelClass = "Lino.ActionParamsPanel"
+            params_panel = action.make_params_layout_handle(self).main
+            #~ logger.info("20121003 %r %s", action, params_panel)
         else:
             return 
-        if action.actor is None:
-            raise Exception("20120524 %s %s actor is None" % (rh.actor,action))
+        #~ if action.defining_actor is None:
+            #~ raise Exception("20120524 %s %r actor is None" % (rh.actor,action))
         windowConfig = dict()
-        #~ ws = action.actor.window_size
-        wl = action.get_window_layout()
+        wl = action.get_window_layout(rh.actor)
+        #~ if action.action_name == 'wf1':
+            #~ logger.info("20121005 %r --> %s",action,wl)
         if wl is not None:
             ws = wl.window_size
             if ws:
@@ -1905,9 +1939,7 @@ tinymce.init({
                     raise ValueError("height")
                 #~ print 20120629, action, windowConfig
                 
-        #~ yield "var fn = function() {" 
-        #~ yield "};" 
-        yield "Lino.%s = new Lino.WindowAction(%s,function(){" % (action,py2js(windowConfig))
+        yield "Lino.%s = new Lino.WindowAction(%s,function(){" % (action.full_name(rh.actor),py2js(windowConfig))
         #~ yield "  console.log('20120625 fn');" 
         if isinstance(action,CalendarAction):
             yield "  return Lino.calendar_app.get_main_panel();"
@@ -1919,7 +1951,7 @@ tinymce.init({
             if action.hide_top_toolbar:
                 p.update(hide_top_toolbar=True)
                 #~ yield "  p.hide_top_toolbar = true;" 
-            if action.actor.hide_window_title:
+            if rpt.hide_window_title:
                 #~ yield "  p.hide_window_title = true;" 
                 p.update(hide_window_title=True)
             #~ yield "  p.is_main_window = true;" # workaround for problem 20111206
@@ -1927,12 +1959,12 @@ tinymce.init({
             yield "  var p = %s;"  % py2js(p)
             #~ if isinstance(action,CalendarAction):
                 #~ yield "  p.items = Lino.CalendarAppPanel_items;" 
-            if params:
-                for ln in jsgen.declare_vars(params):
+            if params_panel:
+                for ln in jsgen.declare_vars(params_panel):
                     yield '  '  + ln
-                yield "  p.params_panel = %s;" % params
+                yield "  p.params_panel = %s;" % params_panel
                 yield "  p.params_panel.fields = %s;" % py2js(
-                  [e for e in params.walk() if isinstance(e,ext_elems.FieldElement)])
+                  [e for e in params_panel.walk() if isinstance(e,ext_elems.FieldElement)])
             
             yield "  return new %s(p);" % mainPanelClass
         #~ yield "  console.log('20120625 rv is',rv);" 

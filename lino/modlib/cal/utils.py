@@ -61,8 +61,8 @@ class CalendarAction(actions.Action):
     url_action_name = 'grid' # because...
     default_format = 'html'
     
-    def get_window_layout(self):
-        return None
+    #~ def get_window_layout(self,actor):
+        #~ return None
   
 
 

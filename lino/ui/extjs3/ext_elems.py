@@ -183,7 +183,7 @@ class GridColumn(jsgen.Component):
                     if rpt.detail_action.get_action_permission(jsgen._for_user,None,None):
                         return "Lino.fk_renderer('%s','Lino.%s')" % (
                           name + ext_requests.CHOICES_HIDDEN_SUFFIX,
-                          rpt.detail_action)
+                          rpt.detail_action.full_name(rpt))
               
             rend = None
             if isinstance(editor.field,models.AutoField):
@@ -776,7 +776,7 @@ class ForeignKeyElement(ComplexRemoteComboFieldElement):
             if not isinstance(layout_handle.layout,layouts.ListLayout):
                 self.value_template = "new Lino.TwinCombo(%s)"
                 kw.update(onTrigger2Click=js_code(
-                    "function(e){ Lino.show_fk_detail(this,Lino.%s)}" % a))
+                    "function(e){ Lino.show_fk_detail(this,Lino.%s)}" % a.full_name(self.actor)))
                     #~ "Lino.show_fk_detail_handler(this,Lino.%s)}" % a))
         FieldElement.__init__(self,layout_handle,field,**kw)
       
@@ -1015,7 +1015,7 @@ class BooleanFieldElement(FieldElement):
                 if rpt.detail_action is not None:
                     js = "Lino.show_mti_child('%s',Lino.%s)" % (
                       self.field.name,
-                      rpt.detail_action)
+                      rpt.detail_action.full_name(rpt))
                     label += """ (<a href="javascript:%s">%s</a>)""" % (
                       js,_("show"))
                 
@@ -1688,12 +1688,22 @@ class DetailMainPanel(Panel):
         return kw
         
 
-class ParamsForm(DetailMainPanel):
-    #~ value_template = "new Ext.form.FormPanel(%s)"
+#~ class ParamsForm(Panel):
+#~ class DialogPanel(Panel):
+class ActionParamsPanel(Panel):
+    """
+    The optional Panel for `parameters` of an Action. 
+    """
+    xtype = None
     value_template = "new Ext.form.FormPanel(%s)"
-    #~ pass
+    #~ value_template = "new Lino.ActionParamsPanel({layout:'fit', autoHeight: true, frame: true, items:new Ext.Panel(%s)})"
+    #~ value_template = "new Lino.ActionParamsPanel(%s)"
     
 class ParamsPanel(Panel):
+    """
+    The optional Panel for `parameters` of a Table. 
+    JS part stored in `Lino.GridPanel.params_panel`.
+    """
     #~ value_template = "new Ext.form.FormPanel(%s)"
     value_template = "new Ext.form.FormPanel({layout:'fit', autoHeight: true, frame: true, items:new Ext.Panel(%s)})"
     #~ pass

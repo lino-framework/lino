@@ -1,9 +1,36 @@
-20121003
-========
+20121003..04
+============
 
 - Aktionsdialogfenster geht weiter, ist aber noch nicht fertig.
 
-- :mod:`lino.utils.niss` enthält die Utilities zur belgischen NISS, 
+- Einige Funktionen in ui.extjs3.ext_ui.Renderer, die bisher strings zurückgaben, geben jetzt auch xmlgen.html-Objekte zurück.
+
+- :mod:`lino.utils.niss` enthält jetzt die Utilities zur belgischen NISS, 
   die bisher in :mod:`lino_welfare.modlib.pcsw.models` standen.
   Neue neue Funktion gen_niss, die ich zum Generieren 
   fiktiver, aber syntaktisch gültiger NISS brauche.
+
+- watch_tim caused an `AttributeError 'City' object has no attribute 'street'` 
+  when trying to synchronize a PLZ to City.
+  PLZ inherited PAR. 
+  
+- watch_tim caused a `ValueError invalid literal for int() with base 10: ''`
+  when trying to find a Partner without IdPar.
+  
+Entwicklungslawine
+-------------------
+
+Aktionsdialogfenster ist noch deutlich komplizierter als ich 
+sowieso schon geahnt hatte. 
+  
+Bisher wurden ja alle Aktionen aus den Basisklassen eines Actors mit 
+deepcopy kopiert. 
+Das war nicht gerade schön, aber nötig, weil Lino sich intern darauf verließ, 
+dass jede Aktion einen eindeutigen Namen hat.
+Da ist jetzt vorbei. 
+Renamed Action.actor to Action.defining_actor.
+Action.__str__ is no longer allowed. 
+Must use Action.full_name(actor) instead.
+New class actions.BoundAction.
+
+  

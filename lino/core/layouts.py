@@ -45,6 +45,11 @@ def DEBUG_LAYOUTS(lo):
     #~ if lo._table.__name__ == 'Users':
         #~ return True
     return False
+    
+class Panel(object):
+    def __init__(self,desc,**options):
+        self.desc = desc
+        self.options = options    
 
 class LayoutHandle:
     """
@@ -518,14 +523,20 @@ class ListLayout(BaseLayout):
 
 class ParamsLayout(BaseLayout):
     """
-    A Layout description for a parameter panel.
+    A Layout description for a :attr:`lino.core.actors.Actor.parameters` panel.
     """
     join_str = " "
 
     def get_data_elem(self,name): 
         return self._table.get_param_elem(name)
 
-class Panel(object):
-    def __init__(self,desc,**options):
-        self.desc = desc
-        self.options = options
+class ActionParamsLayout(BaseLayout):
+    """
+    A Layout description for an :attr:`lino.core.actions.Action.parameters` panel.
+    """
+    join_str = "\n"
+    window_size = (50,'auto')
+
+    def get_data_elem(self,name): 
+        return self._table.get_param_elem(name)
+

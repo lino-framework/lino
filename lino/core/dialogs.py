@@ -51,5 +51,11 @@ class Dialog(actors.Actor):
     """
     _handle_class = DialogHandle
     
+    @classmethod
+    def get_default_action(self):
+        return None # actions.BoundAction(self,actions.GridEdit())
+        
+    
+    
     ok = OK()
     cancel = Cancel()

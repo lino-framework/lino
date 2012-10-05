@@ -49,7 +49,10 @@ class MenuItem:
                  instance=None,
                  href=None):
         self.parent = parent
-        self.action = action
+        if action is not None:
+            if not isinstance(action,actions.BoundAction):
+                raise Exception("20121003 not a BoundAction: %r")
+        self.bound_action = action
         self.params = params
         self.href = href
         self.request = request
@@ -192,18 +195,20 @@ class Menu(MenuItem):
             #~ a = actors.resolve_action(spec)
             #~ if a is None:
                 #~ raise Exception("Could not resolve action specifier %r" % spec)
-        if isinstance(spec,actions.Action):
+        if isinstance(spec,actions.BoundAction):
             a = spec
         elif isinstance(spec,type) and issubclass(spec,models.Model):
             if action:
                 a = spec._lino_default_table.get_url_action(action)
             else:
                 a = spec._lino_default_table.default_action
+            #~ a = actions.BoundAction(spec._lino_default_table,a)
         elif isinstance(spec,type) and issubclass(spec,actors.Actor):
             if action:
                 a = spec.get_url_action(action)
             else:
                 a = spec.default_action
+            #~ a = actions.BoundAction(spec,a)
 
         else:
             raise Exception("(%r,%r) is not a valid action specifier" % (spec,action))
@@ -247,9 +252,9 @@ class Menu(MenuItem):
 
     def _add_item(self,mi):
         assert isinstance(mi,MenuItem)
-        if mi.action is not None:
+        if mi.bound_action is not None:
             #~ if not mi.action.actor.get_view_permission(self.user):
-            if not mi.action.get_action_permission(self.user,None,None):
+            if not mi.bound_action.action.get_action_permission(self.user,None,None):
                 return 
         if mi.name is not None:
             old = self.items_dict.get(mi.name)

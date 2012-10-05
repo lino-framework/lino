@@ -342,7 +342,7 @@ def form2obj_and_save(ar,data,elem,is_new,restful,file_upload=False): # **kw2sav
         return json_response(kw,content_type='text/html')
     else: # 20120814 
         #~ logger.info("20120816 %r", ar.action)
-        if isinstance(ar.action,actions.GridEdit):
+        if isinstance(ar.bound_action.action,actions.GridEdit):
             kw.update(rows=[rh.store.row2list(ar,elem)])
         else:
             kw.update(data_record=elem2rec_detailed(ar,elem))
@@ -426,7 +426,7 @@ class Choices(View):
         """
         rpt = requested_report(app_label,rptname)
         if fldname is None:
-            ar = rpt.request(settings.LINO.ui,request,rpt.default_action)
+            ar = rpt.request(settings.LINO.ui,request) # ,rpt.default_action)
             #~ rh = rpt.get_handle(self)
             #~ ar = ViewReportRequest(request,rh,rpt.default_action)
             #~ ar = dbtables.TableRequest(self,rpt,request,rpt.default_action)
@@ -529,12 +529,12 @@ class Restful(View):
     def post(self,request,app_label=None,actor=None,pk=None):
         ui = settings.LINO.ui
         rpt = requested_report(app_label,actor)
-        a = rpt.default_action
+        #~ a = rpt.default_action
         if pk is None:
             elem = None
         else:
             elem = rpt.get_row_by_pk(pk)
-        ar = rpt.request(ui,request,a)
+        ar = rpt.request(ui,request)
             
         instance = ar.create_instance()
         # store uploaded files. 
@@ -553,21 +553,21 @@ class Restful(View):
     def delete(self,request,app_label=None,actor=None,pk=None):
         ui = settings.LINO.ui
         rpt = requested_report(app_label,actor)
-        a = rpt.default_action
+        #~ a = rpt.default_action
         elem = rpt.get_row_by_pk(pk)
-        ar = rpt.request(ui,request,a)
+        ar = rpt.request(ui,request)
         return delete_element(ar,elem)
       
     def get(self,request,app_label=None,actor=None,pk=None):
         ui = settings.LINO.ui
         rpt = requested_report(app_label,actor)
-        a = rpt.default_action
+        #~ a = rpt.default_action
         assert pk is None, 20120814
         #~ if pk is None:
             #~ elem = None
         #~ else:
             #~ elem = rpt.get_row_by_pk(pk)
-        ar = rpt.request(ui,request,a)
+        ar = rpt.request(ui,request)
         rh = ar.ah
         rows = [ 
           rh.store.row2dict(ar,row,rh.store.list_fields) 
@@ -577,9 +577,9 @@ class Restful(View):
     def put(self,request,app_label=None,actor=None,pk=None):
         ui = settings.LINO.ui
         rpt = requested_report(app_label,actor)
-        a = rpt.default_action
+        #~ a = rpt.default_action
         elem = rpt.get_row_by_pk(pk)
-        ar = rpt.request(ui,request,a)
+        ar = rpt.request(ui,request)
         rh = ar.ah
             
         data = http.QueryDict(request.raw_post_data).get('rows')
@@ -622,12 +622,13 @@ class ApiElement(View):
         if a is None:
             raise http.Http404("%s has no action %r" % (rpt,action_name))
             
-        ar = rpt.request(ui,request,a)
+        #~ ar = rpt.request(ui,request,a)
+        ar = a.request(ui,request)
         ar.renderer = ui.ext_renderer
         ah = ar.ah
         
         #~ fmt = request.GET.get('fmt',a.default_format)
-        fmt = request.GET.get(ext_requests.URL_PARAM_FORMAT,a.default_format)
+        fmt = request.GET.get(ext_requests.URL_PARAM_FORMAT,a.action.default_format)
         
         if fmt == ext_requests.URL_FORMAT_PLAIN:
             ar.renderer = ar.ui.plain_renderer
@@ -658,12 +659,12 @@ class ApiElement(View):
                 
             #~ main = xghtml.Table()
             
-            wl = ar.action.get_window_layout()
+            wl = ar.bound_action.action.get_window_layout()
             #~ print 20120901, wl.main
             lh = wl.get_layout_handle(ar.ui)
             
             def render_detail(ar,obj,elem):
-                print '20120901 render_detail(%s %s)' % (elem.__class__.__name__,elem)
+                #~ print '20120901 render_detail(%s %s)' % (elem.__class__.__name__,elem)
                 if isinstance(elem,ext_elems.Wrapper):
                     for chunk in render_detail(ar,obj,elem.wrapped):
                         yield chunk
@@ -702,7 +703,7 @@ class ApiElement(View):
         
 
         #~ if isinstance(a,actions.OpenWindowAction):
-        if a.opens_a_window:
+        if a.action.opens_a_window:
           
             if fmt == ext_requests.URL_FORMAT_JSON:
                 if pk == '-99999':
@@ -725,22 +726,22 @@ class ApiElement(View):
                 tab = int(tab)
                 after_show.update(active_tab=tab)
             
-            return http.HttpResponse(ui.html_page(request,a.label,
+            return http.HttpResponse(ui.html_page(request,a.action.label,
               on_ready=ui.ext_renderer.action_call(request,a,after_show)))
             
-        if isinstance(a,actions.RedirectAction):
-            target = a.get_target_url(elem)
+        if isinstance(a.action,actions.RedirectAction):
+            target = a.action.get_target_url(elem)
             if target is None:
                 raise http.Http404("%s failed for %r" % (a,elem))
             return http.HttpResponseRedirect(target)
             
-        if isinstance(a,actions.RowAction):
+        if isinstance(a.action,actions.RowAction):
             if pk == '-99998':
                 assert elem is None
                 elem = ar.create_instance()
             
             try:
-                rv = a.run(elem,ar)
+                rv = a.action.run(elem,ar)
                 if rv is None:
                     return ui.success_response()
                 return rv
@@ -768,7 +769,7 @@ class ApiElement(View):
                 else:
                     msg = _(
                       "Action \"%(action)s\" failed for %(record)s:") % dict(
-                      action=a,
+                      action=a.full_name(),
                       record=obj2unicode(elem))
                     msg += "\n" + unicode(e)
                 msg += '.\n' + _(
@@ -857,7 +858,7 @@ class ApiList(View):
         #~ print 20120630, 'api_list_view'
         fmt = request.GET.get(
             ext_requests.URL_PARAM_FORMAT,
-            ar.action.default_format)
+            ar.bound_action.action.default_format)
       
         if fmt == ext_requests.URL_FORMAT_JSON:
             #~ ar.renderer = ui.ext_renderer
@@ -885,7 +886,7 @@ class ApiList(View):
         if fmt == ext_requests.URL_FORMAT_HTML:
             #~ ar.renderer = ui.ext_renderer
             after_show = ar.get_status(ar.ui)
-            if isinstance(ar.action,actions.InsertRow):
+            if isinstance(ar.bound_action.action,actions.InsertRow):
                 elem = ar.create_instance()
                 #~ print 20120630
                 #~ print elem.national_id
@@ -893,7 +894,7 @@ class ApiList(View):
                 after_show.update(data_record=rec)
 
             kw = dict(on_ready=
-                ar.renderer.action_call(ar.request,ar.action,after_show))
+                ar.renderer.action_call(ar.request,ar.bound_action,after_show))
                 #~ ui.ext_renderer.action_call(ar.request,ar.action,after_show))
             #~ print '20110714 on_ready', params
             kw.update(title=ar.get_title())

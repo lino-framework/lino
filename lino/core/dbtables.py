@@ -524,7 +524,7 @@ class Table(AbstractTable):
         if obj is not None:
             state = self.get_row_state(obj)
             u = ar.get_user()
-            for a in self.get_actions(ar.action):
+            for a in self.get_actions(ar.bound_action.action):
                 if a.show_in_bbar and not obj.get_row_permission(u,state,a):
                 #~ if a.show_in_bbar and not a.get_action_permission(ar.get_user(),obj,state):
                     d[a.name] = True

@@ -133,6 +133,10 @@ class DialogRequired(Exception):
         self.dialog = dlg
         Exception.__init__(self)
         
+
+
+
+
 class Parametrizable(object):        
     
     parameters = None
@@ -155,6 +159,8 @@ class Parametrizable(object):
     panel should be visible when this table is being displayed.
     """
     
+    _layout_class = NotImplementedError
+            
     
     @classmethod
     def register_params(cls):
@@ -164,15 +170,13 @@ class Parametrizable(object):
                 v.table = cls
                 
     @classmethod
-    def make_params_layout_handle(self,ui):
-        if self.params_layout:
-            params_layout = self.params_layout
-        else:
-            #~ params_layout= ' '.join([pf.name for pf in h.actor.params])
-            params_layout = ' '.join(self.parameters.keys())
-        pl = layouts.ParamsLayout(params_layout,self)
-        return pl.get_layout_handle(ui)
-            
+    def make_params_layout_handle(cls,ui):
+        if cls.params_layout is None:
+            cls.params_layout = cls._layout_class.join_str.join(cls.parameters.keys())
+        if isinstance(cls.params_layout,basestring):
+            cls.params_layout = cls._layout_class(cls.params_layout,cls)
+        return cls.params_layout.get_layout_handle(ui)
+        
     @classmethod
     def after_site_setup(self,site):
         if self.parameters:
@@ -191,7 +195,7 @@ class Parametrizable(object):
         return None
       
     @classmethod
-    def get_window_layout(self):
+    def get_window_layout(self,actor):
         return self.params_layout
         
         
@@ -209,6 +213,8 @@ class Action(Parametrizable):
     """
     
     __metaclass__ = ActionMetaClass
+    
+    _layout_class = layouts.ActionParamsLayout
     
     sort_index = 90
     """
@@ -253,14 +259,14 @@ class Action(Parametrizable):
     See :func:`lino.core.perms.make_permission_handler`.
     """
     
-    name = None
+    action_name = None
     """
-    Internally used to store the name of this action within the Actor's namespace.
+    Internally used to store the name of this action within the defining Actor's namespace.
     """
     
-    url_action_name = None
-    """
-    """
+    #~ url_action_name = None
+    #~ """
+    #~ """
     
     use_param_panel = False
     """
@@ -269,10 +275,10 @@ class Action(Parametrizable):
     """
     
     
-    actor = None
+    defining_actor = None
     """
     Internally used to store the :class:`lino.core.actors.Actor` 
-    who owns this action.
+    who defined this action.
     """
     
     key = None
@@ -396,31 +402,47 @@ class Action(Parametrizable):
         else:
             self.show_in_bbar = True
         
+    def full_name(self,actor):
+        if self.action_name is None:
+            return repr(self)
+        return str(actor) + '.' + self.action_name
+        
+    def __repr__(self):
+        return "%s %s.%s" % (self.__class__.__name__,self.defining_actor,self.action_name)
+        
     def __str__(self):
-        #~ raise Exception("Must use action2str(actor,action)")
-        if self.actor is None:
-            #~ raise Exception("tried to call str() on general action %s" % self.name)
-            return repr(self)
-            #~ raise Exception("Tried to call str() on shared action %r" % self)
-        if self.name is None:
-            return repr(self)
-        return str(self.actor) + '.' + self.name
+        raise Exception("20121003 Must use full_name(actor)") 
+        #~ if self.defining_actor is None:
+            #~ return repr(self)
+        #~ if self.name is None:
+            #~ return repr(self)
+        #~ return str(self.defining_actor) + '.' + self.name
         
     #~ def set_permissions(self,*args,**kw)
         #~ self.permission = perms.factory(*args,**kw)
         
     def attach_to_actor(self,actor,name):
-        if self.name is not None:
-            raise Exception("%s tried to attach named action %s" % (actor,self))
-        if self.actor is not None:
-            raise Exception("%s tried to attach action %s of %s" % (actor,name,self.actor))
-        self.name = name
-        self.actor = actor
+        #~ if self.name is not None:
+            #~ raise Exception("%s tried to attach named action %s" % (actor,self))
+        #~ if actor == self.defining_actor:
+            #~ raise Exception('20121003 %s %s' % (actor,name))
+        if self.defining_actor is not None:
+            #~ if name != self.name:
+                #~ raise Exception("%s tried to attach action %s as %s" % (actor,self.name,name))
+            if False:
+                # the following test is not possible, it would give false alert for EmptyTable.default_action
+                if not issubclass(actor,self.defining_actor):
+                    raise Exception("%r tried to attach action %s of %r" % (actor,name,self.defining_actor))
+            return
+        self.action_name = name
+        self.defining_actor = actor
         if self.label is None:
             self.label = name
         if actor.hide_top_toolbar:
             self.hide_top_toolbar = True
-        if self.help_text is None and self is actor.default_action:
+        if self.help_text is None \
+            and actor.default_action is not None \
+            and self is actor.default_action.action:
             self.help_text  = actor.help_text
         #~ if name == 'default_action':
             #~ print 20120527, self
@@ -444,14 +466,6 @@ class Action(Parametrizable):
         #~ """
         #~ return True
         
-    def get_button_label(self):
-        if self.actor is None:
-            return self.label 
-        if self is self.actor.default_action:
-            return self.label 
-        else:
-            return u"%s %s" % (self.label,self.actor.label)
-            
     def get_action_permission(self,user,obj,state):
         """
         The default implementation simply calls this action's 
@@ -464,9 +478,9 @@ class Action(Parametrizable):
     #~ def run(self,elem,ar,**kw):
         #~ raise NotImplementedError("%s has no run() method" % self.__class__)
 
-    def request(self,*args,**kw):
-        kw.update(action=self)
-        return self.actor.request(*args,**kw)
+    #~ def request(self,*args,**kw):
+        #~ kw.update(action=self)
+        #~ return self.defining_actor.request(*args,**kw)
         
 
 class TableAction(Action):
@@ -499,10 +513,10 @@ class RowAction(Action):
     #~ def get_action_permission(self,user,obj):
         #~ return self.actor.get_row_permission(self,user,obj)
             
-    def attach_to_actor(self,actor,name):
-        super(RowAction,self).attach_to_actor(actor,name)
-        if not self.url_action_name:
-            self.url_action_name = name 
+    #~ def attach_to_actor(self,actor,name):
+        #~ super(RowAction,self).attach_to_actor(actor,name)
+        #~ if not self.url_action_name:
+            #~ self.url_action_name = name 
 
 
 
@@ -521,14 +535,14 @@ class GridEdit(TableAction):
     opens_a_window = True
 
     callable_from = tuple()
-    url_action_name = 'grid'
+    #~ url_action_name = 'grid'
     
     def attach_to_actor(self,actor,name):
         #~ self.label = actor.button_label or actor.label
         self.label = actor.label
         super(GridEdit,self).attach_to_actor(actor,name)
 
-    def get_window_layout(self):
+    def get_window_layout(self,actor):
         #~ return self.actor.list_layout
         return None
 
@@ -544,11 +558,11 @@ class ShowDetailAction(RowAction):
     callable_from = (GridEdit,)
     #~ show_in_detail = False
     #~ needs_selection = True
-    url_action_name = 'detail'
+    #~ url_action_name = 'detail'
     label = _("Detail")
     
-    def get_window_layout(self):
-        return self.actor.detail_layout
+    def get_window_layout(self,actor):
+        return actor.detail_layout
         
     #~ def get_elem_title(self,elem):
         #~ return _("%s (Detail)")  % unicode(elem)
@@ -571,7 +585,7 @@ class InsertRow(TableAction):
     #~ readonly = False # see blog/2012/0726
     required = dict(user_level='user')
     callable_from = (GridEdit,ShowDetailAction)
-    url_action_name = 'insert'
+    #~ url_action_name = 'insert'
     #~ label = _("Insert")
     key = INSERT # (ctrl=True)
     #~ needs_selection = False
@@ -579,8 +593,8 @@ class InsertRow(TableAction):
     def get_action_title(self,rr):
         return _("Insert into %s") % force_unicode(rr.get_title())
         
-    def get_window_layout(self):
-        return self.actor.insert_layout or self.actor.detail_layout
+    def get_window_layout(self,actor):
+        return actor.insert_layout or actor.detail_layout
 
     def get_action_permission(self,user,obj,state):
         # see blog/2012/0726
@@ -597,14 +611,14 @@ class DuplicateRow(RowAction):
     readonly = False
     required = dict(user_level='user')
     callable_from = (GridEdit,ShowDetailAction)
-    url_action_name = 'duplicate'
+    #~ url_action_name = 'duplicate'
     label = _("Duplicate")
 
 
 class ShowEmptyTable(ShowDetailAction):
     use_param_panel = True
     callable_from = tuple()
-    url_action_name = 'show' 
+    #~ url_action_name = 'show' 
     default_format = 'html'
     #~ hide_top_toolbar = True
     hide_navigator = True
@@ -646,7 +660,7 @@ class DeleteSelected(RowAction):
     callable_from = (GridEdit,ShowDetailAction)
     #~ needs_selection = True
     label = _("Delete")
-    url_action_name = 'delete'
+    #~ url_action_name = 'delete'
     key = DELETE # (ctrl=True)
     #~ client_side = True
     
@@ -707,10 +721,14 @@ class ActionRequest(object):
         if renderer is None:
             renderer = ui.text_renderer
         self.renderer = renderer
-        self.action = action or actor.default_action
+        self.actor = actor
+        #~ self.action = action or actor.default_action
+        #~ self.bound_action = BoundAction(actor,action or actor.default_action)
+        if action and not isinstance(action,BoundAction):
+            raise Exception("20121003 %r is not a BoundAction" % action)
+        self.bound_action = action or actor.default_action
         self.step = 0 # confirmation counter
         #~ self.report = actor
-        self.actor = actor
         self.request = request
         if request is not None:
             if request.method == 'PUT':
@@ -808,6 +826,7 @@ class ActionRequest(object):
         
         
     def dialog(self,dlg):
+        # not finished
         self.step += 1
         if int(self.request.REQUEST.get(ext_requests.URL_PARAM_ACTION_STEP,'0')) >= self.step:
             return
@@ -878,13 +897,13 @@ class ActionRequest(object):
         return self.subst_user or self.user
         
     def get_action_title(self):
-        return self.action.get_action_title(self)
+        return self.bound_action.action.get_action_title(self)
         
     def get_title(self):
         return self.actor.get_title(self)
         
     def render_to_dict(self):
-        return self.action.render_to_dict(self)
+        return self.bound_action.action.render_to_dict(self)
         
     def get_request_url(self,*args,**kw):
         return self.ui.get_request_url(self,*args,**kw)
@@ -948,3 +967,33 @@ def action(*args,**kw):
     
 #~ def action2str(actor,action):
     #~ return str(actor) + '.' + action.name
+        
+        
+class BoundAction(object):
+    def __init__(self,actor,action):
+        assert isinstance(action,Action)
+        self.action = action
+        self.actor = actor
+        
+    def get_window_layout(self):
+        return self.action.get_window_layout(self.actor)
+        
+    def full_name(self):
+        if self.action.action_name is None:
+            raise Exception("%r action_name is None" % self.action)
+        return str(self.actor) + '.' + self.action.action_name
+        
+    def request(self,*args,**kw):
+        kw.update(action=self)
+        return self.actor.request(*args,**kw)
+        
+        
+    def get_button_label(self):
+        if self.actor is None:
+            return self.action.label 
+        if self.action is self.actor.default_action.action:
+            return self.actor.label 
+        else:
+            return u"%s %s" % (self.action.label,self.actor.label)
+            
+        

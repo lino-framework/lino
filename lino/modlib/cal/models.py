@@ -1753,8 +1753,15 @@ if settings.LINO.use_extensible:
   
     class CalendarPanel(dd.Frame):
         required = dict(user_groups='office',auth=True)
-        default_action = CalendarAction()
+        
+        #~ default_action = CalendarAction()
         #~ default_action_class = dd.Calendar
+        
+        show_calendar = CalendarAction()
+        
+        @classmethod
+        def get_default_action(self):
+            return actions.BoundAction(self,self.show_calendar)
 
     class PanelCalendars(Calendars):
         use_as_default_table = False
@@ -1908,11 +1915,11 @@ def reminders_as_html(ar,days_back=None,days_forward=None,**kw):
         filter=flt & models.Q(state__in=[None,TaskState.todo]))
     
     for o in events:
-        o._detail_action = MyEvents.detail_action
+        o._detail_action = MyEvents.get_url_action('detail_action')
         add(o)
         
     for o in tasks:
-        o._detail_action = MyTasks.detail_action
+        o._detail_action = MyTasks.get_url_action('detail_action')
         add(o)
         
     #~ for o in Event.objects.filter(

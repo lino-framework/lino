@@ -1,0 +1,12 @@
+20121005
+========
+
+- Finished recovering from the surgery.
+
+- Unified the appearence of "action buttons". They are now always
+  [between square brackets], and we might display them more button-like 
+  using css if we had time to play.
+  
+- Fixed a problem in :mod:`lino.mixins.uploadable`:
+  Certain Python versions or systems don't manage non-ascii filenames,
+  so we replace any non-ascii char by "_"

@@ -119,7 +119,7 @@ class ChangeStateAction(actions.RowAction):
         #~ logger.info('20120930 ChangeStateAction %s %s', actor,target_state)
         
     def run(self,row,ar,**kw):
-        state_field_name = self.actor.workflow_state_field.attname
+        state_field_name = self.defining_actor.workflow_state_field.attname
         assert isinstance(state_field_name,basestring)
         #~ old = row.state
         old = getattr(row,state_field_name)
@@ -143,8 +143,12 @@ from django.utils.functional import Promise
 class State(choicelists.Choice):        
         
     def add_workflow(self,label=None,help_text=None,**required):
+        """
+        `label` can be either a string or a subclass of ChangeStateAction
+        """
         self.choicelist.workflow_actions = list(self.choicelist.workflow_actions)
         i = len(self.choicelist.workflow_actions)
+        #~ if label and issubclass(label,actions.Action):
         if label and not isinstance(label,(basestring,Promise)):#issubclass(label,ChangeStateAction):
             def fn():
                 return label(self,required,
@@ -153,7 +157,8 @@ class State(choicelists.Choice):
         else:
             def fn():
                 return ChangeStateAction(self,required,
-                    label=label or self.text,help_text=help_text,
+                    label=label or self.text,
+                    help_text=help_text,
                     sort_index=10+i)
         #~ name = 'mark_' + self.value
         name = 'wf' + str(i)
@@ -304,7 +309,7 @@ class ActorMetaClass(type):
         if classname not in (
             'Table','AbstractTable','VirtualTable',
             'Action','Actor','Frame',
-            'EmptyTable'):
+            'EmptyTable','Dialog'):
             if actor_classes is None:
                 #~ logger.debug("%s definition was after discover",cls)
                 pass
@@ -328,6 +333,8 @@ class Actor(actions.Parametrizable):
     """
     
     __metaclass__ = ActorMetaClass
+    
+    _layout_class = layouts.ParamsLayout
     
     app_label = None
     """
@@ -468,7 +475,7 @@ class Actor(actions.Parametrizable):
     
     allow_create = True
     """
-    If this is False, then then Actor won't have neither create_action  nor insert_action.
+    If this is False, then then Actor won't have neither create_action nor insert_action.
     """
 
     #~ has_navigator = True
@@ -627,32 +634,35 @@ class Actor(actions.Parametrizable):
     def class_init(cls):
         #~ if cls.__name__ == 'Home':
             #~ print "20120524",cls, "class_init()", cls.__bases__
-        #~ for b in cls.__bases__:
+        cls.default_action = cls.get_default_action()
         
-        for b in cls.mro():
-            for k,v in b.__dict__.items():
-                if isinstance(v,actions.Action):
-                    #~ if not cls.__dict__.has_key(k):
-                    #~ if cls.__name__ == 'Home':
-                    if cls.__dict__.get(k,None) is None:
-                        #~ logger.info("20120628 %s.%s copied from %s",cls,k,b)
-                        #~ label = v.label
-                        v = copy.deepcopy(v)
-                        #~ v.label = label
-                        #~ v = copy.copy(v)
-                        v.name = None
-                        setattr(cls,k,v)
-                        #~ cls.define_action(k,v)
-                        #~ if b is EmptyTable:
-                            #~ print "20120523", classname, k, v
-            #~ bd = getattr(b,'_actions_dict',None)
-            #~ if bd:
-                #~ for k,v in bd.items():
-                    #~ cls._actions_dict[k] = cls.add_action(copy.deepcopy(v),k)
+        if False:
+            #~ for b in cls.__bases__:
+            for b in cls.mro():
+                for k,v in b.__dict__.items():
+                    if isinstance(v,actions.Action):
+                      if v.parameters is not None:
+                        #~ if not cls.__dict__.has_key(k):
+                        #~ if cls.__name__ == 'Home':
+                        if cls.__dict__.get(k,None) is None:
+                            #~ logger.info("20120628 %s.%s copied from %s",cls,k,b)
+                            #~ label = v.label
+                            v = copy.deepcopy(v)
+                            #~ v.label = label
+                            #~ v = copy.copy(v)
+                            v.name = None
+                            setattr(cls,k,v)
+                            #~ cls.define_action(k,v)
+                            #~ if b is EmptyTable:
+                                #~ print "20120523", classname, k, v
+                #~ bd = getattr(b,'_actions_dict',None)
+                #~ if bd:
+                    #~ for k,v in bd.items():
+                        #~ cls._actions_dict[k] = cls.add_action(copy.deepcopy(v),k)
         
     @classmethod
     def get_view_permission(self,user):
-        return self.default_action.allow(user,None,None)
+        return self.default_action.action.allow(user,None,None)
         #~ return self.allow_read(user,None,None)
 
     @classmethod
@@ -681,8 +691,8 @@ class Actor(actions.Parametrizable):
         Also fill _actions_list.
         """
         if cls.detail_layout or cls.detail_template:
-            if isinstance(cls.default_action,actions.ShowDetailAction):
-                cls.detail_action = cls.default_action
+            if cls.default_action and isinstance(cls.default_action.action,actions.ShowDetailAction):
+                cls.detail_action = cls.default_action.action
             else:
                 cls.detail_action = actions.ShowDetailAction()
         if cls.detail_action and cls.editable and cls.allow_create:
@@ -722,9 +732,16 @@ class Actor(actions.Parametrizable):
         been copied to this Actor's __dict__
         """
         cls._actions_list = []
-        for k,v in cls.__dict__.items():
-            if isinstance(v,actions.Action):
-                cls._attach_action(k,v)
+        if True:
+            for b in cls.mro():
+                for k,v in b.__dict__.items():
+                    if isinstance(v,actions.Action):
+                        if not cls._actions_dict.has_key(k):
+                            cls._attach_action(k,v)
+        else:
+            for k,v in cls.__dict__.items():
+                if isinstance(v,actions.Action):
+                    cls._attach_action(k,v)
                 
         #~ cls._actions_list = cls._actions_dict.values()
         #~ cls._actions_list += cls.get_shared_actions()
@@ -740,11 +757,11 @@ class Actor(actions.Parametrizable):
     def get_workflow_actions(self,ar,obj):
         state = self.get_row_state(obj)
         u = ar.get_user()
-        for a in self.get_actions(ar.action):
+        for a in self.get_actions(ar.bound_action.action):
             if a.show_in_workflow:
                 #~ logger.info('20120930 %s show in workflow', a.name)
                 if obj.get_row_permission(u,state,a):
-                    yield a
+                    yield actions.BoundAction(self,a)
         
     #~ @classmethod
     #~ def get_state_actions(self):
@@ -761,17 +778,31 @@ class Actor(actions.Parametrizable):
             
     @classmethod
     def _attach_action(self,name,a):
-        if a.actor is self:
-            return
+        #~ if str(self) == 'lino.Home':
+            #~ logger.info("20121003 %s._attach_action(%r)",self,name)
+        #~ if a.defining_actor is self:
+            #~ return # defining same action under different names (eg default_action...)
+            
+        v = self._actions_dict.get(name,None)
+        if v is not None:
+            return 
+            #~ raise Exception("%s : action_name %r of %r would override %r" % (
+                  #~ self,a.action_name,a,v))
+            #~ if self._actions_dict.has_key(a.url_action_name):
+                #~ raise Exception(
+                    #~ "Duplicate url_action_name %s for %r" % (
+                        #~ a.url_action_name,a))
+        self._actions_dict[name] = a
+        
         a.attach_to_actor(self,name)
-        if a.url_action_name:
-            if self._actions_dict.has_key(a.url_action_name):
-                raise Exception(
-                    "Duplicate url_action_name %s for %s" % (
-                        a.url_action_name,a))
-            self._actions_dict[a.url_action_name] = a
-        elif a.show_in_workflow:
-            raise Exception("Cannot show %s in workflow without url_action_name" % self)
+        
+        if name != a.action_name:
+            #~ raise Exception("20121003 %r %r : %r != %r" % (self,a,name,a.action_name))
+            #~ logger.info("20121003 %r %r : %r != %r", self,a,name,a.action_name)
+            return 
+        
+        #~ elif a.show_in_workflow:
+            #~ raise Exception("Cannot show %s in workflow without url_action_name" % self)
         self._actions_list.append(a)
         return a
             
@@ -957,7 +988,9 @@ class Actor(actions.Parametrizable):
         
     @classmethod
     def get_url_action(self,name):
-        return self._actions_dict.get(name,None)
+        a = self._actions_dict.get(name,None)
+        if a is not None:
+            return actions.BoundAction(self,a)
         
     @classmethod
     def get_actions(self,callable_from=None):
