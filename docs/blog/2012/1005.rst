@@ -1,7 +1,11 @@
 20121005
 ========
 
-- Finished recovering from the surgery.
+Continued recovering after the surgery. 
+Action Parameter Dialog Boxes are no longer duplicated 
+and have now a default window_size.
+
+En passant:
 
 - Unified the appearence of "action buttons". They are now always
   [between square brackets], and we might display them more button-like 
@@ -10,3 +14,17 @@
 - Fixed a problem in :mod:`lino.mixins.uploadable`:
   Certain Python versions or systems don't manage non-ascii filenames,
   so we replace any non-ascii char by "_"
+
+Checkin
+-------
+
+Nach der Entwicklungslawine scheinen die meisten Nebenwirkungen 
+jetzt beseitigt. Ich kann weiter an dem arbeiten, was die Lawine 
+verursacht hatte:
+
+- Dialogfenster von RefuseNewClient hat noch immer ein Layout-Problem
+- Felder werden doppelt deklariert (wahrscheinlich weil sie auch 
+  in `params_panel.fields` nochmal drin stehen.
+- Und dann müssen die Werte der Aktionsparameter noch in eine Variable 
+  `ar.action_param_values` übergeben werden.
+

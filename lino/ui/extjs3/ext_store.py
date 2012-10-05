@@ -502,11 +502,13 @@ class SpecialStoreField(StoreField):
 
 class DisabledFieldsStoreField(SpecialStoreField):
     """
-    See 20100803, 20111003, 20120901
-    NB: disabled_fields:
+    See also blog entries 20100803, 20111003, 20120901
+    
+    Note some special cases:
+    
     - vat.VatDocument.total_incl must be disabled and may not get submitted. 
       ExtJS requires us to set this dynamically each time.
-    - JobsOverview.body may not be have the disbaled class
+    - JobsOverview.body (readonly) must *not* have the 'disabled' css class
     """
     name = 'disabled_fields'
     
