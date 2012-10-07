@@ -68,11 +68,14 @@ class Watcher(object):
         
     def log_changes(self,request):
       
-        #~ cs = self.watched._watch_changes_specs
-        ignored_fields = self.watched._watch_changes_specs
+        cs = self.watched._watch_changes_specs
+        
         #~ print 20120921, cs
-        if ignored_fields is None:
+        if cs is None:
             return
+            
+        #~ ignored_fields = self.watched._watch_changes_specs
+        #~ ignored_fields            
         
         #~ watched_fields, options = cs
         
@@ -83,7 +86,7 @@ class Watcher(object):
             changes = []
             for k,old in self.original_state.iteritems():
                 #~ if watched_fields is None or k in watched_fields:
-                if not k in ignored_fields:
+                if not k in cs.ignored_fields:
                     new = self.watched.__dict__.get(k, NOT_GIVEN)
                     if old != new:
                         changes.append("%s : %s --> %s" % (k,obj2str(old),obj2str(new)))
@@ -97,9 +100,15 @@ class Watcher(object):
                 
         from lino.models import Change            
         
+        if cs.master_key is None:
+            master = self.watched
+        else:
+            master = getattr(self.watched,cs.master_key)
+            
         Change(
             time=datetime.datetime.now(),
             user=request.user,
             summary=self.watched._change_summary,
+            master=master,
             object=self.watched,
             diff=msg).save()

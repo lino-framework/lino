@@ -59,3 +59,19 @@ z.B. werden ChoiceLists jetzt nur noch ein einziges Mal
 in den `lino*.js` definiert, 
 statt bei jeder Verwendung inline in den Code geklebt zu werden.
 
+Das Layout-Problem im ExtJS-Code ist jetzt gelöst. 
+Also bei Klick auf !Refuse" kommt jetzt das Dialogfenster 
+mit den Parametern und den beiden Buttons "OK" und "Cancel"
+
+Checkin. 
+
+Jetzt fehlt "nur" noch, dass er bei Klick auf OK den 
+korrekten AJAX-Request abschickt.
+
+En passant habe ich,
+jetzt wo meine Internetleitung 10x schneller geworden ist,
+die Demo auf meinem Server mal aktualisiert:
+
+  http://dsbe-demo.saffre-rumma.net/
+  
+Ist das jetzt eine zumutbare Geschwindigkeit? 

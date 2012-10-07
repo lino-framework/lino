@@ -1501,22 +1501,6 @@ class Panel(Container):
         else:
             raise Exception("layout is %r" % d['layout'] )
             
-        if self.is_fieldset:
-            self.update(labelWidth=self.label_width * EXT_CHAR_WIDTH)
-        #~ else:
-            #~ d.update(padding=DEFAULT_PADDING)
-        if len(self.elements) > 1 and self.vertical:
-            #d.update(frame=self.has_frame)
-            self.update(frame=True)
-            self.update(bodyBorder=False)
-            self.update(border=False)
-            #~ 20120115 d.update(labelAlign=self.labelAlign)
-            #d.update(style=dict(padding='0px'),color='green')
-        else:
-            self.update(frame=False)
-            #self.update(bodyBorder=False)
-            self.update(border=False)
-            
         
     def wrap_formlayout_elements(self):
         #~ if layout_handle.main_class is DetailMainPanel:
@@ -1573,6 +1557,28 @@ class Panel(Container):
         #d.update(items=js_code("[\n  %s\n]" % (", ".join(l))))
         #d.update(items=js_code("this.elements"))
         #~ if self.label and not isinstance(self,MainPanel) and not isinstance(self.parent,MainPanel):
+        
+        
+        if self.is_fieldset:
+            d.update(labelWidth=self.label_width * EXT_CHAR_WIDTH)
+        if self.parent is None or (len(self.elements) > 1 and self.vertical):
+            """
+            The `self.parent is None` test is e.g. for Parameter 
+            Panels which are usually not vertical but still want a frame 
+            since they are the main panel.
+            """
+            d.update(frame=True)
+            d.update(bodyBorder=False)
+            d.update(border=False)
+            #~ 20120115 d.update(labelAlign=self.labelAlign)
+            #d.update(style=dict(padding='0px'),color='green')
+        else:
+            d.update(frame=False)
+            #self.update(bodyBorder=False)
+            d.update(border=False)
+            
+        
+        
         return d
         
 
@@ -1690,6 +1696,27 @@ class DetailMainPanel(Panel):
         return kw
         
 
+class ParamsPanel(Panel):
+    """
+    The optional Panel for `parameters` of a Table. 
+    JS part stored in `Lino.GridPanel.params_panel`.
+    """
+    #~ value_template = "new Ext.form.FormPanel(%s)"
+    #~ value_template = "new Ext.form.FormPanel({layout:'fit', autoHeight: true, frame: true, items:new Ext.Panel(%s)})"
+    value_template = "%s"
+    #~ pass
+    def unused__init__(self,lh,name,vertical,*elements,**kw):
+        Panel.__init__(self,lh,name,vertical,*elements,**kw)
+        
+        #~ fkw = dict(layout='fit', autoHeight= True, frame= True, items=pp)
+        if lh.layout._table.params_panel_hidden:
+            self.value_template = "new Ext.form.FormPanel({hidden:true, layout:'fit', autoHeight: true, frame: true, items:new Ext.Panel(%s)})"
+          
+            #~ fkw.update(hidden=True)
+        #~ self.value = 
+        #~ return ext_elems.FormPanel(**fkw)
+    
+
 #~ class ParamsForm(Panel):
 #~ class DialogPanel(Panel):
 class ActionParamsPanel(Panel):
@@ -1702,26 +1729,6 @@ class ActionParamsPanel(Panel):
     #~ value_template = "new Lino.ActionParamsPanel({layout:'fit', autoHeight: true, frame: true, items:new Ext.Panel(%s)})"
     value_template = "new Lino.ActionParamsPanel(%s)"
     
-class ParamsPanel(Panel):
-    """
-    The optional Panel for `parameters` of a Table. 
-    JS part stored in `Lino.GridPanel.params_panel`.
-    """
-    #~ value_template = "new Ext.form.FormPanel(%s)"
-    value_template = "new Ext.form.FormPanel({layout:'fit', autoHeight: true, frame: true, items:new Ext.Panel(%s)})"
-    #~ pass
-    def __init__(self,lh,name,vertical,*elements,**kw):
-        Panel.__init__(self,lh,name,vertical,*elements,**kw)
-        
-        #~ fkw = dict(layout='fit', autoHeight= True, frame= True, items=pp)
-        if lh.layout._table.params_panel_hidden:
-            self.value_template = "new Ext.form.FormPanel({hidden:true, layout:'fit', autoHeight: true, frame: true, items:new Ext.Panel(%s)})"
-          
-            #~ fkw.update(hidden=True)
-        #~ self.value = 
-        #~ return ext_elems.FormPanel(**fkw)
-    
-
 
 class TabPanel(Panel):
     value_template = "new Ext.TabPanel(%s)"

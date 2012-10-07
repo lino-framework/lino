@@ -284,9 +284,15 @@ class Change(dd.Model):
     time = models.DateTimeField()
     if settings.LINO.user_model:
         user = dd.ForeignKey(settings.LINO.user_model)
-    object_type = models.ForeignKey(ContentType)
+        
+    object_type = models.ForeignKey(ContentType,related_name='changes_by_object')
     object_id = dd.GenericForeignKeyIdField(object_type)
     object = dd.GenericForeignKey('object_type','object_id',_("Object"))
+    
+    master_type = models.ForeignKey(ContentType,related_name='changes_by_master')
+    master_id = dd.GenericForeignKeyIdField(master_type)
+    master = dd.GenericForeignKey('master_type','master_id',_("Master"))
+    
     summary = models.CharField(_("Summary"),max_length=200,blank=True)
     #~ description = dd.RichTextField(format='plain')
     diff = dd.RichTextField(_("Changes"),format='plain')
@@ -300,17 +306,20 @@ class Changes(dd.Table):
     model = Change
     order_by = ['-time']
     detail_layout = """
-    time user object id
+    time user object master id
     summary
     diff
     """
     
-class ChangesByObject(Changes):
+#~ class ChangesByObject(Changes):
+class ChangesByMaster(Changes):
     """
     Slave Table showing the changes related to the current object
     """
-    column_names = 'time user summary'
-    master_key = 'object'
+    column_names = 'time user object summary'
+    master_key = 'master'
+
+
 
 
 

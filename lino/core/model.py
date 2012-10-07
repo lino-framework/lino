@@ -24,6 +24,13 @@ from lino.core import fields
 from lino.core import modeltools
 from lino.utils.xmlgen import html as xghtml
 
+class WatcherSpec:
+    def __init__(self,ignored_fields,master_key):
+        self.ignored_fields = ignored_fields
+        self.master_key = master_key
+    
+
+
 class Model(models.Model):
     """
     Adds Lino specific features to Django's Model base class. 
@@ -104,7 +111,7 @@ class Model(models.Model):
     """
     
     @classmethod
-    def watch_changes(model,ignore=[],**options):
+    def watch_changes(model,ignore=[],master_key=None,**options):
         """
         Declare a set of fields of this model to be "observed" or "watched".
         Each change to an object comprising at least one watched 
@@ -126,7 +133,7 @@ class Model(models.Model):
         for f in model._meta.fields:
             if not f.editable:
                 ignore.add(f.name)
-        model._watch_changes_specs = ignore
+        model._watch_changes_specs = WatcherSpec(ignore,master_key)
         #~ logger.info("20120924 %s ignore %s", model, ignore)
         #~ model._watch_changes_specs = (fields_spec,options)
         #~ else:
@@ -269,6 +276,7 @@ class Model(models.Model):
         #~ print 20120621 , actor,  self
         #~ print 20120618, ar
         l = []
+        l.append("%s : " % ar.actor.get_row_state(obj))
         for a in ar.actor.get_workflow_actions(ar,obj):
             l.append(ar.renderer.action_button(obj,ar,a))
             l.append(' ')

@@ -16,7 +16,7 @@
 """
 
 from django.conf import settings
-from lino.utils.choicelists import Gender
+from lino.modlib.contats.utils import Gender
 from lino.utils import Cycler
 from lino import dd
 from lino.utils import demonames 

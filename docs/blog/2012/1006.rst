@@ -1,0 +1,98 @@
+20121006
+========
+
+Noch einige weitere Stunden Operation. 
+
+So muss es sein::
+
+  Lino.pcsw.IntegClients.ParamsPanel = Ext.extend(Ext.form.FormPanel,{
+    //~ layout: 'fit',
+    layout: 'hbox',
+    auto_save: true,
+    "autoHeight": true, 
+    "frame": true,       <<<<<
+    "layoutConfig": { "align": "stretchmax" }, 
+    "autoScroll": false, "hideCheckBoxLabels": true, "labelWidth": 216, 
+    "border": false, 
+    "labelAlign": "top",
+    initComponent : function() {
+      var containing_panel = this;
+      var coached_on806 = new Lino.DateField({ "selectOnFocus": true, "fieldLabel": "Begleitet am", "anchor": "-20", "name": "coached_on" });
+      var coached_by807 = new Lino.TwinCombo({ "fieldLabel": "Begleitet von", "name": "coached_by", "pageSize": 20, "onTrigger2Click": function(e){ Lino.show_fk_detail(this,Lino.users.Users.detail_action)}, "emptyText": "Benutzer ausw\u00e4hlen...", "selectOnFocus": true, "hiddenName": "coached_byHidden", "anchor": "-20", "store": new Lino.ComplexRemoteComboStore({ "proxy": new Ext.data.HttpProxy({ "url": "/choices/pcsw/IntegClients/coached_by", "method": "GET" }) }) });
+      var group808 = new Lino.RemoteComboFieldElement({ "fieldLabel": "Integrationsphase", "name": "group", "pageSize": 20, "emptyText": "Integrationsphase ausw\u00e4hlen...", "selectOnFocus": true, "hiddenName": "groupHidden", "anchor": "-20", "store": new Lino.ComplexRemoteComboStore({ "proxy": new Ext.data.HttpProxy({ "url": "/choices/pcsw/IntegClients/group", "method": "GET" }) }) });
+      var only_active809 = new Ext.form.Checkbox({ "boxLabel": "Nur aktive Klienten", "listeners": { "render": Lino.quicktip_renderer("Nur aktive Klienten","Show only clients in 'active' integration phases") }, "hideLabel": true, "checked": false, "name": "only_active", "selectOnFocus": true, "anchor": "-20" });
+      var only_primary810 = new Ext.form.Checkbox({ "boxLabel": "Nur komplette Akten", "hideLabel": true, "checked": false, "name": "only_primary", "selectOnFocus": true, "anchor": "-20" });
+      var also_obsolete811 = new Ext.form.Checkbox({ "boxLabel": "Auch veraltete Klienten", "hideLabel": true, "checked": false, "name": "also_obsolete", "selectOnFocus": true, "anchor": "-20" });
+      var new_since812 = new Lino.DateField({ "selectOnFocus": true, "fieldLabel": "Neue seit", "anchor": "-20", "name": "new_since" });
+      //~ var main_panel813 = { "autoHeight": true, "layout": "hbox", 
+        //~ "items": [ { "flex": 9, "autoHeight": true, "layout": "form", "xtype": "panel", "items": coached_on806, "labelAlign": "top" }, { "flex": 18, "autoHeight": true, "layout": "form", "xtype": "panel", "items": coached_by807, "labelAlign": "top" }, { "flex": 24, "autoHeight": true, "layout": "form", "xtype": "panel", "items": group808, "labelAlign": "top" }, { "flex": 12, "autoHeight": true, "layout": "form", "xtype": "panel", "items": only_active809, "labelAlign": "top" }, { "flex": 12, "autoHeight": true, "layout": "form", "xtype": "panel", "items": only_primary810, "labelAlign": "top" }, { "flex": 12, "autoHeight": true, "layout": "form", "xtype": "panel", "items": also_obsolete811, "labelAlign": "top" }, { "flex": 9, "autoHeight": true, "layout": "form", "xtype": "panel", "items": new_since812, "labelAlign": "top" } ], 
+        //~ "frame": false, "layoutConfig": { "align": "stretchmax" }, 
+        //~ "autoScroll": false, "hideCheckBoxLabels": true, "labelWidth": 216, 
+        //~ "border": false, "labelAlign": "top" };
+      //~ this.items = main_panel813;
+      this.items = [ 
+        { "flex": 9, "autoHeight": true, "layout": "form", "xtype": "panel", "items": coached_on806, "labelAlign": "top" }, 
+        { "flex": 18, "autoHeight": true, "layout": "form", "xtype": "panel", "items": coached_by807, "labelAlign": "top" }, 
+        { "flex": 24, "autoHeight": true, "layout": "form", "xtype": "panel", "items": group808, "labelAlign": "top" }, 
+        { "flex": 12, "autoHeight": true, "layout": "form", "xtype": "panel", "items": only_active809, "labelAlign": "top" }, 
+        { "flex": 12, "autoHeight": true, "layout": "form", "xtype": "panel", "items": only_primary810, "labelAlign": "top" }, 
+        { "flex": 12, "autoHeight": true, "layout": "form", "xtype": "panel", "items": also_obsolete811, "labelAlign": "top" }, 
+        { "flex": 9, "autoHeight": true, "layout": "form", "xtype": "panel", "items": new_since812, "labelAlign": "top" } 
+      ];
+      this.fields = [ coached_on806, coached_by807, group808, only_active809, only_primary810, also_obsolete811, new_since812 ];
+      Lino.pcsw.IntegClients.ParamsPanel.superclass.initComponent.call(this);
+    }
+  });
+
+
+
+
+  Lino.pcsw.Clients.wf2_ActionFormPanel = Ext.extend(Lino.ActionParamsPanel,{
+  //~ Lino.pcsw.Clients.wf2_ActionFormPanel = Ext.extend(Ext.form.FormPanel,{
+    //~ layout: 'fit',
+    //~ auto_save: true,
+    //~ autoHeight: true,
+    "autoScroll": false, "autoHeight": true, "border": false, "layout": "form", "labelWidth": 198, "hideCheckBoxLabels": true, 
+    "frame": true, "bodyBorder": false, "labelAlign": "top",
+    initComponent : function() { console.log("20121007");
+      var containing_panel = this;
+      var dummy2270 = new Ext.form.Checkbox({ "boxLabel": "Dummy RefuseNewClient", "hideLabel": true, "checked": false, "name": "dummy", "selectOnFocus": true, "anchor": "-20" });
+      var dummy2270 = new Ext.form.Checkbox({ "boxLabel": "Dummy RefuseNewClient", "hideLabel": true, "checked": false, "name": "dummy", "selectOnFocus": true, "anchor": "-20" });
+      var reason2271 = new Ext.form.TextField({ "fieldLabel": "Grund", "name": "reason", "maxLength": 200, "selectOnFocus": true, "anchor": "-20", "allowBlank": false });
+      var reason2271 = new Ext.form.TextField({ "fieldLabel": "Grund", "name": "reason", "maxLength": 200, "selectOnFocus": true, "anchor": "-20", "allowBlank": false });
+      //~ var main_panel2272 = new Lino.ActionParamsPanel({ "autoScroll": false, "autoHeight": true, "border": false, "layout": "form", "labelWidth": 198, "hideCheckBoxLabels": true, "items": [ { "autoHeight": true, "layout": "form", "xtype": "panel", "items": dummy2270, "anchor": "-20", "labelAlign": "top" }, { "autoHeight": true, "layout": "form", "xtype": "panel", "items": reason2271, "anchor": "-20", "labelAlign": "top" } ], "frame": true, "bodyBorder": false, "labelAlign": "top" });
+      //~ var main_panel2272 = new Lino.ActionParamsPanel({ "items": , 
+        //~ });
+      //~ this.items = main_panel2272;
+      this.items = [ { "autoHeight": true, "layout": "form", "xtype": "panel", "items": dummy2270, "anchor": "-20", "labelAlign": "top" }, { "autoHeight": true, "layout": "form", "xtype": "panel", "items": reason2271, "anchor": "-20", "labelAlign": "top" } ];
+      //~ this.before_row_edit = function(record) {
+      //~ }
+      Lino.pcsw.Clients.wf2_ActionFormPanel.superclass.initComponent.call(this);
+    }
+  });
+
+
+
+
+Change collectors
+-----------------
+
+Eine Idee, die mir zwischendurch kam:
+Im Änderungsprotokoll eines Klienten will man ja nicht nur "direkte" Änderungen 
+im Record selber sehen, sondern (eventuell) auch Änderungen in gewissen 
+related objects (z.B. in den Begleitungen, Stellenanfragen,...)
+
+Dazu brauchen wir lediglich noch das neue Konzept des "change collectors". 
+Gedacht, getan. Konfigurierung sieht ungefähr so aus::
+
+    def on_site_startup(self):
+        self.modules.pcsw.Client.watch_changes()
+        self.modules.pcsw.Coaching.watch_changes(master_key='client')
+        self.modules.jobs.Candidature.watch_changes(master_key='person')
+
+Miscellaneous
+-------------
+
+- Neues Feld Coaching.active
+
+- 

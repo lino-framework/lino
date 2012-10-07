@@ -1810,6 +1810,7 @@ Lino.lfk_renderer = function(panel,fkname) {
 
 
 Lino.build_buttons = function(panel,actions) {
+  //~ console.log("20121006 Lino.build_buttons",actions);
   if (actions) {
     var buttons = Array(actions.length);
     var cmenu = Array(actions.length);
@@ -2269,19 +2270,19 @@ Lino.RichTextPanel = Ext.extend(Lino.RichTextPanel,{
 
 #end if
 
-Lino.ActionParamsPanel = Ext.extend(Ext.form.FormPanel,Lino.MainPanel);
-Lino.ActionParamsPanel = Ext.extend(Lino.ActionParamsPanel,Lino.MainPanel);
-Lino.ActionParamsPanel = Ext.extend(Lino.ActionParamsPanel,{
+Lino.ActionFormPanel = Ext.extend(Ext.form.FormPanel,Lino.MainPanel);
+Lino.ActionFormPanel = Ext.extend(Lino.ActionFormPanel,Lino.MainPanel);
+Lino.ActionFormPanel = Ext.extend(Lino.ActionFormPanel,{
   //~ layout:'fit'
   //~ ,autoHeight: true
   //~ ,frame: true
   constructor : function(config){
     config.bbar = [{text:'OK'},{text:'Cancel'}]
     //~ config.items = config.params_panel;
-    Lino.ActionParamsPanel.superclass.constructor.call(this, config);
+    Lino.ActionFormPanel.superclass.constructor.call(this, config);
   }
   ,initComponent : function(){
-    Lino.ActionParamsPanel.superclass.initComponent.call(this);
+    Lino.ActionFormPanel.superclass.initComponent.call(this);
   }
 });
 
@@ -2315,10 +2316,14 @@ Lino.FormPanel = Ext.extend(Lino.FormPanel,{
     //~ console.log("20111201 containing_window",this.containing_window,this);
     
     var actions = Lino.build_buttons(this,this.ls_bbar_actions);
-    this.bbar = actions.bbar;
+    if (actions) {
+        this.bbar = actions.bbar;
+    //~ } else {
+        //~ this.bbar = [];
+    }
     //~ Ext.apply(config,Lino.build_buttons(this,config.ls_bbar_actions));
     //~ config.bbar = Lino.build_buttons(this,config.ls_bbar_actions);
-    var config = this;
+    //~ var config = this;
     
     //~ if (this.containing_window instanceof Lino.DetailWrapper) {
     
@@ -2331,11 +2336,11 @@ Lino.FormPanel = Ext.extend(Lino.FormPanel,{
       if (! this.hide_navigator) {
         this.record_selector = new Lino.RemoteComboFieldElement({
           store: new Lino.ComplexRemoteComboStore({
-            //~ baseParams: config.containing_window.config.base_params,
+            //~ baseParams: this.containing_window.config.base_params,
             baseParams: this.get_base_params(),
             //~ value: this.containing_window.config.base_params.query,
             proxy: new Ext.data.HttpProxy({
-              url: ROOT_URL + '/choices' + config.ls_url,
+              url: ROOT_URL + '/choices' + this.ls_url,
               method:'GET'
             })
           }),
@@ -2349,9 +2354,9 @@ Lino.FormPanel = Ext.extend(Lino.FormPanel,{
           },
           emptyText: "$_('Go to record')"
         })
-        config.tbar = config.tbar.concat([this.record_selector]);
+        this.tbar = this.tbar.concat([this.record_selector]);
         
-        config.tbar = config.tbar.concat([
+        this.tbar = this.tbar.concat([
           this.first = new Ext.Toolbar.Button({
             tooltip:"$_('First')",disabled:true,handler:this.moveFirst,scope:this,iconCls:'x-tbar-page-first'}),
           this.prev = new Ext.Toolbar.Button({
@@ -2362,10 +2367,10 @@ Lino.FormPanel = Ext.extend(Lino.FormPanel,{
             tooltip:"$_('Last')",disabled:true,handler:this.moveLast,scope:this,iconCls:'x-tbar-page-last'})
         ]);
       }
-      config.tbar = this.add_params_panel(config.tbar);
+      this.tbar = this.add_params_panel(this.tbar);
       
       //~ console.log(20101117,this.containing_window.refresh);
-      config.tbar = config.tbar.concat([
+      this.tbar = this.tbar.concat([
         {
           //~ text:'Refresh',
           handler:function(){ this.do_when_clean(true,this.refresh.createDelegate(this)) },
@@ -2374,14 +2379,14 @@ Lino.FormPanel = Ext.extend(Lino.FormPanel,{
           scope:this}
       ]);
           
-      config.tbar = config.tbar.concat([
+      this.tbar = this.tbar.concat([
           '->',
           this.displayItem = new Ext.Toolbar.TextItem({})
       ]);
           
     }
-    if (config.content_type && this.action_name != 'insert_action') {
-      config.bbar = config.bbar.concat([
+    if (this.content_type && this.action_name != 'insert_action') {
+      this.bbar = this.bbar.concat([
         '->',
         { text: "[$_('Help Text Editor')]",
           handler: Lino.help_text_editor,

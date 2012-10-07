@@ -1450,7 +1450,7 @@ tinymce.init({
             #~ '\n'.join([str(d) for d in dbtables.all_details]))
         
         details = set()
-        def add(actor,fl,nametpl):
+        def add(fl,formpanel_name):
             # fl : a FormLayout
             if fl is not None:
                 #~ if details.has_key():
@@ -1458,31 +1458,44 @@ tinymce.init({
                     pass
                     #~ fl._using_actors.append(actor)
                 else:
-                    fl._formpanel_name = nametpl % actor
+                    fl._formpanel_name = formpanel_name
                     #~ fl._using_actors = [actor]
                     details.add(fl)
                     
         assert user == jsgen._for_user
         
-        for a in actors_list:
-            add(a,a.detail_layout, "%s.DetailFormPanel")
-            add(a,a.insert_layout, "%s.InsertFormPanel")
+        for res in actors_list:
+            add(res.detail_layout, "%s.DetailFormPanel" % res)
+            add(res.insert_layout, "%s.InsertFormPanel" % res)
+            add(res.params_layout, "%s.ParamsPanel" % res)
+            
+            for a in res.get_actions():
+                if a.parameters:
+                    add(a.params_layout, "%s.%s_ActionFormPanel" % (res,a.action_name))
 
         if False:
             logger.debug('FormPanels')
             for fl in details:
                 logger.debug('- ' + fl._formpanel_name + ' : ' + ','.join([a.actor_id for a in fl._using_actors]))
             
+        f.write('\n/* Application FormPanel subclasses */\n')
         for fl in details:
             lh = fl.get_layout_handle(self)
-            for ln in self.js_render_FormPanel(lh,user):
-                f.write(ln + '\n')
+            if fl._formpanel_name.endswith('ParamsPanel'):
+                for ln in self.js_render_ParamsPanelSubclass(lh,user):
+                    f.write(ln + '\n')
+            elif fl._formpanel_name.endswith('ActionFormPanel'):
+                for ln in self.js_render_ActionFormPanelSubclass(lh,user):
+                    f.write(ln + '\n')
+            else:
+                for ln in self.js_render_FormPanelSubclass(lh,user):
+                    f.write(ln + '\n')
         
         actions_written = set()
         
         for rpt in actors_list:
             rh = rpt.get_handle(self) 
-            if isinstance(rpt,type) and issubclass(rpt,dbtables.AbstractTable):
+            if isinstance(rpt,type) and issubclass(rpt,tables.AbstractTable):
                 #~ if rpt.model is None:
                 #~ f.write('// 20120621 %s\n' % rpt)
                     #~ continue
@@ -1694,7 +1707,64 @@ tinymce.init({
       
         
       
-    def js_render_FormPanel(self,dh,user):
+    def js_render_ParamsPanelSubclass(self,dh,user):
+        tbl = dh.layout._table
+        
+        yield ""
+        #~ yield "Lino.%s = Ext.extend(Lino.FormPanel,{" % dh.layout._formpanel_name
+        yield "Lino.%s = Ext.extend(Ext.form.FormPanel,{" % dh.layout._formpanel_name
+        for k,v in dh.main.ext_options().items():
+            if k != 'items':
+                yield "  %s: %s," % (k,py2js(v))
+        #~ yield "  layout: 'fit',"
+        #~ yield "  auto_save: true,"
+        if dh.layout.window_size and dh.layout.window_size[1] == 'auto':
+            yield "  autoHeight: true,"
+        yield "  initComponent : function() {"
+        yield "    var containing_panel = this;"
+        lc = 0
+        for ln in jsgen.declare_vars(dh.main.elements):
+            yield "    " + ln
+            lc += 1
+        if lc == 0:
+            raise Exception("%r of %s has no variables" % (dh.main,dh))
+        yield "    this.items = %s;" % py2js(dh.main.elements)
+        yield "    this.fields = %s;" % py2js(
+          [e for e in dh.main.walk() if isinstance(e,ext_elems.FieldElement)])
+        yield "    Lino.%s.superclass.initComponent.call(this);" % dh.layout._formpanel_name
+        yield "  }"
+        yield "});"
+        yield ""
+      
+    def js_render_ActionFormPanelSubclass(self,dh,user):
+        tbl = dh.layout._table
+        logger.info("20121007 js_render_ActionFormPanelSubclass")
+        yield ""
+        yield "Lino.%s = Ext.extend(Lino.ActionFormPanel,{" % dh.layout._formpanel_name
+        for k,v in dh.main.ext_options().items():
+            if k != 'items':
+                yield "  %s: %s," % (k,py2js(v))
+        #~ yield "  layout: 'fit',"
+        #~ yield "  auto_save: true,"
+        if dh.layout.window_size and dh.layout.window_size[1] == 'auto':
+            yield "  autoHeight: true,"
+        yield "  initComponent : function() {"
+        yield "    var containing_panel = this;"
+        lc = 0
+        for ln in jsgen.declare_vars(dh.main.elements):
+            yield "    " + ln
+            lc += 1
+        if lc == 0:
+            raise Exception("%r of %s has no variables" % (dh.main,dh))
+        yield "    this.items = %s;" % py2js(dh.main.elements)
+        yield "    this.fields = %s;" % py2js(
+          [e for e in dh.main.walk() if isinstance(e,ext_elems.FieldElement)])
+        yield "    Lino.%s.superclass.initComponent.call(this);" % dh.layout._formpanel_name
+        yield "  }"
+        yield "});"
+        yield ""
+      
+    def js_render_FormPanelSubclass(self,dh,user):
         
         if not dh.main.get_view_permission(jsgen._for_user):
             raise Exception("20120927 no view permission for %s ?! required is %s" % (dh,dh.main.required))
@@ -1717,10 +1787,12 @@ tinymce.init({
         if lc == 0:
             raise Exception("%r of %s has no variables" % (dh.main,dh))
         yield "    this.items = %s;" % dh.main.as_ext()
-        yield "    this.before_row_edit = function(record) {"
-        for ln in ext_elems.before_row_edit(dh.main):
-            yield "      " + ln
-        yield "    }"
+        #~ if issubclass(tbl,tables.AbstractTable):
+        if True:
+            yield "    this.before_row_edit = function(record) {"
+            for ln in ext_elems.before_row_edit(dh.main):
+                yield "      " + ln
+            yield "    }"
         on_render = self.build_on_render(dh.main)
         if on_render:
             yield "    this.onRender = function(ct, position) {"
@@ -1734,6 +1806,7 @@ tinymce.init({
         yield "    Lino.%s.superclass.initComponent.call(this);" % dh.layout._formpanel_name
         
         if tbl.active_fields:
+        #~ if issubclass(tbl,tables.AbstractTable) and tbl.active_fields:
             yield '    // active_fields:'
             for name in tbl.active_fields:
                 e = dh.main.find_by_name(name)
@@ -1807,7 +1880,7 @@ tinymce.init({
         kw.update(ls_quick_edit=rh.actor.cell_edit)
         kw.update(ls_bbar_actions=[
             rh.ui.a2btn(a) 
-              for a in rh.actor.get_actions(rh.actor.default_action) 
+              for a in rh.actor.get_actions(rh.actor.default_action.action) 
                   if a.show_in_bbar and a.get_action_permission(jsgen._for_user,None,None)])
         kw.update(ls_grid_configs=[gc.data for gc in rh.actor.grid_configs])
         kw.update(gc_name=ext_elems.DEFAULT_GC_NAME)
@@ -1900,7 +1973,7 @@ tinymce.init({
         rpt = rh.actor
         
         if rpt.parameters and action.use_param_panel:
-            params_panel = rh.params_layout_handle.main
+            params_panel = rh.params_layout_handle
         else:
             params_panel = None
         
@@ -1918,7 +1991,7 @@ tinymce.init({
             #~ mainPanelClass = "Ext.ensible.cal.CalendarPanel"
         elif action.parameters:
             #~ mainPanelClass = "Lino.ActionParamsPanel"
-            params_panel = action.make_params_layout_handle(self).main
+            params_panel = action.make_params_layout_handle(self)
             #~ logger.info("20121003 %r %s", action, params_panel)
         else:
             return 
@@ -1956,7 +2029,7 @@ tinymce.init({
             if action is settings.LINO.get_main_action(user):
                 p.update(is_home_page=True)
             #~ yield "  var p = {};" 
-            if action.hide_top_toolbar:
+            if action.hide_top_toolbar or action.parameters:
                 p.update(hide_top_toolbar=True)
                 #~ yield "  p.hide_top_toolbar = true;" 
             if rpt.hide_window_title:
@@ -1968,14 +2041,14 @@ tinymce.init({
             #~ if isinstance(action,CalendarAction):
                 #~ yield "  p.items = Lino.CalendarAppPanel_items;" 
             if params_panel:
-                for ln in jsgen.declare_vars(params_panel):
-                    yield '  '  + ln
+                #~ for ln in jsgen.declare_vars(params_panel):
+                    #~ yield '  '  + ln
                 if action.parameters:
-                    yield "  return %s;" % params_panel
+                    #~ yield "  return %s;" % params_panel
+                    yield "  return new Lino.%s({});" % wl._formpanel_name
                 else:
-                    yield "  p.params_panel = %s;" % params_panel
-                    yield "  p.params_panel.fields = %s;" % py2js(
-                      [e for e in params_panel.walk() if isinstance(e,ext_elems.FieldElement)])
+                    #~ yield "  p.params_panel = %s;" % params_panel
+                    yield "  p.params_panel = new Lino.%s({});" % params_panel.layout._formpanel_name
                     yield "  return new %s(p);" % mainPanelClass
             else:
                 yield "  return new %s(p);" % mainPanelClass
