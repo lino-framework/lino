@@ -161,8 +161,8 @@ class HtmlRenderer(object):
         if n > 0:
             obj = ar.data_iterator[n-1]
             after_show.update(record_id=obj.pk)
-            buttons.append(self.action_href_js(
-                ar.ah.actor.detail_action,after_show,_("Show Last")))
+            a = ar.actor.get_url_action('detail_action')
+            buttons.append(self.action_href_js(a,after_show,_("Show Last")))
             buttons.append(' ')
             #~ s += ' ' + self.action_href_js(
                 #~ ar.ah.actor.detail_action,after_show,_("Show Last"))
