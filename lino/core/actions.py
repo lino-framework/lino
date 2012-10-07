@@ -717,7 +717,7 @@ class ChangeStateAction(RowAction):
                 required.update(allow=allow)
         kw.update(required=required)
         help_text = getattr(target_state,'help_text',None)
-        if help_text:
+        if help_text is not None:
             kw.update(help_text=help_text)
         super(ChangeStateAction,self).__init__(**kw)
         #~ logger.info('20120930 ChangeStateAction %s %s', actor,target_state)

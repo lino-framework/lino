@@ -1006,7 +1006,7 @@ class EventInsertLayout(EventDetailLayout):
 class Events(dd.Table):
     model = 'cal.Event'
     required = dict(user_groups='office',user_level='manager')
-    column_names = 'start_date start_time user summary state workflow_buttons calendar *'
+    column_names = 'start_date start_time user summary workflow_buttons calendar *'
     #~ active_fields = ['all_day']
     order_by = ["start_date","start_time"]
     
@@ -1047,7 +1047,7 @@ if settings.LINO.user_model:
     class MyEvents(Events,mixins.ByUser):
         help_text = _("Table of all my calendar events.")
         required = dict(user_groups='office',auth=True)
-        column_names = 'start_date start_time calendar project summary state workflow_buttons *'
+        column_names = 'start_date start_time calendar project summary workflow_buttons *'
         
     #~ class EventsReserved(Events):
         #~ help_text = _("Table of all reserved events.")
@@ -1156,7 +1156,7 @@ if settings.LINO.user_model:
     class MyEventsToday(MyEvents):
         required = dict(user_groups='office',auth=True)
         help_text = _("Table of my events per day.")
-        column_names = 'start_time summary state workflow_buttons *'
+        column_names = 'start_time summary workflow_buttons *'
         label = _("My events today")
         order_by = ['start_time']
         
@@ -1267,7 +1267,7 @@ class Tasks(dd.Table):
     #~ description #notes.NotesByTask    
     #~ """
     detail_layout = """
-    start_date due_date id state workflow_buttons 
+    start_date due_date id workflow_buttons 
     summary 
     user project 
     calendar owner created:20 modified:20   
@@ -1300,12 +1300,12 @@ if settings.LINO.user_model:
         required = dict(user_groups='office',auth=True)
         #~ required = dict()
         help_text = _("Table of all my tasks.")
-        column_names = 'start_date summary state workflow_buttons *'
+        column_names = 'start_date summary workflow_buttons *'
     
     class MyTasksToDo(MyTasks):
         required = dict(user_groups='office',auth=True)
         help_text = _("Table of my tasks marked 'to do'.")
-        column_names = 'start_date summary state workflow_buttons *'
+        column_names = 'start_date summary workflow_buttons *'
         label = _("To-do list")
         #~ filter = models.Q(state__in=(TaskState.blank_item,TaskState.todo,TaskState.started))
         filter = models.Q(
@@ -1316,7 +1316,7 @@ if settings.LINO.project_model:
   
     class TasksByProject(Tasks):
         master_key = 'project'
-        column_names = 'start_date user summary state workflow_buttons *'
+        column_names = 'start_date user summary workflow_buttons *'
     
 
 class GuestRole(mixins.PrintableType,outbox.MailableType,babel.BabelNamed):
@@ -1433,7 +1433,7 @@ class Guest(mixins.TypedPrintable,outbox.Mailable):
 class Guests(dd.Table):
     model = Guest
     required = dict(user_groups='office')
-    column_names = 'partner role state workflow_buttons remark event *'
+    column_names = 'partner role workflow_buttons remark event *'
     #~ workflow_state_field = 'state'
     #~ column_names = 'contact role state remark event *'
     #~ workflow_actions = ['invite','notify']
@@ -1451,14 +1451,14 @@ class GuestsByRole(Guests):
 
 class GuestsByPartner(Guests):
     master_key = 'partner'
-    column_names = 'event role state workflow_buttons remark *'
+    column_names = 'event role workflow_buttons remark *'
 
 class MyInvitations(GuestsByPartner):
     required = dict(user_groups='office',auth=True)
     order_by = ['event__start_date','event__start_time']
     label = _("My received invitations")
     help_text = _("""Shows all my received invitations, independently of their state.""")
-    column_names = 'event__start_date event__start_time event_summary role state workflow_buttons remark *'
+    column_names = 'event__start_date event__start_time event_summary role workflow_buttons remark *'
     
     @classmethod
     def get_request_queryset(self,ar):
@@ -1477,7 +1477,7 @@ class MyPendingInvitations(MyInvitations):
     #~ label = _("My Sent Invitations")
     
     #~ order_by = ['event__start_date','event__start_time']
-    #~ column_names = 'event__start_date event__start_time event_summary role state workflow_buttons remark *'
+    #~ column_names = 'event__start_date event__start_time event_summary role workflow_buttons remark *'
     
     #~ @classmethod
     #~ def get_request_queryset(self,ar):

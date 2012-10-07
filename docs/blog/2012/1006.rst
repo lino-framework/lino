@@ -95,4 +95,6 @@ Miscellaneous
 
 - Neues Feld Coaching.active
 
+- Only one Coaching per Person may be primary
+
 - 

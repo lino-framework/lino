@@ -587,15 +587,14 @@ class State(Choice):
         """
         i = len(self.choicelist.workflow_actions)
         #~ if label and issubclass(label,actions.Action):
+        kw = dict()
+        if help_text is not None:
+            kw.update(help_text=help_text)
+        kw.update(sort_index=10+i)
         if label and not isinstance(label,(basestring,Promise)):#issubclass(label,ChangeStateAction):
-            a = label(self,required,
-                help_text=help_text,
-                sort_index=10+i)
+            a = label(self,required,**kw)
         else:
-            a = actions.ChangeStateAction(self,required,
-                label=label or self.text,
-                help_text=help_text,
-                sort_index=10+i)
+            a = actions.ChangeStateAction(self,required,label=label or self.text,**kw)
         #~ name = 'mark_' + self.value
         name = 'wf' + str(i+1)
         a.attach_to_workflow(self,name)

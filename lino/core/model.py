@@ -276,7 +276,9 @@ class Model(models.Model):
         #~ print 20120621 , actor,  self
         #~ print 20120618, ar
         l = []
-        l.append("%s : " % ar.actor.get_row_state(obj))
+        state = ar.actor.get_row_state(obj)
+        if state:
+            l.append("%s : " % state)
         for a in ar.actor.get_workflow_actions(ar,obj):
             l.append(ar.renderer.action_button(obj,ar,a))
             l.append(' ')

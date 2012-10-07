@@ -1738,7 +1738,7 @@ tinymce.init({
       
     def js_render_ActionFormPanelSubclass(self,dh,user):
         tbl = dh.layout._table
-        logger.info("20121007 js_render_ActionFormPanelSubclass")
+        #~ logger.info("20121007 js_render_ActionFormPanelSubclass")
         yield ""
         yield "Lino.%s = Ext.extend(Lino.ActionFormPanel,{" % dh.layout._formpanel_name
         for k,v in dh.main.ext_options().items():
