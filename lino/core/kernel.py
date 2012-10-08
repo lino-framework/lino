@@ -127,6 +127,7 @@ def analyze_models():
                   'workflow_state_field',
                   'workflow_owner_field',
                   'summary_row',
+                  'get_default_table',
                   'site_setup',
                   'disable_delete',
                   'on_duplicate',

@@ -427,7 +427,8 @@ class ExtRenderer(HtmlRenderer):
     def instance_handler(self,ar,obj):
         a = getattr(obj,'_detail_action',None)
         if a is None:
-            a = obj.__class__._lino_default_table.get_url_action('detail_action')
+            a = obj.get_default_table(ar).get_url_action('detail_action')
+            #~ a = obj.__class__._lino_default_table.get_url_action('detail_action')
         if a is not None:
             if ar is None or a.action.get_action_permission(ar.get_user(),obj,None):
                 return self.action_call(None,a,dict(record_id=obj.pk))

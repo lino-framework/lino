@@ -144,8 +144,6 @@ class Model(models.Model):
     def set_change_summary(self,text):
         self._change_summary = text
     
-    
-    
     def disable_delete(self,ar):
         """
         Return None if it is okay to delete this object,
@@ -155,6 +153,9 @@ class Model(models.Model):
         being called from a script or batch process.
         """
         return self._lino_ddh.disable_delete_on_object(self)
+        
+    def get_default_table(self,ar):
+        return self._lino_default_table
         
     def disabled_fields(self,ar):
         return []
@@ -180,11 +181,15 @@ class Model(models.Model):
         Called after a PUT or POST on this row, 
         and after the row has been saved.
         It must return (and may modify) the `kw` which will become 
-        the ajax response to the save() call.
-        Used by :class:`lino.modlib.debts.models.Budget` 
+        the Ajax response to the save() call.
+        Used by 
+        :class:`lino_welfare.modlib.debts.models.Budget` 
         to fill default entries to a new Budget,
-        or by :class:`lino.modlib.cbss.models.CBSSRequest` 
-        to execute the request.
+        or by :class:`lino_welfare.modlib.cbss.models.CBSSRequest` 
+        to execute the request,
+        or by 
+        :class:`lino_welfare.modlib.jobs.models.Contract` 
+        :class:`lino_welfare.modlib.pcsw.models.Coaching` 
         """
         return kw
         

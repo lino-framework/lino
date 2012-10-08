@@ -306,6 +306,9 @@ As long as nobody protests, I'll save some time by writing in German.
   :doc:`03 <1003>`
   :doc:`04 <1003>`
   :doc:`05 <1005>`
+  :doc:`06 <1006>`
+  |br| 
+  :doc:`08 <1008>`
 
 .. |Nov| replace::  **November**
   |br| 
