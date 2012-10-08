@@ -224,13 +224,15 @@ class Users(dd.Table):
           
 class MySettings(Users):
     use_as_default_table = False
-    default_action = actions.ShowDetailAction()
     hide_top_toolbar = True
     #~ model = User
     #~ detail_layout = Users.detail_layout
     #~ detail_layout = UserDetail()
     required = dict()
     
+    @classmethod
+    def get_default_action(cls):
+        return cls.default_elem_action_name
     
 
 if settings.LINO.user_model:

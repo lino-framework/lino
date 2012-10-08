@@ -35,7 +35,7 @@ from lino.core.modeltools import resolve_model
 from lino.core import layouts
 
 #~ from lino.core.perms import UserLevels
-#~ from lino.core import perms 
+from lino.core import perms 
 
 
 class VirtualRow(object):
@@ -448,8 +448,9 @@ class Action(Parametrizable):
         if actor.hide_top_toolbar:
             self.hide_top_toolbar = True
         if self.help_text is None \
-            and actor.default_action is not None \
-            and self is actor.default_action.action:
+            and name == actor.get_default_action():
+            #~ and actor.default_action is not None \
+            #~ and self is actor.default_action.action:
             self.help_text  = actor.help_text
         #~ if name == 'default_action':
             #~ print 20120527, self
@@ -475,12 +476,10 @@ class Action(Parametrizable):
         
     def get_action_permission(self,user,obj,state):
         """
-        The default implementation simply calls this action's 
-        permission handler.
         Derived Action classes may override this to add vetos.
         E.g. DispatchAction is not available for a User with empty partner.
         """
-        return self.allow(user,obj,state)
+        return True
         
     #~ def run(self,elem,ar,**kw):
         #~ raise NotImplementedError("%s has no run() method" % self.__class__)
@@ -927,8 +926,11 @@ class ActionRequest(object):
             return 
         #~ if not self.actor.get_permission(self.get_user(),self.actor.create_action):
         #~ if not self.actor.allow_create(self.get_user(),None,None):
-        if self.actor.create_action is not None:
-            if not self.actor.create_action.allow(self.get_user(),None,None):
+        ca = self.actor.get_url_action('create_action')
+        #~ if self.actor.create_action is not None:
+        if ca is not None:
+            #~ if not self.actor.create_action.allow(self.get_user(),None,None):
+            if not ca.allow(self.get_user(),None,None):
                 return
         yield PhantomRow(self,**kw)
       
@@ -1039,10 +1041,34 @@ def action(*args,**kw):
         
         
 class BoundAction(object):
+  
     def __init__(self,actor,action):
         assert isinstance(action,Action)
         self.action = action
         self.actor = actor
+        
+        
+        required = dict()
+        if action.readonly:
+            required.update(actor.required)
+        elif isinstance(action,InsertRow):
+            required.update(actor.create_required)
+        elif isinstance(action,DeleteSelected):
+            required.update(actor.delete_required)
+        else:
+            required.update(actor.update_required)
+        required.update(action.required)
+        #~ print 20120628, str(a), required
+        #~ def wrap(a,required,fn):
+            #~ return fn
+            
+        #~ a.allow = curry(wrap(a,required,perms.make_permission_handler(
+            #~ a,actor,a.readonly,actor.debug_permissions,**required)),a)
+        #~ ba = actions.BoundAction(actor,a)
+        self.allow = curry(perms.make_permission_handler(
+            action,actor,action.readonly,actor.debug_permissions,**required),action)
+        #~ actor.actions.define(a.action_name,ba)
+        
         
     def get_window_layout(self):
         return self.action.get_window_layout(self.actor)
@@ -1066,4 +1092,9 @@ class BoundAction(object):
         else:
             return u"%s %s" % (self.action.label,self.actor.label)
             
+        
+    def get_action_permission(self,user,obj,state):
+        if not self.action.get_action_permission(user,obj,state):
+            return False
+        return self.allow(user,obj,state)
         

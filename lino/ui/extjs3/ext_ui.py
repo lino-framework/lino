@@ -147,7 +147,7 @@ class HtmlRenderer(object):
         buttons = []
         #~ a = ar.actor.insert_action
         if a is not None:
-            if a.action.get_action_permission(ar.get_user(),None,None):
+            if a.get_action_permission(ar.get_user(),None,None):
                 elem = ar.create_instance()
                 after_show.update(data_record=views.elem2rec_insert(ar,ar.ah,elem))
                 #~ after_show.update(record_id=-99999)
@@ -246,7 +246,7 @@ class PlainRenderer(HtmlRenderer):
         if a is None:
             a = obj.__class__._lino_default_table.get_url_action('detail_action')
         if a is not None:
-            if ar is None or a.action.get_action_permission(ar.get_user(),obj,None):
+            if ar is None or a.get_action_permission(ar.get_user(),obj,None):
                 return self.get_detail_url(obj)
   
     def pk2url(self,ar,pk,**kw):
@@ -430,7 +430,7 @@ class ExtRenderer(HtmlRenderer):
             a = obj.get_default_table(ar).get_url_action('detail_action')
             #~ a = obj.__class__._lino_default_table.get_url_action('detail_action')
         if a is not None:
-            if ar is None or a.action.get_action_permission(ar.get_user(),obj,None):
+            if ar is None or a.get_action_permission(ar.get_user(),obj,None):
                 return self.action_call(None,a,dict(record_id=obj.pk))
                 
     def obj2html(self,ar,obj,text=None):
@@ -1440,7 +1440,16 @@ tinymce.init({
         #~ print '20120605 dynamic actors',[a for a in actors_list if a.get_handle_name is not None]
         actors_list = [a for a in actors_list if a.get_handle_name is None]
 
-        actors_list = [a for a in actors_list if a.get_view_permission(jsgen._for_user)]
+        new_actors_list = []
+        for a in actors_list:
+            if a.get_view_permission(jsgen._for_user):
+                new_actors_list.append(a)
+            #~ else:
+                #~ logger.info("20121008 no view permission for %s",a)
+                
+        actors_list = new_actors_list
+        
+        #~ actors_list = [a for a in actors_list if a.get_view_permission(jsgen._for_user)]
           
         f.write("\n// ChoiceLists: \n")
         for a in choicelists.CHOICELISTS.values():
@@ -1470,9 +1479,9 @@ tinymce.init({
             add(res.insert_layout, "%s.InsertFormPanel" % res)
             add(res.params_layout, "%s.ParamsPanel" % res)
             
-            for a in res.get_actions():
-                if a.parameters:
-                    add(a.params_layout, "%s.%s_ActionFormPanel" % (res,a.action_name))
+            for ba in res.get_actions():
+                if ba.action.parameters:
+                    add(ba.action.params_layout, "%s.%s_ActionFormPanel" % (res,ba.action.action_name))
 
         if False:
             logger.debug('FormPanels')
@@ -1515,22 +1524,22 @@ tinymce.init({
                     #~ for ln in self.js_render_custom_action(rh,a,user):
                         #~ f.write(ln + '\n')
         
-            for a in rpt.get_actions():
-                if a.parameters:
-                    if not a in actions_written:
+            for ba in rpt.get_actions():
+                if ba.action.parameters:
+                    if not ba.action in actions_written:
                         #~ logger.info("20121005 %r is not in %r",a,actions_written)
-                        actions_written.add(a)
-                        for ln in self.js_render_window_action(rh,a,user):
+                        actions_written.add(ba.action)
+                        for ln in self.js_render_window_action(rh,ba,user):
                             f.write(ln + '\n')
-                elif a.opens_a_window:
-                    if isinstance(a,(actions.ShowDetailAction,actions.InsertRow)):
-                        for ln in self.js_render_detail_action_FormPanel(rh,a):
+                elif ba.action.opens_a_window:
+                    if isinstance(ba.action,(actions.ShowDetailAction,actions.InsertRow)):
+                        for ln in self.js_render_detail_action_FormPanel(rh,ba):
                               f.write(ln + '\n')
-                    for ln in self.js_render_window_action(rh,a,user):
+                    for ln in self.js_render_window_action(rh,ba,user):
                         f.write(ln + '\n')
                 #~ elif a.show_in_workflow:
-                elif a.custom_handler:
-                    for ln in self.js_render_custom_action(rh,a,user):
+                elif ba.action.custom_handler:
+                    for ln in self.js_render_custom_action(rh,ba,user):
                         f.write(ln + '\n')
             
         
@@ -1827,7 +1836,7 @@ tinymce.init({
         #~ logger.info('20121005 js_render_detail_action_FormPanel(%s,%s)',rpt,action.full_name(rpt))
         yield ""
         #~ yield "// js_render_detail_action_FormPanel %s" % action
-        action = actions.BoundAction(rpt,action)
+        #~ action = actions.BoundAction(rpt,action)
         dtl = action.get_window_layout()
         #~ dtl = rpt.detail_layout
         if dtl is None:
@@ -1843,8 +1852,8 @@ tinymce.init({
             yield "  params_panel_hidden: true,"
 
         yield "  ls_bbar_actions: %s," % py2js([
-            rh.ui.a2btn(a) for a in rpt.get_actions(action.action) 
-                if a.show_in_bbar and a.get_action_permission(jsgen._for_user,None,None)]) 
+            rh.ui.a2btn(ba.action) for ba in rpt.get_actions(action.action) 
+                if ba.action.show_in_bbar and ba.get_action_permission(jsgen._for_user,None,None)]) 
         yield "  ls_url: %s," % py2js(ext_elems.rpt2url(rpt))
         if action.action != rpt.default_action.action:
             yield "  action_name: %s," % py2js(action.action.action_name)
@@ -1880,9 +1889,9 @@ tinymce.init({
                 kw.update(content_type=ContentType.objects.get_for_model(rh.actor.model).pk)
         kw.update(ls_quick_edit=rh.actor.cell_edit)
         kw.update(ls_bbar_actions=[
-            rh.ui.a2btn(a) 
-              for a in rh.actor.get_actions(rh.actor.default_action.action) 
-                  if a.show_in_bbar and a.get_action_permission(jsgen._for_user,None,None)])
+            rh.ui.a2btn(ba.action) 
+              for ba in rh.actor.get_actions(rh.actor.default_action.action) 
+                  if ba.action.show_in_bbar and ba.get_action_permission(jsgen._for_user,None,None)])
         kw.update(ls_grid_configs=[gc.data for gc in rh.actor.grid_configs])
         kw.update(gc_name=ext_elems.DEFAULT_GC_NAME)
         #~ if action != rh.actor.default_action:
@@ -1961,11 +1970,11 @@ tinymce.init({
         """
         
         # 20120723 : removed useless js param "action"
-        yield "Lino.%s = function(rp,pk) { " % action.full_name(rh.actor)
+        yield "Lino.%s = function(rp,pk) { " % action.full_name()
         #~ panel = "Lino.%s.GridPanel.ls_url" % action 
         url = ext_elems.rpt2url(rh.actor)
         yield "  Lino.run_row_action(rp,%s,pk,%s);" % (
-            py2js(url),py2js(action.action_name))
+            py2js(url),py2js(action.action.action_name))
         yield "};"
 
 
@@ -1973,33 +1982,33 @@ tinymce.init({
       
         rpt = rh.actor
         
-        if rpt.parameters and action.use_param_panel:
+        if rpt.parameters and action.action.use_param_panel:
             params_panel = rh.params_layout_handle
         else:
             params_panel = None
         
-        if isinstance(action,actions.ShowDetailAction):
-            mainPanelClass = "Lino.%sPanel" % action.full_name(rh.actor)
-        elif isinstance(action,actions.InsertRow): 
-            mainPanelClass = "Lino.%sPanel" % action.full_name(rh.actor)
-        elif isinstance(action,actions.GridEdit):
+        if isinstance(action.action,actions.ShowDetailAction):
+            mainPanelClass = "Lino.%sPanel" % action.full_name()
+        elif isinstance(action.action,actions.InsertRow): 
+            mainPanelClass = "Lino.%sPanel" % action.full_name()
+        elif isinstance(action.action,actions.GridEdit):
             mainPanelClass = "Lino.%s.GridPanel" % rpt
             #~ if rh.actor.parameters:
                 #~ params_panel = rh.params_layout_handle.main
-        elif isinstance(action,CalendarAction):
+        elif isinstance(action.action,CalendarAction):
             mainPanelClass = "Lino.CalendarPanel"
             #~ mainPanelClass = "Lino.CalendarAppPanel"
             #~ mainPanelClass = "Ext.ensible.cal.CalendarPanel"
-        elif action.parameters:
+        elif action.action.parameters:
             #~ mainPanelClass = "Lino.ActionParamsPanel"
-            params_panel = action.make_params_layout_handle(self)
+            params_panel = action.action.make_params_layout_handle(self)
             #~ logger.info("20121003 %r %s", action, params_panel)
         else:
             return 
         #~ if action.defining_actor is None:
             #~ raise Exception("20120524 %s %r actor is None" % (rh.actor,action))
         windowConfig = dict()
-        wl = action.get_window_layout(rh.actor)
+        wl = action.get_window_layout()
         #~ if action.action_name == 'wf1':
             #~ logger.info("20121005 %r --> %s",action,wl)
         if wl is not None:
@@ -2021,16 +2030,16 @@ tinymce.init({
                     raise ValueError("height")
                 #~ print 20120629, action, windowConfig
                 
-        yield "Lino.%s = new Lino.WindowAction(%s,function(){" % (action.full_name(rh.actor),py2js(windowConfig))
+        yield "Lino.%s = new Lino.WindowAction(%s,function(){" % (action.full_name(),py2js(windowConfig))
         #~ yield "  console.log('20120625 fn');" 
-        if isinstance(action,CalendarAction):
+        if isinstance(action.action,CalendarAction):
             yield "  return Lino.calendar_app.get_main_panel();"
         else:
             p = dict()
-            if action is settings.LINO.get_main_action(user):
+            if action.action is settings.LINO.get_main_action(user):
                 p.update(is_home_page=True)
             #~ yield "  var p = {};" 
-            if action.hide_top_toolbar or action.parameters:
+            if action.action.hide_top_toolbar or action.action.parameters:
                 p.update(hide_top_toolbar=True)
                 #~ yield "  p.hide_top_toolbar = true;" 
             if rpt.hide_window_title:
@@ -2044,7 +2053,7 @@ tinymce.init({
             if params_panel:
                 #~ for ln in jsgen.declare_vars(params_panel):
                     #~ yield '  '  + ln
-                if action.parameters:
+                if action.action.parameters:
                     #~ yield "  return %s;" % params_panel
                     yield "  return new Lino.%s({});" % wl._formpanel_name
                 else:

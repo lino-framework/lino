@@ -254,7 +254,7 @@ class Menu(MenuItem):
         assert isinstance(mi,MenuItem)
         if mi.bound_action is not None:
             #~ if not mi.action.actor.get_view_permission(self.user):
-            if not mi.bound_action.action.get_action_permission(self.user,None,None):
+            if not mi.bound_action.get_action_permission(self.user,None,None):
                 return 
         if mi.name is not None:
             old = self.items_dict.get(mi.name)

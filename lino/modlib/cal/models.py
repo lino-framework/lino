@@ -1761,7 +1761,8 @@ if settings.LINO.use_extensible:
         
         @classmethod
         def get_default_action(self):
-            return actions.BoundAction(self,self.show_calendar)
+            #~ return actions.BoundAction(self,self.show_calendar)
+            return 'show_calendar'
 
     class PanelCalendars(Calendars):
         use_as_default_table = False

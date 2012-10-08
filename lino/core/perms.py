@@ -227,7 +227,7 @@ def make_permission_handler(
                 v = allow4(action,user,obj,state)
                 if not v:
                     logger.info(u"debug_permissions %s %s.required(%s,%s,%s), allow(%s,%s,%s)--> %s",
-                      actor,action.name,user_level,user_groups,states,user.username,obj2str(obj),state,v)
+                      actor,action.action_name,user_level,user_groups,states,user.username,obj2str(obj),state,v)
                 return v
         return allow
         

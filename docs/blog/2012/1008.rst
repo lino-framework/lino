@@ -14,3 +14,9 @@
   
 - Lino macht jetzt eine Mitteilung, wenn Stellenanfragen automatsich 
   deaktiviert wurden  .
+  
+- Übersetzungen
+
+- Noch eine weitere Folge der Aktionsdialogfenster:
+  die permission handler sitzen jetzt in BoundAction. 
+  Und Actor.get_actions gibt jetzt ebenfalls schon bound actions zurück.

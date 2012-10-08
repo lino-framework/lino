@@ -126,7 +126,7 @@ class ActorMetaClass(type):
                 
         cls.virtual_fields = {}
         cls._constants = {}
-        cls._actions_dict = {}
+        cls._actions_dict = AttrDict()
         cls._actions_list = None
         #~ cls._replaced_by = None
         
@@ -239,7 +239,7 @@ class Actor(actions.Parametrizable):
     """
     
     default_list_action_name = 'grid'
-    default_elem_action_name =  'detail'
+    default_elem_action_name =  'detail_action'
     
     
     debug_permissions = False
@@ -518,7 +518,7 @@ class Actor(actions.Parametrizable):
     def class_init(cls):
         #~ if cls.__name__ == 'Home':
             #~ print "20120524",cls, "class_init()", cls.__bases__
-        cls.default_action = cls.get_default_action()
+        #~ 20121008 cls.default_action = cls.get_default_action()
         
         if False:
             #~ for b in cls.__bases__:
@@ -546,7 +546,8 @@ class Actor(actions.Parametrizable):
         
     @classmethod
     def get_view_permission(self,user):
-        return self.default_action.action.allow(user,None,None)
+        #~ return self.default_action.action.allow(user,None,None)
+        return self.default_action.get_action_permission(user,None,None)
         #~ return self.allow_read(user,None,None)
 
     @classmethod
@@ -574,9 +575,10 @@ class Actor(actions.Parametrizable):
         Before this we create `insert_action` and `detail_action` if necessary.
         Also fill _actions_list.
         """
+        default_action = getattr(cls,cls.get_default_action())
         if cls.detail_layout or cls.detail_template:
-            if cls.default_action and isinstance(cls.default_action.action,actions.ShowDetailAction):
-                cls.detail_action = cls.default_action.action
+            if default_action and isinstance(default_action,actions.ShowDetailAction):
+                cls.detail_action = default_action
             else:
                 cls.detail_action = actions.ShowDetailAction()
         if cls.detail_action and cls.editable and cls.allow_create:
@@ -612,10 +614,6 @@ class Actor(actions.Parametrizable):
 
         #~ if cls.__name__.startswith('OutboxBy'):
             #~ print '20120524 collect_actions',cls, cls.insert_action, cls.detail_action, cls.editable
-        """
-        Note that Action instances on base classes have 
-        been copied to this Actor's __dict__
-        """
         cls._actions_list = []
         if True:
             for b in cls.mro():
@@ -627,11 +625,13 @@ class Actor(actions.Parametrizable):
             for k,v in cls.__dict__.items():
                 if isinstance(v,actions.Action):
                     cls._attach_action(k,v)
-                
+                    
+        cls.default_action = cls._actions_dict.get(cls.get_default_action())
+                    
         #~ cls._actions_list = cls._actions_dict.values()
         #~ cls._actions_list += cls.get_shared_actions()
         def f(a,b):
-            return cmp(a.sort_index,b.sort_index)
+            return cmp(a.action.sort_index,b.action.sort_index)
         cls._actions_list.sort(f)
         cls._actions_list = tuple(cls._actions_list)
         #~ if cls.__name__ == 'RetrieveTIGroupsRequest':
@@ -639,47 +639,17 @@ class Actor(actions.Parametrizable):
         
         
     @classmethod
-    def get_workflow_actions(self,ar,obj):
-        state = self.get_row_state(obj)
-        u = ar.get_user()
-        for a in self.get_actions(ar.bound_action.action):
-            if a.show_in_workflow:
-                #~ logger.info('20120930 %s show in workflow', a.name)
-                if obj.get_row_permission(u,state,a):
-                    yield actions.BoundAction(self,a)
-        
-    #~ @classmethod
-    #~ def get_state_actions(self):
-        #~ for name, fn in self.workflow_state_field.choicelist.workflow_actions:
-            #~ yield (name,fn())
-        #~ i = 10
-        #~ for st in self.workflow_state_field.choicelist.items():
-            #~ if hasattr(st,'required'):
-                #~ name = 'mark_' + st.value
-                #~ a = ChangeStateAction(self,st,sort_index=i)
-                #~ print 20120709, self, name, a
-                #~ yield name,a
-                #~ i += 1
-            
-    @classmethod
     def _attach_action(self,name,a):
-        #~ if str(self) == 'lino.Home':
-            #~ logger.info("20121003 %s._attach_action(%r)",self,name)
-        #~ if a.defining_actor is self:
-            #~ return # defining same action under different names (eg default_action...)
             
-        v = self._actions_dict.get(name,None)
-        if v is not None:
-            return 
-            #~ raise Exception("%s : action_name %r of %r would override %r" % (
-                  #~ self,a.action_name,a,v))
-            #~ if self._actions_dict.has_key(a.url_action_name):
-                #~ raise Exception(
-                    #~ "Duplicate url_action_name %s for %r" % (
-                        #~ a.url_action_name,a))
-        self._actions_dict[name] = a
+        #~ v = self._actions_dict.get(name,None)
+        #~ if v is not None:
+            #~ return 
+            
+        ba = actions.BoundAction(self,a)
         
-        a.attach_to_actor(self,name)
+        self._actions_dict.define(name,ba)
+        
+        ba.action.attach_to_actor(self,name)
         
         if name != a.action_name:
             #~ raise Exception("20121003 %r %r : %r != %r" % (self,a,name,a.action_name))
@@ -688,10 +658,20 @@ class Actor(actions.Parametrizable):
         
         #~ elif a.show_in_workflow:
             #~ raise Exception("Cannot show %s in workflow without url_action_name" % self)
-        self._actions_list.append(a)
+        self._actions_list.append(ba)
         return a
             
 
+    @classmethod
+    def get_workflow_actions(self,ar,obj):
+        state = self.get_row_state(obj)
+        u = ar.get_user()
+        for ba in self.get_actions(ar.bound_action.action):
+            if ba.action.show_in_workflow:
+                #~ logger.info('20120930 %s show in workflow', a.name)
+                if obj.get_row_permission(u,state,ba.action):
+                    yield ba
+        
     @classmethod
     def get_label(self):
         return self.label
@@ -873,9 +853,10 @@ class Actor(actions.Parametrizable):
         
     @classmethod
     def get_url_action(self,name):
-        a = self._actions_dict.get(name,None)
-        if a is not None:
-            return actions.BoundAction(self,a)
+        return self._actions_dict.get(name,None)
+        #~ a = self._actions_dict.get(name,None)
+        #~ if a is not None:
+            #~ return actions.BoundAction(self,a)
         
     @classmethod
     def get_actions(self,callable_from=None):
@@ -883,8 +864,8 @@ class Actor(actions.Parametrizable):
             raise Exception("Tried to %s.get_actions() with empty _actions_list" % self)
         if callable_from is None:
             return self._actions_list
-        return [a for a in self._actions_list 
-          if a.callable_from is None or isinstance(callable_from,a.callable_from)]
+        return [ba for ba in self._actions_list 
+          if ba.action.callable_from is None or isinstance(callable_from,ba.action.callable_from)]
     
     @classmethod
     def get_data_elem(self,name):

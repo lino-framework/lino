@@ -759,7 +759,8 @@ class AbstractTable(actors.Actor):
     
     @classmethod
     def get_default_action(cls):
-        return actions.BoundAction(cls,cls.grid)
+        #~ return actions.BoundAction(cls,cls.grid)
+        return 'grid'
         
     @classmethod
     def class_init(self):

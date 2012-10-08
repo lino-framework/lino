@@ -241,7 +241,7 @@ class DisableDeleteHandler():
 
 
 
-def load_workflows(self):
+def unused_load_workflows(self):
     """
     Each Actor receives the meta information about workflows.
     
@@ -250,71 +250,32 @@ def load_workflows(self):
     but may be overridden by adding an explicit 
     JobProviders Rule.
     """
-    #~ self.workflow_actors = {}
+    
     for actor in actors.actors_list:
-        
-        for a in actor.get_actions():
+        #~ actor.actions = AttrDict()
+        for ba in actor.get_actions():
             required = dict()
-            if a.readonly:
+            if ba.action.readonly:
                 required.update(actor.required)
-            elif isinstance(a,actions.InsertRow):
+            elif isinstance(ba.action,actions.InsertRow):
                 required.update(actor.create_required)
-            elif isinstance(a,actions.DeleteSelected):
+            elif isinstance(ba.action,actions.DeleteSelected):
                 required.update(actor.delete_required)
             else:
                 required.update(actor.update_required)
-            required.update(a.required)
+            required.update(ba.action.required)
             #~ print 20120628, str(a), required
             #~ def wrap(a,required,fn):
                 #~ return fn
                 
             #~ a.allow = curry(wrap(a,required,perms.make_permission_handler(
                 #~ a,actor,a.readonly,actor.debug_permissions,**required)),a)
-            a.allow = curry(perms.make_permission_handler(
-                a,actor,a.readonly,actor.debug_permissions,**required),a)
+            #~ ba = actions.BoundAction(actor,a)
+            ba.allow = curry(perms.make_permission_handler(
+                ba.action,actor,ba.action.readonly,actor.debug_permissions,**required),ba.action)
+            #~ actor.actions.define(a.action_name,ba)
             
 
-    if False:
-      if self.is_installed('workflows'):
-          Rule = resolve_model('workflows.Rule')
-          for rule in Rule.objects.all().order_by('seqno'):
-              ruleactor = self.workflow_actors.get(rule.actor_name)
-              if ruleactor is not None:
-                  if ruleactor.workflow_owner_field is not None and rule.owned_only:
-                      rh = OwnedOnlyRuleHandler()
-                  else:
-                      rh = RuleHandler()
-                  if rule.user_level:
-                      rh.required_user_level = rule.user_level
-                  if rule.user_group:
-                      rh.required_user_groups = [rule.user_group.value]
-                      
-                  def apply_rule(action_names,states,actor):
-                      for state in states:
-                          for an in action_names:
-                              a = getattr(actor,an)
-                              a._rule_handlers[state] = rh
-                  
-                  if rule.action_name:
-                      action_names = [ rule.action_name ]
-                  else:
-                      action_names = [a.name for a in ruleactor.workflow_actions]
-                  if rule.state:
-                      states = []
-                  else:
-                      states = ruleactor.workflow_state_field.choicelist.items_dict.keys()
-                      
-                  for actor in self.workflow_actors.values():
-                      if actor is ruleactor or issubclass(actor,ruleactor):
-                          apply_rule(action_names,states,actor)
-
-                  
-      self.workflow_actor_choices = self.workflow_actors.items()
-      def cmpfn(a,b):
-          return cmp(a[0],b[0])
-      self.workflow_actor_choices = self.workflow_actors.items()
-      self.workflow_actor_choices.sort(cmpfn)
-        
 
         
         
@@ -507,7 +468,7 @@ def startup_site(self):
         `after_site_setup()` definitively collects actions of each actor.
         Now we can install permission handlers.
         """
-        load_workflows(self)
+        #~ load_workflows(self)
             
         #~ install_summary_rows()
         

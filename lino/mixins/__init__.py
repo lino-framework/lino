@@ -394,6 +394,7 @@ class EmptyTable(frames.Frame):
     A "Table" that has exactly one virtual row and thus is visible 
     only using a Detail view on that row.
     """
+    #~ debug_permissions = True
     #~ has_navigator = False
     #~ hide_top_toolbar = True
     hide_navigator = True
@@ -406,7 +407,8 @@ class EmptyTable(frames.Frame):
     
     @classmethod
     def get_default_action(cls):
-        return actions.BoundAction(cls,cls.show)
+        #~ return actions.BoundAction(cls,cls.show)
+        return 'show'
         
     
     

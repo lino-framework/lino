@@ -381,9 +381,13 @@ class Models(dd.VirtualTable):
     def name(self,obj,ar):
         return obj.__name__
         
-    @dd.displayfield(_("detail_action"))
+    #~ @dd.displayfield(_("Detail Action"))
+    @dd.displayfield()
     def detail_action(self,obj,ar):
-        return str(obj._lino_default_table.detail_action)
+        #~ return str(obj._lino_default_table.detail_action)
+        if obj._lino_default_table.detail_action is None:
+            return ''
+        return obj._lino_default_table.detail_action.full_name(obj._lino_default_table)
         
     #~ @dd.displayfield(_("verbose name"))
     #~ def vebose_name(self,obj,ar):
