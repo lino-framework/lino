@@ -80,7 +80,7 @@ class Watcher(object):
         #~ watched_fields, options = cs
         
         if self.is_new:
-            msg = u"%s created." % obj2str(self.watched)
+            msg = u"%s created." % obj2str(self.watched,True)
             #~ msg = u"%s created by %s." % (obj2str(self.watched),request.user)
         else:
             changes = []
@@ -104,7 +104,9 @@ class Watcher(object):
             master = self.watched
         else:
             master = getattr(self.watched,cs.master_key)
-            
+            if master is None:
+                return
+                
         Change(
             time=datetime.datetime.now(),
             user=request.user,

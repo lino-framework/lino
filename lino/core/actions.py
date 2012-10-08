@@ -728,7 +728,8 @@ class ChangeStateAction(RowAction):
         return self.defining_actor.choicelist.actor_id + '.' + self.action_name
         
     def run(self,row,ar,**kw):
-        state_field_name = self.defining_actor.workflow_state_field.attname
+        #~ state_field_name = self.defining_actor.workflow_state_field.attname
+        state_field_name = row.workflow_state_field.attname
         assert isinstance(state_field_name,basestring)
         #~ old = row.state
         old = getattr(row,state_field_name)

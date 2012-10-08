@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: lino.modlib.mails\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2012-09-22 06:21+0100\n"
+"POT-Creation-Date: 2012-10-08 04:26+0100\n"
 "PO-Revision-Date: 2011-09-14 21:28+0200\n"
 "Last-Translator: Luc Saffre <luc.saffre@gmail.com>\n"
 "Language-Team: fr\n"
@@ -16,107 +16,107 @@ msgstr ""
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=(n > 1)\n"
 
-#: .\models.py:72
+#: .\models.py:73
 msgid "Recipient Type"
 msgstr "Type de destinataire"
 
-#: .\models.py:75
+#: .\models.py:76
 msgid "to"
 msgstr ""
 
-#: .\models.py:76
+#: .\models.py:77
 msgid "cc"
 msgstr ""
 
-#: .\models.py:77
+#: .\models.py:78
 msgid "bcc"
 msgstr ""
 
-#: .\models.py:106
+#: .\models.py:107
 msgid "Attach to email"
 msgstr ""
 
-#: .\models.py:112
+#: .\models.py:113
 msgid "Email template"
 msgstr ""
 
-#: .\models.py:133
+#: .\models.py:134
 msgid "Create email"
 msgstr "Céer courrier"
 
-#: .\models.py:244
+#: .\models.py:245
 msgid "Recipient"
 msgstr "Destinataire"
 
-#: .\models.py:245 .\models.py:450
+#: .\models.py:246 .\models.py:451
 msgid "Recipients"
 msgstr "DestinataireDestinataires"
 
-#: .\models.py:251
+#: .\models.py:252
 msgid "Address"
 msgstr "Adresse"
 
-#: .\models.py:252
+#: .\models.py:253
 msgid "Name"
 msgstr "Nom"
 
-#: .\models.py:307
+#: .\models.py:308
 msgid "Send email"
 msgstr "Envoyer"
 
-#: .\models.py:353
+#: .\models.py:354
 msgid "There are recipients without address: "
 msgstr ""
 
-#: .\models.py:372
+#: .\models.py:373
 #, python-format
 msgid "Couldn't find target file of %s"
 msgstr ""
 
-#: .\models.py:388
+#: .\models.py:389
 #, python-format
 msgid "Email %(id)s from %(sender)s has been sent to %(num)d recipients."
 msgstr ""
 
-#: .\models.py:405
+#: .\models.py:406
 msgid "Outgoing Mail"
 msgstr ""
 
-#: .\models.py:406
+#: .\models.py:407
 msgid "Outgoing Mails"
 msgstr ""
 
-#: .\models.py:410
+#: .\models.py:411
 msgid "Date"
 msgstr ""
 
-#: .\models.py:416
+#: .\models.py:417
 msgid "Subject"
 msgstr "Objet"
 
-#: .\models.py:420
+#: .\models.py:421
 msgid "Body"
 msgstr "Contenu"
 
-#: .\models.py:487
+#: .\models.py:488
 #, fuzzy
 msgid "My Outbox"
 msgstr "Courrier sortant"
 
-#: .\models.py:510 .\models.py:518 .\models.py:527 .\models.py:588
+#: .\models.py:511 .\models.py:519 .\models.py:528 .\models.py:590
 #, fuzzy
 msgid "Outbox"
 msgstr "Courrier sortant"
 
-#: .\models.py:546
+#: .\models.py:547
 msgid "Attachment"
 msgstr "Pièce jointe"
 
-#: .\models.py:547
+#: .\models.py:548
 msgid "Attachments"
 msgstr "Pièces jointes"
 
-#: .\models.py:613
+#: .\models.py:615
 #, fuzzy
 msgid "Sender"
 msgstr "Envoyer"

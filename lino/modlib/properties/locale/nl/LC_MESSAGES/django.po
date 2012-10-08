@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2012-09-22 06:21+0100\n"
+"POT-Creation-Date: 2012-10-08 04:26+0100\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -17,62 +17,110 @@ msgstr ""
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=(n != 1)\n"
 
-#: .\models.py:70 .\models.py:155 .\models.py:187
-msgid "Property Type"
+#: .\models.py:64
+msgid "certainly not...very much"
+msgstr ""
+
+#: .\models.py:67
+msgid "certainly not"
+msgstr ""
+
+#: .\models.py:68
+msgid "rather not"
+msgstr ""
+
+#: .\models.py:69
+msgid "normally"
+msgstr ""
+
+#: .\models.py:70
+msgid "quite much"
 msgstr ""
 
 #: .\models.py:71
-msgid "Property Types"
+msgid "very much"
 msgstr ""
 
-#: .\models.py:77
-msgid "Choices List"
+#: .\models.py:84
+msgid "not at all...very well"
 msgstr ""
 
-#: .\models.py:80
-msgid "default value"
+#: .\models.py:87
+msgid "not at all"
 msgstr ""
 
 #: .\models.py:88
+msgid "a bit"
+msgstr ""
+
+#: .\models.py:89
+msgid "moderate"
+msgstr ""
+
+#: .\models.py:90
+msgid "quite well"
+msgstr ""
+
+#: .\models.py:91
+msgid "very well"
+msgstr ""
+
+#: .\models.py:108 .\models.py:193 .\models.py:225
+msgid "Property Type"
+msgstr ""
+
+#: .\models.py:109
+msgid "Property Types"
+msgstr ""
+
+#: .\models.py:115
+msgid "Choices List"
+msgstr ""
+
+#: .\models.py:118
+msgid "default value"
+msgstr ""
+
+#: .\models.py:126
 msgid "Limit to choices"
 msgstr ""
 
-#: .\models.py:93
+#: .\models.py:131
 msgid "Multiple choices"
 msgstr ""
 
-#: .\models.py:151
+#: .\models.py:189
 msgid "Property Choice"
 msgstr ""
 
-#: .\models.py:152
+#: .\models.py:190
 msgid "Property Choices"
 msgstr ""
 
-#: .\models.py:156 .\models.py:214
+#: .\models.py:194 .\models.py:252
 msgid "Value"
 msgstr ""
 
-#: .\models.py:157
+#: .\models.py:195
 msgid "Designation"
 msgstr ""
 
-#: .\models.py:175 .\models.py:186
+#: .\models.py:213 .\models.py:224
 msgid "Property Group"
 msgstr ""
 
-#: .\models.py:176
+#: .\models.py:214
 msgid "Property Groups"
 msgstr ""
 
-#: .\models.py:182 .\models.py:212
+#: .\models.py:220 .\models.py:250
 msgid "Property"
 msgstr ""
 
-#: .\models.py:183 .\models.py:298
+#: .\models.py:221 .\models.py:336
 msgid "Properties"
 msgstr ""
 
-#: .\models.py:210
+#: .\models.py:248
 msgid "Property group"
 msgstr ""

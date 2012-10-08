@@ -11,3 +11,6 @@
   DSBE-Leute wollen dann aber eigentlich ihr Detail aus IntegClients sehen.
   Und newcomer-Benutzer haben ja auch "ihr eigenes" Detail.
   Also eine neue Methode :meth:`lino.core.model.Model.get_default_table`.
+  
+- Lino macht jetzt eine Mitteilung, wenn Stellenanfragen automatsich 
+  deaktiviert wurden  .

@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: lino.modlib.mails\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2012-09-22 06:22+0100\n"
+"POT-Creation-Date: 2012-10-08 04:27+0100\n"
 "PO-Revision-Date: 2011-09-14 21:28+0200\n"
 "Last-Translator: Luc Saffre <luc.saffre@gmail.com>\n"
 "Language-Team: fr\n"
@@ -16,65 +16,65 @@ msgstr ""
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=(n > 1)\n"
 
-#: .\models.py:59
+#: .\models.py:61
 msgid "State"
 msgstr ""
 
-#: .\models.py:61
+#: .\models.py:63
 msgid "Open"
 msgstr ""
 
-#: .\models.py:62
+#: .\models.py:64
 msgid "Ready to print"
 msgstr ""
 
-#: .\models.py:63
+#: .\models.py:65
 msgid "Printed"
 msgstr ""
 
-#: .\models.py:64
+#: .\models.py:66
 #, fuzzy
 msgid "Sent"
 msgstr "Expéditeur"
 
-#: .\models.py:65
+#: .\models.py:67
 msgid "Returned"
 msgstr ""
 
-#: .\models.py:75
+#: .\models.py:77
 msgid "Posting"
 msgstr ""
 
-#: .\models.py:76 .\models.py:195
+#: .\models.py:78 .\models.py:201
 msgid "Postings"
 msgstr ""
 
-#: .\models.py:79
+#: .\models.py:81
 msgid "Recipient"
 msgstr "Destinataire"
 
-#: .\models.py:90
+#: .\models.py:96
 msgid "Print"
 msgstr ""
 
-#: .\models.py:116
+#: .\models.py:122
 msgid "Postings ready to print"
 msgstr ""
 
-#: .\models.py:120
+#: .\models.py:126
 msgid "Postings printed"
 msgstr ""
 
-#: .\models.py:124
+#: .\models.py:130
 msgid "Postings sent"
 msgstr ""
 
-#: .\models.py:157
+#: .\models.py:163
 #, fuzzy
 msgid "Create posting"
 msgstr "Céer courrier"
 
-#: .\models.py:167
+#: .\models.py:173
 #, python-format
 msgid "Going to create %(num)d postings for %(elem)s"
 msgstr ""
