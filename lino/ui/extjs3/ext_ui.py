@@ -56,7 +56,6 @@ from lino.ui.extjs3 import ext_store
 #~ from lino.ui.extjs3 import ext_windows
 from lino.ui import requests as ext_requests
 
-#~ from lino.ui import store as ext_store
 from lino import dd
 from lino.core import actions 
 #~ from lino.core.actions import action2str
@@ -1761,6 +1760,7 @@ tinymce.init({
         if dh.layout._table.action_name is None:
             raise Exception("20121009 action_name of %r is None" % dh.layout._table)
         yield "  action_name: '%s'," % dh.layout._table.action_name
+        yield "  window_title: %s," % py2js(dh.layout._table.label)
         #~ yield "  layout: 'fit',"
         #~ yield "  auto_save: true,"
         if dh.layout.window_size and dh.layout.window_size[1] == 'auto':

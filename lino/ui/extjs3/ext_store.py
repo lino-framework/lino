@@ -852,7 +852,143 @@ class OneToOneStoreField(RelatedMixin,StoreField):
         #~ d[self.field.name] = self.value_from_object(request,obj)
         
 
-class Store:
+class BaseStore(object):
+        
+    def create_field(self,fld,name):
+        if isinstance(fld,fields.RemoteField):
+            """
+            Hack: we create a StoreField based on the remote field,
+            then modify its behaviour.
+            """
+            sf = self.create_field(fld.field,fld.name)
+            def value_from_object(sf,obj,ar):
+                m = fld.func
+                return m(obj)
+                
+            def full_value_from_object(sf,obj,ar):
+                #~ logger.info("20120406 %s.full_value_from_object(%s)",sf.name,sf)
+                m = fld.func
+                return m(obj)
+                
+            sf.value_from_object = curry(value_from_object,sf)
+            sf.full_value_from_object = curry(full_value_from_object,sf)
+            #~ sf.field = fld.field
+            #~ sf.value2list = curry(value2list,sf)
+            return sf
+        #~ if isinstance(fld,tables.ComputedColumn):
+            #~ logger.info("20111230 Store.create_field(%s)", fld)
+            #~ return ComputedColumnField(fld)
+        meth = getattr(fld,'_return_type_for_method',None)
+        if meth is not None:
+            # uh, this is tricky...
+            return MethodStoreField(fld,name)
+        #~ if isinstance(fld,fields.HtmlBox):
+            #~ ...
+        #~ if isinstance(fld,dd.LinkedForeignKey):
+            #~ return LinkedForeignKeyField(fld,name)
+        if isinstance(fld,dd.RequestField):
+            delegate = self.create_field(fld.return_type,fld.name)
+            return RequestStoreField(fld,delegate,name)
+        if isinstance(fld,dd.VirtualField):
+            delegate = self.create_field(fld.return_type,fld.name)
+            return VirtStoreField(fld,delegate,name)
+        if isinstance(fld,models.FileField):
+            return FileFieldStoreField(fld,name)
+        if isinstance(fld,models.ManyToManyField):
+            return StoreField(fld,name)
+        if isinstance(fld,dd.PasswordField):
+            return PasswordStoreField(fld,name)
+        if isinstance(fld,models.OneToOneField):
+            return OneToOneStoreField(fld,name)
+        if isinstance(fld,generic.GenericForeignKey):
+            return GenericForeignKeyField(fld,name)
+        if isinstance(fld,dd.GenericForeignKeyIdField):
+            return ComboStoreField(fld,name)
+        if isinstance(fld,models.ForeignKey):
+            return ForeignKeyStoreField(fld,name)
+        if isinstance(fld,models.TimeField):
+            return TimeStoreField(fld,name)
+        if isinstance(fld,models.DateTimeField):
+            return DateTimeStoreField(fld,name)
+        if isinstance(fld,dd.IncompleteDateField):
+            return IncompleteDateStoreField(fld,name)
+        if isinstance(fld,models.DateField):
+            return DateStoreField(fld,name)
+        if isinstance(fld,models.BooleanField):
+            return BooleanStoreField(fld,name)
+        if isinstance(fld,models.DecimalField):
+            return DecimalStoreField(fld,name)
+        if isinstance(fld,models.AutoField):
+            return AutoStoreField(fld,name)
+            #~ kw.update(type='int')
+        if isinstance(fld,models.SmallIntegerField):
+            return IntegerStoreField(fld,name)
+        if isinstance(fld,dd.DisplayField):
+            return DisplayStoreField(fld,name)
+        if isinstance(fld,models.IntegerField):
+            return IntegerStoreField(fld,name)
+        kw = {}
+        if choosers.uses_simple_values(fld):
+            return StoreField(fld,name,**kw)
+        else:
+            return ComboStoreField(fld,name,**kw)
+
+class ParameterStore(BaseStore):
+        
+    def __init__(self,params_layout_handle,url_param):
+        self.param_fields = []
+        
+        for pf in params_layout_handle._store_fields:
+        #~ for pf in rh.report.params:
+            self.param_fields.append(self.create_field(pf,pf.name))
+        
+        self.param_fields = tuple(self.param_fields)
+        self.url_param = url_param        
+
+        
+    def unused_pv2list(self,pv):
+        l = []
+        for f in self.param_fields:
+            l.append(pv[f.field.name])
+        return l
+        
+    def pv2dict(self,ui,pv,**d):
+        for fld in self.param_fields:
+            v = pv.get(fld.name,None)
+            fld.value2dict(ui,v,d,None)
+        return d
+
+    def parse_params(self,request,**kw):
+        pv = request.REQUEST.getlist(self.url_param)
+        #~ logger.info("20120221 parse_params(%s)",pv)
+        def parse(sf,form_value):
+            if form_value == '' and not sf.field.empty_strings_allowed:
+                return sf.form2obj_default
+                # if a field has been posted with empty string, 
+                # we don't want it to get the field's default value because
+                # otherwise checkboxes with default value True can never be unset.
+                # charfields have empty_strings_allowed
+                # e.g. id field may be empty
+                # but don't do this for other cases
+            else:
+                return sf.parse_form_value(form_value,None)
+      
+        #~ if pv: 
+            #~ if len(self.param_fields) != len(pv):
+                #~ raise Exception("len(%r) != len(%r)" % (self.param_fields,pv))
+        if pv and len(self.param_fields) == len(pv):
+            for i,f in enumerate(self.param_fields):
+                kw[f.field.name] = parse(f,pv[i])
+        #~ else: removed 20120918
+            #~ for i,f in enumerate(self.param_fields):
+                #~ kw[f.field.name] = parse(f,'')
+        #~ logger.info("20120221 2 parse_params(%s) --> %r",pv,kw)
+        return kw
+        
+
+
+
+class Store(BaseStore):
     """
     
     Represents an :extjs:`Ext.data.JsonStore`.
@@ -940,13 +1076,6 @@ class Store:
             
         del self.df2sf
         
-        self.param_fields = []
-        
-        if rh.actor.parameters:
-            for pf in rh.params_layout_handle._store_fields:
-            #~ for pf in rh.report.params:
-                self.param_fields.append(self.create_field(pf,pf.name))
-        
         #~ if not issubclass(rh.report,dbtables.Table):
             #~ addfield(RecnoStoreField(self))
           
@@ -978,8 +1107,7 @@ class Store:
         self.all_fields = tuple(self.all_fields)
         self.list_fields = tuple(self.list_fields)
         self.detail_fields = tuple(self.detail_fields)
-        self.param_fields = tuple(self.param_fields)
-
+        
 
     def add_field_for(self,fields,df):
         sf = getattr(df,'_lino_atomizer',None)
@@ -1019,85 +1147,7 @@ class Store:
                 self.pk = self.actor.model._meta.pk
             if not pk_found:
                 self.add_field_for(fields,self.pk)
-        
-    def create_field(self,fld,name):
-        if isinstance(fld,fields.RemoteField):
-            """
-            Hack: we create a StoreField based on the remote field,
-            then modify its behaviour.
-            """
-            sf = self.create_field(fld.field,fld.name)
-            def value_from_object(sf,obj,ar):
-                m = fld.func
-                return m(obj)
                 
-            def full_value_from_object(sf,obj,ar):
-                #~ logger.info("20120406 %s.full_value_from_object(%s)",sf.name,sf)
-                m = fld.func
-                return m(obj)
-                
-            sf.value_from_object = curry(value_from_object,sf)
-            sf.full_value_from_object = curry(full_value_from_object,sf)
-            #~ sf.field = fld.field
-            #~ sf.value2list = curry(value2list,sf)
-            return sf
-        #~ if isinstance(fld,tables.ComputedColumn):
-            #~ logger.info("20111230 Store.create_field(%s)", fld)
-            #~ return ComputedColumnField(fld)
-        meth = getattr(fld,'_return_type_for_method',None)
-        if meth is not None:
-            # uh, this is tricky...
-            return MethodStoreField(fld,name)
-        #~ if isinstance(fld,fields.HtmlBox):
-            #~ ...
-        #~ if isinstance(fld,dd.LinkedForeignKey):
-            #~ return LinkedForeignKeyField(fld,name)
-        if isinstance(fld,dd.RequestField):
-            delegate = self.create_field(fld.return_type,fld.name)
-            return RequestStoreField(fld,delegate,name)
-        if isinstance(fld,dd.VirtualField):
-            delegate = self.create_field(fld.return_type,fld.name)
-            return VirtStoreField(fld,delegate,name)
-        if isinstance(fld,models.FileField):
-            return FileFieldStoreField(fld,name)
-        if isinstance(fld,models.ManyToManyField):
-            return StoreField(fld,name)
-        if isinstance(fld,dd.PasswordField):
-            return PasswordStoreField(fld,name)
-        if isinstance(fld,models.OneToOneField):
-            return OneToOneStoreField(fld,name)
-        if isinstance(fld,generic.GenericForeignKey):
-            return GenericForeignKeyField(fld,name)
-        if isinstance(fld,dd.GenericForeignKeyIdField):
-            return ComboStoreField(fld,name)
-        if isinstance(fld,models.ForeignKey):
-            return ForeignKeyStoreField(fld,name)
-        if isinstance(fld,models.TimeField):
-            return TimeStoreField(fld,name)
-        if isinstance(fld,models.DateTimeField):
-            return DateTimeStoreField(fld,name)
-        if isinstance(fld,dd.IncompleteDateField):
-            return IncompleteDateStoreField(fld,name)
-        if isinstance(fld,models.DateField):
-            return DateStoreField(fld,name)
-        if isinstance(fld,models.BooleanField):
-            return BooleanStoreField(fld,name)
-        if isinstance(fld,models.DecimalField):
-            return DecimalStoreField(fld,name)
-        if isinstance(fld,models.AutoField):
-            return AutoStoreField(fld,name)
-            #~ kw.update(type='int')
-        if isinstance(fld,models.SmallIntegerField):
-            return IntegerStoreField(fld,name)
-        if isinstance(fld,dd.DisplayField):
-            return DisplayStoreField(fld,name)
-        if isinstance(fld,models.IntegerField):
-            return IntegerStoreField(fld,name)
-        kw = {}
-        if choosers.uses_simple_values(fld):
-            return StoreField(fld,name,**kw)
-        else:
-            return ComboStoreField(fld,name,**kw)
 
     def form2obj(self,ar,form_values,instance,is_new):
         disabled_fields = set(self.actor.disabled_fields(instance,ar))
@@ -1232,43 +1282,3 @@ class Store:
                     #~ yield fld.value2odt(request,v)
             
             
-    def unused_pv2list(self,pv):
-        l = []
-        for f in self.param_fields:
-            l.append(pv[f.field.name])
-        return l
-        
-    def pv2dict(self,ui,pv,**d):
-        for fld in self.param_fields:
-            v = pv.get(fld.name,None)
-            fld.value2dict(ui,v,d,None)
-        return d
-        
-        
-    def parse_params(self,request,**kw):
-        pv = request.REQUEST.getlist(ext_requests.URL_PARAM_PARAM_VALUES)
-        #~ logger.info("20120221 parse_params(%s)",pv)
-        def parse(self,form_value):
-            if form_value == '' and not self.field.empty_strings_allowed:
-                return self.form2obj_default
-                # if a field has been posted with empty string, 
-                # we don't want it to get the field's default value because
-                # otherwise checkboxes with default value True can never be unset.
-                # charfields have empty_strings_allowed
-                # e.g. id field may be empty
-                # but don't do this for other cases
-            else:
-                return self.parse_form_value(form_value,None)
-      
-        #~ if pv: 
-            #~ if len(self.param_fields) != len(pv):
-                #~ raise Exception("len(%r) != len(%r)" % (self.param_fields,pv))
-        if pv and len(self.param_fields) == len(pv):
-            for i,f in enumerate(self.param_fields):
-                kw[f.field.name] = parse(f,pv[i])
-        #~ else: removed 20120918
-            #~ for i,f in enumerate(self.param_fields):
-                #~ kw[f.field.name] = parse(f,'')
-        #~ logger.info("20120221 2 parse_params(%s) --> %r",pv,kw)
-        return kw
-        

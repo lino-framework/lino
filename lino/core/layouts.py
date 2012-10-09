@@ -30,6 +30,8 @@ import yaml
 
 from django.utils.translation import ugettext_lazy as _
 
+from lino.ui import requests as ext_requests
+
 #~ from lino.core import perms
 #~ from lino.utils import curry
 
@@ -548,17 +550,23 @@ class ParamsLayout(BaseLayout):
     A Layout description for a :attr:`lino.core.actors.Actor.parameters` panel.
     """
     join_str = " "
+    params_store = None
+    url_param_name = ext_requests.URL_PARAM_PARAM_VALUES
 
     def get_data_elem(self,name): 
         return self._table.get_param_elem(name)
+        
+    def setup_handle(self,lh):
+        if self.params_store is None:
+            from lino.ui.extjs3 import ext_store
+            self.params_store = ext_store.ParameterStore(lh,self.url_param_name)
 
-class ActionParamsLayout(BaseLayout):
+class ActionParamsLayout(ParamsLayout):
     """
     A Layout description for an :attr:`lino.core.actions.Action.parameters` panel.
     """
     join_str = "\n"
     window_size = (50,'auto')
+    url_param_name = ext_requests.URL_PARAM_FIELD_VALUES
 
-    def get_data_elem(self,name): 
-        return self._table.get_param_elem(name)
-
+        

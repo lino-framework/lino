@@ -437,7 +437,7 @@ class Action(Parametrizable):
     def attach_to_workflow(self,wf,name):
         self.action_name = name
         self.defining_actor = wf
-        logger.info("20121009 %r attach_to_workflow(%s)",self,self.full_name(wf))
+        #~ logger.info("20121009 %r attach_to_workflow(%s)",self,self.full_name(wf))
         
     def attach_to_actor(self,actor,name):
         #~ if self.name is not None:
@@ -498,6 +498,15 @@ class Action(Parametrizable):
     #~ def request(self,*args,**kw):
         #~ kw.update(action=self)
         #~ return self.defining_actor.request(*args,**kw)
+        
+    def param_defaults(self,ar,**kw):
+        """
+        Same as Actor.param_defaults, except that here it is a instance method
+        """
+        for k,pf in self.parameters.items():
+            kw[k] = pf.get_default()
+        return kw
+        
         
 
 class TableAction(Action):
@@ -848,7 +857,8 @@ class ActionRequest(object):
                 
             if request is not None:
                 #~ pv.update(self.ui.parse_params(self.ah,request))
-                pv.update(self.ah.store.parse_params(request))
+                #~ pv.update(self.ah.store.parse_params(request))
+                pv.update(self.actor.params_layout.params_store.parse_params(request))
                 
             if param_values is not None:
                 for k in param_values.keys(): 
@@ -857,6 +867,15 @@ class ActionRequest(object):
                 pv.update(param_values)
                 
             self.param_values = AttrDict(**pv)
+            
+        if self.bound_action.action.parameters is not None:
+            apv = self.bound_action.action.param_defaults(self)
+            if request is not None:
+                #~ pv.update(self.ui.parse_params(self.ah,request))
+                #~ pv.update(self.ah.store.parse_params(request))
+                apv.update(self.bound_action.action.params_layout.params_store.parse_params(request))
+                
+            self.action_param_values = AttrDict(**apv)
             
             #~ if param_values:
                 #~ # logger.info("20120608 param_values is %s",param_values)
@@ -994,7 +1013,9 @@ class ActionRequest(object):
 
     def get_status(self,ui,**kw):
         if self.actor.parameters:
-            kw.update(param_values=self.ah.store.pv2dict(ui,self.param_values))
+            #~ kw.update(param_values=self.ah.store.pv2dict(ui,self.param_values))
+            #~ lh = self.actor.params_layout.get_layout_handle(ui)
+            kw.update(param_values=self.actor.params_layout.params_store.pv2dict(ui,self.param_values))
         bp = kw.setdefault('base_params',{})
         if self.subst_user is not None:
             #~ bp[ext_requests.URL_PARAM_SUBST_USER] = self.subst_user.username

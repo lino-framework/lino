@@ -71,3 +71,25 @@ Interne Änderungen:
 - Actions kriegen ihr params_panel jetzt pro Instanz gemacht.
   Hier fällt störend auf, dass Actors nie instanziert werden. 
   Dadurch ist die Vererbung von Parametrizable nicht sehr elegant.
+  
+18.20 Uhr : Wieder ein Stück näher am Ziel. 
+Jetzt muss ich noch im Store rumschneiden und die Werte übergeben.
+Aber vorher ein Checkin.
+
+Neue Klasse ParameterStore, ...
+
+19.40 Uhr : Ta-da, es klappt! 
+Erstmals nach 26 Stunden Arbeitszeit während zwei Wochen.
+
+Jetzt bleiben nur noch ein paar Details zu tun:
+
+- Dialogfenster schließt sich nicht nach OK und success.
+
+- reason ist blank=True, aber das prüft er nicht nach.
+
+- ClientStates workflow : er schlägt [Ablehnen] auch vor, wenn er schon im Zustand Abgelehnt ist. 
+  Idem für [Neuzugang].
+  
+- workflow_buttons ist ebenfalls in disabled_fields
+
+Aber jetzt erstmal Checkin und Feierabend.

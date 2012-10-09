@@ -880,7 +880,8 @@ class ApiList(View):
               #~ disabled_actions=rpt.disabled_actions(ar,None),
               #~ gc_choices=[gc.data for gc in ar.actor.grid_configs])
             if ar.actor.parameters:
-                kw.update(param_values=ar.ah.store.pv2dict(ar.ui,ar.param_values))
+                #~ kw.update(param_values=ar.ah.store.pv2dict(ar.ui,ar.param_values))
+                kw.update(param_values=ar.actor.params_layout.params_store.pv2dict(ar.ui,ar.param_values))
             return json_response(kw) 
                 
         if fmt == ext_requests.URL_FORMAT_HTML:
