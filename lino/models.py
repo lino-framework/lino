@@ -627,15 +627,11 @@ class Home(mixins.EmptyTable):
     def quick_links(cls,self,req):
         quicklinks = settings.LINO.get_quicklinks(self,req.get_user())
         if quicklinks.items:
-            #~ assert mi.params is None
-            #~ return 'Quick Links: ' + ' '.join(
-              #~ [req.ui.ext_renderer.action_href_js(mi.action) 
-                #~ for mi in quicklinks.items]
-              #~ )
             chunks = []
             for mi in quicklinks.items:
                 chunks.append(' ')
-                chunks.append(req.ui.ext_renderer.action_href_js(mi.bound_action))
+                chunks.append(req.ui.ext_renderer.window_action_button(
+                  req,mi.bound_action))
             return xghtml.E.p('Quick Links:',*chunks)
       
     #~ @dd.virtualfield(dd.HtmlBox())

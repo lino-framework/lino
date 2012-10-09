@@ -615,7 +615,7 @@ class State(Choice):
             a = actions.ChangeStateAction(self,required,label=label or self.text,**kw)
         #~ name = 'mark_' + self.value
         name = 'wf' + str(i+1)
-        a.attach_to_workflow(self,name)
+        a.attach_to_workflow(self.choicelist,name)
         #~ print 20120709, self, name, a
         self.choicelist.workflow_actions = self.choicelist.workflow_actions + [ a ]
         #~ self.choicelist.workflow_actions.append(a) 

@@ -103,7 +103,7 @@ class ActorMetaClass(type):
         
         cls = type.__new__(meta, classname, bases, classDict)
         
-        cls.register_params()
+        actions.register_params(cls)
         
         """
         On 20110822 I thought "A Table always gets the app_label of its model,
@@ -189,6 +189,8 @@ class ActorMetaClass(type):
             else:
                 raise Exception("Cannot reuse detail_layout owned by another table")
                 #~ logger.debug("Note: %s uses layout owned by %s",cls,dl._table)
+                
+        #~ cls.install_params_on_actor()
                 
         if classname not in (
             'Table','AbstractTable','VirtualTable',
@@ -477,7 +479,10 @@ class Actor(actions.Parametrizable):
     def is_valid_row(self,row):
         return False
         
-      
+    @classmethod
+    def make_params_layout_handle(self,ui):
+        return actions.make_params_layout_handle(self,ui)
+        
         
     @classmethod
     def get_handle(self,ui):
@@ -840,7 +845,8 @@ class Actor(actions.Parametrizable):
         self._collect_actions()
         
         #~ Parametrizable.after_site_setup(self)
-        super(Actor,self).after_site_setup(site)
+        #~ super(Actor,self).after_site_setup(site)
+        actions.setup_params_choosers(self)
             
         self.do_setup()
         #~ self.setup_permissions()

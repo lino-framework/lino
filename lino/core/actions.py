@@ -33,6 +33,7 @@ from lino.ui import requests as ext_requests
 
 from lino.core.modeltools import resolve_model
 from lino.core import layouts
+from lino.core import changes
 
 #~ from lino.core.perms import UserLevels
 from lino.core import perms 
@@ -135,8 +136,28 @@ class DialogRequired(Exception):
         
 
 
+#~ @classmethod
+def register_params(cls):
+    if cls.parameters:
+        for k,v in cls.parameters.items():
+            v.set_attributes_from_name(k)
+            v.table = cls
+        if cls.params_layout is None:
+            cls.params_layout = cls._layout_class.join_str.join(cls.parameters.keys())
+        if isinstance(cls.params_layout,basestring):
+            cls.params_layout = cls._layout_class(cls.params_layout,cls)
 
+def setup_params_choosers(self):
+    if self.parameters:
+        from lino.utils.choosers import check_for_chooser
+        for k,fld in self.parameters.items():
+            if isinstance(fld,models.ForeignKey):
+                fld.rel.to = resolve_model(fld.rel.to)
+            check_for_chooser(self,fld)
 
+def make_params_layout_handle(self,ui):
+    return self.params_layout.get_layout_handle(ui)
+        
 class Parametrizable(object):        
   
     active_fields = None # 20121006
@@ -163,31 +184,15 @@ class Parametrizable(object):
     """
     
     _layout_class = NotImplementedError
-            
     
-    @classmethod
-    def register_params(cls):
-        if cls.parameters:
-            for k,v in cls.parameters.items():
-                v.set_attributes_from_name(k)
-                v.table = cls
-            if cls.params_layout is None:
-                cls.params_layout = cls._layout_class.join_str.join(cls.parameters.keys())
-            if isinstance(cls.params_layout,basestring):
-                cls.params_layout = cls._layout_class(cls.params_layout,cls)
-                
-    @classmethod
-    def make_params_layout_handle(cls,ui):
-        return cls.params_layout.get_layout_handle(ui)
+            
+    #~ @classmethod
+    #~ def install_params_on_actor(cls):
+        #~ for k in ('get_window_layout', 'after_site_setup',
+          #~ 'make_params_layout_handle','get_param_elem'):
+            #~ um = getattr(cls,k)
+            #~ setattr(cls,k,classmethod(um))
         
-    @classmethod
-    def after_site_setup(self,site):
-        if self.parameters:
-            from lino.utils.choosers import check_for_chooser
-            for k,fld in self.parameters.items():
-                if isinstance(fld,models.ForeignKey):
-                    fld.rel.to = resolve_model(fld.rel.to)
-                check_for_chooser(self,fld)
         
     @classmethod
     def get_param_elem(self,name):
@@ -197,16 +202,16 @@ class Parametrizable(object):
             #~ if pf.name == name:  return pf
         return None
       
-    @classmethod
+    #~ @classmethod
     def get_window_layout(self,actor):
         return self.params_layout
         
         
-class ActionMetaClass(type):
-    def __new__(meta, classname, bases, classDict):
-        cls = type.__new__(meta, classname, bases, classDict)
-        cls.register_params()
-        return cls
+#~ class ActionMetaClass(type):
+    #~ def __new__(meta, classname, bases, classDict):
+        #~ cls = type.__new__(meta, classname, bases, classDict)
+        #~ cls.register_params()
+        #~ return cls
       
 
 
@@ -215,7 +220,7 @@ class Action(Parametrizable):
     Abstract base class for all Actions
     """
     
-    __metaclass__ = ActionMetaClass
+    #~ __metaclass__ = ActionMetaClass
     
     _layout_class = layouts.ActionParamsLayout
     
@@ -369,6 +374,9 @@ class Action(Parametrizable):
         if label is not None:
             self.label = label
             
+        register_params(self)
+        setup_params_choosers(self.__class__)
+            
         #~ if label is None:
             #~ label = self.label or self.url_action_name 
         for k,v in kw.items():
@@ -381,6 +389,8 @@ class Action(Parametrizable):
             self.callable_from,(tuple,type)), "%s" % self
             
 
+    def make_params_layout_handle(self,ui):
+        return make_params_layout_handle(self,ui)
         
     def set_required(self,**kw):
         """
@@ -424,9 +434,10 @@ class Action(Parametrizable):
     #~ def set_permissions(self,*args,**kw)
         #~ self.permission = perms.factory(*args,**kw)
         
-    def attach_to_workflow(self,fwl,name):
+    def attach_to_workflow(self,wf,name):
         self.action_name = name
-        self.defining_actor = fwl
+        self.defining_actor = wf
+        logger.info("20121009 %r attach_to_workflow(%s)",self,self.full_name(wf))
         
     def attach_to_actor(self,actor,name):
         #~ if self.name is not None:
@@ -724,12 +735,13 @@ class ChangeStateAction(RowAction):
     def full_name(self,actor):
         if self.action_name is None or self.defining_actor is None:
             return repr(self)
-        return self.defining_actor.choicelist.actor_id + '.' + self.action_name
+        return self.defining_actor.actor_id + '.' + self.action_name
         
     def run(self,row,ar,**kw):
         #~ state_field_name = self.defining_actor.workflow_state_field.attname
-        state_field_name = row.workflow_state_field.attname
-        assert isinstance(state_field_name,basestring)
+        #~ state_field_name = row.workflow_state_field.attname
+        state_field_name = ar.actor.workflow_state_field.attname
+        #~ assert isinstance(state_field_name,basestring)
         #~ old = row.state
         old = getattr(row,state_field_name)
         
@@ -835,7 +847,8 @@ class ActionRequest(object):
                     pv[self.actor.master_key] = self.master_instance
                 
             if request is not None:
-                pv.update(self.ui.parse_params(self.ah,request))
+                #~ pv.update(self.ui.parse_params(self.ah,request))
+                pv.update(self.ah.store.parse_params(request))
                 
             if param_values is not None:
                 for k in param_values.keys(): 

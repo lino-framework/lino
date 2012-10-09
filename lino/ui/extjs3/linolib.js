@@ -436,7 +436,7 @@ Lino.Viewport = Ext.extend(Ext.Viewport,{
 
 
 
-Lino.open_window = function(win,st) {
+Lino.open_window = function(win,st,requesting_panel) {
   //~ console.log("20120918 Lino.open_window()",win,st);
   var cw = Lino.current_window;
   if (cw) {
@@ -449,7 +449,7 @@ Lino.open_window = function(win,st) {
   Lino.current_window = win;
   //~ if (st.$ext_requests.URL_PARAM_SUBST_USER) 
       //~ Lino.subst_user_field.setValue(st.$ext_requests.URL_PARAM_SUBST_USER);
-  win.main_item.set_status(st);
+  win.main_item.set_status(st,requesting_panel);
   win.show();
 };
 
@@ -522,9 +522,9 @@ Lino.WindowAction = Ext.extend(Lino.WindowAction,{
       }
       return this.window;
     },
-    run : function(status) {
+    run : function(requesting_panel,status) {
       //~ console.log('20120625 window_action.run()',this)
-      Lino.open_window(this.get_window(),status);
+      Lino.open_window(this.get_window(),status,requesting_panel);
     }
   
 });
@@ -1287,7 +1287,7 @@ Lino.show_in_own_window_button = function(handler) {
       //~ panel.containing_window = ww; // for HtmlBox. see blog/2010/1022
       //~ handler(panel,{base_params:bp});
       //~ handler(panel,{base_params:panel.get_master_params()});
-      handler.run({base_params:panel.containing_panel.get_master_params()});
+      handler.run(null,{base_params:panel.containing_panel.get_master_params()});
       //~ handler(panel,{master_panel:panel.containing_window.main_item});
     }
   }
@@ -1623,19 +1623,8 @@ Lino.MainPanel = {
       //~ console.log("20120203 add_param_values added pv",pv,"to",p);
     }
   },
-  get_param_values : function() {
-      var fields = this.params_panel.fields;
-      //~ console.log('20120116 gonna loop on', fields);
-      var pv = Array(fields.length);
-      for(var i=0; i < fields.length;i++) {
-          var f = fields[i]
-          if (f.formatDate) {
-              pv[i] = f.formatDate(f.getValue()); 
-          } else {
-              pv[i] = f.getValue(); 
-          }
-      }
-      return pv;
+  get_param_values : function() { // similar to get_field_values()
+      return Lino.fields2array(this.params_panel.fields);
   },
   set_param_values : function(pv) {
     if (this.params_panel) {
@@ -1643,19 +1632,7 @@ Lino.MainPanel = {
       this.status_param_values = pv;
       if (pv) this.params_panel.form.my_loadRecord(pv);
       else this.params_panel.form.reset(); 
-      
-      //~ var fields = this.params_panel.fields;
-      //~ console.log('20120116 gonna loop on', fields);
-      //~ for(var i=0; i < fields.length;i++) {
-          //~ var f = fields[i]
-          //~ f.setValue(pv[i]); 
-      //~ }
-      //~ this.refresh();
-      //~ console.log(20120113,options);
     }
-    //~ var test = {test:"foo"};
-    //~ this.add_param_values(test);
-    //~ console.log('20120203 set_param_values test is ', test);
   }
 };
 
@@ -1729,7 +1706,7 @@ Lino.help_text_editor = function() {
     //~ };
     //~ console.log(20120202,bp);
   //~ Lino.lino.ContentTypes.detail({},{base_params:bp});
-  Lino.lino.ContentTypes.detail_action.run({record_id:this.content_type});
+  Lino.lino.ContentTypes.detail_action.run(null,{record_id:this.content_type});
 }
 
 // Path to the blank image should point to a valid location on your server
@@ -1774,7 +1751,7 @@ Lino.fk_renderer = function(fkname,handlername) {
     //~ if (record.phantom) return '';
     if (value) {
         var s = '<a href="javascript:' ;
-        s += handlername + '.run({record_id:\'' + String(record.data[fkname]) + '\'})">';
+        s += handlername + '.run(null,{record_id:\'' + String(record.data[fkname]) + '\'})">';
         s += value + '</a>';
         //~ console.log('Lino.fk_renderer',value,'-->',s);
         return s
@@ -1961,7 +1938,7 @@ Lino.show_detail = function(panel,btn) {
         //~ param_values: pv.$ext_requests.URL_PARAM_PARAM_VALUES
       }
       //~ console.log("20120918 Lino.show_detail",status);
-      panel.ls_detail_handler.run(status);
+      panel.ls_detail_handler.run(null,status);
       //~ panel.loadMask.hide();
       //~ panel.containing_window.window.hideMask();
       //~ panel.el.unmask();
@@ -1974,7 +1951,7 @@ Lino.show_fk_detail = function(combo,detail_action) {
     //~ console.log("Lino.show_fk_detail",combo,handler);
     pk = combo.getValue();
     if (pk) {
-        detail_action.run({record_id: pk})
+        detail_action.run(null,{record_id: pk})
       } else {
         Lino.notify("$_('Cannot show detail for empty foreign key.')");
       }
@@ -1983,7 +1960,7 @@ Lino.show_fk_detail = function(combo,detail_action) {
 Lino.show_insert = function(panel,btn) {
   var bp = panel.get_base_params();
   //~ console.log('20120125 Lino.show_insert',bp)
-  panel.ls_insert_handler.run({record_id:-99999,base_params:bp});
+  panel.ls_insert_handler.run(null,{record_id:-99999,base_params:bp});
 };
 
 Lino.show_insert_duplicate = function(panel,btn) {
@@ -1992,7 +1969,7 @@ Lino.show_insert_duplicate = function(panel,btn) {
       var newRec = {};
       Ext.apply(newRec,rec);
       newRec.id = -99999;
-      panel.ls_insert_handler.run({data_record:rec});
+      panel.ls_insert_handler.run(null,{data_record:rec});
     });
 };
 
@@ -2271,20 +2248,78 @@ Lino.RichTextPanel = Ext.extend(Lino.RichTextPanel,{
 #end if
 
 Lino.ActionFormPanel = Ext.extend(Ext.form.FormPanel,Lino.MainPanel);
-Lino.ActionFormPanel = Ext.extend(Lino.ActionFormPanel,Lino.MainPanel);
+Lino.ActionFormPanel = Ext.extend(Lino.ActionFormPanel,Lino.PanelMixin);
+Lino.ActionFormPanel = Ext.extend(Lino.ActionFormPanel,Lino.FieldBoxMixin);
 Lino.ActionFormPanel = Ext.extend(Lino.ActionFormPanel,{
   //~ layout:'fit'
   //~ ,autoHeight: true
   //~ ,frame: true
   constructor : function(config){
-    config.bbar = [{text:'OK'},{text:'Cancel'}]
+    config.bbar = [
+        {text:'OK',handler:this.on_ok,scope:this},
+        {text:'Cancel',handler:this.close,scope:this}
+    ];
     //~ config.items = config.params_panel;
     Lino.ActionFormPanel.superclass.constructor.call(this, config);
   }
   ,initComponent : function(){
     Lino.ActionFormPanel.superclass.initComponent.call(this);
   }
+  ,on_ok : function() { 
+    //~ var rp = this.requesting_panel;
+    console.log("on_ok",this.requesting_panel,arguments);
+    //~ Lino.row_action_handler()
+    var panel = this.requesting_panel;
+    var actionName = this.action_name;
+    var rec = panel.get_current_record();
+    var fn = function(panel,btn,step) {
+      Lino.call_row_action(panel,panel.get_record_url(rec.id),actionName,step,fn);
+    }
+    fn(panel,null,null);
+    
+    
+  }
+  ,set_status : function(status,rp){
+    this.requesting_panel = Ext.getCmp(rp);
+    console.log('20120918 ActionFormPanel.set_status()',status,rp,this.requesting_panel);
+    this.clear_base_params();
+    if (status == undefined) status = {};
+    //~ if (status.param_values) 
+    this.set_param_values(status.param_values);
+    if (status.base_params) this.set_base_params(status.base_params);
+  }
+  
+  ,add_field_values : function (p) { // similar to add_param_values()
+      if (!this.form.isDirty()) return;
+      p.$ext_requests.URL_PARAM_FIELD_VALUES = this.get_field_values();
+      //~ console.log("20120203 add_param_values added pv",pv,"to",p);
+  },
+  get_field_values : function() {
+      return Lino.fields2array(this.fields);
+  },
+  set_field_values : function(pv) {
+      //~ console.log('20120203 MainPanel.set_param_values', pv);
+      this.status_field_values = pv;
+      if (pv) this.form.my_loadRecord(pv);
+      else this.form.reset(); 
+  }
+  
 });
+
+Lino.fields2array = function(fields) {
+    //~ console.log('20120116 gonna loop on', fields);
+    var pv = Array(fields.length);
+    for(var i=0; i < fields.length;i++) {
+        var f = fields[i]
+        if (f.formatDate) {
+            pv[i] = f.formatDate(f.getValue()); 
+        } else {
+            pv[i] = f.getValue(); 
+        }
+    }
+    return pv;
+}
+
 
 Lino.FormPanel = Ext.extend(Ext.form.FormPanel,Lino.MainPanel);
 Lino.FormPanel = Ext.extend(Lino.FormPanel,Lino.PanelMixin);
@@ -2827,7 +2862,7 @@ Lino.FormPanel = Ext.extend(Lino.FormPanel,{
             } else if (this.ls_detail_handler) {
                 //~ console.log("20120217 case 2");
                 Lino.kill_current_window();
-                this.ls_detail_handler.run({
+                this.ls_detail_handler.run(null,{
                     record_id:action.result.record_id,
                     data_record: action.result.data_record,
                     base_params:this.get_base_params()
@@ -4452,7 +4487,7 @@ Lino.show_mti_child = function(fieldname,detail_handler) {
     }else if (rec.data[fieldname]) {
       //~ console.log('show_mti_child',rec.id);
       //~ detail_handler(Lino.current_window.main_item,{},{record_id:rec.id});
-      detail_handler.run({record_id:rec.id});
+      detail_handler.run(null,{record_id:rec.id});
       //~ window.open(urlroot + '/' + rec.id);
       //~ document.location = urlroot + '/' + rec.id;
       //~ window.open(urlroot + '/' + rec.id,'_blank');
@@ -4520,7 +4555,7 @@ Ext.ensible.cal.EventRecord.reconfigure();
 Lino.on_eventclick = function(cp,rec,el) {
   //~ console.log("Lino.on_eventclick",arguments);
   //~ Lino.cal.Events.detail_action.run({record_id:rec.data.ID});
-  Lino.cal.PanelEvents.detail_action.run({record_id:rec.data.ID,base_params:Lino.eventStore.baseParams});
+  Lino.cal.PanelEvents.detail_action.run(null,{record_id:rec.data.ID,base_params:Lino.eventStore.baseParams});
   return false;
 }
     
@@ -4528,7 +4563,7 @@ Lino.on_editdetails = function(cp,rec,el) {
   //~ console.log("Lino.on_editdetails",arguments);
   if (rec.data.ID)
       //~ Lino.cal.Events.detail_action.run({record_id:rec.data.ID});
-      Lino.cal.PanelEvents.detail_action.run({record_id:rec.data.ID,base_params:Lino.eventStore.baseParams});
+      Lino.cal.PanelEvents.detail_action.run(null,{record_id:rec.data.ID,base_params:Lino.eventStore.baseParams});
   return false;
 }
 

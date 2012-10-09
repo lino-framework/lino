@@ -1181,19 +1181,6 @@ class Store:
             #~ logger.info("20111209 Store.row2dict %s -> %s", f, d)
         return d
 
-    def unused_pv2list(self,pv):
-        l = []
-        for f in self.param_fields:
-            l.append(pv[f.field.name])
-        return l
-        
-    def pv2dict(self,ui,pv,**d):
-        for fld in self.param_fields:
-            v = pv.get(fld.name,None)
-            fld.value2dict(ui,v,d,None)
-        return d
-        
-        
     def row2html(self,ar,fields,row,sums):
         #~ for i,fld in enumerate(self.list_fields):
         for i,fld in enumerate(fields):
@@ -1245,6 +1232,19 @@ class Store:
                     #~ yield fld.value2odt(request,v)
             
             
+    def unused_pv2list(self,pv):
+        l = []
+        for f in self.param_fields:
+            l.append(pv[f.field.name])
+        return l
+        
+    def pv2dict(self,ui,pv,**d):
+        for fld in self.param_fields:
+            v = pv.get(fld.name,None)
+            fld.value2dict(ui,v,d,None)
+        return d
+        
+        
     def parse_params(self,request,**kw):
         pv = request.REQUEST.getlist(ext_requests.URL_PARAM_PARAM_VALUES)
         #~ logger.info("20120221 parse_params(%s)",pv)
@@ -1252,8 +1252,8 @@ class Store:
             if form_value == '' and not self.field.empty_strings_allowed:
                 return self.form2obj_default
                 # if a field has been posted with empty string, 
-                # we don't want it to get the field's default value! 
-                # otherwise checkboxes with default value True can never be unset!
+                # we don't want it to get the field's default value because
+                # otherwise checkboxes with default value True can never be unset.
                 # charfields have empty_strings_allowed
                 # e.g. id field may be empty
                 # but don't do this for other cases

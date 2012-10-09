@@ -143,6 +143,8 @@ def setup(app):
       #~ indextemplate='pair: %s; field')
     app.add_object_type(directivename='table',rolename='table',
       indextemplate='pair: %s; table')
+    app.add_object_type(directivename='screenshot',rolename='screen',
+      indextemplate='pair: %s; screenshot')
     app.add_object_type(directivename='modattr',rolename='modattr',
       indextemplate='pair: %s; model attribute')
     app.add_object_type(directivename='model',rolename='model',

@@ -152,8 +152,8 @@ class HtmlRenderer(object):
                 after_show.update(data_record=views.elem2rec_insert(ar,ar.ah,elem))
                 #~ after_show.update(record_id=-99999)
                 # see tickets/56
-                #~ s += self.action_href_js(a,after_show,_("New"))
-                buttons.append(self.action_href_js(a,after_show,_("New")))
+                #~ s += self.window_action_button(a,after_show,_("New"))
+                buttons.append(self.window_action_button(ar.request,a,after_show,_("New")))
                 buttons.append(' ')
                 after_show = ar.get_status(self)
         n = ar.get_total_count()
@@ -162,9 +162,9 @@ class HtmlRenderer(object):
             obj = ar.data_iterator[n-1]
             after_show.update(record_id=obj.pk)
             a = ar.actor.get_url_action('detail_action')
-            buttons.append(self.action_href_js(a,after_show,_("Show Last")))
+            buttons.append(self.window_action_button(ar.request,a,after_show,_("Show Last")))
             buttons.append(' ')
-            #~ s += ' ' + self.action_href_js(
+            #~ s += ' ' + self.window_action_button(
                 #~ ar.ah.actor.detail_action,after_show,_("Show Last"))
             #~ s += ' ' + self.href_to_request(ar,"[%s]" % unicode(_("Show All")))
             buttons.append(self.href_to_request(None,ar,_("Show All")))
@@ -197,23 +197,24 @@ class HtmlRenderer(object):
                 after_show.update(data_record=views.elem2rec_insert(rr,rr.ah,elem))
                 #~ after_show.update(record_id=-99999)
                 # see tickets/56
-                return self.action_href_js(a,after_show,_("Upload"))
+                return self.window_action_button(rr.request,a,after_show,_("Upload"))
         if rr.get_total_count() == 1:
             obj = rr.data_iterator[0]
             chunks = []
             #~ chunks.append(xghtml.E.a(_("show"),
               #~ href=self.ui.media_url(obj.file.name),target='_blank'))
-            chunks.append(self.href_button(self.ui.media_url(obj.file.name),_("show"),target='_blank'))
+            chunks.append(self.href_button(
+                self.ui.media_url(obj.file.name),_("show"),target='_blank'))
             chunks.append(' ')
             after_show.update(record_id=obj.pk)
-            chunks.append(self.action_href_js(rr.ah.actor.get_url_action('detail_action'),after_show,_("Edit")))
+            chunks.append(self.window_action_button(rr.request,rr.ah.actor.get_url_action('detail_action'),after_show,_("Edit")))
             return xghtml.E.p(*chunks)
             
             #~ s = ''
             #~ s += ' [<a href="%s" target="_blank">show</a>]' % (self.ui.media_url(obj.file.name))
             #~ if True:
                 #~ after_show.update(record_id=obj.pk)
-                #~ s += ' ' + self.action_href_js(rr.ah.actor.detail_action,after_show,_("Edit"))
+                #~ s += ' ' + self.window_action_button(rr.ah.actor.detail_action,after_show,_("Edit"))
             #~ else:
                 #~ after_show.update(record_id=obj.pk)
                 #~ s += ' ' + self.action_href_http(rr.ah.actor.detail_action,_("Edit"),params,after_show)
@@ -360,22 +361,6 @@ class ExtRenderer(HtmlRenderer):
             return dict(text=prepare_label(v),href=url)
         return v
         
-    def action_call(self,request,bound_action,after_show):
-        if bound_action.action.opens_a_window or bound_action.action.parameters:
-        #~ if a.opens_a_window:
-            #~ if after_show is None:
-                #~ after_show = {}
-            if request and request.subst_user:
-                after_show[ext_requests.URL_PARAM_SUBST_USER] = request.subst_user
-            if isinstance(bound_action.action,actions.ShowEmptyTable):
-                after_show.update(record_id=-99998)
-            if after_show:
-                #~ return "Lino.%s.run(%s)" % (action.full_name(a.actor),py2js(after_show))
-                return "Lino.%s.run(%s)" % (
-                  bound_action.full_name(),py2js(after_show))
-            return "Lino.%s.run()" % bound_action.full_name()
-        return "?"
-
     def js2url(self,js):
         js = cgi.escape(js)
         js = js.replace('"','&quot;')
@@ -386,24 +371,19 @@ class ExtRenderer(HtmlRenderer):
 
     def action_button(self,obj,ar,a,label=None):
         if a.action.opens_a_window or a.action.parameters:
-        #~ if a.opens_a_window:
-            #~ raise Exception('20121002 %s %r' % (a,unicode(label)))
-            after_show = ar.get_status(self)
-            after_show.update(record_id=obj.pk)
-            return self.action_href_js(a,after_show,label or a.action.label)
+            st = ar.get_status(self)
+            st.update(record_id=obj.pk)
+            return self.window_action_button(ar.request,a,st,label or a.action.label)
         return self.row_action_button(obj,ar.request,a,label)
         
-    def action_href_js(self,a,after_show={},label=None):
+    def window_action_button(self,request,a,after_show={},label=None):
         """
         Return a HTML chunk for a button that will execute this 
         action using a *Javascript* link to this action.
         """
-        #~ label = cgi.escape(force_unicode(label or a.get_button_label()))
         label = unicode(label or a.get_button_label())
-        #~ url = self.action_url_js(a,after_show)
-        #~ url = self.js2url(self.action_call(None,a,after_show))
-        url = 'javascript:'+self.action_call(None,a,after_show)
-        #~ logger.info('20121002 action_href_js %s %r',a,unicode(label))
+        url = 'javascript:'+self.action_call(request,a,after_show)
+        #~ logger.info('20121002 window_action_button %s %r',a,unicode(label))
         if a.action.help_text:
             return self.href_button(url,label,title=a.action.help_text)
         return self.href_button(url,label)
@@ -413,7 +393,6 @@ class ExtRenderer(HtmlRenderer):
         Return a HTML fragment that displays a button-like link 
         which runs the action when clicked.
         """
-        #~ label = "[%s]" % unicode(label or a.action.label)
         label = label or a.action.label
         url = 'javascript:Lino.%s(%r,%s)' % (
                 a.full_name(),str(request.requesting_panel),
@@ -424,6 +403,28 @@ class ExtRenderer(HtmlRenderer):
             #~ return xghtml.E.a(label,href=url,title=unicode(a.action.help_text))
         #~ return xghtml.E.a(label,href=url)
         
+    def action_call(self,request,bound_action,after_show):
+        if bound_action.action.opens_a_window or bound_action.action.parameters:
+        #~ if a.opens_a_window:
+            #~ if after_show is None:
+                #~ after_show = {}
+            if request and request.subst_user:
+                after_show[ext_requests.URL_PARAM_SUBST_USER] = request.subst_user
+            if isinstance(bound_action.action,actions.ShowEmptyTable):
+                after_show.update(record_id=-99998)
+            if request is None or request.requesting_panel is None:
+                rp = 'null'
+            else:
+                rp = "'" + request.requesting_panel + "'"
+            if after_show:
+                #~ return "Lino.%s.run(%s)" % (action.full_name(a.actor),py2js(after_show))
+                return "Lino.%s.run(%s,%s)" % (
+                  bound_action.full_name(),
+                  rp,
+                  py2js(after_show))
+            return "Lino.%s.run(%s)" % (bound_action.full_name(),rp)
+        return "?"
+
     def instance_handler(self,ar,obj):
         a = getattr(obj,'_detail_action',None)
         if a is None:
@@ -1279,8 +1280,8 @@ tinymce.init({
 
 
 
-    def parse_params(self,rh,request):
-        return rh.store.parse_params(request)
+    #~ def parse_params(self,rh,request):
+        #~ return rh.store.parse_params(request)
         
     #~ def rest2form(self,request,rh,data):
         #~ d = dict()
@@ -1483,7 +1484,8 @@ tinymce.init({
             
             for ba in res.get_actions():
                 if ba.action.parameters:
-                    add(ba.action.params_layout, "%s.%s_ActionFormPanel" % (res,ba.action.action_name))
+                    add(ba.action.params_layout, 
+                      "%s.%s_ActionFormPanel" % (res,ba.action.action_name))
 
         if False:
             logger.debug('FormPanels')
@@ -1756,6 +1758,9 @@ tinymce.init({
         for k,v in dh.main.ext_options().items():
             if k != 'items':
                 yield "  %s: %s," % (k,py2js(v))
+        if dh.layout._table.action_name is None:
+            raise Exception("20121009 action_name of %r is None" % dh.layout._table)
+        yield "  action_name: '%s'," % dh.layout._table.action_name
         #~ yield "  layout: 'fit',"
         #~ yield "  auto_save: true,"
         if dh.layout.window_size and dh.layout.window_size[1] == 'auto':

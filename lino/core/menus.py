@@ -125,8 +125,8 @@ class MenuItem:
         return s
 
     def as_html(self,ar,level=None):
-        if self.action:
-            sr = ar.spawn(self.action.actor,action=self.action)
+        if self.bound_action:
+            sr = ar.spawn(self.bound_action.actor,action=self.bound_action)
             url = sr.get_request_url()
         elif self.request:
             url = self.request.get_request_url()

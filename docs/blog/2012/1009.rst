@@ -1,6 +1,73 @@
 20121009
 --------
 
+Miscellaneous
+-------------
+
 - Administratoren bekamen in "Arbeiten als..." auch Benutzer angezeigt, 
   die gar kein Profil haben. Behoben.
-  :class:`lino.utils.choicelists.ChoiceListField`
+  :class:`lino.utils.choicelists.ChoiceListField`.
+  
+- Ich arbeite übrigens zur Zeit auch an der Dokumentation 
+  des neuen Releases im ÖSHZ:  
+  http://packages.python.org/lino-welfare/de/releases/coming.html
+  
+  
+Weiter mit Aktionsdialogfenstern
+--------------------------------
+
+So. Jetzt kommt die letzte große Operation für die Aktionsdialogfenster.
+Zur Zeit hat der [Ablehnen]-Button auf einem Neuantrag folgende URL::
+  
+  javascript:Lino.pcsw.ClientStates.wf2.run({ 
+    "record_id": 116, 
+    "param_values": { 
+      "also_obsolete": false, "new_since": "09.09.2012", 
+      "coached_byHidden": null, "also_refused": false, "coached_by": null }, 
+    "base_params": {  } })  
+    
+Und in der lino*.js steht:: 
+
+    Lino.pcsw.Clients.wf2_ActionFormPanel = Ext.extend(Lino.ActionFormPanel,{
+      autoScroll: false,
+      autoHeight: true,
+      border: false,
+      layout: "form",
+      labelWidth: 198,
+      hideCheckBoxLabels: true,
+      frame: true,
+      bodyBorder: false,
+      labelAlign: "top",
+      autoHeight: true,
+      initComponent : function() {
+        var containing_panel = this;
+        var dummy4908 = new Ext.form.Checkbox({ "boxLabel": "Dummy RefuseNewClient", "hideLabel": true, "checked": false, "name": "dummy", "selectOnFocus": true, "anchor": "-20" });
+        ...
+        var reason4909 = new Ext.form.TextField({ "fieldLabel": "Grund", "name": "reason", "maxLength": 200, "selectOnFocus": true, "anchor": "-20", "allowBlank": false });
+        this.items = [ { "autoHeight": true, "layout": "form", "xtype": "panel", "items": dummy4908, "anchor": "-20", "labelAlign": "top" }, { "autoHeight": true, "layout": "form", "xtype": "panel", "items": reason4909, "anchor": "-20", "labelAlign": "top" } ];
+        this.fields = [ dummy4908, reason4909 ];
+        Lino.pcsw.Clients.wf2_ActionFormPanel.superclass.initComponent.call(this);
+      }
+    });
+
+    
+  Lino.pcsw.ClientStates.wf2 = new Lino.WindowAction({ 
+      "draggable": true, "width": Lino.chars2width(50), 
+      "autoHeight": true, "maximizable": true, 
+      "modal": true, "maximized": false 
+    }, function(){
+      var p = { "is_main_window": true, "hide_top_toolbar": true };
+      return new Lino.pcsw.Clients.wf2_ActionFormPanel({});
+    });
+
+
+Die Klassendefinition bleibt gleich, aber der Aufruf muss noch 
+eine Info mehr enthalten, nämlich die Basis-URL, zu der die Aktion 
+bei Klick aufs OK dann geschickt werden soll. 
+
+Interne Änderungen:
+
+- WindowAction.run() hat jetzt einen weiteren Parameter requesting_panel
+- Actions kriegen ihr params_panel jetzt pro Instanz gemacht.
+  Hier fällt störend auf, dass Actors nie instanziert werden. 
+  Dadurch ist die Vererbung von Parametrizable nicht sehr elegant.
