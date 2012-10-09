@@ -92,4 +92,6 @@ Jetzt bleiben nur noch ein paar Details zu tun:
   
 - workflow_buttons ist ebenfalls in disabled_fields
 
+- Das Dummy-Feld muss ich durch etwas Unauffälligeres ersetzen...
+
 Aber jetzt erstmal Checkin und Feierabend.

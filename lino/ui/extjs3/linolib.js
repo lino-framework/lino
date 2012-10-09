@@ -922,7 +922,7 @@ Lino.FileField = Ext.extend(Ext.form.TriggerField,{
 
 Lino.file_field_handler = function(panel,config) {
   //~ if (instanceof Lino.DetailWrapper) {
-  if (panel.action_name == 'insert_action') {
+  if (panel.action_name == 'insert') {
   //~ if (panel.get_current_record().phantom) {
       panel.has_file_upload = true;
 #if $settings.LINO.use_awesome_uploader
@@ -2426,7 +2426,7 @@ Lino.FormPanel = Ext.extend(Lino.FormPanel,{
       ]);
           
     }
-    if (this.content_type && this.action_name != 'insert_action') {
+    if (this.content_type && this.action_name != 'insert') {
       this.bbar = this.bbar.concat([
         '->',
         { text: "[$_('Help Text Editor')]",
@@ -2467,7 +2467,7 @@ Lino.FormPanel = Ext.extend(Lino.FormPanel,{
       //~ }
     //~ });
     
-    if (this.action_name == 'insert_action') {
+    if (this.action_name == 'insert') {
       this.cascade(function(cmp){
         // console.log('20110613 cascade',cmp);
         if (cmp.disabled_in_insert_window) {
@@ -2837,7 +2837,7 @@ Lino.FormPanel = Ext.extend(Lino.FormPanel,{
       p.$ext_requests.URL_PARAM_REQUESTING_PANEL = this.getId();
       p.$ext_requests.URL_PARAM_ACTION_NAME = this.action_name;
       if (rec.phantom) {
-        if (this.action_name != 'insert_action') 
+        if (this.action_name != 'insert') 
             console.log("Warning: phantom record, but action_name is",this.action_name)
         this.form.submit({
           url: ROOT_URL + '/api' + this.ls_url,

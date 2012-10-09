@@ -525,7 +525,8 @@ class Table(AbstractTable):
             state = self.get_row_state(obj)
             u = ar.get_user()
             for ba in self.get_actions(ar.bound_action.action):
-                if ba.action.show_in_bbar and not obj.get_row_permission(u,state,ba.action):
+                if ba.action.show_in_bbar and not self.get_row_permission(obj,u,state,ba):
+                #~ if ba.action.show_in_bbar and not obj.get_row_permission(u,state,ba.action):
                 #~ if a.show_in_bbar and not a.get_action_permission(ar.get_user(),obj,state):
                     d[ba.action.action_name] = True
             #~ if obj.__class__.__name__ == 'Note':
@@ -707,13 +708,12 @@ class Table(AbstractTable):
         
         
     @classmethod
-    def get_row_permission(cls,obj,user,state,action):
+    def get_row_permission(cls,obj,user,state,ba):
         """
-        Returns True or False whether the given action 
-        is allowed for the given row instance `row` 
-        and the user who issued the given ActionRequest `ar`.
+        Returns True if the given action is allowed for the given instance `obj` 
+        and the given user.
         """
-        return obj.get_row_permission(user,state,action)
+        return obj.get_row_permission(user,state,ba)
         
     @classmethod
     def disable_delete(self,obj,ar):

@@ -506,9 +506,12 @@ class DisabledFieldsStoreField(SpecialStoreField):
     
     Note some special cases:
     
-    - vat.VatDocument.total_incl must be disabled and may not get submitted. 
+    - vat.VatDocument.total_incl (readonly virtual PriceField) must be disabled 
+      and may not get submitted. 
       ExtJS requires us to set this dynamically each time.
-    - JobsOverview.body (readonly) must *not* have the 'disabled' css class
+    - JobsOverview.body (a virtual HtmlBox) 
+      or Model.workflow_buttons (a displayfield) must *not* have the 'disabled' css class
+    - 
     """
     name = 'disabled_fields'
     
@@ -519,7 +522,9 @@ class DisabledFieldsStoreField(SpecialStoreField):
             if f.field is not None:
                 if isinstance(f,VirtStoreField):
                     if not f.vf.editable:
-                        self.disabled_fields.add(f.name)
+                        if not isinstance(f.vf.return_type,dd.DisplayField):
+                            self.disabled_fields.add(f.name)
+                            print "20121010 always disabled:", f
                 elif not isinstance(f.field,generic.GenericForeignKey):
                     if not f.field.editable:
                         self.disabled_fields.add(f.name)

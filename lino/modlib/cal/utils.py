@@ -58,7 +58,7 @@ def setkw(obj,**kw):
 class CalendarAction(actions.Action):
     opens_a_window = True
     label = _("Calendar")
-    url_action_name = 'grid' # because...
+    action_name = 'grid' # because...
     default_format = 'html'
     
     #~ def get_window_layout(self,actor):

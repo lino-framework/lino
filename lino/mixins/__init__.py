@@ -190,16 +190,16 @@ class UserAuthored(dd.Model):
         #~ super(UserAuthored,self).update_owned_instance(other)
         
 
-    def get_row_permission(self,user,state,action):
+    def get_row_permission(self,user,state,ba):
         """
         Only system managers can edit other users' work.
         """
-        if not super(UserAuthored,self).get_row_permission(user,state,action):
+        if not super(UserAuthored,self).get_row_permission(user,state,ba):
             #~ logger.info("20120919 no permission to %s on %s for %r",action,self,user)
             return False
         if self.user != user and user.profile.level < dd.UserLevels.manager:
             #~ logger.info("20120919 no permission to %s on %r because %r != %r",action,self,self.user,user)
-            return action.readonly
+            return ba.action.readonly
         return True
 
 AutoUser = UserAuthored # backwards compatibility
@@ -403,12 +403,13 @@ class EmptyTable(frames.Frame):
     #~ default_action = actions.ShowEmptyTable()
     
     do_print = DirectPrintAction()
-    show = actions.ShowEmptyTable()
+    #~ show = actions.ShowEmptyTable()
     
     @classmethod
     def get_default_action(cls):
         #~ return actions.BoundAction(cls,cls.show)
-        return 'show'
+        #~ return 'show'
+        return actions.ShowEmptyTable()
         
     
     

@@ -193,12 +193,12 @@ class Model(models.Model):
         """
         return kw
         
-    def get_row_permission(self,user,state,action):
+    def get_row_permission(self,user,state,ba):
         """
         Returns True or False whether this row instance 
         gives permission the specified user to run the specified action.
         """
-        return action.get_action_permission(user,self,state)
+        return ba.get_bound_action_permission(user,self,state)
 
     def update_owned_instance(self,controllable):
         """

@@ -755,12 +755,13 @@ class AbstractTable(actors.Actor):
         return kw
     
         
-    grid = actions.GridEdit()
+    #~ grid = actions.GridEdit()
     
     @classmethod
     def get_default_action(cls):
         #~ return actions.BoundAction(cls,cls.grid)
-        return 'grid'
+        #~ return 'grid'
+        return actions.GridEdit()
         
     @classmethod
     def class_init(self):
@@ -848,9 +849,9 @@ class AbstractTable(actors.Actor):
         #~ return None
         
     @classmethod
-    def get_row_permission(self,obj,user,state,action):
+    def get_row_permission(self,obj,user,state,ba):
         if self.get_data_rows:
-            return action.readonly
+            return ba.action.readonly
         return True
         
         

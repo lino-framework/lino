@@ -1,0 +1,28 @@
+20121010
+========
+
+Aktionsdialogfenster
+--------------------
+
+Zwei der Details von gestern Abend sind behoben:
+
+- ClientStates workflow : er schlägt [Ablehnen] auch vor, wenn er schon im Zustand Abgelehnt ist. 
+  Idem für [Neuzugang].
+  (Das war gar kein Detail, sondern noch eine Nachwehe der heftigen internen Änderungen.)
+
+  
+- workflow_buttons stand ebenfalls in `disabled_fields`
+  und bekam deshalb fälschlicherweise einen disabled-Style 
+  (blau und kein Hand-Curor über dem Link).
+  
+
+Jetzt bleiben nur noch folgende Details zu tun:
+
+- Dialogfenster schließt sich nicht nach OK und success.
+
+- reason ist blank=True, aber das prüft er nicht nach.
+
+- Das Dummy-Feld muss ich durch etwas Unauffälligeres ersetzen...
+
+- Im JS-Code werden die Felder doppelt definiert.
+

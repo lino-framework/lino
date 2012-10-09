@@ -248,12 +248,13 @@ class ChoiceList(actors.Actor):
     #~ def __init__(self,*args,**kw):
         #~ raise Exception("ChoiceList may not be instantiated")
         
-    grid = actions.GridEdit()
+    #~ grid = actions.GridEdit()
     
     @classmethod
     def get_default_action(cls):
         #~ return actions.BoundAction(cls,cls.grid)
-        return 'grid'
+        #~ return 'grid'
+        return actions.GridEdit()
         
         
         

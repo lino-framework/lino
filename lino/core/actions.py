@@ -47,8 +47,8 @@ class VirtualRow(object):
         for k,v in kw.items():
             setattr(self,k,v)
 
-    def get_row_permission(self,user,state,action):
-        if action.readonly:
+    def get_row_permission(self,user,state,ba):
+        if ba.action.readonly:
             return True
         return False 
             
@@ -221,6 +221,8 @@ class Action(Parametrizable):
     """
     
     #~ __metaclass__ = ActionMetaClass
+    
+    debug_permissions = False
     
     _layout_class = layouts.ActionParamsLayout
     
@@ -417,24 +419,31 @@ class Action(Parametrizable):
         
     def full_name(self,actor):
         if self.action_name is None:
-            return repr(self)
+            raise Exception("Tried to full_name() on %r" % self)
+            #~ return repr(self)
         return str(actor) + '.' + self.action_name
         
     def __repr__(self):
         return "%s %s.%s" % (self.__class__.__name__,self.defining_actor,self.action_name)
         
     def __str__(self):
+        if self.defining_actor is None:
+            return repr(self)
+        return unicode(self.defining_actor.label).encode('ascii','replace') + ' : ' + unicode(self.label).encode('ascii','replace')
+        
+    def unused__str__(self):
         raise Exception("20121003 Must use full_name(actor)") 
-        #~ if self.defining_actor is None:
-            #~ return repr(self)
-        #~ if self.name is None:
-            #~ return repr(self)
-        #~ return str(self.defining_actor) + '.' + self.name
+        if self.defining_actor is None:
+            return repr(self)
+        if self.action_name is None:
+            return repr(self)
+        return str(self.defining_actor) + ':' + self.action_name
         
     #~ def set_permissions(self,*args,**kw)
         #~ self.permission = perms.factory(*args,**kw)
         
     def attach_to_workflow(self,wf,name):
+        assert self.action_name is None
         self.action_name = name
         self.defining_actor = wf
         #~ logger.info("20121009 %r attach_to_workflow(%s)",self,self.full_name(wf))
@@ -445,24 +454,19 @@ class Action(Parametrizable):
         #~ if actor == self.defining_actor:
             #~ raise Exception('20121003 %s %s' % (actor,name))
         if self.defining_actor is not None:
-            #~ if name != self.name:
-                #~ raise Exception("%s tried to attach action %s as %s" % (actor,self.name,name))
-            if False:
-                # the following test is not possible, it would give false alert for EmptyTable.default_action
-                if not issubclass(actor,self.defining_actor):
-                    raise Exception("%r tried to attach action %s of %r" % (actor,name,self.defining_actor))
+            # already defined in another actor
             return
+        if self.action_name is not None:
+            raise Exception("tried to attach named action %s.%s" % (actor,self.action_name))
         self.action_name = name
         self.defining_actor = actor
         if self.label is None:
             self.label = name
-        if actor.hide_top_toolbar:
-            self.hide_top_toolbar = True
-        if self.help_text is None \
-            and name == actor.get_default_action():
-            #~ and actor.default_action is not None \
-            #~ and self is actor.default_action.action:
-            self.help_text  = actor.help_text
+        #~ if actor.hide_top_toolbar:
+            #~ self.hide_top_toolbar = True
+        #~ if self.help_text is None \
+            #~ and name == actor.get_default_action():
+            #~ self.help_text  = actor.help_text
         #~ if name == 'default_action':
             #~ print 20120527, self
             
@@ -561,7 +565,7 @@ class GridEdit(TableAction):
     opens_a_window = True
 
     callable_from = tuple()
-    #~ url_action_name = 'grid'
+    action_name = 'grid'
     
     def attach_to_actor(self,actor,name):
         #~ self.label = actor.button_label or actor.label
@@ -584,7 +588,7 @@ class ShowDetailAction(RowAction):
     callable_from = (GridEdit,)
     #~ show_in_detail = False
     #~ needs_selection = True
-    #~ url_action_name = 'detail'
+    action_name = 'detail'
     label = _("Detail")
     
     def get_window_layout(self,actor):
@@ -611,7 +615,7 @@ class InsertRow(TableAction):
     #~ readonly = False # see blog/2012/0726
     required = dict(user_level='user')
     callable_from = (GridEdit,ShowDetailAction)
-    #~ url_action_name = 'insert'
+    action_name = 'insert'
     #~ label = _("Insert")
     key = INSERT # (ctrl=True)
     #~ needs_selection = False
@@ -637,14 +641,14 @@ class DuplicateRow(RowAction):
     readonly = False
     required = dict(user_level='user')
     callable_from = (GridEdit,ShowDetailAction)
-    #~ url_action_name = 'duplicate'
+    action_name = 'duplicate'
     label = _("Duplicate")
 
 
 class ShowEmptyTable(ShowDetailAction):
     use_param_panel = True
     callable_from = tuple()
-    #~ url_action_name = 'show' 
+    action_name = 'show' 
     default_format = 'html'
     #~ hide_top_toolbar = True
     hide_navigator = True
@@ -719,6 +723,8 @@ class ChangeStateAction(RowAction):
     ajax = True
     
     show_in_workflow = True
+    
+    #~ debug_permissions = True
     
     def __init__(self,target_state,required,**kw):
         self.target_state = target_state
@@ -1077,7 +1083,8 @@ def action(*args,**kw):
 class BoundAction(object):
   
     def __init__(self,actor,action):
-        assert isinstance(action,Action)
+        if not isinstance(action,Action):
+            raise Exception("%s : %r is not an Action" % (actor,action))
         self.action = action
         self.actor = actor
         
@@ -1099,8 +1106,9 @@ class BoundAction(object):
         #~ a.allow = curry(wrap(a,required,perms.make_permission_handler(
             #~ a,actor,a.readonly,actor.debug_permissions,**required)),a)
         #~ ba = actions.BoundAction(actor,a)
+        debug = actor.debug_permissions or action.debug_permissions
         self.allow = curry(perms.make_permission_handler(
-            action,actor,action.readonly,actor.debug_permissions,**required),action)
+            action,actor,action.readonly,debug,**required),action)
         #~ actor.actions.define(a.action_name,ba)
         
         
@@ -1127,7 +1135,7 @@ class BoundAction(object):
             return u"%s %s" % (self.action.label,self.actor.label)
             
         
-    def get_action_permission(self,user,obj,state):
+    def get_bound_action_permission(self,user,obj,state):
         if not self.action.get_action_permission(user,obj,state):
             return False
         return self.allow(user,obj,state)

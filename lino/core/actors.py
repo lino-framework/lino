@@ -241,7 +241,7 @@ class Actor(actions.Parametrizable):
     """
     
     default_list_action_name = 'grid'
-    default_elem_action_name =  'detail_action'
+    default_elem_action_name =  'detail'
     
     
     debug_permissions = False
@@ -336,11 +336,6 @@ class Actor(actions.Parametrizable):
     def disabled_fields(cls,obj,ar):
         return []
     
-    
-    #~ get_row_permission = None
-    #~ """
-    #~ Same remarks as for :attr:`disabled_fields`.
-    #~ """
     
     #~ disable_editing = None
     #~ """
@@ -552,17 +547,17 @@ class Actor(actions.Parametrizable):
     @classmethod
     def get_view_permission(self,user):
         #~ return self.default_action.action.allow(user,None,None)
-        return self.default_action.get_action_permission(user,None,None)
+        return self.default_action.get_bound_action_permission(user,None,None)
         #~ return self.allow_read(user,None,None)
 
     @classmethod
-    def get_row_permission(cls,obj,user,state,action):
+    def get_row_permission(cls,obj,user,state,ba):
         """
         Returns True or False whether the given action 
         is allowed for the given row instance `row` 
         and the user who issued the given ActionRequest `ar`.
         """
-        if action.readonly:
+        if ba.action.readonly:
             return True
         return cls.editable
 
@@ -580,20 +575,29 @@ class Actor(actions.Parametrizable):
         Before this we create `insert_action` and `detail_action` if necessary.
         Also fill _actions_list.
         """
-        default_action = getattr(cls,cls.get_default_action())
+        cls._actions_list = []
+        
+        #~ default_action = getattr(cls,cls.get_default_action())
+        default_action = cls.get_default_action()
+        cls.default_action = cls.bind_action(default_action)
+        #~ print 20121010, cls, default_action
+        if default_action.help_text is None:
+            default_action.help_text = cls.help_text
+            
         if cls.detail_layout or cls.detail_template:
             if default_action and isinstance(default_action,actions.ShowDetailAction):
-                cls.detail_action = default_action
+                cls.detail_action = cls.bind_action(default_action)
             else:
-                cls.detail_action = actions.ShowDetailAction()
+                #~ cls.detail_action = actions.ShowDetailAction()
+                cls.detail_action = cls.bind_action(actions.ShowDetailAction())
         if cls.detail_action and cls.editable and cls.allow_create:
             if not cls.hide_top_toolbar:
-                cls.insert_action = actions.InsertRow()
-                cls.create_action = actions.SubmitInsert(sort_index=1)
+                cls.insert_action = cls.bind_action(actions.InsertRow())
+                cls.create_action = cls.bind_action(actions.SubmitInsert(sort_index=1))
         if cls.editable:
-            cls.update_action = actions.SubmitDetail(sort_index=1)
+            cls.update_action = cls.bind_action(actions.SubmitDetail(sort_index=1))
         if cls.editable and not cls.hide_top_toolbar:
-            cls.delete_action = actions.DeleteSelected(sort_index=5)
+            cls.delete_action = cls.bind_action(actions.DeleteSelected(sort_index=5))
 
 
         if isinstance(cls.workflow_owner_field,basestring):
@@ -619,7 +623,6 @@ class Actor(actions.Parametrizable):
 
         #~ if cls.__name__.startswith('OutboxBy'):
             #~ print '20120524 collect_actions',cls, cls.insert_action, cls.detail_action, cls.editable
-        cls._actions_list = []
         if True:
             for b in cls.mro():
                 for k,v in b.__dict__.items():
@@ -631,7 +634,6 @@ class Actor(actions.Parametrizable):
                 if isinstance(v,actions.Action):
                     cls._attach_action(k,v)
                     
-        cls.default_action = cls._actions_dict.get(cls.get_default_action())
                     
         #~ cls._actions_list = cls._actions_dict.values()
         #~ cls._actions_list += cls.get_shared_actions()
@@ -644,17 +646,24 @@ class Actor(actions.Parametrizable):
         
         
     @classmethod
+    def bind_action(self,a):
+        ba = actions.BoundAction(self,a)
+        if a.action_name is not None:
+            self._actions_dict.define(a.action_name,ba)
+        self._actions_list.append(ba)
+        return ba
+        
+      
+    @classmethod
     def _attach_action(self,name,a):
             
         #~ v = self._actions_dict.get(name,None)
         #~ if v is not None:
             #~ return 
             
-        ba = actions.BoundAction(self,a)
+        a.attach_to_actor(self,name)
         
-        self._actions_dict.define(name,ba)
-        
-        ba.action.attach_to_actor(self,name)
+        ba = self.bind_action(a)
         
         if name != a.action_name:
             #~ raise Exception("20121003 %r %r : %r != %r" % (self,a,name,a.action_name))
@@ -663,7 +672,6 @@ class Actor(actions.Parametrizable):
         
         #~ elif a.show_in_workflow:
             #~ raise Exception("Cannot show %s in workflow without url_action_name" % self)
-        self._actions_list.append(ba)
         return a
             
 
@@ -674,7 +682,7 @@ class Actor(actions.Parametrizable):
         for ba in self.get_actions(ar.bound_action.action):
             if ba.action.show_in_workflow:
                 #~ logger.info('20120930 %s show in workflow', a.name)
-                if obj.get_row_permission(u,state,ba.action):
+                if obj.get_row_permission(u,state,ba):
                     yield ba
         
     @classmethod

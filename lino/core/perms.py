@@ -204,6 +204,8 @@ def make_permission_handler(
                     #~ raise Exception("Invalid state %r, must be one of %r" % (st,possible_states))
             states = frozenset(ns)
             allow2 = allow
+            if debug_permissions:
+                logger.info("20121009 %s %s required states: %s",actor,elem,states)
             def allow(action,user,obj,state):
                 if not allow2(action,user,obj,state): return False
                 if obj is None: return True
@@ -225,7 +227,7 @@ def make_permission_handler(
             allow4 = allow
             def allow(action,user,obj,state):
                 v = allow4(action,user,obj,state)
-                if not v:
+                if True: # not v:
                     logger.info(u"debug_permissions %s %s.required(%s,%s,%s), allow(%s,%s,%s)--> %s",
                       actor,action.action_name,user_level,user_groups,states,user.username,obj2str(obj),state,v)
                 return v

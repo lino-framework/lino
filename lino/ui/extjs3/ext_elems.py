@@ -180,10 +180,10 @@ class GridColumn(jsgen.Component):
                 # FK fields are clickable if their target has a detail view
                 rpt = fld.rel.to._lino_default_table
                 if rpt.detail_action is not None:
-                    if rpt.detail_action.get_action_permission(jsgen._for_user,None,None):
+                    if rpt.detail_action.get_bound_action_permission(jsgen._for_user,None,None):
                         return "Lino.fk_renderer('%s','Lino.%s')" % (
                           name + ext_requests.CHOICES_HIDDEN_SUFFIX,
-                          rpt.detail_action.full_name(rpt))
+                          rpt.detail_action.full_name())
               
             rend = None
             if isinstance(editor.field,models.AutoField):
@@ -778,7 +778,7 @@ class ForeignKeyElement(ComplexRemoteComboFieldElement):
             if not isinstance(layout_handle.layout,layouts.ListLayout):
                 self.value_template = "new Lino.TwinCombo(%s)"
                 kw.update(onTrigger2Click=js_code(
-                    "function(e){ Lino.show_fk_detail(this,Lino.%s)}" % a.full_name(self.actor)))
+                    "function(e){ Lino.show_fk_detail(this,Lino.%s)}" % a.full_name()))
                     #~ "Lino.show_fk_detail_handler(this,Lino.%s)}" % a))
         FieldElement.__init__(self,layout_handle,field,**kw)
       
@@ -1017,7 +1017,7 @@ class BooleanFieldElement(FieldElement):
                 if rpt.detail_action is not None:
                     js = "Lino.show_mti_child('%s',Lino.%s)" % (
                       self.field.name,
-                      rpt.detail_action.full_name(rpt))
+                      rpt.detail_action.full_name())
                     label += """ (<a href="javascript:%s">%s</a>)""" % (
                       js,_("show"))
                 

@@ -142,11 +142,11 @@ class HtmlRenderer(object):
         
         #~ params = ar.get_status(self)
         #~ after_show = dict()
-        a = ar.actor.get_url_action('insert_action')
+        #~ a = ar.actor.get_url_action('insert_action')
         buttons = []
-        #~ a = ar.actor.insert_action
+        a = ar.actor.insert_action
         if a is not None:
-            if a.get_action_permission(ar.get_user(),None,None):
+            if a.get_bound_action_permission(ar.get_user(),None,None):
                 elem = ar.create_instance()
                 after_show.update(data_record=views.elem2rec_insert(ar,ar.ah,elem))
                 #~ after_show.update(record_id=-99999)
@@ -160,7 +160,8 @@ class HtmlRenderer(object):
         if n > 0:
             obj = ar.data_iterator[n-1]
             after_show.update(record_id=obj.pk)
-            a = ar.actor.get_url_action('detail_action')
+            #~ a = ar.actor.get_url_action('detail_action')
+            a = ar.actor.detail_action
             buttons.append(self.window_action_button(ar.request,a,after_show,_("Show Last")))
             buttons.append(' ')
             #~ s += ' ' + self.window_action_button(
@@ -189,8 +190,8 @@ class HtmlRenderer(object):
         #~ after_show = dict(base_params=rr.get_status(self))
         #~ after_show = dict()
         if rr.get_total_count() == 0:
-            a = rr.actor.get_url_action('insert_action')
-            #~ a = rr.actor.insert_action
+            #~ a = rr.actor.get_url_action('insert_action')
+            a = rr.actor.insert_action
             if a is not None:
                 elem = rr.create_instance()
                 after_show.update(data_record=views.elem2rec_insert(rr,rr.ah,elem))
@@ -206,7 +207,7 @@ class HtmlRenderer(object):
                 self.ui.media_url(obj.file.name),_("show"),target='_blank'))
             chunks.append(' ')
             after_show.update(record_id=obj.pk)
-            chunks.append(self.window_action_button(rr.request,rr.ah.actor.get_url_action('detail_action'),after_show,_("Edit")))
+            chunks.append(self.window_action_button(rr.request,rr.ah.actor.detail_action,after_show,_("Edit")))
             return xghtml.E.p(*chunks)
             
             #~ s = ''
@@ -244,9 +245,9 @@ class PlainRenderer(HtmlRenderer):
     def instance_handler(self,ar,obj):
         a = getattr(obj,'_detail_action',None)
         if a is None:
-            a = obj.__class__._lino_default_table.get_url_action('detail_action')
+            a = obj.__class__._lino_default_table.detail_action
         if a is not None:
-            if ar is None or a.get_action_permission(ar.get_user(),obj,None):
+            if ar is None or a.get_bound_action_permission(ar.get_user(),obj,None):
                 return self.get_detail_url(obj)
   
     def pk2url(self,ar,pk,**kw):
@@ -427,10 +428,11 @@ class ExtRenderer(HtmlRenderer):
     def instance_handler(self,ar,obj):
         a = getattr(obj,'_detail_action',None)
         if a is None:
-            a = obj.get_default_table(ar).get_url_action('detail_action')
+            #~ a = obj.get_default_table(ar).get_url_action('detail_action')
+            a = obj.get_default_table(ar).detail_action
             #~ a = obj.__class__._lino_default_table.get_url_action('detail_action')
         if a is not None:
-            if ar is None or a.get_action_permission(ar.get_user(),obj,None):
+            if ar is None or a.get_bound_action_permission(ar.get_user(),obj,None):
                 return self.action_call(None,a,dict(record_id=obj.pk))
                 
     def obj2html(self,ar,obj,text=None):
@@ -719,8 +721,8 @@ class ExtUI(base.UI):
                     #~ a = de.get_action('insert')
                     a = de.insert_action
                     if a is not None:
-                        kw.update(ls_insert_handler=js_code("Lino.%s" % a.full_name(de)))
-                        kw.update(ls_bbar_actions=[self.a2btn(a)])
+                        kw.update(ls_insert_handler=js_code("Lino.%s" % a.full_name()))
+                        kw.update(ls_bbar_actions=[self.a2btn(a.action)])
                     #~ else:
                         #~ print 20120619, de, 'has no insert_action'
                     field = fields.HtmlBox(verbose_name=de.label,**o)
@@ -734,8 +736,8 @@ class ExtUI(base.UI):
                     #~ a = de.get_action('insert')
                     a = de.insert_action
                     if a is not None:
-                        kw.update(ls_insert_handler=js_code("Lino.%s" % a.full_name(de)))
-                        kw.update(ls_bbar_actions=[self.a2btn(a)])
+                        kw.update(ls_insert_handler=js_code("Lino.%s" % a.full_name()))
+                        kw.update(ls_bbar_actions=[self.a2btn(a.action)])
                     field = fields.HtmlBox(verbose_name=de.label)
                     field.name = de.__name__
                     field._return_type_for_method = de.slave_as_html_meth(self)
@@ -1860,7 +1862,7 @@ tinymce.init({
 
         yield "  ls_bbar_actions: %s," % py2js([
             rh.ui.a2btn(ba.action) for ba in rpt.get_actions(action.action) 
-                if ba.action.show_in_bbar and ba.get_action_permission(jsgen._for_user,None,None)]) 
+                if ba.action.show_in_bbar and ba.get_bound_action_permission(jsgen._for_user,None,None)]) 
         yield "  ls_url: %s," % py2js(ext_elems.rpt2url(rpt))
         if action.action != rpt.default_action.action:
             yield "  action_name: %s," % py2js(action.action.action_name)
@@ -1868,10 +1870,10 @@ tinymce.init({
         yield "  initComponent : function() {"
         a = rpt.detail_action
         if a:
-            yield "    this.ls_detail_handler = Lino.%s;" % a.full_name(rpt)
+            yield "    this.ls_detail_handler = Lino.%s;" % a.full_name()
         a = rpt.insert_action
         if a:
-            yield "    this.ls_insert_handler = Lino.%s;" % a.full_name(rpt)
+            yield "    this.ls_insert_handler = Lino.%s;" % a.full_name()
             
         yield "    Lino.%sPanel.superclass.initComponent.call(this);" % action.full_name()
         yield "  }"
@@ -1898,7 +1900,7 @@ tinymce.init({
         kw.update(ls_bbar_actions=[
             rh.ui.a2btn(ba.action) 
               for ba in rh.actor.get_actions(rh.actor.default_action.action) 
-                  if ba.action.show_in_bbar and ba.get_action_permission(jsgen._for_user,None,None)])
+                  if ba.action.show_in_bbar and ba.get_bound_action_permission(jsgen._for_user,None,None)])
         kw.update(ls_grid_configs=[gc.data for gc in rh.actor.grid_configs])
         kw.update(gc_name=ext_elems.DEFAULT_GC_NAME)
         #~ if action != rh.actor.default_action:
@@ -1927,11 +1929,11 @@ tinymce.init({
         #~ a = rh.actor.get_action('detail')
         a = rh.actor.detail_action
         if a:
-            yield "    this.ls_detail_handler = Lino.%s;" % a.full_name(rh.actor)
+            yield "    this.ls_detail_handler = Lino.%s;" % a.full_name()
         #~ a = rh.actor.get_action('insert')
         a = rh.actor.insert_action
         if a:
-            yield "    this.ls_insert_handler = Lino.%s;" % a.full_name(rh.actor)
+            yield "    this.ls_insert_handler = Lino.%s;" % a.full_name()
         
         
         yield "    var ww = this.containing_window;"
@@ -2046,7 +2048,7 @@ tinymce.init({
             if action.action is settings.LINO.get_main_action(user):
                 p.update(is_home_page=True)
             #~ yield "  var p = {};" 
-            if action.action.hide_top_toolbar or action.action.parameters:
+            if action.action.hide_top_toolbar or action.actor.hide_top_toolbar or action.action.parameters:
                 p.update(hide_top_toolbar=True)
                 #~ yield "  p.hide_top_toolbar = true;" 
             if rpt.hide_window_title:
