@@ -444,6 +444,23 @@ class ChoiceListField(models.CharField):
     """
     A field that stores a value to be selected from a 
     :class:`lino.utils.choicelists.ChoiceList`.
+    
+    ChoiceListField cannot be nullable since they are implemented as CharFields.
+    Therefore when filtering on empty values in a database query
+    you cannot use ``__isnull``::
+    
+      for u in users.User.objects.filter(profile__isnull=False):
+      
+    You must either check for an empty string::
+      
+      for u in users.User.objects.exclude(profile='')
+
+    or use the ``__gte`` operator::
+      
+      for u in users.User.objects.filter(profile__gte=dd.UserLevels.guest):
+      
+    
+    
     """
     
     __metaclass__ = models.SubfieldBase

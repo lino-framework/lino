@@ -286,6 +286,7 @@ Short-term
 Medium-term
 -----------
 
+
 #.  Historique des "choses" consultées pendant une session 
     pour facilement naviguer d’une "chose" à l’autre.
     Chose = configurable: Personnes, Clients, Demandes,...

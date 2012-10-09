@@ -1,0 +1,6 @@
+20121009
+--------
+
+- Administratoren bekamen in "Arbeiten als..." auch Benutzer angezeigt, 
+  die gar kein Profil haben. Behoben.
+  :class:`lino.utils.choicelists.ChoiceListField`

@@ -1131,7 +1131,9 @@ tinymce.init({
             if user.profile.level >= dd.UserLevels.admin:
                 authorities = [(u.id,unicode(u)) 
                     #~ for u in users.User.objects.exclude(profile=dd.UserProfiles.blank_item)] 20120829
-                    for u in users.User.objects.exclude(profile=None)]
+                    #~ for u in users.User.objects.filter(profile__isnull=False)]
+                    for u in users.User.objects.exclude(profile='')]
+                    #~ for u in users.User.objects.filter(profile__gte=dd.UserLevels.guest)]
             else:
                 authorities = [(a.user.id,unicode(a.user)) 
                     for a in users.Authority.objects.filter(authorized=user)]
