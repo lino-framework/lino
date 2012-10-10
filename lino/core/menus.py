@@ -242,6 +242,9 @@ class Menu(MenuItem):
     def add_menu(self,name,label,**kw):
         return self._add_item(Menu(self.user,name,label,self,**kw))
 
+    def get_item(self,name):
+        return self.items_dict[name]
+
     #~ def add_url_button(self,url,label):
     def add_url_button(self,url,**kw):
         kw.update(href=url)
@@ -259,6 +262,8 @@ class Menu(MenuItem):
         if mi.name is not None:
             old = self.items_dict.get(mi.name)
             if old is not None:
+                if mi.label != old.label:
+                    raise Exception("Menu item %r labelled %s cannot override existing label %s" % (mi.name,mi.label,old.label))
                 return old
             self.items_dict[mi.name] = mi
         self.items.append(mi)

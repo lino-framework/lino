@@ -588,28 +588,35 @@ class AttachmentsByController(Attachments):
 
 
 MODULE_LABEL = _("Outbox")
-  
-def setup_main_menu(site,ui,user,m): pass
 
-def setup_my_menu(site,ui,user,m): 
+lino = dd.resolve_app('lino')
+
+def setup_main_menu(site,ui,user,m):
+    m  = m.add_menu("office",lino.OFFICE_MODULE_LABEL)
+    m.add_action(MyOutbox)
+
+  
+#~ def setup_main_menu(site,ui,user,m): pass
+
+def unused_setup_my_menu(site,ui,user,m): 
     m  = m.add_menu("outbox",MODULE_LABEL)
     #~ m.add_action(MyInbox)
     m.add_action(MyOutbox)
     #~ m.add_action(MySent)
   
-def setup_config_menu(site,ui,user,m):
+#~ def setup_config_menu(site,ui,user,m):
     #~ if user.level >= UserLevels.manager:
-    m  = m.add_menu("outbox",MODULE_LABEL)
+    #~ m  = m.add_menu("outbox",MODULE_LABEL)
     #~ m.add_action(MailTypes)
   
 def setup_explorer_menu(site,ui,user,m):
     #~ if user.level >= UserLevels.manager:
-    m  = m.add_menu("outbox",MODULE_LABEL)
+    m  = m.add_menu("office",lino.OFFICE_MODULE_LABEL)
+    #~ m  = m.add_menu("outbox",MODULE_LABEL)
     m.add_action(Mails)
     m.add_action(Attachments)
   
   
-dd.add_user_group('office',MODULE_LABEL)
-  
+#~ dd.add_user_group('office',MODULE_LABEL)
   
 dd.update_field(Mail,'user',verbose_name=_("Sender"))

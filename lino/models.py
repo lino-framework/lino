@@ -266,6 +266,7 @@ if settings.LINO.user_model:
         text
         """
         model = TextFieldTemplate
+        required = dict(user_groups='office')
 
     class MyTextFieldTemplates(TextFieldTemplates,mixins.ByUser):
         pass
@@ -660,18 +661,23 @@ class Home(mixins.EmptyTable):
 
 
 
-
+SYSTEM_USER_LABEL = _("System")
+OFFICE_MODULE_LABEL = _("Office")
   
-def setup_main_menu(site,ui,user,m): pass
+def setup_main_menu(site,ui,user,m): 
+    #~ office = m.add_menu("office",OFFICE_MODULE_LABEL)
+    #~ office.add_action(MyTextFieldTemplates)
+    pass
 
 def setup_my_menu(site,ui,user,m): pass
   
 def setup_config_menu(site,ui,user,m):
-    m = m.add_menu("etc",_("System"))
+    office = m.add_menu("office",OFFICE_MODULE_LABEL)
+    system = m.add_menu("system",SYSTEM_USER_LABEL)
     #~ m.add_action('links.LinkTypes')
     if site.user_model:
-        m.add_action(site.user_model)
-        m.add_action(site.modules.lino.TextFieldTemplates)
+        system.add_action(site.user_model)
+        office.add_action(MyTextFieldTemplates)
     #~ m.add_action(site.modules.users.Users)
     if site.is_installed('contenttypes'):
         m.add_action(site.modules.lino.ContentTypes)
@@ -682,12 +688,17 @@ def setup_config_menu(site,ui,user,m):
         
   
 def setup_explorer_menu(site,ui,user,m):
+    office = m.add_menu("office",OFFICE_MODULE_LABEL)
+    system = m.add_menu("system",SYSTEM_USER_LABEL)
     if site.user_model:
-        m.add_action(site.modules.users.Authorities)
-    m.add_action(Changes)
+        system.add_action(site.modules.users.Authorities)
+    system.add_action(Changes)
+    office.add_action(TextFieldTemplates)
   
   
 def setup_site_menu(site,ui,user,m): 
     m.add_action(site.modules.lino.About)
     m.add_action(site.modules.lino.Inspector)
 
+
+dd.add_user_group('office',OFFICE_MODULE_LABEL)

@@ -16,13 +16,36 @@ Zwei der Details von gestern Abend sind behoben:
   (blau und kein Hand-Curor über dem Link).
   
 
+Checkin um 01.30 Uhr.
 Jetzt bleiben nur noch folgende Details zu tun:
 
 - Dialogfenster schließt sich nicht nach OK und success.
-
 - reason ist blank=True, aber das prüft er nicht nach.
-
 - Das Dummy-Feld muss ich durch etwas Unauffälligeres ersetzen...
-
 - Im JS-Code werden die Felder doppelt definiert.
 
+
+Das Menü
+--------
+
+Das Menü "Mein Menü" war konzeptuell falsch. 
+Es gibt kein "Mein Menü", denn das ganze Menü ist "meines", 
+d.h. speziell 
+auf den jeweiligen Benutzer (genauer gesagt auf dessen Profil) zugeschnitten.
+
+Die Befehle, die dort standen, sind jetzt unter ihren jeweiligen Titeln.
+Also z.B. 
+
+- :menuselection:`Mein Menü --> Meine VSEs` steht jetzt unter :menuselection:`DSBE --> Meine VSEs` 
+- :menuselection:`Mein Menü --> Meine Art.-60§7-Konventionen` steht jetzt unter 
+  :menuselection:`DSBE --> Meine Art.-60§7-Konventionen` 
+
+
+- Die Listen "Meine VSEs"
+  isip.Contracts und isip.MyContracts 
+  sowie 
+  jobs.Contracts und jobs.MyContracts haben jetzt eine gemeinsame Basis isip.ContractBaseTable, 
+  die die Parameter definiert. MyContracts unterscheidet sich lediglich dadurch, 
+  dass dort das Feld "Benutzer" vorausgefüllt ist mit dem anfragenden Benutzer.
+  
+  

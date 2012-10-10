@@ -524,7 +524,7 @@ class DisabledFieldsStoreField(SpecialStoreField):
                     if not f.vf.editable:
                         if not isinstance(f.vf.return_type,dd.DisplayField):
                             self.disabled_fields.add(f.name)
-                            print "20121010 always disabled:", f
+                            #~ print "20121010 always disabled:", f
                 elif not isinstance(f.field,generic.GenericForeignKey):
                     if not f.field.editable:
                         self.disabled_fields.add(f.name)

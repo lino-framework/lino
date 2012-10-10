@@ -2151,6 +2151,6 @@ def whats_up(site,ui,user):
     MyEventsNotified
     
         
-dd.add_user_group('office',MODULE_LABEL)
+#~ dd.add_user_group('office',MODULE_LABEL)
 
 customize_users()

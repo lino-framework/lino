@@ -61,6 +61,7 @@ import lino
 from lino.core import fields
 from lino.core import actions
 from lino.utils import babel
+from lino.core.model import Model
 from lino.core.modeltools import obj2str
 from lino.utils.config import load_config_files, Configured
 #~ from lino.core import datalinks
@@ -697,6 +698,15 @@ class Table(AbstractTable):
         if m is not None:
             m(self)
         
+    @classmethod
+    def is_abstract(self):
+        if self.model is None \
+            or self.model is Model \
+            or self.model._meta.abstract:
+            #~ logger.info('20120621 %s : no real table',h)
+            return True
+        return False
+          
     #~ @classmethod
     #~ def setup_permissions(self):
         #~ if self.model is not None:

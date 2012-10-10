@@ -145,7 +145,8 @@ def elem2rec_empty(ar,ah,elem,**rec):
     rec.update(id=-99998)
     #~ rec.update(id=elem.pk) or -99999)
     if ar.actor.parameters:
-        rec.update(param_values=ar.ah.store.pv2dict(ar.ui,ar.param_values))
+        #~ rec.update(param_values=ar.ah.store.pv2dict(ar.ui,ar.param_values))
+        rec.update(param_values=ar.actor.params_layout.params_store.pv2dict(ar.ui,ar.param_values))
     return rec
 
 def elem2rec_detailed(ar,elem,**rec):

@@ -80,16 +80,17 @@ def resolve_app(app_label):
         contacts = dd.resolve_app('contacts')
         
     Because it makes your code usable 
-    (1) on sites that don't have the 'contacts' module installed
+    (1) in applications that don't have the 'contacts' module installed
     and
-    (2) on sites who have another implementation of the contacts module.
+    (2) in applications who have another implementation of the contacts module.
     
     """
+    #~ app_label = app_label
     for app_name in settings.INSTALLED_APPS:
-        if app_name.endswith('.'+app_label):
+        if app_name == app_label or app_name.endswith('.'+app_label):
             return import_module('.models', app_name)
     try:
-        return import_module('lino.modlib.%s.dummy' % app_label)
+        return import_module('lino.modlib%s.dummy' % app_label)
     except ImportError:
         pass
         

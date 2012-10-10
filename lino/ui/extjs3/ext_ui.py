@@ -1606,14 +1606,13 @@ tinymce.init({
         """
         ar is usually None, except for actors with dynamic handle
         """
-        #~ logger.info('20120621 ExtUI.setup_handle() %s',h)
+        if h.actor.is_abstract():
+            return
+            
+        #~ logger.info('20121010 ExtUI.setup_handle() %s',h.actor)
+            
         if isinstance(h,tables.TableHandle):
-            if issubclass(h.actor,dbtables.Table):
-                if h.actor.model is None \
-                    or h.actor.model is dd.Model \
-                    or h.actor.model._meta.abstract:
-                    #~ logger.info('20120621 %s : no real table',h)
-                    return
+            #~ if issubclass(h.actor,dbtables.Table):
             ll = layouts.ListLayout(h.actor.get_column_names(ar),h.actor,hidden_elements=h.actor.hidden_columns)
             #~ h.list_layout = layouts.ListLayoutHandle(h,ll,hidden_elements=h.actor.hidden_columns)
             h.list_layout = ll.get_layout_handle(self)

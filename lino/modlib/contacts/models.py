@@ -916,7 +916,7 @@ dd.inject_field(SiteConfig,
         #~ help_text=_("Whether this Partner is a Company.")))
 
 
-MODULE_NAME = _("Contacts")
+MODULE_LABEL = _("Contacts")
 
 def site_setup(site):
     site.modules.countries.Cities.set_detail_layout("""
@@ -928,27 +928,28 @@ def site_setup(site):
     
 
 
-def setup_main_menu(site,ui,user,m): pass
+def setup_main_menu(site,ui,user,m):
+    m = m.add_menu("contacts",MODULE_LABEL)
+    #~ actors = (Persons,Companies,Partners)
+    #~ for m in (Person,Company,Partner):
+        #~ if m._meta.abstract: 
+            #~ return 
+    """
+    We use the string representations and not the classes because 
+    other installed applications may want to override these tables.
+    """
+    #~ for a in (Persons,Companies,Partners):
+    for a in ('contacts.Persons','contacts.Companies','contacts.Partners'):
+        m.add_action(a)
 
 def setup_my_menu(site,ui,user,m): 
     pass
   
 def setup_master_menu(site,ui,user,m): 
-    """
-    The contacts module adds entries to the master menu only 
-    if none of Persons, Companies, Partners is abstract.
-    """
-    m = m.add_menu("contacts",MODULE_NAME)
-    #~ actors = (Persons,Companies,Partners)
-    #~ for m in (Person,Company,Partner):
-        #~ if m._meta.abstract: 
-            #~ return 
-    #~ for a in (Persons,Companies,Partners):
-    for a in ('contacts.Persons','contacts.Companies','contacts.Partners'):
-        m.add_action(a)
+    pass
     
 def setup_config_menu(site,ui,user,m): 
-    config_contacts = m.add_menu("contacts",MODULE_NAME)
+    config_contacts = m.add_menu("contacts",MODULE_LABEL)
     config_contacts.add_action(CompanyTypes)
     config_contacts.add_action(RoleTypes)
     config_contacts.add_action(site.modules.countries.Countries)
@@ -959,7 +960,7 @@ def setup_config_menu(site,ui,user,m):
     #~ m.add_action('contacts.RoleTypes')
   
 def setup_explorer_menu(site,ui,user,m):
-    m = m.add_menu("contacts",MODULE_NAME)
+    m = m.add_menu("contacts",MODULE_LABEL)
     m.add_action(site.modules.contacts.Roles)
     m.add_action(site.modules.countries.Cities)
   

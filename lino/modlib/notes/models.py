@@ -319,13 +319,18 @@ class NotesByProject(Notes):
     order_by = ["-date"]
   
   
-def setup_main_menu(site,ui,user,m): pass
+lino = dd.resolve_app('lino')
+
+def setup_main_menu(site,ui,user,m):
+    m  = m.add_menu("office",lino.OFFICE_MODULE_LABEL)
+    m.add_action(MyNotes)
   
 def setup_my_menu(site,ui,user,m): 
     pass
   
 def setup_config_menu(site,ui,user,m): 
-    m  = m.add_menu("notes",_("~Notes"))
+    #~ m  = m.add_menu("notes",_("~Notes"))
+    m  = m.add_menu("office",lino.OFFICE_MODULE_LABEL)
     m.add_action(NoteTypes)
     m.add_action(EventTypes)
   

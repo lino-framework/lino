@@ -265,11 +265,12 @@ if settings.LINO.is_installed('households'):
 
 
 
-def setup_main_menu(site,ui,user,m): pass
+def setup_main_menu(site,ui,user,m):
+    m = m.add_menu('contacts',contacts.MODULE_LABEL)
+    m.add_action('households.Households')
     
 def setup_master_menu(site,ui,user,m): 
-    m.add_action('households.Households')
-
+    pass
 def setup_my_menu(site,ui,user,m): 
     pass
     

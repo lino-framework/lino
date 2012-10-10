@@ -103,7 +103,8 @@ class ActorMetaClass(type):
         
         cls = type.__new__(meta, classname, bases, classDict)
         
-        actions.register_params(cls)
+        #~ if cls.is_abstract():
+            #~ actions.register_params(cls)
         
         """
         On 20110822 I thought "A Table always gets the app_label of its model,
@@ -480,6 +481,11 @@ class Actor(actions.Parametrizable):
         
         
     @classmethod
+    def is_abstract(self):
+        return False
+        
+            
+    @classmethod
     def get_handle(self,ui):
         #~ assert ar is None or isinstance(ui,UI), \
             #~ "%s.get_handle() : %r is not a BaseUI" % (self,ui)
@@ -850,11 +856,15 @@ class Actor(actions.Parametrizable):
         #~ logger.debug("Actor.setup() %s", self)
         self._setup_doing = True
         
+        if not self.is_abstract():
+            actions.register_params(self)
+            
         self._collect_actions()
         
         #~ Parametrizable.after_site_setup(self)
         #~ super(Actor,self).after_site_setup(site)
-        actions.setup_params_choosers(self)
+        if not self.is_abstract():
+            actions.setup_params_choosers(self)
             
         self.do_setup()
         #~ self.setup_permissions()

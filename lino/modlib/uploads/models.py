@@ -162,6 +162,13 @@ class MyUploads(Uploads,mixins.ByUser):
 
 MODULE_LABEL = _("Uploads")
 
+lino = dd.resolve_app('lino')
+
+def setup_main_menu(site,ui,user,m):
+    m  = m.add_menu("office",lino.OFFICE_MODULE_LABEL)
+    m.add_action(MyUploads)
+
+
 def site_setup(site):
     pass
   
@@ -172,14 +179,16 @@ def setup_main_menu(site,ui,user,m):
 def setup_master_menu(site,ui,user,m): 
     pass
   
-def setup_my_menu(site,ui,user,m): 
+def unused_setup_my_menu(site,ui,user,m): 
     m  = m.add_menu("uploads",MODULE_LABEL)
     m.add_action(MyUploads)
     
 def setup_config_menu(site,ui,user,m): 
-    m  = m.add_menu("uploads",MODULE_LABEL)
+    m  = m.add_menu("office",lino.OFFICE_MODULE_LABEL)
+    #~ m  = m.add_menu("uploads",MODULE_LABEL)
     m.add_action(UploadTypes)
   
 def setup_explorer_menu(site,ui,user,m):
-    m  = m.add_menu("uploads",MODULE_LABEL)
+    m  = m.add_menu("office",lino.OFFICE_MODULE_LABEL)
+    #~ m  = m.add_menu("uploads",MODULE_LABEL)
     m.add_action(Uploads)
