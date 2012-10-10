@@ -245,9 +245,10 @@ def delete_element(ar,elem):
     assert elem is not None
     msg = ar.actor.disable_delete(elem,ar)
     if msg is not None:
-        return settings.LINO.ui.error_response(None,msg)
+        return settings.LINO.ui.error_response(None,msg,alert=True)
             
-    dblogger.log_deleted(ar.request,elem)
+    #~ dblogger.log_deleted(ar.request,elem)
+    changes.log_delete(ar.request,elem)
     
     try:
         elem.delete()

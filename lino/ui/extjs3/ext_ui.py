@@ -114,10 +114,14 @@ class HtmlRenderer(object):
     def href(self,url,text):
         return '<a href="%s">%s</a>' % (url,text)
         
-    def href_button(self,url,text,**kw):
-    #~ def href_button(self,url,text,title=None):
+    def href_button(self,url,text,title=None,**kw):
+        """
+        Returns an elementtree object of a "button-like" ``<a href>`` tag.
+        """
         #~ logger.info('20121002 href_button %r',unicode(text))
-        #~ if title:
+        # Remember that Python 2.6 doesn't like if title is a Promise
+        if title:
+            kw.update(title=unicode(title))
             #~ return xghtml.E.a(text,href=url,title=title)
         return xghtml.E.a('[',text,']',href=url,**kw)
             #~ return '[<a href="%s" title="%s">%s</a>]' % (
@@ -385,7 +389,7 @@ class ExtRenderer(HtmlRenderer):
         url = 'javascript:'+self.action_call(request,a,after_show)
         #~ logger.info('20121002 window_action_button %s %r',a,unicode(label))
         if a.action.help_text:
-            return self.href_button(url,label,title=a.action.help_text)
+            return self.href_button(url,label,a.action.help_text)
         return self.href_button(url,label)
         
     def row_action_button(self,obj,request,a,label=None):
@@ -398,7 +402,7 @@ class ExtRenderer(HtmlRenderer):
                 a.full_name(),str(request.requesting_panel),
                 py2js(obj.pk))
         if a.action.help_text:
-            return self.href_button(url,label,title=a.action.help_text)
+            return self.href_button(url,label,a.action.help_text)
         return self.href_button(url,label)
             #~ return xghtml.E.a(label,href=url,title=unicode(a.action.help_text))
         #~ return xghtml.E.a(label,href=url)
@@ -2056,6 +2060,7 @@ tinymce.init({
             #~ yield "  p.is_main_window = true;" # workaround for problem 20111206
             p.update(is_main_window=True) # workaround for problem 20111206
             yield "  var p = %s;"  % py2js(p)
+            #~ yield "  Lino.insert_subst_user(p);" # 20121010 : 
             #~ if isinstance(action,CalendarAction):
                 #~ yield "  p.items = Lino.CalendarAppPanel_items;" 
             if params_panel:

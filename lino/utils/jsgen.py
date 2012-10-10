@@ -139,7 +139,7 @@ def declare_vars(v):
             for ln in declare_vars(sub):
                 yield ln
         # DON'T return
-    if isinstance(v,Value): 
+    elif isinstance(v,Value): 
         #~ 20120616 if not v.get_view_permission(_for_user): return
         #~ ok = True
         for ln in declare_vars(v.value):

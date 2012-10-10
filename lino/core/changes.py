@@ -43,16 +43,12 @@ from django.utils.translation import ugettext_lazy as _
 
 from lino.core.modeltools import obj2str
 
-
-#~ from lino import models as lino_models
-
 NOT_GIVEN = object()
 
 
 class PseudoRequest:
     def __init__(self,user):
         self.user = user
-
 
 class Watcher(object):
     def __init__(self,watched,is_new):
@@ -98,7 +94,7 @@ class Watcher(object):
             else:
                 msg = '- ' + ('\n- '.join(changes))
                 
-        from lino.models import Change            
+        from lino.models import Change, ChangeTypes
         
         if cs.master_key is None:
             master = self.watched
@@ -107,10 +103,37 @@ class Watcher(object):
             if master is None:
                 return
                 
+        kw = dict()
+        if self.is_new:
+            kw.update(type=ChangeTypes.create)
+        else:
+            kw.update(type=ChangeTypes.update)
+
         Change(
             time=datetime.datetime.now(),
             user=request.user,
             summary=self.watched._change_summary,
             master=master,
             object=self.watched,
-            diff=msg).save()
+            diff=msg,**kw).save()
+
+def log_delete(request,obj):
+    from lino.models import Change, ChangeTypes
+    cs = obj._watch_changes_specs
+    if cs is None:
+        return
+    
+    if cs.master_key is None:
+        master = obj
+    else:
+        master = getattr(obj,cs.master_key)
+        if master is None:
+            return
+    Change(
+        type=ChangeTypes.delete,
+        time=datetime.datetime.now(),
+        user=request.user,
+        summary=obj._change_summary,
+        master=master,
+        object=obj).save()
+

@@ -732,6 +732,9 @@ class ChangeStateAction(RowAction):
         #~ kw.setdefault('label',target_state.text)
         #~ required = getattr(target_state,'required',None)
         #~ if required is not None:
+        assert not kw.has_key('required')
+        new_required = dict(self.required)
+        new_required.update(required)
         if target_state.name:
             m = getattr(target_state.choicelist,'allow_state_'+target_state.name,None)
             #~ m = getattr(actor.model,'allow_state_'+target_state.name,None)
@@ -739,8 +742,8 @@ class ChangeStateAction(RowAction):
                 assert not required.has_key('allowed')
                 def allow(action,user,obj,state):
                     return m(obj,user)
-                required.update(allow=allow)
-        kw.update(required=required)
+                new_required.update(allow=allow)
+        kw.update(required=new_required)
         help_text = getattr(target_state,'help_text',None)
         if help_text is not None:
             kw.update(help_text=help_text)
@@ -774,6 +777,20 @@ class ChangeStateAction(RowAction):
         
         return ar.ui.success_response(**kw)
         
+    
+class NotifyingChangeStateAction(ChangeStateAction):
+    parameters = dict(
+      change_summary = models.CharField(_("Reason for the change"),max_length=200,blank=False),
+      edit_mail = models.BooleanField(_("Edit notification mail before sending"),default=False),
+    )  
+    params_layout = """
+    change_summary
+    edit_mail
+    """
+    def run(self,obj,ar,**kw):
+        logger.info("20121009 NotifyingChangeStateAction.run() %s",ar.action_param_values)
+        obj.set_change_summary(ar.action_param_values.change_summary)
+        return super(NotifyingChangeStateAction,self).run(obj,ar,**kw)
     
 
 

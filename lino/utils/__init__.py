@@ -407,6 +407,7 @@ class Cycler:
         self.current = 0
         
     def pop(self):
+        if len(self.items) == 0: return None
         item = self.items[self.current]
         self.current += 1
         if self.current >= len(self.items):

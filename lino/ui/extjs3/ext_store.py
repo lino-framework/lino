@@ -948,7 +948,7 @@ class ParameterStore(BaseStore):
             self.param_fields.append(self.create_field(pf,pf.name))
         
         self.param_fields = tuple(self.param_fields)
-        self.url_param = url_param        
+        self.url_param = url_param
 
         
     def unused_pv2list(self,pv):
@@ -965,7 +965,7 @@ class ParameterStore(BaseStore):
 
     def parse_params(self,request,**kw):
         pv = request.REQUEST.getlist(self.url_param)
-        #~ logger.info("20120221 parse_params(%s)",pv)
+        #~ logger.info("20120221 ParameterStore.parse_params(%s) --> %s",self.url_param,pv)
         def parse(sf,form_value):
             if form_value == '' and not sf.field.empty_strings_allowed:
                 return sf.form2obj_default
@@ -981,7 +981,10 @@ class ParameterStore(BaseStore):
         #~ if pv: 
             #~ if len(self.param_fields) != len(pv):
                 #~ raise Exception("len(%r) != len(%r)" % (self.param_fields,pv))
-        if pv and len(self.param_fields) == len(pv):
+        if len(pv) > 0:
+            if len(self.param_fields) != len(pv):
+                #~ logger.info('20121010 %s',[sf.field.name for sf in self.param_fields])
+                raise Exception("Expected a list of %d values, but got %s" % (len(self.param_fields),pv))
             for i,f in enumerate(self.param_fields):
                 kw[f.field.name] = parse(f,pv[i])
         #~ else: removed 20120918

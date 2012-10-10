@@ -26,6 +26,11 @@ u'<p>Hello,\xa0world!<br/>Again I say: Hello,\xa0world!</p>\n<img src="foo.org"/
 >>> print repr(html2xhtml(html))
 u'<p style=\'font-family: "Verdana";\'>Verdana</p>'
 
+>>> print html2xhtml('A &amp; B')
+A &amp; B
+
+>>> print html2xhtml('a &lt; b')
+a &lt; b
 
 
 """
@@ -66,10 +71,12 @@ class MyHTMLParser(HTMLParser):
         
     def handle_entityref(self,name):
         """process a general entity reference of the form "&name;"."""
+        #~ print "20121010 handle_entityref", repr(name)
         if name in ('lt','gt','amp','quot'):
             # 20120311 
             #~ self.handle_data('<![CDATA['+unichr(name2codepoint[name])+']]>')
-            self.handle_data(unichr(name2codepoint[name]))
+            #~ 20121010 self.handle_data(unichr(name2codepoint[name]))
+            self.handle_data("&%s;" % name)
             return
         self.handle_data(unichr(name2codepoint[name]))
 

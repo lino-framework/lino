@@ -22,16 +22,14 @@ Jetzt bleiben nur noch folgende Details zu tun:
 - Dialogfenster schließt sich nicht nach OK und success.
 - reason ist blank=True, aber das prüft er nicht nach.
 - Das Dummy-Feld muss ich durch etwas Unauffälligeres ersetzen...
-- Im JS-Code werden die Felder doppelt definiert.
 
 
 Das Menü
 --------
 
-Das Menü "Mein Menü" war konzeptuell falsch. 
-Es gibt kein "Mein Menü", denn das ganze Menü ist "meines", 
-d.h. speziell 
-auf den jeweiligen Benutzer (genauer gesagt auf dessen Profil) zugeschnitten.
+Es gibt kein :menuselection:`Mein Menü` mehr, denn das ganze Menü ist "meines"
+(im Sinne von "speziell auf den jeweiligen Benutzer 
+zugeschnitten" (genauer gesagt auf dessen Profil).
 
 Die Befehle, die dort standen, sind jetzt unter ihren jeweiligen Titeln.
 Also z.B. 
@@ -40,12 +38,222 @@ Also z.B.
 - :menuselection:`Mein Menü --> Meine Art.-60§7-Konventionen` steht jetzt unter 
   :menuselection:`DSBE --> Meine Art.-60§7-Konventionen` 
 
+Das Menü :menuselection:`Mein Menü` war ein konzeptueller Fehler. 
+Auch das Menü :menuselection:`Stammdaten` brachte Verwirrung. 
+Ich fange an klar zu sehen, wie ein Hauptmenü strukturiert sein muss, 
+damit es auch *langfristig* (d.h. unter Berücksichtigung der Tatsache, 
+dass eine Anwendung sich verändert) von den Benutzern nicht als 
+verwirrend empfunden wird.
 
-- Die Listen "Meine VSEs"
-  isip.Contracts und isip.MyContracts 
-  sowie 
-  jobs.Contracts und jobs.MyContracts haben jetzt eine gemeinsame Basis isip.ContractBaseTable, 
-  die die Parameter definiert. MyContracts unterscheidet sich lediglich dadurch, 
-  dass dort das Feld "Benutzer" vorausgefüllt ist mit dem anfragenden Benutzer.
+#. Jedes "Benutzermodul" führt zu einem Titel im Hauptmenü:
+
+  - Kontakte
+  - Kalender
+  - Office
+  - ÖSHZ (Allgemeine Klientenverwaltung)
+  - Integration (DSBE-spezifische Funktionen VSE und Art.60§7)
+  - Kurse (Sprachkurse ist zwar auch DSBE-spezifisch, aber ich fand es logischer, 
+    das von VSE und Art.60§7 zu trennen)
+  - Schuldnerberatung
+  - Neuanträge
   
+  Lino unterscheidet zwischen "Benutzermodulen" und "technischen Modulen". 
+  Z.B. kommen die technischen Module 
+  :mod:`cal <lino.modlib.cal>`,
+  :mod:`notes <lino.modlib.notes>`,
+  :mod:`outbox <lino.modlib.outbox>`,
+  :mod:`postings <lino.modlib.postings>`
+  und :mod:`uploads <lino.modlib.uploads>` alle in den gleichen Topf, 
+  nämlich ins Benutzermodul "Office".
+
+
+#. Außer diesen "Modul-Menüs" gibt es folgende "Standardmenüs", 
+   von denen die ersten drei ihrerseits wieder pro Benutzermodul unterteilt sind:
+
+  - Drucken
+  - Konfigurierung
+  - Explorer
+  - Site
+  - (sowie oben rechts das "Benutzermenü", das als Titel 
+    den Namen des angemeldeten Benutzers trägt)
+
+
+Die Listen der VSE und Art.60§7-Konventionen 
+(isip.Contracts und isip.MyContracts 
+sowie 
+jobs.Contracts und jobs.MyContracts)
+haben jetzt eine gemeinsame BasisKlasse isip.ContractBaseTable, 
+die die Parameter definiert. 
+MyContracts unterscheidet sich von Contracts lediglich dadurch, 
+dass dort das Feld "Benutzer" vorausgefüllt ist mit dem anfragenden Benutzer.
   
+
+Meine Personensuchen
+--------------------
+
+Dieser Menübefehl (der übrigens seltsamerweise nicht etwa in :menuselection`Mein Menü` 
+stand, sondern in :menuselection`Kontakte` bzw. :menuselection`Stammdaten`, war veraltet. 
+Er stammte aus der Zeit, als es noch keine Listenparameter gab.
+
+Wird ersetzt durch Parameter in der allgemeinen und DSBE-spezifischen Klientenlisten.
+
+
+Ein Bug 
+--------
+
+Bei einem Versuchsrelease auf einen Rechner mit Python 2.6 (bei läuft meistens 2.7) kam folgender Fehler::
+
+  TypeError
+  cannot serialize <django.utils.functional.__proxy__ object at 0x7ff41fe29110> (type __proxy__)
+
+  TRACEBACK:
+    File "/var/snapshots/django/django/core/handlers/base.py", line 111, in get_response
+      response = callback(request, *callback_args, **callback_kwargs)
+
+    File "/var/snapshots/django/django/views/generic/base.py", line 47, in view
+      return self.dispatch(request, *args, **kwargs)
+
+    File "/var/snapshots/django/django/views/generic/base.py", line 68, in dispatch
+      return handler(request, *args, **kwargs)
+
+    File "/usr/local/django/test_dsbe/using/lino/lino/ui/extjs3/views.py", line 721, in get
+      return json_response(datarec)
+
+    File "/usr/local/django/test_dsbe/using/lino/lino/ui/extjs3/views.py", line 103, in json_response
+      s = py2js(x)
+
+    File "/usr/local/django/test_dsbe/using/lino/lino/utils/jsgen.py", line 203, in py2js
+      if (not isinstance(v,Permittable)) or v.get_view_permission(_for_user)
+
+    File "/usr/local/django/test_dsbe/using/lino/lino/utils/jsgen.py", line 203, in py2js
+      if (not isinstance(v,Permittable)) or v.get_view_permission(_for_user)
+
+    File "/usr/local/django/test_dsbe/using/lino/lino/utils/jsgen.py", line 180, in py2js
+      return simplejson.dumps(etree.tostring(v))
+
+    File "/usr/lib/python2.6/xml/etree/ElementTree.py", line 1009, in tostring
+      ElementTree(element).write(file, encoding)
+
+    File "/usr/lib/python2.6/xml/etree/ElementTree.py", line 663, in write
+      self._write(file, self._root, encoding, {})
+
+    File "/usr/lib/python2.6/xml/etree/ElementTree.py", line 707, in _write
+      self._write(file, n, encoding, namespaces)
+
+    File "/usr/lib/python2.6/xml/etree/ElementTree.py", line 698, in _write
+      _escape_attrib(v, encoding)))
+
+    File "/usr/lib/python2.6/xml/etree/ElementTree.py", line 830, in _escape_attrib
+      _raise_serialization_error(text)
+
+    File "/usr/lib/python2.6/xml/etree/ElementTree.py", line 777, in _raise_serialization_error
+      "cannot serialize %r (type %s)" % (text, type(text).__name__)
+
+Deshalb die Änderung in :meth:`lino.ui.extjs3.HtmlRenderer.href_button`.
+
+Bugfixes
+--------
+
+- Im JS-Code wurden die Felder doppelt definiert. 
+  Das war ein Bug in :func:`lino.utils.jsgen.declare_vars`.
+  
+- In pcsw.models.PersonDetail haben wir jetzt 
+  auch `households.MembersByPerson`.
+
+- Wenn Admin als Alicia arbeitet, sah er in `Meine Begleitungen` 
+  dennoch nur seine, nicht die von Alicia. 
+  In `linolib.js` muss bei `clear_base_param()` immer auch 
+  `Lino.insert_subst_user()` gerufen werden.
+
+Changes
+-------
+
+Das Aktionsdialogfenster zum Ablehnen eines Neuantrags 
+ist nicht das einzige. Und die haben immer das gleiche Muster: 
+vor dem Zustandswechsel wird noch nach einer Erklärung 
+für die anstehende Änderung gefragt.
+
+`add_workflow` hat eine neue Option `notify`. Wenn die `True` ist, 
+macht er keine einfach ChangeStateAction, sondern eine 
+NotifyingChangeStateAction, die vor dem Zustandswechsel 
+ein Aktionsdialogfenster ausführt, in dem der 
+Grund der Änderung erfasst werden kann, sowie weitere Optionen 
+(momentan die Option "Mitteilung an Coach manuell bearbeiten")
+
+`lino.core.changes` loggt jetzt auch Löschungen. Neues Feld `lino.Change.type` 
+enthält CREATE, UPDATE oder DELETE.
+
+
+`loaddata` order can differ from INSTALLED_APPS
+-----------------------------------------------
+
+python manage.py initdb std few_countries few_cities few_languages props cbss democfg demo demo_events cpas_eupen --traceback --noinput %*
+
+
+Installing custom SQL ...
+Installing indexes ...
+Installed 0 object(s) from 0 fixture(s)
+INFO Loading t:\hgwork\lino\lino\fixtures\std.py...
+INFO Loading t:\hgwork\lino\lino\modlib\properties\fixtures\std.py...
+INFO Loading t:\hgwork\lino\lino\modlib\contacts\fixtures\std.py...
+INFO Loading t:\hgwork\lino\lino\modlib\cal\fixtures\std.py...
+INFO Loading t:\hgwork\lino\lino\modlib\households\fixtures\std.py...
+INFO Loading t:\hgwork\welfare\lino_welfare\modlib\debts\fixtures\std.py...
+INFO Loading t:\hgwork\lino\lino\modlib\notes\fixtures\std.py...
+INFO Loading t:\hgwork\welfare\lino_welfare\modlib\pcsw\fixtures\std.py...
+INFO Loading t:\hgwork\welfare\lino_welfare\modlib\jobs\fixtures\std.py...
+INFO Loading t:\hgwork\lino\lino\modlib\countries\fixtures\few_countries.py...
+INFO Loading t:\hgwork\lino\lino\modlib\countries\fixtures\few_cities.py...
+INFO Loading t:\hgwork\lino\lino\modlib\countries\fixtures\few_languages.py...
+INFO Loading t:\hgwork\welfare\lino_welfare\modlib\pcsw\fixtures\props.py...
+INFO Loading t:\hgwork\welfare\lino_welfare\modlib\cbss\fixtures\cbss.py...
+INFO Loading country INS codes
+INFO Loading city INS codes
+INFO Loading t:\hgwork\welfare\lino_welfare\modlib\cbss\fixtures\democfg.py...
+INFO Loading t:\hgwork\lino\lino\modlib\users\fixtures\demo.py...
+INFO Loading t:\hgwork\lino\lino\modlib\properties\fixtures\demo.py...
+INFO Loading t:\hgwork\lino\lino\modlib\contacts\fixtures\demo.py...
+INFO Loading t:\hgwork\lino\lino\modlib\cal\fixtures\demo.py...
+INFO Loading t:\hgwork\lino\lino\modlib\households\fixtures\demo.py...
+INFO Loading t:\hgwork\lino\lino\modlib\accounts\fixtures\demo.py...
+INFO Loading t:\hgwork\welfare\lino_welfare\modlib\newcomers\fixtures\demo.py...
+INFO Loading t:\hgwork\welfare\lino_welfare\modlib\debts\fixtures\demo.py...
+INFO Loading t:\hgwork\lino\lino\modlib\notes\fixtures\demo.py...
+INFO Loading t:\hgwork\welfare\lino_welfare\modlib\pcsw\fixtures\demo.py...
+INFO Loading t:\hgwork\lino\lino\modlib\cal\fixtures\demo_events.py...
+INFO Loading t:\data\luc\lino_local\dsbe\fixtures\cpas_eupen.py...
+Installed 1582 object(s) from 27 fixture(s)
+INFO Lino initdb done ('std', 'few_countries', 'few_cities', 'few_languages', 'props', 'cbss', 'democfg', 'demo', 'demo_
+events', 'cpas_eupen') on database :memory:.
+
+
+
+Ausdruck Art. 60§7-Übersicht produziert leeres PDF
+--------------------------------------------------
+
+Wenn ich die Standard-Konstruktionsmethode in den Site-Parametern von AppyPdf 
+nach AppyOdt ändere, sehe ich die Fehlermeldung::
+
+  Error while evaluating the expression "html(self.body)" defined in the "from" part of a statement.
+  File "<string>", line 1, in <module>
+  File "/var/snapshots/lino/lino/utils/appy_pod.py", line 190, in html_func
+  return self.renderXhtml(html,**kw)
+  File "/var/snapshots/appy-current/appy/pod/renderer.py", line 242, in renderXhtml
+  stylesMapping, ns).run()
+  File "/var/snapshots/appy-current/appy/pod/xhtml2odt.py", line 500, in run
+  self.xhtmlParser.parse(self.xhtmlString)
+  File "/var/snapshots/appy-current/appy/shared/xml_parser.py", line 193, in parse
+  self.parser.parse(inputSource)
+  File "/usr/lib/python2.6/xml/sax/expatreader.py", line 107, in parse
+  xmlreader.IncrementalParser.parse(self, source)
+  File "/usr/lib/python2.6/xml/sax/xmlreader.py", line 123, in parse
+  self.feed(buffer)
+  File "/usr/lib/python2.6/xml/sax/expatreader.py", line 211, in feed
+  self._err_handler.fatalError(exc)
+  File "/usr/lib/python2.6/xml/sax/handler.py", line 38, in fatalError
+  raise exception
+  <class 'xml.sax._exceptions.SAXParseException'>: <unknown>:10:127: not well-formed (invalid token)
+  
+Das lag an einem Bug in :mod:`lino.utils.html2xhtml`:
+ein ``&amp;`` in der Quelle darf nicht schon nach ``&`` aufgelöst werden.
+Siehe den neuen Fall im Docstring des Moduls.

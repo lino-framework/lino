@@ -870,10 +870,12 @@ class URLFieldElement(CharFieldElement):
 class IntegerFieldElement(FieldElement):
     filter_type = 'numeric'
     gridfilters_settings = dict(type='numeric')
-    xtype = 'numberfield'
+    #~ xtype = 'numberfield'
+    xtype = None
     sortable = True
     preferred_width = 5
     #~ data_type = 'int' 
+    value_template = "new Ext.form.NumberField(%s)"
 
 class IncompleteDateFieldElement(CharFieldElement):
     """

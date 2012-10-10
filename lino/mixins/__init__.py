@@ -218,10 +218,10 @@ if settings.LINO.user_model:
             #~ return _("My %s") % self.model._meta.verbose_name_plural
             
         @classmethod
-        def setup_request(self,rr):
+        def setup_request(self,ar):
             #~ logger.info("mixins.ByUser.setup_request")
-            if rr.master_instance is None:
-                rr.master_instance = rr.get_user()
+            if ar.master_instance is None:
+                ar.master_instance = ar.get_user()
                 
                 
 else:

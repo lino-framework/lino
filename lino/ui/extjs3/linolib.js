@@ -1600,8 +1600,12 @@ Lino.MainPanel = {
               f.on('check',function() {t.refresh()});
           else if (f instanceof Ext.form.TriggerField)
               f.on('select',function() {t.refresh()});
-          else
-              f.on('change',function() {t.refresh()});
+          else {
+              if (! f.on) 
+                  console.log("20121010 no method 'on'",f);
+              else
+                  f.on('change',function() {t.refresh()});
+            }
           });
       }
       return tbar;
@@ -1864,7 +1868,7 @@ Lino.do_on_current_record = function(panel,fn,phantom_fn) {
 };
 
 
-Lino.call_row_action = function(panel,url,p,actionName,step,fn) {
+Lino.call_row_action = function(panel,url,p,actionName,step,fn,on_success) {
   p.$ext_requests.URL_PARAM_ACTION_NAME = actionName;
   if (!panel) panel = Lino.viewport;
   Ext.apply(p,panel.get_base_params());
@@ -1877,7 +1881,7 @@ Lino.call_row_action = function(panel,url,p,actionName,step,fn) {
     method: 'GET',
     url: url,
     params: p,
-    success: Lino.action_handler(panel,undefined,fn)
+    success: Lino.action_handler(panel,on_success,fn)
   });
 };
 
@@ -2052,6 +2056,7 @@ Lino.FieldBoxMixin = {
   },
   clear_base_params : function() {
       this.base_params = {};
+      Lino.insert_subst_user(this.base_params);
   },
   set_base_param : function(k,v) {
     this.base_params[k] = v;
@@ -2274,10 +2279,11 @@ Lino.ActionFormPanel = Ext.extend(Lino.ActionFormPanel,{
     var actionName = this.action_name;
     var rec = panel.get_current_record();
     var self = this;
+    function on_success() { self.get_containing_window().close(); };
     var fn = function(panel,btn,step) {
       var p = {};
       self.add_field_values(p)
-      Lino.call_row_action(panel,panel.get_record_url(rec.id),p,actionName,step,fn);
+      Lino.call_row_action(panel,panel.get_record_url(rec.id),p,actionName,step,fn,on_success);
     }
     fn(panel,null,null);
     
@@ -2285,7 +2291,7 @@ Lino.ActionFormPanel = Ext.extend(Lino.ActionFormPanel,{
   }
   ,set_status : function(status,rp){
     this.requesting_panel = Ext.getCmp(rp);
-    console.log('20120918 ActionFormPanel.set_status()',status,rp,this.requesting_panel);
+    //~ console.log('20120918 ActionFormPanel.set_status()',status,rp,this.requesting_panel);
     this.clear_base_params();
     if (status == undefined) status = {};
     //~ if (status.param_values) 
@@ -2570,6 +2576,8 @@ Lino.FormPanel = Ext.extend(Lino.FormPanel,{
   },
   clear_base_params : function() {
       this.base_params = {};
+      Lino.insert_subst_user(this.base_params);
+        
       //~ if (this.record_selector) {
           //~ var store = this.record_selector.getStore();
           //~ for (k in store.baseParams) store.setBaseParam(k,undefined);
@@ -3561,6 +3569,7 @@ Lino.GridPanel = Ext.extend(Lino.GridPanel,{
   },
   clear_base_params : function() {
       this.store.baseParams = {};
+      Lino.insert_subst_user(this.store.baseParams);
   },
   set_base_param : function(k,v) {
     this.store.setBaseParam(k,v);
@@ -4729,6 +4738,7 @@ Lino.CalendarAppPanel = Ext.extend(Lino.CalendarAppPanel,{
   }
   ,clear_base_params : function() {
       this.base_params = {};
+      Lino.insert_subst_user(this.base_params);
   }
   ,set_base_param : function(k,v) {
       if (!this.base_params) this.base_params = {};

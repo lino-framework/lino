@@ -600,7 +600,7 @@ class MultiChoiceListField(ChoiceListField):
 
 class State(Choice):
         
-    def add_workflow(self,label=None,help_text=None,**required):
+    def add_workflow(self,label=None,help_text=None,notify=False,**required):
         """
         `label` can be either a string or a subclass of ChangeStateAction
         """
@@ -611,9 +611,15 @@ class State(Choice):
             kw.update(help_text=help_text)
         kw.update(sort_index=10+i)
         if label and not isinstance(label,(basestring,Promise)):#issubclass(label,ChangeStateAction):
+            if notify:
+                raise Exception("Cannot specify notify=True when using your own class")
             a = label(self,required,**kw)
         else:
-            a = actions.ChangeStateAction(self,required,label=label or self.text,**kw)
+            if notify:
+                cl = actions.NotifyingChangeStateAction
+            else:
+                cl = actions.ChangeStateAction
+            a = cl(self,required,label=label or self.text,**kw)
         #~ name = 'mark_' + self.value
         name = 'wf' + str(i+1)
         a.attach_to_workflow(self.choicelist,name)

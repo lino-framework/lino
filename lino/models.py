@@ -272,7 +272,12 @@ if settings.LINO.user_model:
         pass
         
 
-
+class ChangeTypes(dd.ChoiceList):
+    label = _("Change Type")
+add = ChangeTypes.add_item    
+add('C',_("Create"),'create')
+add('U',_("Update"),'update')
+add('D',_("Delete"),'delete')
 
 class Change(dd.Model):
     """
@@ -283,6 +288,7 @@ class Change(dd.Model):
         verbose_name_plural = _("Changes")
             
     time = models.DateTimeField()
+    type = ChangeTypes.field()
     if settings.LINO.user_model:
         user = dd.ForeignKey(settings.LINO.user_model)
         
@@ -296,7 +302,7 @@ class Change(dd.Model):
     
     summary = models.CharField(_("Summary"),max_length=200,blank=True)
     #~ description = dd.RichTextField(format='plain')
-    diff = dd.RichTextField(_("Changes"),format='plain')
+    diff = dd.RichTextField(_("Changes"),format='plain',blank=True)
     
     def __unicode__(self):
         #~ return "#%s - %s" % (self.id,self.time)
@@ -307,7 +313,7 @@ class Changes(dd.Table):
     model = Change
     order_by = ['-time']
     detail_layout = """
-    time user object master id
+    time user type master object id
     summary
     diff
     """
@@ -317,7 +323,7 @@ class ChangesByMaster(Changes):
     """
     Slave Table showing the changes related to the current object
     """
-    column_names = 'time user object summary'
+    column_names = 'time user type object summary object_type object_id'
     master_key = 'master'
 
 
