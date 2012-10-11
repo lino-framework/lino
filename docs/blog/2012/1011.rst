@@ -51,6 +51,7 @@ Die Regel "Nur Benutzer mit einem unleeren Feld
 war noch mal wieder was Neues für Lino.
 
 Actor.create_required war unnütz und fliegt raus. 
+Dafür haben wir jetzt :meth:`lino.core.actors.Actor.get_create_permission`
   
 
 
@@ -78,11 +79,41 @@ daher, dass `pcsw` und `newcomers` sich gegenseitig importierten.
 `pcsw` ist das "Hauptmodul" in `lino-welfare` und 
 darf deshalb die anderen Module (`newcomers`) nicht importieren.
 
+.. graphviz:: 
+   
+   digraph foo {
+   
+      
+      newcomers -> pcsw;
+      debts -> pcsw;
+      courses -> pcsw;
+      
+      isip -> pcsw;
+      
+      jobs -> pcsw;
+      
+      jobs -> isip;
+      
+   }
+
+Oder wenn ich die modlib-Module mit reinnehme:
 
 .. graphviz:: 
    
    digraph foo {
    
+      
+      subgraph cluster_modlib {
+        label = "lino.modlib";
+        outbox contacts notes uploads households accounts cal countries properties postings;
+      }
+      
+      subgraph cluster_welfare {
+        label = "lino_welfare";
+        pcsw newcomers debts isip jobs courses; 
+      }
+   
+      households -> contacts;
       pcsw -> contacts;
       pcsw -> notes;
       pcsw -> uploads;
@@ -102,11 +133,17 @@ darf deshalb die anderen Module (`newcomers`) nicht importieren.
       isip -> pcsw ;
       isip -> cal ;
       
+      cal -> contacts;
+      cal -> postings;
+      cal -> outbox;
       jobs -> contacts;
       jobs -> properties;
       jobs -> countries;
+      contacts -> countries;
       jobs -> isip;
       jobs -> pcsw;
+      
+      overlap=false;
    }
 
 
