@@ -253,7 +253,7 @@ class Actor(actions.Parametrizable):
     """
     
     required = dict()
-    create_required = dict()
+    #~ create_required = dict()
     update_required = dict()
     delete_required = dict()
     
@@ -557,6 +557,14 @@ class Actor(actions.Parametrizable):
         #~ return self.allow_read(user,None,None)
 
     @classmethod
+    def get_create_permission(self,ar):
+        """
+        Dynamic test per request. 
+        This is being called only when `allow_create` is True.
+        """
+        return True
+
+    @classmethod
     def get_row_permission(cls,obj,user,state,ba):
         """
         Returns True or False whether the given action 
@@ -596,10 +604,10 @@ class Actor(actions.Parametrizable):
             else:
                 #~ cls.detail_action = actions.ShowDetailAction()
                 cls.detail_action = cls.bind_action(actions.ShowDetailAction())
-        if cls.detail_action and cls.editable and cls.allow_create:
-            if not cls.hide_top_toolbar:
+        if cls.editable and cls.allow_create:
+            cls.create_action = cls.bind_action(actions.SubmitInsert(sort_index=1))
+            if cls.detail_action and not cls.hide_top_toolbar:
                 cls.insert_action = cls.bind_action(actions.InsertRow())
-                cls.create_action = cls.bind_action(actions.SubmitInsert(sort_index=1))
         if cls.editable:
             cls.update_action = cls.bind_action(actions.SubmitDetail(sort_index=1))
         if cls.editable and not cls.hide_top_toolbar:

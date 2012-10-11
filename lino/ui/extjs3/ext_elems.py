@@ -1563,6 +1563,7 @@ class Panel(Container):
         
         if self.is_fieldset:
             d.update(labelWidth=self.label_width * EXT_CHAR_WIDTH)
+        #~ if len(self.elements) > 1 and self.vertical:
         if self.parent is None or (len(self.elements) > 1 and self.vertical):
             """
             The `self.parent is None` test is e.g. for Parameter 

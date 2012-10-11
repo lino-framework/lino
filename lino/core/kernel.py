@@ -257,8 +257,8 @@ def unused_load_workflows(self):
             required = dict()
             if ba.action.readonly:
                 required.update(actor.required)
-            elif isinstance(ba.action,actions.InsertRow):
-                required.update(actor.create_required)
+            #~ elif isinstance(ba.action,actions.InsertRow):
+                #~ required.update(actor.create_required)
             elif isinstance(ba.action,actions.DeleteSelected):
                 required.update(actor.delete_required)
             else:

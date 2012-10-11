@@ -57,6 +57,8 @@ class Watcher(object):
         self.is_new = is_new
         
     def is_dirty(self):
+        if self.is_new: 
+            return True
         for k,v in self.original_state.iteritems():
             if v != self.watched.__dict__.get(k, NOT_GIVEN):
                 return True

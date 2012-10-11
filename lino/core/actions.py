@@ -976,17 +976,21 @@ class ActionRequest(object):
         raise ConfirmationRequired(self.step,messages)
         
     def create_phantom_rows(self,**kw):
+        #~ logger.info('20121011 %s.create_phantom_rows(), %r', self,self.create_kw)
         if self.create_kw is None or not self.actor.editable or not self.actor.allow_create:
             #~ logger.info('20120519 %s.create_phantom_row(), %r', self,self.create_kw)
             return 
-        #~ if not self.actor.get_permission(self.get_user(),self.actor.create_action):
-        #~ if not self.actor.allow_create(self.get_user(),None,None):
-        ca = self.actor.get_url_action('create_action')
-        #~ if self.actor.create_action is not None:
-        if ca is not None:
-            #~ if not self.actor.create_action.allow(self.get_user(),None,None):
-            if not ca.allow(self.get_user(),None,None):
-                return
+        if not self.actor.get_create_permission(self):
+            return
+        #~ # if not self.actor.get_permission(self.get_user(),self.actor.create_action):
+        #~ # if not self.actor.allow_create(self.get_user(),None,None):
+        #~ # ca = self.actor.get_url_action('create_action')
+        #~ ca = self.actor.create_action
+        #~ if ca is not None:
+            #~ # if not self.actor.create_action.allow(self.get_user(),None,None):
+            #~ # if not ca.allow(self.get_user(),None,None):
+            #~ if not ca.get_bound_action_permission(self.get_user(),None,None):
+                #~ return
         yield PhantomRow(self,**kw)
       
     def create_instance(self,**kw):
@@ -1004,6 +1008,7 @@ class ActionRequest(object):
                 #~ field = self.model._meta.get_field(k) ...hier
                 #~ kw[k] = v
         return obj
+        
         
     def get_data_iterator(self):
         raise NotImplementedError
@@ -1109,8 +1114,8 @@ class BoundAction(object):
         required = dict()
         if action.readonly:
             required.update(actor.required)
-        elif isinstance(action,InsertRow):
-            required.update(actor.create_required)
+        #~ elif isinstance(action,InsertRow):
+            #~ required.update(actor.create_required)
         elif isinstance(action,DeleteSelected):
             required.update(actor.delete_required)
         else:

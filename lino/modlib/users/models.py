@@ -229,6 +229,7 @@ class MySettings(Users):
     #~ detail_layout = Users.detail_layout
     #~ detail_layout = UserDetail()
     required = dict()
+    default_list_action_name = 'detail'
     
     @classmethod
     def get_default_action(cls):

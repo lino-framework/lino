@@ -658,6 +658,12 @@ class Workflow(ChoiceList):
     def after_state_change(cls,obj,ar,kw,oldstate,newstate):
         pass
 
+    #~ @classmethod
+    #~ def field(cls,*args,**kw):
+        #~ if len(cls._fields) > 0:
+            #~ raise Exception("Cannot use a Workflow for more than one field.")
+        #~ return super(Workflow,cls).field(*args,**kw)
+        
         
  #~ def set_required(self,**kw):
         #~ from lino.core import perms

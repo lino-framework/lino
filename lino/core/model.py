@@ -1,3 +1,4 @@
+# -*- coding: UTF-8 -*-
 ## Copyright 2009-2012 Luc Saffre
 ## This file is part of the Lino project.
 ## Lino is free software; you can redistribute it and/or modify 
@@ -283,7 +284,8 @@ class Model(models.Model):
         l = []
         state = ar.actor.get_row_state(obj)
         if state:
-            l.append("%s : " % state)
+            l.append(xghtml.E.b(unicode(state)))
+            l.append(u" » ")
         for a in ar.actor.get_workflow_actions(ar,obj):
             l.append(ar.renderer.action_button(obj,ar,a))
             l.append(' ')

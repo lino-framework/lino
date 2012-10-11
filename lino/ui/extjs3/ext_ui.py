@@ -715,8 +715,8 @@ class ExtUI(base.UI):
                   #~ js_code("Lino.report_window_button(ww,Lino.%s)" % de.default_action)
                 ])
                 if de.slave_grid_format == 'grid':
-                    if not de.parameters:
-                        kw.update(hide_top_toolbar=True)
+                    #~ if not de.parameters:
+                    kw.update(hide_top_toolbar=True)
                     e = ext_elems.GridElement(lh,name,de,**kw)
                     return e
                 elif de.slave_grid_format == 'summary':

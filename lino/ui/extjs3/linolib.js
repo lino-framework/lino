@@ -2843,7 +2843,8 @@ Lino.FormPanel = Ext.extend(Lino.FormPanel,{
       var p = {};
       Ext.apply(p,this.get_base_params());
       p.$ext_requests.URL_PARAM_REQUESTING_PANEL = this.getId();
-      p.$ext_requests.URL_PARAM_ACTION_NAME = this.action_name;
+      if (this.action_name) 
+          p.$ext_requests.URL_PARAM_ACTION_NAME = this.action_name;
       if (rec.phantom) {
         if (this.action_name != 'insert') 
             console.log("Warning: phantom record, but action_name is",this.action_name)

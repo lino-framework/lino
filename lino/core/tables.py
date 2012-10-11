@@ -389,7 +389,7 @@ class TableRequest(actions.ActionRequest):
             
         if limit is not None:
             self.limit = limit
-        
+            
     
     def table2xhtml(self):
         return self.ui.table2xhtml(self)
@@ -535,7 +535,8 @@ class TableRequest(actions.ActionRequest):
         if u is not None:
             kw.update(su=u.username)
         #~ return self.__class__.__name__ + '(%s)' % kw
-        return self.__class__.__name__ + ' '+str(self.action)+'(%s)' % kw
+        #~ return self.__class__.__name__ + ' '+str(self.bound_action)+'(%s)' % kw
+        return "<%s %s(%s)>" %  (self.__class__.__name__,self.bound_action.full_name(),kw)
 
 
 
