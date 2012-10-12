@@ -726,7 +726,7 @@ class ExtUI(base.UI):
                     a = de.insert_action
                     if a is not None:
                         kw.update(ls_insert_handler=js_code("Lino.%s" % a.full_name()))
-                        kw.update(ls_bbar_actions=[self.a2btn(a.action)])
+                        kw.update(ls_bbar_actions=[self.a2btn(a)])
                     #~ else:
                         #~ print 20120619, de, 'has no insert_action'
                     field = fields.HtmlBox(verbose_name=de.label,**o)
@@ -741,7 +741,7 @@ class ExtUI(base.UI):
                     a = de.insert_action
                     if a is not None:
                         kw.update(ls_insert_handler=js_code("Lino.%s" % a.full_name()))
-                        kw.update(ls_bbar_actions=[self.a2btn(a.action)])
+                        kw.update(ls_bbar_actions=[self.a2btn(a)])
                     field = fields.HtmlBox(verbose_name=de.label)
                     field.name = de.__name__
                     field._return_type_for_method = de.slave_as_html_meth(self)
@@ -1467,29 +1467,31 @@ tinymce.init({
         #~ logger.info('20120120 dbtables.all_details:\n%s',
             #~ '\n'.join([str(d) for d in dbtables.all_details]))
         
-        details = set()
-        def add(fl,formpanel_name):
+        form_panels = set()
+        param_panels = set()
+        action_param_panels = set()
+        def add(collector,fl,formpanel_name):
             # fl : a FormLayout
             if fl is not None:
                 #~ if details.has_key():
-                if fl in details:
+                if fl in collector:
                     pass
                     #~ fl._using_actors.append(actor)
                 else:
                     fl._formpanel_name = formpanel_name
                     #~ fl._using_actors = [actor]
-                    details.add(fl)
+                    collector.add(fl)
                     
         assert user == jsgen._for_user
         
         for res in actors_list:
-            add(res.detail_layout, "%s.DetailFormPanel" % res)
-            add(res.insert_layout, "%s.InsertFormPanel" % res)
-            add(res.params_layout, "%s.ParamsPanel" % res)
+            add(form_panels,res.detail_layout, "%s.DetailFormPanel" % res)
+            add(form_panels,res.insert_layout, "%s.InsertFormPanel" % res)
+            add(param_panels,res.params_layout, "%s.ParamsPanel" % res)
             
             for ba in res.get_actions():
                 if ba.action.parameters:
-                    add(ba.action.params_layout, 
+                    add(action_param_panels,ba.action.params_layout, 
                       "%s.%s_ActionFormPanel" % (res,ba.action.action_name))
 
         if False:
@@ -1497,21 +1499,33 @@ tinymce.init({
             for fl in details:
                 logger.debug('- ' + fl._formpanel_name + ' : ' + ','.join([a.actor_id for a in fl._using_actors]))
             
-        f.write('\n/* Application FormPanel subclasses */\n')
-        for fl in details:
+        #~ f.write('\n/* Application FormPanel subclasses */\n')
+        for fl in param_panels:
             lh = fl.get_layout_handle(self)
-            if fl._formpanel_name.endswith('ParamsPanel'):
-                for ln in self.js_render_ParamsPanelSubclass(lh,user):
-                    f.write(ln + '\n')
-            elif fl._formpanel_name.endswith('ActionFormPanel'):
-                for ln in self.js_render_ActionFormPanelSubclass(lh,user):
-                    f.write(ln + '\n')
-            else:
-                for ln in self.js_render_FormPanelSubclass(lh,user):
-                    f.write(ln + '\n')
+            for ln in self.js_render_ParamsPanelSubclass(lh,user):
+                f.write(ln + '\n')
+                
+        for fl in action_param_panels:
+            lh = fl.get_layout_handle(self)
+            for ln in self.js_render_ActionFormPanelSubclass(lh,user):
+                f.write(ln + '\n')
+                
+        for fl in form_panels:
+            lh = fl.get_layout_handle(self)
+            for ln in self.js_render_FormPanelSubclass(lh,user):
+                f.write(ln + '\n')
         
         actions_written = set()
-        
+        for rpt in actors_list:
+            rh = rpt.get_handle(self) 
+            for ba in rpt.get_actions():
+                if ba.action.parameters:
+                    if not ba.action in actions_written:
+                        #~ logger.info("20121005 %r is not in %r",a,actions_written)
+                        actions_written.add(ba.action)
+                        for ln in self.js_render_window_action(rh,ba,user):
+                            f.write(ln + '\n')
+          
         for rpt in actors_list:
             rh = rpt.get_handle(self) 
             if isinstance(rpt,type) and issubclass(rpt,tables.AbstractTable):
@@ -1535,11 +1549,7 @@ tinymce.init({
         
             for ba in rpt.get_actions():
                 if ba.action.parameters:
-                    if not ba.action in actions_written:
-                        #~ logger.info("20121005 %r is not in %r",a,actions_written)
-                        actions_written.add(ba.action)
-                        for ln in self.js_render_window_action(rh,ba,user):
-                            f.write(ln + '\n')
+                    pass
                 elif ba.action.opens_a_window:
                     if isinstance(ba.action,(actions.ShowDetailAction,actions.InsertRow)):
                         for ln in self.js_render_detail_action_FormPanel(rh,ba):
@@ -1644,8 +1654,11 @@ tinymce.init({
     def source_dir(self):
         return os.path.abspath(os.path.dirname(__file__))
         
-    def a2btn(self,a,**kw):
-        if isinstance(a,actions.SubmitDetail):
+    def a2btn(self,ba,**kw):
+        a = ba.action
+        if a.parameters:
+            kw.update(panel_btn_handler=js_code("Lino.param_action_handler(Lino.%s)" % ba.full_name()))
+        elif isinstance(a,actions.SubmitDetail):
             kw.update(panel_btn_handler=js_code('function(panel){panel.save()}'))
         elif isinstance(a,actions.ShowDetailAction):
             kw.update(panel_btn_handler=js_code('Lino.show_detail'))
@@ -1864,7 +1877,7 @@ tinymce.init({
             yield "  params_panel_hidden: true,"
 
         yield "  ls_bbar_actions: %s," % py2js([
-            rh.ui.a2btn(ba.action) for ba in rpt.get_actions(action.action) 
+            rh.ui.a2btn(ba) for ba in rpt.get_actions(action.action) 
                 if ba.action.show_in_bbar and ba.get_bound_action_permission(jsgen._for_user,None,None)]) 
         yield "  ls_url: %s," % py2js(ext_elems.rpt2url(rpt))
         if action.action != rpt.default_action.action:
@@ -1901,7 +1914,7 @@ tinymce.init({
                 kw.update(content_type=ContentType.objects.get_for_model(rh.actor.model).pk)
         kw.update(ls_quick_edit=rh.actor.cell_edit)
         kw.update(ls_bbar_actions=[
-            rh.ui.a2btn(ba.action) 
+            rh.ui.a2btn(ba) 
               for ba in rh.actor.get_actions(rh.actor.default_action.action) 
                   if ba.action.show_in_bbar and ba.get_bound_action_permission(jsgen._for_user,None,None)])
         kw.update(ls_grid_configs=[gc.data for gc in rh.actor.grid_configs])

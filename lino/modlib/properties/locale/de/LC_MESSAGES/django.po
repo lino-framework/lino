@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: lino.modlib.properties\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2012-10-08 04:26+0100\n"
+"POT-Creation-Date: 2012-10-12 03:14+0100\n"
 "PO-Revision-Date: 2011-07-20 15:20+0200\n"
 "Last-Translator: Luc Saffre <luc.saffre@gmail.com>\n"
 "Language-Team: de <luc.saffre@gmx.net>\n"
@@ -18,51 +18,51 @@ msgstr ""
 
 #: .\models.py:64
 msgid "certainly not...very much"
-msgstr ""
+msgstr "bloß nicht ... sehr gerne"
 
 #: .\models.py:67
 msgid "certainly not"
-msgstr ""
+msgstr "bloß nicht"
 
 #: .\models.py:68
 msgid "rather not"
-msgstr ""
+msgstr "eher nicht"
 
 #: .\models.py:69
 msgid "normally"
-msgstr ""
+msgstr "normal"
 
 #: .\models.py:70
 msgid "quite much"
-msgstr ""
+msgstr "gerne"
 
 #: .\models.py:71
 msgid "very much"
-msgstr ""
+msgstr "sehr gerne"
 
 #: .\models.py:84
 msgid "not at all...very well"
-msgstr ""
+msgstr "gar nicht ... sehr gut"
 
 #: .\models.py:87
 msgid "not at all"
-msgstr ""
+msgstr "gar nicht"
 
 #: .\models.py:88
 msgid "a bit"
-msgstr ""
+msgstr "ein bisschen"
 
 #: .\models.py:89
 msgid "moderate"
-msgstr ""
+msgstr "mittelmäßig"
 
 #: .\models.py:90
 msgid "quite well"
-msgstr ""
+msgstr "gut"
 
 #: .\models.py:91
 msgid "very well"
-msgstr ""
+msgstr "sehr gut"
 
 #: .\models.py:108 .\models.py:193 .\models.py:225
 msgid "Property Type"

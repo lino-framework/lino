@@ -720,7 +720,7 @@ class ChangeStateAction(RowAction):
     `mark_XXX`
     """
     
-    ajax = True
+    #~ ajax = True
     
     show_in_workflow = True
     
@@ -788,7 +788,7 @@ class NotifyingChangeStateAction(ChangeStateAction):
     edit_mail
     """
     def run(self,obj,ar,**kw):
-        logger.info("20121009 NotifyingChangeStateAction.run() %s",ar.action_param_values)
+        #~ logger.info("20121009 NotifyingChangeStateAction.run() %s",ar.action_param_values)
         obj.set_change_summary(ar.action_param_values.change_summary)
         return super(NotifyingChangeStateAction,self).run(obj,ar,**kw)
     

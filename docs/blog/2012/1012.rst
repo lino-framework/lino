@@ -1,4 +1,10 @@
 20121012
 ========
 
-- Neuer Tabellenparameter "Sprache" in Klientenliste. 
+- Neue Tabellenparameter "Sprachkenntnis", "Erwünschte Eigenschaften", "Nationalität" 
+  in DSBE-Klientenliste. 
+  
+- Zuweisung eines Neuantrags jetzt mit Aktionsdialogfenster.
+
+- Aktionsdialogfenster funktionierte 
+  noch nicht für normale Row Actions (d.h. `a2btn()`)

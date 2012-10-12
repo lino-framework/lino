@@ -811,7 +811,7 @@ class Table(AbstractTable):
             #~ return _("%(details)s by %(model)s %(master)s") % dict(
             title = _("%(details)s of %(master)s") % dict(
               details=title,
-              master=rr.master_instance)
+              master=ar.master_instance)
         tags = list(self.get_title_tags(ar))
         if len(tags):
             title += " (%s)" % (', '.join(tags))

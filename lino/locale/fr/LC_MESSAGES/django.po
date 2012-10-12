@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: lino\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2012-10-08 04:26+0100\n"
+"POT-Creation-Date: 2012-10-12 03:14+0100\n"
 "PO-Revision-Date: 2012-07-21 19:03+0200\n"
 "Last-Translator: Luc Saffre <luc.saffre@gmail.com>\n"
 "Language-Team: fr <lino-users@gmail.com>\n"
@@ -36,13 +36,13 @@ msgstr "Néerlandais"
 msgid "Estonian"
 msgstr "Estonien"
 
-#: .\__init__.py:1035 .\models.py:604 .\templates\500.html.py:4
-#: .\templates\base.html.py:26 .\ui\extjs3\views.py:641
-#: .\ui\extjs3\views.py:981
+#: .\__init__.py:1035 .\models.py:615 .\templates\500.html.py:4
+#: .\templates\base.html.py:26 .\ui\extjs3\views.py:643
+#: .\ui\extjs3\views.py:984
 msgid "Home"
 msgstr "Départ"
 
-#: .\__init__.py:1067 .\models.py:294
+#: .\__init__.py:1067 .\models.py:301
 msgid "Master"
 msgstr "Signalétique"
 
@@ -136,96 +136,110 @@ msgstr "Description"
 msgid "Template Text"
 msgstr "Texte modèle"
 
-#: .\models.py:281
+#: .\models.py:276
+#, fuzzy
+msgid "Change Type"
+msgstr "Langue"
+
+#: .\models.py:278 .\core\actions.py:710
+msgid "Create"
+msgstr "Créer"
+
+#: .\models.py:279
+#, fuzzy
+msgid "Update"
+msgstr "Date"
+
+#: .\models.py:280 .\core\actions.py:692
+msgid "Delete"
+msgstr "Supprimer"
+
+#: .\models.py:287
 #, fuzzy
 msgid "Change"
 msgstr "Langue"
 
-#: .\models.py:282 .\models.py:298
+#: .\models.py:288 .\models.py:305
 msgid "Changes"
 msgstr ""
 
-#: .\models.py:290
+#: .\models.py:297
 msgid "Object"
 msgstr ""
 
-#: .\models.py:296
+#: .\models.py:303
 msgid "Summary"
 msgstr ""
 
-#: .\models.py:359
+#: .\models.py:366
 #, fuzzy
 msgid "Models"
 msgstr "Modifié"
 
-#: .\models.py:376
+#: .\models.py:383
 msgid "app_label"
 msgstr ""
 
-#: .\models.py:380 .\models.py:416
+#: .\models.py:387 .\models.py:427
 #, fuzzy
 msgid "name"
 msgstr "Nom de famille"
 
-#: .\models.py:384
-msgid "detail_action"
-msgstr ""
-
-#: .\models.py:392
+#: .\models.py:403
 msgid "docstring"
 msgstr ""
 
-#: .\models.py:397
+#: .\models.py:408
 msgid "Rows"
 msgstr ""
 
-#: .\models.py:404
+#: .\models.py:415
 #, fuzzy
 msgid "Fields"
 msgstr "Fichier"
 
-#: .\models.py:420
+#: .\models.py:431
 #, fuzzy
 msgid "verbose name"
 msgstr "Prénom"
 
-#: .\models.py:424
+#: .\models.py:435
 #, fuzzy
 msgid "help text"
 msgstr "Texte modèle"
 
-#: .\models.py:447
+#: .\models.py:458
 #, fuzzy
 msgid "Inspector"
 msgstr "Insérer"
 
-#: .\models.py:451
+#: .\models.py:462
 msgid "Inspected object"
 msgstr ""
 
-#: .\models.py:452
+#: .\models.py:463
 msgid "show callables"
 msgstr ""
 
-#: .\models.py:523 .\mixins\mails.py:56
+#: .\models.py:534 .\mixins\mails.py:56
 msgid "Name"
 msgstr ""
 
-#: .\models.py:535
+#: .\models.py:546
 #, fuzzy
 msgid "Value"
 msgstr "Masculin"
 
-#: .\models.py:539
+#: .\models.py:550
 #, fuzzy
 msgid "Type"
 msgstr "(type)"
 
-#: .\models.py:559
+#: .\models.py:570
 msgid "About"
 msgstr "à propos"
 
-#: .\models.py:592
+#: .\models.py:603
 msgid "Server up since"
 msgstr ""
 
@@ -233,40 +247,44 @@ msgstr ""
 msgid "System"
 msgstr ""
 
-#: .\core\actions.py:569
+#: .\models.py:671
+msgid "Office"
+msgstr ""
+
+#: .\core\actions.py:592
 msgid "Detail"
 msgstr "Détail"
 
-#: .\core\actions.py:586 .\ui\extjs3\ext_ui.py:156
+#: .\core\actions.py:609 .\ui\extjs3\ext_ui.py:159
 msgid "New"
 msgstr "Nouveau"
 
-#: .\core\actions.py:601
+#: .\core\actions.py:624
 #, python-format
 msgid "Insert into %s"
 msgstr "Insérer dans %s"
 
-#: .\core\actions.py:622 .\mixins\__init__.py:280 .\mixins\duplicable.py:43
+#: .\core\actions.py:645 .\mixins\__init__.py:280 .\mixins\duplicable.py:43
 msgid "Duplicate"
 msgstr "Dupliquer"
 
-#: .\core\actions.py:669
-msgid "Delete"
-msgstr "Supprimer"
-
-#: .\core\actions.py:676
+#: .\core\actions.py:699
 msgid "Save"
 msgstr "Enregistrer"
 
-#: .\core\actions.py:687
-msgid "Create"
-msgstr "Créer"
+#: .\core\actions.py:783
+msgid "Reason for the change"
+msgstr ""
 
-#: .\core\dbtables.py:729
+#: .\core\actions.py:784
+msgid "Edit notification mail before sending"
+msgstr ""
+
+#: .\core\dbtables.py:739
 msgid "You have no permission to delete this row."
 msgstr ""
 
-#: .\core\dbtables.py:801
+#: .\core\dbtables.py:812
 #, python-format
 msgid "%(details)s of %(master)s"
 msgstr "%(details)s de %(master)s"
@@ -289,19 +307,19 @@ msgid "Cannot delete %(self)s because %(count)d %(refs)s refer to it."
 msgstr ""
 "%(self)s ne peut être effacé parce que %(count)d  %(refs)s y font référence"
 
-#: .\core\layouts.py:484
+#: .\core\layouts.py:486
 msgid "General"
 msgstr "Général"
 
-#: .\core\model.py:274
+#: .\core\model.py:275
 msgid "Workflow"
 msgstr ""
 
-#: .\core\tables.py:667 .\ui\extjs3\ext_store.py:679
+#: .\core\tables.py:668 .\ui\extjs3\ext_store.py:684
 msgid "Yes"
 msgstr "Oui"
 
-#: .\core\tables.py:667 .\ui\extjs3\ext_store.py:679
+#: .\core\tables.py:668 .\ui\extjs3\ext_store.py:684
 msgid "No"
 msgstr "Non"
 
@@ -485,11 +503,11 @@ msgstr ""
 msgid "Select a %s..."
 msgstr "Choisir %s..."
 
-#: .\ui\extjs3\ext_elems.py:1022 .\ui\extjs3\ext_ui.py:206
+#: .\ui\extjs3\ext_elems.py:1024 .\ui\extjs3\ext_ui.py:211
 msgid "show"
 msgstr "montrer"
 
-#: .\ui\extjs3\ext_elems.py:1618 .\ui\extjs3\ext_ui.py:1892
+#: .\ui\extjs3\ext_elems.py:1621 .\ui\extjs3\ext_ui.py:1913
 #: .\ui\extjs3\linolib.js.py:14
 msgid "No data to display."
 msgstr ""
@@ -511,41 +529,41 @@ msgstr "La clé primaire %r existante ne peut être modifiée"
 msgid "%r (invalid choice)"
 msgstr "%r (choix non valide)"
 
-#: .\ui\extjs3\ext_ui.py:165
+#: .\ui\extjs3\ext_ui.py:169
 #, fuzzy
 msgid "Show Last"
 msgstr "Dernier"
 
-#: .\ui\extjs3\ext_ui.py:170
+#: .\ui\extjs3\ext_ui.py:174
 msgid "Show All"
 msgstr "Montrer tous"
 
-#: .\ui\extjs3\ext_ui.py:200 .\ui\extjs4\ext_ui.py:1325 .\ui\qx\qx_ui.py:1068
+#: .\ui\extjs3\ext_ui.py:204 .\ui\extjs4\ext_ui.py:1325 .\ui\qx\qx_ui.py:1068
 msgid "Upload"
 msgstr "Uploader"
 
-#: .\ui\extjs3\ext_ui.py:209 .\ui\extjs4\ext_ui.py:1333 .\ui\qx\qx_ui.py:1076
+#: .\ui\extjs3\ext_ui.py:214 .\ui\extjs4\ext_ui.py:1333 .\ui\qx\qx_ui.py:1076
 msgid "Edit"
 msgstr "Editer"
 
-#: .\ui\extjs3\ext_ui.py:1121
+#: .\ui\extjs3\ext_ui.py:1127
 msgid "as"
 msgstr "comme"
 
-#: .\ui\extjs3\ext_ui.py:1145
+#: .\ui\extjs3\ext_ui.py:1153
 msgid "My settings"
 msgstr "Mes préférences"
 
-#: .\ui\extjs3\ext_ui.py:1154
+#: .\ui\extjs3\ext_ui.py:1162
 msgid "Myself"
 msgstr "moi-même"
 
-#: .\ui\extjs3\ext_ui.py:1156
+#: .\ui\extjs3\ext_ui.py:1164
 msgid "Act as..."
 msgstr "Travailler comme..."
 
-#: .\ui\extjs3\linolib.js.py:3 .\ui\extjs3\views.py:645
-#: .\ui\extjs3\views.py:1020
+#: .\ui\extjs3\linolib.js.py:3 .\ui\extjs3\views.py:647
+#: .\ui\extjs3\views.py:1023
 msgid "Next page"
 msgstr ""
 
@@ -594,8 +612,8 @@ msgstr "Confirmation"
 msgid "Alert"
 msgstr ""
 
-#: .\ui\extjs3\linolib.js.py:16 .\ui\extjs3\views.py:644
-#: .\ui\extjs3\views.py:1008
+#: .\ui\extjs3\linolib.js.py:16 .\ui\extjs3\views.py:646
+#: .\ui\extjs3\views.py:1011
 msgid "Previous page"
 msgstr "Page précédente"
 
@@ -627,8 +645,8 @@ msgstr "Dernier"
 msgid "Edit help texts for fields on this model."
 msgstr ""
 
-#: .\ui\extjs3\linolib.js.py:24 .\ui\extjs3\views.py:646
-#: .\ui\extjs3\views.py:1021
+#: .\ui\extjs3\linolib.js.py:24 .\ui\extjs3\views.py:648
+#: .\ui\extjs3\views.py:1024
 msgid "Last page"
 msgstr "Dernière page"
 
@@ -677,8 +695,8 @@ msgstr "Enregistrer vos changements au texte?"
 msgid "No more records to display. Detail window has been closed."
 msgstr ""
 
-#: .\ui\extjs3\linolib.js.py:36 .\ui\extjs3\views.py:643
-#: .\ui\extjs3\views.py:1007
+#: .\ui\extjs3\linolib.js.py:36 .\ui\extjs3\views.py:645
+#: .\ui\extjs3\views.py:1010
 msgid "First page"
 msgstr "Première page"
 
@@ -702,50 +720,50 @@ msgstr ""
 msgid "Enter a date in format YYYY-MM-DD (use zeroes for unknown parts)."
 msgstr ""
 
-#: .\ui\extjs3\views.py:232 .\ui\extjs4\ext_ui.py:229 .\ui\qx\qx_ui.py:229
+#: .\ui\extjs3\views.py:233 .\ui\extjs4\ext_ui.py:229 .\ui\qx\qx_ui.py:229
 #, python-format
 msgid "Row %(rowid)d of %(rowcount)d"
 msgstr "Ligne %(rowid)d de %(rowcount)d"
 
-#: .\ui\extjs3\views.py:255 .\ui\extjs4\ext_ui.py:1015 .\ui\qx\qx_ui.py:819
+#: .\ui\extjs3\views.py:257 .\ui\extjs4\ext_ui.py:1015 .\ui\qx\qx_ui.py:819
 #, python-format
 msgid "Failed to delete %(record)s : %(error)s."
 msgstr "Echec lors de l'effacement de %(record)s: %(error)s."
 
-#: .\ui\extjs3\views.py:296
+#: .\ui\extjs3\views.py:298
 #, python-format
 msgid "%s : nothing to save."
 msgstr ""
 
-#: .\ui\extjs3\views.py:330 .\ui\extjs4\ext_ui.py:817 .\ui\qx\qx_ui.py:622
+#: .\ui\extjs3\views.py:332 .\ui\extjs4\ext_ui.py:817 .\ui\qx\qx_ui.py:622
 #, python-format
 msgid "%s has been created."
 msgstr "%s a été créé"
 
-#: .\ui\extjs3\views.py:333 .\ui\extjs4\ext_ui.py:819 .\ui\qx\qx_ui.py:624
+#: .\ui\extjs3\views.py:335 .\ui\extjs4\ext_ui.py:819 .\ui\qx\qx_ui.py:624
 #, python-format
 msgid "%s has been saved."
 msgstr "%s a été sauvé"
 
-#: .\ui\extjs3\views.py:771
+#: .\ui\extjs3\views.py:773
 #, python-format
 msgid "Action \"%(action)s\" failed for %(record)s:"
 msgstr "L'action %(action)s a échoué pour %(record)s:"
 
-#: .\ui\extjs3\views.py:776
+#: .\ui\extjs3\views.py:778
 msgid "An error report has been sent to the system administrator."
 msgstr ""
 
-#: .\ui\extjs3\views.py:925 .\ui\extjs3\views.py:966
+#: .\ui\extjs3\views.py:928 .\ui\extjs3\views.py:969
 #, python-format
 msgid "List contains more than %d rows"
 msgstr ""
 
-#: .\ui\extjs3\views.py:982
+#: .\ui\extjs3\views.py:985
 msgid "Using ExtJS"
 msgstr ""
 
-#: .\ui\extjs3\views.py:1072
+#: .\ui\extjs3\views.py:1075
 #, fuzzy, python-format
 msgid "Error while saving GC for %(table)s: %(error)s"
 msgstr ""
@@ -785,46 +803,46 @@ msgstr "Choix pour %s"
 msgid "Language"
 msgstr "Langue"
 
-#: .\utils\choicelists.py:428
+#: .\utils\choicelists.py:430
 #, python-format
 msgid "%(value)r (invalid choice for %(list)s)"
 msgstr "%(value)r (choix non valable pour %(list)s)"
 
-#: .\utils\choicelists.py:664
+#: .\utils\choicelists.py:695
 msgid "User Level"
 msgstr ""
 
-#: .\utils\choicelists.py:679
+#: .\utils\choicelists.py:710
 msgid "Guest"
 msgstr ""
 
-#: .\utils\choicelists.py:681
+#: .\utils\choicelists.py:712
 msgid "Secretary"
 msgstr ""
 
-#: .\utils\choicelists.py:682 .\utils\choicelists.py:826
+#: .\utils\choicelists.py:713 .\utils\choicelists.py:857
 #, fuzzy
 msgid "User"
 msgstr "utilisateur"
 
-#: .\utils\choicelists.py:683
+#: .\utils\choicelists.py:714
 #, fuzzy
 msgid "Manager"
 msgstr "Langue"
 
-#: .\utils\choicelists.py:684 .\utils\choicelists.py:827
+#: .\utils\choicelists.py:715 .\utils\choicelists.py:858
 msgid "Administrator"
 msgstr ""
 
-#: .\utils\choicelists.py:685
+#: .\utils\choicelists.py:716
 msgid "Expert"
 msgstr ""
 
-#: .\utils\choicelists.py:696
+#: .\utils\choicelists.py:727
 msgid "User Group"
 msgstr ""
 
-#: .\utils\choicelists.py:784
+#: .\utils\choicelists.py:815
 msgid "User Profile"
 msgstr ""
 
@@ -931,9 +949,6 @@ msgstr ""
 #, fuzzy
 #~ msgid "username"
 #~ msgstr "Nom de famille"
-
-#~ msgid "Date"
-#~ msgstr "Date"
 
 #, fuzzy
 #~ msgid "Closed"

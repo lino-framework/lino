@@ -1453,20 +1453,20 @@ class GuestsByPartner(Guests):
     master_key = 'partner'
     column_names = 'event role workflow_buttons remark *'
 
-class MyInvitations(GuestsByPartner):
+class MyPresences(GuestsByPartner):
     required = dict(user_groups='office',auth=True)
     order_by = ['event__start_date','event__start_time']
-    label = _("My received invitations")
-    help_text = _("""Shows all my received invitations, independently of their state.""")
+    label = _("My presences")
+    help_text = _("""Shows all my presences in calendar events, independently of their state.""")
     column_names = 'event__start_date event__start_time event_summary role workflow_buttons remark *'
     
     @classmethod
     def get_request_queryset(self,ar):
         ar.master_instance = ar.get_user().partner
-        return super(MyInvitations,self).get_request_queryset(ar)
+        return super(MyPresences,self).get_request_queryset(ar)
         
     
-class MyPendingInvitations(MyInvitations):
+class MyPendingInvitations(MyPresences):
     help_text = _("""Shows received invitations which I must accept or reject.""")
     label = _("My pending received invitations")
     filter = models.Q(state=GuestState.invited)
@@ -2100,10 +2100,11 @@ def setup_main_menu(site,ui,user,m):
     m.add_action(MyTasks)
     m.add_action(MyTasksToDo)
     
-    m.add_separator('-')
     
-    m.add_action(MyInvitations)
-    m.add_action(MyPendingInvitations)
+    if user.partner:
+        m.add_separator('-')
+        m.add_action(MyPresences)
+        m.add_action(MyPendingInvitations)
     #~ m.add_action(MySentInvitations)
     #~ m.add_action(MyPendingSentInvitations)
     

@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2012-10-08 04:27+0100\n"
+"POT-Creation-Date: 2012-10-12 03:15+0100\n"
 "PO-Revision-Date: 2012-07-22 15:10+0200\n"
 "Last-Translator: Luc Saffre <luc.saffre@gmail.com>\n"
 "Language-Team: \n"
@@ -55,22 +55,22 @@ msgstr "Remarques"
 msgid "Name"
 msgstr "Nom"
 
-#: .\models.py:248
+#: .\models.py:252
 msgid "Authority"
 msgstr "Procuration"
 
-#: .\models.py:249
+#: .\models.py:253
 msgid "Authorities"
 msgstr "Procurations"
 
-#: .\models.py:254
+#: .\models.py:258
 msgid "The user who gets authority to act in your name."
 msgstr ""
 
-#: .\models.py:278
+#: .\models.py:282
 msgid "Authorities given"
 msgstr "Procurations accordées"
 
-#: .\models.py:284
+#: .\models.py:288
 msgid "Authorities taken"
 msgstr "Procurations reçues"

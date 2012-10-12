@@ -1896,6 +1896,17 @@ Lino.row_action_handler = function(actionName) {
   return fn;
 };
 
+Lino.param_action_handler = function(window_action) { // 20121012
+  var fn = function(panel,btn,step) {
+    Lino.do_on_current_record(panel,function(rec) {
+      //~ console.log(panel);
+      //~ 20120723 Lino.call_row_action(panel,rec.id,actionName,step,fn);
+      window_action.run(panel.getId(),{}); 
+    });
+  };
+  return fn;
+};
+
 
 Lino.run_row_action = function(requesting_panel,url,pk,actionName) {
   //~ var panel = action.get_window().main_item;

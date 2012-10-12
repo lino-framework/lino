@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: lino.modlib.contacts\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2012-10-08 04:26+0100\n"
+"POT-Creation-Date: 2012-10-12 03:14+0100\n"
 "PO-Revision-Date: 2011-03-02 21:46+0200\n"
 "Last-Translator: Luc Saffre <luc.saffre@gmail.com>\n"
 "Language-Team: et <et>\n"
@@ -15,7 +15,7 @@ msgstr ""
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 
-#: .\models.py:113 .\models.py:703 .\models.py:2074 .\utils.py:60
+#: .\models.py:113 .\models.py:703 .\models.py:2076 .\utils.py:60
 msgid "Calendar"
 msgstr ""
 
@@ -133,7 +133,7 @@ msgstr ""
 msgid "UID"
 msgstr ""
 
-#: .\models.py:630 .\models.py:1803
+#: .\models.py:630 .\models.py:1805
 msgid "Summary"
 msgstr ""
 
@@ -321,11 +321,12 @@ msgid "Remark"
 msgstr "Märkused"
 
 #: .\models.py:1459
-msgid "My received invitations"
+msgid "My presences"
 msgstr ""
 
 #: .\models.py:1460
-msgid "Shows all my received invitations, independently of their state."
+msgid ""
+"Shows all my presences in calendar events, independently of their state."
 msgstr ""
 
 #: .\models.py:1470
@@ -336,7 +337,7 @@ msgstr ""
 msgid "My pending received invitations"
 msgstr ""
 
-#: .\models.py:1562 .\models.py:1998
+#: .\models.py:1562 .\models.py:2000
 msgid "Upcoming reminders"
 msgstr ""
 
@@ -356,45 +357,45 @@ msgstr ""
 msgid "with"
 msgstr ""
 
-#: .\models.py:1781
+#: .\models.py:1783
 msgid "Hidden"
 msgstr ""
 
-#: .\models.py:1800
+#: .\models.py:1802
 #, fuzzy
 msgid "Start"
 msgstr "Tänav"
 
-#: .\models.py:1801
+#: .\models.py:1803
 msgid "End"
 msgstr ""
 
-#: .\models.py:1970
+#: .\models.py:1972
 msgid "Update Reminders"
 msgstr ""
 
-#: .\models.py:1978
+#: .\models.py:1980
 #, python-format
 msgid "%(num)d reminders for %(user)s have been updated."
 msgstr ""
 
-#: .\models.py:2003
+#: .\models.py:2005
 msgid "Missed reminders"
 msgstr ""
 
-#: .\models.py:2036
+#: .\models.py:2038
 msgid "Default access class"
 msgstr ""
 
-#: .\models.py:2037
+#: .\models.py:2039
 msgid "The default access class for your calendar events and tasks."
 msgstr ""
 
-#: .\models.py:2043
+#: .\models.py:2045
 msgid "Default calendar"
 msgstr ""
 
-#: .\models.py:2044
+#: .\models.py:2046
 msgid "The default calendar for your events and tasks."
 msgstr ""
 

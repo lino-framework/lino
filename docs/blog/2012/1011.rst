@@ -42,7 +42,7 @@ Es gibt noch eine Menge "Teufel im Detail" beim Workflow. Hier einige neue Regel
   wird `Beginndatum` aufs Tagesdatum 
   und `Begleitungsart (Dienst)` auf die des Benutzers ausgefüllt.
 
-(Komplette Liste der Regeln sammle ich unter :doc:`/user/clients`
+(Komplette Liste der Regeln sammeln wir unter :doc:`/user/clients`)
 
 Customizing create permissions
 ------------------------------
