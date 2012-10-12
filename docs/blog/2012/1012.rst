@@ -1,0 +1,4 @@
+20121012
+========
+
+- Neuer Tabellenparameter "Sprache" in Klientenliste. 

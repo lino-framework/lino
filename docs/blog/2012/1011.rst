@@ -41,7 +41,8 @@ Es gibt noch eine Menge "Teufel im Detail" beim Workflow. Hier einige neue Regel
 - Wenn man ein Coaching manuell erstellt, 
   wird `Beginndatum` aufs Tagesdatum 
   und `Begleitungsart (Dienst)` auf die des Benutzers ausgefüllt.
-  
+
+(Komplette Liste der Regeln sammle ich unter :doc:`/user/clients`
 
 Customizing create permissions
 ------------------------------

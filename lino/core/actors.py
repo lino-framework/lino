@@ -709,7 +709,19 @@ class Actor(actions.Parametrizable):
         Return the title of this Table for the given request `ar`.
         Override this if your Table's title should mention for example filter conditions.
         """
-        return self.title or self.label
+        # NOTE: similar code in dbtables
+        title = self.title or self.label
+        tags = list(self.get_title_tags(ar))
+        if len(tags):
+            title += " (%s)" % (', '.join(tags))
+        return title
+        
+        
+        
+        
+    @classmethod
+    def get_title_tags(self,ar):
+        return []
         
     @classmethod
     def setup_request(self,req):

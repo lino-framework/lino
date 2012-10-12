@@ -802,20 +802,21 @@ class Table(AbstractTable):
     #~ def get_detail(self):
         #~ return self.model._lino_detail
         
+        
     @classmethod
-    def get_title(self,rr):
-        assert rr is not None
-        #~ if rr is not None and self.master is not None:
+    def get_title(self,ar):
+        # NOTE: similar code in tables
+        title = self.title or self.label
         if self.master is not None:
             #~ return _("%(details)s by %(model)s %(master)s") % dict(
-            return _("%(details)s of %(master)s") % dict(
-              #~ model=self.master._meta.verbose_name,
-              #~ model=rr.master_instance._meta.verbose_name,
-              #~ details=self.model._meta.verbose_name_plural,
-              details=self.label,
+            title = _("%(details)s of %(master)s") % dict(
+              details=title,
               master=rr.master_instance)
-        #~ return AbstractTable.get_title(self,rr)
-        return super(Table,self).get_title(rr)
+        tags = list(self.get_title_tags(ar))
+        if len(tags):
+            title += " (%s)" % (', '.join(tags))
+        return title
+        
         
     @classmethod
     def get_queryset(self):
