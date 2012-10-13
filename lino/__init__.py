@@ -183,12 +183,13 @@ class Lino(object):
     and only if :attr:`use_tinymce` is True.
     """
     
-    beid_jslib_root = None
+    eid_jslib_root = None
     """
-    Path to the `beid_jslib` root directory. 
+    Path to the `eid_jslib` root directory. 
     Only to be used on a development server
     if the `media` directory has no symbolic link to the directory,
-    and only if :attr:`use_beid_jslib` is True.
+    and only if :attr:`use_eid_jslib` is True.
+    http://code.google.com/p/eid-javascript-lib/
     """
     
     
@@ -290,14 +291,14 @@ class Lino(object):
     
     use_gridfilters = True
     
-    use_beid_jslib = True
+    use_eid_jslib = True
     """
     Whether to include functionality to read Belgian eid cards.
     
     If this is True, Lino expects Johan De Schutter's
     `eid-javascript-lib <http://code.google.com/p/eid-javascript-lib/>`_
     to be installed in a directory `media/beid-jslib`.
-    See also :attr:`beid_jslib_root`.
+    See also :attr:`eid_jslib_root`.
     
     """
     

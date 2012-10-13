@@ -1,0 +1,13 @@
+20121013
+========
+
+- Moved to our new home at
+  http://www.lino-framework.org/
+  
+  There is also a new public demo:
+  http://welfare-demo.lino-framework.org/
+
+- :mod:`lino.apps.aze` had become broken after the recent changes. 
+  Now it is almost funtional again.
+  
+Checkin.  

@@ -166,6 +166,7 @@ into `~/snapshots/`::
   wget http://pypi.python.org/packages/source/o/odfpy/odfpy-0.9.4.tar.gz
   tar -xvzf odfpy-0.9.4.tar.gz
   
+  
 Note: Lino didn't yet migrate to ExtJS 4.0. See :doc:`/tickets/40`
 
 Install TinyMCE language packs
@@ -365,10 +366,14 @@ It is the central place where Lino expects static files to be served.
 You must manually add the following symbolic links in order to 
 tell Lino where certain other software is installed on your server::
 
-  ln -s ~/snapshots/lino/media media/lino
-  ln -s ~/snapshots/ext-3.3.1 media/extjs
-  ln -s ~/snapshots/extensible-1.0.1 media/extensible
-  ln -s /usr/share/tinymce/www media/tinymce
+  cd media
+  ln -s ~/snapshots/lino/media lino
+  ln -s ~/snapshots/ext-3.3.1 extjs
+  ln -s ~/snapshots/extensible-1.0.1 extensible
+  ln -s /usr/share/tinymce/www tinymce
+  ln -s /usr/share/tinymce/www beid_jslib
+  
+  cd ..
   
 Besides these manual entries, 
 the Lino server will 

@@ -393,6 +393,14 @@ class BaseLayout(object):
     def get_data_elem(self,name): 
         return self._table.get_data_elem(name)
         
+    def remove_element(self,*args):
+        """
+        Removes specified element names from this Panel's `main` template.
+        """
+        for name in args:
+            self.main = self.main.replace(name,'')
+        
+        
     def setup_handle(self,lh):
         pass
         

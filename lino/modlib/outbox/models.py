@@ -470,15 +470,15 @@ class Mails(dd.Table):
     model = Mail
     column_names = "sent recipients subject * body"
     order_by = ["sent"]
-    detail_layout = """
+    detail_layout = dd.FormLayout("""
     subject project date 
     user sent #build_time id owner
     RecipientsByMail:50x5 AttachmentsByMail:20x5 uploads.UploadsByController:20x5
     body:90x10
-    """
+    """)
     
 if not settings.LINO.project_model:
-    Mails.detail_layout.replace('project','')
+    Mails.detail_layout.remove_element('project')
     
     
 class MyOutbox(Mails):

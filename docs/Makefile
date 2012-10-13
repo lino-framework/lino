@@ -50,8 +50,9 @@ show:
 	$(OPENHTML) $(BUILDDIR)\index.html
   
 upload:
-	python ../setup.py upload_sphinx --upload-dir $(BUILDDIR)
-	cd $(BUILDDIR) && rsync -r --progress --delete --times ./ luc@saffre-rumma.net:~/public_html/sphinxbuild/$(SITENAME)
+	cd $(BUILDDIR) && rsync -r --progress --delete --times ./ luc@lino-framework.org:~/public_html/$(SITENAME)
+	#python ../setup.py upload_sphinx --upload-dir $(BUILDDIR)
+	#cd $(BUILDDIR) && rsync -r --progress --delete --times ./ luc@saffre-rumma.net:~/public_html/sphinxbuild/$(SITENAME)
 
 
 doctest:

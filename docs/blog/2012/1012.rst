@@ -8,3 +8,9 @@
 
 - Aktionsdialogfenster funktionierte 
   noch nicht für normale Row Actions (d.h. `a2btn()`)
+
+
+
+
+Renamed `beid_jslib` to :attr:`lino.Lino.eid_jslib`.
+http://code.google.com/p/eid-javascript-lib/

@@ -984,7 +984,7 @@ Indicates that this Event shouldn't prevent other Events at the same time."""))
             '''summary''')
 
 
-class EventDetailLayout(dd.FormLayout):
+class EventDetail(dd.FormLayout):
     start = "start_date start_time"
     end = "end_date end_time"
     main = """
@@ -995,14 +995,7 @@ class EventDetailLayout(dd.FormLayout):
     description
     GuestsByEvent outbox.MailsByController
     """
-
-class EventInsertLayout(EventDetailLayout):
-    main = """
-    calendar summary 
-    start end 
-    place priority access_class transparent 
-    """
-    
+   
 class Events(dd.Table):
     model = 'cal.Event'
     required = dict(user_groups='office',user_level='manager')
@@ -1010,8 +1003,12 @@ class Events(dd.Table):
     #~ active_fields = ['all_day']
     order_by = ["start_date","start_time"]
     
-    detail_layout = EventDetailLayout()
-    insert_layout = EventInsertLayout()
+    detail_layout = EventDetail()
+    insert_layout = """
+    calendar summary 
+    start end 
+    place priority access_class transparent 
+    """
     
 
     

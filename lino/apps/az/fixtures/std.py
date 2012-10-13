@@ -24,7 +24,7 @@ from lino.utils.babel import babel_values, babelitem
 
 def objects():
   
-    mailType = Instantiator('mails.MailType').build
+    mailType = Instantiator('notes.NoteType').build
     
     yield mailType(**babel_values('name',
         en="Inscription",

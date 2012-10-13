@@ -90,7 +90,7 @@ def resolve_app(app_label):
         if app_name == app_label or app_name.endswith('.'+app_label):
             return import_module('.models', app_name)
     try:
-        return import_module('lino.modlib%s.dummy' % app_label)
+        return import_module('lino.modlib.%s.dummy' % app_label)
     except ImportError:
         pass
         

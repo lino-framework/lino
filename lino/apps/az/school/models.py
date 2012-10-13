@@ -46,19 +46,14 @@ from lino import mixins
 from lino.modlib.notes import models as notes
 #~ from lino.modlib.links import models as links
 #~ from lino.modlib.uploads import models as uploads
-from lino.modlib.cal import models as cal
-from lino.modlib.users import models as users
-from lino.utils.choicelists import HowWell, Gender
+#~ from lino.modlib.cal import models as cal
+#~ from lino.modlib.users import models as users
+from lino.modlib.contacts.utils import Gender
+from lino.modlib.properties.models import HowWell
+#~ from lino.utils.choicelists import HowWell, Gender
 from lino.utils.choicelists import ChoiceList
 #~ from lino.modlib.properties.utils import KnowledgeField #, StrengthField
 #~ from lino.modlib.uploads.models import UploadsByPerson
-from lino.models import get_site_config
-from lino.core.modeltools import get_field
-from lino.core.modeltools import resolve_field
-from lino.core.modeltools import range_filter
-from lino.utils.babel import DEFAULT_LANGUAGE, babelattr, babeldict_getitem
-from lino.utils.babel import language_choices
-#~ from lino.utils.babel import add_babel_field, DEFAULT_LANGUAGE, babelattr, babeldict_getitem
 from lino.utils import babel 
 from lino.utils.choosers import chooser
 from lino.utils import mti
@@ -67,9 +62,8 @@ from lino.mixins.printable import DirectPrintAction, Printable
 from lino.core.modeltools import obj2str
 
 from lino.modlib.countries.models import CountryCity
-from lino.modlib.cal import models as cal
-from lino.modlib.contacts.models import Partner
-from lino.core.modeltools import resolve_app, resolve_model
+#~ from lino.modlib.cal import models as cal
+#~ from lino.modlib.contacts.models import Partner
 
 #~ # not used here, but these modules are required in INSTALLED_APPS, 
 #~ # and other code may import them using 
@@ -79,11 +73,13 @@ from lino.core.modeltools import resolve_app, resolve_model
 #~ from lino.modlib.countries.models import Country, City
 
 if settings.LINO.user_model:
-    User = resolve_model(settings.LINO.user_model,strict=True)
+    User = dd.resolve_model(settings.LINO.user_model,strict=True)
 
-contacts = resolve_app('contacts')
-Company = resolve_model('contacts.Company',strict=True)
-Person = resolve_model('contacts.Person',strict=True)
+users = dd.resolve_app('users')
+cal = dd.resolve_app('cal')
+contacts = dd.resolve_app('contacts')
+Company = dd.resolve_model('contacts.Company',strict=True)
+Person = dd.resolve_model('contacts.Person',strict=True)
 
 
 
@@ -344,23 +340,24 @@ class EnrolmentsByPupil(Enrolments):
   
 
 class EventDetail(cal.EventDetail):
-    lesson = """
+    lesson = dd.Panel("""
     owner start_date start_time end_time place 
     school.PresencesByEvent
-    """
-    event = """
+    """,label=_("Lesson"))
+    
+    event = dd.Panel("""
     id:8 user priority access_class transparent #rset 
     type summary status 
     calendar created:20 modified:20 
     description
     cal.GuestsByEvent 
-    """
+    """,label=_("Event"))
     main = "lesson event"
 
-    def setup_handle(self,lh):
+    #~ def setup_handle(self,lh):
       
-        lh.lesson.label = _("Lesson")
-        lh.event.label = _("Event")
+        #~ lh.lesson.label = _("Lesson")
+        #~ lh.event.label = 
         #~ lh.notes.label = _("Notes")
 
 

@@ -5060,7 +5060,7 @@ function captureEvents(observable) {
  
 
 
-#if $settings.LINO.use_beid_jslib
+#if $settings.LINO.use_eid_jslib
 
 try {
 
@@ -5114,7 +5114,7 @@ try {
   }
 } catch (err){
   Lino.read_beid_card = function(requesting_panel) {
-      Lino.alert("`Lino.use_beid_jslib` is True, but `/media/beid-jslib/be_belgium_eid.js` not found");
+      Lino.alert("`Lino.use_eid_jslib` in your `settings.py` is True, but `/media/eid-jslib/be_belgium_eid.js` not found");
   }
 }  
 

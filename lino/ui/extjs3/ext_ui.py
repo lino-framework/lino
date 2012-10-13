@@ -919,8 +919,8 @@ class ExtUI(base.UI):
             setup_media_link('extensible','extensible_root')
         if settings.LINO.use_tinymce:
             setup_media_link('tinymce','tinymce_root')
-        if settings.LINO.use_beid_jslib:
-            setup_media_link('beid-jslib','beid_jslib_root')
+        if settings.LINO.use_eid_jslib:
+            setup_media_link('eid-jslib','eid_jslib_root')
             
         setup_media_link('lino',source=join(dirname(lino.__file__),'..','media'))
 
@@ -1035,7 +1035,7 @@ tinymce.init({
             
             yield javascript("/lino/jasmine/specs.js")
             
-        if settings.LINO.use_beid_jslib:
+        if settings.LINO.use_eid_jslib:
             yield javascript('/beid-jslib/be_belgium_eid.js')
             
             
@@ -1214,8 +1214,8 @@ tinymce.init({
         yield "}); // end of onReady()"
         yield '</script></head><body>'
 
-        if settings.LINO.use_beid_jslib:
-            p = self.media_url('beid-jslib')
+        if settings.LINO.use_eid_jslib:
+            p = self.media_url('eid-jslib')
             #~ print p
             yield '<applet code="org.jdesktop.applet.util.JNLPAppletLauncher"'
             yield 'codebase = "%s"' % p
