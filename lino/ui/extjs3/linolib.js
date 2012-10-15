@@ -2274,13 +2274,16 @@ Lino.ActionFormPanel = Ext.extend(Lino.ActionFormPanel,{
   constructor : function(config){
     config.bbar = [
         {text:'OK',handler:this.on_ok,scope:this},
-        {text:'Cancel',handler:this.close,scope:this}
+        {text:'Cancel',handler:this.on_cancel,scope:this}
     ];
     //~ config.items = config.params_panel;
     Lino.ActionFormPanel.superclass.constructor.call(this, config);
   }
-  ,initComponent : function(){
-    Lino.ActionFormPanel.superclass.initComponent.call(this);
+  //~ ,initComponent : function(){
+    //~ Lino.ActionFormPanel.superclass.initComponent.call(this);
+  //~ }
+  ,on_cancel : function() { 
+    this.get_containing_window().close();
   }
   ,on_ok : function() { 
     //~ var rp = this.requesting_panel;
@@ -2306,7 +2309,7 @@ Lino.ActionFormPanel = Ext.extend(Lino.ActionFormPanel,{
     this.clear_base_params();
     if (status == undefined) status = {};
     //~ if (status.param_values) 
-    this.set_param_values(status.param_values);
+    this.set_field_values(status.field_values);
     if (status.base_params) this.set_base_params(status.base_params);
   }
   

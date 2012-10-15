@@ -146,6 +146,8 @@ def register_params(cls):
             cls.params_layout = cls._layout_class.join_str.join(cls.parameters.keys())
         if isinstance(cls.params_layout,basestring):
             cls.params_layout = cls._layout_class(cls.params_layout,cls)
+        elif isinstance(cls.params_layout,layouts.Panel):
+            cls.params_layout = cls._layout_class(cls.params_layout.desc,cls,**cls.params_layout.options)
 
 def setup_params_choosers(self):
     if self.parameters:
@@ -377,7 +379,7 @@ class Action(Parametrizable):
             self.label = label
             
         register_params(self)
-        setup_params_choosers(self.__class__)
+        #~ setup_params_choosers(self.__class__)
             
         #~ if label is None:
             #~ label = self.label or self.url_action_name 
@@ -503,7 +505,8 @@ class Action(Parametrizable):
         #~ kw.update(action=self)
         #~ return self.defining_actor.request(*args,**kw)
         
-    def param_defaults(self,ar,**kw):
+    #~ def param_defaults(self,ar,**kw):
+    def action_param_defaults(self,ar,obj,**kw):
         """
         Same as Actor.param_defaults, except that here it is a instance method
         """
@@ -892,7 +895,7 @@ class ActionRequest(object):
             self.param_values = AttrDict(**pv)
             
         if self.bound_action.action.parameters is not None:
-            apv = self.bound_action.action.param_defaults(self)
+            apv = self.bound_action.action.action_param_defaults(self,None)
             if request is not None:
                 #~ pv.update(self.ui.parse_params(self.ah,request))
                 #~ pv.update(self.ah.store.parse_params(request))
@@ -1039,6 +1042,14 @@ class ActionRequest(object):
     def get_request_url(self,*args,**kw):
         return self.ui.get_request_url(self,*args,**kw)
 
+    def get_action_status(self,ba,obj,**kw):
+        #~ logger.info("get_action_status %s",ba.full_name())
+        if ba.action.parameters:
+            kw.update(field_values=ba.action.params_layout.params_store.pv2dict(
+                self.ui,ba.action.action_param_defaults(self,obj)))
+        return kw
+      
+      
     def get_status(self,ui,**kw):
         if self.actor.parameters:
             #~ kw.update(param_values=self.ah.store.pv2dict(ui,self.param_values))

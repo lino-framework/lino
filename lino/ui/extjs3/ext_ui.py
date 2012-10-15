@@ -374,7 +374,11 @@ class ExtRenderer(HtmlRenderer):
         #~ return self.js2url(self.action_call(a,after_show))
 
     def action_button(self,obj,ar,a,label=None):
-        if a.action.opens_a_window or a.action.parameters:
+        if a.action.parameters:
+            st = ar.get_action_status(a,obj)
+            #~ st.update(record_id=obj.pk)
+            return self.window_action_button(ar.request,a,st,label or a.action.label)
+        if a.action.opens_a_window:
             st = ar.get_status(self)
             st.update(record_id=obj.pk)
             return self.window_action_button(ar.request,a,st,label or a.action.label)

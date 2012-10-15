@@ -1,0 +1,14 @@
+20121015
+========
+
+Ein wichtiges Problem war noch in der Version von Freitag: AssignCoach 
+zeigte im Aktionsdialogfenster nicht an, wer denn jetzt wem zugewiesen 
+wird. Wenn man sich dennoch sicher war und auf OK klickte, 
+kam diese Info in einer weiteren Frage, 
+ob man denn auch wirklich sicher sei. 
+Also von der Benutzung her unsinnig.
+
+Das habe ich (finde ich) elegant gelöst, indem ich den Klienten und den Coach 
+als schreibgeschützte Parameter der Aktion definiere.
+`AssignCoach.action_param_defaults`
+

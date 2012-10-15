@@ -314,6 +314,9 @@ class LayoutHandle:
     def get_data_elem(self,name): 
         return self.layout.get_data_elem(name)
         
+    def get_choices_url(self,*args,**kw):
+        return self.layout.get_choices_url(self.ui,*args,**kw)
+        
 
 class unused_ListLayoutHandle(LayoutHandle):
   
@@ -537,6 +540,13 @@ add_tabpanel() on %s horizontal 'main' panel %r."""
     def __str__(self):
         #~ return "%s Detail(%s)" % (self.actor,[str(x) for x in self.layouts])
         return "%s on %s" % (self.__class__.__name__,self._table)
+        
+    def get_choices_url(self,ui,field_name,**kw):
+        return ui.build_url("choices",
+          self._table.app_label,
+          self._table.__name__,
+          field_name,**kw)
+        
 
         
             
@@ -577,4 +587,11 @@ class ActionParamsLayout(ParamsLayout):
     window_size = (50,'auto')
     url_param_name = ext_requests.URL_PARAM_FIELD_VALUES
 
-        
+    def get_choices_url(self,ui,field_name,**kw):
+        a = self._table
+        return ui.build_url("apchoices",
+          'oops', # todo: instantiate ActionParamsLayout per BoundAction (not per Action)?
+          #~ ba.actor.app_label,
+          #~ ba.actor.__name__,
+          a.action_name,
+          field_name,**kw)

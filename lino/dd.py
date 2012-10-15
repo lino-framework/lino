@@ -78,6 +78,7 @@ Miscellaneous:
 - :class:`UserLevels <lino.utils.choicelists.UserLevels>`
 - :class:`ChoiceList <lino.utils.choicelists.ChoiceList>`
 - :class:`Workflow <lino.utils.choicelists.Workflow>`
+- :class:`ChangeStateAction <lino.core.actions.ChangeStateAction>`
 
 
 
@@ -145,6 +146,8 @@ from lino.utils.choicelists import UserLevels, UserProfiles, UserGroups
 #~ from lino.base.utils import UserLevels, UserGroups, UserProfiles
 
 from lino.core.layouts import FormLayout, Panel
+from lino.core.layouts import ParamsLayout
+#~ from lino.core.layouts import ActionParamsLayout
 #~ DetailLayout = InsertLayout = FormLayout
 
 #~ from lino.core.layouts import DetailLayout, InsertLayout

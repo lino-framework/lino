@@ -272,6 +272,14 @@ class Model(models.Model):
     def summary_row(self,ar,**kw):
         return ar.href_to(self)
         
+    #~ @fields.displayfield(_("ACtions"))
+    #~ def action_buttons(obj,ar):
+        #~ l = []
+        #~ for a in ar.actor.get_custom_actions(ar,obj):
+            #~ l.append(ar.renderer.action_button(obj,ar,a))
+            #~ l.append(' ')
+        #~ return xghtml.E.p(*l)
+      
     @fields.displayfield(_("Workflow"))
     def workflow_buttons(obj,ar):
         """
@@ -282,7 +290,7 @@ class Model(models.Model):
         #~ print 20120621 , actor,  self
         #~ print 20120618, ar
         l = []
-        state = ar.actor.get_row_state(obj)
+        state = actor.get_row_state(obj)
         if state:
             l.append(xghtml.E.b(unicode(state)))
             l.append(u" » ")
