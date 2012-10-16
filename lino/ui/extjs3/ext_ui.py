@@ -150,7 +150,7 @@ class HtmlRenderer(object):
         buttons = []
         a = ar.actor.insert_action
         if a is not None:
-            if a.get_bound_action_permission(ar.get_user(),None,None):
+            if a.get_bound_action_permission(ar,ar.master_instance,None):
                 elem = ar.create_instance()
                 after_show.update(data_record=views.elem2rec_insert(ar,ar.ah,elem))
                 #~ after_show.update(record_id=-99999)
@@ -251,7 +251,7 @@ class PlainRenderer(HtmlRenderer):
         if a is None:
             a = obj.__class__._lino_default_table.detail_action
         if a is not None:
-            if ar is None or a.get_bound_action_permission(ar.get_user(),obj,None):
+            if ar is None or a.get_bound_action_permission(ar,obj,None):
                 return self.get_detail_url(obj)
   
     def pk2url(self,ar,pk,**kw):
@@ -440,7 +440,7 @@ class ExtRenderer(HtmlRenderer):
             a = obj.get_default_table(ar).detail_action
             #~ a = obj.__class__._lino_default_table.get_url_action('detail_action')
         if a is not None:
-            if ar is None or a.get_bound_action_permission(ar.get_user(),obj,None):
+            if ar is None or a.get_bound_action_permission(ar,obj,None):
                 return self.action_call(None,a,dict(record_id=obj.pk))
                 
     def obj2html(self,ar,obj,text=None):
@@ -1142,7 +1142,7 @@ tinymce.init({
                 authorities = [(u.id,unicode(u)) 
                     #~ for u in users.User.objects.exclude(profile=dd.UserProfiles.blank_item)] 20120829
                     #~ for u in users.User.objects.filter(profile__isnull=False)]
-                    for u in users.User.objects.exclude(profile='')]
+                    for u in users.User.objects.exclude(profile='').exclude(id=user.id)]
                     #~ for u in users.User.objects.filter(profile__gte=dd.UserLevels.guest)]
             else:
                 authorities = [(a.user.id,unicode(a.user)) 
@@ -1882,7 +1882,7 @@ tinymce.init({
 
         yield "  ls_bbar_actions: %s," % py2js([
             rh.ui.a2btn(ba) for ba in rpt.get_actions(action.action) 
-                if ba.action.show_in_bbar and ba.get_bound_action_permission(jsgen._for_user,None,None)]) 
+                if ba.action.show_in_bbar and ba.get_view_permission(jsgen._for_user)]) 
         yield "  ls_url: %s," % py2js(ext_elems.rpt2url(rpt))
         if action.action != rpt.default_action.action:
             yield "  action_name: %s," % py2js(action.action.action_name)
@@ -1920,7 +1920,7 @@ tinymce.init({
         kw.update(ls_bbar_actions=[
             rh.ui.a2btn(ba) 
               for ba in rh.actor.get_actions(rh.actor.default_action.action) 
-                  if ba.action.show_in_bbar and ba.get_bound_action_permission(jsgen._for_user,None,None)])
+                  if ba.action.show_in_bbar and ba.get_view_permission(jsgen._for_user)])
         kw.update(ls_grid_configs=[gc.data for gc in rh.actor.grid_configs])
         kw.update(gc_name=ext_elems.DEFAULT_GC_NAME)
         #~ if action != rh.actor.default_action:

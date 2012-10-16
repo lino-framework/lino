@@ -95,9 +95,11 @@ class LayoutHandle:
         #~ self.datalink = layout.get_datalink(ui)
         #~ self.label = layout.label # or ''
         self._store_fields = []
+        self._names = {}
         
         self.define_panel('main',layout.main)
         
+        self.main = self._names.get('main')
         if self.main is None:
             raise Exception(
                 "Failed to create main element %r for %s." % (
@@ -108,9 +110,11 @@ class LayoutHandle:
         
         self.layout.setup_handle(self)
         for k,v in self.layout._labels.items():
-            if not hasattr(self,k):
+            #~ if not hasattr(self,k):
+            if not self._names.has_key(k):
                 raise Exception("%s has no attribute %r (layout.main is %r)" % (self,k,layout.main))
-            getattr(self,k).label = v
+            #~ getattr(self,k).label = v
+            self._names[k].label = v
         
         
                 
@@ -135,31 +139,6 @@ class LayoutHandle:
         return self.main.ext_lines(request)
   
         
-    def define_panel(self,name,desc,**kw):
-        if not desc:
-            raise Exception(
-                'Failed to define empty element %s (in %s)' 
-                % (name,self.layout))
-            #~ return
-        if hasattr(self,name):
-            raise Exception(
-                'Duplicate element definition %s = %r in %s' 
-                % (name,desc,self.layout))
-        #~ if name == 'main':
-            #~ e = self.desc2elem(self.main_class,name,desc,**kw)
-        #~ else:
-            #~ e = self.desc2elem(self.ui.Panel,name,desc,**kw)
-        e = self.desc2elem(name,desc,**kw)
-        if e is None:
-            raise Exception(
-                'Failed to define element %s = %s\n(in %s)' 
-                % (name,desc,self.layout))
-                #~ return
-        #~ e.allow_read = curry(perms.make_permission(self.layout._table,**e.required),e)
-        setattr(self,name,e)
-        return e
-        
-            
     #~ def desc2elem(self,panelclass,desc_name,desc,**kw):
     def desc2elem(self,elemname,desc,**kw):
         #logger.debug("desc2elem(panelclass,%r,%r)",elemname,desc)
@@ -252,13 +231,45 @@ class LayoutHandle:
         #~ e.allow_read = curry(perms.make_permission(self.layout._table,**e.required),e)
         return e
             
+    def define_panel(self,name,desc,**kw):
+        if not desc:
+            raise Exception(
+                'Failed to define empty element %s (in %s)' 
+                % (name,self.layout))
+            #~ return
+        #~ if hasattr(self,name):
+        if self._names.has_key(name):
+            raise Exception(
+                'Duplicate element definition %s = %r in %s' 
+                % (name,desc,self.layout))
+        #~ if name == 'main':
+            #~ e = self.desc2elem(self.main_class,name,desc,**kw)
+        #~ else:
+            #~ e = self.desc2elem(self.ui.Panel,name,desc,**kw)
+        e = self.desc2elem(name,desc,**kw)
+        if e is None:
+            raise Exception(
+                'Failed to define element %s = %s\n(in %s)' 
+                % (name,desc,self.layout))
+                #~ return
+        #~ e.allow_read = curry(perms.make_permission(self.layout._table,**e.required),e)
+        self._names[name] = e
+        #~ setattr(self,name,e)
+        return e
+        
+            
     def create_element(self,desc_name):
         #~ logger.debug("create_element(%r)", desc_name)
         name,pkw = self.splitdesc(desc_name)
         #~ kw.update(pkw)
-        e = getattr(self,name,None)
-        if e is not None:
-            return e
+        #~ e = getattr(self,name,None)
+        if self._names.has_key(name):
+            raise Exception(
+                'Duplicate element definition %s = %r in %s' 
+                % (name,desc_name,self.layout))
+        #~ e = self._names.get(name,None)
+        #~ if e is not None:
+            #~ return e
         desc = getattr(self.layout,name,None)
         if desc is not None:
             return self.define_panel(name,desc,**pkw)
@@ -269,7 +280,8 @@ class LayoutHandle:
         # todo: cannot hide babelfields
         if name in self.layout.hidden_elements:
             e.hidden = True
-        setattr(self,name,e)
+        #~ setattr(self,name,e)
+        self._names[name] = e
         #~ self.setup_element(e)
         return e
         
@@ -378,7 +390,7 @@ class BaseLayout(object):
     #~ def __init__(self,table=None,main=None,hidden_elements=frozenset(),window_size=None):
     def __init__(self,main=None,table=None,hidden_elements=frozenset(),**kw):
         self._table = table
-        self._labels = dict()
+        self._labels = self.override_labels()
         self._added_panels = dict()
         #~ self._window_size = window_size
         self.hidden_elements = hidden_elements 
@@ -393,6 +405,9 @@ class BaseLayout(object):
                 #~ raise Exception("Got unexpected keyword %s=%r" % (k,v))
             setattr(self,k,v)
     
+    def override_labels(self):
+        return dict()
+        
     def get_data_elem(self,name): 
         return self._table.get_data_elem(name)
         

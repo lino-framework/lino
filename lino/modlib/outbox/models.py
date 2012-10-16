@@ -271,14 +271,14 @@ class Recipient(dd.Model):
                 self.name = self.partner.get_full_name(salutation=False)
         super(Recipient,self).full_clean()
         
-    def get_row_permission(self,user,state,ba):
+    def get_row_permission(self,ar,state,ba):
         """
         Recipients of a Mail may not be edited if the Mail is read-only.
         """
-        if self.mail_id and not self.mail.get_row_permission(user,state,ba):
+        if self.mail_id and not self.mail.get_row_permission(ar,state,ba):
             #~ logger.info("20120920 Recipient.get_row_permission()")
             return False
-        return super(Recipient,self).get_row_permission(user,state,ba)
+        return super(Recipient,self).get_row_permission(ar,state,ba)
       
 
 
@@ -450,14 +450,14 @@ class Mail(mixins.AutoUser,mixins.Printable,mixins.ProjectRelated,mixins.Control
         return ', '.join(recs)
     recipients = dd.VirtualField(dd.HtmlBox(_("Recipients")),get_recipients)
         
-    def get_row_permission(self,user,state,ba):
+    def get_row_permission(self,ar,state,ba):
         """
         Mails may not be edited after they have been sent.
         """
         if self.sent and not ba.action.readonly:
             #~ logger.info("20120920 Mail.get_row_permission()")
             return False
-        return super(Mail,self).get_row_permission(user,state,ba)
+        return super(Mail,self).get_row_permission(ar,state,ba)
       
 
 #~ class MailDetail(dd.FormLayout):

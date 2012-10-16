@@ -31,9 +31,10 @@ from lino.utils import Warning
 
 from lino.ui import requests as ext_requests
 
-from lino.core.modeltools import resolve_model
+from lino.core.modeltools import resolve_model, resolve_app
 from lino.core import layouts
 from lino.core import changes
+from lino.core import fields
 
 #~ from lino.core.perms import UserLevels
 from lino.core import perms 
@@ -47,7 +48,7 @@ class VirtualRow(object):
         for k,v in kw.items():
             setattr(self,k,v)
 
-    def get_row_permission(self,user,state,ba):
+    def get_row_permission(self,ar,state,ba):
         if ba.action.readonly:
             return True
         return False 
@@ -423,6 +424,8 @@ class Action(Parametrizable):
         if self.action_name is None:
             raise Exception("Tried to full_name() on %r" % self)
             #~ return repr(self)
+        if self.parameters:
+            return self.defining_actor.actor_id + '.' + self.action_name
         return str(actor) + '.' + self.action_name
         
     def __repr__(self):
@@ -544,7 +547,7 @@ class RowAction(Action):
         raise NotImplementedError("%s has no run() method" % self.__class__)
 
     #~ def get_action_permission(self,user,obj):
-        #~ return self.actor.get_row_permission(self,user,obj)
+        #~ return self.actor.get_row_permission(self,ar,obj)
             
     #~ def attach_to_actor(self,actor,name):
         #~ super(RowAction,self).attach_to_actor(actor,name)
@@ -723,11 +726,10 @@ class ChangeStateAction(RowAction):
     `mark_XXX`
     """
     
-    #~ ajax = True
+    #~ debug_permissions = True
     
     show_in_workflow = True
     
-    #~ debug_permissions = True
     
     def __init__(self,target_state,required,**kw):
         self.target_state = target_state
@@ -753,10 +755,13 @@ class ChangeStateAction(RowAction):
         super(ChangeStateAction,self).__init__(**kw)
         #~ logger.info('20120930 ChangeStateAction %s %s', actor,target_state)
         
-    def full_name(self,actor):
-        if self.action_name is None or self.defining_actor is None:
-            return repr(self)
-        return self.defining_actor.actor_id + '.' + self.action_name
+    #~ def full_name(self,actor):
+        #~ if self.action_name is None or self.defining_actor is None:
+            #~ return repr(self)
+        #~ return self.defining_actor.actor_id + '.' + self.action_name
+        
+    def before_row_save(self,row,ar):
+        pass
         
     def run(self,row,ar,**kw):
         #~ state_field_name = self.defining_actor.workflow_state_field.attname
@@ -772,6 +777,7 @@ class ChangeStateAction(RowAction):
         row.before_state_change(ar,kw,old,self.target_state)
         #~ row.state = self.target_state
         setattr(row,state_field_name,self.target_state)
+        self.before_row_save(row,ar)
         row.save()
         self.target_state.choicelist.after_state_change(row,ar,kw,old,self.target_state)
         row.after_state_change(ar,kw,old,self.target_state)
@@ -781,23 +787,123 @@ class ChangeStateAction(RowAction):
         return ar.ui.success_response(**kw)
         
     
-class NotifyingChangeStateAction(ChangeStateAction):
+#~ class NotifyingChangeStateAction(ChangeStateAction):
+class NotifyingAction(RowAction):
+  
     parameters = dict(
-      change_summary = models.CharField(_("Reason for the change"),max_length=200,blank=False),
-      edit_mail = models.BooleanField(_("Edit notification mail before sending"),default=False),
-    )  
-    params_layout = """
-    change_summary
-    edit_mail
-    """
+        notify_subject = models.CharField(_("Summary"),blank=True,max_length=200),
+        notify_body = fields.RichTextField(_("Description"),blank=True),
+        notify_broadcast = models.BooleanField(_("Send notifications by email"),default=True),
+    )
+    
+    params_layout = layouts.Panel("""
+    notify_subject
+    notify_body
+    notify_broadcast
+    """,window_size=(50,20))
+    
+    def add_system_note(self,ar,owner,**kw):
+      
+        body = ar.action_param_values.notify_body
+        body = _("""%(user)s executed the following action:\n%(body)s
+        """) % dict(user=ar.get_user(),body=body)
+        
+        ar.add_system_note(owner,ar.action_param_values.notify_subject,body,ar.action_param_values.notify_broadcast,**kw)
+        
+    
+    
+    
+    #~ notifying_template = None
+    #~ notification_notetype = None
+    
+  
+    #~ parameters = dict(
+      #~ change_summary = models.CharField(_("Reason for the change"),max_length=200,blank=False),
+      #~ edit_mail = models.BooleanField(_("Edit notification mail before sending"),default=False),
+    #~ )  
+    #~ params_layout = """
+    #~ change_summary
+    #~ edit_mail
+    #~ """
+    
+    def update_system_note_kw(self,ar,kw,obj):
+        pass
+        
     def run(self,obj,ar,**kw):
-        #~ logger.info("20121009 NotifyingChangeStateAction.run() %s",ar.action_param_values)
-        obj.set_change_summary(ar.action_param_values.change_summary)
-        return super(NotifyingChangeStateAction,self).run(obj,ar,**kw)
+        #~ logger.info("20121016 NotifyingAction.run() %s",ar.action_param_values)
+        #~ # obj.set_change_summary(ar.action_param_values.change_summary)
+        #~ nt = settings.LINO.site_config.notification_notetype
+        #~ if nt:
+        #~ note_kw = dict()
+        #~ self.update_system_note_kw(ar,note_kw,obj)
+        self.add_system_note(ar,obj)
+        return super(NotifyingAction,self).run(obj,ar,**kw)
     
 
 
-
+class BoundAction(object):
+  
+    def __init__(self,actor,action):
+        if not isinstance(action,Action):
+            raise Exception("%s : %r is not an Action" % (actor,action))
+        self.action = action
+        self.actor = actor
+        
+        
+        required = dict()
+        if action.readonly:
+            required.update(actor.required)
+        #~ elif isinstance(action,InsertRow):
+            #~ required.update(actor.create_required)
+        elif isinstance(action,DeleteSelected):
+            required.update(actor.delete_required)
+        else:
+            required.update(actor.update_required)
+        required.update(action.required)
+        #~ print 20120628, str(a), required
+        #~ def wrap(a,required,fn):
+            #~ return fn
+            
+        #~ a.allow = curry(wrap(a,required,perms.make_permission_handler(
+            #~ a,actor,a.readonly,actor.debug_permissions,**required)),a)
+        #~ ba = actions.BoundAction(actor,a)
+        debug = actor.debug_permissions or action.debug_permissions
+        self.allow = curry(perms.make_permission_handler(
+            action,actor,action.readonly,debug,**required),action)
+        #~ actor.actions.define(a.action_name,ba)
+        
+        
+    def get_window_layout(self):
+        return self.action.get_window_layout(self.actor)
+        
+    def full_name(self):
+        return self.action.full_name(self.actor)
+        #~ if self.action.action_name is None:
+            #~ raise Exception("%r action_name is None" % self.action)
+        #~ return str(self.actor) + '.' + self.action.action_name
+        
+    def request(self,*args,**kw):
+        kw.update(action=self)
+        return self.actor.request(*args,**kw)
+        
+        
+    def get_button_label(self):
+        if self.actor is None:
+            return self.action.label 
+        if self.action is self.actor.default_action.action:
+            return self.actor.label 
+        else:
+            return u"%s %s" % (self.action.label,self.actor.label)
+            
+        
+    def get_bound_action_permission(self,ar,obj,state):
+        if not self.action.get_action_permission(ar.get_user(),obj,state):
+            return False
+        return self.allow(ar.get_user(),obj,state)
+        
+    def get_view_permission(self,user):
+        return self.allow(user,None,None)
+        
 
 class ActionRequest(object):
     """
@@ -1045,6 +1151,9 @@ class ActionRequest(object):
     def get_action_status(self,ba,obj,**kw):
         #~ logger.info("get_action_status %s",ba.full_name())
         if ba.action.parameters:
+          
+            if ba.action.params_layout.params_store is None:
+                raise Exception("20121016 %s has no store" % ba.action.params_layout)
             kw.update(field_values=ba.action.params_layout.params_store.pv2dict(
                 self.ui,ba.action.action_param_defaults(self,obj)))
         return kw
@@ -1091,6 +1200,14 @@ class ActionRequest(object):
         location = ar.renderer.get_request_url(ar)
         return self.request.build_absolute_uri(location)
         
+    def add_system_note(self,owner,subject,body,email):
+        notes = resolve_app('notes')
+        if notes:
+            notes.add_system_note(self,owner,subject,body,email)
+            
+            
+        
+        
 
 def action(*args,**kw):
     """
@@ -1108,68 +1225,5 @@ def action(*args,**kw):
         a.run = fn
         return a
     return decorator
-    
-#~ def action2str(actor,action):
-    #~ return str(actor) + '.' + action.name
         
-        
-class BoundAction(object):
-  
-    def __init__(self,actor,action):
-        if not isinstance(action,Action):
-            raise Exception("%s : %r is not an Action" % (actor,action))
-        self.action = action
-        self.actor = actor
-        
-        
-        required = dict()
-        if action.readonly:
-            required.update(actor.required)
-        #~ elif isinstance(action,InsertRow):
-            #~ required.update(actor.create_required)
-        elif isinstance(action,DeleteSelected):
-            required.update(actor.delete_required)
-        else:
-            required.update(actor.update_required)
-        required.update(action.required)
-        #~ print 20120628, str(a), required
-        #~ def wrap(a,required,fn):
-            #~ return fn
-            
-        #~ a.allow = curry(wrap(a,required,perms.make_permission_handler(
-            #~ a,actor,a.readonly,actor.debug_permissions,**required)),a)
-        #~ ba = actions.BoundAction(actor,a)
-        debug = actor.debug_permissions or action.debug_permissions
-        self.allow = curry(perms.make_permission_handler(
-            action,actor,action.readonly,debug,**required),action)
-        #~ actor.actions.define(a.action_name,ba)
-        
-        
-    def get_window_layout(self):
-        return self.action.get_window_layout(self.actor)
-        
-    def full_name(self):
-        return self.action.full_name(self.actor)
-        #~ if self.action.action_name is None:
-            #~ raise Exception("%r action_name is None" % self.action)
-        #~ return str(self.actor) + '.' + self.action.action_name
-        
-    def request(self,*args,**kw):
-        kw.update(action=self)
-        return self.actor.request(*args,**kw)
-        
-        
-    def get_button_label(self):
-        if self.actor is None:
-            return self.action.label 
-        if self.action is self.actor.default_action.action:
-            return self.actor.label 
-        else:
-            return u"%s %s" % (self.action.label,self.actor.label)
-            
-        
-    def get_bound_action_permission(self,user,obj,state):
-        if not self.action.get_action_permission(user,obj,state):
-            return False
-        return self.allow(user,obj,state)
         

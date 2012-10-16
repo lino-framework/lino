@@ -79,6 +79,7 @@ Miscellaneous:
 - :class:`ChoiceList <lino.utils.choicelists.ChoiceList>`
 - :class:`Workflow <lino.utils.choicelists.Workflow>`
 - :class:`ChangeStateAction <lino.core.actions.ChangeStateAction>`
+- :class:`NotifyingAction <lino.core.actions.NotifyingAction>`
 
 
 
@@ -119,6 +120,7 @@ from lino.core.actions import SubmitDetail, SubmitInsert
 
 from lino.utils.choicelists import Workflow, ChoiceList, Choice
 from lino.core.actions import ChangeStateAction
+from lino.core.actions import NotifyingAction
 
 
 from lino.core.fields import DummyField

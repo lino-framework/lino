@@ -12,6 +12,9 @@
 ## You should have received a copy of the GNU General Public License
 ## along with Lino; if not, see <http://www.gnu.org/licenses/>.
 
+import logging
+logger = logging.getLogger(__name__)
+
 import os
 import sys
 import cgi
@@ -20,13 +23,15 @@ import datetime
 from django.db import models
 from django.utils.translation import ugettext_lazy as _
 from django.utils.translation import pgettext_lazy 
+from django.core.mail import EmailMultiAlternatives
+
 #~ from django.contrib.contenttypes.models import ContentType
 #~ from django.contrib.contenttypes import generic
 from django.db import IntegrityError
 from django.utils.encoding import force_unicode
 
 
-from lino import tools
+#~ from lino import tools
 from lino import dd
 #~ from lino.utils.babel import default_language
 #~ from lino import reports
@@ -115,6 +120,7 @@ class EventTypes(dd.Table):
 
 class Note(mixins.TypedPrintable,
       mixins.AutoUser,
+      mixins.Controllable,
       #~ contacts.PartnerDocument,
       mixins.ProjectRelated,
       outbox.Mailable,
@@ -227,7 +233,7 @@ class Note(mixins.TypedPrintable,
         #~ lino.NOTE_PRINTABLE_FIELDS = dd.fields_list(cls,
         #~ '''date subject body language type event_type''')
         
-    #~ def summary_row(self,ui,rr,**kw):
+
     def summary_row(self,ar,**kw):
         #~ s = super(Note,self).summary_row(ui,rr)
         s = super(Note,self).summary_row(ar)
@@ -317,9 +323,46 @@ class NotesByProject(Notes):
     master_key = 'project'
     column_names = "date event_type type subject body user *"
     order_by = ["-date"]
-  
-  
+    
+def add_system_note(ar,owner,subject,body,email,**kw):
+    if not settings.LINO.site_config.notification_notetype:
+        return
+    note = Note(
+        type=settings.LINO.site_config.notification_notetype,
+        owner=owner,
+        subject=subject,body=body,user=ar.get_user(),**kw)
+    if owner:
+        owner.update_system_note(note)
+        #~ kw.update(project=owner.get_project())
+    note.save()
+    
+    if not email:
+        return
+    recipients = list(settings.LINO.get_system_note_recipients(note))
+    if not len(recipients):
+        return
+    msg = EmailMultiAlternatives(subject=note.subject, 
+        from_email=settings.SERVER_EMAIL,
+        body=note.body, 
+        to=recipients)
+    msg.send()
+    logger.info("System note %s has been sent to %s",note,recipients)
+
+    
+    
 lino = dd.resolve_app('lino')
+    
+def customize_siteconfig():
+    """
+    Injects application-specific fields to :class:`SiteConfig <lino.models.SiteConfig>`.
+    """
+    dd.inject_field(lino.SiteConfig,
+        'notification_notetype',
+        models.ForeignKey(NoteType,
+            blank=True,null=True,
+            verbose_name=_("Notification note type"),
+            help_text="""Note type used by notifying actions."""))
+  
 
 def setup_main_menu(site,ui,user,m):
     m  = m.add_menu("office",lino.OFFICE_MODULE_LABEL)
@@ -337,3 +380,4 @@ def setup_config_menu(site,ui,user,m):
 def setup_explorer_menu(site,ui,user,m):
     m.add_action(Notes)
   
+customize_siteconfig()  

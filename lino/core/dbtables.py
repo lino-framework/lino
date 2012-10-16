@@ -524,9 +524,9 @@ class Table(AbstractTable):
         d = dict()
         if obj is not None:
             state = self.get_row_state(obj)
-            u = ar.get_user()
+            #~ u = ar.get_user()
             for ba in self.get_actions(ar.bound_action.action):
-                if ba.action.show_in_bbar and not self.get_row_permission(obj,u,state,ba):
+                if ba.action.show_in_bbar and not self.get_row_permission(obj,ar,state,ba):
                 #~ if ba.action.show_in_bbar and not obj.get_row_permission(u,state,ba.action):
                 #~ if a.show_in_bbar and not a.get_action_permission(ar.get_user(),obj,state):
                     d[ba.action.action_name] = True
@@ -718,12 +718,12 @@ class Table(AbstractTable):
         
         
     @classmethod
-    def get_row_permission(cls,obj,user,state,ba):
+    def get_row_permission(cls,obj,ar,state,ba):
         """
         Returns True if the given action is allowed for the given instance `obj` 
         and the given user.
         """
-        return obj.get_row_permission(user,state,ba)
+        return obj.get_row_permission(ar,state,ba)
         
     @classmethod
     def disable_delete(self,obj,ar):
@@ -734,7 +734,7 @@ class Table(AbstractTable):
         """
         if self.delete_action is None:
             return "No delete_action"
-        if not self.get_row_permission(obj,ar.get_user(),self.get_row_state(obj),self.delete_action):
+        if not self.get_row_permission(obj,ar,self.get_row_state(obj),self.delete_action):
         #~ if not obj.get_row_permission(self.delete_action,ar.get_user()):
             return _("You have no permission to delete this row.")
         return obj.disable_delete(ar)

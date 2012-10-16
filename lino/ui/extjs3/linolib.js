@@ -1710,7 +1710,8 @@ Lino.help_text_editor = function() {
     //~ };
     //~ console.log(20120202,bp);
   //~ Lino.lino.ContentTypes.detail({},{base_params:bp});
-  Lino.lino.ContentTypes.detail_action.run(null,{record_id:this.content_type});
+  //~ Lino.lino.ContentTypes.detail.run(null,{record_id:this.content_type});
+  Lino.lino.ContentTypes.detail.run(null,{record_id:this.content_type});
 }
 
 // Path to the blank image should point to a valid location on your server
@@ -2440,25 +2441,27 @@ Lino.FormPanel = Ext.extend(Lino.FormPanel,{
           scope:this}
       ]);
           
+      if (this.bbar) { // since 20121016
+        if (!this.tbar) this.tbar = [];
+        this.tbar = this.tbar.concat(this.bbar) ;
+        this.bbar = undefined;
+      }
+    
       this.tbar = this.tbar.concat([
           '->',
           this.displayItem = new Ext.Toolbar.TextItem({})
       ]);
           
     }
-    if (this.content_type && this.action_name != 'insert') {
-      this.bbar = this.bbar.concat([
-        '->',
-        { text: "[$_('Help Text Editor')]",
-          handler: Lino.help_text_editor,
-          qtip: "$_('Edit help texts for fields on this model.')",
-          scope: this}
-        //~ ,{ text: '[$_("Layout Editor")]',
-          //~ handler: this.edit_detail_config,
-          //~ qtip: "$_("Edit Detail layout")",
+    //~ if (this.content_type && this.action_name != 'insert') {
+      //~ this.bbar = this.bbar.concat([
+        //~ '->',
+        //~ { text: "[$_('Help Text Editor')]",
+          //~ handler: Lino.help_text_editor,
+          //~ qtip: "$_('Edit help texts for fields on this model.')",
           //~ scope: this}
-      ])
-    }
+      //~ ])
+    //~ }
     //~ this.before_row_edit = config.before_row_edit.createDelegate(this);
       
     //~ if (this.master_panel) {
@@ -2748,11 +2751,13 @@ Lino.FormPanel = Ext.extend(Lino.FormPanel,{
       this.enable();
       this.form.my_loadRecord(record.data);
       this.set_window_title(record.title);
-      this.getBottomToolbar().enable();
+      //~ this.getBottomToolbar().enable();
       var da = record.data.disabled_actions;
       if (da) {
           //~ console.log('20120528 disabled_actions =',da,this.getBottomToolbar());
-          this.getBottomToolbar().items.each(function(item,index,length){
+          //~ 20121016 this.getBottomToolbar().items.each(function(item,index,length){
+          var tb = this.getTopToolbar();
+          if (tb) tb.items.each(function(item,index,length){
               //~ console.log('20120528 ',item.itemId,'-->',da[item.itemId]);
               if (da[item.itemId]) item.disable(); else item.enable();
           });
@@ -2790,7 +2795,7 @@ Lino.FormPanel = Ext.extend(Lino.FormPanel,{
       if (this.form.rendered) 
         this.form.reset(); /* FileUploadField would fail when resetting a non-rendered form */
       //~ this.disable();
-      this.getBottomToolbar().disable();
+      //~ this.getBottomToolbar().disable();
       this.form.items.each(function(cmp){
         cmp.disable();
       },this);
@@ -3022,6 +3027,7 @@ Lino.GridStore = Ext.extend(Ext.data.ArrayStore,{
     if (!options.params) options.params = {};
     options.params.$URL_PARAM_FORMAT = '$ext_requests.URL_FORMAT_JSON';
     options.params.$URL_PARAM_REQUESTING_PANEL = this.grid_panel.getId();
+    Lino.insert_subst_user(options.params); // since 20121016
       
     var ps = this.grid_panel.calculatePageSize();
     
@@ -4299,6 +4305,16 @@ Lino.Window = Ext.extend(Ext.Window,{
       config.tools = [ 
         { qtip: 'permalink', handler: Lino.permalink_handler(this), id: "pin" }
       ];
+      if (this.main_item.content_type && this.main_item.action_name != 'insert') {
+        config.tools = config.tools.concat([ {
+          handler: Lino.help_text_editor,
+          qtip: "$_('Edit help texts for fields on this model.')",
+          scope: this.main_item,
+          id: "gear"
+        }]);
+      }
+        
+    //~ { qtip: '', handler: Lino.save_wc_handler(this), id: "save" }, 
     //~ { qtip: this.config.qtip, handler: Lino.save_wc_handler(this), id: "save" }, 
     //~ { qtip: 'Call doLayout() on main Container.', handler: Lino.refresh_handler(this), id: "refresh" },
     //~ if (this.main_item.params_panel) {
@@ -4585,7 +4601,7 @@ Ext.ensible.cal.EventRecord.reconfigure();
 Lino.on_eventclick = function(cp,rec,el) {
   //~ console.log("Lino.on_eventclick",arguments);
   //~ Lino.cal.Events.detail_action.run({record_id:rec.data.ID});
-  Lino.cal.PanelEvents.detail_action.run(null,{record_id:rec.data.ID,base_params:Lino.eventStore.baseParams});
+  Lino.cal.PanelEvents.detail.run(null,{record_id:rec.data.ID,base_params:Lino.eventStore.baseParams});
   return false;
 }
     
@@ -4593,7 +4609,7 @@ Lino.on_editdetails = function(cp,rec,el) {
   //~ console.log("Lino.on_editdetails",arguments);
   if (rec.data.ID)
       //~ Lino.cal.Events.detail_action.run({record_id:rec.data.ID});
-      Lino.cal.PanelEvents.detail_action.run(null,{record_id:rec.data.ID,base_params:Lino.eventStore.baseParams});
+      Lino.cal.PanelEvents.detail.run(null,{record_id:rec.data.ID,base_params:Lino.eventStore.baseParams});
   return false;
 }
 

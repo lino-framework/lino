@@ -850,7 +850,7 @@ class AbstractTable(actors.Actor):
         #~ return None
         
     @classmethod
-    def get_row_permission(self,obj,user,state,ba):
+    def get_row_permission(self,obj,ar,state,ba):
         if self.get_data_rows:
             return ba.action.readonly
         return True

@@ -122,10 +122,12 @@ def analyze_models():
         model._lino_ddh = DisableDeleteHandler(model)
         for k in ('get_row_permission',
                   'after_ui_save',
+                  'update_system_note',
                   'before_ui_save',
                   'allow_cascaded_delete',
                   'workflow_state_field',
                   'workflow_owner_field',
+                  'disabled_fields',
                   'summary_row',
                   'get_default_table',
                   'site_setup',

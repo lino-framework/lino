@@ -1435,3 +1435,12 @@ class Lino(object):
         """
         pass
         
+
+    def get_system_note_recipients(self,note):
+        """
+        Return or yield a list of recipients (i.e. strings "Full Name <name@example.com>" )
+        to be notified by email about the specified system note `note` 
+        which has just been created.
+        """
+        return []
+        

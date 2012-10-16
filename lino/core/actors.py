@@ -553,7 +553,8 @@ class Actor(actions.Parametrizable):
     @classmethod
     def get_view_permission(self,user):
         #~ return self.default_action.action.allow(user,None,None)
-        return self.default_action.get_bound_action_permission(user,None,None)
+        #~ return self.default_action.get_bound_action_permission(user,None,None)
+        return self.default_action.get_view_permission(user)
         #~ return self.allow_read(user,None,None)
 
     @classmethod
@@ -565,7 +566,7 @@ class Actor(actions.Parametrizable):
         return True
 
     @classmethod
-    def get_row_permission(cls,obj,user,state,ba):
+    def get_row_permission(cls,obj,ar,state,ba):
         """
         Returns True or False whether the given action 
         is allowed for the given row instance `row` 
@@ -692,11 +693,12 @@ class Actor(actions.Parametrizable):
     @classmethod
     def get_workflow_actions(self,ar,obj):
         state = self.get_row_state(obj)
-        u = ar.get_user()
+        #~ u = ar.get_user()
         for ba in self.get_actions(ar.bound_action.action):
             if ba.action.show_in_workflow:
                 #~ logger.info('20120930 %s show in workflow', a.name)
-                if obj.get_row_permission(u,state,ba):
+                #~ if obj.get_row_permission(ar,state,ba):
+                if self.get_row_permission(obj,ar,state,ba):
                     yield ba
         
     @classmethod

@@ -120,18 +120,19 @@ class User(mixins.CreatedModified):
     
     person = property(get_person)
 
-    def get_row_permission(self,user,state,ba):
+    def get_row_permission(self,ar,state,ba):
         """
         Only system managers may edit other users.
         See also :meth:`User.disabled_fields`.
         """
         #~ print 20120621, self, user, state, action
         if ba.action.readonly: return True
+        user = ar.get_user()
         if user.profile.level >= dd.UserLevels.admin: return True
         #~ print 20120621, user.profile.level, 'is not', UserLevels.admin
         if user.profile.level >= dd.UserLevels.user: 
             if user == self: return True
-        return super(User,self).get_row_permission(user,state,ba)
+        return super(User,self).get_row_permission(ar,state,ba)
         #~ return False
         
     def disabled_fields(self,ar):

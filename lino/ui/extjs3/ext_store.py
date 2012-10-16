@@ -591,7 +591,7 @@ class DisableEditingStoreField(SpecialStoreField):
         #~ print 20120621, obj.__class__
         #~ return not obj.get_row_permission(ar.get_user(),state,self.store.actor.update_action)
         #~ logger.info("20120622 ext_store gonna call get_action_permission")
-        v = actor.get_row_permission(obj,ar.get_user(),actor.get_row_state(obj),actor.update_action)
+        v = actor.get_row_permission(obj,ar,actor.get_row_state(obj),actor.update_action)
         #~ v = self.store.actor.update_action.get_action_permission(ar.get_user(),obj,state)
         #~ logger.info("ext_store 20120622 got %r", v)
         return not v
@@ -983,7 +983,7 @@ class ParameterStore(BaseStore):
                 #~ raise Exception("len(%r) != len(%r)" % (self.param_fields,pv))
         if len(pv) > 0:
             if len(self.param_fields) != len(pv):
-                #~ logger.info('20121010 %s',[sf.field.name for sf in self.param_fields])
+                logger.info('20121016 para_fields are %s',[sf.field.name for sf in self.param_fields])
                 raise Exception("Expected a list of %d values, but got %s" % (len(self.param_fields),pv))
             for i,f in enumerate(self.param_fields):
                 kw[f.field.name] = parse(f,pv[i])

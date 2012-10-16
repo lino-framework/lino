@@ -1,0 +1,58 @@
+20121016
+========
+
+
+Wie/wo soll die "Begründung" (RefuseClient, EndCoaching, AssignCoach)
+gespeichert werden? 
+
+Antwort: 
+Dafür soll eine Notiz erstellt werden und nichts anderes. 
+Aber Notizen sind jetzt auch Controllable (kriegen ein neues Feld `controller`),
+und wir kriegen eine neue Notion von "note broadcasting".
+Change.summary kann wieder raus.
+Außerdem ein neuer Parameter `SiteConfig.notifying_notetype`.
+Gemeinsame Basisklasse ist `dd.NotifyingAction`.
+
+:meth:`lino.Lino.get_system_note_recipients`
+
+
+- Der Button für AssignCoach erscheint jetzt nur noch auf Kunden mit gültiger NISS.
+  (`get_row_permission` und `get_bound_action_permission` kriegen jetzt 
+  nicht mehr nur den `user`, sondern den `ar`.
+
+
+
+- Neue Warnung "Duplicate element definition only_primary = 'only_primary' 
+  in ParamsLayout on pcsw.IntegClients".
+  Ich hatte nämlich mindestens eine halbe Stunde lang danach gesucht.
+  
+  In CompanyDetail war auch ein doppeltes Element `activity`::
+  
+    intro_box = """
+    prefix name id language 
+    vat_id:12 activity:20 type:20 #hourly_rate
+    activity bank_account1 bank_account2 is_deprecated
+    """
+  
+  
+- Wenn Root als Melanie arbeitet, dann konnte er in CoachingsByClient 
+  dennoch nicht ein Coaching beenden. 
+  Weil `Lino.GridStore` nicht `Lino.insert_subst_user()` machte.
+  
+- Button [Hilfetexte bearbeiten] funktionierte nicht.
+
+- Gerd hatte eine gute Idee: 
+
+    Eine andere Sache, die vielleicht etwas "unergonomisch" ist: Ich war z.B. 
+    auf dem Budget eines Klienten und wollte dort ein neues anlegen.
+    Instinktiv habe ich da auf den New-Button gedrückt und dann gesehen,
+    dass das ja - logischerweise - einen neuen Klienten erstellt.
+
+    Ist nur ein Schnellschuss, aber was hältst du davon, dass man die
+    Buttons immer im Kopf (Titelzeile) des jeweiligen Fensters unterbringt?
+    Dann könnte man sogar Knöpfe machen, wenn Fenster verschachtelt sind und
+    trotzdem wäre klar, welche Aktion zu welchem Fenster gehört. Doof?
+  
+  Die buttom toolbar ist jetzt leer, 
+  bis auf den eventuellen Button [Hilfetexte bearbeiten]. Bin noch am überlegen, 
+  wo ich den hintun soll. Wahrscheinlich am ehesten einen neuen Tool-Button.

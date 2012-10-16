@@ -141,6 +141,8 @@ class Model(models.Model):
             #~ raise NotImplementedError()
   
         
+    def update_system_note(self,note):
+        pass
         
     def set_change_summary(self,text):
         self._change_summary = text
@@ -194,12 +196,13 @@ class Model(models.Model):
         """
         return kw
         
-    def get_row_permission(self,user,state,ba):
+    def get_row_permission(self,ar,state,ba):
         """
         Returns True or False whether this row instance 
-        gives permission the specified user to run the specified action.
+        gives permission the specified action request `ar` 
+        to run the specified action.
         """
-        return ba.get_bound_action_permission(user,self,state)
+        return ba.get_bound_action_permission(ar,self,state)
 
     def update_owned_instance(self,controllable):
         """
