@@ -1151,7 +1151,6 @@ class ActionRequest(object):
     def get_action_status(self,ba,obj,**kw):
         #~ logger.info("get_action_status %s",ba.full_name())
         if ba.action.parameters:
-          
             if ba.action.params_layout.params_store is None:
                 raise Exception("20121016 %s has no store" % ba.action.params_layout)
             kw.update(field_values=ba.action.params_layout.params_store.pv2dict(

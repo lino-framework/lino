@@ -26,6 +26,8 @@ import sys
 import traceback
 import codecs
 import yaml
+import threading
+write_lock = threading.RLock()
 
 
 from django.utils.translation import ugettext_lazy as _
@@ -81,6 +83,7 @@ class LayoutHandle:
     resulting LayoutElements provided by the UI.
     
     """
+    
     
     #~ 20120114 def __init__(self,ui,table,layout,hidden_elements=frozenset()):
     def __init__(self,ui,layout):
@@ -545,11 +548,16 @@ add_tabpanel() on %s horizontal 'main' panel %r."""
             hname = '_lino_console_handler'
         else:
             hname = ui._handle_attr_name
-        h = self.__dict__.get(hname,None)
-        if h is None:
-            h = self._handle_class(ui,self)
-            setattr(self,hname,h)
-            #~ h.setup()
+            
+        write_lock.acquire()
+        try:
+            h = self.__dict__.get(hname,None)
+            if h is None:
+                h = self._handle_class(ui,self)
+                setattr(self,hname,h)
+                #~ h.setup()
+        finally:
+            write_lock.release()
         return h
         
     def __str__(self):
@@ -583,16 +591,16 @@ class ParamsLayout(BaseLayout):
     A Layout description for a :attr:`lino.core.actors.Actor.parameters` panel.
     """
     join_str = " "
-    params_store = None
     url_param_name = ext_requests.URL_PARAM_PARAM_VALUES
+    params_store = None
 
     def get_data_elem(self,name): 
         return self._table.get_param_elem(name)
         
     def setup_handle(self,lh):
-        if self.params_store is None:
-            from lino.ui.extjs3 import ext_store
-            self.params_store = ext_store.ParameterStore(lh,self.url_param_name)
+        #~ if self.params_store is None:
+        from lino.ui.extjs3 import ext_store
+        self.params_store = ext_store.ParameterStore(lh,self.url_param_name)
 
 class ActionParamsLayout(ParamsLayout):
     """

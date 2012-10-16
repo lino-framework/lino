@@ -1040,7 +1040,7 @@ tinymce.init({
             yield javascript("/lino/jasmine/specs.js")
             
         if settings.LINO.use_eid_jslib:
-            yield javascript('/beid-jslib/be_belgium_eid.js')
+            yield javascript('/eid-jslib/be_belgium_eid.js')
             
             
         if settings.LINO.use_gridfilters:
