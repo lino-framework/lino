@@ -1222,7 +1222,7 @@ tinymce.init({
             p = self.media_url('eid-jslib')
             #~ print p
             yield '<applet code="org.jdesktop.applet.util.JNLPAppletLauncher"'
-            yield 'codebase = "%s"' % p
+            yield 'codebase = "%s/"' % p
             yield 'width="1" height="1"'
             yield 'name   = "BEIDAppletLauncher"'
             yield 'id   = "BEIDAppletLauncher"'
