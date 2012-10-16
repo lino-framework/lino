@@ -49,7 +49,7 @@ from lino.core.modeltools import resolve_model, obj2str
 
 from lino.modlib.cal.utils import \
     Weekday, DurationUnits, setkw, dt2kw, \
-    EventStates, GuestState, TaskState, AccessClasses, \
+    EventStates, GuestStates, TaskState, AccessClasses, \
     CalendarAction
 
 from lino.utils.babel import dtosl
@@ -863,7 +863,7 @@ class Event(Component,Ended,
     postings.Postable):
     """
     A Calendar Event (french "Rendez-vous", german "Termin") 
-    is a scheduled lapse of time where something happens.
+    is a planned ("scheduled") lapse of time where something happens.
     """
     
     class Meta:
@@ -937,8 +937,6 @@ Indicates that this Event shouldn't prevent other Events at the same time."""))
         super(Event,self).on_create(ar)
         
         
-      
-        
     def get_postable_recipients(self):
         """return or yield a list of Partners"""
         if contacts and issubclass(settings.LINO.project_model,contacts.Partner):
@@ -963,6 +961,16 @@ Indicates that this Event shouldn't prevent other Events at the same time."""))
             
     #~ def get_mailable_body(self,ar):
         #~ return self.description
+        
+    def get_system_note_recipients(self,ar,silent):
+        if self.user != ar.user:
+            yield "%s <%s>" % (unicode(self.user),self.user.email)
+        if silent:
+            return
+        for g in self.guest_set.all():
+            if g.partner.email:
+                yield "%s <%s>" % (unicode(g.partner),g.partner.email)
+      
         
             
     @dd.displayfield(_("Link URL"))
@@ -1363,7 +1371,8 @@ class Guest(mixins.TypedPrintable,outbox.Mailable):
         verbose_name=_("Role"),
         blank=True,null=True) 
         
-    state = GuestState.field(blank=True)
+    #~ state = GuestStates.field(blank=True)
+    state = GuestStates.field()
     #~ status = models.ForeignKey(GuestStatus,verbose_name=_("Status"),blank=True,null=True)
     
     #~ confirmed = models.DateField(
@@ -1401,7 +1410,7 @@ class Guest(mixins.TypedPrintable,outbox.Mailable):
         
     def before_ui_save(self,ar,**kw):
         if not self.state:
-            self.state = GuestState.invited
+            self.state = GuestStates.invited
         return super(Guest,self).before_ui_save(ar,**kw)
         
     #~ def on_user_change(self,request):
@@ -1465,8 +1474,8 @@ class MyPresences(GuestsByPartner):
     
 class MyPendingInvitations(MyPresences):
     help_text = _("""Shows received invitations which I must accept or reject.""")
-    label = _("My pending received invitations")
-    filter = models.Q(state=GuestState.invited)
+    label = _("My received invitations")
+    filter = models.Q(state=GuestStates.invited)
     
 #~ class MySentInvitations(Guests):
     #~ help_text = _("""Shows invitations which I sent accept or reject.""")
@@ -1487,7 +1496,7 @@ class MyPendingInvitations(MyPresences):
     #~ label = _("My Pending Sent Invitations")
     #~ @classmethod
     #~ def get_request_queryset(self,ar):
-        #~ ar.filter = models.Q(state=GuestState.invited,event__user=ar.get_user())
+        #~ ar.filter = models.Q(state=GuestStates.invited,event__user=ar.get_user())
         #~ # ! note that we skip one mro parent:
         #~ return super(MySentInvitations,self).get_request_queryset(ar)
     

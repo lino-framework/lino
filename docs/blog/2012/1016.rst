@@ -59,57 +59,76 @@ Gemeinsame Basisklasse ist `dd.NotifyingAction`.
   bis auf den eventuellen Button [Hilfetexte bearbeiten]. Bin noch am überlegen, 
   wo ich den hintun soll. Wahrscheinlich am ehesten einen neuen Tool-Button.
   
-Checkin und Upgrade
+
+Checkin und Upgrade zwecks Besichtigung.
+
+
+Nachwehe
+--------
+
+Ein mysteriöser Fehler, den ich noch nicht verstanden habe::
+
+  Exception
+  20121016 ActionParamsLayout on Begleitungsstadium : Begleitung beenden has no store
+
+  TRACEBACK:
+    File "/var/snapshots/django/django/core/handlers/base.py", line 111, in get_response
+      response = callback(request, *callback_args, **callback_kwargs)
+
+    File "/var/snapshots/django/django/views/generic/base.py", line 47, in view
+      return self.dispatch(request, *args, **kwargs)
+
+    File "/var/snapshots/django/django/views/generic/base.py", line 68, in dispatch
+      return handler(request, *args, **kwargs)
+
+    File "/usr/local/django/test_dsbe/using/lino/lino/ui/extjs3/views.py", line 867, in get
+      rows = [ rh.store.row2list(ar,row) for row in ar.sliced_data_iterator]
+
+    File "/usr/local/django/test_dsbe/using/lino/lino/ui/extjs3/ext_store.py", line 1222, in row2list
+      v = fld.full_value_from_object(row,request)
+
+    File "/usr/local/django/test_dsbe/using/lino/lino/ui/extjs3/ext_store.py", line 376, in full_value_from_object
+      return self.vf.value_from_object(obj,ar)
+
+    File "/usr/local/django/test_dsbe/using/lino/lino/core/fields.py", line 310, in value_from_object
+      return m(obj,ar)
+
+    File "/usr/local/django/test_dsbe/using/lino/lino/core/model.py", line 301, in workflow_buttons
+      l.append(ar.renderer.action_button(obj,ar,a))
+
+    File "/usr/local/django/test_dsbe/using/lino/lino/ui/extjs3/ext_ui.py", line 378, in action_button
+      st = ar.get_action_status(a,obj)
+
+    File "/usr/local/django/test_dsbe/using/lino/lino/core/actions.py", line 1156, in get_action_status
+      raise Exception("20121016 %s has no store" % ba.action.params_layout)
+      
+      
+Der kam daher, dass `action.params_layout.params_store` 
+einmalig beim Erzeugen einer LayoutHandle gemacht wird, 
+und dass die wiederum nur beim Generieren der `lino*.js` gebraucht 
+wird. Und unter mod_wsgi werden zwei parallele Threads gestartet, 
+von denen nur der erste (wenn überhaupt) eine `lino*.js` erzeugt. 
+Alle Requests, die vom anderen Thread bedient werden 
+(und diese Verteilung ist zufällig) kriegen potentiell diesen Fehler.
+
 
 Besichtigung 1  
 --------------
-
-
-
-
-Exception
-20121016 ActionParamsLayout on Begleitungsstadium : Begleitung beenden has no store
-
-TRACEBACK:
-  File "/var/snapshots/django/django/core/handlers/base.py", line 111, in get_response
-    response = callback(request, *callback_args, **callback_kwargs)
-
-  File "/var/snapshots/django/django/views/generic/base.py", line 47, in view
-    return self.dispatch(request, *args, **kwargs)
-
-  File "/var/snapshots/django/django/views/generic/base.py", line 68, in dispatch
-    return handler(request, *args, **kwargs)
-
-  File "/usr/local/django/test_dsbe/using/lino/lino/ui/extjs3/views.py", line 867, in get
-    rows = [ rh.store.row2list(ar,row) for row in ar.sliced_data_iterator]
-
-  File "/usr/local/django/test_dsbe/using/lino/lino/ui/extjs3/ext_store.py", line 1222, in row2list
-    v = fld.full_value_from_object(row,request)
-
-  File "/usr/local/django/test_dsbe/using/lino/lino/ui/extjs3/ext_store.py", line 376, in full_value_from_object
-    return self.vf.value_from_object(obj,ar)
-
-  File "/usr/local/django/test_dsbe/using/lino/lino/core/fields.py", line 310, in value_from_object
-    return m(obj,ar)
-
-  File "/usr/local/django/test_dsbe/using/lino/lino/core/model.py", line 301, in workflow_buttons
-    l.append(ar.renderer.action_button(obj,ar,a))
-
-  File "/usr/local/django/test_dsbe/using/lino/lino/ui/extjs3/ext_ui.py", line 378, in action_button
-    st = ar.get_action_status(a,obj)
-
-  File "/usr/local/django/test_dsbe/using/lino/lino/core/actions.py", line 1156, in get_action_status
-    raise Exception("20121016 %s has no store" % ba.action.params_layout)
-    
-    
-    
   
-  
-  
-  
-TODO:
+Als Resultat der ersten Besichtigung außer der Nachwehe auch eine Erkenntnis:
 
-- Menü "ÖSHZ" auflösen. "Klienten" nach Kontakte
-- "Meine Begleitungen" : nach DSBE bzw- Schuldnerberatung bzw. Neuzugänge
-- Begleitungsvorschläge raus, stattdessen müssen neu zugewieene Coachings 
-  direkt in den Status coached kommen. 
+Das Menü "ÖSHZ" war verwirrend. Weg damit. 
+:menuselection:`ÖSHZ --> Klienten` kommt nach :menuselection:`Kontakte --> Klienten`.
+"Meine Begleitungen" und "Begleitungsvorschläge" raus, 
+stattdessen kommen neu zugewieene Coachings 
+jetzt immer direkt in den Status coached. 
+Auch "Begleitungsvorschläge" wird bis auf weiteres nicht benutzt.
+Auch die CoachingStates 'suggested' and 'refused' werden rauskommentiert.
+  
+Workflow Kalender und Konfigurierung der "Systemnotizen".
+Wenn man eine Einladung ablehnt, kommt nun ebenfalls 
+ein Dialogfenster, wo man dem Autor des Termins den Grund mitteilen kann.
+Falls der Termin einem Kunden zugewiesen ist, wird die Absage dann auch 
+als Systemnotiz vermerkt.
+So oder so wird eine E-Mail verschickt (wenn denn alle Betroffenen 
+ihre Adresse eingetragen haben)

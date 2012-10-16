@@ -344,6 +344,10 @@ class ProjectRelated(dd.Model):
             related_name="%(app_label)s_%(class)s_set_by_project",
             )
 
+    def get_related_project(self,ar):
+        if settings.LINO.project_model:
+            return self.project
+        
     #~ def summary_row(self,ui,rr,**kw):
     def summary_row(self,ar,**kw):
         s = ar.href_to(self)

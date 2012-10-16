@@ -300,7 +300,7 @@ class Change(dd.Model):
     master_id = dd.GenericForeignKeyIdField(master_type)
     master = dd.GenericForeignKey('master_type','master_id',_("Master"))
     
-    summary = models.CharField(_("Summary"),max_length=200,blank=True)
+    #~ summary = models.CharField(_("Summary"),max_length=200,blank=True)
     #~ description = dd.RichTextField(format='plain')
     diff = dd.RichTextField(_("Changes"),format='plain',blank=True)
     
@@ -314,7 +314,6 @@ class Changes(dd.Table):
     order_by = ['-time']
     detail_layout = """
     time user type master object id
-    summary
     diff
     """
     
@@ -323,7 +322,7 @@ class ChangesByMaster(Changes):
     """
     Slave Table showing the changes related to the current object
     """
-    column_names = 'time user type object summary object_type object_id'
+    column_names = 'time user type object diff object_type object_id'
     master_key = 'master'
 
 

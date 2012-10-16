@@ -23,7 +23,6 @@ import datetime
 from django.db import models
 from django.utils.translation import ugettext_lazy as _
 from django.utils.translation import pgettext_lazy 
-from django.core.mail import EmailMultiAlternatives
 
 #~ from django.contrib.contenttypes.models import ContentType
 #~ from django.contrib.contenttypes import generic
@@ -324,30 +323,20 @@ class NotesByProject(Notes):
     column_names = "date event_type type subject body user *"
     order_by = ["-date"]
     
-def add_system_note(ar,owner,subject,body,email,**kw):
-    if not settings.LINO.site_config.notification_notetype:
+def add_system_note(ar,owner,subject,body,**kw):
+    #~ if not settings.LINO.site_config.system_note_type:
+        #~ return
+    nt = owner.get_system_note_type(ar)
+    if not nt: 
         return
-    note = Note(
-        type=settings.LINO.site_config.notification_notetype,
-        owner=owner,
+    prj = owner.get_related_project(ar)
+    if prj:
+        kw.update(project=prj)
+    note = Note(type=nt,owner=owner,
         subject=subject,body=body,user=ar.get_user(),**kw)
-    if owner:
-        owner.update_system_note(note)
-        #~ kw.update(project=owner.get_project())
+    #~ owner.update_system_note(note)
     note.save()
     
-    if not email:
-        return
-    recipients = list(settings.LINO.get_system_note_recipients(note))
-    if not len(recipients):
-        return
-    msg = EmailMultiAlternatives(subject=note.subject, 
-        from_email=settings.SERVER_EMAIL,
-        body=note.body, 
-        to=recipients)
-    msg.send()
-    logger.info("System note %s has been sent to %s",note,recipients)
-
     
     
 lino = dd.resolve_app('lino')
@@ -357,7 +346,7 @@ def customize_siteconfig():
     Injects application-specific fields to :class:`SiteConfig <lino.models.SiteConfig>`.
     """
     dd.inject_field(lino.SiteConfig,
-        'notification_notetype',
+        'system_note_type',
         models.ForeignKey(NoteType,
             blank=True,null=True,
             verbose_name=_("Notification note type"),

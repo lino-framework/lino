@@ -16,7 +16,7 @@ import logging
 logger = logging.getLogger(__name__)
 
 from django.db import models
-#~ from django.conf import settings
+from django.conf import settings
 from django.utils.translation import ugettext as _
 
 from django.db.models.base import signals, ModelState, DeferredAttribute, ManyToOneRel, izip
@@ -106,10 +106,10 @@ class Model(models.Model):
     Internally used by :meth:`watch_changes`
     """
     
-    _change_summary = ''
-    """
-    Internally used by :meth:`watch_changes`
-    """
+    #~ _change_summary = ''
+    #~ """
+    #~ Internally used by :meth:`watch_changes`
+    #~ """
     
     @classmethod
     def watch_changes(model,ignore=[],master_key=None,**options):
@@ -141,11 +141,11 @@ class Model(models.Model):
             #~ raise NotImplementedError()
   
         
-    def update_system_note(self,note):
-        pass
+    #~ def update_system_note(self,note):
+        #~ pass
         
-    def set_change_summary(self,text):
-        self._change_summary = text
+    #~ def set_change_summary(self,text):
+        #~ self._change_summary = text
     
     def disable_delete(self,ar):
         """
@@ -306,3 +306,19 @@ class Model(models.Model):
         
     def __repr__(self):
         return modeltools.obj2str(self)
+
+
+    def get_related_project(self,ar):
+        if settings.LINO.project_model:
+            if isinstance(self,settings.LINO.project_model):
+                return self
+        
+    def get_system_note_type(self,ar):
+        return None
+        
+    def get_system_note_recipients(self,ar,silent):
+        """
+        Called from :meth:`lino.Lino.get_system_note_recipients`.
+        """
+        return []
+        

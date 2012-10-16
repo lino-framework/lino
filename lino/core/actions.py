@@ -21,6 +21,8 @@ from django.utils.encoding import force_unicode
 from django.conf import settings
 from django import http
 from django.db import models
+#~ from django.core.mail import EmailMultiAlternatives
+from django.core.mail import EmailMessage
 
 
 import lino
@@ -182,8 +184,8 @@ class Parametrizable(object):
     
     params_panel_hidden = False
     """
-    If this table has parameters, set this to False if the parameters 
-    panel should be visible when this table is being displayed.
+    If this table has parameters, set this to True if the parameters 
+    panel should be initially hidden when this table is being displayed.
     """
     
     _layout_class = NotImplementedError
@@ -508,7 +510,6 @@ class Action(Parametrizable):
         #~ kw.update(action=self)
         #~ return self.defining_actor.request(*args,**kw)
         
-    #~ def param_defaults(self,ar,**kw):
     def action_param_defaults(self,ar,obj,**kw):
         """
         Same as Actor.param_defaults, except that here it is a instance method
@@ -793,51 +794,52 @@ class NotifyingAction(RowAction):
     parameters = dict(
         notify_subject = models.CharField(_("Summary"),blank=True,max_length=200),
         notify_body = fields.RichTextField(_("Description"),blank=True),
-        notify_broadcast = models.BooleanField(_("Send notifications by email"),default=True),
+        notify_silent = models.BooleanField(_("this change is silent"),default=False),
     )
     
     params_layout = layouts.Panel("""
     notify_subject
     notify_body
-    notify_broadcast
-    """,window_size=(50,20))
+    notify_silent
+    """,window_size=(50,15))
     
-    def add_system_note(self,ar,owner,**kw):
-      
-        body = ar.action_param_values.notify_body
-        body = _("""%(user)s executed the following action:\n%(body)s
-        """) % dict(user=ar.get_user(),body=body)
+    #~ def update_system_note_kw(self,ar,kw,obj):
+        #~ pass
         
-        ar.add_system_note(owner,ar.action_param_values.notify_subject,body,ar.action_param_values.notify_broadcast,**kw)
+    def get_notify_subject(self,ar,obj):
+        """
+        Return the default value of the `notify_subject` field.
+        """
+        return None
         
-    
-    
-    
-    #~ notifying_template = None
-    #~ notification_notetype = None
-    
-  
-    #~ parameters = dict(
-      #~ change_summary = models.CharField(_("Reason for the change"),max_length=200,blank=False),
-      #~ edit_mail = models.BooleanField(_("Edit notification mail before sending"),default=False),
-    #~ )  
-    #~ params_layout = """
-    #~ change_summary
-    #~ edit_mail
-    #~ """
-    
-    def update_system_note_kw(self,ar,kw,obj):
-        pass
+    def get_notify_body(self,ar,obj):
+        """
+        Return the default value of the `notify_body` field.
+        """
+        return None
+        
+    def action_param_defaults(self,ar,obj,**kw):
+        kw = super(NotifyingAction,self).action_param_defaults(ar,obj,**kw)
+        s = self.get_notify_subject(ar,obj)
+        if s is not None: kw.update(notify_subject=s)
+        s = self.get_notify_body(ar,obj)
+        if s is not None: kw.update(notify_body=s)
+        return kw
         
     def run(self,obj,ar,**kw):
-        #~ logger.info("20121016 NotifyingAction.run() %s",ar.action_param_values)
-        #~ # obj.set_change_summary(ar.action_param_values.change_summary)
-        #~ nt = settings.LINO.site_config.notification_notetype
-        #~ if nt:
-        #~ note_kw = dict()
-        #~ self.update_system_note_kw(ar,note_kw,obj)
+        kw = super(NotifyingAction,self).run(obj,ar,**kw)
         self.add_system_note(ar,obj)
-        return super(NotifyingAction,self).run(obj,ar,**kw)
+        return kw
+    
+    def add_system_note(self,ar,owner,**kw):
+        #~ body = _("""%(user)s executed the following action:\n%(body)s
+        #~ """) % dict(user=ar.get_user(),body=body)
+        ar.add_system_note(
+            owner,
+            ar.action_param_values.notify_subject,
+            ar.action_param_values.notify_body,
+            ar.action_param_values.notify_silent,**kw)
+        
     
 
 
@@ -1199,10 +1201,23 @@ class ActionRequest(object):
         location = ar.renderer.get_request_url(ar)
         return self.request.build_absolute_uri(location)
         
-    def add_system_note(self,owner,subject,body,email):
+    def add_system_note(self,owner,subject,body,silent):
+        logger.info("20121016 add_system_note() '%s'",subject)
         notes = resolve_app('notes')
         if notes:
-            notes.add_system_note(self,owner,subject,body,email)
+            notes.add_system_note(self,owner,subject,body)
+        #~ if silent:
+            #~ return
+        recipients = list(settings.LINO.get_system_note_recipients(self,owner,silent))
+        if not len(recipients):
+            return
+        sender = self.get_user().email or settings.SERVER_EMAIL
+        msg = EmailMessage(subject=subject, 
+            from_email=sender,body=body,to=recipients)
+        msg.send()
+        logger.info("System note '%s' from %s has been sent to %s",subject,sender,recipients)
+
+            
             
             
         

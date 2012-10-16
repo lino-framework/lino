@@ -1436,11 +1436,17 @@ class Lino(object):
         pass
         
 
-    def get_system_note_recipients(self,note):
+    def get_system_note_recipients(self,ar,obj,silent):
         """
-        Return or yield a list of recipients (i.e. strings "Full Name <name@example.com>" )
-        to be notified by email about the specified system note `note` 
-        which has just been created.
+        Return or yield a list of recipients 
+        (i.e. strings "Full Name <name@example.com>" )
+        to be notified by email about a system note issued 
+        by action request `ar` about the object instance `obj`.
+        
+        Default behaviour is to simply forwar it to the `obj`'s 
+        :meth:`get_system_note_recipients <lino.core.model.Model.get_system_note_recipients>`,
+        but here is a hook to define local exceptions to the 
+        application specific default rules.
         """
-        return []
+        return obj.get_system_note_recipients(ar,silent)
         

@@ -24,6 +24,7 @@ from django.utils.translation import pgettext_lazy
 from lino.utils.choicelists import ChoiceList, Choice, Workflow
 from lino.core import actions
 #~ from lino.core.actors import 
+from lino import dd
 
 from dateutil.tz import tzlocal
 
@@ -206,6 +207,16 @@ class EventStates(Workflow):
         return True
         
     @classmethod
+    def before_state_change(cls,obj,ar,kw,oldstate,newstate):
+      
+        if newstate.name == 'draft':
+            ar.confirm(_("This will reset all invitations"))
+            for g in obj.guest_set.all():
+                g.state = GuestStates.invited
+                g.save()
+        
+        
+    @classmethod
     def migrate(cls,status_id):
         """
         Used by :meth:`lino.apps.pcsw.migrate.migrate_from_1_4_4`.
@@ -238,7 +249,7 @@ add('80', _("Absent"),'absent')
 add('90', _("Obsolete"),'obsolete')
 
 EventStates.draft.add_workflow(_("Restart"),
-    states='notified scheduled',
+    states='notified scheduled rescheduled',
     help_text=_("Return to Draft state and restart workflow for this event."))
 EventStates.suggested.add_workflow(_("Suggest"),
     states='_ draft',
@@ -269,24 +280,36 @@ EventStates.obsolete.add_workflow()
     
 
     
-class GuestState(Workflow):
+class GuestStates(Workflow):
     """
     State of a Calendar Event Guest. Used as Workflow selector.
     """
     #~ label = _("Guest State")
     label = _("State")
-add = GuestState.add_item
+add = GuestStates.add_item
 add('10', _("Invited"),'invited')
 add('20', _("Accepted"),'accepted') #,required=dict(states=['','invited'],owner=False),action_label=_("Accept"))
 add('30', _("Rejected"),'rejected')# ,required=dict(states=['','invited'],owner=False),action_label=_("Reject"))
 add('40', _("Present"),'present')# ,required=dict(states=['invited','accepted'],owner=True))
 add('50', _("Absent"),'absent')# ,required=dict(states=['invited','accepted'],owner=True))
 
-GuestState.invited.add_workflow(_("Invite"),states='_',owner=True)
-GuestState.accepted.add_workflow(_("Accept"),states='_ invited',owner=False)
-GuestState.rejected.add_workflow(_("Reject"),states='_ invited',owner=False)
-GuestState.present.add_workflow(states='invited accepted',owner=True)
-GuestState.absent.add_workflow(states='invited accepted',owner=True)
+class RejectInvitation(dd.ChangeStateAction,dd.NotifyingAction):
+    label = _("Reject")
+    help_text = _("Reject this invitation.")  
+    required = dict(states='invited',owner=False)
+    
+    def get_notify_subject(self,ar,obj):
+        return _("Cannot accept invitation %(day)s at %(time)s") % dict(
+           day=babel.dtos(obj.event.start_date),
+           time=str(obj.event.start_time))
+
+  
+#~ GuestStates.invited.add_workflow(_("Invite"),states='_',owner=True)
+GuestStates.accepted.add_workflow(_("Accept"),states='_ invited',owner=False)
+#~ GuestStates.rejected.add_workflow(_("Reject"),states='_ invited',owner=False)
+GuestStates.rejected.add_workflow(RejectInvitation)
+GuestStates.present.add_workflow(states='invited accepted',owner=True)
+GuestStates.absent.add_workflow(states='invited accepted',owner=True)
 
 
 class AccessClasses(ChoiceList):

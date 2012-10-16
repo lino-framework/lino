@@ -26,8 +26,8 @@ import sys
 import traceback
 import codecs
 import yaml
-import threading
-write_lock = threading.RLock()
+#~ import threading
+#~ write_lock = threading.RLock()
 
 
 from django.utils.translation import ugettext_lazy as _
@@ -549,15 +549,16 @@ add_tabpanel() on %s horizontal 'main' panel %r."""
         else:
             hname = ui._handle_attr_name
             
-        write_lock.acquire()
-        try:
-            h = self.__dict__.get(hname,None)
-            if h is None:
-                h = self._handle_class(ui,self)
-                setattr(self,hname,h)
-                #~ h.setup()
-        finally:
-            write_lock.release()
+        #~ write_lock.acquire()
+        #~ try:
+        # we do not want any inherited handle
+        h = self.__dict__.get(hname,None)
+        if h is None:
+            h = self._handle_class(ui,self)
+            setattr(self,hname,h)
+            #~ h.setup()
+        #~ finally:
+            #~ write_lock.release()
         return h
         
     def __str__(self):

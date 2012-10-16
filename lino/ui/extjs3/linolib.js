@@ -1579,7 +1579,8 @@ Lino.MainPanel = {
         tbar = tbar.concat([{ scope:this, 
           text: "$_("[parameters]")", // gear
           enableToggle: true,
-          pressed: ! this.params_panel.hidden,
+          //~ pressed: ! this.params_panel.hidden,
+          pressed: ! this.params_panel_hidden,
           toggleHandler: function(btn,state) { 
             //~ if (this.params_panel.isVisible()) 
                 //~ this.params_panel.hide();
@@ -4274,7 +4275,7 @@ Lino.Window = Ext.extend(Ext.Window,{
         config.layout = 'border';
         config.main_item.region = 'center';
         config.main_item.params_panel.region = 'north';
-        //~ config.main_item.params_panel.hidden = config.main_item.params_panel_hidden;
+        config.main_item.params_panel.hidden = config.main_item.params_panel_hidden;
         config.items = [config.main_item.params_panel, config.main_item];
     } else {
         config.layout = 'fit';

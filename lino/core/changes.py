@@ -114,7 +114,7 @@ class Watcher(object):
         Change(
             time=datetime.datetime.now(),
             user=request.user,
-            summary=self.watched._change_summary,
+            #~ summary=self.watched._change_summary,
             master=master,
             object=self.watched,
             diff=msg,**kw).save()
@@ -135,7 +135,7 @@ def log_delete(request,obj):
         type=ChangeTypes.delete,
         time=datetime.datetime.now(),
         user=request.user,
-        summary=obj._change_summary,
+        #~ summary=obj._change_summary,
         master=master,
         object=obj).save()
 

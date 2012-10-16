@@ -622,6 +622,13 @@ class ExtUI(base.UI):
         #~ base.UI.__init__(self,*args,**kw) # will create a.window_wrapper for all actions
         base.UI.__init__(self) 
         
+        #~ cause creation of the params_layout.params_store
+        for res in actors.actors_list:
+            for ba in res.get_actions():
+                if ba.action.parameters:
+                  ba.action.params_layout.get_layout_handle(self)
+        
+        
         
     def create_layout_panel(self,lh,name,vertical,elems,**kw):
         """
@@ -1933,6 +1940,8 @@ tinymce.init({
         kw.update(viewConfig=vc)
         
         
+        if rh.actor.params_panel_hidden:
+            kw.update(params_panel_hidden=True)
         
         kw.update(page_length=rh.actor.page_length)
         kw.update(stripeRows=True)
