@@ -225,7 +225,8 @@ class EventStates(Workflow):
         """
         #~ if status_id is None: return cls.blank_item
         cv = {
-          None: '',
+          #~ None: '',
+          None:EventStates.draft,
           1:EventStates.suggested,
           2:EventStates.scheduled,
           3:EventStates.cancelled,
