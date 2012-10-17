@@ -3224,6 +3224,15 @@ Lino.GridPanel = Ext.extend(Lino.GridPanel,{
         }
       }, this
     );
+    var actions = Lino.build_buttons(this,this.ls_bbar_actions);
+    //~ Ext.apply(config,Lino.build_buttons(this,config.ls_bbar_actions));
+    //~ config.bbar, this.cmenu = Lino.build_buttons(this,config.ls_bbar_actions);
+    //~ this.cmenu = new Ext.menu.Menu({items: config.bbar});
+    delete this.ls_bbar_actions
+    if (actions) {
+        this.cmenu = actions.cmenu;
+    }
+    
     if (!this.hide_top_toolbar) {  
       var tbar = [ 
         this.search_field = new Ext.form.TextField({ 
@@ -3295,6 +3304,12 @@ Lino.GridPanel = Ext.extend(Lino.GridPanel,{
           }
         ]);
       }
+      
+      if (actions) {
+        tbar = tbar.concat(actions.bbar);
+          //~ this.bbar = actions.bbar;
+      }
+      
       this.tbar = new Ext.PagingToolbar({ 
         store: this.store, 
         prependButtons: true, 
@@ -3326,14 +3341,6 @@ Lino.GridPanel = Ext.extend(Lino.GridPanel,{
     }
     
     delete this.page_length
-    
-    var actions = Lino.build_buttons(this,this.ls_bbar_actions);
-    this.cmenu = actions.cmenu;
-    
-    //~ Ext.apply(config,Lino.build_buttons(this,config.ls_bbar_actions));
-    //~ config.bbar, this.cmenu = Lino.build_buttons(this,config.ls_bbar_actions);
-    //~ this.cmenu = new Ext.menu.Menu({items: config.bbar});
-    delete this.ls_bbar_actions
     
     
       
@@ -4307,12 +4314,12 @@ Lino.Window = Ext.extend(Ext.Window,{
         { qtip: 'permalink', handler: Lino.permalink_handler(this), id: "pin" }
       ];
       if (this.main_item.content_type && this.main_item.action_name != 'insert') {
-        config.tools = config.tools.concat([ {
+        config.tools = [ {
           handler: Lino.help_text_editor,
           qtip: "$_('Edit help texts for fields on this model.')",
           scope: this.main_item,
           id: "gear"
-        }]);
+        }].concat(config.tools);
       }
         
     //~ { qtip: '', handler: Lino.save_wc_handler(this), id: "save" }, 

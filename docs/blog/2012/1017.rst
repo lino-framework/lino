@@ -12,3 +12,22 @@
   und "Ist Akteur in folgenden Budgets:" (die neue Tabelle ActorsByPartner).
   
 - Übersetzungen
+
+- TaskStates "leer" und "Schläft" : raus. 
+  TaskState "leer" ersetzen durch "zu tun".
+  Bleiben nur "Zu tun", "Storniert", "Erledigt"
+
+  N.B. [Begonnen] bedeutet bei automatisch generierten Aufgaben 
+  "noch nicht erledigt, aber soll auch nicht mehr automatisch gelöscht werden". Außerdem schaute die Todo-Liste 7 Tage in die Zukunft, das war ein bisschen viel. 
+  
+- EventStates : darf jetzt auch nicht mehr leer sein. 
+
+- UsersWithClients : hier stimmten einige Zahlen noch nicht.
+
+- Caroline braucht die folgenden Reiter im Clientdetail nicht zu sehen: 
+  Ausbildung, Sprachen, Kompetenzen. --> Erledigt.
+
+- Auch in Grid Window stehen Row actions jetzt in der top toolbar.
+
+- eID-Inhalt drucken funktionierte nicht
+
