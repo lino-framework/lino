@@ -1,0 +1,14 @@
+20121017
+========
+
+- Feinschliff in den Demodaten. 
+  Jetzt wo die Demo öffentlich ist.
+  Berühmte Persönlichkeiten wie Elio di Rupo oder Herman van Veen eigneten sich
+  eigentlich nicht als Klienten.
+  Auch wurden geschlechtslose Personen dennoch zu Klienten.
+
+- Der Reiter "Schuldnerberatung" eines Partners hat jetzt zwei Unterteilungen: 
+  "Ist Partner folgender Budgets:" (die bisher einzige Tabelle BudgetsByPartner) 
+  und "Ist Akteur in folgenden Budgets:" (die neue Tabelle ActorsByPartner).
+  
+- Übersetzungen

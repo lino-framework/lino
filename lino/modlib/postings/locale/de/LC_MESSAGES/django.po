@@ -8,17 +8,18 @@ msgstr ""
 "Project-Id-Version: lino.modlib.mails\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2012-10-12 03:15+0100\n"
-"PO-Revision-Date: 2012-06-22 19:19+0200\n"
+"PO-Revision-Date: 2012-10-17 09:20+0200\n"
 "Last-Translator: Luc Saffre <luc.saffre@gmail.com>\n"
 "Language-Team: de\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"Plural-Forms: nplurals=2; plural=(n != 1)\n"
+"Plural-Forms: nplurals=2; plural=(n != 1);\n"
+"X-Generator: Poedit 1.5.4\n"
 
 #: .\models.py:61
 msgid "State"
-msgstr ""
+msgstr "Zustand"
 
 #: .\models.py:63
 msgid "Open"
@@ -57,19 +58,16 @@ msgid "Print"
 msgstr "Drucken"
 
 #: .\models.py:122
-#, fuzzy
 msgid "Postings ready to print"
 msgstr "Bereit für Ausdruck"
 
 #: .\models.py:126
-#, fuzzy
 msgid "Postings printed"
-msgstr "Postsendungs-Status"
+msgstr "Gedruckte Postsendungen"
 
 #: .\models.py:130
-#, fuzzy
 msgid "Postings sent"
-msgstr "Postsendungen"
+msgstr "Ausgegangene Postsendungen"
 
 #: .\models.py:163
 msgid "Create posting"

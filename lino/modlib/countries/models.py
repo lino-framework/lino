@@ -44,13 +44,13 @@ class CityTypes(ChoiceList):
     - http://en.wikipedia.org/wiki/List_of_subnational_entities
     
     """
-    label = _("Settlement Type")
+    label = _("Place Type")
 add = CityTypes.add_item
 #~ add('10', pgettext_lazy(u'countries','State'))             # de:Bundesland
 add('10', _('Member State'))      # de:Bundesland
 add('11', _('Division'))
 add('12', _('Region'))
-add('13', _('Community'))
+add('13', _('Community'))            # fr:Communauté de: Gemeinschaft
 add('14', _('Territory'))
 #~ add('15', _('City-state'))        # et:Linnriik  de:Stadtstaat  fr:Cité-État
 
@@ -66,8 +66,8 @@ add('28', _('Sector'))
 
 add('50', _('City'),'city')              # et:suurlinn  de:Stadt
 add('51', _('Town'),'town')              # et:linn      de:Kleinstadt
-add('52', _('Municipality'),'municipality')      # et:vald     de:Gemeinde
-add('53', _('Commune'),'commune')           # de:Kommune fr:Commune
+add('52', _('Municipality'),'municipality')      # et:vald     de:Gemeinde fr:Commune
+#~ add('53', _('Commune'),'commune')           # de:Kommune fr:Commune
 add('54', _('Parish'),'parish')           # de:Pfarre fr:Paroisse
 add('55', _('Township'),'township')           # de:Stadtteil fr:?
 add('56', _('Quarter'),'quarter')           # de:Viertel fr:Quartier

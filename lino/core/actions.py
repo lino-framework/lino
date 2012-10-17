@@ -1208,10 +1208,15 @@ class ActionRequest(object):
             notes.add_system_note(self,owner,subject,body)
         #~ if silent:
             #~ return
-        recipients = list(settings.LINO.get_system_note_recipients(self,owner,silent))
+        recipients = []
+        for addr in settings.LINO.get_system_note_recipients(self,owner,silent):
+            if not '@example.com' in addr:
+                recipients.append(addr)
         if not len(recipients):
             return
         sender = self.get_user().email or settings.SERVER_EMAIL
+        if not sender or '@example.com' in sender:
+            return
         msg = EmailMessage(subject=subject, 
             from_email=sender,body=body,to=recipients)
         msg.send()

@@ -7,14 +7,15 @@ msgid ""
 msgstr ""
 "Project-Id-Version: lino.modlib.contacts\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2012-10-12 03:14+0100\n"
-"PO-Revision-Date: 2012-06-08 11:19+0200\n"
+"POT-Creation-Date: 2012-10-17 07:19+0100\n"
+"PO-Revision-Date: 2012-10-17 09:24+0200\n"
 "Last-Translator: Luc Saffre <luc.saffre@gmail.com>\n"
 "Language-Team: ds <luc.saffre@gmail.com>\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"Plural-Forms: nplurals=2; plural=(n != 1)\n"
+"Plural-Forms: nplurals=2; plural=(n != 1);\n"
+"X-Generator: Poedit 1.5.4\n"
 
 #: .\models.py:82
 msgid "Mrs"
@@ -181,11 +182,11 @@ msgstr "Organisationsart"
 
 #: .\models.py:585
 msgid "Function"
-msgstr ""
+msgstr "Funktion"
 
 #: .\models.py:586
 msgid "Functions"
-msgstr ""
+msgstr "Funktionen"
 
 #: .\models.py:603
 msgid "Contact Person"
@@ -212,7 +213,6 @@ msgid "represented by"
 msgstr "Vertreten durch"
 
 #: .\models.py:825
-#, fuzzy
 msgid "represented as"
 msgstr "Vertreten durch"
 

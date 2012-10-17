@@ -104,7 +104,8 @@ def objects():
     
     raeren = City.objects.get(name__exact='Raeren')
     person = Instantiator(settings.LINO.person_model,"first_name last_name",
-                country='BE',language=default_language(),city=raeren,zip_code='4730').build
+                country='BE',language=default_language(),
+                city=raeren,zip_code='4730').build
     yield person(u'Erich',    u'Emonts',gender=Gender.male)
     yield person(u'Erwin',    u'Emontspool',gender=Gender.male)
     yield person(u'Erna',     u'Emonts-Gast',gender=Gender.female)
@@ -112,22 +113,22 @@ def objects():
     yield person(u'Berta',     u'Radermacher',gender=Gender.female)
     yield person(u'Christian',     u'Radermacher',gender=Gender.male)
     yield person(u'Daniela',     u'Radermacher',gender=Gender.female)
-    yield person(u'Edgard',     u'Radermacher')
-    yield person(u'Fritz',     u'Radermacher')
-    yield person(u'Guido',     u'Radermacher')
-    yield person(u'Hans',     u'Radermacher')
-    yield person(u'Hedi',     u'Radermacher')
-    yield person(u'Inge',     u'Radermacher')
-    yield person(u'Jean',     u'Radermacher')
+    yield person(u'Edgard',     u'Radermacher',gender=Gender.male)
+    yield person(u'Fritz',     u'Radermacher',gender=Gender.male)
+    yield person(u'Guido',     u'Radermacher',gender=Gender.male)
+    yield person(u'Hans',     u'Radermacher',gender=Gender.male)
+    yield person(u'Hedi',     u'Radermacher',gender=Gender.female)
+    yield person(u'Inge',     u'Radermacher',gender=Gender.female)
+    yield person(u'Jean',     u'Radermacher',gender=Gender.male)
     
     # special challenges for alphabetic ordering
-    yield person(u'Elio',     u'di Rupo')
-    yield person(u'Leonardo', u'da Vinci')
-    yield person(u'Herman',   u'van Veen')
-    yield person(u'Rein',   u'Õunapuu')
+    yield person(u'Didier',     u'di Rupo',gender=Gender.male)
+    yield person(u'David', u'da Vinci',gender=Gender.male)
+    yield person(u'Vincent',   u'van Veen',gender=Gender.male)
+    yield person(u'Rein',   u'Õunapuu',gender=Gender.male)
     
-    yield person(u'Otto',   u'Östges')
-    yield person(u'Erna',   u'Ärgerlich')
+    yield person(u'Otto',   u'Östges',gender=Gender.male)
+    yield person(u'Erna',   u'Ärgerlich',gender=Gender.female)
     
     
     person = Instantiator(settings.LINO.person_model,country='BE',city=City.objects.get(name__exact=u'Angleur')).build
@@ -135,20 +136,20 @@ def objects():
     yield person(first_name=u'Jean',last_name=u'Dupont')
     
     person = Instantiator(settings.LINO.person_model,country='BE',city=City.objects.get(name__exact=u'Oostende')).build
-    yield person(first_name=u'Mark',last_name=u'Martelaer')
-    yield person(first_name=u'Rik',last_name=u'Radermecker')
-    yield person(first_name=u'Marie-Louise',last_name=u'Vandenmeulenbos')
+    yield person(first_name=u'Mark',last_name=u'Martelaer',gender=Gender.male)
+    yield person(first_name=u'Rik',last_name=u'Radermecker',gender=Gender.male)
+    yield person(first_name=u'Marie-Louise',last_name=u'Vandenmeulenbos',gender=Gender.female)
     
     person = Instantiator(settings.LINO.person_model,country='DE').build
-    yield person(first_name=u'Emil',last_name=u'Eierschal')
-    yield person(first_name=u'Lisa',last_name=u'Lahm')
-    yield person(first_name=u'Bernd',last_name=u'Brecht')
-    yield person(first_name=u'Karl',last_name=u'Keller')
+    yield person(first_name=u'Emil',last_name=u'Eierschal',gender=Gender.male)
+    yield person(first_name=u'Lisa',last_name=u'Lahm',gender=Gender.female)
+    yield person(first_name=u'Bernd',last_name=u'Brecht',gender=Gender.male)
+    yield person(first_name=u'Karl',last_name=u'Keller',gender=Gender.male)
     
     person = Instantiator(settings.LINO.person_model,country='FR').build
-    yield person(first_name=u'Robin',last_name=u'Dubois')
-    yield person(first_name=u'Denis',last_name=u'Denon')
-    yield person(first_name=u'Jérôme',last_name=u'Jeanémart')
+    yield person(first_name=u'Robin',last_name=u'Dubois',gender=Gender.male)
+    yield person(first_name=u'Denis',last_name=u'Denon',gender=Gender.male)
+    yield person(first_name=u'Jérôme',last_name=u'Jeanémart',gender=Gender.male)
     
     
     s = u"""\
