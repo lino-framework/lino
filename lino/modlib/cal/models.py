@@ -1039,7 +1039,7 @@ class EventsByPlace(Events):
 class EventsByController(Events):
     required = dict(user_groups='office')
     master_key = 'owner'
-    column_names = 'start_date start_time summary state *'
+    column_names = 'start_date start_time summary workflow_buttons id'
 
 if settings.LINO.project_model:    
   
@@ -1264,7 +1264,7 @@ class Tasks(dd.Table):
     #~ debug_permissions = True
     model = 'cal.Task'
     required = dict(user_groups='office')
-    column_names = 'start_date summary state *'
+    column_names = 'start_date summary workflow_buttons *'
     order_by = ["-start_date","-start_time"]
     #~ hidden_columns = set('owner_id owner_type'.split())
     
@@ -1288,6 +1288,7 @@ class Tasks(dd.Table):
     
 class TasksByController(Tasks):
     master_key = 'owner'
+    column_names = 'start_date summary workflow_buttons id'
     #~ hidden_columns = set('owner_id owner_type'.split())
 
 if settings.LINO.user_model:    
