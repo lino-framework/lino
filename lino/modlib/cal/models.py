@@ -874,7 +874,7 @@ Indicates that this Event shouldn't prevent other Events at the same time."""))
     place = models.ForeignKey(Place,null=True,blank=True) # iCal:LOCATION
     priority = models.ForeignKey(Priority,null=True,blank=True)
     #~ priority = Priority.field(_("Priority"),blank=True) # iCal:PRIORITY
-    state = EventStates.field(blank=True) # iCal:STATUS
+    state = EventStates.field() # iCal:STATUS
     #~ status = models.ForeignKey(EventStatus,verbose_name=_("Status"),blank=True,null=True) # iCal:STATUS
     #~ duration = dd.FieldSet(_("Duration"),'duration_value duration_unit')
     #~ duration_value = models.IntegerField(_("Duration value"),null=True,blank=True) # iCal:DURATION
