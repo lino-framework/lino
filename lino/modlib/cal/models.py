@@ -1318,7 +1318,7 @@ if settings.LINO.user_model:
         #~ filter = models.Q(state__in=(TaskState.blank_item,TaskState.todo,TaskState.started))
         filter = models.Q(
             start_date__lte=datetime.date.today()+dateutil.relativedelta.relativedelta(days=1),
-            state__in=(TaskState.todo,TaskState.started))
+            state__in=(TaskStates.todo,TaskStates.started))
     
 if settings.LINO.project_model:    
   
@@ -1552,7 +1552,7 @@ def tasks_summary(ui,user,days_back=None,days_forward=None,**kw):
         
     #~ filterkw.update(done=False)
     #~ filterkw.update(state__in=[TaskState.blank_item,TaskState.todo]) 20120829
-    filterkw.update(state__in=[None,TaskState.todo])
+    filterkw.update(state__in=[None,TaskStates.todo])
             
     for task in Task.objects.filter(**filterkw).order_by('start_date'):
         add(task)
@@ -1923,7 +1923,7 @@ def reminders_as_html(ar,days_back=None,days_forward=None,**kw):
         filter=flt & (models.Q(state=None) | models.Q(state__lte=EventStates.scheduled)))
     tasks = ar.spawn(MyTasks,master_instance=user,
         #~ filter=flt & models.Q(state__in=[TaskState.blank_item,TaskState.todo])) 20120829
-        filter=flt & models.Q(state__in=[None,TaskState.todo]))
+        filter=flt & models.Q(state__in=[None,TaskStates.todo]))
     
     for o in events:
         o._detail_action = MyEvents.get_url_action('detail_action')
