@@ -153,7 +153,7 @@ def amonthago():
     return DurationUnits.months.add_duration(datetime.date.today(),-1)
         
 
-class TaskState(Workflow):
+class TaskStates(Workflow):
     """
     State of a Calendar Task. Used as Workflow selector.
     """
@@ -166,33 +166,35 @@ class TaskState(Workflow):
         """
         #~ if status_id is None: return None
         cv = {
-          None: '',
-          1:TaskState.todo,
-          2:TaskState.started,
-          3:TaskState.done,
-          4:TaskState.cancelled,
+          None: TaskStates.todo,
+          1:TaskStates.todo,
+          2:TaskStates.started,
+          #~ 2:TaskStates.todo,
+          3:TaskStates.done,
+          4:TaskStates.cancelled,
           }
         return cv[status_id]
     
-add = TaskState.add_item
+add = TaskStates.add_item
 #~ add('10', _("To do"),'todo',required=dict(states=['']))
 #~ add('20', pgettext_lazy(u"cal",u"Started"),'started',required=dict(states=['','todo']))
 #~ add('30', _("Done"),'done',required=dict(states=['','todo','started']))
 #~ add('40', _("Sleeping"),'sleeping',required=dict(states=['','todo']))
 #~ add('50', _("Cancelled"),'cancelled',required=dict(states=['todo','sleeping']))
 
+#~ add('00', _("Virgin"),'todo')
 add('10', _("To do"),'todo')
 add('20', pgettext_lazy(u"cal",u"Started"),'started')
 add('30', _("Done"),'done')
-add('40', _("Sleeping"),'sleeping')
+#~ add('40', _("Sleeping"),'sleeping')
 add('50', _("Cancelled"),'cancelled')
 
-TaskState.todo.add_workflow(states='_')
-TaskState.todo.add_workflow(_("Wake up"),states='sleeping')
-TaskState.started.add_workflow(states='_ todo')
-TaskState.done.add_workflow(states='_ todo started')
-TaskState.sleeping.add_workflow(states='_ todo')
-TaskState.cancelled.add_workflow(states='todo sleeping')
+TaskStates.todo.add_workflow(_("Reopen"),states='done cancelled')
+#~ TaskStates.todo.add_workflow(_("Wake up"),states='sleeping')
+#~ TaskStates.started.add_workflow(states='_ todo')
+TaskStates.done.add_workflow(states='todo started')
+#~ TaskStates.sleeping.add_workflow(states='_ todo')
+TaskStates.cancelled.add_workflow(states='todo started')
 
 #~ class EventStates(ChoiceList):
 class EventStates(Workflow):

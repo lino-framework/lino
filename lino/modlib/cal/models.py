@@ -49,7 +49,7 @@ from lino.core.modeltools import resolve_model, obj2str
 
 from lino.modlib.cal.utils import \
     Weekday, DurationUnits, setkw, dt2kw, \
-    EventStates, GuestStates, TaskState, AccessClasses, \
+    EventStates, GuestStates, TaskStates, AccessClasses, \
     CalendarAction
 
 from lino.utils.babel import dtosl
@@ -764,9 +764,6 @@ Whether this is private, public or between.""")) # iCal:CLASS
         return "%s@%s" % (self.pk,settings.LINO.uid)
             
 
-    def is_user_modified(self):
-        return self.state
-        
     #~ def on_user_change(self,request):
         #~ raise NotImplementedError
         #~ self.user_modified = True
@@ -900,6 +897,9 @@ Indicates that this Event shouldn't prevent other Events at the same time."""))
                     for obj in Membership.objects.filter(user=self.user):
                         if obj.watched_user.partner:
                             Guest(event=self,partner=obj.watched_user.partner).save()
+        
+    def is_user_modified(self):
+        return self.state != EventStates.draft
         
     def after_state_change(self,ar,kw,old,new):
         """
@@ -1208,7 +1208,7 @@ class Task(Component):
         verbose_name=_("Due time"))
     #~ done = models.BooleanField(_("Done"),default=False) # iCal:COMPLETED
     percent = models.IntegerField(_("Duration value"),null=True,blank=True) # iCal:PERCENT
-    state = TaskState.field(blank=True) # iCal:STATUS
+    state = TaskStates.field() # iCal:STATUS
     #~ status = models.ForeignKey(TaskStatus,verbose_name=_("Status"),blank=True,null=True) # iCal:STATUS
     
     #~ @dd.action(_("Done"),required=dict(states=['','todo','started']))
@@ -1238,14 +1238,17 @@ class Task(Component):
     
 
     def before_ui_save(self,ar,**kw):
-        if not self.state:
-            self.state = TaskState.todo
+        if self.state == TaskStates.todo:
+            self.state = TaskStates.started
         return super(Task,self).before_ui_save(ar,**kw)
         
     #~ def on_user_change(self,request):
         #~ if not self.state:
             #~ self.state = TaskState.todo
         #~ self.user_modified = True
+        
+    def is_user_modified(self):
+        return self.state != TaskStates.todo
         
     @classmethod
     def site_setup(cls,lino):
@@ -1314,8 +1317,8 @@ if settings.LINO.user_model:
         label = _("To-do list")
         #~ filter = models.Q(state__in=(TaskState.blank_item,TaskState.todo,TaskState.started))
         filter = models.Q(
-            start_date__lte=datetime.date.today()+dateutil.relativedelta.relativedelta(days=7),
-            state__in=(None,TaskState.todo,TaskState.started))
+            start_date__lte=datetime.date.today()+dateutil.relativedelta.relativedelta(days=1),
+            state__in=(TaskState.todo,TaskState.started))
     
 if settings.LINO.project_model:    
   
