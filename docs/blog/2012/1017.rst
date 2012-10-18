@@ -27,7 +27,13 @@
 - Caroline braucht die folgenden Reiter im Clientdetail nicht zu sehen: 
   Ausbildung, Sprachen, Kompetenzen. --> Erledigt.
 
-- Auch in Grid Window stehen Row actions jetzt in der top toolbar.
+- Auch in Grid-Fenstern stehen Row actions jetzt in der top toolbar.
 
 - eID-Inhalt drucken funktionierte nicht
 
+
+
+- Gerd und ich meinten, dass wir ein Wiki machen sollten, 
+  um das Benutzerhandbuch zu schreiben:
+  
+  http://de.wikibooks.org/wiki/Lino_f%C3%BCr_%C3%96SHZ

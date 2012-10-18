@@ -351,6 +351,7 @@ def startup_site(self):
           
             from django.db.utils import DatabaseError
             try:
+              
                 from lino.models import HelpText
                 for ht in HelpText.objects.filter(help_text__isnull=False):
                     #~ logger.info("20120629 %s.help_text", ht)

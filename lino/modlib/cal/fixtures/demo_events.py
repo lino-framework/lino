@@ -54,6 +54,7 @@ def objects():
     #~ DURATIONS = Cycler([s2duration(s) for s in ('00:30','00:40','1:00','1:30','2:00','3:00')])
     DURATIONS = Cycler([s2duration(s) for s in ('01:00','01:15','1:30','1:45','2:00','2:30','3:00')])
     ACL = Cycler(cal.AccessClasses.items())
+    STATES = Cycler(cal.EventStates.items())
     SUMMARIES = Cycler((
       dict(en='Lunch',de=u"Mittagessen",fr=u"Diner")
       ,dict(en='Dinner',de=u"Abendessen",fr=u"Souper")
@@ -80,6 +81,7 @@ def objects():
               start_time=st,
               summary=s)
             kw.update(access_class=ACL.pop())
+            kw.update(state=STATES.pop())
             if settings.LINO.project_model:
                 kw.update(project=PROJECTS.pop())
             e = cal.Event(**kw)

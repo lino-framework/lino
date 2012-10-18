@@ -173,6 +173,7 @@ class GridColumn(jsgen.Component):
         #~ if isinstance(editor,FieldElement) and editor.field.primary_key:
         if isinstance(editor,FieldElement):
             if settings.LINO.use_quicktips and self.editor.field.help_text:
+                #~ GridColumn tooltips don't support html
                 if not "<" in self.editor.field.help_text:
                     kw.update(tooltip=self.editor.field.help_text)
                 
@@ -470,7 +471,9 @@ class FieldElement(LayoutElement):
                 #~ kw.update(toolTipText=self.field.help_text)
                 #~ kw.update(tooltip=self.field.help_text)
                 kw.update(listeners=dict(render=js_code(
-                  "Lino.quicktip_renderer(%s,%s)" % (py2js(self.field.verbose_name),py2js(self.field.help_text)))
+                  "Lino.quicktip_renderer(%s,%s)" % (
+                      py2js(self.field.verbose_name),
+                      py2js(self.field.help_text)))
                 ))
             
 

@@ -1,0 +1,16 @@
+20121018
+========
+
+
+Die Hilfetexte
+==============
+
+Die Hilfetexte (Tooltips) müssten noch etwas verbessert 
+werden: momentan ist es nicht möglich, die Tooltips 
+von Parameterfeldern zu bearbeiten.
+
+Das ist aber eigentlich nicht so dringend. Als pragmatische Lösung 
+habe ich begonnen, die deutschen Hilfetexte direkt im Sourcecode einzugeben.
+
+
+renamed `is_deprecated` to `is_obsolete`
