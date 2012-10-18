@@ -41,6 +41,7 @@ from lino.core.modeltools import resolve_model
 from lino.utils import IncompleteDate, d2iso
 #~ from lino.utils.quantities import Duration
 from lino.utils import quantities 
+from lino.utils import get_class_attr
 
 
 class PasswordField(models.CharField):
@@ -167,6 +168,18 @@ class RemoteField(FakeField):
         self.max_length = getattr(fld,'max_length',None)
         #~ print 20120424, self.name
 
+    def value_from_object(self,obj,ar=None):
+        """
+        Return the value of this field in the specified model instance `obj`.
+        `ar` may be `None`, it's forwarded to the getter method who may 
+        decide to return values depending on it.
+        """
+        m = self.func
+        return m(obj,ar)
+        
+    def __get__(self,instance,owner):
+        if instance is None: return self
+        return self.value_from_object(instance)
 
         
 
@@ -740,3 +753,78 @@ class RecurrenceField(models.CharField):
         kw.setdefault('max_length',200)
         models.CharField.__init__(self,*args,**kw)
       
+
+def get_data_elem(model,name):
+    #~ logger.info("20120202 get_data_elem %r,%r",model,name)
+    parts = name.split('__')
+    if len(parts) > 1:
+        # logger.warning("20120406 RemoteField %s in %s",name,self)
+        #~ model = self.model
+        for n in parts:
+            assert model is not None
+            fld = get_data_elem(model,n)
+            if fld is None:
+                # raise Exception("Part %s of %s got None" % (n,model))
+                raise Exception(
+                    "Invalid RemoteField %s.%s (no %s in %s)" % 
+                    (full_model_name(self.model),name,n,full_model_name(model)))
+            if fld.rel:
+                model = fld.rel.to
+            else:
+                model = None
+        def func(obj,ar=None):
+            # logger.info('20120109 %s',name)
+            try:
+                for n in parts:
+                    obj = getattr(obj,n)
+                # logger.info('20120109 %s --> %r', name,obj)
+                return obj
+            except Exception,e:
+                return None
+        return RemoteField(func,name,fld)
+    
+    try:
+        return model._meta.get_field(name)
+    except models.FieldDoesNotExist,e:
+        pass
+        
+    #~ s = name.split('.')
+    #~ if len(s) == 1:
+        #~ mod = import_module(model.__module__)
+        #~ rpt = getattr(mod,name,None)
+    #~ elif len(s) == 2:
+        #~ mod = getattr(settings.LINO.modules,s[0])
+        #~ rpt = getattr(mod,s[1],None)
+    #~ else:
+        #~ raise Exception("Invalid data element name %r" % name)
+    
+    v = get_class_attr(model,name)
+    if v is not None: return v
+    
+    for vf in model._meta.virtual_fields:
+        if vf.name == name:
+            return vf
+
+
+def fields_list(model,field_names):
+    """
+    Return a list with the names of the specified fields, 
+    checking whether each of them exists.
+    
+    Arguments: 
+    `model` is any subclass of `django.db.models.Model`.
+    `field_names` is a single string with a space-separated list of field names.
+    
+    For example if you have a model `MyModel` 
+    with two fields `foo` and `bar`,
+    then ``dd.fields_list(MyModel,"foo bar")`` 
+    will return ``['foo','bar']``
+    and ``dd.fields_list(MyModel,"foo baz")`` will raise an exception.
+    """
+    #~ return tuple([get_field(model,n) for n in field_names.split()])
+    #~ if model.__name__ == 'Company':
+        #~ print 20110929, [get_field(model,n) for n in field_names.split()]
+    #~ return [get_field(model,n).name for n in field_names.split()]
+    return [get_data_elem(model,n).name for n in field_names.split()]
+
+

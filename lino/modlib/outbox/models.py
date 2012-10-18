@@ -239,7 +239,7 @@ class Recipient(dd.Model):
     """
     Abstract base for :class:`inbox.Recipient` and :class:`outbox.Recipient`.
     """
-    allow_cascaded_delete = True
+    allow_cascaded_delete = ['mail']
     
     class Meta:
         verbose_name = _("Recipient")
@@ -541,7 +541,7 @@ class SentByPartner(Mails):
 
 class Attachment(mixins.Controllable):
   
-    allow_cascaded_delete = True
+    allow_cascaded_delete = ['mail']
     
     class Meta:
         verbose_name = _("Attachment")

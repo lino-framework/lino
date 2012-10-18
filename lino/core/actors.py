@@ -281,6 +281,10 @@ class Actor(actions.Parametrizable):
     Set this explicitly to True or False to make the 
     Actor per se editable or not.
     Otherwise it will be set to `False` if the Actor is a Table has a `get_data_rows` method.
+    
+    The :class:`lino.models.Changes` table is an example where this is being used: 
+    nobody should ever edit something in the table of Changes. 
+    The user interface uses this to generate optimized JS code for this case.
     """
     
     

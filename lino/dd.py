@@ -62,6 +62,7 @@ Layouts:
   
 Utilities:
 
+- :func:`fields_list <lino.core.fields.fields_list>`
 - :func:`resolve_field <lino.core.modeltools.resolve_field>`
 - :func:`resolve_model <lino.core.modeltools.resolve_model>`
 - :func:`resolve_app <lino.core.modeltools.resolve_app>` 
@@ -92,6 +93,7 @@ logger = logging.getLogger(__name__)
 from lino.core.tables import VirtualTable
 
 from lino.core.modeltools import resolve_model, resolve_app, resolve_field, get_field, UnresolvedModel
+
 from lino.core.model import Model
 
 #~ from lino.core.table import fields_list, inject_field
@@ -123,6 +125,7 @@ from lino.core.actions import ChangeStateAction
 from lino.core.actions import NotifyingAction
 
 
+from lino.core.fields import fields_list
 from lino.core.fields import DummyField
 from lino.core.fields import RecurrenceField
 from lino.core.fields import GenericForeignKey
@@ -158,27 +161,6 @@ from lino.core.layouts import ParamsLayout
 class Module(object):
     pass
     
-def fields_list(model,field_names):
-    """
-    Return a list with the names of the specified fields, 
-    checking whether each of them exists.
-    
-    Arguments: 
-    `model` is any subclass of `django.db.models.Model`.
-    `field_names` is a single string with a space-separated list of field names.
-    
-    For example if you have a model `MyModel` 
-    with two fields `foo` and `bar`,
-    then ``dd.fields_list(MyModel,"foo bar")`` 
-    will return ``['foo','bar']``
-    and ``dd.fields_list(MyModel,"foo baz")`` will raise an exception.
-    """
-    #~ return tuple([get_field(model,n) for n in field_names.split()])
-    #~ if model.__name__ == 'Company':
-        #~ print 20110929, [get_field(model,n) for n in field_names.split()]
-    return [get_field(model,n).name for n in field_names.split()]
-
-
 PENDING_INJECTS = dict()
 PREPARED_MODELS = dict()
 

@@ -27,7 +27,6 @@ from django.db.models import Q
 from django.db.models.fields import FieldDoesNotExist
 from django.utils.importlib import import_module
 from django.db.models import loading
-from lino.utils import get_class_attr
 
 
 from django.core.validators import validate_email, ValidationError, URLValidator
@@ -358,31 +357,4 @@ def get_model_report(model):
         raise Exception("%r has no _lino_default_table" % model)
     return model._lino_default_table
 
-def get_unbound_meth(cl,name):
-    raise Exception("replaced by lino.utils.get_class_attr")
     
-    
-def get_data_elem(model,name):
-    #~ logger.info("20120202 get_data_elem %r,%r",model,name)
-    try:
-        return model._meta.get_field(name)
-    except models.FieldDoesNotExist,e:
-        pass
-        
-    #~ s = name.split('.')
-    #~ if len(s) == 1:
-        #~ mod = import_module(model.__module__)
-        #~ rpt = getattr(mod,name,None)
-    #~ elif len(s) == 2:
-        #~ mod = getattr(settings.LINO.modules,s[0])
-        #~ rpt = getattr(mod,s[1],None)
-    #~ else:
-        #~ raise Exception("Invalid data element name %r" % name)
-    
-    v = get_class_attr(model,name)
-    if v is not None: return v
-    
-    for vf in model._meta.virtual_fields:
-        if vf.name == name:
-            return vf
-

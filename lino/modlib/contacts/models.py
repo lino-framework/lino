@@ -356,7 +356,13 @@ class Born(dd.Model):
         
     birth_date = dd.IncompleteDateField(
         blank=True,
-        verbose_name=_("Birth date"))
+        verbose_name=_("Birth date"),
+        help_text = u"""\
+Unkomplette Geburtsdaten sind erlaubt, z.B. 
+<br>"00.00.1980" heißt "irgendwann im Jahr 1980", 
+<br>"00.07.1980" heißt "im Juli 1980"
+<br>oder"23.07.0000" heißt "Geburtstag am 23. Juli, Alter unbekannt".""")
+        
     
     def get_age_years(self,today=None):
         if self.birth_date and self.birth_date.year:
@@ -378,6 +384,7 @@ class Born(dd.Model):
         return u"±" + s
 
 
+        
 
 class PersonMixin(dd.Model):
     """

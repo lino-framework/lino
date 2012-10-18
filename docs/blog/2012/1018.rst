@@ -2,15 +2,93 @@
 ========
 
 
-Die Hilfetexte
-==============
+Hilfetexte
+----------
 
-Die Hilfetexte (Tooltips) müssten noch etwas verbessert 
-werden: momentan ist es nicht möglich, die Tooltips 
+Momentan ist es nicht möglich, die Tooltips 
 von Parameterfeldern zu bearbeiten.
 
+Die Hilfetexte (Tooltips) müssten insgesamt noch etwas verbessert 
+werden: 
+
+- HelpText.label und HelpText.text sollten Babelfelder werden
+- HelpText.type und HelpTextType:
+    dbfield
+    action
+    param_field
+- HelpText.actor statt HelpText.content_type
+
 Das ist aber eigentlich nicht so dringend. Als pragmatische Lösung 
-habe ich begonnen, die deutschen Hilfetexte direkt im Sourcecode einzugeben.
+habe ich begonnen, die deutschen Hilfetexte 
+direkt im Sourcecode einzugeben.
 
 
 renamed `is_deprecated` to `is_obsolete`
+
+
+allow_cascaded_delete
+---------------------
+
+:attr:`allow_cascaded_delete <lino.core.Model.allow_cascaded_delete`
+is no longer a boolean but a list.
+
+Bisher konnte man nur sagen Ja oder Nein, aber das war zu einfach gedacht.
+Zum Beispiel Akteure eines Budgets: die sollen automatisch gelöscht werden, 
+wenn das Budget gelöscht wird. Aber nicht, wenn der Partner gelöscht wird.
+Aber bisher wurden sie dadurch auch automatisch wenn der Partner gelöscht 
+wurde. 
+Einen Partner zu löschen, der als Akteur in einem Budget verwendet wird, 
+*das* darf Lino *nicht* erlauben.
+
+Begleitungen hatten 
+:attr:`allow_cascaded_delete <lino.core.Model.allow_cascaded_delete` 
+noch nicht gesetzt. Lino meldete fälschlicherweise Dinge wie 
+"Kann Kient X nicht löschen, weil 1 Begleitungen darauf verweisen."
+
+Miscellaneous
+-------------
+
+
+- Discovered and fixed a little bug: 
+  editing was *not* disabled when 
+  :attr:`lino.core.actors.Actor.editable` was set to True.
+
+- Außerdem ein Bug, der wahrscheinlich schon länger da war: 
+  Wenn man nach [Neu] in contacts/Partners das Insert-Fenster 
+  bestätigte, kam "contacts_partner.created may not be NULL".
+
+
+changes and mti
+---------------
+
+Mir ist aufgefallen, dass Änderungen noch nicht funktionierten, 
+wenn man sie auf mehreren Ebenen einer MTI-Familie haben will. 
+Also z.B. nicht nur für Klienten, sondern für alle Partner.
+Und wir wollen das im Lino für ÖSHZ, wo watch_tim 
+auch immer wieder mal Partnermetamorphosen durchführt
+(Client becomes Partner, Person becomes Company etc.).
+
+Resultat: einige intere Änderungen, und die Konfiguration sieht jetzt so aus::
+
+    def on_site_startup(self):
+    
+        self.modules.contacts.Partner.watch_changes()
+        self.modules.contacts.Person.watch_changes(master_key='partner_ptr')
+        self.modules.contacts.Company.watch_changes(master_key='partner_ptr')
+        self.modules.pcsw.Client.watch_changes(master_key='partner_ptr')
+        self.modules.pcsw.Coaching.watch_changes(master_key='client__partner_ptr')
+        self.modules.pcsw.ClientContact.watch_changes(master_key='client__partner_ptr')
+        self.modules.jobs.Candidature.watch_changes(master_key='person__partner_ptr')
+
+Die Tabelle ChangesByMaster steht jetzt nicht mehr im Reiter "Chronik" eines Klienten, 
+sondern in einen eigenen Reiter "Änderungen" eines Partners. 
+Das ist logisch: die Änderungen eines Klienten machen nur Sinn, wenn man auch 
+eventuelle Metamorphosen des Partners mit betrachtet.
+
+Das neue System funktioniert auch schon fast. 
+
+TODO:
+
+- mti.EnableChild loggt noch nichts.
+- weiter mit watch_tim, der ja ebenfalls jetzt über `Changes` loggen soll.
+

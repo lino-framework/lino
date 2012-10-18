@@ -258,7 +258,8 @@ class CreatedModified(dd.Model):
         On save, update timestamps.
         '''
         if not settings.LINO.loading_from_dump:
-            if not self.pk:
+            #~ if not self.pk:
+            if self.created is None:
                 self.created = datetime.datetime.now()
             self.modified = datetime.datetime.now()
         super(CreatedModified, self).save(*args, **kwargs)

@@ -1824,6 +1824,8 @@ tinymce.init({
             yield "  autoHeight: true,"
         if settings.LINO.is_installed('contenttypes') and issubclass(tbl,dbtables.Table):
             yield "  content_type: %s," % py2js(ContentType.objects.get_for_model(tbl.model).pk)
+        if not tbl.editable:
+            yield "  disable_editing: true," 
         yield "  initComponent : function() {"
         yield "    var containing_panel = this;"
         lc = 0
@@ -1940,6 +1942,8 @@ tinymce.init({
         kw.update(viewConfig=vc)
         
         
+        if not rh.actor.editable:
+            kw.update(disable_editing=True)
         if rh.actor.params_panel_hidden:
             kw.update(params_panel_hidden=True)
         

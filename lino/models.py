@@ -55,9 +55,6 @@ from lino.dd import UserLevels, UserProfiles, UserGroups
 
 
 
-
-
-
 #~ class BuildLinoJS(dd.RowAction):
 class BuildSiteCache(dd.RowAction):
     """

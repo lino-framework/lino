@@ -59,7 +59,7 @@ class Upload(
     mixins.CreatedModified,
     mixins.Controllable):
     
-    allow_cascaded_delete = True
+    #~ allow_cascaded_delete = ['']
     
     class Meta:
         verbose_name = _("Upload")

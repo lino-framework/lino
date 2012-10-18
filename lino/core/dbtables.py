@@ -75,7 +75,7 @@ from lino.ui import requests as ext_requests
 
 from lino.core.modeltools import resolve_model, resolve_field, full_model_name, get_field, UnresolvedModel
 #~ from lino.utils.config import LOCAL_CONFIG_DIR
-from lino.core.modeltools import get_model_report, get_data_elem
+from lino.core.modeltools import get_model_report
 from lino.core.tables import AbstractTable, TableRequest, VirtualTable
 #~ from lino.core.tables import GridEdit #, ComputedColumn
 
@@ -757,41 +757,11 @@ class Table(AbstractTable):
             return None
         if not isinstance(self.model,type) or not issubclass(self.model,models.Model):
             raise Exception("%s.model is %r (and not a Model subclass)" % (self,self.model))
-        parts = name.split('__')
-        if len(parts) > 1:
-            #~ logger.warning("20120406 RemoteField %s in %s",name,self)
-            model = self.model
-            for n in parts:
-                assert model is not None
-                fld = get_data_elem(model,n)
-                if fld is None:
-                    #~ raise Exception("Part %s of %s got None" % (n,model))
-                    raise Exception(
-                        "Invalid RemoteField %s.%s (no %s in %s)" % 
-                        (full_model_name(self.model),name,n,full_model_name(model)))
-                if fld.rel:
-                    model = fld.rel.to
-                else:
-                    #~ model = False
-                    model = None
-            def func(obj):
-                #~ logger.info('20120109 %s',name)
-                #~ print '20120109', name
-                try:
-                    for n in parts:
-                        obj = getattr(obj,n)
-                    #~ logger.info('20120109 %s --> %r', name,obj)
-                    return obj
-                except Exception,e:
-                    return None
-            #~ de = get_data_elem(model,name)
-            return fields.RemoteField(func,name,fld)
             
-            #~ return self.add_column(fn,name=name,
-              #~ verbose_name=fld.verbose_name)
             
-        #~ logger.info("20120202 Table.get_data_elem found nothing")
-        return get_data_elem(self.model,name)
+            
+        # logger.info("20120202 Table.get_data_elem found nothing")
+        return fields.get_data_elem(self.model,name)
         #~ de = get_data_elem(self.model,name)
         #~ if de is not None: 
             #~ return de

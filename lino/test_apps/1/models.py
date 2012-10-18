@@ -257,7 +257,8 @@ DoesNotExist: Restaurant matching query does not exist. Lookup parameters were {
 
 Note that `Meal` has :attr:`allow_cascaded_delete 
 <lino.core.modeltools.Model.allow_cascaded_delete>`
-set to True, otherwise the above code would have raised a
+set to `['restaurant']`, 
+otherwise the above code would have raised a
 ValidationError "Cannot delete #2 
 (name=Second,owners=Bert,cooks=Bert) because 2 meals refer to it."
 But the meals have been deleted:
@@ -405,7 +406,7 @@ class Visit(dd.Model):
           self.purpose, self.person, self.place.name)
 
 class Meal(dd.Model):
-    allow_cascaded_delete = True
+    allow_cascaded_delete = ['restaurant']
     person = models.ForeignKey(Person)
     restaurant = models.ForeignKey(Restaurant)
     what = models.CharField(max_length=50)

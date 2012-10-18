@@ -25,12 +25,6 @@ from lino.core import fields
 from lino.core import modeltools
 from lino.utils.xmlgen import html as xghtml
 
-class WatcherSpec:
-    def __init__(self,ignored_fields,master_key):
-        self.ignored_fields = ignored_fields
-        self.master_key = master_key
-    
-
 
 class Model(models.Model):
     """
@@ -42,30 +36,34 @@ class Model(models.Model):
     class Meta:
         abstract = True
         
-    allow_cascaded_delete = False
+    allow_cascaded_delete = []
     """
-    Lino, like Django, by default forbids to delete an object that is 
-    referenced by other objects.
-
-    Set this to `True` on models whose objects should get automatically 
-    deleted if a related object gets deleted. 
+    A list of names of ForeignKey fields of this model 
+    that allow for cascaded delete.
+    
+    When deleting an object through the user interface, 
+    Lino by default forbids to delete an object that is 
+    referenced by other objects. Users will get a message 
+    of type "Cannot delete X because n Ys refer to it".
+    
     Example: Lino should not refuse to delete 
     a Mail just because it has some Recipient. 
     When deleting a Mail, Lino should also delete its Recipients.
     That's why :class:`lino.modlib.outbox.models.Recipient` 
-    has ``allow_cascaded_delete = True``.
+    has ``allow_cascaded_delete = ['mail']``.
     
-    Other examples of such models are 
-    :class:`lino.modlib.cv.models.PersonProperty`,
-    :class:`lino.modlib.cv.models.LanguageKnowledge`,
-    :class:`lino.modlib.debts.models.Actor`,
-    :class:`lino.modlib.debts.models.Entry`,
-    ...
-    
-    Not that this currently is also consulted by
+    Note that this currently is also consulted by
     :meth:`lino.mixins.duplicable.Duplicable.duplicate_row`
     to decide whether slaves of a record being duplicated
     should be duplicated as well.
+    
+    This mechanism doesn't depend on nor influence Django's
+    `on_delete
+    <https://docs.djangoproject.com/en/dev/ref/models/fields/#django.db.models.ForeignKey.on_delete>`_
+    option.
+    But of course you should not allow_cascaded_delete for fields
+    which have e.g. `on_delete=PROTECT`.
+
     
     """
     
@@ -101,7 +99,8 @@ class Model(models.Model):
     on all tables based on this Model.
     """
     
-    _watch_changes_specs = None
+    #~ _watch_changes_specs = None
+    _change_watcher_spec = None
     """
     Internally used by :meth:`watch_changes`
     """
@@ -112,34 +111,22 @@ class Model(models.Model):
     #~ """
     
     @classmethod
-    def watch_changes(model,ignore=[],master_key=None,**options):
+    def watch_changes(cls,*args,**kw):
         """
-        Declare a set of fields of this model to be "observed" or "watched".
-        Each change to an object comprising at least one watched 
-        will lead to an entry to the ChangesByObject table.
+        Declare this model to be "observed" or "watched" for changes.
+        Each change to an object comprising at least one watched field
+        will lead to an entry to the `Changes` table.
         
         All calls to watch_changes will be grouped by model.
         
         See also :mod:`lino.core.changes`.
         """
-        #~ if ignore is None:
-            #~ model._watch_changes_specs = None
-            #~ return
-        from lino import dd
-        if isinstance(ignore,basestring):
-            ignore = dd.fields_list(model,ignore)
-        ignore = set(ignore)
-        if model._watch_changes_specs is not None:
-            ignore += model._watch_changes_specs
-        for f in model._meta.fields:
-            if not f.editable:
-                ignore.add(f.name)
-        model._watch_changes_specs = WatcherSpec(ignore,master_key)
-        #~ logger.info("20120924 %s ignore %s", model, ignore)
-        #~ model._watch_changes_specs = (fields_spec,options)
-        #~ else:
-            #~ raise NotImplementedError()
-  
+        from lino.core import changes
+        changes.add_watcher_spec(cls,*args,**kw)
+        
+    #~ def get_watcher(self,*args,**kw):
+        #~ from lino.core import changes
+        #~ return changes.Watcher(self,*args,**kw)
         
     #~ def update_system_note(self,note):
         #~ pass

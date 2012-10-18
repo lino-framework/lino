@@ -248,6 +248,7 @@ def delete_element(ar,elem):
         return settings.LINO.ui.error_response(None,msg,alert=True)
             
     #~ dblogger.log_deleted(ar.request,elem)
+    
     changes.log_delete(ar.request,elem)
     
     try:
@@ -259,6 +260,8 @@ def delete_element(ar,elem):
         #~ msg = "Failed to delete %s." % element_name(elem)
         return settings.LINO.ui.error_response(None,msg)
         #~ raise Http404(msg)
+        
+    
     return HttpResponseDeleted()
     
 

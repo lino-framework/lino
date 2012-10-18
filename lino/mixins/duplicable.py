@@ -60,7 +60,7 @@ class Duplicate(actions.RowAction):
         related = []
         for m,fk in self._lino_ddh.fklist:
             #~ related[fk] = m.objects.filter(**kw)
-            if m.allow_cascaded_delete:
+            if fk.name in m.allow_cascaded_delete:
                 related.append((fk,m.objects.filter(**{fk.name:self})))
             #~ if issubclass(m,Duplicable):
                 #~ related[fk.related_name] = getattr(self,fk.name)

@@ -376,7 +376,7 @@ Lino.set_subst_user = function(id,name) {
 Lino.current_window = null;
 Lino.window_history = Array();
     
-Lino.chars2width = function(cols) {  return cols * 8; }
+Lino.chars2width = function(cols) {  return cols * 9; }
 Lino.rows2height = function(cols) {  return cols * 20; }
 
 
@@ -2763,7 +2763,7 @@ Lino.FormPanel = Ext.extend(Lino.FormPanel,{
               if (da[item.itemId]) item.disable(); else item.enable();
           });
       };
-      if (record.data.disable_editing) {
+      if (this.disable_editing | record.data.disable_editing) {
           //~ console.log("20120202 disable_editing",record.title);
           this.form.items.each(function(cmp){
             if (!cmp.always_enabled) cmp.disable();
@@ -3795,7 +3795,7 @@ Lino.GridPanel = Ext.extend(Lino.GridPanel,{
   
   on_beforeedit : function(e) {
     //~ console.log('20120514 GridPanel.on_beforeedit()',e,e.record.data.disabled_fields);
-    if(e.record.data.disable_editing) {
+    if(this.disable_editing | e.record.data.disable_editing) {
       e.cancel = true;
       Lino.notify("$_("This record is disabled")");
       return;

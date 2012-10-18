@@ -154,7 +154,7 @@ if True:
 class Recipient(dd.Model):
 #~ class Recipient(mixins.Controllable):
 
-    allow_cascaded_delete = True
+    allow_cascaded_delete = ['mail']
     
     class Meta:
         verbose_name = _("Recipient")

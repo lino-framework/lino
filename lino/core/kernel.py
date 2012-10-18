@@ -164,8 +164,8 @@ def analyze_models():
                     
                 """
                 If JobProvider is an MTI child of Company,
-                then mti.delete_child(JobProvider) must not fail if the 
-                JobProvider is being refered only by objects that can refer 
+                then mti.delete_child(JobProvider) must not fail on a 
+                JobProvider being refered only by objects that can refer 
                 to a Company as well.
                 """
                 #~ f.rel.to._lino_ddh.add_fk(model,f) # 20120728
@@ -203,10 +203,11 @@ class DisableDeleteHandler():
         #~     if msg is not None:
             #~     return msg
         for m,fk in self.fklist:
-            kw = {}
-            kw[fk.name] = obj
-            if not getattr(m,'allow_cascaded_delete',False):
-                n = m.objects.filter(**kw).count()
+            #~ kw = {}
+            #~ kw[fk.name] = obj
+            #~ if not getattr(m,'allow_cascaded_delete',False):
+            if not fk.name in m.allow_cascaded_delete:
+                n = m.objects.filter(**{fk.name : obj}).count()
                 if n:
                     msg = _("Cannot delete %(self)s because %(count)d %(refs)s refer to it.") % dict(
                       self=obj,count=n,
