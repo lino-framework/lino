@@ -189,6 +189,7 @@ class Model(models.Model):
         gives permission the specified action request `ar` 
         to run the specified action.
         """
+        #~ logger.info("20121020 Model.get_row_permission %s",unicode(ba.action.label))
         return ba.get_bound_action_permission(ar,self,state)
 
     def update_owned_instance(self,controllable):

@@ -35,7 +35,7 @@ from lino.ui import base
 from lino.core import fields
 from lino.core import actions
 from lino.core import layouts
-from lino.core import changes
+#~ from lino.core import changes
 from lino.core.modeltools import resolve_model
 from lino.utils import curry, AttrDict
 #~ from lino.utils import choicelists
@@ -700,7 +700,7 @@ class Actor(actions.Parametrizable):
         #~ u = ar.get_user()
         for ba in self.get_actions(ar.bound_action.action):
             if ba.action.show_in_workflow:
-                #~ logger.info('20120930 %s show in workflow', a.name)
+                #~ logger.info('20121020 show_in_workflow [%s]', unicode(ba.action.label))
                 #~ if obj.get_row_permission(ar,state,ba):
                 if self.get_row_permission(obj,ar,state,ba):
                     yield ba

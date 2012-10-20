@@ -31,6 +31,7 @@ from django.core.exceptions import ValidationError
 
 from lino.core.modeltools import resolve_model
 from lino.core.fields import VirtualField
+from lino.core import changes
 
 
 class MultiTableBase(models.Model):
@@ -71,7 +72,7 @@ class MultiTableBase(models.Model):
 
 class ChildCollector(Collector):
     """
-    A Collector that does not delete the parents.
+    A Collector that does not delete the MTI parents.
     """
   
     def collect(self, objs, source=None, nullable=False, collect_related=True,
@@ -229,12 +230,14 @@ class EnableChild(VirtualField):
                 #~ obj.__class__.__name__,self.child_model.__name__)
             # child exists, delete it if it may not 
             if not v:
+                changes.log_remove_child(ar.request,obj,self.child_model)
                 delete_child(obj,self.child_model,ar)
         else:
             #~ logger.debug('set_value_in_object : %s has no child %s',
                 #~ obj.__class__.__name__,self.child_model.__name__)
             if v:
                 # child doesn't exist. insert if it should
+                changes.log_add_child(ar.request,obj,self.child_model)
                 insert_child(obj,self.child_model)
                 
 
@@ -248,9 +251,9 @@ def create_child(parent_model,pk_,child_model,**kw):
     Used by :mod:`lino.utils.dumpy`
     See :mod:`lino.test_apps.1.models`.
     
-    The return value is almost a normal model instance,
-    but whose `save` and `full_clean` methods have been 
-    hacked. They are the only methods that will be 
+    The return value is an "almost normal" model instance,
+    whose `save` and `full_clean` methods have been hacked. 
+    They are the only methods that will be 
     called by :class:`lino.utils.dumpy.Deserializer`.
     You should not use this instance for anything else
     and throw it away when the save() has been called.

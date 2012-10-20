@@ -21,7 +21,7 @@ import datetime
 from django.utils.translation import ugettext_lazy as _
 from django.utils.translation import pgettext_lazy 
 
-from lino.utils.choicelists import ChoiceList, Choice, Workflow
+#~ from lino.utils.choicelists import Choice
 from lino.core import actions
 #~ from lino.core.actors import 
 from lino import dd
@@ -67,7 +67,7 @@ class CalendarAction(actions.Action):
   
 
 
-class Weekday(ChoiceList):
+class Weekday(dd.ChoiceList):
     label = _("Weekday")
 add = Weekday.add_item
 add('1', _('Monday'),'monday')
@@ -78,7 +78,7 @@ add('5', _('Friday'),'friday')
 add('6', _('Saturday'),'saturday')
 add('7', _('Sunday'),'sunday')
 
-class DurationUnit(Choice):
+class DurationUnit(dd.Choice):
   
     def add_duration(unit,orig,value):
         """
@@ -131,7 +131,7 @@ class DurationUnit(Choice):
     
   
     
-class DurationUnits(ChoiceList):
+class DurationUnits(dd.ChoiceList):
     """A list of possible values for the `duration_unit` field of an :class:`Event`.
     """
     label = _("Duration Unit")
@@ -153,7 +153,7 @@ def amonthago():
     return DurationUnits.months.add_duration(datetime.date.today(),-1)
         
 
-class TaskStates(Workflow):
+class TaskStates(dd.Workflow):
     """
     State of a Calendar Task. Used as Workflow selector.
     """
@@ -197,7 +197,7 @@ TaskStates.done.add_workflow(states='todo started')
 TaskStates.cancelled.add_workflow(states='todo started')
 
 #~ class EventStates(ChoiceList):
-class EventStates(Workflow):
+class EventStates(dd.Workflow):
     """
     State of a Calendar Event. Used as Workflow selector.
     """
@@ -283,7 +283,7 @@ EventStates.obsolete.add_workflow()
     
 
     
-class GuestStates(Workflow):
+class GuestStates(dd.Workflow):
     """
     State of a Calendar Event Guest. Used as Workflow selector.
     """
@@ -315,7 +315,7 @@ GuestStates.present.add_workflow(states='invited accepted',owner=True)
 GuestStates.absent.add_workflow(states='invited accepted',owner=True)
 
 
-class AccessClasses(ChoiceList):
+class AccessClasses(dd.ChoiceList):
     label = _("Access Class")
 add = AccessClasses.add_item
 add('10', _('Private'),'private')

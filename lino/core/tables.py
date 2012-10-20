@@ -158,6 +158,8 @@ class TableRequest(actions.ActionRequest):
     offset = None
     #~ create_rows = None
     
+    no_data_text = None
+    
     _data_iterator = None
     _sliced_data_iterator = None
     
@@ -196,13 +198,16 @@ class TableRequest(actions.ActionRequest):
     def get_data_iterator(self):
         if self.actor.get_data_rows is not None:
             l = []
-            rows = self.actor.get_data_rows(self)
-            for row in rows:
-                if len(l) > 300:
-                    raise Exception("20120521 More than 300 items in %s" % 
-                        unicode(rows))
-                group = self.actor.group_from_row(row)
-                group.process_row(l,row)
+            try:
+                rows = self.actor.get_data_rows(self)
+                for row in rows:
+                    if len(l) > 300:
+                        raise Exception("20120521 More than 300 items in %s" % 
+                            unicode(rows))
+                    group = self.actor.group_from_row(row)
+                    group.process_row(l,row)
+            except Warning,e:
+                self.no_data_text = unicode(e)
             return l
         #~ logger.info("20120914 tables.get_data_iterator %s",self)
         #~ logger.info("20120914 tables.get_data_iterator %s",self.actor)

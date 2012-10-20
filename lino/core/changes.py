@@ -41,132 +41,38 @@ from django.db import models
 from django.utils.translation import ugettext_lazy as _
 
 
-from lino.core.modeltools import obj2str
-from lino.core import fields #~ fields_list
+from lino.core.modeltools import obj2str, full_model_name
+from lino.core import fields 
+from lino.core import actions
+from lino.utils import choicelists
 
 #~ WATCH_SPECS = dict()
 
 NOT_GIVEN = object()
 
-class WatcherSpec:
-    def __init__(self,ignored_fields,master_key):
-        self.ignored_fields = ignored_fields
-        self.master_key = master_key
-    
-
-
-
 class PseudoRequest:
     def __init__(self,user):
         self.user = user
+        
+class ChangeTypes(choicelists.ChoiceList):
+    app_label = 'lino'
+    label = _("Change Type")
+add = ChangeTypes.add_item    
+add('C',_("Create"),'create')
+add('U',_("Update"),'update')
+add('D',_("Delete"),'delete')
+add('R',_("Remove child"),'remove_child')
+add('A',_("Add child"),'add_child')
 
-class Watcher(object):
-    def __init__(self,watched,is_new=False):
-        self.original_state = dict(watched.__dict__)
-        self.watched = watched
-        self.is_new = is_new
         
-    def is_dirty(self):
-        if self.is_new: 
-            return True
-        for k,v in self.original_state.iteritems():
-            if v != self.watched.__dict__.get(k, NOT_GIVEN):
-                return True
-        return False
-        
-    def log_changes(self,request):
-      
-        #~ cs = WATCH_SPECS.get(self.watched.__class__)
-        cs = self.watched._change_watcher_spec
-        
-        #~ print 20120921, cs
-        if cs is None:
-            return
-            
-        #~ ignored_fields = self.watched._watch_changes_specs
-        #~ ignored_fields            
-        
-        #~ watched_fields, options = cs
-        
-        if self.is_new:
-            msg = u"%s created." % obj2str(self.watched,True)
-            #~ msg = u"%s created by %s." % (obj2str(self.watched),request.user)
-        else:
-            changes = []
-            for k,old in self.original_state.iteritems():
-                #~ if watched_fields is None or k in watched_fields:
-                if not k in cs.ignored_fields:
-                    new = self.watched.__dict__.get(k, NOT_GIVEN)
-                    if old != new:
-                        changes.append("%s : %s --> %s" % (k,obj2str(old),obj2str(new)))
-            
-            if len(changes) == 0:
-                msg = '(no changes)'
-            elif len(changes) == 1:
-                msg = changes[0]
-            else:
-                msg = '- ' + ('\n- '.join(changes))
-                
-        from lino.models import Change, ChangeTypes
-        
-        if cs.master_key is None:
-            master = self.watched
-        else:
-            #~ master = cs.master_key.value_from_object(self.watched)
-            #~ master = getattr(self.watched,cs.master_key)
-            master = getattr(self.watched,cs.master_key.name)
-           
-        #~ logger.info("20121018 %r",cs.master_key)
-        #~ logger.info("20121018 watched is %r, master is %r ",self.watched,master)
-        
-        if master is None:
-            return
-            
-        kw = dict()
-        if self.is_new:
-            kw.update(type=ChangeTypes.create)
-        else:
-            kw.update(type=ChangeTypes.update)
 
-        #~ if not isinstance(master,models.Model):
-            #~ raise Exception("20121018 %r is not a Model instance" % master)
-        #~ if not isinstance(self.watched,models.Model):
-            #~ raise Exception("20121018 %r is not a Model instance" % self.watched)
-        Change(
-            time=datetime.datetime.now(),
-            user=request.user,
-            #~ summary=self.watched._change_summary,
-            master=master,
-            object=self.watched,
-            diff=msg,**kw).save()
-
-def log_delete(request,obj):
-    from lino.models import Change, ChangeTypes
-    #~ cs = WATCH_SPECS.get(obj.__class__)
-    cs = obj._change_watcher_spec
-    if cs is None:
-        return
+class WatcherSpec:
+    #~ def __init__(self,ignored_fields,master_key):
+    def __init__(self,ignored_fields,get_master):
+        self.ignored_fields = ignored_fields
+        #~ self.master_key = master_key
+        self.get_master = get_master
     
-    if cs.master_key is None:
-        master = obj
-    else:
-        #~ master = cs.master_key.value_from_object(obj)
-        #~ master = getattr(obj,cs.master_key)
-        master = getattr(obj,cs.master_key.name)
-        if master is None:
-            return
-    #~ if not isinstance(master,models.Model):
-        #~ raise Exception("20121018 %r is not a Model instance" % master)
-    #~ if not isinstance(obj,models.Model):
-        #~ raise Exception("20121018 %r is not a Model instance" % obj)
-    Change(
-        type=ChangeTypes.delete,
-        time=datetime.datetime.now(),
-        user=request.user,
-        #~ summary=obj._change_summary,
-        master=master,
-        object=obj).save()
-
 def add_watcher_spec(model,ignore=[],master_key=None,**options):
     #~ if ignore is None:
         #~ model._change_watcher_spec = None
@@ -179,6 +85,12 @@ def add_watcher_spec(model,ignore=[],master_key=None,**options):
         if fld is None:
             raise Exception("No field %r in %s" % (master_key,model))
         master_key = fld
+    if isinstance(master_key,fields.RemoteField):
+        get_master = master_key.func
+    else:
+        def f(obj):
+            return getattr(obj,master_key.name)
+        get_master = f
     ignore = set(ignore)
     #~ cs = WATCH_SPECS.get(model)
     cs = model._change_watcher_spec
@@ -187,7 +99,7 @@ def add_watcher_spec(model,ignore=[],master_key=None,**options):
     for f in model._meta.fields:
         if not f.editable:
             ignore.add(f.name)
-    model._change_watcher_spec = WatcherSpec(ignore,master_key)
+    model._change_watcher_spec = WatcherSpec(ignore,get_master)
     #~ WATCH_SPECS[model] = WatcherSpec(ignore,master_key)
     
     #~ logger.info("20120924 %s ignore %s", model, ignore)
@@ -195,3 +107,105 @@ def add_watcher_spec(model,ignore=[],master_key=None,**options):
     #~ else:
         #~ raise NotImplementedError()
 
+
+def get_master(obj):
+    
+    #~ cs = WATCH_SPECS.get(self.watched.__class__)
+    cs = obj._change_watcher_spec
+    
+    #~ print 20120921, cs
+    if cs is None:
+        return
+    return cs.get_master(obj)
+        
+    #~ if cs.master_key is None:
+        #~ return obj
+    # master = cs.master_key.value_from_object(self.watched)
+    # master = getattr(self.watched,cs.master_key)
+    #~ return getattr(obj,cs.master_key.name)
+
+def log_change(type,request,master,obj,msg=''):
+    from lino.models import Change
+    Change(
+        type=type,
+        time=datetime.datetime.now(),
+        user=request.user,
+        #~ summary=self.watched._change_summary,
+        master=master,
+        object=obj,
+        diff=msg).save()
+
+
+class Watcher(object):
+    def __init__(self,watched):
+        self.original_state = dict(watched.__dict__)
+        self.watched = watched
+        #~ self.is_new = is_new
+        #~ self.request
+        
+    def is_dirty(self):
+        #~ if self.is_new: 
+            #~ return True
+        for k,v in self.original_state.iteritems():
+            if v != self.watched.__dict__.get(k, NOT_GIVEN):
+                return True
+        return False
+        
+    def log_diff(self,request):
+        master = get_master(self.watched)
+        if master is None:
+            return
+            
+        #~ ignored_fields = self.watched._watch_changes_specs
+        #~ ignored_fields            
+        
+        #~ watched_fields, options = cs
+        
+        #~ if self.is_new:
+            #~ msg = u"%s created." % obj2str(self.watched,True)
+            #~ msg = u"%s created by %s." % (obj2str(self.watched),request.user)
+        #~ else:
+        cs = self.watched._change_watcher_spec
+        changes = []
+        for k,old in self.original_state.iteritems():
+            #~ if watched_fields is None or k in watched_fields:
+            if not k in cs.ignored_fields:
+                new = self.watched.__dict__.get(k, NOT_GIVEN)
+                if old != new:
+                    changes.append("%s : %s --> %s" % (k,obj2str(old),obj2str(new)))
+        
+        if len(changes) == 0:
+            msg = '(no changes)'
+        elif len(changes) == 1:
+            msg = changes[0]
+        else:
+            msg = '- ' + ('\n- '.join(changes))
+            
+        log_change(ChangeTypes.update,request,master,self.watched,msg)
+        
+        
+        
+
+def log_delete(request,obj):
+    master = get_master(obj)
+    if master is None:
+        return
+    log_change(ChangeTypes.delete,request,master,obj)
+    
+def log_create(request,obj):
+    master = get_master(obj)
+    if master is None:
+        return
+    log_change(ChangeTypes.create,request,master,obj)
+
+def log_add_child(request,obj,child_model):
+    master = get_master(obj)
+    if master is None:
+        return
+    log_change(ChangeTypes.add_child,request,master,obj,full_model_name(child_model))
+
+def log_remove_child(request,obj,child_model):
+    master = get_master(obj)
+    if master is None:
+        return
+    log_change(ChangeTypes.remove_child,request,master,obj,full_model_name(child_model))

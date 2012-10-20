@@ -436,11 +436,11 @@ def uca_collator():
     return c
     
 
-class Warning(Exception): 
-    """
-    An Exception whose message is meant to be 
-    understandable by the user.
-    """
+#~ class Warning(Exception): 
+    #~ """
+    #~ An Exception whose message is meant to be 
+    #~ understandable by the user.
+    #~ """
     
 # unmodified copy from http://docs.python.org/library/decimal.html#recipes
 def moneyfmt(value, places=2, curr='', sep=',', dp='.',

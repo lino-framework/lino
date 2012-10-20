@@ -235,7 +235,7 @@ from lino.utils.xmlgen import etree
 
 #~ from lino.utils import d2iso
 #~ from lino.utils import IncompleteDate
-from lino.utils.xmlgen import Warning, Namespace, pretty_print, prettify
+from lino.utils.xmlgen import Namespace, pretty_print, prettify
 
 def xsdpath(*parts):
     p1 = os.path.abspath(os.path.dirname(__file__))

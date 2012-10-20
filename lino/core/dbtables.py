@@ -723,6 +723,7 @@ class Table(AbstractTable):
         Returns True if the given action is allowed for the given instance `obj` 
         and the given user.
         """
+        #~ logger.info("20121020 dbtables.Table.get_row_permission %s",unicode(ba.action.label))
         return obj.get_row_permission(ar,state,ba)
         
     @classmethod

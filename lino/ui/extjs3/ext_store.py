@@ -175,7 +175,7 @@ class StoreField(object):
     #~ if v is NOT_PROVIDED:
         #~ return
         
-    def form2obj(self,request,instance,post_data,is_new):
+    def form2obj(self,ar,instance,post_data,is_new):
         """
         Test cases:
         - setting a CharField to ''
@@ -202,10 +202,10 @@ class StoreField(object):
             raise exceptions.ValidationError({
               self.field.name:_("Existing primary key value %r may not be modified.") % instance.pk})
               
-        return self.set_value_in_object(request,instance,v)
+        return self.set_value_in_object(ar,instance,v)
         
-    def set_value_in_object(self,request,instance,v):
-        old_value = self.value_from_object(instance,request)
+    def set_value_in_object(self,ar,instance,v):
+        old_value = self.value_from_object(instance,ar.request)
         #~ old_value = getattr(instance,self.field.attname)
         if old_value != v:
             setattr(instance,self.name,v)
@@ -1168,7 +1168,8 @@ class Store(BaseStore):
           #~ if f.editable:
             if not f.name in disabled_fields:
                 try:
-                    if f.form2obj(ar.request,instance,form_values,is_new):
+                    #~ if f.form2obj(ar.request,instance,form_values,is_new):
+                    if f.form2obj(ar,instance,form_values,is_new):
                         m = getattr(instance,f.name + "_changed",None)
                         if m is not None:
                             changed_triggers.append(m)

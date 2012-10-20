@@ -278,8 +278,8 @@ def form2obj_and_save(ar,data,elem,is_new,restful,file_upload=False): # **kw2sav
     #~ logger.info('20120228 before store.form2obj , elem is %s' % obj2str(elem))
     # store normal form data (POST or PUT)
     #~ original_state = dict(elem.__dict__)
-    #~ watcher = dblogger.get_watcher(elem,is_new)
-    watcher = changes.Watcher(elem,is_new)
+    if not is_new:
+        watcher = changes.Watcher(elem)
     try:
         rh.store.form2obj(ar,data,elem,is_new)
     except exceptions.ValidationError,e:
@@ -296,12 +296,8 @@ def form2obj_and_save(ar,data,elem,is_new,restful,file_upload=False): # **kw2sav
         #~ if v != elem.__dict__.get(k, missing):
             #~ dirty = True
     #~ if not dirty:
-    if not watcher.is_dirty():
+    if is_new or watcher.is_dirty():
       
-        kw.update(message=_("%s : nothing to save.") % obj2unicode(elem))
-        
-    else:
-    
         elem.before_ui_save(ar)
         
         #~ if not is_new:
@@ -327,15 +323,19 @@ def form2obj_and_save(ar,data,elem,is_new,restful,file_upload=False): # **kw2sav
             #~ return views.json_response_kw(success=False,
                   #~ msg=_("There was a problem while saving your data:\n%s") % e)
                   
-        watcher.log_changes(request)
-        
         if is_new:
-            #~ dblogger.log_created(request,elem)
+            changes.log_create(request,elem)
             kw.update(
                 message=_("%s has been created.") % obj2unicode(elem))
                 #~ record_id=elem.pk)
         else:
+            watcher.log_diff(request)
+        
             kw.update(message=_("%s has been saved.") % obj2unicode(elem))
+        
+    else:
+    
+        kw.update(message=_("%s : nothing to save.") % obj2unicode(elem))
         
     kw = elem.after_ui_save(ar,**kw)
         
@@ -880,6 +880,7 @@ class ApiList(View):
             kw = dict(count=total_count,
               rows=rows,
               success=True,
+              no_data_text=ar.no_data_text,
               #~ status=ar.get_status(ar.ui),
               title=unicode(ar.get_title()))
               #~ disabled_actions=rpt.disabled_actions(ar,None),

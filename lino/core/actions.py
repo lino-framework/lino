@@ -29,13 +29,13 @@ import lino
 from lino.utils import AttrDict
 from lino.utils import curry
 from lino.utils import babel
-from lino.utils import Warning
+#~ from lino.utils import Warning
 
 from lino.ui import requests as ext_requests
 
 from lino.core.modeltools import resolve_model, resolve_app
 from lino.core import layouts
-from lino.core import changes
+#~ from lino.core import changes
 from lino.core import fields
 
 #~ from lino.core.perms import UserLevels
@@ -323,10 +323,10 @@ class Action(Parametrizable):
     which do not modify the given object but *do* modify the database,
     must override their `get_action_permission`::
     
-      def get_action_permission(self,user,obj,state):
+      def get_action_permission(self,ar,obj,state):
           if user.profile.readonly: 
               return False
-          return super(Duplicate,self).get_action_permission(user,obj,state)
+          return super(Duplicate,self).get_action_permission(ar,obj,state)
         
     
     """
@@ -496,7 +496,7 @@ class Action(Parametrizable):
         #~ """
         #~ return True
         
-    def get_action_permission(self,user,obj,state):
+    def get_action_permission(self,ar,obj,state):
         """
         Derived Action classes may override this to add vetos.
         E.g. DispatchAction is not available for a User with empty partner.
@@ -633,11 +633,11 @@ class InsertRow(TableAction):
     def get_window_layout(self,actor):
         return actor.insert_layout or actor.detail_layout
 
-    def get_action_permission(self,user,obj,state):
+    def get_action_permission(self,ar,obj,state):
         # see blog/2012/0726
-        if user.profile.readonly: 
+        if ar.get_user().profile.readonly: 
             return False
-        return super(InsertRow,self).get_action_permission(user,obj,state)
+        return super(InsertRow,self).get_action_permission(ar,obj,state)
 
 
 
@@ -719,76 +719,7 @@ class SubmitInsert(SubmitDetail):
     callable_from = (InsertRow,)
     
     
-class ChangeStateAction(RowAction):
-    """
-    This is the class used when generating automatic 
-    "state actions". For each possible value of the Actor's 
-    :attr:`workflow_state_field` there will be an automatic action called 
-    `mark_XXX`
-    """
     
-    #~ debug_permissions = True
-    
-    show_in_workflow = True
-    
-    
-    def __init__(self,target_state,required,**kw):
-        self.target_state = target_state
-        #~ kw.update(label=getattr(target_state,'action_label',target_state.text))
-        #~ kw.setdefault('label',target_state.text)
-        #~ required = getattr(target_state,'required',None)
-        #~ if required is not None:
-        assert not kw.has_key('required')
-        new_required = dict(self.required)
-        new_required.update(required)
-        if target_state.name:
-            m = getattr(target_state.choicelist,'allow_state_'+target_state.name,None)
-            #~ m = getattr(actor.model,'allow_state_'+target_state.name,None)
-            if m is not None:
-                assert not required.has_key('allowed')
-                def allow(action,user,obj,state):
-                    return m(obj,user)
-                new_required.update(allow=allow)
-        kw.update(required=new_required)
-        help_text = getattr(target_state,'help_text',None)
-        if help_text is not None:
-            kw.update(help_text=help_text)
-        super(ChangeStateAction,self).__init__(**kw)
-        #~ logger.info('20120930 ChangeStateAction %s %s', actor,target_state)
-        
-    #~ def full_name(self,actor):
-        #~ if self.action_name is None or self.defining_actor is None:
-            #~ return repr(self)
-        #~ return self.defining_actor.actor_id + '.' + self.action_name
-        
-    def before_row_save(self,row,ar):
-        pass
-        
-    def run(self,row,ar,**kw):
-        #~ state_field_name = self.defining_actor.workflow_state_field.attname
-        #~ state_field_name = row.workflow_state_field.attname
-        state_field_name = ar.actor.workflow_state_field.attname
-        #~ assert isinstance(state_field_name,basestring)
-        #~ old = row.state
-        old = getattr(row,state_field_name)
-        
-        watcher = changes.Watcher(row,False)
-        
-        self.target_state.choicelist.before_state_change(row,ar,kw,old,self.target_state)
-        row.before_state_change(ar,kw,old,self.target_state)
-        #~ row.state = self.target_state
-        setattr(row,state_field_name,self.target_state)
-        self.before_row_save(row,ar)
-        row.save()
-        self.target_state.choicelist.after_state_change(row,ar,kw,old,self.target_state)
-        row.after_state_change(ar,kw,old,self.target_state)
-        
-        watcher.log_changes(ar.request)
-        
-        return ar.ui.success_response(**kw)
-        
-    
-#~ class NotifyingChangeStateAction(ChangeStateAction):
 class NotifyingAction(RowAction):
   
     parameters = dict(
@@ -899,7 +830,7 @@ class BoundAction(object):
             
         
     def get_bound_action_permission(self,ar,obj,state):
-        if not self.action.get_action_permission(ar.get_user(),obj,state):
+        if not self.action.get_action_permission(ar,obj,state):
             return False
         return self.allow(ar.get_user(),obj,state)
         

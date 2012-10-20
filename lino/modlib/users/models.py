@@ -126,18 +126,17 @@ class User(mixins.CreatedModified):
         See also :meth:`User.disabled_fields`.
         """
         #~ print 20120621, self, user, state, action
-        if ba.action.readonly: return True
-        user = ar.get_user()
-        if user.profile.level >= dd.UserLevels.admin: return True
-        #~ print 20120621, user.profile.level, 'is not', UserLevels.admin
-        if user.profile.level >= dd.UserLevels.user: 
-            if user == self: return True
+        if not ba.action.readonly:
+            user = ar.get_user()
+            if user != self:
+                if user.profile.level < dd.UserLevels.admin: 
+                    return False
         return super(User,self).get_row_permission(ar,state,ba)
         #~ return False
         
     def disabled_fields(self,ar):
         """
-        Only System admins may change the profile of users.
+        Only System admins may change the `profile` of users.
         See also :meth:`Users.get_row_permission`.
         """
         #~ if ar.get_user().is_superuser: 

@@ -137,14 +137,14 @@ class CreateMail(dd.RowAction):
         actions.ShowDetailAction,
         actions.ShowEmptyTable) # but not from InsertRow
     
-    def get_action_permission(self,user,obj,state):
+    def get_action_permission(self,ar,obj,state):
         """
         This action is not available:
         
         - when the user has not email address
         - on an obj whose MailableType is empty or has no :attr:`MailableType.email_template` configured
         """
-        if not user.email:
+        if not ar.get_user().email:
             return False
         if obj is not None:
             mt = obj.get_mailable_type()
@@ -153,7 +153,7 @@ class CreateMail(dd.RowAction):
             #~ if obj.attach_to_email(ar) and obj.get_target_name() is None:
             if mt.attach_to_email and not obj.get_target_name():
                 return False
-        return super(CreateMail,self).get_action_permission(user,obj,state)
+        return super(CreateMail,self).get_action_permission(ar,obj,state)
         
     def run(self,elem,ar,**kw):
       
@@ -312,10 +312,10 @@ class SendMail(dd.RowAction):
     
     #~ callable_from = None
             
-    def get_action_permission(self,user,obj,state):
+    def get_action_permission(self,ar,obj,state):
         if obj is not None and obj.sent:
             return False
-        return super(SendMail,self).get_action_permission(user,obj,state)
+        return super(SendMail,self).get_action_permission(ar,obj,state)
         
     def run(self,elem,ar,**kw):
         #~ if elem.sent:

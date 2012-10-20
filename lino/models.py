@@ -47,6 +47,7 @@ from lino.utils.choosers import chooser, get_for_field
 #~ from lino.modlib.users.models import UserLevels
 from lino.utils.restify import restify
 from lino.core import actions
+from lino.core import changes
 from lino.utils.xmlgen import html as xghtml
 
 #~ from lino.core.changes import Change, Changes, ChangesByObject
@@ -269,13 +270,6 @@ if settings.LINO.user_model:
         pass
         
 
-class ChangeTypes(dd.ChoiceList):
-    label = _("Change Type")
-add = ChangeTypes.add_item    
-add('C',_("Create"),'create')
-add('U',_("Update"),'update')
-add('D',_("Delete"),'delete')
-
 class Change(dd.Model):
     """
     Each `save()` of a watched object will generate one Change record.
@@ -285,7 +279,7 @@ class Change(dd.Model):
         verbose_name_plural = _("Changes")
             
     time = models.DateTimeField()
-    type = ChangeTypes.field()
+    type = changes.ChangeTypes.field()
     if settings.LINO.user_model:
         user = dd.ForeignKey(settings.LINO.user_model)
         

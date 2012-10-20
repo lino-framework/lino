@@ -3212,6 +3212,11 @@ Lino.GridPanel = Ext.extend(Lino.GridPanel,{
         this_.set_param_values(this_.store.reader.arrayData.param_values);
         //~ this_.set_status(this_.store.reader.arrayData.status);
         //~ 20120918
+        if (this_.store.reader.arrayData.no_data_text) {
+            //~ this.viewConfig.emptyText = this_.store.reader.arrayData.no_data_text;
+            this.getView().emptyText = this_.store.reader.arrayData.no_data_text;
+            this.getView().refresh();
+        }
         if (this_.containing_window)
             this_.set_window_title(this_.store.reader.arrayData.title);
             //~ this_.containing_window.setTitle(this_.store.reader.arrayData.title);

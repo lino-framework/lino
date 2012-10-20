@@ -45,10 +45,10 @@ class Duplicate(actions.RowAction):
     show_in_workflow = False
     readonly = True # like InsertRow. See docs/blog/2012/0726
   
-    def get_action_permission(self,user,obj,state):
-        if user.profile.readonly: 
+    def get_action_permission(self,ar,obj,state):
+        if ar.get_user().profile.readonly: 
             return False
-        return super(Duplicate,self).get_action_permission(user,obj,state)
+        return super(Duplicate,self).get_action_permission(ar,obj,state)
         
     def run(self,ar,**kw):
         #~ if not isinstance(ar,actions.ActionRequest):

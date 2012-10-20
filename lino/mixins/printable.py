@@ -621,12 +621,12 @@ class ClearCacheAction(actions.RowAction):
         #~ if not obj.build_time:
             #~ return True
             
-    def get_action_permission(self,user,obj,state):
+    def get_action_permission(self,ar,obj,state):
         # obj may be None when Lino asks whether this action 
         # should be visible in the UI
         if obj is not None and not obj.build_time:
             return False
-        return super(ClearCacheAction,self).get_action_permission(user,obj,state)
+        return super(ClearCacheAction,self).get_action_permission(ar,obj,state)
     
     def run(self,elem,rr):
         t = elem.get_cache_mtime()

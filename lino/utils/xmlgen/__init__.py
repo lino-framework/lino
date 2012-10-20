@@ -38,7 +38,7 @@ from functools import partial
 
 #~ from xml.etree import ElementTree as ET
 from lino.utils.xmlgen import etree
-from lino.utils import Warning
+#~ from lino.utils import Warning
 from django.utils.functional import Promise
 from django.utils.encoding import force_unicode
 
