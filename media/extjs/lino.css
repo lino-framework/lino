@@ -267,3 +267,32 @@ adapted for usage in an ExtJS application.
 */
 
 /* border: 1px solid #FFAD33;  */
+
+
+.x-tbar-delete{
+	background-image: url(images/default/grid/delete.gif) !important;
+}
+.x-item-disabled .x-tbar-delete{
+	background-image: url(images/default/grid/delete-disabled.gif) !important;
+}
+
+.x-tbar-new{
+	background-image: url(images/default/grid/new.gif) !important;
+}
+.x-item-disabled .x-tbar-new{
+	background-image: url(images/default/grid/new-disabled.gif) !important;
+}
+
+.x-tbar-detail{
+	background-image: url(images/default/grid/detail.png) !important;
+}
+.x-item-disabled .x-tbar-detail{
+	background-image: url(images/default/grid/detail-disabled.gif) !important;
+}
+
+.x-tbar-save{
+	background-image: url(images/default/grid/save.gif) !important;
+}
+.x-item-disabled .x-tbar-save{
+	background-image: url(images/default/grid/save-disabled.gif) !important;
+}

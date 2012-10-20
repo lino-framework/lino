@@ -229,6 +229,11 @@ class Action(Parametrizable):
     
     debug_permissions = False
     
+    icon_name = None 
+    """
+    The name of an icon to be used for this action.
+    """
+    
     _layout_class = layouts.ActionParamsLayout
     
     sort_index = 90
@@ -588,6 +593,7 @@ class ShowDetailAction(RowAction):
     """
     An action that opens the Detail Window of its actor.
     """
+    icon_name = 'x-tbar-detail'
     opens_a_window = True
     show_in_workflow = False
     
@@ -614,6 +620,7 @@ class InsertRow(TableAction):
     window gets submitted.
     """
     label = _("New")
+    icon_name = 'x-tbar-new'
     show_in_workflow = False
     opens_a_window = True
     hide_navigator = True
@@ -689,6 +696,7 @@ class DeleteSelected(RowAction):
     """
     Delete the row.
     """
+    icon_name = 'x-tbar-delete'
     auto_save = False
     sort_index = 30
     readonly = False
@@ -703,6 +711,7 @@ class DeleteSelected(RowAction):
     
         
 class SubmitDetail(RowAction):
+    icon_name = 'x-tbar-save'
     label = _("Save")
     auto_save = False
     show_in_workflow = False
@@ -713,6 +722,7 @@ class SubmitDetail(RowAction):
     callable_from = (ShowDetailAction,)
     
 class SubmitInsert(SubmitDetail):
+    icon_name = 'x-tbar-save'
     #~ url_action_name = 'SubmitInsert'
     label = _("Create")
     #~ label = _("Insert")

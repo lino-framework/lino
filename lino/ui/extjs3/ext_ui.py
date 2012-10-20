@@ -1698,8 +1698,13 @@ tinymce.init({
             kw.update(must_save=True)
         else:
             kw.update(panel_btn_handler=js_code("Lino.%s" % a))
+            
+        if a.icon_name:
+            kw.update(iconCls=a.icon_name) # 'x-tbar-delete'
+            kw.update(overflowText=a.label)
+        else:
+            kw.update(text=a.label)
         kw.update(
-          text=a.label,
           #~ name=a.name,
           auto_save=a.auto_save,
           itemId=a.action_name,
@@ -1707,6 +1712,8 @@ tinymce.init({
         )
         if a.help_text:
             kw.update(tooltip=a.help_text)
+        elif a.icon_name:
+            kw.update(tooltip=a.label)
         return kw
         
     def build_on_render(self,main):
