@@ -61,6 +61,8 @@ class CalendarAction(actions.Action):
     label = _("Calendar")
     action_name = 'grid' # because...
     default_format = 'html'
+    icon_name = 'x-tbar-calendar'
+
     
     #~ def get_window_layout(self,actor):
         #~ return None

@@ -562,6 +562,8 @@ def handler_item(mi,handler,help_text):
     handler = "function(){%s}" % handler
     #~ d = dict(text=prepare_label(mi),handler=js_code(handler),tooltip="Foo")
     d = dict(text=prepare_label(mi),handler=js_code(handler))
+    if mi.bound_action and mi.bound_action.action.icon_name:
+        d.update(iconCls=mi.bound_action.action.icon_name)
     if settings.LINO.use_quicktips and help_text:
         d.update(listeners=dict(render=js_code(
           "Lino.quicktip_renderer(%s,%s)" % (py2js('Foo'),py2js(help_text)))
@@ -1701,7 +1703,7 @@ tinymce.init({
             
         if a.icon_name:
             kw.update(iconCls=a.icon_name) # 'x-tbar-delete'
-            kw.update(overflowText=a.label)
+            kw.update(menu_item_text=a.label)
         else:
             kw.update(text=a.label)
         kw.update(

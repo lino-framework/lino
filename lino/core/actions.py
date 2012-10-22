@@ -626,6 +626,7 @@ class InsertRow(TableAction):
     hide_navigator = True
     sort_index = 20
     hide_top_toolbar = True
+    help_text = _("Insert a new record")
     #~ readonly = False # see blog/2012/0726
     required = dict(user_level='user')
     callable_from = (GridEdit,ShowDetailAction)
@@ -697,6 +698,7 @@ class DeleteSelected(RowAction):
     Delete the row.
     """
     icon_name = 'x-tbar-delete'
+    help_text = _("Delete this record")
     auto_save = False
     sort_index = 30
     readonly = False
@@ -712,6 +714,7 @@ class DeleteSelected(RowAction):
         
 class SubmitDetail(RowAction):
     icon_name = 'x-tbar-save'
+    help_text = _("Save changes in this form")
     label = _("Save")
     auto_save = False
     show_in_workflow = False
@@ -722,7 +725,7 @@ class SubmitDetail(RowAction):
     callable_from = (ShowDetailAction,)
     
 class SubmitInsert(SubmitDetail):
-    icon_name = 'x-tbar-save'
+    icon_name = None # don't inherit 'x-tbar-save' from Submitdetail 
     #~ url_action_name = 'SubmitInsert'
     label = _("Create")
     #~ label = _("Insert")

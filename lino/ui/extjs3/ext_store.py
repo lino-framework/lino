@@ -495,7 +495,7 @@ class SpecialStoreField(StoreField):
     #~ def value2list(self,ui,v):
         #~ return [v]
       
-    def form2obj(self,request,instance,post_data,is_new):
+    def form2obj(self,ar,instance,post_data,is_new):
         pass
         #~ raise NotImplementedError
         #~ return instance
@@ -706,12 +706,18 @@ class IntegerStoreField(StoreField):
         
         
 class AutoStoreField(StoreField):
+    """
+    A :class:`StoreField` for 
+    `AutoField <https://docs.djangoproject.com/en/dev/ref/models/fields/#autofield>`__
+    """
     def __init__(self,field,name,**kw):
         kw['type'] = 'int'
         StoreField.__init__(self,field,name,**kw)
   
-    def form2obj(self,request,instance,post_data,is_new):
-        pass
+    def form2obj(self,ar,obj,post_data,is_new):
+        #~ logger.info("20121022 AutoStoreField.form2obj(%r)",ar.bound_action.full_name())
+        if isinstance(ar.bound_action.action,actions.InsertRow):
+            return super(AutoStoreField,self).form2obj(ar,obj,post_data,is_new)
         
         
         
@@ -1160,7 +1166,7 @@ class Store(BaseStore):
     def form2obj(self,ar,form_values,instance,is_new):
         disabled_fields = set(self.actor.disabled_fields(instance,ar))
         #~ logger.info("20120228 %s Store.form2obj(%s),\ndisabled %s\n all_fields %s", 
-            #~ self.report,form_values,disabled_fields,self.all_fields)
+            #~ self.rh,form_values,disabled_fields,self.all_fields)
         #~ print 20110406, disabled_fields
         changed_triggers = []
         for f in self.all_fields:

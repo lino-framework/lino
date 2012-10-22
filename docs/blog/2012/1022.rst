@@ -1,6 +1,40 @@
 20121022
 ========
 
+
 watch_tim fängt an zu klappen.
 Der hat ja einige neue subtile Regeln, 
-die ich übrigens in :doc:`/user/tim2lino` dokumentiere.
+die ich übrigens unter 
+http://welfare.lino-framework.org/de/user/tim2lino.html
+dokumentiere.
+  
+  
+`Action.icon_name <lino.core.actions.Action.icon_name>` and grid context menu
+-----------------------------------------------------------------------------
+
+`extjs3.ext_ui.a2btn` now adds the label as `menu_item_text` 
+(and `linolib.js` puts this to the context menu item's `text` property), 
+to solve the following issue:
+  
+- Im Kontextmenü hatten Bilderbuttons kein Label
+
+Manually setting and `AutoField`
+--------------------------------
+
+Lino didn't yet handle the case of including the `id` field to an 
+:attr:`insert_layout <lino.core.actors.Actor.insert_layout>`. 
+This disturbed in Lino-Welfare which synchronizes with legacy data:
+
+- Kann Partner.id nicht selbst bestimmen
+
+That was because :class:`lino.ui.extjs3.ext_store.AutoStoreField` 
+simply did::
+
+    def form2obj(self,ar,obj,post_data,is_new):
+        pass 
+        
+More icons
+----------
+
+Discovered `Greenfish Icon Editor` and spent another hour with the button icons.
+

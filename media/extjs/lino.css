@@ -277,10 +277,10 @@ adapted for usage in an ExtJS application.
 }
 
 .x-tbar-new{
-	background-image: url(images/default/grid/new.gif) !important;
+	background-image: url(images/default/grid/new.png) !important;
 }
 .x-item-disabled .x-tbar-new{
-	background-image: url(images/default/grid/new-disabled.gif) !important;
+	background-image: url(images/default/grid/new-disabled.png) !important;
 }
 
 .x-tbar-detail{
@@ -291,8 +291,16 @@ adapted for usage in an ExtJS application.
 }
 
 .x-tbar-save{
-	background-image: url(images/default/grid/save.gif) !important;
+	background-image: url(images/default/grid/save.png) !important;
 }
 .x-item-disabled .x-tbar-save{
-	background-image: url(images/default/grid/save-disabled.gif) !important;
+	background-image: url(images/default/grid/save-disabled.png) !important;
+}
+
+.x-tbar-email{
+	background-image: url(images/default/grid/email.png) !important;
+}
+
+.x-tbar-calendar{
+	background-image: url(images/default/grid/calendar.png) !important;
 }

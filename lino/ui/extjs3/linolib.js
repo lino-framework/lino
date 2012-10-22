@@ -1800,6 +1800,7 @@ Lino.build_buttons = function(panel,actions) {
     for (var i=0; i < actions.length; i++) { 
       buttons[i] = new Ext.Toolbar.Button(actions[i]);
       cmenu[i] = actions[i]
+      cmenu[i].text = actions[i].menu_item_text;
       if (actions[i].panel_btn_handler) {
           var h = actions[i].panel_btn_handler.createCallback(panel,buttons[i]);
           //~ if (actions[i].must_save) {

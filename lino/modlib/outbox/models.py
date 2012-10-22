@@ -127,9 +127,9 @@ class CreateMail(dd.RowAction):
     """
     Creates an outbox mail and displays it.
     """
-  
-    url_action_name = 'mail'
-    #~ label = _('Create email')
+    url_action_name = 'email'
+    icon_name = 'x-tbar-email'
+    help_text = _('Create an email from this')
     #~ label = pgettext_lazy(u'verb',u'Mail')
     label = _('Create email')
     
