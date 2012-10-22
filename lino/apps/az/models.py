@@ -19,12 +19,15 @@ from lino import dd
 from lino import mixins
 #~ from lino.models import SiteConfig
 
-from lino.modlib.contacts import models as contacts
-from lino.modlib.cal import models as cal
+#~ from lino.modlib.contacts import models as contacts
+#~ from lino.modlib.cal import models as cal
 
-#~ class Person(contacts.PersonMixin,contacts.Partner,contacts.Born):
-    #~ class Meta(contacts.PersonMixin.Meta):
-        #~ app_label = 'contacts'
+contacts = dd.resolve_app('contacts')
+cal = dd.resolve_app('cal')
+
+class Person(contacts.Person,contacts.Born):
+    class Meta(contacts.Person.Meta):
+        app_label = 'contacts'
         #~ # see :doc:`/tickets/14`
         #~ verbose_name = _("Person")
         #~ verbose_name_plural = _("Persons")
@@ -35,17 +38,22 @@ class PersonDetail(contacts.PersonDetail):
     
     #~ contact = contacts.PersonDetail.main
     
-    mails = """
-    mails.InboxByPartner
-    mails.OutboxByPartner
-    """
+    #~ outbox = dd.Panel("""
+    #~ outbox.MailsByProject
+    #~ """,label = _("Correspondence"))
     
-    main = "contact mails"
+    #~ calendar = dd.Panel("""
+    #~ cal.EventsByProject
+    #~ cal.TasksByProject
+    #~ """,label = _("Calendar"))
+    
+    
+    #~ main = "contact outbox calendar"
 
-    contact = """
+    main = dd.Panel("""
     box1 box2
-    remarks contacts.RolesByPerson families.MembersByPerson
-    """
+    remarks contacts.RolesByPerson households.MembersByPerson
+    """,label = _("Contact"))
     
     box1 = """
     last_name first_name:15 #title:10
@@ -64,10 +72,10 @@ class PersonDetail(contacts.PersonDetail):
     """
     
     
-    def setup_handle(self,lh):
+    #~ def setup_handle(self,lh):
       
-        lh.contact.label = _("Contact")
-        lh.mails.label = _("Mails")
+        #~ lh.contact.label = _("Contact")
+        #~ lh.mails.label = _("Mails")
 
 
 
@@ -83,19 +91,76 @@ class PersonDetail(contacts.PersonDetail):
     #~ class Meta(cal.Event.Meta):
         #~ app_label = 'cal'
 
-class Task(cal.Task):
-    class Meta(cal.Task.Meta):
-        app_label = 'cal'
+#~ class Task(cal.Task):
+    #~ class Meta(cal.Task.Meta):
+        #~ app_label = 'cal'
+        
+        
+#~ class EventDetail(cal.EventDetail):
+#~ class EventDetail(dd.FormLayout):
+    #~ main = "general more"
+    
+    #~ lesson = dd.Panel("""
+    #~ owner start_date start_time end_time place 
+    #~ school.PresencesByEvent
+    #~ """,label=_("Lesson"))
+    
+  
+    #~ event = dd.Panel("""
+    #~ id:8 user priority access_class transparent #rset 
+    #~ summary state workflow_buttons 
+    #~ calendar created:20 modified:20 
+    #~ description
+    #~ cal.GuestsByEvent 
+    #~ """,label=_("Event"))
+    
+    #~ main = "lesson event"
+
+    #~ def setup_handle(self,lh):
+      
+        #~ lh.lesson.label = _("Lesson")
+        #~ lh.event.label = 
+        #~ lh.notes.label = _("Notes")
+
      
      
 def site_setup(site):
     site.modules.contacts.Persons.set_detail_layout(PersonDetail())
     
+    #~ site.modules.cal.Events.set_detail_layout(EventDetail())
+    site.modules.cal.Events.set_detail_layout('general more')
+    site.modules.cal.Events.add_detail_panel('general',"""
+    calendar summary user project 
+    start end 
+    place priority access_class transparent #rset 
+    owner workflow_buttons
+    description cal.GuestsByEvent 
+    """,_("General"))
+    
+    site.modules.cal.Events.add_detail_panel('more',"""
+    id created:20 modified:20  
+    outbox.MailsByController #postings.PostingsByController
+    """,_("More"))
+    
+    
+    
     # remove `project` field
-    site.modules.cal.Tasks.set_detail("""
-    start_date status due_date done user id
-    summary 
-    calendar owner created:20 modified:20 user_modified  
-    description #notes.NotesByTask    
-    """)
+    #~ site.modules.cal.Tasks.set_detail_layout("""
+    #~ start_date workflow_buttons due_date done user id
+    #~ summary 
+    #~ calendar owner created:20 modified:20 user_modified  
+    #~ description #notes.NotesByTask    
+    #~ """)
 
+    #~ site.modules.cal.Events.set_detail_layout("general more")
+    
+    
+    site.modules.cal.Events.set_insert_layout("""
+    summary 
+    start end 
+    calendar project 
+    """,
+    start="start_date start_time",
+    end="end_date end_time",
+    window_size=(60,'auto'))
+    

@@ -66,8 +66,10 @@ class Panel(object):
     
     See :doc:`/topics/layouts`.
     """
-    def __init__(self,desc,**options):
+    def __init__(self,desc,label=None,**options):
         self.desc = desc
+        if label is not None:
+            options.update(label=label)
         self.options = options
         
     def replace(self,*args,**kw):
@@ -276,6 +278,9 @@ class LayoutHandle:
         desc = getattr(self.layout,name,None)
         if desc is not None:
             return self.define_panel(name,desc,**pkw)
+        if str(self.layout._table) == 'cal.Events':
+            if name == 'start':
+                print 20121021, repr(name), "not a panel", repr(self.layout)
             #~ return self.define_panel(name,desc)
         e = self.ui.create_layout_element(self,name,**pkw)
         #~ e = self.ui.create_layout_element(self,name)
@@ -292,7 +297,7 @@ class LayoutHandle:
     def splitdesc(self,picture):
         kw = dict()
         if picture.endswith(')'):
-            raise Exception("No longer supported sincve 20120630")
+            raise Exception("No longer supported since 20120630")
             a = picture.split("(",1)
             if len(a) == 2:
                 pkw = eval('dict('+a[1])

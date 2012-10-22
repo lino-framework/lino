@@ -1,0 +1,6 @@
+20121022
+========
+
+watch_tim fängt an zu klappen.
+Der hat ja einige neue subtile Regeln, 
+die ich übrigens in :doc:`/user/tim2lino` dokumentiere.

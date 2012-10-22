@@ -51,8 +51,16 @@ from lino.utils import choicelists
 NOT_GIVEN = object()
 
 class PseudoRequest:
-    def __init__(self,user):
-        self.user = user
+    def __init__(self,username):
+        self.username = username
+        self._user = None
+        
+    def get_user(self):
+        if self._user is None:
+            if settings.LINO.user_model is not None:
+                self._user = settings.LINO.user_model.objects.get(username=self.username)
+        return self._user
+    user = property(get_user)
         
 class ChangeTypes(choicelists.ChoiceList):
     app_label = 'lino'
@@ -87,10 +95,12 @@ def add_watcher_spec(model,ignore=[],master_key=None,**options):
         master_key = fld
     if isinstance(master_key,fields.RemoteField):
         get_master = master_key.func
+    elif master_key is None:
+        def get_master(obj):
+            return obj
     else:
-        def f(obj):
+        def get_master(obj):
             return getattr(obj,master_key.name)
-        get_master = f
     ignore = set(ignore)
     #~ cs = WATCH_SPECS.get(model)
     cs = model._change_watcher_spec

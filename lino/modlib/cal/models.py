@@ -44,6 +44,7 @@ from lino.utils import AttrDict
 from lino.ui import requests as ext_requests
 from lino.core.modeltools import resolve_model, obj2str
 #~ from lino.core.perms import UserProfiles
+from lino.utils.xmlgen import html as xghtml
 
 
 
@@ -1279,7 +1280,7 @@ class Tasks(dd.Table):
     summary 
     user project 
     calendar owner created:20 modified:20   
-    description #notes.NotesByTask    
+    description #notes.NotesByTask
     """
     insert_layout = dd.FormLayout("""
     summary
@@ -1663,10 +1664,10 @@ def migrate_reminder(obj,reminder_date,reminder_text,
     """
     raise NotImplementedError("No longer needed (and no longer supported after 20111026).")
     def delay2alarm(delay_type):
-        if delay_type == 'D': return DurationUnit.days
-        if delay_type == 'W': return DurationUnit.weeks
-        if delay_type == 'M': return DurationUnit.months
-        if delay_type == 'Y': return DurationUnit.years
+        if delay_type == 'D': return DurationUnits.days
+        if delay_type == 'W': return DurationUnits.weeks
+        if delay_type == 'M': return DurationUnits.months
+        if delay_type == 'Y': return DurationUnits.years
       
     #~ # These constants must be unique for the whole Lino Site.
     #~ # Keep in sync with auto types defined in lino.apps.pcsw.models.Person
@@ -2004,6 +2005,7 @@ class Home(lino.Home):
     app_label = 'lino'
     detail_layout = """
     quick_links:80x1
+    welcome
     coming_reminders:40x16 missed_reminders:40x16
     """
     
@@ -2016,6 +2018,49 @@ class Home(lino.Home):
     def missed_reminders(cls,self,ar):
         return reminders_as_html(ar,days_back=90,
           max_items=10,before='<ul><li>',separator='</li><li>',after="</li></ul>")
+          
+    @dd.virtualfield(dd.HtmlBox(_('Welcome')))
+    def welcome(cls,self,ar):
+        #~ MAXITEMS = 2
+        u = ar.get_user()
+        story = []
+        
+        intro = [_("Hi, "),u.first_name,'! ']
+        story.append(xghtml.E.p(*intro))
+        
+        warnings = []
+        
+        #~ for T in (MySuggestedCoachings,cal.MyTasksToDo):
+        for T in (MyPendingInvitations,MyTasksToDo,
+            MyEventsNotified,
+            MyEventsSuggested):
+            r = T.request(user=u)
+            #~ r = T.request(subst_user=u)
+            #~ r = ar.spawn(T)
+            if r.get_total_count() != 0:
+                #~ for obj in r.data_iterator[-MAXITEMS]:
+                    #~ chunks = [obj.summary_row(ar)]
+                    #~ sep = ' : '
+                    #~ for a in T.get_workflow_actions(ar,obj):
+                        #~ chunks.append(sep)
+                        #~ chunks.append(ar.row_action_button(obj,a))
+                        #~ sep = ', '
+                    
+                warnings.append(xghtml.E.li(
+                    _("You have %d entries in ") % r.get_total_count(),
+                    ar.href_to_request(r,T.label)))
+        
+        #~ warnings.append(xghtml.E.li("Test 1"))
+        #~ warnings.append(xghtml.E.li("Second test"))
+        if len(warnings):
+            story.append(xghtml.E.h3(_("Warnings")))
+            story.append(xghtml.E.ul(*warnings))
+        else:
+            story.append(xghtml.E.p(_("Congratulatons: you have no warnings.")))
+        return xghtml.E.div(*story,class_="htmlText",style="margin:5px")
+        
+
+          
 
 
 #~ class MissedReminders(dd.Frame):
@@ -2152,9 +2197,9 @@ def setup_quicklinks(site,ui,user,m):
     if site.use_extensible:
         #~ m.add_action(self.modules.cal.Panel)
         m.add_action(CalendarPanel)
-        m.add_action(MyEventsSuggested)
-        m.add_action(MyEventsNotified)
-        m.add_action(MyTasksToDo)
+        #~ m.add_action(MyEventsSuggested)
+        #~ m.add_action(MyEventsNotified)
+        #~ m.add_action(MyTasksToDo)
         
 def whats_up(site,ui,user):
     #~ MyEventsReserved

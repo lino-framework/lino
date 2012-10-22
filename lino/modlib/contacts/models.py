@@ -561,9 +561,10 @@ class Companies(Partners):
     order_by = ["name"]
     detail_layout = CompanyDetail()
     insert_layout = dd.FormLayout("""
-    name type
-    language email
-    """,window_size=(40,'auto'))
+    name 
+    language:20 email:40
+    type id
+    """,window_size=(60,'auto'))
     
 #~ class List(Partner):
     #~ pass

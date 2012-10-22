@@ -668,7 +668,7 @@ class ExtUI(base.UI):
         return ext_elems.Panel(lh,name,vertical,*elems,**pkw)
 
     def create_layout_element(self,lh,name,**kw):
-        if True: # don't catch any exception. useful when there's some problem within the framework 
+        if False: # don't catch any exception. useful when there's some problem within the framework 
             de = lh.get_data_elem(name)
         else:
             try:
@@ -782,7 +782,7 @@ class ExtUI(base.UI):
                 return value
                 
         if hasattr(lh,'rh'):
-            msg = "Unknown element %r referred in layout %s of %s." % (
+            msg = "Unknown element %r referred in layout <%s of %s>." % (
                 name,lh.layout,lh.rh.actor)
             l = [de.name for de in lh.rh.actor.wildcard_data_elems()]
             model = getattr(lh.rh.actor,'model',None) # VirtualTables don't have a model
@@ -790,9 +790,9 @@ class ExtUI(base.UI):
                 l += [str(rpt) for rpt in model._lino_slaves.values()]
             msg += " Possible names are %s." % ', '.join(l)
         else:
-            msg = "Unknown element %r referred in layout %s." % (
+            msg = "Unknown element %r referred in layout <%s>." % (
                 name,lh.layout)
-            msg += "Cannot handle %r" % de
+            msg += " Cannot handle %r" % de
         raise KeyError(msg)
         
 

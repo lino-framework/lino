@@ -67,4 +67,11 @@ Ich wollte vor allem sehen, ob es überhaupt funktioniert.
 Eure Vorschläge für schönere Buttons sind willkommen!
 Und außer diesen braucht Lino noch eine ganze Serie von Buttons!
 
-:srcref:`/media/images/default/grid`
+:srcref:`/media/extjs/images/default/grid`
+
+
+Miscellaneous
+-------------
+
+- Worked on lino.apps.az
+- Moved the definition of `welcome` from lino_welfare.pcsw to lino.modlib.cal

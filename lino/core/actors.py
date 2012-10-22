@@ -173,14 +173,16 @@ class ActorMetaClass(type):
             
         # the same for insert_template and insert_layout:
         dt = classDict.get('insert_template',None)
-        dl = classDict.get('insert_layout',None)
         if dt is not None:
-            if not isinstance(dt,basestring):
-                raise ValueError("%r : insert_template %r is not a string" % (cls,dt))
-            if dl is not None:
-                raise Exception("%r has both insert_template and insert_layout" % cls)
-            #~ cls.insert_layout = layouts.FormLayout(dt,cls)
-            dl = dt
+            raise Exception("Rename insert_template to insert_layout")
+            
+        dl = classDict.get('insert_layout',None)
+        #~ if dt is not None:
+            #~ if not isinstance(dt,basestring):
+                #~ raise ValueError("%r : insert_template %r is not a string" % (cls,dt))
+            #~ if dl is not None:
+                #~ raise Exception("%r has both insert_template and insert_layout" % cls)
+            #~ dl = dt
         if dl is not None:
             if isinstance(dl,basestring):
                 cls.insert_layout = layouts.FormLayout(dl,cls)

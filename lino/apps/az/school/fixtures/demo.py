@@ -15,8 +15,10 @@
 import datetime
 
 #~ from django.contrib.contenttypes.models import ContentType
+
+from lino import dd
 #~ from lino.utils.instantiator import Instantiator, i2d
-from lino.core.modeltools import resolve_model
+#~ from lino.core.modeltools import resolve_model
 from lino.utils import mti, Cycler
 from django.utils.translation import ugettext_lazy as _
 
@@ -25,13 +27,17 @@ from django.db import models
 from django.conf import settings
 from lino.utils.babel import babel_values
 
-Person = resolve_model('contacts.Person')
+Person = dd.resolve_model('contacts.Person')
+
+school = dd.resolve_app('school')
+cal = dd.resolve_app('cal')
+users = dd.resolve_app('users')
 #~ Room = resolve_model('courses.Room')
 #~ Content = resolve_model('courses.Content')
 #~ PresenceStatus = resolve_model('courses.PresenceStatus')
 
-from lino.apps.az.school import models as school
-from lino.modlib.cal import models as cal
+#~ from lino.apps.az.school import models as school
+#~ from lino.modlib.cal import models as cal
 
 def objects():
   
@@ -98,6 +104,7 @@ def objects():
         
     #~ PS = Cycler(school.PresenceStatus.objects.all())
     CONTENTS = Cycler(school.Content.objects.all())
+    USERS = Cycler(users.User.objects.all())
     TEACHERS = Cycler(school.Teacher.objects.all())
     #~ SLOTS = Cycler(school.Slot.objects.all())
     SLOTS = Cycler(1,2,3,4)
@@ -105,18 +112,20 @@ def objects():
     PLACES = Cycler(cal.Place.objects.all())
     #~ Event = settings.LINO.modules.cal.Event
     
-    from lino.modlib.cal.utils import DurationUnit
+    #~ from lino.modlib.cal.utils import DurationUnit
     
     year = settings.LINO.demo_date().year
     if settings.LINO.demo_date().month < 7:
         year -= 1
     for i in range(10):
-        c = school.Course(user=TEACHERS.pop(),
+        c = school.Course(
+          user=USERS.pop(),
+          teacher=TEACHERS.pop(),
           content=CONTENTS.pop(),place=PLACES.pop(),
           start_date=datetime.date(year,9,1+i),
           end_date=datetime.date(year+1,6,30),
           every=1,
-          every_unit=DurationUnits.weeks,
+          every_unit=cal.DurationUnits.weeks,
           slot=SLOTS.pop(),
           )
         yield c

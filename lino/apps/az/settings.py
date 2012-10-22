@@ -22,16 +22,27 @@ from lino.apps.std.settings import *
 class Lino(Lino):
     source_dir = os.path.dirname(__file__)
     title = "Lino/AZ"
-    help_url = "http://lino.saffre-rumma.net/az/index.html"
+    #~ help_url = "http://lino.saffre-rumma.net/az/index.html"
     #~ migration_module = 'lino.apps.az.migrate'
     
     #~ project_model = 'contacts.Person'
-    #~ project_model = 'contacts.Person'
-    project_model = None
+    project_model = 'school.Pupil'
+    #~ project_model = None
+    user_model = 'users.User'
     
     languages = ('de', 'fr')
     
+    use_eid_jslib = False
+    
     #~ index_view_action = "dsbe.Home"
+    
+    override_modlib_models = [
+        #~ 'contacts.Partner', 
+        'contacts.Person', 
+        #~ 'contacts.Company',
+        #~ 'households.Household',
+        ]
+    
     
     remote_user_header = "REMOTE_USER"
     
@@ -45,8 +56,23 @@ class Lino(Lino):
         #~ tb.add_action(self.modules.isip.MyContracts)
         #~ tb.add_action(self.modules.jobs.MyContracts)
         
+    def setup_choicelists(self):
+        """
+        This defines default user profiles for :mod:`lino_welfare`.
+        """
+        from lino import dd
+        from django.utils.translation import ugettext_lazy as _
+        dd.UserProfiles.reset('* office')
+        add = dd.UserProfiles.add_item
+        #~ add('100', _("Integration Agent"),          'U U')
+        #~ add('900', _("System admin"),          'U U')
         
-    def setup_menu(self,ui,user,main):
+        add('100', _("User"), 'U U', name='user', level='user')
+        add('900', _("Administrator"), 'A A', name='admin', level='admin')
+        
+        
+        
+    def unused_setup_menu(self,ui,user,main):
         from django.utils.translation import ugettext_lazy as _
         from django.db import models
         

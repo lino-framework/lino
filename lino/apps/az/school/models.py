@@ -124,15 +124,16 @@ class Teacher(Person):
         verbose_name = _("Teacher")
         verbose_name_plural = _("Teachers")
     
+#~ site.modules.contacts.Persons.add_detail_tab('school.CoursesByTeacher')
+
 class TeacherDetail(contacts.PersonDetail):
     box5 = "remarks" 
-    general = contacts.PersonDetail.main
-    #~ main = "general school.EventsByTeacher school.CoursesByTeacher"
+    general = dd.Panel(contacts.PersonDetail.main,label = _("General"))
     main = "general cal.EventsByPartner school.CoursesByTeacher"
 
-    def setup_handle(self,lh):
+    #~ def setup_handle(self,lh):
       
-        lh.general.label = _("General")
+        #~ lh.general.label = _("General")
         #~ lh.notes.label = _("Notes")
 
 class Teachers(contacts.Persons):
@@ -148,17 +149,20 @@ class Pupil(Person):
     
 class PupilDetail(contacts.PersonDetail):
     box5 = "remarks" 
-    general = contacts.PersonDetail.main
-    school = """
+    general = dd.Panel(contacts.PersonDetail.main,label = _("General"))
+    
+    school = dd.Panel("""
     EnrolmentsByPupil 
-    PresencesByPupil
-    """
+    # PresencesByPupil
+    cal.GuestsByPartner
+    """,label = _("School"))
+    
     main = "general school"
 
-    def setup_handle(self,lh):
+    #~ def setup_handle(self,lh):
       
-        lh.general.label = _("General")
-        lh.school.label = _("School")
+        #~ lh.general.label = _("General")
+        #~ lh.school.label = _("School")
         #~ lh.notes.label = _("Notes")
 
 class Pupils(contacts.Persons):
@@ -235,7 +239,7 @@ class Course(cal.EventGenerator,cal.RecurrenceSet,mixins.Printable):
         verbose_name_plural = _('Courses')
         
     content = models.ForeignKey(Content)
-    #~ teacher = models.ForeignKey(Teacher)
+    teacher = models.ForeignKey(Teacher)
     #~ place = models.ForeignKey(Place,verbose_name=_("Place"),null=True,blank=True) # iCal:LOCATION
     #~ room = models.ForeignKey(Room,blank=True,null=True)
     place = models.ForeignKey(cal.Place,blank=True,null=True)
@@ -265,9 +269,11 @@ class Course(cal.EventGenerator,cal.RecurrenceSet,mixins.Printable):
         #~ if self.course is not None:
         #~ if isinstance(self.owner,Course):
         settings.LINO.setup_course_event(self,ev)
-        if ev.presence_set.count() == 0:
+        if ev.guest_set.count() == 0:
+        #~ if ev.presence_set.count() == 0:
             for e in self.enrolment_set.all():
-                Presence(pupil=e.pupil,event=ev).save()
+                Guest(partner=e.pupil,event=ev).save()
+                #~ Presence(pupil=e.pupil,event=ev).save()
         super(Course,self).update_owned_instance(ev)
         
   
@@ -339,27 +345,6 @@ class EnrolmentsByPupil(Enrolments):
           #~ self.user)
   
 
-class EventDetail(cal.EventDetail):
-    lesson = dd.Panel("""
-    owner start_date start_time end_time place 
-    school.PresencesByEvent
-    """,label=_("Lesson"))
-    
-    event = dd.Panel("""
-    id:8 user priority access_class transparent #rset 
-    type summary status 
-    calendar created:20 modified:20 
-    description
-    cal.GuestsByEvent 
-    """,label=_("Event"))
-    main = "lesson event"
-
-    #~ def setup_handle(self,lh):
-      
-        #~ lh.lesson.label = _("Lesson")
-        #~ lh.event.label = 
-        #~ lh.notes.label = _("Notes")
-
 
 #~ class Events(dd.Table):
     #~ model = Event
@@ -373,38 +358,38 @@ class EventDetail(cal.EventDetail):
     #~ master_key = "course"
 
 
-class Presence(dd.Model):
+#~ class Presence(dd.Model):
   
-    class Meta:
-        verbose_name = _("Presence")
-        verbose_name_plural = _('Presences')
+    #~ class Meta:
+        #~ verbose_name = _("Presence")
+        #~ verbose_name_plural = _('Presences')
 
-    #~ teacher = models.ForeignKey(Teacher)
-    event = models.ForeignKey(cal.Event)
-    pupil = models.ForeignKey(Pupil)
-    absent = models.BooleanField(_("Absent"))
-    excused = models.BooleanField(_("Excused"))
-    remark = models.CharField(_("Remark"),max_length=200,blank=True)
-    #~ status = models.ForeignKey(PresenceStatus,null=True,blank=True)
+    #~ # teacher = models.ForeignKey(Teacher)
+    #~ event = models.ForeignKey(cal.Event)
+    #~ pupil = models.ForeignKey(Pupil)
+    #~ absent = models.BooleanField(_("Absent"))
+    #~ excused = models.BooleanField(_("Excused"))
+    #~ remark = models.CharField(_("Remark"),max_length=200,blank=True)
+    #~ # status = models.ForeignKey(PresenceStatus,null=True,blank=True)
     
-    def save(self,*args,**kw):
-        if self.excused and not self.absent:
-            self.absent = True
-        super(Presence,self).save(*args,**kw)
+    #~ def save(self,*args,**kw):
+        #~ if self.excused and not self.absent:
+            #~ self.absent = True
+        #~ super(Presence,self).save(*args,**kw)
         
-    def absent_changed(self,rr):
-        if not self.absent:
-            self.excused = False
+    #~ def absent_changed(self,rr):
+        #~ if not self.absent:
+            #~ self.excused = False
 
-class Presences(dd.Table):
-    model = Presence
-    order_by = ['event__start_date','event__start_time']
+#~ class Presences(dd.Table):
+    #~ model = Presence
+    #~ order_by = ['event__start_date','event__start_time']
 
-class PresencesByPupil(Presences):
-    master_key = "pupil"
+#~ class PresencesByPupil(Presences):
+    #~ master_key = "pupil"
 
-class PresencesByEvent(Presences):
-    master_key = "event"
+#~ class PresencesByEvent(Presences):
+    #~ master_key = "event"
     
 
 
@@ -422,8 +407,6 @@ dd.inject_field(Person,
     """Whether this Person is also a Pupil."""
     )
 
-def site_setup(site):
-    site.modules.cal.Events.set_detail_layout(EventDetail())
 
     
 def setup_main_menu(site,ui,user,m): pass
@@ -445,9 +428,9 @@ def setup_config_menu(site,ui,user,m):
     #~ m.add_action(Slots)
     #~ m.add_action(PresenceStatuses)
   
-def setup_explorer_menu(site,ui,user,m):
-    m = m.add_menu("school",_("School"))
-    m.add_action(Presences)
+#~ def setup_explorer_menu(site,ui,user,m):
+    #~ m = m.add_menu("school",_("School"))
+    #~ m.add_action(Presences)
     #~ m.add_action(Events)
     m.add_action(Courses)
     m.add_action(Enrolments)
