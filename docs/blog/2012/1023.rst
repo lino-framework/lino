@@ -1,0 +1,84 @@
+20121023
+========
+
+Endspurt vor dem Release. Beim Baustellenrundgang haben Gerd und 
+ich folgendes festgestellt, was noch gemacht werden muss:
+
+- Kontakte Personen : [Parameter] fehlt.
+  ("Auch veraltete" par défaut nicht anzeigen)
+
+- N.B. "Altfall" oder veraltet? "Altfall" heisst eher "das hat jemand
+  entschieden", "veraltet" heisst eher "das ist automatisch gekommen".
+  Also "veraltet" ist uns lieber, weil es allgemeiner ist 
+  (kann man später auch z.B. für Vertrage anwenden)
+- AssignCoach : im Body-Text "Melanie Mélard zuweisen als Begleiter für
+  COLLARD Charlotte (12)." auch den Fachbereich angeben.
+
+- AssignCoach hat nicht funktioniert. Coaching wurde erstellt,
+  ansonsten nichts. E-Mail-Benachrichtigungen funktioniert nicht.
+
+
+- Menü "Kontakte":
+
+  - umbenennen nach "Partner"
+  - Reihenfolge wie folgt:
+
+    - Personen
+    - \ Klienten
+    - Organisationen
+    - Haushalte
+    - Partner (alle)
+
+
+- Ein User watch_tim wird jetzt in migrate automatisch erstellt. 
+
+
+
+Gerd discovered 
+`Silk Icons <http://www.famfamfam.com/lab/icons/silk/>`_,
+and I fell in love immediately. 
+The subset of icons used in Lino are under :srcref:`/media/extjs/images/mjames`.
+I added Mark James to Lino's :doc:`/about/thanks` page.
+
+
+Die [Parameter] für Kontakte Personen bargen eine Überraschung: 
+das wollte ich gelöst haben, indem ich `contacts.Persons` überschreibe.
+Das konnte Lino bisher noch nicht. 
+Jetzt wohl. 
+insert_layout und detail_layout durften nicht schon in 
+ActorMetaClass.__new__ instanziert werden, sondern erst in init_class.
+
+Ein weiteres Problem am anderen Ende der [Parameter] fiel auf und ist 
+jetzt gelöst: die Liste DSBE-Klienten zeigt jetzt par défaut nur "Meine 
+Klienten" (also die vom anfragenden Benutzer begleiteten). 
+Das war bisher nicht machbar gewesen, weil man dann das Feld coached_by 
+nicht auf leer setzen konnte.
+
+
+Checkin wegen Feierabend
+
+TODO:
+
+- DebtsClients
+- Übersetzungen
+
+- Context menu in slave grids scheint alle Befehle verdoppelt zu haben
+  (jeweils leere Zeilen)
+
+- Im Menü Schuldnerberatung fehlt noch der Befehl "Meine Klienten"
+
+
+
+- Meldung "20120912 lost : ..." in Bemerkung bei Melanie E.:
+  migrate vielleicht: wenn aid_type oder civil_state: doch ein Klient
+  werden lassen.
+
+- Diverse Übersetzungen fehlen noch, z.B.:
+  no coaches available for ...
+  this change is silent : "keine Benachrichtigungen per E-Mail schicken"
+
+- "Begleitungsdienst" --> "Dienst"
+
+- "Supervisor Begleitungen" --> "Benachrichtigung per E-Mail bei
+  Zuweisung Neuantrag"
+

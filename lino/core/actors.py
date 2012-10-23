@@ -53,23 +53,6 @@ ACTOR_SEP = '.'
 
 MODULES = AttrDict()
   
-def register_actor(a):
-    #~ logger.debug("register_actor %s",a)
-    old = MODULES.define(a.app_label,a.__name__,a)
-    #~ old = actors_dict.get(a.actor_id,None)
-    if old is not None:
-        logger.debug("register_actor %s : %r replaced by %r",a,old,a)
-        actors_list.remove(old)
-        #~ old._replaced_by = a
-    #~ actors_dict[a.actor_id] = a
-    actors_list.append(a)
-    return a
-  
-    #~ actor.setup()
-    #~ assert not actors_dict.has_key(actor.actor_id), "duplicate actor_id %s" % actor.actor_id
-    #~ actors_dict[actor.actor_id] = actor
-    #~ return actor
-
 def discover():
     global actor_classes
     global actors_list
@@ -83,6 +66,23 @@ def discover():
     for a in actors_list:
         a.class_init()
           
+
+def register_actor(a):
+    #~ logger.debug("register_actor %s",a)
+    old = MODULES.define(a.app_label,a.__name__,a)
+    #~ old = actors_dict.get(a.actor_id,None)
+    if old is not None:
+        #~ logger.info("20121023 register_actor %s : %r replaced by %r",a,old,a)
+        actors_list.remove(old)
+        #~ old._replaced_by = a
+    #~ actors_dict[a.actor_id] = a
+    actors_list.append(a)
+    return a
+  
+    #~ actor.setup()
+    #~ assert not actors_dict.has_key(actor.actor_id), "duplicate actor_id %s" % actor.actor_id
+    #~ actors_dict[actor.actor_id] = actor
+    #~ return actor
 
 
 
@@ -153,45 +153,6 @@ class ActorMetaClass(type):
                 #~ cls.params.append(v)
                 
         
-        dt = classDict.get('detail_template',None)
-        dl = classDict.get('detail_layout',None)
-        if dt is not None:
-            raise Exception("Rename detail_template to detail_layout")
-            #~ if dl is not None:
-                #~ raise Exception("%r has both detail_template and detail_layout" % cls)
-            #~ dl = dt
-            
-        if dl is not None:
-            if isinstance(dl,basestring):
-                cls.detail_layout = layouts.FormLayout(dl,cls)
-            elif dl._table is None:
-                dl._table = cls
-                cls.detail_layout = dl
-            else:
-                raise Exception("Cannot reuse detail_layout owned by another table")
-                #~ logger.debug("Note: %s uses layout owned by %s",cls,dl._table)
-            
-        # the same for insert_template and insert_layout:
-        dt = classDict.get('insert_template',None)
-        if dt is not None:
-            raise Exception("Rename insert_template to insert_layout")
-            
-        dl = classDict.get('insert_layout',None)
-        #~ if dt is not None:
-            #~ if not isinstance(dt,basestring):
-                #~ raise ValueError("%r : insert_template %r is not a string" % (cls,dt))
-            #~ if dl is not None:
-                #~ raise Exception("%r has both insert_template and insert_layout" % cls)
-            #~ dl = dt
-        if dl is not None:
-            if isinstance(dl,basestring):
-                cls.insert_layout = layouts.FormLayout(dl,cls)
-            elif dl._table is None:
-                dl._table = cls
-                cls.insert_layout = dl
-            else:
-                raise Exception("Cannot reuse detail_layout owned by another table")
-                #~ logger.debug("Note: %s uses layout owned by %s",cls,dl._table)
                 
         #~ cls.install_params_on_actor()
                 
@@ -528,10 +489,55 @@ class Actor(actions.Parametrizable):
     
     @classmethod
     def class_init(cls):
+        #~ if str(cls) == 'jobs.JobsOverview':
+            #~ logger.info("20121023 Actor.class_init() %r",cls)
         #~ if cls.__name__ == 'Home':
             #~ print "20120524",cls, "class_init()", cls.__bases__
         #~ 20121008 cls.default_action = cls.get_default_action()
         
+        classDict = cls.__dict__
+        
+        #~ dt = classDict.get('detail_template',None)
+        dt = getattr(cls,'detail_template',None)
+        if dt is not None:
+            raise Exception("Please rename detail_template to detail_layout")
+            #~ if dl is not None:
+                #~ raise Exception("%r has both detail_template and detail_layout" % cls)
+            #~ dl = dt
+            
+        #~ dl = classDict.get('detail_layout',None)
+        dl = getattr(cls,'detail_layout',None)
+        if dl is not None:
+            if isinstance(dl,basestring):
+                cls.detail_layout = layouts.FormLayout(dl,cls)
+            elif dl._table is None:
+                dl._table = cls
+                cls.detail_layout = dl
+            elif not issubclass(cls,dl._table):
+                raise Exception("Cannot reuse %r detail_layout for %r" % (dl._table,cls))
+            #~ else:
+                #~ raise Exception("Cannot reuse detail_layout owned by another table")
+                #~ logger.debug("Note: %s uses layout owned by %s",cls,dl._table)
+            
+        # the same for insert_template and insert_layout:
+        #~ dt = classDict.get('insert_template',None)
+        dt = getattr(cls,'insert_template',None)
+        if dt is not None:
+            raise Exception("Please rename insert_template to insert_layout")
+            
+        #~ dl = classDict.get('insert_layout',None)
+        dl = getattr(cls,'insert_layout',None)
+        if dl is not None:
+            if isinstance(dl,basestring):
+                cls.insert_layout = layouts.FormLayout(dl,cls)
+            elif dl._table is None:
+                dl._table = cls
+                cls.insert_layout = dl
+            elif not issubclass(cls,dl._table):
+                raise Exception("Cannot reuse %r insert_layout for %r" % (dl._table,cls))
+                #~ logger.debug("Note: %s uses layout owned by %s",cls,dl._table)
+                
+                
         if False:
             #~ for b in cls.__bases__:
             for b in cls.mro():
@@ -611,14 +617,15 @@ class Actor(actions.Parametrizable):
             else:
                 #~ cls.detail_action = actions.ShowDetailAction()
                 cls.detail_action = cls.bind_action(actions.ShowDetailAction())
-        if cls.editable and cls.allow_create:
-            cls.create_action = cls.bind_action(actions.SubmitInsert(sort_index=1))
-            if cls.detail_action and not cls.hide_top_toolbar:
-                cls.insert_action = cls.bind_action(actions.InsertRow())
         if cls.editable:
+            if cls.allow_create:
+                cls.create_action = cls.bind_action(actions.SubmitInsert())
+                if cls.detail_action and not cls.hide_top_toolbar:
+                    cls.insert_action = cls.bind_action(actions.InsertRow())
+                    cls.create_edit_action = cls.bind_action(actions.SubmitInsertAndEdit())
             cls.update_action = cls.bind_action(actions.SubmitDetail(sort_index=1))
-        if cls.editable and not cls.hide_top_toolbar:
-            cls.delete_action = cls.bind_action(actions.DeleteSelected(sort_index=5))
+            if not cls.hide_top_toolbar:
+                cls.delete_action = cls.bind_action(actions.DeleteSelected())
 
 
         if isinstance(cls.workflow_owner_field,basestring):

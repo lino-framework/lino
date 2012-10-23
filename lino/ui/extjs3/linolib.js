@@ -826,6 +826,7 @@ Lino.DateTimeField = Ext.extend(Ext.ux.form.DateTime,{
   });
 Lino.URLField = Ext.extend(Ext.form.TriggerField,{
   triggerClass : 'x-form-search-trigger',
+  //~ triggerClass : 'x-form-world-trigger',
   vtype: 'url',
   onTriggerClick : function() {
     //~ console.log('Lino.URLField.onTriggerClick',this.value)
@@ -1617,14 +1618,19 @@ Lino.MainPanel = {
       20120918 add param_values to the request string 
       *only if the params_form is dirty*.
       Otherwise Actor.default_params() would never be used.
+      
+      20121023 But IntegClients.params_default has non-empty default values. 
+      Users must have the possibility to make them empty.
       */
-      if (!this.params_panel.form.isDirty()) return;
-      //~ var formdata = Lino.form2dict(this.params_panel);
-      //~ console.log('20120203 add_param_values formdata', formdata);
-      //~ p.$ext_requests.URL_PARAM_PARAM_VALUES = formdata;
-      //~ return;
-      //~ var formdata = Ext.lib.Ajax.serializeForm(frm);
-      p.$ext_requests.URL_PARAM_PARAM_VALUES = this.get_param_values();
+      if (this.params_panel.form.isDirty()) {
+        p.$ext_requests.URL_PARAM_PARAM_VALUES = this.get_param_values();
+      }else{
+        if (this.status_param_values) 
+          p.$ext_requests.URL_PARAM_PARAM_VALUES = Lino.fields2array(
+            this.params_panel.fields,this.status_param_values);
+      }
+      //~ if (!this.params_panel.form.isDirty()) return;
+      //~ p.$ext_requests.URL_PARAM_PARAM_VALUES = this.get_param_values();
       //~ console.log("20120203 add_param_values added pv",pv,"to",p);
     }
   },
@@ -2317,8 +2323,15 @@ Lino.ActionFormPanel = Ext.extend(Lino.ActionFormPanel,{
   }
   
   ,add_field_values : function (p) { // similar to add_param_values()
-      if (!this.form.isDirty()) return;
-      p.$ext_requests.URL_PARAM_FIELD_VALUES = this.get_field_values();
+      //~ 20121023 
+      if (this.form.isDirty()) {
+        p.$ext_requests.URL_PARAM_FIELD_VALUES = this.get_field_values();
+      }else{
+        if (this.status_field_values) 
+          p.$ext_requests.URL_PARAM_FIELD_VALUES = Lino.fields2array(this.fields,this.status_field_values);
+      }
+      //~ if (!this.form.isDirty()) return;
+      //~ p.$ext_requests.URL_PARAM_FIELD_VALUES = this.get_field_values();
       //~ console.log("20120203 add_param_values added pv",pv,"to",p);
   }
   ,get_field_values : function() {
@@ -2335,13 +2348,17 @@ Lino.ActionFormPanel = Ext.extend(Lino.ActionFormPanel,{
   }
 });
 
-Lino.fields2array = function(fields) {
+Lino.fields2array = function(fields,values) {
     //~ console.log('20120116 gonna loop on', fields);
     var pv = Array(fields.length);
     for(var i=0; i < fields.length;i++) {
         var f = fields[i]
+        if (values) 
+          var v = values[f.name];
+        else 
+          var v = f.getValue();
         if (f.formatDate) {
-            pv[i] = f.formatDate(f.getValue()); 
+            pv[i] = f.formatDate(v); 
         } else {
             pv[i] = f.getValue(); 
         }
@@ -2444,7 +2461,11 @@ Lino.FormPanel = Ext.extend(Lino.FormPanel,{
       ]);
           
       if (this.bbar) { // since 20121016
-        if (!this.tbar) this.tbar = [];
+        if (this.tbar) {
+            this.tbar = this.tbar.concat(['-']) ;
+        } else {
+          this.tbar = [];
+        }
         this.tbar = this.tbar.concat(this.bbar) ;
         this.bbar = undefined;
       }
@@ -2854,7 +2875,7 @@ Lino.FormPanel = Ext.extend(Lino.FormPanel,{
   /* 
   Lino.FormPanel.save() 
   */
-  save : function(after) {
+  save : function(after,switch_to_detail) {
     //~ var panel = this;
     this.loadMask.show();
     var rec = this.get_current_record();
@@ -2895,7 +2916,7 @@ Lino.FormPanel = Ext.extend(Lino.FormPanel,{
                 ww.status.record_id = action.result.record_id;
                 ww.status.data_record = action.result.data_record;
                 Lino.close_window();
-            } else if (this.ls_detail_handler) {
+            } else if (this.ls_detail_handler && switch_to_detail) {
                 //~ console.log("20120217 case 2");
                 Lino.kill_current_window();
                 this.ls_detail_handler.run(null,{
@@ -3279,7 +3300,9 @@ Lino.GridPanel = Ext.extend(Lino.GridPanel,{
             window.open(ROOT_URL+'/api'+this.ls_url + "?" + Ext.urlEncode(p)) 
           } },
         { scope:this, 
-          text: "[pdf]", 
+          //~ text: "[pdf]", 
+          tooltip: "$_('Show this table as a pdf document')", 
+          iconCls: 'x-tbar-acrobat',
           handler: function() { 
             var p = this.get_current_grid_config();
             Ext.apply(p,this.get_base_params());
@@ -4087,6 +4110,7 @@ Lino.chooser_handler = function(combo,name) {
 Lino.ComboBox = Ext.extend(Ext.form.ComboBox,{
   forceSelection: true,
   triggerAction: 'all',
+  minListWidth:230,
   autoSelect: false,
   submitValue: true,
   displayField: '$ext_requests.CHOICES_TEXT_FIELD', // 'text', 
@@ -4244,6 +4268,7 @@ http://www.sencha.com/forum/showthread.php?15842-2.0-SOLVED-Combobox-twintrigger
 */
 Lino.TwinCombo = Ext.extend(Lino.RemoteComboFieldElement,{
     trigger2Class : 'x-form-search-trigger',
+    //~ trigger2Class : 'x-tbar-detail',
     initComponent : function() {
         //~ Lino.TwinCombo.superclass.initComponent.call(this);
         Lino.ComboBox.prototype.initComponent.call(this);

@@ -154,10 +154,13 @@ class Menu(MenuItem):
     #~ template_to_response = 'lino/menu.html'
     def __init__(self,user,name,label=None,parent=None,**kw):
         MenuItem.__init__(self,parent,None,name,label,**kw)
-        self.items = []
         self.user = user
-        self.items_dict = {}
+        self.clear()
 
+    def clear(self):
+        self.items = []
+        self.items_dict = {}
+        
     def compress(self):
         """
         Dynamically removes empty menu entries.

@@ -44,16 +44,12 @@ from lino.utils import babel
 from lino.core.modeltools import obj2str, sorted_models_list, full_model_name
 from lino.core.modeltools import resolve_field, UnresolvedModel
 from lino.utils.choosers import chooser, get_for_field
-#~ from lino.modlib.users.models import UserLevels
 from lino.utils.restify import restify
 from lino.core import actions
 from lino.core import changes
 from lino.utils.xmlgen import html as xghtml
 
 #~ from lino.core.changes import Change, Changes, ChangesByObject
-
-from lino.dd import UserLevels, UserProfiles, UserGroups
-
 
 
 #~ class BuildLinoJS(dd.RowAction):
@@ -384,7 +380,7 @@ class Models(dd.VirtualTable):
         #~ return str(obj._lino_default_table.detail_action)
         if obj._lino_default_table.detail_action is None:
             return ''
-        return obj._lino_default_table.detail_action.full_name(obj._lino_default_table)
+        return obj._lino_default_table.detail_action.full_name()
         
     #~ @dd.displayfield(_("verbose name"))
     #~ def vebose_name(self,obj,ar):
@@ -637,9 +633,52 @@ class Home(mixins.EmptyTable):
           #~ max_items=10,before='<ul><li>',separator='</li><li>',after="</li></ul>")
           
     #~ @dd.constant('')
-    @dd.constant()
-    def welcome(cls,ui):
-        return "Welcome to the <b>%s</b> server." % cgi.escape(settings.LINO.title)
+    #~ @dd.constant()
+    #~ def welcome(cls,ui):
+        #~ return "Welcome to the <b>%s</b> server." % cgi.escape(settings.LINO.title)
+        
+    @dd.virtualfield(dd.HtmlBox(_('Welcome')))
+    def welcome(cls,self,ar):
+        #~ MAXITEMS = 2
+        u = ar.get_user()
+        story = []
+        
+        intro = [_("Hi, "),u.first_name,'! ']
+        story.append(xghtml.E.p(*intro))
+        
+        warnings = []
+        
+        #~ for T in (MySuggestedCoachings,cal.MyTasksToDo):
+        for table,text in settings.LINO.get_todo_tables(ar):
+            r = table.request(user=u)
+            #~ r = T.request(subst_user=u)
+            #~ r = ar.spawn(T)
+            if r.get_total_count() != 0:
+                #~ for obj in r.data_iterator[-MAXITEMS]:
+                    #~ chunks = [obj.summary_row(ar)]
+                    #~ sep = ' : '
+                    #~ for a in T.get_workflow_actions(ar,obj):
+                        #~ chunks.append(sep)
+                        #~ chunks.append(ar.row_action_button(obj,a))
+                        #~ sep = ', '
+                
+                warnings.append(xghtml.E.li(
+                    ar.href_to_request(r,text % r.get_total_count())))
+                    #~ _("You have %d entries in ") % r.get_total_count(),
+                    #~ ar.href_to_request(r,label)))
+        
+        #~ warnings.append(xghtml.E.li("Test 1"))
+        #~ warnings.append(xghtml.E.li("Second test"))
+        if len(warnings):
+            #~ story.append(xghtml.E.h3(_("Warnings")))
+            story.append(xghtml.E.h3(_("You have")))
+            story.append(xghtml.E.ul(*warnings))
+        else:
+            story.append(xghtml.E.p(_("Congratulatons: you have no warnings.")))
+        return xghtml.E.div(*story,class_="htmlText",style="margin:5px")
+        
+
+        
     
     #~ @dd.virtualfield(dd.HtmlBox(_('Missed reminders')))
     #~ def missed_reminders(cls,self,req):

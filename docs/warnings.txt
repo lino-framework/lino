@@ -1,0 +1,4 @@
+T:\hgwork\lino\docs\casts\lino_intro.rst:: WARNING: document isn't included in any toctree
+T:\hgwork\lino\docs\about\index.rst:11: WARNING: unknown document: /pcsw/index
+T:\hgwork\lino\docs\about\index.rst:104: WARNING: unknown document: /tutorials/t1
+T:\hgwork\lino\docs\about\thanks.rst:41: WARNING: py:mod reference target not found: lino.utils.pyuca

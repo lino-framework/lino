@@ -80,7 +80,7 @@ class Posting(mixins.AutoUser,mixins.ProjectRelated,mixins.Controllable):
     partner = models.ForeignKey('contacts.Partner',
         verbose_name=_("Recipient"),
         blank=True,null=True)
-    state = PostingStates.field(blank=True)
+    state = PostingStates.field()
     #~ sender = models.ForeignKey(settings.LINO.user_model)
     date = models.DateField()
     
@@ -97,7 +97,7 @@ class Posting(mixins.AutoUser,mixins.ProjectRelated,mixins.Controllable):
     def print_action(self,ar,**kw):
         kw.update(refresh=True)
         r = self.owner.print_from_posting(self,ar,**kw)
-        if self.state in (None,PostingStates.open,PostingStates.ready):
+        if self.state in (PostingStates.open,PostingStates.ready):
             self.state = PostingStates.printed
         self.save()
         return r
@@ -148,7 +148,7 @@ class PostingsByProject(Postings):
     
 class CreatePostings(dd.RowAction):
     """
-    Creates a series of new Posting from this Postable. 
+    Creates a series of new Postings from this Postable. 
     The Postable gives the list of recipients, and there will 
     be one Posting for each recipient.
     
@@ -161,6 +161,8 @@ class CreatePostings(dd.RowAction):
     url_action_name = 'post'
     #~ label = _('Create email')
     label = _('Create posting')
+    help_text = _('Create classical mail postings from this')
+    icon_name = 'x-tbar-create-postings'
     
     callable_from = (actions.GridEdit, 
         actions.ShowDetailAction,
@@ -230,4 +232,8 @@ def setup_explorer_menu(site,ui,user,m):
     m  = m.add_menu("office",lino.OFFICE_MODULE_LABEL)
     #~ m  = m.add_menu("postings",MODULE_LABEL)
     m.add_action(Postings)
+  
+def get_todo_tables(site,ar):
+    yield (PostingsReady,_("%d postings ready to print"))
+                
   

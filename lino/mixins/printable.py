@@ -513,6 +513,9 @@ class PrintAction(BasePrintAction):
     
     #~ needs_selection = True
     
+    icon_name = 'x-tbar-print'
+    
+    
     def before_build(self,bm,elem):
         #~ if not elem.must_build:
         if elem.build_time:
@@ -613,9 +616,11 @@ class ClearCacheAction(actions.RowAction):
     """
     Defines the :guilabel:`Clear cache` button on a Printable record.
     """
-    sort_index = 11
+    sort_index = 51
     url_action_name = 'clear'
     label = _('Clear cache')
+    
+    icon_name = 'x-tbar-clearcache'
     
     #~ def disabled_for(self,obj,request):
         #~ if not obj.build_time:

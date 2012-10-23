@@ -762,7 +762,7 @@ class ApiElement(View):
                   dialog_fn=e.dialog,
                   step=e.step)
                 return ui.action_response(r)
-            except actions.Warning,e:
+            except Warning,e:
                 r = dict(
                   success=False,
                   message=unicode(e),

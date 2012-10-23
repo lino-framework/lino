@@ -670,7 +670,8 @@ class ExtUI(base.UI):
         return ext_elems.Panel(lh,name,vertical,*elems,**pkw)
 
     def create_layout_element(self,lh,name,**kw):
-        if False: # don't catch any exception. useful when there's some problem within the framework 
+        if True: 
+            # don't catch any exception. useful when there's some problem within the framework 
             de = lh.get_data_elem(name)
         else:
             try:
@@ -792,6 +793,7 @@ class ExtUI(base.UI):
                 l += [str(rpt) for rpt in model._lino_slaves.values()]
             msg += " Possible names are %s." % ', '.join(l)
         else:
+            logger.info("20121023 create_layout_element %r",lh.layout._table)
             msg = "Unknown element %r referred in layout <%s>." % (
                 name,lh.layout)
             msg += " Cannot handle %r" % de
@@ -1453,6 +1455,10 @@ tinymce.init({
         for a in actors_list:
             f.write("Ext.namespace('Lino.%s')\n" % a)
             
+            #~ from lino.modlib.contacts.models import Persons
+            #~ if a == Persons:
+                #~ raise Exception("20121023")
+                
         assert user == jsgen._for_user
         
         """
@@ -1672,7 +1678,9 @@ tinymce.init({
         if a.parameters:
             kw.update(panel_btn_handler=js_code("Lino.param_action_handler(Lino.%s)" % ba.full_name()))
         elif isinstance(a,actions.SubmitDetail):
-            kw.update(panel_btn_handler=js_code('function(panel){panel.save()}'))
+            #~ kw.update(tabIndex=1)
+            js = 'function(panel){panel.save(null,%s)}' % py2js(a.switch_to_detail)
+            kw.update(panel_btn_handler=js_code(js))
         elif isinstance(a,actions.ShowDetailAction):
             kw.update(panel_btn_handler=js_code('Lino.show_detail'))
         elif isinstance(a,actions.InsertRow):
@@ -1708,6 +1716,7 @@ tinymce.init({
             kw.update(text=a.label)
         kw.update(
           #~ name=a.name,
+          overflowText=a.label,
           auto_save=a.auto_save,
           itemId=a.action_name,
           #~ text=unicode(a.label),

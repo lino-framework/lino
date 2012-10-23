@@ -44,3 +44,8 @@ distributed with Lino.
   `pyuca_allkeys.txt` is an unmodified copy of
   http://www.unicode.org/Public/UCA/latest/allkeys.txt
   
+- :srcref:`/media/extjs/images/mjames` contains 
+  a subset of Mark James' great and free 
+  `Silk Icons <http://www.famfamfam.com/lab/icons/silk/>`_.
+  
+  

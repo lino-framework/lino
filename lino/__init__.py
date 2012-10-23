@@ -1080,17 +1080,19 @@ class Lino(object):
         return main
 
 
+    def get_installed_modules(self):
+        from django.conf import settings
+        from django.utils.importlib import import_module
+        for app_name in settings.INSTALLED_APPS:
+            yield import_module('.models', app_name)
+        
     def on_each_app(self,methname,*args):
         """
         Call the named method on each module in :setting:`INSTALLED_APPS`
         that defines it.
         """
-        from django.conf import settings
-        from django.utils.importlib import import_module
         from lino.utils import dblogger
-        
-        for app_name in settings.INSTALLED_APPS:
-            mod = import_module('.models', app_name)
+        for mod in self.get_installed_modules():
             meth = getattr(mod,methname,None)
             if meth is not None:
                 #~ dblogger.debug("Running %s of %s", methname, mod.__name__)
@@ -1387,7 +1389,16 @@ class Lino(object):
             text = "(version)"
             version = """<a href="#" onclick="%s" title="%s">%s</a>""" % (onclick,tip,text)
             yield ("ExtJS",version ,"http://www.sencha.com")
+            
+            yield ("Silk Icons",'1.3',"http://www.famfamfam.com/lab/icons/silk/")
 
+            if self.use_extensible:
+                onclick = "alert('Extensible Calendar version is ' + Ext.ensible.version);"
+                tip = "Click to see Extensible Calendar version"
+                text = "(version)"
+                version = """<a href="#" onclick="%s" title="%s">%s</a>""" % (onclick,tip,text)
+                yield ("Extensible",version ,"http://ext.ensible.com/products/calendar/")
+            
 
     def welcome_text(self):
         """
@@ -1400,7 +1411,8 @@ class Lino(object):
         Text to display in the "about" dialog of a GUI application.
         """
         sep = '<br/>'
-        return sep.join(['<a href="%s" target="_blank">%s</a> %s' 
+        #~ sep = ', '
+        return sep.join(['<a href="%s" target="_blank">%s</a>&nbsp;%s' 
             % (u,n,v) for n,v,u in self.using(ui)])
 
     def site_version(self):
@@ -1450,3 +1462,14 @@ class Lino(object):
         """
         return obj.get_system_note_recipients(ar,silent)
         
+
+    def get_todo_tables(self,ar):
+        """
+        Return or yield a list of tables that should be empty
+        """
+        for mod in self.get_installed_modules():
+            meth = getattr(mod,'get_todo_tables',None)
+            if meth is not None:
+                #~ dblogger.debug("Running %s of %s", methname, mod.__name__)
+                for i in meth(self,ar):
+                    yield i

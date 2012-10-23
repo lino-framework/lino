@@ -44,7 +44,6 @@ from lino.utils import AttrDict
 from lino.ui import requests as ext_requests
 from lino.core.modeltools import resolve_model, obj2str
 #~ from lino.core.perms import UserProfiles
-from lino.utils.xmlgen import html as xghtml
 
 
 
@@ -2019,47 +2018,6 @@ class Home(lino.Home):
         return reminders_as_html(ar,days_back=90,
           max_items=10,before='<ul><li>',separator='</li><li>',after="</li></ul>")
           
-    @dd.virtualfield(dd.HtmlBox(_('Welcome')))
-    def welcome(cls,self,ar):
-        #~ MAXITEMS = 2
-        u = ar.get_user()
-        story = []
-        
-        intro = [_("Hi, "),u.first_name,'! ']
-        story.append(xghtml.E.p(*intro))
-        
-        warnings = []
-        
-        #~ for T in (MySuggestedCoachings,cal.MyTasksToDo):
-        for T in (MyPendingInvitations,MyTasksToDo,
-            MyEventsNotified,
-            MyEventsSuggested):
-            r = T.request(user=u)
-            #~ r = T.request(subst_user=u)
-            #~ r = ar.spawn(T)
-            if r.get_total_count() != 0:
-                #~ for obj in r.data_iterator[-MAXITEMS]:
-                    #~ chunks = [obj.summary_row(ar)]
-                    #~ sep = ' : '
-                    #~ for a in T.get_workflow_actions(ar,obj):
-                        #~ chunks.append(sep)
-                        #~ chunks.append(ar.row_action_button(obj,a))
-                        #~ sep = ', '
-                    
-                warnings.append(xghtml.E.li(
-                    _("You have %d entries in ") % r.get_total_count(),
-                    ar.href_to_request(r,T.label)))
-        
-        #~ warnings.append(xghtml.E.li("Test 1"))
-        #~ warnings.append(xghtml.E.li("Second test"))
-        if len(warnings):
-            story.append(xghtml.E.h3(_("Warnings")))
-            story.append(xghtml.E.ul(*warnings))
-        else:
-            story.append(xghtml.E.p(_("Congratulatons: you have no warnings.")))
-        return xghtml.E.div(*story,class_="htmlText",style="margin:5px")
-        
-
           
 
 
@@ -2201,10 +2159,17 @@ def setup_quicklinks(site,ui,user,m):
         #~ m.add_action(MyEventsNotified)
         #~ m.add_action(MyTasksToDo)
         
-def whats_up(site,ui,user):
+#~ def whats_up(site,ui,user):
     #~ MyEventsReserved
-    MyEventsSuggested
-    MyEventsNotified
+    #~ MyEventsSuggested
+    #~ MyEventsNotified
+    
+def get_todo_tables(site,ar):
+    yield (MyPendingInvitations, _("%d invitations waiting for your reaction"))
+    yield (MyTasksToDo,_("%d tasks to do"))
+    yield (MyEventsNotified,_("%d notified events"))
+    yield (MyEventsSuggested,_("%d suggested events"))
+    
     
 
 #~ dd.add_user_group('office',MODULE_LABEL)

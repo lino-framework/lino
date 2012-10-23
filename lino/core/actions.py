@@ -245,9 +245,10 @@ class Action(Parametrizable):
     value action
     ===== =================================
     20    :class:`Insert <InsertRow>`
+    21    :attr:`Duplicate <lino.mixins.duplicable.Duplicable.duplicate_row>`
     30    :class:`Delete <DeleteSelected>`
     50    :class:`Print <lino.mixins.printable.BasePrintAction>`
-    60    :attr:`Duplicate <lino.mixins.duplicable.Duplicable.duplicate_row>`
+    51    :class:`Clear Cache <lino.mixins.printable.ClearCacheAction>`
     90    default for all custom row actions created using :func:`@dd.action <action>`
     ===== =================================
     
@@ -667,6 +668,7 @@ class ShowEmptyTable(ShowDetailAction):
     default_format = 'html'
     #~ hide_top_toolbar = True
     hide_navigator = True
+    icon_name = None
     
     def attach_to_actor(self,actor,name):
         self.label = actor.label
@@ -713,6 +715,8 @@ class DeleteSelected(RowAction):
     
         
 class SubmitDetail(RowAction):
+    sort_index = 10
+    switch_to_detail = False
     icon_name = 'x-tbar-save'
     help_text = _("Save changes in this form")
     label = _("Save")
@@ -725,12 +729,18 @@ class SubmitDetail(RowAction):
     callable_from = (ShowDetailAction,)
     
 class SubmitInsert(SubmitDetail):
+    sort_index = 10
     icon_name = None # don't inherit 'x-tbar-save' from Submitdetail 
     #~ url_action_name = 'SubmitInsert'
     label = _("Create")
     #~ label = _("Insert")
     callable_from = (InsertRow,)
     
+class SubmitInsertAndEdit(SubmitInsert):
+    sort_index = 11
+    switch_to_detail = True
+    label = _("Create and Edit")
+
     
     
 class NotifyingAction(RowAction):

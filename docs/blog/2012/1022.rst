@@ -9,17 +9,18 @@ http://welfare.lino-framework.org/de/user/tim2lino.html
 dokumentiere.
   
   
-`Action.icon_name <lino.core.actions.Action.icon_name>` and grid context menu
------------------------------------------------------------------------------
+`Action.icon_name` and grid context menu
+----------------------------------------
 
+For actions with an :attr:`icon_name <lino.core.actions.Action.icon_name>`,
 `extjs3.ext_ui.a2btn` now adds the label as `menu_item_text` 
 (and `linolib.js` puts this to the context menu item's `text` property), 
 to solve the following issue:
   
 - Im Kontextmenü hatten Bilderbuttons kein Label
 
-Manually setting and `AutoField`
---------------------------------
+Manually setting an `AutoField`
+-------------------------------
 
 Lino didn't yet handle the case of including the `id` field to an 
 :attr:`insert_layout <lino.core.actors.Actor.insert_layout>`. 

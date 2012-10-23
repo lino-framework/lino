@@ -270,37 +270,46 @@ adapted for usage in an ExtJS application.
 
 
 .x-tbar-delete{
-	background-image: url(images/default/grid/delete.gif) !important;
+	background-image: url(images/mjames/delete.png) !important;
 }
 .x-item-disabled .x-tbar-delete{
 	background-image: url(images/default/grid/delete-disabled.gif) !important;
 }
 
 .x-tbar-new{
-	background-image: url(images/default/grid/new.png) !important;
-}
-.x-item-disabled .x-tbar-new{
-	background-image: url(images/default/grid/new-disabled.png) !important;
+	background-image: url(images/mjames/add.png) !important;
 }
 
 .x-tbar-detail{
-	background-image: url(images/default/grid/detail.png) !important;
-}
-.x-item-disabled .x-tbar-detail{
-	background-image: url(images/default/grid/detail-disabled.gif) !important;
+	background-image: url(images/mjames/application_form.png) !important;
 }
 
 .x-tbar-save{
-	background-image: url(images/default/grid/save.png) !important;
-}
-.x-item-disabled .x-tbar-save{
-	background-image: url(images/default/grid/save-disabled.png) !important;
+	background-image: url(images/mjames/disk.png) !important;
 }
 
 .x-tbar-email{
-	background-image: url(images/default/grid/email.png) !important;
+	background-image: url(images/mjames/email_add.png) !important;
+}
+
+.x-tbar-create-postings{
+	background-image: url(images/mjames/script_add.png) !important;
 }
 
 .x-tbar-calendar{
-	background-image: url(images/default/grid/calendar.png) !important;
+	background-image: url(images/mjames/calendar.png) !important;
+}
+
+.x-tbar-print{
+	background-image: url(images/mjames/printer.png) !important;
+}
+
+.x-tbar-clearcache{
+	background-image: url(images/mjames/printer_delete.png) !important;
+}
+.x-tbar-duplicate{
+	background-image: url(images/mjames/arrow_divide.png) !important;
+}
+.x-tbar-acrobat{
+	background-image: url(images/mjames/page_white_acrobat.png) !important;
 }

@@ -206,7 +206,7 @@ def log_create(request,obj):
     master = get_master(obj)
     if master is None:
         return
-    log_change(ChangeTypes.create,request,master,obj)
+    log_change(ChangeTypes.create,request,master,obj,obj2str(obj,True))
 
 def log_add_child(request,obj,child_model):
     master = get_master(obj)
