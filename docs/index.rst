@@ -2,6 +2,7 @@
 Lino -- a framework for database applications
 =============================================
 
+
 Welcome to the Lino Website. 
 Lino is still in pre-documentation phase, 
 so don't judge the project on this website only.
@@ -10,10 +11,11 @@ If you like Lino, read our :doc:`/community` page and
 consider lending a helping hand.
 
 
-- Read :doc:`more about Lino </about/index>`?
+- :doc:`What is Lino? </about/index>`
 
-- There's currently no online demo, 
-  but the :doc:`installation </admin/install>` 
+- Watch the :doc:`online demos</demos>`
+
+- The :doc:`installation </admin/install>` 
   is easy if you have some experience qith Python.
   
 - See Luc's :doc:`Blog <blog/2012/index>` to get the hottest 

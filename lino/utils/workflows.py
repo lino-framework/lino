@@ -31,7 +31,11 @@ from lino.utils import choicelists
 
 class State(choicelists.Choice):
         
-    def add_workflow(self,label=None,help_text=None,notify=False,**required):
+    def add_workflow(self,label=None,
+        help_text=None,
+        notify=False,
+        icon_file=None,
+        **required):
         """
         `label` can be either a string or a subclass of ChangeStateAction
         """
@@ -40,6 +44,8 @@ class State(choicelists.Choice):
         kw = dict()
         if help_text is not None:
             kw.update(help_text=help_text)
+        if icon_file is not None:
+            kw.update(icon_file=icon_file)
         kw.update(sort_index=10+i)
         if label and not isinstance(label,(basestring,Promise)):#issubclass(label,ChangeStateAction):
             if notify:
@@ -76,6 +82,8 @@ class Workflow(choicelists.ChoiceList):
     workflow_actions = []
     
     item_class = State
+    
+    label = _("State")
   
     #~ @classmethod
     #~ def add_statechange(self,newstate,action_label=None,states=None,**kw):
@@ -115,7 +123,7 @@ class ChangeStateAction(actions.RowAction):
     show_in_workflow = True
     
     
-    def __init__(self,target_state,required,**kw):
+    def __init__(self,target_state,required,help_text=None,**kw):
         self.target_state = target_state
         #~ kw.update(label=getattr(target_state,'action_label',target_state.text))
         #~ kw.setdefault('label',target_state.text)
@@ -133,9 +141,11 @@ class ChangeStateAction(actions.RowAction):
                     return m(obj,user)
                 new_required.update(allow=allow)
         kw.update(required=new_required)
-        help_text = getattr(target_state,'help_text',None)
-        if help_text is not None:
-            kw.update(help_text=help_text)
+        if help_text is None:
+            help_text = _("Mark this as %s") % target_state.text
+        #~ help_text = getattr(target_state,'help_text',None)
+        #~ if help_text is not None:
+        kw.update(help_text=help_text)
         super(ChangeStateAction,self).__init__(**kw)
         #~ logger.info('20120930 ChangeStateAction %s %s', actor,target_state)
         

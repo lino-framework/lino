@@ -1208,7 +1208,7 @@ class Task(Component):
         verbose_name=_("Due time"))
     #~ done = models.BooleanField(_("Done"),default=False) # iCal:COMPLETED
     percent = models.IntegerField(_("Duration value"),null=True,blank=True) # iCal:PERCENT
-    state = TaskStates.field() # iCal:STATUS
+    state = TaskStates.field(default=TaskStates.todo) # iCal:STATUS
     #~ status = models.ForeignKey(TaskStatus,verbose_name=_("Status"),blank=True,null=True) # iCal:STATUS
     
     #~ @dd.action(_("Done"),required=dict(states=['','todo','started']))

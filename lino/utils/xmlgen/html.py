@@ -1,10 +1,11 @@
+# -*- coding: UTF-8 -*-
 # LS 20120430 adapted copy from lxml\src\lxml\html\builder.py
 # --------------------------------------------------------------------
 # The ElementTree toolkit is
 # Copyright (c) 1999-2004 by Fredrik Lundh
 # --------------------------------------------------------------------
 
-"""
+u"""
 A set of HTML generator tags for building HTML documents.
 
 Usage::
@@ -19,16 +20,25 @@ Usage::
     ...        )
 
     >>> print E.tostring_pretty(html)
-    <?xml version="1.0" ?>
-    <html xmlns="http://www.w3.org/1999/xhtml">
-      <head>
-        <title>Hello World</title>
-      </head>
-      <body class="main">
-        <h1>Hello World !</h1>
-      </body>
-    </html>
-    <BLANKLINE>
+    <html>
+    <head>
+    <title>Hello World</title>
+    </head>
+    <body class="main">
+    <h1>Hello World !</h1>
+    </body>
+    </html>    
+    
+    
+    >>> kw = dict(title=u'Ein süßes Beispiel')
+    >>> kw.update(href="foo/bar.html")
+    >>> btn = E.button(type='button',class_='x-btn-text x-tbar-upload')
+    >>> html = E.a(btn,**kw)
+    >>> print E.tostring_pretty(html)
+    <a href="foo/bar.html" title="Ein s&#252;&#223;es Beispiel">
+    <button class="x-btn-text x-tbar-upload" type="button" />
+    </a>    
+    
 """
 
 from xml.etree import ElementTree as ET
@@ -139,6 +149,8 @@ href
 type
 rel
 target
+onclick
+src
 """)
 
 def table_header_row(*headers,**kw):

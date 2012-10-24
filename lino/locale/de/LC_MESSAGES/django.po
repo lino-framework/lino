@@ -8,7 +8,7 @@ msgstr ""
 "Project-Id-Version: lino.modlib.systen\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2012-10-23 23:19+0100\n"
-"PO-Revision-Date: 2012-10-24 01:22+0200\n"
+"PO-Revision-Date: 2012-10-24 04:01+0200\n"
 "Last-Translator: Luc Saffre <luc.saffre@gmail.com>\n"
 "Language-Team: \n"
 "MIME-Version: 1.0\n"
@@ -222,7 +222,7 @@ msgstr "Hallo, "
 
 #: .\models.py:674
 msgid "You have"
-msgstr "Du hat"
+msgstr "Du hast"
 
 #: .\models.py:677
 msgid "Congratulatons: you have no warnings."

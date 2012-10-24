@@ -114,19 +114,34 @@ class HtmlRenderer(object):
     def href(self,url,text):
         return '<a href="%s">%s</a>' % (url,text)
         
-    def href_button(self,url,text,title=None,**kw):
+    def href_button(self,url,text,title=None,target=None,icon_file=None,**kw):
         """
         Returns an elementtree object of a "button-like" ``<a href>`` tag.
         """
         #~ logger.info('20121002 href_button %r',unicode(text))
         # Remember that Python 2.6 doesn't like if title is a Promise
+        if target:
+            kw.update(target=target)
         if title:
             kw.update(title=unicode(title))
             #~ return xghtml.E.a(text,href=url,title=title)
-        return xghtml.E.a('[',text,']',href=url,**kw)
-            #~ return '[<a href="%s" title="%s">%s</a>]' % (
-                #~ url,cgi.escape(unicode(title)),text)
-        #~ return '[<a href="%s">%s</a>]' % (url,text)
+        kw.update(href=url)
+        #~ if icon_name:
+        if icon_file:
+            #~ btn = xghtml.E.button(type='button',class_='x-btn-text '+icon_name)
+            #~ btn = xghtml.E.button(
+                #~ type='button',
+                #~ class_='x-btn-text '+icon_name,
+                #~ onclick='function() {console.log(20121024)}')
+            #~ return btn
+            #~ return xghtml.E.a(btn,**kw)
+            #~ kw.update(class_='x-btn-text '+icon_name)
+            img = xghtml.E.img(src=self.ui.media_url('lino','extjs','images','mjames',icon_file))
+            return xghtml.E.a(img,**kw)
+        else:
+            return xghtml.E.span('[',xghtml.E.a(text,**kw),']')
+            #~ kw.update(style='border-width:1px; border-color:black; border-style:solid;')
+            #~ return xghtml.E.a(text,**kw)
         
     def quick_add_buttons(self,ar):
         """
@@ -201,17 +216,29 @@ class HtmlRenderer(object):
                 after_show.update(data_record=views.elem2rec_insert(rr,rr.ah,elem))
                 #~ after_show.update(record_id=-99999)
                 # see tickets/56
-                return self.window_action_button(rr.request,a,after_show,_("Upload"))
+                return self.window_action_button(rr.request,a,after_show,_("Upload"),
+                  #~ icon_file='attach.png',
+                  #~ icon_file='world_add.png',
+                  icon_file='page_add.png',
+                  title=_("Upload a file from your PC to the server."))
+                  #~ icon_name='x-tbar-upload')
         if rr.get_total_count() == 1:
             obj = rr.data_iterator[0]
             chunks = []
             #~ chunks.append(xghtml.E.a(_("show"),
               #~ href=self.ui.media_url(obj.file.name),target='_blank'))
             chunks.append(self.href_button(
-                self.ui.media_url(obj.file.name),_("show"),target='_blank'))
+                self.ui.media_url(obj.file.name),_("show"),
+                target='_blank',
+                #~ icon_file='world_go.png',
+                icon_file='page_go.png',
+                title=_("Open the uploaded file in a new browser window")))
             chunks.append(' ')
             after_show.update(record_id=obj.pk)
-            chunks.append(self.window_action_button(rr.request,rr.ah.actor.detail_action,after_show,_("Edit")))
+            chunks.append(self.window_action_button(rr.request,
+                rr.ah.actor.detail_action,
+                after_show,
+                _("Edit"),icon_file='application_form.png',title=_("Edit metadata of the uploaded file.")))
             return xghtml.E.p(*chunks)
             
             #~ s = ''
@@ -373,18 +400,24 @@ class ExtRenderer(HtmlRenderer):
     #~ def action_url_js(self,a,after_show):
         #~ return self.js2url(self.action_call(a,after_show))
 
-    def action_button(self,obj,ar,a,label=None):
-        if a.action.parameters:
-            st = ar.get_action_status(a,obj)
+    def action_button(self,obj,ar,ba,label=None,**kw):
+        """
+        ``kw`` may contain additional html attributes like `style`
+        """
+        if ba.action.icon_file is not None:
+            kw.update(icon_file=ba.action.icon_file)
+            kw.update(style="vertical-align:-30%;")
+        if ba.action.parameters:
+            st = ar.get_action_status(ba,obj)
             #~ st.update(record_id=obj.pk)
-            return self.window_action_button(ar.request,a,st,label or a.action.label)
-        if a.action.opens_a_window:
+            return self.window_action_button(ar.request,ba,st,label or ba.action.label,**kw)
+        if ba.action.opens_a_window:
             st = ar.get_status(self)
             st.update(record_id=obj.pk)
-            return self.window_action_button(ar.request,a,st,label or a.action.label)
-        return self.row_action_button(obj,ar.request,a,label)
+            return self.window_action_button(ar.request,ba,st,label or ba.action.label,**kw)
+        return self.row_action_button(obj,ar.request,ba,label,**kw)
         
-    def window_action_button(self,request,a,after_show={},label=None):
+    def window_action_button(self,request,a,after_show={},label=None,title=None,**kw):
         """
         Return a HTML chunk for a button that will execute this 
         action using a *Javascript* link to this action.
@@ -392,11 +425,12 @@ class ExtRenderer(HtmlRenderer):
         label = unicode(label or a.get_button_label())
         url = 'javascript:'+self.action_call(request,a,after_show)
         #~ logger.info('20121002 window_action_button %s %r',a,unicode(label))
-        if a.action.help_text:
-            return self.href_button(url,label,a.action.help_text)
-        return self.href_button(url,label)
+        return self.href_button(url,label,title or a.action.help_text,**kw)
+        #~ if a.action.help_text:
+            #~ return self.href_button(url,label,a.action.help_text)
+        #~ return self.href_button(url,label)
         
-    def row_action_button(self,obj,request,a,label=None):
+    def row_action_button(self,obj,request,a,label=None,title=None,**kw):
         """
         Return a HTML fragment that displays a button-like link 
         which runs the action when clicked.
@@ -405,11 +439,10 @@ class ExtRenderer(HtmlRenderer):
         url = 'javascript:Lino.%s(%r,%s)' % (
                 a.full_name(),str(request.requesting_panel),
                 py2js(obj.pk))
-        if a.action.help_text:
-            return self.href_button(url,label,a.action.help_text)
-        return self.href_button(url,label)
-            #~ return xghtml.E.a(label,href=url,title=unicode(a.action.help_text))
-        #~ return xghtml.E.a(label,href=url)
+        return self.href_button(url,label,title or a.action.help_text,**kw)
+        #~ if a.action.help_text:
+            #~ return self.href_button(url,label,a.action.help_text)
+        #~ return self.href_button(url,label)
         
     def action_call(self,request,bound_action,after_show):
         if bound_action.action.opens_a_window or bound_action.action.parameters:

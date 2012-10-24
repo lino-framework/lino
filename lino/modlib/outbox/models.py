@@ -476,6 +476,11 @@ class Mails(dd.Table):
     RecipientsByMail:50x5 AttachmentsByMail:20x5 uploads.UploadsByController:20x5
     body:90x10
     """)
+    insert_layout = dd.FormLayout("""
+    project 
+    subject 
+    body
+    """,window_size=(60,20))
     
 if not settings.LINO.project_model:
     Mails.detail_layout.remove_element('project')

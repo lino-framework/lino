@@ -231,7 +231,12 @@ class Action(Parametrizable):
     
     icon_name = None 
     """
-    The name of an icon to be used for this action.
+    The class name of an icon to be used for this action.
+    """
+    
+    icon_file = None
+    """
+    The file name of an icon to be used for this action.
     """
     
     _layout_class = layouts.ActionParamsLayout

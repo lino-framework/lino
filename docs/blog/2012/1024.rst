@@ -1,6 +1,11 @@
 20121024
 ========
 
+Erste Sitzung
+--------------
+
+- postings.Posting.state : no longer blank=True
+
 - Im Menü Schuldnerberatung fehlt noch ein Befehl "Klienten".
   New table DebtsClients
 
@@ -18,11 +23,65 @@
 - Im Kontextmenü einer Tabelle waren alle Befehle, die kein Icon haben, 
   jetzt komplett leer.
 
-
-- Meldung "20120912 lost : ..." in Bemerkung bei Melanie E.:
-  migrate vielleicht: wenn aid_type oder civil_state: doch ein Klient
-  werden lassen.
+- Meldung "20120912 lost : ..." in Bemerkung bei Melanie E. war irritierend.
+  Ist jetzt ausführlicher. 
+  Beispiele: suche nach "Datenmigration 20121024"
 
 - "Begleitungsdienst" --> "Dienst"
 
+- migrate erstellt jetzt automatisch einen User "watch_tim"
+
 Checkin und pull
+
+
+Zweite Sitzung
+--------------
+
+TODO:
+
+- Im Insert-Fenster gibt es ja jetzt zwei Buttons 
+  "Erstellen" und "Erstellen und Bearbeiten". 
+  Sehr unklar. Zumindest bessere Bezeichnungen:
+   
+  "Erstellen und Speichern" / "Erstellen und Bearbeiten"
+
+- Nicht "Status" und nicht "Aktenzustand", sondern "Bearbeitungszustand".
+
+- "Komplette Akte" ersetzen durch "primäre Begleitung"
+
+
+- UsersWithClients : Unterschied zw. Quote und Quote NZ?
+
+- Nach erfolgreicher Zuweisung eines Klienten springt er ohne viele Worte
+  auf den nächsten Klienten. Stattdessen alert_msg. 
+  Oder in die Grid zurück?
+
+- Bei `Ablehnen` wird keine Mails verschickt. Da sollte "Keine
+  Benachrichtiung per Email" dann auch grau sein.
+
+- In "Neue Klienten" steht noch "Altfälle"
+
+- warum wurde kein chronik-eintrag erstellt bei aliber (23132)?
+
+- workflow Ehemalig -> Neuantrag
+
+
+
+
+
+
+
+DONE:
+
+- :class:`lino.core.workflows.Workflow` hat jetzt ein `label` ("Bearbeitungszustand")
+
+- `Cache löschen` : wenn Aktion disabled, ist das jetzt nicht mehr sichtbar.
+  --> Nicht reproduzierbar.
+  
+- Die Schnell-Hochlade-Buttons arbeiten jetzt ebenfalls mit Bildchen.
+  Hier ist die Technologie ganz anders, das sind ja keine 
+  ExtJS-Komponenen, sondern das ist dynamisch generiertes plain html.
+
+- :class:`lino.modlib.outbox.models.Mails` hatte noch 
+  kein :attr:`insert_layout <lino.core.actors.Actor.insert_layout>`.
+  

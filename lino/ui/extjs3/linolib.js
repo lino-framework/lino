@@ -1984,7 +1984,8 @@ Lino.show_fk_detail = function(combo,detail_action) {
 Lino.show_insert = function(panel,btn) {
   var bp = panel.get_base_params();
   //~ console.log('20120125 Lino.show_insert',bp)
-  panel.ls_insert_handler.run(null,{record_id:-99999,base_params:bp});
+  //~ panel.ls_insert_handler.run(null,{record_id:-99999,base_params:bp});
+  panel.ls_insert_handler.run(panel.getId(),{record_id:-99999,base_params:bp});
 };
 
 Lino.show_insert_duplicate = function(panel,btn) {
@@ -2556,7 +2557,8 @@ Lino.FormPanel = Ext.extend(Lino.FormPanel,{
       st.param_values = this.status_param_values;
       return st;
   },
-  set_status : function(status){
+  set_status : function(status,rp){
+    this.requesting_panel = Ext.getCmp(rp);
     //~ console.log('20120918 FormPanel.set_status()',status);
     this.clear_base_params();
     if (status == undefined) status = {};
@@ -3097,9 +3099,8 @@ Lino.GridStore = Ext.extend(Ext.data.ArrayStore,{
 Lino.GridPanel = Ext.extend(Ext.grid.EditorGridPanel,Lino.MainPanel);
 Lino.GridPanel = Ext.extend(Lino.GridPanel,Lino.PanelMixin);
 Lino.GridPanel = Ext.extend(Lino.GridPanel,{
-  //~ quick_search_text : '',
+  quick_search_text : '',
   disabled_in_insert_window : true,
-  quick_search_text: '',
   clicksToEdit:2,
   enableColLock: false,
   autoHeight: false,
@@ -3250,6 +3251,7 @@ Lino.GridPanel = Ext.extend(Lino.GridPanel,{
             this_.selModel.selectFirstRow();
             this_.getView().focusEl.focus();
         }
+        //~ this.search_field.focus(); // 20121024
       }, this
     );
     var actions = Lino.build_buttons(this,this.ls_bbar_actions);
@@ -3282,10 +3284,12 @@ Lino.GridPanel = Ext.extend(Lino.GridPanel,{
       tbar = this.add_params_panel(tbar);
       tbar = tbar.concat([
         { scope:this, 
-          text: "[csv]", 
+          //~ text: "[csv]", 
+          tooltip: "$_('Export this table to a .csv file')", 
+          iconCls: 'x-tbar-csv',
           handler: function() { 
             var p = Ext.apply({},this.get_base_params());
-            p['fmt'] = 'csv';
+            p.$ext_requests.URL_PARAM_FORMAT = 'csv';
             //~ url += "?" + Ext.urlEncode(p);
             window.open(ROOT_URL+'/api'+this.ls_url + "?" + Ext.urlEncode(p)) 
           } },
@@ -3299,7 +3303,9 @@ Lino.GridPanel = Ext.extend(Lino.GridPanel,{
             //~ window.open(ROOT_URL+'/api'+this.ls_url + "?" + Ext.urlEncode(p)) 
           //~ } },
         { scope:this, 
-          text: "[html]", 
+          //~ text: "[html]", 
+          tooltip: "$_('Show this table in plain html')", 
+          iconCls: 'x-tbar-html',
           handler: function() { 
             var p = this.get_current_grid_config();
             Ext.apply(p,this.get_base_params());
@@ -3310,7 +3316,7 @@ Lino.GridPanel = Ext.extend(Lino.GridPanel,{
         { scope:this, 
           //~ text: "[pdf]", 
           tooltip: "$_('Show this table as a pdf document')", 
-          iconCls: 'x-tbar-acrobat',
+          iconCls: 'x-tbar-pdf',
           handler: function() { 
             var p = this.get_current_grid_config();
             Ext.apply(p,this.get_base_params());

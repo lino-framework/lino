@@ -310,6 +310,18 @@ adapted for usage in an ExtJS application.
 .x-tbar-duplicate{
 	background-image: url(images/mjames/arrow_divide.png) !important;
 }
-.x-tbar-acrobat{
+.x-tbar-pdf{
 	background-image: url(images/mjames/page_white_acrobat.png) !important;
+}
+.x-tbar-html{
+	background-image: url(images/mjames/html.png) !important;
+}
+.x-tbar-csv{
+	background-image: url(images/mjames/page_excel.png) !important;
+}
+.x-tbar-vcard{
+	background-image: url(images/mjames/vcard.png) !important;
+}
+.x-tbar-done{
+	background-image: url(images/mjames/accept.png) !important;
 }

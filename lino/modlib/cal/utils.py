@@ -159,7 +159,7 @@ class TaskStates(dd.Workflow):
     """
     State of a Calendar Task. Used as Workflow selector.
     """
-    label = _("State")
+    #~ label = _("State")
     
     @classmethod
     def migrate(cls,status_id):
@@ -194,16 +194,16 @@ add('50', _("Cancelled"),'cancelled')
 TaskStates.todo.add_workflow(_("Reopen"),states='done cancelled')
 #~ TaskStates.todo.add_workflow(_("Wake up"),states='sleeping')
 #~ TaskStates.started.add_workflow(states='_ todo')
-TaskStates.done.add_workflow(states='todo started')
+TaskStates.done.add_workflow(states='todo started',icon_file='accept.png')
 #~ TaskStates.sleeping.add_workflow(states='_ todo')
-TaskStates.cancelled.add_workflow(states='todo started')
+TaskStates.cancelled.add_workflow(states='todo started',icon_file='cancel.png')
 
 #~ class EventStates(ChoiceList):
 class EventStates(dd.Workflow):
     """
     State of a Calendar Event. Used as Workflow selector.
     """
-    label = _("State")
+    #~ label = _("State")
     
     @classmethod
     def allow_state_suggest(cls,self,user):
@@ -290,7 +290,7 @@ class GuestStates(dd.Workflow):
     State of a Calendar Event Guest. Used as Workflow selector.
     """
     #~ label = _("Guest State")
-    label = _("State")
+    #~ label = _("State")
 add = GuestStates.add_item
 add('10', _("Invited"),'invited')
 add('20', _("Accepted"),'accepted') #,required=dict(states=['','invited'],owner=False),action_label=_("Accept"))

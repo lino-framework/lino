@@ -283,8 +283,11 @@ class Model(models.Model):
         l = []
         state = actor.get_row_state(obj)
         if state:
+            #~ l.append(xghtml.E.b(unicode(state),style="vertical-align:middle;"))
             l.append(xghtml.E.b(unicode(state)))
-            l.append(u" » ")
+            #~ l.append(u" » ")
+            #~ l.append(u" \u25b8 ")
+            l.append(u" \u2192 ")
         for a in ar.actor.get_workflow_actions(ar,obj):
             l.append(ar.renderer.action_button(obj,ar,a))
             l.append(' ')
