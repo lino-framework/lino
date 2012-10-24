@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: lino.modlib.mails\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2012-10-17 07:19+0100\n"
+"POT-Creation-Date: 2012-10-23 23:20+0100\n"
 "PO-Revision-Date: 2012-06-28 11:43+0200\n"
 "Last-Translator: Luc Saffre <luc.saffre@gmail.com>\n"
 "Language-Team: de\n"
@@ -39,6 +39,11 @@ msgstr "als Anhang per E-Mail"
 #: .\models.py:113
 msgid "Email template"
 msgstr "E-Mail-Vorlage"
+
+#: .\models.py:132
+#, fuzzy
+msgid "Create an email from this"
+msgstr "per E-Mail"
 
 #: .\models.py:134
 msgid "Create email"

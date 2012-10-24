@@ -3099,6 +3099,7 @@ Lino.GridPanel = Ext.extend(Lino.GridPanel,Lino.PanelMixin);
 Lino.GridPanel = Ext.extend(Lino.GridPanel,{
   //~ quick_search_text : '',
   disabled_in_insert_window : true,
+  quick_search_text: '',
   clicksToEdit:2,
   enableColLock: false,
   autoHeight: false,
@@ -3263,11 +3264,18 @@ Lino.GridPanel = Ext.extend(Lino.GridPanel,{
     if (!this.hide_top_toolbar) {  
       var tbar = [ 
         this.search_field = new Ext.form.TextField({ 
-          fieldLabel: "Search", 
-          listeners: { scope:this_, change:this_.search_change }
+          //~ fieldLabel: "Search"
+          listeners: { 
+            scope:this_
+            //~ ,change:this_.search_change
+            ,render: Lino.quicktip_renderer("$_('Quick Search')","$_('Enter a text to use as quick search filter')")
+            //~ ,keypress: this.search_keypress 
+          }
+          ,validator:function(value) { return this_.search_validate(value) }
+          //~ ,tooltip: "Enter a quick search text, then press TAB"
           //~ value: text
           //~ scope:this, 
-          //~ enableKeyEvents: true, 
+          //~ ,enableKeyEvents: true
           //~ listeners: { keypress: this.search_keypress }, 
           //~ id: "seachString" 
       })];
@@ -3639,6 +3647,20 @@ Lino.GridPanel = Ext.extend(Lino.GridPanel,{
   //~ },
   
   before_row_edit : function(record) {},
+    
+  //~ search_keypress : function(){
+    //~ console.log("2012124 search_keypress",arguments);
+  //~ },
+  search_validate : function(value) {
+    if (value == this.quick_search_text) return true;
+    //~ console.log('search_change',field.getValue(),oldValue,newValue)
+    this.quick_search_text = value;
+    this.set_base_param('$URL_PARAM_FILTER',value); 
+    this.getTopToolbar().moveFirst();
+    //~ this.refresh();
+    return true;
+  },
+  
   search_change : function(field,oldValue,newValue) {
     //~ console.log('search_change',field.getValue(),oldValue,newValue)
     this.set_base_param('$URL_PARAM_FILTER',field.getValue()); 

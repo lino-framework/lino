@@ -99,10 +99,9 @@ class User(mixins.CreatedModified):
 
     def get_full_name(self):
         "Returns the first_name plus the last_name, with a space in between."
-        full_name = u'%s %s' % (self.first_name, self.last_name)
-        if not full_name:
-            full_name = self.username
-        return full_name.strip()
+        if not self.first_name and not self.last_name:
+            return self.username
+        return u'%s %s' % (self.first_name.strip(), self.last_name.strip())
         
     @dd.displayfield(_("Name"))
     def name_column(self,request):

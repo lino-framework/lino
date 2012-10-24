@@ -244,9 +244,10 @@ class Action(Parametrizable):
     ===== =================================
     value action
     ===== =================================
-    20    :class:`Insert <InsertRow>`
-    21    :attr:`Duplicate <lino.mixins.duplicable.Duplicable.duplicate_row>`
-    30    :class:`Delete <DeleteSelected>`
+    10    :class:`detail <ShowDetailAction>`
+    20    :class:`insert <InsertRow>`
+    21    :attr:`duplicate <lino.mixins.duplicable.Duplicable.duplicate_row>`
+    30    :class:`delete <DeleteSelected>`
     50    :class:`Print <lino.mixins.printable.BasePrintAction>`
     51    :class:`Clear Cache <lino.mixins.printable.ClearCacheAction>`
     90    default for all custom row actions created using :func:`@dd.action <action>`
@@ -598,7 +599,7 @@ class ShowDetailAction(RowAction):
     opens_a_window = True
     show_in_workflow = False
     
-    #~ sort_index = 1
+    sort_index = 10
     callable_from = (GridEdit,)
     #~ show_in_detail = False
     #~ needs_selection = True
@@ -744,11 +745,11 @@ class SubmitInsertAndEdit(SubmitInsert):
     
     
 class NotifyingAction(RowAction):
-  
+    
     parameters = dict(
         notify_subject = models.CharField(_("Summary"),blank=True,max_length=200),
         notify_body = fields.RichTextField(_("Description"),blank=True),
-        notify_silent = models.BooleanField(_("this change is silent"),default=False),
+        notify_silent = models.BooleanField(_("Don't send email notification"),default=False),
     )
     
     params_layout = layouts.Panel("""

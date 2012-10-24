@@ -7,8 +7,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: lino.modlib.cal\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2012-10-17 07:19+0100\n"
-"PO-Revision-Date: 2012-10-17 09:24+0200\n"
+"POT-Creation-Date: 2012-10-23 23:20+0100\n"
+"PO-Revision-Date: 2012-10-24 01:25+0200\n"
 "Last-Translator: Luc Saffre <luc.saffre@gmail.com>\n"
 "Language-Team: de <luc.saffre@gmail.com>\n"
 "MIME-Version: 1.0\n"
@@ -17,7 +17,7 @@ msgstr ""
 "Plural-Forms: nplurals=2; plural=(n != 1);\n"
 "X-Generator: Poedit 1.5.4\n"
 
-#: .\models.py:113 .\models.py:703 .\models.py:2082 .\utils.py:61
+#: .\models.py:113 .\models.py:703 .\models.py:2089 .\utils.py:61
 msgid "Calendar"
 msgstr "Kalender"
 
@@ -133,7 +133,7 @@ msgstr "Endet um"
 msgid "UID"
 msgstr ""
 
-#: .\models.py:630 .\models.py:1811
+#: .\models.py:630 .\models.py:1815
 msgid "Summary"
 msgstr "Kurzbeschreibung"
 
@@ -165,30 +165,30 @@ msgstr "Ob dieser Termin  privat, öffentlich oder halb öffentlich ist"
 msgid "Revision"
 msgstr "Revisionsnummer"
 
-#: .\models.py:788
+#: .\models.py:785
 msgid " at "
 msgstr " um "
 
-#: .\models.py:871
+#: .\models.py:868
 msgctxt "cal"
 msgid "Event"
 msgstr "Termin"
 
-#: .\models.py:872
+#: .\models.py:869
 msgctxt "cal"
 msgid "Events"
 msgstr "Termine"
 
-#: .\models.py:874
+#: .\models.py:871
 msgid "Transparent"
 msgstr "nicht blockierend"
 
-#: .\models.py:874
+#: .\models.py:871
 msgid ""
 "Indicates that this Event shouldn't prevent other Events at the same time."
 msgstr "Dieser Termin lässt auch andere Termine zur gleichen Zeit zu."
 
-#: .\models.py:887
+#: .\models.py:884
 msgid "all day"
 msgstr "ganztags"
 
@@ -277,352 +277,374 @@ msgstr "Fällig um"
 msgid "Duration value"
 msgstr "Dauer (Anzahl)"
 
-#: .\models.py:1307
+#: .\models.py:1311
 msgid "Table of all my tasks."
 msgstr "Alle meine Aufgaben"
 
-#: .\models.py:1312
+#: .\models.py:1316
 msgid "Table of my tasks marked 'to do'."
 msgstr "Meine zu erledigenden Aufgaben."
 
-#: .\models.py:1314
+#: .\models.py:1318
 msgid "To-do list"
 msgstr "To-Do-Liste"
 
-#: .\models.py:1335
+#: .\models.py:1339
 msgid "Guest Role"
 msgstr "Gastrolle"
 
-#: .\models.py:1336
+#: .\models.py:1340
 msgid "Guest Roles"
 msgstr "Gastrollen"
 
-#: .\models.py:1360
+#: .\models.py:1364
 msgid "Guest"
 msgstr "Gast"
 
-#: .\models.py:1361
+#: .\models.py:1365
 msgid "Guests"
 msgstr "Gäste"
 
-#: .\models.py:1365 .\models.py:1406
+#: .\models.py:1369 .\models.py:1410
 msgid "Event"
 msgstr "Termin"
 
-#: .\models.py:1371
+#: .\models.py:1375
 msgid "Role"
 msgstr "Rolle"
 
-#: .\models.py:1383
+#: .\models.py:1387
 msgid "Remark"
 msgstr "Bemerkungen"
 
-#: .\models.py:1465
+#: .\models.py:1469
 msgid "My presences"
 msgstr "Meine Anwesenheiten"
 
-#: .\models.py:1466
+#: .\models.py:1470
 msgid ""
 "Shows all my presences in calendar events, independently of their state."
 msgstr ""
 
-#: .\models.py:1476
+#: .\models.py:1480
 msgid "Shows received invitations which I must accept or reject."
 msgstr ""
 
-#: .\models.py:1477
+#: .\models.py:1481
 msgid "My received invitations"
 msgstr "Meine erhaltenen Einladungen"
 
-#: .\models.py:1568 .\models.py:2006
+#: .\models.py:1572 .\models.py:2011
 msgid "Upcoming reminders"
 msgstr "Ausblick"
 
-#: .\models.py:1569
+#: .\models.py:1573
 msgid "Past reminders"
 msgstr "Rückblick"
 
-#: .\models.py:1674
+#: .\models.py:1678
 msgid "due date reached"
 msgstr "Fälligkeitsdatum erreicht"
 
-#: .\models.py:1737
+#: .\models.py:1741
 msgid "Busy"
 msgstr "Beschäftigt"
 
-#: .\models.py:1740
+#: .\models.py:1744
 msgid "with"
 msgstr "mit"
 
-#: .\models.py:1789
+#: .\models.py:1793
 msgid "Hidden"
 msgstr "versteckt"
 
-#: .\models.py:1808
+#: .\models.py:1812
 msgid "Start"
 msgstr "Beginn"
 
-#: .\models.py:1809
+#: .\models.py:1813
 msgid "End"
 msgstr "Ende"
 
-#: .\models.py:1978
+#: .\models.py:1982
 msgid "Update Reminders"
 msgstr "Erinnerungen aktualisieren"
 
-#: .\models.py:1986
+#: .\models.py:1990
 #, python-format
 msgid "%(num)d reminders for %(user)s have been updated."
 msgstr "%(num)d Erinnerungen für %(user)s wurden aktualisiert."
 
-#: .\models.py:2011
+#: .\models.py:2016
 msgid "Missed reminders"
 msgstr "Verpasste Erinnerungen"
 
-#: .\models.py:2044
+#: .\models.py:2051
 msgid "Default access class"
 msgstr "Standardmäßige Zugriffsklasse"
 
-#: .\models.py:2045
+#: .\models.py:2052
 msgid "The default access class for your calendar events and tasks."
 msgstr "Die standardmäßige Zugriffsklasse für Ihre Termine und Aufgaben"
 
-#: .\models.py:2051
+#: .\models.py:2058
 msgid "Default calendar"
 msgstr "Standard-Kalender"
 
-#: .\models.py:2052
+#: .\models.py:2059
 msgid "The default calendar for your events and tasks."
 msgstr ""
 
-#: .\utils.py:71
+#: .\models.py:2168
+#, python-format
+msgid "%d invitations waiting for your reaction"
+msgstr "%d unbeantwortete Einladungen zu Versammlungen"
+
+#: .\models.py:2169
+#, python-format
+msgid "%d tasks to do"
+msgstr "%d Aufgaben zu erledigen"
+
+#: .\models.py:2170
+#, python-format
+msgid "%d notified events"
+msgstr "%d mitgeteilte Termine"
+
+#: .\models.py:2171
+#, python-format
+msgid "%d suggested events"
+msgstr "%d vorgeschlagene Termine"
+
+#: .\utils.py:73
 msgid "Weekday"
 msgstr "Wochentag"
 
-#: .\utils.py:73
+#: .\utils.py:75
 msgid "Monday"
 msgstr "Montag"
 
-#: .\utils.py:74
+#: .\utils.py:76
 msgid "Tuesday"
 msgstr "Dienstag"
 
-#: .\utils.py:75
+#: .\utils.py:77
 msgid "Wednesday"
 msgstr "Mittwoch"
 
-#: .\utils.py:76
+#: .\utils.py:78
 msgid "Thursday"
 msgstr "Donnerstag"
 
-#: .\utils.py:77
+#: .\utils.py:79
 msgid "Friday"
 msgstr "Freitag"
 
-#: .\utils.py:78
+#: .\utils.py:80
 msgid "Saturday"
 msgstr "Samstag"
 
-#: .\utils.py:79
+#: .\utils.py:81
 msgid "Sunday"
 msgstr "Sonntag"
 
-#: .\utils.py:137
+#: .\utils.py:139
 msgid "Duration Unit"
 msgstr "Dauer (Einheit)"
 
-#: .\utils.py:143
+#: .\utils.py:145
 msgid "seconds"
 msgstr "Sekunden"
 
-#: .\utils.py:144
+#: .\utils.py:146
 msgid "minutes"
 msgstr "Minuten"
 
-#: .\utils.py:145
+#: .\utils.py:147
 msgid "hours"
 msgstr "Stunden"
 
-#: .\utils.py:146
+#: .\utils.py:148
 msgid "days"
 msgstr "Tage"
 
-#: .\utils.py:147
+#: .\utils.py:149
 msgid "weeks"
 msgstr "Wochen"
 
-#: .\utils.py:148
+#: .\utils.py:150
 msgid "months"
 msgstr "Monate"
 
-#: .\utils.py:149
+#: .\utils.py:151
 msgid "years"
 msgstr "Jahre"
 
-#: .\utils.py:160 .\utils.py:202 .\utils.py:288
+#: .\utils.py:162 .\utils.py:206 .\utils.py:293
 msgid "State"
 msgstr "Status"
 
-#: .\utils.py:184
+#: .\utils.py:188
 msgid "To do"
 msgstr "Zu tun"
 
-#: .\utils.py:185
+#: .\utils.py:189
 msgctxt "cal"
 msgid "Started"
 msgstr "Begonnen"
 
-#: .\utils.py:186
+#: .\utils.py:190
 msgid "Done"
 msgstr "Erledigt"
 
-#: .\utils.py:187
-msgid "Sleeping"
-msgstr "Schläft"
-
-#: .\utils.py:188 .\utils.py:247
+#: .\utils.py:192 .\utils.py:252
 msgid "Cancelled"
 msgstr "Storniert"
 
-#: .\utils.py:191
-msgid "Wake up"
-msgstr "Aufwecken"
+#: .\utils.py:194
+msgid "Reopen"
+msgstr "Neu öffnen"
 
-#: .\utils.py:213
+#: .\utils.py:217
 msgid "This will reset all invitations"
 msgstr "Hiermit werden alle Gäste zurückgesetzt auf den Zustand \"Eingeladen\""
 
-#: .\utils.py:241
+#: .\utils.py:246
 msgid "Draft"
 msgstr "Entwurf"
 
-#: .\utils.py:241
+#: .\utils.py:246
 msgid "Default state of a new event."
 msgstr ""
 
-#: .\utils.py:242
+#: .\utils.py:247
 msgid "Suggested"
 msgstr "Vorgeschlagen"
 
-#: .\utils.py:242
+#: .\utils.py:247
 msgid ""
 "Created by colleague. External guests are notified, but user must confirm."
 msgstr ""
 
-#: .\utils.py:243
+#: .\utils.py:248
 msgid "Notified"
 msgstr "Mitgeteilt"
 
-#: .\utils.py:244
+#: .\utils.py:249
 msgid "Scheduled"
 msgstr "Geplant"
 
-#: .\utils.py:245
+#: .\utils.py:250
 msgid "Took place"
 msgstr "Stattgefunden"
 
-#: .\utils.py:246
+#: .\utils.py:251
 msgid "Rescheduled"
 msgstr "Verschoben"
 
-#: .\utils.py:248 .\utils.py:294
+#: .\utils.py:253 .\utils.py:299
 msgid "Absent"
 msgstr "Abwesend"
 
-#: .\utils.py:249
+#: .\utils.py:254
 msgid "Obsolete"
 msgstr "Verjährt"
 
-#: .\utils.py:251
+#: .\utils.py:256
 msgid "Restart"
 msgstr "Neubeginn"
 
-#: .\utils.py:253
+#: .\utils.py:258
 msgid "Return to Draft state and restart workflow for this event."
 msgstr ""
 
-#: .\utils.py:254
+#: .\utils.py:259
 msgid "Suggest"
 msgstr "Vorschlagen"
 
-#: .\utils.py:257
+#: .\utils.py:262
 msgid ""
 "Notify the user and ask to confirm (event was created by colleague for a "
 "client)."
 msgstr ""
 
-#: .\utils.py:258
+#: .\utils.py:263
 msgid "Notify guests"
 msgstr "Mitteilung an Gäste"
 
-#: .\utils.py:260
+#: .\utils.py:265
 msgid "Invitations have been sent. Waiting for feedback from guests."
 msgstr ""
 
-#: .\utils.py:261
+#: .\utils.py:266
 msgid "Confirm"
 msgstr "Bestätigen"
 
-#: .\utils.py:263
+#: .\utils.py:268
 msgid "Confirmed. All participants have been informed."
 msgstr ""
 
-#: .\utils.py:265
+#: .\utils.py:270
 msgid "Reschedule"
 msgstr "Verschieben"
 
-#: .\utils.py:266
+#: .\utils.py:271
 msgid "Cancel"
 msgstr "Stornieren"
 
-#: .\utils.py:290
+#: .\utils.py:295
 msgid "Invited"
 msgstr "Eingeladen"
 
-#: .\utils.py:291
+#: .\utils.py:296
 msgid "Accepted"
 msgstr "Zugesagt"
 
-#: .\utils.py:292
+#: .\utils.py:297
 msgid "Rejected"
 msgstr "Abgesagt"
 
-#: .\utils.py:293
+#: .\utils.py:298
 msgid "Present"
 msgstr "Anwesend"
 
-#: .\utils.py:297
+#: .\utils.py:302
 msgid "Reject"
 msgstr "Absagen"
 
-#: .\utils.py:298
+#: .\utils.py:303
 msgid "Reject this invitation."
 msgstr "Diese Einladung absagen"
 
-#: .\utils.py:302
+#: .\utils.py:307
 #, python-format
 msgid "Cannot accept invitation %(day)s at %(time)s"
 msgstr "Absage Termin am %(day)s um %(time)s"
 
-#: .\utils.py:308
+#: .\utils.py:313
 msgid "Accept"
 msgstr "Zusagen"
 
-#: .\utils.py:316
+#: .\utils.py:321
 msgid "Access Class"
 msgstr "Zugriffsklasse"
 
-#: .\utils.py:318
+#: .\utils.py:323
 msgid "Private"
 msgstr "Privat"
 
-#: .\utils.py:319
+#: .\utils.py:324
 msgid "Show busy"
 msgstr "halb öffentlich (\"Beschäftigt\")"
 
-#: .\utils.py:320
+#: .\utils.py:325
 msgid "Public"
 msgstr "Öffentlich"
+
+#~ msgid "Sleeping"
+#~ msgstr "Schläft"
+
+#~ msgid "Wake up"
+#~ msgstr "Aufwecken"
 
 #~ msgid "My pending received invitations"
 #~ msgstr "Meine offenen erhaltenen Einladungen"

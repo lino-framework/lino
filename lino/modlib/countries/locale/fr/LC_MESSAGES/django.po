@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2012-10-17 07:28+0100\n"
+"POT-Creation-Date: 2012-10-23 23:20+0100\n"
 "PO-Revision-Date: 2011-11-11 11:00+0200\n"
 "Last-Translator: Luc Saffre <luc.saffre@gmail.com>\n"
 "Language-Team: \n"
@@ -90,11 +90,6 @@ msgstr ""
 msgid "Municipality"
 msgstr ""
 
-#: .\models.py:70
-#, fuzzy
-msgid "Commune"
-msgstr "Pays"
-
 #: .\models.py:71
 msgid "Parish"
 msgstr ""
@@ -150,6 +145,10 @@ msgstr ""
 #: .\models.py:272
 msgid "Zip code"
 msgstr ""
+
+#, fuzzy
+#~ msgid "Commune"
+#~ msgstr "Pays"
 
 #~ msgid "Cities"
 #~ msgstr "Villes"

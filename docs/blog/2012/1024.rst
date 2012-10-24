@@ -1,0 +1,28 @@
+20121024
+========
+
+- Im Menü Schuldnerberatung fehlt noch ein Befehl "Klienten".
+  New table DebtsClients
+
+- Diverse Übersetzungen fehlen noch, z.B.:
+
+  no coaches available for ...
+  this change is silent : "keine Benachrichtigungen per E-Mail schicken",
+  "Supervisor Begleitungen" --> "Benachrichtigung per E-Mail bei
+  Zuweisung Neuantrag"
+
+- Endlich! (Wartezeit 1 Jahr, Arbeitsaufwand 30 Minuten): 
+  Im Schnellsuche-Feld braucht man 
+  jetzt nicht mehr TAB zu drücken, um die Suche zu starten.
+
+- Im Kontextmenü einer Tabelle waren alle Befehle, die kein Icon haben, 
+  jetzt komplett leer.
+
+
+- Meldung "20120912 lost : ..." in Bemerkung bei Melanie E.:
+  migrate vielleicht: wenn aid_type oder civil_state: doch ein Klient
+  werden lassen.
+
+- "Begleitungsdienst" --> "Dienst"
+
+Checkin und pull

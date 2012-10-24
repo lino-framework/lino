@@ -349,8 +349,10 @@ def customize_siteconfig():
         'system_note_type',
         models.ForeignKey(NoteType,
             blank=True,null=True,
-            verbose_name=_("Notification note type"),
-            help_text="""Note type used by notifying actions."""))
+            verbose_name=_("Default system note type"),
+            help_text=_("""\
+Note Type used by system notes.
+If this is empty, then system notes won't create any entry to the Notes table.""")))
   
 
 def setup_main_menu(site,ui,user,m):

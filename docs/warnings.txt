@@ -1,4 +1,14 @@
 T:\hgwork\lino\docs\casts\lino_intro.rst:: WARNING: document isn't included in any toctree
-T:\hgwork\lino\docs\about\index.rst:11: WARNING: unknown document: /pcsw/index
-T:\hgwork\lino\docs\about\index.rst:104: WARNING: unknown document: /tutorials/t1
-T:\hgwork\lino\docs\about\thanks.rst:41: WARNING: py:mod reference target not found: lino.utils.pyuca
+T:\hgwork\lino\docs\igen\index.rst:: WARNING: document isn't included in any toctree
+T:\hgwork\lino\docs\autodoc\lino.core.actions.rst:11: WARNING: py:class reference target not found: lino.core.actions.Parametrizable
+T:\hgwork\lino\docs\autodoc\lino.core.actions.rst:138: WARNING: py:class reference target not found: lino.mixins.duplicable.Duplicate
+T:\hgwork\lino\docs\autodoc\lino.core.actions.rst:178: WARNING: py:meth reference target not found: lino.core.model.Model.workflow_buttons
+T:\hgwork\lino\docs\autodoc\lino.core.actions.rst:194: WARNING: py:attr reference target not found: lino.mixins.duplicable.Duplicable.duplicate_row
+T:\hgwork\lino\docs\autodoc\lino.core.actions.rst:213: WARNING: py:class reference target not found: object
+T:\hgwork\lino\docs\autodoc\lino.core.actions.rst:236: WARNING: py:meth reference target not found: Action.run
+T:\hgwork\lino\docs\autodoc\lino.core.actions.rst:277: WARNING: py:class reference target not found: exceptions.Exception
+T:\hgwork\lino\docs\autodoc\lino.core.actions.rst:294: WARNING: py:class reference target not found: exceptions.Exception
+T:\hgwork\lino\docs\autodoc\lino.core.actions.rst:296: WARNING: py:meth reference target not found: ActionRequest.dialog
+T:\hgwork\lino\docs\autodoc\lino.core.actions.rst:303: WARNING: py:class reference target not found: lino.core.actions.VirtualRow
+T:\hgwork\lino\docs\autodoc\lino.core.actions.rst:305: WARNING: py:class reference target not found: EmptyTable
+T:\hgwork\lino\docs\autodoc\lino.core.actions.rst:364: WARNING: py:meth reference target not found: Action.__init__

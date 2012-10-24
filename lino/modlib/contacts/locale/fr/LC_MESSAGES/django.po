@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: lino.modlib.contacts\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2012-10-17 07:19+0100\n"
+"POT-Creation-Date: 2012-10-23 23:20+0100\n"
 "PO-Revision-Date: 2012-06-24 22:45+0200\n"
 "Last-Translator: Luc Saffre <luc.saffre@gmail.com>\n"
 "Language-Team: fr\n"
@@ -130,105 +130,105 @@ msgstr "Contact"
 msgid "Birth date"
 msgstr "Date de naissance"
 
-#: .\models.py:370
+#: .\models.py:376
 msgid "Age"
 msgstr "Âge"
 
-#: .\models.py:374
+#: .\models.py:380
 msgid "unknown"
 msgstr "inconnu"
 
-#: .\models.py:375
+#: .\models.py:381
 #, python-format
 msgid "%d years"
 msgstr "%d années"
 
-#: .\models.py:391
+#: .\models.py:398
 msgid "First name"
 msgstr "Prénom"
 
-#: .\models.py:396
+#: .\models.py:403
 msgid "Last name"
 msgstr "Nom de famille"
 
-#: .\models.py:400
+#: .\models.py:407
 msgid "Title"
 msgstr "Allocution"
 
-#: .\models.py:441
+#: .\models.py:448
 msgid "Person"
 msgstr "Personne"
 
-#: .\models.py:442
+#: .\models.py:449
 msgid "Persons"
 msgstr "Personnes"
 
-#: .\models.py:516 .\models.py:771 .\models.py:814
+#: .\models.py:523 .\models.py:779 .\models.py:822
 msgid "Company"
 msgstr "Organisation"
 
-#: .\models.py:517
+#: .\models.py:524
 msgid "Companies"
 msgstr "Organisations"
 
-#: .\models.py:520
+#: .\models.py:527
 msgid "VAT id"
 msgstr "N° de TVA"
 
-#: .\models.py:525
+#: .\models.py:532
 msgid "Company type"
 msgstr "Type de société"
 
-#: .\models.py:585
+#: .\models.py:593
 msgid "Function"
 msgstr ""
 
-#: .\models.py:586
+#: .\models.py:594
 msgid "Functions"
 msgstr ""
 
-#: .\models.py:603
+#: .\models.py:611
 msgid "Contact Person"
 msgstr "Personne de contact"
 
-#: .\models.py:604
+#: .\models.py:612
 msgid "Contact Persons"
 msgstr "Personnes de contact"
 
-#: .\models.py:608
+#: .\models.py:616
 msgid "Contact Role"
 msgstr "Rôle"
 
-#: .\models.py:669
+#: .\models.py:677
 msgid "Contact persons"
 msgstr "Personnes de contact"
 
-#: .\models.py:676
+#: .\models.py:684
 msgid "Contact for"
 msgstr "contact pour"
 
-#: .\models.py:777 .\models.py:820
+#: .\models.py:785 .\models.py:828
 msgid "represented by"
 msgstr "représenté par"
 
-#: .\models.py:825
+#: .\models.py:833
 #, fuzzy
 msgid "represented as"
 msgstr "représenté par"
 
-#: .\models.py:891
+#: .\models.py:899
 msgid "The next automatic id for Person or Company"
 msgstr "Identifiant automatique pour la personne ounla société suivante"
 
-#: .\models.py:900
+#: .\models.py:908
 msgid "The company that runs this site"
 msgstr "La société ou tourne ce site"
 
-#: .\models.py:902
+#: .\models.py:910
 msgid "The Company to be used as sender in documents."
 msgstr ""
 
-#: .\models.py:919
+#: .\models.py:927
 msgid "Contacts"
 msgstr "Contacts"
 

@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2012-10-17 07:19+0100\n"
+"POT-Creation-Date: 2012-10-23 23:20+0100\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -45,7 +45,7 @@ msgstr ""
 msgid "Posting"
 msgstr ""
 
-#: .\models.py:78 .\models.py:201
+#: .\models.py:78 .\models.py:203
 msgid "Postings"
 msgstr ""
 
@@ -73,7 +73,16 @@ msgstr ""
 msgid "Create posting"
 msgstr ""
 
-#: .\models.py:173
+#: .\models.py:164
+msgid "Create classical mail postings from this"
+msgstr ""
+
+#: .\models.py:175
 #, python-format
 msgid "Going to create %(num)d postings for %(elem)s"
+msgstr ""
+
+#: .\models.py:237
+#, python-format
+msgid "%d postings ready to print"
 msgstr ""

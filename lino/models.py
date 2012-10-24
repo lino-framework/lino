@@ -715,11 +715,11 @@ def setup_config_menu(site,ui,user,m):
         office.add_action(MyTextFieldTemplates)
     #~ m.add_action(site.modules.users.Users)
     if site.is_installed('contenttypes'):
-        m.add_action(site.modules.lino.ContentTypes)
-        m.add_action(site.modules.lino.HelpTexts)
+        system.add_action(site.modules.lino.ContentTypes)
+        system.add_action(site.modules.lino.HelpTexts)
         #~ m.add_action(site.modules.lino.Workflows)
     #~ if site.use_tinymce:
-    m.add_instance_action(site.site_config)
+    system.add_instance_action(site.site_config)
         
   
 def setup_explorer_menu(site,ui,user,m):

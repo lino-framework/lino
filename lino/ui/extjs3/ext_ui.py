@@ -1711,11 +1711,11 @@ tinymce.init({
             
         if a.icon_name:
             kw.update(iconCls=a.icon_name) # 'x-tbar-delete'
-            kw.update(menu_item_text=a.label)
         else:
             kw.update(text=a.label)
         kw.update(
           #~ name=a.name,
+          menu_item_text=a.label,
           overflowText=a.label,
           auto_save=a.auto_save,
           itemId=a.action_name,

@@ -57,28 +57,3 @@ nicht auf leer setzen konnte.
 
 Checkin wegen Feierabend
 
-TODO:
-
-- DebtsClients
-- Übersetzungen
-
-- Context menu in slave grids scheint alle Befehle verdoppelt zu haben
-  (jeweils leere Zeilen)
-
-- Im Menü Schuldnerberatung fehlt noch der Befehl "Meine Klienten"
-
-
-
-- Meldung "20120912 lost : ..." in Bemerkung bei Melanie E.:
-  migrate vielleicht: wenn aid_type oder civil_state: doch ein Klient
-  werden lassen.
-
-- Diverse Übersetzungen fehlen noch, z.B.:
-  no coaches available for ...
-  this change is silent : "keine Benachrichtigungen per E-Mail schicken"
-
-- "Begleitungsdienst" --> "Dienst"
-
-- "Supervisor Begleitungen" --> "Benachrichtigung per E-Mail bei
-  Zuweisung Neuantrag"
-
