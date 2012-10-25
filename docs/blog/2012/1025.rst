@@ -149,6 +149,20 @@ Das war ein trivialer Bug in :meth:`lino.ui.base.UI.success_response`.
 Checkin wegen Feierabend.
 
 
-23.30 Uhr : Nachtsitzung. 
-Warnung
+Nachtsitzung
+------------
+
+Ich war schon im Bett und wollte einschlafen, da kam Lino mit der Idee, 
+wie ich die eventuellen Fehlermeldungen "No handler soundo" abfangen kann, 
+die beim Ausdruck von manchen Tx25 möglicherweise kommen und von den Benutzern 
+dann nicht unbedingt gemeldet werden.
+
+Also Optimierung des Fehlerreporting-Systems in solchen Fällen. 
+Was zu drei neuen Beispielen in meiner privaten Fehlersammlung führte 
+(privat, weil ich natürlich keine echten Resultate einer Tx25 
+ins Lino-Repository stellen darf):
+
+- Tx25 # 74 : NameType instance has no attribute 'FirstName'
+- Tx25 # 20 : No handler for Pseudonyms (Pseudonyms)
+- Tx25 # 4 : No handler for Aliases (Aliases)
 

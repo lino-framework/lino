@@ -561,6 +561,7 @@ class DirectPrintAction(BasePrintAction):
     A Print Action that uses a hard-coded template and no cache.
     """
     url_action_name = None
+    icon_name='x-tbar-print'
     
     #~ def __init__(self,rpt,name,label,bmname,tplname):
     def __init__(self,label=None,tplname='Default',build_method=None,**kw):
