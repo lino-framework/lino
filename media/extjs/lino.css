@@ -272,9 +272,11 @@ adapted for usage in an ExtJS application.
 .x-tbar-delete{
 	background-image: url(images/mjames/delete.png) !important;
 }
+/*
 .x-item-disabled .x-tbar-delete{
 	background-image: url(images/default/grid/delete-disabled.gif) !important;
 }
+*/
 
 .x-tbar-new{
 	background-image: url(images/mjames/add.png) !important;
