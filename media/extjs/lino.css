@@ -280,6 +280,11 @@ adapted for usage in an ExtJS application.
 	background-image: url(images/mjames/add.png) !important;
 }
 
+/*
+ShowDetailAction
+$a.icon_name
+$a.icon_file
+*/
 .x-tbar-detail{
 	background-image: url(images/mjames/application_form.png) !important;
 }
@@ -288,8 +293,11 @@ adapted for usage in an ExtJS application.
 	background-image: url(images/mjames/disk.png) !important;
 }
 
-.x-tbar-email{
+.x-tbar-email_add{
 	background-image: url(images/mjames/email_add.png) !important;
+}
+.x-tbar-email_send{
+	background-image: url(images/mjames/email_go.png) !important;
 }
 
 .x-tbar-create-postings{
@@ -324,4 +332,7 @@ adapted for usage in an ExtJS application.
 }
 .x-tbar-done{
 	background-image: url(images/mjames/accept.png) !important;
+}
+.x-tbar-parameters{
+	background-image: url(images/mjames/database_gear.png) !important;
 }

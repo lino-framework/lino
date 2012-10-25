@@ -85,3 +85,8 @@ DONE:
 - :class:`lino.modlib.outbox.models.Mails` hatte noch 
   kein :attr:`insert_layout <lino.core.actors.Actor.insert_layout>`.
   
+- In der lokalen settings.py muss man jetzt 
+  ``from lino_settings.settings import *``
+  ersetzen durch 
+  ``from lino_settings.modlib.pcsw.settings import *``.
+  Sonst wurde die `settings.py` nicht übersetzt.

@@ -1314,9 +1314,11 @@ Lino.delete_selected = function(panel) {
   };
   //~ console.log(recs);
   Ext.MessageBox.show({
-    title: 'Confirmation',
-    msg: "Delete " + String(recs.length) + " rows. Are you sure?",
-    buttons: Ext.MessageBox.YESNOCANCEL,
+    title: "$_('Confirmation')",
+    msg: String.format("$_('Delete {0} rows. Are you sure?')",String(recs.length)),
+    //~ msg: "Delete " + String(recs.length) + " rows. Are you sure?",
+    //~ buttons: Ext.MessageBox.YESNOCANCEL,
+    buttons: Ext.MessageBox.YESNO,
     fn: function(btn) {
       if (btn == 'yes') {
         for ( var i=0; i < recs.length; i++ ) {
@@ -1578,7 +1580,9 @@ Lino.MainPanel = {
   ,add_params_panel : function (tbar) {
       if (this.params_panel) {
         tbar = tbar.concat([{ scope:this, 
-          text: "$_("[parameters]")", // gear
+          //~ text: "$_("[parameters]")", // gear
+          iconCls: 'x-tbar-parameters',
+          tooltip:"$_('Show or hide the table parameters panel')",
           enableToggle: true,
           //~ pressed: ! this.params_panel.hidden,
           pressed: ! this.params_panel_hidden,
@@ -3100,6 +3104,7 @@ Lino.GridPanel = Ext.extend(Ext.grid.EditorGridPanel,Lino.MainPanel);
 Lino.GridPanel = Ext.extend(Lino.GridPanel,Lino.PanelMixin);
 Lino.GridPanel = Ext.extend(Lino.GridPanel,{
   quick_search_text : '',
+  is_searching : false,
   disabled_in_insert_window : true,
   clicksToEdit:2,
   enableColLock: false,
@@ -3244,14 +3249,20 @@ Lino.GridPanel = Ext.extend(Lino.GridPanel,{
         if (this_.containing_window)
             this_.set_window_title(this_.store.reader.arrayData.title);
             //~ this_.containing_window.setTitle(this_.store.reader.arrayData.title);
-        if (this_.selModel.getSelectedCell){
-            if (this_.getStore().getCount()) // there may be no data
-                this_.selModel.select(0,0); 
-        } else {
-            this_.selModel.selectFirstRow();
-            this_.getView().focusEl.focus();
-        }
-        //~ this.search_field.focus(); // 20121024
+        if (!this.is_searching) { // disabled 20121025: quick_search_field may not los focus
+          this.is_searching = false;
+          if (this_.selModel.getSelectedCell){
+              if (this_.getStore().getCount()) // there may be no data
+                  this_.selModel.select(0,0); 
+          } else {
+              this_.selModel.selectFirstRow();
+              this_.getView().focusEl.focus();
+          }
+        } 
+        else console.log("is_searching -> no focussing");
+        //~ var t = this.getTopToolbar();
+        //~ var activePage = Math.ceil((t.cursor + t.pageSize) / t.pageSize);
+        //~ this.quick_search_field.focus(); // 20121024
       }, this
     );
     var actions = Lino.build_buttons(this,this.ls_bbar_actions);
@@ -3265,13 +3276,14 @@ Lino.GridPanel = Ext.extend(Lino.GridPanel,{
     
     if (!this.hide_top_toolbar) {  
       var tbar = [ 
-        this.search_field = new Ext.form.TextField({ 
+        this.quick_search_field = new Ext.form.TextField({ 
           //~ fieldLabel: "Search"
           listeners: { 
             scope:this_
             //~ ,change:this_.search_change
             ,render: Lino.quicktip_renderer("$_('Quick Search')","$_('Enter a text to use as quick search filter')")
             //~ ,keypress: this.search_keypress 
+            ,blur: function() { this.is_searching = false}
           }
           ,validator:function(value) { return this_.search_validate(value) }
           //~ ,tooltip: "Enter a quick search text, then press TAB"
@@ -3635,7 +3647,7 @@ Lino.GridPanel = Ext.extend(Lino.GridPanel,{
     for (k in p) this.store.setBaseParam(k,p[k]);
     //~ this.store.baseParams = p;
     if (p.query) 
-        this.search_field.setValue(p.query);
+        this.quick_search_field.setValue(p.query);
     //~ if (p.param_values) 
         //~ this.set_param_values(p.param_values);  
   },
@@ -3659,9 +3671,11 @@ Lino.GridPanel = Ext.extend(Lino.GridPanel,{
   //~ },
   search_validate : function(value) {
     if (value == this.quick_search_text) return true;
-    //~ console.log('search_change',field.getValue(),oldValue,newValue)
+    this.is_searching = true;
+    console.log('search_validate',value)
     this.quick_search_text = value;
     this.set_base_param('$URL_PARAM_FILTER',value); 
+    //~ this.getTopToolbar().changePage(1);
     this.getTopToolbar().moveFirst();
     //~ this.refresh();
     return true;

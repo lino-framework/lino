@@ -1,0 +1,57 @@
+20121025
+========
+
+
+TODO:
+
+- Detail `Kontakte --> Klienten` meldet Exception:
+  Expected a list of 2 values, but got [u'', u'', u'', u'false', u'', u'', u'', u'false', u'']
+
+
+- Nicht "Status" und nicht "Aktenzustand", sondern "Bearbeitungszustand".
+
+- "Komplette Akte" ersetzen durch "primäre Begleitung"
+
+- Nach erfolgreicher Zuweisung eines Klienten springt er ohne viele Worte
+  auf den nächsten Klienten. Stattdessen alert_msg. 
+  Oder in die Grid zurück?
+
+- Bei `Ablehnen` wird keine Mail verschickt. Da sollte "Keine
+  Benachrichtiung per Email" dann auch grau sein.
+
+- In "Neue Klienten" steht noch "Altfälle"
+
+- warum wurde kein Chronik-Eintrag erstellt bei aliber (23132)?
+
+
+DONE:
+
+- workflow Klienten: Ehemalig -> Neuantrag
+
+- Im Insert-Fenster gibt es ja jetzt zwei Buttons 
+  "Erstellen" und "Erstellen und Bearbeiten". 
+  Sehr unklar. Zumindest bessere Bezeichnungen:
+   
+  "Erstellen und Speichern" / "Erstellen und Bearbeiten"
+
+
+- "Im Schnellsuche-Feld braucht man 
+  jetzt nicht mehr TAB zu drücken, um die Suche zu starten."
+  Von wegen "Arbeitsaufwand 30 Minuten":
+  Es war doch recht störend, dass das Feld dann 
+  auch den Tastaturfokus verlor.
+  Zwei weitere halbe Stunden.
+  
+- Auch [Parameters] hat jetzt ein Icon und einen tooltip
+
+- Reihenfolge Aktionen: Insert kommt jetzt an erster Stelle 
+  (:attr:`sort_index <lino.core.actions.Action.sort_index>` 10), 
+  noch vor Detail, weil die ja fast noch eher eine Listenaktion 
+  als eine RowAction ist.
+
+- Icon für outbox.Mail.send, postings.Posting.print
+
+- AvailableCoaches : Feld "Quote" ersetzt durch "Belastung" ("Workload").
+  Und die Liste ist jetzt nach diesem Wert sortiert: 
+  der am wenigsten belastete verfügbare Begleiter steht zuerst.
+

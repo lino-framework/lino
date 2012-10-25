@@ -41,7 +41,7 @@ from lino.core import actions
 class Duplicate(actions.RowAction):
   
     label = _("Duplicate")
-    sort_index = 21
+    sort_index = 11
     show_in_workflow = False
     readonly = True # like InsertRow. See docs/blog/2012/0726
     icon_name = 'x-tbar-duplicate'

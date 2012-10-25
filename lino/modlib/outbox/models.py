@@ -128,7 +128,7 @@ class CreateMail(dd.RowAction):
     Creates an outbox mail and displays it.
     """
     url_action_name = 'email'
-    icon_name = 'x-tbar-email'
+    icon_name = 'x-tbar-email_add'
     help_text = _('Create an email from this')
     #~ label = pgettext_lazy(u'verb',u'Mail')
     label = _('Create email')
@@ -304,6 +304,7 @@ class SendMail(dd.RowAction):
     Sends this as an email.
     """
   
+    icon_name = 'x-tbar-email_send'
     url_action_name = 'send'
     label = _('Send email')
     callable_from = (actions.GridEdit, 

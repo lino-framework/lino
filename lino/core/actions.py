@@ -249,9 +249,9 @@ class Action(Parametrizable):
     ===== =================================
     value action
     ===== =================================
-    10    :class:`detail <ShowDetailAction>`
-    20    :class:`insert <InsertRow>`
-    21    :attr:`duplicate <lino.mixins.duplicable.Duplicable.duplicate_row>`
+    10    :class:`insert <InsertRow>`
+    11    :attr:`duplicate <lino.mixins.duplicable.Duplicable.duplicate_row>`
+    20    :class:`detail <ShowDetailAction>`
     30    :class:`delete <DeleteSelected>`
     50    :class:`Print <lino.mixins.printable.BasePrintAction>`
     51    :class:`Clear Cache <lino.mixins.printable.ClearCacheAction>`
@@ -582,6 +582,7 @@ class GridEdit(TableAction):
     use_param_panel = True
     show_in_workflow = False
     opens_a_window = True
+    #~ icon_file = 'application_view_list.png' # used e.g. by quick_add_buttons()
 
     callable_from = tuple()
     action_name = 'grid'
@@ -601,15 +602,17 @@ class ShowDetailAction(RowAction):
     An action that opens the Detail Window of its actor.
     """
     icon_name = 'x-tbar-detail'
+    #~ icon_file = 'application_form.png'
     opens_a_window = True
     show_in_workflow = False
     
-    sort_index = 10
+    sort_index = 20
     callable_from = (GridEdit,)
     #~ show_in_detail = False
     #~ needs_selection = True
     action_name = 'detail'
     label = _("Detail")
+    help_text = _("Open a detail window on this record")
     
     def get_window_layout(self,actor):
         return actor.detail_layout
@@ -627,11 +630,12 @@ class InsertRow(TableAction):
     window gets submitted.
     """
     label = _("New")
-    icon_name = 'x-tbar-new'
+    icon_name = 'x-tbar-new' # if action rendered as toolbar button
+    icon_file = 'add.png' # if action rendered by quick_add_buttons
     show_in_workflow = False
     opens_a_window = True
     hide_navigator = True
-    sort_index = 20
+    sort_index = 10
     hide_top_toolbar = True
     help_text = _("Insert a new record")
     #~ readonly = False # see blog/2012/0726
@@ -736,16 +740,19 @@ class SubmitDetail(RowAction):
     
 class SubmitInsert(SubmitDetail):
     sort_index = 10
+    switch_to_detail = True
     icon_name = None # don't inherit 'x-tbar-save' from Submitdetail 
     #~ url_action_name = 'SubmitInsert'
     label = _("Create")
+    help_text = _("Create the record and open a detail window on it")
     #~ label = _("Insert")
     callable_from = (InsertRow,)
     
-class SubmitInsertAndEdit(SubmitInsert):
+class SubmitInsertAndStay(SubmitInsert):
     sort_index = 11
-    switch_to_detail = True
-    label = _("Create and Edit")
+    switch_to_detail = False
+    label = _("Create without detail")
+    help_text = _("Don't open an detail window on the new record")
 
     
     

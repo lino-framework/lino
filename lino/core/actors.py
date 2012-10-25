@@ -250,6 +250,11 @@ class Actor(actions.Parametrizable):
     The user interface uses this to generate optimized JS code for this case.
     """
     
+    hide_sums = False
+    """
+    Set this to True if you don't want Lino to display sums in a table view.
+    """
+    
     
     workflow_state_field = None 
     """
@@ -622,7 +627,7 @@ class Actor(actions.Parametrizable):
                 cls.create_action = cls.bind_action(actions.SubmitInsert())
                 if cls.detail_action and not cls.hide_top_toolbar:
                     cls.insert_action = cls.bind_action(actions.InsertRow())
-                    cls.create_edit_action = cls.bind_action(actions.SubmitInsertAndEdit())
+                    cls.create_edit_action = cls.bind_action(actions.SubmitInsertAndStay())
             cls.update_action = cls.bind_action(actions.SubmitDetail(sort_index=1))
             if not cls.hide_top_toolbar:
                 cls.delete_action = cls.bind_action(actions.DeleteSelected())

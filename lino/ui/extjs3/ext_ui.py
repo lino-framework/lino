@@ -114,15 +114,22 @@ class HtmlRenderer(object):
     def href(self,url,text):
         return '<a href="%s">%s</a>' % (url,text)
         
+          
+    def href_button_action(self,ba,*args,**kw):
+        if ba.action.icon_file is not None:
+            kw.update(icon_file=ba.action.icon_file)
+            kw.update(style="vertical-align:-30%;")
+        return self.href_button(*args,**kw)
+        
     def href_button(self,url,text,title=None,target=None,icon_file=None,**kw):
         """
         Returns an elementtree object of a "button-like" ``<a href>`` tag.
         """
         #~ logger.info('20121002 href_button %r',unicode(text))
-        # Remember that Python 2.6 doesn't like if title is a Promise
         if target:
             kw.update(target=target)
         if title:
+            # Remember that Python 2.6 doesn't like if title is a Promise
             kw.update(title=unicode(title))
             #~ return xghtml.E.a(text,href=url,title=title)
         kw.update(href=url)
@@ -139,9 +146,9 @@ class HtmlRenderer(object):
             img = xghtml.E.img(src=self.ui.media_url('lino','extjs','images','mjames',icon_file))
             return xghtml.E.a(img,**kw)
         else:
-            return xghtml.E.span('[',xghtml.E.a(text,**kw),']')
+            #~ return xghtml.E.span('[',xghtml.E.a(text,**kw),']')
             #~ kw.update(style='border-width:1px; border-color:black; border-style:solid;')
-            #~ return xghtml.E.a(text,**kw)
+            return xghtml.E.a(text,**kw)
         
     def quick_add_buttons(self,ar):
         """
@@ -172,6 +179,7 @@ class HtmlRenderer(object):
                 # see tickets/56
                 #~ s += self.window_action_button(a,after_show,_("New"))
                 buttons.append(self.window_action_button(ar.request,a,after_show,_("New")))
+                #~ buttons.append(self.action_button(ar.request,a,after_show,_("New")))
                 buttons.append(' ')
                 after_show = ar.get_status(self)
         n = ar.get_total_count()
@@ -181,12 +189,18 @@ class HtmlRenderer(object):
             after_show.update(record_id=obj.pk)
             #~ a = ar.actor.get_url_action('detail_action')
             a = ar.actor.detail_action
-            buttons.append(self.window_action_button(ar.request,a,after_show,_("Show Last")))
+            buttons.append(self.window_action_button(
+                ar.request,a,after_show,_("Show Last"),
+                icon_file = 'application_form.png',
+                title=_("Show the last record in a detail window")))
             buttons.append(' ')
             #~ s += ' ' + self.window_action_button(
                 #~ ar.ah.actor.detail_action,after_show,_("Show Last"))
             #~ s += ' ' + self.href_to_request(ar,"[%s]" % unicode(_("Show All")))
-            buttons.append(self.href_to_request(None,ar,_("Show All")))
+            buttons.append(self.href_to_request(None,ar,
+              _("Show All"),
+              icon_file = 'application_view_list.png',
+              title=_("Show all records in a table window")))
         #~ return '<p>%s</p>' % s
         return xghtml.E.p(*buttons)
                 
@@ -311,6 +325,10 @@ class PlainRenderer(HtmlRenderer):
     def request_handler(self,ar,*args,**kw):
         return ''
   
+    def action_button(self,obj,ar,ba,label=None,**kw):
+        label = label or ba.action.label
+        return label
+      
 class ExtRenderer(HtmlRenderer):
     """
     Deserves more documentation.
@@ -404,9 +422,6 @@ class ExtRenderer(HtmlRenderer):
         """
         ``kw`` may contain additional html attributes like `style`
         """
-        if ba.action.icon_file is not None:
-            kw.update(icon_file=ba.action.icon_file)
-            kw.update(style="vertical-align:-30%;")
         if ba.action.parameters:
             st = ar.get_action_status(ba,obj)
             #~ st.update(record_id=obj.pk)
@@ -417,29 +432,30 @@ class ExtRenderer(HtmlRenderer):
             return self.window_action_button(ar.request,ba,st,label or ba.action.label,**kw)
         return self.row_action_button(obj,ar.request,ba,label,**kw)
         
-    def window_action_button(self,request,a,after_show={},label=None,title=None,**kw):
+    def window_action_button(self,request,ba,after_show={},label=None,title=None,**kw):
         """
         Return a HTML chunk for a button that will execute this 
         action using a *Javascript* link to this action.
         """
-        label = unicode(label or a.get_button_label())
-        url = 'javascript:'+self.action_call(request,a,after_show)
+        label = unicode(label or ba.get_button_label())
+        url = 'javascript:'+self.action_call(request,ba,after_show)
         #~ logger.info('20121002 window_action_button %s %r',a,unicode(label))
-        return self.href_button(url,label,title or a.action.help_text,**kw)
+        return self.href_button_action(ba,url,label,title or ba.action.help_text,**kw)
         #~ if a.action.help_text:
             #~ return self.href_button(url,label,a.action.help_text)
         #~ return self.href_button(url,label)
         
-    def row_action_button(self,obj,request,a,label=None,title=None,**kw):
+    def row_action_button(self,obj,request,ba,label=None,title=None,**kw):
         """
         Return a HTML fragment that displays a button-like link 
         which runs the action when clicked.
         """
-        label = label or a.action.label
+        #~ label = unicode(label or ba.get_button_label())
+        label = label or ba.action.label
         url = 'javascript:Lino.%s(%r,%s)' % (
-                a.full_name(),str(request.requesting_panel),
+                ba.full_name(),str(request.requesting_panel),
                 py2js(obj.pk))
-        return self.href_button(url,label,title or a.action.help_text,**kw)
+        return self.href_button_action(ba,url,label,title or ba.action.help_text,**kw)
         #~ if a.action.help_text:
             #~ return self.href_button(url,label,a.action.help_text)
         #~ return self.href_button(url,label)
@@ -490,15 +506,17 @@ class ExtRenderer(HtmlRenderer):
         st = ar.get_status(self.ui,**kw)
         return self.action_call(ar.request,ar.bound_action,st)
         
-    def href_to_request(self,sar,tar,text=None):
+    def href_to_request(self,sar,tar,text=None,**kw):
         #~ url = self.js2url(self.request_handler(tar))
         url = 'javascript:'+self.request_handler(tar)
         #~ if 'Lino.pcsw.MyPersonsByGroup' in url:
         #~ print 20120618, url
         #~ return self.href(url,text or cgi.escape(force_unicode(rr.label)))
-        if text is None:
-            text = unicode(tar.get_title())
-        return xghtml.E.a(text,href=url)
+        #~ if text is None:
+            #~ text = unicode(tar.get_title())
+        #~ return xghtml.E.a(text,href=url)
+        return self.href_button_action(tar.bound_action,url,text or tar.get_title(),**kw)
+        #~ return self.href_button(url,text or tar.get_title(),**kw)
         #~ return self.href_button(url,text or cgi.escape(force_unicode(rr.label)))
             
     def action_href_http(self,a,label=None,**params):
@@ -785,10 +803,11 @@ class ExtUI(base.UI):
                     
                 elif de.slave_grid_format == 'html':
                     #~ a = de.get_action('insert')
-                    a = de.insert_action
-                    if a is not None:
-                        kw.update(ls_insert_handler=js_code("Lino.%s" % a.full_name()))
-                        kw.update(ls_bbar_actions=[self.a2btn(a)])
+                    if de.editable:
+                        a = de.insert_action
+                        if a is not None:
+                            kw.update(ls_insert_handler=js_code("Lino.%s" % a.full_name()))
+                            kw.update(ls_bbar_actions=[self.a2btn(a)])
                     field = fields.HtmlBox(verbose_name=de.label)
                     field.name = de.__name__
                     field._return_type_for_method = de.slave_as_html_meth(self)
@@ -2238,14 +2257,15 @@ tinymce.init({
             cells = [x for x in ar.ah.store.row2html(ar,fields,row,sums)]
             #~ print 20120623, cells
             tble.add_body_row(*cells,**cellattrs)
-                
-        has_sum = False
-        for i in sums:
-            if i:
-                has_sum = True
-                break
-        if has_sum:
-            tble.add_body_row(*ar.ah.store.sums2html(ar,fields,sums),**cellattrs)
+        
+        if not ar.actor.hide_sums:
+            has_sum = False
+            for i in sums:
+                if i:
+                    has_sum = True
+                    break
+            if has_sum:
+                tble.add_body_row(*ar.ah.store.sums2html(ar,fields,sums),**cellattrs)
             
             
             

@@ -93,7 +93,7 @@ class Posting(mixins.AutoUser,mixins.ProjectRelated,mixins.Controllable):
             #~ raise ValidationError("Controller %s is not a Postable" % obj2str(self.owner))
         super(Posting,self).save(*args,**kw)
 
-    @dd.action(_("Print"))
+    @dd.action(_("Print"),icon_name='x-tbar-print')
     def print_action(self,ar,**kw):
         kw.update(refresh=True)
         r = self.owner.print_from_posting(self,ar,**kw)

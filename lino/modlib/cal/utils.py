@@ -255,6 +255,7 @@ add('90', _("Obsolete"),'obsolete')
 
 EventStates.draft.add_workflow(_("Restart"),
     states='notified scheduled rescheduled',
+    icon_file='arrow_undo.png',
     help_text=_("Return to Draft state and restart workflow for this event."))
 EventStates.suggested.add_workflow(_("Suggest"),
     states='_ draft',
@@ -265,11 +266,13 @@ EventStates.notified.add_workflow(_("Notify guests"),
     help_text=_("Invitations have been sent. Waiting for feedback from guests."))
 EventStates.scheduled.add_workflow(_("Confirm"), 
     states=[None,'draft','suggested'],
+    icon_file='accept.png',
     help_text=_("Confirmed. All participants have been informed."))
-EventStates.took_place.add_workflow(states='scheduled notified')
-EventStates.rescheduled.add_workflow(_("Reschedule"),states='suggested scheduled notified')
-EventStates.cancelled.add_workflow(_("Cancel"),states='suggested scheduled notified')
-EventStates.absent.add_workflow(states='scheduled notified')
+EventStates.took_place.add_workflow(states='scheduled notified',icon_file='emoticon_smile.png')
+EventStates.rescheduled.add_workflow(_("Reschedule"),
+    states='suggested scheduled notified',icon_file='date_edit.png')
+EventStates.cancelled.add_workflow(_("Cancel"),states='suggested scheduled notified',icon_file='cancel.png')
+EventStates.absent.add_workflow(states='scheduled notified',icon_file='emoticon_unhappy.png')
 EventStates.obsolete.add_workflow()
 
 #~ EventStates.add_statechange('draft',help_text=_("Default state of a new event."))
