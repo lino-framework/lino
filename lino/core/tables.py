@@ -536,7 +536,7 @@ class TableRequest(actions.ActionRequest):
         return kw
         
         
-    def __str__(self):
+    def __repr__(self):
         #~ kw = dict(actor=str(self.actor))
         kw = dict()
         if self.master_instance is not None:
