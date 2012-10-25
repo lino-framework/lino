@@ -210,14 +210,14 @@ class TableRequest(actions.ActionRequest):
                     group.process_row(l,row)
             except Warning,e:
                 self.no_data_text = unicode(e)
+                return []
             except Exception,e:
                 self.no_data_text = unicode(e)
                 w = WARNINGS_LOGGED.get(str(e))
                 if w is None:
                     WARNINGS_LOGGED[str(e)] = True
                     logger.exception(e)
-
-                
+                return []
             return l
         #~ logger.info("20120914 tables.get_data_iterator %s",self)
         #~ logger.info("20120914 tables.get_data_iterator %s",self.actor)
