@@ -160,6 +160,9 @@ def table_body_row(*cells,**kw):
       
 class Table(object):
     def __init__(self):
+        self.clear()
+        
+    def clear(self):
         self.head = []
         self.foot = []
         self.body = []

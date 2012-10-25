@@ -2257,6 +2257,11 @@ tinymce.init({
             cells = [x for x in ar.ah.store.row2html(ar,fields,row,sums)]
             #~ print 20120623, cells
             tble.add_body_row(*cells,**cellattrs)
+            
+        if recno == 0:
+            tble.clear()
+            tble.body.append(ar.no_data_text)
+            
         
         if not ar.actor.hide_sums:
             has_sum = False

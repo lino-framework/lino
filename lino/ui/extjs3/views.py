@@ -880,7 +880,7 @@ class ApiList(View):
             kw = dict(count=total_count,
               rows=rows,
               success=True,
-              no_data_text=ar.no_data_text,
+              no_data_text=ar.no_data_text, 
               #~ status=ar.get_status(ar.ui),
               title=unicode(ar.get_title()))
               #~ disabled_actions=rpt.disabled_actions(ar,None),

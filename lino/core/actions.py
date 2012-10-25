@@ -932,10 +932,11 @@ class ActionRequest(object):
         """
         See 20120825
         """
-        if self.actor.parameters is None:
-            if param_values is not None:
-                raise Exception("Cannot request param_values on %s" % self.actor)
-        else:
+        #~ if self.actor.parameters is None:
+            #~ if param_values is not None:
+                #~ raise Exception("Cannot request param_values on %s" % self.actor)
+        #~ else:
+        if self.actor.parameters is not None:
             pv = self.actor.param_defaults(self)
             
             """
@@ -956,7 +957,8 @@ class ActionRequest(object):
                 if pv.has_key(self.actor.master_key):
                     pv[self.actor.master_key] = self.master_instance
                 
-            if request is not None:
+            if param_values is None:
+              if request is not None: # 20121025
                 #~ pv.update(self.ui.parse_params(self.ah,request))
                 #~ pv.update(self.ah.store.parse_params(request))
                 pv.update(self.actor.params_layout.params_store.parse_params(request))

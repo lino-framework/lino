@@ -133,8 +133,10 @@ class UI:
         Shortcut for building a success response.
         """
         kw.update(success=True)
-        if alert is True:
-            alert = _("Success")
+        if alert is not None:
+            if alert is True:
+                alert = _("Success")
+            kw.update(alert=alert)
         if message:
             kw.update(message=message)
         return self.action_response(kw)

@@ -158,7 +158,8 @@ class TableRequest(actions.ActionRequest):
     offset = None
     #~ create_rows = None
     
-    no_data_text = None
+    #~ no_data_text = None
+    no_data_text = _("No data to display") # Keine Daten anzuzeigen
     
     _data_iterator = None
     _sliced_data_iterator = None
@@ -206,7 +207,8 @@ class TableRequest(actions.ActionRequest):
                             unicode(rows))
                     group = self.actor.group_from_row(row)
                     group.process_row(l,row)
-            except Warning,e:
+            #~ except Warning,e:
+            except Exception,e:
                 self.no_data_text = unicode(e)
             return l
         #~ logger.info("20120914 tables.get_data_iterator %s",self)
@@ -880,23 +882,6 @@ class AbstractTable(actors.Actor):
         #~ f.close()
         #~ return "Grid Config has been saved to %s" % filename
     
-    @classmethod
-    def slave_as_html_meth(self,ui):
-        """
-        Creates and returns the method to be used when 
-        :attr:`AbstractTable.slave_grid_format` is `html`.
-        """
-        def meth(master,ar):
-            ar = self.request(ui,request=ar.request,
-                #~ action=self.default_action,
-                master_instance=master)
-            ar.renderer = ui.ext_renderer
-            #~ s = ui.table2xhtml(ar).tostring()
-            return ui.table2xhtml(ar)
-            #~ s = etree.tostring(ui.table2xhtml(ar))
-            #~ return s
-        return meth
-
     @classmethod
     def get_create_kw(self,master_instance,**kw):
         return self.get_filter_kw(master_instance,**kw)

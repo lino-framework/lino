@@ -4,20 +4,9 @@
 
 TODO:
 
-- Detail `Kontakte --> Klienten` meldet Exception:
-  Expected a list of 2 values, but got [u'', u'', u'', u'false', u'', u'', u'', u'false', u'']
-
-
 - Nicht "Status" und nicht "Aktenzustand", sondern "Bearbeitungszustand".
 
 - "Komplette Akte" ersetzen durch "primäre Begleitung"
-
-- Nach erfolgreicher Zuweisung eines Klienten springt er ohne viele Worte
-  auf den nächsten Klienten. Stattdessen alert_msg. 
-  Oder in die Grid zurück?
-
-- Bei `Ablehnen` wird keine Mail verschickt. Da sollte "Keine
-  Benachrichtiung per Email" dann auch grau sein.
 
 - In "Neue Klienten" steht noch "Altfälle"
 
@@ -51,7 +40,110 @@ DONE:
 
 - Icon für outbox.Mail.send, postings.Posting.print
 
-- AvailableCoaches : Feld "Quote" ersetzt durch "Belastung" ("Workload").
+- :class:`lino_welfare.modlib.newcomers.models.AvailableCoachesByClient`:
+  Feld "Quote" ersetzt durch "Belastung" ("Workload").
   Und die Liste ist jetzt nach diesem Wert sortiert: 
   der am wenigsten belastete verfügbare Begleiter steht zuerst.
 
+- Neues Attribut 
+  :attr:`lino.core.actors.Actor.hide_sums` wird benutzt in 
+  AvailableCoachesByClient,
+  die jetzt auch :attr:`lino.core.actors.Actor.slave_grid_format` 
+  auf `html` hat.
+  
+
+Ein cooler Bug
+--------------
+
+Weil AvailableCoachesByClient jetzt mit
+:attr:`slave_grid_format <lino.core.actors.Actor.slave_grid_format>` `html`
+angezeigt wird, kam ein weiterer subtiler Bug zum Vorschein.
+Symptom war: :menuselection`Kontakte --> Klienten` und 
+dann Doppelklick oder Enter. Dann kam auf dem Server::  
+  
+  Exception
+  Expected a list of 2 values, but got [u'', u'', u'', u'false', u'', u'', u'', u'false', u'']
+
+  TRACEBACK:
+    File "l:\snapshots\django\django\core\handlers\base.py", line 111, in get_response
+      response = callback(request, *callback_args, **callback_kwargs)
+
+    File "l:\snapshots\django\django\views\generic\base.py", line 58, in view
+      return self.dispatch(request, *args, **kwargs)
+
+    File "l:\snapshots\django\django\views\generic\base.py", line 79, in dispatch
+      return handler(request, *args, **kwargs)
+
+    File "t:\hgwork\lino\lino\ui\extjs3\views.py", line 723, in get
+      datarec = elem2rec_detailed(ar,elem)
+
+    File "t:\hgwork\lino\lino\ui\extjs3\views.py", line 170, in elem2rec_detailed
+      rec = elem2rec1(ar,rh,elem,**rec)
+
+    File "t:\hgwork\lino\lino\ui\extjs3\views.py", line 122, in elem2rec1
+      rec.update(data=rh.store.row2dict(ar,elem))
+
+    File "t:\hgwork\lino\lino\ui\extjs3\ext_store.py", line 1248, in row2dict
+      v = fld.full_value_from_object(row,ar)
+
+    File "t:\hgwork\lino\lino\ui\extjs3\ext_store.py", line 783, in full_value_from_object
+      return unbound_meth(obj,request)
+
+    File "t:\hgwork\lino\lino\core\tables.py", line 892, in meth
+      master_instance=master)
+
+    File "t:\hgwork\lino\lino\core\dbtables.py", line 473, in request
+      return TableRequest(ui,self,request,action,**kw)
+
+    File "t:\hgwork\lino\lino\core\tables.py", line 169, in __init__
+      actions.ActionRequest.__init__(self,ui,actor,request,action,**kw)
+
+    File "t:\hgwork\lino\lino\core\actions.py", line 962, in __init__
+      pv.update(self.actor.params_layout.params_store.parse_params(request))
+
+    File "t:\hgwork\lino\lino\ui\extjs3\ext_store.py", line 997, in parse_params
+      raise Exception("Expected a list of %d values, but got %s" % (len(self.param_fields),pv))
+    
+    
+Erklärung: weil die AvailableCoachesByClient außerdem 
+:attr:`parameters <lino.core.actors.Actor.parameters>`
+hat, versuchte sie in diesem Fall, die Parameterwerte 
+aus dem ActionRequest rauszuholen. 
+Die Master Tabelle hat deren auch. Aber die sind ja für 
+den Master und nicht für den Slave gedacht.
+Wenn eine parametrierte Slave-Tabelle im Detail eines Masters angezeigt wird, 
+muss sie dies mit den Default-Serte ihrer Parameter tun.
+Implementierung:
+:meth:`slave_as_html_meth <lino.core.actors.Actor.slave_as_html_meth>`
+gibt jetzt immer einen expliziten `param_values={}` mit,
+und :class:`ActionRequest` meckert jetzt nicht mehr falls die Tabelle 
+keine Parameter hat ("Cannot request param_values on ") *und* 
+parst den `request` für Parameterwerte jetzt nur noch, wenn dieses
+`param_values` None ist.
+
+
+Noch was Neues: 
+Slave-Tabellen im
+:attr:`slave_grid_format <lino.core.actors.Actor.slave_grid_format>`
+`html`
+zeigen jetzt den `no_data_text` korrekt an.
+
+
+Danach habe ich das
+:attr:`slave_grid_format <lino.core.actors.Actor.slave_grid_format>`
+`html`
+der Tabelle "Verfügbare Benutzer" allerdings doch wieder abgeschaltet, 
+weil es da noch ein anderes Problem gibt: die Aktionen (Zuweisen) werden im plain 
+html-Modus dann nicht korrekt gerendert.
+
+
+Und noch ein Bug:
+
+- Nach erfolgreicher Zuweisung eines Klienten springt er ohne viele Worte
+  auf den nächsten Klienten. Stattdessen alert_msg. Oder in die Grid zurück?
+  
+Die Aktion war korrekt programmiert (dass sie eine abschließende Meldung in 
+einer alert-Box anzeigen soll), aber das Problem war, dass die Box nicht kam. 
+Das war ein trivialer Bug in :meth:`lino.ui.base.UI.success_response`.
+
+Checkin wegen Feierabend.

@@ -592,6 +592,7 @@ class Actor(actions.Parametrizable):
         if ba.action.readonly:
             return True
         return cls.editable
+        
 
     #~ 20120621 @classmethod
     #~ def get_permission(self,user,action):
@@ -1003,6 +1004,24 @@ class Actor(actions.Parametrizable):
     @classmethod
     def request(self,ui=None,request=None,action=None,**kw):
         return actions.ActionRequest(ui,self,request,action,**kw)
+
+        
+    @classmethod
+    def slave_as_html_meth(self,ui):
+        """
+        Creates and returns the method to be used when 
+        :attr:`AbstractTable.slave_grid_format` is `html`.
+        """
+        def meth(master,ar):
+            ar = self.request(ui,request=ar.request,
+                #~ action=self.default_action,
+                master_instance=master,param_values={})
+            ar.renderer = ui.ext_renderer
+            #~ s = ui.table2xhtml(ar).tostring()
+            return ui.table2xhtml(ar)
+            #~ s = etree.tostring(ui.table2xhtml(ar))
+            #~ return s
+        return meth
 
         
 
