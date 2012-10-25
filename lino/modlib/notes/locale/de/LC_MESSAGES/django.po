@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: lino.modlib.notes\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2012-10-23 23:20+0100\n"
+"POT-Creation-Date: 2012-10-25 18:12+0100\n"
 "PO-Revision-Date: 2012-06-28 22:58+0200\n"
 "Last-Translator: Luc Saffre <luc.saffre@gmail.com>\n"
 "Language-Team: de <luc.saffre@gmail.com>\n"
@@ -74,7 +74,14 @@ msgid "My notes"
 msgstr "Meine Notizen"
 
 #: .\models.py:352
-msgid "Notification note type"
+msgid "Default system note type"
+msgstr ""
+
+#: .\models.py:353
+msgid ""
+"Note Type used by system notes.\n"
+"If this is empty, then system notes won't create any entry to the Notes "
+"table."
 msgstr ""
 
 #~ msgid "~Notes"

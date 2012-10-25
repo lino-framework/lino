@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: lino.modlib.contacts\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2012-10-23 23:20+0100\n"
+"POT-Creation-Date: 2012-10-25 18:12+0100\n"
 "PO-Revision-Date: 2011-03-02 21:46+0200\n"
 "Last-Translator: Luc Saffre <luc.saffre@gmail.com>\n"
 "Language-Team: et <et>\n"
@@ -483,11 +483,6 @@ msgstr ""
 msgid "years"
 msgstr ""
 
-#: .\utils.py:162 .\utils.py:206 .\utils.py:293
-#, fuzzy
-msgid "State"
-msgstr "Tänav"
-
 #: .\utils.py:188
 msgid "To do"
 msgstr ""
@@ -548,7 +543,7 @@ msgstr ""
 msgid "Rescheduled"
 msgstr ""
 
-#: .\utils.py:253 .\utils.py:299
+#: .\utils.py:253 .\utils.py:302
 msgid "Absent"
 msgstr ""
 
@@ -561,93 +556,97 @@ msgstr ""
 msgid "Restart"
 msgstr "Tänav"
 
-#: .\utils.py:258
+#: .\utils.py:259
 msgid "Return to Draft state and restart workflow for this event."
 msgstr ""
 
-#: .\utils.py:259
+#: .\utils.py:260
 msgid "Suggest"
 msgstr ""
 
-#: .\utils.py:262
+#: .\utils.py:263
 msgid ""
 "Notify the user and ask to confirm (event was created by colleague for a "
 "client)."
 msgstr ""
 
-#: .\utils.py:263
+#: .\utils.py:264
 msgid "Notify guests"
 msgstr ""
 
-#: .\utils.py:265
+#: .\utils.py:266
 msgid "Invitations have been sent. Waiting for feedback from guests."
 msgstr ""
 
-#: .\utils.py:266
+#: .\utils.py:267
 msgid "Confirm"
 msgstr ""
 
-#: .\utils.py:268
+#: .\utils.py:270
 msgid "Confirmed. All participants have been informed."
 msgstr ""
 
-#: .\utils.py:270
+#: .\utils.py:272
 msgid "Reschedule"
 msgstr ""
 
-#: .\utils.py:271
+#: .\utils.py:274
 msgid "Cancel"
 msgstr ""
 
-#: .\utils.py:295
+#: .\utils.py:298
 msgid "Invited"
 msgstr ""
 
-#: .\utils.py:296
+#: .\utils.py:299
 msgid "Accepted"
 msgstr ""
 
-#: .\utils.py:297
+#: .\utils.py:300
 msgid "Rejected"
 msgstr ""
 
-#: .\utils.py:298
+#: .\utils.py:301
 #, fuzzy
 msgid "Present"
 msgstr "Isik"
 
-#: .\utils.py:302
+#: .\utils.py:305
 msgid "Reject"
 msgstr ""
 
-#: .\utils.py:303
+#: .\utils.py:306
 msgid "Reject this invitation."
 msgstr ""
 
-#: .\utils.py:307
+#: .\utils.py:310
 #, python-format
 msgid "Cannot accept invitation %(day)s at %(time)s"
 msgstr ""
 
-#: .\utils.py:313
+#: .\utils.py:316
 msgid "Accept"
 msgstr ""
 
-#: .\utils.py:321
+#: .\utils.py:324
 msgid "Access Class"
 msgstr ""
 
-#: .\utils.py:323
+#: .\utils.py:326
 msgid "Private"
 msgstr ""
 
-#: .\utils.py:324
+#: .\utils.py:327
 msgid "Show busy"
 msgstr ""
 
-#: .\utils.py:325
+#: .\utils.py:328
 msgid "Public"
 msgstr ""
+
+#, fuzzy
+#~ msgid "State"
+#~ msgstr "Tänav"
 
 #~ msgid "Name"
 #~ msgstr "Nimi"

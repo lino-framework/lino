@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: lino\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2012-10-23 23:20+0100\n"
+"POT-Creation-Date: 2012-10-25 18:11+0100\n"
 "PO-Revision-Date: 2012-07-21 19:03+0200\n"
 "Last-Translator: Luc Saffre <luc.saffre@gmail.com>\n"
 "Language-Team: fr <lino-users@gmail.com>\n"
@@ -70,7 +70,7 @@ msgstr ""
 msgid "Are you sure?"
 msgstr "Etes-vous certain ?"
 
-#: .\models.py:74 .\ui\base.py:137
+#: .\models.py:74 .\ui\base.py:138
 msgid "Success"
 msgstr "Succès"
 
@@ -128,7 +128,7 @@ msgstr ""
 msgid "Designation"
 msgstr "Description"
 
-#: .\models.py:248 .\core\actions.py:750
+#: .\models.py:248 .\core\actions.py:763
 msgid "Description"
 msgstr "Description"
 
@@ -245,60 +245,71 @@ msgstr ""
 msgid "Office"
 msgstr ""
 
-#: .\core\actions.py:606
+#: .\core\actions.py:614
 msgid "Detail"
 msgstr "Détail"
 
-#: .\core\actions.py:623 .\ui\extjs3\ext_ui.py:159
+#: .\core\actions.py:615
+msgid "Open a detail window on this record"
+msgstr ""
+
+#: .\core\actions.py:632 .\ui\extjs3\ext_ui.py:181
 msgid "New"
 msgstr "Nouveau"
 
-#: .\core\actions.py:630
+#: .\core\actions.py:640
 #, fuzzy
 msgid "Insert a new record"
 msgstr "Insérer"
 
-#: .\core\actions.py:640
+#: .\core\actions.py:650
 #, python-format
 msgid "Insert into %s"
 msgstr "Insérer dans %s"
 
-#: .\core\actions.py:661 .\mixins\__init__.py:282 .\mixins\duplicable.py:43
+#: .\core\actions.py:671 .\mixins\__init__.py:282 .\mixins\duplicable.py:43
 msgid "Duplicate"
 msgstr "Dupliquer"
 
-#: .\core\actions.py:703
+#: .\core\actions.py:713
 #, fuzzy
 msgid "Delete this record"
 msgstr "Aller vers enregistrement"
 
-#: .\core\actions.py:711 .\core\changes.py:71
+#: .\core\actions.py:721 .\core\changes.py:71
 msgid "Delete"
 msgstr "Supprimer"
 
-#: .\core\actions.py:721
+#: .\core\actions.py:731
 #, fuzzy
 msgid "Save changes in this form"
 msgstr "Enregistrer vos changements au texte?"
 
-#: .\core\actions.py:722
+#: .\core\actions.py:732
 msgid "Save"
 msgstr "Enregistrer"
 
-#: .\core\actions.py:735 .\core\changes.py:69
+#: .\core\actions.py:746 .\core\changes.py:69
 msgid "Create"
 msgstr "Créer"
 
-#: .\core\actions.py:742
-#, fuzzy
-msgid "Create and Edit"
-msgstr "Créer"
+#: .\core\actions.py:747
+msgid "Create the record and open a detail window on it"
+msgstr ""
 
-#: .\core\actions.py:749
+#: .\core\actions.py:754
+msgid "Create without detail"
+msgstr ""
+
+#: .\core\actions.py:755
+msgid "Don't open an detail window on the new record"
+msgstr ""
+
+#: .\core\actions.py:762
 msgid "Summary"
 msgstr ""
 
-#: .\core\actions.py:751
+#: .\core\actions.py:764
 msgid "Don't send email notification"
 msgstr ""
 
@@ -355,11 +366,15 @@ msgstr "Général"
 msgid "Workflow"
 msgstr ""
 
-#: .\core\tables.py:673 .\ui\extjs3\ext_store.py:684
+#: .\core\tables.py:162
+msgid "No data to display"
+msgstr ""
+
+#: .\core\tables.py:675 .\ui\extjs3\ext_store.py:684
 msgid "Yes"
 msgstr "Oui"
 
-#: .\core\tables.py:673 .\ui\extjs3\ext_store.py:684
+#: .\core\tables.py:675 .\ui\extjs3\ext_store.py:684
 msgid "No"
 msgstr "Non"
 
@@ -543,12 +558,12 @@ msgstr ""
 msgid "Select a %s..."
 msgstr "Choisir %s..."
 
-#: .\ui\extjs3\ext_elems.py:1028 .\ui\extjs3\ext_ui.py:211
+#: .\ui\extjs3\ext_elems.py:1028 .\ui\extjs3\ext_ui.py:245
 msgid "show"
 msgstr "montrer"
 
-#: .\ui\extjs3\ext_elems.py:1625 .\ui\extjs3\ext_ui.py:1957
-#: .\ui\extjs3\linolib.js.py:14
+#: .\ui\extjs3\ext_elems.py:1625 .\ui\extjs3\ext_ui.py:2009
+#: .\ui\extjs3\linolib.js.py:17
 msgid "No data to display."
 msgstr ""
 
@@ -569,36 +584,56 @@ msgstr "La clé primaire %r existante ne peut être modifiée"
 msgid "%r (invalid choice)"
 msgstr "%r (choix non valide)"
 
-#: .\ui\extjs3\ext_ui.py:169
+#: .\ui\extjs3\ext_ui.py:193
 #, fuzzy
 msgid "Show Last"
 msgstr "Dernier"
 
-#: .\ui\extjs3\ext_ui.py:174
+#: .\ui\extjs3\ext_ui.py:195
+msgid "Show the last record in a detail window"
+msgstr ""
+
+#: .\ui\extjs3\ext_ui.py:201
 msgid "Show All"
 msgstr "Montrer tous"
 
-#: .\ui\extjs3\ext_ui.py:204 .\ui\extjs4\ext_ui.py:1325 .\ui\qx\qx_ui.py:1068
+#: .\ui\extjs3\ext_ui.py:203
+msgid "Show all records in a table window"
+msgstr ""
+
+#: .\ui\extjs3\ext_ui.py:233 .\ui\extjs4\ext_ui.py:1325 .\ui\qx\qx_ui.py:1068
 msgid "Upload"
 msgstr "Uploader"
 
-#: .\ui\extjs3\ext_ui.py:214 .\ui\extjs4\ext_ui.py:1333 .\ui\qx\qx_ui.py:1076
+#: .\ui\extjs3\ext_ui.py:237
+msgid "Upload a file from your PC to the server."
+msgstr ""
+
+#: .\ui\extjs3\ext_ui.py:249
+msgid "Open the uploaded file in a new browser window"
+msgstr ""
+
+#: .\ui\extjs3\ext_ui.py:255 .\ui\extjs4\ext_ui.py:1333 .\ui\qx\qx_ui.py:1076
 msgid "Edit"
 msgstr "Editer"
 
-#: .\ui\extjs3\ext_ui.py:1142
+#: .\ui\extjs3\ext_ui.py:255
+msgid "Edit metadata of the uploaded file."
+msgstr ""
+
+#: .\ui\extjs3\ext_ui.py:1194
 msgid "as"
 msgstr "comme"
 
-#: .\ui\extjs3\ext_ui.py:1168
+#: .\ui\extjs3\ext_ui.py:1220
 msgid "My settings"
 msgstr "Mes préférences"
 
-#: .\ui\extjs3\ext_ui.py:1177
+#: .\ui\extjs3\ext_ui.py:1229
 msgid "Myself"
 msgstr "moi-même"
 
-#: .\ui\extjs3\ext_ui.py:1179
+#: .\ui\extjs3\ext_ui.py:1231
 msgid "Act as..."
 msgstr "Travailler comme..."
 
@@ -617,144 +652,169 @@ msgid "Please wait..."
 msgstr "Veuillez attendre..."
 
 #: .\ui\extjs3\linolib.js.py:6
-msgid "Action not available on phantom record."
+msgid "Show or hide the table parameters panel"
 msgstr ""
 
 #: .\ui\extjs3\linolib.js.py:7
+msgid "Action not available on phantom record."
+msgstr ""
+
+#: .\ui\extjs3\linolib.js.py:8
 msgid "Next"
 msgstr "Suivant"
 
-#: .\ui\extjs3\linolib.js.py:8
+#: .\ui\extjs3\linolib.js.py:9
 msgid "Go to record"
 msgstr "Aller vers enregistrement"
 
-#: .\ui\extjs3\linolib.js.py:9
+#: .\ui\extjs3\linolib.js.py:10
 msgid "Reload current record"
 msgstr ""
 
-#: .\ui\extjs3\linolib.js.py:10
+#: .\ui\extjs3\linolib.js.py:11
 msgid "Save changes to current record ?"
 msgstr ""
 
-#: .\ui\extjs3\linolib.js.py:11
+#: .\ui\extjs3\linolib.js.py:12
 msgid "Edit text in own window"
 msgstr ""
 
-#: .\ui\extjs3\linolib.js.py:12
+#: .\ui\extjs3\linolib.js.py:13
+msgid "Enter a text to use as quick search filter"
+msgstr ""
+
+#: .\ui\extjs3\linolib.js.py:14
 msgid "Field '{0}' is disabled"
 msgstr ""
 
-#: .\ui\extjs3\linolib.js.py:13
+#: .\ui\extjs3\linolib.js.py:15
 msgid "Confirmation"
 msgstr "Confirmation"
 
-#: .\ui\extjs3\linolib.js.py:15
-msgid "Alert"
-msgstr ""
-
-#: .\ui\extjs3\linolib.js.py:16 .\ui\extjs3\views.py:649
-#: .\ui\extjs3\views.py:1015
-msgid "Previous page"
-msgstr "Page précédente"
-
-#: .\ui\extjs3\linolib.js.py:17
-msgid "Cannot show detail for empty foreign key."
-msgstr ""
-
-#: .\ui\extjs3\linolib.js.py:18
-msgid "This record is disabled"
-msgstr ""
-
-#: .\ui\extjs3\linolib.js.py:19
-msgid "View"
-msgstr "Vue"
-
-#: .\ui\extjs3\linolib.js.py:20
-msgid "Displaying {0} - {1} of {2}"
-msgstr "Affichage  {0} - {1} de {2}"
-
-#: .\ui\extjs3\linolib.js.py:21
-msgid "Team view"
-msgstr "Vue équipe"
-
-#: .\ui\extjs3\linolib.js.py:22
-msgid "Last"
-msgstr "Dernier"
-
-#: .\ui\extjs3\linolib.js.py:23
-msgid "Edit help texts for fields on this model."
-msgstr ""
-
-#: .\ui\extjs3\linolib.js.py:24 .\ui\extjs3\views.py:651
+#: .\ui\extjs3\linolib.js.py:16 .\ui\extjs3\views.py:651
 #: .\ui\extjs3\views.py:1028
 msgid "Last page"
 msgstr "Dernière page"
 
+#: .\ui\extjs3\linolib.js.py:18
+msgid "Alert"
+msgstr ""
+
+#: .\ui\extjs3\linolib.js.py:19 .\ui\extjs3\views.py:649
+#: .\ui\extjs3\views.py:1015
+msgid "Previous page"
+msgstr "Page précédente"
+
+#: .\ui\extjs3\linolib.js.py:20
+msgid "Cannot show detail for empty foreign key."
+msgstr ""
+
+#: .\ui\extjs3\linolib.js.py:21
+msgid "This record is disabled"
+msgstr ""
+
+#: .\ui\extjs3\linolib.js.py:22
+msgid "Quick Search"
+msgstr ""
+
+#: .\ui\extjs3\linolib.js.py:23
+msgid "Displaying {0} - {1} of {2}"
+msgstr "Affichage  {0} - {1} de {2}"
+
+#: .\ui\extjs3\linolib.js.py:24
+msgid "Team view"
+msgstr "Vue équipe"
+
 #: .\ui\extjs3\linolib.js.py:25
+msgid "Last"
+msgstr "Dernier"
+
+#: .\ui\extjs3\linolib.js.py:26
+msgid "Edit help texts for fields on this model."
+msgstr ""
+
+#: .\ui\extjs3\linolib.js.py:27
+msgid "Show this table in plain html"
+msgstr ""
+
+#: .\ui\extjs3\linolib.js.py:28
+msgid "Export this table to a .csv file"
+msgstr ""
+
+#: .\ui\extjs3\linolib.js.py:29
 msgid "of {0}"
 msgstr "de {0}"
 
-#: .\ui\extjs3\linolib.js.py:26
-msgid "Help Text Editor"
-msgstr "Editer textes d'aide"
+#: .\ui\extjs3\linolib.js.py:30
+msgid "Enter a date in format YYYY-MM-DD (use zeroes for unknown parts)."
+msgstr ""
 
-#: .\ui\extjs3\linolib.js.py:27
+#: .\ui\extjs3\linolib.js.py:31
 #, fuzzy
 msgid "Save Grid Configuration"
 msgstr "Confirmation"
 
-#: .\ui\extjs3\linolib.js.py:28
+#: .\ui\extjs3\linolib.js.py:32
 msgid "Page"
 msgstr "Page"
 
-#: .\ui\extjs3\linolib.js.py:29
+#: .\ui\extjs3\linolib.js.py:33
 msgid "First"
 msgstr "Premier"
 
-#: .\ui\extjs3\linolib.js.py:30
+#: .\ui\extjs3\linolib.js.py:34
 msgid "Show this panel in own window"
 msgstr ""
 
-#: .\ui\extjs3\linolib.js.py:31
+#: .\ui\extjs3\linolib.js.py:35
 msgid "[parameters]"
 msgstr "[paramètres]"
 
-#: .\ui\extjs3\linolib.js.py:32
+#: .\ui\extjs3\linolib.js.py:36
 msgid "This field is disabled"
 msgstr ""
 
-#: .\ui\extjs3\linolib.js.py:33
+#: .\ui\extjs3\linolib.js.py:37
+#, fuzzy
+msgid "Delete {0} rows. Are you sure?"
+msgstr "Etes-vous certain ?"
+
+#: .\ui\extjs3\linolib.js.py:38
 msgid "No more records to display. Detail window has been closed."
 msgstr ""
 
-#: .\ui\extjs3\linolib.js.py:34 .\ui\extjs3\views.py:648
+#: .\ui\extjs3\linolib.js.py:39 .\ui\extjs3\views.py:648
 #: .\ui\extjs3\views.py:1014
 msgid "First page"
 msgstr "Première page"
 
-#: .\ui\extjs3\linolib.js.py:35
+#: .\ui\extjs3\linolib.js.py:40
 msgid "Show this table as a pdf document"
 msgstr ""
 
-#: .\ui\extjs3\linolib.js.py:36
+#: .\ui\extjs3\linolib.js.py:41
 msgid "Select another view of this report"
 msgstr ""
 
-#: .\ui\extjs3\linolib.js.py:37
+#: .\ui\extjs3\linolib.js.py:42
 msgid "Cannot show MTI child if checkbox is off."
 msgstr ""
 
-#: .\ui\extjs3\linolib.js.py:38
+#: .\ui\extjs3\linolib.js.py:43
+msgid "View"
+msgstr "Vue"
+
+#: .\ui\extjs3\linolib.js.py:44
 msgid "Previous"
 msgstr "Précédent"
 
-#: .\ui\extjs3\linolib.js.py:39
+#: .\ui\extjs3\linolib.js.py:45
 msgid "Save changes to text ?"
 msgstr "Enregistrer vos changements au texte?"
 
-#: .\ui\extjs3\linolib.js.py:40
-msgid "Enter a date in format YYYY-MM-DD (use zeroes for unknown parts)."
-msgstr ""
+#: .\ui\extjs3\linolib.js.py:46
+msgid "Help Text Editor"
+msgstr "Editer textes d'aide"
 
 #: .\ui\extjs3\views.py:233 .\ui\extjs4\ext_ui.py:229 .\ui\qx\qx_ui.py:229
 #, python-format
@@ -900,6 +960,20 @@ msgstr ""
 #, python-format
 msgid "Check digit is %(found)d but should be %(expected)d"
 msgstr ""
+
+#: .\utils\workflows.py:86
+#, fuzzy
+msgid "State"
+msgstr "Site"
+
+#: .\utils\workflows.py:145
+#, python-format
+msgid "Mark this as %s"
+msgstr ""
+
+#, fuzzy
+#~ msgid "Create and Edit"
+#~ msgstr "Créer"
 
 #~ msgid "certainly not...very much"
 #~ msgstr "Certainement pas...beaucoup"

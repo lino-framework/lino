@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: lino.modlib.contacts\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2012-10-23 23:20+0100\n"
+"POT-Creation-Date: 2012-10-25 18:12+0100\n"
 "PO-Revision-Date: 2012-07-21 15:08+0200\n"
 "Last-Translator: Luc Saffre <luc.saffre@gmail.com>\n"
 "Language-Team: fr\n"
@@ -484,10 +484,6 @@ msgstr "mois"
 msgid "years"
 msgstr "années"
 
-#: .\utils.py:162 .\utils.py:206 .\utils.py:293
-msgid "State"
-msgstr "Etat"
-
 #: .\utils.py:188
 msgid "To do"
 msgstr "à faire"
@@ -547,7 +543,7 @@ msgstr "a eu lieu"
 msgid "Rescheduled"
 msgstr "Déplacé"
 
-#: .\utils.py:253 .\utils.py:299
+#: .\utils.py:253 .\utils.py:302
 msgid "Absent"
 msgstr "Absent"
 
@@ -560,96 +556,99 @@ msgstr "Obsolète"
 msgid "Restart"
 msgstr "Début"
 
-#: .\utils.py:258
+#: .\utils.py:259
 msgid "Return to Draft state and restart workflow for this event."
 msgstr ""
 
-#: .\utils.py:259
+#: .\utils.py:260
 #, fuzzy
 msgid "Suggest"
 msgstr "Proposé"
 
-#: .\utils.py:262
+#: .\utils.py:263
 msgid ""
 "Notify the user and ask to confirm (event was created by colleague for a "
 "client)."
 msgstr ""
 
-#: .\utils.py:263
+#: .\utils.py:264
 msgid "Notify guests"
 msgstr "Informer participants"
 
-#: .\utils.py:265
+#: .\utils.py:266
 msgid "Invitations have been sent. Waiting for feedback from guests."
 msgstr ""
 
-#: .\utils.py:266
+#: .\utils.py:267
 msgid "Confirm"
 msgstr "Confirmer"
 
-#: .\utils.py:268
+#: .\utils.py:270
 msgid "Confirmed. All participants have been informed."
 msgstr ""
 
-#: .\utils.py:270
+#: .\utils.py:272
 #, fuzzy
 msgid "Reschedule"
 msgstr "Déplacé"
 
-#: .\utils.py:271
+#: .\utils.py:274
 #, fuzzy
 msgid "Cancel"
 msgstr "Annulé"
 
-#: .\utils.py:295
+#: .\utils.py:298
 msgid "Invited"
 msgstr "Invité"
 
-#: .\utils.py:296
+#: .\utils.py:299
 msgid "Accepted"
 msgstr "Accepté"
 
-#: .\utils.py:297
+#: .\utils.py:300
 msgid "Rejected"
 msgstr "Rejeté"
 
-#: .\utils.py:298
+#: .\utils.py:301
 msgid "Present"
 msgstr "Présent"
 
-#: .\utils.py:302
+#: .\utils.py:305
 msgid "Reject"
 msgstr "Rejeter"
 
-#: .\utils.py:303
+#: .\utils.py:306
 #, fuzzy
 msgid "Reject this invitation."
 msgstr "Mes invitations reçues"
 
-#: .\utils.py:307
+#: .\utils.py:310
 #, python-format
 msgid "Cannot accept invitation %(day)s at %(time)s"
 msgstr ""
 
-#: .\utils.py:313
+#: .\utils.py:316
 msgid "Accept"
 msgstr "Accepter"
 
-#: .\utils.py:321
+#: .\utils.py:324
 msgid "Access Class"
 msgstr "Classe d'accès"
 
-#: .\utils.py:323
+#: .\utils.py:326
 msgid "Private"
 msgstr "Privé"
 
-#: .\utils.py:324
+#: .\utils.py:327
 msgid "Show busy"
 msgstr "Montrer \"occupé\""
 
-#: .\utils.py:325
+#: .\utils.py:328
 msgid "Public"
 msgstr "Public"
+
+#~ msgid "State"
+#~ msgstr "Etat"
 
 #~ msgid "Sleeping"
 #~ msgstr "Dormant"

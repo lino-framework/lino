@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: lino.modlib.cal\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2012-10-23 23:20+0100\n"
+"POT-Creation-Date: 2012-10-25 18:12+0100\n"
 "PO-Revision-Date: 2012-10-24 01:25+0200\n"
 "Last-Translator: Luc Saffre <luc.saffre@gmail.com>\n"
 "Language-Team: de <luc.saffre@gmail.com>\n"
@@ -479,10 +479,6 @@ msgstr "Monate"
 msgid "years"
 msgstr "Jahre"
 
-#: .\utils.py:162 .\utils.py:206 .\utils.py:293
-msgid "State"
-msgstr "Status"
-
 #: .\utils.py:188
 msgid "To do"
 msgstr "Zu tun"
@@ -541,7 +537,7 @@ msgstr "Stattgefunden"
 msgid "Rescheduled"
 msgstr "Verschoben"
 
-#: .\utils.py:253 .\utils.py:299
+#: .\utils.py:253 .\utils.py:302
 msgid "Absent"
 msgstr "Abwesend"
 
@@ -553,92 +549,95 @@ msgstr "Verjährt"
 msgid "Restart"
 msgstr "Neubeginn"
 
-#: .\utils.py:258
+#: .\utils.py:259
 msgid "Return to Draft state and restart workflow for this event."
 msgstr ""
 
-#: .\utils.py:259
+#: .\utils.py:260
 msgid "Suggest"
 msgstr "Vorschlagen"
 
-#: .\utils.py:262
+#: .\utils.py:263
 msgid ""
 "Notify the user and ask to confirm (event was created by colleague for a "
 "client)."
 msgstr ""
 
-#: .\utils.py:263
+#: .\utils.py:264
 msgid "Notify guests"
 msgstr "Mitteilung an Gäste"
 
-#: .\utils.py:265
+#: .\utils.py:266
 msgid "Invitations have been sent. Waiting for feedback from guests."
 msgstr ""
 
-#: .\utils.py:266
+#: .\utils.py:267
 msgid "Confirm"
 msgstr "Bestätigen"
 
-#: .\utils.py:268
+#: .\utils.py:270
 msgid "Confirmed. All participants have been informed."
 msgstr ""
 
-#: .\utils.py:270
+#: .\utils.py:272
 msgid "Reschedule"
 msgstr "Verschieben"
 
-#: .\utils.py:271
+#: .\utils.py:274
 msgid "Cancel"
 msgstr "Stornieren"
 
-#: .\utils.py:295
+#: .\utils.py:298
 msgid "Invited"
 msgstr "Eingeladen"
 
-#: .\utils.py:296
+#: .\utils.py:299
 msgid "Accepted"
 msgstr "Zugesagt"
 
-#: .\utils.py:297
+#: .\utils.py:300
 msgid "Rejected"
 msgstr "Abgesagt"
 
-#: .\utils.py:298
+#: .\utils.py:301
 msgid "Present"
 msgstr "Anwesend"
 
-#: .\utils.py:302
+#: .\utils.py:305
 msgid "Reject"
 msgstr "Absagen"
 
-#: .\utils.py:303
+#: .\utils.py:306
 msgid "Reject this invitation."
 msgstr "Diese Einladung absagen"
 
-#: .\utils.py:307
+#: .\utils.py:310
 #, python-format
 msgid "Cannot accept invitation %(day)s at %(time)s"
 msgstr "Absage Termin am %(day)s um %(time)s"
 
-#: .\utils.py:313
+#: .\utils.py:316
 msgid "Accept"
 msgstr "Zusagen"
 
-#: .\utils.py:321
+#: .\utils.py:324
 msgid "Access Class"
 msgstr "Zugriffsklasse"
 
-#: .\utils.py:323
+#: .\utils.py:326
 msgid "Private"
 msgstr "Privat"
 
-#: .\utils.py:324
+#: .\utils.py:327
 msgid "Show busy"
 msgstr "halb öffentlich (\"Beschäftigt\")"
 
-#: .\utils.py:325
+#: .\utils.py:328
 msgid "Public"
 msgstr "Öffentlich"
+
+#~ msgid "State"
+#~ msgstr "Status"
 
 #~ msgid "Sleeping"
 #~ msgstr "Schläft"
