@@ -138,6 +138,7 @@ class GridConfig(Configured):
         
 
 
+WARNINGS_LOGGED = dict()
 
 
 class TableRequest(actions.ActionRequest):
@@ -207,9 +208,16 @@ class TableRequest(actions.ActionRequest):
                             unicode(rows))
                     group = self.actor.group_from_row(row)
                     group.process_row(l,row)
-            #~ except Warning,e:
+            except Warning,e:
+                self.no_data_text = unicode(e)
             except Exception,e:
                 self.no_data_text = unicode(e)
+                w = WARNINGS_LOGGED.get(str(e))
+                if w is None:
+                    WARNINGS_LOGGED[str(e)] = True
+                    logger.exception(e)
+
+                
             return l
         #~ logger.info("20120914 tables.get_data_iterator %s",self)
         #~ logger.info("20120914 tables.get_data_iterator %s",self.actor)

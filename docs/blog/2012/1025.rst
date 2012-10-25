@@ -147,3 +147,8 @@ einer alert-Box anzeigen soll), aber das Problem war, dass die Box nicht kam.
 Das war ein trivialer Bug in :meth:`lino.ui.base.UI.success_response`.
 
 Checkin wegen Feierabend.
+
+
+23.30 Uhr : Nachtsitzung. 
+Warnung
+
