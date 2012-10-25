@@ -196,7 +196,7 @@ if settings.LINO.is_installed('contenttypes'):
               for f in meta.many_to_many: l.append(f.name)
               for f in meta.virtual_fields: l.append(f.name)
               for a in model._lino_default_table.get_actions():
-                  l.append(a.name)
+                  l.append(a.action_name)
               l.sort()
           return l
           
