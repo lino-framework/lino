@@ -794,6 +794,8 @@ class NotifyingAction(RowAction):
         return kw
         
     def run(self,obj,ar,**kw):
+        kw.update(message=ar.action_param_values.notify_subject)
+        kw.update(alert=True)
         kw = super(NotifyingAction,self).run(obj,ar,**kw)
         self.add_system_note(ar,obj)
         return kw
@@ -1171,7 +1173,7 @@ class ActionRequest(object):
         return self.request.build_absolute_uri(location)
         
     def add_system_note(self,owner,subject,body,silent):
-        logger.info("20121016 add_system_note() '%s'",subject)
+        #~ logger.info("20121016 add_system_note() '%s'",subject)
         notes = resolve_app('notes')
         if notes:
             notes.add_system_note(self,owner,subject,body)

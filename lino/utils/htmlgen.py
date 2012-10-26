@@ -45,7 +45,7 @@ def LIST(tag,items):
     return "<%s>%s</%s>" % (tag,s,tag)
 def UL(items): return LIST('UL',items)
 def OL(items): return LIST('OL',items)
-def H(level,text): return "<H%d>%s</H%d>" % (level,cgi.escape(text),level)
+def H(level,text): return "<h%d>%s</h%d>" % (level,cgi.escape(text),level)
 def DIV(content): return "<DIV>%s</DIV>" % py2html(content)
 def TH(content): return "<th>%s</th>" % py2html(content)
 def TD(content): return "<TD>%s</TD>" % py2html(content)

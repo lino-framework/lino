@@ -343,9 +343,11 @@ class Section:
             p = p.parent
         if not text:
             text = self.get_ref_text()
-        if text:
-            return ':doc:`%s </%s>`' % (text,'/'.join(parts))
-        return ':doc:`/%s`' % '/'.join(parts)
+        if self.book.writing_format == 'rst':
+            if text:
+                return ':doc:`%s </%s>`' % (text,'/'.join(parts))
+            return ':doc:`/%s`' % '/'.join(parts)
+        return "*" + text + "*"
         #~ return ':doc:`%s </%s>`' % (self.title,'/'.join(parts))
         
     def get_full_number(self):
@@ -633,6 +635,7 @@ class Book:
     def __init__(self,from_language,to_language,
           title=None,input_template=None,
           memo_parser=None):
+        self.writing_format = None
         self.input_template = input_template
         self.ref2sect = dict()
         self.memo_parser = memo_parser or MemoParser(self)
@@ -731,12 +734,17 @@ class Book:
         #~ s = htmlgen.DIV(self.main.html_lines)
         s = ''.join([ln for ln in self.main.html_lines()])
         s = "<div>%s</div>" % s
+        if True:
+            f = open("odt_content.xml","wt")
+            f.write(s.encode('utf-8'))
+            f.close()
         #~ logger.info(s)
         return s
         
         
     def write_rst_files(self,root='.'):
         
+        self.writing_format = 'rst'
         self.main.write_rst_files(root)
         
         if False: # must convert to new structure
@@ -753,9 +761,10 @@ class Book:
             fd.close()
 
     def write_odt_file(self,target):
-        from appy.pod.renderer import Renderer
+        #~ from appy.pod.renderer import Renderer
         from lino.utils import iif
-        from lino.utils.appy_pod import setup_renderer
+        #~ from lino.utils.appy_pod import setup_renderer
+        from lino.utils.appy_pod import Renderer
         assert os.path.abspath(self.input_template) != os.path.abspath(target)
         if os.path.exists(target):
             os.remove(target)
@@ -767,8 +776,9 @@ class Book:
         appy_params = dict()
         logger.info(u"appy.pod render %s -> %s (params=%s)",self.input_template,target,appy_params)
         renderer = Renderer(self.input_template, context, target,**appy_params)
-        setup_renderer(renderer)
+        #~ setup_renderer(renderer)
         #~ renderer.context.update(restify=debug_restify)
+        self.writing_format = 'odt'
         renderer.run()
         
         

@@ -168,8 +168,9 @@ def analyze_models():
                 JobProvider being refered only by objects that can refer 
                 to a Company as well.
                 """
-                #~ f.rel.to._lino_ddh.add_fk(model,f) # 20120728
-                f.rel.to._lino_ddh.add_fk(m or model,f)
+                if hasattr(f.rel.to,'_lino_ddh'):
+                    #~ f.rel.to._lino_ddh.add_fk(model,f) # 20120728
+                    f.rel.to._lino_ddh.add_fk(m or model,f)
                         
     #~ for model in models.get_models():
 

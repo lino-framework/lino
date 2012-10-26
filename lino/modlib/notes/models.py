@@ -332,7 +332,8 @@ def add_system_note(ar,owner,subject,body,**kw):
     prj = owner.get_related_project(ar)
     if prj:
         kw.update(project=prj)
-    note = Note(type=nt,owner=owner,
+    #~ note = Note(type=nt,owner=owner,
+    note = Note(event_type=nt,owner=owner,
         subject=subject,body=body,user=ar.get_user(),**kw)
     #~ owner.update_system_note(note)
     note.save()
@@ -347,7 +348,8 @@ def customize_siteconfig():
     """
     dd.inject_field(lino.SiteConfig,
         'system_note_type',
-        models.ForeignKey(NoteType,
+        #~ models.ForeignKey(NoteType,
+        models.ForeignKey(EventType,
             blank=True,null=True,
             verbose_name=_("Default system note type"),
             help_text=_("""\

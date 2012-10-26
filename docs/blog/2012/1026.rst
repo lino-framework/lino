@@ -1,0 +1,15 @@
+20121026
+========
+
+- Bug UsersWithClients : primäre und aktive zeigten zu viele.
+
+- migrate : coached_until --> nur die DSBE-Begleitung. Die ASD-Begleitung ist immer aktiv
+
+- Feld `Zustand` einer Begleitung komplett raus.
+
+- "zuweisen als Begleiter für " --> "wurde zugewiesen als Begleiter für"
+
+- Bei "Ablehnen"ˇ fehlte Mitteilung, dass es geklappt hat.
+
+- "Systemnotiz" ist Form (Ereignisart), nicht Inhalt (Notizart)
+
