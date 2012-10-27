@@ -1,5 +1,5 @@
-lino.test_apps
-==============
+:mod:`lino.test_apps`
+=====================
 
 .. module:: lino.test_apps
 

@@ -1171,8 +1171,16 @@ class Lino(object):
         """
         Return a chunk of html to be displayed in the main area.
         This is being called only if :meth:`get_main_action` returns `None`.
+        The default implementation returns the 
+        message "It works! But your application isn't complete. ..."
         """
-        return None
+        return """<h1>It works!</h1>
+<p>But your application isn't complete,
+it should also override either 
+<a href="http://lino-framework.org/autodoc/lino.html#lino.Lino.get_main_action">get_main_action</a>
+or 
+<a href="http://lino-framework.org/autodoc/lino.html#lino.Lino.get_main_html">get_main_html</a>
+</p>"""
 
     def get_product_vat_class(self,tt,product):
         return 'normal'

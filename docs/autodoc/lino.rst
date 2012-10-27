@@ -1,5 +1,5 @@
-The :mod:`lino` module
-----------------------
+:mod:`lino`
+-----------
 
 .. automodule:: lino
     :members:

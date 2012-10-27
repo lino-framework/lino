@@ -12,6 +12,16 @@
 ## You should have received a copy of the GNU General Public License
 ## along with Lino; if not, see <http://www.gnu.org/licenses/>.
 
+"""
+Work in progress.
+
+I currently use the :mod:`lino.modlib.vocbook` 
+module to generate teaching materials for my pupils, 
+the catering cooks at 
+`Vigala professional school <http://web.vigalattk.ee/>`_.
+
+"""
+
 import logging
 #~ logging.basicConfig(filename='example.log',level=logging.DEBUG)
 logging.basicConfig(level=logging.DEBUG)

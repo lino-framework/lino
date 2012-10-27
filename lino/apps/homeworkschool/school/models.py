@@ -284,12 +284,13 @@ class CourseDetail(dd.FormLayout):
     #~ freq = "every every_unit"
     #~ start end freq
     main = """
-    id:8 user content place summary
+    id:8 user teacher content place 
+    summary
     start_date slot every every_unit
     description
     #remark
     #rrule
-    cal.EventsByController
+    school.EnrolmentsByCourse cal.EventsByController
     """
     
     #~ def setup_handle(self,dh):
@@ -326,6 +327,9 @@ class Enrolments(dd.Table):
 
 class EnrolmentsByPupil(Enrolments):
     master_key = "pupil"
+
+class EnrolmentsByCourse(Enrolments):
+    master_key = "course"
 
 
 
@@ -409,9 +413,16 @@ dd.inject_field(Person,
 
 
     
-def setup_main_menu(site,ui,user,m): pass
+def setup_main_menu(site,ui,user,main):
+    m = main.get_item("contacts")
+    m.add_action(Teachers)
+    m.add_action(Pupils)
+    m = main.add_menu("school",_("School"))
+    m.add_action(Courses)
+    m.add_action(Teachers)
+    m.add_action(Pupils)
   
-def setup_master_menu(site,ui,user,m): 
+def unused_setup_master_menu(site,ui,user,m): 
     #~ m = m.add_menu("school",_("School"))
     m.add_action(Teachers)
     m.add_action(Pupils)
@@ -428,10 +439,9 @@ def setup_config_menu(site,ui,user,m):
     #~ m.add_action(Slots)
     #~ m.add_action(PresenceStatuses)
   
-#~ def setup_explorer_menu(site,ui,user,m):
-    #~ m = m.add_menu("school",_("School"))
+def setup_explorer_menu(site,ui,user,m):
+    m = m.add_menu("school",_("School"))
     #~ m.add_action(Presences)
     #~ m.add_action(Events)
-    m.add_action(Courses)
     m.add_action(Enrolments)
   

@@ -15,3 +15,11 @@
     :show-inheritance:
 
 
+:mod:`lino.modlib.vocbook.base`
+---------------------------------
+
+.. automodule:: lino.modlib.vocbook.base
+    :members:
+    :show-inheritance:
+
+

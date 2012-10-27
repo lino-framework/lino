@@ -1,5 +1,5 @@
-The :mod:`mixins` Module
-------------------------
+:mod:`lino.mixins`
+==================
 
 .. automodule:: lino.mixins
     :members:

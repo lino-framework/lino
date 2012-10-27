@@ -36,8 +36,6 @@ users = dd.resolve_app('users')
 #~ Content = resolve_model('courses.Content')
 #~ PresenceStatus = resolve_model('courses.PresenceStatus')
 
-#~ from lino.apps.az.school import models as school
-#~ from lino.modlib.cal import models as cal
 
 def objects():
   

@@ -13,10 +13,6 @@
 ## along with Lino; if not, see <http://www.gnu.org/licenses/>.
 
 """
-This module turns Lino into a basic calendar client. 
-To be combined with :attr:`lino.Lino.use_extensible`.
-Supports remote calendars.
-Events and Tasks can get attributed to a :attr:`Project <lino.Lino.project_model>`.
 
 """
 import logging
@@ -615,17 +611,8 @@ class Ended(dd.Model):
     
   
     
-class ComponentBase(mixins.ProjectRelated,Started):
-    """
-    Abstract model used as base class for 
-    both :class:`Event` and :class:`Task`.
-    """
-    class Meta:
-        abstract = True
-        
-    uid = models.CharField(_("UID"),
-        max_length=200,
-        blank=True) # ,null=True)
+  
+class StartedSummaryDescription(Started):
 
     summary = models.CharField(_("Summary"),max_length=200,blank=True) # iCal:SUMMARY
     description = dd.RichTextField(_("Description"),blank=True,format='html')
@@ -634,7 +621,7 @@ class ComponentBase(mixins.ProjectRelated,Started):
         return self._meta.verbose_name + " #" + str(self.pk)
 
     def summary_row(self,ar,**kw):
-        html = mixins.ProjectRelated.summary_row(self,ar,**kw)
+        html = super(ComponentBase,self).summary_row(ar,**kw)
         if self.summary:
             html += '&nbsp;: %s' % cgi.escape(force_unicode(self.summary))
             #~ html += ui.href_to(self,force_unicode(self.summary))
@@ -642,7 +629,7 @@ class ComponentBase(mixins.ProjectRelated,Started):
         return html
         
 
-class RecurrenceSet(ComponentBase,Ended):
+class RecurrenceSet(StartedSummaryDescription,Ended):
     """
     Abstract base for models that group together all instances 
     of a set of recurring calendar components.
@@ -686,6 +673,21 @@ class RecurrenceSets(dd.Table):
     #~ """
     
     
+class ComponentBase(mixins.ProjectRelated,StartedSummaryDescription):
+    """
+    Abstract model used as base class for 
+    both :class:`Event` and :class:`Task`.
+    """
+    class Meta:
+        abstract = True
+        
+    uid = models.CharField(_("UID"),
+        max_length=200,
+        blank=True) # ,null=True)
+
+
+
+
 class Component(ComponentBase,
                 #~ CalendarRelated,
                 mixins.UserAuthored,

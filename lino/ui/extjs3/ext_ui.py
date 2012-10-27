@@ -1246,9 +1246,11 @@ tinymce.init({
           xtype='container',
           region="center",
           autoScroll=True,
-          layout='fit',
-          html=self.get_main_html(request),
+          layout='fit'
         )
+        
+        if not on_ready:
+            main.update(html=self.get_main_html(request))
         
         win = dict(
           layout='fit',

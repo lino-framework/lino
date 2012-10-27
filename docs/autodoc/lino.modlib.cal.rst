@@ -7,15 +7,16 @@
     :show-inheritance:
     
 
-:mod:`lino.modlib.cal.models`
------------------------------
+:mod:`models`
+-------------
 
 .. automodule:: lino.modlib.cal.models
     :members:
     :show-inheritance:
+    :synopsis:
 
 
-:mod:`lino.modlib.cal.utils`
+:mod:`utils`
 ----------------------------
 
 .. automodule:: lino.modlib.cal.utils

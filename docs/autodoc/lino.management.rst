@@ -1,5 +1,6 @@
-The :mod:`lino.management` package
-==================================
+======================
+:mod:`lino.management`
+======================
 
 This contains Lino's "standard management commands", 
 automatically included with every Lino application.

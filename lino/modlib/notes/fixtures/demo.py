@@ -38,8 +38,12 @@ def objects():
     NoteType = resolve_model('notes.NoteType')
     
     USERS = Cycler(User.objects.all())
-    PERSONS = Cycler(Project.objects.filter(name__startswith="A"))
-    #~ PERSONS = Cycler(Project.objects.all())
+    qs = Project.objects.all()
+    if qs.count() > 10:
+        qs = qs[:10]
+    PROJECTS = Cycler(qs)
+    #~ PROJECTS = Cycler(Project.objects.filter(name__startswith="A"))
+    #~ PROJECTS = Cycler(Project.objects.all())
     #~ COMPANIES = Cycler(Company.objects.all())
     NTYPES = Cycler(NoteType.objects.all())
     
@@ -55,7 +59,7 @@ def objects():
             date=settings.LINO.demo_date(days=i),
             subject="Important note %d" % i,
             #~ company=COMPANIES.pop(),
-            project=PERSONS.pop(),
+            project=PROJECTS.pop(),
             type=NTYPES.pop())
         
     

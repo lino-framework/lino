@@ -43,8 +43,3 @@ distributed with Lino.
   `Python Unicode Collation Algorithm
   <http://jtauber.com/blog/2006/02/13/bug_fix_to_python_unicode_collation_algorithm/>`_
   
-- :srcref:`pyuca_allkeys.txt </lino/utils/pyuca_allkeys.txt>` 
-  is an unmodified copy of `the original file 
-  <http://www.unicode.org/Public/UCA/latest/allkeys.txt>`_,
-  Copyright (c) 2001-2012 Unicode, Inc.
-  

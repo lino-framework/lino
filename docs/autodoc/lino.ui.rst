@@ -1,5 +1,5 @@
-The `lino.ui` Package 
-=====================
+:mod:`lino.ui`
+==============
 
 This contains possible user interfaces for Lino applications. 
 Currently only :mod:`lino.ui.extjs` works.

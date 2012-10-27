@@ -7,16 +7,16 @@
     :show-inheritance:
     
 
-Models
-------
+`models`
+--------
 
 .. automodule:: lino.modlib.postings.models
     :members:
     :show-inheritance:
 
 
-dummy
-=====
+`dummy`
+-------
 
 .. automodule:: lino.modlib.postings.dummy
     :members:
