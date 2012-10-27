@@ -5,37 +5,35 @@ What is Lino?
 -------------
 
 Lino is a framework for creating customized enterprise-level 
-Rich Internet Applications that use :term:`Django's <Django>`
-database model combined with an out-of-the box user interface.
+Rich Internet Applications 
+using `Sencha ExtJS <http://www.sencha.com/products/extjs/>`
+and :term:`Django's <Django>`.
 
 Up to now there's one 
 real-world Lino application, 
 running in a Belgian 
 *Public Centre for Social Welfare* 
 (PCSW) since January 2011.
-These users and their system adminstrator 
-are so satisfied that other similar centres showed their interest.
+These first users are so satisfied that 
+other similar centres showed interest.
 That's why this particular Lino application 
-:doc:`Lino-PCSW </pcsw/index>` 
+`Lino-Welfare <http://welfare.lino-framework.org>`_
 is currently using up most of our human resources.
 
-But Lino is a *framework*. This means that there 
-will be many different Lino applications in the future.
-:doc:`Lino-iGen </igen/index>` is just one example 
-of what's possible.
+But Lino is a *framework*, designed to write many more
+different applications in the future.
+:mod:`lino.apps` contains examples or prototypes of such applications.
 
 Features
 --------
 
-Some of Lino's features:
+Lino features innovative solutions for 
 
-- Designed for rapid prototyping and short release cycles.
-- Innovative solutions for 
-  :doc:`data migration </topics/datamig>`,
-  :doc:`polymorphism  </topics/mti>`,
-  :doc:`user-interface agnostic form design </topics/layouts>`
-  and
-  :doc:`multilingual database content </topics/babel>`.
+- rapid prototyping and short release cycles
+- :doc:`data migration </topics/datamig>`
+- :doc:`polymorphism  </topics/mti>`
+- :doc:`user-interface agnostic form design </topics/layouts>`
+- :doc:`multilingual database content </topics/babel>`
 
 The user interface
 ------------------
@@ -49,16 +47,15 @@ and there are many other, more interesting tasks that are
 waiting to be done.
 
 Lino is designed to have many possible user interfaces.
-But since Lino is young, your choice is currently limited 
-to the :term:`ExtJS` UI. This means that Lino applications currently 
-always have the look of a web-based Rich Internet Application that 
-runs inside a browser.
+But your choice is currently limited to the :term:`ExtJS` UI.
+This means that Lino applications currently always use this interface, 
+because ExtJS is so cool and Lino so young.
 
-Although we are satisfied with ExtJS, 
-we also started working on a first alternative user interface 
-which  will be using the :doc:`Qooxdoo library </topics/qooxdoo>`.
-And we can imagine to write other interfaces in the future 
-(simple HTML, curses, Qt, ...).
+We started working on a first alternative user interface 
+that uses the :doc:`Qooxdoo library </topics/qooxdoo>`,
+and we can imagine to write other interfaces in the future 
+(simple HTML, curses, Qt, ...), but for the moment there are more urgent things to do.
+
 
 
 History

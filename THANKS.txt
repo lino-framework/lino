@@ -4,48 +4,47 @@ Thanks to
 Here is a list of other publications who are at least partially being 
 distributed with Lino.
 
-- :srcref:`/lino/utils/html2text.py` :
-  Unmodified copy from http://www.aaronsw.com/2002/html2text/
-  Copyright 2004-2008 Aaron Swartz. 
-  GNU GPL 3.
-
-- :file:`lino/utils/daemoncommand.py` :
-  Copyright (c) 2009, Sean Creeley.
-  Modifications by Luc Saffre.
-
-- :file:`media/extjs/Ext.ux.form.DateTime.js` :
+- :srcref:`/media/extjs/Ext.ux.form.DateTime.js` :
   Copyright (c) 2008, Ing. Jozef Sakáloš.
 
+- :srcref:`/media/tinymce` by Andrew Mayorov et al.,
+  Copyright (c) 2008-2010 `BYTE-force <http://www.byte-force.com>`_.
 
-- :file:`media/tinymce` :
-	Author: Andrew Mayorov et al.,
-	Copyright (c) 2008-2010 `BYTE-force <http://www.byte-force.com>`_.
-
-- :file:`media/filterRow` :
-  Author: Surinder singh Mattaur (Matoo) <surinder83singh@gmail.com>
-  <http://www.sencha.com/forum/member.php?75710-Surinder-singh> 
-  
-
-- `Sexy Tooltips with Just CSS
-  <http://sixrevisions.com/css/css-only-tooltips/>`_ 
-  by Alexander Dawson (2010-06-16):
-  The corresponding section in :file:`media/extjs/lino.css`
-  is inspired by this article, and the 
-  files :file:`Critical.png`,  :file:`Help.png`,
-  :file:`Info.png` and :file:`Warning.png`
-  in  :file:`media/extjs`
-  are unchanged copies.
-
-- :mod:`lino.utils.pyuca` 
-  is an unmodified copy of James Tauber's 
-  `Python Unicode Collation Algorithm
-  <http://jtauber.com/blog/2006/02/13/bug_fix_to_python_unicode_collation_algorithm/>`_
-  
-  `pyuca_allkeys.txt` is an unmodified copy of
-  http://www.unicode.org/Public/UCA/latest/allkeys.txt
-  
 - :srcref:`/media/extjs/images/mjames` contains 
   a subset of Mark James' great and free 
   `Silk Icons <http://www.famfamfam.com/lab/icons/silk/>`_.
   
+- :srcref:`/lino/utils/html2text.py` :
+  Almost unmodified copy from 
+  `Aaron Swartz's original work <http://www.aaronsw.com/2002/html2text>`_
+  Copyright 2004-2008 Aaron Swartz. 
+  GNU GPL 3.
+
+- :srcref:`/lino/utils/daemoncommand.py` :
+  Copyright (c) 2009, Sean Creeley.
+  Modifications by Luc Saffre.
+
+- :srcref:`/media/filterRow` :
+  Author: `Surinder singh (Matoo) 
+  <http://www.sencha.com/forum/member.php?75710-Surinder-singh>`_ 
+
+- `Sexy Tooltips with Just CSS
+  <http://sixrevisions.com/css/css-only-tooltips/>`_ 
+  by Alexander Dawson (2010-06-16):
+  The corresponding section in :srcref:`/media/extjs/lino.css`
+  is inspired by this article, and the 
+  files :file:`Critical.png`,  :file:`Help.png`,
+  :file:`Info.png` and :file:`Warning.png`
+  in  :srcref:`/media/extjs`
+  are unchanged copies.
+
+- :srcref:`/lino/utils/pyuca.py` 
+  is an unmodified copy of James Tauber's 
+  `Python Unicode Collation Algorithm
+  <http://jtauber.com/blog/2006/02/13/bug_fix_to_python_unicode_collation_algorithm/>`_
+  
+- :srcref:`pyuca_allkeys.txt </lino/utils/pyuca_allkeys.txt>` 
+  is an unmodified copy of `the original file 
+  <http://www.unicode.org/Public/UCA/latest/allkeys.txt>`_,
+  Copyright (c) 2001-2012 Unicode, Inc.
   

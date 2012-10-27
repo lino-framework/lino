@@ -56,7 +56,7 @@ from dateutil import parser as dateparser
 from decimal import Decimal
 import stat
 
-import lino
+#~ import lino
 
 def confirm(prompt=None):
     """
@@ -424,17 +424,6 @@ class Cycler:
         
 
 
-def uca_collator():
-    """
-    """
-    #~ logger.info("20120308 build uca_collator")
-    from lino.utils.pyuca import Collator
-    fn = os.path.join(os.path.dirname(__file__),'pyuca_allkeys.txt')
-    'http://www.unicode.org/Public/UCA/latest/allkeys.txt'
-    c = Collator(fn)
-    #~ logger.info("20120308 uca_collator() done")
-    return c
-    
 
 #~ class Warning(Exception): 
     #~ """

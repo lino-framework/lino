@@ -32,7 +32,6 @@ from lino.utils.html2xhtml import html2xhtml
 from lino.utils.restify import restify
 from lino.utils.rstgen import SimpleTable, write_header, html2rst
 from lino.utils import htmlgen
-from lino.utils import uca_collator
 
 USE_XHTML2ODT = False
 
@@ -531,10 +530,35 @@ class Unit(Section):
             fd.write('\n\n' + chunk + '\n\n')
             
 
+#~ def uca_collator():
+    #~ """
+    #~ """
+    #~ logger.info("20120308 build uca_collator")
+    #~ c = Collator(fn)
+    #~ logger.info("20120308 uca_collator() done")
+    #~ return c
+    
+try:
+    from lino.utils.pyuca import Collator
+    #~ fn = os.path.join(os.path.dirname(__file__),'pyuca_allkeys.txt')
+    fn = 'uca_allkeys.txt'
+    UCA_COLLATOR = Collator(fn)
+except Exception:
+    UCA_COLLATOR = None
+    import warnings
+    warnings.warn("""\
+If you want serious alphabetic sorting, you need to download \
+http://www.unicode.org/Public/UCA/latest/allkeys.txt \
+to your current working directory (`%s`) and rename it to `uca_allkeys.txt`. \
+""" % os.getcwd())
+  
 
 def uca_sort(l):
-    c = uca_collator()
-    def k(w): return c.sort_key(w.text)
+    #~ c = uca_collator()
+    if UCA_COLLATOR:
+        def k(w): return UCA_COLLATOR.sort_key(w.text)
+    else:
+        def k(w): return w.text.upper()
     l.sort(key=k)
 
   
