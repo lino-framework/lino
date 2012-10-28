@@ -41,4 +41,18 @@ T:\hgwork\lino\docs\autodoc\lino.ui.rst:4: WARNING: py:mod reference target not 
 T:\hgwork\lino\docs\autodoc\lino.ui.extjs3.rst:9: WARNING: py:mod reference target not found: urls
 T:\hgwork\lino\docs\autodoc\lino.ui.extjs3.rst:17: WARNING: py:mod reference target not found: ext_elems
 T:\hgwork\lino\docs\autodoc\lino.ui.extjs3.rst:234: WARNING: py:class reference target not found: FormPanel
-T:\hgwo
+T:\hgwork\lino\docs\autodoc\lino.ui.extjs3.rst:234: WARNING: py:class reference target not found: GridPanel
+T:\hgwork\lino\docs\autodoc\lino.ui.extjs3.rst:659: WARNING: py:class reference target not found: lino.core.fields.IncompleteDate
+T:\hgwork\lino\docs\autodoc\lino.ui.extjs3.rst:26: WARNING: py:mod reference target not found: ext_ui
+T:\hgwork\lino\docs\autodoc\lino.ui.extjs3.rst:117: WARNING: py:attr reference target not found: ACTION_RESPONSES
+T:\hgwork\lino\docs\autodoc\lino.ui.extjs3.rst:140: WARNING: py:class reference target not found: lino.modles.BuildSiteCache
+T:\hgwork\lino\docs\autodoc\lino.ui.extjs3.rst:154: WARNING: xfile reference target not found: lino*.js
+T:\hgwork\lino\docs\autodoc\lino.ui.extjs3.rst:292: WARNING: py:class reference target not found: object
+T:\hgwork\lino\docs\autodoc\lino.ui.extjs3.rst:319: WARNING: py:class reference target not found: lino.core.dbtables.TableRequest
+T:\hgwork\lino\docs\autodoc\lino.ui.extjs3.rst:332: WARNING: py:class reference target not found: lino.core.dbtables.TableRequest
+T:\hgwork\lino\docs\autodoc\lino.ui.extjs3.rst:35: WARNING: py:mod reference target not found: ext_store
+T:\hgwork\lino\docs\autodoc\lino.ui.extjs3.rst:26: WARNING: py:class reference target not found: object
+T:\hgwork\lino\docs\autodoc\lino.ui.extjs3.rst:163: WARNING: unknown document: /blog/2011/0830
+T:\hgwork\lino\docs\autodoc\lino.ui.extjs3.rst:353: WARNING: py:class reference target not found: object
+T:\hgwork\lino\docs\autodoc\lino.ui.extjs3.rst:514: WARNING: py:class reference target not found: object
+T:\hgwork\lino\docs\autodoc\lino.ui.extjs3.rst:570: WARNING: py:attr reference target not found: Store.pk_index
