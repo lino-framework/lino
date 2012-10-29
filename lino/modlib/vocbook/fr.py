@@ -167,18 +167,6 @@ class French(Language):
   
 
     @classmethod
-    def word2html(cls,w):
-        hfr = w.text
-        if w.haspire:
-            hfr = "*"+ hfr
-        if w.type and w.gender:
-            return u"<b>%s</b> (%s%s.)" % (hfr,w.type.text,w.gender)
-        if w.type and w.type.text:
-            return u"<b>%s</b> (%s)" % (hfr,w.type.text)
-        return u"<b>%s</b>" % hfr
-        
-
-    @classmethod
     def starts_with_vowel(cls,w):
         return w.text[0].lower() in u'aeiouyàéœ' or (w.text[0].lower() == 'h' and not w.haspire)
         
@@ -191,13 +179,6 @@ class French(Language):
         hfr = w.text
         if w.haspire:
             hfr = "*"+ hfr
-        if Verbe.is_of_this_type(w):
-            if w.form is not None:
-                pronom = PRONOMS[w.form]
-                if pronom[-1] == 'e' and cls.starts_with_vowel(w):
-                    pronom = pronom[:-1]
-                    return u"%s'<b>%s</b>" % (pronom,hfr)
-                return u"%s <b>%s</b>" % (pronom,hfr)
         if Nom.is_of_this_type(w):
             if w.gender == 'pl':
                 return u"les <b>%s</b>" % hfr
@@ -221,4 +202,21 @@ class French(Language):
 
 
 
-            
+    @classmethod
+    def word2html(cls,w):
+        hfr = w.text
+        if w.haspire:
+            hfr = "*"+ hfr
+        if Verbe.is_of_this_type(w) and w.form is not None:
+            pronom = PRONOMS[w.form]
+            if pronom[-1] == 'e' and cls.starts_with_vowel(w):
+                pronom = pronom[:-1]
+                return u"%s'<b>%s</b>" % (pronom,hfr)
+            return u"%s <b>%s</b>" % (pronom,hfr)
+        if w.type and w.gender:
+            return u"<b>%s</b> (%s%s.)" % (hfr,w.type.text,w.gender)
+        if w.type and w.type.text:
+            return u"<b>%s</b> (%s)" % (hfr,w.type.text)
+        return u"<b>%s</b>" % hfr
+        
+

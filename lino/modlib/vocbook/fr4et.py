@@ -721,8 +721,9 @@ if HAS_FUN:
     Fun.parse_words(None,u"""
 le meunier [mÖn'jee] : mölder
 le moulin [mu'lÄ~] : veski
+tu dors [dOOr] : sa magad
 trop vite [tro'vitə] : liiga kiiresti
-trop fort [fro'fOOr] : liiga kõvasti
+trop fort [tro'fOOr] : liiga kõvasti
     """)
 
     Fun.add_lesson(u"Minu onu...", 
@@ -742,7 +743,7 @@ trop fort [fro'fOOr] : liiga kõvasti
     deux [döö] : kaks
     """)
     Fun.parse_words(Nom,u"""
-    un tonton [tO~'tO~] : onu
+    le tonton [tO~'tO~] : onu
     """)
     Fun.parse_words(Verbe,u"""
     tondre [tO~drə] : pügama
@@ -1399,20 +1400,26 @@ if HAS_FUN:
   
   Fun.add_lesson(u"Sur le pont d'Avignon", u"""
 | Sur le pont d'Avignon,
-| L’on y danse, l’on y danse ;
+| on y danse, on y danse ;
 | Sur le pont d’Avignon,
-| L’on y danse tout en rond !
+| on y danse tout en rond !
 
 | Les beaux messieurs font comme ça,
-| Et puis encore comme ça.
+| et puis encore comme ça.
 
-| Sur le pont d’Avignon,
-| L’on y danse, on y danse ;
-| Sur le pont d’Avignon,
-| L’on y danse tout en rond !
+| Les belles dames font comme ça,
+| et puis encore comme ça.  
 
-| Les belles dames font comme ça
-| Et puis encore comme ça.  
+| Les cordonniers font comme ça,
+| et puis encore comme ça.  
+  """)
+  Fun.parse_words(None,u"""
+  le pont [pO~] : sild
+  on danse ['dA~sə] : tantsitakse
+  sur : peal
+  tout en rond : ringis
+  les beaux messieurs : ilusad härrad
+  les belles dames : ilusad daamid
   """)
   
   

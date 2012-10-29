@@ -157,6 +157,7 @@ class Word(object):
         if self.pronounciation != other.pronounciation: return False
         if self.gender != other.gender: return False
         if self.type != other.type: return False
+        if self.form != other.form: return False
         return True
         
     def add_translations(self,translations):
