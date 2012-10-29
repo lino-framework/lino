@@ -147,7 +147,8 @@ def new_content_type_id(m):
                     raise Exception("%s instances weren't grouped!" % model)
                 all_models.append(model)
                 self.stream.write('\ndef %s_objects():\n' % model._meta.db_table)
-            fields = obj._meta.local_fields
+            fields = [f for f,m in model._meta.get_fields_with_model() if m is None]
+            #~ fields = obj._meta.local_fields
             #~ fields = [f for f in obj._meta.local_fields if f.serialize]
             self.stream.write('    yield create_%s(%s)\n' % (
                 obj._meta.db_table,

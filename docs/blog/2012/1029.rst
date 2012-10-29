@@ -6,7 +6,11 @@
   StartedSummaryDescription wasn't abstract.
   
   
-Oops, the double dump test fails. 
+Fixed a bug in :mod:`lino.utils.dumpy`
+--------------------------------------
+
+
+Oops, the double dump test fails! 
 The coming Lino version is not able to read her own dumps!
 
 
@@ -37,13 +41,13 @@ Until here everything seems okay. But then::
       ignored))
   Exception: create_child() Person 112 from Partner : ignored non-local fields {'fax': u'', 'name': u'Saffre Luc', 'language': u'de', 'url': u'', 'street_box': u'', 'street_no': u'1', 'phone': u'', 'street': u'Uus', 'addr2': u'Vana-Vigala k\xfcla', 'addr1': u'', 'remarks': u'', 'street_prefix': u'', 'gsm': u'', 'email': u'', 'zip_code': u'78003'}
 
-
-And :mod:`lino.utils.dumpy` indeed creates the following function::
+Looking into the fixture, we can see that :mod:`lino.utils.dumpy` 
+indeed creates the following function::
 
   def create_contacts_person(partner_ptr_id, country_id, city_id, region_id, zip_code, name, addr1, street_prefix, street, street_no, street_box, addr2, language, email, url, phone, gsm, fax, remarks, birth_date, first_name, last_name, title, gender):
       return create_child(contacts_Partner,partner_ptr_id,contacts_Person,country_id=country_id,city_id=city_id,region_id=region_id,zip_code=zip_code,name=name,addr1=addr1,street_prefix=street_prefix,street=street,street_no=street_no,street_box=street_box,addr2=addr2,language=language,email=email,url=url,phone=phone,gsm=gsm,fax=fax,remarks=remarks,birth_date=birth_date,first_name=first_name,last_name=last_name,title=title,gender=gender)
 
-which is wrong because street, addr1 etc are stored in Partner, not in Person.
+which is wrong because street, addr1 etc are stored in `Partner`, not in `Person`.
 Seems that Django has a different definition of `local_fields` than what I thought::
 
   >>> from django.conf import settings
@@ -56,4 +60,5 @@ What we want is::
   >>> print [f.name for f,m in settings.LINO.modules.contacts.Person._meta.get_fields_with_model() if m is None]
   ['partner_ptr', 'birth_date', 'first_name', 'last_name', 'title', 'gender']
   
-  
+Seems that this bug has "always" been there, but didn't lead to a failure before 
+I changed the "ignored non-local fields" warning into an Exception (:doc:`/2012/0929`).

@@ -1,0 +1,19 @@
+function doit()
+{
+  python manage.py dumpdata --format py > fixtures/a.py
+  python manage.py initdb a --noinput
+  python manage.py dumpdata --format py > fixtures/b.py
+  diff fixtures/a.py fixtures/b.py
+}
+echo "Double Dump Test"
+echo "WARNING: running this test can break your database. Be sure to have a backup!"
+read -r -p "Are you sure? [Y/n] " response
+case $response in
+    [yY][eE][sS]|[yY]) 
+        doit
+        ;;
+    *)
+        echo "Dann eben nicht..."
+        ;;
+esac
+
