@@ -1,0 +1,6 @@
+20121029
+========
+
+
+- migrate create_isip_exampolicy Auswertungsstrategien haben jetzt kein Feld `uid` mehr.
+  StartedSummaryDescription wasn't abstract.

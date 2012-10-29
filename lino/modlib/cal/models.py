@@ -613,7 +613,12 @@ class Ended(dd.Model):
     
   
 class StartedSummaryDescription(Started):
+    """
+    """
 
+    class Meta:
+        abstract = True
+        
     summary = models.CharField(_("Summary"),max_length=200,blank=True) # iCal:SUMMARY
     description = dd.RichTextField(_("Description"),blank=True,format='html')
     
