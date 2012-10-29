@@ -77,3 +77,15 @@ lot of deferred instances when getting loaded back.
 Cool! Ich hatte mich schon gewundert (aber war der Sache aus Zeitmangel 
 nie auf den Grund gegangen), weshalb er immer noch so viele "deferred" 
 meldet beim einlesen eines Dumps.
+
+
+14.40 Uhr: Uff::
+
+  lsaffre@lino:/usr/local/django/test_dsbe$ python manage.py dumpdata --format py > fixtures/a.py
+  INFO Source version is 1.0 : no migration needed
+  INFO Loading /usr/local/django/test_dsbe/fixtures/a.py...
+  Installed 53248 object(s) from 1 fixture(s)
+  INFO Lino initdb done ('a',) on database test_dsbe.
+  lsaffre@lino:/usr/local/django/test_dsbe$ python manage.py dumpdata --format py > fixtures/b.py
+  lsaffre@lino:/usr/local/django/test_dsbe$ diff fixtures/a.py fixtures/b.py
+

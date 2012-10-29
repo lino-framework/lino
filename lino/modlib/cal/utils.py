@@ -245,8 +245,9 @@ class EventStates(dd.Workflow):
     
     
 add = EventStates.add_item
-add('10', _("Draft"), 'draft',help_text=_("Default state of a new event."))
-add('20', _("Suggested"), 'suggested',help_text=_("Created by colleague. External guests are notified, but user must confirm."))
+add('10', _("New"), 'new',help_text=_("Default state of a new event."))
+add('20', _("Draft"), 'draft',help_text=_("Has been user-modified."))
+add('25', _("Suggested"), 'suggested',help_text=_("Created by colleague. External guests are notified, but user must confirm."))
 add('30', _("Notified"),'notified')
 add('40', _("Scheduled"), 'scheduled')
 add('50', _("Took place"),'took_place')

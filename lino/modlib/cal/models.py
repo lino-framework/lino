@@ -881,7 +881,7 @@ Indicates that this Event shouldn't prevent other Events at the same time."""))
     place = models.ForeignKey(Place,null=True,blank=True) # iCal:LOCATION
     priority = models.ForeignKey(Priority,null=True,blank=True)
     #~ priority = Priority.field(_("Priority"),blank=True) # iCal:PRIORITY
-    state = EventStates.field(default=EventStates.draft) # iCal:STATUS
+    state =   .field(default=EventStates.new) # iCal:STATUS
     #~ status = models.ForeignKey(EventStatus,verbose_name=_("Status"),blank=True,null=True) # iCal:STATUS
     #~ duration = dd.FieldSet(_("Duration"),'duration_value duration_unit')
     #~ duration_value = models.IntegerField(_("Duration value"),null=True,blank=True) # iCal:DURATION
@@ -899,8 +899,8 @@ Indicates that this Event shouldn't prevent other Events at the same time."""))
         if settings.LINO.loading_from_dump:
             return
         #~ if not self.state in (EventStates.blank_item, EventStates.draft): 20120829
-        #~ if not self.state in (None, EventStates.draft):
-        if self.state != EventStates.draft:
+        if not self.state in (EventStates.new, EventStates.draft):
+        #~ if self.state != EventStates.draft:
             if self.calendar and self.calendar.invite_team_members:
                 if self.guest_set.all().count() == 0:
                     #~ print 20120711
@@ -909,7 +909,7 @@ Indicates that this Event shouldn't prevent other Events at the same time."""))
                             Guest(event=self,partner=obj.watched_user.partner).save()
         
     def is_user_modified(self):
-        return self.state != EventStates.draft
+        return self.state != EventStates.new
         
     def after_state_change(self,ar,kw,old,new):
         """
