@@ -88,7 +88,7 @@ def objects():
     yield person(u'Henri',    u'Hilgers',gender=Gender.male)
     yield person(u'Irene',    u'Ingels',gender=Gender.female)
     yield person(u'Jérémy',   u'Jansen',gender=Gender.male)
-    yield person(u'Jean-Pierre', u'Jacob',gender=Gender.male)
+    yield person(u'Jacqueline', u'Jacobs',gender=Gender.female)
     yield person(u'Johann', u'Johnen',gender=Gender.male)
     yield person(u'Josef', u'Jonas',gender=Gender.male)
     yield person(u'Jan',   u'Jousten',gender=Gender.male)

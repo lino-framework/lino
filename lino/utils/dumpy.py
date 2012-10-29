@@ -174,6 +174,7 @@ def new_content_type_id(m):
             #~ print "hope for", [m.__name__ for m in unsorted]
             for model in unsorted:
                 deps = [f.rel.to for f in model._meta.fields if f.rel is not None]
+                deps += [m for m in model._meta.parents.keys()]
                 ok = True
                 for d in deps:
                     if d in unsorted:

@@ -18,6 +18,8 @@ This module deserves more documentation.
 """
 import datetime
 
+from dateutil.tz import tzlocal
+
 from django.utils.translation import ugettext_lazy as _
 from django.utils.translation import pgettext_lazy 
 
@@ -25,8 +27,8 @@ from django.utils.translation import pgettext_lazy
 from lino.core import actions
 #~ from lino.core.actors import 
 from lino import dd
+from lino.utils import babel
 
-from dateutil.tz import tzlocal
 
 def aware(d):
     return datetime.datetime(d.year,d.month,d.day,tzinfo=tzlocal())

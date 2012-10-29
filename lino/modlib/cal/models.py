@@ -881,7 +881,7 @@ Indicates that this Event shouldn't prevent other Events at the same time."""))
     place = models.ForeignKey(Place,null=True,blank=True) # iCal:LOCATION
     priority = models.ForeignKey(Priority,null=True,blank=True)
     #~ priority = Priority.field(_("Priority"),blank=True) # iCal:PRIORITY
-    state = EventStates.field() # iCal:STATUS
+    state = EventStates.field(default=EventStates.draft) # iCal:STATUS
     #~ status = models.ForeignKey(EventStatus,verbose_name=_("Status"),blank=True,null=True) # iCal:STATUS
     #~ duration = dd.FieldSet(_("Duration"),'duration_value duration_unit')
     #~ duration_value = models.IntegerField(_("Duration value"),null=True,blank=True) # iCal:DURATION
@@ -896,9 +896,12 @@ Indicates that this Event shouldn't prevent other Events at the same time."""))
         #~ if not self.state and self.start_date and self.start_date < datetime.date.today():
             #~ self.state = EventStates.obsolete
         super(Event,self).save(*args,**kw)
-        if self.calendar and self.calendar.invite_team_members:
-            #~ if not self.state in (EventStates.blank_item, EventStates.draft): 20120829
-            if not self.state in (None, EventStates.draft):
+        if settings.LINO.loading_from_dump:
+            return
+        #~ if not self.state in (EventStates.blank_item, EventStates.draft): 20120829
+        #~ if not self.state in (None, EventStates.draft):
+        if self.state != EventStates.draft:
+            if self.calendar and self.calendar.invite_team_members:
                 if self.guest_set.all().count() == 0:
                     #~ print 20120711
                     for obj in Membership.objects.filter(user=self.user):
@@ -1383,7 +1386,7 @@ class Guest(mixins.TypedPrintable,outbox.Mailable):
         blank=True,null=True) 
         
     #~ state = GuestStates.field(blank=True)
-    state = GuestStates.field()
+    state = GuestStates.field(default=GuestStates.invited)
     #~ status = models.ForeignKey(GuestStatus,verbose_name=_("Status"),blank=True,null=True)
     
     #~ confirmed = models.DateField(
@@ -1419,10 +1422,10 @@ class Guest(mixins.TypedPrintable,outbox.Mailable):
         return ar.href_to(self.event,event_summary(self.event,ar.get_user()))
         #~ return event_summary(self.event,ar.get_user())
         
-    def before_ui_save(self,ar,**kw):
-        if not self.state:
-            self.state = GuestStates.invited
-        return super(Guest,self).before_ui_save(ar,**kw)
+    #~ def before_ui_save(self,ar,**kw):
+        #~ if not self.state:
+            #~ self.state = GuestStates.invited
+        #~ return super(Guest,self).before_ui_save(ar,**kw)
         
     #~ def on_user_change(self,request):
         #~ if not self.state:
@@ -1631,6 +1634,7 @@ def update_auto_component(model,autotype,user,date,summary,owner,**defaults):
             if obj.start_date != date:
                 obj.start_date = date
             if created or obj.__dict__ != original_state:
+                #~ obj.full_clean()
                 obj.save()
         return obj
     else:
