@@ -53,7 +53,7 @@ class State(choicelists.Choice):
             a = label(self,required,**kw)
         else:
             if notify:
-                cl = actions.NotifyingChangeStateAction
+                cl = NotifyingChangeStateAction
             else:
                 cl = ChangeStateAction
             a = cl(self,required,label=label or self.text,**kw)
@@ -181,3 +181,5 @@ class ChangeStateAction(actions.RowAction):
         return ar.ui.success_response(**kw)
         
         
+class NotifyingChangeStateAction(ChangeStateAction,actions.NotifyingAction):
+    pass

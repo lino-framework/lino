@@ -1174,7 +1174,9 @@ class Lino(object):
         The default implementation returns the 
         message "It works! But your application isn't complete. ..."
         """
-        return """<h1>It works!</h1>
+        return None
+        if False:
+            return """<h1>It works!</h1>
 <p>But your application isn't complete,
 it should also override either 
 <a href="http://lino-framework.org/autodoc/lino.html#lino.Lino.get_main_action">get_main_action</a>

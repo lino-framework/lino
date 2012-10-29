@@ -911,7 +911,7 @@ Indicates that this Event shouldn't prevent other Events at the same time."""))
     def is_user_modified(self):
         return self.state != EventStates.new
         
-    def after_state_change(self,ar,kw,old,new):
+    def unused_after_state_change(self,ar,kw,old,new):
         """
         Tell the user that they should now inform the guests.
         """
@@ -933,8 +933,9 @@ Indicates that this Event shouldn't prevent other Events at the same time."""))
         Mark the event as "user modified" by setting a default state.
         This is important because EventGenerators may not modify any user-modified Events.
         """
-        if self.state is None:
-            if ar.request.subst_user:
+        if self.state is EventStates.new:
+            #~ if ar.request.subst_user:
+            if self.user != ar.get_user():
                 self.state = EventStates.suggested
                 #~ self.state = EventStates.reserved
             else:

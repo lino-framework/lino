@@ -245,38 +245,60 @@ class EventStates(dd.Workflow):
     
     
 add = EventStates.add_item
-add('10', _("New"), 'new',help_text=_("Default state of a new event."))
-add('20', _("Draft"), 'draft',help_text=_("Has been user-modified."))
-add('25', _("Suggested"), 'suggested',help_text=_("Created by colleague. External guests are notified, but user must confirm."))
+add('10', _("New"), 'new',help_text=_("Default state of an automatic event."))
+add('15', _("Suggested"), 'suggested',help_text=_("Suggested by colleague. External guests are notified, but user must confirm."))
+add('20', _("Draft"), 'draft')
 add('30', _("Notified"),'notified')
 add('40', _("Scheduled"), 'scheduled')
 add('50', _("Took place"),'took_place')
 add('60', _("Rescheduled"),'rescheduled')
 add('70', _("Cancelled"),'cancelled')
 add('80', _("Absent"),'absent')
-add('90', _("Obsolete"),'obsolete')
+#~ add('90', _("Obsolete"),'obsolete')
 
-EventStates.draft.add_workflow(_("Restart"),
-    states='notified scheduled rescheduled',
-    icon_file='arrow_undo.png',
-    help_text=_("Return to Draft state and restart workflow for this event."))
+EventStates.draft.add_workflow(_("Accept"),
+    states='new suggested',
+    owner=True,
+    icon_file='book.png',
+    help_text=_("User takes responsibility for this event. Guests are not yet notified."))
 EventStates.suggested.add_workflow(_("Suggest"),
-    states='_ draft',
+    icon_file='flag_blue.png',
+    states='new draft',
     owner=False,
-    help_text=_("Notify the user and ask to confirm (event was created by colleague for a client)."))
+    help_text=_("Event was created by colleague for a client. Owner must confirm it."))
+EventStates.new.add_workflow(_("Suggest"),
+    icon_file='cancel.png',
+    states='suggested',
+    owner=False,
+    help_text=_("Undo suggested event."))
 EventStates.notified.add_workflow(_("Notify guests"), 
+    icon_file='eye.png',
     states='draft',
     help_text=_("Invitations have been sent. Waiting for feedback from guests."))
 EventStates.scheduled.add_workflow(_("Confirm"), 
-    states=[None,'draft','suggested'],
+    states='new draft suggested',
+    owner=True,
     icon_file='accept.png',
-    help_text=_("Confirmed. All participants have been informed."))
-EventStates.took_place.add_workflow(states='scheduled notified',icon_file='emoticon_smile.png')
+    help_text=_("Mark this as Scheduled. All participants have been informed."))
+EventStates.took_place.add_workflow(
+    states='scheduled notified',
+    owner=True,
+    help_text=_("Event took place."),
+    icon_file='emoticon_smile.png')
 EventStates.rescheduled.add_workflow(_("Reschedule"),
+    owner=True,
     states='suggested scheduled notified',icon_file='date_edit.png')
-EventStates.cancelled.add_workflow(_("Cancel"),states='suggested scheduled notified',icon_file='cancel.png')
+EventStates.cancelled.add_workflow(_("Cancel"),
+    owner=True,
+    states='suggested scheduled notified',
+    icon_file='cancel.png')
 EventStates.absent.add_workflow(states='scheduled notified',icon_file='emoticon_unhappy.png')
-EventStates.obsolete.add_workflow()
+#~ EventStates.obsolete.add_workflow()
+EventStates.draft.add_workflow(_("Restart"),
+    states='notified scheduled rescheduled',
+    notify=True,
+    icon_file='arrow_undo.png',
+    help_text=_("Return to Draft state and restart workflow for this event."))
 
 #~ EventStates.add_statechange('draft',help_text=_("Default state of a new event."))
 #~ EventStates.add_statechange('suggested',_("Suggest"),states='_ draft')
