@@ -62,3 +62,12 @@ What we want is::
   
 Seems that this bug has "always" been there, but didn't lead to a failure before 
 I changed the "ignored non-local fields" warning into an Exception (:doc:`/2012/0929`).
+
+Dumpy resolving cirular dependencies
+------------------------------------
+
+The dumpy Serializer now generates, as a comment,
+an overview of the unresolved circular dependencies.
+This helped me to discover that it abandoned the resolution 
+process too early, causing fixtures to have a 
+lot of deferred instances when getting loaded back.

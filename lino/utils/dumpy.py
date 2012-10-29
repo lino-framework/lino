@@ -169,26 +169,47 @@ def new_content_type_id(m):
     def sort_models(self,unsorted):
         sorted = []
         hope = True
-        while unsorted and hope:
+        unsorted = set(unsorted)
+        while len(unsorted) and hope:
             hope = False
+            guilty = dict()
             #~ print "hope for", [m.__name__ for m in unsorted]
             for model in unsorted:
-                deps = [f.rel.to for f in model._meta.fields if f.rel is not None]
-                deps += [m for m in model._meta.parents.keys()]
-                ok = True
-                for d in deps:
-                    if d in unsorted:
-                    #~ if not d in sorted:
-                        ok = False
-                if ok:
-                    #~ print "ok:", model.__name__
+                deps = set([f.rel.to 
+                  for f in model._meta.fields 
+                      if f.rel is not None and f.rel.to is not model and f.rel.to in unsorted])
+                #~ deps += [m for m in model._meta.parents.keys()]
+                for m in sorted:
+                    if m in deps:
+                        deps.remove(m)
+                if len(deps):
+                    guilty[model] = deps
+                else:
                     sorted.append(model)
                     unsorted.remove(model)
                     hope = True
                     break
+                    
+                #~ ok = True
+                #~ for d in deps:
+                    #~ if d in unsorted:
+                        #~ ok = False
+                #~ if ok:
+                    #~ sorted.append(model)
+                    #~ unsorted.remove(model)
+                    #~ hope = True
+                    #~ break
+                #~ else:
+                    #~ guilty[model] = deps
                 #~ print model.__name__, "depends on", [m.__name__ for m in deps]
         if unsorted:
-            dblogger.debug("models with circular dependencies : %s",[m.__name__ for m in unsorted])
+            assert len(unsorted) == len(guilty)
+            msg = "There are %d models with circular dependencies :\n" % len(unsorted)
+            msg += "- " + '\n- '.join([
+                full_model_name(m)+' (depends on %s)' % ", ".join([full_model_name(d) for d in deps]) for m,deps in guilty.items()])
+            for ln in msg.splitlines():
+                self.stream.write('\n    # %s' % ln)
+            dblogger.info(msg)
             sorted.extend(unsorted)              
         return sorted      
     
