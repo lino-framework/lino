@@ -863,14 +863,15 @@ class ContactRelated(dd.Model):
         return settings.LINO.person_model.objects.filter(rolesbyperson__company=company).distinct()
 
     def full_clean(self,*args,**kw):
-        if self.company and self.contact_person is None:
-            qs = self.contact_person_choices_queryset(self.company)
-            #~ qs = self.company.rolesbyparent.all()
-            if qs.count() == 1:
-                self.contact_person = qs[0]
-            else:
-                #~ print "20120227 clear contact!"
-                self.contact = None
+        if not settings.LINO.loading_from_dump:
+            if self.company and self.contact_person is None:
+                qs = self.contact_person_choices_queryset(self.company)
+                #~ qs = self.company.rolesbyparent.all()
+                if qs.count() == 1:
+                    self.contact_person = qs[0]
+                else:
+                    #~ print "20120227 clear contact!"
+                    self.contact = None
         super(ContactRelated,self).full_clean(*args,**kw)
 
 
