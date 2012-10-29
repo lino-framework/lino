@@ -95,7 +95,8 @@ def new_content_type_id(m):
                   full_model_name(model,'_'), full_model_name(model)))
         self.stream.write('\n')
         for model in self.models:
-            fields = model._meta.local_fields
+            fields = [f for f,m in model._meta.get_fields_with_model() if m is None]
+            #~ fields = model._meta.local_fields
             #~ fields = [f for f in model._meta.fields if f.serialize]
             #~ fields = [f for f in model._meta.local_fields if f.serialize]
             self.stream.write('def create_%s(%s):\n' % (

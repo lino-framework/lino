@@ -6,7 +6,7 @@ Basic instructions
 
 Here is how we suggest to 
 :doc:`migrate existing data </topics/datamig>` 
-using :doc:`/topics/dpy`.
+using :doc:`/topics/dumpy`.
 
 Go to your local directory::
 
@@ -44,26 +44,24 @@ command::
 
 
 
-How to test whether a data migration worked correctly
+The double dump test
 -----------------------------------------------------
 
 When :mod:`initdb <lino.management.commands.initdb>` 
-successfully terminated, then there are good chances 
+successfully terminated without any warnings and error messages, 
+then there are good chances 
 that your database has been successfully migrated. 
 
-You should now test your new Lino version.
+But here is one more automated test that you may run 
+when everything seems okay.
 
-But here is one more automated test that you may run when 
-there are no errors and tracebacks and everything *seems* 
-okay.
-
-The additional test consists of the following steps:
+This so-called double dump test consists of the following steps:
 
 - make another dump :file:`a.py` of the freshly migrated database 
 - load this dump 
 - make a third dump :file:`b.py` of your database 
 - Compare the files :file:`a.py` and :file:`b.py`:
-  if there's no difference, then the test succeeded!
+  if there's no difference, then the double dump test succeeded!
 
 
 For example, here is a successful upgrade with data migration::
@@ -111,12 +109,3 @@ If there's no difference between the two dumps, then the test succeeded!
   fields.
   
   
-Designing data migrations for your application
-----------------------------------------------
-
-
-A magical `before_dumpy_save` attribute may contain custom 
-code to apply inside the try...except block. 
-If that code fails, the deserializer will simply 
-defer the save operation and try it again.
-    
