@@ -2,8 +2,10 @@
 ========
 
 
-- migrate create_isip_exampolicy Auswertungsstrategien haben jetzt kein Feld `uid` mehr.
-  StartedSummaryDescription wasn't abstract.
+- StartedSummaryDescription wasn't abstract.
+  isip.ExamPolicy is no longer ProjectRelated (`project`) 
+  and no longer cal.ComponentBase (`uid`).
+  
   
   
 Fixed a bug in :mod:`lino.utils.dumpy`
@@ -71,3 +73,7 @@ an overview of the unresolved circular dependencies.
 This helped me to discover that it abandoned the resolution 
 process too early, causing fixtures to have a 
 lot of deferred instances when getting loaded back.
+
+Cool! Ich hatte mich schon gewundert (aber war der Sache aus Zeitmangel 
+nie auf den Grund gegangen), weshalb er immer noch so viele "deferred" 
+meldet beim einlesen eines Dumps.

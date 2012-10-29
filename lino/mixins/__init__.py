@@ -128,18 +128,14 @@ class Controllable(dd.Model):
             #~ m(controllable)
 
     def save(self,*args,**kw):
-        if self.owner: #  and not self.is_user_modified():
-            self.owner.update_owned_instance(self)
-            #~ print "20120627 called update_owned_instance of ", self.owner.__class__
-            #~ m = getattr(self.owner,'update_owned_instance',None)
-            #~ if m:
-                #~ m(self)
-        super(Controllable,self).save(*args,**kw)
-        if self.owner: #  and self.is_user_modified():
-            self.owner.after_update_owned_instance(self)
-            #~ m = getattr(self.owner,'after_update_owned_instance',None)
-            #~ if m:
-                #~ m(self)
+        if settings.LINO.loading_from_dump:
+            super(Controllable,self).save(*args,**kw)
+        else:
+            if self.owner: #  and not self.is_user_modified():
+                self.owner.update_owned_instance(self)
+            super(Controllable,self).save(*args,**kw)
+            if self.owner: #  and self.is_user_modified():
+                self.owner.after_update_owned_instance(self)
 
 
 

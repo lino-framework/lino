@@ -63,9 +63,17 @@ class Serializer(base.Serializer):
         self.selected_fields = options.get("fields")
         self.use_natural_keys = options.get("use_natural_keys", False)
         if self.write_preamble:
-            self.stream.write('# -*- coding: UTF-8 -*-\n\n')
+            self.stream.write('# -*- coding: UTF-8 -*-\n')
             #~ self.stream.write('# Created using Lino version %s\n' % lino.__version__)
-            self.stream.write('SOURCE_VERSION = %r\n' % lino.__version__)
+            name,current_version,url = settings.LINO.using().next()
+            self.stream.write('''\
+"""
+This is a `Python dump <http://lino-framework.org/topics/dumpy.html>`_ 
+created by `%s <%s>`_.
+"""
+''' % (name,url))
+            self.stream.write('SOURCE_VERSION = %r\n' % current_version)
+            #~ self.stream.write('SOURCE_VERSION = %r\n' % lino.__version__)
             self.stream.write('from decimal import Decimal\n')
             self.stream.write('from datetime import datetime as dt\n')
             self.stream.write('from datetime import time,date\n')
