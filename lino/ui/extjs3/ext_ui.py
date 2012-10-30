@@ -1424,7 +1424,8 @@ tinymce.init({
             count = 0
             langs = babel.AVAILABLE_LANGUAGES
             #~ qs = users.User.objects.exclude(profile=dd.UserProfiles.blank_item) 20120829
-            qs = users.User.objects.exclude(profile=None) # .exclude(level='')
+            #~ qs = users.User.objects.exclude(profile=None) # .exclude(level='')
+            qs = users.User.objects.exclude(profile='')
             for lang in langs:
                 babel.set_language(lang)
                 for user in qs:
