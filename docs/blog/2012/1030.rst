@@ -86,3 +86,9 @@ the solution was to change::
 into::
 
         execfile(fn,{})
+
+Miscellaneous bugfixes
+----------------------
+
+- JS failure when :attr:`lino.Lino.use_quicktips` was False.
+- Startup failure when :attr:`lino.Lino.build_js_cache_on_startup` 

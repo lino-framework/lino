@@ -3281,7 +3281,9 @@ Lino.GridPanel = Ext.extend(Lino.GridPanel,{
           listeners: { 
             scope:this_
             //~ ,change:this_.search_change
+            #if $settings.LINO.use_quicktips
             ,render: Lino.quicktip_renderer("$_('Quick Search')","$_('Enter a text to use as quick search filter')")
+            #end if
             //~ ,keypress: this.search_keypress 
             ,blur: function() { this.is_searching = false}
           }
