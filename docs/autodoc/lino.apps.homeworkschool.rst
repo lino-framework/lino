@@ -1,6 +1,6 @@
-=======================
+=================================
 :mod:`lino.apps.homeworkschool`
-=======================
+=================================
 
 .. automodule:: lino.apps.homeworkschool
     :members:

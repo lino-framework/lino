@@ -1,0 +1,33 @@
+20121030
+========
+
+The "releasing" mode
+--------------------
+
+Lino-Welfare 1.0 and Lino 1.5.0 are almost released: 
+they have started their service on a production site. 
+
+Before doing the official release we remain in "releasing 
+mode": the production site is running on the development 
+version so that we can add quick bugfixes.
+
+Since there is currently only one production user,
+the "releasing mode" can remain active until
+we need a database migration.
+
+A first bugfix is the following::
+
+  Traceback (most recent call last):
+    File "t:\hgwork\welfare\lino_welfare\modlib\pcsw\management\commands\watch_tim.py", line 828, in watch
+      process_line(i,ln)
+    File "t:\hgwork\welfare\lino_welfare\modlib\pcsw\management\commands\watch_tim.py", line 801, in process_line
+      m(**kw)
+    File "t:\hgwork\welfare\lino_welfare\modlib\pcsw\management\commands\watch_tim.py", line 419, in PUT
+      self.applydata(obj,kw['data'])
+    File "t:\hgwork\welfare\lino_welfare\modlib\pcsw\management\commands\watch_tim.py", line 689, in applydata
+      pxs2client(data,obj)
+    File "t:\hgwork\welfare\lino_welfare\modlib\pcsw\management\commands\watch_tim.py", line 183, in pxs2client
+      person.card_type = pcsw.BeIdCardType.blank_item
+  AttributeError: type object 'BeIdCardType' has no attribute 'blank_item'
+
+

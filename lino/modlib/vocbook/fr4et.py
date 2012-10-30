@@ -662,14 +662,19 @@ if HAS_FUN:
 
     Fun.parse_words(Verbe,u"""
   il regardait [rəgar'dä] : ta vaatas
-  ouvrir [uv'riir] : avama
-  tuer [tü'ee] : tapma
+""")
+
+    Fun.parse_words(None,u"""
+  ouvre-moi ['uvrəmwa] : tee mulle lahti
+  ou [u] : või
+  il me tuera [il mə tüə'ra] : ta tapab mind 
   serrer [sä'ree] : suruma
+  grand [grA~] | grande [grA~də]: suur
   """)
     Fun.parse_words(Nom,u"""
   la maison [mä'zO~] : maja
-  la fenêtre [fə'näätrə] : aken
   le cerf [säär] : hirv
+  la fenêtre [fə'näätrə] : aken
   le lapin [lapÄ~] : küünik
   le chasseur [ša'sÖÖr] : jahimees
   la main [mÄ~] : käsi
@@ -726,6 +731,8 @@ trop vite [tro'vitə] : liiga kiiresti
 trop fort [tro'fOOr] : liiga kõvasti
     """)
 
+if HAS_FUN and FULL_CONTENT:
+  
     Fun.add_lesson(u"Minu onu...", 
     u"""
 | Mon tonton et ton tonton sont deux tontons,
@@ -1358,7 +1365,8 @@ if FULL_CONTENT:
 
 # belette : nirk 
 
-if HAS_FUN:
+
+if HAS_FUN and FULL_CONTENT:
 
   Fun.add_lesson(u"Au clair de la lune", u"""
 | Au clair de la lune,
@@ -1398,30 +1406,37 @@ if HAS_FUN:
   Dieu : Jumal
   """)
   
+if HAS_FUN:
+  
   Fun.add_lesson(u"Sur le pont d'Avignon", u"""
 | Sur le pont d'Avignon,
 | on y danse, on y danse ;
 | Sur le pont d’Avignon,
 | on y danse tout en rond !
-
+|
 | Les beaux messieurs font comme ça,
 | et puis encore comme ça.
-
+|
 | Les belles dames font comme ça,
 | et puis encore comme ça.  
-
+|
 | Les cordonniers font comme ça,
 | et puis encore comme ça.  
   """)
   Fun.parse_words(None,u"""
+  sur : peal
   le pont [pO~] : sild
   on danse ['dA~sə] : tantsitakse
-  sur : peal
   tout en rond : ringis
   les beaux messieurs : ilusad härrad
   les belles dames : ilusad daamid
+  ils font [il fO~] : nad teevad
+  comme ça [kOm'sa] : niimoodi
+  et puis encore [e pwi A~'kOOr] : ja siis veel
   """)
   
+
+if HAS_FUN and FULL_CONTENT:
   
   Fun.add_lesson(u"J'ai du bon tabac", u"""
 
