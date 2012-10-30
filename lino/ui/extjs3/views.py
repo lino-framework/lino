@@ -284,7 +284,8 @@ def form2obj_and_save(ar,data,elem,is_new,restful,file_upload=False): # **kw2sav
         rh.store.form2obj(ar,data,elem,is_new)
     except exceptions.ValidationError,e:
         #~ raise
-        return settings.LINO.ui.error_response(e)
+        kw = settings.LINO.ui.error_response(e)
+        return json_response(kw)
        #~ return error_response(e,_("There was a problem while validating your data : "))
     #~ logger.info('20120228 store.form2obj passed, elem is %s' % obj2str(elem))
     
@@ -306,7 +307,9 @@ def form2obj_and_save(ar,data,elem,is_new,restful,file_upload=False): # **kw2sav
         try:
             elem.full_clean()
         except exceptions.ValidationError, e:
-            return settings.LINO.ui.error_response(e) #,_("There was a problem while validating your data : "))
+            kw = settings.LINO.ui.error_response(e) #,_("There was a problem while validating your data : "))
+            return json_response(kw)
+            
             
         kw2save = {}
         if is_new:
@@ -319,9 +322,10 @@ def form2obj_and_save(ar,data,elem,is_new,restful,file_upload=False): # **kw2sav
             
         #~ except Exception,e:
         except IntegrityError,e:
-            return settings.LINO.ui.error_response(e) # ,_("There was a problem while saving your data : "))
+            kw = settings.LINO.ui.error_response(e) # ,_("There was a problem while saving your data : "))
             #~ return views.json_response_kw(success=False,
                   #~ msg=_("There was a problem while saving your data:\n%s") % e)
+            return json_response(kw)
                   
         if is_new:
             changes.log_create(request,elem)
