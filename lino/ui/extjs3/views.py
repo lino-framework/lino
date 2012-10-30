@@ -322,7 +322,7 @@ def form2obj_and_save(ar,data,elem,is_new,restful,file_upload=False): # **kw2sav
             
         #~ except Exception,e:
         except IntegrityError,e:
-            kw = settings.LINO.ui.error_response(e) # ,_("There was a problem while saving your data : "))
+            kw = settings.LINO.ui.error_response(e,alert=True) # ,_("There was a problem while saving your data : "))
             #~ return views.json_response_kw(success=False,
                   #~ msg=_("There was a problem while saving your data:\n%s") % e)
             return json_response(kw)
