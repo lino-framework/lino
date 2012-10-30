@@ -139,7 +139,8 @@ class UI:
             kw.update(alert=alert)
         if message:
             kw.update(message=message)
-        return self.action_response(kw)
+        #~ return self.action_response(kw)
+        return kw
 
     def error_response(self,e=None,message=None,**kw):
         """
@@ -155,7 +156,8 @@ class UI:
         if message is None:
             message = unicode(e)
         kw.update(message=message)
-        return self.action_response(kw)
+        #~ return self.action_response(kw)
+        return kw
     
     def action_response(self,kw):
         """

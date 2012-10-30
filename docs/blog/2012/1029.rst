@@ -89,3 +89,15 @@ meldet beim einlesen eines Dumps.
   lsaffre@lino:/usr/local/django/test_dsbe$ python manage.py dumpdata --format py > fixtures/b.py
   lsaffre@lino:/usr/local/django/test_dsbe$ diff fixtures/a.py fixtures/b.py
 
+
+Nachtsitzung
+------------
+
+Noch Tests und Bugfixes.
+
+- contact_role wurde nicht automatisch zugewiesen
+
+- assign_coach gab dict statt JsonResponse zurück. 
+  Ich Wirklichkeit geben success_response und error_response jetzt ebenfalls dicts zurück. Eine RowAction.run() muss entweder None oder einen dict zurückgeben, nicht eine action_response().
+
+- watch_tim 

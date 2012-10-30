@@ -852,10 +852,6 @@ class ContactRelated(dd.Model):
                 self.contact_person = roles[0].person
                 self.contact_role = roles[0].type
             return 
-        contact = self.get_contact()
-        if contact is not None:
-            self.contact_role = contact.type
-            #~ print '20120929b', contact.type
       
     @classmethod
     def contact_person_choices_queryset(cls,company):
@@ -872,6 +868,10 @@ class ContactRelated(dd.Model):
                 else:
                     #~ print "20120227 clear contact!"
                     self.contact = None
+            contact = self.get_contact()
+            if contact is not None:
+                self.contact_role = contact.type
+                #~ print '20120929b', contact.type
         super(ContactRelated,self).full_clean(*args,**kw)
 
 

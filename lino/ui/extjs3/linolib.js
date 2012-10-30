@@ -3259,7 +3259,7 @@ Lino.GridPanel = Ext.extend(Lino.GridPanel,{
               this_.getView().focusEl.focus();
           }
         } 
-        else console.log("is_searching -> no focussing");
+        //~ else console.log("is_searching -> no focussing");
         //~ var t = this.getTopToolbar();
         //~ var activePage = Math.ceil((t.cursor + t.pageSize) / t.pageSize);
         //~ this.quick_search_field.focus(); // 20121024
@@ -3672,7 +3672,7 @@ Lino.GridPanel = Ext.extend(Lino.GridPanel,{
   search_validate : function(value) {
     if (value == this.quick_search_text) return true;
     this.is_searching = true;
-    console.log('search_validate',value)
+    //~ console.log('search_validate',value)
     this.quick_search_text = value;
     this.set_base_param('$URL_PARAM_FILTER',value); 
     //~ this.getTopToolbar().changePage(1);

@@ -749,7 +749,8 @@ class ApiElement(View):
                 rv = a.action.run(elem,ar)
                 if rv is None:
                     return ui.success_response()
-                return rv
+                return ui.action_response(rv)
+                #~ return rv
             except actions.ConfirmationRequired,e:
                 r = dict(
                   success=True,

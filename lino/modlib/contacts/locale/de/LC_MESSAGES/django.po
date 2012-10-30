@@ -8,7 +8,7 @@ msgstr ""
 "Project-Id-Version: lino.modlib.contacts\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2012-10-25 18:12+0100\n"
-"PO-Revision-Date: 2012-10-24 01:26+0200\n"
+"PO-Revision-Date: 2012-10-29 20:16+0200\n"
 "Last-Translator: Luc Saffre <luc.saffre@gmail.com>\n"
 "Language-Team: ds <luc.saffre@gmail.com>\n"
 "MIME-Version: 1.0\n"
@@ -214,7 +214,7 @@ msgstr "Vertreten durch"
 
 #: .\models.py:833
 msgid "represented as"
-msgstr "Vertreten durch"
+msgstr "in seiner Eigenschaft als"
 
 #: .\models.py:899
 msgid "The next automatic id for Person or Company"
