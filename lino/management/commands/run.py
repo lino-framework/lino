@@ -57,5 +57,6 @@ class Command(BaseCommand):
         fn = args[0]
         sys.argv = sys.argv[2:]
         globals()['__name__'] = '__main__'
+        #~ execfile(fn,{})
         execfile(fn)
           

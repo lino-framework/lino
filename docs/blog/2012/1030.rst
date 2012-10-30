@@ -1,7 +1,7 @@
 20121030
 ========
 
-The "releasing" mode
+The "releasing mode"
 --------------------
 
 Lino-Welfare 1.0 and Lino 1.5.0 are almost released: 
@@ -9,13 +9,13 @@ they have started their service on a production site.
 
 Before doing the official release we remain in "releasing 
 mode": the production site is running on the development 
-version so that we can add quick bugfixes.
-
+version so that we can add quick bugfixes without having 
+to release each of them.
 Since there is currently only one production user,
 the "releasing mode" can remain active until
 we need a database migration.
 
-A first bugfix is the following::
+A first such bugfix is the following::
 
   Traceback (most recent call last):
     File "t:\hgwork\welfare\lino_welfare\modlib\pcsw\management\commands\watch_tim.py", line 828, in watch
@@ -31,3 +31,58 @@ A first bugfix is the following::
   AttributeError: type object 'BeIdCardType' has no attribute 'blank_item'
 
 
+
+Another bug, also in watch_tim, was:
+
+  Cannot resolve keyword 'type_id' into field. Choices are: client, company, contact_person, contact_role, id, remark, type
+
+
+
+
+Fixed a bug in :mod:`lino.management.commands.run`
+----------------------------------------------------
+
+And a third bug, in :mod:`lino.management.commands.run`, was
+If I tried to run the following file::
+
+  def f1():
+      return "f1"
+      
+  def f2():
+      return f1()
+      
+  print f2()    
+
+
+then I got::
+
+  Traceback (most recent call last):
+    File "manage.py", line 12, in <module>
+      execute_manager(settings)
+    File "l:\snapshots\django\django\core\management\__init__.py", line 458, in execute_manager
+      utility.execute()
+    File "l:\snapshots\django\django\core\management\__init__.py", line 381, in execute
+      self.fetch_command(subcommand).run_from_argv(self.argv)
+    File "l:\snapshots\django\django\core\management\base.py", line 195, in run_from_argv
+      self.execute(*args, **options.__dict__)
+    File "l:\snapshots\django\django\core\management\base.py", line 231, in execute
+      output = self.handle(*args, **options)
+    File "t:\hgwork\lino\lino\management\commands\run.py", line 61, in handle
+      execfile(fn)
+    File "tt.py", line 8, in <module>
+      print f2()
+    File "tt.py", line 5, in f2
+      return f1()
+  NameError: global name 'f1' is not defined
+
+
+It has to do with Python 
+`execfile <http://docs.python.org/2.7/library/functions.html?highlight=execfile#execfile>`_ function.
+I din't understand in-deep, but
+the solution was to change::
+
+        execfile(fn)
+        
+into::
+
+        execfile(fn,{})
