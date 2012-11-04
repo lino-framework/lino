@@ -488,7 +488,9 @@ if not settings.LINO.project_model:
     
     
 class MyOutbox(Mails):
-    required = dict()
+    #~ required = dict()
+    required = dict(user_groups='office')
+    
     #~ required_user_level = None
     #~ known_values = dict(outgoing=True)
     label = _("My Outbox")

@@ -812,6 +812,7 @@ class ExtUI(base.UI):
                     field.name = de.__name__
                     field._return_type_for_method = de.slave_as_html_meth(self)
                     lh.add_store_field(field)
+                    kw.update(required=de.required) # e.g. lino.Home.UsersWithClients not visible for everybody
                     e = ext_elems.HtmlBoxElement(lh,field,**kw)
                     return e
             else:
@@ -929,6 +930,7 @@ class ExtUI(base.UI):
         urlpatterns = patterns('',
             (rx+'$', views.Index.as_view()),
             (rx+r'api/main_html$', views.MainHtml.as_view()),
+            (rx+r'auth$', views.Authenticate.as_view()),
             (rx+r'grid_config/(?P<app_label>\w+)/(?P<actor>\w+)$', views.GridConfig.as_view()),
             (rx+r'api/(?P<app_label>\w+)/(?P<actor>\w+)$', views.ApiList.as_view()),
             (rx+r'api/(?P<app_label>\w+)/(?P<actor>\w+)/(?P<pk>.+)$', views.ApiElement.as_view()),
@@ -1216,8 +1218,9 @@ tinymce.init({
             a = users.MySettings.default_action
             handler = self.ext_renderer.action_call(None,a,dict(record_id=user.pk))
             handler = "function(){%s}" % handler
+            mysettings = dict(text=_("My settings"),handler=js_code(handler))
+            login_menu_items = [mysettings]
             if len(authorities):
-                mysettings = dict(text=_("My settings"),handler=js_code(handler))
                 #~ act_as = [
                     #~ dict(text=unicode(u),handler=js_code("function(){Lino.set_subst_user(%s)}" % i)) 
                         #~ for i,u in user.get_received_mandates()]
@@ -1229,14 +1232,34 @@ tinymce.init({
                     text=_("Myself"),
                     handler=js_code("function(){Lino.set_subst_user(null)}")))
                 act_as = dict(text=_("Act as..."),menu=dict(items=act_as))
-                login_menu = dict(
-                    text=user_text,
-                    menu=dict(items=[act_as,mysettings]))
-            else:
-                login_menu = dict(text=user_text,handler=js_code(handler))
                 
-            yield "Lino.login_menu = %s;" % py2js(login_menu)
-            yield "Lino.main_menu = Lino.main_menu.concat(['->',Lino.login_menu]);"
+                login_menu_items.insert(0,act_as)
+                #~ login_menu_items = [act_as,mysettings]
+                
+            if settings.LINO.remote_user_header is None:
+                login_menu_items.append(dict(text=_("Log out"),handler=js_code('Lino.logout')))
+                login_menu_items.append(dict(text=_("Change password"),handler=js_code('Lino.change_password')))
+                login_menu_items.append(dict(text=_("Forgot password"),handler=js_code('Lino.forgot_password')))
+            
+            login_menu = dict(
+                text=user_text,
+                menu=dict(items=login_menu_items))
+            #~ else:
+                #~ login_menu = dict(text=user_text,handler=js_code(handler))
+                
+            #~ yield "Lino.login_menu = %s;" % py2js(login_menu)
+            #~ yield "Lino.main_menu = Lino.main_menu.concat(['->',Lino.login_menu]);"
+            yield "Lino.main_menu = Lino.main_menu.concat(['->',%s]);" % py2js(login_menu)
+                
+        elif settings.LINO.user_model is not None: # 20121103
+            login_buttons = [
+              #~ dict(xtype="textfield",emptyText=_('Enter your username')),
+              #~ dict(xtype="textfield",emptyText=_('Enter your password'),inputType="password"),
+              dict(xtype="button",text="Login",handler=js_code('Lino.show_login_window')),
+              #~ dict(xtype="button",text="Register",handler=Lino.register),
+              ]
+            yield "Lino.main_menu = Lino.main_menu.concat(['->',%s]);" % py2js(login_buttons)
+                
                 
         
         #~ yield "Lino.load_mask = new Ext.LoadMask(Ext.getBody(), {msg:'Immer mit der Ruhe...'});"

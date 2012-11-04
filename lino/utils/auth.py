@@ -45,7 +45,8 @@ from django import http
 
 from lino.utils import babel
 from lino.core.modeltools import resolve_model
-from lino.core import perms
+#~ from lino.core import perms
+from lino.utils.choicelists import UserProfiles
 from lino.ui import requests as ext_requests
 
 class AnonymousUser(object):
@@ -57,19 +58,99 @@ class AnonymousUser(object):
     email = None
     username = 'anonymous'
     modified = None
+    partner = None
+    language = None
     
-    def __init__(self):
-        try:
-            self.profile = perms.UserProfiles.get_by_value(settings.LINO.anonymous_user_profile)
-        except KeyError:
-            raise Exception(
-                "Invalid value %r for `LINO.anonymous_user_profile`. Must be one of %s" % (
-                    settings.LINO.anonymous_user_profile,
-                    [i.value for i in perms.UserProfiles.items()]))
+    _instance = None
+    
+    @classmethod
+    def instance(cls):
+        if cls._instance is None:
+            #~ cls._instance = super(AnonymousUser, cls).__new__(cls, *args, **kwargs)
+            cls._instance = AnonymousUser()
+            try:
+                cls._instance.profile = UserProfiles.get_by_value(settings.LINO.anonymous_user_profile)
+            except KeyError:
+                raise Exception(
+                    "Invalid value %r for `LINO.anonymous_user_profile`. Must be one of %s" % (
+                        settings.LINO.anonymous_user_profile,
+                        [i.value for i in UserProfiles.items()]))
+        return cls._instance
+    
+
+
+class NOT_NEEDED:
+    pass
+    
+def authenticate(username,password=NOT_NEEDED):
+
+    if not settings.LINO.user_model or not username:
+        #~ if self.anonymous_user is None:
+            #~ self.anonymous_user = AnonymousUser()
+        #~ request.user = self.anonymous_user
+        return AnonymousUser.instance()
         
-
-
+    """
+    20120110 : alicia hatte es geschafft, 
+    beim Anmelden ein Leerzeichen vor ihren Namen zu setzen. 
+    Apache ließ sie als " alicia" durch.
+    Und Lino legte brav einen neuen User " alicia" an.
+    """
+    username = username.strip()
     
+    try:
+        user = settings.LINO.user_model.objects.get(username=username)
+        if password != NOT_NEEDED:
+            if not user.check_password(password):
+                logger.info("20121104 password mismatch")
+                return None
+        return user
+    except settings.LINO.user_model.DoesNotExist,e:
+        logger.info("20121104 no username %r",username)
+        return None  
+        
+        
+def on_login(request,user):
+    
+    request.user = user
+        
+    if len(babel.AVAILABLE_LANGUAGES) > 1:
+        #~ lang = settings.LINO.override_user_language() or request.user.language
+        lang = user.language
+        if lang:
+            translation.activate(lang)
+            request.LANGUAGE_CODE = translation.get_language()
+        
+          
+    if request.method == 'GET':
+        rqdata = request.GET
+    elif request.method == 'PUT':
+        rqdata = http.QueryDict(request.raw_post_data)
+    elif request.method == 'POST':
+        rqdata = request.POST
+    else: # DELETE
+        request.subst_user = None
+        request.requesting_panel = None
+        return
+        
+    su = rqdata.get(ext_requests.URL_PARAM_SUBST_USER,None)
+    if su:
+        try:
+            su = settings.LINO.user_model.objects.get(id=int(su))
+            #~ logger.info("20120714 su is %s",request.subst_user.username)
+        except settings.LINO.user_model.DoesNotExist, e:
+            su = None
+    request.subst_user = su
+    request.requesting_panel = rqdata.get(ext_requests.URL_PARAM_REQUESTING_PANEL,None)
+    
+    ul = rqdata.get(ext_requests.URL_PARAM_USER_LANGUAGE,None)
+    if ul:
+        translation.activate(ul)
+        request.LANGUAGE_CODE = translation.get_language()
+            
+            
+
+            
 class RemoteUserMiddleware(object):
     """
     This does the same as
@@ -84,81 +165,37 @@ class RemoteUserMiddleware(object):
     
     """
     
-    anonymous_user = None
+    def process_request(self, request):
+      
+        # trigger site startup if necessary
+        settings.LINO.startup()
+        
+        username = request.META.get(
+            settings.LINO.remote_user_header,settings.LINO.default_user)
+            
+        user = authenticate(username)
+        
+        if user is None:
+            logger.exception("Unknown username %s from request %s",username, request)
+            raise Exception(
+              "Unknown username %r. Please contact your system administrator." 
+              % username)
+              
+        on_login(request,user)
+    
+
+class SessionUserMiddleware(object):
 
     def process_request(self, request):
       
         # trigger site startup if necessary
         settings.LINO.startup()
         
-        if settings.LINO.user_model:
+        user = authenticate(request.session.get('username'),request.session.get('password'))
         
-            username = request.META.get(
-                settings.LINO.remote_user_header,settings.LINO.default_user)
-        else:
-          
-            username = None
-            
-        if username:
-            """
-            20120110 : alicia hatte es geschafft, 
-            beim Anmelden ein Leerzeichen vor ihren Namen zu setzen. 
-            Apache ließ sie als " alicia" durch.
-            Und Lino legte brav einen neuen User " alicia" an.
-            """
-            username = username.strip()
-            
-            try:
-                request.user = settings.LINO.user_model.objects.get(username=username)
-            except settings.LINO.user_model.DoesNotExist,e:
-                # [C1]
-                request.user = None  
-                logger.exception("Unknown username %s from request %s",username, request)
-                raise Exception(
-                  "Unknown username %r. Please contact your system administrator." 
-                  % username)
-            
-            if len(babel.AVAILABLE_LANGUAGES) > 1:
-                #~ lang = settings.LINO.override_user_language() or request.user.language
-                lang = request.user.language
-                if lang:
-                    translation.activate(lang)
-                    request.LANGUAGE_CODE = translation.get_language()
-                
-        else:
-          
-            if self.anonymous_user is None:
-                self.anonymous_user = AnonymousUser()
-            request.user = self.anonymous_user
-            request.subst_user = None
-            
-              
-        if request.method == 'GET':
-            rqdata = request.GET
-        elif request.method == 'PUT':
-            rqdata = http.QueryDict(request.raw_post_data)
-        elif request.method == 'POST':
-            rqdata = request.POST
-        else: # DELETE
-            request.subst_user = None
-            request.requesting_panel = None
-            return 
-        su = rqdata.get(ext_requests.URL_PARAM_SUBST_USER,None)
-        if su:
-            try:
-                su = settings.LINO.user_model.objects.get(id=int(su))
-                #~ logger.info("20120714 su is %s",request.subst_user.username)
-            except settings.LINO.user_model.DoesNotExist, e:
-                pass
-        request.subst_user = su
-        request.requesting_panel = rqdata.get(ext_requests.URL_PARAM_REQUESTING_PANEL,None)
+        if user is None:
+            logger.debug("Login failed username %s from request %s",username, request)
+            user = AnonymousUser.instance()
         
-        ul = rqdata.get(ext_requests.URL_PARAM_USER_LANGUAGE,None)
-        if ul:
-            translation.activate(ul)
-            request.LANGUAGE_CODE = translation.get_language()
-            
-            
-                
+        on_login(request,user)
         
-    

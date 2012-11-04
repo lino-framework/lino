@@ -1,0 +1,38 @@
+20121103
+========
+
+Session-based authentication
+-----------------------------
+
+Lino applications can now handle 
+:doc:`authentication </topics/auth>`
+themselves using sessions. 
+
+This behaviour is automatically activated when 
+:attr:`lino.Lino.remote_user_header` is `None` 
+(and :attr:`lino.Lino.user_model` not).
+
+One side effect is that applications no longer directly 
+define the :setting:`INSTALLED_APPS` setting 
+but override the new :meth:`lino.Lino.get_installed_apps` method.
+This API changes is necessary 
+because we want Lino to decide 
+automatically whether 
+`django.contrib.sessions` 
+is to be included or not.
+
+
+Also ich habe dieses Wochenende einige Stunden damit verbracht,
+ein Feature from scratch neu zu programmieren, 
+das Django eigentlich schon immer hatte. 
+Aber Lino hatte es nicht, und hat es auch jetzt noch nicht ganz 
+(Passort ändern und Passwort vergessen funktionieren noch nicht), 
+und wird wohl auch noch eine ganze Zeitlang unter Kinderkrankheiten leiden.
+Das alles nur, weil mir das Permission-System von Django nicht gut genug ist. 
+Ja, da bin ich Künstler und Perfektionist: was mir nicht gefällt, 
+benutze ich nicht.
+
+Der sichtbare Nutzen dieser Übrung ist, dass die Demo
+
+En passant habe ich wohl auch was Nützliches
+

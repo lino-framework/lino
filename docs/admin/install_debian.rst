@@ -26,10 +26,6 @@ Software prerequisites
 
 You'll need the following Debian packages installed:
 
-* Packages needed to download Lino and Django::
-
-    mercurial subversion unzip patch
-
 * Packages needed by Django applications to run in Apache2::
 
     apache2 apache2-doc apache2-mpm-prefork \
@@ -39,6 +35,7 @@ You'll need the following Debian packages installed:
     
 * Packages needed by Lino to work::
 
+    python-django
     python-dateutil python-yaml python-cheetah python-docutils python-vobject python-lxml
     python-pysqlite2
     mysql-server python-mysqldb
@@ -65,6 +62,10 @@ You'll need the following Debian packages installed:
 
     mdbtools
 
+* Packages needed to download Lino and Django::
+
+    mercurial subversion unzip patch
+
 
 
 Create directories
@@ -83,36 +84,48 @@ it will inherit the group of the directory.
 Download Lino
 -------------
 
+
+**To install a released version of Lino**
+
+- Consult :doc:`/releases` to see which version you want.
+
+- Download and unpack the corresponding `.tar.gz  file 
+  `from http://pypi.python.org/pypi/lino#downloads
+  
+- For example::
+
+    cd ~/snapshots
+    wget http://pypi.python.org/packages/source/l/lino/lino-1.5.0.tar.gz
+    
+
+**To install a development version of Lino**
+
 Go to the :file:`~/snapshots` directory and do::
 
-  hg clone https://lino.googlecode.com/hg/ lino
-
+  hg clone https://lino.googlecode.com/hg/ lino-dev
+  
+  
 Note: don't run Lino's file `setup.py`, it is not necessary and doesn't work.  
 Just `Set up your Python path`_ manually (see below).
 
 Install Django
 --------------
 
-Lino requires Django version 1.3 or later.
-To see whether Django is already installed (and which version)::
+To see whether Django is installed (and which version)::
 
   $ python -c 'import django; print django.get_version()'
 
-The Django version 1.2.3 provided 
-by the Debian Squeeze `python-django` package 
-is too old for Lino, so you need either the latest 
-released Django version 1.4, or (if you don't 
-need production server quality) Django's 
-development version. 
+Lino requires Django version 1.3 or later. 
+If you have it, then you can skip to the next section.
 
-To install Django 1.4::
+To manually install a snapshot of Django 1.4::
 
   cd ~/snapshots
   wget https://www.djangoproject.com/m/releases/1.4/Django-1.4.tar.gz
   tar xzvf Django-1.4.tar.gz
   ln -s Django-1.4 django
 
-To install Django's latest development snapshot::
+Or to install Django's latest development snapshot::
 
   cd ~/snapshots
   svn co http://code.djangoproject.com/svn/django/trunk/ django
@@ -120,9 +133,8 @@ To install Django's latest development snapshot::
 We suggest to *not* run Django's :file:`setup.py` since that's 
 not needed for Lino and makes it more difficult to switch from one 
 version to the other.
-Just remember where you installed it and 
-specify this path in your your :xfile:`settings.py` 
-(see later).
+In both cases, just remember where you installed it and 
+specify this in your your :doc:`Python path <pythonpath>`
 
 
 Set up the Python Path
@@ -160,8 +172,8 @@ into `~/snapshots/`::
   unzip extensible-1.0.1.zip
   rm extensible-1.0.1.zip
 
-  wget http://launchpad.net/appy/0.8/0.8.0/+download/appy0.8.0.zip
-  unzip appy0.8.0.zip -d appy
+  wget http://launchpad.net/appy/0.8/0.8.0/+download/appy0.8.1.zip
+  unzip appy0.8.1.zip -d appy
   
   wget http://pypi.python.org/packages/source/o/odfpy/odfpy-0.9.4.tar.gz
   tar -xvzf odfpy-0.9.4.tar.gz

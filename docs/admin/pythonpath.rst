@@ -93,5 +93,6 @@ OS              Recommended directory
 =============== ==============================================
 Debian Lenny    :file:`/usr/local/lib/python2.5/site-packages`
 Debian Squeeze  :file:`/usr/local/lib/python2.6/dist-packages`
+Debian Wheezy   :file:`/usr/local/lib/python2.7/dist-packages`
 =============== ==============================================
 

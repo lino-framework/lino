@@ -356,6 +356,103 @@ Lino.insert_subst_user = function(p){
     //~ console.log('20120714 insert_subst_user -->',Lino.subst_user,p);
 }
 
+Lino.login_window = null;
+
+
+Lino.show_login_window = function() {
+  //~ console.log('20121103 show_login_window',arguments);
+  if (Lino.login_window == null) {
+    
+      function do_login() { 
+            login_panel.getForm().submit({ 
+                method:'POST', 
+                waitTitle:'Connecting', 
+                waitMsg:'Sending data...',
+                success:function(){ 
+                  //~ console.log('20121104 logged in',arguments);
+                  Lino.login_window.hide();
+                  Lino.close_all_windows();
+                },
+                failure: function(form,action) { 
+                  //~ this.loadMask.hide();
+                  Lino.on_submit_failure(form,action);
+                }
+                //~ failure:function(form, action){ 
+                    //~ alert_msg
+                    //~ if(action.failureType == 'server'){ 
+                        //~ obj = Ext.util.JSON.decode(action.response.responseText); 
+                        //~ Ext.Msg.alert('Login Failed!', obj.errors.reason); 
+                    //~ }else{ 
+                        //~ Ext.Msg.alert('Warning!', 'Authentication server is unreachable : ' + action.response.responseText); 
+                    //~ } 
+                    //~ Lino.login_panel.getForm().reset(); 
+                //~ } 
+            }); 
+      };
+    
+      var login_button = new Ext.Button({ 
+        text:'Login',
+        formBind: true,	 
+        // Function that fires when user clicks the button 
+        handler: do_login});
+    
+      var login_panel = new Ext.FormPanel({ 
+        //~ inspired by http://www.sencha.com/learn/a-basic-login/
+        autoHeight:true,
+        labelWidth:80,
+        url:'/auth', 
+        frame:true, 
+        defaultType:'textfield',
+        monitorValid:true,
+        items:[{ 
+            fieldLabel:'Username', 
+            name:'username', 
+            autoHeight:true,
+            allowBlank:false 
+        },{ 
+            fieldLabel:'Password', 
+            name:'password', 
+            inputType:'password', 
+            autoHeight:true,
+            allowBlank:false 
+        }],        
+        buttons:[ login_button ]});
+        
+      var enter_key_binding = {
+          key: Ext.EventObject.ENTER,
+          //~ fn: function() { console.log("20121104 click!"); login_button.fireEvent('click',login_button)}
+          fn: function() { console.log("20121104 click!"); do_login()}
+          //~ scope: login_button
+      };        
+        
+      Lino.login_window = new Ext.Window({
+          layout:'fit',
+          width:300,
+          title:'Please Login', 
+          autoHeight:true,
+          closeAction: "hide",
+          keys: enter_key_binding,
+          //~ defaultButton: login_button,
+          //~ height:'auto',
+          //~ closable: false,
+          //~ resizable: false,
+          //~ plain: true,
+          //~ border: false,
+          items: [login_panel] });
+  };
+  Lino.login_window.show();
+};
+
+Lino.logout = function(id,name) {
+    console.log('20121104 gonna log out',arguments);
+    //~ Lino.do_action
+    Lino.call_row_action(Lino.viewport,'/auth',{},'logout',undefined,undefined,function(){
+        console.log('20121104 logged out',arguments);
+        //~ Lino.login_window.hide();
+        Lino.close_all_windows();
+    })
+}
+
 Lino.set_subst_user = function(id,name) {
     //~ console.log(20120714,'Lino.set_subst_user',id,name);
     Lino.subst_user = id;
@@ -1881,7 +1978,7 @@ Lino.do_on_current_record = function(panel,fn,phantom_fn) {
 };
 
 
-Lino.call_row_action = function(panel,url,p,actionName,step,fn,on_success) {
+Lino.call_row_action = function(panel,url,p,actionName,step,on_confirm,on_success) {
   p.$ext_requests.URL_PARAM_ACTION_NAME = actionName;
   if (!panel) panel = Lino.viewport;
   Ext.apply(p,panel.get_base_params());
@@ -1894,7 +1991,7 @@ Lino.call_row_action = function(panel,url,p,actionName,step,fn,on_success) {
     method: 'GET',
     url: url,
     params: p,
-    success: Lino.action_handler(panel,on_success,fn)
+    success: Lino.action_handler(panel,on_success,on_confirm)
   });
 };
 

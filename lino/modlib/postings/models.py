@@ -110,7 +110,8 @@ class Postings(dd.Table):
     order_by = ['date']
     
 class MyPostings(Postings,mixins.ByUser):
-    required = dict()
+    required = dict(user_groups='office')
+    #~ required = dict()
     #~ master_key = 'owner'
     column_names = 'date partner state workflow_buttons *'
   

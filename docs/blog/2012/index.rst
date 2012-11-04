@@ -331,9 +331,16 @@ As long as nobody protests, I'll save some time by writing in German.
   |br|
   :doc:`29 <1029>`
   :doc:`30 <1030>`
+  31
 
 .. |Nov| replace::  **November**
   |br| 
+  :doc:`29 <1029>`
+  :doc:`30 <1030>`
+  31
+  01
+  :doc:`02 <1102>`
+  :doc:`03 <1103>`
 
 .. |Dec| replace::  **December**
   |br| 

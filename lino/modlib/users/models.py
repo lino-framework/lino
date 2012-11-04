@@ -21,6 +21,11 @@ from django.db import models
 from django.utils.translation import ugettext_lazy as _
 from django.conf import settings
 
+from django.contrib.auth.hashers import (
+    check_password, make_password, is_password_usable)
+
+
+
 from lino import dd
 from lino.utils import babel
 from lino.utils import mti
@@ -73,6 +78,8 @@ class User(mixins.CreatedModified):
         help_text=_("""
         Required. Must be unique. 
         """))
+        
+    password = models.CharField(_('Password'), max_length=128)
         
     profile = dd.UserProfiles.field(blank=True)
     
@@ -157,6 +164,8 @@ class User(mixins.CreatedModified):
             #~ self.language = p.language
         if not self.language:
             self.language = babel.DEFAULT_LANGUAGE
+        if not self.password:
+            self.set_unusable_password()
         super(User,self).full_clean(*args,**kw)
         
     #~ def save(self,*args,**kw):
@@ -166,6 +175,30 @@ class User(mixins.CreatedModified):
         #~ return [ [u.id,_("as %s")%u] for u in self.__class__.objects.all()]
         return [ [u.id,unicode(u)] for u in self.__class__.objects.all()]
         #~ return self.__class__.objects.all()
+
+    # the following methods are unchanged copies from Django's User model
+        
+    def set_password(self, raw_password):
+        self.password = make_password(raw_password)
+
+    def check_password(self, raw_password):
+        """
+        Returns a boolean of whether the raw_password was correct. Handles
+        hashing formats behind the scenes.
+        """
+        def setter(raw_password):
+            self.set_password(raw_password)
+            self.save()
+        return check_password(raw_password, self.password, setter)
+
+    def set_unusable_password(self):
+        # Sets a value that will never be a valid hash
+        self.password = make_password(None)
+
+    def has_usable_password(self):
+        return is_password_usable(self.password)
+
+        
 
 
 class UserDetail(dd.FormLayout):

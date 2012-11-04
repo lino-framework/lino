@@ -55,6 +55,8 @@ class Command(BaseCommand):
             
         self.options = options
         
+        settings.LINO.startup()
+        
         encoding = self.stdout.encoding or 'utf-8'
         
         def writeln(ln):
@@ -75,8 +77,8 @@ class Command(BaseCommand):
             #~ "Class",
             "M",
             "#fields",
-            "#rows",
-            "first","last"
+            "#rows"
+            #~ ,"first","last"
             ]
         rows = []
         for model in models_list:
@@ -94,12 +96,12 @@ class Command(BaseCommand):
             qs = model.objects.order_by('pk')
             n = qs.count()
             cells.append(str(n))
-            if n:
-                cells.append(obj2str(qs[0]))
-                cells.append(obj2str(qs[n-1]))
-            else:
-                cells.append('')
-                cells.append('')
+            #~ if n:
+                #~ cells.append(obj2str(qs[0]))
+                #~ cells.append(obj2str(qs[n-1]))
+            #~ else:
+                #~ cells.append('')
+                #~ cells.append('')
             rows.append(cells)
         writeln(rstgen.table(headers,rows))
         

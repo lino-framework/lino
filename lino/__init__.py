@@ -23,12 +23,13 @@ import sys
 import datetime
 from os.path import join, abspath, dirname, normpath
 from decimal import Decimal
+from lino.utils.xmlgen import html as xghtml
 
 
 
 #~ __version__ = file(os.path.join(os.path.dirname(
     #~ __file__),'..','VERSION')).read().strip()
-__version__ = "1.5.0"
+__version__ = "1.5.1"
 """
 Lino version number. 
 """
@@ -726,6 +727,10 @@ class Lino(object):
             MIDDLEWARE_CLASSES=tuple(
                 self.get_middleware_classes()))
 
+        settings_dict.update(
+            INSTALLED_APPS=tuple(
+                self.get_installed_apps()))
+
         self.startup_time = datetime.datetime.today()
         
         if self.languages:
@@ -1137,12 +1142,16 @@ class Lino(object):
         #~ if self.user_model is None:
             #~ yield 'lino.utils.auth.NoUserMiddleware'
         #~ elif self.remote_user_header:
-        if self.remote_user_header:
-            yield 'lino.utils.auth.RemoteUserMiddleware'
-            #~ yield 'django.middleware.doc.XViewMiddleware'
-        else:
-            raise Exception("""\
-`user_model` is not None, but no `remote_user_header` in your settings.LINO.""")
+        if self.user_model is not None:
+            if self.remote_user_header:
+                yield 'lino.utils.auth.RemoteUserMiddleware'
+                #~ yield 'django.middleware.doc.XViewMiddleware'
+            else:
+                # 20121003 : not using remote http auth, so we need sessions
+                yield 'django.contrib.sessions.middleware.SessionMiddleware'
+                yield 'lino.utils.auth.SessionUserMiddleware'
+                #~ raise Exception("""\
+    #~ `user_model` is not None, but no `remote_user_header` in your settings.LINO.""")
         #~ yield 'lino.utils.editing.EditingMiddleware'
         yield 'lino.utils.ajax.AjaxExceptionResponse'
 
@@ -1483,3 +1492,19 @@ or
                 #~ dblogger.debug("Running %s of %s", methname, mod.__name__)
                 for i in meth(self,ar):
                     yield i
+
+    def get_installed_apps(self):
+        """
+        This method is expected to return or yield the list of strings 
+        to be stored into Django's :setting:`INSTALLED_APPS` setting.
+        """
+        yield 'django.contrib.contenttypes'
+        if self.user_model is not None and self.remote_user_header is None:
+            yield 'django.contrib.sessions' # 20121103
+        #~ 'django.contrib.sites',
+        #~ 'django.contrib.markup',
+        #~ 'lino.modlib.system',
+        yield 'lino'
+        
+    def get_guest_greeting(self):
+        return xghtml.E.p("Please log in")

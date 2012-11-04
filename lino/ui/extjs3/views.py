@@ -369,6 +369,38 @@ class Index(View):
             kw.update(on_ready=ui.ext_renderer.action_call(request,a,{}))
         return http.HttpResponse(ui.html_page(request,**kw))
 
+class Authenticate(View):
+  
+    def get(self, request, *args, **kw):
+        action_name = request.GET.get(ext_requests.URL_PARAM_ACTION_NAME)
+        if action_name == 'logout':
+            username = request.session['username'] 
+            del request.session['username'] 
+            del request.session['password']
+            rv = dict(success=True,message="%r has been logged out" % username)
+            return settings.LINO.ui.action_response(rv)
+            
+
+    def post(self, request, *args, **kw):
+        from lino.utils import auth
+        #~ from django.contrib.sessions.backends.db import SessionStore
+        #~ ss = SessionStore()
+        username = request.POST.get('username')
+        password = request.POST.get('password')
+        user = auth.authenticate(username,password)
+        if user is None:
+            rv = settings.LINO.ui.error_response("Could not authenticate %r" % username)
+            return settings.LINO.ui.action_response(rv)
+        request.session['username'] = username
+        request.session['password'] = password
+        #~ request.session['password'] = request.GET.get('password')
+        #~ auth.login(request,request.GET.get('username'), request.GET.get('password'))
+        #~ ss.save()
+        rv = settings.LINO.ui.success_response("Now logged in as %r" % username)
+        #~ rv = dict(success=True,message="Now logged in as %r" % username)
+        return settings.LINO.ui.action_response(rv)
+      
+
 class RunJasmine(View):
     """
     """

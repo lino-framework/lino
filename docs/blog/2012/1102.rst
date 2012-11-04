@@ -1,0 +1,8 @@
+20121102
+========
+
+
+The :mod:`diag <lino.management.commands.diag>` command was broken. 
+And it now displays only the number of records per model 
+(I removed the columns "first" and "last").
+

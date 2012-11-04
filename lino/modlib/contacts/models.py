@@ -313,6 +313,7 @@ class PartnerDetail(dd.FormLayout):
     
     
 class Partners(dd.Table):
+    required = dict(user_level='user')
     model = 'contacts.Partner'
     column_names = "name email * id" 
     order_by = ['name','id']
@@ -494,10 +495,12 @@ class PersonDetail(PartnerDetail):
   
 
 
-class Persons(dd.Table):
+#~ class Persons(dd.Table):
+class Persons(Partners):
     """
     List of all Persons.
     """
+    #~ required = dict(user_level='user')
     model = settings.LINO.person_model
     order_by = ["last_name","first_name","id"]
     column_names = "name_column:20 address_column email phone:10 gsm:10 id language:10 *"

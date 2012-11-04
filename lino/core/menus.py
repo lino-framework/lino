@@ -144,6 +144,11 @@ class MenuItem:
         #~ if self.can_view.passes(user):
         return self
         
+def has_items(menu):
+    for i in menu.items:
+        if not i.label.startswith('-'):
+            return True
+    return False
 
 
 class Menu(MenuItem):
@@ -175,7 +180,8 @@ class Menu(MenuItem):
                     #~ newitems.append(mi.items[0])
                 #~ elif len(mi.items) > 1:
                     #~ newitems.append(mi)
-                if len(mi.items) > 0:
+                #~ if len(mi.items) > 0:
+                if has_items(mi) > 0:
                     #~ if self.parent is None or len(mi.items) > 1:
                         #~ newitems.append(mi)
                     #~ elif len(mi.items) == 1:

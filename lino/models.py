@@ -393,8 +393,9 @@ class Models(dd.VirtualTable):
         
     @dd.requestfield(_("Rows"))
     def rows(self,obj,ar):
-        return obj._lino_default_table.request(ar.ui,
-          user=ar.get_user(),renderer=ar.renderer)
+        if obj._lino_default_table.get_view_permission(ar.get_user()):
+            return obj._lino_default_table.request(ar.ui,
+              user=ar.get_user(),renderer=ar.renderer)
 
 
 class FieldsByModel(dd.VirtualTable):
@@ -643,38 +644,43 @@ class Home(mixins.EmptyTable):
         u = ar.get_user()
         story = []
         
-        intro = [_("Hi, "),u.first_name,'! ']
-        story.append(xghtml.E.p(*intro))
-        
-        warnings = []
-        
-        #~ for T in (MySuggestedCoachings,cal.MyTasksToDo):
-        for table,text in settings.LINO.get_todo_tables(ar):
-            r = table.request(user=u)
-            #~ r = T.request(subst_user=u)
-            #~ r = ar.spawn(T)
-            if r.get_total_count() != 0:
-                #~ for obj in r.data_iterator[-MAXITEMS]:
-                    #~ chunks = [obj.summary_row(ar)]
-                    #~ sep = ' : '
-                    #~ for a in T.get_workflow_actions(ar,obj):
-                        #~ chunks.append(sep)
-                        #~ chunks.append(ar.row_action_button(obj,a))
-                        #~ sep = ', '
-                
-                warnings.append(xghtml.E.li(
-                    ar.href_to_request(r,text % r.get_total_count())))
-                    #~ _("You have %d entries in ") % r.get_total_count(),
-                    #~ ar.href_to_request(r,label)))
-        
-        #~ warnings.append(xghtml.E.li("Test 1"))
-        #~ warnings.append(xghtml.E.li("Second test"))
-        if len(warnings):
-            #~ story.append(xghtml.E.h3(_("Warnings")))
-            story.append(xghtml.E.h3(_("You have")))
-            story.append(xghtml.E.ul(*warnings))
+        if u.authenticated:
+          
+            intro = [_("Hi, "),u.first_name,'! ']
+            story.append(xghtml.E.p(*intro))
+            warnings = []
+            
+            #~ for T in (MySuggestedCoachings,cal.MyTasksToDo):
+            for table,text in settings.LINO.get_todo_tables(ar):
+                r = table.request(user=u)
+                #~ r = T.request(subst_user=u)
+                #~ r = ar.spawn(T)
+                if r.get_total_count() != 0:
+                    #~ for obj in r.data_iterator[-MAXITEMS]:
+                        #~ chunks = [obj.summary_row(ar)]
+                        #~ sep = ' : '
+                        #~ for a in T.get_workflow_actions(ar,obj):
+                            #~ chunks.append(sep)
+                            #~ chunks.append(ar.row_action_button(obj,a))
+                            #~ sep = ', '
+                    
+                    warnings.append(xghtml.E.li(
+                        ar.href_to_request(r,text % r.get_total_count())))
+                        #~ _("You have %d entries in ") % r.get_total_count(),
+                        #~ ar.href_to_request(r,label)))
+            
+            #~ warnings.append(xghtml.E.li("Test 1"))
+            #~ warnings.append(xghtml.E.li("Second test"))
+            if len(warnings):
+                #~ story.append(xghtml.E.h3(_("Warnings")))
+                story.append(xghtml.E.h3(_("You have")))
+                story.append(xghtml.E.ul(*warnings))
+            else:
+                story.append(xghtml.E.p(_("Congratulatons: you have no warnings.")))
         else:
-            story.append(xghtml.E.p(_("Congratulatons: you have no warnings.")))
+            #~ story.append(xghtml.E.p("Please log in"))
+            story.append(settings.LINO.get_guest_greeting())
+        
         return xghtml.E.div(*story,class_="htmlText",style="margin:5px")
         
 
