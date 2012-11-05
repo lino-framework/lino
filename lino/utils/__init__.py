@@ -396,6 +396,12 @@ class Cycler:
     >>> print s
     abcabcabca
     
+    A Cycler on an empty list will endlessly pop None values:
+    
+    >>> c = Cycler([])
+    >>> print c.pop(), c.pop(), c.pop()
+    None None None
+    
     """
     def __init__(self,*args):
         if len(args) == 0:

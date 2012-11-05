@@ -319,6 +319,15 @@ class GuestStates(dd.Workflow):
     """
     #~ label = _("Guest State")
     #~ label = _("State")
+    
+    @classmethod
+    def allow_state_present(self,obj,user):
+        return obj.event.state == EventStates.took_place
+        
+    @classmethod
+    def allow_state_absent(self,obj,user):
+        return obj.event.state == EventStates.took_place
+        
 add = GuestStates.add_item
 add('10', _("Invited"),'invited')
 add('20', _("Accepted"),'accepted') #,required=dict(states=['','invited'],owner=False),action_label=_("Accept"))

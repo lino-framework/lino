@@ -176,30 +176,46 @@ class Pupils(contacts.Persons):
     
 #~ class Course(cal.RecurrenceSet,mixins.Printable):
   
-#~ class Slot(models.Model):
-    #~ """
-    #~ """
-    #~ class Meta:
-        #~ verbose_name = _("Timetable Slot") # Zeitnische
-        #~ verbose_name_plural = _('Timetable Slots')
+class Slot(mixins.Sequenced):
+    """
+    """
+    class Meta:
+        verbose_name = _("Timetable Slot") # Zeitnische
+        verbose_name_plural = _('Timetable Slots')
         
-    #~ name = models.CharField(max_length=20,
-          #~ blank=True,
-          #~ verbose_name=_("Name"))
+    name = models.CharField(max_length=200,
+          unique=True,
+          verbose_name=_("Name"))
     #~ weekday = cal.Weekday.field()
-    #~ start_time = models.TimeField(
-        #~ blank=True,null=True,
-        #~ verbose_name=_("Start Time"))
-    #~ end_time = models.TimeField(
-        #~ blank=True,null=True,
-        #~ verbose_name=_("End Time"))
+    monday    = models.BooleanField(cal.Weekday.monday.text)
+    tuesday   = models.BooleanField(cal.Weekday.tuesday.text)
+    wednesday = models.BooleanField(cal.Weekday.wednesday.text)
+    thursday  = models.BooleanField(cal.Weekday.thursday.text)
+    friday    = models.BooleanField(cal.Weekday.friday.text)
+    saturday  = models.BooleanField(cal.Weekday.saturday.text)
+    sunday    = models.BooleanField(cal.Weekday.sunday.text)
+    start_time = models.TimeField(
+        blank=True,null=True,
+        verbose_name=_("Start Time"))
+    end_time = models.TimeField(
+        blank=True,null=True,
+        verbose_name=_("End Time"))
   
-#~ class Slots(dd.Table):
-    #~ model = Slot
-    #~ detail_layout = """
-    #~ weekday start_time end_time
-    #~ school.CoursesBySlot
-    #~ """
+    def __unicode__(self):
+        return self.name
+        
+    def is_available_on(self,date):
+        wd = date.isoweekday() # Monday:1, Tuesday:2 ... Sunday:7
+        wd = cal.Weekday.get_by_value(str(wd))
+        return getattr(self,wd.name)
+        
+class Slots(dd.Table):
+    model = Slot
+    detail_layout = """
+    name start_time end_time 
+    monday tuesday wednesday thursday friday saturday sunday
+    school.CoursesBySlot
+    """
     
 
 #~ def on_event_generated(self,course,ev):
@@ -209,19 +225,22 @@ def setup_course_event(self,course,ev):
     if not ev.start_date: 
         #~ raise Exception("20120403 %s" % obj2str(ev))
         return
-    start_time = datetime.time(16)
-    skip = datetime.timedelta(minutes=60)
-    wd = ev.start_date.isoweekday() # Monday:1, Tuesday:2 ... Sunday:7
-    if wd in (1,2,4,5):
-        pass
-    elif wd == 3:
-        start_time = datetime.time(13)
-    else:
-        return
-    start_time = datetime.datetime.combine(ev.start_date,start_time)
-    start_time = start_time + skip * (course.slot - 1)
-    ev.set_datetime('start',start_time)
-    ev.set_datetime('end',start_time + skip)
+        
+    ev.start_time = course.slot.start_time
+    ev.end_time = course.slot.end_time
+    
+    #~ start_time = datetime.time(16)
+    #~ skip = datetime.timedelta(minutes=60)
+    #~ if wd in (1,2,4,5):
+        #~ pass
+    #~ elif wd == 3:
+        #~ start_time = datetime.time(13)
+    #~ else:
+        #~ return
+    #~ start_time = datetime.datetime.combine(ev.start_date,start_time)
+    #~ start_time = start_time + skip * (course.slot - 1)
+    #~ ev.set_datetime('start',start_time)
+    #~ ev.set_datetime('end',start_time + skip)
     
 if not hasattr(settings.LINO,'setup_course_event'):
     #~ raise Exception("20120403")
@@ -243,14 +262,12 @@ class Course(cal.EventGenerator,cal.RecurrenceSet,mixins.Printable):
     #~ place = models.ForeignKey(Place,verbose_name=_("Place"),null=True,blank=True) # iCal:LOCATION
     #~ room = models.ForeignKey(Room,blank=True,null=True)
     place = models.ForeignKey(cal.Place,blank=True,null=True)
-    #~ slot = models.ForeignKey(Slot,blank=True,null=True)
-    slot = models.PositiveSmallIntegerField(_("Time slot"),
-        blank=True,null=True)
+    slot = models.ForeignKey(Slot,blank=True,null=True)
+    #~ slot = models.PositiveSmallIntegerField(_("Time slot"),
+        #~ blank=True,null=True)
     
     def __unicode__(self):
-        return u"%s (%s)" % (
-          self.content,
-          self.user)
+        return u"%s (%s)" % (self.content,self.teacher)
           
     def update_cal_rset(self):
         return self
@@ -265,16 +282,17 @@ class Course(cal.EventGenerator,cal.RecurrenceSet,mixins.Printable):
         return _("Lesson %d") % (i + 1)
         
           
-    def update_owned_instance(self,ev):
+    def update_owned_instance(self,owned):
         #~ if self.course is not None:
-        #~ if isinstance(self.owner,Course):
-        settings.LINO.setup_course_event(self,ev)
-        if ev.guest_set.count() == 0:
-        #~ if ev.presence_set.count() == 0:
-            for e in self.enrolment_set.all():
-                Guest(partner=e.pupil,event=ev).save()
-                #~ Presence(pupil=e.pupil,event=ev).save()
-        super(Course,self).update_owned_instance(ev)
+        if isinstance(owned,cal.Event):
+            owned.project = self
+            settings.LINO.setup_course_event(self,owned)
+            if owned.guest_set.count() == 0:
+            #~ if ev.presence_set.count() == 0:
+                for e in self.enrolment_set.all():
+                    cal.Guest(partner=e.pupil,event=owned).save()
+                    #~ Presence(pupil=e.pupil,event=ev).save()
+        super(Course,self).update_owned_instance(owned)
         
   
 
@@ -286,7 +304,7 @@ class CourseDetail(dd.FormLayout):
     main = """
     id:8 user teacher content place 
     summary
-    start_date slot every every_unit
+    start_date end_date slot every every_unit
     description
     #remark
     #rrule
@@ -302,15 +320,16 @@ class Courses(dd.Table):
     model = Course
     #~ order_by = ['date','start_time']
     detail_layout = CourseDetail() 
+    column_names = "content teacher place slot summary *"
 
 class CoursesByTeacher(Courses):
-    master_key = "user"
+    master_key = "teacher"
 
 class CoursesByContent(Courses):
     master_key = "content"
 
-#~ class CoursesBySlot(Courses):
-    #~ master_key = "slot"
+class CoursesBySlot(Courses):
+    master_key = "slot"
 
 class Enrolment(dd.Model):
   
@@ -436,7 +455,7 @@ def setup_config_menu(site,ui,user,m):
     m = m.add_menu("school",_("School"))
     #~ m.add_action(Rooms)
     m.add_action(Contents)
-    #~ m.add_action(Slots)
+    m.add_action(Slots)
     #~ m.add_action(PresenceStatuses)
   
 def setup_explorer_menu(site,ui,user,m):

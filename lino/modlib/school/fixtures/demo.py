@@ -104,8 +104,8 @@ def objects():
     CONTENTS = Cycler(school.Content.objects.all())
     USERS = Cycler(users.User.objects.all())
     TEACHERS = Cycler(school.Teacher.objects.all())
-    #~ SLOTS = Cycler(school.Slot.objects.all())
-    SLOTS = Cycler(1,2,3,4)
+    SLOTS = Cycler(school.Slot.objects.all())
+    #~ SLOTS = Cycler(1,2,3,4)
     PUPILS = Cycler(school.Pupil.objects.all())
     PLACES = Cycler(cal.Place.objects.all())
     #~ Event = settings.LINO.modules.cal.Event

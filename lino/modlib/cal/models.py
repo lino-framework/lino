@@ -626,7 +626,7 @@ class StartedSummaryDescription(Started):
         return self._meta.verbose_name + " #" + str(self.pk)
 
     def summary_row(self,ar,**kw):
-        html = super(ComponentBase,self).summary_row(ar,**kw)
+        html = super(StartedSummaryDescription,self).summary_row(ar,**kw)
         if self.summary:
             html += '&nbsp;: %s' % cgi.escape(force_unicode(self.summary))
             #~ html += ui.href_to(self,force_unicode(self.summary))

@@ -244,7 +244,8 @@ extlinks = {
 
 #~ welfare_inv = os.path.join('..','..','welfare','objects.inv')
 intersphinx_mapping = {
-  'welfare': ('http://packages.python.org/lino-welfare/en', None )
+  #~ 'welfare': ('http://packages.python.org/lino-welfare/en', None )
+  'welfare': ('http://welfare.lino-framework.org/en', None )
 }
 
 autosummary_generate = True

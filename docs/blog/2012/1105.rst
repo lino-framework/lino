@@ -1,0 +1,5 @@
+20121105
+========
+
+Continued on :mod:`lino.apps.homeworkschool`.
+How to manage time tables and courses in a school.

@@ -60,6 +60,20 @@ class Lino(Lino):
         #~ tb.add_action(self.modules.isip.MyContracts)
         #~ tb.add_action(self.modules.jobs.MyContracts)
         
+    def get_installed_apps(self):
+        for a in super(Lino,self).get_installed_apps():
+            yield a
+        yield 'lino.modlib.users'
+        yield 'lino.modlib.countries'
+        yield 'lino.modlib.contacts'
+        yield 'lino.modlib.households'
+        yield 'lino.modlib.notes'
+        yield 'lino.modlib.school'
+        yield 'lino.modlib.uploads'
+        yield 'lino.modlib.cal'
+        yield 'lino.modlib.outbox'
+        yield 'lino.apps.homeworkschool'
+      
     def setup_choicelists(self):
         """
         This defines default user profiles for :mod:`lino_welfare`.
@@ -96,7 +110,7 @@ TIME_ZONE = None
 
 #~ SITE_ID = 1 # see also fill.py
 
-INSTALLED_APPS = (
+unused_INSTALLED_APPS = (
   #~ 'django.contrib.auth',
   'django.contrib.contenttypes',
   #~ 'django.contrib.sessions',
