@@ -939,6 +939,10 @@ class ExtUI(base.UI):
             (rx+r'choices/(?P<app_label>\w+)/(?P<rptname>\w+)$', views.Choices.as_view()),
             (rx+r'choices/(?P<app_label>\w+)/(?P<rptname>\w+)/(?P<fldname>\w+)$', views.Choices.as_view()),
         )
+        if settings.LINO.use_eid_applet:
+            urlpatterns += patterns('',
+                (rx+r'eid-applet-service$', views.EidAppletService.as_view()),
+            )
         if settings.LINO.use_jasmine:
             urlpatterns += patterns('',
                 (rx+r'run-jasmine$', views.RunJasmine.as_view()),

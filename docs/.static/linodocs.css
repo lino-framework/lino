@@ -1,0 +1,39 @@
+/*
+
+Thanks to:
+- <holger.spill@gmail.com> in sphinx-users@googlegroups.com November 2012 
+- http://ask.metafilter.com/156206/Using-a-character-as-a-custom-list-bullet
+- Mark Newhouse at http://www.alistapart.com/articles/taminglists
+- http://www.w3.org/TR/CSS2/syndata.html#escaped-characters
+
+
+
+*/
+ul.dialog {
+    list-style-type: none;
+	padding: 1em;
+	list-style-position:outside;
+}
+
+ul.dialog li {
+	text-align:left;
+	text-indent:-1em;
+}
+
+ul.dialog li:before {
+	content: "\25B8 \0020";
+}
+
+
+table.scrollwide {
+	display: block;
+	// width: 400px;
+	width: 100%;
+	background-color: #E0;
+	overflow: auto;
+}
+
+table.scrollwide td {
+	white-space: nowrap;
+}
+

@@ -3,3 +3,51 @@
 
 Continued on :mod:`lino.apps.homeworkschool`.
 How to manage time tables and courses in a school.
+
+
+Belgische eID-Karten einlesen
+-----------------------------
+
+Ich habe nochmal erfolglos versucht, 
+das `eid-applet <http://code.google.com/p/eid-applet/>`_ 
+in Lino zu integrieren, um belgische eID-Karten einzulesen.
+
+Eine neue Option `use_eid_applet`, und wenn ein *development server* 
+läuft, kann man jetzt meinen Versuch nachvollziehen:
+
+  http://localhost:8000/media/lino/eid-applet/test.html
+  
+Dieses Ding weigert sich kategorisch zu laufen, wenn es
+nicht diesen Applet-Service hat. Und für den
+gibt es außer der offiziellen Referenzimplementierung als Java EE
+servlet *nichts*, nicht mal brauchbare Dokumentation. Der einzige
+Hinweis war (in der eid-applet-dev-guide.pdf):
+
+   For the moment we only fully support Java EE servlet containers out 
+   of the box. At the same time this serves as the reference 
+   implementation. For other web application environments like the 
+   ASP.NET web application environment and the PHP environment we 
+   strongly advise to use the eID Identity Provider and eID Digital 
+   Signature Service products to integrate eID within ASP.NET and PHP 
+   based web applications.
+
+Ich habe auch noch immer nicht verstanden, was die Middleware eigentlich
+soll. Das neue eid-applet benutzt sie ja gar nicht mehr, sondern greift
+direkt (using javax.smartcardio) darauf zu. hier einige lesenswerte 
+Artikel zur Einführung ins Thema:
+
+- http://konstantin.filtschew.de/blog/2009/10/08/smart-cards-durch-die-in-java-eingebaute-java-smartcard-io-javax-smartcardio-ansprechen/
+- http://oliduty.blogspot.com/2011/06/reading-smartcards-with-java-6.html
+- http://blog.codeborne.com/2010/10/javaxsmartcardio-and-esteid.html
+
+Aber ich werde doch nicht Frank Cornelis' Arbeit neu schreiben! Zumal
+der ganze Kram ja vielleicht in absehbarer Zeit wieder ersetzt werden wird durch
+den geplanten europaweiten Standard.
+
+Fazit: Ich werde mich bis auf weiteres weiter auf Johan de Schutter 
+verlassen, weil mir alles andere zu kompliziert scheint. 
+
+Wir wollen ja momentan keine Authentifizierung per eID-Karte, 
+sondern lediglich die öffentlich sichtbaren Angaben der Karte eines Klienten auslesen 
+und in unserer Datenbank speichern.
+

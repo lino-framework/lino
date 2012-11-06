@@ -292,6 +292,11 @@ class Lino(object):
     
     use_gridfilters = True
     
+    use_eid_applet = True
+    """
+    New since 20121106
+    """
+    
     use_eid_jslib = True
     """
     Whether to include functionality to read Belgian eid cards.

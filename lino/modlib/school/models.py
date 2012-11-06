@@ -43,15 +43,15 @@ from lino import mixins
 #~ from lino import actions
 #~ from lino import fields
 #~ from lino.modlib.contacts import models as contacts
-from lino.modlib.notes import models as notes
+#~ from lino.modlib.notes import models as notes
 #~ from lino.modlib.links import models as links
 #~ from lino.modlib.uploads import models as uploads
 #~ from lino.modlib.cal import models as cal
 #~ from lino.modlib.users import models as users
-from lino.modlib.contacts.utils import Gender
-from lino.modlib.properties.models import HowWell
+#~ from lino.modlib.contacts.utils import Gender
+#~ from lino.modlib.properties.models import HowWell
 #~ from lino.utils.choicelists import HowWell, Gender
-from lino.utils.choicelists import ChoiceList
+#~ from lino.utils.choicelists import ChoiceList
 #~ from lino.modlib.properties.utils import KnowledgeField #, StrengthField
 #~ from lino.modlib.uploads.models import UploadsByPerson
 from lino.utils import babel 
@@ -61,7 +61,7 @@ from lino.mixins.printable import DirectPrintAction, Printable
 #~ from lino.mixins.reminder import ReminderEntry
 from lino.core.modeltools import obj2str
 
-from lino.modlib.countries.models import CountryCity
+#~ from lino.modlib.countries.models import CountryCity
 #~ from lino.modlib.cal import models as cal
 #~ from lino.modlib.contacts.models import Partner
 

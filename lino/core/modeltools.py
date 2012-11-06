@@ -61,11 +61,12 @@ def is_devserver():
     return len(sys.argv) > 1 and sys.argv[1] == 'runserver'
 
 
-def resolve_app(app_label):
+def resolve_app(app_label,strict=False):
     """
     Return the `modules` module of the given `app_label` if it is installed. 
     Otherwise return either the :term:`dummy module` for `app_label` 
     if it exists, or `None`.
+    If the optional second argument `strict` is `True`, then 
     
     This function is designed for use in models modules and available 
     through the shortcut ``dd.resolve_app``.
@@ -88,10 +89,12 @@ def resolve_app(app_label):
     for app_name in settings.INSTALLED_APPS:
         if app_name == app_label or app_name.endswith('.'+app_label):
             return import_module('.models', app_name)
+    #~ return import_module('lino.modlib.%s.dummy' % app_label)
     try:
         return import_module('lino.modlib.%s.dummy' % app_label)
     except ImportError:
-        pass
+        if strict: 
+            raise Exception("strict resolve_app failed for app_label %r" % app_label)
         
     #~ if not emptyOK:
     #~ raise ImportError("No application labeled %r." % app_label)

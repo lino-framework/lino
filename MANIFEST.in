@@ -1,5 +1,5 @@
 global-include *.txt *.py *.BAT *.bat *.js *.css *.html \
-  *.jar *.rtf *.java *.diff *.ico *.jpg *.dtl \
+  *.jar *.rtf *.java *.diff *.ico *.jpg *.png \
   *.csv *.xml *.tab \
   *.odt \
   *.wsdl \

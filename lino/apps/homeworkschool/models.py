@@ -24,6 +24,17 @@ from lino import mixins
 
 contacts = dd.resolve_app('contacts')
 cal = dd.resolve_app('cal')
+school = dd.resolve_app('school')
+
+
+class School(contacts.Company):
+    class Meta:
+        #~ app_label = 'school'
+        verbose_name = _("School")
+        verbose_name_plural = _("Schools")
+    
+class Schools(contacts.Companies):
+    model = School
 
 class Person(contacts.Person,contacts.Born):
     class Meta(contacts.Person.Meta):
@@ -164,3 +175,17 @@ def site_setup(site):
     end="end_date end_time",
     window_size=(60,'auto'))
     
+def setup_main_menu(site,ui,user,main):
+    m = main.get_item("contacts")
+    m.add_action(Schools)
+
+
+def customize_school():
+    dd.inject_field(school.Pupil,
+        'school',
+        models.ForeignKey(School,
+            blank=True,null=True),
+            help_text=_("""The regular school where this child goes.""")
+    )
+
+customize_school()

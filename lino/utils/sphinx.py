@@ -133,6 +133,9 @@ def autodoc_add_srcref(app,what,name,obj,options,lines):
     
 
 def setup(app):
+    """
+    The Sphinx setup function used for Lino-related documentation trees.
+    """
     app.add_object_type(directivename='xfile',rolename='xfile',
       indextemplate='pair: %s; file')
     app.add_object_type(directivename='setting',rolename='setting',
@@ -157,7 +160,7 @@ def setup(app):
     #~ app.add_directive('screenshot', ScreenshotDirective)
     #~ app.add_config_value('screenshots_root', '/screenshots/', 'html')
 
-
+    app.add_stylesheet('linodocs.css')
 
 
 def _test():

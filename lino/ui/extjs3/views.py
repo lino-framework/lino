@@ -408,6 +408,13 @@ class RunJasmine(View):
         ui = settings.LINO.ui
         return http.HttpResponse(ui.html_page(request,run_jasmine=True))
 
+class EidAppletService(View):
+    """
+    """
+    def post(self, request, *args, **kw):
+        ui = settings.LINO.ui
+        return ui.success_response(html='Hallo?')
+
 
 class MainHtml(View):
     def get(self, request, *args, **kw):

@@ -197,6 +197,12 @@ class Watcher(object):
         
 
 def log_delete(request,obj):
+    """
+    Calls :func:`log_change` with `ChangeTypes.delete`.
+    
+    Note that you must call this before actually deleting the object,
+    otherwise mysql says ERROR: (1048, "Column 'object_id' cannot be null")
+    """
     master = get_master(obj)
     if master is None:
         return

@@ -430,6 +430,7 @@ Lino.show_login_window = function() {
           width:300,
           title:'Please Login', 
           autoHeight:true,
+          modal: true,
           closeAction: "hide",
           keys: enter_key_binding,
           //~ defaultButton: login_button,
@@ -5297,7 +5298,7 @@ try {
     var card = cardReader.read();
     if (card != null) {
       var content = card.toString();
-      Lino.alert(content);
+      //~ Lino.alert(content);
       //~ if (typeof(base64) != "undefined") {
         //~ var encodedPicture = base64.encode(card.getPicture(), false, false);
         //~ document.getElementById("encoded_picture").src = "data:image/jpeg;base64," + encodedPicture;
@@ -5307,6 +5308,21 @@ try {
         //~ content += "\r\n\r\n" + "base64 object not defined";
       //~ }
       //~ document.getElementById("content").value = content;
+      
+      function on_success() {
+          console.log('20121105 /beid_card on_success',arguments);
+          //~ Lino.login_window.hide();
+          //~ Lino.close_all_windows();
+      };
+      var p = {
+        foo: 1,
+        content : card.toString()
+        };
+      var fn = function(panel,btn,step) {
+        Lino.call_row_action(panel,'/beid_card',p,'read',step,fn,on_success);
+      }
+      fn(panel,null,null);
+      
     } else {
         Lino.alert("No card returned.");
     }

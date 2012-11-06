@@ -116,5 +116,6 @@ Conventions
    :maxdepth: 2
 
    ../ref/model_methods
+   datamig
 
 

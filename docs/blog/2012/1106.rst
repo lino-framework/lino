@@ -1,0 +1,127 @@
+========
+20121106
+========
+
+
+Spielereien mit Sphinx 
+======================
+
+
+Heute Morgen habe ich mir ein paar kleine Spielereien mit Sphinx gegönnt.
+
+Zunächst eine Aufwärm-Übung, Listen mit besonderem Bullet:
+inspiriert durch die von Boris Kheyfets gestartete Diskussion 
+`Custom char for bullet list? <https://groups.google.com/d/topic/sphinx-users/fNWyyRzoa8I/discussion>`
+auf `sphinx-users`.
+
+.. cssclass:: dialog
+
+- Hallo, Welt.
+  Ein "Dialog" ist eine normale Aufzählungsliste, 
+  aber mit einem kleinen Dreieck (&#9658;) als *custom list item bullet*.
+- Siehe auch die :func:`setup <lino.utils.sphinx.setup>`, die ich in 
+  meiner Sphinx-Konfiguration verwende und
+  die Datei :srcref:`linodocs.css </lino/docs/.static/linodocs.css>`.
+- Leider habe ich es bisher nicht hingekriegt, dass bei längeren Einträgen 
+  die zweite Zeile korrekt eingerückt ist. Sieht aus als ob er 
+  `list-style-position:outside` ignoriert, wenn `list-style-type:none` 
+  ist. Und das negative `text-indent` bringt nur ein
+  fast perfektes Resultat, weil das Dreieck mit dem Leerzeichen dahinter 
+  nun mal nicht exakt `1em` breit sind.
+
+
+Und die folgende Tabelle wird mit einem horizontalen 
+Scrollbar dargestellt, wenn sie breiter als der verfügbare Platz ist.
+
+Auch das kommt von einer Diskussion auf `sphinx-users`,
+und zwar `framed wide tables <https://groups.google.com/d/topic/sphinx-users/ZV8gGObVrQU/discussion>`_.
+
+.. cssclass:: scrollwide
+
+================== ================== ================== ================== ================== ================== ================== =================================================================
+col 1              col 2              col 3              col 4              col 5              col 6              col 7              col 8
+================== ================== ================== ================== ================== ================== ================== =================================================================
+entry 1            entry 1            entry 1            entry 1            entry 1            entry 1            entry 1            vvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvery long entry 2
+entry 3            entry 3            entry 3            entry 3            entry 3            entry 3            entry 3            vvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvery long entry 4
+entry 5            entry 5            entry 5            entry 5            entry 5            entry 5            entry 5            vvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvery long entry 6
+================== ================== ================== ================== ================== ================== ================== =================================================================
+
+
+Ohne dieses neue Feature sähe sie so aus:
+
+================== ================== ================== ================== ================== ================== ================== =================================================================
+col 1              col 2              col 3              col 4              col 5              col 6              col 7              col 8
+================== ================== ================== ================== ================== ================== ================== =================================================================
+entry 1            entry 1            entry 1            entry 1            entry 1            entry 1            entry 1            vvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvery long entry 2
+entry 3            entry 3            entry 3            entry 3            entry 3            entry 3            entry 3            vvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvery long entry 4
+entry 5            entry 5            entry 5            entry 5            entry 5            entry 5            entry 5            vvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvery long entry 6
+================== ================== ================== ================== ================== ================== ================== =================================================================
+
+
+
+
+Und drittens hier ein Beispiel von Python-Code, 
+der dynamisch (beim `build` der `docs`) 
+eine Tabelle im rst-Format produziert:
+
+.. runblock:: py2rst
+
+  import os
+  os.environ['DJANGO_SETTINGS_MODULE'] = 'lino_welfare.demo.settings'
+  from django.conf import settings
+  settings.LINO.startup()
+  from lino import dd
+  pcsw = dd.resolve_app('pcsw')
+  User = dd.resolve_model('users.User')
+  root = User.objects.get(username='root')
+  print
+  print pcsw.UsersWithClients.request(user=root).to_rst()
+  print
+  
+Diese neue Möglichkeit haben wir Vadim Gubergrits' Sphinx-Erweiterung 
+`autorun <https://bitbucket.org/birkenfeld/sphinx-contrib>`_ 
+zu verdanken. Ich hatte allerdings ein paar Stunden Arbeit, 
+um eine Erweiterung der Erweiterung zu schreiben.
+
+
+Linos Lausbubenstreiche
+=======================
+
+Hier als Anekdote die Art von Pannen, die einem momentan 
+mit Lino passieren können.
+
+Ich hatte gestern oder vorgestern den Eupener Produktionsserver fixiert, 
+also von lino-dev auf die lino-1.5.0 umgestiegen.
+
+Heute erfahre ich, dass die Buttons nicht mehr angezeigt wurden.
+Da fehlten alle ``*.png``. Lag der :srcref:`/MANIFEST.in`. 
+Also die releaste Version 1.5.0 ist relativ unbrauchbar.
+
+Dass ich das erfuhr, lag aber gar nicht daran, 
+sondern es gab noch ein anderes Problem: 
+das Detail eines Klienten wurde nicht mehr angezeigt.
+Und das kam, weil jemand auf den Button "Tabellenkonfiguration speichern" 
+geklickt hatte. Der ist momentan eine Mausefalle: 
+generiert eine fehlerhafte Konfigurationsdatei, 
+die dann beim nächsten Neugenerieren der :xfile:`lino*.js` 
+"aktiv" wird.
+
+
+Noch Spielereien
+================
+
+Oder hier die Listen der Notizarten und der Benutzerprofile 
+in der Demo-Datenbank von Lino-Welfare:
+
+.. runblock:: py2rst
+
+  from lino_welfare.demo.startup import site
+  from lino.utils import rstgen
+  print rstgen.header(4,"Notizarten")
+  print ".. cssclass:: scrollwide\n"
+  print site.modules.notes.NoteTypes.request().to_rst("name template id remark")
+  print rstgen.header(4,"Benutzerprofile")
+  print rstgen.table(("value","text"),[(i.value, i.text) for i in site.modules.lino.UserProfiles.items()])
+  
+
+

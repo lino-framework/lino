@@ -39,7 +39,7 @@ Another example using :attr:`lino.Lino.project_dir`::
 
   
 Example to use date-based log files 
-(this trick is suboptimal since the filename is computed 
+(this trick is not recommended since the filename is computed 
 once per process, causing a long-running server process to log to an old file
 even though a newer file has been created by another process)::
 
@@ -67,8 +67,6 @@ with mod_wsgi. If such code is a library module, the code should be providing a 
 specifically flag that it is a non interactive application and not use magic to 
 determine whether that is the case or not.".
 Any comments are welcome.
-
-
 
 
 
@@ -122,6 +120,7 @@ Available parameters are:
 :param level:    the overall verbosity level for both console and logfile.
 :param mode:     the opening mode for the logfile
 :param encoding: the encoding for the logfile
+:param tty:      whether to install a default logger to the terminal
 
 :param loggers:  A list or tuple of names of loggers to configure.
                  Default is ['lino'].
@@ -165,6 +164,7 @@ Because that's rather necessary on a production server with :setting:`DEBUG` Fal
     encoding = config.get('encoding','UTF-8')
     logfile = config.get('filename',None)
     rotate = config.get('rotate',True)
+    tty = config.get('tty',True)
     logger_names = config.get('loggers','lino')
     #~ when = config.get('when',None)
     #~ interval = config.get('interval',None)
@@ -186,19 +186,19 @@ Because that's rather necessary on a production server with :setting:`DEBUG` Fal
     if not 'django' in logger_names:
         djangoLogger.addHandler(aeh)
     
-        
-    try:
-        if sys.stdout.isatty():
-            h = logging.StreamHandler()
-            #~ h.setLevel(level)
-            if logfile is not None:
-                h.setLevel(logging.INFO)
-            fmt = logging.Formatter(fmt='%(levelname)s %(message)s')
-            h.setFormatter(fmt)
-            for l in loggers: l.addHandler(h)
-    except IOError:
-        # happens under mod_wsgi
-        linoLogger.info("mod_wsgi mode (no sys.stdout)")
+    if tty:
+        try:
+            if sys.stdout.isatty():
+                h = logging.StreamHandler()
+                #~ h.setLevel(level)
+                if logfile is not None:
+                    h.setLevel(logging.INFO)
+                fmt = logging.Formatter(fmt='%(levelname)s %(message)s')
+                h.setFormatter(fmt)
+                for l in loggers: l.addHandler(h)
+        except IOError:
+            # happens under mod_wsgi
+            linoLogger.info("mod_wsgi mode (no sys.stdout)")
         
     if logfile is not None:
         try:

@@ -1,0 +1,54 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en">
+<body>
+<h2>Playing with the eID Applet</h2>
+<p>Hello world.</p>
+<!-- https://www.java.com/js/deployJava.js -->
+<script type="text/javascript" src="./deployJava.js"></script>
+<script type="text/javascript" src="./deploy-eid-applet.js"></script>
+<script type="text/javascript">
+        var appletLauncherId = "BEIDAppletLauncher";
+        var attributes = {
+                //~ name : 'beidapplet',
+                //~ alt : 'eID applet',
+                id: appletLauncherId,
+                code : 'be.fedict.eid.applet.Applet.class',
+                archive : './eid-applet-package-1.0.5.GA.jar',
+                width : 600,
+                height : 300
+        };
+        var parameters = {
+                TargetPage : 'identity-result',
+                AppletService : 'eid-applet-service',
+                Language : 'de'
+        };
+        deployJavaEIDApplet.runApplet(attributes, parameters);
+        
+        
+    var theBEIDApplet = document.getElementById(appletLauncherId);
+  	// check if applet is loaded as sub applet (using applet-launcher) or as main applet (using Next-Generation Java Plug-in).
+    if (theBEIDApplet.getSubApplet) theBEIDApplet = theBEIDApplet.getSubApplet();
+    
+var getReaderNames = function() {
+	var readerNames = new Array(0);
+	try {
+		theBEIDApplet.InitLib(null);
+		var nbrReaders = theBEIDApplet.readerCount();
+		readerNames = new Array(nbrReaders);
+		for (var i = 0; i < nbrReaders; i++) {
+			readerNames[i] = "" + theBEIDApplet.getReaderByNum(i);
+		}
+	} catch (e){} // catch Javascript and Java exceptions
+
+	try {
+		theBEIDApplet.exitLib();
+	} catch (e){} // catch Javascript and Java exceptions
+
+	return readerNames;
+};
+  
+  console.log('20121106 reader names:',getReaderNames());  
+  document.write(getReaderNames());
+</script>
+</body>
+</html>

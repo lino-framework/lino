@@ -39,6 +39,17 @@ extensions = [
   #~ 'sphinx.ext.doctest',
 ]
 
+extensions.append('sphinxcontrib.autorun')
+
+#~ autorun_languages = {}
+#~ autorun_languages['welfare'] = 'python -m lino_welfare.run_demo_script'
+#~ autorun_languages['py2rst'] = 'python -m sphinxcontrib.autorun_py2rst'
+#~ autorun_languages['py2rst'] = 'python -'
+#~ autorun_languages['py2rst_prefix_chars'] = 0
+#~ autorun_languages['py2rst_rst_output'] = True
+#~ autorun_languages['py2rst_output_encoding'] = 'utf-8'
+#~ autorun_languages['py2rst_input_encoding'] = 'utf-8'
+
 primary_domain = 'py'
 
 # Add any paths that contain templates here, relative to this directory.
@@ -90,7 +101,9 @@ version = '.'.join(release.split('.')[:2])
 exclude_trees = [
   'blog/2009',
   'blog/2010',
-  'blog/2011'
+  'blog/2011',
+  'releases/2010',
+  'releases/2011',
   ]
 
 # The reST default role (used for this markup: `text`) to use for all documents.
@@ -228,6 +241,11 @@ latex_documents = [
 #~ from timtools.sphinx import setup
 
 from lino.utils.sphinx import setup
+#~ from lino.utils.sphinx import setup as stdsetup
+#~ def setup(app):
+    #~ stdsetup(app)
+    #~ app.add_stylesheet('dialog.css')
+    #~ app.add_stylesheet('scrollwide.css')
 
 extlinks = {
   'issue': ('http://code.google.com/p/lino/issues/detail?id=%s', 'Issue '),
