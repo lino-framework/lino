@@ -1774,6 +1774,9 @@ if settings.LINO.use_extensible:
         return datetime.date(*settings.LINO.parse_date(s))
   
     class CalendarPanel(dd.Frame):
+        """
+        Deserves documentation.
+        """
         required = dict(user_groups='office',auth=True)
         
         #~ default_action = CalendarAction()

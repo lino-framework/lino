@@ -1,0 +1,24 @@
+20121107
+========
+
+eId-Karten einlesen
+-------------------
+
+Jetzt kommt die eigentliche Einbindung dran: wenn man eine Karte 
+eingelesen hat, müssen die Daten ja an den Server geschickt werden, 
+und der muss dann nachschlagen, entscheiden und ggf. rückfragen, 
+was damit geschehen soll.
+
+Das ist was Neues für Lino. 
+Ein bisschen wie das :class:`lino.modlib.cal.models.CalendarPanel`. 
+Oder vielleicht brauche ich nicht einmal einen 
+:class:`Actor <lino.core.actors.Actor>`
+mit 
+:class:`Action <lino.core.actions.Action>`?
+Der erste Versuch geht in diese Richtung. 
+Abspaltung 
+eines :class:`BaseRequest <lino.core.actions.BaseRequest>`
+aus dem bisherigen
+:class:`ActionRequest <lino.core.actions.ActionRequest>`.
+Checkin.
+

@@ -287,14 +287,12 @@ class Lino(object):
     migration_module = None
     """If you maintain a data migration module for your application, 
     specify its name here."""
-    
-    #~ bypass_perms = False
-    
+   
     use_gridfilters = True
     
-    use_eid_applet = True
+    use_eid_applet = False
     """
-    New since 20121106
+    No longer used. Experimental, see :doc:`/blog/2012/1105`.
     """
     
     use_eid_jslib = True
@@ -1513,3 +1511,6 @@ or
         
     def get_guest_greeting(self):
         return xghtml.E.p("Please log in")
+
+    def get_urls(self):
+        return []

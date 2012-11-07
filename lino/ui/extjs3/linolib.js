@@ -447,7 +447,7 @@ Lino.show_login_window = function() {
 Lino.logout = function(id,name) {
     console.log('20121104 gonna log out',arguments);
     //~ Lino.do_action
-    Lino.call_row_action(Lino.viewport,'/auth',{},'logout',undefined,undefined,function(){
+    Lino.call_row_action(Lino.viewport,'GET','/auth',{},'logout',undefined,undefined,function(){
         console.log('20121104 logged out',arguments);
         //~ Lino.login_window.hide();
         Lino.close_all_windows();
@@ -1979,7 +1979,7 @@ Lino.do_on_current_record = function(panel,fn,phantom_fn) {
 };
 
 
-Lino.call_row_action = function(panel,url,p,actionName,step,on_confirm,on_success) {
+Lino.call_row_action = function(panel,method,url,p,actionName,step,on_confirm,on_success) {
   p.$ext_requests.URL_PARAM_ACTION_NAME = actionName;
   if (!panel) panel = Lino.viewport;
   Ext.apply(p,panel.get_base_params());
@@ -1989,7 +1989,7 @@ Lino.call_row_action = function(panel,url,p,actionName,step,on_confirm,on_succes
     
   if (step) p['$ext_requests.URL_PARAM_ACTION_STEP'] = step;
   Ext.Ajax.request({
-    method: 'GET',
+    method: method,
     url: url,
     params: p,
     success: Lino.action_handler(panel,on_success,on_confirm)
@@ -2001,7 +2001,7 @@ Lino.row_action_handler = function(actionName) {
     Lino.do_on_current_record(panel,function(rec) {
       //~ console.log(panel);
       //~ 20120723 Lino.call_row_action(panel,rec.id,actionName,step,fn);
-      Lino.call_row_action(panel,panel.get_record_url(rec.id),{},actionName,step,fn);
+      Lino.call_row_action(panel,'GET',panel.get_record_url(rec.id),{},actionName,step,fn);
     });
   };
   return fn;
@@ -2025,7 +2025,7 @@ Lino.run_row_action = function(requesting_panel,url,pk,actionName) {
   var panel = Ext.getCmp(requesting_panel);
   var fn = function(panel,btn,step) {
     //~ 20120723 Lino.call_row_action(panel,pk,actionName,step,fn);
-    Lino.call_row_action(panel,url,{},actionName,step,fn);
+    Lino.call_row_action(panel,'GET',url,{},actionName,step,fn);
   }
   fn(panel,null,null);
 }
@@ -2409,7 +2409,7 @@ Lino.ActionFormPanel = Ext.extend(Lino.ActionFormPanel,{
     var fn = function(panel,btn,step) {
       var p = {};
       self.add_field_values(p)
-      Lino.call_row_action(panel,panel.get_record_url(rec.id),p,actionName,step,fn,on_success);
+      Lino.call_row_action(panel,'GET',panel.get_record_url(rec.id),p,actionName,step,fn,on_success);
     }
     fn(panel,null,null);
     
@@ -5310,17 +5310,43 @@ try {
       //~ document.getElementById("content").value = content;
       
       function on_success() {
-          console.log('20121105 /beid_card on_success',arguments);
+          console.log('20121105 /eid-jslib read on_success',arguments);
           //~ Lino.login_window.hide();
           //~ Lino.close_all_windows();
       };
       var p = {
-        foo: 1,
-        content : card.toString()
+        //~ foo: 1,
+        //~ content : card.toString(),
+        cardNumber: card.cardNumber,
+        validityBeginDate:card.validityBeginDate,
+        validityEndDate: card.validityEndDate,
+        chipNumber:card.chipNumber,
+        issuingMunicipality:card.issuingMunicipality,
+        nationalNumber:card.nationalNumber,
+        surname:card.surname,
+        firstName1:card.firstName1,
+        firstName2:card.firstName2,
+        firstName3:card.firstName3,
+        nationality:card.nationality,
+        birthLocation:card.birthLocation,
+        birthDate: card.birthDate,
+        sex:card.sex,
+        nobleCondition:card.nobleCondition,
+        documentType:card.documentType,
+        specialStatus:card.specialStatus,
+        whiteCane:card.whiteCane,
+        yellowCane:card.yellowCane,
+        extendedMinority:card.extendedMinority,
+        street:card.street,
+        streetNumber:card.streetNumber,
+        boxNumber:card.boxNumber,
+        zipCode:card.zipCode,
+        municipality:card.municipality,
+        country:card.country
         };
       var fn = function(panel,btn,step) {
-        Lino.call_row_action(panel,'/beid_card',p,'read',step,fn,on_success);
-      }
+        Lino.call_row_action(panel,'POST','/eid-jslib',p,'read',step,fn,on_success);
+      };
       fn(panel,null,null);
       
     } else {
