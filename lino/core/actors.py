@@ -874,14 +874,6 @@ class Actor(actions.Parametrizable):
         cls._constants[name] = vf
         vf.name = name
         
-    #~ @classmethod
-    #~ def get_url(self,ui,**kw):
-        #~ return ui.action_url_http(self,self.default_action,**kw)
-
-    #~ @classmethod
-    #~ def setup_permissions(self):
-        #~ pass
-        
     @classmethod
     def after_site_setup(self,site):
         #~ raise "20100616"
@@ -1022,7 +1014,11 @@ class Actor(actions.Parametrizable):
             #~ s = etree.tostring(ui.table2xhtml(ar))
             #~ return s
         return meth
-
+        
+    @classmethod
+    def to_rst(self,column_names=None,**kw):
+        settings.LINO.startup()
+        return self.request(**kw).to_rst(column_names)
         
 
 #~ def workflow(target_state,**kw):

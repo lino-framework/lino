@@ -93,6 +93,48 @@ def action_request(app_label,actor,request,rqdata,**kw):
     ar = rpt.request(settings.LINO.ui,request,a,**kw)
     ar.renderer = settings.LINO.ui.ext_renderer
     return ar
+    
+def run_action(ar,elem):
+    try:
+        rv = ar.bound_action.action.run(elem,ar)
+        if rv is None:
+            return ui.success_response()
+        return ar.ui.action_response(rv)
+        #~ return rv
+    except actions.ConfirmationRequired,e:
+        r = dict(
+          success=True,
+          confirm_message='\n'.join([unicode(m) for m in e.messages]),
+          step=e.step)
+        return ar.ui.action_response(r)
+    except actions.DialogRequired,e:
+        r = dict(
+          success=True,
+          dialog_fn=e.dialog,
+          step=e.step)
+        return ar.ui.action_response(r)
+    except Warning,e:
+        r = dict(
+          success=False,
+          message=unicode(e),
+          alert=True)
+        return ar.ui.action_response(r)
+    except Exception,e:
+        if elem is None:
+            msg = unicode(e)
+        else:
+            msg = _(
+              "Action \"%(action)s\" failed for %(record)s:") % dict(
+              action=ar.bound_action.full_name(),
+              record=obj2unicode(elem))
+            msg += "\n" + unicode(e)
+        msg += '.\n' + _(
+          "An error report has been sent to the system administrator.")
+        logger.warning(msg)
+        logger.exception(e)
+        return ar.ui.error_response(e,msg)
+          
+    
   
     
         
@@ -666,17 +708,17 @@ class ApiElement(View):
         
         action_name = request.GET.get(ext_requests.URL_PARAM_ACTION_NAME,
           rpt.default_elem_action_name)
-        a = rpt.get_url_action(action_name)
-        if a is None:
+        ba = rpt.get_url_action(action_name)
+        if ba is None:
             raise http.Http404("%s has no action %r" % (rpt,action_name))
             
         #~ ar = rpt.request(ui,request,a)
-        ar = a.request(ui,request)
+        ar = ba.request(ui,request)
         ar.renderer = ui.ext_renderer
         ah = ar.ah
         
         #~ fmt = request.GET.get('fmt',a.default_format)
-        fmt = request.GET.get(ext_requests.URL_PARAM_FORMAT,a.action.default_format)
+        fmt = request.GET.get(ext_requests.URL_PARAM_FORMAT,ba.action.default_format)
         
         if fmt == ext_requests.URL_FORMAT_PLAIN:
             ar.renderer = ar.ui.plain_renderer
@@ -751,7 +793,7 @@ class ApiElement(View):
         
 
         #~ if isinstance(a,actions.OpenWindowAction):
-        if a.action.opens_a_window:
+        if ba.action.opens_a_window:
           
             if fmt == ext_requests.URL_FORMAT_JSON:
                 if pk == '-99999':
@@ -774,60 +816,21 @@ class ApiElement(View):
                 tab = int(tab)
                 after_show.update(active_tab=tab)
             
-            return http.HttpResponse(ui.html_page(request,a.action.label,
-              on_ready=ui.ext_renderer.action_call(request,a,after_show)))
+            return http.HttpResponse(ui.html_page(request,ba.action.label,
+              on_ready=ui.ext_renderer.action_call(request,ba,after_show)))
             
-        if isinstance(a.action,actions.RedirectAction):
-            target = a.action.get_target_url(elem)
+        if isinstance(ba.action,actions.RedirectAction):
+            target = ba.action.get_target_url(elem)
             if target is None:
-                raise http.Http404("%s failed for %r" % (a,elem))
+                raise http.Http404("%s failed for %r" % (ba,elem))
             return http.HttpResponseRedirect(target)
             
-        if isinstance(a.action,actions.RowAction):
+        if isinstance(ba.action,actions.RowAction):
             if pk == '-99998':
                 assert elem is None
                 elem = ar.create_instance()
-            
-            try:
-                rv = a.action.run(elem,ar)
-                if rv is None:
-                    return ui.success_response()
-                return ui.action_response(rv)
-                #~ return rv
-            except actions.ConfirmationRequired,e:
-                r = dict(
-                  success=True,
-                  confirm_message='\n'.join([unicode(m) for m in e.messages]),
-                  step=e.step)
-                return ui.action_response(r)
-            except actions.DialogRequired,e:
-                r = dict(
-                  success=True,
-                  dialog_fn=e.dialog,
-                  step=e.step)
-                return ui.action_response(r)
-            except Warning,e:
-                r = dict(
-                  success=False,
-                  message=unicode(e),
-                  alert=True)
-                return ui.action_response(r)
-            except Exception,e:
-                if elem is None:
-                    msg = unicode(e)
-                else:
-                    msg = _(
-                      "Action \"%(action)s\" failed for %(record)s:") % dict(
-                      action=a.full_name(),
-                      record=obj2unicode(elem))
-                    msg += "\n" + unicode(e)
-                msg += '.\n' + _(
-                  "An error report has been sent to the system administrator.")
-                logger.warning(msg)
-                logger.exception(e)
-                return settings.LINO.ui.error_response(e,msg)
-          
-        raise NotImplementedError("Action %s is not implemented)" % a)
+            return run_action(ar,elem)
+        raise NotImplementedError("Action %s is not implemented)" % ba)
                 
         
     def put(self,request,app_label=None,actor=None,pk=None):
@@ -880,16 +883,18 @@ class ApiList(View):
         #~ ar = rpt.request(ui,request,a)
         
         ar = action_request(app_label,actor,request,request.POST)
-        #~ ar.renderer = ui.ext_renderer
-        rh = ar.ah
-        
-        elem = ar.create_instance()
-        if rh.actor.handle_uploaded_files is not None:
-            rh.actor.handle_uploaded_files(elem,request)
-            file_upload = True
-        else:
-            file_upload = False
-        return form2obj_and_save(ar,request.POST,elem,True,False,file_upload)
+        if isinstance(ar.bound_action.action,actions.InsertRow):
+            rh = ar.ah
+            elem = ar.create_instance()
+            if rh.actor.handle_uploaded_files is not None:
+                rh.actor.handle_uploaded_files(elem,request)
+                file_upload = True
+            else:
+                file_upload = False
+            return form2obj_and_save(ar,request.POST,elem,True,False,file_upload)
+        return run_action(ar,None)
+        rv = ar.bound_action.action.run(ar)
+        return rv
       
     def get(self,request,app_label=None,actor=None):
         """

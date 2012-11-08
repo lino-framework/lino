@@ -32,7 +32,3 @@ Das alles nur, weil mir das Permission-System von Django nicht gut genug ist.
 Ja, da bin ich Künstler und Perfektionist: was mir nicht gefällt, 
 benutze ich nicht.
 
-Der sichtbare Nutzen dieser Übrung ist, dass die Demo
-
-En passant habe ich wohl auch was Nützliches
-

@@ -597,6 +597,28 @@ class GridEdit(TableAction):
         return None
 
 
+
+
+class ListAction(Action):
+    """
+    Base class for actions that are executed server-side on an individual row.
+    """
+    callable_from = (GridEdit,)
+    js_handler = None
+    http_method = 'GET'
+    
+    def get_panel_btn_handler(self,actor,ui):
+        url = ui.ext_renderer.get_actor_url(actor)
+        return "%s(%r,%r,%r)" % (self.js_handler,url,self.action_name,self.http_method)
+
+    def run(self,row,ar,**kw):
+        """
+        Execute the action on the given `row`. `ar` is an :class:`ActionRequest` 
+        object representing the context where the action is running.
+        """
+        raise NotImplementedError("%s has no run() method" % self.__class__)
+
+
 class ShowDetailAction(RowAction):
     """
     An action that opens the Detail Window of its actor.
@@ -696,13 +718,6 @@ class UpdateRowAction(RowAction):
     show_in_workflow = False
     readonly = False
     required = dict(user_level='user')
-    
-
-class ListAction(Action):
-    """
-    Base class for actions that are executed server-side on an individual row.
-    """
-    callable_from = (GridEdit,)
     
 
 class DeleteSelected(RowAction):
@@ -866,6 +881,8 @@ class BoundAction(object):
         else:
             return u"%s %s" % (self.action.label,self.actor.label)
             
+    def get_panel_btn_handler(self,*args):
+        return self.action.get_panel_btn_handler(self.actor,*args)
         
     def get_bound_action_permission(self,ar,obj,state):
         if not self.action.get_action_permission(ar,obj,state):

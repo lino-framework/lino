@@ -1,3 +1,34 @@
 T:\hgwork\lino\docs\autodoc\lino.apps.homeworkschool.rst:12: WARNING: autodoc can't import/find module 'lino.apps.homeworkschool.models', it reported error: "'NoneType' object has no attribute 'Pupil'", please check your spelling and sys.path
 T:\hgwork\lino\docs\casts\lino_intro.rst:: WARNING: document isn't included in any toctree
 T:\hgwork\lino\docs\igen\index.rst:: WARNING: document isn't included in any toctree
+<autodoc>:1: WARNING: py:class reference target not found: lino.core.actions.Parametrizable
+t:\hgwork\lino\lino\core\actions.py:docstring of lino.core.actions.Action.readonly:3: WARNING: py:class reference target not found: lino.mixins.duplicable.Duplicate
+t:\hgwork\lino\lino\core\actions.py:docstring of lino.core.actions.Action.show_in_workflow:1: WARNING: py:meth reference target not found: lino.core.model.Model.workflow_buttons
+t:\hgwork\lino\lino\core\actions.py:docstring of lino.core.actions.Action.sort_index:7: WARNING: py:attr reference target not found: lino.mixins.duplicable.Duplicable.duplicate_row
+<autodoc>:1: WARNING: py:class reference target not found: lino.core.actions.BaseRequest
+t:\hgwork\lino\lino\core\actions.py:docstring of lino.core.actions.ActionRequest:3: WARNING: py:meth reference target not found: lino.core.actions.ActionRequest.get_user
+t:\hgwork\lino\lino\core\actions.py:docstring of lino.core.actions.ActionRequest:4: WARNING: py:meth reference target not found: lino.core.actions.ActionRequest.confirm
+<autodoc>:1: WARNING: py:class reference target not found: exceptions.Exception
+t:\hgwork\lino\lino\core\actions.py:docstring of lino.core.actions.ConfirmationRequired:1: WARNING: py:meth reference target not found: ActionRequest.confirm
+<autodoc>:1: WARNING: py:class reference target not found: exceptions.Exception
+t:\hgwork\lino\lino\core\actions.py:docstring of lino.core.actions.DialogRequired:1: WARNING: py:meth reference target not found: ActionRequest.dialog
+<autodoc>:1: WARNING: py:class reference target not found: lino.core.actions.VirtualRow
+t:\hgwork\lino\lino\core\actions.py:docstring of lino.core.actions.EmptyTableRow:1: WARNING: py:class reference target not found: EmptyTable
+t:\hgwork\lino\lino\core\actions.py:docstring of lino.core.actions.action:1: WARNING: py:meth reference target not found: Action.__init__
+T:\hgwork\lino\docs\autodoc\lino.utils.rst:41: WARNING: py:class reference target not found: dict
+t:\hgwork\lino\lino\utils\__init__.py:docstring of lino.utils.call_on_bases:1: WARNING: unknown document: /blog/2011/0914
+t:\hgwork\lino\lino\utils\__init__.py:docstring of lino.utils.call_optional_super:1: WARNING: unknown document: /blog/2011/0914
+T:\hgwork\lino\docs\autodoc\lino.utils.rst:42: WARNING: py:mod reference target not found: dbfreader
+T:\hgwork\lino\docs\autodoc\lino.utils.rst:50: WARNING: py:mod reference target not found: instantiator
+T:\hgwork\lino\docs\autodoc\lino.utils.rst:23: WARNING: py:class reference target not found: exceptions.Exception
+T:\hgwork\lino\docs\autodoc\lino.utils.rst:58: WARNING: py:mod reference target not found: latex
+T:\hgwork\lino\docs\autodoc\lino.utils.rst:67: WARNING: py:mod reference target not found: restify
+T:\hgwork\lino\docs\autodoc\lino.utils.rst:7: WARNING: py:mod reference target not found: docutils.examples
+T:\hgwork\lino\docs\autodoc\lino.utils.rst:17: WARNING: py:class reference target not found: docutils.writers.html4css1.HTMLTranslator
+T:\hgwork\lino\docs\autodoc\lino.utils.rst:29: WARNING: py:class reference target not found: docutils.writers.html4css1.Writer
+T:\hgwork\lino\docs\autodoc\lino.utils.rst:82: WARNING: unknown document: /blog/2011/0525
+T:\hgwork\lino\docs\autodoc\lino.utils.rst:75: WARNING: py:mod reference target not found: ucsv
+<autodoc>:1: WARNING: py:class reference target not found: lino.utils.choosers.FieldChooser
+t:\hgwork\lino\lino\utils\choosers.py:docstring of lino.utils.choosers.uses_simple_values:1: WARNING: py:class reference target not found: lino.ui.extjs.ext_store.Store
+T:\hgwork\lino\docs\blog\2012\1107.rst:12: WARNING: py:class reference target not found: lino.core.actions.BaseRequest
+T:\hgwork\lino\docs\blog\2012\1107.rst:36: WARNING: py:class reference target not found: lino.core.actions.BaseRequest

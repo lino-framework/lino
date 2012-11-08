@@ -268,6 +268,19 @@ class MySettings(Users):
         #~ return cls.default_elem_action_name
         return actions.ShowDetailAction()
     
+class UsersOverview(Users):
+    """
+    >>> from django.conf import settings
+    >>> settings.LINO.startup()
+    >>> print settings.LINO.modules.users.UsersOverview.to_rst()
+    
+    
+    $ python manage.py shell
+    >>> from lino.modlib.users.models import UsersOverview as T; print T.to_rst()
+    
+    """
+    column_names = 'username profile language'
+    exclude = dict(profile='')
 
 if settings.LINO.user_model:
   

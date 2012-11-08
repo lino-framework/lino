@@ -20,5 +20,69 @@ Abspaltung
 eines :class:`BaseRequest <lino.core.actions.BaseRequest>`
 aus dem bisherigen
 :class:`ActionRequest <lino.core.actions.ActionRequest>`.
-Checkin.
+:checkin:`435632ee40dc`.
+
+
+Bugfix "AJAX-Gehoppel"
+----------------------
+
+Nach diesen Änderungen entdeckte ich einen lustigen Bug:
+wenn man im Startbildschirm in der UsersWithClients 
+die 
+"Primären Begleitungen" und "Aktiven Klienten"
+eines Bentuzers hintereinander abwechselnd aufruft und wieder schließt,
+dann fängt Lino beim dritten Aufruf an, endlose AJAX-Calls zu machen.
+
+Ob das an dem neuen :class:`BaseRequest <lino.core.actions.BaseRequest>` liegt?
+Das ist leicht nachgeprüft::
+
+  hg revert actions.py -r 5d68fbf237e3
+
+Nein, an dieser Änderung lags nicht. 
+Der Fehler ist auch mit der vorigen Version reproduzierbar.
+
+10.50 Uhr. Erklärung: die Felder des params_panel sollen ja 
+automatisch ein Aktualisieren der Tabelle auslösen, wenn man sie 
+verändert. Das mach ich mit folgenden event bindings::
+
+        Ext.each(this.params_panel.fields,function(f) {
+          if (f instanceof Ext.form.Checkbox)
+              f.on('check',function() {t.refresh()});
+          else if (f instanceof Ext.form.TriggerField)
+              f.on('select',function() {t.refresh()});
+          else {
+              f.on('change',function() {t.refresh()});
+            }
+          });
+
+Diese `refresh` wurden dann aber auch in `set_param_values` 
+gefeuert, wenn die Felder nach einem refresh() verändert wurden. 
+Und das war immer dann der Fall, 
+wenn das gleiche Fenster vorher mit anderen Parametern benutzt worden 
+war. Lösung::
+
+        var refresh = function() {if (!t.setting_param_values) t.refresh();}
+        Ext.each(this.params_panel.fields,function(f) {
+          if (f instanceof Ext.form.Checkbox)
+              f.on('check',refresh);
+          else if (f instanceof Ext.form.TriggerField)
+              f.on('select',refresh);
+          else {
+              f.on('change',refresh);
+            }
+          });
+
+
+Mausefalle deaktiviert
+----------------------
+
+Wenn jemand auf den Button "Tabellenkonfiguration speichern" 
+("Save Grid Configuration") klickte,
+generierte Lino eine fehlerhafte Konfigurationsdatei, 
+die dann beim nächsten Neugenerieren 
+der :xfile:`lino*.js` "aktiv" wurde.
+Weil sowieso bislang nicht erwiesen ist, wie sinnvoll dieses Feature 
+überhaupt ist, habe ich es bis auf weiteres mal deaktiviert.
+
+
 

@@ -519,7 +519,7 @@ class ExtRenderer(HtmlRenderer):
         #~ return self.href_button(url,text or tar.get_title(),**kw)
         #~ return self.href_button(url,text or cgi.escape(force_unicode(rr.label)))
             
-    def action_href_http(self,a,label=None,**params):
+    def unused_action_href_http(self,a,label=None,**params):
         """
         Return a HTML chunk for a button that will execute 
         this action using a *HTTP* link to this action.
@@ -528,7 +528,7 @@ class ExtRenderer(HtmlRenderer):
         return '[<a href="%s">%s</a>]' % (self.action_url_http(a,**params),label)
         
     def get_actor_url(self,actor,*args,**kw):
-        return self.build_url("api",actor.app_label,actor.__name__,*args,**kw)
+        return self.ui.build_url("api",actor.app_label,actor.__name__,*args,**kw)
         
     def get_request_url(self,ar,*args,**kw):
         """
@@ -1785,9 +1785,9 @@ tinymce.init({
         elif isinstance(a,actions.ListAction):
             #~ if a.url_action_name is None:
                 #~ raise Exception("Action %r has no url_action_name" % a)
-            kw.update(
-              #~ panel_btn_handler=js_code("Lino.list_action_handler(%r)" % a.url_action_name))
-              panel_btn_handler=js_code("Lino.list_action_handler(%r)" % a.action_name))
+            #~ kw.update(
+              #~ panel_btn_handler=js_code("Lino.list_action_handler(%r)" % a.action_name))
+            kw.update(panel_btn_handler=js_code(ba.get_panel_btn_handler(self)))
             kw.update(must_save=True)
         else:
             kw.update(panel_btn_handler=js_code("Lino.%s" % a))
@@ -2314,7 +2314,7 @@ tinymce.init({
         return self.ext_renderer.row_action_button(*args,**kw)
 
 
-    def action_url_http(self,action,*args,**kw):
+    def unused_action_url_http(self,action,*args,**kw):
         #~ if not action is action.actor.default_action:
         if action != action.actor.default_action:
             kw.update(an=action.name)

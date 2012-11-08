@@ -1,0 +1,64 @@
+20121108
+========
+
+eID-Karten einlesen
+-------------------
+
+Tilt! 
+Nee, die erste Implementierung (ohne Actor) war nix. 
+Viel schöner ist, wenn ich sie als
+:class:`lino_welfare.modlib.pcsw.models.BeIdReadCardAction`
+definiere!
+
+TODO:
+
+- eid-javascript-lib übergibt das Geburtsdatum als
+ ``birthDate:1968-06-01T00:00:00``. 
+ Sollte aber laut :attr:`lino.Lino.date_format_extjs` sein. 
+ Und was ist mit unkompletten Geburtsdaten?
+
+Printing a table from command line
+----------------------------------
+
+New table :class:`lino.modlib.users.models.UsersOverview` 
+and new shortcut :meth:`link.core.actors.Actor.to_rst`.
+Example usage::
+
+  $ python manage.py shell
+  >>> from lino.modlib.users.models import UsersOverview as T; print T.to_rst()
+  INFO Starting Lino...
+  INFO Analyzing models...
+  INFO Lino Site 'DSBE@armand' started. Languages: de, fr, en. 296 actors.
+  INFO Using Lino/Welfare 1.0.1, Lino 1.5.1, Django 1.5.dev17942, python-dateutil 1.5, Cheetah 2.4.4, OdfPy ODFPY/0.9.4, docutils 0.9.1, suds 0.4.1, PyYaml 3.08, Appy 0.8.0 (2011/12/15 22:41), Python 2.7.1.
+  ============ ===================================== =======
+  Benutzername Benutzerprofil                        Sprache
+  ============ ===================================== =======
+  alicia       Integration Agent                     de
+  caroline     Berater Neuanträge                    de
+  charles      CBSS only                             de
+  elmar        Anonymous                             de
+  gerd         Verwalter                             de
+  hubert       Integration Agent                     de
+  kerstin      Schuldenberater                       de
+  luc          Verwalter                             de
+  melanie      Integrations-Assistent (Dienstleiter) fr
+  root         Verwalter                             de
+  ============ ===================================== =======
+  
+  >>> from lino.utils import babel  
+  >>> babel.set_language('en')
+  >>> print T.to_rst()
+  ======== ========================== ========
+  Username User Profile               Language
+  ======== ========================== ========
+  alicia   Integration Agent          de
+  caroline Newcomers consultant       de
+  charles  CBSS only                  de
+  elmar    Anonymous                  de
+  gerd     Administrator              de
+  hubert   Integration Agent          de
+  kerstin  Debts consultant           de
+  luc      Administrator              de
+  melanie  Integration Agent (Senior) fr
+  root     Administrator              de
+  ======== ========================== ========  

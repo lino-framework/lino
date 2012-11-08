@@ -1609,6 +1609,7 @@ Lino.permalink_handler = function (ww) {
 
 Lino.MainPanel = {
   is_home_page : false,
+  setting_param_values : false,
   config_containing_window : function(wincfg) { }
   ,init_containing_window : function(win) { }
   ,is_loading : function() { return true; } // overridden by subclasses
@@ -1698,17 +1699,18 @@ Lino.MainPanel = {
           }
         }]);
         var t = this;
+        var refresh = function() {if (!t.setting_param_values) t.refresh();}
         Ext.each(this.params_panel.fields,function(f) {
           //~ f.on('valid',function() {t.refresh()});
           if (f instanceof Ext.form.Checkbox)
-              f.on('check',function() {t.refresh()});
+              f.on('check',refresh);
           else if (f instanceof Ext.form.TriggerField)
-              f.on('select',function() {t.refresh()});
+              f.on('select',refresh);
           else {
               if (! f.on) 
                   console.log("20121010 no method 'on'",f);
               else
-                  f.on('change',function() {t.refresh()});
+                  f.on('change',refresh);
             }
           });
       }
@@ -1743,8 +1745,15 @@ Lino.MainPanel = {
     if (this.params_panel) {
       //~ console.log('20120203 MainPanel.set_param_values', pv);
       this.status_param_values = pv;
-      if (pv) this.params_panel.form.my_loadRecord(pv);
-      else this.params_panel.form.reset(); 
+      //~ this.params_panel.form.suspendEvents(false);
+      this.setting_param_values = true;
+      if (pv) { 
+          this.params_panel.form.my_loadRecord(pv);
+      } else { 
+        this.params_panel.form.reset(); 
+      }
+      this.setting_param_values = false;
+      //~ this.params_panel.form.resumeEvents();
     }
   }
 };
@@ -2031,7 +2040,7 @@ Lino.run_row_action = function(requesting_panel,url,pk,actionName) {
 }
 
 
-Lino.list_action_handler = function(actionName,gridmode) {
+Lino.unused_list_action_handler = function(actionName,gridmode) {
   var fn = function(panel,btn,step) {
     //~ console.log(panel);
     var url = ROOT_URL + '/api' + panel.ls_url ;
@@ -3236,7 +3245,8 @@ Lino.GridPanel = Ext.extend(Lino.GridPanel,{
     return !this.loadMask.disabled; 
   },
   
-  config_containing_window : function(wincfg) { 
+  unused_config_containing_window : function(wincfg) { 
+      //~ temporarily remove save_grid_config button (see /blog(2012/1107)
       if (wincfg.tools != undefined) 
         wincfg.tools = [
           //~ {handler:this.save_grid_data,
@@ -5262,101 +5272,98 @@ function captureEvents(observable) {
 
 #if $settings.LINO.use_eid_jslib
 
-try {
+var cardReader = new be.belgium.eid.CardReader();
 
-  var cardReader = new be.belgium.eid.CardReader();
+function noCardPresentHandler() {
+  window.alert("No card present!");
+}
+cardReader.setNoCardPresentHandler(noCardPresentHandler);
 
-  function noCardPresentHandler() {
-    window.alert("No card present!");
-  }
-  cardReader.setNoCardPresentHandler(noCardPresentHandler);
+function noReaderDetectedHandler() {
+  window.alert("No reader detected!");
+}
+cardReader.setNoReaderDetectedHandler(noReaderDetectedHandler);
 
-  function noReaderDetectedHandler() {
-    window.alert("No reader detected!");
-  }
-  cardReader.setNoReaderDetectedHandler(noReaderDetectedHandler);
+function appletNotFoundHandler() {
+  window.alert("Applet not found!");
+}
+cardReader.setAppletNotFoundHandler(appletNotFoundHandler);
 
-  function appletNotFoundHandler() {
-    window.alert("Applet not found!");
-  }
-  cardReader.setAppletNotFoundHandler(appletNotFoundHandler);
+function appletExceptionHandler(e) {
+  window.alert("Error reading card!\r\nException: " + e + "\r\nPlease try again.");
+}
+cardReader.setAppletExceptionHandler(appletExceptionHandler);
 
-  function appletExceptionHandler(e) {
-    window.alert("Error reading card!\r\nException: " + e + "\r\nPlease try again.");
-  }
-  cardReader.setAppletExceptionHandler(appletExceptionHandler);
+//~ function clearPicture() {
+  //~ document.getElementById("encoded_picture").src = "data:image/jpeg;base64,";
+//~ }
 
-  //~ function clearPicture() {
-    //~ document.getElementById("encoded_picture").src = "data:image/jpeg;base64,";
-  //~ }
-
-  Lino.read_beid_card = function(requesting_panel) {
+//~ Lino.read_beid_card = function(requesting_panel) {
+Lino.beid_read_card_handler = function(url,actionName,method) {
+  return function(panel,btn,step) {
     //~ clearPicture();
-    var panel = Ext.getCmp(requesting_panel);
-    console.log("readCard",panel);
-    //~ document.getElementById("content").value = "Please wait ...";
     var card = cardReader.read();
-    if (card != null) {
-      var content = card.toString();
-      //~ Lino.alert(content);
-      //~ if (typeof(base64) != "undefined") {
-        //~ var encodedPicture = base64.encode(card.getPicture(), false, false);
-        //~ document.getElementById("encoded_picture").src = "data:image/jpeg;base64," + encodedPicture;
-        //~ content += "\r\n\r\n" + encodedPicture;
-      //~ } else {
-        //~ window.alert("base64 object not defined");
-        //~ content += "\r\n\r\n" + "base64 object not defined";
-      //~ }
-      //~ document.getElementById("content").value = content;
-      
-      function on_success() {
-          console.log('20121105 /eid-jslib read on_success',arguments);
-          //~ Lino.login_window.hide();
-          //~ Lino.close_all_windows();
-      };
-      var p = {
-        //~ foo: 1,
-        //~ content : card.toString(),
-        cardNumber: card.cardNumber,
-        validityBeginDate:card.validityBeginDate,
-        validityEndDate: card.validityEndDate,
-        chipNumber:card.chipNumber,
-        issuingMunicipality:card.issuingMunicipality,
-        nationalNumber:card.nationalNumber,
-        surname:card.surname,
-        firstName1:card.firstName1,
-        firstName2:card.firstName2,
-        firstName3:card.firstName3,
-        nationality:card.nationality,
-        birthLocation:card.birthLocation,
-        birthDate: card.birthDate,
-        sex:card.sex,
-        nobleCondition:card.nobleCondition,
-        documentType:card.documentType,
-        specialStatus:card.specialStatus,
-        whiteCane:card.whiteCane,
-        yellowCane:card.yellowCane,
-        extendedMinority:card.extendedMinority,
-        street:card.street,
-        streetNumber:card.streetNumber,
-        boxNumber:card.boxNumber,
-        zipCode:card.zipCode,
-        municipality:card.municipality,
-        country:card.country
-        };
-      var fn = function(panel,btn,step) {
-        Lino.call_row_action(panel,'POST','/eid-jslib',p,'read',step,fn,on_success);
-      };
-      fn(panel,null,null);
-      
-    } else {
+    if (!card) {
         Lino.alert("No card returned.");
-    }
+        return;
+    } 
+      
+    //~ var content = card.toString();
+    //~ Lino.alert(content);
+    //~ if (typeof(base64) != "undefined") {
+      //~ var encodedPicture = base64.encode(card.getPicture(), false, false);
+      //~ document.getElementById("encoded_picture").src = "data:image/jpeg;base64," + encodedPicture;
+      //~ content += "\r\n\r\n" + encodedPicture;
+    //~ } else {
+      //~ window.alert("base64 object not defined");
+      //~ content += "\r\n\r\n" + "base64 object not defined";
+    //~ }
+    //~ document.getElementById("content").value = content;
+    
+    function on_success() {
+        console.log('20121105 /eid-jslib read on_success',arguments);
+        //~ Lino.login_window.hide();
+        //~ Lino.close_all_windows();
+    };
+    
+    console.log('20121107 got',card.toString());
+    
+    var p = {
+      //~ foo: 1,
+      //~ content : card.toString(),
+      cardNumber: card.cardNumber,
+      validityBeginDate:card.validityBeginDate,
+      validityEndDate: card.validityEndDate,
+      chipNumber:card.chipNumber,
+      issuingMunicipality:card.issuingMunicipality,
+      nationalNumber:card.nationalNumber,
+      surname:card.surname,
+      firstName1:card.firstName1,
+      firstName2:card.firstName2,
+      firstName3:card.firstName3,
+      nationality:card.nationality,
+      birthLocation:card.birthLocation,
+      birthDate: card.birthDate,
+      sex:card.sex,
+      nobleCondition:card.nobleCondition,
+      documentType:card.documentType,
+      specialStatus:card.specialStatus,
+      whiteCane:card.whiteCane,
+      yellowCane:card.yellowCane,
+      extendedMinority:card.extendedMinority,
+      street:card.street,
+      streetNumber:card.streetNumber,
+      boxNumber:card.boxNumber,
+      zipCode:card.zipCode,
+      municipality:card.municipality,
+      country:card.country
+      };
+    var on_confirm = function(panel,btn,step) {
+      //~ Lino.call_row_action(panel,'POST','/eid-jslib',p,'read',step,fn,on_success);
+      Lino.call_row_action(panel,method,url,p,actionName,step,on_confirm,on_success);
+    };
+    on_confirm(panel,btn,step);
   }
-} catch (err){
-  Lino.read_beid_card = function(requesting_panel) {
-      Lino.alert("`Lino.use_eid_jslib` in your `settings.py` is True, but `/media/eid-jslib/be_belgium_eid.js` not found");
-  }
-}  
+}
 
 #end if

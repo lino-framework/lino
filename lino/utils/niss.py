@@ -76,6 +76,9 @@ def gen_niss(birth_date,gender,seq=None):
     niss += '%02d' % checksum
     niss = niss[0:6] + sep1 + niss[6:9] + sep2 + niss[9:11]
     return niss
+    
+#~ def format_niss(niss):
+    
 
 def is_valid_niss(national_id):
     try:

@@ -470,6 +470,7 @@ class Table(AbstractTable):
     def request(self,ui=None,request=None,action=None,**kw):
         if action is None:
             action = self.default_action
+            assert action is not None
         return TableRequest(ui,self,request,action,**kw)
         
     @classmethod
@@ -823,8 +824,8 @@ class Table(AbstractTable):
             qs = qs.filter(**kw)
 
         if rr.exclude:
-            #~ qs = qs.exclude(**rr.exclude)
-            qs = qs.exclude(rr.exclude)
+            qs = qs.exclude(**rr.exclude)
+            #~ qs = qs.exclude(rr.exclude)
             
         if self.filter:
             #~ qs = qs.filter(**self.filter)
