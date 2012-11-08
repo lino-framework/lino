@@ -83,16 +83,28 @@ def py2html(obj,name):
         obj = list(obj)
     return escape(unicode(obj))
     
+
+def get_view_permission(e):
+    if isinstance(e,jsgen.Permittable) and not e.get_view_permission(jsgen._for_user):
+        return False
+    #~ e.g. pcsw.ClientDetail has a tab "Other", visible only to system admins
+    #~ but the "Other" contains a GridElement RolesByPerson which is not per se reserved for system admins.
+    #~ js of normal users should not try to call on_master_changed() on it
+    parent = e.parent
+    while parent is not None:
+    #~ if e.parent is not None:
+        if isinstance(parent,jsgen.Permittable) and not parent.get_view_permission(jsgen._for_user):
+            return False # bug 3 (bcss_summary) blog/2012/09/27
+        parent = parent.parent
+    return True
+
 def before_row_edit(panel):
     l = []
     #~ l.append("console.log('before_row_edit',record);")
     master_field = panel.layout_handle.layout._table.master_field
     for e in panel.active_children:
-        if isinstance(e,jsgen.Permittable) and not e.get_view_permission(jsgen._for_user):
+        if not get_view_permission(e):
             continue
-        if e.parent is not None:
-            if isinstance(e.parent,jsgen.Permittable) and not e.parent.get_view_permission(jsgen._for_user):
-                continue # bug 3 (bcss_summary) blog/2012/09/27
         #~ if not e.get_view_permission(jsgen._for_user): 
         if isinstance(e,GridElement):
             l.append("%s.on_master_changed();" % e.as_ext())

@@ -122,7 +122,33 @@ class PriceField(models.DecimalField):
         #~ return fld
         
         
+"""
+http://stackoverflow.com/questions/454436/unique-fields-that-allow-nulls-in-django
+answer Dec 20 '09 at 3:40 by mightyhal
+http://stackoverflow.com/a/1934764
+"""
+class NullCharField(models.CharField): #subclass the CharField
+    description = "CharField that stores empty strings as NULL instead of ''."
+    def __init__(self, *args, **kwargs):
+        defaults = dict(blank=True,null=True)
+        defaults.update(kwargs)
+        super(NullCharField, self).__init__(*args, **defaults)
         
+    def to_python(self, value):  #this is the value right out of the db, or an instance
+       #~ if isinstance(value, models.CharField): #if an instance, just return the instance
+       if isinstance(value, basestring): #if a string, just return the value
+            return value 
+       if value is None:   #if the db has a NULL (==None in Python)
+            return ''  # convert it into the Django-friendly '' string
+       else:
+            return value # otherwise, return just the value
+            
+    def get_db_prep_value(self, value, connection, prepared=False):
+    #catches value right before sending to db
+       if value == '':     # if Django tries to save '' string, send the db None (NULL)
+            return None
+       else:
+            return value # otherwise, just pass the value        
 
 class FakeField(object):
     """

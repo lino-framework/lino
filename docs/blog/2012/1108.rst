@@ -10,18 +10,45 @@ Viel schöner ist, wenn ich sie als
 :class:`lino_welfare.modlib.pcsw.models.BeIdReadCardAction`
 definiere!
 
-TODO:
+eid-javascript-lib übergab das Geburtsdatum anfangs 
+als
+``birthDate:1968-06-01T00:00:00``. 
+Sollte aber laut :attr:`lino.Lino.date_format_extjs` sein. 
+Und was ist mit unkompletten Geburtsdaten?
 
-- eid-javascript-lib übergibt das Geburtsdatum als
- ``birthDate:1968-06-01T00:00:00``. 
- Sollte aber laut :attr:`lino.Lino.date_format_extjs` sein. 
- Und was ist mit unkompletten Geburtsdaten?
+Unbekannte NR-Nummern
+---------------------
+
+Neue Regel: die NR-Nr. eines Klienten darf ab jetzt *wohl* leer sein.
+Die Konvention, dass bei Klienten mit unbekannter oder ungültiger
+NR-Nr stattdessen die die Partnernummer im Feld NR-Nr stehen muss, 
+ist abgeschafft.
+Dass die NR-Nr erstens gültig und zweitens einzig sein muss, 
+gilt jetzt nur noch dann, wenn sie nicht leer ist.
+
+Ich dachte bisher, dass das technisch nicht möglich ist, but 
+after reading the thread `Unique fields that allow nulls in Django
+<http://stackoverflow.com/questions/454436/unique-fields-that-allow-nulls-in-django>`_ 
+on stackoverflow I decided to use this for the `national_id` field of a 
+:class:`Client <lino_welfare.modlib.pcsw.models.Client>`.
+
+Diese Neuerung ist zwar lästig (Buggefahr), aber prinzipiell gut. 
+Auslöser war vor allem folgendes:
+Wenn eine eId-Karte eingelesen wird, für deren NR-Nr wir keinen Klienten 
+haben, dann sollte Lino nicht schon sogleich vorschlagen, den neuen 
+Klienten anzulegen, sondern erstmal schauen, ob es diese Person nicht 
+schon ohne NR-Nr gibt. 
+Mit unserer Konvention, dass anstelle von ungültigen 
+NR-Nummern die Partnernummer im Feld NR-Nr stehen soll, wird das ein 
+suboptimales Query.
+
+
 
 Printing a table from command line
 ----------------------------------
 
 New table :class:`lino.modlib.users.models.UsersOverview` 
-and new shortcut :meth:`link.core.actors.Actor.to_rst`.
+and new shortcut :meth:`lino.core.actors.Actor.to_rst`.
 Example usage::
 
   $ python manage.py shell

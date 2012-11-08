@@ -29,6 +29,7 @@ Tables:
 
 Extended Fields:
 
+- :class:`NullCharField <lino.core.fields.NullCharField>`
 - :class:`IncompleteDateField <lino.core.fields.IncompleteDateField>`
 - :class:`PasswordField <lino.core.fields.PasswordField>`
 - :class:`MonthField <lino.core.fields.MonthField>`
@@ -132,6 +133,7 @@ from lino.core.fields import RecurrenceField
 from lino.core.fields import GenericForeignKey
 from lino.core.fields import GenericForeignKeyIdField
 from lino.core.fields import IncompleteDateField
+from lino.core.fields import NullCharField
 from lino.core.fields import PasswordField
 from lino.core.fields import MonthField
 #~ from lino.core.fields import LinkedForeignKey

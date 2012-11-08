@@ -15,20 +15,26 @@ t:\hgwork\lino\lino\core\actions.py:docstring of lino.core.actions.DialogRequire
 <autodoc>:1: WARNING: py:class reference target not found: lino.core.actions.VirtualRow
 t:\hgwork\lino\lino\core\actions.py:docstring of lino.core.actions.EmptyTableRow:1: WARNING: py:class reference target not found: EmptyTable
 t:\hgwork\lino\lino\core\actions.py:docstring of lino.core.actions.action:1: WARNING: py:meth reference target not found: Action.__init__
-T:\hgwork\lino\docs\autodoc\lino.utils.rst:41: WARNING: py:class reference target not found: dict
-t:\hgwork\lino\lino\utils\__init__.py:docstring of lino.utils.call_on_bases:1: WARNING: unknown document: /blog/2011/0914
-t:\hgwork\lino\lino\utils\__init__.py:docstring of lino.utils.call_optional_super:1: WARNING: unknown document: /blog/2011/0914
-T:\hgwork\lino\docs\autodoc\lino.utils.rst:42: WARNING: py:mod reference target not found: dbfreader
-T:\hgwork\lino\docs\autodoc\lino.utils.rst:50: WARNING: py:mod reference target not found: instantiator
-T:\hgwork\lino\docs\autodoc\lino.utils.rst:23: WARNING: py:class reference target not found: exceptions.Exception
-T:\hgwork\lino\docs\autodoc\lino.utils.rst:58: WARNING: py:mod reference target not found: latex
-T:\hgwork\lino\docs\autodoc\lino.utils.rst:67: WARNING: py:mod reference target not found: restify
-T:\hgwork\lino\docs\autodoc\lino.utils.rst:7: WARNING: py:mod reference target not found: docutils.examples
-T:\hgwork\lino\docs\autodoc\lino.utils.rst:17: WARNING: py:class reference target not found: docutils.writers.html4css1.HTMLTranslator
-T:\hgwork\lino\docs\autodoc\lino.utils.rst:29: WARNING: py:class reference target not found: docutils.writers.html4css1.Writer
-T:\hgwork\lino\docs\autodoc\lino.utils.rst:82: WARNING: unknown document: /blog/2011/0525
-T:\hgwork\lino\docs\autodoc\lino.utils.rst:75: WARNING: py:mod reference target not found: ucsv
-<autodoc>:1: WARNING: py:class reference target not found: lino.utils.choosers.FieldChooser
-t:\hgwork\lino\lino\utils\choosers.py:docstring of lino.utils.choosers.uses_simple_values:1: WARNING: py:class reference target not found: lino.ui.extjs.ext_store.Store
-T:\hgwork\lino\docs\blog\2012\1107.rst:12: WARNING: py:class reference target not found: lino.core.actions.BaseRequest
-T:\hgwork\lino\docs\blog\2012\1107.rst:36: WARNING: py:class reference target not found: lino.core.actions.BaseRequest
+T:\hgwork\lino\docs\autodoc\lino.core.actors.rst:7: WARNING: py:class reference target not found: lino.core.table.Table
+T:\hgwork\lino\docs\autodoc\lino.core.actors.rst:7: WARNING: py:class reference target not found: lino.utils.tables.VirtualTable
+T:\hgwork\lino\docs\autodoc\lino.core.actors.rst:7: WARNING: py:class reference target not found: lino.core.frames.Frame
+<autodoc>:1: WARNING: py:class reference target not found: lino.core.actions.Parametrizable
+t:\hgwork\lino\lino\core\actors.py:docstring of lino.core.actors.Actor.app_label:8: WARNING: py:func reference target not found: lino.core.table.table_factory
+t:\hgwork\lino\lino\core\actors.py:docstring of lino.core.actors.Actor.editable:5: WARNING: py:class reference target not found: lino.models.Changes
+t:\hgwork\lino\lino\core\actors.py:docstring of lino.core.actors.Actor.hide_top_toolbar:5: WARNING: py:class reference target not found: lino_welfare.pcsw.models.Home
+t:\hgwork\lino\lino\core\actors.py:docstring of lino.core.actors.Actor.hide_top_toolbar:5: WARNING: py:class reference target not found: lino.modlib.users.models.Mysettings
+t:\hgwork\lino\lino\core\actors.py:docstring of lino.core.actors.Actor.hide_window_title:1: WARNING: py:class reference target not found: lino.apps.pcsw.models.Home
+t:\hgwork\lino\lino\core\actors.py:docstring of lino.core.actors.Actor.known_values:1: WARNING: py:attr reference target not found: filter
+t:\hgwork\lino\lino\core\actors.py:docstring of lino.core.actors.Actor.label:1: WARNING: py:class reference target not found: lino.core.table.Table
+t:\hgwork\lino\lino\core\actors.py:docstring of lino.core.actors.Actor.label:1: WARNING: py:meth reference target not found: lino.core.table.Table.get_actor_label
+t:\hgwork\lino\lino\core\actors.py:docstring of lino.core.actors.Actor.slave_as_html_meth:1: WARNING: py:attr reference target not found: AbstractTable.slave_grid_format
+t:\hgwork\lino\lino\core\actors.py:docstring of lino.core.actors.Actor.to_rst:1: WARNING: py:meth reference target not found: ActionRequest.to_rst
+t:\hgwork\lino\lino\core\tables.py:docstring of lino.core.tables.AbstractTable:1: WARNING: py:class reference target not found: Table
+t:\hgwork\lino\lino\core\tables.py:docstring of lino.core.tables.AbstractTable.custom_groups:1: WARNING: py:class reference target not found: Group
+t:\hgwork\lino\lino\core\tables.py:docstring of lino.core.tables.AbstractTable.filter:5: WARNING: py:attr reference target not found: known_values
+t:\hgwork\lino\lino\core\tables.py:docstring of lino.core.tables.AbstractTable.filter:9: WARNING: py:attr reference target not found: known_values
+t:\hgwork\lino\lino\core\tables.py:docstring of lino.core.tables.AbstractTable.filter:9: WARNING: py:attr reference target not found: filter.
+t:\hgwork\lino\lino\core\tables.py:docstring of lino.core.tables.AbstractTable.grid_configs:1: WARNING: py:meth reference target not found: lino.core.table.Table.do_setup
+t:\hgwork\lino\lino\core\tables.py:docstring of lino.core.tables.AbstractTable.slave_grid_format:1: WARNING: py:class reference target not found: links.LinksByController
+t:\hgwork\lino\lino\core\tables.py:docstring of lino.core.tables.TableRequest:1: WARNING: py:class reference target not found: Table
+T:\hgwork\lino\docs\blog\2012\1108.rst:7: WARNING: py:class reference target not found: lino_welfare.modlib.pcsw.models.BeIdReadCardAction

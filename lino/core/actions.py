@@ -1233,6 +1233,11 @@ class ActionRequest(BaseRequest):
         return self.request.build_absolute_uri(location)
         
             
+    def to_rst(self,column_names=None):
+        """
+        Returns a string representing this request in reStructuredText markup.
+        """
+        raise NotImplementedError()
             
             
         

@@ -468,9 +468,6 @@ class TableRequest(actions.ActionRequest):
         
         
     def to_rst(self,column_names=None):
-        """
-        Returns a string with this request as a table in reStructuredText markup
-        """
         
         fields, headers, widths = self.get_field_info(column_names)
         

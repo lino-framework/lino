@@ -145,7 +145,8 @@ def analyze_models():
     for model in models.get_models():
         
         for f, m in model._meta.get_fields_with_model():
-            if isinstance(f,models.CharField) and f.null:
+            #~ if isinstance(f,models.CharField) and f.null:
+            if f.__class__ is models.CharField and f.null:
                 msg = "Nullable CharField %s in %s" % (f.name,model)
                 raise Exception(msg)
                 #~ if f.__class__ is models.CharField:

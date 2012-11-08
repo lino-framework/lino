@@ -869,6 +869,15 @@ class ApiElement(View):
 PLAIN_PAGE_LENGTH = 5
         
 class ApiList(View):
+    """
+    - GET : List the members of the collection. 
+    - PUT : Replace the entire collection with another collection. 
+    - POST : Create a new entry in the collection where the ID is assigned automatically by the collection. 
+      The ID created is included as part of the data returned by this operation. 
+    - DELETE : Delete the entire collection.
+    
+    (Source: http://en.wikipedia.org/wiki/Restful)
+    """
 
     def post(self,request,app_label=None,actor=None):
         #~ ui = settings.LINO.ui
@@ -897,16 +906,8 @@ class ApiList(View):
         return rv
       
     def get(self,request,app_label=None,actor=None):
-        """
-        - GET : List the members of the collection. 
-        - PUT : Replace the entire collection with another collection. 
-        - POST : Create a new entry in the collection where the ID is assigned automatically by the collection. 
-          The ID created is included as part of the data returned by this operation. 
-        - DELETE : Delete the entire collection.
-        
-        (Source: http://en.wikipedia.org/wiki/Restful)
-        """
-        ar = action_request(app_label,actor,request,request.GET,limit=PLAIN_PAGE_LENGTH)
+        #~ ar = action_request(app_label,actor,request,request.GET,limit=PLAIN_PAGE_LENGTH)
+        ar = action_request(app_label,actor,request,request.GET)
         rh = ar.ah
         
         #~ print 20120630, 'api_list_view'

@@ -44,6 +44,9 @@ This is a test
 >>> print join_words('This','is','','another','test')
 This is another test
 
+>>> print join_words(None,None,None,'Third','test')
+Third test
+
 
 """
 
