@@ -21,7 +21,7 @@ Unbekannte NR-Nummern
 
 Neue Regel: die NR-Nr. eines Klienten darf ab jetzt *wohl* leer sein.
 Die Konvention, dass bei Klienten mit unbekannter oder ungültiger
-NR-Nr stattdessen die die Partnernummer im Feld NR-Nr stehen muss, 
+NR-Nr stattdessen die Partnernummer im Feld NR-Nr stehen muss, 
 ist abgeschafft.
 Dass die NR-Nr erstens gültig und zweitens einzig sein muss, 
 gilt jetzt nur noch dann, wenn sie nicht leer ist.

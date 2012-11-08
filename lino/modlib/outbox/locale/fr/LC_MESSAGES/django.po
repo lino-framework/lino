@@ -7,14 +7,15 @@ msgid ""
 msgstr ""
 "Project-Id-Version: lino.modlib.mails\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2012-10-25 18:12+0100\n"
-"PO-Revision-Date: 2011-09-14 21:28+0200\n"
+"POT-Creation-Date: 2012-11-08 20:32+0000\n"
+"PO-Revision-Date: 2012-11-08 23:03+0200\n"
 "Last-Translator: Luc Saffre <luc.saffre@gmail.com>\n"
 "Language-Team: fr\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"Plural-Forms: nplurals=2; plural=(n > 1)\n"
+"Plural-Forms: nplurals=2; plural=(n > 1);\n"
+"X-Generator: Poedit 1.5.4\n"
 
 #: .\models.py:73
 msgid "Recipient Type"
@@ -22,11 +23,11 @@ msgstr "Type de destinataire"
 
 #: .\models.py:76
 msgid "to"
-msgstr ""
+msgstr "à"
 
 #: .\models.py:77
 msgid "cc"
-msgstr ""
+msgstr "copie à "
 
 #: .\models.py:78
 msgid "bcc"
@@ -103,28 +104,25 @@ msgstr "Objet"
 msgid "Body"
 msgstr "Contenu"
 
-#: .\models.py:494
-#, fuzzy
+#: .\models.py:496
 msgid "My Outbox"
-msgstr "Courrier sortant"
+msgstr "Mon courrier sortant"
 
-#: .\models.py:517 .\models.py:525 .\models.py:534 .\models.py:596
-#, fuzzy
+#: .\models.py:519 .\models.py:527 .\models.py:536 .\models.py:598
 msgid "Outbox"
 msgstr "Courrier sortant"
 
-#: .\models.py:553
+#: .\models.py:555
 msgid "Attachment"
 msgstr "Pièce jointe"
 
-#: .\models.py:554
+#: .\models.py:556
 msgid "Attachments"
 msgstr "Pièces jointes"
 
-#: .\models.py:628
-#, fuzzy
+#: .\models.py:630
 msgid "Sender"
-msgstr "Envoyer"
+msgstr "expéditeur"
 
 #~ msgid "Sent Mails"
 #~ msgstr "Courriers envoyés"

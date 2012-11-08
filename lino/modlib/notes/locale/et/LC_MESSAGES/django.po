@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2012-10-25 18:12+0100\n"
+"POT-Creation-Date: 2012-11-08 20:33+0000\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -69,15 +69,15 @@ msgstr ""
 msgid "Subject"
 msgstr ""
 
-#: .\models.py:291
+#: .\models.py:292
 msgid "My notes"
 msgstr ""
 
-#: .\models.py:352
+#: .\models.py:355
 msgid "Default system note type"
 msgstr ""
 
-#: .\models.py:353
+#: .\models.py:356
 msgid ""
 "Note Type used by system notes.\n"
 "If this is empty, then system notes won't create any entry to the Notes "
