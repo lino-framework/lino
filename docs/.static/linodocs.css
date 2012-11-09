@@ -6,22 +6,25 @@ Thanks to:
 - Mark Newhouse at http://www.alistapart.com/articles/taminglists
 - http://www.w3.org/TR/CSS2/syndata.html#escaped-characters
 
-
-
 */
-ul.dialog {
+ul.dialog, ul.checklist, ul.steplist {
     list-style-type: none;
 	padding: 1em;
 	list-style-position:outside;
 }
-
-ul.dialog li {
+ul.dialog, ul.checklist, ul.steplist li {
 	text-align:left;
 	text-indent:-1em;
 }
-
 ul.dialog li:before {
 	content: "\25B8 \0020";
+}
+
+ul.checklist li:before {
+	content: "\2610 \0020";
+}
+ul.steplist li:before {
+	content: "- \0020";
 }
 
 

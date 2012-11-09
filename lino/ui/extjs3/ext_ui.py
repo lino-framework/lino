@@ -1762,7 +1762,8 @@ tinymce.init({
             kw.update(panel_btn_handler=js_code("Lino.param_action_handler(Lino.%s)" % ba.full_name()))
         elif isinstance(a,actions.SubmitDetail):
             #~ kw.update(tabIndex=1)
-            js = 'function(panel){panel.save(null,%s)}' % py2js(a.switch_to_detail)
+            js = 'function(panel){panel.save(null,%s,%r)}' % (
+                py2js(a.switch_to_detail),a.action_name)
             kw.update(panel_btn_handler=js_code(js))
         elif isinstance(a,actions.ShowDetailAction):
             kw.update(panel_btn_handler=js_code('Lino.show_detail'))

@@ -1,0 +1,99 @@
+20121109
+========
+
+Neue Tabelle "Source files"
+---------------------------
+
+Es gibt jetzt einen neuen Befehl :menuselection:`Site --> Source files`.
+Noch nicht sehr fertig, aber man kann sie sich schon in eine .csv-Datei 
+exportieren und dort Summen machen.
+Ersten Untersuchungen zufolge bestünde 
+Lino-Welfare dann aus 14205 Zeilen Code und 12754 Zeilen docstrings.
+Aber ich habe keine Ahnung, ob das stimmt.
+
+Diesen und die Befehle "Info" (`about.About`) und "Inspector" 
+habe ich in ein 
+eigenes Modul :mod:`lino.modlib.about` ausgelagert.
+
+Ein fieser Bug
+--------------
+
+- Ein Bug, der ausgerechnet heute Morgen kurz vor einer hausinternen 
+  Vorstellung auftreten musste:
+  in Grids auf Tabellen ohne Detail-Fenster konnte man nichts einfügen.
+  Aber bon. Behoben.
+  
+  
+Zwei kleine Bugs
+----------------
+  
+- Bei allen Windowsfenstern ist das Kreuzchen zum Schließen das *letzte*
+  Icon oben rechts, und *davor* das Maximieren. Bei Lino war es genau
+  umgekehrt. Jetzt nicht mehr.
+  
+- Und noch ein schöner Fehler, der wahrscheinlich schon was länger 
+  drin war: Wenn man von irgendwo auf den ForeignKey eines Klienten 
+  klickt, dann öffnet sich das Detail-Fenster::
+  
+    javascript:Lino.pcsw.Clients.detail.run(null,{ "record_id": 20976 })
+    
+  Wenn besagter Klient jetzt jedoch veraltet ist, dann hatte Lino 
+  ein Problem: die Liste `Lino.pcsw.Clients` 
+  (:class:`lino_welfare.modlib.pcsw.models.Clients`) hat par défaut veraltete 
+  Klienten rausgefiltert. Dadurch stand `navinfo.recno` auf 0, und Lino 
+  meinte es dann gut (bzw. `Lino.FormPanel.load_record_id` glaubte sich 
+  schlauer als der Rest) und sprang dann auf den ersten Record der Liste.
+  Diese Logik ist nicht allgemein sinnvoll, sondern nur wenn man einen Record 
+  im Detail-Fenster gelöscht hat. Das passiert ja auch in 
+  `Lino.FormPanel.after_delete`.
+  
+Manuelle Testsuiten
+-------------------
+
+Der fiese Bug heute Morgen trat ja ausgerechnet kurz 
+vor einer hausinternen Vorstellung aus. 
+Also mehrere Leute hatten sich den Zeitpunkt reserviert.
+
+"Oh Mann, wer macht denn auch ein Release in der Nacht vor so was" 
+kann ich mir sagen. 
+Ja, ich war mal wieder zu optimistisch gewesen.
+Um uns vor meinem naiven Optimismus des Programmierers 
+zu schützen, können wir vor wichtigen Terminen 
+einen Release-Stopp machen.
+
+Andererseits dürfen wir nicht vergessen:
+Wer nicht wagt, der nicht gewinnt. 
+Ein Release-Stopp bedeutet auch eine strenge Verwaltung 
+des Release-Prozesses mit allem Pipapo, 
+noch strenger als momentan (z.B. müsste ich für jedes Release 
+eigentlich einen Branch eröffnen),
+sprich: ein Mehr an "administrativem" Aufwand.
+
+Das ist eines der großen Geheimnisse, die Lino so kostengünstig und flexibel machen: 
+ärgerliche Überraschungen wie heute Morgen **sind relativ selten**.
+Wir können damit leben.
+Wir sind nicht auf einem Flughafen, 
+wo so ein Bug Menschenleben bedeuten kann.
+
+Aber es stellt sich natürlich auch mal wieder die Frage, 
+wie ich die Testphase vor einem Release verbessern kann.
+
+Das Testen vor einem Release ist eine Arbeit, 
+die zumindest für mich, den Programmierer des Ganzen, 
+besonders stumpfsinnig erscheint.
+
+Eine Lektion, die daraus zu holen ist: da sieht man mal wieder, 
+wie wichtig eine automatisierte und komplette Testsuite ist.
+Das wusste ich aber eigentlich schon vor her. 
+Dass die Testsuite momentan nicht benutzbar ist, liegt einfach an Prioritäten.
+Auch nach heute Morgen habe ich noch das Gefühl: keine Panik. 
+Noch dringeneder als eine gute Testsuite sind diverse sichtbare Resultate.
+
+Noch was. Automatisieren ist schön und gut, aber 
+einen echten "Test mit Menschenvestand" 
+muss es ja so oder so auch immer geben.
+Das ist der ursprüngliche Daseinsgrund für die Seite
+`Manueller Testlauf <http://welfare.lino-framework.org/en/admin/testlauf.html>`,
+die ich aus gegebenem Anlass mal ein bisschen aktualisiert habe.
+
+ 

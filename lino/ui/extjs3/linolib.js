@@ -2843,19 +2843,7 @@ Lino.FormPanel = Ext.extend(Lino.FormPanel,{
           var rec = Ext.decode(response.responseText);
           //~ console.log('20120918 goto_record_id success',rec);
           this.set_param_values(rec.param_values);
-          if (rec.navinfo && rec.navinfo.recno == 0) {
-              /* 
-                recno 0 means "the requested pk exists but is not contained in the requested queryset".
-                This can happen e.g. after search_change on a detail.
-              */
-              //~ this_.goto_record_id(rec.navinfo.first);
-              if (rec.navinfo.first) {
-                  this.load_record_id(rec.navinfo.first);
-              } else this.abandon();
-                  
-          } else {
-              this.set_current_record(rec,after);
-          }
+          this.set_current_record(rec,after);
         }
       },
       failure: Lino.ajax_error_handler(this)
@@ -2921,10 +2909,17 @@ Lino.FormPanel = Ext.extend(Lino.FormPanel,{
       };
       
       if (record.navinfo && ! this.hide_top_toolbar && ! this.hide_navigator) {
-        this.first.setDisabled(!record.navinfo.first);
-        this.prev.setDisabled(!record.navinfo.prev);
-        this.next.setDisabled(!record.navinfo.next);
-        this.last.setDisabled(!record.navinfo.last);
+        //~ if (record.navinfo.recno == 0) {
+            //~ this.first.setDisabled(true);
+            //~ this.prev.setDisabled(true);
+            //~ this.next.setDisabled(true);
+            //~ this.last.setDisabled(true);
+        //~ } else {
+            this.first.setDisabled(!record.navinfo.first);
+            this.prev.setDisabled(!record.navinfo.prev);
+            this.next.setDisabled(!record.navinfo.next);
+            this.last.setDisabled(!record.navinfo.last);
+        //~ }
         this.displayItem.setText(record.navinfo.message);
       }
     } else {
@@ -2988,21 +2983,23 @@ Lino.FormPanel = Ext.extend(Lino.FormPanel,{
   /* 
   Lino.FormPanel.save() 
   */
-  save : function(after,switch_to_detail) {
+  save : function(after,switch_to_detail,action_name) {
     //~ var panel = this;
     this.loadMask.show();
     var rec = this.get_current_record();
     if (this.has_file_upload) this.form.fileUpload = true;
     //~ console.log('FormPanel.save()',rec);
+    if (!action_name) action_name = this.action_name;
     if (rec) {
       var p = {};
       Ext.apply(p,this.get_base_params());
       p.$ext_requests.URL_PARAM_REQUESTING_PANEL = this.getId();
-      if (this.action_name) 
-          p.$ext_requests.URL_PARAM_ACTION_NAME = this.action_name;
+      //~ if (this.action_name) 
+          //~ p.$ext_requests.URL_PARAM_ACTION_NAME = this.action_name;
+      p.$ext_requests.URL_PARAM_ACTION_NAME = action_name;
       if (rec.phantom) {
-        if (this.action_name != 'insert') 
-            console.log("Warning: phantom record, but action_name is",this.action_name)
+        //~ if (this.action_name != 'insert') 
+            //~ console.log("Warning: phantom record, but action_name is",this.action_name)
         this.form.submit({
           url: ROOT_URL + '/api' + this.ls_url,
           method: 'POST',
@@ -3056,8 +3053,8 @@ Lino.FormPanel = Ext.extend(Lino.FormPanel,{
           clientValidation: true
         })
       } else {
-        if (this.action_name != 'detail') 
-            console.log("Warning: non-phantom record, but action_name is",this.action_name)
+        //~ if (this.action_name != 'detail') 
+            //~ console.log("Warning: non-phantom record, but action_name is",this.action_name)
         this.form.submit({
           url: ROOT_URL + '/api' + this.ls_url + '/' + rec.id,
           method: 'PUT',
@@ -4077,7 +4074,7 @@ Lino.GridPanel = Ext.extend(Lino.GridPanel,{
     // console.log("grid_afteredit:",e.field,'=',e.value);
     Ext.apply(p,this.get_base_params()); // needed for POST, ignored for PUT
     //~ Ext.apply(p,this.containing_window.config.base_params);
-    p['$ext_requests.URL_PARAM_ACTION_NAME'] = 'grid';
+    //~ 20121109 p['$ext_requests.URL_PARAM_ACTION_NAME'] = 'grid';
     var self = this;
     var req = {
         params:p,
@@ -4107,11 +4104,13 @@ Lino.GridPanel = Ext.extend(Lino.GridPanel,{
         failure: Lino.ajax_error_handler(this)
     };
     if (e.record.phantom) {
+      p['$ext_requests.URL_PARAM_ACTION_NAME'] = 'post'; // SubmitInsert.action_name
       Ext.apply(req,{
         method: 'POST',
         url: ROOT_URL + '/api' + this.ls_url
       });
     } else {
+      p['$ext_requests.URL_PARAM_ACTION_NAME'] = 'put'; // SubmitDetail.action_name
       Ext.apply(req,{
         method: 'PUT',
         url: ROOT_URL + '/api' + this.ls_url + '/' + e.record.id
@@ -4515,9 +4514,9 @@ Lino.Window = Ext.extend(Ext.Window,{
     //~ }
     //~ if (config.closable !== false) {
       // if undefined, will take default behaviour
-      config.tools = config.tools.concat([ 
-        { qtip: 'close', handler: this.hide, id: "close", scope:this } 
-      ]);
+      //~ config.tools = config.tools.concat([ 
+        //~ { qtip: 'close', handler: this.hide, id: "close", scope:this } 
+      //~ ]);
     }
     
     this.main_item.config_containing_window(config);

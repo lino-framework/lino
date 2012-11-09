@@ -89,7 +89,8 @@ def action_request(app_label,actor,request,rqdata,**kw):
         rpt.default_list_action_name)
     a = rpt.get_url_action(action_name)
     if a is None:
-        raise http.Http404("%s has no url action %r" % (rpt,action_name))
+        raise http.Http404("%s has no url action %r (possible values are %s)" % (
+            rpt,action_name,rpt.get_url_action_names()))
     ar = rpt.request(settings.LINO.ui,request,a,**kw)
     ar.renderer = settings.LINO.ui.ext_renderer
     return ar
@@ -221,59 +222,37 @@ def elem2rec_detailed(ar,elem,**rec):
         prev = None
         next = None
         last = None
-        #~ ar = ext_requests.ViewReportRequest(request,rh,rh.actor.default_action)
         recno = 0
-        #~ if len(ar.data_iterator) > 0:
+        message = None
         LEN = ar.get_total_count()
         if LEN > 0:
-            if True:
-                # this algorithm is clearly quicker on reports with a few thousand Persons
-                id_list = list(ar.data_iterator.values_list('pk',flat=True))
-                """
-                Uncommented the following assert because it failed in certain circumstances 
-                (see :doc:`/blog/2011/1220`)
-                """
-                #~ assert len(id_list) == ar.total_count, \
-                    #~ "len(id_list) is %d while ar.total_count is %d" % (len(id_list),ar.total_count)
-                #~ print 20111220, id_list
+            # this algorithm is clearly quicker on queries with a few thousand rows
+            id_list = list(ar.data_iterator.values_list('pk',flat=True))
+            """
+            Uncommented the following assert because it failed in certain circumstances 
+            (see :doc:`/blog/2011/1220`)
+            """
+            #~ assert len(id_list) == ar.total_count, \
+                #~ "len(id_list) is %d while ar.total_count is %d" % (len(id_list),ar.total_count)
+            #~ print 20111220, id_list
+            try:
+                i = id_list.index(elem.pk)
+            except ValueError:
+                pass
+            else:
+                recno = i + 1
                 first = id_list[0]
                 last = id_list[-1]
-                try:
-                    i = id_list.index(elem.pk)
-                except ValueError:
-                    pass
-                else:
-                    recno = i + 1
-                    if i > 0:
-                        prev = id_list[i-1]
-                    if i < len(id_list) - 1:
-                        next = id_list[i+1]
-            else:
-                first = ar.queryset[0]
-                last = ar.queryset.reverse()[0]
-                if ar.get_total_count() > 200:
-                    #~ TODO: check performance
-                    pass
-                g = enumerate(ar.queryset) # a generator
-                try:
-                    while True:
-                        index, item = g.next()
-                        if item == elem:
-                            if index > 0:
-                                prev = ar.queryset[index-1]
-                            recno = index + 1
-                            index,next = g.next()
-                            break
-                except StopIteration:
-                    pass
-                if first is not None: first = first.pk
-                if last is not None: last = last.pk
-                if prev is not None: prev = prev.pk
-                if next is not None: next = next.pk
+                if i > 0:
+                    prev = id_list[i-1]
+                if i < len(id_list) - 1:
+                    next = id_list[i+1]
+                message = _("Row %(rowid)d of %(rowcount)d") % dict(rowid=recno,rowcount=LEN)
+        if message is None:
+            message = _("No navigation")
         rec.update(navinfo=dict(
             first=first,prev=prev,next=next,last=last,recno=recno,
-            message=_("Row %(rowid)d of %(rowcount)d") % dict(
-              rowid=recno,rowcount=LEN)))
+            message=message))
     return rec
             
     
@@ -892,7 +871,11 @@ class ApiList(View):
         #~ ar = rpt.request(ui,request,a)
         
         ar = action_request(app_label,actor,request,request.POST)
-        if isinstance(ar.bound_action.action,actions.InsertRow):
+        if ar.bound_action.action.action_name in ['duplicate_row','post','poststay']:
+        #~ if isinstance(ar.bound_action.action,(
+              #~ actions.InsertRow,
+              #~ actions.DuplicateAction,
+              #~ actions.SubmitInsert)):
             rh = ar.ah
             elem = ar.create_instance()
             if rh.actor.handle_uploaded_files is not None:
@@ -902,8 +885,8 @@ class ApiList(View):
                 file_upload = False
             return form2obj_and_save(ar,request.POST,elem,True,False,file_upload)
         return run_action(ar,None)
-        rv = ar.bound_action.action.run(ar)
-        return rv
+        #~ rv = ar.bound_action.action.run(ar)
+        #~ return rv
       
     def get(self,request,app_label=None,actor=None):
         #~ ar = action_request(app_label,actor,request,request.GET,limit=PLAIN_PAGE_LENGTH)
@@ -1037,7 +1020,7 @@ class ApiList(View):
             buttons = []
             buttons.append( ('*',_("Home"), '/' ))
             buttons.append( ('Ext',_("Using ExtJS"), ar.ui.ext_renderer.get_request_url(ar) ))
-            pglen = ar.limit # or PLAIN_PAGE_LENGTH
+            pglen = ar.limit or PLAIN_PAGE_LENGTH
             if ar.offset is None:
                 page = 1
             else:

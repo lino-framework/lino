@@ -261,6 +261,8 @@ class CreatedModified(dd.Model):
         super(CreatedModified, self).save(*args, **kwargs)
 
 
+#~ class DuplicateAction(actions.RowAction)
+
 class Sequenced(Duplicable):
     """
     Abstract base class for models that have a sequence number `seqno`.

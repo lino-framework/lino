@@ -748,6 +748,7 @@ class SubmitDetail(RowAction):
     auto_save = False
     show_in_workflow = False
     #~ show_in_bbar = True
+    action_name = 'put'
     readonly = False
     required = dict(user_level='user')
     #~ url_action_name = 'SubmitDetail'
@@ -759,6 +760,7 @@ class SubmitInsert(SubmitDetail):
     icon_name = None # don't inherit 'x-tbar-save' from Submitdetail 
     #~ url_action_name = 'SubmitInsert'
     label = _("Create")
+    action_name = 'post'
     help_text = _("Create the record and open a detail window on it")
     #~ label = _("Insert")
     callable_from = (InsertRow,)
@@ -766,6 +768,7 @@ class SubmitInsert(SubmitDetail):
 class SubmitInsertAndStay(SubmitInsert):
     sort_index = 11
     switch_to_detail = False
+    action_name = 'poststay'
     label = _("Create without detail")
     help_text = _("Don't open an detail window on the new record")
 

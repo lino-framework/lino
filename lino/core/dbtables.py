@@ -321,7 +321,8 @@ def register_report(rpt):
                 master_reports.append(rpt)
             if not rpt.filter and not rpt.exclude and not rpt.known_values and rpt.use_as_default_table:
                 #~ logger.info("register %s : model_report for %s", rpt.actor_id, full_model_name(rpt.model))
-                rpt.model._lino_default_table = rpt
+                if not rpt.model.__dict__.has_key('_lino_default_table'):
+                    rpt.model._lino_default_table = rpt
         elif rpt.master is ContentType:
             #~ logger.debug("register %s : generic slave for %r", rpt.actor_id, rpt.master_key)
             generic_slaves[rpt.actor_id] = rpt
@@ -444,7 +445,7 @@ class Table(AbstractTable):
     
     use_as_default_table = True
     """
-    Set this to False if this Table should not become the Model's default table.
+    Set this to False if this Table should *not* become the Model's default table.
     """
     
     expand_memos = False

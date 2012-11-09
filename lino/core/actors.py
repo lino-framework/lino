@@ -916,6 +916,10 @@ class Actor(actions.Parametrizable):
             #~ return actions.BoundAction(self,a)
         
     @classmethod
+    def get_url_action_names(self):
+        return self._actions_dict.keys()
+        
+    @classmethod
     def get_actions(self,callable_from=None):
         if self._actions_list is None:
             raise Exception("Tried to %s.get_actions() with empty _actions_list" % self)

@@ -1508,6 +1508,7 @@ or
         #~ 'django.contrib.markup',
         #~ 'lino.modlib.system',
         yield 'lino'
+        yield 'lino.modlib.about'
         
     def get_guest_greeting(self):
         return xghtml.E.p("Please log in")

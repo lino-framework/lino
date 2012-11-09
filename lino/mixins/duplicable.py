@@ -45,6 +45,7 @@ class Duplicate(actions.RowAction):
     show_in_workflow = False
     readonly = True # like InsertRow. See docs/blog/2012/0726
     icon_name = 'x-tbar-duplicate'
+    #~ action_name = 'duplicate'
 
   
     def get_action_permission(self,ar,obj,state):
@@ -52,7 +53,7 @@ class Duplicate(actions.RowAction):
             return False
         return super(Duplicate,self).get_action_permission(ar,obj,state)
         
-    def run(self,ar,**kw):
+    def run(self,obj,ar,**kw):
         #~ if not isinstance(ar,actions.ActionRequest):
             #~ raise Exception("Expected and ActionRequest but got %r" % ar)
         #~ related = dict()
@@ -60,10 +61,10 @@ class Duplicate(actions.RowAction):
             #~ print m2m
         #~ print self._lino_ddh.fklist
         related = []
-        for m,fk in self._lino_ddh.fklist:
+        for m,fk in obj._lino_ddh.fklist:
             #~ related[fk] = m.objects.filter(**kw)
             if fk.name in m.allow_cascaded_delete:
-                related.append((fk,m.objects.filter(**{fk.name:self})))
+                related.append((fk,m.objects.filter(**{fk.name:obj})))
             #~ if issubclass(m,Duplicable):
                 #~ related[fk.related_name] = getattr(self,fk.name)
                 #~ related[fk.name] = getattr(self,fk.rel.related_name)
@@ -88,18 +89,18 @@ class Duplicate(actions.RowAction):
         #~ print 20120608, kw
         if True:
             #~ kw = dict()
-            for f in self._meta.fields:
+            for f in obj._meta.fields:
                 if not f.primary_key:
-                    kw[f.name] = getattr(self,f.name)
-            new = self.__class__(**kw)
+                    kw[f.name] = getattr(obj,f.name)
+            new = obj.__class__(**kw)
             #~ new = ar.create_instance(**kw)
             """
             20120704 create_instances causes fill_from_person() on a CBSS request.
             """
         else:
             # doesn't seem to want to work
-            new = self
-            for f in self._meta.fields:
+            new = obj
+            for f in obj._meta.fields:
                 if f.primary_key:
                     setattr(new,f.name,None) # causes Django to consider this an unsaved instance
             #~ new.pk = None # causes Django to consider this an unsaved instance
@@ -114,15 +115,15 @@ class Duplicate(actions.RowAction):
             #~ m(ar,None)
         
         for fk,qs in related:
-            for obj in qs:
-                obj.pk = None # causes Django to save a copy
-                setattr(obj,fk.name,new)
+            for relobj in qs:
+                relobj.pk = None # causes Django to save a copy
+                setattr(relobj,fk.name,new)
                 #~ if isinstance(obj,Duplicable):
-                obj.on_duplicate(ar,new)
+                relobj.on_duplicate(ar,new)
                 #~ m = getattr(obj,'on_duplicate',None)
                 #~ if m is not None:
                     #~ m(ar,new)
-                obj.save(force_insert=True)
+                relobj.save(force_insert=True)
         
         #~ for de,rm in related.items():
             #~ # rm is the RelatedManager
@@ -137,7 +138,7 @@ class Duplicate(actions.RowAction):
                 
         kw = dict()
         kw.update(refresh=True)
-        kw.update(message=_("Duplicated %(old)s to %(new)s.") % dict(old=self,new=new))
+        kw.update(message=_("Duplicated %(old)s to %(new)s.") % dict(old=obj,new=new))
         #~ kw.update(new_status=dict(record_id=new.pk))
         kw.update(goto_record_id=new.pk)
         return ar.success_response(**kw)

@@ -21,10 +21,11 @@ Unbekannte NR-Nummern
 
 Neue Regel: die NR-Nr. eines Klienten darf ab jetzt *wohl* leer sein.
 Die Konvention, dass bei Klienten mit unbekannter oder ungültiger
-NR-Nr stattdessen die Partnernummer im Feld NR-Nr stehen muss, 
-ist abgeschafft.
-Dass die NR-Nr erstens gültig und zweitens einzig sein muss, 
-gilt jetzt nur noch dann, wenn sie nicht leer ist.
+NR-Nr stattdessen die Partnernummer im Feld NR-Nr stehen muss, ist also nicht mehr nötig.
+Wenn die NR-Nr ausgefüllt ist, muss sie weiterhin einzig sein.
+Bei Dubletten kann man z.B. a, b dahinter setzen. 
+Dadurch wird die Nummer (als NR-Nummer) freilich ungültig, 
+was aber okay ist *solange der Klient nicht "Begleitet" ist*.
 
 Ich dachte bisher, dass das technisch nicht möglich ist, but 
 after reading the thread `Unique fields that allow nulls in Django

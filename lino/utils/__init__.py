@@ -55,6 +55,8 @@ Third test
 
 
 import os, sys, locale, types, datetime
+import re
+import fnmatch
 from dateutil import parser as dateparser
 from decimal import Decimal
 import stat
@@ -211,20 +213,34 @@ curry = lambda func, *args, **kw:\
                  
     
 
+#~ def codefiles(pattern='.*', flags=0):
+def codefiles(pattern='*'):
+    """
+    Yield a list of the source files corresponding to the currently 
+    imported modules which match the given pattern
+    """
+    #~ exp = re.compile(pattern, flags)
+    
+    for name,mod in sys.modules.items():
+        if fnmatch.fnmatch(name, pattern):
+        #~ if exp.match(name):
+            filename = getattr(mod, "__file__", None)
+            if filename is not None:
+                if filename.endswith(".pyc") or filename.endswith(".pyo"):
+                    filename = filename[:-1]
+                if filename.endswith("$py.class"):
+                    filename = filename[:-9] + ".py"
+                if os.path.exists(filename): # File might be in an egg, so there's no source available
+                    yield name,filename
+            
 def codetime():
     """
     Return the modification time of the youngest source code in memory.
     Used by :mod:`lino.ui.extjs3.ext_ui` to avoid generating lino.js files if not necessary.
-    Inspired by the code_changed() function in django.utils.autoreload.
+    Inspired by the code_changed() function in `django.utils.autoreload`.
     """
     code_mtime = None
-    for filename in filter(lambda v: v, map(lambda m: getattr(m, "__file__", None), sys.modules.values())):
-        if filename.endswith(".pyc") or filename.endswith(".pyo"):
-            filename = filename[:-1]
-        if filename.endswith("$py.class"):
-            filename = filename[:-9] + ".py"
-        if not os.path.exists(filename):
-            continue # File might be in an egg, so it can't be reloaded.
+    for name,filename in codefiles():
         stat = os.stat(filename)
         mtime = stat.st_mtime
         #~ print filename, time.ctime(mtime)
