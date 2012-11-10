@@ -1,0 +1,32 @@
+20121110
+========
+
+Heute ist der 10.11.12.
+
+
+Ein Content Management System für Lino
+--------------------------------------
+
+Gestern hatte ich auf http://welfare-demo.lino-framework.org/ folgendes konfiguriert::
+
+    def get_guest_greeting(self):
+        return xghtml.E.div(
+          xghtml.E.p("Please log in using the button in the upper right corner and one of the following usernames:"),
+          xghtml.E.ul(
+            xghtml.E.li("(German:) root, hubert, melanie, caroline"),
+            xghtml.E.li("(French:) robert, alicia"),
+          ),
+          xghtml.E.p("""They all have "1234" as password."""),
+          )
+
+
+Das war natürlich relativ primitiv.
+Lino braucht ein *Content Management System*.
+Wussten wir alles schon seit Langem.
+Aber jetzt! Jetzt hatte ich erstmals eine Vision, 
+deren *proof of concept* mir nach zweieinhalb Stunden Nachtschicht 
+vielversprechend scheint.
+
+Siehe 
+:mod:`lino.modlib.pages` und das neue Attribut :attr:`lino.Lino.admin_url` 
+in der :xfile:`settings.py`.

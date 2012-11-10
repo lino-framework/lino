@@ -22,6 +22,7 @@ Subpackages
     lino.modlib.links
     lino.modlib.outbox
     lino.modlib.notes
+    lino.modlib.pages
     lino.modlib.postings
     lino.modlib.properties
     lino.modlib.tickets

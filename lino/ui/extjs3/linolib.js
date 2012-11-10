@@ -400,7 +400,7 @@ Lino.show_login_window = function() {
         //~ inspired by http://www.sencha.com/learn/a-basic-login/
         autoHeight:true,
         labelWidth:80,
-        url:'/auth', 
+        url:ADMIN_URL+'/auth', 
         frame:true, 
         defaultType:'textfield',
         monitorValid:true,
@@ -445,10 +445,10 @@ Lino.show_login_window = function() {
 };
 
 Lino.logout = function(id,name) {
-    console.log('20121104 gonna log out',arguments);
+    //~ console.log('20121104 gonna log out',arguments);
     //~ Lino.do_action
-    Lino.call_row_action(Lino.viewport,'GET','/auth',{},'logout',undefined,undefined,function(){
-        console.log('20121104 logged out',arguments);
+    Lino.call_row_action(Lino.viewport,'GET',ADMIN_URL+'/auth',{},'logout',undefined,undefined,function(){
+        //~ console.log('20121104 logged out',arguments);
         //~ Lino.login_window.hide();
         Lino.close_all_windows();
     })
@@ -519,7 +519,7 @@ Lino.Viewport = Ext.extend(Ext.Viewport,{
         }
       };
       var action = {
-        url : ROOT_URL + '/api/main_html',
+        url : ADMIN_URL + '/api/main_html',
         waitMsg: "$_('Please wait...')",
         failure: Lino.ajax_error_handler(caller),
         success: success,
@@ -568,9 +568,9 @@ Lino.close_window = function(status_update) {
 Lino.close_all_windows = function() {
   if (Lino.window_history.length == 0) {
       //~ Lino.viewport.refresh();
-      var url = ROOT_URL + "/"
-      //~ console.log("20120222 Lino.close_all_windows() : location.replace(",ROOT_URL,")");
-      //~ if (ROOT_URL) 
+      var url = ADMIN_URL + "/"
+      //~ console.log("20120222 Lino.close_all_windows() : location.replace(",ADMIN_URL,")");
+      //~ if (ADMIN_URL) 
       var p = {};
       Lino.insert_subst_user(p)
       if (Ext.urlEncode(p)) url = url + "?" + Ext.urlEncode(p);
@@ -1422,7 +1422,7 @@ Lino.delete_selected = function(panel) {
         for ( var i=0; i < recs.length; i++ ) {
           Lino.do_action(panel,{
               method:'DELETE',
-              url: ROOT_URL + '/api' + panel.ls_url + '/' + recs[i].id,
+              url: ADMIN_URL + '/api' + panel.ls_url + '/' + recs[i].id,
               after_success: panel.after_delete.createDelegate(panel)
           })
         }
@@ -1641,7 +1641,7 @@ Lino.MainPanel = {
     //~ console.log('get_permalink',p,this.get_permalink_params());
     if (this.is_home_page)
         //~ var url = '';
-        var url = ROOT_URL + '/';
+        var url = ADMIN_URL + '/';
     else 
         var url = this.get_permalink_url();
     if (p.$ext_requests.URL_PARAM_SUBST_USER == null) 
@@ -1650,7 +1650,7 @@ Lino.MainPanel = {
     return url;
   }
   ,get_record_url : function(record_id) {
-      var url = ROOT_URL + '/api' + this.ls_url
+      var url = ADMIN_URL + '/api' + this.ls_url
       //~ var url = this.containing_window.config.url_data; // ls_url;
       url += '/' + (record_id === undefined ? '-99999' : String(record_id));
       //~ if (record_id !== undefined) url += '/' + String(record_id);
@@ -1658,7 +1658,7 @@ Lino.MainPanel = {
       return url;
   }
   ,get_permalink_url : function() {
-      return ROOT_URL+'/api' + this.ls_url;
+      return ADMIN_URL+'/api' + this.ls_url;
   }
   ,get_permalink_params : function() {
       //~ return {an:'grid'};
@@ -2030,7 +2030,7 @@ Lino.param_action_handler = function(window_action) { // 20121012
 
 Lino.run_row_action = function(requesting_panel,url,pk,actionName) {
   //~ var panel = action.get_window().main_item;
-  url = ROOT_URL + '/api' + url  + '/' + pk;
+  url = ADMIN_URL + '/api' + url  + '/' + pk;
   var panel = Ext.getCmp(requesting_panel);
   var fn = function(panel,btn,step) {
     //~ 20120723 Lino.call_row_action(panel,pk,actionName,step,fn);
@@ -2043,7 +2043,7 @@ Lino.run_row_action = function(requesting_panel,url,pk,actionName) {
 Lino.unused_list_action_handler = function(actionName,gridmode) {
   var fn = function(panel,btn,step) {
     //~ console.log(panel);
-    var url = ROOT_URL + '/api' + panel.ls_url ;
+    var url = ADMIN_URL + '/api' + panel.ls_url ;
     var p = Ext.apply({},panel.get_base_params());
     p.$ext_requests.URL_PARAM_ACTION_NAME = actionName;
     //~ p.$ext_requests.URL_PARAM_SUBST_USER = Lino.subst_user;
@@ -2300,7 +2300,7 @@ Lino.RichTextPanel = Ext.extend(Lino.RichTextPanel,{
     var t = this;
     var tinymce_options = {
         theme : "advanced",
-        content_css: ROOT_URL + '/media/lino/extjs/lino.css',
+        content_css: ADMIN_URL + '/media/lino/extjs/lino.css',
         language: '$settings.LANGUAGE_CODE',
         //~ template_external_list_url : url,
         theme_advanced_toolbar_location : "top",
@@ -2365,7 +2365,7 @@ Lino.RichTextPanel = Ext.extend(Lino.RichTextPanel,{
     var todo = function() {
       //~ this.set_base_params(this.containing_window.get_base_params());
       if (record) {
-        var url = ROOT_URL + '/templates' + this.containing_panel.ls_url + "/" 
+        var url = ADMIN_URL + '/templates' + this.containing_panel.ls_url + "/" 
             + String(record.id) + "/" + this.editor.name;
         //~ console.log('RichTextPanel.refresh()',url);
         if (this.editor.ed) this.editor.ed.settings.template_external_list_url = url;
@@ -2533,7 +2533,7 @@ Lino.FormPanel = Ext.extend(Lino.FormPanel,{
             baseParams: this.get_base_params(),
             //~ value: this.containing_window.config.base_params.query,
             proxy: new Ext.data.HttpProxy({
-              url: ROOT_URL + '/choices' + this.ls_url,
+              url: ADMIN_URL + '/choices' + this.ls_url,
               method:'GET'
             })
           }),
@@ -2960,8 +2960,8 @@ Lino.FormPanel = Ext.extend(Lino.FormPanel,{
   get_permalink_url : function() {
       var rec = this.get_current_record();
       if (rec && ! rec.phantom && rec.id != -99998)
-          return ROOT_URL + '/api' + this.ls_url + '/' + rec.id;
-      return ROOT_URL + '/api' + this.ls_url;
+          return ADMIN_URL + '/api' + this.ls_url + '/' + rec.id;
+      return ADMIN_URL + '/api' + this.ls_url;
     
   },
   get_permalink_params : function() {
@@ -3001,7 +3001,7 @@ Lino.FormPanel = Ext.extend(Lino.FormPanel,{
         //~ if (this.action_name != 'insert') 
             //~ console.log("Warning: phantom record, but action_name is",this.action_name)
         this.form.submit({
-          url: ROOT_URL + '/api' + this.ls_url,
+          url: ADMIN_URL + '/api' + this.ls_url,
           method: 'POST',
           params: p, 
           scope: this,
@@ -3056,7 +3056,7 @@ Lino.FormPanel = Ext.extend(Lino.FormPanel,{
         //~ if (this.action_name != 'detail') 
             //~ console.log("Warning: non-phantom record, but action_name is",this.action_name)
         this.form.submit({
-          url: ROOT_URL + '/api' + this.ls_url + '/' + rec.id,
+          url: ADMIN_URL + '/api' + this.ls_url + '/' + rec.id,
           method: 'PUT',
           //~ headers: { 'HTTP_X_REQUESTED_WITH' : 'XMLHttpRequest'},
           scope: this,
@@ -3100,7 +3100,7 @@ Lino.FormPanel = Ext.extend(Lino.FormPanel,{
       var a = { 
         params: params, 
         method: 'PUT',
-        url: ROOT_URL + '/detail_config' + _this.ls_url,
+        url: ADMIN_URL + '/detail_config' + _this.ls_url,
         failure : Lino.ajax_error_handler(this),
         success: Lino.action_handler( _this, function(result) {
           //~ console.log('detail_config/save success',result);
@@ -3120,7 +3120,7 @@ Lino.FormPanel = Ext.extend(Lino.FormPanel,{
     var a = { 
       params:active_tab, 
       method:'GET',
-      url:ROOT_URL+'/detail_config'+_this.ls_url,
+      url:ADMIN_URL+'/detail_config'+_this.ls_url,
       success : function(response) {
         if (response.responseText) {
           var result = Ext.decode(response.responseText);
@@ -3299,9 +3299,9 @@ Lino.GridPanel = Ext.extend(Lino.GridPanel,{
     //~ }
     var proxy = new Ext.data.HttpProxy({ 
       // 20120814 
-      url: ROOT_URL + '/api' + this.ls_url
+      url: ADMIN_URL + '/api' + this.ls_url
       ,method: "GET"
-      //~ ,url: ROOT_URL + '/restful' + this.ls_url
+      //~ ,url: ADMIN_URL + '/restful' + this.ls_url
       //~ ,restful: true 
       //~ ,listeners: {load:on_proxy_load} 
       //~ ,listeners: {write:on_proxy_write} 
@@ -3410,7 +3410,7 @@ Lino.GridPanel = Ext.extend(Lino.GridPanel,{
             var p = Ext.apply({},this.get_base_params());
             p.$ext_requests.URL_PARAM_FORMAT = 'csv';
             //~ url += "?" + Ext.urlEncode(p);
-            window.open(ROOT_URL+'/api'+this.ls_url + "?" + Ext.urlEncode(p)) 
+            window.open(ADMIN_URL+'/api'+this.ls_url + "?" + Ext.urlEncode(p)) 
           } },
         //~ { scope:this, 
           //~ text: "[html]", 
@@ -3419,7 +3419,7 @@ Lino.GridPanel = Ext.extend(Lino.GridPanel,{
             //~ Ext.apply(p,this.get_base_params());
             //~ p.$ext_requests.URL_PARAM_FORMAT = "$ext_requests.URL_FORMAT_PRINTER";
             //~ this.add_param_values(p);
-            //~ window.open(ROOT_URL+'/api'+this.ls_url + "?" + Ext.urlEncode(p)) 
+            //~ window.open(ADMIN_URL+'/api'+this.ls_url + "?" + Ext.urlEncode(p)) 
           //~ } },
         { scope:this, 
           //~ text: "[html]", 
@@ -3430,7 +3430,7 @@ Lino.GridPanel = Ext.extend(Lino.GridPanel,{
             Ext.apply(p,this.get_base_params());
             p.$ext_requests.URL_PARAM_FORMAT = "$ext_requests.URL_FORMAT_PLAIN";
             this.add_param_values(p);
-            window.open(ROOT_URL+'/api'+this.ls_url + "?" + Ext.urlEncode(p)) 
+            window.open(ADMIN_URL+'/api'+this.ls_url + "?" + Ext.urlEncode(p)) 
           } },
         { scope:this, 
           //~ text: "[pdf]", 
@@ -3441,7 +3441,7 @@ Lino.GridPanel = Ext.extend(Lino.GridPanel,{
             Ext.apply(p,this.get_base_params());
             p.$ext_requests.URL_PARAM_FORMAT = "$ext_requests.URL_FORMAT_PDF";
             this.add_param_values(p);
-            window.open(ROOT_URL+'/api'+this.ls_url + "?" + Ext.urlEncode(p)) 
+            window.open(ADMIN_URL+'/api'+this.ls_url + "?" + Ext.urlEncode(p)) 
           } }
       ]);
     
@@ -3961,7 +3961,7 @@ Lino.GridPanel = Ext.extend(Lino.GridPanel,{
     var a = { 
       params:this.get_current_grid_config(), 
       method:'PUT',
-      url:ROOT_URL + '/grid_config' + this.ls_url,
+      url:ADMIN_URL + '/grid_config' + this.ls_url,
       success: Lino.action_handler(this),
       scope: this,
       failure: Lino.ajax_error_handler(this)
@@ -4107,13 +4107,13 @@ Lino.GridPanel = Ext.extend(Lino.GridPanel,{
       p['$ext_requests.URL_PARAM_ACTION_NAME'] = 'post'; // SubmitInsert.action_name
       Ext.apply(req,{
         method: 'POST',
-        url: ROOT_URL + '/api' + this.ls_url
+        url: ADMIN_URL + '/api' + this.ls_url
       });
     } else {
       p['$ext_requests.URL_PARAM_ACTION_NAME'] = 'put'; // SubmitDetail.action_name
       Ext.apply(req,{
         method: 'PUT',
-        url: ROOT_URL + '/api' + this.ls_url + '/' + e.record.id
+        url: ADMIN_URL + '/api' + this.ls_url + '/' + e.record.id
       });
     }
     //~ console.log('20110406 on_afteredit',req);
@@ -4833,10 +4833,10 @@ Lino.on_eventupdate  = function(cp,rec,el) {
 //~ Lino.eventStore = new Ext.data.ArrayStore({ 
 Lino.eventStore = new Ext.data.JsonStore({ 
   listeners: { exception: Lino.on_store_exception }
-  ,url: ROOT_URL + '/restful/cal/PanelEvents'
+  ,url: ADMIN_URL + '/restful/cal/PanelEvents'
   ,restful : true
   ,proxy: new Ext.data.HttpProxy({ 
-      url: ROOT_URL + '/restful/cal/PanelEvents', 
+      url: ADMIN_URL + '/restful/cal/PanelEvents', 
       disableCaching: false // no need for cache busting when loading via Ajax
       //~ disableCaching:true,
   })
@@ -4872,7 +4872,7 @@ Lino.calendarStore = new Ext.data.JsonStore({
       listeners: { exception: Lino.on_store_exception }
       ,restful : true
       ,proxy: new Ext.data.HttpProxy({ 
-          url: ROOT_URL + '/restful/cal/PanelCalendars?fmt=$ext_requests.URL_FORMAT_JSON', 
+          url: ADMIN_URL + '/restful/cal/PanelCalendars?fmt=$ext_requests.URL_FORMAT_JSON', 
           disableCaching: false // no need for cache busting when loading via Ajax
           //~ restful : true
           //~ method: "GET"

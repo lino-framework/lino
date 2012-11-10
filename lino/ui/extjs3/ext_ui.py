@@ -926,9 +926,10 @@ class ExtUI(base.UI):
 
   
     def get_urls(self):
+        #~ print "20121110 get_urls"
         rx = '^'
         urlpatterns = patterns('',
-            (rx+'$', views.Index.as_view()),
+            (rx+'$', views.AdminIndex.as_view()),
             (rx+r'api/main_html$', views.MainHtml.as_view()),
             (rx+r'auth$', views.Authenticate.as_view()),
             (rx+r'grid_config/(?P<app_label>\w+)/(?P<actor>\w+)$', views.GridConfig.as_view()),
@@ -956,6 +957,11 @@ class ExtUI(base.UI):
                     views.Templates.as_view()),
             )
 
+        return urlpatterns
+        
+    def get_media_urls(self):
+        #~ print "20121110 get_urls"
+        urlpatterns = []
         from os.path import exists, join, abspath, dirname
         
         logger.info("Checking /media URLs ")
@@ -1370,8 +1376,11 @@ tinymce.init({
             #~ yield "STRENGTH_CHOICES = %s;" % py2js(list(STRENGTH_CHOICES))
             #~ yield "KNOWLEDGE_CHOICES = %s;" % py2js(list(KNOWLEDGE_CHOICES))
             yield "MEDIA_URL = %r;" % (self.media_url())
-            #~ yield "ROOT_URL = %r;" % settings.LINO.root_url
-            yield "ROOT_URL = %r;" % self.root_url
+            yield "ADMIN_URL = %r;" % settings.LINO.admin_url
+            #~ if settings.LINO.admin_url:
+                #~ yield "ADMIN_URL = '/%s';" % settings.LINO.admin_url
+            #~ else:
+                #~ yield "ADMIN_URL = '';" 
             
             #~ yield "API_URL = %r;" % self.build_url('api')
             #~ yield "TEMPLATES_URL = %r;" % self.build_url('templates')

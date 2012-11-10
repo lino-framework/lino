@@ -16,7 +16,7 @@ import logging
 logger = logging.getLogger(__name__)
 
 import os
-
+import cgi
 
 from django import http
 from django.db import models
@@ -63,7 +63,8 @@ def plain_html_page(ar,title,navigator,main):
     menu = menu.as_html(ar)
     response = http.HttpResponse(content_type='text/html;charset="utf-8"')
     doc = xghtml.Document(force_unicode(title))
-    doc.add_stylesheet('/media/lino/plain/lino.css')
+    #~ doc.add_stylesheet('/media/lino/plain/lino.css')
+    doc.add_stylesheet(settings.LINO.ui.media_url('lino','plain','lino.css'))
     doc.body.append(E.h1(doc.title))
     doc.body.append(menu)
     if navigator is not None:
@@ -381,7 +382,35 @@ def form2obj_and_save(ar,data,elem,is_new,restful,file_upload=False): # **kw2sav
             
 
 
-class Index(View):
+HTML_PAGE = """\
+<html>
+<head>
+<title>%(title)s</title>
+</head>
+<body>
+<h1>%(title)s</h1>
+%(body)s
+</body>
+</html>
+"""
+
+class WebIndex(View):
+  
+    def get(self, request,ref='index'):
+        pages = dd.resolve_app('pages')
+        if not pages:
+            return http.HttpResponse('<html>This is the WebIndex. <a href="%s/">admin</a></html>' % settings.LINO.admin_url)
+        obj = pages.Page.objects.get(ref=ref)
+        context = dict(
+            title=cgi.escape(obj.title),
+            #~ abstract=obj.abstract,
+            body=obj.body)
+        if not obj.body:
+            context.update(body=obj.abstract)
+        return http.HttpResponse(HTML_PAGE % context)
+        
+
+class AdminIndex(View):
 
     def get(self, request, *args, **kw):
         ui = settings.LINO.ui

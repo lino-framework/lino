@@ -78,22 +78,35 @@ wo so ein Bug Menschenleben bedeuten kann.
 Aber es stellt sich natürlich auch mal wieder die Frage, 
 wie ich die Testphase vor einem Release verbessern kann.
 
-Das Testen vor einem Release ist eine Arbeit, 
-die zumindest für mich, den Programmierer des Ganzen, 
-besonders stumpfsinnig erscheint.
-
 Eine Lektion, die daraus zu holen ist: da sieht man mal wieder, 
 wie wichtig eine automatisierte und komplette Testsuite ist.
-Das wusste ich aber eigentlich schon vor her. 
+Das wusste ich aber eigentlich schon vorher. 
 Dass die Testsuite momentan nicht benutzbar ist, liegt einfach an Prioritäten.
 Auch nach heute Morgen habe ich noch das Gefühl: keine Panik. 
 Noch dringeneder als eine gute Testsuite sind diverse sichtbare Resultate.
 
 Noch was. Automatisieren ist schön und gut, aber 
-einen echten "Test mit Menschenvestand" 
+einen echten "Test mit Menschenverstand" 
 muss es ja so oder so auch immer geben.
-Das ist der ursprüngliche Daseinsgrund für die Seite
-`Manueller Testlauf <http://welfare.lino-framework.org/en/admin/testlauf.html>`,
-die ich aus gegebenem Anlass mal ein bisschen aktualisiert habe.
+
+Dieses manuelle Testen vor einem Release ist eine Arbeit, 
+die zumindest für mich, den Programmierer des Ganzen, 
+besonders stumpfsinnig erscheint.
+In Wirklichkeit ist Testen natürlich sogar eine Kunst.
+Aber eben keine, die der Entwickler auf seinem eigenen Produkt betreibt.
+
+Das ist der Daseinsgrund für die Seite
+`Manueller Testlauf <http://welfare.lino-framework.org/en/admin/testlauf.html>`_,
+die ich heute aus gegebenem Anlass auch mal ein bisschen aktualisiert habe.
+Das Dokument soll aber nur ein Anreiz sein.
+Eigentlich sollte bei jedem meiner Kunden ein Verantwortlicher 
+diese Aufgabe übernehmen. 
+Eine Person, die die Verantwortung übernimmt,
+vor einem Release (nach terminlicher Abstimmung mit mir) 
+in der `testlino` 
+eine von ihr selbst dokumentierte Serie von 
+"Mindestfunktionen" zu prüfen.
+
+
 
  

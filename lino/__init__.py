@@ -145,13 +145,29 @@ class Lino(object):
     max_action_name_length = 50
     max_actor_name_length = 100
     
-    root_url = '' # 
+    admin_url = '' # 
     """
-    must begin with a slash if not empty
+    If this is not empty, then your site features a "web content mode": 
+    the root url renders normal readonly web content defined by :attr:`cms_index_page`.
+    
+    If this is not empty, the usual value is ``"/admin"``.
+    Make sure that it must begin with a slash if not empty.
+    
+    
     See also  
     http://groups.google.com/group/django-users/browse_thread/thread/c95ba83e8f666ae5?pli=1
     http://groups.google.com/group/django-users/browse_thread/thread/27f035aa8e566af6
+    https://code.djangoproject.com/ticket/8906
+    https://code.djangoproject.com/wiki/BackwardsIncompatibleChanges#ChangedthewayURLpathsaredetermined
     """
+    
+    #~ cms_index_page = None
+    #~ """
+    #~ Set this to the primary key of the page to display as "index" 
+    #~ page when :attr:`admin_url` is not empty.
+    #~ """
+    
+    
     
     extjs_root = None
     """
@@ -693,7 +709,7 @@ class Lino(object):
         #~ print "settings.LINO.source_dir:", self.source_dir
         #~ print "settings.LINO.source_name:", self.source_name
 
-        self.qooxdoo_prefix = self.root_url + '/media/qooxdoo/lino_apps/' + self.project_name + '/build/'
+        self.qooxdoo_prefix = self.admin_url + '/media/qooxdoo/lino_apps/' + self.project_name + '/build/'
         #~ self.dummy_messages = set()
         self._setting_up = False
         self._setup_done = False
@@ -708,7 +724,7 @@ class Lino(object):
         #~ if settings_dict: 
             #~ self.install_settings(settings_dict)
         if self.webdav_url is None:
-            self.webdav_url = self.root_url + '/media/webdav/'
+            self.webdav_url = self.admin_url + '/media/webdav/'
         if self.webdav_root is None:
             self.webdav_root = join(abspath(self.project_dir),'media','webdav')
             
@@ -1037,7 +1053,7 @@ class Lino(object):
         main = menus.Toolbar(user,'main')
         self.setup_menu(ui,user,main)
         main.compress()
-        url = self.root_url
+        url = self.admin_url
         if not url: 
             url = "/"
         url = "javascript:Lino.close_all_windows()"

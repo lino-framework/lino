@@ -22,6 +22,7 @@ from urllib import urlencode
 from django.conf import settings
 from django.conf.urls.defaults import patterns, include, url
 
+
 class Handle:
   
     def __init__(self,ui):
@@ -30,12 +31,6 @@ class Handle:
     def setup(self,ar):
         if self.ui is not None:
             self.ui.setup_handle(self,ar)
-        
-        
-#~ class Handled(object):
-  
-    #~ "Inherited by Actor"
-    
 
 
 ACTION_RESPONSES = frozenset((
@@ -63,39 +58,47 @@ class UI:
     def __init__(self,prefix='',**options):
         #~ 20120614 settings.LINO.setup(**options)
         assert isinstance(prefix,basestring)
-        self.prefix = prefix
-        self.root_url = settings.LINO.root_url
-        if prefix:
-            assert not prefix.startswith('/')
-            assert not prefix.endswith('/')
-            self.root_url += '/' + prefix
-        #~ 20120706 settings.LINO.setup(**options)
+        assert len(prefix) == 0, "no longer supported"
+        assert len(options) == 0, "no longer supported"
+        #~ self.prefix = prefix
+        #~ self.admin_url = settings.LINO.admin_url
+        #~ if prefix:
+            #~ assert not prefix.startswith('/')
+            #~ assert not prefix.endswith('/')
+            #~ self.admin_url += '/' + prefix
         
-        #~ print 'settings.LINO.root_url:', settings.LINO.root_url
-        #~ print 'ui.root_url:', self.root_url
         
-    def check_action_response(self,kw):
-        """
-        Raise an exception if the action responded using an unknown keyword.
-        """
-        for k in kw.keys():
-            if not k in ACTION_RESPONSES:
-                raise Exception("Unknown action response %r" % k)
-                
     def build_url(self,*args,**kw):
-        #~ url = self.site.root_url
-        url = self.root_url
+        #~ url = self.admin_url
+        url = settings.LINO.admin_url
         if args:
             url += '/' + ("/".join(args))
-        #~ if self.prefix:
-            #~ url = "/" + self.prefix + url
         if len(kw):
             url += "?" + urlencode(kw)
         return url
         
     def media_url(self,*args,**kw):
-        return self.build_url('media',*args,**kw)
-        #~ settings.MEDIA_URL
+        url = '/media'
+        if args:
+            url += '/' + ("/".join(args))
+        if len(kw):
+            url += "?" + urlencode(kw)
+        return url
+      
+        #~ return self.build_url('media',*args,**kw)
+        
+    def old_get_patterns(self):
+        urlpatterns = patterns('',
+            (r'^favicon\.ico$', 'django.views.generic.simple.redirect_to', 
+                {'url': settings.MEDIA_URL + 'lino/favicon.ico'})
+        )
+        if self.prefix:
+            urlpatterns += patterns('',
+              ('^'+self.prefix+"/", include(self.get_urls()))
+            )
+        else:
+            urlpatterns += self.get_urls()
+        return urlpatterns
         
     def get_patterns(self):
         #~ return patterns('',(self.prefix, include(self.get_urls())))
@@ -103,10 +106,16 @@ class UI:
             (r'^favicon\.ico$', 'django.views.generic.simple.redirect_to', 
                 {'url': settings.MEDIA_URL + 'lino/favicon.ico'})
         )
-        
-        if self.prefix:
+        urlpatterns += self.get_media_urls()
+        if settings.LINO.admin_url:
+        #~ if self.prefix:
+            from lino.ui.extjs3 import views
             urlpatterns += patterns('',
-              ('^'+self.prefix+"/", include(self.get_urls()))
+                ('^$', views.WebIndex.as_view()),
+                ('^(?P<ref>\w+)$', views.WebIndex.as_view()),
+            )
+            urlpatterns += patterns('',
+              ('^'+settings.LINO.admin_url[1:]+"/", include(self.get_urls()))
             )
         else:
             urlpatterns += self.get_urls()
@@ -128,6 +137,14 @@ class UI:
         #~ kw.update(ui=self)
         return actor.request(self,**kw)
         
+    def check_action_response(self,kw):
+        """
+        Raise an exception if the action responded using an unknown keyword.
+        """
+        for k in kw.keys():
+            if not k in ACTION_RESPONSES:
+                raise Exception("Unknown action response %r" % k)
+                
     def success_response(self,message=None,alert=None,**kw):
         """
         Shortcut for building a success response.

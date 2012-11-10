@@ -129,7 +129,7 @@ class Lino(Lino):
             href='http://lino.saffre-rumma.net/crl/index.html')
 
         #~ self.main_menu.add_item('home',_("~Home"),href='/')
-        main.add_url_button(self.root_url,_("Home"))
+        main.add_url_button(self.admin_url,_("Home"))
           
         return main
       
