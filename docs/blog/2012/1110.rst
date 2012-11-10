@@ -1,7 +1,7 @@
 20121110
 ========
 
-Heute ist der 10.11.12.
+Heute ist der 10.11.12. Also Tendenz steigend.
 
 
 Ein Content Management System für Lino
@@ -30,3 +30,34 @@ vielversprechend scheint.
 Siehe 
 :mod:`lino.modlib.pages` und das neue Attribut :attr:`lino.Lino.admin_url` 
 in der :xfile:`settings.py`.
+
+:checkin:`5b670bf2a5c7` um 05.52 Uhr
+
+Nachtrag um 10.40 Uhr: 
+Tiens, irgendwo habe ich scheinbar meine Zeitzone nicht richtig konfiguriert.
+Google behauptet, dass mein Checkin von heute Morgen (:checkin:`5b670bf2a5c7`) 
+vor 4 Stunden war ("Today (4 hours ago)"),  
+und wenn ich mit der Maus drüber fahre, zeigt er 19.52 Uhr an.
+Ein ``hg tip`` auf meinem Rechner sagt::
+
+  changeset:   3111:5b670bf2a5c7
+  tag:         tip
+  user:        Luc Saffre <luc.saffre@mail.ee>
+  date:        Fri Nov 09 23:52:20 2012 -0400
+  summary:     http://code.google.com/p/lino/source/browse/docs/blog/2012/1110.rst
+  
+
+Heusch wa
+---------
+
+Oops, um 10 Uhr fällt mir ein, dass ich 
+das Doppelrelease Lino 1.5.1 und Welfare 1.0.1 besser fertigstellen sollte,
+bevor ich das neue CMS aktiviere. Also: Modul :mod:`lino.modlib.pages` 
+aus der Default-Konfiguration wieder raus, 
+dann erneutes Checkin, 
+dann Release auf http://welfare-demo.lino-framework.org/,
+dann bis Sonntagabend testen und 
+ab Montagmorgen auch in Eupen aufspielen.
+Es geht darum, eventuelle Bugs rauszufangen, 
+die durch das noch nicht aktivierte :attr:`lino.Lino.admin_url` theoretisch kommen könnten.
+

@@ -1,5 +1,3 @@
 T:\hgwork\lino\docs\autodoc\lino.apps.homeworkschool.rst:12: WARNING: autodoc can't import/find module 'lino.apps.homeworkschool.models', it reported error: "'NoneType' object has no attribute 'Pupil'", please check your spelling and sys.path
-T:\hgwork\lino\docs\releases\index.rst:18: WARNING: toctree glob pattern u'2010/index' didn't match any documents
-T:\hgwork\lino\docs\releases\index.rst:18: WARNING: toctree glob pattern u'2011/index' didn't match any documents
 T:\hgwork\lino\docs\casts\lino_intro.rst:: WARNING: document isn't included in any toctree
 T:\hgwork\lino\docs\igen\index.rst:: WARNING: document isn't included in any toctree
