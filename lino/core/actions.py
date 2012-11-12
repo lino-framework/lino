@@ -515,6 +515,13 @@ class Action(Parametrizable):
         """
         return True
         
+    def get_view_permission(self,user):
+        """
+        Overridden by lino_welfare.modlib.pcsw.models.BeIdReadCardAction
+        (which is available only when lino.Lino.use_eid_jslib is True).
+        """
+        return True
+        
     #~ def run(self,elem,ar,**kw):
         #~ raise NotImplementedError("%s has no run() method" % self.__class__)
 
@@ -853,9 +860,6 @@ class BoundAction(object):
         #~ def wrap(a,required,fn):
             #~ return fn
             
-        #~ a.allow = curry(wrap(a,required,perms.make_permission_handler(
-            #~ a,actor,a.readonly,actor.debug_permissions,**required)),a)
-        #~ ba = actions.BoundAction(actor,a)
         debug = actor.debug_permissions or action.debug_permissions
         self.allow = curry(perms.make_permission_handler(
             action,actor,action.readonly,debug,**required),action)
@@ -893,6 +897,8 @@ class BoundAction(object):
         return self.allow(ar.get_user(),obj,state)
         
     def get_view_permission(self,user):
+        if not self.action.get_view_permission(user):
+            return False
         return self.allow(user,None,None)
         
 

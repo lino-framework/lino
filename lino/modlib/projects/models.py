@@ -84,17 +84,17 @@ def site_setup(site):  pass
 
 def setup_main_menu(site,ui,user,m):  pass
   
-def setup_master_menu(site,ui,user,m): pass
+#~ def setup_master_menu(site,ui,user,m): pass
 
-def setup_my_menu(site,ui,user,m): 
-    m  = m.add_menu("debts",MODULE_NAME)
+def setup_main_menu(site,ui,user,m): 
+    m  = m.add_menu("projects",MODULE_NAME)
     m.add_action(MyProjects)
   
 def setup_config_menu(site,ui,user,m): 
-    m  = m.add_menu("debts",MODULE_NAME)
+    m  = m.add_menu("projects",MODULE_NAME)
     #~ m.add_action(Accounts)
     m.add_action(ProjectTypes)
   
 def setup_explorer_menu(site,ui,user,m):
-    m  = m.add_menu("debts",MODULE_NAME)
+    m  = m.add_menu("projects",MODULE_NAME)
     m.add_action(Projects)

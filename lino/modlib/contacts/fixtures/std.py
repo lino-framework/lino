@@ -125,14 +125,15 @@ def objects():
     
     Person = resolve_model(settings.LINO.person_model)
     t = ContentType.objects.get_for_model(Person)
-    yield I(t,'birth_date',u"""\
-Unkomplette Geburtsdaten sind erlaubt, z.B. 
-<ul>
-<li>00.00.1980 : irgendwann in 1980</li>
-<li>00.07.1980 : im Juli 1980</li>
-<li>23.07.0000 : Geburtstag am 23. Juli, Alter unbekannt</li>
-</ul>    
-""")
+    
+    #~ yield I(t,'birth_date',u"""\
+#~ Unkomplette Geburtsdaten sind erlaubt, z.B. 
+#~ <ul>
+#~ <li>00.00.1980 : irgendwann in 1980</li>
+#~ <li>00.07.1980 : im Juli 1980</li>
+#~ <li>23.07.0000 : Geburtstag am 23. Juli, Alter unbekannt</li>
+#~ </ul>    
+#~ """)
     
     Partner = resolve_model('contacts.Partner')
     t = ContentType.objects.get_for_model(Partner)

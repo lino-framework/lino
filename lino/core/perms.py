@@ -55,17 +55,9 @@ class Permittable(object):
 
         
     def get_view_permission(self,user):
-        #~ if str(self.layout_handle.layout) == 'ClientDetail on pcsw.Clients':
-            #~ if self.name == 'cbss':
-                #~ logger.info("20120925 %s Permittable.get_view_permission(%s)", self,self.required)
-        #~ logger.info("20120622 %s.get_view_permission",self)
         return self.allow_read(user,None,None)
-        
-        
 
 
-
-#~ BLANK_STATE = ''
 
 
 def make_permission_handler(
@@ -170,8 +162,6 @@ def make_permission_handler(
                     level = getattr(user.profile,g+'_level')
                     if level >= user_level:
                         return True
-                #~ if isinstance(elem,Permittable):
-                    #~ print '20120630 not for you:', elem
                 return False
                 
         if states is not None:
@@ -205,7 +195,7 @@ def make_permission_handler(
             states = frozenset(ns)
             allow2 = allow
             if debug_permissions:
-                logger.info("20121009 %s %s required states: %s",actor,elem,states)
+                logger.info("20121009 %s required states: %s",actor,states)
             def allow(action,user,obj,state):
                 if not allow2(action,user,obj,state): return False
                 if obj is None: return True
@@ -217,13 +207,10 @@ def make_permission_handler(
             def allow(action,user,obj,state):
                 if not allow3(action,user,obj,state): return False
                 if user.profile.readonly:
-                    #~ if isinstance(elem,Permittable):
-                        #~ print '20120630 not readonly:', elem
                     return False
                 return True
         
         if debug_permissions: # False:
-            #~ logger.info("20120920 debug_permissions %r",elem)
             allow4 = allow
             def allow(action,user,obj,state):
                 v = allow4(action,user,obj,state)

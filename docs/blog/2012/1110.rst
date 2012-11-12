@@ -61,3 +61,26 @@ ab Montagmorgen auch in Eupen aufspielen.
 Es geht darum, eventuelle Bugs rauszufangen, 
 die durch das noch nicht aktivierte :attr:`lino.Lino.admin_url` theoretisch kommen könnten.
 
+
+Der Zeitunterschied zwischen Google und der (estnischen) Wirklichkeit 
+scheint genau 10 Stunden zu sein::
+
+  T:\hgwork\lino>ci 1110
+  
+  T:\hgwork\lino>hg push lino
+  pushing to https://***@lino.googlecode.com/hg
+  searching for changes
+  remote: Success.
+  
+  T:\hgwork\lino>hg tip
+  changeset:   3112:97d8b0f6b0fb
+  tag:         tip
+  user:        Luc Saffre <luc.saffre@mail.ee>
+  date:        Sat Nov 10 04:53:54 2012 -0400
+  summary:     http://code.google.com/p/lino/source/browse/docs/blog/2012/1110.rst
+
+
+  T:\hgwork\lino>time
+  The current time is: 10:55:19,07
+
+Und das Webinterface von Googlecode sagt 00:53:54

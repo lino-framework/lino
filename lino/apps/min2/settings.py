@@ -27,26 +27,40 @@ class Lino(Lino):
     #~ project_model = 'contacts.Person'
     #~ project_model = 'contacts.Person'
     project_model = 'projects.Project'
+    user_model = "users.User"
     
     #~ languages = ('de', 'fr')
     languages = ['en']
     
     #~ index_view_action = "dsbe.Home"
     
-    remote_user_header = "REMOTE_USER"
+    #~ remote_user_header = "REMOTE_USER"
+    remote_user_header = None
     
     def get_app_source_file(self):  return __file__
         
-    def setup_quicklinks(self,ui,user,tb):
-        tb.add_action(self.modules.contacts.Persons.detail_action)
-        tb.add_action(self.modules.contacts.Companies.detail_action)
-        
+    #~ def setup_quicklinks(self,ui,user,tb):
+        #~ tb.add_action(self.modules.contacts.Persons.detail_action)
+        #~ tb.add_action(self.modules.contacts.Companies.detail_action)
+
+    def get_installed_apps(self):
+        for a in super(Lino,self).get_installed_apps():
+            yield a
+        yield 'lino.modlib.users'
+        yield 'lino.modlib.countries'
+        yield 'lino.modlib.contacts'
+        yield 'lino.modlib.projects'
+        yield 'lino.modlib.uploads'
+        yield 'lino.modlib.cal'
+        yield 'lino.modlib.outbox'
+        yield 'lino.apps.min2'
+
       
 LINO = Lino(__file__,globals())
 
 
 
-INSTALLED_APPS = (
+unused_INSTALLED_APPS = (
   #~ 'django.contrib.auth',
   'django.contrib.contenttypes',
   #~ 'django.contrib.sessions',

@@ -31,6 +31,7 @@ from lino.core import dbtables
 from lino.core import layouts
 from lino.core import fields
 from lino.core import actions
+from lino.core import perms
 from lino.utils.ranges import constrain
 from lino.utils import jsgen
 from lino.utils import mti
@@ -85,7 +86,7 @@ def py2html(obj,name):
     
 
 def get_view_permission(e):
-    if isinstance(e,jsgen.Permittable) and not e.get_view_permission(jsgen._for_user):
+    if isinstance(e,perms.Permittable) and not e.get_view_permission(jsgen._for_user):
         return False
     #~ e.g. pcsw.ClientDetail has a tab "Other", visible only to system admins
     #~ but the "Other" contains a GridElement RolesByPerson which is not per se reserved for system admins.
@@ -93,7 +94,7 @@ def get_view_permission(e):
     parent = e.parent
     while parent is not None:
     #~ if e.parent is not None:
-        if isinstance(parent,jsgen.Permittable) and not parent.get_view_permission(jsgen._for_user):
+        if isinstance(parent,perms.Permittable) and not parent.get_view_permission(jsgen._for_user):
             return False # bug 3 (bcss_summary) blog/2012/09/27
         parent = parent.parent
     return True
@@ -258,7 +259,7 @@ class Calendar(jsgen.Component):
         
 NOT_GIVEN = object()
         
-class VisibleComponent(jsgen.Component,jsgen.Permittable):
+class VisibleComponent(jsgen.Component,perms.Permittable):
     vflex = False
     hflex = True
     width = None
@@ -270,9 +271,8 @@ class VisibleComponent(jsgen.Component,jsgen.Permittable):
     def __init__(self,name,**kw):
         jsgen.Component.__init__(self,name)
         # install `allow_read` permission handler:
-        #~ jsgen.Permittable.__init__(self,layout_handle.layout._table)
         self.setup(**kw)
-        jsgen.Permittable.__init__(self,False) # name.startswith('cbss'))
+        perms.Permittable.__init__(self,False) # name.startswith('cbss'))
         
     def setup(self,width=None,height=None,label=None,
         preferred_width=None,
@@ -1237,7 +1237,7 @@ class Container(LayoutElement):
         #~ if self.value.get("title") == "CBSS":
             #~ print "20120525 Container.get_view_permission() passed", self
         for e in self.elements:
-            if (not isinstance(e,jsgen.Permittable)) or e.get_view_permission(user):
+            if (not isinstance(e,perms.Permittable)) or e.get_view_permission(user):
                 # one visble child is enough, no need to continue loop 
                 return True
         #~ logger.info("20120925 not a single visible element in %s",self)
@@ -1655,7 +1655,6 @@ class GridElement(Container):
         if rpt.params_panel_hidden:
             kw.update(params_panel_hidden=True)
         Container.__init__(self,layout_handle,name,**kw)
-        #~ jsgen.Permittable.__init__(self)
         self.active_children = columns
         #~ 20111125
         #~ assert not kw.has_key('before_row_edit')
@@ -1767,7 +1766,6 @@ class TabPanel(Panel):
           #~ listeners=dict(activate=js_code("function(p) {p.doLayout();}"),single=True),
         )
         Container.__init__(self,layout_handle,name,*elems,**kw)
-        #~ jsgen.Permittable.__init__(self)
         
 
 

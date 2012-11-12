@@ -685,7 +685,7 @@ class UserProfile(Choice):
             for i,k in enumerate(memberships.split()):
                 kw[cls.membership_keys[i]] = UserLevels.get_by_name(UserLevels.SHORT_NAMES[k])
                 
-        #~ print 20120705, value, kw
+        print 20120705, value, kw
         
         assert kw.has_key('level')
             
@@ -753,10 +753,13 @@ class UserProfiles(ChoiceList):
     #~ @classmethod
     #~ def clear(cls,groups='*'):
     @classmethod
-    def reset(cls,groups):
+    def reset(cls,groups=None):
         #~ cls.groups_list = [g.value for g in UserGroups.items()]
-        s = []
         expected_names = set(['*']+[g.value for g in UserGroups.items() if g.value])
+        if groups is None:
+            groups = ' '.join(expected_names)
+            #~ cls.membership_keys = tuple(expected_names)
+        s = []
         for g in groups.split():
             if not g in expected_names:
                 raise Exception("Unexpected name %r (UserGroups are: %s)" % (
@@ -777,11 +780,13 @@ class UserProfiles(ChoiceList):
     @classmethod
     def add_item(cls,value,text,memberships=None,name=None,**kw):
         return cls.add_item_instance(UserProfile(cls,value,text,name,memberships,**kw))
-          
+
+#~ UserProfiles choicelist is going to be filled in `lino.Lino.setup_choicelists` 
+#~ because attributes of Choice depend on UserGroups
     
-add = UserProfiles.add_item
-add('100', _("User"), name='user', level='user')
-add('900', _("Administrator"), name='admin', level='admin')
+#~ add = UserProfiles.add_item
+#~ add('100', _("User"), name='user', level='user')
+#~ add('900', _("Administrator"), name='admin', level='admin')
 
 
 
