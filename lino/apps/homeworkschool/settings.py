@@ -72,6 +72,7 @@ class Lino(Lino):
         yield 'lino.modlib.uploads'
         yield 'lino.modlib.cal'
         yield 'lino.modlib.outbox'
+        yield 'lino.modlib.pages'
         yield 'lino.apps.homeworkschool'
       
     def setup_choicelists(self):

@@ -50,17 +50,44 @@ class Lino(Lino):
         from django.utils.translation import ugettext_lazy as _
         dd.UserProfiles.reset('* office')
         add = dd.UserProfiles.add_item
-        add('100', _("User"),            'U U')
-        add('900', _("Administrator"),   'A A')
+        add('100', _("User"),            'U U', 'user')
+        add('900', _("Administrator"),   'A A', 'admin')
         
         #~ for p in dd.UserProfiles.items():
             #~ print 20120705, repr(p)
+            
+    def get_installed_apps(self):
+        for a in super(Lino,self).get_installed_apps():
+            yield a
+        yield 'lino.modlib.users'
+        yield 'lino.modlib.countries'
+        yield 'lino.modlib.properties'
+        yield 'lino.modlib.contacts'
+        yield 'lino.modlib.households'
+        yield 'lino.modlib.products'
+        yield 'lino.modlib.accounts'
+        yield 'lino.modlib.ledger'
+        yield 'lino.modlib.vat'
+        #~ 'lino.modlib.journals',
+        yield 'lino.modlib.sales'
+        #~ 'lino.modlib.projects',
+        yield 'lino.modlib.blogs'
+        yield 'lino.modlib.tickets'
+        #~ 'lino.modlib.links',
+        yield 'lino.modlib.uploads'
+        #~ 'lino.modlib.thirds',
+        yield 'lino.modlib.cal'
+        yield 'lino.modlib.outbox'
+        #~ yield 'lino.modlib.postings'
+        yield 'lino.modlib.pages'
+        yield 'lino.apps.presto'
+      
             
         
     
 LINO = Lino(__file__,globals()) 
 
-INSTALLED_APPS = (
+unused_INSTALLED_APPS = (
   #~ 'django.contrib.auth',
   'django.contrib.contenttypes',
   #~ 'django.contrib.sessions',

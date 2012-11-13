@@ -14,20 +14,44 @@
 
 import datetime
 from django.conf import settings
+from lino import dd
 from lino.utils.instantiator import Instantiator
-#from lino import reports
-#contacts = reports.get_app('contacts')
+from lino.utils import babel
+
+def root_kw(lang,**kw):
+    #~ kw.update(profile='900') # UserProfiles.admin) 
+    kw.update(profile=dd.UserProfiles.admin) 
+    kw.update(email='root@example.com') 
+    kw.update(language=lang) 
+    if lang == 'de':
+        kw.update(first_name="Rudi",last_name=u"Rothkranz")
+    elif lang == 'fr':
+        kw.update(first_name="Robert",last_name=u"Robinet")
+    elif lang == 'et':
+        kw.update(first_name="Roland",last_name=u"Rukki")
+    else:
+        kw.update(first_name="Robin",last_name="Rosefeldt")
+    kw.update(username=kw.get('first_name').lower()) 
+    return kw
 
 def objects():
-    def create_user(*args,**kw):
-        user = Instantiator('users.User',
-          'username email first_name last_name'
-          ).build
-        u = user(*args,**kw)
+    User = settings.LINO.user_model
+    #~ def create_user(lang,**kw):
+        #~ user = Instantiator('users.User',
+          #~ 'username email first_name last_name'
+          #~ ).build
+        #~ u = user(*args,**kw)
+        #~ u = User(**kw)
         #~ u.set_password('1234')
-        return u
+        #~ return u
     #~ kw = dict()
     #~ for f in settings.LINO.user_profile_fields:
         #~ kw[f] = UserLevel.expert
-    yield create_user('root','root@example.com','Root','User',profile='900') # UserProfiles.admin) 
-    yield create_user('luc','luc@example.com','Luc','Saffre',profile='900') # UserProfiles.admin) 
+    for lang in babel.AVAILABLE_LANGUAGES:
+        kw = root_kw(lang)
+        u = User(**kw)
+        u.set_password('1234')
+        yield u
+        
+    #~ yield create_user('root','root@example.com','Root','User')
+    #~ yield create_user('luc','luc@example.com','Luc','Saffre',profile='900') # UserProfiles.admin) 

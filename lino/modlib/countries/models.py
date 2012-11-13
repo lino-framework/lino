@@ -44,7 +44,7 @@ class CityTypes(ChoiceList):
     - http://en.wikipedia.org/wiki/List_of_subnational_entities
     
     """
-    label = _("Place Type")
+    verbose_name = _("Place Type")
 add = CityTypes.add_item
 #~ add('10', pgettext_lazy(u'countries','State'))             # de:Bundesland
 add('10', _('Member State'))      # de:Bundesland

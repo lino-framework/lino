@@ -43,6 +43,7 @@ tests:
 	python lino/utils/rstgen.py
 	python lino/utils/appy_pod.py
 	python lino/utils/niss.py
+	python lino/utils/memo.py
 	python lino/modlib/contacts/utils.py
 	python lino/utils/html2xhtml.py
 	python lino/utils/demonames.py

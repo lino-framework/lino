@@ -21,7 +21,7 @@ The caller defines itself all commands, there are no predefined commands.
 Usage example
 -------------
 
-Instatiate a parser:
+Instantiate a parser:
 
 >>> p = Parser()
 
@@ -51,8 +51,14 @@ It must return the text which is to replace
 the ``[KEYWORD ARGS]`` fragment.
 It is responsible for parsing 
 the text that it receives as parameter.
+
+If an exception occurs while parsing, 
+only the final exception message is visible in the result.
+But the whole traceback is being logged to the lino logger.
+
 Our example implementation has a bug, 
 it doesn't support the case of having only an URL without TEXT:
+
 
 >>> print p.parse('This is a [url http://xyz.com].')
 [DEBUG] url2html() got 'http://xyz.com'
@@ -114,24 +120,57 @@ produce the desired result:
 [DEBUG] url2html() got 'http://xyz.com The character "\\'
 This is a <a href="http://xyz.com">The character "\</a>"].
 
-Built-in commands like `[if ...]`, `[endif ...]`, `[=<expression>]`,... 
+Execution flow statements like 
+`[if ...]` and `[endif ...]`
+or ``[for ...]`` and ``[endfor ...]``
 would be nice.
+
+
+
+The ``[=expression]`` form
+--------------------------
+
+Instantiate a new parser with a context and without :
+
+>>> print p.parse('''\
+... The answer is [=a*a*5-a].''',a=3)
+The answer is 42.
+
+
+
 
 
 """
 
-import re
+import logging
+#~ logging.basicConfig()
+logger = logging.getLogger(__name__)
+logger.addHandler(logging.NullHandler()) # avoid "No handlers could be found for logger "__main__"" when doctesting
 
-REGEX = re.compile(r"\[(\w+)\s*((?:[^[\]]|\[.*?\])*?)\]")
+
+import re
+COMMAND_REGEX = re.compile(r"\[(\w+)\s*((?:[^[\]]|\[.*?\])*?)\]")
+#~                                      ===...... .......=
+
+EVAL_REGEX = re.compile(r"\[=((?:[^[\]]|\[.*?\])*?)\]")
 
 class Parser(object):
   
-    def __init__(self):
+    def __init__(self,**context):
         self.commands = dict()
+        self.context = context
 
     def register_command(self,cmd,func):
         self.commands[cmd] = func
 
+    def eval_match(self,matchobj):
+        expr = matchobj.group(1)
+        try:
+            return unicode(eval(expr,self.context))
+        except Exception,e:
+            logger.exception(e)
+            return self.handle_error(matchobj,e)
+      
     def cmd_match(self,matchobj):
         cmd = matchobj.group(1)
         params = matchobj.group(2)
@@ -143,6 +182,7 @@ class Parser(object):
             return h(params)
         #~ except KeyError,e:
         except Exception,e:
+            logger.exception(e)
             return self.handle_error(matchobj,e)
             
     def handle_error(self,mo,e):
@@ -151,8 +191,10 @@ class Parser(object):
           e, mo.group(0), mo.start(),mo.end())
         
 
-    def parse(self,s):
-        s = REGEX.sub(self.cmd_match,s)
+    def parse(self,s,**context):
+        self.context = context
+        s = COMMAND_REGEX.sub(self.cmd_match,s)
+        s = EVAL_REGEX.sub(self.eval_match,s)
         return s
 
 

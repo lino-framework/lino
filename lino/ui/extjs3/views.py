@@ -382,17 +382,34 @@ def form2obj_and_save(ar,data,elem,is_new,restful,file_upload=False): # **kw2sav
             
 
 
-HTML_PAGE = """\
+#~ HTML_PAGE = """\
+#~ <html>
+#~ <head>
+#~ <title>%(title)s</title>
+#~ </head>
+#~ <body>
+#~ <h1>%(title)s</h1>
+#~ %(body)s
+#~ </body>
+#~ </html>
+#~ """
+
+#~ <body style="font-family:Arial;padding:2em;background-color:wheat;">
+SIMPLE_PAGE = """\
 <html>
 <head>
-<title>%(title)s</title>
+<title>[=title]</title>
 </head>
-<body>
-<h1>%(title)s</h1>
-%(body)s
+<body style="font-family:Arial;padding:2em;color:black;background-color:#c7dffc;">
+<h1>[=title]</h1>
+[=parse(obj.body or obj.abstract)]
 </body>
 </html>
 """
+
+from lino.utils.memo import Parser
+
+MEMO_PARSER = Parser()
 
 class WebIndex(View):
   
@@ -401,13 +418,25 @@ class WebIndex(View):
         if not pages:
             return http.HttpResponse('<html>This is the WebIndex. <a href="%s/">admin</a></html>' % settings.LINO.admin_url)
         obj = pages.Page.objects.get(ref=ref)
+        
         context = dict(
+            obj=obj,
+            settings=settings,
+            cgi=cgi,
             title=cgi.escape(obj.title),
             #~ abstract=obj.abstract,
             body=obj.body)
-        if not obj.body:
-            context.update(body=obj.abstract)
-        return http.HttpResponse(HTML_PAGE % context)
+            
+        def parse(s):
+            return MEMO_PARSER.parse(s,**context)
+        context.update(parse=parse)
+        
+        #~ if not obj.body:
+            #~ context.update(body=obj.abstract)
+            
+        return http.HttpResponse(MEMO_PARSER.parse(SIMPLE_PAGE,**context))
+        
+        #~ return http.HttpResponse(HTML_PAGE % context)
         
 
 class AdminIndex(View):

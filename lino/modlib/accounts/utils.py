@@ -139,7 +139,7 @@ class AccountType(Choice):
         super(AccountType,self).__init__(cls,value,text,name)
     
 class AccountTypes(ChoiceList):
-    label = _("Account Type")
+    verbose_name = _("Account Type")
     item_class = AccountType
     
     

@@ -147,11 +147,11 @@ class Lino(object):
     
     admin_url = '' # 
     """
-    If this is not empty, then your site features a "web content mode": 
+    If this is not empty (the usual value in that case is ``"/admin"``), 
+    then your site features a "web content mode": 
     the root url renders normal readonly web content defined by :attr:`cms_index_page`.
     
-    If this is not empty, the usual value is ``"/admin"``.
-    Make sure that it must begin with a slash if not empty.
+    Make sure that it begins with a slash if not empty.
     
     
     See also  
@@ -221,6 +221,10 @@ class Lino(object):
     #~ index_html = "This is the main page."
     title = "Untitled Lino Application"
     #~ domain = "www.example.com"
+    
+    help_text = """
+    This is yet another <a href="%s">Lino</a> application.
+    """ % __url__
     
     uid = 'myuid'
     """
@@ -402,6 +406,19 @@ class Lino(object):
     Set this to False if you don't want Lino to automatically 
     create missing dirs when needed 
     (but to raise an exception in these cases, asking you to create it yourself)
+    """
+    
+    catch_layout_exceptions = True
+    """
+    Lino usually catches any exception during 
+    :meth:`lino.ui.extjs3.ExtUI.create_layout_element`
+    to report errors of style 
+    "Unknown element "postings.PostingsByController ('postings')" 
+    referred in layout <PageDetail on pages.Pages>."
+    
+    Setting this to `False` is
+    useful when there's some problem *within* the framework.
+    
     """
     
     

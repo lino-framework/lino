@@ -550,14 +550,19 @@ class Table(AbstractTable):
         
     @classmethod
     def get_actor_label(self):
-        """
-        Compute the label of this actor. 
-        Called only if `label` is not set, and only once during site startup.
-        """
+        if self.model is None:
+            return self.__name__
         return self.model._meta.verbose_name_plural
         
     @classmethod
     def class_init(self):
+      
+        if self.model is not None:
+            self.model = resolve_model(self.model,self.app_label)
+            
+        if isinstance(self.model,UnresolvedModel):
+            self.model = None
+            
         super(Table,self).class_init()
         #~ if self.model is None:
             #~ if self.base_queryset is not None:
@@ -566,14 +571,8 @@ class Table(AbstractTable):
         #~ else:
             #~ self.model = resolve_model(self.model,self.app_label)
             
-        if self.model is not None:
-            self.model = resolve_model(self.model,self.app_label)
-            
         #~ logger.debug("20120731 class_init(%r) : model is %s",self,self.model)
         
-        if isinstance(self.model,UnresolvedModel):
-            self.model = None
-            
         
         if self.model is not None:
             for b in self.model.mro():
@@ -610,10 +609,6 @@ class Table(AbstractTable):
                     #~ setattr(self,k,v)
                     
                     
-            if self.label is None:
-                #~ self.label = capfirst(self.model._meta.verbose_name_plural)
-                self.label = self.get_actor_label()
-          
               
             for name in ('workflow_state_field','workflow_owner_field'):
                 if getattr(self,name) is None:

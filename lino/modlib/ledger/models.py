@@ -409,8 +409,10 @@ class MovementsByVoucher(Movements):
 
 
 
-class LedgerInvoiceStates(ChoiceList):
-    label = _("State")
+#~ class LedgerInvoiceStates(ChoiceList):
+class LedgerInvoiceStates(dd.Workflow):
+    #~ label = _("State")
+    pass
 add = LedgerInvoiceStates.add_item
 add('10',_("Booked"),'booked',help_text=_("Ready to sign"))
 #~ add('20',_("Signed"),'signed')

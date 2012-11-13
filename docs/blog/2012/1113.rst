@@ -1,0 +1,25 @@
+20121113
+========
+
+Kleinkram
+---------
+
+There was an error "Unknown element "postings.PostingsByController 
+referred in layout <PageDetail on pages.Pages>." in 
+:mod:`lino.apps.presto` where :mod:`lino.modlib.postings` 
+is not being used.
+:meth:`lino.core.actors.Actor.get_data_elem`.
+
+New settings attribute :attr:`lino.Lino.catch_layout_exceptions`.
+
+
+- ChoiceLists können jetzt auch im Webinterface als Tabellen dargestellt werden.
+  Natürlich nicht bearbeitbar.
+
+- :mod:`lino.utils.memo` now can interpret expressions ``[=...]``
+
+- New :meth:`lino.core.actors.as_html`.
+
+- Worked on the default index page created by :mod:`lino.modlib.pages.fixtures.demo`
+
+- tinymce is now instantiated with ``convert_urls = false``

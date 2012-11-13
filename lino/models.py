@@ -455,6 +455,9 @@ def setup_explorer_menu(site,ui,user,m):
     system = m.add_menu("system",SYSTEM_USER_LABEL)
     if site.user_model:
         system.add_action(site.modules.users.Authorities)
+        system.add_action(dd.UserGroups)
+        system.add_action(dd.UserLevels)
+        system.add_action(dd.UserProfiles)
     system.add_action(Changes)
     office.add_action(TextFieldTemplates)
   

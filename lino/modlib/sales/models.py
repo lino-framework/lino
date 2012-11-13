@@ -64,8 +64,9 @@ from lino.utils.choicelists import ChoiceList
 #~ add('P',_("Paper"))
 #~ add('E',_("E-mail"))
 
-class InvoiceStates(ChoiceList):
-    label = _("State")
+class InvoiceStates(dd.Workflow):
+    #~ label = _("State")
+    pass
 add = InvoiceStates.add_item
 add('10',_("Booked"),'booked',help_text=_("Ready to sign"))
 add('20',_("Signed"),'signed')

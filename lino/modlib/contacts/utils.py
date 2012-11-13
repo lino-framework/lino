@@ -29,7 +29,7 @@ class Gender(ChoiceList):
     Defines choices for the "Gender" of a person.
 
     """
-    label = _("Gender")
+    verbose_name = _("Gender")
 add = Gender.add_item
 add('M',_("Male"),'male')
 add('F',_("Female"),'female')

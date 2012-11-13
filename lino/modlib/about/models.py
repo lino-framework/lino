@@ -288,9 +288,9 @@ class About(mixins.EmptyTable):
         #~ self.add_action(BuildSiteCache())
    
     #~ @dd.constant(_("Versions"))
-    @dd.constant()
-    def versions(cls,ui):
-        return settings.LINO.welcome_html(ui)
+    #~ @dd.constant()
+    #~ def versions(cls,ui):
+        #~ return settings.LINO.welcome_html(ui)
         
     @dd.constant()
     def about_html(cls,ui):
@@ -344,9 +344,9 @@ class About(mixins.EmptyTable):
     #~ def versions(cls,self,req):
         #~ return lino.welcome_html()
         
-    @dd.virtualfield(models.DateTimeField(_("Server up since")))
-    def startup_time(cls,self,req):
-        return settings.LINO.startup_time
+    #~ @dd.virtualfield(models.DateTimeField(_("Server up since")))
+    #~ def startup_time(cls,self,req):
+        #~ return settings.LINO.startup_time
     
 
 

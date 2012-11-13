@@ -146,6 +146,7 @@ class UserAuthored(dd.Model):
     Also defines a `ByUser` base table which fills the master instance 
     from the web request.
     """
+    required = dict(auth=True)
     class Meta:
         abstract = True
         
@@ -210,6 +211,7 @@ if settings.LINO.user_model:
         
         @classmethod
         def get_actor_label(self):
+            if self.model is None: return self.__name__
             return string_concat(
                 _("My "),self.model._meta.verbose_name_plural)
             #~ return _("My %s") % self.model._meta.verbose_name_plural

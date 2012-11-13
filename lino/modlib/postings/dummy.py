@@ -16,5 +16,9 @@
 A :term:`dummy module` for `postings`, used by 
 """
 
+from lino import dd
+
 class Postable(object): 
     pass
+
+PostingsByController = dd.DummyField

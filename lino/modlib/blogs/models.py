@@ -176,9 +176,9 @@ class EntriesByController(Entries):
   
 MODULE_NAME = _("~Blog")  
   
-def setup_main_menu(site,ui,user,m): pass
+#~ def setup_main_menu(site,ui,user,m): pass
   
-def setup_my_menu(site,ui,user,m): 
+def setup_main_menu(site,ui,user,m): 
     m  = m.add_menu("blogs",MODULE_NAME)
     m.add_action(MyEntries)
   

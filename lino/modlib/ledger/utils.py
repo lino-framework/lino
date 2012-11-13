@@ -27,7 +27,7 @@ class FiscalMonth(Choice):
     
 class FiscalMonths(ChoiceList):
     item_class = FiscalMonth
-    label = _("Fiscal Month")
+    verbose_name = _("Fiscal Month")
     
     
 class FiscalYear(Choice):
@@ -41,7 +41,7 @@ class FiscalYear(Choice):
     
 class FiscalYears(ChoiceList):
     item_class = FiscalYear
-    label = _("Fiscal Year")
+    verbose_name = _("Fiscal Year")
     
     @classmethod
     def from_int(cls,year):

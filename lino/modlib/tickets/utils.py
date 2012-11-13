@@ -13,14 +13,14 @@
 ## along with Lino; if not, see <http://www.gnu.org/licenses/>.
 
 from django.utils.translation import ugettext_lazy as _
-from lino.utils.choicelists import ChoiceList
+from lino.utils.workflows import Workflow
 
 
-class TicketStates(ChoiceList):
+class TicketStates(Workflow):
     """
     The state of a ticket (new, open, closed, ...)
     """
-    label = _("Ticket State")
+    #~ label = _("Ticket State")
     
     @classmethod
     def allow_state_accepted(cls,self,user):

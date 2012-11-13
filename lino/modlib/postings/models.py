@@ -51,14 +51,14 @@ from lino.core.modeltools import obj2str
 from django.conf import settings
 
 
-from lino.utils.choicelists import ChoiceList
 
 class PostingStates(dd.Workflow):
     """
     List of possible values for the `state` field of a 
     :class:`Posting`.
     """
-    label = _("State")
+    #~ label = _("State")
+    
 add = PostingStates.add_item
 add('10',_("Open"),'open') # owner still working on it
 add('20',_("Ready to print"),'ready') # secretary can send it out
