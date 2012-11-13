@@ -15,7 +15,7 @@
 Adds an arbitrary selection of a few demo cities.
 """
 
-from django.exceptions import MultipleObjectsReturned
+from django.core.exceptions import MultipleObjectsReturned
 from lino.utils import dblogger
 from lino.core.modeltools import resolve_model
 from lino.utils.instantiator import Instantiator
