@@ -15,6 +15,7 @@
 Adds an arbitrary selection of a few demo cities.
 """
 
+from django.exceptions import MultipleObjectsReturned
 from lino.utils import dblogger
 from lino.core.modeltools import resolve_model
 from lino.utils.instantiator import Instantiator
@@ -32,6 +33,9 @@ def objects():
         try:
             return City.objects.exclude(type=CityTypes.county).get(
                 country__isocode=country_id,name=name)
+        except MultipleObjectsReturned:
+            qs = City.objects.exclude(type=CityTypes.county).filter(country__isocode=country_id,name=name)
+            raise Exception("Oops, there are multiple cities in %s" % qs)
         except City.DoesNotExist:
             return city(name,country_id,**kw)
         
