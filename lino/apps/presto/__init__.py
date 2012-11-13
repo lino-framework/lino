@@ -13,7 +13,7 @@
 ## along with Lino; if not, see <http://www.gnu.org/licenses/>.
 
 """
-"Presto" means "quick" in Italian and reminds the French "prestations de service".
+"Presto" means "quick" in Italian, and in French it reminds "prestations de service".
 
 It is a Lino application for managing the work of service providers such 
 as software developers, tax consultants, accountants, ...
@@ -33,3 +33,23 @@ Presto combines the following modules:
 - :mod:`lino.modlib.outbox`
 
 """
+
+
+__name__ = "Lino Presto"
+
+__version__ = "0.0.1"
+"""
+Version number. 
+"""
+
+__author__ = "Luc Saffre <luc.saffre@gmx.net>"
+
+__url__ = "http://www.lino-framework.org/autodoc/lino.apps.presto"
+
+__copyright__ = """\
+Copyright (c) 2012 Luc Saffre.
+This software comes with ABSOLUTELY NO WARRANTY and is
+distributed under the terms of the GNU General Public License.
+See file COPYING.txt for more information."""
+
+

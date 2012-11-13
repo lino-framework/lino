@@ -29,8 +29,12 @@ def root_kw(lang,**kw):
         kw.update(first_name="Robert",last_name=u"Robinet")
     elif lang == 'et':
         kw.update(first_name="Roland",last_name=u"Rukki")
-    else:
+    elif lang == 'en':
         kw.update(first_name="Robin",last_name="Rosefeldt")
+    elif lang == 'nl':
+        kw.update(first_name="Rik",last_name="Brouwer")
+    else:
+        return None
     kw.update(username=kw.get('first_name').lower()) 
     return kw
 
@@ -49,9 +53,10 @@ def objects():
         #~ kw[f] = UserLevel.expert
     for lang in babel.AVAILABLE_LANGUAGES:
         kw = root_kw(lang)
-        u = User(**kw)
-        u.set_password('1234')
-        yield u
+        if kw:
+            u = User(**kw)
+            u.set_password('1234')
+            yield u
         
     #~ yield create_user('root','root@example.com','Root','User')
     #~ yield create_user('luc','luc@example.com','Luc','Saffre',profile='900') # UserProfiles.admin) 

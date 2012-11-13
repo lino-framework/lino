@@ -37,7 +37,9 @@ Lino version number.
 __author__ = "Luc Saffre <luc.saffre@gmx.net>"
 
 #~ __url__ = "http://lino.saffre-rumma.net"
-__url__ = "http://code.google.com/p/lino/"
+#~ __url__ = "http://code.google.com/p/lino/"
+__url__ = "http://www.lino-framework.org"
+
 
 __copyright__ = """\
 Copyright (c) 2002-2012 Luc Saffre.
@@ -145,14 +147,15 @@ class Lino(object):
     max_action_name_length = 50
     max_actor_name_length = 100
     
-    admin_url = '' # 
+    
+    admin_url = '/admin'
+    #~ admin_url = '' # 
     """
     If this is not empty (the usual value in that case is ``"/admin"``), 
     then your site features a "web content mode": 
     the root url renders normal readonly web content defined by :attr:`cms_index_page`.
     
     Make sure that it begins with a slash if not empty.
-    
     
     See also  
     http://groups.google.com/group/django-users/browse_thread/thread/c95ba83e8f666ae5?pli=1
@@ -222,9 +225,17 @@ class Lino(object):
     title = "Untitled Lino Application"
     #~ domain = "www.example.com"
     
-    help_text = """
-    This is yet another <a href="%s">Lino</a> application.
-    """ % __url__
+    def get_application_description(self):
+        info = self.get_application_info()
+        s = """%s is yet another 
+        <a href="%s">Lino</a> application.
+        """ % (info[0],__url__)
+        if False:
+            from django.db import models
+            s += """
+            It features %d database tables in %d modules.
+            """ % (len(list(models.get_models())),len(list(self.get_installed_apps())))
+        return s
     
     uid = 'myuid'
     """

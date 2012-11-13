@@ -53,6 +53,7 @@ MAX_ROW_COUNT = 300
 
 E = xghtml.E
 
+pages = dd.resolve_app('pages')
 
 class HttpResponseDeleted(http.HttpResponse):
     status_code = 204
@@ -407,6 +408,7 @@ SIMPLE_PAGE = """\
 </html>
 """
 
+
 from lino.utils.memo import Parser
 
 MEMO_PARSER = Parser()
@@ -414,18 +416,16 @@ MEMO_PARSER = Parser()
 class WebIndex(View):
   
     def get(self, request,ref='index'):
-        pages = dd.resolve_app('pages')
-        if not pages:
-            return http.HttpResponse('<html>This is the WebIndex. <a href="%s/">admin</a></html>' % settings.LINO.admin_url)
-        obj = pages.Page.objects.get(ref=ref)
+            
+        obj = pages.lookup(ref)
         
         context = dict(
             obj=obj,
             settings=settings,
+            LINO=settings.LINO,
             cgi=cgi,
-            title=cgi.escape(obj.title),
-            #~ abstract=obj.abstract,
-            body=obj.body)
+            babel=babel,
+            title=cgi.escape(obj.title))
             
         def parse(s):
             return MEMO_PARSER.parse(s,**context)
@@ -434,7 +434,13 @@ class WebIndex(View):
         #~ if not obj.body:
             #~ context.update(body=obj.abstract)
             
-        return http.HttpResponse(MEMO_PARSER.parse(SIMPLE_PAGE,**context))
+        def func():        
+            return http.HttpResponse(MEMO_PARSER.parse(SIMPLE_PAGE,**context))
+        
+        if obj.language:
+            return babel.run_with_language(obj.language,func)
+            
+        return func()
         
         #~ return http.HttpResponse(HTML_PAGE % context)
         

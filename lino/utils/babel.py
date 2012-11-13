@@ -1,4 +1,4 @@
-## Copyright 2009-2011 Luc Saffre
+## Copyright 2009-2012 Luc Saffre
 ## This file is part of the Lino project.
 ## Lino is free software; you can redistribute it and/or modify 
 ## it under the terms of the GNU General Public License as published by
@@ -13,7 +13,7 @@
 
 """
 Generic support for multilingual content
-in hard-coded values and database fields.
+in both hard-coded values and database fields.
 
 This includes definition of *babel fields* in your Django Models 
 as well as methods to access these fields transparently.
@@ -59,8 +59,11 @@ from django.utils.translation import string_concat
 from lino.core import fields
 from lino.core.model import Model
 
+LANGUAGE_CODE_MAX_LENGTH = 2            
+"""
+"""
 
-DEFAULT_LANGUAGE = settings.LANGUAGE_CODE[:2]
+DEFAULT_LANGUAGE = settings.LANGUAGE_CODE[:LANGUAGE_CODE_MAX_LENGTH].strip()
 """
 The 2 first chars of :setting:`LANGUAGE_CODE`.
 """
@@ -74,6 +77,11 @@ BABEL_LANGS = [x[0] for x in settings.LANGUAGES if x[0] != DEFAULT_LANGUAGE]
 AVAILABLE_LANGUAGES = tuple([DEFAULT_LANGUAGE] + BABEL_LANGS)
 
 BABEL_LANGS = tuple(BABEL_LANGS)
+
+LANGUAGE_DICT = dict()
+for k,v in LANGUAGE_CHOICES:
+    LANGUAGE_DICT[k] = v
+
 
 #~ logger.info("Languages: %s ",AVAILABLE_LANGUAGES)
 
@@ -353,7 +361,7 @@ class BabelNamed(Model):
     def __unicode__(self):
         return babelattr(self,'name')
     
-                
+            
                 
 class LanguageField(models.CharField):
     """
@@ -364,8 +372,9 @@ class LanguageField(models.CharField):
         defaults = dict(
             verbose_name=_("Language"),
             choices=LANGUAGE_CHOICES,
-            default=DEFAULT_LANGUAGE,
-            max_length=2,
+            #~ default=DEFAULT_LANGUAGE,
+            default=get_language,
+            max_length=LANGUAGE_CODE_MAX_LENGTH,
             )
         defaults.update(kw)
         models.CharField.__init__(self,*args, **defaults)
@@ -380,9 +389,10 @@ def run_with_language(lang,func):
     current_lang = get_language()
     set_language(lang)
     try:
-        func()
+        rv = func()
     except Exception:
         set_language(current_lang)
         raise
     set_language(current_lang)
+    return rv
                 

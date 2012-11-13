@@ -137,6 +137,9 @@ Instantiate a new parser with a context and without :
 The answer is 42.
 
 
+>>> print p.parse('''<ul>[="".join(['<li>%s</li>' % (i+1) for i in range(5)])]</ul>''')
+<ul><li>1</li><li>2</li><li>3</li><li>4</li><li>5</li></ul>
+
 
 
 

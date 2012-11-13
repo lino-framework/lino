@@ -14,10 +14,11 @@
 from os.path import join, abspath, dirname
 
 from lino.apps.std.settings import *
+from lino.apps.presto import __version__, __url__, __name__
 
 class Lino(Lino):
   
-    title = "lino.apps.presto"
+    title = __name__
     languages = ['en']
     #~ languages = 'de fr et en'.split()
     
@@ -33,7 +34,7 @@ class Lino(Lino):
     def get_app_source_file(self): return __file__
       
     def get_application_info(self):
-        return ("Lino Presto",'0.0','http://code.google.com/p/lino/')
+        return (__name__,__version__,__url__)
       
     def get_main_action(self,user):
         return self.modules.lino.Home.default_action
@@ -79,7 +80,7 @@ class Lino(Lino):
         yield 'lino.modlib.cal'
         yield 'lino.modlib.outbox'
         #~ yield 'lino.modlib.postings'
-        yield 'lino.modlib.pages'
+        #~ yield 'lino.modlib.pages'
         yield 'lino.apps.presto'
       
             

@@ -26,7 +26,8 @@ def objects():
     User = resolve_model(settings.LINO.user_model)
     Company = resolve_model(settings.LINO.company_model)
     Session = resolve_model('tickets.Session')
-    u = User.objects.get(username='root')
+    #~ u = User.objects.get(username='root')
+    u = User.objects.all()[0]
     
     rumma = Company.objects.get(name=u'Rumma & Ko OÜ')
     

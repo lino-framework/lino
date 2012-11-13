@@ -55,6 +55,7 @@ outbox = dd.resolve_app('outbox')
 postings = dd.resolve_app('postings')
 #~ contacts = dd.resolve_app('contacts')
 
+from lino.modlib.pages import dummy
 
 class PageType(babel.BabelNamed,mixins.PrintableType,outbox.MailableType):
   
@@ -115,7 +116,8 @@ class Page(mixins.TypedPrintable,
     abstract = dd.RichTextField(_("Abstract"),blank=True,format='html')
     body = dd.RichTextField(_("Body"),blank=True,format='html')
     
-    language = babel.LanguageField(default=babel.default_language)
+    #~ language = babel.LanguageField(default=babel.get_language,blank=True)
+    language = babel.LanguageField(blank=True)
     
     
     def __unicode__(self):
@@ -171,6 +173,25 @@ class PagesByProject(Pages):
     master_key = 'project'
     column_names = "type title abstract user *"
     order_by = ["-modified"]
+    
+    
+def lookup(ref):
+        
+    try:
+        return Page.objects.get(ref=ref,language=babel.get_language())
+    except Page.DoesNotExist:
+        if babel.get_language() != babel.DEFAULT_LANGUAGE:
+            try:
+                return Page.objects.get(ref=ref,language=babel.DEFAULT_LANGUAGE)
+            except Page.DoesNotExist:
+                pass
+    try:
+        return Page.objects.get(ref=ref,language=None)
+    except Page.DoesNotExist:
+        return dummy.lookup(ref)
+        
+            
+    
     
     
 lino = dd.resolve_app('lino')

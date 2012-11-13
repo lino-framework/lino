@@ -30,7 +30,7 @@ class Lino(Lino):
     user_model = "users.User"
     
     #~ languages = ('de', 'fr')
-    languages = ['en']
+    languages = ['en','et']
     
     #~ index_view_action = "dsbe.Home"
     
@@ -53,6 +53,7 @@ class Lino(Lino):
         yield 'lino.modlib.uploads'
         yield 'lino.modlib.cal'
         yield 'lino.modlib.outbox'
+        yield 'lino.modlib.pages'
         yield 'lino.apps.min2'
 
       
