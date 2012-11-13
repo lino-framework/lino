@@ -721,15 +721,19 @@ class ExtUI(base.UI):
         return ext_elems.Panel(lh,name,vertical,*elems,**pkw)
 
     def create_layout_element(self,lh,name,**kw):
-        if True: 
-            # don't catch any exception. useful when there's some problem within the framework 
-            de = lh.get_data_elem(name)
-        else:
+        """
+        Create a layout element from the named data element.
+        """
+        #~ if True: 
+        if settings.LINO.catch_layout_exceptions: 
             try:
                 de = lh.get_data_elem(name)
             except Exception, e:
+                logger.exception(e)
                 de = None
                 name += " (" + str(e) + ")"
+        else:
+            de = lh.get_data_elem(name)
             
         #~ if isinstance(de,fields.FieldSet):
             #~ # return lh.desc2elem(ext_elems.FieldSetPanel,name,de.desc)
@@ -846,7 +850,7 @@ class ExtUI(base.UI):
                 l += [str(rpt) for rpt in model._lino_slaves.values()]
             msg += " Possible names are %s." % ', '.join(l)
         else:
-            logger.info("20121023 create_layout_element %r",lh.layout._table)
+            #~ logger.info("20121023 create_layout_element %r",lh.layout._table)
             msg = "Unknown element %r referred in layout <%s>." % (
                 name,lh.layout)
             msg += " Cannot handle %r" % de
@@ -1025,21 +1029,21 @@ class ExtUI(base.UI):
         yield '<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />'
         yield '<title id="title">%s</title>' % settings.LINO.title
         
-        def stylesheet(url):
-            url = self.media_url() + url
+        def stylesheet(*args):
+            url = self.media_url(*args) #  + url
             return '<link rel="stylesheet" type="text/css" href="%s" />' % url
         def javascript(url):
             url = self.media_url() + url
             return '<script type="text/javascript" src="%s"></script>' % url
             
         if run_jasmine: 
-            yield stylesheet("/jasmine/jasmine.css")
-        yield stylesheet('/extjs/resources/css/ext-all.css')
+            yield stylesheet("jasmine","jasmine.css")
+        yield stylesheet('extjs','resources','css','ext-all.css')
         
         #~ yield '<!-- overrides to base library -->'
         
         if settings.LINO.use_extensible:
-            yield stylesheet("/extensible/resources/css/extensible-all.css")
+            yield stylesheet("extensible","resources","css","extensible-all.css")
           
         if settings.LINO.use_vinylfox:
             yield stylessheet('/lino/vinylfox/resources/css/htmleditorplugins.css')
@@ -1049,20 +1053,20 @@ class ExtUI(base.UI):
         if settings.LINO.use_filterRow:
             #~ p = self.media_url() + '/lino/filterRow'
             #~ yield '<link rel="stylesheet" type="text/css" href="%s/filterRow.css" />' % p
-            yield stylesheet('/lino/filterRow/filterRow.css')
+            yield stylesheet('lino','filterRow','filterRow.css')
             
         if settings.LINO.use_gridfilters:
             #~ yield '<link rel="stylesheet" type="text/css" href="%s/extjs/examples/ux/statusbar/css/statusbar.css" />' % self.media_url() 
             #~ yield '<link rel="stylesheet" type="text/css" href="%s/extjs/examples/ux/gridfilters/css/GridFilters.css" />' % self.media_url() 
             #~ yield '<link rel="stylesheet" type="text/css" href="%s/extjs/examples/ux/gridfilters/css/RangeMenu.css" />' % self.media_url() 
-            yield stylesheet("/extjs/examples/ux/statusbar/css/statusbar.css")
-            yield stylesheet("/extjs/examples/ux/gridfilters/css/GridFilters.css")
-            yield stylesheet("/extjs/examples/ux/gridfilters/css/RangeMenu.css")
+            yield stylesheet("extjs","examples","ux","statusbar","css/statusbar.css")
+            yield stylesheet("extjs","examples","ux","gridfilters","css/GridFilters.css")
+            yield stylesheet("extjs","examples","ux","gridfilters","css","RangeMenu.css")
             
         yield '<link rel="stylesheet" type="text/css" href="%s/extjs/examples/ux/fileuploadfield/css/fileuploadfield.css" />' % self.media_url() 
         
         #~ yield '<link rel="stylesheet" type="text/css" href="%s/lino/extjs/lino.css">' % self.media_url()
-        yield stylesheet("/lino/extjs/lino.css")
+        yield stylesheet("lino","extjs","lino.css")
         
         if settings.LINO.use_awesome_uploader:
             yield '<link rel="stylesheet" type="text/css" href="%s/lino/AwesomeUploader/AwesomeUploader.css">' % self.media_url()
@@ -1522,12 +1526,16 @@ tinymce.init({
         f.write(jscompress(unicode(tpl)+'\n'))
         
         """
-        make the dummy messages file.
-        but only when generating for root user.
+        Make the dummy messages file.
+        But only when generating for root user.
         """
         if jsgen._for_user.profile == dd.UserProfiles.admin:
             make_dummy_messages_file(self.linolib_template_name(),messages)
         
+        assert user == jsgen._for_user
+        
+        f.write("Lino.main_menu = %s;\n" % py2js(settings.LINO.get_site_menu(self,user)))
+
         actors_list = [
             rpt for rpt in dbtables.master_reports \
                + dbtables.slave_reports \
@@ -1535,21 +1543,14 @@ tinymce.init({
                + dbtables.custom_tables \
                + dbtables.frames_list ]
                
+        actors_list.extend(choicelists.CHOICELISTS.values())
+               
         """
         Call Ext.namespace for *all* actors because e.g. outbox.Mails.FormPanel 
         is defined in ns outbox.Mails which is not directly used by non-expert users.
         """
-        
-        assert user == jsgen._for_user
-        
-        f.write("Lino.main_menu = %s;\n" % py2js(settings.LINO.get_site_menu(self,user)))
-
         for a in actors_list:
             f.write("Ext.namespace('Lino.%s')\n" % a)
-            
-            #~ from lino.modlib.contacts.models import Persons
-            #~ if a == Persons:
-                #~ raise Exception("20121023")
                 
         assert user == jsgen._for_user
         
@@ -1639,7 +1640,7 @@ tinymce.init({
           
         for rpt in actors_list:
             rh = rpt.get_handle(self) 
-            if isinstance(rpt,type) and issubclass(rpt,tables.AbstractTable):
+            if isinstance(rpt,type) and issubclass(rpt,(tables.AbstractTable,choicelists.ChoiceList)):
                 #~ if rpt.model is None:
                 #~ f.write('// 20120621 %s\n' % rpt)
                     #~ continue
@@ -2282,7 +2283,8 @@ tinymce.init({
                 if e.sortable and ar.order_by != [e.name]:
                     kw = {ext_requests.URL_PARAM_SORT:e.name}
                     url = ar.renderer.get_request_url(ar,**kw)
-                    headers[i] = xghtml.E.a(headers[i],href=url)
+                    if url is not None:
+                        headers[i] = xghtml.E.a(headers[i],href=url)
         
         sums  = [fld.zero for fld in fields]
         #~ cellattrs = dict(align="center",valign="middle",bgcolor="#eeeeee")

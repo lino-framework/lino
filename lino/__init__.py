@@ -147,11 +147,11 @@ class Lino(object):
     
     admin_url = '' # 
     """
-    If this is not empty, then your site features a "web content mode": 
+    If this is not empty (the usual value in that case is ``"/admin"``), 
+    then your site features a "web content mode": 
     the root url renders normal readonly web content defined by :attr:`cms_index_page`.
     
-    If this is not empty, the usual value is ``"/admin"``.
-    Make sure that it must begin with a slash if not empty.
+    Make sure that it begins with a slash if not empty.
     
     
     See also  
@@ -221,6 +221,10 @@ class Lino(object):
     #~ index_html = "This is the main page."
     title = "Untitled Lino Application"
     #~ domain = "www.example.com"
+    
+    help_text = """
+    This is yet another <a href="%s">Lino</a> application.
+    """ % __url__
     
     uid = 'myuid'
     """
@@ -311,7 +315,7 @@ class Lino(object):
     No longer used. Experimental, see :doc:`/blog/2012/1105`.
     """
     
-    use_eid_jslib = True
+    use_eid_jslib = False
     """
     Whether to include functionality to read Belgian eid cards.
     
@@ -402,6 +406,19 @@ class Lino(object):
     Set this to False if you don't want Lino to automatically 
     create missing dirs when needed 
     (but to raise an exception in these cases, asking you to create it yourself)
+    """
+    
+    catch_layout_exceptions = True
+    """
+    Lino usually catches any exception during 
+    :meth:`lino.ui.extjs3.ExtUI.create_layout_element`
+    to report errors of style 
+    "Unknown element "postings.PostingsByController ('postings')" 
+    referred in layout <PageDetail on pages.Pages>."
+    
+    Setting this to `False` is
+    useful when there's some problem *within* the framework.
+    
     """
     
     
@@ -750,7 +767,7 @@ class Lino(object):
             INSTALLED_APPS=tuple(
                 self.get_installed_apps()))
 
-        self.startup_time = datetime.datetime.today()
+        self.startup_time = datetime.datetime.now()
         
         if self.languages:
             lc = language_choices(*self.languages)
@@ -827,7 +844,6 @@ class Lino(object):
               
           def kiss(self):
               ...
-          
     
     """
     
@@ -1017,7 +1033,16 @@ class Lino(object):
         or texts of choices.
         
         """
-        pass
+        #~ pass
+        
+        from lino import dd
+        from django.utils.translation import ugettext_lazy as _
+        dd.UserProfiles.reset()
+        add = dd.UserProfiles.add_item
+        add('100', _("User"), name='user', level='user')
+        add('900', _("Administrator"), name='admin', level='admin')
+        
+        
         
     def add_user_field(self,name,fld):
         if self.user_model:
@@ -1420,21 +1445,23 @@ or
         version = "%d.%d.%d" % sys.version_info[:3]
         yield ("Python",version,"http://www.python.org/")
         
+        yield ("Silk Icons",'1.3',"http://www.famfamfam.com/lab/icons/silk/")
+
         if ui is not None:
             #~ version = '<script type="text/javascript">document.write(Ext.version);</script>'
             onclick = "alert('ExtJS client version is ' + Ext.version);"
             tip = "Click to see ExtJS client version"
             text = "(version)"
-            version = """<a href="#" onclick="%s" title="%s">%s</a>""" % (onclick,tip,text)
+            #~ version = """<a href="#" onclick="%s" title="%s">%s</a>""" % (onclick,tip,text)
+            version = xghtml.E.a(text,href='#',onclick=onclick,title=tip)
             yield ("ExtJS",version ,"http://www.sencha.com")
             
-            yield ("Silk Icons",'1.3',"http://www.famfamfam.com/lab/icons/silk/")
-
             if self.use_extensible:
                 onclick = "alert('Extensible Calendar version is ' + Ext.ensible.version);"
                 tip = "Click to see Extensible Calendar version"
                 text = "(version)"
-                version = """<a href="#" onclick="%s" title="%s">%s</a>""" % (onclick,tip,text)
+                #~ version = """<a href="#" onclick="%s" title="%s">%s</a>""" % (onclick,tip,text)
+                version = xghtml.E.a(text,href='#',onclick=onclick,title=tip)
                 yield ("Extensible",version ,"http://ext.ensible.com/products/calendar/")
             
 

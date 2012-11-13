@@ -68,7 +68,6 @@ from lino import dd
 #~ from lino.models import get_site_config
 from lino.utils import babel
 from lino.utils import AttrDict
-#~ from lino.core.perms import make_permission_handler
 from lino.core import perms
 
 #~ BLANK_STATE = ''
@@ -247,42 +246,6 @@ class DisableDeleteHandler():
         #~ return RuleHandler.allow(self,obj,user)
         
 
-
-
-def unused_load_workflows(self):
-    """
-    Each Actor receives the meta information about workflows.
-    
-    If JobProvider is an MTI child of Company, then the 
-    Rules for Companies apply also for JobProviders 
-    but may be overridden by adding an explicit 
-    JobProviders Rule.
-    """
-    
-    for actor in actors.actors_list:
-        #~ actor.actions = AttrDict()
-        for ba in actor.get_actions():
-            required = dict()
-            if ba.action.readonly:
-                required.update(actor.required)
-            #~ elif isinstance(ba.action,actions.InsertRow):
-                #~ required.update(actor.create_required)
-            elif isinstance(ba.action,actions.DeleteSelected):
-                required.update(actor.delete_required)
-            else:
-                required.update(actor.update_required)
-            required.update(ba.action.required)
-            #~ print 20120628, str(a), required
-            #~ def wrap(a,required,fn):
-                #~ return fn
-                
-            #~ a.allow = curry(wrap(a,required,perms.make_permission_handler(
-                #~ a,actor,a.readonly,actor.debug_permissions,**required)),a)
-            #~ ba = actions.BoundAction(actor,a)
-            ba.allow = curry(perms.make_permission_handler(
-                ba.action,actor,ba.action.readonly,actor.debug_permissions,**required),ba.action)
-            #~ actor.actions.define(a.action_name,ba)
-            
 
 
         

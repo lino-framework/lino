@@ -542,6 +542,10 @@ class Actor(actions.Parametrizable):
                 raise Exception("Cannot reuse %r insert_layout for %r" % (dl._table,cls))
                 #~ logger.debug("Note: %s uses layout owned by %s",cls,dl._table)
                 
+        if cls.label is None:
+            #~ self.label = capfirst(self.model._meta.verbose_name_plural)
+            cls.label = cls.get_actor_label()
+          
                 
         if False:
             #~ for b in cls.__bases__:
@@ -566,6 +570,15 @@ class Actor(actions.Parametrizable):
                 #~ if bd:
                     #~ for k,v in bd.items():
                         #~ cls._actions_dict[k] = cls.add_action(copy.deepcopy(v),k)
+                        
+    @classmethod
+    def get_actor_label(self):
+        """
+        Compute the label of this actor. 
+        Called only if `label` is not set, and only once during site startup.
+        """
+        return self.__name__
+                        
         
     @classmethod
     def get_view_permission(self,user):
@@ -930,6 +943,9 @@ class Actor(actions.Parametrizable):
     
     @classmethod
     def get_data_elem(self,name):
+        """
+        Find data element ni this actor by name.
+        """
         c = self._constants.get(name,None)
         if c is not None:
             return c
@@ -949,7 +965,14 @@ class Actor(actions.Parametrizable):
             #~ app_label = model._meta.app_label
             rpt = settings.LINO.modules[self.app_label].get(name,None)
         elif len(s) == 2:
-            rpt = settings.LINO.modules[s[0]].get(s[1],None)
+            # 20121113
+            #~ app = resolve_app(s[0])
+            #~ rpt = getattr(app,s[1],None)
+            m = settings.LINO.modules.get(s[0],None)
+            if m is None:
+                return fields.DummyField()
+            return m.get(s[1],None)
+            #~ rpt = settings.LINO.modules[s[0]].get(s[1],None)
         else:
             raise Exception("Invalid data element name %r" % name)
         if rpt is not None: 
@@ -1028,6 +1051,16 @@ class Actor(actions.Parametrizable):
         """
         settings.LINO.startup()
         return self.request(**kw).to_rst(column_names)
+        
+    @classmethod
+    def to_html(self,**kw):
+        """
+        Shortcut which calls :meth:`lino.Lino.startup`, 
+        creates an action request for this actor 
+        and calls its :meth:`ActionRequest.table2xhtml` method.
+        """
+        settings.LINO.startup()
+        return self.request(**kw).table2xhtml()
         
 
 #~ def workflow(target_state,**kw):

@@ -83,7 +83,8 @@ class Workflow(choicelists.ChoiceList):
     
     item_class = State
     
-    label = _("State")
+    verbose_name = _("State")
+    verbose_name_plural = _("States")
   
     #~ @classmethod
     #~ def add_statechange(self,newstate,action_label=None,states=None,**kw):

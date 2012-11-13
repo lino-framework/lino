@@ -11,13 +11,26 @@
 ## You should have received a copy of the GNU General Public License
 ## along with Lino; if not, see <http://www.gnu.org/licenses/>.
 
+import logging
+logger = logging.getLogger(__name__)
+
+import inspect
+import types
+import datetime
+
 from django.utils.translation import ugettext as _
 from django.db import models
 from django.conf import settings
 
-from lino.utils import codefiles
+
+from lino.utils import AttrDict
+from lino.utils.xmlgen import html as xghtml
+
+from lino.utils import codetime, codefiles
+from lino.utils import babel
 from lino import mixins
 from lino import dd
+
 
 import os
 
@@ -129,9 +142,6 @@ class FieldsByModel(dd.VirtualTable):
         return restify(unicode(obj.help_text))
 
 
-import inspect
-import types
-from lino.utils import AttrDict
 
 class Inspected(object):
     def __init__(self,parent,prefix,name,value):
@@ -178,7 +188,7 @@ class Inspector(dd.VirtualTable):
         
     @classmethod
     def get_data_rows(self,ar):
-        logger.info("20120210 %s, %s",ar.quick_search,ar.param_values.inspected)
+        #~ logger.info("20120210 %s, %s",ar.quick_search,ar.param_values.inspected)
         
         if ar.param_values.show_callables:
             def flt(v): return True
@@ -243,15 +253,15 @@ class Inspector(dd.VirtualTable):
         return cgi.escape(str(type(obj.value)))
         
 
-class AboutDetail(dd.FormLayout):
-    """
-    The Detail Layout for :class:`About`
-    """
-    window_size = (60,30)
-    main = """
-    versions:40x5 startup_time:30
-    about.Models:70x10
-    """
+#~ class AboutDetail(dd.FormLayout):
+    #~ """
+    #~ The Detail Layout for :class:`About`
+    #~ """
+    #~ window_size = (60,30)
+    #~ main = """
+    #~ versions:40x5 startup_time:30
+    #~ about.Models:70x10
+    #~ """
 
 
 class About(mixins.EmptyTable):
@@ -263,11 +273,10 @@ class About(mixins.EmptyTable):
     hide_top_toolbar = True
     #~ window_size = (700,400)
     #~ detail_layout = AboutDetail(window_size = (700,400))
-    detail_layout = AboutDetail()
-    #~ detail_layout = """
-    #~ versions:40x5 startup_time:30
-    #~ about.Models:70x10
-    #~ """
+    #~ detail_layout = AboutDetail()
+    detail_layout = dd.FormLayout("""
+    about_html
+    """,window_size = (60,20))
     
     #~ versions = dd.Constant(lino.welcome_html())
     
@@ -279,9 +288,53 @@ class About(mixins.EmptyTable):
         #~ self.add_action(BuildSiteCache())
    
     #~ @dd.constant(_("Versions"))
+    #~ @dd.constant()
+    #~ def versions(cls,ui):
+        #~ return settings.LINO.welcome_html(ui)
+        
     @dd.constant()
-    def versions(cls,ui):
-        return settings.LINO.welcome_html(ui)
+    def about_html(cls,ui):
+      
+    #~ @dd.displayfield()
+    #~ def about_html(cls,obj,ar):
+        #~ ui = ar.ui
+        #~ return settings.LINO.welcome_html(ui)
+        body = []
+        
+        p = []
+        for name,version,url in settings.LINO.using(ui):
+            if len(p):
+                #~ body.append(xghtml.E.br())
+                p.append(', ')
+            p.append(xghtml.E.a(name,href=url,target='_blank'))
+            p.append(' ')
+            p.append(version)
+        body.append(xghtml.E.p(*p))
+        
+        #~ print "20121112 startup_time", settings.LINO.startup_time.date()
+        def dtfmt(dt):
+            if isinstance(dt,float):
+                dt = datetime.datetime.fromtimestamp(dt)
+                #~ raise ValueError("Expected float, go %r" % dt)
+            return unicode(_("%(date)s at %(time)s")) % dict(
+              date=babel.dtosl(dt.date()),
+              time=dt.time())
+            
+        items = []
+        E = xghtml.E
+        times = []
+        times.append((_("Server uptime"),settings.LINO.startup_time))
+        for src in ("lino","lino_welfare"):
+            label = _("Source timestamp (%s)") % src
+            value = codetime('%s.*' % src)
+            times.append((label,value))
+        for label,value in times:
+            if value is not None:
+                items.append(E.li(unicode(label),' : ',E.b(dtfmt(value))))
+        body.append(E.ul(*items))
+        
+        return xghtml.E.div(*body,class_='htmlText')
+        
         
     #~ @dd.displayfield(_("Versions"))
     #~ def versions(self,obj,ar):
@@ -291,9 +344,9 @@ class About(mixins.EmptyTable):
     #~ def versions(cls,self,req):
         #~ return lino.welcome_html()
         
-    @dd.virtualfield(models.DateTimeField(_("Server up since")))
-    def startup_time(cls,self,req):
-        return settings.LINO.startup_time
+    #~ @dd.virtualfield(models.DateTimeField(_("Server up since")))
+    #~ def startup_time(cls,self,req):
+        #~ return settings.LINO.startup_time
     
 
 
@@ -381,6 +434,7 @@ class SourceFiles(dd.VirtualTable):
 
 def setup_site_menu(site,ui,user,m): 
     m.add_action(site.modules.about.About)
+    m.add_action(site.modules.about.Models)
     m.add_action(site.modules.about.Inspector)
     m.add_action(site.modules.about.SourceFiles)
 

@@ -61,7 +61,7 @@ class DoYouLike(dd.ChoiceList):
     """
     A list of possible answers to questions of type "How much do you like ...?".
     """
-    label = _("certainly not...very much")
+    verbose_name = _("certainly not...very much")
     
 add = DoYouLike.add_item
 add('0',_("certainly not"))
@@ -81,7 +81,7 @@ class HowWell(dd.ChoiceList):
     `lino.apps.pcsw.models.Languageknowledge.spoken` 
     `lino.apps.pcsw.models.Languageknowledge.written` 
     """
-    label = _("not at all...very well")
+    verbose_name = _("not at all...very well")
     
 add = HowWell.add_item
 add('0',_("not at all"))

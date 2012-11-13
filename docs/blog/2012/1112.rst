@@ -1,0 +1,20 @@
+20121112
+========
+
+Heute nur Kleinkram.
+Unter anderem die neue `actions.Action.get_view_permission`, 
+die in lino_welfare.modlib.pcsw.models.BeIdReadCardAction 
+überschrieben wird.
+Denn sonst kam ein JS-Fehler auf Sites, deren 
+:attr:`lino.Lino.use_eid_jslib` auf False stand.
+Letzteres hat jetzt übrigens :attr:`lino.Lino.use_eid_jslib` False als default-Wert.
+
+Leider funktioniert :srcref:`lino_welfare/demo/make_screenshots.bat`
+immer noch nicht::
+
+  Loading http://127.0.0.1:8000/api/cal/CalendarPanel?su=8&ul=de to ../../docs/de/gen/screenshots/cal.CalendarPanel-su.png
+  TypeError: 'undefined' is not an object (evaluating 'Lino.cal.CalendarPanel.grid.run')
+     http://127.0.0.1:8000/api/cal/CalendarPanel?su=8&ul=de : 43
+     http://127.0.0.1:8000/media/extjs/ext-all-debug.js : 190
+     http://127.0.0.1:8000/media/extjs/ext-all-debug.js : 1459
+

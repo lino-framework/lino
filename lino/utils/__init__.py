@@ -233,14 +233,14 @@ def codefiles(pattern='*'):
                 if os.path.exists(filename): # File might be in an egg, so there's no source available
                     yield name,filename
             
-def codetime():
+def codetime(*args,**kw):
     """
     Return the modification time of the youngest source code in memory.
     Used by :mod:`lino.ui.extjs3.ext_ui` to avoid generating lino.js files if not necessary.
     Inspired by the code_changed() function in `django.utils.autoreload`.
     """
     code_mtime = None
-    for name,filename in codefiles():
+    for name,filename in codefiles(*args,**kw):
         stat = os.stat(filename)
         mtime = stat.st_mtime
         #~ print filename, time.ctime(mtime)

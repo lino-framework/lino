@@ -72,7 +72,7 @@ class CalendarAction(actions.Action):
 
 
 class Weekday(dd.ChoiceList):
-    label = _("Weekday")
+    verbose_name = _("Weekday")
 add = Weekday.add_item
 add('1', _('Monday'),'monday')
 add('2', _('Tuesday'),'tuesday')
@@ -138,7 +138,7 @@ class DurationUnit(dd.Choice):
 class DurationUnits(dd.ChoiceList):
     """A list of possible values for the `duration_unit` field of an :class:`Event`.
     """
-    label = _("Duration Unit")
+    verbose_name = _("Duration Unit")
     item_class = DurationUnit
         
     
@@ -355,7 +355,7 @@ GuestStates.absent.add_workflow(states='invited accepted',owner=True)
 
 
 class AccessClasses(dd.ChoiceList):
-    label = _("Access Class")
+    verbose_name = _("Access Class")
 add = AccessClasses.add_item
 add('10', _('Private'),'private')
 add('20', _('Show busy'),'show_busy')

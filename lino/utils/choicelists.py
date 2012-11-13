@@ -97,6 +97,8 @@ from lino.utils import curry, unicode_string
 
 from lino.core import actions
 from lino.core import actors
+from lino.core import tables
+from lino.core import fields
 
 
 class Choice(object):
@@ -168,7 +170,8 @@ def get_choicelist(i):
     return CHOICELISTS[i]
 
 def choicelist_choices():
-    l = [ (k,v.label or v.__name__) for k,v in CHOICELISTS.items()]
+    l = [ (k,v.verbose_name_plural or v.__name__) for k,v in CHOICELISTS.items()]
+    #~ l = [ (k,v.label or v.__name__) for k,v in CHOICELISTS.items()]
     l.sort(lambda a,b : cmp(a[0],b[0]))
     return l
       
@@ -182,6 +185,8 @@ class ChoiceListMeta(actors.ActorMetaClass):
         default list has only one group with value "system", 
         but applications may want to add longer group names
         """
+        if classDict.has_key('label'):
+            raise Exception("label replaced by verbose_name_plural")
         classDict.setdefault('max_length',1)
         cls = actors.ActorMetaClass.__new__(meta, classname, bases, classDict)
         
@@ -197,12 +202,22 @@ class ChoiceListMeta(actors.ActorMetaClass):
         return cls
   
 
+#~ choicelist_column_fields = dict()
+#~ choicelist_column_fields['value'] = fields.VirtualField(models.CharField())
+#~ choicelist_column_fields['text'] = fields.VirtualField(models.CharField())
+#~ choicelist_column_fields['name'] = fields.VirtualField(models.CharField())
+
+
 #~ class ChoiceList(object):
-class ChoiceList(actors.Actor):
+#~ class ChoiceList(actors.Actor):
+class ChoiceList(tables.AbstractTable):
     """
     Used-defined choice lists must inherit from this base class.
     """
     __metaclass__ = ChoiceListMeta
+    
+    #~ _handle_class = tables.TableHandle
+
     
     item_class = Choice
     """
@@ -222,8 +237,11 @@ class ChoiceList(actors.Actor):
     existing ChoiceList.
     """
     
-    label = None
-    "The label or title for this list"
+    verbose_name = None
+    verbose_name_plural = None
+    
+    #~ label = None
+    #~ "The label or title for this list"
     
     show_values = False
     """
@@ -255,6 +273,44 @@ class ChoiceList(actors.Actor):
         #~ return actions.BoundAction(cls,cls.grid)
         #~ return 'grid'
         return actions.GridEdit()
+        
+        
+    hidden_columns = frozenset()
+    @classmethod
+    def get_column_names(self,ar):
+        return 'value name text'
+        
+    @classmethod
+    def get_data_elem(self,name):
+        de = super(ChoiceList,self).get_data_elem(name)
+        if de:
+            return de
+        return getattr(self,name)
+        #~ return _choicelist_column_fields.get(name)
+    
+    @fields.virtualfield(models.CharField(_("value"),max_length=20))
+    def value(cls,choice,ar):
+        return choice.value
+        
+    @fields.virtualfield(models.CharField(_("text"),max_length=50))
+    def text(cls,choice,ar):
+        return choice.text
+        
+    @fields.virtualfield(models.CharField(_("name"),max_length=20))
+    def name(cls,choice,ar):
+        return choice.name
+        
+    @classmethod
+    def get_data_rows(self,ar=None):
+        return self.items()
+        
+    @classmethod
+    def get_actor_label(self):
+        """
+        Compute the label of this actor. 
+        Called only if `label` is not set, and only once during site startup.
+        """
+        return self.verbose_name_plural or self.__name__
         
         
         
@@ -472,7 +528,7 @@ class ChoiceListField(models.CharField):
     
     def __init__(self,choicelist,verbose_name=None,force_selection=True,**kw):
         if verbose_name is None:
-            verbose_name = choicelist.label
+            verbose_name = choicelist.verbose_name
         self.choicelist = choicelist
         self.force_selection = force_selection
         defaults = dict(
@@ -555,7 +611,7 @@ class MultiChoiceListField(ChoiceListField):
     
     def __init__(self,choicelist,verbose_name=None,max_values=10,**kw):
         if verbose_name is None:
-            verbose_name = choicelist.label_plural
+            verbose_name = choicelist.verbose_name_plural
         self.max_values = max_values
         defaults = dict(
             max_length=(choicelist.max_length+1) * max_values
@@ -618,7 +674,8 @@ class UserLevels(ChoiceList):
       http://www.differencebetween.com/difference-between-manager-and-vs-administrator/
     
     """
-    label = _("User Level")
+    verbose_name = _("User Level")
+    verbose_name_plural = _("User Levels")
     app_label = 'lino'
     
     
@@ -629,7 +686,7 @@ class UserLevels(ChoiceList):
         """
         kw.setdefault('blank',True)
         if module_name is not None:
-            kw.update(verbose_name=string_concat(cls.label,' (',module_name,')'))
+            kw.update(verbose_name=string_concat(cls.verbose_name,' (',module_name,')'))
         return super(UserLevels,cls).field(**kw)
         
 add = UserLevels.add_item
@@ -650,7 +707,8 @@ class UserGroups(ChoiceList):
     Applications will 
     
     """
-    label = _("User Group")
+    verbose_name = _("User Group")
+    verbose_name_plural = _("User Groups")
     app_label = 'lino'
     show_values = True
     max_length = 20 
@@ -738,7 +796,8 @@ class UserProfiles(ChoiceList):
     
     """
     #~ item_class = UserProfile
-    label = _("User Profile")
+    verbose_name = _("User Profile")
+    verbose_name_plural = _("User Profiles")
     app_label = 'lino'
     show_values = True
     max_length = 20
@@ -753,10 +812,13 @@ class UserProfiles(ChoiceList):
     #~ @classmethod
     #~ def clear(cls,groups='*'):
     @classmethod
-    def reset(cls,groups):
+    def reset(cls,groups=None):
         #~ cls.groups_list = [g.value for g in UserGroups.items()]
-        s = []
         expected_names = set(['*']+[g.value for g in UserGroups.items() if g.value])
+        if groups is None:
+            groups = ' '.join(expected_names)
+            #~ cls.membership_keys = tuple(expected_names)
+        s = []
         for g in groups.split():
             if not g in expected_names:
                 raise Exception("Unexpected name %r (UserGroups are: %s)" % (
@@ -777,11 +839,13 @@ class UserProfiles(ChoiceList):
     @classmethod
     def add_item(cls,value,text,memberships=None,name=None,**kw):
         return cls.add_item_instance(UserProfile(cls,value,text,name,memberships,**kw))
-          
+
+#~ UserProfiles choicelist is going to be filled in `lino.Lino.setup_choicelists` 
+#~ because attributes of Choice depend on UserGroups
     
-add = UserProfiles.add_item
-add('100', _("User"), name='user', level='user')
-add('900', _("Administrator"), name='admin', level='admin')
+#~ add = UserProfiles.add_item
+#~ add('100', _("User"), name='user', level='user')
+#~ add('900', _("Administrator"), name='admin', level='admin')
 
 
 

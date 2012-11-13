@@ -55,7 +55,7 @@ class VatClasses(ChoiceList):
     the time and type of the operation, 
     and possibly other factors.
     """
-    label = _("VAT Rate")
+    verbose_name = _("VAT Rate")
 add = VatClasses.add_item
 add('0',_("Exempt"),'exempt')
 add('1',_("Reduced"),'reduced')
@@ -67,7 +67,7 @@ class VatRegimes(ChoiceList):
     The VAT regime determines how the VAT is being handled,
     i.e. whether and how it is to be paid.
     """
-    label = _("VAT Regime")
+    verbose_name = _("VAT Regime")
 add = VatRegimes.add_item
 add('10',_("Private person"),'private')
 add('20',_("Subject to VAT"),'subject')
@@ -79,7 +79,7 @@ add('50',_("Exempt"),'exempt')
 
     
 class TradeTypes(ChoiceList):
-    label = _("Trade Type")
+    verbose_name = _("Trade Type")
 add = TradeTypes.add_item
 add('S',_("Sales"),'sales')
 add('P',_("Purchases"),'purchases')
@@ -215,5 +215,10 @@ def site_setup(site): pass
 def setup_main_menu(site,ui,user,m): pass
 def setup_my_menu(site,ui,user,m): pass
 def setup_config_menu(site,ui,user,m): pass
-def setup_explorer_menu(site,ui,user,m): pass
+#~ def setup_explorer_menu(site,ui,user,m): pass
+  
+
+def setup_explorer_menu(site,ui,user,m):
+    m  = m.add_menu("vat",MODULE_LABEL)
+    m.add_action(VatClasses)
   

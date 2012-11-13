@@ -730,6 +730,7 @@ Lino.edit_tinymce_text = function(panel,options) {
         theme_advanced_buttons2 : "cut,copy,paste,template,|,bullist,numlist,|,outdent,indent,|,undo,redo,|,link,unlink,anchor,image,|,code,preview,|,forecolor,backcolor",
         theme_advanced_buttons3 : "insertdate,inserttime,|,spellchecker,advhr,,removeformat,|,sub,sup,|,charmap,emotions,|,tablecontrols",      
         theme_advanced_resizing : false,
+        convert_urls : false,
         save_onsavecallback : save_callback,
         save_enablewhendirty : true
         //~ save_oncancelcallback: on_cancel

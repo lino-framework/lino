@@ -181,11 +181,11 @@ def setup_main_menu(site,ui,user,main):
 
 
 def customize_school():
-    dd.inject_field(school.Pupil,
+    dd.inject_field('school.Pupil',
         'school',
         models.ForeignKey(School,
-            blank=True,null=True),
+            blank=True,null=True,
             help_text=_("""The regular school where this child goes.""")
-    )
+    ))
 
 customize_school()

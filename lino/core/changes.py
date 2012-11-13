@@ -64,7 +64,8 @@ class PseudoRequest:
         
 class ChangeTypes(choicelists.ChoiceList):
     app_label = 'lino'
-    label = _("Change Type")
+    verbose_name = _("Change Type")
+    verbose_name_plural = _("Change Types")
 add = ChangeTypes.add_item    
 add('C',_("Create"),'create')
 add('U',_("Update"),'update')

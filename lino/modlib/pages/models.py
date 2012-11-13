@@ -49,7 +49,6 @@ from django.conf import settings
 #~ from lino import choices_method, simple_choices_method
 #~ from lino.modlib.contacts import models as contacts
 #~ from lino.modlib.outbox import models as outbox
-#~ from lino.modlib.postings import models as postings
 
 
 outbox = dd.resolve_app('outbox')
@@ -203,6 +202,7 @@ def setup_config_menu(site,ui,user,m):
     m.add_action(PageTypes)
   
 def setup_explorer_menu(site,ui,user,m):
+    m  = m.add_menu("office",lino.OFFICE_MODULE_LABEL)
     m.add_action(Pages)
   
 customize_siteconfig()  

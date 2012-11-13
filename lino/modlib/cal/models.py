@@ -1014,6 +1014,12 @@ class EventDetail(dd.FormLayout):
     description
     GuestsByEvent outbox.MailsByController
     """
+class EventInsert(EventDetail):
+    main = """
+    calendar summary 
+    start end 
+    place priority access_class transparent 
+    """
    
 class Events(dd.Table):
     model = 'cal.Event'
@@ -1023,11 +1029,7 @@ class Events(dd.Table):
     order_by = ["start_date","start_time"]
     
     detail_layout = EventDetail()
-    insert_layout = """
-    calendar summary 
-    start end 
-    place priority access_class transparent 
-    """
+    insert_layout = EventInsert()
     
 
     
@@ -2163,6 +2165,9 @@ def setup_explorer_menu(site,ui,user,m):
     m.add_action(Guests)
     m.add_action(Subscriptions)
     m.add_action(Memberships)
+    m.add_action(EventStates)
+    m.add_action(GuestStates)
+    m.add_action(TaskStates)
     #~ m.add_action(RecurrenceSets)
 
 def setup_quicklinks(site,ui,user,m):

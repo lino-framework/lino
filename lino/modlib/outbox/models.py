@@ -70,7 +70,7 @@ class RecipientType(ChoiceList):
     A list of possible values for the `type` field of a 
     :class:`Recipient`.
     """
-    label = _("Recipient Type")
+    verbose_name = _("Recipient Type")
     
 add = RecipientType.add_item
 add('to',_("to"),'to')

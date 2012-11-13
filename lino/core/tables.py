@@ -937,6 +937,13 @@ class AbstractTable(actors.Actor):
         #~ logger.info('20120519 %s.get_filter_kw(%r) --> %r',self,master_instance,kw)
         return kw
         
+    @classmethod
+    def request(cls,ui=None,request=None,action=None,**kw):
+        self = cls
+        if action is None:
+            action = self.default_action
+        #~ return VirtualTableRequest(ui,self,request,action,**kw)
+        return TableRequest(ui,self,request,action,**kw)
 
 
 class VirtualTable(AbstractTable):
@@ -946,13 +953,6 @@ class VirtualTable(AbstractTable):
     By nature it cannot have database fields, only virtual fields.
     """
     
-    @classmethod
-    def request(cls,ui=None,request=None,action=None,**kw):
-        self = cls
-        if action is None:
-            action = self.default_action
-        #~ return VirtualTableRequest(ui,self,request,action,**kw)
-        return TableRequest(ui,self,request,action,**kw)
 
 
 
