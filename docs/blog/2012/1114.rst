@@ -2,6 +2,17 @@
 ========
 
 
+Oh, das war ein subtiler Bug.
+Es gab eine Fixture `lino.modlib.ledger.fixtures.be`, in dem 
+fälschlicherweise keine Funktion `objects` definiert war.
+
+Aber :mod:`lino.utils.dumpy` merkte das nicht, sondern rief stattdesen 
+die `objects` der vorigen Fixture nochmal neu auf.
+Zumindest falls es denn der Zufall 
+wollte, dass just zuvor eine Fixture mit dem gleichen Namen (hier "be") geladen worden war.
+Das lag daran, dass ich `imp.load_module <http://docs.python.org/2.7/library/imp.html#imp.load_module>`_ 
+falsch aufrief. Jetzt generiert er eindeutige temporäre Modulnamen im Stil "lino.utils.dumpy_tmp_37091808".
+
 MultipleObjectsReturned: get() returned more than one City -- it returned 2! Lookup parameters were {'name': 'Eupen'}
 INFO Lino initdb done ('std', 'all_countries', 'be', 'few_cities', 'all_languages', 'props', 'democfg', 'demo', 'demo_ev
 ents') on database :memory:.
@@ -11,8 +22,4 @@ is None, :mod:`lino.core.kernel` now also considers
 :setting:`DEBUG` for finding the default value.
 
 
-Oh, ein subtiler Bug ist raus:
-Es gab ein Inventarmodul `lino.modlib.ledger.fixtures.be`, in dem 
-fälschlicherweise keine Funktion `objects` definiert war.
 
-lino.utils.dumpy_tmp_37091808

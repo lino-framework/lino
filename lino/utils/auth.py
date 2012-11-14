@@ -46,7 +46,7 @@ from django import http
 from lino.utils import babel
 from lino.core.modeltools import resolve_model
 #~ from lino.core import perms
-from lino.utils.choicelists import UserProfiles
+from lino.core.perms import UserProfiles
 from lino.ui import requests as ext_requests
 
 class AnonymousUser(object):
