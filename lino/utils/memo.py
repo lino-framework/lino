@@ -148,7 +148,10 @@ The answer is 42.
 import logging
 #~ logging.basicConfig()
 logger = logging.getLogger(__name__)
-logger.addHandler(logging.NullHandler()) # avoid "No handlers could be found for logger "__main__"" when doctesting
+
+#~ logger.addHandler(logging.NullHandler()) 
+#~ avoid "No handlers could be found for logger "__main__"" when doctesting
+#~ not available before Python 2.7
 
 
 import re
