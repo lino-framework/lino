@@ -175,6 +175,8 @@ class PagesByProject(Pages):
     order_by = ["-modified"]
     
     
+def render(*args,**kw): return dummy.render(*args,**kw)
+  
 def lookup(ref):
         
     try:

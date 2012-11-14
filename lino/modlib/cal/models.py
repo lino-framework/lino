@@ -1319,13 +1319,13 @@ if settings.LINO.user_model:
         #~ filter = Q(auto_type__isnull=False)
         
     class MyTasks(Tasks,mixins.ByUser):
-        required = dict(user_groups='office',auth=True)
+        required = dict(user_groups='office')
         #~ required = dict()
         help_text = _("Table of all my tasks.")
         column_names = 'start_date summary workflow_buttons *'
     
     class MyTasksToDo(MyTasks):
-        required = dict(user_groups='office',auth=True)
+        required = dict(user_groups='office')
         help_text = _("Table of my tasks marked 'to do'.")
         column_names = 'start_date summary workflow_buttons *'
         label = _("To-do list")

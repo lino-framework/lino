@@ -216,6 +216,8 @@ class Actor(actions.Parametrizable):
     """
     
     required = dict()
+    #~ required = dict(auth=True)
+    
     #~ create_required = dict()
     update_required = dict()
     delete_required = dict()
@@ -515,14 +517,14 @@ class Actor(actions.Parametrizable):
         if dl is not None:
             if isinstance(dl,basestring):
                 cls.detail_layout = layouts.FormLayout(dl,cls)
-            elif dl._table is None:
-                dl._table = cls
+            elif dl._actor is None:
+                dl._actor = cls
                 cls.detail_layout = dl
-            elif not issubclass(cls,dl._table):
-                raise Exception("Cannot reuse %r detail_layout for %r" % (dl._table,cls))
+            elif not issubclass(cls,dl._actor):
+                raise Exception("Cannot reuse %r detail_layout for %r" % (dl._actor,cls))
             #~ else:
                 #~ raise Exception("Cannot reuse detail_layout owned by another table")
-                #~ logger.debug("Note: %s uses layout owned by %s",cls,dl._table)
+                #~ logger.debug("Note: %s uses layout owned by %s",cls,dl._actor)
             
         # the same for insert_template and insert_layout:
         #~ dt = classDict.get('insert_template',None)
@@ -535,12 +537,12 @@ class Actor(actions.Parametrizable):
         if dl is not None:
             if isinstance(dl,basestring):
                 cls.insert_layout = layouts.FormLayout(dl,cls)
-            elif dl._table is None:
-                dl._table = cls
+            elif dl._actor is None:
+                dl._actor = cls
                 cls.insert_layout = dl
-            elif not issubclass(cls,dl._table):
-                raise Exception("Cannot reuse %r insert_layout for %r" % (dl._table,cls))
-                #~ logger.debug("Note: %s uses layout owned by %s",cls,dl._table)
+            elif not issubclass(cls,dl._actor):
+                raise Exception("Cannot reuse %r insert_layout for %r" % (dl._actor,cls))
+                #~ logger.debug("Note: %s uses layout owned by %s",cls,dl._actor)
                 
         if cls.label is None:
             #~ self.label = capfirst(self.model._meta.verbose_name_plural)
@@ -836,7 +838,7 @@ class Actor(actions.Parametrizable):
                 kw[name] = dtl
             else:
                 assert isinstance(dtl,layouts.FormLayout)
-                assert dtl._table is None
+                assert dtl._actor is None
                 if existing is not None: # added for 20120914c but it wasn't the problem
                     if not isinstance(dtl,existing.__class__):
                         raise NotImplementedError(
@@ -849,7 +851,7 @@ class Actor(actions.Parametrizable):
                         #~ logger.info('20120914 %s',dtl.main)
                         dtl._added_panels.update(existing._added_panels)
                     dtl._element_options.update(existing._element_options)
-                dtl._table = self
+                dtl._actor = self
                 setattr(self,attname,dtl)
         if kw:
             getattr(self,attname).update(**kw)

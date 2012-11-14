@@ -201,8 +201,8 @@ class EnableChild(VirtualField):
         When a FormLayout is inherited by an MTI 
         child, EnableChild fields must be disabled.
         """
-        return lh.layout._table.model != self.child_model \
-          and issubclass(self.child_model,lh.layout._table.model)
+        return lh.layout._actor.model != self.child_model \
+          and issubclass(self.child_model,lh.layout._actor.model)
 
     def attach_to_model(self,model,name):
         self.child_model = resolve_model(self.child_model,model._meta.app_label)

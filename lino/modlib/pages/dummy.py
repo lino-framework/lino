@@ -12,17 +12,24 @@
 ## You should have received a copy of the GNU General Public License
 ## along with Lino; if not, see <http://www.gnu.org/licenses/>.
 
+import cgi
+import copy
 
 from django.conf import settings
 from lino.utils import AttrDict
+from lino.utils import babel
+from lino.utils.memo import Parser
 
 appname,version,url = settings.LINO.using().next()
 
-DUMMY_INDEX = AttrDict(
+class DummyPage(AttrDict):
+    ref = None
+    language = 'en'
+    abstract = None
+    
+DUMMY_INDEX = DummyPage(
     ref="index",
-    language='en',
     title=settings.LINO.title,
-    abstract=None,
     body="""<p>
 Welcome to the <b>%(title)s</b> site.
 We are running <a href="%(url)s">%(appname)s</a> version %(version)s.
@@ -33,10 +40,13 @@ We are running <a href="%(url)s">%(appname)s</a> version %(version)s.
     version=version,
     url=url))
     
+ADMIN_INDEX = copy.copy(DUMMY_INDEX)
+ADMIN_INDEX.update(ref='admin')
+
+    
 DUMMY_INDEX.body += """</p>
 <p>
-You are currently seeing the <strong>plain web content</strong> 
-section,
+You are currently seeing the <strong>plain web content</strong> section,
 which contains just this default index page 
 because this site hasn't been configured to show something else here.
 </p>
@@ -44,22 +54,33 @@ because this site hasn't been configured to show something else here.
 <p>
 To see what Lino really adds to a Django site, 
 you should go to the <strong>admin</strong> section.
-
-In the admin section you will probably want to 
-use the <strong>Log in</strong> button in the upper right corner 
-and log in. This demo site has 
-[=LINO.modules.users.UsersOverview.request().get_total_count()] 
-users configured, they all have "1234" as password:
-
-[="".join(['<li><strong>%s</strong> : %s, %s, %s</li>' % (\
-  u.username, u, u.profile, babel.LANGUAGE_DICT.get(u.language)) \
-  for u in LINO.modules.users.UsersOverview.request()])]
-
+</p>
+<p align="center"><button onclick="document.location='/admin/'">admin</button></p>
 <p>
+Enjoy!
 Your feedback is welcome to lino-users@googlegroups.com
 or directly to the person who invited you.
 </p>
-<p align="center"><button onclick="document.location='/admin/'">admin</button>
+"""
+
+ADMIN_INDEX.body = """
+<p>
+You have entered the admin section but are not yet logged in. 
+Here you will probably want to 
+use the <strong>Login</strong> button in the upper right corner 
+and log in. 
+</p>
+<p>
+This demo site has 
+[=LINO.modules.users.UsersOverview.request().get_total_count()] 
+users configured, they all have "1234" as password:
+
+[="".join(['<li><strong>%s</strong> : %s, %s, <strong>%s</strong></li>' % (\
+  u.username, u, u.profile, babel.LANGUAGE_DICT.get(u.language)) \
+  for u in LINO.modules.users.UsersOverview.request()])]
+  
+<p>
+Or you might want to return to the <a href="/">web content section</a>.
 </p>
 """
 
@@ -71,4 +92,34 @@ or directly to the person who invited you.
 def lookup(ref): 
     if ref == 'index':
         return DUMMY_INDEX
+    if ref == 'admin':
+        return ADMIN_INDEX
     
+
+
+MEMO_PARSER = Parser()
+
+def render(obj,template):
+    context = dict(
+        obj=obj,
+        settings=settings,
+        LINO=settings.LINO,
+        cgi=cgi,
+        babel=babel,
+        title=cgi.escape(obj.title))
+        
+    def parse(s):
+        return MEMO_PARSER.parse(s,**context)
+    context.update(parse=parse)
+    
+    #~ if not obj.body:
+        #~ context.update(body=obj.abstract)
+        
+    def func():        
+        return MEMO_PARSER.parse(template,**context)
+    
+    if obj.language:
+        return babel.run_with_language(obj.language,func)
+        
+    return func()
+        

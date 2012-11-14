@@ -80,9 +80,9 @@ Miscellaneous:
 - :class:`ChangeStateAction <lino.core.changes.ChangeStateAction>`
 - :class:`NotifyingAction <lino.core.actions.NotifyingAction>`
 
-- :class:`UserProfiles <lino.core.perms.UserProfiles>`
-- :class:`UserGroups <lino.core.perms.UserGroups>`
-- :class:`UserLevels <lino.core.perms.UserLevels>`
+- :class:`UserProfiles <lino.utils.auth.UserProfiles>`
+- :class:`UserGroups <lino.utils.auth.UserGroups>`
+- :class:`UserLevels <lino.utils.auth.UserLevels>`
 
 
 """
@@ -149,7 +149,7 @@ from lino.utils.babel import BabelCharField, BabelTextField
 
 from lino.utils.choosers import chooser
 
-from lino.core.perms import UserLevels, UserProfiles, UserGroups
+from lino.utils.auth import UserLevels, UserProfiles, UserGroups
 
 #~ from lino.base.utils import UserLevels, UserGroups, UserProfiles
 

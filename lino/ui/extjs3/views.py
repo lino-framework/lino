@@ -383,17 +383,6 @@ def form2obj_and_save(ar,data,elem,is_new,restful,file_upload=False): # **kw2sav
             
 
 
-#~ HTML_PAGE = """\
-#~ <html>
-#~ <head>
-#~ <title>%(title)s</title>
-#~ </head>
-#~ <body>
-#~ <h1>%(title)s</h1>
-#~ %(body)s
-#~ </body>
-#~ </html>
-#~ """
 
 #~ <body style="font-family:Arial;padding:2em;background-color:wheat;">
 SIMPLE_PAGE = """\
@@ -409,48 +398,23 @@ SIMPLE_PAGE = """\
 """
 
 
-from lino.utils.memo import Parser
-
-MEMO_PARSER = Parser()
 
 class WebIndex(View):
   
     def get(self, request,ref='index'):
-            
         obj = pages.lookup(ref)
+        html = pages.render(obj,SIMPLE_PAGE)
+        return http.HttpResponse(html)
         
-        context = dict(
-            obj=obj,
-            settings=settings,
-            LINO=settings.LINO,
-            cgi=cgi,
-            babel=babel,
-            title=cgi.escape(obj.title))
-            
-        def parse(s):
-            return MEMO_PARSER.parse(s,**context)
-        context.update(parse=parse)
-        
-        #~ if not obj.body:
-            #~ context.update(body=obj.abstract)
-            
-        def func():        
-            return http.HttpResponse(MEMO_PARSER.parse(SIMPLE_PAGE,**context))
-        
-        if obj.language:
-            return babel.run_with_language(obj.language,func)
-            
-        return func()
-        
-        #~ return http.HttpResponse(HTML_PAGE % context)
         
 
 class AdminIndex(View):
 
     def get(self, request, *args, **kw):
         ui = settings.LINO.ui
-        a = settings.LINO.get_main_action(request.subst_user or request.user)
-        if a is not None:
+        user = request.subst_user or request.user
+        a = settings.LINO.get_main_action(user)
+        if a is not None and a.get_view_permission(user):
             kw.update(on_ready=ui.ext_renderer.action_call(request,a,{}))
         return http.HttpResponse(ui.html_page(request,**kw))
 

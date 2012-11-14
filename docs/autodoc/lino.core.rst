@@ -14,6 +14,7 @@
     lino.core.changes
     lino.core.dbtables
     lino.core.fields
+    lino.core.kernel
     lino.core.layouts
     lino.core.menus
     lino.core.model

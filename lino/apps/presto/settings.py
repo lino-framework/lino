@@ -51,11 +51,10 @@ class Lino(Lino):
         from django.utils.translation import ugettext_lazy as _
         dd.UserProfiles.reset('* office')
         add = dd.UserProfiles.add_item
-        add('100', _("User"),            'U U', name='user')
-        add('900', _("Administrator"),   'A A', name='admin')
+        add('000', _("Anonymous"),       '_ _', 'anonymous',readonly=True)
+        add('100', _("User"),            'U U', 'user')
+        add('900', _("Administrator"),   'A A', 'admin')
         
-        for p in dd.UserProfiles.items():
-            print 20120705, repr(p)
             
     def get_installed_apps(self):
         for a in super(Lino,self).get_installed_apps():

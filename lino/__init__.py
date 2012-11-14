@@ -296,7 +296,11 @@ class Lino(object):
     Used by :mod:`lino.utils.auth`.
     """
     
-    anonymous_user_profile = '900'
+    anonymous_user_profile = '000'
+    """
+    The UserProfile (or rather it's value) to assigned to anonymous user.
+    
+    """
     
     
     
@@ -1047,12 +1051,12 @@ class Lino(object):
         or texts of choices.
         
         """
-        #~ pass
         
         from lino import dd
         from django.utils.translation import ugettext_lazy as _
         dd.UserProfiles.reset()
         add = dd.UserProfiles.add_item
+        add('000', _("Anonymous"), name='anonymous', level=None,readonly=True)
         add('100', _("User"), name='user', level='user')
         add('900', _("Administrator"), name='admin', level='admin')
         

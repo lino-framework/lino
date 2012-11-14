@@ -68,7 +68,7 @@ from lino import dd
 #~ from lino.models import get_site_config
 from lino.utils import babel
 from lino.utils import AttrDict
-from lino.core import perms
+#~ from lino.core import perms
 
 #~ BLANK_STATE = ''
 

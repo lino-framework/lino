@@ -29,7 +29,7 @@ import lino
 from lino.utils import AttrDict
 from lino.utils import curry
 from lino.utils import babel
-from lino.utils import jsgen
+#~ from lino.utils import jsgen
 #~ from lino.utils import Warning
 
 from lino.ui import requests as ext_requests
@@ -164,6 +164,56 @@ def setup_params_choosers(self):
 def make_params_layout_handle(self,ui):
     return self.params_layout.get_layout_handle(ui)
         
+
+class Permittable(object):
+    """
+    Base class for Components that have view permissions control.
+    """
+    
+    #~ required = None # not {}, see blog/2012/0923
+    #~ required = dict()
+    required = {}
+    """
+    A dict with permission requirements.
+    See :func:`lino.utils.jsgen.make_permission_handler`.
+    """
+    
+    workflow_state_field = None # internally needed for make_permission_handler
+    workflow_owner_field = None # internally needed for make_permission_handler
+    #~ readonly = True
+    
+    
+    #~ def allow_read(self,user,obj,state):
+        #~ return True
+    
+
+    def set_required(obj,**kw):
+        """
+        Add the specified requirements to `obj`.
+        `obj` can be an 
+        :class:`lino.core.actors.Actor` or a 
+        :class:`lino.utils.choicelists.Choice`.
+        Application code uses this indirectly through the shortcut methods
+        :meth:`lino.core.actors.Actor.set_required` or a 
+        :meth:`lino.utils.choicelists.Choice.set_required`.
+        
+        """
+        #~ logger.info("20120927 perms.set_required %r",kw)
+        new = dict()
+        #~ new.update(getattr(obj,'required',{}))
+        new.update(obj.required)
+        new.update(kw)
+        obj.required = new
+    
+
+
+        
+    def get_view_permission(self,user):
+        raise NotImplementedError()
+        
+        
+
+
 class Parametrizable(object):        
   
     active_fields = None # 20121006
@@ -221,7 +271,7 @@ class Parametrizable(object):
       
 
 
-class Action(Parametrizable):
+class Action(Parametrizable,Permittable):
     """
     Abstract base class for all Actions
     """
@@ -281,11 +331,11 @@ class Action(Parametrizable):
     - `None` means: ask the user.
     """
     
-    required = {}
-    """
-    A dict with permission requirements.
-    See :func:`lino.utils.jsgen.make_permission_handler`.
-    """
+    #~ required = {}
+    #~ """
+    #~ A dict with permission requirements.
+    #~ See :func:`lino.utils.jsgen.make_permission_handler`.
+    #~ """
     
     action_name = None
     """
@@ -417,7 +467,7 @@ class Action(Parametrizable):
         Override existing permission requirements.
         Arguments: see :func:`lino.utils.jsgen.make_permission_handler`.
         """
-        jsgen.set_required(self,**kw)
+        Permittable.set_required(self,**kw)
         #~ logger.info("20120628 set_required %s(%s)",self,kw)
         #~ new = dict()
         #~ new.update(self.required)
@@ -503,12 +553,6 @@ class Action(Parametrizable):
         
     def __unicode__(self):
         return force_unicode(self.label)
-        
-    #~ def get_view_permission(self,user):
-        #~ """
-        #~ E.g. DispatchAction is not available for a User with empty partner
-        #~ """
-        #~ return True
         
     def get_action_permission(self,ar,obj,state):
         """
@@ -842,6 +886,7 @@ class NotifyingAction(RowAction):
 class BoundAction(object):
   
     def __init__(self,actor,action):
+
         if not isinstance(action,Action):
             raise Exception("%s : %r is not an Action" % (actor,action))
         self.action = action
@@ -863,7 +908,9 @@ class BoundAction(object):
             #~ return fn
             
         debug = actor.debug_permissions or action.debug_permissions
-        self.allow = curry(jsgen.make_permission_handler(
+        
+        from lino.utils.auth import make_permission_handler
+        self.allow = curry(make_permission_handler(
             action,actor,action.readonly,debug,**required),action)
         #~ actor.actions.define(a.action_name,ba)
         

@@ -31,16 +31,18 @@ from lino.core import dbtables
 from lino.core import layouts
 from lino.core import fields
 from lino.core import actions
-from lino.core import perms
+from lino.core.actions import Permittable
+#~ from lino.core import perms
 from lino.utils.ranges import constrain
 from lino.utils import jsgen
+from lino.utils import curry
 from lino.utils import mti
 from lino.utils import choicelists
 from lino.utils.jsgen import py2js, id2js, js_code
 from lino.utils import choosers
+from lino.utils.auth import make_permission_handler
 #~ from . import ext_requests
 from lino.ui import requests as ext_requests
-from lino.utils.jsgen import Permittable
 
 EXT_CHAR_WIDTH = 9
 EXT_CHAR_HEIGHT = 22
@@ -103,7 +105,7 @@ def get_view_permission(e):
 def before_row_edit(panel):
     l = []
     #~ l.append("console.log('before_row_edit',record);")
-    master_field = panel.layout_handle.layout._table.master_field
+    master_field = panel.layout_handle.layout._actor.master_field
     for e in panel.active_children:
         if not get_view_permission(e):
             continue
@@ -126,7 +128,7 @@ def before_row_edit(panel):
                 #~ logger.debug("20100615 %s.%s has chooser", self.layout_handle.layout, e.field.name)
                 for f in chooser.context_fields:
                     if master_field and master_field.name == f.name:
-                        #~ print 20120603, panel.layout_handle.layout._table, e.field.name, f.name
+                        #~ print 20120603, panel.layout_handle.layout._actor, e.field.name, f.name
                         #~ l.append("console.log('20120602 before_row_edit',this.get_base_params());")
                         l.append("var bp = this.get_base_params();")
                         #~ ext_requests.URL_PARAM_MASTER_TYPE
@@ -229,7 +231,7 @@ class GridColumn(jsgen.Component):
             #~ if editor.editable:
             if editor.editable and not isinstance(editor,BooleanFieldElement):
                 kw.update(editor=editor)
-            #~ if str(editor.layout_handle.layout._table) == 'pcsw.CoachingsByProject':
+            #~ if str(editor.layout_handle.layout._actor) == 'pcsw.CoachingsByProject':
               #~ if editor.name == 'user':
                 #~ print 20120919, editor.field.__class__, editor.field.editable
                 #~ print 20120919, editor.field.model, kw['editable']
@@ -256,9 +258,10 @@ class ExtPanel(jsgen.Component): # todo: rename this to Panel, and Panel to Pane
 class Calendar(jsgen.Component): 
     value_template = "new Lino.CalendarPanel(%s)"
     
-                    
-        
+
+
 NOT_GIVEN = object()
+
         
 class VisibleComponent(jsgen.Component,Permittable):
     vflex = False
@@ -273,7 +276,23 @@ class VisibleComponent(jsgen.Component,Permittable):
         jsgen.Component.__init__(self,name)
         # install `allow_read` permission handler:
         self.setup(**kw)
-        Permittable.__init__(self,False) # name.startswith('cbss'))
+        #~ Permittable.__init__(self,False) # name.startswith('cbss'))
+        
+        #~ def __init__(self,debug_permissions):
+        #~ if type(debug_permissions) != bool:
+            #~ raise Exception("20120925 %s %r",self,self)
+        #~ if self.required is None:
+            #~ self.allow_read = curry(make_permission_handler(
+                #~ self,self,True,
+                #~ debug_permissions),self)
+        #~ else:
+        self.allow_read = curry(make_permission_handler(
+            self,self,True,
+            False,
+            **self.required),self)
+
+    def get_view_permission(self,user):
+        return self.allow_read(user,None,None)
         
     def setup(self,width=None,height=None,label=None,
         preferred_width=None,
@@ -361,29 +380,23 @@ class LayoutElement(VisibleComponent):
                 raise Exception("%s has no attribute %s" % (self,k))
             setattr(self,k,v)
             
+        required = dict()
+        required.update(layout_handle.layout._actor.required)
+        required.update(self.required)
+        kw.update(required=required)
+            
         VisibleComponent.__init__(self,name,**kw)
         #~ if opts:
             #~ print "20120525 apply _element_options", opts, 'to', self.__class__, self
         self.layout_handle = layout_handle
         #~ if layout_handle is not None:
         #~ layout_handle.setup_element(self)
-        #~ if str(self.layout_handle.layout._table) == 'lino.Home':
+        #~ if str(self.layout_handle.layout._actor) == 'lino.Home':
             #~ logger.info("20120927 LayoutElement.__init__ %r required is %s, kw was %s, opts was %s",
               #~ self,self.required,kw,opts)
 
     #~ def submit_fields(self):
         #~ return []
-        
-    def unused_get_view_permission(self,user):
-        if not super(LayoutElement,self).get_view_permission(user): 
-            #~ if str(self.layout_handle.layout._table) == 'users.Users':
-                #~ logger.info("20120927 LayoutElement.get_view_permission super %r ",self)
-            return False
-        if not self.layout_handle.layout._table.get_view_permission(user):
-            #~ if str(self.layout_handle.layout._table) == 'users.Users':
-                #~ logger.info("20120927 LayoutElement.get_view_permission table %r",self)
-            return False
-        return True
         
     def get_property(self,name):
         v = getattr(self,name,None)
@@ -438,7 +451,7 @@ class ConstantElement(LayoutElement):
     vflex = True
     
     def __init__(self,lh,fld,**kw):
-        kw.update(html=fld.text_fn(lh.layout._table,lh.ui))
+        kw.update(html=fld.text_fn(lh.layout._actor,lh.ui))
         #~ kw.update(html=fld.text)
         #~ kw.update(autoHeight=True)
         LayoutElement.__init__(self,lh,fld.name,**kw)
@@ -740,8 +753,8 @@ class RemoteComboFieldElement(ComboFieldElement):
         if self.editable:
             url = self.layout_handle.get_choices_url(self.field.name,**kw)
             #~ url = self.layout_handle.ui.build_url("choices",
-                #~ self.layout_handle.layout._table.app_label,
-                #~ self.layout_handle.layout._table.__name__,
+                #~ self.layout_handle.layout._actor.app_label,
+                #~ self.layout_handle.layout._actor.__name__,
                 #~ self.field.name,**kw)
             proxy = dict(url=url,method='GET')
             kw.update(proxy=js_code("new Ext.data.HttpProxy(%s)" % py2js(proxy)))
@@ -1177,7 +1190,7 @@ class Container(LayoutElement):
         LayoutElement.__init__(self,layout_handle,name,**kw)
         
         #~ if self.required:
-            #~ if layout_handle.layout._table.__name__.startswith('IntegClient'):
+            #~ if layout_handle.layout._actor.__name__.startswith('IntegClient'):
                 #~ print 20120924, layout_handle, self.required
         #~ if name == 'cbss':
             #~ logger.info("20120925 Container.__init__() 2 %r",self.required)
@@ -1241,7 +1254,7 @@ class Container(LayoutElement):
             if (not isinstance(e,Permittable)) or e.get_view_permission(user):
                 # one visble child is enough, no need to continue loop 
                 return True
-        #~ logger.info("20120925 not a single visible element in %s",self)
+        #~ logger.info("20120925 not a single visible element in %s of %s",self,self.layout_handle)
         return False
         
 class Wrapper(VisibleComponent):
@@ -1728,7 +1741,7 @@ class ParamsPanel(Panel):
         Panel.__init__(self,lh,name,vertical,*elements,**kw)
         
         #~ fkw = dict(layout='fit', autoHeight= True, frame= True, items=pp)
-        if lh.layout._table.params_panel_hidden:
+        if lh.layout._actor.params_panel_hidden:
             self.value_template = "new Ext.form.FormPanel({hidden:true, layout:'fit', autoHeight: true, frame: true, items:new Ext.Panel(%s)})"
           
             #~ fkw.update(hidden=True)

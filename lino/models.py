@@ -320,6 +320,7 @@ class Home(mixins.EmptyTable):
     This is the "home page" or "welcome screen", the window to be displayed 
     when no other window is opened.
     """
+    #~ required = dict(auth=False)
     #~ debug_actions = True
     label = _("Home") 
     hide_window_title = True
