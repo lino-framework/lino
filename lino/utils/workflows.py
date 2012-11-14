@@ -89,6 +89,7 @@ class Workflow(choicelists.ChoiceList):
     #~ @classmethod
     #~ def add_statechange(self,newstate,action_label=None,states=None,**kw):
         #~ old = self.get_by_name()
+        
     
     @classmethod
     def before_state_change(cls,obj,ar,kw,oldstate,newstate):

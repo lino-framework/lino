@@ -196,6 +196,10 @@ class City(dd.Model):
             return [(i,t) for i,t in CityTypes.choices if i in allowed]
         return CityTypes.choices
             
+    def save(self,*args,**kw):
+        super(City,self).save(*args,**kw)
+        if self.name == "Eupen" and self.id != 708:
+            raise Exception("20121114")
       
 class Cities(dd.Table):
     #~ label = _("Cities")

@@ -423,6 +423,8 @@ class DpyDeserializer:
         #~ dblogger.info("20120225 DpyDeserializer.__init__()")
         self.save_later = {}
         self.saved = 0
+        #~ self.count = 0
+
   
     def flush_deferred_objects(self):
         """
@@ -449,17 +451,23 @@ class DpyDeserializer:
         #~ dblogger.info("20120225 DpyDeserializer.deserialize()")
         if isinstance(fp, basestring):
             raise NotImplementedError
-        #~ global IS_DESERIALIZING
-        #~ IS_DESERIALIZING = True
         babel.set_language(babel.DEFAULT_LANGUAGE)
-        parts = os.path.split(fp.name)
-        fqname = parts[-1]
-        assert fqname.endswith(SUFFIX)
-        fqname = fqname[:-4]
-        #print fqname
+        
+        #~ self.count += 1
+        fqname = 'lino.utils.dumpy_tmp_%s' % hash(self)
+        
+        if False:
+            parts = fp.name.split(os.sep)
+            #~ parts = os.path.split(fp.name)
+            print parts
+            #~ fqname = parts[-1]
+            fqname = '.'.join([p for p in parts if not ':' in p])
+            assert fqname.endswith(SUFFIX)
+            fqname = fqname[:-len(SUFFIX)]
+            print fqname
         desc = (SUFFIX,'r',imp.PY_SOURCE)
         module = imp.load_module(fqname, fp, fp.name, desc)
-        #m = __import__(filename)
+        #~ module = __import__(filename)
         
         def expand(obj):
             if obj is None:
@@ -483,6 +491,8 @@ class DpyDeserializer:
                 dblogger.warning("Ignored unknown object %r",obj)
                 
         dblogger.info("Loading %s...",fp.name)
+        if not hasattr(module,'objects'):
+            raise Exception("%s has no attribute 'objects'" % fp.name)
         empty_fixture = True
         for obj in module.objects():
             for o in expand(obj): 

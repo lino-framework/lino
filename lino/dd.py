@@ -75,14 +75,14 @@ Utilities:
 
 Miscellaneous:
 
-- :class:`UserProfiles <lino.utils.choicelists.UserProfiles>`
-- :class:`UserGroups <lino.utils.choicelists.UserGroups>`
-- :class:`UserLevels <lino.utils.choicelists.UserLevels>`
 - :class:`ChoiceList <lino.utils.choicelists.ChoiceList>`
 - :class:`Workflow <lino.utils.workflows.Workflow>`
 - :class:`ChangeStateAction <lino.core.changes.ChangeStateAction>`
 - :class:`NotifyingAction <lino.core.actions.NotifyingAction>`
 
+- :class:`UserProfiles <lino.core.perms.UserProfiles>`
+- :class:`UserGroups <lino.core.perms.UserGroups>`
+- :class:`UserLevels <lino.core.perms.UserLevels>`
 
 
 """
@@ -149,7 +149,7 @@ from lino.utils.babel import BabelCharField, BabelTextField
 
 from lino.utils.choosers import chooser
 
-from lino.utils.choicelists import UserLevels, UserProfiles, UserGroups
+from lino.core.perms import UserLevels, UserProfiles, UserGroups
 
 #~ from lino.base.utils import UserLevels, UserGroups, UserProfiles
 

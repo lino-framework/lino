@@ -23,6 +23,7 @@ import decimal
 import datetime
 from dateutil import parser as dateparser
 
+from django.core.exceptions import MultipleObjectsReturned
 from django.db import models
 from django.contrib.contenttypes.models import ContentType
 
@@ -31,6 +32,7 @@ from lino.core.modeltools import resolve_model, UnresolvedModel
 
 from lino.utils import i2d # for backward compatibility of .py fixtures
 from lino.core import fields
+from lino.core.modeltools import obj2str
     
 
 class DataError(Exception):
@@ -82,6 +84,9 @@ class ForeignKeyConverter(Converter):
                     lookup_kw = {self.lookup_field: value}
                     try:
                         value = model.objects.get(**lookup_kw)
+                    except MultipleObjectsReturned,e:
+                        raise Exception("Oops: more than 1 object in %s" % [
+                            obj2str(o,True) for o in model.objects.filter(**lookup_kw)])
                     except model.DoesNotExist,e:
                         raise DataError("%s.objects.get(**%r) : %s" % (
                               model.__name__,lookup_kw,e))

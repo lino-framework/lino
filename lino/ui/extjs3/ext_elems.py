@@ -40,6 +40,7 @@ from lino.utils.jsgen import py2js, id2js, js_code
 from lino.utils import choosers
 #~ from . import ext_requests
 from lino.ui import requests as ext_requests
+from lino.utils.jsgen import Permittable
 
 EXT_CHAR_WIDTH = 9
 EXT_CHAR_HEIGHT = 22
@@ -86,7 +87,7 @@ def py2html(obj,name):
     
 
 def get_view_permission(e):
-    if isinstance(e,perms.Permittable) and not e.get_view_permission(jsgen._for_user):
+    if isinstance(e,Permittable) and not e.get_view_permission(jsgen._for_user):
         return False
     #~ e.g. pcsw.ClientDetail has a tab "Other", visible only to system admins
     #~ but the "Other" contains a GridElement RolesByPerson which is not per se reserved for system admins.
@@ -94,7 +95,7 @@ def get_view_permission(e):
     parent = e.parent
     while parent is not None:
     #~ if e.parent is not None:
-        if isinstance(parent,perms.Permittable) and not parent.get_view_permission(jsgen._for_user):
+        if isinstance(parent,Permittable) and not parent.get_view_permission(jsgen._for_user):
             return False # bug 3 (bcss_summary) blog/2012/09/27
         parent = parent.parent
     return True
@@ -259,7 +260,7 @@ class Calendar(jsgen.Component):
         
 NOT_GIVEN = object()
         
-class VisibleComponent(jsgen.Component,perms.Permittable):
+class VisibleComponent(jsgen.Component,Permittable):
     vflex = False
     hflex = True
     width = None
@@ -272,7 +273,7 @@ class VisibleComponent(jsgen.Component,perms.Permittable):
         jsgen.Component.__init__(self,name)
         # install `allow_read` permission handler:
         self.setup(**kw)
-        perms.Permittable.__init__(self,False) # name.startswith('cbss'))
+        Permittable.__init__(self,False) # name.startswith('cbss'))
         
     def setup(self,width=None,height=None,label=None,
         preferred_width=None,
@@ -1232,12 +1233,12 @@ class Container(LayoutElement):
             
         # if the Panel itself is invisble, no need to loop through the children
         if not super(Container,self).get_view_permission(user): 
-        #~ if not jsgen.Permittable.get_view_permission(self,user):
+        #~ if not Permittable.get_view_permission(self,user):
             return False
         #~ if self.value.get("title") == "CBSS":
             #~ print "20120525 Container.get_view_permission() passed", self
         for e in self.elements:
-            if (not isinstance(e,perms.Permittable)) or e.get_view_permission(user):
+            if (not isinstance(e,Permittable)) or e.get_view_permission(user):
                 # one visble child is enough, no need to continue loop 
                 return True
         #~ logger.info("20120925 not a single visible element in %s",self)

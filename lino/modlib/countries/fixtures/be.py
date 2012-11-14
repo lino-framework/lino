@@ -14,8 +14,10 @@
 
 from lino.core.modeltools import resolve_model
 from lino.utils.instantiator import Instantiator
+from lino import dd
 
-# copied from http://www.charline.be/info/codepost/cpost.htm
+# The following string is originally copied from
+# http://www.charline.be/info/codepost/cpost.htm
 
 belgian_cities = u"""
 9420 Aaigem 
@@ -2877,10 +2879,15 @@ fr = u"""
 """
 
 def objects():
-    city = Instantiator("countries.City","zip_code name",country='BE').build
+    countries = dd.resolve_app('countries')
+    city = Instantiator(countries.City,"zip_code name",
+        country='BE',
+        type=countries.CityTypes.city).build
     for ln in belgian_cities.splitlines():
         if ln.strip():
             args = ln.split(None,1)
             o = city(*args)
             # print "%r %r" % (o.zip_code, o.name)
             yield o
+            #~ print __name__, "20121114"
+            #~ return 

@@ -29,6 +29,7 @@ import lino
 from lino.utils import AttrDict
 from lino.utils import curry
 from lino.utils import babel
+from lino.utils import jsgen
 #~ from lino.utils import Warning
 
 from lino.ui import requests as ext_requests
@@ -39,7 +40,7 @@ from lino.core import layouts
 from lino.core import fields
 
 #~ from lino.core.perms import UserLevels
-from lino.core import perms 
+#~ from lino.core import perms 
 
 
 class VirtualRow(object):
@@ -416,11 +417,12 @@ class Action(Parametrizable):
         Override existing permission requirements.
         Arguments: see :func:`lino.core.perms.make_permission_handler`.
         """
+        jsgen.set_required(self,**kw)
         #~ logger.info("20120628 set_required %s(%s)",self,kw)
-        new = dict()
-        new.update(self.required)
-        new.update(kw)
-        self.required = new
+        #~ new = dict()
+        #~ new.update(self.required)
+        #~ new.update(kw)
+        #~ self.required = new
         #~ if self.required.has_key('states'):
             #~ self.show_in_workflow = True
             #~ self.custom_handler = True

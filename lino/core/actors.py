@@ -39,8 +39,8 @@ from lino.core import layouts
 from lino.core.modeltools import resolve_model
 from lino.utils import curry, AttrDict
 #~ from lino.utils import choicelists
-from lino.core import perms
-#~ from lino.utils import jsgen
+#~ from lino.core import perms
+from lino.utils import jsgen
 
         
 
@@ -420,7 +420,7 @@ class Actor(actions.Parametrizable):
     
     @classmethod
     def set_required(self,**kw):
-        perms.set_required(self,**kw)
+        jsgen.set_required(self,**kw)
         
     
     
