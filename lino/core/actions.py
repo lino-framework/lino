@@ -284,7 +284,7 @@ class Action(Parametrizable):
     required = {}
     """
     A dict with permission requirements.
-    See :func:`lino.core.perms.make_permission_handler`.
+    See :func:`lino.utils.jsgen.make_permission_handler`.
     """
     
     action_name = None
@@ -415,7 +415,7 @@ class Action(Parametrizable):
     def set_required(self,**kw):
         """
         Override existing permission requirements.
-        Arguments: see :func:`lino.core.perms.make_permission_handler`.
+        Arguments: see :func:`lino.utils.jsgen.make_permission_handler`.
         """
         jsgen.set_required(self,**kw)
         #~ logger.info("20120628 set_required %s(%s)",self,kw)
@@ -863,7 +863,7 @@ class BoundAction(object):
             #~ return fn
             
         debug = actor.debug_permissions or action.debug_permissions
-        self.allow = curry(perms.make_permission_handler(
+        self.allow = curry(jsgen.make_permission_handler(
             action,actor,action.readonly,debug,**required),action)
         #~ actor.actions.define(a.action_name,ba)
         
