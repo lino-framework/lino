@@ -230,7 +230,7 @@ def make_permission_handler(
     
     
     """
-    from lino.utils.choicelists import UserLevels, UserGroups
+    from lino.core.perms import UserLevels, UserGroups
     try:
         if allow is None:
             def allow(action,user,obj,state):
