@@ -51,8 +51,8 @@ class Lino(Lino):
         from django.utils.translation import ugettext_lazy as _
         dd.UserProfiles.reset('* office')
         add = dd.UserProfiles.add_item
-        add('100', _("User"),            'U U', 'user')
-        add('900', _("Administrator"),   'A A', 'admin')
+        add('100', _("User"),            'U U', name='user')
+        add('900', _("Administrator"),   'A A', name='admin')
         
         for p in dd.UserProfiles.items():
             print 20120705, repr(p)
