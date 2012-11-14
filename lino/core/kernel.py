@@ -253,11 +253,12 @@ class DisableDeleteHandler():
 #~ import threading
 #~ write_lock = threading.RLock()
 
-#~ def setup_site(self,make_messages=False):
-#~ def setup_site(self,no_site_cache=False):
 def startup_site(self):
     """
-    `self` is the Lino instance stored as :setting:`LINO` in your :xfile:`settings.py`.
+    This is the code that runs when you call :meth:`lino.Lino.startup`.
+    
+    `self` is the Lino instance stored as :setting:`LINO` 
+    in your :xfile:`settings.py`.
     
     This is run once after Django has populated it's model cache, 
     and before any Lino actor can be used.
@@ -431,7 +432,7 @@ def startup_site(self):
         #~ del self._watch_changes_requests
         
         if self.build_js_cache_on_startup is None:
-            self.build_js_cache_on_startup = not is_devserver()
+            self.build_js_cache_on_startup = not (settings.DEBUG or is_devserver())
           
 
         

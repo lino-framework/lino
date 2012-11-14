@@ -135,11 +135,14 @@ class Lino(object):
     for all user profiles and languages.
     
     On a production server this should be `True` for best performance,
-    but while developing it is easier to set it to `False`, which means 
+    but while developing, it may be easier to set it to `False`, which means 
     that each file is built upon need (when a first request comes in).
     
     The default value `None` means that Lino decides automatically 
-    (using :func:`lino.core.modeltools.is_devserver`).
+    in :func:`lino.core.kernel.startup_site`: 
+    if becomes `False` if
+    either :func:`lino.core.modeltools.is_devserver` returns True
+    or setting:`DEBUG` is set.
     """
     
     # tree constants used by lino.modlib.workflows:

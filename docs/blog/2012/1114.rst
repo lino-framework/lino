@@ -1,0 +1,7 @@
+20121114
+========
+
+
+When :attr:`lino.Lino.build_js_cache_on_startup` 
+is None, :mod:`lino.core.kernel` now also considers 
+:setting:`DEBUG` for finding the default value.

@@ -54,8 +54,8 @@ class Lino(Lino):
         add('100', _("User"),            'U U', 'user')
         add('900', _("Administrator"),   'A A', 'admin')
         
-        #~ for p in dd.UserProfiles.items():
-            #~ print 20120705, repr(p)
+        for p in dd.UserProfiles.items():
+            print 20120705, repr(p)
             
     def get_installed_apps(self):
         for a in super(Lino,self).get_installed_apps():
