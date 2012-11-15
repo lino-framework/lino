@@ -6,4 +6,49 @@ von Lino und Lino-Welfare, und daran will ich auch mindestens
 bis kommenden Dienstag nichts mehr ändern. 
 Deshalb release ich jetzt diese Versionen im Nachhinein als 1.5.1 und 1.0.1.
 
+Weil ich so ein Release im Nachhinein heute erstmals mache 
+(habe vorher zur Auffrischung http://mercurial.selenic.com/guide/ konsultiert),
+notiere ich mir die einzelnen Schritte.
 
+Auf dem Produktionsserver in Eupen::
+
+  lsaffre@lino:~$ cd /var/snapshots/lino-dev/
+  lsaffre@lino:/var/snapshots/lino-dev$ hg tip
+  changeset:   3110:23339f18880f
+  tag:         tip
+  user:        Luc Saffre <luc.saffre@mail.ee>
+  date:        Fri Nov 09 11:12:24 2012 -0400
+  summary:     http://code.google.com/p/lino/source/browse/docs/blog/2012/1109.rst
+
+  lsaffre@lino:/var/snapshots/lino-welfare-dev$ hg tip
+  changeset:   169:8efa2a28b667
+  tag:         tip
+  user:        Luc Saffre <luc.saffre@mail.ee>
+  date:        Fri Nov 09 11:13:04 2012 -0400
+  summary:     http://code.google.com/p/lino/source/browse/docs/blog/2012/1109.rst
+
+
+Ich arbeite auf m
+
+
+T:\hgwork\welfare>hg log -d 2012-11-09
+changeset:   170:70dbdb8f5833
+user:        Luc Saffre <luc.saffre@mail.ee>
+date:        Fri Nov 09 23:52:46 2012 -0400
+summary:     http://code.google.com/p/lino/source/browse/docs/blog/2012/1110.rst
+
+changeset:   169:8efa2a28b667
+user:        Luc Saffre <luc.saffre@mail.ee>
+date:        Fri Nov 09 11:13:04 2012 -0400
+summary:     http://code.google.com/p/lino/source/browse/docs/blog/2012/1109.rst
+
+T:\hgwork\lino>hg log -d 2012-11-09
+changeset:   3111:5b670bf2a5c7
+user:        Luc Saffre <luc.saffre@mail.ee>
+date:        Fri Nov 09 23:52:20 2012 -0400
+summary:     http://code.google.com/p/lino/source/browse/docs/blog/2012/1110.rst
+
+changeset:   3110:23339f18880f
+user:        Luc Saffre <luc.saffre@mail.ee>
+date:        Fri Nov 09 11:12:24 2012 -0400
+summary:     http://code.google.com/p/lino/source/browse/docs/blog/2012/1109.rst
