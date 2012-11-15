@@ -1,0 +1,9 @@
+20121115
+========
+
+In Eupen läuft seit einer Woche eine Development-Version 
+von Lino und Lino-Welfare, und daran will ich auch mindestens 
+bis kommenden Dienstag nichts mehr ändern. 
+Deshalb release ich jetzt diese Versionen im Nachhinein als 1.5.1 und 1.0.1.
+
+
