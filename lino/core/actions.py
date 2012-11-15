@@ -494,6 +494,12 @@ class Action(Parametrizable,Permittable):
             return self.defining_actor.actor_id + '.' + self.action_name
         return str(actor) + '.' + self.action_name
         
+    def as_button(self,obj,request,label):
+        ba = self.defining_actor.get_url_action(self.action_name)
+        return settings.LINO.ui.row_action_button(obj,request,ba,label)
+        
+        
+        
     def __repr__(self):
         return "%s %s.%s" % (self.__class__.__name__,self.defining_actor,self.action_name)
         
@@ -1106,8 +1112,8 @@ class ActionRequest(BaseRequest):
         self.actor = actor
         #~ self.action = action or actor.default_action
         #~ self.bound_action = BoundAction(actor,action or actor.default_action)
-        if action and not isinstance(action,BoundAction):
-            raise Exception("20121003 %r is not a BoundAction" % action)
+        #~ if action and not isinstance(action,BoundAction):
+            #~ raise Exception("20121003 %r is not a BoundAction" % action)
         self.bound_action = action or actor.default_action
         BaseRequest.__init__(self,ui,request,renderer,**kw)
         self.ah = actor.get_request_handle(self)

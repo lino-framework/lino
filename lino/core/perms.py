@@ -11,16 +11,4 @@
 ## You should have received a copy of the GNU General Public License
 ## along with Lino; if not, see <http://www.gnu.org/licenses/>.
 
-raise Exception("no longer used")
-
-import logging
-logger = logging.getLogger(__name__)
-
-from django.utils.translation import ugettext_lazy as _
-
-from lino.utils.choicelists import ChoiceList, Choice
-
-
-
-
-
+"no longer used"

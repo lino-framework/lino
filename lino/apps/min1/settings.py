@@ -45,6 +45,15 @@ class Lino(Lino):
         tb.add_action(self.modules.contacts.Persons.detail_action)
         tb.add_action(self.modules.contacts.Companies.detail_action)
         
+    def get_installed_apps(self):
+        for a in super(Lino,self).get_installed_apps():
+            yield a
+
+        yield 'django.contrib.contenttypes'
+        yield 'lino.modlib.users'
+        yield 'lino.modlib.countries'
+        yield 'lino.modlib.contacts'
+        yield 'lino.apps.min1'
       
 LINO = Lino(__file__,globals())
 
@@ -52,7 +61,7 @@ LINO = Lino(__file__,globals())
 TIME_ZONE = None
 
 
-INSTALLED_APPS = (
+unused_INSTALLED_APPS = (
   #~ 'django.contrib.auth',
   'django.contrib.contenttypes',
   #~ 'django.contrib.sessions',

@@ -232,7 +232,54 @@ if settings.LINO.is_installed('contenttypes'):
       
 
 
-#~ if settings.LINO.is_installed('users'):
+  class Change(dd.Model):
+      """
+      Each `save()` of a watched object will generate one Change record.
+      """
+      class Meta:
+          verbose_name = _("Change")
+          verbose_name_plural = _("Changes")
+              
+      time = models.DateTimeField()
+      type = changes.ChangeTypes.field()
+      if settings.LINO.user_model:
+          user = dd.ForeignKey(settings.LINO.user_model)
+          
+      object_type = models.ForeignKey(ContentType,related_name='changes_by_object')
+      object_id = dd.GenericForeignKeyIdField(object_type)
+      object = dd.GenericForeignKey('object_type','object_id',_("Object"))
+      
+      master_type = models.ForeignKey(ContentType,related_name='changes_by_master')
+      master_id = dd.GenericForeignKeyIdField(master_type)
+      master = dd.GenericForeignKey('master_type','master_id',_("Master"))
+      
+      #~ summary = models.CharField(_("Summary"),max_length=200,blank=True)
+      #~ description = dd.RichTextField(format='plain')
+      diff = dd.RichTextField(_("Changes"),format='plain',blank=True)
+      
+      def __unicode__(self):
+          #~ return "#%s - %s" % (self.id,self.time)
+          return "#%s" % self.id
+      
+  class Changes(dd.Table):
+      editable = False
+      model = Change
+      order_by = ['-time']
+      detail_layout = """
+      time user type master object id
+      diff
+      """
+      
+  #~ class ChangesByObject(Changes):
+  class ChangesByMaster(Changes):
+      """
+      Slave Table showing the changes related to the current object
+      """
+      column_names = 'time user type object diff object_type object_id'
+      master_key = 'master'
+
+
+
 if settings.LINO.user_model:
 
     class TextFieldTemplate(mixins.AutoUser):
@@ -265,54 +312,6 @@ if settings.LINO.user_model:
     class MyTextFieldTemplates(TextFieldTemplates,mixins.ByUser):
         pass
         
-
-class Change(dd.Model):
-    """
-    Each `save()` of a watched object will generate one Change record.
-    """
-    class Meta:
-        verbose_name = _("Change")
-        verbose_name_plural = _("Changes")
-            
-    time = models.DateTimeField()
-    type = changes.ChangeTypes.field()
-    if settings.LINO.user_model:
-        user = dd.ForeignKey(settings.LINO.user_model)
-        
-    object_type = models.ForeignKey(ContentType,related_name='changes_by_object')
-    object_id = dd.GenericForeignKeyIdField(object_type)
-    object = dd.GenericForeignKey('object_type','object_id',_("Object"))
-    
-    master_type = models.ForeignKey(ContentType,related_name='changes_by_master')
-    master_id = dd.GenericForeignKeyIdField(master_type)
-    master = dd.GenericForeignKey('master_type','master_id',_("Master"))
-    
-    #~ summary = models.CharField(_("Summary"),max_length=200,blank=True)
-    #~ description = dd.RichTextField(format='plain')
-    diff = dd.RichTextField(_("Changes"),format='plain',blank=True)
-    
-    def __unicode__(self):
-        #~ return "#%s - %s" % (self.id,self.time)
-        return "#%s" % self.id
-    
-class Changes(dd.Table):
-    editable = False
-    model = Change
-    order_by = ['-time']
-    detail_layout = """
-    time user type master object id
-    diff
-    """
-    
-#~ class ChangesByObject(Changes):
-class ChangesByMaster(Changes):
-    """
-    Slave Table showing the changes related to the current object
-    """
-    column_names = 'time user type object diff object_type object_id'
-    master_key = 'master'
-
-
 
 
 class Home(mixins.EmptyTable):
@@ -459,8 +458,9 @@ def setup_explorer_menu(site,ui,user,m):
         system.add_action(dd.UserGroups)
         system.add_action(dd.UserLevels)
         system.add_action(dd.UserProfiles)
-    system.add_action(Changes)
-    office.add_action(TextFieldTemplates)
+        office.add_action(TextFieldTemplates)
+    if site.is_installed('contenttypes'):
+        system.add_action(Changes)
   
 
 dd.add_user_group('office',OFFICE_MODULE_LABEL)

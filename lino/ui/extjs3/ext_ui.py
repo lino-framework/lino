@@ -106,14 +106,6 @@ from lino.ui.extjs3 import views
 
 
 
-pages = dd.resolve_app('pages')
-
-MAIN_HTML_TEMPLATE = """\
-<div class="htmlText">
-<h1>[=title]</h1>
-[=parse(obj.body or obj.abstract)]
-</div>"""
-
 
 class HtmlRenderer(object):
     """
@@ -1302,7 +1294,8 @@ tinymce.init({
         )
         
         if not on_ready:
-            main.update(html=self.get_main_html(request))
+            #~ print "20121115 foo"
+            main.update(html=settings.LINO.get_main_html(request))
         
         win = dict(
           layout='fit',
@@ -1375,14 +1368,6 @@ tinymce.init({
         
         
         
-    def get_main_html(self,request):
-        obj = pages.lookup('admin')
-        return pages.render(obj,MAIN_HTML_TEMPLATE)
-
-        #~ html = settings.LINO.get_main_html(request)
-        #~ if html:
-            #~ html = '<div class="htmlText">%s</div>' % html
-        #~ return html
             
     def linolib_intro(self):
         """

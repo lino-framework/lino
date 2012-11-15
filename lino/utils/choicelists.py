@@ -92,6 +92,7 @@ from django.utils.translation import ugettext_lazy as _
 from django.utils.translation import string_concat
 from django.utils.functional import lazy
 from django.db import models
+from django.conf import settings
 
 from lino.utils import curry, unicode_string
 
@@ -198,7 +199,8 @@ class ChoiceListMeta(actors.ActorMetaClass):
         #~ for i in cls.items:
             #~ cls.add_item(i)
         if classname not in ('ChoiceList','Workflow'):
-            register_choicelist(cls)
+            if settings.LINO.is_installed(cls.app_label):
+                register_choicelist(cls)
         return cls
   
 

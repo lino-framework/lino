@@ -318,12 +318,13 @@ def make_permission_handler_(
     if allow is None:
         def allow(action,user,obj,state):
             return True
-    if auth:
-        allow_before_auth = allow
-        def allow(action,user,obj,state):
-            if not user.authenticated:
-                return False
-            return allow_before_auth(action,user,obj,state)
+    if settings.LINO.user_model is not None:
+        if auth:
+            allow_before_auth = allow
+            def allow(action,user,obj,state):
+                if not user.authenticated:
+                    return False
+                return allow_before_auth(action,user,obj,state)
             
     if user_level is not None:
         user_level = getattr(UserLevels,user_level)
@@ -419,29 +420,6 @@ def make_permission_handler_(
             return v
     return allow
         
-    
-    
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 
 
@@ -480,7 +458,7 @@ class NOT_NEEDED:
     
 def authenticate(username,password=NOT_NEEDED):
 
-    if not settings.LINO.user_model or not username:
+    if not username:
         return AnonymousUser.instance()
         
     """
@@ -560,8 +538,7 @@ class RemoteUserMiddleware(object):
     
     def process_request(self, request):
       
-        # trigger site startup if necessary
-        settings.LINO.startup()
+        settings.LINO.startup() # trigger site startup if necessary
         
         username = request.META.get(
             settings.LINO.remote_user_header,settings.LINO.default_user)
@@ -581,8 +558,7 @@ class SessionUserMiddleware(object):
 
     def process_request(self, request):
       
-        # trigger site startup if necessary
-        settings.LINO.startup()
+        settings.LINO.startup() # trigger site startup if necessary
         
         user = authenticate(request.session.get('username'),request.session.get('password'))
         
@@ -591,4 +567,16 @@ class SessionUserMiddleware(object):
             user = AnonymousUser.instance()
         
         on_login(request,user)
+        
+        
+class NoUserMiddleware(object):
+  
+    def process_request(self, request):
+      
+        settings.LINO.startup() # trigger site startup if necessary
+        
+        user = AnonymousUser.instance()
+        
+        on_login(request,user)
+        
         

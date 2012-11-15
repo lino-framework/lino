@@ -40,47 +40,29 @@ class Lino(Lino):
     languages = ['en']
     
 
+    def get_installed_apps(self):
+        for a in super(Lino,self).get_installed_apps():
+            yield a
+
+        yield 'django.contrib.contenttypes'
+        yield 'lino.modlib.users'
+        yield 'lino.modlib.countries'
+        yield 'lino.modlib.properties'
+        yield 'lino.modlib.contacts'
+        
+        yield 'lino.modlib.uploads'
+        yield 'lino.modlib.notes'
+        yield 'lino.modlib.outbox'
+        yield 'lino.modlib.cal'
+        yield 'lino.modlib.postings'
+        yield 'lino.modlib.households'
+        
+        yield 'lino.modlib.accounts'
+        yield 'lino.modlib.ledger'
+        yield 'lino.modlib.vat'
+        yield 'lino.modlib.products'
+        yield 'lino.modlib.sales'
+        yield 'lino.apps.presto'
+
 LINO = Lino(__file__,globals())
-
-
-
-INSTALLED_APPS = (
-  #~ 'django.contrib.auth',
-  'django.contrib.contenttypes',
-  #~ 'django.contrib.sessions',
-  #~ 'django.contrib.sites',
-  #~ 'django.contrib.markup',
-  #~ 'lino.modlib.system',
-  'lino',
-  'lino.modlib.users',
-  'lino.modlib.countries',
-  #~ 'lino.modlib.documents',
-  'lino.modlib.properties',
-  'lino.modlib.contacts',
-  
-  'lino.modlib.uploads',
-  'lino.modlib.thirds',
-  'lino.modlib.notes',
-  #~ 'lino.modlib.links',
-  
-  
-  #~ 'lino.modlib.projects',
-  'lino.modlib.outbox',
-  'lino.modlib.cal',
-  'lino.modlib.postings',
-  #~ 'lino.modlib.inbox',
-  'lino.modlib.households',
-  
-  'lino.modlib.accounts',
-  'lino.modlib.ledger',
-  'lino.modlib.vat',
-  'lino.modlib.products',
-  'lino.modlib.sales',
-  
-  #~ 'lino.modlib.jobs',
-  #~ 'lino.modlib.isip',
-  #~ 'lino.modlib.cbss',
-  #~ 'lino.apps.pcsw',
-  'lino.apps.presto',
-)
 

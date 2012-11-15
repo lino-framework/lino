@@ -1,6 +1,9 @@
 20121115
 ========
 
+Zeitmaschine
+------------
+
 In Eupen läuft seit einer Woche eine Development-Version 
 von Lino und Lino-Welfare, und daran will ich auch mindestens 
 bis kommenden Dienstag nichts mehr ändern. 
@@ -10,17 +13,21 @@ Weil ich so ein Release im Nachhinein heute erstmals mache
 (habe vorher zur Auffrischung http://mercurial.selenic.com/guide/ konsultiert),
 notiere ich mir die einzelnen Schritte.
 
-Auf dem Produktionsserver in Eupen::
+Auf dem Produktionsserver in Eupen schaue ich nach, welche Versionen es 
+genau sind, die da laufen:
 
-  lsaffre@lino:~$ cd /var/snapshots/lino-dev/
-  lsaffre@lino:/var/snapshots/lino-dev$ hg tip
+.. code-block:: bash
+
+  $ cd /var/snapshots/lino-dev/
+  $ hg tip
   changeset:   3110:23339f18880f
   tag:         tip
   user:        Luc Saffre <luc.saffre@mail.ee>
   date:        Fri Nov 09 11:12:24 2012 -0400
   summary:     http://code.google.com/p/lino/source/browse/docs/blog/2012/1109.rst
 
-  lsaffre@lino:/var/snapshots/lino-welfare-dev$ hg tip
+  $ cd /var/snapshots/lino-welfare-dev/
+  $ hg tip
   changeset:   169:8efa2a28b667
   tag:         tip
   user:        Luc Saffre <luc.saffre@mail.ee>
@@ -28,27 +35,135 @@ Auf dem Produktionsserver in Eupen::
   summary:     http://code.google.com/p/lino/source/browse/docs/blog/2012/1109.rst
 
 
-Ich arbeite auf m
+Ich merke mir das Datum (9. November) die drei letzten Positionen 
+der changeset-Nummern (80f und 667).
+
+Jetzt auf meinem Windows-Rechner.
+
+Zuerst kommt Lino selber dran:
+
+.. code-block:: guess
+
+  T:\hgwork\lino>hg log -d 2012-11-09
+  changeset:   3111:5b670bf2a5c7
+  user:        Luc Saffre <luc.saffre@mail.ee>
+  date:        Fri Nov 09 23:52:20 2012 -0400
+  summary:     http://code.google.com/p/lino/source/browse/docs/blog/2012/1110.rst
+
+  changeset:   3110:23339f18880f
+  user:        Luc Saffre <luc.saffre@mail.ee>
+  date:        Fri Nov 09 11:12:24 2012 -0400
+  summary:     http://code.google.com/p/lino/source/browse/docs/blog/2012/1109.rst
 
 
-T:\hgwork\welfare>hg log -d 2012-11-09
-changeset:   170:70dbdb8f5833
-user:        Luc Saffre <luc.saffre@mail.ee>
-date:        Fri Nov 09 23:52:46 2012 -0400
-summary:     http://code.google.com/p/lino/source/browse/docs/blog/2012/1110.rst
+Aha, also die 3110 ist es, wohin ich will. Sprung zurück in der Zeit:
 
-changeset:   169:8efa2a28b667
-user:        Luc Saffre <luc.saffre@mail.ee>
-date:        Fri Nov 09 11:13:04 2012 -0400
-summary:     http://code.google.com/p/lino/source/browse/docs/blog/2012/1109.rst
+.. code-block:: guess
 
-T:\hgwork\lino>hg log -d 2012-11-09
-changeset:   3111:5b670bf2a5c7
-user:        Luc Saffre <luc.saffre@mail.ee>
-date:        Fri Nov 09 23:52:20 2012 -0400
-summary:     http://code.google.com/p/lino/source/browse/docs/blog/2012/1110.rst
 
-changeset:   3110:23339f18880f
-user:        Luc Saffre <luc.saffre@mail.ee>
-date:        Fri Nov 09 11:12:24 2012 -0400
-summary:     http://code.google.com/p/lino/source/browse/docs/blog/2012/1109.rst
+  T:\hgwork\lino>hg update 3110
+  68 files updated, 0 files merged, 14 files removed, 0 files unresolved
+
+Jetzt das eigentliche Release:
+
+.. code-block:: guess
+
+  T:\hgwork\lino>make sdist
+  (...)
+  removing 'lino-1.5.1' (and everything under it)
+  running upload
+  Submitting dist\lino-1.5.1.tar.gz to http://pypi.python.org/pypi
+  Server response (200): OK
+  Submitting dist\lino-1.5.1.zip to http://pypi.python.org/pypi
+  Server response (200): OK
+  
+Und Sprung zurück ins Heute:  
+
+.. code-block:: guess
+
+  T:\hgwork\lino>hg update tip
+  81 files updated, 0 files merged, 1 files removed, 0 files unresolved
+
+
+Und das Gleiche in Grün für Lino-Welfare:
+
+.. code-block:: guess
+
+  T:\hgwork\welfare>hg log -d 2012-11-09
+  changeset:   170:70dbdb8f5833
+  user:        Luc Saffre <luc.saffre@mail.ee>
+  date:        Fri Nov 09 23:52:46 2012 -0400
+  summary:     http://code.google.com/p/lino/source/browse/docs/blog/2012/1110.rst
+
+  changeset:   169:8efa2a28b667
+  user:        Luc Saffre <luc.saffre@mail.ee>
+  date:        Fri Nov 09 11:13:04 2012 -0400
+  summary:     http://code.google.com/p/lino/source/browse/docs/blog/2012/1109.rst
+
+  T:\hgwork\welfare>hg update 169
+  23 files updated, 0 files merged, 4 files removed, 0 files unresolved
+
+  T:\hgwork\welfare>make sdist
+  python setup.py register sdist --formats=gztar,zip upload
+  running register
+  running egg_info
+  creating lino_welfare.egg-info
+  writing lino_welfare.egg-info\PKG-INFO
+  (...)
+  removing 'lino-welfare-1.0.1' (and everything under it)
+  running upload
+  Submitting dist\lino-welfare-1.0.1.tar.gz to http://pypi.python.org/pypi
+  Server response (200): OK
+  Submitting dist\lino-welfare-1.0.1.zip to http://pypi.python.org/pypi
+  Server response (200): OK
+
+  T:\hgwork\welfare>hg update tip
+  25 files updated, 0 files merged, 2 files removed, 0 files unresolved
+
+
+Voilà. 
+Lino :doc:`/releases/1.5.1` und 
+`Lino-Welfare 1.0.1 <http://welfare.lino-framework.org/de/releases/1.0.1.html>`_
+erkläre ich hiermit als offiziell seit dem 9. November released.
+
+
+
+The :xfile:`settings.py` of :mod:`lino_welfare`
+------------------------------------------------
+
+:mod:`lino_welfare.modlib.pcsw` 
+is the "main" module of Lino-Welfare, but this fact isn't very visible.
+
+And the fragment ``modlib`` in directory trees should be 
+reserved for :doc:`Lino's module library </topics/modlib>`.
+
+The :xfile:`settings.py` of :mod:`lino_welfare` 
+is not :mod:`lino_welfare.settings`,
+but :mod:`lino_welfare.modlib.pcsw.settings`.
+
+The reason for this is that the `settings.py` file 
+contains translatable strings, and I didn't want 
+to have an additional .po file just for this.
+
+I could move the content of
+:mod:`lino_welfare.modlib.pcsw`
+to the top-level.
+But that would rename things like `pcsw.Client` 
+to  `lino_welfare.Client`... 
+Hm, `lino_welfare` seems a bit long as an app_label... 
+
+Maybe rename `lino_welfare` to `lino_pcsw`? 
+No, we just chose`"welfare" to replace "pscw".
+
+After these thoughts, the best solution seems::
+
+  lino_welfare/docs
+  lino_welfare/demo/
+  lino_welfare/lib/cbss
+  lino_welfare/lib/cv
+  lino_welfare/lib/...
+  lino_welfare/lib/welfare
+
+But that's for later. It will be technically simple, 
+but causing a lot of code changes and needing a migration 
+to rename pcsw.* to welfare.*)

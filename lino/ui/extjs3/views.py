@@ -412,10 +412,11 @@ class AdminIndex(View):
 
     def get(self, request, *args, **kw):
         ui = settings.LINO.ui
-        user = request.subst_user or request.user
-        a = settings.LINO.get_main_action(user)
-        if a is not None and a.get_view_permission(user):
-            kw.update(on_ready=ui.ext_renderer.action_call(request,a,{}))
+        if settings.LINO.user_model is not None:
+            user = request.subst_user or request.user
+            a = settings.LINO.get_main_action(user)
+            if a is not None and a.get_view_permission(user):
+                kw.update(on_ready=ui.ext_renderer.action_call(request,a,{}))
         return http.HttpResponse(ui.html_page(request,**kw))
 
 class Authenticate(View):
@@ -468,7 +469,8 @@ class EidAppletService(View):
 class MainHtml(View):
     def get(self, request, *args, **kw):
         ui = settings.LINO.ui
-        return ui.success_response(html=ui.get_main_html(request))
+        rv = ui.success_response(html=settings.LINO.get_main_html(request))
+        return ui.action_response(rv)
         
 class Templates(View):
   

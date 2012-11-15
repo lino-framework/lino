@@ -33,4 +33,21 @@
               return _("Cannot delete companies and persons imported from TIM")
           return super(CpasPartner,self).disable_delete(ar)
 
-    
+Lino-Welfare
+------------
+
+The legacy database (TIM) contains duplicate clients having the same `national_id`.
+But we want to keep the `unique=True` requirement on `Client.national_id`.
+How to solve this:
+legacy Clients marked `is_deprecated ` now automaticaly 
+get a suffix " (A)" appended to their `national_id`.
+(both watch_tim and migrate)
+
+Field `prefix` of imported Companies wasn't read-only.
+
+Bug "Imbiss Firat": watch_tim konnte seit 20120728 nicht mehr von 
+Person nach Firma konvertieren. Also z.B. wenn man die MWSt-Nr 
+eines Partners in TIM löschte. Dann kam die Fehlermeldung 
+"Aus TIM importierte Partner d\xfcrfen nicht gelöscht werden."
+
+

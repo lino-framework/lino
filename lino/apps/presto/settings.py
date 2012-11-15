@@ -59,6 +59,7 @@ class Lino(Lino):
     def get_installed_apps(self):
         for a in super(Lino,self).get_installed_apps():
             yield a
+        yield 'django.contrib.contenttypes'
         yield 'lino.modlib.users'
         yield 'lino.modlib.countries'
         yield 'lino.modlib.properties'
@@ -82,40 +83,6 @@ class Lino(Lino):
         #~ yield 'lino.modlib.pages'
         yield 'lino.apps.presto'
       
-            
-        
     
 LINO = Lino(__file__,globals()) 
-
-unused_INSTALLED_APPS = (
-  #~ 'django.contrib.auth',
-  'django.contrib.contenttypes',
-  #~ 'django.contrib.sessions',
-  #~ 'django.contrib.sites',
-  #~ 'django.contrib.markup',
-  #~ 'lino.modlib.system',
-  'lino',
-  'lino.modlib.users',
-  'lino.modlib.countries',
-  #~ 'lino.modlib.documents',
-  'lino.modlib.properties',
-  'lino.modlib.contacts',
-  'lino.modlib.households',
-  'lino.modlib.products',
-  'lino.modlib.accounts',
-  'lino.modlib.ledger',
-  'lino.modlib.vat',
-  #~ 'lino.modlib.journals',
-  'lino.modlib.sales',
-  #~ 'lino.modlib.projects',
-  'lino.modlib.blogs',
-  'lino.modlib.tickets',
-  #~ 'lino.modlib.links',
-  'lino.modlib.uploads',
-  #~ 'lino.modlib.thirds',
-  'lino.modlib.cal',
-  'lino.modlib.outbox',
-  'lino.apps.presto',
-)
-
 

@@ -95,5 +95,14 @@ So the above section from the MTI tutorial is no longer necessary
 because the feature is no longer missing.
 
 
+Lino-Welfare
+------------
+
+- added `Account.ref` to debts std fixtures
+
+- Researched on a mysterious message 
+  "outbox.Attachment Controllers of Attachment must define a method `get_target_url`. (1 object(s) with primary key 1)"
+  during data migration.
+  
 
 

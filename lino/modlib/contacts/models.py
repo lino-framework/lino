@@ -15,7 +15,8 @@
 """
 This module deserves more documentation.
 
-It defines tables like `Person` and `Company`
+It defines tables like 
+- :class:`Partner` (and their specializations :class:`Person` and :class:`Company`)
 
 """
 
@@ -114,6 +115,15 @@ class CompanyTypes(dd.Table):
 #~ class Contact(mti.MultiTableBase,CountryCity):
 class Partner(mti.MultiTableBase,CountryRegionCity):
     """
+    
+    A :class:`Partner` is anything that can act as a business partner.
+    A Partner has at least a name and usually also one "official" address.
+    Predefined subclasses of Partners are
+    :class:`Person` for physical persons and
+    :class:`Company` for companies, organisations and any kind of 
+    non-formal Partners.
+    
+    
     Base class for anything that has contact information 
     (postal address, email, phone,...).
     
@@ -459,7 +469,7 @@ class Person(PersonMixin,Partner):
         
     def full_clean(self,*args,**kw):
         """
-        Set the :attr:`Partner.name` field of this person. 
+        Set the `name` field of this person. 
         This field is visible in the Partner's detail but not 
         in the Person's detail and serves for sorting 
         when selecting a Partner. 
@@ -590,7 +600,10 @@ class Companies(Partners):
 # class ContactType(babel.BabelNamed):
 class RoleType(babel.BabelNamed):
     """
-    TODO: rename "RoleType" to "Function".
+    TODO: rename "RoleType" to "Function" or "ContactType".
+    
+    RoleType,name is used at "in seiner Eigenschaft als ..." 
+    in document templates for contracts.    
     """
     class Meta:
         verbose_name = _("Function")
@@ -605,8 +618,12 @@ class RoleTypes(dd.Table):
 #~ class Contact(dd.Model):
 class Role(dd.Model):
     """
-    Represents a given :class:`Person` having a given Function 
-    in a given :class:`Company`.
+    
+    A Contact (historical model name :class:`Role`) 
+    is a :class:`Person` 
+    that has a given  role (:class:`ContactType`) 
+    in a given :class:`Company`. 
+    
     TODO: rename "Role" to "Contact".
     """
   

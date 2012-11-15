@@ -1,4 +1,4 @@
-## Copyright 2008-2010 Luc Saffre
+## Copyright 2008-2012 Luc Saffre
 ## This file is part of the Lino project.
 ## Lino is free software; you can redistribute it and/or modify 
 ## it under the terms of the GNU General Public License as published by
@@ -12,5 +12,5 @@
 ## along with Lino; if not, see <http://www.gnu.org/licenses/>.
 
 """
-See :doc:`/ref/modlib`
+This is :doc:`/topics/modlib`.
 """

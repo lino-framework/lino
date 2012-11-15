@@ -68,6 +68,7 @@ class Lino(Lino):
     def get_installed_apps(self):
         for a in super(Lino,self).get_installed_apps():
             yield a
+        yield 'django.contrib.contenttypes'
         yield 'lino.modlib.users'
         yield 'lino.modlib.countries'
         yield 'lino.modlib.contacts'
@@ -88,64 +89,9 @@ class Lino(Lino):
         from django.utils.translation import ugettext_lazy as _
         dd.UserProfiles.reset('* office')
         add = dd.UserProfiles.add_item
-        #~ add('100', _("Integration Agent"),          'U U')
-        #~ add('900', _("System admin"),          'U U')
         
         add('100', _("User"),          'U U', name='user')
         add('900', _("Administrator"), 'A A', name='admin')
         
       
 LINO = Lino(__file__,globals())
-
-
-#~ PROJECT_DIR = abspath(dirname(__file__))
-#~ DATA_DIR = join(PROJECT_DIR,"data")
-#~ LINO_SETTINGS = join(PROJECT_DIR,"lino_settings.py")
-
-#~ MEDIA_ROOT = join(LINO.project_dir,'media')
-#~ MEDIA_ROOT = join(PROJECT_DIR,'media')
-
-#~ TIME_ZONE = 'Europe/Brussels'
-TIME_ZONE = None
-
-# Language code for this installation. All choices can be found here:
-# http://www.i18nguy.com/unicode/language-identifiers.html
-#~ LANGUAGE_CODE = 'de'
-#~ LANGUAGE_CODE = 'de-BE'
-#~ LANGUAGE_CODE = 'fr-BE'
-
-#~ SITE_ID = 1 # see also fill.py
-
-unused_INSTALLED_APPS = (
-  #~ 'django.contrib.auth',
-  'django.contrib.contenttypes',
-  #~ 'django.contrib.sessions',
-  #~ 'django.contrib.sites',
-  #~ 'django.contrib.markup',
-  #~ 'lino.modlib.system',
-  'lino',
-  'lino.modlib.users',
-  'lino.modlib.countries',
-  #~ 'lino.modlib.documents',
-  #~ 'lino.modlib.properties',
-  'lino.modlib.contacts',
-  #~ 'lino.modlib.projects',
-  'lino.modlib.households',
-  'lino.modlib.notes',
-  'lino.apps.homeworkschool.school',
-  #~ 'lino.modlib.links',
-  'lino.modlib.uploads',
-  #~ 'lino.modlib.thirds',
-  'lino.modlib.cal',
-  'lino.modlib.outbox',
-  #~ 'lino.modlib.jobs',
-  #~ 'lino.modlib.isip',
-  #~ 'lino.modlib.bcss',
-  #~ 'lino.modlib.newcomers',
-  'lino.apps.homeworkschool',
-  #'dsbe.modlib.contacts',
-  #'dsbe.modlib.projects',
-  #~ 'south', # http://south.aeracode.org
-)
-
-

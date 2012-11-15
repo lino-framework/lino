@@ -1204,7 +1204,9 @@ class Lino(object):
         #~ if self.user_model is None:
             #~ yield 'lino.utils.auth.NoUserMiddleware'
         #~ elif self.remote_user_header:
-        if self.user_model is not None:
+        if self.user_model is None:
+            yield 'lino.utils.auth.NoUserMiddleware'
+        else:
             if self.remote_user_header:
                 yield 'lino.utils.auth.RemoteUserMiddleware'
                 #~ yield 'django.middleware.doc.XViewMiddleware'
@@ -1216,7 +1218,6 @@ class Lino(object):
     #~ `user_model` is not None, but no `remote_user_header` in your settings.LINO.""")
         #~ yield 'lino.utils.editing.EditingMiddleware'
         yield 'lino.utils.ajax.AjaxExceptionResponse'
-
 
         if False: # not BYPASS_PERMS:
             yield 'django.contrib.auth.middleware.RemoteUserMiddleware'
@@ -1238,22 +1239,26 @@ class Lino(object):
         """
         return None
         
+
+    MAIN_HTML_TEMPLATE = """\
+    <div class="htmlText">
+    <h1>[=title]</h1>
+    [=parse(obj.body or obj.abstract)]
+    </div>"""
+
+        
+        
     def get_main_html(self,request):
         """
-        Return a chunk of html to be displayed in the main area.
+        Return a chunk of html to be displayed in the main area of the admin index.
         This is being called only if :meth:`get_main_action` returns `None`.
         The default implementation returns the 
         message "It works! But your application isn't complete. ..."
         """
-        return None
-        if False:
-            return """<h1>It works!</h1>
-<p>But your application isn't complete,
-it should also override either 
-<a href="http://lino-framework.org/autodoc/lino.html#lino.Lino.get_main_action">get_main_action</a>
-or 
-<a href="http://lino-framework.org/autodoc/lino.html#lino.Lino.get_main_html">get_main_html</a>
-</p>"""
+        pages = dd.resolve_app('pages')
+        obj = pages.lookup('admin')
+        return pages.render(obj,self.MAIN_HTML_TEMPLATE)
+
 
     def get_product_vat_class(self,tt,product):
         return 'normal'
@@ -1562,12 +1567,10 @@ or
         This method is expected to return or yield the list of strings 
         to be stored into Django's :setting:`INSTALLED_APPS` setting.
         """
-        yield 'django.contrib.contenttypes'
         if self.user_model is not None and self.remote_user_header is None:
             yield 'django.contrib.sessions' # 20121103
         #~ 'django.contrib.sites',
         #~ 'django.contrib.markup',
-        #~ 'lino.modlib.system',
         yield 'lino'
         yield 'lino.modlib.about'
         
