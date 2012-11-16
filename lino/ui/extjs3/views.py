@@ -135,7 +135,8 @@ def run_action(ar,elem):
           "An error report has been sent to the system administrator.")
         logger.warning(msg)
         logger.exception(e)
-        return ar.ui.error_response(e,msg)
+        r = ar.ui.error_response(e,msg)
+        return ar.ui.action_response(r)
           
     
   
@@ -374,10 +375,13 @@ def form2obj_and_save(ar,data,elem,is_new,restful,file_upload=False): # **kw2sav
         return json_response(kw,content_type='text/html')
     else: # 20120814 
         #~ logger.info("20120816 %r", ar.action)
-        if isinstance(ar.bound_action.action,actions.GridEdit):
-            kw.update(rows=[rh.store.row2list(ar,elem)])
-        else:
-            kw.update(data_record=elem2rec_detailed(ar,elem))
+        #~ if isinstance(ar.bound_action.action,actions.GridEdit):
+        #~ if ar.bound_action.action.action_name in ('put','post'): # grid.on_afteredit
+            #~ kw.update(rows=[rh.store.row2list(ar,elem)])
+        #~ else:
+            #~ kw.update(data_record=elem2rec_detailed(ar,elem))
+        kw.update(rows=[rh.store.row2list(ar,elem)])
+        kw.update(data_record=elem2rec_detailed(ar,elem))
     #~ logger.info("20120208 form2obj_and_save --> %r",kw)
     return json_response(kw)
             
@@ -901,7 +905,8 @@ class ApiList(View):
         #~ ar = rpt.request(ui,request,a)
         
         ar = action_request(app_label,actor,request,request.POST)
-        if ar.bound_action.action.action_name in ['duplicate_row','post','poststay']:
+        #~ print 20121116, ar.bound_action.action.action_name
+        if ar.bound_action.action.action_name in ['duplicate_row','post','poststay','insert']:
         #~ if isinstance(ar.bound_action.action,(
               #~ actions.InsertRow,
               #~ actions.DuplicateAction,

@@ -29,7 +29,7 @@ from lino.utils.xmlgen import html as xghtml
 
 #~ __version__ = file(os.path.join(os.path.dirname(
     #~ __file__),'..','VERSION')).read().strip()
-__version__ = "1.5.1"
+__version__ = "1.5.2"
 """
 Lino version number. 
 """

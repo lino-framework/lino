@@ -1673,7 +1673,7 @@ Lino.MainPanel = {
       //~ return {an:'grid'};
       var p = {};
       if (this.action_name)
-          p['$ext_requests.URL_PARAM_ACTION_NAME'] = this.action_name;
+          p$ext_requests.URL_PARAM_ACTION_NAME = this.action_name;
       this.add_param_values(p)
       return p;
   }
@@ -2049,25 +2049,6 @@ Lino.run_row_action = function(requesting_panel,url,pk,actionName) {
 }
 
 
-Lino.unused_list_action_handler = function(actionName,gridmode) {
-  var fn = function(panel,btn,step) {
-    //~ console.log(panel);
-    var url = ADMIN_URL + '/api' + panel.ls_url ;
-    var p = Ext.apply({},panel.get_base_params());
-    p.$ext_requests.URL_PARAM_ACTION_NAME = actionName;
-    //~ p.$ext_requests.URL_PARAM_SUBST_USER = Lino.subst_user;
-    //~ Lino.insert_subst_user(p);
-    if (step) p['$ext_requests.URL_PARAM_ACTION_STEP'] = step;
-    panel.loadMask.show(); // 20120211
-    Ext.Ajax.request({
-      method: 'GET',
-      url: url,
-      params: p,
-      success: Lino.action_handler(panel,undefined,fn)
-    });
-  };
-  return fn;
-};
 
 Lino.show_detail = function(panel,btn) {
   Lino.do_on_current_record(panel, 
@@ -4113,13 +4094,13 @@ Lino.GridPanel = Ext.extend(Lino.GridPanel,{
         failure: Lino.ajax_error_handler(this)
     };
     if (e.record.phantom) {
-      p['$ext_requests.URL_PARAM_ACTION_NAME'] = 'post'; // SubmitInsert.action_name
+      req.params.$ext_requests.URL_PARAM_ACTION_NAME = 'post'; // SubmitInsert.action_name
       Ext.apply(req,{
         method: 'POST',
         url: ADMIN_URL + '/api' + this.ls_url
       });
     } else {
-      p['$ext_requests.URL_PARAM_ACTION_NAME'] = 'put'; // SubmitDetail.action_name
+      req.params.$ext_requests.URL_PARAM_ACTION_NAME = 'put'; // SubmitDetail.action_name
       Ext.apply(req,{
         method: 'PUT',
         url: ADMIN_URL + '/api' + this.ls_url + '/' + e.record.id

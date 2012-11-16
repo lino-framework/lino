@@ -1,9 +1,22 @@
 20121116
 ========
 
+
+Live Demos
+----------
+
 Puh. Heute noch ein hoffentlich letzter Gewaltakt, 
 um die Live-Demos akzeptabel zu kriegen. 
 Da gab es noch hochsubtile Probleme bei den Zugriffsrechten. 
 Zum Beispiel wollte ich, dass jetzt par défaut alle Actors 
 das requirement `auth=True` haben.
 
+
+Testrunde Lino-Welfare
+-----------------------
+
+- Beim Erstellen einer Art-60-7-Konvention gab es noch einige Probleme.
+
+- Nach Bearbeiten einer Zelle einer Grid sprang der Cursor wieder an die erste Position.
+
+- Wenn im Feld "Einleitung" z.B. "Grüße" stand, dann wurde "Gr&uuml;&szlig;e" gedruckt.
