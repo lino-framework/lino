@@ -1,0 +1,9 @@
+20121116
+========
+
+Puh. Heute noch ein hoffentlich letzter Gewaltakt, 
+um die Live-Demos akzeptabel zu kriegen. 
+Da gab es noch hochsubtile Probleme bei den Zugriffsrechten. 
+Zum Beispiel wollte ich, dass jetzt par défaut alle Actors 
+das requirement `auth=True` haben.
+

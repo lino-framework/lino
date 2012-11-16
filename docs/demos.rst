@@ -2,6 +2,20 @@ Demo sites
 ==========
 
 
+http://demo1.lino-framework.org
+
+  homeworkschool
+
+http://demo2.lino-framework.org
+
+  Presto
+
+http://demo3.lino-framework.org
+
+  The Polls Tutorial
+
+
+
 http://welfare-demo.lino-framework.org
 
   An application for Belgian Public Centres for Social Welfare (PCSW)

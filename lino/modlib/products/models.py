@@ -36,6 +36,7 @@ class ProductCat(babel.BabelNamed):
 
 class ProductCats(dd.Table):
     model = ProductCat
+    required = dd.required(user_level='manager')
     order_by = ["id"]
     detail_layout = """
     id name
@@ -64,6 +65,7 @@ class Product(babel.BabelNamed):
         
 
 class Products(dd.Table):
+    required = dd.required(auth=True)
     model = Product
     order_by = ["id"]
     column_names = "id:3 name cat vatExempt price:6 *"
