@@ -100,32 +100,36 @@ wrap it into a <div class="htmlText">.
 
 .htmlText {
 	font-family: arial,tahoma;
-	color:black;
 }
 .htmlText h1 {
-	padding:6px;
-	font-size:24px;
+	font-size:16px;
+	padding-top:0px;
+	padding-bottom:12px;
 	}
 .htmlText h2 {
-	padding:6px;
 	font-size:13px;
+	padding-top:0px;
+	padding-bottom:10px;
 	}
 .htmlText td {
-	padding:6px;
+	padding:0px;
 	}
-.htmlText p,ol,ul,li {
-	padding:6px;
-	}
-.htmlText li {
-	padding-top:0px;
-	padding-bottom:0px;
+.htmlText p {
+	margin-top:0px;
+	margin-bottom:0px;
 	}
 .htmlText ol {
+	margin-top:3px;
+	margin-left:20px;
+	margin-bottom:3px;
 	list-style-type: decimal; 
 	list-style-image: none; 
 	list-style-position: outside;
 	}
 .htmlText ul {
+	margin-top:3px;
+	margin-left:20px;
+	margin-bottom:3px;
 	list-style-type: square; 
 	list-style-image: none; 
 	list-style-position: outside;

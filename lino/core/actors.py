@@ -216,7 +216,7 @@ class Actor(actions.Parametrizable):
     """
     
     required = dict()
-    #~ required = dict(auth=True)
+    #~ required = dict(auth=True) # 20121116
     
     #~ create_required = dict()
     update_required = dict()
@@ -405,27 +405,6 @@ class Actor(actions.Parametrizable):
     create_action = None
     delete_action = None
     
-    #~ required_user_level = None
-    #~ """
-    #~ The minimum :class:`lino.utils.choicelists.UserLevels` 
-    #~ required to get permission to view this Actor.
-    #~ The default value `None` means that no special UserLevel is required.
-    #~ See also :attr:`required_user_groups`
-    #~ """
-    
-    #~ required_user_groups = None
-    #~ """
-    #~ List of strings naming the user groups for which membership is required 
-    #~ to get permission to view this Actor.
-    #~ The default value `None` means
-    #~ """
-    
-    @classmethod
-    def set_required(self,**kw):
-        jsgen.set_required(self,**kw)
-        
-    
-    
     
     _handle_class = None
     "For internal use"
@@ -582,6 +561,11 @@ class Actor(actions.Parametrizable):
         return self.__name__
                         
         
+    @classmethod
+    def add_view_requirements(cls,**kw):
+        return actions.add_requirements(cls,**kw)
+        
+    
     @classmethod
     def get_view_permission(self,user):
         #~ return self.default_action.action.allow(user,None,None)

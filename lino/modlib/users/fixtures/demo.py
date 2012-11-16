@@ -55,7 +55,7 @@ def objects():
         kw = root_kw(lang)
         if kw:
             u = User(**kw)
-            u.set_password('1234')
+            #~ u.set_password('1234')
             yield u
         
     #~ yield create_user('root','root@example.com','Root','User')

@@ -48,6 +48,7 @@ from django import http
 from lino.utils import babel
 from lino.utils.choicelists import ChoiceList, Choice
 
+from lino.core.modeltools import obj2str
 #~ from lino.core.perms import UserProfiles
 from lino.ui import requests as ext_requests
 
@@ -246,10 +247,9 @@ class UserProfiles(ChoiceList):
 
 #~ UserProfiles choicelist is going to be filled in `lino.Lino.setup_choicelists` 
 #~ because the attributes of each Choice depend on UserGroups
-    
 
 
-
+#~ def default_required(): return dict(auth=True)
 
 def make_permission_handler(*args,**kw):
     """
@@ -313,7 +313,8 @@ def make_permission_handler(*args,**kw):
 def make_permission_handler_(
     elem,actor,
     readonly,debug_permissions,
-    user_level=None,user_groups=None,states=None,allow=None,owner=None,auth=True):
+    #~ user_level=None,user_groups=None,states=None,allow=None,owner=None,auth=True): 20121116
+    user_level=None,user_groups=None,states=None,allow=None,owner=None,auth=False):
     #~ from lino.utils.auth import UserLevels, UserGroups
     if allow is None:
         def allow(action,user,obj,state):
@@ -326,41 +327,41 @@ def make_permission_handler_(
                     return False
                 return allow_before_auth(action,user,obj,state)
             
-    if user_level is not None:
-        user_level = getattr(UserLevels,user_level)
-        allow_user_level = allow
-        def allow(action,user,obj,state):
-            #~ if user.profile.level is None or user.profile.level < user_level:
-            if user.profile.level < user_level:
-                #~ print 20120715, user.profile.level
-                return False
-            return allow_user_level(action,user,obj,state)
-            
-    if owner is not None:
-        allow_owner = allow
-        def allow(action,user,obj,state):
-            if obj is not None and (user == obj.user) != owner:
-                return False
-            return allow_owner(action,user,obj,state)
-            
-    if user_groups is not None:
-        if isinstance(user_groups,basestring):
-            user_groups = user_groups.split()
-        if user_level is None:
-            user_level = UserLevels.user
-            #~ raise Exception("20120621")
-        for g in user_groups:
-            UserGroups.get_by_value(g) # raise Exception if no such group exists
-            #~ if not UserGroups.get_by_name(g):
-                #~ raise Exception("Invalid UserGroup %r" % g)
-        allow1 = allow
-        def allow(action,user,obj,state):
-            if not allow1(action,user,obj,state): return False
+        if user_level is not None:
+            user_level = getattr(UserLevels,user_level)
+            allow_user_level = allow
+            def allow(action,user,obj,state):
+                #~ if user.profile.level is None or user.profile.level < user_level:
+                if user.profile.level < user_level:
+                    #~ print 20120715, user.profile.level
+                    return False
+                return allow_user_level(action,user,obj,state)
+                
+        if owner is not None:
+            allow_owner = allow
+            def allow(action,user,obj,state):
+                if obj is not None and (user == obj.user) != owner:
+                    return False
+                return allow_owner(action,user,obj,state)
+                
+        if user_groups is not None:
+            if isinstance(user_groups,basestring):
+                user_groups = user_groups.split()
+            if user_level is None:
+                user_level = UserLevels.user
+                #~ raise Exception("20120621")
             for g in user_groups:
-                level = getattr(user.profile,g+'_level')
-                if level >= user_level:
-                    return True
-            return False
+                UserGroups.get_by_value(g) # raise Exception if no such group exists
+                #~ if not UserGroups.get_by_name(g):
+                    #~ raise Exception("Invalid UserGroup %r" % g)
+            allow1 = allow
+            def allow(action,user,obj,state):
+                if not allow1(action,user,obj,state): return False
+                for g in user_groups:
+                    level = getattr(user.profile,g+'_level')
+                    if level >= user_level:
+                        return True
+                return False
             
     if states is not None and actor.workflow_state_field is not None:
         #~ if not isinstance(actor.workflow_state_field,choicelists.ChoiceListField):
@@ -473,11 +474,11 @@ def authenticate(username,password=NOT_NEEDED):
         user = settings.LINO.user_model.objects.get(username=username)
         if password != NOT_NEEDED:
             if not user.check_password(password):
-                #~ logger.info("20121104 password mismatch")
+                logger.info("20121104 password mismatch")
                 return None
         return user
     except settings.LINO.user_model.DoesNotExist,e:
-        #~ logger.info("20121104 no username %r",username)
+        logger.info("20121104 no username %r",username)
         return None  
         
         

@@ -150,9 +150,14 @@ class Lino(object):
     max_action_name_length = 50
     max_actor_name_length = 100
     
+    use_experimental_features = False
+    """
+    Whether to include "experimental" features.
+    """
     
-    admin_url = '/admin'
-    #~ admin_url = '' # 
+    
+    #~ admin_url = '/admin'
+    admin_url = '' # 
     """
     If this is not empty (the usual value in that case is ``"/admin"``), 
     then your site features a "web content mode": 

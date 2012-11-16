@@ -419,6 +419,12 @@ class AdminIndex(View):
                 kw.update(on_ready=ui.ext_renderer.action_call(request,a,{}))
         return http.HttpResponse(ui.html_page(request,**kw))
 
+class MainHtml(View):
+    def get(self, request, *args, **kw):
+        ui = settings.LINO.ui
+        rv = ui.success_response(html=settings.LINO.get_main_html(request))
+        return ui.action_response(rv)
+        
 class Authenticate(View):
   
     def get(self, request, *args, **kw):
@@ -466,12 +472,6 @@ class EidAppletService(View):
         return ui.success_response(html='Hallo?')
 
 
-class MainHtml(View):
-    def get(self, request, *args, **kw):
-        ui = settings.LINO.ui
-        rv = ui.success_response(html=settings.LINO.get_main_html(request))
-        return ui.action_response(rv)
-        
 class Templates(View):
   
     #~ def templates_view(self,request,

@@ -361,9 +361,11 @@ Lino.login_window = null;
 
 Lino.show_login_window = function() {
   //~ console.log('20121103 show_login_window',arguments);
+  //~ var current_window = Lino.current_window;
   if (Lino.login_window == null) {
     
       function do_login() { 
+            Lino.viewport.loadMask.show()
             login_panel.getForm().submit({ 
                 method:'POST', 
                 waitTitle:'Connecting', 
@@ -372,10 +374,13 @@ Lino.show_login_window = function() {
                   //~ console.log('20121104 logged in',arguments);
                   Lino.login_window.hide();
                   Lino.close_all_windows();
+                  Lino.viewport.loadMask.hide()
                 },
                 failure: function(form,action) { 
                   //~ this.loadMask.hide();
                   Lino.on_submit_failure(form,action);
+                  Lino.viewport.loadMask.hide()
+                  //~ if (Lino.current_window) Lino.current_window.main_item.loadMask.hide()
                 }
                 //~ failure:function(form, action){ 
                     //~ alert_msg
@@ -406,6 +411,7 @@ Lino.show_login_window = function() {
         monitorValid:true,
         items:[{ 
             fieldLabel:'Username', 
+            id: 'username',
             name:'username', 
             autoHeight:true,
             allowBlank:false 
@@ -421,12 +427,13 @@ Lino.show_login_window = function() {
       var enter_key_binding = {
           key: Ext.EventObject.ENTER,
           //~ fn: function() { console.log("20121104 click!"); login_button.fireEvent('click',login_button)}
-          fn: function() { console.log("20121104 click!"); do_login()}
+          fn: function() { do_login()}
           //~ scope: login_button
       };        
         
       Lino.login_window = new Ext.Window({
           layout:'fit',
+          defaultButton: 'username',
           width:300,
           title:'Please Login', 
           autoHeight:true,
@@ -464,6 +471,7 @@ Lino.set_subst_user = function(id,name) {
         Lino.current_window.main_item.set_base_param("$ext_requests.URL_PARAM_SUBST_USER",id);
     if (Lino.viewport) Lino.permalink_handler(Lino.current_window)();
 }
+
 
 
 //~ Lino.select_subst_user = function(cmp,rec,value){

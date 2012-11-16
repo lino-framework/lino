@@ -136,6 +136,8 @@ class Choice(object):
         
         
     def __str__(self):
+        if self.name:
+            return self.name
         return unicode_string(self.text)
         #~ return unicode(self.text).encode(sys.getdefaultencoding(),'backslashreplace')
         

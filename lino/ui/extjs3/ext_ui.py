@@ -697,33 +697,41 @@ class ExtUI(base.UI):
         pkw.update(label=kw.pop('label',None))
         pkw.update(width=kw.pop('width',None))
         pkw.update(height=kw.pop('height',None))
-        required = {}
-        required.update(lh.layout._actor.required)
+        #~ required = {}
+        #~ main panel 
+        # 20121116
+        #~ if False and name == 'main' and isinstance(lh.layout,layouts.ListLayout):
+        #~ if name != 'main' and isinstance(lh.layout,layouts.ListLayout):
+        #~ required.update(lh.layout._actor.required)
+        #~ todo: requirements sind eine negativ-liste. aber auth=True muss in eine positiv-liste
         v = kw.pop('required',NOT_GIVEN)
         if v is not NOT_GIVEN:
-            required.update(v)
-        pkw.update(required=required)
+            pkw.update(required=v)
         if kw:
             raise Exception("Unknown panel attributes %r for %s" % (kw,lh))
         if name == 'main':
             if isinstance(lh.layout,layouts.ListLayout):
                 #~ return ext_elems.GridMainPanel(lh,name,vertical,*elems,**pkw)
                 #~ return ext_elems.GridMainPanel(lh,name,lh.layout._actor,*elems,**pkw)
-                return ext_elems.GridElement(lh,name,lh.layout._actor,*elems,**pkw)
-            if isinstance(lh.layout,layouts.ActionParamsLayout) : 
-                return ext_elems.ActionParamsPanel(lh,name,vertical,*elems,**pkw)
-            if isinstance(lh.layout,layouts.ParamsLayout) : 
-                return ext_elems.ParamsPanel(lh,name,vertical,*elems,**pkw)
+                e = ext_elems.GridElement(lh,name,lh.layout._actor,*elems,**pkw)
+            elif isinstance(lh.layout,layouts.ActionParamsLayout) : 
+                e = ext_elems.ActionParamsPanel(lh,name,vertical,*elems,**pkw)
+            elif isinstance(lh.layout,layouts.ParamsLayout) : 
+                e = ext_elems.ParamsPanel(lh,name,vertical,*elems,**pkw)
                 #~ fkw = dict(layout='fit', autoHeight= True, frame= True, items=pp)
                 #~ if lh.layout._actor.params_panel_hidden:
                     #~ fkw.update(hidden=True)
                 #~ return ext_elems.FormPanel(**fkw)
-            if isinstance(lh.layout,layouts.FormLayout): 
+            elif isinstance(lh.layout,layouts.FormLayout): 
                 if len(elems) == 1 or vertical:
-                    return ext_elems.DetailMainPanel(lh,name,vertical,*elems,**pkw)
+                    e = ext_elems.DetailMainPanel(lh,name,vertical,*elems,**pkw)
                 else:
-                    return ext_elems.TabPanel(lh,name,*elems,**pkw)
-            raise Exception("No element class for layout %r" % lh.layout)
+                    e = ext_elems.TabPanel(lh,name,*elems,**pkw)
+            else:
+                raise Exception("No element class for layout %r" % lh.layout)
+            #~ actions.loosen_requirements(e,**lh.layout._actor.required)
+            #~ e.debug_permissions = True
+            return e
         return ext_elems.Panel(lh,name,vertical,*elems,**pkw)
 
     def create_layout_element(self,lh,name,**kw):
@@ -822,8 +830,9 @@ class ExtUI(base.UI):
                     field.name = de.__name__
                     field._return_type_for_method = de.slave_as_html_meth(self)
                     lh.add_store_field(field)
-                    kw.update(required=de.required) # e.g. lino.Home.UsersWithClients not visible for everybody
+                    #~ kw.update(required=de.required) # e.g. lino.Home.UsersWithClients not visible for everybody
                     e = ext_elems.HtmlBoxElement(lh,field,**kw)
+                    e.add_requirements(**de.required)
                     return e
             else:
                 #~ field = fields.TextField(verbose_name=de.label)
@@ -1563,14 +1572,13 @@ tinymce.init({
         #~ print '20120605 dynamic actors',[a for a in actors_list if a.get_handle_name is not None]
         actors_list = [a for a in actors_list if a.get_handle_name is None]
 
-        new_actors_list = []
-        for a in actors_list:
-            if a.get_view_permission(jsgen._for_user):
-                new_actors_list.append(a)
-            #~ else:
-                #~ logger.info("20121008 no view permission for %s",a)
-                
-        actors_list = new_actors_list
+        #~ new_actors_list = []
+        #~ for a in actors_list:
+            #~ if a.get_view_permission(jsgen._for_user):
+                #~ new_actors_list.append(a)
+        #~ actors_list = new_actors_list
+        
+        actors_list = [a for a in actors_list if a.get_view_permission(jsgen._for_user)]
         
         #~ actors_list = [a for a in actors_list if a.get_view_permission(jsgen._for_user)]
           
@@ -1585,10 +1593,12 @@ tinymce.init({
         form_panels = set()
         param_panels = set()
         action_param_panels = set()
-        def add(collector,fl,formpanel_name):
+        def add(res,collector,fl,formpanel_name):
             # fl : a FormLayout
             if fl is not None:
-                #~ if details.has_key():
+                lh = fl.get_layout_handle(self)
+                for e in lh.main.walk():
+                    e.loosen_requirements(res)
                 if fl in collector:
                     pass
                     #~ fl._using_actors.append(actor)
@@ -1600,13 +1610,13 @@ tinymce.init({
         assert user == jsgen._for_user
         
         for res in actors_list:
-            add(form_panels,res.detail_layout, "%s.DetailFormPanel" % res)
-            add(form_panels,res.insert_layout, "%s.InsertFormPanel" % res)
-            add(param_panels,res.params_layout, "%s.ParamsPanel" % res)
+            add(res,form_panels,res.detail_layout, "%s.DetailFormPanel" % res)
+            add(res,form_panels,res.insert_layout, "%s.InsertFormPanel" % res)
+            add(res,param_panels,res.params_layout, "%s.ParamsPanel" % res)
             
             for ba in res.get_actions():
                 if ba.action.parameters:
-                    add(action_param_panels,ba.action.params_layout, 
+                    add(res,action_param_panels,ba.action.params_layout, 
                       "%s.%s_ActionFormPanel" % (res,ba.action.action_name))
 
         if False:
@@ -1888,7 +1898,7 @@ tinymce.init({
       
     def js_render_ActionFormPanelSubclass(self,dh,user):
         tbl = dh.layout._actor
-        #~ logger.info("20121007 js_render_ActionFormPanelSubclass")
+        #~ logger.info("20121007 js_render_ActionFormPanelSubclass %s",dh.layout._formpanel_name)
         yield ""
         yield "Lino.%s = Ext.extend(Lino.ActionFormPanel,{" % dh.layout._formpanel_name
         for k,v in dh.main.ext_options().items():
@@ -1908,8 +1918,9 @@ tinymce.init({
         for ln in jsgen.declare_vars(dh.main.elements):
             yield "    " + ln
             lc += 1
-        if lc == 0:
-            raise Exception("%r of %s has no variables" % (dh.main,dh))
+        # 20121116
+        #~ if lc == 0:
+            #~ raise Exception("%s (%r of %s) has no variables" % (dh.layout._formpanel_name,dh.main,dh))
         yield "    this.items = %s;" % py2js(dh.main.elements)
         yield "    this.fields = %s;" % py2js(
           [e for e in dh.main.walk() if isinstance(e,ext_elems.FieldElement)])
@@ -1920,9 +1931,11 @@ tinymce.init({
       
     def js_render_FormPanelSubclass(self,dh,user):
         
-        if not dh.main.get_view_permission(jsgen._for_user):
-            raise Exception("No view permission for main panel of %s ?! required is %s" % (dh,dh.main.required))
         tbl = dh.layout._actor
+        if not dh.main.get_view_permission(jsgen._for_user):
+            msg = "No view permission for main panel of %s :" % dh.layout._formpanel_name
+            msg += " actor %s requires %s, but main requires %s)" % (tbl,tbl.required,dh.main.required)
+            raise Exception(msg)
         
         yield ""
         yield "Lino.%s = Ext.extend(Lino.FormPanel,{" % dh.layout._formpanel_name

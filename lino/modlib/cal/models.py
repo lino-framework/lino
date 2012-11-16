@@ -174,7 +174,7 @@ class Calendar(mixins.PrintableType,outbox.MailableType,babel.BabelNamed):
         
     
 class Calendars(dd.Table):
-    required = dict(user_groups='office',user_level='manager')
+    required = dd.required(user_groups='office',user_level='manager')
     model = 'cal.Calendar'
     column_names = "name type color readonly build_method template *"
     
@@ -239,14 +239,14 @@ Whether this subscription should initially be hidden in your calendar panel.""")
     
         
 class Subscriptions(dd.Table):
-    required = dict(user_groups='office',user_level='manager')
+    required = dd.required(user_groups='office',user_level='manager')
     model = Subscription
 
 class SubscriptionsByCalendar(Subscriptions):
     master_key = 'calendar'
 
 class SubscriptionsByUser(Subscriptions):
-    required = dict(user_groups='office')
+    required = dd.required(user_groups='office')
     master_key = 'user'
 
 #~ class MySubscriptions(Subscriptions,mixins.ByUser):
@@ -283,12 +283,12 @@ if settings.LINO.user_model:
         
             
     class Memberships(dd.Table):
-        required = dict(user_groups='office',user_level='manager')
+        required = dd.required(user_groups='office',user_level='manager')
         model = Membership
 
 
     class MembershipsByUser(Memberships):
-        required = dict(user_groups='office')
+        required = dd.required(user_groups='office')
         master_key = 'user'
         label = _("Team Members")
 
@@ -306,7 +306,7 @@ class Place(babel.BabelNamed):
         
   
 class Places(dd.Table):
-    required = dict(user_groups='office')
+    required = dd.required(user_groups='office')
     model = Place
     detail_layout = """
     id name
@@ -321,7 +321,7 @@ class Priority(babel.BabelNamed):
     ref = models.CharField(max_length='1')
 
 class Priorities(dd.Table):
-    required = dict(user_groups='office')
+    required = dd.required(user_groups='office')
     model = Priority
     column_names = 'name *'
 
@@ -666,7 +666,7 @@ class RecurrenceSets(dd.Table):
     The list of all :class:`Recurrence Sets <RecurrenceSet>`.
     """
     model = RecurrenceSet
-    required = dict(user_groups='office')
+    required = dd.required(user_groups='office')
     
     detail_layout = """
     id calendar uid summary start_date start_time
@@ -1022,8 +1022,9 @@ class EventInsert(EventDetail):
     """
    
 class Events(dd.Table):
+    #~ debug_permissions = True
     model = 'cal.Event'
-    required = dict(user_groups='office',user_level='manager')
+    required = dd.required(user_groups='office',user_level='manager')
     column_names = 'start_date start_time user summary workflow_buttons calendar *'
     #~ active_fields = ['all_day']
     order_by = ["start_date","start_time"]
@@ -1040,7 +1041,7 @@ class EventsByCalendar(Events):
     #~ master_key = 'type'
     
 class EventsByPartner(Events):
-    required = dict(user_groups='office')
+    required = dd.required(user_groups='office')
     master_key = 'user'
     
 class EventsByPlace(Events):
@@ -1050,21 +1051,21 @@ class EventsByPlace(Events):
     master_key = 'place'
 
 class EventsByController(Events):
-    required = dict(user_groups='office')
+    required = dd.required(user_groups='office')
     master_key = 'owner'
     column_names = 'start_date start_time summary workflow_buttons id'
 
 if settings.LINO.project_model:    
   
     class EventsByProject(Events):
-        required = dict(user_groups='office')
+        required = dd.required(user_groups='office')
         master_key = 'project'
     
 if settings.LINO.user_model:    
   
     class MyEvents(Events,mixins.ByUser):
         help_text = _("Table of all my calendar events.")
-        required = dict(user_groups='office',auth=True)
+        required = dd.required(user_groups='office')
         column_names = 'start_date start_time calendar project summary workflow_buttons *'
         
     #~ class EventsReserved(Events):
@@ -1084,26 +1085,26 @@ if settings.LINO.user_model:
     class EventsSuggested(Events):
         help_text = _("Table of all suggested events.")
         label = _("Suggested Events")
-        required = dict(user_groups='office',user_level='manager')
+        required = dd.required(user_groups='office',user_level='manager')
         column_names = 'start_date start_time user project summary workflow_buttons *'
         known_values = dict(state=EventStates.suggested)
         
     class MyEventsSuggested(EventsSuggested,MyEvents):
         help_text = _("Table of my suggested events (to become notified).")
-        required = dict(user_groups='office',auth=True)
+        required = dd.required(user_groups='office')
         column_names = 'start_date start_time project summary workflow_buttons *'
         label = _("My suggested Events")
         
     class EventsNotified(Events):
         help_text = _("Table of all notified events (waiting to become scheduled).")
         label = _("Notified Events")
-        required = dict(user_groups='office',user_level='manager')
+        required = dd.required(user_groups='office',user_level='manager')
         column_names = 'start_date start_time user project summary workflow_buttons *'
         known_values = dict(state=EventStates.notified)
         
     class MyEventsNotified(EventsNotified,MyEvents):
         help_text = _("Table of my notified events (waiting to become scheduled).")
-        required = dict(user_groups='office',auth=True)
+        required = dd.required(user_groups='office')
         column_names = 'start_date start_time project summary workflow_buttons *'
         label = _("My notified Events")
         
@@ -1172,7 +1173,7 @@ if settings.LINO.user_model:
         #~ column_names = 'start_date start_time project summary workflow_buttons *'
         
     class MyEventsToday(MyEvents):
-        required = dict(user_groups='office',auth=True)
+        required = dd.required(user_groups='office')
         help_text = _("Table of my events per day.")
         column_names = 'start_time summary workflow_buttons *'
         label = _("My events today")
@@ -1276,7 +1277,7 @@ class Task(Component):
 class Tasks(dd.Table):
     #~ debug_permissions = True
     model = 'cal.Task'
-    required = dict(user_groups='office')
+    required = dd.required(user_groups='office')
     column_names = 'start_date summary workflow_buttons *'
     order_by = ["-start_date","-start_time"]
     #~ hidden_columns = set('owner_id owner_type'.split())
@@ -1319,13 +1320,13 @@ if settings.LINO.user_model:
         #~ filter = Q(auto_type__isnull=False)
         
     class MyTasks(Tasks,mixins.ByUser):
-        required = dict(user_groups='office')
+        required = dd.required(user_groups='office')
         #~ required = dict()
         help_text = _("Table of all my tasks.")
         column_names = 'start_date summary workflow_buttons *'
     
     class MyTasksToDo(MyTasks):
-        required = dict(user_groups='office')
+        required = dd.required(user_groups='office')
         help_text = _("Table of my tasks marked 'to do'.")
         column_names = 'start_date summary workflow_buttons *'
         label = _("To-do list")
@@ -1358,7 +1359,7 @@ class GuestRoles(dd.Table):
     Table showing all :class:`GuestRole` objects.
     """
     model = GuestRole
-    required = dict(user_groups='office')
+    required = dd.required(user_groups='office')
     detail_layout = """
     id name
     build_method template email_template attach_to_email
@@ -1455,7 +1456,7 @@ class Guest(mixins.TypedPrintable,outbox.Mailable):
 #~ class Guests(dd.Table,workflows.Workflowable):
 class Guests(dd.Table):
     model = Guest
-    required = dict(user_groups='office')
+    required = dd.required(user_groups='office')
     column_names = 'partner role workflow_buttons remark event *'
     #~ workflow_state_field = 'state'
     #~ column_names = 'contact role state remark event *'
@@ -1477,7 +1478,7 @@ class GuestsByPartner(Guests):
     column_names = 'event role workflow_buttons remark *'
 
 class MyPresences(GuestsByPartner):
-    required = dict(user_groups='office',auth=True)
+    required = dd.required(user_groups='office')
     order_by = ['event__start_date','event__start_time']
     label = _("My presences")
     help_text = _("""Shows all my presences in calendar events, independently of their state.""")
@@ -1779,7 +1780,7 @@ if settings.LINO.use_extensible:
         """
         Deserves documentation.
         """
-        required = dict(user_groups='office',auth=True)
+        required = dd.required(user_groups='office')
         
         #~ default_action = CalendarAction()
         #~ default_action_class = dd.Calendar
@@ -1794,7 +1795,7 @@ if settings.LINO.use_extensible:
 
     class PanelCalendars(Calendars):
         use_as_default_table = False
-        required = dict(user_groups='office',auth=True)
+        required = dd.required(user_groups='office')
         #~ column_names = 'id name description color is_hidden'
         column_names = 'id babel_name description color is_hidden'
         
@@ -1820,7 +1821,7 @@ if settings.LINO.use_extensible:
         """
         The table used for Ext.ensible CalendarPanel.
         """
-        required = dict(user_groups='office',auth=True)
+        required = dd.required(user_groups='office')
         use_as_default_table = False
         #~ parameters = dict(team_view=models.BooleanField(_("Team View")))
         

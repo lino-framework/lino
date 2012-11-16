@@ -319,7 +319,7 @@ class Home(mixins.EmptyTable):
     This is the "home page" or "welcome screen", the window to be displayed 
     when no other window is opened.
     """
-    #~ required = dict(auth=False)
+    required = dict(auth=True)
     #~ debug_actions = True
     label = _("Home") 
     hide_window_title = True
@@ -439,6 +439,7 @@ def setup_config_menu(site,ui,user,m):
     system = m.add_menu("system",SYSTEM_USER_LABEL)
     #~ m.add_action('links.LinkTypes')
     if site.user_model:
+        system.add_instance_action(site.site_config)
         system.add_action(site.user_model)
         office.add_action(MyTextFieldTemplates)
     #~ m.add_action(site.modules.users.Users)
@@ -446,8 +447,6 @@ def setup_config_menu(site,ui,user,m):
         system.add_action(site.modules.lino.ContentTypes)
         system.add_action(site.modules.lino.HelpTexts)
         #~ m.add_action(site.modules.lino.Workflows)
-    #~ if site.use_tinymce:
-    system.add_instance_action(site.site_config)
         
   
 def setup_explorer_menu(site,ui,user,m):

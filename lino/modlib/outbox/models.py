@@ -280,17 +280,15 @@ class Recipient(dd.Model):
             return False
         return super(Recipient,self).get_row_permission(ar,state,ba)
       
-
-
 class Recipients(dd.Table):
-    required = dict(user_level='manager',user_groups='office')
+    required = dd.required(user_level='manager',user_groups='office')
     #~ required_user_level = UserLevels.manager
     model = Recipient
     #~ column_names = 'mail  type *'
     #~ order_by = ["address"]
-
+    
 class RecipientsByMail(Recipients):
-    required = dict()
+    required = dd.required()
     #~ required_user_level = None
     master_key = 'mail'
     column_names = 'partner:20 address:20 name:20 type:10 *'
@@ -467,7 +465,7 @@ class Mail(mixins.AutoUser,mixins.Printable,mixins.ProjectRelated,mixins.Control
 
 class Mails(dd.Table):
     #~ read_access = dd.required(user_level='manager')
-    required = dict(user_level='manager',user_groups='office')
+    required = dd.required(user_level='manager',user_groups='office')
     model = Mail
     column_names = "sent recipients subject * body"
     order_by = ["sent"]
@@ -488,8 +486,7 @@ if not settings.LINO.project_model:
     
     
 class MyOutbox(Mails):
-    #~ required = dict()
-    required = dict(user_groups='office')
+    required = dd.required(user_groups='office')
     
     #~ required_user_level = None
     #~ known_values = dict(outgoing=True)
@@ -508,14 +505,14 @@ class MyOutbox(Mails):
     #~ filter = models.Q(sent__isnull=False)
     
 class MailsByController(Mails):
-    required = dict()
+    required = dd.required()
     master_key = 'owner'
     #~ label = _("Postings")
     #~ slave_grid_format = 'summary'
 
   
 class MailsByUser(Mails):
-    required = dict()
+    required = dd.required()
     label = _("Outbox")
     column_names = 'sent subject recipients'
     #~ order_by = ['sent']
@@ -523,7 +520,7 @@ class MailsByUser(Mails):
     master_key = 'user'
 
 class MailsByProject(Mails):
-    required = dict()
+    required = dd.required()
     label = _("Outbox")
     column_names = 'date subject recipients user *'
     #~ order_by = ['sent']
@@ -531,7 +528,7 @@ class MailsByProject(Mails):
     master_key = 'project'
     
 class SentByPartner(Mails):
-    required = dict()
+    required = dd.required()
     master = 'contacts.Partner'
     label = _("Outbox")
     column_names = 'sent subject user'
@@ -579,7 +576,7 @@ class Attachment(mixins.Controllable):
         
 class Attachments(dd.Table):
     model = Attachment
-    required = dict(user_groups='office')
+    required = dd.required(user_groups='office')
     #~ window_size = (400,500)
     #~ detail_layout = """
     #~ mail owner
@@ -628,3 +625,5 @@ def setup_explorer_menu(site,ui,user,m):
 #~ dd.add_user_group('office',MODULE_LABEL)
   
 dd.update_field(Mail,'user',verbose_name=_("Sender"))
+
+

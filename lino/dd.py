@@ -322,4 +322,10 @@ def ForeignKey(othermodel,*args,**kw):
         return DummyField(othermodel,*args,**kw)
     return models.ForeignKey(othermodel,*args,**kw)
     
+def required(**kw):
+    #~ if not kw.has_key('auth'):
+        #~ kw.update(auth=True)
+    kw.setdefault('auth',True)
+    return kw
+
     

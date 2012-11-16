@@ -75,7 +75,7 @@ class ChoicesByPoll(Choices):
     master_key = 'poll'
     
 
-def old_recent_polls(request):
+def recent_polls(request):
     html = '<h1>%s</h1> ' % cgi.escape("Recent polls")
     html += '<ul>'
     for poll in Poll.objects.filter(hidden=False).order_by('pub_date'):
@@ -97,7 +97,7 @@ def old_recent_polls(request):
     html += '</ul>'
     return html
     
-def recent_polls(request):
+def recent_polls_xghtml(request):
     from lino.utils.xmlgen.html import E
     main = E.div(class_='htmlText')
     E.add_child(main,'h1',"Recent polls")

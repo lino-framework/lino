@@ -286,11 +286,14 @@ class VisibleComponent(jsgen.Component,Permittable):
                 #~ self,self,True,
                 #~ debug_permissions),self)
         #~ else:
+        self.install_permission_handler()
+        
+    def install_permission_handler(self):
         self.allow_read = curry(make_permission_handler(
             self,self,True,
-            False,
+            self.debug_permissions,
             **self.required),self)
-
+            
     def get_view_permission(self,user):
         return self.allow_read(user,None,None)
         
@@ -398,6 +401,55 @@ class LayoutElement(VisibleComponent):
     #~ def submit_fields(self):
         #~ return []
         
+    def add_requirements(self,**kw):
+        super(LayoutElement,self).add_requirements(**kw)
+        self.install_permission_handler()
+        
+        
+    def loosen_requirements(self,actor):
+        """
+        Retain only those requirements of obj which are also in actor.
+        """
+        if self.layout_handle.layout._actor == actor:
+            return 
+        #~ kw = actor.required
+        new = dict()
+        loosened = set()
+        for k,v in self.required.items():
+            if actor.required.has_key(k):
+                if actor.required[k] < v:
+                    loosened.add(k)
+                    self.required[k] = actor.required[k]
+            else:
+                loosened.add(k)
+                del self.required[k]
+            
+        #~ for k,v in actor.required.items():
+            #~ new[k] = v
+            #~ if k in self.required:
+                #~ if self.required[k] > v:
+                    #~ removed.add(k)
+            #~ else:
+                #~ removed.add(k)
+        if loosened:
+            #~ self.required = new
+            self.install_permission_handler()
+            #~ logger.info("20121116 loosened requirements %s using %s by %s",,self.layout_handle.layout,actor)
+            #~ logger.info("20121116 %s uses %s loosening requirements %s",actor,self.layout_handle.layout,','.join(loosened))
+            #~ if self.layout_handle.layout._actor != actor:
+                #~ raise Exception("%s != %s" % (self.layout_handle.layout._actor,actor))
+            #~ for e in self.elements:
+                #~ if isinstance(e,Container):
+                    #~ e.loosen_requirements(actor)
+        #~ elif self.layout_handle.layout._actor != actor:
+            #~ logger.info("20121116 %s uses %s with same requirements",actor,self.layout_handle.layout)
+            
+        
+        
+    def __repr__(self):
+        return "<%s %s in %s>" % (self.__class__.__name__,self.name,self.layout_handle.layout)
+        
+
     def get_property(self,name):
         v = getattr(self,name,None)
         if self.parent is None or v is not None:
@@ -1229,6 +1281,8 @@ class Container(LayoutElement):
         #~ kw.update(items=items)
         kw.update(items=self.elements)
         return kw
+        
+        
 
     def get_view_permission(self,user):
         """
@@ -1268,7 +1322,7 @@ class Wrapper(VisibleComponent):
         kw.update(items=e,xtype='panel')
         VisibleComponent.__init__(self,e.name+"_ct",**kw)
         self.wrapped = e
-        for n in ('width', 'height', 'preferred_width','preferred_height','vflex'):
+        for n in ('width', 'height', 'preferred_width','preferred_height','vflex','loosen_requirements'):
             setattr(self,n,getattr(e,n))
         #~ e.update(anchor="100%")
         if e.vflex: 

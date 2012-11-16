@@ -31,6 +31,7 @@ from lino.utils import curry
 from lino.utils import babel
 #~ from lino.utils import jsgen
 #~ from lino.utils import Warning
+from lino.utils.xmlgen import html as xghtml
 
 from lino.ui import requests as ext_requests
 
@@ -167,7 +168,11 @@ def make_params_layout_handle(self,ui):
 
 class Permittable(object):
     """
-    Base class for Components that have view permissions control.
+    Base class for objects that have view permissions control.
+    
+    :class:`lino.core.actors.Actor` would be a subclass, 
+    but is a special case since actors never get instantiated.
+    
     """
     
     #~ required = None # not {}, see blog/2012/0923
@@ -182,37 +187,42 @@ class Permittable(object):
     workflow_owner_field = None # internally needed for make_permission_handler
     #~ readonly = True
     
+    debug_permissions = False
+    
     
     #~ def allow_read(self,user,obj,state):
         #~ return True
     
 
-    def set_required(obj,**kw):
-        """
-        Add the specified requirements to `obj`.
-        `obj` can be an 
-        :class:`lino.core.actors.Actor` or a 
-        :class:`lino.utils.choicelists.Choice`.
-        Application code uses this indirectly through the shortcut methods
-        :meth:`lino.core.actors.Actor.set_required` or a 
-        :meth:`lino.utils.choicelists.Choice.set_required`.
-        
-        """
-        #~ logger.info("20120927 perms.set_required %r",kw)
-        new = dict()
-        #~ new.update(getattr(obj,'required',{}))
-        new.update(obj.required)
-        new.update(kw)
-        obj.required = new
-    
-
-
+    def add_requirements(self,**kw):
+        return add_requirements(self,**kw)
         
     def get_view_permission(self,user):
         raise NotImplementedError()
         
-        
 
+def add_requirements(obj,**kw):
+    """
+    Add the specified requirements to `obj`.
+    `obj` can be an 
+    :class:`lino.core.actors.Actor` or any 
+    :class:`lino.core.actions.Permittable`.
+    Application code uses this indirectly through the shortcut methods
+    :meth:`lino.core.actors.Actor.add_view_requirements` or a 
+    :meth:`lino.core.actions.Permittable.add_requirements`.
+    
+    """
+    #~ logger.info("20120927 perms.set_required %r",kw)
+    new = dict()
+    #~ new.update(getattr(obj,'required',{}))
+    new.update(obj.required)
+    new.update(kw)
+    obj.required = new
+
+
+
+        
+        
 
 class Parametrizable(object):        
   
@@ -453,7 +463,15 @@ class Action(Parametrizable,Permittable):
             if not hasattr(self,k):
                 raise Exception("Invalid keyword %s" % k)
             setattr(self,k,v)
-        self.set_required()
+        #~ self.add_requirements()
+        
+        if self.show_in_workflow:
+            self.custom_handler = True
+            self.show_in_bbar = False
+        else:
+            self.show_in_bbar = True
+        
+        
         #~ self.set_required(**required)
         assert self.callable_from is None or isinstance(
             self.callable_from,(tuple,type)), "%s" % self
@@ -462,12 +480,12 @@ class Action(Parametrizable,Permittable):
     def make_params_layout_handle(self,ui):
         return make_params_layout_handle(self,ui)
         
-    def set_required(self,**kw):
-        """
-        Override existing permission requirements.
-        Arguments: see :func:`lino.utils.jsgen.make_permission_handler`.
-        """
-        Permittable.set_required(self,**kw)
+    #~ def add_requirements(self,**kw):
+        #~ """
+        #~ Override existing permission requirements.
+        #~ Arguments: see :func:`lino.utils.jsgen.make_permission_handler`.
+        #~ """
+        #~ Permittable.add_requirements(self,**kw)
         #~ logger.info("20120628 set_required %s(%s)",self,kw)
         #~ new = dict()
         #~ new.update(self.required)
@@ -480,11 +498,6 @@ class Action(Parametrizable,Permittable):
         #~ else:
             #~ self.show_in_workflow = False
             #~ self.show_in_bbar = True
-        if self.show_in_workflow:
-            self.custom_handler = True
-            self.show_in_bbar = False
-        else:
-            self.show_in_bbar = True
         
     def full_name(self,actor):
         if self.action_name is None:
@@ -496,7 +509,8 @@ class Action(Parametrizable,Permittable):
         
     def as_button(self,obj,request,label):
         ba = self.defining_actor.get_url_action(self.action_name)
-        return settings.LINO.ui.row_action_button(obj,request,ba,label)
+        btn = settings.LINO.ui.row_action_button(obj,request,ba,label)
+        return xghtml.E.tostring(btn)
         
         
         
@@ -913,7 +927,7 @@ class BoundAction(object):
         #~ def wrap(a,required,fn):
             #~ return fn
             
-        debug = actor.debug_permissions or action.debug_permissions
+        debug = actor.debug_permissions and action.debug_permissions
         
         from lino.utils.auth import make_permission_handler
         self.allow = curry(make_permission_handler(

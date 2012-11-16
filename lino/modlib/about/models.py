@@ -14,6 +14,7 @@
 import logging
 logger = logging.getLogger(__name__)
 
+import cgi
 import inspect
 import types
 import datetime
@@ -50,8 +51,11 @@ class Models(dd.VirtualTable):
   
     @classmethod
     def get_data_rows(self,ar):
+        u = ar.get_user()
         for model in models.get_models():
-            yield model
+            if model._lino_default_table.get_view_permission(u):
+                #~ print model
+                yield model
                 
     @dd.displayfield(_("app_label"))
     def app(self,obj,ar):
@@ -80,9 +84,9 @@ class Models(dd.VirtualTable):
         
     @dd.requestfield(_("Rows"))
     def rows(self,obj,ar):
-        if obj._lino_default_table.get_view_permission(ar.get_user()):
-            return obj._lino_default_table.request(ar.ui,
-              user=ar.get_user(),renderer=ar.renderer)
+        #~ if obj._lino_default_table.get_view_permission(ar.get_user()):
+        return obj._lino_default_table.request(ar.ui,
+          user=ar.get_user(),renderer=ar.renderer)
 
 
 class FieldsByModel(dd.VirtualTable):
@@ -405,7 +409,8 @@ class SourceFiles(dd.VirtualTable):
 
 def setup_site_menu(site,ui,user,m): 
     m.add_action(site.modules.about.About)
-    m.add_action(site.modules.about.Models)
-    m.add_action(site.modules.about.Inspector)
-    m.add_action(site.modules.about.SourceFiles)
+    if settings.LINO.use_experimental_features:
+        m.add_action(site.modules.about.Models)
+        m.add_action(site.modules.about.Inspector)
+        m.add_action(site.modules.about.SourceFiles)
 
