@@ -1,0 +1,10 @@
+20121117
+========
+
+Continued on :class:`lino_welfare.modlib.pcsw.models.BeIdReadCardAction`.
+
+- Renamed :mod:`lino.utils.niss` to :mod:`lino.utils.ssin`
+- :func:`lino.core.modeltools.obj2str` has become more human-readable:
+
+  - datetime.date values are rendered as simple strings `YYYY-MM-DD` 
+  - unicode strings are no longer preceded by an 'u'

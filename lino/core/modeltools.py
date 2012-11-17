@@ -20,6 +20,7 @@ logger = logging.getLogger(__name__)
 
 import os
 import sys
+import datetime
 
 from django.db import models
 from django.conf import settings
@@ -252,12 +253,13 @@ def obj2unicode(i):
     
 def obj2str(i,force_detailed=False):
     """
-    Returns a usable ascii string representation of a model instance, 
+    Returns a human-readable ascii string representation of a model instance, 
     even in some edge cases.
     """
-    #~ if not force_detailed and i.pk is not None:
     if not isinstance(i,models.Model): 
         if isinstance(i,long): return str(i) # AutoField is long on mysql, int on sqlite
+        if isinstance(i,datetime.date): return i.isoformat()
+        if isinstance(i,unicode): return repr(i)[1:]
         return repr(i)
     if i.pk is None:
         force_detailed = True

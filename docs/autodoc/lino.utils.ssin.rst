@@ -1,8 +1,8 @@
 ===========================
-:mod:`lino.utils.niss`
+:mod:`lino.utils.ssin`
 ===========================
 
-.. automodule:: lino.utils.niss
+.. automodule:: lino.utils.ssin
     :members:
     :show-inheritance:
 
