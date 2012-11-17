@@ -30,10 +30,10 @@
     :members:
     :show-inheritance:
 
-:mod:`lino.modlib.cal.fixtures.demo_events`
+:mod:`lino.modlib.cal.fixtures.demo2`
 -------------------------------------------
 
-.. automodule:: lino.modlib.cal.fixtures.demo_events
+.. automodule:: lino.modlib.cal.fixtures.demo2
     :members:
     :show-inheritance:
 

@@ -6,8 +6,8 @@ What is Lino?
 
 Lino is a framework for creating customized enterprise-level 
 Rich Internet Applications 
-using `Sencha ExtJS <http://www.sencha.com/products/extjs/>`
-and :term:`Django <Django>`.
+using `Sencha ExtJS <http://www.sencha.com/products/extjs/>`_
+and `Django <https://www.djangoproject.com/>`_.
 
 Up to now there's one 
 real-world Lino application, 

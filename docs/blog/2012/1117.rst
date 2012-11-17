@@ -8,3 +8,7 @@ Continued on :class:`lino_welfare.modlib.pcsw.models.BeIdReadCardAction`.
 
   - datetime.date values are rendered as simple strings `YYYY-MM-DD` 
   - unicode strings are no longer preceded by an 'u'
+  
+  
+There was a bug in :func:`lino.utils.ssin.generate_ssin`.
+:mod:`lino.utils.ssin` is now handles birth dates after 2000 correctly.

@@ -270,13 +270,13 @@ class MySettings(Users):
     
 class UsersOverview(Users):
     """
-    >>> from django.conf import settings
-    >>> settings.LINO.startup()
-    >>> print settings.LINO.modules.users.UsersOverview.to_rst()
+    >> from django.conf import settings
+    >> settings.LINO.startup()
+    >> print settings.LINO.modules.users.UsersOverview.to_rst()
     
     
     $ python manage.py shell
-    >>> from lino.modlib.users.models import UsersOverview as T; print T.to_rst()
+    >> from lino.modlib.users.models import UsersOverview as T; print T.to_rst()
     
     """
     column_names = 'username profile language'

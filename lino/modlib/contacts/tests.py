@@ -31,7 +31,8 @@ Person = resolve_model(settings.LINO.person_model)
 contacts = resolve_app('contacts')
 from lino.utils.instantiator import Instantiator, create_and_get
 from lino.utils.babel import babel_values
-from lino.utils.choicelists import Gender
+#~ from lino.utils.choicelists import Gender
+Gender = contacts.Gender
 
 class QuickTest(TestCase):
     #~ fixtures = [ 'std', 'few_countries', 'ee', 'be', 'demo', 'demo_ee']

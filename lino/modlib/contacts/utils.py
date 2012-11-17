@@ -27,7 +27,6 @@ from lino.utils.choicelists import ChoiceList
 class Gender(ChoiceList):
     """
     Defines choices for the "Gender" of a person.
-
     """
     verbose_name = _("Gender")
 add = Gender.add_item
@@ -38,7 +37,7 @@ add('F',_("Female"),'female')
 
 
 name_prefixes1 = ("HET", "'T",'VAN','DER', 'TER',
-  'VOM','VON','OF', "DE", "DU", "EL", "AL")
+  'VOM','VON','OF', "DE", "DU", "EL", "AL", "DI")
 name_prefixes2 = ("VAN DEN","VAN DER","VAN DE",
   "IN HET", "VON DER","DE LA")
 

@@ -26,14 +26,14 @@ born the same day (odd numbers for men and even numbers for women),
 and ``97`` is a check digit (remainder of previous digits divided by 97).
     
 
->>> n = gen_ssin(datetime.date(1968,6,1),Gender.male,53)
+>>> n = generate_ssin(datetime.date(1968,6,1),Gender.male,53)
 >>> print n
 680601 053-29
 >>> ssin_validator(n)
 
->>> n = gen_ssin(datetime.date(2002,4,5),Gender.female)
+>>> n = generate_ssin(datetime.date(2002,4,5),Gender.female)
 >>> print n
-020405 002=15
+020405 002=44
 >>> ssin_validator(n)
 
 >>> from lino.utils import babel
@@ -47,8 +47,18 @@ ValidationError: [u'Invalid SSIN 123 : A formatted SSIN must have 13 positions']
 >>> format_ssin('68060105329')
 '680601 053-29'
 
-TODO: ``format_ssin('12060105329')`` should return 
-either '120601 053-29' or '120601 053=29'
+In order to say whether the person is born in 19xx or 20xx,
+we need to look at the check digits:
+
+>>> format_ssin('12060105317')
+'120601 053-17'
+
+>>> format_ssin('12060105346')
+'120601 053=46'
+
+Question to mathematicians: is it sure that there is no combination 
+of birth date and sequence number for which the check digits are 
+the same?
 
 
 """
@@ -61,7 +71,6 @@ import cgi
 import datetime
 
 os.environ.setdefault('DJANGO_SETTINGS_MODULE','lino.apps.std.settings')
-
   
 from django.core.exceptions import ValidationError
 from django.utils.encoding import force_unicode 
@@ -69,32 +78,35 @@ from django.utils.translation import ugettext_lazy as _
 
 from lino.modlib.contacts.utils import Gender
 
-#~ def gen_niss(birth_date,gender,seq=None):
-def gen_ssin(birth_date,gender,seq=None):
+YEAR2000 = '='
+YEAR1900 = '-'
+YEAR1800 = '*'
+
+def generate_ssin(birth_date,gender,seq=None):
     """
     Generate an SSIN from a given birth date, gender and optional sequence number.
     """
     year = birth_date.year
     sep1 = ' '
     if year >= 2000:
-        year -= 2000
-        sep2 = '='
+        bd = "2%02d%02d%02d" % (year-2000,birth_date.month,birth_date.day)
+        sep2 = YEAR2000
     elif year >= 1900:
-        year -= 1900
-        sep2 = '-'
+        bd = "%02d%02d%02d" % (year-1900,birth_date.month,birth_date.day)
+        sep2 = YEAR1900
     else:
-        raise Exception("1800?")
-    ssin = "%02d%02d%02d" % (year,birth_date.month,birth_date.day)
+        raise Exception("Born before 1900")
+        
     if seq is None:
         if gender == Gender.male:
             seq = 1
         else:
             seq = 2
-    ssin += '%03d' % seq
-    checksum = 97 - (int(ssin) % 97)
+    seq = '%03d' % seq
+    checksum = 97 - (int(bd+seq) % 97)
     if checksum == 0: checksum = 97 
-    ssin += '%02d' % checksum
-    ssin = ssin[0:6] + sep1 + ssin[6:9] + sep2 + ssin[9:11]
+    checksum = '%02d' % checksum
+    ssin = bd[-6:] + sep1 + seq + sep2 + checksum
     return ssin
 
 def is_valid_ssin(ssin):
@@ -122,7 +134,21 @@ def format_ssin(raw_ssin):
     bd = raw_ssin[:6]
     sn = raw_ssin[6:9]
     cd = raw_ssin[9:]
-    return bd + ' ' + sn + '-' + cd
+    
+    def is_ok(xtest):
+        xtest = int(xtest)
+        xtest = abs((xtest-97*(int(xtest/97)))-97)
+        if xtest == 0:
+            xtest = 97
+        return int(cd) == xtest
+    
+    if is_ok(bd + sn):
+        return bd + ' ' + sn + YEAR1900 + cd
+    if is_ok('2' + bd + sn):
+        return bd + ' ' + sn + YEAR2000 + cd
+    raise Exception(
+        force_unicode(_('Invalid SSIN %s : ') % raw_ssin) 
+        + force_unicode(_('Could not recognize checkdigit'))) 
     
 format_niss = format_ssin    
           
@@ -140,7 +166,8 @@ def ssin_validator(ssin):
           + force_unicode(_('A formatted SSIN must have 13 positions'))
           ) 
     xtest = ssin[:6] + ssin[7:10]
-    if ssin[6] == "=":
+    if ssin[10] == "=":
+        #~ print 'yes'
         xtest = "2" + xtest
     try:
         xtest = int(xtest)
