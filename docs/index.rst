@@ -24,6 +24,7 @@ Welcome to the Lino Website.
   
 Some external links:
 
+- `Lino-Welfare <http://welfare.lino-framework.org>`__
 - `Project page on Googlecode <http://code.google.com/p/lino>`__
 - `PyPI entry <http://pypi.python.org/pypi/lino>`_
 
