@@ -1,30 +1,28 @@
 Demo sites
 ==========
 
+The demo databases are writeable. 
+You may edit according to the user permissions. 
+Any changes will be lost each time we reinitialize the demo data.
 
-http://demo1.lino-framework.org
 
-  homeworkschool
 
-http://demo2.lino-framework.org
+- `demo1 <http://demo1.lino-framework.org>`_
+  shows the "Polls" application developed in the :doc:`/tutorials/polls` 
+  tutorial.
+  A minimal Lino application which doesn't even have user management.
+
+
+- http://demo2.lino-framework.org
 
   Presto
 
-http://demo3.lino-framework.org
+- http://demo3.lino-framework.org
 
-  The Polls Tutorial
+  Homeworkschool
 
 
+- http://welfare-demo.lino-framework.org
 
-http://welfare-demo.lino-framework.org
+  `Lino-Welfare <http://welfare.lino-framework.org/>`_
 
-  An application for Belgian Public Centres for Social Welfare (PCSW)
-  `More about Lino-Welfare 
-  <http://welfare.lino-framework.org/>`_
-
-  You will be asked for a username and password. 
-  Allowed usernames are **root**, **alicia**, **hubert**, **melanie**, **kerstin**, **caroline**. The password is always **1234**.
-  
-  The database is not readonly. You may edit according to the user permissions. 
-  Any changes will be lost each time we reinitialize the demo data.
-  

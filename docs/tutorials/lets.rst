@@ -1,7 +1,7 @@
 A Local Exchange Trade System
 =============================
 
-This tutorial supposes that you followed :doc:`t1`.
+This tutorial supposes that you followed :doc:`polls`.
 
 In this tutorial we are going to leave Django's 
 polls and write a new application.
@@ -21,7 +21,7 @@ The code for such a first draft is in :srcref:`/lino/tutorials/lets1`.
 
 Please explore these files and and copy 
 them to a local project directory 
-(e,g, :file:`c:\\mypy\\t3a`).
+(e,g, :file:`c:\\mypy\\lets`).
 The directory structure should be as follows::
 
   __init__.py

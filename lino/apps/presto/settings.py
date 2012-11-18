@@ -14,11 +14,18 @@
 from os.path import join, abspath, dirname
 
 from lino.apps.std.settings import *
-from lino.apps.presto import __version__, __url__, __name__
+#~ from lino.apps.presto import __version__, __url__, __name__
 
 class Lino(Lino):
   
-    title = __name__
+    #~ title = __name__
+    short_name = "Lino Presto"
+    version = "0.1"
+    url "http://www.lino-framework.org/autodoc/lino.apps.presto"
+    #~ description = "a Lino application for Belgian Public Welfare Centres"
+    author = 'Luc Saffre'
+    author_email = 'luc.saffre@gmail.com'
+    
     languages = ['en']
     #~ languages = 'de fr et en'.split()
     

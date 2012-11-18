@@ -20,7 +20,7 @@ from lino.utils import AttrDict
 from lino.utils import babel
 from lino.utils.memo import Parser
 
-appname,version,url = settings.LINO.using().next()
+#~ appname,version,url = settings.LINO.using().next()
 
 class DummyPage(AttrDict):
     ref = None
@@ -32,14 +32,14 @@ WEB_INDEX = DummyPage(
     title=settings.LINO.title,
     body="""<p>
 Welcome to the <b>%(title)s</b> site.
-We are running <a href="%(url)s">%(appname)s</a> version %(version)s.
-[=LINO.get_application_description()]
+We are running <a href="[=LINO.url]">[=LINO.short_name]</a> 
+version [=LINO.version], [=LINO.description]
 </p>
 """ % dict(
-    title=settings.LINO.title,
-    appname=appname,
-    version=version,
-    url=url))
+    title=settings.LINO.title
+    #~ short_name=settings.LINO.short_name,
+    #~ version=settings.LINO.version
+    ))
     
 ADMIN_INDEX = copy.copy(WEB_INDEX)
 ADMIN_INDEX.update(ref='admin')

@@ -1,14 +1,14 @@
-Your first standalone Lino application
-======================================
+The Polls tutorial 
+==================
 
-In this tutorial you are going to write your first 
-standalone Lino application.
-Don't hesitate to send us your feedback 
-if you have suggestions on how to make this tutorial better.
+In this tutorial we are going to take the "Polls" 
+application from Django's excellent tutorial and turn it 
+into a Lino application.
 
-Note that this tutorial requires the development version 
-of Lino (1.4.8 is not enough).
-  
+The result of this tutorial is available as a public 
+live demo at http://demo1.lino-framework.org
+
+
 .. contents:: Table of Contents
  :local:
  :depth: 2
@@ -18,10 +18,11 @@ Create a local Django project
 -----------------------------
 
 Lino applications are Django projects.
-That's why we recommend to start by reading
+That's why we start by reading
 `Part 1 of the Django tutorial
 <https://docs.djangoproject.com/en/1.4/intro/tutorial01/>`_,
 which applies entirely for a Lino application.
+
 The Django documentation is good,
 and it introduces some important notions about
 Creating a project,
@@ -31,7 +32,7 @@ Creating models,
 Activating models,
 and Playing with the API.
 
-Since you have already installed Lino and 
+If you have already installed Lino and 
 set up your Python Path as explained in 
 :doc:`/admin/pythonpath`, we suggest that 
 you take :file:`~/mypy/mysite` 
@@ -66,7 +67,7 @@ Most files remain unchanged, they are the same as with every Django project:
 :xfile:`urls.py` and :xfile:`wsgi.py`.
 You might want to compare your files with our version 
 which you can see in the code repository at
-:srcref:`/lino/tutorials/t1`.
+:srcref:`/lino/apps/polls_tutorial`.
 
 But we are now going to modify the files 
 :xfile:`settings.py` and
@@ -83,7 +84,7 @@ especially if you maintain Lino sites for several customers.
   to the following (except for the :setting:`DATABASES` setting,
   which you should take over from your original file):
 
-.. literalinclude:: ../../lino/tutorials/t1/settings.py
+.. literalinclude:: ../../lino/apps/polls_tutorial/settings.py
 
 
 A few explanations:
@@ -125,34 +126,27 @@ a Lino application::
   Lino uses this to fill "intelligent default values" to your settings.
   That's why these lines should be at the *beginning* of your file.
 
+
 One important setting to be defined by every Lino application 
-is :setting:`INSTALLED_APPS`.
+is the :meth:`get_installed_apps <lino.Lino.get_installed_apps>` 
+method. This method is used to fill Django's :setting:`INSTALLED_APPS`.
 
-For this tutorial, we gave it the following value::
+    def get_installed_apps(self):
+        for a in super(Lino,self).get_installed_apps():
+            yield a
+        yield 'lino.apps.polls_tutorial.polls' # 'mysite.polls'
+        
+The above code is roughly equivalent to::
 
-    INSTALLED_APPS = (
-      'lino',
-      'mysite.polls'
-    )
+    INSTALLED_APPS = [
+      'lino', 
+      'lino.modlib.about', 
+      'lino.apps.polls_tutorial.polls'
+    ]
 
-Where you maybe need to change the last item to the name you used
-during the Django Tutorial.
-
-``lino`` is mandatory for every Lino application. 
-It will cause the :mod:`lino.models` module to be loaded 
-which defines some system tables and general application logic.
-  
-
-- To keep things simple in this first tutorial, we didn't use 
-  the following modules which are almost mandatory for 
-  any real application:
-
-    - ``django.contrib.contenttypes``
-      (though most of the other ``django.contrib.*`` modules are not 
-      used in Lino)
-    - ``lino.modlib.users``, is Lino's replacement for Django's ``django.contrib.auth``.
-
-  
+But with the difference that Lino automatically adds 
+certain system modules when needed.
+ 
 Some more Django settings deserve at least a comment:
 
 - More documentation about the :setting:`LOGGING` 
@@ -167,14 +161,13 @@ Some more Django settings deserve at least a comment:
 
 
 
-
 The :xfile:`models.py` file
 ---------------------------
 
 - Change the contents of your :xfile:`polls/models.py` 
   to the following:
 
-.. literalinclude:: ../../lino/tutorials/t1/polls/models.py
+.. literalinclude:: ../../lino/apps/polls_tutorial/polls/models.py
 
 A few explanations while looking at that file:
 
@@ -232,11 +225,11 @@ Because that's so easy, we'll also quickly add a demo fixture.
   :doc:`dumpy` tutorial.
   
 - Download the file   
-  :srcref:`polls/fixtures/demo.py </lino/tutorials/t1/polls/fixtures/demo.py>`  
+  :srcref:`polls/fixtures/demo.py </lino/apps/polls_tutorial/polls/fixtures/demo.py>`  
   from the Lino repository and add it 
   below your project directory.
   
-- Create an empty file :srcref:`polls/fixtures/__init__.py </lino/tutorials/t1/polls/fixtures/__init__.py>` in that same directory.
+- Create an empty file :xfile:`__init__.py` in that same directory.
   
 - Run the following command (from your project directory) 
   to install these fixtures::
@@ -246,9 +239,9 @@ Because that's so easy, we'll also quickly add a demo fixture.
   The output should be similar to::
   
     INFO Analyzing models...
-    We are going to flush your database (T:\hgwork\lino\lino\tutorials\t1\test.db).
+    We are going to flush your database (C:\mysite\test.db).
     Are you sure (y/n) ?y
-    INFO Lino initdb ('demo',) started on database T:\hgwork\lino\lino\tutorials\t1\test.db.
+    INFO Lino initdb ('demo',) started on database C:\mysite\test.db.
     INFO Using Lino 1.4.9, Django 1.5.dev17937, python-dateutil 1.5, Cheetah 2.4.4, 
     OdfPy ODFPY/0.9.4, docutils 0.7, suds 0.4.1, PyYaml 3.08, Appy 0.8.0 (2011/12/15 22:41), 
     Python 2.7.1.
@@ -259,9 +252,9 @@ Because that's so easy, we'll also quickly add a demo fixture.
     Installing custom SQL ...
     Installing indexes ...
     Installed 0 object(s) from 0 fixture(s)
-    INFO Saved 13 instances from T:\hgwork\lino\lino\tutorials\t1\polls\fixtures\demo.py.
+    INFO Saved 13 instances from C:\mysite\polls\fixtures\demo.py.
     Installed 13 object(s) from 1 fixture(s)
-    INFO Lino initdb done ('demo',) on database T:\hgwork\lino\lino\tutorials\t1\test.db.  
+    INFO Lino initdb done ('demo',) on database C:\mysite\polls\test.db.  
     
 Now we are ready to start the development web server on our project.
   

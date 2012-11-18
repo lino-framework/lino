@@ -104,7 +104,7 @@ class CompanyType(babel.BabelNamed):
     
         
 class CompanyTypes(dd.Table):
-    required = dict(user_level='manager')
+    required = dd.required(user_level='manager')
     model = 'contacts.CompanyType'
     column_names = 'name *'
     #~ label = _("Company types")
@@ -323,7 +323,7 @@ class PartnerDetail(dd.FormLayout):
     
     
 class Partners(dd.Table):
-    required = dict(user_level='user')
+    required = dd.required(user_level='user')
     model = 'contacts.Partner'
     column_names = "name email * id" 
     order_by = ['name','id']
@@ -611,7 +611,7 @@ class RoleType(babel.BabelNamed):
 
 
 class RoleTypes(dd.Table):
-    required = dict(user_level='manager')
+    required = dd.required(user_level='manager')
     model = RoleType
 
 
@@ -687,19 +687,19 @@ class Role(dd.Model):
     #~ column_names = 'company type *'
     
 class Roles(dd.Table):
-    required = dict(user_level='manager')
+    required = dd.required(user_level='manager')
     #~ required_user_level = UserLevels.manager
     model = 'contacts.Role'   
     
 class RolesByCompany(Roles):
-    required = dict()
+    required = dd.required()
     #~ required_user_level = None
     label = _("Contact persons")
     master_key = 'company'
     column_names = 'person type *'
 
 class RolesByPerson(Roles):
-    required = dict()
+    required = dd.required()
     #~ required_user_level = None
     label = _("Contact for")
     master_key = 'person'

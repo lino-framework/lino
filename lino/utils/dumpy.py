@@ -502,11 +502,16 @@ class DpyDeserializer:
             if SUPPORT_EMPTY_FIXTURES:
                 yield DummyDeserializedObject() # avoid Django interpreting empty fixtures as an error
             else:
-                raise Exception("""\
-Fixture %s decided to not create any object.
-We're sorry, but Django doesn't like that. 
-See <https://code.djangoproject.com/ticket/18213>.
-""" % fp.name)
+                """
+                To avoid Django interpreting empty fixtures as an error, 
+                we yield one object which always exists: the SiteConfig
+                """
+                yield FakeDeserializedObject(self,settings.LINO.site_config)
+                #~ raise Exception("""\
+#~ Fixture %s decided to not create any object.
+#~ We're sorry, but Django doesn't like that. 
+#~ See <https://code.djangoproject.com/ticket/18213>.
+#~ """ % fp.name)
           
         #~ dblogger.info("Saved %d instances from %s.",self.saved,fp.name)
         

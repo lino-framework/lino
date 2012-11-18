@@ -35,16 +35,16 @@ Presto combines the following modules:
 """
 
 
-__name__ = "Lino Presto"
+#~ __name__ = "Lino Presto"
 
-__version__ = "0.0.1"
-"""
-Version number. 
-"""
+#~ __version__ = "0.0.1"
+#~ """
+#~ Version number. 
+#~ """
 
-__author__ = "Luc Saffre <luc.saffre@gmx.net>"
+#~ __author__ = "Luc Saffre <luc.saffre@gmx.net>"
 
-__url__ = "http://www.lino-framework.org/autodoc/lino.apps.presto"
+#~ __url__ = "http://www.lino-framework.org/autodoc/lino.apps.presto"
 
 __copyright__ = """\
 Copyright (c) 2012 Luc Saffre.

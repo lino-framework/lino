@@ -17,6 +17,12 @@ See http://docs.djangoproject.com/en/dev/intro/tutorial01/#creating-a-project
 
 See http://docs.djangoproject.com/en/dev/intro/tutorial01/#creating-a-project
 
+.. xfile:: __init__.py
+
+The Python language requires a file :xfile:`__init__.py` 
+in each directory that is to be considered as a package.
+:xfile:`__init__.py` are often empty (but not always).
+
 .. xfile:: media
 
 See 

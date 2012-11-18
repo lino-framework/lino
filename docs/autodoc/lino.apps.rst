@@ -19,5 +19,6 @@ Subpackages
     lino.apps.min1
     lino.apps.min2
     lino.apps.presto
+    lino.apps.polls_tutorial
 
 

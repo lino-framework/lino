@@ -13,37 +13,27 @@
 ## along with Lino; if not, see <http://www.gnu.org/licenses/>.
 
 """
-Performs a database flush, removing 
-*all existing tables* from the database 
-(not only Django tables), 
-then runs Django's standard `syncdb` and `loaddata` 
-commands to load the specified fixtures for all applications.
+Performs a database flush, removing *all existing tables* from the 
+database (not only Django tables), then runs Django's standard `syncdb` 
+and `loaddata` commands to load the specified fixtures for all applications.
 Also writes log entries to your dblogger.
 
 That may sound dangerous, but that's what we want when we have a 
-:doc:`python dump </topics/dumpy>` to restore our database.
-You know that you should rather not let 
-Lino and some other application share the same database!
-
+:doc:`python dump </topics/dumpy>` to restore our database. You know that you 
+should rather not let Lino and some other application share the same database!
 
 Django's `reset` command may fail after an upgrade if the new Lino 
 version defines new tables. In that case, flush sends a DROP TABLE 
 which fails because that table doesn't exist. 
 
-Lino's `initdb` reimplements a simplified version 
-of Django's `reset` command (which has been deprecated in 
-`Django 1.3
-<https://docs.djangoproject.com/en/dev/releases/1.3/#reset-and-sqlreset-management-commands>`__), 
-but does not even try to offer a possibility of deleting only *some* 
-data (the thing which caused so big problems that 
-Django 1.3. decided to deprecate the `reset` command).
-
+Lino's `initdb` reimplements a simplified version of Django's `reset` command, 
+but without the possibility of deleting only *some* data (the thing which 
+caused so big problems that Django 1.3. decided to `deprecate this command
+<https://docs.djangoproject.com/en/dev/releases/1.3/#reset-and-sqlreset-management-commands>`__.
 
 See also ticket :doc:`/tickets/50`.
 
 """
-
-#~ print 20120426
 
 import logging
 from optparse import make_option 
@@ -84,8 +74,6 @@ class Command(BaseCommand):
     ) 
 
     def handle(self, *args, **options):
-      
-        #~ settings.LINO.startup() 
       
         from lino.core.kernel import analyze_models
         analyze_models()
@@ -156,8 +144,7 @@ class Command(BaseCommand):
         #~ not good because all other messages "Creating table..." also disappear.
         
         
-        
-        call_command('syncdb',**options)
+        call_command('syncdb',load_initial_data=False,**options)
         
         call_command('loaddata',*args,**options)
         

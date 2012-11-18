@@ -76,6 +76,7 @@ class NoteTypes(dd.Table):
     Displays all rows of :class:`NoteType`.
     """
     model = 'notes.NoteType'
+    required = dd.required(user_groups='office')
     #~ label = _("Note types")
     column_names = 'name build_method template *'
     order_by = ["name"]
@@ -107,6 +108,7 @@ class EventTypes(dd.Table):
     List of all Event Types.
     """
     model = 'notes.EventType'
+    required = dd.required(user_groups='office')
     column_names = 'name *'
     order_by = ["name"]
     
@@ -283,7 +285,7 @@ class Notes(dd.Table):
 
 
 class MyNotes(mixins.ByUser,Notes):
-    required = dict(user_groups='office')
+    required = dd.required(user_groups='office')
     #~ master_key = 'user'
     column_names = "date event_type type subject project body *"
     #~ column_names = "date event_type type subject body *"

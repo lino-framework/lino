@@ -366,6 +366,7 @@ Lino.show_login_window = function() {
     
       function do_login() { 
             Lino.viewport.loadMask.show()
+            //~ Lino.body_loadMask.show()
             login_panel.getForm().submit({ 
                 method:'POST', 
                 waitTitle:'Connecting', 
@@ -375,11 +376,13 @@ Lino.show_login_window = function() {
                   Lino.login_window.hide();
                   Lino.close_all_windows();
                   Lino.viewport.loadMask.hide()
+                  //~ Lino.body_loadMask.hide()
                 },
                 failure: function(form,action) { 
                   //~ this.loadMask.hide();
                   Lino.on_submit_failure(form,action);
                   Lino.viewport.loadMask.hide()
+                  //~ Lino.body_loadMask.hide()
                   //~ if (Lino.current_window) Lino.current_window.main_item.loadMask.hide()
                 }
                 //~ failure:function(form, action){ 
@@ -493,6 +496,7 @@ Lino.Viewport = Ext.extend(Ext.Viewport,{
     Lino.Viewport.superclass.initComponent.call(this);
     this.on('render',function(){
       this.loadMask = new Ext.LoadMask(this.el,{msg:"$_('Please wait...')"});
+      console.log("20121118 Lino.viewport.loadMask",this.loadMask);
     },this);
   }
   ,get_base_params : function() { 
@@ -541,7 +545,6 @@ Lino.Viewport = Ext.extend(Ext.Viewport,{
 });
 
 
-
 Lino.open_window = function(win,st,requesting_panel) {
   //~ console.log("20120918 Lino.open_window()",win,st);
   var cw = Lino.current_window;
@@ -558,6 +561,13 @@ Lino.open_window = function(win,st,requesting_panel) {
   win.main_item.set_status(st,requesting_panel);
   win.show();
 };
+
+Lino.load_url = function(url) {
+    //~ Lino.body_loadMask.show();
+    Lino.viewport.loadMask.show();
+    //~ location.replace(url);
+    document.location = url;
+}
 
 Lino.close_window = function(status_update) {
   var cw = Lino.current_window;
@@ -582,7 +592,7 @@ Lino.close_all_windows = function() {
       var p = {};
       Lino.insert_subst_user(p)
       if (Ext.urlEncode(p)) url = url + "?" + Ext.urlEncode(p);
-      location.replace(url);
+      Lino.load_url(url);
   } else {
     //~ console.log("20120222 Lino.close_all_windows()",Lino.window_history);
     while (Lino.window_history.length > 0) {
@@ -1605,7 +1615,7 @@ Lino.permalink_handler = function (ww) {
   return function() { 
     //~ console.log(20100923,ww.get_permalink());
     //~ document.location = ww.main_item.get_permalink();
-    location.replace(ww.main_item.get_permalink());
+    Lino.load_url(ww.main_item.get_permalink());
     //~ console.log(20120715, ww.main_item.get_permalink());
     //~ document.location = "?permalink=" + ww.get_permalink();
     //~ document.location = "?permalink=" + ww.config.permalink_name +'()';

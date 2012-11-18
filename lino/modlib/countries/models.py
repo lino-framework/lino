@@ -112,6 +112,7 @@ class Language(babel.BabelNamed):
 
 class Languages(dd.Table):
     model = Language
+    required = dd.required()
 
 
 
@@ -149,6 +150,7 @@ class Countries(dd.Table):
     """
     #~ label = _("Countries")
     model = 'countries.Country'
+    required = dd.required()
     order_by = ["name","isocode"]
     column_names = "name isocode *"
     detail_layout = """
@@ -204,6 +206,7 @@ class City(dd.Model):
 class Cities(dd.Table):
     #~ label = _("Cities")
     model = 'countries.City'
+    required = dd.required()
     order_by = "country name".split()
     column_names = "country name type zip_code *"
     detail_layout = """

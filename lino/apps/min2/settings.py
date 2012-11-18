@@ -35,7 +35,7 @@ class Lino(Lino):
     #~ index_view_action = "dsbe.Home"
     
     #~ remote_user_header = "REMOTE_USER"
-    remote_user_header = None
+    #~ remote_user_header = None
     
     def get_app_source_file(self):  return __file__
         

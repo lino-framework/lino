@@ -18,11 +18,17 @@ import lino
 
 from lino.apps.std.settings import *
 
-from lino.apps.homeworkschool import __version__, __url__, __name__
+#~ from lino.apps.homeworkschool import __version__, __url__, __name__
 
 class Lino(Lino):
-    source_dir = os.path.dirname(__file__)
-    title = __name__
+    #~ source_dir = os.path.dirname(__file__)
+    #~ title = __name__
+    version = "0.0.1"
+    short_name = "Lino-HWS"
+    url = "http://www.lino-framework.org/autodoc/lino.apps.homeworkschool"
+    author = "Luc Saffre"
+    author_email = "luc.saffre@gmx.net"
+    
     #~ help_url = "http://lino.saffre-rumma.net/az/index.html"
     #~ migration_module = 'lino.apps.az.migrate'
     
@@ -32,7 +38,7 @@ class Lino(Lino):
     #~ project_model = None
     user_model = 'users.User'
     
-    languages = ('de', 'fr')
+    languages = ('en', 'de', 'fr')
     
     use_eid_jslib = False
     
@@ -46,15 +52,15 @@ class Lino(Lino):
         ]
     
     
-    remote_user_header = "REMOTE_USER"
+    #~ remote_user_header = "REMOTE_USER"
     
     def get_app_source_file(self):  return __file__
         
     def get_main_action(self,user):
         return self.modules.lino.Home.default_action
         
-    def get_application_info(self):
-        return (__name__,__version__,__url__)
+    #~ def get_application_info(self):
+        #~ return (__name__,__version__,__url__)
         
         
     #~ def setup_quicklinks(self,ui,user,tb):

@@ -67,6 +67,28 @@ class Polls(dd.Table):
     """,window_size=(40,'auto'))
     
     
+    @classmethod
+    def recent_polls(cls,request):
+        html = '<h1>%s</h1> ' % cgi.escape("Recent polls")
+        html += '<ul>'
+        for poll in Poll.objects.filter(hidden=False).order_by('pub_date'):
+            html += '<li>'
+            html += '<b>%s</b> ' % cgi.escape(poll.question)
+            chunks = []
+            for obj in poll.choice_set.all():
+                chunks.append(Choices.vote.as_button(obj,request,unicode(obj)))
+                #~ chunks.append(settings.LINO.ui.row_action_button(obj,request,Choices.vote,unicode(obj)))
+            html += ' / '.join(chunks)
+            
+            html += "<br/><small>Published %s" % babel.dtosl(poll.pub_date)
+            chunks = []
+            for obj in poll.choice_set.all():
+                chunks.append("%d %s" % (obj.votes,cgi.escape(unicode(obj))))
+            html += '<br/>Results: %s' % (', '.join(chunks))
+            html += '</small>'
+            html += '</li>'
+        html += '</ul>'
+        return html
 
 class Choices(dd.Table):
     model = Choice
@@ -75,27 +97,6 @@ class ChoicesByPoll(Choices):
     master_key = 'poll'
     
 
-def recent_polls(request):
-    html = '<h1>%s</h1> ' % cgi.escape("Recent polls")
-    html += '<ul>'
-    for poll in Poll.objects.filter(hidden=False).order_by('pub_date'):
-        html += '<li>'
-        html += '<b>%s</b> ' % cgi.escape(poll.question)
-        chunks = []
-        for obj in poll.choice_set.all():
-            chunks.append(Choices.vote.as_button(obj,request,unicode(obj)))
-            #~ chunks.append(settings.LINO.ui.row_action_button(obj,request,Choices.vote,unicode(obj)))
-        html += ' / '.join(chunks)
-        
-        html += "<br/><small>Published %s" % babel.dtosl(poll.pub_date)
-        chunks = []
-        for obj in poll.choice_set.all():
-            chunks.append("%d %s" % (obj.votes,cgi.escape(unicode(obj))))
-        html += '<br/>Results: %s' % (', '.join(chunks))
-        html += '</small>'
-        html += '</li>'
-    html += '</ul>'
-    return html
     
 def recent_polls_xghtml(request):
     from lino.utils.xmlgen.html import E
@@ -116,3 +117,9 @@ def recent_polls_xghtml(request):
             li.append(E.small("Results: ",", ".join(results)))
     return E.tostring(main)
     
+
+def setup_main_menu(self,ui,user,main):
+    m = main.add_menu("polls","~Polls")
+    m.add_action(self.modules.polls.Polls)
+    m.add_action(self.modules.polls.Choices)
+    #~ super(Lino,self).setup_menu(ui,user,main)

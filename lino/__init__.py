@@ -230,20 +230,48 @@ class Lino(object):
     
     help_url = "http://code.google.com/p/lino"
     #~ index_html = "This is the main page."
-    title = "Untitled Lino Application"
+    title = None
     #~ domain = "www.example.com"
     
-    def get_application_description(self):
-        info = self.get_application_info()
-        s = """%s is yet another 
-        <a href="%s">Lino</a> application.
-        """ % (info[0],__url__)
-        if False:
-            from django.db import models
-            s += """
-            It features %d database tables in %d modules.
-            """ % (len(list(models.get_models())),len(list(self.get_installed_apps())))
-        return s
+    python_name = None
+    """
+    The pythonic name of the top-level module. Used for PyPI.
+    """
+    
+    short_name = "Unnamed Lino Application"
+    """
+    Used as display name to end-users at different places.
+    """
+    
+    author = None
+    author_email = None
+    version = None
+    """
+    """
+    
+    url = None
+    """
+    """
+    
+    description = """yet another <a href="%s">Lino</a> application.""" % __url__
+    """
+    A short single-sentence description.
+    It should start with a lowercase letter because the beginning 
+    of the sentence will be generated from other class attributes 
+    like :attr:`short_name` and :attr:`version`.
+    """
+    
+    #~ def get_application_description(self):
+        #~ info = self.get_application_info()
+        #~ s = """%s is yet another 
+        #~ <a href="%s">Lino</a> application.
+        #~ """ % (info[0],__url__)
+        #~ if False:
+            #~ from django.db import models
+            #~ s += """
+            #~ It features %d database tables in %d modules.
+            #~ """ % (len(list(models.get_models())),len(list(self.get_installed_apps())))
+        #~ return s
     
     uid = 'myuid'
     """
@@ -309,14 +337,13 @@ class Lino(object):
     
     
     
-    remote_user_header = "REMOTE_USER"
-    #~ remote_user_header = None
+    #~ remote_user_header = "REMOTE_USER"
+    remote_user_header = None
     """
     The name of the header (set by the web server) that Lino consults 
     for finding the user of a request.
-    Default value is ``"REMOTE_USER"``.
-    Settings this to `None` means that http authentication 
-    is not used at all.
+    The default value `None` means that http authentication is not used.
+    Apache's default value is ``"REMOTE_USER"``.
     """
     
     #~ simulate_remote_user = False
@@ -483,14 +510,21 @@ class Lino(object):
     """
     Full path to the source directory of this Lino application.
     Local Lino subclasses should not override this variable.
-    This is used e.g. in :mod:`lino.utils.config` to decide 
+    This is used in :mod:`lino.utils.config` to decide 
     whether there is a local config directory.
     """
     
     source_name = None  # os.path.split(source_dir)[-1]
     
+    project_name = None
+    """
+    Read-only.
+    The leaf name of your local project directory.
+    """
+    
     project_dir = None
     """
+    Read-only.
     Full path to your local project directory. 
     Local Lino subclasses should not override this variable.
     
@@ -1359,22 +1393,28 @@ class Lino(object):
                 break
 
           
-    def get_application_info(self):
-        """
+    #~ def get_application_info(self):
+        #~ """
         
-        Application developers must implement 
-        this in their Lino 
-        subclass by something like this::
+        #~ Application developers must implement 
+        #~ this in their Lino 
+        #~ subclass by something like this::
         
-            def get_application_info(self):
-                from myapp import __version__, __url__
-                return ("MyApp",__version__,__url__)
+            #~ def get_application_info(self):
+                #~ from myapp import __version__, __url__
+                #~ return ("MyApp",__version__,__url__)
         
-        This function is used by 
-        :meth:`using` and :meth:`site_version`.
+        #~ This function is used by 
+        #~ :meth:`using` and :meth:`site_version`.
         
-        """
-        return ("Lino App",'0.1','http://code.google.com/p/lino/')
+        #~ """
+        #~ return (self.__name__,
+                #~ self.__version__,
+                #~ self.__url__)
+        #~ return (self.settings_dict['__name__'],
+                #~ self.settings_dict['__version__'],
+                #~ self.settings_dict['__url__'])
+        #~ return ("Lino App",'0.1','http://code.google.com/p/lino/')
         
         #~ raise NotImplementedError()
         
@@ -1393,9 +1433,11 @@ class Lino(object):
         
         """
         
-        ai = self.get_application_info()
-        if ai is not None:
-            yield ai
+        #~ ai = self.get_application_info()
+        #~ if ai is not None:
+            #~ yield ai
+        if self.short_name and self.version and self.url:
+            yield (self.short_name, self.version, self.url)
         
         yield ("Lino",__version__,"http://lino.saffre-rumma.net")
         
@@ -1513,8 +1555,9 @@ class Lino(object):
         Used in footnote or header of certain printed documents.
         """
         #~ name,version,url = self.using().next()
-        name,version,url = self.get_application_info()
-        return name + ' ' + version
+        #~ name,version,url = self.get_application_info()
+        return self.short_name + ' ' + self.version
+        #~ return name + ' ' + version
         #~ return "Lino " + __version__
 
 

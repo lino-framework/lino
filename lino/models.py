@@ -118,7 +118,7 @@ class SiteConfigs(dd.Table):
     """
     default_action = actions.ShowDetailAction()
     model = SiteConfig
-    required = dict(user_level='manager')
+    required = dd.required(user_level='manager')
     #~ default_action_class = dd.OpenDetailAction
     #~ has_navigator = False
     hide_top_toolbar = True
@@ -307,7 +307,7 @@ if settings.LINO.user_model:
         text
         """
         model = TextFieldTemplate
-        required = dict(user_groups='office')
+        required = dd.required(user_groups='office')
 
     class MyTextFieldTemplates(TextFieldTemplates,mixins.ByUser):
         pass
@@ -319,7 +319,7 @@ class Home(mixins.EmptyTable):
     This is the "home page" or "welcome screen", the window to be displayed 
     when no other window is opened.
     """
-    required = dict(auth=True)
+    required = dd.required()
     #~ debug_actions = True
     label = _("Home") 
     hide_window_title = True
@@ -438,7 +438,7 @@ def setup_config_menu(site,ui,user,m):
     office = m.add_menu("office",OFFICE_MODULE_LABEL)
     system = m.add_menu("system",SYSTEM_USER_LABEL)
     #~ m.add_action('links.LinkTypes')
-    if site.user_model:
+    if site.user_model and user.authenticated:
         system.add_instance_action(site.site_config)
         system.add_action(site.user_model)
         office.add_action(MyTextFieldTemplates)

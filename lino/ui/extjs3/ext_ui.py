@@ -409,7 +409,7 @@ class ExtRenderer(HtmlRenderer):
                 return dict(
                   xtype='button',text=prepare_label(v),
                   #~ handler=js_code("function() { window.location='%s'; }" % url))
-                  handler=js_code("function() { location.replace('%s'); }" % url))
+                  handler=js_code("function() { Lino.load_url('%s'); }" % url))
             return dict(text=prepare_label(v),href=url)
         return v
         
@@ -1042,7 +1042,7 @@ class ExtUI(base.UI):
         yield '<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">'
         yield '<html><head>'
         yield '<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />'
-        yield '<title id="title">%s</title>' % settings.LINO.title
+        yield '<title id="title">%s</title>' % settings.LINO.title or settings.LINO.short_name
         
         def stylesheet(*args):
             url = self.media_url(*args) #  + url
@@ -1320,6 +1320,8 @@ tinymce.init({
         for ln in jsgen.declare_vars(win):
             yield ln
         #~ yield '  new Ext.Viewport({layout:"fit",items:%s}).render("body");' % py2js(win)
+        #~ yield '  Lino.body_loadMask = new Ext.LoadMask(Ext.getBody(),{msg:"Please wait..."});'
+        #~ yield '  Lino.body_loadMask.show();'
         yield '  Lino.viewport = new Lino.Viewport({items:%s});' % py2js(win)
         
         if run_jasmine: # settings.LINO.use_jasmine:

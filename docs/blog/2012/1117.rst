@@ -9,6 +9,86 @@ Continued on :class:`lino_welfare.modlib.pcsw.models.BeIdReadCardAction`.
   - datetime.date values are rendered as simple strings `YYYY-MM-DD` 
   - unicode strings are no longer preceded by an 'u'
   
+- There was a bug in :func:`lino.utils.ssin.generate_ssin`.
+- :mod:`lino.utils.ssin` is now handles birth dates after 2000 correctly.
+
+All four live demo sites are now working.
+
+:doc:`/demos`
+
+Managing a park of Lino applications
+------------------------------------
+
+Currently I have for each demo site the two files `manage.py` and `wsgi.py`.
+
+- manage.py::
+
+    #!/usr/bin/env python
+    if __name__ == "__main__":
+    
+        import sys; sys.path.append('/home/luc/mypy')  # [Note1]
+        import os ; os.environ['DJANGO_SETTINGS_MODULE'] = 'demo1.settings' # [Note2]
+        
+        from django.core.management import execute_from_command_line
+        execute_from_command_line(sys.argv)
+        
+- wsgi.py::
+
+    import sys ; sys.path.append('/home/luc/mypy') # [Note1]
+    import os ; os.environ['DJANGO_SETTINGS_MODULE'] = 'demo1.settings' # [Note2]
+
+    import django.core.handlers.wsgi
+    application = django.core.handlers.wsgi.WSGIHandler()
+
+
+[Note1] This line is the same for each site.
+[Note2] differs for each site, but is each time equal to :attr:`lino.Lino.project_name`
+
+
+I can replace the two following lines::
+
+    import sys ; sys.path.append('/home/luc/mypy')
+    import os ; os.environ['DJANGO_SETTINGS_MODULE'] = 'demo1.settings'
+    
+by::    
+
+    import sys ; sys.path.append('/home/luc/mypy')
+    import os ; os.environ['DJANGO_SETTINGS_MODULE'] = 'demo1.settings'
+
+    import sys ; sys.path.append('/home/luc/mypy')
+    from demo_sites import setup ; setup(__file__)
+      
+
+manage.py:
+
+  #!/usr/bin/env python
+  if __name__ == "__main__":
+      
+
+
+Und dann die :file:`/home/luc/mypy/demo_sites/__init__.py` sähe 
+wie folgt aus::
+
+  import os
+  from os.path import split, dirname, abspath
+  def setup(filename):
+      prj = split(dirname(abspath(filename)))[-1]
+      os.environ['DJANGO_SETTINGS_MODULE'] = 'demo_sites.' + prj + '.settings'
+
+
+
+Loading demo fixtures
+---------------------
+
+- moved the Polls Tutorial from lino.tutorials.t1 to lino.apps.polls_tutorial
+
+- :mod:`initdb <lino.management.commands.initdb>` now uses the `load_initial_data` 
+  stealth option to avoid the automatic loading of `initial_data` fixtures 
+  which caused an irritating message "No fixtures found". 
+  This message came because there are no `initial_data` fixtures. 
+  No registered Lino user ever used `initial_data` fixtures. 
+  They cause only problems.
+  One of them, by the way is that `syncdb`, when called with --traceback, 
+  forgets to forward this option when calling loaddata for initial_data.
   
-There was a bug in :func:`lino.utils.ssin.generate_ssin`.
-:mod:`lino.utils.ssin` is now handles birth dates after 2000 correctly.
+  

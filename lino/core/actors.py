@@ -215,8 +215,10 @@ class Actor(actions.Parametrizable):
     Not to be used on a production site but useful for debugging.
     """
     
-    required = dict()
-    #~ required = dict(auth=True) # 20121116
+    #~ required = dict()
+    #~ required = dd.required()
+    
+    required = dict(auth=True) # 20121116
     
     #~ create_required = dict()
     update_required = dict()

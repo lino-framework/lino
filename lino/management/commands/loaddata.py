@@ -14,9 +14,9 @@
 
 """
 Does the same as the original Django loaddata command,
-but calls `lino.Lino.startup` first.
-This is necessary if your application has its 
-own :meth:`lino.Lino.setup_choicelists`.
+but calls :func:`lino.core.kernel.analyze_models` first.
+This is necessary if your application has its own 
+:meth:`lino.Lino.setup_choicelists`.
 
 """
 
@@ -28,9 +28,9 @@ from lino.core.kernel import analyze_models
 
 class Command(OriginalCommand):
   
-    def handle(self, *app_labels, **options):
+    def handle(self, *fixture_labels, **options):
         #~ settings.LINO.startup()
         analyze_models()
         # startup would create a SiteConfig object
-        return OriginalCommand.handle(self, *app_labels, **options)
+        return OriginalCommand.handle(self, *fixture_labels, **options)
   
