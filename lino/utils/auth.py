@@ -474,11 +474,11 @@ def authenticate(username,password=NOT_NEEDED):
         user = settings.LINO.user_model.objects.get(username=username)
         if password != NOT_NEEDED:
             if not user.check_password(password):
-                logger.info("20121104 password mismatch")
+                qlogger.info("20121104 password mismatch")
                 return None
         return user
     except settings.LINO.user_model.DoesNotExist,e:
-        logger.info("20121104 no username %r",username)
+        #~ logger.info("20121104 no username %r",username)
         return None  
         
         

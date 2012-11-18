@@ -36,14 +36,16 @@ def objects():
         en="Present or not",
         de=u"Vorhanden oder nicht",
         fr=u"Présent ou pas",
+        et=u"Olemas või mitte",
         nl=u"Ja of niet",
         )))
     yield ptype(id=2,
         choicelist=properties.HowWell.actor_id,
         default_value=properties.HowWell.default.value,
         **babel_values('name',**dict(
-            en="Appraisal",
+            en="Rating",
             de=u"Bewertung",
+            et=u"Hinnang",
             fr=u"Appréciation(?)",
             nl=u"Hoe goed",
             )))
