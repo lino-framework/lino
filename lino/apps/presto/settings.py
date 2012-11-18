@@ -21,7 +21,7 @@ class Lino(Lino):
     #~ title = __name__
     short_name = "Lino Presto"
     version = "0.1"
-    url "http://www.lino-framework.org/autodoc/lino.apps.presto"
+    url = "http://www.lino-framework.org/autodoc/lino.apps.presto"
     #~ description = "a Lino application for Belgian Public Welfare Centres"
     author = 'Luc Saffre'
     author_email = 'luc.saffre@gmail.com'

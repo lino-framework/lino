@@ -12,17 +12,14 @@ Any changes will be lost each time we reinitialize the demo data.
   tutorial.
   A minimal Lino application which doesn't even have user management.
 
+- `demo2 <http://demo2.lino-framework.org>`_ : 
+  shows an early prototype of the Homeworkschool application.
+  
+- `demo3 <http://demo3.lino-framework.org>`_ : 
+  shows an early prototype of the Presto application.
 
-- http://demo2.lino-framework.org
-
-  Presto
-
-- http://demo3.lino-framework.org
-
-  Homeworkschool
-
-
-- http://welfare-demo.lino-framework.org
-
-  `Lino-Welfare <http://welfare.lino-framework.org/>`_
+- `welfare-demo <http://welfare-demo.lino-framework.org>`_ : 
+  shows a demo version of
+  `Lino-Welfare <http://welfare.lino-framework.org/>`_,
+  the only Lino application (until now) that is being really used.
 
