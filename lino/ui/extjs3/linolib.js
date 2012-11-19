@@ -5319,7 +5319,7 @@ Lino.beid_read_card_handler = function(url,actionName,method) {
     //~ document.getElementById("content").value = content;
     
     function on_success() {
-        console.log('20121105 /eid-jslib read on_success',arguments);
+        //~ console.log('20121105 /eid-jslib read on_success',arguments);
         //~ Lino.login_window.hide();
         //~ Lino.close_all_windows();
     };
