@@ -135,7 +135,7 @@ def run_action(ar,elem):
           "An error report has been sent to the system administrator.")
         logger.warning(msg)
         logger.exception(e)
-        r = ar.ui.error_response(e,msg)
+        r = ar.ui.error_response(e,msg,alert=_("Oops!"))
         return ar.ui.action_response(r)
           
     

@@ -1,0 +1,56 @@
+20121119
+========
+
+Der "aktive Vertrag" eines Klienten
+-----------------------------------
+
+:meth:`get_active_contract <lino_welfare.modlib.pcsw.models.Client.get_active_contract>`
+funktionierte nicht, wenn ein Klient mehr als einen Vertrag hatte, die alle vergangen 
+sind. Dann gilt der zuletzt **begonnene** Vertrag als aktiv. Beispiel Klient 22538.
+
+N.B. ich teste auf den zuletzt **begonnenen** Vertrag, weil das 
+einfacher (sprich billiger) ist. Eigentlich wollen wir den 
+zuletzt **beendeten** Vertrag haben, aber das kommt in der Praxis aufs 
+Gleiche raus, weil Vertragsüberschneidungen nicht erlaubt sind. 
+Also der folgende Fall kann nicht vorkommen und darf deshalb ignoriert 
+werden::
+
+  Zeit :     <----------------------------------- heute ------>
+  Vertrag 1 :    +-------------------+ 
+  Vertrag 2 :       +-----------+ 
+    
+    
+    
+Reading Belgian eID cards
+--------------------------
+
+Lino is now more or less able to read Belgian eID cards.
+
+If you have a Belgian eID card and the "Belgium eID Middleware" 
+installed on your computer, then you can test the new feature in 
+our public live demo as follows:
+
+- Go to http://welfare-demo.lino-framework.org/
+- Log in as robin (password "1234")
+  (after hitting OK there are some moments where nothing seems to happen)
+- In the menu, select "Contacts --> Clients". Lino shows a list of
+  fictive clients. In the top toolbar there's a button "Read eID card".
+- Insert some Belgian eID card. Click the button.
+- There will probably be two warnings 
+  "This application was built against the Belgium Identity Card SDK, 
+  version 3.5. This version is considered deprecated and will not be 
+  supported iby future versions of the eID middleware. 
+  Please contact the application vendor."  
+  and maybe another question asking you to allow access to the card reader.
+  
+  
+- Lino will ask "Create new client?". Answer Yes. 
+  You will see the data from your card in our database. 
+  
+- If you modify some data, e.g. the street, then re-read the same card 
+  (or imagine 2 years later a new card of a same person), 
+  Lino will ask whether to update the data.
+
+- Ater playing around you'll probably want to delete the client so that 
+  other people won't see the personal data from your eid card.
+

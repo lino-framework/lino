@@ -129,13 +129,14 @@ a Lino application::
 
 One important setting to be defined by every Lino application 
 is the :meth:`get_installed_apps <lino.Lino.get_installed_apps>` 
-method. This method is used to fill Django's :setting:`INSTALLED_APPS`.
+method:: 
 
     def get_installed_apps(self):
         for a in super(Lino,self).get_installed_apps():
             yield a
         yield 'lino.apps.polls_tutorial.polls' # 'mysite.polls'
         
+This method is used to fill Django's :setting:`INSTALLED_APPS`.
 The above code is roughly equivalent to::
 
     INSTALLED_APPS = [
@@ -192,17 +193,18 @@ A few explanations while looking at that file:
   decorator. Another important new concept in Lino, 
   we'll talk about it in the Actions_ section.
   
-- The `recent_polls` function 
-  (imported and called from your `settings.py` file)
-  builds the HTML to be displayed in 
-  our Main Window. It uses one Django-specific feature::
+- The `recent_polls` class method used in the 
+  `get_main_html` method from our `settings.py` file.
+  It builds the HTML to be displayed in our Main Window. 
+  It uses one Django-specific feature::
 
       Poll.objects.filter(hidden=False).order_by('pub_date')
       
-  If you didn't know this, we recommend you to dive a bit 
-  more into Django's documentation before seriously starting 
-  your own Lino application. Lino is based on Django, and 
-  Django is known for its good documentation. Use it!
+  If you didn't understand this piece of code, 
+  please read the `Making queries 
+  <https://docs.djangoproject.com/en/dev/topics/db/queries>`_
+  chapter of Django's documentation before starting to write your own Lino application. 
+  Lino is based on Django, and Django is known for its good documentation. Use it!
   
   It also uses a Lino-specific feature, which admittedly 
   is less well documented: :meth:`row_action_button

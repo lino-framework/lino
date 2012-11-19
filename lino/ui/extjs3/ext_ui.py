@@ -1136,6 +1136,7 @@ tinymce.init({
             
         if settings.LINO.use_eid_jslib:
             yield javascript('/eid-jslib/be_belgium_eid.js')
+            yield javascript('/eid-jslib/hellerim_base64.js')
             
             
         if settings.LINO.use_gridfilters:

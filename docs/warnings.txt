@@ -1,5 +1,4 @@
 T:\hgwork\lino\docs\autodoc\lino.utils.rst:10: WARNING: toctree contains reference to nonexisting document u'autodoc/lino.utils.niss'
-T:\hgwork\lino\docs\tutorials\polls.rst:137: WARNING: Definition list ends without a blank line; unexpected unindent.
 T:\hgwork\lino\docs\autodoc\lino.utils.ssin.rst:: WARNING: document isn't included in any toctree
 T:\hgwork\lino\docs\casts\lino_intro.rst:: WARNING: document isn't included in any toctree
 T:\hgwork\lino\docs\igen\index.rst:: WARNING: document isn't included in any toctree
@@ -16,22 +15,3 @@ T:\hgwork\lino\docs\autodoc\lino.utils.rst:17: WARNING: py:class reference targe
 T:\hgwork\lino\docs\autodoc\lino.utils.rst:29: WARNING: py:class reference target not found: docutils.writers.html4css1.Writer
 T:\hgwork\lino\docs\autodoc\lino.utils.rst:82: WARNING: unknown document: /blog/2011/0525
 T:\hgwork\lino\docs\autodoc\lino.utils.rst:75: WARNING: py:mod reference target not found: ucsv
-T:\hgwork\lino\docs\tutorials\polls.rst:None: WARNING: xfile reference target not found: models.py
-T:\hgwork\lino\docs\tutorials\polls.rst:35: WARNING: envvar reference target not found: DJANGO_SETTINGS_MODULE
-T:\hgwork\lino\docs\tutorials\polls.rst:65: WARNING: xfile reference target not found: wsgi.py
-T:\hgwork\lino\docs\tutorials\polls.rst:72: WARNING: xfile reference target not found: polls/models.py
-T:\hgwork\lino\docs\tutorials\polls.rst:102: WARNING: py:mod reference target not found: lino.apps.std
-T:\hgwork\lino\docs\tutorials\polls.rst:106: WARNING: py:attr reference target not found: lino.Lino.title
-T:\hgwork\lino\docs\tutorials\polls.rst:164: WARNING: xfile reference target not found: models.py
-T:\hgwork\lino\docs\tutorials\polls.rst:167: WARNING: xfile reference target not found: polls/models.py
-T:\hgwork\lino\docs\tutorials\polls.rst:178: WARNING: py:class reference target not found: lino.core.modeltools.Model
-T:\hgwork\lino\docs\tutorials\polls.rst:184: WARNING: py:class reference target not found: lino.core.table.Table
-T:\hgwork\lino\docs\tutorials\polls.rst:384: WARNING: py:attr reference target not found: lino.utils.tables.AbstractTable.column_names
-T:\hgwork\lino\docs\tutorials\polls.rst:384: WARNING: py:attr reference target not found: lino.core.actors.Actor.parameters
-T:\hgwork\lino\docs\tutorials\polls.rst:398: WARNING: py:class reference target not found: lino.core.table.Table
-T:\hgwork\lino\docs\tutorials\polls.rst:398: WARNING: py:class reference target not found: lino.utils.tables.AbstractTable
-T:\hgwork\lino\docs\tutorials\polls.rst:414: WARNING: py:attr reference target not found: lino.core.table.Table.master_key
-T:\hgwork\lino\docs\tutorials\polls.rst:455: WARNING: py:meth reference target not found: lino.core.menus.Menu.add_action
-T:\hgwork\lino\docs\tutorials\polls.rst:468: WARNING: py:attr reference target not found: lino.core.actions.Action.required
-T:\hgwork\lino\docs\tutorials\polls.rst:480: WARNING: py:meth reference target not found: lino.core.actions.ActionRequest.confirm
-T:\hgwork\lino\docs\tutorials\polls.rst:480: WARNING: py:meth reference target not found: lino.core.actions.ActionRequest.get_user

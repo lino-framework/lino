@@ -53,16 +53,7 @@ I can replace the two following lines::
 by::    
 
     import sys ; sys.path.append('/home/luc/mypy')
-    import os ; os.environ['DJANGO_SETTINGS_MODULE'] = 'demo1.settings'
-
-    import sys ; sys.path.append('/home/luc/mypy')
     from demo_sites import setup ; setup(__file__)
-      
-
-manage.py:
-
-  #!/usr/bin/env python
-  if __name__ == "__main__":
       
 
 
