@@ -24,15 +24,15 @@ def root_kw(lang,**kw):
     kw.update(email='root@example.com') 
     kw.update(language=lang) 
     if lang == 'de':
-        kw.update(first_name="Rudi",last_name=u"Rothkranz")
+        kw.update(first_name="Rudi",last_name=u"Rutté")
     elif lang == 'fr':
-        kw.update(first_name="Robert",last_name=u"Robinet")
+        kw.update(first_name=u"René",last_name=u"Robert")
     elif lang == 'et':
-        kw.update(first_name="Roland",last_name=u"Rukki")
+        kw.update(first_name="Rando",last_name=u"Roosi")
     elif lang == 'en':
-        kw.update(first_name="Robin",last_name="Rosefeldt")
+        kw.update(first_name="Robin",last_name="Rowland")
     elif lang == 'nl':
-        kw.update(first_name="Rik",last_name="Brouwer")
+        kw.update(first_name="Rik",last_name="Roelands")
     else:
         return None
     kw.update(username=kw.get('first_name').lower()) 

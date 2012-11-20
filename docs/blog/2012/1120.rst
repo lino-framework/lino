@@ -1,6 +1,12 @@
 20121120
 ========
 
+`Lino-Welfare 1.0.2
+<http://welfare.lino-framework.org/de/releases/1.0.2.html>`_
+ist seit heute im Versuchsbetrieb, also in der letzten Testphase 
+vor dem Release.
+
+
 Testrunde 1 nach dem Upgrade
 ----------------------------
 
@@ -28,4 +34,11 @@ Testrunde 1 nach dem Upgrade
   :class:`CalendarAction <lino.modlib.cal.utils.CalendarAction>` 
   ins
   :class:`CalendarPanel <lino.modlib.cal.models.CalendarPanel>` versetzt.
+  
+- Statt "Autor" eines Termins sagt Lino jetzt "Verantwortlicher". 
+  Wenn Alicia nicht da ist und Caroline mit einem Klienten einen Termin 
+  für Alicia vormerkt, dann steht dort Alicia und nicht Caroline. 
+  (Dass Caroline den Termin ursprünglich erstellt hat, sieht Alicia 
+  in der Mitteilung per E-Mail, ansonsten hält Lino diese Information 
+  für belanglos...)
   
