@@ -1065,7 +1065,7 @@ class ApiList(View):
                 0      1
                 5      2
                 """
-                page = int( ar.offset / pglen) + 1
+                page = int(ar.offset / pglen) + 1
             kw = dict()
             kw = {ext_requests.URL_PARAM_FORMAT:ext_requests.URL_FORMAT_PLAIN}
             if pglen != PLAIN_PAGE_LENGTH:

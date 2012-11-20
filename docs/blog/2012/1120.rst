@@ -1,0 +1,31 @@
+20121120
+========
+
+Testrunde 1 nach dem Upgrade
+----------------------------
+
+
+- Noch nicht behoben (hat auch Zeit):
+  Wenn ich die Hauptseite mit fmt=plain aufrufe, kriege ich::
+
+    201211-20 05:03:43 ERROR base : Internal Server Error: /api/about/About
+    Traceback (most recent call last):
+      File "/var/snapshots/django/django/core/handlers/base.py", line 111, in get_response
+        response = callback(request, *callback_args, **callback_kwargs)
+      File "/var/snapshots/django/django/views/generic/base.py", line 48, in view
+        return self.dispatch(request, *args, **kwargs)
+      File "/var/snapshots/django/django/views/generic/base.py", line 69, in dispatch
+        return handler(request, *args, **kwargs)
+      File "/usr/local/django/cpas_eupen/using/lino/lino/ui/extjs3/views.py", line 1086, in get
+        if next_start < ar.get_total_count():
+    AttributeError: 'ActionRequest' object has no attribute 'get_total_count'
+
+
+- :class:`lino.modlib.cal.models.CalendarPanel` 
+  offenbarte sich dem deutschsprachigen 
+  Benutzer als "CalendarPanel" statt "Kalender".  
+  Habe das `label` von der
+  :class:`CalendarAction <lino.modlib.cal.utils.CalendarAction>` 
+  ins
+  :class:`CalendarPanel <lino.modlib.cal.models.CalendarPanel>` versetzt.
+  

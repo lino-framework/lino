@@ -1002,6 +1002,7 @@ Indicates that this Event shouldn't prevent other Events at the same time."""))
         cls.DISABLED_AUTO_FIELDS = dd.fields_list(cls,
             '''summary''')
 
+dd.update_field(Event,'user',verbose_name=_("Responsible user"))
 
 class EventDetail(dd.FormLayout):
     start = "start_date start_time"
@@ -1025,7 +1026,8 @@ class Events(dd.Table):
     #~ debug_permissions = True
     model = 'cal.Event'
     required = dd.required(user_groups='office',user_level='manager')
-    column_names = 'start_date start_time user summary workflow_buttons calendar *'
+    #~ column_names = 'start_date start_time user summary workflow_buttons calendar *'
+    column_names = 'start_date start_time user summary calendar *'
     #~ active_fields = ['all_day']
     order_by = ["start_date","start_time"]
     
@@ -1066,7 +1068,8 @@ if settings.LINO.user_model:
     class MyEvents(Events,mixins.ByUser):
         help_text = _("Table of all my calendar events.")
         required = dd.required(user_groups='office')
-        column_names = 'start_date start_time calendar project summary workflow_buttons *'
+        #~ column_names = 'start_date start_time calendar project summary workflow_buttons *'
+        column_names = 'start_date start_time calendar project summary *'
         
     #~ class EventsReserved(Events):
         #~ help_text = _("Table of all reserved events.")
@@ -1778,19 +1781,13 @@ if settings.LINO.use_extensible:
   
     class CalendarPanel(dd.Frame):
         """
-        Deserves documentation.
+        Opens the "Calendar View" (a special window with the Ext.ensible CalendarAppPanel).
         """
         required = dd.required(user_groups='office')
-        
-        #~ default_action = CalendarAction()
-        #~ default_action_class = dd.Calendar
-        
-        #~ show_calendar = CalendarAction()
+        label = _("Calendar")
         
         @classmethod
         def get_default_action(self):
-            #~ return actions.BoundAction(self,self.show_calendar)
-            #~ return 'show_calendar'
             return CalendarAction()
 
     class PanelCalendars(Calendars):
