@@ -182,6 +182,30 @@ request to the national register to get this and other information.
   nothing except to confirm the new version.
 
 
-All this will be part of 
+Version 1.0.3
+-------------
+
+All this is be part of 
 `Lino-Welfare 1.0.3
-<http://welfare.lino-framework.org/de/releases/1.0.3.html>`_
+<http://welfare.lino-framework.org/de/releases/1.0.3.html>`_,
+which went into production in Eupen today evening.
+
+
+Last minute changes:
+
+- dumpy.py #~ 20121120 unsorted = set(unsorted)
+- ext_elems.py if isinstance(editor,FieldElement) and not isinstance(editor.field,fields.VirtualField):
+
+
+
+TODO:
+
+- Setting a column filter for a *normal* date column now works... 
+  but Lino also allows setting a filter on a virtual field. 
+  Which then causes another traceback
+  "FieldError at /api/pcsw/IntegClients / Cannot resolve keyword 'applies_from' into field."
+  
+  Idea: implement the fields Client.applies_from and applies_until as 
+  "summary fields". This is a new concept: :doc:`/topics/summary_fields`
+  
+  

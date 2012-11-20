@@ -202,7 +202,8 @@ def log_delete(request,obj):
     Calls :func:`log_change` with `ChangeTypes.delete`.
     
     Note that you must call this before actually deleting the object,
-    otherwise mysql says ERROR: (1048, "Column 'object_id' cannot be null")
+    otherwise mysql (not sqlite) says 
+    ERROR: (1048, "Column 'object_id' cannot be null")
     """
     master = get_master(obj)
     if master is None:
@@ -210,6 +211,9 @@ def log_delete(request,obj):
     log_change(ChangeTypes.delete,request,master,obj)
     
 def log_create(request,obj):
+    """
+    To be called when a new instance has actually been created and saved.
+    """    
     master = get_master(obj)
     if master is None:
         return

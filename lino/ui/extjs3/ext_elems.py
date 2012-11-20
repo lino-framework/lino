@@ -185,6 +185,8 @@ class GridColumn(jsgen.Component):
                 ])
               
         if settings.LINO.use_gridfilters and editor.gridfilters_settings:
+            # 20121120 last minute
+            if isinstance(editor,FieldElement) and not isinstance(editor.field,fields.VirtualField):
                 kw.update(filter=editor.gridfilters_settings)
         #~ if isinstance(editor,FieldElement) and editor.field.primary_key:
         if isinstance(editor,FieldElement):

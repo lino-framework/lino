@@ -177,7 +177,7 @@ def new_content_type_id(m):
     def sort_models(self,unsorted):
         sorted = []
         hope = True
-        unsorted = set(unsorted)
+        #~ 20121120 unsorted = set(unsorted)
         while len(unsorted) and hope:
             hope = False
             guilty = dict()

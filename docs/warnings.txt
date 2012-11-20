@@ -1,4 +1,3 @@
-T:\hgwork\lino\docs\blog\2012\1120.rst:172: WARNING: Mismatch: both interpreted text role prefix and reference suffix.
 T:\hgwork\lino\docs\casts\lino_intro.rst:: WARNING: document isn't included in any toctree
 T:\hgwork\lino\docs\igen\index.rst:: WARNING: document isn't included in any toctree
-T:\hgwork\lino\docs\blog\2012\1120.rst:178: WARNING: py:func reference target not found: lino_welfare.modlib.pcsw.migrate.migrate_from_1_0_2
+T:\hgwork\lino\docs\topics\summary_fields.rst:4: WARNING: py:meth reference target not found: lino_welfare.modlib.pcsw.Client.get_active_contract
