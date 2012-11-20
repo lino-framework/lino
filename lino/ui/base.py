@@ -101,12 +101,17 @@ class UI:
         return urlpatterns
         
     def get_patterns(self):
+        """
+        This is the method called from :mod:`lino.ui.extjs3.urls` 
+        (see there for more explanations).
+        """
         #~ return patterns('',(self.prefix, include(self.get_urls())))
-        urlpatterns = patterns('',
-            (r'^favicon\.ico$', 'django.views.generic.simple.redirect_to', 
-                {'url': settings.MEDIA_URL + 'lino/favicon.ico'})
-        )
-        urlpatterns += self.get_media_urls()
+        #~ urlpatterns = []
+        #~ urlpatterns = patterns('',
+            #~ (r'^favicon\.ico$', 'django.views.generic.simple.redirect_to', 
+                #~ {'url': settings.MEDIA_URL + 'lino/favicon.ico'})
+        #~ )
+        urlpatterns = self.get_media_urls()
         if settings.LINO.admin_url:
         #~ if self.prefix:
             from lino.ui.extjs3 import views

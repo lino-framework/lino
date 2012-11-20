@@ -25,7 +25,7 @@ import sys
 import traceback
 import codecs
 import yaml
-#~ import datetime
+import datetime
 #import logging ; logger = logging.getLogger('lino.reports')
 #~ import cPickle as pickle
 #~ import pprint

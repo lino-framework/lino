@@ -20,7 +20,7 @@
     lino.utils.html2xhtml
     lino.utils.jsgen
     lino.utils.mti
-    lino.utils.niss
+    lino.utils.ssin
     lino.utils.daemoncommand
     lino.utils.choicelists
     lino.utils.babel

@@ -47,6 +47,7 @@ class MenuItem:
                  hotkey=None,params=None,
                  request=None,
                  instance=None,
+                 javascript=None,
                  href=None):
         self.parent = parent
         if action is not None:
@@ -57,6 +58,7 @@ class MenuItem:
         self.href = href
         self.request = request
         self.instance = instance
+        self.javascript = javascript
         
         if label is None:
             if instance is not None:

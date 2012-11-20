@@ -1130,16 +1130,22 @@ class Lino(object):
         return tb
         
     def get_site_menu(self,ui,user):
+        """
+        Return this site's main menu for the given user. 
+        Must be a :class:`lino.core.menus.Toolbar` instance.
+        Applications usually should not need to override this.
+        """
         from django.utils.translation import ugettext_lazy as _
         from lino.core import menus
         main = menus.Toolbar(user,'main')
         self.setup_menu(ui,user,main)
         main.compress()
-        url = self.admin_url
-        if not url: 
-            url = "/"
-        url = "javascript:Lino.close_all_windows()"
-        main.add_url_button(url,label=_("Home"))
+        #~ url = self.admin_url
+        #~ if not url: 
+            #~ url = "/"
+        #~ url = "javascript:Lino.close_all_windows()"
+        #~ main.add_url_button(url,label=_("Home"))
+        main.add_item('home',_("Home"),javascript="Lino.close_all_windows()")
         
         #~ 20120626 if self.user_model:
             #~ from lino.modlib.users import models as users

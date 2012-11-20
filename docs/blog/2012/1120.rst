@@ -42,3 +42,105 @@ Testrunde 1 nach dem Upgrade
   in der Mitteilung per E-Mail, ansonsten hält Lino diese Information 
   für belanglos...)
   
+  
+  
+The last function-based view
+----------------------------
+
+Lino still caused a DeprecationWarning 
+in Django 1.4.2 because :meth:`lino.ui.base.UI.get_patterns`
+still added a well-meant entry for ``favicon.ico``.
+No longer.
+
+Lino no longer configures any automagic 
+`favicon.ico` or `robots.txt`.
+
+A basic `favicon.ico` and `robots.txt`
+configuration for Apache looks like::
+
+  Alias /robots.txt /var/www/robots.txt
+  Alias /favicon.ico /var/www/favicon.ico
+
+
+Where `favicon.ico` may or may not be a copy of
+:src:`/lino/media/favicon.ico`, 
+and the file `/var/www/robots.txt` may contain 
+for example::
+
+  User-agent: *
+  Disallow: /
+
+
+
+Noch Bugs
+---------
+
+- Setting a column filter on a date column caused a server traceback
+
+    | NameError at /api/isip/MyContracts 
+    | global name 'datetime' is not defined
+    | /usr/local/django/cpas_eupen/using/lino/lino/core/dbtables.py in add_gridfilters, line 245
+    
+
+- Clicking the "Home" button (the one of Lino's main menu) 
+  when at least one window was opened caused the viewport's loadmask 
+  to show up forever.
+  
+  :meth:`lino.Lino.get_site_menu` made the Home button as follows::
+  
+        url = "javascript:Lino.close_all_windows()"
+        main.add_url_button(url,label=_("Home"))
+        
+  Now it is better::
+  
+    main.add_item('home',_("Home"),javascript="Lino.close_all_windows()")
+  
+  
+Lino and Internet Explorer
+--------------------------
+
+
+Oops, I just discovered that Lino doesn't work in Internet Explorer.
+It says::
+
+  Message: Invalid procedure call or argument
+  Line: 2362
+  Char: 17
+  Code: 0
+  URI: http://127.0.0.1:8000/media/extjs/ext-all-debug.js
+  
+To be honest I dicovered this already in February and didn't yet 
+find time to investigate it.   
+  
+The Sencha forum describes a similar problem (but with another reason):
+http://www.sencha.com/forum/showthread.php?243915
+
+My `ext-all-debug.js` says at line 2362::
+
+                style == 'opacity' ?
+                    this.setOpacity(value) :
+                    this.dom.style[chkCache(style)] = value;             
+                    
+I modified that code in order to localize where IE stumbles::
+
+                var i = chkCache(style);
+                try {
+                style == 'opacity' ?
+                    this.setOpacity(value) :
+                    this.dom.style[i] = value;
+                } catch (e) {
+                    window.alert('failed to this.dom.style['+i+'] = '+value)
+                }
+
+To find out that my following code was guilty::
+
+    def get_field_options(self,**kw):
+        # hide horizontal scrollbar      
+        # for this trick thanks to Vladimir 
+        # <http://forums.ext.net/showthread.php?1513-CLOSED-Autoscroll-on-ext-panel>
+        kw.update(bodyStyle="overflow-x:hidden !important;")
+        
+After removing the ``!important``, IE no longer stumbles.
+        
+        kw.update(bodyStyle="overflow-x:hidden")
+

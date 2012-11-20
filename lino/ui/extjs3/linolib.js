@@ -506,6 +506,8 @@ Lino.Viewport = Ext.extend(Ext.Viewport,{
   }
   ,refresh : function() {
       var caller = this;
+      //~ console.log("20121120 Lino.Viewport.refresh()");
+      if (caller.loadMask) caller.loadMask.show();
       var success = function(response) {
         if (caller.loadMask) caller.loadMask.hide();
         if (response.responseText) {
@@ -563,6 +565,8 @@ Lino.open_window = function(win,st,requesting_panel) {
 };
 
 Lino.load_url = function(url) {
+    //~ foo.bar.baz = 2; 
+    //~ console.log("20121120 Lino.load_url()");
     //~ Lino.body_loadMask.show();
     Lino.viewport.loadMask.show();
     //~ location.replace(url);
@@ -587,14 +591,14 @@ Lino.close_all_windows = function() {
   if (Lino.window_history.length == 0) {
       //~ Lino.viewport.refresh();
       var url = ADMIN_URL + "/"
-      //~ console.log("20120222 Lino.close_all_windows() : location.replace(",ADMIN_URL,")");
+      //~ console.log("20121120 Lino.close_all_windows() : no window_history");
       //~ if (ADMIN_URL) 
       var p = {};
       Lino.insert_subst_user(p)
       if (Ext.urlEncode(p)) url = url + "?" + Ext.urlEncode(p);
       Lino.load_url(url);
   } else {
-    //~ console.log("20120222 Lino.close_all_windows()",Lino.window_history);
+    //~ console.log("20121120 Lino.close_all_windows() with window_history");
     while (Lino.window_history.length > 0) {
       Lino.close_window();
       //~ Lino.window_history.pop().hide_really();
@@ -2011,6 +2015,7 @@ Lino.call_row_action = function(panel,method,url,p,actionName,step,on_confirm,on
   p.$ext_requests.URL_PARAM_ACTION_NAME = actionName;
   if (!panel) panel = Lino.viewport;
   Ext.apply(p,panel.get_base_params());
+  //~ console.log("20121120 Lino.call_row_action");
   panel.loadMask.show(); 
   //~ p.$ext_requests.URL_PARAM_SUBST_USER = Lino.subst_user;
   //~ Lino.insert_subst_user(p);
@@ -2828,7 +2833,7 @@ Lino.FormPanel = Ext.extend(Lino.FormPanel,{
     //~ 20110119b p['$URL_PARAM_FILTER'] = this.quick_search_text;
     //~ Ext.apply(p,this.query_params);
     this.add_param_values(p);
-    //~ console.log('20120622 load_record_id',record_id,p);
+    //~ console.log('20121120 FormPanel.load_record_id',record_id,p);
     if (this.loadMask) this.loadMask.show();
     Ext.Ajax.request({ 
       waitMsg: 'Loading record...',
@@ -2985,6 +2990,7 @@ Lino.FormPanel = Ext.extend(Lino.FormPanel,{
   */
   save : function(after,switch_to_detail,action_name) {
     //~ var panel = this;
+    //~ console.log('20121120 FormPanel.save');
     this.loadMask.show();
     var rec = this.get_current_record();
     if (this.has_file_upload) this.form.fileUpload = true;

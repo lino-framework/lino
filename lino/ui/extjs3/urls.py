@@ -12,12 +12,14 @@
 ## along with Lino; if not, see <http://www.gnu.org/licenses/>.
 
 """
-The default URLconf module, pointed to by 
-:setting:`ROOT_URLCONF` 
-defined in :mod:`lino.apps.std.settings`.
-Defines the variable `urlpatterns` required by Django.
-
+The default URLconf module, defines the variable `urlpatterns` 
+as required by Django.
 Application code doesn't need to worry about this.
+
+This is found by Django because 
+:mod:`lino.apps.std.settings`
+:setting:`ROOT_URLCONF` 
+is set to ``'lino.ui.extjs3.urls'``.
 
 """
 

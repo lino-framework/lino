@@ -385,6 +385,8 @@ class ExtRenderer(HtmlRenderer):
                 return handler_item(v,self.action_call(None,v.bound_action,{}),v.bound_action.action.help_text)
                 #~ ar = v.action.request(self.ui)
                 #~ return handler_item(v,self.request_handler(ar),v.action.help_text)
+            elif v.javascript is not None:
+                return handler_item(v,v.javascript,None)
             elif v.href is not None:
                 url = v.href
             elif v.request is not None:
