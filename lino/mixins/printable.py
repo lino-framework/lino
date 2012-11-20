@@ -55,9 +55,9 @@ def decfmt(v,places=2,**kw):
     """
     Format a Decimal value.
     Like :func:`lino.utils.moneyfmt`, but using the site settings
-    :attr:`lino.Lno.decimal_group_separator`
+    :attr:`lino.Lino.decimal_group_separator`
     and
-    :attr:`lino.Lno.decimal_separator`.
+    :attr:`lino.Lino.decimal_separator`.
     """
     kw.setdefault('sep',settings.LINO.decimal_group_separator)
     kw.setdefault('dp',settings.LINO.decimal_separator)
@@ -178,12 +178,12 @@ class DjangoBuildMethod(BuildMethod):
     def get_template(self,action,elem):
         tpls = action.get_print_templates(self,elem)
         if len(tpls) == 0:
-            raise actions.Warning("No templates defined for %r" % elem)
+            raise Warning("No templates defined for %r" % elem)
         #~ logger.debug('make_pisa_html %s',tpls)
         try:
             return select_template(tpls)
         except TemplateDoesNotExist,e:
-            raise actions.Warning("No template found for %s (%s)" % (e,tpls))
+            raise Warning("No template found for %s (%s)" % (e,tpls))
 
     def render_template(self,elem,tpl): # ,MEDIA_URL=settings.MEDIA_URL):
         context = dict(
@@ -269,7 +269,7 @@ class SimpleBuildMethod(BuildMethod):
         tpl_leaf = self.get_template_leaf(action,elem)
         tplfile = find_config_file(tpl_leaf,self.get_group(elem))
         if not tplfile:
-            raise actions.Warning("No file %s / %s" % (self.get_group(elem),tpl_leaf))
+            raise Warning("No file %s / %s" % (self.get_group(elem),tpl_leaf))
         #~ tplfile = os.path.normpath(os.path.join(self.templates_dir,tpl_leaf))
         return self.simple_build(ar,elem,tplfile,target)
         
@@ -838,7 +838,7 @@ class TypedPrintable(CachedPrintable):
             return super(TypedPrintable,self).get_print_templates(bm,action)
         tplname = ptype.template or bm.default_template
         if not tplname.endswith(bm.template_ext):
-            raise actions.Warning(
+            raise Warning(
               "Invalid template %r configured for %s %r (expected filename ending with %r)." %
               (tplname,ptype.__class__.__name__,unicode(ptype),bm.template_ext))
         return [ tplname ]

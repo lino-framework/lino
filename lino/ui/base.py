@@ -167,6 +167,7 @@ class UI:
     def error_response(self,e=None,message=None,**kw):
         """
         Shortcut for building an error response.
+        First argument should be either an exception object or a message.
         """
         kw.update(success=False)
         #~ if e is not None:

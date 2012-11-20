@@ -690,6 +690,27 @@ class ListAction(Action):
         object representing the context where the action is running.
         """
         raise NotImplementedError("%s has no run() method" % self.__class__)
+        
+
+class BeIdReadCardAction(ListAction):
+    """
+    Explore the data read from an eid card and decide what to do with it.
+    
+    The client browser reads a Belgian eId card using :attr:`lino.Lino.use_eid_jslib`,
+    then sends the data to the server where this action's `run` method will 
+    be called. Possible actions are to create a new client or to update data 
+    in existing client.
+    
+    """
+    js_handler = 'Lino.beid_read_card_handler'
+    http_method = 'POST'
+    
+    def get_view_permission(self,user):
+        if not settings.LINO.use_eid_jslib:
+            return False
+        return super(BeIdReadCardAction,self).get_view_permission(user)
+
+        
 
 
 class ShowDetailAction(RowAction):

@@ -26,7 +26,7 @@ def root_kw(lang,**kw):
     if lang == 'de':
         kw.update(first_name="Rudi",last_name=u"Rutté")
     elif lang == 'fr':
-        kw.update(first_name=u"René",last_name=u"Robert")
+        kw.update(first_name=u"Romain",last_name=u"Rousseau")
     elif lang == 'et':
         kw.update(first_name="Rando",last_name=u"Roosi")
     elif lang == 'en':

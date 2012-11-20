@@ -43,3 +43,7 @@ distributed with Lino.
   `Python Unicode Collation Algorithm
   <http://jtauber.com/blog/2006/02/13/bug_fix_to_python_unicode_collation_algorithm/>`_
   
+- Lino uses 
+  Johan De Schutter's `eid-javascript-lib <http://code.google.com/p/eid-javascript-lib/>`_
+  to read data from Belgian eID cards
+  (See also :attr:`lino.Lino.use_eid_jslib`).

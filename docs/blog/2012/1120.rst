@@ -63,7 +63,7 @@ configuration for Apache looks like::
 
 
 Where `favicon.ico` may or may not be a copy of
-:src:`/lino/media/favicon.ico`, 
+:srcref:`/lino/media/favicon.ico`, 
 and the file `/var/www/robots.txt` may contain 
 for example::
 
@@ -94,11 +94,13 @@ Noch Bugs
   Now it is better::
   
     main.add_item('home',_("Home"),javascript="Lino.close_all_windows()")
+    
+- The message "Failed to delete %(record)s : %(error)s." never reached 
+  the user, they saw only "'dict' object has no attribute 'has_header'".    
   
   
 Lino and Internet Explorer
 --------------------------
-
 
 Oops, I just discovered that Lino doesn't work in Internet Explorer.
 It says::
@@ -132,7 +134,8 @@ I modified that code in order to localize where IE stumbles::
                     window.alert('failed to this.dom.style['+i+'] = '+value)
                 }
 
-To find out that my following code was guilty::
+To find out that my following code in :class:`HtmlBoxElement 
+<lino.ui.extjs3.ext_elems.HtmlBoxElement>` was guilty::
 
     def get_field_options(self,**kw):
         # hide horizontal scrollbar      
@@ -141,6 +144,44 @@ To find out that my following code was guilty::
         kw.update(bodyStyle="overflow-x:hidden !important;")
         
 After removing the ``!important``, IE no longer stumbles.
+And we'll see whether this "!important" was important...
         
-        kw.update(bodyStyle="overflow-x:hidden")
 
+Belgian eID cards and the nationality
+-------------------------------------
+
+Question: The 'nationality' field of a Belgian eID card 
+contains the nationality in full text and in the language of the card.
+Maybe even depending on the person's gender.
+So for a Belgian it may contain "BELG", "BELGE", "BELGIER", "BELGIERIN" or "BELGIAN".
+Isn't there also a code? 
+And is there somewhere an official list of all possible nationalities?
+
+Answer: no, there isn't.
+
+- https://securehomes.esat.kuleuven.be/~decockd/wiki/bin/view.cgi/EidForums/ForumEidCards0097
+
+
+- https://groups.google.com/d/topic/eid-applet/99P9fR3m-j0/discussion
+
+- http://code.google.com/p/eid-applet/issues/detail?id=42&can=1&q=nationality
+
+
+Yes, that's typically Belgian... I just couldn't believe it at first glance.
+
+I won't try to change the Belgian administration, I think for me it's
+okay to say "Sorry, it's impossible to reliably extract the nationality
+from an eid card". A PCSW can always do afterwards a 
+:class:`Tx25 <lino_welfare.modlib.cbss.tx25.RetrieveTIGroupsRequest>`_ 
+request to the national register to get this and other information.
+
+- Conclusion: 
+  remove the 'Country.nationalities' field & Co.
+  We'll need a simple dump-load cycle:
+  :func:`lino_welfare.modlib.pcsw.migrate.migrate_from_1_0_2` does 
+  nothing except to confirm the new version.
+
+
+All this will be part of 
+`Lino-Welfare 1.0.3
+<http://welfare.lino-framework.org/de/releases/1.0.3.html>`_

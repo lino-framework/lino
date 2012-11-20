@@ -269,7 +269,8 @@ def delete_element(ar,elem):
     assert elem is not None
     msg = ar.actor.disable_delete(elem,ar)
     if msg is not None:
-        return settings.LINO.ui.error_response(None,msg,alert=True)
+        rv = ar.ui.error_response(None,msg,alert=True)
+        return ar.ui.action_response(rv)
             
     #~ dblogger.log_deleted(ar.request,elem)
     
@@ -282,7 +283,8 @@ def delete_element(ar,elem):
         msg = _("Failed to delete %(record)s : %(error)s."
             ) % dict(record=obj2unicode(elem),error=e)
         #~ msg = "Failed to delete %s." % element_name(elem)
-        return settings.LINO.ui.error_response(None,msg)
+        rv = ar.ui.error_response(None,msg)
+        return ar.ui.action_response(rv)
         #~ raise Http404(msg)
         
     
@@ -874,7 +876,7 @@ class ApiElement(View):
         rpt = requested_report(app_label,actor)
         elem = rpt.get_row_by_pk(pk)
         if elem is None:
-            raise http.Http404("%s has no row with prmiary key %r" % (rpt,pk))
+            raise http.Http404("%s has no row with primary key %r" % (rpt,pk))
         ar = rpt.request(ui,request)
         return delete_element(ar,elem)
         
