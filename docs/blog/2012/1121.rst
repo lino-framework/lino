@@ -1,0 +1,26 @@
+20121121
+========
+
+Signature of `get_view_permission`
+----------------------------------
+
+Eine rein interne Optimierung: 
+Signatur der Methode :meth:`lino.utils.auth.Permittable.get_view_permission` 
+lautet nicht mehr `(action, user, obj, state)`
+sondern nur noch `(profile)`.
+
+Und es gibt auch eine eigene Fabrik für view permission handler 
+(:func:`lino.utils.auth.make_view_permission_handler`).
+Die Information `authenticated` steht jetzt nicht mehr 
+pro Benutzer sondern pro Profil.
+Die lino*.js-Dateien werden ja generiert in einem Loop.
+Dieser Loop ging bisher über alle *Benutzer*, 
+jetzt über alle *UserProfiles*.
+
+An zwei Stellen war ich auch selbst in die Mausefalle der falsch 
+designten Signatur reingetreten.
+
+Importing data from .ods files
+------------------------------
+
+New module :mod:`lino.utils.odsreader` (with a tested example in the docstring).

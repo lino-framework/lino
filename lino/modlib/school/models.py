@@ -432,7 +432,7 @@ dd.inject_field(Person,
 
 
     
-def setup_main_menu(site,ui,user,main):
+def setup_main_menu(site,ui,profile,main):
     m = main.get_item("contacts")
     m.add_action(Teachers)
     m.add_action(Pupils)
@@ -441,7 +441,7 @@ def setup_main_menu(site,ui,user,main):
     m.add_action(Teachers)
     m.add_action(Pupils)
   
-def unused_setup_master_menu(site,ui,user,m): 
+def unused_setup_master_menu(site,ui,profile,m): 
     #~ m = m.add_menu("school",_("School"))
     m.add_action(Teachers)
     m.add_action(Pupils)
@@ -449,16 +449,16 @@ def unused_setup_master_menu(site,ui,user,m):
     #~ m.add_action(Courses)
             
 
-def setup_my_menu(site,ui,user,m): pass
+def setup_my_menu(site,ui,profile,m): pass
   
-def setup_config_menu(site,ui,user,m):
+def setup_config_menu(site,ui,profile,m):
     m = m.add_menu("school",_("School"))
     #~ m.add_action(Rooms)
     m.add_action(Contents)
     m.add_action(Slots)
     #~ m.add_action(PresenceStatuses)
   
-def setup_explorer_menu(site,ui,user,m):
+def setup_explorer_menu(site,ui,profile,m):
     m = m.add_menu("school",_("School"))
     #~ m.add_action(Presences)
     #~ m.add_action(Events)

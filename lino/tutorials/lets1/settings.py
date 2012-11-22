@@ -6,7 +6,7 @@ class Lino(Lino):
     
     #~ user_model = None
     
-    def setup_menu(self,ui,user,main):
+    def setup_menu(self,ui,profile,main):
         m = main.add_menu("master","Master")
         m.add_action(self.modules.lets.Products)
         m.add_action(self.modules.lets.Customers)

@@ -212,13 +212,13 @@ class VatItemBase(mixins.Sequenced,VatTotal):
 MODULE_LABEL = _("VAT")
 
 def site_setup(site): pass 
-def setup_main_menu(site,ui,user,m): pass
-def setup_my_menu(site,ui,user,m): pass
-def setup_config_menu(site,ui,user,m): pass
-#~ def setup_explorer_menu(site,ui,user,m): pass
+def setup_main_menu(site,ui,profile,m): pass
+def setup_my_menu(site,ui,profile,m): pass
+def setup_config_menu(site,ui,profile,m): pass
+#~ def setup_explorer_menu(site,ui,profile,m): pass
   
 
-def setup_explorer_menu(site,ui,user,m):
+def setup_explorer_menu(site,ui,profile,m):
     m  = m.add_menu("vat",MODULE_LABEL)
     m.add_action(VatClasses)
   

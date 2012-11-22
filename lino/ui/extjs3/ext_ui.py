@@ -1206,9 +1206,9 @@ tinymce.init({
             if request.subst_user:
                 user = request.subst_user
         if not settings.LINO.build_js_cache_on_startup:
-            self.build_js_cache_for_user(user)
+            self.build_js_cache_for_profile(user.profile,False)
         yield '<script type="text/javascript" src="%s"></script>' % (
-            self.media_url(*self.lino_js_parts(user)))
+            self.media_url(*self.lino_js_parts(user.profile)))
             
         #~ yield '<!-- page specific -->'
         yield '<script type="text/javascript">'
@@ -1217,9 +1217,7 @@ tinymce.init({
         
         #~ yield "console.time('onReady');"
         
-        #~ yield '  Ext.QuickTips.init();'
-        
-        if request.user.authenticated:
+        if request.user.profile.authenticated:
           
             if request.subst_user:
                 #~ yield "Lino.subst_user = %s;" % py2js(request.subst_user.id)
@@ -1317,9 +1315,8 @@ tinymce.init({
           bbar=dict(xtype='toolbar',items=js_code('Lino.status_bar')),
           #~ title=self.site.title,
           tbar=js_code('Lino.main_menu'),
-          #~ tbar=settings.LINO.get_site_menu(self,request.user),
         )
-        jsgen.set_for_user(request.user)
+        jsgen.set_for_user_profile(request.user.profile)
         for ln in jsgen.declare_vars(win):
             yield ln
         #~ yield '  new Ext.Viewport({layout:"fit",items:%s}).render("body");' % py2js(win)
@@ -1448,14 +1445,8 @@ tinymce.init({
         self.check_action_response(kw)
         return views.json_response(kw)
             
-    def lino_js_parts(self,user):
-    #~ def js_cache_name(self):
-        #~ return ('cache','js','site.js')
-        #~ return ('cache','js','lino.js')
-        #~ return ('cache','js','lino_'+user.get_profile()+'_'+translation.get_language()+'.js')
-        #~ return ('cache','js','lino_'+(user.profile.name or user.username)+'_'+translation.get_language()+'.js')
-        #~ logger.info("20121114 %s : %s",user,user.profile)
-        return ('cache','js','lino_' + user.profile.value + '_' + translation.get_language()+'.js')
+    def lino_js_parts(self,profile):
+        return ('cache','js','lino_' + profile.value + '_' + translation.get_language()+'.js')
         
     def build_site_cache(self,force=False):
         """
@@ -1481,19 +1472,22 @@ tinymce.init({
         if force or settings.LINO.build_js_cache_on_startup:
             count = 0
             langs = babel.AVAILABLE_LANGUAGES
-            #~ qs = users.User.objects.exclude(profile=dd.UserProfiles.blank_item) 20120829
-            #~ qs = users.User.objects.exclude(profile=None) # .exclude(level='')
-            qs = users.User.objects.exclude(profile='')
             for lang in langs:
                 babel.set_language(lang)
-                for user in qs:
-                    count += self.build_js_cache_for_user(user,force)
+                for profile in dd.UserProfiles.objects():
+                    count += self.build_js_cache_for_profile(profile,force)
+            #~ qs = users.User.objects.exclude(profile='')
+            #~ for lang in langs:
+                #~ babel.set_language(lang)
+                #~ for user in qs:
+                    #~ count += self.build_js_cache_for_user(user,force)
             babel.set_language(None)
                 
             logger.info("%d lino*.js files have been built in %s seconds.",
                 count,time.time()-started)
           
-    def build_js_cache_for_user(self,user,force=False):
+    #~ def build_js_cache_for_user(self,user,force=False):
+    def build_js_cache_for_profile(self,profile,force):
         """
         Build the lino*.js file for the specified user and the current language.
         If the file exists and is up to date, don't generate it unless 
@@ -1501,38 +1495,40 @@ tinymce.init({
         
         This is called 
         - on each request if :attr:`lino.Lino.build_js_cache_on_startup` is `False`.
-        - with `force=True` by :class:`lino.modles.BuildSiteCache`
+        - with `force=True` by :class:`lino.models.BuildSiteCache`
         """
-        jsgen.set_for_user(user)
+        jsgen.set_for_user_profile(profile)
         
-        fn = os.path.join(settings.MEDIA_ROOT,*self.lino_js_parts(user)) 
+        fn = os.path.join(settings.MEDIA_ROOT,*self.lino_js_parts(profile)) 
         if not force and os.path.exists(fn):
             mtime = os.stat(fn).st_mtime
             if mtime > settings.LINO.mtime:
-                if not user.modified or user.modified < datetime.datetime.fromtimestamp(mtime):
-                    logger.debug("%s is up to date.",fn)
-                    return 0
+                #~ if not user.modified or user.modified < datetime.datetime.fromtimestamp(mtime):
+                logger.debug("%s is up to date.",fn)
+                return 0
                     
         logger.info("Building %s ...", fn)
         makedirs_if_missing(os.path.dirname(fn))
         f = codecs.open(fn,'w',encoding='utf-8')
         try:
-            self.write_lino_js(f,user)
+            self.write_lino_js(f,profile)
             #~ f.write(jscompress(js))
             f.close()
             return 1
         except Exception, e:
             """
-            If some error occurs, remove the half generated file 
-            to make sure that Lino will try to generate it again on next request
-            (and report the same error message again).
+            If some error occurs, remove the partly generated file 
+            to make sure that Lino will try to generate it again 
+            (and report the same error message) on next request.
             """
             f.close()
             os.remove(fn)
             raise
         #~ logger.info("Wrote %s ...", fn)
             
-    def write_lino_js(self,f,user):
+    #~ def write_lino_js(self,f,user):
+    def write_lino_js(self,f,profile):
+        
         tpl = self.linolib_template()
         
         messages = set()
@@ -1546,12 +1542,13 @@ tinymce.init({
         Make the dummy messages file.
         But only when generating for root user.
         """
-        if jsgen._for_user.profile == dd.UserProfiles.admin:
+        if jsgen._for_user_profile == dd.UserProfiles.admin:
             make_dummy_messages_file(self.linolib_template_name(),messages)
         
-        assert user == jsgen._for_user
+        #~ assert user == jsgen._for_user
+        assert profile == jsgen._for_user_profile
         
-        f.write("Lino.main_menu = %s;\n" % py2js(settings.LINO.get_site_menu(self,user)))
+        f.write("Lino.main_menu = %s;\n" % py2js(settings.LINO.get_site_menu(self,profile)))
 
         actors_list = [
             rpt for rpt in dbtables.master_reports \
@@ -1569,7 +1566,8 @@ tinymce.init({
         for a in actors_list:
             f.write("Ext.namespace('Lino.%s')\n" % a)
                 
-        assert user == jsgen._for_user
+        #~ assert user == jsgen._for_user
+        assert profile == jsgen._for_user_profile
         
         """
         actors with their own `get_handle_name` don't have a js implementation
@@ -1579,11 +1577,11 @@ tinymce.init({
 
         #~ new_actors_list = []
         #~ for a in actors_list:
-            #~ if a.get_view_permission(jsgen._for_user):
+            #~ if a.get_view_permission(jsgen._for_user_profile):
                 #~ new_actors_list.append(a)
         #~ actors_list = new_actors_list
         
-        actors_list = [a for a in actors_list if a.get_view_permission(jsgen._for_user)]
+        actors_list = [a for a in actors_list if a.get_view_permission(jsgen._for_user_profile)]
         
         #~ actors_list = [a for a in actors_list if a.get_view_permission(jsgen._for_user)]
           
@@ -1612,7 +1610,8 @@ tinymce.init({
                     #~ fl._using_actors = [actor]
                     collector.add(fl)
                     
-        assert user == jsgen._for_user
+        #~ assert user == jsgen._for_user
+        assert profile == jsgen._for_user_profile
         
         for res in actors_list:
             add(res,form_panels,res.detail_layout, "%s.DetailFormPanel" % res)
@@ -1632,17 +1631,17 @@ tinymce.init({
         #~ f.write('\n/* Application FormPanel subclasses */\n')
         for fl in param_panels:
             lh = fl.get_layout_handle(self)
-            for ln in self.js_render_ParamsPanelSubclass(lh,user):
+            for ln in self.js_render_ParamsPanelSubclass(lh):
                 f.write(ln + '\n')
                 
         for fl in action_param_panels:
             lh = fl.get_layout_handle(self)
-            for ln in self.js_render_ActionFormPanelSubclass(lh,user):
+            for ln in self.js_render_ActionFormPanelSubclass(lh):
                 f.write(ln + '\n')
                 
         for fl in form_panels:
             lh = fl.get_layout_handle(self)
-            for ln in self.js_render_FormPanelSubclass(lh,user):
+            for ln in self.js_render_FormPanelSubclass(lh):
                 f.write(ln + '\n')
         
         actions_written = set()
@@ -1653,7 +1652,7 @@ tinymce.init({
                     if not ba.action in actions_written:
                         #~ logger.info("20121005 %r is not in %r",a,actions_written)
                         actions_written.add(ba.action)
-                        for ln in self.js_render_window_action(rh,ba,user):
+                        for ln in self.js_render_window_action(rh,ba,profile):
                             f.write(ln + '\n')
           
         for rpt in actors_list:
@@ -1663,7 +1662,7 @@ tinymce.init({
                 #~ f.write('// 20120621 %s\n' % rpt)
                     #~ continue
                 
-                for ln in self.js_render_GridPanel_class(rh,user):
+                for ln in self.js_render_GridPanel_class(rh):
                     f.write(ln + '\n')
                 
             #~ for a in rpt.get_actions():
@@ -1684,15 +1683,16 @@ tinymce.init({
                     if isinstance(ba.action,(actions.ShowDetailAction,actions.InsertRow)):
                         for ln in self.js_render_detail_action_FormPanel(rh,ba):
                               f.write(ln + '\n')
-                    for ln in self.js_render_window_action(rh,ba,user):
+                    for ln in self.js_render_window_action(rh,ba,profile):
                         f.write(ln + '\n')
                 #~ elif a.show_in_workflow:
                 elif ba.action.custom_handler:
-                    for ln in self.js_render_custom_action(rh,ba,user):
+                    for ln in self.js_render_custom_action(rh,ba):
                         f.write(ln + '\n')
             
         
-        assert user == jsgen._for_user
+        #~ assert user == jsgen._for_user
+        assert profile == jsgen._for_user_profile
         
         return 1
           
@@ -1846,7 +1846,7 @@ tinymce.init({
         field_elems = []
         for e in main.active_children:
             if isinstance(e,ext_elems.FieldElement):
-                if e.get_view_permission(jsgen._for_user):
+                if e.get_view_permission(jsgen._for_user_profile):
                     field_elems.append(e)
                     l = elems_by_field.get(e.field.name,None)
                     if l is None:
@@ -1872,7 +1872,8 @@ tinymce.init({
         
         
       
-    def js_render_ParamsPanelSubclass(self,dh,user):
+    #~ def js_render_ParamsPanelSubclass(self,dh,user):
+    def js_render_ParamsPanelSubclass(self,dh):
         tbl = dh.layout._actor
         
         yield ""
@@ -1901,7 +1902,8 @@ tinymce.init({
         yield "});"
         yield ""
       
-    def js_render_ActionFormPanelSubclass(self,dh,user):
+    #~ def js_render_ActionFormPanelSubclass(self,dh,user):
+    def js_render_ActionFormPanelSubclass(self,dh):
         tbl = dh.layout._actor
         #~ logger.info("20121007 js_render_ActionFormPanelSubclass %s",dh.layout._formpanel_name)
         yield ""
@@ -1934,10 +1936,11 @@ tinymce.init({
         yield "});"
         yield ""
       
-    def js_render_FormPanelSubclass(self,dh,user):
+    #~ def js_render_FormPanelSubclass(self,dh,user):
+    def js_render_FormPanelSubclass(self,dh):
         
         tbl = dh.layout._actor
-        if not dh.main.get_view_permission(jsgen._for_user):
+        if not dh.main.get_view_permission(jsgen._for_user_profile):
             msg = "No view permission for main panel of %s :" % dh.layout._formpanel_name
             msg += " actor %s requires %s, but main requires %s)" % (tbl,tbl.required,dh.main.required)
             raise Exception(msg)
@@ -2000,7 +2003,6 @@ tinymce.init({
         #~ logger.info('20121005 js_render_detail_action_FormPanel(%s,%s)',rpt,action.full_name(rpt))
         yield ""
         #~ yield "// js_render_detail_action_FormPanel %s" % action
-        #~ action = actions.BoundAction(rpt,action)
         dtl = action.get_window_layout()
         #~ dtl = rpt.detail_layout
         if dtl is None:
@@ -2017,7 +2019,7 @@ tinymce.init({
 
         yield "  ls_bbar_actions: %s," % py2js([
             rh.ui.a2btn(ba) for ba in rpt.get_actions(action.action) 
-                if ba.action.show_in_bbar and ba.get_view_permission(jsgen._for_user)]) 
+                if ba.action.show_in_bbar and ba.get_view_permission(jsgen._for_user_profile)]) 
         yield "  ls_url: %s," % py2js(ext_elems.rpt2url(rpt))
         if action.action != rpt.default_action.action:
             yield "  action_name: %s," % py2js(action.action.action_name)
@@ -2035,7 +2037,8 @@ tinymce.init({
         yield "});"
         yield ""
         
-    def js_render_GridPanel_class(self,rh,user):
+    #~ def js_render_GridPanel_class(self,rh,user):
+    def js_render_GridPanel_class(self,rh):
         
         yield ""
         yield "// js_render_GridPanel_class %s" % rh
@@ -2055,7 +2058,7 @@ tinymce.init({
         kw.update(ls_bbar_actions=[
             rh.ui.a2btn(ba) 
               for ba in rh.actor.get_actions(rh.actor.default_action.action) 
-                  if ba.action.show_in_bbar and ba.get_view_permission(jsgen._for_user)])
+                  if ba.action.show_in_bbar and ba.get_view_permission(jsgen._for_user_profile)])
         kw.update(ls_grid_configs=[gc.data for gc in rh.actor.grid_configs])
         kw.update(gc_name=ext_elems.DEFAULT_GC_NAME)
         #~ if action != rh.actor.default_action:
@@ -2132,7 +2135,7 @@ tinymce.init({
         yield ""
       
             
-    def js_render_custom_action(self,rh,action,user):
+    def js_render_custom_action(self,rh,action):
         """
         Defines the non-window action handler used by :meth:`row_action_button`
         """
@@ -2146,7 +2149,8 @@ tinymce.init({
         yield "};"
 
 
-    def js_render_window_action(self,rh,action,user):
+    #~ def js_render_window_action(self,rh,action,user):
+    def js_render_window_action(self,rh,action,profile):
       
         rpt = rh.actor
         
@@ -2204,7 +2208,7 @@ tinymce.init({
             yield "  return Lino.calendar_app.get_main_panel();"
         else:
             p = dict()
-            if action.action is settings.LINO.get_main_action(user):
+            if action.action is settings.LINO.get_main_action(profile):
                 p.update(is_home_page=True)
             #~ yield "  var p = {};" 
             if action.action.hide_top_toolbar or action.actor.hide_top_toolbar or action.action.parameters:

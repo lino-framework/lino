@@ -83,6 +83,82 @@ def register_actor(a):
     #~ assert not actors_dict.has_key(actor.actor_id), "duplicate actor_id %s" % actor.actor_id
     #~ actors_dict[actor.actor_id] = actor
     #~ return actor
+    
+    
+    
+    
+    
+    
+class BoundAction(object):
+  
+    def __init__(self,actor,action):
+
+        if not isinstance(action,actions.Action):
+            raise Exception("%s : %r is not an Action" % (actor,action))
+        self.action = action
+        self.actor = actor
+        
+        required = dict()
+        if action.readonly:
+            required.update(actor.required)
+        #~ elif isinstance(action,InsertRow):
+            #~ required.update(actor.create_required)
+        elif isinstance(action,actions.DeleteSelected):
+            required.update(actor.delete_required)
+        else:
+            required.update(actor.update_required)
+        required.update(action.required)
+        #~ print 20120628, str(a), required
+        #~ def wrap(a,required,fn):
+            #~ return fn
+            
+        debug = actor.debug_permissions and action.debug_permissions
+        
+        from lino.utils.auth import make_permission_handler, make_view_permission_handler
+        self.allow_view = curry(make_view_permission_handler(
+            self,action.readonly,debug,**required),action)
+        self.allow = curry(make_permission_handler(
+            action,actor,action.readonly,debug,**required),action)
+        #~ actor.actions.define(a.action_name,ba)
+        
+        
+    def get_window_layout(self):
+        return self.action.get_window_layout(self.actor)
+        
+    def full_name(self):
+        return self.action.full_name(self.actor)
+        #~ if self.action.action_name is None:
+            #~ raise Exception("%r action_name is None" % self.action)
+        #~ return str(self.actor) + '.' + self.action.action_name
+        
+    def request(self,*args,**kw):
+        kw.update(action=self)
+        return self.actor.request(*args,**kw)
+        
+        
+    def get_button_label(self):
+        if self.actor is None:
+            return self.action.label 
+        if self.action is self.actor.default_action.action:
+            return self.actor.label 
+        else:
+            return u"%s %s" % (self.action.label,self.actor.label)
+            
+    def get_panel_btn_handler(self,*args):
+        return self.action.get_panel_btn_handler(self.actor,*args)
+        
+    def get_bound_action_permission(self,ar,obj,state):
+        if not self.action.get_action_permission(ar,obj,state):
+            return False
+        return self.allow(ar.get_user(),obj,state)
+        
+    def get_view_permission(self,profile):
+        if not self.action.get_view_permission(profile):
+            return False
+        return self.allow_view(profile)
+        
+
+    
 
 
 
@@ -569,10 +645,10 @@ class Actor(actions.Parametrizable):
         
     
     @classmethod
-    def get_view_permission(self,user):
+    def get_view_permission(self,profile):
         #~ return self.default_action.action.allow(user,None,None)
         #~ return self.default_action.get_bound_action_permission(user,None,None)
-        return self.default_action.get_view_permission(user)
+        return self.default_action.get_view_permission(profile)
         #~ return self.allow_read(user,None,None)
 
     @classmethod
@@ -682,7 +758,7 @@ class Actor(actions.Parametrizable):
         
     @classmethod
     def bind_action(self,a):
-        ba = actions.BoundAction(self,a)
+        ba = BoundAction(self,a)
         if a.action_name is not None:
             self._actions_dict.define(a.action_name,ba)
         self._actions_list.append(ba)

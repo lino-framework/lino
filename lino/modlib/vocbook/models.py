@@ -36,9 +36,9 @@ from lino.core.modeltools import resolve_model
 from lino.utils.babel import dtosl
 
 
-def setup_main_menu(site,ui,user,m): pass
+def setup_main_menu(site,ui,profile,m): pass
 
-def setup_my_menu(site,ui,user,m): 
+def setup_my_menu(site,ui,profile,m): 
     m  = m.add_menu("cal",_("~Calendar"))
     m.add_action('cal.MyTasks')
     #~ m.add_action('cal.MyEventsToday')
@@ -47,7 +47,7 @@ def setup_my_menu(site,ui,user,m):
         m.add_action('cal.Panel')
     #~ m.add_action_(actions.Calendar())
   
-def setup_config_menu(site,ui,user,m): 
+def setup_config_menu(site,ui,profile,m): 
     m  = m.add_menu("cal",_("~Calendar"))
     m.add_action('cal.Places')
     m.add_action('cal.Priorities')
@@ -59,7 +59,7 @@ def setup_config_menu(site,ui,user,m):
     m.add_action('cal.GuestStatuses')
     m.add_action('cal.Calendars')
   
-def setup_explorer_menu(site,ui,user,m):
+def setup_explorer_menu(site,ui,profile,m):
     m  = m.add_menu("cal",_("~Calendar"))
     m.add_action('cal.Events')
     m.add_action('cal.Tasks')

@@ -1095,7 +1095,9 @@ class Lino(object):
         from django.utils.translation import ugettext_lazy as _
         dd.UserProfiles.reset()
         add = dd.UserProfiles.add_item
-        add('000', _("Anonymous"), name='anonymous', level=None,readonly=True)
+        add('000', _("Anonymous"), name='anonymous', level=None,
+            readonly=True,
+            authenticated=False)
         add('100', _("User"), name='user', level='user')
         add('900', _("Administrator"), name='admin', level='admin')
         
@@ -1123,13 +1125,13 @@ class Lino(object):
         #~ print "20120703 not installed: %r" % app_label
 
         
-    def get_quicklinks(self,ui,user):
+    def get_quicklinks(self,ar):
         from lino.core import menus
-        tb = menus.Toolbar(user,'quicklinks')
-        self.setup_quicklinks(ui,user,tb)
-        return tb
+        m = menus.Toolbar(ar.get_user().profile,'quicklinks')
+        self.setup_quicklinks(ar,m)
+        return m
         
-    def get_site_menu(self,ui,user):
+    def get_site_menu(self,ui,profile):
         """
         Return this site's main menu for the given user. 
         Must be a :class:`lino.core.menus.Toolbar` instance.
@@ -1137,8 +1139,8 @@ class Lino(object):
         """
         from django.utils.translation import ugettext_lazy as _
         from lino.core import menus
-        main = menus.Toolbar(user,'main')
-        self.setup_menu(ui,user,main)
+        main = menus.Toolbar(profile,'main')
+        self.setup_menu(ui,profile,main)
         main.compress()
         #~ url = self.admin_url
         #~ if not url: 
@@ -1147,25 +1149,18 @@ class Lino(object):
         #~ main.add_url_button(url,label=_("Home"))
         main.add_item('home',_("Home"),javascript="Lino.close_all_windows()")
         
-        #~ 20120626 if self.user_model:
-            #~ from lino.modlib.users import models as users
-            #~ main.add_separator("->")
-            #~ main.add_instance_action(user)
-            #~ main.add_action(users.MyDetail)
-            #~ main.add_action(users.Users.detail_action)
-        
         return main
         
-    def setup_quicklinks(self,ui,user,m):
+    def setup_quicklinks(self,ar,m):
         """
         Override this 
         in application-specific (or even local) :xfile:`settings.py` files 
         to define a series of *quick links* to appear below the main menu bar.
         Example see :meth:`lino.apps.pcsw.settings.Lino.setup_quicklinks`.
         """
-        self.on_each_app('setup_quicklinks',ui,user,m)
+        self.on_each_app('setup_quicklinks',ar,m)
         
-    def setup_menu(self,ui,user,main):
+    def setup_menu(self,ui,profile,main):
         """
         Set up the application's menu structure.
         
@@ -1178,17 +1173,17 @@ class Lino(object):
         """
         from django.utils.translation import ugettext_lazy as _
         m = main.add_menu("master",_("Master"))
-        self.on_each_app('setup_master_menu',ui,user,m)
-        if not user.profile.readonly:
+        self.on_each_app('setup_master_menu',ui,profile,m)
+        if not profile.readonly:
             m = main.add_menu("my",_("My menu"))
-            self.on_each_app('setup_my_menu',ui,user,m)
-        self.on_each_app('setup_main_menu',ui,user,main)
+            self.on_each_app('setup_my_menu',ui,profile,m)
+        self.on_each_app('setup_main_menu',ui,profile,main)
         m = main.add_menu("config",_("Configure"))
-        self.on_each_app('setup_config_menu',ui,user,m)
+        self.on_each_app('setup_config_menu',ui,profile,m)
         m = main.add_menu("explorer",_("Explorer"))
-        self.on_each_app('setup_explorer_menu',ui,user,m)
+        self.on_each_app('setup_explorer_menu',ui,profile,m)
         m = main.add_menu("site",_("Site"))
-        self.on_each_app('setup_site_menu',ui,user,m)
+        self.on_each_app('setup_site_menu',ui,profile,m)
         return main
 
 
@@ -1276,7 +1271,7 @@ class Lino(object):
             yield 'lino.utils.sqllog.SQLLogToConsoleMiddleware'
             #~ yield 'lino.utils.sqllog.SQLLogMiddleware'
             
-    def get_main_action(self,user):
+    def get_main_action(self,profile):
         """
         Return the action to show as top-level "index.html".
         The default implementation returns `None`, which means 

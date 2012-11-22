@@ -178,15 +178,15 @@ MODULE_NAME = _("~Blog")
   
 #~ def setup_main_menu(site,ui,user,m): pass
   
-def setup_main_menu(site,ui,user,m): 
+def setup_main_menu(site,ui,profile,m): 
     m  = m.add_menu("blogs",MODULE_NAME)
     m.add_action(MyEntries)
   
-def setup_config_menu(site,ui,user,m): 
+def setup_config_menu(site,ui,profile,m): 
     m  = m.add_menu("blogs",MODULE_NAME)
     m.add_action(EntryTypes)
   
-def setup_explorer_menu(site,ui,user,m):
+def setup_explorer_menu(site,ui,profile,m):
     m  = m.add_menu("blogs",MODULE_NAME)
     m.add_action(Entries)
   

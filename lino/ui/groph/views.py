@@ -30,7 +30,7 @@ class Index(View):
         yield '<title id="title">%s</title>' % settings.LINO.title
         
         user = ar.get_user()  # request.subst_user or request.user
-        menu = settings.LINO.get_site_menu(self,user)
+        menu = settings.LINO.get_site_menu(self,user.profile)
         yield '</head><body>'
         
         yield menu.as_html(ar)

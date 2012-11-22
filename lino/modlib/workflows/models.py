@@ -205,20 +205,20 @@ def site_setup(site):
     site.workflow_actors = dict()
     
         
-def setup_main_menu(site,ui,user,m): 
+def setup_main_menu(site,ui,profile,m): 
     pass
 
-def setup_my_menu(site,ui,user,m): 
+def setup_my_menu(site,ui,profile,m): 
     pass
   
-def setup_config_menu(site,ui,user,m):
+def setup_config_menu(site,ui,profile,m):
     m = m.add_menu("workflows",MODULE_LABEL)
     m.add_action(Rules)
         
   
-def setup_explorer_menu(site,ui,user,m): 
+def setup_explorer_menu(site,ui,profile,m): 
     pass
   
-def setup_site_menu(site,ui,user,m): 
+def setup_site_menu(site,ui,profile,m): 
     pass
 

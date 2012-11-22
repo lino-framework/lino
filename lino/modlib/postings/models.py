@@ -205,7 +205,7 @@ MODULE_LABEL = _("Postings")
 
 lino = dd.resolve_app('lino')
 
-def setup_main_menu(site,ui,user,m):
+def setup_main_menu(site,ui,profile,m):
     m  = m.add_menu("office",lino.OFFICE_MODULE_LABEL)
     m  = m.add_menu("postings",MODULE_LABEL)
     m.add_action(MyPostings)
@@ -215,20 +215,20 @@ def setup_main_menu(site,ui,user,m):
 
 
   
-#~ def setup_main_menu(site,ui,user,m): pass
+#~ def setup_main_menu(site,ui,profile,m): pass
 
-#~ def setup_my_menu(site,ui,user,m): 
+#~ def setup_my_menu(site,ui,profile,m): 
     #~ m  = m.add_menu("postings",MODULE_LABEL)
     #~ m.add_action(MyInbox)
     #~ m.add_action(MySent)
   
-def setup_config_menu(site,ui,user,m):
+def setup_config_menu(site,ui,profile,m):
     pass
     #~ if user.level >= UserLevels.manager:
     #~ m  = m.add_menu("outbox",MODULE_LABEL)
     #~ m.add_action(MailTypes)
   
-def setup_explorer_menu(site,ui,user,m):
+def setup_explorer_menu(site,ui,profile,m):
     #~ if user.level >= UserLevels.manager:
     m  = m.add_menu("office",lino.OFFICE_MODULE_LABEL)
     #~ m  = m.add_menu("postings",MODULE_LABEL)

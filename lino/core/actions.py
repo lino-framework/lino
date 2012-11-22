@@ -197,7 +197,7 @@ class Permittable(object):
     def add_requirements(self,**kw):
         return add_requirements(self,**kw)
         
-    def get_view_permission(self,user):
+    def get_view_permission(self,profile):
         raise NotImplementedError()
         
 
@@ -581,7 +581,7 @@ class Action(Parametrizable,Permittable):
         """
         return True
         
-    def get_view_permission(self,user):
+    def get_view_permission(self,profile):
         """
         Overridden by lino_welfare.modlib.pcsw.models.BeIdReadCardAction
         (which is available only when lino.Lino.use_eid_jslib is True).
@@ -705,10 +705,10 @@ class BeIdReadCardAction(ListAction):
     js_handler = 'Lino.beid_read_card_handler'
     http_method = 'POST'
     
-    def get_view_permission(self,user):
+    def get_view_permission(self,profile):
         if not settings.LINO.use_eid_jslib:
             return False
-        return super(BeIdReadCardAction,self).get_view_permission(user)
+        return super(BeIdReadCardAction,self).get_view_permission(profile)
 
         
 
@@ -923,74 +923,6 @@ class NotifyingAction(RowAction):
         
     
 
-
-class BoundAction(object):
-  
-    def __init__(self,actor,action):
-
-        if not isinstance(action,Action):
-            raise Exception("%s : %r is not an Action" % (actor,action))
-        self.action = action
-        self.actor = actor
-        
-        
-        required = dict()
-        if action.readonly:
-            required.update(actor.required)
-        #~ elif isinstance(action,InsertRow):
-            #~ required.update(actor.create_required)
-        elif isinstance(action,DeleteSelected):
-            required.update(actor.delete_required)
-        else:
-            required.update(actor.update_required)
-        required.update(action.required)
-        #~ print 20120628, str(a), required
-        #~ def wrap(a,required,fn):
-            #~ return fn
-            
-        debug = actor.debug_permissions and action.debug_permissions
-        
-        from lino.utils.auth import make_permission_handler
-        self.allow = curry(make_permission_handler(
-            action,actor,action.readonly,debug,**required),action)
-        #~ actor.actions.define(a.action_name,ba)
-        
-        
-    def get_window_layout(self):
-        return self.action.get_window_layout(self.actor)
-        
-    def full_name(self):
-        return self.action.full_name(self.actor)
-        #~ if self.action.action_name is None:
-            #~ raise Exception("%r action_name is None" % self.action)
-        #~ return str(self.actor) + '.' + self.action.action_name
-        
-    def request(self,*args,**kw):
-        kw.update(action=self)
-        return self.actor.request(*args,**kw)
-        
-        
-    def get_button_label(self):
-        if self.actor is None:
-            return self.action.label 
-        if self.action is self.actor.default_action.action:
-            return self.actor.label 
-        else:
-            return u"%s %s" % (self.action.label,self.actor.label)
-            
-    def get_panel_btn_handler(self,*args):
-        return self.action.get_panel_btn_handler(self.actor,*args)
-        
-    def get_bound_action_permission(self,ar,obj,state):
-        if not self.action.get_action_permission(ar,obj,state):
-            return False
-        return self.allow(ar.get_user(),obj,state)
-        
-    def get_view_permission(self,user):
-        if not self.action.get_view_permission(user):
-            return False
-        return self.allow(user,None,None)
-        
 
 class BaseRequest(object):
     def __init__(self,ui,request=None,renderer=None,**kw):

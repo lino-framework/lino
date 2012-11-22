@@ -550,7 +550,7 @@ def site_setup(site):
     pass
 
 
-def setup_main_menu(site,ui,user,m): 
+def setup_main_menu(site,ui,profile,m): 
     m = m.add_menu(vat.TradeTypes.purchases.name,vat.TradeTypes.purchases.text)
     
     for jnl in Journal.objects.all():
@@ -567,15 +567,15 @@ def setup_main_menu(site,ui,user,m):
             #~ label=unicode(jnl),
             #~ params=dict(master_instance=jnl))
     
-def setup_my_menu(site,ui,user,m): 
+def setup_my_menu(site,ui,profile,m): 
     pass
   
-def setup_config_menu(site,ui,user,m): 
+def setup_config_menu(site,ui,profile,m): 
     m = m.add_menu("ledger",MODULE_LABEL)
     m.add_action(Journals)
     
     
-def setup_explorer_menu(site,ui,user,m):
+def setup_explorer_menu(site,ui,profile,m):
     m = m.add_menu("ledger",MODULE_LABEL)
     m.add_action(Invoices)
   

@@ -51,7 +51,7 @@ class MenuItem:
                  href=None):
         self.parent = parent
         if action is not None:
-            if not isinstance(action,actions.BoundAction):
+            if not isinstance(action,actors.BoundAction):
                 raise Exception("20121003 not a BoundAction: %r")
         self.bound_action = action
         self.params = params
@@ -140,7 +140,7 @@ class MenuItem:
         #~ return '<a href="%s">%s</a>' % (
               #~ self.get_url_path(),self.label)
               
-    def menu_request(self,user):
+    def unused_menu_request(self,user_profile):
         #~ if self.can_view.passes(user):
         return self
         
@@ -157,9 +157,9 @@ class Menu(MenuItem):
     which contains other menu items.
     """
     #~ template_to_response = 'lino/menu.html'
-    def __init__(self,user,name,label=None,parent=None,**kw):
+    def __init__(self,user_profile,name,label=None,parent=None,**kw):
         MenuItem.__init__(self,parent,None,name,label,**kw)
-        self.user = user
+        self.user_profile = user_profile
         self.clear()
 
     def clear(self):
@@ -204,20 +204,20 @@ class Menu(MenuItem):
             #~ a = actors.resolve_action(spec)
             #~ if a is None:
                 #~ raise Exception("Could not resolve action specifier %r" % spec)
-        if isinstance(spec,actions.BoundAction):
+        if isinstance(spec,actors.BoundAction):
             a = spec
         elif isinstance(spec,type) and issubclass(spec,models.Model):
             if action:
                 a = spec._lino_default_table.get_url_action(action)
             else:
                 a = spec._lino_default_table.default_action
-            #~ a = actions.BoundAction(spec._lino_default_table,a)
+            #~ a = actors.BoundAction(spec._lino_default_table,a)
         elif isinstance(spec,type) and issubclass(spec,actors.Actor):
             if action:
                 a = spec.get_url_action(action)
             else:
                 a = spec.default_action
-            #~ a = actions.BoundAction(spec,a)
+            #~ a = actors.BoundAction(spec,a)
 
         else:
             raise Exception("(%r,%r) is not a valid action specifier" % (spec,action))
@@ -249,7 +249,7 @@ class Menu(MenuItem):
         return self._add_item(MenuItem(self,None,None,label,**kw))
         
     def add_menu(self,name,label,**kw):
-        return self._add_item(Menu(self.user,name,label,self,**kw))
+        return self._add_item(Menu(self.user_profile,name,label,self,**kw))
 
     def get_item(self,name):
         return self.items_dict[name]
@@ -266,7 +266,7 @@ class Menu(MenuItem):
         assert isinstance(mi,MenuItem)
         if mi.bound_action is not None:
             #~ if not mi.action.actor.get_view_permission(self.user):
-            if not mi.bound_action.get_view_permission(self.user):
+            if not mi.bound_action.get_view_permission(self.user_profile):
                 return 
         if mi.name is not None:
             old = self.items_dict.get(mi.name)
@@ -333,7 +333,7 @@ class Menu(MenuItem):
             raise
             #~ traceback.print_exc(e)
 
-    def menu_request(self,user):
+    def unused_menu_request(self,user_profile):
         #~ if self.can_view.passes(user):
         m = copy.copy(self)
         items = []
@@ -342,7 +342,7 @@ class Menu(MenuItem):
             if meth is None:
                 items.append(i)
             else:
-                r = meth(user)
+                r = meth(user_profile)
                 #~ r = i.menu_request(user)
                 if r is not None:
                     items.append(r)

@@ -413,8 +413,6 @@ class EmptyTable(frames.Frame):
     
     @classmethod
     def get_default_action(cls):
-        #~ return actions.BoundAction(cls,cls.show)
-        #~ return 'show'
         return actions.ShowEmptyTable()
         
     

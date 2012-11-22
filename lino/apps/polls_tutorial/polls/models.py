@@ -118,7 +118,7 @@ def recent_polls_xghtml(request):
     return E.tostring(main)
     
 
-def setup_main_menu(self,ui,user,main):
+def setup_main_menu(self,ui,profile,main):
     m = main.add_menu("polls","~Polls")
     m.add_action(self.modules.polls.Polls)
     m.add_action(self.modules.polls.Choices)

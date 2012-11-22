@@ -177,6 +177,11 @@ def new_content_type_id(m):
     def sort_models(self,unsorted):
         sorted = []
         hope = True
+        """
+        20121120 if we convert the list to a set, we gain some performance 
+        for the ``in`` tests, but we obtain a random sorting order for all 
+        independent models, making the double dump test less evident.
+        """
         #~ 20121120 unsorted = set(unsorted)
         while len(unsorted) and hope:
             hope = False

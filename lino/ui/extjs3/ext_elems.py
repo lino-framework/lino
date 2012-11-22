@@ -40,7 +40,7 @@ from lino.utils import mti
 from lino.utils import choicelists
 from lino.utils.jsgen import py2js, id2js, js_code
 from lino.utils import choosers
-from lino.utils.auth import make_permission_handler
+from lino.utils.auth import make_view_permission_handler
 #~ from . import ext_requests
 from lino.ui import requests as ext_requests
 
@@ -89,7 +89,7 @@ def py2html(obj,name):
     
 
 def get_view_permission(e):
-    if isinstance(e,Permittable) and not e.get_view_permission(jsgen._for_user):
+    if isinstance(e,Permittable) and not e.get_view_permission(jsgen._for_user_profile):
         return False
     #~ e.g. pcsw.ClientDetail has a tab "Other", visible only to system admins
     #~ but the "Other" contains a GridElement RolesByPerson which is not per se reserved for system admins.
@@ -97,7 +97,7 @@ def get_view_permission(e):
     parent = e.parent
     while parent is not None:
     #~ if e.parent is not None:
-        if isinstance(parent,Permittable) and not parent.get_view_permission(jsgen._for_user):
+        if isinstance(parent,Permittable) and not parent.get_view_permission(jsgen._for_user_profile):
             return False # bug 3 (bcss_summary) blog/2012/09/27
         parent = parent.parent
     return True
@@ -109,7 +109,7 @@ def before_row_edit(panel):
     for e in panel.active_children:
         if not get_view_permission(e):
             continue
-        #~ if not e.get_view_permission(jsgen._for_user): 
+        #~ if not e.get_view_permission(jsgen._for_user_profile): 
         if isinstance(e,GridElement):
             l.append("%s.on_master_changed();" % e.as_ext())
         #~ elif isinstance(e,PictureElement):
@@ -199,7 +199,7 @@ class GridColumn(jsgen.Component):
                 # FK fields are clickable if their target has a detail view
                 rpt = fld.rel.to._lino_default_table
                 if rpt.detail_action is not None:
-                    if rpt.detail_action.get_view_permission(jsgen._for_user):
+                    if rpt.detail_action.get_view_permission(jsgen._for_user_profile):
                         return "Lino.fk_renderer('%s','Lino.%s')" % (
                           name + ext_requests.CHOICES_HIDDEN_SUFFIX,
                           rpt.detail_action.full_name())
@@ -291,13 +291,13 @@ class VisibleComponent(jsgen.Component,Permittable):
         self.install_permission_handler()
         
     def install_permission_handler(self):
-        self.allow_read = curry(make_permission_handler(
-            self,self,True,
+        self.allow_read = curry(make_view_permission_handler(
+            self,True,
             self.debug_permissions,
             **self.required),self)
             
-    def get_view_permission(self,user):
-        return self.allow_read(user,None,None)
+    def get_view_permission(self,profile):
+        return self.allow_read(profile)
         
     def setup(self,width=None,height=None,label=None,
         preferred_width=None,
@@ -1287,7 +1287,7 @@ class Container(LayoutElement):
         
         
 
-    def get_view_permission(self,user):
+    def get_view_permission(self,profile):
         """
         A Panel which doesn't contain a single visible element 
         becomes itself hidden.
@@ -1302,13 +1302,13 @@ class Container(LayoutElement):
             #~ print "20120525 Container.get_view_permission()", self
             
         # if the Panel itself is invisble, no need to loop through the children
-        if not super(Container,self).get_view_permission(user): 
+        if not super(Container,self).get_view_permission(profile): 
         #~ if not Permittable.get_view_permission(self,user):
             return False
         #~ if self.value.get("title") == "CBSS":
             #~ print "20120525 Container.get_view_permission() passed", self
         for e in self.elements:
-            if (not isinstance(e,Permittable)) or e.get_view_permission(user):
+            if (not isinstance(e,Permittable)) or e.get_view_permission(profile):
                 # one visble child is enough, no need to continue loop 
                 return True
         #~ logger.info("20120925 not a single visible element in %s of %s",self,self.layout_handle)
@@ -1340,8 +1340,8 @@ class Wrapper(VisibleComponent):
         #~ self.allow_read = e.allow_read
         #~ self.get_view_permission = e.get_view_permission
             
-    def get_view_permission(self,user):
-        return self.wrapped.get_view_permission(user)
+    def get_view_permission(self,profile):
+        return self.wrapped.get_view_permission(profile)
         
     #~ def allow_read(self,*args):
         #~ return self.wrapped.allow(user)
@@ -1737,15 +1737,15 @@ class GridElement(Container):
             #~ self.mt = 'undefined'
             
             
-    def get_view_permission(self,user):
+    def get_view_permission(self,profile):
         #~ if not super(GridElement,self).get_view_permission():
         # skip Container parent:
         #~ return super(Container,self).get_view_permission(user)
         #~ return LayoutElement.get_view_permission(self,user)
-        if not super(Container,self).get_view_permission(user): 
+        if not super(Container,self).get_view_permission(profile): 
             return False
-        return self.actor.get_view_permission(user)
-        #~ return self.actor.get_permission(actions.VIEW,jsgen._for_user,None)
+        return self.actor.get_view_permission(profile)
+        #~ return self.actor.get_permission(actions.VIEW,jsgen._for_user_profile,None)
         
     def ext_options(self,**kw):
         #~ not direct parent (Container), only LayoutElement

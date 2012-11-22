@@ -957,7 +957,7 @@ def site_setup(site):
     
 
 
-def setup_main_menu(site,ui,user,m):
+def setup_main_menu(site,ui,profile,m):
     m = m.add_menu("contacts",MODULE_LABEL)
     #~ actors = (Persons,Companies,Partners)
     #~ for m in (Person,Company,Partner):
@@ -971,13 +971,13 @@ def setup_main_menu(site,ui,user,m):
     for a in ('contacts.Persons','contacts.Companies','contacts.Partners'):
         m.add_action(a)
 
-def setup_my_menu(site,ui,user,m): 
+def setup_my_menu(site,ui,profile,m): 
     pass
   
-def setup_master_menu(site,ui,user,m): 
+def setup_master_menu(site,ui,profile,m): 
     pass
     
-def setup_config_menu(site,ui,user,m): 
+def setup_config_menu(site,ui,profile,m): 
     config_contacts = m.add_menu("contacts",MODULE_LABEL)
     config_contacts.add_action(CompanyTypes)
     config_contacts.add_action(RoleTypes)
@@ -988,7 +988,7 @@ def setup_config_menu(site,ui,user,m):
     #~ m  = m.add_menu("contacts",_("~Contacts"))
     #~ m.add_action('contacts.RoleTypes')
   
-def setup_explorer_menu(site,ui,user,m):
+def setup_explorer_menu(site,ui,profile,m):
     m = m.add_menu("contacts",MODULE_LABEL)
     m.add_action(site.modules.contacts.Roles)
     m.add_action(site.modules.countries.Cities)

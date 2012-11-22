@@ -212,19 +212,19 @@ def customize_siteconfig():
 Page to display to anonymous users.""")))
   
 
-def setup_main_menu(site,ui,user,m):
+def setup_main_menu(site,ui,profile,m):
     m  = m.add_menu("office",lino.OFFICE_MODULE_LABEL)
     m.add_action(MyPages)
   
-def setup_my_menu(site,ui,user,m): 
+def setup_my_menu(site,ui,profile,m): 
     pass
   
-def setup_config_menu(site,ui,user,m): 
+def setup_config_menu(site,ui,profile,m): 
     #~ m  = m.add_menu("pages",_("~Pages"))
     m  = m.add_menu("office",lino.OFFICE_MODULE_LABEL)
     m.add_action(PageTypes)
   
-def setup_explorer_menu(site,ui,user,m):
+def setup_explorer_menu(site,ui,profile,m):
     m  = m.add_menu("office",lino.OFFICE_MODULE_LABEL)
     m.add_action(Pages)
   

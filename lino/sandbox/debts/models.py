@@ -827,18 +827,18 @@ def site_setup(site):
     site.modules.contacts.AllPersons.add_detail_tab('debts.BudgetsByPartner')
     site.modules.households.Households.add_detail_tab('debts.BudgetsByPartner')
 
-def setup_main_menu(site,ui,user,m):  pass
+def setup_main_menu(site,ui,profile,m):  pass
   
-def setup_master_menu(site,ui,user,m): pass
+def setup_master_menu(site,ui,profile,m): pass
 
-def setup_my_menu(site,ui,user,m): 
-    if user.profile.debts_level < UserLevels.user: 
+def setup_my_menu(site,ui,profile,m): 
+    if profile.debts_level < UserLevels.user: 
         return
     m  = m.add_menu("debts",MODULE_NAME)
     m.add_action(MyBudgets)
   
-def setup_config_menu(site,ui,user,m): 
-    if user.profile.debts_level < UserLevels.manager: 
+def setup_config_menu(site,ui,profile,m): 
+    if profile.debts_level < UserLevels.manager: 
         return
     m  = m.add_menu("debts",MODULE_NAME)
     #~ m.add_action(Accounts)
@@ -846,8 +846,8 @@ def setup_config_menu(site,ui,user,m):
     #~ m.add_action(DebtTypes)
     m.add_action(Accounts)
   
-def setup_explorer_menu(site,ui,user,m):
-    if user.profile.debts_level < UserLevels.admin:
+def setup_explorer_menu(site,ui,profile,m):
+    if profile.debts_level < UserLevels.admin:
         return
     m  = m.add_menu("debts",MODULE_NAME)
     m.add_action(Budgets)

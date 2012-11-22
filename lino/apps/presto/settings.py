@@ -58,7 +58,8 @@ class Lino(Lino):
         from django.utils.translation import ugettext_lazy as _
         dd.UserProfiles.reset('* office')
         add = dd.UserProfiles.add_item
-        add('000', _("Anonymous"),       '_ _', 'anonymous',readonly=True)
+        add('000', _("Anonymous"),       '_ _', 'anonymous',
+            readonly=True,authenticated=False)
         add('100', _("User"),            'U U', 'user')
         add('900', _("Administrator"),   'A A', 'admin')
         

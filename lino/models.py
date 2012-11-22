@@ -340,14 +340,14 @@ class Home(mixins.EmptyTable):
         #~ return cal.tasks_summary(req.ui,req.get_user())
     
     @dd.virtualfield(dd.HtmlBox())
-    def quick_links(cls,self,req):
-        quicklinks = settings.LINO.get_quicklinks(self,req.get_user())
+    def quick_links(cls,self,ar):
+        quicklinks = settings.LINO.get_quicklinks(ar)
         if quicklinks.items:
             chunks = []
             for mi in quicklinks.items:
                 chunks.append(' ')
-                chunks.append(req.ui.ext_renderer.window_action_button(
-                  req,mi.bound_action))
+                chunks.append(ar.ui.ext_renderer.window_action_button(
+                  ar,mi.bound_action))
             return xghtml.E.p('Quick Links:',*chunks)
       
     #~ @dd.virtualfield(dd.HtmlBox())
@@ -366,7 +366,7 @@ class Home(mixins.EmptyTable):
         u = ar.get_user()
         story = []
         
-        if u.authenticated:
+        if u.profile.authenticated:
           
             intro = [_("Hi, "),u.first_name,'! ']
             story.append(xghtml.E.p(*intro))
@@ -427,18 +427,18 @@ class Home(mixins.EmptyTable):
 SYSTEM_USER_LABEL = _("System")
 OFFICE_MODULE_LABEL = _("Office")
   
-def setup_main_menu(site,ui,user,m): 
+def setup_main_menu(site,ui,profile,m): 
     #~ office = m.add_menu("office",OFFICE_MODULE_LABEL)
     #~ office.add_action(MyTextFieldTemplates)
     pass
 
-def setup_my_menu(site,ui,user,m): pass
+def setup_my_menu(site,ui,profile,m): pass
   
-def setup_config_menu(site,ui,user,m):
+def setup_config_menu(site,ui,profile,m):
     office = m.add_menu("office",OFFICE_MODULE_LABEL)
     system = m.add_menu("system",SYSTEM_USER_LABEL)
     #~ m.add_action('links.LinkTypes')
-    if site.user_model and user.authenticated:
+    if site.user_model and profile.authenticated:
         system.add_instance_action(site.site_config)
         system.add_action(site.user_model)
         office.add_action(MyTextFieldTemplates)
@@ -449,7 +449,7 @@ def setup_config_menu(site,ui,user,m):
         #~ m.add_action(site.modules.lino.Workflows)
         
   
-def setup_explorer_menu(site,ui,user,m):
+def setup_explorer_menu(site,ui,profile,m):
     office = m.add_menu("office",OFFICE_MODULE_LABEL)
     system = m.add_menu("system",SYSTEM_USER_LABEL)
     if site.user_model:

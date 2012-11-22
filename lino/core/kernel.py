@@ -218,37 +218,6 @@ class DisableDeleteHandler():
         return None
         
 
-
-
-#~ class Always(object):
-  
-    #~ def allow(obj,user):
-        #~ return True
-        
-#~ class Never(object):
-  
-    #~ def allow(obj,user):
-        #~ return False
-        
-#~ class RuleHandler(ViewPermissionInstance):
-    #~ """
-    #~ Lino creates one RuleHandler per model and state
-    #~ """
-    
-    #~ def allow(self,obj,user):
-        #~ return self.get_view_permission(user)
-        
-        
-#~ class OwnedOnlyRuleHandler(RuleHandler):
-    #~ def allow(self,obj,user):
-        #~ if obj.user != user:
-            #~ return False
-        #~ return RuleHandler.allow(self,obj,user)
-        
-
-
-
-        
         
 #~ import threading
 #~ write_lock = threading.RLock()

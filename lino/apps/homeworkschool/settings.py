@@ -96,7 +96,8 @@ class Lino(Lino):
         dd.UserProfiles.reset('* office')
         add = dd.UserProfiles.add_item
         
-        add('000', _("Anonymous"),     '_ _', name='anonymous',readonly=True)
+        add('000', _("Anonymous"),     '_ _', name='anonymous',
+            readonly=True,authenticated=False)
         add('100', _("User"),          'U U', name='user')
         add('900', _("Administrator"), 'A A', name='admin')
         

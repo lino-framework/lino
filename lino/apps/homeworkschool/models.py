@@ -175,7 +175,7 @@ def site_setup(site):
     end="end_date end_time",
     window_size=(60,'auto'))
     
-def setup_main_menu(site,ui,user,main):
+def setup_main_menu(site,ui,profile,main):
     m = main.get_item("contacts")
     m.add_action(Schools)
 

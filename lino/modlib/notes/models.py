@@ -360,20 +360,20 @@ Note Type used by system notes.
 If this is empty, then system notes won't create any entry to the Notes table.""")))
   
 
-def setup_main_menu(site,ui,user,m):
+def setup_main_menu(site,ui,profile,m):
     m  = m.add_menu("office",lino.OFFICE_MODULE_LABEL)
     m.add_action(MyNotes)
   
-def setup_my_menu(site,ui,user,m): 
+def setup_my_menu(site,ui,profile,m): 
     pass
   
-def setup_config_menu(site,ui,user,m): 
+def setup_config_menu(site,ui,profile,m): 
     #~ m  = m.add_menu("notes",_("~Notes"))
     m  = m.add_menu("office",lino.OFFICE_MODULE_LABEL)
     m.add_action(NoteTypes)
     m.add_action(EventTypes)
   
-def setup_explorer_menu(site,ui,user,m):
+def setup_explorer_menu(site,ui,profile,m):
     m.add_action(Notes)
   
 customize_siteconfig()  

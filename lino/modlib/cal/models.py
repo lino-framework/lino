@@ -1899,7 +1899,7 @@ def reminders_as_html(ar,days_back=None,days_forward=None,**kw):
     Return a HTML summary of all open reminders for this user.
     """
     user = ar.get_user()
-    if not user.authenticated: return ''
+    if not user.profile.authenticated: return ''
     #~ Task = resolve_model('cal.Task')
     #~ Event = resolve_model('cal.Event')
     today = datetime.date.today()
@@ -2104,7 +2104,7 @@ def site_setup(site):
 MODULE_LABEL = _("Calendar")
 
 
-def setup_main_menu(site,ui,user,m): 
+def setup_main_menu(site,ui,profile,m): 
     m  = m.add_menu("cal",MODULE_LABEL)
     
     if site.use_extensible:
@@ -2129,7 +2129,7 @@ def setup_main_menu(site,ui,user,m):
     m.add_action(MyTasksToDo)
     
     
-    if user.partner:
+    if True: # user.partner:
         m.add_separator('-')
         m.add_action(MyPresences)
         m.add_action(MyPendingInvitations)
@@ -2137,15 +2137,15 @@ def setup_main_menu(site,ui,user,m):
     #~ m.add_action(MyPendingSentInvitations)
     
   
-def setup_master_menu(site,ui,user,m): 
+def setup_master_menu(site,ui,profile,m): 
     pass
     
-def setup_my_menu(site,ui,user,m): 
+def setup_my_menu(site,ui,profile,m): 
     pass
     #~ m  = m.add_menu("cal",MODULE_LABEL)
     #~ m.add_action(MySubscriptions)
     
-def setup_config_menu(site,ui,user,m): 
+def setup_config_menu(site,ui,profile,m): 
     m  = m.add_menu("cal",MODULE_LABEL)
     m.add_action(Places)
     m.add_action(Priorities)
@@ -2157,7 +2157,7 @@ def setup_config_menu(site,ui,user,m):
     #~ m.add_action(GuestStatuses)
     m.add_action(Calendars)
   
-def setup_explorer_menu(site,ui,user,m):
+def setup_explorer_menu(site,ui,profile,m):
     m  = m.add_menu("cal",MODULE_LABEL)
     m.add_action(Tasks)
     m.add_action(Guests)
@@ -2168,7 +2168,7 @@ def setup_explorer_menu(site,ui,user,m):
     m.add_action(TaskStates)
     #~ m.add_action(RecurrenceSets)
 
-def setup_quicklinks(site,ui,user,m):
+def setup_quicklinks(site,ar,m):
     #~ print 20120706
     if site.use_extensible:
         #~ m.add_action(self.modules.cal.Panel)

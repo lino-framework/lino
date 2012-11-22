@@ -121,14 +121,16 @@ class UserGroups(ChoiceList):
 
 
 class UserProfile(Choice):
-  
-    def __init__(self,cls,value,text,name=None,memberships=None,readonly=False,**kw):
+    
+    def __init__(self,cls,value,text,name=None,memberships=None,readonly=False,authenticated=True,**kw):
       
         super(UserProfile,self).__init__(cls,value,text,name)
         
         #~ keys = ['level'] + [g+'_level' for g in choicelist.groups_list]
         #~ keys = ['level'] + [g+'_level' for g in choicelist.membership_keys]
         self.readonly = readonly
+        self.authenticated = authenticated
+        
 
         if memberships is None:
             for k in cls.membership_keys:
@@ -309,13 +311,82 @@ def make_permission_handler(*args,**kw):
     #~ except Exception,e:
         #~ raise Exception("Exception while making permissions for %s: %s" % (actor,e))
 
+def make_view_permission_handler(*args,**kw):
+    """
+    Similar to :func:`make_permission_handler`, but for static view permissions 
+    which don't have an object nor states.
+    """
+    return make_view_permission_handler_(*args,**kw)
     
+def make_view_permission_handler_(
+    actor,readonly,debug_permissions,
+    user_level=None,user_groups=None,allow=None,auth=False,
+    owner=None,states=None):
+    #~ if states is not None:
+        #~ logger.info("20121121 ignoring required states %s for %s",states,actor)
+    #~ if owner is not None:
+        #~ logger.info("20121121 ignoring required owner %s for %s",owner,actor)
+    if allow is None:
+        def allow(action,profile):
+            return True
+    if settings.LINO.user_model is not None:
+        if auth:
+            allow_before_auth = allow
+            def allow(action,profile):
+                if not profile.authenticated:
+                    return False
+                return allow_before_auth(action,profile)
+            
+        if user_level is not None:
+            user_level = getattr(UserLevels,user_level)
+            allow_user_level = allow
+            def allow(action,profile):
+                if profile.level < user_level:
+                    return False
+                return allow_user_level(action,profile)
+                
+        if user_groups is not None:
+            if isinstance(user_groups,basestring):
+                user_groups = user_groups.split()
+            if user_level is None:
+                user_level = UserLevels.user
+                #~ raise Exception("20120621")
+            for g in user_groups:
+                UserGroups.get_by_value(g) # raise Exception if no such group exists
+                #~ if not UserGroups.get_by_name(g):
+                    #~ raise Exception("Invalid UserGroup %r" % g)
+            allow1 = allow
+            def allow(action,profile):
+                if not allow1(action,profile): return False
+                for g in user_groups:
+                    level = getattr(profile,g+'_level')
+                    if level >= user_level:
+                        return True
+                return False
+    
+    if not readonly:
+        allow3 = allow
+        def allow(action,profile):
+            if not allow3(action,profile): return False
+            if profile.readonly:
+                return False
+            return True
+    
+    if debug_permissions: # False:
+        allow4 = allow
+        def allow(action,profile):
+            v = allow4(action,profile)
+            if True: # not v:
+                logger.info(u"debug_permissions %r required(%s,%s), allow(%s)--> %s",
+                  action,user_level,user_groups,profile,v)
+            return v
+    return allow
+        
+
 def make_permission_handler_(
-    elem,actor,
-    readonly,debug_permissions,
-    #~ user_level=None,user_groups=None,states=None,allow=None,owner=None,auth=True): 20121116
+    elem,actor,readonly,debug_permissions,
     user_level=None,user_groups=None,states=None,allow=None,owner=None,auth=False):
-    #~ from lino.utils.auth import UserLevels, UserGroups
+    
     if allow is None:
         def allow(action,user,obj,state):
             return True
@@ -323,7 +394,7 @@ def make_permission_handler_(
         if auth:
             allow_before_auth = allow
             def allow(action,user,obj,state):
-                if not user.authenticated:
+                if not user.profile.authenticated:
                     return False
                 return allow_before_auth(action,user,obj,state)
             
@@ -429,7 +500,7 @@ class AnonymousUser(object):
     Similar to Django's approach to represent anonymous visitors 
     as a special kind of user.
     """
-    authenticated = False
+    #~ authenticated = False
     email = None
     username = 'anonymous'
     modified = None
@@ -445,6 +516,8 @@ class AnonymousUser(object):
             cls._instance = AnonymousUser()
             try:
                 cls._instance.profile = UserProfiles.get_by_value(settings.LINO.anonymous_user_profile)
+                if cls._instance.profile.authenticated:
+                    raise Exception("20121121 profile specified by `anonymous_user_profile` is `authenticated`")
             except KeyError:
                 raise Exception(
                     "Invalid value %r for `LINO.anonymous_user_profile`. Must be one of %s" % (
@@ -474,7 +547,7 @@ def authenticate(username,password=NOT_NEEDED):
         user = settings.LINO.user_model.objects.get(username=username)
         if password != NOT_NEEDED:
             if not user.check_password(password):
-                qlogger.info("20121104 password mismatch")
+                #~ logger.info("20121104 password mismatch")
                 return None
         return user
     except settings.LINO.user_model.DoesNotExist,e:

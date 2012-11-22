@@ -81,18 +81,18 @@ class ProductsByCategory(Products):
     
 MODULE_LABEL = _("Products")
 
-#~ def setup_master_menu(site,ui,user,m): 
-def setup_main_menu(site,ui,user,m): 
+#~ def setup_master_menu(site,ui,profile,m): 
+def setup_main_menu(site,ui,profile,m): 
     m  = m.add_menu("products",MODULE_LABEL)
     m.add_action(Products)
     m.add_action(ProductCats)
 
-#~ def setup_my_menu(site,ui,user,m): 
+#~ def setup_my_menu(site,ui,profile,m): 
     #~ pass
   
-def setup_config_menu(site,ui,user,m): 
+def setup_config_menu(site,ui,profile,m): 
     pass
   
-def setup_explorer_menu(site,ui,user,m):
+def setup_explorer_menu(site,ui,profile,m):
     pass
       

@@ -111,11 +111,11 @@ CONVERTERS = []
 def register_converter(func):
     CONVERTERS.append(func)
     
-_for_user = None    
+_for_user_profile = None    
 
-def set_for_user(u):
-    global _for_user
-    _for_user = u    
+def set_for_user_profile(up):
+    global _for_user_profile
+    _for_user_profile = up
     
     
     
@@ -125,7 +125,7 @@ def declare_vars(v):
     If `v` is a :class:`Component`, `list`, `tuple` or `dict` which contains
     other variables, recursively yields also the lines to declare these.
     """
-    #~ assert _for_user is not None
+    #~ assert _for_user_profile is not None
     if isinstance(v,(list,tuple)): 
         for sub in v:
             for ln in declare_vars(sub):
@@ -136,7 +136,7 @@ def declare_vars(v):
             for ln in declare_vars(sub):
                 yield ln
         return
-    if isinstance(v,Permittable) and not v.get_view_permission(_for_user): 
+    if isinstance(v,Permittable) and not v.get_view_permission(_for_user_profile): 
         return
     if isinstance(v,Component): 
         for sub in v.ext_options().values():
@@ -144,14 +144,14 @@ def declare_vars(v):
                 yield ln
         # DON'T return
     elif isinstance(v,Value): 
-        #~ 20120616 if not v.get_view_permission(_for_user): return
+        #~ 20120616 if not v.get_view_permission(_for_user_profile): return
         #~ ok = True
         for ln in declare_vars(v.value):
             yield ln
         # DON'T return
         
     if isinstance(v,Variable):
-        #~ 20120616 if not v.get_view_permission(_for_user): return
+        #~ 20120616 if not v.get_view_permission(_for_user_profile): return
         if v.declare_type == DECLARE_VAR:
             yield "var %s = %s;" % (v.ext_name,'\n'.join(v.js_value())) 
         elif v.declare_type == DECLARE_THIS:
@@ -162,7 +162,7 @@ def py2js(v):
     """
     Note that None values are rendered as ``null`` (not ``undefined``.
     """
-    #~ assert _for_user is not None
+    #~ assert _for_user_profile is not None
     #~ logger.debug("py2js(%r)",v)
     for cv in CONVERTERS:
         v = cv(v)
@@ -198,13 +198,13 @@ def py2js(v):
     if isinstance(v,(list,tuple)): # (types.ListType, types.TupleType):
         #~ return "[ %s ]" % ", ".join([py2js(x) for x in v])
         elems = [py2js(x) for x in v 
-            if (not isinstance(x,Permittable)) or x.get_view_permission(_for_user)]
+            if (not isinstance(x,Permittable)) or x.get_view_permission(_for_user_profile)]
         return "[ %s ]" % ", ".join(elems)
     if isinstance(v,dict): # ) is types.DictType:
         #~ print 20100226, repr(v)
         return "{ %s }" % ", ".join([
             "%s: %s" % (py2js(k),py2js(v)) for k,v in v.items()
-              if (not isinstance(v,Permittable)) or v.get_view_permission(_for_user)
+              if (not isinstance(v,Permittable)) or v.get_view_permission(_for_user_profile)
               ])
             #~ "%s: %s" % (k,py2js(v)) for k,v in v.items()])
     if isinstance(v,bool): # types.BooleanType:

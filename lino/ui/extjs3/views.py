@@ -421,7 +421,7 @@ class AdminIndex(View):
         if settings.LINO.user_model is not None:
             user = request.subst_user or request.user
             a = settings.LINO.get_main_action(user)
-            if a is not None and a.get_view_permission(user):
+            if a is not None and a.get_view_permission(user.profile):
                 kw.update(on_ready=ui.ext_renderer.action_call(request,a,{}))
         return http.HttpResponse(ui.html_page(request,**kw))
 

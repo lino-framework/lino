@@ -265,21 +265,21 @@ if settings.LINO.is_installed('households'):
 
 
 
-def setup_main_menu(site,ui,user,m):
+def setup_main_menu(site,ui,profile,m):
     m = m.add_menu('contacts',contacts.MODULE_LABEL)
     m.add_action('households.Households')
     
-def setup_master_menu(site,ui,user,m): 
+def setup_master_menu(site,ui,profile,m): 
     pass
-def setup_my_menu(site,ui,user,m): 
+def setup_my_menu(site,ui,profile,m): 
     pass
     
-def setup_config_menu(site,ui,user,m): 
+def setup_config_menu(site,ui,profile,m): 
     m = m.add_menu("households",_("Households"))
     m.add_action(Roles)
     m.add_action(Types)
   
-def setup_explorer_menu(site,ui,user,m):
+def setup_explorer_menu(site,ui,profile,m):
     m = m.add_menu("households",_("Households"))
     m.add_action(Members)
   

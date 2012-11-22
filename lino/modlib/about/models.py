@@ -51,9 +51,9 @@ class Models(dd.VirtualTable):
   
     @classmethod
     def get_data_rows(self,ar):
-        u = ar.get_user()
+        profile = ar.get_user().profile
         for model in models.get_models():
-            if model._lino_default_table.get_view_permission(u):
+            if model._lino_default_table.get_view_permission(profile):
                 #~ print model
                 yield model
                 
@@ -407,7 +407,7 @@ class SourceFiles(dd.VirtualTable):
     #~ _test()
 
 
-def setup_site_menu(site,ui,user,m): 
+def setup_site_menu(site,ui,profile,m): 
     m.add_action(site.modules.about.About)
     if settings.LINO.use_experimental_features:
         m.add_action(site.modules.about.Models)

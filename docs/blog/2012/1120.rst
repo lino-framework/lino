@@ -193,19 +193,25 @@ which went into production in Eupen today evening.
 
 Last minute changes:
 
-- dumpy.py #~ 20121120 unsorted = set(unsorted)
-- ext_elems.py if isinstance(editor,FieldElement) and not isinstance(editor.field,fields.VirtualField):
+- :class:`lino.utils.dumpy.Serializer` converted the `list` of unsorted 
+  models to a `set` before building the list of sorted models. 
+  This caused the sort order to be random for models with same level of independency,
+  making :term:`double dump tests <double dump test>` more difficult::
+  
+    #~ 20121120 unsorted = set(unsorted)
 
-
+- Setting a column filter for a *normal* date column now works... 
+  but Lino also allowed setting a filter on a virtual field. 
+  Which then caused another traceback
+  "FieldError at /api/pcsw/IntegClients / Cannot resolve keyword 'applies_from' into field."
+  Solved by on aditional test 
+  `if isinstance(editor,FieldElement) and not isinstance(editor.field,fields.VirtualField)`
+  in :mod:`lino.ui.extjs3.ext_elems`.
+  
 
 TODO:
 
-- Setting a column filter for a *normal* date column now works... 
-  but Lino also allows setting a filter on a virtual field. 
-  Which then causes another traceback
-  "FieldError at /api/pcsw/IntegClients / Cannot resolve keyword 'applies_from' into field."
-  
-  Idea: implement the fields Client.applies_from and applies_until as 
+- Idea: implement the fields Client.applies_from and applies_until as 
   "summary fields". This is a new concept: :doc:`/topics/summary_fields`
   
   

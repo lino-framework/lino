@@ -7,23 +7,17 @@ Short-term
 #.  User stories: 
     Alicia: Hubert hatte in meinem Urlaub eine Telefonnotiz auf einem meiner 
     Klienten gemacht, und mir nun mündlich noch ein paar Zusatzinfos gesagt, 
-    die er nur vergessen hatte, rein zu schreiben. Ich will jetzt an seiner Stelle seine 
+    die er nur vergessen hatte, rein zu schreiben. Ich will jetzt an seiner 
+    Stelle seine 
     Notiz nachträglich korrigieren, damit das direkt beim ersten Lesen deutlich ist.
 
-#.  Bestehende Person zu einem Klienten machen. 
-    Statt "AJAX communication failed" sollte er zumindest sagen 
-    "IntegrityError: column national_id is not unique", oder (die Luxus-Version) 
-    "Kann Person X nicht zu einem Klienten machen, weil Klient Y noch keine NISS bekommen hat"
-
-#.  Wenn der Begleitungszeitraum einer *Person* geändert wird, merkt Lino nicht, 
-    wenn dadurch ein Vertrag ungültig wird.                                                      
+#.  Wenn der Begleitungszeitraum einer *Person* geändert wird, merkt Lino nicht,
+    wenn dadurch ein Vertrag ungültig wird.
 
 #.  Ein Bug, der auch schon in der 1.4.8 war: wenn man das Detail eines Uploads, 
     der keine Reminder hat, via Permalink öffnet, dann ist die Tabelle der 
     Aufgaben nicht leer, sondern voll irgendwelcher Einträge.
     
-#.  Polls tutorial : SiteConfig geht nicht.
-
 #.  Übersetzung für "Scheduled" ist momentan "Geplant". 
     Sollte besser "Festgelegt" o.ä. sein.
     Und statt "vorgeschlagen" sollte Lino vielleicht besser "vorgemerkt" sagen.

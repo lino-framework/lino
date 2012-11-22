@@ -21,6 +21,8 @@ It uses Ethan Furman's ``dbf`` package from http://pypi.python.org/pypi/dbf/
 
 """
 
+GET_THEM_ALL = True
+
 import os
 import sys
 import datetime
@@ -76,6 +78,16 @@ ledger = dd.resolve_app('ledger')
 accounts = dd.resolve_app('accounts')
 products = dd.resolve_app('products')
 contacts = dd.resolve_app('contacts')
+
+def dbfmemo(s):
+    s = s.replace('\r\n','\n')
+    s = s.replace(u'\xec\n','')
+    #~ s = s.replace(u'\r\nì',' ')
+    if u'ì' in s:
+        raise Exception("20121121 %r" % s)
+    return s.strip()
+
+
 
 def store(kw,**d):
     for k,v in d.items():
@@ -144,7 +156,7 @@ def isolang(x):
     if x == 'E' : return 'en'
     if x == 'D' : return 'de'
     if x == 'F' : return 'fr'
-    if x == 'N' : return 'nl'
+    #~ if x == 'N' : return 'nl'
       
 def par_class(data):
     # wer eine nationalregisternummer hat ist eine Person, selbst wenn er auch eine MWst-Nummer hat.
@@ -248,6 +260,7 @@ def load_dbf(dbpath,tableName,load):
 def load_tim_data(dbpath):
   
     ROOT = users.User(username='root',profile='900',last_name="Root")
+    ROOT.set_password("1234")
     yield ROOT
     
     settings.LINO.loading_from_dump = True
@@ -341,7 +354,7 @@ def load_tim_data(dbpath):
         language = isolang(row['langue'])
         store(kw,
             language=language,
-            remarks=row['memo'],
+            remarks=dbfmemo(row['memo']),
         )
         
         #~ country2kw(row,kw)
@@ -409,6 +422,8 @@ def load_tim_data(dbpath):
             #~ PRJPAR[pk] = 
         kw.update(iname=row.seq.strip())
         kw.update(user=ROOT)
+        kw.update(summary=dbfmemo(row.abstract))
+        kw.update(description=dbfmemo(row.body))
         return tickets.Project(**kw)
     
     def load_pin(row,**kw):
@@ -420,8 +435,8 @@ def load_tim_data(dbpath):
         if row.idpar.strip():
             kw.update(partner_id=par_pk(row.idpar))
         kw.update(summary=row.short.strip())
+        kw.update(description=dbfmemo(row.memo))
         kw.update(state=ticket_state(row.idpns))
-        kw.update(description=row.memo.strip())
         kw.update(closed=row.closed)
         kw.update(created=row['date'])
         kw.update(modified=datetime.datetime.now())
@@ -437,6 +452,7 @@ def load_tim_data(dbpath):
         if row.idpar.strip():
             kw.update(partner_id=par_pk(row.idpar))
         kw.update(summary=row.nb.strip())
+        kw.update(description=dbfmemo(row.memo))
         kw.update(date=row.date)
         kw.update(user=ROOT)
         def set_time(kw,fldname,v):
@@ -623,7 +639,7 @@ def load_tim_data(dbpath):
     yield load_dbf(dbpath,r'RUMMA\VEN',load_ven)
     yield load_dbf(dbpath,r'RUMMA\VNL',load_vnl)
     
-    if False:
+    if GET_THEM_ALL:
         yield load_dbf(dbpath,'PIN',load_pin)
         yield load_dbf(dbpath,'DLS',load_dls)
     

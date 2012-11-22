@@ -26,6 +26,7 @@
     lino.utils.babel
     lino.utils.choosers
     lino.utils.memo
+    lino.utils.odsreader
     lino.utils.quantities
     lino.utils.ranges
     lino.utils.sphinx
@@ -39,24 +40,16 @@
 More modules
 ============
 
-The :mod:`dbfreader` Module
----------------------------
-
-.. automodule:: lino.utils.dbfreader
-    :members:
-    :undoc-members:
-    :show-inheritance:
-
-The :mod:`instantiator` Module
-------------------------------
+`instantiator`
+--------------
 
 .. automodule:: lino.utils.instantiator
     :members:
     :undoc-members:
     :show-inheritance:
 
-The :mod:`latex` Module
------------------------
+`latex`
+-------
 
 .. automodule:: lino.utils.latex
     :members:
@@ -64,16 +57,16 @@ The :mod:`latex` Module
     :show-inheritance:
 
 
-The :mod:`restify` Module
--------------------------
+`restify`
+---------
 
 .. automodule:: lino.utils.restify
     :members:
     :undoc-members:
     :show-inheritance:
 
-The :mod:`ucsv` Module
-----------------------
+`ucsv`
+------
 
 .. automodule:: lino.utils.ucsv
     :members:

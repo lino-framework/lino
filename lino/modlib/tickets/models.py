@@ -114,6 +114,7 @@ class Project(mixins.UserAuthored,mixins.Printable):
     partner = models.ForeignKey('contacts.Partner',blank=True,null=True)
     summary = models.CharField(_("Summary"),max_length=200,blank=True)
     #~ description = dd.RichTextField(_("Description"),blank=True,format='plain')
+    description = dd.RichTextField(_("Description"),blank=True,format='plain')
     
     def __unicode__(self):
         return self.name
@@ -422,7 +423,7 @@ if settings.LINO.user_model:
 
 
 
-def setup_main_menu(site,ui,user,m): 
+def setup_main_menu(site,ui,profile,m): 
     m  = m.add_menu("tickets",_("Tickets"))
     m.add_action(MyProjects)
     m.add_action(MyOpenTickets)
@@ -431,16 +432,16 @@ def setup_main_menu(site,ui,user,m):
     m.add_action(MySessionsByDate)
     #~ m.add_action(MySessionsByDate,params=dict(master_instance=datetime.date.today()))
 
-def setup_my_menu(site,ui,user,m): 
+def setup_my_menu(site,ui,profile,m): 
     pass
   
-def setup_config_menu(site,ui,user,m): 
+def setup_config_menu(site,ui,profile,m): 
     m  = m.add_menu("tickets",_("Tickets"))
     m.add_action(ProjectTypes)
     #~ m.add_action(TicketStates)
     m.add_action(SessionTypes)
   
-def setup_explorer_menu(site,ui,user,m):
+def setup_explorer_menu(site,ui,profile,m):
     m  = m.add_menu("tickets",_("Tickets"))
     m.add_action(Projects)
     m.add_action(Tickets)

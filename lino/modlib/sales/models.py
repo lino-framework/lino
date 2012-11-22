@@ -849,7 +849,7 @@ def site_setup(site):
     #~ """,label=_("Sales"))
 
 
-def setup_main_menu(site,ui,user,m): 
+def setup_main_menu(site,ui,profile,m): 
     #~ m = m.add_menu("sales",MODULE_LABEL)
     m = m.add_menu(vat.TradeTypes.sales.name,vat.TradeTypes.sales.text)
     m.add_action(Orders)
@@ -864,16 +864,16 @@ def setup_main_menu(site,ui,user,m):
     #~ m.add_action(DocumentsToSign)
     #~ m.add_action(PendingOrders)
 
-def setup_my_menu(site,ui,user,m): 
+def setup_my_menu(site,ui,profile,m): 
     pass
   
-def setup_config_menu(site,ui,user,m): 
+def setup_config_menu(site,ui,profile,m): 
     m = m.add_menu("sales",MODULE_LABEL)
     m.add_action(InvoicingModes)
     m.add_action(ShippingModes)
     m.add_action(PaymentTerms)
     
-def setup_explorer_menu(site,ui,user,m):
+def setup_explorer_menu(site,ui,profile,m):
     pass
   
 customize_contacts()

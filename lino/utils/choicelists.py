@@ -274,8 +274,6 @@ class ChoiceList(tables.AbstractTable):
     
     @classmethod
     def get_default_action(cls):
-        #~ return actions.BoundAction(cls,cls.grid)
-        #~ return 'grid'
         return actions.GridEdit()
         
         
@@ -475,10 +473,14 @@ Django creates copies of them when inheriting models.
         #~ return self.items_dict.get(value)
         return self.items_dict[value]
       
+    #~ @classmethod
+    #~ def items(self):
+        #~ return [choice[0] for choice in self.choices]
+        
     @classmethod
-    def items(self):
-        #~ return self.items_dict.values()
+    def objects(self):
         return [choice[0] for choice in self.choices]
+    items = objects
         
     @classmethod
     def get_text_for_value(self,value):

@@ -596,14 +596,14 @@ MODULE_LABEL = _("Outbox")
 
 lino = dd.resolve_app('lino')
 
-def setup_main_menu(site,ui,user,m):
+def setup_main_menu(site,ui,profile,m):
     m  = m.add_menu("office",lino.OFFICE_MODULE_LABEL)
     m.add_action(MyOutbox)
 
   
 #~ def setup_main_menu(site,ui,user,m): pass
 
-def unused_setup_my_menu(site,ui,user,m): 
+def unused_setup_my_menu(site,ui,profile,m): 
     m  = m.add_menu("outbox",MODULE_LABEL)
     #~ m.add_action(MyInbox)
     m.add_action(MyOutbox)
@@ -614,7 +614,7 @@ def unused_setup_my_menu(site,ui,user,m):
     #~ m  = m.add_menu("outbox",MODULE_LABEL)
     #~ m.add_action(MailTypes)
   
-def setup_explorer_menu(site,ui,user,m):
+def setup_explorer_menu(site,ui,profile,m):
     #~ if user.level >= UserLevels.manager:
     m  = m.add_menu("office",lino.OFFICE_MODULE_LABEL)
     #~ m  = m.add_menu("outbox",MODULE_LABEL)

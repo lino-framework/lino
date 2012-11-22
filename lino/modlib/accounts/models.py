@@ -151,20 +151,20 @@ MODULE_LABEL = _("Accounts")
 def site_setup(site):
     pass
 
-def setup_main_menu(site,ui,user,m):  pass
+def setup_main_menu(site,ui,profile,m):  pass
  
-def setup_master_menu(site,ui,user,m): pass
+def setup_master_menu(site,ui,profile,m): pass
 
-def setup_my_menu(site,ui,user,m): 
+def setup_my_menu(site,ui,profile,m): 
     pass
   
-def setup_config_menu(site,ui,user,m): 
+def setup_config_menu(site,ui,profile,m): 
     #~ if user.profile.debts_level < UserLevels.manager: 
         #~ return
     m  = m.add_menu("accounts",MODULE_LABEL)
     m.add_action(Charts)
   
-def setup_explorer_menu(site,ui,user,m):
+def setup_explorer_menu(site,ui,profile,m):
     m  = m.add_menu("accounts",MODULE_LABEL)
     m.add_action(Groups)
     m.add_action(Accounts)

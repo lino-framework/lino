@@ -13,7 +13,7 @@ class Lino(Lino):
     def get_app_source_file(self):
         return __file__
         
-    def setup_quicklinks(self,ui,user,tb):
+    def setup_quicklinks(self,ar,tb):
         tb.add_action(self.modules.contacts.Persons.detail_action)
         tb.add_action(self.modules.contacts.Companies.detail_action)
         
