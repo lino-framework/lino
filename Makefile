@@ -47,6 +47,7 @@ tests:
 	python lino/modlib/contacts/utils.py
 	python lino/utils/html2xhtml.py
 	python lino/utils/demonames.py
+	python lino/utils/odsreader.py
 	export DJANGO_SETTINGS_MODULE=lino.apps.std.settings ; python lino/utils/choicelists.py
 	export DJANGO_SETTINGS_MODULE=lino.apps.std.settings ; python lino/utils/jsgen.py
 	export DJANGO_SETTINGS_MODULE=lino.apps.std.settings ; python lino/utils/ranges.py

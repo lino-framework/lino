@@ -24,3 +24,7 @@ Importing data from .ods files
 ------------------------------
 
 New module :mod:`lino.utils.odsreader` (with a tested example in the docstring).
+
+
+:checkin:`6a2ca97bd0eb`
+

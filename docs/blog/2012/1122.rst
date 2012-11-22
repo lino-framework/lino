@@ -1,0 +1,10 @@
+20121122
+========
+
+Oops, Google told me that several of the fictive person 
+names from 
+:mod:`lino.modlib.users.fixtures.demo` actually belong 
+to real people. 
+Changed them to names for which Google doesn't have any result.
+We are trying to sound realistic without actually hitting any real person.
+

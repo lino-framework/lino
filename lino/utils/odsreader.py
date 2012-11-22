@@ -25,9 +25,9 @@ it just loops over the rows.
 
 OdsReader is used to import data from .ods files into a 
 Django database using a :mod:`lino.utils.dumpy` fixture,
-but this code not limited to this usage.
+but not limited to this usage.
 
-State : works for me (but very young and probably full of bugs)
+State : works for me, but very young and probably full of bugs.
 
 Usage example:
 
@@ -42,10 +42,12 @@ and prints a line of text for each row of data.
 >>> for row in Sample().rows():
 ...     print "%(first_name)s %(last_name)s from %(city)s" % row
 Rudi Rutté from Eupen
-Romain Rouvier from Liège
+Romain Raffault from Liège
 Rando Roosi from Tallinn
-Rik Roelands from Antwerpen
-Robin Rowland from London
+Rik Rozenbos from Antwerpen
+Robin Rood from London
+
+(Note: these are fictive person names from :mod:`lino.modlib.users.fixtures.demo`).
 
 
 """
@@ -114,6 +116,7 @@ class SimpleOdsReader(object):
                     for p in cell.getElementsByType(P):
                         for n in p.childNodes:
                             content += unicode(n.data)
+                    content = content.strip()
                     repeat = cell.getAttribute("numbercolumnsrepeated")
                     if repeat: 
                         repeat = int(repeat)

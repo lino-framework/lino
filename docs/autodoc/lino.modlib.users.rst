@@ -15,3 +15,11 @@
     :show-inheritance:
 
 
+:mod:`lino.modlib.users.fixtures.demo`
+--------------------------------------
+
+.. automodule:: lino.modlib.users.fixtures.demo
+    :members:
+    :show-inheritance:
+
+
