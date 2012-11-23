@@ -4,8 +4,10 @@
 #
 # (C) Copyright 2010 Luc Saffre 
 # (based on http://svn.nuxeo.org/nuxeo/tools/ooo/oooctl
-#  and http://code.google.com/p/openmeetings/wiki/OpenOfficeConverter
-#  See also :doc:`/tickets/16`)
+# and the `OpenOffice Converter Installation instructions
+# <http://code.google.com/p/openmeetings/wiki/OpenOfficeConverter>` 
+# page of openmeetings <http://code.google.com/p/openmeetings/>
+# See also :doc:`/tickets/16`)
 #
 # This file is part of the Lino project.
 # Lino is free software; you can redistribute it and/or modify 

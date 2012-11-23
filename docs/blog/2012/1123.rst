@@ -1,0 +1,10 @@
+20121123
+========
+
+I had several hours of surf and thought about "GPL or BSD?" question
+and came to the conclusion that GPL remains my choice.
+
+For those who are interested, please
+read the following page and tell me whether you see some problems:
+
+  :doc:`/about/license`

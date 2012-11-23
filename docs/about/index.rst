@@ -42,20 +42,20 @@ People tend to judge a framework by it's user interface (UI).
 This approach is not completely wrong since the UI is the 
 first "visible" part.
 
-On the other hand, optimizing a UI is a rather boring work, 
-and there are many other, more interesting tasks that are 
-waiting to be done.
-
-Lino is designed to have many possible user interfaces.
-But your choice is currently limited to the :term:`ExtJS` UI.
-This means that Lino applications currently always use this interface, 
-because ExtJS is so cool and Lino so young.
+Lino is designed to have many possible user interfaces,
+but your choice is currently limited to the :term:`ExtJS` UI.
+This means that Lino applications currently always 
+"look like" those you can see at :doc:`demos`.
 
 We started working on a first alternative user interface 
 that uses the :doc:`Qooxdoo library </topics/qooxdoo>`,
 and we can imagine to write other interfaces in the future 
-(simple HTML, curses, Qt, ...), but for the moment there are more urgent things to do.
-
+(simple HTML, curses, Qt, ...), but for the moment 
+Lino relies on ExtJS, because ExtJS is so cool, 
+and because writing and optimizing a user interface 
+is a rather boring work, 
+and because there are many other, 
+more interesting tasks that are waiting to be done.
 
 
 History
@@ -79,32 +79,14 @@ In August 2009 he started to use the :term:`ExtJS` Javascript framework.
 Since January 2011 a first Lino application is being 
 used on a real (non-public) site.
 
-Lino explained to Django users
-------------------------------
-
-When Luc discovered Django in the end of 2008, he was quickly seized by
-the clear design and mature implementation. Some of his statements:
-"The ORM and database model based on *applications* is simply genial.
-The way of how this is integrated into a web application server system: genial.
-But one thing disturbed me: the 
-`admin application <http://docs.djangoproject.com/en/dev/ref/contrib/admin/#ref-contrib-admin>`_  
-has obviously not been designed to write complete database applications.
-That's why I started to write Lino.
-Lino is an alternative for Django's `django.contrib.admin` module."
-
-Unlike a Django application developer, 
-a Lino application developer doesn't write a single 
-line of HTML, CSS or Javascript. 
-
-
-
-See also :doc:`/tutorials/t1`
 
 
 .. toctree::
    :maxdepth: 1
    
+   license
    why_gpl
-   why_extjs
-   compared
    thanks
+   compared
+   lino_and_django
+   why_extjs

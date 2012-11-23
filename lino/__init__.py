@@ -757,8 +757,6 @@ class Lino(object):
     #~ index_view_action = 'lino.Home'
     
     
-    
-    
     # for internal use:
     
     _site_config = None
@@ -845,20 +843,6 @@ class Lino(object):
               #~ }
             #~ })
         
-        
-        #~ self.source_name = os.path.split(self.source_dir)[-1]
-        #~ # find the first base class that is defined in the Lino source tree
-        #~ # this is to find out the source_name and the source_dir
-        #~ for cl in self.__class__.__mro__:
-            #~ if cl.__module__.startswith('lino.apps.'):
-                #~ self.source_dir = os.path.dirname(__file__)
-                #~ self.source_name = self.source_dir
-                #~ os.path.split(_source_dir,
-              
-            
-        # ImportError: Settings cannot be imported, because environment variable DJANGO_SETTINGS_MODULE is undefined.
-        #~ from lino.models import get_site_config
-        #~ self.config = get_site_config()
         
 
     def get_ui(self):

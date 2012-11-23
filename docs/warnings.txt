@@ -1,19 +1,4 @@
-T:\hgwork\lino\docs\releases\index.rst:18: WARNING: toctree glob pattern u'2010/index' didn't match any documents
-T:\hgwork\lino\docs\releases\index.rst:18: WARNING: toctree glob pattern u'2011/index' didn't match any documents
 T:\hgwork\lino\docs\autodoc\lino.utils.dbfreader.rst:: WARNING: document isn't included in any toctree
 T:\hgwork\lino\docs\casts\lino_intro.rst:: WARNING: document isn't included in any toctree
 T:\hgwork\lino\docs\igen\index.rst:: WARNING: document isn't included in any toctree
-T:\hgwork\lino\docs\autodoc\lino.modlib.users.rst:7: WARNING: py:mod reference target not found: django.contrib.auth
-T:\hgwork\lino\docs\autodoc\lino.modlib.users.rst:10: WARNING: py:mod reference target not found: django.contrib.sessions
-t:\hgwork\lino\lino\modlib\users\models.py:docstring of lino.modlib.users.models.User:3: WARNING: unknown document: /topics/http_auth
-t:\hgwork\lino\lino\modlib\users\models.py:docstring of lino.modlib.users.models.User.disabled_fields:1: WARNING: py:meth reference target not found: Users.get_row_permission
-T:\hgwork\lino\docs\autodoc\lino.utils.rst:44: WARNING: py:class reference target not found: dict
-t:\hgwork\lino\lino\utils\__init__.py:docstring of lino.utils.call_on_bases:1: WARNING: unknown document: /blog/2011/0914
-t:\hgwork\lino\lino\utils\__init__.py:docstring of lino.utils.call_optional_super:1: WARNING: unknown document: /blog/2011/0914
-T:\hgwork\lino\docs\autodoc\lino.utils.rst:23: WARNING: py:class reference target not found: exceptions.Exception
-T:\hgwork\lino\docs\autodoc\lino.utils.rst:7: WARNING: py:mod reference target not found: docutils.examples
-T:\hgwork\lino\docs\autodoc\lino.utils.rst:17: WARNING: py:class reference target not found: docutils.writers.html4css1.HTMLTranslator
-T:\hgwork\lino\docs\autodoc\lino.utils.rst:29: WARNING: py:class reference target not found: docutils.writers.html4css1.Writer
-t:\hgwork\lino\lino\utils\restify.py:docstring of lino.utils.restify.old_restify:1: WARNING: unknown document: /blog/2011/0525
-<autodoc>:1: WARNING: py:class reference target not found: object
-T:\hgwork\lino\docs\blog\2012\1121.rst:7: WARNING: py:meth reference target not found: lino.utils.auth.Permittable.get_view_permission
+T:\hgwork\lino\docs\about\index.rst:45: WARNING: unknown document: demos

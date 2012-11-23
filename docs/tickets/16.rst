@@ -1,10 +1,44 @@
-#16 : Copyright notice on derived work
-======================================
+#16 : Questions about copyright 
+===============================
+
+
+- Question: **Are the things stated in :doc:`/about/license`
+  allowed with the GPL?**
+
+
+Lino and ExtJS and Ext.ensible
+------------------------------
+
+In case we decide to switch from GPL to BSD, before doing so, 
+we need to check the following:
+
+ExtJS and Ext.ensible are GPL. 
+Lino uses them both.
+
+
+Lino generates and serves HTML pages which contain the instruction 
+to include the `*.js` and `*.css` files of these libraries.
+
+Lino currently *needs* them, it does not currently offer a 
+possibility to be used without them. 
+But this possibility exists theoretically, 
+and it is just a question of priorities whether we develop an 
+alternative user interface which doesn't require ExtJS and Ext.ensible.
+
+- Questions: 
+  Is Lino **the framework** to be considered a derived work?
+  Are Lino **applications** to be considered derived works?
+
+(My current answer: I think not, because Lino doesn't call any functions.)
+
+
+Miscellaneous
+-------------
 
 What about the copyright notice in :srcref:`/bash/oood`? 
 This is based on `oooctl <http://svn.nuxeo.org/nuxeo/tools/ooo/oooctl>`_ 
 (copyright "Nuxeo 2007 and contributors" and published using LGPL).
-I made modifications and would like to publish my work independently 
-with Lino using the GPL.
+I made modifications and would like to publish my work 
+independently with Lino using the GPL.
 How to formulate this?
-  
+

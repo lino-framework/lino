@@ -48,14 +48,18 @@ even though a newer file has been created by another process)::
   LOGGING = dict(filename=filename,level='DEBUG',rotate=False)
   
 
-Remarks
--------
+Logile rotation
+---------------
 
 **Logfile rotation** is no longer supported here since with Django 
-it is possible to have several processes using the same `settings.py` file.
+it is possible to have several processes using the same :xfile:`settings.py` file.
 That might cause problems when they all try to rotate at the same time.
-On Linux systems, we use WatchedFileHandler so that
+
+On Linux systems, Lino uses WatchedFileHandler so that
 system administrators can install system-wide log rotation with `logrotate`.
+
+Remarks
+-------
 
 
 Yes, we read the `mod_wsgi documentation 
@@ -126,6 +130,8 @@ Available parameters are:
                  Default is ['lino'].
                  If this is a string, Lino converts it to a list 
                  (expecting it to be a space-separated list of names).
+                 
+The following options are *no longer supported* because they were for `logfile rotation`_.
                 
 :param rotate:   [deprecated] if `logfile` specified, set this to `False` if you 
                  don't want a rotating logfile.
@@ -203,7 +209,8 @@ Because that's rather necessary on a production server with :setting:`DEBUG` Fal
     if logfile is not None:
         try:
             kw = {}
-            for k in ('mode','encoding','maxBytes','backupCount','when','interval'):
+            #~ for k in ('mode','encoding','maxBytes','backupCount','when','interval'):
+            for k in ('mode','encoding'):
                 if config.has_key(k):
                     kw[k] = config[k]
             h = file_handler(logfile,rotate,**kw)

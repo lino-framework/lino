@@ -1,16 +1,37 @@
 Why GPL?
 ========
 
-Lino is published under the `GPL <http://en.wikipedia.org/wiki/GNU_General_Public_License>`_
-because we want to make sure that our voluntary work will always 
+Lino is published under the `GPL
+<http://en.wikipedia.org/wiki/GNU_General_Public_License>`_,
+as explained in :doc:`license`.
+
+The reason for our choice is that we want to make sure 
+that our voluntary work will always 
 belong to the general public and never be controlled 
 by some proprietary organisation.
 
 **Luc's statement on this subject**:
 
-The BSD versus GPL discussion has a "religious" dimension.  The personal preference of a software developer seems to depend mainly on his or her life situation and beliefs. And as far as I can see, my personal faith is clear: the GPL is the only license that `"resists proprietary  vendors' attempts to embrace, extend and extinguish <http://en.wikipedia.org/wiki/Embrace,_extend_and_extinguish>`_".
+The BSD versus GPL discussion has a religious dimension: 
+two persons can have opposite views 
+and never get to a common statement, 
+despite the fact that both are mentally sane and "rationally right".
 
-I don't claim to understand the topic completely, so I'm open to comments and discussion, and maybe I'll even change my mind. One reason to make me change my mind might be if I hear that people who would otherwise collaborate on Lino, refrain from doing so because of the GPL licensing. Let me know if you are one of them. On the other hand, here are some thoughts of other developers against the GPL that *didn't* make me change my mind:
+The personal preference of a software developer seems to 
+depend mainly on his or her life situation and beliefs.  
+And as far as I can see, my personal faith is clear: 
+the GPL is the only license that `"resists proprietary  vendors' 
+attempts to embrace, extend and extinguish
+<http://en.wikipedia.org/wiki/Embrace,_extend_and_extinguish>`_".
+
+I don't claim to understand the topic completely, so 
+I'm open to comments and discussion, and maybe I'll even change my mind. 
+One reason to make me change my mind might be if I hear that people 
+who would otherwise collaborate on Lino, refrain from doing so 
+because of the GPL licensing. Let me know if you are one of them. 
+See also :doc:`/topics/16`.
+  
+On the other hand, here are some thoughts of other developers against the GPL that *did not* make me change my mind:
 
 * "I do not wish to pay for my javascript framework, nor do I want 
   to be forced to GPL it, as is the only other option available 
