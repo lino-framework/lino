@@ -1,35 +1,48 @@
 #16 : Questions about copyright 
 ===============================
 
+Is it possible to change Lino's license to LGPL or BSD?
+For those who are interested, please read the following page 
+and tell me your comments and advice about how I should decide.
 
-- Question: **Are the things stated in :doc:`/about/license`
-  allowed with the GPL?**
+The main reason to do so would be to stop refraining 
+a certain group of developers from using Lino.
 
+ExtJS and Ext.ensible
+---------------------
 
-Lino and ExtJS and Ext.ensible
-------------------------------
+It seems that Lino **cannot** switch to another license 
+as long as we use ExtJS and Ext.ensible.
+ExtJS and Ext.ensible are GPLv3, and Lino uses them both.
 
-In case we decide to switch from GPL to BSD, before doing so, 
-we need to check the following:
+- Lino generates and serves HTML pages which contain the instruction 
+  to include the `*.js` and `*.css` files of these libraries.
 
-ExtJS and Ext.ensible are GPL. 
-Lino uses them both.
+- Lino extends Ext classes and overrides Ext functions or methods.
+  (See :srcref:`linolib.js </lino/ui/extjs3/linolib.js>`)
+  
+According to `Sencha's Open Source FAQ 
+<http://www.sencha.com/legal/open-source-faq/>`_, 
+at least the second point is a modification, 
+and "All modifications of a GPLv3 licensed products are subject 
+to the GPL v3 license."
 
-
-Lino generates and serves HTML pages which contain the instruction 
-to include the `*.js` and `*.css` files of these libraries.
-
-Lino currently *needs* them, it does not currently offer a 
-possibility to be used without them. 
+Lino does not currently offer a possibility to be used 
+without ExtJS and Ext.ensible. 
 But this possibility exists theoretically, 
 and it is just a question of priorities whether we develop an 
-alternative user interface which doesn't require ExtJS and Ext.ensible.
+alternative user interface which is not 
+based on ExtJS and Ext.ensible.
 
-- Questions: 
-  Is Lino **the framework** to be considered a derived work?
-  Are Lino **applications** to be considered derived works?
+It is theoretically possible to split Lino into a 
+BSD-licensed "kernel" which does not provide any ExtJS based user interface,
+and a GPLv3 licensed extension "Lino+".
+Lino applications could then be proprietary because 
+they "modify" only parts of the *kernel*. 
 
-(My current answer: I think not, because Lino doesn't call any functions.)
+It's the end-user who 
+installs the Lino+ extension (and ExtJS and Ext.ensible)
+and decides in a local configuration file to use these GPL products.
 
 
 Miscellaneous

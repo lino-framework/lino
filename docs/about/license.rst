@@ -4,40 +4,42 @@ Licensing : How to make money with Lino
 Lino is published under the 
 `GPL <http://en.wikipedia.org/wiki/GNU_General_Public_License>`_.
 What does this concretely mean for a Lino application developer?
-This section explains how the author of Lino understands the GPL.
+This section explains how the author of Lino understands the GPL 
+(it has no legal value, the only authority is the license text).
 
-- If you write a Lino application, you may distribute and sell it as your work,
-  using either a commercial or a free license.
-
+- This license gives you the permission to use Lino and write 
+  your own Lino application.
   A Lino application can be something as simple as
   the "Polls" application described in 
   :doc:`The Polls tutorial </tutorials/polls>`.
-
-- This permission is given also if your application uses some part of the 
-  :doc:`Lino Modules Library </topics/modlib>`, which is a collection of built-in Lino plugins.
-
-- You may even write and distribute 
-  a commercial collection of Lino plugins,
+  
+- You may also write your own collection of Lino plugins,
   a concurrent to the :doc:`Lino Modules Library </topics/modlib>`.
-
+  
+- You may write some other extension to Lino, or even start a fork 
+  which does certain things in a better way.
+  
 If you do any of the above, 
-you do not need to register nor to pay me for doing so. 
+then your work is also subject to the GPL.
+You are free to use it for yourself and within your company,
+you may (and are encouraged to) share your work to others, 
+as long as you do this according to the terms of the GPL:
+no license fee, source code available etc...
+
+You may do all this as a *commercial activity*, 
+asking money for your support.
+
+You do not need to register nor to pay me for doing so. 
 Of course I recommend that you inform me about your activity and to register 
 at least to the announcement mailing list.
 And maybe I will offer you to pay me money for getting my professional support. 
 But these are not requirements.
 
-In other words, using formulations picked from the 
-`FAQ about the GNU Licenses 
-<http://www.gnu.org/licenses/gpl-faq.en.html#GPLInProprietarySystem>`_:
-
-- Since Lino is GPL, you cannot *incorporate* Lino in a proprietary system, 
-  but you can *distribute Lino alongside* your proprietary system.
-- A Lino application and the Lino framework communicate 
-  "at arms length", they are not "combined in a way that would 
-  make them effectively a single program".
-- Take care at the form how you describe what you are doing: 
-  you may not deliberately hide to your customers the fact that 
-  your application uses Lino.
-  
+**If you prefer to distribute your work 
+using a proprietary license,
+then I equally encourage you to do so.**
+The only detail in that case is that you must ask me (the author of Lino) 
+for *another license than the GPL*.
+Since Lino is young, you are likely to get your commercial license 
+for good conditions, but you need to contact me. 
 

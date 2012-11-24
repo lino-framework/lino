@@ -1,9 +1,19 @@
 Why GPL?
 ========
 
+
+.. note::
+
+  I am currently considering to change the license.
+  See :doc:`/tickets/16`
+
+
 Lino is published under the `GPL
 <http://en.wikipedia.org/wiki/GNU_General_Public_License>`_,
 as explained in :doc:`license`.
+
+
+
 
 The reason for our choice is that we want to make sure 
 that our voluntary work will always 

@@ -20,13 +20,16 @@ Projects form a tree: each Project can have a `parent`
 (another Project for which it is a sub-project).
 
 A **Milestone** is a named step of evolution of a Project.
-(For software projects we usually call them a "release" and they are named by a version number.)
+For software projects we usually call them a "release" and they are 
+named by a version number.
 
 A **Ticket** is a concrete question or problem formulated 
 by a `reporter` (a Partner). 
-A Ticket is always related to a given Project.
+A Ticket is always related to one and only one Project.
+It may be related to other tickets which may belong to other projects.
 
-A **Session** is when a User works during a given lapse of time 
+A **Session** is when an employee (a User) 
+works during a given lapse of time 
 on a given Project and/or Ticket.
 
 All the Sessions related to a given Project represent the time 
@@ -41,7 +44,7 @@ Extreme case of a session:
   That call is interrupted several times (by the customer himself).
   During the first interruption another customer calls, 
   with another problem (ticket #3) which we solve together within 5 minutes.
-  During the second interruption (which lasts 7 minutes) I make a coffee break.
+  During the second interruption of #2 (which lasts 7 minutes) I make a coffee break.
   During the third interruption I continue to analyze the customer's problem.
   When ticket #2 is solved, I decided that it's not worth to keep track of each interruption and that the overall session time for this ticket
   can be estimated to 0:40.
@@ -51,7 +54,7 @@ Extreme case of a session:
     Ticket start end    Pause  Duration
     #1     9:23  13:12  0:45
     #2     10:17 11:12  0:12       0:43   
-    #3     10:23 10:28         0:05
+    #3     10:23 10:28             0:05
 
 
 """
@@ -217,6 +220,10 @@ class Ticket(mixins.AutoUser,mixins.CreatedModified,mixins.ProjectRelated):
     #~ start_date = models.DateField(
         #~ verbose_name=_("Start date"),
         #~ blank=True,null=True)
+        
+    @dd.virtualfield(models.TimeField(_("Time")))
+    def time(self,ar):
+        return self.sessions_time
     
     def __unicode__(self):
         return u"#%d (%s)" % (self.id,self.summary)
@@ -253,7 +260,16 @@ class UnassignedTickets(Tickets):
     
 class TicketsByProject(Tickets):
     master_key = 'project'
-    column_names = "summary user partner *"
+    column_names = "summary user partner time *"
+    parameters = dict(
+      today = models.DateField(_("Date"),blank=True)
+    )
+    
+    @classmethod
+    def get_request_queryset(self,ar):
+        qs = super(TicketsByProject,self).get_request_queryset(ar)
+        #~ if ar.param_values.today is not None:
+        return qs.annotate(sessions_time=models.Sum('sessions__time'))
 
 class TicketsByPartner(Tickets):
     master_key = 'partner'
@@ -285,7 +301,9 @@ class Session(mixins.AutoUser,mixins.ProjectRelated):
         blank=True,null=True,
         help_text=_("The partner to be invoiced for this session."))
     #~ project = models.ForeignKey('tickets.Project',blank=True,null=True)
-    ticket = models.ForeignKey('tickets.Ticket',blank=True,null=True)
+    ticket = models.ForeignKey('tickets.Ticket',
+        blank=True,null=True,
+        related_name='sessions')
     summary = models.CharField(_("Summary"),max_length=200,
         blank=True,
         help_text=_("Short summary of the session."))
@@ -300,6 +318,9 @@ class Session(mixins.AutoUser,mixins.ProjectRelated):
     break_time = models.TimeField(
         blank=True,null=True,
         verbose_name=_("Break Time"))
+    time = models.TimeField(
+        blank=True,null=True,
+        verbose_name=_("Time"))
     is_private = models.BooleanField(verbose_name=_("is private"))
     
     def __unicode__(self):

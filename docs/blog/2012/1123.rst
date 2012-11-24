@@ -1,10 +1,15 @@
 20121123
 ========
 
-I had several hours of surf and thought about "GPL or BSD?" question
-and came to the conclusion that GPL remains my choice.
+I had several hours of surf and thought about 
+"GPL or BSD?" question and came to the conclusion 
+that GPL remains my choice *for the moment*.
 
-For those who are interested, please
-read the following page and tell me whether you see some problems:
+For those who are interested, please read the following page 
+and tell me your advice about how I should decide:
 
-  :doc:`/about/license`
+  :doc:`/tickets/16`
+
+I also noticed that the file :srcref:`/COPYING.txt` 
+was mistakenly still a version 2 of the GPL. 
+Lino is and has always been distributed under the GPLv3.

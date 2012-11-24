@@ -1,0 +1,12 @@
+20121124
+========
+
+- Updated :doc:`/about/license`.
+  Consider :doc:`/tickets/16` as closed for the moment.
+  
+- :mod:`lino.modlib.tickets` : I want to have a virtual column 
+  `time` in `TicketsByProject` which is the sum of the related 
+  `Session.time`.
+  Thats a simple case of `annotate`.  Did I imagine.
+  But :mod:`lino.test_apps.20121124`
+  

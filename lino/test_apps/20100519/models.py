@@ -2,7 +2,8 @@
 Django pitfall : Defining IntegerField as explicit primary_key field
 --------------------------------------------------------------------
 
-If you define an IntegerField as explicit primary_key field, you'll get unexpected bahaviour:
+If you define an IntegerField as explicit primary_key field, you'll 
+get unexpected bahaviour:
 
   >>> p = IntegerPerson(name="Luc")
   >>> p.save() 
