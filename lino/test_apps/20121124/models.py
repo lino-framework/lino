@@ -18,8 +18,50 @@ and some sessions:
 >>> print Session.objects.all()
 [<Session: at 00:45:00>, <Session: at 01:30:00>]
 
->>> qs = Ticket.objects.annotate(time=models.Sum('sessions__time'))
->>> print [t.time for t in qs]
+Create an annotation:
+
+>>> qs = Ticket.objects.annotate(timesum=models.Sum('sessions__time'))
+
+Counting works::
+
+>>> print qs.count()
+2
+
+But when I try to access the annotation::
+
+>>> print [unicode(t.timesum) for t in qs]
+['02:15:00','']
+
+The above example raises the following Exeption::
+
+  Traceback (most recent call last):
+    File "l:\snapshots\Django-1.4.2\django\test\_doctest.py", line 1235, in __run
+      compileflags, 1) in test.globs
+    File "<doctest lino.test_apps.20121124.models[10]>", line 1, in <module>
+      print [unicode(t.timesum) for t in qs]
+    File "l:\snapshots\Django-1.4.2\django\db\models\query.py", line 118, in _result_iter
+      self._fill_cache()
+    File "l:\snapshots\Django-1.4.2\django\db\models\query.py", line 892, in _fill_cache
+      self._result_cache.append(self._iter.next())
+    File "l:\snapshots\Django-1.4.2\django\db\models\query.py", line 291, in iterator
+      for row in compiler.results_iter():
+    File "l:\snapshots\Django-1.4.2\django\db\models\sql\compiler.py", line 790, in results_iter
+      ]) + tuple(row[aggregate_end:])
+    File "l:\snapshots\Django-1.4.2\django\db\models\sql\query.py", line 338, in resolve_aggregate
+      return self.convert_values(value, aggregate.field, connection)
+    File "l:\snapshots\Django-1.4.2\django\db\models\sql\query.py", line 316, in convert_values
+      return connection.ops.convert_values(value, field)
+    File "l:\snapshots\Django-1.4.2\django\db\backends\sqlite3\base.py", line 208, in convert_values
+      return parse_time(value)
+    File "l:\snapshots\Django-1.4.2\django\utils\dateparse.py", line 51, in parse_time
+      match = time_re.match(value)
+  TypeError: expected string or buffer
+
+The same exception comes when I use Django development trunk revision 17942.
+
+
+- `Value conversions of aggregate return values -- is float conversion really required? 
+  <https://groups.google.com/forum/?fromgroups=#!topic/django-developers/6HQlh2t1j4M>`_
 
 """
 

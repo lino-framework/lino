@@ -1,9 +1,11 @@
-from lino.apps.std.settings import *
+INSTALLED_APPS = ['lino.test_apps.20121124']
 
-class Lino(Lino):
-  
-    def get_installed_apps(self):
-        yield 'lino.test_apps.20121124'
+DATABASES = {
+    'default': {
+        'ENGINE': 'django.db.backends.sqlite3',
+        'NAME': ':memory:'
+    }
+}
         
-LINO = Lino(__file__,globals())    
 
+SECRET_KEY = "123"

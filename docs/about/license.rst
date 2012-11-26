@@ -19,27 +19,35 @@ This section explains how the author of Lino understands the GPL
 - You may write some other extension to Lino, or even start a fork 
   which does certain things in a better way.
   
-If you do any of the above, 
-then your work is also subject to the GPL.
+If you do any of the above, then your work is also subject to the GPL.
 You are free to use it for yourself and within your company,
 you may (and are encouraged to) share your work to others, 
 as long as you do this according to the terms of the GPL:
 no license fee, source code available etc...
 
-You may do all this as a *commercial activity*, 
-asking money for your support.
+You may do all this as a *commercial activity*, for example, 
 
-You do not need to register nor to pay me for doing so. 
+- you may run your Lino application on an Internet server
+  and sell subscriptions to users of your system. 
+  You don't need to publish your source code in that 
+  case since you are not conveying your work. Lino is GPL, not AGPL.
+
+- Or you may publish your application without documentation, 
+  maintaining your own knowledge base and selling your know-how.
+
+You do not need to register nor to pay me for doing theses things. 
 Of course I recommend that you inform me about your activity and to register 
 at least to the announcement mailing list.
 And maybe I will offer you to pay me money for getting my professional support. 
 But these are not requirements.
 
-**If you prefer to distribute your work 
-using a proprietary license,
-then I equally encourage you to do so.**
-The only detail in that case is that you must ask me (the author of Lino) 
-for *another license than the GPL*.
-Since Lino is young, you are likely to get your commercial license 
-for good conditions, but you need to contact me. 
+It gets complicated only if you want to 
+**distribute your work using a proprietary license**.
+But even in that case I encourage you to do so.
+It is just a question of money: 
+(1) you must ask me for *another license than the GPL* 
+and 
+(2) I must ask for commercial licenses for certain libraries 
+which Lino uses (ExtJS, Ext.ensible and maybe more)
+
 
