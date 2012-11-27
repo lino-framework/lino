@@ -92,6 +92,11 @@ Miscellaneous
   Thanks to http://stackoverflow.com/questions/7377012/openoffice-api-url-seems-to-be-an-unsupported-one 
   for shedding light over this.
 
-- Error while evaluating expression "settings.LINO.site_version()". cannot concatenate 'str' and 'NoneType' objects
+- Error while evaluating expression "settings.LINO.site_version()". 
+  cannot concatenate 'str' and 'NoneType' objects
+
+- When trying to create a Posting from a Postable (e.g. a Note),
+  the action failed and the server reported 
+  "ValidationError {'state': [u'Dieses Feld darf nicht leer sein.']}"
 
 

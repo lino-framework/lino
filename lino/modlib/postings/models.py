@@ -176,7 +176,10 @@ class CreatePostings(dd.RowAction):
           _("Going to create %(num)d postings for %(elem)s") 
           % dict(num=len(recs),elem=elem))
         for p in recs:
-            p = Posting(user=ar.user,owner=elem,partner=p,date=datetime.date.today())
+            p = Posting(
+                  user=ar.user,owner=elem,partner=p,
+                  date=datetime.date.today(),
+                  state=PostingStates.ready)
             p.full_clean()
             p.save()
         kw.update(refresh=True)
