@@ -620,6 +620,7 @@ class ClearCacheAction(actions.RowAction):
     sort_index = 51
     url_action_name = 'clear'
     label = _('Clear cache')
+    #~ debug_permissions = 20121127
     
     icon_name = 'x-tbar-clearcache'
     

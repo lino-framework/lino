@@ -1542,6 +1542,8 @@ class Lino(object):
         """
         #~ name,version,url = self.using().next()
         #~ name,version,url = self.get_application_info()
+        if self.version is None:
+            return self.short_name + ' (Lino %s)' % __version__
         return self.short_name + ' ' + self.version
         #~ return name + ' ' + version
         #~ return "Lino " + __version__

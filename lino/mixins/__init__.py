@@ -186,7 +186,22 @@ class UserAuthored(dd.Model):
         #~ other.user = self.user
         #~ super(UserAuthored,self).update_owned_instance(other)
         
-
+    manager_level_field = 'level'
+    """
+    Only system managers can edit other users' work. 
+    But if the application defines customized UserGroups, 
+    then we may want to permit it also to department managers.
+    If an application defines a UserGroup `foo`, 
+    then it can set this attribute to `'foo_level'` 
+    on a model to specify that a manager level for 
+    the foo department is enough to get edit permission on other users' instances.
+    
+    Usage examples see 
+    :class:`lino.modlib.notes.models.Note`
+    or
+    :class:`lino.modlib.cal.models.Component`.
+    """
+    
     def get_row_permission(self,ar,state,ba):
         """
         Only system managers can edit other users' work.
@@ -195,7 +210,8 @@ class UserAuthored(dd.Model):
             #~ logger.info("20120919 no permission to %s on %s for %r",action,self,user)
             return False
         user = ar.get_user()
-        if self.user != user and user.profile.level < dd.UserLevels.manager:
+        if self.user != user and getattr(user.profile,self.manager_level_field) < dd.UserLevels.manager:
+        #~ if self.user != user and user.profile.level < dd.UserLevels.manager:
             #~ logger.info("20120919 no permission to %s on %r because %r != %r",action,self,self.user,user)
             return ba.action.readonly
         return True

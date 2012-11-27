@@ -221,6 +221,8 @@ class Subscription(mixins.UserAuthored):
     
     """
     
+    manager_level_field = 'office_level'
+    
     class Meta:
         verbose_name = _("Subscription")
         verbose_name_plural = _("Subscriptions")
@@ -236,8 +238,7 @@ You can subscribe to *non-private* calendars of *other* users."""))
 Whether this subscription should initially be hidden in your calendar panel."""))
     
 
-    
-        
+
 class Subscriptions(dd.Table):
     required = dd.required(user_groups='office',user_level='manager')
     model = Subscription
@@ -262,6 +263,8 @@ if settings.LINO.user_model:
         :watched_user: points to the watched user
         
         """
+        
+        manager_level_field = 'office_level'
         
         class Meta:
             verbose_name = _("Membership")
@@ -704,6 +707,8 @@ class Component(ComponentBase,
     """
     workflow_state_field = 'state'
     
+    manager_level_field = 'office_level'
+    
     class Meta:
         abstract = True
         
@@ -1070,6 +1075,15 @@ if settings.LINO.user_model:
         required = dd.required(user_groups='office')
         #~ column_names = 'start_date start_time calendar project summary workflow_buttons *'
         column_names = 'start_date start_time calendar project summary *'
+        hidden_columns = """
+        user 
+        place priority access_class transparent
+        owner created modified
+        description
+        uid sequence auto_type build_time owner owner_id owner_type 
+        end_date end_time
+        """
+        
         
     #~ class EventsReserved(Events):
         #~ help_text = _("Table of all reserved events.")

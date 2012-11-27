@@ -120,7 +120,7 @@ class EventTypes(dd.Table):
     
 
 class Note(mixins.TypedPrintable,
-      mixins.AutoUser,
+      mixins.UserAuthored,
       mixins.Controllable,
       #~ contacts.PartnerDocument,
       mixins.ProjectRelated,
@@ -131,6 +131,9 @@ class Note(mixins.TypedPrintable,
     """
     Deserves more documentation.
     """
+    
+    manager_level_field = 'office_level'
+    
     
     class Meta:
         #~ abstract = True

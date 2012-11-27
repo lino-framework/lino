@@ -533,6 +533,8 @@ class Table(AbstractTable):
                     #~ if ba.action.show_in_bbar and not obj.get_row_permission(u,state,ba.action):
                     #~ if a.show_in_bbar and not a.get_action_permission(ar.get_user(),obj,state):
                         d[ba.action.action_name] = True
+                #~ if ba.action.action_name == 'do_clear_cache':
+                    #~ logger.info("20121127 %s %s", obj, d)
             #~ if obj.__class__.__name__ == 'Note':
                 #~ logger.info("20120920 %s %s %r", obj, d,obj.__class__.get_row_permission)
         return d
