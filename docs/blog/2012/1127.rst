@@ -6,10 +6,11 @@ Monitoring a Lino site
 
 Lino should be able to send every day a 
 monitor status to the admins of a site.
-
-The first useful thing in shuch a status seems to be certain warnings:
+The first useful thing in such a status seems 
+to be certain warnings:
 
 - if the size on disk or number of records of a model has grown abnormally
+- available disk space and size of log files
 
 :mod:`lino.management.commands.diag` is not the right candidate 
 to do this job (main purpose is a logical comparison of two dumps),
@@ -25,3 +26,14 @@ used by the database table of each model?
 
 - sqlite would be more tricky (http://stackoverflow.com/questions/5900050/sqlite-table-disk-usage) 
   and probably never necessaary.
+  
+Okay, here is some first visible result::  
+  
+  luc@vps:~/mypy/demo_sites/welfare$ python manage.py  monitor
+  INFO Loaded 2 states from /home/luc/mypy/demo_sites/welfare/states.pck
+  INFO Changes since 2012-11-27 08:34:50.240809:
+  - cv.LanguageKnowledge rows : 122 -> 121
+  - cv.LanguageKnowledge bytes : 10992 -> 10972
+  INFO Saved 3 states to /home/luc/mypy/demo_sites/welfare/states.pck  
+  
+But there's still a lot to do. Not urgent.
