@@ -81,15 +81,16 @@ Miscellaneous
 
 - :menuselection:`Explorer --> ÖSHZ --> ClientStates`
 
-- When clicking the [pdf] button at http://demo1.lino-framework.org/api/polls/Polls
+- When trying to render something as pdf on any of the demo sites, 
+  (e.g. clicking the [pdf] button at http://demo1.lino-framework.org/api/polls/Polls),
   the server said "An error occurred during the conversion. 
   Doc URL "/home/luc/mypy/demo_sites/polls/media/cache/appypdf/polls.Polls.pdf.1354022098.282635/result.odt" 
   is wrong. URL seems to be an unsupported one."
   
-
-
-/home/luc/snapshots/appy/appy/pod/renderer.py
-
+  That was just because forgot to install openoffice-writer on the server.
+  Took me some time to discover the reason, though.
+  Thanks to http://stackoverflow.com/questions/7377012/openoffice-api-url-seems-to-be-an-unsupported-one 
+  for shedding light over this.
 
 - Error while evaluating expression "settings.LINO.site_version()". cannot concatenate 'str' and 'NoneType' objects
 

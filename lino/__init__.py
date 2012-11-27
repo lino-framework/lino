@@ -238,7 +238,7 @@ class Lino(object):
     The pythonic name of the top-level module. Used for PyPI.
     """
     
-    short_name = "Unnamed Lino Application"
+    short_name = None # "Unnamed Lino Application"
     """
     Used as display name to end-users at different places.
     """
@@ -1540,12 +1540,13 @@ class Lino(object):
         """
         Used in footnote or header of certain printed documents.
         """
-        #~ name,version,url = self.using().next()
+        name,version,url = self.using().next()
         #~ name,version,url = self.get_application_info()
-        if self.version is None:
-            return self.short_name + ' (Lino %s)' % __version__
-        return self.short_name + ' ' + self.version
-        #~ return name + ' ' + version
+        #~ if self.short_name
+        #~ if self.version is None:
+            #~ return self.short_name + ' (Lino %s)' % __version__
+        #~ return self.short_name + ' ' + self.version
+        return name + ' ' + version
         #~ return "Lino " + __version__
 
 
