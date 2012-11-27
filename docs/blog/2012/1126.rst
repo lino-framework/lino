@@ -1,3 +1,21 @@
 20121126
 ========
 
+- Continued on :mod:`lino.test_apps.20121124`.
+  Posted 
+  :djangoticket:`19360`
+  (`Django Ticket # 19360 <https://code.djangoproject.com/ticket/19360>`_).
+  
+- New :class:`ExamPolicies <lino_welfare.modlib.isip.models.ExamPolicies>`
+  now has a :attr:`detail_layout <lino.core.actors.ACtor.detail_layout>`.
+  And new class `ContractsByPolicy` in both 
+  :mod:`lino_welfare.modlib.isip`
+  and
+  :mod:`lino_welfare.modlib.jobs`
+  used therein.
+  
+- Die :class:`Liste aller VSEs <lino_welfare.modlib.isip.models.Contracts>` 
+  stand im Menü fälschlicherweise unter
+  :menuselection:`Explorer --> VSEs`
+  statt unter
+  :menuselection:`Explorer --> DSBE --> VSEs`.

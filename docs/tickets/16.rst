@@ -1,12 +1,12 @@
 #16 : Questions about copyright 
 ===============================
 
-Is it possible to change Lino's license to LGPL or BSD?
-For those who are interested, please read the following page 
-and tell me your comments and advice about how I should decide.
-
+Should I change Lino's license from the current GPL to LGPL or even BSD?
 The main reason to do so would be to stop refraining 
 a certain group of developers from using Lino.
+
+For those who are interested, please read the following page 
+and tell me your comments and advice about how I should decide.
 
 ExtJS and Ext.ensible
 ---------------------
@@ -23,26 +23,24 @@ ExtJS and Ext.ensible are GPLv3, and Lino uses them both.
   
 According to `Sencha's Open Source FAQ 
 <http://www.sencha.com/legal/open-source-faq/>`_, 
-at least the second point is a modification, 
+at least the second point is a "modification", 
 and "All modifications of a GPLv3 licensed products are subject 
 to the GPL v3 license."
 
-Lino does not currently offer a possibility to be used 
-without ExtJS and Ext.ensible. 
-But this possibility exists theoretically, 
-and it is just a question of priorities whether we develop an 
-alternative user interface which is not 
-based on ExtJS and Ext.ensible.
+One possibility is to split Lino into a BSD-licensed "kernel" 
+which does not provide any ExtJS based user interface,
+and a GPLv3 licensed extension "Lino+" of this kernel.
 
-It is theoretically possible to split Lino into a 
-BSD-licensed "kernel" which does not provide any ExtJS based user interface,
-and a GPLv3 licensed extension "Lino+".
-Lino applications could then be proprietary because 
-they "modify" only parts of the *kernel*. 
+Applications could then be proprietary because 
+they "modify" only parts of the BSD-licensed *kernel*. 
 
-It's the end-user who 
-installs the Lino+ extension (and ExtJS and Ext.ensible)
-and decides in a local configuration file to use these GPL products.
+It's the end-user 
+who decides in a local configuration file to use these GPL products
+and to install the Lino+ extension, ExtJS and Ext.ensible.
+
+Of course it is possible to write a new user 
+interface which does not require any GPLed library.
+It is just a question of priorities.
 
 
 Miscellaneous

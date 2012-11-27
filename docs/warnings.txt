@@ -1,6 +1,3 @@
 T:\hgwork\lino\docs\autodoc\lino.utils.dbfreader.rst:: WARNING: document isn't included in any toctree
 T:\hgwork\lino\docs\casts\lino_intro.rst:: WARNING: document isn't included in any toctree
 T:\hgwork\lino\docs\igen\index.rst:: WARNING: document isn't included in any toctree
-T:\hgwork\lino\docs\about\index.rst:45: WARNING: unknown document: demos
-T:\hgwork\lino\docs\blog\2012\index.rst:336: WARNING: unknown document: 1126
-T:\hgwork\lino\docs\blog\2012\index.rst:375: WARNING: unknown document: 1126

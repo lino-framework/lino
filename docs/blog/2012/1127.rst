@@ -1,0 +1,23 @@
+20121127
+========
+
+Monitoring a Lino site
+----------------------
+
+Lino should be able to send every day a 
+monitor status to the admins of a site.
+
+The first useful thing in shuch a status seems to be certain warnings:
+
+- if the size on disk or number of records of a model has grown abnormally
+
+:mod:`lino.management.commands.diag` is not the right candidate 
+to do this job (main purpose is a logical comparison of two dumps),
+so we write a new command for this:
+:mod:`lino.management.commands.monitor`.
+
+How to find outthe disk size 
+used by the database table of each model?
+Currently only for the mysql backend. 
+PostGreSQL should be easy, too. 
+sqlite would be more tricky and probably never necessaary.

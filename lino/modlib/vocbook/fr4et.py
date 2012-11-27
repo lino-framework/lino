@@ -31,6 +31,7 @@ else:
     FULL_CONTENT = False
 
 HAS_FUN = True
+HAS_EXERCICES = True
 
 book = Book(French,Estonian,
     title=u"Kutsealane prantsuse keel kokadele",
@@ -121,6 +122,8 @@ Kokadele = Vocabulary.add_section(u"Kulinaaria")
 if HAS_FUN:
     Fun = Vocabulary.add_section(u"Laulud")
 
+if HAS_EXERCICES:
+    Exercices = Vocabulary.add_section(u"Harjutused")
 
 
 
@@ -2220,6 +2223,38 @@ if FULL_CONTENT:
     une heure [ÖÖr] : tund
     le dauphinois [dofinw'a] : lõunaprantsuse dialekt
     """
+
+if HAS_EXERCICES:
+    Exercices.add_lesson(u"Lugeda oskad?", u"""
+Õpetaja kirjutab tahvlile sari hääldamiskirjeldusi.
+Õpilased loevad ette.
+Ainult lugeda, mitte tõlkida.
+""")
+    Exercice.parse_words(None,u"""
+    au clair de lune [okläärdə'lün] : kuuvalguses
+    le cœur de filet [kÖÖr də fi'lä] : veise sisefilee
+    le dessert [des'säär] : magustoit
+    la mousse au chocolat [musošoko'la] : šokoladivaht
+    le pot-au-feu [poto'föö] : ühepajatoit
+    le petit-beurre [pəti'bÖÖr]: (kuiv küpsis)
+    la sauce chasseur [soos ša'sÖÖr] : jahimehe kaste
+    Poitou [pwa'tu] : -
+    la sauce italienne [soosital'jän] : itaalia kaste
+    le gratin dauphinois [gra'tÄ~ dofinw'a] : (tuntud retsept)
+    """)
+    
+    Exercices.add_lesson(u"Kirjutada oskad?", u"""
+Õpetaja loeb ette sari sõnu.
+Õpilased kirjutavad paberile, kasutades hääldamiskirjelduse tähestik.
+""")
+    Exercice.parse_words(None,u"""
+le chevreuil [šəv'rÖj] : metskits
+le soleil [so'leij] : päike
+la boisson [bwa'sO~] : jook
+le poisson [pwa'sO~] : kala
+le requin [rə'kÄ~] : haikala
+la cuillère [kwi'jäär] : lusikas
+""")
 
 
 if __name__ == '__main__':

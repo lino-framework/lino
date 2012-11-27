@@ -13,22 +13,21 @@ Let's create two tickets:
 
 and some sessions:
 
->>> Session(ticket=t1,time="0:45").save()
->>> Session(ticket=t1,time="1:30").save()
+>>> Session(ticket=t1,time="0:45",price="0.75").save()
+>>> Session(ticket=t1,time="1:30",price="1.50").save()
 >>> print Session.objects.all()
 [<Session: at 00:45:00>, <Session: at 01:30:00>]
 
-Create an annotation:
+Get the sum of the prices of all sessions for each ticket:
+
+>>> qs = Ticket.objects.annotate(pricesum=models.Sum('sessions__price'))
+>>> print [t.pricesum for t in qs]
+[Decimal('2.25'), None]
+
+
+Now the same with a timefield:
 
 >>> qs = Ticket.objects.annotate(timesum=models.Sum('sessions__time'))
-
-Counting works::
-
->>> print qs.count()
-2
-
-But when I try to access the annotation::
-
 >>> print [unicode(t.timesum) for t in qs]
 ['02:15:00','']
 
@@ -77,6 +76,7 @@ class Ticket(models.Model):
 class Session(models.Model):  
     ticket = models.ForeignKey(Ticket,related_name="sessions")
     time = models.TimeField()
+    price = models.DecimalField(max_digits=5,decimal_places=2)
     def __unicode__(self):
         return "at %s" % self.time
 

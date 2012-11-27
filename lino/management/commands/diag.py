@@ -13,7 +13,7 @@
 ## along with Lino; if not, see <http://www.gnu.org/licenses/>.
 
 """
-Writes a diagnostic report about the data on this Site. 
+Writes a diagnostic status report about the data on this Site. 
 Used to get a quick overview on the differences in two databases. 
 """
 
@@ -39,6 +39,7 @@ from lino.core.modeltools import app_labels
 from lino.utils import rstgen
 from lino.core.modeltools import obj2str, full_model_name, sorted_models_list
 
+
 class Command(BaseCommand):
     help = __doc__
     args = "output_dir"
@@ -62,8 +63,8 @@ class Command(BaseCommand):
         def writeln(ln):
             self.stdout.write(ln.encode(encoding,"xmlcharrefreplace") + "\n")
         
-        
         writeln("Lino %s" % lino.__version__)
+        #~ yield (settings.LINO.short_name, settings.LINO.version)
         writeln(settings.LINO.title)
         models_list = sorted_models_list()
 
@@ -75,22 +76,23 @@ class Command(BaseCommand):
             #~ "No.",
             "Name",
             #~ "Class",
-            "M",
+            #~ "M",
             "#fields",
-            "#rows"
+            "#rows",
             #~ ,"first","last"
             ]
         rows = []
         for model in models_list:
+          if model._meta.managed:
             i += 1
             cells = []
             #~ cells.append(str(i))
             cells.append(full_model_name(model))
             #~ cells.append(str(model))
-            if model._meta.managed:
-                cells.append('X')
-            else:
-                cells.append('')
+            #~ if model._meta.managed:
+                #~ cells.append('X')
+            #~ else:
+                #~ cells.append('')
             cells.append(str(len(model._meta.fields)))
             #~ qs = model.objects.all()
             qs = model.objects.order_by('pk')
@@ -102,6 +104,7 @@ class Command(BaseCommand):
             #~ else:
                 #~ cells.append('')
                 #~ cells.append('')
+                
             rows.append(cells)
         writeln(rstgen.table(headers,rows))
         

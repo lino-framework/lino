@@ -364,6 +364,7 @@ As long as nobody protests, I'll save some time by writing in German.
   :doc:`24 <1124>`
   |br|
   :doc:`26 <1126>`
+  :doc:`27 <1127>`
 
 .. |Dec| replace::  **December**
   |br| 
