@@ -564,6 +564,13 @@ class Table(AbstractTable):
         if isinstance(self.model,UnresolvedModel):
             self.model = None
             
+        if self.model is not None:
+            if self.hidden_columns is None:
+                self.hidden_columns = self.model.hidden_columns
+            elif isinstance(self.hidden_columns,basestring):
+                self.hidden_columns = fields.fields_list(self.model,self.hidden_columns)
+            
+            
         super(Table,self).class_init()
         #~ if self.model is None:
             #~ if self.base_queryset is not None:

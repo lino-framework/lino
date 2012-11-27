@@ -1101,10 +1101,11 @@ class Lino(object):
         which ends with the specified `app_label`.
         """
         from django.conf import settings
-        if not '.' in app_label:
-            app_label = '.' + app_label
+        #~ if not '.' in app_label:
+            #~ app_label = '.' + app_label
         for s in settings.INSTALLED_APPS:
-            if s.endswith(app_label):
+            if s == app_label or s.endswith('.'+app_label):
+            #~ if s.endswith(app_label):
                 return True
         #~ print "20120703 not installed: %r" % app_label
 

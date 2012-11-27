@@ -545,6 +545,9 @@ def authenticate(username,password=NOT_NEEDED):
     
     try:
         user = settings.LINO.user_model.objects.get(username=username)
+        if user.profile is None:
+            #~ logger.info("20121127 user has no profile")
+            return None
         if password != NOT_NEEDED:
             if not user.check_password(password):
                 #~ logger.info("20121104 password mismatch")
@@ -622,7 +625,7 @@ class RemoteUserMiddleware(object):
         if user is None:
             logger.exception("Unknown username %s from request %s",username, request)
             raise Exception(
-              "Unknown username %r. Please contact your system administrator." 
+              "Unknown or inactive username %r. Please contact your system administrator." 
               % username)
               
         on_login(request,user)

@@ -60,7 +60,7 @@ class HttpResponseDeleted(http.HttpResponse):
     
     
 def plain_html_page(ar,title,navigator,main):
-    menu = settings.LINO.get_site_menu(ar.ui,ar.get_user())
+    menu = settings.LINO.get_site_menu(ar.ui,ar.get_user().profile)
     menu = menu.as_html(ar)
     response = http.HttpResponse(content_type='text/html;charset="utf-8"')
     doc = xghtml.Document(force_unicode(title))

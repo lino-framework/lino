@@ -83,6 +83,13 @@ class Model(models.Model):
     #~ The name of the field to be used when a gridfilter has been set on a 
     #~ foreign key column which points to this model. Capito?
     #~ """
+    
+    hidden_columns = None
+    """
+    If specified, this is the default value for 
+    :attr:`hidden_columns <lino.core.tables.AbstractTable.hidden_columns>` 
+    of every `Table` on this model.
+    """
 
     
     workflow_state_field = None

@@ -1557,7 +1557,7 @@ tinymce.init({
                + dbtables.custom_tables \
                + dbtables.frames_list ]
                
-        actors_list.extend(choicelists.CHOICELISTS.values())
+        actors_list.extend([a for a in choicelists.CHOICELISTS.values() if settings.LINO.is_installed(a.app_label)])
                
         """
         Call Ext.namespace for *all* actors because e.g. outbox.Mails.FormPanel 
@@ -1587,8 +1587,9 @@ tinymce.init({
           
         f.write("\n// ChoiceLists: \n")
         for a in choicelists.CHOICELISTS.values():
-            #~ if issubclass(a,choicelists.ChoiceList):
-            f.write("Lino.%s = %s;\n" % (a.actor_id,py2js(a.get_choices())))
+            if settings.LINO.is_installed(a.app_label):
+                #~ if issubclass(a,choicelists.ChoiceList):
+                f.write("Lino.%s = %s;\n" % (a.actor_id,py2js(a.get_choices())))
                 
         #~ logger.info('20120120 dbtables.all_details:\n%s',
             #~ '\n'.join([str(d) for d in dbtables.all_details]))
@@ -1757,7 +1758,10 @@ tinymce.init({
             
         if isinstance(h,tables.TableHandle):
             #~ if issubclass(h.actor,dbtables.Table):
-            ll = layouts.ListLayout(h.actor.get_column_names(ar),h.actor,hidden_elements=h.actor.hidden_columns)
+            ll = layouts.ListLayout(
+                h.actor.get_column_names(ar),
+                h.actor,
+                hidden_elements=h.actor.hidden_columns)
             #~ h.list_layout = layouts.ListLayoutHandle(h,ll,hidden_elements=h.actor.hidden_columns)
             h.list_layout = ll.get_layout_handle(self)
         else:

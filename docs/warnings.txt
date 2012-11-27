@@ -1,3 +1,11 @@
 T:\hgwork\lino\docs\autodoc\lino.utils.dbfreader.rst:: WARNING: document isn't included in any toctree
 T:\hgwork\lino\docs\casts\lino_intro.rst:: WARNING: document isn't included in any toctree
 T:\hgwork\lino\docs\igen\index.rst:: WARNING: document isn't included in any toctree
+t:\hgwork\lino\lino\core\tables.py:docstring of lino.core.tables.AbstractTable:1: WARNING: py:class reference target not found: Table
+t:\hgwork\lino\lino\core\tables.py:docstring of lino.core.tables.AbstractTable.custom_groups:1: WARNING: py:class reference target not found: Group
+t:\hgwork\lino\lino\core\tables.py:docstring of lino.core.tables.AbstractTable.filter:5: WARNING: py:attr reference target not found: known_values
+t:\hgwork\lino\lino\core\tables.py:docstring of lino.core.tables.AbstractTable.filter:9: WARNING: py:attr reference target not found: known_values
+t:\hgwork\lino\lino\core\tables.py:docstring of lino.core.tables.AbstractTable.filter:9: WARNING: py:attr reference target not found: filter.
+t:\hgwork\lino\lino\core\tables.py:docstring of lino.core.tables.AbstractTable.grid_configs:1: WARNING: py:meth reference target not found: lino.core.table.Table.do_setup
+t:\hgwork\lino\lino\core\tables.py:docstring of lino.core.tables.AbstractTable.slave_grid_format:1: WARNING: py:class reference target not found: links.LinksByController
+t:\hgwork\lino\lino\core\tables.py:docstring of lino.core.tables.TableRequest:1: WARNING: py:class reference target not found: Table

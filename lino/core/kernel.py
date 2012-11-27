@@ -128,6 +128,7 @@ def analyze_models():
                   'workflow_owner_field',
                   'disabled_fields',
                   'summary_row',
+                  'hidden_columns',
                   'get_default_table',
                   'get_related_project',
                   'get_system_note_recipients',
@@ -140,6 +141,11 @@ def analyze_models():
                 #~ setattr(model,k,getattr(dd.Model,k))
                 setattr(model,k,dd.Model.__dict__[k])
                 #~ model.__dict__[k] = getattr(dd.Model,k)
+                #~ logger.info("20121127 Install default %s for %s",k,model)
+              
+        if isinstance(model.hidden_columns,basestring):
+            model.hidden_columns = dd.fields_list(model,model.hidden_columns)
+
         
     for model in models.get_models():
         

@@ -37,3 +37,28 @@ Okay, here is some first visible result::
   INFO Saved 3 states to /home/luc/mypy/demo_sites/welfare/states.pck  
   
 But there's still a lot to do. Not urgent.
+
+
+Bugfixes
+--------
+
+- There was a bug in :meth:`lino.Lino.is_installed`: `is_installed('lino')` 
+  always returned False.
+  This caused `UserProfiles` to lack in the definition of global 
+  choicelists in `lino*.js`.
+  
+- When using :attr:`lino.Lino.remote_user_header` 
+  it was possible to authenticate as a user whose `profile` was empty.
+  This then caused a message "AttributeError. 'NoneType' object has no attribute 'level'".
+  Now the message is "Unknown or inactive username 'nicole'. 
+  Please contact your system administrator."
+
+
+Hidden columns
+--------------
+
+The new attribute :attr:`lino.core.model.Model.hidden_columns` makes 
+it more pleasant to define hidden columns. 
+If specified, this is the default value for 
+:attr:`lino.core.dbtables.Table.hidden_columns` 
+of every  :class:`lino.core.dbtables.Table` on this model.

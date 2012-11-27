@@ -201,8 +201,8 @@ class ChoiceListMeta(actors.ActorMetaClass):
         #~ for i in cls.items:
             #~ cls.add_item(i)
         if classname not in ('ChoiceList','Workflow'):
-            if settings.LINO.is_installed(cls.app_label):
-                register_choicelist(cls)
+            #~ if settings.LINO.is_installed(cls.app_label):
+            register_choicelist(cls)
         return cls
   
 

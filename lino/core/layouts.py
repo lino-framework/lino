@@ -397,14 +397,14 @@ class BaseLayout(object):
     #~ _element_options = dict()
     
     #~ def __init__(self,table=None,main=None,hidden_elements=frozenset(),window_size=None):
-    def __init__(self,main=None,table=None,hidden_elements=frozenset(),**kw):
+    def __init__(self,main=None,table=None,hidden_elements=None,**kw):
         #~ assert table is not None
         #~ self._table = table
         self._actor = table
         self._labels = self.override_labels()
         self._added_panels = dict()
         #~ self._window_size = window_size
-        self.hidden_elements = hidden_elements 
+        self.hidden_elements = hidden_elements or frozenset()
         self._element_options = dict()
         if main is not None:
             self.main = main

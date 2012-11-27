@@ -660,7 +660,27 @@ class AbstractTable(actors.Actor):
     #~ """
     
     #~ hide_columns = None
-    hidden_columns = frozenset()
+    #~ hidden_columns = frozenset()
+    
+    hidden_columns = None
+    """
+    If given, this is specifies the data elements
+    that should be hidden by default when rendering 
+    this actor in a grid.
+    
+    When specified on a :class:`lino.core.model.Model` 
+    or on a :class:`dd.Table <lino.core.dbtables.Table>`, 
+    this can be a single string containing 
+    a space-separated list of field names. 
+    Lino will automatically 
+    resolve this using 
+    :func:`dd.fields_list <lino.core.fields.fields_list>` during server startup.
+    
+    Otherwise it must be specified as a set of strings, 
+    each one the name of a data element.
+    
+    """
+    
     form_class = None
     help_url = None
     #master_instance = None
