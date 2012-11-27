@@ -16,8 +16,12 @@ to do this job (main purpose is a logical comparison of two dumps),
 so we write a new command for this:
 :mod:`lino.management.commands.monitor`.
 
-How to find outthe disk size 
+How to find out the disk size 
 used by the database table of each model?
-Currently only for the mysql backend. 
-PostGreSQL should be easy, too. 
-sqlite would be more tricky and probably never necessaary.
+
+- Currently only for the mysql backend. 
+
+- PostGreSQL should be easy, too. 
+
+- sqlite would be more tricky (http://stackoverflow.com/questions/5900050/sqlite-table-disk-usage) 
+  and probably never necessaary.

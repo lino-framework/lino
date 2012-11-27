@@ -143,11 +143,12 @@ class Command(BaseCommand):
                 if mysql and isinstance(connection,mysql):
 
                     cursor = connection.cursor()
+                    dbname = connection.settings_dict['NAME']
                     sql = """\
                     SELECT (data_length+index_length) tablesize
                     FROM information_schema.tables
                     WHERE table_schema='%s' and table_name='%s';
-                    """ % (connection.alias,model._meta.db_table)
+                    """ % (dbname,model._meta.db_table)
                     print sql
                     cursor.execute(sql)
                     row = cursor.fetchone()
