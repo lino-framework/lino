@@ -142,13 +142,12 @@ class Command(BaseCommand):
                     #~ cells.append("-")
                 if mysql and isinstance(connection,mysql):
 
-                    dbname = connection.get('NAME') 
                     cursor = connection.cursor()
                     sql = """\
                     SELECT (data_length+index_length) tablesize
                     FROM information_schema.tables
                     WHERE table_schema='%s' and table_name='%s';
-                    """ % (dbname,model._meta.dbname)
+                    """ % (connection.alias,model._meta.dbname)
                     #~ cursur.execute(sql)
                     row = cursor.fetchone()
                     #~ transaction.commit_unless_managed(using='my_db_alias')
