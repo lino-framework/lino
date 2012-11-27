@@ -22,13 +22,32 @@ import re
 
 from django.utils.translation import ugettext_lazy as _
 
-from lino.utils.choicelists import ChoiceList
+from lino.utils.choicelists import ChoiceList, Choice
 
+class GenderItem(Choice):
+    """
+    The class used to store both Genders male and female.
+    """
+    def mf(self,m,f):
+        """
+        Taking two parameters `m` and `f` of any type, 
+        returns one of them depending with this 
+        is `male` or `female`.
+        
+        For example ``self.client.gender.mf("He","She")``
+        in a document template.
+        """
+        if self is self.choicelist.male:
+            return m
+        return f
+        
 class Gender(ChoiceList):
     """
     Defines choices for the "Gender" of a person.
     """
     verbose_name = _("Gender")
+    item_class = GenderItem
+    
 add = Gender.add_item
 add('M',_("Male"),'male')
 add('F',_("Female"),'female')

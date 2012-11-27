@@ -100,3 +100,7 @@ Miscellaneous
   "ValidationError {'state': [u'Dieses Feld darf nicht leer sein.']}"
 
 
+- New class :class:`lino.modlib.contacts.utils.GenderItem` 
+  with a method
+  :meth:`mf <lino.modlib.contacts.utils.GenderItem.mf>`.
+  
