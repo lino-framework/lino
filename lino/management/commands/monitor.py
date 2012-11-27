@@ -147,7 +147,7 @@ class Command(BaseCommand):
                     SELECT (data_length+index_length) tablesize
                     FROM information_schema.tables
                     WHERE table_schema='%s' and table_name='%s';
-                    """ % (connection.alias,model._meta.dbname)
+                    """ % (connection.alias,model._meta.db_table)
                     #~ cursur.execute(sql)
                     row = cursor.fetchone()
                     #~ transaction.commit_unless_managed(using='my_db_alias')
