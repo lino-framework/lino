@@ -148,6 +148,7 @@ class Command(BaseCommand):
                     FROM information_schema.tables
                     WHERE table_schema='%s' and table_name='%s';
                     """ % (connection.alias,model._meta.db_table)
+                    print sql
                     cursor.execute(sql)
                     row = cursor.fetchone()
                     #~ transaction.commit_unless_managed(using='my_db_alias')
