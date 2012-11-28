@@ -89,7 +89,8 @@ import fractions
 
 #~ from django.core.serializers.json import DjangoJSONEncoder
 from django.conf import settings
-from django.utils import simplejson
+#~ from django.utils import simplejson as json
+import json
 from django.utils.functional import Promise
 from django.utils.encoding import force_unicode
 
@@ -175,13 +176,13 @@ def py2js(v):
         #~ return v
     if isinstance(v,Promise):
         #~ v = force_unicode(v)
-        return simplejson.dumps(force_unicode(v))
+        return json.dumps(force_unicode(v))
         
     if isinstance(v,types.GeneratorType): 
         return "".join([py2js(x) for x in v])
     if etree.iselement(v): 
     #~ if isinstance(v,etree.Element): 
-        return simplejson.dumps(etree.tostring(v))
+        return json.dumps(etree.tostring(v))
         
     #~ if type(v) is types.GeneratorType:
         #~ raise Exception("Please don't call the generator function yourself")
@@ -235,13 +236,13 @@ def py2js(v):
 
     if isinstance(v, float):
         return repr(v)
-    #return simplejson.encoder.encode_basestring(v)
+    #return json.encoder.encode_basestring(v)
     #print repr(v)
     # http://docs.djangoproject.com/en/dev/topics/serialization/
     #~ if not isinstance(v, (str,unicode)):
         #~ raise Exception("20120121 %r is of type %s" % (v,type(v)))
-    return simplejson.dumps(v)
-    #~ return simplejson.dumps(v,cls=DjangoJSONEncoder) # http://code.djangoproject.com/ticket/3324
+    return json.dumps(v)
+    #~ return json.dumps(v,cls=DjangoJSONEncoder) # http://code.djangoproject.com/ticket/3324
     
 
 """
@@ -285,14 +286,14 @@ def py2js(v,**kw):
     if isinstance(v,Variable):
         return v.as_ext(**kw)
     assert len(kw) == 0, "py2js() : value %r not allowed with keyword parameters" % v
-    return simplejson.dumps(v,cls=LinoJSONEncoder) # http://code.djangoproject.com/ticket/3324
+    return json.dumps(v,cls=LinoJSONEncoder) # http://code.djangoproject.com/ticket/3324
     
 """
 
 def key2js(s):
     if isinstance(s,str):
         return s
-    return simplejson.dumps(s) # ,cls=DjangoJSONEncoder)
+    return json.dumps(s) # ,cls=DjangoJSONEncoder)
     
 def id2js(s):
     return s.replace('.','_')

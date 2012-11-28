@@ -28,11 +28,12 @@ from lino.utils import babel
 
 from lino.core.modeltools import resolve_model,resolve_app
 Person = resolve_model(settings.LINO.person_model)
-contacts = resolve_app('contacts')
+#~ contacts = resolve_app('contacts')
 from lino.utils.instantiator import Instantiator, create_and_get
 from lino.utils.babel import babel_values
-#~ from lino.utils.choicelists import Gender
-Gender = contacts.Gender
+
+from lino import mixins
+Genders = mixins.Genders
 
 class QuickTest(TestCase):
     #~ fixtures = [ 'std', 'few_countries', 'ee', 'be', 'demo', 'demo_ee']
@@ -67,15 +68,16 @@ def test01(self):
           
     eupen = create_and_get('countries.City',name=u'Eupen',country=be,zip_code='4700')
     vigala = create_and_get('countries.City',name=u'Vigala',country=ee)
-          
     
     luc = create_and_get(settings.LINO.person_model,
         first_name='Luc',last_name='Saffre',
-        gender=Gender.male,
+        gender=Genders.male,
         country=ee,street='Uus', street_no='1',
         addr2=u'Vana-Vigala küla',
         city=vigala,zip_code='78003')
         
+    settings.LINO.uppercase_last_name = True
+    
     if 'en' in babel.AVAILABLE_LANGUAGES:
         babel.set_language('en')
         self.assertEquals(luc.address(), u'''\

@@ -19,8 +19,6 @@ from django.db import models
 from django.conf import settings
 from django.utils.translation import ugettext as _
 
-from django.db.models.base import signals, ModelState, DeferredAttribute, ManyToOneRel, izip
-
 from lino.core import fields
 from lino.core import modeltools
 from lino.utils.xmlgen import html as xghtml

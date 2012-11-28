@@ -16,8 +16,9 @@
 """
 
 from django.conf import settings
-from lino.modlib.contacts.utils import Gender
+#~ from lino.modlib.contacts.utils import Gender
 from lino.utils import Cycler
+from lino import mixins
 from lino import dd
 from lino.utils import demonames 
             
@@ -39,7 +40,7 @@ def objects():
         yield Person(
           first_name=male_first_names.pop(),
           last_name=last_names.pop(),
-          gender=Gender.male,
+          gender=mixins.Genders.male,
           city=CITIES.pop(),
           street=STREETS.pop(),
           **common
@@ -47,7 +48,7 @@ def objects():
         yield Person(
           first_name=female_first_names.pop(),
           last_name=last_names.pop(),
-          gender=Gender.female,
+          gender=mixins.Genders.female,
           city=CITIES.pop(),
           street=STREETS.pop(),
           **common

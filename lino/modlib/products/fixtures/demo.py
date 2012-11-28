@@ -26,13 +26,13 @@ def objects():
     product = Instantiator('products.Product',"price cat").build
 
     furniture = productcat(id=1,**babel_values('name',
-        en="Furniture",et=u"Mööbel",de="Möbel",fr="Meubles"))
+        en=u"Furniture",et=u"Mööbel",de=u"Möbel",fr=u"Meubles"))
     yield furniture
     #print "foo", furniture.id, furniture
     hosting = productcat(id=2,**babel_values('name',
-        en="Website Hosting",
+        en=u"Website Hosting",
         et=u"Veebimajutus",
-        de="Website-Hosting",
+        de=u"Website-Hosting",
         fr=u"Hébergement de sites Internet"))
     yield hosting 
     
@@ -68,49 +68,49 @@ Produit de l'année 2008.""",
     yield product("99.99",1,**babel_values('name',
         en="Wooden chair",
         et=u"Tool puidust",
-        de="Stuhl aus Holz",
+        de=u"Stuhl aus Holz",
         fr=u"Chaise en bois"))
     yield product("129.99",1,**babel_values('name',
         en="Metal table",
         et=u"Laud metallist",
-        de="Tisch aus Metall",
+        de=u"Tisch aus Metall",
         fr=u"Table en métal"))
     yield product("79.99",1,**babel_values('name',
         en="Metal chair",
         et=u"Tool metallist",
-        de="Stuhl aus Metall",
+        de=u"Stuhl aus Metall",
         fr=u"Chaise en métal"))
     hosting = product("3.99",2,
       **babel_values('name',
         en="Website hosting 1MB/month",
         et=u"Majutus 1MB/s",
-        de="Stuhl aus Metall",
+        de=u"Stuhl aus Metall",
         fr=u"Chaise en métal"))
     yield hosting
     yield product("30.00",2,
       **babel_values('name',
         en="IKT consultation & maintenance",
         et=u"IKT konsultatsioonid & hooldustööd",
-        de="IKT Konsultierung & Unterhalt",
+        de=u"IKT Konsultierung & Unterhalt",
         fr=u"Consultation & maintenance"))
     yield product("35.00",2,
       **babel_values('name',
         en="Server software installation, configuration and administration",
         et=u"Serveritarkvara installeerimine, seadistamine ja administreerimine",
-        de="Server software installation, configuration and administration",
+        de=u"Server software installation, configuration and administration",
         fr=u"Server software installation, configuration and administration"))
     
     yield product("40.00",2,
       **babel_values('name',
         en="Programming",
         et=u"Programmeerimistööd",
-        de="Programmierung",
+        de=u"Programmierung",
         fr=u"Programmation"))
         
     yield product("25.00",2,
       **babel_values('name',
         en="Image processing and website content maintenance",
         et=u"Pilditöötlus ja kodulehtede sisuhaldustööd",
-        de="Programmierung",
+        de=u"Programmierung",
         fr=u"Programmation"))
     

@@ -23,7 +23,7 @@ from lino.core.modeltools import resolve_model
 from lino.utils.instantiator import Instantiator
 from lino.utils.babel import default_language
 from lino.utils.babel import babel_values
-from lino.utils.choicelists import Gender
+#~ from lino.utils.choicelists import Gender
 #~ from lino.utils.perms import UserLevels
 #~ from lino.core.perms import UserProfiles
 from lino.utils import dblogger
@@ -114,18 +114,18 @@ def objects():
     
     #~ yield person(u'Luc',  u'Saffre', gender=Gender.male)
     
-    yield person(u'Andreas',  u'Arens', 'BE','4700','Eupen',  gender=Gender.male)
-    yield person(u'Annette',  u'Arens','BE','4700','Eupen',  gender=Gender.female)
-    yield person(u'Hans',     u'Altenberg','BE','4700','Eupen',  gender=Gender.male)
-    yield person(u'Alfons',   u'Ausdemwald','BE','4700','Eupen',  gender=Gender.male)
-    yield person(u'Laurent',  u'Bastiaensen','BE','4700','Eupen',  gender=Gender.male)
-    yield person(u'Charlotte',  u'Collard','BE','4700','Eupen',  gender=Gender.female)
-    yield person(u'Ulrike',  u'Charlier','BE','4700','Eupen',  gender=Gender.female)
-    yield person(u'Marc',  u'Chantraine','BE','4700','Eupen',  gender=Gender.male)
-    yield person(u'Daniel',   u'Dericum','BE','4700','Eupen',  gender=Gender.male)
-    yield person(u'Dorothée', u'Demeulenaere','BE','4700','Eupen',  gender=Gender.female)
-    yield person(u'Berta',    u'Ernst','BE','4700','Eupen',  gender=Gender.female)
-    yield person(u'Bernd',    u'Evertz','BE','4700','Eupen',  gender=Gender.male)
+    yield person(u'Andreas',  u'Arens', 'BE','4700','Eupen',  gender=mixins.Genders.male)
+    yield person(u'Annette',  u'Arens','BE','4700','Eupen',  gender=mixins.Genders.female)
+    yield person(u'Hans',     u'Altenberg','BE','4700','Eupen',  gender=mixins.Genders.male)
+    yield person(u'Alfons',   u'Ausdemwald','BE','4700','Eupen',  gender=mixins.Genders.male)
+    yield person(u'Laurent',  u'Bastiaensen','BE','4700','Eupen',  gender=mixins.Genders.male)
+    yield person(u'Charlotte',  u'Collard','BE','4700','Eupen',  gender=mixins.Genders.female)
+    yield person(u'Ulrike',  u'Charlier','BE','4700','Eupen',  gender=mixins.Genders.female)
+    yield person(u'Marc',  u'Chantraine','BE','4700','Eupen',  gender=mixins.Genders.male)
+    yield person(u'Daniel',   u'Dericum','BE','4700','Eupen',  gender=mixins.Genders.male)
+    yield person(u'Dorothée', u'Demeulenaere','BE','4700','Eupen',  gender=mixins.Genders.female)
+    yield person(u'Berta',    u'Ernst','BE','4700','Eupen',  gender=mixins.Genders.female)
+    yield person(u'Bernd',    u'Evertz','BE','4700','Eupen',  gender=mixins.Genders.male)
     yield person(u'Eberhart', u'Evers','BE','4700','Eupen',  gender=Gender.male)
     yield person(u'Daniel',   u'Emonts','BE','4700','Eupen',  gender=Gender.male)
     yield person(u'Edgar',    u'Engels','BE','4700','Eupen',  gender=Gender.male)

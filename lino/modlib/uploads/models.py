@@ -31,8 +31,11 @@ from django.contrib.contenttypes import generic
 
 from lino import dd
 from lino import mixins
-from lino.modlib.contacts import models as contacts
-from lino.modlib.cal.models import DurationUnits, update_reminder
+#~ from lino.modlib.contacts import models as contacts
+#~ from lino.modlib.cal.models import DurationUnits, update_reminder
+
+#~ contacts = dd.resolve_app('contacts')
+cal = dd.resolve_app('cal')
 
 class UploadType(dd.Model):
     
@@ -104,10 +107,10 @@ class Upload(
         """
         #~ logger.info("Upload.update_reminders() %s : owner is %s", self.pk, self.owner)
         
-        update_reminder(1,self,self.user,
+        cal.update_reminder(1,self,self.user,
           self.valid_until,
           _("%s expires") % self.type,
-          2,DurationUnits.months)
+          2,cal.DurationUnits.months)
       
     #~ def update_owned_instance(self,task):
         #~ # logger.info("Upload.update_owned_instance() %s : owner is %s", self.pk, self.owner)

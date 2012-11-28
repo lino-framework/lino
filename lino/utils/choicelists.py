@@ -16,7 +16,7 @@ ur"""
 Utility for defining hard-coded multi-lingual choice lists 
 whose value is rendered according to the current language.
 
-:class:`Gender`, :class:`DoYouLike` and :class:`HowWell` 
+:class:`Genders`, :class:`DoYouLike` and :class:`HowWell` 
 are "batteries included" usage examples.
 
 Usage:
@@ -33,26 +33,26 @@ so we must set :envvar:`DJANGO_SETTINGS_MODULE`)
 >>> for value,text in choicelist_choices():
 ...     print "%s : %s" % (value, unicode(text))
 DoYouLike : certainly not...very much
-Gender : Gender
+Genders : Gender
 HowWell : not at all...very well
 
->>> for bc,text in Gender.choices:
+>>> for bc,text in Genders.choices:
 ...     print "%s : %s" % (bc.value, unicode(text))
 M : Male
 F : Female
 
->>> print unicode(Gender.male)
+>>> print unicode(Genders.male)
 Male
 
 >>> translation.activate('de')
->>> print unicode(Gender.male)
+>>> print unicode(Genders.male)
 Männlich
 
->>> print str(Gender.male)
+>>> print str(Genders.male)
 M\xe4nnlich
 
->>> print repr(Gender.male)
-M\xe4nnlich (Gender.male:M)
+>>> print repr(Genders.male)
+M\xe4nnlich (Genders.male:M)
 
 Comparing Choices uses their *value* (not the alias or text):
 

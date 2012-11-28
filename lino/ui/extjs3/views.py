@@ -23,7 +23,8 @@ from django.db import models
 from django.db import IntegrityError
 from django.conf import settings
 from django.views.generic import View
-from django.utils import simplejson as json
+#~ from django.utils import simplejson as json
+import json
 from django.core import exceptions
 from django.utils.translation import ugettext as _
 from django.utils.encoding import force_unicode

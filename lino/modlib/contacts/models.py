@@ -50,7 +50,7 @@ from lino.utils.choosers import chooser
 from lino.utils import babel 
 #~ from lino.models import get_site_config
 
-from lino.modlib.contacts.utils import Gender
+#~ from lino.modlib.contacts.utils import Genders
 
 #~ from lino.modlib.countries.models import CountryCity
 from lino.modlib.countries.models import CountryRegionCity
@@ -60,32 +60,6 @@ from lino.modlib.countries.models import CountryRegionCity
 
 
 from lino.utils import mti
-
-
-def get_salutation(gender,nominative=False):
-    """
-    Returns "Mr" or "Mrs" or a translation thereof, 
-    depending on the gender and the current babel language.
-    
-    Note that the English abbreviations 
-    `Mr <http://en.wikipedia.org/wiki/Mr.>`_ and 
-    `Mrs <http://en.wikipedia.org/wiki/Mrs.>`_
-    are written either with (AE) or 
-    without (BE) a dot. Since the babel module doesn't yet allow 
-    to differentiate dialects, we opted for the british version.
-    
-    The optional keyword argument `nominative` used only when babel language
-    is "de": specifying ``nominative=True`` will return "Herr" instead of default 
-    "Herrn" for male persons.
-    
-    """
-    if not gender: return ''
-    if gender == Gender.female: return _("Mrs")
-    from django.utils.translation import pgettext
-    if nominative:
-        return pgettext("nominative salutation","Mr") 
-    return pgettext("indirect salutation","Mr") 
-    
 
 
 
@@ -357,97 +331,18 @@ class PartnersByCountry(Partners):
 
 
 
-class Born(dd.Model):
-    """
-    Abstract base class that adds a `birth_date` 
-    field and a virtual field "Age".
-    """
-    class Meta:
-        abstract = True
-        
-    birth_date = dd.IncompleteDateField(
-        blank=True,
-        verbose_name=_("Birth date"),
-        help_text = u"""\
-Unkomplette Geburtsdaten sind erlaubt, z.B. 
-<br>"00.00.1980" heißt "irgendwann im Jahr 1980", 
-<br>"00.07.1980" heißt "im Juli 1980"
-<br>oder"23.07.0000" heißt "Geburtstag am 23. Juli, Alter unbekannt".""")
-        
-    
-    def get_age_years(self,today=None):
-        if self.birth_date and self.birth_date.year:
-            if today is None:
-                today = datetime.date.today()
-            try:
-                return today - self.birth_date.as_date()
-            except ValueError:
-                pass
-      
-    @dd.displayfield(_("Age"))
-    def age(self,request,today=None):
-        a = self.get_age_years(today)
-        if a is None:
-            return unicode(_('unknown'))
-        s = _("%d years") % (a.days / 365)
-        if self.birth_date and self.birth_date.is_complete():
-            return s
-        return u"±" + s
-
-
-        
-
-class PersonMixin(dd.Model):
+  
+class PersonMixin(mixins.Human):
     """
     Can be used also for Persons that are no Partners
     """
     class Meta:
         abstract = True
         
-    first_name = models.CharField(max_length=200,
-      #~ blank=True,
-      verbose_name=_('First name'))
-    "Space-separated list of all first names."
-    
-    last_name = models.CharField(max_length=200,
-      #~ blank=True,
-      verbose_name=_('Last name'))
-    """Last name (family name)."""
-    
     title = models.CharField(max_length=200,blank=True,
       verbose_name=_('Title'))
     """Text to print as part of the first address line in front of first_name."""
         
-    gender = Gender.field(blank=True)
-        
-    def get_salutation(self,**salutation_options):
-        return get_salutation(
-            #~ translation.get_language(),
-            self.gender,**salutation_options)
-    
-        
-    def get_full_name(self,salutation=True,**salutation_options):
-        """Returns a one-line string composed of salutation, first_name and last_name.
-        
-The optional keyword argument `salutation` can be set to `False` 
-to suppress salutations. 
-See :func:`lino.apps.pcsw.tests.pcsw_tests.test04` 
-and
-:func:`lino.modlib.contacts.tests.test01` 
-for some examples.
-
-Optional `salutation_options` see :func:`get_salutation`.
-        """
-        #~ print '20120729 PersonMixin.get_full_name`'
-        #~ return '%s %s' % (self.first_name, self.last_name.upper())
-        words = []
-        if salutation:
-            words.append(self.get_salutation(**salutation_options))
-        words += [self.first_name, self.last_name.upper()]
-        return join_words(*words)
-    full_name = property(get_full_name)
-    #~ full_name.return_type = models.CharField(max_length=200,verbose_name=_('Full name'))
-    
   
 class Person(PersonMixin,Partner):
     """
@@ -468,6 +363,7 @@ class Person(PersonMixin,Partner):
         #~ yield  " ".join(l)
         
     def full_clean(self,*args,**kw):
+    #~ def save(self,*args,**kw):
         """
         Set the `name` field of this person. 
         This field is visible in the Partner's detail but not 
@@ -475,8 +371,6 @@ class Person(PersonMixin,Partner):
         when selecting a Partner. 
         It also serves for quick search on Persons.
         """
-        #~ l = filter(lambda x:x,[self.last_name,self.first_name])
-        #~ self.name = " ".join(l)
         self.name = join_words(self.last_name,self.first_name)
         super(Person,self).full_clean(*args,**kw)
 

@@ -39,22 +39,24 @@ cm:
   
 tests:  
 	python lino/utils/__init__.py
-	python lino/utils/sphinx.py
+	#~ python lino/utils/sphinx.py
 	python lino/utils/rstgen.py
 	python lino/utils/appy_pod.py
-	python lino/utils/niss.py
+	python lino/utils/ssin.py
 	python lino/utils/memo.py
 	python lino/modlib/contacts/utils.py
 	python lino/utils/html2xhtml.py
 	python lino/utils/demonames.py
 	python lino/utils/odsreader.py
-	export DJANGO_SETTINGS_MODULE=lino.apps.std.settings ; python lino/utils/choicelists.py
+	#~ export DJANGO_SETTINGS_MODULE=lino.apps.std.settings ; python lino/utils/choicelists.py
 	export DJANGO_SETTINGS_MODULE=lino.apps.std.settings ; python lino/utils/jsgen.py
 	export DJANGO_SETTINGS_MODULE=lino.apps.std.settings ; python lino/utils/ranges.py
 	export DJANGO_SETTINGS_MODULE=lino.apps.std.settings ; python lino/modlib/ledger/utils.py
 	$(DJANGO_ADMIN) test --settings=lino.test_apps.1.settings  $(TESTS_OPTIONS)
 	$(DJANGO_ADMIN) test --settings=lino.test_apps.20100212.settings $(TESTS_OPTIONS)
+	$(DJANGO_ADMIN) test --settings=lino.test_apps.20100519.settings $(TESTS_OPTIONS)
 	$(DJANGO_ADMIN) test --settings=lino.test_apps.quantityfield.settings $(TESTS_OPTIONS)
+	$(DJANGO_ADMIN) test --settings=lino.test_apps.human.settings $(TESTS_OPTIONS)
 	#~ $(DJANGO_ADMIN) test --settings=lino.apps.std.settings
 	#~ $(DJANGO_ADMIN) test --settings=lino.apps.pcsw.settings $(TESTS_OPTIONS)
 	#~ $(DJANGO_ADMIN) test --settings=lino.apps.igen.settings $(TESTS_OPTIONS)

@@ -39,11 +39,6 @@ from django.template import RequestContext, Context, loader
 from django.utils.http import urlquote, base36_to_int
 from django.utils.translation import ugettext as _
 
-from django.conf.urls.defaults import patterns, url, include
-#~ auth = models.get_app('auth')
-#~ from django.contrib.auth import models as auth
-#~ from lino.modlib.users import models as auth
-
 from django.utils.safestring import mark_safe
 
 import lino

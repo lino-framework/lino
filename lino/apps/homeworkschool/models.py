@@ -36,7 +36,7 @@ class School(contacts.Company):
 class Schools(contacts.Companies):
     model = School
 
-class Person(contacts.Person,contacts.Born):
+class Person(contacts.Person,mixins.Born):
     class Meta(contacts.Person.Meta):
         app_label = 'contacts'
         #~ # see :doc:`/tickets/14`

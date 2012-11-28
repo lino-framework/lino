@@ -195,7 +195,9 @@ class ActorMetaClass(type):
         if classDict.get('app_label',None) is None:
             # Figure out the app_label by looking one level up.
             # For 'django.contrib.sites.models', this would be 'sites'.
-            cls.app_label = cls.__module__.split('.')[-2]
+            x = cls.__module__.split('.')
+            if len(x) > 1:
+                cls.app_label = x[-2]
         
         cls.actor_id = cls.app_label + '.' + cls.__name__
         cls._setup_done = False

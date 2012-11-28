@@ -30,8 +30,8 @@ from django.conf import settings
 from lino.utils.babel import babel_values
 from lino.utils import Cycler
 #~ from lino.utils.choicelists import Gender
-from lino.modlib.contacts.utils import Gender
-
+#~ from lino.modlib.contacts.utils import Gender
+from lino import mixins
 
 
 def objects():
@@ -41,8 +41,8 @@ def objects():
     Household = resolve_model('households.Household')
     Person = resolve_model('contacts.Person')
     
-    MEN = Cycler(Person.objects.filter(gender=Gender.male).order_by('birth_date'))
-    WOMEN = Cycler(Person.objects.filter(gender=Gender.female).order_by('birth_date'))
+    MEN = Cycler(Person.objects.filter(gender=mixins.Genders.male).order_by('birth_date'))
+    WOMEN = Cycler(Person.objects.filter(gender=mixins.Genders.female).order_by('birth_date'))
     
     for i in range(3):
         he = MEN.pop()

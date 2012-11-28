@@ -59,7 +59,6 @@ But the whole traceback is being logged to the lino logger.
 Our example implementation has a bug, 
 it doesn't support the case of having only an URL without TEXT:
 
-
 >>> print p.parse('This is a [url http://xyz.com].')
 [DEBUG] url2html() got 'http://xyz.com'
 This is a [ERROR need more than 1 value to unpack in '[url http://xyz.com]' at position 10-30].
@@ -139,9 +138,6 @@ The answer is 42.
 
 >>> print p.parse('''<ul>[="".join(['<li>%s</li>' % (i+1) for i in range(5)])]</ul>''')
 <ul><li>1</li><li>2</li><li>3</li><li>4</li><li>5</li></ul>
-
-
-
 
 """
 

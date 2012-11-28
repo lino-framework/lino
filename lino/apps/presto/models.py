@@ -52,7 +52,7 @@ contacts = dd.resolve_app('contacts')
 households = dd.resolve_app('households')
 
 #~ class Person(contacts.PersonMixin,contacts.Partner,contacts.Born,mixins.Printable):
-class Person(contacts.Person,contacts.Born,mixins.Printable,mixins.CreatedModified):
+class Person(contacts.Person,mixins.Born,mixins.Printable,mixins.CreatedModified):
     class Meta(contacts.Person.Meta):
         app_label = 'contacts'
 

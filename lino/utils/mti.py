@@ -230,14 +230,16 @@ class EnableChild(VirtualField):
                 #~ obj.__class__.__name__,self.child_model.__name__)
             # child exists, delete it if it may not 
             if not v:
-                changes.log_remove_child(ar.request,obj,self.child_model)
+                if ar is not None:
+                    changes.log_remove_child(ar.request,obj,self.child_model)
                 delete_child(obj,self.child_model,ar)
         else:
             #~ logger.debug('set_value_in_object : %s has no child %s',
                 #~ obj.__class__.__name__,self.child_model.__name__)
             if v:
                 # child doesn't exist. insert if it should
-                changes.log_add_child(ar.request,obj,self.child_model)
+                if ar is not None:
+                    changes.log_add_child(ar.request,obj,self.child_model)
                 insert_child(obj,self.child_model)
                 
 

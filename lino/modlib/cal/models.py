@@ -45,8 +45,7 @@ from lino.core.modeltools import resolve_model, obj2str
 
 from lino.modlib.cal.utils import \
     Weekday, DurationUnits, setkw, dt2kw, \
-    EventStates, GuestStates, TaskStates, AccessClasses, \
-    CalendarAction
+    AccessClasses, CalendarAction
 
 from lino.utils.babel import dtosl
 
@@ -58,6 +57,251 @@ from lino.utils.babel import dtosl
 contacts = dd.resolve_app('contacts')
 postings = dd.resolve_app('postings')
 outbox = dd.resolve_app('outbox')
+
+
+
+class TaskStates(dd.Workflow):
+    """
+    State of a Calendar Task. Used as Workflow selector.
+    """
+    #~ label = _("State")
+    
+    @classmethod
+    def migrate(cls,status_id):
+        """
+        Used by :meth:`lino.apps.pcsw.migrate.migrate_from_1_4_4`.
+        """
+        #~ if status_id is None: return None
+        cv = {
+          None: TaskStates.todo,
+          1:TaskStates.todo,
+          2:TaskStates.started,
+          #~ 2:TaskStates.todo,
+          3:TaskStates.done,
+          4:TaskStates.cancelled,
+          }
+        return cv[status_id]
+    
+add = TaskStates.add_item
+#~ add('10', _("To do"),'todo',required=dict(states=['']))
+#~ add('20', pgettext_lazy(u"cal",u"Started"),'started',required=dict(states=['','todo']))
+#~ add('30', _("Done"),'done',required=dict(states=['','todo','started']))
+#~ add('40', _("Sleeping"),'sleeping',required=dict(states=['','todo']))
+#~ add('50', _("Cancelled"),'cancelled',required=dict(states=['todo','sleeping']))
+
+#~ add('00', _("Virgin"),'todo')
+add('10', _("To do"),'todo')
+add('20', pgettext_lazy(u"cal",u"Started"),'started')
+add('30', _("Done"),'done')
+#~ add('40', _("Sleeping"),'sleeping')
+add('50', _("Cancelled"),'cancelled')
+
+TaskStates.todo.add_workflow(_("Reopen"),states='done cancelled')
+#~ TaskStates.todo.add_workflow(_("Wake up"),states='sleeping')
+#~ TaskStates.started.add_workflow(states='_ todo')
+TaskStates.done.add_workflow(states='todo started',icon_file='accept.png')
+#~ TaskStates.sleeping.add_workflow(states='_ todo')
+TaskStates.cancelled.add_workflow(states='todo started',icon_file='cancel.png')
+
+    
+class GuestStates(dd.Workflow):
+    """
+    State of a Calendar Event Guest. Used as Workflow selector.
+    """
+    #~ label = _("Guest State")
+    #~ label = _("State")
+    
+    @classmethod
+    def allow_state_present(self,obj,user):
+        return obj.event.state == EventStates.took_place
+        
+    @classmethod
+    def allow_state_absent(self,obj,user):
+        return obj.event.state == EventStates.took_place
+        
+add = GuestStates.add_item
+add('10', _("Invited"),'invited')
+add('20', _("Accepted"),'accepted') #,required=dict(states=['','invited'],owner=False),action_label=_("Accept"))
+add('30', _("Rejected"),'rejected')# ,required=dict(states=['','invited'],owner=False),action_label=_("Reject"))
+add('40', _("Present"),'present')# ,required=dict(states=['invited','accepted'],owner=True))
+add('50', _("Absent"),'absent')# ,required=dict(states=['invited','accepted'],owner=True))
+
+class RejectInvitation(dd.ChangeStateAction,dd.NotifyingAction):
+    label = _("Reject")
+    help_text = _("Reject this invitation.")  
+    required = dict(states='invited',owner=False)
+    
+    def get_notify_subject(self,ar,obj):
+        return _("Cannot accept invitation %(day)s at %(time)s") % dict(
+           day=babel.dtos(obj.event.start_date),
+           time=str(obj.event.start_time))
+
+  
+#~ GuestStates.invited.add_workflow(_("Invite"),states='_',owner=True)
+GuestStates.accepted.add_workflow(_("Accept"),states='_ invited',owner=False)
+#~ GuestStates.rejected.add_workflow(_("Reject"),states='_ invited',owner=False)
+GuestStates.rejected.add_workflow(RejectInvitation)
+GuestStates.present.add_workflow(states='invited accepted',owner=True)
+GuestStates.absent.add_workflow(states='invited accepted',owner=True)
+
+
+
+
+
+#~ class EventStates(ChoiceList):
+class EventStates(dd.Workflow):
+    """
+    State of a Calendar Event. Used as Workflow selector.
+    """
+    #~ label = _("State")
+    
+    @classmethod
+    def allow_state_suggest(cls,self,user):
+        if not self.start_time: return False
+        return True
+        
+    @classmethod
+    def before_state_change(cls,obj,ar,kw,oldstate,newstate):
+      
+        if newstate.name == 'draft':
+            ar.confirm(_("This will reset all invitations"))
+            for g in obj.guest_set.all():
+                g.state = GuestStates.invited
+                g.save()
+        
+        
+    @classmethod
+    def migrate(cls,status_id):
+        """
+        Was used by :meth:`lino.apps.pcsw.migrate.migrate_from_1_4_4`.
+        """
+        #~ if status_id is None: return cls.blank_item
+        cv = {
+          #~ None: '',
+          None:EventStates.draft,
+          1:EventStates.suggested,
+          2:EventStates.scheduled,
+          3:EventStates.cancelled,
+          4:EventStates.rescheduled,
+          5:EventStates.absent,
+        }
+        return cv[status_id]
+        
+#~ def allow_scheduled(action,user,obj,state):
+    #~ if not obj.start_time: return False
+    #~ return True
+    
+    
+add = EventStates.add_item
+add('10', _("New"), 'new',help_text=_("Default state of an automatic event."))
+#~ add('15', _("Suggested"), 'suggested',
+  #~ help_text=_("Suggested by colleague. External guests are notified, but user must confirm."))
+add('15', _("Assigned"), 'suggested',
+  help_text=_("Suggested by colleague. External guests are notified, but user must confirm."))
+add('20', _("Draft"), 'draft')
+add('30', _("Notified"),'notified')
+add('40', _("Scheduled"), 'scheduled')
+add('50', _("Took place"),'took_place')
+add('60', _("Rescheduled"),'rescheduled')
+add('70', _("Cancelled"),'cancelled')
+add('80', _("Absent"),'absent')
+#~ add('90', _("Obsolete"),'obsolete')
+
+
+
+class AssignEvent(dd.ChangeStateAction):
+    label = _("Assign")
+    required = dict(states='new draft',owner=True)
+    
+    icon_file = 'flag_blue.png'
+    help_text=_("Assign responsibility of this event to another user.")
+    
+    parameters = dict(
+        assign_to=models.ForeignKey(settings.LINO.user_model),
+        remark = dd.RichTextField(_("Remark"),blank=True),
+        )
+    
+    params_layout = dd.Panel("""
+    assign_to
+    remark
+    """,window_size=(50,15))
+    
+    def action_param_defaults(self,ar,obj,**kw):
+        kw = super(AssignEvent,self).action_param_defaults(ar,obj,**kw)
+        kw.update(
+            remark=unicode(_("I made up this event for you. %s")) 
+                % ar.get_user())
+        return kw
+    
+    
+    def run(self,obj,ar,**kw):
+        kw = super(AssignEvent,self).run(obj,ar,**kw)
+        obj.user = ar.param_values.assign_to
+        obj.save()
+        kw.update(refresh=True)
+        return kw
+    
+        
+
+
+EventStates.draft.add_workflow(_("Accept"),
+    states='new suggested',
+    owner=True,
+    icon_file='book.png',
+    help_text=_("User takes responsibility for this event. Guests are not yet notified."))
+EventStates.suggested.add_workflow(AssignEvent)
+#~ EventStates.suggested.add_workflow(_("Suggest"),
+    #~ icon_file='flag_blue.png',
+    #~ states='new draft',
+    #~ owner=False,
+    #~ help_text=_("Event was created by colleague for a client. Owner must confirm it."))
+EventStates.new.add_workflow(_("Cancel"),
+    icon_file='cancel.png',
+    states='suggested',
+    owner=False,
+    help_text=_("Undo suggested event."))
+EventStates.notified.add_workflow(_("Notify guests"), 
+    icon_file='eye.png',
+    states='draft',
+    help_text=_("Invitations have been sent. Waiting for feedback from guests."))
+EventStates.scheduled.add_workflow(_("Confirm"), 
+    states='new draft suggested',
+    owner=True,
+    icon_file='accept.png',
+    help_text=_("Mark this as Scheduled. All participants have been informed."))
+EventStates.took_place.add_workflow(
+    states='scheduled notified',
+    owner=True,
+    help_text=_("Event took place."),
+    icon_file='emoticon_smile.png')
+EventStates.rescheduled.add_workflow(_("Reschedule"),
+    owner=True,
+    states='suggested scheduled notified',icon_file='date_edit.png')
+EventStates.cancelled.add_workflow(_("Cancel"),
+    owner=True,
+    states='suggested scheduled notified',
+    icon_file='cancel.png')
+EventStates.absent.add_workflow(states='scheduled notified',icon_file='emoticon_unhappy.png')
+#~ EventStates.obsolete.add_workflow()
+EventStates.draft.add_workflow(_("Restart"),
+    states='notified scheduled rescheduled',
+    notify=True,
+    icon_file='arrow_undo.png',
+    help_text=_("Return to Draft state and restart workflow for this event."))
+
+#~ EventStates.add_statechange('draft',help_text=_("Default state of a new event."))
+#~ EventStates.add_statechange('suggested',_("Suggest"),states='_ draft')
+#~ EventStates.add_statechange('notified',_("Notify guests"), states='draft')
+#~ EventStates.add_statechange('scheduled',_("Confirm"), states='_draft suggested'
+    #~ help_text=_("Confirmed. All participants have been informed."))
+#~ EventStates.add_statechange('took_place',states='scheduled notified')
+#~ EventStates.add_statechange('rescheduled',_("Reschedule"),states='suggested scheduled notified')
+#~ EventStates.add_statechange('cancelled',_("Cancel"),states='suggested scheduled notified')
+#~ EventStates.add_statechange('absent',states='scheduled notified')
+#~ EventStates.add_statechange('obsolete')
+    
+
+
 
 
 

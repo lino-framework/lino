@@ -26,12 +26,12 @@ born the same day (odd numbers for men and even numbers for women),
 and ``97`` is a check digit (remainder of previous digits divided by 97).
     
 
->>> n = generate_ssin(datetime.date(1968,6,1),Gender.male,53)
+>>> n = generate_ssin(datetime.date(1968,6,1),Genders.male,53)
 >>> print n
 680601 053-29
 >>> ssin_validator(n)
 
->>> n = generate_ssin(datetime.date(2002,4,5),Gender.female)
+>>> n = generate_ssin(datetime.date(2002,4,5),Genders.female)
 >>> print n
 020405 002=44
 >>> ssin_validator(n)
@@ -76,7 +76,7 @@ from django.core.exceptions import ValidationError
 from django.utils.encoding import force_unicode 
 from django.utils.translation import ugettext_lazy as _
 
-from lino.modlib.contacts.utils import Gender
+from lino.mixins import Genders
 
 YEAR2000 = '='
 YEAR1900 = '-'
@@ -98,7 +98,7 @@ def generate_ssin(birth_date,gender,seq=None):
         raise Exception("Born before 1900")
         
     if seq is None:
-        if gender == Gender.male:
+        if gender == Genders.male:
             seq = 1
         else:
             seq = 2

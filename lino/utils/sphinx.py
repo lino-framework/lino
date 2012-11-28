@@ -163,10 +163,3 @@ def setup(app):
     app.add_stylesheet('linodocs.css')
 
 
-def _test():
-    import doctest
-    doctest.testmod()
-
-if __name__ == "__main__":
-    _test()
-

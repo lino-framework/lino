@@ -104,3 +104,5 @@ Miscellaneous
   with a method
   :meth:`mf <lino.modlib.contacts.utils.GenderItem.mf>`.
   
+- `Lino-Welfare 1.0.4` pre-released 
+

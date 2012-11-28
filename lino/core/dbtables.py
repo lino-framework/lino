@@ -43,7 +43,7 @@ from django.db import models
 from django.db.models.query import QuerySet
 from django.db.models.fields.related import ForeignRelatedObjectsDescriptor
 #~ from django import forms
-from django.conf.urls.defaults import patterns, url, include
+#~ from django.conf.urls.defaults import patterns, url
 #~ from django.forms.models import modelform_factory
 #~ from django.forms.models import _get_foreign_key
 #~ from django.contrib.auth.decorators import login_required

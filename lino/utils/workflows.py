@@ -143,11 +143,12 @@ class ChangeStateAction(actions.RowAction):
                     return m(obj,user)
                 new_required.update(allow=allow)
         kw.update(required=new_required)
-        if help_text is None:
-            help_text = _("Mark this as %s") % target_state.text
+        if self.help_text is None:
+            if help_text is None:
+                help_text = _("Mark this as %s") % target_state.text
         #~ help_text = getattr(target_state,'help_text',None)
         #~ if help_text is not None:
-        kw.update(help_text=help_text)
+            kw.update(help_text=help_text)
         super(ChangeStateAction,self).__init__(**kw)
         #~ logger.info('20120930 ChangeStateAction %s %s', actor,target_state)
         

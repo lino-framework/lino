@@ -141,31 +141,6 @@ class DialogRequired(Exception):
         
 
 
-#~ @classmethod
-def register_params(cls):
-    if cls.parameters:
-        for k,v in cls.parameters.items():
-            v.set_attributes_from_name(k)
-            v.table = cls
-        if cls.params_layout is None:
-            cls.params_layout = cls._layout_class.join_str.join(cls.parameters.keys())
-        if isinstance(cls.params_layout,basestring):
-            cls.params_layout = cls._layout_class(cls.params_layout,cls)
-        elif isinstance(cls.params_layout,layouts.Panel):
-            cls.params_layout = cls._layout_class(cls.params_layout.desc,cls,**cls.params_layout.options)
-
-def setup_params_choosers(self):
-    if self.parameters:
-        from lino.utils.choosers import check_for_chooser
-        for k,fld in self.parameters.items():
-            if isinstance(fld,models.ForeignKey):
-                fld.rel.to = resolve_model(fld.rel.to)
-            check_for_chooser(self,fld)
-
-def make_params_layout_handle(self,ui):
-    return self.params_layout.get_layout_handle(ui)
-        
-
 class Permittable(object):
     """
     Base class for objects that have view permissions control.
@@ -189,11 +164,6 @@ class Permittable(object):
     
     debug_permissions = False
     
-    
-    #~ def allow_read(self,user,obj,state):
-        #~ return True
-    
-
     def add_requirements(self,**kw):
         return add_requirements(self,**kw)
         
@@ -221,8 +191,29 @@ def add_requirements(obj,**kw):
 
 
 
-        
-        
+def register_params(cls):
+    if cls.parameters:
+        for k,v in cls.parameters.items():
+            v.set_attributes_from_name(k)
+            v.table = cls
+        if cls.params_layout is None:
+            cls.params_layout = cls._layout_class.join_str.join(cls.parameters.keys())
+        if isinstance(cls.params_layout,basestring):
+            cls.params_layout = cls._layout_class(cls.params_layout,cls)
+        elif isinstance(cls.params_layout,layouts.Panel):
+            cls.params_layout = cls._layout_class(cls.params_layout.desc,cls,**cls.params_layout.options)
+
+def setup_params_choosers(self):
+    if self.parameters:
+        from lino.utils.choosers import check_for_chooser
+        for k,fld in self.parameters.items():
+            if isinstance(fld,models.ForeignKey):
+                fld.rel.to = resolve_model(fld.rel.to)
+            check_for_chooser(self,fld)
+
+def make_params_layout_handle(self,ui):
+    return self.params_layout.get_layout_handle(ui)
+
 
 class Parametrizable(object):        
   
@@ -538,6 +529,7 @@ class Action(Parametrizable,Permittable):
         self.action_name = name
         self.defining_actor = wf
         #~ logger.info("20121009 %r attach_to_workflow(%s)",self,self.full_name(wf))
+        setup_params_choosers(self.__class__)
         
     def attach_to_actor(self,actor,name):
         #~ if self.name is not None:
@@ -560,6 +552,7 @@ class Action(Parametrizable,Permittable):
             #~ self.help_text  = actor.help_text
         #~ if name == 'default_action':
             #~ print 20120527, self
+        setup_params_choosers(self.__class__)
             
     #~ def contribute_to_class(self,model,name):
         #~ ma = model.__dict__.get('_lino_model_actions',None)

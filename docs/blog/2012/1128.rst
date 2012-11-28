@@ -1,0 +1,18 @@
+20121128
+========
+
+Lino and Django 1.5
+-------------------
+
+`Django 1.5 beta 1 
+<https://www.djangoproject.com/weblog/2012/nov/27/15-beta-1/>`_
+is released.
+I tested it and had a few surprises from harmless to positive,
+but inadvertently lost my notes about them.
+
+
+Lino and humans
+---------------
+
+:mod:`lino.test_apps.human`
+

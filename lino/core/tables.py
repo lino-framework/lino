@@ -58,7 +58,8 @@ from django.contrib.contenttypes import generic
 from django.db.models.query import QuerySet
 from django.utils.translation import ugettext_lazy as _
 from django.utils.encoding import force_unicode
-from django.utils import simplejson as json
+#~ from django.utils import simplejson as json
+import json
 
 from lino.core import actors
 from lino.core import actions

@@ -42,6 +42,7 @@ class FiscalYear(Choice):
 class FiscalYears(ChoiceList):
     item_class = FiscalYear
     verbose_name = _("Fiscal Year")
+    verbose_name_plural = _("Fiscal Years")
     
     @classmethod
     def from_int(cls,year):

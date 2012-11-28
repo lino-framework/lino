@@ -17,6 +17,22 @@ msgstr ""
 "Plural-Forms: nplurals=2; plural=(n != 1);\n"
 "X-Generator: Poedit 1.5.4\n"
 
+#: .\models.py:82
+msgid "Mrs"
+msgstr "Frau"
+
+#: .\models.py:85
+msgctxt "nominative salutation"
+msgid "Mr"
+msgstr "Herr"
+
+#: .\models.py:86
+msgctxt "indirect salutation"
+msgid "Mr"
+msgstr "Herrn"
+
+
+
 #: .\__init__.py:57
 msgid "English"
 msgstr "Englisch"

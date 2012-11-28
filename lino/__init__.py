@@ -639,6 +639,12 @@ class Lino(object):
     If you change this setting, you also need to override :meth:`parse_datetime`.
     """
     
+    uppercase_last_name = False
+    """
+    Whether last name of persons should be printed with uppercase letters.
+    See :mod:`lino.test_apps.human`
+    """
+    
     cbss_live_tests = False
     """
     Whether unit tests should try to really connect to the cbss.
@@ -879,7 +885,7 @@ class Lino(object):
     and hence your application is responsible for defining another 
     `Person` class with "contacts" as `app_label`::
           
-      class Person(contacts.Person,contacts.Born):
+      class Person(contacts.Person,mixins.Born):
           class Meta(contacts.Person.Meta):
               app_label = 'contacts'
               
@@ -981,6 +987,7 @@ class Lino(object):
                 kw.update(self.site_config_defaults)
                 #~ logger.debug("Creating SiteConfig record (%s)",e)
                 self._site_config = SiteConfig(**kw)
+            
                 # 20120725 
                 # tutorials.t1 menu selection `Config --> Site Parameters` 
                 # said "SiteConfig 1 does not exist"

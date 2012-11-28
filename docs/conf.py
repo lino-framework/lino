@@ -16,6 +16,12 @@ import sys, os
 import lino
 
 os.environ['DJANGO_SETTINGS_MODULE'] = 'lino.apps.sphinxdocs.settings'
+"""
+Trigger loading of Djangos model cache in order to avoid side effects that 
+would occur when this happens later while importing one of the models modules.
+"""
+from lino.core import kernel
+kernel.analyze_models()
 
 
 # If your extensions are in another directory, add it here. If the directory

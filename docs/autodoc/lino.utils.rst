@@ -14,6 +14,7 @@
     lino.utils.sqllog
     lino.utils.log
     lino.utils.dblogger
+    lino.utils.dbfreader
     lino.utils.demonames
     lino.utils.dumpy
     lino.utils.html2text

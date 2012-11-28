@@ -25,7 +25,7 @@ if False: # no longer necessary after 20120713
 
     from lino.modlib.contacts import models as contacts
 
-    class Person(contacts.PersonMixin,contacts.Partner,contacts.Born):
+    class Person(contacts.PersonMixin,contacts.Partner,mixins.Born):
         class Meta(contacts.PersonMixin.Meta):
             app_label = 'contacts'
 
