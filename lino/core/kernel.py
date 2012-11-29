@@ -56,7 +56,6 @@ from lino.core.modeltools import is_devserver
     
 from lino.utils.config import load_config_files, find_config_file
 from lino.utils import choosers
-from lino.utils import choicelists
 from lino.utils import codetime
 from lino.utils import curry
 from lino import dd

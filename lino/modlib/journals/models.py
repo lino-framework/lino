@@ -40,7 +40,7 @@ from lino.utils.babel import babelattr, BabelCharField
 #~ from lino.modlib.documents import models as documents
 #~ from lino import mixins
 from lino.utils import mti
-from lino.utils.choicelists import ChoiceList
+#~ from lino.utils.choicelists import ChoiceList
 
 
 class DocumentError(Exception):

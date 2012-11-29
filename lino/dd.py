@@ -75,8 +75,8 @@ Utilities:
 
 Miscellaneous:
 
-- :class:`ChoiceList <lino.utils.choicelists.ChoiceList>`
-- :class:`Workflow <lino.utils.workflows.Workflow>`
+- :class:`ChoiceList <lino.core.choicelists.ChoiceList>`
+- :class:`Workflow <lino.core.workflows.Workflow>`
 - :class:`ChangeStateAction <lino.core.changes.ChangeStateAction>`
 - :class:`NotifyingAction <lino.core.actions.NotifyingAction>`
 
@@ -121,8 +121,8 @@ from lino.core.actions import InsertRow, DeleteSelected
 from lino.core.actions import SubmitDetail, SubmitInsert
 #~ from lino.core.actions import Calendar
 
-from lino.utils.choicelists import ChoiceList, Choice
-from lino.utils.workflows import Workflow, ChangeStateAction
+from lino.core.choicelists import ChoiceList, Choice
+from lino.core.workflows import Workflow, ChangeStateAction
 #~ from lino.core.changes import ChangeStateAction
 from lino.core.actions import NotifyingAction
 

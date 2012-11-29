@@ -52,7 +52,7 @@ from lino import mixins
 #~ from lino import fields
 from lino.utils.choosers import chooser
 
-from lino.utils.choicelists import get_choicelist, choicelist_choices
+from lino.core.choicelists import get_choicelist, choicelist_choices
 
 MULTIPLE_VALUES_SEP = ','
 

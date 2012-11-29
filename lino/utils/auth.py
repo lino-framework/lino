@@ -46,7 +46,7 @@ from django.conf import settings
 from django import http
 
 from lino.utils import babel
-from lino.utils.choicelists import ChoiceList, Choice
+from lino.core.choicelists import ChoiceList, Choice
 
 from lino.core.modeltools import obj2str
 #~ from lino.core.perms import UserProfiles

@@ -1,11 +1,11 @@
 20121129
 ========
 
+
 Worked on docstring of :class:`lino.core.actors.Actor`.
 
-Renamed Layout._actor to Layout._datasource
+In class :class:`BaseLayout <lino.core.layouts.BaseLayout>` renamed `_actor` to `_datasource`.
 
-
-One day I should move the `choicelists` and `workflows` modules from 
-`lino.utils`
-to `lino.core`
+Move the :mod:`choicelists <lino.core.choicelists>` and :mod:`workflows <lino.core.workflows>` modules from 
+:mod:`lino.utils`
+to :mod:`lino.core`.

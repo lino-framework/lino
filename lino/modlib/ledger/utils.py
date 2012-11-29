@@ -19,18 +19,19 @@ import datetime
 
 from django.utils.translation import ugettext_lazy as _
 
-from lino.utils.choicelists import Choice,ChoiceList
+#~ from lino.utils.choicelists import Choice,ChoiceList
 
+from lino import dd
 
-class FiscalMonth(Choice):
+class FiscalMonth(dd.Choice):
     pass
     
-class FiscalMonths(ChoiceList):
+class FiscalMonths(dd.ChoiceList):
     item_class = FiscalMonth
     verbose_name = _("Fiscal Month")
     
     
-class FiscalYear(Choice):
+class FiscalYear(dd.Choice):
     pass
     
     #~ def __init__(self,lst,value=None,text=None,name=None,monthly=True,**kw):
@@ -39,7 +40,7 @@ class FiscalYear(Choice):
         #~ if monthly:
         
     
-class FiscalYears(ChoiceList):
+class FiscalYears(dd.ChoiceList):
     item_class = FiscalYear
     verbose_name = _("Fiscal Year")
     verbose_name_plural = _("Fiscal Years")

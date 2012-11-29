@@ -122,7 +122,8 @@ Some vocabulary
 """
 
 from django.utils.translation import ugettext_lazy as _
-from lino.utils.choicelists import Choice,ChoiceList
+#~ from lino.utils.choicelists import Choice,ChoiceList
+from lino import dd
 
 DEBIT = True
 CREDIT = False
@@ -133,12 +134,12 @@ DC = {
 }
 
 
-class AccountType(Choice):
+class AccountType(dd.Choice):
     def __init__(self,cls,value,text,name,dc=True,**kw):
         self.dc = dc
         super(AccountType,self).__init__(cls,value,text,name)
     
-class AccountTypes(ChoiceList):
+class AccountTypes(dd.ChoiceList):
     verbose_name = _("Account Type")
     item_class = AccountType
     

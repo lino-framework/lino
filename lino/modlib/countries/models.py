@@ -35,9 +35,8 @@ from lino.utils.choosers import chooser
 #~ from lino.utils.babel import add_babel_field, babelattr
 from lino.utils import babel 
 #~ from lino.utils import dblogger
-from lino.utils.choicelists import ChoiceList, Choice
 
-class CityTypes(ChoiceList):
+class CityTypes(dd.ChoiceList):
     """
     Sources used:
     

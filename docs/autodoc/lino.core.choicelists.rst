@@ -1,7 +1,7 @@
 =============================
-:mod:`lino.utils.choicelists`
+:mod:`lino.core.choicelists`
 =============================
 
-.. automodule:: lino.utils.choicelists
+.. automodule:: lino.core.choicelists
     :members:
     :show-inheritance:

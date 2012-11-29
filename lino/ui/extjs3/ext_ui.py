@@ -72,7 +72,7 @@ from lino.core.modeltools import is_devserver
     
 from lino.utils import choosers
 from lino.utils import babel
-from lino.utils import choicelists
+from lino.core import choicelists
 from lino.core import menus
 from lino.utils import jsgen
 from lino.utils.jsgen import py2js, js_code, id2js

@@ -29,7 +29,7 @@ from lino import dd
 from lino import mixins
 from lino.utils import babel
 from lino.core.modeltools import full_model_name
-from lino.utils.choicelists import ChoiceList, Choice
+#~ from lino.utils.choicelists import Choice
 #contacts = reports.get_app('contacts')
 #~ from lino.modlib.journals import models as journals
 #~ journals = reports.get_app('journals')
@@ -76,7 +76,7 @@ ZERO = Decimal()
     #~ return models.IntegerField(**kw)
 
       
-class VoucherType(Choice):
+class VoucherType(dd.Choice):
     def __init__(self,cls,model,table_class):
         self.table_class = table_class
         self.model = model
@@ -86,7 +86,7 @@ class VoucherType(Choice):
         name = None
         super(VoucherType,self).__init__(cls,value,text,name)
         
-class VoucherTypes(ChoiceList):
+class VoucherTypes(dd.ChoiceList):
     item_class = VoucherType
     #~ blank = False
     max_length = 100

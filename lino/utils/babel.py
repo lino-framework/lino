@@ -29,16 +29,13 @@ Example::
       name = babel.BabelCharField(_("Foo"), max_length=200)
       
 To handle hard-coded multilingual texts we suggest 
-the :mod:`lino.utils.choicelists` module which uses
+the :mod:`lino.core.choicelists` module which uses
 the :class:`BabelText` class defined below.
-
 
 One known issue is that complex language codes are not yet 
 supported or at least not tested. 
 The :setting:`LANGUAGE_CODE` in your :xfile:`settings.py` 
 should be ``'de'``, and not ``'de-BE'`` or ``'de-CH'``.
-
-This module would deserve more documentation.
 
 """
 

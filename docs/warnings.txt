@@ -1,5 +1,22 @@
+T:\hgwork\lino\docs\releases\index.rst:18: WARNING: toctree glob pattern u'2010/index' didn't match any documents
+T:\hgwork\lino\docs\releases\index.rst:18: WARNING: toctree glob pattern u'2011/index' didn't match any documents
 T:\hgwork\lino\docs\casts\lino_intro.rst:: WARNING: document isn't included in any toctree
 T:\hgwork\lino\docs\igen\index.rst:: WARNING: document isn't included in any toctree
-T:\hgwork\lino\docs\dev\index.rst:24: WARNING: py:class reference target not found: lino.reports.Report
-T:\hgwork\lino\docs\dev\index.rst:34: WARNING: xfile reference target not found: lino_settings.py
-T:\hgwork\lino\docs\dev\index.rst:90: WARNING: py:class reference target not found: contacts.Person
+t:\hgwork\lino\lino\core\choicelists.py:docstring of lino.core.choicelists:7: WARNING: py:class reference target not found: Genders
+t:\hgwork\lino\lino\core\choicelists.py:docstring of lino.core.choicelists:7: WARNING: py:class reference target not found: DoYouLike
+t:\hgwork\lino\lino\core\choicelists.py:docstring of lino.core.choicelists:7: WARNING: py:class reference target not found: HowWell
+t:\hgwork\lino\lino\core\choicelists.py:docstring of lino.core.choicelists:12: WARNING: envvar reference target not found: DJANGO_SETTINGS_MODULE
+<autodoc>:1: WARNING: py:class reference target not found: object
+t:\hgwork\lino\lino\core\choicelists.py:docstring of lino.core.choicelists.ChoiceList.display_text:1: WARNING: py:class reference target not found: lino.core.perms.UserGroups
+t:\hgwork\lino\lino\core\choicelists.py:docstring of lino.core.choicelists.ChoiceList.display_text:1: WARNING: py:class reference target not found: lino.modlib.cv.models.CefLevel
+t:\hgwork\lino\lino\core\choicelists.py:docstring of lino.core.choicelists.ChoiceList.preferred_width:1: WARNING: py:class reference target not found: lino.core.fields.ChoiceListField
+<autodoc>:1: WARNING: py:class reference target not found: django.db.models.fields.CharField
+t:\hgwork\lino\lino\core\workflows.py:docstring of lino.core.workflows.ChangeStateAction:1: WARNING: py:attr reference target not found: workflow_state_field
+T:\hgwork\lino\docs\autodoc\lino.utils.rst:44: WARNING: py:class reference target not found: dict
+t:\hgwork\lino\lino\utils\__init__.py:docstring of lino.utils.call_on_bases:1: WARNING: unknown document: /blog/2011/0914
+t:\hgwork\lino\lino\utils\__init__.py:docstring of lino.utils.call_optional_super:1: WARNING: unknown document: /blog/2011/0914
+T:\hgwork\lino\docs\autodoc\lino.utils.rst:23: WARNING: py:class reference target not found: exceptions.Exception
+T:\hgwork\lino\docs\autodoc\lino.utils.rst:7: WARNING: py:mod reference target not found: docutils.examples
+T:\hgwork\lino\docs\autodoc\lino.utils.rst:17: WARNING: py:class reference target not found: docutils.writers.html4css1.HTMLTranslator
+T:\hgwork\lino\docs\autodoc\lino.utils.rst:29: WARNING: py:class reference target not found: docutils.writers.html4css1.Writer
+t:\hgwork\lino\lino\utils\restify.py:docstring of lino.utils.restify.old_restify:1: WARNING: unknown document: /blog/2011/0525

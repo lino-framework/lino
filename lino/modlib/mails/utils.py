@@ -22,9 +22,10 @@ import datetime
 
 from django.utils.translation import ugettext_lazy as _
 
-from lino.utils.choicelists import ChoiceList
+#~ from lino.utils.choicelists import ChoiceList
+from lino import dd
 
-class RecipientType(ChoiceList):
+class RecipientType(dd.ChoiceList):
     """A list of possible values for the `status` field of an :class:`Event`.
     """
     label = _("Recipient Type")

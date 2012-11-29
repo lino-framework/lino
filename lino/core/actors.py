@@ -38,7 +38,6 @@ from lino.core import layouts
 #~ from lino.core import changes
 from lino.core.modeltools import resolve_model
 from lino.utils import curry, AttrDict
-#~ from lino.utils import choicelists
 #~ from lino.core import perms
 from lino.utils import jsgen
 

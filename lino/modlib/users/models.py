@@ -29,7 +29,7 @@ from django.contrib.auth.hashers import (
 from lino import dd
 from lino.utils import babel
 from lino.utils import mti
-from lino.utils import choicelists
+#~ from lino.utils import choicelists
 from lino.utils.choosers import chooser
 from lino import mixins
 from lino.core import actions

@@ -34,7 +34,7 @@ from lino import dd
 from lino import mixins
 from lino.utils import babel
 #~ from lino.core.modeltools import full_model_name
-from lino.utils.choicelists import ChoiceList, Choice
+#~ from lino.utils.choicelists import ChoiceList
 #contacts = reports.get_app('contacts')
 #~ from lino.modlib.journals import models as journals
 #~ journals = reports.get_app('journals')
@@ -46,7 +46,7 @@ from django.utils.translation import ugettext_lazy as _
 
 ZERO = Decimal()
  
-class VatClasses(ChoiceList):
+class VatClasses(dd.ChoiceList):
     """
     A VAT class is usually a direct or indirect property 
     of a trade object which determines the VAT *rate* to be used.
@@ -62,7 +62,7 @@ add('1',_("Reduced"),'reduced')
 add('2',_("Normal"),'normal')
 
 
-class VatRegimes(ChoiceList):
+class VatRegimes(dd.ChoiceList):
     """
     The VAT regime determines how the VAT is being handled,
     i.e. whether and how it is to be paid.
@@ -78,7 +78,7 @@ add('50',_("Exempt"),'exempt')
 
 
     
-class TradeTypes(ChoiceList):
+class TradeTypes(dd.ChoiceList):
     verbose_name = _("Trade Type")
 add = TradeTypes.add_item
 add('S',_("Sales"),'sales')

@@ -25,7 +25,7 @@ from lino.core import actors
 from lino.core import changes
 
 from lino.utils import curry, unicode_string
-from lino.utils import choicelists
+from lino.core import choicelists
 
 
 

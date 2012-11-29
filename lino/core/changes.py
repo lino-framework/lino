@@ -44,7 +44,7 @@ from django.utils.translation import ugettext_lazy as _
 from lino.core.modeltools import obj2str, full_model_name
 from lino.core import fields 
 from lino.core import actions
-from lino.utils import choicelists
+from lino.core import choicelists
 
 #~ WATCH_SPECS = dict()
 

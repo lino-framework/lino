@@ -1042,15 +1042,6 @@ class Lino(object):
         #~ self.site_config.save()
         
         
-    #~ def has_module(self,name):
-        #~ from django.conf import settings
-        #~ return name in settings.INSTALLED_APPS
-        
-    #~ def add_user_group(self,name,label):
-        #~ from lino.utils.choicelists import UserLevel, UserGroup
-        #~ UserGroup.add_item(name,label,name)
-        #~ self.add_user_field(name+'_level',UserLevel.field(label),profile=True)
-        
     def setup_choicelists(self):
         """
         Redefine application-specific Choice Lists.

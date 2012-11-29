@@ -12,6 +12,7 @@
     lino.core.actions
     lino.core.actors
     lino.core.changes
+    lino.core.choicelists
     lino.core.dbtables
     lino.core.fields
     lino.core.kernel
@@ -21,3 +22,4 @@
     lino.core.modeltools
     lino.core.perms
     lino.core.tables
+    lino.core.workflows

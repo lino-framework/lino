@@ -13,10 +13,11 @@
 ## along with Lino; if not, see <http://www.gnu.org/licenses/>.
 
 from django.utils.translation import ugettext_lazy as _
-from lino.utils.workflows import Workflow
+#~ from lino.utils.workflows import Workflow
+from lino import dd
 
 
-class TicketStates(Workflow):
+class TicketStates(dd.Workflow):
     """
     The state of a ticket (new, open, closed, ...)
     """

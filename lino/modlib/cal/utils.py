@@ -23,7 +23,6 @@ from dateutil.tz import tzlocal
 from django.utils.translation import ugettext_lazy as _
 from django.utils.translation import pgettext_lazy 
 
-#~ from lino.utils.choicelists import Choice
 from lino.core import actions
 #~ from lino.core.actors import 
 from lino import dd

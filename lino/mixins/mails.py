@@ -21,11 +21,11 @@ from django.utils.translation import ugettext_lazy as _
 
 
 from lino import dd
-from lino.utils.choicelists import ChoiceList
+#~ from lino.core import choicelists 
 #~ from lino import mixins
 #~ from lino.mixins.printable import TypedPrintable
 
-class RecipientType(ChoiceList):
+class RecipientType(dd.ChoiceList):
     """
     A list of possible values for the `type` field of a 
     :class:`Recipient`.

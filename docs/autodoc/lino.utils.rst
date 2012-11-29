@@ -23,7 +23,6 @@
     lino.utils.mti
     lino.utils.ssin
     lino.utils.daemoncommand
-    lino.utils.choicelists
     lino.utils.babel
     lino.utils.choosers
     lino.utils.memo

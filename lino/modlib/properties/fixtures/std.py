@@ -17,7 +17,6 @@ from django.utils.translation import ugettext as _
 
 from lino.utils.instantiator import Instantiator
 from lino.utils.babel import babel_values
-#~ from lino.utils.choicelists import HowWell
 from lino.modlib.properties import models as properties
 
 #~ def objects():

@@ -72,7 +72,7 @@ False
 Example on how to use a ChoiceList in your model::
 
   from django.db.models import Model
-  from lino.utils.choicelists import HowWell
+  from lino.core.choicelists import HowWell
   
   class KnownLanguage(Model):
       spoken = HowWell.field(verbose_name=_("spoken"))
@@ -106,7 +106,7 @@ class Choice(object):
     """
     A constant (hard-coded) value whose unicode representation 
     depends on the current babel language at runtime.
-    Used by :class:`lino.utils.choicelists`.
+    Used by :class:`ChoiceList`.
 
     """
     def __init__(self,choicelist,value,text,name,**kw):
@@ -498,7 +498,7 @@ Django creates copies of them when inheriting models.
 class ChoiceListField(models.CharField):
     """
     A field that stores a value to be selected from a 
-    :class:`lino.utils.choicelists.ChoiceList`.
+    :class:`ChoiceList`.
     
     ChoiceListField cannot be nullable since they are implemented as CharFields.
     Therefore when filtering on empty values in a database query

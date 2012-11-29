@@ -28,7 +28,7 @@ from django.conf import settings
 from lino import dd
 from lino import mixins
 from lino.utils import babel
-from lino.utils.choicelists import ChoiceList
+#~ from lino.utils.choicelists import ChoiceList
 #contacts = reports.get_app('contacts')
 #~ from lino.modlib.journals import models as journals
 #~ journals = reports.get_app('journals')

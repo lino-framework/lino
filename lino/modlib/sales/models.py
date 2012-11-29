@@ -56,7 +56,7 @@ from lino.modlib.contacts import models as contacts
 #~ products = resolve_app('products')
 #~ contacts = resolve_app('contacts')
 #~ from lino.modlib.contacts import models as contacts
-from lino.utils.choicelists import ChoiceList  
+#~ from lino.utils.choicelists import ChoiceList  
 
 #~ class Channel(ChoiceList):
     #~ label = _("Channel")

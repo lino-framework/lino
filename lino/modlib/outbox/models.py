@@ -57,7 +57,7 @@ from django.conf import settings
 from lino.utils.html2text import html2text
 from django.core.mail import EmailMultiAlternatives
 from lino.utils.config import find_config_file
-from lino.utils.choicelists import ChoiceList
+#~ from lino.utils.choicelists import ChoiceList
 
 
 from Cheetah.Template import Template as CheetahTemplate
@@ -65,7 +65,7 @@ from Cheetah.Template import Template as CheetahTemplate
 
 
 
-class RecipientType(ChoiceList):
+class RecipientType(dd.ChoiceList):
     """
     A list of possible values for the `type` field of a 
     :class:`Recipient`.
