@@ -33,8 +33,8 @@ from django.contrib.contenttypes.models import ContentType
 from lino.utils.instantiator import make_converter
 #~ from lino import reports
 #~ from lino.core.fields import get_data_elem # , get_unbound_meth
-import lino
-from lino.core import fields
+#~ import lino
+#~ from lino.core import fields
 from lino.utils import get_class_attr
 from lino.ui import requests as ext_requests
 

@@ -1,5 +1,5 @@
-T:\hgwork\lino\docs\autodoc\lino.test_apps.human.rst:16: WARNING: Include file u'T:\\hgwork\\lino\\docs\\autodoc\\models.py' not found or reading it failed
-T:\hgwork\lino\docs\autodoc\lino.utils.dbfreader.rst:: WARNING: document isn't included in any toctree
 T:\hgwork\lino\docs\casts\lino_intro.rst:: WARNING: document isn't included in any toctree
 T:\hgwork\lino\docs\igen\index.rst:: WARNING: document isn't included in any toctree
-t:\hgwork\lino\lino\test_apps\human\__init__.py:docstring of lino.test_apps.human:101: WARNING: py:meth reference target not found: lino.mixins.humans.Human.mf
+T:\hgwork\lino\docs\dev\index.rst:24: WARNING: py:class reference target not found: lino.reports.Report
+T:\hgwork\lino\docs\dev\index.rst:34: WARNING: xfile reference target not found: lino_settings.py
+T:\hgwork\lino\docs\dev\index.rst:90: WARNING: py:class reference target not found: contacts.Person

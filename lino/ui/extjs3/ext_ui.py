@@ -704,7 +704,7 @@ class ExtUI(base.UI):
         # 20121116
         #~ if False and name == 'main' and isinstance(lh.layout,layouts.ListLayout):
         #~ if name != 'main' and isinstance(lh.layout,layouts.ListLayout):
-        #~ required.update(lh.layout._actor.required)
+        #~ required.update(lh.layout._datasource.required)
         #~ todo: requirements sind eine negativ-liste. aber auth=True muss in eine positiv-liste
         v = kw.pop('required',NOT_GIVEN)
         if v is not NOT_GIVEN:
@@ -714,14 +714,14 @@ class ExtUI(base.UI):
         if name == 'main':
             if isinstance(lh.layout,layouts.ListLayout):
                 #~ return ext_elems.GridMainPanel(lh,name,vertical,*elems,**pkw)
-                #~ return ext_elems.GridMainPanel(lh,name,lh.layout._actor,*elems,**pkw)
-                e = ext_elems.GridElement(lh,name,lh.layout._actor,*elems,**pkw)
+                #~ return ext_elems.GridMainPanel(lh,name,lh.layout._datasource,*elems,**pkw)
+                e = ext_elems.GridElement(lh,name,lh.layout._datasource,*elems,**pkw)
             elif isinstance(lh.layout,layouts.ActionParamsLayout) : 
                 e = ext_elems.ActionParamsPanel(lh,name,vertical,*elems,**pkw)
             elif isinstance(lh.layout,layouts.ParamsLayout) : 
                 e = ext_elems.ParamsPanel(lh,name,vertical,*elems,**pkw)
                 #~ fkw = dict(layout='fit', autoHeight= True, frame= True, items=pp)
-                #~ if lh.layout._actor.params_panel_hidden:
+                #~ if lh.layout._datasource.params_panel_hidden:
                     #~ fkw.update(hidden=True)
                 #~ return ext_elems.FormPanel(**fkw)
             elif isinstance(lh.layout,layouts.FormLayout): 
@@ -731,7 +731,7 @@ class ExtUI(base.UI):
                     e = ext_elems.TabPanel(lh,name,*elems,**pkw)
             else:
                 raise Exception("No element class for layout %r" % lh.layout)
-            #~ actions.loosen_requirements(e,**lh.layout._actor.required)
+            #~ actions.loosen_requirements(e,**lh.layout._datasource.required)
             #~ e.debug_permissions = True
             return e
         return ext_elems.Panel(lh,name,vertical,*elems,**pkw)
@@ -867,7 +867,7 @@ class ExtUI(base.UI):
                 l += [str(rpt) for rpt in model._lino_slaves.values()]
             msg += " Possible names are %s." % ', '.join(l)
         else:
-            #~ logger.info("20121023 create_layout_element %r",lh.layout._actor)
+            #~ logger.info("20121023 create_layout_element %r",lh.layout._datasource)
             msg = "Unknown element %r referred in layout <%s>." % (
                 name,lh.layout)
             msg += " Cannot handle %r" % de
@@ -1878,7 +1878,7 @@ tinymce.init({
       
     #~ def js_render_ParamsPanelSubclass(self,dh,user):
     def js_render_ParamsPanelSubclass(self,dh):
-        tbl = dh.layout._actor
+        tbl = dh.layout._datasource
         
         yield ""
         #~ yield "Lino.%s = Ext.extend(Lino.FormPanel,{" % dh.layout._formpanel_name
@@ -1908,7 +1908,7 @@ tinymce.init({
       
     #~ def js_render_ActionFormPanelSubclass(self,dh,user):
     def js_render_ActionFormPanelSubclass(self,dh):
-        tbl = dh.layout._actor
+        tbl = dh.layout._datasource
         #~ logger.info("20121007 js_render_ActionFormPanelSubclass %s",dh.layout._formpanel_name)
         yield ""
         yield "Lino.%s = Ext.extend(Lino.ActionFormPanel,{" % dh.layout._formpanel_name
@@ -1943,7 +1943,7 @@ tinymce.init({
     #~ def js_render_FormPanelSubclass(self,dh,user):
     def js_render_FormPanelSubclass(self,dh):
         
-        tbl = dh.layout._actor
+        tbl = dh.layout._datasource
         if not dh.main.get_view_permission(jsgen._for_user_profile):
             msg = "No view permission for main panel of %s :" % dh.layout._formpanel_name
             msg += " actor %s requires %s, but main requires %s)" % (tbl,tbl.required,dh.main.required)
@@ -2011,7 +2011,7 @@ tinymce.init({
         #~ dtl = rpt.detail_layout
         if dtl is None:
             raise Exception("action %s without detail?" % action.full_name())
-        #~ yield "Lino.%sPanel = Ext.extend(Lino.%s.FormPanel,{" % (action,dtl._actor)
+        #~ yield "Lino.%sPanel = Ext.extend(Lino.%s.FormPanel,{" % (action,dtl._datasource)
         yield "Lino.%sPanel = Ext.extend(Lino.%s,{" % (action.full_name(),dtl._formpanel_name)
         yield "  empty_title: %s," % py2js(action.get_button_label())
         #~ if not isinstance(action,actions.InsertRow):

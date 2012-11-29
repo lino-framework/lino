@@ -216,7 +216,9 @@ def make_params_layout_handle(self,ui):
 
 
 class Parametrizable(object):        
-  
+    """
+    Base class for both Actors and Actions.
+    """
     active_fields = None # 20121006
     master_field = None
     

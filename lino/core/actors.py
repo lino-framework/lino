@@ -253,12 +253,16 @@ class ActorMetaClass(type):
         return self.actor_id 
   
 
-#~ class ConstantActor(actions.Parametrizable):
 class Actor(actions.Parametrizable):
     """
-    Base class for Tables and Frames. 
-    An alternative name for "Actor" is "Resource".
+    Base class for 
+    :class:`AbstractTable <lino.core.tables.AbstractTable>`, 
+    :class:`ChoiceList <lino.core.choicelists.ChoiceList>` 
+    and :class:`Frame <lino.core.frames.Frame>`.
+    
+    See :doc:`/dev/actors`.
     """
+    
     __metaclass__ = ActorMetaClass
     
     _layout_class = layouts.ParamsLayout
@@ -576,14 +580,14 @@ class Actor(actions.Parametrizable):
         if dl is not None:
             if isinstance(dl,basestring):
                 cls.detail_layout = layouts.FormLayout(dl,cls)
-            elif dl._actor is None:
-                dl._actor = cls
+            elif dl._datasource is None:
+                dl._datasource = cls
                 cls.detail_layout = dl
-            elif not issubclass(cls,dl._actor):
-                raise Exception("Cannot reuse %r detail_layout for %r" % (dl._actor,cls))
+            elif not issubclass(cls,dl._datasource):
+                raise Exception("Cannot reuse %r detail_layout for %r" % (dl._datasource,cls))
             #~ else:
                 #~ raise Exception("Cannot reuse detail_layout owned by another table")
-                #~ logger.debug("Note: %s uses layout owned by %s",cls,dl._actor)
+                #~ logger.debug("Note: %s uses layout owned by %s",cls,dl._datasource)
             
         # the same for insert_template and insert_layout:
         #~ dt = classDict.get('insert_template',None)
@@ -596,12 +600,12 @@ class Actor(actions.Parametrizable):
         if dl is not None:
             if isinstance(dl,basestring):
                 cls.insert_layout = layouts.FormLayout(dl,cls)
-            elif dl._actor is None:
-                dl._actor = cls
+            elif dl._datasource is None:
+                dl._datasource = cls
                 cls.insert_layout = dl
-            elif not issubclass(cls,dl._actor):
-                raise Exception("Cannot reuse %r insert_layout for %r" % (dl._actor,cls))
-                #~ logger.debug("Note: %s uses layout owned by %s",cls,dl._actor)
+            elif not issubclass(cls,dl._datasource):
+                raise Exception("Cannot reuse %r insert_layout for %r" % (dl._datasource,cls))
+                #~ logger.debug("Note: %s uses layout owned by %s",cls,dl._datasource)
                 
         if cls.label is None:
             #~ self.label = capfirst(self.model._meta.verbose_name_plural)
@@ -902,7 +906,7 @@ class Actor(actions.Parametrizable):
                 kw[name] = dtl
             else:
                 assert isinstance(dtl,layouts.FormLayout)
-                assert dtl._actor is None
+                assert dtl._datasource is None
                 if existing is not None: # added for 20120914c but it wasn't the problem
                     if not isinstance(dtl,existing.__class__):
                         raise NotImplementedError(
@@ -915,7 +919,7 @@ class Actor(actions.Parametrizable):
                         #~ logger.info('20120914 %s',dtl.main)
                         dtl._added_panels.update(existing._added_panels)
                     dtl._element_options.update(existing._element_options)
-                dtl._actor = self
+                dtl._datasource = self
                 setattr(self,attname,dtl)
         if kw:
             getattr(self,attname).update(**kw)

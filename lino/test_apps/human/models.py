@@ -19,12 +19,12 @@ The database structure used for the following examples is very simple,
 we define a single model `Person` 
 which just inherits :class:`lino.mixins.human.Human`:
 
-.. code-block::
+.. code-block:: python
 
-  from lino.mixins import Human
+    from lino.mixins import Human
 
-  class Person(Human):
-      pass
+    class Person(Human):
+        pass
 
 
 Overview

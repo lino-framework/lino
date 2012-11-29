@@ -172,7 +172,7 @@ class LayoutHandle:
                     name,kw = self.splitdesc(spec)
                     explicit_specs.add(name)
             wildcard_fields = self.layout.join_str.join([
-                de.name for de in self.layout._actor.wildcard_data_elems() \
+                de.name for de in self.layout._datasource.wildcard_data_elems() \
                   if (de.name not in explicit_specs) \
                     and self.use_as_wildcard(de) \
                 ])
@@ -199,7 +199,7 @@ class LayoutHandle:
                         i += 1
                         e = self.desc2elem(elemname+'_'+str(i),x)
                         if e is not None:
-                            #~ e.allow_read = curry(perms.make_permission(self.layout._actor,**e.required),e)
+                            #~ e.allow_read = curry(perms.make_permission(self.layout._datasource,**e.required),e)
                             elems.append(e)
             #~ if len(elems) == 1:
                 #~ vertical = False
@@ -233,7 +233,7 @@ class LayoutHandle:
             return elems[0]
         #~ kw.update(self.layout.panel_options.get(elemname,{}))
         e = self.ui.create_layout_panel(self,elemname,vertical,elems,**kw)
-        #~ e.allow_read = curry(perms.make_permission(self.layout._actor,**e.required),e)
+        #~ e.allow_read = curry(perms.make_permission(self.layout._datasource,**e.required),e)
         return e
             
     def define_panel(self,name,desc,**kw):
@@ -257,7 +257,7 @@ class LayoutHandle:
                 'Failed to define element %s = %s\n(in %s)' 
                 % (name,desc,self.layout))
                 #~ return
-        #~ e.allow_read = curry(perms.make_permission(self.layout._actor,**e.required),e)
+        #~ e.allow_read = curry(perms.make_permission(self.layout._datasource,**e.required),e)
         self._names[name] = e
         #~ setattr(self,name,e)
         return e
@@ -278,7 +278,7 @@ class LayoutHandle:
         desc = getattr(self.layout,name,None)
         if desc is not None:
             return self.define_panel(name,desc,**pkw)
-        #~ if str(self.layout._actor) == 'cal.Events':
+        #~ if str(self.layout._datasource) == 'cal.Events':
             #~ if name == 'start':
                 #~ print 20121021, repr(name), "not a panel", repr(self.layout)
             #~ return self.define_panel(name,desc)
@@ -326,7 +326,7 @@ class LayoutHandle:
         #~ and (de.name not in self.rh.report.known_values.keys()) \
         #~ if de.name == self.rh.report.master_key: return False
         if isinstance(self.layout,ListLayout):
-            if de.name == self.layout._actor.master_key: return False
+            if de.name == self.layout._datasource.master_key: return False
         return True
         
         return True
@@ -375,7 +375,7 @@ class BaseLayout(object):
     #~ __metaclass__ = LayoutMeta
     
     #~ _table = None # deprecated
-    _actor = None
+    _datasource = None
     
     window_size = None
     """
@@ -397,10 +397,13 @@ class BaseLayout(object):
     #~ _element_options = dict()
     
     #~ def __init__(self,table=None,main=None,hidden_elements=frozenset(),window_size=None):
-    def __init__(self,main=None,table=None,hidden_elements=None,**kw):
+    def __init__(self,main=None,datasource=None,hidden_elements=None,**kw):
+        """
+        datasource is either an actor or an action.
+        """
         #~ assert table is not None
         #~ self._table = table
-        self._actor = table
+        self._datasource = datasource 
         self._labels = self.override_labels()
         self._added_panels = dict()
         #~ self._window_size = window_size
@@ -420,7 +423,7 @@ class BaseLayout(object):
         return dict()
         
     def get_data_elem(self,name): 
-        return self._actor.get_data_elem(name)
+        return self._datasource.get_data_elem(name)
         
     def remove_element(self,*args):
         """
@@ -570,13 +573,13 @@ add_tabpanel() on %s horizontal 'main' panel %r."""
         return h
         
     def __str__(self):
-        #~ return "%s Detail(%s)" % (self._actor,[str(x) for x in self.layouts])
-        return "%s on %s" % (self.__class__.__name__,self._actor)
+        #~ return "%s Detail(%s)" % (self._datasource,[str(x) for x in self.layouts])
+        return "%s on %s" % (self.__class__.__name__,self._datasource)
         
     def get_choices_url(self,ui,field_name,**kw):
         return ui.build_url("choices",
-          self._actor.app_label,
-          self._actor.__name__,
+          self._datasource.app_label,
+          self._datasource.__name__,
           field_name,**kw)
         
 
@@ -604,7 +607,7 @@ class ParamsLayout(BaseLayout):
     params_store = None
 
     def get_data_elem(self,name): 
-        return self._actor.get_param_elem(name)
+        return self._datasource.get_param_elem(name)
         
     def setup_handle(self,lh):
         #~ if self.params_store is None:
@@ -620,7 +623,7 @@ class ActionParamsLayout(ParamsLayout):
     url_param_name = ext_requests.URL_PARAM_FIELD_VALUES
 
     def get_choices_url(self,ui,field_name,**kw):
-        a = self._actor
+        a = self._datasource
         return ui.build_url("apchoices",
           'oops', # todo: instantiate ActionParamsLayout per BoundAction (not per Action)?
           #~ ba.actor.app_label,

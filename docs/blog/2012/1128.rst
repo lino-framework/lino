@@ -11,8 +11,24 @@ I tested it and had a few surprises from harmless to positive,
 but inadvertently lost my notes about them.
 
 
+Assigning a calendar event
+--------------------------
+
+Continued on this. Not finished. 
+Need to implement 
+:meth:`lino.core.layouts.ActionParamsLayout.get_choices_url`.
+
+
 Lino and humans
 ---------------
 
-:mod:`lino.test_apps.human`
+Yesterday's last-minute idea to use `self.client.gender.mf(m,f)` 
+in a contract's document template 
+was not the good solution: didn't work for people whose `gender` 
+field is empty.
+Replaced by `self.client.mf(m,f,u)`.
+
+New module :mod:`lino.mixins.human`.
+Choicelist `contact.Gender` renamed to `lino.Genders`.
+Tested documentation in :mod:`lino.test_apps.human`.
 

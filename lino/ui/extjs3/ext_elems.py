@@ -105,7 +105,7 @@ def get_view_permission(e):
 def before_row_edit(panel):
     l = []
     #~ l.append("console.log('before_row_edit',record);")
-    master_field = panel.layout_handle.layout._actor.master_field
+    master_field = panel.layout_handle.layout._datasource.master_field
     for e in panel.active_children:
         if not get_view_permission(e):
             continue
@@ -128,7 +128,7 @@ def before_row_edit(panel):
                 #~ logger.debug("20100615 %s.%s has chooser", self.layout_handle.layout, e.field.name)
                 for f in chooser.context_fields:
                     if master_field and master_field.name == f.name:
-                        #~ print 20120603, panel.layout_handle.layout._actor, e.field.name, f.name
+                        #~ print 20120603, panel.layout_handle.layout._datasource, e.field.name, f.name
                         #~ l.append("console.log('20120602 before_row_edit',this.get_base_params());")
                         l.append("var bp = this.get_base_params();")
                         #~ ext_requests.URL_PARAM_MASTER_TYPE
@@ -233,7 +233,7 @@ class GridColumn(jsgen.Component):
             #~ if editor.editable:
             if editor.editable and not isinstance(editor,BooleanFieldElement):
                 kw.update(editor=editor)
-            #~ if str(editor.layout_handle.layout._actor) == 'pcsw.CoachingsByProject':
+            #~ if str(editor.layout_handle.layout._datasource) == 'pcsw.CoachingsByProject':
               #~ if editor.name == 'user':
                 #~ print 20120919, editor.field.__class__, editor.field.editable
                 #~ print 20120919, editor.field.model, kw['editable']
@@ -386,7 +386,7 @@ class LayoutElement(VisibleComponent):
             setattr(self,k,v)
             
         required = dict()
-        required.update(layout_handle.layout._actor.required)
+        required.update(layout_handle.layout._datasource.required)
         required.update(self.required)
         kw.update(required=required)
             
@@ -396,7 +396,7 @@ class LayoutElement(VisibleComponent):
         self.layout_handle = layout_handle
         #~ if layout_handle is not None:
         #~ layout_handle.setup_element(self)
-        #~ if str(self.layout_handle.layout._actor) == 'lino.Home':
+        #~ if str(self.layout_handle.layout._datasource) == 'lino.Home':
             #~ logger.info("20120927 LayoutElement.__init__ %r required is %s, kw was %s, opts was %s",
               #~ self,self.required,kw,opts)
 
@@ -412,7 +412,7 @@ class LayoutElement(VisibleComponent):
         """
         Retain only those requirements of obj which are also in actor.
         """
-        if self.layout_handle.layout._actor == actor:
+        if self.layout_handle.layout._datasource == actor:
             return 
         #~ kw = actor.required
         new = dict()
@@ -438,12 +438,12 @@ class LayoutElement(VisibleComponent):
             self.install_permission_handler()
             #~ logger.info("20121116 loosened requirements %s using %s by %s",,self.layout_handle.layout,actor)
             #~ logger.info("20121116 %s uses %s loosening requirements %s",actor,self.layout_handle.layout,','.join(loosened))
-            #~ if self.layout_handle.layout._actor != actor:
-                #~ raise Exception("%s != %s" % (self.layout_handle.layout._actor,actor))
+            #~ if self.layout_handle.layout._datasource != actor:
+                #~ raise Exception("%s != %s" % (self.layout_handle.layout._datasource,actor))
             #~ for e in self.elements:
                 #~ if isinstance(e,Container):
                     #~ e.loosen_requirements(actor)
-        #~ elif self.layout_handle.layout._actor != actor:
+        #~ elif self.layout_handle.layout._datasource != actor:
             #~ logger.info("20121116 %s uses %s with same requirements",actor,self.layout_handle.layout)
             
         
@@ -505,7 +505,7 @@ class ConstantElement(LayoutElement):
     vflex = True
     
     def __init__(self,lh,fld,**kw):
-        kw.update(html=fld.text_fn(lh.layout._actor,lh.ui))
+        kw.update(html=fld.text_fn(lh.layout._datasource,lh.ui))
         #~ kw.update(html=fld.text)
         #~ kw.update(autoHeight=True)
         LayoutElement.__init__(self,lh,fld.name,**kw)
@@ -807,8 +807,8 @@ class RemoteComboFieldElement(ComboFieldElement):
         if self.editable:
             url = self.layout_handle.get_choices_url(self.field.name,**kw)
             #~ url = self.layout_handle.ui.build_url("choices",
-                #~ self.layout_handle.layout._actor.app_label,
-                #~ self.layout_handle.layout._actor.__name__,
+                #~ self.layout_handle.layout._datasource.app_label,
+                #~ self.layout_handle.layout._datasource.__name__,
                 #~ self.field.name,**kw)
             proxy = dict(url=url,method='GET')
             kw.update(proxy=js_code("new Ext.data.HttpProxy(%s)" % py2js(proxy)))
@@ -1245,7 +1245,7 @@ class Container(LayoutElement):
         LayoutElement.__init__(self,layout_handle,name,**kw)
         
         #~ if self.required:
-            #~ if layout_handle.layout._actor.__name__.startswith('IntegClient'):
+            #~ if layout_handle.layout._datasource.__name__.startswith('IntegClient'):
                 #~ print 20120924, layout_handle, self.required
         #~ if name == 'cbss':
             #~ logger.info("20120925 Container.__init__() 2 %r",self.required)
@@ -1798,7 +1798,7 @@ class ParamsPanel(Panel):
         Panel.__init__(self,lh,name,vertical,*elements,**kw)
         
         #~ fkw = dict(layout='fit', autoHeight= True, frame= True, items=pp)
-        if lh.layout._actor.params_panel_hidden:
+        if lh.layout._datasource.params_panel_hidden:
             self.value_template = "new Ext.form.FormPanel({hidden:true, layout:'fit', autoHeight: true, frame: true, items:new Ext.Panel(%s)})"
           
             #~ fkw.update(hidden=True)
