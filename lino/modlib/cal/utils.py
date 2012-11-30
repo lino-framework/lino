@@ -69,9 +69,9 @@ class CalendarAction(actions.Action):
 
 
 
-class Weekday(dd.ChoiceList):
+class Weekdays(dd.ChoiceList):
     verbose_name = _("Weekday")
-add = Weekday.add_item
+add = Weekdays.add_item
 add('1', _('Monday'),'monday')
 add('2', _('Tuesday'),'tuesday')
 add('3', _('Wednesday'),'wednesday')

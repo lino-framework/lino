@@ -1,0 +1,39 @@
+20121130
+========
+
+Neuanträge zuweisen
+-------------------
+
+- Wrote a new function :func:`lino.utils.workdays` 
+  before it turned out to be not 
+  necessary for computing the scores of available coaches.
+  
+- New rules for the "score" column in AvailableCoaches.
+
+
+Language courses
+----------------
+
+- Sprachkurse verwalten: Registrieren / Entregistrieren funktionierte nicht.
+
+
+Unofficial release
+------------------
+
+This is the third "unofficial" release, where "unofficial" means that it is not 
+registered and announced at PyPI.
+
+Upgrade in Eupen from 
+Lino :changeset:`3167:c9cfe3e98d91` (Tue Nov 27 13:28:42 2012 -0400)
+and 
+Lino-Welfare `203:82ef854ca191` (Tue Nov 27 13:29:01 2012 -0400) 
+to the current versions.
+
+Database Migrating from version 1.0.4 to 1.0.5.
+
+
+
+Last minute changes
+-------------------
+
+- Removed the now obsolete PersonSearch model & related

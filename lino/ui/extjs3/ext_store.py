@@ -437,7 +437,7 @@ class RequestStoreField(StoreField):
 
         
     def format_value(self,ar,v):
-        logger.info("20121116 format_value(%s)",v)
+        #~ logger.info("20121116 format_value(%s)",v)
         if v is None:
             raise Exception("Got None value for %s" % self)
         n = v.get_total_count()

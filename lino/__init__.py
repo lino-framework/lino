@@ -1042,6 +1042,9 @@ class Lino(object):
         #~ self.site_config.save()
         
         
+    def setup_workflows(self):
+        self.on_each_app('setup_workflows')
+        
     def setup_choicelists(self):
         """
         Redefine application-specific Choice Lists.

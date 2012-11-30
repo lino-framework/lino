@@ -291,12 +291,18 @@ class VisibleComponent(jsgen.Component,Permittable):
         self.install_permission_handler()
         
     def install_permission_handler(self):
+        #~ if self.name == 'newcomers_left': # required.has_key('user_groups'):
+            #~ logger.info("20121130 install_permission_handler() %s %s",self,self.required)
+            #~ if self.required.get('user_groups') ==  'integ':
+                #~ raise Exception("20121130")
         self.allow_read = curry(make_view_permission_handler(
             self,True,
             self.debug_permissions,
             **self.required),self)
             
     def get_view_permission(self,profile):
+        #~ if self.name == 'newcomers_left': # required.has_key('user_groups'):
+            #~ logger.info("20121130 get_view_permission() %s %s",self,self.required)
         return self.allow_read(profile)
         
     def setup(self,width=None,height=None,label=None,
@@ -315,7 +321,8 @@ class VisibleComponent(jsgen.Component,Permittable):
             self.label = label
         if required is not NOT_GIVEN:
             self.required = required
-            #~ logger.info("20120925 VisibleComponent.setup() %s",self)
+            #~ if self.name == 'newcomers_left': # required.has_key('user_groups'):
+                #~ logger.info("20121130 setup() %s %s",self,self.required)
     
 
     def __str__(self):
@@ -384,12 +391,15 @@ class LayoutElement(VisibleComponent):
             if not hasattr(self,k):
                 raise Exception("%s has no attribute %s" % (self,k))
             setattr(self,k,v)
-            
-        required = dict()
-        required.update(layout_handle.layout._datasource.required)
-        required.update(self.required)
-        kw.update(required=required)
-            
+        
+        if not kw.has_key('required'): # new since 20121130. theoretically better
+            required = dict()
+            required.update(layout_handle.layout._datasource.required)
+            required.update(self.required)
+            kw.update(required=required)
+        #~ else:
+            #~ logger.info("20121130 %s %s",name,kw)
+          
         VisibleComponent.__init__(self,name,**kw)
         #~ if opts:
             #~ print "20120525 apply _element_options", opts, 'to', self.__class__, self
@@ -776,7 +786,7 @@ class ComboFieldElement(FieldElement):
         kw = FieldElement.get_field_options(self,**kw)
         # When used as editor of an EditorGridPanel, don't set the name attribute
         # because it is not needed for grids and might conflict with fields of a 
-        # surronding detail form. See ticket #38 (:doc:`/blog/2011/0408`).
+        # surronding detail form. See ticket #38 (`/blog/2011/0408`).
         # Also, Comboboxes with simple values may never have a hiddenName option.
         if not isinstance(self.layout_handle.layout,layouts.ListLayout) \
             and not isinstance(self,SimpleRemoteComboFieldElement):
@@ -805,7 +815,7 @@ class RemoteComboFieldElement(ComboFieldElement):
     def store_options(self,**kw):
         #~ kw.update(baseParams=js_code('this.get_base_params()')) # 20120202
         if self.editable:
-            url = self.layout_handle.get_choices_url(self.field.name,**kw)
+            url = self.layout_handle.get_choices_url(self.field,**kw)
             #~ url = self.layout_handle.ui.build_url("choices",
                 #~ self.layout_handle.layout._datasource.app_label,
                 #~ self.layout_handle.layout._datasource.__name__,

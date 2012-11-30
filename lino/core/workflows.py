@@ -11,6 +11,12 @@
 ## GNU General Public License for more details.
 ## You should have received a copy of the GNU General Public License
 ## along with Lino; if not, see <http://www.gnu.org/licenses/>.
+"""
+Defines classes 
+:class:`State`
+:class:`Workflow`
+:class:`ChangeStateAction`
+"""
 
 import sys
 
@@ -30,7 +36,9 @@ from lino.core import choicelists
 
 
 class State(choicelists.Choice):
-        
+    """
+    A State is a specialized `Choice` that adds the `add_workflow` method.
+    """
     def add_workflow(self,label=None,
         help_text=None,
         notify=False,
@@ -60,7 +68,11 @@ class State(choicelists.Choice):
         #~ name = 'mark_' + self.value
         name = 'wf' + str(i+1)
         a.attach_to_workflow(self.choicelist,name)
+        ba = self.choicelist.bind_action(a) # 
         #~ print 20120709, self, name, a
+        """
+        TODO: `workflow_actions` is perhaps not nevessary: use Actor._actions_list instead
+        """
         self.choicelist.workflow_actions = self.choicelist.workflow_actions + [ a ]
         #~ self.choicelist.workflow_actions.append(a) 
         #~ yield name,a
@@ -78,7 +90,10 @@ class State(choicelists.Choice):
 
 
 class Workflow(choicelists.ChoiceList):
-  
+    """
+    A Workflow is a specialized ChoiceList used for 
+    :attr:`lino.core.actors.Actor.workflow_state_field`.
+    """
     workflow_actions = []
     
     item_class = State
@@ -149,8 +164,13 @@ class ChangeStateAction(actions.RowAction):
         #~ help_text = getattr(target_state,'help_text',None)
         #~ if help_text is not None:
             kw.update(help_text=help_text)
+        else:
+            assert help_text is None
+            
         super(ChangeStateAction,self).__init__(**kw)
         #~ logger.info('20120930 ChangeStateAction %s %s', actor,target_state)
+        if self.icon_file or self.icon_name:
+            self.help_text = string_concat(self.label, '. ', self.help_text)
         
     #~ def full_name(self,actor):
         #~ if self.action_name is None or self.defining_actor is None:

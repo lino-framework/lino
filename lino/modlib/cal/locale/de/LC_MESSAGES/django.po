@@ -588,7 +588,7 @@ msgstr ""
 
 #: .\utils.py:285
 msgid "Event took place."
-msgstr "Stattgefunden"
+msgstr "Der Termin hat stattgefunden"
 
 #: .\utils.py:287
 msgid "Reschedule"

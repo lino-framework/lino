@@ -471,6 +471,7 @@ class Action(Parametrizable,Permittable):
             
 
     def make_params_layout_handle(self,ui):
+        #~ return self.action.params_layout.get_layout_handle(ui)
         return make_params_layout_handle(self,ui)
         
     #~ def add_requirements(self,**kw):

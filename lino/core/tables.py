@@ -569,7 +569,8 @@ class TableHandle(base.Handle):
         base.Handle.__init__(self,ui)
   
     def __str__(self):
-        return str(self.ui.__class__)+str(self.actor) + 'Handle'
+        #~ return str(self.ui.__class__)+str(self.actor) + 'Handle'
+        return str(self.actor) + 'Handle'
             
     def setup_layouts(self):
         if self._layouts is not None:

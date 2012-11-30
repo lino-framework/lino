@@ -94,6 +94,7 @@ def analyze_models():
         self.project_model = resolve_model(self.project_model)
     
     self.setup_choicelists()
+    self.setup_workflows()
     
     #~ settings.LINO.setup_user_profiles()
     

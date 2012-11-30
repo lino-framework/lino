@@ -436,7 +436,6 @@ class BaseLayout(object):
     def setup_handle(self,lh):
         pass
         
-    #~ @classmethod    
     def update(self,**kw):
         """
         Update the template of one or more panels.
@@ -455,7 +454,6 @@ In %s, updating attribute %r:
                 logger.info(msg)
             setattr(self,k,v)
             
-    #~ @classmethod    
     def add_panel(self,name,tpl,label=None,**options):
         """
         Adds a new panel to this layout.
@@ -576,11 +574,11 @@ add_tabpanel() on %s horizontal 'main' panel %r."""
         #~ return "%s Detail(%s)" % (self._datasource,[str(x) for x in self.layouts])
         return "%s on %s" % (self.__class__.__name__,self._datasource)
         
-    def get_choices_url(self,ui,field_name,**kw):
+    def get_choices_url(self,ui,field,**kw):
         return ui.build_url("choices",
           self._datasource.app_label,
           self._datasource.__name__,
-          field_name,**kw)
+          field.name,**kw)
         
 
         
@@ -621,12 +619,24 @@ class ActionParamsLayout(ParamsLayout):
     join_str = "\n"
     window_size = (50,'auto')
     url_param_name = ext_requests.URL_PARAM_FIELD_VALUES
+    
+    def get_choices_url(self,ui,field,**kw):
+        return ui.build_url("apchoices",
+          self._datasource.defining_actor.app_label,
+          self._datasource.defining_actor.__name__,
+          self._datasource.action_name,
+          field.name,**kw)
+    
 
-    def get_choices_url(self,ui,field_name,**kw):
+    def unused_get_choices_url(self,ui,field,**kw):
+        """
+        """
         a = self._datasource
         return ui.build_url("apchoices",
-          'oops', # todo: instantiate ActionParamsLayout per BoundAction (not per Action)?
+          field.rel.to._meta.app_label,
+          field.rel.to.__name__,
+          #~ 'oops', # todo: instantiate ActionParamsLayout per BoundAction (not per Action)?
           #~ ba.actor.app_label,
           #~ ba.actor.__name__,
           a.action_name,
-          field_name,**kw)
+          field.name,**kw)

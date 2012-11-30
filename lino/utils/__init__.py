@@ -520,6 +520,47 @@ def unicode_string(x):
     # Python 2.6.6 said "Error in formatting: encode() takes no keyword arguments"
     #~ return unicode(x).encode(errors='backslashreplace')
     
+    
+ONE_DAY = datetime.timedelta(days=1)
+
+def workdays(start,end):
+    """
+    Return the number of workdays (Monday to Friday) between the given 
+    two dates. Is not aware of holidays. 
+    
+    Both dates start and end are included. For example if you 
+    specify a Monday as start and Monday of the following 
+    week as end, then you get 6 (not 5).
+    
+    Examples:
+    >>> examples = [
+    ...   (20121130,20121201,1),
+    ...   (20121130,20121224,17),
+    ...   (20121130,20121130,1),
+    ...   (20121201,20121201,0),
+    ...   (20121201,20121202,0),
+    ...   (20121201,20121203,1),
+    ...   (20121130,20121207,6),
+    ... ]
+    >>> for start,end,expected in examples:
+    ...     a = i2d(start)
+    ...     b = i2d(end)
+    ...     if workdays(a,b) != expected:
+    ...        print "Got %d instead of %d for (%s,%s)" % (workdays(a,b),expected,a,b)
+    
+    """
+    #~ for d in range(start,end,ONE_DAY):
+        #~ if d.isoweekday() <= 5:
+            #~ n += 1
+    n = 0
+    d = start
+    while d <= end:
+        if d.isoweekday() <= 5:
+            n += 1
+        d += ONE_DAY
+    return n
+    
+    
 
 
 def _test():

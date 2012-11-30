@@ -960,6 +960,7 @@ class ExtUI(base.UI):
             (rx+r'restful/(?P<app_label>\w+)/(?P<actor>\w+)/(?P<pk>.+)$', views.Restful.as_view()),
             (rx+r'choices/(?P<app_label>\w+)/(?P<rptname>\w+)$', views.Choices.as_view()),
             (rx+r'choices/(?P<app_label>\w+)/(?P<rptname>\w+)/(?P<fldname>\w+)$', views.Choices.as_view()),
+            (rx+r'apchoices/(?P<app_label>\w+)/(?P<actor>\w+)/(?P<an>\w+)/(?P<field>\w+)$', views.ActionParamChoices.as_view()),
         )
         urlpatterns += settings.LINO.get_urls()
         if settings.LINO.use_eid_applet:
@@ -1601,8 +1602,11 @@ tinymce.init({
             # fl : a FormLayout
             if fl is not None:
                 lh = fl.get_layout_handle(self)
-                for e in lh.main.walk():
-                    e.loosen_requirements(res)
+                if True: # 20121130 why was this?
+                    for e in lh.main.walk():
+                        e.loosen_requirements(res)
+                else:
+                    lh.main.loosen_requirements(res)
                 if fl in collector:
                     pass
                     #~ fl._using_actors.append(actor)
@@ -2045,7 +2049,7 @@ tinymce.init({
     def js_render_GridPanel_class(self,rh):
         
         yield ""
-        yield "// js_render_GridPanel_class %s" % rh
+        yield "// js_render_GridPanel_class %s" % rh.actor
         yield "Lino.%s.GridPanel = Ext.extend(Lino.GridPanel,{" % rh.actor
         
         kw = dict()

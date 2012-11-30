@@ -12,11 +12,11 @@
 ## along with Lino; if not, see <http://www.gnu.org/licenses/>.
 
 """
-This defines the :class:`Actor` class, the base class 
-for 
-:class:`dd.Table <lino.core.table.Table>`,
-:class:`dd.VirtualTable <lino.utils.tables.VirtualTable>`
-and :class:`dd.Frame <lino.core.frames.Frame>`.
+This defines the 
+:class:`Actor` 
+and
+:class:`BoundAction` 
+classes.
 
 """
 
@@ -89,6 +89,10 @@ def register_actor(a):
     
     
 class BoundAction(object):
+    """
+    An Action which is bound to an Actor.
+    If an Actor has subclasses, each subclass "inherits" its actions.
+    """
   
     def __init__(self,actor,action):
 
@@ -205,7 +209,8 @@ class ActorMetaClass(type):
         cls.virtual_fields = {}
         cls._constants = {}
         cls._actions_dict = AttrDict()
-        cls._actions_list = None
+        #~ cls._actions_list = None # 20121129
+        cls._actions_list = [] # 20121129
         #~ cls._replaced_by = None
         
         # inherit virtual fields defined on parent Actors
@@ -690,7 +695,7 @@ class Actor(actions.Parametrizable):
         Before this we create `insert_action` and `detail_action` if necessary.
         Also fill _actions_list.
         """
-        cls._actions_list = []
+        #~ cls._actions_list = [] # 20121129
         
         #~ default_action = getattr(cls,cls.get_default_action())
         default_action = cls.get_default_action()
@@ -739,17 +744,15 @@ class Actor(actions.Parametrizable):
 
         #~ if cls.__name__.startswith('OutboxBy'):
             #~ print '20120524 collect_actions',cls, cls.insert_action, cls.detail_action, cls.editable
-        if True:
-            for b in cls.mro():
-                for k,v in b.__dict__.items():
-                    if isinstance(v,actions.Action):
-                        if not cls._actions_dict.has_key(k):
-                            cls._attach_action(k,v)
-        else:
-            for k,v in cls.__dict__.items():
+        for b in cls.mro():
+            for k,v in b.__dict__.items():
                 if isinstance(v,actions.Action):
-                    cls._attach_action(k,v)
-                    
+                    if not cls._actions_dict.has_key(k):
+                        #~ cls._attach_action(k,v)
+                        v.attach_to_actor(cls,k)
+                        cls.bind_action(v)
+        
+                        
                     
         #~ cls._actions_list = cls._actions_dict.values()
         #~ cls._actions_list += cls.get_shared_actions()
@@ -768,28 +771,6 @@ class Actor(actions.Parametrizable):
             self._actions_dict.define(a.action_name,ba)
         self._actions_list.append(ba)
         return ba
-        
-      
-    @classmethod
-    def _attach_action(self,name,a):
-            
-        #~ v = self._actions_dict.get(name,None)
-        #~ if v is not None:
-            #~ return 
-            
-        a.attach_to_actor(self,name)
-        
-        ba = self.bind_action(a)
-        
-        if name != a.action_name:
-            #~ raise Exception("20121003 %r %r : %r != %r" % (self,a,name,a.action_name))
-            #~ logger.info("20121003 %r %r : %r != %r", self,a,name,a.action_name)
-            return 
-        
-        #~ elif a.show_in_workflow:
-            #~ raise Exception("Cannot show %s in workflow without url_action_name" % self)
-        return a
-            
 
     @classmethod
     def get_workflow_actions(self,ar,obj):
@@ -1003,8 +984,8 @@ class Actor(actions.Parametrizable):
         
     @classmethod
     def get_actions(self,callable_from=None):
-        if self._actions_list is None:
-            raise Exception("Tried to %s.get_actions() with empty _actions_list" % self)
+        #~ if self._actions_list is None:
+            #~ raise Exception("Tried to %s.get_actions() with empty _actions_list" % self)
         if callable_from is None:
             return self._actions_list
         return [ba for ba in self._actions_list 

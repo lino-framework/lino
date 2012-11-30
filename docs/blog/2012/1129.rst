@@ -1,11 +1,36 @@
 20121129
 ========
 
+Foreignkeys in Action Parameter Window 
+--------------------------------------
+
+Lino can now handle Foreignkey fields in Action Parameter Windows.
+
+This feature wasn't yet implemented.
 
 Worked on docstring of :class:`lino.core.actors.Actor`.
 
 In class :class:`BaseLayout <lino.core.layouts.BaseLayout>` renamed `_actor` to `_datasource`.
 
-Move the :mod:`choicelists <lino.core.choicelists>` and :mod:`workflows <lino.core.workflows>` modules from 
+Moved the :mod:`choicelists <lino.core.choicelists>` 
+and :mod:`workflows <lino.core.workflows>` 
+modules from 
 :mod:`lino.utils`
 to :mod:`lino.core`.
+
+
+Workflow of calendar events
+---------------------------
+
+The :class:`lino.modlib.cal.models.AssignEvent` action is a first 
+usage example of the new feature since the field `assign_to` is 
+a ForeignKey to User.
+
+
+
+Newcomers
+---------
+
+- new algorithm to compute the relative workload in AvailableCoaches
+- new field Faculty.weight
+- new help_text for user.newcomer_quota

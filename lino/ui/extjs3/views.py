@@ -517,8 +517,100 @@ class Templates(View):
             js = "var tinyMCETemplateList = %s;" % py2js(templates)
             return http.HttpResponse(js,content_type='text/json')
         raise http.Http404("Method %r not supported" % request.method)
+
+
+
+def choices_for_field(request,rpt,field):
+    #~ logger.info("20120202 %r",field)
+    chooser = choosers.get_for_field(field)
+    if chooser:
+        #~ logger.info('20120710 choices_view() : has chooser')
+        qs = chooser.get_request_choices(request,rpt)
+        #~ qs = list(chooser.get_request_choices(ar,rpt))
+        #~ logger.info("20120213 %s",qs)
+        #~ if qs is None:
+            #~ qs = []
+        assert isiterable(qs), \
+              "%s.%s_choices() returned %r which is not iterable." % (
+              rpt.model,field.name,qs)
+        if chooser.simple_values:
+            def row2dict(obj,d):
+                #~ d[ext_requests.CHOICES_TEXT_FIELD] = unicode(obj)
+                d[ext_requests.CHOICES_VALUE_FIELD] = unicode(obj)
+                return d
+        elif chooser.instance_values:
+            # same code as for ForeignKey
+            def row2dict(obj,d):
+                d[ext_requests.CHOICES_TEXT_FIELD] = unicode(obj)
+                d[ext_requests.CHOICES_VALUE_FIELD] = obj.pk
+                return d
+        else:
+            def row2dict(obj,d):
+                d[ext_requests.CHOICES_TEXT_FIELD] = unicode(obj[1])
+                d[ext_requests.CHOICES_VALUE_FIELD] = obj[0]
+                return d
+    elif field.choices:
+        qs = field.choices
+        def row2dict(obj,d):
+            if type(obj) is list or type(obj) is tuple:
+                d[ext_requests.CHOICES_TEXT_FIELD] = unicode(obj[1])
+                d[ext_requests.CHOICES_VALUE_FIELD] = obj[0]
+            else:
+                d[ext_requests.CHOICES_TEXT_FIELD] = unicode(obj)
+                d[ext_requests.CHOICES_VALUE_FIELD] = unicode(obj)
+            return d
         
+    elif isinstance(field,models.ForeignKey):
+        m = field.rel.to
+        t = getattr(m,'_lino_choices_table',m._lino_default_table)
+        qs = t.request(settings.LINO.ui,request).data_iterator
+        #~ logger.info('20120710 choices_view(FK) %s --> %s',t,qs)
+        def row2dict(obj,d):
+            d[ext_requests.CHOICES_TEXT_FIELD] = unicode(obj)
+            d[ext_requests.CHOICES_VALUE_FIELD] = obj.pk 
+            return d
+    else:
+        raise http.Http404("No choices for %s" % fldname)
+    return (qs,row2dict)
+        
+
+def choices_response(request,qs,row2dict):
+            
+    quick_search = request.GET.get(ext_requests.URL_PARAM_FILTER,None)
+    if quick_search is not None:
+        qs = dbtables.add_quick_search_filter(qs,quick_search)
+        
+    count = len(qs)
+        
+    offset = request.GET.get(ext_requests.URL_PARAM_START,None)
+    if offset:
+        qs = qs[int(offset):]
+        #~ kw.update(offset=int(offset))
+    limit = request.GET.get(ext_requests.URL_PARAM_LIMIT,None)
+    if limit:
+        #~ kw.update(limit=int(limit))
+        qs = qs[:int(limit)]
+        
+    rows = [ row2dict(row,{}) for row in qs ]
+    return json_response_kw(count=count,rows=rows) 
+    #~ return json_response_kw(count=len(rows),rows=rows) 
+    #~ return json_response_kw(count=len(rows),rows=rows,title=_('Choices for %s') % fldname)
+
+
+
+
   
+class ActionParamChoices(View):
+  
+    def get(self,request,app_label=None,actor=None,an=None,field=None,**kw):
+        actor = requested_report(app_label,actor)
+        ba = actor.get_url_action(an)
+        if ba is None:
+            raise Exception("Unknown action %r for %s" % (an,actor))
+        field = ba.action.get_param_elem(field)
+        qs, row2dict = choices_for_field(request,actor,field)
+        return choices_response(request,qs,row2dict)
+      
 class Choices(View):
   
     #~ def choices_view(self,request,app_label=None,rptname=None,fldname=None,**kw):
@@ -554,77 +646,9 @@ class Choices(View):
             field = rpt.get_param_elem(fldname)
             if field is None:
                 field = rpt.get_data_elem(fldname)
-            #~ logger.info("20120202 %r",field)
-            chooser = choosers.get_for_field(field)
-            if chooser:
-                #~ logger.info('20120710 choices_view() : has chooser')
-                qs = chooser.get_request_choices(request,rpt)
-                #~ qs = list(chooser.get_request_choices(ar,rpt))
-                #~ logger.info("20120213 %s",qs)
-                #~ if qs is None:
-                    #~ qs = []
-                assert isiterable(qs), \
-                      "%s.%s_choices() returned %r which is not iterable." % (
-                      rpt.model,fldname,qs)
-                if chooser.simple_values:
-                    def row2dict(obj,d):
-                        #~ d[ext_requests.CHOICES_TEXT_FIELD] = unicode(obj)
-                        d[ext_requests.CHOICES_VALUE_FIELD] = unicode(obj)
-                        return d
-                elif chooser.instance_values:
-                    # same code as for ForeignKey
-                    def row2dict(obj,d):
-                        d[ext_requests.CHOICES_TEXT_FIELD] = unicode(obj)
-                        d[ext_requests.CHOICES_VALUE_FIELD] = obj.pk
-                        return d
-                else:
-                    def row2dict(obj,d):
-                        d[ext_requests.CHOICES_TEXT_FIELD] = unicode(obj[1])
-                        d[ext_requests.CHOICES_VALUE_FIELD] = obj[0]
-                        return d
-            elif field.choices:
-                qs = field.choices
-                def row2dict(obj,d):
-                    if type(obj) is list or type(obj) is tuple:
-                        d[ext_requests.CHOICES_TEXT_FIELD] = unicode(obj[1])
-                        d[ext_requests.CHOICES_VALUE_FIELD] = obj[0]
-                    else:
-                        d[ext_requests.CHOICES_TEXT_FIELD] = unicode(obj)
-                        d[ext_requests.CHOICES_VALUE_FIELD] = unicode(obj)
-                    return d
-                
-            elif isinstance(field,models.ForeignKey):
-                m = field.rel.to
-                t = getattr(m,'_lino_choices_table',m._lino_default_table)
-                qs = t.request(settings.LINO.ui,request).data_iterator
-                #~ logger.info('20120710 choices_view(FK) %s --> %s',t,qs)
-                def row2dict(obj,d):
-                    d[ext_requests.CHOICES_TEXT_FIELD] = unicode(obj)
-                    d[ext_requests.CHOICES_VALUE_FIELD] = obj.pk 
-                    return d
-            else:
-                raise http.Http404("No choices for %s" % fldname)
-                
-                
-        quick_search = request.GET.get(ext_requests.URL_PARAM_FILTER,None)
-        if quick_search is not None:
-            qs = dbtables.add_quick_search_filter(qs,quick_search)
+            qs, row2dict = choices_for_field(request,rpt,field)
             
-        count = len(qs)
-            
-        offset = request.GET.get(ext_requests.URL_PARAM_START,None)
-        if offset:
-            qs = qs[int(offset):]
-            #~ kw.update(offset=int(offset))
-        limit = request.GET.get(ext_requests.URL_PARAM_LIMIT,None)
-        if limit:
-            #~ kw.update(limit=int(limit))
-            qs = qs[:int(limit)]
-            
-        rows = [ row2dict(row,{}) for row in qs ]
-        return json_response_kw(count=count,rows=rows) 
-        #~ return json_response_kw(count=len(rows),rows=rows) 
-        #~ return json_response_kw(count=len(rows),rows=rows,title=_('Choices for %s') % fldname)
+        return choices_response(request,qs,row2dict)
         
   
 class Restful(View):
