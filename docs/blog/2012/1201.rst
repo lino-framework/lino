@@ -4,14 +4,19 @@
 Hunting bugs in Django
 ----------------------
 
-I upgraded the demo sites at :doc:`/demos`:
-one thing is that I switched to the newest Lino and Lino-Welfare versions.
+This morning I upgraded the demo sites at :doc:`/demos`:
+one thing is that I switched to the newest Lino and 
+Lino-Welfare versions.
 
 But especially I also switched to the Django 
 development version in order to "pitch in and help them fix 
 bugs before the final 1.5 release (due in December)" 
 (as `they formulated it 
 <https://www.djangoproject.com/weblog/2012/nov/27/15-beta-1/>`_).
+
+First test result is **negative**: 
+no single bug appeared.
+Congratulations to the Django developers for their good work.
 
 
 Lino is not visible
@@ -22,6 +27,9 @@ and discovered that the Internet is really  obsolete.
 Google links people to pages that I wrote back in the previous decade. 
 Time to change that!
 
+Wrote a first post to `Luc's Lino blog <http://lsaffre.blogspot.com/>` 
+after more than two years.
+
 On saffre-rumma.net, all requests to http://lino.saffre-rumma.net 
 are now automatically and being redirected to 
 http://lino-framework.org using a permanent redirect.
@@ -31,6 +39,24 @@ way to make it say that it's obsolete. Started to delete pages.
 Blog entries from January to May 2010 were still only there. 
 Now I added them to :srcref:`/docs/blog/2010`, but without yet 
 converting them from Google's wiki markup to reStructuredText.
+
+
+Lino Così
+---------
+
+Started a new project :mod:`lino.apps.cosi`.
+
+Lino Così is yet another attempt to make Belgian accounting simple.
+With Lino Così (when it isready) you will be able to
+
+- manage your contacts (organisations and persons)
+- manage your account chart 
+- optionally manage a list of products (sales items)
+- record your sales invoices (optionally printing them)
+- record your purchase invoices
+- declare your VAT statement
+- record your bank statements
+- get your financial situation 
 
 
 

@@ -360,6 +360,8 @@ class ProjectRelated(dd.Model):
             blank=True,null=True,
             related_name="%(app_label)s_%(class)s_set_by_project",
             )
+    else:
+        project = dd.DummyField()
 
     def get_related_project(self,ar):
         if settings.LINO.project_model:

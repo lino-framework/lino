@@ -1291,31 +1291,39 @@ class Lino(object):
         
 
     def get_product_base_account(self,tt,product):
-        #~ from lino.modlib.ledger.models import JournalTypes
-        #~ if item.voucher.journal.type == JournalTypes.sales:
+        """
+        Return the reference of the general account 
+        to be used to book the product movement of 
+        the trade type and product.
+        The default implementation works with the accounts created by
+        :mod:`lino.modlib.accounts.fixtures.mini`.
+        """
         if tt.name == 'sales':
-            return '704000'
+            return '7000'
         elif tt.name == 'purchases':
         #~ elif item.voucher.journal.type == JournalTypes.purchases:
-            return '604000'
+            return '6000'
         
     #~ def get_sales_item_account(self,item):
         #~ return self.modules.accounts.Account.objects.get(group__ref='704000')
         
     def get_partner_account(self,voucher):
+        """
+        Return the reference of the general account 
+        where the partner movement of the given voucher should be booked.
+        The default implementation works with the accounts created by
+        :mod:`lino.modlib.accounts.fixtures.mini`.
+        """
         tt = voucher.get_trade_type()
         if tt.name == 'sales':
-        #~ if voucher.journal.type == JournalTypes.sales:
-            return '400000'
+            return '4000'
         elif tt.name == 'purchases':
-        #~ elif voucher.journal.type == JournalTypes.purchases:
-            return '440000'
+            return '4400'
         
     def get_vat_account(self,tt,vc,vr):
         """
-        Return a string with the `ref` of the account into which 
-        the VAT amount should be booked.
-        `tt` is a TradeType (usually either sales or purchases)
+        Return the reference of the account where the VAT amount should be booked.
+        `tt` is a TradeType (usually either `sales` or `purchases`)
         `vc` is a VatClass
         `vr` is a VatRegime
         

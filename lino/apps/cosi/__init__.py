@@ -1,3 +1,4 @@
+# -*- coding: UTF-8 -*-
 ## Copyright 2011-2012 Luc Saffre
 ## This file is part of the Lino project.
 ## Lino is free software; you can redistribute it and/or modify 
@@ -11,58 +12,68 @@
 ## You should have received a copy of the GNU General Public License
 ## along with Lino; if not, see <http://www.gnu.org/licenses/>.
 
+"""
+Lino Così is yet another attempt to make Belgian accounting simple.
+
+With Lino Così (when it is ready) you will be able to
+
+- manage your contacts (organisations and persons)
+- manage your account chart 
+- optionally manage a list of products (sales items)
+- record your sales invoices (optionally printing them)
+- record your purchase invoices
+- declare your VAT statement
+- record your bank statements
+- get your financial situation 
+
+About the name: 
+Le but est de proposer enfin un logiciel de comptabilité vraiment simple à utiliser.
+Une **co**\ mptabilité **si**\ mple? 
+"Così" en italien signifie "comme ceci".
+Così! c'est comme ça qu'on fait une compta simple!
+(Mais bien sûr il nous reste un peu de travail avant d'y être.
+Bienvenus les volontaires pour tester 
+http://demo.lino-framework.org
+et m'aider à réfléchir.)
+
+"""
+
 from os.path import join, abspath, dirname
 
 from lino.apps.std.settings import *
-#~ from lino.apps.presto import __version__, __url__, __name__
 
 class Lino(Lino):
   
     #~ title = __name__
-    short_name = "Lino Presto"
+    short_name = u"Lino Così"
     version = "0.1"
-    url = "http://www.lino-framework.org/autodoc/lino.apps.presto"
-    #~ description = "a Lino application for Belgian Public Welfare Centres"
+    url = "http://www.lino-framework.org/autodoc/lino.apps.cosi"
+    description = "a Lino application to make Belgian accounting simple."
     author = 'Luc Saffre'
     author_email = 'luc.saffre@gmail.com'
     
-    languages = ['en']
+    languages = ['en','de','fr']
     #~ languages = 'de fr et en'.split()
     
-    project_model = 'tickets.Project'
+    #~ project_model = 'tickets.Project'
     user_model = 'users.User'
     
     #~ remote_user_header = "REMOTE_USER"
     
-    override_modlib_models = [
-      'contacts.Person','contacts.Company',
-      'households.Household']
+    #~ override_modlib_models = [
+      #~ 'contacts.Person','contacts.Company',
+      #~ 'households.Household']
     
     def get_app_source_file(self): return __file__
       
-    def get_application_info(self):
-        return (__name__,__version__,__url__)
+    #~ def get_application_info(self):
+        #~ return (__name__,__version__,__url__)
       
     def get_main_action(self,user):
         return self.modules.lino.Home.default_action
         
     #~ def setup_quicklinks(self,ui,user,tb):
         #~ tb.add_action(self.modules.contacts.Persons.detail_action)
-        
-    def get_partner_account(self,voucher):
-        tt = voucher.get_trade_type()
-        if tt.name == 'sales':
-            return '400000'
-        elif tt.name == 'purchases':
-            return '440000'
-            
-    def get_product_base_account(self,tt,product):
-        if tt.name == 'sales':
-            return '704000'
-        elif tt.name == 'purchases':
-            return '604000'
-            
-        
         
     def setup_choicelists(self):
         """
@@ -85,9 +96,9 @@ class Lino(Lino):
         yield 'django.contrib.contenttypes'
         yield 'lino.modlib.users'
         yield 'lino.modlib.countries'
-        yield 'lino.modlib.properties'
+        #~ yield 'lino.modlib.properties'
         yield 'lino.modlib.contacts'
-        yield 'lino.modlib.households'
+        #~ yield 'lino.modlib.households'
         yield 'lino.modlib.products'
         yield 'lino.modlib.accounts'
         yield 'lino.modlib.ledger'
@@ -95,17 +106,13 @@ class Lino(Lino):
         #~ 'lino.modlib.journals',
         yield 'lino.modlib.sales'
         #~ 'lino.modlib.projects',
-        yield 'lino.modlib.blogs'
-        yield 'lino.modlib.tickets'
+        #~ yield 'lino.modlib.blogs'
+        #~ yield 'lino.modlib.tickets'
         #~ 'lino.modlib.links',
-        yield 'lino.modlib.uploads'
+        #~ yield 'lino.modlib.uploads'
         #~ 'lino.modlib.thirds',
-        yield 'lino.modlib.cal'
-        yield 'lino.modlib.outbox'
+        #~ yield 'lino.modlib.cal'
+        #~ yield 'lino.modlib.outbox'
         #~ yield 'lino.modlib.postings'
         #~ yield 'lino.modlib.pages'
-        yield 'lino.apps.presto'
-      
-    
-LINO = Lino(__file__,globals()) 
-
+        yield 'lino.apps.cosi'

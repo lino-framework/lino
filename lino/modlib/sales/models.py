@@ -179,19 +179,10 @@ class SalesRule(dd.Model):
             #~ return r
             
 
-class Customer(contacts.Partner):
-    """
-    A Customer is a :class:`contacts.Partner` 
-    that can receive sales invoices.
-    """    
+class Customer(dd.Model):
     class Meta:
-        verbose_name =_("Customer")
-        verbose_name_plural =_("Customers")
-        
-    #~ name = models.CharField(max_length=40)
-    #~ company = models.ForeignKey('contacts.Company',blank=True,null=True)
-    #~ person = models.ForeignKey('contacts.Person',blank=True,null=True)
-    
+        abstract = True
+
     payment_term = models.ForeignKey(PaymentTerm,
         blank=True,null=True,help_text="""\
 The default payment term of sales invoices for this customer.""")
@@ -199,12 +190,29 @@ The default payment term of sales invoices for this customer.""")
 The default `VAT regime` of sales invoices for this customer.""")
     item_vat = models.BooleanField(default=False,help_text="""\
 The default item_vat settings of sales invoices for this customer.""")
-    
-    #~ def __unicode__(self):
-        #~ if self.name is None:
-            #~ return u"Unsaved customer %s" % self.id
-        #~ return self.name
+
+
+#~ class Customer(contacts.Partner):
+    #~ """
+    #~ A Customer is a :class:`contacts.Partner` 
+    #~ that can receive sales invoices.
+    #~ """    
+    #~ class Meta:
+        #~ verbose_name =_("Customer")
+        #~ verbose_name_plural =_("Customers")
         
+    #~ # name = models.CharField(max_length=40)
+    #~ # company = models.ForeignKey('contacts.Company',blank=True,null=True)
+    #~ # person = models.ForeignKey('contacts.Person',blank=True,null=True)
+    
+    #~ payment_term = models.ForeignKey(PaymentTerm,
+        #~ blank=True,null=True,help_text="""\
+#~ The default payment term of sales invoices for this customer.""")
+    #~ vat_regime = vat.VatRegimes.field(blank=True,help_text="""\
+#~ The default `VAT regime` of sales invoices for this customer.""")
+    #~ item_vat = models.BooleanField(default=False,help_text="""\
+#~ The default item_vat settings of sales invoices for this customer.""")
+    
         
     #~ def full_clean(self,*args,**kw):
         #~ if self.company_id is not None:
@@ -274,9 +282,9 @@ class SalesDocument(
     #status = models.CharField(max_length=1, choices=STATUS_CHOICES)
     discount = models.IntegerField(_("Discount"),blank=True,null=True)
         
-    @dd.chooser()
-    def partner_choices(self):
-        return Customer.objects.order_by('name')
+    #~ @dd.chooser()
+    #~ def partner_choices(self):
+        #~ return Customer.objects.order_by('name')
         
     def add_item(self,product=None,qty=None,**kw):
         if product is not None:
@@ -684,9 +692,11 @@ class InvoicesByJournal(Invoices):
                   "total_excl total_vat user *"
                   #~ "ledger_remark:10 " \
 
-class InvoicesByProject(Invoices):
-    order_by = ['-date']
-    master_key = 'project' 
+if settings.LINO.project_model:
+  
+    class InvoicesByProject(Invoices):
+        order_by = ['-date']
+        master_key = 'project' 
     
 class SignAction(actions.Action):
     label = "Sign"

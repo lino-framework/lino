@@ -136,7 +136,8 @@ class VoucherTypes(dd.ChoiceList):
 
 class Journal(babel.BabelNamed,mixins.Sequenced):
   
-    id = models.CharField(max_length=4,primary_key=True)
+    #~ id = models.CharField(max_length=4,primary_key=True)
+    ref = dd.NullCharField(max_length=20,unique=True)
     #~ name = models.CharField(max_length=100)
     trade_type = vat.TradeTypes.field()
     #~ doctype = models.IntegerField() #choices=DOCTYPE_CHOICES)
@@ -192,7 +193,10 @@ class Journal(babel.BabelNamed,mixins.Sequenced):
         return number + 1
         
     def __unicode__(self):
-        return self.id +' (%s)' % babel.BabelNamed.__unicode__(self)
+        #~ if self.ref:
+        return '%s (%s)' % (babel.BabelNamed.__unicode__(self),self.ref or self.id)
+            #~ return self.ref +'%s (%s)' % babel.BabelNamed.__unicode__(self)
+            #~ return self.id +' (%s)' % babel.BabelNamed.__unicode__(self)
         
     def save(self,*args,**kw):
         #~ self.before_save()
@@ -272,12 +276,14 @@ class Voucher(mixins.UserAuthored):
         #~ return jnl
         
     @classmethod
-    def create_journal(cls,jnl_id,trade_type,**kw):
+    def create_journal(cls,trade_type,**kw):
+    #~ def create_journal(cls,jnl_id,trade_type,**kw):
         #~ doctype = get_doctype(cls)
         #~ jnl = Journal(doctype=doctype,id=jnl_id,*args,**kw)
         tt = vat.TradeTypes.get_by_name(trade_type)
         vt = VoucherTypes.get_by_value(full_model_name(cls))
-        jnl = Journal(trade_type=tt,voucher_type=vt,id=jnl_id,**kw)
+        #~ jnl = Journal(trade_type=tt,voucher_type=vt,id=jnl_id,**kw)
+        jnl = Journal(trade_type=tt,voucher_type=vt,**kw)
         return jnl
         
     @classmethod
@@ -333,7 +339,10 @@ class Voucher(mixins.UserAuthored):
     def create_movement(self,account,amount,**kw):
         kw['voucher'] = self
         #~ account = accounts.Account.objects.get(group__ref=account)
-        account = accounts.Account.objects.get(ref=account)
+        try:
+            account = accounts.Account.objects.get(ref=account)
+        except accounts.Account.DoesNotExist:
+            raise Warning("No Account with reference %r" % account)
         kw['account'] = account
         if amount >= 0:
             kw['amount'] = amount

@@ -14,10 +14,10 @@
 
 """
 
-Import of your TIM data. 
+Import of our TIM data. 
 Mandatory argument is the path to your TIM data directory.
 
-It uses Ethan Furman's ``dbf`` package from http://pypi.python.org/pypi/dbf/
+It requires Ethan Furman's ``dbf`` package from http://pypi.python.org/pypi/dbf/
 
 """
 

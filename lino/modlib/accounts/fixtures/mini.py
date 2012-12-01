@@ -39,11 +39,11 @@ def objects():
         u"Forderungen aus Lieferungen und Leistungen",
         "Commercial receivable(?)")
     yield O('4000','asset',u"Clients",u"Kunden","Customers")
+    yield O('4400','liability',u"Fournisseurs",u"Lieferanten","Suppliers")
     # todo: hackerzacker, gibt es da denn keine allgemein verständliche Formulierung?!
     yield O('451','asset',u"TVA à payer",u"Geschuldete MWSt","VAT to pay")
     yield O('4510','income',u"TVA due",u"MWSt zu regularisieren","VAT due")
     yield O('4512','asset',u"TVA déductible",u"Geschuldete MWSt","VAT receivable")
-    yield O('4400','liability',u"Fournisseurs",u"Lieferanten","Suppliers")
-    yield O('6','expense',u"Charges",u"Aufwendungen","Expenses")
+    yield O('6000','expense',u"Charges",u"Aufwendungen","Expenses")
     yield O('7','income',u"Produits",u"Erträge","Revenues")
-    yield O('70','income',u"Ventes",u"Verkäufe","Sales")
+    yield O('7000','income',u"Ventes",u"Verkäufe","Sales")
