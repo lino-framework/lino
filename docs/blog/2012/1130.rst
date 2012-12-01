@@ -16,11 +16,16 @@ Language courses
 
 - Sprachkurse verwalten: Registrieren / Entregistrieren funktionierte nicht.
 
+Last minute changes
+-------------------
+
+- Removed the now obsolete PersonSearch model & related
+
 
 Unofficial release
 ------------------
 
-This is the third "unofficial" release, where "unofficial" means that it is not 
+This is the third unofficial release, where "unofficial" means that it is not 
 registered and announced at PyPI.
 
 Upgrade in Eupen from 
@@ -30,10 +35,7 @@ Lino-Welfare `203:82ef854ca191` (Tue Nov 27 13:29:01 2012 -0400)
 to the current versions.
 
 Database Migrating from version 1.0.4 to 1.0.5.
+Installed 55125 object(s) from 1 fixture(s)
 
 
 
-Last minute changes
--------------------
-
-- Removed the now obsolete PersonSearch model & related

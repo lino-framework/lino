@@ -45,7 +45,7 @@ from lino.core.modeltools import resolve_model, obj2str
 
 from lino.modlib.cal.utils import \
     DurationUnits, setkw, dt2kw, \
-    AccessClasses, CalendarAction
+    Weekdays, AccessClasses, CalendarAction
 
 from lino.utils.babel import dtosl
 

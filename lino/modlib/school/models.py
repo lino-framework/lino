@@ -187,13 +187,13 @@ class Slot(mixins.Sequenced):
           unique=True,
           verbose_name=_("Name"))
     #~ weekday = cal.Weekday.field()
-    monday    = models.BooleanField(cal.Weekday.monday.text)
-    tuesday   = models.BooleanField(cal.Weekday.tuesday.text)
-    wednesday = models.BooleanField(cal.Weekday.wednesday.text)
-    thursday  = models.BooleanField(cal.Weekday.thursday.text)
-    friday    = models.BooleanField(cal.Weekday.friday.text)
-    saturday  = models.BooleanField(cal.Weekday.saturday.text)
-    sunday    = models.BooleanField(cal.Weekday.sunday.text)
+    monday    = models.BooleanField(cal.Weekdays.monday.text)
+    tuesday   = models.BooleanField(cal.Weekdays.tuesday.text)
+    wednesday = models.BooleanField(cal.Weekdays.wednesday.text)
+    thursday  = models.BooleanField(cal.Weekdays.thursday.text)
+    friday    = models.BooleanField(cal.Weekdays.friday.text)
+    saturday  = models.BooleanField(cal.Weekdays.saturday.text)
+    sunday    = models.BooleanField(cal.Weekdays.sunday.text)
     start_time = models.TimeField(
         blank=True,null=True,
         verbose_name=_("Start Time"))
@@ -206,7 +206,7 @@ class Slot(mixins.Sequenced):
         
     def is_available_on(self,date):
         wd = date.isoweekday() # Monday:1, Tuesday:2 ... Sunday:7
-        wd = cal.Weekday.get_by_value(str(wd))
+        wd = cal.Weekdays.get_by_value(str(wd))
         return getattr(self,wd.name)
         
 class Slots(dd.Table):
