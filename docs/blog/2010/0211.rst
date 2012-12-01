@@ -1,0 +1,21 @@
+= [20100211 Arbeitsbericht] =
+
+Die Idee für Issue 94 wird mir langsam klarer. Ich werde es "Dialoge" nennen. Ein Dialog ist eine Serie von Requests (c2s) und Responses (s2c). 
+
+Der Client sagt zum Server `POST /action/contacts/Persons`, worauf der Server einen neuen Dialog eröffnet. Bei `/action/contacts/Persons` wird es ein kurzer Dialog: der Server antwortet dem Client mit JS-Code ("führ mal folgenden Code aus"). 
+
+Ein bisschen schade ist, dass der Server dann diesen Dialog dennoch offen hält, weil eine Generatorfunktion nicht sagen kann wieviele Steps sie hat. Der Client muss also gleich nach dem Ausführen des JS-Codes kurz antworten (z.B. ´POST /step/1´) und auf die nächste Anweisung warten. Erst dann darf der Server `dialog.next()` rufen und wird feststellen, dass keine Anweisung mehr kommt.
+
+Der Server hat eine Liste von allen laufenden Dialogen. Die Dialognummern brauchen nur innerhalb ihrer Sitzung identifizierend zu sein.
+
+
+Auch Issue 100 dürfte relativ leicht werden. Das API der `FOO_choice`-Methoden kann so bleiben, aber der `/choices/`-Request muss einfach fast das Gleiche wie `/submit/` machen, außer dass er die Instanz nicht speichert.
+
+Habe an Issue 86 (Grid does 2 useless data requests) gearbeitet. Funktioniert immer noch nicht richtig. Ich erinnere mich nicht, weshalb ich auch in `render` die `pageSize` setze. Nach dem Render wird scheinbar auch resize getriggert, daher der doppelte Aufruf. Die Einbindung in die Events scheint jetzt okay zu sein, aber woher kriege ich eine verlässliche Angabe über die Größe der Grid? 
+`this.getInnerHeight()`? `this.getView().mainBody.getHeight()`?
+Kann es sein, dass das `autoHeight=True` der Grid stört?
+Wahrscheinlich... jedenfalls ohne `autoHeight=True` klappt es einigermaßen.
+Warum ich aber noch 3 Zeilen abziehen muss, habe ich nicht ganz verstanden. Eine für die extra row, vielleicht eine weitere für die Kolonnentitel, aber die Dritte kann ich nicht erklären. 
+
+
+Weiter mit der Einbindung der Slave Grids (Issue 102). Die load()s der slave_grids müssen nicht in DetailMainPanel generiert werden, sondern die slave_grids selber müssen sich als row_listener registrieren.

@@ -1,0 +1,120 @@
+= [20100225 ←] [20100226 26.02.2010] [20100227 →] =
+
+Speichern der Fenstergröße des Ei-Editors. Jetzt haben auch Eigenschaften-Fenster einen Button um die Größe zu speichern. Das Problem hier war, dass die Ei-Editor-Fenster noch keinen Permalink-Namen hatten. War über 4 Stunden Arbeit, was u.A. daran liegt, dass mein System zum Generieren von JS sehr komplex und noch nicht stabil ist. Zum Beispiel werden Generatorfunktionen jetzt wieder während `py2js()` ausgeführt und nicht vom aufrufenden Code. Denn sonst kann man eine gleiche Struktur nur einmal generieren lassen. Das hatte interessanterweise bisher nie gestört. Aber seit heute ist auch `PagingToolbar` eine `jsgen.Variable`, und dort störte es.
+
+Also in Revision 
+[http://code.google.com/p/lino/source/detail?r=528936fc2d6e47186b63ee52ca1687be81a44f31 528936fc2d] können auch Ei-Fenster ihre Größe speichern.
+
+Todo: 
+ * Ei-Fenster zeigt noch immer nur die gesetzten Eigenschaften an (statt alle)
+ * alle SlaveWindows mit Toggle-Button wie PropertiesWindow
+
+----
+
+Ein paar Kleinigkeiten in der demo.dpy von lino-dsbe. Neue Eigenschaft 'Betriebsform'. Feld `civil_state` ist jetzt nicht mehr in Person, sondern als Eigenschaft. Kleine Funktion `fill_choices(p,model)`, um fiktive Demo-Eigenschaften bequem zu generieren.
+
+Bug in LoginDialog behoben. (Mir schwant es immer klarer, dass ich `ReportRequest` umbenennen sollte nach `ReportDialog(Dialog)`...)
+
+Auch nach 1 Stunde Suche zeigt der Ei-Fenster noch immer nicht alle Eigenschaften an. Obschon Lino sie ihm alle liefert, zeigt er immer nur diese 5 an. Rätselhaft...
+
+== Release auf Tups ==
+
+Aber jetzt scheint mir der richtige Zeitpunkt, noch mal ein Release auf [http://dsbe.saffre-rumma.ee] zu machen. Dummerweise schlägt nun Issue 79 wieder zu.
+Updated Django to revision 12600. Ändert nichts.
+
+Also ich gehe nach `/var/snapshots/dsbe/src/dsbe/demo` und starte dort:
+
+{{{
+$ python fill.py demo
+Using default logging config
+Traceback (most recent call last):
+  File "fill.py", line 23, in <module>
+    from lino import lino_site
+  File "/var/snapshots/lino/src/lino/lino_site.py", line 19, in <module>
+    from django.conf import settings
+ImportError: No module named conf
+$
+}}}
+
+Und dieser Fehler kommt auf allen UNIX-Rechnern, aber nicht unter Windows.
+Seltsam ist, dass folgendes wohl funktioniert:
+
+{{{
+$ export DJANGO_SETTINGS_MODULE=dsbe.demo.settings
+$ python -c 'from django.conf import settings; print settings.DEBUG'
+Using default logging config
+True
+$
+}}}
+
+Oder noch härter:
+
+{{{
+$ python
+Python 2.5.2 (r252:60911, Jan  4 2009, 17:40:26)
+[GCC 4.3.2] on linux2
+Type "help", "copyright", "credits" or "license" for more information.
+>>> from django.conf import settings
+>>>
+}}}
+
+Nach langem Suchen... Ha! Die Erklärung ist, dass es früher mal ein Modul `lino.django` gab, und Mercurial hat dessen Verzeichnis (`/var/snapshots/lino/src/lino/django`) mitsamt den darin enthaltenen `*.pyc`-Dateien stehenlassen (weil ich ihm ja gesagt hat, er soll die ignorieren). Und wenn ich in `lino.lino_site` das `from django.conf import settings` mache, importiert er das dortige Modul `lino.django`. Deswegen muss man ja relative Imports in neueren Python-Versionen explizit schreiben: `from . import django.conf`
+
+Jedenfalls war die Lösung also:
+
+{{{
+rm -R /var/snapshots/lino/src/django
+}}}
+
+
+Nach einigen weiteren Problemen (in der Apache-Konfig stand `Alias /extjs/ /var/snapshots/extjs/ext-3.1.1/` statt `Alias /extjs/ /var/snapshots/ext-3.1.1/`, und für die `/tmp/dsbe_demo.db` muss ich nach dem fill.py immer manuell `chgrp www-data` und `chmod g+w` machen) funktioniert jetzt endlich wieder ein öffentlicher Demo-Lino:
+
+   http://dsbe.saffre-rumma.ee/
+
+Bemerkungen:
+
+ * Um Daten zu sehen, muss man sich anmelden als "user" oder "root", die beide als Passwort "1234" haben. 
+
+ * Kann sein, dass man FireBug aktivieren muss, weil ich an manchen Stellen noch "console.log()" benutze.
+
+ * Die Performance lässt zu wünschen übrig.
+
+Oh je! Dieses Release auf Tups (eigentlich nur für mich, um in Übung zu bleiben) hat 2 Stunden gedauert... aber immerhin ist ja jetzt Issue 79 gelöst.
+
+----
+
+Nachtrag: kurz danach hatten wir zwei Stunden lang Strompanne, so dass saffre-rumma.ee Zwangsurlaub hatte.
+
+Anschließend musste ich die Demo-Datenbank (sqlite) neu generieren, weil die durch den unangemeldeten Aussetzer kaputtgegangen war.
+
+{{{
+$ python fill.py demo
+Using default logging config
+Gonna reset database /tmp/dsbe_demo.db. Are you sure? [Y,n]
+Error: Error: auth couldn't be reset. Possible reasons:
+  * The database isn't running or isn't configured correctly.
+  * At least one of the database tables doesn't exist.
+  * The SQL was invalid.
+Hint: Look at the output of 'django-admin.py sqlreset auth'. That's the SQL this command wasn't able to run.
+The full error: attempt to write a readonly database
+
+$ ls -l /tmp/dsbe_demo.db
+-rw-r--r-- 1 www-data www-data 0 Feb 26 21:52 /tmp/dsbe_demo.db
+
+# rm /tmp/dsbe_demo.db
+
+$ python fill.py  demo
+Using default logging config
+Gonna reset database /tmp/dsbe_demo.db. Are you sure? [Y,n]
+Installing dpy fixture 'initial_data' from '/var/snapshots/lino/src/lino/modlib/countries/fixtures'.
+Installed 5 object(s) from 1 fixture(s)
+Installing dpy fixture 'demo' from '/var/snapshots/lino/src/lino/modlib/countries/fixtures'.
+Installing dpy fixture 'demo' from '/var/snapshots/lino/src/lino/modlib/contacts/fixtures'.
+Installing dpy fixture 'demo' from '/var/snapshots/lino/src/lino/modlib/notes/fixtures'.
+Installing dpy fixture 'demo' from '/var/snapshots/dsbe/src/dsbe/fixtures'.
+Installed 141 object(s) from 4 fixture(s)
+
+$ chown luc:www-data /tmp/dsbe_demo.db
+
+$ chmod g+w /tmp/dsbe_demo.db
+}}}

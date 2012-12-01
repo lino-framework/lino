@@ -1,0 +1,21 @@
+= [20100422 ←] [20100423 23.04.2010] [20100424 →] =
+
+Gestern abend sagte ich zu Ly «Vielleicht wird Lino heute fertig». Das war natürlich übertrieben, aber ich hatte erstmals seit vielen Wochen wieder den Eindruck, Horizont zu sehen. Vorm Schlafengehen hatte ich in nur einer halben Stunde noch schnell das InsertWindow begonnen und erstmals laufen sehen. 
+
+8.45 Uhr : [http://code.google.com/p/lino/source/detail?r=a01e3b224c9422d4d749486f78cc04fa0e6ac353 Hier] der Zustand von gestern abend.
+
+12.10 Uhr : Das erste Submit über das neue Insert-Fenster hat funktioniert.
+
+Hier noch eine Liste von [http://www.prescod.net/rest/mistakes/ Common REST Mistakes].
+
+
+17.30 Uhr. Bon, ich muss Feierabend machen, und Lino ist nicht fertig geworden ;-)
+Aber immerhin: Man kann jetzt Records einfügen und löschen. 
+
+[http://code.google.com/p/lino/source/detail?r=b691e3dc411b78684059373ccfe29e18a0eb1220 Check-in].
+
+
+Lästige Kleinigkeiten sind noch:
+
+ * InsertWindow schließt nicht automatisch nach "Submit"
+ * `Lino.delete_selected()` ruft `caller.refresh()` sogleich nachdem die DELETE calls abgschickt sind. Eigentlich müsste er warten, bis alle calls beantwortet wurden.

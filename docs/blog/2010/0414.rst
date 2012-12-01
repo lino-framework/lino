@@ -1,0 +1,80 @@
+= [20100413 ←] [20100414 14.-16.04.2010] [20100421 →] =
+
+Die störenden Fragen von [20100413 gestern] sind noch nicht definitiv beantwortet. Insgesamt stellt sich raus, dass Issue 118 wohl doch nicht so peu à peu gemacht werden kann, sondern noch vor der Geburt erledigt werden muss...
+
+[http://code.google.com/p/lino/source/detail?r=ffdd0df5959b68311d8edd355f385aaaad27a80d Check-In], um den momentanen Stand mal festzuhalten. Dort ist folgendes interessante Problem: `GET /api/contacts/Companies/props.act` funktioniert korrekt und öffnet das Fenster, das dann einen Ajax-Call `GET /api/contacts/Companies/props.json` macht. 
+
+{{{
+Traceback (most recent call last):
+  File "l:\snapshots\django\django\core\servers\basehttp.py", line 280, in run
+    self.result = application(self.environ, self.start_response)
+  File "l:\snapshots\django\django\core\servers\basehttp.py", line 674, in __call__
+    return self.application(environ, start_response)
+  File "l:\snapshots\django\django\core\handlers\wsgi.py", line 241, in __call__
+    response = self.get_response(request)
+  File "l:\snapshots\django\django\core\handlers\base.py", line 143, in get_response
+    return self.handle_uncaught_exception(request, resolver, exc_info)
+  File "l:\snapshots\django\django\core\handlers\base.py", line 101, in get_response
+    response = callback(request, *callback_args, **callback_kwargs)
+  File "t:\hgwork\lino\src\lino\ui\extjs\ext_ui.py", line 346, in api_view
+    return e.handle_request(ar)
+  File "t:\hgwork\lino\src\lino\ui\extjs\ext_ui.py", line 84, in handle_request
+    d = ar.render_to_dict()
+  File "t:\hgwork\lino\src\lino\reports.py", line 592, in render_to_dict
+    rows = [ self.row2dict(row,{}) for row in self.queryset ]
+  File "t:\hgwork\lino\src\lino\ui\extjs\ext_requests.py", line 237, in row2dict
+    fld.obj2json(row,d)
+  File "t:\hgwork\lino\src\lino\ui\extjs\ext_store.py", line 172, in obj2json
+    v = getattr(obj,self.field.name)
+AttributeError: 'INT' object has no attribute 'country'
+}}}
+
+Der RTE auf dem Server kommt daher, dass er eine Liste von PropValues unter Verwendung der Metadaten von Companies zu formatieren versucht.
+
+Um das Problem richtig zu lösen, müsste ich mal endlich eine klare Vision über die Struktur der URLs haben. 
+
+ # Ein URL, das mit `/api/contacts/Companies/` beginnt, sollte immer Company-Daten zurück geben, niemals PropValues. 
+
+ # Eine URL `/api/contacts/Persons/projects.act` ist nötig, weil `Lino.setup_child()` diese URL ausgehend vom Namen des Buttons im GridMaster-Fenster konstruieren können muss. Stimmt nicht, denn ich kann die URL jedes Buttons auch in `config.actions` mitgeben. 
+
+ # Das SlaveGrid-Fenster, das sich dann öffnet, hat eine Grid, deren Store seine Daten von `/api/projects/ProjectsByPerson/grid.json` holen sollte und nicht von `/api/contacts/Persons/projects.json`.
+
+ # Also in `/api/contacts/Persons/grid.act` gibt es einen Toggle-Button namens `projects`, der seinen JS-Code von `/api/projects/ProjectsByPerson/grid.act` holt. Das wäre für GridSlave-Fenster. Auch die URL des Properties-Fenster springt zur Wurzel zurück, sie zeigt nach `/api/properties/PropValuesByOwner/pgrid.act`. (warum pgrid und nicht grid: sh. weiter unten). 
+
+ # Aber `detail` (obwohl wie SlaveGrid und Properties ein Togglebutten ist) verhält sich vom URL her wie `insert` und `delete` und geht nach `/api/contacts/Persons/detail.act`, also tiefer in den Baum runter.
+
+
+PropValuesByOwner ist ein spezieller Report in dem Sinne, das seine Kolonne 'value' eine variable Datenart hat. Deshalb wird er nicht in einer normalen `Ext.grid.EditorGrid` angezeigt, sondern mit einer `Ext.grid.PropertyGrid`. 
+
+Bisher habe ich diese Besonderheit durch das Attribut `use_layouts` gekennzeichnet. Das ist sehr unschön, und jetzt ahne ich auch, wie das elegant gehen soll: Der Report muss eine andere `default_action` kriegen. 
+
+Das bedeutet freilich auch, dass `list_layout` und die anderen Dinger, die ExtUI nur im Fall von use_layouts anlegte, nicht mehr im ReportHandle sondern der Action gespeichert wird. Also brauchen wir eine ActionHandle.
+
+Auch das noch? Wäre es nicht eleganter, wenn ich diese Unterscheidung zwischen Actors und deren Handles überhaupt wieder raushole? Also ReportHandle bzw. LayoutHandle ersetzen durch ein Attribut `extjs_specific_setup_data`, das beim ersten Zugriff in den Actor eingepfropft wird? Nun ja, das genau ist ja eigentlich der Sinn der Handles. 
+
+Also besser muss ich `HandledActor(Actor)`ersetzen durch `Handled`, `Actor(Handled)` und `Action(Handled)`. Und `Handled` kommt nach `lino.ui.base`, und `_handle_selector` kommt weg, denn der Selector muss immer `base.UI` (oder `None`) sein.
+
+Für Actions ist ein eigenes Handle vorläufig nicht nötig, weil Actions kein User-Code sind. ExtUI propft ihnen einfach ein Attribut `window_wrapper` rein, das stört niemanden. Handle wird also zunächst nur für Layout und Report benutzt, weil das User-Code ist und wir uns vor Name-Clashes schützen sollten.
+
+Noch was: NotesByOwner zum Beispiel muss ja eine eigene Konfiguration für jede GridSlaveAction kriegen. Deshalb muss ein WindowWrapper in jeder GridSlaveAction gespeichert werden. Weil er einen master hat, kriegt er keine default_action.
+
+Layouts sind Actors, denn es sind Singletons und sie müssen beim Hochfahren des Servers initialisiert und ihrem Modell zugewiesen werden. 
+
+Bisher wurde aber ein LayoutHandle nicht nur einmal pro Layout und UI instanziert, sondern einmal pro Layout und ReportHandle. Das war nötig, weil das ReportHandle als datalink funktionierte, um die Actions und Datenfelder zu liefern. Die Actions sind in einem Layout jetzt aber nicht mehr nötig (Action-Buttons brauchen nicht an arbiträren Stellen eines Fensters eingesetzt zu werden, dieses Feature war nur für Forms wichtig, die es nicht mehr gibt), und Datenfelder holte auch der ReportHandle nur aus dem Modell raus. 
+Also wird jetzt nur noch ein LayoutHandle pro Layout (und UI) instanziert. Das ist gut, denn die Instanzierung eines LayoutHandles ist ziemlich teuer, denn da wird seine Element-Struktur erzeugt (für die das UI bekannt sein muss).
+
+Konsequenzen: 
+ * Woher holt sich ForeignKeyElement dann seinen chooser? 
+ * DateFieldElement holt sich sein date_format nun aus dem Layout, nicht mehr aus dem Report. Idem für BooleanFieldElement und `boolean_texts`. 
+ * `LayoutHandle._needed_stores` ist nicht mehr nötig, weil die Stores nun immer inline sind. 
+ * Das Schwierigste ist GridElement. Dort wird das ListLayout des Reports benötigt. Das ist theoretisch machbar, weil ListLayouts nie GridElemente enthalten. Nur muss ich dann (wahrscheinlich in UI.setup_site()) dafür sorgen, dass zuerst alle ReportHandles instanziert werden, und ihnen dann dann selber zuerst allen ein list_layout verpassen und dann erst die LayoutHandles der Detail-Layouts. Aber das schaff ich jetzt nicht mehr, denn ich muss Feierabend machen.
+
+Nochmal [http://code.google.com/p/lino/source/detail?r=1f84d4cc758c728981e241b41970fc36c01faf30 Check-In], obschon quasi nichts funktioniert, aber einfach nur weil das die einzige nach außen hin sichtbare Spur meiner heutigen Arbeit ist.
+
+==Wochenrückschau==
+
+Hackerzacker! Noch immer kein zeigbares Resultat! Und das, obschon ich diese Woche 21 Stunden an Lino gearbeitet habe! 
+
+Sind Entwicklungslawinen solchen Ausmaßes noch normal? Fehlen mir vielleicht irgendwelche Denktechniken? Das kann ich natürlich nicht von der Hand weisen, also falls jemand meine Denkfehler aus obigen Notizen erkennt und sich zutraut, meine über 20 Jahre alten Denkgewohnheiten mit raisonablem Kosten- und Zeitaufwand zu korrigieren, der möge sich bei mir melden! 
+
+Derweil mache ich weiter mit meinen altbewährten Methoden und hoffe, dass diese Lawine sich bald wieder beruhigt und dass es die letzte ihrer Größenordnung ist. Ich bin ungeduldig und ärgere mich, dass es noch so lange dauert, aber sehe keinen Grund, die Hoffnung aufzugeben. Also Maul halten und durchhalten.

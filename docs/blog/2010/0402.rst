@@ -1,0 +1,9 @@
+= [20100401 ←] [20100402 02.04.2010] [20100405 →] =
+
+Das gestrige Erfolgserlebnis kann ich weiterhin bestätigen. Aber obschon ich danach noch mehr als 3 Stunden lang geömmelt habe, bin ich noch immer nicht fertig geworden mit der Implementierung der Actions und Buttons. Kann sein, dass die UI-spezifischen Daten (Store und LayoutHandles) pro Action in einer neuen Klasse ActionHandle stehen sollten statt wie bisher im ReportHandle. Also für Ostern wird noch immer nichts Vorzeigbares fertig sein.
+
+Es tut mir ja Leid, dass Lino uns alle auch in dieser letzten Phase vor der "Geburt" noch so lange warten lässt. Was zur Zeit passiert (es hat am Tag vor dem Urlaub begonnen), würde ich "interne Entwicklungslawine" nennen. So was wäre nach der Geburt kaum noch denkbar oder zumindest viel schwieriger. Natürlich stellt sich die Frage, ob diese Änderungen wirklich so nötig sind und ob ich nicht zu perfektionistisch bin; andererseits bringt eine zu frühe Geburt später Probleme. Mehr darüber erfahren wir aber sowieso frühestens nach der Geburt, also bis dahin gebe ich mein Bestes und nicht mehr, basta. Heute ist in Estland übrigens Feiertag, also die Familie wird mich teilweise von Lino wegreißen.
+
+Ich habe zunächst etwas Arbeit, um auch die restlichen Fensterarten direkt in JS zu definieren statt wie bisher als Python-Klassen (die in ext_windows.py stehen). 
+
+Der statische JS-Code von Lino, der bisher in der ext_viewport.py stand und direkt in die index.html reingeschrieben wurde, steht jetzt in einer separaten datei `lino.js`. Das sind immerhin ca. 30 KB. Für die Performance macht das wahrscheinlich keinen großen Unterschied, aber wohl für die Wartbarkeit.

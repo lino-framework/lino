@@ -1,0 +1,12 @@
+= Yes, a matter of belief =
+
+I stumbled upon the blog entry 
+[http://juixe.com/techknow/index.php/2008/04/27/how-to-kill-a-community/ How To Kill A Community].
+
+As I started to use Javascript only a few weeks ago, I read this discussion à postériori.
+[http://jackslocum.com/blog/ Jack Slocum] unfortunately didn't want the large public to see what he wrote in that time.
+
+For me it is clear that Ext did the right thing when they switched to GPL. They explain it in their [http://www.extjs.com/products/license-faq.php Open Source FAQ]:
+"We considered once again releasing under straight LGPL but (...) found out quickly that it enabled others (e.g. large commercial entities) to take our work, wrap it up and sell it as their own. With no mention of us at all. We, as a business with a full time team of talented developers, can not exist under those circumstances. We would quickly become diluted and competing with ourselves."
+
+That's why the above mentioned blog entry is just another example of how much the [GPLorBSD GPL versus BSD discussion] is a matter of belief. 

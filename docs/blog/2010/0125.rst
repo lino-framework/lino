@@ -1,0 +1,40 @@
+Bei den Änderungen, um die Kolonnen und/oder Editoren des ColumnModel als eigene Variablen zu deklarieren, stellt sich raus, dass der Trick mit der `FieldElement.ext_options()`, die um die eigentliche Component noch mal einen Container mit `layout='form'` packt, jetzt stört. Denn der `editor` einer `Ext.grid.Column` muss natürlich nur der Component ohne Verpackung sein. Puh!
+
+Also: 
+Der künstliche Container mit `layout='form'` wird jetzt nicht mehr in `FieldElement.ext_options()` erzeugt, sondern in `field2elem()`, die aus dem UI ins dessen main_panel_class() verlagert wurde.
+Neue Klassen `MainPanel` und `WrappingMainPanel(MainPanel)`.
+
+----
+Ich glaube, die erweiterte ComboBox funktioniert jetzt. Ich habe in `setValue()` den Test, ob der Store geladen werden muss, erweitert, denn wenn er zwar geladen ist aber für einen anderen `queryContext`, dann muss er ja neu geladen werden. Ich kann einfach auf `this.lastQuery` testen, weil `setQueryContext()` den löscht.
+Aber das `setQueryContext()` ist noch nicht an die richtigen Events angebunden. Im GridMainPanel funktioniert es, aber im Detail ist sie momentan überhaupt nicht angebunden. Ich weiß auch noch nicht, ob die Slave Grids ihre ComboBoxen richtig einbinden. 
+
+----
+
+= 20100126 = 
+
+Also Anbinden der `ComboBox.setQueryContext()` auch in DetailMainPanels.
+Anderthalb Stunden Aufräum-Arbeiten in `extjs.py`, um diesen Schachzug vorzubereiten.
+
+`Variable.has_comp` kann weg.
+
+`Variable.js_lines()` ist ein Iterator, der zeilenweise Javascript-Code überreicht. 
+`js_lines` umbenannt nach `js_declare`, weil es die Deklaration der Variable generiert.
+ 
+Hinzu kommt `js_run()`.
+
+`Variable.subvars()` (die bisherige `Variable.js_elements()`) ist auch ein Iterator, der aber keinen JS-Code überreicht, sondern eine Liste von Variablen, die von dieser Variablen gebraucht werden. Präfix "js_' sollte reserviert sein für JS-Generatoren. Ausnahme ist noch `js_code`, für die ich mit einen besseren Namen ausdenken muss.
+
+Neue Methode `MainPanel.job_constructor()` enthält den Code, der vorher in ExtUI.view_report() und ExtUI.view_form() definiert war.
+
+Diese Aufräumarbeiten haben übrigens auch schon mit Issue 90 zu tun.
+
+----
+
+So, es funktioniert: auch die ComboBoxen in DetailMainPanel kriegen jetzt ein `setQueryContext()` gemacht, wenn der selected_record in der Grid ändert. Außer dass mein Test in der ComboBox-Erweiterung (ob wegen geändertem queryContext neu geladen werden muss) offenbar noch nicht funktioniert: wenn ich nur blättere und sich das Land des Kontakts ändert, dann sehe ich zwar jetzt die drei Aufrufe von `setQueryContext()`, aber statt des Städtenamens steht nur die Nummer da. Erst wenn ich triggere, steht die richtige Städteliste da, und beim Zurückblättern kennt er jetzt die Städte aus diesem Land. 
+
+In der Tat, mein Test via `!Ext.isDefined(this.lastQuery)` bzw. `this.lastQuery === null` scheint noch nicht ganz das Wahre zu sein. Aber das lass ich jetzt mal offen, es gibt Dringenderes zu tun.
+
+En passant habe ich das Interface für ContextAwareChoices noch verändert: Lino sucht die Methode `get_XXX_choices()` (wobei XXX der Name eines Feldes ist) jetzt nicht mehr im Report, sondern im Model. Habe ein bisschen gezögert, weil Django damit vielleicht in Zukunft mal Probleme hätte. Aber Vorteil ist, dass das jetzt noch ein bisschen eleganter ist, weil ich keinen Parameter `recipient` mehr brauche. 
+Und der abstrakte Report `Contacts`, der nur zu diesem Zweck existierte, kann jetzt auch wieder weg. 
+
+Neue Seite LinoFeatures, und jetzt wird es langsam Zeit, dass ich igen mal wieder ans Laufen bringe für den Fall, dass sich am Freitag jemand für Lino interessiert.

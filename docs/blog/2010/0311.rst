@@ -1,0 +1,37 @@
+= [20100310 ←] [20100311 11.03.2010] [20100312 →] =
+
+Kontextbewusste Auswahllisten (`setContextValues()`) funktionieren wieder: für city zeigt er wieder nur die Städte des betreffenden Landes an. 
+
+Filtern der Auswahlliste einer Combobox funktioniert auch wieder.
+
+Punkt 6 von gestern abend ist jetzt dadurch behoben, dass Projects nun ein Page-Layout hat (was sowieso nötig war). Comboboxen in automatisch generierten PageLayout funktionieren weiterhin nicht, aber das stört momentan niemanden. Issue 116 (ComboBoxes in Details with generic PageLayout don't work).
+
+Problem ist noch, dass er die dsbe-spezifischen Felder (person, company und why_stopped) nicht anzeigt im Detail der Projekte, obschon ich das in dsbe.models überschreibe. Er wählt da scheinbar den Standard-Report.
+
+Punkt 7 von gestern lag daran, dass ich für die Slave-Fenster natürlich `closeAction='hide'` setzen muss. Behoben.
+
+So, und jetzt endlich noch mal was Sichtbares: Personen und Firmen haben nun einen neuen Button "PDF". Und der funktioniert sogar! Freilich ist das dabei rauskommende Dokument nicht besonders erbaulich, weil ich die Vorlage momentan nur mal dahingeworfen habe. Das soll jedenfalls mal ein "Aktenblatt" o.ä. werden. 
+
+Der PDF-Button auf den Stammdaten einer Person oder Firma druckt immer ein "Aktenblatt". Die Funktionalität, dass man wie in TIM nach F7 noch eine Auswahlliste mit verschiedenen Templates bekommt, die kommt in Lino wahrscheinlich weg. Wenn man ein bestimmtes Dokument (z.B. einen Kontoauszug) drucken will, erstellt man stattdessen eine entsprechende Notiz, und die Art der Notiz entscheidet dann, welches PDF-Template genommen wird. Also in Note muss ich noch eine Methode `html_templates` schreiben.
+
+Dafür habe ich aus `lino.modlib.documents.AbstractDocument` eine Mixin-Klasse `Printable` rausgespalten, die man auf jedes bestehende Model anwenden kann. 
+Ich musste auch die PrintAction und PdfAction noch konvertieren, die hatten noch keine `run_in_dlg()`. Auch ignorierte `Lino.do_dialog` noch den `DialogResonse.redirect`.
+
+Den bisherige Button "Print" habe ich bis auf weiteres rausgeholt. Der öffnete ja lediglich ein eher irritierendes Fenster, das eine Art schnelle HTML-Ansicht anzeigte.
+
+Jetzt noch in lino.modlib.notes.models ein `from lino.modlib.documents.utils import Printable`, und in der Modelldeklaration von `Note` das `Printable` hinzufügen, ein erstes Template machen, und Plupp kann man auch Notizen ausdrucken. Schön!
+
+Check-In 
+[http://code.google.com/p/lino/source/detail?r=e9e088394b0b43ca48d9429a30d6c3e885a7a4aa lino] und
+[http://code.google.com/p/lino-dsbe/source/detail?r=7fa3fb17debe30596e8724ab0e885bab01af99e9 lino-dsbe]
+wegen Feierabend.
+
+Aktualisierte Liste der offenen Punkte für morgen:
+
+ # Formatierter Text kommt im PDF als HTML-Code raus. Da muss ich im Template noch das richtige Wörtchen finden um ihm zu sagen, dass `{{instance.text}}` HTML enthält (`mark_safe` oder so).
+ # Problem, dass er die dsbe-spezifischen Felder (person, company und why_stopped) nicht anzeigt im Detail der Projekte, obschon ich das in dsbe.models überschreibe. Er wählt da scheinbar den Standard-Report.
+ # Kolonne 'text' muss entweder aus der Grid von MyNotes raus, oder in der Höhe beschränkt werden.
+ # Langsam wird es Zeit, das Passfoto einer Person am Bildschirm zu zeigen.
+ # `Note.html_templates` implementieren und in NoteType ein Feld "template".
+ # Issue 115: Insert im Detail-Fenster funktioniert nur unsichtbar: er steht anschließend nicht auf dem neu erstellten Record. In der Grid nebenan dagegen sieht man den neuen Record (wenn die Grid auf der richtigen Seite steht und den neuen (noch leeren) Record nicht wegen Quickfilter rausfiltert).
+ # Issue 114: Änderung der Fenstergröße und sonstigen Fensterkonfiguration wird erst nach dem nächsten Restart des Servers berücksichtigt.

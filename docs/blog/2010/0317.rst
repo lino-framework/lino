@@ -1,0 +1,14 @@
+= [20100316 ←] [20100317 17.03.2010] [20100318 →] =
+
+6.50 Uhr : nach 3 Stunden Operation hat Lino erstmals wieder die Augen aufgeschlagen: `manage.py runserver` startet wieder. Aber jetzt muss Onkel Doktor zuerst mal seklber schlafen gehen. 
+
+Also das war ja mal wieder eine unerwartete Lawine von Änderungen. Hier eine Übersicht (die freilich bald nur noch historischen Wert haben wird)
+
+ # Layouts sind jetzt Actors
+ # Report.row_layout ist ein automatisch aus column_names generiertes RowLayout
+ # Der Datalink einer Form ist jetzt ihr Command. forms.Form ersetzt durch commands.Command, FormHandle durch CommandHandle 
+ # Layout.datalink statt Report.page_layouts
+
+14.00 Uhr : nach 2 weiteren Stunden schafft der Server es erstmals bis zum Hauptmenü. Also `lino_site.setup()` funktioniert wieder. Und jetzt erst mal Mittagspause.
+
+19.00 Uhr. Feierabend. Die modalen Dialogfenster fangen an zu funktionieren, aber ich habe noch was Arbeit damit. 

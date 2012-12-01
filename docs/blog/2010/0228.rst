@@ -1,0 +1,87 @@
+= [20100227 ←] [20100228 28.02.2010] [20100301 →] =
+
+Text-Editor.
+
+Super: Statt `Ext.form.TextArea` kann ich scheinbar einfach `Ext.form.HtmlEditor` nehmen, um out of the box wysiwyg anzubieten:
+http://www.extjs.com/deploy/ext/examples/form/dynamic.html
+
+Oho, `lino.modlib.notes.MyNotes` funktioniert nicht. RTE `caller is undefined` im JS. Ja, das hat damit zu tun, dass der als einziger eine feste master_instance hat.
+`ext_sore.Store.js_after_body()` war ein bisschen zu naiv: machte sein `caller.main_grid.add_row_listener()` auch wenn caller nicht defined ist (was bei MyNotes der Fall ist).
+
+Aber nun zum Text-Editor. 
+Daraus wurde eine schnelle Demo dessen, weshalb ich [Layouts] gut finde.
+
+== Layouts find ich gut ==
+
+Da es jetzt ein HTML-Editor ist, der mehr Platz braucht, müssen wir das Layout mal überdenken. So sah es bisher aus:
+
+<table><tr><td>
+{{{
+class NoteDetail(layouts.PageLayout):
+    main = """
+    date short type user
+    person company
+    text:40x5 links.LinksByOwner:40x5
+    """
+}}}
+</td><td>
+<p align="center">
+<a href="http://lino.googlecode.com/hg/screenshots/20100228-1.jpg">
+<img src="http://lino.googlecode.com/hg/screenshots/20100228-1.jpg" width="90%"/>
+</a></p>
+</td></tr></table>
+
+Probieren wir mal so:
+
+<table><tr><td>
+{{{
+class NoteDetail(layouts.PageLayout):
+    box1 = """
+    date type user
+    short 
+    person 
+    company
+    """
+    main = """
+    box1 links.LinksByOwner:40
+    text:80x5 
+    """
+}}}
+</td><td>
+<p align="center">
+<a href="http://lino.googlecode.com/hg/screenshots/20100228-2.jpg">
+<img src="http://lino.googlecode.com/hg/screenshots/20100228-2.jpg" width="90%"/>
+</a></p>
+</td></tr></table>
+
+
+Oder noch besser so:
+
+
+<table><tr><td>
+{{{
+class NoteDetail(layouts.PageLayout):
+    box1 = """
+    person 
+    company
+    """
+    main = """
+    date short type user 
+    box1:40 links.LinksByOwner:40
+    text:80x5 
+    """
+}}}
+</td><td>
+<p align="center">
+<a href="http://lino.googlecode.com/hg/screenshots/20100228-3.jpg">
+<img src="http://lino.googlecode.com/hg/screenshots/20100228-3.jpg" width="90%"/>
+</a></p>
+</td></tr></table>
+
+
+----
+
+Jetzt versuche ich noch das Problem zu lösen, dass der HtmlEditor nicht automatisch "den Rest des Fensters" ausfüllt.
+Hier hat jemand ungefähr das gleiche Problem mit einem BorderLayout gelöst:
+http://extjs.net/forum/showthread.php?p=98654
+Aber okay, das ist für morgen.

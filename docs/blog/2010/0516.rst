@@ -1,0 +1,12 @@
+= [20100515 ←] [20100516 16.05.2010] [20100517 →] =
+
+Zuerst noch ein bisschen spielen mit der Internationalisierung: für dsbe und contacts gibt es jetzt erste französische Übersetzungen. Und wenn ich `settings.LANGUAGE_CODE` auf `'fr-BE'` setze, kriege ich erste französische Bezeichnungen. Schön. Als nächstes muss ich "nur" noch bei Gelegenheit mal weitere Texte im Quellcode als übersetzbar markieren, bzw. für alle Felder einen `verbose_name` angeben.
+
+Der folgende Punkt ist erledigt:
+
+ * Wenn eine SlaveGrid automatische Kolonnen hat, dann sollte der master (fk_name) nicht erscheinen, bzw. erst ganz am Ende.
+
+
+13.55 Uhr : Check-in vor der nächsten großen Änderung, von der ich noch nicht sicher bin obs das Richtige ist: store und pager werden jetzt im Lino.GridPanel gemacht und sind somit auch für Gridelemente wieder sichtbar (oder zumindest möglich).
+
+22.00 Uhr: Die große Änderung war das Richtige. Bin zufrieden aber habe keine Lust alles zu dokumentieren, was ich heute gemacht habe. Check-in, Release beim Kunden und Feierabend.

@@ -1,0 +1,19 @@
+= [20100218 ←] [20100219 19.02.2010] [20100222 →] =
+
+Heute habe ich leider keine Zeit zum Programmieren, aber vor dem WE will ich noch alle Ideen aufschreiben.
+
+Also im Eigenschaften-Editor muss man natürlich speichern können. Ich will das am liebsten unter direkter Verwendung von PropValuesByOwner machen. 
+
+Die `props_view()` (`GET /props`) konnte raus, weil die nichts anderes machte als `GET /list/properties/PropValuesByOwner`. Der row listener, der diesen Request machte, wurde in MainPanel definiert (5 Minuten lang habe ich ihn gesucht). Der steht viel besser in `WindowProperties.js_after_body()`.
+
+`ext_ui.ExtUI.setup_report()` entscheidet, ob ein `ext_elems.PropertiesWindow` instanziert wird. Also muss der auch den PropValuesByOwner machen oder wie? 
+
+Ich werde wohl auch ein 
+`ReportHandle.request(*args,**kw)` brauchen, und weiteres UI, das weder ExtUI noch Console ist, sondern nur programmintern arbeitet.
+
+Hier noch ein Abschiedsfoto:
+
+<p align="center">
+<a href="http://lino.googlecode.com/hg/screenshots/20100219.jpg">
+<img src="http://lino.googlecode.com/hg/screenshots/20100219.jpg" width="50%"/>
+</a></p>

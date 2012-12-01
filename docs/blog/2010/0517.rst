@@ -1,0 +1,12 @@
+= [20100516 ←] [20100517 17.05.2010] [20100518 →] =
+
+So, also heute wird das `Printable` interface überarbeitet. Bis kann er nur aus einer HTML-Vorlage mittels Pisa eine PDF-Datei generieren. Aber in Zukunft soll er auch z.B. aus einer ODT-Vorlage eine ODT-Datei oder aus einer RTF-Vorlage eine RTF-Datei generieren können. 
+
+Ich mach also eine erweiterbare Liste von "Transformern":
+
+ * html2pdf
+ * rtf2rtf
+ * odt2odt
+
+Für RTF-Dateien kann ich das `select_template` von Django nehmen, um die Vorlage zu finden. Aber für ODT-Dateien kann ich nicht das Django-Templating benutzen, sondern brauche appy_pod, also müsste ich da den Template-Such-Algorithmus isolieren. Deshalb nehme ich zuerst RTF.
+

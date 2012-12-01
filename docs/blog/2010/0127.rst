@@ -1,0 +1,58 @@
+Neue Tickets notiert:
+
+Issue 91 (ComboBoxes for fields other than ForeignKey) 
+Issue 92 (Set maxHeight of FieldElements)
+Issue 93 (Spawned Reports don't work)
+
+LinoIgen ist fast wieder up-to-date. 
+
+Ein Problem ist noch wenn ich `sales.DocumentsToSign` aufrufe:
+
+{{{
+Traceback (most recent call last):
+  File "l:\snapshot\django\django\core\servers\basehttp.py", line 280, in run
+    self.result = application(self.environ, self.start_response)
+  File "l:\snapshot\django\django\core\servers\basehttp.py", line 674, in __call__
+    return self.application(environ, start_response)
+  File "l:\snapshot\django\django\core\handlers\wsgi.py", line 241, in __call__
+    response = self.get_response(request)
+  File "l:\snapshot\django\django\core\handlers\base.py", line 143, in get_response
+    return self.handle_uncaught_exception(request, resolver, exc_info)
+  File "l:\snapshot\django\django\core\handlers\base.py", line 101, in get_response
+    response = callback(request, *callback_args, **callback_kwargs)
+  File "c:\drives\t\hgwork\lino\src\lino\ui\extjs.py", line 2542, in list_report_view
+    return json_report_view(request,**kw)
+  File "c:\drives\t\hgwork\lino\src\lino\ui\extjs.py", line 2547, in json_report_view
+    return json_report_view_(request,rpt,**kw)
+  File "c:\drives\t\hgwork\lino\src\lino\ui\extjs.py", line 2591, in json_report_view_
+    d = rptreq.render_to_json()
+  File "c:\drives\t\hgwork\lino\src\lino\ui\extjs.py", line 2336, in render_to_json
+    rows.append(self.obj2json(row))
+  File "c:\drives\t\hgwork\lino\src\lino\ui\extjs.py", line 2456, in obj2json
+    fld.obj2json(obj,kw)
+  File "c:\drives\t\hgwork\lino\src\lino\ui\extjs.py", line 327, in obj2json
+    d[self.field.name] = meth()
+  File "c:\drives\t\hgwork\lino\src\lino\modlib\journals\models.py", line 218, in __unicode__
+    self.__class__,self.journal,self.number)
+  File "l:\snapshot\django\django\db\models\fields\related.py", line 264, in __get__
+    raise self.field.rel.to.DoesNotExist
+DoesNotExist
+}}}
+
+Wie kann ich sehen, was da los ist? Schade, dass Django noch immer nicht das Python-logging-Modul] integriert hat. Sie sind ja dran am arbeiten:
+
+ * http://code.djangoproject.com/ticket/12012
+ * http://code.djangoproject.com/wiki/LoggingProposal
+ * http://groups.google.com/group/django-developers/browse_thread/thread/8551ecdb7412ab22 
+
+Puh! Nach fast 3 Stunden Arbeit denke ich, dass das ein einfacher blöder Bug in Django ist. Habe [http://code.djangoproject.com/ticket/12708 Ticket #12708] (Django raises DoesNotExist when consulting an empty ForeignKey field) eingereicht.
+
+So, der Nächste bitte. 
+Jetzt kommt: "TypeError: Decimal("15.96") is not JSON serializable"
+Aha, da kann ich den gleichen Trick benutzen wie im 
+[http://code.djangoproject.com/ticket/3324 Django-Ticket #3324].
+
+Nächstes Problem: Date-Felder werden im Grid nicht ordentlich formatiert. 
+Das ist weil `kw.update(xtype='datecolumn')` ja jetzt nichts mehr nützt, wo ich die Felder selber instanziere. Ersetzt durch `grid_column_template`. 
+
+Nächstes Problem: `ValueError: Cannot assign None: "DocItem.document" does not allow null values.` wenn ich in `http://127.0.0.1:8000/?show=sales_InvoicesByJournalINV` auf Detail klicke.

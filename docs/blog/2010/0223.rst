@@ -1,0 +1,34 @@
+= [20100222 ←] [20100223 23.02.2010] [20100225 →] =
+
+Uff: `PropValuesByOwner.render_to_dict()` funktioniert im 
+[http://code.google.com/p/lino/source/browse/src/lino/test_apps/properties/models.py  Testcase] jetzt endlich so wie ich will.
+
+Wenn `master_instance` None ist (aber master bekannt), dann zeigt er eine allgemeine Liste aller *möglichen* Eigenschaften für Instanzen dieses Modells. Dieses Query braucht der Server, um den Ei-Editor zu konfigurieren:
+
+{{{
+  >>> properties.PropValuesByOwner().render_to_dict(master=Person)
+  {'count': 3, 'rows': [\
+    {'name': u'favdish', 'value': ''}, 
+    {'name': u'married', 'value': None}, 
+    {'name': u'weight', 'value': None}
+  ], 'title': u'Properties for persons'}
+}}}
+
+Später, wenn man die Eigenschaften einer konkreten Person sehen will, wird jeweils folgendes Query gemacht:
+
+{{{
+  >>> properties.PropValuesByOwner().render_to_dict(master_instance=fred)
+  {'count': 3, 'rows': [
+    {'name': u'favdish', 'value': u'Fish'}, 
+    {'name': u'married', 'value': False}, 
+    {'name': u'weight', 'value': 110}
+  ], 'title': u'Properties for Fred'}
+}}}
+
+N.B.: PropValuesByOwner gibt immer die gleiche Anzahl Zeilen zurück, weil immer alle Eigenschaften angezeigt werden (auch die, für die dieser Owner keinen Wert bekommen hat). 
+
+19.10 Uhr 
+[http://code.google.com/p/lino/source/detail?r=68b49021d8aed2a8f1ae8e9434196c4510cf7bc2 Check-In wegen Feierabend].
+
+Der Ei-Editor funktioniert jetzt endlich wieder wie vorigen Freitag, aber eben nicht mehr manuell gefrickelt, sondern unter Verwendung des Reports PropValuesByOwner. Jetzt müsste das Submit ein Kinderspiel sein. Das wartet aber jetzt bis morgen, bzw. übermorgen, denn morgen ist Nationalfeiertag in Estland, da darf ich nicht arbeiten...
+

@@ -1,0 +1,15 @@
+= [20100513 ←] [20100514 14.05.2010] [20100515 →] =
+
+Datenabgleich aus TIM. Ich sehe momentan zwei Möglichkeiten und überlege, welches die angebrachtere ist: [http://curl.haxx.se/docs/httpscripting.html cURL] oder [http://docs.python.org/library/urllib2.html urllib2].
+
+Bei cURL würde ich die Option `--data-urlencode` brauchen, die noch relativ jung ist.
+Außerdem ist die Option `-X` bzw. `--request` wichtig. Specifies a custom HTTP request method to use when communicating with the HTTP server. The specified request will be used instead of the method otherwise used (which defaults to GET). Read the HTTP 1.1 specification for details and explanations. Common additional HTTP requests include PUT and DELETE, but related technologies like WebDAV offers PROPFIND, COPY, MOVE and more.
+
+Pythons liburl2 würde ich in Form eines kleinen TIM-Tools machen. 
+Aber bei liburl2 habe ich noch nichts davon gefunden, dass man GET, POST, PUT und DELETE explizit angeben kann
+
+18 Uhr. Eine fehlende Grundfunktion weniger:
+
+ * Datenabgleich aus TIM. Geänderte und neue Personen. Daten werden einmal mit `load_tim.py` importiert, danach muss TIM jede Änderung in der `PAR.DBF` in eine temporäre Aktualisierungsdatei schreiben, und der Lino-Server liest diese Dateien dann ein und löscht sie wieder. TIM könnte vielleicht auch direkt [http://de.wikipedia.org/wiki/CURL cURL] aufrufen.
+
+Genau genommen kann man den Punkt noch nicht als abgeschlossen betrachten, aber immerhin ist das Grundprinzip sichtbar. Check-in [http://code.google.com/p/lino/source/detail?r=95c5c2437abd4801e164fc7973b589b249587faa Lino] und heute vor allem [http://code.google.com/p/lino-dsbe/source/detail?r=585db3bebf753a7c491906d89750c4f22b6de45a DSBE].

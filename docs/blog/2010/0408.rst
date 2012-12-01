@@ -1,0 +1,38 @@
+= [20100406 ←] [20100408 08.04.2010] [20100412 →] =
+
+Endlich kann ich nochmal an Lino weiter arbeiten! Wir sind noch immer beim Buddeln nach der Lawine, die durch das Amputieren der Dialoge ausgelöst wurde. Doof, dass das alles erst so kurz vor der Geburt kommt, aber gut, dass es nicht erst nachher kommt.
+
+Also GridMaster-Fenster funktionieren schon wieder. Heute will ich zuerst mal die Permalinks auferwecken. 
+
+Die URL `/do_permalink` war doppelt gemoppelter Kram, die kommt weg. 
+In der `Ext.onReady` wird `Lino.run_permalinks` gerufen, die ungefähr folgendes macht:
+
+{{{
+Lino.run_permalink = function() {
+  var links = Lino.gup('permalink').split(',');
+  for ( i=0; i < links.length; i++ ) {
+    Lino.do_action(undefined,'/action'+links[i],{});
+  }
+}
+}}}
+
+Dort und in den Menübefehlen wird nun die gleiche Funktion `Lino.do_action` ersetzt, die ähnlich wie vorher `do_dialog` arbeitet aber keine modalen Dialogfenster mehr kann.
+
+Um an den Permalink aufzurufen, muss der Benutzer ja momentan auf "permalink with open windows" klicken. Dieser Link, der momentan in der lino_settings.py definiert werden muss, hat ein `onclick=Lino.goto_permalink`:
+
+{{{
+Lino.goto_permalink = function () {
+    var windows = "";
+    var sep = '';
+    Ext.WindowMgr.each(function(win){
+      if(!win.hidden && !win.window_wrapper.caller) { 
+        windows += sep + win.window_wrapper.config.url; 
+        sep = ","
+      }
+    });
+    //~ document.location = "/permalink/?show=" + windows;
+    if (windows) document.location = "?permalink=" + windows;
+};
+}}}
+
+Statt eines Links in der `lino.index_html` sollte das wohl besser als Button im Menü oder sonstwo stehen.

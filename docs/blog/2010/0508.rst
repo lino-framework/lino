@@ -1,0 +1,77 @@
+= [20100506 ←] [20100508 08.05.2010] [20100510 →] =
+
+(Bin gestern abend um 20 Uhr wohlbehalten in Brüssel gelandet. Im Zug Leuven-Welkenraedt konnte ich ein bisschen arbeiten, aber plötzlich ging mein Notebook wegen Strommangel in Winterschlaf...)
+
+So, das nächste Problem ist gelöst:
+
+ * Insert in LinksByOwner geht nicht, er sagt dann "comp is null" in Ext.Container.lookupComponent(), und zwar noch bevor der constructor gestartet wird. Also scheinbar beim bloßen Parsen des Ausdrucks. Also wahrscheinlich beim Instanzieren des FormPanels.
+
+Da hab ich vielleicht dran gesucht! Das "comp is null" kam effektiv sehr logischerweise daher, dass ich ihm in items ein 'null' übergab. Nachdem ich das endlich rausgefunden hatte (durch Auseinanderpflücken der relativ großen Expression, was übrigens sehr schön funktioniert in FireBug), erkannte ich den Schuldigen: 
+
+{{{
+class LinkDetail(layouts.DetailLayout):
+    datalink = 'links.Link'
+    main = """
+    url
+    desc
+    user date owner
+    """
+}}}
+
+Das Feld `owner` ist ein GenericForeignKey, den ExtUI.create_layout_element zu einem VirtualFieldElement macht, und dieses rendert sich selbst als `null`. Ein erster Workaround war folgendes:
+
+{{{
+class LinkDetail(layouts.DetailLayout):
+    datalink = 'links.Link'
+    main = """
+    url
+    desc
+    user date owner_type owner_id
+    """
+}}}
+
+Aber dass `owner` aus diesen beiden Feldern besteht, ist ja schon im Model definiert. Also wäre es redundant, das im Layout wieder angeben zu müssen. 
+
+Jetzt mach ich es anders: einfach nur die Zeile
+
+{{{
+if isinstance(de,generic.GenericForeignKey):
+    return ext_elems.VirtualFieldElement(lh,name,de,**kw)
+}}}
+
+ersetzen durch 
+
+{{{
+if isinstance(de,generic.GenericForeignKey):
+    # create a horizontal panel with 2 comboboxes
+    return lh.desc2elem(panelclass,name,de.ct_field + ' ' + de.fk_field,**kw)
+}}}
+
+Ist das nicht wunderschön?
+
+Weiter. Die beiden folgenden Punkte sind nun auch gelöst:
+
+ * Insert in LinksByOwner öffnet zwar nun korrekt ein Insert-Fenster, aber das Doppelfeld `owner` ist nicht ausgefüllt. In NotesByCompany z.B. funktioniert das wohl. Liegt also daran, dass LinksByOwner ein generic slave ist.
+ * Neuen Record erstellen durch Eingabe in der extra row geht nicht. Er macht dann ein `PUT http://127.0.0.1:8000/api/links/LinksByOwner/ext-record-6`, weil er nicht weiss, dass das eine neue Zeile ist. Das ist ein (kleines) konzeptuelles Problem.
+
+Wenn ein Benutzer einen neuen Record einfügen möchte, dann fragt das User Interface von Lino die "selbstverständlichen" Angaben. Zum Beispiel bei Insert in NotesByPerson wird der InsertWrapper für Note angezeigt, dessen Master (Feld `person`) dann selbstverständlich schon ausgefüllt sein muss. 
+
+Der InsertWrapper sollte immer der Gleiche sein, weil ich die URIs unterhalb von ´/ui/´ irgendwann statisch servieren will (genauer gesagt, dass sie zumindest für den Webserver statisch sind, und Lino generiert sie automatisch bei jedem Start des Applikationsservers).
+
+Diese selbstverständlichen Angaben stehen in der ExtraRow.
+Dort soll der InsertWrapper sich diese Werte holen.
+
+Zwischenbemerkung: Das Attribut `ReportActionRequest.extra` sollte kein Integer mehr sein, sondern ein boolean. Lino braucht niemals mehr als eine ExtraRow zu liefern.
+
+Ich musste mit mir selber eine Konvention aushandeln, um die ExtraRow zu identifizieren. Die hat ja noch kein ID. Aber wenn ich das Feld leer lasse, generiert ExtJS selber eine ID. Records mit leerem ID kann er nicht haben. Momentan nehme ich deshalb -99999 als Wert. Das ist natürlich eine Mausefalle, aber mir fällt nichts besseres ein, also negative ID's sollte man in Lino bis auf Weiteres vermeiden. Ein spezieller String (z.B. "_new") wäre besser, aber dann muss ich ExtJS daran hindern, das als Zahlenwert parsen zu wollen. 
+
+Zwischenbemerkung: Lino nutzt momentan nicht das neue ExtJS-Feature
+[http://www.extjs.com/deploy/dev/examples/restful/restful.html Ext.data.Store.restful]. Kann sein, dass ich mir da unnötige Arbeit mache. Issue 121. Aber zumindest dieses Beispiel bringt auch keine Lösung für das Problem der serverseitig vorbelegten Felder in neuen Records.
+
+
+
+In [countries.Countries] übrigens kann man nicht einfügen. Dieser Report ist ein Sonderfall, weil Country keinen automatischen primary key hat, sondern das Feld `isocode` dort der pk ist. Issue 122.
+
+Und hier noch ein Punkt, der abgehakt werden kann:
+
+ * LinksByOwner verträgt es nicht, wenn im master keine Zeile markiert ist. Liegt daran, dass LinksByOwner ein generic slave ist.

@@ -1,0 +1,50 @@
+= [20100311 ←] [20100312 12.03.2010] [20100316 →] =
+
+Hier nochmal die Liste der offenen Punkte von gestern (in der Reihenfolge, wie ich sie heute bearbeite):
+
+ # Formatierter Text kommt im PDF als HTML-Code raus. Da muss ich im Template noch das richtige Wörtchen finden um ihm zu sagen, dass `{{instance.text}}` HTML enthält (`mark_safe` oder so).
+ # Kolonne 'text' muss entweder aus der Grid von MyNotes raus, oder in der Höhe beschränkt werden.
+ # Problem, dass er die dsbe-spezifischen Felder (person, company und why_stopped) nicht anzeigt im Detail der Projekte, obschon ich das in dsbe.models überschreibe. Er wählt da scheinbar den Standard-Report.
+ # Langsam wird es Zeit, das Passfoto einer Person am Bildschirm zu zeigen.
+ # `Note.html_templates` implementieren und in NoteType ein Feld "template".
+ # Issue 115: Insert im Detail-Fenster funktioniert nur unsichtbar: er steht anschließend nicht auf dem neu erstellten Record. In der Grid nebenan dagegen sieht man den neuen Record (wenn die Grid auf der richtigen Seite steht und den neuen (noch leeren) Record nicht wegen Quickfilter rausfiltert).
+ # Issue 114: Änderung der Fenstergröße und sonstigen Fensterkonfiguration wird erst nach dem nächsten Restart des Servers berücksichtigt.
+
+*Punkt 1.* Das Wörtchen, das im Template `note_pisa.html` noch fehlte, war 
+[http://docs.djangoproject.com/en/dev/ref/templates/builtins/#safe safe]. Also im Template musste ich lediglich das `{{instance.text}}` durch `{{instance.text|safe}}` ersetzen. 
+
+Es gibt auch einen Filter [http://docs.djangoproject.com/en/dev/ref/templates/builtins/#date date], um das Datum zu formatieren. Aber `{{instance.date|date}}` generiert momentan *Dez. 8, 2009*, also nicht gerade das traditionelle deutsche Datumsformat. Datumsformatierung lasse ich erstmal offen, zumal da sich in Django scheinbar noch was tut. Eines ist klar: dass wir noch mindestens zwei Felder `Note.language` und `User.language` brauchen werden. Issue 117.
+
+*Punkt 2.* Hier brauche ich ein neues Attribut `Report.hide_columns`, denn das Feld "text" darf ja nicht aus dem Report selber verschwinden, weil es im Detail ja sehr wohl angezeigt werden muss. Es soll lediglich in der Grid nicht erscheinen. Jetzt ist wohl auch der richtige Moment, um `Report.columnNames` nach `column_names` umzuändern.
+
+*Punkt 3.*
+Hier ein Auszug aus der `lino.log`, der die Ursache für diesen Fehler zeigt:
+
+{{{
+201003-12 07:14:24 DEBUG lino_site : ACTORS:
+201003-12 07:14:24 DEBUG lino_site : 
+  dsbe.Projects -> <class 'dsbe.models.Projects'>
+201003-12 07:14:24 DEBUG lino_site : 
+  projects.Projects -> <class 'lino.modlib.projects.models.Projects'>
+}}}
+
+Also `dsbe.models.Projects` wird als Actor `dsbe.Projects` registriert, was falsch ist. Er soll sich als `projects.Projects` registrieren, um den gleichnamigen Standard-Report zu überschreiben. Ich könnte in dsbe.Projects ein explizites `app_label = 'projects'` setzen, aber das wäre unelegant. Ein Report sollte immer das `app_label` seines Leit-Models übernehmen. Daher jetzt die zwei neuen Zeilen in `Report.__init__()`:
+
+{{{
+if self.model is not None:
+    self.app_label = self.model._meta.app_label
+}}}
+
+Upps... nee, das reicht noch nicht. Weil `actors.ActorMetaClass` den Report schon im actors_dict registriert, bevor dessen `__init__()` aufgerufen wird. Also ich muss den Startup-Prozess noch verfeinern: ActorMetaClass macht nur eine provisorische Liste aller Actor-Klassen in der Reihenfolge ihrer Definition. Also die Projects aus lino.modlib kommt dort zuerst, weil sie existieren muss, bevor sie von dsbe.Projects geerbt werden kann. Dann in einem zweiten Schritt werden alle Actors instanziert, und deren Instanzen werden dann im actors_dict eingetragen.
+
+11.15 Uhr. Puh, das war nach längerer Zeit noch mal ein Ausflug in den Startup-Prozess. Der ist komplex, und seit heute wieder ein Stückchen klarer. Trotzdem ist es noch etwas früh um ihn zu dokumentieren. In `lino_settings.py` wird jetzt nicht mehr wie bisher `m.add_action('system.Users')` gesagt, sondern `m.add_action('auth.Users')`. Das überraschte mich, aber es ist eine logische Folge dessen, dass ein Report nun automatisch das gleiche `app_label` hat wie sein Leit-Model.
+
+Check-in Lino und DSBE.
+
+Jetzt könnte ich mit dem Passfoto anfangen... aber da ruft ein TIM-Benutzer an und hat eine dringende Frage. C'est la vie. 
+
+----
+
+Nachmittags: Statt der Passfotos habe ich mir als nächstes Issue 115 vorgenommen, weil mir plötzlich klar geworden war, wie ich das anpacken soll. Das ist noch was Spannendes. Also bei Insert sollte fast nie einfach nur ein Record erstellt werden, sondern eher immer ein DetailMasterWrapper gemacht werden, also ein Fenster mit gleichem Layout wie ein Detail, das aber nicht an eine Guid versklavt ist, sondern selber seine eventuellen Standardwerte kennt. Und wenn man dort "Submit" klickt, dann wird der Record gespeichert. 
+
+Aber ich habs nicht fertig. Und jetzt kommt erstmal das Wochenende.

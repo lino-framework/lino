@@ -1,0 +1,19 @@
+= [20100318 ←] [20100319 19.03.2010] [20100322 →] =
+
+6.00 Uhr. Check-In zwischendurch. 
+
+Die Anzeige eines modalen Formulars auf einem bestimmten Record ist schwieriger, als ich gestern nachmittag glaubte. Ich hab noch nicht die Lösung. 
+
+LayoutHandles haben jetzt auch `base.UI´ statt DataLink als Selector. Denn LayoutHandles sollen wie Reports und Commands nur einmal pro UI angelegt werden. Man soll das gleiche Layout mit verschiedene Datenquellen benutzen können. 
+
+Ich muss scheinbar datalink und queryset klarer trennen:
+  
+  * *datalink* defines the columns of a grid or the fields of a form. metadata. columnModel
+  * *queryset* provides the rows or the actual data. A Form has no real queryset but something equivalent to a queryset with a single row.
+
+Die Vorgehensweise von `InsertRow.run()` ist mir noch nicht klar genug.
+`layouts.get_detail_layout(model)` scheint mir richtig. Ich kenne das model, also kann Lino mir das DetailLayout geben. None bedeutet, dass dieses model kein detail layout hat, in diesem Fall frage ich eine Bestätigung und speichere den Record und fertig. Aber ansonsten. Zunächst kann ich mir dann ein LayoutHandle anfragen.
+
+16.50 Uhr : Check-In wegen Feierabend. Ich bin nicht fertig, aber habe wenigstens das Gefühl, dass die Grundidee richtig war und nur noch Kleinigkeiten fehlen. Heute habe ich 7 Stunden daran gearbeitet, das reicht.
+
+23.58 Uhr : Es gibt noch mindestens ein Problem: ich möchte am liebsten BasicForm.submit() benutzen, um die Daten abzuschicken, aber diese Funktion arbeitet mit den Actions von ExtJS, die mit einem anderen Format für `result` arbeiten.

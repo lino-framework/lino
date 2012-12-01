@@ -1,0 +1,5 @@
+= [20100521 ←] [20100527 27.05.2010] [20100531 →] =
+
+(Bin zurück aus Eupen. In den vergangenen drei Tagen musste ich mich zunächst mal um dringende andere Sachen kümmern, jetzt geht es weiter mit Lino.)
+
+Ich hatte schon in Eupen damit begonnen, die Comboboxen wieder kontextbewusst zu machen. Das ist wichtig zum Konfigurieren der Templates von Notizen. Was für ne Wurstelei! Ich habs gerade endlich geschafft, dass alle kontextbewussten Comboboxen in ihrem "added"-Event sich selbst als row listener ihres Windowwrapper deklarieren... aber jetzt merke ich, dass das auch wieder das falsche Event ist. Sie müssen sich z.B. auch (oder nur?) aufs changed-Event ihrer jeweiligen Kontexte reagieren... Ich wurstel weiter.

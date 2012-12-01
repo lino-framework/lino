@@ -1,0 +1,21 @@
+= [20100301 ←] [20100302 02.03.2010] [20100303 →] =
+
+Was wollen wir den heute machen?
+
+ # Weiter mit Issue 100 (ContextAwareChoices needs redesign)
+ # Slave-Fenster als Toggle-Buttons
+ # Foto anzeigen
+ # Links ordentlich anzeigen und bequem erfassen können.
+
+
+Aber zuerst noch schnell ein Detail, das ich gestern bemerkt hatte: lino.test_apps hat zwei Failures. Das kommt, weil Django-Ticket 10808 noch immer nicht gelöst ist. Es steht seit einem Jahr im Status "Ready for checkin". Normalerweise würde ich ja jetzt mal in django-dev nachfragen, was da los ist, aber seit [http://www.mail-archive.com/django-developers@googlegroups.com/msg24851.html unserer letzten Diskussion] fürchte ich, dass das wahrscheinlich Zeitverschwendung wäre. Updated my Django copy to revision 12653. Updated `patches/10808b.diff` to avoid the "Hunk" warnings. Updated wiki pages HowToInstall and DjangoPatches.
+
+14.30 Uhr : das choices-API habe ich nochmal gründlich überarbeitet und verallgemeinert. Es sitzt jetzt im neuen Modul lino.modlib.chooser und wird in [http://code.google.com/p/lino/source/browse/src/lino/test_apps/chooser/models.py test_apps.chooser] dokumentiert und getestet. Jetzt kann man mit Lino wieder arbeiten, aber der Store der ComboBoxen übergibt die Daten aus den Form-Feldern noch nicht an den `/choices/`-Request, weshalb immer alle Auswahlmöglichkeiten angezeigt werden. Ich muss noch nachdenken, wie ich das im JS implementieren soll. 
+
+18.10 Uhr : [http://code.google.com/p/lino/source/detail?r=18748254f1fb78f2643e14c8dbca0277ed40a5f8 checkin] wegen Feierabend.
+(Issue 100 ist scheinbar tatsächlich komplett fertig! Aber ich hab mich nicht getraut, gründlich zu testen, weil ich Feierabend machen muss...) 
+
+Super! Um ehrlich zu sein hatte ich die Liste heute morgen eigentlich nur gemacht, weil ich erwägte, Issue 100 ein paar Tage warten zu lassen, weil es relativ wenig sichtbaren Erfolg bringt und ich nicht glaubte, es an einem Tag zu schaffen.
+
+
+

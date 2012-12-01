@@ -1,4 +1,36 @@
 20121201
 ========
 
+Hunting bugs in Django
+----------------------
+
+I upgraded the demo sites at :doc:`/demos`:
+one thing is that I switched to the newest Lino and Lino-Welfare versions.
+
+But especially I also switched to the Django 
+development version in order to "pitch in and help them fix 
+bugs before the final 1.5 release (due in December)" 
+(as `they formulated it 
+<https://www.djangoproject.com/weblog/2012/nov/27/15-beta-1/>`_).
+
+
+Lino is not visible
+-------------------
+
+I did a Google search about "lino" and "django" and "extjs" 
+and discovered that the Internet is really  obsolete. 
+Google links people to pages that I wrote back in the previous decade. 
+Time to change that!
+
+On saffre-rumma.net, all requests to http://lino.saffre-rumma.net 
+are now automatically and being redirected to 
+http://lino-framework.org using a permanent redirect.
+
+The Lino Wiki on GoogleCode is too bad: it looks like new and no 
+way to make it say that it's obsolete. Started to delete pages. 
+Blog entries from January to May 2010 were still only there. 
+Now I added them to :srcref:`/docs/blog/2010`, but without yet 
+converting them from Google's wiki markup to reStructuredText.
+
+
 

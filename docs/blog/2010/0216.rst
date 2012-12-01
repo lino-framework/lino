@@ -1,0 +1,29 @@
+= [20100215 ←] [20100216 16.02.2010] [20100217 →] =
+
+Weiter mit dem Eigenschaften-Editor (Issue 103). Was noch zu tun ist:
+
+ # Datenanbindung: caller.add_record_listener() und function load_props(), Submit-Button und function submit_props()
+ # im Titel den aktuellen Owner anzeigen
+ # props-button nur dann anzeigen, wenn es überhaupt properties gibt.
+ # Wenn man props schließt, toggelt der Button nicht. Wenn props schon in der grid geöffnet wurde und dann das Detail, dann ist dort der props-button nicht active.
+
+
+Properties-Button wird jetzt nur dann angezeigt, wenn es für dieses `Report.model` auch Properties gibt. Um das zu testen, habe ich demo.dpy in dsbe.fixtures etwas erweitert. Dazu habe ich auch `lino.utils.instantiator.ForeignKeyConverter` erweitert, so dass man jetzt FK-Felder nach ContentType nun einfach als String (z.B. `'contacts.Persons'`) oder das Modell selber (z.B. `Person`) angeben kann. Auch eine neue Klassenmethode `PropValue.create_property()`, damit man auch eine Property instanzieren kann, ohne weder den Instantiator noch ContentTypes zu brauchen. 
+
+Das Folgende war mir schon seit einigen Tagen ein Dorn im Auge:
+
+{{{
+  INT = ContentType.objects.get_for_model(propertyes.IntegerPropValue)
+  weight = properties.Property(name='weight',value_type=INT)
+}}}
+
+Das schreibt man nun so:
+
+{{{
+  weight = properties.INT.create_property(name='weight')
+}}}
+
+----
+
+Als ich mit der Datenanbindung anfangen wollte, erkannte ich, dass jetzt der richtige Moment gekommen ist, Issue 94 zu beginnen. Das hat nämlich Einfluss auf die Datenanbindung. Also `Lino.do_action()` ersetzt durch eine neue `Lino.do_dialog()`, `ActionContext` ersetzt durch `Dialog`. `Action.run()` ersetzt durch `Action.run_in_dlg()`, die (das ist das eigenliche Neue) ein Generatorfunktion ist, also `yield` statt `return` benutzt.  Anderthalb Stunden Arbeit, und Lino liegt noch immer mit raushängenden Eingeweiden auf dem Operationstisch, aber jetzt gehe ich erstmal schlafen.
+[http://code.google.com/p/lino/source/detail?r=edf63623f476d55b25bf60bf2346fa2c18da2a00 check in] und Feierabend.

@@ -1,0 +1,65 @@
+Hab mal probiert, eine `Company` einzugeben. Plutsch, schon das erste Problem.
+Das Feld `name` , das in `lino.modlib.contacts.models.Contact` definiert wird, darf nicht `editable=False` sein, weil man dann keine `Company` eingeben kann. Ich hatte es auf uneditierbar gesetzt, weil es in Person automatisch gesetzt wird. Eigentlich muss ich in `Person` einen trigger auf den Feldern `first_name` und `last_name` machen. Weil Lino das noch nicht kann, prüft `Person.before_save()` jetzt vorher, ob das Feld leer ist.
+
+Aha, da ist ja auch die Dokumentation zu Djangos neuer Model validation:
+http://docs.djangoproject.com/en/dev/ref/models/instances/#validating-objects
+Also die `before_save()` werde ich wohl demnächst nach `clean()` umbenennen.
+
+Oops, und die Liste einer Combo-Box lässt sich nicht mehr filtern. Wieso? Das hat doch immer funktioniert? Aha, tilt: ich hatte ja das Schlüsselwort 
+`URL_PARAM_FILTER` von `query` nach `qs` umbenannt. Das wird aber von der Combobox benutzt, da hatte ich nicht dran gedacht.
+
+----
+
+En passant notiere ich mir issue 80 (ForeignKey fields in Detail window display value instead of display_field). Das Problem ist ja schon alt, aber es hatte noch kein Ticket.
+
+So, und jetzt fang ich mal mit dem Insert-Button an. 
+
+Zuerst will ich die beiden Toolbars etwas umkrempeln: das Quick-Filter-Feld kommt nach oben, in den `PagingToolbar`, und die grid_actions kommen nach unten. Oben die Einstellungen für die Liste, unten die Aktionen, die sich auf die markierte Zeile beziehen. Mann, das war mal wieder einfach!
+
+Noch ein neues issue 81 (Opening more than one Detail of a Report).
+Oh, das war ja einfacher als ich anfangs dachte: lag nicht an `Window.closeAction`, sondern daran, dass die beiden Fenster dann das gleiche `id` haben. Verständlich, dass ExtJS dann durcheinander kommt.
+
+Feld `civil_state` in `dsbe.models.Person` hat keine Auswahlliste. Dabei hat das Datenbankfeld doch ein `choices`. Aber stimmt: weil es kein `ForeignKey` ist, sondern eine einfache Auswahlliste, erkennt Lino das nicht. Issue 82.
+
+Feld `tim_nr` in `dsbe.models.Person` wird im Detail nicht angezeigt. Ich knall es mal neben den Zivilstand. Ist übrigens maximal 10 (und nicht 8) Positionen lang. 
+
+Und dann, obwohl ich im Layout `properties.PropValuesByOwner:40x6`gesagt habe, sieht man im Detail-Fenster momentan nur eine einzige Datenzeile. Das ist fies... Neue Konstante ADD_GRID_HEIGHT.
+
+So und jetzt ran an de Insert-Button. 
+Der braucht eine neue Action `actions.InsertRow`. 
+Neue Konstante actions.INSERT. Woher kommen die keycodes nochmal? 
+Aha aus `Ext-3.1.0/src/core/EventManager-more.js`.
+Jetzt das eigentliche Neue: 
+Eine Action bzw. ein Actioncontext muss ein selbstdefiniertes modales Dialogfenster anzeigen können. 
+Vielleicht sogar eines, das das Layout eines Details hat, aber keine Next/Previous-Buttons (aber das lasse ich für später).
+
+----
+
+Am besten lasse ich sogar die selbstdefinierten Dialogfenster mal warten. In dsbe ist das noch nicht dringend nötig. Ein einfacher Button, der ein confirm macht und dann eine leere Zeile erstellt, das könnte auch schon reichen.
+
+Bon... der Insert-Button ist jetzt da und funktioniert. Obschon er theoretisch einen Fehler generieren müsste, weil `Person.name` leer ist.
+ 
+Außerdem müssen die report actions auch im Detail angezeigt werden. Das kriegt also auch einen oberen und einen unteren Toolbar. Der obere kann freilich kein `PagingToolbar` sein, und kriegt auch kein Quick-Filter-Feld, weil das Detail mit dem Store der Grid verknüpft ist. Er hat nur die vier Knöpfe First, Previous, Next und Last. 
+Der submit-Button gehört eigentlich nach unten. Aber nicht in die untere Toolbar, sondern in den Bereich wo er jetzt schon steht. Ganz allein. Schade natürlich um den vertikalen Platz... Oder könnte der Submit-Button explizit im Layout angegeben werden? Hmm... 
+
+Aber jetzt ist erstmal Pause, weil ein TIM-Benutzer eine Frage hat.
+
+----
+Weiter im Text...
+
+`GridElement.setup()` muss wohl in eine neue Klasse `DataElementMixin` verlegt werden, die von `GridElement`, `DetailMainPanel` und `FormMainPanel` geerbt wird.
+Wie mach ich es, damit `Lino.grid_action()` und `Lino.show_slave()` auch für ein Detail funktionieren? Dazu muss der Job (caller) sein Interface erweitert bekommen um eine Methode `get_current_row()` und `add_row_listener()`.
+
+Das funktioniert jetzt bis auf ein paar Details: (1) Die Grid hat alle Buttons, aber ein Detail oder ein Slave sollte den Button, der es aufrief, nicht haben. Und (2) Ctrl-Enter in einem Detail oder Slave sollte natürlich nicht nochmal das erste Detail aufrufen. 
+
+Aber jetzt erst mal das Problem, dass in den Daten vom ÖSHZ Namen und Vornamen in einem einzigen Feld stehen, und `load_tim.py` rausfinden muss, was der Familienname und was der Vorname ist. 
+Der bisherige Algorithmus (erstes Wort nach last_name, Rest nach first_name) ist offensichtlich zu simpel. 
+Ich schreibe also eine Funktion `lino.modlib.contacts.utils.name2kw()`. 
+Die ist jetzt theoretisch fertig, sogar mit doctest 
+(den man freilich momentan manuell mit `python utils.py` im betreffenden Verzeichnis starten muss, schön wär's, wenn ich bei Gelegenheit `python manage.py test` mal wieder ans Laufen brächte).
+
+Hier auch etwas Dokumentation über die möglichen Präfixe von Familiennamen, die es so gibt:
+http://en.wikipedia.org/wiki/Dutch_name
+http://www.myheritage.com/support-post-130501/dutch-belgium-german-french-surnames-with-prefix-such-as-van?lang=RU
+
+So, aber jetzt checkin und Schluss für heute! Knapp 7 Stunden Arbeit war das alles.

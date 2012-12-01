@@ -1,0 +1,68 @@
+= [20100319 ←] [20100322 22.03.2010] [20100323 →] =
+
+03.55 Uhr: Das Problem, dass die Actions von ExtJS, ein anderes Format für die Antwort des Servers benutzen, war gar nicht so schlimm wie ich dachte: Actions rufen die angegebene `success`-Funktion nur auf, wenn die Antwort des Servers entweder ein klares schlichtes `true` lautet, oder wenn sie ein Attribut `success` hat, dessen Wert (im weiteren Sinne) `true` ist. Das war nicht schwer zu erfüllen.
+
+Weniger erfreulich ist die Tatsache, dass ich noch immer nicht klar sehe, wie ich die Datenkonvertiertung zwischen Django-Instanzen und meinen neuen modalen Formularen organisieren soll. 
+
+Konzeptuelle Probleme in der momentanen Version: `CommandHandle.before_step()` enthält UI-spezifischen Code. Dieser Code (der die Daten aus dem Formular zum Server rein holt), steht an der falschen Stelle. Die Daten der Form müssen im `FormHandle` gespeichert werden, nicht in `Dialog.params`. 
+
+Lösungsansatz: RowHandle und FormHandle kriegen wahrscheinlich eine Methode `get_from_form()`.
+
+Ein anderes Problem (für Lino) ist, dass hier in Estland Schulferien sind und wir für 2 Tage nach Saaremaa fahren: ab morgen muss Lino noch mal 3 Tage warten. 
+
+Also ich wäre schon zufrieden, wenn ich heute abend wenigstens InsertRow am Klappen hätte.
+
+----
+
+7.40 Uhr: Die Datenkonvertiertung zwischen Django-Instanzen und meinen neuen modalen Formularen ist vielleicht sogar noch komplexer, als ich heute morgen ahnte. 
+
+Zum Beispiel habe ich mich bisher noch gar nicht um das Problem der concurrent write gekümmert. Momentan herrscht da die Regel tpplp (tant pis pour le premier): wenn zwei Benutzer gleichzeitig einen Record bearbeiten, dann gehen die Änderungen desjenigen verloren, der zuerst Submit geklickt hatte. Über kurz oder lang werde ich mich also um record locking kümmern müssen. 
+
+Oder das Problem, dass Lino nicht RESTful ist. 
+ExtJS kann mit einem RESTful server umgehen und hat ein anschauliches [http://www.extjs.com/deploy/dev/examples/restful/restful.html Beispiel] dafür. Mehr über RESTful in der [http://de.wikipedia.org/wiki/Representational_State_Transfer Wikipedia]
+und z.B. in 
+[http://www.ibm.com/developerworks/webservices/library/ws-restful/ diesem] Artikel von Alex Rodriguez.
+
+Linos "Dialoge" sind, zumindest in ihrer momentanen Form, nicht implementierbar mit einem RESTful Server. Kann also sein, dass meine Idee nicht genial sondern verrückt ist. Kann auch sein, dass nur meine momentane Implementierung falsch ist. Oder es kann sein, dass die RESTful-Prinzipien für Lino nicht pauschal gelten.
+
+Die Idee der Dialoge ist, dass der Server jeden einzelnen Schritt des Clients während einer Aktion bestimmt, und dass der Server nach jedem Schritt dem Client sagt, welches der nächste ist. RESTful dagegen besagt, dass der Server dem Client alle Verantwortung für die Details einer Aktion überlässt. CRUD (create, retrieve, update, delete) und sonst nichts. 
+
+Diese "Details" der Client-seitigen Anwendungslogik müssen freilich von jemandem analysiert, programmiert und gewartet werden. Eine der Eigenschaften von Lino ist, dass Anwendungsserver und Client aus dem gleichen Quellcode stammen. Das hat Vorteile, solange die beiden von der gleichen Person geschrieben und gewartet werden. Es ist klar, dass das nicht skalierbar ist. Frage ist, ob die Vorteile es wert sind, Skalierbarkeit zu opfern. Ein Dilemma.
+
+Dieses Dilemma würde sich lösen, wenn ich die Dialoge wieder rausschmeiße und alle Anwendungslogik (bis ins Detail) auf RESTvolle Art programmiert kriege. 
+
+Zumindest beim Erstellen von Personen mit Dublettenprüfung wäre das durchaus denkbar: z.B. wenn beide Personen das Geburtsdatum ausgefüllt haben (und die beiden Daten verschieden sind), lässt er es zu.
+
+Und was wird aus dem Login? Antwort laut [http://www.oio.de/public/xml/rest-webservices.htm Thomas Bayer]:
+
+  "In REST Anwendungen wird meist keine spezielle Funktionalität für den Login benötigt.
+  Alle Resourcen lassen sich mit verfügbaren Web Technologien wie zum Beispiel HTTP und
+  HTTPS authentifizieren und autorisieren."
+
+N.B.: Entweder [http://www.oio.de/public/xml/rest-webservices.htm Thomas Bayer] oder 
+[http://www.ibm.com/developerworks/webservices/library/ws-restful/ Alex Rodriguez] verwechselt POST und PUT. Meiner Meinung nach ersterer, aber das ist momentan nur ein Detail. Wichtig ist: die Authentifizierung würde gar nicht mehr von Lino gemacht, sondern vom Web-Server. In Django ist das vorgesehen: [http://docs.djangoproject.com/en/dev/howto/apache-auth/ Authenticating against Django’s user database from Apache].
+
+Jetzt wird [http://code.google.com/p/django-rest-interface django-rest-interface] interessant. Einige Bemerkungen dazu stehen 
+[http://stackoverflow.com/questions/212941/using-django-rest-interface hier]. 
+Das ist ein übersichtliches Modul, das ich testweise mal in Lino integriert habe:
+
+{{{
+for a in ('contacts.Persons','contacts.Companies','projects.Projects'):
+    rpt = actors.get_actor(a)
+    rr = rpt.request(self)
+    rsc = Collection(
+        queryset = rr.queryset,
+        permitted_methods = ('GET', 'POST', 'PUT', 'DELETE'),
+        responder = responder.JSONResponder(paginate_by=rr.limit)
+    )
+    urlpatterns += patterns('',
+       url(r'^json/%s/%s/(.*?)/?$' % (rpt.app_label,rpt._actor_name), rsc),
+    )
+
+}}}
+
+Das funktioniert auch... nur nützt es wenig, weil Lino ja _auch_ das User Interface machen muss. Aber es zeigt mir, dass meine bisherige Vorgehensweise (bis auf die Dialoge) gar nicht so RESTlos ist. Das mit den CRUD wusste ich bis heute morgen noch nicht, aber das braucht nicht sofort angepasst zu werden, sondern kann bei Gelegenheit nachträglich dahin wachsen.
+
+Wichtig ist vor allem die Erkenntnis, dass meine "Dialoge" die falsche Richtung sind. Weg damit. 
+
+14.30 Uhr: Bitte anschnallen, es geht los! Vorher noch ein Check-In (obschon er momentan nicht lauffähig ist, z.B. weil ich in system.Login schon Versuche gemacht hatte). Also diese Woche ist nicht mehr mit einem Release zu rechnen...

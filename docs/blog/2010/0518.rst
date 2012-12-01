@@ -1,0 +1,18 @@
+= [20100517 ←] [20100518 18.05.2010] [20100519 →] =
+
+Design decisions :
+ * Alle Partner werden aus TIM nach Lino geholt, nicht nur die Personen.
+ * Person.title bleibt ein normales CharField, kein FK nach PersonTitle.
+ * `Company.type` und `CompanyType` dagegen machen Sinn.
+ * tim_nr kommt weg, stattdessen wird die TIM-Nummer als id in Lino benutzt.
+ * Ob ein Partner eine Person oder eine Company ist, sieht Lino daran, ob die MWSt-Nummer leer ist. Wenn man das in TIM ändert, wird automatisch die Person gelöscht und eine Company angelegt (oder umgekehrt).
+ * Als Templatesystem werden wir appy pod nehmen, also die Vorlagen werden in OOo entworfen und gepflegt. Kann man dem Django Template System sagen, er soll statt `{{foo}}` und `{%foo%}` lieber `[[foo]]` und `[%foo%]` nehmen? Oder gibt es sonst einen Trick, um RTF-Dokumente auch noch mit Word bearbeiten zu können, wenn man Tags eingebaut hat?
+ * Von den Berufsgruppen aus TIM wird nur der Code importiert.
+
+Abgesehen davon habe ich heute den ganzen Tag lang nur die Teufel im Detail beim Datenabgleich ausgetrieben. tim2lino.py loggt jetzt auch einigermaßen vernünftig, was er tut.
+
+
+Zu tun unter anderem:
+
+ * normale CharFields mit einer choices-Methode (insbesondere print_method und template in notes.NoteType) müssen als ComboBox gerendert werden.
+ * neues Feld is_active

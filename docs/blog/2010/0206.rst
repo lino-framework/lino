@@ -1,0 +1,230 @@
+= [20100206 Nested BoxLayouts in an ExtJS FormPanel] =
+
+Note: The problem described here is solved. Look at the end to see the solution.
+
+Using ExtJS 3.1, I would like to create a window with this layout:
+
+{{{
+┌──────────────────────────────────────────────────────┐
+│                                                      │
+│ first_name:           last_name:                     │
+│ ____________________  ______________________________ │
+│                                                      │
+│                                                      │
+│ comment:                                             │
+│ ____________________________________________________ │
+│ ____________________________________________________ │
+│ ____________________________________________________ │
+│ ____________________________________________________ │
+│ ____________________________________________________ │
+│                                                      │
+└──────────────────────────────────────────────────────┘
+}}}
+
+`first_name` and `last_name` are normal `TextField`s; 
+`comment` is a `TextArea` which should dynamically fill out the remaining part of the Window. `last_name` should be a bit longer than `first_name` (ratio 20:30).
+
+== First step ==
+
+{{{
+  var first_name = { fieldLabel: "first_name", 
+    xtype: "textfield", anchor: "100%" };
+  var last_name = { fieldLabel: "last_name", 
+    xtype: "textfield", anchor: "100%" };
+  var comment = { fieldLabel: "comment", 
+    xtype: "textarea", anchor: "100% 100%"};
+  
+  var main_panel = new Ext.form.FormPanel({ 
+    items: [ first_name, last_name, comment ], 
+    frame: true, 
+    labelAlign: "top" 
+  });
+    
+  var win = new Ext.Window({ 
+    layout: "fit", title: "Test 1", items: main_panel, 
+      height:true, width: 400, x:10});
+  win.show();
+}}}
+
+Brings this result:
+
+<p align="center">
+<a href="http://lino.googlecode.com/hg/screenshots/20100206-1.jpg">
+<img src="http://lino.googlecode.com/hg/screenshots/20100206-1.jpg" width="50%"/>
+</a></p>
+
+How can I get the TextFields to a single row? 
+
+== Second step ==
+
+The most suitable way I found is to use nested BoxLayouts: put first_name and last_name into a Container with horizontal BoxLayout, then this Container and the comment TextArea into another Container wih vertical BoxLayout. 
+
+One problem with this method is that BoxLayout does not render field labels. Only formLayout does this. So I have to wrap each field into an extra Container that has FormLayout.
+
+{{{
+  var labelAlign = "top";
+  var first_name = { fieldLabel: "first_name", 
+    xtype: "textfield", anchor: "100%" };
+  var first_name_panel = { layout: "form", 
+    items: first_name, labelAlign: labelAlign,
+    autoHeight:true, flex:20 };
+  
+  var last_name = { fieldLabel: "last_name", 
+    xtype: "textfield", anchor: "100%" };
+  var last_name_panel = { layout: "form", 
+    items: last_name, labelAlign: labelAlign,
+    autoHeight:true, flex:30 };
+  
+  var names_panel = { layout: "hbox", 
+    layoutConfig: { align: "stretch" }, pack: "end",
+    items: [ first_name_panel,last_name_panel], 
+    // autoHeight:true, 
+    height: 50,
+    }
+  
+  var comment = { fieldLabel: "comment", 
+    xtype: "textarea", anchor: "100% 100%" };
+  var comment_panel = { layout: "form", 
+    items: comment, labelAlign: labelAlign, flex:1 };
+  
+  var main_panel = new Ext.form.FormPanel({ 
+    layout: "vbox", layoutConfig: { align: "stretch" }, 
+    pack: "end", 
+    items: [ names_panel, comment_panel ], 
+    frame: true, 
+    });
+    
+  var win = new Ext.Window({ 
+    layout: "fit", title: "Test 2", items: main_panel, 
+      height:400, width: 400, x:420});
+  win.show();
+
+}}}
+
+This looks fine: 
+
+<p align="center">
+<a href="http://lino.googlecode.com/hg/screenshots/20100206-2.jpg">
+<img src="http://lino.googlecode.com/hg/screenshots/20100206-2.jpg" width="50%"/>
+</a></p>
+
+
+But you may have noticed that I am cheating: 
+I manually set the `height` of `names_panel` to 50, a value that I found out experimentally.
+
+*Question: how can I avoid specifying the height myself in the above approach?*
+
+If I specify `autoHeight:true` instead of `height:50` for `names_panel`, then the result is not as expected. 
+
+<p align="center">
+<a href="http://lino.googlecode.com/hg/screenshots/20100206-3.jpg">
+<img src="http://lino.googlecode.com/hg/screenshots/20100206-3.jpg" width="50%"/>
+</a></p>
+
+
+== Third step ==
+
+Maybe I should use a table layout instead of nested box layouts?
+
+{{{
+  var labelAlign = "top";
+  var first_name = { fieldLabel: "first_name", 
+    xtype: "textfield", anchor: "100% 100%", 
+    autoHeight:true };
+  var first_name_panel = { layout: "form", 
+    items: first_name, labelAlign: labelAlign, 
+    autoHeight:true};
+  
+  var last_name = { fieldLabel: "last_name", 
+    xtype: "textfield", anchor: "100% 100%", 
+    autoHeight:true };
+  var last_name_panel = { layout: "form", 
+    items: last_name, labelAlign: labelAlign, 
+    autoHeight:true};
+  
+  var comment = { fieldLabel: "comment", 
+    xtype: "textarea", anchor: "100% 100%", 
+    autoHeight:true  };
+  var comment_panel = { layout: "form", 
+    items: comment, labelAlign: labelAlign, 
+    autoHeight:true, colspan:2};
+  
+  var main_panel = new Ext.form.FormPanel({
+    layout: "table", 
+    layoutConfig: { columns: 2, tableAttrs: {
+                      style: {
+        	        width: '100%'
+        	     }
+                  }}, 
+    // autoHeight:true, 
+    height: 400,
+    items: [ first_name_panel, last_name_panel, comment_panel ], 
+    frame: true, 
+    });
+    
+  var win = new Ext.Window({ 
+    layout: "fit", title: "Test 4", items: main_panel, 
+    height:400, width: 400, x:10});
+  win.show();
+}}}
+
+
+But the above code doesn't work, the `last_name` field is missing:
+
+<p align="center">
+<a href="http://lino.googlecode.com/hg/screenshots/20100206-4.jpg">
+<img src="http://lino.googlecode.com/hg/screenshots/20100206-4.jpg" width="50%"/>
+</a></p>
+
+*Question: Why the `last_name` field missing in the above code?*
+
+
+Notes: 
+ * The showcase used to create this article can be found [http://code.google.com/p/lino/source/browse/snippets/20100206.html here].
+
+ * I also tried with the override provided in [http://www.extjs.com/forum/showthread.php?t=88251 thread 88251] of the ExtJS bug forum, but this didn't help. 
+
+
+
+== Solution ==
+
+Thanks to MiamiCoder in http://www.extjs.com/forum/showthread.php?p=434629 who helped me to find the solution. It turns out that I underestimated ColumnsLayout:
+
+{{{
+  var labelAlign = "top";
+  var first_name = { fieldLabel: "first_name", 
+    xtype: "textfield", anchor: "100%" };
+  var last_name = { fieldLabel: "last_name", 
+    xtype: "textfield", anchor: "100%"  };
+  var first_name_panel = { layout: "form", 
+    items: first_name, labelAlign: labelAlign, columnWidth: 0.5 };
+  var last_name_panel = { layout: "form", 
+    items: last_name, labelAlign: labelAlign, columnWidth: 0.5 };
+  
+  var names_panel = { 
+    layout: "column", 
+    items: [ first_name_panel, last_name_panel], 
+    labelAlign: labelAlign,
+    };
+    
+  var comment = { fieldLabel: "comment", xtype: 
+    "textarea", anchor: "100% 100%" };
+  
+  var main_panel = new Ext.form.FormPanel({ 
+    items: [ names_panel, comment ], 
+    labelAlign: labelAlign,
+    frame: true, 
+    });
+    
+  var win = new Ext.Window({ 
+    layout: "fit", title: "Test 7", items: main_panel, 
+      height:400, width: 400, x:170, y:170});
+  win.show();
+
+}}}
+
+
+<p align="center">
+<a href="http://lino.googlecode.com/hg/screenshots/20100206-5.jpg">
+<img src="http://lino.googlecode.com/hg/screenshots/20100206-5.jpg" width="50%"/>
+</a></p>

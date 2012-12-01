@@ -1,0 +1,54 @@
+= [20100309 ←] [20100310 10.03.2010] [20100311 →] =
+
+Lino ist aus der Intensivstation raus, aber da sind noch einige Grundfunktionalitäten, die momentan nicht funktionieren. Unvollständige Liste:
+
+ # Buttons Next, Previous und Submit im Detail-Fenster werden nicht angezeigt.
+ # Delete und Insert funktionieren nicht, da kommt `caller.get_values is not a function`.
+ # Überhaupt müssen die Buttons in ihren jeweiligen Wrappern definiert werden statt in ExtUI.setup_report(). Zumindest detail_buttons und grid_buttons. 
+ # Änderung der Fenstergröße und sonstigen Fensterkonfiguration wird erst nach dem nächsten Restart des Servers berücksichtigt.
+ # Der seltsame Effekt, dass beim ersten Anzeigen einer Grid nur ca. die Hälfte der möglichen Zeilen angezeigt werden, kommt jetzt ungefähr immer. 
+
+Kleine Änderung en passant: Reihenfolge der Buttons im bbar eines Grid-Fensters war "Properties, Löschen, Insert, Detail, Projects, Notes", jetzt "Löschen, Delete, Properties, Detail, Projects, Notes"
+
+Notiz am Rande: Wenn Lino fehlerhaften JS-Code generiert, dann kann es inzwischen wieder schwer sein, den Fehler zu finden. Beispiel: Ich hatte eine Meldung `invalid regular expression flag n`. Der fehlerhafte Code (der syntaktisch eine einzige Funktionsdefinition ist) umfasste allerdings 73 KB in 661 Zeilen, und aus einem mir nicht ersichtlichen Grund macht FireBug keine Angabe über die Zeilennummer... Der Fehler war schließlich, dass ich die Anführungszeichen um eine URL nicht generierte:
+
+{{{
+this.DeleteSelected = new Ext.Button({ 
+  maxWidth: 63, text: "L\u00f6schen", 
+  handler: Lino.action_handler(
+    this,/grid_action/contacts/Companies/DeleteSelected),
+  scope: this, id: "DeleteSelected" });
+}}}
+
+Hier hatte ich mit etwas Glück den Fehler schnell entdeckt, aber solche Fälle könnten in Zukunft schwer zu debuggen sein. Also neues Issue 112 (FireBug doesn't always indicate line number of JS syntax errors).
+
+Und noch ein neues Issue 111 (Option "Don't ask again" for confirmations). Das wäre angenehm, wenn Gerd und ich demnächst anfangen, Fensterkonfigurationen zu bearbeiten...
+
+Screenshot und [http://code.google.com/p/lino/source/detail?r=85f73b6bd08d3a999cece432635bc18854ddeabd check-In]:
+
+<p align="center">
+<a href="http://lino.googlecode.com/hg/screenshots/20100310.jpg">
+<img src="http://lino.googlecode.com/hg/screenshots/20100310.jpg" width="80%"/>
+</a></p>
+
+Alle Fenster auf diesem Screenshot sind Unterfenster des Hauptfensters. Alle Definitionen dieser Fenster sind in der Server-Response auf den Menübefehl Contacts / Companies enthalten. Deshalb ist die Response jetzt wieder 70 KB groß. Dafür bewirkt das Ein- oder Ausblenden einzelner Fenster dieser Gruppe keinen weiteren AJAX-Call mehr. 
+
+Zu beachten ist, dass hier auch schon eine zweifache Versklavung sichtbar ist: das NotesByCompany-Detail ist ein Sklave von NotesByCompany, das seinerseits ein Sklave des hauptfensters ist. Man kann sich die Frage stellen, ob diese verschachtelte Sklaverei irgendwann die Speichergrenzen sprengt oder redundant wird. Zum Beispiel wäre ein Toggle-Button im Detail-Fenster einer Notiz denkbar, der das Detail-Fenster der Company dieser Notiz öffnen würde. Der dürfte im obigen Fall (wenn die Notiz über deren company gefunden wurde) nicht existieren, sonst hätten wir Redundanz.
+
+17.05 Uhr : Feierabend. Hackerzacker: heute nachmittag habe ich 3 Stunden geschwitzt, um den Submit-Button im Detail-Fenster wiederzukriegen. Das hätte ich nicht gedacht, dass das so schwer würde. Immerhin funktioniert es jetzt. Und vielleicht habe ich en passant einen bisher unentdeckten Bug behoben (nämlich dass sich die slave-Fenster bei jedem show neu als row_listener registrieren).
+
+Check-In.
+
+Zu Issue 60: Der "seltsame Effekt, dass beim ersten Anzeigen einer Grid nur ca. die Hälfte der möglichen Zeilen angezeigt werden" liegt daran, dass die Grid noch leer ist, wenn `calculatePagesize()` das erste Mal gerufen wird. Er nahm dann einen Defaultwert von 42 für die Zeilenhöhe. Bei mir scheint die tatsächliche Höhe aber zwischen 22 und 23 zu schwanken, und ich weiß nicht, wovon das abhängt. Jedenfalls habe ich mit einem Defaultwert von 23 nun sinnvollere Resultate. Das ist freilich weiterhin nur eine Frickelslösung. Außerdem kann die Zeilenhöhe pro Zeile je nach Kolonnenbreite und Länge des Feldinhalts ändern, wenn der Text gewrappt wird. Dann kommt calculatePageSize() sowieso durcheinander. Bisher sehe ich keine definitive Lösung... Das Beste scheint mir fast, die Zeilenzahl (optional) als Konfigurationsparameter zu speichern dann kann der Benutzer selber entscheiden...
+
+Insert funktionierte noch nicht. Jetzt wohl. Aber noch nicht sehr elegant: er fügt einfach eine leere Zeile in die Grid ein. Zumindest bei Person müsste wenigstens das Feld "name" schreibgeschützt sein, weil es automatisch aus first_name und last_name zusammengefügt wird.
+
+TODO-Liste für morgen:
+
+ # Issue 113: Buttons "Next" und "Previous" im Detail-Fenster werden noch nicht angezeigt. Aber die will ich eigentlich gar nicht in ihrer alten Form zurück holen, sondern das Detail-Fenster sollte vielleicht eine richtige PagingToolbar kriegen.
+ # Issue 114: Änderung der Fenstergröße und sonstigen Fensterkonfiguration wird erst nach dem nächsten Restart des Servers berücksichtigt.
+ # Issue 115: Insert im Detail-Fenster funktioniert nur unsichtbar: er steht anschließend nicht auf dem neu erstellten Record. In der Grid nebenan dagegen sieht man den neuen Record (wenn die Grid auf der richtigen Seite steht und den neuen (noch leeren) Record nicht wegen Quickfilter rausfiltert).
+ # Die ComboBoxen in einer Grid funktionieren zwar auf den ersten Blick, aber wenn man einen Suchstring eingibt, das ignoriert er. Scheinbar ist das Problem schon beim Server, denn der Suchtext wird abgeschickt und der Server ignoriert den.
+ # Und `setQueryContext()` funktioniert auch nicht: für `city` zeigt er immer alle Städte aller Länder an.
+ # Im Detail-Fenster eines Projekts (das ist ein Fenster ohne Layout) funktionieren die Comboboxen überhaupt nicht. Der Text "Select a Project type..." steht da, aber die Klappleiste ist nicht da. 
+ # Und wenn man das Detail-Fenster schließt, dann kann man es nicht mehr öffnen, dann kommt im FireBug `me.dom is undefined`.

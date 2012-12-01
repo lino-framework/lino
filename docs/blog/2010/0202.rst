@@ -1,0 +1,29 @@
+= [20100202 Arbeitsbericht] =
+
+Weiter mit Issue 97 (Export to CSV).
+
+Vorigen Freitagmorgen hatte ich schon erste eilige Versuche mit
+Ed Spencers [http://github.com/edspencer/Ext.ux.Exporter Ext.ux.Exporter]
+gemacht. Hätte es beinahe auch geschafft, aber da ist scheinbar ein Bug, ich bekam immer `this.btnEl is undefined` in der Console. 
+
+Und im [http://edspencer.net/2009/11/ext-ux-exporter-export-any-grid-to-excel-or-csv.html Forum] hatte ein anderer Besucher namens Paul das gleiche Problem erst vor Kurzem gepostet. Mal sehen, was daraus geworden ist. 
+
+Nee, mein eigener Post ist noch immer im Status "waiting to be moderated" und besagter Paul hat auch keine Antwort bekommen... 
+
+Aha, hier die Erklärung: Ed Spencer ist seit Anfang Januar 
+[http://edspencer.net/2010/01/2010-the-year-ext-js-takes-over.html lead developer bei ExtJS]. Verständlich also, dass seine frühere Website momentan etwas außer Acht geraten ist. 
+
+Okay, aber was mach ich nu? Ich versuch mal zu verstehen, was da los ist.
+Oufti, das ist nicht trivial. Das passiert in seiner `onRender`.
+Nee, lassen wir das. Wir warten, bis der Autor mal wieder was mehr Zeit hat. 
+Ich könnte mit Lino zumindest vorläufig mal den anderen Approach machen, dass die Daten schon vom Server formatiert werden.
+
+Aber zack, jetzt werde ich wieder unterbrochen. Ja, TIM hat nun mal Vorrang...
+
+----
+
+Weiter. Nach anderthalb Stunden Arbeit funktioniert es jetzt: Der neue Button "Download" öffnet ein neues Browserfenster nach "/csv/contacts/Companies". Und dort kriegt man rohes CSV zurück. Kolonnenreihenfolge ist wie im Report konfiguriert, nicht wie im Client. 
+
+Ich musste hier wieder den uneleganten Trick mit `_return_type_for_method` anwenden. Den notiere ich mal als Issue 98. 
+
+Issue 97 betrachte ich hiermit als abgeschlossen und mach jetzt Mittagspause.

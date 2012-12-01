@@ -1,0 +1,20 @@
+= [20100331 ←] [20100401 01.04.2010] [20100402 →] =
+
+Erstes Erfolgserlebnis seit dem Urlaub: Ich habe eine Klasse `Lino.GridMasterWrapper` definiert, die der Server in seiner Antwort benutzt:
+{{{
+  function(caller) { 
+    new Lino.GridMasterWrapper(caller,{ 
+      title: "Companies", 
+      url: "/contacts/Companies", 
+      colModel: new Ext.grid.ColumnModel({ columns: [ ... ]}),
+      fields: [ ... ],
+      height: 463, 
+      bbar: [ new Ext.Button(...), ... ],
+      y: 103, x: 15, width: 400 
+    }).show(); 
+  }
+}}}
+
+So eine Antwort ist jetzt nur noch 4 bis 5 Kbytes groß (100x kleiner als gestern); das ist natürlich leichter zu debuggen.
+
+Jetzt muss ich nur noch die Buttons der Slave-Windows implementieren. 

@@ -1,0 +1,40 @@
+= [20100306 ←] [20100309 09.03.2010] [20100310 →] =
+
+Was soll passieren, wenn man das Detail-Fenster öffnet, obschon in der Grid gar keine Zeile ausgewählt ist? Da kam ein JS-RTE "record is undefined", erzeugt in `BasicForm.loadRecord()`. Die rufe ich jetzt nur noch wenn record defined ist. Und ansonsten rufe ich sogar `BasicForm.reset()` obschon, das momentan nur auftritt, wenn das Fenster gerade erst angezeigt wird.
+
+Aber nun zu dem, was die große Operation ausgelöst hatte: Kolonnenbreiten speichern.
+
+Zuerst war da noch ein Bug: Name des Fensters wurde nicht übergeben. WindowWrapper benutzt jetzt eine Klassenvariable `window_config_type` und eine Methode `js_window_config`, um die JS-Funktion `get_window_config()` zu generieren. Neue Klasse `GridWrapperMixin`. Das funktioniert schön.
+
+Dann kommt die Frage, wie eine Aktion auf eventuelle  Parameter eines Dialogs zugreifen können soll. `SaveWindowConfig.run_in_dlg()` benutzt momentan `Dialog.get()`, aber das würde nicht funktionieren, wenn die Aktion nicht unter ExtJS läuft. Beschluss: Neues Attribut `dialog.params`, der ein dict oder wenigstens ein dictionary-like object sein muss. 
+
+16 Uhr, schon wieder Feierabend bevor ich zufrieden bin! Aber die Grid-Fenster speichern nun ihre Kolonnenbreiten.
+
+[http://code.google.com/p/lino/source/detail?r=266d3bd2e4a1cc24708cc8ded2b13ccc447ad113 check-in]
+
+Todo: 
+
+ * Im Eigenschaften-Fenster funktioniert es noch nicht, der findet scheinbar nur eine Kolonne.
+ * Jetzt wo das Framework zum Speichern erweitert ist, wollen wir natürlich auch den Status der Togglebuttons speichern. Dann kann man z.B. festlegen, dass bei Stammdaten / Personen nicht nur das Grid-Fenster, sondern auch z.B. der Ei-Editor und das Detail-Fenster geöffnet wird.
+ * Und die Sortierfolgen und Kolonnenreihenfolgen, und ...
+
+Nachtrag nach Feierabend: 
+
+Der Server schickt jetzt die Kolonnenbreiten in der Reaktion an den Client theoretisch korrekt ab:
+{{{
+{ 
+  customEditors: { ... }
+  autoHeight: true, 
+  xtype: "propertygrid", 
+  source: { ... }, 
+  listeners: { ...}, 
+  columns: [ { width: 110 }, { width: 232 } ] 
+}
+}}}
+
+Aber das funktioniert nicht. Kann sein, dass PropertyGrid die Konfigurationsoption `columns` ignoriert. Wäre verständlich, weil der ja ein eigenes ColumnModel hat. Ich lass diesen Punkt mal offen bis jemand sich darüber beklagt: Issue 109 (im Ei-Editor kann man die Kolonnenbreiten nicht speichern). 
+
+Ebenso lass ich die anderen Erweiterungen mal warten, bis sich jemand beklagt: Issue 110. 
+
+Issue 108 erachte ich jetzt als abgeschlossen.
+Und Issue 107 erübrigt sich.

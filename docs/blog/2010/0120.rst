@@ -1,0 +1,48 @@
+Issue 84 (Extend window_config) habe ich begonnen, weil wir beim Speichern der Fensterpositionen momentan eine Serie von kleinen Bugs haben:
+ * Speichern der Fensterposition klappt schinbar nicht auf dem oeshz
+ * Kolonnenbreite und -reihenfolge werden nicht gespeichert;
+
+Es lohnt sich aber nicht, diese jetzt zu bearbeiten, weil das System mit der einen Pickle-Datei ja früher oder später komplett ersetzt wird. Das ist es, was ich mit Issue 84 meine:
+
+  * One file per Report (or per View)
+  * Use a central repository settings.CONFIG_DIRS (or `config` subdir in each application)
+  * Server saves only to "local" directory
+
+Neues Issue 86 (Grid does 2 useless data requests) ist eine Nebenwirkung von Issue 70 (Dynamic number of rows per page). Stört die Benutzer nicht allzu sehr, aber muss natürlich weg.
+
+Issue 83 (New models City (and maybe Street) in contacts) ist fertig. 
+`City` ist natürlich nicht in `lino.modlib.contacts`, sondern in `lino.modlib.countries`.
+`load_tim.py` holt jetzt die Städte ebenfalls. Straßen als eigene Tabelle lass ich in der Tat für später mal.
+
+Zugleich habe ich auch ein bisschen für Issue 87 vorbereitet.
+
+Jetzt stechen natürlich Issue 80 (ForeignKey fields in Detail window display value instead of display_field) und Issue 49 (ForeignKey choices that depends on recipient) wieder ins Auge: Auswahl einer Stadt sollte pro Land erfolgen (momentan werden alle Städte der Welt angezeigt).
+
+----
+
+Tagesplan: Ich fange an mit 49 und 80.
+
+Wie ein Auswahlfilter definiiert wird, ist mir schon klar. Zum Beispiel wie er für `lino.modlib.properties.models.PropValue` schon definiert (aber nicht benutzt) wird:
+
+{{{
+    def prop_choices_filter(self,recipient):
+        return dict(only_for__in=(recipient.owner_type,None))
+}}}
+
+`lino.modlib.contacts.models.Contact` kriegt jetzt auch schon mal so einen Auswahlfilter:
+
+{{{
+    def city_choices_filter(self,recipient):
+        return dict(country__in=(recipient.country,))
+}}}
+
+Aber wie mach ich das Dingen nutzbar?
+Prinzipiell muss die ComboBox ihrem Store mitteilen, wer der "Empfänger" der Auswahlliste ist. Es reicht ja der `pk` des Empfängers.
+Dann kann die `choices_view()` schauen, ob das Modell eine Methode `FOO_choices_filter` hat.
+Zuerst mal die [http://www.extjs.com/deploy/dev/docs/?class=Ext.form.ComboBox Doku zu ComboBox] lesen.
+
+ComboBox benutzt momentan gar nicht `/choices/`, sondern `list`. Jeder `ReportHandle` hat momentan nur einen `extjs.Store`, und der hat eine feste URL, und die ist immer dieselbe. Das muss ich ändern. Und das wird nicht leicht.
+
+Zwischendurch: permalink geht jetzt wieder. Ich speichere den Namen im Window-Objekt in einem Attribut `_permalink`. Permalink ist zugegebenermaßen sehr gefrickelt und müsste mal revidiert werden (Neues Issue 88 notiert), aber beim Testen erspart es mir viele Mausklicks.
+
+Und noch ne Spielerei zwischendurch: Neue Felder `street`, `street_no` und `street_box`, in `contacts.Contact` sowie neue Funktion `street2kw()` in `lino.modlib.contacts.utils`, die von `load_tim.py` benutzt wird.

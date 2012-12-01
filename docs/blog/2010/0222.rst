@@ -1,0 +1,24 @@
+= [20100219 ←] [20100222 22.02.2010] [20100223 →] =
+
+Überlegungen am Vorabend. 
+
+ * Also wenn ich fürs PropertiesWindow sowieso einen Report instanziere, dann sollte ich den bisherigen Code zur Initialisierung des Editors ebenfalls über den Report machen. Da kommt also ein `for pv in self.rh.request(master=model,master_instance=None)`
+
+ * Das PropertiesWindow sollte eigentlich gar nicht im Report gespeichert werden, sondern im Model. Momentan wird es für jeden Report instanziert; das stört zwar nicht, aber ist unnötig. Also der Code aus `setup_report()` gehört irgendwo anders hin, und zwar nach `Lino.setup()`. Oder genauer gesagt nach `reports.setup()`, ähnlich wie ich schon ein `_lino_model_report` in die Models rein propfe. Also `_lino_properties_window`.
+
+ * Irgendwie unschön ist, dass man von außerhalb den PropValuesByOwner befragen muss, ob er Records für `master_instance=None` enthält. PropertiesWindow sollte doch eigentlich selber sagen, ob es für ein gegebenes Modell angelegt werden will.
+
+ * Momentan ist es auch so, dass man den Server neustarten muss, wenn man Änderungen in der Konfiguration der Eigenschaften gemacht hat. Also wenn man eine neue Eigenschaft anlegt, oder auch nur eine neue Auswahlmöglichkeit einer Eigenschaft. Andererseits wäre es dumm, für jede Anzeige des Ei-Editors eine Abfrage zu machen um solche seltenen Änderungen automatisch zu erkennen. 
+
+----
+
+Nein, das PropertiesWindow kann nicht Model gespeichert werden, weil eventuell mehrere UIs auf einem Server laufen können. Momentan haben wir zwar nur `extui`, aber wer weiß ob sich das irgendwann mal ändert. Ein `ModelHandle` (also einen Descriptor pro Model pro UI) braucht Lino aber momentan noch nicht. Also tun wir das PropertiesWindow doch in den ReportHandle.
+
+Aha, und jetzt kommt was Neues: Reports ohne Layout. PropValuesByOwner hat ja die Sammelklasse `PropValue` als `model`, also kennt er keine Kolonne `value`. Ich könnte eine Methode `PropValue.value` definieren, aber deren `return_type` wäre ja pro Instanz veränderlich. Das wäre unsinnig.  Das Neue ist, dass dieser Report gar keine Layouts haben kann. Neues Attribut `Report.use_layouts`: wenn das `False` steht, dann kriegt der ReportHandle kein `choice_layout`, `row_layout` und `layouts`.
+
+Neue Methode `reports.ReportHandle.request()`. Die gibt also einen "primitiven" `ReportRequest` zurück. 
+Bis auf weiteres unterstützt der Ei-Editor übrigens keine benutzerabhängigen Eigenschaften (also Eigenschaften, die manche Benutzer sehen können und andere nicht). So ein Feature wäre wahrscheinlich auch ziemlich unsinnig.
+
+Reports ohne Layout brauchen übrigens auch kein UI und kein Handle. `Report.render_to_dict()` könnte theoretisch ohne all diesen Kram funktionieren.
+
+Und jetzt muss ich Feierabend machen. Bin in `testapps.properties` dran, denn irgendwas klappt noch nicht nach den Neuerungen. Das ist für morgen. (Schade, ich hatte gehofft, dass ich heute den Ei-Editor fertig kriege und mit dem Text-Editor anfangen kann...)

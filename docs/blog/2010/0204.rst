@@ -1,0 +1,25 @@
+= [20100204 Arbeitsbericht] =
+
+Also weiter am Aussehen der Detail-Fenster (siehe [20100203 gestern]). SlaveGrids sollen anklickbar sein und nicht mehr die Textfelder verdrängen.
+
+<a href="http://lino.googlecode.com/hg/screenshots/20100204.jpg">
+<img src="http://lino.googlecode.com/hg/screenshots/20100204.jpg" width="70%"/>
+</a>
+
+Zwischendurch fällt mir ein, dass ich dieser Tage einen konzeptuellen Fehler in den ContextAwareChoices bemerkt habe: Issue 100. Die Methode `city_choices()` muss auch funktionieren, wenn es noch gar keine Instanz gibt. Zum Beispiel so:
+
+{{{
+    def city_choices(self,data):
+        if data['country']:
+            return data['country'].city_set.order_by('name')
+}}}
+
+Wenn ich eine neue Person im Detail-Fenster eingebe und ein Land ausgewählt habe, dann hat es momentan keinen Sinn, den Server nach den möglichen Städten für das Feld `city` einer Person zu fragen, die in der Datenbank noch gar nicht existiert. Aber so macht Lino das momentan. 
+
+
+Puh, die Layout-Manager von ExtJS sind komplex! Für so ein doofes Detail muss ich so lange suchen! Zwischendurch habe ich die Konfigurationsoption `collapsible` ausprobiert. Damit ein Panel einklappbar ist, muss man dessen Namen in `Layout.collapsible_elements` eintragen. Das funktioniert auch und ist süß, aber selbst wenn ich das panel mit den SlaveGrids einklappe, wird der dadurch eingesparte Raum nicht benutzt, sondern bleibt leer. Hier noch mal ein Screenshot:
+
+
+<a href="http://lino.googlecode.com/hg/screenshots/20100204-2.jpg">
+<img src="http://lino.googlecode.com/hg/screenshots/20100204-2.jpg" width="70%"/>
+</a>

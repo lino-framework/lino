@@ -1,0 +1,55 @@
+= [20100208 Arbeitsbericht] = 
+
+Heute habe ich zuerst mal in den Tests weiter aufgeräumt. Die waren ja nicht mehr zu gebrauchen. Der Impuls dazu war, dass ich für `lino.modlib.properties` wohl am besten mit ein paar ordentlichen Tests beginne.
+
+----
+
+Wieso erkennt der Testrunner den docstring von `lino.modlib.properties.modules` nicht als Test? Neue `lino.test_apps.properties` und docstring dort rein. Das wäre sowieso bald nötig geworden, weil ich zum Testen eine weitere Tabelle brauche. Aber Hackerzacker, auch dort findet er ihn nicht! Wie kommt denn das? Liegt es etwa daran, dass ich in `settings.INSTALLED_APPS` zwei Applications habe, die auf `'.properties'` enden? Nein. Liegt es an der Indentierung der Testsequenzen? Vielleicht. Aber der Fehler ist plötzlich wieder verschwunden, ohne dass ich wüsste, wie ich das gemacht habe... Ich schätze mal, das liegt mal wieder daran, dass Djangos Testrunner eine abgespeckte eingefrorene Version von doctests hat (Siehe [http://lsaffre.blogspot.com/2009/10/when-your-django-doctests-never-fail.html 20091015]). Hier noch was, das dieser alte Testrunner nicht verträgt:
+
+{{{
+>>> favdish.create_values("Cookies\nFish\nMeat\nVegetables")
+}}}
+
+Er sagt dann:
+
+{{{
+    >>> favdish.create_values("""Cookies
+                                       ^
+SyntaxError: invalid syntax
+}}}
+
+
+Das Gleiche sagt er, wenn ich es umformuliere:
+
+{{{
+>>> favdish.create_values("""Cookies
+...   Fish
+...   Meat
+...   Vegetables""")
+}}}
+
+Also die neue Methode `.create_value()` habe ich wegen des doofen Testrunners auslagern müssen.  Ich geb aber zu, dass meine `.create_values()`, die einen mehrzeiligen String erwartet, nicht unbedingt die eleganteste API ist (aber bequem in dpy-fixtures).
+
+Aber weiter mit den Tests für `lino.modlib.properties` (die also jetzt 
+[http://code.google.com/p/lino/source/browse/src/lino/test_apps/properties/models.py hier] stehen).
+
+Habe begonnen, `Report.as_text()` wieder ans Laufen zu bringen. Aber das ist relativ viel Arbeit. Das lass ich vorerst mal offen, denn es gibt Wichtigeres zu tun.
+
+`properties.PropValuesByOwner().get_queryset(fred)` kann momentan nicht funktionieren, weil `Report.model` keine abstrakte Klasse sein darf. Ich könnte freilich `PropValue.Meta.abstract` ausschalten, aber dann hätte ich für jeden einzelnen Wert einer jeden Eigenschaft zwei Records in zwei verschiedenen Tabellen. Neues Issue 101 (Reports on abstract models).
+
+----
+
+Ich frage mich, ob ich mit meinem `lino.modlib.properties` nicht das Rad neu am erfinden bin. Aber Google meldet zu "django generic properties" nichts Interessantes. Das Wort "generic" wird in Django meistens im Kontext von "generic views" benutzt, die mit properties nichts zu tun. Und bei "properties" denken die meisten Django-Benutzer an Python properties. Höchstens 
+[http://code.djangoproject.com/ticket/6818 hier] 
+hat jemand ein Problem mit 
+[http://docs.djangoproject.com/en/dev/ref/contrib/contenttypes/#id1 Generic Relations], 
+und das angeführte Beispiel erinnert an meine Datenstruktur.
+
+Also schreibe ich's selber. Nach gut 3 Stunden Arbeit halte ich Datenbankstruktur und API für zufriedenstellend. 
+
+Was fehlt, ist freilich noch der Eigenschaften-Editor. 
+Vielleicht reicht die bestehende Slave Grid. Die muss jetzt sowieso zuerst mal auf Mausklicks reagieren, indem sie ihren Report in einem eigenen Fenster öffnet. Dnach sehen wir weiter. Aber das kommt morgen...
+
+----
+
+Ich lag schon im Bett als mir noch auffiel, dass `order_by('value_text')` ersetzt werden kann durch `order_by('value')`. Das ist besser, weil Fred dann auch 110 Kg wiegen kann. Leider muss das redundante Feld `value_text` trotzdem bleiben, damit `PropValuesByOwner` was zum anzeigen hat...

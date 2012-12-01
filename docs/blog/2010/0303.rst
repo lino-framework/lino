@@ -1,0 +1,16 @@
+= [20100302 ←] [20100303 03.03.2010] [20100304 →] =
+
+Issue 100 ist so weit fertig. Ich bin sehr zufrieden. Was noch fehlt, ist dass Comboboxen im Detail-Fenster nach einer Änderung des Contexts ihren Store nicht neu laden. Dadurch wird manchmal nicht der Name sondern die Nummer der Stadt angezeigt. Aber ich mach daraus ein neues Issue 105 und lass das mal warten, denn es ist vielleicht nicht sehr störend und hängt auch mit Issue 106 zusammen (das ich jetzt erst eintippe).
+
+Heute will ich mir Issue 84 vornehmen.
+Wahrscheinlich kommt in einem auch _Slave-Fenster als Toggle-Buttons_ dran.
+
+Bisher habe ich in `window_configs.pck` pro Fenster ja lediglich ein array von 5 Werten (width, height, x,y,maximsied) eingepickelt. Jetzt mach ich neue pickelbare Klassen WindowConfig, GridWindowConfig, LayoutWindowConfig, PropsWindowConfig, deren Methode configure_window() das UI dann aufruft. Dann muss jeder WindowWrapper eine JS-Funktion `get_window_config()` kriegen, die von `Lino.save_window_config()` gerufen wird.
+
+Ich würde ja gerne im JS eine eigene Basisklasse `Lino.WindowWrapper` definieren, damit der Server den allgemeinen Code nicht für jede Reaktion neu generieren muss... aber das lass ich momentan mal, weil das vielleicht nicht einfach ist: Issue 107.
+
+demo.dpy (in lino.modlib.contacts.fixtures) erzeugt jetzt ein bisschen komplettere Demo-Firmen in DE, NL und FR. Jetzt kann man Issue 105 leichter beobachten.
+
+Die `get_window_config()` war nicht schwer, aber nun erst fällt mir auf, wie sehr Isssue 84 und Issue 108 miteinander verknotet sind. Ein PropertiesWindow wird schon im JS seines Masters instanziert, und der toggleButton ruft abwechselnd `show()` und `hide()`. Details und slaved Gridwindows dagegen machen bisher einen eigenen AJAX call. Das ist nicht richtig. Und nur ein Master-Fenster sollte einen Tools-Button "save config" haben und dann die Konfiguration all seiner Kinder abfragen.
+
+16.40 Uhr, ich muss Feierabend machen. Habe heute "nur" im Code rumgespielt und den großen Plupp vorbereitet. Klasse Reaction heißt jetzt WindowWrapper und steht in ext_ui statt ext_elems. Vor allem habe ich jsgen.Variable.js_before_body() und js_after_body() rausgeholt. Diese Änderung ist wahrscheinlich schuld, dass momentan slave windows mit generic master nicht aktualisiert werden. Heute kein Checkin.

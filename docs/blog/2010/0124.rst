@@ -1,0 +1,107 @@
+#summary Rendering ForeignKey fields using ComboBox
+
+`Form.submit()` schickt meine erweiterten ComboBoxen, deren `value` ein `Array` sind, nicht als Arrays. Muss ich mir also die Submit-Action mal genauer ansehen.
+
+Zwischendurch stolperte ich bei 
+[http://stackoverflow.com/questions/tagged/extjs Stackoverflow] über die  Antwort auf eine Frage, die ich mir noch gar nicht gestellt hatte, die aber sicherlich bald gekommen wäre: [http://stackoverflow.com/questions/2106104/word-wrap-grid-cells-in-ext-js
+Word-wrap grid cells in ExtJS].
+Das habe ich gleich eingebaut.
+Bemerkungen: 
+ * Wird Zeit für separate `lino.css` und `lino.js`: Neues Issue 89
+ * Wenn eine oder mehrere Zeilen wrappen und somit höher sind, dann funktioniert das Ermitteln der Anzahl Zeilen pro Seite nicht mehr. Issue 60 wieder eröffnet.
+
+Also die Submit-Action. Woher kriegt die die Daten, sie sie per POST verschickt? `Lino.form_submit()` sagt sie ihr nicht, sondern gibt nur eine Meta-Info [[[p[pkname] = job.get_current_record().data.id}}} für den Fall, dass der primary key nicht in der Form enthalten ist. Und ruft dann `Ext.form.BasicForm.submit()`. Die leitet weiter an
+`Ext.form.Action.Submit.run()`:
+
+{{{    
+    run : function(){
+        var o = this.options;
+        var method = this.getMethod();
+        var isGet = method == 'GET';
+        if(o.clientValidation === false || this.form.isValid()){
+            Ext.Ajax.request(Ext.apply(this.createCallback(o), {
+                form:this.form.el.dom,
+                url:this.getUrl(isGet),
+                method: method,
+                headers: o.headers,
+                params:!isGet ? this.getParams() : null,
+                isUpload: this.form.fileUpload
+            }));
+        }else if (o.clientValidation !== false){ 
+            this.failureType = Ext.form.Action.CLIENT_INVALID;
+            this.form.afterAction(this, false);
+        }
+    },
+
+}}}
+
+Die ruft also `Ext.Ajax.request()` mit dem `el.dom` meiner Form.
+`Ext.Ajax.request()` gibt das weiter an `Ext.lib.Ajax.serializeForm()` und, oh je, da haben wir es:
+
+{{{
+Ext.each(fElements, function(element) {                 
+  name = element.name;                 
+  type = element.type;
+  if (!element.disabled && name){
+    if(/select-(one|multiple)/i.test(type)) {
+      Ext.each(element.options, function(opt) {
+        if (opt.selected) {
+            data += String.format("{0}={1}&", encoder(name), 
+              encoder((opt.hasAttribute ? opt.hasAttribute('value') : 
+                opt.getAttribute('value') !== null) ? opt.value : opt.text));
+        }                               
+      });
+}}}
+
+Also eine Form Action findet die Werte ihrer Felder nicht raus, indem sie die Felder selber fragt, sondern indem sie das von den Feldern generierte HTML (besser gesagt das DOM) analysiert. Ja klar, ExtJS soll ja auch funktionieren mit Forms, die sie gar nicht selbst generiert hat.
+
+Tja, und da kann ich so leicht nichts dran ändern: wenn ich `BasicForm.submit()` benutze, dann wird der Wert einer ComboBox als `country=Belgium` verschickt, Punkt.
+
+Ich muss also doch `hiddenName` benutzen, und meine erweiterte ComboBox, die Arrays als  `value` speichert, hat nichts genützt (außer dass ich einiges gelernt habe).
+Und hiermit wird auch meine [20100122 gestern] formulierte Konvention definitiv:
+
+   `countryHidden=BE` und `country=Belgium`
+
+Und jetzt, wo ich die Konfigurationsparameter `hiddenName` und `valueField` einer ComboBox einigermaßen verstanden habe, funktioniert auch endlich alles: Anzeige und Speichern, sowohl im Grid als im Detail, sind korrekt. Schön!
+
+Jetzt fehlt nur noch, dass die Auswahlliste der Städte sich auf Städte des jeweiligen Landes bezieht. `ComboBox.doQuery()` muss dazu einen neuen Parameter `ck` (ein Name, den ich in URL_PARAM_CHOICES_PK definiere) übergeben, der den pk des aktuellen records enthält. Aber wie soll eine ComboBox _das_ wissen?! 
+
+Ich nehme mal an, dass ich beim Definieren der ComboBox einen `listener` auf `beforequery` setzen muss.
+Der Listener muss dann `qe.combo.store.setBaseParam(URL_PARAM_CHOICES_PK)` setzen. Sieht in Lino so aus:
+
+{{{
+def js():
+    yield "function(combo) {"
+    yield "  console.log('focus',combo)"
+    yield "  combo.store.setBaseParam(%r,job.get_current_record().data.id);" \
+       % URL_PARAM_CHOICES_PK
+    yield "}"
+kw.update(listeners=dict(focus=js))
+}}}
+
+Nein, `ComboBox.beforequery` ist nicht das richtige Event, das wird nur gefeuert, wenn er ein filterndes query macht. 
+Eher dann das `beforeload`-Event des `Store`. Da ist es dann allerdings zu spät für `store.setBaseParam()`, sondern ich setze den pk direkt nach `options.params`. Auch machbar:
+
+{{{
+def js():
+    yield "function(store,options) {"
+    yield "  options.params[%r] = job.get_current_record().data.id;" \
+          % URL_PARAM_CHOICES_PK
+    yield "}"
+listeners.update(beforeload=js)
+}}}
+
+Ha! Es funktioniert: Wenn ich auf einem deutschen Kontakt die Stadt auswähle, erscheinen nur die deutschen Städte.
+
+Oh... aber nur beim ersten Mal: wenn ich danach auf einem Belgier die Stadt auswähle, kriegt der auch nur deutsche Städte zur Auswahl. Da muss ich noch was dran feilen...
+
+Was ist mit dem `ComboBox.render`-Event? Wird nur einmal gefeuert.
+Und `ComboBox.focus`? wird jedesmal gefeuert, aber erst nach dem Laden des Stores.
+
+Neue Idee: Die Listener sind jetzt nur noch einfache calls an die neue Methode `ComboBox.setQueryContext()`. Und `ComboBox.getParams()` habe ich überschrieben.
+Und das ganze System wird nur aktiviert, wenn `contextParam` definiert ist.
+Cool, müsste super klappen. Ist aber noch nicht fertig:
+ * In der Grid deklarieren die ComboBoxen des columnModels ihre `setQueryContext` nicht an job.add_row_listener(), weil da ja nicht js_lines() ausgeführt wird. Dazu müsste ich alle Kolonnen (oder besser gesagt deren Editoren) als Variablen deklarieren.
+ * Im Detail wird der Handler gerufen, verursacht dann aber "this.setQueryContext is not a function"
+
+([20100125 Fortsetzung folgt])

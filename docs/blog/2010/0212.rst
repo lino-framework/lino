@@ -1,0 +1,33 @@
+= [20100212 Arbeitsbericht] =
+
+Weiter mit der Einbindung der Slave Grids (Issue 102). Funktioniert schon mit NotesByPerson, aber noch nicht mit PropValuesByOwner (weil dort die Verknüpfung per GFK ist). Genauer gesagt weil `Lino.show_slave()` den Master (mk und mt) nie übergibt, was bei NotesByPerson nicht zu einem Traceback führt, sondern alle Records mit person==None anzeigt.
+
+Diese Woche habe ich einige Stunden verbraten, um auf django-developers zu 
+[http://groups.google.com/group/django-developers/browse_thread/thread/89787edc279d74d2?hl=en diskutieren]. 
+Einfach unglaublich, dass keiner der Entwickler mein 
+[http://code.djangoproject.com/ticket/12801 Ticket 12801] versteht!
+Habe gerade noch mal eine Stunde lang geschrieben, um es ihnen zu erklären.
+Nicht, dass das so super wichtig wäre (man kann ja damit leben), aber so ein Bug sollte doch bitte in der Dokumentation erwähnt werden. Erst recht, wenn das scheinbar so schwer zu verstehen ist. 
+
+Weiter mit Lino. Also ich will ja eigentlich nur mal endlich ein EditorGrid-Fenster auf PropValuesByOwner angezeigt bekommen. Dort wird es bestimmt noch Herausforderungen geben wegen des pro Zeile ändernden Editors. Aber vorher hatte ich einige Hürden:
+
+Erste Hürde (die jetzt endlich bewältigt ist) war die Anbindung eines Slave-Fensters an seinen Master. Neue Methode `load_master()` im generierten JS-Code. Dort musste ich auch erst mal kapieren, dass der Fensteraufruf (`POST /action/props/PropsByOwner`) gar keinen ReportRequest zu instanzieren braucht, weil er keine `master_instance` ermitteln muss.  Ein ReportRequest wertet immer nur GET aus und nie POST. Nur das `layout` ist dort wichtig.
+
+Dann sehe ich en passant, dass die Schnellsuche noch mal wieder nicht funktioniert.
+Aha: die lästigen Warnungen `The 'charCode' property of a keyup event should not be used. The value is meaningless.` in FireBug kann ich laut [http://www.yui-ext.com/forum/showthread.php?t=74188] ignorieren und überhaupt abschalten, indem ich die Javascript warnings in FireBug abschalte. 
+
+`demo.dpy`in dsbe füllt jetzt einige properties aller Personen mit Werten und... oh, die werden aber noch nicht abgezeigt. Da muss noch irgendwo ein stud sein. Aber jetzt ist Wochenende... 
+Noch gerade hg commit 
+[http://code.google.com/p/lino/source/detail?r=bcdef7a581e83160a9ee75c73c1cc3329e9f4068 lino] und 
+[http://code.google.com/p/lino-dsbe/source/detail?r=4501de7610d07f8de37f0d6eefe49235de14dafe lino-dsbe] und Tschüss.
+
+----
+
+23.30 Uhr: Der Stud ist gefunden, ich kann zum ersten Mal die neuen Properties (mit Datentyp) sehen. 
+
+TODO:
+ # `PropValues.value` bearbeiten geht nicht (`InterfaceError: Error binding parameter 0 - probably unsupported type.`)
+ # `PropValues.value` zeigt keine Auswahlliste an
+ # clicking on a GridElement should hide the element until the slave window is closed
+ # Previous/Next in a DetailMainPanel should switch between pages on the `caller.main_grid`'s PagingToolbar when necessary.
+ # `PgUp` & `PgDn` in a DetailMainPanel doesn't work

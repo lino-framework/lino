@@ -1,0 +1,70 @@
+= [20100414 ←] [20100421 17.-21.04.2010] [20100422 →] =
+
+Die Umstellung auf RESTful ist überraschend aufwändig, und das frustriert
+mich. Es lohnt sich auch nicht, darüber viel zu schreiben, weil es echt
+Schlammschipperei ist. Trotzdem bin ich motiviert und hoffe, dass das
+bald wieder vorbei ist.
+
+20.04. abends: 
+
+Uff: die neue URL-Struktur scheint jetzt ([http://code.google.com/p/lino/source/detail?r=753a477a2a0f64b1a463ee57a990886aadd51fb2 revision 753a477a2a]) im Großen und Ganzen zu funktionieren. Einiges an Kleinarbeiten ist noch zu tun, bevor die Funktionalität von vor der großen Lawine wieder hergestellt ist...
+
+21.04.
+
+Zuerst in der lino.js : die Verwaltung von Slave-Fenstern macht noch gelegentliche JS-Fehlermeldungen. Außerdem wird die PDF-Action noch nicht ausgelöst. Die `success`-Funktion in `WindowWrapper.setup_child` und `Lino.do_action` sind teilweise doppelt gemoppelt.
+
+Es gibt Toggle-Slave-Fenster und einfache Slave-Fenster. Erstere müssen den Toggle-Button in ihrem Master kennen, um ihn wieder einschalten zu können, wenn sie durch ihr eigenes close-Tool geschlossen werden. Insert wird ein einfaches Slave-Fenster ohne Toggle sein. Der Master soll alle seine Slaves (auch die nicht toggelnden?) schließen, wenn er geschlossen wird.
+
+Ich kann es auch einfacher machen: ein Insert-Fenster wird nicht geschlossen, wenn der Master geschlossen wird. Dann wären alle Slaves automatisch Toggle-Fenster (d.h. Detail, GridSlaves und Properties).
+
+PDF ist keine Aktion, die ein (Unter-)Fenster öffnet, sondern sie macht ein Redirect zur URL, unter der die pdf-Datei steht (je nach Browsereinstellung bedeutet das ein neues Browser-Fenster oder ein Dialog zum Runterladen der Datei).
+
+Delete sollte je nach Konfiguration des Reports entweder vorher bestätigen oder nicht. Also beim Klicken des Buttons sollte ein Ajax-Request `GET /contactsz/Persons/delete.act` rausgehen, der z.B. folgendes zurück gibt:
+{{{
+  function(caller) { 
+    if Ext.confirm("Are you sure?") {
+      Lino.do_action(caller,
+        'DELETE','/api/contacts/Persons',{selection=caller.get_selected()}
+      )
+    } 
+  }
+}}}
+
+Momentan gibt z.B. `/api/contacts/Persons/projects.act` folgendes zurück: 
+
+{{{
+{ 
+  success: true, ...
+  open_window: function(caller) { return new Lino.GridSlaveWrapper(caller,{...});}
+}
+}}}
+
+Und `Lino.do_action` bzw. `setup_child` machen:
+
+{{{
+    if (result.show_window) {
+      var ww = result.show_window(caller);
+      ww.show();
+    }
+}}}
+
+Das ist ziemlicher Quatsch. Transparenter wäre ein System im Stil:
+
+{{{
+{ 
+  success: true, ...
+  js_code: function(caller) { 
+    caller.show_slave('projects',new Lino.GridSlaveWrapper(caller,{...}));}
+}
+}}}
+
+und in `Lino.do_action` bzw. `setup_child` dann einfach:
+
+{{{
+    if (result.js_code) result.js_code(caller);
+}}}
+
+
+`js_code` ist einfach eine Funktion, die mit einem einzigen Parameter 'caller' aufgerufen wird. Ein `GridSlaveWrapper` kann dann natürlich nicht funktionieren wenn es vom Hauptmenü aus gestartet wird (wo der caller `undefined` ist).
+
+Wichtig ist zu bedenken, dass `/api/contacts/Persons/projects.act` natürlich nur einmal aufgerufen werden muss. Deshalb ist `Lino.toggle_button_handler` da. Der schaut momentan nach, ob der Master-WindowWrapper schon ein Attribut namens 'projects' hat. Wenn ja, dann ist das nämlich der zuvor generierte GridSlaveWrapper, der inzwischen geschlossen (d.h. versteckt) worden war und lediglich ein `show()` angefragt kriegt.

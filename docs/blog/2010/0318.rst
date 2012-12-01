@@ -1,0 +1,63 @@
+= [20100317 ←] [20100318 18.03.2010] [20100319 →] =
+
+11 Uhr. Die Grundfunktionen sind bis auf ein paar Kleinigkeiten wiederhergestellt. Erstes Check-In nach der großen Operation, die ich übrigens "modal dialog forms" nennen würde. Zum Einloggen brauchen wir jetzt nur noch zwei statt vorher drei Klassen:
+
+{{{
+class LoginForm(layouts.FormLayout):
+    layout_command = 'Login'
+    
+    text = layouts.StaticText(_("Please enter your username and password to authentificate."))
+  
+    main = """
+    text
+    username
+    password
+    _ cancel ok
+    """
+}}}
+
+{{{
+class Login(commands.Command):
+
+    label = _("Login")
+    username = forms.Input(fieldLabel=_("Username"),
+      maxLength=75,allowBlank=False)
+    password = forms.Input(fieldLabel=_("Password"),
+      maxLength=75,inputType='password',allowBlank=False)
+    
+    def run_in_dlg(self,dlg):
+        yield dlg.show_modal_form('LoginForm')
+        
+        while True:
+            if dlg.button_clicked != self.ok:
+                yield dlg.cancel()
+        
+            username = dlg.params.get('username')
+            password = dlg.params.get('password')
+            print username,password
+            user = authenticate(username=username, password=password)
+            if user is None:
+                yield dlg.notify(
+                _(u"Please enter a correct username and \
+                  password. Both fields are case-sensitive."))
+            elif not user.is_active:
+                yield dlg.notify(_("This account is inactive."))
+            else:
+                login(dlg.request, user)
+                yield dlg.ok("Welcome, %s!" % user).refresh_menu()
+
+}}}
+
+
+Außerdem funktioniert jetzt erstmals sowohl client- wie serverside validation.
+
+13.45 Uhr : Check-In. 
+Die weiteren Kleinigkeiten waren z.B. Speichern der Fensterkonfiguration. Das funktioniert jetzt wieder (und übrigens ohne dass der Server neugestartet werden muss).
+
+Bevor ich zum eigentlichen Zweck der Operation komme (nämlich zum customisierbaren InsertRow) gibt es noch eine subtile Nachwirkung zu beheben: contacts.PersonsList zeigt kein Detail an. Das liegt an der Reihenfolge beim Server-Start: `ModelLayout.setup()` für PersonDetail wird scheinbar erst ausgeführt, wenn `contact.PersonsList` schon gemacht ist.
+
+15.45 Uhr. Das Detail ist wieder da. Check-In. 
+
+Und jetzt also InserRow mit modalen Dialogfenstern. Idee ist, dass in `InsertRow.run_in_dlg()`eine neu angelegte model instance gemacht wird, die also im Dialog als Variable existiert, aber noch nicht in der datenbank gespeichert ist. Die wird nun zunächst in einem modalen Formular angezeigt, das par défaut das DetailLayout des Modells benutzt, und das lediglich einen Cancel- und einen OK-Button hat. Nach OK wird vor dem Speichern dann noch anwendungsspezifischer Code ausgeführt, z.B. in contacs.Person eine Suche nach Dubletten, was eventuell zu zusätzlichen Bestätigungen führt, oder sogar zur Verweigerung des Abspeicherns.
+
+Das müsste jetzt prinzipiell kein Problem mehr sein, außer dass ich noch eine neue Art von DataLink machen muss, der diese ungespeicherte Instanz an das FormLayout knüpft.

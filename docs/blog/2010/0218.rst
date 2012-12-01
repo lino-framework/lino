@@ -1,0 +1,44 @@
+= [20100217 ←] [20100218 18.02.2010] [20100219 →] =
+
+
+8.56 Uhr. So, mit Issue 94 bin ich jetzt zufrieden.
+[http://code.google.com/p/lino/source/detail?r=456477876fb12cc3c52158babb7b34c6ad67a32b checkin].
+
+Weiter mit der Datenanbindung des Ei-Editors (Issue 103). Das wird relativ leicht gehen, aber ich finde es nicht. Also zuerst mal aufräumen.
+
+`Lino.show_slave()` umbenannt nach `Lino.slave_handler()`, weil sie führt die Aktion ja nicht selber aus, sondern liefert eine Funktion, die die Aktion ausführt. Ebenso `Lino.props_toggle()` umbenannt nach `Lino.props_toggle_handler()`.
+
+Diese Handler-Funktionen (also globale Funktionen, die eine Funktion zurückgeben, sind eigentlich nur shortcuts. Statt zu schreiben:
+
+{{{
+buttons.append(dict(
+  handler=js_code("Lino.slave_handler(this,%r)" % url,
+  text=lh.layout.label))
+}}}
+
+Könnte ich auch gleich schreiben:
+
+{{{
+buttons.append(dict(
+  scope=js_code('this'),
+  handler=js_code("function(){Lino.do_dialog(this,%r,{})" % url,
+  text=lh.layout.label))  
+}}}
+
+Aber ich weiß momentan nicht, welche Methode schneller ist. Also lassen wir die Methode, die am lesbarsten ist...
+
+Beim Aufräumen fand ich auch noch ein paar Nebenwirkungen von Issue 94. 
+
+17.09 Uhr. Puh... Siebeneinhalb Stunden Lino, das reicht für heute. Und nicht nur hier und da ein paar kleine Änderungen, sondern mehrere interne Umstrukturierungen, von denen ich mir höchstens eine pro Tag zutrauen würde, wenn das im Voraus planbar wäre. Meine Methode zum Generieren von Javascript gefällt mir immer mehr. Und dann hat eine ReportRequest jetzt ein Attribut `master`. Da könnte man sich fragen, wieso, weil das ja im `Report.master` steht. Der feine Unterschied kommt, wenn `Report.master` ein `ContentType` ist. Dann ermittelt `BaseViewReportRequest` die master-Klasse dynamisch anhand des GET-Parameters (`mt`). Und damit properties.PropValuesByOwner alle Eigenschaften anzeigt (nicht nur die, die einen Wert haben), muss er get_queryset() überschreiben und den (dynamisch ermittelten) master kennen. Und statt in `Report.get_queryset()` zu den 1000 Parametern noch einen weiteren hinzu zu fügen, wird die jetzt einfach nur mit dem ReportRequest aufgerufen.
+
+
+Sichtbare Resultate: Der Ei-Editor zeigt jetzt immer schön die Eigenschaften der jeweiligen Person oder Organisation an, wenn man durch die Liste klickt. Und zwar *auch* die Eigenschaften, die *nicht* gesetzt sind. Und im Fenstertitel zeigt er den Namen des Owners. Und wenn man das Ei-Fenster selber schließt, wird der Properties-Button rausgetoggelt 
+
+
+[http://code.google.com/p/lino/source/detail?r=0ce74d9bd5bb6dc09af3635e98fe5fd8cef4d7db checkin]
+
+Bleibt für morgen:
+
+ * Eigenschaften speichern
+ * die Buttons der verschiedenen Slave-Fenster könnte ich auch zu Togglebuttons machen
+ * Testen

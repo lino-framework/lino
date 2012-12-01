@@ -1,0 +1,60 @@
+= [20100408 ←] [20100412 12.04.2010] [20100413 →] =
+
+Erster Punkt: *Text der Buttons im GridMaster* ist jetzt wieder `Report.button_label` statt `Report.label`.
+
+
+Nächster Punkt: *Detail-Buttons waren doppelt*, weil er die Details nun automatisch zuweist, aber das Detail aus modlib nicht überschreibt. Hier der Code aus  `lino.layouts.DetailLayout.do_setup()`, der das verwaltet:
+
+{{{
+    def do_setup(self):
+        ModelLayout.do_setup(self)
+        if self.datalink is not None:
+            new_details = []
+            l = getattr(self.datalink,'_lino_layouts',None)
+            if l is None:
+                l = []
+                setattr(self.datalink,'_lino_layouts',l)
+            lino.log.debug('Register DetailLayout %s as %r for model %s',
+                self,self._actor_name,model_label(self.datalink))
+            for dtl in l:
+                if self._actor_name != dtl._actor_name:
+                #~ if not isinstance(self,dtl.__class__):
+                    new_details.append(dtl)
+                else:
+                    lino.log.debug('not isinstance(%r,%r)',self,dtl.__class__)
+            new_details.append(self)
+            setattr(self.datalink,'_lino_layouts',new_details)
+}}}
+
+
+Ich habe nicht verstanden, weshalb der Test auf isinstance nicht funktionierte. Hier ein Auszug aus der `lino.log` mit Test auf `isinstance` statt `_actor_name`:
+
+{{{
+201004-12 10:52:52 DEBUG layouts : Register DetailLayout dsbe.ProjectDetail as #1 for model projects.Project
+201004-12 10:52:52 DEBUG layouts : not isinstance(<dsbe.models.ProjectDetail object at 0x018A75F0>,<class 'lino.modlib.projects.models.ProjectDetail'>)
+}}}
+
+Aber sowieso ist der Test auf `_actor_name` logischer, weil es keinen Sinn macht, zwei Details mit gleichem Namen zu registrieren (selbst wenn das zweite nicht als Unterklasse des ersten definiert ist). Wenn eine Anwendung ein Detail aus der modlib überschreibt, dann sollte sie das trotzdem als Unterklasse tun, damit die Reihenfolge stimmt. 
+
+Nächster Punkt: *Properties-Button funktioniert noch nicht*. Er schickt zwar einen Ajax-Request ab, bekommt aber folgende Antwort: 
+
+{{{
+{ redirect: null, confirm_msg: null, success: false, 
+  notify_msg: null, refresh_menu: false, 
+  close_caller: false, show_window: null,
+  refresh_caller: false, alert_msg: "" 
+}
+}}}
+
+Das kommt, weil `PropertiesAction.run_action()`noch gar nicht implementiert war. 
+Na und vor allem ist `Lino.PropertiesWrapper`in der `lino.js` noch gar nicht implementiert. Beim Implementieren fallen mir noch weitere Dinge auf, die nicht wie bisher bleiben konnten:
+
+ Das Fenster eines WindowWrappers wird jetzt an einer einzigen Stelle in `Lino.WindowWrapper.setup`instanziert.
+
+ Actions werden jetzt nicht mehr vom Anwendungscode instanziert, sondern in `Report.default_action` und `Report.actions` gibt man lediglich die Klassen an. Instanziert werden die Dinger jetzt von Lino, und zwar mit dem ActorHandle als Parameter (den sie dann in `self.ah` speichern). 
+
+21.30 Uhr: Uff, das PropertiesWindow öffnet sich wieder, ich kann beruhigt schlafen gehen: das Fundament ist nun nach der Amputation der Dialoge erstmals wieder tragfähig.
+
+[http://code.google.com/p/lino/source/detail?r=f2bd4d8672da51d257937e3d3a307173e3ae6d58 Check-In].
+
+Morgen gibt es dann viel Kleinkram: Fenstertitel und -verknüpfungen funktionieren noch nicht. Und kann auch sein, dass intern noch Änderungen kommen, denn momentan ist der Code stellenweise nicht gerade klar...

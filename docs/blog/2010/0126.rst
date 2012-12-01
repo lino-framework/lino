@@ -1,0 +1,32 @@
+Weiter mit `python fill.py demo` in `lino-igen`. Nach den eher trivialen Anpassungen wegen der Änderungen in `lino.modlib` hier noch mal was Interessantes:
+
+{{{
+Problem installing fixture 'c:\drives\t\hgwork\lino\src\lino\modlib\sales\fixtures\demo.dpy': Traceback (most recent call last):
+  ...
+  File "l:\snapshot\django\django\db\backends\util.py", line 19, in execute
+    return self.cursor.execute(sql, params)
+  File "l:\snapshot\django\django\db\backends\sqlite3\base.py", line 189, in execute
+    return Database.Cursor.execute(self, query, params)
+IntegrityError: ledger_ledgerdocument.journal_id may not be NULL
+}}}
+
+
+{{{
+    def create_document(self,**kw):
+        cl = self.get_doc_model()
+        kw.update(journal=self)
+        doc = cl(**kw)
+        print 20100126, doc
+        doc.save()
+        return doc
+}}}
+
+Output der Zeile `print 20100126, doc`:
+
+{{{
+20100126 (Unsaved <class 'lino.modlib.sales.models.Invoice'> document (journal=<Journal: INV>,number=None))
+}}}
+
+Erklärung (nach 2 Stunden Suche und einer neuen test_app): 
+Ich bin erneut auf Djangos Ticket #10808 reingefallen. 
+Ich hatte den Patch nicht installiert, weil der in lino-dsbe nicht nötig ist.

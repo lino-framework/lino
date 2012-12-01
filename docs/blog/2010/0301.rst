@@ -1,0 +1,29 @@
+= [20100228 ←] [20100301 01.03.2010] [20100302 →] =
+
+Weiter mit dem Text-Editor. Es ist ja übrigens nicht nur der HtmlEditor, der nicht automatisch "den Rest des Fensters" ausfüllt. Auch die GridElements in einem Detail-Fenster tun das im Grunde nicht. Ich hatte das da mit autoHeight unter den Teppich gekehrt. Hier ein paar neue Regeln, die ich nun implementieren will:
+
+Wenn das Hauptelement eines Layouts ein vertikales Panel ist, und wenn ein Element dieses Panels "vertikal flexibel" ist, dann soll das als Füller benutzt werden. Und wenn es kein vflex-Element im Hauptelement gibt, dann darf die Fensterhöhe eigentlich nicht verändert werden. Z.B. im Login-Dialogfenster hat das in der tat keinen Sinn. Und wenn mehrere Elemente vflex sind? Dann kriegen sie die verbleibende Höhe proportional zugeteilt, entsprechend ihrer `height or preferred_height`. 
+Ein vertikales Panel ist vflex, wenn mindestens eines seiner Kinder vflex ist. 
+Ein horizontales Panel ist vflex, wenn *alle* seine Kinder vflex sind.
+
+Ich brauche übrigens kein BorderLayout, sondern eine vbox ist logischer.
+Die Beispiele, die ich brauchte, um das zu verstehen, sind 
+[http://code.google.com/p/lino/source/browse/extjs-showcases/20100228_htmleditor.html hier].
+
+Die eigentliche Integrierung dieser Ideen in Lino (dass er solchen JS generiert) war nicht allzu schwer, aber wegen eines mir rätselhaften Details brauchte ich noch mehrere Stunden, um den Fall in einem showcase zu isolieren und eine 
+[http://www.extjs.com/forum/showthread.php?p=441918#post441918 Frage im ExtJS-Forum] zu stellen. Keine 5 Minuten später hatte Animal meinen Fehler gefunden. 
+
+Checkin
+
+Weiter: Das Problem _"store is not defined" nach Eingabe im Schnellfilter_ war leicht.
+
+Weiter: Das Problem mit den ForeignKey-Comboboxen ist fies, dafür muss ich Issue 100 (ContextAwareChoices needs redesign) in Angriff nehmen.
+
+`Report.get_field_choices()` funktioniert jetzt mit dem neuen API. Die neue [http://code.google.com/p/lino/source/browse/src/lino/test_apps/20100301/models.py lino.test_apps.20100301] testet das. 
+
+TODO:
+
+ * `ext_ui.choices_view()` muss die POST-Parameter noch in Python-Werte umwandeln, das ist die gleiche Logik wie die Converter in Instantiator. 
+ * und das Fieseste wird dann das Suchen nach den Bugs im JS-Code sein.
+
+Aber jetzt ist erst mal Feierabend. Sechseinhalb Stunden Lino, das ist nicht schlecht für einen Montag. 

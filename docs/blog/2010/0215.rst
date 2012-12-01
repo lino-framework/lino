@@ -1,0 +1,52 @@
+= [20100213 ←] [20100215 15.02.2010] [20100216 →]=
+
+
+Weiter mit Issue 103. 
+Gestern habe ich ohne Blog drei Stunden lang nach einem saudoofen Bug gesucht: ich bekam die PropertyGrid nicht im Detail-Fenster angezeigt. Ich hatte einen JS-Fehler während des Renderns. Es lag letzten Endes gar nicht an falschen config-Optionen, sondern an einem Bug in `Layout.desc2elem()` : die vertrug bisher kein horizontales `main` (produzierte dann zwei DetailMainPanel).
+
+Eine horizontale `main` (also deren description nur eine Zeile enthält) funktioniert jetzt prinzipiell, aber mindestens zwei Details stimmen noch nicht: Breitenverteilung ist falsch und er hat dann scheinbar `frame=False`. Hier ein Screenshot:
+
+<p align="center">
+<a href="http://lino.googlecode.com/hg/screenshots/20100215.jpg">
+<img src="http://lino.googlecode.com/hg/screenshots/20100215.jpg" width="80%"/>
+</a></p>
+
+Als ich das sah, habe ich verstanden, dass das für den Eigenschaften-Editor nicht der richtige Weg ist. Der muss in einem eigenen Fenster stehen, damit man ihn unabhängig positionieren kann. Außerdem kann man PropertiesByOwner von jedem Report aus aufrufen, es ist ein Standard-Button, der direkt hinter Insert und Delete kommen kann.
+
+Die Details an der horizontalen `main` lass ich offen, bis sich mal ein konkreter Nutzen ergibt. Issue 104. Ich kann mir vorstellen, dass eine horizontale main, die nur aus zwei oder drei Elementen besteht, zumindest Splitbars haben sollte, damit man die Breite der Panels leicht selber einstellen kann.
+
+== Echte Felder oder Eigenschaften ==
+
+Ein anderer Aspekt, der mit obigem Screenshot gut erklärt werden kann: Wenn die Properties mal funktionieren, werden wir jedesmal neu vor der Entscheidung stehen, welche Angaben als "echte" Datenfelder in der Tabelle selber stehen (d.h. in Djangosprache im Model `Person`) und welche als Eigenschaft sozusagen ausgelagert werden.
+
+Zum Beispiel Geburtsort, Herkunftsland sind momentan echte Felder, die vielleicht besser zu Eigenschaften gemacht werden.
+
+Ein echtes Feld ist z.B. nötig, wenn es in einem Layout stehen soll. Zum Beispiel Straße, Hausnummer und Briefkastennummer wären als Eigenschaften recht unschön, die bleiben besser im Model. Ich könnte zwar auch machen, dass PageLayout einzelne Properties als Eingabefelder anzeigt. Das wäre aber eher um flexibel zu sein, und es würde die Datenstruktur untransparenter machen.
+
+Auch die TIM-Nummer würde ich eher als echtes Feld belassen, weil die ziemlich fest mit ihrer Person verbunden sein muss. Ich werde sie wahrscheinlich auch noch als unique definieren.
+
+Performance bzw. Serverbelastung beim Zugriff sind natürlich auch nicht ganz bedeutungslos. Ein Ankreuzfeld, das bei jeder Buchung 3x abgefragt wird, sollte lieber direkt im Model stehen.
+
+----
+
+Zwischendurch habe ich Issue 99 gelöst. 
+Die Basisklasse ReportRequest (`reports.ReportRequest`) nahm `Report.page_length` als Standardwert für `ReportRequest.limit`. Dadurch war es unmöglich, alle Records zu bekommen. 
+
+
+Weiter mit Issue 103. 
+
+Eigenschaften, für die mindestens eine Auswahlmöglichkeit existiert, kriegen jetzt einen Eintrag in `customEditors`. Funktioniert sogar. 
+
+Und jetzt den EiEditor in ein eigenes Fenster...
+Dazu brauch ich wahrscheinlich eine neue Art von MainPanel...
+
+Hah! Das ist der Moment, um endlich mal Issue 90 zu starten. Die extjs.py wird nämlich immer unübersichtlicher, sie hat 3045 Zeilen...
+
+Nebenbei hätte ich beinahe meine selbstgebastelte `py2js()` durch ein `simplejson.encode()` mit einem `LinoJSONEncoder` ersetzt. Das wäre theoretisch eleganter, aber das geht nicht, weil ich meine Klasse `js_code` definiere und auch ausgiebig nutze, um rohes Javascript generieren zu können. `js_code('foo')` wird nach JSON unverändert übergeben. Dieses Feature kann keiner der beiden JSONEncoder. Es funktioniert nur, weil ich `simplejson.dumps()` erst ganz am Ende von `py2js()` für reine Strings aufrufe.
+
+Mit Python 2.6 würde es nun funktionieren (Ich habe einen LinoJSONEncoder, der die interne Methode `_iterencode_default()` überschreibt). In Python 2.5 hat Django aber seine eigene Implementierung, mit der mein Hack nicht funktioniert. Deshalb ist das Ganze nun doch deaktiviert.
+
+Ha! Super! Ich habe nicht nur Issue 90 fertig bekommen, sondern auch das separate Eigenschaften-Fenster. Das wird mit einem Toggle-Button ein- und ausgeschaltet. 
+
+Das Fenster zeigt freilich momentan erst die Standardwerte aller Eigenschaften an. Die Werte zu laden und zu speichern, das mach ich morgen. Es ist 17.15 Uhr, jetzt ist Feierabend. Knapp 8 Stunden Programmierung waren das heute, bei denen ich wahrscheinlich 
+mehr Freude hatte als viele andere im Rosenmontagszug, der in Eupen gerade endet...

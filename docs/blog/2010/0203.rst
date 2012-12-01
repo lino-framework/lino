@@ -1,0 +1,51 @@
+= [20100203 Arbeitsbericht] =
+
+`lino.__version__` enthält jetzt in der Entwicklungsversion auch die Angabe des Mercurial-Changesets. Das habe ich von [http://sphinx.pocoo.org Sphinx] kopiert.
+`lino.diag.welcome()` zeigt das also jetzt auch an:
+
+{{{
+Lino 0.8.1+ (Hg 10ff891f931a+) <http://lino.saffre-rumma.ee>
+Django 1.2 alpha 1 SVN-12300 <http://www.djangoproject.com>
+ReportLab Toolkit 2.3+ <http://www.reportlab.org/rl_toolkit.html>
+PyYaml 3.08 <http://pyyaml.org/>
+python-dateutil 1.4.1 <http://labix.org/python-dateutil>
+Python 2.5.2 <http://www.python.org/>
+xhtml2pdf 3.0.32 <http://www.xhtml2pdf.com//>
+}}}
+
+
+Aber jetzt mal weiter. Ich habe begonnen zu überlegen, wie ich die Kolonnenbreiten mit den Fenstergröße speichern will. Die Kolonnenbreiten könnte ich mit Frickelsarbeit schnell in der `windows_config.pck` hinzufügen... aber ich ahne, dass da schon bald mehr kommen wird. Zum Beispiel 
+ * Sortierung speichern
+ * Start am Anfang oder am Ende
+ * mehrere gespeicherte Varianten eines Reports
+
+Außerdem hat das Detail-Layout von `dsbe.contacts.Persons` eindeutig noch ein Problem:
+
+<a href="http://lino.googlecode.com/hg/screenshots/20100203.jpg">
+<img src="http://lino.googlecode.com/hg/screenshots/20100203.jpg" width="70%"/>
+</a>
+
+(Das war mein erster anklickbarer Screenshot in raisonabler Größe in einem WikiBlog. Bin wohl ein bisschen enttäuscht, dass Google da noch keine einfachere Methode gefunden hat...)
+
+Einverstanden, dass das Detail für Person in dsbe relativ viele Felder hat. Aber das soll auch so sein. Aber z.B. die beiden SlaveGrids nehmen viel zu viel Platz ein. Einzeilige TextFelder sollten `minHeight` gesetzt kriegen. SlaveGrids sollten optional ohne Toolbars sein (und sich dann per Klick in einem neuen Fenster öffnen).
+
+Na ja, und dann die Frage, ob es reicht, wenn man Details eben nicht wie von TIM her gewohnt mit einem Maskeneditor bearbeiten kann, sondern dass man dafür [Layouts Python-Code] editieren gehen muss...
+
+----
+
+Antwort auf meine Frage von vorhin: Wenn der Python-Code zum Bearbeiten von Layouts irgendwann mal jemanden stört, dann kann ich das auch über separate Text-Dateien machen, z.B. im yaml-Format. Es müssen keine Python-Klassen sein. Also werfe die Layouts noch nicht übern Haufen, sondern löse jetzt zuerst mal das Problem, dass normale Textfelder ihre Höhe skaliert kriegen. Die müssen eine raisonable Mindesthöhe haben.
+Um das besser testen zu können, füge ich im `contacts.CompanyDetail` von `lino.dsbe` auch die `props.PropValuesByOwner` und `notes.NotesByCompany` hinzu.
+Ziel ist, dass die einzeiligen Eingabefelder eine (relativ) feste Größe haben, während die SlavGrids und Memofelder flexibler sind. Aber jetzt muss ich erstmal wieder abbrechen...
+
+----
+
+Nachtrag: In meinem Satz "SlaveGrids sollten optional ohne Toolbars sein (und sich dann per Klick in einem neuen Fenster öffnen)" kann ich das "optional" wegfallen lassen. Die Implementierung wird dann einfacher: ich hole das Meiste aus `DataElementMixin` nach `MainPanel`. Und die topToolBar aus `GridPanel` kommt nach `MainGridPanel`. Plupp und fertig:
+
+<a href="http://lino.googlecode.com/hg/screenshots/20100204.jpg">
+<img src="http://lino.googlecode.com/hg/screenshots/20100204.jpg" width="70%"/>
+</a>
+
+Bearbeitbare SlaveGrids habe ich bisher haben wollen, damit man bei der Eingabe von Rechnungen den oberen und den unteren Teil in einem einzigen Fenster eingeben kann. Wäre ja schön gewesen, aber ein eigenes Unterfenster für die Positionen ist bestimmt auch gesünder. 
+
+Jetzt ist also nur noch das Problem, dass die SlaveGrids sich viel zu wichtig nehmen und den normalen Eingabeelementen ihren Platz rauben. 
+Ach ja, und ein Klick auf diese neuen "doofen" SlaveGrids muss natürlich die entsprechende Tabelle in einem eigenen Grid-Fenster öffnen.

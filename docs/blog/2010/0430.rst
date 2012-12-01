@@ -1,0 +1,969 @@
+= [20100424 ←] [20100430 30.04.2010] [20100501 →] =
+
+Puh! Die knapp vier Stunden, die ich diese Woche an Lino arbeiten konnte, sind gänzlich für einen einzigen Fehler verpulvert worden. Hier ein Bild des Problems:
+
+<p align="center">
+<a href="http://lino.googlecode.com/hg/screenshots/20100429.png">
+<img src="http://lino.googlecode.com/hg/screenshots/20100429.png" width="50%"/>
+</a></p>
+
+Die Textfelder der Detailform scheinen aus irgendeinem Grund wieder zerstört und neu instanziert zu werden, nachdem sie gerendert wurden. Sie sind also sichtbar, aber wenn man ihnen mit `Ext.form.BasicForm.loadRecord()` einen neuen Wert zuweist, dann findet `Basicform.findField()` eine neue, noch nicht gerenderte Instanz eines `Ext.form.Textfield` mit dem gleichen Namen. Deshalb wird der Wert nie angezeigt.
+Die beiden relevanten Einträge in der Console sind:
+
+{{{
+Component.render() street ext-comp-1033
+Ext.form.Field.setValue() street Gospert ext-comp-1091
+}}}
+
+Ich habe den Effekt nicht in einem Showcase reproduzieren können. Ich könnte mir vorstellen, dass er nur kommt, wenn man --wie ich es tue-- das komplette Fenster in einer dynamisch mit `Ext.decode()` erstellten Funktion instanziert.
+(Siehe `Lino.toggle_button_handler` und `Lino.do_action` in der `lino.js`).
+
+Workaround: Der ganze Zauber verschwindet jedenfalls in [http://code.google.com/p/lino/source/detail?r=cea3f59818fb7bf9b61fe9da854f7dc1a070f109 Revision cea3f59818], indem ich die Textfelder als echte Instanzen von `Ext.form.TextField` und nicht als Konfigurationsobjekte mit `xtype:'textfield'` generiere. 
+
+Weiter unten noch fürs Archiv die Antwort von `GET http://127.0.0.1:8000/ui/contacts/Companies/detail` vor und nach dem Workaround. (Danke an http://jsbeautifier.org/ für die Indentierung.)
+
+Aber nun noch ein Liste der letzten kleinen Probleme nach der großen Operation:
+
+ # Detail-Fenster hat keinen Submit-Button. 
+ # Außerdem sollte das Detail-Fenster par défaut nicht editieren lassen. Also normalerweise alle Felder mit `editable:false` und unten ein Button "Edit", und wenn man darauf klickt werden alle Felder editierbar (und der Record in der Datenbank blockiert), und unten stehen zwei Buttons "Save" und "Cancel". Wobei darauf zu achten ist was passiert, wenn man während des Bearbeitens in der Grid auf eine andere Zeile klickt. Dann muss er am besten das Detail-Fenster speichern, und falls dort ungültige Daten stehen, in der Grid den Zeilenwechsel verweigern.
+ # Ein weniger abschreckendes Template für das PDF-Dokument machen.
+ # Detail-Fenster auf Personen funktioniert nicht; wahrscheinlich weil dort Detail-Grids sind. (Server sagt `AttributeError: 'GridElement' object has no attribute 'rh'`)
+ # NotesByPerson öffnet sich nicht, weil ein JS-Fehler `w is null` kommt. Vielleicht einfach nur `py2js()` anpassen, dass sie `None` nicht als `null` rendert sondern als `undefined`.
+ # QuickFilter funktioniert nicht mehr (er vergisst das `refresh()`).
+ # Hinter das QuickFilter-Feld muss ein Button, um den Filter zu aktivieren. Dass man einfach nur ENTER drücken muss ist nicht intuitiv.
+ # Reports, für deren Model keine Properties existieren, sollten auch keinen Properties-Button haben.
+ # Insert funktioniert nicht in SlaveGrid-Fenstern
+ # Insert-Fenster hat keinen Titel und keinen Cancel-Button.
+ # Nach Submit im Insert-Fenster muss das Fenster geschlossen werden und die darunterliegende Grid aktualisiert werden.
+
+
+
+== Vorher ==
+
+{{{
+{
+    js_code: function (caller) {
+        return new Lino.DetailSlaveWrapper(caller, {
+            url_action: "/ui/contacts/Companies/detail",
+            wc: {
+                title: "Companies - Detail",
+                height: 459,
+                width: 509,
+                maximized: false,
+                y: 49,
+                x: 417,
+                column_widths: []
+            },
+            permalink_name: "contacts/Companies/detail",
+            main_panel: {
+                border: false,
+                layout: "vbox",
+                xtype: "form",
+                autoScroll: true,
+                items: [{
+                    items: [{
+                        border: false,
+                        layout: "form",
+                        xtype: "container",
+                        items: [{
+                            border: false,
+                            labelWidth: 45,
+                            xtype: "container",
+                            items: [{
+                                fieldLabel: "name",
+                                xtype: "textfield",
+                                name: "name",
+                                maxLength: 200,
+                                anchor: "100%",
+                                allowBlank: false
+                            }],
+                            frame: true,
+                            labelAlign: "top",
+                            bodyBorder: false,
+                            anchor: "100%",
+                            layout: "form"
+                        },
+                        {
+                            border: false,
+                            labelWidth: 63,
+                            xtype: "container",
+                            items: [{
+                                fieldLabel: "vat id",
+                                xtype: "textfield",
+                                maxLength: 200,
+                                anchor: "100%",
+                                name: "vat_id"
+                            }],
+                            frame: true,
+                            labelAlign: "top",
+                            bodyBorder: false,
+                            anchor: "100%",
+                            layout: "form"
+                        }],
+                        columnWidth: 0.5714285714285714,
+                        frame: true,
+                        bodyBorder: false,
+                        labelAlign: "top"
+                    },
+                    {
+                        border: false,
+                        layout: "form",
+                        xtype: "container",
+                        items: [{
+                            border: false,
+                            labelWidth: 108,
+                            xtype: "container",
+                            items: [{
+                                fieldLabel: "national id",
+                                xtype: "textfield",
+                                maxLength: 200,
+                                anchor: "100%",
+                                name: "national_id"
+                            }],
+                            frame: true,
+                            labelAlign: "top",
+                            bodyBorder: false,
+                            anchor: "100%",
+                            layout: "form"
+                        },
+                        {
+                            border: false,
+                            labelWidth: 81,
+                            xtype: "container",
+                            items: [new Ext.form.ComboBox({
+                                resizable: true,
+                                emptyText: "Select a Language...",
+                                submitValue: true,
+                                pageSize: 10,
+                                queryParam: "query",
+                                displayField: "text",
+                                fieldLabel: "language",
+                                name: "language",
+                                hiddenName: "languageHidden",
+                                typeAhead: true,
+                                valueField: "value",
+                                mode: "remote",
+                                triggerAction: "all",
+                                selectOnFocus: true,
+                                minChars: 2,
+                                queryDelay: 300,
+                                anchor: "100%",
+                                store: new Ext.data.JsonStore({
+                                    listeners: {
+                                        exception: Lino.on_store_exception
+                                    },
+                                    proxy: new Ext.data.HttpProxy({
+                                        url: "/choices/contacts/Companies/language",
+                                        method: "GET"
+                                    }),
+                                    totalProperty: "count",
+                                    fields: ["value", "text"],
+                                    root: "rows",
+                                    id: "value"
+                                })
+                            })],
+                            frame: true,
+                            labelAlign: "top",
+                            bodyBorder: false,
+                            anchor: "100%",
+                            layout: "form"
+                        }],
+                        columnWidth: 0.42857142857142855,
+                        frame: true,
+                        bodyBorder: false,
+                        labelAlign: "top"
+                    }],
+                    frame: false,
+                    border: false,
+                    layout: "column",
+                    xtype: "container"
+                },
+                {
+                    items: [{
+                        border: false,
+                        layout: "form",
+                        xtype: "container",
+                        items: [{
+                            layout: "column",
+                            xtype: "container",
+                            items: [{
+                                border: false,
+                                labelWidth: 72,
+                                xtype: "container",
+                                items: [new Ext.form.ComboBox({
+                                    resizable: true,
+                                    emptyText: "Select a Country...",
+                                    submitValue: true,
+                                    pageSize: 10,
+                                    queryParam: "query",
+                                    displayField: "text",
+                                    fieldLabel: "country",
+                                    name: "country",
+                                    hiddenName: "countryHidden",
+                                    typeAhead: true,
+                                    valueField: "value",
+                                    mode: "remote",
+                                    triggerAction: "all",
+                                    selectOnFocus: true,
+                                    minChars: 2,
+                                    queryDelay: 300,
+                                    anchor: "100%",
+                                    store: new Ext.data.JsonStore({
+                                        listeners: {
+                                            exception: Lino.on_store_exception
+                                        },
+                                        proxy: new Ext.data.HttpProxy({
+                                            url: "/choices/contacts/Companies/country",
+                                            method: "GET"
+                                        }),
+                                        totalProperty: "count",
+                                        fields: ["value", "text"],
+                                        root: "rows",
+                                        id: "value"
+                                    })
+                                })],
+                                columnWidth: 0.33333333333333331,
+                                frame: true,
+                                labelAlign: "top",
+                                bodyBorder: false,
+                                layout: "form"
+                            },
+                            {
+                                border: false,
+                                labelWidth: 63,
+                                xtype: "container",
+                                items: [{
+                                    fieldLabel: "region",
+                                    xtype: "textfield",
+                                    maxLength: 200,
+                                    anchor: "100%",
+                                    name: "region"
+                                }],
+                                columnWidth: 0.66666666666666663,
+                                frame: true,
+                                labelAlign: "top",
+                                bodyBorder: false,
+                                layout: "form"
+                            }],
+                            frame: false,
+                            border: false,
+                            anchor: "100%"
+                        },
+                        {
+                            layout: "column",
+                            xtype: "container",
+                            items: [{
+                                border: false,
+                                labelWidth: 45,
+                                xtype: "container",
+                                items: [new Ext.form.ComboBox({
+                                    resizable: true,
+                                    contextParams: ["country"],
+                                    emptyText: "Select a City...",
+                                    submitValue: true,
+                                    pageSize: 10,
+                                    queryParam: "query",
+                                    displayField: "text",
+                                    fieldLabel: "city",
+                                    name: "city",
+                                    hiddenName: "cityHidden",
+                                    typeAhead: true,
+                                    valueField: "value",
+                                    mode: "remote",
+                                    triggerAction: "all",
+                                    selectOnFocus: true,
+                                    minChars: 2,
+                                    queryDelay: 300,
+                                    anchor: "100%",
+                                    store: new Ext.data.JsonStore({
+                                        listeners: {
+                                            exception: Lino.on_store_exception
+                                        },
+                                        proxy: new Ext.data.HttpProxy({
+                                            url: "/choices/contacts/Companies/city",
+                                            method: "GET"
+                                        }),
+                                        totalProperty: "count",
+                                        fields: ["value", "text"],
+                                        root: "rows",
+                                        id: "value"
+                                    })
+                                })],
+                                columnWidth: 0.5,
+                                frame: true,
+                                labelAlign: "top",
+                                bodyBorder: false,
+                                layout: "form"
+                            },
+                            {
+                                border: false,
+                                labelWidth: 81,
+                                xtype: "container",
+                                items: [{
+                                    fieldLabel: "zip code",
+                                    xtype: "textfield",
+                                    maxLength: 10,
+                                    anchor: "100%",
+                                    name: "zip_code"
+                                }],
+                                columnWidth: 0.5,
+                                frame: true,
+                                labelAlign: "top",
+                                bodyBorder: false,
+                                layout: "form"
+                            }],
+                            frame: false,
+                            border: false,
+                            anchor: "100%"
+                        },
+                        {
+                            layout: "column",
+                            xtype: "container",
+                            items: [{
+                                border: false,
+                                labelWidth: 63,
+                                xtype: "container",
+                                items: [{
+                                    fieldLabel: "Street",
+                                    xtype: "textfield",
+                                    maxLength: 200,
+                                    anchor: "100%",
+                                    name: "street"
+                                }],
+                                columnWidth: 0.55555555555555558,
+                                frame: true,
+                                labelAlign: "top",
+                                bodyBorder: false,
+                                layout: "form"
+                            },
+                            {
+                                border: false,
+                                labelWidth: 36,
+                                xtype: "container",
+                                items: [{
+                                    fieldLabel: "No.",
+                                    xtype: "textfield",
+                                    maxLength: 10,
+                                    anchor: "100%",
+                                    name: "street_no"
+                                }],
+                                columnWidth: 0.22222222222222221,
+                                frame: true,
+                                labelAlign: "top",
+                                bodyBorder: false,
+                                layout: "form"
+                            },
+                            {
+                                border: false,
+                                labelWidth: 36,
+                                xtype: "container",
+                                items: [{
+                                    fieldLabel: "Box",
+                                    xtype: "textfield",
+                                    maxLength: 10,
+                                    anchor: "100%",
+                                    name: "street_box"
+                                }],
+                                columnWidth: 0.22222222222222221,
+                                frame: true,
+                                labelAlign: "top",
+                                bodyBorder: false,
+                                layout: "form"
+                            }],
+                            frame: false,
+                            border: false,
+                            anchor: "100%"
+                        },
+                        {
+                            border: false,
+                            labelWidth: 54,
+                            xtype: "container",
+                            items: [{
+                                fieldLabel: "addr1",
+                                xtype: "textfield",
+                                maxLength: 200,
+                                anchor: "100%",
+                                name: "addr1"
+                            }],
+                            frame: true,
+                            labelAlign: "top",
+                            bodyBorder: false,
+                            anchor: "100%",
+                            layout: "form"
+                        }],
+                        columnWidth: 0.52941176470588236,
+                        frame: true,
+                        bodyBorder: false,
+                        labelAlign: "top"
+                    },
+                    {
+                        border: false,
+                        layout: "form",
+                        xtype: "container",
+                        items: [{
+                            border: false,
+                            labelWidth: 54,
+                            xtype: "container",
+                            items: [{
+                                fieldLabel: "email",
+                                xtype: "textfield",
+                                maxLength: 75,
+                                anchor: "100%",
+                                name: "email"
+                            }],
+                            frame: true,
+                            labelAlign: "top",
+                            bodyBorder: false,
+                            anchor: "100%",
+                            layout: "form"
+                        },
+                        {
+                            border: false,
+                            labelWidth: 36,
+                            xtype: "container",
+                            items: [{
+                                fieldLabel: "url",
+                                xtype: "textfield",
+                                maxLength: 200,
+                                anchor: "100%",
+                                name: "url"
+                            }],
+                            frame: true,
+                            labelAlign: "top",
+                            bodyBorder: false,
+                            anchor: "100%",
+                            layout: "form"
+                        },
+                        {
+                            border: false,
+                            labelWidth: 54,
+                            xtype: "container",
+                            items: [{
+                                fieldLabel: "phone",
+                                xtype: "textfield",
+                                maxLength: 200,
+                                anchor: "100%",
+                                name: "phone"
+                            }],
+                            frame: true,
+                            labelAlign: "top",
+                            bodyBorder: false,
+                            anchor: "100%",
+                            layout: "form"
+                        },
+                        {
+                            border: false,
+                            labelWidth: 36,
+                            xtype: "container",
+                            items: [{
+                                fieldLabel: "gsm",
+                                xtype: "textfield",
+                                maxLength: 200,
+                                anchor: "100%",
+                                name: "gsm"
+                            }],
+                            frame: true,
+                            labelAlign: "top",
+                            bodyBorder: false,
+                            anchor: "100%",
+                            layout: "form"
+                        }],
+                        columnWidth: 0.47058823529411764,
+                        frame: true,
+                        bodyBorder: false,
+                        labelAlign: "top"
+                    }],
+                    frame: false,
+                    border: false,
+                    layout: "column",
+                    xtype: "container"
+                },
+                {
+                    flex: 1,
+                    border: false,
+                    labelWidth: 72,
+                    xtype: "container",
+                    items: [{
+                        fieldLabel: "remarks",
+                        anchor: "100% 100%",
+                        name: "remarks",
+                        xtype: "htmleditor"
+                    }],
+                    layout: "form",
+                    frame: true,
+                    bodyBorder: false,
+                    labelAlign: "top"
+                }],
+                frame: true,
+                layoutConfig: {
+                    align: "stretch"
+                },
+                bodyBorder: false,
+                labelAlign: "top"
+            },
+            title: "Companies - Detail",
+            name: "detail"
+        });
+    },
+    success: true
+}
+}}}
+
+
+== Nachher ==
+
+{{{
+{
+    js_code: function (caller) {
+        return new Lino.DetailSlaveWrapper(caller, {
+            url_action: "/ui/contacts/Companies/detail",
+            wc: {
+                title: "Companies - Detail",
+                height: 459,
+                width: 509,
+                maximized: false,
+                y: 49,
+                x: 417,
+                column_widths: []
+            },
+            permalink_name: "contacts/Companies/detail",
+            main_panel: {
+                border: false,
+                layout: "vbox",
+                xtype: "form",
+                autoScroll: true,
+                items: [{
+                    items: [{
+                        border: false,
+                        layout: "form",
+                        xtype: "container",
+                        items: [{
+                            border: false,
+                            labelWidth: 45,
+                            xtype: "container",
+                            items: [new Ext.form.TextField({
+                                allowBlank: false,
+                                fieldLabel: "name",
+                                anchor: "100%",
+                                name: "name",
+                                maxLength: 200
+                            })],
+                            frame: true,
+                            labelAlign: "top",
+                            bodyBorder: false,
+                            anchor: "100%",
+                            layout: "form"
+                        },
+                        {
+                            border: false,
+                            labelWidth: 63,
+                            xtype: "container",
+                            items: [new Ext.form.TextField({
+                                maxLength: 200,
+                                fieldLabel: "vat id",
+                                anchor: "100%",
+                                name: "vat_id"
+                            })],
+                            frame: true,
+                            labelAlign: "top",
+                            bodyBorder: false,
+                            anchor: "100%",
+                            layout: "form"
+                        }],
+                        columnWidth: 0.5714285714285714,
+                        frame: true,
+                        bodyBorder: false,
+                        labelAlign: "top"
+                    },
+                    {
+                        border: false,
+                        layout: "form",
+                        xtype: "container",
+                        items: [{
+                            border: false,
+                            labelWidth: 108,
+                            xtype: "container",
+                            items: [new Ext.form.TextField({
+                                maxLength: 200,
+                                fieldLabel: "national id",
+                                anchor: "100%",
+                                name: "national_id"
+                            })],
+                            frame: true,
+                            labelAlign: "top",
+                            bodyBorder: false,
+                            anchor: "100%",
+                            layout: "form"
+                        },
+                        {
+                            border: false,
+                            labelWidth: 81,
+                            xtype: "container",
+                            items: [new Ext.form.ComboBox({
+                                resizable: true,
+                                emptyText: "Select a Language...",
+                                submitValue: true,
+                                pageSize: 10,
+                                queryParam: "query",
+                                displayField: "text",
+                                fieldLabel: "language",
+                                name: "language",
+                                hiddenName: "languageHidden",
+                                typeAhead: true,
+                                valueField: "value",
+                                mode: "remote",
+                                triggerAction: "all",
+                                selectOnFocus: true,
+                                minChars: 2,
+                                queryDelay: 300,
+                                anchor: "100%",
+                                store: new Ext.data.JsonStore({
+                                    listeners: {
+                                        exception: Lino.on_store_exception
+                                    },
+                                    proxy: new Ext.data.HttpProxy({
+                                        url: "/choices/contacts/Companies/language",
+                                        method: "GET"
+                                    }),
+                                    totalProperty: "count",
+                                    fields: ["value", "text"],
+                                    root: "rows",
+                                    id: "value"
+                                })
+                            })],
+                            frame: true,
+                            labelAlign: "top",
+                            bodyBorder: false,
+                            anchor: "100%",
+                            layout: "form"
+                        }],
+                        columnWidth: 0.42857142857142855,
+                        frame: true,
+                        bodyBorder: false,
+                        labelAlign: "top"
+                    }],
+                    frame: false,
+                    border: false,
+                    layout: "column",
+                    xtype: "container"
+                },
+                {
+                    items: [{
+                        border: false,
+                        layout: "form",
+                        xtype: "container",
+                        items: [{
+                            layout: "column",
+                            xtype: "container",
+                            items: [{
+                                border: false,
+                                labelWidth: 72,
+                                xtype: "container",
+                                items: [new Ext.form.ComboBox({
+                                    resizable: true,
+                                    emptyText: "Select a Country...",
+                                    submitValue: true,
+                                    pageSize: 10,
+                                    queryParam: "query",
+                                    displayField: "text",
+                                    fieldLabel: "country",
+                                    name: "country",
+                                    hiddenName: "countryHidden",
+                                    typeAhead: true,
+                                    valueField: "value",
+                                    mode: "remote",
+                                    triggerAction: "all",
+                                    selectOnFocus: true,
+                                    minChars: 2,
+                                    queryDelay: 300,
+                                    anchor: "100%",
+                                    store: new Ext.data.JsonStore({
+                                        listeners: {
+                                            exception: Lino.on_store_exception
+                                        },
+                                        proxy: new Ext.data.HttpProxy({
+                                            url: "/choices/contacts/Companies/country",
+                                            method: "GET"
+                                        }),
+                                        totalProperty: "count",
+                                        fields: ["value", "text"],
+                                        root: "rows",
+                                        id: "value"
+                                    })
+                                })],
+                                columnWidth: 0.33333333333333331,
+                                frame: true,
+                                labelAlign: "top",
+                                bodyBorder: false,
+                                layout: "form"
+                            },
+                            {
+                                border: false,
+                                labelWidth: 63,
+                                xtype: "container",
+                                items: [new Ext.form.TextField({
+                                    maxLength: 200,
+                                    fieldLabel: "region",
+                                    anchor: "100%",
+                                    name: "region"
+                                })],
+                                columnWidth: 0.66666666666666663,
+                                frame: true,
+                                labelAlign: "top",
+                                bodyBorder: false,
+                                layout: "form"
+                            }],
+                            frame: false,
+                            border: false,
+                            anchor: "100%"
+                        },
+                        {
+                            layout: "column",
+                            xtype: "container",
+                            items: [{
+                                border: false,
+                                labelWidth: 45,
+                                xtype: "container",
+                                items: [new Ext.form.ComboBox({
+                                    resizable: true,
+                                    contextParams: ["country"],
+                                    emptyText: "Select a City...",
+                                    submitValue: true,
+                                    pageSize: 10,
+                                    queryParam: "query",
+                                    displayField: "text",
+                                    fieldLabel: "city",
+                                    name: "city",
+                                    hiddenName: "cityHidden",
+                                    typeAhead: true,
+                                    valueField: "value",
+                                    mode: "remote",
+                                    triggerAction: "all",
+                                    selectOnFocus: true,
+                                    minChars: 2,
+                                    queryDelay: 300,
+                                    anchor: "100%",
+                                    store: new Ext.data.JsonStore({
+                                        listeners: {
+                                            exception: Lino.on_store_exception
+                                        },
+                                        proxy: new Ext.data.HttpProxy({
+                                            url: "/choices/contacts/Companies/city",
+                                            method: "GET"
+                                        }),
+                                        totalProperty: "count",
+                                        fields: ["value", "text"],
+                                        root: "rows",
+                                        id: "value"
+                                    })
+                                })],
+                                columnWidth: 0.5,
+                                frame: true,
+                                labelAlign: "top",
+                                bodyBorder: false,
+                                layout: "form"
+                            },
+                            {
+                                border: false,
+                                labelWidth: 81,
+                                xtype: "container",
+                                items: [new Ext.form.TextField({
+                                    maxLength: 10,
+                                    fieldLabel: "zip code",
+                                    anchor: "100%",
+                                    name: "zip_code"
+                                })],
+                                columnWidth: 0.5,
+                                frame: true,
+                                labelAlign: "top",
+                                bodyBorder: false,
+                                layout: "form"
+                            }],
+                            frame: false,
+                            border: false,
+                            anchor: "100%"
+                        },
+                        {
+                            layout: "column",
+                            xtype: "container",
+                            items: [{
+                                border: false,
+                                labelWidth: 63,
+                                xtype: "container",
+                                items: [new Ext.form.TextField({
+                                    maxLength: 200,
+                                    fieldLabel: "Street",
+                                    anchor: "100%",
+                                    name: "street"
+                                })],
+                                columnWidth: 0.55555555555555558,
+                                frame: true,
+                                labelAlign: "top",
+                                bodyBorder: false,
+                                layout: "form"
+                            },
+                            {
+                                border: false,
+                                labelWidth: 36,
+                                xtype: "container",
+                                items: [new Ext.form.TextField({
+                                    maxLength: 10,
+                                    fieldLabel: "No.",
+                                    anchor: "100%",
+                                    name: "street_no"
+                                })],
+                                columnWidth: 0.22222222222222221,
+                                frame: true,
+                                labelAlign: "top",
+                                bodyBorder: false,
+                                layout: "form"
+                            },
+                            {
+                                border: false,
+                                labelWidth: 36,
+                                xtype: "container",
+                                items: [new Ext.form.TextField({
+                                    maxLength: 10,
+                                    fieldLabel: "Box",
+                                    anchor: "100%",
+                                    name: "street_box"
+                                })],
+                                columnWidth: 0.22222222222222221,
+                                frame: true,
+                                labelAlign: "top",
+                                bodyBorder: false,
+                                layout: "form"
+                            }],
+                            frame: false,
+                            border: false,
+                            anchor: "100%"
+                        },
+                        {
+                            border: false,
+                            labelWidth: 54,
+                            xtype: "container",
+                            items: [new Ext.form.TextField({
+                                maxLength: 200,
+                                fieldLabel: "addr1",
+                                anchor: "100%",
+                                name: "addr1"
+                            })],
+                            frame: true,
+                            labelAlign: "top",
+                            bodyBorder: false,
+                            anchor: "100%",
+                            layout: "form"
+                        }],
+                        columnWidth: 0.52941176470588236,
+                        frame: true,
+                        bodyBorder: false,
+                        labelAlign: "top"
+                    },
+                    {
+                        border: false,
+                        layout: "form",
+                        xtype: "container",
+                        items: [{
+                            border: false,
+                            labelWidth: 54,
+                            xtype: "container",
+                            items: [new Ext.form.TextField({
+                                maxLength: 75,
+                                fieldLabel: "email",
+                                anchor: "100%",
+                                name: "email"
+                            })],
+                            frame: true,
+                            labelAlign: "top",
+                            bodyBorder: false,
+                            anchor: "100%",
+                            layout: "form"
+                        },
+                        {
+                            border: false,
+                            labelWidth: 36,
+                            xtype: "container",
+                            items: [new Ext.form.TextField({
+                                maxLength: 200,
+                                fieldLabel: "url",
+                                anchor: "100%",
+                                name: "url"
+                            })],
+                            frame: true,
+                            labelAlign: "top",
+                            bodyBorder: false,
+                            anchor: "100%",
+                            layout: "form"
+                        },
+                        {
+                            border: false,
+                            labelWidth: 54,
+                            xtype: "container",
+                            items: [new Ext.form.TextField({
+                                maxLength: 200,
+                                fieldLabel: "phone",
+                                anchor: "100%",
+                                name: "phone"
+                            })],
+                            frame: true,
+                            labelAlign: "top",
+                            bodyBorder: false,
+                            anchor: "100%",
+                            layout: "form"
+                        },
+                        {
+                            border: false,
+                            labelWidth: 36,
+                            xtype: "container",
+                            items: [new Ext.form.TextField({
+                                maxLength: 200,
+                                fieldLabel: "gsm",
+                                anchor: "100%",
+                                name: "gsm"
+                            })],
+                            frame: true,
+                            labelAlign: "top",
+                            bodyBorder: false,
+                            anchor: "100%",
+                            layout: "form"
+                        }],
+                        columnWidth: 0.47058823529411764,
+                        frame: true,
+                        bodyBorder: false,
+                        labelAlign: "top"
+                    }],
+                    frame: false,
+                    border: false,
+                    layout: "column",
+                    xtype: "container"
+                },
+                {
+                    flex: 1,
+                    border: false,
+                    labelWidth: 72,
+                    xtype: "container",
+                    items: [{
+                        fieldLabel: "remarks",
+                        anchor: "100% 100%",
+                        name: "remarks",
+                        xtype: "htmleditor"
+                    }],
+                    layout: "form",
+                    frame: true,
+                    bodyBorder: false,
+                    labelAlign: "top"
+                }],
+                frame: true,
+                layoutConfig: {
+                    align: "stretch"
+                },
+                bodyBorder: false,
+                labelAlign: "top"
+            },
+            title: "Companies - Detail",
+            name: "detail"
+        });
+    },
+    success: true
+}
+}}}

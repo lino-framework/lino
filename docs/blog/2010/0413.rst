@@ -1,0 +1,98 @@
+= [20100412 ←] [20100413 13.04.2010] [20100414 →] =
+
+Weiter mit Issue 119 (remove lino.dialogs). Hier die Punkte, die ich heute hoffentlich schaffe:
+
+ # Bei Delete oder PDF sagt er "No selection. Nothing to do." auch wenn man eine Zeile markiert hat.
+ # "Insert" funktioniert noch nicht.
+ # "Properties" und "Detail" öffnen sich zwar, aber haben keinen Titel.
+ # "Properties" und "Detail" werden nicht aktualisiert, wenn man in der Grid einen Record anklickt.
+ # permalink funktioniert nicht, weil die default_action ('grid') jetzt im URL stehen muss.
+ # Namenskonvention zum Speichern der Fensterkonfigurationen ist noch durcheinander.
+
+
+Beim Arbeiten stören mich aber noch einige aufdringliche Fragen:
+
+Mir ist noch nicht ganz klar, wie ich die URLs strukturieren soll.
+Meine Reports (bzw. Actors) entsprechen den "Resources" im RESTful-Modell. 
+Wie aber werden meine "Actions" mit denen aus dem RESTful-Modell gemappt? 
+
+Arten von Fenstern:
+
+  * Hauptfenster mit Menü
+  * GridMaster
+    * DetailSlave
+    * GridSlave
+    * Properties
+  * Insert (todo)
+
+Arten von Actions:
+
+  * lino.reports.GridEdit
+  * lino.reports.InsertRow
+  * lino.reports.DeleteSelected
+  * lino.reports.DetailAction
+  * lino.reports.SlaveGridAction
+  * lino.reports.PropertiesAction
+  * sales.invoices.Sign
+  * documents.utils.AsPdf
+
+Lino benutzt folgende Arten von Responses:
+
+ * JS-Code, den der Client ausführen soll
+ * Daten im JSON-Format
+ * Daten im CSV-Format
+ 
+Jede Action (außer die default_action) erzeugt im GridMaster-Fenster einen entsprechenden Button. 
+Die Buttons eines Slave-Fensters, sind Toggle-Buttons. 
+Beim ersten Klicken auf so einen Button wird per Ajax der JS-Code zum Erstellen des Slave-Fensters angefragt und ausgeführt, und das resultat wird im WindowWrapper des Masters (callers) gespeichert. Wenn man das Slave-Fenster schließt, dann wird es nur versteckt. Und wenn man es dann nochmals öffnet, ist kein Ajax-Call mehr nötig, weil es schon existiert.
+
+Ein Report kennt die Actions, die er anbietet.
+
+Die folgenden URLs scheinen mir klar:
+
+{{{
+ - POST /contacts/Persons (name=foo,...)
+ - PUT /contacts/Persons (pk=1,name=foo,...)
+ - DELETE /contacts/Persons (selected=1,2,3)
+
+ - GET /contacts/Persons.json oder GET /contacts/Persons?fmt=json -> Daten als JSON
+ - GET /contacts/Persons.csv  oder GET /contacts/Persons?fmt=csv -> Daten als CSV
+}}}
+
+Unschlüssig bin ich noch bei den URLs, die JS-Code zurückgeben sollen:
+ 
+{{{
+ - GET /contacts/Persons
+ - GET /contacts/Persons/insert oder GET /contacts/Persons?action=insert
+ - GET /contacts/Persons/delete
+ - GET /contacts/Persons/detail
+ - GET /contacts/Persons/projects
+}}}
+ 
+Müsste nicht auch jedesmal ein `fmt=extjs` mit gegeben werden, weil Lino ja nicht unbedingt nur mit ExtJS-clients funktionieren soll?
+
+Es könnte z.B. auch `GET /contacts/Persons?fmt=txt` geben, die reinen Text zurückgibt.
+
+Also am klarsten scheint mir ein einziges URL `GET /contacts/Persons`, das zwei wichtige Parameter `action` und `fmt` kriegen muss. Muss? Ich könnte für beide Parameter auch Default-Werte vorsehen, aber das wäre weniger klar. Wenn beide Parameter obligatorisch sind, dann kann ich sie auch gleich über den Patch angeben:
+
+  `GET /contacts/Persons/<action>.<fmt>`
+ 
+Mit anderen Worten:
+
+{{{ 
+ - GET /contacts/Persons/grid.js
+ - GET /contacts/Persons/insert.js
+ - GET /contacts/Persons/delete.js
+ - GET /contacts/Persons/detail.js
+ - GET /contacts/Persons/projects.js
+}}}
+  
+Statt `GET /contacts/Persons/projects.js` wäre es irgendwie logischer, gleich `GET /projects/ProjectsByPerson/grid.js?mk=1` anzufragen. Dann müsste `GET /contacts/Persons/pdf.js` wohl auch ersetzt werden durch `GET /documents/AsPdf.js ?mt=1&mk=2`. Oder `GET /contacts/Persons/invoices/grid.js` durch `GET /sales/InvoicesByPerson/grid.js`.
+
+Aber ist es nicht verwirrend, wenn manche Actions keine eigene URL haben?
+
+Nee, dann ist es schon besser, dass nur Master-Reports eine URL kriegen. 
+Das hieße aber wiederum, dass Slave-Reports gar keine Actors zu sein brauchen. 
+Oder zumindest kein eigenes URL brauchen. Also `/projects/ProjectsByPerson/` müsste dann einen 404 zurückgeben.
+
+Was ist mit InvoicesByJournal? Das ist ein Slave-Report mit festem Master. Also der muss ein eigenes URL kriegen.

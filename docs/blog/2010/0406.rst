@@ -1,0 +1,3 @@
+= [20100405 ←] [20100406 06.04.2010] [20100408 →] =
+
+Tja, gestern waren mir nur 3 Stunden Zeit zum Programmieren gegönnt. Viel mehr werden es heute wohl auch kaum. Lino ist noch immer verschüttet unter dieser ungeplant umfangreichen Entwicklungslawine. Ich buddel weiter, um ihn wieder ans Tageslicht zu befördern.

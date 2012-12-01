@@ -1,0 +1,15 @@
+= [20100518 ←] [20100519 19.05.2010] [20100520 →] =
+
+Heute erledigt:
+
+ * Datenimport wird immer besser. Berufsgruppen importiere ich nun doch komplett als neue Tabelle "Activities". is_active, sex, ... Ich habe nebenbei eine [DjangoPitfalls Django-Mausefalle] dokumentiert, in die ich heute reingetappt bin.
+ * Fotos wurden nicht angezeigt. Behoben.
+ * Submit im Detail- und Insert-Fenster waren kaputt. Behoben. 
+ * Window-Konfiguration speichern geht wieder. Ein Problem ist noch, dass der Server dann zwar die lino.js neu generiert, aber der Client kriegt die erst beim nächsten Reload seiner Seite. 
+
+
+== Inheriting from more than one Model ==
+
+is_active und activity sind zwei Felder, die einerseits DSBE-spezifisch sind, aber dort sowohl für Personen als auch für Firmen gelten. Also mache ich auch eine Klasse Contacts in DSBE. 
+
+So oder so lässt sich das Datenmodell nicht ohne Wiederholung von Code beschreiben: ich muss entweder auf dsbe.Contacts verzichten (d.h. is_active und activity in dsbe.Person und dsbe.Company definieren), oder darauf verzichten, Person und Company einzeln aus der modlib zu beerben. Schade, dass Django es nicht erlaubt, von mehr als einem Model auf einmal zu erben.

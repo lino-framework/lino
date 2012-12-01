@@ -1,0 +1,13 @@
+= [20100322 ←] [20100323 23.03.2010] [20100329 →] =
+
+Hier meine Pläne für nach dem Urlaub:
+ # Lino wird RESTful, aber peu à peu, denn das hat Zeit. Issue 118.
+ # Login und Logout kann rauskommen und wird stattdessen über Apache geregelt. Vorerst kann ich `settings.OVERRIDE_PERMS` auf True setzen.
+ # Der Insert-Button in contacts.Persons macht einen Request `GET /contacts/Persons/insert` zum Server. Das ist ein GET und noch kein POST, weil hier zunächst die "Anweisungen zum Erstellen eines Records" angefragt werden. Das GET schickt u.A. auch selected_pks, was der Server möglicherweise nutzen kann (z.B. Positionsnummer ermitteln oder als Kopiervorlage für den zu erstellenden Record). Die Antwort des Servers ist JS-Code, den der Client ausführen soll. Konkret ist es momentan der Konstruktor einer Form, die nur Datenbankfelder enthält, deren Standardwerte der Server entsprechend der Regeln im Report füllt, und deren Submit ein `POST /contacts/Persons` abschickt. 
+ # Reports ohne DetailLayout haben keinen Insert-Button. 
+ # Außer einem Insert-Button kann ein Report auch weiterhin optional eine oder mehrere Extra-Rows haben, in die man neue Records direkt hinzufügen kann. Wichtig z.B. in sales.ItemsByInvoice. Der Server braucht diese leeren Rows eigentlich nicht schon beim GET zu liefern, das sollte eigentlich eine Option der Grid sein. 
+ # Der Client kann eigentlich selber wissen, dass er nach einem erfolgreichen POST oder PUT seinen Store neu laden muss. Also das braucht der Server nicht extra anzufordern. 
+ # Formularfelder, die keine Datenbankfelder sind, werden im FormLayout als Inputs definiert. Ich sehe aber momentan noch gar keinen Bedarf für solche Formulare.
+ # Globale Commands werden verschwinden. system.Logout enthällt ja; und SaveWindowConfig ist speziell, der darf ruhig zu Fuß programmiert werden. 
+ # Für die in TIM oft benutzten Listen mit vorherigem Dialogfenster werde ich jeweils ein Model definieren, also jeder Ausdruck wird gespeichert.
+ # Der Klassenname `Report` ist möglicherweise irreführend... falls mir mal was Besseres einfällt, würde ich ihn umbenennen.

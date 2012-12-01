@@ -1,0 +1,16 @@
+= [20100226 ←] [20100227 27.02.2010] [20100228 →] =
+
+HowToInstall : Wenn man mit `chmod g+s` das Bit SGID (set group id) eines Verzeichnisses einschaltet, dann erben alle neu erstellten Dateien die Gruppe des Verzeichnisses. Das ist zumindest für `/var/snapshots` wichtig.
+
+Tilt! Ich habe gerade verstanden, warum die Datenbank nach dem Absturz so dermaßen kaputt war (Größe 0 Bytes): weil sie in `/tmp` steht. 
+
+Also außer dem Projektverzeichnis `/var/snapshots/dsbe` (das ich in meiner settings.py `settings.PROJECT_DIR` nenne) kennt Lino inzwischen folgende zwei Verzeichnisse:
+
+ * `/usr/local/lino` : Datenverzeichnis. Wird in `settings.DATA_DIR` gesetzt.
+ * `/var/log/lino` : Log-Dateien. (Wird in `src/lino/__init__.py` gesetzt, wenn man nicht vorher schon selber `logging` konfiguriert hat.)
+
+
+http://igen.saffre-rumma.ee/ funktioniert jetzt theoretisch auch... in Wirklichkeit leider nur fast: Er sagt `ImportError: No module named urls`. Das schau ich mir beim nächsten Mal an.
+
+Oh! Und Django 12600 hat nun auch endlich das Ticket 10808 gelöst. 
+Also die Section mit dem Patch kann raus aus HowToInstall.

@@ -1,0 +1,66 @@
+= About keyboard handling in ExtJS =
+
+I read the following:
+
+  (1) Ext JS Key mapping; Keyboard handling as a first class citizen, Dion Almaer, 2008-09-24, [http://ajaxian.com/archives/ext-js-key-mapping-keyboard-handling-as-a-first-class-citizen]
+
+  (2) http://www.extjs.com/learn/Manual:Utilities:Function
+
+Inspired by Dion Almaer's example in (1) (which didn't work in Ext 3.1, but it helped me to get started) I now 
+define and use a {{{Lino.GridPanel}}} which extends Ext{{{.grid.EditorGridPanel}}}.
+{{{Lino.GridPanel}}} makes the Grid react to PageUp, PageDown, Home and End. 
+That's nice, thanks for the example.
+Here is my modified code, which is much shorter, but which worked for me:
+
+{{{
+Lino.GridPanel = Ext.extend(Ext.grid.EditorGridPanel,{
+  afterRender : function() {
+    Lino.GridPanel.superclass.afterRender.call(this);
+    var tbar = this.getTopToolbar();
+    this.nav = new Ext.KeyNav(this.getEl(),{
+      pageUp: function() {tbar.movePrevious()},
+      pageDown: function() {tbar.moveNext()},
+      home: function() {tbar.moveFirst()},
+      end: function() {tbar.moveLast()},
+      scope: this
+    });
+  }
+});
+}}}
+
+The next problem is that I can do each of these key only once. 
+Because after their execution, the keyboard focus goes away from my grid. 
+I have to click on the grid again before I can type the next key.
+How to control the keyboard focus?
+
+Some first attempts. This has no effect:
+
+{{{
+  pageDown: function() {tbar.moveNext(); this.body.focus();},
+}}}
+
+Neither has this:
+
+{{{
+  pageDown: function() {tbar.moveNext(); this.focus();},
+}}}
+
+The following has an interesting effect: the call to {{{selectFirstRow()}}} is executed *before* the call to {{{moveNext()}}}.
+
+{{{
+  pageDown: function() {tbar.moveNext(); this.getSelectionModel().selectFirstRow();},
+}}}
+
+I was surprised to see this, but it is logical since at least {{{moveNext()}}} is asynchronous (returns before having executed).
+
+Aha. Asynchronous. That's why the first attempts were deemed to have no effect. I must do my focus() calls after the new page has been rendered. Attach some listener to some event. Maybe the PagingToolbar's 'change' event? I added one line:
+
+{{{
+    tbar.on('change',function() {this.getSelectionModel().selectFirstRow();this.getEl().focus();},this);
+}}}
+
+This works, at least concerning selectFirstRow() which is now executed on each new page: the first row of the grid is selected.
+That's nice, but still it has unfortunately no effect on the keyboard focus.
+
+
+Continued [20100114]

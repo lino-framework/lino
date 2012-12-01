@@ -1,0 +1,48 @@
+= [20100421 ←] [20100422 22.04.2010] [20100423 →] =
+
+Nachdem ich nochmal über [url http://en.wikipedia.org/wiki/Representational_State_Transfer REST] gelesen habe, denke ich, dass ich zwei Serien von URLs anbieten muss. Erstens ein Baum nach den "klassischen" RESTful-Prinzipien:
+
+Collection URIs: 
+{{{
+/api/contacts/Persons.csv
+/api/contacts/Persons.json
+/api/contacts/Persons.pdf
+}}}
+
+GET-Requests auf diese URIs lesen Parameter wie mt, mk, sort, offset, limit usw.
+
+Element URIs: 
+{{{
+/api/contacts/Persons/123.pdf
+/api/contacts/Persons/123.html
+/api/contacts/Persons/123.json
+}}}
+
+(Wobei `123` ein primary key ist). Hier sind als Parameter der Name des zu verwendenden Templates denkbar, oder spezifische Optionen der Templates.
+
+
+Und parallel dazu einen Baum, der ExtJS-Code liefert und mit RESTful eigentlich nicht mehr viel zu tun hat:
+
+{{{
+GET /ui/contacts/Persons/grid
+GET /ui/contacts/Persons/detail
+GET /ui/contacts/Persons/projects
+...
+}}}
+
+Diese URIs lesen momentan überhaupt keine Parameter.
+
+Das ist nur für Clients, die das von Lino vorgeschlagene user interface nutzen wollen und geht somit über eine klassische REST-Anwendung hinaus.
+
+Dieser Baum kennt auch eine Art von POST zum Speichern einer windows configuration:
+
+{{{
+POST /ui/contacts/Persons/grid
+...
+}}}
+
+
+
+16 Uhr: In Revision [http://code.google.com/p/lino/source/detail?r=10f4f269ffe99217ed96dd3805789bbab2dae620 10f4f269ff] sind diese neuen URI-Regeln aktiv. Die Grundfunktionen (Fenster öffnen, Datenenanbindung, Konfig speichern) sind wieder da, diesmal auch der PDF-Download.
+Das Wichtigste, das noch fehlt, sind Submit, Insert, und Delete.
+

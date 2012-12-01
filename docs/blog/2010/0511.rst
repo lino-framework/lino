@@ -1,0 +1,8 @@
+= [20100510 ←] [20100511 11.05.2010] [20100513 →] =
+
+Heute haben wir u.A. folgende Punkte erledigt:
+
+ * Bilder anzeigen. Alle static files unter `/media/`.
+ * Authentifizierung. Die muss ja jetzt vom Apache abgefragt werden. Lino muss aber den User abfragen und die Menüs und Zugriffsrechte entsprechend liefern. "My Notes" z.B. macht wenig Sinn, solange man sich nicht einloggen kann.
+
+Der Ei-Editor muss noch erweitert werden: wir brauchen hierarchisch angeordnete Eigenschaften.

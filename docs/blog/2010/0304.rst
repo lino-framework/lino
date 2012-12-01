@@ -1,0 +1,23 @@
+= [20100303 ←] [20100304 04.03.2010] [20100305 →] =
+
+Das Issue 108 (toggle buttons for all slave windows) hat es in sich.
+Lino liegt zur Zeit auf der Intensivstation und 
+kriegt einige umfangreiche interne Änderungen eingebaut. 
+Hier eine ansatzweise Dokumentation der neuen Klassenstruktur. 
+
+
+`dl` : a `DataLink` (i.e. a `ReportHandle` or a `FormHandle`)
+
+lh : a `LayoutHandle`
+
+`Window(ui,name,main,lh,**kw)`: a `jsgen.Component` that will render to `new Ext.Window()`
+
+`WindowWrapper(window)`: a `jsgen.Object` around a `Window`. Will render to the constructor function for a JS object.
+
+`MasterWrapper(dl,lh)`: a `WindowWrapper` for a master window
+
+`SlaveWrapper():`: a `WindowWrapper` for a slave window.
+
+`DetailsWrapper()`: a `SlaveWrapper` for a details window.
+
+`PropertiesWrapper()` a `SlaveWrapper` for a properties window.

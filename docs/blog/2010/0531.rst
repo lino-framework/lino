@@ -1,0 +1,71 @@
+= [20100527 ←] [20100531 31.05.2010] [20100601 →] =
+
+12 Uhr: Kontextsensitive Comboboxen sind noch immer nicht fertig. Ich schreib mir jetzt mal auf, woran ich da schon seit Tagen frickle.
+
+Im folgenden rede ich von `country` und `city`, weil das mein Testbeispiel ist. Ich rede aber natürlich vom Prinzip, nicht von diesem einen Fall. `country` ist die "context source" und `city` das "context target".
+
+Im change-Event des country-Feldes wird der Kontext von city jetzt gesetzt. Das geht. Aber das reicht nicht: z.B. ist der Kontext von city noch falsch, wenn man country vorher gar nicht bearbeitet hat, oder wenn man es auf einem anderen Record bearbeitet hat.
+
+Wenn ich setContextValue() für city im focus-Event von city aufrufe: das geht fast immer, aber nicht in der Grid. Dort ist ja nur ein country-Feld für alle Records, und das wird nur gesetzt, wenn man drauf klickt.
+
+Am logischsten scheint mir, setContextValue (außer im change-Event) auch in `load_master_record()` zu rufen. Hierbei ist das Problem aber, dass der Wert von country (die Id des Landes) nicht in `record.data.country` sondern in `record.data.countryHidden` sitzt, weil country eine Combobox ist. 
+
+Aber ein Chooser weiß das nicht, er hat nicht zu wissen, was die Context sources für Felder sind. Deshalb ruft er den Wert mit `getValue()` aus dem country-Feld. Das setzt freilich voraus, dass das Source-Feld immer im Formular enthalten ist; ein bisschen einschränkend, aber damit könnten wir leben. (Falsch: alles in diesem Absatz ist Quatsch; siehe später.)
+
+Das funktioniert jetzt theoretisch für alle lokalen Comboboxen. Aber in Lino sind die meisten Comboboxen remote, d.h. deren `setValue()` (das von `BasicForm.loadRecord()` gerufen wird) ist verzögert: es macht erst noch eine weiteren AJAX-Aufruf, um den Store der Combobox zu laden. Eine Combobox braucht ja nicht nur ihren Wert, sondern auch den dazugehörigen Text (z.B. Text "Belgien" für den Wert "BE"). Deshalb kriegt das City-Feld, wenn es gleich nach BasicForm.loadRecord() das Country-Feld nach seiner value fragt, als Antwort "leer". Puh!
+
+Zwei Fliegen mit einer Klappe hätten wir, wenn ich mein ComboBox.setValue() dahingehend ändere, dass dieser zusätzliche AJAX-Aufruf gar nicht mehr nötig ist. Den zur Value zugehörigen Text haben wir nämlich schon vom Server bekommen, der ist im Record gespeichert. Deshalb folgender neuer Code in der lino.js:
+
+{{{
+Ext.override(Ext.form.BasicForm,{
+    loadRecord : function(record){
+        var field, id;
+        for(id in record.data){
+            if(!Ext.isFunction(record.data[id]) && (field = this.findField(id))){
+                field.setValue(record.data[id],record);
+                if(this.trackResetOnLoad){
+                    field.originalValue = field.getValue();
+                }
+            }
+        }
+        return this;
+    },
+});
+}}}
+
+Meine `loadRecord` recht also im Gegensatz zur Originalversion jedem Feld nicht nur `setValue()` den rohen Wert, sondern als zweiten Parameter auch den ganzen Record. (Dass mein `loadRecord()` nur noch hashed arrays verträgt, liegt nur daran, dass dieser Fall so weit ich sehen kann von Lino nie benutzt werden wird.)
+Und in meiner `Combobox.setValue()` steht dann ganz einfach:
+
+{{{
+} else if (record != undefined) {
+  text = record.data[this.name];
+  //~ console.log(this.name,'.setValue',v,'got text ',this.name,' from record ',record);
+} else {
+}}}
+
+Und vorbei ist es mit den unnützen AJAX beim Anzeigen von Comboboxen in Detail-Fenster! Schön.
+
+Eins fehlt noch: in der Grid wird der Kontext noch nicht gesetzt. Am besten müsste ich hier aufs rowselected-Event horchen. Nein, Quatsch, das gibt es gar nicht. Das beforeedit-Event brauch ich.
+
+Das geht gut, aber... in einer Grid wird logischerweise immer nur der Editor gefüllt, der gerade bearbeitet werden soll. Und mein before_row_edit ruft ja `country_field.get_value` ab, wenn city_field bearbeitet wird. Da ist im Falle einer Grid nichts zu holen. Lösung? Der Chooser sollte also doch irgendwie wissen, ob die source fields Comboboxen sind, und mein before_row_edit-Event holt die Werte direkt aus dem Record. Deswegen in `ext_windows.MasterWrapper.js_render()` ein kleiner Test:
+
+{{{
+if isinstance(f,models.ForeignKey) or (isinstance(f,models.Field) and f.choices):
+    fname = f.name+ext_requests.CHOICES_HIDDEN_SUFFIX
+else:
+    fname = f.name
+before_row_edit.append("%s.setContextValue(%r,record.data[%r]);" % (
+                                e.ext_name,f.name,fname))
+}}}
+
+Das ist nicht wirklich elegant, aber es funktioniert. Super!
+
+**Also hier die frohe Mitteilung des Tages: 
+Kontextsensitive Comboboxen funktionieren wieder!** 
+Und zwar besser denn je: auch für ungespeicherte Records, und auch für normale Textfelder mit `choices`.
+
+[http://code.google.com/p/lino/source/detail?r=4aebca79aedd4fd2f4d0671ef5e7d729cacc4097 Check-In].
+
+Als nächstes 
+ # müsste jetzt die Konfigurierung der Dokumentvorlagen für Notizen machbar sein,
+ # und dann will ich auch mal den fensterlosen Weg probieren. Macht es Sinn, im Browser eine Desktop-Anwendung imitieren zu wollen? Sind die Unterfenster in Lino der falsche Weg? Wenn ich z.B. in [http://www.insideria.com/2009/09/50-most-usable-rias.html 50 Most Usable RIAs] lese, dann sehe ich da keine Anwendung, die mit Fenstern arbeitet. 

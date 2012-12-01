@@ -1,0 +1,12 @@
+#labels Blog
+= [20100504 ←] [20100505 05.05.2010] [20100506 →] =
+
+So, der Kleinkram ist jetzt erledigt, die To-do-Liste kann ihren Horizont eine Stufe weiter eingestellt kriegen. Resultat: aktualisierte [Roadmap].
+
+Als Nächstes scheint mir dringend, dass das Insert in einem SlaveGrid-Fenster nicht funktioniert ("Insert in SlaveGrids? setzt den Master-Pointer im erstellten Record nicht").
+
+Auf normalen Slave Reports (nicht ContentType) geht es jetzt.
+
+Oops, noch was: Properties werden noch nicht gespeichert.
+
+Aber jetzt erstmal [http://code.google.com/p/lino/source/detail?r=1c7b21ee22e470cfa95035f748ddc228c4d2c25f Check-in] wegen Feierabend.

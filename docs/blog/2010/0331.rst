@@ -1,0 +1,7 @@
+= [20100329 ←] [20100331 31.03.2010] [20100401 →] =
+
+Gestern abend war ich nicht in Stimmung zu bloggen. Ich hatte mir [http://bitbucket.org/jespern/django-piston/wiki/Home piston] angeschaut. Piston ist super, und Lino müsste das eigentlich benutzen. Aber nach anderthalb Stunden stand auch fest, dass das momentan zu viele fundamentale Änderungen mit sich zöge. Linos Reports würden zu ResourceHandlern in Piston, und der ExtJS-Code würde dann wahrscheinlich durch einen Emitter generiert. Aber Piston ist letzten Endes ja doch nur ein Framework, um den Anwendungsserver RESTful zu machen. Der Benutzer sieht von all dem überhaupt nichts.
+
+Zur Zeit kriege ich mal wieder einen JS-Error in der vom Lino-Server generierten Antwort an den Client. Das Problem ist, dass die Antwort über 2000 Zeilen lang ist. Ich schätze, dass ich die Definition der Slave-Fenster (Eigenschaften, Detail und SlaveGrids) am besten doch auslagere. Das hieße, dass beim ersten Klick auf deren Button ein AJAX-Request stattfände, der dann den Konstruktor des Unterfensters generiert.
+
+Und das Insert-Fenster kriegt ähnlich wie die Slave-Fenster auch so eine ausgelagerte Definition. Wichtigster Unterschied zwischen Slave-Fenstern und Insert-Fenster ist, dass der Insert-Button kein Toggle-Button ist. Also wer will soll ruhig 2 Insert-Fenster hintereinander öffnen; gespeichert wird ja erst, wenn man OK klickt. Genau! Das ist RESTful!

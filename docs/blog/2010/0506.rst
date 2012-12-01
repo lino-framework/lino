@@ -1,0 +1,11 @@
+= [20100505 ←] [20100506 06.05.2010] [20100508 →] =
+
+Morgen fliege ich nach Eupen, um mal zwei Wochen lang konzentriert an Lino arbeiten zu können. Mal sehen, wie weit ich heute noch komme...
+
+Properties speichern war nicht trivial. Die `submit_property_view` war noch nicht RESTful. Statt sie anzupassen, damit sie wieder funktioniert, habe ich den ganzen Prozess gleich nach RESTful konvertiert. Also Properties werden jetzt vom API her ganz wie normale Datenbankfelder gehandhabt. Das funktioniert selbst für Properties wie "Familiäre Situation" (deren Name kein gültiger Name für ein Attribut in Python ist). Also Eigenschaftsnamen dürfen weiterhin Leerzeichen und Sonderzeichen enthalten. Mich wundert schon von Anfang an, dass ich diese Möglichkeit bisher noch immer nicht zu elimineren brauchte. Eine wichtige allgemeine Neuerung: `Store.get_from_form()` ist ersetzt durch `Store.form2obj`, die jetzt nur noch jene Felder aktualisiert, die im form_data enthalten sind.
+
+[http://code.google.com/p/lino/source/detail?r=354564ae4a82558ddb9da63630737090291d285f Check-In] um das zu feiern.
+
+Irgendwann sollte ich das form2obj() aus Store raus nach ReportHandle verpflanzen, denn das ist nicht mehr ExtJS-spezifisch: new Issue 120.
+
+Habe heute auch einige Zeit für ein ganz anderes Problem gefummelt: AtiOnDebian.

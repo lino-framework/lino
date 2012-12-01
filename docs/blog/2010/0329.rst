@@ -1,0 +1,12 @@
+= [20100323 ←] [20100329 29.03.2010] [20100331 →] =
+
+So. Weiter nach dem Urlaub. Also meine Dialogs kommen wieder raus, und ich migriere die Kommunikation zwischen Client und Server entsprechend der REST-Prinzipien. Ich schätze grob über den Daumen gepeilt, dass das 1 bis 3 Tage Arbeit bedeutet. Ob es richtig ist, die "geniale" Idee der Dialoge wegzuwerfen, darüber hatte ich ja während des Urlaubs genügend Zeit zu meditieren. Die Antwort ist Ja, weil jeder seriöse potentielle Mitentwickler sogleich darüber stolpern würde, wenn Lino nicht RESTful ist. 
+
+Erste interne Änderungen:
+
+ # Dialog ersetzt durch ActionRequest.
+ # ReportRequest wird ReportActionRequest.
+ # Action.run_in_dialog() ersetzt durch Action.run_action(act).
+
+
+[http://code.google.com/p/lino/source/detail?r=932bcfc4b03f81c77506acc92dec5403ad39b112 Check-In] wegen Feierabend.

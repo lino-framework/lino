@@ -1,0 +1,82 @@
+= Stammdaten nur für eingeloggte User sichtbar =
+
+Ich lass momentan bewusst die Companies (Organisationen) mal für alle sichtbar, weil ich dann ein bisschen experimentieren kann. can_view würde ich ja gerne auch pro Model setzen können, aber da muss ich erst mal nachschauen, inwiefern Djangos Meta-Klasse erweiterbar ist.
+
+Weil `load_tim.py` jetzt auch die Benutzer aus TIM importiert, könnte ich mich ja mal als LUC statt immer nur der doofe "user" einloggen. Aber oh, Login für Benutzer ohne Passwort funktioniert nicht:
+
+{{{
+Traceback (most recent call last):
+  File "c:\drives\t\hgwork\lino\src\lino\actions.py", line 90, in run
+    self.action.run(self,*self._args,**self._kw)
+  File "c:\drives\t\hgwork\lino\src\lino\modlib\system\models.py", line 97, in run
+    _("Please enter a correct username and password. Note that both fields are case-sensitive."))
+ValidationError: <unprintable ValidationError object>
+Traceback (most recent call last):
+  File "l:\snapshot\django\django\core\servers\basehttp.py", line 280, in run
+    self.result = application(self.environ, self.start_response)
+  File "l:\snapshot\django\django\core\servers\basehttp.py", line 672, in __call__
+    return self.application(environ, start_response)
+  File "l:\snapshot\django\django\core\handlers\wsgi.py", line 241, in __call__
+    response = self.get_response(request)
+  File "l:\snapshot\django\django\core\handlers\base.py", line 143, in get_response
+    return self.handle_uncaught_exception(request, resolver, exc_info)
+  File "l:\snapshot\django\django\core\handlers\base.py", line 101, in get_response
+    response = callback(request, *callback_args, **callback_kwargs)
+  File "c:\drives\t\hgwork\lino\src\lino\ui\extjs.py", line 1987, in act_view
+    context.run()
+  File "c:\drives\t\hgwork\lino\src\lino\actions.py", line 95, in run
+    self.response.update(msg=str(e),success=False)
+UnicodeEncodeError: 'ascii' codec can't encode character u'\xfc' in position 13: ordinal not in range(128)
+}}}
+
+Also wir kommen voll in ins Thema Internationalisierung rein, denn wenn ich den Unterstrich vor der Fehlermeldung `_("Please enter a correct username and password. Note that both fields are case-sensitive."))` weg tue, dann klappt es (d.h. die Fehlermeldung wird angezeigt). Der Fehler kommt, weil Django automagisch den englischen text nach Deutsch übersetzt hat. Ein `print repr(e)` vor Zeile 95 in actions.py lässt den Text `ValidationError(u'Bitte einen g\xfcltigen Benutzernamen und ein Passwort eingeben. Beide Felder ber\xfccksichtigen die Gro\xdf-/Kleinschreibung.',)`
+auf der Konsole erscheinen.
+Wie kriege ich die deutsche Meldung angezeigt? Was mach ich falsch?
+
+Erst mal ein `svn update` für Django: `Updated to revision 12231`. Immerhin ist Django in der Alpha von 1.2. Dann mal die [http://docs.djangoproject.com/en/1.1/topics/i18n/#topics-i18n Dokumentation über Djangos i18n] lesen. Hm... nützt alles nichts...
+
+Also das ist eine Exception mit einer Meldung in Unicode. 
+Django-Ticket [http://code.djangoproject.com/ticket/6353 6353] 
+hatte da auch schon Probleme mit. Die haben das damals so gelöst:
+[http://code.djangoproject.com/attachment/ticket/6353/6353-2.diff].
+
+Tilt! Ich muss nicht `unicode()`, sondern Djangos `force_unicode()` benutzen. 
+Hier muss ich übrigens nicht `smart_unicode()` benutzen, weil mein JavaScript mit einem lazy translation string noch nichts anfangen könnte. Übersetzung findet momentan nur auf dem Server, nicht auf dem Client statt. 
+
+Voilà. Und dass man sich momentan noch nicht mit den TIM-Benutzernamen einloggen kann, weil die kein Passwort haben, das lass ich vorerst mal offen.
+
+Habe `allowBlank=False` für das Feld Passwort gesetzt. Er umrahmt das Feld zwar jetzt in Rot, wenn es leer ist, aber trotzdem schickt er den Request ab. Eigentlich sollte er doch client validation machen. Hier der momentane Code meines Login-Fensters:
+
+{{{
+function(caller) {
+  var text = { flex: 1, html: "Please enter your username and password to authentificate.", xtype: "label" };
+  this.username = { items: { flex: 1, fieldLabel: "Benutzername", xtype: "textfield", name: "username", maxLength: 75, allowBlank: false }, layout: "form", xtype: "container" };
+  this.password = { items: { flex: 1, fieldLabel: "Passwort", xtype: "textfield", name: "password", maxLength: 75, inputType: "password", allowBlank: false }, layout: "form", xtype: "container" };
+  var cancel = { flex: 10, handler: Lino.form_action(this,'cancel','/form/system/Login/cancel'), xtype: "button", text: "Cancel" };
+  var ok = { flex: 10, handler: Lino.form_action(this,'ok','/form/system/Login/ok'), xtype: "button", text: "Login" };
+  this.main_4_panel = { flex: 1, border: false, layout: "hbox", xtype: "container", items: [ cancel, ok ], frame: false, layoutConfig: { align: "stretch" } };
+  this.main_panel = new Ext.form.FormPanel({ border: false, autoHeight: false, layout: "vbox", xtype: "container", autoScroll: true, items: [ text, this.username, this.password, this.main_4_panel ], frame: true, layoutConfig: { align: "stretch" }, bodyBorder: false, labelAlign: "left" });
+  this.comp = new Ext.Window( { layout: "fit", title: null, items: this.main_panel, height: 178, width: 260, maximizable: true, maximized: false, y: 191, x: 341, tools: [ { handler: Lino.save_window_config(this,'/save_win/system_Login'), id: "save" } ], id: "system_Login" } );
+  this.get_values = function() {
+    var v = {};
+    v['password'] = this.main_panel.getForm().findField('password').getValue();
+    v['username'] = this.main_panel.getForm().findField('username').getValue();
+    return v;
+  };
+  this.stop = function() {
+     this.comp.close();
+  }
+  this.comp.show();
+}
+}}}
+
+Und mein `Lino.form_action()` ruft `Lino.do_action()`, und der macht ohne Wenn und Aber einen AJAX-Request. Daher kommt es. Allerdings sollte der Cancel-Button ja auch funktionieren, wenn die Form nicht gültig ausgefüllt ist. Also muss ich pro `Action` festlegen, ob sie nur validierte Form data akzeptiert. Also ein neues Attribut `Action.needs_validation`, das in actions.OK auf True gesetzt wird.
+
+Schön wäre noch, wenn ich den defaultButton definieren könnte.
+Neues Attribut `Layout.default_element` ist (wenn nicht None) ein String mit dem Namen des Default-Buttons. Und `extjs.InputElement` muss dann nur den `id` ebenfalls setzen. 
+
+Das funktioniert jetzt so, aber Problem: ExtJS versteht unter defaultButton die Komponente, die beim Öffnen den Fokus bekommen soll ("Specifies a Component to receive focus when this Window is focussed."). Das ist ein irritierender Name. Unter "Default Button" verstehe ich was ganz anderes, nämlich den Button, der bei ENTER aktiviert werden soll. 
+Also Linos Layout.default_button soll gar nicht der `Ext.Window.defaultButton` werden.
+Zum Glück hat Stephen Friedrich eine Lösung dafür geschrieben:
+http://www.extjs.com/forum/showthread.php?t=87273
+Für mich das erste Mal, dass ich ein ExtJS-Plugin benutze. Eingebaut und Plupp, es funktioniert! Höchstens noch schade, dass der defaultButton nicht als solche erkennbar ist (weil er keinen verbreiterten Rand hat). Aber jetzt muss ich Feierabend machen.

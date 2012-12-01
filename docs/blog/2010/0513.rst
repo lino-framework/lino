@@ -1,0 +1,16 @@
+= [20100511 ←] [20100513 13.05.2010] [20100514 →] =
+
+Vorgestern begann ich zu ahnen, dass der Eigenschaften-Editor möglicherweise eine Sackgasse ist, weil er keine hierarchischen Eigenschaften hinbekommt. Die Eigenschaften müssten für den DSBE schon strukturiert sein und in einem Baum dargestellt werden. Aber das Ext.grid.PropertyGrid kann keine Gruppen machen. Es gibt zwar ein Ext.ux.TreeGrid, aber das wiederrum kann keine dynamischen Datentypen (in Funktion der Zeile) machen.
+
+Die vermeintliche Sackgasse entpuppte sich im Laufe des Tages als Sprungschanze: Wir brauchen gar keinen Ei-Editor. Neue Tabellen für Sprachkenntnisse und Studien waren in nullkommanichts fertig. Ein Tool zur Datenbank-Migration nach Änderung eines Modells muss sowieso früher oder später herbei. Super.
+
+Allerdings werden wir nun mit recht vielen DetailLayouts für Personen arbeiten. Heute habe ich deshalb an folgenden Punkten gearbeitet:
+
+ * Alle Detail-Layouts eines Models kommen in einem TabPanel in ein einziges Detail-Fenster.
+ * Neuer Window-Wrapper "MasterDetail", der ähnlich wie der bestehende InsertWrapper einen einzigen Record anzeigt. Eigentlich braucht so ein Fenster noch nichtmal einen Store. Der InsertWrapper missbraucht ihn momentan auch nur, um einen leeren Record (mit den selbstverständlichen Werten) zu erhalten. Was demnächst mich mehr funktioniert, denn Grids mit einem Insert-Button sollten eigentlich gar keine extra-Zeile anzeigen, das ist nur irritierend.
+
+Das Detail-Fenster ist nun kein Slave des GridMasters mehr, sondern pro Zeile wird ein neues Fenster geöffnet.
+
+Der FF-spezifische Layout-Bug von [http://code.google.com/p/lino/wiki/20100504 voriger Woche] war wieder aufgetaucht. Und genauso plötzlich verschwand er wieder, nachdem ich dem TabPanel die unsinnige Angabe `width:300` entfernt habe.
+
+Die Performance macht mir Sorgen. Momentan haben wir ein Detail-Fenster mit zwei Reitern, und der Client braucht schon recht lange fürs Layout. Bis auf weiteres hoffe ich (auch wegen des Layout-Bugs), dass ich versehentlich irgendwas Unnützes in meiner Komponentenstruktur habe, vielleicht eine ungünstige Kombination von Layout-Managern, die sich gegenseitig asuf die Füße treten...

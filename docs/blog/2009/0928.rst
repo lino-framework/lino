@@ -1,0 +1,94 @@
+NO_PUBKEY warning during aptitude update http://ftp.debian-unofficial.org stable
+
+{{{
+surfsp:/home/milvi# aptitude update
+...
+W: GPG error: http://ftp.debian-unofficial.org stable Release: The following signatures couldn't be verified because the public key is not available: NO_PUBKEY 394D199524C52AC3
+W: You may want to run apt-get update to correct these problems
+}}}
+
+{{{
+surfsp:/home/milvi# gpg --keyserver wwwkeys.eu.pgp.net --recv-keys 394D199524C52AC3
+gpg: directory `/root/.gnupg' created
+gpg: uus omaduste fail `/root/.gnupg/gpg.conf' on loodud
+gpg: HOIATUS: seaded failis `/root/.gnupg/gpg.conf' pole seekord veel aktiivsed
+gpg: võtmehoidla `/root/.gnupg/secring.gpg' on loodud
+gpg: võtmehoidla `/root/.gnupg/pubring.gpg' on loodud
+gpg: requesting key 24C52AC3 from hkp server wwwkeys.eu.pgp.net
+gpg: /root/.gnupg/trustdb.gpg: trustdb on loodud
+gpg: key 24C52AC3: public key "Debian Unofficial Archive Automatic Signing Key (2007) <ftpmaster@debian-unofficial.org>" imported
+gpg: absoluutselt usaldatavaid võtmeid pole
+gpg: Töödeldud kokku: 1
+gpg:             imporditud: 1
+surfsp:/home/milvi# apt-key add /root/.gnupg/pubring.gpg
+OK
+
+surfsp:/home/milvi# aptitude update
+...
+W: GPG error: http://ftp.debian-unofficial.org stable Release: The following signatures were invalid: KEYEXPIRED 1201887412
+W: You may want to run apt-get update to correct these problems
+}}}
+
+After upgrade to lenny in June 2009, the estonian keyboard layout doesn't work in gnome or GTK.
+
+Observations:
+ * the keyboard is a no-brand with 105 keys (Generic-105-keys)
+ * after system startup using the automatic user the layout in Gnome is always US
+ * the problem does not occur when the automatic user option is switched off.
+ * Doing Ctrl-Alt-F1 (going to a non-X console) reveals that there is works. 
+ * Going to System > Preferences > Keyboard and changing something there (be it just the sort order or adding another layout) will activate the estonian layout.
+ * The option "Layout Switching" is set to "Both Ctrl keys together change layout", but this seems to have no effect.
+
+
+I found a similar problem reported by a canadian user:
+   http://forums.debian.net/viewtopic.php?f=10&t=42345
+
+His first trick, `dpkg-reconfigure console-data`, doesn't change anything.
+
+Next try as suggested by 987687 » 2009-07-26 in above thread:
+
+ * `xkbmap ee` in a terminal: works  
+
+ * edit /etc/X11/xorg.conf and in Section "InputDevice", change:
+   * Option "XkbModel" from pc104 to pc105
+   * Option XkbLayout from us to ee
+
+This worked for me. So I'm more fortunate than the Canadian user
+
+
+
+{{{/home/milvi/.xsession-errors}}} may be interesting:
+
+{{{
+/etc/gdm/Xsession: Beginning session setup...
+SESSION_MANAGER=local/surfsp:/tmp/.ICE-unix/3020
+** Message: another SSH agent is running at: /tmp/ssh-HGkWfZ3020/agent.3020
+Warning:          Type "PC_RALT_LEVEL2" has 2 levels, but <LALT> has 3 symbols
+                  Ignoring extra symbols
+Warning:          No symbols defined for <SYRQ> (keycode 92)
+Warning:          No symbols defined for <II65> (keycode 101)
+(...)
+Warning:          No symbols defined for <I7F> (keycode 255)
+<stdin>:130:14: warning: missing terminating ' character
+Aknahalduri hoiatus: Viga salvestatud seansifaili '/home/milvi/.metacity/sessions/default0.ms' lugemisel: Failed to open file '/home/milvi/.metacity/sessions/default0.ms': No such file or directory
+** Message: <info>  Nüüd oled ühendatud juhtmega võrku.
+
+Initializing gnome-mount extension
+seahorse nautilus module initialized
+
+(gnome-panel:3112): Gtk-WARNING **: gtk_widget_size_allocate(): attempt to allocate widget with width -9 and height 24
+** Message: GetValue variable 1 (1)
+** Message: GetValue variable 2 (2)
+** Message: GetValue variable 1 (1)
+** Message: GetValue variable 2 (2)
+** Message: GetValue variable 1 (1)
+** Message: GetValue variable 2 (2)
+** Message: GetValue variable 1 (1)
+** Message: GetValue variable 2 (2)
+}}}
+
+
+
+
+{{{
+}}}

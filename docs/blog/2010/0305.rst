@@ -1,0 +1,7 @@
+= [20100304 ←] [20100305 05.03.2010] [20100306 →] =
+
+9.10 Uhr. Also gestern habe ich 5 Stunden an Lino operiert und er ist noch immer nicht aus der Narkose erwacht. Hoffentlich ist er wenigstens bis heute abend wieder fit...
+
+11.10 Uhr. Der Server startet wieder, ich habe ein Master-Fenster (Projekte) sogar schon gesehen... aber es kommen noch ständig Tracebacks und Syntaxfehler im Firebug. Immerhin ist das nun fast schon Routinearbeit.
+
+18 Uhr : [http://code.google.com/p/lino/source/detail?r=61570b13075958ffac71f0d70346dd1d5e30ea98 Check-In] wegen Feierabend. Operation ist nicht fertig, aber Patient atmet schon wieder... man kann schon wieder diverse Fenster öffnen (das Detail-Fenster funktioniert nun per Toggle-Button), aber viele Sachen wie Datenverknüpfung und window_config funktionieren noch nicht wieder.

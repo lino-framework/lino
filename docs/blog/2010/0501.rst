@@ -1,0 +1,30 @@
+= [20100430 ←] [20100501 01.05.2010] [20100503 →] =
+
+Der Submit-Button eines DetailSlave war an sich nicht schwer, aber um richtig RESTful zu sein, sollte der Button ein PUT, und nicht ein POST abschicken. Tabelle der URI-Struktur, angepasst nach [http://en.wikipedia.org/wiki/Restful Wikipedia]:
+
+|| Resource || GET  || PUT   || POST  || DELETE ||
+|| api_list_view (Collection URI) || List the members of the collection. || Replace the entire collection with another collection. || 	Create a new entry in the collection where the ID is assigned automatically by the collection. The ID created is usually included as part of the data returned by this operation. || 	Delete the entire collection.|| 
+|| `api_element_view` (Element URI)  || Retrieve a representation of the addressed member of the collection expressed in an appropriate MIME type || Update the addressed member of the collection or create it with the specified ID.  || Treats the addressed member as a collection in its own right and creates a new subordinate of it.  || Delete the addressed member of the collection. || 
+
+
+Bei PUT ist das Datenformat des Requests aber scheinbar nicht wie bei POST vorgeschrieben, so dass Django diese Methode nicht wie POST und GET unterstützt, sondern mich mit `request.raw_post_data` allein lässt. Hier kommt [http://bitbucket.org/jespern/django-piston/wiki/Home Piston] ins Spiel. Django stellt sich nämlich stellenweise sogar quer, so dass Piston ihm "den Arm verdrehen" muss. Also um richtig RESTful zu werden, sollte ich Piston verwenden. 
+
+03.30 Uhr : Aber fürs Erste (solange ich keine Dateien aus einer klassischen Form hochlade) reicht es, wenn ich das `request.POST` durch `QueryDict(request.raw_post_data)` ersetze. Also aus
+
+{{{
+data = ah.store.get_from_form(request.POST)
+}}}
+
+wird
+
+{{{
+from django import http
+PUT = http.QueryDict(request.raw_post_data)
+data = ah.store.get_from_form(PUT)
+}}}
+
+und fertig. Also so ganz allein lässt Django mich auch wieder nicht...
+
+Tiens, zu meiner Liste von 11 Punkten kommt noch einer hinzu: weshalb ist in Companies im Detail-Fenster ein HtmlEditor aber im Insert-Fenster überhaupt kein Editor für `remarks`? 
+
+[http://code.google.com/p/lino/source/detail?r=e5108e5fd2dda21b9bc70136ce06cb7b0308da38 Check-In]

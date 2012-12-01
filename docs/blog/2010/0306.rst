@@ -1,0 +1,4 @@
+= [20100305 ←] [20100306 06.03.2010] [20100309 →] =
+
+Noch zwei Stunden Fehler ausbügeln nach der großen Operation. Lino erholt sich zusehens.
+[http://code.google.com/p/lino/source/detail?r=31adda5a71419837795c2bf41be61ea94efde83e Check-In].

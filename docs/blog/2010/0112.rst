@@ -1,0 +1,100 @@
+= Fixed issue 67 (Getting rid of DeprecationWarning) =
+
+After switching from Python 2.5 to 2.6, {{{manage.py runserver}}} issues a DeprecationWarning :
+
+{{{
+s:\py-site-packages\pyPdf-1.12\pyPdf\pdf.py:52: DeprecationWarning: the sets module is deprecated
+  from sets import ImmutableSet
+}}}
+
+Solution (thanks to http://flo.nigsch.com/?p=62):
+
+Edit the indicated file pdf.py and replace line 52 {{{from sets import ImmutableSet}}} by {{{ImmutableSet = frozenset}}}.
+
+Solving this reveals that there is the same problem in Pisa:
+
+{{{
+l:\snapshot\pisa-3.0.32\sx\w3c\css.py:40: DeprecationWarning: the sets module is deprecated
+  import sets
+}}}
+
+Edit the indicated filecss.py, comment out line 40 ({{{import sets}}}), and in line 530, replace
+{{{MediumSetFactory = sets.Set}}} by {{{MediumSetFactory = set}}}.
+
+... but I didn't yet test whether pisa and pypdf still work...
+
+
+= Fixed issue 66 (Slave grids don't load correctly) =
+
+I did the loop over slave_grids using JavaScript, but wrongly. 
+Now I do it again in Python when generating the code. 
+That's probably more performant anyway.
+The JS loop had been introduced because of a {{{this}}} problem, which no longer exists.
+
+= Fixed issue 62 (Generic slave where master_instance is None) =
+
+Seems that this issue has disappeared together with issue 66.
+
+= New issue 77 (ForeignKey to User tries with AnonymousUser when not logged in) = 
+
+Reproducible only when not logged in. 
+When logged in, the same problem causes your user name to appear in empty pointers to User.
+
+{{{
+Traceback (most recent call last):
+  File "l:\snapshot\django\django\core\servers\basehttp.py", line 280, in run
+    self.result = application(self.environ, self.start_response)
+  File "l:\snapshot\django\django\core\servers\basehttp.py", line 672, in __call__
+    return self.application(environ, start_response)
+  File "l:\snapshot\django\django\core\handlers\wsgi.py", line 241, in __call__
+    response = self.get_response(request)
+  File "l:\snapshot\django\django\core\handlers\base.py", line 141, in get_response
+    return self.handle_uncaught_exception(request, resolver, exc_info)
+  File "l:\snapshot\django\django\core\handlers\base.py", line 99, in get_response
+    response = callback(request, *callback_args, **callback_kwargs)
+  File "c:\drives\t\hgwork\lino\src\lino\ui\extjs.py", line 1944, in list_report_view
+    return json_report_view(request,**kw)
+  File "c:\drives\t\hgwork\lino\src\lino\ui\extjs.py", line 1949, in json_report_view
+    return json_report_view_(request,rpt,**kw)
+  File "c:\drives\t\hgwork\lino\src\lino\ui\extjs.py", line 1991, in json_report_view_
+    d = rptreq.render_to_json()
+  File "c:\drives\t\hgwork\lino\src\lino\ui\extjs.py", line 1849, in render_to_json
+    row = self.create_instance()
+  File "c:\drives\t\hgwork\lino\src\lino\reports.py", line 645, in create_instance
+    return self.report.create_instance(self,**kw)
+  File "c:\drives\t\hgwork\lino\src\lino\reports.py", line 450, in create_instance
+    m(req)
+  File "c:\drives\t\hgwork\lino\src\lino\modlib\notes\models.py", line 58, in on_create
+    self.user = req.get_user()
+  File "l:\snapshot\django\django\db\models\fields\related.py", line 280, in __set__
+    self.field.name, self.field.rel.to._meta.object_name))
+ValueError: Cannot assign "<django.contrib.auth.models.AnonymousUser object at 0x0212FF70>": "Note.user" must be a "User
+" instance.
+}}}
+
+For example here is the JSON that returns the list of notes related to Person Arens Annette 
+(http://127.0.0.1:8000/list/notes/NotesByPerson?_dc=1263301159102&mk=2&mt=13):
+
+{{{
+  { count: 2, rows: [ 
+    { short: "note for person 2", text: "Lorem ipsum...", company: null, userHidden: 2, typeHidden: null, personHidden: 2, companyHidden: null, person: "Arens Annette", user: "user", date: "Tue Dec  8 00:00:00 2009", type: null, id: 2, __unicode__: "note for person 2 (user 2009-12-08)" }, 
+    { short: null, text: "", company: null, userHidden: 2, typeHidden: null, personHidden: 2, companyHidden: null, 
+    person: "Arens Annette", user: "user", type: null, id: null, __unicode__: "(user None)" } 
+  ] }
+}}}
+
+The second row is the blank extra row sent to the grid to create new row. 
+It's {{{person}}} attribute is set to the current Person, which is correct.
+Tilt! and now I see that the "user" string that appears when you are logged in is correct. 
+It is the default value for that extra row.
+So there's only problem when you are not logged in.
+The root of the problem is Django's feature to return an AnonymousUser instance which has the interface of a User instance but is not persistent. 
+So a ForeignKey to User cannot point to AnonymousUser.
+Current solution: ReportRequest.get_user() and ActionContext.get_user() both now return None if request.user is AnonymousUser.
+Changed notes.Note.user to accept None values.
+
+= New issue 78 (Anonymous Notes should not be allowed) =
+
+Currently notes.Note allows empty values. In reality that should be forbidden. 
+This needs changes in the permission checking system and a possibility for on_create() to raise a Veto.
+

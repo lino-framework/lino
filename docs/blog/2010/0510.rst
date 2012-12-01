@@ -1,0 +1,12 @@
+= [20100508 ←] [20100510 10.05.2010] [20100511 →] =
+
+Am Wochenende habe ich ca. 8 Stunden gewurstelt, damit man im Detail-Fesnter von Personen deren Foto sehen kann. Ist noch keine sehr schöne Lösung, aber reicht fürs erste.
+
+Heute habe ich den ganzen Tag lang nach einem lächerlich kleinen Problem gesucht: unter mod_python fand er keine Reports. Das lag letzten Endes einfach nur daran, dass `lino_site.LinoSite.setup` `actors.discover` aufrief, bevor Django die Model-Cache bevölkert hatte. Der Model-Chache wird nicht automatisch bevölkert, wenn man `django.db` oder `django.db.models` importiert, sondern wurde bisher eher aus Versehen als Nebeneffekt von `welcome()` bevölkert. Und die wurde in der `manage.py` gerufen, die unter `mod_python` nicht gerufen wird.
+
+Das Importieren der Daten aus TIM funktioniert jetzt auch wieder. 
+Countries sind jetzt die aus TIM. Benutzer kriegen nun auch ihren Namen importiert. Auch PXS wird durchlaufen (wegen der card_number).
+
+Djangos `unique_together` funktioniert scheinbar nicht mit sqlite. Jedenfalls hatte ich die Datenbank anschließend korrupt, Django meldet "DatabaseError: database is locked", sqlite dagegen "database disk image is malformed".
+
+TODO: konfigurierbar machen, wo die Fotos stehen. Oder lieber mit symlink arbeiten?

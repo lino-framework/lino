@@ -1,0 +1,9 @@
+= [20100216 ←] [20100217 17.02.2010] [20100218 →] =
+
+Lektüre:
+http://docs.djangoproject.com/en/dev/topics/http/sessions/
+http://docs.djangoproject.com/en/dev/ref/contrib/messages/
+
+Mann, mit Issue 94 hab ich ja mal wieder was angefangen! Dabei bin ich noch nicht mal sicher, ob meine Idee nicht Unsinn ist. 
+
+Die Idee der Dialoge ist, dass eine Aktion in Lino etwas Besseres sein soll als das traditionelle Denken in einzelnen Requests. Dadurch ist der Anwendungsentwickler gezwungen, seine Logik in Schritte zu zerteilen und jedem Schritt einen eigenen Namen zu geben. Man soll mit Lino eine Aktion schreiben können, die je nach Umständen (falls sie selber das als nötig erachtet) Rückfragen an den Client stellen kann. Das einzige Beispiel, das bisher funktioniert hat, ist `Dialog.confirm()`. Hinzukommen soll bald auch das Ausführen einer beliebigen  modalen Form, deren Daten danach zur Verfügung stehen. 

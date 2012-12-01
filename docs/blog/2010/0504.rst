@@ -1,0 +1,62 @@
+= [20100503 ←] [20100504 04.05.2010] [20100505 →] =
+
+Ich bin am wursteln wegen des Layout-Problems im Insert-Fenster (sh. [http://code.google.com/p/lino/wiki/20100503_vbox_stretch hier]). 
+Gestern Abend hatte ich das als [http://www.extjs.com/forum/showthread.php?98378-vbox-layout-stretches-correctly-on-IE-but-on-on-FF&p=463956 Frage im ExtJS-Forum] gestellt, und heute morgen war schon eine wohlgemeinte Antwort da, die aber leider nur für das vereinfachte Beispiel funktioniert und insofern nicht allgemein für Lino anwendbar ist. 
+
+Es handelt sich offensichtlich um einen Bug in EstJS, also muss ich entscheiden: mach ich mir die Mühe einen Bug-Report einzureichen für einen eher subtilen Bug, der wahrscheinlich nicht prompt behoben werden wird? Oder mach ich mir die Mühe, den von Lino generierte Code so anzupassen, dass der Bug mich nicht stört?
+
+Die Frage kann jedoch vorerst offen bleiben, denn zum Glück gibt es einen einfachen Workaround: das Fenster muss einfach breit genug sein. Der Bug tritt nämlich nur auf, wenn es im Fenster relativ eng ist.
+
+
+Bisher glaubte ich, dass man wie in Python so auch in JavaScript Dictionaries und Listen ungestraft mit einem Komma "zu viel" am Ende definieren darf. Also dass eine Definition im Stil
+
+{{{
+var foo = [ 1, 2, 3, ];
+}}}
+
+das Gleiche macht wie
+
+{{{
+var foo = [ 1, 2, 3 ];
+}}}
+
+Das ist ein bequemes Feature, das sehr nützlich beim Jonglieren mit längeren Definitionen ist. 
+
+Wie ich nun gelernt habe, ist Monsieur I.E. da leider anderer Meinung. Der empfindet das als Syntaxfehler. 
+
+Wenn ich in `settings.py` den Wert von `EXTJS_ROOT` ändere, dann bleibt die `ext-all-debug.js`manchmal recht hartnäckig im Cache. Im FF muss ich Tools / Options / Advanced / Network öffnen und dann in der Gruppe "Offline storage" auf "Clear now" klicken.
+Deshalb der neue Menübefehl Help | About, damit man die Version seines ExtJS-Clients sehen kann. 
+
+Eines merke ich jetzt deutlich, wenn ich Lino mit dem IE teste: Firebug causes performance problems to ExtJS. Also Lino ist im IE merklich schneller als im FF mit Firebug.
+
+Ein Problem, zu dem es viele komplizierte Lösungen gibt, ist, dass IE keine globale Variable names `console` hat. [http://getfirebug.com/firebuglite] ist vielleicht die kompletteste Lösung. Aber ich will eigentlich keinen Ersatz für die Konsole im IE, sondern lediglich, dass mein Code im IE keine Fehler verursacht. 
+
+Mein erster Ansatz war, dass ich nicht mehr `console.log(foo,bar,baz)` schreibe, sondern `Lino.debug(foo,bar,baz)`, und in der lino.js definiere:
+
+{{{
+Lino.debug = function() {
+  if(typeof(console)!="undefined") console.log(arguments);
+};
+}}}
+
+Störend dabei ist, dass er im FireFox dann `arguments` als array versteht und nicht als eine Serie von Argumenten, wodurch die Meldung weniger gut lesbar ist. Deshalb die folgende Lösung, die noch besser ist, weil der Wrapper wegfällt:
+
+{{{
+function PseudoConsole() {
+    this.log = function() {};
+};
+if (typeof(console) == 'undefined') console = new PseudoConsole();
+}}}
+
+Check-In wegen Feierabend:
+
+DONE:
+
+ # Insert funktioniert nicht in SlaveGrid-Fenstern
+ # Editor für `remarks` ist nur im Detail-Fenster sichtbar, aber nicht im Insert-Fenter.
+
+TODO: 
+
+ # Ein weniger abschreckendes Template für das PDF-Dokument machen.
+ # Reports, für deren Model keine Properties existieren, sollten auch keinen Properties-Button haben.
+ # SlaveGrid-Fenster zeigt beim ersten Öffnen alle Datensätze an, und erst wenn man im Master Grid die Zeile wechselt wird `load_record()` korrekt ausgeführt.

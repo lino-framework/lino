@@ -1,0 +1,16 @@
+= [20100423 ←] [20100424 24.04.2010] [20100430 →] =
+
+Die Comboboxen funktionieren wieder, außer dass sie noch nicht `setContextValues()` im row_listener des masters gemacht kriegen. Deshalb werden z.B. immer die Städte aller Länder angezeigt.
+
+Ansonsten noch offen:
+
+ * Detail-Fenster wird nicht aktualisiert
+ * Bei Insert in Persons kommt ein 505 `AttributeError: 'GridElement' object has no attribute 'rh'`.
+
+(Aber jetzt kommt zuerst noch mal TIM dran, weil ein Kunde ein kleines Sonderprojekt anfragt, das ein paar Tage dauern wird. Also muss Lino warten.)
+
+[http://code.google.com/p/lino/source/detail?r=4880e6f30e77b9dc2da4f46cca15c97d12f8dfee Check-In].
+
+Nachtrag 18 Uhr: Die Felder country und city im Detail-Fenster werden jetzt aktualisiert. Das `BasicForm.loadRecord()` wird jetzt korrekt gerufen, so weit ich sehen kann. Als nächstes will ich mal ein `console.log` in `BasicForm.setValues()` einbauen.
+
+[http://code.google.com/p/lino/source/detail?r=896c6f00409dcb3a32e745e69dbb0b5f74d9dde1 Check-In].

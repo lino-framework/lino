@@ -1,0 +1,150 @@
+Weiter an Issue 80. 
+Google bringt zu "extjs remote combobox" neue Einsichten.
+
+Auf http://www.extjs.com/learn/Ext_FAQ_ComboBox stehen ein paar Sachen, die später mal interessant werden könnten. Aber nichts zu meinem Problem.
+
+Auf http://extjs.net/forum/showthread.php?p=400274
+haben Animal und Condor einen "override" für ComboBox entwickelt.
+Der ändert bei mir nichts.
+
+Aber aha, mit `Ext.override(Ext.form.ComboBox,{...})` kann ich also meine Änderungen einbringen bzw. mit strategisch platzierten `console.log()` arbeiten, um die 
+ComboBox von innen kennenzulernen.
+
+Meine Notizen zu den Konfigurationsparametern von `Ext.form.ComboBox`
+
+  `name`: 
+  Defaults to ''.
+  The field's HTML name attribute. 
+  Must be set if this field is to be automatically included with form submit().
+  Lino sets this for all fields in `FieldElement.get_field_options()`.
+
+  `valueField`: 
+  Name of the store field that holds the "value".
+  Lino uses the primary key of the related table. 
+  Required if mode is 'remote'.
+
+  `displayField`: 
+  Name of the store field that holds the "text".
+  Lino uses the __unicode__() of the related table. 
+  Required if mode is 'remote'.
+
+  `hiddenName`:
+  If specified, a hidden form field with this name is generated to store the data. 
+  Required for the combo's value to automatically post during a 
+  form submission. 
+  Note: `name` and `hiddenName`should not be the same (except if you also 
+  specify a unique hiddenId...)
+
+  `hiddenValue`:
+  If you specify a `value` and a `hiddenName`, then you should also specify a `hiddenValue`.
+  Otherwise the posted `hiddenName` field will contain `value` when the combobox wasn't edited before submit.
+
+  `submitValue`: 
+  Defaults to `undefined`.
+  Lino always sets true.
+  False to clear the name attribute on the field so that it is not 
+  submitted during a form post. 
+  If a hiddenName is specified, setting this to true will cause both 
+  the hidden field and the element to be submitted. 
+
+  `triggerAction`: 
+  Defaults to 'query'
+  The action to execute when the trigger is clicked.
+    * 'query' : run the query using the value of the text field
+    * 'all' : run the query specified by the allQuery config option
+    
+  `allQuery`: 
+  Defaults to ''
+  The text query to send to the server to return all records for the 
+  list with no filtering 
+
+  `queryParam`: 
+  defaults to 'query'
+  Name of the query (baseParam name for the store) as it will be passed 
+  on the querystring 
+
+  `lazyRender`: 
+  Defaults to false
+  true to prevent the ComboBox from rendering until requested 
+  (should always be used when rendering into an Ext.Editor (e.g. Grids), ).
+
+
+Nach stundenlanger Fummelei steht fest: auch heute werde ich nicht fertig.
+
+----
+
+(Weiter am Samstagmorgen)
+
+`choices_view()` auf dem Server gibt ja jetzt immer eine Liste mit genau zwei Feldern zurück, die `text` und 'value' heißen. 'value' ist immer der primary key der related table, und `text` (momentan) immer `__unicode__()` des betreffenden Objekts in der Table.
+
+Also `http://127.0.0.1:8000/choices/contacts/Companies/country` gibt zurück:
+
+{{{
+{ count: 6, rows: [ 
+  { text: "Estonia", value: "EE" }, 
+  { text: "Belgium", value: "BE" }, 
+  { text: "Germany", value: "DE" }, 
+  { text: "France", value: "FR" }, 
+  { text: "Netherlands", value: "NL" },
+  { text: "Soviet Union", value: "SUHH" } 
+] }
+}}}
+
+Irritierend: wenn das Feld "Land" leer ist und ich die ComboBox aufklappen will, dann kommt da nichts. Aha, die Lösung ist einfach: `triggerAction` muss ich auf `all` setzen. `triggerAction='all'` bedeutet also scheinbar nicht, dass *immer* alle Records angezeigt werden, sondern dass auch bei leerem Textfeld eine Liste angefragt werden kann (deren query-Text dann `allQuery` enthält, d.h. par défaut `''`).
+
+Ich möchte ja wenn möglich eine einzige Methode `/submit/` auf dem Server haben, die sowohl von `Lino.grid_afteredit()` als auch von `Lino.form_submit()` benutzt wird. Beide übergeben per POST immer alle Werte des Records. Aber sie tun das scheinbar momentan nicht gleich: 
+Prüfen wir das mal nach:
+
+Wenn ich eine Zeile in der Grid bearbeite, dann kommt `ValueError: invalid literal for int() with base 10: 'Eupen'`. Und `Lino.grid_afteredit()` hat u.A. folgendes nach `/grid_afteredit/contacts/Companies` geschickt:
+
+{{{
+country=BE, countryHidden=Belgium
+}}}
+
+Wenn ich dagegen in einem Detail-Fenster auf "Submit" klicke, dann get ein Request nach 
+`/submit/contacts/Companies` raus mit folgenden Daten:
+
+{{{
+country=Belgium, countryHidden=BE
+}}}
+
+Da haste der Scheiß: `form.submit()` setzt für ComboBox-Felder den `value` nach `countryHidden` und den `text` nach `country`, während `record.data` im `afteredit` der Grid die Daten andersrum enthält. Leute, wir müssen uns schon einigen, wie es denn sein soll. 
+
+  Ich würde intuitiv sagen, dass `country` "Belgien" enthalten soll und `countryHidden` "BE". Also die ID kommt ins versteckte Feld.
+
+Dummerweise kann ich noch nicht garantieren, dass diese Konvention definitiv ist. Aber arbeiten wir mal damit und schauen wir nach, wer sich denn da daneben benimmt.
+
+Also die Grid macht es falsch, und Submit macht es richtig. Und dass der Server bei der Grid seinen ValueError antwortet, ist also richtig. 
+
+Beobachtung: `submitValue=False` ändert nichts daran: er schickt dann nur noch `countryHidden`, nicht mehr beide Felder, was keinen Unterschied macht weil Lino sowieso nur auf das countryHidden schaut.
+
+Was macht `Lino.form_submit()`? 
+Nicht viel mehr als `Ext.form.BasicForm.submit()` zu rufen. 
+`clientValidation` setze ich da übrigens mal auf `true`.
+
+Präzisierung: Submit in einem Detail funktioniert nicht in allen Fällen. Auch dort wird value und text der Comboboxen verwechselt, _wenn sie nicht bearbeitet wurden_. Das fällt freilich nur auf, wenn sie nicht leer sind. 
+
+Test case: 
+ * http://127.0.0.1:8000/?show=contacts_Companies
+ * auf ersten record klicken
+ * auf "Detail" klicken (console zeigt load_data(record.data) an : hier sind die Daten richtig)
+ * auf Submit klicken. Lino sagt "Exception occured: Cannot assign "u'Germany'": "Company.country" must be a "Country" instance." und Firebug zeigt die geposteten Daten an, die in der Tat falsch sind: `country=Germany, countryHidden=Germany`.
+  
+Die Preisfrage des Tages: Wie kommt das?
+
+----
+
+Nach einigem Rumprobieren und Surfen (u.A. 
+([http://www.jasonclawson.com/2008/06/11/extjs-update-to-combobox-replacement/ 1])
+([http://chris.cfwebtools.com/index.cfm/2008/12/22/ExtJS-setValue-method-for-ComboBox-Control 2]) und
+([http://www.yui-ext.com/forum/showthread.php?t=75751 3]))
+habe ich das Gefühl, das ich vielleicht eine eigene ComboBox für Lino schreiben sollte, deren values nicht atomisch sind, sondern ein Objekt mit zwei Attributen "value" und "text". `ComboBox.setValue('BE')` tut nämlich etwas, was für Lino vollkommen unnütz ist: sie sucht in ihrer Liste aller Länder nach, um rauszufinden, dass der `text` für `'BE'` `'Belgium'` ist. Auch in ExtJS Version 3.1 gibt es dann scheinbar immer noch das Problem, das in (2) und (3) beschrieben ist, und das diese Ansätze dadurch lösen, dass sie wenigstens versucht ihren Store zu laden, bevor sie das tut. Dabei ist ein Datenbank-Request doch gar nicht nötig (ich meine jetzt _bevor_ die Box getriggert wurde), denn der Text wurde ja schon in der Response auf `/list/` mitgeliefert. 
+Oder... wenn `setValue()` irgendwie den zur value gehörigen `Record` erwischen könnte, dann könnte sie sich dort den Text abholen. Nein, das scheint noch schwieriger zu sein. 
+
+Also ran an den Speck. Ich muss in `ForeignKeyField.obj2json()` ändern, dass er als Liste rendert, dann muss `get_from_form()` ein array erwarten (Django macht nicht automatisch eine list daraus, sondern man muss `post_data.getlist()` rufen). Dann im JS den Renderer der Kolonnen, und zuletzt die ComboBox überschreiben. Außer `setValue()` auch kleine Änderungen in `onSelect()`, `beforeBlu()` und `clearValue()` (die aber hauptsächlich eine Kopie der Originale sind).
+Entgegen meinem Plan nehme ich kein Objekt mit zwei Attributen "value" und "text" als Wert, sondern ein Array mit 2 Elementen. Weil sich ein Array ohne Probleme per POST übertragen lässt.
+Zwei Stunden Arbeit und das Ding läuft!
+
+Ehrlich gesagt noch nicht ganz... Submit in einem Detail ruft jetzt ein `refresh()` des Browserfensters.... scheinbar weil ich `standardSubmit=True` gesetzt hatte. Und wenn ich das nicht tue, schickt `Form.submit()` die ComboBoxen nicht als Arrays. Okay, standardSubmit kommt wieder auf False, und beim nächsten Mal muss ich mir die Submit-Action dann doch mal genauer ansehen. 
+
+[20100124 Fortsetzung folgt].

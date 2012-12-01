@@ -1,0 +1,51 @@
+= [20100213 Arbeitsbericht] =
+
+Ich habe die Idee, wie ich ContextAwareChoices besser implementieren kann (Issue 100): Die `city_choices`-Methode im Beispiel wird eine `@staticmethod` (braucht keine Instanz) und definiert selber ihre Liste von Argumenten, deren Name mit einem existierenden Feld übereinstimmen muss. Mit dieser API ist es möglich, dass das UserInterface (d.h. `extjs`) seine Combo-Boxen nicht jedesmal neu lädt, wenn der `current_record` ändert. Momentan wird beim Blättern durch Person (z.B.) der Context für jede Person neu geladen, auch wenn die neue Person im gleichen Land ist. Weil extjs bisher nicht wissen kann, dass für die Auswahlliste von `city` lediglich das Land wichtig ist. 
+
+Aber wie kann ich in Python die Namen der deklarierten Argumente (formal parameter list) einer Funktion rausfinden? Mit `inspect`?
+Nö, viel einfacher: die stehen in `fn.func_code.co_argcount`.
+Ich probiere es aber lieber doch mal aus:
+http://code.google.com/p/lino/source/browse/tests/misc/choices.py
+
+Die Hauptarbeit wird darin bestehen, das momentane System der Comboboxen in extjs nochmal umzukramen... 
+
+Dabei werde ich auch nochmal probieren, ob ich die Städtenamen in `cityHidden` nicht doch ausnutzen kann, um den Text der ComboBoxen anzuzeigen. Es ist einfach zu dumm, dass er beim einfachen Blättern durch die Persons jedesmal einen Request machen muss, um die Stadt anzuzeigen. In Zukunft kommt der Request dann zwar nur noch, wenn das Land der Person ändert. Aber auch das ist noch unnötig, weil die komplette Liste ja erst nötig ist, wenn man die Auswahlliste aufklappt.
+
+Frage am Rande: Bin ich nicht vielleicht das Rad neu am erfinden? Gibt es vielleicht doch schon andere Lösungen für das Problem der ContextAwareChoices?
+
+Das [http://www.djangosnippets.org/snippets/26/ Django Snippet 26] (Getting dynamic model choices in newforms) ist zunächst keine, aber in den Kommentaren werden zwei verschiedene Anzätze beschrieben "how to filter a lookup table based on a value passed at run time". Vor allem die Idee eines gewissen beuc ist bemerkenswert:
+
+{{{
+class MyForm(forms.ModelForm):
+    class Meta:
+        model = my_models.MyModel
+
+    def __init__(self, *args, **kwargs):
+        dynarg = kwargs.pop('dynarg')
+        self.base_fields['myfield'].empty_label = None
+        self.base_fields['myfield'].queryset = \
+          my_models.MyField.objects.filter(myfilter=dynarg)
+        super(MyForm, self).__init__(*args, **kwargs)
+
+}}}
+
+Also er setzt `FormField.queryset` beim Instanzieren der Form.
+
+Diese Idee nützt mir leider für ExtJS nichts, weil der Client die Dynamisierung machen muss (bzw. die Entscheidung, ob ein neuer Request nötig ist), d.h. die Entscheidung muss in JavaScript implementierbar sein.
+
+---
+
+Weiter mit Issue 103 (das ich gerade erst erfasst habe, obschon ich ja schon die ganze Woche daran arbeite...)
+Mir ist inzwischen klar, dass ich das unmöglich mit einer normalen Grid geregelt kriege, sondern dafür muss eine `Ext.grid.PropertyGrid` her. 
+Meine ersten Kennenlern-Versuche sind
+[http://code.google.com/p/lino/source/browse/extjs-showboxes/20100213_PropertyGrid.html hier].
+
+Wieso finde ich `PropertyGrid.customRenderers` nicht im Quellcode? Aha, weil es eine neue Version 3.1.1 gibt. Das Feature ist offenbar neu, obwohl es nicht in den 
+[http://www.extjs.com/products/extjs/CHANGES_ext-3.1.1.html Release notes] steht.
+
+`PropertyGrid.propertyNames` : super, dass es das gibt. Ich glaube, dass sollte ich prinzipiell benutzen, damit ich in mehrsprachigen Installationen keine Probleme kriege. Aber auf einsprachigen Sites (und insbesondere DSBE) hat das die lästige Nebenwirkung, dass ich mir für jede Eigenschaft einen internen Namen ausdenken muss. Hmm... also jedenfalls muss `Property.label` optional bleiben.
+
+Na das war ja einfach. Gefällt mir.
+
+Aber wie integriere ich das nun in Lino? Das ist mal was ganz Neues. Das wird eine neue Art von Element, das in einem PageLayout benutzt werden kann. Kommt also nach
+`layouts.py` als Klasse `PropertyGrid`. Die Klasse kann bis auf weiteres komplett leer sein, weil sie immer die `properties.PropValue` des `Report.model` anzeigt. Da sind also keine Konfigurationsoptionen. Und in `extjs.py` kommt eine neue Klasse `PropertyGridElement`. Die muss sich um das Einbinden kümmern. Jetzt wird es spannend. Aber ich geh trotzdem erst mal schlafen.

@@ -1,0 +1,20 @@
+= [20100312 ←] [20100316 16.03.2010] [20100317 →] =
+
+Nach dem verlängerten WE hier erstmal die Liste der offenen Punkte, die für heute in Frage kommen:
+
+ # Weiter mit Issue 115: Insert im Detail-Fenster funktioniert nur unsichtbar: er steht anschließend nicht auf dem neu erstellten Record. In der Grid nebenan dagegen sieht man den neuen Record (wenn die Grid auf der richtigen Seite steht und den neuen (noch leeren) Record nicht wegen Quickfilter rausfiltert).
+ # Issue 114: Änderung der Fenstergröße und sonstigen Fensterkonfiguration wird erst nach dem nächsten Restart des Servers berücksichtigt.
+ # Langsam wird es Zeit, das Passfoto einer Person am Bildschirm zu zeigen.
+ # `Note.html_templates` implementieren und in NoteType ein Feld "template".
+
+
+Issue 115. Das Fenster erscheint (jetzt wieder mit der korrekten Größe), und man kann auch Submit klicken und der Record wird abgespeichert. Aber dann fehlt noch was Subtiles: die InsertAction geht nicht weiter. Weil `Lino.form_submit` noch nicht wie `Lino.do_dialog` funktioniert. Auch `form_submit_view` war bisher noch nicht dafür vorgesehen, in einem Dialog zu laufen. Sollte das DetailSlaveWindow womöglich immer erst dann editierbar sein, wenn man F2 drückt oder "Bearbeiten" klickt? Und wenn nicht: in welchem Dialog läuft dann ein Submit dieses Fensters? Hmm... Mittagspause.
+
+----
+
+Das DetailSlaveWindow kann vorerst bleiben wie es ist, das Problem ist nämlich ganz woanders verankert: das Fenster zum Erstellen eines Records muss modal sein, damit die InsertAction() nach Bestätigung weiter ausgeführt werden kann. Aktionen wie ViewReport() starten immer ein nicht-modales Fenster und beenden damit den Dialog, denn es wäre Verschwendung, auf dem Server dafür noch einen Dialog aufrecht zu halten. Aber `InsertRow.run_in_dlg()` darf nicht `Dialog.show_window()` benutzen, sondern etwas Neues namens `show_modal_form()`, die eher dem bisherigen `confirm_msg()` ähnelt. Und ich muss eine neue Art von `lino.forms.Form` haben, die das DetailPageLayout und Datenfelder des Reports benutzt. Und die muss dann ähnlich wie `Ext.MessageBox.show` aufgerufen werden können.
+
+Wir stehen vor einem der letzten großen Probleme im Rohbau von Lino: ich muss ein System ausdenken, wie man modal aus einem Dialog raus selbstdefinierte Forms anzeigen kann.
+Kann sein, dass das auch den Login-Befehl betrifft. Ich brauche dafür momentan drei Klassendefinitionen: eine für die Form, eine für deren Layout und eine weitere für die OK-Aktion. Das ist ziemlich umständlich. 
+ 
+Also die nächste Operation mit Vollnarkose ist fällig, und Issue 115 werde ich heute nicht fertig kriegen. Sind diese Änderungen denn nötig vor dem ersten Release? Ich denke ja. Also schnallt euch an, es geht los. 

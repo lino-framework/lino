@@ -1,0 +1,38 @@
+Ich bin noch immer am issue 49 und issue 80 dran.  Die URL-Struktur stimmt ungefähr (das war das Schwierigste): unter `/choices/` antwortet jetzt wieder `choices_view()`. Neue Klasse `ChoicesViewRequest`. 
+                                                                                         
+Und wenn ich in `http://127.0.0.1:8000/?show=contacts_Persons` im Feld `City` doppelklicke und die Combobox triggere, dann habe ich jetzt eine Liste mit nur den belgischen Städten. Super. 
+
+Aber leider schickt die ComboBox die ausgewählte Stadt nicht nach `grid_afteredit()`. 
+Sieht aus als ob es nicht in `grid_afteredit()` liegt, sondern dass die ComboBox die ausgewählte value gar nicht erst ans event rübergibt. `e.value` ist jedenfalls immer leer. Ich tippe darauf, dass ich Konfigurationsparameter `valueField`, `hiddenField` usw. falsch benutze.
+
+Es hilft nichts, ich muss ein isoliertes Snippet schreiben, um im ExtJS-Forum fragen zu können. 
+
+Zuerst mal Testdaten herbeischaffen. Oho, `fill.py demo` funktioniert nicht mehr, weil ich das nach Issue 83 noch anpassen muss. 
+
+Oh je, jetzt hab ich mich festgebissen: 2 Stunden Spielerei, und jetzt installiert `python fill.py be ee demo` alle 2853 belgischen und 367 estnischen Städte. Und nützen tut das vorerst nichts, denn ich brauche für mein isoliertes Snippet *kleine* Testdatensätze. Nein, das muss ich verfeinern. Hier jetzt eine Übersicht der fixtures, die mit Lino kommen:
+
+Demo-Daten:
+
+ * demo : kleines Testdatenset Ostbelgien
+ * demo_ee : kleines Testdatenset Estland
+
+"Echte" Daten:
+
+ * be : lädt alle belgischen Städte und Postleitzahlen
+ * ee : lädt die wichtigsten estnischen Städten, ohne Dörfer und ohne Postleitzahlen
+ * iso3166 : lädt eine Liste mit allen Ländern der Welt laut ISO 3166.
+
+Wenn man Demo-Daten lädt, darf man keine "echten" laden.
+`be` und `ee` erfordern `iso3166`.
+
+So, mit `python fill.py demo` kriegt man jetzt eine übersichtliche kleine Demo-Datenbank.
+
+Aber jetzt wird mir klar, dass es auch mit einer übersichtlichen kleinen Demo-Datenbank nicht möglich sein wird, mein isoliertes Snippet hinzukriegen. Es geht ja um ComboBoxes mit `mode='remote'` und PagingToolbar. Hier einige URLs von AJAX-calls:
+
+{{{
+GET http://127.0.0.1:8000/list/contacts/Companies?_dc=1264087888005
+GET http://127.0.0.1:8000/list/contacts/Companies?_dc=1264087889024&limit=4&start=0
+GET http://127.0.0.1:8000/choices/contacts/Companies/city?_dc=1264088486580&start=0&limit=10&query=
+}}}
+	
+Und jetzt zeigt die Uhr Feierabend! Also issue 49 und issue 80 sind auch morgen noch dran...

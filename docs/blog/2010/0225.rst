@@ -1,0 +1,29 @@
+= [20100223 ←] [20100225 25.02.2010] [20100226 →] =
+
+Kommen wir zum Speichern von Properties. Außerdem sehe ich, dass er momentan nur die gesetzten Eigenschaften anzeigt, aber ich will ja immer alle sehen. Auch macht er momentan selbst dann für jeden Record einen Request, wenn der Ei-Editor gar nicht geöffnet ist. Ich muss also das Laden der Eigenschaften nicht nur als row_listener der main_grid machen, sondern auch beim Öffnen des Fensters.
+
+Und es wird wohl auch noch einen Report ChoicesByProperty geben müssen, mit dem man die Auswahlmöglichkeiten einer Eigenschaften sehen und bearbeiten kann.
+
+Das Speichern im Ei-Editor kann noch nicht funktionieren, weil mt und mk nicht übergeben werden. Die werden doch in `Lino.load_master()` gesetzt. Aber der ist an den Store gebunden, und einen Store hat ein Report ohne `use_layouts` ja nicht. Einen Store braucht die PropertyGrid ja auch nicht, weil die für jeden Record einen neuen Request macht.
+
+Das Laden ist also jetzt ausgelagert in die globale Funktion `Lino.load_properties(caller,url,record)`.
+Die unterlässt den Request jetzt, wenn das Fenster hidden ist.
+Und wird deshalb nun auch im show-Event des properties_window aufgerufen.
+
+Eine Ext.PropertyGrid hat keinen normalen Store, deshalb kann ich `Lino.grid_afteredit()` nicht für den Ei-Editor benutzen. 
+Also eine neue globale Funktion `Lino.submit_property(caller,e)`. 
+
+Dann noch der `submit_property_view(self,request)`. Der ist für alle property-Fenster die gleiche URL und braucht nur vier Parameter owner_type, owner_id, name, und value. 
+Soll ich hier wirklich einen ReportRequest instanzieren, nur um mk und mt in die master_instance zu konvertieren? Zumal BaseViewReportRequest dann noch verändert werden müsste, damit er auch mit einem POST-Request funktioniert. Ich könnte stattdessen auch die Logik aus `BaseViewReportRequest.parse_kw()` auslagern und die ganze Idee mit den Reports ohne Layout wieder verwerfen. Dann käme PropValuesByOwner und `use_layouts` wieder raus. 
+
+Hm... jetzt zuerst mal Mittagspause...
+
+Also Ausklinken oder nicht? Ist PropValuesByOwner nützlich oder nicht?
+
+Ich könnte in `parse_kw()` natürlich `request.REQUEST` abfragen statt GET oder POST, aber die [http://docs.djangoproject.com/en/dev/ref/request-response Django-Doku] sagt "It's strongly suggested that you use GET and POST instead of REQUEST, because the former are more explicit."
+
+Die Frage ist nicht definitiv beantwortet, aber die einfachste bzw. zukunftsweisendste Implementierung scheint mir ohne Ausklinken. `parse_kw()` fragt nun entgegen des Rates der Django-Doku `request.REQUEST` ab (tant pis).
+
+Noch Tests und einige Kleinigkeiten, und schon ist wieder Feierabend :-(
+
+Morgen muss ich noch die Fenstergröße des Ei-Editor speichern (und wahrscheinlich dann auch in einem die Kolonnenbreiten usw).

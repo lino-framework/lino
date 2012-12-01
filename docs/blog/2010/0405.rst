@@ -1,0 +1,13 @@
+= [20100402 ←] [20100405 05.04.2010] [20100406 →] =
+
+Ich bin an der [http://code.google.com/p/lino/source/browse/media/lino.js lino.js] am arbeiten und verstehe nun, weshalb ich die Implementierung der verschiedenen Fensterarten als JS-Klassen bisher gescheut hatte. Multiple inheritance in JavaScript ist gewöhnungsbedürftig. Objekte sind in JS zunächst mal einfach nur dictionaries, deren Elemente man aber zusätzlich wie Attribute ansprechen kann (wenn der Name keine Leerzeichen enthält). In JS definiert man keine Klasse, sondern lediglich eine Funktion, die als Konstruktor dient. Und diese Funktion kriegt dann optional einen Parameter `prototype` gesetzt, dessen Atribute bzw. Elemente benutzt werden, wenn sie nicht in der Instanz überschrieben sind. In ExtJS gibt es dann noch statische Funktionen `Ext.extend()` und  `Ext.override()`, die die Handhabung dieser sehr lockeren Konvention vereinfachen. 
+[http://www.extjs.com/forum/showthread.php?t=48000 hier] ein Beispiel.
+
+ * WindowWrapper
+ * GridWindowWrapper(WindowWrapper)
+ * GridMasterWrapper(GridWindowWrapper)
+ * SlaveWrapper(WindowWrapper)
+ * GridSlaveWrapper(SlaveWrapper,GridWindowWrapper)
+ * PropertiesWrapper(SlaveWrapper)
+
+[http://code.google.com/p/lino/source/detail?r=d34adf9bd3d25bdbdd446849c869c2d55617badc Check-In] wegen Feierabend.

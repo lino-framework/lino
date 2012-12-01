@@ -1,0 +1,12 @@
+Heute habe ich den ganzen Tag an Issue 60 gearbeitet (Zeilenanzahl einer Grid je nach Fensterhöhe). Also wenn man die Höhe eines Grid-Fensters verändert, sollte sich dich Anzahl der dargestellten Zeilen entsprechend anpassen. Eine vertikale Scrollbar sollte nie nötig sein.
+
+Hier ist ein Thread, wo dieses Problem gefragt wird und Christophe Badoit hat seine Lösung gepostet: http://www.extjs.net/forum/showthread.php?t=82647
+Ein Tag Arbeit, um das in Lino zu integrieren (`calculatePageSize` implementiere ich im `Lino.GridPanel`, und die Anbindung wird in in `GridElement.js_lines()` generiert. 
+
+Problem ist noch die "extra row". Die ist momentan konstant 1, also wenn es deren keine gibt oder mehrere, dann funktioniert das resize nicht. Momentan ist eine extra row Standard, aber in Zukunft vielleicht nur in gewissen Reports.
+
+En passant funktioniert jetzt auch der Quickfilter wieder.
+
+Neues Issue 83 notiert: New models City (and maybe Street) in contacts.
+
+Ach ja: und permalink geht momentan nicht, weil `Lino.goto_permalink()` die `getId()` des Fensters abruft, um den Namen rauszufinden. Da muss ich mir was anderes einfallen lassen.

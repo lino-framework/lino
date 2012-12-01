@@ -1,0 +1,64 @@
+= [20100514 ←] [20100515 15.05.2010] [20100516 →] =
+
+== Dokumente ==
+
+Ein Dokument ist ein in sich abgeschlossener Text, der zu einem bestimmten Moment durch einen bestimmten Benutzer aus Lino heraus erstellt worden ist. 
+
+ * Rechnungen, Angebote, Lieferscheine 
+ * Bescheinigungen, Genehmigungen, Urkunden
+ * Protokolle, Gesprächsnotizen
+ * Briefe, E-Mails
+
+Jedes erstellte Dokument ist ein Record in der entsprechenden Datenbanktabelle, die außer `django.db.models.Model` auch `lino.modlib.documents.utils.Printable` implementiert.
+
+Dokumente, die außerhalb von Lino mit anderen Mitteln erstellt (und durch einen Lino-Benutzer eingescannt) worden sind, werden in Lino als "Links" bezeichnet und erfasst. Lino speichert solche Dokumente nicht in seiner eigenen Datenbank, sondern lediglich die URL oder den Dateinamen.
+Es gibt auch eine Tabelle von Link-Arten, z.B. Aufenthaltsgenehmigung, Arbeitserlaubnis, Personalausweis, Geburtsurkunde, Mietvertrag, ... Für manche dieser Links muss ein Gültigkeitsdatum eingetragen werden.
+
+Kann aber sein, dass ich in DSBE `notes.Notes` für alle Dokumente benutze. In NoteType kommen dann die oben erwähnten Dokumentarten. Jede "Notiz" wäre dann wie ein Chronikeintrag in TIM.
+
+== Abschied vom Eigenschaften-Editor ==
+
+Pro Person braucht der DSBE eine Fülle von Angaben wie:
+
+ * Atomare Eigenschaften:
+   * Führerschein
+   * Zivilstand
+   * und viele andere
+
+ * Komplexe Eigenschaften:
+   * Dokumente (type, date, ...)
+   * Links (type, date_issued, date_expired, url)
+   * Sprachkenntnisse (language, written, spoken)
+   * Studien (type, content, year, language,...)
+
+Der Sozialdienst braucht andere Angaben, die Buchhaltung wiederum andere.
+
+Führerschein: ein atomares Feld mit einer Auswahlliste. Es sollte kein doofes CharField sein, in dem der Text (z.B. "Klasse B") gespeichert wird, sondern lediglich der Code muss gespeichert werden, denn wir wollen ja mehrsprachige Bedienung und sprachunabhängige Suchabfragen. Also muss es eine weitere Tabelle DrivingLicense geben mit den möglichen Arten von Führerscheinen. Das hört sich an als würden wir Kanonen benutzen, um auf Spatzen zu schießen. Um das zu vermeiden, hatten wir ja den Eigenschaften-Editor gemacht. Aber der entpuppt sich als Sackgasse, weil:
+ * die Tabelle DrivingLicense wird dadurch nicht vermieden
+ * man kann Eigenschaften nicht strukturiert in Layouts einbauen
+ * um Abfragen zu ermöglichen, müssten Eigenschaften noch weiter abstrahiert werden
+
+14.45 Uhr: Check-in. Diese Gedanken bestätigen sich durch die Änderungen von heute morgen.
+
+== site.js ==
+
+Jetzt wo die Detail-Fenster keine Sklaven mehr sind, werden sie natürlich häufiger geöffnet und geschlossen. Und natürlich sollte da nicht bei jedem Klick ein Ajax-Call nötig sein bloß um den JS-Code zu erhalten. Der bisher von `ui_view()` bei GET generierte Code steht jetzt in einer "relativ statischen" Datei `media/cache/js/site.js`, die bei jedem Serverstart neu generiert wird.
+
+Erfreuliche Nebenwirkung: die Speichergefräßigkeit des Clients verringert sich. Und das obwohl die Datei site.js allein für Lino-DSBE momentan 580 KB dick ist.
+
+Insgesamt hat diese imposante Neuerung erstaunlich wenig Zeit genommen. Abgesehen von ein paar Warnungen im Firebug funktioniert alles wie vor 6 Stunden, außer dass jetzt weniger Ajax-Calls laufen.
+
+21.20 Uhr. Check-in.
+
+Der eigentliche Sinn dieser Übung war aber, dass ich die Fenster leichter von allen möglichen Stellen aus aufrufen kann. Zum Beispiel sollte ein Doppelklick zumindest in manchen Reports automatisch das Detail öffnen.
+
+Das muss nun warten, weil http://www.extjs.com/deploy/dev/docs/ nicht online ist, und dann ist die Doku unbequem zu lesen. Deshalb fang ich mal mit i18n an. 
+
+== i18n ==
+
+In den models-Modulen muss ich ugettext_lazy verwenden. Und dann muss ich an einigen Stellen explizit `unicode()` aufrufen, damit die Übersetzung stattfindet. Dann musste ich in den betreffenden Modulen `#coding: utf8` durch `#coding: UTF-8` ersetzen, weil xgettext das sonst nicht versteht.
+
+`django django-admin.py makemessages -l de` funktioniert nun, zumindest in 
+`dsbe` und in `lino.modlib.contacts`.
+
+Auch `django django-admin.py compilemessages` funktioniert, und die ersten Labels erscheinen nun in übersetztem Deutsch. Aber jetzt mach ich erstmal Feierabend. Dritter Check-in für heute.
