@@ -178,16 +178,16 @@ class Instantiator:
 
     def build(self,*values,**kw):
         # logger.debug("Instantiator.build(%s,%r,%r)",self.model_class._meta.db_table,values,kw)
-        i = 0
+        #~ i = 0
         kw['_m2m'] = {}
-        for v in values:
+        for i,v in enumerate(values):
             if isinstance(v,basestring):
                 v = v.strip()
                 if len(v) > 0:
                     kw[self.fields[i].name] = v
             else:
                 kw[self.fields[i].name] = v
-            i += 1
+            #~ i += 1
         #~ kw.update(self.default_values)
         for k,v in self.default_values.items():
             kw.setdefault(k,v)
