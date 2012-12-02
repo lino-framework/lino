@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: lino.modlib.countries\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2012-11-08 20:33+0000\n"
+"POT-Creation-Date: 2012-12-02 10:23+0000\n"
 "PO-Revision-Date: 2012-10-17 09:35+0200\n"
 "Last-Translator: Luc Saffre <luc.saffre@gmail.com>\n"
 "Language-Team: de <luc.saffre@gmail.com>\n"
@@ -18,107 +18,107 @@ msgstr ""
 "Language: de\n"
 "X-Generator: Poedit 1.5.4\n"
 
-#: .\models.py:47
+#: .\models.py:46
 msgid "Place Type"
 msgstr "Ortsart"
 
-#: .\models.py:50
+#: .\models.py:49
 msgid "Member State"
 msgstr "Bundesland"
 
-#: .\models.py:51
+#: .\models.py:50
 msgid "Division"
 msgstr ""
 
-#: .\models.py:52 .\models.py:269
+#: .\models.py:51 .\models.py:275
 msgid "Region"
 msgstr ""
 
-#: .\models.py:53
+#: .\models.py:52
 msgid "Community"
 msgstr "Gemeinschaft"
 
-#: .\models.py:54
+#: .\models.py:53
 msgid "Territory"
 msgstr "Territorium"
 
-#: .\models.py:57
+#: .\models.py:56
 msgid "County"
 msgstr "Regierungsbezirk"
 
-#: .\models.py:58
+#: .\models.py:57
 msgid "Province"
 msgstr "Provinz"
 
-#: .\models.py:59
+#: .\models.py:58
 msgid "Shire"
 msgstr ""
 
-#: .\models.py:60
+#: .\models.py:59
 msgid "Subregion"
 msgstr "Unterregion"
 
-#: .\models.py:61
+#: .\models.py:60
 msgid "Department"
 msgstr "Departement"
 
-#: .\models.py:62
+#: .\models.py:61
 msgid "Arrondissement"
 msgstr "Arrondissement"
 
-#: .\models.py:63
+#: .\models.py:62
 msgid "Prefecture"
 msgstr "Präfektur"
 
-#: .\models.py:64
+#: .\models.py:63
 msgid "District"
 msgstr "Distrikt"
 
-#: .\models.py:65
+#: .\models.py:64
 msgid "Sector"
 msgstr ""
 
-#: .\models.py:67
+#: .\models.py:66
 msgid "City"
 msgstr "Stadt"
 
-#: .\models.py:68
+#: .\models.py:67
 msgid "Town"
 msgstr "Kleinstadt"
 
-#: .\models.py:69
+#: .\models.py:68
 msgid "Municipality"
 msgstr "Gemeinde"
 
-#: .\models.py:71
+#: .\models.py:70
 msgid "Parish"
 msgstr "Pfarre"
 
-#: .\models.py:72
+#: .\models.py:71
 msgid "Township"
 msgstr ""
 
-#: .\models.py:73
+#: .\models.py:72
 msgid "Quarter"
 msgstr "Viertel"
 
-#: .\models.py:75
+#: .\models.py:74
 msgid "Borough"
 msgstr "Ortschaft"
 
-#: .\models.py:76
+#: .\models.py:75
 msgid "Small borough"
 msgstr "Kleine Ortschaft"
 
-#: .\models.py:78
+#: .\models.py:77
 msgid "Village"
 msgstr "Dorf"
 
-#: .\models.py:99
+#: .\models.py:98
 msgid "Language"
 msgstr "Sprache"
 
-#: .\models.py:100
+#: .\models.py:99
 msgid "Languages"
 msgstr "Sprachen"
 
@@ -130,19 +130,19 @@ msgstr "Land"
 msgid "Countries"
 msgstr "Länder"
 
-#: .\models.py:169
+#: .\models.py:170
 msgid "Place"
 msgstr "Ort"
 
-#: .\models.py:170
+#: .\models.py:171
 msgid "Places"
 msgstr "Orte"
 
-#: .\models.py:182
+#: .\models.py:183
 msgid "Part of"
 msgstr "Teil von"
 
-#: .\models.py:272
+#: .\models.py:278
 msgid "Zip code"
 msgstr "Postleitzahl"
 

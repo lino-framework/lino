@@ -182,6 +182,9 @@ class SalesRule(dd.Model):
             
 
 class Customer(dd.Model):
+    """
+    Mixin meant to be applied to contacts.Person and contacts.Company
+    """
     class Meta:
         abstract = True
 
@@ -296,7 +299,7 @@ class SalesDocument(
                 #~ qty = Duration(1)
         kw['product'] = product 
         
-        unit_price = kw.get('unit_price',None)
+        #~ unit_price = kw.get('unit_price',None)
         #~ if type(unit_price) == float:
             #~ kw['unit_price'] = "%.2f" % unit_price
         kw['qty'] = qty
@@ -312,8 +315,8 @@ class SalesDocument(
             #~ return None
         #~ return self.total_excl + self.total_vat
     
-    def update_total(self):
-        logger.info("20121202 sales.update_total()")
+    def update_totals(self):
+        logger.info("20121202 sales.update_totals()")
         if self.pk is None:
             return
         total_excl = 0
@@ -345,7 +348,7 @@ class SalesDocument(
             #~ self.shipping_mode = r.shipping_mode
         #~ if self.shipping_mode is None:
             #~ self.shipping_mode = r.shipping_mode
-        self.update_total()
+        self.update_totals()
       
 #~ SALES_PRINTABLE_FIELDS = dd.fields_list(SalesDocument,
   #~ 'customer imode payment_term '

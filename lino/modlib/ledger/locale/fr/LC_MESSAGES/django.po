@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2012-11-08 20:32+0000\n"
+"POT-Creation-Date: 2012-12-02 10:23+0000\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -17,62 +17,62 @@ msgstr ""
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=(n > 1)\n"
 
-#: .\models.py:266
+#: .\models.py:272
 msgid "Narration"
 msgstr ""
 
-#: .\models.py:376
+#: .\models.py:387
 msgid "Debit"
 msgstr ""
 
-#: .\models.py:382
+#: .\models.py:393
 msgid "Credit"
 msgstr ""
 
-#: .\models.py:413
-msgid "State"
-msgstr ""
-
-#: .\models.py:415
+#: .\models.py:428
 msgid "Booked"
 msgstr ""
 
-#: .\models.py:415
+#: .\models.py:428
 msgid "Ready to sign"
 msgstr ""
 
-#: .\models.py:418
+#: .\models.py:431
 msgid "Paid"
 msgstr ""
 
-#: .\models.py:427
+#: .\models.py:440
 msgid "Invoice"
 msgstr ""
 
-#: .\models.py:428
+#: .\models.py:441
 msgid "Invoices"
 msgstr ""
 
-#: .\models.py:430
+#: .\models.py:443
 msgid "Your reference"
 msgstr ""
 
-#: .\models.py:433
+#: .\models.py:446
 msgid "Due date"
 msgstr ""
 
-#: .\models.py:490
+#: .\models.py:503
 msgid "General"
 msgstr ""
 
-#: .\models.py:495 .\models.py:545
+#: .\models.py:508 .\models.py:558
 msgid "Ledger"
 msgstr ""
 
-#: .\utils.py:30
+#: .\utils.py:31
 msgid "Fiscal Month"
 msgstr ""
 
-#: .\utils.py:44
+#: .\utils.py:45
 msgid "Fiscal Year"
+msgstr ""
+
+#: .\utils.py:46
+msgid "Fiscal Years"
 msgstr ""

@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: lino.modlib.contacts\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2012-11-20 04:40+0000\n"
+"POT-Creation-Date: 2012-12-02 10:23+0000\n"
 "PO-Revision-Date: 2011-03-02 21:46+0200\n"
 "Last-Translator: Luc Saffre <luc.saffre@gmail.com>\n"
 "Language-Team: et <et>\n"
@@ -15,646 +15,660 @@ msgstr ""
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 
-#: .\models.py:109 .\models.py:710 .\models.py:1787 .\models.py:2104
-msgid "Calendar"
-msgstr ""
-
-#: .\models.py:110
-msgid "Calendars"
-msgstr ""
-
-#: .\models.py:112
-msgid "Type"
-msgstr ""
-
-#: .\models.py:116 .\models.py:623
-#, fuzzy
-msgid "Description"
-msgstr "Nimetus"
-
-#: .\models.py:117
-msgid "URL template"
-msgstr ""
-
-#: .\models.py:119
-msgid "Username"
-msgstr ""
-
-#: .\models.py:121
-msgid "Password"
-msgstr ""
-
-#: .\models.py:123
-msgid "read-only"
-msgstr ""
-
-#: .\models.py:125
-msgid "Invite team members"
-msgstr ""
-
-#: .\models.py:132 .\models.py:555
-msgid "Start date"
-msgstr ""
-
-#: .\models.py:135
-msgid "color"
-msgstr ""
-
-#: .\models.py:225
-#, fuzzy
-msgid "Subscription"
-msgstr "Nimetus"
-
-#: .\models.py:226
-#, fuzzy
-msgid "Subscriptions"
-msgstr "Nimetus"
-
-#: .\models.py:231
-msgid ""
-"The calendar you want to subscribe to.\n"
-"You can subscribe to *non-private* calendars of *other* users."
-msgstr ""
-
-#: .\models.py:235
-msgid "hidden"
-msgstr ""
-
-#: .\models.py:235
-msgid ""
-"Whether this subscription should initially be hidden in your calendar panel."
-msgstr ""
-
-#: .\models.py:267
-msgid "Membership"
-msgstr ""
-
-#: .\models.py:268
-msgid "Memberships"
-msgstr ""
-
-#: .\models.py:273
-msgid "    The user whose calendar events you want to see in team view."
-msgstr ""
-
-#: .\models.py:293
-msgid "Team Members"
-msgstr ""
-
-#: .\models.py:304
-msgid "Place"
-msgstr ""
-
-#: .\models.py:305
-msgid "Places"
-msgstr ""
-
-#: .\models.py:319
-msgid "Priority"
-msgstr ""
-
-#: .\models.py:320
-msgid "Priorities"
-msgstr ""
-
-#: .\models.py:558
-msgid "Start time"
-msgstr ""
-
-#: .\models.py:606
-msgid "End Date"
-msgstr ""
-
-#: .\models.py:609
-msgid "End Time"
-msgstr ""
-
-#: .\models.py:622 .\models.py:1830
-msgid "Summary"
-msgstr ""
-
-#: .\models.py:633
-msgid " on "
-msgstr ""
-
-#: .\models.py:647
-msgid "Recurrence Set"
-msgstr ""
-
-#: .\models.py:648
-msgid "Recurrence Sets"
-msgstr ""
-
-#: .\models.py:650
-msgid "Evaluation every X months"
-msgstr ""
-
-#: .\models.py:652
-#, fuzzy
-msgid "Duration unit"
-msgstr "Nimetus"
-
-#: .\models.py:689
-msgid "UID"
-msgstr ""
-
-#: .\models.py:712
-msgid "Whether this is private, public or between."
-msgstr ""
-
-#: .\models.py:718
-#, fuzzy
-msgid "Revision"
-msgstr "Maakond"
-
-#: .\models.py:792
-msgid " at "
-msgstr ""
-
-#: .\models.py:875
-msgctxt "cal"
-msgid "Event"
-msgstr ""
-
-#: .\models.py:876
-msgctxt "cal"
-msgid "Events"
-msgstr ""
-
-#: .\models.py:878
-msgid "Transparent"
-msgstr ""
-
-#: .\models.py:878
-msgid ""
-"Indicates that this Event shouldn't prevent other Events at the same time."
-msgstr ""
-
-#: .\models.py:891
-msgid "all day"
-msgstr ""
-
-#: .\models.py:921
-msgid "You should now inform the guests about this state change."
-msgstr ""
-
-#: .\models.py:926
-#, python-format
-msgid "Event %s has been marked *notified*."
-msgstr ""
-
-#: .\models.py:987
-msgid "Link URL"
-msgstr ""
-
-#: .\models.py:991
-msgid "Reminder"
-msgstr ""
-
-#: .\models.py:1005
-msgid "Responsible user"
-msgstr ""
-
-#: .\models.py:1069
-msgid "Table of all my calendar events."
-msgstr ""
-
-#: .\models.py:1089
-msgid "Table of all suggested events."
-msgstr ""
-
-#: .\models.py:1090
-msgid "Suggested Events"
-msgstr ""
-
-#: .\models.py:1096
-msgid "Table of my suggested events (to become notified)."
-msgstr ""
-
-#: .\models.py:1099
-msgid "My suggested Events"
-msgstr ""
-
-#: .\models.py:1102
-msgid "Table of all notified events (waiting to become scheduled)."
-msgstr ""
-
-#: .\models.py:1103
-msgid "Notified Events"
-msgstr ""
-
-#: .\models.py:1109
-msgid "Table of my notified events (waiting to become scheduled)."
-msgstr ""
-
-#: .\models.py:1112
-msgid "My notified Events"
-msgstr ""
-
-#: .\models.py:1180
-msgid "Table of my events per day."
-msgstr ""
-
-#: .\models.py:1182
-msgid "My events today"
-msgstr ""
-
-#: .\models.py:1186
-msgid "Date"
-msgstr ""
-
-#: .\models.py:1216
-msgid "Task"
-msgstr ""
-
-#: .\models.py:1217
-msgid "Tasks"
-msgstr ""
-
-#: .\models.py:1222
-msgid "Due date"
-msgstr ""
-
-#: .\models.py:1225
-msgid "Due time"
-msgstr ""
-
-#: .\models.py:1227
-msgid "Duration value"
-msgstr ""
-
-#: .\models.py:1328
-msgid "Table of all my tasks."
-msgstr ""
-
-#: .\models.py:1333
-msgid "Table of my tasks marked 'to do'."
-msgstr ""
-
-#: .\models.py:1335
-msgid "To-do list"
-msgstr ""
-
-#: .\models.py:1356
-msgid "Guest Role"
-msgstr ""
-
-#: .\models.py:1357
-msgid "Guest Roles"
-msgstr ""
-
-#: .\models.py:1381
-msgid "Guest"
-msgstr ""
-
-#: .\models.py:1382
-msgid "Guests"
-msgstr ""
-
-#: .\models.py:1386 .\models.py:1427
-msgid "Event"
-msgstr ""
-
-#: .\models.py:1392
-msgid "Role"
-msgstr ""
-
-#: .\models.py:1404
-#, fuzzy
-msgid "Remark"
-msgstr "Märkused"
-
-#: .\models.py:1486
-msgid "My presences"
-msgstr ""
-
-#: .\models.py:1487
-msgid ""
-"Shows all my presences in calendar events, independently of their state."
-msgstr ""
-
-#: .\models.py:1497
-msgid "Shows received invitations which I must accept or reject."
-msgstr ""
-
-#: .\models.py:1498
-msgid "My received invitations"
-msgstr ""
-
-#: .\models.py:1589 .\models.py:2026
-msgid "Upcoming reminders"
-msgstr ""
-
-#: .\models.py:1590
-msgid "Past reminders"
-msgstr ""
-
-#: .\models.py:1696
-msgid "due date reached"
-msgstr ""
-
-#: .\models.py:1759
-msgid "Busy"
-msgstr ""
-
-#: .\models.py:1762
-msgid "with"
-msgstr ""
-
-#: .\models.py:1808
-msgid "Hidden"
-msgstr ""
-
-#: .\models.py:1827
-#, fuzzy
-msgid "Start"
-msgstr "Tänav"
-
-#: .\models.py:1828
-msgid "End"
-msgstr ""
-
-#: .\models.py:1997
-msgid "Update Reminders"
-msgstr ""
-
-#: .\models.py:2005
-#, python-format
-msgid "%(num)d reminders for %(user)s have been updated."
-msgstr ""
-
-#: .\models.py:2031
-msgid "Missed reminders"
-msgstr ""
-
-#: .\models.py:2066
-msgid "Default access class"
-msgstr ""
-
-#: .\models.py:2067
-msgid "The default access class for your calendar events and tasks."
-msgstr ""
-
-#: .\models.py:2073
-msgid "Default calendar"
-msgstr ""
-
-#: .\models.py:2074
-msgid "The default calendar for your events and tasks."
-msgstr ""
-
-#: .\models.py:2186
-#, python-format
-msgid "%d invitations waiting for your reaction"
-msgstr ""
-
-#: .\models.py:2187
-#, python-format
-msgid "%d tasks to do"
-msgstr ""
-
-#: .\models.py:2188
-#, python-format
-msgid "%d notified events"
-msgstr ""
-
-#: .\models.py:2189
-#, python-format
-msgid "%d suggested events"
-msgstr ""
-
-#: .\utils.py:74
-msgid "Weekday"
-msgstr ""
-
-#: .\utils.py:76
-msgid "Monday"
-msgstr ""
-
-#: .\utils.py:77
-msgid "Tuesday"
-msgstr ""
-
-#: .\utils.py:78
-msgid "Wednesday"
-msgstr ""
-
-#: .\utils.py:79
-msgid "Thursday"
-msgstr ""
-
-#: .\utils.py:80
-msgid "Friday"
-msgstr ""
-
-#: .\utils.py:81
-msgid "Saturday"
-msgstr ""
-
-#: .\utils.py:82
-msgid "Sunday"
-msgstr ""
-
-#: .\utils.py:140
-msgid "Duration Unit"
-msgstr ""
-
-#: .\utils.py:146
-msgid "seconds"
-msgstr ""
-
-#: .\utils.py:147
-msgid "minutes"
-msgstr ""
-
-#: .\utils.py:148
-msgid "hours"
-msgstr ""
-
-#: .\utils.py:149
-msgid "days"
-msgstr ""
-
-#: .\utils.py:150
-msgid "weeks"
-msgstr ""
-
-#: .\utils.py:151
-msgid "months"
-msgstr ""
-
-#: .\utils.py:152
-msgid "years"
-msgstr ""
-
-#: .\utils.py:189
+#: .\models.py:93
 msgid "To do"
 msgstr ""
 
-#: .\utils.py:190
+#: .\models.py:94
 #, fuzzy
 msgctxt "cal"
 msgid "Started"
 msgstr "Tänav"
 
-#: .\utils.py:191
+#: .\models.py:95
 #, fuzzy
 msgid "Done"
 msgstr "Telefon"
 
-#: .\utils.py:193 .\utils.py:254
+#: .\models.py:97 .\models.py:191
 msgid "Cancelled"
 msgstr ""
 
-#: .\utils.py:195
-msgid "Reopen"
-msgstr ""
-
-#: .\utils.py:218
-msgid "This will reset all invitations"
-msgstr ""
-
-#: .\utils.py:247
-msgid "New"
-msgstr ""
-
-#: .\utils.py:247
-msgid "Default state of an automatic event."
-msgstr ""
-
-#: .\utils.py:248
-msgid "Suggested"
-msgstr ""
-
-#: .\utils.py:248
-msgid ""
-"Suggested by colleague. External guests are notified, but user must confirm."
-msgstr ""
-
-#: .\utils.py:249
-msgid "Draft"
-msgstr ""
-
-#: .\utils.py:250
-msgid "Notified"
-msgstr ""
-
-#: .\utils.py:251
-msgid "Scheduled"
-msgstr ""
-
-#: .\utils.py:252
-msgid "Took place"
-msgstr ""
-
-#: .\utils.py:253
-msgid "Rescheduled"
-msgstr ""
-
-#: .\utils.py:255 .\utils.py:335
-msgid "Absent"
-msgstr ""
-
-#: .\utils.py:258 .\utils.py:349
-msgid "Accept"
-msgstr ""
-
-#: .\utils.py:262
-msgid "User takes responsibility for this event. Guests are not yet notified."
-msgstr ""
-
-#: .\utils.py:263 .\utils.py:268
-msgid "Suggest"
-msgstr ""
-
-#: .\utils.py:267
-msgid "Event was created by colleague for a client. Owner must confirm it."
-msgstr ""
-
-#: .\utils.py:272
-msgid "Undo suggested event."
-msgstr ""
-
-#: .\utils.py:273
-msgid "Notify guests"
-msgstr ""
-
-#: .\utils.py:276
-msgid "Invitations have been sent. Waiting for feedback from guests."
-msgstr ""
-
-#: .\utils.py:277
-msgid "Confirm"
-msgstr ""
-
-#: .\utils.py:281
-msgid "Mark this as Scheduled. All participants have been informed."
-msgstr ""
-
-#: .\utils.py:285
-msgid "Event took place."
-msgstr ""
-
-#: .\utils.py:287
-msgid "Reschedule"
-msgstr ""
-
-#: .\utils.py:290
-msgid "Cancel"
-msgstr ""
-
-#: .\utils.py:296
-#, fuzzy
-msgid "Restart"
-msgstr "Tänav"
-
-#: .\utils.py:300
-msgid "Return to Draft state and restart workflow for this event."
-msgstr ""
-
-#: .\utils.py:331
+#: .\models.py:116
 msgid "Invited"
 msgstr ""
 
-#: .\utils.py:332
+#: .\models.py:117
 msgid "Accepted"
 msgstr ""
 
-#: .\utils.py:333
+#: .\models.py:118
 msgid "Rejected"
 msgstr ""
 
-#: .\utils.py:334
+#: .\models.py:119
 #, fuzzy
 msgid "Present"
 msgstr "Isik"
 
-#: .\utils.py:338
+#: .\models.py:120 .\models.py:192
+msgid "Absent"
+msgstr ""
+
+#: .\models.py:123
 msgid "Reject"
 msgstr ""
 
-#: .\utils.py:339
+#: .\models.py:124
 msgid "Reject this invitation."
 msgstr ""
 
-#: .\utils.py:343
+#: .\models.py:128
 #, python-format
 msgid "Cannot accept invitation %(day)s at %(time)s"
 msgstr ""
 
-#: .\utils.py:357
+#: .\models.py:181
+msgid "New"
+msgstr ""
+
+#: .\models.py:181
+msgid "Default state of an automatic event."
+msgstr ""
+
+#: .\models.py:184
+msgid "Assigned"
+msgstr ""
+
+#: .\models.py:185
+msgid ""
+"Assigned by colleague. External guests are notified, but user must confirm."
+msgstr ""
+
+#: .\models.py:186
+msgid "Draft"
+msgstr ""
+
+#: .\models.py:187
+msgid "Notified"
+msgstr ""
+
+#: .\models.py:188
+msgid "Scheduled"
+msgstr ""
+
+#: .\models.py:189
+msgid "Took place"
+msgstr ""
+
+#: .\models.py:190
+msgid "Rescheduled"
+msgstr ""
+
+#: .\models.py:198
+#, fuzzy
+msgid "Reset"
+msgstr "Tänav"
+
+#: .\models.py:203
+msgid "Return to Draft state and restart workflow for this event."
+msgstr ""
+
+#: .\models.py:207
+msgid "This will reset all invitations"
+msgstr ""
+
+#: .\models.py:207 .\models.py:212 .\models.py:224
+msgid "Are you sure?"
+msgstr ""
+
+#: .\models.py:217
+msgid "Take"
+msgstr ""
+
+#: .\models.py:221
+msgid "Take responsibility for this event."
+msgstr ""
+
+#: .\models.py:233
+msgid "Assign"
+msgstr ""
+
+#: .\models.py:237
+msgid "Assign responsibility of this event to another user."
+msgstr ""
+
+#: .\models.py:241 .\models.py:1627
+#, fuzzy
+msgid "Remark"
+msgstr "Märkused"
+
+#: .\models.py:257
+#, python-format
+msgid "I made up this event for you. %s"
+msgstr ""
+
+#: .\models.py:318 .\models.py:924 .\models.py:2010 .\models.py:2327
+msgid "Calendar"
+msgstr ""
+
+#: .\models.py:319
+msgid "Calendars"
+msgstr ""
+
+#: .\models.py:321
+msgid "Type"
+msgstr ""
+
+#: .\models.py:325 .\models.py:835
+#, fuzzy
+msgid "Description"
+msgstr "Nimetus"
+
+#: .\models.py:326
+msgid "URL template"
+msgstr ""
+
+#: .\models.py:328
+msgid "Username"
+msgstr ""
+
+#: .\models.py:330
+msgid "Password"
+msgstr ""
+
+#: .\models.py:332
+msgid "read-only"
+msgstr ""
+
+#: .\models.py:334
+msgid "Invite team members"
+msgstr ""
+
+#: .\models.py:341 .\models.py:767
+msgid "Start date"
+msgstr ""
+
+#: .\models.py:344
+msgid "color"
+msgstr ""
+
+#: .\models.py:436
+#, fuzzy
+msgid "Subscription"
+msgstr "Nimetus"
+
+#: .\models.py:437
+#, fuzzy
+msgid "Subscriptions"
+msgstr "Nimetus"
+
+#: .\models.py:442
+msgid ""
+"The calendar you want to subscribe to.\n"
+"You can subscribe to *non-private* calendars of *other* users."
+msgstr ""
+
+#: .\models.py:446
+msgid "hidden"
+msgstr ""
+
+#: .\models.py:446
+msgid ""
+"Whether this subscription should initially be hidden in your calendar panel."
+msgstr ""
+
+#: .\models.py:479
+msgid "Membership"
+msgstr ""
+
+#: .\models.py:480
+msgid "Memberships"
+msgstr ""
+
+#: .\models.py:485
+msgid "    The user whose calendar events you want to see in team view."
+msgstr ""
+
+#: .\models.py:505
+msgid "Team Members"
+msgstr ""
+
+#: .\models.py:516
+msgid "Place"
+msgstr ""
+
+#: .\models.py:517
+msgid "Places"
+msgstr ""
+
+#: .\models.py:531
+msgid "Priority"
+msgstr ""
+
+#: .\models.py:532
+msgid "Priorities"
+msgstr ""
+
+#: .\models.py:770
+msgid "Start time"
+msgstr ""
+
+#: .\models.py:818
+msgid "End Date"
+msgstr ""
+
+#: .\models.py:821
+msgid "End Time"
+msgstr ""
+
+#: .\models.py:834 .\models.py:2053
+msgid "Summary"
+msgstr ""
+
+#: .\models.py:845
+msgid " on "
+msgstr ""
+
+#: .\models.py:859
+msgid "Recurrence Set"
+msgstr ""
+
+#: .\models.py:860
+msgid "Recurrence Sets"
+msgstr ""
+
+#: .\models.py:862
+msgid "Evaluation every X months"
+msgstr ""
+
+#: .\models.py:864
+#, fuzzy
+msgid "Duration unit"
+msgstr "Nimetus"
+
+#: .\models.py:901
+msgid "UID"
+msgstr ""
+
+#: .\models.py:926
+msgid "Whether this is private, public or between."
+msgstr ""
+
+#: .\models.py:932
+#, fuzzy
+msgid "Revision"
+msgstr "Maakond"
+
+#: .\models.py:1006
+msgid " at "
+msgstr ""
+
+#: .\models.py:1089
+msgctxt "cal"
+msgid "Event"
+msgstr ""
+
+#: .\models.py:1090
+msgctxt "cal"
+msgid "Events"
+msgstr ""
+
+#: .\models.py:1092
+msgid "Transparent"
+msgstr ""
+
+#: .\models.py:1092
+msgid ""
+"Indicates that this Event shouldn't prevent other Events at the same time."
+msgstr ""
+
+#: .\models.py:1105
+msgid "all day"
+msgstr ""
+
+#: .\models.py:1135
+msgid "You should now inform the guests about this state change."
+msgstr ""
+
+#: .\models.py:1140
+#, python-format
+msgid "Event %s has been marked *notified*."
+msgstr ""
+
+#: .\models.py:1201
+msgid "Link URL"
+msgstr ""
+
+#: .\models.py:1205
+msgid "Reminder"
+msgstr ""
+
+#: .\models.py:1219
+msgid "Responsible user"
+msgstr ""
+
+#: .\models.py:1283
+msgid "Table of all my calendar events."
+msgstr ""
+
+#: .\models.py:1312
+msgid "Table of all assigned events."
+msgstr ""
+
+#: .\models.py:1313
+msgid "Assigned Events"
+msgstr ""
+
+#: .\models.py:1319
+msgid "Table of my assigned events (to become notified)."
+msgstr ""
+
+#: .\models.py:1322
+msgid "My assigned Events"
+msgstr ""
+
+#: .\models.py:1325
+msgid "Table of all notified events (waiting to become scheduled)."
+msgstr ""
+
+#: .\models.py:1326
+msgid "Notified Events"
+msgstr ""
+
+#: .\models.py:1332
+msgid "Table of my notified events (waiting to become scheduled)."
+msgstr ""
+
+#: .\models.py:1335
+msgid "My notified Events"
+msgstr ""
+
+#: .\models.py:1403
+msgid "Table of my events per day."
+msgstr ""
+
+#: .\models.py:1405
+msgid "My events today"
+msgstr ""
+
+#: .\models.py:1409
+msgid "Date"
+msgstr ""
+
+#: .\models.py:1439
+msgid "Task"
+msgstr ""
+
+#: .\models.py:1440
+msgid "Tasks"
+msgstr ""
+
+#: .\models.py:1445
+msgid "Due date"
+msgstr ""
+
+#: .\models.py:1448
+msgid "Due time"
+msgstr ""
+
+#: .\models.py:1450
+msgid "Duration value"
+msgstr ""
+
+#: .\models.py:1551
+msgid "Table of all my tasks."
+msgstr ""
+
+#: .\models.py:1556
+msgid "Table of my tasks marked 'to do'."
+msgstr ""
+
+#: .\models.py:1558
+msgid "To-do list"
+msgstr ""
+
+#: .\models.py:1579
+msgid "Guest Role"
+msgstr ""
+
+#: .\models.py:1580
+msgid "Guest Roles"
+msgstr ""
+
+#: .\models.py:1604
+msgid "Guest"
+msgstr ""
+
+#: .\models.py:1605
+msgid "Guests"
+msgstr ""
+
+#: .\models.py:1609 .\models.py:1650
+msgid "Event"
+msgstr ""
+
+#: .\models.py:1615
+msgid "Role"
+msgstr ""
+
+#: .\models.py:1709
+msgid "My presences"
+msgstr ""
+
+#: .\models.py:1710
+msgid ""
+"Shows all my presences in calendar events, independently of their state."
+msgstr ""
+
+#: .\models.py:1720
+msgid "Shows received invitations which I must accept or reject."
+msgstr ""
+
+#: .\models.py:1721
+msgid "My received invitations"
+msgstr ""
+
+#: .\models.py:1812 .\models.py:2249
+msgid "Upcoming reminders"
+msgstr ""
+
+#: .\models.py:1813
+msgid "Past reminders"
+msgstr ""
+
+#: .\models.py:1919
+msgid "due date reached"
+msgstr ""
+
+#: .\models.py:1982
+msgid "Busy"
+msgstr ""
+
+#: .\models.py:1985
+msgid "with"
+msgstr ""
+
+#: .\models.py:2031
+msgid "Hidden"
+msgstr ""
+
+#: .\models.py:2050
+#, fuzzy
+msgid "Start"
+msgstr "Tänav"
+
+#: .\models.py:2051
+msgid "End"
+msgstr ""
+
+#: .\models.py:2220
+msgid "Update Reminders"
+msgstr ""
+
+#: .\models.py:2228
+#, python-format
+msgid "%(num)d reminders for %(user)s have been updated."
+msgstr ""
+
+#: .\models.py:2254
+msgid "Missed reminders"
+msgstr ""
+
+#: .\models.py:2289
+msgid "Default access class"
+msgstr ""
+
+#: .\models.py:2290
+msgid "The default access class for your calendar events and tasks."
+msgstr ""
+
+#: .\models.py:2296
+msgid "Default calendar"
+msgstr ""
+
+#: .\models.py:2297
+msgid "The default calendar for your events and tasks."
+msgstr ""
+
+#: .\models.py:2409
+#, python-format
+msgid "%d invitations waiting for your reaction"
+msgstr ""
+
+#: .\models.py:2410
+#, python-format
+msgid "%d tasks to do"
+msgstr ""
+
+#: .\models.py:2411
+#, python-format
+msgid "%d notified events"
+msgstr ""
+
+#: .\models.py:2412
+#, python-format
+msgid "%d assigned events"
+msgstr ""
+
+#: .\models.py:2425
+msgid "Reopen"
+msgstr ""
+
+#: .\models.py:2434 .\models.py:2489
+msgid "Accept"
+msgstr ""
+
+#: .\models.py:2438
+msgid "User takes responsibility for this event. Planning continues."
+msgstr ""
+
+#: .\models.py:2440
+msgid "Notify guests"
+msgstr ""
+
+#: .\models.py:2445
+msgid "Invitations have been sent. Waiting for feedback from invited guests."
+msgstr ""
+
+#: .\models.py:2446
+msgid "Confirm"
+msgstr ""
+
+#: .\models.py:2450
+msgid "Mark this as Scheduled. All participants have been informed."
+msgstr ""
+
+#: .\models.py:2454
+msgid "Event took place."
+msgstr ""
+
+#: .\models.py:2457
+msgid "Reschedule"
+msgstr ""
+
+#: .\models.py:2460
+msgctxt "calendar event action"
+msgid "Cancel"
+msgstr ""
+
+#: .\utils.py:73
+msgid "Weekday"
+msgstr ""
+
+#: .\utils.py:75
+msgid "Monday"
+msgstr ""
+
+#: .\utils.py:76
+msgid "Tuesday"
+msgstr ""
+
+#: .\utils.py:77
+msgid "Wednesday"
+msgstr ""
+
+#: .\utils.py:78
+msgid "Thursday"
+msgstr ""
+
+#: .\utils.py:79
+msgid "Friday"
+msgstr ""
+
+#: .\utils.py:80
+msgid "Saturday"
+msgstr ""
+
+#: .\utils.py:81
+msgid "Sunday"
+msgstr ""
+
+#: .\utils.py:139
+msgid "Duration Unit"
+msgstr ""
+
+#: .\utils.py:145
+msgid "seconds"
+msgstr ""
+
+#: .\utils.py:146
+msgid "minutes"
+msgstr ""
+
+#: .\utils.py:147
+msgid "hours"
+msgstr ""
+
+#: .\utils.py:148
+msgid "days"
+msgstr ""
+
+#: .\utils.py:149
+msgid "weeks"
+msgstr ""
+
+#: .\utils.py:150
+msgid "months"
+msgstr ""
+
+#: .\utils.py:151
+msgid "years"
+msgstr ""
+
+#: .\utils.py:160
 msgid "Access Class"
 msgstr ""
 
-#: .\utils.py:359
+#: .\utils.py:162
 msgid "Private"
 msgstr ""
 
-#: .\utils.py:360
+#: .\utils.py:163
 msgid "Show busy"
 msgstr ""
 
-#: .\utils.py:361
+#: .\utils.py:164
 msgid "Public"
 msgstr ""
 

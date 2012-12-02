@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2012-11-08 20:32+0000\n"
+"POT-Creation-Date: 2012-12-02 10:23+0000\n"
 "PO-Revision-Date: 2012-09-22 07:29+0100\n"
 "Last-Translator: Luc Saffre <luc.saffre@gmail.com>\n"
 "Language-Team: \n"
@@ -18,8 +18,8 @@ msgstr ""
 "X-Generator: Poedit 1.5.3\n"
 
 #: .\models.py:58
-msgid "VAT Rate"
-msgstr "MWSt.-Satz"
+msgid "VAT Class"
+msgstr ""
 
 #: .\models.py:60 .\models.py:77
 msgid "Exempt"
@@ -84,3 +84,6 @@ msgstr "Total inkl. MWSt."
 #: .\models.py:113
 msgid "Whether item unit price includes VAT or not."
 msgstr ""
+
+#~ msgid "VAT Rate"
+#~ msgstr "MWSt.-Satz"
