@@ -143,6 +143,8 @@ class Journal(babel.BabelNamed,mixins.Sequenced):
     #~ doctype = models.IntegerField() #choices=DOCTYPE_CHOICES)
     voucher_type = VoucherTypes.field() 
     force_sequence = models.BooleanField(default=False)
+    chart = models.ForeignKey('accounts.Chart')
+    #~ chart = models.ForeignKey('accounts.Chart',blank=True,null=True)
     #~ account = models.ForeignKey('accounts.Account',blank=True,null=True)
     #~ account = models.CharField(max_length=6,blank=True)
     #~ pos = models.IntegerField()
@@ -340,7 +342,7 @@ class Voucher(mixins.UserAuthored):
         kw['voucher'] = self
         #~ account = accounts.Account.objects.get(group__ref=account)
         try:
-            account = accounts.Account.objects.get(ref=account)
+            account = accounts.Account.objects.get(ref=account,chart=self.journal.chart)
         except accounts.Account.DoesNotExist:
             raise Warning("No Account with reference %r" % account)
         kw['account'] = account

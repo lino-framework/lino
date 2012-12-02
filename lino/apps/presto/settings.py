@@ -62,6 +62,8 @@ class Lino(Lino):
         elif tt.name == 'purchases':
             return '604000'
             
+    def get_vat_account(self,tt,vc,vr):
+        return '472100'
         
         
     def setup_choicelists(self):

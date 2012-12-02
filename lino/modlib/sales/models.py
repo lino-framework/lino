@@ -43,13 +43,15 @@ from lino.utils import babel
 #~ journals = resolve_app('journals')
 #~ journals = models.get_app('journals')
 #~ auth = resolve_app('auth')
-from lino.modlib.users import models as auth
+#~ from lino.modlib.users import models as auth
+contacts = dd.resolve_app('contacts')
 ledger = dd.resolve_app('ledger')
 vat = dd.resolve_app('vat')
+products = dd.resolve_app('products')
 #~ from lino.modlib.ledger import models as ledger
 #~ from lino.modlib.journals import models as journals
-from lino.modlib.products import models as products
-from lino.modlib.contacts import models as contacts
+#~ from lino.modlib.products import models as products
+#~ from lino.modlib.contacts import models as contacts
 #~ from lino.modlib.vat.models import TradeTypes
 #~ products = models.get_app('products')
 #~ ledger = resolve_app('ledger')
@@ -311,6 +313,7 @@ class SalesDocument(
         #~ return self.total_excl + self.total_vat
     
     def update_total(self):
+        logger.info("20121202 sales.update_total()")
         if self.pk is None:
             return
         total_excl = 0
@@ -606,7 +609,7 @@ class ProductDocItem(vat.VatItemBase):
         
     def get_vat_class(self,tt):
         name = settings.LINO.get_product_vat_class(tt,self.product)
-        return VatClasses.get_by_name(name)
+        return vat.VatClasses.get_by_name(name)
         
     def full_clean(self,*args,**kw):
         if self.product:

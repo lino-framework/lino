@@ -44,19 +44,16 @@ converting them from Google's wiki markup to reStructuredText.
 Lino Così
 ---------
 
-Started a new project :mod:`lino.apps.cosi`.
+Today I finally found a name and started to work on a project which has been waiting patiently for so long:
+Lino Così is yet another attempt to make Belgian accounting simple. An application that offers the bare minimum
+functionality for startups to do your own accounting in Belgium. And of course you can always extend it 
+later since it is written in Lino.
 
-Lino Così is yet another attempt to make Belgian accounting simple.
-With Lino Così (when it isready) you will be able to
+- Full blog post http://lsaffre.blogspot.com/2012/12/belgian-accounting-made-simple.html
+- API doc :mod:`lino.apps.cosi`
+- http://demo4.lino-framework.org/
 
-- manage your contacts (organisations and persons)
-- manage your account chart 
-- optionally manage a list of products (sales items)
-- record your sales invoices (optionally printing them)
-- record your purchase invoices
-- declare your VAT statement
-- record your bank statements
-- get your financial situation 
-
-
-
+Miscellaneous changes in :mod:`lino.modlib.sales`, 
+:mod:`lino.modlib.vat`
+:mod:`lino.modlib.ledger`
+:mod:`lino.modlib.accounts`

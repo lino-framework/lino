@@ -229,6 +229,7 @@ class Lino(object):
     
     
     help_url = "http://code.google.com/p/lino"
+    #~ site_url = 
     #~ index_html = "This is the main page."
     title = None
     #~ domain = "www.example.com"
@@ -1299,10 +1300,12 @@ class Lino(object):
         :mod:`lino.modlib.accounts.fixtures.mini`.
         """
         if tt.name == 'sales':
-            return '7000'
+            #~ return '7000'
+            return 'sales'
         elif tt.name == 'purchases':
         #~ elif item.voucher.journal.type == JournalTypes.purchases:
-            return '6000'
+            return 'purchases'
+            #~ return '6000'
         
     #~ def get_sales_item_account(self,item):
         #~ return self.modules.accounts.Account.objects.get(group__ref='704000')
@@ -1316,9 +1319,11 @@ class Lino(object):
         """
         tt = voucher.get_trade_type()
         if tt.name == 'sales':
-            return '4000'
+            #~ return '4000'
+            return 'customers'
         elif tt.name == 'purchases':
-            return '4400'
+            #~ return '4400'
+            return 'suppliers'
         
     def get_vat_account(self,tt,vc,vr):
         """
@@ -1328,7 +1333,14 @@ class Lino(object):
         `vr` is a VatRegime
         
         """
-        return '472100'
+        if tt.name == 'sales':
+            #~ return '4000'
+            return 'vat_due'
+        elif tt.name == 'purchases':
+            #~ return '4400'
+            return 'vat_deductible'
+        
+        #~ return '472100'
 
     def get_vat_rate(self,tt,vc,vr):
         VAT_RATES = dict(

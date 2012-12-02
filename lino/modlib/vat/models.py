@@ -55,7 +55,7 @@ class VatClasses(dd.ChoiceList):
     the time and type of the operation, 
     and possibly other factors.
     """
-    verbose_name = _("VAT Rate")
+    verbose_name = _("VAT Class")
 add = VatClasses.add_item
 add('0',_("Exempt"),'exempt')
 add('1',_("Reduced"),'reduced')
