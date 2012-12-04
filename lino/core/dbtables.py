@@ -784,17 +784,21 @@ class Table(AbstractTable):
     @classmethod
     def get_title(self,ar):
         # NOTE: similar code in tables
-        title = self.title or self.label
-        if self.master is not None:
-            #~ return _("%(details)s by %(model)s %(master)s") % dict(
-            title = _("%(details)s of %(master)s") % dict(
-              details=title,
-              master=ar.master_instance)
+        title = self.get_title_base(ar)
         tags = list(self.get_title_tags(ar))
         if len(tags):
             title += " (%s)" % (', '.join(tags))
         return title
         
+        
+    @classmethod
+    def get_title_base(self,ar):
+        title = self.title or self.label
+        if self.master is not None:
+            title = _("%(details)s of %(master)s") % dict(
+              details=title,
+              master=ar.master_instance)
+        return title
         
     @classmethod
     def get_queryset(self):

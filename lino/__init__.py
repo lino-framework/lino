@@ -155,6 +155,8 @@ class Lino(object):
     Whether to include "experimental" features.
     """
     
+    use_spinner = False # doesn't work. leave this to False
+    
     
     #~ admin_url = '/admin'
     admin_url = '' # 
@@ -1287,6 +1289,9 @@ class Lino(object):
         return pages.render(obj,self.MAIN_HTML_TEMPLATE)
 
 
+    def get_vat_class(self,tt,item):
+        return 'normal'
+        
     def get_product_vat_class(self,tt,product):
         return 'normal'
         
@@ -1370,7 +1375,18 @@ class Lino(object):
         #~ dblogger = logging.getLogger(__name__)
         from lino.utils import dblogger
         from django.utils.importlib import import_module
-        name,current_version,url = self.using().next()
+        
+        current_version = self.version
+        
+        #~ name,current_version,url = self.using().next()
+        if current_version is None:
+            raise Exception("Cannot migrate to version None")
+        if '+' in current_version:
+            raise Exception(
+                "Cannot loaddata python dumps to intermediate version %s" % current_version)
+            #~ dblogger.info("Cannot migrate to intermediate version %", current_version)
+            #~ return
+            
         if globals_dict['SOURCE_VERSION'] == current_version:
             dblogger.info("Source version is %s : no migration needed", current_version)
             return

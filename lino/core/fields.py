@@ -79,17 +79,17 @@ class PercentageField(models.SmallIntegerField):
         defaults.update(kw)
         models.SmallIntegerField.__init__(self,*args, **defaults)
   
-#~ class MonthField(models.CharField):
+class DatePickerField(models.DateField):
+    """
+    A DateField that uses a DatePicker instead of a normal DateWidget.
+    Doesn't yet work.
+    """
+
 class MonthField(models.DateField):
     """
-    Deserves more documentation.
+    A DateField that uses a MonthPicker instead of a normal DateWidget
     """
     def __init__(self, *args, **kw):
-        #~ defaults = dict(
-            #~ max_length=10,
-            #~ )
-        #~ defaults.update(kw)
-        #~ models.CharField.__init__(self,*args, **defaults)
         models.DateField.__init__(self,*args, **kw)
   
 class PriceField(models.DecimalField):

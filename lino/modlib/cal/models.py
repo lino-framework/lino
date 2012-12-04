@@ -37,6 +37,7 @@ from lino import dd
 from lino.core import actions
 from lino.utils import babel
 from lino.utils import AttrDict
+from lino.utils import ONE_DAY
 from lino.ui import requests as ext_requests
 from lino.core.modeltools import resolve_model, obj2str
 #~ from lino.core.perms import UserProfiles
@@ -155,34 +156,18 @@ class EventStates(dd.Workflow):
                 #~ g.save()
         
         
-    @classmethod
-    def migrate(cls,status_id):
-        """
-        Was used by :meth:`lino.apps.pcsw.migrate.migrate_from_1_4_4`.
-        """
-        #~ if status_id is None: return cls.blank_item
-        cv = {
-          #~ None: '',
-          None:EventStates.draft,
-          1:EventStates.assigned,
-          2:EventStates.scheduled,
-          3:EventStates.cancelled,
-          4:EventStates.rescheduled,
-          5:EventStates.absent,
-        }
-        return cv[status_id]
         
 #~ def allow_scheduled(action,user,obj,state):
     #~ if not obj.start_time: return False
     #~ return True
     
-    
+
 add = EventStates.add_item
-add('10', _("New"), 'new',help_text=_("Default state of an automatic event."))
+add('10', _("Suggested"), 'suggested',help_text=_("Automatically suggested. Default state of an automatic event."))
 #~ add('15', _("Suggested"), 'suggested',
   #~ help_text=_("Suggested by colleague. External guests are notified, but user must confirm."))
-add('15', _("Assigned"), 'assigned',
-  help_text=_("Assigned by colleague. External guests are notified, but user must confirm."))
+#~ add('15', _("Assigned"), 'assigned',
+  #~ help_text=_("Assigned by colleague. External guests are notified, but user must confirm."))
 add('20', _("Draft"), 'draft')
 add('30', _("Notified"),'notified')
 add('40', _("Scheduled"), 'scheduled')
@@ -199,7 +184,6 @@ class ResetEvent(dd.ChangeStateAction):
     icon_file = 'cancel.png'
     #~ required = dict(states='assigned',owner=True)
     required = dict(states='notified scheduled rescheduled',owner=True)
-    #~ help_text=_("Return this event to New state.")
     help_text=_("Return to Draft state and restart workflow for this event.")
   
     def run(self,obj,ar,**kw):
@@ -213,25 +197,35 @@ class ResetEvent(dd.ChangeStateAction):
         kw = super(ResetEvent,self).run(obj,ar,**kw)
         return kw
     
-class TakeAssignedEvent(dd.ChangeStateAction):
+#~ class TakeAssignedEvent(dd.ChangeStateAction):
+class TakeAssignedEvent(dd.RowAction):
     label = _("Take")
+    show_in_workflow = True
+    
     #~ icon_file = 'cancel.png'
     icon_file = 'flag_green.png'
-    required = dict(states='new assigned',owner=False)
+    #~ required = dict(states='new assigned',owner=False)
+    required = dict(owner=False)
     help_text=_("Take responsibility for this event.")
   
+    def get_action_permission(self,ar,obj,state):
+        if obj.assigned_to != ar.get_user():
+            return False
+        return super(TakeAssignedEvent,self).get_action_permission(ar,obj,state)
+        
     def run(self,obj,ar,**kw):
         ar.confirm(self.help_text,_("Are you sure?"))
         obj.user = ar.get_user()
-        kw = super(TakeAssignedEvent,self).run(obj,ar,**kw)
-        #~ obj.save()
+        obj.assigned_to = None
+        #~ kw = super(TakeAssignedEvent,self).run(obj,ar,**kw)
+        obj.save()
         kw.update(refresh=True)
         return kw
     
   
 class AssignEvent(dd.ChangeStateAction):
     label = _("Assign")
-    required = dict(states='new draft scheduled',owner=True)
+    required = dict(states='suggested draft scheduled',owner=True)
     
     icon_file = 'flag_blue.png'
     help_text=_("Assign responsibility of this event to another user.")
@@ -255,7 +249,7 @@ class AssignEvent(dd.ChangeStateAction):
         kw = super(AssignEvent,self).action_param_defaults(ar,obj,**kw)
         kw.update(
             remark=unicode(_("I made up this event for you. %s")) 
-                % ar.get_user())
+                % ar.user)
         return kw
     
     
@@ -1095,7 +1089,7 @@ Indicates that this Event shouldn't prevent other Events at the same time."""))
     place = models.ForeignKey(Place,null=True,blank=True) # iCal:LOCATION
     priority = models.ForeignKey(Priority,null=True,blank=True)
     #~ priority = Priority.field(_("Priority"),blank=True) # iCal:PRIORITY
-    state = EventStates.field(default=EventStates.new) # iCal:STATUS
+    state = EventStates.field(default=EventStates.suggested) # iCal:STATUS
     #~ status = models.ForeignKey(EventStatus,verbose_name=_("Status"),blank=True,null=True) # iCal:STATUS
     #~ duration = dd.FieldSet(_("Duration"),'duration_value duration_unit')
     #~ duration_value = models.IntegerField(_("Duration value"),null=True,blank=True) # iCal:DURATION
@@ -1105,6 +1099,16 @@ Indicates that this Event shouldn't prevent other Events at the same time."""))
     all_day = ExtAllDayField(_("all day"))
     #~ all_day = models.BooleanField(_("all day"),default=False)
     
+    if settings.LINO.user_model:
+        assigned_to = models.ForeignKey(settings.LINO.user_model,
+            verbose_name=_("Assigned to"),
+            related_name="cal_events_assigned",
+            blank=True,null=True
+            )
+    else:
+        assigned_to = dd.DummyField()
+        
+    take = TakeAssignedEvent()
     
     def save(self,*args,**kw):
         #~ if not self.state and self.start_date and self.start_date < datetime.date.today():
@@ -1113,7 +1117,7 @@ Indicates that this Event shouldn't prevent other Events at the same time."""))
         if settings.LINO.loading_from_dump:
             return
         #~ if not self.state in (EventStates.blank_item, EventStates.draft): 20120829
-        if not self.state in (EventStates.new, EventStates.draft):
+        if not self.state in (EventStates.suggested, EventStates.draft):
         #~ if self.state != EventStates.draft:
             if self.calendar and self.calendar.invite_team_members:
                 if self.guest_set.all().count() == 0:
@@ -1123,17 +1127,8 @@ Indicates that this Event shouldn't prevent other Events at the same time."""))
                             Guest(event=self,partner=obj.watched_user.partner).save()
         
     def is_user_modified(self):
-        return self.state != EventStates.new
+        return self.state != EventStates.suggested
         
-    def unused_after_state_change(self,ar,kw,old,new):
-        """
-        Tell the user that they should now inform the guests.
-        """
-        super(Event,self).after_state_change(ar,kw,old,new)
-        if new.name in ('assigned','cancelled','scheduled','rescheduled'):
-            if self.guest_set.all().count() > 0:
-                kw.update(alert=True,message=_("You should now inform the guests about this state change."))
-                
     def after_send_mail(self,mail,ar,kw):
         if self.state == EventStates.assigned:
             self.state = EventStates.notified
@@ -1147,19 +1142,32 @@ Indicates that this Event shouldn't prevent other Events at the same time."""))
         Mark the event as "user modified" by setting a default state.
         This is important because EventGenerators may not modify any user-modified Events.
         """
-        if self.state is EventStates.new:
-            #~ if ar.request.subst_user:
-            if self.user != ar.get_user():
-                self.state = EventStates.assigned
-                #~ self.state = EventStates.reserved
-            else:
-                self.state = EventStates.draft
+        if self.state is EventStates.suggested:
+            self.state = EventStates.draft
+            #~ if self.user != ar.get_user():
+                #~ self.state = EventStates.assigned
+            #~ else:
+                #~ self.state = EventStates.draft
         return super(Event,self).before_ui_save(ar,**kw)
         
     def on_create(self,ar):
         self.start_date = datetime.date.today()
         self.start_time = datetime.datetime.now().time()
+        #~ if ar.subst_user is not None:
+        self.assigned_to = ar.subst_user
         super(Event,self).on_create(ar)
+        
+    #~ def on_create(self,ar):
+        #~ self.start_date = datetime.date.today()
+        #~ self.start_time = datetime.datetime.now().time()
+        #~ # default user is almost the same as for UserAuthored
+        #~ # but we take the *real* user, not the "working as"
+        #~ if self.user_id is None:
+            #~ u = ar.user
+            #~ if u is not None:
+                #~ self.user = u
+        #~ super(Event,self).on_create(ar)
+        
         
         
     def get_postable_recipients(self):
@@ -1222,7 +1230,7 @@ class EventDetail(dd.FormLayout):
     start = "start_date start_time"
     end = "end_date end_time"
     main = """
-    calendar summary user 
+    calendar summary user assigned_to
     start end #all_day #duration state
     place priority access_class transparent #rset 
     owner created:20 modified:20  
@@ -1235,6 +1243,25 @@ class EventInsert(EventDetail):
     start end 
     place priority access_class transparent 
     """
+    
+class NextDateAction(dd.ListAction):
+    label = _("Next")
+    #~ action_name = 'next'
+    default_format = ext_requests.URL_FORMAT_JSON
+    
+    def setup_action_request(self,actor,ar):
+        #~ print "coucou"
+        #~ assert row is None
+        dates_from = ar.param_values.dates_from or datetime.date.today()
+        dates_to = ar.param_values.dates_to or dates_from
+        ar.param_values.define('dates_from',dates_from + ONE_DAY)
+        ar.param_values.define('dates_to',dates_to + ONE_DAY)
+        #~ ar.param_values.dates_to += ONE_DAY
+        #~ logger.info("20121203 cal.NextDateAction.setup_action_request() %s",ar.param_values)
+        #~ return ar.success_response(refresh=True)
+    
+    #~ def run(self,row,ar,**kw):
+    
    
 class Events(dd.Table):
     #~ debug_permissions = True
@@ -1242,12 +1269,100 @@ class Events(dd.Table):
     required = dd.required(user_groups='office',user_level='manager')
     #~ column_names = 'start_date start_time user summary workflow_buttons calendar *'
     column_names = 'start_date start_time user summary calendar *'
+    
+    hidden_columns = """
+    place priority access_class transparent
+    owner created modified
+    description
+    uid sequence auto_type build_time owner owner_id owner_type 
+    end_date end_time
+    """
+    
     #~ active_fields = ['all_day']
     order_by = ["start_date","start_time"]
     
     detail_layout = EventDetail()
     insert_layout = EventInsert()
     
+    params_panel_hidden = True
+    
+    parameters = dict(
+        #~ dates_from = dd.DatePickerField(_("Date from"),
+        dates_from = models.DateField(_("Date from"),
+            blank=True,null=True,help_text=u"""\
+Nur Termine ab diesem Datum."""),
+        #~ dates_to = dd.DatePickerField(_("until"),
+        dates_to = models.DateField(_("until"),
+            blank=True,null=True,help_text=u"""\
+Nur Termine bis zu diesem Datum."""),
+        user = models.ForeignKey(settings.LINO.user_model,
+            verbose_name=_("Responsible user"),
+            blank=True,null=True,
+            help_text=u"""\
+Nur Termine dieses Benutzers."""),
+        assigned_to = models.ForeignKey(settings.LINO.user_model,
+            verbose_name=_("Assigned to"),
+            blank=True,null=True,
+            help_text=u"""\
+Nur Termine, die diesem Benutzer zugewiesen sind."""),
+        state = EventStates.field(blank=True,help_text=u"""\
+Nur Termine in diesem Bearbeitungszustand."""),
+        unready = models.BooleanField()
+    )
+    
+    params_layout = """
+    dates_from dates_to user assigned_to state
+    """
+    #~ params_layout = dd.Panel("""
+    #~ dates_from dates_to other
+    #~ """,other="""
+    #~ user 
+    #~ assigned_to 
+    #~ state
+    #~ """)
+    
+    #~ next = NextDateAction() # doesn't yet work. 20121203
+    
+    
+    @classmethod
+    def get_request_queryset(self,ar):
+        #~ logger.info("20121010 Clients.get_request_queryset %s",ar.param_values)
+        qs = super(Events,self).get_request_queryset(ar)
+            
+        if ar.param_values.user:
+            qs = qs.filter(user=ar.param_values.user)
+        if ar.param_values.assigned_to:
+            qs = qs.filter(assigned_to=ar.param_values.assigned_to)
+
+        if ar.param_values.state:
+            qs = qs.filter(state=ar.param_values.state)
+            
+        if ar.param_values.dates_from:
+            if ar.param_values.dates_to:
+                qs = qs.filter(start_date__gte=ar.param_values.dates_from)
+            else:
+                qs = qs.filter(start_date=ar.param_values.dates_from)
+        if ar.param_values.dates_to:
+            qs = qs.filter(start_date__lte=ar.param_values.dates_to)
+        return qs
+        
+    @classmethod
+    def get_title_tags(self,ar):
+        for t in super(Events,self).get_title_tags(ar):
+            yield t
+        if ar.param_values.dates_from or ar.param_values.dates_to:
+            yield unicode(_("Dates %(min)s to %(max)s") % dict(
+              min=ar.param_values.dates_from or'...',
+              max=ar.param_values.dates_to or '...'))
+              
+        if ar.param_values.state:
+            yield unicode(ar.param_values.state)
+            
+        if ar.param_values.user:
+            yield unicode(ar.param_values.user)
+            
+        if ar.param_values.assigned_to:
+            yield unicode(self.parameters['assigned_to'].verbose_name)
 
     
 class EventsByCalendar(Events):
@@ -1279,20 +1394,18 @@ if settings.LINO.project_model:
     
 if settings.LINO.user_model:    
   
-    class MyEvents(Events,mixins.ByUser):
+    #~ class MyEvents(Events,mixins.ByUser):
+    class MyEvents(Events):
         help_text = _("Table of all my calendar events.")
         required = dd.required(user_groups='office')
         #~ column_names = 'start_date start_time calendar project summary workflow_buttons *'
         column_names = 'start_date start_time calendar project summary *'
-        hidden_columns = """
-        user 
-        place priority access_class transparent
-        owner created modified
-        description
-        uid sequence auto_type build_time owner owner_id owner_type 
-        end_date end_time
-        """
         
+        @classmethod
+        def param_defaults(self,ar,**kw):
+            kw = super(MyEvents,self).param_defaults(ar,**kw)
+            kw.update(user=ar.get_user())
+            return kw
         
     #~ class EventsReserved(Events):
         #~ help_text = _("Table of all reserved events.")
@@ -1308,31 +1421,49 @@ if settings.LINO.user_model:
         #~ label = _("My reserved Events")
         
         
-    class EventsAssigned(Events):
-        help_text = _("Table of all assigned events.")
-        label = _("Assigned Events")
-        required = dd.required(user_groups='office',user_level='manager')
-        column_names = 'start_date start_time user project summary workflow_buttons *'
-        known_values = dict(state=EventStates.assigned)
-        
-    class MyEventsAssigned(EventsAssigned,MyEvents):
-        help_text = _("Table of my assigned events (to become notified).")
-        required = dd.required(user_groups='office')
+    class MyUnreadyEvents(MyEvents):
+        label = _("My unready events")
+        help_text = _("Events which probably need your attention.")
+        #~ required = dd.required(user_groups='office')
         column_names = 'start_date start_time project summary workflow_buttons *'
-        label = _("My assigned Events")
+        #~ known_values = dict(assigned_to=EventStates.assigned)
+        master_key = 'assigned_to'
         
-    class EventsNotified(Events):
-        help_text = _("Table of all notified events (waiting to become scheduled).")
-        label = _("Notified Events")
-        required = dd.required(user_groups='office',user_level='manager')
-        column_names = 'start_date start_time user project summary workflow_buttons *'
-        known_values = dict(state=EventStates.notified)
+        @classmethod
+        def param_defaults(self,ar,**kw):
+            kw = super(MyUnreadyEvents,self).param_defaults(ar,**kw)
+            kw.update(unready=True)
+            return kw
         
-    class MyEventsNotified(EventsNotified,MyEvents):
-        help_text = _("Table of my notified events (waiting to become scheduled).")
-        required = dd.required(user_groups='office')
+    class EventsAssignedToMe(MyEvents):
+        label = _("Events assigned to me")
+        help_text = _("Table of events assigned to me.")
+        master_key = 'assigned_to'
+        #~ required = dd.required(user_groups='office')
         column_names = 'start_date start_time project summary workflow_buttons *'
-        label = _("My notified Events")
+        #~ known_values = dict(assigned_to=EventStates.assigned)
+        
+    #~ class EventsAssigned(Events):
+        #~ label = _("Assigned Events")
+        #~ help_text = _("Table of all events assigned to somebody.")
+        #~ required = dd.required(user_groups='office',user_level='manager')
+        #~ column_names = 'start_date start_time user project summary workflow_buttons *'
+        #~ # known_values = dict(state=EventStates.assigned)
+        #~ filter = models.Q(assigned_to__isnull=False)
+        
+        
+    #~ class EventsNotified(Events):
+        #~ help_text = _("Table of all notified events (waiting to become scheduled).")
+        #~ label = _("Notified Events")
+        #~ required = dd.required(user_groups='office',user_level='manager')
+        #~ column_names = 'start_date start_time user project summary workflow_buttons *'
+        #~ known_values = dict(state=EventStates.notified)
+        
+    #~ class MyEventsNotified(EventsNotified,MyEvents):
+        #~ help_text = _("Table of my notified events (waiting to become scheduled).")
+        #~ required = dd.required(user_groups='office')
+        #~ column_names = 'start_date start_time project summary workflow_buttons *'
+        #~ label = _("My notified Events")
         
     #~ class EventsToNotify(Events):
         #~ """
@@ -2334,14 +2465,14 @@ def setup_main_menu(site,ui,profile,m):
         m.add_action(CalendarPanel)
     m.add_action(MyEvents)
     #~ m.add_action(MyEventsToday)
-    m.add_action(MyEventsAssigned)
-    m.add_action(MyEventsNotified)
+    #~ m.add_action(MyEventsAssigned)
+    #~ m.add_action(MyEventsNotified)
     
     m.add_separator('-')
     m.add_action(Events)
     #~ m.add_action(EventsReserved)
-    m.add_action(EventsAssigned)
-    m.add_action(EventsNotified)
+    #~ m.add_action(EventsAssigned)
+    #~ m.add_action(EventsNotified)
     #~ m.add_action(EventsToSchedule)
     #~ m.add_action(EventsToNotify)
     #~ m.add_action(EventsToConfirm)
@@ -2406,10 +2537,11 @@ def setup_quicklinks(site,ar,m):
     #~ MyEventsNotified
     
 def get_todo_tables(site,ar):
-    yield (MyPendingInvitations, _("%d invitations waiting for your reaction"))
+    yield (MyUnreadyEvents, _("%d unready events approaching.")) # "%d unfertige Termine kommen näher"
+    yield (MyPendingInvitations, _("%d invitations are waiting for your answer."))
     yield (MyTasksToDo,_("%d tasks to do"))
-    yield (MyEventsNotified,_("%d notified events"))
-    yield (MyEventsAssigned,_("%d assigned events"))
+    #~ yield (MyEventsNotified,_("%d notified events"))
+    yield (EventsAssignedToMe,_("%d events assigned to you"))
     
     
 
@@ -2429,22 +2561,22 @@ def setup_workflows(site):
     #~ TaskStates.sleeping.add_workflow(states='_ todo')
     TaskStates.cancelled.add_workflow(states='todo started',icon_file='cancel.png')
 
-  
-
     EventStates.draft.add_workflow(_("Accept"),
-        states='new assigned',
+        #~ states='new assigned',
+        states='suggested',
         owner=True,
         icon_file='book.png',
         help_text=_("User takes responsibility for this event. Planning continues."))
-    EventStates.draft.add_workflow(TakeAssignedEvent)
-    EventStates.notified.add_workflow(_("Notify guests"), 
+    #~ EventStates.draft.add_workflow(TakeAssignedEvent)
+    EventStates.notified.add_workflow( #_("Notify guests"), 
         #~ icon_file='eye.png',
         #~ icon_file='telephone.png',
         icon_file='hourglass.png',
-        states='draft',
+        states='suggested draft',
         help_text=_("Invitations have been sent. Waiting for feedback from invited guests."))
     EventStates.scheduled.add_workflow(_("Confirm"), 
-        states='new draft assigned',
+        #~ states='new draft assigned',
+        states='suggested draft',
         owner=True,
         icon_file='accept.png',
         help_text=_("Mark this as Scheduled. All participants have been informed."))
@@ -2461,7 +2593,7 @@ def setup_workflows(site):
         owner=True,
         states='scheduled notified',
         icon_file='cross.png')
-    EventStates.assigned.add_workflow(AssignEvent)
+    #~ EventStates.assigned.add_workflow(AssignEvent)
     EventStates.draft.add_workflow(ResetEvent)
     
     #~ EventStates.obsolete.add_workflow()

@@ -128,6 +128,7 @@ def analyze_models():
                   'get_related_project',
                   'get_system_note_recipients',
                   'get_system_note_type',
+                  'quick_search_fields',
                   'site_setup',
                   'disable_delete',
                   'on_duplicate',

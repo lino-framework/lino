@@ -940,6 +940,15 @@ Lino.DateField = Ext.extend(Ext.form.DateField,{
   format: '$settings.LINO.date_format_extjs',
   altFormats: '$settings.LINO.alt_date_formats_extjs'
   });
+Lino.DatePickerField = Ext.extend(Ext.DatePicker,{
+  //~ boxMinWidth: Lino.chars2width(11),
+  format: '$settings.LINO.date_format_extjs',
+  //~ altFormats: '$settings.LINO.alt_date_formats_extjs'
+  formatDate : function(date){
+      console.log("20121203 formatDate",this.name,date);
+      return Ext.isDate(date) ? date.dateFormat(this.format) : date;
+  }
+  });
 Lino.DateTimeField = Ext.extend(Ext.ux.form.DateTime,{
   dateFormat: '$settings.LINO.date_format_extjs',
   timeFormat: '$settings.LINO.time_format_extjs',
@@ -1725,11 +1734,15 @@ Lino.MainPanel = {
         var refresh = function() {if (!t.setting_param_values) t.refresh();}
         Ext.each(this.params_panel.fields,function(f) {
           //~ f.on('valid',function() {t.refresh()});
-          if (f instanceof Ext.form.Checkbox)
+          if (f instanceof Ext.form.Checkbox) {
               f.on('check',refresh);
-          else if (f instanceof Ext.form.TriggerField)
+          } else if (f instanceof Ext.DatePicker) {
               f.on('select',refresh);
-          else {
+          } else if (f instanceof Ext.form.TriggerField) {
+              f.on('select',refresh);
+              //~ f.on('change',refresh);
+              //~ f.on('valid',refresh);
+          } else {
               if (! f.on) 
                   console.log("20121010 no method 'on'",f);
               else
@@ -2036,6 +2049,14 @@ Lino.row_action_handler = function(actionName) {
       //~ 20120723 Lino.call_row_action(panel,rec.id,actionName,step,fn);
       Lino.call_row_action(panel,'GET',panel.get_record_url(rec.id),{},actionName,step,fn);
     });
+  };
+  return fn;
+};
+
+Lino.list_action_handler = function(actionName) {
+  var fn = function(panel,btn,step) {
+      var url = ADMIN_URL + '/api' + panel.ls_url
+      Lino.call_row_action(panel,'GET',url,{},actionName,step,fn);
   };
   return fn;
 };
@@ -2477,7 +2498,7 @@ Lino.fields2array = function(fields,values) {
         if (f.formatDate) {
             pv[i] = f.formatDate(v); 
         } else {
-            pv[i] = f.getValue(); 
+            pv[i] = v; // f.getValue(); 
         }
     }
     return pv;
@@ -3657,7 +3678,6 @@ Lino.GridPanel = Ext.extend(Lino.GridPanel,{
     if (after) {
         options.callback = function(r,options,success) {if(success) after()}
     }
-    
       
     //~ if (!this.rendered) {
         //~ console.log("20120206 GridPanel.refresh() must wait until rendered",options);
@@ -4269,6 +4289,7 @@ Lino.ComboBox = Ext.extend(Ext.form.ComboBox,{
   triggerAction: 'all',
   minListWidth:230,
   autoSelect: false,
+  selectOnFocus: true, // select any existing text in the field immediately on focus.
   submitValue: true,
   displayField: '$ext_requests.CHOICES_TEXT_FIELD', // 'text', 
   valueField: '$ext_requests.CHOICES_VALUE_FIELD', // 'value',
@@ -4414,7 +4435,7 @@ Lino.RemoteComboFieldElement = Ext.extend(Lino.ComboBox,{
   queryDelay: 300, // default 500 is maybe slow
   queryParam: '$URL_PARAM_FILTER', 
   //~ typeAhead: true,
-  selectOnFocus: true, // select any existing text in the field immediately on focus.
+  //~ selectOnFocus: true, // select any existing text in the field immediately on focus.
   resizable: true
 });
 
@@ -5375,3 +5396,4 @@ Lino.beid_read_card_handler = function(url,actionName,method) {
 }
 
 #end if
+

@@ -599,6 +599,8 @@ class Action(Parametrizable,Permittable):
             kw[k] = pf.get_default()
         return kw
         
+    def setup_action_request(self,actor,ar):
+        pass
         
 
 class TableAction(Action):
@@ -673,6 +675,18 @@ class ListAction(Action):
     Base class for actions that are executed server-side on an individual row.
     """
     callable_from = (GridEdit,)
+    def get_panel_btn_handler(self,actor,ui):
+        assert self.action_name is not None
+        return "Lino.list_action_handler(%r)" % self.action_name
+        #~ url = ui.ext_renderer.get_actor_url(actor)
+        #~ return "%s(%r,%r,%r)" % (self.js_handler,url,self.action_name,self.http_method)
+
+
+class JavaScriptAction(Action):
+    """
+    Base class for actions that are executed server-side on an individual row.
+    """
+    callable_from = (GridEdit,)
     js_handler = None
     http_method = 'GET'
     
@@ -688,7 +702,7 @@ class ListAction(Action):
         raise NotImplementedError("%s has no run() method" % self.__class__)
         
 
-class BeIdReadCardAction(ListAction):
+class BeIdReadCardAction(JavaScriptAction):
     """
     Explore the data read from an eid card and decide what to do with it.
     
@@ -1135,6 +1149,8 @@ class ActionRequest(BaseRequest):
                 #~ # logger.info("20120608 param_values is %s",param_values)
                 #~ for k,v in param_values.items():
                     #~ self.param_values.define(k,v)
+                    
+        self.bound_action.setup_action_request(self)
                 
         
     def setup(self,

@@ -45,6 +45,14 @@ class Chart(babel.BabelNamed):
         verbose_name = _("Account Chart")
         verbose_name_plural = _("Account Charts")
         
+    def get_account_by_ref(self,ref):
+        try:
+            #~ print 20121203, dict(ref=account,chart=self.journal.chart)
+            return Account.objects.get(ref=ref,chart=self)
+        except Account.DoesNotExist:
+            raise Warning("No Account with reference %r" % ref)
+        
+        
 class Charts(dd.Table):
     model = Chart
     detail_layout = """

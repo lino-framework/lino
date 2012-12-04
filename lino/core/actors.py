@@ -150,6 +150,9 @@ class BoundAction(object):
     def get_panel_btn_handler(self,*args):
         return self.action.get_panel_btn_handler(self.actor,*args)
         
+    def setup_action_request(self,*args):
+        return self.action.setup_action_request(self.actor,*args)
+        
     def get_bound_action_permission(self,ar,obj,state):
         if not self.action.get_action_permission(ar,obj,state):
             return False

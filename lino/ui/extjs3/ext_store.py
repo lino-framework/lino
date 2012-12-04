@@ -36,6 +36,8 @@ from django.contrib.contenttypes import generic
 
 from lino.utils import jsgen 
 from lino.utils.jsgen import py2js, Component, id2js, js_code
+from lino.utils.quantities import parse_decimal
+
 #~ from . import ext_requests
 from lino.ui import requests as ext_requests
 
@@ -628,6 +630,7 @@ class DisableEditingStoreField(SpecialStoreField):
             #~ return v
         #~ return extract_summary(v)
   
+
 class DecimalStoreField(StoreField):
     zero = decimal.Decimal(0)
     def __init__(self,field,name,**kw):
@@ -635,9 +638,7 @@ class DecimalStoreField(StoreField):
         StoreField.__init__(self,field,name,**kw)
         
     def parse_form_value(self,v,obj):
-        if '.' in v and ',' in v:
-            raise Exception("Invalid decimal value %r" % v)
-        return v.replace(',','.')
+        return parse_decimal(v)
 
     def value2num(self,v):
         #~ print "20120426 %s value2num(%s)" % (self,v)

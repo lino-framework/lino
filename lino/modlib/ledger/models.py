@@ -63,11 +63,6 @@ ZERO = Decimal()
     #~ return None
 
 
-
-
-
-
-    
 #~ def default_year():
     #~ return datetime.date.today().year
     
@@ -143,6 +138,7 @@ class Journal(babel.BabelNamed,mixins.Sequenced):
     #~ doctype = models.IntegerField() #choices=DOCTYPE_CHOICES)
     voucher_type = VoucherTypes.field() 
     force_sequence = models.BooleanField(default=False)
+    #~ total_based = models.BooleanField(_("Voucher entry based on total amount"),default=False)
     chart = models.ForeignKey('accounts.Chart')
     #~ chart = models.ForeignKey('accounts.Chart',blank=True,null=True)
     #~ account = models.ForeignKey('accounts.Account',blank=True,null=True)
@@ -152,7 +148,7 @@ class Journal(babel.BabelNamed,mixins.Sequenced):
     printed_name = babel.BabelCharField(max_length=100,blank=True)
     
     def get_doc_model(self):
-        """The model of documents in this Journal."""
+        """The model of vouchers in this Journal."""
         #print self,DOCTYPE_CLASSES, self.doctype
         return self.voucher_type.model
         #~ return DOCTYPES[self.doctype][0]
@@ -161,13 +157,13 @@ class Journal(babel.BabelNamed,mixins.Sequenced):
         return self.voucher_type.table_class
         #~ return DOCTYPES[self.doctype][1]
 
-    def get_document(self,year=None,number=None,**kw):
+    def get_voucher(self,year=None,number=None,**kw):
         cl = self.get_doc_model()
         kw.update(journal=self,year=year,number=number) 
         return cl.objects.get(**kw)
         
-    def create_document(self,**kw):
-        """Create an instance of this Journal's document model (:meth:`get_doc_model`)."""
+    def create_voucher(self,**kw):
+        """Create an instance of this Journal's voucher model (:meth:`get_doc_model`)."""
         cl = self.get_doc_model()
         kw.update(journal=self) 
         try:
@@ -184,10 +180,10 @@ class Journal(babel.BabelNamed,mixins.Sequenced):
         #~ doc.save()
         return doc
         
-    def get_next_number(self):
+    def get_next_number(self,voucher):
         self.save()
         cl = self.get_doc_model()
-        d = cl.objects.filter(journal=self).aggregate(
+        d = cl.objects.filter(journal=self,year=voucher.year).aggregate(
             models.Max('number'))
         number = d['number__max']
         if number is None:
@@ -195,8 +191,11 @@ class Journal(babel.BabelNamed,mixins.Sequenced):
         return number + 1
         
     def __unicode__(self):
-        #~ if self.ref:
-        return '%s (%s)' % (babel.BabelNamed.__unicode__(self),self.ref or self.id)
+        s = super(Journal,self).__unicode__()
+        if self.ref:
+            s += " (%s)" % self.ref
+            #~ return '%s (%s)' % (babel.BabelNamed.__unicode__(self),self.ref or self.id)
+        return s
             #~ return self.ref +'%s (%s)' % babel.BabelNamed.__unicode__(self)
             #~ return self.id +' (%s)' % babel.BabelNamed.__unicode__(self)
         
@@ -217,13 +216,12 @@ class Journal(babel.BabelNamed,mixins.Sequenced):
         super(Journal,self).full_clean(*args,**kw)
       
         
-    def pre_delete_voucher(self,doc):
-        #print "pre_delete_document", doc.number, self.get_next_number()
+    #~ def pre_delete_voucher(self,doc):
+    def disable_voucher_delete(self,doc):
+        #print "pre_delete_voucher", doc.number, self.get_next_number()
         if self.force_sequence:
-            if doc.number + 1 != self.get_next_number():
-                raise Exception(
-                  "%s is not the last voucher in journal" % unicode(doc)
-                  )
+            if doc.number + 1 != self.get_next_number(doc):
+                return _("%s is not the last voucher in journal" % unicode(doc))
 
 
 
@@ -232,10 +230,16 @@ class Journals(dd.Table):
     order_by = ["seqno"]
     column_names = "seqno id trade_type voucher_type name force_sequence *"
     detail_layout = """
-    seqno id trade_type voucher_type force_sequence 
+    seqno id trade_type voucher_type 
+    force_sequence 
     name
     printed_name
     """
+    insert_layout = dd.FormLayout("""
+    name
+    trade_type 
+    voucher_type 
+    """,window_size=(60,'auto'))
     
 
                   
@@ -249,14 +253,56 @@ def VoucherNumber(**kw):
     
 
 
+class RegisterVoucher(dd.RowAction):
+    label = _("Register") 
+    show_in_workflow = True
     
+    #~ icon_file = 'cancel.png'
+    #~ icon_file = 'flag_green.png'
+    required = dict(states='draft')
+    help_text=_("Register this voucher.")
+  
+    def get_action_permission(self,ar,obj,state):
+        if obj.user != ar.get_user():
+            return False
+        return super(RegisterVoucher,self).get_action_permission(ar,obj,state)
         
+    def run(self,obj,ar,**kw):
+        #~ ar.confirm(self.help_text,_("Are you sure?"))
+        obj.register_voucher(ar)
+        obj.save()
+        kw.update(refresh=True)
+        return kw
+    
+    
+class UnregisterVoucher(dd.RowAction):
+    label = _("Unregister")
+    show_in_workflow = True
+    
+    icon_file = 'cancel.png'
+    required = dict(states='registered paid')
+    help_text=_("Unregister this voucher.")
+  
+    def get_action_permission(self,ar,obj,state):
+        if obj.user != ar.get_user():
+            return False
+        return super(UnregisterVoucher,self).get_action_permission(ar,obj,state)
+        
+    def run(self,obj,ar,**kw):
+        #~ ar.confirm(self.help_text,_("Are you sure?"))
+        obj.unregister_voucher(ar)
+        obj.save()
+        kw.update(refresh=True)
+        return kw
+
 
 #~ class Voucher(mixins.Controllable):
-class Voucher(mixins.UserAuthored):
+class Voucher(mixins.UserAuthored,mixins.ProjectRelated):
     """
     A Voucher is a document that represents a monetary transaction.
-    This model is subclassed by sales.Invoice, purchases.Invoice, finan.Statement etc...
+    Subclasses must define a field `state`.
+    This model is subclassed by sales.Invoice, ledger.AccountInvoice, 
+    finan.Statement etc...
     """
     #~ class Meta:
         #~ abstract = True
@@ -265,11 +311,14 @@ class Voucher(mixins.UserAuthored):
     
     journal = JournalRef()
     year = FiscalYears.field(blank=True)
-    number = VoucherNumber(blank=True)
+    number = VoucherNumber(blank=True,null=True)
     date = models.DateField(default=datetime.date.today)
     #~ ledger_remark = models.CharField("Remark for ledger",
       #~ max_length=200,blank=True)
     narration = models.CharField(_("Narration"),max_length=200,blank=True)
+    
+    register_action = RegisterVoucher()
+    unregister_action = UnregisterVoucher()
     
     #~ @classmethod
     #~ def create_journal(cls,id,**kw):
@@ -296,30 +345,44 @@ class Voucher(mixins.UserAuthored):
             
         
     def __unicode__(self):
+        if self.number is None:
+            return "Voucher #%s (not registered)" % (self.id)
         return "%s-%s/%s" % (self.journal.pk,self.year,self.number)
         
-    def full_clean(self,*args,**kw):
-        #~ logger.info('Voucher.full_clean')
+                
+    def register_voucher(self,ar):
+        if self.year is None:
+            self.year = FiscalYears.from_date(self.date)
         if self.number is None:
-            self.number = self.journal.get_next_number()
-        #~ logger.info('Voucher.full_clean : number is %r',self.number)
-        super(Voucher,self).full_clean(*args,**kw)
+            self.number = self.journal.get_next_number(self)
+        assert self.number is not None
+        """
+        delete any existing movements and re-create them
+        """
+        self.movement_set.all().delete() 
+        for m in self.get_wanted_movements():
+            m.full_clean()
+            m.save()
+        state_field = self._meta.get_field('state')
+        self.state = state_field.choicelist.registered
         
-    def save(self,*args,**kw):
-        super(Voucher,self).save(*args,**kw)
-        if self.number is not None:
-            """
-            delete any existing movements and re-create them
-            """
-            self.movement_set.all().delete() 
-            for m in self.get_wanted_movements():
-                m.full_clean()
-                m.save()
+    def unregister_voucher(self,ar):
+        self.number = None
+        self.movement_set.all().delete() 
+        state_field = self._meta.get_field('state')
+        self.state = state_field.choicelist.draft
         
-    def delete(self):
-        #jnl = self.get_journal()
-        self.journal.pre_delete_document(self)
-        return super(Voucher,self).delete()
+        
+    def disable_delete(self,ar):
+        msg = self.journal.disable_voucher_delete(self)
+        if msg is not None:
+            return msg
+        return super(Voucher,self).disable_delete(ar)
+            
+        
+    #~ def delete(self):
+        #~ self.journal.pre_delete_voucher(self)
+        #~ return super(Voucher,self).delete()
         
     #~ def get_child_model(self):
         #~ ## overrides Typed
@@ -339,12 +402,10 @@ class Voucher(mixins.UserAuthored):
         #~ return self.create_movement(account,amount,**kw)
         
     def create_movement(self,account,amount,**kw):
+        assert isinstance(account,accounts.Account)
         kw['voucher'] = self
         #~ account = accounts.Account.objects.get(group__ref=account)
-        try:
-            account = accounts.Account.objects.get(ref=account,chart=self.journal.chart)
-        except accounts.Account.DoesNotExist:
-            raise Warning("No Account with reference %r" % account)
+        #~ account = self.journal.chart.get_account_by_ref(account)
         kw['account'] = account
         if amount >= 0:
             kw['amount'] = amount
@@ -356,7 +417,7 @@ class Voucher(mixins.UserAuthored):
         #~ kw['journal'] = self.journal
         #~ kw['year'] = self.year
         #~ kw['number'] = self.number
-        #~ kw['document'] = self
+        #~ kw['voucher'] = self
         #kw['number'] = self.number
         #~ kw.setdefault('date',self.date)
         #~ if not kw.get('date',None):
@@ -366,6 +427,15 @@ class Voucher(mixins.UserAuthored):
         #b.save()
         return b
         
+    def get_row_permission(self,ar,state,ba):
+        """
+        Only invoices in an editable state may be edited.
+        """
+        if not ba.action.readonly and not self.state.editable:
+            return False
+        return super(Voucher,self).get_row_permission(ar,state,ba)
+
+    
         
 
 class DebitOrCreditField(models.BooleanField):
@@ -374,6 +444,9 @@ class DebitOrCreditField(models.BooleanField):
 
     
 class Movement(mixins.Sequenced):
+  
+    allow_cascaded_delete = ['voucher']
+    
     voucher = models.ForeignKey(Voucher)
     #~ pos = models.IntegerField("Position",blank=True,null=True)
     account = models.ForeignKey(accounts.Account)
@@ -404,14 +477,12 @@ class Movement(mixins.Sequenced):
     def __unicode__(self):
         return u"%s.%d" % (unicode(self.voucher),self.seqno)
         
-    #~ def document(self,request):
-        #~ return "%s-%s/%s" % (self.journal,self.year,self.number)
-    #~ document.return_type = models.CharField(max_length=30)
     
 
 class Movements(dd.Table): 
     model = Movement
     column_names = 'voucher account debit credit *'
+    editable = False
     
 class MovementsByVoucher(Movements):
     master_key = 'voucher'
@@ -420,19 +491,18 @@ class MovementsByVoucher(Movements):
 
 
 
-#~ class LedgerInvoiceStates(ChoiceList):
-class LedgerInvoiceStates(dd.Workflow):
+class InvoiceStates(dd.Workflow):
     #~ label = _("State")
     pass
-add = LedgerInvoiceStates.add_item
-add('10',_("Booked"),'booked',help_text=_("Ready to sign"))
+add = InvoiceStates.add_item
+add('10',_("Draft"),'draft',editable=True) 
+add('20',_("Registered"),'registered',editable=False) 
 #~ add('20',_("Signed"),'signed')
 #~ add('30',_("Sent"),'sent')
-add('40',_("Paid"),'paid')
+add('40',_("Paid"),'paid',editable=False)
 
-
-
-
+#~ InvoiceStates.draft.add_workflow(_("Unregister"),states='registered paid')
+#~ InvoiceStates.registered.add_workflow(_("Register"),states='draft')
     
 class AccountInvoice(vat.VatDocument,Voucher):
     
@@ -445,44 +515,65 @@ class AccountInvoice(vat.VatDocument,Voucher):
     
     due_date = models.DateField(_("Due date"),blank=True,null=True)
     
-    state = LedgerInvoiceStates.field(blank=True)
+    state = InvoiceStates.field(default=InvoiceStates.draft)
     
     workflow_state_field = 'state'
     
-    def add_item(self,account=None,qty=None,**kw):
+    def get_trade_type(self):
+        return self.journal.trade_type
+        
+    def add_item(self,account=None,**kw):
         if account is not None:
             #~ if not isinstance(account,accounts.Account):
             if isinstance(account,basestring):
                 #~ account = accounts.Account.objects.get(group__ref=account)
-                account = accounts.Account.objects.get(ref=account)
+                #~ account = accounts.Account.objects.get(ref=account)
+                account = self.journal.chart.get_account_by_ref(account)
         kw['account'] = account
-        unit_price = kw.get('unit_price',None)
-        #~ if type(unit_price) == float:
-            #~ kw['unit_price'] = "%.2f" % unit_price
-        kw['qty'] = qty
-        #print self,kw
-        kw['document'] = self
+        kw['voucher'] = self
         return self.items.model(**kw)
         
-    def get_trade_type(self):
-        return self.journal.trade_type
+    
+
+
+class VoucherItem(dd.Model):
+    """
+    Subclasses must define a field `voucher` which must be a FK with related_name='items'
+    """
+    
+    allow_cascaded_delete = ['voucher']
+    
+    class Meta:
+        abstract = True
         
-    
-    
-
-
-
-
-class InvoiceItem(vat.VatItemBase):
-    
-    document = models.ForeignKey(AccountInvoice,related_name='items') 
-    
-    account = models.ForeignKey('accounts.Account',blank=True,null=True)
     title = models.CharField(max_length=200,blank=True)
     
-    def get_base_account(self):
-        return self.account
+    def get_row_permission(self,ar,state,ba):
+        """
+        Items of registered invoices may not be edited
+        """
+        if not self.voucher.get_row_permission(ar,state,ba):
+            return False
+        return super(VoucherItem,self).get_row_permission(ar,state,ba)
 
+
+class InvoiceItem(VoucherItem,vat.VatItemBase):
+    
+    #~ document = models.ForeignKey(AccountInvoice,related_name='items') 
+    voucher = models.ForeignKey(AccountInvoice,related_name='items') 
+    
+    #~ account = models.ForeignKey('accounts.Account',blank=True,null=True)
+    account = models.ForeignKey('accounts.Account')
+    
+    def get_base_account(self,tt):
+        return self.account
+        
+    @dd.chooser()
+    def account_choices(self,voucher):
+        if voucher and voucher.journal:
+            fkw = {voucher.journal.trade_type.name+'_allowed':True}
+            return accounts.Account.objects.filter(chart=voucher.journal.chart,**fkw)
+        return []
 
 
 
@@ -490,14 +581,14 @@ class InvoiceDetail(dd.FormLayout):
     main = "general ledger"
     
     totals = """
-    total_excl
+    total_base
     total_vat
     total_incl
     workflow_buttons
     """
     
     general = dd.Panel("""
-    id date partner user state
+    id date partner user 
     due_date your_ref vat_regime item_vat
     ItemsByInvoice:60 totals:20
     """,label=_("General"))
@@ -509,20 +600,28 @@ class InvoiceDetail(dd.FormLayout):
     
 class Invoices(dd.Table):
     parameters = dict(
-        year=FiscalYears.field(blank=True),
-        journal=JournalRef(blank=True))
+        pyear=FiscalYears.field(blank=True),
+        ppartner=models.ForeignKey('contacts.Partner',blank=True,null=True),
+        pjournal=JournalRef(blank=True))
     model = AccountInvoice
     order_by = ["id"]
     column_names = "id date partner total_incl user *" 
+    params_layout = "pjournal pyear ppartner"
     detail_layout = InvoiceDetail()
+    insert_layout = dd.FormLayout("""
+    date partner
+    total_incl
+    """,window_size=(60,'auto'))
     
     @classmethod
     def get_request_queryset(cls,ar):
         qs = super(Invoices,cls).get_request_queryset(ar)
-        if ar.param_values.year:
-            qs = qs.filter(year=ar.param_values.year)
-        if ar.param_values.journal:
-            qs = qs.filter(journal=ar.param_values.journal)
+        if ar.param_values.ppartner:
+            qs = qs.filter(partner=ar.param_values.ppartner)
+        if ar.param_values.pyear:
+            qs = qs.filter(year=ar.param_values.pyear)
+        if ar.param_values.pjournal:
+            qs = qs.filter(journal=ar.param_values.pjournal)
         return qs
     
     
@@ -534,21 +633,31 @@ class InvoicesByJournal(Invoices):
     column_names = "number date due_date " \
                   "partner " \
                   "total_incl " \
-                  "total_excl total_vat user *"
+                  "total_base total_vat user *"
                   #~ "ledger_remark:10 " \
+    params_panel_hidden = True
+                  
+    @classmethod
+    def get_title_base(self,ar):
+        return unicode(ar.master_instance)
+        #~ title = _("%(details)s of %(master)s") % dict(
+          #~ details=title,
+          #~ master=ar.master_instance)
+        #~ return title
+                  
 
 
 class ItemsByInvoice(dd.Table):
     model = InvoiceItem
-    column_names = "seqno:3 account title unit_price qty total_excl total_vat total_incl"
-    master_key = 'document'
+    column_names = "seqno:3 account title total_base total_vat total_incl"
+    master_key = 'voucher'
     order_by = ["seqno"]
     
 
 class InvoicesByPartner(Invoices):
     order_by = ["date"]
     master_key = 'partner'
-    column_names = "date total_incl total_excl total_vat *"
+    column_names = "date total_incl total_base total_vat *"
     
 
 
@@ -590,3 +699,13 @@ def setup_explorer_menu(site,ui,profile,m):
     m = m.add_menu("ledger",MODULE_LABEL)
     m.add_action(Invoices)
   
+
+
+def customize_accounts():
+
+    for tt in vat.TradeTypes.objects():
+        dd.inject_field('accounts.Account',
+            tt.name+'_allowed',
+            models.BooleanField(verbose_name=tt.text))
+
+customize_accounts()

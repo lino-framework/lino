@@ -48,6 +48,10 @@ class FiscalYears(dd.ChoiceList):
     @classmethod
     def from_int(cls,year):
         return cls.get_by_value(str(year)[2:])
+        
+    @classmethod
+    def from_date(cls,date):
+        return cls.from_int(date.year)
 
 for y in range(2000,datetime.date.today().year+5):
     s = str(y)

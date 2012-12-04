@@ -42,6 +42,14 @@ Fraction(1, 3)          1/3      1
 Percentage('33%')       33%   0.99
 Duration('2:30')       2:30   7:30
 
+Both period and comma are accepted as decimal separator:
+
+>>> parse('1.5')
+Decimal('1.5')
+>>> parse('1,5')
+Decimal('1.5')
+
+
 """
 
 from decimal import Decimal
@@ -200,7 +208,14 @@ def parse(s):
         return Fraction(s)
     if s.endswith('%'):
         return Percentage(s)
+    return parse_decimal(s)
+    
+def parse_decimal(s):
+    if '.' in s and ',' in s:
+        raise Exception("Invalid decimal value %r" % s)
+    s = s.replace(',','.')
     return Decimal(s)
+    
         
         
         

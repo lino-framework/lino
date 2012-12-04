@@ -153,7 +153,7 @@ class Model(models.Model):
         return self._lino_default_table
         
     def disabled_fields(self,ar):
-        return []
+        return set()
         
     def on_create(self,ar):
         """

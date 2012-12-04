@@ -66,6 +66,10 @@ class Serializer(base.Serializer):
             self.stream.write('# -*- coding: UTF-8 -*-\n')
             #~ self.stream.write('# Created using Lino version %s\n' % lino.__version__)
             name,current_version,url = settings.LINO.using().next()
+            if '+' in current_version:
+                raise Exception(
+                    "Cannot dumpdata from intermediate version %s" % current_version)
+            
             self.stream.write('''\
 """
 This is a `Python dump <http://lino-framework.org/topics/dumpy.html>`_ 

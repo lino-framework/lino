@@ -45,6 +45,7 @@ from lino.utils import babel
 #~ auth = resolve_app('auth')
 #~ from lino.modlib.users import models as auth
 contacts = dd.resolve_app('contacts')
+accounts = dd.resolve_app('accounts')
 ledger = dd.resolve_app('ledger')
 vat = dd.resolve_app('vat')
 products = dd.resolve_app('products')
@@ -70,10 +71,11 @@ class InvoiceStates(dd.Workflow):
     #~ label = _("State")
     pass
 add = InvoiceStates.add_item
-add('10',_("Booked"),'booked',help_text=_("Ready to sign"))
-add('20',_("Signed"),'signed')
-add('30',_("Sent"),'sent')
-add('40',_("Paid"),'paid')
+add('10',_("Draft"),'draft',editable=True)
+add('20',_("Registered"),'registered',editable=False) 
+add('30',_("Signed"),'signed',editable=False)
+add('40',_("Sent"),'sent',editable=False)
+add('50',_("Paid"),'paid',editable=False)
 
 
 
@@ -244,7 +246,6 @@ The default item_vat settings of sales invoices for this customer.""")
 class SalesDocument(
       #~ mixins.UserAuthored,
       vat.VatDocument,
-      mixins.ProjectRelated,
       #~ journals.Sendable,
       #~ journals.Journaled,
       #~ contacts.ContactDocument,
@@ -254,6 +255,9 @@ class SalesDocument(
     #~ Subclasses must either add themselves a date field (as does Order) 
     #~ or inherit it from Transaction (as does Invoice)
     """
+    
+    compute_totals = True
+    
     class Meta:
         abstract = True
         
@@ -280,7 +284,7 @@ class SalesDocument(
     subject = models.CharField("Subject line",max_length=200,blank=True)
     #~ vat_exempt = models.BooleanField(default=False)
     #~ item_vat = models.BooleanField(default=False)
-    #~ total_excl = dd.PriceField(blank=True,null=True)
+    #~ total_base = dd.PriceField(blank=True,null=True)
     #~ total_vat = dd.PriceField(blank=True,null=True)
     intro = models.TextField("Introductive Text",blank=True)
     #~ user = models.ForeignKey(settings.LINO.user_model,blank=True,null=True)
@@ -304,31 +308,31 @@ class SalesDocument(
             #~ kw['unit_price'] = "%.2f" % unit_price
         kw['qty'] = qty
         #print self,kw
-        kw['document'] = self
+        kw['voucher'] = self
         return self.items.model(**kw)
         #~ cannot use create here because that would try to save() the item
         #~ return self.items.create(**kw)
     
     #~ @dd.virtualfield(dd.PriceField(_("Total incl. VAT")))
     #~ def total_incl(self,ar=None):
-        #~ if self.total_excl is None:
+        #~ if self.total_base is None:
             #~ return None
-        #~ return self.total_excl + self.total_vat
+        #~ return self.total_base + self.total_vat
     
     def update_totals(self):
-        logger.info("20121202 sales.update_totals()")
+        #~ logger.info("20121202 sales.update_totals()")
         if self.pk is None:
             return
-        total_excl = 0
+        total_base = 0
         total_vat = 0
         for i in self.items.all():
-            if i.total_excl is not None:
-                total_excl += i.total_excl
+            if i.total_base is not None:
+                total_base += i.total_base
             if i.total_vat is not None:
                 total_vat += i.total_vat
             #~ if not i.product.vatExempt:
-                #~ total_vat += i.total_excl() * 0.18
-        self.total_excl = total_excl
+                #~ total_vat += i.total_base() * 0.18
+        self.total_base = total_base
         self.total_vat = total_vat
         #~ if self.journal == "ORD":
             #~ print "  done before_save:", self
@@ -365,14 +369,15 @@ class SalesDocuments(dd.Table):
         #~ return dict(items=ItemsByDocument())
 
 
+      
 
-class Order(SalesDocument):
+class Order(SalesDocument,mixins.ProjectRelated):
     """
     An Order is when a :class:`Customer` asks us to "deliver" a 
     given set of "products".
     """
     
-    #~ date = models.DateField(help_text="""The official date of this document.""")
+    #~ date = models.DateField(help_text="""The official date of this voucher.""")
     
     class Meta:
         verbose_name = _("Order")
@@ -487,7 +492,7 @@ class Order(SalesDocument):
         if simulate:
             return True
         #jnl = journals.get_journal(self.imode.journal)
-        #~ invoice = self.imode.journal.create_document(
+        #~ invoice = self.imode.journal.create_voucher(
         invoice = Invoice(
             date=today,
             order=self,
@@ -506,7 +511,7 @@ class Order(SalesDocument):
             i = invoice.add_item(**d)
             i.full_clean()
             i.save()
-            #i = DocItem(document=invoice,**d)
+            #i = DocItem(voucher=invoice,**d)
             #i.save()
         invoice.full_clean()
         invoice.save() # save again because totals have been updated
@@ -559,14 +564,6 @@ class Invoice(SalesDocument,ledger.Voucher):
     class Meta:
         verbose_name = _("Invoice")
         verbose_name_plural = _("Invoices")
-  
-    #~ # implements Booked:
-    #~ value_date = models.DateField(auto_now=True)
-    #~ ledger_remark = models.CharField("Remark for ledger",
-      #~ max_length=200,blank=True)
-    #~ booked = models.BooleanField(default=False)
-    
-    #~ item_class = InvoiceItem
     
     due_date = models.DateField(_("Date of payment"),blank=True,null=True)
     order = models.ForeignKey('sales.Order',blank=True,null=True)
@@ -591,24 +588,25 @@ class Invoice(SalesDocument,ledger.Voucher):
     #~ def get_wanted_movements(self):
         #~ yield self.create_movement(
           #~ settings.LINO.get_base_account(self),
-          #~ self.total_excl)
+          #~ self.total_base)
         #~ if self.total_vat:
             #~ yield self.create_movement(
               #~ settings.LINO.get_vat_account(self),
               #~ self.total_vat)
         #~ yield self.create_movement(
           #~ settings.LINO.site_config.customers_account,
-          #~ self.total_excl+self.total_vat)
+          #~ self.total_base+self.total_vat)
 
 
-class ProductDocItem(vat.VatItemBase):
+class ProductDocItem(ledger.VoucherItem,vat.QtyVatItemBase):
     product = models.ForeignKey('products.Product',blank=True,null=True)
-    title = models.CharField(max_length=200,blank=True)
+    #~ title = models.CharField(max_length=200,blank=True)
     description = dd.RichTextField(_("Description"),blank=True,null=True)
     discount = models.IntegerField(_("Discount"),default=0)
     
     def get_base_account(self,tt):
-        return settings.LINO.get_product_base_account(tt,self.product)
+        ref = settings.LINO.get_product_base_account(tt,self.product)
+        return self.voucher.journal.chart.get_account_by_ref(ref)
         
     def get_vat_class(self,tt):
         name = settings.LINO.get_product_vat_class(tt,self.product)
@@ -627,10 +625,10 @@ class ProductDocItem(vat.VatItemBase):
 
 
 class OrderItem(ProductDocItem):
-    document = models.ForeignKey(Order,related_name='items') 
+    voucher = models.ForeignKey(Order,related_name='items') 
 
 class InvoiceItem(ProductDocItem):
-    document = models.ForeignKey(Invoice,related_name='items') 
+    voucher = models.ForeignKey(Invoice,related_name='items') 
 
 
 class InvoiceDetail(dd.FormLayout):
@@ -638,11 +636,10 @@ class InvoiceDetail(dd.FormLayout):
     
     totals = dd.Panel("""
     discount
-    total_excl
+    total_base
     total_vat
     total_incl
-    state
-    # workflow_buttons
+    workflow_buttons
     """,label=_("Totals"))
     
     invoice_header = dd.Panel("""
@@ -691,11 +688,12 @@ class Invoices(SalesDocuments):
 class InvoicesByJournal(Invoices):
     order_by = ["number"]
     master_key = 'journal' # see django issue 10808
+    params_panel_hidden = True
     #master = journals.Journal
     column_names = "number date due_date " \
                   "partner " \
                   "total_incl order subject:10 sales_remark:10 " \
-                  "total_excl total_vat user *"
+                  "total_base total_vat user *"
                   #~ "ledger_remark:10 " \
 
 if settings.LINO.project_model:
@@ -722,7 +720,7 @@ class DocumentsToSign(Invoices):
     #~ can_add = perms.never
     column_names = "number:4 order date " \
                   "partner:10 imode " \
-                  "subject:10 total_incl total_excl total_vat "
+                  "subject:10 total_incl total_base total_vat "
     #~ actions = Invoices.actions + [ SignAction() ]
     
     #~ def get_row_actions(self,renderer):
@@ -743,7 +741,7 @@ class InvoicesByOrder(SalesDocuments):
     model = Invoice
     master_key = "order"
     order_by = ["number"]
-    column_names = "number date your_ref total_excl *"
+    column_names = "number date your_ref total_base *"
 
     
 #~ class ItemsByDocumentListLayout(layouts.ListLayout):
@@ -755,7 +753,7 @@ class InvoicesByOrder(SalesDocuments):
 
 class ItemsByDocument(dd.Table):
     column_names = "seqno:3 product title description:20x1 discount unit_price qty total_incl *"
-    master_key = 'document'
+    master_key = 'voucher'
     order_by = ["seqno"]
     
 
@@ -789,19 +787,19 @@ class OrdersByPartner(Orders):
     #~ model = 'sales.Order'
     master_key = 'partner'
     order_by = ["start_date"]
-    column_names = "start_date total_incl total_excl total_vat *"
+    column_names = "start_date total_incl total_base total_vat *"
     
 
 class InvoicesByPartner(Invoices):
     #~ model = 'sales.Invoice'
     order_by = ["date"]
     master_key = 'partner'
-    column_names = "date total_incl total_excl total_vat *"
+    column_names = "date total_incl total_base total_vat *"
     
 
 #~ class SalesByPerson(SalesDocuments):
     #~ column_names = "journal:4 number:4 date:8 " \
-                   #~ "total_incl total_excl total_vat *"
+                   #~ "total_incl total_base total_vat *"
     #~ order_by = ["date"]
     #~ master_key = 'person'
 

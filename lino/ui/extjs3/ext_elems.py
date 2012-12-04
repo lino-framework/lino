@@ -918,8 +918,17 @@ class DateTimeFieldElement(FieldElement):
             kw.update(value="<br>")
         FieldElement.__init__(self,layout_handle,field,**kw)
     
+class DatePickerFieldElement(FieldElement):
+    value_template = "new Lino.DatePickerField(%s)"
+    def get_column_options(self,**kw):
+        raise Exception("not allowed in grid")
+    
 class DateFieldElement(FieldElement):
-    value_template = "new Lino.DateField(%s)"
+    if settings.LINO.use_spinner:
+        value_template = "new Lino.SpinnerDateField(%s)"
+    else:
+        value_template = "new Lino.DateField(%s)"
+        #~ value_template = "new Lino.DatePickerField(%s)"
     #~ xtype = 'datefield'
     #~ data_type = 'date' # for store column
     sortable = True
@@ -929,6 +938,11 @@ class DateFieldElement(FieldElement):
     # todo: DateFieldElement.preferred_width should be computed from Report.date_format
     #~ grid_column_template = "new Ext.grid.DateColumn(%s)"
     
+    #~ def __init__(self,layout_handle,field,**kw):
+        #~ if False: # getattr(field,'picker',False):
+            #~ self.value_template = "new Lino.DatePickerField(%s)"
+        #~ FieldElement.__init__(self,layout_handle,field,**kw)
+        
     #~ def get_field_options(self,**kw):
         #~ kw = FieldElement.get_field_options(self,**kw)
         #~ kw.update(format=self.layout_handle.rh.actor.date_format)
@@ -1869,6 +1883,7 @@ _FIELD2ELEM = (
     (models.CharField, CharFieldElement),
     (dd.MonthField, MonthFieldElement),
     (models.DateTimeField, DateTimeFieldElement),
+    (dd.DatePickerField, DatePickerFieldElement),
     (models.DateField, DateFieldElement),
     (models.TimeField, TimeFieldElement),
     (models.IntegerField, IntegerFieldElement),

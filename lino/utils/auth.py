@@ -524,6 +524,9 @@ class AnonymousUser(object):
                         settings.LINO.anonymous_user_profile,
                         [i.value for i in UserProfiles.items()]))
         return cls._instance
+        
+    def __str__(self):
+        return self.username
     
 
 

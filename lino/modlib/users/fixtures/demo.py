@@ -30,7 +30,8 @@ def root_user(lang,**kw):
     kw.update(email='root@example.com') 
     kw.update(language=lang) 
     if lang == 'de':
-        kw.update(first_name="Rudi",last_name=u"Rutté")
+        #~ kw.update(first_name="Rudi",last_name=u"Rutté")
+        kw.update(first_name="Rolf",last_name=u"Rompen")
     elif lang == 'fr':
         kw.update(first_name=u"Romain",last_name=u"Raffault")
     elif lang == 'et':

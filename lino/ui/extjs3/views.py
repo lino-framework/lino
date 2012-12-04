@@ -94,6 +94,9 @@ def action_request(app_label,actor,request,rqdata,**kw):
     if a is None:
         raise http.Http404("%s has no url action %r (possible values are %s)" % (
             rpt,action_name,rpt.get_url_action_names()))
+    user = request.subst_user or request.user
+    if not a.get_view_permission(user.profile):
+        raise Exception("Action not allowed for %s" % user)
     ar = rpt.request(settings.LINO.ui,request,a,**kw)
     ar.renderer = settings.LINO.ui.ext_renderer
     return ar
@@ -360,8 +363,7 @@ def form2obj_and_save(ar,data,elem,is_new,restful,file_upload=False): # **kw2sav
                 #~ record_id=elem.pk)
         else:
             watcher.log_diff(request)
-        
-            kw.update(message=_("%s has been saved.") % obj2unicode(elem))
+            kw.update(message=_("%s has been updated.") % obj2unicode(elem))
         
     else:
     
@@ -573,8 +575,7 @@ def choices_for_field(request,rpt,field):
     return (qs,row2dict)
         
 
-def choices_response(request,qs,row2dict):
-            
+def choices_response(request,qs,row2dict,emptyValue):
     quick_search = request.GET.get(ext_requests.URL_PARAM_FILTER,None)
     if quick_search is not None:
         qs = dbtables.add_quick_search_filter(qs,quick_search)
@@ -591,6 +592,11 @@ def choices_response(request,qs,row2dict):
         qs = qs[:int(limit)]
         
     rows = [ row2dict(row,{}) for row in qs ]
+    if emptyValue is not None: # 20121203
+        empty = dict()
+        empty[ext_requests.CHOICES_TEXT_FIELD] = emptyValue
+        empty[ext_requests.CHOICES_VALUE_FIELD] = None
+        rows.insert(0,empty)
     return json_response_kw(count=count,rows=rows) 
     #~ return json_response_kw(count=len(rows),rows=rows) 
     #~ return json_response_kw(count=len(rows),rows=rows,title=_('Choices for %s') % fldname)
@@ -608,7 +614,11 @@ class ActionParamChoices(View):
             raise Exception("Unknown action %r for %s" % (an,actor))
         field = ba.action.get_param_elem(field)
         qs, row2dict = choices_for_field(request,actor,field)
-        return choices_response(request,qs,row2dict)
+        if field.blank:
+            emptyValue = '<br/>'
+        else:
+            emptyValue = None
+        return choices_response(request,qs,row2dict,emptyValue)
       
 class Choices(View):
   
@@ -622,6 +632,7 @@ class Choices(View):
         the `record_selector` widget.
         """
         rpt = requested_report(app_label,rptname)
+        emptyValue = None
         if fldname is None:
             ar = rpt.request(settings.LINO.ui,request) # ,rpt.default_action)
             #~ rh = rpt.get_handle(self)
@@ -645,9 +656,12 @@ class Choices(View):
             field = rpt.get_param_elem(fldname)
             if field is None:
                 field = rpt.get_data_elem(fldname)
+            if field.blank:
+                #~ logger.info("views.Choices: %r is blank",field)
+                emptyValue = '<br/>'
             qs, row2dict = choices_for_field(request,rpt,field)
             
-        return choices_response(request,qs,row2dict)
+        return choices_response(request,qs,row2dict,emptyValue)
         
   
 class Restful(View):
@@ -958,6 +972,8 @@ class ApiList(View):
         fmt = request.GET.get(
             ext_requests.URL_PARAM_FORMAT,
             ar.bound_action.action.default_format)
+            
+        #~ logger.info("20121203 views.ApiList.get() %s",ar.bound_action.full_name())
       
         if fmt == ext_requests.URL_FORMAT_JSON:
             #~ ar.renderer = ui.ext_renderer

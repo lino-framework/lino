@@ -167,12 +167,14 @@ class TableRequest(actions.ActionRequest):
     _sliced_data_iterator = None
     
     def __init__(self,ui,actor,request=None,action=None,**kw):
-        if not (isinstance(actor,type) and issubclass(actor,AbstractTable)):
-            raise Exception("Expected an AbstractTable subclass, got %r" % actor)
+        #~ if not (isinstance(actor,type) and issubclass(actor,AbstractTable)):
+            #~ raise Exception("Expected an AbstractTable subclass, got %r" % actor)
         actions.ActionRequest.__init__(self,ui,actor,request,action,**kw)
         #~ self.execute()
         
     def execute(self):
+        #~ if self.actor.parameters:
+            #~ logger.info("20121203 TableRequest.execute() %s",self.param_values)
         self._data_iterator = self.get_data_iterator()
         self._sliced_data_iterator = self._data_iterator
         if self.offset is not None:

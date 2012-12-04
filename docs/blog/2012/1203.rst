@@ -1,0 +1,61 @@
+20121203
+========
+
+- Entering purchase invoices in :mod:`lino.apps.cosi`:
+  Bugs and optimizations.
+  
+- AttributeError at /choices/lino/ContentTypes, 
+  "type object 'ContentType' has no attribute 'quick_search_fields'",
+  :srdref:`/lino/core/dbtables.py` in quick_search_filter, line 184  
+  
+
+About versioning
+----------------
+
+Lino is currently in version "1.0.5+". 
+The "+" is a new experimental feature: it would raise
+an exception if somebody tried to load a dumpy fixture.
+Just to keep myself from using this on a production server.
+
+Started new doc section :doc:`/dev/versioning`.
+
+
+Sprachkurse
+-----------
+
+CourseContents hat jetzt ein detail_layout und 
+
+Kursinhalte haben jetzt ein Detail-Fenster, in dem man
+die Anfragen und die Angebote pro Kursinhalt sehen kann.
+Also alle Zeiger auf einen Kursinhalt sind jetzt anklickbar,
+und in :menuselection:`Konfigurierung --> Kursinhalte`
+kann man jetzt doppelklicken.
+
+
+Terminplanung
+-------------
+
+Hier hat sich einiges geändert. Events hat jetzt ein Parameter-Panel,
+dadurch werden einige Menübefehle unnütz.
+Und das neue Feld `assigned_to`.
+
+In der Terminliste wäre es ja schön, wenn man durch einfachen Klick 
+von einem Tag zum nächsten wandern könnte. Das haben wir leider noch nicht.
+
+Ich habe heute drei Methoden versucht, um das zu implementieren:
+
+- NextDateAction: serverseitig würden die param_values verändert. ListAction
+- SpinnerDateField
+- DatePickerField
+
+Die letzte scheint mit am erfolgsversprechendsten. Da ist scheinbar nur ein doofer Bug, 
+der dafür sorgt, das die Werte nicht richtig aktualisiert werden. 
+Und das Layout ist in diesem Fall auch noch nachzuschauen.
+
+Miscellaneous
+-------------
+
+- In Comboboxen, die einen leeren Wert erlauben, 
+  steht eine leere Zeile jetzt auch in der Auswahlliste.
+  
+- Budget.partner war nullable. Jetzt nicht mehr.

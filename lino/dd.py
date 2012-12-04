@@ -79,6 +79,7 @@ Miscellaneous:
 - :class:`Workflow <lino.core.workflows.Workflow>`
 - :class:`ChangeStateAction <lino.core.changes.ChangeStateAction>`
 - :class:`NotifyingAction <lino.core.actions.NotifyingAction>`
+- :class:`ListAction <lino.core.actions.ListAction>`
 
 - :class:`UserProfiles <lino.utils.auth.UserProfiles>`
 - :class:`UserGroups <lino.utils.auth.UserGroups>`
@@ -116,6 +117,7 @@ from lino.core.dialogs import Dialog
 from lino.core.actions import action
 #~ from lino.core.actions import Action
 from lino.core.actions import RowAction
+from lino.core.actions import ListAction
 from lino.core.actions import GridEdit, ShowDetailAction
 from lino.core.actions import InsertRow, DeleteSelected
 from lino.core.actions import SubmitDetail, SubmitInsert
@@ -133,6 +135,7 @@ from lino.core.fields import RecurrenceField
 from lino.core.fields import GenericForeignKey
 from lino.core.fields import GenericForeignKeyIdField
 from lino.core.fields import IncompleteDateField
+from lino.core.fields import DatePickerField
 from lino.core.fields import NullCharField
 from lino.core.fields import PasswordField
 from lino.core.fields import MonthField
@@ -242,6 +245,7 @@ def inject_field(model_spec,name,field,doc=None):
     That's why it uses Django's `class_prepared` signal to maintain 
     its own list of models.
     """
+    #~ logger.info("20121204 inject_field(%r,%s)",model_spec,name)
     if doc:
         field.__doc__ = doc
     def todo(model):

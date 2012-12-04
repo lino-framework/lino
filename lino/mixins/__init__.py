@@ -150,12 +150,6 @@ class UserAuthored(dd.Model):
     class Meta:
         abstract = True
         
-    #~ user = models.ForeignKey('contacts.Partner',
-        #~ verbose_name=_("user"),
-        #~ related_name="%(app_label)s_%(class)s_set_by_user",
-        #~ blank=True,null=True
-        #~ )
-            
     if settings.LINO.user_model: 
       
         workflow_owner_field = 'user' # used by :mod:`lino.modlib.workflows.models`
@@ -165,6 +159,10 @@ class UserAuthored(dd.Model):
             related_name="%(app_label)s_%(class)s_set_by_user",
             blank=True,null=True
             )
+            
+    else:
+      
+        user = dd.DummyField()
         
     #~ def on_duplicate(self,ar):
         #~ self.user = ar.get_user()

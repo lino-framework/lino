@@ -40,13 +40,14 @@ def objects():
           **babel_values('name',de=de,fr=fr,en=en))
         return current_group
           
-    def Account(ref,type,fr,de,en):
+    def Account(ref,type,fr,de,en,**kw):
+        kw.update(babel_values('name',de=de,fr=fr,en=en))
         return accounts.Account(
           chart=chart,
           group=current_group,
           ref=ref,
           type=accounts.AccountTypes.get_by_name(type),
-          **babel_values('name',de=de,fr=fr,en=en))
+          **kw)
           
     yield Group('10','capital',u"Capital",u"Kapital","Capital")
     
@@ -59,10 +60,20 @@ def objects():
     yield Account('vat_deductible','asset',u"TVA déductible",u"Geschuldete MWSt","VAT deductible") # PCMN 4512
     
     yield Group('6','expense',u"Charges",u"Aufwendungen","Expenses") # 
-    yield Account('purchases','expense',u"Achat de marchandise",u"Wareneinkäufe","Purchase of goods") # PCMN 6000
+    yield Account('products','expense',
+        u"Achat de marchandise",u"Wareneinkäufe","Purchase of goods",
+        purchases_allowed=True) # PCMN 6040
+    yield Account('services','expense',
+        u"Services et biens divers",u"Dienstleistungen","Purchase of services",
+        purchases_allowed=True) 
+    yield Account('invests','expense',
+        u"Investissements",u"Anlagen","Purchase of investments",
+        purchases_allowed=True) 
     
     yield Group('7','income',u"Produits",u"Erträge","Revenues") 
-    yield Account('sales','income',u"Ventes",u"Verkäufe","Sales") # PCMN 7000
+    yield Account('sales','income',
+        u"Ventes",u"Verkäufe","Sales",
+        sales_allowed=True) # PCMN 7000
 
 
     sales = dd.resolve_app('sales')
@@ -75,9 +86,12 @@ def objects():
             yield sales.Invoice.create_journal('sales',chart=chart,**babel_values('name',
               de=u"Verkaufsrechnungen",fr=u"Factures vente",en="Sales invoices",et=u"Müügiarved"))
         else:
-            yield ledger.AccountInvoice.create_journal('sales',chart=chart,**babel_values('name',
-              de=u"Verkaufsrechnungen",fr=u"Factures vente",en="Sales invoices",et=u"Müügiarved"))
+            yield ledger.AccountInvoice.create_journal('sales',
+                chart=chart,**babel_values('name',
+                de=u"Verkaufsrechnungen",fr=u"Factures vente",en="Sales invoices",et=u"Müügiarved"))
               
-        yield ledger.AccountInvoice.create_journal('purchases',chart=chart,**babel_values('name',
-          de=u"Einkaufsrechnungen",fr=u"Factures achat",en="Purchase invoices",et=u"Ostuarved"))
+        yield ledger.AccountInvoice.create_journal('purchases',
+            chart=chart,
+            **babel_values('name',
+                de=u"Einkaufsrechnungen",fr=u"Factures achat",en="Purchase invoices",et=u"Ostuarved"))
 

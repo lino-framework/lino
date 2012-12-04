@@ -1114,6 +1114,9 @@ class ExtUI(base.UI):
 
         yield '<script type="text/javascript" src="%s/extjs/examples/ux/statusbar/StatusBar.js"></script>' % self.media_url()
         
+        if settings.LINO.use_spinner:
+            yield '<script type="text/javascript" src="%s/extjs/examples/ux/Spinner.js"></script>' % self.media_url()
+        
         if settings.LINO.use_tinymce:
             p = self.media_url() + '/tinymce'
             #~ yield '<script type="text/javascript" src="Ext.ux.form.FileUploadField.js"></script>'
@@ -1824,6 +1827,9 @@ tinymce.init({
                 #~ raise Exception("Action %r has no url_action_name" % a)
             #~ kw.update(
               #~ panel_btn_handler=js_code("Lino.list_action_handler(%r)" % a.action_name))
+            kw.update(panel_btn_handler=js_code(ba.get_panel_btn_handler(self)))
+            kw.update(must_save=True)
+        elif isinstance(a,actions.JavaScriptAction):
             kw.update(panel_btn_handler=js_code(ba.get_panel_btn_handler(self)))
             kw.update(must_save=True)
         else:
