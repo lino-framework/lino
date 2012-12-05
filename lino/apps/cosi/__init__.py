@@ -43,13 +43,15 @@ from os.path import join, abspath, dirname
 
 from lino.apps.std.settings import *
 
+from django.utils.translation import ugettext_lazy as _
+
 class Lino(Lino):
   
     #~ title = __name__
     short_name = u"Lino Così"
+    description = _("a Lino application to make Belgian accounting simple.")
     version = "0.1"
     url = "http://www.lino-framework.org/autodoc/lino.apps.cosi"
-    description = "a Lino application to make Belgian accounting simple."
     author = 'Luc Saffre'
     author_email = 'luc.saffre@gmail.com'
     
@@ -65,6 +67,12 @@ class Lino(Lino):
       #~ 'contacts.Person','contacts.Company',
       #~ 'households.Household']
     
+    #~ def get_description(self):
+        #~ from django.utils.translation import ugettext_lazy as _
+        #~ from django.utils.translation import string_concat
+        #~ return _("a Lino application to make Belgian accounting simple.")
+    #~ description = property(get_description)
+        
     def get_app_source_file(self): return __file__
       
     #~ def get_application_info(self):

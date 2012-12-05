@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2012-12-02 10:23+0000\n"
+"POT-Creation-Date: 2012-12-05 15:40+0000\n"
 "PO-Revision-Date: 2012-09-22 07:29+0100\n"
 "Last-Translator: Luc Saffre <luc.saffre@gmail.com>\n"
 "Language-Team: \n"
@@ -17,72 +17,72 @@ msgstr ""
 "Plural-Forms: nplurals=2; plural=(n != 1);\n"
 "X-Generator: Poedit 1.5.3\n"
 
-#: .\models.py:58
+#: .\models.py:56
 msgid "VAT Class"
 msgstr ""
 
-#: .\models.py:60 .\models.py:77
+#: .\models.py:58 .\models.py:75
 msgid "Exempt"
 msgstr "Befreit von MWSt."
 
-#: .\models.py:61
+#: .\models.py:59
 msgid "Reduced"
 msgstr "Ermäßigter MWSt-Satz"
 
-#: .\models.py:62
+#: .\models.py:60
 msgid "Normal"
 msgstr "Normaler MWSt-Satz"
 
-#: .\models.py:70
+#: .\models.py:68
 msgid "VAT Regime"
 msgstr "MWSt.-Regime"
 
-#: .\models.py:72
+#: .\models.py:70
 msgid "Private person"
 msgstr "Privatperson"
 
-#: .\models.py:73
+#: .\models.py:71
 msgid "Subject to VAT"
 msgstr "MWSt-pflichtig"
 
-#: .\models.py:74
+#: .\models.py:72
 msgid "Co-contractor"
 msgstr "Vertragspartner"
 
-#: .\models.py:75
+#: .\models.py:73
 msgid "Intra-community"
 msgstr "Innergemeinschaftlich"
 
-#: .\models.py:76
+#: .\models.py:74
 msgid "Outside EU"
 msgstr "Außerhalb EU"
 
-#: .\models.py:82
+#: .\models.py:80
 msgid "Trade Type"
 msgstr "Handelsart"
 
-#: .\models.py:84
+#: .\models.py:82
 msgid "Sales"
 msgstr "Verkauf"
 
-#: .\models.py:85
+#: .\models.py:83
 msgid "Purchases"
 msgstr "Einkauf"
+
+#: .\models.py:91
+msgid "Total incl. VAT"
+msgstr "Total inkl. MWSt."
 
 #: .\models.py:92
 msgid "Total excl. VAT"
 msgstr "Total zzgl. MWSt."
 
-#: .\models.py:93 .\models.py:212
+#: .\models.py:93 .\models.py:305
 msgid "VAT"
 msgstr "MWSt."
 
-#: .\models.py:95
-msgid "Total incl. VAT"
-msgstr "Total inkl. MWSt."
-
-#: .\models.py:113
-msgid "Whether item unit price includes VAT or not."
+#: .\models.py:156
+msgid "Whether price includes VAT or not."
 msgstr ""
 
 #~ msgid "VAT Rate"

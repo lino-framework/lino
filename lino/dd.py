@@ -14,7 +14,8 @@
 r"""
 A shortcut to classes and methods needed 
 when defining your database structure in a `models` module.
-The name "dd" stands for "Data Definition". 
+
+The name "dd" stands for "Data Definition".
 
 A small wrapper around Django's `Model` class 
 which adds some Lino specific features:

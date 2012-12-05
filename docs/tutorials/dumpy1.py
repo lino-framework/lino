@@ -1,5 +1,5 @@
-from lino.tools import resolve_model
-User = resolve_model('users.User')
+from lino import dd
+User = dd.resolve_model('users.User')
 
 def objects():
 

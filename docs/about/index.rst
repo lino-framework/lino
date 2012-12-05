@@ -9,31 +9,28 @@ Rich Internet Applications
 using `Sencha ExtJS <http://www.sencha.com/products/extjs/>`_
 and `Django <https://www.djangoproject.com/>`_.
 
-Up to now there's one 
-real-world Lino application, 
-running in a Belgian 
-*Public Centre for Social Welfare* 
-(PCSW) since January 2011.
-These first users are so satisfied that 
-other similar centres showed interest.
-That's why this particular Lino application 
-`Lino-Welfare <http://welfare.lino-framework.org>`_
-is currently using up most of our human resources.
-
-But Lino is a *framework*, designed to write many more
-different applications in the future.
-:mod:`lino.apps` contains examples or prototypes of such applications.
-
 Features
 --------
+    
+- for application developers:
 
-Lino features innovative solutions for 
+  - rapid prototyping and short release cycles
+  - :doc:`data migration </topics/datamig>`
+  - :doc:`polymorphism  </topics/mti>`
+  - :doc:`user-interface agnostic form design </topics/layouts>`
+  - :doc:`multilingual database content </topics/babel>`
+  - permission management
 
-- rapid prototyping and short release cycles
-- :doc:`data migration </topics/datamig>`
-- :doc:`polymorphism  </topics/mti>`
-- :doc:`user-interface agnostic form design </topics/layouts>`
-- :doc:`multilingual database content </topics/babel>`
+
+- for Django users:
+
+  - Lino sites are enhanced Django projects.
+  - Lino provides an out-of-the box user interface. 
+    Application developers don't write HTML templates.
+  - Lino replaces Django's
+    ``lino.contrib.admin`` and 
+    ``lino.contrib.auth`` modules by its own methods.
+
 
 The user interface
 ------------------
@@ -70,14 +67,23 @@ TIM users have relatively wide-spread profiles,
 ranging from the independant craftsman who writes 50 invoices per year 
 to the government agency with 30 users and hundreds of documents per day.
 
-Luc has been working on writing a successor for TIM since the early 1990s. 
+Luc has been working on writing a successor for TIM **since the early 1990s**.
 He has done and dropped projects in C++, PHP and Java. 
-Since August 2004 he's mostly working in Python. 
-In March 2009 he discovered :term:`Django` whose database model and application 
+Since **August 2004** he's mostly working in Python. 
+In **March 2009** he discovered :term:`Django` whose database model and application 
 server concepts seem ideal for Lino. 
-In August 2009 he started to use the :term:`ExtJS` Javascript framework.
-Since January 2011 a first Lino application is being 
-used on a real (non-public) site.
+In **August 2009** he started to use the :term:`ExtJS` Javascript framework.
+
+The first real-world Lino application started 
+in a Belgian *Public Centre for Social Welfare* 
+(PCSW) in **January 2011**.
+In **August 2012** we forked it into a separate project 
+`Lino-Welfare <http://welfare.lino-framework.org>`_
+to be maintained by an independant organization.
+
+In September 2012 we purchased the domain name `lino-framework.org`.
+
+In December 2012 we announced a first prototype of `Lino Così`.
 
 
 

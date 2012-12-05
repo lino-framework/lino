@@ -399,7 +399,7 @@ Lino.show_login_window = function() {
       };
     
       var login_button = new Ext.Button({ 
-        text:'Login',
+        text:"$_('Log in')",
         formBind: true,	 
         // Function that fires when user clicks the button 
         handler: do_login});
@@ -413,13 +413,13 @@ Lino.show_login_window = function() {
         defaultType:'textfield',
         monitorValid:true,
         items:[{ 
-            fieldLabel:'Username', 
+            fieldLabel:"$_('Username')", 
             id: 'username',
             name:'username', 
             autoHeight:true,
             allowBlank:false 
         },{ 
-            fieldLabel:'Password', 
+            fieldLabel:"$_('Password')", 
             name:'password', 
             inputType:'password', 
             autoHeight:true,
@@ -438,7 +438,7 @@ Lino.show_login_window = function() {
           layout:'fit',
           defaultButton: 'username',
           width:300,
-          title:'Please Login', 
+          title:"$_('Log in')", 
           autoHeight:true,
           modal: true,
           closeAction: "hide",

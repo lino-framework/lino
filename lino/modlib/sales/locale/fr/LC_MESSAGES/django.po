@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2012-12-02 10:23+0000\n"
+"POT-Creation-Date: 2012-12-05 15:41+0000\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -21,110 +21,110 @@ msgstr ""
 msgid "Recipient"
 msgstr ""
 
-#: .\dummy_messages.py:6 .\models.py:571
+#: .\dummy_messages.py:6 .\models.py:568
 msgid "Date of payment"
 msgstr ""
 
-#: .\models.py:73
-msgid "Booked"
-msgstr ""
-
-#: .\models.py:73
-msgid "Ready to sign"
-msgstr ""
-
 #: .\models.py:74
-msgid "Signed"
+msgid "Draft"
 msgstr ""
 
 #: .\models.py:75
-msgid "Sent"
+msgid "Registered"
 msgstr ""
 
 #: .\models.py:76
+msgid "Signed"
+msgstr ""
+
+#: .\models.py:77
+msgid "Sent"
+msgstr ""
+
+#: .\models.py:78
 msgid "Paid"
 msgstr ""
 
-#: .\models.py:86
+#: .\models.py:88
 msgid "Payment Term"
 msgstr ""
 
-#: .\models.py:87
+#: .\models.py:89
 msgid "Payment Terms"
 msgstr ""
 
-#: .\models.py:113
+#: .\models.py:115
 msgid "Invoicing Mode"
 msgstr ""
 
-#: .\models.py:114
+#: .\models.py:116
 msgid "Invoicing Modes"
 msgstr ""
 
-#: .\models.py:117
+#: .\models.py:119
 msgid "Additional fee charged when using this invoicing mode."
 msgstr ""
 
-#: .\models.py:145
+#: .\models.py:147
 msgid "Shipping Mode"
 msgstr ""
 
-#: .\models.py:146
+#: .\models.py:148
 msgid "Shipping Modes"
 msgstr ""
 
-#: .\models.py:167
+#: .\models.py:169
 msgid "Sales Rule"
 msgstr ""
 
-#: .\models.py:168
+#: .\models.py:170
 msgid "Sales Rules"
 msgstr ""
 
-#: .\models.py:288 .\models.py:608
+#: .\models.py:292 .\models.py:605
 msgid "Discount"
 msgstr ""
 
-#: .\models.py:378
+#: .\models.py:383
 msgid "Order"
 msgstr ""
 
-#: .\models.py:379
+#: .\models.py:384
 msgid "Orders"
 msgstr ""
 
-#: .\models.py:560
+#: .\models.py:565
 msgid "Invoice"
 msgstr ""
 
-#: .\models.py:561
+#: .\models.py:566
 msgid "Invoices"
 msgstr ""
 
-#: .\models.py:607
+#: .\models.py:604
 msgid "Description"
 msgstr ""
 
-#: .\models.py:646
+#: .\models.py:643
 msgid "Totals"
 msgstr ""
 
-#: .\models.py:653
+#: .\models.py:650
 msgid "Header"
 msgstr ""
 
-#: .\models.py:658
+#: .\models.py:655
 msgid "General"
 msgstr ""
 
-#: .\models.py:663
+#: .\models.py:660
 msgid "Ledger"
 msgstr ""
 
-#: .\models.py:847
+#: .\models.py:845
 msgid "is Customer"
 msgstr ""
 
-#: .\models.py:852
+#: .\models.py:850
 msgid "Sales"
 msgstr ""

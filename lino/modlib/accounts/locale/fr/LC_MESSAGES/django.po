@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2012-12-02 10:23+0000\n"
+"POT-Creation-Date: 2012-12-05 15:40+0000\n"
 "PO-Revision-Date: 2012-08-29 07:47+0200\n"
 "Last-Translator: Luc Saffre <luc.saffre@gmail.com>\n"
 "Language-Team: \n"
@@ -24,39 +24,39 @@ msgstr "Plan comptable"
 msgid "Account Charts"
 msgstr "Plan comptables"
 
-#: .\models.py:59
+#: .\models.py:67
 msgid "Account Group"
 msgstr "Groupe de comptes"
 
-#: .\models.py:60
+#: .\models.py:68
 msgid "Account Groups"
 msgstr "Groupes de comptes"
 
-#: .\models.py:67 .\models.py:100
+#: .\models.py:75 .\models.py:108
 msgid "Introduction"
 msgstr ""
 
-#: .\models.py:90
+#: .\models.py:98
 msgid "Account"
 msgstr "Compte"
 
-#: .\models.py:91 .\models.py:148
+#: .\models.py:99 .\models.py:156
 msgid "Accounts"
 msgstr "Comptes"
 
-#: .\models.py:132
+#: .\models.py:140
 msgid "Sales account"
 msgstr "Compte Ventes"
 
-#: .\models.py:135
+#: .\models.py:143
 msgid "The account to move when this product is used in a sales invoice."
 msgstr ""
 
-#: .\models.py:140
+#: .\models.py:148
 msgid "Purchases account"
 msgstr "Compte Achats"
 
-#: .\models.py:143
+#: .\models.py:151
 msgid "The account to move when this product is used in a purchases invoice."
 msgstr ""
 

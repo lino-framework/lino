@@ -1,0 +1,83 @@
+20121205
+========
+
+Internationalized welcome pages
+-------------------------------
+
+I started to write translations for the 
+``index`` and ``admin`` pages provided by
+:mod:`lino.modlib.pages.dummy`.
+
+
+Fixed a bug about attribution of the help_text.
+MenuItem now has a help_text attribute. 
+The help_text displayed for :menuselection:`Site --> About` 
+was wrongly "Shows this record in a Detail window",
+(coming from ShowDetailAction).
+
+Added more translations.
+
+
+Role inheritance
+----------------
+
+I was invited by Alexandru Lemnaru to participate in a survey 
+`Framework Study <http://www.frameworkstudy.com/>`_
+(A study on Open-Source Framework Usage)
+for his thesis research 
+for the `University of Lethbridge <http://www.uleth.ca/>`_
+Masters of Science in Management (Information Systems) program.
+
+Some of the questions:
+
+- Updating the framework while keeping compatibility with previous instances of the framework was easy.
+- Adding new functionality to the framework was easy.
+- The framework used small components instead of large ones.
+- The framework provided automatic documentation for its functions.
+- The framework interfaces were role oriented.
+- The framework used role inheritance to pass down information.
+- The framework was easily scalable based on application requirements.
+- The framework interfaces were separated from its components.
+- Debugging the framework was easy.
+- The framework used delegation to require specific functions from child components.
+- The framework used automatic configuration to help with its configuration.
+- The framework rarely failed.
+- People who are important to me thought I should use the framework.
+- The framework handled failures well if or when they occurred.
+- Overall, the framework was easy to use.
+- I believed that the framework was mature.
+- I found it was easy for me to become skillful at using the framework.
+- Coworkers thought I should use the framework.
+- People in the online community thought I should use the framework.
+- Overall, I believe the framework was useful.
+- People in the IT community in my area thought I should use the framework.
+- I believe that using the framework increased my effectiveness.
+- I believe that using the framework increased my productivity.
+- People who influence my behavior thought I should use the framework.
+- Learning to use the framework was easy for me.
+- Assuming I were to develop the same project, I would still use this framework.
+- Assuming I were to develop other applications of this type, I would continue using the framework.
+- Assuming I were to develop other applications in the same domain, I would continue using the framework.
+- Assuming others were to develop the same project, 
+  I would recommend this framework to them.
+
+
+One question made me dig a bit more: 
+**What is "role inheritance"?**
+Yes, I had never read about the 
+`Role Class Model <http://en.wikipedia.org/wiki/Role_Class_Model>`_
+before.
+Here is more reading for me:
+`Modeling Roles <http://www.jot.fm/issues/issue_2002_09/column2/>`_ 
+by Francis G. Mossé
+and
+`Dealing with Roles
+<http://www.martinfowler.com/apsupp/roles.pdf>`_
+by Martin Fowler.
+I should read these articles before making decisions
+about my system of 
+UserProfiles, UserLevels and UserGroups
+(which already now solves many, 
+but not all of the problems described there).
+
+

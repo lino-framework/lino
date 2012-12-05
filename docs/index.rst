@@ -1,39 +1,42 @@
-=============================================
-Lino -- a framework for database applications
-=============================================
+==================
+Lino the Framework
+==================
 
 
-Welcome to the Lino Website. 
+Welcome to the Project homepage of Lino the Framework. 
 
 - :doc:`What is Lino? </about/index>`
 
 - Watch the :doc:`online demos</demos>`
 
-- See Luc's :doc:`Blog <blog/2012/index>` to get the hottest 
-  news about what's going on here. 
+- Stay connected by subscribing to the official 
+  `Lino Blog <http://blog.lino-framework.org/>`_
 
 - Read our :doc:`/community` page and consider lending a helping hand.
 
+- See Luc's detailed :doc:`Developer Blog <blog/2012/index>` 
+  to get the hottest news about what's going on here. 
+
 - The :doc:`installation </admin/install>` 
-  is easy if you have some experience qith Python.
+  is easy if you have some experience with Python.
   
 - The final truth about what's going on is only 
-  `The Source Code <http://code.google.com/p/lino/source/list>`_.
+  `The Source Code <http://code.google.com/p/lino/source/list>`_
+  (hosted on `Googlecode <http://code.google.com/p/lino>`__).
   
-
-  
-Some external links:
+- Lino is listed on `PyPI <http://pypi.python.org/pypi/lino>`_, 
+  the Python Package Index.
+ 
+Related projects:
 
 - `Lino-Welfare <http://welfare.lino-framework.org>`__
-- `Project page on Googlecode <http://code.google.com/p/lino>`__
-- `PyPI entry <http://pypi.python.org/pypi/lino>`_
+- `Lino Così <http://cosi.lino-framework.org>`__
 
 .. toctree::
    :maxdepth: 2
    :hidden:
 
    about/index
-   jobs/index
    community
    blog/index
    releases/index

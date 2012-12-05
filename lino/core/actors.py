@@ -704,8 +704,8 @@ class Actor(actions.Parametrizable):
         default_action = cls.get_default_action()
         cls.default_action = cls.bind_action(default_action)
         #~ print 20121010, cls, default_action
-        if default_action.help_text is None:
-            default_action.help_text = cls.help_text
+        #~ if default_action.help_text is None:
+            #~ default_action.help_text = cls.help_text
             
         if cls.detail_layout or cls.detail_template:
             if default_action and isinstance(default_action,actions.ShowDetailAction):

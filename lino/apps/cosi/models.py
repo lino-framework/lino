@@ -38,3 +38,6 @@ class Person(contacts.Person,sales.Customer):
 class Company(contacts.Company,sales.Customer):
     class Meta(contacts.Company.Meta):
         app_label = 'contacts'
+
+#~ def site_setup(site):
+    #~ site.description = 

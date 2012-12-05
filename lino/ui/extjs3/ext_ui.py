@@ -379,14 +379,14 @@ class ExtRenderer(HtmlRenderer):
             if v.params is not None:
                 #~ ar = v.action.actor.request(self.ui,None,v.action,**v.params)
                 ar = v.bound_action.request(self.ui,**v.params)
-                return handler_item(v,self.request_handler(ar),v.bound_action.action.help_text)
+                return handler_item(v,self.request_handler(ar),v.help_text)
                 #~ return dict(text=prepare_label(v),handler=js_code(handler))
             if v.bound_action:
-                return handler_item(v,self.action_call(None,v.bound_action,{}),v.bound_action.action.help_text)
+                return handler_item(v,self.action_call(None,v.bound_action,{}),v.help_text)
                 #~ ar = v.action.request(self.ui)
                 #~ return handler_item(v,self.request_handler(ar),v.action.help_text)
             elif v.javascript is not None:
-                return handler_item(v,v.javascript,None)
+                return handler_item(v,v.javascript,v.help_text)
             elif v.href is not None:
                 url = v.href
             elif v.request is not None:
@@ -1290,7 +1290,7 @@ tinymce.init({
             login_buttons = [
               #~ dict(xtype="textfield",emptyText=_('Enter your username')),
               #~ dict(xtype="textfield",emptyText=_('Enter your password'),inputType="password"),
-              dict(xtype="button",text="Login",handler=js_code('Lino.show_login_window')),
+              dict(xtype="button",text=_("Log in"),handler=js_code('Lino.show_login_window')),
               #~ dict(xtype="button",text="Register",handler=Lino.register),
               ]
             yield "Lino.main_menu = Lino.main_menu.concat(['->',%s]);" % py2js(login_buttons)

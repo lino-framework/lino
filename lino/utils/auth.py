@@ -562,15 +562,28 @@ def authenticate(username,password=NOT_NEEDED):
         
         
 def on_login(request,user):
+    """
+    on multilingual sites, 
+    if URL_PARAM_USER_LANGUAGE is present it overrides user.language,
+    except for DELETE requests 
+    because those don't have request data
+    (is that still true in Django 1.5)
+    """
     
     request.user = user
+    
         
-    if len(babel.AVAILABLE_LANGUAGES) > 1:
+    #~ if len(babel.AVAILABLE_LANGUAGES) > 1:
+    if len(settings.LINO.languages) > 1:
+        
         #~ lang = settings.LINO.override_user_language() or request.user.language
         lang = user.language
         if lang:
             translation.activate(lang)
             request.LANGUAGE_CODE = translation.get_language()
+            #~ logger.info("20121205 on_login %r",lang)
+            
+        #~ logger.info("20121205 on_login %r",translation.get_language())
         
           
     if request.method == 'GET':
@@ -584,6 +597,12 @@ def on_login(request,user):
         request.requesting_panel = None
         return
         
+    if len(settings.LINO.languages) > 1:
+        ul = rqdata.get(ext_requests.URL_PARAM_USER_LANGUAGE,None)
+        if ul:
+            translation.activate(ul)
+            request.LANGUAGE_CODE = translation.get_language()
+      
     su = rqdata.get(ext_requests.URL_PARAM_SUBST_USER,None)
     if su:
         try:
@@ -594,10 +613,6 @@ def on_login(request,user):
     request.subst_user = su
     request.requesting_panel = rqdata.get(ext_requests.URL_PARAM_REQUESTING_PANEL,None)
     
-    ul = rqdata.get(ext_requests.URL_PARAM_USER_LANGUAGE,None)
-    if ul:
-        translation.activate(ul)
-        request.LANGUAGE_CODE = translation.get_language()
             
             
 

@@ -1,8 +1,8 @@
 DJANGO_ADMIN = python l:\\snapshots\\django\\django\\bin\\django-admin.py
 LINO_ROOT := /cygdrive/t/hgwork/lino
 LINO_ROOT := `cygpath -m $(LINO_ROOT)`
-#~ APPS = presto
-MODULES = vat accounts ledger households outbox cal thirds products properties contacts countries notes sales finan uploads users postings
+APPS = cosi 
+MODULES = vat accounts ledger households outbox cal products properties contacts countries notes sales finan uploads users postings about
 TESTS_OPTIONS = --verbosity=2 --traceback
 MMOPTS := -s -a --settings lino.apps.sphinxdocs.settings
 CMOPTS := --settings lino.apps.sphinxdocs.settings

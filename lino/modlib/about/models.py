@@ -242,8 +242,9 @@ class About(mixins.EmptyTable):
     """
     A modal window displaying information about this server.
     """
-    required = dict(auth=False)
     label = _("About") 
+    help_text = _("Show information about this site.")
+    required = dict(auth=False)
     #~ hide_window_title = True
     hide_top_toolbar = True
     #~ window_size = (700,400)

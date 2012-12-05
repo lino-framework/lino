@@ -45,6 +45,7 @@ class MenuItem:
                  name=None,label=None,doc=None,enabled=True,
                  #~ can_view=None,
                  hotkey=None,params=None,
+                 help_text=None,
                  request=None,
                  instance=None,
                  javascript=None,
@@ -59,6 +60,7 @@ class MenuItem:
         self.request = request
         self.instance = instance
         self.javascript = javascript
+        self.help_text = help_text
         
         if label is None:
             if instance is not None:
@@ -198,7 +200,7 @@ class Menu(MenuItem):
                 newitems.append(mi)
         self.items = newitems
                 
-    def add_action(self,spec,action=None,**kw):
+    def add_action(self,spec,action=None,help_text=None,**kw):
         if isinstance(spec,basestring):
             spec = settings.LINO.modules.resolve(spec)
             #~ a = actors.resolve_action(spec)
@@ -226,6 +228,13 @@ class Menu(MenuItem):
         #~ if kw.has_key('params'):
             #~ if a.actor.__name__ == 'Contacts':
               #~ raise Exception("20120103")
+        if help_text is None:
+            if a == a.actor.default_action:
+                help_text = a.actor.help_text or a.action.help_text
+            else:
+                help_text = a.action.help_text
+        if help_text is not None:
+            kw.update(help_text=help_text)
         return self._add_item(MenuItem(self,a,**kw))
         
     #~ def add_action_(self,action,**kw):
