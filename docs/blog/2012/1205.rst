@@ -17,6 +17,10 @@ was wrongly "Shows this record in a Detail window",
 
 Added more translations.
 
+Result: the anonymous welcome page at 
+http://demo4.lino-framework.org/
+now works in en, de and fr using the browser's language preferences.
+
 
 Role inheritance
 ----------------

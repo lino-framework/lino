@@ -12,23 +12,8 @@
 ## You should have received a copy of the GNU General Public License
 ## along with Lino; if not, see <http://www.gnu.org/licenses/>.
 
-import time
-#~ from datetime import date
-#~ from dateutil import parser as dateparser
-#~ from lino.modlib.ledger import models as ledger
-#from lino.apps.journals import models as journals
-from lino.utils.instantiator import Instantiator, i2d
-from lino.utils.babel import babel_values
-from lino.modlib.accounts.utils import AccountTypes
-
-from lino import dd
-accounts = dd.resolve_app('accounts')
-
-#journal = Instantiator(journals.Journal,"id name")
-#account = Instantiator(ledger.Account,"name").build
-
 def objects():
-    from lino.modlib.accounts.fixtures import mini
+    from lino.modlib.ledger.fixtures import mini
     yield mini.objects()
     
         

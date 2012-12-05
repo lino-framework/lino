@@ -21,6 +21,7 @@ To be used for simple demo setups in different countries.
 from lino.utils.babel import babel_values
 from lino import dd
 accounts = dd.resolve_app('accounts')
+vat = dd.resolve_app('vat')
 
 current_group = None
 
@@ -78,20 +79,18 @@ def objects():
 
     sales = dd.resolve_app('sales')
     ledger = dd.resolve_app('ledger')
-    
-    if ledger:
-    
-        if sales:
-            #~ yield sales.Orders.create_journal("VKR",'sales',name=u"Aufträge")
-            yield sales.Invoice.create_journal('sales',chart=chart,**babel_values('name',
-              de=u"Verkaufsrechnungen",fr=u"Factures vente",en="Sales invoices",et=u"Müügiarved"))
-        else:
-            yield ledger.AccountInvoice.create_journal('sales',
-                chart=chart,**babel_values('name',
-                de=u"Verkaufsrechnungen",fr=u"Factures vente",en="Sales invoices",et=u"Müügiarved"))
-              
-        yield ledger.AccountInvoice.create_journal('purchases',
-            chart=chart,
-            **babel_values('name',
-                de=u"Einkaufsrechnungen",fr=u"Factures achat",en="Purchase invoices",et=u"Ostuarved"))
+
+    if sales:
+        #~ yield sales.Orders.create_journal("VKR",'sales',name=u"Aufträge")
+        yield sales.Invoice.create_journal('sales',chart=chart,**babel_values('name',
+          de=u"Verkaufsrechnungen",fr=u"Factures vente",en="Sales invoices",et=u"Müügiarved"))
+    else:
+        yield ledger.AccountInvoice.create_journal('sales',
+            chart=chart,**babel_values('name',
+            de=u"Verkaufsrechnungen",fr=u"Factures vente",en="Sales invoices",et=u"Müügiarved"))
+          
+    yield ledger.AccountInvoice.create_journal('purchases',
+        chart=chart,
+        **babel_values('name',
+            de=u"Einkaufsrechnungen",fr=u"Factures achat",en="Purchase invoices",et=u"Ostuarved"))
 
