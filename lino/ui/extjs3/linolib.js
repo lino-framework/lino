@@ -407,7 +407,7 @@ Lino.show_login_window = function() {
       var login_panel = new Ext.FormPanel({ 
         //~ inspired by http://www.sencha.com/learn/a-basic-login/
         autoHeight:true,
-        labelWidth:80,
+        labelWidth:90,
         url:ADMIN_URL+'/auth', 
         frame:true, 
         defaultType:'textfield',
@@ -427,13 +427,6 @@ Lino.show_login_window = function() {
         }],        
         buttons:[ login_button ]});
         
-      var enter_key_binding = {
-          key: Ext.EventObject.ENTER,
-          //~ fn: function() { console.log("20121104 click!"); login_button.fireEvent('click',login_button)}
-          fn: function() { do_login()}
-          //~ scope: login_button
-      };        
-        
       Lino.login_window = new Ext.Window({
           layout:'fit',
           defaultButton: 'username',
@@ -442,7 +435,10 @@ Lino.show_login_window = function() {
           autoHeight:true,
           modal: true,
           closeAction: "hide",
-          keys: enter_key_binding,
+          keys: {
+            key: Ext.EventObject.ENTER,
+            fn: function() { do_login()}
+          },
           //~ defaultButton: login_button,
           //~ height:'auto',
           //~ closable: false,
@@ -2483,6 +2479,9 @@ Lino.ActionFormPanel = Ext.extend(Lino.ActionFormPanel,{
   }
   ,config_containing_window : function(wincfg) { 
       wincfg.title = this.window_title;
+      wincfg.keys = [
+        { key: Ext.EventObject.ENTER, fn: this.on_ok }
+      ]
   }
 });
 
@@ -3109,6 +3108,23 @@ Lino.FormPanel = Ext.extend(Lino.FormPanel,{
     } else Lino.notify("Sorry, no current record.");
   }
   
+  ,on_cancel : function() { 
+    this.get_containing_window().close();
+  }
+  ,on_ok : function() { 
+      this.save(null,true);
+      //~ var rec = this.get_current_record();
+      //~ if (rec && rec.phantom)
+          //~ this.do_when_clean(true,function() { Lino.close_window(); });
+  }
+  ,config_containing_window : function(wincfg) { 
+      wincfg.keys = [
+        { key: Ext.EventObject.ENTER, fn: this.on_ok, scope:this }
+        ,{ key: Ext.EventObject.ESCAPE, fn: this.on_cancel, scope:this }
+      ]
+  }
+  
+  
   /* not used (no longer possible without .dtl files)
   , edit_detail_config : function () {
     var active_tab = {};
@@ -3381,7 +3397,7 @@ Lino.GridPanel = Ext.extend(Lino.GridPanel,{
         if (this_.containing_window)
             this_.set_window_title(this_.store.reader.arrayData.title);
             //~ this_.containing_window.setTitle(this_.store.reader.arrayData.title);
-        if (!this.is_searching) { // disabled 20121025: quick_search_field may not los focus
+        if (!this.is_searching) { // disabled 20121025: quick_search_field may not lose focus
           this.is_searching = false;
           if (this_.selModel.getSelectedCell){
               if (this_.getStore().getCount()) // there may be no data

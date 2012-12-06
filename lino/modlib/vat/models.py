@@ -105,6 +105,7 @@ class VatTotal(dd.Model):
             if self.total_base is None: return
         #~ assert not isinstance(self.total_base,basestring)
         rate = self.get_vat_rate()
+        logger.info("20121206 total_base_changed %s",rate)
         if rate is None: 
             return
         self.total_vat = self.total_base * rate
@@ -126,6 +127,7 @@ class VatTotal(dd.Model):
             if self.total_incl is None: return
         #~ assert not isinstance(self.total_incl,basestring)
         rate = self.get_vat_rate()
+        logger.info("20121206 total_incl_changed %s",rate)
         if rate is None: return
         self.total_base = self.total_incl / (1 + rate)
         self.total_vat = self.total_incl - self.total_base
@@ -228,6 +230,13 @@ class VatItemBase(mixins.Sequenced,VatTotal):
         name = settings.LINO.get_vat_class(tt,self)
         return VatClasses.get_by_name(name)
         
+    def vat_class_changed(self,ar):
+        logger.info("20121204 vat_class_changed")
+        if self.voucher.item_vat:
+            self.total_incl_changed(ar)
+        else:
+            self.total_base_changed(ar)
+              
     def get_base_account(self,tt):
         raise NotImplementedError
         
@@ -313,5 +322,7 @@ def setup_config_menu(site,ui,profile,m): pass
 
 def setup_explorer_menu(site,ui,profile,m):
     m  = m.add_menu("vat",MODULE_LABEL)
+    m.add_action(VatRegimes)
+    m.add_action(TradeTypes)
     m.add_action(VatClasses)
   

@@ -4,15 +4,8 @@ To-do list
 Short-term
 ----------
 
-#.  User stories: 
-    Alicia: Hubert hatte in meinem Urlaub eine Telefonnotiz auf einem meiner 
-    Klienten gemacht, und mir nun mündlich noch ein paar Zusatzinfos gesagt, 
-    die er nur vergessen hatte, rein zu schreiben. Ich will jetzt an seiner 
-    Stelle seine 
-    Notiz nachträglich korrigieren, damit das direkt beim ersten Lesen deutlich ist.
-
-#.  Wenn der Begleitungszeitraum einer *Person* geändert wird, merkt Lino nicht,
-    wenn dadurch ein Vertrag ungültig wird.
+#.  Wenn man den Begleitungszeitraum einer *Person* ändert, dann merkt Lino nicht,
+    falls durch diese Änderung ein Vertrag ungültig wird.
 
 #.  Ein Bug, der auch schon in der 1.4.8 war: wenn man das Detail eines Uploads, 
     der keine Reminder hat, via Permalink öffnet, dann ist die Tabelle der 
@@ -33,7 +26,7 @@ Short-term
 #.  Wenn `invite_team_members` angekreuzt ist und Gäste automatisch erstellt 
     werden, dann stehen die trotzdem noch nicht auf "Eingeladen".
 
-#.  Brauchen wir die Notion von "Teams"? Oder besser Partnerlisten.
+#.  Brauchen wir die Notion von "Teams"? Oder besser Partnerlisten?
     Momentan ist die Konfigurierung etwas skurril: 
     jeder Benutzer stellt sich "sein Team" zusammen.
     Pro Kalender sollte neben `invite_team_members` auch stehen, 
@@ -279,6 +272,17 @@ Short-term
 
 Medium-term
 -----------
+
+#.  Must I implement a way to make sure that for any existing 
+    Voucher record there's always one and only one MTI child in one of the 
+    VoucherType tables?
+
+#.  User stories: 
+    Alicia: Hubert hatte in meinem Urlaub eine Telefonnotiz auf einem meiner 
+    Klienten gemacht, und mir nun mündlich noch ein paar Zusatzinfos gesagt, 
+    die er nur vergessen hatte, rein zu schreiben. Ich will jetzt an seiner 
+    Stelle seine 
+    Notiz nachträglich korrigieren, damit das direkt beim ersten Lesen deutlich ist.
 
 
 #.  Historique des "choses" consultées pendant une session 

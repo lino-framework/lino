@@ -153,6 +153,8 @@ class UserProfile(Choice):
         for k,v in kw.items():
             setattr(self,k,v)
             
+        for k in cls.default_memberships:
+            setattr(self,k,self.level)
         
         #~ for grp in enumerate(UserGroups.items()):
             #~ attname = grp.value + '_level'
@@ -200,7 +202,7 @@ class UserProfile(Choice):
         
 class UserProfiles(ChoiceList):
     """
-    
+    Deserves a docstring.
     """
     #~ item_class = UserProfile
     verbose_name = _("User Profile")
@@ -209,7 +211,7 @@ class UserProfiles(ChoiceList):
     show_values = True
     max_length = 20
     membership_keys = ('level',)
-    
+
     #~ @classmethod
     #~ def clear(cls):
         #~ cls.groups_list = [g.value for g in UserGroups.items()]
@@ -220,6 +222,9 @@ class UserProfiles(ChoiceList):
     #~ def clear(cls,groups='*'):
     @classmethod
     def reset(cls,groups=None):
+        """
+        Deserves a docstring.
+        """
         #~ cls.groups_list = [g.value for g in UserGroups.items()]
         expected_names = set(['*']+[g.value for g in UserGroups.items() if g.value])
         if groups is None:
@@ -238,8 +243,9 @@ class UserProfiles(ChoiceList):
                     if not UserGroups.get_by_value(g):
                         raise Exception("Unknown group %r" % g)
                     s.append(g+'_level')
-        if len(expected_names) > 0:
-            raise Exception("Missing name(s) %s in %r" % (expected_names,groups))
+        #~ if len(expected_names) > 0:
+            #~ raise Exception("Missing name(s) %s in %r" % (expected_names,groups))
+        cls.default_memberships = expected_names
         cls.membership_keys = tuple(s)
         cls.clear()
 

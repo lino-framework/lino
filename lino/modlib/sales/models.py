@@ -852,8 +852,21 @@ MODULE_LABEL = _("Sales")
 def site_setup(site):
     if site.is_installed('products'):
         site.modules.products.Products.add_detail_tab("sales",
-            "sales.OrderItemsByProduct\nsales.InvoiceItemsByProduct",
+            """
+            sales.OrderItemsByProduct
+            sales.InvoiceItemsByProduct
+            """,
             label=MODULE_LABEL)
+    if site.is_installed('contacts'):
+        for t in (site.modules.contacts.Partners,
+          site.modules.contacts.Persons,
+          site.modules.contacts.Companies):
+            t.add_detail_tab("sales",
+                """
+                sales.OrdersByPartner
+                sales.InvoicesByPartner
+                """,
+                label=MODULE_LABEL)
     #~ if site.is_installed('tickets'):
         #~ site.modules.tickets.Projects.add_detail_tab("sales","sales.InvoicesByProject")
     #~ site.modules.lino.SiteConfigs.add_detail_tab("sales","""

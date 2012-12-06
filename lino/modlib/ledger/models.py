@@ -131,6 +131,10 @@ class VoucherTypes(dd.ChoiceList):
 
 class Journal(babel.BabelNamed,mixins.Sequenced):
   
+    class Meta:
+        verbose_name = _("Journal")
+        verbose_name_plural = _("Journals")
+        
     #~ id = models.CharField(max_length=4,primary_key=True)
     ref = dd.NullCharField(max_length=20,unique=True)
     #~ name = models.CharField(max_length=100)
@@ -186,6 +190,7 @@ class Journal(babel.BabelNamed,mixins.Sequenced):
         d = cl.objects.filter(journal=self,year=voucher.year).aggregate(
             models.Max('number'))
         number = d['number__max']
+        logger.info("20121206 get_next_number %r",number)
         if number is None:
             return 1
         return number + 1
@@ -303,8 +308,14 @@ class Voucher(mixins.UserAuthored,mixins.ProjectRelated):
     Subclasses must define a field `state`.
     This model is subclassed by sales.Invoice, ledger.AccountInvoice, 
     finan.Statement etc...
+    
+    It is **not** abstract because we have a ForeignKey to Voucher in Movement,
+    and we want one Movement model for all ledger movements.
+    
     """
-    #~ class Meta:
+    class Meta:
+        verbose_name = _("Voucher")
+        verbose_name_plural = _("Vouchers")
         #~ abstract = True
         
     #~ controller_is_optional = False
@@ -488,6 +499,10 @@ class MovementsByVoucher(Movements):
     master_key = 'voucher'
     column_names = 'seqno account debit credit'
     
+class MovementsByPartner(Movements):
+    master_key = 'partner'
+    column_names = 'seqno account voucher debit credit'
+    
 
 
 
@@ -557,26 +572,6 @@ class VoucherItem(dd.Model):
         return super(VoucherItem,self).get_row_permission(ar,state,ba)
 
 
-class InvoiceItem(VoucherItem,vat.VatItemBase):
-    
-    #~ document = models.ForeignKey(AccountInvoice,related_name='items') 
-    voucher = models.ForeignKey(AccountInvoice,related_name='items') 
-    
-    #~ account = models.ForeignKey('accounts.Account',blank=True,null=True)
-    account = models.ForeignKey('accounts.Account')
-    
-    def get_base_account(self,tt):
-        return self.account
-        
-    @dd.chooser()
-    def account_choices(self,voucher):
-        if voucher and voucher.journal:
-            fkw = {voucher.journal.trade_type.name+'_allowed':True}
-            return accounts.Account.objects.filter(chart=voucher.journal.chart,**fkw)
-        return []
-
-
-
 class InvoiceDetail(dd.FormLayout):
     main = "general ledger"
     
@@ -609,8 +604,8 @@ class Invoices(dd.Table):
     params_layout = "pjournal pyear ppartner"
     detail_layout = InvoiceDetail()
     insert_layout = dd.FormLayout("""
-    date partner
-    total_incl
+    partner
+    date total_incl
     """,window_size=(60,'auto'))
     
     @classmethod
@@ -646,10 +641,28 @@ class InvoicesByJournal(Invoices):
         #~ return title
                   
 
+class InvoiceItem(VoucherItem,vat.VatItemBase):
+    
+    #~ document = models.ForeignKey(AccountInvoice,related_name='items') 
+    voucher = models.ForeignKey(AccountInvoice,related_name='items') 
+    
+    #~ account = models.ForeignKey('accounts.Account',blank=True,null=True)
+    account = models.ForeignKey('accounts.Account')
+    
+    def get_base_account(self,tt):
+        return self.account
+        
+    @dd.chooser()
+    def account_choices(self,voucher):
+        if voucher and voucher.journal:
+            fkw = {voucher.journal.trade_type.name+'_allowed':True}
+            return accounts.Account.objects.filter(chart=voucher.journal.chart,**fkw)
+        return []
+
 
 class ItemsByInvoice(dd.Table):
     model = InvoiceItem
-    column_names = "seqno:3 account title total_base total_vat total_incl"
+    column_names = "account title vat_class total_base total_vat total_incl seqno"
     master_key = 'voucher'
     order_by = ["seqno"]
     
@@ -664,10 +677,20 @@ class InvoicesByPartner(Invoices):
 #~ register_voucher_type(Invoice,InvoicesByJournal)
 VoucherTypes.add_item(AccountInvoice,InvoicesByJournal)
 
-MODULE_LABEL = _("Ledger")
+#~ MODULE_LABEL = _("Ledger")
+MODULE_LABEL = accounts.MODULE_LABEL
 
 def site_setup(site):
-    pass
+    if site.is_installed('contacts'):
+        for t in (site.modules.contacts.Partners,
+          site.modules.contacts.Persons,
+          site.modules.contacts.Companies):
+            t.add_detail_tab("ledger",
+                """
+                ledger.InvoicesByPartner
+                ledger.MovementsByPartner
+                """,
+                label=MODULE_LABEL)
 
 
 def setup_main_menu(site,ui,profile,m): 
@@ -691,13 +714,16 @@ def setup_my_menu(site,ui,profile,m):
     pass
   
 def setup_config_menu(site,ui,profile,m): 
-    m = m.add_menu("ledger",MODULE_LABEL)
+    #~ m = m.add_menu("ledger",MODULE_LABEL)
+    m = m.add_menu("accounts",MODULE_LABEL)
     m.add_action(Journals)
     
     
 def setup_explorer_menu(site,ui,profile,m):
-    m = m.add_menu("ledger",MODULE_LABEL)
+    #~ m = m.add_menu("ledger",MODULE_LABEL)
+    m = m.add_menu("accounts",MODULE_LABEL)
     m.add_action(Invoices)
+    m.add_action(VoucherTypes)
   
 
 

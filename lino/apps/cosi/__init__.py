@@ -91,12 +91,11 @@ class Lino(Lino):
         """
         from lino import dd
         from django.utils.translation import ugettext_lazy as _
-        dd.UserProfiles.reset('* office')
+        dd.UserProfiles.reset('* office accounting')
         add = dd.UserProfiles.add_item
-        add('000', _("Anonymous"),       '_ _', 'anonymous',
-            readonly=True,authenticated=False)
-        add('100', _("User"),            'U U', 'user')
-        add('900', _("Administrator"),   'A A', 'admin')
+        add('000', _("Anonymous"),       '_ _ _', 'anonymous',readonly=True,authenticated=False)
+        add('100', _("User"),            'U U U', 'user')
+        add('900', _("Administrator"),   'A A A', 'admin')
         
             
     def get_installed_apps(self):

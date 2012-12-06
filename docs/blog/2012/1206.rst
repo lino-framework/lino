@@ -1,0 +1,54 @@
+20121206
+========
+
+Working on :mod:`lino.apps.cosi`.
+
+- labelWidth 80 -> 90 im Login-Fenster weil "Nom d'utilisateur" sonst nicht passte.
+- insert_layout ledger.AccountInvoices
+- user can now confirm an Insert window by pressing ENTER key 
+
+- ledger and sales now :meth:`add_detail_tab 
+  <lino.core.actors.Actor.add_detail_tab>` to 
+  contacts.Partners, Persons and Companies
+
+- ledger now uses accounts.MODULE_LABEL which changed from "Accounts" to "Accounting"
+- new user group "accounting" defined in accounts
+
+- :meth:`lino.utils.auth.UserProfiles.reset` 
+  now supports the situation where a string of user groups is specified but doesn't 
+  name all groups. This leads to a set of `default_memberships`. 
+  For example, :mod:`lino.apps.cosi` uses module 'accounts' which now defines 
+  usergroup 'accounting', but we didn't yet override 
+  :meth:`lino.apps.cosi.Lino.setup_choicelists` to reflect this change.
+  
+- ledger invoices ("simple invoices") now have a column vat_class
+
+Here a dependancy graph for the :mod:`lino.modlib` modules I'm working on.
+
+.. graphviz:: 
+   
+   digraph foo {
+   
+      
+      sales -> contacts;
+      sales -> ledger;
+      sales -> products;
+      ledger -> accounts;
+      ledger -> vat;
+      accounts -> contacts;
+      ledger -> contacts;
+      vat -> contacts;
+   }
+
+It looks sophisticated, but nobody ever claimed that :mod:`lino.modlib` is a simple thing.
+
+Note especially that :mod:`accounts <lino.modlib.accounts>` is being used in Lino/Welfare 
+which does *not* currently use :mod:`ledger <lino.modlib.ledger>`.
+
+
+TODO:
+
+- ledger.Voucher should not define it's own detail_layout, but 
+  `Movement.voucher` (the pointer to Voucher) should be clickable and link 
+  to the detail of the one and only VoucherType MTI child of that Voucher.
+  

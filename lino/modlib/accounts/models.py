@@ -153,7 +153,10 @@ def customize_products():
 
 
 
-MODULE_LABEL = _("Accounts")
+#~ MODULE_LABEL = _("Accounts")
+MODULE_LABEL = _("Accounting")
+
+dd.add_user_group('accounting',MODULE_LABEL)
 
 #~ settings.LINO.add_user_field('debts_level',UserLevel.field(MODULE_LABEL))
 #~ settings.LINO.add_user_group('debts',MODULE_LABEL)

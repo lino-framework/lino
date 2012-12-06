@@ -375,6 +375,7 @@ As long as nobody protests, I'll save some time by writing in German.
   :doc:`03 <1203>`
   :doc:`04 <1204>`
   :doc:`05 <1205>`
+  :doc:`06 <1206>`
 
 ===== ===== =====
 |Jan| |Feb| |Mar|
