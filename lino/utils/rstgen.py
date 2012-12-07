@@ -57,7 +57,7 @@ St. Vincent and the Grenadines Chateaubelair Nicole
 """
 
 #~ import cStringIO as StringIO
-import StringIO 
+import StringIO
 
 class Column(object):
     def __init__(self,index,header,width=None):
@@ -118,6 +118,8 @@ class SimpleTable(object):
         self.adjust_widths(headers)
         
     def adjust_widths(self,row):
+        if len(row) != len(self.headers):
+            raise Exception("Invalid row %(row)s" % dict(row=row))
         for col in self.cols:
             col.adjust_width(row)
       

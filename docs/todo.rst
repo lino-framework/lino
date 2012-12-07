@@ -4,6 +4,16 @@ To-do list
 Short-term
 ----------
 
+#.  Setting a column filter for a *normal* date column now works... 
+    but Lino also allows setting a filter on a virtual field. 
+    Which then causes another traceback
+    "FieldError at /api/pcsw/IntegClients / Cannot resolve keyword 'applies_from' into field."
+    Idea: implement the fields Client.applies_from and applies_until as 
+    "summary fields". This is a new concept: :doc:`/topics/summary_fields`
+
+#.  Inform about active column filters when building the title of table
+    (using title tags).
+
 #.  Is it really necessary that Voucher is a non-abstract class?
 
 #.  Wenn man den Begleitungszeitraum einer *Person* ändert, dann merkt Lino nicht,
