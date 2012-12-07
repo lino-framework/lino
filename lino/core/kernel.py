@@ -117,6 +117,7 @@ def analyze_models():
         for k in ('get_row_permission',
                   'after_ui_save',
                   #~ 'update_system_note',
+                  'preferred_foreignkey_width',
                   'before_ui_save',
                   'allow_cascaded_delete',
                   'workflow_state_field',

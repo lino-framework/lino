@@ -1289,6 +1289,11 @@ class Lino(object):
         return pages.render(obj,self.MAIN_HTML_TEMPLATE)
 
 
+    vat_quarterly = False
+    """
+    Set this to True to support quarterly VAT declarations.
+    """
+    
     def get_vat_class(self,tt,item):
         return 'normal'
         

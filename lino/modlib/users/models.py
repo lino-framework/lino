@@ -64,7 +64,7 @@ class User(mixins.CreatedModified):
     fields like first_name, last_name, email, access rights for the new user.    
     """
     
-    _lino_preferred_width = 15 
+    preferred_foreignkey_width = 15 
     
     #~ authenticated = True
     
@@ -110,7 +110,7 @@ class User(mixins.CreatedModified):
             return self.username
         return u'%s %s' % (self.first_name.strip(), self.last_name.strip())
         
-    @dd.displayfield(_("Name"))
+    @dd.displayfield(_("Name"),max_length=15)
     def name_column(self,request):
         #~ return join_words(self.last_name.upper(),self.first_name)
         return unicode(self)

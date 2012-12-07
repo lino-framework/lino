@@ -711,7 +711,6 @@ class Actor(actions.Parametrizable):
             if default_action and isinstance(default_action,actions.ShowDetailAction):
                 cls.detail_action = cls.bind_action(default_action)
             else:
-                #~ cls.detail_action = actions.ShowDetailAction()
                 cls.detail_action = cls.bind_action(actions.ShowDetailAction())
         if cls.editable:
             if cls.allow_create:

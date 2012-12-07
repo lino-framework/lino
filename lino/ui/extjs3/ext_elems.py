@@ -196,7 +196,11 @@ class GridColumn(jsgen.Component):
                     kw.update(tooltip=self.editor.field.help_text)
                 
             def fk_renderer(fld,name):
-                # FK fields are clickable if their target has a detail view
+                """
+                FK fields are clickable 
+                (1) if their target has a detail view
+                (2) 
+                """
                 rpt = fld.rel.to._lino_default_table
                 if rpt.detail_action is not None:
                     if rpt.detail_action.get_view_permission(jsgen._for_user_profile):
@@ -860,7 +864,8 @@ class ForeignKeyElement(ComplexRemoteComboFieldElement):
     #~ def __init__(self,*args,**kw):
         #~ print 20100903,repr(self.field.rel.to)
         #~ assert issubclass(self.field.rel.to,dd.Model), "%r is not a model" % self.field.rel.to
-        pw = getattr(field.rel.to,'_lino_preferred_width',None)
+        #~ pw = getattr(field.rel.to,'_lino_preferred_width',None)
+        pw = field.rel.to.preferred_foreignkey_width
         if pw is not None:
             kw.setdefault('preferred_width',pw)
             #~ kw.update(preferred_width=pw)
@@ -1014,7 +1019,7 @@ class DecimalFieldElement(FieldElement):
     
     def __init__(self,*args,**kw):
         FieldElement.__init__(self,*args,**kw)
-        self.preferred_width = min(5,self.field.max_digits) \
+        self.preferred_width = max(5,self.field.max_digits) \
                 + self.field.decimal_places
                 
     def get_field_options(self,**kw):

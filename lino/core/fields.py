@@ -230,6 +230,15 @@ class DisplayField(FakeField):
     def value_to_string(self,*args,**kw): raise NotImplementedError
         
 
+#~ class DynamicForeignKey(DisplayField):
+    #~ """
+    #~ A pointer to "the" one and only MTI child.
+    #~ This assumes that there is always one and only one child instance among the given models.
+    #~ """
+    #~ def __init__(self,get_child,**kw):
+        #~ self.get_child = get_child
+        #~ VirtualField.__init__(self,models.ForeignKey(**kw),self.has_child)
+        
         
 class HtmlBox(DisplayField):
     """
@@ -299,6 +308,7 @@ class VirtualField(FakeField): # (Field):
         for k in ('''to_python choices save_form_data 
           value_to_string verbose_name max_length rel
           max_digits decimal_places
+          help_text
           blank'''.split()):
             setattr(self,k,getattr(self.return_type,k,None))
         #~ logger.info('20120831 VirtualField %s on %s',name,actor_or_model)
@@ -453,8 +463,7 @@ class MethodField(VirtualField):
 
 class unused_LinkedForeignKey(generic.GenericForeignKey):
     """
-    Like a GenericForeignKey, but the content type 
-    is not stored in another model.
+    Like a GenericForeignKey, but the content type is not stored in another model.
     Code partly copied from django.contrib.contenttypes GenericForeignKey.
     Used by :mod:`lino.modlib.links`.
     

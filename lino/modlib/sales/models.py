@@ -555,10 +555,6 @@ class PendingOrders(Orders):
         return Order.objects.pending(make_until=make_until)
 
 
-
-
-
-
 class Invoice(SalesDocument,ledger.Voucher):
   
     class Meta:

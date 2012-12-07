@@ -88,6 +88,12 @@ class Model(models.Model):
     :attr:`hidden_columns <lino.core.tables.AbstractTable.hidden_columns>` 
     of every `Table` on this model.
     """
+    
+    preferred_foreignkey_width = None
+    """
+    The default preferred width (in characters) of widgets that display a 
+    ForeignKey to this model
+    """
 
     
     workflow_state_field = None

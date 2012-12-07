@@ -106,7 +106,7 @@ class Partner(mti.MultiTableBase,CountryRegionCity):
     """
     preferred width for ForeignKey fields to a Partner
     """
-    _lino_preferred_width = 20 
+    preferred_foreignkey_width = 20 
     
   
     class Meta:

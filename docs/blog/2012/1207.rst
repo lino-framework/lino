@@ -1,0 +1,71 @@
+20121207
+========
+
+
+Yesterday's todo is solved:
+
+- ledger.Voucher should not define it's own detail_layout, but 
+  `Movement.voucher` (the pointer to Voucher) should be clickable and link 
+  to the detail of the one and only VoucherType MTI child of that Voucher.
+  
+It was easier than expected, we just need a display field on 
+:class:`Movement <lino.modlib.ledger.models.Movement>` ::
+
+    @dd.displayfield(_("Voucher"))
+    def voucher_link(self,ar):
+        obj = self.voucher.journal.voucher_type.model.objects.get(
+            journal=self.voucher.journal,number=self.voucher.number,year=self.voucher.year)
+        return ar.href_to(obj)
+
+More things to meditate: 
+
+- is it really necessary that Voucher is a non-abstract class?
+
+- It is irritating that the `ledger` and `sales` panels of a partner partly 
+  seem to show redundant information: the same invoice (when registered) 
+  appears in two lists.
+
+A first idea to solve the latter is to have 
+ledger.InvoicesByPartner show only unregistered invoices.
+
+Oops, did I say "unregistered invoices"? 
+Renamed the action "Unregister" to "Deregister". 
+Because "unregistered" ("unregistriert", "non enregistré") 
+is an adjective and means "currently not registered" 
+and includes the case of an invoice that has never been registered.
+While "to deregister" is a verb, meaning to undo a previously executed "register" action.
+"deregistered" then is the participe of this verb, as in 
+"Invoice X has been deregistered", which is to be translated as "entregistriert" 
+and "désenregistré".
+
+FiscalYears and FiscalPeriods
+-----------------------------
+
+A design decision: should it be possible to write a Lino application 
+that uses the modlib and that provides VAT declarations *with* 
+providing ledger? Theoretically this is not unthinkable that somebody 
+wants to enter sales and purchases invoices and to have Lino generate 
+VAT declarations *without* using the ledger module.
+
+So the answer is basically yes.
+This means that we have a little problem: where should we define FiscalYears? 
+Currently it is in ledger, but 
+
+
+Neuanträge
+----------
+
+Some more changes in :mod:`lino_welfare.modlib.newcomers` after feedback of users.
+
+Fixed two framework bugs: 
+
+- until now it was not possible to specify help_text for virtual fields.
+- DecimalFieldElement did not take the correct preferred_width
+
+And some optimizations:
+
+- Renamed `_lino_preferred_width` to the now documented 
+  :attr:`preferred_foreignkey_width <lino.core.model.Model.preferred_foreignkey_width>`
+
+- The `name_column` of :class:`lino.modlib.users.models.User` 
+  now also has a preferred_width of 15.

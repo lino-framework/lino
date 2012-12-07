@@ -42,6 +42,8 @@ from lino.utils import babel
 from django.utils.translation import ugettext_lazy as _
 #~ from lino.modlib.accounts.utils import AccountTypes
 
+from lino.modlib.ledger.utils import FiscalYears
+
 ZERO = Decimal()
  
 class VatClasses(dd.ChoiceList):
@@ -309,6 +311,45 @@ class QtyVatItemBase(VatItemBase):
                 self.total_vat = self.total_base * rate
                 self.total_incl = self.total_base + self.total_vat
                 
+class Periods(dd.ChoiceList):
+    verbose_name = _("VAT Periods")
+add = Periods.add_item
+
+if settings.LINO.vat_quarterly:
+  
+  add('Q1',_("First Quarter (January-March)"))
+  add('Q2',_("Second Quarter (April-June)"))
+  add('Q3',_("Third Quarter (July-August)"))
+  add('Q4',_("Fourth Quarter (September-December)"))
+
+else:
+    
+  add('01',_("January"),'january')
+  add('02',_("February"),'february')
+  add('03',_("March"),'march')
+  add('04',_("April"),'april')
+  add('05',_("May"),'may')
+  add('06',_("June"),'june')
+  add('07',_("July"),'july')
+  add('08',_("August"),'august')
+  add('09',_("September"),'september')
+  add('10',_("October"),'october')
+  add('11',_("November"),'november')
+  add('12',_("December"),'december')
+
+  
+
+class Declaration(dd.Model):
+    class Meta:
+        verbose_name = _("VAT declaration")
+        verbose_name_plural = _("VAT declarations")
+        
+    year = FiscalYears.field()
+    period = Periods.field()
+    
+class Declarations(dd.Table):
+    model = Declaration
+    
         
 
 MODULE_LABEL = _("VAT")
@@ -322,6 +363,7 @@ def setup_config_menu(site,ui,profile,m): pass
 
 def setup_explorer_menu(site,ui,profile,m):
     m  = m.add_menu("vat",MODULE_LABEL)
+    m.add_action(Declarations)
     m.add_action(VatRegimes)
     m.add_action(TradeTypes)
     m.add_action(VatClasses)

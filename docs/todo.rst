@@ -4,6 +4,8 @@ To-do list
 Short-term
 ----------
 
+#.  Is it really necessary that Voucher is a non-abstract class?
+
 #.  Wenn man den Begleitungszeitraum einer *Person* ändert, dann merkt Lino nicht,
     falls durch diese Änderung ein Vertrag ungültig wird.
 

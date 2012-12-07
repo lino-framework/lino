@@ -280,22 +280,22 @@ class RegisterVoucher(dd.RowAction):
         return kw
     
     
-class UnregisterVoucher(dd.RowAction):
-    label = _("Unregister")
+class DeregisterVoucher(dd.RowAction):
+    label = _("Deregister")
     show_in_workflow = True
     
     icon_file = 'cancel.png'
     required = dict(states='registered paid')
-    help_text=_("Unregister this voucher.")
+    help_text=_("Deregister this voucher.")
   
     def get_action_permission(self,ar,obj,state):
         if obj.user != ar.get_user():
             return False
-        return super(UnregisterVoucher,self).get_action_permission(ar,obj,state)
+        return super(DeregisterVoucher,self).get_action_permission(ar,obj,state)
         
     def run(self,obj,ar,**kw):
         #~ ar.confirm(self.help_text,_("Are you sure?"))
-        obj.unregister_voucher(ar)
+        obj.deregister_voucher(ar)
         obj.save()
         kw.update(refresh=True)
         return kw
@@ -329,7 +329,7 @@ class Voucher(mixins.UserAuthored,mixins.ProjectRelated):
     narration = models.CharField(_("Narration"),max_length=200,blank=True)
     
     register_action = RegisterVoucher()
-    unregister_action = UnregisterVoucher()
+    deregister_action = DeregisterVoucher()
     
     #~ @classmethod
     #~ def create_journal(cls,id,**kw):
@@ -357,8 +357,9 @@ class Voucher(mixins.UserAuthored,mixins.ProjectRelated):
         
     def __unicode__(self):
         if self.number is None:
-            return "Voucher #%s (not registered)" % (self.id)
-        return "%s-%s/%s" % (self.journal.pk,self.year,self.number)
+            return "%s #%s (not registered)" % (
+                unicode(self.journal.voucher_type.model._meta.verbose_name),self.id)
+        return "#%s (%s %s)" % (self.number,self.journal,self.year)
         
                 
     def register_voucher(self,ar):
@@ -377,7 +378,7 @@ class Voucher(mixins.UserAuthored,mixins.ProjectRelated):
         state_field = self._meta.get_field('state')
         self.state = state_field.choicelist.registered
         
-    def unregister_voucher(self,ar):
+    def deregister_voucher(self,ar):
         self.number = None
         self.movement_set.all().delete() 
         state_field = self._meta.get_field('state')
@@ -458,6 +459,10 @@ class Movement(mixins.Sequenced):
   
     allow_cascaded_delete = ['voucher']
     
+    class Meta:
+        verbose_name = _("Movement")
+        verbose_name_plural = _("Movements")
+        
     voucher = models.ForeignKey(Voucher)
     #~ pos = models.IntegerField("Position",blank=True,null=True)
     account = models.ForeignKey(accounts.Account)
@@ -480,6 +485,12 @@ class Movement(mixins.Sequenced):
             return self.amount
         return ZERO
             
+    @dd.displayfield(_("Voucher"))
+    def voucher_link(self,ar):
+        obj = self.voucher.journal.voucher_type.model.objects.get(
+            journal=self.voucher.journal,number=self.voucher.number,year=self.voucher.year)
+        return ar.href_to(obj)
+    
     
     def get_siblings(self):
         return self.voucher.movement_set.order_by('seqno')
@@ -492,7 +503,7 @@ class Movement(mixins.Sequenced):
 
 class Movements(dd.Table): 
     model = Movement
-    column_names = 'voucher account debit credit *'
+    column_names = 'voucher_link account debit credit *'
     editable = False
     
 class MovementsByVoucher(Movements):
@@ -501,7 +512,8 @@ class MovementsByVoucher(Movements):
     
 class MovementsByPartner(Movements):
     master_key = 'partner'
-    column_names = 'seqno account voucher debit credit'
+    order_by = ['voucher__date']
+    column_names = 'voucher__date voucher_link debit credit account '
     
 
 
@@ -516,7 +528,7 @@ add('20',_("Registered"),'registered',editable=False)
 #~ add('30',_("Sent"),'sent')
 add('40',_("Paid"),'paid',editable=False)
 
-#~ InvoiceStates.draft.add_workflow(_("Unregister"),states='registered paid')
+#~ InvoiceStates.draft.add_workflow(_("Deregister"),states='registered paid')
 #~ InvoiceStates.registered.add_workflow(_("Register"),states='draft')
     
 class AccountInvoice(vat.VatDocument,Voucher):
@@ -599,8 +611,8 @@ class Invoices(dd.Table):
         ppartner=models.ForeignKey('contacts.Partner',blank=True,null=True),
         pjournal=JournalRef(blank=True))
     model = AccountInvoice
-    order_by = ["id"]
-    column_names = "id date partner total_incl user *" 
+    order_by = ["date","id"]
+    column_names = "date id number partner total_incl user *" 
     params_layout = "pjournal pyear ppartner"
     detail_layout = InvoiceDetail()
     insert_layout = dd.FormLayout("""
@@ -628,7 +640,7 @@ class InvoicesByJournal(Invoices):
     column_names = "number date due_date " \
                   "partner " \
                   "total_incl " \
-                  "total_base total_vat user *"
+                  "total_base total_vat user workflow_buttons *"
                   #~ "ledger_remark:10 " \
     params_panel_hidden = True
                   
@@ -640,6 +652,21 @@ class InvoicesByJournal(Invoices):
           #~ master=ar.master_instance)
         #~ return title
                   
+
+    
+
+class InvoicesByPartner(Invoices):
+    label = _("Unregistered invoices")
+    order_by = ["date"]
+    master_key = 'partner'
+    column_names = "date total_incl total_base total_vat *"
+    filter = models.Q(state=InvoiceStates.draft)
+    
+
+
+#~ register_voucher_type(Invoice,InvoicesByJournal)
+VoucherTypes.add_item(AccountInvoice,InvoicesByJournal)
+
 
 class InvoiceItem(VoucherItem,vat.VatItemBase):
     
@@ -665,17 +692,7 @@ class ItemsByInvoice(dd.Table):
     column_names = "account title vat_class total_base total_vat total_incl seqno"
     master_key = 'voucher'
     order_by = ["seqno"]
-    
 
-class InvoicesByPartner(Invoices):
-    order_by = ["date"]
-    master_key = 'partner'
-    column_names = "date total_incl total_base total_vat *"
-    
-
-
-#~ register_voucher_type(Invoice,InvoicesByJournal)
-VoucherTypes.add_item(AccountInvoice,InvoicesByJournal)
 
 #~ MODULE_LABEL = _("Ledger")
 MODULE_LABEL = accounts.MODULE_LABEL
@@ -724,6 +741,8 @@ def setup_explorer_menu(site,ui,profile,m):
     m = m.add_menu("accounts",MODULE_LABEL)
     m.add_action(Invoices)
     m.add_action(VoucherTypes)
+    m.add_action(Movements)
+    m.add_action(FiscalYears)
   
 
 

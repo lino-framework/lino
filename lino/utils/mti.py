@@ -183,8 +183,11 @@ def insert_child(obj,child_model,**attrs):
     
 
      
+  
 class EnableChild(VirtualField):
     """
+    Rendered as a checkbox that indicates whether an mti 
+    child of the given model exists.
     Documented and tested in :mod:`lino.test_apps.1.models`
     """
     

@@ -267,7 +267,7 @@ class ContactsByCompany(Contacts):
 #~ class User(Person):
 class User(Contact):
   
-    _lino_preferred_width = 15 
+    preferred_foreignkey_width = 15 
     
     class Meta:
         verbose_name = _('User')

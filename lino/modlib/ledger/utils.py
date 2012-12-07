@@ -23,22 +23,17 @@ from django.utils.translation import ugettext_lazy as _
 
 from lino import dd
 
-class FiscalMonth(dd.Choice):
-    pass
+#~ class FiscalMonth(dd.Choice):
+    #~ pass
     
-class FiscalMonths(dd.ChoiceList):
-    item_class = FiscalMonth
-    verbose_name = _("Fiscal Month")
+#~ class FiscalMonths(dd.ChoiceList):
+    #~ item_class = FiscalMonth
+    #~ verbose_name = _("Fiscal Month")
     
     
 class FiscalYear(dd.Choice):
     pass
     
-    #~ def __init__(self,lst,value=None,text=None,name=None,monthly=True,**kw):
-        #~ s = str(year)  
-        #~ super(FiscalYear,self).__init__(lst,s[2:],s)
-        #~ if monthly:
-        
     
 class FiscalYears(dd.ChoiceList):
     item_class = FiscalYear
@@ -53,13 +48,11 @@ class FiscalYears(dd.ChoiceList):
     def from_date(cls,date):
         return cls.from_int(date.year)
 
-for y in range(2000,datetime.date.today().year+5):
+for y in range(datetime.date.today().year,datetime.date.today().year+5):
     s = str(y)
     FiscalYears.add_item(s[2:],s)
 
  
-
-
 
 def _test():
     import doctest

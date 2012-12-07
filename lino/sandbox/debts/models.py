@@ -156,7 +156,7 @@ class Budget(mixins.AutoUser,mixins.CachedPrintable):
     Deserves more documentation.
     """
     
-    #~ _lino_preferred_width = 30
+    #~ preferred_foreignkey_width = 30
     
     class Meta:
         verbose_name = _("Budget")
