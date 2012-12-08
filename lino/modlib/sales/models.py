@@ -19,13 +19,17 @@
 import logging
 logger = logging.getLogger(__name__)
 import datetime
+
+from decimal import Decimal
+HUNDRED = Decimal('100')
+
 from dateutil.relativedelta import relativedelta
 ONE_DAY = relativedelta(days=1)
 
 from django.db import models
+from django import forms
 from django.conf import settings
 #~ from django.contrib.auth import models as auth
-from django import forms
 from django.core.exceptions import ValidationError
 from django.utils.translation import ugettext_lazy as _
 
@@ -76,7 +80,6 @@ add('20',_("Registered"),'registered',editable=False)
 add('30',_("Signed"),'signed',editable=False)
 add('40',_("Sent"),'sent',editable=False)
 add('50',_("Paid"),'paid',editable=False)
-
 
 
 class PaymentTerm(babel.BabelNamed):
@@ -294,6 +297,9 @@ class SalesDocument(
     #~ @dd.chooser()
     #~ def partner_choices(self):
         #~ return Customer.objects.order_by('name')
+        
+    def get_trade_type(self):
+        return vat.TradeTypes.sales
         
     def add_item(self,product=None,qty=None,**kw):
         if product is not None:
@@ -608,17 +614,31 @@ class ProductDocItem(ledger.VoucherItem,vat.QtyVatItemBase):
         name = settings.LINO.get_product_vat_class(tt,self.product)
         return vat.VatClasses.get_by_name(name)
         
-    def full_clean(self,*args,**kw):
-        if self.product:
-            if not self.title:
-                self.title = self.product.name
-            if not self.description:
-                self.description = self.product.description
-            if self.unit_price is None:
-                if self.product.price is not None:
-                    self.unit_price = self.product.price * (100 - self.discount) / 100
-        super(ProductDocItem,self).full_clean(*args,**kw)
+    #~ def full_clean(self,*args,**kw):
+        #~ super(ProductDocItem,self).full_clean(*args,**kw)
 
+    def product_changed(self,ar):
+        if self.product:
+            self.title = self.product.name
+            self.description = self.product.description
+            if self.qty is None:
+                self.qty = Decimal("1")
+            if self.product.price is not None:
+                self.unit_price = self.product.price * (HUNDRED - self.discount) / HUNDRED
+                self.unit_price_changed(ar)
+        
+    def before_ui_save(self,ar):
+        #~ if self.product:
+            #~ if not self.title:
+                #~ self.title = self.product.name
+            #~ if not self.description:
+                #~ self.description = self.product.description
+            #~ if self.unit_price is None:
+                #~ if self.product.price is not None:
+                    #~ self.unit_price = self.product.price * (100 - self.discount) / 100
+                    #~ self.unit_price_changed(ar)
+        super(ProductDocItem,self).before_ui_save(ar)
+      
 
 class OrderItem(ProductDocItem):
     voucher = models.ForeignKey(Order,related_name='items') 

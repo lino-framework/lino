@@ -579,8 +579,8 @@ class Action(Parametrizable,Permittable):
         
     def get_view_permission(self,profile):
         """
-        Overridden by lino_welfare.modlib.pcsw.models.BeIdReadCardAction
-        (which is available only when lino.Lino.use_eid_jslib is True).
+        Overridden by :class:`lino_welfare.modlib.pcsw.models.BeIdReadCardAction`
+        to make it available only when :attr:`lino.Lino.use_eid_jslib` is True.
         """
         return True
         

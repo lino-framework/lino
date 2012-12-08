@@ -18,12 +18,23 @@ To be used for simple demo setups in different countries.
 
 """
 
+from decimal import Decimal
+
+from django.conf import settings
+from lino.utils import Cycler
 from lino.utils.babel import babel_values
 from lino import dd
 accounts = dd.resolve_app('accounts')
 vat = dd.resolve_app('vat')
+sales = dd.resolve_app('sales')
+ledger = dd.resolve_app('ledger')
+contacts = dd.resolve_app('contacts')
+
 
 current_group = None
+
+REQUEST = None
+
 
 def objects():
     chart  = accounts.Chart(**babel_values('name',
@@ -77,8 +88,6 @@ def objects():
         sales_allowed=True) # PCMN 7000
 
 
-    sales = dd.resolve_app('sales')
-    ledger = dd.resolve_app('ledger')
 
     if sales:
         #~ yield sales.Orders.create_journal("VKR",'sales',name=u"Aufträge")
@@ -94,3 +103,37 @@ def objects():
         **babel_values('name',
             de=u"Einkaufsrechnungen",fr=u"Factures achat",en="Purchase invoices",et=u"Ostuarved"))
 
+
+    MODEL = ledger.AccountInvoice
+    vt = ledger.VoucherTypes.get_for_model(MODEL)
+    JOURNALS = Cycler(vt.get_journals())
+    PARTNERS = Cycler(contacts.Partner.objects.all())
+    USERS = Cycler(settings.LINO.user_model.objects.all())
+    AMOUNTS = Cycler([Decimal(x) for x in 
+        "2.50 6.80 9.95 14.50 20 29.90 39.90 39.90 99.95 199.95 599.95 1599.99".split()])
+    ITEMCOUNT = Cycler(1,2,3)
+    for i in range(10):
+        jnl = JOURNALS.pop()
+        invoice = MODEL(journal=jnl,
+          partner=PARTNERS.pop(),
+          user=USERS.pop(),
+          date=settings.LINO.demo_date(-30+i))
+        yield invoice
+        for j in range(ITEMCOUNT.pop()):
+            item = ledger.InvoiceItem(voucher=invoice,
+                account=jnl.get_allowed_accounts()[0],
+                #~ product=PRODUCTS.pop(),
+                total_incl=AMOUNTS.pop()
+                )
+            item.total_incl_changed(REQUEST)
+            item.before_ui_save(REQUEST)
+            #~ if item.total_incl:
+                #~ print "20121208 ok", item
+            #~ else:
+                #~ if item.product.price:
+                    #~ raise Exception("20121208")
+            yield item
+        invoice.register_voucher(REQUEST)
+        invoice.save()
+
+    

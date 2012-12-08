@@ -25,9 +25,10 @@ from django.db import models
 from django.utils.translation import ugettext_lazy as _
 from django.db.models.fields.related import ForeignRelatedObjectsDescriptor
 
-from lino import dd
+#~ from lino import dd
 from lino.core.modeltools import obj2str
 from lino.core import actions
+from lino.core import model
 
 
 #~ def duplicate_row(obj,**kw):
@@ -146,7 +147,7 @@ class Duplicate(actions.RowAction):
         
   
 
-class Duplicable(dd.Model):
+class Duplicable(model.Model):
     """
     Adds a row action "Duplicate" which duplicates (creates a clone of) 
     the object it was called on.

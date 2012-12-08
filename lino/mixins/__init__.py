@@ -28,18 +28,22 @@ from django.contrib.contenttypes.models import ContentType
 from django.utils.translation import ugettext_lazy as _
 from django.utils.translation import string_concat
 
-from lino import dd
+#~ from lino import dd
 #~ from lino.models import Workflow
+from lino.utils import auth
 #~ from lino.utils import perms
 from lino.core.modeltools import full_model_name
 from lino.core import frames
 from lino.core import actions
+from lino.core import fields
+from lino.core import dbtables
+from lino.core import model
 from lino.utils.choosers import chooser
 from lino.mixins.duplicable import Duplicable
 
 
 #~ class Owned(dd.Model):
-class Controllable(dd.Model):
+class Controllable(model.Model):
     """
     Mixin for models that are "controllable" by another database object.
     
@@ -82,16 +86,16 @@ class Controllable(dd.Model):
     class Meta:
         abstract = True
         
-    owner_type = dd.ForeignKey(ContentType,
+    owner_type = fields.ForeignKey(ContentType,
         editable=True,
         blank=controller_is_optional,null=controller_is_optional,
         verbose_name=string_concat(owner_label,' ',_('(type)')))
-    owner_id = dd.GenericForeignKeyIdField(
+    owner_id = fields.GenericForeignKeyIdField(
         owner_type,
         editable=True,
         blank=controller_is_optional,null=controller_is_optional,
         verbose_name=string_concat(owner_label,' ',_('(object)')))
-    owner = dd.GenericForeignKey(
+    owner = fields.GenericForeignKey(
         'owner_type', 'owner_id',
         verbose_name=owner_label)
         
@@ -139,7 +143,7 @@ class Controllable(dd.Model):
 
 
 
-class UserAuthored(dd.Model):
+class UserAuthored(model.Model):
     """
     Mixin for models that have a `user` field which is automatically 
     set to the requesting user.
@@ -162,7 +166,7 @@ class UserAuthored(dd.Model):
             
     else:
       
-        user = dd.DummyField()
+        user = fields.DummyField()
         
     #~ def on_duplicate(self,ar):
         #~ self.user = ar.get_user()
@@ -208,18 +212,123 @@ class UserAuthored(dd.Model):
             #~ logger.info("20120919 no permission to %s on %s for %r",action,self,user)
             return False
         user = ar.get_user()
-        if self.user != user and getattr(user.profile,self.manager_level_field) < dd.UserLevels.manager:
-        #~ if self.user != user and user.profile.level < dd.UserLevels.manager:
+        if self.user != user and getattr(user.profile,self.manager_level_field) < auth.UserLevels.manager:
+        #~ if self.user != user and user.profile.level < auth.UserLevels.manager:
             #~ logger.info("20120919 no permission to %s on %r because %r != %r",action,self,self.user,user)
             return ba.action.readonly
         return True
 
 AutoUser = UserAuthored # backwards compatibility
 
+class AuthorRowAction(actions.RowAction):
+    """
+    """
+    manager_level_field = 'level'
+    
+    def get_action_permission(self,ar,obj,state):
+        user = ar.get_user()
+        if obj.user != user and getattr(user.profile,self.manager_level_field) < auth.UserLevels.manager:
+            return self.readonly
+        return super(actions.AuthorRowAction,self).get_action_permission(ar,obj,state)
+        
+        
+class RegisterAction(actions.RowAction):
+    label = _("Register") 
+    show_in_workflow = True
+    
+    #~ icon_file = 'flag_green.png'
+    #~ required = dict(states='draft')
+    help_text=_("Register this object.")
+    
+    def attach_to_actor(self,actor,name):
+        if not issubclass(actor.model,Registrable):
+            raise Exception("%s is not a Registrable" % actor.model)
+        self.target_model = actor.model
+        self.required = self.target_model.required_to_register
+        super(RegisterAction,self).attach_to_actor(actor,name)
+  
+    def run(self,obj,ar,**kw):
+        #~ ar.confirm(self.help_text,_("Are you sure?"))
+        obj.register(ar)
+        obj.save()
+        kw.update(refresh=True)
+        return kw
+    
+    
+        
+class DeregisterAction(actions.RowAction):
+    label = _("Deregister")
+    show_in_workflow = True
+    
+    icon_file = 'cancel.png'
+    #~ required = dict(states='registered paid')
+    help_text=_("Deregister this object.")
+    
+    def attach_to_actor(self,actor,name):
+        if not issubclass(actor.model,Registrable):
+            raise Exception("%s is not a Registrable" % actor.model)
+        self.target_model = actor.model
+        self.required = self.target_model.required_to_deregister
+        #~ logger.info("20121208 DeregisterAction.attach_to_actor() %s %s",actor,actor.model.required_to_deregister)
+        super(DeregisterAction,self).attach_to_actor(actor,name)
+  
+    def run(self,obj,ar,**kw):
+        #~ ar.confirm(self.help_text,_("Are you sure?"))
+        obj.deregister(ar)
+        obj.save()
+        kw.update(refresh=True)
+        return kw
+
+
+class Registrable(model.Model):
+    """
+    Base class to anything that may be "registered" and "deregistered".
+    E.g. Invoices, Vouchers, Declarations are candidates. 
+    "Registered" in general means "this item has been taken account of". 
+    Registered objects generally are not editable.
+    """
+    class Meta:
+        abstract = True
+        
+    workflow_state_field = 'state'
+    
+    required_to_register = dict(states='draft')
+    #~ required_to_deregister = dict(states='registered paid')
+    required_to_deregister = dict(states='registered')
+    
+    register_action = RegisterAction()
+    deregister_action = DeregisterAction()
+    
+    def get_row_permission(self,ar,state,ba):
+        if state is not None and state.name != 'draft' and not ar.bound_action.action.readonly:
+            return False
+        return super(Registrable,self).get_row_permission(ar,state,ba)
+    
+        
+    def register(self,ar):
+        """
+        Register this item. 
+        The base implementation just sets the state to "registered".
+        Subclasses may override this to add custom behaviour.
+        """
+        state_field = self._meta.get_field('state')
+        self.state = state_field.choicelist.registered
+        
+    def deregister(self,ar):
+        """
+        Deregister this item. 
+        The base implementation just sets the state to "draft".
+        Subclasses may override this to add custom behaviour.
+        """
+        state_field = self._meta.get_field('state')
+        self.state = state_field.choicelist.draft
+        
+
+
 
 if settings.LINO.user_model: 
   
-    class ByUser(dd.Table):
+    class ByUser(dbtables.Table):
         master_key = 'user'
         #~ can_view = perms.is_authenticated
         
@@ -240,12 +349,12 @@ if settings.LINO.user_model:
 else:
   
     # dummy Table for userless sites
-    class ByUser(dd.Table): pass 
+    class ByUser(dbtables.Table): pass 
   
 
 
 
-class CreatedModified(dd.Model):
+class CreatedModified(model.Model):
     """
     Adds two timestamp fields `created` and `modified`.    
     
@@ -293,7 +402,7 @@ class Sequenced(Duplicable):
         verbose_name=_("Seq.No."))
         
         
-    @dd.action(_("Duplicate"))
+    @actions.action(_("Duplicate"))
     def duplicate_row(self,ar):
         #~ print '20120605 duplicate_row', self.seqno, self.account
         seqno = self.seqno
@@ -335,7 +444,7 @@ class Sequenced(Duplicable):
         super(Sequenced,self).full_clean(*args,**kw)
   
 
-class ProjectRelated(dd.Model):
+class ProjectRelated(model.Model):
     """
     Mixin for Models that are automatically 
     related to a "project". 
@@ -359,7 +468,7 @@ class ProjectRelated(dd.Model):
             related_name="%(app_label)s_%(class)s_set_by_project",
             )
     else:
-        project = dd.DummyField()
+        project = fields.DummyField()
 
     def get_related_project(self,ar):
         if settings.LINO.project_model:

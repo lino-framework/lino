@@ -605,6 +605,7 @@ class Table(AbstractTable):
                         else:
                             v = copy.deepcopy(v)
                             v.name = None
+                            
                             #~ def meth(action,ar,elem):
                             #~     return v.run()
                             #~ v.run = meth
@@ -635,7 +636,7 @@ class Table(AbstractTable):
                 if getattr(self,name) is None:
                     m = getattr(self.model,name,None)
                     if m is not None:
-                        logger.debug('20120731 Install model method %s from %r to %r',name,self.model,self)
+                        #~ logger.debug('20120731 Install model method %s from %r to %r',name,self.model,self)
                         setattr(self,name,model2actor(m))
                         #~ 'dictproxy' object does not support item assignment:
                         #~ self.__dict__[name] = model2actor(m) 

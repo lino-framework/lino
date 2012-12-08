@@ -43,6 +43,7 @@ from django.utils.translation import ugettext_lazy as _
 #~ from lino.modlib.accounts.utils import AccountTypes
 
 from lino.modlib.ledger.utils import FiscalYears
+from lino.core.modeltools import models_by_abc
 
 ZERO = Decimal()
  
@@ -80,9 +81,88 @@ add('50',_("Exempt"),'exempt')
     
 class TradeTypes(dd.ChoiceList):
     verbose_name = _("Trade Type")
+    
 add = TradeTypes.add_item
 add('S',_("Sales"),'sales')
 add('P',_("Purchases"),'purchases')
+
+
+
+
+class Periods(dd.ChoiceList):
+    verbose_name = _("VAT Period")
+    verbose_name_plural = _("VAT Periods")
+add = Periods.add_item
+
+if settings.LINO.vat_quarterly:
+  
+  add('Q1',_("First Quarter (January-March)"),months=(1,2,3))
+  add('Q2',_("Second Quarter (April-June)"),months=(4,5,6,))
+  add('Q3',_("Third Quarter (July-August)"),months=(7,8,9))
+  add('Q4',_("Fourth Quarter (September-December)"),months=(10,11,12))
+
+else:
+    
+  add('01',_("January"),'january',months=(1,))
+  add('02',_("February"),'february',months=(2,))
+  add('03',_("March"),'march',months=(3,))
+  add('04',_("April"),'april',months=(4,))
+  add('05',_("May"),'may',months=(5,))
+  add('06',_("June"),'june',months=(6,))
+  add('07',_("July"),'july',months=(7,))
+  add('08',_("August"),'august',months=(8,))
+  add('09',_("September"),'september',months=(9,))
+  add('10',_("October"),'october',months=(10,))
+  add('11',_("November"),'november',months=(11,))
+  add('12',_("December"),'december',months=(12,))
+
+  
+
+class DeclarationStates(dd.Workflow):
+    pass
+add = DeclarationStates.add_item
+add("00",_("Draft"),"draft")
+add("10",_("Registered"),"registered")
+add("20",_("Submitted"),"submitted")
+
+
+
+class DeclarationFields(dd.ChoiceList):
+    
+    @classmethod
+    def amount_for_field(self,fld,dcl,doc,tt):
+        if not fld.name.startswith(tt.name):
+            return
+        #~ if tt.name == 'sales':
+        if fld.name.endswith("_base"):
+            return doc.total_base
+        if fld.name.endswith("_vat"):
+            return doc.total_vat
+            
+    #~ @classmethod
+    #~ def collect_sales_base(self,dcl,tt,doc):
+        #~ if tt.name == 'sales':
+            #~ return doc.total_base
+            
+    #~ @classmethod
+    #~ def collect_sales_vat(self,dcl,tt,doc):
+        #~ if tt.name == 'sales':
+            #~ return doc.total_vat
+            
+    #~ @classmethod
+    #~ def collect_purchases_base(self,dcl,tt,doc):
+        #~ if tt.name == 'purchases':
+            #~ return doc.total_base
+
+
+add = DeclarationFields.add_item
+add("00",_("Sales base"),"sales_base")
+add("10",_("Sales VAT"),"sales_vat")
+add("20",_("Purchases base"),"purchases_base")
+add("30",_("Purchases VAT"),"purchases_vat")
+
+
+
 
 
 class VatTotal(dd.Model):
@@ -107,7 +187,7 @@ class VatTotal(dd.Model):
             if self.total_base is None: return
         #~ assert not isinstance(self.total_base,basestring)
         rate = self.get_vat_rate()
-        logger.info("20121206 total_base_changed %s",rate)
+        #~ logger.info("20121206 total_base_changed %s",rate)
         if rate is None: 
             return
         self.total_vat = self.total_base * rate
@@ -129,7 +209,7 @@ class VatTotal(dd.Model):
             if self.total_incl is None: return
         #~ assert not isinstance(self.total_incl,basestring)
         rate = self.get_vat_rate()
-        logger.info("20121206 total_incl_changed %s",rate)
+        #~ logger.info("20121206 total_incl_changed %s",rate)
         if rate is None: return
         self.total_base = self.total_incl / (1 + rate)
         self.total_vat = self.total_incl - self.total_base
@@ -159,6 +239,7 @@ class VatDocument(mixins.UserAuthored,VatTotal):
     item_vat = models.BooleanField(default=False,
       help_text=_("Whether price includes VAT or not."))
     vat_regime = VatRegimes.field(blank=True)
+    declaration = models.ForeignKey("vat.Declaration",blank=True,null=True)
     
     
     @classmethod
@@ -176,7 +257,7 @@ class VatDocument(mixins.UserAuthored,VatTotal):
         return fields
         
     def get_trade_type(self):
-        return TradeTypes.sales
+        raise NotImplementedError()
         
     def get_vat_sums(self):
         sums_dict = dict()
@@ -190,13 +271,16 @@ class VatDocument(mixins.UserAuthored,VatTotal):
         base = Decimal()
         vat = Decimal()
         for i in self.items.order_by('seqno'):
-            #~ move(i.get_base_account(),i.total)
-            book(i.get_base_account(tt),i.total_base)
-            vatacc = settings.LINO.get_vat_account(tt,i.vat_class,self.vat_regime)
-            vatacc = self.journal.chart.get_account_by_ref(vatacc)
-            book(vatacc,i.total_vat)
-            base += i.total_base
-            vat += i.total_vat
+            if i.total_base is not None:
+                if i.total_vat is None or i.total_incl is None:
+                    raise Exception("20121208")
+                #~ move(i.get_base_account(),i.total)
+                book(i.get_base_account(tt),i.total_base)
+                vatacc = settings.LINO.get_vat_account(tt,i.vat_class,self.vat_regime)
+                vatacc = self.journal.chart.get_account_by_ref(vatacc)
+                book(vatacc,i.total_vat)
+                base += i.total_base
+                vat += i.total_vat
         self.total_base = base
         self.total_vat = vat
         self.total_incl = vat + base
@@ -291,16 +375,19 @@ class QtyVatItemBase(VatItemBase):
     unit_price = dd.PriceField(blank=True,null=True) 
     qty = dd.QuantityField(blank=True) # ,null=True)
     
+    def unit_price_changed(self,ar):
+        self.reset_totals(ar)
+        
     def reset_totals(self,ar):
         super(QtyVatItemBase,self).reset_totals(ar)
-        if not self.voucher.compute_totals:
-            if self.qty:
-                if self.voucher.item_vat: 
-                    self.unit_price = self.total_incl / self.qty
-                else:
-                    self.unit_price = self.total_base / self.qty
+        #~ if not self.voucher.compute_totals:
+            #~ if self.qty:
+                #~ if self.voucher.item_vat: 
+                    #~ self.unit_price = self.total_incl / self.qty
+                #~ else:
+                    #~ self.unit_price = self.total_base / self.qty
         
-        elif self.unit_price is not None and self.qty is not None:
+        if self.unit_price is not None and self.qty is not None:
             rate = self.get_vat_rate()
             if self.voucher.item_vat: # unit_price_includes_vat
                 self.total_incl = self.unit_price * self.qty
@@ -311,44 +398,121 @@ class QtyVatItemBase(VatItemBase):
                 self.total_vat = self.total_base * rate
                 self.total_incl = self.total_base + self.total_vat
                 
-class Periods(dd.ChoiceList):
-    verbose_name = _("VAT Periods")
-add = Periods.add_item
 
-if settings.LINO.vat_quarterly:
-  
-  add('Q1',_("First Quarter (January-March)"))
-  add('Q2',_("Second Quarter (April-June)"))
-  add('Q3',_("Third Quarter (July-August)"))
-  add('Q4',_("Fourth Quarter (September-December)"))
-
-else:
-    
-  add('01',_("January"),'january')
-  add('02',_("February"),'february')
-  add('03',_("March"),'march')
-  add('04',_("April"),'april')
-  add('05',_("May"),'may')
-  add('06',_("June"),'june')
-  add('07',_("July"),'july')
-  add('08',_("August"),'august')
-  add('09',_("September"),'september')
-  add('10',_("October"),'october')
-  add('11',_("November"),'november')
-  add('12',_("December"),'december')
-
-  
-
-class Declaration(dd.Model):
+class Declaration(mixins.Registrable):
     class Meta:
         verbose_name = _("VAT declaration")
         verbose_name_plural = _("VAT declarations")
         
     year = FiscalYears.field()
     period = Periods.field()
+    state = DeclarationStates.field(default=DeclarationStates.draft)
+    
+    def can_declare(self,doc):
+        if doc.year == self.year:
+            if doc.date.month in self.period.months:
+                return True
+            #~ logger.info("20121208 not %s in %s",doc.date.month,self.period.months)
+        return False
+        
+    #~ def save(self,*args,**kw):
+        #~ if self.state == DeclarationStates.draft:
+            #~ if self.year and self.period:
+                #~ self.compute_fields()
+        #~ super(Declaration,self).save(*args,**kw)
+    
+    def register(self,ar):
+        self.compute_fields()
+        super(Declaration,self).register(ar)
+        
+    def deregister(self,ar):
+        for m in models_by_abc(VatDocument):
+            #~ logger.info("20121208 a model %s",m)
+            for doc in m.objects.filter(declaration_=self):
+                doc.declaration = None
+                doc.save()
+        super(Declaration,self).deregister(ar)
+        
+    def compute_fields(self):
+        sums = dict()
+        for fld in DeclarationFields.objects():
+            sums[fld.name] = Decimal('0')
+        
+        count = 0
+        for m in models_by_abc(VatDocument):
+            #~ logger.info("20121208 a model %s",m)
+            for doc in m.objects.filter(declaration__isnull=True):
+                #~ logger.info("20121208 a document %s",doc)
+                if self.can_declare(doc):
+                    #~ logger.info("20121208 a can_declare %s",doc)
+                    count += 1
+                    doc.declaration = self
+                    doc.save()
+
+        for m in models_by_abc(VatDocument):
+            for doc in m.objects.filter(declaration=self):
+                #~ logger.info("20121208 b document %s",doc)
+                self.collect_doc(sums,doc)
+                
+        for fld in DeclarationFields.objects():
+            setattr(self,fld.name,sums[fld.name])
+            
+                
+    def collect_doc(self,sums,doc):
+        tt = doc.get_trade_type()
+        for fld in DeclarationFields.objects():
+            amount = DeclarationFields.amount_for_field(fld,self,doc,tt)
+            if amount:
+                sums[fld.name] += amount
+            
+            #~ m = getattr(self,"collect_"+fld.name,None)
+            #~ if m:
+                #~ amount = m(self,tt,doc)
+                #~ if amount:
+                    #~ sums[fld.name] += amount
+                    
+                    
+  
+class DocumentsByDeclaration(dd.VirtualTable):
+#~ class DocumentsByDeclaration(dd.Table):
+    master = Declaration
+    column_names = 'date partner'
+    #~ model = VatDocument
+    #~ master_key = 'declaration'
+  
+    @classmethod
+    def get_data_rows(self,ar):
+    #~ def get_request_queryset(self,ar):
+        docs = []
+        for m in models_by_abc(VatDocument):
+            for doc in m.objects.filter(declaration=ar.master_instance):
+                docs.append(doc)
+                
+        def f(a,b): return cmp(a.date,b.date)
+        docs.sort(f)
+        return docs
+        
+    @dd.virtualfield(models.DateField(_("Date")))
+    def date(self,obj,ar=None):
+        return obj.date
+        
+    @dd.virtualfield(models.ForeignKey('contacts.Partner'))
+    def partner(self,obj,ar=None):
+        return obj.partner
+    
+
+for fld in DeclarationFields.objects():
+    dd.inject_field(Declaration,fld.name,dd.PriceField(fld.text,default=Decimal))
+
     
 class Declarations(dd.Table):
     model = Declaration
+    column_names = 'year period workflow_buttons * state id'
+    detail_layout = """
+    year period state
+    DocumentsByDeclaration
+    """
+    
     
         
 
@@ -357,13 +521,17 @@ MODULE_LABEL = _("VAT")
 def site_setup(site): pass 
 def setup_main_menu(site,ui,profile,m): pass
 def setup_my_menu(site,ui,profile,m): pass
+  
+def setup_reports_menu(site,ui,profile,m):
+    m  = m.add_menu("vat",MODULE_LABEL)
+    m.add_action(Declarations)
+    
 def setup_config_menu(site,ui,profile,m): pass
 #~ def setup_explorer_menu(site,ui,profile,m): pass
   
 
 def setup_explorer_menu(site,ui,profile,m):
     m  = m.add_menu("vat",MODULE_LABEL)
-    m.add_action(Declarations)
     m.add_action(VatRegimes)
     m.add_action(TradeTypes)
     m.add_action(VatClasses)

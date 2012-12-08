@@ -862,3 +862,16 @@ def fields_list(model,field_names):
     return [get_data_elem(model,n).name for n in field_names.split()]
 
 
+def ForeignKey(othermodel,*args,**kw):
+    """
+    This is exactly the same as 
+    `django.db.models.ForeignKey <https://docs.djangoproject.com/en/dev/ref/models/fields/#foreignkey>`, 
+    except for a subtle difference: it supports `othermodel` being `None`
+    and returns a :class:`DummyField <lino.core.fields.DummyField>` 
+    in that case.
+    This difference is useful when designing reusable models.
+    """
+    if othermodel is None: 
+        return DummyField(othermodel,*args,**kw)
+    return models.ForeignKey(othermodel,*args,**kw)
+    

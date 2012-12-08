@@ -40,7 +40,7 @@ Extended Fields:
 - :class:`GenericForeignKeyIdField <lino.core.fields.GenericForeignKeyIdField>`
 - :class:`RecurrenceField <lino.core.fields.RecurrenceField>`
 - :class:`DummyField <lino.core.fields.DummyField>`
-- :func:`ForeignKey`
+- :func:`ForeignKey <lino.core.fields.ForeignKey>`
 
 Babel fields:
 
@@ -74,13 +74,19 @@ Utilities:
 - :func:`update_field` 
 - :func:`inject_field` 
 
+Actions:
+
+- :class:`RowAction <lino.core.actions.RowAction >`
+- :class:`ListAction <lino.core.actions.ListAction>`
+- :class:`ChangeStateAction <lino.core.changes.ChangeStateAction>`
+- :class:`NotifyingAction <lino.core.actions.NotifyingAction>`
+- :class:`AuthorRowAction <lino.mixins.AuthorRowAction>`
+
 Miscellaneous:
 
 - :class:`ChoiceList <lino.core.choicelists.ChoiceList>`
 - :class:`Workflow <lino.core.workflows.Workflow>`
-- :class:`ChangeStateAction <lino.core.changes.ChangeStateAction>`
-- :class:`NotifyingAction <lino.core.actions.NotifyingAction>`
-- :class:`ListAction <lino.core.actions.ListAction>`
+
 
 - :class:`UserProfiles <lino.utils.auth.UserProfiles>`
 - :class:`UserGroups <lino.utils.auth.UserGroups>`
@@ -118,6 +124,7 @@ from lino.core.dialogs import Dialog
 from lino.core.actions import action
 #~ from lino.core.actions import Action
 from lino.core.actions import RowAction
+from lino.mixins import AuthorRowAction
 from lino.core.actions import ListAction
 from lino.core.actions import GridEdit, ShowDetailAction
 from lino.core.actions import InsertRow, DeleteSelected
@@ -148,6 +155,8 @@ from lino.core.fields import DisplayField, displayfield
 from lino.core.fields import VirtualField, virtualfield
 from lino.core.fields import RequestField, requestfield
 from lino.core.fields import Constant, constant
+from lino.core.fields import ForeignKey
+
 from lino.utils.babel import BabelCharField, BabelTextField
 #~ from lino.core.fields import MethodField
 
@@ -318,19 +327,6 @@ def add_user_group(name,label):
     else:
         if g.text != label:
             g.text += " & " + unicode(label)
-    
-def ForeignKey(othermodel,*args,**kw):
-    """
-    This is exactly the same as 
-    `django.db.models.ForeignKey <https://docs.djangoproject.com/en/dev/ref/models/fields/#foreignkey>`, 
-    except for a subtle difference: it supports `othermodel` being `None`
-    and returns a :class:`DummyField <lino.core.fields.DummyField>` 
-    in that case.
-    This difference is useful when designing reusable models.
-    """
-    if othermodel is None: 
-        return DummyField(othermodel,*args,**kw)
-    return models.ForeignKey(othermodel,*args,**kw)
     
 def required(**kw):
     #~ if not kw.has_key('auth'):

@@ -1151,9 +1151,22 @@ class Lino(object):
         """
         Set up the application's menu structure.
         
-        The default implementation use a system of 
+        The default implementation uses a system of 
         predefined top-level items that are filled by the 
         different :setting:`INSTALLED_APPS`.
+        To use this system, application programmers 
+        define one or several of the following functions in 
+        their `modules` module:
+        
+        - `setup_master_menu`
+        - `setup_main_menu`
+        - `setup_reports_menu`
+        - `setup_config_menu`
+        - `setup_explorer_menu`
+        - `setup_site_menu`
+        
+        These functions, if present, will be called with three 
+        positional arguments: `ui`, `profile` and `menu`.
         
         Deserves more documentation.
         
@@ -1161,10 +1174,12 @@ class Lino(object):
         from django.utils.translation import ugettext_lazy as _
         m = main.add_menu("master",_("Master"))
         self.on_each_app('setup_master_menu',ui,profile,m)
-        if not profile.readonly:
-            m = main.add_menu("my",_("My menu"))
-            self.on_each_app('setup_my_menu',ui,profile,m)
+        #~ if not profile.readonly:
+            #~ m = main.add_menu("my",_("My menu"))
+            #~ self.on_each_app('setup_my_menu',ui,profile,m)
         self.on_each_app('setup_main_menu',ui,profile,main)
+        m = main.add_menu("reports",_("Reports"))
+        self.on_each_app('setup_reports_menu',ui,profile,m)
         m = main.add_menu("config",_("Configure"))
         self.on_each_app('setup_config_menu',ui,profile,m)
         m = main.add_menu("explorer",_("Explorer"))

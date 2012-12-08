@@ -44,31 +44,6 @@ vat = dd.resolve_app('vat')
 
 ZERO = Decimal()
 
-#~ DOCTYPES = []
-#~ DOCTYPE_CHOICES = []
-
-#~ def register_voucher_type(docclass,rptclass=None):
-    #~ type_id = len(DOCTYPE_CHOICES)
-    #~ DOCTYPE_CHOICES.append((type_id,docclass.__name__))
-    #~ DOCTYPES.append((docclass,rptclass))
-    #~ docclass.doctype = type_id
-    #~ return type_id
-
-#~ def get_doctype(cl):
-    #~ i = 0
-    #~ for c,r in DOCTYPES:
-        #~ if c is cl:
-            #~ return i
-        #~ i += 1
-    #~ return None
-
-
-#~ def default_year():
-    #~ return datetime.date.today().year
-    
-#~ def YearRef(**kw):
-    #~ kw.setdefault('default',default_year)
-    #~ return models.IntegerField(**kw)
 
       
 class VoucherType(dd.Choice):
@@ -81,14 +56,25 @@ class VoucherType(dd.Choice):
         name = None
         super(VoucherType,self).__init__(cls,value,text,name)
         
+    def get_journals(self):
+        return Journal.objects.filter(voucher_type=self)
+        
 class VoucherTypes(dd.ChoiceList):
     item_class = VoucherType
     #~ blank = False
     max_length = 100
     
     @classmethod
+    def get_for_model(self,model):
+        for o in self.objects():
+            if o.model is model:
+                return o
+          
+    @classmethod
     def add_item(cls,model,table_class):
         return cls.add_item_instance(VoucherType(cls,model,table_class))
+        
+        
     
   
 #~ class VatClasses(ChoiceList):
@@ -184,13 +170,19 @@ class Journal(babel.BabelNamed,mixins.Sequenced):
         #~ doc.save()
         return doc
         
+    def get_allowed_accounts(self,**kw):
+        kw[self.trade_type.name+'_allowed'] = True
+        kw.update(chart=self.chart)
+        return accounts.Account.objects.filter(**kw)
+        
+        
     def get_next_number(self,voucher):
         self.save()
         cl = self.get_doc_model()
         d = cl.objects.filter(journal=self,year=voucher.year).aggregate(
             models.Max('number'))
         number = d['number__max']
-        logger.info("20121206 get_next_number %r",number)
+        #~ logger.info("20121206 get_next_number %r",number)
         if number is None:
             return 1
         return number + 1
@@ -258,51 +250,9 @@ def VoucherNumber(**kw):
     
 
 
-class RegisterVoucher(dd.RowAction):
-    label = _("Register") 
-    show_in_workflow = True
     
-    #~ icon_file = 'cancel.png'
-    #~ icon_file = 'flag_green.png'
-    required = dict(states='draft')
-    help_text=_("Register this voucher.")
-  
-    def get_action_permission(self,ar,obj,state):
-        if obj.user != ar.get_user():
-            return False
-        return super(RegisterVoucher,self).get_action_permission(ar,obj,state)
-        
-    def run(self,obj,ar,**kw):
-        #~ ar.confirm(self.help_text,_("Are you sure?"))
-        obj.register_voucher(ar)
-        obj.save()
-        kw.update(refresh=True)
-        return kw
-    
-    
-class DeregisterVoucher(dd.RowAction):
-    label = _("Deregister")
-    show_in_workflow = True
-    
-    icon_file = 'cancel.png'
-    required = dict(states='registered paid')
-    help_text=_("Deregister this voucher.")
-  
-    def get_action_permission(self,ar,obj,state):
-        if obj.user != ar.get_user():
-            return False
-        return super(DeregisterVoucher,self).get_action_permission(ar,obj,state)
-        
-    def run(self,obj,ar,**kw):
-        #~ ar.confirm(self.help_text,_("Are you sure?"))
-        obj.deregister_voucher(ar)
-        obj.save()
-        kw.update(refresh=True)
-        return kw
-
-
 #~ class Voucher(mixins.Controllable):
-class Voucher(mixins.UserAuthored,mixins.ProjectRelated):
+class Voucher(mixins.UserAuthored,mixins.ProjectRelated,mixins.Registrable):
     """
     A Voucher is a document that represents a monetary transaction.
     Subclasses must define a field `state`.
@@ -318,6 +268,8 @@ class Voucher(mixins.UserAuthored,mixins.ProjectRelated):
         verbose_name_plural = _("Vouchers")
         #~ abstract = True
         
+    required_to_deregister = dict(states='registered paid')
+        
     #~ controller_is_optional = False
     
     journal = JournalRef()
@@ -327,9 +279,6 @@ class Voucher(mixins.UserAuthored,mixins.ProjectRelated):
     #~ ledger_remark = models.CharField("Remark for ledger",
       #~ max_length=200,blank=True)
     narration = models.CharField(_("Narration"),max_length=200,blank=True)
-    
-    register_action = RegisterVoucher()
-    deregister_action = DeregisterVoucher()
     
     #~ @classmethod
     #~ def create_journal(cls,id,**kw):
@@ -362,7 +311,7 @@ class Voucher(mixins.UserAuthored,mixins.ProjectRelated):
         return "#%s (%s %s)" % (self.number,self.journal,self.year)
         
                 
-    def register_voucher(self,ar):
+    def register(self,ar):
         if self.year is None:
             self.year = FiscalYears.from_date(self.date)
         if self.number is None:
@@ -375,14 +324,12 @@ class Voucher(mixins.UserAuthored,mixins.ProjectRelated):
         for m in self.get_wanted_movements():
             m.full_clean()
             m.save()
-        state_field = self._meta.get_field('state')
-        self.state = state_field.choicelist.registered
+        super(Voucher,self).register(ar)
         
-    def deregister_voucher(self,ar):
+    def deregister(self,ar):
         self.number = None
         self.movement_set.all().delete() 
-        state_field = self._meta.get_field('state')
-        self.state = state_field.choicelist.draft
+        super(Voucher,self).deregister(ar)
         
         
     def disable_delete(self,ar):
@@ -443,10 +390,14 @@ class Voucher(mixins.UserAuthored,mixins.ProjectRelated):
         """
         Only invoices in an editable state may be edited.
         """
-        if not ba.action.readonly and not self.state.editable:
+        if not ba.action.readonly and self.state is not None and not self.state.editable:
             return False
         return super(Voucher,self).get_row_permission(ar,state,ba)
 
+    def href_to(self,ar):
+        obj = self.journal.voucher_type.model.objects.get(
+            journal=self.journal,number=self.number,year=self.year)
+        return ar.href_to(obj)
     
         
 
@@ -487,10 +438,8 @@ class Movement(mixins.Sequenced):
             
     @dd.displayfield(_("Voucher"))
     def voucher_link(self,ar):
-        obj = self.voucher.journal.voucher_type.model.objects.get(
-            journal=self.voucher.journal,number=self.voucher.number,year=self.voucher.year)
-        return ar.href_to(obj)
-    
+        return self.voucher.href_to(ar)
+        
     
     def get_siblings(self):
         return self.voucher.movement_set.order_by('seqno')
@@ -582,6 +531,8 @@ class VoucherItem(dd.Model):
         if not self.voucher.get_row_permission(ar,state,ba):
             return False
         return super(VoucherItem,self).get_row_permission(ar,state,ba)
+        
+        
 
 
 class InvoiceDetail(dd.FormLayout):
@@ -664,7 +615,6 @@ class InvoicesByPartner(Invoices):
     
 
 
-#~ register_voucher_type(Invoice,InvoicesByJournal)
 VoucherTypes.add_item(AccountInvoice,InvoicesByJournal)
 
 
