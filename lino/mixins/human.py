@@ -23,8 +23,11 @@ from django.utils.translation import pgettext
 from django.conf import settings
 
 from lino.utils import join_words
+from lino.core import choicelists
+from lino.core import fields
+from lino.core import model
 
-from lino import dd
+#~ from lino import dd
 
 #~ SHOW_SALUTATION = True
 #~ UPPERCASE_LAST_NAME = True
@@ -37,7 +40,7 @@ from lino import dd
     #~ global SHOW_SALUTATION
     #~ SHOW_SALUTATION = b
 
-class Genders(dd.ChoiceList):
+class Genders(choicelists.ChoiceList):
     """
     Defines the two possible choices "male" and "female" 
     for the gender of a person.
@@ -81,7 +84,7 @@ def get_salutation(gender,nominative=False):
 
         
 
-class Human(dd.Model):
+class Human(model.Model):
     """
     Base class for all models that represent a human.
     It defines three fields `first_name`, `last_name` and `gender`.
@@ -154,7 +157,7 @@ Optional `salutation_options` see :func:`get_salutation`.
     
         
         
-class Born(dd.Model):
+class Born(model.Model):
     """
     Abstract base class that adds a `birth_date` 
     field and a virtual field "Age".
@@ -162,7 +165,7 @@ class Born(dd.Model):
     class Meta:
         abstract = True
         
-    birth_date = dd.IncompleteDateField(
+    birth_date = fields.IncompleteDateField(
         blank=True,
         verbose_name=_("Birth date"),
         help_text = u"""\
@@ -181,7 +184,7 @@ Unkomplette Geburtsdaten sind erlaubt, z.B.
             except ValueError:
                 pass
       
-    @dd.displayfield(_("Age"))
+    @fields.displayfield(_("Age"))
     def age(self,request,today=None):
         a = self.get_age_years(today)
         if a is None:
