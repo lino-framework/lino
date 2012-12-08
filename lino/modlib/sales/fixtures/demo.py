@@ -58,7 +58,7 @@ def objects():
                     #~ if item.product.price:
                         #~ raise Exception("20121208")
                 yield item
-            invoice.register_voucher(REQUEST)
+            invoice.register(REQUEST)
             invoice.save()
 
     sales.Invoice
