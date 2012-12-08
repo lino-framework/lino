@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2012-12-05 15:40+0000\n"
+"POT-Creation-Date: 2012-12-08 19:28+0000\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -41,7 +41,7 @@ msgstr ""
 msgid "Account"
 msgstr ""
 
-#: .\models.py:99 .\models.py:156
+#: .\models.py:99
 msgid "Accounts"
 msgstr ""
 
@@ -59,6 +59,10 @@ msgstr ""
 
 #: .\models.py:151
 msgid "The account to move when this product is used in a purchases invoice."
+msgstr ""
+
+#: .\models.py:157
+msgid "Accounting"
 msgstr ""
 
 #: .\utils.py:132

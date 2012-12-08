@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2012-12-05 15:40+0000\n"
+"POT-Creation-Date: 2012-12-08 19:28+0000\n"
 "PO-Revision-Date: 2012-08-29 07:47+0200\n"
 "Last-Translator: Luc Saffre <luc.saffre@gmail.com>\n"
 "Language-Team: \n"
@@ -40,7 +40,7 @@ msgstr ""
 msgid "Account"
 msgstr "Compte"
 
-#: .\models.py:99 .\models.py:156
+#: .\models.py:99
 msgid "Accounts"
 msgstr "Comptes"
 
@@ -59,6 +59,11 @@ msgstr "Compte Achats"
 #: .\models.py:151
 msgid "The account to move when this product is used in a purchases invoice."
 msgstr ""
+
+#: .\models.py:157
+#, fuzzy
+msgid "Accounting"
+msgstr "Compte"
 
 #: .\utils.py:132
 msgid "Debit"

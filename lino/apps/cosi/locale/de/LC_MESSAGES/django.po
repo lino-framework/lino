@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2012-12-05 15:41+0000\n"
+"POT-Creation-Date: 2012-12-08 19:29+0000\n"
 "PO-Revision-Date: 2012-12-05 17:09+0200\n"
 "Last-Translator: Luc Saffre <luc.saffre@gmail.com>\n"
 "Language-Team: \n"
@@ -25,10 +25,10 @@ msgstr "eine Lino-Anwendung, um belgische Buchführung einfach zu machen."
 msgid "Anonymous"
 msgstr ""
 
-#: .\__init__.py:98
+#: .\__init__.py:97
 msgid "User"
 msgstr ""
 
-#: .\__init__.py:99
+#: .\__init__.py:98
 msgid "Administrator"
 msgstr ""

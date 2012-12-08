@@ -1263,6 +1263,9 @@ class NextDateAction(dd.ListAction):
     #~ def run(self,row,ar,**kw):
     
    
+   
+unclear_event_states = (EventStates.suggested,EventStates.draft,EventStates.notified)
+
 class Events(dd.Table):
     #~ debug_permissions = True
     model = 'cal.Event'
@@ -1307,11 +1310,11 @@ Nur Termine dieses Benutzers."""),
 Nur Termine, die diesem Benutzer zugewiesen sind."""),
         state = EventStates.field(blank=True,help_text=u"""\
 Nur Termine in diesem Bearbeitungszustand."""),
-        unready = models.BooleanField()
+        unclear = models.BooleanField(_("Unclear events"))
     )
     
     params_layout = """
-    dates_from dates_to user assigned_to state
+    dates_from dates_to user assigned_to state unclear
     """
     #~ params_layout = dd.Panel("""
     #~ dates_from dates_to other
@@ -1336,6 +1339,9 @@ Nur Termine in diesem Bearbeitungszustand."""),
 
         if ar.param_values.state:
             qs = qs.filter(state=ar.param_values.state)
+            
+        if ar.param_values.unclear:
+            qs = qs.filter(state__in=unclear_event_states)
             
         if ar.param_values.dates_from:
             if ar.param_values.dates_to:
@@ -1362,7 +1368,7 @@ Nur Termine in diesem Bearbeitungszustand."""),
             yield unicode(ar.param_values.user)
             
         if ar.param_values.assigned_to:
-            yield unicode(self.parameters['assigned_to'].verbose_name)
+            yield unicode(self.parameters['assigned_to'].verbose_name) + ' ' + unicode(ar.param_values.assigned_to)
 
     
 class EventsByCalendar(Events):
@@ -1396,6 +1402,7 @@ if settings.LINO.user_model:
   
     #~ class MyEvents(Events,mixins.ByUser):
     class MyEvents(Events):
+        #~ label = _("My events")
         help_text = _("Table of all my calendar events.")
         required = dd.required(user_groups='office')
         #~ column_names = 'start_date start_time calendar project summary workflow_buttons *'
@@ -1421,27 +1428,36 @@ if settings.LINO.user_model:
         #~ label = _("My reserved Events")
         
         
-    class MyUnreadyEvents(MyEvents):
-        label = _("My unready events")
+    class MyUnclearEvents(MyEvents):
+        label = _("My unclear events")
         help_text = _("Events which probably need your attention.")
         #~ required = dd.required(user_groups='office')
         column_names = 'start_date start_time project summary workflow_buttons *'
         #~ known_values = dict(assigned_to=EventStates.assigned)
-        master_key = 'assigned_to'
+        #~ master_key = 'assigned_to'
         
         @classmethod
         def param_defaults(self,ar,**kw):
-            kw = super(MyUnreadyEvents,self).param_defaults(ar,**kw)
-            kw.update(unready=True)
+            kw = super(MyUnclearEvents,self).param_defaults(ar,**kw)
+            kw.update(unclear=True)
+            kw.update(dates_from=datetime.date.today())
+            kw.update(dates_to=datetime.date.today()+datetime.timedelta(days=1))
             return kw
         
-    class EventsAssignedToMe(MyEvents):
-        label = _("Events assigned to me")
+    class EventsAssignedToMe(Events):
+        #~ label = _("Events assigned to me")
         help_text = _("Table of events assigned to me.")
-        master_key = 'assigned_to'
-        #~ required = dd.required(user_groups='office')
+        #~ master_key = 'assigned_to'
+        required = dd.required(user_groups='office')
         column_names = 'start_date start_time project summary workflow_buttons *'
         #~ known_values = dict(assigned_to=EventStates.assigned)
+        
+        @classmethod
+        def param_defaults(self,ar,**kw):
+            kw = super(EventsAssignedToMe,self).param_defaults(ar,**kw)
+            kw.update(assigned_to=ar.get_user())
+            return kw
+        
         
     #~ class EventsAssigned(Events):
         #~ label = _("Assigned Events")
@@ -2468,8 +2484,8 @@ def setup_main_menu(site,ui,profile,m):
     #~ m.add_action(MyEventsAssigned)
     #~ m.add_action(MyEventsNotified)
     
-    m.add_separator('-')
-    m.add_action(Events)
+    #~ m.add_separator('-')
+    #~ m.add_action(Events)
     #~ m.add_action(EventsReserved)
     #~ m.add_action(EventsAssigned)
     #~ m.add_action(EventsNotified)
@@ -2494,8 +2510,8 @@ def setup_main_menu(site,ui,profile,m):
 def setup_master_menu(site,ui,profile,m): 
     pass
     
-def setup_my_menu(site,ui,profile,m): 
-    pass
+#~ def setup_my_menu(site,ui,profile,m): 
+    #~ pass
     #~ m  = m.add_menu("cal",MODULE_LABEL)
     #~ m.add_action(MySubscriptions)
     
@@ -2537,7 +2553,7 @@ def setup_quicklinks(site,ar,m):
     #~ MyEventsNotified
     
 def get_todo_tables(site,ar):
-    yield (MyUnreadyEvents, _("%d unready events approaching.")) # "%d unfertige Termine kommen näher"
+    yield (MyUnclearEvents, _("%d unclear events approaching.")) # "%d unklare Termine kommen näher"
     yield (MyPendingInvitations, _("%d invitations are waiting for your answer."))
     yield (MyTasksToDo,_("%d tasks to do"))
     #~ yield (MyEventsNotified,_("%d notified events"))
@@ -2576,7 +2592,7 @@ def setup_workflows(site):
         help_text=_("Invitations have been sent. Waiting for feedback from invited guests."))
     EventStates.scheduled.add_workflow(_("Confirm"), 
         #~ states='new draft assigned',
-        states='suggested draft',
+        states='suggested draft notified',
         owner=True,
         icon_file='accept.png',
         help_text=_("Mark this as Scheduled. All participants have been informed."))

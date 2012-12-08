@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2012-12-05 15:40+0000\n"
+"POT-Creation-Date: 2012-12-08 19:28+0000\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -16,61 +16,61 @@ msgstr ""
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 
-#: .\__init__.py:59
+#: .\__init__.py:57
 msgid "English"
 msgstr ""
 
-#: .\__init__.py:60
+#: .\__init__.py:58
 msgid "German"
 msgstr ""
 
-#: .\__init__.py:61
+#: .\__init__.py:59
 msgid "French"
 msgstr ""
 
-#: .\__init__.py:62
+#: .\__init__.py:60
 msgid "Dutch"
 msgstr ""
 
-#: .\__init__.py:63
+#: .\__init__.py:61
 msgid "Estonian"
 msgstr ""
 
-#: .\__init__.py:1086
+#: .\__init__.py:1084
 msgid "Anonymous"
 msgstr ""
 
-#: .\__init__.py:1089 .\utils\auth.py:97
+#: .\__init__.py:1087 .\utils\auth.py:97
 msgid "User"
 msgstr ""
 
-#: .\__init__.py:1090 .\utils\auth.py:99
+#: .\__init__.py:1088 .\utils\auth.py:99
 msgid "Administrator"
 msgstr ""
 
-#: .\__init__.py:1139 .\models.py:324 .\templates\500.html.py:4
+#: .\__init__.py:1137 .\models.py:324 .\templates\500.html.py:4
 #: .\templates\base.html.py:26 .\ui\extjs3\views.py:784
 #: .\ui\extjs3\views.py:1098
 msgid "Home"
 msgstr ""
 
-#: .\__init__.py:1164 .\models.py:254
+#: .\__init__.py:1175 .\models.py:254
 msgid "Master"
 msgstr ""
 
-#: .\__init__.py:1167
-msgid "My menu"
+#: .\__init__.py:1181
+msgid "Reports"
 msgstr ""
 
-#: .\__init__.py:1170
+#: .\__init__.py:1183
 msgid "Configure"
 msgstr ""
 
-#: .\__init__.py:1172
+#: .\__init__.py:1185
 msgid "Explorer"
 msgstr ""
 
-#: .\__init__.py:1174
+#: .\__init__.py:1187
 msgid "Site"
 msgstr ""
 
@@ -203,7 +203,7 @@ msgstr ""
 msgid "Insert into %s"
 msgstr ""
 
-#: .\core\actions.py:797 .\mixins\__init__.py:296 .\mixins\duplicable.py:43
+#: .\core\actions.py:797 .\mixins\__init__.py:405 .\mixins\duplicable.py:44
 msgid "Duplicate"
 msgstr ""
 
@@ -284,11 +284,11 @@ msgstr ""
 msgid "%(value)r (invalid choice for %(list)s)"
 msgstr ""
 
-#: .\core\dbtables.py:747
+#: .\core\dbtables.py:748
 msgid "You have no permission to delete this row."
 msgstr ""
 
-#: .\core\dbtables.py:798
+#: .\core\dbtables.py:799
 #, python-format
 msgid "%(details)s of %(master)s"
 msgstr ""
@@ -301,11 +301,11 @@ msgstr ""
 msgid "Cancel"
 msgstr ""
 
-#: .\core\fields.py:696
+#: .\core\fields.py:705
 msgid "Quantity (Decimal or Duration)"
 msgstr ""
 
-#: .\core\kernel.py:215
+#: .\core\kernel.py:216
 #, python-format
 msgid "Cannot delete %(self)s because %(count)d %(refs)s refer to it."
 msgstr ""
@@ -314,7 +314,7 @@ msgstr ""
 msgid "General"
 msgstr ""
 
-#: .\core\model.py:279
+#: .\core\model.py:285
 msgid "Workflow"
 msgstr ""
 
@@ -344,95 +344,111 @@ msgid "Mark this as %s"
 msgstr ""
 
 #. Translators: will also be concatenated with '(type)' '(object)'
-#: .\mixins\__init__.py:69
+#: .\mixins\__init__.py:73
 msgid "Controlled by"
 msgstr ""
 
-#: .\mixins\__init__.py:88
+#: .\mixins\__init__.py:92
 msgid "(type)"
 msgstr ""
 
-#: .\mixins\__init__.py:93
+#: .\mixins\__init__.py:97
 msgid "(object)"
 msgstr ""
 
-#: .\mixins\__init__.py:158
+#: .\mixins\__init__.py:162
 msgid "Author"
 msgstr ""
 
-#: .\mixins\__init__.py:230
-msgid "My "
+#: .\mixins\__init__.py:236
+msgid "Register"
+msgstr ""
+
+#: .\mixins\__init__.py:241
+msgid "Register this object."
+msgstr ""
+
+#: .\mixins\__init__.py:260
+msgid "Deregister"
 msgstr ""
 
 #: .\mixins\__init__.py:265
+msgid "Deregister this object."
+msgstr ""
+
+#: .\mixins\__init__.py:339
+msgid "My "
+msgstr ""
+
+#: .\mixins\__init__.py:374
 msgid "Created"
 msgstr ""
 
-#: .\mixins\__init__.py:266
+#: .\mixins\__init__.py:375
 msgid "Modified"
 msgstr ""
 
-#: .\mixins\__init__.py:293
+#: .\mixins\__init__.py:402
 msgid "Seq.No."
 msgstr ""
 
-#: .\mixins\__init__.py:308
+#: .\mixins\__init__.py:417
 #, python-format
 msgid "Row # %s"
 msgstr ""
 
-#: .\mixins\duplicable.py:141
+#: .\mixins\duplicable.py:142
 #, python-format
 msgid "Duplicated %(old)s to %(new)s."
 msgstr ""
 
-#: .\mixins\human.py:45
+#: .\mixins\human.py:48
 msgid "Gender"
 msgstr ""
 
-#: .\mixins\human.py:50
+#: .\mixins\human.py:53
 msgid "Male"
 msgstr ""
 
-#: .\mixins\human.py:51
+#: .\mixins\human.py:54
 msgid "Female"
 msgstr ""
 
-#: .\mixins\human.py:72
+#: .\mixins\human.py:75
 msgid "Mrs"
 msgstr ""
 
-#: .\mixins\human.py:74
+#: .\mixins\human.py:77
 msgctxt "nominative salutation"
 msgid "Mr"
 msgstr ""
 
-#: .\mixins\human.py:75
+#: .\mixins\human.py:78
 msgctxt "indirect salutation"
 msgid "Mr"
 msgstr ""
 
-#: .\mixins\human.py:94
+#: .\mixins\human.py:97
 msgid "First name"
 msgstr ""
 
-#: .\mixins\human.py:99
+#: .\mixins\human.py:102
 msgid "Last name"
 msgstr ""
 
-#: .\mixins\human.py:167
+#: .\mixins\human.py:170
 msgid "Birth date"
 msgstr ""
 
-#: .\mixins\human.py:184
+#: .\mixins\human.py:187
 msgid "Age"
 msgstr ""
 
-#: .\mixins\human.py:188
+#: .\mixins\human.py:191
 msgid "unknown"
 msgstr ""
 
-#: .\mixins\human.py:189
+#: .\mixins\human.py:192
 #, python-format
 msgid "%d years"
 msgstr ""
@@ -569,17 +585,17 @@ msgstr ""
 msgid "Django administration"
 msgstr ""
 
-#: .\ui\extjs3\ext_elems.py:887 .\ui\extjs4\ext_elems.py:569
+#: .\ui\extjs3\ext_elems.py:892 .\ui\extjs4\ext_elems.py:569
 #: .\ui\qx\qx_elems.py:555
 #, python-format
 msgid "Select a %s..."
 msgstr ""
 
-#: .\ui\extjs3\ext_elems.py:1132 .\ui\extjs3\ext_ui.py:248
+#: .\ui\extjs3\ext_elems.py:1137 .\ui\extjs3\ext_ui.py:248
 msgid "show"
 msgstr ""
 
-#: .\ui\extjs3\ext_elems.py:1732 .\ui\extjs3\ext_ui.py:2082
+#: .\ui\extjs3\ext_elems.py:1737 .\ui\extjs3\ext_ui.py:2082
 #: .\ui\extjs3\linolib.js.py:19
 msgid "No data to display."
 msgstr ""
@@ -972,11 +988,11 @@ msgstr ""
 msgid "User Groups"
 msgstr ""
 
-#: .\utils\auth.py:206
+#: .\utils\auth.py:208
 msgid "User Profile"
 msgstr ""
 
-#: .\utils\auth.py:207
+#: .\utils\auth.py:209
 msgid "User Profiles"
 msgstr ""
 

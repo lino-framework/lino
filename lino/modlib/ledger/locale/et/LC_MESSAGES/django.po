@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2012-12-05 15:40+0000\n"
+"POT-Creation-Date: 2012-12-08 19:28+0000\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -17,83 +17,91 @@ msgstr ""
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=(n != 1)\n"
 
-#: .\models.py:224
+#: .\models.py:121
+msgid "Journal"
+msgstr ""
+
+#: .\models.py:122
+msgid "Journals"
+msgstr ""
+
+#: .\models.py:221
 #, python-format
 msgid "%s is not the last voucher in journal"
 msgstr ""
 
-#: .\models.py:257
-msgid "Register"
+#: .\models.py:267 .\models.py:439
+msgid "Voucher"
 msgstr ""
 
-#: .\models.py:263
-msgid "Register this voucher."
+#: .\models.py:268
+msgid "Vouchers"
 msgstr ""
 
-#: .\models.py:279
-msgid "Unregister"
-msgstr ""
-
-#: .\models.py:284
-msgid "Unregister this voucher."
-msgstr ""
-
-#: .\models.py:318
+#: .\models.py:281
 msgid "Narration"
 msgstr ""
 
-#: .\models.py:460
+#: .\models.py:414
+msgid "Movement"
+msgstr ""
+
+#: .\models.py:415
+msgid "Movements"
+msgstr ""
+
+#: .\models.py:427
 msgid "Debit"
 msgstr ""
 
-#: .\models.py:466
+#: .\models.py:433
 msgid "Credit"
 msgstr ""
 
-#: .\models.py:498
+#: .\models.py:474
 msgid "Draft"
 msgstr ""
 
-#: .\models.py:499
+#: .\models.py:475
 msgid "Registered"
 msgstr ""
 
-#: .\models.py:502
+#: .\models.py:478
 msgid "Paid"
 msgstr ""
 
-#: .\models.py:510
+#: .\models.py:486
 msgid "Invoice"
 msgstr ""
 
-#: .\models.py:511
+#: .\models.py:487
 msgid "Invoices"
 msgstr ""
 
-#: .\models.py:513
+#: .\models.py:489
 msgid "Your reference"
 msgstr ""
 
-#: .\models.py:516
+#: .\models.py:492
 msgid "Due date"
 msgstr ""
 
-#: .\models.py:594
+#: .\models.py:552
 msgid "General"
 msgstr ""
 
-#: .\models.py:599 .\models.py:667
+#: .\models.py:557
 msgid "Ledger"
 msgstr ""
 
-#: .\utils.py:31
-msgid "Fiscal Month"
+#: .\models.py:610
+msgid "Unregistered invoices"
 msgstr ""
 
-#: .\utils.py:45
+#: .\utils.py:40
 msgid "Fiscal Year"
 msgstr ""
 
-#: .\utils.py:46
+#: .\utils.py:41
 msgid "Fiscal Years"
 msgstr ""
