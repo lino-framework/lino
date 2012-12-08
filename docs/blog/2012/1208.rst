@@ -1,6 +1,9 @@
 20121208
 ========
 
+:mod:`lino.apps.cosi` : VAT declarations now have a "Register" and "Deregister" action 
+and a Detail window.
+
 - setup_menu now also calls setup_reports_menu. Used by lino.modlib.vat.
   The "Reports" (or "Listings") menu 
   is supposed to contain commands for periodical analysis.
@@ -8,3 +11,8 @@
 - New class :class:`dd.AuthorRowAction <lino.mixins.AuthorRowAction>`.
 
 - New class :class:`lino.mixins.Registrable`
+
+TODO:
+
+- The Detail window has a slave table DocumentsByDeclaration which 
+  is Lino's first case of merging two tables. Not yet really convincing.

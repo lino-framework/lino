@@ -1,9 +1,10 @@
-Version 1.5.2
+Version 1.5.3
 =============
 
-Released 2012-12-02
+Released 2012-12-07
 
 :checkin:`e905b89ac5ee`
+
 
 General
 -------

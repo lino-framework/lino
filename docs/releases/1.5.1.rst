@@ -3,6 +3,8 @@ Version 1.5.1
 
 :checkin:`23339f18880f`
 
+:checkin:`e905b89ac5ee`
+
 API changes
 -----------
 
