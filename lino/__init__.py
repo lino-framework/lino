@@ -1399,9 +1399,13 @@ class Lino(object):
         #~ name,current_version,url = self.using().next()
         if current_version is None:
             raise Exception("Cannot migrate to version None")
+        if '+' in __version__:
+            raise Exception(
+                "Cannot loaddata python dumps to intermediate Lino version %s" % __version__)
         if '+' in current_version:
             raise Exception(
-                "Cannot loaddata python dumps to intermediate version %s" % current_version)
+                "Cannot loaddata python dumps to intermediate %s version %s" 
+                % (self.short_name,current_version))
             #~ dblogger.info("Cannot migrate to intermediate version %", current_version)
             #~ return
             
