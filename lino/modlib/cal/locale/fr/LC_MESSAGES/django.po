@@ -8,7 +8,7 @@ msgstr ""
 "Project-Id-Version: lino.modlib.contacts\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2012-12-08 19:28+0000\n"
-"PO-Revision-Date: 2012-11-08 22:46+0200\n"
+"PO-Revision-Date: 2012-12-08 21:44+0200\n"
 "Last-Translator: Luc Saffre <luc.saffre@gmail.com>\n"
 "Language-Team: fr\n"
 "MIME-Version: 1.0\n"
@@ -110,12 +110,11 @@ msgstr ""
 
 #: .\models.py:191 .\models.py:196 .\models.py:217
 msgid "Are you sure?"
-msgstr ""
+msgstr "Êtes-vous certain?"
 
 #: .\models.py:202
-#, fuzzy
 msgid "Take"
-msgstr "Tâche"
+msgstr "Accepter"
 
 #: .\models.py:209
 msgid "Take responsibility for this event."
@@ -123,7 +122,7 @@ msgstr ""
 
 #: .\models.py:227
 msgid "Assign"
-msgstr ""
+msgstr "Attribuer"
 
 #: .\models.py:231
 msgid "Assign responsibility of this event to another user."
@@ -317,9 +316,8 @@ msgid "all day"
 msgstr "journée entière"
 
 #: .\models.py:1104 .\models.py:1307
-#, fuzzy
 msgid "Assigned to"
-msgstr "Rendez-vous communiqués"
+msgstr "Attribué à"
 
 #: .\models.py:1135
 #, python-format
@@ -343,32 +341,29 @@ msgid "Next"
 msgstr ""
 
 #: .\models.py:1294
-#, fuzzy
 msgid "Date from"
-msgstr "Date"
+msgstr "Date du"
 
 #: .\models.py:1298
 msgid "until"
-msgstr ""
+msgstr "au "
 
 #: .\models.py:1313
-#, fuzzy
 msgid "Unclear events"
-msgstr "Mes rendez-vous proposés"
+msgstr "Mes rendez-vous à clarifier"
 
 #: .\models.py:1360
 #, python-format
 msgid "Dates %(min)s to %(max)s"
-msgstr ""
+msgstr "Dates du %(min)s au %(max)s"
 
 #: .\models.py:1406
 msgid "Table of all my calendar events."
 msgstr ""
 
 #: .\models.py:1432
-#, fuzzy
 msgid "My unclear events"
-msgstr "Mes rendez-vous proposés"
+msgstr "Mes rendez-vous à clarifier"
 
 #: .\models.py:1433
 msgid "Events which probably need your attention."
@@ -533,12 +528,12 @@ msgstr "Le calendrier par défaut pour vos rendez-vous et tâches."
 #: .\models.py:2556
 #, python-format
 msgid "%d unclear events approaching."
-msgstr ""
+msgstr "%d rendez-vous à clarifier qui s'approchent."
 
 #: .\models.py:2557
 #, python-format
 msgid "%d invitations are waiting for your answer."
-msgstr ""
+msgstr "%d invitations attendent votre réponse."
 
 #: .\models.py:2558
 #, python-format
@@ -546,9 +541,9 @@ msgid "%d tasks to do"
 msgstr "%d tâches à achever"
 
 #: .\models.py:2560
-#, fuzzy, python-format
+#, python-format
 msgid "%d events assigned to you"
-msgstr "%d tâches à achever"
+msgstr "%d rendez-vous vous ont été attribués"
 
 #: .\models.py:2573
 msgid "Reopen"
@@ -575,16 +570,14 @@ msgid "Mark this as Scheduled. All participants have been informed."
 msgstr ""
 
 #: .\models.py:2602
-#, fuzzy
 msgid "Event took place."
-msgstr "a eu lieu"
+msgstr "Rendez-vous a eu lieu"
 
 #: .\models.py:2605
 msgid "Reschedule"
 msgstr "Déplacer"
 
 #: .\models.py:2608
-#, fuzzy
 msgctxt "calendar event action"
 msgid "Cancel"
 msgstr "Annuler"
