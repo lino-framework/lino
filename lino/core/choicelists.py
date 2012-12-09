@@ -16,26 +16,28 @@ ur"""
 Utility for defining hard-coded multi-lingual choice lists 
 whose value is rendered according to the current language.
 
-:class:`Genders`, :class:`DoYouLike` and :class:`HowWell` 
-are "batteries included" usage examples.
-
 Usage:
 
-(Doctesting this module requires the Django translation machine, 
-so we must set :envvar:`DJANGO_SETTINGS_MODULE`)
+>>> from django.conf import settings
+>>> settings.LINO.startup()
 
->>> import os
->>> os.environ['DJANGO_SETTINGS_MODULE'] = 'lino.apps.std.settings'
+One thing to avoid doctest side-effects is not necessary in your code:
 
+>>> from lino.core.choicelists import *
 
 >>> from django.utils import translation
 >>> translation.activate('en')
+
+
 >>> for value,text in choicelist_choices():
 ...     print "%s : %s" % (value, unicode(text))
-DoYouLike : certainly not...very much
-Genders : Gender
-HowWell : not at all...very well
+lino.ChangeTypes : Change Types
+lino.Genders : Genders
+lino.UserGroups : User Groups
+lino.UserLevels : User Levels
+lino.UserProfiles : User Profiles
 
+>>> Genders = settings.LINO.modules.lino.Genders
 >>> for bc,text in Genders.choices:
 ...     print "%s : %s" % (bc.value, unicode(text))
 M : Male
@@ -49,14 +51,14 @@ Male
 Männlich
 
 >>> print str(Genders.male)
-M\xe4nnlich
+male
 
 >>> print repr(Genders.male)
-M\xe4nnlich (Genders.male:M)
+Genders.male:M
 
 Comparing Choices uses their *value* (not the alias or text):
 
->>> from lino.core.perms import UserLevels
+>>> from lino.utils.auth import UserLevels
 
 >>> UserLevels.manager > UserLevels.user
 True
@@ -71,10 +73,10 @@ False
 
 Example on how to use a ChoiceList in your model::
 
-  from django.db.models import Model
-  from lino.core.choicelists import HowWell
+  from django.db import models 
+  from lino.modlib.properties.models import HowWell
   
-  class KnownLanguage(Model):
+  class KnownLanguage(models.Model):
       spoken = HowWell.field(verbose_name=_("spoken"))
       written = HowWell.field(verbose_name=_("written"))
 
@@ -87,9 +89,9 @@ automatically available as a property value in
 
 import sys
 
-from django.utils.functional import Promise
+#~ from django.utils.functional import Promise
 from django.utils.translation import ugettext_lazy as _
-from django.utils.translation import string_concat
+#~ from django.utils.translation import string_concat
 from django.utils.functional import lazy
 from django.db import models
 from django.conf import settings
@@ -109,13 +111,18 @@ class Choice(object):
     Used by :class:`ChoiceList`.
 
     """
-    def __init__(self,choicelist,value,text,name,**kw):
-        self.choicelist = choicelist
+    choicelist = None
+    
+    def __init__(self,value,text,name,**kw):
+        #~ self.choicelist = choicelist
         self.value = value
         self.text = text
         self.name = name
         for k,v in kw.items():
             setattr(self,k,v)
+        
+    def attach(self,choicelist):
+        self.choicelist = choicelist
         
     def __len__(self):
         return len(self.value)
@@ -131,8 +138,10 @@ class Choice(object):
         
     def __repr__(self):
         if self.name is None:
-            return "%s (%s:%s)" % (self,self.choicelist.__name__,self.value)
-        return "%s (%s.%s:%s)" % (self,self.choicelist.__name__,self.name,self.value)
+            #~ return "%s (%s:%s)" % (self,self.choicelist.__name__,self.value)
+        #~ return "%s (%s.%s:%s)" % (self,self.choicelist.__name__,self.name,self.value)
+            return "%s:%s" % (self.choicelist.__name__,self.value)
+        return "%s.%s:%s" % (self.choicelist.__name__,self.name,self.value)
         
         
     def __str__(self):
@@ -162,6 +171,7 @@ class Choice(object):
 CHOICELISTS = {}
 
 def register_choicelist(cl):
+    #~ print '20121209 register_choicelist', cl
     #~ k = cl.stored_name or cl.__name__
     k = cl.stored_name or cl.actor_id
     if CHOICELISTS.has_key(k):
@@ -173,6 +183,7 @@ def get_choicelist(i):
     return CHOICELISTS[i]
 
 def choicelist_choices():
+    #~ print '20121209 choicelist_choices()', CHOICELISTS
     l = [ (k,v.verbose_name_plural or v.__name__) for k,v in CHOICELISTS.items()]
     #~ l = [ (k,v.label or v.__name__) for k,v in CHOICELISTS.items()]
     l.sort(lambda a,b : cmp(a[0],b[0]))
@@ -337,12 +348,17 @@ class ChoiceList(tables.AbstractTable):
         #~ cls.items = []
         
     @classmethod
+    def setup_field(cls,fld):
+        pass
+        
+    @classmethod
     def field(cls,*args,**kw):
         """
         Create a database field (a :class:`ChoiceListField`)
         that holds one value of this choicelist. 
         """
         fld = ChoiceListField(cls,*args,**kw)
+        cls.setup_field(fld)
         cls._fields.append(fld)
         return fld
         
@@ -359,7 +375,7 @@ class ChoiceList(tables.AbstractTable):
         
     @classmethod
     def add_item(cls,value,text,name=None,*args,**kw):
-        return cls.add_item_instance(cls.item_class(cls,value,text,name,*args,**kw))
+        return cls.add_item_instance(cls.item_class(value,text,name,*args,**kw))
         
     @classmethod
     def add_item_instance(cls,i):
@@ -367,6 +383,7 @@ class ChoiceList(tables.AbstractTable):
             #~ raise Exception("Cannot define items on the base class")
         if cls.items_dict.has_key(i.value):
             raise Exception("Duplicate value %r in %s." % (i.value,cls))
+        i.attach(cls)
         dt = cls.display_text(i)
         cls.choices.append((i,dt))
         cls.preferred_width = max(cls.preferred_width,len(unicode(dt)))
@@ -477,6 +494,15 @@ Django creates copies of them when inheriting models.
     #~ def items(self):
         #~ return [choice[0] for choice in self.choices]
         
+    @classmethod
+    def filter(self,**fkw):
+        def f(item):
+            for k,v in fkw.items():
+                if getattr(item,k) != v:
+                    return False
+            return True
+        return [choice[0] for choice in self.choices if f(choice[0])]
+    
     @classmethod
     def objects(self):
         return [choice[0] for choice in self.choices]

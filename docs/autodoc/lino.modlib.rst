@@ -16,6 +16,7 @@ Subpackages
     lino.modlib.cal
     lino.modlib.contacts
     lino.modlib.countries
+    lino.modlib.finan
     lino.modlib.households
     lino.modlib.sales
     lino.modlib.ledger

@@ -124,37 +124,43 @@ class UserProfile(Choice):
     
     def __init__(self,cls,value,text,name=None,memberships=None,readonly=False,authenticated=True,**kw):
       
-        super(UserProfile,self).__init__(cls,value,text,name)
+        super(UserProfile,self).__init__(value,text,name)
         
         #~ keys = ['level'] + [g+'_level' for g in choicelist.groups_list]
         #~ keys = ['level'] + [g+'_level' for g in choicelist.membership_keys]
         self.readonly = readonly
         self.authenticated = authenticated
+        self.memberships = memberships
+        self.kw = kw
         
-
-        if memberships is None:
+    def attach(self,cls):
+        super(UserProfile,self).attach(cls)
+        if self.memberships is None:
             for k in cls.membership_keys:
                 #~ kw[k] = UserLevels.blank_item
                 #~ kw.setdefault(k,UserLevels.blank_item) 20120829
-                kw.setdefault(k,None)
+                self.kw.setdefault(k,None)
         else:
         #~ if memberships is not None:
-            if len(memberships.split()) != len(cls.membership_keys):
+            if len(self.memberships.split()) != len(cls.membership_keys):
                 raise Exception(
                     "Invalid memberships specification %r : must contain %d letters" 
-                    % (memberships,len(cls.membership_keys)))
-            for i,k in enumerate(memberships.split()):
-                kw[cls.membership_keys[i]] = UserLevels.get_by_name(UserLevels.SHORT_NAMES[k])
+                    % (self.memberships,len(cls.membership_keys)))
+            for i,k in enumerate(self.memberships.split()):
+                self.kw[cls.membership_keys[i]] = UserLevels.get_by_name(UserLevels.SHORT_NAMES[k])
                 
         #~ print 20120705, value, kw
         
-        assert kw.has_key('level')
+        assert self.kw.has_key('level')
             
-        for k,v in kw.items():
+        for k,v in self.kw.items():
             setattr(self,k,v)
             
         for k in cls.default_memberships:
             setattr(self,k,self.level)
+            
+        del self.kw
+        del self.memberships
         
         #~ for grp in enumerate(UserGroups.items()):
             #~ attname = grp.value + '_level'

@@ -113,6 +113,7 @@ class Lino(Lino):
         yield 'lino.modlib.vat'
         #~ 'lino.modlib.journals',
         yield 'lino.modlib.sales'
+        yield 'lino.modlib.finan'
         #~ 'lino.modlib.projects',
         #~ yield 'lino.modlib.blogs'
         #~ yield 'lino.modlib.tickets'

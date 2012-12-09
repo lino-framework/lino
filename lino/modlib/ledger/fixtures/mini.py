@@ -28,6 +28,7 @@ accounts = dd.resolve_app('accounts')
 vat = dd.resolve_app('vat')
 sales = dd.resolve_app('sales')
 ledger = dd.resolve_app('ledger')
+finan = dd.resolve_app('finan')
 contacts = dd.resolve_app('contacts')
 
 
@@ -63,27 +64,30 @@ def objects():
           
     yield Group('10','capital',u"Capital",u"Kapital","Capital")
     
-    yield Group('40','asset',  u"Créances commerciales", u"Forderungen aus Lieferungen und Leistungen", "Commercial receivable(?)")
-    yield Account('customers','asset',u"Clients",u"Kunden","Customers") # PCMN 4000
-    yield Account('suppliers','liability',u"Fournisseurs",u"Lieferanten","Suppliers") # PCMN 4400
+    yield Group('40','assets',  u"Créances commerciales", u"Forderungen aus Lieferungen und Leistungen", "Commercial receivable(?)")
+    yield Account('customers','assets',u"Clients",u"Kunden","Customers") # PCMN 4000
+    yield Account('suppliers','liabilities',u"Fournisseurs",u"Lieferanten","Suppliers") # PCMN 4400
     
-    yield Group('45','asset',u"TVA à payer",u"Geschuldete MWSt","VAT to pay") # PCMN 451
-    yield Account('vat_due','income',u"TVA due",u"MWSt zu regularisieren","VAT due") # PCMN 4510
-    yield Account('vat_deductible','asset',u"TVA déductible",u"Geschuldete MWSt","VAT deductible") # PCMN 4512
+    yield Group('45','assets',u"TVA à payer",u"Geschuldete MWSt","VAT to pay") # PCMN 451
+    yield Account('vat_due','incomes',u"TVA due",u"MWSt zu regularisieren","VAT due") # PCMN 4510
+    yield Account('vat_deductible','assets',u"TVA déductible",u"Geschuldete MWSt","VAT deductible") # PCMN 4512
     
-    yield Group('6','expense',u"Charges",u"Aufwendungen","Expenses") # 
-    yield Account('products','expense',
+    yield Group('55','assets',u"Institutions financières",u"Fainanzinstitute","Banks") # PCMN 55
+    yield Account('bestbank','bank_accounts',u"Bestbank",u"Bestbank","Bestbank") 
+    
+    yield Group('6','expenses',u"Charges",u"Aufwendungen","Expenses") # 
+    yield Account('products','expenses',
         u"Achat de marchandise",u"Wareneinkäufe","Purchase of goods",
         purchases_allowed=True) # PCMN 6040
-    yield Account('services','expense',
+    yield Account('services','expenses',
         u"Services et biens divers",u"Dienstleistungen","Purchase of services",
         purchases_allowed=True) 
-    yield Account('invests','expense',
+    yield Account('invests','expenses',
         u"Investissements",u"Anlagen","Purchase of investments",
         purchases_allowed=True) 
     
-    yield Group('7','income',u"Produits",u"Erträge","Revenues") 
-    yield Account('sales','income',
+    yield Group('7','incomes',u"Produits",u"Erträge","Revenues") 
+    yield Account('sales','incomes',
         u"Ventes",u"Verkäufe","Sales",
         sales_allowed=True) # PCMN 7000
 
@@ -102,12 +106,15 @@ def objects():
         chart=chart,
         **babel_values('name',
             de=u"Einkaufsrechnungen",fr=u"Factures achat",en="Purchase invoices",et=u"Ostuarved"))
+            
+    if finan:
+        yield finan.BankStatement.create_journal(chart=chart,name=u"Bestbank",account='bestbank')
 
 
     MODEL = ledger.AccountInvoice
     vt = ledger.VoucherTypes.get_for_model(MODEL)
     JOURNALS = Cycler(vt.get_journals())
-    PARTNERS = Cycler(contacts.Partner.objects.all())
+    PARTNERS = Cycler(contacts.Partner.objects.order_by('name'))
     USERS = Cycler(settings.LINO.user_model.objects.all())
     AMOUNTS = Cycler([Decimal(x) for x in 
         "2.50 6.80 9.95 14.50 20 29.90 39.90 39.90 99.95 199.95 599.95 1599.99".split()])

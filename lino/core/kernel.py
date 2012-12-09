@@ -418,12 +418,15 @@ def startup_site(self):
         #~ install_summary_rows()
         
         #~ if settings.MODEL_DEBUG:
-        if False:
-            logger.debug("ACTORS:")
-            for k in sorted(actors.actors_dict.keys()):
-                a = actors.actors_dict[k]
+        #~ print 20121209, actors.actors_list
+        #~ if False:
+            #~ logger.info("ACTORS: %s",actors.actors_list)
+            #~ for k in sorted(actors.actors_dict.keys()):
+            #~ for a in actors.actors_list:
+                #~ a = actors.actors_dict[k]
                 #~ logger.debug("%s -> %r",k,a.__class__)
-                logger.debug("%s -> %r",k,a.debug_summary())
+                #~ logger.info("%s -> %r",a,a.debug_summary())
+                #~ logger.info("%s -> %r",a,a.debug_summary())
                 
         #~ cls = type("Modules",tuple(),d)
         #~ self.modules = cls()

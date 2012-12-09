@@ -41,6 +41,11 @@ class FiscalYears(dd.ChoiceList):
     verbose_name_plural = _("Fiscal Years")
     
     @classmethod
+    def setup_field(cls,fld):
+        def d(): return cls.from_date(datetime.date.today())
+        fld.default = d
+        
+    @classmethod
     def from_int(cls,year):
         return cls.get_by_value(str(year)[2:])
         

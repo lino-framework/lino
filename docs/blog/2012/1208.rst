@@ -1,14 +1,17 @@
 20121208
 ========
 
-:mod:`lino.apps.cosi` : VAT declarations now have a "Register" and "Deregister" action 
+:mod:`lino.apps.cosi` : 
+VAT declarations now have a "Register" and "Deregister" action 
 and a Detail window.
 
-- setup_menu now also calls setup_reports_menu. Used by lino.modlib.vat.
+- setup_menu now also calls setup_reports_menu. Used by 
+  :mod:`lino.modlib.vat`.
   The "Reports" (or "Listings") menu 
   is supposed to contain commands for periodical analysis.
   
 - New class :class:`dd.AuthorRowAction <lino.mixins.AuthorRowAction>`.
+  This is maybe not really useful.
 
 - New class :class:`lino.mixins.Registrable`
 

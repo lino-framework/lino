@@ -34,7 +34,8 @@ from lino.utils import babel
 #~ journals = reports.get_app('journals')
 #from lino.modlib.journals import models as journals
 from django.utils.translation import ugettext_lazy as _
-from lino.modlib.accounts.utils import AccountTypes
+
+from lino.modlib.accounts.utils import AccountTypes, DEBIT, CREDIT
 
 
 

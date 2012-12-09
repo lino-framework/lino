@@ -260,7 +260,7 @@ class DeregisterAction(actions.RowAction):
     label = _("Deregister")
     show_in_workflow = True
     
-    icon_file = 'cancel.png'
+    #~ icon_file = 'cancel.png'
     #~ required = dict(states='registered paid')
     help_text=_("Deregister this object.")
     
@@ -290,6 +290,8 @@ class Registrable(model.Model):
     class Meta:
         abstract = True
         
+    date = models.DateField(_("Date"),default=datetime.date.today)
+    
     workflow_state_field = 'state'
     
     required_to_register = dict(states='draft')

@@ -40,10 +40,13 @@ are normally DEBITed and have DEBIT balances.
 That's what the :attr:`dc <AccountType.dc>` attribute means.
 
 
->>> print unicode(DC[AccountTypes.asset.dc])
+>>> print unicode(DC[AccountTypes.assets.dc])
 Debit
->>> print unicode(DC[AccountTypes.expense.dc])
+>>> print unicode(DC[AccountTypes.expenses.dc])
 Debit
+
+>>> print isinstance(AccountTypes.bank_accounts,Assets)
+True
 
 
   
@@ -63,13 +66,13 @@ accounting elements:
   
 The equivalent in Lino code is:
 
->>> for t in AccountTypes.items(): #doctest: +NORMALIZE_WHITESPACE
-...     print "%-10s|%-15s|%-6s" % (t.name, unicode(t), DC[t.dc])
-asset     |Assets         |Debit
-liability |Liabilities    |Credit
-income    |Incomes        |Credit
-expense   |Expenses       |Debit
-capital   |Capital        |Credit
+>>> for t in AccountTypes.filter(top_level=True): #doctest: +NORMALIZE_WHITESPACE
+...     print "%-12s|%-15s|%-6s" % (t.name, unicode(t), DC[t.dc])
+assets      |Assets         |Debit
+liabilities |Liabilities    |Credit
+incomes     |Incomes        |Credit
+expenses    |Expenses       |Debit
+capital     |Capital        |Credit
 
 Yes.
 
@@ -135,9 +138,54 @@ DC = {
 
 
 class AccountType(dd.Choice):
-    def __init__(self,cls,value,text,name,dc=True,**kw):
-        self.dc = dc
-        super(AccountType,self).__init__(cls,value,text,name)
+    top_level = True
+    #~ def __init__(self,value,text,name,dc=True,**kw):
+        #~ self.dc = dc
+        #~ super(AccountType,self).__init__(value,text,name)
+    def __init__(self):
+        pass
+        #~ self.dc = dc
+        #~ super(AccountType,self).__init__(value,text,name)
+        
+class Assets(AccountType):
+    value = 'A'
+    text = _("Assets")   # Aktiva, Anleihe, Vermögen, Anlage
+    name  = "assets"
+    dc = DEBIT
+
+class Liabilities(AccountType):
+    value = 'L'
+    text = _("Liabilities") # Guthaben, Schulden, Verbindlichkeit  
+    name  = "liabilities"
+    dc = CREDIT
+
+class Income(AccountType):
+    value = 'I'
+    text = _("Incomes") # Gain/Revenue     Einnahmen  Produits
+    name  = "incomes" 
+    dc = CREDIT
+
+class Expenses(AccountType):
+    value = 'E' 
+    text = _("Expenses") # Loss/Cost       Ausgaben   Charges
+    name = "expenses"
+    dc = DEBIT
+
+class Capital(AccountType):
+    value = 'C' 
+    text = _("Capital") # Kapital owner's Equities
+    name = "capital"
+    dc = CREDIT
+
+class BankAccounts(Assets):
+    top_level = False
+    value = 'B'
+    text = _("Bank accounts")
+    name = 'bank_accounts'
+    #~ dc = CREDIT    
+    
+    
+    
     
 class AccountTypes(dd.ChoiceList):
     verbose_name = _("Account Type")
@@ -147,12 +195,21 @@ class AccountTypes(dd.ChoiceList):
 add = AccountTypes.add_item
 #~ def add(*args):
     #~ AccountTypes.add_item_instance(AccountType(*args))
-add('A', _("Assets"),"asset",DEBIT)   # Aktiva, Anleihe, Vermögen, Anlage
-add('L', _("Liabilities"),"liability",CREDIT) # Guthaben, Schulden, Verbindlichkeit
-add('I', _("Incomes"),"income",CREDIT) # Gain/Revenue     Einnahmen  Produits
-add('E', _("Expenses"),"expense",DEBIT) # Loss/Cost       Ausgaben   Charges
-add('C', _("Capital"),"capital",CREDIT)  # Kapital owner's Equities
+add = AccountTypes.add_item_instance
+add(Assets())
+add(Liabilities())
+add(Income())
+add(Expenses())
+add(Capital())
+add(BankAccounts())
+#~ add('A', _("Assets"),"asset",DEBIT)   # Aktiva, Anleihe, Vermögen, Anlage
+#~ add('L', _("Liabilities"),"liability",CREDIT) # Guthaben, Schulden, Verbindlichkeit
+#~ add('I', _("Incomes"),"income",CREDIT) # Gain/Revenue     Einnahmen  Produits
+#~ add('E', _("Expenses"),"expense",DEBIT) # Loss/Cost       Ausgaben   Charges
+#~ add('C', _("Capital"),"capital",CREDIT)  # Kapital owner's Equities
 
+
+#~ AccountTypes.add_item_instance(BankAccounts())
 
 
 def _test():

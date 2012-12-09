@@ -87,11 +87,28 @@ add('S',_("Sales"),'sales')
 add('P',_("Purchases"),'purchases')
 
 
+from dateutil.relativedelta import relativedelta
 
 
 class Periods(dd.ChoiceList):
     verbose_name = _("VAT Period")
     verbose_name_plural = _("VAT Periods")
+    
+    @classmethod
+    def setup_field(cls,fld):
+        def d(): return cls.from_date(datetime.date.today())
+        fld.default = d
+        
+    @classmethod
+    def from_date(cls,date):
+        date -= relativedelta(months=1)
+        return cls.from_int(date.month)
+        
+    @classmethod
+    def from_int(cls,month):
+        return cls.get_by_value('%02d' % month)
+        
+    
 add = Periods.add_item
 
 if settings.LINO.vat_quarterly:
@@ -130,29 +147,18 @@ add("20",_("Submitted"),"submitted")
 class DeclarationFields(dd.ChoiceList):
     
     @classmethod
-    def amount_for_field(self,fld,dcl,doc,tt):
+    def amount_for_field(self,fld,dcl,item,tt):
         if not fld.name.startswith(tt.name):
             return
         #~ if tt.name == 'sales':
         if fld.name.endswith("_base"):
-            return doc.total_base
+            return item.total_base
         if fld.name.endswith("_vat"):
-            return doc.total_vat
-            
-    #~ @classmethod
-    #~ def collect_sales_base(self,dcl,tt,doc):
-        #~ if tt.name == 'sales':
-            #~ return doc.total_base
-            
-    #~ @classmethod
-    #~ def collect_sales_vat(self,dcl,tt,doc):
-        #~ if tt.name == 'sales':
-            #~ return doc.total_vat
-            
-    #~ @classmethod
-    #~ def collect_purchases_base(self,dcl,tt,doc):
-        #~ if tt.name == 'purchases':
-            #~ return doc.total_base
+            return item.total_vat
+        #~ if fld.value == '80':
+            #~ if item.vat_class == VatClasses.
+            #~ if item.get_base_account().type == AccountTypes.invest
+            #~ return item.total_base
 
 
 add = DeclarationFields.add_item
@@ -160,6 +166,11 @@ add("00",_("Sales base"),"sales_base")
 add("10",_("Sales VAT"),"sales_vat")
 add("20",_("Purchases base"),"purchases_base")
 add("30",_("Purchases VAT"),"purchases_vat")
+
+declaration_fields_layout = dd.Panel("""
+sales_base sales_vat
+purchases_base purchases_vat
+""")
 
 
 
@@ -292,12 +303,17 @@ class VatDocument(mixins.UserAuthored,VatTotal):
         sum = Decimal()
         for a,m in sums_dict.items():
             if m:
-                yield self.create_movement(a,m)
+                yield self.create_movement(a,a.type.dc,m)
                 sum += m
         a = settings.LINO.get_partner_account(self)
         a = self.journal.chart.get_account_by_ref(a)
-        yield self.create_movement(a,sum,partner=self.partner)
+        yield self.create_movement(a,a.type.dc,sum,partner=self.partner)
         
+
+#~ class DeclaredVatDocument(VatDocument):
+    #~ class Meta:
+        #~ abstract = True
+    
         
 class VatItemBase(mixins.Sequenced,VatTotal):
     """
@@ -428,40 +444,46 @@ class Declaration(mixins.Registrable):
     def deregister(self,ar):
         for m in models_by_abc(VatDocument):
             #~ logger.info("20121208 a model %s",m)
-            for doc in m.objects.filter(declaration_=self):
+            for doc in m.objects.filter(declaration=self):
                 doc.declaration = None
                 doc.save()
         super(Declaration,self).deregister(ar)
         
     def compute_fields(self):
+        ledger = dd.resolve_app('ledger')
         sums = dict()
         for fld in DeclarationFields.objects():
             sums[fld.name] = Decimal('0')
         
+        item_models = []
         count = 0
         for m in models_by_abc(VatDocument):
-            #~ logger.info("20121208 a model %s",m)
-            for doc in m.objects.filter(declaration__isnull=True):
-                #~ logger.info("20121208 a document %s",doc)
-                if self.can_declare(doc):
-                    #~ logger.info("20121208 a can_declare %s",doc)
-                    count += 1
-                    doc.declaration = self
-                    doc.save()
+            if issubclass(m,ledger.Voucher):
+                item_models.append(m.items.related.model)
+                #~ logger.info("20121208 a model %s",m)
+                for doc in m.objects.filter(declaration__isnull=True):
+                    #~ logger.info("20121208 a document %s",doc)
+                    if self.can_declare(doc):
+                        #~ logger.info("20121208 a can_declare %s",doc)
+                        count += 1
+                        doc.declaration = self
+                        doc.save()
 
-        for m in models_by_abc(VatDocument):
-            for doc in m.objects.filter(declaration=self):
+        #~ print 20121209, item_models
+        for m in item_models:
+        #~ for m in models_by_abc(VatDocument):
+            for item in m.objects.filter(voucher__declaration=self):
                 #~ logger.info("20121208 b document %s",doc)
-                self.collect_doc(sums,doc)
+                self.collect_item(sums,item)
                 
         for fld in DeclarationFields.objects():
             setattr(self,fld.name,sums[fld.name])
             
                 
-    def collect_doc(self,sums,doc):
-        tt = doc.get_trade_type()
+    def collect_item(self,sums,item):
+        tt = item.voucher.get_trade_type()
         for fld in DeclarationFields.objects():
-            amount = DeclarationFields.amount_for_field(fld,self,doc,tt)
+            amount = DeclarationFields.amount_for_field(fld,self,item,tt)
             if amount:
                 sums[fld.name] += amount
             
@@ -476,7 +498,7 @@ class Declaration(mixins.Registrable):
 class DocumentsByDeclaration(dd.VirtualTable):
 #~ class DocumentsByDeclaration(dd.Table):
     master = Declaration
-    column_names = 'date partner'
+    column_names = 'date partner voucher total_base total_vat total_incl'
     #~ model = VatDocument
     #~ master_key = 'declaration'
   
@@ -493,13 +515,23 @@ class DocumentsByDeclaration(dd.VirtualTable):
         return docs
         
     @dd.virtualfield(models.DateField(_("Date")))
-    def date(self,obj,ar=None):
-        return obj.date
+    def date(self,obj,ar=None): return obj.date
         
     @dd.virtualfield(models.ForeignKey('contacts.Partner'))
-    def partner(self,obj,ar=None):
-        return obj.partner
+    def partner(self,obj,ar=None): return obj.partner
     
+    @dd.virtualfield(dd.PriceField(_("Total incl. VAT")))
+    def total_incl(self,obj,ar=None): return obj.total_incl
+      
+    @dd.virtualfield(dd.PriceField(_("Total excl. VAT")))
+    def total_base(self,obj,ar=None): return obj.total_base
+      
+    @dd.virtualfield(dd.PriceField(_("Total VAT")))
+    def total_vat(self,obj,ar=None): return obj.total_vat
+      
+    @dd.displayfield(_("Voucher"))
+    def voucher(self,obj,ar): return obj.href_to(ar)
+      
 
 for fld in DeclarationFields.objects():
     dd.inject_field(Declaration,fld.name,dd.PriceField(fld.text,default=Decimal))
@@ -508,10 +540,16 @@ for fld in DeclarationFields.objects():
 class Declarations(dd.Table):
     model = Declaration
     column_names = 'year period workflow_buttons * state id'
-    detail_layout = """
-    year period state
+    insert_layout = dd.FormLayout("""
+    date 
+    year 
+    period
+    """,window_size=(40,'auto'))
+    detail_layout = dd.FormLayout("""
+    date year period workflow_buttons
+    fields
     DocumentsByDeclaration
-    """
+    """,fields=declaration_fields_layout)
     
     
         

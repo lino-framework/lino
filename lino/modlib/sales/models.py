@@ -301,7 +301,7 @@ class SalesDocument(
     def get_trade_type(self):
         return vat.TradeTypes.sales
         
-    def add_item(self,product=None,qty=None,**kw):
+    def add_voucher_item(self,product=None,qty=None,**kw):
         if product is not None:
             if not isinstance(product,products.Product):
                 product = products.Product.objects.get(pk=product)
@@ -314,11 +314,8 @@ class SalesDocument(
             #~ kw['unit_price'] = "%.2f" % unit_price
         kw['qty'] = qty
         #print self,kw
-        kw['voucher'] = self
-        return self.items.model(**kw)
-        #~ cannot use create here because that would try to save() the item
-        #~ return self.items.create(**kw)
-    
+        return super(SalesDocument,self).add_voucher_item(**kw)
+        
     #~ @dd.virtualfield(dd.PriceField(_("Total incl. VAT")))
     #~ def total_incl(self,ar=None):
         #~ if self.total_base is None:

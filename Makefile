@@ -48,10 +48,11 @@ tests:
 	python lino/utils/html2xhtml.py
 	python lino/utils/demonames.py
 	python lino/utils/odsreader.py
-	#~ export DJANGO_SETTINGS_MODULE=lino.apps.std.settings ; python lino/utils/choicelists.py
+	export DJANGO_SETTINGS_MODULE=lino.apps.std.settings ; python lino/core/choicelists.py
 	export DJANGO_SETTINGS_MODULE=lino.apps.std.settings ; python lino/utils/jsgen.py
 	export DJANGO_SETTINGS_MODULE=lino.apps.std.settings ; python lino/utils/ranges.py
 	export DJANGO_SETTINGS_MODULE=lino.apps.std.settings ; python lino/modlib/ledger/utils.py
+	export DJANGO_SETTINGS_MODULE=lino.apps.std.settings ; python lino/modlib/accounts/utils.py
 	$(DJANGO_ADMIN) test --settings=lino.test_apps.1.settings  $(TESTS_OPTIONS)
 	$(DJANGO_ADMIN) test --settings=lino.test_apps.20100212.settings $(TESTS_OPTIONS)
 	$(DJANGO_ADMIN) test --settings=lino.test_apps.20100519.settings $(TESTS_OPTIONS)
@@ -63,7 +64,8 @@ tests:
 	$(DJANGO_ADMIN) test --settings=lino.apps.presto.settings $(TESTS_OPTIONS)
 
 tt:  
-	$(DJANGO_ADMIN) test --settings=lino.apps.presto.settings $(TESTS_OPTIONS)
+	export DJANGO_SETTINGS_MODULE=lino.apps.std.settings ; python lino/modlib/accounts/utils.py
+	export DJANGO_SETTINGS_MODULE=lino.apps.std.settings ; python lino/core/choicelists.py
 
 unused_appdocs:
 	$(DJANGO_ADMIN) makedocs --settings lino.apps.pcsw.settings docs/pcsw/appdocs

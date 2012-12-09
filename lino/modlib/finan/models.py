@@ -21,18 +21,24 @@ import decimal
 
 #~ from django import forms
 
-from lino import dd
-
 from django.db import models
+from django.utils.translation import ugettext_lazy as _
+
+
+from lino import dd
+from lino import mixins
+
+
 #~ from lino import fields
-from lino.core.modeltools import resolve_model
+#~ from lino.core.modeltools import resolve_model
 
 contacts = dd.resolve_app('contacts')
-#~ ledger = dd.resolve_app('ledger')
-from lino.modlib.ledger import models as ledger
-journals = dd.resolve_app('journals')
+ledger = dd.resolve_app('ledger')
+#~ from lino.modlib.ledger import models as ledger
+#~ journals = dd.resolve_app('journals')
+accounts = dd.resolve_app('accounts')
 
-Contact = resolve_model('contacts.Contact')
+#~ Contact = dd.resolve_model('contacts.Contact')
 #~ Person = resolve_model('contacts.Person')
 #~ Company = resolve_model('contacts.Company')
 
@@ -47,24 +53,26 @@ def _functionId(nFramesUp):
 
 def todo_notice(msg):
     print "[todo] in %s :\n       %s" % (_functionId(1),msg)
+    
+    
+class VoucherStates(dd.Workflow):
+    #~ label = _("State")
+    pass
+add = VoucherStates.add_item
+add('10',_("Draft"),'draft',editable=True) 
+add('20',_("Registered"),'registered',editable=False) 
+
+    
   
-class BankStatement(journals.Journaled,ledger.Booked):
+class BankStatement(ledger.Voucher):
     
-    #~ # implements Journaled:
-    #~ journal = journals.JournalRef()
-    #~ number = journals.DocumentRef()
+    balance1 = dd.PriceField(blank=True,null=True)
+    balance2 = dd.PriceField(blank=True,null=True)
     
-    #~ # implements Booked:
-    #~ value_date = models.DateField(auto_now=True)
-    #~ ledger_remark = models.CharField("Remark for ledger",
-      #~ max_length=200,blank=True)
-    #~ booked = models.BooleanField(default=False)
+    state = VoucherStates.field(default=VoucherStates.draft)
     
-    date = models.DateField()
-    balance1 = dd.PriceField()
-    balance2 = dd.PriceField()
     
-    def full_clean(self,*args,**kw):
+    def unused_full_clean(self,*args,**kw):
     #~ def before_save(self):
         if not self.booked:
             if self.value_date is None:
@@ -73,7 +81,7 @@ class BankStatement(journals.Journaled,ledger.Booked):
             #ledger.LedgerDocumentMixin.before_save(self)
             balance = self.balance1
             if self.id is not None:
-                for i in self.docitem_set.all():
+                for i in self.items.all():
                     balance += i.debit - i.credit
             self.balance2 = balance
         super(BankStatement,self).full_clean(*args,**kw)
@@ -81,50 +89,42 @@ class BankStatement(journals.Journaled,ledger.Booked):
     #~ def after_save(self):
         #~ logger.info("Saved document %s (balances=%r,%r)",self,self.balance1,self.balance2)
         
-    def collect_bookings(self):
-        sum_debit = 0 # decimal.Decimal(0)
-        for i in self.docitem_set.all():
-            b = self.create_booking(
-              pos=i.pos,
-              account=i.account,
-              contact=i.contact,
+        
+    def get_wanted_movements(self):
+        #~ a = self.journal.chart.get_account_by_ref(a)
+        
+        a = self.journal.account
+        if not a: return 
+        sum = decimal.Decimal(0)
+        for i in self.items.all():
+            if i.dc == a.type.dc:
+                sum += i.amount
+            else:
+                sum -= i.amount
+            b = self.create_movement(
+              i.account,i.dc,i.amount,
+              seqno=i.seqno,
+              partner=i.partner)
               #~ person=i.person,
               #~ company=i.company,
-              date=i.date,
-              debit=i.debit,
-              credit=i.credit)
-            sum_debit += i.debit - i.credit
+              #~ date=i.date)
+            #~ sum_debit += i.debit - i.credit
             yield b
         #todo_notice("BankStatement.balance1 and 2 are strings?!")
         #http://code.google.com/p/lino/issues/detail?id=1
         #logger.info("finan.BankStatement %r %r",self.balance1, sum_debit)
-        self.balance2 = self.balance1 + sum_debit
+        if self.balance1 is not None:
+            self.balance2 = self.balance1 + sum
         #jnl = self.get_journal()
         #~ acct = ledger.Account.objects.get(id=self.journal.account)
         #~ b = self.create_booking(account=acct)
-        b = self.create_booking(account=self.journal.account)
-        if sum_debit > 0:
-            b.debit = sum_debit
-        else:
-            b.credit = - sum_debit
-        yield b
+        yield self.create_movement(a,a.type.dc,sum)
         
-    def add_item(self,account=None,contact=None,
-        #~ company=None,person=None,
-        **kw):
-        pos = self.docitem_set.count() + 1
-        if account is not None:
-            if not isinstance(account,ledger.Account):
-                account = ledger.Account.objects.get(match=account)
-        if contact is not None:
-            if not isinstance(contact,Contact):
-                contact = Contact.objects.get(pk=contact)
-        #~ if person is not None:
-            #~ if not isinstance(person,Person):
-                #~ person = Person.objects.get(pk=person)
-        #~ if company is not None:
-            #~ if not isinstance(company,Company):
-                #~ company = Company.objects.get(pk=company)
+    def unused_add_item(self,account=None,**kw):
+        #~ pos = self.items.count() + 1
+        #~ if account is not None:
+            #~ if not isinstance(account,ledger.Account):
+                #~ account = ledger.Account.objects.get(match=account)
         kw['account'] = account
         kw['contact'] = contact
         #~ kw['person'] = person
@@ -133,31 +133,38 @@ class BankStatement(journals.Journaled,ledger.Booked):
             v = kw.get(k,None)
             if isinstance(v,basestring):
                 kw[k] = decimal.Decimal(v)
-        #~ return self.docitem_set.create(**kw)
+        #~ return self.items.create(**kw)
         kw['document'] = self
         return DocItem(**kw)
-        #~ return self.docitem_set.create(**kw)
+        #~ return self.items.create(**kw)
     
   
-class DocItem(dd.Model):
-    document = models.ForeignKey(BankStatement) 
-    pos = models.IntegerField("Position")
+class DocItem(mixins.Sequenced,ledger.VoucherItem):
+    voucher = models.ForeignKey(BankStatement,related_name='items')
+    #~ pos = models.IntegerField("Position")
     date = models.DateField(blank=True,null=True)
-    debit = dd.PriceField(default=0)
-    credit = dd.PriceField(default=0)
+    amount = dd.PriceField(default=0)
+    dc = ledger.DebitOrCreditField()
+    #~ credit = dd.PriceField(default=0)
     remark = models.CharField(max_length=200,blank=True)
-    account = models.ForeignKey(ledger.Account)
-    contact = models.ForeignKey(Contact,blank=True,null=True)
+    account = models.ForeignKey(accounts.Account)
+    partner = models.ForeignKey(contacts.Partner,blank=True,null=True)
     #~ person = models.ForeignKey(Person,blank=True,null=True)
     #~ company = models.ForeignKey(Company,blank=True,null=True)
     
-    def full_clean(self,*args,**kw):
-        if self.pos is None:
-            self.pos = self.document.docitem_set.count() + 1
-        return super(DocItem,self).full_clean(*args,**kw)
+    debit = ledger.DcAmountField(accounts.DEBIT,_("Income"))
+    credit = ledger.DcAmountField(accounts.CREDIT,_("Expense"))
+    
+    def get_siblings(self):
+        return self.voucher.items.all()
+    
+    #~ def full_clean(self,*args,**kw):
+        #~ if self.pos is None:
+            #~ self.pos = self.document.items.count() + 1
+        #~ return super(DocItem,self).full_clean(*args,**kw)
         
-    def __unicode__(self):
-        return u"DocItem %s.%d" % (self.document,self.pos)
+    #~ def __unicode__(self):
+        #~ return u"DocItem %s.%d" % (self.document,self.pos)
         
 #~ class Booking(dd.Model):
     #~ #journal = models.ForeignKey(journals.Journal)
@@ -173,24 +180,78 @@ class DocItem(dd.Model):
 
         
 
-    
-class BankStatements(journals.DocumentsByJournal):
+class BankStatements(dd.Table):
+    parameters = dict(
+        pyear=ledger.FiscalYears.field(blank=True),
+        #~ ppartner=models.ForeignKey('contacts.Partner',blank=True,null=True),
+        pjournal=ledger.JournalRef(blank=True))
     model = BankStatement
-    column_names = "number date balance1 balance2 ledger_remark value_date"
+    order_by = ["date","id"]
+    column_names = "date id number balance1 balance2 user *" 
+    params_layout = "pjournal pyear"
+    #~ detail_layout = InvoiceDetail()
+    insert_layout = dd.FormLayout("""
+    date 
+    balance1 
+    balance2
+    """,window_size=(40,'auto'))
     
+    detail_layout = """
+    date balance1 balance2 user id
+    finan.ItemsByStatement
+    """
+    
+    @classmethod
+    def get_request_queryset(cls,ar):
+        qs = super(BankStatements,cls).get_request_queryset(ar)
+        if ar.param_values.pyear:
+            qs = qs.filter(year=ar.param_values.pyear)
+        if ar.param_values.pjournal:
+            qs = qs.filter(journal=ar.param_values.pjournal)
+        return qs
+    
+    
+    
+class BankStatementsByJournal(BankStatements):
+    order_by = ["number"]
+    master_key = 'journal' # see django issue 10808
+    params_panel_hidden = True
+                  
+    @classmethod
+    def get_title_base(self,ar):
+        return unicode(ar.master_instance)
+                  
+
+
+
+    
+#~ class BankStatements(journals.DocumentsByJournal):
+    #~ model = BankStatement
+    #~ column_names = "number date balance1 balance2 ledger_remark value_date"
+   
     
     
 class DocItems(dd.Table):
-    column_names = "document pos:3 "\
-                  "date account contact remark debit credit" 
+    column_names = "date account partner remark debit credit seqno *" 
     model = DocItem
-    order_by = ["pos"]
+    order_by = ["seqno"]
 
-class ItemsByDocument(DocItems):
-    column_names = "pos:3 date account contact remark debit credit" 
-    #master = BankStatement
-    master_key = 'document'
+class ItemsByStatement(DocItems):
+    master_key = 'voucher'
     
-BankStatement.content = ItemsByDocument
+#~ BankStatement.content = ItemsByDocument
 
-journals.register_doctype(BankStatement,BankStatements)
+#~ journals.register_doctype(BankStatement,BankStatements)
+
+ledger.VoucherTypes.add_item(BankStatement,BankStatementsByJournal)
+
+MODULE_LABEL = _("Financial")
+
+def setup_main_menu(site,ui,profile,m): 
+    m = m.add_menu('finan',MODULE_LABEL)
+    
+    for jnl in ledger.Journal.objects.filter(trade_type=''):
+        m.add_action(jnl.voucher_type.table_class,
+            label=unicode(jnl),
+            params=dict(master_instance=jnl))
+

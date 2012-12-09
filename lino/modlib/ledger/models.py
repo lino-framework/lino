@@ -44,17 +44,15 @@ vat = dd.resolve_app('vat')
 
 ZERO = Decimal()
 
-
-      
 class VoucherType(dd.Choice):
-    def __init__(self,cls,model,table_class):
+    def __init__(self,model,table_class):
         self.table_class = table_class
         self.model = model
         value = full_model_name(model)
         text = model._meta.verbose_name + ' (%s.%s)' % (
             model.__module__,model.__name__)
         name = None
-        super(VoucherType,self).__init__(cls,value,text,name)
+        super(VoucherType,self).__init__(value,text,name)
         
     def get_journals(self):
         return Journal.objects.filter(voucher_type=self)
@@ -72,48 +70,8 @@ class VoucherTypes(dd.ChoiceList):
           
     @classmethod
     def add_item(cls,model,table_class):
-        return cls.add_item_instance(VoucherType(cls,model,table_class))
-        
-        
+        return cls.add_item_instance(VoucherType(model,table_class))
     
-  
-#~ class VatClasses(ChoiceList):
-    #~ """
-    #~ A VAT rate determines the *rate* of VAT.
-    #~ The actual rates are not stored here, 
-    #~ they vary depending on your country, 
-    #~ the time and type of the operation, 
-    #~ and possibly other factors.
-    #~ """
-    #~ label = _("VAT Rate")
-#~ add = VatClasses.add_item
-#~ add('0',_("Exempt"),'exempt')
-#~ add('1',_("Reduced"),'reduced')
-#~ add('2',_("Normal"),'normal')
-
-
-#~ class VatRegimes(ChoiceList):
-    #~ """
-    #~ While the rate of VAT is determined using :class:`VatClasses`,
-    #~ the VAT regime determines how the VAT is being handled: 
-    #~ whether and how it is to be paid.
-    #~ """
-    #~ label = _("VAT Regimes")
-#~ add = VatRegimes.add_item
-#~ add('10',_("Private person"),'private')
-#~ add('20',_("Subject to VAT"),'subject')
-#~ add('25',_("Co-contractor"),'cocontractor')
-#~ add('30',_("Intra-community"),'intracom')
-#~ add('40',_("Outside EU"),'outside')
-
-
-    
-#~ class JournalTypes(ChoiceList):
-    #~ label = _("Journal Type")
-#~ add = JournalTypes.add_item
-#~ add('S',_("Sales"),'sales')
-#~ add('P',_("Purchases"),'purchases')
-#~ add('F',_("Financial"),'financial')
 
 class Journal(babel.BabelNamed,mixins.Sequenced):
   
@@ -124,19 +82,25 @@ class Journal(babel.BabelNamed,mixins.Sequenced):
     #~ id = models.CharField(max_length=4,primary_key=True)
     ref = dd.NullCharField(max_length=20,unique=True)
     #~ name = models.CharField(max_length=100)
-    trade_type = vat.TradeTypes.field()
+    trade_type = vat.TradeTypes.field(blank=True)
     #~ doctype = models.IntegerField() #choices=DOCTYPE_CHOICES)
     voucher_type = VoucherTypes.field() 
     force_sequence = models.BooleanField(default=False)
     #~ total_based = models.BooleanField(_("Voucher entry based on total amount"),default=False)
     chart = models.ForeignKey('accounts.Chart')
     #~ chart = models.ForeignKey('accounts.Chart',blank=True,null=True)
-    #~ account = models.ForeignKey('accounts.Account',blank=True,null=True)
+    account = models.ForeignKey('accounts.Account',blank=True,null=True)
     #~ account = models.CharField(max_length=6,blank=True)
     #~ pos = models.IntegerField()
     #~ printed_name = models.CharField(max_length=100,blank=True)
     printed_name = babel.BabelCharField(max_length=100,blank=True)
     
+    @dd.chooser()
+    def account_choices(self,chart):
+        #~ fkw = dict()
+        fkw = dict(type=accounts.AccountTypes.bank_accounts)
+        return accounts.Account.objects.filter(chart=chart,**fkw)
+
     def get_doc_model(self):
         """The model of vouchers in this Journal."""
         #print self,DOCTYPE_CLASSES, self.doctype
@@ -171,7 +135,8 @@ class Journal(babel.BabelNamed,mixins.Sequenced):
         return doc
         
     def get_allowed_accounts(self,**kw):
-        kw[self.trade_type.name+'_allowed'] = True
+        if self.trade_type:
+            kw[self.trade_type.name+'_allowed'] = True
         kw.update(chart=self.chart)
         return accounts.Account.objects.filter(**kw)
         
@@ -228,7 +193,7 @@ class Journals(dd.Table):
     column_names = "seqno id trade_type voucher_type name force_sequence *"
     detail_layout = """
     seqno id trade_type voucher_type 
-    force_sequence 
+    force_sequence account
     name
     printed_name
     """
@@ -250,7 +215,6 @@ def VoucherNumber(**kw):
     
 
 
-    
 #~ class Voucher(mixins.Controllable):
 class Voucher(mixins.UserAuthored,mixins.ProjectRelated,mixins.Registrable):
     """
@@ -268,14 +232,13 @@ class Voucher(mixins.UserAuthored,mixins.ProjectRelated,mixins.Registrable):
         verbose_name_plural = _("Vouchers")
         #~ abstract = True
         
-    required_to_deregister = dict(states='registered paid')
+    #~ required_to_deregister = dict(states='registered paid')
         
     #~ controller_is_optional = False
     
     journal = JournalRef()
     year = FiscalYears.field(blank=True)
     number = VoucherNumber(blank=True,null=True)
-    date = models.DateField(default=datetime.date.today)
     #~ ledger_remark = models.CharField("Remark for ledger",
       #~ max_length=200,blank=True)
     narration = models.CharField(_("Narration"),max_length=200,blank=True)
@@ -287,15 +250,21 @@ class Voucher(mixins.UserAuthored,mixins.ProjectRelated,mixins.Registrable):
         #~ return jnl
         
     @classmethod
-    def create_journal(cls,trade_type,**kw):
+    def create_journal(cls,trade_type=None,account=None,chart=None,**kw):
     #~ def create_journal(cls,jnl_id,trade_type,**kw):
         #~ doctype = get_doctype(cls)
         #~ jnl = Journal(doctype=doctype,id=jnl_id,*args,**kw)
-        tt = vat.TradeTypes.get_by_name(trade_type)
+        if isinstance(account,basestring):
+            account = chart.get_account_by_ref(account)
+            #~ account = account.Account.objects.get(chart=chart,ref=account)
+        if isinstance(trade_type,basestring):
+            trade_type = vat.TradeTypes.get_by_name(trade_type)
         vt = VoucherTypes.get_by_value(full_model_name(cls))
+        kw.update(chart=chart)
+        if account is not None:
+            kw.update(account=account)
         #~ jnl = Journal(trade_type=tt,voucher_type=vt,id=jnl_id,**kw)
-        jnl = Journal(trade_type=tt,voucher_type=vt,**kw)
-        return jnl
+        return Journal(trade_type=trade_type,voucher_type=vt,**kw)
         
     @classmethod
     def get_journals(cls):
@@ -312,14 +281,14 @@ class Voucher(mixins.UserAuthored,mixins.ProjectRelated,mixins.Registrable):
         
                 
     def register(self,ar):
+        """
+        delete any existing movements and re-create them
+        """
         if self.year is None:
             self.year = FiscalYears.from_date(self.date)
         if self.number is None:
             self.number = self.journal.get_next_number(self)
         assert self.number is not None
-        """
-        delete any existing movements and re-create them
-        """
         self.movement_set.all().delete() 
         for m in self.get_wanted_movements():
             m.full_clean()
@@ -348,8 +317,13 @@ class Voucher(mixins.UserAuthored,mixins.ProjectRelated,mixins.Registrable):
         #~ return DOCTYPES[self.journal.doctype][0]
         
         
-    #~ def get_wanted_movements(self):
-        #~ raise NotImplementedError()
+    def get_wanted_movements(self):
+        """
+        Subclasses must implement this. 
+        Supposed to return or yield a list 
+        of unsaved :class:`Movement` instances.
+        """
+        raise NotImplementedError()
         #~ return []
         
     #~ def create_movement_credit(self,account,amount,**kw):
@@ -360,18 +334,17 @@ class Voucher(mixins.UserAuthored,mixins.ProjectRelated,mixins.Registrable):
         #~ kw.update(is_credit=False)
         #~ return self.create_movement(account,amount,**kw)
         
-    def create_movement(self,account,amount,**kw):
+    def create_movement(self,account,dc,amount,**kw):
         assert isinstance(account,accounts.Account)
         kw['voucher'] = self
         #~ account = accounts.Account.objects.get(group__ref=account)
         #~ account = self.journal.chart.get_account_by_ref(account)
         kw['account'] = account
-        if amount >= 0:
-            kw['amount'] = amount
-            kw['dc'] = account.type.dc
-        else:
-            kw['amount'] = - amount
-            kw['dc'] = not account.type.dc
+        if amount < 0:
+            amount = - amount
+            dc = not dc
+        kw['amount'] = amount
+        kw['dc'] = dc
         
         #~ kw['journal'] = self.journal
         #~ kw['year'] = self.year
@@ -398,11 +371,49 @@ class Voucher(mixins.UserAuthored,mixins.ProjectRelated,mixins.Registrable):
         obj = self.journal.voucher_type.model.objects.get(
             journal=self.journal,number=self.number,year=self.year)
         return ar.href_to(obj)
+        
     
+    #~ def add_voucher_item(self,account=None,**kw):
+        #~ if account is not None:
+            #~ if not isinstance(account,accounts.Account):
+            #~ if isinstance(account,basestring):
+                #~ account = self.journal.chart.get_account_by_ref(account)
+            #~ kw['account'] = account
+        
+    def add_voucher_item(self,account=None,**kw):
+        if account is not None:
+            if isinstance(account,basestring):
+                account = self.journal.chart.get_account_by_ref(account)
+            kw['account'] = account
+        kw.update(voucher=self)
+        return self.items.model(**kw)
+        #~ return super(AccountInvoice,self).add_voucher_item(**kw)
         
 
 class DebitOrCreditField(models.BooleanField):
     pass
+    
+    
+class DcAmountField(dd.VirtualField):
+    """
+    An editable virtual field to set both fields `amount` and `dc`
+    """
+    
+    editable = True
+    
+    def __init__(self,dc,*args,**kw):
+        self.dc = dc
+        dd.VirtualField.__init__(self,dd.PriceField(*args,**kw),None)
+        
+    def set_value_in_object(self,request,obj,value):
+        obj.amount = value
+        obj.dc = self.dc
+        
+    def value_from_object(self,obj,ar):
+        if obj.dc == self.dc: return obj.amount
+        return None
+        
+    
 
 
     
@@ -497,17 +508,6 @@ class AccountInvoice(vat.VatDocument,Voucher):
     
     def get_trade_type(self):
         return self.journal.trade_type
-        
-    def add_item(self,account=None,**kw):
-        if account is not None:
-            #~ if not isinstance(account,accounts.Account):
-            if isinstance(account,basestring):
-                #~ account = accounts.Account.objects.get(group__ref=account)
-                #~ account = accounts.Account.objects.get(ref=account)
-                account = self.journal.chart.get_account_by_ref(account)
-        kw['account'] = account
-        kw['voucher'] = self
-        return self.items.model(**kw)
         
     
 

@@ -1,0 +1,15 @@
+20121209
+========
+
+Started to work on :mod:`lino.modlib.finan`.
+
+There should be a more or less hard-coded account type 
+`accounts.utils.BankAccounts` which is used as filter 
+for the choices to be displaied in Journal.account.
+
+`UserLevels` (which I'm going to rename to `UserRoles` one day) and 
+`AccountTypes` are examples of choicelists where inheritance 
+can be useful.
+But to make it possible, we first need to get rid of the required choicelist in the `__init__`.
+
+Updated the docstring of :mod:`lino.core.choicelists` which didn't pass the doctest.
