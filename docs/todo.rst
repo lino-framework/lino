@@ -4,13 +4,17 @@ To-do list
 Short-term
 ----------
 
+#.  finding a client using the eid card wastes time because it also reads 
+    the picture and transfers it to the server. Test whether this is a problem.
+
+#.  implement the fields Client.applies_from and applies_until as 
+    "summary fields". This is a new concept: :doc:`/topics/summary_fields`
+
 #.  Setting a column filter for a *normal* date column now works... 
     but Lino also allows setting a filter on a virtual field. 
     Which then causes another traceback
     "FieldError at /api/pcsw/IntegClients / Cannot resolve keyword 'applies_from' into field."
-    Idea: implement the fields Client.applies_from and applies_until as 
-    "summary fields". This is a new concept: :doc:`/topics/summary_fields`
-
+    
 #.  Inform about active column filters when building the title of table
     (using title tags).
 

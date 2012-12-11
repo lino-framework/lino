@@ -9,6 +9,12 @@ Rich Internet Applications
 using `Sencha ExtJS <http://www.sencha.com/products/extjs/>`_
 and `Django <https://www.djangoproject.com/>`_.
 
+Primary target users of Lino applications 
+are agencies and companies who 
+need a customized database application 
+"more than MS-Access for cheaper than SAP".
+
+
 Features
 --------
     

@@ -4,6 +4,7 @@
 Kleinkarm in Lino/Welfare
 
 - :menuselection:`Listings --> Datenkontrolle Klienten` funktionierte nicht.
+
 - Menü "Buchhaltung": War noch nicht übersetzt.
   "Gruppen" und "Konten" stehen jetzt unter "Konfigurierung" 
   statt unter "Explorer".

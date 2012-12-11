@@ -1,13 +1,3 @@
-T:\hgwork\lino\docs\releases\index.rst:18: WARNING: toctree glob pattern u'2010/index' didn't match any documents
-T:\hgwork\lino\docs\releases\index.rst:18: WARNING: toctree glob pattern u'2011/index' didn't match any documents
 T:\hgwork\lino\docs\casts\lino_intro.rst:: WARNING: document isn't included in any toctree
 T:\hgwork\lino\docs\dev\versioning.rst:: WARNING: document isn't included in any toctree
 T:\hgwork\lino\docs\igen\index.rst:: WARNING: document isn't included in any toctree
-<autodoc>:1: WARNING: py:class reference target not found: object
-t:\hgwork\lino\lino\core\choicelists.py:docstring of lino.core.choicelists.ChoiceList.display_text:1: WARNING: py:class reference target not found: lino.core.perms.UserGroups
-t:\hgwork\lino\lino\core\choicelists.py:docstring of lino.core.choicelists.ChoiceList.display_text:1: WARNING: py:class reference target not found: lino.modlib.cv.models.CefLevel
-t:\hgwork\lino\lino\core\choicelists.py:docstring of lino.core.choicelists.ChoiceList.preferred_width:1: WARNING: py:class reference target not found: lino.core.fields.ChoiceListField
-<autodoc>:1: WARNING: py:class reference target not found: django.db.models.fields.CharField
-<autodoc>:1: WARNING: py:class reference target not found: lino.modlib.vat.models.QtyVatItemBase
-<autodoc>:1: WARNING: py:class reference target not found: lino.modlib.vat.models.VatTotal
-<autodoc>:1: WARNING: py:class reference target not found: lino.modlib.vat.models.VatTotal
