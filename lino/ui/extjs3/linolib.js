@@ -2030,6 +2030,7 @@ Lino.call_row_action = function(panel,method,url,p,actionName,step,on_confirm,on
   //~ Lino.insert_subst_user(p);
     
   if (step) p['$ext_requests.URL_PARAM_ACTION_STEP'] = step;
+  //~ if (pp) pp(p); // "parameter processor" : first used for read beid card
   Ext.Ajax.request({
     method: method,
     url: url,
@@ -2038,21 +2039,27 @@ Lino.call_row_action = function(panel,method,url,p,actionName,step,on_confirm,on
   });
 };
 
-Lino.row_action_handler = function(actionName) {
+Lino.row_action_handler = function(actionName,hm,pp) {
+  var p = {};
   var fn = function(panel,btn,step) {
-    Lino.do_on_current_record(panel,function(rec) {
-      //~ console.log(panel);
-      //~ 20120723 Lino.call_row_action(panel,rec.id,actionName,step,fn);
-      Lino.call_row_action(panel,'GET',panel.get_record_url(rec.id),{},actionName,step,fn);
-    });
+      if (pp && !step) p = pp();
+      Lino.do_on_current_record(panel,function(rec) {
+          //~ console.log(panel);
+          //~ 20120723 Lino.call_row_action(panel,rec.id,actionName,step,fn);
+          Lino.call_row_action(panel,hm,panel.get_record_url(rec.id),p,actionName,step,fn);
+      });
   };
   return fn;
 };
 
-Lino.list_action_handler = function(actionName) {
+Lino.list_action_handler = function(ls_url,actionName,hm,pp) {
+  var p = {};
+  var url = ADMIN_URL + '/api' + ls_url
   var fn = function(panel,btn,step) {
-      var url = ADMIN_URL + '/api' + panel.ls_url
-      Lino.call_row_action(panel,'GET',url,{},actionName,step,fn);
+      //~ console.log("20121210 Lino.list_action_handler",arguments);
+      //~ var url = ADMIN_URL + '/api' + panel.ls_url
+      if (pp && !step) p = pp();
+      Lino.call_row_action(panel,hm,url,p,actionName,step,fn);
   };
   return fn;
 };
@@ -2069,13 +2076,14 @@ Lino.param_action_handler = function(window_action) { // 20121012
 };
 
 
-Lino.run_row_action = function(requesting_panel,url,pk,actionName) {
+Lino.run_row_action = function(requesting_panel,url,pk,actionName,pp) {
   //~ var panel = action.get_window().main_item;
   url = ADMIN_URL + '/api' + url  + '/' + pk;
   var panel = Ext.getCmp(requesting_panel);
+  if (pp) var p = pp(); else var p = {};
   var fn = function(panel,btn,step) {
     //~ 20120723 Lino.call_row_action(panel,pk,actionName,step,fn);
-    Lino.call_row_action(panel,'GET',url,{},actionName,step,fn);
+    Lino.call_row_action(panel,'GET',url,p,actionName,step,fn);
   }
   fn(panel,null,null);
 }
@@ -5340,7 +5348,7 @@ cardReader.setAppletExceptionHandler(appletExceptionHandler);
   //~ document.getElementById("encoded_picture").src = "data:image/jpeg;base64,";
 //~ }
 
-Lino.beid_read_card_handler = function(url,actionName,method) {
+Lino.unused_beid_read_card_handler = function(url,actionName,method) {
   return function(panel,btn,step) {
     //~ clearPicture();
     var card = cardReader.read();
@@ -5405,11 +5413,50 @@ Lino.beid_read_card_handler = function(url,actionName,method) {
       };
     var on_confirm = function(panel,btn,step) {
       //~ Lino.call_row_action(panel,'POST','/eid-jslib',p,'read',step,fn,on_success);
-      Lino.call_row_action(panel,method,url,p,actionName,step,on_confirm,on_success);
+      Lino.call_row_action(panel,method,pp,url,p,actionName,step,on_confirm,on_success);
     };
     on_confirm(panel,btn,step);
   }
 }
+
+Lino.beid_read_card_processor = function() {
+    var card = cardReader.read();
+    if (!card) {
+        Lino.alert("No card returned.");
+        return {};
+    } 
+    return {
+      cardNumber: card.cardNumber,
+      validityBeginDate:card.validityBeginDate.format("$settings.LINO.date_format_extjs"),
+      validityEndDate: card.validityEndDate.format("$settings.LINO.date_format_extjs"),
+      chipNumber:card.chipNumber,
+      issuingMunicipality:card.issuingMunicipality,
+      nationalNumber:card.nationalNumber,
+      surname:card.surname,
+      firstName1:card.firstName1,
+      firstName2:card.firstName2,
+      firstName3:card.firstName3,
+      nationality:card.nationality,
+      birthLocation:card.birthLocation,
+      birthDate: card.birthDate.format("$settings.LINO.date_format_extjs"),
+      sex:card.sex,
+      nobleCondition:card.nobleCondition,
+      documentType:card.documentType,
+      specialStatus:card.specialStatus,
+      whiteCane:card.whiteCane,
+      yellowCane:card.yellowCane,
+      extendedMinority:card.extendedMinority,
+      street:card.street,
+      streetNumber:card.streetNumber,
+      boxNumber:card.boxNumber,
+      zipCode:card.zipCode,
+      municipality:card.municipality,
+      country:card.country,
+      picture:base64.encode(card.getPicture())
+    };
+}
+
+
 
 #end if
 

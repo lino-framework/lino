@@ -139,14 +139,9 @@ class BoundAction(object):
         return self.actor.request(*args,**kw)
         
         
-    def get_button_label(self):
-        if self.actor is None:
-            return self.action.label 
-        if self.action is self.actor.default_action.action:
-            return self.actor.label 
-        else:
-            return u"%s %s" % (self.action.label,self.actor.label)
-            
+    def get_button_label(self,*args):
+        return self.action.get_button_label(self.actor,*args)
+        
     def get_panel_btn_handler(self,*args):
         return self.action.get_panel_btn_handler(self.actor,*args)
         

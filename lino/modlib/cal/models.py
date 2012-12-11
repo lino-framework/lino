@@ -1244,23 +1244,22 @@ class EventInsert(EventDetail):
     place priority access_class transparent 
     """
     
-class NextDateAction(dd.ListAction):
-    label = _("Next")
-    #~ action_name = 'next'
-    default_format = ext_requests.URL_FORMAT_JSON
+#~ class NextDateAction(dd.ListAction):
+    #~ label = _("Next")
+    #~ # action_name = 'next'
+    #~ default_format = ext_requests.URL_FORMAT_JSON
     
-    def setup_action_request(self,actor,ar):
-        #~ print "coucou"
-        #~ assert row is None
-        dates_from = ar.param_values.dates_from or datetime.date.today()
-        dates_to = ar.param_values.dates_to or dates_from
-        ar.param_values.define('dates_from',dates_from + ONE_DAY)
-        ar.param_values.define('dates_to',dates_to + ONE_DAY)
-        #~ ar.param_values.dates_to += ONE_DAY
-        #~ logger.info("20121203 cal.NextDateAction.setup_action_request() %s",ar.param_values)
-        #~ return ar.success_response(refresh=True)
+    #~ def setup_action_request(self,actor,ar):
+        #~ # print "coucou"
+        #~ # assert row is None
+        #~ dates_from = ar.param_values.dates_from or datetime.date.today()
+        #~ dates_to = ar.param_values.dates_to or dates_from
+        #~ ar.param_values.define('dates_from',dates_from + ONE_DAY)
+        #~ ar.param_values.define('dates_to',dates_to + ONE_DAY)
+        #~ # ar.param_values.dates_to += ONE_DAY
+        #~ # logger.info("20121203 cal.NextDateAction.setup_action_request() %s",ar.param_values)
+        #~ # return ar.success_response(refresh=True)
     
-    #~ def run(self,row,ar,**kw):
     
    
    

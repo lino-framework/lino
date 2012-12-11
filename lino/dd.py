@@ -77,7 +77,6 @@ Utilities:
 Actions:
 
 - :class:`RowAction <lino.core.actions.RowAction >`
-- :class:`ListAction <lino.core.actions.ListAction>`
 - :class:`ChangeStateAction <lino.core.changes.ChangeStateAction>`
 - :class:`NotifyingAction <lino.core.actions.NotifyingAction>`
 - :class:`AuthorRowAction <lino.mixins.AuthorRowAction>`
@@ -125,7 +124,7 @@ from lino.core.actions import action
 #~ from lino.core.actions import Action
 from lino.core.actions import RowAction
 from lino.mixins import AuthorRowAction
-from lino.core.actions import ListAction
+#~ from lino.core.actions import ListAction
 from lino.core.actions import GridEdit, ShowDetailAction
 from lino.core.actions import InsertRow, DeleteSelected
 from lino.core.actions import SubmitDetail, SubmitInsert

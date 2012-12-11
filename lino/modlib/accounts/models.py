@@ -177,11 +177,12 @@ def setup_config_menu(site,ui,profile,m):
         #~ return
     m  = m.add_menu("accounts",MODULE_LABEL)
     m.add_action(Charts)
+    m.add_action(Groups)
+    m.add_action(Accounts)
   
 def setup_explorer_menu(site,ui,profile,m):
     m  = m.add_menu("accounts",MODULE_LABEL)
-    m.add_action(Groups)
-    m.add_action(Accounts)
+    m.add_action(AccountTypes)
 
 #~ dd.add_user_group('debts',MODULE_LABEL)
 

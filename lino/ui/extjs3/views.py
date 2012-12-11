@@ -384,6 +384,10 @@ def form2obj_and_save(ar,data,elem,is_new,restful,file_upload=False): # **kw2sav
             #~ kw.update(rows=[rh.store.row2list(ar,elem)])
         #~ else:
             #~ kw.update(data_record=elem2rec_detailed(ar,elem))
+        """
+        TODO: in fact we need *either* `rows` (when this was called from a Grid) 
+        *or* `data_record` (when this was called from a form).
+        """
         kw.update(rows=[rh.store.row2list(ar,elem)])
         kw.update(data_record=elem2rec_detailed(ar,elem))
     #~ logger.info("20120208 form2obj_and_save --> %r",kw)
@@ -754,7 +758,7 @@ class ApiElement(View):
         if pk and pk != '-99999' and pk != '-99998':
             elem = rpt.get_row_by_pk(pk)
             if elem is None:
-                raise http.Http404("%s has no row with prmiary key %r" % (rpt,pk))
+                raise http.Http404("%s has no row with primary key %r" % (rpt,pk))
                 #~ raise Exception("20120327 %s.get_row_by_pk(%r)" % (rpt,pk))
         else:
             elem = None
@@ -770,7 +774,6 @@ class ApiElement(View):
         ar.renderer = ui.ext_renderer
         ah = ar.ah
         
-        #~ fmt = request.GET.get('fmt',a.default_format)
         fmt = request.GET.get(ext_requests.URL_PARAM_FORMAT,ba.action.default_format)
         
         if fmt == ext_requests.URL_FORMAT_PLAIN:
@@ -886,27 +889,25 @@ class ApiElement(View):
         raise NotImplementedError("Action %s is not implemented)" % ba)
                 
         
+    def post(self,request,app_label=None,actor=None,pk=None):
+        ar = action_request(app_label,actor,request,request.POST)
+        elem = ar.actor.get_row_by_pk(pk)
+        if elem is None:
+            raise http.Http404("%s has no row with primary key %r" % (ar.actor,pk))
+        if isinstance(ar.bound_action.action,actions.RowAction):
+            if pk == '-99998':
+                assert elem is None
+                elem = ar.create_instance()
+            return run_action(ar,elem)
+        raise NotImplementedError("Action %s is not implemented)" % ar)
+        
     def put(self,request,app_label=None,actor=None,pk=None):
-      
         data = http.QueryDict(request.raw_post_data)
         ar = action_request(app_label,actor,request,data)
-      
-        #~ ui = settings.LINO.ui
-        #~ rpt = requested_report(app_label,actor)
-        #~ # data = http.QueryDict(request.raw_post_data).get('rows')
-        #~ # data = json.loads(data)
-        #~ a = rpt.get_url_action(rpt.default_list_action_name)
-        #~ ar = rpt.request(ui,request,a)
-        
-        #~ ar.renderer = ui.ext_renderer
-        #~ print 20120814, data
-        #~ assert isinstance(data,dict)
-        #~ data = data[0]
         
         elem = ar.actor.get_row_by_pk(pk)
         if elem is None:
             raise http.Http404("%s has no row with primary key %r" % (rpt,pk))
-            
         return form2obj_and_save(ar,data,elem,False,False) # force_update=True)
             
     def delete(self,request,app_label=None,actor=None,pk=None):

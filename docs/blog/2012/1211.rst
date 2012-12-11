@@ -1,0 +1,25 @@
+20121211
+========
+
+Es gibt nicht "eine" Aktion zum Einlesen einer belgischen 
+eID-Karte, sondern mindestens zwei.
+
+- Globale Aktion "Klient finden anhand eID" 
+  (:class:`FindByBeIdAction
+  <lino_welfare.modlib.pcsw.models.FindByBeIdAction>`)
+  im Hauptmenü : 
+  Liest Daten von Karte ein und danach das Detail-Fenster 
+  des Klienten.
+  En passant prüft sie nach, ob alle Daten aktuell sind.
+  Fall es keinen Klienten gibt, wird er angelegt.
+
+- Button "eID einlesen" (:class:`BeIdReadCardToClientAction 
+  <lino_welfare.modlib.pcsw.models.BeIdReadCardToClientAction>`)
+  wenn man auf dem Klienten steht: da hat 
+  man diesen Klienten schon ausgesucht und will nun, dass 
+  Lino dessen Daten aktualisiert.
+
+Um das zu implementieren, musste ich nochmal wieder am Gesamtkonzept 
+der URLs und Views basteln (Welche HTTP-Methode 
+soll die erstgenannte Aktion benutzen, wenn ich mich ans
+RESTful-Prinzip halten will?)

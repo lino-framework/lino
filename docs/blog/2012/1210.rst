@@ -1,0 +1,20 @@
+20121210
+========
+
+Kleinkarm in Lino/Welfare
+
+- :menuselection:`Listings --> Datenkontrolle Klienten` funktionierte nicht.
+- Menü "Buchhaltung": War noch nicht übersetzt.
+  "Gruppen" und "Konten" stehen jetzt unter "Konfigurierung" 
+  statt unter "Explorer".
+  Und im Explorer haben wir jetzt zur Info auch AccountTypes stehen.
+  
+- Strengere Regel beim Einlesen einer eID-Karte:
+  if a client with same last_name and first_name 
+  exists, the user cannot (automatically) create a new client from eid card.
+  
+  Falls das mal vorkommen sollte (zwei Leute mit gleichem Vor- und Familiennamen),
+  muss der zweite Klient zunächst manuell in Lino angelegt werden und zumindest 
+  die NR-Nummer korrekt eingegeben werden.
+  Danach eid-Karte erneut einlesen, damit er die retlichen Daten automatisch aktualisiert.
+  

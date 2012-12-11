@@ -379,23 +379,32 @@ class ExtRenderer(HtmlRenderer):
             if v.params is not None:
                 #~ ar = v.action.actor.request(self.ui,None,v.action,**v.params)
                 ar = v.bound_action.request(self.ui,**v.params)
-                return handler_item(v,self.request_handler(ar),v.help_text)
+                js = "function() {%s}" % self.request_handler(ar)
+                return handler_item(v,js,v.help_text)
                 #~ return dict(text=prepare_label(v),handler=js_code(handler))
             if v.bound_action:
-                return handler_item(v,self.action_call(None,v.bound_action,{}),v.help_text)
+                js = self.action_call(None,v.bound_action,{})
+                if js is None:
+                    js = v.bound_action.get_panel_btn_handler(self)
+                    js = "function() {%s(Lino.viewport)}" % js
+                else:
+                    js = "function() {%s}" % js
+                return handler_item(v,js,v.help_text)
                 #~ ar = v.action.request(self.ui)
                 #~ return handler_item(v,self.request_handler(ar),v.action.help_text)
             elif v.javascript is not None:
-                return handler_item(v,v.javascript,v.help_text)
+                js = "function() {%s}" % v.javascript
+                return handler_item(v,js,v.help_text)
             elif v.href is not None:
                 url = v.href
-            elif v.request is not None:
-                raise Exception("20120918 request %r still used?" % v.request)
-                url = self.get_request_url(v.request)
+            #~ elif v.request is not None:
+                #~ raise Exception("20120918 request %r still used?" % v.request)
+                #~ url = self.get_request_url(v.request)
             elif v.instance is not None:
                 h = self.instance_handler(None,v.instance)
                 assert h is not None
-                return handler_item(v,h,None)
+                js = "function() {%s}" % h
+                return handler_item(v,js,None)
                 #~ handler = "function(){%s}" % self.instance_handler(v.instance)
                 #~ return dict(text=prepare_label(v),handler=js_code(handler))
               
@@ -485,7 +494,7 @@ class ExtRenderer(HtmlRenderer):
                   rp,
                   py2js(after_show))
             return "Lino.%s.run(%s)" % (bound_action.full_name(),rp)
-        return "?"
+        return None
 
     def instance_handler(self,ar,obj):
         a = getattr(obj,'_detail_action',None)
@@ -615,7 +624,7 @@ def prepare_label(mi):
     #~ return label
     
 def handler_item(mi,handler,help_text):
-    handler = "function(){%s}" % handler
+    #~ handler = "function(){%s}" % handler
     #~ d = dict(text=prepare_label(mi),handler=js_code(handler),tooltip="Foo")
     d = dict(text=prepare_label(mi),handler=js_code(handler))
     if mi.bound_action and mi.bound_action.action.icon_name:
@@ -624,7 +633,6 @@ def handler_item(mi,handler,help_text):
         d.update(listeners=dict(render=js_code(
           "Lino.quicktip_renderer(%s,%s)" % (py2js('Foo'),py2js(help_text)))
         ))
-    
     return d
 
 
@@ -1819,18 +1827,13 @@ tinymce.init({
             #~ if a.url_action_name is None:
                 #~ raise Exception("Action %r has no url_action_name" % a)
             kw.update(must_save=True)
-            kw.update(
-              panel_btn_handler=js_code("Lino.row_action_handler(%r)" % a.action_name))
-              #~ panel_btn_handler=js_code("Lino.row_action_handler(%r)" % a.url_action_name))
+            kw.update(panel_btn_handler=js_code(ba.get_panel_btn_handler(self.ext_renderer)))
+            #~ kw.update(panel_btn_handler=js_code("Lino.row_action_handler(%r)" % a.action_name))
         elif isinstance(a,actions.ListAction):
-            #~ if a.url_action_name is None:
-                #~ raise Exception("Action %r has no url_action_name" % a)
-            #~ kw.update(
-              #~ panel_btn_handler=js_code("Lino.list_action_handler(%r)" % a.action_name))
-            kw.update(panel_btn_handler=js_code(ba.get_panel_btn_handler(self)))
+            kw.update(panel_btn_handler=js_code(ba.get_panel_btn_handler(self.ext_renderer)))
             kw.update(must_save=True)
         elif isinstance(a,actions.JavaScriptAction):
-            kw.update(panel_btn_handler=js_code(ba.get_panel_btn_handler(self)))
+            kw.update(panel_btn_handler=js_code(ba.get_panel_btn_handler(self.ext_renderer)))
             kw.update(must_save=True)
         else:
             kw.update(panel_btn_handler=js_code("Lino.%s" % a))

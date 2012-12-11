@@ -493,6 +493,14 @@ class Action(Parametrizable,Permittable):
             #~ self.show_in_workflow = False
             #~ self.show_in_bbar = True
         
+    def get_button_label(self,actor):
+        if actor is None:
+            return self.label 
+        if self is actor.default_action.action:
+            return actor.label 
+        else:
+            return u"%s %s" % (self.label,actor.label)
+            
     def full_name(self,actor):
         if self.action_name is None:
             raise Exception("Tried to full_name() on %r" % self)
@@ -620,9 +628,29 @@ class TableAction(Action):
 
 class RowAction(Action):
     """
-    Base class for actions that are executed on an individual row.
+    TODO: rename RowAction to ServerSideAction or AjaxAction
+    Base class for actions that are executed server-side, 
+    either on an individual row (if `single_row` is True) 
+    or on a list.
     """
+    single_row = True
+    preprocessor = None
+    http_method = 'GET'
     
+    def get_panel_btn_handler(self,actor,renderer):
+        if self.single_row:
+            h  = 'Lino.row_action_handler('
+        else:
+            h  = 'Lino.list_action_handler('
+            ls_url = '/' + actor.app_label + '/' + actor.__name__
+            h += "%r," % ls_url
+        h += "%r" % self.action_name
+        h += ",%r" % self.http_method
+        if self.preprocessor:
+            h += "," + self.preprocessor
+        h += ")"
+        return h 
+        
     def run(self,row,ar,**kw):
         """
         Execute the action on the given `row`. `ar` is an :class:`ActionRequest` 
@@ -668,21 +696,33 @@ class GridEdit(TableAction):
         return None
 
 
+class BeIdReadCardAction(RowAction):
+    preprocessor = 'Lino.beid_read_card_processor'
+    http_method = 'POST'
+    
+    def get_button_label(self,actor):
+        return self.label 
+        
+    def get_view_permission(self,profile):
+        if not settings.LINO.use_eid_jslib:
+            return False
+        return super(BeIdReadCardAction,self).get_view_permission(profile)
+  
 
 
-class ListAction(Action):
+class unused_ListAction(Action):
     """
-    Base class for actions that are executed server-side on an individual row.
+    Base class for actions that are executed server-side on a set of rows.
     """
     callable_from = (GridEdit,)
-    def get_panel_btn_handler(self,actor,ui):
+    def get_panel_btn_handler(self,actor,renderer):
         assert self.action_name is not None
         return "Lino.list_action_handler(%r)" % self.action_name
         #~ url = ui.ext_renderer.get_actor_url(actor)
         #~ return "%s(%r,%r,%r)" % (self.js_handler,url,self.action_name,self.http_method)
 
 
-class JavaScriptAction(Action):
+class unused_JavaScriptAction(Action):
     """
     Base class for actions that are executed server-side on an individual row.
     """
@@ -690,8 +730,8 @@ class JavaScriptAction(Action):
     js_handler = None
     http_method = 'GET'
     
-    def get_panel_btn_handler(self,actor,ui):
-        url = ui.ext_renderer.get_actor_url(actor)
+    def get_panel_btn_handler(self,actor,renderer):
+        url = renderer.get_actor_url(actor)
         return "%s(%r,%r,%r)" % (self.js_handler,url,self.action_name,self.http_method)
 
     def run(self,row,ar,**kw):
@@ -702,7 +742,7 @@ class JavaScriptAction(Action):
         raise NotImplementedError("%s has no run() method" % self.__class__)
         
 
-class BeIdReadCardAction(JavaScriptAction):
+class unused_BeIdReadCardAction(unused_JavaScriptAction):
     """
     Explore the data read from an eid card and decide what to do with it.
     
@@ -1263,6 +1303,7 @@ class ActionRequest(BaseRequest):
             actor = self.actor
         return self.ui.request(actor,**kw)
         
+    def instance_handler(self,*args,**kw): return self.renderer.instance_handler(self,*args,**kw)
     def href_to(self,*args,**kw): return self.renderer.href_to(self,*args,**kw)
     def pk2url(self,*args,**kw): return self.renderer.pk2url(self,*args,**kw)
     def get_request_url(self,*args,**kw): return self.renderer.get_request_url(self,*args,**kw)

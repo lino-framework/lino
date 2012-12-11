@@ -46,7 +46,7 @@ class MenuItem:
                  #~ can_view=None,
                  hotkey=None,params=None,
                  help_text=None,
-                 request=None,
+                 #~ request=None,
                  instance=None,
                  javascript=None,
                  href=None):
@@ -57,7 +57,7 @@ class MenuItem:
         self.bound_action = action
         self.params = params
         self.href = href
-        self.request = request
+        #~ self.request = request
         self.instance = instance
         self.javascript = javascript
         self.help_text = help_text
@@ -130,8 +130,8 @@ class MenuItem:
         if self.bound_action:
             sr = ar.spawn(self.bound_action.actor,action=self.bound_action)
             url = sr.get_request_url()
-        elif self.request:
-            url = self.request.get_request_url()
+        #~ elif self.request:
+            #~ url = self.request.get_request_url()
         else:
             url = self.href
         assert self.label is not None
@@ -217,6 +217,7 @@ class Menu(MenuItem):
         elif isinstance(spec,type) and issubclass(spec,actors.Actor):
             if action:
                 a = spec.get_url_action(action)
+                #~ print 20121210, a
             else:
                 a = spec.default_action
             #~ a = actors.BoundAction(spec,a)
@@ -326,37 +327,6 @@ class Menu(MenuItem):
         assert self.label is not None
         return xghtml.E.p(self.label,xghtml.E.ul(*items))
       
-    def old_as_html(self,request,level=1):
-        try:
-            if level == 1:
-                s = '<ul class="jd_menu">' 
-            else:
-                #s = Component.as_html(self,request)
-                s = self.label
-                s += '\n<ul>' 
-            for mi in self.items:
-                s += '\n<li>%s</li>' % mi.as_html(request,level+1)
-            s += '\n</ul>\n'
-            return s
-        except Exception, e:
-            raise
-            #~ traceback.print_exc(e)
-
-    def unused_menu_request(self,user_profile):
-        #~ if self.can_view.passes(user):
-        m = copy.copy(self)
-        items = []
-        for i in m.items:
-            meth = getattr(i,'menu_request',None)
-            if meth is None:
-                items.append(i)
-            else:
-                r = meth(user_profile)
-                #~ r = i.menu_request(user)
-                if r is not None:
-                    items.append(r)
-        m.items = items
-        return m
 
 class Toolbar(Menu):
     """
