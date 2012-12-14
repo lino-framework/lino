@@ -969,6 +969,7 @@ class ExtUI(base.UI):
             (rx+r'choices/(?P<app_label>\w+)/(?P<rptname>\w+)$', views.Choices.as_view()),
             (rx+r'choices/(?P<app_label>\w+)/(?P<rptname>\w+)/(?P<fldname>\w+)$', views.Choices.as_view()),
             (rx+r'apchoices/(?P<app_label>\w+)/(?P<actor>\w+)/(?P<an>\w+)/(?P<field>\w+)$', views.ActionParamChoices.as_view()),
+            (rx+r'threads/(?P<thread_id>\w+)/(?P<button_id>\w+)$', views.Threads.as_view()),
         )
         urlpatterns += settings.LINO.get_urls()
         if settings.LINO.use_eid_applet:

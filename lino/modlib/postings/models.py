@@ -183,7 +183,7 @@ class CreatePostings(dd.RowAction):
             p.full_clean()
             p.save()
         kw.update(refresh=True)
-        return ar.success_response(**kw)
+        return ar.success(**kw)
         
     
     
@@ -198,7 +198,7 @@ class Postable(dd.Model):
     create_postings = CreatePostings()
     
     def print_from_posting(self,posting,ar,**kw):
-        return ar.error_response("Not implemented")
+        return ar.error("Not implemented")
         
 
   

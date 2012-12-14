@@ -1,0 +1,32 @@
+20121214
+========
+
+Yesterday and today I implemented
+another important internal todo: I replaced the "confirmation" 
+machinery be a new one which doesn't require a `step` variable and 
+doesn't repeat code.
+We can be glad that Lino isn't yet a popular framework,
+because this was an important API change which 
+caused some work to convert all existing `run` actions.
+Before::
+
+    def run(self,row,ar,**kw):
+        ... code ...
+        ar.confirm("Are you sure?")
+        ... run after ok...
+
+After::
+
+    def run(self,row,ar,**kw):
+        ... code ...
+        def ok():
+            ... run after ok...
+        return ar.confirm(ok,"Are you sure?")
+
+The overall system is still merely documented because not yet very stable.
+The main things to document are:
+
+- :meth:`prompt <lino.ui.base.UI.prompt>`
+- :meth:`confirm <lino.ui.base.UI.confirm>`
+- :meth:`success <lino.ui.base.UI.success>`
+- :meth:`error <lino.ui.base.UI.error>`

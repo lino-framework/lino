@@ -188,10 +188,11 @@ class ResetEvent(dd.ChangeStateAction):
   
     def run(self,obj,ar,**kw):
         if obj.guest_set.exclude(state=GuestStates.invited).count() > 0:
-            ar.confirm(_("This will reset all invitations"),_("Are you sure?"))
-            for g in obj.guest_set.all():
-                g.state = GuestStates.invited
-                g.save()
+            def ok():
+                for g in obj.guest_set.all():
+                    g.state = GuestStates.invited
+                    g.save()
+            return ar.confirm(ok,_("This will reset all invitations"),_("Are you sure?"))
         else:
             ar.confirm(self.help_text,_("Are you sure?"))
         kw = super(ResetEvent,self).run(obj,ar,**kw)
@@ -2373,9 +2374,8 @@ class UpdateReminders(actions.RowAction):
         kw.update(success=True)
         msg = _("%(num)d reminders for %(user)s have been updated."
           ) % dict(user=user,num=n)
-        kw.update(message=msg)
         logger.info(msg)
-        return ar.ui.success_response(**kw)
+        return ar.ui.success(msg,**kw)
         
 
 from lino import models as lino

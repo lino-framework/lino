@@ -106,7 +106,7 @@ if True:
           a = Attachment(mail=m,owner=elem)
           a.save()
           kw.update(open_url=rr.ui.get_detail_url(m))
-          return rr.ui.success_response(**kw)
+          return rr.ui.success(**kw)
           
       
   class Mailable(dd.Model):
@@ -208,7 +208,7 @@ class SendMailAction(dd.RowAction):
             
     def run(self,rr,elem,**kw):
         if elem.sent:
-            return rr.ui.error_response(message='Mail has already been sent.')
+            return rr.ui.error(message='Mail has already been sent.')
         text_content = html2text(elem.body)
         #~ subject = elem.subject
         #~ sender = "%s <%s>" % (rr.get_user().get_full_name(),rr.get_user().email)
@@ -226,11 +226,10 @@ class SendMailAction(dd.RowAction):
         kw.update(refresh=True)
         msg = "Email %s from %s has been sent to %s." % (
             elem.id,elem.sender,', '.join([r.address for r in elem.recipient_set.all()]))
-        kw.update(message=msg)
         #~ for n in """EMAIL_HOST SERVER_EMAIL EMAIL_USE_TLS EMAIL_BACKEND""".split():
             #~ msg += "\n" + n + " = " + unicode(getattr(settings,n))
         logger.info(msg)
-        return rr.ui.success_response(**kw)
+        return rr.ui.success(msg,**kw)
       
 
 

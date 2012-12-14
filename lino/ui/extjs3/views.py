@@ -105,21 +105,27 @@ def run_action(ar,elem):
     try:
         rv = ar.bound_action.action.run(elem,ar)
         if rv is None:
-            return ui.success_response()
+            rv  = ui.success()
         return ar.ui.action_response(rv)
         #~ return rv
-    except actions.ConfirmationRequired,e:
-        r = dict(
-          success=True,
-          confirm_message='\n'.join([unicode(m) for m in e.messages]),
-          step=e.step)
-        return ar.ui.action_response(r)
-    except actions.DialogRequired,e:
-        r = dict(
-          success=True,
-          dialog_fn=e.dialog,
-          step=e.step)
-        return ar.ui.action_response(r)
+    #~ except actions.ConfirmationRequired,e:
+        #~ r = dict(
+          #~ success=True,
+          #~ confirm_message='\n'.join([unicode(m) for m in e.messages]),
+          #~ step=e.step)
+        #~ return ar.ui.action_response(r)
+    #~ except actions.DialogRequired,e:
+        #~ r = dict(
+          #~ success=True,
+          #~ dialog_fn=e.dialog,
+          #~ step=e.step)
+        #~ return ar.ui.action_response(r)
+    #~ except actions.DecisionRequired,e:
+        #~ r = dict(
+          #~ success=True,
+          #~ message=unicode(e),
+          #~ decide_id=ar.ui.add_decision(e))
+        #~ return ar.ui.action_response(r)
     except Warning,e:
         r = dict(
           success=False,
@@ -139,7 +145,7 @@ def run_action(ar,elem):
           "An error report has been sent to the system administrator.")
         logger.warning(msg)
         logger.exception(e)
-        r = ar.ui.error_response(e,msg,alert=_("Oops!"))
+        r = ar.ui.error(e,msg,alert=_("Oops!"))
         return ar.ui.action_response(r)
           
     
@@ -273,7 +279,7 @@ def delete_element(ar,elem):
     assert elem is not None
     msg = ar.actor.disable_delete(elem,ar)
     if msg is not None:
-        rv = ar.ui.error_response(None,msg,alert=True)
+        rv = ar.ui.error(None,msg,alert=True)
         return ar.ui.action_response(rv)
             
     #~ dblogger.log_deleted(ar.request,elem)
@@ -287,7 +293,7 @@ def delete_element(ar,elem):
         msg = _("Failed to delete %(record)s : %(error)s."
             ) % dict(record=obj2unicode(elem),error=e)
         #~ msg = "Failed to delete %s." % element_name(elem)
-        rv = ar.ui.error_response(None,msg)
+        rv = ar.ui.error(None,msg)
         return ar.ui.action_response(rv)
         #~ raise Http404(msg)
         
@@ -314,9 +320,9 @@ def form2obj_and_save(ar,data,elem,is_new,restful,file_upload=False): # **kw2sav
         rh.store.form2obj(ar,data,elem,is_new)
     except exceptions.ValidationError,e:
         #~ raise
-        kw = settings.LINO.ui.error_response(e)
+        kw = settings.LINO.ui.error(e)
         return json_response(kw)
-       #~ return error_response(e,_("There was a problem while validating your data : "))
+       #~ return error(e,_("There was a problem while validating your data : "))
     #~ logger.info('20120228 store.form2obj passed, elem is %s' % obj2str(elem))
     
     kw = dict(success=True)
@@ -337,7 +343,7 @@ def form2obj_and_save(ar,data,elem,is_new,restful,file_upload=False): # **kw2sav
         try:
             elem.full_clean()
         except exceptions.ValidationError, e:
-            kw = settings.LINO.ui.error_response(e) #,_("There was a problem while validating your data : "))
+            kw = settings.LINO.ui.error(e) #,_("There was a problem while validating your data : "))
             return json_response(kw)
             
             
@@ -351,7 +357,7 @@ def form2obj_and_save(ar,data,elem,is_new,restful,file_upload=False): # **kw2sav
             elem.save(**kw2save)
         #~ except Exception,e:
         except (Warning,IntegrityError),e:
-            kw = settings.LINO.ui.error_response(e,alert=True) # ,_("There was a problem while saving your data : "))
+            kw = settings.LINO.ui.error(e,alert=True) # ,_("There was a problem while saving your data : "))
             #~ return views.json_response_kw(success=False,
                   #~ msg=_("There was a problem while saving your data:\n%s") % e)
             return json_response(kw)
@@ -434,7 +440,7 @@ class AdminIndex(View):
 class MainHtml(View):
     def get(self, request, *args, **kw):
         ui = settings.LINO.ui
-        rv = ui.success_response(html=settings.LINO.get_main_html(request))
+        rv = ui.success(html=settings.LINO.get_main_html(request))
         return ui.action_response(rv)
         
 class Authenticate(View):
@@ -457,14 +463,14 @@ class Authenticate(View):
         password = request.POST.get('password')
         user = auth.authenticate(username,password)
         if user is None:
-            rv = settings.LINO.ui.error_response("Could not authenticate %r" % username)
+            rv = settings.LINO.ui.error("Could not authenticate %r" % username)
             return settings.LINO.ui.action_response(rv)
         request.session['username'] = username
         request.session['password'] = password
         #~ request.session['password'] = request.GET.get('password')
         #~ auth.login(request,request.GET.get('username'), request.GET.get('password'))
         #~ ss.save()
-        rv = settings.LINO.ui.success_response("Now logged in as %r" % username)
+        rv = settings.LINO.ui.success("Now logged in as %r" % username)
         #~ rv = dict(success=True,message="Now logged in as %r" % username)
         return settings.LINO.ui.action_response(rv)
       
@@ -481,7 +487,7 @@ class EidAppletService(View):
     """
     def post(self, request, *args, **kw):
         ui = settings.LINO.ui
-        return ui.success_response(html='Hallo?')
+        return ui.success(html='Hallo?')
 
 
 class Templates(View):
@@ -608,6 +614,24 @@ def choices_response(request,qs,row2dict,emptyValue):
 
 
 
+  
+class Threads(View):
+    def get(self,request,thread_id,button_id):
+        ui = settings.LINO.ui
+        d = ui.pop_thread(int(thread_id))
+        if d is None: 
+            return ui.action_response(ui.error("Unknown thread %r" % id))
+        #~ buttonId = request.GET[ext_requests.URL_PARAM_'bi']
+        #~ print buttonId
+        m = getattr(d,button_id)
+        rv = m()
+        #~ if button_id == 'yes':
+            #~ rv = d.yes()
+        #~ elif button_id == 'no':
+            #~ rv = d.no()
+        if rv is None:
+            return ui.action_response(ui.success())
+        return ui.action_response(rv)
   
 class ActionParamChoices(View):
   
@@ -1189,8 +1213,8 @@ class GridConfig(View):
         except IOError,e:
             msg = _("Error while saving GC for %(table)s: %(error)s") % dict(
                 table=rpt,error=e)
-            return settings.LINO.ui.error_response(None,msg,alert=True)
+            return settings.LINO.ui.error(None,msg,alert=True)
         #~ logger.info(msg)
         settings.LINO.ui.build_site_cache(True)            
-        return settings.LINO.ui.success_response(msg)
+        return settings.LINO.ui.success(msg)
             

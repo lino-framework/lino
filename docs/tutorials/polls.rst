@@ -467,7 +467,7 @@ Custom actions are the actions defined by the application developer.
 One way to define custom actions is to decorate a model method with the
 :func:`dd.action <lino.core.actions.action>` decorator.
 
-The decorator itself can have keyword parameters to specify 
+The decorator can have keyword parameters to specify 
 information about the action. In practice these may be 
 :attr:`label <lino.core.actions.Action.label>`,
 :attr:`help_text <lino.core.actions.Action.help_text>` and
@@ -477,11 +477,18 @@ The action method itself should have the following signature::
 
     def vote(self,ar,**kw):
         ...
-        return ar.success_response(kw)
+        return ar.success(kw)
         
 Where `ar` is an :class:`ActionRequest <lino.core.actions.ActionRequest>` 
 instance that holds information about the web request and provides methods 
 like
+
+- :meth:`prompt <lino.ui.base.UI.prompt>`
+- :meth:`confirm <lino.ui.base.UI.confirm>`
+- :meth:`success <lino.ui.base.UI.success>`
+- :meth:`error <lino.ui.base.UI.error>`
+
+
 :meth:`confirm <lino.core.actions.ActionRequest.confirm>` or
 :meth:`get_user <lino.core.actions.ActionRequest.get_user>` or
 :meth:`success_response <lino.ui.base.UI.success_response>`

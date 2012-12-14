@@ -60,11 +60,11 @@ class BuildSiteCache(dd.RowAction):
     """
     label = _("Rebuild site cache")
     url_action_name = "buildjs"
-    def run(self,elem,rr):
-        rr.confirm(_("Are you sure?"))
+    def run(self,elem,ar):
+        #~ rr.confirm(_("Are you sure?"))
         #~ rr.confirm(_("Are you really sure?"))
-        rr.ui.build_site_cache(True)
-        return rr.ui.success_response(
+        ar.ui.build_site_cache(True)
+        return ar.success(
             """\
 Seems that it worked. Refresh your browser. 
 <br>

@@ -178,7 +178,7 @@ class CreateMail(dd.RowAction):
         #~ kw.update(open_url=rr.renderer.get_detail_url(m))
         #~ kw.update(open_url=url)
         kw.update(eval_js=js)
-        return ar.success_response(**kw)
+        return ar.success(**kw)
         
     
 class Mailable(dd.Model):
@@ -318,7 +318,7 @@ class SendMail(dd.RowAction):
         
     def run(self,elem,ar,**kw):
         #~ if elem.sent:
-            #~ return rr.ui.error_response(message='Mail has already been sent.')
+            #~ return rr.ui.error(message='Mail has already been sent.')
         #~ subject = elem.subject
         #~ sender = "%s <%s>" % (rr.get_user().get_full_name(),rr.get_user().email)
         sender = "%s <%s>" % (elem.user.get_full_name(),elem.user.email)
@@ -348,11 +348,11 @@ class SendMail(dd.RowAction):
             #~ else:
                 #~ logger.info("Ignoring recipient %s (type %s)",r,r.type)
         if not found:
-            return ar.error_response("No recipients found.")
+            return ar.error("No recipients found.")
         if len(missing_addresses):
             msg = _("There are recipients without address: ")
             msg += ', '.join([unicode(r) for r in missing_addresses])
-            return ar.error_response(msg,alert=True)
+            return ar.error(msg,alert=True)
         #~ as_attachment = elem.owner.attach_to_email(rr)
         #~ body = elem.body
         #~ if as_attachment:
@@ -394,7 +394,7 @@ class SendMail(dd.RowAction):
         if elem.owner:
             elem.owner.after_send_mail(elem,ar,kw)
         elem.save()
-        return ar.success_response(**kw)
+        return ar.success(**kw)
 
 
 

@@ -201,7 +201,7 @@ class ChangeStateAction(actions.RowAction):
         
         watcher.log_diff(ar.request)
         
-        return ar.ui.success_response(**kw)
+        return ar.ui.success(**kw)
         
         
 class NotifyingChangeStateAction(ChangeStateAction,actions.NotifyingAction):

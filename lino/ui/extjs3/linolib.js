@@ -453,7 +453,7 @@ Lino.show_login_window = function() {
 Lino.logout = function(id,name) {
     //~ console.log('20121104 gonna log out',arguments);
     //~ Lino.do_action
-    Lino.call_row_action(Lino.viewport,'GET',ADMIN_URL+'/auth',{},'logout',undefined,undefined,function(){
+    Lino.call_ajax_action(Lino.viewport,'GET',ADMIN_URL+'/auth',{},'logout',undefined,undefined,function(){
         //~ console.log('20121104 logged out',arguments);
         //~ Lino.login_window.hide();
         Lino.close_all_windows();
@@ -502,7 +502,7 @@ Lino.Viewport = Ext.extend(Ext.Viewport,{
   }
   ,refresh : function() {
       var caller = this;
-      //~ console.log("20121120 Lino.Viewport.refresh()");
+      console.log("20121120 Lino.Viewport.refresh()");
       if (caller.loadMask) caller.loadMask.show();
       var success = function(response) {
         if (caller.loadMask) caller.loadMask.hide();
@@ -1473,75 +1473,99 @@ Lino.action_handler = function (panel,on_success,on_confirm) {
         //~ console.log('20120608 no');
     }
     panel.loadMask.hide(); // 20120211
-    if (response.responseText) {
-      var result = Ext.decode(response.responseText);
-      //~ console.log('Lino.action_handler()','result is',result,'on_confirm is',on_confirm);
-      if (on_success && result.success) on_success(result);
-      if (on_confirm && result.confirm_message) {
-          var config = {title:"$_('Confirmation')"};
-          config.buttons = Ext.MessageBox.YESNOCANCEL;
-          config.msg = result.confirm_message;
-          config.fn = function(buttonId,text,opt) {
-            if (buttonId == "yes") {
-                on_confirm(panel,undefined,result.step);
-            }
-          }
-          Ext.MessageBox.show(config);
-          return;
-      }
-      if (result.dialog_fn) {
-          console.log('20120928 TODO',result.dialog_fn);
-      }
-      if (result.message) {
-          //~ if (result.alert && ! gridmode) {
-          if (result.alert) { // 20120628b 
-              //~ Ext.MessageBox.alert('Alert',result.alert_msg);
-              if (result.alert === true) result.alert = "$_('Alert')";
-              Ext.MessageBox.alert(result.alert,result.message);
-          } else {
-              Lino.notify(result.message);
-          }
-      }
-      // 
-      if (result.data_record && ! gridmode) {
-          //~ not used
-          panel.set_status({data_record:result.data_record});
-      }
-      else if (result.new_status && ! gridmode) {
-          //~ not used
-          //~ console.log('20120607 new_status');
-          panel.set_status(result.new_status);
-      }
-      else if (result.goto_record_id != undefined && ! gridmode) {
-          //~ console.log('20120607 new_status');
-          panel.load_record_id(result.goto_record_id);
-      }
-      else if (result.refresh_all) {
-          var cw = panel.get_containing_window();
-          //~ console.log("20120123 refresh_all");
-          if (cw) {
-            cw.main_item.refresh();
-          }
-          else console.log("20120123 cannot refresh_all",panel);
-      } else {
-          if (result.refresh) panel.refresh();
-      }
-      #if $settings.LINO.use_davlink
-      if (result.open_davlink_url) {
-         Lino.davlink_open(result.open_davlink_url);
-      }
-      #end if
-      if (result.open_url) {
-          //~ console.log(20111126,result.open_url);
-          //~ if (!result.message)
-              //~ Lino.notify('Open new window <a href="'+result.open_url+'" target="_blank">'+result.open_url+'</a>');
-          window.open(result.open_url,'foo',"");
-          //~ document.location = result.open_url;
-      }
-      if (result.eval_js) {
-          //~ console.log(20120618,result.eval_js);
-          eval(result.eval_js);
-      }
+    if (!response.responseText) return ;
+    var result = Ext.decode(response.responseText);
+    //~ console.log('Lino.action_handler()','result is',result,'on_confirm is',on_confirm);
+    
+    if (result.eval_js) {
+        //~ console.log(20120618,result.eval_js);
+        eval(result.eval_js);
+    }
+    
+    if (result.thread_id) {
+        var config = {title:"$_('Confirmation')"};
+        //~ config.buttons = Ext.MessageBox.YESNOCANCEL;
+        config.buttons = Ext.MessageBox.YESNO;
+        config.msg = result.message;
+        config.fn = function(buttonId,text,opt) {
+          panel.loadMask.show(); 
+          //~ Lino.insert_subst_user(p);
+          Ext.Ajax.request({
+            method: 'GET',
+            url: ADMIN_URL+'/threads/'+result.thread_id + '/' + buttonId,
+            //~ params: {bi: buttonId},
+            success: Lino.action_handler(panel,on_success,on_confirm)
+          });
+          //~ Lino.call_ajax_action(panel,'GET',)
+        }
+        Ext.MessageBox.show(config);
+        return;
+    }
+    
+    if (on_success && result.success) on_success(result);
+    
+    //~ if (on_confirm && result.confirm_message) {
+        //~ var config = {title:"$_('Confirmation')"};
+        //~ // config.buttons = Ext.MessageBox.YESNOCANCEL;
+        //~ config.buttons = Ext.MessageBox.YESNO;
+        //~ config.msg = result.confirm_message;
+        //~ config.fn = function(buttonId,text,opt) {
+          //~ if (buttonId == "yes") {
+              //~ on_confirm(panel,undefined,result.step);
+          //~ }
+        //~ }
+        //~ Ext.MessageBox.show(config);
+        //~ return;
+    //~ }
+    //~ if (result.dialog_fn) {
+        //~ console.log('20120928 TODO',result.dialog_fn);
+    //~ }
+    if (result.message) {
+        //~ if (result.alert && ! gridmode) {
+        if (result.alert) { // 20120628b 
+            //~ Ext.MessageBox.alert('Alert',result.alert_msg);
+            if (result.alert === true) result.alert = "$_('Alert')";
+            Ext.MessageBox.alert(result.alert,result.message);
+        } else {
+            Lino.notify(result.message);
+        }
+    }
+    // 
+    if (result.data_record && ! gridmode) {
+        //~ not used
+        panel.set_status({data_record:result.data_record});
+    }
+    else if (result.new_status && ! gridmode) {
+        //~ not used
+        //~ console.log('20120607 new_status');
+        panel.set_status(result.new_status);
+    }
+    else if (result.goto_record_id != undefined && ! gridmode) {
+        //~ console.log('20120607 new_status');
+        panel.load_record_id(result.goto_record_id);
+    }
+    else if (result.refresh_all) {
+        var cw = panel.get_containing_window();
+        //~ console.log("20120123 refresh_all");
+        if (cw) {
+          cw.main_item.refresh();
+        }
+        else console.log("20120123 cannot refresh_all",panel);
+    } else {
+        //~ console.log("20121212 b gonna refresh",panel);
+        if (result.refresh) panel.refresh();
+    }
+    #if $settings.LINO.use_davlink
+    if (result.open_davlink_url) {
+       Lino.davlink_open(result.open_davlink_url);
+    }
+    #end if
+    if (result.open_url) {
+        //~ console.log(20111126,result.open_url);
+        //~ if (!result.message)
+            //~ Lino.notify('Open new window <a href="'+result.open_url+'" target="_blank">'+result.open_url+'</a>');
+        window.open(result.open_url,'foo',"");
+        //~ document.location = result.open_url;
     }
   }
 };
@@ -2020,16 +2044,20 @@ Lino.do_on_current_record = function(panel,fn,phantom_fn) {
 };
 
 
-Lino.call_row_action = function(panel,method,url,p,actionName,step,on_confirm,on_success) {
+
+
+
+
+Lino.call_ajax_action = function(panel,method,url,p,actionName,step,on_confirm,on_success) {
   p.$ext_requests.URL_PARAM_ACTION_NAME = actionName;
   if (!panel) panel = Lino.viewport;
   Ext.apply(p,panel.get_base_params());
-  //~ console.log("20121120 Lino.call_row_action");
+  //~ console.log("20121212 Lino.call_ajax_action",panel);
   panel.loadMask.show(); 
   //~ p.$ext_requests.URL_PARAM_SUBST_USER = Lino.subst_user;
   //~ Lino.insert_subst_user(p);
     
-  if (step) p['$ext_requests.URL_PARAM_ACTION_STEP'] = step;
+  //~ if (step) p['$ext_requests.URL_PARAM_ACTION_STEP'] = step;
   //~ if (pp) pp(p); // "parameter processor" : first used for read beid card
   Ext.Ajax.request({
     method: method,
@@ -2042,11 +2070,11 @@ Lino.call_row_action = function(panel,method,url,p,actionName,step,on_confirm,on
 Lino.row_action_handler = function(actionName,hm,pp) {
   var p = {};
   var fn = function(panel,btn,step) {
-      if (pp && !step) p = pp();
+      if (pp) { p = pp(); if (! p) return; }
       Lino.do_on_current_record(panel,function(rec) {
           //~ console.log(panel);
-          //~ 20120723 Lino.call_row_action(panel,rec.id,actionName,step,fn);
-          Lino.call_row_action(panel,hm,panel.get_record_url(rec.id),p,actionName,step,fn);
+          //~ 20120723 Lino.call_ajax_action(panel,rec.id,actionName,step,fn);
+          Lino.call_ajax_action(panel,hm,panel.get_record_url(rec.id),p,actionName,step,fn);
       });
   };
   return fn;
@@ -2058,8 +2086,8 @@ Lino.list_action_handler = function(ls_url,actionName,hm,pp) {
   var fn = function(panel,btn,step) {
       //~ console.log("20121210 Lino.list_action_handler",arguments);
       //~ var url = ADMIN_URL + '/api' + panel.ls_url
-      if (pp && !step) p = pp();
-      Lino.call_row_action(panel,hm,url,p,actionName,step,fn);
+      if (pp) { p = pp();  if (! p) return; }
+      Lino.call_ajax_action(panel,hm,url,p,actionName,step,fn);
   };
   return fn;
 };
@@ -2068,7 +2096,7 @@ Lino.param_action_handler = function(window_action) { // 20121012
   var fn = function(panel,btn,step) {
     Lino.do_on_current_record(panel,function(rec) {
       //~ console.log(panel);
-      //~ 20120723 Lino.call_row_action(panel,rec.id,actionName,step,fn);
+      //~ 20120723 Lino.call_ajax_action(panel,rec.id,actionName,step,fn);
       window_action.run(panel.getId(),{}); 
     });
   };
@@ -2082,8 +2110,8 @@ Lino.run_row_action = function(requesting_panel,url,pk,actionName,pp) {
   var panel = Ext.getCmp(requesting_panel);
   if (pp) var p = pp(); else var p = {};
   var fn = function(panel,btn,step) {
-    //~ 20120723 Lino.call_row_action(panel,pk,actionName,step,fn);
-    Lino.call_row_action(panel,'GET',url,p,actionName,step,fn);
+    //~ 20120723 Lino.call_ajax_action(panel,pk,actionName,step,fn);
+    Lino.call_ajax_action(panel,'GET',url,p,actionName,step,fn);
   }
   fn(panel,null,null);
 }
@@ -2448,7 +2476,7 @@ Lino.ActionFormPanel = Ext.extend(Lino.ActionFormPanel,{
     var fn = function(panel,btn,step) {
       var p = {};
       self.add_field_values(p)
-      Lino.call_row_action(panel,'GET',panel.get_record_url(rec.id),p,actionName,step,fn,on_success);
+      Lino.call_ajax_action(panel,'GET',panel.get_record_url(rec.id),p,actionName,step,fn,on_success);
     }
     fn(panel,null,null);
     
@@ -5348,82 +5376,11 @@ cardReader.setAppletExceptionHandler(appletExceptionHandler);
   //~ document.getElementById("encoded_picture").src = "data:image/jpeg;base64,";
 //~ }
 
-Lino.unused_beid_read_card_handler = function(url,actionName,method) {
-  return function(panel,btn,step) {
-    //~ clearPicture();
-    var card = cardReader.read();
-    if (!card) {
-        Lino.alert("No card returned.");
-        return;
-    } 
-      
-    //~ var content = card.toString();
-    //~ Lino.alert(content);
-    //~ if (typeof(base64) != "undefined") {
-      //~ var encodedPicture = base64.encode(card.getPicture(), false, false);
-      //~ document.getElementById("encoded_picture").src = "data:image/jpeg;base64," + encodedPicture;
-      //~ content += "\r\n\r\n" + encodedPicture;
-    //~ } else {
-      //~ window.alert("base64 object not defined");
-      //~ content += "\r\n\r\n" + "base64 object not defined";
-    //~ }
-    //~ document.getElementById("content").value = content;
-    
-    function on_success() {
-        //~ console.log('20121105 /eid-jslib read on_success',arguments);
-        //~ Lino.login_window.hide();
-        //~ Lino.close_all_windows();
-    };
-    
-    //~ console.log('20121107 toString:',card.toString());
-    //~ console.log('20121117 picture (raw):',card.getPicture());
-    //~ console.log('20121117 picture (raw again):',card.getPicture());
-    //~ console.log('20121117 picture (encoded):',base64.encode(card.getPicture())); 
-    
-    var p = {
-      //~ foo: 1,
-      //~ content : card.toString(),
-      cardNumber: card.cardNumber,
-      validityBeginDate:card.validityBeginDate.format("$settings.LINO.date_format_extjs"),
-      validityEndDate: card.validityEndDate.format("$settings.LINO.date_format_extjs"),
-      chipNumber:card.chipNumber,
-      issuingMunicipality:card.issuingMunicipality,
-      nationalNumber:card.nationalNumber,
-      surname:card.surname,
-      firstName1:card.firstName1,
-      firstName2:card.firstName2,
-      firstName3:card.firstName3,
-      nationality:card.nationality,
-      birthLocation:card.birthLocation,
-      birthDate: card.birthDate.format("$settings.LINO.date_format_extjs"),
-      sex:card.sex,
-      nobleCondition:card.nobleCondition,
-      documentType:card.documentType,
-      specialStatus:card.specialStatus,
-      whiteCane:card.whiteCane,
-      yellowCane:card.yellowCane,
-      extendedMinority:card.extendedMinority,
-      street:card.street,
-      streetNumber:card.streetNumber,
-      boxNumber:card.boxNumber,
-      zipCode:card.zipCode,
-      municipality:card.municipality,
-      country:card.country,
-      picture:base64.encode(card.getPicture())
-      };
-    var on_confirm = function(panel,btn,step) {
-      //~ Lino.call_row_action(panel,'POST','/eid-jslib',p,'read',step,fn,on_success);
-      Lino.call_row_action(panel,method,pp,url,p,actionName,step,on_confirm,on_success);
-    };
-    on_confirm(panel,btn,step);
-  }
-}
-
 Lino.beid_read_card_processor = function() {
     var card = cardReader.read();
     if (!card) {
-        Lino.alert("No card returned.");
-        return {};
+        //~ Lino.alert("No card returned.");
+        return null;
     } 
     return {
       cardNumber: card.cardNumber,
@@ -5451,12 +5408,12 @@ Lino.beid_read_card_processor = function() {
       boxNumber:card.boxNumber,
       zipCode:card.zipCode,
       municipality:card.municipality,
-      country:card.country,
-      picture:base64.encode(card.getPicture())
+      country:card.country
+      //~ comment the folowing line out to test whether the picture takes a lot of time
+      //~ test 20121214 on my machine revealed no perceivable gain
+      ,picture:base64.encode(card.getPicture())
     };
 }
-
-
 
 #end if
 

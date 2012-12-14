@@ -119,25 +119,32 @@ INSERT = Hotkey(keycode=44)
 DELETE = Hotkey(keycode=46)
     
     
-class ConfirmationRequired(Exception):
-    """
-    This is the special exception risen when an Action calls 
-    :meth:`ActionRequest.confirm`.
-    """
-    def __init__(self,step,messages):
-        self.step = step
-        self.messages = messages
-        Exception.__init__(self)
+
+#~ class DecisionRequired(Exception):
+    #~ def __init__(self,msg,yes,no):
+        #~ self.yes = yes
+        #~ self.no = no
+        #~ Exception.__init__(self,msg)
+  
+#~ class ConfirmationRequired(Exception):
+    #~ """
+    #~ This is the special exception risen when an Action calls 
+    #~ :meth:`ActionRequest.confirm`.
+    #~ """
+    #~ def __init__(self,step,messages):
+        #~ self.step = step
+        #~ self.messages = messages
+        #~ Exception.__init__(self)
         
-class DialogRequired(Exception):
-    """
-    This is the special exception risen when an Action calls 
-    :meth:`ActionRequest.dialog`.
-    """
-    def __init__(self,step,dlg):
-        self.step = step
-        self.dialog = dlg
-        Exception.__init__(self)
+#~ class DialogRequired(Exception):
+    #~ """
+    #~ This is the special exception risen when an Action calls 
+    #~ :meth:`ActionRequest.dialog`.
+    #~ """
+    #~ def __init__(self,step,dlg):
+        #~ self.step = step
+        #~ self.dialog = dlg
+        #~ Exception.__init__(self)
         
 
 
@@ -980,12 +987,17 @@ class BaseRequest(object):
             ui = settings.LINO.ui
             #~ from lino.ui.extjs3 import ui
         self.ui = ui
-        self.error_response = ui.error_response
-        self.success_response = ui.success_response
+        #~ self.error_response = ui.error_response
+        #~ self.success_response = ui.success_response
+        
+        self.prompt = ui.prompt
+        self.confirm = ui.confirm
+        self.error = ui.error
+        self.success = ui.success
         if renderer is None:
             renderer = ui.text_renderer
         self.renderer = renderer
-        self.step = 0 # confirmation counter
+        #~ self.step = 0 # confirmation counter
         #~ self.report = actor
         self.request = request
         if request is not None:
@@ -1028,33 +1040,43 @@ class BaseRequest(object):
         self.subst_user = subst_user
         
         
-    def dialog(self,dlg):
-        # not finished
-        self.step += 1
-        if int(self.request.REQUEST.get(ext_requests.URL_PARAM_ACTION_STEP,'0')) >= self.step:
-            return
-        raise DialogRequired(self.step,dlg)
+    #~ def dialog(self,dlg):
+        #~ # not finished
+        #~ self.step += 1
+        #~ if int(self.request.REQUEST.get(ext_requests.URL_PARAM_ACTION_STEP,'0')) >= self.step:
+            #~ return
+        #~ raise DialogRequired(self.step,dlg)
         
-    def confirm(self,*messages):
-        """
-        Calling this from an Action's :meth:`Action.run` method will
-        interrupt the execution, send the specified message(s) back to 
-        the user, waiting for confirmation before continuing.
+    #~ def confirm(self,*messages):
+        #~ """
+        #~ Calling this from an Action's :meth:`Action.run` method will
+        #~ interrupt the execution, send the specified message(s) back to 
+        #~ the user, waiting for confirmation before continuing.
         
-        Note that this is implemented without any server sessions 
-        and cookies. While this system is genial, it has one drawback 
-        which you should be aware of: the code execution does not 
-        *continue* after the call to `confirm` but starts again at the 
-        beginning (with the difference that the client this time calls it with 
-        an internal `step` parameter that tells Lino that this `confirm()` 
-        has been answered and should no longer raise stop execution.
-        """
-        assert len(messages) > 0 and messages[0], "At least one non-empty message required"
-        self.step += 1
-        if int(self.request.REQUEST.get(ext_requests.URL_PARAM_ACTION_STEP,'0')) >= self.step:
-            return
-        raise ConfirmationRequired(self.step,messages)
+        #~ Note that this is implemented without any server sessions 
+        #~ and cookies. While this system is genial, it has one drawback 
+        #~ which you should be aware of: the code execution does not 
+        #~ *continue* after the call to `confirm` but starts again at the 
+        #~ beginning (with the difference that the client this time calls it with 
+        #~ an internal `step` parameter that tells Lino that this `confirm()` 
+        #~ has been answered and should no longer raise stop execution.
+        #~ """
+        #~ assert len(messages) > 0 and messages[0], "At least one non-empty message required"
+        #~ self.step += 1
+        #~ if int(self.request.REQUEST.get(ext_requests.URL_PARAM_ACTION_STEP,'0')) >= self.step:
+            #~ return
+        #~ raise ConfirmationRequired(self.step,messages)
         
+    #~ def decide(self,msg,yes,no=None):
+        #~ """
+        #~ Calling this from an Action's :meth:`Action.run` method will
+        #~ interrupt the execution, send the specified message(s) back to 
+        #~ the user, adding the executables `yes` and optionally `no` to a queue 
+        #~ of pending dialogs.
+        
+        #~ """
+        #~ raise DecisionRequired(msg,yes,no)
+            
     def get_user(self):
         """
         Return the :class:`User <lino.modlib.users.models.User>` 
@@ -1103,9 +1125,10 @@ class ActionRequest(BaseRequest):
     Holds information about an indivitual web request and provides methods like
 
     - :meth:`get_user <lino.core.actions.ActionRequest.get_user>`
-    - :meth:`confirm <lino.core.actions.ActionRequest.confirm>`
-    - :meth:`success_response <lino.ui.base.UI.success_response>`
-    - :meth:`error_response <lino.ui.base.UI.error_response>`
+    - :meth:`prompt <lino.ui.base.UI.prompt>`
+    - :meth:`confirm <lino.ui.base.UI.confirm>`
+    - :meth:`success <lino.ui.base.UI.success>`
+    - :meth:`error <lino.ui.base.UI.error>`
     - :meth:`spawn <lino.core.actions.ActionRequest.spawn>`
 
     
@@ -1303,6 +1326,8 @@ class ActionRequest(BaseRequest):
             actor = self.actor
         return self.ui.request(actor,**kw)
         
+    #~ def decide_response(self,*args,**kw): return self.ui.decide_response(self,*args,**kw)
+    #~ def prompt(self,*args,**kw): return self.ui.prompt(self,*args,**kw)
     def instance_handler(self,*args,**kw): return self.renderer.instance_handler(self,*args,**kw)
     def href_to(self,*args,**kw): return self.renderer.href_to(self,*args,**kw)
     def pk2url(self,*args,**kw): return self.renderer.pk2url(self,*args,**kw)

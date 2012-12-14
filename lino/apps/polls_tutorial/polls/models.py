@@ -36,18 +36,19 @@ class Choice(dd.Model):
     def __unicode__(self):
         return self.choice    
 
-    @dd.action(help_text="Click here to see how Lino implements custom actions.")
-    def vote(self,ar,**kw):
-        if self.votes > 2:
+    @dd.action(help_text="Click here to vote this.")
+    def vote(self,ar):
+        def yes():
+            self.votes += 1
+            self.save()
+            return ar.success(
+                "Thank you for voting %s" % self,
+                "Voted!",refresh=True)
+        if self.votes > 0:
             msg = "%s has already %d votes!" % (self,self.votes)
             msg += "\nDo you still want to vote for it?"
-            ar.confirm(msg)
-        self.votes += 1
-        self.save()
-        kw.update(refresh=True)
-        kw.update(alert="Voted!")
-        kw.update(message="Thank you for voting %s" % self)
-        return ar.success_response(**kw)
+            return ar.prompt(msg,yes)
+        return yes()
         
 
 

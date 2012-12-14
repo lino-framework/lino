@@ -708,6 +708,14 @@ class InvoicesByJournal(Invoices):
                   "total_incl order subject:10 sales_remark:10 " \
                   "total_base total_vat user *"
                   #~ "ledger_remark:10 " \
+                  
+    @classmethod
+    def get_title_base(self,ar):
+        """
+        Without this override we would have a title like "Invoices of journal <Invoices>"
+        """
+        return unicode(ar.master_instance)
+                  
 
 if settings.LINO.project_model:
   
@@ -718,14 +726,15 @@ if settings.LINO.project_model:
 class SignAction(actions.Action):
     label = "Sign"
     def run(self,obj,ar):
-        ar.confirm(
+        def ok():
+            for row in ar.selected_rows:
+                row.instance.user = ar.get_user()
+                row.instance.save()
+            return ar.ui.success(refresh=True)
+        return ar.prompt(
             "Going to sign %d documents as user %s. Are you sure?" % (
             len(ar.selected_rows),
-            ar.get_user()))
-        for row in ar.selected_rows:
-            row.instance.user = ar.get_user()
-            row.instance.save()
-        return ar.ui.success_response(refresh=True)
+            ar.get_user()),ok)
 
 class DocumentsToSign(Invoices):
     use_as_default_table = False

@@ -142,7 +142,7 @@ class Duplicate(actions.RowAction):
         kw.update(message=_("Duplicated %(old)s to %(new)s.") % dict(old=obj,new=new))
         #~ kw.update(new_status=dict(record_id=new.pk))
         kw.update(goto_record_id=new.pk)
-        return ar.success_response(**kw)
+        return ar.success(**kw)
         
         
   
@@ -199,5 +199,5 @@ class Duplicable(model.Model):
         #~ kw.update(refresh=True)
         #~ kw.update(message=_("Duplicated %(old)s to %(new)s.") % dict(old=self,new=new))
         #~ kw.update(goto_record_id=new.pk)
-        #~ return ar.success_response(**kw)
+        #~ return ar.success(**kw)
         

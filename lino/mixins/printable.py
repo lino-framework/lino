@@ -34,6 +34,8 @@ from django.utils.translation import ugettext_lazy as _
 from django.template.loader import render_to_string, get_template, select_template, Context, TemplateDoesNotExist
 from django.http import HttpResponse, HttpResponseRedirect, Http404
 from django.utils.encoding import force_unicode
+from django.utils.translation import string_concat
+
 
 import lino
 #~ from lino import dd
@@ -554,7 +556,7 @@ class PrintAction(BasePrintAction):
     def run(self,elem,ar,**kw):
         #~ kw = self.run_(ar.request,rr.ui,elem,**kw)
         kw = self.run_(ar,elem,**kw)
-        return ar.ui.success_response(**kw)
+        return ar.ui.success(**kw)
       
 class DirectPrintAction(BasePrintAction):
     """
@@ -602,7 +604,7 @@ class DirectPrintAction(BasePrintAction):
             kw.update(open_davlink_url=url)
         else:
             kw.update(open_url=url)
-        return ar.ui.success_response(**kw)
+        return ar.ui.success(**kw)
     
 #~ class EditTemplateAction(dd.RowAction):
     #~ name = 'tpledit'
@@ -635,21 +637,23 @@ class ClearCacheAction(actions.RowAction):
             return False
         return super(ClearCacheAction,self).get_action_permission(ar,obj,state)
     
-    def run(self,elem,rr):
+    def run(self,elem,ar):
+        def doit():
+            #~ elem.must_build = True
+            elem.build_time = None
+            elem.save()
+            return ar.success("%s printable cache has been cleared." % elem,refresh=True)
+            
         t = elem.get_cache_mtime()
         if t is not None and t != elem.build_time:
             #~ logger.info("%r != %r", elem.get_cache_mtime(),elem.build_time)
-            rr.confirm(
+            return ar.confirm(doit,
                 _("This will discard all changes in the generated file."),
                 _("Are you sure?"))
-            logger.info("Got confirmation to discard changes in %s", elem.get_target_name())
+            #~ logger.info("Got confirmation to discard changes in %s", elem.get_target_name())
         #~ else:
             #~ logger.info("%r == %r : no confirmation", elem.get_cache_mtime(),elem.build_time)
-          
-        #~ elem.must_build = True
-        elem.build_time = None
-        elem.save()
-        return rr.ui.success_response("%s printable cache has been cleared." % elem,refresh=True)
+        return doit()
         
         
     

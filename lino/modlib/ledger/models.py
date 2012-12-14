@@ -597,11 +597,10 @@ class InvoicesByJournal(Invoices):
                   
     @classmethod
     def get_title_base(self,ar):
+        """
+        Without this override we would have a title like "Invoices of journal <Invoices>"
+        """
         return unicode(ar.master_instance)
-        #~ title = _("%(details)s of %(master)s") % dict(
-          #~ details=title,
-          #~ master=ar.master_instance)
-        #~ return title
                   
 
     
