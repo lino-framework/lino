@@ -653,7 +653,7 @@ class RemoteUserMiddleware(object):
         user = authenticate(username)
         
         if user is None:
-            logger.exception("Unknown username %s from request %s",username, request)
+            #~ logger.exception("Unknown username %s from request %s",username, request)
             raise Exception(
               "Unknown or inactive username %r. Please contact your system administrator." 
               % username)

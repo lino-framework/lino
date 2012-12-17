@@ -490,6 +490,11 @@ class EidAppletService(View):
         return ui.success(html='Hallo?')
 
 
+class Callbacks(View):
+    def get(self,request,thread_id,button_id):
+        return settings.LINO.ui.callback_get(request,thread_id,button_id)
+        
+
 class Templates(View):
   
     #~ def templates_view(self,request,
@@ -614,24 +619,6 @@ def choices_response(request,qs,row2dict,emptyValue):
 
 
 
-  
-class Threads(View):
-    def get(self,request,thread_id,button_id):
-        ui = settings.LINO.ui
-        d = ui.pop_thread(int(thread_id))
-        if d is None: 
-            return ui.action_response(ui.error("Unknown thread %r" % id))
-        #~ buttonId = request.GET[ext_requests.URL_PARAM_'bi']
-        #~ print buttonId
-        m = getattr(d,button_id)
-        rv = m()
-        #~ if button_id == 'yes':
-            #~ rv = d.yes()
-        #~ elif button_id == 'no':
-            #~ rv = d.no()
-        if rv is None:
-            return ui.action_response(ui.success())
-        return ui.action_response(rv)
   
 class ActionParamChoices(View):
   

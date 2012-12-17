@@ -1,0 +1,65 @@
+20121217
+========
+
+
+NameError: name '_[1]' is not defined
+-------------------------------------
+
+Da war eine Fehlermeldung "NameError: name '_[1]' is not defined" 
+von welfare-demo.lino-framework.org, die ich mir nicht erklären kann.
+Deshalb loggt memo.Parser.handle_error() jetzt eine weitere Warnung.
+
+Angriffssversuche?
+------------------
+
+Kann mir jemand auf die Sprünge helfen zu vestehen, was der folgende 
+Log-Eintrag zu bedeuten hat?
+
+
+  [Sun Dec 16 20:38:31 2012] [error] [client 94.153.71.180] File does not exist: \
+  /home/luc/public_html/lino/topics/babel.html+++++++++++++++++++++++++++++++++++\
+  Result:+\xed\xe5+\xed\xe0\xf8\xeb\xee\xf1\xfc+\xf4\xee\xf0\xec\xfb+\xe4\xeb\xff\
+  +\xee\xf2\xef\xf0\xe0\xe2\xea\xe8;+Result:+\xed\xe5+\xed\xe0\xf8\xeb\xee\xf1\xfc\
+  +\xf4\xee\xf0\xec\xfb+\xe4\xeb\xff+\xee\xf2\xef\xf0\xe0\xe2\xea\xe8;, referer: \
+  http://www.lino-framework.org/topics/babel.html%2B%2B%2B%2B%2B%2B%2B%2B%2B%2B%2B\
+  %2B%2B%2B%2B%2B%2B%2B%2B%2B%2B%2B%2B%2B%2B%2B%2B%2B%2B%2B%2B%2B%2B%2B%2BResult:\
+  %2B%ed%e5%2B%ed%e0%f8%eb%ee%f1%fc%2B%f4%ee%f0%ec%fb%2B%e4%eb%ff%2B%ee%f2%ef%f0%e\
+  0%e2%ea%e8%3b%2BResult:%2B%ed%e5%2B%ed%e0%f8%eb%ee%f1%fc%2B%f4%ee%f0%ec%fb%2B%e4\
+  %eb%ff%2B%ee%f2%ef%f0%e0%e2%ea%e8%3b
+
+Sieht für mich so aus als ob da ein Roboter versucht hat, 
+eine Sicherheitslücke auszunutzen.
+Auf einem öffentlich erreichbaren Server ist so was wahrscheinlich Routine.
+Aber muss/kann/sollte ich als Webmaster da was unternehmen?
+
+
+
+DatabaseError when using Django's current Git version
+------------------------------------------------------
+
+The following DatabaseError comes when when using Django's current Git version::
+
+    File "/home/luc/snapshots/django/django/db/backends/util.py", line 41, in execute
+      return self.cursor.execute(sql, params)
+    File "/home/luc/snapshots/django/django/db/backends/mysql/base.py", line 128, in execute
+      six.reraise(utils.DatabaseError, utils.DatabaseError(*tuple(e.args)), sys.exc_info()[2])
+    File "/home/luc/snapshots/django/django/db/backends/mysql/base.py", line 120, in execute
+      return self.cursor.execute(query, args)
+    File "/usr/lib/pymodules/python2.6/MySQLdb/cursors.py", line 166, in execute
+      self.errorhandler(self, exc, value)
+    File "/usr/lib/pymodules/python2.6/MySQLdb/connections.py", line 35, in defaulterrorhandler
+      raise errorclass, errorvalue
+  DatabaseError: Problem installing fixture '/home/luc/hgwork/welfare/lino_welfare/modlib/cbss/fixtures/demo.py': (1054, "Unknown column 'T4.partner_ptr_id' in 'on clause'")
+
+Not yet reporting this to django-developers because maybe it's just a temporary problem.
+
+
+Ajax-Aktionen
+-------------
+
+Ich habe die Funktion `prompt` nochmal umbenannt nach `callback` 
+(im Sinne von "Rückfrage"). Scheint mir korrekter. 
+Auch die API ist in etwa jetzt so, 
+dass ich komplexe Rückfragen möglich machen könnte. 
+Details lass ich aber warten, bis es mal einen trifftigen Grund gibt.
+

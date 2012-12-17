@@ -47,7 +47,7 @@ class Choice(dd.Model):
         if self.votes > 0:
             msg = "%s has already %d votes!" % (self,self.votes)
             msg += "\nDo you still want to vote for it?"
-            return ar.prompt(msg,yes)
+            return ar.confirm(yes,msg)
         return yes()
         
 

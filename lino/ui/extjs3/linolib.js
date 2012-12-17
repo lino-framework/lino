@@ -1482,17 +1482,19 @@ Lino.action_handler = function (panel,on_success,on_confirm) {
         eval(result.eval_js);
     }
     
-    if (result.thread_id) {
-        var config = {title:"$_('Confirmation')"};
+    if (result.xcallback) {
+        //~ var config = {title:"$_('Confirmation')"};
+        var config = {title:result.xcallback.title};
         //~ config.buttons = Ext.MessageBox.YESNOCANCEL;
-        config.buttons = Ext.MessageBox.YESNO;
+        //~ config.buttons = Ext.MessageBox.YESNO;
+        config.buttons = result.xcallback.buttons;
         config.msg = result.message;
         config.fn = function(buttonId,text,opt) {
           panel.loadMask.show(); 
           //~ Lino.insert_subst_user(p);
           Ext.Ajax.request({
             method: 'GET',
-            url: ADMIN_URL+'/threads/'+result.thread_id + '/' + buttonId,
+            url: ADMIN_URL+'/callbacks/'+result.xcallback.id + '/' + buttonId,
             //~ params: {bi: buttonId},
             success: Lino.action_handler(panel,on_success,on_confirm)
           });
@@ -5413,6 +5415,44 @@ Lino.beid_read_card_processor = function() {
       //~ test 20121214 on my machine revealed no perceivable gain
       ,picture:base64.encode(card.getPicture())
     };
+}
+
+#end if
+
+#if $settings.LINO.use_esteid
+
+
+
+Lino.init_esteid = function() {
+
+  try {
+    //~ var esteid = document.getElementById("esteid");
+    var esteid = Ext.get("esteid");
+    console.log("20121214 esteid is ",esteid)
+  } catch(err) {
+    console.log("20121214 Error:",err.message);
+  }
+  
+  function cardInserted(reader) {
+    var names = [ "firstName", "lastName", "middleName", "sex",
+                  "citizenship", "birthDate", "personalID", "documentID",
+                  "expiryDate", "placeOfBirth", "issuedDate", "residencePermit",
+                  "comment1", "comment2", "comment3", "comment4"
+    ];
+    var pdata = esteid["personalData"];
+    console.log("20121214, personalData is ",pdata)
+  }
+  
+  try {
+    console.log(20121214,esteid.getVersion());
+    addEvent(esteid, "CardInserted", cardInserted);
+    //~ addEvent(Lino.esteid, "CardRemoved", Lino.cardRemoved);
+    //~ addEvent(esteid, "SignSuccess", signSuccess);
+    //~ addEvent(esteid, "SignFailure", signFailure);
+  } catch(err) {
+    console.log("20121214 Error:",err.message);
+  }
+  
 }
 
 #end if

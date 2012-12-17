@@ -45,20 +45,60 @@ ACTION_RESPONSES = frozenset((
   'goto_record_id',
   'refresh','refresh_all',
   #~ 'confirm_message', 'step',
-  'thread_id',
+  'xcallback',
+  #~ 'thread_id',
   #~ 'dialog_fn',
   'open_url','open_davlink_url','eval_js'))
 """
 Action responses supported by `Lino.action_handler` (defined in :xfile:`linolib.js`).
 """
 
-class DialogThread(object):
-    def __init__(self,yes,no):
-        self.yes = yes
-        self.no = no
+class CallbackChoice(object):
+    #~ def __init__(self,name,label,func):
+    def __init__(self,name,func,label):
+        self.name = name
+        #~ self.index = index
+        self.func = func
+        self.label = label
+        
+class Callback(object):
+    """
+    A callback is a question that rose during an AJAX action.
+    The original action is pending until we get a request that answers the question.
+    """
+    title = _('Confirmation')
+    #~ def __init__(self,yes,no):
+    def __init__(self,message):
+    #~ def __init__(self,message,answers,labels=None):
+        self.message = message
+        self.choices = []
+        self.choices_dict = {}
+        #~ self.answers = {}
+        #~ self.labels = labels
+        #~ self.yes = yes
+        #~ self.no = no
             
         #~ d = Decision(yes,no)
         #~ self.pending_dialogs[d.hash()] = d
+        
+    def set_title(self,title):
+        self.title = title
+        
+    def add_choice(self,name,func,label):
+        """
+        Add a possible answer to this callback.
+        - name: "yes", "no", "ok" or "cancel"
+        - func: a callable to be executed when user selects this choice
+        - the label of the button
+        """
+        assert not self.choices_dict.has_key(name)
+        allowed_names = ("yes", "no", "ok", "cancel")
+        if not name in allowed_names:
+            raise Exception("Sorry, name must be one of %s" % allowed_names)
+        cbc = CallbackChoice(name,func,label)
+        self.choices.append(cbc)
+        self.choices_dict[name] = cbc
+        return cbc
 
         
 class UI:
@@ -82,8 +122,8 @@ class UI:
             #~ self.admin_url += '/' + prefix
             
             
-    def pop_thread(self,id):
-        return self.pending_threads.pop(id,None)
+    #~ def pop_thread(self,id):
+        #~ return self.pending_threads.pop(id,None)
         
     def abandon_response(self):
         return self.success(_("User abandoned"))
@@ -195,17 +235,26 @@ class UI:
         #~ return self.action_response(kw)
         return kw
     
-    def confirm(self,ok,*msgs,**kw):
+    def confirm(self,ok_func,*msgs,**kw):
         """
         Execute the specified callable `ok` after the user has confirmed 
         the specified message.
         All remaining positional arguments to `confirm` 
-        are concatenated to a single prompt message.
-        This method then calls :meth:`prompt` (see there for implementation notes).
-        """
-        return self.prompt('\n'.join([force_text(s) for s in msgs]),ok)
+        are concatenated to a single callback message.
+        This method then calls :meth:`callback` (see there for implementation notes).
         
-    def prompt(self,msg,yes,no=None):
+        The callable may not expect any mandatory arguments
+        (this is different than for the raw callback method)
+        
+        """
+        cb = self.callback(*msgs)
+        #~ def func(request):
+            #~ return ok_func()
+        cb.add_choice('yes',ok_func,_("OK"))
+        return cb
+        
+    #~ def callback(self,msg,yes,no=None):
+    def callback(self,*msgs):
         """
         Returns an action response which will initiate a dialog thread 
         by asking a question to the user and suspending execution until 
@@ -219,30 +268,85 @@ class UI:
         The client will display the prompt and will continue this thread 
         by requesting :class:`lino.ui.extjs3.views.Threads`.
         """
-        if no is None:
-            no = self.abandon_response
+        return Callback('\n'.join([force_text(s) for s in msgs]))
+          
+        #~ if no is None:
+            #~ no = self.abandon_response
             
-        d = DialogThread(yes,no)
-        h  = hash(d)
-        self.pending_threads[h] = d
+        #~ return Callback(msg,yes=yes,no)
+        #~ return Callback(yes,no)
+        #~ cb = Callback(yes,no)
+        #~ h  = hash(cb)
+        #~ self.pending_threads[h] = cb
         
-        r = dict(
-          success=True,
-          message=msg,
-          thread_id=h)
-        return r # self.action_response(r)
+        #~ r = dict(
+          #~ success=True,
+          #~ message=msg,
+          #~ thread_id=h)
+        #~ return r 
+        
+    def callback_get(self,request,thread_id,button_id):
+        thread_id = int(thread_id)
+        cb = self.pending_threads.pop(thread_id,None)
+        #~ d = self.pop_thread(int(thread_id))
+        if cb is None: 
+            return self.action_response(self.error("Unknown callback %r" % thread_id))
+        #~ buttonId = request.GET[ext_requests.URL_PARAM_'bi']
+        #~ print buttonId
+        for c in cb.choices:
+            if c.name == button_id:
+                #~ rv = c.func(request)
+                rv = c.func()
+                return self.action_response(rv)
+                
+        return self.action_response(self.error(
+            "Invalid button %r for callback" % (button_id,thread_id)))
+                
+        #~ m = getattr(d,button_id)
+        #~ rv = m(request)
+        #~ if button_id == 'yes':
+            #~ rv = d.yes()
+        #~ elif button_id == 'no':
+            #~ rv = d.no()
+        #~ return self.action_response(rv)
+  
+        
 
         
-    def check_action_response(self,kw):
+    def check_action_response(self,rv):
         """
         Raise an exception if the action responded using an unknown keyword.
         """
-        for k in kw.keys():
+        
+        if rv is None:
+            rv = self.success()
+        elif isinstance(rv,Callback):
+            h = hash(rv)
+            self.pending_threads[h] = rv
+            #~ def cb2dict(c):
+                #~ return dict(name=c.name,label=c.label)
+            #~ choices=[cb2dict(c) for c in rv.choices]
+            buttons = dict()
+            for c in rv.choices:
+                buttons[c.name] = c.label
+            rv = dict(
+              success=True,
+              message=rv.message,
+              xcallback=dict(id=h,
+                  title=rv.title,
+                  buttons=buttons))
+              #~ callback_id=h)
+              #~ thread_id=h)
+            #~ return r 
+          
+        for k in rv.keys():
             if not k in ACTION_RESPONSES:
-                raise Exception("Unknown action response %r" % k)
+                raise Exception("Unknown key %r in action response." % k)
+        return rv
                 
     def action_response(self,kw):
         """
         """
         raise NotImplementedError
         
+

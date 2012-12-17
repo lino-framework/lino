@@ -644,7 +644,7 @@ class RowAction(Action):
     preprocessor = None
     http_method = 'GET'
     
-    def get_panel_btn_handler(self,actor,renderer):
+    def get_panel_btn_handler(self,actor):
         if self.single_row:
             h  = 'Lino.row_action_handler('
         else:
@@ -717,57 +717,6 @@ class BeIdReadCardAction(RowAction):
   
 
 
-class unused_ListAction(Action):
-    """
-    Base class for actions that are executed server-side on a set of rows.
-    """
-    callable_from = (GridEdit,)
-    def get_panel_btn_handler(self,actor,renderer):
-        assert self.action_name is not None
-        return "Lino.list_action_handler(%r)" % self.action_name
-        #~ url = ui.ext_renderer.get_actor_url(actor)
-        #~ return "%s(%r,%r,%r)" % (self.js_handler,url,self.action_name,self.http_method)
-
-
-class unused_JavaScriptAction(Action):
-    """
-    Base class for actions that are executed server-side on an individual row.
-    """
-    callable_from = (GridEdit,)
-    js_handler = None
-    http_method = 'GET'
-    
-    def get_panel_btn_handler(self,actor,renderer):
-        url = renderer.get_actor_url(actor)
-        return "%s(%r,%r,%r)" % (self.js_handler,url,self.action_name,self.http_method)
-
-    def run(self,row,ar,**kw):
-        """
-        Execute the action on the given `row`. `ar` is an :class:`ActionRequest` 
-        object representing the context where the action is running.
-        """
-        raise NotImplementedError("%s has no run() method" % self.__class__)
-        
-
-class unused_BeIdReadCardAction(unused_JavaScriptAction):
-    """
-    Explore the data read from an eid card and decide what to do with it.
-    
-    The client browser reads a Belgian eId card using :attr:`lino.Lino.use_eid_jslib`,
-    then sends the data to the server where this action's `run` method will 
-    be called. Possible actions are to create a new client or to update data 
-    in existing client.
-    
-    """
-    js_handler = 'Lino.beid_read_card_handler'
-    http_method = 'POST'
-    
-    def get_view_permission(self,profile):
-        if not settings.LINO.use_eid_jslib:
-            return False
-        return super(BeIdReadCardAction,self).get_view_permission(profile)
-
-        
 
 
 class ShowDetailAction(RowAction):
@@ -990,7 +939,8 @@ class BaseRequest(object):
         #~ self.error_response = ui.error_response
         #~ self.success_response = ui.success_response
         
-        self.prompt = ui.prompt
+        #~ self.prompt = ui.callback
+        self.callback = ui.callback
         self.confirm = ui.confirm
         self.error = ui.error
         self.success = ui.success
@@ -1125,7 +1075,7 @@ class ActionRequest(BaseRequest):
     Holds information about an indivitual web request and provides methods like
 
     - :meth:`get_user <lino.core.actions.ActionRequest.get_user>`
-    - :meth:`prompt <lino.ui.base.UI.prompt>`
+    - :meth:`callback <lino.ui.base.UI.callback>`
     - :meth:`confirm <lino.ui.base.UI.confirm>`
     - :meth:`success <lino.ui.base.UI.success>`
     - :meth:`error <lino.ui.base.UI.error>`

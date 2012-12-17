@@ -366,9 +366,15 @@ class Lino(object):
     No longer used. Experimental, see :doc:`/blog/2012/1105`.
     """
     
+    use_esteid = False
+    """
+    Whether to include functionality to read Estonian id cards.
+    This option is experimental and doesn't yet work.
+    """
+    
     use_eid_jslib = False
     """
-    Whether to include functionality to read Belgian eid cards.
+    Whether to include functionality to read Belgian id cards.
     
     If this is True, Lino expects Johan De Schutter's
     `eid-javascript-lib <http://code.google.com/p/eid-javascript-lib/>`_
@@ -380,13 +386,14 @@ class Lino(object):
     
     use_filterRow = not use_gridfilters
     """
-    See :doc:`/blog/2011/0630`
+    See :doc:`/blog/2011/0630`.
+    This option was experimental and doesn't yet work (and maybe never will).
     """
     
     use_awesome_uploader = False
     """
     Whether to use AwesomeUploader. 
-    This feature was experimental and doesn't yet work (and maybe never will).
+    This option was experimental and doesn't yet work (and maybe never will).
     """
     
     textfield_format = 'plain'

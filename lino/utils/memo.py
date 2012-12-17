@@ -189,8 +189,10 @@ class Parser(object):
             
     def handle_error(self,mo,e):
         #~ return mo.group(0)
-        return "[ERROR %s in %r at position %d-%d]" %(
+        msg = "[ERROR %s in %r at position %d-%d]" %(
           e, mo.group(0), mo.start(),mo.end())
+        logger.error(msg)
+        return msg
         
 
     def parse(self,s,**context):

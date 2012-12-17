@@ -65,6 +65,7 @@ from lino.core import tables
 #~ from lino.utils.xmlgen import xhtml as xhg
 from lino.core import fields
 from lino.ui import base
+from lino.ui.base import Callback
 from lino.core import actors
 from lino.core.modeltools import makedirs_if_missing
 from lino.core.modeltools import full_model_name
@@ -385,7 +386,7 @@ class ExtRenderer(HtmlRenderer):
             if v.bound_action:
                 js = self.action_call(None,v.bound_action,{})
                 if js is None:
-                    js = v.bound_action.get_panel_btn_handler(self)
+                    js = v.bound_action.get_panel_btn_handler()
                     js = "function() {%s(Lino.viewport)}" % js
                 else:
                     js = "function() {%s}" % js
@@ -494,7 +495,8 @@ class ExtRenderer(HtmlRenderer):
                   rp,
                   py2js(after_show))
             return "Lino.%s.run(%s)" % (bound_action.full_name(),rp)
-        return None
+        return "%s()" % bound_action.get_panel_btn_handler()
+        #~ return None
 
     def instance_handler(self,ar,obj):
         a = getattr(obj,'_detail_action',None)
@@ -969,7 +971,7 @@ class ExtUI(base.UI):
             (rx+r'choices/(?P<app_label>\w+)/(?P<rptname>\w+)$', views.Choices.as_view()),
             (rx+r'choices/(?P<app_label>\w+)/(?P<rptname>\w+)/(?P<fldname>\w+)$', views.Choices.as_view()),
             (rx+r'apchoices/(?P<app_label>\w+)/(?P<actor>\w+)/(?P<an>\w+)/(?P<field>\w+)$', views.ActionParamChoices.as_view()),
-            (rx+r'threads/(?P<thread_id>\w+)/(?P<button_id>\w+)$', views.Threads.as_view()),
+            (rx+r'callbacks/(?P<thread_id>\w+)/(?P<button_id>\w+)$', views.Callbacks.as_view()),
         )
         urlpatterns += settings.LINO.get_urls()
         if settings.LINO.use_eid_applet:
@@ -1169,7 +1171,7 @@ tinymce.init({
             
         yield '<script type="text/javascript" src="%s/extjs/examples/ux/fileuploadfield/FileUploadField.js"></script>' % self.media_url()
         
-        if settings.LINO.use_filterRow:
+        if settings.LINO.use_filterRow: 
             p = self.media_url() + '/lino/filterRow'
             yield '<script type="text/javascript" src="%s/filterRow.js"></script>' % p
             
@@ -1337,13 +1339,15 @@ tinymce.init({
         #~ yield '  Lino.body_loadMask.show();'
         yield '  Lino.viewport = new Lino.Viewport({items:%s});' % py2js(win)
         
+        if settings.LINO.use_esteid:
+            yield 'Lino.init_esteid();'
+        
+        
         if run_jasmine: # settings.LINO.use_jasmine:
             yield '  jasmine.getEnv().addReporter(new jasmine.TrivialReporter());'
             yield '  jasmine.getEnv().execute();'
         else:
             yield '  Lino.viewport.render("body");'
-        
-            
             yield on_ready
         #~ for ln in on_ready:
             #~ yield ln
@@ -1352,6 +1356,11 @@ tinymce.init({
         yield "}); // end of onReady()"
         yield '</script></head><body>'
 
+        if settings.LINO.use_esteid:
+            yield '<object id="esteid" type="application/x-esteid" style="width: 1px; height: 1px;"></object>'
+            #~ yield "your browser doesn't support esteid"
+            #~ yield '</object>'
+            
         if settings.LINO.use_eid_jslib:
             p = self.media_url('eid-jslib')
             #~ print p
@@ -1449,15 +1458,6 @@ tinymce.init({
         return self.action_response(kw)
     
 
-    def action_response(self,kw):
-        """
-        Builds a JSON response from given dict, 
-        checking first whether there are only allowed keys 
-        (defined in :attr:`ACTION_RESPONSES`)
-        """
-        self.check_action_response(kw)
-        return views.json_response(kw)
-            
     def lino_js_parts(self,profile):
         return ('cache','js','lino_' + profile.value + '_' + translation.get_language()+'.js')
         
@@ -1828,13 +1828,13 @@ tinymce.init({
             #~ if a.url_action_name is None:
                 #~ raise Exception("Action %r has no url_action_name" % a)
             kw.update(must_save=True)
-            kw.update(panel_btn_handler=js_code(ba.get_panel_btn_handler(self.ext_renderer)))
+            kw.update(panel_btn_handler=js_code(ba.get_panel_btn_handler()))
             #~ kw.update(panel_btn_handler=js_code("Lino.row_action_handler(%r)" % a.action_name))
         elif isinstance(a,actions.ListAction):
-            kw.update(panel_btn_handler=js_code(ba.get_panel_btn_handler(self.ext_renderer)))
+            kw.update(panel_btn_handler=js_code(ba.get_panel_btn_handler()))
             kw.update(must_save=True)
         elif isinstance(a,actions.JavaScriptAction):
-            kw.update(panel_btn_handler=js_code(ba.get_panel_btn_handler(self.ext_renderer)))
+            kw.update(panel_btn_handler=js_code(ba.get_panel_btn_handler()))
             kw.update(must_save=True)
         else:
             kw.update(panel_btn_handler=js_code("Lino.%s" % a))
@@ -2351,6 +2351,15 @@ tinymce.init({
             if has_sum:
                 tble.add_body_row(*ar.ah.store.sums2html(ar,fields,sums),**cellattrs)
             
+            
+    def action_response(self,rv):
+        """
+        Builds a JSON response from given dict, 
+        checking first whether there are only allowed keys 
+        (defined in :attr:`ACTION_RESPONSES`)
+        """
+        rv = self.check_action_response(rv)
+        return views.json_response(rv)
             
             
     
