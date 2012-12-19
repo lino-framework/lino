@@ -29,6 +29,7 @@ from django.contrib.auth.hashers import (
 from lino import dd
 from lino.utils import babel
 from lino.utils import mti
+from lino.utils.xmlgen.html import E
 #~ from lino.utils import choicelists
 from lino.utils.choosers import chooser
 from lino import mixins
@@ -198,6 +199,12 @@ class User(mixins.CreatedModified):
     def has_usable_password(self):
         return is_password_usable(self.password)
 
+    def as_list_item(self,ar):
+        return E.li(E.strong(self.username),' : ',
+          unicode(self),', ',
+          unicode(self.profile),', ',
+          E.strong(babel.LANGUAGE_DICT.get(self.language)))
+      
         
 
 

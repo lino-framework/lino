@@ -49,8 +49,9 @@ Business project managers
 Friends
   Follow what's going on and tell us your opinion about Lino. 
   Tell other people the advantages of Lino.
-
   
+
+
 Mailing lists
 -------------
 
@@ -66,6 +67,9 @@ Mailing lists
 
 - `lino-users <https://groups.google.com/d/forum/lino-users>`_
   (lino-users@googlegroups.com).
+  
+  
+   
 
 
 .. toctree::
@@ -73,3 +77,4 @@ Mailing lists
    :hidden:
 
    wanted
+   wanted-sysadmin

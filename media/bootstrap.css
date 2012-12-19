@@ -1,0 +1,9 @@
+/* styles to be applied after bootstrap css */
+div .header {
+  text-align: right;
+  background-color:#c7dffc;
+}
+div .footer {
+  text-align: center;
+  background-color:#c7dffc;
+}

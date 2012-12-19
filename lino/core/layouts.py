@@ -253,10 +253,11 @@ class LayoutHandle:
             #~ e = self.desc2elem(self.ui.Panel,name,desc,**kw)
         e = self.desc2elem(name,desc,**kw)
         if e is None:
-            raise Exception(
-                'Failed to define element %s = %s\n(in %s)' 
-                % (name,desc,self.layout))
-                #~ return
+            if False:
+                raise Exception(
+                    'Failed to define element %s = %s\n(in %s)' 
+                    % (name,desc,self.layout))
+            return
         #~ e.allow_read = curry(perms.make_permission(self.layout._datasource,**e.required),e)
         self._names[name] = e
         #~ setattr(self,name,e)

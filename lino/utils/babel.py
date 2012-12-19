@@ -56,6 +56,7 @@ from django.utils.translation import string_concat
 from lino.core import fields
 from lino.core.model import Model
 
+
 LANGUAGE_CODE_MAX_LENGTH = 2            
 """
 """

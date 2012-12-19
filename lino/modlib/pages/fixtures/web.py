@@ -21,29 +21,182 @@ it will overwrite existing web pages.
 
 """
 
-import datetime
+#~ import datetime
 from django.conf import settings
 #~ from lino.utils.instantiator import Instantiator
-from lino import dd
 from lino.utils import babel
+from lino import dd
 
 pages = dd.resolve_app('pages')
 
-def page(ref,title,body):
-    page = pages.lookup(ref)
-    if page is None:
-    #~ qs = pages.Page.objects.filter(ref=ref)
-    #~ if qs.count() == 0:
-        return pages.Page(ref=ref,title=title,body=body)
-    #~ if qs.count() == 1:
-    #~ obj = qs[0]
-    page.title = title
-    page.body = body
-    return page
-
-
 def objects():
-    yield page("hello","Hello","""\
-The hello page.    
+    #~ yield pages.page("hello","Hello","""\
+#~ The hello page.    
+    #~ """)
+
+    WEB_INDEX = pages.page("index",
+        body="""\
+    <p>
+    Welcome to the <b>[=LINO.title]</b> site.
+    We are running <a href="[=LINO.url]">[=LINO.short_name]</a> 
+    version [=LINO.version], [=LINO.description]
+    </p>
     """)
+    ADMIN_INDEX = pages.page("admin",body=WEB_INDEX.body)
+        
+    if 'fr' in babel.AVAILABLE_LANGUAGES:
+        WEB_INDEX_FR = pages.page("index",'fr',
+            body=u"""\
+        <p>
+        Bienvenue sur <b>[=LINO.title]</b>.
+        Ce site utilise <a href="[=LINO.url]">[=LINO.short_name]</a> 
+        version [=LINO.version], [=LINO.description]
+        </p>
+        """)
+        ADMIN_INDEX_FR = pages.page("admin",'fr',body=WEB_INDEX_FR.body)
+        
+    if 'de' in babel.AVAILABLE_LANGUAGES:
+        WEB_INDEX_DE = pages.page("index",'de',body=u"""\
+        <p>
+        Willkommen auf <b>[=LINO.title]</b>.
+        Diese Site benutzt <a href="[=LINO.url]">[=LINO.short_name]</a> 
+        version [=LINO.version], [=LINO.description]
+        </p>
+        """)
+        ADMIN_INDEX_DE = pages.page("admin",'de',body=WEB_INDEX_DE.body)
+
+
+    if settings.LINO.admin_url:
+      
+        if settings.LINO.user_model is None:
+            raise Exception("When admin_url is not empty, user_model cannot be None")
+            
+        WEB_INDEX.body += """
+        <p>
+        You are currently seeing the <strong>plain web content</strong> section,
+        which contains just this default index page 
+        because this site hasn't been configured to show something else here.
+        </p>
+        <p>
+        To see what Lino really adds to a Django site, 
+        you should go to the <strong>admin</strong> section.
+        </p>
+        <p align="center"><button onclick="document.location='/admin/'">admin</button></p>
+        """
+
+
+    if settings.LINO.admin_url:
+      
+        ADMIN_INDEX.body += """
+        <p>
+        You have entered the admin section. 
+        </p>
+        """
+        
+    ADMIN_INDEX.body += """
+    <p>
+    You will now probably want to 
+    use the <strong>Login</strong> button in the upper right corner 
+    and log in. 
+    </p><p>
+    This demo site has 
+    [=LINO.modules.users.UsersOverview.request().get_total_count()] 
+    users configured, they all have "1234" as password:
+    </p>
+    """
     
+    users_overview = "[ul users.UsersOverview]"
+    #~ users_overview = """
+    #~ <ul>
+    #~ [="".join(['<li><strong>%s</strong> : %s, %s, <strong>%s</strong></li>' % (\
+      #~ u.username, u, u.profile, babel.LANGUAGE_DICT.get(u.language)) \
+      #~ for u in LINO.modules.users.UsersOverview.request()])] 
+    #~ </ul>
+    #~ """
+    
+    ADMIN_INDEX.body += users_overview
+    
+    
+    if 'de' in babel.AVAILABLE_LANGUAGES:
+        ADMIN_INDEX_DE.body += u"""
+        <p>
+        Bitte klicken Sie jetzt auf <strong>Anmelden</strong> in der oberen rechten 
+        Bildschirmecke, um sich anzumelden.
+        </p><p>
+        Auf dieser Demo-Site gibt es
+        [=LINO.modules.users.UsersOverview.request().get_total_count()] 
+        Benutzer, die alle "1234" als Passwort haben:
+        </p>
+        """
+        ADMIN_INDEX_DE.body += users_overview
+
+    if 'fr' in babel.AVAILABLE_LANGUAGES:
+        ADMIN_INDEX_FR.body += u"""
+        <p>
+        Veuillez cliquer maintenant sur le bouton <strong>Log in</strong> 
+        dans le coin supérieur droit de l'écran.
+        </p><p>
+        Sur ce site démo il y a 
+        [=LINO.modules.users.UsersOverview.request().get_total_count()] 
+        utilisateurs, tous avec "1234" comme mot de passe:
+        </p>
+        """
+        ADMIN_INDEX_FR.body += users_overview
+
+
+
+    if settings.LINO.admin_url:
+      
+        ADMIN_INDEX.body += """
+        <p>
+        Or you might want to return to the <a href="/">web content section</a>.
+        </p>
+        """
+
+    #~ </p><p>
+    #~ [=LINO.modules.users.UsersOverview.to_html()]
+
+
+    WEB_INDEX.body += """
+    <p>
+    Enjoy!
+    Your feedback is welcome to lino-users@googlegroups.com
+    or directly to the person who invited you.
+    </p>
+    """
+
+    if 'de' in babel.AVAILABLE_LANGUAGES:
+        WEB_INDEX_DE.body += u"""
+        <p>
+        Viel Spaß!
+        Reaktionen und Kommentare sind willkommen an lino-users@googlegroups.com
+        oder direkt die Person, die Sie eingeladen hat.
+        </p>
+        """
+
+    if 'fr' in babel.AVAILABLE_LANGUAGES:
+        WEB_INDEX_FR.body += """
+        <p>
+        Enjoy!
+        Your feedback is welcome to lino-users@googlegroups.com
+        or directly to the person who invited you.
+        </p>
+        """
+
+
+    #~ WEB_INDEX.body += """
+    #~ <iframe src="https://www.facebook.com/plugins/like.php?href=[=LINO.site_url]"
+            #~ scrolling="no" frameborder="0"
+            #~ style="border:none; width:450px; height:80px"></iframe>
+    #~ """
+
+
+    yield WEB_INDEX
+    yield ADMIN_INDEX
+    
+    if 'de' in babel.AVAILABLE_LANGUAGES:
+        yield WEB_INDEX_DE
+        yield ADMIN_INDEX_DE
+    if 'fr' in babel.AVAILABLE_LANGUAGES:
+        yield WEB_INDEX_FR
+        yield ADMIN_INDEX_FR

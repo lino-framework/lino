@@ -1,5 +1,5 @@
 # -*- coding: UTF-8 -*-
-## Copyright 2012 Luc Saffre
+## Copyright 2011-2012 Luc Saffre
 ## This file is part of the Lino project.
 ## Lino is free software; you can redistribute it and/or modify 
 ## it under the terms of the GNU General Public License as published by
@@ -13,19 +13,31 @@
 ## along with Lino; if not, see <http://www.gnu.org/licenses/>.
 
 """
-The :term:`dummy module` for `outbox`, 
-used by :func:`lino.core.modeltools.resolve_app`.
 """
+
+import os
+import cgi
+import datetime
+
+from django.db import models
+#~ from django.db.models import Q
+from django.conf import settings
+from django.utils.translation import ugettext_lazy as _
+
+
+from lino import mixins
 from lino import dd
 
-class Mailable(object): pass
+#~ contacts = dd.resolve_app('contacts')
+#~ sales = dd.resolve_app('sales')
 
-#~ class MailableType(object): pass
+#~ class Person(contacts.Person,sales.Customer):
+    #~ class Meta(contacts.Person.Meta):
+        #~ app_label = 'contacts'
 
-class MailableType(dd.Model):
-    email_template = dd.DummyField()
-    attach_to_email = dd.DummyField()
-    class Meta:
-        abstract = True
-        
-MailsByController = dd.DummyField()
+#~ class Company(contacts.Company,sales.Customer):
+    #~ class Meta(contacts.Company.Meta):
+        #~ app_label = 'contacts'
+
+#~ def site_setup(site):
+    #~ site.description = 

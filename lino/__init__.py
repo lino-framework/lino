@@ -24,6 +24,7 @@ import datetime
 from os.path import join, abspath, dirname, normpath
 from decimal import Decimal
 from lino.utils.xmlgen import html as xghtml
+#~ from lino.utils import babel
 
 #~ __version__ = file(os.path.join(os.path.dirname(
     #~ __file__),'..','VERSION')).read().strip()
@@ -763,6 +764,35 @@ class Lino(object):
     by :class:`lino.modlib.cal.models.EventOwner`.
     """
     
+    override_modlib_models = []
+    """
+    A list of names of modlib models which are being 
+    redefined by this application.
+    
+    The following modlib models currently support this:
+    - :class:`contacts.Person <lino.modlib.contacts.models.Person>`
+    - :class:`contacts.Company <lino.modlib.contacts.models.Company>`
+    
+    Usage: in your application's `settings.py`, specify::
+    
+      class Lino(Lino):
+          override_modlib_models = ['contacts.Person']
+          
+    This will cause the modlib Person model to be abstract, 
+    and hence your application is responsible for defining another 
+    `Person` class with "contacts" as `app_label`::
+          
+      class Person(contacts.Person,mixins.Born):
+          class Meta(contacts.Person.Meta):
+              app_label = 'contacts'
+              
+          def kiss(self):
+              ...
+    
+    """
+    
+    
+    
     #~ use_contenttypes = True
     #~ """
     #~ Set this to False if you don't want to use `django.contrib.contenttypes`.
@@ -875,33 +905,6 @@ class Lino(object):
         return self._groph_ui
     groph_ui = property(get_groph_ui)
 
-    override_modlib_models = []
-    """
-    A list of names of modlib models which are being 
-    redefined by this application.
-    
-    The following modlib models currently support this:
-    - :class:`contacts.Person <lino.modlib.contacts.models.Person>`
-    - :class:`contacts.Company <lino.modlib.contacts.models.Company>`
-    
-    Usage: in your application's `settings.py`, specify::
-    
-      class Lino(Lino):
-          override_modlib_models = ['contacts.Person']
-          
-    This will cause the modlib Person model to be abstract, 
-    and hence your application is responsible for defining another 
-    `Person` class with "contacts" as `app_label`::
-          
-      class Person(contacts.Person,mixins.Born):
-          class Meta(contacts.Person.Meta):
-              app_label = 'contacts'
-              
-          def kiss(self):
-              ...
-    
-    """
-    
     def site_header(self):
         """
         Used e.g. in footnote or header of certain printed documents.
@@ -1288,7 +1291,7 @@ class Lino(object):
         """
         return None
         
-
+        
     MAIN_HTML_TEMPLATE = """\
     <div class="htmlText">
     <h1>[=title]</h1>
@@ -1305,7 +1308,10 @@ class Lino(object):
         message "It works! But your application isn't complete. ..."
         """
         pages = dd.resolve_app('pages')
-        obj = pages.lookup('admin')
+        #~ obj = pages.lookup('admin')
+        from lino.utils import babel
+        obj = pages.lookup('admin',babel.get_language())
+        #~ obj = pages.lookup('index')
         return pages.render(obj,self.MAIN_HTML_TEMPLATE)
 
 

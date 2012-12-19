@@ -149,12 +149,15 @@ logger = logging.getLogger(__name__)
 #~ avoid "No handlers could be found for logger "__main__"" when doctesting
 #~ not available before Python 2.7
 
-
 import re
 COMMAND_REGEX = re.compile(r"\[(\w+)\s*((?:[^[\]]|\[.*?\])*?)\]")
 #~                                      ===...... .......=
 
 EVAL_REGEX = re.compile(r"\[=((?:[^[\]]|\[.*?\])*?)\]")
+
+from lino.utils.xmlgen import etree
+
+
 
 class Parser(object):
   
@@ -168,10 +171,15 @@ class Parser(object):
     def eval_match(self,matchobj):
         expr = matchobj.group(1)
         try:
-            return unicode(eval(expr,self.context))
+            return self.format_value(eval(expr,self.context))
         except Exception,e:
             logger.exception(e)
             return self.handle_error(matchobj,e)
+        
+    def format_value(self,v):
+        if etree.iselement(v): 
+            return unicode(etree.tostring(v))
+        return unicode(v)
       
     def cmd_match(self,matchobj):
         cmd = matchobj.group(1)

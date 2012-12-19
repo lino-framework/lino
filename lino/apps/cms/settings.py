@@ -12,20 +12,9 @@
 ## You should have received a copy of the GNU General Public License
 ## along with Lino; if not, see <http://www.gnu.org/licenses/>.
 
-"""
-The :term:`dummy module` for `outbox`, 
-used by :func:`lino.core.modeltools.resolve_app`.
-"""
-from lino import dd
+# Django settings file. Don't add anything here, the real stuff is in `__init__.py`.
+      
+from lino.apps.cms import *
 
-class Mailable(object): pass
+LINO = Lino(__file__,globals()) 
 
-#~ class MailableType(object): pass
-
-class MailableType(dd.Model):
-    email_template = dd.DummyField()
-    attach_to_email = dd.DummyField()
-    class Meta:
-        abstract = True
-        
-MailsByController = dd.DummyField()

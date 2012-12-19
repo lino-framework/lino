@@ -78,7 +78,7 @@ def plain_html_page(ar,title,navigator,main):
     
 
 
-def requested_report(app_label,actor):
+def requested_actor(app_label,actor):
     x = getattr(settings.LINO.modules,app_label)
     cl = getattr(x,actor)
     if issubclass(cl,dd.Model):
@@ -86,7 +86,7 @@ def requested_report(app_label,actor):
     return cl
     
 def action_request(app_label,actor,request,rqdata,**kw):
-    rpt = requested_report(app_label,actor)
+    rpt = requested_actor(app_label,actor)
     action_name = rqdata.get(
         ext_requests.URL_PARAM_ACTION_NAME,
         rpt.default_list_action_name)
@@ -402,26 +402,13 @@ def form2obj_and_save(ar,data,elem,is_new,restful,file_upload=False): # **kw2sav
 
 
 
-#~ <body style="font-family:Arial;padding:2em;background-color:wheat;">
-SIMPLE_PAGE = """\
-<html>
-<head>
-<title>[=title]</title>
-</head>
-<body style="font-family:Arial;padding:2em;color:black;background-color:#c7dffc;">
-<h1>[=title]</h1>
-[=parse(obj.body or obj.abstract)]
-</body>
-</html>
-"""
-
 
 
 class WebIndex(View):
   
     def get(self, request,ref='index'):
-        obj = pages.lookup(ref)
-        html = pages.render(obj,SIMPLE_PAGE)
+        obj = pages.lookup(ref,babel.get_language())
+        html = pages.render(obj)
         return http.HttpResponse(html)
         
         
@@ -507,7 +494,7 @@ class Templates(View):
                 tft = TextFieldTemplate.objects.get(pk=int(tplname))
                 return http.HttpResponse(tft.text)
                 
-            rpt = requested_report(app_label,actor)
+            rpt = requested_actor(app_label,actor)
                 
             elem = rpt.get_row_by_pk(pk)
 
@@ -623,7 +610,7 @@ def choices_response(request,qs,row2dict,emptyValue):
 class ActionParamChoices(View):
   
     def get(self,request,app_label=None,actor=None,an=None,field=None,**kw):
-        actor = requested_report(app_label,actor)
+        actor = requested_actor(app_label,actor)
         ba = actor.get_url_action(an)
         if ba is None:
             raise Exception("Unknown action %r for %s" % (an,actor))
@@ -646,7 +633,7 @@ class Choices(View):
         If `fldname` is not specified, returns the choices for 
         the `record_selector` widget.
         """
-        rpt = requested_report(app_label,rptname)
+        rpt = requested_actor(app_label,rptname)
         emptyValue = None
         if fldname is None:
             ar = rpt.request(settings.LINO.ui,request) # ,rpt.default_action)
@@ -686,7 +673,7 @@ class Restful(View):
   
     def post(self,request,app_label=None,actor=None,pk=None):
         ui = settings.LINO.ui
-        rpt = requested_report(app_label,actor)
+        rpt = requested_actor(app_label,actor)
         #~ a = rpt.default_action
         if pk is None:
             elem = None
@@ -710,7 +697,7 @@ class Restful(View):
       
     def delete(self,request,app_label=None,actor=None,pk=None):
         ui = settings.LINO.ui
-        rpt = requested_report(app_label,actor)
+        rpt = requested_actor(app_label,actor)
         #~ a = rpt.default_action
         elem = rpt.get_row_by_pk(pk)
         ar = rpt.request(ui,request)
@@ -718,7 +705,7 @@ class Restful(View):
       
     def get(self,request,app_label=None,actor=None,pk=None):
         ui = settings.LINO.ui
-        rpt = requested_report(app_label,actor)
+        rpt = requested_actor(app_label,actor)
         #~ a = rpt.default_action
         assert pk is None, 20120814
         #~ if pk is None:
@@ -734,7 +721,7 @@ class Restful(View):
         
     def put(self,request,app_label=None,actor=None,pk=None):
         ui = settings.LINO.ui
-        rpt = requested_report(app_label,actor)
+        rpt = requested_actor(app_label,actor)
         #~ a = rpt.default_action
         elem = rpt.get_row_by_pk(pk)
         ar = rpt.request(ui,request)
@@ -761,7 +748,7 @@ class ApiElement(View):
         (Source: http://en.wikipedia.org/wiki/Restful)
         """
         ui = settings.LINO.ui
-        rpt = requested_report(app_label,actor)
+        rpt = requested_actor(app_label,actor)
         #~ if not ah.actor.can_view.passes(request.user):
             #~ msg = "User %s cannot view %s." % (request.user,ah.actor)
             #~ return http.HttpResponseForbidden()
@@ -923,7 +910,7 @@ class ApiElement(View):
             
     def delete(self,request,app_label=None,actor=None,pk=None):
         ui = settings.LINO.ui
-        rpt = requested_report(app_label,actor)
+        rpt = requested_actor(app_label,actor)
         elem = rpt.get_row_by_pk(pk)
         if elem is None:
             raise http.Http404("%s has no row with primary key %r" % (rpt,pk))
@@ -946,7 +933,7 @@ class ApiList(View):
 
     def post(self,request,app_label=None,actor=None):
         #~ ui = settings.LINO.ui
-        #~ rpt = requested_report(app_label,actor)
+        #~ rpt = requested_actor(app_label,actor)
         
         #~ action_name = request.POST.get(
             #~ ext_requests.URL_PARAM_ACTION_NAME,
@@ -1173,7 +1160,7 @@ class GridConfig(View):
     #~ def grid_config_view(self,request,app_label=None,actor=None):
     def put(self,request,app_label=None,actor=None):
         ui = settings.LINO.ui
-        rpt = requested_report(app_label,actor)
+        rpt = requested_actor(app_label,actor)
         #~ rpt = actors.get_actor2(app_label,actor)
         PUT = http.QueryDict(request.raw_post_data)
         gc = dict(

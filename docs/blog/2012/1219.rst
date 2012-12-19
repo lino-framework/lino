@@ -1,0 +1,9 @@
+20121219
+========
+
+Yesterday I started another new application: :mod:`lino.apps.cms`, 
+which features mainly the :mod:`lino.modlib.pages` module.
+
+This module is yet young and experimental, and nobody asked me to 
+write something like this, but my feeling tells me that this is an 
+important piece missing in the jigsaw puzzle.

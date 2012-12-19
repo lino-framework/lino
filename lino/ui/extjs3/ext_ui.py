@@ -1129,7 +1129,8 @@ class ExtUI(base.UI):
             yield '<script type="text/javascript" src="%s/extjs/examples/ux/Spinner.js"></script>' % self.media_url()
         
         if settings.LINO.use_tinymce:
-            p = self.media_url() + '/tinymce'
+            #~ p = self.media_url() + '/tinymce'
+            p = self.media_url('tinymce')
             #~ yield '<script type="text/javascript" src="Ext.ux.form.FileUploadField.js"></script>'
             #~ yield '<script type="text/javascript" src="%s/tiny_mce.js"></script>' % p
             yield javascript("/tinymce/tiny_mce.js")
@@ -1157,7 +1158,8 @@ tinymce.init({
             
             
         if settings.LINO.use_gridfilters:
-            p = self.media_url() + '/extjs/examples/ux/gridfilters'
+            #~ p = self.media_url() + '/extjs/examples/ux/gridfilters'
+            p = self.media_url('extjs','examples','ux','gridfilters')
             #~ yield '<script type="text/javascript" src="%s/extjs/examples/ux/RowEditor.js"></script>' % self.media_url()
             yield '<script type="text/javascript" src="%s/menu/RangeMenu.js"></script>' % p
             yield '<script type="text/javascript" src="%s/menu/ListMenu.js"></script>' % p

@@ -17,7 +17,8 @@ need a customized database application
 "more than MS-Access for cheaper than SAP".
 See also :doc:`/about/license`.
 
-We do not currently offer paid jobs, 
+We do not currently offer paid jobs,
+(except for one :doc:`limited special offer <wanted-sysadmin>`)
 but there is hope that this will change in the near future. 
 *Show your interest now to be a privileged 
 candidate when recruitment starts!*

@@ -22,6 +22,7 @@ from django.utils.translation import ugettext as _
 from lino.core import fields
 from lino.core import modeltools
 from lino.utils.xmlgen import html as xghtml
+E = xghtml.E
 
 
 class Model(models.Model):
@@ -144,6 +145,11 @@ class Model(models.Model):
         
     #~ def set_change_summary(self,text):
         #~ self._change_summary = text
+        
+    def as_list_item(self,ar):
+        return E.li(unicode(self))
+        
+        
     
     def disable_delete(self,ar):
         """
@@ -295,7 +301,7 @@ class Model(models.Model):
         state = actor.get_row_state(obj)
         if state:
             #~ l.append(xghtml.E.b(unicode(state),style="vertical-align:middle;"))
-            l.append(xghtml.E.b(unicode(state)))
+            l.append(E.b(unicode(state)))
             #~ l.append(u" » ")
             #~ l.append(u" \u25b8 ")
             #~ l.append(u" \u2192 ")
@@ -307,7 +313,7 @@ class Model(models.Model):
             sep = ' '
             #~ l.append(' ')
         #~ return ', '.join(l)
-        return xghtml.E.p(*l)
+        return E.p(*l)
         
         
     def __repr__(self):

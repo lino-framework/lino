@@ -13,6 +13,7 @@ Subpackages
 .. toctree::
 
     lino.apps.std
+    lino.apps.cms
     lino.apps.cosi
     lino.apps.crl
     lino.apps.homeworkschool
