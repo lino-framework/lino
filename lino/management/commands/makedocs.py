@@ -62,7 +62,7 @@ def min_indent(s):
         
 def doc2rst(s):
     if s is None:
-        return ''
+        return u''
     s = s.expandtabs()
     # If all lines begin with the same indentation, then strip it.
     mi = min_indent(s)

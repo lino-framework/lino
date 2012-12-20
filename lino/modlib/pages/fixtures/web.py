@@ -21,20 +21,108 @@ it will overwrite existing web pages.
 
 """
 
-#~ import datetime
+from __future__ import unicode_literals
+
 from django.conf import settings
-#~ from lino.utils.instantiator import Instantiator
-from lino.utils import babel
-from lino import dd
 
-pages = dd.resolve_app('pages')
+from lino.modlib.pages.builder import Page, objects    
 
-def objects():
+    
+class Index(Page):
+    """
+    Welcome to the <b>[=LINO.title]</b> site.
+    We are running <a href="[=LINO.url]">[=LINO.short_name]</a> 
+    version [=LINO.version], [=LINO.description]
+    """
+    language = 'en'
+    
+if settings.LINO.admin_url:
+      
+    if settings.LINO.user_model is None:
+        raise Exception("When admin_url is not empty, user_model cannot be None")
+            
+    Index.__doc__ += """
+    
+    You are currently seeing the **plain web content** section,
+    which contains just this default index page 
+    because this site hasn't been configured to show something else here.
+
+    To see what Lino really adds to a Django site, 
+    you should go to the **admin** section.
+        
+    ..raw:: html
+        <p align="center"><button onclick="document.location='/admin/'">admin</button></p>
+    """
+    
+
+class Index(Page):
+    """
+    Bienvenue sur <b>[=LINO.title]</b>.
+    Ce site utilise <a href="[=LINO.url]">[=LINO.short_name]</a> 
+    version [=LINO.version], [=LINO.description]
+    """
+    language = 'fr'
+
+class Index(Page):
+    """
+    Willkommen auf <b>[=LINO.title]</b>.
+    Diese Site benutzt <a href="[=LINO.url]">[=LINO.short_name]</a> 
+    version [=LINO.version], [=LINO.description]
+    """
+    language = 'de'
+    
+    
+    
+class Admin(Page):
+    """
+    You have entered the admin section. 
+    You will now probably want to 
+    use the :guilabel:Log in` button in the upper right corner 
+    and log in. 
+    
+    This demo site has 
+    [=LINO.modules.users.UsersOverview.request().get_total_count()] 
+    users configured, they all have "1234" as password:
+    
+    [ul users.UsersOverview]
+    
+    """
+    
+class Admin(Page):
+    """
+    Bitte klicken Sie jetzt auf :guilabel:`Anmelden` in der oberen rechten 
+    Bildschirmecke, um sich anzumelden.
+    
+    Auf dieser Demo-Site gibt es
+    [=LINO.modules.users.UsersOverview.request().get_total_count()] 
+    Benutzer, die alle "1234" als Passwort haben:
+    
+    [ul users.UsersOverview]
+    
+    """
+    language = 'de'
+
+class Admin(Page):
+    """
+    Veuillez cliquer maintenant sur le bouton :guilabel:`Log in`
+    dans le coin supérieur droit de l'écran.
+    
+    Sur ce site démo il y a 
+    [=LINO.modules.users.UsersOverview.request().get_total_count()] 
+    utilisateurs, tous avec "1234" comme mot de passe:
+    
+    [ul users.UsersOverview]
+    
+    """
+    language = 'fr'
+    
+
+def unused_objects():
     #~ yield pages.page("hello","Hello","""\
 #~ The hello page.    
     #~ """)
 
-    WEB_INDEX = pages.page("index",
+    WEB_INDEX = pages.page("",
         body="""\
     <p>
     Welcome to the <b>[=LINO.title]</b> site.
@@ -45,7 +133,7 @@ def objects():
     ADMIN_INDEX = pages.page("admin",body=WEB_INDEX.body)
         
     if 'fr' in babel.AVAILABLE_LANGUAGES:
-        WEB_INDEX_FR = pages.page("index",'fr',
+        WEB_INDEX_FR = pages.page("",'fr',
             body=u"""\
         <p>
         Bienvenue sur <b>[=LINO.title]</b>.
@@ -56,7 +144,7 @@ def objects():
         ADMIN_INDEX_FR = pages.page("admin",'fr',body=WEB_INDEX_FR.body)
         
     if 'de' in babel.AVAILABLE_LANGUAGES:
-        WEB_INDEX_DE = pages.page("index",'de',body=u"""\
+        WEB_INDEX_DE = pages.page("",'de',body=u"""\
         <p>
         Willkommen auf <b>[=LINO.title]</b>.
         Diese Site benutzt <a href="[=LINO.url]">[=LINO.short_name]</a> 

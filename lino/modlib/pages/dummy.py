@@ -141,7 +141,7 @@ class Parser(memo.Parser):
             setattr(page,k,v)
         #~ page.title = title
         #~ page.body = body
-        logger.info("20121219 updated %s %s",ref,language)
+        #~ logger.info("20121219 updated %s %s",ref,language)
         return page
         
   
@@ -216,6 +216,9 @@ MEMO_PARSER = Parser()
 page = MEMO_PARSER.instantiate_page
 lookup = MEMO_PARSER.lookup_page
 render = MEMO_PARSER.render
+
+
+
 
 if not settings.LINO.is_installed('pages'):
     from lino.modlib.pages.fixtures import web

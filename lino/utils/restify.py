@@ -11,6 +11,11 @@ Just a copy & paste of the :mod:`docutils.examples` module (as instructed there)
 #~ import traceback
 from docutils import core, io
 
+
+#~ for rolename, func in specific_docroles.iteritems():
+    #~ roles.register_local_role(rolename, func)
+
+
 def html_parts(input_string, source_path=None, destination_path=None,
                input_encoding='unicode', doctitle=1, initial_header_level=1):
     """
@@ -103,6 +108,16 @@ class Writer(html4css1.Writer):
         writers.Writer.__init__(self)
         self.translator_class = HTMLTranslator
 
+
+"""
+simply importing the sphinx.roles module 
+causes these text roles to be installed
+"""
+from sphinx import roles 
+
+#~ import sphinx
+#~ print sphinx.__file__
+#~ import sphinx.roles
 
 def restify(input_string,source_path=None, destination_path=None,
             input_encoding='unicode', doctitle=1, initial_header_level=1):

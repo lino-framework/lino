@@ -1,9 +1,13 @@
-20121219
-========
+20121218...20
+=============
 
-Yesterday I started another new application: :mod:`lino.apps.cms`, 
+I started another new application: :mod:`lino.apps.cms`, 
 which features mainly the :mod:`lino.modlib.pages` module.
 
 This module is yet young and experimental, and nobody asked me to 
 write something like this, but my feeling tells me that this is an 
-important piece missing in the jigsaw puzzle.
+important piece missing in the jigsaw puzzle: how to use Lino for 
+creating "normal" websites quickly and easily.
+Where "normal" means "without ExtJS".
+
+I discovered Blueprint and later Bootstrap.

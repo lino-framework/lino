@@ -29,6 +29,9 @@ from django.db import models
 from django.utils.translation import ugettext_lazy as _
 from django.utils.translation import pgettext_lazy 
 
+from django import http
+from django.views.generic import View
+
 #~ from django.contrib.contenttypes.models import ContentType
 #~ from django.contrib.contenttypes import generic
 from django.db import IntegrityError
@@ -57,45 +60,46 @@ postings = dd.resolve_app('postings')
 
 from lino.modlib.pages import dummy
 
-class PageType(babel.BabelNamed,mixins.PrintableType,outbox.MailableType):
+#~ class PageType(babel.BabelNamed,mixins.PrintableType,outbox.MailableType):
   
-    templates_group = 'pages/Page'
+    #~ templates_group = 'pages/Page'
     
-    class Meta:
-        verbose_name = _("Page Type")
-        verbose_name_plural = _("Page Types")
+    #~ class Meta:
+        #~ verbose_name = _("Page Type")
+        #~ verbose_name_plural = _("Page Types")
         
-    remark = models.TextField(verbose_name=_("Remark"),blank=True)
+    #~ remark = models.TextField(verbose_name=_("Remark"),blank=True)
     
-    def __unicode__(self):
-        return self.name
+    #~ def __unicode__(self):
+        #~ return self.name
 
 
-class PageTypes(dd.Table):
-    """
-    Displays all rows of :class:`PageType`.
-    """
-    model = 'pages.PageType'
-    #~ label = _("Page types")
-    column_names = 'name build_method template *'
-    order_by = ["name"]
+#~ class PageTypes(dd.Table):
+    #~ """
+    #~ Displays all rows of :class:`PageType`.
+    #~ """
+    #~ model = 'pages.PageType'
+    #~ column_names = 'name build_method template *'
+    #~ order_by = ["name"]
     
-    detail_layout = """
-    id name
-    build_method template email_template attach_to_email
-    remark:60x5
-    pages.PagesByType
-    """
+    #~ detail_layout = """
+    #~ id name
+    #~ build_method template email_template attach_to_email
+    #~ remark:60x5
+    #~ pages.PagesByType
+    #~ """
 
 
-class Page(mixins.TypedPrintable,
-      mixins.AutoUser,
-      mixins.Controllable,
-      mixins.CreatedModified,
-      mixins.ProjectRelated,
-      outbox.Mailable,
-      postings.Postable, 
-      ):
+#~ class Page(mixins.TypedPrintable,
+      #~ mixins.AutoUser,
+      #~ mixins.Controllable,
+      #~ mixins.CreatedModified,
+      #~ mixins.ProjectRelated,
+      #~ outbox.Mailable,
+      #~ postings.Postable, 
+      #~ ):
+      
+class Page(dd.Model):
       
     """
     Deserves more documentation.
@@ -109,70 +113,77 @@ class Page(mixins.TypedPrintable,
         #~ verbose_name_plural = _("Pages")
         unique_together = ['ref','language']
         
-    ref = dd.NullCharField(_("Reference"),max_length=40) # ,unique=True)
-    type = models.ForeignKey(PageType,blank=True,null=True)
+    #~ ref = dd.NullCharField(_("Reference"),max_length=40) # ,unique=True)
+    ref = models.CharField(_("Reference"),max_length=100,blank=True)
+    #~ language = babel.LanguageField(default=babel.get_language,blank=True)
+    language = babel.LanguageField(blank=True)
+    
+    #~ type = models.ForeignKey(PageType,blank=True,null=True)
     title = models.CharField(_("Title"),max_length=200,blank=True) # ,null=True)
     #~ abstract = dd.RichTextField(_("Abstract"),blank=True,format='html')
     body = dd.RichTextField(_("Body"),blank=True,format='html')
     
-    #~ language = babel.LanguageField(default=babel.get_language,blank=True)
-    language = babel.LanguageField(blank=True)
     
     
     def __unicode__(self):
-        return u'%s #%s' % (self._meta.verbose_name,self.pk)
+        return "%s -> %s (%s)" % (self.ref,self.title,self.language)
+        #~ return u'%s #%s' % (self._meta.verbose_name,self.pk)
         
         
     def get_mailable_type(self):
         return self.type
 
 
+#~ class PageDetail(dd.FormLayout):
+    #~ main = """
+    #~ ref title type:25 
+    #~ project id user:10 language:8 build_time
+    #~ left right
+    #~ """
+    #~ left = """
+    #~ # abstract:60x5
+    #~ body:60x20
+    #~ """
+    #~ right="""
+    #~ outbox.MailsByController
+    #~ postings.PostingsByController
+    #~ """
+    
 class PageDetail(dd.FormLayout):
     main = """
-    ref title type:25 
-    project id user:10 language:8 build_time
-    left right
+    ref language:8 title 
+    body
     """
-    left = """
-    # abstract:60x5
-    body:60x20
-    """
-    right="""
-    outbox.MailsByController
-    postings.PostingsByController
-    """
-    
-
 
 
     
 class Pages(dd.Table):
     model = 'pages.Page'
     detail_layout = PageDetail()
-    column_names = "ref language title user type project *"
+    column_names = "ref language title *"
+    #~ column_names = "ref language title user type project *"
     order_by = ["ref",'language']
 
 
-class MyPages(mixins.ByUser,Pages):
-    required = dict(user_groups='office')
-    #~ master_key = 'user'
-    column_names = "modified title type project *"
-    label = _("My pages")
-    order_by = ["-modified"]
+#~ class MyPages(mixins.ByUser,Pages):
+    #~ required = dict(user_groups='office')
+    #~ column_names = "modified title type project *"
+    #~ label = _("My pages")
+    #~ order_by = ["-modified"]
     
 
   
-class PagesByType(Pages):
-    master_key = 'type'
-    column_names = "title user *"
-    order_by = ["-modified"]
+#~ class PagesByType(Pages):
+    #~ master_key = 'type'
+    #~ column_names = "title user *"
+    #~ order_by = ["-modified"]
 
-if settings.LINO.project_model:
+#~ if settings.LINO.project_model:
   
-    class PagesByProject(Pages):
-        master_key = 'project'
-        column_names = "type title user *"
-        order_by = ["-modified"]
+    #~ class PagesByProject(Pages):
+        #~ master_key = 'project'
+        #~ column_names = "type title user *"
+        #~ order_by = ["-modified"]
         
     
 #~ def render(*args,**kw): 
@@ -181,12 +192,12 @@ if settings.LINO.project_model:
 class Parser(dummy.Parser):
   
     def create_page(self,**kw):
-        logger.info("20121219 create_page(%r)",kw)
+        #~ logger.info("20121219 create_page(%r)",kw)
         return Page(**kw)
         
     def lookup_page(self,ref,language=None,strict=False): 
     #~ def lookup_page(self,ref,language):
-        logger.info("20121219 lookup_page(%r,%r)",ref,language)
+        #~ logger.info("20121219 lookup_page(%r,%r)",ref,language)
         try:
             return Page.objects.get(ref=ref,language=language)
         except Page.DoesNotExist:
@@ -376,9 +387,9 @@ def customize_siteconfig():
             help_text=_("Page to use for footer.")))
   
 
-def setup_main_menu(site,ui,profile,m):
-    m  = m.add_menu("office",lino.OFFICE_MODULE_LABEL)
-    m.add_action(MyPages)
+#~ def setup_main_menu(site,ui,profile,m):
+    #~ m  = m.add_menu("office",lino.OFFICE_MODULE_LABEL)
+    #~ m.add_action(MyPages)
   
 def setup_my_menu(site,ui,profile,m): 
     pass
@@ -386,10 +397,34 @@ def setup_my_menu(site,ui,profile,m):
 def setup_config_menu(site,ui,profile,m): 
     #~ m  = m.add_menu("pages",_("~Pages"))
     m  = m.add_menu("office",lino.OFFICE_MODULE_LABEL)
-    m.add_action(PageTypes)
-  
-def setup_explorer_menu(site,ui,profile,m):
-    m  = m.add_menu("office",lino.OFFICE_MODULE_LABEL)
     m.add_action(Pages)
+    #~ m.add_action(PageTypes)
+  
+#~ def setup_explorer_menu(site,ui,profile,m):
+    #~ m  = m.add_menu("office",lino.OFFICE_MODULE_LABEL)
+    #~ m.add_action(Pages)
   
 customize_siteconfig()  
+
+from django.conf.urls.defaults import patterns, url, include
+
+class WebIndex(View):
+  
+    #~ def get(self, request,ref='index'):
+    def get(self, request,ref=''):
+        print 20121220, ref
+        obj = lookup(ref,babel.get_language())
+        html = render(obj)
+        return http.HttpResponse(html)
+        
+
+def get_urls():
+    #~ print "20121110 get_urls"
+    refs = set()
+    urlpatterns = []
+    for page in Page.objects.all():
+        refs.add(page.ref)
+    for ref in refs:
+        urlpatterns += patterns('',
+           (r'^%s$' % ref, WebIndex.as_view(),dict(ref=ref)))
+    return urlpatterns

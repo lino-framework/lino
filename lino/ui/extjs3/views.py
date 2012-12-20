@@ -404,13 +404,6 @@ def form2obj_and_save(ar,data,elem,is_new,restful,file_upload=False): # **kw2sav
 
 
 
-class WebIndex(View):
-  
-    def get(self, request,ref='index'):
-        obj = pages.lookup(ref,babel.get_language())
-        html = pages.render(obj)
-        return http.HttpResponse(html)
-        
         
 
 class AdminIndex(View):

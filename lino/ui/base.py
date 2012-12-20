@@ -27,6 +27,8 @@ from django.utils.translation import string_concat
 
 from lino.core import actions
 
+from lino.core.modeltools import resolve_app
+
 class Handle:
   
     def __init__(self,ui):
@@ -174,19 +176,24 @@ class UI:
         urlpatterns = self.get_media_urls()
         if settings.LINO.admin_url:
         #~ if self.prefix:
-            from lino.ui.extjs3 import views
-            urlpatterns += patterns('',
-                ('^$', views.WebIndex.as_view()),
-                ('^(?P<ref>\w+)$', views.WebIndex.as_view()),
-            )
+        
             urlpatterns += patterns('',
               ('^'+settings.LINO.admin_url[1:]+"/", include(self.get_urls()))
             )
+            pages = resolve_app('pages')
+            urlpatterns += pages.get_urls()
+            #~ from lino.ui.extjs3 import views
+            #~ from lino.modlib.pages.models import WebIndex
+            #~ urlpatterns += patterns('',
+                #~ ('', pages.WebIndex.as_view()),
+                #~ ('^$', WebIndex.as_view()),
+                #~ ('^(?P<ref>\w+)$', WebIndex.as_view()),
+            #~ )
         else:
             urlpatterns += self.get_urls()
         return urlpatterns
         
-    def get_urls():
+    def get_urls(self):
         raise NotImplementedError()
         
 
