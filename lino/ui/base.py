@@ -25,9 +25,20 @@ from django.conf import settings
 from django.conf.urls import patterns, include, url
 from django.utils.translation import string_concat
 
+from django.utils.translation import get_language
+
+
+from django import http
+from django.views.generic import View
+
+
 from lino.core import actions
 
 from lino.core.modeltools import resolve_app
+
+
+#~ from django.conf.urls.defaults import patterns, url, include
+
 
 class Handle:
   
@@ -180,8 +191,29 @@ class UI:
             urlpatterns += patterns('',
               ('^'+settings.LINO.admin_url[1:]+"/", include(self.get_urls()))
             )
+            
             pages = resolve_app('pages')
-            urlpatterns += pages.get_urls()
+
+            class WebIndex(View):
+              
+                #~ def get(self, request,ref='index'):
+                def get(self, request,ref=''):
+                    #~ print 20121220, ref
+                    obj = pages.lookup(ref,get_language())
+                    html = pages.render(request,obj)
+                    return http.HttpResponse(html)
+
+            
+            refs = set()
+            #~ urlpatterns = []
+            for page in pages.get_all_pages():
+                refs.add(page.ref)
+            for ref in refs:
+                urlpatterns += patterns('',
+                   (r'^%s$' % ref, WebIndex.as_view(),dict(ref=ref)))
+            #~ return urlpatterns
+            
+            #~ urlpatterns += pages.get_urls()
             #~ from lino.ui.extjs3 import views
             #~ from lino.modlib.pages.models import WebIndex
             #~ urlpatterns += patterns('',

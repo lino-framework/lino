@@ -20,6 +20,7 @@ file since it does not import any django module.
 
 import os
 import sys
+import cgi
 import datetime
 
 from os.path import join, abspath, dirname, normpath
@@ -166,7 +167,7 @@ class Lino(object):
     """
     If this is not empty (the usual value in that case is ``"/admin"``), 
     then your site features a "web content mode": 
-    the root url renders normal readonly web content defined by :attr:`cms_index_page`.
+    the root url renders normal readonly web content defined by :mod:`lino.modlib.pages`.
     
     Make sure that it begins with a slash if not empty.
     
@@ -1315,6 +1316,10 @@ class Lino(object):
         #~ obj = pages.lookup('admin')
         from lino.utils import babel
         node = pages.lookup('admin',babel.get_language())
+        if node is None:
+            print '20121221 No admin page within %s' % [unicode(p) for p in pages.get_all_pages()]
+            return '20121221 No admin page within %s' % [cgi.escape(unicode(p)) for p in pages.get_all_pages()]
+            #~ print 20121221, repr(node)
         #~ node = pages.lookup('index')
         return pages.render(request,node,self.MAIN_HTML_TEMPLATE)
 
@@ -1686,6 +1691,8 @@ class Lino(object):
         #~ 'django.contrib.markup',
         yield 'lino'
         yield 'lino.modlib.about'
+        #~ if self.admin_url:
+            #~ yield 'lino.modlib.pages'
         
     def get_guest_greeting(self):
         return xghtml.E.p("Please log in")

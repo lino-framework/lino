@@ -30,8 +30,6 @@ from django.utils.translation import ugettext_lazy as _
 from django.utils.translation import pgettext_lazy 
 from django.utils.translation import get_language
 
-from django import http
-from django.views.generic import View
 
 #~ from django.contrib.contenttypes.models import ContentType
 #~ from django.contrib.contenttypes import generic
@@ -238,17 +236,22 @@ def lookup(ref,language=None,strict=False):
     try:
         return Page.objects.get(ref=ref,language=language)
     except Page.DoesNotExist:
-        if not strict and language != babel.DEFAULT_LANGUAGE:
+        pass
+        
+    if not strict:
+        try:
+            return Page.objects.get(ref=ref,language='')
+        except Page.DoesNotExist:
+            pass
+        if language != babel.DEFAULT_LANGUAGE:
             try:
                 return Page.objects.get(ref=ref,language=babel.DEFAULT_LANGUAGE)
             except Page.DoesNotExist:
                 pass
-    try:
-        return Page.objects.get(ref=ref,language='')
-    except Page.DoesNotExist:
-        logger.debug("Unknown page reference %r. Choices are %s.",
-            ref,Page.objects.all().values_list('ref',flat=True))
-        return None
+        
+    #~ logger.debug("Unknown page reference %r. Choices are %s.",
+        #~ ref,Page.objects.all().values_list('ref',flat=True))
+    #~ return None
         #~ raise Exception("Unknown page ref %r. Choices are %s." % (
             #~ ref,Page.objects.all().values_list('ref',flat=True)))
         #~ return dummy.lookup(ref)
@@ -318,25 +321,17 @@ def setup_config_menu(site,ui,profile,m):
   
 #~ customize_siteconfig()  
 
-from django.conf.urls.defaults import patterns, url, include
 
-class WebIndex(View):
-  
-    #~ def get(self, request,ref='index'):
-    def get(self, request,ref=''):
-        #~ print 20121220, ref
-        obj = lookup(ref,babel.get_language())
-        html = render(request,obj)
-        return http.HttpResponse(html)
         
+def get_all_pages():
+    return Page.objects.all()
 
-def get_urls():
-    #~ print "20121110 get_urls"
-    refs = set()
-    urlpatterns = []
-    for page in Page.objects.all():
-        refs.add(page.ref)
-    for ref in refs:
-        urlpatterns += patterns('',
-           (r'^%s$' % ref, WebIndex.as_view(),dict(ref=ref)))
-    return urlpatterns
+#~ def get_urls():
+    #~ refs = set()
+    #~ urlpatterns = []
+    #~ for page in Page.objects.all():
+        #~ refs.add(page.ref)
+    #~ for ref in refs:
+        #~ urlpatterns += patterns('',
+           #~ (r'^%s$' % ref, WebIndex.as_view(),dict(ref=ref)))
+    #~ return urlpatterns

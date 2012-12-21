@@ -30,50 +30,64 @@ from lino.modlib.pages.builder import Page, objects
     
 class Index(Page):
     """
-    Welcome to the <b>{{LINO.title}}</b> site.
-    We are running <a href="{{LINO.url}}">{{LINO.short_name}}</a> 
+    Welcome to the **{{LINO.title}}** site.
+    We are running 
+    `{{LINO.short_name}} <{{LINO.url}}>`__
     version {{LINO.version}}, {{LINO.description}}
-    """
-    language = 'en'
-    raw_html = True
     
-if settings.LINO.admin_url:
-      
-    if settings.LINO.user_model is None:
-        raise Exception("When admin_url is not empty, user_model cannot be None")
-            
-    Index.__doc__ += """
-    <p>
-    You are currently seeing the <strong>plain web content</strong> section,
+    {% if settings.LINO.admin_url %}
+    
+    You are currently seeing the **web content** section,
     which contains just this default index page 
     because this site hasn't been configured to show something else here.
-    </p><p>
+    
     To see what Lino really adds to a Django site, 
-    you should go to the <strong>admin</strong> section.
-    </p>        
-    <p align="center"><button onclick="document.location='/admin/'">admin</button></p>
+    you should go to the **Admin** section.
+    
+    {% endif %}
     """
+    language = 'en'
+    
     
 
 class Index(Page):
     """
-    Bienvenue sur <b>[=LINO.title]</b>.
+    Bienvenue sur **{{LINO.title}}**.
     Ce site est une démonstration en ligne de
-    <a href="{{LINO.url}}">{{LINO.short_name}}</a> 
-    version {{LINO.version}}, {{LINO.description}}.
+    `{{LINO.short_name}} <{{LINO.url}}>`__
+    version {{LINO.version}}, {{LINO.description}}
+    
+    {% if settings.LINO.admin_url %}
+    
+    Ceci est la section "web public" qui ne contient que cette page bidon
+    parce que ce site n'a pas été configuré pour montrer plus d'information ici.
+    
+    Pour voir ce que Lino ajoute à Django, vous devriez maintenant aller 
+    dans la section Admin.
+    
+    {% endif %}
     """
     language = 'fr'
-    raw_html = True
+    #~ raw_html = True
+    
 
 class Index(Page):
     """
-    Willkommen auf <b>[=LINO.title]</b>.
+    Willkommen auf {{LINO.title}}.
     Diese Site ist eine Online-Demo von
-    <a href="{{LINO.url}}">{{LINO.short_name}}</a> 
-    version {{LINO.version}}, {{LINO.description}}.
+    `{{LINO.short_name}} <{{LINO.url}}>`__
+    version {{LINO.version}}, {{LINO.description}}
+    
+    {% if settings.LINO.admin_url %}
+    
+    Dies hier ist der öffentliche Bereich mit frei konfigurierbarem Webinhalt.
+    Um das Besondere an Lino zu sehen, sollten Sie nun auf den 
+    Link **Admin** oben rechts klicken.
+   
+    {% endif %}
+    
     """
     language = 'de'
-    raw_html = True
     
     
 class About(Page):
@@ -83,22 +97,30 @@ class About(Page):
     version {{LINO.version}}, {{LINO.description}}.
     """
     title = "About"
-    raw_html = True
+    #~ raw_html = True
     language = 'en'
     
     
 class Admin(Page):
     """
-    You have entered the admin section.
+    You have entered the **admin** section.
+    Unlike the `web content section </>`__ there is now a GUI menu 
+    bar in the upper part of the screen.
+    
     You will now probably want to 
-    use the :guilabel:Log in` button in the upper right corner 
+    use the :guilabel:`Log in` button in the upper right corner 
     and log in. 
     
     This demo site has 
-    [=LINO.modules.users.UsersOverview.request().get_total_count()] 
+    {{LINO.modules.users.UsersOverview.request().get_total_count()}}
     users configured, they all have "1234" as password:
     
-    [ul users.UsersOverview]
+    {{as_ul('users.UsersOverview')}}
+    
+    
+    Enjoy!
+    Your feedback is welcome to lino-users@googlegroups.com
+    or directly to the person who invited you.
     
     """
     special = True
@@ -115,6 +137,11 @@ class Admin(Page):
     
     {{as_ul('users.UsersOverview')}}
     
+    Viel Spaß!
+    Reaktionen und Kommentare sind willkommen an lino-users@googlegroups.com
+    oder direkt die Person, die Sie eingeladen hat.
+    
+    
     """
     language = 'de'
     special = True
@@ -130,6 +157,8 @@ class Admin(Page):
     
     {{as_ul('users.UsersOverview')}}
     
+    Vos commentaires sont les bienvenus sur lino-users@googlegroups.com
+    oubien directement à la personne qui vous a invitée.
     """
     language = 'fr'
     special = True
@@ -179,7 +208,7 @@ def unused_objects():
             
         WEB_INDEX.body += """
         <p>
-        You are currently seeing the <strong>plain web content</strong> section,
+        You are currently seeing the <strong>web content</strong> section,
         which contains just this default index page 
         because this site hasn't been configured to show something else here.
         </p>

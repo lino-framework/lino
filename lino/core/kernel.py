@@ -433,7 +433,8 @@ def startup_site(self):
         #~ logger.info("20120102 modules: %s",self.modules)
         
         
-        
+        from lino.core import web
+        self.PAGE_TEMPLATE = web.build_page_template(self)
         
         logger.info("Lino Site %r started. Languages: %s. %s actors.", 
             self.title, ', '.join(babel.AVAILABLE_LANGUAGES),len(actors.actors_list))

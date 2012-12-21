@@ -1,7 +1,10 @@
 /* styles to be applied after bootstrap css */
+body { font-family: arial,tahoma; }
 div .header {
   text-align: right;
-  background-color:#c7dffc;
+  /* background-color:#c7dffc;*/
+  background-color:gold;
+  padding: 3px 6px;
 }
 div .footer {
   text-align: center;

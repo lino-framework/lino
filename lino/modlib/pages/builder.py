@@ -40,8 +40,18 @@ class PageBuilderMeta(type):
             cls.ref = ''
         if (not cls.language) or cls.language in babel.AVAILABLE_LANGUAGES:
             PAGES[pagekey(cls)] = cls
+        #~ print 20121221, classname, PAGES
         return cls
 
+class Page(object):
+    __metaclass__ = PageBuilderMeta
+    language = ''
+    ref = ''
+    title = ''
+    raw_html = False
+    special = False
+
+    
 
 def objects():
     global PAGES
@@ -59,12 +69,3 @@ def objects():
                 #~ body=restify(cls.__doc__))
     PAGES = {}
 
-class Page(object):
-    __metaclass__ = PageBuilderMeta
-    language = ''
-    ref = ''
-    title = ''
-    raw_html = False
-    special = False
-
-    
