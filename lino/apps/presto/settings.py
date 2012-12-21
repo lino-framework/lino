@@ -49,21 +49,21 @@ class Lino(Lino):
     #~ def setup_quicklinks(self,ui,user,tb):
         #~ tb.add_action(self.modules.contacts.Persons.detail_action)
         
-    def get_partner_account(self,voucher):
-        tt = voucher.get_trade_type()
-        if tt.name == 'sales':
-            return '400000'
-        elif tt.name == 'purchases':
-            return '440000'
+    #~ def get_partner_account(self,voucher):
+        #~ tt = voucher.get_trade_type()
+        #~ if tt.name == 'sales':
+            #~ return '400000'
+        #~ elif tt.name == 'purchases':
+            #~ return '440000'
             
-    def get_product_base_account(self,tt,product):
-        if tt.name == 'sales':
-            return '704000'
-        elif tt.name == 'purchases':
-            return '604000'
+    #~ def get_product_base_account(self,tt,product):
+        #~ if tt.name == 'sales':
+            #~ return '704000'
+        #~ elif tt.name == 'purchases':
+            #~ return '604000'
             
-    def get_vat_account(self,tt,vc,vr):
-        return '472100'
+    #~ def get_vat_account(self,tt,vc,vr):
+        #~ return '472100'
         
         
     def setup_choicelists(self):
