@@ -271,7 +271,7 @@ def get_sidebar_html(site,request=None,node=None,**context):
 
 lino = dd.resolve_app('lino')
 
-from lino.modlib.pages.dummy import site_setup, render
+from lino.modlib.pages.dummy import render
     
 def unused_customize_siteconfig():
     """
