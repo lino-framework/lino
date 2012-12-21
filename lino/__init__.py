@@ -21,8 +21,12 @@ file since it does not import any django module.
 import os
 import sys
 import datetime
+
 from os.path import join, abspath, dirname, normpath
 from decimal import Decimal
+
+from jinja2 import Template
+
 from lino.utils.xmlgen import html as xghtml
 #~ from lino.utils import babel
 
@@ -1291,12 +1295,12 @@ class Lino(object):
         """
         return None
         
-        
-    MAIN_HTML_TEMPLATE = """\
+    
+    MAIN_HTML_TEMPLATE = Template("""\
     <div class="htmlText">
-    <h1>[=title]</h1>
-    [=parse(node.body)]
-    </div>"""
+    <h1>{{node.title}}</h1>
+    {{parse(node.body)}}
+    </div>""")
 
         
         
@@ -1310,9 +1314,9 @@ class Lino(object):
         pages = dd.resolve_app('pages')
         #~ obj = pages.lookup('admin')
         from lino.utils import babel
-        obj = pages.lookup('admin',babel.get_language())
-        #~ obj = pages.lookup('index')
-        return pages.render(obj,self.MAIN_HTML_TEMPLATE)
+        node = pages.lookup('admin',babel.get_language())
+        #~ node = pages.lookup('index')
+        return pages.render(request,node,self.MAIN_HTML_TEMPLATE)
 
 
     vat_quarterly = False

@@ -44,9 +44,12 @@ from lino import dd
 #~ from lino import reports
 #~ from lino import layouts
 #~ from lino.utils import perms
-from lino.utils.restify import restify
+#~ from lino.utils.restify import restify
 #~ from lino.utils import printable
 from lino.utils import babel
+from lino.utils import iif
+from lino.utils.xmlgen import html as xghtml
+
 from lino import mixins
 from django.conf import settings
 #~ from lino import choices_method, simple_choices_method
@@ -54,11 +57,11 @@ from django.conf import settings
 #~ from lino.modlib.outbox import models as outbox
 
 
-outbox = dd.resolve_app('outbox')
-postings = dd.resolve_app('postings')
+#~ outbox = dd.resolve_app('outbox')
+#~ postings = dd.resolve_app('postings')
 #~ contacts = dd.resolve_app('contacts')
 
-from lino.modlib.pages import dummy
+#~ from lino.modlib.pages import dummy
 
 #~ class PageType(babel.BabelNamed,mixins.PrintableType,outbox.MailableType):
   
@@ -186,49 +189,108 @@ class Pages(dd.Table):
         #~ column_names = "type title user *"
         #~ order_by = ["-modified"]
         
+
+def create_page(**kw):
+    #~ logger.info("20121219 create_page(%r)",kw)
+    return Page(**kw)
+
+def page(ref,language='en',title=None,body=None,**kw):
+    """
+    Instantiator shortcut for use in fixtures.
+    """
+    if title is not None: kw.update(title=title)
+    if body is not None: kw.update(body=body)
+    if language is None: language = ''
+    kw.update(language=language)
+    #~ lang = kw.get('language')
+    #~ if lang is None:
+        #~ kw.update(language=babel.DEFAULT_LANGUAGE)
+        #~ babel.set_language(None)
+    #~ else:
+        #~ babel.set_language(lang)
+    #~ page = None
+    #~ if language in babel.AVAILABLE_LANGUAGES:
+        #~ r = DummyPage.pages_dict.get(ref)
+        #~ if r is not None: 
+            #~ page = r.get(language) 
+        # babel.set_language(language)
+    page = lookup(ref,language,True)
+    if page is None:
+        #~ qs = pages.Page.objects.filter(ref=ref)
+        #~ if qs.count() == 0:
+        return create_page(ref=ref,**kw)
+    #~ if qs.count() == 1:
+    #~ obj = qs[0]
+    for k,v in kw.items():
+        setattr(page,k,v)
+    #~ page.title = title
+    #~ page.body = body
+    #~ logger.info("20121219 updated %s %s",ref,language)
+    return page
+        
+
+
+
+def lookup(ref,language=None,strict=False): 
+#~ def lookup_page(self,ref,language):
+    #~ logger.info("20121219 lookup_page(%r,%r)",ref,language)
+    try:
+        return Page.objects.get(ref=ref,language=language)
+    except Page.DoesNotExist:
+        if not strict and language != babel.DEFAULT_LANGUAGE:
+            try:
+                return Page.objects.get(ref=ref,language=babel.DEFAULT_LANGUAGE)
+            except Page.DoesNotExist:
+                pass
+    try:
+        return Page.objects.get(ref=ref,language='')
+    except Page.DoesNotExist:
+        logger.debug("Unknown page reference %r. Choices are %s.",
+            ref,Page.objects.all().values_list('ref',flat=True))
+        return None
+        #~ raise Exception("Unknown page ref %r. Choices are %s." % (
+            #~ ref,Page.objects.all().values_list('ref',flat=True)))
+        #~ return dummy.lookup(ref)
+
+ 
+def render(request,node,template=None,**context):
+    def parse(s):
+        #~ print 20121221, s
+        return Template(s).render(**context)
+    context.update(
+        node=node,
+        settings=settings,
+        LINO=settings.LINO,
+        cgi=cgi,
+        babel=babel,
+        parse=parse,
+        iif=iif,
+        E=xghtml.E,
+        #~ title=cgi.escape(node.title)
+        )
+    context.update(sidebar=settings.LINO.get_sidebar_html(**context))
+    context.update(header=settings.LINO.get_header_html(**context))
+    context.update(footer=settings.LINO.get_footer_html(**context))
+        
+    #~ def parse(s):
+        #~ return self.parse(s,**context)
+    #~ context.update(parse=parse)
     
-#~ def render(*args,**kw): 
-    #~ return dummy.render(*args,**kw)
-    
-class Parser(dummy.Parser):
+    #~ if not obj.body:
+        #~ context.update(body=obj.abstract)
+        
+    if template is None:
+        template = settings.LINO.PAGE_TEMPLATE
+        
+    return template.render(**context)
   
-    def create_page(self,**kw):
-        #~ logger.info("20121219 create_page(%r)",kw)
-        return Page(**kw)
-        
-    def lookup_page(self,ref,language=None,strict=False): 
-    #~ def lookup_page(self,ref,language):
-        #~ logger.info("20121219 lookup_page(%r,%r)",ref,language)
-        try:
-            return Page.objects.get(ref=ref,language=language)
-        except Page.DoesNotExist:
-            if not strict and language != babel.DEFAULT_LANGUAGE:
-                try:
-                    return Page.objects.get(ref=ref,language=babel.DEFAULT_LANGUAGE)
-                except Page.DoesNotExist:
-                    pass
-        try:
-            return Page.objects.get(ref=ref,language='')
-        except Page.DoesNotExist:
-            logger.debug("Unknown page reference %r. Choices are %s.",
-                ref,Page.objects.all().values_list('ref',flat=True))
-            return None
-            #~ raise Exception("Unknown page ref %r. Choices are %s." % (
-                #~ ref,Page.objects.all().values_list('ref',flat=True)))
-            #~ return dummy.lookup(ref)
-        
-MEMO_PARSER = Parser()
-            
-page = MEMO_PARSER.instantiate_page
-lookup = MEMO_PARSER.lookup_page
-render = MEMO_PARSER.render
 
     
     
 lino = dd.resolve_app('lino')
 
 #~ self-made, inspired by http://de.selfhtml.org/css/layouts/mehrspaltige.htm
-SELFHTML_PAGE_TEMPLATE = """\
+unused_SELFHTML_PAGE_TEMPLATE = """\
 <html>
 <head>
 <title>[=title]</title>
@@ -271,7 +333,7 @@ def stylesheet(*args):
     url = settings.LINO.ui.media_url(*args) 
     return '<link rel="stylesheet" type="text/css" href="%s" />' % url
 
-def BLUEPRINT_PAGE_TEMPLATE(site):
+def unused_BLUEPRINT_PAGE_TEMPLATE(site):
     yield "<html><head>"
     yield "<title>[=title]</title>"
     p = site.ui.media_url('blueprint','screen.css')
@@ -312,7 +374,7 @@ def BLUEPRINT_PAGE_TEMPLATE(site):
         yield '</div>'
     yield '</div></body></html>'
     
-def bootstrap_page_template(site):
+def unused_memoparser_bootstrap_page_template(site):
     yield '<!DOCTYPE html>'
     yield '<html language="en"><head>'
     yield '<meta charset="utf-8"/>'
@@ -354,22 +416,65 @@ def bootstrap_page_template(site):
     
     yield '</div></body></html>'
     
+def bootstrap_page_template(site):
+    yield '<!DOCTYPE html>'
+    yield '<html language="en"><head>'
+    yield '<meta charset="utf-8"/>'
+    yield "<title>{{node.title}}</title>"
+    p = site.ui.media_url('bootstrap','css','bootstrap.css')
+    yield '<link rel="stylesheet" href="%s" type="text/css">' % p
+    p = site.ui.media_url('lino','bootstrap.css')
+    yield '<link rel="stylesheet" href="%s" type="text/css">' % p
+    yield '</head><body><div class="container-fluid">'
+    if True:
+        yield '  <div class="row-fluid header">{{header}}</div>'
+    #~ if site.site_config.header_page:
+        #~ yield '  <div class="row-fluid header">'
+        #~ yield settings.LINO.site_config.header_page.body
+        #~ yield '  </div>'
+    yield '  <div class="row-fluid">'
+    main_width = 12
     
+    #~ if site.site_config.sidebar_page:
+    if settings.LINO.sidebar_width:
+        main_width -= settings.LINO.sidebar_width
+        yield '<div class="span%d">{{sidebar}}</div>' % settings.LINO.sidebar_width
+        #~ main_width -= 2
+        #~ yield '    <div class="span2">'
+        #~ yield site.site_config.sidebar_page.body
+        #~ yield '    </div>'
+        
+    yield '    <div class="span%d">' % main_width
+    #~ yield '<h1>[=title]</h1>'
+    yield '{% if node.title%}<h1>{{node.title}}</h1>{% endif %}'
+    yield '{{parse(node.body)}}'
+    yield '    </div>'
+    yield '  </div>'
+    if True: # site.site_config.footer_page:
+        yield '  <div class="row-fluid footer">{{footer}}</div>'
+        #~ yield '  <div class="row-fluid footer">'
+        #~ yield settings.LINO.site_config.footer_page.body
+        #~ yield '  </div>'
+    
+    yield '</div></body></html>'
+    
+    
+from jinja2 import Template
 
 
 def site_setup(site):
+    site.PAGE_TEMPLATE = Template('\n'.join(list(bootstrap_page_template(settings.LINO))))
     #~ if settings.LINO.site_config.sidebar_page:
         #~ if settings.LINO.site_config.footer_page:
             #~ MEMO_PARSER.page_template =  BLUEPRINT_PAGE_TEMPLATE % settings.LINO.site_config.sidebar_page.body
     #~ MEMO_PARSER.page_template =  '\n'.join(list(BLUEPRINT_PAGE_TEMPLATE(site)))
-    MEMO_PARSER.page_template =  '\n'.join(list(bootstrap_page_template(site)))
-    site.modules.lino.SiteConfigs.set_detail_layout("""
-    sidebar_page footer_page header_page
-    """)
+    #~ site.modules.lino.SiteConfigs.set_detail_layout("""
+    #~ sidebar_page footer_page header_page
+    #~ """)
   
 
     
-def customize_siteconfig():
+def unused_customize_siteconfig():
     """
     Injects application-specific fields to :class:`SiteConfig <lino.models.SiteConfig>`.
     """
@@ -415,7 +520,7 @@ def setup_config_menu(site,ui,profile,m):
     #~ m  = m.add_menu("office",lino.OFFICE_MODULE_LABEL)
     #~ m.add_action(Pages)
   
-customize_siteconfig()  
+#~ customize_siteconfig()  
 
 from django.conf.urls.defaults import patterns, url, include
 
@@ -425,7 +530,7 @@ class WebIndex(View):
     def get(self, request,ref=''):
         #~ print 20121220, ref
         obj = lookup(ref,babel.get_language())
-        html = render(obj,request=request)
+        html = render(request,obj)
         return http.HttpResponse(html)
         
 

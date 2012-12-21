@@ -30,9 +30,9 @@ from lino.modlib.pages.builder import Page, objects
     
 class Index(Page):
     """
-    Welcome to the <b>[=LINO.title]</b> site.
-    We are running <a href="[=LINO.url]">[=LINO.short_name]</a> 
-    version [=LINO.version], [=LINO.description]
+    Welcome to the <b>{{LINO.title}}</b> site.
+    We are running <a href="{{LINO.url}}">{{LINO.short_name}}</a> 
+    version {{LINO.version}}, {{LINO.description}}
     """
     language = 'en'
     raw_html = True

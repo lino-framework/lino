@@ -9,11 +9,17 @@ Just a copy & paste of the :mod:`docutils.examples` module (as instructed there)
 """
 
 #~ import traceback
-from docutils import core, io
+from docutils import core, io, nodes
 
+#~ from docutils.parsers.rst import roles
 
-#~ for rolename, func in specific_docroles.iteritems():
-    #~ roles.register_local_role(rolename, func)
+#~ def doc_role(typ, rawtext, text, lineno, inliner,
+             #~ options={}, content=[]):
+    #~ node = nodes.reference(rawtext, reftype=role, refdomain=domain,
+                                 #~ refexplicit=has_explicit_title)
+    #~ return [node], []
+    
+#~ roles.register_local_role('doc', docrole)
 
 
 def html_parts(input_string, source_path=None, destination_path=None,

@@ -46,6 +46,7 @@ from lino.core import dbtables
 from lino.core import changes
 
 from lino.core.modeltools import obj2str, obj2unicode
+from lino.core.modeltools import makedirs_if_missing
 
 from lino.ui import requests as ext_requests
 from lino.ui.extjs3 import ext_elems
@@ -796,7 +797,7 @@ class ApiElement(View):
                 
             #~ main = xghtml.Table()
             
-            wl = ar.bound_action.action.get_window_layout()
+            wl = ar.bound_action.get_window_layout()
             #~ print 20120901, wl.main
             lh = wl.get_layout_handle(ar.ui)
             
@@ -1041,8 +1042,10 @@ class ApiList(View):
             if not tplfile:
                 raise Exception("No file %s / %s" % (tplgroup,tpl_leaf))
                 
-            target_parts = ['cache', 'appypdf', str(ar.actor) + '.' + fmt]
+            ip = ar.request.META.get('REMOTE_ADDR','unknown_ip')
+            target_parts = ['cache', 'appypdf', ip, str(ar.actor) + '.' + fmt]
             target_file = os.path.join(settings.MEDIA_ROOT,*target_parts)
+            makedirs_if_missing(os.path.dirname(target_file))
             target_url = ar.ui.media_url(*target_parts)
             ar.renderer = ar.ui.ext_renderer # 20120624
             """

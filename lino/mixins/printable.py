@@ -500,6 +500,7 @@ class BasePrintAction(actions.RowAction):
             logger.info(u"%s %s -> overwrite existing %s.",bm,elem,filename)
             os.remove(filename)
         else:
+            #~ logger.info("20121221 makedirs_if_missing %s",os.path.dirname(filename))
             makedirs_if_missing(os.path.dirname(filename))
         logger.debug(u"%s : %s -> %s", bm,elem,filename)
         return filename

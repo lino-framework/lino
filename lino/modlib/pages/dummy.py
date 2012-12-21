@@ -63,7 +63,7 @@ class DummyPage(object):
         #~ return self
 
 
-class Parser(memo.Parser):
+class unused_Parser(memo.Parser):
   
     #~ <body style="font-family:Arial;padding:2em;background-color:wheat;">
     page_template = """\
@@ -220,11 +220,15 @@ class Parser(memo.Parser):
         #~ return func()
             
 
-MEMO_PARSER = Parser()
+#~ MEMO_PARSER = Parser()
 
-page = MEMO_PARSER.instantiate_page
-lookup = MEMO_PARSER.lookup_page
-render = MEMO_PARSER.render
+  
+  
+#~ NODE_PARSER = Parser()
+
+#~ page = MEMO_PARSER.instantiate_page
+#~ lookup = MEMO_PARSER.lookup_page
+#~ render = MEMO_PARSER.render
 
 
 
