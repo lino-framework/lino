@@ -1709,17 +1709,7 @@ class Lino(object):
         return 'Copyright &copy; 1789 The Great Site'
         
     def get_sidebar_html(self,request=None,node=None,**context):
-        from django.utils.translation import get_language
-        import cgi
-        html = ''
-        for n in self.modules.pages.Page.objects.exclude(special=True):
-            if not n.language or (n.language == get_language()):
-                text = cgi.escape(n.title or n.ref or "Home")
-                if n == node:
-                    html += '<br/>%s' % text
-                else:
-                    url = '/'+n.ref
-                    html += '<br/><a href="%s">%s</a> ' % (url,text)
-        return html
+        pages = dd.resolve_app('pages')
+        return pages.get_sidebar_html(self,request=None,node=None,**context)
         
     sidebar_width = 2

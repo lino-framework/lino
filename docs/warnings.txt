@@ -1,0 +1,26 @@
+T:\hgwork\lino\docs\autodoc\lino.apps.cms.rst:21: WARNING: autodoc can't import/find module 'lino.apps.cms.fixtures.web', it reported error: "No module named web", please check your spelling and sys.path
+T:\hgwork\lino\docs\autodoc\lino.ui.extjs3.rst:4: WARNING: autodoc can't import/find module 'lino.ui.extjs3', it reported error: "'module' object has no attribute 'page'", please check your spelling and sys.path
+T:\hgwork\lino\docs\autodoc\lino.ui.extjs3.rst:20: WARNING: autodoc can't import/find module 'lino.ui.extjs3.ext_elems', it reported error: "cannot import name ext_elems", please check your spelling and sys.path
+T:\hgwork\lino\docs\autodoc\lino.ui.extjs3.rst:29: WARNING: autodoc can't import/find module 'lino.ui.extjs3.ext_ui', it reported error: "cannot import name ext_elems", please check your spelling and sys.path
+T:\hgwork\lino\docs\autodoc\lino.ui.extjs3.rst:38: WARNING: autodoc can't import/find module 'lino.ui.extjs3.ext_store', it reported error: "cannot import name ext_elems", please check your spelling and sys.path
+T:\hgwork\lino\docs\autodoc\lino.utils.sphinx.rst:5: WARNING: autodoc can't import/find module 'lino.utils.sphinx', it reported error: "No module named sphinx", please check your spelling and sys.path
+T:\hgwork\lino\docs\casts\lino_intro.rst:: WARNING: document isn't included in any toctree
+T:\hgwork\lino\docs\dev\versioning.rst:: WARNING: document isn't included in any toctree
+T:\hgwork\lino\docs\igen\index.rst:: WARNING: document isn't included in any toctree
+T:\hgwork\lino\docs\autodoc\lino.ui.rst:1: WARNING: py:mod reference target not found: lino.ui
+T:\hgwork\lino\docs\autodoc\lino.ui.rst:4: WARNING: py:mod reference target not found: lino.ui.extjs
+T:\hgwork\lino\docs\autodoc\lino.ui.extjs3.rst:1: WARNING: py:mod reference target not found: lino.ui.extjs3
+T:\hgwork\lino\docs\autodoc\lino.ui.extjs3.rst:9: WARNING: py:mod reference target not found: urls
+T:\hgwork\lino\docs\autodoc\lino.ui.extjs3.rst:17: WARNING: py:mod reference target not found: ext_elems
+T:\hgwork\lino\docs\autodoc\lino.ui.extjs3.rst:26: WARNING: py:mod reference target not found: ext_ui
+T:\hgwork\lino\docs\autodoc\lino.ui.extjs3.rst:35: WARNING: py:mod reference target not found: ext_store
+T:\hgwork\lino\docs\autodoc\lino.utils.rst:44: WARNING: py:class reference target not found: dict
+t:\hgwork\lino\lino\utils\__init__.py:docstring of lino.utils.call_on_bases:1: WARNING: unknown document: /blog/2011/0914
+t:\hgwork\lino\lino\utils\__init__.py:docstring of lino.utils.call_optional_super:1: WARNING: unknown document: /blog/2011/0914
+t:\hgwork\lino\lino\utils\__init__.py:docstring of lino.utils.codetime:1: WARNING: py:mod reference target not found: lino.ui.extjs3.ext_ui
+T:\hgwork\lino\docs\autodoc\lino.utils.rst:23: WARNING: py:class reference target not found: exceptions.Exception
+T:\hgwork\lino\docs\autodoc\lino.utils.rst:7: WARNING: py:mod reference target not found: docutils.examples
+T:\hgwork\lino\docs\autodoc\lino.utils.rst:17: WARNING: py:class reference target not found: docutils.writers.html4css1.HTMLTranslator
+T:\hgwork\lino\docs\autodoc\lino.utils.rst:29: WARNING: py:class reference target not found: docutils.writers.html4css1.Writer
+t:\hgwork\lino\lino\utils\restify.py:docstring of lino.utils.restify.old_restify:1: WARNING: unknown document: /blog/2011/0525
+T:\hgwork\lino\docs\autodoc\lino.utils.sphinx.rst:2: WARNING: py:mod reference target not found: lino.utils.sphinx

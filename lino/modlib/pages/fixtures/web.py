@@ -58,8 +58,9 @@ if settings.LINO.admin_url:
 class Index(Page):
     """
     Bienvenue sur <b>[=LINO.title]</b>.
-    Ce site utilise <a href="[=LINO.url]">[=LINO.short_name]</a> 
-    version [=LINO.version], [=LINO.description]
+    Ce site est une démonstration en ligne de
+    <a href="{{LINO.url}}">{{LINO.short_name}}</a> 
+    version {{LINO.version}}, {{LINO.description}}.
     """
     language = 'fr'
     raw_html = True
@@ -67,8 +68,9 @@ class Index(Page):
 class Index(Page):
     """
     Willkommen auf <b>[=LINO.title]</b>.
-    Diese Site benutzt <a href="[=LINO.url]">[=LINO.short_name]</a> 
-    version [=LINO.version], [=LINO.description]
+    Diese Site ist eine Online-Demo von
+    <a href="{{LINO.url}}">{{LINO.short_name}}</a> 
+    version {{LINO.version}}, {{LINO.description}}.
     """
     language = 'de'
     raw_html = True
@@ -77,8 +79,8 @@ class Index(Page):
 class About(Page):
     """
     This website is a life demonstration of 
-    <a href="[=LINO.url]">[=LINO.short_name]</a> 
-    version [=LINO.version], [=LINO.description].
+    <a href="{{LINO.url}}">{{LINO.short_name}}</a> 
+    version {{LINO.version}}, {{LINO.description}}.
     """
     title = "About"
     raw_html = True
@@ -108,10 +110,10 @@ class Admin(Page):
     Bildschirmecke, um sich anzumelden.
     
     Auf dieser Demo-Site gibt es
-    [=LINO.modules.users.UsersOverview.request().get_total_count()] 
+    {{LINO.modules.users.UsersOverview.request().get_total_count()}}
     Benutzer, die alle "1234" als Passwort haben:
     
-    [ul users.UsersOverview]
+    {{as_ul('users.UsersOverview')}}
     
     """
     language = 'de'
@@ -123,10 +125,10 @@ class Admin(Page):
     dans le coin supérieur droit de l'écran.
     
     Sur ce site démo il y a 
-    [=LINO.modules.users.UsersOverview.request().get_total_count()] 
+    {{LINO.modules.users.UsersOverview.request().get_total_count()}} 
     utilisateurs, tous avec "1234" comme mot de passe:
     
-    [ul users.UsersOverview]
+    {{as_ul('users.UsersOverview')}}
     
     """
     language = 'fr'

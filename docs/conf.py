@@ -246,7 +246,7 @@ latex_documents = [
 #~ srcref_base_uri="http://code.google.com/p/lino/source/browse/#hg" 
 #~ from timtools.sphinx import setup
 
-from lino.utils.sphinx import setup
+from lino.utils.sphinxconf import setup
 #~ from lino.utils.sphinx import setup as stdsetup
 #~ def setup(app):
     #~ stdsetup(app)
