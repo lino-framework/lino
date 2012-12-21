@@ -1295,7 +1295,7 @@ class Lino(object):
     MAIN_HTML_TEMPLATE = """\
     <div class="htmlText">
     <h1>[=title]</h1>
-    [=parse(obj.body or obj.abstract)]
+    [=parse(node.body)]
     </div>"""
 
         
@@ -1688,3 +1688,34 @@ class Lino(object):
 
     def get_urls(self):
         return []
+
+    def get_header_html(self,request=None,node=None,**context):
+        from django.utils.translation import get_language
+        html = ''
+        if len(self.languages) > 1:
+            for lang in self.languages:
+                if lang == get_language():
+                    html += lang + " "
+                else:
+                    html += '[<a href="?ul=%s">%s</a>] ' % (lang,lang)
+        html += '<a href="/admin/">Admin</a>'
+        return html
+        
+    def get_footer_html(self,request=None,**context):
+        return 'Copyright &copy; 1789 The Great Site'
+        
+    def get_sidebar_html(self,request=None,node=None,**context):
+        from django.utils.translation import get_language
+        import cgi
+        html = ''
+        for n in self.modules.pages.Page.objects.exclude(special=True):
+            if not n.language or (n.language == get_language()):
+                text = cgi.escape(n.title or n.ref or "Home")
+                if n == node:
+                    html += '<br/>%s' % text
+                else:
+                    url = '/'+n.ref
+                    html += '<br/><a href="%s">%s</a> ' % (url,text)
+        return html
+        
+    sidebar_width = 2

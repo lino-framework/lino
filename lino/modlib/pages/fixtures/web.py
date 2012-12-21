@@ -35,6 +35,7 @@ class Index(Page):
     version [=LINO.version], [=LINO.description]
     """
     language = 'en'
+    raw_html = True
     
 if settings.LINO.admin_url:
       
@@ -42,16 +43,15 @@ if settings.LINO.admin_url:
         raise Exception("When admin_url is not empty, user_model cannot be None")
             
     Index.__doc__ += """
-    
-    You are currently seeing the **plain web content** section,
+    <p>
+    You are currently seeing the <strong>plain web content</strong> section,
     which contains just this default index page 
     because this site hasn't been configured to show something else here.
-
+    </p><p>
     To see what Lino really adds to a Django site, 
-    you should go to the **admin** section.
-        
-    ..raw:: html
-        <p align="center"><button onclick="document.location='/admin/'">admin</button></p>
+    you should go to the <strong>admin</strong> section.
+    </p>        
+    <p align="center"><button onclick="document.location='/admin/'">admin</button></p>
     """
     
 
@@ -62,6 +62,7 @@ class Index(Page):
     version [=LINO.version], [=LINO.description]
     """
     language = 'fr'
+    raw_html = True
 
 class Index(Page):
     """
@@ -70,12 +71,23 @@ class Index(Page):
     version [=LINO.version], [=LINO.description]
     """
     language = 'de'
+    raw_html = True
     
+    
+class About(Page):
+    """
+    This website is a life demonstration of 
+    <a href="[=LINO.url]">[=LINO.short_name]</a> 
+    version [=LINO.version], [=LINO.description].
+    """
+    title = "About"
+    raw_html = True
+    language = 'en'
     
     
 class Admin(Page):
     """
-    You have entered the admin section. 
+    You have entered the admin section.
     You will now probably want to 
     use the :guilabel:Log in` button in the upper right corner 
     and log in. 
@@ -87,9 +99,11 @@ class Admin(Page):
     [ul users.UsersOverview]
     
     """
+    special = True
     
 class Admin(Page):
     """
+    Sie sind im Verwaltungsbereich ("admin").
     Bitte klicken Sie jetzt auf :guilabel:`Anmelden` in der oberen rechten 
     Bildschirmecke, um sich anzumelden.
     
@@ -101,6 +115,7 @@ class Admin(Page):
     
     """
     language = 'de'
+    special = True
 
 class Admin(Page):
     """
@@ -115,6 +130,7 @@ class Admin(Page):
     
     """
     language = 'fr'
+    special = True
     
 
 def unused_objects():

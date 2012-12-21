@@ -161,6 +161,8 @@ from lino.utils.xmlgen import etree
 
 class Parser(object):
   
+    safe_mode = False
+    
     def __init__(self,**context):
         self.commands = dict()
         self.context = context
@@ -204,9 +206,11 @@ class Parser(object):
         
 
     def parse(self,s,**context):
-        self.context = context
+        #~ self.context = context
+        self.context.update(context)
         s = COMMAND_REGEX.sub(self.cmd_match,s)
-        s = EVAL_REGEX.sub(self.eval_match,s)
+        if not self.safe_mode:
+            s = EVAL_REGEX.sub(self.eval_match,s)
         return s
 
 

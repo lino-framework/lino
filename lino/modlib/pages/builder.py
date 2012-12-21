@@ -47,7 +47,11 @@ def objects():
     global PAGES
     for cls in PAGES.values():
         if cls is not Page:
-            yield pages.page(cls.ref,cls.language,cls.title,restify(doc2rst(cls.__doc__)))
+            if cls.raw_html:
+                body = cls.__doc__
+            else:
+                body = restify(doc2rst(cls.__doc__))
+            yield pages.page(cls.ref,cls.language,cls.title,body,special=cls.special)
             #~ yield pages.Page(
                 #~ ref=cls.ref,
                 #~ language=cls.language,
@@ -60,5 +64,7 @@ class Page(object):
     language = ''
     ref = ''
     title = ''
+    raw_html = False
+    special = False
 
     

@@ -120,6 +120,7 @@ class Page(dd.Model):
     
     #~ type = models.ForeignKey(PageType,blank=True,null=True)
     title = models.CharField(_("Title"),max_length=200,blank=True) # ,null=True)
+    special = models.BooleanField(_("Special"),default=False)
     #~ abstract = dd.RichTextField(_("Abstract"),blank=True,format='html')
     body = dd.RichTextField(_("Body"),blank=True,format='html')
     
@@ -292,11 +293,13 @@ def BLUEPRINT_PAGE_TEMPLATE(site):
         
     main_width = 24
 
-    if settings.LINO.site_config.sidebar_page:
-        main_width -= 4
-        yield '<div class="span-4 border">'
-        yield settings.LINO.site_config.sidebar_page.body
-        yield '</div>'
+    #~ html = settings.LINO.
+    #~ if settings.LINO.site_config.sidebar_page:
+    if settings.LINO.sidebar_width:
+        main_width -= settings.LINO.sidebar_width
+        yield '<div class="span-%d border">[sidebar]</div>' % settings.LINO.sidebar_width
+        #~ yield settings.LINO.site_config.sidebar_page.body
+        #~ yield '</div>'
 
     yield '<div class="span-%d last">' % main_width
     yield '<h1>[=title]</h1>'
@@ -319,27 +322,35 @@ def bootstrap_page_template(site):
     p = site.ui.media_url('lino','bootstrap.css')
     yield '<link rel="stylesheet" href="%s" type="text/css">' % p
     yield '</head><body><div class="container-fluid">'
-    if site.site_config.header_page:
-        yield '  <div class="row-fluid header">'
-        yield settings.LINO.site_config.header_page.body
-        yield '  </div>'
+    if True:
+        yield '  <div class="row-fluid header">[header]</div>'
+    #~ if site.site_config.header_page:
+        #~ yield '  <div class="row-fluid header">'
+        #~ yield settings.LINO.site_config.header_page.body
+        #~ yield '  </div>'
     yield '  <div class="row-fluid">'
     main_width = 12
-    if site.site_config.sidebar_page:
-        main_width -= 2
-        yield '    <div class="span2">'
-        yield site.site_config.sidebar_page.body
-        yield '    </div>'
+    
+    #~ if site.site_config.sidebar_page:
+    if settings.LINO.sidebar_width:
+        main_width -= settings.LINO.sidebar_width
+        yield '<div class="span%d">[sidebar]</div>' % settings.LINO.sidebar_width
+        #~ main_width -= 2
+        #~ yield '    <div class="span2">'
+        #~ yield site.site_config.sidebar_page.body
+        #~ yield '    </div>'
+        
     yield '    <div class="span%d">' % main_width
     #~ yield '<h1>[=title]</h1>'
-    yield '[=iif(obj.title,E.h1(obj.title),"")]'
-    yield '[=parse(obj.body)]'
+    yield '[=iif(node.title,E.h1(node.title),"")]'
+    yield '[=parse(node.body)]'
     yield '    </div>'
     yield '  </div>'
-    if site.site_config.footer_page:
-        yield '  <div class="row-fluid footer">'
-        yield settings.LINO.site_config.footer_page.body
-        yield '  </div>'
+    if True: # site.site_config.footer_page:
+        yield '  <div class="row-fluid footer">[footer]</div>'
+        #~ yield '  <div class="row-fluid footer">'
+        #~ yield settings.LINO.site_config.footer_page.body
+        #~ yield '  </div>'
     
     yield '</div></body></html>'
     
@@ -362,13 +373,13 @@ def customize_siteconfig():
     """
     Injects application-specific fields to :class:`SiteConfig <lino.models.SiteConfig>`.
     """
-    dd.inject_field(lino.SiteConfig,
-        'sidebar_page',
-        models.ForeignKey(Page,
-            blank=True,null=True,
-            related_name='sidebar_page_set',
-            verbose_name=_("Left sidebar page"),
-            help_text=_("Page to use for left sidebar.")))
+    #~ dd.inject_field(lino.SiteConfig,
+        #~ 'sidebar_page',
+        #~ models.ForeignKey(Page,
+            #~ blank=True,null=True,
+            #~ related_name='sidebar_page_set',
+            #~ verbose_name=_("Left sidebar page"),
+            #~ help_text=_("Page to use for left sidebar.")))
             
     dd.inject_field(lino.SiteConfig,
         'header_page',
@@ -412,9 +423,9 @@ class WebIndex(View):
   
     #~ def get(self, request,ref='index'):
     def get(self, request,ref=''):
-        print 20121220, ref
+        #~ print 20121220, ref
         obj = lookup(ref,babel.get_language())
-        html = render(obj)
+        html = render(obj,request=request)
         return http.HttpResponse(html)
         
 

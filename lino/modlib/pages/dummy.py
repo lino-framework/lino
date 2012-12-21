@@ -73,7 +73,7 @@ class Parser(memo.Parser):
     </head>
     <body style="font-family:Arial;padding:2em;color:black;background-color:#c7dffc;">
     <h1>[=title]</h1>
-    [=parse(obj.body)]
+    [=parse(node.body)]
     </body>
     </html>
     """
@@ -84,6 +84,9 @@ class Parser(memo.Parser):
         self.register_command('url',self.url2html)
         self.register_command('ref',self.ref2html)
         self.register_command('include',self.inc2html)
+        self.register_command('sidebar',self.sidebar2html)
+        self.register_command('header',self.header2html)
+        self.register_command('footer',self.footer2html)
         self.register_command('ul',self.ul2html)
       
     def lookup_page(self,ref,language=None,strict=False): 
@@ -169,6 +172,10 @@ class Parser(memo.Parser):
             return '<a href="%s">%s</a>' % (url,text)
         raise NotImplementedError(chunks)
             
+    def sidebar2html(self,ref): return settings.LINO.get_sidebar_html(**self.context)
+    def header2html(self,ref): return settings.LINO.get_header_html(**self.context)
+    def footer2html(self,ref): return settings.LINO.get_footer_html(**self.context)
+        
     def inc2html(self,ref):
         page = self.lookup_page(ref,babel.get_language())
         return page.body
@@ -181,9 +188,9 @@ class Parser(memo.Parser):
         
 
 
-    def render(self,obj,template=None):
-        context = dict(
-            obj=obj,
+    def render(self,obj,template=None,**context):
+        context.update(
+            node=obj,
             settings=settings,
             LINO=settings.LINO,
             cgi=cgi,
@@ -202,13 +209,15 @@ class Parser(memo.Parser):
         if template is None:
             template = self.page_template
             
-        def func():        
-            return self.parse(template,**context)
+        return self.parse(template,**context)
         
-        if obj.language:
-            return babel.run_with_language(obj.language,func)
+        #~ def func():        
+            #~ return self.parse(template,**context)
+        
+        #~ if obj.language:
+            #~ return babel.run_with_language(obj.language,func)
             
-        return func()
+        #~ return func()
             
 
 MEMO_PARSER = Parser()
