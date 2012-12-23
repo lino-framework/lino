@@ -118,4 +118,7 @@ http://moinmo.in/MoinMoinBugs
 blogger.entry(DEMOS,1722,"demo3.lino-framework.org was broken",
 """
 NameError "global name 'pages' is not defined"
+
+ImportError: # sphinx 0.6.6 didn't have split_explicit_title
+
 """)

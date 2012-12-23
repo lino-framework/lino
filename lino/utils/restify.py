@@ -162,7 +162,18 @@ import sphinx.roles
 
 from docutils.parsers.rst import roles
 
-from sphinx.util.nodes import split_explicit_title
+try:
+  from sphinx.util.nodes import split_explicit_title
+except ImportError: # sphinx 0.6.6 didn't have this
+  import re
+  explicit_title_re = re.compile(r'^(.+?)\s*(?<!\x00)<(.*?)>$', re.DOTALL)
+  def split_explicit_title(text):
+      """Split role content into title and target, if given."""
+      match = explicit_title_re.match(text)
+      if match:
+          return True, match.group(1), match.group(2)
+      return False, text, text
+
 
 def mod_role(role, rawtext, text, lineno, inliner,options={}, content=[]):
     has_explicit_title, title, target = split_explicit_title(text)                   
