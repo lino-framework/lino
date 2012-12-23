@@ -138,7 +138,7 @@ class unused_Parser: # (memo.Parser):
 
 #~ def page(ref,language=None,strict=False): 
 def lookup(ref,language=None,strict=False): 
-    logger.info("20121205 lookup %r %r,%r",ref,language,DummyPage.pages_dict)
+    #~ logger.info("20121205 lookup %r %r,%r",ref,language,DummyPage.pages_dict)
     r = DummyPage.pages_dict.get(ref)
     if r is None: return None
     #~ if language is None:

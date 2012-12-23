@@ -35,51 +35,17 @@ from django.db.models import loading
 #~ from lino.core import actors
 #~ from lino.utils import get_class_attr
 
-import re
 import lino
 from lino.core.modeltools import app_labels
 from lino.utils import confirm, curry
 from lino.utils.config import find_config_file
 from lino.utils import rstgen 
 from lino.utils import babel
+from lino.utils.restify import doc2rst, abstract
 from lino.core import dbtables
 
 from lino.core.modeltools import makedirs_if_missing, full_model_name
 
-# Copied from doctest:
-
-# This regular expression finds the indentation of every non-blank
-# line in a string.
-_INDENT_RE = re.compile('^([ ]*)(?=\S)', re.MULTILINE)
-
-def min_indent(s):
-    "Return the minimum indentation of any non-blank line in `s`"
-    indents = [len(indent) for indent in _INDENT_RE.findall(s)]
-    if len(indents) > 0:
-        return min(indents)
-    else:
-        return 0
-        
-def doc2rst(s):
-    if s is None:
-        return u''
-    s = s.expandtabs()
-    # If all lines begin with the same indentation, then strip it.
-    mi = min_indent(s)
-    if mi > 0:
-        s = '\n'.join([l[mi:] for l in s.split('\n')])
-    return s
-
-
-def abstract(o,indent=0):
-    s = doc2rst(o.__doc__).strip()
-    if not s: return '(no docstring)'
-    paras = s.split('\n\n',1)
-    par = paras[0]
-    if indent:
-        par = (' '*indent).join(par.splitlines())
-    return par
-    
 def fieldtype(f):
     if isinstance(f,models.ForeignKey):
         return f.__class__.__name__ + " to " + refto(f.rel.to)

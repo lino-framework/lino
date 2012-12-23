@@ -1,17 +1,27 @@
 20121221
 ========
 
-Calling http://demo2.lino-framework.org/admin/api/countries/Country/BE?fmt=plain
-caused a TypeError "get_window_layout() takes exactly 2 arguments (1 given)",
-:mod:`lino.ui.extjs3.views`, line 832. This was a simple typo bug.
+Continued on the "CMS project". 
+I now use Jinja2 instead of :mod:`lino.utils.memo`.
+
+Somebody who tried the public demo sites found two bugs:
+
+- Calling http://demo2.lino-framework.org/admin/api/countries/Country/BE?fmt=plain
+  caused a TypeError "get_window_layout() takes exactly 2 arguments (1 given)",
+  :mod:`lino.ui.extjs3.views`, line 832. This was a simple typo bug.
 
 
-Calling http://demo2.lino-framework.org/admin/api/cal/MyPresences?fmt=pdf
-caused a PodError "I cannot write result file
-`.../homeworkschool/media/cache/appypdf/cal.MyPresences.pdf`
-[Errno 2] No such file or directory...".
-The corresponding code forgot to call :func:`lino.core.modeltools.makedirs_if_missing`. 
-By the way I solved a theoretic problem: if two simultaneous requests 
-called a [pdf] version of the same actor, they would generate the same file. 
-Now the filename includes the remote IP address.
+- Calling http://demo2.lino-framework.org/admin/api/cal/MyPresences?fmt=pdf
+  caused a PodError "I cannot write result file
+  `.../homeworkschool/media/cache/appypdf/cal.MyPresences.pdf`
+  [Errno 2] No such file or directory...".
+  The corresponding code forgot to call :func:`lino.core.modeltools.makedirs_if_missing`. 
+  By the way I solved a theoretic problem: if two simultaneous requests 
+  called a [pdf] version of the same actor, they would generate the same file. 
+  Now the filename includes the remote IP address.
 
+
+After having fixed these bugs I decided to make a quick upgrade of the demo sites.
+Which was of course a risky thing after all the changes to :mod:`lino.modlib.pages`.
+And indeed it caused the demo sites to be offline for a few hours because there 
+were still plenty of issues in the new CMS functions.

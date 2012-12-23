@@ -9,7 +9,45 @@ Just a copy & paste of the :mod:`docutils.examples` module (as instructed there)
 """
 
 #~ import traceback
-from docutils import core, io, nodes
+from docutils import core, io, nodes, utils
+
+
+# Copied from doctest:
+import re
+# This regular expression finds the indentation of every non-blank
+# line in a string.
+_INDENT_RE = re.compile('^([ ]*)(?=\S)', re.MULTILINE)
+
+def min_indent(s):
+    "Return the minimum indentation of any non-blank line in `s`"
+    indents = [len(indent) for indent in _INDENT_RE.findall(s)]
+    if len(indents) > 0:
+        return min(indents)
+    else:
+        return 0
+        
+def doc2rst(s):
+    if s is None:
+        return u''
+    s = s.expandtabs()
+    # If all lines begin with the same indentation, then strip it.
+    mi = min_indent(s)
+    if mi > 0:
+        s = '\n'.join([l[mi:] for l in s.split('\n')])
+    return s
+
+
+def abstract(o,indent=0):
+    s = doc2rst(o.__doc__).strip()
+    if not s: return '(no docstring)'
+    paras = s.split('\n\n',1)
+    par = paras[0]
+    if indent:
+        par = (' '*indent).join(par.splitlines())
+    return par
+    
+
+
 
 #~ from docutils.parsers.rst import roles
 
@@ -119,11 +157,29 @@ class Writer(html4css1.Writer):
 simply importing the sphinx.roles module 
 causes these text roles to be installed
 """
-from sphinx import roles 
+import sphinx.roles
+#~ from sphinx import roles
+
+from docutils.parsers.rst import roles
+
+from sphinx.util.nodes import split_explicit_title
+
+def mod_role(role, rawtext, text, lineno, inliner,options={}, content=[]):
+    has_explicit_title, title, target = split_explicit_title(text)                   
+    ref = 'http://not_implemented/'  + target
+    return [nodes.reference(rawtext, utils.unescape(title), refuri=ref,
+        **options)], []
+roles.register_local_role('mod', mod_role)
+
+def srcref_role(role, rawtext, text, lineno, inliner,options={}, content=[]):
+    has_explicit_title, title, target = split_explicit_title(text)                   
+    ref = 'http://not_implemented/'  + target
+    return [nodes.reference(rawtext, utils.unescape(title), refuri=ref,
+        **options)], []
+roles.register_local_role('srcref', srcref_role)
 
 #~ import sphinx
 #~ print sphinx.__file__
-#~ import sphinx.roles
 
 def restify(input_string,source_path=None, destination_path=None,
             input_encoding='unicode', doctitle=1, initial_header_level=1):

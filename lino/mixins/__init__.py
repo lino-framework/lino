@@ -523,6 +523,24 @@ from lino.core import actions
 from lino.mixins import printable
 
 
+class Referrable(model.Model):
+    class Meta:
+        abstract = True
+    ref = fields.NullCharField(_("Reference"),max_length=40,blank=True,null=True,unique=True)
+    
+    @classmethod
+    def get_by_ref(cls,ref):
+        try:
+            return cls.objects.get(ref=ref)
+        except cls.DoesNotExist,e:
+            raise cls.DoesNotExist(
+              "No %s with reference %r" % (cls._meta.verbose_name,ref))
+
+    def __unicode__(self):
+        return self.ref
+
+
+
 class EmptyTable(frames.Frame):
     """
     A "Table" that has exactly one virtual row and thus is visible 

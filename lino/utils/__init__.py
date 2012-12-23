@@ -54,7 +54,8 @@ Third test
 #~ logger = logging.getLogger(__name__)
 
 
-import os, sys, locale, types, datetime
+import os, sys, locale, types
+import datetime
 import re
 import fnmatch
 from dateutil import parser as dateparser
@@ -122,10 +123,45 @@ def d2iso(d):
     return "%04d-%02d-%02d" % (d.year, d.month, d.day)
 
 def i2d(i):
+    """
+    Convert `int` to `date`. Examples:
+    
+    >>> i2d(20121224)
+    datetime.date(2012, 12, 24)
+    
+    """
     d = dateparser.parse(str(i))
     d = datetime.date(d.year,d.month,d.day)
     #print i, "->", v
     return d
+    
+def i2t(s):
+    """
+    Convert `int` to `time`. Examples:
+    
+    >>> i2t(815)
+    datetime.time(8, 15)
+    
+    >>> i2t(1230)
+    datetime.time(12, 30)
+    
+    >>> i2t(12)
+    datetime.time(12, 0)
+    
+    >>> i2t(1)
+    datetime.time(1, 0)
+    
+    """
+    s = str(s)
+    if len(s) == 4:
+        return datetime.time(int(s[:2]),int(s[2:]))
+    if len(s) == 3:
+        return datetime.time(int(s[:1]),int(s[1:]))
+    if len(s) <= 2:
+        return datetime.time(int(s),0)
+    raise ValueError(s)
+
+    
     
 def get_class_attr(cl,name):
     value = getattr(cl,name,None)

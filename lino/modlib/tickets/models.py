@@ -13,7 +13,7 @@
 ## along with Lino; if not, see <http://www.gnu.org/licenses/>.
 
 """
-This module adds models for Projects, Tickets and Sessions.
+This module adds models for Projects, Milestones, Tickets and Sessions.
 
 A **Project** is something into which somebody invests time, energy and money.
 Projects form a tree: each Project can have a `parent` 
@@ -29,8 +29,7 @@ A Ticket is always related to one and only one Project.
 It may be related to other tickets which may belong to other projects.
 
 A **Session** is when an employee (a User) 
-works during a given lapse of time 
-on a given Project and/or Ticket.
+works during a given lapse of time on a given Ticket.
 
 All the Sessions related to a given Project represent the time 
 invested into that Project.
@@ -101,8 +100,15 @@ class SessionTypes(dd.Table):
     model = SessionType
     column_names = 'name *'
 
+#~ class Repository(mixins.UserAuthored):
+    #~ class Meta:
+        #~ verbose_name = _("Repository")
+        #~ verbose_name_plural = _('Repositories')
+        
+    #~ ref = dd.NullCharField(_("Reference"),max_length=40,blank=True,null=True,unique=True)
+    #~ srcref_url_template = models.CharField(_("Name"),max_length=200)
 
-class Project(mixins.UserAuthored,mixins.Printable):
+class Project(mixins.UserAuthored,mixins.Printable,mixins.Referrable):
     """
     The `user` ("Autor") of a project is the User who manages that Project.
     """
@@ -110,14 +116,16 @@ class Project(mixins.UserAuthored,mixins.Printable):
         verbose_name = _("Project")
         verbose_name_plural = _('Projects')
         
+    #~ ref = dd.NullCharField(_("Reference"),max_length=40,blank=True,null=True,unique=True)
     name = models.CharField(_("Name"),max_length=200)
-    iname = models.CharField(_("Internal Name"),max_length=20,blank=True)
     parent = models.ForeignKey('self',blank=True,null=True,verbose_name=_("Parent"))
     type = models.ForeignKey('tickets.ProjectType',blank=True,null=True)
     partner = models.ForeignKey('contacts.Partner',blank=True,null=True)
-    summary = models.CharField(_("Summary"),max_length=200,blank=True)
+    #~ summary = models.CharField(_("Summary"),max_length=200,blank=True)
     #~ description = dd.RichTextField(_("Description"),blank=True,format='plain')
     description = dd.RichTextField(_("Description"),blank=True,format='plain')
+    srcref_url_template = models.CharField(blank=True,max_length=200)
+    changeset_url_template = models.CharField(blank=True,max_length=200)
     
     def __unicode__(self):
         return self.name
@@ -127,15 +135,19 @@ class ProjectDetail(dd.FormLayout):
     main = "general tickets"
     
     general = dd.Panel("""
-    name summary parent
+    ref name parent
     type user 
-    # description
-    MilestonesByProject ProjectsByProject 
+    description ProjectsByProject 
     # cal.EventsByProject
     """,label=_("General"))
     
     tickets = dd.Panel("""
     TicketsByProject SessionsByProject
+    """,label=_("Tickets"))
+  
+    history = dd.Panel("""
+    srcref_url_template changeset_url_template
+    MilestonesByProject
     """,label=_("Tickets"))
   
 class Projects(dd.Table):
@@ -145,29 +157,28 @@ class Projects(dd.Table):
 class ProjectsByProject(Projects):
     master_key = 'parent'
     label = _("Sub-projects")
-    column_names = "name summary *"
+    column_names = "ref name *"
 
 class ProjectsByPartner(Projects):
     master_key = 'partner'
-    column_names = "name summary *"
+    column_names = "ref name *"
 
 
 
-
-
-class Milestone(mixins.ProjectRelated):
+class Milestone(mixins.ProjectRelated,mixins.Referrable):
     """
     """
     class Meta:
         verbose_name = _("Milestone")
         verbose_name_plural = _('Milestones')
         
-    label = models.CharField(_("Label"),max_length=20)
+    #~ label = models.CharField(_("Label"),max_length=20)
     expected = models.DateField(_("Expected for"),blank=True,null=True)
     reached = models.DateField(_("Reached"),blank=True,null=True)
+    #~ description = dd.RichTextField(_("Description"),blank=True,format='plain')
     
-    def __unicode__(self):
-        return self.label
+    #~ def __unicode__(self):
+        #~ return self.label
         
 
 class Milestones(dd.Table):
@@ -244,15 +255,15 @@ class Ticket(mixins.AutoUser,mixins.CreatedModified,mixins.ProjectRelated):
 class Tickets(dd.Table):
     model = Ticket
     detail_layout = """
-    partner project reported summary id
+    summary partner project reported id
     user created modified state workflow_buttons fixed
     description 
     SessionsByTicket EntriesByTicket
     """
     insert_layout = dd.FormLayout("""
+    summary 
     partner 
     project 
-    summary 
     """,window_size=(50,'auto'))
     
 class UnassignedTickets(Tickets):
@@ -417,7 +428,7 @@ if settings.LINO.user_model:
   
     class MyProjects(Projects,mixins.ByUser):
         order_by = ["name"]
-        column_names = 'name id summary *'
+        column_names = 'ref name id *'
         
     class MyTickets(Tickets,mixins.ByUser):
         order_by = ["-created","id"]
@@ -440,7 +451,7 @@ if settings.LINO.user_model:
             #~ ),
         #~ """The Ticket attributed to this event.
         #~ """)
-        
+
 
 
 

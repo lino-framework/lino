@@ -204,11 +204,8 @@ def bootstrap_page_template(site):
 #~ jinja_env = Environment(loader=PackageLoader('lino', 'templates'))
 jinja_env = Environment(trim_blocks=False)
 
-
-
 def build_page_template(site):
     #~ return Template('\n'.join(list(bootstrap_page_template(site))))
-    
     return jinja_env.from_string('\n'.join(list(bootstrap_page_template(site))))
 
 

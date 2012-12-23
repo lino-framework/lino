@@ -21,7 +21,8 @@ from django.conf import settings
 from lino import dd
 from lino.utils import babel
 from lino.utils.restify import restify
-from lino.management.commands.makedocs import doc2rst
+from lino.utils.restify import doc2rst
+
 
 pages = dd.resolve_app('pages')
 
