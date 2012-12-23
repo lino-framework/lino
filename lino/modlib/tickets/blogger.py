@@ -76,6 +76,7 @@ class Blogger(object):
         kw.update(created=datetime.datetime.combine(self.date,time))
         if not raw_html:
             body = restify(doc2rst(body))
+        kw.update(user=self.user)
         kw.update(body=body)
         kw.update(title=title)
         kw.update(ticket=ticket)

@@ -61,6 +61,22 @@ class EntryType(babel.BabelNamed,mixins.PrintableType):
 
 
 
+def html_text(s):
+    return '<div class="htmlText">' + s + '</div>'
+    
+class EntryTypes(dd.Table):
+    model = EntryType
+    column_names = 'name build_method template *'
+    order_by = ["name"]
+    
+    detail_layout = """
+    id name
+    build_method template
+    remark:60x5
+    blogs.EntriesByType
+    """
+    
+    
 class Entry(mixins.TypedPrintable,
       mixins.CreatedModified,
       mixins.AutoUser,
@@ -80,8 +96,8 @@ class Entry(mixins.TypedPrintable,
     #~ owner = generic.GenericForeignKey('owner_type', 'owner_id')
     language = babel.LanguageField()
     type = models.ForeignKey(EntryType,blank=True,null=True)
-    title = models.CharField(_("Title"),max_length=200,blank=True) # ,null=True)
-    summary = dd.RichTextField(_("Summary"),blank=True,format='html') 
+    title = models.CharField(_("Heading"),max_length=200,blank=True) # ,null=True)
+    #~ summary = dd.RichTextField(_("Summary"),blank=True,format='html') 
     body = dd.RichTextField(_("Body"),blank=True,format='html')
     
     def __unicode__(self):
@@ -100,27 +116,13 @@ class Entry(mixins.TypedPrintable,
         #~ mixins.AutoUser.update_owned_instance(self,task)
         #~ contacts.PartnerDocument.update_owned_instance(self,task)
     
-def html_text(s):
-    return '<div class="htmlText">' + s + '</div>'
     
-class EntryTypes(dd.Table):
-    model = EntryType
-    column_names = 'name build_method template *'
-    order_by = ["name"]
-    
-    detail_layout = """
-    id name
-    build_method template
-    remark:60x5
-    blogs.EntriesByType
-    """
 
 class EntryDetail(dd.FormLayout):
     main = """
-    type:25 owner
-    title
-    summary    
-    id created modified user:10 language:8 build_time
+    title type:12 user:10 id 
+    # summary    
+    language:10 created modified owner build_time
     body
     """
     
@@ -131,7 +133,7 @@ class EntryDetail(dd.FormLayout):
 class Entries(dd.Table):
     model = Entry
     detail_layout = EntryDetail()
-    column_names = "id modified user type title summary * body"
+    column_names = "id modified user type title * body"
     #~ hide_columns = "body"
     #~ hidden_columns = frozenset(['body'])
     order_by = ["id"]
@@ -140,7 +142,7 @@ class Entries(dd.Table):
 
 class MyEntries(mixins.ByUser,Entries):
     #~ master_key = 'user'
-    column_names = "modified type title summary body *"
+    column_names = "modified type title body *"
     #~ column_names = "date event_type type subject body *"
     #~ column_names = "date type event_type subject body_html *"
     #~ can_view = perms.is_authenticated
@@ -162,14 +164,14 @@ class MyEntries(mixins.ByUser,Entries):
   
 class EntriesByType(Entries):
     master_key = 'type'
-    column_names = "modified title summary user *"
+    column_names = "modified title user *"
     order_by = ["modified-"]
     #~ label = _("Notes by person")
   
   
 class EntriesByController(Entries):
     master_key = 'owner'
-    column_names = "modified title summary user *"
+    column_names = "modified title user *"
     order_by = ["modified-"]
     #~ label = _("Notes by person")
   

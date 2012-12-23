@@ -184,16 +184,16 @@ class Milestone(mixins.ProjectRelated,mixins.Referrable):
 class Milestones(dd.Table):
     model = Milestone
     detail_layout = """
-    project label expected reached id
+    project ref expected reached id
     TicketsFixed TicketsReported
     """
     insert_layout = dd.FormLayout("""
-    project label 
+    project ref
     """,window_size=(40,'auto'))
     
 class MilestonesByProject(Milestones):
     master_key = 'project'
-    column_names = "label expected reached *"
+    column_names = "ref expected reached *"
 
 
 
