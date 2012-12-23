@@ -201,7 +201,7 @@ def get_all_pages():
 
 
 if not settings.LINO.is_installed('pages'):
-    # fill DummyPage.pages_dict
+    # fill DummyPage.pages_dict by invoking objects()
     from lino.modlib.pages.fixtures import std
     for p in std.objects():
         pass

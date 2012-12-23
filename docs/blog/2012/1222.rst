@@ -1,0 +1,7 @@
+20121222
+========
+
+I'm currently experimenting with my way of documenting 
+code changes.
+Currently I am "blogging" in 
+:srcref:`/lino/history/luc201212.py`.

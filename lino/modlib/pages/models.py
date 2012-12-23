@@ -258,7 +258,7 @@ def lookup(ref,language=None,strict=False):
 
 def get_sidebar_html(site,request=None,node=None,**context):
     html = ''
-    for n in pages.Page.objects.exclude(special=True):
+    for n in Page.objects.exclude(special=True):
         if not n.language or (n.language == get_language()):
             text = cgi.escape(n.title or n.ref or "Home")
             if n == node:

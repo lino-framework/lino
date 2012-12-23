@@ -93,8 +93,8 @@ class Index(Page):
 class About(Page):
     """
     This website is a life demonstration of 
-    <a href="{{LINO.url}}">{{LINO.short_name}}</a> 
-    version {{LINO.version}}, {{LINO.description}}.
+    `{{LINO.short_name}} <{{LINO.url}}>`__
+    version {{LINO.version}}, {{LINO.description}}
     """
     title = "About"
     #~ raw_html = True

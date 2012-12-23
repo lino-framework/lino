@@ -15,10 +15,3 @@ models
     :show-inheritance:
 
 
-The `web` fixture
------------------
-
-.. automodule:: lino.apps.cms.fixtures.web
-    :members:
-    :show-inheritance:
-

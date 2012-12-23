@@ -1709,7 +1709,7 @@ class Lino(object):
                     html += lang + " "
                 else:
                     html += '[<a href="?ul=%s">%s</a>] ' % (lang,lang)
-        html += '<a href="/admin/">Admin</a>'
+        html += '<a href="%s/">Admin</a>' % self.admin_url
         return html
         
     def get_footer_html(self,request=None,**context):
