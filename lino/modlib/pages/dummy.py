@@ -178,21 +178,11 @@ def page(ref,language='en',title=None,body=None,**kw):
     return page
     
     
-def get_sidebar_html(site,request=None,node=None,**context):
-    return ''
+#~ def get_sidebar_html(site,request=None,node=None,**context):
+    #~ return ''
   
         
-from lino.core.web import render        
-
-#~ MEMO_PARSER = Parser()
-
-  
-  
-#~ NODE_PARSER = Parser()
-
-#~ page = MEMO_PARSER.instantiate_page
-#~ lookup = MEMO_PARSER.lookup_page
-#~ render = MEMO_PARSER.render
+from lino.core.web import render_node
 
 def get_all_pages():
     for ref2pages in DummyPage.pages_dict.values():
@@ -201,7 +191,7 @@ def get_all_pages():
 
 
 if not settings.LINO.is_installed('pages'):
-    # fill DummyPage.pages_dict by invoking objects()
+    # fill DummyPage.pages_dict at import by running the std fixture
     from lino.modlib.pages.fixtures import std
     for p in std.objects():
         pass

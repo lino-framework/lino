@@ -30,19 +30,19 @@ from lino.modlib.pages.builder import Page, objects
     
 class Index(Page):
     """
-    Welcome to the **{{LINO.title}}** site.
+    Welcome to the **{{site.title}}** site.
     We are running 
-    `{{LINO.short_name}} <{{LINO.url}}>`__
-    version {{LINO.version}}, {{LINO.description}}
+    `{{site.short_name}} <{{site.url}}>`__
+    version {{site.version}}, {{site.description}}
     
-    {% if settings.LINO.admin_url %}
+    {% if site.admin_url %}
     
     You are currently seeing the **web content** section,
     which contains just this default index page 
     because this site hasn't been configured to show something else here.
     
     To see what Lino really adds to a Django site, 
-    you should go to the **Admin** section.
+    you should go to the `Admin <{{site.admin_url}}/>`__ section.
     
     {% endif %}
     """
@@ -52,18 +52,21 @@ class Index(Page):
 
 class Index(Page):
     """
-    Bienvenue sur **{{LINO.title}}**.
+    Bienvenue sur **{{site.title}}**.
     Ce site est une démonstration en ligne de
-    `{{LINO.short_name}} <{{LINO.url}}>`__
-    version {{LINO.version}}, {{LINO.description}}
+    `{{site.short_name}} <{{site.url}}>`__
+    version {{site.version}}, {{site.description}}
     
-    {% if settings.LINO.admin_url %}
+    {% if site.admin_url %}
     
-    Ceci est la section "web public" qui ne contient que cette page bidon
-    parce que ce site n'a pas été configuré pour montrer plus d'information ici.
+    Ceci est la section publique dont le layout et le contenu sont configurables
+    selon les techniques habituelles de Django.
+    Ce site particulier ne contient que cette page bidon
+    parce qu'il n'a pas été configuré pour montrer plus d'information.
     
     Pour voir ce que Lino ajoute à Django, vous devriez maintenant aller 
-    dans la section Admin.
+    dans la `section administrative <{{site.admin_url}}/>`__.
+
     
     {% endif %}
     """
@@ -73,16 +76,17 @@ class Index(Page):
 
 class Index(Page):
     """
-    Willkommen auf {{LINO.title}}.
+    Willkommen auf {{site.title}}.
     Diese Site ist eine Online-Demo von
-    `{{LINO.short_name}} <{{LINO.url}}>`__
-    version {{LINO.version}}, {{LINO.description}}
+    `{{site.short_name}} <{{site.url}}>`__
+    version {{site.version}}, {{site.description}}
     
-    {% if settings.LINO.admin_url %}
+    {% if site.admin_url %}
     
-    Dies hier ist der öffentliche Bereich mit frei konfigurierbarem Webinhalt.
-    Um das Besondere an Lino zu sehen, sollten Sie nun auf den 
-    Link **Admin** oben rechts klicken.
+    Dies hier ist der öffentliche Bereich, dessen Layout 
+    und Inhalt frei konfigurierbar sind.
+    Um das Besondere an Lino zu sehen, sollten Sie nun 
+    in den `Verwaltungsbereich <{{site.admin_url}}/>`__ gehen.
    
     {% endif %}
     
@@ -93,8 +97,8 @@ class Index(Page):
 class About(Page):
     """
     This website is a life demonstration of 
-    `{{LINO.short_name}} <{{LINO.url}}>`__
-    version {{LINO.version}}, {{LINO.description}}
+    `{{site.short_name}} <{{site.url}}>`__
+    version {{site.version}}, {{site.description}}
     """
     title = "About"
     #~ raw_html = True
@@ -112,11 +116,10 @@ class Admin(Page):
     and log in. 
     
     This demo site has 
-    {{LINO.modules.users.UsersOverview.request().get_total_count()}}
+    {{site.modules.users.UsersOverview.request().get_total_count()}}
     users configured, they all have "1234" as password:
     
     {{as_ul('users.UsersOverview')}}
-    
     
     Enjoy!
     Your feedback is welcome to lino-users@googlegroups.com
@@ -127,12 +130,15 @@ class Admin(Page):
     
 class Admin(Page):
     """
-    Sie sind im Verwaltungsbereich ("admin").
+    Sie sind im Verwaltungsbereich.
+    Anders als im `öffentlichen Bereich </>`__ 
+    sehen Sie hier ein Menü am oberen Bildschirmrand.
+    
     Bitte klicken Sie jetzt auf :guilabel:`Anmelden` in der oberen rechten 
     Bildschirmecke, um sich anzumelden.
     
     Auf dieser Demo-Site gibt es
-    {{LINO.modules.users.UsersOverview.request().get_total_count()}}
+    {{site.modules.users.UsersOverview.request().get_total_count()}}
     Benutzer, die alle "1234" als Passwort haben:
     
     {{as_ul('users.UsersOverview')}}
@@ -141,18 +147,23 @@ class Admin(Page):
     Reaktionen und Kommentare sind willkommen an lino-users@googlegroups.com
     oder direkt die Person, die Sie eingeladen hat.
     
-    
     """
     language = 'de'
     special = True
 
 class Admin(Page):
     """
-    Veuillez cliquer maintenant sur le bouton :guilabel:`Log in`
+    Vous êtes ici dans la section administrative qui,
+    autrement que la `section publique </>`__ a un menu déroulant.
+    
+    Ce menu est relativement vide tant que vous ne vous êtes pas identifié.
+    
+    Veuillez vous identifier maintenant en cliquant 
+    sur le bouton :guilabel:`Log in`
     dans le coin supérieur droit de l'écran.
     
     Sur ce site démo il y a 
-    {{LINO.modules.users.UsersOverview.request().get_total_count()}} 
+    {{site.modules.users.UsersOverview.request().get_total_count()}} 
     utilisateurs, tous avec "1234" comme mot de passe:
     
     {{as_ul('users.UsersOverview')}}

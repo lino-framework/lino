@@ -16,227 +16,83 @@
 """
 
 import cgi
-from jinja2 import Template
+import datetime
+import jinja2
 
-from jinja2 import Environment, PackageLoader
+#~ from jinja2 import Template
+
+#~ from jinja2 import Environment, PackageLoader
 
 from django.conf import settings
+from django.utils.translation import get_language
+from django.utils.translation import ugettext_lazy as _
 
 from lino.utils import babel
 from lino.utils import iif
 from lino.utils.xmlgen import html as xghtml
     
-#~ self-made, inspired by http://de.selfhtml.org/css/layouts/mehrspaltige.htm
-unused_SELFHTML_PAGE_TEMPLATE = """\
-<html>
-<head>
-<title>[=title]</title>
-<style type="text/css">
-body {
-  font-family:Arial;
-  color:black;
-  background-color:#c7dffc;
-  padding:0em;
-  margin:0em;
-}
-div#left_sidebar {
-  float: left; width: 16em;
-  background-color:#c0d0f0;
-  padding:6pt;
-}
-div#main_area {
-  margin-left: 16em;
-  min-width: 14em; 
-  padding:2em;
-}
-</style>
-</head>
-<body>
-<div id="left_sidebar">%s</div>
-<div id="main_area">
-<h1>[=title]</h1>
-[=parse(obj.body)]
-<div id="footer">
-[include footer]
-</div>
-</div>
-</body>
-</html>
-"""
 
-# https://github.com/joshuaclayton/blueprint-css/wiki/Quick-start-tutorial
-
-def stylesheet(*args):
-    url = settings.LINO.ui.media_url(*args) 
-    return '<link rel="stylesheet" type="text/css" href="%s" />' % url
-
-def unused_BLUEPRINT_PAGE_TEMPLATE(site):
-    yield "<html><head>"
-    yield "<title>[=title]</title>"
-    p = site.ui.media_url('blueprint','screen.css')
-    yield '<link rel="stylesheet" href="%s" type="text/css" media="screen, projection">' % p
-    p = site.ui.media_url('blueprint','print.css')
-    yield '<link rel="stylesheet" href="%s" type="text/css" media="print">' % p
-    yield '<!--[if lt IE 8]>'
-    p = site.ui.media_url('blueprint','ie.css')
-    yield '  <link rel="stylesheet" href="%s" type="text/css" media="screen, projection">'
-    yield '<![endif]-->'
-    p = site.ui.media_url('lino','blueprint.css')
-    yield '<link rel="stylesheet" href="%s" type="text/css">' % p
-    yield '</head><body><div class="container">'
-    
-    if settings.LINO.site_config.header_page:
-        yield '<div class="span-24 header">'
-        yield settings.LINO.site_config.header_page.body
-        yield '</div>'
-        
-    main_width = 24
-
-    #~ html = settings.LINO.
-    #~ if settings.LINO.site_config.sidebar_page:
-    if settings.LINO.sidebar_width:
-        main_width -= settings.LINO.sidebar_width
-        yield '<div class="span-%d border">[sidebar]</div>' % settings.LINO.sidebar_width
-        #~ yield settings.LINO.site_config.sidebar_page.body
-        #~ yield '</div>'
-
-    yield '<div class="span-%d last">' % main_width
-    yield '<h1>[=title]</h1>'
-    yield '[=parse(obj.body)]'
-    yield '</div>'
-
-    if settings.LINO.site_config.footer_page:
-        yield '<div class="span-24 footer">'
-        yield settings.LINO.site_config.footer_page.body
-        yield '</div>'
-    yield '</div></body></html>'
-    
-def unused_memoparser_bootstrap_page_template(site):
-    yield '<!DOCTYPE html>'
-    yield '<html language="en"><head>'
-    yield '<meta charset="utf-8"/>'
-    yield "<title>[=title]</title>"
-    p = site.ui.media_url('bootstrap','css','bootstrap.css')
-    yield '<link rel="stylesheet" href="%s" type="text/css">' % p
-    p = site.ui.media_url('lino','bootstrap.css')
-    yield '<link rel="stylesheet" href="%s" type="text/css">' % p
-    yield '</head><body><div class="container-fluid">'
-    if True:
-        yield '  <div class="row-fluid header">[header]</div>'
-    #~ if site.site_config.header_page:
-        #~ yield '  <div class="row-fluid header">'
-        #~ yield settings.LINO.site_config.header_page.body
-        #~ yield '  </div>'
-    yield '  <div class="row-fluid">'
-    main_width = 12
-    
-    #~ if site.site_config.sidebar_page:
-    if settings.LINO.sidebar_width:
-        main_width -= settings.LINO.sidebar_width
-        yield '<div class="span%d">[sidebar]</div>' % settings.LINO.sidebar_width
-        #~ main_width -= 2
-        #~ yield '    <div class="span2">'
-        #~ yield site.site_config.sidebar_page.body
-        #~ yield '    </div>'
-        
-    yield '    <div class="span%d">' % main_width
-    #~ yield '<h1>[=title]</h1>'
-    yield '[=iif(node.title,E.h1(node.title),"")]'
-    yield '[=parse(node.body)]'
-    yield '    </div>'
-    yield '  </div>'
-    if True: # site.site_config.footer_page:
-        yield '  <div class="row-fluid footer">[footer]</div>'
-        #~ yield '  <div class="row-fluid footer">'
-        #~ yield settings.LINO.site_config.footer_page.body
-        #~ yield '  </div>'
-    
-    yield '</div></body></html>'
-    
-    
-    
+jinja_env = jinja2.Environment(
+    loader=jinja2.PackageLoader('lino', 'templates'))
+#~ jinja_env = jinja2.Environment(trim_blocks=False)
 
 
-def bootstrap_page_template(site):
-    yield '<!DOCTYPE html>'
-    yield '<html language="en"><head>'
-    yield '<meta charset="utf-8"/>'
-    yield "<title>{{node.title}}</title>"
-    p = site.ui.media_url('bootstrap','css','bootstrap.css')
-    yield '<link rel="stylesheet" href="%s" type="text/css">' % p
-    p = site.ui.media_url('lino','bootstrap.css')
-    yield '<link rel="stylesheet" href="%s" type="text/css">' % p
-    yield '</head><body><div class="container-fluid">'
-    if True:
-        yield '  <div class="row-fluid header">{{header}}</div>'
-    #~ if site.site_config.header_page:
-        #~ yield '  <div class="row-fluid header">'
-        #~ yield settings.LINO.site_config.header_page.body
-        #~ yield '  </div>'
-    yield '  <div class="row-fluid">'
-    main_width = 12
-    
-    #~ if site.site_config.sidebar_page:
-    if site.sidebar_width:
-        main_width -= site.sidebar_width
-        yield '<div class="span%d">{{sidebar}}</div>' % site.sidebar_width
-        #~ main_width -= 2
-        #~ yield '    <div class="span2">'
-        #~ yield site.site_config.sidebar_page.body
-        #~ yield '    </div>'
-        
-    yield '    <div class="span%d">' % main_width
-    #~ yield '<h1>[=title]</h1>'
-    yield '{% if node.title%}<h1>{{node.title}}</h1>{% endif %}'
-    yield '{{parse(node.body)}}'
-    yield '    </div>'
-    yield '  </div>'
-    if True: # site.site_config.footer_page:
-        yield '  <div class="row-fluid footer">{{footer}}</div>'
-        #~ yield '  <div class="row-fluid footer">'
-        #~ yield settings.LINO.site_config.footer_page.body
-        #~ yield '  </div>'
-    
-    yield '</div></body></html>'
-    
+def as_ul(action_spec):
+    a = settings.LINO.modules.resolve(action_spec)
+    ar = a.request()
+    E = xghtml.E
+    return E.tostring(E.ul(*[obj.as_list_item(ar) for obj in ar]))
+
+jinja_env.globals.update(
+        settings=settings,
+        # LINO=settings.LINO,
+        #~ ui=settings.LINO.ui,
+        site=settings.LINO,
+        as_ul=as_ul,
+        iif=iif,
+        len=len,
+        # E=xghtml.E,
+        _= _,
+)
 
 
-#~ jinja_env = Environment(loader=PackageLoader('lino', 'templates'))
-jinja_env = Environment(trim_blocks=False)
-
-def build_page_template(site):
-    #~ return Template('\n'.join(list(bootstrap_page_template(site))))
-    return jinja_env.from_string('\n'.join(list(bootstrap_page_template(site))))
 
 
-def render(request,node,template=None,**context):
+
+#~ def build_page_template(site):
+    # return Template('\n'.join(list(bootstrap_page_template(site))))
+    #~ return jinja_env.from_string('\n'.join(list(bootstrap_page_template(site))))
+
+
+
+def extend_context(context):
     def parse(s):
         #~ print 20121221, s
         #~ return Template(s).render(**context)
         return jinja_env.from_string(s).render(**context)
-        
-    def as_ul(action_spec):
-        a = settings.LINO.modules.resolve(action_spec)
-        ar = a.request()
-        E = xghtml.E
-        return E.tostring(E.ul(*[obj.as_list_item(ar) for obj in ar]))
-        
+    context.update(
+        now=datetime.datetime.now(),
+        parse=parse,
+        )
+
+def render_node(request,node,template_name='node.html',**context):
+  
+    extend_context(context)
+    
     context.update(
         node=node,
-        settings=settings,
-        LINO=settings.LINO,
-        #~ site=settings.LINO,
+        request=request,
         #~ cgi=cgi,
         #~ babel=babel,
-        parse=parse,
-        as_ul=as_ul,
-        iif=iif,
-        E=xghtml.E,
+        requested_language=get_language(),
         #~ title=cgi.escape(node.title)
         )
-    context.update(sidebar=settings.LINO.get_sidebar_html(**context))
-    context.update(header=settings.LINO.get_header_html(**context))
-    context.update(footer=settings.LINO.get_footer_html(**context))
+        
+    #~ context.update(parse=parse)
+        
+    #~ context.update(sidebar=settings.LINO.get_sidebar_html(**context))
+    #~ context.update(header=settings.LINO.get_header_html(**context))
+    #~ context.update(footer=settings.LINO.get_footer_html(**context))
         
     #~ def parse(s):
         #~ return self.parse(s,**context)
@@ -245,8 +101,36 @@ def render(request,node,template=None,**context):
     #~ if not obj.body:
         #~ context.update(body=obj.abstract)
         
-    if template is None:
-        template = settings.LINO.PAGE_TEMPLATE
+    template = jinja_env.get_template(template_name)
         
     return template.render(**context)
 
+
+
+class DjangoJinjaTemplate:
+  
+    def __init__(self,jt):
+        self.jt = jt
+  
+    def render(self, context):
+        # flatten the Django Context into a single dictionary.
+        context_dict = {}
+        for d in context.dicts:
+            context_dict.update(d)
+        extend_context(context_dict)
+        context_dict.update(request=None)
+        return self.jt.render(context_dict)  
+  
+  
+from django.template.loaders import app_directories
+
+class Loader(app_directories.Loader):  
+  
+    is_usable = True
+
+    def load_template(self, template_name, template_dirs=None):
+        source, origin = self.load_template_source(template_name, template_dirs)
+        jt = jinja_env.get_template(template_name)
+        template = DjangoJinjaTemplate(jt)
+        return template, origin
+        

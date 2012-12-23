@@ -1,0 +1,7 @@
+{% extends "base.html" %}
+{% block title %}{{[node.title,site.title]|join(' - ')}}{% endblock %}
+{% block content %}
+{% if node.title%}<h1>{{node.title}}</h1>{% endif %}
+{{parse(node.body)}}
+{% endblock %}
+

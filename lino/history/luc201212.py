@@ -25,7 +25,9 @@ from lino.history import blogger
 DEMOS = blogger.ticket("lino.pr","Demo Sites","""
 """)
 
-CMS = blogger.ticket("lino.cms","Managing Plain Web Content","""
+CMS = blogger.ticket("lino.cms","Lino as a CMS","""
+Managing Plain Web Content.
+:mod:`lino.modlib.pages`
 """)
 
 CHANGES = blogger.ticket("lino.dev","Documenting code changes","""
@@ -115,10 +117,47 @@ http://moinmo.in/MoinMoinBugs
 
 """)
 
-blogger.entry(DEMOS,1722,"demo3.lino-framework.org was broken",
-"""
-NameError "global name 'pages' is not defined"
+blogger.entry(DEMOS,1722,"demos at lino-framework.org still broken","""
+There were still a few bugs in the online demo sites.
 
-ImportError: # sphinx 0.6.6 didn't have split_explicit_title
+NameError "global name 'pages' is not defined".
+
+Sphinx 0.6.6 (distributed with Debian Squeeze) 
+didn't yet have a module 
+`sphinx.util.nodes` with a function 
+`split_explicit_title`. 
+This caused an ImportError. :mod:`lino.utils.restify` 
+now includes the few lines of code copied from 
+a newer Sphinx version.
+""")
+
+blogger.entry(CMS,2304,"Started template inheritance","""
+The sidebar doesn't yet work. 
+
+The best way to solve this is probably using template inheritance.
+
+So in a first step I started to use it,
+as described in http://jinja.pocoo.org/docs/api/#loaders,
+by defining 
+an `Environment` instance and my own loader 
+(in :mod:`lino.core.web`).
+
+I also replaced Django's template engine by Jinja,
+as explained in 
+`Using an alternative template language
+<https://docs.djangoproject.com/en/dev/ref/templates/api/#using-an-alternative-template-language>`_.
+Lino used Django's template engine only for the mandatory 
+`500.html` and `404.html` templates.
+
+All this is really great! 
+I had never used templates because Django's 
+engine doesn't allow function calls. 
+In the beginning when I discovered Django, 
+I felt clearly that this isn't my thing.
+Cheetah had this feature, and I need it to generate `linolib.js`, 
+but I never really fell in love with Cheetah.
+I plan to replace this one also by Jinja soon.
+I did hear about Jinja, too,
+but I just didn't recognize that this was the door to a great new world.
 
 """)

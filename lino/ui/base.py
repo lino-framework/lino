@@ -33,6 +33,7 @@ from django.views.generic import View
 
 
 from lino.core import actions
+from lino.core import web
 
 from lino.core.modeltools import resolve_app
 
@@ -142,23 +143,10 @@ class UI:
         return self.success(_("User abandoned"))
         
     def build_url(self,*args,**kw):
-        #~ url = self.admin_url
-        url = settings.LINO.admin_url
-        if args:
-            url += '/' + ("/".join(args))
-        if len(kw):
-            url += "?" + urlencode(kw)
-        return url
+        return settings.LINO.build_url(*args,**kw)
         
     def media_url(self,*args,**kw):
-        url = '/media'
-        if args:
-            url += '/' + ("/".join(args))
-        if len(kw):
-            url += "?" + urlencode(kw)
-        return url
-      
-        #~ return self.build_url('media',*args,**kw)
+        return settings.LINO.media_url(*args,**kw)
         
     def old_get_patterns(self):
         urlpatterns = patterns('',
@@ -200,7 +188,7 @@ class UI:
                 def get(self, request,ref=''):
                     #~ print 20121220, ref
                     obj = pages.lookup(ref,get_language())
-                    html = pages.render(request,obj)
+                    html = web.render_node(request,obj)
                     return http.HttpResponse(html)
 
             

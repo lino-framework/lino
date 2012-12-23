@@ -25,8 +25,9 @@ import datetime
 
 from os.path import join, abspath, dirname, normpath
 from decimal import Decimal
+from urllib import urlencode
 
-from jinja2 import Template
+#~ from jinja2 import Template
 
 from lino.utils.xmlgen import html as xghtml
 #~ from lino.utils import babel
@@ -866,6 +867,11 @@ class Lino(object):
         settings_dict.update(
             MIDDLEWARE_CLASSES=tuple(
                 self.get_middleware_classes()))
+                
+        settings_dict.update(
+            TEMPLATE_LOADERS=tuple(
+                ['lino.core.web.Loader']
+                ))
 
         settings_dict.update(
             INSTALLED_APPS=tuple(
@@ -1297,11 +1303,11 @@ class Lino(object):
         return None
         
     
-    MAIN_HTML_TEMPLATE = Template("""\
-    <div class="htmlText">
-    <h1>{{node.title}}</h1>
-    {{parse(node.body)}}
-    </div>""")
+    #~ MAIN_HTML_TEMPLATE = Template("""\
+    #~ <div class="htmlText">
+    #~ <h1>{{node.title}}</h1>
+    #~ {{parse(node.body)}}
+    #~ </div>""")
 
         
         
@@ -1321,7 +1327,8 @@ class Lino(object):
             return '20121221 No admin page within %s' % [cgi.escape(unicode(p)) for p in pages.get_all_pages()]
             #~ print 20121221, repr(node)
         #~ node = pages.lookup('index')
-        return pages.render(request,node,self.MAIN_HTML_TEMPLATE)
+        #~ return pages.render(request,node,self.MAIN_HTML_TEMPLATE)
+        return pages.render_node(request,node,'admin_main.html')
 
 
     vat_quarterly = False
@@ -1696,6 +1703,30 @@ class Lino(object):
         
     def get_guest_greeting(self):
         return xghtml.E.p("Please log in")
+        
+
+    def build_url(self,*args,**kw):
+        #~ url = self.admin_url
+        url = self.admin_url
+        if args:
+            url += '/' + ("/".join(args))
+        if len(kw):
+            url += "?" + urlencode(kw)
+        return url
+        
+
+        
+    def media_url(self,*args,**kw):
+        url = '/media'
+        if args:
+            url += '/' + ("/".join(args))
+        if len(kw):
+            url += "?" + urlencode(kw)
+        return url
+      
+        #~ return self.build_url('media',*args,**kw)
+        
+        
 
     def get_urls(self):
         return []
@@ -1713,7 +1744,7 @@ class Lino(object):
         return html
         
     def get_footer_html(self,request=None,**context):
-        return 'Copyright &copy; 1789 The Great Site'
+        return 'Copyright &copy; %d The Great Site' % datetime.date.today().year
         
     def get_sidebar_html(self,request=None,node=None,**context):
         pages = dd.resolve_app('pages')

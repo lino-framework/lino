@@ -2,11 +2,18 @@
 body { font-family: arial,tahoma; }
 div .header {
   text-align: right;
-  /* background-color:#c7dffc;*/
+  /* 
   background-color:gold;
-  padding: 3px 6px;
+  background-color:#c7dffc; 
+  */
+  padding: 2px 6px;
 }
 div .footer {
   text-align: center;
-  background-color:#c7dffc;
+  font-size: small;
+  /* 
+  background-color:gold;
+  background-color:#c7dffc; 
+  */
+  padding: 2px 6px;
 }

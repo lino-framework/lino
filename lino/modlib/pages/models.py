@@ -269,9 +269,8 @@ def get_sidebar_html(site,request=None,node=None,**context):
     return html
  
 
-lino = dd.resolve_app('lino')
 
-from lino.core.web import render        
+from lino.core.web import render_node
     
 def unused_customize_siteconfig():
     """
@@ -309,6 +308,7 @@ def unused_customize_siteconfig():
 def setup_my_menu(site,ui,profile,m): 
     pass
   
+lino = dd.resolve_app('lino')
 def setup_config_menu(site,ui,profile,m): 
     #~ m  = m.add_menu("pages",_("~Pages"))
     m  = m.add_menu("office",lino.OFFICE_MODULE_LABEL)
