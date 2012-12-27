@@ -1,0 +1,11 @@
+{% extends "base.html" %}
+{% set active_page = "" %}
+{% block title %}{{[title,site.title]|join(' - ')}}{% endblock %}
+{% block main %}
+<div class="row-fluid">
+  <h1>{{title}}</h1>
+  {{main}}
+</div>
+{% endblock %}
+
+

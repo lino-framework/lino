@@ -36,14 +36,22 @@ class FiscalYear(dd.Choice):
     
     
 class FiscalYears(dd.ChoiceList):
+    """
+    If the fiscal year of your company is the same as the calendar 
+    year, then the default entries in this should do.
+    Otherwise you can always override this in your 
+    :meth:`lino.Lino.setup_choicelists`.
+    """
     item_class = FiscalYear
     verbose_name = _("Fiscal Year")
     verbose_name_plural = _("Fiscal Years")
+    #~ preferred_width = 4 # would be 2 otherwise 
     
     @classmethod
     def setup_field(cls,fld):
         def d(): return cls.from_date(datetime.date.today())
         fld.default = d
+        #~ print 20121227, cls.preferred_width
         
     @classmethod
     def from_int(cls,year):

@@ -539,6 +539,10 @@ class Actor(actions.Parametrizable):
         return self._get_handle(None,ui,hname)
         
     @classmethod
+    def summary_row(cls,ar,obj,**kw):
+        return obj.summary_row(ar,**kw)
+    
+    @classmethod
     def _get_handle(self,ar,ui,hname):
         # attention, don't inherit from parent!
         h = self.__dict__.get(hname,None)

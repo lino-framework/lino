@@ -1,7 +1,30 @@
 {% extends "base.html" %}
-{% block title %}{{[node.title,site.title]|join(' - ')}}{% endblock %}
-{% block content %}
-{% if node.title%}<h1>{{node.title}}</h1>{% endif %}
-{{parse(node.body)}}
+{% set active_page = "{{node.ref}}" %}
+{% block title %}{{title}}{% endblock %}
+
+{% block main %}
+<div class="row-fluid">
+  {% if site.sidebar_width -%}
+  <div class="span{{site.sidebar_width}}">
+    {% block sidebar %}
+      {% set active_page = active_page|default('index') -%}
+      <ul class="nav nav-list">
+      {% for href, id, caption in node.get_sidebar_menu(request) %}
+        <li{% if id == active_page %} class="active"{% endif %}><a href="{{ href|e }}">{{ caption|e }}</a></li>
+      {% endfor %}
+      </ul>      
+    {% endblock %}
+  </div>
+  <div class="span{{12-site.sidebar_width}}">
+  {% endif -%}
+    {% block content %}
+    {% if heading%}<h1>{{heading}}</h1>{% endif %}
+    {{parse(body)}}
+    {% endblock %}
+  {#
+  </div>
+  #}
+</div>
 {% endblock %}
+
 

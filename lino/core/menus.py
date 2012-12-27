@@ -30,6 +30,7 @@ from django.db import models
 from lino.core import actors
 from lino.utils.jsgen import js_code
 from lino.utils.xmlgen import html as xghtml
+E = xghtml.E
 
 from lino.core import actions
 
@@ -136,9 +137,11 @@ class MenuItem:
             url = self.href
         assert self.label is not None
         if url is None:
-            return xghtml.E.p() # spacer
+            return E.p() # spacer
             #~ raise Exception("20120901 %s" % self.__dict__)
-        return xghtml.E.a(self.label,href=url)
+        #~ return E.a(self.label,href=url,class_="dropdown-toggle",data_toggle="dropdown")
+        return E.li(E.a(self.label,href=url,tabindex="-1"))
+        #~ since 20121226 return xghtml.E.a(self.label,href=url)
         #~ return '<a href="%s">%s</a>' % (
               #~ self.get_url_path(),self.label)
               
@@ -316,16 +319,31 @@ class Menu(MenuItem):
                 
 
     def as_html(self,ar,level=1):
-        items = [xghtml.E.li(mi.as_html(ar,level+1)) for mi in self.items]
+        #~ items = [xghtml.E.li(mi.as_html(ar,level+1),class_='dropdown') for mi in self.items]
+        items = [mi.as_html(ar,level+1) for mi in self.items]
         #~ print 20120901, items
         if level == 1:
             #~ return xghtml.E.ul(*items,class_='jd_menu')
             #~ return xghtml.E.ul(*items,id='navbar')
             #~ return xghtml.E.ul(*items,id='Navigation') # SelfHTML
             #~ return xghtml.E.ul(*items,class_='dd_menu')
-            return xghtml.E.ul(*items,id='nav')
+            #~ until 20121226 return xghtml.E.ul(*items,id='nav')
+            return E.ul(*items,class_='nav nav-tabs')
         assert self.label is not None
-        return xghtml.E.p(self.label,xghtml.E.ul(*items))
+        #~ since 20121226 return xghtml.E.p(self.label,xghtml.E.ul(*items))
+        if level == 2:
+            cl = 'dropdown'
+            menu_title = E.a(unicode(self.label),E.b(' ',class_="caret"),href="#",
+              class_='dropdown-toggle',data_toggle="dropdown")
+        elif level == 3:
+            menu_title = E.a(unicode(self.label),href="#")
+            cl = 'dropdown-submenu'
+        else:
+            raise Exception("Menu with more than three levels")
+        return E.li(
+            menu_title,
+            E.ul(*items,class_='dropdown-menu'),
+            class_=cl)
       
 
 class Toolbar(Menu):

@@ -44,6 +44,7 @@ from lino.core import actions
 from lino.core import actors
 from lino.core import dbtables
 from lino.core import changes
+from lino.core import web
 
 from lino.core.modeltools import obj2str, obj2unicode
 from lino.core.modeltools import makedirs_if_missing
@@ -914,6 +915,7 @@ class ApiElement(View):
 
 PLAIN_PAGE_LENGTH = 5
         
+  
 class ApiList(View):
     """
     - GET : List the members of the collection. 
@@ -1188,3 +1190,193 @@ class GridConfig(View):
         settings.LINO.ui.build_site_cache(True)            
         return settings.LINO.ui.success(msg)
             
+
+  
+class PlainList(View):
+  
+    def get(self,request,app_label=None,actor=None):
+        ar = action_request(app_label,actor,request,request.GET)
+        
+        ar.renderer = ar.ui.plain_renderer
+        E = xghtml.E
+        
+        buttons = []
+        buttons.append( ('*',_("Home"), '/' ))
+        buttons.append( ('Ext',_("Using ExtJS"), ar.ui.ext_renderer.get_request_url(ar) ))
+        pglen = ar.limit or PLAIN_PAGE_LENGTH
+        if ar.offset is None:
+            page = 1
+        else:
+            """
+            (assuming pglen is 5)
+            offset page
+            0      1
+            5      2
+            """
+            page = int(ar.offset / pglen) + 1
+        kw = dict()
+        kw = {}
+        if pglen != PLAIN_PAGE_LENGTH:
+            kw[ext_requests.URL_PARAM_LIMIT] = pglen
+          
+        if page > 1:
+            kw[ext_requests.URL_PARAM_START] = pglen * (page-2) 
+            prev_url = ar.get_request_url(**kw)
+            kw[ext_requests.URL_PARAM_START] = 0
+            first_url = ar.get_request_url(**kw)
+        else:
+            prev_url = None
+            first_url = None
+        buttons.append( ('<<',_("First page"), first_url ))
+        buttons.append( ('<',_("Previous page"), prev_url ))
+        
+        next_start = pglen * page 
+        if next_start < ar.get_total_count():
+            kw[ext_requests.URL_PARAM_START] = next_start
+            next_url = ar.get_request_url(**kw)
+            last_page = int((ar.get_total_count()-1) / pglen)
+            kw[ext_requests.URL_PARAM_START] = pglen * last_page
+            last_url = ar.get_request_url(**kw)
+        else:
+            next_url = None 
+            last_url = None 
+        buttons.append( ('>',_("Next page"), next_url ))
+        buttons.append( ('>>',_("Last page"), last_url ))
+        
+        t = xghtml.Table()
+        #~ t = doc.add_table()
+        ar.ui.ar2html(ar,t,ar.sliced_data_iterator)
+        t = t.as_element()
+        
+        context = dict(
+          title=ar.get_title(),
+          tbar = buttons,
+          table = E.tostring(t),
+        )
+        return plain_response(ar,'table.html',context)
+        
+        
+def plain_response(ar,tplname,context):        
+    menu = settings.LINO.get_site_menu(ar.ui,ar.get_user().profile)
+    menu = menu.as_html(ar)
+    context.update(menu = E.tostring(menu))
+    web.extend_context(context)
+    template = web.jinja_env.get_template(tplname)
+    
+    response = http.HttpResponse(
+        template.render(**context),
+        content_type='text/html;charset="utf-8"')
+    
+    return response
+            
+
+class PlainElement(View):
+  
+    def get(self,request,app_label=None,actor=None,pk=None):
+        """
+        GET : Retrieve a representation of the addressed member of the collection expressed in an appropriate MIME type.
+        PUT : Update the addressed member of the collection or create it with the specified ID. 
+        POST : Treats the addressed member as a collection and creates a new subordinate of it. 
+        DELETE : Delete the addressed member of the collection. 
+        
+        (Source: http://en.wikipedia.org/wiki/Restful)
+        """
+        ui = settings.LINO.ui
+        rpt = requested_actor(app_label,actor)
+        #~ if not ah.actor.can_view.passes(request.user):
+            #~ msg = "User %s cannot view %s." % (request.user,ah.actor)
+            #~ return http.HttpResponseForbidden()
+        
+        if pk and pk != '-99999' and pk != '-99998':
+            elem = rpt.get_row_by_pk(pk)
+            if elem is None:
+                raise http.Http404("%s has no row with primary key %r" % (rpt,pk))
+                #~ raise Exception("20120327 %s.get_row_by_pk(%r)" % (rpt,pk))
+        else:
+            elem = None
+        
+        action_name = request.GET.get(ext_requests.URL_PARAM_ACTION_NAME,
+          rpt.default_elem_action_name)
+        ba = rpt.get_url_action(action_name)
+        if ba is None:
+            raise http.Http404("%s has no action %r" % (rpt,action_name))
+            
+        #~ ar = rpt.request(ui,request,a)
+        ar = ba.request(ui,request)
+        ar.renderer = ui.ext_renderer
+        ah = ar.ah
+        
+        fmt = request.GET.get(ext_requests.URL_PARAM_FORMAT,ba.action.default_format)
+        
+        ar.renderer = ar.ui.plain_renderer
+        
+        datarec = elem2rec_detailed(ar,elem)
+        
+        navinfo = datarec['navinfo']
+        if navinfo:
+            buttons = []
+            buttons.append( ('*',_("Home"), '/' ))
+            
+            buttons.append( ('<<',_("First page"), ar.pk2url(navinfo['first']) ))
+            buttons.append( ('<',_("Previous page"), ar.pk2url(navinfo['prev']) ))
+            buttons.append( ('>',_("Next page"), ar.pk2url(navinfo['next']) ))
+            buttons.append( ('>>',_("Last page"), ar.pk2url(navinfo['last']) ))
+                
+            chunks = []
+            for text,title,url in buttons:
+                chunks.append('[')
+                if url:
+                    chunks.append(E.a(text,href=url,title=title))
+                else:
+                    chunks.append(text)
+                chunks.append('] ')
+            navigator = E.p(*chunks)
+        else:
+            navigator = None
+            
+        #~ main = xghtml.Table()
+        
+        wl = ar.bound_action.get_window_layout()
+        #~ print 20120901, wl.main
+        lh = wl.get_layout_handle(ar.ui)
+        
+        def render_detail(ar,obj,elem):
+            #~ print '20120901 render_detail(%s %s)' % (elem.__class__.__name__,elem)
+            if isinstance(elem,ext_elems.Wrapper):
+                for chunk in render_detail(ar,obj,elem.wrapped):
+                    yield chunk
+                return
+            #~ if elem.label:
+                #~ yield E.p(unicode(elem.label))
+            if isinstance(elem,ext_elems.FieldElement):
+                value = elem.field.value_from_object(obj)
+                text = unicode(value)
+                if not text: text = " "
+                yield E.p(unicode(elem.field.verbose_name),':',E.br(),E.b(text))
+            if isinstance(elem,ext_elems.Container):
+                children = []
+                for e in elem.elements:
+                    for chunk in render_detail(ar,obj,e):
+                        children.append(chunk)
+                if elem.vertical:
+                    yield E.div(*children)
+                else:
+                    tr = E.tr(*[E.td(ch) for ch in children])
+                    yield E.table(tr)
+                
+        main = E.div(*[e for e in render_detail(ar,elem,lh.main)])
+        #~ print 20120901, lh.main.__html__(ar)
+        
+        
+            
+        context = dict(
+          title=datarec['title'],
+          #~ menu = E.tostring(menu),
+          tbar = buttons,
+          main = E.tostring(main),
+        )
+        #~ template = web.jinja_env.get_template('detail.html')
+        
+        return plain_response(ar,'detail.html',context)
+        
+        

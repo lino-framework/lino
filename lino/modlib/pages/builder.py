@@ -13,6 +13,8 @@
 ## along with Lino; if not, see <http://www.gnu.org/licenses/>.
 
 
+import logging
+logger = logging.getLogger(__name__)
 
 #~ import datetime
 from django.conf import settings
@@ -28,45 +30,42 @@ pages = dd.resolve_app('pages')
 
 PAGES = {}
 
-def pagekey(self): 
-    return (self.language,self.ref)
+from lino.utils import AttrDict
 
-class PageBuilderMeta(type):
-    def __new__(meta, classname, bases, classDict):
-        classDict.setdefault('ref',classname.lower())
-        cls = type.__new__(meta, classname, bases, classDict)
-        #~ if not classDict.has_key('ref'):
-            #~ cls.ref = classname.lower()
-        if cls.ref == 'index':
-            cls.ref = ''
-        if (not cls.language) or cls.language in babel.AVAILABLE_LANGUAGES:
-            PAGES[pagekey(cls)] = cls
-        #~ print 20121221, classname, PAGES
-        return cls
+def babelfield(name,language):
+    if language == babel.DEFAULT_LANGUAGE: 
+        return name
+    return name + '_' + language
 
-class Page(object):
-    __metaclass__ = PageBuilderMeta
-    language = ''
-    ref = ''
-    title = ''
-    raw_html = False
-    special = False
-
+def page(ref,language,title,body,parent=None,special=False):
+    if not language in babel.AVAILABLE_LANGUAGES:
+        return
+    obj = PAGES.get(ref)
+    if obj is None:
+        if parent is not None:
+            parent=pages.lookup(parent)
+        kw = dict(special=special,ref=ref,parent=parent)
+        obj = pages.create_page(**kw)
+        PAGES[ref] = obj 
     
+    setattr(obj,babelfield('title',language),title)
+    setattr(obj,babelfield('body',language),body.strip())
+    obj.full_clean()
+    obj.save()
+    #~ obj.update(babelfield('body',**{language:body}))
+    #~ logger.info("20121227 builder.page(%r,%r,%r) -> %s",ref,language,title,obj.keys())
+    #~ obj.title.texts[language] = title
+    #~ obj.body.texts[language] = body
+
 
 def objects():
     global PAGES
-    for cls in PAGES.values():
-        if cls is not Page:
-            if cls.raw_html:
-                body = cls.__doc__
-            else:
-                body = restify(doc2rst(cls.__doc__))
-            yield pages.page(cls.ref,cls.language,cls.title,body,special=cls.special)
-            #~ yield pages.Page(
-                #~ ref=cls.ref,
-                #~ language=cls.language,
-                #~ title=cls.title,
-                #~ body=restify(cls.__doc__))
+    #~ print 20121227, __file__, [obj['ref'] for obj in PAGES.values()]
+    rv = []
+    for obj in PAGES.values():
+        yield obj
+        #~ rv.append()
+        
     PAGES = {}
+    #~ return rv
 

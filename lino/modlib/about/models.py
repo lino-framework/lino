@@ -14,6 +14,7 @@
 import logging
 logger = logging.getLogger(__name__)
 
+import os
 import cgi
 import inspect
 import types
@@ -33,7 +34,9 @@ from lino import mixins
 from lino import dd
 
 
-import os
+
+from lino.utils.xmlgen import html as xghtml
+E = xghtml.E
 
 
         
@@ -51,11 +54,17 @@ class Models(dd.VirtualTable):
   
     @classmethod
     def get_data_rows(self,ar):
-        profile = ar.get_user().profile
+        #~ profile = ar.get_user().profile
         for model in models.get_models():
-            if model._lino_default_table.get_view_permission(profile):
+            #~ if model._lino_default_table.get_view_permission(profile):
+            if True: 
                 #~ print model
                 yield model
+                
+    @classmethod
+    def summary_row(cls,ar,obj,**kw):
+        return E.p(unicode(obj._meta.verbose_name_plural))
+                
                 
     @dd.displayfield(_("app_label"))
     def app(self,obj,ar):

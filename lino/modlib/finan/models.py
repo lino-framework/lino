@@ -66,8 +66,8 @@ add('20',_("Registered"),'registered',editable=False)
   
 class BankStatement(ledger.Voucher):
     
-    balance1 = dd.PriceField(blank=True,null=True)
-    balance2 = dd.PriceField(blank=True,null=True)
+    balance1 = dd.PriceField(_("Old balance"),blank=True,null=True)
+    balance2 = dd.PriceField(_("New balance"),blank=True,null=True)
     
     state = VoucherStates.field(default=VoucherStates.draft)
     
@@ -197,7 +197,8 @@ class BankStatements(dd.Table):
     """,window_size=(40,'auto'))
     
     detail_layout = """
-    date balance1 balance2 user id
+    date narration balance1 balance2 
+    journal year number user id workflow_buttons
     finan.ItemsByStatement
     """
     

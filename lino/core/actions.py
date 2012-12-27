@@ -982,7 +982,7 @@ class BaseRequest(object):
             requesting_panel=None,
             renderer=None):
         self.requesting_panel = requesting_panel
-        self.user = user
+        self.user = user 
         if renderer is not None:
             self.renderer = renderer
         #~ if self.actor.parameters:
@@ -1278,6 +1278,7 @@ class ActionRequest(BaseRequest):
         
     #~ def decide_response(self,*args,**kw): return self.ui.decide_response(self,*args,**kw)
     #~ def prompt(self,*args,**kw): return self.ui.prompt(self,*args,**kw)
+    def summary_row(self,*args,**kw): return self.actor.summary_row(self,*args,**kw)
     def instance_handler(self,*args,**kw): return self.renderer.instance_handler(self,*args,**kw)
     def href_to(self,*args,**kw): return self.renderer.href_to(self,*args,**kw)
     def pk2url(self,*args,**kw): return self.renderer.pk2url(self,*args,**kw)

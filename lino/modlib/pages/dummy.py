@@ -30,6 +30,12 @@ from lino.utils import AttrDict
 from lino.utils import babel
 from lino.utils import iif
 from lino.utils.xmlgen import html as xghtml
+from lino.core import web 
+
+from lino.utils.restify import restify
+from lino.utils.restify import doc2rst
+
+
 #~ from lino.utils import memo
 
 #~ from django.utils.translation import set_language
@@ -40,159 +46,57 @@ from lino.utils.xmlgen import html as xghtml
 
 #~ appname,version,url = settings.LINO.using().next()
 
-#~ class DummyPage(AttrDict):
-class DummyPage(object):
-    pages_dict = {} # used as class variable
-    ref = None
-    #~ language = 'en'
-    language = None 
-    abstract = None
-    body = None
-    special = False
-    def __init__(self,ref=None,title=None,**kw):
-        self.ref = ref
-        self.title = title or settings.LINO.title
-        for k,v in kw.items():
-            assert hasattr(self,k)
-            setattr(self,k,v)
-        if self.language is None:
-            #~ self.language = babel.DEFAULT_LANGUAGE
-            self.language = ''
-        if self.ref is not None:
-            r = self.pages_dict.setdefault(self.ref,{})
-            r[self.language] = self
-        #~ logger.info("20121205 DummyPages %r,%r,%r",self.ref,self.language,
-            #~ self.pages_dict.keys())
-        #~ return self
+DUMMY_PAGES = {}
+
+class DummyPage(AttrDict):
 
     def __unicode__(self):
-        return "%s -> %s (%s)" % (self.ref,self.title,self.language)
-
-class unused_Parser: # (memo.Parser):
-  
-    #~ <body style="font-family:Arial;padding:2em;background-color:wheat;">
-    page_template = """\
-    <html>
-    <head>
-    <title>[=title]</title>
-    </head>
-    <body style="font-family:Arial;padding:2em;color:black;background-color:#c7dffc;">
-    <h1>[=title]</h1>
-    [=parse(node.body)]
-    </body>
-    </html>
-    """
-  
-  
-    def __init__(self,*args,**kw):
-        memo.Parser.__init__(self,*args,**kw)
-        self.register_command('url',self.url2html)
-        self.register_command('ref',self.ref2html)
-        self.register_command('include',self.inc2html)
-        self.register_command('sidebar',self.sidebar2html)
-        self.register_command('header',self.header2html)
-        self.register_command('footer',self.footer2html)
-        self.register_command('ul',self.ul2html)
-      
-  
-    def url2html(self,s):
-        if not s: return "XXX"
-        chunks = s.split(None,1)
-        url = chunks[0]
-        if len(chunks) == 1:
-            text = url
-        else:
-            text = chunks[1]
-        return '<a href="%s">%s</a>' % (url,text)
-            
-
-    def ref2html(self,s):
-        if not s: return "XXX"
-        chunks = s.split(None,1)
-        if len(chunks) == 1:
-            ref = chunks[0]
-            page = self.lookup_page(ref,babel.get_language())
-            return '<a href="%s">%s</a>' % (page.ref,page.title)
-        elif len(chunks) == 2:
-            ref,text = chunks
-            url = '/' + ref
-            return '<a href="%s">%s</a>' % (url,text)
-        raise NotImplementedError(chunks)
-            
-    def sidebar2html(self,ref): return settings.LINO.get_sidebar_html(**self.context)
-    def header2html(self,ref): return settings.LINO.get_header_html(**self.context)
-    def footer2html(self,ref): return settings.LINO.get_footer_html(**self.context)
+        return u'%s %s' % (self._meta.verbose_name,self.ref)
         
-    def inc2html(self,ref):
-        page = self.lookup_page(ref,babel.get_language())
-        return page.body
+    def get_sidebar_menu(self,request):
+        yield ('/', 'index', 'Index')
+        #~ yield ('/downloads/', 'downloads', 'Downloads')
+        yield ('/about/', 'about', 'About')
         
-    def ul2html(self,action_spec):
-        a = settings.LINO.modules.resolve(action_spec)
-        ar = a.request()
-        E = xghtml.E
-        return E.tostring(E.ul(*[obj.as_list_item(ar) for obj in ar]))
+    def full_clean(self):
+        pass
+    def save(self):
+        pass
 
 
-
-
-#~ def page(ref,language=None,strict=False): 
-def lookup(ref,language=None,strict=False): 
-    #~ logger.info("20121205 lookup %r %r,%r",ref,language,DummyPage.pages_dict)
-    r = DummyPage.pages_dict.get(ref)
-    if r is None: return None
-    #~ if language is None:
-        #~ language = babel.get_language()
-    p = r.get(language) 
-    if p: return p
-    if not strict:
-        p = r.get('') 
-        if p: return p
-        if language != babel.DEFAULT_LANGUAGE:
-            return r.get(babel.DEFAULT_LANGUAGE)
     
 def create_page(**kw):
-    #~ logger.info("20121219 dummy create_page %s %s",kw['ref'],kw.get('language'))
-    return DummyPage(**kw)
+    #~ logger.info("20121219 dummy create_page %s",kw)
+    obj = DummyPage(**kw)
+    DUMMY_PAGES[obj.ref] = obj
+    return obj
 
-def page(ref,language='en',title=None,body=None,**kw):
-    """
-    Instantiator shortcut for use in fixtures.
-    """
-    if title is not None: kw.update(title=title)
-    if body is not None: kw.update(body=body)
-    if language is None: language = ''
-    kw.update(language=language)
-    page = lookup(ref,language,True)
-    if page is None:
-        #~ qs = pages.Page.objects.filter(ref=ref)
-        #~ if qs.count() == 0:
-        return create_page(ref=ref,**kw)
-    #~ if qs.count() == 1:
-    #~ obj = qs[0]
-    for k,v in kw.items():
-        setattr(page,k,v)
-    #~ page.title = title
-    #~ page.body = body
-    #~ logger.info("20121219 updated %s %s",ref,language)
-    return page
+def lookup(ref):
+    return DUMMY_PAGES.get(ref)
     
-    
-#~ def get_sidebar_html(site,request=None,node=None,**context):
-    #~ return ''
-  
-        
-from lino.core.web import render_node
+def render_node(request,node,template_name='node.html',**context):
+    context.update(node=node)
+    heading = babel.babelattr(node,'title','')
+    if heading:
+        context.update(heading=heading)
+        context.update(title=heading + ' &middot; ' + settings.LINO.title)
+    else:
+        context.update(heading=settings.LINO.title)
+        context.update(title=settings.LINO.title)
+    body=babel.babelattr(node,'body','')
+    #~ logger.info("20121227 render_node %s -> body is %s",node,body)
+    context.update(body=restify(doc2rst(body)))
+    return web.render_from_request(request,template_name,**context)
+
 
 def get_all_pages():
-    for ref2pages in DummyPage.pages_dict.values():
-        for page in ref2pages.values():
-            yield page
-
+    return DUMMY_PAGES.values()
 
 if not settings.LINO.is_installed('pages'):
-    # fill DummyPage.pages_dict at import by running the std fixture
+    # fill DUMMY_PAGES at import by running the std fixture
     from lino.modlib.pages.fixtures import std
-    for p in std.objects():
+    for o in std.objects():
         pass
+        
+
         

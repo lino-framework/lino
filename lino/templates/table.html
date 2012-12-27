@@ -1,0 +1,56 @@
+{% extends "base.html" %}
+{% set active_page = "" %}
+{% block title %}{{[title,site.title]|join(' - ')}}{% endblock %}
+{% block navbar %}
+<div class="navbar navbar-static">
+  <div class="navbar-inner">
+    <div class="container" style="width: auto;">
+      {{menu}}
+    </div>  
+  </div>  
+</div>  
+{#
+{% block navbar %}
+<div class="navbar navbar-static">
+  <div class="navbar-inner">
+    <div class="container" style="width: auto;">
+      <ul class="nav" role="navigation">
+      
+        <li class="dropdown">
+          <a id="drop1" href="#" role="button" class="dropdown-toggle" data-toggle="dropdown">Kontakte <b class="caret"></b></a>
+          <ul class="dropdown-menu" role="menu" aria-labelledby="drop1">
+            <li><a tabindex="-1" href="/admin/plain/contacts/Persons">Personen</a></li>
+            <li><a tabindex="-1" href="/admin/plain/contacts/Companies">Organisationen</a></li>
+            <li class="divider"></li>
+            <li><a tabindex="-1" href="/admin/plain/contacts/Partners">Partner</a></li>
+          </ul>
+        </li>
+        
+        <li class="dropdown">
+          <a id="drop2" href="#" class="dropdown-toggle" data-toggle="dropdown">Produkte <b class="caret"></b></a>
+          <ul class="dropdown-menu" role="menu"  aria-labelledby="drop2">
+            <li><a tabindex="-1" href="/admin/plain/products/Products">Produkte</a></li>
+            <li><a tabindex="-1" href="/admin/plain/products/ProductCats">Produktkategorien</a></li>
+          </ul>
+        </li>
+        
+        <li class="dropdown">
+          <a id="drop3" href="/admin/plain/about/About" class="dropdown-toggle" data-toggle="dropdown">About</a>
+        </li>
+
+      </ul>
+    </div>  
+  </div>  
+</div>  
+#}
+{% endblock %}
+{% block main %}
+<div class="row-fluid">
+  <div class="span12">
+    <h1>{{title}}</h1>
+    {{table}}
+  </div>
+</div>
+{% endblock %}
+
+

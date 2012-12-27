@@ -145,7 +145,7 @@ def summary(ar,objects,separator=', ',max_items=5,before='',after='',**kw):
             s += before
         n += 1
         #~ s += summary_row(i,ui,rr,**kw)
-        s += summary_row(i,ar,**kw)
+        s += ar.summary_row(i,**kw)
         #~ s += i.summary_row(ui,rr,**kw)
         if n >= max_items:
             s += separator + '...' + after

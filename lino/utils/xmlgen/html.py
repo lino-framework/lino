@@ -151,6 +151,8 @@ rel
 target
 onclick
 src
+data-toggle
+tabindex
 """)
 
 def table_header_row(*headers,**kw):

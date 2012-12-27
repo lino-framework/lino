@@ -27,6 +27,7 @@ DEMOS = blogger.ticket("lino.pr","Demo Sites","""
 
 CMS = blogger.ticket("lino.cms","Lino as a CMS","""
 Managing Plain Web Content.
+First proof of concept of 
 :mod:`lino.modlib.pages`
 """)
 
@@ -44,6 +45,14 @@ The current blog system isn't bad, but it has several disadvantages:
 blogger.ticket("lino.core","Detail of VirtualTable ",
 """
 It seems that `detail_layout` doesn't work on `VirtualTable`.
+""")
+
+
+COSI = blogger.ticket("lino.cosi","Simple Belgian Accounting","""
+First proof of concept of the modules 
+:mod:`lino.modlib.sales`,
+:mod:`lino.modlib.ledger`,
+:mod:`lino.modlib.finan` ...
 """)
 
 
@@ -161,3 +170,33 @@ I did hear about Jinja, too,
 but I just didn't recognize that this was the door to a great new world.
 
 """)
+
+blogger.entry(CMS,1037,"Sidebar","""
+As if to confirm my decision to throw away my own :mod:`lino.utils.memo`, 
+the Jinja documentation has an entry `Highlighting Active Menu Items
+<http://jinja.pocoo.org/docs/tricks/#highlighting-active-menu-items>`_
+which is a beginning of the answer to my initial issue.
+""")
+
+blogger.set_date(20121227)
+
+blogger.entry(COSI,728,"Detail Layout for BankStatement","""
+There were no workflow buttons in the Detail Layout of 
+:class:`lino.modlib.finan.models.BankStatement`.
+""")
+
+blogger.entry(COSI,0805,"Preferred width of ChoiceList comboboxes","""
+:mod:`lino.ui.extjs3.ext_elems`
+now adds a hard-coded value to the preferred_width 
+of ChoiceList fields to account for the width of the trigger button.
+""")
+
+blogger.entry(CMS,1330,"Miscellaneous","""
+Still experimenting with the big question on
+how to write/generate a user manual for Lino application.
+New vision for pages.Page : removed field `language`, and 
+title and body are now babel fields. 
+Only one record per ref.
+
+""")
+

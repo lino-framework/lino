@@ -27,6 +27,8 @@ from django.contrib.contenttypes.models import ContentType
 #~ from django.contrib.contenttypes import generic
 from django.utils.translation import ugettext_lazy as _
 from django.utils.translation import string_concat
+from django.core.exceptions import ValidationError
+
 
 #~ from lino import dd
 #~ from lino.models import Workflow
@@ -409,6 +411,8 @@ class Sequenced(Duplicable):
         #~ print '20120605 duplicate_row', self.seqno, self.account
         seqno = self.seqno
         qs = self.get_siblings().filter(seqno__gte=seqno).reverse()
+        if qs is None:
+            raise Exception("20121227 TODO: Tried to duplicate a root element?")
         for s in qs:
             #~ print '20120605 duplicate_row inc', s.seqno, s.account
             s.seqno += 1
@@ -421,6 +425,9 @@ class Sequenced(Duplicable):
     
     def get_siblings(self):
         """
+        Return a Django Queryset with all siblings of this,
+        or `None` if this is a root element which cannot have anu siblings.
+        The queryset will of course include this.
         The default implementation sets a global sequencing
         by returning all objects of this model.
         Overridden in :class:`lino.modlib.thirds.models.Third`.
@@ -432,12 +439,15 @@ class Sequenced(Duplicable):
         Initialize `seqno` to the `seqno` of eldest sibling + 1.
         """
         qs = self.get_siblings()
-        n = qs.count()
-        if n == 0:
-            self.seqno = 1
+        if qs is None:
+            self.seqno = 0
         else:
-            last = qs[n-1]
-            self.seqno = last.seqno + 1
+            n = qs.count()
+            if n == 0:
+                self.seqno = 1
+            else:
+                last = qs[n-1]
+                self.seqno = last.seqno + 1
         
     
     def full_clean(self,*args,**kw):
@@ -445,6 +455,30 @@ class Sequenced(Duplicable):
             self.set_seqno()
         super(Sequenced,self).full_clean(*args,**kw)
   
+
+class Hierarizable(Sequenced):
+    class Meta:
+        abstract = True
+        
+    parent = models.ForeignKey('self',
+        verbose_name=_("Parent"),
+        null=True,blank=True,
+        related_name='children')
+    
+    def get_siblings(self):
+        if self.parent:
+            return self.parent.children.all()
+        return self.__class__.objects.filter(parent__isnull=True)
+    
+    #~ def save(self, *args, **kwargs):
+        #~ super(Hierarizable, self).save(*args, **kwargs)
+    def full_clean(self, *args, **kwargs):
+        p = self.parent
+        while p is not None:
+            if p == self:
+                raise ValidationError("Cannot be your own ancestor")
+            p = p.parent
+        super(Hierarizable, self).full_clean(*args, **kwargs)
 
 class ProjectRelated(model.Model):
     """
@@ -534,10 +568,10 @@ class Referrable(model.Model):
             return cls.objects.get(ref=ref)
         except cls.DoesNotExist,e:
             raise cls.DoesNotExist(
-              "No %s with reference %r" % (cls._meta.verbose_name,ref))
+              "No %s with reference %r" % (unicode(cls._meta.verbose_name),ref))
 
     def __unicode__(self):
-        return self.ref
+        return self.ref or unicode(_('(Root)'))
 
 
 

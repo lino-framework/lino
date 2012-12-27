@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html language="en"><head>
+<meta charset="utf-8"/>
+<title>{% block title %}{% endblock %}</title>
+<link rel="stylesheet" href="{{site.media_url('bootstrap','css','bootstrap.css')}}" type="text/css">
+<link rel="stylesheet" href="{{site.media_url('lino','bootstrap.css')}}" type="text/css">
+</head><body>
+<div id="wrap">
+  <div class="container-fluid">
+    {% block header %}
+    <div class="row-fluid header">
+    {% if len(site.languages) -%}
+      {% for lang in site.languages -%}
+        {% if lang == requested_language -%}
+            {{lang}}
+        {% else -%}
+            <a href="?ul={{lang}}">{{lang}}</a> 
+        {% endif -%}
+      {% endfor -%}
+      &mdash;
+    {% endif -%}
+    <a href="{{site.admin_url}}/">Admin</a>
+    </div>
+    {% endblock %}
+    {% block navbar %}
+    {% endblock %}
+    {% block main %}
+    <div class="row-fluid">
+        {% block content %}
+        This page has no content.
+        {% endblock %}
+    </div>
+    {% endblock %}
+  </div>
+  <div id="push"></div>
+</div>
+<div id="footer">
+<footer class="container-fluid">
+{% block footer %}
+<p style="vertical-align: middle;">
+{% if request %}
+&copy; Copyright {{now.year}} by <a href="http://{{request.get_host()}}">{{site.title}}</a>.
+{% endif %}
+Using
+{% set sep = joiner(", ") %}
+{% for name,version,url in site.using() %}{{ sep() }}<a href="{{url}}">{{name}}</a> {{version}}{% endfor %}
+</p>
+{% endblock %}
+</footer>
+</div>
+
+<!-- Placed at the end of the document so the pages load faster -->
+<script src="//ajax.googleapis.com/ajax/libs/jquery/1.8.3/jquery.min.js"></script>
+<script src="{{site.media_url('bootstrap','js','bootstrap.min.js')}}"></script>
+</body></html>

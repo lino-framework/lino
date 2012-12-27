@@ -194,6 +194,14 @@ class Lino(object):
     directory has no symbolic link to the ExtJS root directory.
     """
     
+    bootstrap_root = None
+    """
+    Path to the Jasmine root directory. 
+    Only used on a development server
+    whose `media` directory hasn't already a symbolic link or subdirectory,
+    and only if :attr:`use_bootstrap` is True.
+    """
+    
     jasmine_root = None
     """
     Path to the Jasmine root directory. 
@@ -434,6 +442,11 @@ class Lino(object):
     Whether to use TinyMCE instead of Ext.form.HtmlEditor. 
     See also :attr:`tinymce_root`.
     See :doc:`/blog/2011/0523`.
+    """
+    
+    use_bootstrap = True
+    """
+    Whether to use the `Bootstrap  <http://twitter.github.com/bootstrap>`_ CSS toolkit.
     """
     
     use_jasmine = False
@@ -1321,9 +1334,9 @@ class Lino(object):
         pages = dd.resolve_app('pages')
         #~ obj = pages.lookup('admin')
         from lino.utils import babel
-        node = pages.lookup('admin',babel.get_language())
+        node = pages.lookup('admin')
         if node is None:
-            print '20121221 No admin page within %s' % [unicode(p) for p in pages.get_all_pages()]
+            #~ print '20121221 No admin page within %s' % [unicode(p) for p in pages.get_all_pages()]
             return '20121221 No admin page within %s' % [cgi.escape(unicode(p)) for p in pages.get_all_pages()]
             #~ print 20121221, repr(node)
         #~ node = pages.lookup('index')
@@ -1517,6 +1530,10 @@ class Lino(object):
         
         import django
         yield ("Django",django.get_version(),"http://www.djangoproject.com")
+        
+        import jinja2
+        version = getattr(jinja2,'__version__','')
+        yield ("Jinja",version,"http://jinja.pocoo.org/")
         
         import dateutil
         version = getattr(dateutil,'__version__','')
@@ -1750,4 +1767,8 @@ class Lino(object):
         pages = dd.resolve_app('pages')
         return pages.get_sidebar_html(self,request=None,node=None,**context)
         
-    sidebar_width = 2
+    sidebar_width = 0
+    """
+    Width of the sidebar in 1/12 of total screen width.
+    Meaningful values are 0 (no sidebar), 2 or 3.
+    """

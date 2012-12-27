@@ -1900,6 +1900,7 @@ _FIELD2ELEM = (
     (models.AutoField, IntegerFieldElement),
 )
     
+TRIGGER_BUTTON_WIDTH = 3
 
 def field2elem(layout_handle,field,**kw):
     #~ if hasattr(field,'_lino_chooser'):
@@ -1924,7 +1925,8 @@ def field2elem(layout_handle,field,**kw):
                 return ComplexRemoteComboFieldElement(layout_handle,field,**kw)
     if field.choices:
         if isinstance(field,choicelists.ChoiceListField):
-            kw.setdefault('preferred_width',field.choicelist.preferred_width)
+            kw.setdefault('preferred_width',
+                field.choicelist.preferred_width+TRIGGER_BUTTON_WIDTH)
             kw.update(forceSelection=field.force_selection)
             return ChoiceListFieldElement(layout_handle,field,**kw)
         else:

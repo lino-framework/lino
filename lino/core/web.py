@@ -30,6 +30,7 @@ from django.utils.translation import ugettext_lazy as _
 from lino.utils import babel
 from lino.utils import iif
 from lino.utils.xmlgen import html as xghtml
+E = xghtml.E
     
 
 jinja_env = jinja2.Environment(
@@ -37,10 +38,17 @@ jinja_env = jinja2.Environment(
 #~ jinja_env = jinja2.Environment(trim_blocks=False)
 
 
-def as_ul(action_spec):
+def as_table(action_spec):
+    from lino.utils import auth
     a = settings.LINO.modules.resolve(action_spec)
-    ar = a.request()
-    E = xghtml.E
+    ar = a.request(user=auth.AnonymousUser.instance())
+    print ar.get_total_count()
+    return E.tostring(E.ul(*[E.li(ar.summary_row(obj)) for obj in ar]))
+      
+def as_ul(action_spec):
+    from lino.utils import auth
+    a = settings.LINO.modules.resolve(action_spec)
+    ar = a.request(user=auth.AnonymousUser.instance())
     return E.tostring(E.ul(*[obj.as_list_item(ar) for obj in ar]))
 
 jinja_env.globals.update(
@@ -49,6 +57,7 @@ jinja_env.globals.update(
         #~ ui=settings.LINO.ui,
         site=settings.LINO,
         as_ul=as_ul,
+        as_table=as_table,
         iif=iif,
         len=len,
         # E=xghtml.E,
@@ -73,20 +82,14 @@ def extend_context(context):
     context.update(
         now=datetime.datetime.now(),
         parse=parse,
+        requested_language=get_language(),
         )
 
-def render_node(request,node,template_name='node.html',**context):
+def render_from_request(request,template_name,**context):
   
     extend_context(context)
     
-    context.update(
-        node=node,
-        request=request,
-        #~ cgi=cgi,
-        #~ babel=babel,
-        requested_language=get_language(),
-        #~ title=cgi.escape(node.title)
-        )
+    context.update(request=request)
         
     #~ context.update(parse=parse)
         

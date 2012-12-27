@@ -106,6 +106,13 @@ from lino.modlib.cal.utils import CalendarAction
 from lino.ui.extjs3 import views
 
 
+def add_user_language(kw,ar):
+    u = ar.get_user()
+    lang = babel.get_language()
+    if u and u.language and lang != u.language:
+        kw.setdefault(ext_requests.URL_PARAM_USER_LANGUAGE,lang)
+    elif lang != babel.DEFAULT_LANGUAGE:
+        kw.setdefault(ext_requests.URL_PARAM_USER_LANGUAGE,lang)
 
 
 class HtmlRenderer(object):
@@ -291,28 +298,31 @@ class TextRenderer(HtmlRenderer):
         return text
   
 class PlainRenderer(HtmlRenderer):
-    def instance_handler(self,ar,obj):
+    def instance_handler(self,ar,obj,**kw):
         a = getattr(obj,'_detail_action',None)
         if a is None:
             a = obj.__class__._lino_default_table.detail_action
         if a is not None:
             if ar is None or a.get_bound_action_permission(ar,obj,None):
-                return self.get_detail_url(obj)
+                add_user_language(kw,ar)
+                return self.get_detail_url(obj,**kw)
   
     def pk2url(self,ar,pk,**kw):
         if pk is not None:
-            kw[ext_requests.URL_PARAM_FORMAT] = ext_requests.URL_FORMAT_PLAIN
-            return self.ui.build_url('api',
+            #~ kw[ext_requests.URL_PARAM_FORMAT] = ext_requests.URL_FORMAT_PLAIN
+            return self.ui.build_url('plain',
                 ar.actor.model._meta.app_label,
                 ar.actor.model.__name__,
                 str(pk),**kw)
             
     def get_detail_url(self,obj,*args,**kw):
-        kw[ext_requests.URL_PARAM_FORMAT] = ext_requests.URL_FORMAT_PLAIN
-        return self.ui.build_url('api',obj._meta.app_label,obj.__class__.__name__,str(obj.pk),*args,**kw)
+        #~ since 20121226 kw[ext_requests.URL_PARAM_FORMAT] = ext_requests.URL_FORMAT_PLAIN
+        #~ since 20121226 return self.ui.build_url('api',obj._meta.app_label,obj.__class__.__name__,str(obj.pk),*args,**kw)
+        return self.ui.build_url('plain',obj._meta.app_label,obj.__class__.__name__,str(obj.pk),*args,**kw)
         
     def get_request_url(self,ar,*args,**kw):
-        kw.setdefault(ext_requests.URL_PARAM_FORMAT,ext_requests.URL_FORMAT_PLAIN)
+        add_user_language(kw,ar)
+        #~ since 20121226 kw.setdefault(ext_requests.URL_PARAM_FORMAT,ext_requests.URL_FORMAT_PLAIN)
         if ar.offset is not None:
             kw.setdefault(ext_requests.URL_PARAM_START,ar.offset)
         if ar.limit is not None:
@@ -324,7 +334,8 @@ class PlainRenderer(HtmlRenderer):
                 kw.setdefault(ext_requests.URL_PARAM_SORTDIR,'DESC')
             kw.setdefault(ext_requests.URL_PARAM_SORT,sc)
         #~ print '20120901 TODO get_request_url'
-        return ar.ui.build_url('api',ar.actor.app_label,ar.actor.__name__,*args,**kw)
+        
+        return ar.ui.build_url('plain',ar.actor.app_label,ar.actor.__name__,*args,**kw)
         
     def request_handler(self,ar,*args,**kw):
         return ''
@@ -972,6 +983,8 @@ class ExtUI(base.UI):
             (rx+r'choices/(?P<app_label>\w+)/(?P<rptname>\w+)/(?P<fldname>\w+)$', views.Choices.as_view()),
             (rx+r'apchoices/(?P<app_label>\w+)/(?P<actor>\w+)/(?P<an>\w+)/(?P<field>\w+)$', views.ActionParamChoices.as_view()),
             (rx+r'callbacks/(?P<thread_id>\w+)/(?P<button_id>\w+)$', views.Callbacks.as_view()),
+            (rx+r'plain/(?P<app_label>\w+)/(?P<actor>\w+)$', views.PlainList.as_view()),
+            (rx+r'plain/(?P<app_label>\w+)/(?P<actor>\w+)/(?P<pk>.+)$', views.PlainElement.as_view()),
         )
         urlpatterns += settings.LINO.get_urls()
         if settings.LINO.use_eid_applet:
@@ -1026,6 +1039,8 @@ class ExtUI(base.UI):
                     symlink(source,target)
             
         setup_media_link('extjs','extjs_root')
+        if settings.LINO.use_bootstrap:
+            setup_media_link('bootstrap','bootstrap_root')
         if settings.LINO.use_jasmine:
             setup_media_link('jasmine','jasmine_root')
         if settings.LINO.use_extensible:
@@ -1155,6 +1170,9 @@ tinymce.init({
         if settings.LINO.use_eid_jslib:
             yield javascript('/eid-jslib/be_belgium_eid.js')
             yield javascript('/eid-jslib/hellerim_base64.js')
+            
+        #~ if settings.LINO.use_bootstrap:
+            #~ yield '<script src="//ajax.googleapis.com/ajax/libs/jquery/1.8.3/jquery.min.js"></script>'
             
             
         if settings.LINO.use_gridfilters:
@@ -2326,7 +2344,8 @@ tinymce.init({
         
         sums  = [fld.zero for fld in fields]
         #~ cellattrs = dict(align="center",valign="middle",bgcolor="#eeeeee")
-        cellattrs = dict(align="left",valign="top",bgcolor="#eeeeee")
+        #~ cellattrs = dict(align="left",valign="top",bgcolor="#eeeeee")
+        cellattrs = dict()
         hr = tble.add_header_row(*headers,**cellattrs)
         if cellwidths:
             for i,td in enumerate(hr): 

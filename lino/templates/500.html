@@ -1,0 +1,9 @@
+{% extends "base.html" %}
+
+{% block title %}{{_('Server error (500)')}}{% endblock %}
+
+{% block content %}
+<h1>{{_('Server Error <em>(500)</em>')}}</h1>
+<p>{{_("There's been an error. It has been reported to the site administrators via e-mail and should be fixed shortly. Thanks for your patience.")}}</p>
+
+{% endblock %}

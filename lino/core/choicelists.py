@@ -265,17 +265,24 @@ class ChoiceList(tables.AbstractTable):
     """
     
     
-    preferred_width = 5
+    preferred_width = 4
     """
     Preferred width (in characters) used by 
     :class:`fields <lino.core.fields.ChoiceListField>` 
     that refer to this list.
+    
     This is automatically set to length of the longest choice 
     text (using the :attr:`default site language <lino.Lino.languages>`). 
+    It might guess wrong if the user language is not the default site language.
     
-    Currently you cannot manually force it to a lower 
-    value than that. And it might guess wrong if the user language 
-    is not the default site language.
+    The hard-coded absolute minimum is 4.
+    Currently you cannot manually force it to a lower value than that. 
+    
+    Note that by this we mean the width of the bare text field, 
+    excluding any UI-specific control like the trigger button of a combobox. 
+    That's why e.g. `lino.ui.extjs3.ext_elems` adds a another 
+    value for the trigger button. 
+    
     """
     
     #~ def __init__(self,*args,**kw):

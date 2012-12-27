@@ -187,16 +187,17 @@ class UI:
                 #~ def get(self, request,ref='index'):
                 def get(self, request,ref=''):
                     #~ print 20121220, ref
-                    obj = pages.lookup(ref,get_language())
-                    html = web.render_node(request,obj)
+                    obj = pages.lookup(ref)
+                    html = pages.render_node(request,obj)
                     return http.HttpResponse(html)
 
             
-            refs = set()
+            #~ refs = set()
             #~ urlpatterns = []
             for page in pages.get_all_pages():
-                refs.add(page.ref)
-            for ref in refs:
+                #~ refs.add(page.ref)
+            #~ for ref in refs:
+                ref = page.ref or ''
                 urlpatterns += patterns('',
                    (r'^%s$' % ref, WebIndex.as_view(),dict(ref=ref)))
             #~ return urlpatterns

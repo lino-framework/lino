@@ -51,6 +51,7 @@ from lino.utils.xmlgen import html as xghtml
 
 from lino import mixins
 from django.conf import settings
+
 #~ from lino import choices_method, simple_choices_method
 #~ from lino.modlib.contacts import models as contacts
 #~ from lino.modlib.outbox import models as outbox
@@ -101,7 +102,8 @@ from django.conf import settings
       #~ postings.Postable, 
       #~ ):
       
-class Page(dd.Model):
+#~ class Page(dd.Model):
+class Page(mixins.Referrable,mixins.Hierarizable):
       
     """
     Deserves more documentation.
@@ -113,28 +115,44 @@ class Page(dd.Model):
         verbose_name_plural = _("Pages")
         #~ verbose_name = _("Page")
         #~ verbose_name_plural = _("Pages")
-        unique_together = ['ref','language']
+        #~ unique_together = ['ref','language']
         
-    #~ ref = dd.NullCharField(_("Reference"),max_length=40) # ,unique=True)
-    ref = models.CharField(_("Reference"),max_length=100,blank=True)
+    #~ ref = dd.NullCharField(_("Reference"),blank=True,max_length=100) # ,unique=True)
+    #~ ref = models.CharField(_("Reference"),max_length=100,blank=True,unique=True)
     #~ language = babel.LanguageField(default=babel.get_language,blank=True)
-    language = babel.LanguageField(blank=True)
+    #~ language = babel.LanguageField(blank=True)
     
     #~ type = models.ForeignKey(PageType,blank=True,null=True)
-    title = models.CharField(_("Title"),max_length=200,blank=True) # ,null=True)
+    title = babel.BabelCharField(_("Title"),max_length=200,blank=True) # ,null=True)
     special = models.BooleanField(_("Special"),default=False)
     #~ abstract = dd.RichTextField(_("Abstract"),blank=True,format='html')
-    body = dd.RichTextField(_("Body"),blank=True,format='html')
+    body = babel.BabelTextField(_("Body"),blank=True,format='plain')
     
     
     
-    def __unicode__(self):
-        return "%s -> %s (%s)" % (self.ref,self.title,self.language)
-        #~ return u'%s #%s' % (self._meta.verbose_name,self.pk)
+    #~ def __unicode__(self):
+        #~ return "%s -> %s (%s)" % (self.ref,self.title,self.language)
+        #~ return "%s -> %s (%s)" % (self.ref,self.title,self.language)
+        #~ return u'%s %s' % (self._meta.verbose_name,self.ref)
         
         
-    def get_mailable_type(self):
-        return self.type
+    #~ def get_mailable_type(self):
+        #~ return self.type
+        
+    def get_sidebar_menu(self,request):
+        #~ qs = self.get_siblings()
+        qs = Page.objects.filter(parent__isnull=True)
+        #~ qs = self.children.all()
+        yield ('/', 'index', unicode(_('Home')))
+            #~ yield ('/downloads/', 'downloads', 'Downloads')
+        #~ yield ('/about', 'about', 'About')
+        #~ if qs is not None:
+        for obj in qs:
+            if obj.ref and obj.title:
+                yield ('/'+obj.ref,obj.ref,babel.babelattr(obj,'title'))
+            #~ else:
+                #~ yield ('/','index',obj.title)
+        
 
 
 #~ class PageDetail(dd.FormLayout):
@@ -154,7 +172,8 @@ class Page(dd.Model):
     
 class PageDetail(dd.FormLayout):
     main = """
-    ref language:8 title 
+    ref parent seqno 
+    title 
     body
     """
 
@@ -163,9 +182,9 @@ class PageDetail(dd.FormLayout):
 class Pages(dd.Table):
     model = 'pages.Page'
     detail_layout = PageDetail()
-    column_names = "ref language title *"
+    column_names = "ref title *"
     #~ column_names = "ref language title user type project *"
-    order_by = ["ref",'language']
+    order_by = ["ref"]
 
 
 #~ class MyPages(mixins.ByUser,Pages):
@@ -190,71 +209,19 @@ class Pages(dd.Table):
         
 
 def create_page(**kw):
-    #~ logger.info("20121219 create_page(%r)",kw)
+    #~ logger.info("20121219 create_page(%r)",kw['ref'])
     return Page(**kw)
 
-def page(ref,language='en',title=None,body=None,**kw):
-    """
-    Instantiator shortcut for use in fixtures.
-    """
-    if title is not None: kw.update(title=title)
-    if body is not None: kw.update(body=body)
-    if language is None: language = ''
-    kw.update(language=language)
-    #~ lang = kw.get('language')
-    #~ if lang is None:
-        #~ kw.update(language=babel.DEFAULT_LANGUAGE)
-        #~ babel.set_language(None)
-    #~ else:
-        #~ babel.set_language(lang)
-    #~ page = None
-    #~ if language in babel.AVAILABLE_LANGUAGES:
-        #~ r = DummyPage.pages_dict.get(ref)
-        #~ if r is not None: 
-            #~ page = r.get(language) 
-        # babel.set_language(language)
-    page = lookup(ref,language,True)
-    if page is None:
-        #~ qs = pages.Page.objects.filter(ref=ref)
-        #~ if qs.count() == 0:
-        return create_page(ref=ref,**kw)
-    #~ if qs.count() == 1:
-    #~ obj = qs[0]
-    for k,v in kw.items():
-        setattr(page,k,v)
-    #~ page.title = title
-    #~ page.body = body
-    #~ logger.info("20121219 updated %s %s",ref,language)
-    return page
-        
 
-
-
-def lookup(ref,language=None,strict=False): 
-#~ def lookup_page(self,ref,language):
-    #~ logger.info("20121219 lookup_page(%r,%r)",ref,language)
-    try:
-        return Page.objects.get(ref=ref,language=language)
-    except Page.DoesNotExist:
-        pass
-        
-    if not strict:
-        try:
-            return Page.objects.get(ref=ref,language='')
-        except Page.DoesNotExist:
-            pass
-        if language != babel.DEFAULT_LANGUAGE:
-            try:
-                return Page.objects.get(ref=ref,language=babel.DEFAULT_LANGUAGE)
-            except Page.DoesNotExist:
-                pass
-        
-    #~ logger.debug("Unknown page reference %r. Choices are %s.",
-        #~ ref,Page.objects.all().values_list('ref',flat=True))
-    #~ return None
-        #~ raise Exception("Unknown page ref %r. Choices are %s." % (
-            #~ ref,Page.objects.all().values_list('ref',flat=True)))
-        #~ return dummy.lookup(ref)
+def lookup(ref):
+    if ref == '': 
+        ref = None
+    return Page.get_by_ref(ref)
+    #~ try:
+        #~ return Page.objects.get_by_ref(ref)
+    #~ except Page.DoesNotExist:
+        #~ pass
+    
 
 def get_sidebar_html(site,request=None,node=None,**context):
     html = ''
@@ -268,14 +235,13 @@ def get_sidebar_html(site,request=None,node=None,**context):
                 html += '<br/><a href="%s">%s</a> ' % (url,text)
     return html
  
+from lino.modlib.pages.dummy import render_node 
 
-
-from lino.core.web import render_node
     
-def unused_customize_siteconfig():
-    """
-    Injects application-specific fields to :class:`SiteConfig <lino.models.SiteConfig>`.
-    """
+#~ def unused_customize_siteconfig():
+    #~ """
+    #~ Injects application-specific fields to :class:`SiteConfig <lino.models.SiteConfig>`.
+    #~ """
     #~ dd.inject_field(lino.SiteConfig,
         #~ 'sidebar_page',
         #~ models.ForeignKey(Page,
@@ -284,21 +250,21 @@ def unused_customize_siteconfig():
             #~ verbose_name=_("Left sidebar page"),
             #~ help_text=_("Page to use for left sidebar.")))
             
-    dd.inject_field(lino.SiteConfig,
-        'header_page',
-        models.ForeignKey(Page,
-            blank=True,null=True,
-            related_name='header_page_set',
-            verbose_name=_("Header page"),
-            help_text=_("Page to use for header.")))
+    #~ dd.inject_field(lino.SiteConfig,
+        #~ 'header_page',
+        #~ models.ForeignKey(Page,
+            #~ blank=True,null=True,
+            #~ related_name='header_page_set',
+            #~ verbose_name=_("Header page"),
+            #~ help_text=_("Page to use for header.")))
   
-    dd.inject_field(lino.SiteConfig,
-        'footer_page',
-        models.ForeignKey(Page,
-            blank=True,null=True,
-            related_name='footer_page_set',
-            verbose_name=_("Footer page"),
-            help_text=_("Page to use for footer.")))
+    #~ dd.inject_field(lino.SiteConfig,
+        #~ 'footer_page',
+        #~ models.ForeignKey(Page,
+            #~ blank=True,null=True,
+            #~ related_name='footer_page_set',
+            #~ verbose_name=_("Footer page"),
+            #~ help_text=_("Page to use for footer.")))
   
 
 #~ def setup_main_menu(site,ui,profile,m):

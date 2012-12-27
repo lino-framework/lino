@@ -3509,9 +3509,10 @@ Lino.GridPanel = Ext.extend(Lino.GridPanel,{
           handler: function() { 
             var p = this.get_current_grid_config();
             Ext.apply(p,this.get_base_params());
-            p.$ext_requests.URL_PARAM_FORMAT = "$ext_requests.URL_FORMAT_PLAIN";
+            //~ since 20121226 p.$ext_requests.URL_PARAM_FORMAT = "$ext_requests.URL_FORMAT_PLAIN";
             this.add_param_values(p);
-            window.open(ADMIN_URL+'/api'+this.ls_url + "?" + Ext.urlEncode(p)) 
+            //~ since 20121226 window.open(ADMIN_URL+'/api'+this.ls_url + "?" + Ext.urlEncode(p)) 
+            window.open(ADMIN_URL+'/plain'+this.ls_url + "?" + Ext.urlEncode(p)) 
           } },
         { scope:this, 
           //~ text: "[pdf]", 
