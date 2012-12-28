@@ -616,14 +616,21 @@ def on_login(request,user):
             request.LANGUAGE_CODE = translation.get_language()
       
     su = rqdata.get(ext_requests.URL_PARAM_SUBST_USER,None)
-    if su:
-        try:
-            su = settings.LINO.user_model.objects.get(id=int(su))
-            #~ logger.info("20120714 su is %s",request.subst_user.username)
-        except settings.LINO.user_model.DoesNotExist, e:
-            su = None
+    if su is not None:
+        if su:
+            try:
+                su = settings.LINO.user_model.objects.get(id=int(su))
+                logger.info("20120714 su is %s",su.username)
+            except settings.LINO.user_model.DoesNotExist, e:
+                su = None
+        else:
+            su = None # e.g. when it was an empty string "su="
     request.subst_user = su
     request.requesting_panel = rqdata.get(ext_requests.URL_PARAM_REQUESTING_PANEL,None)
+    #~ logger.info("20121228 subst_user is %r",request.subst_user)
+    #~ if request.subst_user is not None and not isinstance(request.subst_user,settings.LINO.user_model):
+        #~ raise Exception("20121228")
+    
     
             
             

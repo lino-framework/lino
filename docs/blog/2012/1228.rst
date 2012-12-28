@@ -1,6 +1,9 @@
 20121228
 ========
 
+Lino and content management
+---------------------------
+
 During the Christmas days I learned a lot about 
 the `Bootstrap CSS toolkit <http://twitter.github.com/bootstrap/>`__.
 
@@ -13,3 +16,20 @@ After:
 
 .. image:: 1228b.jpg
   :scale: 50
+
+
+And these pictures are only the tip of the iceberg: 
+I think I finally found a working solution for 
+:mod:`lino.modlib.pages`
+and :mod:`lino.apps.cms`.
+But it's too early to write more about it.
+
+
+Cannot assign "u''": "Event.assigned_to" must be a "User" instance
+------------------------------------------------------------------
+
+Creating an event in the Calendar Panel in 
+http://demo2.lino-framework.org
+caused a ValueError at /admin/restful/cal/PanelEvents:
+"Cannot assign "u''": "Event.assigned_to" must be a "User" instance."
+This was a plain simple bug.
