@@ -479,6 +479,24 @@ class Hierarizable(Sequenced):
                 raise ValidationError("Cannot be your own ancestor")
             p = p.parent
         super(Hierarizable, self).full_clean(*args, **kwargs)
+        
+    def is_parented(self,other):
+        if self == other: return True
+        p = self.parent
+        while p is not None:
+            if p == other: 
+                return True
+            p = p.parent
+        
+        
+    def get_parents(self):
+        rv = []
+        p = self.parent
+        while p is not None:
+            rv.insert(p)
+            p = p.parent
+        return rv
+        
 
 class ProjectRelated(model.Model):
     """

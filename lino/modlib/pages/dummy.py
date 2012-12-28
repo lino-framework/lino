@@ -53,10 +53,8 @@ class DummyPage(AttrDict):
     def __unicode__(self):
         return u'%s %s' % (self._meta.verbose_name,self.ref)
         
-    def get_sidebar_menu(self,request):
-        yield ('/', 'index', 'Index')
-        #~ yield ('/downloads/', 'downloads', 'Downloads')
-        yield ('/about/', 'about', 'About')
+    def get_sidebar_html(self,request):
+        return ''
         
     def full_clean(self):
         pass

@@ -48,6 +48,7 @@ from lino import dd
 from lino.utils import babel
 from lino.utils import iif
 from lino.utils.xmlgen import html as xghtml
+E = xghtml.E
 
 from lino import mixins
 from django.conf import settings
@@ -111,10 +112,8 @@ class Page(mixins.Referrable,mixins.Hierarizable):
     
     class Meta:
         #~ abstract = True
-        verbose_name = _("Page") 
-        verbose_name_plural = _("Pages")
-        #~ verbose_name = _("Page")
-        #~ verbose_name_plural = _("Pages")
+        verbose_name = _("Node") 
+        verbose_name_plural = _("Nodes")
         #~ unique_together = ['ref','language']
         
     #~ ref = dd.NullCharField(_("Reference"),blank=True,max_length=100) # ,unique=True)
@@ -124,10 +123,10 @@ class Page(mixins.Referrable,mixins.Hierarizable):
     
     #~ type = models.ForeignKey(PageType,blank=True,null=True)
     title = babel.BabelCharField(_("Title"),max_length=200,blank=True) # ,null=True)
-    special = models.BooleanField(_("Special"),default=False)
     #~ abstract = dd.RichTextField(_("Abstract"),blank=True,format='html')
     body = babel.BabelTextField(_("Body"),blank=True,format='plain')
     
+    special = models.BooleanField(_("Special"),default=False)
     
     
     #~ def __unicode__(self):
@@ -138,6 +137,40 @@ class Page(mixins.Referrable,mixins.Hierarizable):
         
     #~ def get_mailable_type(self):
         #~ return self.type
+        
+    def get_absolute_url(self):
+        if self.ref:
+            return '/' + self.ref
+        return '/'
+        
+    def get_sidebar_caption(self):
+        if self.title:
+            return babel.babelattr(self,'title') 
+        if self.ref or self.parent:
+            return self.ref
+        return unicode(_('Home'))
+        
+    def get_sidebar_item(self,request,other):
+        a = E.a(self.get_sidebar_caption(),href=self.get_absolute_url())
+        if self == other:
+            return E.li(a,class_='active')
+        return E.li(a)
+        
+    def get_sidebar_html(self,request):
+        items = []
+        #~ loop over top-level nodes
+        for n in Page.objects.filter(parent__isnull=True,special=False).order_by('seqno'):
+            #~ items += [li for li in n.get_sidebar_items(request,self)]
+            items.append(n.get_sidebar_item(request,self))
+            if self.is_parented(n):
+                children = []
+                for ch in n.children.order_by('seqno'):
+                    children.append(ch.get_sidebar_item(request,self))
+                if len(children):
+                    items.append(E.ul(*children,class_='nav nav-list'))
+                
+        e = E.ul(*items,class_='nav nav-list')
+        return E.tostring_pretty(e)
         
     def get_sidebar_menu(self,request):
         #~ qs = self.get_siblings()
@@ -223,17 +256,6 @@ def lookup(ref):
         #~ pass
     
 
-def get_sidebar_html(site,request=None,node=None,**context):
-    html = ''
-    for n in Page.objects.exclude(special=True):
-        if not n.language or (n.language == get_language()):
-            text = cgi.escape(n.title or n.ref or "Home")
-            if n == node:
-                html += '<br/>%s' % text
-            else:
-                url = '/'+n.ref
-                html += '<br/><a href="%s">%s</a> ' % (url,text)
-    return html
  
 from lino.modlib.pages.dummy import render_node 
 

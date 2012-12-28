@@ -6,13 +6,11 @@
 <div class="row-fluid">
   {% if site.sidebar_width -%}
   <div class="span{{site.sidebar_width}}">
-    {% block sidebar %}
-      {% set active_page = active_page|default('index') -%}
-      <ul class="nav nav-list">
-      {% for href, id, caption in node.get_sidebar_menu(request) %}
-        <li{% if id == active_page %} class="active"{% endif %}><a href="{{ href|e }}">{{ caption|e }}</a></li>
-      {% endfor %}
-      </ul>      
+    {% block sidebar_top %}
+    <br/><br/><br/>
+    {% endblock %}
+    {{ node.get_sidebar_html(request) }}
+    {% block sidebar_bottom %}
     {% endblock %}
   </div>
   <div class="span{{12-site.sidebar_width}}">
