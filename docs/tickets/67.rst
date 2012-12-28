@@ -1,0 +1,20 @@
+#67 : Write a jQuery-based GUI
+==============================
+
+The expected main advantage of a jQuery-based user interface
+comparend to ExtJS is better performance. 
+ExtJS is quite heavy and makes Lino look and feel rather slow.
+
+One problem is Brian Moeskau's great work of the Extensible 
+calendar application. But even this exists in jQuery:
+Adam Shaw's 
+`FullCalendar <http://arshaw.com/fullcalendar/>`_.
+
+
+`Here <http://www.onlinecompanyportal.com/sts/>`_
+is an example integrated in a demo application 
+functionally similar to 
+http://demo3.lino-framework.org.
+
+
+

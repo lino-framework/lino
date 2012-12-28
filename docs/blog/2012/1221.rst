@@ -1,7 +1,7 @@
 20121221
 ========
 
-Continued on the "CMS project". 
+Continued on the "CMS project" (:doc:`/tickets/66`). 
 I now use Jinja2 instead of :mod:`lino.utils.memo`.
 
 Somebody who tried the public demo sites found two bugs:
