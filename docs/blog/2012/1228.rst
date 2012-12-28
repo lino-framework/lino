@@ -1,0 +1,15 @@
+20121228
+========
+
+During the Christmas days I learned a lot about 
+the `Bootstrap CSS toolkit <http://twitter.github.com/bootstrap/>`__.
+
+Before:
+
+.. image:: 1228a.jpg
+  :scale: 50
+  
+After:  
+
+.. image:: 1228b.jpg
+  :scale: 50
