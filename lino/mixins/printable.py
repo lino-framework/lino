@@ -167,7 +167,7 @@ class BuildMethod:
         if self.use_webdav and settings.LINO.use_davlink:
             return settings.LINO.webdav_url + "/".join(self.get_target_parts(action,elem))
         #~ return settings.MEDIA_URL + "/".join(self.get_target_parts(action,elem))
-        return ui.media_url(*self.get_target_parts(action,elem))
+        return settings.LINO.build_media_url(*self.get_target_parts(action,elem))
             
     def build(self,ar,action,elem):
         raise NotImplementedError

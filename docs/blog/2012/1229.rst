@@ -1,0 +1,5 @@
+20121229
+========
+
+:class:`lino.ui.extjs3.views.PlainIndex`
+is another step to make :doc:`/tickets/67` more visible.

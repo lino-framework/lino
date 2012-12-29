@@ -464,7 +464,11 @@ Lino.set_subst_user = function(id,name) {
     //~ console.log(20120714,'Lino.set_subst_user',id,name);
     Lino.subst_user = id;
 #if $settings.LINO.use_extensible and $settings.LINO.is_installed('lino.modlib.cal')
-    Lino.eventStore.setBaseParam("$ext_requests.URL_PARAM_SUBST_USER",id);
+    if(id) {
+        Lino.eventStore.setBaseParam("$ext_requests.URL_PARAM_SUBST_USER",id);
+    } else {
+      delete Lino.eventStore.baseParams['$ext_requests.URL_PARAM_SUBST_USER'];
+    }
 #end if  
     if (Lino.current_window) 
         Lino.current_window.main_item.set_base_param("$ext_requests.URL_PARAM_SUBST_USER",id);
@@ -3512,7 +3516,7 @@ Lino.GridPanel = Ext.extend(Lino.GridPanel,{
             //~ since 20121226 p.$ext_requests.URL_PARAM_FORMAT = "$ext_requests.URL_FORMAT_PLAIN";
             this.add_param_values(p);
             //~ since 20121226 window.open(ADMIN_URL+'/api'+this.ls_url + "?" + Ext.urlEncode(p)) 
-            window.open(ADMIN_URL+'/plain'+this.ls_url + "?" + Ext.urlEncode(p)) 
+            window.open('/$settings.LINO.plain_prefix'+this.ls_url + "?" + Ext.urlEncode(p)) 
           } },
         { scope:this, 
           //~ text: "[pdf]", 

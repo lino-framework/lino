@@ -43,7 +43,11 @@ Creating an event in the Calendar Panel in
 http://demo2.lino-framework.org
 caused a ValueError at /admin/restful/cal/PanelEvents:
 "Cannot assign "u''": "Event.assigned_to" must be a "User" instance."
-This was a plain simple bug.
+This was due to a plain simple bug in :mod:`lino.utils.auth` 
+which didn't manage when it got a query containing 
+"su=" (an empty value for `su`).
+A second reason was the fact that `Lino.set_subst_user` 
+caused the eventStore to send such a query.
 
 
 Write a jQuery-based GUI?

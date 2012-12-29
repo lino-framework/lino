@@ -2,8 +2,8 @@
 <html language="en"><head>
 <meta charset="utf-8"/>
 <title>{% block title %}{% endblock %}</title>
-<link rel="stylesheet" href="{{site.media_url('bootstrap','css','bootstrap.css')}}" type="text/css">
-<link rel="stylesheet" href="{{site.media_url('lino','bootstrap.css')}}" type="text/css">
+<link rel="stylesheet" href="{{site.build_media_url('bootstrap','css','bootstrap.css')}}" type="text/css">
+<link rel="stylesheet" href="{{site.build_media_url('lino','bootstrap.css')}}" type="text/css">
 </head><body>
 <div id="wrap">
   <div class="container-fluid">
@@ -23,6 +23,15 @@
     </div>
     {% endblock %}
     {% block navbar %}
+      {% if menu -%}
+      <div class="navbar navbar-static">
+        <div class="navbar-inner">
+          <div class="container" style="width: auto;">
+            {{menu}}
+          </div>  
+        </div>  
+      </div>  
+      {% endif -%}
     {% endblock %}
     {% block main %}
     <div class="row-fluid">
@@ -51,5 +60,5 @@ Using
 
 <!-- Placed at the end of the document so the pages load faster -->
 <script src="//ajax.googleapis.com/ajax/libs/jquery/1.8.3/jquery.min.js"></script>
-<script src="{{site.media_url('bootstrap','js','bootstrap.min.js')}}"></script>
+<script src="{{site.build_media_url('bootstrap','js','bootstrap.min.js')}}"></script>
 </body></html>

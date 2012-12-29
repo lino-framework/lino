@@ -39,6 +39,7 @@ from lino.utils import choosers
 from lino.utils import babel
 from lino.utils import isiterable
 from lino.utils import dblogger
+from lino.utils import auth
 
 from lino.core import actions
 from lino.core import actors
@@ -63,12 +64,13 @@ class HttpResponseDeleted(http.HttpResponse):
     
     
 def plain_html_page(ar,title,navigator,main):
+    raise Exception("No longer used")
     menu = settings.LINO.get_site_menu(ar.ui,ar.get_user().profile)
     menu = menu.as_html(ar)
     response = http.HttpResponse(content_type='text/html;charset="utf-8"')
     doc = xghtml.Document(force_unicode(title))
     #~ doc.add_stylesheet('/media/lino/plain/lino.css')
-    doc.add_stylesheet(settings.LINO.ui.media_url('lino','plain','lino.css'))
+    doc.add_stylesheet(settings.LINO.build_media_url('lino','plain','lino.css'))
     doc.body.append(E.h1(doc.title))
     doc.body.append(menu)
     if navigator is not None:
@@ -508,7 +510,7 @@ class Templates(View):
                 
             templates = []
             for obj in qs:
-                url = settings.LINO.ui.build_url('templates',
+                url = settings.LINO.build_admin_url('templates',
                     app_label,actor,pk,fldname,unicode(obj.pk))
                 templates.append([
                     unicode(obj.name),url,unicode(obj.description)])
@@ -1048,7 +1050,7 @@ class ApiList(View):
             target_parts = ['cache', 'appypdf', ip, str(ar.actor) + '.' + fmt]
             target_file = os.path.join(settings.MEDIA_ROOT,*target_parts)
             makedirs_if_missing(os.path.dirname(target_file))
-            target_url = ar.ui.media_url(*target_parts)
+            target_url = settings.LINO.build_media_url(*target_parts)
             ar.renderer = ar.ui.ext_renderer # 20120624
             """
             [NOTE] :doc:`/blog/2012/0211`
@@ -1259,7 +1261,7 @@ class PlainList(View):
 def plain_response(ar,tplname,context):        
     menu = settings.LINO.get_site_menu(ar.ui,ar.get_user().profile)
     menu = menu.as_html(ar)
-    context.update(menu = E.tostring(menu))
+    context.update(menu=E.tostring(menu))
     web.extend_context(context)
     template = web.jinja_env.get_template(tplname)
     
@@ -1368,7 +1370,6 @@ class PlainElement(View):
         #~ print 20120901, lh.main.__html__(ar)
         
         
-            
         context = dict(
           title=datarec['title'],
           #~ menu = E.tostring(menu),
@@ -1380,3 +1381,25 @@ class PlainElement(View):
         return plain_response(ar,'detail.html',context)
         
         
+class PlainIndex(View):
+    "This is not a docstring"
+    def get(self, request, *args, **kw):
+        ui = settings.LINO.ui
+        context = dict(
+          title = settings.LINO.title,
+          main = '(TODO: lino.ui.extjs3.views.PlainIndex)',
+        )
+        if settings.LINO.user_model is not None:
+            user = request.subst_user or request.user
+        else:
+            user = auth.AnonymousUser.instance()
+        a = settings.LINO.get_main_action(user)
+        if a is None:
+            raise NotImplementedError()
+        if not a.get_view_permission(user.profile):
+            raise Exception("Action not allowed for %s" % user)
+        ar = a.request(settings.LINO.ui,request,**kw)
+        ar.renderer = ui.plain_renderer
+        context.update(title=ar.get_title())
+        #~ context.update(main=ui.plain_renderer.action_call(request,a,{}))
+        return plain_response(ar,'plain_index.html',context)

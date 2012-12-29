@@ -15,6 +15,10 @@
 This module deserves a better docstring.
 """
 
+import logging
+logger = logging.getLogger(__name__)
+
+
 from django.utils.translation import ugettext_lazy as _
 from django.utils.encoding import force_text
 
@@ -35,7 +39,9 @@ from django.views.generic import View
 from lino.core import actions
 from lino.core import web
 
+
 from lino.core.modeltools import resolve_app
+from lino.core.modeltools import is_devserver
 
 
 #~ from django.conf.urls.defaults import patterns, url, include
@@ -142,24 +148,80 @@ class UI:
     def abandon_response(self):
         return self.success(_("User abandoned"))
         
-    def build_url(self,*args,**kw):
-        return settings.LINO.build_url(*args,**kw)
+    #~ def build_admin_url(self,*args,**kw):
+        #~ return settings.LINO.build_admin_url(*args,**kw)
         
-    def media_url(self,*args,**kw):
-        return settings.LINO.media_url(*args,**kw)
+    #~ def media_url(self,*args,**kw):
+        #~ return settings.LINO.media_url(*args,**kw)
         
-    def old_get_patterns(self):
+    def get_plain_urls(self):
+        from lino.ui.extjs3 import views
+
+        urlpatterns = []
+        rx = '^' # + settings.LINO.plain_prefix
         urlpatterns = patterns('',
-            (r'^favicon\.ico$', 'django.views.generic.simple.redirect_to', 
-                {'url': settings.MEDIA_URL + 'lino/favicon.ico'})
+            (rx+r'$', views.PlainIndex.as_view()),
+            (rx+r'(?P<app_label>\w+)/(?P<actor>\w+)$', views.PlainList.as_view()),
+            (rx+r'(?P<app_label>\w+)/(?P<actor>\w+)/(?P<pk>.+)$', views.PlainElement.as_view()),
         )
-        if self.prefix:
-            urlpatterns += patterns('',
-              ('^'+self.prefix+"/", include(self.get_urls()))
-            )
-        else:
-            urlpatterns += self.get_urls()
         return urlpatterns
+      
+    def get_media_urls(self):
+        #~ print "20121110 get_urls"
+        urlpatterns = []
+        from os.path import exists, join, abspath, dirname
+        
+        logger.info("Checking /media URLs ")
+        prefix = settings.MEDIA_URL[1:]
+        assert prefix.endswith('/')
+        
+        def setup_media_link(short_name,attr_name=None,source=None):
+            target = join(settings.MEDIA_ROOT,short_name)
+            if exists(target):
+                return
+            if attr_name:
+                source = getattr(settings.LINO,attr_name)
+                if not source:
+                    raise Exception(
+                      "%s does not exist and LINO.%s is not set." % (
+                      target,attr_name))
+            if not exists(source):
+                raise Exception("LINO.%s (%s) does not exist" % (attr_name,source))
+            if is_devserver():
+                urlpatterns.extend(patterns('django.views.static',
+                (r'^%s%s/(?P<path>.*)$' % (prefix,short_name), 
+                    'serve', {
+                    'document_root': source,
+                    'show_indexes': False })))
+            else:
+                logger.info("Setting up symlink %s -> %s.",target,source)
+                symlink = getattr(os,'symlink',None)
+                if symlink is not None:
+                    symlink(source,target)
+            
+        setup_media_link('extjs','extjs_root')
+        if settings.LINO.use_bootstrap:
+            setup_media_link('bootstrap','bootstrap_root')
+        if settings.LINO.use_jasmine:
+            setup_media_link('jasmine','jasmine_root')
+        if settings.LINO.use_extensible:
+            setup_media_link('extensible','extensible_root')
+        if settings.LINO.use_tinymce:
+            setup_media_link('tinymce','tinymce_root')
+        if settings.LINO.use_eid_jslib:
+            setup_media_link('eid-jslib','eid_jslib_root')
+            
+        setup_media_link('lino',source=join(dirname(lino.__file__),'..','media'))
+
+        if is_devserver():
+            urlpatterns += patterns('django.views.static',
+                (r'^%s(?P<path>.*)$' % prefix, 'serve', 
+                  { 'document_root': settings.MEDIA_ROOT, 
+                    'show_indexes': True }),
+            )
+
+        return urlpatterns
+        
         
     def get_patterns(self):
         """
@@ -173,6 +235,10 @@ class UI:
                 #~ {'url': settings.MEDIA_URL + 'lino/favicon.ico'})
         #~ )
         urlpatterns = self.get_media_urls()
+        #~ urlpatterns += self.get_plain_urls()
+        urlpatterns += patterns('',
+          ('^'+settings.LINO.plain_prefix+"/", include(self.get_plain_urls()))
+        )
         if settings.LINO.admin_url:
         #~ if self.prefix:
         

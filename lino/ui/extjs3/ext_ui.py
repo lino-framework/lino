@@ -69,7 +69,6 @@ from lino.ui.base import Callback
 from lino.core import actors
 from lino.core.modeltools import makedirs_if_missing
 from lino.core.modeltools import full_model_name
-from lino.core.modeltools import is_devserver
     
 from lino.utils import choosers
 from lino.utils import babel
@@ -154,7 +153,7 @@ class HtmlRenderer(object):
             #~ return btn
             #~ return xghtml.E.a(btn,**kw)
             #~ kw.update(class_='x-btn-text '+icon_name)
-            img = xghtml.E.img(src=self.ui.media_url('lino','extjs','images','mjames',icon_file))
+            img = xghtml.E.img(src=settings.LINO.build_media_url('lino','extjs','images','mjames',icon_file))
             return xghtml.E.a(img,**kw)
         else:
             #~ return xghtml.E.span('[',xghtml.E.a(text,**kw),']')
@@ -253,7 +252,7 @@ class HtmlRenderer(object):
             #~ chunks.append(xghtml.E.a(_("show"),
               #~ href=self.ui.media_url(obj.file.name),target='_blank'))
             chunks.append(self.href_button(
-                self.ui.media_url(obj.file.name),_("show"),
+                settings.LINO.build_media_url(obj.file.name),_("show"),
                 target='_blank',
                 #~ icon_file='world_go.png',
                 icon_file='page_go.png',
@@ -310,7 +309,7 @@ class PlainRenderer(HtmlRenderer):
     def pk2url(self,ar,pk,**kw):
         if pk is not None:
             #~ kw[ext_requests.URL_PARAM_FORMAT] = ext_requests.URL_FORMAT_PLAIN
-            return self.ui.build_url('plain',
+            return settings.LINO.build_plain_url(
                 ar.actor.model._meta.app_label,
                 ar.actor.model.__name__,
                 str(pk),**kw)
@@ -318,7 +317,7 @@ class PlainRenderer(HtmlRenderer):
     def get_detail_url(self,obj,*args,**kw):
         #~ since 20121226 kw[ext_requests.URL_PARAM_FORMAT] = ext_requests.URL_FORMAT_PLAIN
         #~ since 20121226 return self.ui.build_url('api',obj._meta.app_label,obj.__class__.__name__,str(obj.pk),*args,**kw)
-        return self.ui.build_url('plain',obj._meta.app_label,obj.__class__.__name__,str(obj.pk),*args,**kw)
+        return settings.LINO.build_plain_url(obj._meta.app_label,obj.__class__.__name__,str(obj.pk),*args,**kw)
         
     def get_request_url(self,ar,*args,**kw):
         add_user_language(kw,ar)
@@ -335,7 +334,7 @@ class PlainRenderer(HtmlRenderer):
             kw.setdefault(ext_requests.URL_PARAM_SORT,sc)
         #~ print '20120901 TODO get_request_url'
         
-        return ar.ui.build_url('plain',ar.actor.app_label,ar.actor.__name__,*args,**kw)
+        return settings.LINO.build_plain_url(ar.actor.app_label,ar.actor.__name__,*args,**kw)
         
     def request_handler(self,ar,*args,**kw):
         return ''
@@ -555,7 +554,7 @@ class ExtRenderer(HtmlRenderer):
         return '[<a href="%s">%s</a>]' % (self.action_url_http(a,**params),label)
         
     def get_actor_url(self,actor,*args,**kw):
-        return self.ui.build_url("api",actor.app_label,actor.__name__,*args,**kw)
+        return settings.LINO.build_admin_url("api",actor.app_label,actor.__name__,*args,**kw)
         
     def get_request_url(self,ar,*args,**kw):
         """
@@ -569,12 +568,12 @@ class ExtRenderer(HtmlRenderer):
         if not kw['base_params']:
             del kw['base_params']
         #~ kw = self.request2kw(rr,**kw)
-        return ar.ui.build_url('api',ar.actor.app_label,ar.actor.__name__,*args,**kw)
+        return settings.LINO.build_admin_url('api',ar.actor.app_label,ar.actor.__name__,*args,**kw)
         
     def get_detail_url(self,obj,*args,**kw):
         #~ rpt = obj._lino_default_table
         #~ return self.build_url('api',rpt.app_label,rpt.__name__,str(obj.pk),*args,**kw)
-        return self.build_url('api',obj._meta.app_label,obj.__class__.__name__,str(obj.pk),*args,**kw)
+        return settings.LINO.build_admin_url('api',obj._meta.app_label,obj.__class__.__name__,str(obj.pk),*args,**kw)
         
     #~ def request_href_js(self,rr,text=None):
         #~ url = self.request_handler(rr)
@@ -983,8 +982,8 @@ class ExtUI(base.UI):
             (rx+r'choices/(?P<app_label>\w+)/(?P<rptname>\w+)/(?P<fldname>\w+)$', views.Choices.as_view()),
             (rx+r'apchoices/(?P<app_label>\w+)/(?P<actor>\w+)/(?P<an>\w+)/(?P<field>\w+)$', views.ActionParamChoices.as_view()),
             (rx+r'callbacks/(?P<thread_id>\w+)/(?P<button_id>\w+)$', views.Callbacks.as_view()),
-            (rx+r'plain/(?P<app_label>\w+)/(?P<actor>\w+)$', views.PlainList.as_view()),
-            (rx+r'plain/(?P<app_label>\w+)/(?P<actor>\w+)/(?P<pk>.+)$', views.PlainElement.as_view()),
+            #~ (rx+r'plain/(?P<app_label>\w+)/(?P<actor>\w+)$', views.PlainList.as_view()),
+            #~ (rx+r'plain/(?P<app_label>\w+)/(?P<actor>\w+)/(?P<pk>.+)$', views.PlainElement.as_view()),
         )
         urlpatterns += settings.LINO.get_urls()
         if settings.LINO.use_eid_applet:
@@ -1005,61 +1004,6 @@ class ExtUI(base.UI):
 
         return urlpatterns
         
-    def get_media_urls(self):
-        #~ print "20121110 get_urls"
-        urlpatterns = []
-        from os.path import exists, join, abspath, dirname
-        
-        logger.info("Checking /media URLs ")
-        prefix = settings.MEDIA_URL[1:]
-        assert prefix.endswith('/')
-        
-        def setup_media_link(short_name,attr_name=None,source=None):
-            target = join(settings.MEDIA_ROOT,short_name)
-            if exists(target):
-                return
-            if attr_name:
-                source = getattr(settings.LINO,attr_name)
-                if not source:
-                    raise Exception(
-                      "%s does not exist and LINO.%s is not set." % (
-                      target,attr_name))
-            if not exists(source):
-                raise Exception("LINO.%s (%s) does not exist" % (attr_name,source))
-            if is_devserver():
-                urlpatterns.extend(patterns('django.views.static',
-                (r'^%s%s/(?P<path>.*)$' % (prefix,short_name), 
-                    'serve', {
-                    'document_root': source,
-                    'show_indexes': False })))
-            else:
-                logger.info("Setting up symlink %s -> %s.",target,source)
-                symlink = getattr(os,'symlink',None)
-                if symlink is not None:
-                    symlink(source,target)
-            
-        setup_media_link('extjs','extjs_root')
-        if settings.LINO.use_bootstrap:
-            setup_media_link('bootstrap','bootstrap_root')
-        if settings.LINO.use_jasmine:
-            setup_media_link('jasmine','jasmine_root')
-        if settings.LINO.use_extensible:
-            setup_media_link('extensible','extensible_root')
-        if settings.LINO.use_tinymce:
-            setup_media_link('tinymce','tinymce_root')
-        if settings.LINO.use_eid_jslib:
-            setup_media_link('eid-jslib','eid_jslib_root')
-            
-        setup_media_link('lino',source=join(dirname(lino.__file__),'..','media'))
-
-        if is_devserver():
-            urlpatterns += patterns('django.views.static',
-                (r'^%s(?P<path>.*)$' % prefix, 'serve', 
-                  { 'document_root': settings.MEDIA_ROOT, 
-                    'show_indexes': True }),
-            )
-
-        return urlpatterns
 
     def html_page(self,*args,**kw):
         return '\n'.join([ln for ln in self.html_page_lines(*args,**kw)])
@@ -1074,10 +1018,10 @@ class ExtUI(base.UI):
         yield '<title id="title">%s</title>' % settings.LINO.title or settings.LINO.short_name
         
         def stylesheet(*args):
-            url = self.media_url(*args) #  + url
+            url = settings.LINO.build_media_url(*args) #  + url
             return '<link rel="stylesheet" type="text/css" href="%s" />' % url
         def javascript(url):
-            url = self.media_url() + url
+            url = settings.LINO.build_media_url() + url
             return '<script type="text/javascript" src="%s"></script>' % url
             
         if run_jasmine: 
@@ -1107,14 +1051,14 @@ class ExtUI(base.UI):
             yield stylesheet("extjs","examples","ux","gridfilters","css/GridFilters.css")
             yield stylesheet("extjs","examples","ux","gridfilters","css","RangeMenu.css")
             
-        yield '<link rel="stylesheet" type="text/css" href="%s/extjs/examples/ux/fileuploadfield/css/fileuploadfield.css" />' % self.media_url() 
+        yield '<link rel="stylesheet" type="text/css" href="%s/extjs/examples/ux/fileuploadfield/css/fileuploadfield.css" />' % settings.LINO.build_media_url() 
         
         #~ yield '<link rel="stylesheet" type="text/css" href="%s/lino/extjs/lino.css">' % self.media_url()
         yield stylesheet("lino","extjs","lino.css")
         
         if settings.LINO.use_awesome_uploader:
-            yield '<link rel="stylesheet" type="text/css" href="%s/lino/AwesomeUploader/AwesomeUploader.css">' % self.media_url()
-            yield '<link rel="stylesheet" type="text/css" href="%s/lino/AwesomeUploader/AwesomeUploader Progress Bar.css">' % self.media_url()
+            yield '<link rel="stylesheet" type="text/css" href="%s/lino/AwesomeUploader/AwesomeUploader.css">' % settings.LINO.build_media_url()
+            yield '<link rel="stylesheet" type="text/css" href="%s/lino/AwesomeUploader/AwesomeUploader Progress Bar.css">' % settings.LINO.build_media_url()
          
         if settings.DEBUG:
             yield javascript('/extjs/adapter/ext/ext-base-debug.js')
@@ -1133,19 +1077,19 @@ class ExtUI(base.UI):
                 yield javascript('/extensible/src/locale/extensible-lang-'+translation.get_language()+'.js')
             
         if False:
-            yield '<script type="text/javascript" src="%s/extjs/Exporter-all.js"></script>' % self.media_url() 
+            yield '<script type="text/javascript" src="%s/extjs/Exporter-all.js"></script>' % settings.LINO.build_media_url() 
             
         if False:
-            yield '<script type="text/javascript" src="%s/extjs/examples/ux/CheckColumn.js"></script>' % self.media_url() 
+            yield '<script type="text/javascript" src="%s/extjs/examples/ux/CheckColumn.js"></script>' % settings.LINO.build_media_url() 
 
-        yield '<script type="text/javascript" src="%s/extjs/examples/ux/statusbar/StatusBar.js"></script>' % self.media_url()
+        yield '<script type="text/javascript" src="%s/extjs/examples/ux/statusbar/StatusBar.js"></script>' % settings.LINO.build_media_url()
         
         if settings.LINO.use_spinner:
-            yield '<script type="text/javascript" src="%s/extjs/examples/ux/Spinner.js"></script>' % self.media_url()
+            yield '<script type="text/javascript" src="%s/extjs/examples/ux/Spinner.js"></script>' % settings.LINO.build_media_url()
         
         if settings.LINO.use_tinymce:
             #~ p = self.media_url() + '/tinymce'
-            p = self.media_url('tinymce')
+            p = settings.LINO.build_media_url('tinymce')
             #~ yield '<script type="text/javascript" src="Ext.ux.form.FileUploadField.js"></script>'
             #~ yield '<script type="text/javascript" src="%s/tiny_mce.js"></script>' % p
             yield javascript("/tinymce/tiny_mce.js")
@@ -1177,7 +1121,7 @@ tinymce.init({
             
         if settings.LINO.use_gridfilters:
             #~ p = self.media_url() + '/extjs/examples/ux/gridfilters'
-            p = self.media_url('extjs','examples','ux','gridfilters')
+            p = settings.LINO.build_media_url('extjs','examples','ux','gridfilters')
             #~ yield '<script type="text/javascript" src="%s/extjs/examples/ux/RowEditor.js"></script>' % self.media_url()
             yield '<script type="text/javascript" src="%s/menu/RangeMenu.js"></script>' % p
             yield '<script type="text/javascript" src="%s/menu/ListMenu.js"></script>' % p
@@ -1189,14 +1133,14 @@ tinymce.init({
             yield '<script type="text/javascript" src="%s/filter/NumericFilter.js"></script>' % p
             yield '<script type="text/javascript" src="%s/filter/BooleanFilter.js"></script>' % p
             
-        yield '<script type="text/javascript" src="%s/extjs/examples/ux/fileuploadfield/FileUploadField.js"></script>' % self.media_url()
+        yield '<script type="text/javascript" src="%s/extjs/examples/ux/fileuploadfield/FileUploadField.js"></script>' % settings.LINO.build_media_url()
         
         if settings.LINO.use_filterRow: 
-            p = self.media_url() + '/lino/filterRow'
+            p = settings.LINO.build_media_url('lino','filterRow') 
             yield '<script type="text/javascript" src="%s/filterRow.js"></script>' % p
             
         if settings.LINO.use_vinylfox:
-            p = self.media_url() + '/lino/vinylfox/src/Ext.ux.form.HtmlEditor'
+            p = settings.LINO.build_media_url() + '/lino/vinylfox/src/Ext.ux.form.HtmlEditor'
             #~ yield '<script type="text/javascript" src="Ext.ux.form.FileUploadField.js"></script>'
             yield '<script type="text/javascript" src="%s.MidasCommand.js"></script>' % p
             yield '<script type="text/javascript" src="%s.Divider.js"></script>' % p
@@ -1215,7 +1159,7 @@ tinymce.init({
             yield '<script type="text/javascript" src="%s.Plugins.js"></script>' % p
             
         if settings.LINO.use_awesome_uploader:
-            p = self.media_url() + '/lino/AwesomeUploader/'
+            p = settings.LINO.build_media_url() + '/lino/AwesomeUploader/'
             #~ yield '<script type="text/javascript" src="Ext.ux.form.FileUploadField.js"></script>'
             yield '<script type="text/javascript" src="%s/Ext.ux.XHRUpload.js"></script>' % p
             yield '<script type="text/javascript" src="%s/swfupload.js"></script>' % p
@@ -1243,7 +1187,7 @@ tinymce.init({
         if not settings.LINO.build_js_cache_on_startup:
             self.build_js_cache_for_profile(user.profile,False)
         yield '<script type="text/javascript" src="%s"></script>' % (
-            self.media_url(*self.lino_js_parts(user.profile)))
+            settings.LINO.build_media_url(*self.lino_js_parts(user.profile)))
             
         #~ yield '<!-- page specific -->'
         yield '<script type="text/javascript">'
@@ -1262,7 +1206,7 @@ tinymce.init({
                 user_text = unicode(request.user) + " (" + _("as") + " " + unicode(request.subst_user) + ")"
             else:
                 #~ yield "Lino.subst_user = null;"
-                yield "Lino.set_subst_user(null);"
+                yield "Lino.set_subst_user();"
                 user_text = unicode(request.user) 
                 
             user = request.user
@@ -1382,7 +1326,7 @@ tinymce.init({
             #~ yield '</object>'
             
         if settings.LINO.use_eid_jslib:
-            p = self.media_url('eid-jslib')
+            p = settings.LINO.build_media_url('eid-jslib')
             #~ print p
             yield '<applet code="org.jdesktop.applet.util.JNLPAppletLauncher"'
             yield 'codebase = "%s/"' % p
@@ -1408,7 +1352,7 @@ tinymce.init({
           
         if settings.LINO.use_davlink:
             yield '<applet name="DavLink" code="davlink.DavLink.class"'
-            yield '        archive="%s/lino/applets/DavLink.jar"' % self.media_url()
+            yield '        archive="%s/lino/applets/DavLink.jar"' % settings.LINO.build_media_url()
             yield '        width="1" height="1"></applet>'
             # Note: The value of the ARCHIVE attribute is a URL of a JAR file.
         yield '<div id="body"></div>'
@@ -1429,12 +1373,12 @@ tinymce.init({
         def fn():
             yield """// lino.js --- generated %s by Lino version %s.""" % (time.ctime(),lino.__version__)
             #~ // $site.title ($lino.welcome_text())
-            yield "Ext.BLANK_IMAGE_URL = '%s/extjs/resources/images/default/s.gif';" % self.media_url()
+            yield "Ext.BLANK_IMAGE_URL = '%s/extjs/resources/images/default/s.gif';" % settings.LINO.build_media_url()
             yield "LANGUAGE_CHOICES = %s;" % py2js(list(LANGUAGE_CHOICES))
             # TODO: replace the following lines by a generic method for all ChoiceLists
             #~ yield "STRENGTH_CHOICES = %s;" % py2js(list(STRENGTH_CHOICES))
             #~ yield "KNOWLEDGE_CHOICES = %s;" % py2js(list(KNOWLEDGE_CHOICES))
-            yield "MEDIA_URL = %r;" % (self.media_url())
+            yield "MEDIA_URL = %r;" % (settings.LINO.build_media_url())
             yield "ADMIN_URL = %r;" % settings.LINO.admin_url
             #~ if settings.LINO.admin_url:
                 #~ yield "ADMIN_URL = '/%s';" % settings.LINO.admin_url
@@ -2392,9 +2336,3 @@ tinymce.init({
         return self.ext_renderer.row_action_button(*args,**kw)
 
 
-    def unused_action_url_http(self,action,*args,**kw):
-        #~ if not action is action.actor.default_action:
-        if action != action.actor.default_action:
-            kw.update(an=action.name)
-        return self.build_url("api",action.actor.app_label,action.actor.__name__,*args,**kw)
-            

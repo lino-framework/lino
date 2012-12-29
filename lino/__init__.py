@@ -27,6 +27,13 @@ from os.path import join, abspath, dirname, normpath
 from decimal import Decimal
 from urllib import urlencode
 
+def buildurl(*args,**kw):
+    url = '/' + ("/".join(args))
+    if len(kw):
+        url += "?" + urlencode(kw)
+    return url
+        
+
 #~ from jinja2 import Template
 
 from lino.utils.xmlgen import html as xghtml
@@ -162,6 +169,7 @@ class Lino(object):
     
     use_spinner = False # doesn't work. leave this to False
     
+    plain_prefix = 'plain' 
     
     #~ admin_url = '/admin'
     admin_url = '' # 
@@ -1722,27 +1730,17 @@ class Lino(object):
         return xghtml.E.p("Please log in")
         
 
-    def build_url(self,*args,**kw):
-        #~ url = self.admin_url
-        url = self.admin_url
-        if args:
-            url += '/' + ("/".join(args))
-        if len(kw):
-            url += "?" + urlencode(kw)
-        return url
-        
+    def build_admin_url(self,*args,**kw):
+        if self.admin_url:
+            args = (self.admin_url[1:],) + args
+        return buildurl(*args,**kw)
+    #~ build_url = build_admin_url
 
+    def build_media_url(self,*args,**kw):
+        return buildurl('media',*args,**kw)
         
-    def media_url(self,*args,**kw):
-        url = '/media'
-        if args:
-            url += '/' + ("/".join(args))
-        if len(kw):
-            url += "?" + urlencode(kw)
-        return url
-      
-        #~ return self.build_url('media',*args,**kw)
-        
+    def build_plain_url(self,*args,**kw):
+        return buildurl(self.plain_prefix,*args,**kw)
         
 
     def get_urls(self):
