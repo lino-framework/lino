@@ -118,7 +118,6 @@ from lino.core.dbtables import summary, summary_row
 
 from lino.core.frames import Frame
 from lino.core.dialogs import Dialog
-#~ from lino.core.frames import EmptyTable
 
 from lino.core.actions import action
 #~ from lino.core.actions import Action

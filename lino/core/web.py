@@ -65,15 +65,6 @@ jinja_env.globals.update(
 )
 
 
-
-
-
-#~ def build_page_template(site):
-    # return Template('\n'.join(list(bootstrap_page_template(site))))
-    #~ return jinja_env.from_string('\n'.join(list(bootstrap_page_template(site))))
-
-
-
 def extend_context(context):
     def parse(s):
         #~ print 20121221, s
@@ -86,26 +77,9 @@ def extend_context(context):
         )
 
 def render_from_request(request,template_name,**context):
-  
     extend_context(context)
-    
     context.update(request=request)
-        
-    #~ context.update(parse=parse)
-        
-    #~ context.update(sidebar=settings.LINO.get_sidebar_html(**context))
-    #~ context.update(header=settings.LINO.get_header_html(**context))
-    #~ context.update(footer=settings.LINO.get_footer_html(**context))
-        
-    #~ def parse(s):
-        #~ return self.parse(s,**context)
-    #~ context.update(parse=parse)
-    
-    #~ if not obj.body:
-        #~ context.update(body=obj.abstract)
-        
     template = jinja_env.get_template(template_name)
-        
     return template.render(**context)
 
 

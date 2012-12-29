@@ -621,34 +621,10 @@ class EmptyTable(frames.Frame):
     @classmethod
     def get_default_action(cls):
         return actions.ShowEmptyTable()
-        
     
     
-    #~ @classmethod
-    #~ def do_setup(self):
-        #~ # logger.info("%s.__init__()",self.__class__)
-        #~ # if not self.__class__ is Frame:
-        #~ if self is not EmptyTable:
-            #~ # assert self.default_action_class is None
-            #~ # if self.label is None:
-                #~ # raise Exception("%r has no label" % self)
-            #~ # self.default_action = actions.ShowEmptyTable()
-            #~ # self.default_action = self.add_action(actions.ShowEmptyTable())
-            #~ super(Frame,self).do_setup()
-            #~ # self.setup_actions()
-            #~ # self.add_action(self.default_action)
-
-    #~ @classmethod
-    #~ def setup_actions(self):
-        #~ super(EmptyTable,self).setup_actions()
-        #~ from lino.mixins.printable import DirectPrintAction
-        #~ self.add_action(DirectPrintAction())
-        
-            
     @classmethod
     def create_instance(self,req,**kw):
-        #~ if self.known_values:
-            #~ kw.update(self.known_values)
         if self.parameters:
             kw.update(req.param_values)
 
@@ -662,10 +638,6 @@ class EmptyTable(frames.Frame):
         obj.update(**kw)
         return obj
     
-    #~ @classmethod
-    #~ def elem_filename_root(self,elem):
-        #~ return self.app_label + '.' + self.__name__
-
     @classmethod
     def get_data_elem(self,name):
         de = super(EmptyTable,self).get_data_elem(name)

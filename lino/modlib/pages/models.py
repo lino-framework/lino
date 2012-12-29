@@ -260,34 +260,6 @@ def lookup(ref,*args,**kw):
 from lino.modlib.pages.dummy import render_node 
 
     
-#~ def unused_customize_siteconfig():
-    #~ """
-    #~ Injects application-specific fields to :class:`SiteConfig <lino.models.SiteConfig>`.
-    #~ """
-    #~ dd.inject_field(lino.SiteConfig,
-        #~ 'sidebar_page',
-        #~ models.ForeignKey(Page,
-            #~ blank=True,null=True,
-            #~ related_name='sidebar_page_set',
-            #~ verbose_name=_("Left sidebar page"),
-            #~ help_text=_("Page to use for left sidebar.")))
-            
-    #~ dd.inject_field(lino.SiteConfig,
-        #~ 'header_page',
-        #~ models.ForeignKey(Page,
-            #~ blank=True,null=True,
-            #~ related_name='header_page_set',
-            #~ verbose_name=_("Header page"),
-            #~ help_text=_("Page to use for header.")))
-  
-    #~ dd.inject_field(lino.SiteConfig,
-        #~ 'footer_page',
-        #~ models.ForeignKey(Page,
-            #~ blank=True,null=True,
-            #~ related_name='footer_page_set',
-            #~ verbose_name=_("Footer page"),
-            #~ help_text=_("Page to use for footer.")))
-  
 
 #~ def setup_main_menu(site,ui,profile,m):
     #~ m  = m.add_menu("office",lino.OFFICE_MODULE_LABEL)
@@ -307,19 +279,8 @@ def setup_config_menu(site,ui,profile,m):
     #~ m  = m.add_menu("office",lino.OFFICE_MODULE_LABEL)
     #~ m.add_action(Pages)
   
-#~ customize_siteconfig()  
-
 
         
 def get_all_pages():
     return Page.objects.all()
 
-#~ def get_urls():
-    #~ refs = set()
-    #~ urlpatterns = []
-    #~ for page in Page.objects.all():
-        #~ refs.add(page.ref)
-    #~ for ref in refs:
-        #~ urlpatterns += patterns('',
-           #~ (r'^%s$' % ref, WebIndex.as_view(),dict(ref=ref)))
-    #~ return urlpatterns

@@ -136,12 +136,6 @@ class UI:
         assert isinstance(prefix,basestring)
         assert len(prefix) == 0, "no longer supported"
         assert len(options) == 0, "no longer supported"
-        #~ self.prefix = prefix
-        #~ self.admin_url = settings.LINO.admin_url
-        #~ if prefix:
-            #~ assert not prefix.startswith('/')
-            #~ assert not prefix.endswith('/')
-            #~ self.admin_url += '/' + prefix
             
             
     #~ def pop_thread(self,id):
@@ -241,10 +235,10 @@ class UI:
         urlpatterns += patterns('',
           ('^'+settings.LINO.plain_prefix+"/", include(self.get_plain_urls()))
         )
-        if settings.LINO.admin_url:
+        if settings.LINO.admin_prefix:
         
             urlpatterns += patterns('',
-              ('^'+settings.LINO.admin_url[1:]+"/", include(self.get_urls()))
+              ('^'+settings.LINO.admin_prefix+"/", include(self.get_urls()))
             )
             
             pages = resolve_app('pages')
@@ -255,7 +249,7 @@ class UI:
                     #~ print 20121220, ref
                     obj = pages.lookup(ref,None)
                     if obj is None:
-                        raise http.Http404("Unkonwn node %r" % ref)
+                        raise http.Http404("Unknown page %r" % ref)
                     html = pages.render_node(request,obj)
                     return http.HttpResponse(html)
 

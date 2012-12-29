@@ -1,10 +1,17 @@
 20121229
 ========
 
-- :class:`lino.ui.extjs3.views.PlainIndex`
-  is another step to make :doc:`/tickets/67` 
-  more visible.
+Worked on :doc:`/tickets/67`.
 
+- New view :class:`lino.ui.extjs3.views.PlainIndex`
+
+- The detail of a row now renders something. This needs lots of fine-tuning, 
+  but for a proof of concept that's enough now.
 
 - :meth:`lino.ui.base.UI.get_patterns` now adds a single pattern instead 
-  of one pattern for each `pages.Node`.
+  of one pattern for each `pages.Page`.
+  
+- Changed `admin_url` to :attr:`lino.Lino.admin_prefix`.
+
+TODO: The ADMIN_URL variable in linolib.js doesn't 
+correctly handle the case of an empty adin_prefix.

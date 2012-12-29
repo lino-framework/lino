@@ -149,10 +149,13 @@ href
 type
 rel
 target
+value
 onclick
 src
+rows
 data-toggle
 tabindex
+placeholder
 """)
 
 def table_header_row(*headers,**kw):

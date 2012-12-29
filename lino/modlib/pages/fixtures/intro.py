@@ -38,14 +38,14 @@ We are running
 `{{site.short_name}} <{{site.url}}>`__
 version {{site.version}}, {{site.description}}
 
-{% if site.admin_url %}
+{% if site.admin_prefix %}
 
 You are currently seeing the **web content** section,
 whose content and layout are configurable using 
 the normal Django techniques.
 
 To see what Lino really adds to a Django site, 
-you should go to the `Admin <{{site.admin_url}}/>`__ section.
+you should go to the `Admin <{{site.admin_prefix}}/>`__ section.
 
 {% endif %}
 """)
@@ -58,13 +58,13 @@ Ce site est une démonstration en ligne de
 `{{site.short_name}} <{{site.url}}>`__
 version {{site.version}}, {{site.description}}
 
-{% if site.admin_url %}
+{% if site.admin_prefix %}
 
 Ceci est la section publique dont le layout et le contenu sont configurables
 selon les techniques habituelles de Django.
 
 Pour voir ce que Lino ajoute à Django, vous devriez maintenant aller 
-dans la `section administrative <{{site.admin_url}}/>`__.
+dans la `section administrative <{{site.admin_prefix}}/>`__.
 
 
 {% endif %}
@@ -76,13 +76,13 @@ Diese Site ist eine Online-Demo von
 `{{site.short_name}} <{{site.url}}>`__
 version {{site.version}}, {{site.description}}
 
-{% if site.admin_url %}
+{% if site.admin_prefix %}
 
 Dies ist der öffentliche Bereich, dessen Layout 
 und Inhalt frei konfigurierbar sind wie bei jeder Django-Site.
 
 Um das Besondere an Lino zu sehen, sollten Sie nun 
-in den `Verwaltungsbereich <{{site.admin_url}}/>`__ gehen.
+in den `Verwaltungsbereich <{{site.admin_prefix}}/>`__ gehen.
 
 {% endif %}
 """)
@@ -104,6 +104,16 @@ Diese Site ist eine online-Demo von `{{site.short_name}} <{{site.url}}>`__.
     
     
 page('admin','en','',"""
+
+{% if not site.admin_prefix %}
+
+Welcome to the **{{site.title}}** site.
+We are running 
+`{{site.short_name}} <{{site.url}}>`__
+version {{site.version}}, {{site.description}}
+
+{% endif %}
+
 You have entered the **admin** section.
 Unlike the `web content section </>`__ there is now a GUI menu 
 bar in the upper part of the screen.
@@ -125,6 +135,14 @@ or directly to the person who invited you.
 """,special = True)
     
 page('admin','de','',"""
+
+{% if not site.admin_prefix %}
+Willkommen auf {{site.title}}.
+Diese Site ist eine Online-Demo von
+`{{site.short_name}} <{{site.url}}>`__
+version {{site.version}}, {{site.description}}
+{% endif %}
+
 Sie sind im Verwaltungsbereich.
 Anders als im `öffentlichen Bereich </>`__ 
 sehen Sie hier ein Menü am oberen Bildschirmrand.
@@ -145,6 +163,13 @@ oder direkt die Person, die Sie eingeladen hat.
 """,special = True)
 
 page('admin','fr','',"""
+{% if not site.admin_prefix %}
+Bienvenue sur **{{site.title}}**.
+Ce site est une démonstration en ligne de
+`{{site.short_name}} <{{site.url}}>`__
+version {{site.version}}, {{site.description}}
+{% endif %}
+
 Vous êtes dans la section administrative qui,
 autrement que la `section publique </>`__ a un menu déroulant.
 

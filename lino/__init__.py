@@ -157,7 +157,7 @@ class Lino(object):
     or setting:`DEBUG` is set.
     """
     
-    # tree constants used by lino.modlib.workflows:
+    # three constants used by lino.modlib.workflows:
     max_state_value_length = 20 
     max_action_name_length = 50
     max_actor_name_length = 100
@@ -171,14 +171,20 @@ class Lino(object):
     
     plain_prefix = 'plain' 
     
+    admin_prefix = '' 
     #~ admin_url = '/admin'
-    admin_url = '' # 
+    #~ admin_url = '' # 
     """
-    If this is not empty (the usual value in that case is ``"/admin"``), 
-    then your site features a "web content mode": 
-    the root url renders normal readonly web content defined by :mod:`lino.modlib.pages`.
+    The prefix to use for Lino admin URLs.
     
-    Make sure that it begins with a slash if not empty.
+    The default value is an empty string, resulting in a 
+    website whose root url shows the "admin mode" 
+    (i.e. with a pull-down "main menu").
+    
+    If this is nonempty, then your site features a "web content mode": 
+    the root url renders "web content" defined by :mod:`lino.modlib.pages`.
+    The usual value in that case is ``admin_prefix = "admin"``.
+    
     
     See also  
     http://groups.google.com/group/django-users/browse_thread/thread/c95ba83e8f666ae5?pli=1
@@ -186,13 +192,6 @@ class Lino(object):
     https://code.djangoproject.com/ticket/8906
     https://code.djangoproject.com/wiki/BackwardsIncompatibleChanges#ChangedthewayURLpathsaredetermined
     """
-    
-    #~ cms_index_page = None
-    #~ """
-    #~ Set this to the primary key of the page to display as "index" 
-    #~ page when :attr:`admin_url` is not empty.
-    #~ """
-    
     
     
     extjs_root = None
@@ -852,7 +851,7 @@ class Lino(object):
         #~ print "settings.LINO.source_dir:", self.source_dir
         #~ print "settings.LINO.source_name:", self.source_name
 
-        self.qooxdoo_prefix = self.admin_url + '/media/qooxdoo/lino_apps/' + self.project_name + '/build/'
+        self.qooxdoo_prefix = '/media/qooxdoo/lino_apps/' + self.project_name + '/build/'
         #~ self.dummy_messages = set()
         self._setting_up = False
         self._setup_done = False
@@ -867,7 +866,7 @@ class Lino(object):
         #~ if settings_dict: 
             #~ self.install_settings(settings_dict)
         if self.webdav_url is None:
-            self.webdav_url = self.admin_url + '/media/webdav/'
+            self.webdav_url = '/media/webdav/'
         if self.webdav_root is None:
             self.webdav_root = join(abspath(self.project_dir),'media','webdav')
             
@@ -1731,8 +1730,8 @@ class Lino(object):
         
 
     def build_admin_url(self,*args,**kw):
-        if self.admin_url:
-            args = (self.admin_url[1:],) + args
+        if self.admin_prefix:
+            return buildurl(self.admin_prefix,*args,**kw)
         return buildurl(*args,**kw)
     #~ build_url = build_admin_url
 
@@ -1746,24 +1745,9 @@ class Lino(object):
     def get_urls(self):
         return []
 
-    def get_header_html(self,request=None,node=None,**context):
-        from django.utils.translation import get_language
-        html = ''
-        if len(self.languages) > 1:
-            for lang in self.languages:
-                if lang == get_language():
-                    html += lang + " "
-                else:
-                    html += '[<a href="?ul=%s">%s</a>] ' % (lang,lang)
-        html += '<a href="%s/">Admin</a>' % self.admin_url
-        return html
-        
-    def get_footer_html(self,request=None,**context):
-        return 'Copyright &copy; %d The Great Site' % datetime.date.today().year
-        
-    def get_sidebar_html(self,request=None,node=None,**context):
-        pages = dd.resolve_app('pages')
-        return pages.get_sidebar_html(self,request=None,node=None,**context)
+    #~ def get_sidebar_html(self,request=None,node=None,**context):
+        #~ pages = dd.resolve_app('pages')
+        #~ return pages.get_sidebar_html(self,request=None,node=None,**context)
         
     sidebar_width = 0
     """

@@ -699,14 +699,9 @@ class AbstractTable(actors.Actor):
     `True` to use ExtJS CellSelectionModel, `False` to use RowSelectionModel.
     """
     
-    #~ date_format = lino.DATE_FORMAT_EXTJS
-    #~ boolean_texts = boolean_texts
-    boolean_texts = boolean_texts = (_('Yes'),_('No'),' ')
-    
-    #~ show_prev_next = True
     show_detail_navigator = False
     """
-    Whether a Detail view on a row of this table should feature a navigator
+    Whether a Detail view on a row of this table should have a navigator.
     """
     
     default_group = Group()
@@ -722,11 +717,6 @@ class AbstractTable(actors.Actor):
     Usually such a warning means that there is something wrong.
     """
     
-    #~ url = None
-    
-    #~ use_layouts = True
-    
-    #~ button_label = None
     
     slave_grid_format = 'grid'
     """

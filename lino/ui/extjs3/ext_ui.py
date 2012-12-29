@@ -1378,12 +1378,8 @@ tinymce.init({
             # TODO: replace the following lines by a generic method for all ChoiceLists
             #~ yield "STRENGTH_CHOICES = %s;" % py2js(list(STRENGTH_CHOICES))
             #~ yield "KNOWLEDGE_CHOICES = %s;" % py2js(list(KNOWLEDGE_CHOICES))
-            yield "MEDIA_URL = %r;" % (settings.LINO.build_media_url())
-            yield "ADMIN_URL = %r;" % settings.LINO.admin_url
-            #~ if settings.LINO.admin_url:
-                #~ yield "ADMIN_URL = '/%s';" % settings.LINO.admin_url
-            #~ else:
-                #~ yield "ADMIN_URL = '';" 
+            yield "MEDIA_URL = %r;" % settings.LINO.build_media_url()
+            yield "ADMIN_URL = %r;" % settings.LINO.build_admin_url()
             
             #~ yield "API_URL = %r;" % self.build_url('api')
             #~ yield "TEMPLATES_URL = %r;" % self.build_url('templates')

@@ -32,6 +32,8 @@ from django.utils.encoding import force_unicode
 from lino import dd
 
 from lino.utils.xmlgen import html as xghtml
+E = xghtml.E
+
 from lino.utils.jsgen import py2js, js_code, id2js
 from lino.utils.config import find_config_file
 from lino.utils import ucsv
@@ -63,23 +65,6 @@ class HttpResponseDeleted(http.HttpResponse):
     status_code = 204
     
     
-def plain_html_page(ar,title,navigator,main):
-    raise Exception("No longer used")
-    menu = settings.LINO.get_site_menu(ar.ui,ar.get_user().profile)
-    menu = menu.as_html(ar)
-    response = http.HttpResponse(content_type='text/html;charset="utf-8"')
-    doc = xghtml.Document(force_unicode(title))
-    #~ doc.add_stylesheet('/media/lino/plain/lino.css')
-    doc.add_stylesheet(settings.LINO.build_media_url('lino','plain','lino.css'))
-    doc.body.append(E.h1(doc.title))
-    doc.body.append(menu)
-    if navigator is not None:
-        doc.body.append(navigator)
-    doc.body.append(main)
-    doc.write(response,encoding='utf-8')
-    return response
-    
-    
 
 
 def requested_actor(app_label,actor):
@@ -89,11 +74,14 @@ def requested_actor(app_label,actor):
         return cl._lino_default_table
     return cl
     
-def action_request(app_label,actor,request,rqdata,**kw):
+def action_request(app_label,actor,request,rqdata,is_list,**kw):
     rpt = requested_actor(app_label,actor)
-    action_name = rqdata.get(
-        ext_requests.URL_PARAM_ACTION_NAME,
-        rpt.default_list_action_name)
+    action_name = rqdata.get(ext_requests.URL_PARAM_ACTION_NAME,None)
+    if action_name is None:
+        if is_list: 
+            action_name = rpt.default_list_action_name
+        else:
+            action_name = rpt.default_elem_action_name
     a = rpt.get_url_action(action_name)
     if a is None:
         raise http.Http404("%s has no url action %r (possible values are %s)" % (
@@ -102,7 +90,7 @@ def action_request(app_label,actor,request,rqdata,**kw):
     if not a.get_view_permission(user.profile):
         raise Exception("Action not allowed for %s" % user)
     ar = rpt.request(settings.LINO.ui,request,a,**kw)
-    ar.renderer = settings.LINO.ui.ext_renderer
+    #~ ar.renderer = settings.LINO.ui.ext_renderer
     return ar
     
 def run_action(ar,elem):
@@ -235,45 +223,47 @@ def elem2rec_detailed(ar,elem,**rec):
     rec.update(id=elem.pk)
     rec.update(disable_delete=rh.actor.disable_delete(elem,ar))
     if rh.actor.show_detail_navigator:
-        first = None
-        prev = None
-        next = None
-        last = None
-        recno = 0
-        message = None
-        LEN = ar.get_total_count()
-        if LEN > 0:
-            # this algorithm is clearly quicker on queries with a few thousand rows
-            id_list = list(ar.data_iterator.values_list('pk',flat=True))
-            """
-            Uncommented the following assert because it failed in certain circumstances 
-            (see :doc:`/blog/2011/1220`)
-            """
-            #~ assert len(id_list) == ar.total_count, \
-                #~ "len(id_list) is %d while ar.total_count is %d" % (len(id_list),ar.total_count)
-            #~ print 20111220, id_list
-            try:
-                i = id_list.index(elem.pk)
-            except ValueError:
-                pass
-            else:
-                recno = i + 1
-                first = id_list[0]
-                last = id_list[-1]
-                if i > 0:
-                    prev = id_list[i-1]
-                if i < len(id_list) - 1:
-                    next = id_list[i+1]
-                message = _("Row %(rowid)d of %(rowcount)d") % dict(rowid=recno,rowcount=LEN)
-        if message is None:
-            message = _("No navigation")
-        rec.update(navinfo=dict(
-            first=first,prev=prev,next=next,last=last,recno=recno,
-            message=message))
+        rec.update(navinfo=navinfo(ar,elem))
     return rec
             
     
 
+def navinfo(ar,elem):
+    first = None
+    prev = None
+    next = None
+    last = None
+    recno = 0
+    message = None
+    LEN = ar.get_total_count()
+    if LEN > 0:
+        # this algorithm is clearly quicker on queries with a few thousand rows
+        id_list = list(ar.data_iterator.values_list('pk',flat=True))
+        """
+        Uncommented the following assert because it failed in certain circumstances 
+        (see :doc:`/blog/2011/1220`)
+        """
+        #~ assert len(id_list) == ar.total_count, \
+            #~ "len(id_list) is %d while ar.total_count is %d" % (len(id_list),ar.total_count)
+        #~ print 20111220, id_list
+        try:
+            i = id_list.index(elem.pk)
+        except ValueError:
+            pass
+        else:
+            recno = i + 1
+            first = id_list[0]
+            last = id_list[-1]
+            if i > 0:
+                prev = id_list[i-1]
+            if i < len(id_list) - 1:
+                next = id_list[i+1]
+            message = _("Row %(rowid)d of %(rowcount)d") % dict(rowid=recno,rowcount=LEN)
+    if message is None:
+        message = _("No navigation")
+    return dict(
+        first=first,prev=prev,next=next,last=last,recno=recno,
+        message=message)
   
     
     
@@ -411,7 +401,9 @@ def form2obj_and_save(ar,data,elem,is_new,restful,file_upload=False): # **kw2sav
         
 
 class AdminIndex(View):
-
+    """
+    Similar to PlainIndex
+    """
     def get(self, request, *args, **kw):
         ui = settings.LINO.ui
         if settings.LINO.user_model is not None:
@@ -770,78 +762,6 @@ class ApiElement(View):
         ah = ar.ah
         
         fmt = request.GET.get(ext_requests.URL_PARAM_FORMAT,ba.action.default_format)
-        
-        if fmt == ext_requests.URL_FORMAT_PLAIN:
-            ar.renderer = ar.ui.plain_renderer
-            
-            datarec = elem2rec_detailed(ar,elem)
-            
-            navinfo = datarec['navinfo']
-            if navinfo:
-                buttons = []
-                buttons.append( ('*',_("Home"), '/' ))
-                
-                buttons.append( ('<<',_("First page"), ar.pk2url(navinfo['first']) ))
-                buttons.append( ('<',_("Previous page"), ar.pk2url(navinfo['prev']) ))
-                buttons.append( ('>',_("Next page"), ar.pk2url(navinfo['next']) ))
-                buttons.append( ('>>',_("Last page"), ar.pk2url(navinfo['last']) ))
-                    
-                chunks = []
-                for text,title,url in buttons:
-                    chunks.append('[')
-                    if url:
-                        chunks.append(E.a(text,href=url,title=title))
-                    else:
-                        chunks.append(text)
-                    chunks.append('] ')
-                navigator = E.p(*chunks)
-            else:
-                navigator = None
-                
-            #~ main = xghtml.Table()
-            
-            wl = ar.bound_action.get_window_layout()
-            #~ print 20120901, wl.main
-            lh = wl.get_layout_handle(ar.ui)
-            
-            def render_detail(ar,obj,elem):
-                #~ print '20120901 render_detail(%s %s)' % (elem.__class__.__name__,elem)
-                if isinstance(elem,ext_elems.Wrapper):
-                    for chunk in render_detail(ar,obj,elem.wrapped):
-                        yield chunk
-                    return
-                #~ if elem.label:
-                    #~ yield E.p(unicode(elem.label))
-                if isinstance(elem,ext_elems.FieldElement):
-                    value = elem.field.value_from_object(obj)
-                    text = unicode(value)
-                    if not text: text = " "
-                    yield E.p(unicode(elem.field.verbose_name),':',E.br(),E.b(text))
-                if isinstance(elem,ext_elems.Container):
-                    children = []
-                    for e in elem.elements:
-                        for chunk in render_detail(ar,obj,e):
-                            children.append(chunk)
-                    if elem.vertical:
-                        yield E.div(*children)
-                    else:
-                        tr = E.tr(*[E.td(ch) for ch in children])
-                        yield E.table(tr)
-                    
-            main = E.div(*[e for e in render_detail(ar,elem,lh.main)])
-            #~ print 20120901, lh.main.__html__(ar)
-            
-            
-            #~ for k,v in datarec['data'].items():
-                #~ print k,v
-                
-            return plain_html_page(ar,datarec['title'],navigator,main)
-            
-                
-            #~ doc.body.append(E.p(force_unicode(datarec['data'])))
-            #~ doc.write(response,encoding='utf-8')
-            #~ return response
-        
 
         #~ if isinstance(a,actions.OpenWindowAction):
         if ba.action.opens_a_window:
@@ -885,7 +805,8 @@ class ApiElement(View):
                 
         
     def post(self,request,app_label=None,actor=None,pk=None):
-        ar = action_request(app_label,actor,request,request.POST)
+        ar = action_request(app_label,actor,request,request.POST,True)
+        ar.renderer = settings.LINO.ui.ext_renderer
         elem = ar.actor.get_row_by_pk(pk)
         if elem is None:
             raise http.Http404("%s has no row with primary key %r" % (ar.actor,pk))
@@ -898,7 +819,8 @@ class ApiElement(View):
         
     def put(self,request,app_label=None,actor=None,pk=None):
         data = http.QueryDict(request.raw_post_data)
-        ar = action_request(app_label,actor,request,data)
+        ar = action_request(app_label,actor,request,data,False)
+        ar.renderer = settings.LINO.ui.ext_renderer
         
         elem = ar.actor.get_row_by_pk(pk)
         if elem is None:
@@ -941,7 +863,8 @@ class ApiList(View):
             #~ raise http.Http404("%s has no url action %r" % (rpt,action_name))
         #~ ar = rpt.request(ui,request,a)
         
-        ar = action_request(app_label,actor,request,request.POST)
+        ar = action_request(app_label,actor,request,request.POST,True)
+        ar.renderer = settings.LINO.ui.ext_renderer
         #~ print 20121116, ar.bound_action.action.action_name
         if ar.bound_action.action.action_name in ['duplicate_row','post','poststay','insert']:
         #~ if isinstance(ar.bound_action.action,(
@@ -962,7 +885,8 @@ class ApiList(View):
       
     def get(self,request,app_label=None,actor=None):
         #~ ar = action_request(app_label,actor,request,request.GET,limit=PLAIN_PAGE_LENGTH)
-        ar = action_request(app_label,actor,request,request.GET)
+        ar = action_request(app_label,actor,request,request.GET,True)
+        ar.renderer = settings.LINO.ui.ext_renderer
         rh = ar.ah
         
         #~ print 20120630, 'api_list_view'
@@ -1192,75 +1116,10 @@ class GridConfig(View):
         settings.LINO.ui.build_site_cache(True)            
         return settings.LINO.ui.success(msg)
             
-
-  
-class PlainList(View):
-  
-    def get(self,request,app_label=None,actor=None):
-        ar = action_request(app_label,actor,request,request.GET)
-        
-        ar.renderer = ar.ui.plain_renderer
-        E = xghtml.E
-        
-        buttons = []
-        buttons.append( ('*',_("Home"), '/' ))
-        buttons.append( ('Ext',_("Using ExtJS"), ar.ui.ext_renderer.get_request_url(ar) ))
-        pglen = ar.limit or PLAIN_PAGE_LENGTH
-        if ar.offset is None:
-            page = 1
-        else:
-            """
-            (assuming pglen is 5)
-            offset page
-            0      1
-            5      2
-            """
-            page = int(ar.offset / pglen) + 1
-        kw = dict()
-        kw = {}
-        if pglen != PLAIN_PAGE_LENGTH:
-            kw[ext_requests.URL_PARAM_LIMIT] = pglen
-          
-        if page > 1:
-            kw[ext_requests.URL_PARAM_START] = pglen * (page-2) 
-            prev_url = ar.get_request_url(**kw)
-            kw[ext_requests.URL_PARAM_START] = 0
-            first_url = ar.get_request_url(**kw)
-        else:
-            prev_url = None
-            first_url = None
-        buttons.append( ('<<',_("First page"), first_url ))
-        buttons.append( ('<',_("Previous page"), prev_url ))
-        
-        next_start = pglen * page 
-        if next_start < ar.get_total_count():
-            kw[ext_requests.URL_PARAM_START] = next_start
-            next_url = ar.get_request_url(**kw)
-            last_page = int((ar.get_total_count()-1) / pglen)
-            kw[ext_requests.URL_PARAM_START] = pglen * last_page
-            last_url = ar.get_request_url(**kw)
-        else:
-            next_url = None 
-            last_url = None 
-        buttons.append( ('>',_("Next page"), next_url ))
-        buttons.append( ('>>',_("Last page"), last_url ))
-        
-        t = xghtml.Table()
-        #~ t = doc.add_table()
-        ar.ui.ar2html(ar,t,ar.sliced_data_iterator)
-        t = t.as_element()
-        
-        context = dict(
-          title=ar.get_title(),
-          tbar = buttons,
-          table = E.tostring(t),
-        )
-        return plain_response(ar,'table.html',context)
-        
-        
-def plain_response(ar,tplname,context):        
-    menu = settings.LINO.get_site_menu(ar.ui,ar.get_user().profile)
-    menu = menu.as_html(ar)
+def plain_response(ui,request,tplname,context):        
+    u = request.subst_user or request.user
+    menu = settings.LINO.get_site_menu(ui,u.profile)
+    menu = menu.as_html(ui,request)
     context.update(menu=E.tostring(menu))
     web.extend_context(context)
     template = web.jinja_env.get_template(tplname)
@@ -1271,6 +1130,22 @@ def plain_response(ar,tplname,context):
     
     return response
             
+
+  
+class PlainList(View):
+  
+    def get(self,request,app_label=None,actor=None):
+        ar = action_request(app_label,actor,request,request.GET,True)
+        ar.renderer = ar.ui.plain_renderer
+        context = dict(
+          title=ar.get_title(),
+          heading=ar.get_title(),
+          #~ tbar = buttons,
+          main=ar.as_html(),
+        )
+        return plain_response(ar.ui,request,'table.html',context)
+        
+        
 
 class PlainElement(View):
   
@@ -1284,122 +1159,41 @@ class PlainElement(View):
         (Source: http://en.wikipedia.org/wiki/Restful)
         """
         ui = settings.LINO.ui
-        rpt = requested_actor(app_label,actor)
-        #~ if not ah.actor.can_view.passes(request.user):
-            #~ msg = "User %s cannot view %s." % (request.user,ah.actor)
-            #~ return http.HttpResponseForbidden()
-        
-        if pk and pk != '-99999' and pk != '-99998':
-            elem = rpt.get_row_by_pk(pk)
-            if elem is None:
-                raise http.Http404("%s has no row with primary key %r" % (rpt,pk))
-                #~ raise Exception("20120327 %s.get_row_by_pk(%r)" % (rpt,pk))
-        else:
-            elem = None
-        
-        action_name = request.GET.get(ext_requests.URL_PARAM_ACTION_NAME,
-          rpt.default_elem_action_name)
-        ba = rpt.get_url_action(action_name)
-        if ba is None:
-            raise http.Http404("%s has no action %r" % (rpt,action_name))
-            
-        #~ ar = rpt.request(ui,request,a)
-        ar = ba.request(ui,request)
-        ar.renderer = ui.ext_renderer
-        ah = ar.ah
-        
-        fmt = request.GET.get(ext_requests.URL_PARAM_FORMAT,ba.action.default_format)
-        
-        ar.renderer = ar.ui.plain_renderer
-        
-        datarec = elem2rec_detailed(ar,elem)
-        
-        navinfo = datarec['navinfo']
-        if navinfo:
-            buttons = []
-            buttons.append( ('*',_("Home"), '/' ))
-            
-            buttons.append( ('<<',_("First page"), ar.pk2url(navinfo['first']) ))
-            buttons.append( ('<',_("Previous page"), ar.pk2url(navinfo['prev']) ))
-            buttons.append( ('>',_("Next page"), ar.pk2url(navinfo['next']) ))
-            buttons.append( ('>>',_("Last page"), ar.pk2url(navinfo['last']) ))
-                
-            chunks = []
-            for text,title,url in buttons:
-                chunks.append('[')
-                if url:
-                    chunks.append(E.a(text,href=url,title=title))
-                else:
-                    chunks.append(text)
-                chunks.append('] ')
-            navigator = E.p(*chunks)
-        else:
-            navigator = None
-            
-        #~ main = xghtml.Table()
-        
-        wl = ar.bound_action.get_window_layout()
-        #~ print 20120901, wl.main
-        lh = wl.get_layout_handle(ar.ui)
-        
-        def render_detail(ar,obj,elem):
-            #~ print '20120901 render_detail(%s %s)' % (elem.__class__.__name__,elem)
-            if isinstance(elem,ext_elems.Wrapper):
-                for chunk in render_detail(ar,obj,elem.wrapped):
-                    yield chunk
-                return
-            #~ if elem.label:
-                #~ yield E.p(unicode(elem.label))
-            if isinstance(elem,ext_elems.FieldElement):
-                value = elem.field.value_from_object(obj)
-                text = unicode(value)
-                if not text: text = " "
-                yield E.p(unicode(elem.field.verbose_name),':',E.br(),E.b(text))
-            if isinstance(elem,ext_elems.Container):
-                children = []
-                for e in elem.elements:
-                    for chunk in render_detail(ar,obj,e):
-                        children.append(chunk)
-                if elem.vertical:
-                    yield E.div(*children)
-                else:
-                    tr = E.tr(*[E.td(ch) for ch in children])
-                    yield E.table(tr)
-                
-        main = E.div(*[e for e in render_detail(ar,elem,lh.main)])
-        #~ print 20120901, lh.main.__html__(ar)
-        
+        ar = action_request(app_label,actor,request,request.GET,False)
+        ar.renderer = ui.plain_renderer
         
         context = dict(
-          title=datarec['title'],
+          title=ar.get_action_title(),
           #~ menu = E.tostring(menu),
-          tbar = buttons,
-          main = E.tostring(main),
+          #~ tbar = buttons,
+          main = ar.as_html(pk),
         )
         #~ template = web.jinja_env.get_template('detail.html')
         
-        return plain_response(ar,'detail.html',context)
+        return plain_response(ui,request,'detail.html',context)
         
         
 class PlainIndex(View):
-    "This is not a docstring"
+    """This is not a docstring
+    Similar to AdminIndex
+    """
     def get(self, request, *args, **kw):
         ui = settings.LINO.ui
         context = dict(
           title = settings.LINO.title,
-          main = '(TODO: lino.ui.extjs3.views.PlainIndex)',
+          main = '', 
         )
         if settings.LINO.user_model is not None:
             user = request.subst_user or request.user
         else:
             user = auth.AnonymousUser.instance()
         a = settings.LINO.get_main_action(user)
-        if a is None:
-            raise NotImplementedError()
-        if not a.get_view_permission(user.profile):
-            raise Exception("Action not allowed for %s" % user)
-        ar = a.request(settings.LINO.ui,request,**kw)
-        ar.renderer = ui.plain_renderer
-        context.update(title=ar.get_title())
-        #~ context.update(main=ui.plain_renderer.action_call(request,a,{}))
-        return plain_response(ar,'plain_index.html',context)
+        if a is not None:
+            if not a.get_view_permission(user.profile):
+                raise Exception("Action not allowed for %s" % user)
+            ar = a.request(settings.LINO.ui,request,**kw)
+            ar.renderer = ui.plain_renderer
+            context.update(title=ar.get_title())
+            # TODO: let ar generate main
+            # context.update(main=ui.plain_renderer.action_call(request,a,{}))
+        return plain_response(ui,request,'plain_index.html',context)

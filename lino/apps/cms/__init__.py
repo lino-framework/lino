@@ -33,7 +33,7 @@ class Lino(Lino):
     author = 'Luc Saffre'
     author_email = 'luc.saffre@gmail.com'
     
-    admin_url = '/admin'
+    admin_prefix = 'admin'
     
     languages = ['en','de','fr']
     #~ languages = 'de fr et en'.split()

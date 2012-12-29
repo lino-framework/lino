@@ -32,6 +32,7 @@ from lino.utils import babel
 #~ from lino.utils import jsgen
 #~ from lino.utils import Warning
 from lino.utils.xmlgen import html as xghtml
+E = xghtml.E
 
 from lino.ui import requests as ext_requests
 
@@ -476,6 +477,9 @@ class Action(Parametrizable,Permittable):
         assert self.callable_from is None or isinstance(
             self.callable_from,(tuple,type)), "%s" % self
             
+      
+    def as_html(self,ar):
+        return "Oops, no as_html method for %s" % self
 
     def make_params_layout_handle(self,ui):
         #~ return self.action.params_layout.get_layout_handle(ui)
@@ -521,7 +525,8 @@ class Action(Parametrizable,Permittable):
         btn = settings.LINO.ui.row_action_button(obj,request,ba,label)
         return xghtml.E.tostring(btn)
         
-        
+    def get_action_title(self,ar):
+        return ar.get_title()
         
     def __repr__(self):
         return "%s %s.%s" % (self.__class__.__name__,self.defining_actor,self.action_name)
@@ -629,8 +634,8 @@ class TableAction(Action):
   
     #~ required_states = None
     
-    def get_action_title(self,rr):
-        return rr.get_title()
+    def get_action_title(self,ar):
+        return ar.get_title()
         
 
 class RowAction(Action):
@@ -701,6 +706,59 @@ class GridEdit(TableAction):
     def get_window_layout(self,actor):
         #~ return self.actor.list_layout
         return None
+        
+    def as_html(self,ar):
+        if False:
+            buttons = []
+            buttons.append( ('*',_("Home"), '/' ))
+            buttons.append( ('Ext',_("Using ExtJS"), ar.ui.ext_renderer.get_request_url(ar) ))
+            pglen = ar.limit or PLAIN_PAGE_LENGTH
+            if ar.offset is None:
+                page = 1
+            else:
+                """
+                (assuming pglen is 5)
+                offset page
+                0      1
+                5      2
+                """
+                page = int(ar.offset / pglen) + 1
+            kw = dict()
+            kw = {}
+            if pglen != PLAIN_PAGE_LENGTH:
+                kw[ext_requests.URL_PARAM_LIMIT] = pglen
+              
+            if page > 1:
+                kw[ext_requests.URL_PARAM_START] = pglen * (page-2) 
+                prev_url = ar.get_request_url(**kw)
+                kw[ext_requests.URL_PARAM_START] = 0
+                first_url = ar.get_request_url(**kw)
+            else:
+                prev_url = None
+                first_url = None
+            buttons.append( ('<<',_("First page"), first_url ))
+            buttons.append( ('<',_("Previous page"), prev_url ))
+            
+            next_start = pglen * page 
+            if next_start < ar.get_total_count():
+                kw[ext_requests.URL_PARAM_START] = next_start
+                next_url = ar.get_request_url(**kw)
+                last_page = int((ar.get_total_count()-1) / pglen)
+                kw[ext_requests.URL_PARAM_START] = pglen * last_page
+                last_url = ar.get_request_url(**kw)
+            else:
+                next_url = None 
+                last_url = None 
+            buttons.append( ('>',_("Next page"), next_url ))
+            buttons.append( ('>>',_("Last page"), last_url ))
+        
+        t = xghtml.Table()
+        #~ t = doc.add_table()
+        ar.ui.ar2html(ar,t,ar.sliced_data_iterator)
+        t = t.as_element()
+        return E.tostring(t)
+      
+        
 
 
 class BeIdReadCardAction(RowAction):
@@ -742,6 +800,58 @@ class ShowDetailAction(RowAction):
     #~ def get_elem_title(self,elem):
         #~ return _("%s (Detail)")  % unicode(elem)
         
+        
+    def as_html(self,ar,pk):
+        ah = ar.ah
+        ba = ar.bound_action
+        rpt = ar.actor
+        from lino.ui.extjs3 import views
+
+        
+        navigator = None
+        if pk and pk != '-99999' and pk != '-99998':
+            elem = rpt.get_row_by_pk(pk)
+            if elem is None:
+                raise http.Http404("%s has no row with primary key %r" % (rpt,pk))
+                #~ raise Exception("20120327 %s.get_row_by_pk(%r)" % (rpt,pk))
+            if ar.actor.show_detail_navigator:
+              
+                navinfo = views.navinfo(ar,elem)
+                if navinfo:
+                    buttons = []
+                    buttons.append( ('*',_("Home"), '/' ))
+                    
+                    buttons.append( ('<<',_("First page"), ar.pk2url(navinfo['first']) ))
+                    buttons.append( ('<',_("Previous page"), ar.pk2url(navinfo['prev']) ))
+                    buttons.append( ('>',_("Next page"), ar.pk2url(navinfo['next']) ))
+                    buttons.append( ('>>',_("Last page"), ar.pk2url(navinfo['last']) ))
+                        
+                    chunks = []
+                    for text,title,url in buttons:
+                        chunks.append('[')
+                        if url:
+                            chunks.append(E.a(text,href=url,title=title))
+                        else:
+                            chunks.append(text)
+                        chunks.append('] ')
+                    navigator = E.p(*chunks)
+        else:
+            elem = None
+        
+        
+        wl = ar.bound_action.get_window_layout()
+        #~ print 20120901, wl.main
+        lh = wl.get_layout_handle(ar.ui)
+        
+        #~ items = list(render_detail(ar,elem,lh.main))
+        items = list(lh.main.as_plain_html(ar,elem))
+        #~ print E.tostring(E.div())
+        #~ if len(items) == 0: return ""
+        main = E.form(*items)
+        #~ print 20120901, lh.main.__html__(ar)
+        return E.tostring(main,method="html")
+        
+        
 
 RowAction.callable_from = (GridEdit,ShowDetailAction)
 
@@ -768,8 +878,8 @@ class InsertRow(TableAction):
     key = INSERT # (ctrl=True)
     #~ needs_selection = False
     
-    def get_action_title(self,rr):
-        return _("Insert into %s") % force_unicode(rr.get_title())
+    def get_action_title(self,ar):
+        return _("Insert into %s") % force_unicode(ar.get_title())
         
     def get_window_layout(self,actor):
         return actor.insert_layout or actor.detail_layout
@@ -807,12 +917,8 @@ class ShowEmptyTable(ShowDetailAction):
         ShowDetailAction.attach_to_actor(self,actor,name)
         #~ print 20120523, actor, name, 'setup', unicode(self.label)
         
-    def get_action_title(self,rr):
-        return rr.get_title()
-    #~ def __str__(self):
-        #~ return str(self.actor)+'.'+self.name
-        
-    
+    def as_html(self,ar):
+        return super(ShowEmptyTable,self).as_html(ar,'-99998')
 
 class UpdateRowAction(RowAction):
     show_in_workflow = False
@@ -1286,6 +1392,7 @@ class ActionRequest(BaseRequest):
     def obj2html(self,*args,**kw): return self.renderer.obj2html(self,*args,**kw)
     def href_to_request(self,*args,**kw): return self.renderer.href_to_request(self,*args,**kw)
     def row_action_button(self,obj,a,*args,**kw): return self.renderer.row_action_button(obj,self.request,a,*args,**kw)
+    def as_html(self,*args,**kw): return self.bound_action.action.as_html(self,*args,**kw)
         
     def absolute_uri(self,*args,**kw):
         ar = self.spawn(*args,**kw)

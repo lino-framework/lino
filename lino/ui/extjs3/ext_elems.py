@@ -41,7 +41,11 @@ from lino.core import choicelists
 from lino.utils.jsgen import py2js, id2js, js_code
 from lino.utils import choosers
 from lino.utils.auth import make_view_permission_handler
-#~ from . import ext_requests
+
+from lino.utils.xmlgen import html as xghtml
+E = xghtml.E
+from lino.utils.xmlgen import RAW as RAWXML
+
 from lino.ui import requests as ext_requests
 
 EXT_CHAR_WIDTH = 9
@@ -421,7 +425,6 @@ class LayoutElement(VisibleComponent):
         super(LayoutElement,self).add_requirements(**kw)
         self.install_permission_handler()
         
-        
     def loosen_requirements(self,actor):
         """
         Retain only those requirements of obj which are also in actor.
@@ -509,6 +512,9 @@ class LayoutElement(VisibleComponent):
         kw = VisibleComponent.ext_options(self,**kw)
         return kw
 
+    def as_plain_html(self,ar,obj):
+        yield E.p("cannot handle %s" % self.__class__)
+            
 
 
 class ConstantElement(LayoutElement):
@@ -530,6 +536,9 @@ class ConstantElement(LayoutElement):
         #~ kw.update(html=self.text.text)
         #~ return kw
         
+    def as_plain_html(self,ar,obj):
+        #~ return RAWXML(self.value.get('html'))
+        return self.value.get('html')
         
         
 
@@ -600,6 +609,15 @@ class FieldElement(LayoutElement):
         
         LayoutElement.__init__(self,layout_handle,field.name,**kw)
 
+    def as_plain_html(self,ar,obj):
+        value = self.field.value_from_object(obj)
+        text = unicode(value)
+        if not text: text = " "
+        #~ yield E.p(unicode(elem.field.verbose_name),':',E.br(),E.b(text))
+        yield E.label(unicode(self.field.verbose_name))
+        yield E.input(type="text",value=text)
+        #~ yield E.p(unicode(elem.field.verbose_name),':',E.br(),E.b(text))
+            
     def cell_html(self,ui,row):
         return getattr(row,self.field.name)
             
@@ -733,6 +751,14 @@ class TextFieldElement(FieldElement):
                 "Invalid textfield format %r for field %s.%s" % (
                 self.format,field.model.__name__,field.name))
         FieldElement.__init__(self,layout_handle,field,**kw)
+        
+    def as_plain_html(self,ar,obj):
+        value = self.field.value_from_object(obj)
+        text = unicode(value)
+        if not text: text = " "
+        #~ yield E.p(unicode(elem.field.verbose_name),':',E.br(),E.b(text))
+        yield E.label(unicode(self.field.verbose_name))
+        yield E.textarea(value=text,rows=str(self.preferred_height))
         
 class CharFieldElement(FieldElement):
     filter_type = 'string'
@@ -1279,6 +1305,16 @@ class Container(LayoutElement):
         #~ if name == 'cbss':
             #~ logger.info("20120925 Container.__init__() 2 %r",self.required)
         
+    def as_plain_html(self,ar,obj):
+        children = []
+        for e in self.elements:
+            for chunk in e.as_plain_html(ar,obj):
+                children.append(chunk)
+        if self.vertical:
+            yield E.div(*children)
+        else:
+            tr = E.tr(*[E.td(ch) for ch in children])
+            yield E.table(tr)
         
     def subvars(self):
         return self.elements
@@ -1381,6 +1417,10 @@ class Wrapper(VisibleComponent):
             yield e
         yield self
 
+    def as_plain_html(self,ar,obj):
+        for chunk in self.wrapped.as_plain_html(ar,obj):
+            yield chunk
+            
 class Panel(Container):
     """
     A vertical Panel is vflex if and only if at least one of its children is vflex.
