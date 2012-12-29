@@ -246,10 +246,10 @@ def create_page(**kw):
     return Page(**kw)
 
 
-def lookup(ref):
+def lookup(ref,*args,**kw):
     if ref == '': 
         ref = None
-    return Page.get_by_ref(ref)
+    return Page.get_by_ref(ref,*args,**kw)
     #~ try:
         #~ return Page.objects.get_by_ref(ref)
     #~ except Page.DoesNotExist:

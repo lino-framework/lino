@@ -576,17 +576,26 @@ from lino.mixins import printable
 
 
 class Referrable(model.Model):
+    """
+    Mixin for things that have a unique `ref` field and a `get_by_ref` method.
+    """
     class Meta:
         abstract = True
-    ref = fields.NullCharField(_("Reference"),max_length=40,blank=True,null=True,unique=True)
+        
+    ref = fields.NullCharField(_("Reference"),
+        max_length=40,
+        blank=True,null=True,
+        unique=True)
     
     @classmethod
-    def get_by_ref(cls,ref):
+    def get_by_ref(cls,ref,default=models.NOT_PROVIDED):
         try:
             return cls.objects.get(ref=ref)
         except cls.DoesNotExist,e:
-            raise cls.DoesNotExist(
-              "No %s with reference %r" % (unicode(cls._meta.verbose_name),ref))
+            if default is models.NOT_PROVIDED:
+                raise cls.DoesNotExist(
+                  "No %s with reference %r" % (unicode(cls._meta.verbose_name),ref))
+            return default
 
     def __unicode__(self):
         return self.ref or unicode(_('(Root)'))

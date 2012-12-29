@@ -1,5 +1,10 @@
 20121229
 ========
 
-:class:`lino.ui.extjs3.views.PlainIndex`
-is another step to make :doc:`/tickets/67` more visible.
+- :class:`lino.ui.extjs3.views.PlainIndex`
+  is another step to make :doc:`/tickets/67` 
+  more visible.
+
+
+- :meth:`lino.ui.base.UI.get_patterns` now adds a single pattern instead 
+  of one pattern for each `pages.Node`.

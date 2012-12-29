@@ -25,6 +25,7 @@ import cgi
 import copy
 
 from django.conf import settings
+from django.db import models
 
 from lino.utils import AttrDict
 from lino.utils import babel
@@ -69,8 +70,10 @@ def create_page(**kw):
     DUMMY_PAGES[obj.ref] = obj
     return obj
 
-def lookup(ref):
-    return DUMMY_PAGES.get(ref)
+def lookup(ref,default=models.NOT_PROVIDED):
+    if default is models.NOT_PROVIDED:
+        return DUMMY_PAGES[ref]
+    return DUMMY_PAGES.get(ref,default)
     
 def render_node(request,node,template_name='node.html',**context):
     context.update(node=node)

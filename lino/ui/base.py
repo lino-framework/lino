@@ -22,6 +22,7 @@ logger = logging.getLogger(__name__)
 from django.utils.translation import ugettext_lazy as _
 from django.utils.encoding import force_text
 
+
 import lino
 from urllib import urlencode
 from django.conf import settings
@@ -84,7 +85,8 @@ class CallbackChoice(object):
 class Callback(object):
     """
     A callback is a question that rose during an AJAX action.
-    The original action is pending until we get a request that answers the question.
+    The original action is pending until we get a request 
+    that answers the question.
     """
     title = _('Confirmation')
     #~ def __init__(self,yes,no):
@@ -240,7 +242,6 @@ class UI:
           ('^'+settings.LINO.plain_prefix+"/", include(self.get_plain_urls()))
         )
         if settings.LINO.admin_url:
-        #~ if self.prefix:
         
             urlpatterns += patterns('',
               ('^'+settings.LINO.admin_url[1:]+"/", include(self.get_urls()))
@@ -250,32 +251,17 @@ class UI:
 
             class WebIndex(View):
               
-                #~ def get(self, request,ref='index'):
                 def get(self, request,ref=''):
                     #~ print 20121220, ref
-                    obj = pages.lookup(ref)
+                    obj = pages.lookup(ref,None)
+                    if obj is None:
+                        raise http.Http404("Unkonwn node %r" % ref)
                     html = pages.render_node(request,obj)
                     return http.HttpResponse(html)
 
-            
-            #~ refs = set()
-            #~ urlpatterns = []
-            for page in pages.get_all_pages():
-                #~ refs.add(page.ref)
-            #~ for ref in refs:
-                ref = page.ref or ''
-                urlpatterns += patterns('',
-                   (r'^%s$' % ref, WebIndex.as_view(),dict(ref=ref)))
-            #~ return urlpatterns
-            
-            #~ urlpatterns += pages.get_urls()
-            #~ from lino.ui.extjs3 import views
-            #~ from lino.modlib.pages.models import WebIndex
-            #~ urlpatterns += patterns('',
-                #~ ('', pages.WebIndex.as_view()),
-                #~ ('^$', WebIndex.as_view()),
-                #~ ('^(?P<ref>\w+)$', WebIndex.as_view()),
-            #~ )
+            urlpatterns += patterns('',
+                (r'^(?P<ref>\w*)$', WebIndex.as_view()),
+            )
         else:
             urlpatterns += self.get_urls()
         return urlpatterns
