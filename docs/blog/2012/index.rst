@@ -397,6 +397,7 @@ As long as nobody protests, I'll save some time by writing in German.
   24 25 26 27
   :doc:`28 <1228>`
   :doc:`29 <1229>`
+  :doc:`30 <1230>`
 
 ===== ===== =====
 |Jan| |Feb| |Mar|

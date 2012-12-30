@@ -14,4 +14,4 @@ Worked on :doc:`/tickets/67`.
 - Changed `admin_url` to :attr:`lino.Lino.admin_prefix`.
 
 TODO: The ADMIN_URL variable in linolib.js doesn't 
-correctly handle the case of an empty adin_prefix.
+correctly handle the case of an empty admin_prefix.

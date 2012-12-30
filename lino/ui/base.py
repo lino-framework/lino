@@ -231,14 +231,16 @@ class UI:
                 #~ {'url': settings.MEDIA_URL + 'lino/favicon.ico'})
         #~ )
         urlpatterns = self.get_media_urls()
-        #~ urlpatterns += self.get_plain_urls()
-        urlpatterns += patterns('',
-          ('^'+settings.LINO.plain_prefix+"/", include(self.get_plain_urls()))
-        )
+        
+        if settings.LINO.plain_prefix:
+            #~ urlpatterns += self.get_plain_urls()
+            urlpatterns += patterns('',
+              ('^'+settings.LINO.plain_prefix[1:]+"/", include(self.get_plain_urls()))
+            )
         if settings.LINO.admin_prefix:
         
             urlpatterns += patterns('',
-              ('^'+settings.LINO.admin_prefix+"/", include(self.get_urls()))
+              ('^'+settings.LINO.admin_prefix[1:]+"/", include(self.get_urls()))
             )
             
             pages = resolve_app('pages')

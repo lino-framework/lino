@@ -1,0 +1,22 @@
+20121230
+========
+
+URL algebra
+-----------
+
+The ADMIN_URL variable in linolib.js didn't 
+correctly handle the case of an empty :attr:`lino.Lino.admin_prefix`.
+
+This was because I had once again tried 
+to reproduce Django's rule for `MEDIA_URL
+<https://docs.djangoproject.com/en/dev/ref/settings/#media-url>`__ 
+which must **end** with a slash if set to a non-empty value.
+
+After fiddling with different constellations I now gave up.
+I just cannot figure out why the hell they have *such* a rule.
+IMHO the rule should be easy because that's a 
+common configuration option, but not at the price of performance.
+Added a note about the fidderence in the docstring of
+:attr:`lino.Lino.admin_prefix`.
+
+

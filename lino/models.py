@@ -399,9 +399,9 @@ class Home(mixins.EmptyTable):
                 story.append(xghtml.E.ul(*warnings))
             else:
                 story.append(xghtml.E.p(_("Congratulatons: you have no warnings.")))
-        else:
-            #~ story.append(xghtml.E.p("Please log in"))
-            story.append(settings.LINO.get_guest_greeting())
+        #~ else:
+            # story.append(xghtml.E.p("Please log in"))
+            #~ story.append(settings.LINO.get_guest_greeting())
         
         return xghtml.E.div(*story,class_="htmlText",style="margin:5px")
         

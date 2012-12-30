@@ -45,7 +45,8 @@ class MenuItem:
     def __init__(self,parent,action,
                  name=None,label=None,doc=None,enabled=True,
                  #~ can_view=None,
-                 hotkey=None,params=None,
+                 hotkey=None,
+                 params={},
                  help_text=None,
                  #~ request=None,
                  instance=None,
@@ -129,10 +130,11 @@ class MenuItem:
 
     def as_html(self,ui,request,level=None):
         if self.bound_action:
-            sr = ui.request(self.bound_action.actor,action=self.bound_action,
+            sr = ui.request(self.bound_action.actor,
+                action=self.bound_action,
                 user=request.user,subst_user=request.subst_user,
                 requesting_panel=request.requesting_panel,
-                renderer=ui.plain_renderer)
+                renderer=ui.plain_renderer,**self.params)
           
             #~ sr = ar.spawn(self.bound_action.actor,action=self.bound_action)
             url = sr.get_request_url()

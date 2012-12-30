@@ -169,10 +169,11 @@ class Lino(object):
     
     use_spinner = False # doesn't work. leave this to False
     
-    plain_prefix = 'plain' 
+    plain_prefix = '/plain' 
     
     admin_prefix = '' 
-    #~ admin_url = '/admin'
+    #~ admin_url = 'admin/'
+    #~ admin_prefix = '/admin'
     #~ admin_url = '' # 
     """
     The prefix to use for Lino admin URLs.
@@ -181,9 +182,14 @@ class Lino(object):
     website whose root url shows the "admin mode" 
     (i.e. with a pull-down "main menu").
     
+    Note that unlike Django's `MEDIA_URL
+    <https://docs.djangoproject.com/en/dev/ref/settings/#media-url>`__ 
+    setting, this must **begin** and **not end** with a slash if set 
+    to a non-empty value.
+    
     If this is nonempty, then your site features a "web content mode": 
     the root url renders "web content" defined by :mod:`lino.modlib.pages`.
-    The usual value in that case is ``admin_prefix = "admin"``.
+    The usual value in that case is ``admin_prefix = "/admin"``.
     
     
     See also  
@@ -1725,21 +1731,22 @@ class Lino(object):
         #~ if self.admin_url:
             #~ yield 'lino.modlib.pages'
         
-    def get_guest_greeting(self):
-        return xghtml.E.p("Please log in")
+    #~ def get_guest_greeting(self):
+        #~ return xghtml.E.p("Please log in")
         
 
     def build_admin_url(self,*args,**kw):
-        if self.admin_prefix:
-            return buildurl(self.admin_prefix,*args,**kw)
-        return buildurl(*args,**kw)
+        #~ if self.admin_prefix:
+            #~ return buildurl(self.admin_prefix,*args,**kw)
+        #~ return buildurl(*args,**kw)
+        return self.admin_prefix + buildurl(*args,**kw)
     #~ build_url = build_admin_url
 
     def build_media_url(self,*args,**kw):
         return buildurl('media',*args,**kw)
         
     def build_plain_url(self,*args,**kw):
-        return buildurl(self.plain_prefix,*args,**kw)
+        return self.plain_prefix + buildurl(*args,**kw)
         
 
     def get_urls(self):

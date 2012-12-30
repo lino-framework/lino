@@ -320,6 +320,8 @@ class PlainRenderer(HtmlRenderer):
         return settings.LINO.build_plain_url(obj._meta.app_label,obj.__class__.__name__,str(obj.pk),*args,**kw)
         
     def get_request_url(self,ar,*args,**kw):
+        st = ar.get_status(self)
+        kw.update(st['base_params'])
         add_user_language(kw,ar)
         #~ since 20121226 kw.setdefault(ext_requests.URL_PARAM_FORMAT,ext_requests.URL_FORMAT_PLAIN)
         if ar.offset is not None:
@@ -387,13 +389,14 @@ class ExtRenderer(HtmlRenderer):
                 #return py2js(kw)
             return dict(text=prepare_label(v),menu=dict(items=v.items))
         if isinstance(v,menus.MenuItem):
-            if v.params is not None:
-                #~ ar = v.action.actor.request(self.ui,None,v.action,**v.params)
-                ar = v.bound_action.request(self.ui,**v.params)
-                js = "function() {%s}" % self.request_handler(ar)
-                return handler_item(v,js,v.help_text)
-                #~ return dict(text=prepare_label(v),handler=js_code(handler))
-            if v.bound_action:
+            if v.bound_action is not None:
+                if v.params:
+                    #~ ar = v.action.actor.request(self.ui,None,v.action,**v.params)
+                    ar = v.bound_action.request(self.ui,**v.params)
+                    js = "function() {%s}" % self.request_handler(ar)
+                    return handler_item(v,js,v.help_text)
+                    #~ return dict(text=prepare_label(v),handler=js_code(handler))
+              
                 js = self.action_call(None,v.bound_action,{})
                 if js is None:
                     js = v.bound_action.get_panel_btn_handler()
@@ -1379,7 +1382,7 @@ tinymce.init({
             #~ yield "STRENGTH_CHOICES = %s;" % py2js(list(STRENGTH_CHOICES))
             #~ yield "KNOWLEDGE_CHOICES = %s;" % py2js(list(KNOWLEDGE_CHOICES))
             yield "MEDIA_URL = %r;" % settings.LINO.build_media_url()
-            yield "ADMIN_URL = %r;" % settings.LINO.build_admin_url()
+            #~ yield "ADMIN_URL = %r;" % settings.LINO.admin_prefix
             
             #~ yield "API_URL = %r;" % self.build_url('api')
             #~ yield "TEMPLATES_URL = %r;" % self.build_url('templates')
