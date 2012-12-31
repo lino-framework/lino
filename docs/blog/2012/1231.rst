@@ -1,11 +1,20 @@
 20121231
 ========
 
+Switching from Cheetah Template to Jinja2
+-----------------------------------------
+
+People who are used to templates now no longer get shocked 
+when they read the :doc:`/tutorials/polls`.
+
 The content for the "admin" main page is no longer 
 stored in a pages.Page, but directly in `admin_main.html`.
 
 :mod:`lino.apps.polls.tutorial` now uses a template
 :src:`/lino/apps/polls/tutorials/templates/admin_main.html`.
+
+Converted :srcref:`/lino/ui/extjs3/linolib.js` from Cheetah to Jinja.
+
 
 TODO: 
 
@@ -17,3 +26,5 @@ TODO:
   - http://jinja.pocoo.org/docs/extensions/#i18n-extension
   - http://babel.edgewall.org/wiki/BabelDjango
   - https://github.com/niwibe/django-jinja
+  
+  

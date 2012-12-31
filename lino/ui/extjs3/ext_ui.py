@@ -24,12 +24,13 @@ import datetime
 import cPickle as pickle
 from urllib import urlencode
 import codecs
+import jinja2
 
 #~ from lxml import etree
 
 
 #~ import Cheetah
-from Cheetah.Template import Template as CheetahTemplate
+#~ from Cheetah.Template import Template as CheetahTemplate
 
 from django.db import models
 from django.conf import settings
@@ -1460,12 +1461,21 @@ tinymce.init({
         
         tpl = self.linolib_template()
         
+        context = dict(
+            ui = self,
+            site = settings.LINO,
+            settings = settings,
+            lino = lino,
+            ext_requests = ext_requests,
+        )
+        
         messages = set()
         def mytranslate(s):
             messages.add(s)
             return _(s)
-        tpl._ = mytranslate
-        f.write(jscompress(unicode(tpl)+'\n'))
+        context.update(_=mytranslate)
+        #~ f.write(jscompress(unicode(tpl)+'\n'))
+        f.write(jscompress(tpl.render(**context)+'\n'))
         
         """
         Make the dummy messages file.
@@ -1652,27 +1662,34 @@ tinymce.init({
         return os.path.join(os.path.dirname(__file__),'linolib.js')
         
     def linolib_template(self):
-        def docurl(ref):
-            if not ref.startswith('/'):
-                raise Exception("Invalid docref %r" % ref)
-            # todo: check if file exists...
-            return "http://lino.saffre-rumma.net" + ref + ".html"
+        env = jinja2.Environment(loader=jinja2.FileSystemLoader(os.path.dirname(__file__)))
+        return env.get_template('linolib.js')
+        #~ fn = self.linolib_template_name()
+        #~ return settings.LINO.jinja2_env.Template(file(fn).read())
+        #~ return settings.LINO.jinja2_env.Template(file(fn).read())
+        #~ return jinja2.Template(file(self.linolib_template_name()).read())
+        
+        #~ def docurl(ref):
+            #~ if not ref.startswith('/'):
+                #~ raise Exception("Invalid docref %r" % ref)
+            #~ # todo: check if file exists...
+            #~ return "http://lino.saffre-rumma.net" + ref + ".html"
             
-        libname = self.linolib_template_name()
-        tpl = CheetahTemplate(codecs.open(libname,encoding='utf-8').read())
-        tpl.ui = self
+        #~ libname = self.linolib_template_name()
+        
+        #~ tpl = CheetahTemplate(codecs.open(libname,encoding='utf-8').read())
+        #~ tpl.ui = self
             
-        tpl._ = _
-        #~ tpl.user = request.user
-        tpl.site = settings.LINO
-        tpl.settings = settings
-        tpl.lino = lino
-        tpl.docurl = docurl
-        tpl.ui = self
-        tpl.ext_requests = ext_requests
-        for k in ext_requests.URL_PARAMS:
-            setattr(tpl,k,getattr(ext_requests,k))
-        return tpl
+        #~ tpl._ = _
+        #~ tpl.site = settings.LINO
+        #~ tpl.settings = settings
+        #~ tpl.lino = lino
+        #~ tpl.docurl = docurl
+        #~ tpl.ui = self
+        #~ tpl.ext_requests = ext_requests
+        #~ for k in ext_requests.URL_PARAMS:
+            #~ setattr(tpl,k,getattr(ext_requests,k))
+        #~ return tpl
             
 
     #~ def quicklink(self,request,app_label,actor,**kw):
