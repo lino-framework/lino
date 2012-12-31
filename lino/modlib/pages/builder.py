@@ -22,29 +22,28 @@ from django.conf import settings
 
 from lino import dd
 from lino.utils import babel
+from lino.utils import AttrDict
 from lino.utils.restify import restify
 from lino.utils.restify import doc2rst
 
 
-pages = dd.resolve_app('pages')
-
 PAGES = {}
 
-from lino.utils import AttrDict
 
 def babelfield(name,language):
     if language == babel.DEFAULT_LANGUAGE: 
         return name
     return name + '_' + language
 
-def page(ref,language,title,body,parent=None,special=False):
+def page(ref,language,title,body,parent=None,raw_html=False):
     if not language in babel.AVAILABLE_LANGUAGES:
         return
     obj = PAGES.get(ref)
     if obj is None:
+        pages = dd.resolve_app('pages',strict=True)
         if parent is not None:
             parent=pages.lookup(parent)
-        kw = dict(special=special,ref=ref,parent=parent)
+        kw = dict(ref=ref,parent=parent,raw_html=raw_html)
         obj = pages.create_page(**kw)
         PAGES[ref] = obj 
     

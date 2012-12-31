@@ -14,7 +14,7 @@
 """
 
 """
-
+import os
 import cgi
 import datetime
 import jinja2
@@ -32,44 +32,58 @@ from lino.utils import iif
 from lino.utils.xmlgen import html as xghtml
 E = xghtml.E
     
-
-jinja_env = jinja2.Environment(
-    loader=jinja2.PackageLoader('lino', 'templates'))
-#~ jinja_env = jinja2.Environment(trim_blocks=False)
-
-
-def as_table(action_spec):
+def site_setup(self):
+    """
+    Adds a global `jinja_env` attribute to `settings.LINO`
+    """
     from lino.utils import auth
-    a = settings.LINO.modules.resolve(action_spec)
-    ar = a.request(user=auth.AnonymousUser.instance())
-    print ar.get_total_count()
-    return E.tostring(E.ul(*[E.li(ar.summary_row(obj)) for obj in ar]))
-      
-def as_ul(action_spec):
-    from lino.utils import auth
-    a = settings.LINO.modules.resolve(action_spec)
-    ar = a.request(user=auth.AnonymousUser.instance())
-    return E.tostring(E.ul(*[obj.as_list_item(ar) for obj in ar]))
+    
+    self.jinja_env = jinja2.Environment(
+        #~ extensions=['jinja2.ext.i18n'],
+        loader=jinja2.ChoiceLoader([
+          jinja2.FileSystemLoader(os.path.join(self.project_dir,'templates')),
+          jinja2.PackageLoader('lino', 'templates')
+          ]))
+    #~ jinja_env = jinja2.Environment(trim_blocks=False)
 
-jinja_env.globals.update(
-        settings=settings,
-        # LINO=settings.LINO,
-        #~ ui=settings.LINO.ui,
-        site=settings.LINO,
-        as_ul=as_ul,
-        as_table=as_table,
-        iif=iif,
-        len=len,
-        # E=xghtml.E,
-        _= _,
-)
+    #~ from django.utils import translation
+
+    #~ jinja_env.install_gettext_translations(translation)
+
+
+    def as_table(action_spec):
+        a = settings.LINO.modules.resolve(action_spec)
+        ar = a.request(user=auth.AnonymousUser.instance())
+        print ar.get_total_count()
+        return E.tostring(E.ul(*[E.li(ar.summary_row(obj)) for obj in ar]),method="html")
+          
+    def as_ul(action_spec):
+        a = settings.LINO.modules.resolve(action_spec)
+        ar = a.request(user=auth.AnonymousUser.instance())
+        return E.tostring(E.ul(*[obj.as_list_item(ar) for obj in ar]),method="html")
+
+    self.jinja_env.globals.update(
+            settings=settings,
+            # LINO=settings.LINO,
+            #~ ui=settings.LINO.ui,
+            site=self,
+            dtos=babel.dtos,
+            dtosl=babel.dtosl,
+            as_ul=as_ul,
+            as_table=as_table,
+            iif=iif,
+            unicode=unicode,
+            len=len,
+            # E=xghtml.E,
+            _= _,
+    )
 
 
 def extend_context(context):
     def parse(s):
         #~ print 20121221, s
         #~ return Template(s).render(**context)
-        return jinja_env.from_string(s).render(**context)
+        return settings.LINO.jinja_env.from_string(s).render(**context)
     context.update(
         now=datetime.datetime.now(),
         parse=parse,
@@ -79,9 +93,11 @@ def extend_context(context):
 def render_from_request(request,template_name,**context):
     extend_context(context)
     context.update(request=request)
-    template = jinja_env.get_template(template_name)
+    template = settings.LINO.jinja_env.get_template(template_name)
     return template.render(**context)
 
+
+#~ jinja_env.extract_translations()
 
 
 class DjangoJinjaTemplate:
@@ -107,7 +123,7 @@ class Loader(app_directories.Loader):
 
     def load_template(self, template_name, template_dirs=None):
         source, origin = self.load_template_source(template_name, template_dirs)
-        jt = jinja_env.get_template(template_name)
+        jt = settings.LINO.jinja_env.get_template(template_name)
         template = DjangoJinjaTemplate(jt)
         return template, origin
         

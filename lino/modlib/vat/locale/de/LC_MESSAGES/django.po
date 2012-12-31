@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2012-12-08 19:28+0000\n"
+"POT-Creation-Date: 2012-12-31 05:04+0000\n"
 "PO-Revision-Date: 2012-09-22 07:29+0100\n"
 "Last-Translator: Luc Saffre <luc.saffre@gmail.com>\n"
 "Language-Team: \n"
@@ -69,137 +69,146 @@ msgstr "Verkauf"
 msgid "Purchases"
 msgstr "Einkauf"
 
-#: .\models.py:93
+#: .\models.py:94
 #, fuzzy
 msgid "VAT Period"
 msgstr "MWSt.-Regime"
 
-#: .\models.py:94
+#: .\models.py:95
 msgid "VAT Periods"
 msgstr ""
 
-#: .\models.py:99
+#: .\models.py:116
 msgid "First Quarter (January-March)"
 msgstr ""
 
-#: .\models.py:100
+#: .\models.py:117
 msgid "Second Quarter (April-June)"
 msgstr ""
 
-#: .\models.py:101
+#: .\models.py:118
 msgid "Third Quarter (July-August)"
 msgstr ""
 
-#: .\models.py:102
+#: .\models.py:119
 msgid "Fourth Quarter (September-December)"
 msgstr ""
 
-#: .\models.py:106
+#: .\models.py:123
 msgid "January"
 msgstr ""
 
-#: .\models.py:107
+#: .\models.py:124
 msgid "February"
 msgstr ""
 
-#: .\models.py:108
+#: .\models.py:125
 msgid "March"
 msgstr ""
 
-#: .\models.py:109
+#: .\models.py:126
 msgid "April"
 msgstr ""
 
-#: .\models.py:110
+#: .\models.py:127
 msgid "May"
 msgstr ""
 
-#: .\models.py:111
+#: .\models.py:128
 msgid "June"
 msgstr ""
 
-#: .\models.py:112
+#: .\models.py:129
 msgid "July"
 msgstr ""
 
-#: .\models.py:113
+#: .\models.py:130
 msgid "August"
 msgstr ""
 
-#: .\models.py:114
+#: .\models.py:131
 msgid "September"
 msgstr ""
 
-#: .\models.py:115
+#: .\models.py:132
 msgid "October"
 msgstr ""
 
-#: .\models.py:116
+#: .\models.py:133
 msgid "November"
 msgstr ""
 
-#: .\models.py:117
+#: .\models.py:134
 msgid "December"
 msgstr ""
 
-#: .\models.py:124
+#: .\models.py:141
 msgid "Draft"
 msgstr ""
 
-#: .\models.py:125
+#: .\models.py:142
 msgid "Registered"
 msgstr ""
 
-#: .\models.py:126
+#: .\models.py:143
 msgid "Submitted"
 msgstr ""
 
-#: .\models.py:159
+#: .\models.py:165
 #, fuzzy
 msgid "Sales base"
 msgstr "Verkauf"
 
-#: .\models.py:160
+#: .\models.py:166
 #, fuzzy
 msgid "Sales VAT"
 msgstr "Verkauf"
 
-#: .\models.py:161
+#: .\models.py:167
 #, fuzzy
 msgid "Purchases base"
 msgstr "Einkauf"
 
-#: .\models.py:162
+#: .\models.py:168
 #, fuzzy
 msgid "Purchases VAT"
 msgstr "Einkauf"
 
-#: .\models.py:173
+#: .\models.py:184 .\models.py:523
 msgid "Total incl. VAT"
 msgstr "Total inkl. MWSt."
 
-#: .\models.py:174
+#: .\models.py:185 .\models.py:526
 msgid "Total excl. VAT"
 msgstr "Total zzgl. MWSt."
 
-#: .\models.py:175 .\models.py:519
+#: .\models.py:186 .\models.py:557
 msgid "VAT"
 msgstr "MWSt."
 
-#: .\models.py:240
+#: .\models.py:251
 msgid "Whether price includes VAT or not."
 msgstr ""
 
-#: .\models.py:404
+#: .\models.py:420
 msgid "VAT declaration"
 msgstr ""
 
-#: .\models.py:405
+#: .\models.py:421
 msgid "VAT declarations"
 msgstr ""
 
-#: .\models.py:495
+#: .\models.py:517
 msgid "Date"
+msgstr ""
+
+#: .\models.py:529
+#, fuzzy
+msgid "Total VAT"
+msgstr "Total inkl. MWSt."
+
+#: .\models.py:532
+msgid "Voucher"
 msgstr ""
 
 #~ msgid "VAT Rate"

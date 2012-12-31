@@ -520,7 +520,7 @@ class Action(Parametrizable,Permittable):
             return self.defining_actor.actor_id + '.' + self.action_name
         return str(actor) + '.' + self.action_name
         
-    def as_button(self,obj,request,label):
+    def as_button(self,obj,request,label=None):
         ba = self.defining_actor.get_url_action(self.action_name)
         btn = settings.LINO.ui.row_action_button(obj,request,ba,label)
         return xghtml.E.tostring(btn)

@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: lino\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2012-12-08 19:28+0000\n"
+"POT-Creation-Date: 2012-12-31 05:04+0000\n"
 "PO-Revision-Date: 2012-11-08 22:53+0200\n"
 "Last-Translator: Luc Saffre <luc.saffre@gmail.com>\n"
 "Language-Team: fr <lino-users@gmail.com>\n"
@@ -17,61 +17,61 @@ msgstr ""
 "Plural-Forms: nplurals=2; plural=n>1;\n"
 "X-Generator: Poedit 1.5.4\n"
 
-#: .\__init__.py:57
+#: .\__init__.py:71
 msgid "English"
 msgstr "Anglais"
 
-#: .\__init__.py:58
+#: .\__init__.py:72
 msgid "German"
 msgstr "Allemand"
 
-#: .\__init__.py:59
+#: .\__init__.py:73
 msgid "French"
 msgstr "Français"
 
-#: .\__init__.py:60
+#: .\__init__.py:74
 msgid "Dutch"
 msgstr "Néerlandais"
 
-#: .\__init__.py:61
+#: .\__init__.py:75
 msgid "Estonian"
 msgstr "Estonien"
 
-#: .\__init__.py:1084
+#: .\__init__.py:1131
 msgid "Anonymous"
 msgstr ""
 
-#: .\__init__.py:1087 .\utils\auth.py:97
+#: .\__init__.py:1134 .\utils\auth.py:97
 msgid "User"
 msgstr "Utilisateur"
 
-#: .\__init__.py:1088 .\utils\auth.py:99
+#: .\__init__.py:1135 .\utils\auth.py:99
 msgid "Administrator"
 msgstr "Administrateur"
 
-#: .\__init__.py:1137 .\models.py:324 .\templates\500.html.py:4
-#: .\templates\base.html.py:26 .\ui\extjs3\views.py:784
-#: .\ui\extjs3\views.py:1098
+#: .\__init__.py:1184 .\models.py:324 .\core\actions.py:713
+#: .\core\actions.py:822 .\templates_old\500.html.py:4
+#: .\templates_old\base.html.py:26 .\ui\extjs3\views.py:1021
 msgid "Home"
 msgstr "Départ"
 
-#: .\__init__.py:1175 .\models.py:254
+#: .\__init__.py:1222 .\models.py:254
 msgid "Master"
 msgstr "Signalétique"
 
-#: .\__init__.py:1181
+#: .\__init__.py:1228
 msgid "Reports"
 msgstr ""
 
-#: .\__init__.py:1183
+#: .\__init__.py:1230
 msgid "Configure"
 msgstr "Configuration"
 
-#: .\__init__.py:1185
+#: .\__init__.py:1232
 msgid "Explorer"
 msgstr "Explorateur"
 
-#: .\__init__.py:1187
+#: .\__init__.py:1234
 msgid "Site"
 msgstr "Site"
 
@@ -79,11 +79,7 @@ msgstr "Site"
 msgid "Rebuild site cache"
 msgstr ""
 
-#: .\models.py:64 .\mixins\printable.py:644
-msgid "Are you sure?"
-msgstr "Etes-vous certain ?"
-
-#: .\models.py:74 .\ui\base.py:160
+#: .\models.py:74 .\ui\base.py:289
 msgid "Success"
 msgstr "Succès"
 
@@ -150,11 +146,11 @@ msgstr ""
 msgid "Text Field Templates"
 msgstr ""
 
-#: .\models.py:294 .\utils\babel.py:356
+#: .\models.py:294 .\utils\babel.py:357
 msgid "Designation"
 msgstr "Description"
 
-#: .\models.py:295 .\core\actions.py:885
+#: .\models.py:295 .\core\actions.py:987
 msgid "Description"
 msgstr "Description"
 
@@ -186,71 +182,95 @@ msgstr "Système"
 msgid "Office"
 msgstr ""
 
-#: .\core\actions.py:740
+#: .\core\actions.py:714 .\ui\extjs3\views.py:1022
+msgid "Using ExtJS"
+msgstr ""
+
+#: .\core\actions.py:739 .\core\actions.py:824 .\ui\extjs3\linolib.js.py:42
+#: .\ui\extjs3\views.py:1047
+msgid "First page"
+msgstr "Première page"
+
+#: .\core\actions.py:740 .\core\actions.py:825 .\ui\extjs3\linolib.js.py:21
+#: .\ui\extjs3\views.py:1048
+msgid "Previous page"
+msgstr "Page précédente"
+
+#: .\core\actions.py:752 .\core\actions.py:826 .\ui\extjs3\linolib.js.py:3
+#: .\ui\extjs3\views.py:1060
+msgid "Next page"
+msgstr "Page suivante"
+
+#: .\core\actions.py:753 .\core\actions.py:827 .\ui\extjs3\linolib.js.py:18
+#: .\ui\extjs3\views.py:1061
+msgid "Last page"
+msgstr "Dernière page"
+
+#: .\core\actions.py:794
 msgid "Detail"
 msgstr "Détail"
 
-#: .\core\actions.py:741
+#: .\core\actions.py:795
 msgid "Open a detail window on this record"
 msgstr ""
 
-#: .\core\actions.py:758 .\ui\extjs3\ext_ui.py:184
+#: .\core\actions.py:864 .\ui\extjs3\ext_ui.py:191
 msgid "New"
 msgstr "Nouveau"
 
-#: .\core\actions.py:766
+#: .\core\actions.py:872
 #, fuzzy
 msgid "Insert a new record"
 msgstr "Insérer"
 
-#: .\core\actions.py:776
+#: .\core\actions.py:882
 #, python-format
 msgid "Insert into %s"
 msgstr "Insérer dans %s"
 
-#: .\core\actions.py:797 .\mixins\__init__.py:405 .\mixins\duplicable.py:44
+#: .\core\actions.py:903 .\mixins\__init__.py:409 .\mixins\duplicable.py:44
 msgid "Duplicate"
 msgstr "Dupliquer"
 
-#: .\core\actions.py:832
+#: .\core\actions.py:934
 #, fuzzy
 msgid "Delete this record"
 msgstr "Aller vers enregistrement"
 
-#: .\core\actions.py:840 .\core\changes.py:72
+#: .\core\actions.py:942 .\core\changes.py:72
 msgid "Delete"
 msgstr "Supprimer"
 
-#: .\core\actions.py:850
+#: .\core\actions.py:952
 #, fuzzy
 msgid "Save changes in this form"
 msgstr "Enregistrer vos changements au texte?"
 
-#: .\core\actions.py:851
+#: .\core\actions.py:953
 msgid "Save"
 msgstr "Enregistrer"
 
-#: .\core\actions.py:866 .\core\changes.py:70
+#: .\core\actions.py:968 .\core\changes.py:70
 msgid "Create"
 msgstr "Créer"
 
-#: .\core\actions.py:868
+#: .\core\actions.py:970
 msgid "Create the record and open a detail window on it"
 msgstr ""
 
-#: .\core\actions.py:876
+#: .\core\actions.py:978
 msgid "Create without detail"
 msgstr ""
 
-#: .\core\actions.py:877
+#: .\core\actions.py:979
 msgid "Don't open an detail window on the new record"
 msgstr ""
 
-#: .\core\actions.py:884
+#: .\core\actions.py:986
 msgid "Summary"
 msgstr ""
 
-#: .\core\actions.py:886
+#: .\core\actions.py:988
 msgid "Don't send email notification"
 msgstr ""
 
@@ -277,22 +297,22 @@ msgstr ""
 msgid "Add child"
 msgstr ""
 
-#: .\core\choicelists.py:293
+#: .\core\choicelists.py:311
 #, fuzzy
 msgid "value"
 msgstr "Masculin"
 
-#: .\core\choicelists.py:297
+#: .\core\choicelists.py:315
 #, fuzzy
 msgid "text"
 msgstr "Suivant"
 
-#: .\core\choicelists.py:301
+#: .\core\choicelists.py:319
 #, fuzzy
 msgid "name"
 msgstr "Nom de famille"
 
-#: .\core\choicelists.py:492
+#: .\core\choicelists.py:525
 #, python-format
 msgid "%(value)r (invalid choice for %(list)s)"
 msgstr "%(value)r (choix non valable pour %(list)s)"
@@ -306,7 +326,7 @@ msgstr ""
 msgid "%(details)s of %(master)s"
 msgstr "%(details)s de %(master)s"
 
-#: .\core\dialogs.py:43
+#: .\core\dialogs.py:43 .\ui\base.py:329
 msgid "OK"
 msgstr ""
 
@@ -324,25 +344,17 @@ msgid "Cannot delete %(self)s because %(count)d %(refs)s refer to it."
 msgstr ""
 "%(self)s ne peut être effacé parce que %(count)d  %(refs)s y font référence"
 
-#: .\core\layouts.py:524
+#: .\core\layouts.py:526
 msgid "General"
 msgstr "Général"
 
-#: .\core\model.py:285
+#: .\core\model.py:291
 msgid "Workflow"
 msgstr ""
 
 #: .\core\tables.py:164
 msgid "No data to display"
 msgstr "Aucun enregistrement"
-
-#: .\core\tables.py:704 .\ui\extjs3\ext_store.py:686
-msgid "Yes"
-msgstr "Oui"
-
-#: .\core\tables.py:704 .\ui\extjs3\ext_store.py:686
-msgid "No"
-msgstr "Non"
 
 #: .\core\workflows.py:101
 #, fuzzy
@@ -360,60 +372,78 @@ msgid "Mark this as %s"
 msgstr "Marquer comme %s"
 
 #. Translators: will also be concatenated with '(type)' '(object)'
-#: .\mixins\__init__.py:73
+#: .\mixins\__init__.py:75
 msgid "Controlled by"
 msgstr "Contrôlé par"
 
-#: .\mixins\__init__.py:92
+#: .\mixins\__init__.py:94
 msgid "(type)"
 msgstr "(type)"
 
-#: .\mixins\__init__.py:97
+#: .\mixins\__init__.py:99
 msgid "(object)"
 msgstr ""
 
-#: .\mixins\__init__.py:162
+#: .\mixins\__init__.py:164
 msgid "Author"
 msgstr "Auteur"
 
-#: .\mixins\__init__.py:236
+#: .\mixins\__init__.py:238
 msgid "Register"
 msgstr ""
 
-#: .\mixins\__init__.py:241
+#: .\mixins\__init__.py:243
 msgid "Register this object."
 msgstr ""
 
-#: .\mixins\__init__.py:260
+#: .\mixins\__init__.py:262
 #, fuzzy
 msgid "Deregister"
 msgstr "Supprimer"
 
-#: .\mixins\__init__.py:265
+#: .\mixins\__init__.py:267
 #, fuzzy
 msgid "Deregister this object."
 msgstr "Aller vers enregistrement"
 
-#: .\mixins\__init__.py:339
+#: .\mixins\__init__.py:295
+#, fuzzy
+msgid "Date"
+msgstr "Site"
+
+#: .\mixins\__init__.py:343
 msgid "My "
 msgstr "Mes "
 
-#: .\mixins\__init__.py:374
+#: .\mixins\__init__.py:378
 msgid "Created"
 msgstr "Créé"
 
-#: .\mixins\__init__.py:375
+#: .\mixins\__init__.py:379
 #, fuzzy
 msgid "Modified"
 msgstr "Modèle"
 
-#: .\mixins\__init__.py:402
+#: .\mixins\__init__.py:406
 msgid "Seq.No."
 msgstr "N° de séq"
 
-#: .\mixins\__init__.py:417
+#: .\mixins\__init__.py:423
 #, python-format
 msgid "Row # %s"
+msgstr ""
+
+#: .\mixins\__init__.py:464
+#, fuzzy
+msgid "Parent"
+msgstr "Imprimer"
+
+#: .\mixins\__init__.py:585
+msgid "Reference"
+msgstr ""
+
+#: .\mixins\__init__.py:601
+msgid "(Root)"
 msgstr ""
 
 #: .\mixins\duplicable.py:142
@@ -523,37 +553,41 @@ msgstr ""
 msgid "Body"
 msgstr ""
 
-#: .\mixins\printable.py:480
+#: .\mixins\printable.py:482
 msgid "Print"
 msgstr "Imprimer"
 
-#: .\mixins\printable.py:543
+#: .\mixins\printable.py:546
 #, python-format
 msgid "%s printable has been built."
 msgstr ""
 
-#: .\mixins\printable.py:545
+#: .\mixins\printable.py:548
 #, python-format
 msgid "Reused %s printable from cache."
 msgstr ""
 
-#: .\mixins\printable.py:622
+#: .\mixins\printable.py:625
 msgid "Clear cache"
 msgstr "Effacer la cache"
 
-#: .\mixins\printable.py:643
+#: .\mixins\printable.py:652
 msgid "This will discard all changes in the generated file."
 msgstr ""
 
-#: .\mixins\printable.py:670
+#: .\mixins\printable.py:653
+msgid "Are you sure?"
+msgstr "Etes-vous certain ?"
+
+#: .\mixins\printable.py:675
 msgid "Build method"
 msgstr "Méthode de construction"
 
-#: .\mixins\printable.py:679
+#: .\mixins\printable.py:684
 msgid "Template"
 msgstr "Modèle"
 
-#: .\mixins\printable.py:726
+#: .\mixins\printable.py:731
 #, fuzzy
 msgid "build time"
 msgstr "Méthode de construction"
@@ -574,51 +608,98 @@ msgstr "Fichier"
 msgid "MIME type"
 msgstr "type MIME"
 
-#: .\templates\404.html.py:4 .\templates\404.html.py:8
+#: .\templates\404.html.py:3 .\templates\404.html.py:7
+#: .\templates_old\404.html.py:4 .\templates_old\404.html.py:8
 msgid "Page not found"
 msgstr ""
 
-#: .\templates\404.html.py:10
+#: .\templates\404.html.py:9 .\templates_old\404.html.py:10
 msgid "We're sorry, but the requested page could not be found."
 msgstr ""
 
-#: .\templates\500.html.py:4
-msgid "Server error"
-msgstr ""
-
-#: .\templates\500.html.py:6
+#: .\templates\500.html.py:3 .\templates_old\500.html.py:6
 msgid "Server error (500)"
 msgstr ""
 
-#: .\templates\500.html.py:9
+#: .\templates\500.html.py:6 .\templates_old\500.html.py:9
 msgid "Server Error <em>(500)</em>"
 msgstr ""
 
-#: .\templates\500.html.py:10
+#: .\templates\500.html.py:7
+msgid ""
+"There's been an error. It has been reported to the site administrators via e-"
+"mail and should be fixed shortly. Thanks for your patience."
+msgstr ""
+
+#: .\templates\admin_main.html.py:5
+#, python-format
+msgid "Welcome to the <b>%s</b> site."
+msgstr ""
+
+#: .\templates\admin_main.html.py:13
+msgid "You have entered the <b>admin</b> section."
+msgstr ""
+
+#: .\templates\admin_main.html.py:14
+msgid ""
+"Unlike the <a href=\"/\">web content section</a> there is now a GUI menu bar "
+"in the upper part of the screen."
+msgstr ""
+
+#: .\templates\admin_main.html.py:16
+msgid ""
+"You will now probably want to use the <b>Log in</b> button in the upper "
+"right corner and log in."
+msgstr ""
+
+#: .\templates\admin_main.html.py:18
+#, python-format
+msgid "This demo site has %d users, they all have \"1234\" as password:"
+msgstr ""
+
+#: .\templates\admin_main.html.py:23
+msgid ""
+"Your feedback is welcome to lino-users@googlegroups.com or directly to the "
+"person who invited you."
+msgstr ""
+
+#: .\templates_old\500.html.py:4
+msgid "Server error"
+msgstr ""
+
+#: .\templates_old\500.html.py:10
 msgid ""
 "There's been an error. It's been reported to the site administrators via e-"
 "mail and should be fixed shortly. Thanks for your patience."
 msgstr ""
 
-#: .\templates\base_site.html.py:4
+#: .\templates_old\base_site.html.py:4
 msgid "Django site admin"
 msgstr ""
 
-#: .\templates\base_site.html.py:7
+#: .\templates_old\base_site.html.py:7
 msgid "Django administration"
 msgstr ""
 
-#: .\ui\extjs3\ext_elems.py:892 .\ui\extjs4\ext_elems.py:569
+#: .\ui\base.py:91 .\ui\extjs3\linolib.js.py:17
+msgid "Confirmation"
+msgstr "Confirmation"
+
+#: .\ui\base.py:145
+msgid "User abandoned"
+msgstr ""
+
+#: .\ui\extjs3\ext_elems.py:918 .\ui\extjs4\ext_elems.py:569
 #: .\ui\qx\qx_elems.py:555
 #, python-format
 msgid "Select a %s..."
 msgstr "Choisir %s..."
 
-#: .\ui\extjs3\ext_elems.py:1137 .\ui\extjs3\ext_ui.py:248
+#: .\ui\extjs3\ext_elems.py:1163 .\ui\extjs3\ext_ui.py:255
 msgid "show"
 msgstr "montrer"
 
-#: .\ui\extjs3\ext_elems.py:1737 .\ui\extjs3\ext_ui.py:2082
+#: .\ui\extjs3\ext_elems.py:1777 .\ui\extjs3\ext_ui.py:2002
 #: .\ui\extjs3\linolib.js.py:19
 msgid "No data to display."
 msgstr ""
@@ -640,81 +721,84 @@ msgstr "La clé primaire %r existante ne peut être modifiée"
 msgid "%r (invalid choice)"
 msgstr "%r (choix non valide)"
 
-#: .\ui\extjs3\ext_ui.py:196
+#: .\ui\extjs3\ext_store.py:686
+msgid "Yes"
+msgstr "Oui"
+
+#: .\ui\extjs3\ext_store.py:686
+msgid "No"
+msgstr "Non"
+
+#: .\ui\extjs3\ext_ui.py:203
 #, fuzzy
 msgid "Show Last"
 msgstr "Dernier"
 
-#: .\ui\extjs3\ext_ui.py:198
+#: .\ui\extjs3\ext_ui.py:205
 msgid "Show the last record in a detail window"
 msgstr ""
 
-#: .\ui\extjs3\ext_ui.py:204
+#: .\ui\extjs3\ext_ui.py:211
 msgid "Show All"
 msgstr "Montrer tous"
 
-#: .\ui\extjs3\ext_ui.py:206
+#: .\ui\extjs3\ext_ui.py:213
 msgid "Show all records in a table window"
 msgstr ""
 
-#: .\ui\extjs3\ext_ui.py:236 .\ui\extjs4\ext_ui.py:1325 .\ui\qx\qx_ui.py:1068
+#: .\ui\extjs3\ext_ui.py:243 .\ui\extjs4\ext_ui.py:1325 .\ui\qx\qx_ui.py:1068
 msgid "Upload"
 msgstr "Uploader"
 
-#: .\ui\extjs3\ext_ui.py:240
+#: .\ui\extjs3\ext_ui.py:247
 msgid "Upload a file from your PC to the server."
 msgstr ""
 
-#: .\ui\extjs3\ext_ui.py:252
+#: .\ui\extjs3\ext_ui.py:259
 msgid "Open the uploaded file in a new browser window"
 msgstr ""
 
-#: .\ui\extjs3\ext_ui.py:258 .\ui\extjs4\ext_ui.py:1333 .\ui\qx\qx_ui.py:1076
+#: .\ui\extjs3\ext_ui.py:265 .\ui\extjs4\ext_ui.py:1333 .\ui\qx\qx_ui.py:1076
 msgid "Edit"
 msgstr "Editer"
 
-#: .\ui\extjs3\ext_ui.py:258
+#: .\ui\extjs3\ext_ui.py:265
 msgid "Edit metadata of the uploaded file."
 msgstr ""
 
-#: .\ui\extjs3\ext_ui.py:1231
+#: .\ui\extjs3\ext_ui.py:1164
 msgid "as"
 msgstr "comme"
 
-#: .\ui\extjs3\ext_ui.py:1256
+#: .\ui\extjs3\ext_ui.py:1189
 msgid "My settings"
 msgstr "Mes préférences"
 
-#: .\ui\extjs3\ext_ui.py:1267
+#: .\ui\extjs3\ext_ui.py:1200
 msgid "Myself"
 msgstr "moi-même"
 
-#: .\ui\extjs3\ext_ui.py:1269
+#: .\ui\extjs3\ext_ui.py:1202
 msgid "Act as..."
 msgstr "Travailler comme..."
 
-#: .\ui\extjs3\ext_ui.py:1275
+#: .\ui\extjs3\ext_ui.py:1208
 msgid "Log out"
 msgstr "Déconnecter"
 
-#: .\ui\extjs3\ext_ui.py:1276
+#: .\ui\extjs3\ext_ui.py:1209
 #, fuzzy
 msgid "Change password"
 msgstr "Langue"
 
-#: .\ui\extjs3\ext_ui.py:1277
+#: .\ui\extjs3\ext_ui.py:1210
 msgid "Forgot password"
 msgstr "Oublié mot de passe"
 
-#: .\ui\extjs3\ext_ui.py:1293 .\ui\extjs3\linolib.js.py:33
+#: .\ui\extjs3\ext_ui.py:1226 .\ui\extjs3\linolib.js.py:33
 #, fuzzy
 msgid "Log in"
 msgstr "Déconnecter"
-
-#: .\ui\extjs3\linolib.js.py:3 .\ui\extjs3\views.py:788
-#: .\ui\extjs3\views.py:1137
-msgid "Next page"
-msgstr "Page suivante"
 
 #: .\ui\extjs3\linolib.js.py:4
 #, fuzzy
@@ -770,23 +854,9 @@ msgstr "Nom de famille"
 msgid "Field '{0}' is disabled"
 msgstr ""
 
-#: .\ui\extjs3\linolib.js.py:17
-msgid "Confirmation"
-msgstr "Confirmation"
-
-#: .\ui\extjs3\linolib.js.py:18 .\ui\extjs3\views.py:789
-#: .\ui\extjs3\views.py:1138
-msgid "Last page"
-msgstr "Dernière page"
-
 #: .\ui\extjs3\linolib.js.py:20
 msgid "Alert"
 msgstr "Avertissement"
-
-#: .\ui\extjs3\linolib.js.py:21 .\ui\extjs3\views.py:787
-#: .\ui\extjs3\views.py:1125
-msgid "Previous page"
-msgstr "Page précédente"
 
 #: .\ui\extjs3\linolib.js.py:22
 msgid "Help Text Editor"
@@ -866,11 +936,6 @@ msgstr "Supprimer {0} enregistrements. Etes-vous certain ?"
 msgid "No more records to display. Detail window has been closed."
 msgstr ""
 
-#: .\ui\extjs3\linolib.js.py:42 .\ui\extjs3\views.py:786
-#: .\ui\extjs3\views.py:1124
-msgid "First page"
-msgstr "Première page"
-
 #: .\ui\extjs3\linolib.js.py:43
 msgid "Show this table as a pdf document"
 msgstr ""
@@ -895,25 +960,25 @@ msgstr "Enregistrer vos changements au texte?"
 msgid "Previous"
 msgstr "Précédent"
 
-#: .\ui\extjs3\views.py:134
+#: .\ui\extjs3\views.py:132
 #, python-format
 msgid "Action \"%(action)s\" failed for %(record)s:"
 msgstr "L'action %(action)s a échoué pour %(record)s:"
 
-#: .\ui\extjs3\views.py:139
+#: .\ui\extjs3\views.py:137
 msgid "An error report has been sent to the system administrator."
 msgstr ""
 
-#: .\ui\extjs3\views.py:142
+#: .\ui\extjs3\views.py:140
 msgid "Oops!"
 msgstr ""
 
-#: .\ui\extjs3\views.py:257 .\ui\extjs4\ext_ui.py:229 .\ui\qx\qx_ui.py:229
+#: .\ui\extjs3\views.py:261 .\ui\extjs4\ext_ui.py:229 .\ui\qx\qx_ui.py:229
 #, python-format
 msgid "Row %(rowid)d of %(rowcount)d"
 msgstr "Ligne %(rowid)d de %(rowcount)d"
 
-#: .\ui\extjs3\views.py:259
+#: .\ui\extjs3\views.py:263
 #, fuzzy
 msgid "No navigation"
 msgstr "Confirmation"
@@ -938,16 +1003,12 @@ msgstr "%s a été créé"
 msgid "%s : nothing to save."
 msgstr ""
 
-#: .\ui\extjs3\views.py:1042 .\ui\extjs3\views.py:1083
+#: .\ui\extjs3\views.py:963 .\ui\extjs3\views.py:1006
 #, python-format
 msgid "List contains more than %d rows"
 msgstr ""
 
-#: .\ui\extjs3\views.py:1099
-msgid "Using ExtJS"
-msgstr ""
-
-#: .\ui\extjs3\views.py:1189
+#: .\ui\extjs3\views.py:1112
 #, fuzzy, python-format
 msgid "Error while saving GC for %(table)s: %(error)s"
 msgstr ""
@@ -1023,15 +1084,15 @@ msgstr ""
 msgid "User Groups"
 msgstr "utilisateur"
 
-#: .\utils\auth.py:208
+#: .\utils\auth.py:214
 msgid "User Profile"
 msgstr ""
 
-#: .\utils\auth.py:209
+#: .\utils\auth.py:215
 msgid "User Profiles"
 msgstr ""
 
-#: .\utils\babel.py:370
+#: .\utils\babel.py:371
 msgid "Language"
 msgstr "Langue"
 

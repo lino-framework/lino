@@ -126,7 +126,8 @@ class Page(mixins.Referrable,mixins.Hierarizable):
     #~ abstract = dd.RichTextField(_("Abstract"),blank=True,format='html')
     body = babel.BabelTextField(_("Body"),blank=True,format='plain')
     
-    special = models.BooleanField(_("Special"),default=False)
+    #~ special = models.BooleanField(_("Special"),default=False)
+    raw_html = models.BooleanField(_("raw html"),default=False)
     
     
     #~ def __unicode__(self):
@@ -159,7 +160,7 @@ class Page(mixins.Referrable,mixins.Hierarizable):
     def get_sidebar_html(self,request):
         items = []
         #~ loop over top-level nodes
-        for n in Page.objects.filter(parent__isnull=True,special=False).order_by('seqno'):
+        for n in Page.objects.filter(parent__isnull=True).order_by('seqno'):
             #~ items += [li for li in n.get_sidebar_items(request,self)]
             items.append(n.get_sidebar_item(request,self))
             if self.is_parented(n):

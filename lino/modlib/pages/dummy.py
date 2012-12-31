@@ -31,7 +31,7 @@ from lino.utils import AttrDict
 from lino.utils import babel
 from lino.utils import iif
 from lino.utils.xmlgen import html as xghtml
-from lino.core import web 
+from lino.core import web
 
 from lino.utils.restify import restify
 from lino.utils.restify import doc2rst
@@ -50,7 +50,8 @@ from lino.utils.restify import doc2rst
 DUMMY_PAGES = {}
 
 class DummyPage(AttrDict):
-
+    raw_html = False
+    #~ special = False
     def __unicode__(self):
         return u'%s %s' % (self._meta.verbose_name,self.ref)
         
@@ -63,7 +64,6 @@ class DummyPage(AttrDict):
         pass
 
 
-    
 def create_page(**kw):
     #~ logger.info("20121219 dummy create_page %s",kw)
     obj = DummyPage(**kw)
@@ -85,8 +85,10 @@ def render_node(request,node,template_name='node.html',**context):
         context.update(heading=settings.LINO.title)
         context.update(title=settings.LINO.title)
     body=babel.babelattr(node,'body','')
+    if not node.raw_html:
+        body = restify(doc2rst(body))
     #~ logger.info("20121227 render_node %s -> body is %s",node,body)
-    context.update(body=restify(doc2rst(body)))
+    context.update(body=body)
     return web.render_from_request(request,template_name,**context)
 
 

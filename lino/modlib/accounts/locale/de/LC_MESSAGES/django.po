@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2012-12-08 19:28+0000\n"
+"POT-Creation-Date: 2012-12-31 05:04+0000\n"
 "PO-Revision-Date: 2012-12-10 10:57+0200\n"
 "Last-Translator: Luc Saffre <luc.saffre@gmail.com>\n"
 "Language-Team: \n"
@@ -17,85 +17,90 @@ msgstr ""
 "Plural-Forms: nplurals=2; plural=(n != 1);\n"
 "X-Generator: Poedit 1.5.4\n"
 
-#: .\models.py:45
+#: .\models.py:46
 msgid "Account Chart"
 msgstr "Kontenplan"
 
-#: .\models.py:46
+#: .\models.py:47
 msgid "Account Charts"
 msgstr "Kontenpläne"
 
-#: .\models.py:67
+#: .\models.py:68
 msgid "Account Group"
 msgstr "Kontengruppe"
 
-#: .\models.py:68
+#: .\models.py:69
 msgid "Account Groups"
 msgstr "Kontengruppen"
 
-#: .\models.py:75 .\models.py:108
+#: .\models.py:76 .\models.py:109
 msgid "Introduction"
 msgstr "Einleitung"
 
-#: .\models.py:98
+#: .\models.py:99
 msgid "Account"
 msgstr "Konto"
 
-#: .\models.py:99
+#: .\models.py:100
 msgid "Accounts"
 msgstr "Konten"
 
-#: .\models.py:140
+#: .\models.py:141
 msgid "Sales account"
 msgstr "Konto für Verkäufe"
 
-#: .\models.py:143
+#: .\models.py:144
 msgid "The account to move when this product is used in a sales invoice."
 msgstr ""
 
-#: .\models.py:148
+#: .\models.py:149
 msgid "Purchases account"
 msgstr "Konto für Einkäufe"
 
-#: .\models.py:151
+#: .\models.py:152
 msgid "The account to move when this product is used in a purchases invoice."
 msgstr ""
 
-#: .\models.py:157
+#: .\models.py:158
 msgid "Accounting"
 msgstr "Buchhaltung"
 
-#: .\utils.py:132
+#: .\utils.py:135
 msgid "Debit"
 msgstr "Debit"
 
-#: .\utils.py:133
+#: .\utils.py:136
 msgid "Credit"
 msgstr "Kredit"
 
-#: .\utils.py:143
-msgid "Account Type"
-msgstr "Kontenart"
-
-#: .\utils.py:150
+#: .\utils.py:152
 msgid "Assets"
 msgstr "Vermögen"
 
-#: .\utils.py:151
+#: .\utils.py:158
 msgid "Liabilities"
 msgstr "Verpflichtungen"
 
-#: .\utils.py:152
+#: .\utils.py:164
 msgid "Incomes"
 msgstr "Einkünfte"
 
-#: .\utils.py:153
+#: .\utils.py:170
 msgid "Expenses"
 msgstr "Ausgaben"
 
-#: .\utils.py:154
+#: .\utils.py:176
 msgid "Capital"
 msgstr "Kapital"
+
+#: .\utils.py:183
+#, fuzzy
+msgid "Bank accounts"
+msgstr "Konto für Verkäufe"
+
+#: .\utils.py:191
+msgid "Account Type"
+msgstr "Kontenart"
 
 #~ msgid "Budget Account"
 #~ msgstr "Budgetkonto"

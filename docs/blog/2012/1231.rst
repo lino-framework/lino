@@ -1,0 +1,19 @@
+20121231
+========
+
+The content for the "admin" main page is no longer 
+stored in a pages.Page, but directly in `admin_main.html`.
+
+:mod:`lino.apps.polls.tutorial` now uses a template
+:src:`/lino/apps/polls/tutorials/templates/admin_main.html`.
+
+TODO: 
+
+- Add a PackageLoader for each INSTALLED_APPS
+
+- Integrate a solution for extracting messages between ``trans`` tags from templates. 
+  Current workaround is to use the `_()` function.
+
+  - http://jinja.pocoo.org/docs/extensions/#i18n-extension
+  - http://babel.edgewall.org/wiki/BabelDjango
+  - https://github.com/niwibe/django-jinja

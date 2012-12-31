@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2012-12-08 19:28+0000\n"
+"POT-Creation-Date: 2012-12-31 05:04+0000\n"
 "PO-Revision-Date: 2012-09-22 07:31+0100\n"
 "Last-Translator: Luc Saffre <luc.saffre@gmail.com>\n"
 "Language-Team: \n"
@@ -17,72 +17,72 @@ msgstr ""
 "Plural-Forms: nplurals=2; plural=(n != 1);\n"
 "X-Generator: Poedit 1.5.3\n"
 
-#: .\models.py:121
+#: .\models.py:79
 msgid "Journal"
 msgstr ""
 
-#: .\models.py:122
+#: .\models.py:80
 msgid "Journals"
 msgstr ""
 
-#: .\models.py:221
+#: .\models.py:186
 #, python-format
 msgid "%s is not the last voucher in journal"
 msgstr ""
 
-#: .\models.py:267 .\models.py:439
+#: .\models.py:231 .\models.py:450
 msgid "Voucher"
 msgstr ""
 
-#: .\models.py:268
+#: .\models.py:232
 msgid "Vouchers"
 msgstr ""
 
-#: .\models.py:281
+#: .\models.py:244
 msgid "Narration"
 msgstr ""
 
-#: .\models.py:414
+#: .\models.py:425
 msgid "Movement"
 msgstr ""
 
-#: .\models.py:415
+#: .\models.py:426
 msgid "Movements"
 msgstr ""
 
-#: .\models.py:427
+#: .\models.py:438
 msgid "Debit"
 msgstr ""
 
-#: .\models.py:433
+#: .\models.py:444
 msgid "Credit"
 msgstr "Kredit"
 
-#: .\models.py:474
+#: .\models.py:485
 msgid "Draft"
 msgstr ""
 
-#: .\models.py:475
+#: .\models.py:486
 msgid "Registered"
 msgstr ""
 
-#: .\models.py:478
+#: .\models.py:489
 msgid "Paid"
 msgstr "Bezahlt"
 
-#: .\models.py:486
+#: .\models.py:497
 msgid "Invoice"
 msgstr "Rechnung"
 
-#: .\models.py:487
+#: .\models.py:498
 msgid "Invoices"
 msgstr "Rechnungen"
 
-#: .\models.py:489
+#: .\models.py:500
 msgid "Your reference"
 msgstr "Ihr Zeichen"
 
-#: .\models.py:492
+#: .\models.py:503
 msgid "Due date"
 msgstr "Zahlungsziel"
 
@@ -94,15 +94,15 @@ msgstr "Allgemein"
 msgid "Ledger"
 msgstr "Buchhaltung"
 
-#: .\models.py:610
+#: .\models.py:609
 msgid "Unregistered invoices"
 msgstr ""
 
-#: .\utils.py:40
+#: .\utils.py:46
 msgid "Fiscal Year"
 msgstr "Geschäftsjahr"
 
-#: .\utils.py:41
+#: .\utils.py:47
 #, fuzzy
 msgid "Fiscal Years"
 msgstr "Geschäftsjahr"

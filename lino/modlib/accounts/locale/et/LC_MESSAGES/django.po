@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2012-12-08 19:28+0000\n"
+"POT-Creation-Date: 2012-12-31 05:04+0000\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -17,82 +17,86 @@ msgstr ""
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=(n != 1)\n"
 
-#: .\models.py:45
+#: .\models.py:46
 msgid "Account Chart"
 msgstr ""
 
-#: .\models.py:46
+#: .\models.py:47
 msgid "Account Charts"
 msgstr ""
 
-#: .\models.py:67
+#: .\models.py:68
 msgid "Account Group"
 msgstr ""
 
-#: .\models.py:68
+#: .\models.py:69
 msgid "Account Groups"
 msgstr ""
 
-#: .\models.py:75 .\models.py:108
+#: .\models.py:76 .\models.py:109
 msgid "Introduction"
 msgstr ""
 
-#: .\models.py:98
+#: .\models.py:99
 msgid "Account"
 msgstr ""
 
-#: .\models.py:99
+#: .\models.py:100
 msgid "Accounts"
 msgstr ""
 
-#: .\models.py:140
+#: .\models.py:141
 msgid "Sales account"
 msgstr ""
 
-#: .\models.py:143
+#: .\models.py:144
 msgid "The account to move when this product is used in a sales invoice."
 msgstr ""
 
-#: .\models.py:148
+#: .\models.py:149
 msgid "Purchases account"
 msgstr ""
 
-#: .\models.py:151
+#: .\models.py:152
 msgid "The account to move when this product is used in a purchases invoice."
 msgstr ""
 
-#: .\models.py:157
+#: .\models.py:158
 msgid "Accounting"
 msgstr ""
 
-#: .\utils.py:132
+#: .\utils.py:135
 msgid "Debit"
 msgstr ""
 
-#: .\utils.py:133
+#: .\utils.py:136
 msgid "Credit"
 msgstr ""
 
-#: .\utils.py:143
-msgid "Account Type"
-msgstr ""
-
-#: .\utils.py:150
+#: .\utils.py:152
 msgid "Assets"
 msgstr ""
 
-#: .\utils.py:151
+#: .\utils.py:158
 msgid "Liabilities"
 msgstr ""
 
-#: .\utils.py:152
+#: .\utils.py:164
 msgid "Incomes"
 msgstr ""
 
-#: .\utils.py:153
+#: .\utils.py:170
 msgid "Expenses"
 msgstr ""
 
-#: .\utils.py:154
+#: .\utils.py:176
 msgid "Capital"
+msgstr ""
+
+#: .\utils.py:183
+msgid "Bank accounts"
+msgstr ""
+
+#: .\utils.py:191
+msgid "Account Type"
 msgstr ""

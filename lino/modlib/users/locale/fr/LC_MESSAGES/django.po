@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2012-12-08 19:29+0000\n"
+"POT-Creation-Date: 2012-12-31 05:04+0000\n"
 "PO-Revision-Date: 2012-07-22 15:10+0200\n"
 "Last-Translator: Luc Saffre <luc.saffre@gmail.com>\n"
 "Language-Team: \n"
@@ -16,65 +16,65 @@ msgstr ""
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=(n > 1)\n"
 
-#: .\models.py:72
+#: .\models.py:73
 msgid "User"
 msgstr "Utilisateur"
 
-#: .\models.py:73
+#: .\models.py:74
 msgid "Users"
 msgstr "Utilisateurs"
 
-#: .\models.py:76
+#: .\models.py:77
 msgid "Username"
 msgstr "Nom d'utilisateur"
 
-#: .\models.py:78
+#: .\models.py:79
 msgid ""
 "\n"
 "        Required. Must be unique. \n"
 "        "
 msgstr ""
 
-#: .\models.py:82
+#: .\models.py:83
 msgid "Password"
 msgstr ""
 
-#: .\models.py:86
+#: .\models.py:87
 msgid "First name"
 msgstr "Prénom"
 
-#: .\models.py:87
+#: .\models.py:88
 msgid "Last name"
 msgstr "Nom de famille"
 
-#: .\models.py:88
+#: .\models.py:89
 msgid "e-mail address"
 msgstr "adresse e-mail"
 
-#: .\models.py:90
+#: .\models.py:91
 msgid "Remarks"
 msgstr "Remarques"
 
-#: .\models.py:113
+#: .\models.py:114
 msgid "Name"
 msgstr "Nom"
 
-#: .\models.py:297
+#: .\models.py:304
 msgid "Authority"
 msgstr "Procuration"
 
-#: .\models.py:298
+#: .\models.py:305
 msgid "Authorities"
 msgstr "Procurations"
 
-#: .\models.py:303
+#: .\models.py:310
 msgid "The user who gets authority to act in your name."
 msgstr ""
 
-#: .\models.py:327
+#: .\models.py:334
 msgid "Authorities given"
 msgstr "Procurations accordées"
 
-#: .\models.py:333
+#: .\models.py:340
 msgid "Authorities taken"
 msgstr "Procurations reçues"

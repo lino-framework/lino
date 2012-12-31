@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2012-12-08 19:29+0000\n"
+"POT-Creation-Date: 2012-12-31 05:04+0000\n"
 "PO-Revision-Date: 2012-09-19 10:58+0100\n"
 "Last-Translator: Luc Saffre <luc.saffre@gmail.com>\n"
 "Language-Team: \n"
@@ -22,7 +22,7 @@ msgstr ""
 msgid "Recipient"
 msgstr "Beschreibung"
 
-#: .\dummy_messages.py:6 .\models.py:570
+#: .\dummy_messages.py:6 .\models.py:567
 msgid "Date of payment"
 msgstr "Zahlungsziel"
 
@@ -82,51 +82,51 @@ msgstr "Verkaufsregel"
 msgid "Sales Rules"
 msgstr "Verkaufsregeln"
 
-#: .\models.py:295 .\models.py:607
+#: .\models.py:295 .\models.py:604
 msgid "Discount"
 msgstr "Ermäßigung"
 
-#: .\models.py:389
+#: .\models.py:386
 msgid "Order"
 msgstr "Auftrag"
 
-#: .\models.py:390
+#: .\models.py:387
 msgid "Orders"
 msgstr "Aufträge"
 
-#: .\models.py:567
+#: .\models.py:564
 msgid "Invoice"
 msgstr "Rechnung"
 
-#: .\models.py:568
+#: .\models.py:565
 msgid "Invoices"
 msgstr "Rechnungen"
 
-#: .\models.py:606
+#: .\models.py:603
 msgid "Description"
 msgstr "Beschreibung"
 
-#: .\models.py:659
+#: .\models.py:656
 msgid "Totals"
 msgstr ""
 
-#: .\models.py:666
+#: .\models.py:663
 msgid "Header"
 msgstr ""
 
-#: .\models.py:671
+#: .\models.py:668
 msgid "General"
 msgstr "Allgemein"
 
-#: .\models.py:676
+#: .\models.py:673
 msgid "Ledger"
 msgstr ""
 
-#: .\models.py:861
+#: .\models.py:867
 msgid "is Customer"
 msgstr "ist Kunde"
 
-#: .\models.py:866
+#: .\models.py:872
 msgid "Sales"
 msgstr "Verkauf"
 

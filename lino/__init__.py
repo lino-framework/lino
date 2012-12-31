@@ -1341,19 +1341,24 @@ class Lino(object):
         """
         Return a chunk of html to be displayed in the main area of the admin index.
         This is being called only if :meth:`get_main_action` returns `None`.
+        The default implementation returns the message 
+        "You are now in the admin section..."
+        """
+        from lino.core import web
+        return web.render_from_request(request,'admin_main.html')
+        
+    def unused_get_main_html(self,request):
+        """
+        Return a chunk of html to be displayed in the main area of the admin index.
+        This is being called only if :meth:`get_main_action` returns `None`.
         The default implementation returns the 
         message "It works! But your application isn't complete. ..."
         """
         pages = dd.resolve_app('pages')
-        #~ obj = pages.lookup('admin')
         from lino.utils import babel
         node = pages.lookup('admin')
         if node is None:
-            #~ print '20121221 No admin page within %s' % [unicode(p) for p in pages.get_all_pages()]
             return '20121221 No admin page within %s' % [cgi.escape(unicode(p)) for p in pages.get_all_pages()]
-            #~ print 20121221, repr(node)
-        #~ node = pages.lookup('index')
-        #~ return pages.render(request,node,self.MAIN_HTML_TEMPLATE)
         return pages.render_node(request,node,'admin_main.html')
 
 

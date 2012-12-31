@@ -34,9 +34,10 @@ from lino.modlib.pages.builder import page, objects
 
 page('','en','',"""
 Welcome to the **{{site.title}}** site.
-We are running 
-`{{site.short_name}} <{{site.url}}>`__
+{% if site.short_name %}
+This is an online demo of `{{site.short_name}} <{{site.url}}>`__
 version {{site.version}}, {{site.description}}
+{% endif %}
 
 {% if site.admin_prefix %}
 
@@ -54,9 +55,11 @@ you should go to the `Admin <{{site.admin_prefix}}/>`__ section.
 
 page('','fr','',"""
 Bienvenue sur **{{site.title}}**.
+{% if site.short_name %}
 Ce site est une démonstration en ligne de
 `{{site.short_name}} <{{site.url}}>`__
 version {{site.version}}, {{site.description}}
+{% endif %}
 
 {% if site.admin_prefix %}
 
@@ -72,9 +75,11 @@ dans la `section administrative <{{site.admin_prefix}}/>`__.
     
 page('','de','',"""
 Willkommen auf {{site.title}}.
+{% if site.short_name %}
 Diese Site ist eine Online-Demo von
 `{{site.short_name}} <{{site.url}}>`__
 version {{site.version}}, {{site.description}}
+{% endif %}
 
 {% if site.admin_prefix %}
 
@@ -102,91 +107,90 @@ page('about','de','Info',"""
 Diese Site ist eine online-Demo von `{{site.short_name}} <{{site.url}}>`__.
 """)
     
-    
-page('admin','en','',"""
+if False:
+  
+    page('admin','en','',"""
 
-{% if not site.admin_prefix %}
+    {% if not site.admin_prefix %}
 
-Welcome to the **{{site.title}}** site.
-We are running 
-`{{site.short_name}} <{{site.url}}>`__
-version {{site.version}}, {{site.description}}
+    Welcome to the **{{site.title}}** site.
+    We are running 
+    `{{site.short_name}} <{{site.url}}>`__
+    version {{site.version}}, {{site.description}}
 
-{% endif %}
+    {% endif %}
 
-You have entered the **admin** section.
-Unlike the `web content section </>`__ there is now a GUI menu 
-bar in the upper part of the screen.
+    You have entered the **admin** section.
+    Unlike the `web content section </>`__ there is now a GUI menu 
+    bar in the upper part of the screen.
 
-You will now probably want to 
-use the :guilabel:`Log in` button in the upper right corner 
-and log in. 
+    You will now probably want to 
+    use the :guilabel:`Log in` button in the upper right corner 
+    and log in. 
 
-This demo site has 
-{{site.modules.users.UsersOverview.request().get_total_count()}}
-users configured, they all have "1234" as password:
+    This demo site has 
+    {{site.modules.users.UsersOverview.request().get_total_count()}}
+    users configured, they all have "1234" as password:
 
-{{as_ul('users.UsersOverview')}}
+    {{as_ul('users.UsersOverview')}}
 
-Enjoy!
-Your feedback is welcome to lino-users@googlegroups.com
-or directly to the person who invited you.
+    Enjoy!
+    Your feedback is welcome to lino-users@googlegroups.com
+    or directly to the person who invited you.
 
-""",special = True)
-    
-page('admin','de','',"""
+    """,special = True)
+        
+    page('admin','de','',"""
 
-{% if not site.admin_prefix %}
-Willkommen auf {{site.title}}.
-Diese Site ist eine Online-Demo von
-`{{site.short_name}} <{{site.url}}>`__
-version {{site.version}}, {{site.description}}
-{% endif %}
+    {% if not site.admin_prefix %}
+    Willkommen auf {{site.title}}.
+    Diese Site ist eine Online-Demo von
+    `{{site.short_name}} <{{site.url}}>`__
+    version {{site.version}}, {{site.description}}
+    {% endif %}
 
-Sie sind im Verwaltungsbereich.
-Anders als im `öffentlichen Bereich </>`__ 
-sehen Sie hier ein Menü am oberen Bildschirmrand.
+    Sie sind im Verwaltungsbereich.
+    Anders als im `öffentlichen Bereich </>`__ 
+    sehen Sie hier ein Menü am oberen Bildschirmrand.
 
-Bitte klicken Sie jetzt auf :guilabel:`Anmelden` in der oberen rechten 
-Bildschirmecke, um sich anzumelden.
+    Bitte klicken Sie jetzt auf :guilabel:`Anmelden` in der oberen rechten Bildschirmecke, um sich anzumelden.
 
-Auf dieser Demo-Site gibt es
-{{site.modules.users.UsersOverview.request().get_total_count()}}
-Benutzer, die alle "1234" als Passwort haben:
+    Auf dieser Demo-Site gibt es
+    {{site.modules.users.UsersOverview.request().get_total_count()}}
+    Benutzer, die alle "1234" als Passwort haben:
 
-{{as_ul('users.UsersOverview')}}
+    {{as_ul('users.UsersOverview')}}
 
-Viel Spaß!
-Reaktionen und Kommentare sind willkommen an lino-users@googlegroups.com
-oder direkt die Person, die Sie eingeladen hat.
+    Viel Spaß!
+    Reaktionen und Kommentare sind willkommen an lino-users@googlegroups.com oder direkt die Person, die Sie eingeladen hat.
 
-""",special = True)
+    """,special = True)
 
-page('admin','fr','',"""
-{% if not site.admin_prefix %}
-Bienvenue sur **{{site.title}}**.
-Ce site est une démonstration en ligne de
-`{{site.short_name}} <{{site.url}}>`__
-version {{site.version}}, {{site.description}}
-{% endif %}
+    page('admin','fr','',"""
+    {% if not site.admin_prefix %}
+    Bienvenue sur **{{site.title}}**.
+    Ce site est une démonstration en ligne de
+    `{{site.short_name}} <{{site.url}}>`__
+    version {{site.version}}, {{site.description}}
+    {% endif %}
 
-Vous êtes dans la section administrative qui,
-autrement que la `section publique </>`__ a un menu déroulant.
+    Vous êtes dans la section administrative qui,
+    autrement que la `section publique </>`__ a un menu déroulant.
 
-Ce menu est relativement vide tant que vous ne vous êtes pas identifié.
+    Ce menu est relativement vide tant que vous ne vous êtes pas identifié.
 
-Veuillez vous identifier maintenant en cliquant 
-sur le bouton :guilabel:`Log in`
-dans le coin supérieur droit de l'écran.
+    Veuillez vous identifier maintenant en cliquant 
+    sur le bouton :guilabel:`Log in`
+    dans le coin supérieur droit de l'écran.
 
-Sur ce site démo il y a 
-{{site.modules.users.UsersOverview.request().get_total_count()}} 
-utilisateurs, tous avec "1234" comme mot de passe:
+    Sur ce site démo il y a 
+    {{site.modules.users.UsersOverview.request().get_total_count()}} 
+    utilisateurs, tous avec "1234" comme mot de passe:
 
-{{as_ul('users.UsersOverview')}}
+    {{as_ul('users.UsersOverview')}}
 
-Vos commentaires sont les bienvenus sur lino-users@googlegroups.com
-oubien directement à la personne qui vous a invitée.
-""",special = True)
-    
+    Vos commentaires sont les bienvenus sur lino-users@googlegroups.com
+    oubien directement à la personne qui vous a invitée.
+    """,special = True)
+        
 #~ print 20121227, __file__

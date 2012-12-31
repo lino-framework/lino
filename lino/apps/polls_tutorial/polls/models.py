@@ -68,56 +68,13 @@ class Polls(dd.Table):
     """,window_size=(40,'auto'))
     
     
-    @classmethod
-    def recent_polls(cls,request):
-        html = '<h1>%s</h1> ' % cgi.escape("Recent polls")
-        html += '<ul>'
-        for poll in Poll.objects.filter(hidden=False).order_by('pub_date'):
-            html += '<li>'
-            html += '<b>%s</b> ' % cgi.escape(poll.question)
-            chunks = []
-            for obj in poll.choice_set.all():
-                chunks.append(Choices.vote.as_button(obj,request,unicode(obj)))
-                #~ chunks.append(settings.LINO.ui.row_action_button(obj,request,Choices.vote,unicode(obj)))
-            html += ' / '.join(chunks)
-            
-            html += "<br/><small>Published %s" % babel.dtosl(poll.pub_date)
-            chunks = []
-            for obj in poll.choice_set.all():
-                chunks.append("%d %s" % (obj.votes,cgi.escape(unicode(obj))))
-            html += '<br/>Results: %s' % (', '.join(chunks))
-            html += '</small>'
-            html += '</li>'
-        html += '</ul>'
-        return html
 
 class Choices(dd.Table):
     model = Choice
         
 class ChoicesByPoll(Choices):
     master_key = 'poll'
-    
 
-    
-def recent_polls_xghtml(request):
-    from lino.utils.xmlgen.html import E
-    main = E.div(class_='htmlText')
-    E.add_child(main,'h1',"Recent polls")
-    ul = E.add_child(main,'ul',)
-    for poll in Poll.objects.filter(hidden=False).order_by('pub_date'):
-        li = E.add_child(ul,'li')
-        li.append(E.b(unicode(poll.question)+' '))
-        for obj in poll.choice_set.all():
-            li.append(Choices.vote.as_button(obj,request,unicode(obj)))
-            li.append(E.span(' / '))
-        li.append(E.br())
-        li.append(E.small("Published %s" % babel.dtosl(poll.pub_date)))
-        li.append(E.br())
-        results = ["%d %s" % (obj.votes,unicode(obj)) for obj in poll.choice_set.all()]
-        if len(results):
-            li.append(E.small("Results: ",", ".join(results)))
-    return E.tostring(main)
-    
 
 def setup_main_menu(self,ui,profile,main):
     m = main.add_menu("polls","~Polls")

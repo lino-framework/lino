@@ -394,7 +394,7 @@ class ExtRenderer(HtmlRenderer):
                     #~ ar = v.action.actor.request(self.ui,None,v.action,**v.params)
                     ar = v.bound_action.request(self.ui,**v.params)
                     js = "function() {%s}" % self.request_handler(ar)
-                    return handler_item(v,js,v.help_text)
+                    return self.handler_item(v,js,v.help_text)
                     #~ return dict(text=prepare_label(v),handler=js_code(handler))
               
                 js = self.action_call(None,v.bound_action,{})
@@ -403,12 +403,12 @@ class ExtRenderer(HtmlRenderer):
                     js = "function() {%s(Lino.viewport)}" % js
                 else:
                     js = "function() {%s}" % js
-                return handler_item(v,js,v.help_text)
+                return self.handler_item(v,js,v.help_text)
                 #~ ar = v.action.request(self.ui)
-                #~ return handler_item(v,self.request_handler(ar),v.action.help_text)
+                #~ return self.handler_item(v,self.request_handler(ar),v.action.help_text)
             elif v.javascript is not None:
                 js = "function() {%s}" % v.javascript
-                return handler_item(v,js,v.help_text)
+                return self.handler_item(v,js,v.help_text)
             elif v.href is not None:
                 url = v.href
             #~ elif v.request is not None:
@@ -418,7 +418,7 @@ class ExtRenderer(HtmlRenderer):
                 h = self.instance_handler(None,v.instance)
                 assert h is not None
                 js = "function() {%s}" % h
-                return handler_item(v,js,None)
+                return self.handler_item(v,js,None)
                 #~ handler = "function(){%s}" % self.instance_handler(v.instance)
                 #~ return dict(text=prepare_label(v),handler=js_code(handler))
               
@@ -582,46 +582,17 @@ class ExtRenderer(HtmlRenderer):
         #~ url = self.request_handler(rr)
         #~ return self.href(url,text or cgi.escape(force_unicode(rr.label)))
         
-    
-#~ class PdfRenderer(HtmlRenderer):
-    #~ """
-    #~ Deserves more documentation.
-    #~ """
-    #~ def href_to_request(self,rr,text=None):
-        #~ return text or ("<b>%s</b>" % cgi.escape(force_unicode(rr.label)))
-    #~ def href_to(self,obj,text=None):
-        #~ text = text or cgi.escape(force_unicode(obj))
-        #~ return "<b>%s</b>" % text
-    #~ def instance_handler(self,obj):
-        #~ return None
-    #~ def request_handler(self,ar,*args,**kw):
-        #~ return ''
-        
-
-#~ class ExtRendererPermalink(HtmlRenderer):
-    #~ """
-    #~ Deserves more documentation.
-    #~ """
-    #~ def href_to_request(self,rr,text=None):
-        #~ """
-        #~ Returns a HTML chunk with a clickable link to 
-        #~ the given :class:`TableTequest <lino.core.dbtables.TableRequest>`.
-        #~ """
-        #~ return self.href(
-            #~ self.get_request_url(rr),
-            #~ text or cgi.escape(force_unicode(rr.label)))
-    #~ def href_to(self,obj,text=None):
-        #~ """
-        #~ Returns a HTML chunk with a clickable link to 
-        #~ the given model instance.
-        #~ """
-        #~ return self.href(
-            #~ self.get_detail_url(obj),
-            #~ text or cgi.escape(force_unicode(obj)))
-            
-            
-
-
+    def handler_item(self,mi,handler,help_text):
+        #~ handler = "function(){%s}" % handler
+        #~ d = dict(text=prepare_label(mi),handler=js_code(handler),tooltip="Foo")
+        d = dict(text=prepare_label(mi),handler=js_code(handler))
+        if mi.bound_action and mi.bound_action.action.icon_name:
+            d.update(iconCls=mi.bound_action.action.icon_name)
+        if settings.LINO.use_quicktips and help_text:
+            d.update(listeners=dict(render=js_code(
+              "Lino.quicktip_renderer(%s,%s)" % (py2js('Foo'),py2js(help_text)))
+            ))
+        return d
 
 
 
@@ -638,22 +609,6 @@ def prepare_label(mi):
         #~ #label=label[:n] + '<u>' + label[n] + '</u>' + label[n+1:]
     #~ return label
     
-def handler_item(mi,handler,help_text):
-    #~ handler = "function(){%s}" % handler
-    #~ d = dict(text=prepare_label(mi),handler=js_code(handler),tooltip="Foo")
-    d = dict(text=prepare_label(mi),handler=js_code(handler))
-    if mi.bound_action and mi.bound_action.action.icon_name:
-        d.update(iconCls=mi.bound_action.action.icon_name)
-    if settings.LINO.use_quicktips and help_text:
-        d.update(listeners=dict(render=js_code(
-          "Lino.quicktip_renderer(%s,%s)" % (py2js('Foo'),py2js(help_text)))
-        ))
-    return d
-
-
-#~ def element_name(elem):
-    #~ return u"%s (#%s in %s.%s)" % (elem,elem.pk,elem._meta.app_label,elem.__class__.__name__)
-
 
 def parse_bool(s):
     return s == 'true'
@@ -1462,7 +1417,6 @@ tinymce.init({
             logger.info("%d lino*.js files have been built in %s seconds.",
                 count,time.time()-started)
           
-    #~ def build_js_cache_for_user(self,user,force=False):
     def build_js_cache_for_profile(self,profile,force):
         """
         Build the lino*.js file for the specified user and the current language.
@@ -1502,7 +1456,6 @@ tinymce.init({
             raise
         #~ logger.info("Wrote %s ...", fn)
             
-    #~ def write_lino_js(self,f,user):
     def write_lino_js(self,f,profile):
         
         tpl = self.linolib_template()

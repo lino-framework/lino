@@ -95,7 +95,8 @@ def resolve_app(app_label,strict=False):
         return import_module('lino.modlib.%s.dummy' % app_label)
     except ImportError:
         if strict: 
-            raise Exception("strict resolve_app failed for app_label %r" % app_label)
+            raise
+            #~ raise Exception("strict resolve_app failed for app_label %r" % app_label)
         
     #~ if not emptyOK:
     #~ raise ImportError("No application labeled %r." % app_label)
