@@ -13,6 +13,8 @@
 ## along with Lino; if not, see <http://www.gnu.org/licenses/>.
 
 u"""
+This module will soon be useless.
+
 The Lino process creates a list config_dirs of all 
 configuration directories on server startup
 by looping through :setting:`INSTALLED_APPS` that have a :xfile:`config` 
@@ -90,6 +92,7 @@ config_dirs = tuple(config_dirs)
     #~ LOCAL_CONFIG_DIR = ConfigDir(os.path.join(settings.PROJECT_DIR,'config'),True)
     #~ config_dirs.append(LOCAL_CONFIG_DIR)
 
+  
 def find_config_file(fn,group=''):
     if os.path.isabs(fn):
         return fn

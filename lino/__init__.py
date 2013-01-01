@@ -1733,7 +1733,7 @@ class Lino(object):
         #~ 'django.contrib.markup',
         yield 'lino'
         yield 'lino.modlib.about'
-        #~ if self.admin_url:
+        #~ if self.admin_prefix:
             #~ yield 'lino.modlib.pages'
         
     #~ def get_guest_greeting(self):

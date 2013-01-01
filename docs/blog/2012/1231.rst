@@ -28,3 +28,7 @@ TODO:
   - https://github.com/niwibe/django-jinja
   
   
+Miscellaneous
+-------------
+
+- In lino_welfare I forgot to rename a `ui.media_url` to :meth:`lino.Lino.build_media_url`.

@@ -43,6 +43,8 @@ blogger.project("lino.cms","Content management","""
 """,parent=LINO)
 blogger.project("lino.core","Core functionality","""
 """)
+blogger.project("lino.cosi","Lino Cosi first prototype ","""
+""")
 
 
 blogger.milestone('1.4.3',20120328)

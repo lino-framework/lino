@@ -37,13 +37,18 @@ def site_setup(self):
     Adds a global `jinja_env` attribute to `settings.LINO`
     """
     from lino.utils import auth
+    from django.utils.importlib import import_module
+    
+    loaders = []
+    loaders.append(jinja2.FileSystemLoader(os.path.join(self.project_dir,'templates')))
+    for name in self.get_installed_apps():
+        m = import_module(name)
+        if os.path.isdir(os.path.join(os.path.dirname(m.__file__),'templates')):
+            loaders.append(jinja2.PackageLoader(name, 'templates'))
     
     self.jinja_env = jinja2.Environment(
         #~ extensions=['jinja2.ext.i18n'],
-        loader=jinja2.ChoiceLoader([
-          jinja2.FileSystemLoader(os.path.join(self.project_dir,'templates')),
-          jinja2.PackageLoader('lino', 'templates')
-          ]))
+        loader=jinja2.ChoiceLoader(loaders))
     #~ jinja_env = jinja2.Environment(trim_blocks=False)
 
     #~ from django.utils import translation
@@ -77,6 +82,8 @@ def site_setup(self):
             # E=xghtml.E,
             _= _,
     )
+    
+    print __file__, 20121231, self.jinja_env.list_templates('.html')
 
 
 def extend_context(context):

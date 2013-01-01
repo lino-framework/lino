@@ -1,5 +1,5 @@
 # -*- coding: UTF-8 -*-
-## Copyright 2011-2012 Luc Saffre
+## Copyright 2011-2013 Luc Saffre
 ## This file is part of the Lino project.
 ## Lino is free software; you can redistribute it and/or modify 
 ## it under the terms of the GNU General Public License as published by
@@ -26,6 +26,7 @@ import datetime
 
 
 from django.db import models
+from django.conf import settings
 from django.utils.translation import ugettext_lazy as _
 from django.utils.translation import pgettext_lazy
 from django.contrib.contenttypes.models import ContentType
@@ -49,7 +50,6 @@ from lino.utils.restify import restify
 #~ from lino.utils import printable
 from lino.utils import babel
 #~ from lino.utils import call_optional_super
-from django.conf import settings
 #~ from lino import choices_method, simple_choices_method
 
 #~ from lino.modlib.mails.utils import RecipientType
@@ -93,13 +93,25 @@ add('bcc',_("bcc"),'bcc')
     #~ column_names = 'name build_method template *'
     
     
-from lino.utils.config import find_template_config_files
+#~ from lino.utils.config import find_template_config_files
 
 class MailableType(dd.Model):
     """
     Mixin for Models that serve as `type` of a :class:`Mailable`.
+    Concrete examples are cal.Calendar, cal.GuestRole, notes.NoteType
     """
     templates_group = None
+    """
+    Should contain a string "<app_label>/<Model>" of the Mailable 
+    being typed by this MailableType. Example::
+    
+      class NoteType(...,MailableType):
+          templates_group = 'notes/Note'
+          
+      class Note(...,Mailable):
+          type = models.ForeignKey(NoteType)
+
+    """
 
     class Meta:
         abstract = True
@@ -116,9 +128,13 @@ The name of the file to be used as template
 when creating an email from a mailable of this type.
 """)
     
+    #~ @dd.chooser(simple_values=True)
+    #~ def email_template_choices(cls):
+        #~ return find_template_config_files('.eml.html',cls.templates_group)
+      
     @dd.chooser(simple_values=True)
     def email_template_choices(cls):
-        return find_template_config_files('.eml.html',cls.templates_group)
+        return list_templates('.eml.html',cls.templates_group)
       
     
 
@@ -180,7 +196,21 @@ class CreateMail(dd.RowAction):
         kw.update(eval_js=js)
         return ar.success(**kw)
         
+
+def list_templates(ext,group=''):
+    if group:
+        #~ prefix = os.path.join(*(group.split('/')))
+        def ff(fn):
+            rv = fn.startswith(group) and fn.endswith(ext)
+            #~ logger.info("20130101 %r -> %s", fn,rv)
+            return rv 
+        lst = settings.LINO.jinja_env.list_templates(filter_func=ff)
+        L = len(group) + 1
+        lst = [i[L:] for i in lst]
+        return lst
+    return settings.LINO.jinja_env.list_templates(extensions=[ext])
     
+
 class Mailable(dd.Model):
     """
     Mixin for models that provide a "Post" button.
@@ -207,7 +237,7 @@ class Mailable(dd.Model):
         return self.get_mailable_type().attach_to_email
         #~ return isinstance(self,mixins.CachedPrintable)
         
-    def get_mailable_intro(self,ar):
+    def unused_get_mailable_intro(self,ar):
         mt = self.get_mailable_type()
         #~ tplname = self._meta.app_label + '/' + self.__class__.__name__ + '/email.html'
         fn = find_config_file(mt.email_template,mt.templates_group)
@@ -222,6 +252,37 @@ class Mailable(dd.Model):
         tpl.dtos = babel.dtos
         tpl.ar = ar
         return unicode(tpl)
+        
+    def get_mailable_intro(self,ar):
+        mt = self.get_mailable_type()
+        #~ print 20130101, mt.email_template
+        name = mt.email_template
+        if mt.templates_group is not None:
+            #~ prefix = os.path.join(*(mt.templates_group.split('/')))
+            #~ name = os.path.join(prefix,name)
+            name = mt.templates_group + "/" + name
+        tpl = settings.LINO.jinja_env.get_template(name)
+        context = dict(
+          instance = self,
+          dtosl = babel.dtosl,
+          dtos = babel.dtos,
+          ar = ar,
+        )
+        return tpl.render(**context)
+        
+        #~ # tplname = self._meta.app_label + '/' + self.__class__.__name__ + '/email.html'
+        #~ fn = find_config_file(mt.email_template,mt.templates_group)
+        #~ if fn is None:
+            #~ raise Exception("No config file %s / %s" % (mt.templates_group,mt.email_template))
+            #~ # return ''
+        #~ # logger.info("Using email template %s",fn)
+        #~ tpl = CheetahTemplate(file(fn).read().decode('utf-8'))
+        #~ # tpl.self = elem # doesn't work because Cheetah adds itself a name 'self' 
+        #~ tpl.instance = self
+        #~ tpl.dtosl = babel.dtosl
+        #~ tpl.dtos = babel.dtos
+        #~ tpl.ar = ar
+        #~ return unicode(tpl)
         
     #~ def get_mailable_body(self,ar):
         #~ raise NoteImplementdError()

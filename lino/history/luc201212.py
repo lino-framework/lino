@@ -185,7 +185,7 @@ There were no workflow buttons in the Detail Layout of
 :class:`lino.modlib.finan.models.BankStatement`.
 """)
 
-blogger.entry(COSI,0805,"Preferred width of ChoiceList comboboxes","""
+blogger.entry(COSI,805,"Preferred width of ChoiceList comboboxes","""
 :mod:`lino.ui.extjs3.ext_elems`
 now adds a hard-coded value to the preferred_width 
 of ChoiceList fields to account for the width of the trigger button.
