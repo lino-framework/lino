@@ -1,9 +1,8 @@
-T:\hgwork\lino\docs\autodoc\lino.modlib.pages.rst:21: WARNING: autodoc can't import/find module 'lino.modlib.pages.fixtures.web', it reported error: "No module named web", please check your spelling and sys.path
-T:\hgwork\lino\docs\autodoc\lino.utils.sphinx.rst:5: WARNING: autodoc can't import/find module 'lino.utils.sphinx', it reported error: "No module named sphinx", please check your spelling and sys.path
+T:\hgwork\lino\docs\releases\index.rst:18: WARNING: toctree glob pattern u'2010/index' didn't match any documents
+T:\hgwork\lino\docs\releases\index.rst:18: WARNING: toctree glob pattern u'2011/index' didn't match any documents
 T:\hgwork\lino\docs\casts\lino_intro.rst:: WARNING: document isn't included in any toctree
 T:\hgwork\lino\docs\dev\versioning.rst:: WARNING: document isn't included in any toctree
 T:\hgwork\lino\docs\igen\index.rst:: WARNING: document isn't included in any toctree
-T:\hgwork\lino\docs\autodoc\lino.modlib.pages.rst:18: WARNING: py:mod reference target not found: lino.modlib.pages.fixtures.web
 T:\hgwork\lino\docs\autodoc\lino.utils.rst:44: WARNING: py:class reference target not found: dict
 t:\hgwork\lino\lino\utils\__init__.py:docstring of lino.utils.call_on_bases:1: WARNING: unknown document: /blog/2011/0914
 t:\hgwork\lino\lino\utils\__init__.py:docstring of lino.utils.call_optional_super:1: WARNING: unknown document: /blog/2011/0914
@@ -12,4 +11,3 @@ T:\hgwork\lino\docs\autodoc\lino.utils.rst:7: WARNING: py:mod reference target n
 T:\hgwork\lino\docs\autodoc\lino.utils.rst:17: WARNING: py:class reference target not found: docutils.writers.html4css1.HTMLTranslator
 T:\hgwork\lino\docs\autodoc\lino.utils.rst:29: WARNING: py:class reference target not found: docutils.writers.html4css1.Writer
 t:\hgwork\lino\lino\utils\restify.py:docstring of lino.utils.restify.old_restify:1: WARNING: unknown document: /blog/2011/0525
-T:\hgwork\lino\docs\autodoc\lino.utils.sphinx.rst:2: WARNING: py:mod reference target not found: lino.utils.sphinx

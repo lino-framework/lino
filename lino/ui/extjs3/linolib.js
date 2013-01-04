@@ -5415,7 +5415,7 @@ Lino.beid_read_card_processor = function() {
       zipCode:card.zipCode,
       municipality:card.municipality,
       country:card.country
-      //~ comment the folowing line out to test whether the picture takes a lot of time
+      //~ comment the following line out to test whether the picture takes a lot of time
       //~ test 20121214 on my machine revealed no perceivable gain
       ,picture:base64.encode(card.getPicture())
     };

@@ -398,8 +398,11 @@ As long as nobody protests, I'll save some time by writing in German.
   :doc:`28 <1228>`
   :doc:`29 <1229>`
   :doc:`30 <1230>`
+  |br|
   :doc:`31 <1231>`
   :doc:`01 <../2013/0101>`
+  02
+  :doc:`03 <../2013/0103>`
 
 ===== ===== =====
 |Jan| |Feb| |Mar|

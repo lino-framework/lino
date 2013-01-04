@@ -1,0 +1,13 @@
+20130103
+========
+
+We had a Belgian eID card of type 16 ("Foreigner card E+"), 
+but Lino had stored this as type 1 ('Belgian citizen').
+
+Surfed and researched about 
+:class:`BeIdCardTypes <lino_welfare.modlib.pcsw.models.BeIdCardTypes>`: 
+is there an official list? 
+Renamed BeIdCardType to BeIdCardTypes.
+Could not find any bug in Lino.
+Added new command :menuselection:`Explorer / eID card types`.
+Added a logger.info() call so that next test yields more information.

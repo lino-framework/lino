@@ -1,5 +1,5 @@
 # -*- coding: UTF-8 -*-
-## Copyright 2008-2012 Luc Saffre
+## Copyright 2008-2013 Luc Saffre
 ## This file is part of the Lino project.
 ## Lino is free software; you can redistribute it and/or modify 
 ## it under the terms of the GNU General Public License as published by
@@ -25,7 +25,6 @@ and ``=`` for the 21st century), ``123`` is a sequential number for persons
 born the same day (odd numbers for men and even numbers for women), 
 and ``97`` is a check digit (remainder of previous digits divided by 97).
     
-
 >>> n = generate_ssin(datetime.date(1968,6,1),Genders.male,53)
 >>> print n
 680601 053-29
@@ -60,8 +59,8 @@ Question to mathematicians: is it sure that there is no combination
 of birth date and sequence number for which the check digits are 
 the same?
 
-
 """
+
 
 #~ import logging
 #~ logger = logging.getLogger(__name__)

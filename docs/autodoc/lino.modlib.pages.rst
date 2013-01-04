@@ -15,10 +15,10 @@
     :show-inheritance:
 
 
-:mod:`lino.modlib.pages.fixtures.web`
---------------------------------------
+:mod:`lino.modlib.pages.fixtures.intro`
+---------------------------------------
 
-.. automodule:: lino.modlib.pages.fixtures.web
+.. automodule:: lino.modlib.pages.fixtures.intro
     :members:
     :show-inheritance:
 

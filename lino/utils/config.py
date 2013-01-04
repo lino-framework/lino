@@ -1,5 +1,5 @@
 # -*- coding: UTF-8 -*-
-## Copyright 2009-2011 Luc Saffre
+## Copyright 2009-2013 Luc Saffre
 ## This file is part of the Lino project.
 ## Lino is free software; you can redistribute it and/or modify 
 ## it under the terms of the GNU General Public License as published by
@@ -12,13 +12,24 @@
 ## You should have received a copy of the GNU General Public License
 ## along with Lino; if not, see <http://www.gnu.org/licenses/>.
 
-u"""
-This module will soon be useless.
-
+"""
 The Lino process creates a list config_dirs of all 
 configuration directories on server startup
 by looping through :setting:`INSTALLED_APPS` that have a :xfile:`config` 
 subdir.
+
+The mechanism in this module emulates the behaviour of Django's 
+(or Jinja's) template loaders. 
+It was written before I discovered Jinja and became less used afterwards.
+But we still need it to find the `.odt` files for 
+:class:`AppyBuildMethod <lino.mixins.printable.AppyBuildMethod>`.
+This task cannot be done using Jinja because
+Jinja's `get_template` method returns a `Template`, 
+and Jinja templates don't know their filename,
+the only thing needed by 
+:class:`AppyBuildMethod <lino.mixins.printable.AppyBuildMethod>`.
+
+One possibility might be to write a special Jinja Template class...
 
 Die Reihenfolge in :setting:`INSTALLED_APPS` sollte sein: zuerst 
 `django.contrib.*`, dann ``lino``, dann `lino.modlib.*` und dann `lino.apps.pcsw`. 
@@ -28,6 +39,8 @@ ersten Treffer aufhören): zuerst das eventuelle lokale `config_dir`,
 dann `lino.apps.pcsw`, dann die diversen `lino.modlib.*` usw. 
 
 """
+
+from __future__ import unicode_literals
 
 import logging
 logger = logging.getLogger(__name__)
@@ -43,6 +56,8 @@ from django.utils.importlib import import_module
 
 from lino.core.modeltools import makedirs_if_missing
 from lino.utils import iif
+
+SUBDIR_NAME = 'config' # we might change this to "templates" 
 
 class ConfigDir:
     """
@@ -62,17 +77,18 @@ fs_encoding = sys.getfilesystemencoding() or sys.getdefaultencoding()
 config_dirs = []
 for app in settings.INSTALLED_APPS:
     mod = import_module(app)
-    dirname = os.path.join(os.path.dirname(mod.__file__), 'config')
+    dirname = os.path.join(os.path.dirname(mod.__file__), SUBDIR_NAME)
     if os.path.isdir(dirname):
         config_dirs.append(ConfigDir(dirname.decode(fs_encoding),False))
 
 LOCAL_CONFIG_DIR = None
 
+
 if settings.LINO.project_dir != settings.LINO.source_dir:
     """
     When called by makedocs, there is no local config dir.
     """
-    dirname = os.path.join(settings.LINO.project_dir,'config')
+    dirname = os.path.join(settings.LINO.project_dir,SUBDIR_NAME)
     if os.path.isdir(dirname):
         LOCAL_CONFIG_DIR = ConfigDir(dirname,True)
         config_dirs.append(LOCAL_CONFIG_DIR)
@@ -282,7 +298,7 @@ def must_make(src,target):
 
 def make_dummy_messages_file(src_fn,messages):
     """
-    Write a dummy `.py`source file containing 
+    Write a dummy `.py` source file containing 
     translatable messages that getmessages will find. 
     """
     target_fn = src_fn + '.py'

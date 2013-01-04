@@ -5,8 +5,6 @@ Converted :mod:`lino.modlib.outbox` to use Jinja templates.
 One consequence is that `.eml.html` files are no longer under 
 `config` but under `templates`.
 
-The :mod`lino.utils.config` module will soon be useless.
-The only remaining issue are the .odt files for 
-:class:`lino.mixins.printable.AppyBuildMethod`:
-Jinja's `get_template` method returns a `Template`, 
-but we don't need that here.
+The :mod:`lino.utils.config` module might now seem pretty useless,
+but unfortunately we still need it to find the `.odt` files for 
+:class:`AppyBuildMethod <lino.mixins.printable.AppyBuildMethod>`.
