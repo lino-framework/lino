@@ -1,4 +1,4 @@
-## Copyright 2008-2012 Luc Saffre
+## Copyright 2008-2013 Luc Saffre
 ## This file is part of the Lino project.
 ## Lino is free software; you can redistribute it and/or modify 
 ## it under the terms of the GNU General Public License as published by
@@ -359,13 +359,13 @@ class Voucher(mixins.UserAuthored,mixins.ProjectRelated,mixins.Registrable):
         #b.save()
         return b
         
-    def get_row_permission(self,ar,state,ba):
-        """
-        Only invoices in an editable state may be edited.
-        """
-        if not ba.action.readonly and self.state is not None and not self.state.editable:
-            return False
-        return super(Voucher,self).get_row_permission(ar,state,ba)
+    #~ def get_row_permission(self,ar,state,ba):
+        #~ """
+        #~ Only invoices in an editable state may be edited.
+        #~ """
+        #~ if not ba.action.readonly and self.state is not None and not self.state.editable:
+            #~ return False
+        #~ return super(Voucher,self).get_row_permission(ar,state,ba)
 
     def href_to(self,ar):
         obj = self.journal.voucher_type.model.objects.get(
@@ -659,11 +659,10 @@ def site_setup(site):
                 label=MODULE_LABEL)
 
 
-def setup_main_menu(site,ui,profile,m): 
-    m = m.add_menu(vat.TradeTypes.purchases.name,vat.TradeTypes.purchases.text)
-    
-    for jnl in Journal.objects.all():
-        if jnl.trade_type == vat.TradeTypes.purchases:
+def setup_main_menu(site,ui,profile,main): 
+    for tt in vat.TradeTypes.objects():
+        m = main.add_menu(tt.name,tt.text)
+        for jnl in Journal.objects.filter(trade_type=tt):
             m.add_action(jnl.voucher_type.table_class,
                 label=unicode(jnl),
                 params=dict(master_instance=jnl))

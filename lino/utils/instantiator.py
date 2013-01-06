@@ -1,4 +1,4 @@
-## Copyright 2009-2012 Luc Saffre
+## Copyright 2009-2013 Luc Saffre
 ## This file is part of the Lino project.
 ## Lino is free software; you can redistribute it and/or modify 
 ## it under the terms of the GNU General Public License as published by
@@ -143,7 +143,8 @@ class Instantiator:
             #~ return 
         if self.model._meta.pk is None: 
             raise Exception("Model %r is not installed (_meta.pk is None)." % self.model)
-        if type(fieldnames) == str:
+        #~ if type(fieldnames) == str:
+        if isinstance(fieldnames,basestring):
             fieldnames = fieldnames.split()
         self.default_values = kw
         #self.fieldnames = fieldnames

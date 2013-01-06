@@ -101,6 +101,8 @@ logger = logging.getLogger(__name__)
 from lino.core.tables import VirtualTable
 
 from lino.core.modeltools import resolve_model, resolve_app, resolve_field, get_field, UnresolvedModel
+from lino.core.modeltools import full_model_name
+from lino.core.modeltools import models_by_base
 
 from lino.core.model import Model
 
@@ -175,8 +177,25 @@ from lino.core.layouts import ParamsLayout
 class Module(object):
     pass
     
+    
+  
 PENDING_INJECTS = dict()
 PREPARED_MODELS = dict()
+
+def fix_field_cache(model):
+    """
+    Remove duplicate entries in `_field_cache` to fix Django issue #10808
+    """
+    cache = []
+    field_names = set()
+    for f,m in model._meta._field_cache:
+        if f.attname not in field_names:
+            field_names.add(f.attname)
+            cache.append( (f,m) )
+    model._meta._field_cache = tuple(cache)
+    model._meta._field_name_cache = [x for x, _ in cache]
+    #~ logger.info("20130106 fixed field_cache %s (%s)",full_model_name(model),' '.join(field_names))
+
 
 def on_class_prepared(signal,sender=None,**kw):
     """
@@ -204,29 +223,47 @@ def on_class_prepared(signal,sender=None,**kw):
         #~ for k,v in injects.items():
             #~ model.add_to_class(k,v)
 
-
+    """
+    django.db.models.options
+    """
     if hasattr(model._meta,'_field_cache'):
-        cache = []
-        field_names = set()
-        for f,m in model._meta._field_cache:
-            if f.attname not in field_names:
-                field_names.add(f.attname)
-                cache.append( (f,m) )
-        model._meta._field_cache = tuple(cache)
-        model._meta._field_name_cache = [x for x, _ in cache]
+        fix_field_cache(model)
     #~ else:
         #~ logger.info("20120905 Could not fix Django issue #10808 for %s",model)
 
 
 models.signals.class_prepared.connect(on_class_prepared)
 
+def on_analyze_models(): # called from kernel.analyze_models()
+    
+    if PENDING_INJECTS:
+        msg = ''
+        for spec,funcs in PENDING_INJECTS.items():
+            msg += spec + ': ' 
+            #~ msg += '\n'.join([str(dir(func)) for func in funcs])
+            #~ msg += '\n'.join([str(func.func_code.co_consts) for func in funcs])
+            msg += str(funcs)
+        raise Exception("Oops, there are pending injects: %s" % msg)
+        #~ logger.warning("pending injects: %s", msg)
+
+    """
+    20130106
+    now we loop a last time over each model and fill it's _meta._field_cache
+    otherwise if some application module used inject_field() on a model which 
+    has subclasses, then the new field would not be seen by subclasses
+    """
+    for model in models.get_models():
+        model._meta._fill_fields_cache()
+        fix_field_cache(model)
+
+from lino.core.modeltools import is_installed_model_spec
+
 def do_when_prepared(model_spec,todo):
     if model_spec is None:
         return # e.g. inject_field during autodoc when user_model is None
         
     if isinstance(model_spec,basestring):
-        app_label, model_name = model_spec.split(".")
-        if not settings.LINO.is_installed(app_label):
+        if not is_installed_model_spec(model_spec):
             return
         k = model_spec
         model = PREPARED_MODELS.get(k,None)
@@ -253,11 +290,21 @@ def inject_field(model_spec,name,field,doc=None):
     That's why it uses Django's `class_prepared` signal to maintain 
     its own list of models.
     """
-    #~ logger.info("20121204 inject_field(%r,%s)",model_spec,name)
+    #~ logger.info("20130106 inject_field(%r,%s)",model_spec,name)
     if doc:
         field.__doc__ = doc
     def todo(model):
         model.add_to_class(name,field)
+        #~ if hasattr(model._meta,'_field_cache'):
+        model._meta._fill_fields_cache()
+        #~ fix_field_cache(model)
+        #~ for m in models_by_base(model):
+            #~ if hasattr(m._meta,'_field_cache'):
+                #~ m._meta._fill_fields_cache()
+                #~ fix_field_cache(m)
+        #~ else:
+            #~ logger.info("20130106 no need to fix_field_cache after inject_field")
+
     return do_when_prepared(model_spec,todo)    
     
     
@@ -290,7 +337,8 @@ def update_field(model_spec,name,**kw):
             logger.warning("Cannot update unresolved field %s.%s", model,name)
             return
         if fld.model != model:
-            logger.warning('20120715 update_field(%s.%s) : %s',model,fld,fld.model)
+            raise Exception('20120715 update_field(%s.%s) : %s' % (model,fld,fld.model))
+            #~ logger.warning('20120715 update_field(%s.%s) : %s',model,fld,fld.model)
         for k,v in kw.items():
             setattr(fld,k,v)
     return do_when_prepared(model_spec,todo)    

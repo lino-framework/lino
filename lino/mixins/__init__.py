@@ -1,4 +1,4 @@
-## Copyright 2010-2012 Luc Saffre
+## Copyright 2010-2013 Luc Saffre
 ## This file is part of the Lino project.
 ## Lino is free software; you can redistribute it and/or modify 
 ## it under the terms of the GNU General Public License as published by
@@ -235,8 +235,9 @@ class AuthorRowAction(actions.RowAction):
         
         
 class RegisterAction(actions.RowAction):
-    label = _("Register") 
+    label = _("Register")
     show_in_workflow = True
+    readonly = False
     
     #~ icon_file = 'flag_green.png'
     #~ required = dict(states='draft')
@@ -261,6 +262,7 @@ class RegisterAction(actions.RowAction):
 class DeregisterAction(actions.RowAction):
     label = _("Deregister")
     show_in_workflow = True
+    readonly = False
     
     #~ icon_file = 'cancel.png'
     #~ required = dict(states='registered paid')
@@ -304,8 +306,12 @@ class Registrable(model.Model):
     deregister_action = DeregisterAction()
     
     def get_row_permission(self,ar,state,ba):
-        if state is not None and state.name != 'draft' and not ar.bound_action.action.readonly:
-            return False
+        """
+        Only invoices in an editable state may be edited.
+        """
+        if state and not state.editable:
+            if not ar.bound_action.action.readonly:
+                return False
         return super(Registrable,self).get_row_permission(ar,state,ba)
     
         

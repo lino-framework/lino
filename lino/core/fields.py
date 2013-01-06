@@ -34,7 +34,8 @@ logger = logging.getLogger(__name__)
 from lino.core.modeltools import full_model_name
 from lino.core.modeltools import obj2str
 from lino.core.modeltools import resolve_field
-from lino.core.modeltools import resolve_model
+from lino.core.modeltools import resolve_model, UnresolvedModel
+from lino.core.modeltools import is_installed_model_spec
 
 #~ from lino.utils import choosers
 from lino.utils import IncompleteDate, d2iso
@@ -864,14 +865,18 @@ def fields_list(model,field_names):
 
 def ForeignKey(othermodel,*args,**kw):
     """
-    This is exactly the same as 
+    This is almost as 
     `django.db.models.ForeignKey <https://docs.djangoproject.com/en/dev/ref/models/fields/#foreignkey>`, 
-    except for a subtle difference: it supports `othermodel` being `None`
+    except for a subtle difference: 
+    it supports `othermodel` being `None` or the name of some non-installed model
     and returns a :class:`DummyField <lino.core.fields.DummyField>` 
     in that case.
     This difference is useful when designing reusable models.
     """
     if othermodel is None: 
         return DummyField(othermodel,*args,**kw)
+    if isinstance(othermodel,basestring):
+        if not is_installed_model_spec(othermodel):
+            return DummyField(othermodel,*args,**kw)
     return models.ForeignKey(othermodel,*args,**kw)
     

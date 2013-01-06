@@ -1,4 +1,4 @@
-## Copyright 2009-2012 Luc Saffre
+## Copyright 2009-2013 Luc Saffre
 ## This file is part of the Lino project.
 ## Lino is free software; you can redistribute it and/or modify 
 ## it under the terms of the GNU General Public License as published by
@@ -157,6 +157,8 @@ def resolve_model(model_spec,app_label=None,strict=False,seed_cache=True):
         model = model_spec
     if not isinstance(model,type) or not issubclass(model,models.Model):
         if strict:
+            if isinstance(strict,basestring):
+                raise Exception(strict % model_spec)
             raise Exception(
                 "resolve_model(%r,app_label=%r) found %r (settings %s)" % (
                 model_spec,app_label,model,settings.SETTINGS_MODULE))
@@ -304,15 +306,16 @@ def sorted_models_list():
     models_list.sort(fn)
     return models_list
 
-def models_by_abc(abc):
+def models_by_base(base):
     """
     Yields a list of installed models that are 
-    subclass of the given abstract base class.
+    subclass of the given base class.
     """
     for m in models.get_models():
-        if issubclass(m,abc):
+        if issubclass(m,base):
             yield m
     
+#~ models_by_abc = models_by_base
 
 def makedirs_if_missing(dirname):
     """
@@ -363,4 +366,8 @@ def get_model_report(model):
         raise Exception("%r has no _lino_default_table" % model)
     return model._lino_default_table
 
+    
+def is_installed_model_spec(model_spec):
+    app_label, model_name = model_spec.split(".")
+    return settings.LINO.is_installed(app_label)
     

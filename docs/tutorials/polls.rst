@@ -8,7 +8,6 @@ into a Lino application.
 The result of this tutorial is available as a public 
 live demo at http://demo1.lino-framework.org
 
-
 .. contents:: Table of Contents
  :local:
  :depth: 2
@@ -193,26 +192,45 @@ A few explanations while looking at that file:
   decorator. Another important new concept in Lino, 
   we'll talk about it in the Actions_ section.
   
-- The `recent_polls` class method used in the 
-  `get_main_html` method from our `settings.py` file.
-  It builds the HTML to be displayed in our Main Window. 
-  It uses one Django-specific feature::
+  
+The main index
+--------------
+  
+The following template is used to 
+build the HTML to be displayed in our Main Window. 
 
-      Poll.objects.filter(hidden=False).order_by('pub_date')
-      
-  If you didn't understand this piece of code, 
-  please read the `Making queries 
-  <https://docs.djangoproject.com/en/dev/topics/db/queries>`_
-  chapter of Django's documentation before starting to write your own Lino application. 
-  Lino is based on Django, and Django is known for its good documentation. Use it!
-  
-  It also uses a Lino-specific feature, which admittedly 
-  is less well documented: :meth:`row_action_button
-  <lino.ui.extjs3.ext_ui.ExtUI.row_action_button>`
-  return a HTML fragment that displays a button-like 
-  link which will run the action when clicked.
-  
-But before explaining the details, let's have a look at the result.
+.. literalinclude:: ../../lino/apps/polls_tutorial/templates/admin_main.html
+
+The `<div class="htmlText">` specifies that this fragment 
+contains simple html text inside an ExtJS component. 
+
+It uses one Django-specific feature::
+
+    {% for poll in site.modules.polls.Poll.objects.filter(hidden=False).order_by('pub_date') %}
+    
+Every Lino site has an attribute `modules` which is a shortcut to access 
+the models and tables of the application.
+    
+If `objects`, `filter()` and `order_by()` are new to you, 
+then please read the `Making queries 
+<https://docs.djangoproject.com/en/dev/topics/db/queries>`_
+chapter of Django's documentation. 
+Lino is based on Django, and Django is known for its good documentation. Use it!
+
+If `joiner` and `sep` are a riddle to you, you'll find the 
+solution in Jinja's `Template Designer 
+Documentation <http://jinja.pocoo.org/docs/templates/#joiner>`__.
+Lino applications by default replace Django's template engine by Jinja.
+
+The template also uses a Lino-specific method 
+:meth:`row_action_button
+<lino.ui.extjs3.ext_ui.ExtUI.row_action_button>`
+which returns a HTML fragment that displays a button-like 
+link which will run the action when clicked.
+More about this in Actions_.
+
+
+
 
 Adding a demo fixture
 ---------------------
@@ -434,6 +452,8 @@ the `ModelAdmin` class and `Model._meta` options.
 Actions
 -------
 
+
+
 Lino has a class :class:`Action <lino.core.actions.Action>` 
 which represents the methods who have a clickable button 
 or menu item in the user interface. 
@@ -463,11 +483,27 @@ Many actions are created automatically by Lino. For example:
   :class:`Action <lino.core.actions.Action>` instance.
   
 Custom actions are the actions defined by the application developer.
+Our tutorial has one of them:
 
-One way to define custom actions is to decorate a model method with the
-:func:`dd.action <lino.core.actions.action>` decorator.
+.. code-block:: python
+  
+    @dd.action(help_text="Click here to vote this.")
+    def vote(self,ar):
+        def yes():
+            self.votes += 1
+            self.save()
+            return ar.success(
+                "Thank you for voting %s" % self,
+                "Voted!",refresh=True)
+        if self.votes > 0:
+            msg = "%s has already %d votes!" % (self,self.votes)
+            msg += "\nDo you still want to vote for it?"
+            return ar.confirm(yes,msg)
+        return yes()
+    
 
-The decorator can have keyword parameters to specify 
+The :func:`@dd.action <lino.core.actions.action>` decorator
+can have keyword parameters to specify 
 information about the action. In practice these may be 
 :attr:`label <lino.core.actions.Action.label>`,
 :attr:`help_text <lino.core.actions.Action.help_text>` and
@@ -483,20 +519,13 @@ Where `ar` is an :class:`ActionRequest <lino.core.actions.ActionRequest>`
 instance that holds information about the web request and provides methods 
 like
 
-- :meth:`prompt <lino.ui.base.UI.prompt>`
-- :meth:`confirm <lino.ui.base.UI.confirm>`
-- :meth:`success <lino.ui.base.UI.success>`
-- :meth:`error <lino.ui.base.UI.error>`
+- :meth:`callback <lino.ui.base.UI.callback>` 
+  and :meth:`confirm <lino.ui.base.UI.confirm>`
+  lets you define a dialog with the user using callbacks.
 
-
-:meth:`confirm <lino.core.actions.ActionRequest.confirm>` or
-:meth:`get_user <lino.core.actions.ActionRequest.get_user>` or
-:meth:`success_response <lino.ui.base.UI.success_response>`
-and
-:meth:`error_response <lino.ui.base.UI.error_response>`.
-
-
-
+- :meth:`success <lino.ui.base.UI.success>` and
+  :meth:`error <lino.ui.base.UI.error>` are possible return values
+  where you can ask the client to do certain things.
 
 
 

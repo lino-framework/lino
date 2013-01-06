@@ -1,0 +1,64 @@
+20130105
+========
+
+eID-Karten einlesen : Kartenart
+-------------------------------
+
+Es hat sich rausgestellt, dass Johan's 
+`eid-javascript-lib <http://code.google.com/p/eid-javascript-lib/>`_ 
+die Kartenart (:class:`lino_welfare.modlib.pcsw.models.BeIdCardTypes`) 
+nicht korrekt ausliest, 
+sondern lediglich einen Workaround benutzt.
+
+Also nochmal zum Thema "belgische eID-Karten einlesen".
+Vergleiche auch :doc:`../2012/1105`.
+
+Offiziell gibt es das "eID-Applet", die "Middleware" und den "Viewer", 
+die vom `Fedict <http://www.fedict.belgium.be/de/>`_ 
+(FÖD Informations- und Kommunikationstechnologie) gewartet werden.
+Inoffiziell kommt Johan De Schutter's
+`eid-javascript-lib <http://code.google.com/p/eid-javascript-lib/>`_ 
+hinzu.
+
+- Die `Middleware <http://code.google.com/p/eid-mw>`_
+  ist eine Sammlung von Komponenten "for using the Belgian eID on your computer".
+  Seit Version 4 hat die Middleware sich radikal verändert:
+  "We will no longer define our own API, but in fact use the 
+  cryptografic token interface standard PKCS#11 v2.11 API.  
+  (...)
+  SDK 3.5 contains an example Java applet. 
+  This applet accesses the eid middleware libraries installed on the client trough JNI libraries.
+  SDK 4.0 will not provide Java examples. 
+  Java has evolved over time and smartcard access is now provided by the JVM. 
+  Applets can do smartcard operations right in the JVM. 
+  This fact removes the need for client side middleware dependencies.
+  Fedict provides and maintains a pure Java eid applet. 
+  Around the "eid-applet", other applications are built to ease integration with web based applications. 
+  We suggest users of SDK 3.5 Java to move on to this platform."
+  (`[*] <http://code.google.com/p/eid-mw/wiki/SDK40>`__)
+  
+- Das `eID-Applet <http://code.google.com/p/eid-applet>`_
+  dient dazu, sich per eID zu **identifizieren**.
+  Identifizierung kann nicht funktionieren, indem der Client die Zertifikate auflöst,
+  weil der Client ja gehackt sein könnte. 
+  Dazu braucht es also einen "Identification Server".
+  Seit 2010 benutzt das eID-Applet gar nicht mehr die Middleware.
+  `Get The Facts: eID Applet Identification <http://code.google.com/p/eid-applet/wiki/GetTheFacts>`_
+
+- Der `eID-Viewer <https://code.google.com/p/eid-viewer/>`_
+  braucht scheinbar sowohl die Middleware als auch das Applet.
+
+Was ich noch immer nicht verstanden habe: wieso gibt es keine 
+offizielle Methode, um die Daten auf einer eID-Karte mal 
+schnell einzulesen? 
+Dazu braucht man doch weder Identifizierung und Authentifizierung. 
+Wir wollen das, was sowieso öffentlich sichtbar auf der Karte steht, 
+elektronisch lesen statt es abzutippen.
+
+
+
+Lino Così
+---------
+
+Weiter mit Lino Così. 
+Ich habe das Gefühl, "fast fertig" zu sein mit einer ersten zeigbaren Version.

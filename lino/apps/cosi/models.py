@@ -28,16 +28,20 @@ from django.utils.translation import ugettext_lazy as _
 from lino import mixins
 from lino import dd
 
-contacts = dd.resolve_app('contacts')
-sales = dd.resolve_app('sales')
+#~ contacts = dd.resolve_app('contacts')
+#~ sales = dd.resolve_app('sales')
 
-class Person(contacts.Person,sales.Customer):
-    class Meta(contacts.Person.Meta):
-        app_label = 'contacts'
+#~ class Partner(contacts.Partner,sales.Customer):
+    #~ class Meta(contacts.Partner.Meta):
+        #~ app_label = 'contacts'
+        
+#~ class Person(contacts.Person,sales.Customer):
+    #~ class Meta(contacts.Person.Meta):
+        #~ app_label = 'contacts'
 
-class Company(contacts.Company,sales.Customer):
-    class Meta(contacts.Company.Meta):
-        app_label = 'contacts'
+#~ class Company(contacts.Company,sales.Customer):
+    #~ class Meta(contacts.Company.Meta):
+        #~ app_label = 'contacts'
 
 #~ def site_setup(site):
     #~ site.description = 

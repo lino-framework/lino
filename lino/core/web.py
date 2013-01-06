@@ -1,4 +1,4 @@
-## Copyright 2012 Luc Saffre
+## Copyright 2012-2013 Luc Saffre
 ## This file is part of the Lino project.
 ## Lino is free software; you can redistribute it and/or modify 
 ## it under the terms of the GNU General Public License as published by
@@ -83,7 +83,7 @@ def site_setup(self):
             _= _,
     )
     
-    print __file__, 20121231, self.jinja_env.list_templates('.html')
+    #~ print __file__, 20121231, self.jinja_env.list_templates('.html')
 
 
 def extend_context(context):

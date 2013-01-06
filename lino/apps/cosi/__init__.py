@@ -63,6 +63,7 @@ class Lino(Lino):
     
     #~ remote_user_header = "REMOTE_USER"
     
+    #~ override_modlib_models = [ 'contacts.Partner' ]
     #~ override_modlib_models = [
       #~ 'contacts.Person','contacts.Company',
       #~ 'households.Household']
@@ -123,5 +124,5 @@ class Lino(Lino):
         #~ yield 'lino.modlib.cal'
         #~ yield 'lino.modlib.outbox'
         #~ yield 'lino.modlib.postings'
-        #~ yield 'lino.modlib.pages'
+        yield 'lino.modlib.pages'
         yield 'lino.apps.cosi'

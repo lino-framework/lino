@@ -13,27 +13,66 @@
 ## along with Lino; if not, see <http://www.gnu.org/licenses/>.
 
 ur"""
-Utilities for manipulating Belgian SSIN's,
-usually called 
-**NISS** ("No. d'identification de Sécurité Sociale") in French
-or 
-**INSZ** ("identificatienummer van de sociale zekerheid) in Dutch.
+Utilities for manipulating `Belgian national identification numbers
+<http://en.wikipedia.org/wiki/National_identification_number#Belgium>`__.
+It defines the functions :func:`format_ssin`, 
+:func:`is_valid_ssin` and :func:`ssin_validator`. 
 
-Official format is ``YYMMDDx123-97``, where ``YYMMDD`` is the birth date, 
+Belgians call their national identification number
+**INSZ** ("identificatienummer van de sociale zekerheid) in Dutch,
+**NISS** ("No. d'identification de Sécurité Sociale") in French
+or **INSS** ("Identifizierungsnummer der Sozialen Sicherheit") in German.
+We use the English abbreviation
+**SSIN** ("Social Security Identification Number"),
+though some sources also speak about **INSS** 
+("Identification Number Social Security"). 
+That's a normal phenomen in Belgium, don't worry.
+See also 
+`Numéro de registre national
+<http://fr.wikipedia.org/wiki/Num%C3%A9ro_de_registre_national>`_
+and
+`Rijksregisternummer
+<http://nl.wikipedia.org/wiki/Rijksregisternummer>`_
+
+
+http://www.ibz.rrn.fgov.be/fileadmin/user_upload/Registre/Acces_RN/RRNS003_F_IV.pdf
+http://www.simplification.fgov.be/doc/1206617650-4990.pdf
+
+
+Formatting Belgian National Numbers
+-----------------------------------
+
+An obsolete but still used format for printing a Belgian SSIN
+is ``YYMMDDx123-97``, where ``YYMMDD`` is the birth date, 
 ``x`` indicates the century (``*`` for the 19th, `` `` (space) for the 20th
 and ``=`` for the 21st century), ``123`` is a sequential number for persons 
 born the same day (odd numbers for men and even numbers for women), 
 and ``97`` is a check digit (remainder of previous digits divided by 97).
+
+And a function :func:`generate_ssin` is mainly used to 
+generate fictive demo data.
+For example, here is the national number of the 25th boy born in 
+Belgium on June 1st, 1968:
     
 >>> n = generate_ssin(datetime.date(1968,6,1),Genders.male,53)
 >>> print n
 680601 053-29
 >>> ssin_validator(n)
 
+The sequence number is optional and the default value depends on the gender.
+For boys it is 1, for girls 2.
+
 >>> n = generate_ssin(datetime.date(2002,4,5),Genders.female)
 >>> print n
 020405 002=44
 >>> ssin_validator(n)
+
+There are two validator functions, 
+:func:`is_valid_ssin` and :func:`ssin_validator`. 
+the difference between them is 
+that one returns True or False while the other raises a ValidationError 
+to be used in Django forms.
+The message of this ValidationError depends on the user language.
 
 >>> from lino.utils import babel
 >>> babel.set_language('en')
@@ -43,11 +82,25 @@ Traceback (most recent call last):
 ...
 ValidationError: [u'Invalid SSIN 123 : A formatted SSIN must have 13 positions']
 
+No need for special characters?
+-------------------------------
+
+In 1983 Belgians discovered that the formatting 
+with a special character to indicate the century 
+is not absolutely required since the national 
+register no longer cared about people born before 
+1900, and now the century can be deduced by trying 
+the check digits.
+
 >>> format_ssin('68060105329')
 '680601 053-29'
 
 In order to say whether the person is born in 19xx or 20xx,
-we need to look at the check digits:
+we need to look at the check digits.
+
+For example, the 25th boy born on June 1st in **1912** will 
+get another check-digit than a similar boy exactly 100 
+years later (in **2012**):
 
 >>> format_ssin('12060105317')
 '120601 053-17'
@@ -59,6 +112,9 @@ Question to mathematicians: is it sure that there is no combination
 of birth date and sequence number for which the check digits are 
 the same?
 
+Functions
+---------
+
 """
 
 
@@ -69,7 +125,7 @@ import os
 import cgi
 import datetime
 
-os.environ.setdefault('DJANGO_SETTINGS_MODULE','lino.apps.std.settings')
+#~ os.environ.setdefault('DJANGO_SETTINGS_MODULE','lino.apps.std.settings')
   
 from django.core.exceptions import ValidationError
 from django.utils.encoding import force_unicode 
@@ -119,6 +175,21 @@ def is_valid_ssin(ssin):
         return False
         
         
+def new_format_ssin(s):
+    """
+    Formats a raw SSIN as they are printed on the back of 
+    Belgian eid cards, for example "68.06.01-053.09"
+    """
+    s = s.strip()
+    if not s:
+        return ''
+    if len(s) != 11:
+        raise Exception(
+          force_unicode(_('Invalid SSIN %s : ') % s) 
+          + force_unicode(_('A raw SSIN must have 11 positions'))) 
+    return s[:2] + '.' + s[2:4] + '.' + s[4:6] + '-' + s[6:9] + '.' + s[9:] 
+  
+    
 def format_ssin(raw_ssin):
     """
     Add formatting chars to a given raw SSIN.

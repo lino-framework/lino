@@ -1,5 +1,5 @@
 # -*- coding: UTF-8 -*-
-## Copyright 2009-2012 Luc Saffre
+## Copyright 2009-2013 Luc Saffre
 ## This file is part of the Lino project.
 ## Lino is free software; you can redistribute it and/or modify 
 ## it under the terms of the GNU General Public License as published by
@@ -92,6 +92,9 @@ def analyze_models():
         self.person_model = resolve_model(self.person_model)
     if self.project_model:
         self.project_model = resolve_model(self.project_model)
+        
+    for m in self.override_modlib_models:
+        resolve_model(m,strict="Unresolved model '%s' in override_modlib_models.")
     
     self.setup_choicelists()
     self.setup_workflows()
@@ -100,15 +103,8 @@ def analyze_models():
     
     logger.info("Analyzing models...")
     
-    if dd.PENDING_INJECTS:
-        msg = ''
-        for spec,funcs in dd.PENDING_INJECTS.items():
-            msg += spec + ': ' 
-            #~ msg += '\n'.join([str(dir(func)) for func in funcs])
-            #~ msg += '\n'.join([str(func.func_code.co_consts) for func in funcs])
-            msg += str(funcs)
-        raise Exception("Oops, there are pending injects: %s" % msg)
-        #~ logger.warning("pending injects: %s", msg)
+    dd.on_analyze_models()
+    
     
     models_list = models.get_models() # trigger django.db.models.loading.cache._populate()
 
@@ -318,6 +314,8 @@ def startup_site(self):
         
         #~ self.modules = AttrDict()
         self.modules = actors.MODULES
+        
+        #~ logger.info("20130105 modules is %s",self.modules.keys())
 
         for a in models.get_apps():
             #~ for app_label,a in loading.cache.app_store.items():

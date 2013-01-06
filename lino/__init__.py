@@ -1,5 +1,5 @@
 # -*- coding: UTF-8 -*-
-## Copyright 2002-2012 Luc Saffre
+## Copyright 2002-2013 Luc Saffre
 ## This file is part of the Lino project.
 ## Lino is free software; you can redistribute it and/or modify 
 ## it under the terms of the GNU General Public License as published by
@@ -391,24 +391,29 @@ class Lino(object):
     
     use_eid_applet = False
     """
-    No longer used. Experimental, see :doc:`/blog/2012/1105`.
+    Whether to include functionality to read Belgian id cards
+    using the official 
+    `eid-applet <http://code.google.com/p/eid-applet>`_.
+    This option is experimental and doesn't yet work.
+    See :doc:`/blog/2012/1105`.
+    """
+    
+    use_eid_jslib = False
+    """
+    Whether to include functionality to read Belgian id cards    
+    using Johan De Schutter's
+    `eid-javascript-lib <http://code.google.com/p/eid-javascript-lib/>`_.
+    
+    If this is True, Lino expects eid-javascript-lib
+    to be installed in a directory `media/beid-jslib`.
+    See also :attr:`eid_jslib_root`.
+    
     """
     
     use_esteid = False
     """
     Whether to include functionality to read Estonian id cards.
     This option is experimental and doesn't yet work.
-    """
-    
-    use_eid_jslib = False
-    """
-    Whether to include functionality to read Belgian id cards.
-    
-    If this is True, Lino expects Johan De Schutter's
-    `eid-javascript-lib <http://code.google.com/p/eid-javascript-lib/>`_
-    to be installed in a directory `media/beid-jslib`.
-    See also :attr:`eid_jslib_root`.
-    
     """
     
     
@@ -821,6 +826,12 @@ class Lino(object):
           def kiss(self):
               ...
     
+    """
+    
+    modules = None
+    """
+    A shortcut to access all installed models and actors.
+    Read-only. Applications should not set this. 
     """
     
     

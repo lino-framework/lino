@@ -1,5 +1,5 @@
 # -*- coding: UTF-8 -*-
-## Copyright 2012 Luc Saffre
+## Copyright 2012-2013 Luc Saffre
 ## This file is part of the Lino project.
 ## Lino is free software; you can redistribute it and/or modify 
 ## it under the terms of the GNU General Public License as published by
@@ -17,6 +17,12 @@ My personal attempt to create a "universal account chart".
 To be used for simple demo setups in different countries.
 
 """
+
+from __future__ import unicode_literals
+
+import logging
+logger = logging.getLogger(__name__)
+
 
 from decimal import Decimal
 
@@ -40,8 +46,8 @@ REQUEST = None
 def objects():
     chart  = accounts.Chart(**babel_values('name',
         en="Minimal Accounts Chart",
-        fr=u"Plan comptable réduit",
-        de=u"Reduzierter Kontenplan"))
+        fr="Plan comptable réduit",
+        de="Reduzierter Kontenplan"))
     yield chart
     #~ account = Instantiator(accounts.Account,"ref name").build
     def Group(ref,type,fr,de,en):
@@ -62,9 +68,9 @@ def objects():
           type=accounts.AccountTypes.get_by_name(type),
           **kw)
           
-    yield Group('10','capital',u"Capital",u"Kapital","Capital")
+    yield Group('10','capital',"Capital","Kapital","Capital")
     
-    yield Group('40','assets',  u"Créances commerciales", u"Forderungen aus Lieferungen und Leistungen", "Commercial receivable(?)")
+    yield Group('40','assets',  "Créances commerciales", "Forderungen aus Lieferungen und Leistungen", "Commercial receivable(?)")
     yield Account('customers','assets',u"Clients",u"Kunden","Customers") # PCMN 4000
     yield Account('suppliers','liabilities',u"Fournisseurs",u"Lieferanten","Suppliers") # PCMN 4400
     
@@ -114,7 +120,9 @@ def objects():
     MODEL = ledger.AccountInvoice
     vt = ledger.VoucherTypes.get_for_model(MODEL)
     JOURNALS = Cycler(vt.get_journals())
-    PARTNERS = Cycler(contacts.Partner.objects.order_by('name'))
+    Partner = dd.resolve_model('contacts.Partner')
+    #~ logger.info("20130105 mini Partners %s",Partner.objects.all().count())
+    PARTNERS = Cycler(Partner.objects.order_by('name'))
     USERS = Cycler(settings.LINO.user_model.objects.all())
     AMOUNTS = Cycler([Decimal(x) for x in 
         "2.50 6.80 9.95 14.50 20 29.90 39.90 39.90 99.95 199.95 599.95 1599.99".split()])

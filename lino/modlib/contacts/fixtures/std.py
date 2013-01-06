@@ -46,6 +46,8 @@ Company | Firma | Société | Firma
 Public service |  | Service Public | Öffentlicher Dienst
 Ministry |  | Ministère | Ministerium
 School |  | école | Schule
+Freelancer | Freelacer | Travailleur libre | Freier Mitarbeiter
+Sole proprietorship | Eenmanszaak | Entreprise individuelle | Einzelunternehmen
 """
 COMPANY_TYPES = []
 

@@ -1,5 +1,5 @@
 # -*- coding: UTF-8 -*-
-## Copyright 2009-2012 Luc Saffre
+## Copyright 2009-2013 Luc Saffre
 ## This file is part of the Lino project.
 ## Lino is free software; you can redistribute it and/or modify 
 ## it under the terms of the GNU General Public License as published by
@@ -11,6 +11,13 @@
 ## GNU General Public License for more details.
 ## You should have received a copy of the GNU General Public License
 ## along with Lino; if not, see <http://www.gnu.org/licenses/>.
+
+"""
+Deserves documentation
+"""
+
+from __future__ import unicode_literals
+
 
 from django.conf import settings
 from lino.core.modeltools import resolve_model, obj2str
@@ -29,17 +36,17 @@ def objects():
     #~ dblogger.info("Installing contacts demo fixture") # use --verbosity=2
     
     company = Instantiator(settings.LINO.company_model,"name zip_code city:name street street_no",country='EE').build
-    yield company(u'Rumma & Ko OÜ','10115','Tallinn',u'Tartu mnt','71')
+    yield company('Rumma & Ko OÜ','10115','Tallinn','Tartu mnt','71')
     #~ Company = resolve_model('contacts.Company')
     #~ obj = Company(name=u'Rumma & Ko OÜ',zip_code='10115',street=u'Tartu mnt',street_no='71')
     #~ print obj2str(obj)
     #~ yield obj
     
     company = Instantiator(settings.LINO.company_model,"name zip_code city:name street street_no",country='BE').build
-    yield company(u'Bäckerei Ausdemwald', '4700', 'Eupen',  u'Vervierser Straße','45')
-    yield company(u'Bäckerei Mießen',     '4700', 'Eupen',  u'Gospert','103')
-    yield company(u'Bäckerei Schmitz',    '4700', 'Eupen',  u'Aachener Straße','53')
-    yield company(u'Garage Mergelsberg',  '4720', 'Kelmis', u'Kasinostraße','13')
+    yield company('Bäckerei Ausdemwald', '4700', 'Eupen',  u'Vervierser Straße','45')
+    yield company('Bäckerei Mießen',     '4700', 'Eupen',  u'Gospert','103')
+    yield company('Bäckerei Schmitz',    '4700', 'Eupen',  u'Aachener Straße','53')
+    yield company('Garage Mergelsberg',  '4720', 'Kelmis', u'Kasinostraße','13')
     
     company = Instantiator(settings.LINO.company_model,"name zip_code city:name street street_no",country='NL').build
     yield company(u'Donderweer BV','4816 AR','Breda', 'Edisonstraat','12')

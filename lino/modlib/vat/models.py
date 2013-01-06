@@ -43,7 +43,7 @@ from django.utils.translation import ugettext_lazy as _
 #~ from lino.modlib.accounts.utils import AccountTypes
 
 from lino.modlib.ledger.utils import FiscalYears
-from lino.core.modeltools import models_by_abc
+#~ from lino.core.modeltools import models_by_base
 
 ZERO = Decimal()
  
@@ -442,7 +442,7 @@ class Declaration(mixins.Registrable):
         super(Declaration,self).register(ar)
         
     def deregister(self,ar):
-        for m in models_by_abc(VatDocument):
+        for m in dd.models_by_base(VatDocument):
             #~ logger.info("20121208 a model %s",m)
             for doc in m.objects.filter(declaration=self):
                 doc.declaration = None
@@ -457,7 +457,7 @@ class Declaration(mixins.Registrable):
         
         item_models = []
         count = 0
-        for m in models_by_abc(VatDocument):
+        for m in dd.models_by_base(VatDocument):
             if issubclass(m,ledger.Voucher):
                 item_models.append(m.items.related.model)
                 #~ logger.info("20121208 a model %s",m)
@@ -471,7 +471,7 @@ class Declaration(mixins.Registrable):
 
         #~ print 20121209, item_models
         for m in item_models:
-        #~ for m in models_by_abc(VatDocument):
+        #~ for m in dd.models_by_base(VatDocument):
             for item in m.objects.filter(voucher__declaration=self):
                 #~ logger.info("20121208 b document %s",doc)
                 self.collect_item(sums,item)
@@ -506,7 +506,7 @@ class DocumentsByDeclaration(dd.VirtualTable):
     def get_data_rows(self,ar):
     #~ def get_request_queryset(self,ar):
         docs = []
-        for m in models_by_abc(VatDocument):
+        for m in dd.models_by_base(VatDocument):
             for doc in m.objects.filter(declaration=ar.master_instance):
                 docs.append(doc)
                 

@@ -11,3 +11,4 @@ Renamed BeIdCardType to BeIdCardTypes.
 Could not find any bug in Lino.
 Added new command :menuselection:`Explorer / eID card types`.
 Added a logger.info() call so that next test yields more information.
+

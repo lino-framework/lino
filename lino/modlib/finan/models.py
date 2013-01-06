@@ -1,4 +1,4 @@
-## Copyright 2008-2012 Luc Saffre
+## Copyright 2008-2013 Luc Saffre
 ## This file is part of the Lino project.
 ## Lino is free software; you can redistribute it and/or modify 
 ## it under the terms of the GNU General Public License as published by
@@ -10,6 +10,9 @@
 ## GNU General Public License for more details.
 ## You should have received a copy of the GNU General Public License
 ## along with Lino; if not, see <http://www.gnu.org/licenses/>.
+"""
+Deserves documentation
+"""
 
 
 import logging
@@ -147,8 +150,8 @@ class DocItem(mixins.Sequenced,ledger.VoucherItem):
     dc = ledger.DebitOrCreditField()
     #~ credit = dd.PriceField(default=0)
     remark = models.CharField(max_length=200,blank=True)
-    account = models.ForeignKey(accounts.Account)
-    partner = models.ForeignKey(contacts.Partner,blank=True,null=True)
+    account = models.ForeignKey('accounts.Account')
+    partner = models.ForeignKey('contacts.Partner',blank=True,null=True)
     #~ person = models.ForeignKey(Person,blank=True,null=True)
     #~ company = models.ForeignKey(Company,blank=True,null=True)
     

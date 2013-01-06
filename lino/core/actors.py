@@ -779,10 +779,11 @@ class Actor(actions.Parametrizable):
         #~ u = ar.get_user()
         for ba in self.get_actions(ar.bound_action.action):
             if ba.action.show_in_workflow:
-                #~ logger.info('20121020 show_in_workflow [%s]', unicode(ba.action.label))
                 #~ if obj.get_row_permission(ar,state,ba):
                 if self.get_row_permission(obj,ar,state,ba):
                     yield ba
+                else:
+                    logger.info('20121020 no permission for [%s]', unicode(ba.action.label))
         
     @classmethod
     def get_label(self):
