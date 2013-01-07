@@ -41,3 +41,7 @@ Multilingual names of cities
 
 Fixed the mentioned bug.
 Added new method :meth:`lino.core.model.Model.get_choices_text`.
+
+Added a `country_changed` method for 
+:class:`lino.modlib.countries.models.CountryCity`
+If user changes the `country`, then the `city` gets lost.

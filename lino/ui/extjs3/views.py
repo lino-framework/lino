@@ -386,7 +386,8 @@ def form2obj_and_save(ar,data,elem,is_new,restful,file_upload=False): # **kw2sav
             #~ kw.update(data_record=elem2rec_detailed(ar,elem))
         """
         TODO: in fact we need *either* `rows` (when this was called from a Grid) 
-        *or* `data_record` (when this was called from a form).
+        *or* `data_record` (when this was called from a form). 
+        But how to find out which one is needed?
         """
         kw.update(rows=[rh.store.row2list(ar,elem)])
         kw.update(data_record=elem2rec_detailed(ar,elem))

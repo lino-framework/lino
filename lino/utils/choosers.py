@@ -101,7 +101,8 @@ class Chooser(FieldChooser):
         #~ m = get_unbound_meth(model,field.name + "_display")
         #~ if m is not None:
             #~ self.display_meth
-            
+        
+        #~ if get_class_attr(model,"create_%s_choice" % field.name):
         if hasattr(model,"create_%s_choice" % field.name):
             self.can_create_choice = True
             

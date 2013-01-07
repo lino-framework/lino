@@ -1171,6 +1171,7 @@ class Store(BaseStore):
 
     def form2obj(self,ar,form_values,instance,is_new):
         disabled_fields = set(self.actor.disabled_fields(instance,ar))
+        #~ logger.info("20130107 Store.form2obj(%s)", form_values)
         #~ logger.info("20120228 %s Store.form2obj(%s),\ndisabled %s\n all_fields %s", 
             #~ self.rh,form_values,disabled_fields,self.all_fields)
         #~ print 20110406, disabled_fields
@@ -1182,6 +1183,7 @@ class Store(BaseStore):
                 try:
                     #~ if f.form2obj(ar.request,instance,form_values,is_new):
                     if f.form2obj(ar,instance,form_values,is_new):
+                        #~ logger.info("20130107 Store.form2obj %s changed", f)
                         m = getattr(instance,f.name + "_changed",None)
                         if m is not None:
                             changed_triggers.append(m)

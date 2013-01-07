@@ -197,12 +197,16 @@ class City(babel.BabelNamed):
         return CityTypes.choices
         
     def get_choices_text(self,request,rpt,field):
-        s = self.name
+        names = [self.name]
         for lng in babel.BABEL_LANGS:
             n = getattr(self,'name_'+lng)
-            if n and not n in s:
-                s += ' / ' + n
-        return s
+            if n and not n in names:
+                names.append(n)
+                #~ s += ' / ' + n
+        if len(names) == 1:
+            return names[0]
+        return "%s (%s)" % (names[0],', '.join(names[1:]))
+        #~ return s
         #~ return unicode(self)
         
             
@@ -235,15 +239,15 @@ class CitiesByCountry(Cities):
 
 class CountryCity(dd.Model):
     """
-    Adds two fields `country` and `city` and defines 
-    a context-sensitive chooser for city as well as a 
-    `create_city_choice` method.
+    Model mixin that adds two fields `country` and `city` 
+    and defines 
+    a context-sensitive chooser for `city`, 
+    a `create_city_choice` method, ...
     """
     class Meta:
         abstract = True
         
     country = models.ForeignKey("countries.Country",blank=True,null=True)
-        #~ verbose_name=_("Country"))
     city = models.ForeignKey('countries.City',blank=True,null=True)
     
     @chooser()
@@ -291,9 +295,18 @@ class CountryCity(dd.Model):
               % (text,self.country))
         #~ dblogger.warning("Cannot auto-create city %r if country is empty",text)
         raise ValidationError("Cannot auto-create city %r if country is empty",text)
+        
+    def country_changed(self,ar):
+        """
+        If user changes the `country`, then the `city` gets lost.
+        """
+        if self.city is not None and self.country != self.city.country:
+            self.city = None
+        
   
     def full_clean(self,*args,**kw):
-        if self.city is not None and self.country != self.city.country:
+        if self.city is not None and self.city.country is not None \
+              and self.country != self.city.country:
             self.country = self.city.country
         super(CountryCity,self).full_clean(*args,**kw)
 
@@ -324,9 +337,15 @@ class CountryRegionCity(CountryCity):
             flt = models.Q(type__lt=CityTypes.get_by_value('50'))
             return City.objects.filter(flt).order_by('name')
         
+    def create_city_choice(self,text):
+        # if a City is created by super, then we add our region
+        obj = super(CountryRegionCity,self).create_city_choice(text)
+        obj.region = self.region
+        return obj
+        
     @chooser()
     def city_choices(cls,country,region):
-        qs = super(CountryRegionCity,cls).city_choices(country,region)
+        qs = super(CountryRegionCity,cls).city_choices(country)
             
         if region is not None:
             parent_list = [p.pk for p in region.get_parents()] + [None]
