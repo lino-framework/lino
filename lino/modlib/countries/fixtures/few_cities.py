@@ -1,5 +1,5 @@
 # -*- coding: UTF-8 -*-
-## Copyright 2009-2012 Luc Saffre
+## Copyright 2009-2013 Luc Saffre
 ## This file is part of the Lino project.
 ## Lino is free software; you can redistribute it and/or modify 
 ## it under the terms of the GNU General Public License as published by
@@ -15,6 +15,8 @@
 Adds an arbitrary selection of a few demo cities.
 """
 
+from __future__ import unicode_literals
+
 import logging
 logger = logging.getLogger(__name__)
 
@@ -22,6 +24,8 @@ from django.core.exceptions import MultipleObjectsReturned
 from lino.utils import dblogger
 from lino.core.modeltools import resolve_model
 from lino.utils.instantiator import Instantiator
+from lino.utils.babel import babel_values
+
 
 from lino import dd
 
@@ -30,6 +34,7 @@ def objects():
     countries = dd.resolve_app('countries')
     #~ City = resolve_model('countries.City')
     City = countries.City
+    Country = countries.Country
     CityTypes = countries.CityTypes
     city = Instantiator(City,'name country').build
     def make_city(name,country_id,**kw):
@@ -43,16 +48,23 @@ def objects():
         except City.DoesNotExist:
             return city(name,country_id,**kw)
         
-    yield make_city(u'Eupen','BE',zip_code='4700',type=CityTypes.city)
-    yield make_city(u'Kelmis','BE',zip_code='4720',type=CityTypes.city)
-    yield make_city(u'Kettenis','BE',zip_code='4701',type=CityTypes.village)
-    yield make_city(u'Raeren','BE',zip_code='4730',type=CityTypes.village)
-    yield make_city(u'Angleur','BE',zip_code='4031',type=CityTypes.city)
-    yield make_city(u'Liège','BE',zip_code='4000',type=CityTypes.city)
-    yield make_city(u'Bruxelles','BE',zip_code='1000',type=CityTypes.city)
+    BE = Country.objects.get(pk='BE')
+    DE = Country.objects.get(pk='DE')
+    FR = Country.objects.get(pk='FR')
+    yield make_city('Eupen','BE',zip_code='4700',type=CityTypes.city)
+    yield City(country=BE,zip_code='4720',type=CityTypes.city,
+      **babel_values('name',de='Kelmis',fr='La Calamine'))
+    yield make_city('Kettenis','BE',zip_code='4701',type=CityTypes.village)
+    yield make_city('Raeren','BE',zip_code='4730',type=CityTypes.village)
+    yield make_city('Angleur','BE',zip_code='4031',type=CityTypes.city)
+    yield City(country=BE,zip_code='4000',type=CityTypes.city,
+      **babel_values('name',de='Lüttich',fr='Liège',nl="Luik"))
+    yield City(country=BE,zip_code='1000',type=CityTypes.city,
+      **babel_values('name',de='Brüssel',fr='Bruxelles',nl="Brussel",en="Brussels"))
     #~ yield city('Brussel','BE',zip_code='1000')
     #~ yield city(u'Brüssel','BE',zip_code='1000')
-    yield make_city(u'Oostende','BE',zip_code='8400',type=CityTypes.city)
+    yield City(country=BE,zip_code='8400',type=CityTypes.city,
+      **babel_values('name',de='Ostende',fr='Ostende',nl="Oostende",en="Ostende"))
     
     harjumaa = make_city(u'Harjumaa','EE',type=CityTypes.county)
     yield harjumaa
@@ -70,11 +82,15 @@ def objects():
     yield make_city(u'Narva','EE',type=CityTypes.town)
     yield make_city(u'Ääsmäe','EE',type=CityTypes.town,parent=harjumaa)
 
-    yield make_city(u'Aachen','DE')
-    yield make_city(u'Köln','DE')
+    #~ yield make_city(u'Aachen','DE')
+    yield City(country=DE,type=CityTypes.city,
+      **babel_values('name',de='Aachen',fr='Aix-la-Chapelle',nl="Aken",en="Aachen"))
+    yield City(country=DE,type=CityTypes.city,
+      **babel_values('name',de='Köln',fr='Cologne',nl="Keulen",en="Cologne"))
     yield make_city(u'Berlin','DE')
     yield make_city(u'Hamburg','DE')
-    yield make_city(u'München','DE')
+    yield City(country=DE,type=CityTypes.city,
+      **babel_values('name',de='München',fr='Munich',en="Munich"))
     
     yield make_city(u'Maastricht','NL')
     yield make_city(u'Amsterdam','NL')
@@ -83,8 +99,10 @@ def objects():
     yield make_city(u'Utrecht','NL')
     yield make_city(u'Breda','NL')
     
-    yield make_city(u'Paris','FR')
-    yield make_city(u'Nice','FR')
+    yield City(country=FR,type=CityTypes.city,
+      **babel_values('name',de='Paris',fr='Paris',en="Paris",et="Pariis",nl="Parijs"))
+    yield City(country=FR,type=CityTypes.city,
+      **babel_values('name',de='Nizza',fr='Nice',en="Nice"))
     yield make_city(u'Metz','FR')
     yield make_city(u'Strasbourg','FR')
     yield make_city(u'Nancy','FR')

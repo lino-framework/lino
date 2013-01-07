@@ -782,8 +782,8 @@ class Actor(actions.Parametrizable):
                 #~ if obj.get_row_permission(ar,state,ba):
                 if self.get_row_permission(obj,ar,state,ba):
                     yield ba
-                else:
-                    logger.info('20121020 no permission for [%s]', unicode(ba.action.label))
+                #~ else:
+                    #~ logger.info('20121020 no permission for [%s]', unicode(ba.action.label))
         
     @classmethod
     def get_label(self):

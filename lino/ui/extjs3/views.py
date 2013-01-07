@@ -528,27 +528,28 @@ def choices_for_field(request,rpt,field):
         if chooser.simple_values:
             def row2dict(obj,d):
                 #~ d[ext_requests.CHOICES_TEXT_FIELD] = unicode(obj)
-                d[ext_requests.CHOICES_VALUE_FIELD] = unicode(obj)
+                d[ext_requests.CHOICES_VALUE_FIELD] = obj.get_choices_text(request,rpt,field)
                 return d
         elif chooser.instance_values:
             # same code as for ForeignKey
             def row2dict(obj,d):
-                d[ext_requests.CHOICES_TEXT_FIELD] = unicode(obj)
+                d[ext_requests.CHOICES_TEXT_FIELD] = obj.get_choices_text(request,rpt,field)
                 d[ext_requests.CHOICES_VALUE_FIELD] = obj.pk
                 return d
         else:
             def row2dict(obj,d):
-                d[ext_requests.CHOICES_TEXT_FIELD] = unicode(obj[1])
+                #~ d[ext_requests.CHOICES_TEXT_FIELD] = unicode(obj[1])
+                d[ext_requests.CHOICES_TEXT_FIELD] = obj[1].get_choices_text(request,rpt,field)
                 d[ext_requests.CHOICES_VALUE_FIELD] = obj[0]
                 return d
     elif field.choices:
         qs = field.choices
         def row2dict(obj,d):
             if type(obj) is list or type(obj) is tuple:
-                d[ext_requests.CHOICES_TEXT_FIELD] = unicode(obj[1])
+                d[ext_requests.CHOICES_TEXT_FIELD] = obj[1].get_choices_text(request,rpt,field)
                 d[ext_requests.CHOICES_VALUE_FIELD] = obj[0]
             else:
-                d[ext_requests.CHOICES_TEXT_FIELD] = unicode(obj)
+                d[ext_requests.CHOICES_TEXT_FIELD] = obj.get_choices_text(request,rpt,field)
                 d[ext_requests.CHOICES_VALUE_FIELD] = unicode(obj)
             return d
         
@@ -558,7 +559,7 @@ def choices_for_field(request,rpt,field):
         qs = t.request(settings.LINO.ui,request).data_iterator
         #~ logger.info('20120710 choices_view(FK) %s --> %s',t,qs)
         def row2dict(obj,d):
-            d[ext_requests.CHOICES_TEXT_FIELD] = unicode(obj)
+            d[ext_requests.CHOICES_TEXT_FIELD] = obj.get_choices_text(request,rpt,field)
             d[ext_requests.CHOICES_VALUE_FIELD] = obj.pk 
             return d
     else:
@@ -1122,7 +1123,7 @@ def plain_response(ui,request,tplname,context):
     menu = menu.as_html(ui,request)
     context.update(menu=E.tostring(menu))
     web.extend_context(context)
-    template = web.jinja_env.get_template(tplname)
+    template = settings.LINO.jinja_env.get_template(tplname)
     
     response = http.HttpResponse(
         template.render(**context),

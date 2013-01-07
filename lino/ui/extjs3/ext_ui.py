@@ -781,6 +781,8 @@ class ExtUI(base.UI):
                 if de.slave_grid_format == 'grid':
                     #~ if not de.parameters:
                     kw.update(hide_top_toolbar=True)
+                    if de.preview_limit is not None:
+                        kw.update(preview_limit=de.preview_limit)
                     e = ext_elems.GridElement(lh,name,de,**kw)
                     return e
                 elif de.slave_grid_format == 'summary':

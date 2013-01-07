@@ -119,6 +119,7 @@ def analyze_models():
                   'workflow_state_field',
                   'workflow_owner_field',
                   'disabled_fields',
+                  'get_choices_text',
                   'summary_row',
                   'hidden_columns',
                   'get_default_table',

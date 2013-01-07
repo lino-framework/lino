@@ -4,8 +4,11 @@ To-do list
 Short-term
 ----------
 
-#.  finding a client using the eid card wastes time because it also reads 
-    the picture and transfers it to the server. Test whether this is a problem.
+#.  lino.ui.boy :
+    - rename "plain" to "boy"
+    - cell_html() and "as_plain_html"?
+    - detail of a pcsw.client doesn't work because as_plain_html doesn't 
+    pass the `ar` to `value_from_object`.
 
 #.  implement the fields Client.applies_from and applies_until as 
     "summary fields". This is a new concept: :doc:`/topics/summary_fields`

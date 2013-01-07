@@ -67,6 +67,8 @@ class User(mixins.CreatedModified):
     
     preferred_foreignkey_width = 15 
     
+    hidden_columns = 'password remarks'
+    
     #~ authenticated = True
     
     class Meta:

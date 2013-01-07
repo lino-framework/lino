@@ -151,6 +151,16 @@ class Model(models.Model):
         
         
     
+    def get_choices_text(self,request,rpt,field):
+        """
+        Return the text to be displayed when an instance of this model 
+        is being used as a choice in a combobox (i.e. by ForeignKey fields 
+        pointing to this model).
+        Default is to simply return `unicode(self)`.
+        One usage example is :class:`lino.modlib.countries.models.City`.
+        """
+        return unicode(self)
+        
     def disable_delete(self,ar):
         """
         Return None if it is okay to delete this object,

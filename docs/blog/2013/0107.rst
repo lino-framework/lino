@@ -1,0 +1,43 @@
+20130107
+========
+
+preview_limit
+-------------
+
+When a table is rendered as a slave grid in a detail window, 
+then it has no page navigator toolbar.
+Until now these slave grids tried to display as many rows as allowed 
+by the screen space (calculatePageSize()). 
+But calculatePageSize() had a hard-coded minimum of 5 rows.
+Thus, in these cases, there was a vertical scrollbar 
+and up to 5 rows even if in fact there were more than 5 rows. 
+--> 
+New parameter :attr:`lino.core.tables.AbstractTable.preview_limit`.
+
+
+Multilingual names of cities
+----------------------------
+
+:class:`lino.modlib.countries.models.City` is now a 
+:class:`lino.utils.babel.BabelNamed`. Here is why:
+
+  Ein letztes Problem (wenn ich mich nicht irre) ist "La Calamine", d.h.
+  was soll Lino mit Ortsnamen machen, die er nicht kennt. Oder genauer
+  gesagt die Frage, wie Lino überhaupt mit mehrsprachigen Ortsnamen
+  umgehen sollte.
+
+  Euer Lino kennt momentan "Kelmis (La Calamine)", aber kein "La
+  Calamine". Er kennt auch ein "Kelmis", das offenbar versehentlich
+  erstellt wurde, als Alicia für einen ihrer Klienten eine Ausbildung im
+  Athenée César Franck notiert hat. Offenbar hat Alicia da nicht gesehen,
+  dass Lino ihr "Kelmis (La Calamine)" vorschlug (momentan ist an dieser
+  Stelle übrigens ein Bug, so dass wir das nicht mehr nachvollziehen können).
+
+  Die einzig richtige Lösung scheint mir, dass wir mehrsprachige Ortsnamen
+  ermöglichen. Ort Nr. 737 heißt dann in Deutsch "Kelmis" und in
+  Französisch "La Calamine", und beim Einlesen einer eID-Karte schaut er
+  in beiden Sprachen nach. In den Comboboxen zur Auswahl eines Orts sollte
+  er dann immer alle Sprachen anzeigen: "Brüssel / Bxuxelles / Brussel".
+
+Fixed the mentioned bug.
+Added new method :meth:`lino.core.model.Model.get_choices_text`.

@@ -161,7 +161,7 @@ class Countries(dd.Table):
 FREQUENT_COUNTRIES = ['BE','NL','DE', 'FR', 'LU']
 
 
-class City(dd.Model):
+class City(babel.BabelNamed):
     """
     Implements the :class:`countries.City` convention.
     """
@@ -173,8 +173,7 @@ class City(dd.Model):
             unique_together = ('country','parent','name','type')
             #~ unique_together = ('country','parent','name','type','zip_code')
     
-    
-    name = models.CharField(max_length=200)
+    #~ name = models.CharField(max_length=200)
     country = models.ForeignKey('countries.Country')
     zip_code = models.CharField(max_length=8,blank=True)
     type = CityTypes.field(blank=True)
@@ -182,8 +181,8 @@ class City(dd.Model):
         blank=True,null=True,
         verbose_name=_("Part of"))
     
-    def __unicode__(self):
-        return self.name
+    #~ def __unicode__(self):
+        #~ return self.name
         
     def get_parents(self,*grandparents):
         if self.parent_id:
@@ -196,6 +195,16 @@ class City(dd.Model):
             allowed = country.allowed_city_types()
             return [(i,t) for i,t in CityTypes.choices if i in allowed]
         return CityTypes.choices
+        
+    def get_choices_text(self,request,rpt,field):
+        s = self.name
+        for lng in babel.BABEL_LANGS:
+            n = getattr(self,'name_'+lng)
+            if n and not n in s:
+                s += ' / ' + n
+        return s
+        #~ return unicode(self)
+        
             
     #~ def save(self,*args,**kw):
         #~ super(City,self).save(*args,**kw)
@@ -239,14 +248,33 @@ class CountryCity(dd.Model):
     
     @chooser()
     def city_choices(cls,country):
-        if country is not None:
+        if country is None:
+            cd = None
+            flt = models.Q()
+        else:
             cd = getattr(CountryDrivers,country.isocode,None)
-            if cd:
-                return City.filter(
-                    country=country,
-                    type__in=cd.city_types).order_by('name')
-            return country.city_set.order_by('name')
-        return cls.city.field.rel.to.objects.order_by('name')
+            flt = models.Q(country=country)
+            
+        #~ types = [CityTypes.blank_item] 20120829
+        types = [None]
+        if cd:
+            types += cd.city_types
+            #~ flt = flt & models.Q(type__in=cd.city_types)
+        else:
+            types += [v for v in CityTypes.items() if v.value >= '50']
+            #~ flt = flt & models.Q(type__gte=CityTypes.get_by_value('50'))
+        flt = flt & models.Q(type__in=types)
+        #~ flt = flt | models.Q(type=CityTypes.blank_item)
+        return City.objects.filter(flt).order_by('name')
+      
+        #~ if country is not None:
+            #~ cd = getattr(CountryDrivers,country.isocode,None)
+            #~ if cd:
+                #~ return City.objects.filter(
+                    #~ country=country,
+                    #~ type__in=cd.city_types).order_by('name')
+            #~ return country.city_set.order_by('name')
+        #~ return cls.city.field.rel.to.objects.order_by('name')
         
     def create_city_choice(self,text):
         """Called when an unknown city name was given. 
@@ -298,31 +326,15 @@ class CountryRegionCity(CountryCity):
         
     @chooser()
     def city_choices(cls,country,region):
-        if country is None:
-            cd = None
-            flt = models.Q()
-        else:
-            cd = getattr(CountryDrivers,country.isocode,None)
-            flt = models.Q(country=country)
-            
-        #~ types = [CityTypes.blank_item] 20120829
-        types = [None]
-        if cd:
-            types += cd.city_types
-            #~ flt = flt & models.Q(type__in=cd.city_types)
-        else:
-            types += [v for v in CityTypes.items() if v.value >= '50']
-            #~ flt = flt & models.Q(type__gte=CityTypes.get_by_value('50'))
-        flt = flt & models.Q(type__in=types)
-        #~ flt = flt | models.Q(type=CityTypes.blank_item)
+        qs = super(CountryRegionCity,cls).city_choices(country,region)
             
         if region is not None:
             parent_list = [p.pk for p in region.get_parents()] + [None]
             #~ print 20120822, region,region.get_parents(), parent_list
-            flt = flt & models.Q(parent__id__in=parent_list)
-            print flt
+            qs = qs.filter(parent__id__in=parent_list)
+            #~ print flt
             
-        return City.objects.filter(flt).order_by('name')
+        return qs
             
             #~ return country.city_set.filter(flt).order_by('name')
         #~ return cls.city.field.rel.to.objects.order_by('name')

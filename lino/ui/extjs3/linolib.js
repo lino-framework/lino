@@ -3247,23 +3247,25 @@ Lino.GridStore = Ext.extend(Ext.data.ArrayStore,{
     options.params.{{ext_requests.URL_PARAM_REQUESTING_PANEL}} = this.grid_panel.getId();
     Lino.insert_subst_user(options.params); // since 20121016
       
-    var ps = this.grid_panel.calculatePageSize();
     
-    if (!ps) {
-        //~ this.gridpanel.on('render',this.load())
-      //~ console.log("20120814 GridStore.load() failed to calculate pagesize");
-      return false;
-        //~ params.$URL_PARAM_LIMIT = 1;
-        //~ this.grid_panel.on('render',this.load.createDelegate(this,options))
-        //~ return;
-    } 
-    
-    options.params.{{ext_requests.URL_PARAM_LIMIT}} = ps;
-      
     if (this.grid_panel.hide_top_toolbar) {
         //~ console.log("20120206 GridStore.load() toolbar is hidden");
         options.params.{{ext_requests.URL_PARAM_START}} = 0;
+        if (this.grid_panel.preview_limit) {
+          options.params.{{ext_requests.URL_PARAM_LIMIT}} = this.grid_panel.preview_limit;
+        }
     } else {
+        var ps = this.grid_panel.calculatePageSize();
+        if (!ps) {
+            //~ this.gridpanel.on('render',this.load())
+          //~ console.log("20120814 GridStore.load() failed to calculate pagesize");
+          return false;
+            //~ params.$URL_PARAM_LIMIT = 1;
+            //~ this.grid_panel.on('render',this.load.createDelegate(this,options))
+            //~ return;
+        } 
+        options.params.{{ext_requests.URL_PARAM_LIMIT}} = ps;
+      
         //~ options.params.{{ext_requests.URL_PARAM_START}} = this.grid_panel.getTopToolbar().cursor;
         //~ if (this.grid_panel.getTopToolbar().pageSize !=  ps) {
           //~ console.log("20120206 abort load because toolbar says pagesize",
@@ -3299,6 +3301,7 @@ Lino.GridPanel = Ext.extend(Lino.GridPanel,{
   enableColLock: false,
   autoHeight: false,
   params_panel_hidden : false,
+  preview_limit : undefined, 
   //~ loadMask: true,
   //~ viewConfig: {
           //~ getRowClass: Lino.getRowClass,
@@ -3588,7 +3591,7 @@ Lino.GridPanel = Ext.extend(Lino.GridPanel,{
         //~ }, this, {delay:500});
     }
     
-    delete this.page_length
+    //~ delete this.page_length
     
     
       
@@ -3804,7 +3807,7 @@ Lino.GridPanel = Ext.extend(Lino.GridPanel,{
     if (ps > 1) return ps;
     //~ console.log('calculatePageSize() found less than 1 row:',height,'/',rowHeight,'->',ps);
     //~ foo.bar = baz; // 20120213
-    return 5;
+    return 5; // preview_limit
     //~ if (second_attempt) {
         //~ console.log('calculatePageSize() abandons after second attempt:',
           //~ height,'/',rowHeight,'->',ps);

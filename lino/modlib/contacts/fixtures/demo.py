@@ -143,7 +143,8 @@ def objects():
     yield person(first_name=u'Bernard',last_name=u'Bodard',title='Dr.')
     yield person(first_name=u'Jean',last_name=u'Dupont')
     
-    person = Instantiator(settings.LINO.person_model,country='BE',city=City.objects.get(name__exact=u'Oostende')).build
+    #~ person = Instantiator(settings.LINO.person_model,country='BE',city=City.objects.get(name__exact=u'Oostende')).build
+    person = Instantiator(settings.LINO.person_model,country='NL',city=City.objects.get(name__exact='Amsterdam')).build
     yield person(first_name=u'Mark',last_name=u'Martelaer',gender=mixins.Genders.male)
     yield person(first_name=u'Rik',last_name=u'Radermecker',gender=mixins.Genders.male)
     yield person(first_name=u'Marie-Louise',last_name=u'Vandenmeulenbos',gender=mixins.Genders.female)
