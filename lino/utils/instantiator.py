@@ -87,11 +87,11 @@ class LookupConverter(Converter):
         try:
             return model.objects.get(flt)
         except MultipleObjectsReturned,e:
-            raise Exception("Oops: more than 1 object in %s" % [
-                obj2str(o,True) for o in model.objects.filter(**lookup_kw)])
+            raise model.MultipleObjectsReturned("%s.objects lookup(%r) : %s" % (model.__name__,value,e))
+            #~ raise Exception("Oops: more than 1 object in %s" % [
+                #~ obj2str(o,True) for o in model.objects.filter(flt)])
         except model.DoesNotExist,e:
-            raise DataError("%s.objects.get(**%r) : %s" % (
-                  model.__name__,lookup_kw,e))
+            raise model.DoesNotExist("%s.objects lookup(%r) : %s" % (model.__name__,value,e))
               
         
 
