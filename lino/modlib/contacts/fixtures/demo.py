@@ -35,29 +35,29 @@ from lino.utils import dblogger
 def objects():
     #~ dblogger.info("Installing contacts demo fixture") # use --verbosity=2
     
-    company = Instantiator(settings.LINO.company_model,"name zip_code city:name street street_no",country='EE').build
+    company = Instantiator('contacts.Company',"name zip_code city:name street street_no",country='EE').build
     yield company('Rumma & Ko OÜ','10115','Tallinn','Tartu mnt','71')
     #~ Company = resolve_model('contacts.Company')
     #~ obj = Company(name=u'Rumma & Ko OÜ',zip_code='10115',street=u'Tartu mnt',street_no='71')
     #~ print obj2str(obj)
     #~ yield obj
     
-    company = Instantiator(settings.LINO.company_model,"name zip_code city:name street street_no",country='BE').build
+    company = Instantiator('contacts.Company',"name zip_code city:name street street_no",country='BE').build
     yield company('Bäckerei Ausdemwald', '4700', 'Eupen',  u'Vervierser Straße','45')
     yield company('Bäckerei Mießen',     '4700', 'Eupen',  u'Gospert','103')
     yield company('Bäckerei Schmitz',    '4700', 'Eupen',  u'Aachener Straße','53')
     yield company('Garage Mergelsberg',  '4720', 'Kelmis', u'Kasinostraße','13')
     
-    company = Instantiator(settings.LINO.company_model,"name zip_code city:name street street_no",country='NL').build
+    company = Instantiator('contacts.Company',"name zip_code city:name street street_no",country='NL').build
     yield company(u'Donderweer BV','4816 AR','Breda', 'Edisonstraat','12')
     yield company(u'Van Achter NV','4836 LG','Breda', 'Hazeldonk','2')
     
-    company = Instantiator(settings.LINO.company_model,"name zip_code city:name street street_no",country='DE').build
-    yield company(u'Hans Flott & Co','22453','Hamburg',u'Niendorfer Weg','532')
-    yield company(u'Bernd Brechts Bücherladen','80333',u'München',u'Brienner Straße','18')
-    yield company(u'Reinhards Baumschule','12487 ',u'Berlin',u'Segelfliegerdamm','123')
+    company = Instantiator('contacts.Company',"name zip_code city:name street street_no",country='DE').build
+    yield company('Hans Flott & Co','22453','Hamburg','Niendorfer Weg','532')
+    yield company('Bernd Brechts Bücherladen','80333','münchen','Brienner Straße','18')
+    yield company('Reinhards Baumschule','12487 ','Berlin','Segelfliegerdamm','123')
     
-    company = Instantiator(settings.LINO.company_model,"name zip_code city:name street street_no",country='FR').build
+    company = Instantiator('contacts.Company',"name zip_code city:name street street_no",country='FR').build
     yield company(u'Moulin Rouge','75018','Paris',u'Boulevard de Clichy','82')
     yield company(u'Auto École Verte','54000 ','Nancy',u'rue de Mon Désert','12')
     

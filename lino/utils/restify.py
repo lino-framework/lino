@@ -182,6 +182,13 @@ def mod_role(role, rawtext, text, lineno, inliner,options={}, content=[]):
         **options)], []
 roles.register_local_role('mod', mod_role)
 
+def class_role(role, rawtext, text, lineno, inliner,options={}, content=[]):
+    has_explicit_title, title, target = split_explicit_title(text)                   
+    ref = 'http://not_implemented/'  + target
+    return [nodes.reference(rawtext, utils.unescape(title), refuri=ref,
+        **options)], []
+roles.register_local_role('class', class_role)
+
 def srcref_role(role, rawtext, text, lineno, inliner,options={}, content=[]):
     has_explicit_title, title, target = split_explicit_title(text)                   
     ref = 'http://not_implemented/'  + target

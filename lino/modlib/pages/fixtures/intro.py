@@ -32,7 +32,7 @@ from django.conf import settings
 
 from lino.modlib.pages.builder import page, objects
 
-page('','en','',"""
+page('index','en','',"""
 Welcome to the **{{site.title}}** site.
 {% if site.short_name %}
 This is an online demo of `{{site.short_name}} <{{site.url}}>`__
@@ -53,7 +53,7 @@ you should go to the `Admin <{{site.admin_prefix}}/>`__ section.
     
     
 
-page('','fr','',"""
+page('index','fr','',"""
 Bienvenue sur **{{site.title}}**.
 {% if site.short_name %}
 Ce site est une démonstration en ligne de
@@ -73,7 +73,7 @@ dans la `section administrative <{{site.admin_prefix}}/>`__.
 {% endif %}
 """)
     
-page('','de','',"""
+page('index','de','',"""
 Willkommen auf {{site.title}}.
 {% if site.short_name %}
 Diese Site ist eine Online-Demo von

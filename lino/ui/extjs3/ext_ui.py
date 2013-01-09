@@ -307,6 +307,12 @@ class PlainRenderer(HtmlRenderer):
                 add_user_language(kw,ar)
                 return self.get_detail_url(obj,**kw)
   
+    def href_to(self,ar,obj,text=None):
+        h = self.instance_handler(ar,obj)
+        if h is None:
+            return cgi.escape(force_unicode(obj))
+        return self.href(url,text or cgi.escape(force_unicode(obj)))
+        
     def pk2url(self,ar,pk,**kw):
         if pk is not None:
             #~ kw[ext_requests.URL_PARAM_FORMAT] = ext_requests.URL_FORMAT_PLAIN

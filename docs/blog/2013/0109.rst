@@ -1,0 +1,32 @@
+20130109
+========
+
+Jetzt, wo Städtenamen mehrsprachig sind, brauchen wir noch ein bisschen 
+mehr Intelligenz beim Generieren der Demo-Daten. 
+Die gleiche Intelligenz brauchen wir auch beim Einlesen eines 
+Ortes von einer eID. Also es lohnt sich, dass ich mir da was Mühe gebe.
+
+Zum Beispiel in der :mod:`lino.modlib.contacts.fixtures.demo`
+werden folgende fiktiven Firmen in Deutschland erstellt::
+
+    company = Instantiator('contacts.Company',"name zip_code city:name street street_no",country='DE').build
+    yield company('Hans Flott & Co','22453','Hamburg','Niendorfer Weg','532')
+    yield company('Bernd Brechts Bücherladen','80333','München','Brienner Straße','18')
+    yield company('Reinhards Baumschule','12487 ','Berlin','Segelfliegerdamm','123')
+
+In einer Datenbank, deren erste Sprache Englisch ist, 
+funktionierte das seit vorgestern nicht mehr, 
+weil "München" dann neuerdings "Munich" heißt.
+Lösung ist die neue Klasse
+:class:`lino.utils.instantiator.LookupConverter`, 
+die zunächst mal die Methode `lookup` aus 
+:class:`ForeignKeyConverter <lino.utils.instantiator.ForeignKeyConverter>`
+und
+:class:`ManyToManyConverter <lino.utils.instantiator.ManyToManyConverter>`
+rauskapselt, um ihr dann besagte neue Intelligenz
+zu verleihen, die man auch als 
+Mehrsprachigkeitsverträglichkeit bezeichnen könnte:
+falls das Lookup-Feld ein :class:`BabelCharField 
+<lino.utils.babel.BabelCharField>` ist, 
+werden alle verfügbaren Sprachen durchsucht.
+

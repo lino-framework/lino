@@ -31,7 +31,8 @@ Multilingual names of cities
   erstellt wurde, als Alicia für einen ihrer Klienten eine Ausbildung im
   Athenée César Franck notiert hat. Offenbar hat Alicia da nicht gesehen,
   dass Lino ihr "Kelmis (La Calamine)" vorschlug (momentan ist an dieser
-  Stelle übrigens ein Bug, so dass wir das nicht mehr nachvollziehen können).
+  Stelle übrigens ein Bug (type object 'City' has no attribute 'filter'), 
+  so dass wir das nicht mehr nachvollziehen können).
 
   Die einzig richtige Lösung scheint mir, dass wir mehrsprachige Ortsnamen
   ermöglichen. Ort Nr. 737 heißt dann in Deutsch "Kelmis" und in

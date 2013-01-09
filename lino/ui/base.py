@@ -247,7 +247,10 @@ class UI:
 
             class WebIndex(View):
               
-                def get(self, request,ref=''):
+                def get(self, request,ref='index'):
+                    if not ref: 
+                        ref = 'index'
+                  
                     #~ print 20121220, ref
                     obj = pages.lookup(ref,None)
                     if obj is None:

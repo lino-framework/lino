@@ -31,21 +31,69 @@ from django.contrib.contenttypes.models import ContentType
 from lino.core.modeltools import resolve_model, UnresolvedModel
 
 from lino.utils import i2d # for backward compatibility of .py fixtures
+from lino.utils import babel
 from lino.core import fields
 from lino.core.modeltools import obj2str
     
 
 class DataError(Exception):
     pass
+    
+    
 
-class Converter:
-    def __init__(self,field,lookup_field=None):
+class Converter(object):
+    def __init__(self,field):
         self.field = field
-        self.lookup_field = lookup_field
   
     def convert(self,**kw):
         return kw
       
+class LookupConverter(Converter):
+    """
+    A Converter for ForeignKey and ManyToManyField. 
+    If the lookup_field is a BabelField, then it tries all available languages.
+    """
+    def __init__(self,field,lookup_field):
+        Converter.__init__(self,field)
+        model = self.field.rel.to
+        if lookup_field == 'pk':
+            self.lookup_field = model._meta.pk
+        else:
+            self.lookup_field = model._meta.get_field(lookup_field)
+        #~ self.lookup_field = lookup_field
+        
+        
+        
+    #~ def lookup(self,value):
+        #~ model = self.field.rel.to
+        #~ try:
+            #~ return model.objects.get(
+              #~ **{self.lookup_field: value})
+        #~ except model.DoesNotExist,e:
+            #~ raise DataError("%s.objects.get(%r) : %s" % (
+              #~ model.__name__,value,e))
+              
+              
+    def lookup(self,value):
+        model = self.field.rel.to
+        if isinstance(value,model):
+            return value
+        if isinstance(self.lookup_field,babel.BabelCharField):
+            flt = models.Q(**{self.lookup_field.name+'__iexact': value})
+            for lng in babel.BABEL_LANGS:
+                flt = flt | models.Q(**{self.lookup_field.name+'_'+lng+'__iexact': value})
+        else:
+            flt = models.Q(**{self.lookup_field.name: value})
+        try:
+            return model.objects.get(flt)
+        except MultipleObjectsReturned,e:
+            raise Exception("Oops: more than 1 object in %s" % [
+                obj2str(o,True) for o in model.objects.filter(**lookup_kw)])
+        except model.DoesNotExist,e:
+            raise DataError("%s.objects.get(**%r) : %s" % (
+                  model.__name__,lookup_kw,e))
+              
+        
 
 class DateConverter(Converter):
     def convert(self,**kw):
@@ -67,11 +115,10 @@ class DecimalConverter(Converter):
             if not isinstance(value,decimal.Decimal):
                 kw[self.field.name] = decimal.Decimal(value)
         return kw
+        
 
-class ForeignKeyConverter(Converter):
+class ForeignKeyConverter(LookupConverter):
     """Converter for ForeignKey fields."""
-    def get_rel_to(self,obj):
-        return self.field.rel.to
         
     def convert(self,**kw):
         value = kw.get(self.field.name)
@@ -79,40 +126,25 @@ class ForeignKeyConverter(Converter):
             if value == '':
                 value = None
             else:
-                model = self.get_rel_to(value)
-                if not isinstance(value,model):
-                    lookup_kw = {self.lookup_field: value}
-                    try:
-                        value = model.objects.get(**lookup_kw)
-                    except MultipleObjectsReturned,e:
-                        raise Exception("Oops: more than 1 object in %s" % [
-                            obj2str(o,True) for o in model.objects.filter(**lookup_kw)])
-                    except model.DoesNotExist,e:
-                        raise DataError("%s.objects.get(**%r) : %s" % (
-                              model.__name__,lookup_kw,e))
+                value = self.lookup(value)
             kw[self.field.name] = value
             #~ logger.info("20111213 %s %s -> %r", self.field.name,self.__class__,value)
         return kw
 
-#~ class LinkedForeignKeyConverter(ForeignKeyConverter):
-    #~ """Converter for :class:`lino.fields.LinkedForeignKey` fields."""
-    #~ def get_rel_to(self,obj):
-        #~ ct = self.field.get_content_type(obj)
-        #~ if ct is None:
-            #~ return None
-        #~ return ct.model_class()
+  
 
-class ManyToManyConverter(Converter):
+class ManyToManyConverter(LookupConverter):
+    """Converter for ManyToMany fields."""
     splitsep = None
         
-    def lookup(self,value):
-        model = self.field.rel.to
-        try:
-            return model.objects.get(
-              **{self.lookup_field: value})
-        except model.DoesNotExist,e:
-            raise DataError("%s.objects.get(%r) : %s" % (
-              model.__name__,value,e))
+    #~ def lookup(self,value):
+        #~ model = self.field.rel.to
+        #~ try:
+            #~ return model.objects.get(
+              #~ **{self.lookup_field: value})
+        #~ except model.DoesNotExist,e:
+            #~ raise DataError("%s.objects.get(%r) : %s" % (
+              #~ model.__name__,value,e))
 
     def convert(self,**kw):
         values = kw.get(self.field.name)

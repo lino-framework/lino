@@ -38,7 +38,7 @@ class Lino(Lino):
     languages = ['en','de','fr']
     #~ languages = 'de fr et en'.split()
     
-    #~ project_model = 'tickets.Project'
+    project_model = 'tickets.Project'
     user_model = 'users.User'
     
     #~ remote_user_header = "REMOTE_USER"
@@ -53,8 +53,10 @@ class Lino(Lino):
             yield a
         yield 'django.contrib.contenttypes'
         yield 'lino.modlib.users'
-        #~ yield 'lino.modlib.countries'
-        #~ yield 'lino.modlib.contacts'
+        yield 'lino.modlib.countries'
+        yield 'lino.modlib.contacts'
         #~ yield 'lino.modlib.outbox'
+        yield 'lino.modlib.blogs'
+        yield 'lino.modlib.tickets'
         yield 'lino.modlib.pages'
         yield 'lino.apps.cms'

@@ -12,7 +12,6 @@
 ## You should have received a copy of the GNU General Public License
 ## along with Lino; if not, see <http://www.gnu.org/licenses/>.
 
-
 import logging
 logger = logging.getLogger(__name__)
 
@@ -26,9 +25,7 @@ from lino.utils import AttrDict
 from lino.utils.restify import restify
 from lino.utils.restify import doc2rst
 
-
-PAGES = {}
-
+#~ PAGES = {}
 
 def babelfield(name,language):
     if language == babel.DEFAULT_LANGUAGE: 
@@ -38,17 +35,26 @@ def babelfield(name,language):
 def page(ref,language,title,body,parent=None,raw_html=False):
     if not language in babel.AVAILABLE_LANGUAGES:
         return
-    obj = PAGES.get(ref)
+    pages = dd.resolve_app('pages',strict=True)
+    obj = pages.lookup(ref,None)
+    #~ obj = PAGES.get(ref)
+    if parent is not None:
+        parent=pages.lookup(parent)
     if obj is None:
-        pages = dd.resolve_app('pages',strict=True)
-        if parent is not None:
-            parent=pages.lookup(parent)
-        kw = dict(ref=ref,parent=parent,raw_html=raw_html)
-        obj = pages.create_page(**kw)
-        PAGES[ref] = obj 
+        #~ kw = dict(,parent=parent)
+        obj = pages.create_page(ref=ref)
+        #~ PAGES[ref] = obj 
+        #~ if not ref:
+            #~ logger.info("20130109 define index page %r --> %r",language,body)
+    #~ else:
+        #~ if not ref:
+            #~ logger.info("20130109 override index page %r --> %r",language,body)
     
+    setattr(obj,'raw_html',raw_html)
+    setattr(obj,'parent',parent)
     setattr(obj,babelfield('title',language),title)
     setattr(obj,babelfield('body',language),body.strip())
+    # must save it already here so that subsequent pages of the same fixture can use it as parent.
     obj.full_clean()
     obj.save()
     #~ obj.update(babelfield('body',**{language:body}))
@@ -58,13 +64,15 @@ def page(ref,language,title,body,parent=None,raw_html=False):
 
 
 def objects():
-    global PAGES
-    #~ print 20121227, __file__, [obj['ref'] for obj in PAGES.values()]
-    rv = []
-    for obj in PAGES.values():
-        yield obj
-        #~ rv.append()
-        
-    PAGES = {}
-    #~ return rv
+    yield settings.LINO.site_config
+    if False:
+        global PAGES
+        #~ print 20121227, __file__, [obj['ref'] for obj in PAGES.values()]
+        rv = []
+        for obj in PAGES.values():
+            yield obj
+            #~ rv.append()
+            
+        PAGES = {}
+        #~ return rv
 

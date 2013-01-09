@@ -53,12 +53,12 @@ def objects():
     FR = Country.objects.get(pk='FR')
     yield make_city('Eupen','BE',zip_code='4700',type=CityTypes.city)
     yield City(country=BE,zip_code='4720',type=CityTypes.city,
-      **babel_values('name',de='Kelmis',fr='La Calamine'))
+      **babel_values('name',de='Kelmis',fr='La Calamine',en="Kelmis"))
     yield make_city('Kettenis','BE',zip_code='4701',type=CityTypes.village)
     yield make_city('Raeren','BE',zip_code='4730',type=CityTypes.village)
     yield make_city('Angleur','BE',zip_code='4031',type=CityTypes.city)
     yield City(country=BE,zip_code='4000',type=CityTypes.city,
-      **babel_values('name',de='Lüttich',fr='Liège',nl="Luik"))
+      **babel_values('name',de='Lüttich',fr='Liège',en='Liège',nl="Luik"))
     yield City(country=BE,zip_code='1000',type=CityTypes.city,
       **babel_values('name',de='Brüssel',fr='Bruxelles',nl="Brussel",en="Brussels"))
     #~ yield city('Brussel','BE',zip_code='1000')

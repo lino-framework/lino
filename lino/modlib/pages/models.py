@@ -141,15 +141,22 @@ class Page(mixins.Referrable,mixins.Hierarizable):
         
     def get_absolute_url(self):
         if self.ref:
-            return '/' + self.ref
+            if self.ref != 'index':
+                return '/' + self.ref
         return '/'
         
     def get_sidebar_caption(self):
         if self.title:
             return babel.babelattr(self,'title') 
-        if self.ref or self.parent:
+        if self.ref == 'index':
+            return unicode(_('Home'))
+        if self.ref:
             return self.ref
-        return unicode(_('Home'))
+        return str(self.id)
+            
+        #~ if self.ref or self.parent:
+            #~ return self.ref
+        #~ return unicode(_('Home'))
         
     def get_sidebar_item(self,request,other):
         a = E.a(self.get_sidebar_caption(),href=self.get_absolute_url())
@@ -248,8 +255,8 @@ def create_page(**kw):
 
 
 def lookup(ref,*args,**kw):
-    if ref == '': 
-        ref = None
+    #~ if ref == '': 
+        #~ ref = None
     return Page.get_by_ref(ref,*args,**kw)
     #~ try:
         #~ return Page.objects.get_by_ref(ref)

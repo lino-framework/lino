@@ -18,6 +18,8 @@ As long as nobody protests, I'll save some time by writing in German.
   :doc:`05 <0105>`
   |br| 
   :doc:`07 <0107>`
+  08
+  :doc:`09 <0109>`
   
 
 .. |Feb| replace:: **February**
