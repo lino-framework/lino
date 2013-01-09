@@ -66,14 +66,18 @@ def site_setup(self):
         ar.ui.ar2html(ar,t,ar.sliced_data_iterator)
         
         #~ print ar.get_total_count()
-        return E.tostring(t.as_element(),method="html")
+        if False:
+            return E.tostring(t.as_element(),method="html")
+        return E.tostring(t.as_element())
         #~ return E.tostring(E.ul(*[E.li(ar.summary_row(obj)) for obj in ar]),method="html")
           
     def as_ul(action_spec):
         a = settings.LINO.modules.resolve(action_spec)
         ar = a.request(user=auth.AnonymousUser.instance())
         ar.renderer = settings.LINO.ui.plain_renderer
-        return E.tostring(E.ul(*[obj.as_list_item(ar) for obj in ar]),method="html")
+        if False:
+            return E.tostring(E.ul(*[obj.as_list_item(ar) for obj in ar]),method="html")
+        return E.tostring(E.ul(*[obj.as_list_item(ar) for obj in ar]))
 
     self.jinja_env.globals.update(
             settings=settings,

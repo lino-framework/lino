@@ -47,7 +47,7 @@ class Converter(object):
   
     def convert(self,**kw):
         return kw
-      
+ 
 class LookupConverter(Converter):
     """
     A Converter for ForeignKey and ManyToManyField. 
@@ -55,7 +55,7 @@ class LookupConverter(Converter):
     """
     def __init__(self,field,lookup_field):
         Converter.__init__(self,field)
-        model = self.field.rel.to
+        model = field.rel.to
         if lookup_field == 'pk':
             self.lookup_field = model._meta.pk
         else:
@@ -64,26 +64,20 @@ class LookupConverter(Converter):
         
         
         
-    #~ def lookup(self,value):
-        #~ model = self.field.rel.to
-        #~ try:
-            #~ return model.objects.get(
-              #~ **{self.lookup_field: value})
-        #~ except model.DoesNotExist,e:
-            #~ raise DataError("%s.objects.get(%r) : %s" % (
-              #~ model.__name__,value,e))
-              
-              
-    def lookup(self,value):
+    def lookup(self,value,**kw):
         model = self.field.rel.to
         if isinstance(value,model):
             return value
+        #~ kw[self.lookup_field.name+'__iexact'= value]
+        kw[self.lookup_field.name] = value
         if isinstance(self.lookup_field,babel.BabelCharField):
-            flt = models.Q(**{self.lookup_field.name+'__iexact': value})
+            flt = models.Q(**kw)
             for lng in babel.BABEL_LANGS:
-                flt = flt | models.Q(**{self.lookup_field.name+'_'+lng+'__iexact': value})
+                #~ flt = flt | models.Q(**{self.lookup_field.name+'_'+lng+'__iexact': value})
+                flt = flt | models.Q(**{self.lookup_field.name+'_'+lng: value})
         else:
-            flt = models.Q(**{self.lookup_field.name: value})
+            flt = models.Q(**kw)
+            #~ flt = models.Q(**{self.lookup_field.name: value})
         try:
             return model.objects.get(flt)
         except MultipleObjectsReturned,e:
