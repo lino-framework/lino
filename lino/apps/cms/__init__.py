@@ -41,6 +41,8 @@ class Lino(Lino):
     project_model = 'tickets.Project'
     user_model = 'users.User'
     
+    sidebar_width  = 3
+    
     #~ remote_user_header = "REMOTE_USER"
     
     def get_app_source_file(self): return __file__
