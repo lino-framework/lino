@@ -674,10 +674,11 @@ class SessionUserMiddleware(object):
       
         settings.LINO.startup() # trigger site startup if necessary
         
-        user = authenticate(request.session.get('username'),request.session.get('password'))
+        user = authenticate(request.session.get('username'),
+            request.session.get('password'))
         
         if user is None:
-            logger.debug("Login failed username %s from request %s",username, request)
+            logger.debug("Login failed from session %s", request.session)
             user = AnonymousUser.instance()
         
         on_login(request,user)

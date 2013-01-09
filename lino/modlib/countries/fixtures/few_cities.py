@@ -22,6 +22,7 @@ logger = logging.getLogger(__name__)
 
 from django.core.exceptions import MultipleObjectsReturned
 from lino.utils import dblogger
+from lino.utils import babel
 from lino.core.modeltools import resolve_model
 from lino.utils.instantiator import Instantiator
 from lino.utils.babel import babel_values
@@ -38,12 +39,15 @@ def objects():
     CityTypes = countries.CityTypes
     city = Instantiator(City,'name country').build
     def make_city(name,country_id,**kw):
+        #~ kw.update()
+        flt = babel.lookup_filter('name',name,country__isocode=country_id,**kw)
         try:
-            return City.objects.exclude(type=CityTypes.county).get(
-                country__isocode=country_id,name=name)
+            return City.objects.exclude(type=CityTypes.county).get(flt)
+            #~ return City.objects.exclude(type=CityTypes.county).get(
+                #~ country__isocode=country_id,name=name)
         except MultipleObjectsReturned:
-            qs = City.objects.exclude(type=CityTypes.county).filter(country__isocode=country_id,name=name)
-            logger.info("Oops, there are multiple cities in %s", qs)
+            #~ qs = City.objects.exclude(type=CityTypes.county).filter(country__isocode=country_id,name=name)
+            logger.info("Oops, there are multiple cities for %r", name)
             return qs[0]
         except City.DoesNotExist:
             return city(name,country_id,**kw)

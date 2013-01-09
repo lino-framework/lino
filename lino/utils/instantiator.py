@@ -68,14 +68,10 @@ class LookupConverter(Converter):
         model = self.field.rel.to
         if isinstance(value,model):
             return value
-        #~ kw[self.lookup_field.name+'__iexact'= value]
-        kw[self.lookup_field.name] = value
         if isinstance(self.lookup_field,babel.BabelCharField):
-            flt = models.Q(**kw)
-            for lng in babel.BABEL_LANGS:
-                #~ flt = flt | models.Q(**{self.lookup_field.name+'_'+lng+'__iexact': value})
-                flt = flt | models.Q(**{self.lookup_field.name+'_'+lng: value})
+            flt  = babel.lookup_filter(self.lookup_field.name,value,**kw)
         else:
+            kw[self.lookup_field.name] = value
             flt = models.Q(**kw)
             #~ flt = models.Q(**{self.lookup_field.name: value})
         try:

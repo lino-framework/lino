@@ -394,3 +394,17 @@ def run_with_language(lang,func):
     set_language(current_lang)
     return rv
                 
+                
+def lookup_filter(fieldname,value,**kw):
+    #~ kw[field_name+'__iexact'] = value
+    kw[fieldname] = value
+    flt = models.Q(**kw)
+    del kw[fieldname]
+    for lng in BABEL_LANGS:
+        kw[fieldname+'_'+lng] = value
+        #~ flt = flt | models.Q(**{self.lookup_field.name+'_'+lng+'__iexact': value})
+        #~ flt = flt | models.Q(**{self.lookup_field.name+'_'+lng: value})
+        flt = flt | models.Q(**kw)
+        del kw[fieldname+'_'+lng]
+    return flt
+        
