@@ -14,9 +14,16 @@
 """
 
 """
+
+from __future__ import unicode_literals
+
+import logging
+logger = logging.getLogger(__name__)
+
 import os
 import cgi
 import datetime
+import inspect
 import jinja2
 
 #~ from jinja2 import Template
@@ -31,20 +38,52 @@ from lino.utils import babel
 from lino.utils import iif
 from lino.utils.xmlgen import html as xghtml
 E = xghtml.E
+
+SUBDIR_NAME = 'templates'
     
 def site_setup(self):
     """
-    Adds a global `jinja_env` attribute to `settings.LINO`
+    Adds a global `jinja_env` attribute to `settings.LINO`.
+    
+    Lino has an automatic and currently not configurable method 
+    for building Jinja's template loader. It looks for a "templates" 
+    subfolder in the following places:
+    
+    - the directory where your settings.py is defined.
+    
     """
     from lino.utils import auth
     from django.utils.importlib import import_module
     
+    paths = []
+    def collect_path(*parts):
+        dirname = os.path.join(*parts)
+        if os.path.isdir(dirname):
+            paths.append(dirname)
+            #~ logger.info("20130109 added directory: %s",dirname)
+        #~ else:
+            #~ logger.info("20130109 not a directory: %s",dirname)
+            
+    for cl in self.__class__.__mro__:
+        #~ logger.info("20130109 inspecting class %s",cl)
+        if cl is not object and not inspect.isbuiltin(cl):
+            collect_path(os.path.dirname(inspect.getfile(cl)),SUBDIR_NAME)
+        
+    #~ collect_path(self.project_dir,SUBDIR_NAME)
+    #~ if self.project_dir != self.source_dir:
+        #~ collect_path(self.source_dir,SUBDIR_NAME)
+        
     loaders = []
-    loaders.append(jinja2.FileSystemLoader(os.path.join(self.project_dir,'templates')))
+    if len(paths) > 0:
+        loaders.append(jinja2.FileSystemLoader(paths))
+    
     for name in self.get_installed_apps():
         m = import_module(name)
-        if os.path.isdir(os.path.join(os.path.dirname(m.__file__),'templates')):
-            loaders.append(jinja2.PackageLoader(name, 'templates'))
+        if os.path.isdir(os.path.join(os.path.dirname(m.__file__),SUBDIR_NAME)):
+            loaders.append(jinja2.PackageLoader(name, SUBDIR_NAME))
+    
+    #~ loaders = reversed(loaders)
+    #~ print 20130109, loaders
     
     self.jinja_env = jinja2.Environment(
         #~ extensions=['jinja2.ext.i18n'],

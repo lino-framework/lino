@@ -1140,7 +1140,7 @@ class Lino(object):
         dd.UserProfiles.reset()
         add = dd.UserProfiles.add_item
         add('000', _("Anonymous"), name='anonymous', level=None,
-            readonly=True,
+            #~ readonly=True,
             authenticated=False)
         add('100', _("User"), name='user', level='user')
         add('900', _("Administrator"), name='admin', level='admin')
