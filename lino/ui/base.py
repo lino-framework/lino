@@ -17,7 +17,7 @@ This module deserves a better docstring.
 
 import logging
 logger = logging.getLogger(__name__)
-
+import os
 
 from django.utils.translation import ugettext_lazy as _
 from django.utils.encoding import force_text
