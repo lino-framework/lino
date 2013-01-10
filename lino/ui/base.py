@@ -327,9 +327,12 @@ class UI:
         
         """
         cb = self.callback(*msgs)
+        def noop():
+            return dict(success=True,message=_("Aborted"))
         #~ def func(request):
             #~ return ok_func()
-        cb.add_choice('yes',ok_func,_("OK"))
+        cb.add_choice('yes',ok_func,_("Yes"))
+        cb.add_choice('no',noop,_("No"))
         return cb
         
     #~ def callback(self,msg,yes,no=None):

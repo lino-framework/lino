@@ -1,5 +1,5 @@
 # -*- coding: UTF-8 -*-
-## Copyright 2008-2012 Luc Saffre
+## Copyright 2008-2013 Luc Saffre
 ## This file is part of the Lino project.
 ## Lino is free software; you can redistribute it and/or modify 
 ## it under the terms of the GNU General Public License as published by
@@ -35,6 +35,9 @@ from lino.utils.choosers import chooser
 #~ from lino.utils.babel import add_babel_field, babelattr
 from lino.utils import babel 
 #~ from lino.utils import dblogger
+
+from lino.utils.instantiator import lookup_or_create
+
 
 class CityTypes(dd.ChoiceList):
     """
@@ -281,18 +284,19 @@ class CountryCity(dd.Model):
         #~ return cls.city.field.rel.to.objects.order_by('name')
         
     def create_city_choice(self,text):
-        """Called when an unknown city name was given. 
+        """
+        Called when an unknown city name was given. 
         Try to auto-create it.
         """
         if self.country is not None:
-            #~ return self.country.city_set.create(name=text)
-            #~ except IntegrityError:
-            qs = self.country.city_set.filter(name__iexact=text)
-            if qs.count() == 0:
-                return self.country.city_set.create(name=text,country=self.country)
-            raise ValidationError(
-              "Refused to auto-create city %s in %s because same name exists." 
-              % (text,self.country))
+            return lookup_or_create(City,City._meta.get_field('name'),text,country=self.country)
+            
+            #~ qs = self.country.city_set.filter(name__iexact=text)
+            #~ if qs.count() == 0:
+                #~ return self.country.city_set.create(name=text,country=self.country)
+            #~ raise ValidationError(
+              #~ "Refused to auto-create city %s in %s because same name exists." 
+              #~ % (text,self.country))
         #~ dblogger.warning("Cannot auto-create city %r if country is empty",text)
         raise ValidationError("Cannot auto-create city %r if country is empty",text)
         

@@ -25,7 +25,7 @@ from lino.history import blogger
 DEMOS = blogger.ticket("lino.pr","Demo Sites","""
 """)
 
-CMS = blogger.ticket("lino.cms","Lino as a CMS","""
+CMS = blogger.ticket("cms","Lino as a CMS","""
 Managing Plain Web Content.
 First proof of concept of 
 :mod:`lino.modlib.pages`
@@ -197,6 +197,15 @@ how to write/generate a user manual for Lino application.
 New vision for pages.Page : removed field `language`, and 
 title and body are now babel fields. 
 Only one record per ref.
-
 """)
 
+blogger.set_date(20130109)
+blogger.entry(CMS,1607,"The next Lino production site?","""
+Started a new Lino site that runs at 
+`http://wwwbeta.lino-framework.org`_.
+But don't (for the moment) waste your time to look at it.
+My vision is to make this the first satisfying community development platform in the world.
+And I agree that rationally speaking it is pure nonsense to believe 
+that I could make something better than Googlecode, Sourceforge or Github.
+That's why I don't yet write very much about what I'm doing.
+""")

@@ -1,4 +1,4 @@
-## Copyright 2009-2012 Luc Saffre
+## Copyright 2009-2013 Luc Saffre
 ## This file is part of the Lino project.
 ## Lino is free software; you can redistribute it and/or modify 
 ## it under the terms of the GNU General Public License as published by
@@ -319,23 +319,15 @@ class ForeignKeyStoreField(RelatedMixin,ComboStoreField):
         ch = choosers.get_for_field(self.field)
         #~ if ch and ch.meth.quick_insert_field:
         if ch and ch.can_create_choice:
-            o = ch.create_choice(obj,v)
-            if o is not None:
-                logger.info(u"Auto-created %s %s",
-                    unicode(o._meta.verbose_name),unicode(o))
-                return o
-            #~ qs = ch.get_instance_choices(obj)
-            #~ print 20110425, qs
-            #~ kw = {}
-            #~ kw[ch.meth.quick_insert_field] = v
-            #~ fk_target = qs.create(**kw)
-            # fk_target.save() not necessary
-            #~ logger.info("Auto-created %s %s",fk_target.__class__,fk_target)
-            #~ return fk_target
-            #~ return ch.on_quick_insert(obj,self.field,v)
-        #~ else:
-            #~ logger.info("Could not find %s#%s",relto_model,v)
+            return ch.create_choice(obj,v)
+            #~ if o is not None:
+                #~ o.full_clean()
+                #~ o.save()
+                #~ logger.info(u"Auto-created %s %s",
+                    #~ unicode(o._meta.verbose_name),unicode(o))
+                #~ return o
         return None
+        
             
 #~ class LinkedForeignKeyField(ForeignKeyStoreField):
   

@@ -23,12 +23,17 @@ from __future__ import unicode_literals
 #~ blogger = Blogger(username='luc')
 from lino.modlib.tickets.blogger import Blogger
 blogger = Blogger()
-blogger.set_user('robin')
+blogger.set_user('luc')
 
-LINO = blogger.project("lino","Public relations","""
+LINO = blogger.project("lino","Lino","""
 """,
 srcref_url_template='http://code.google.com/p/lino/source/browse%s',
 changeset_url_template='http://code.google.com/p/lino/source/detail?r=%s')
+
+WELFARE = blogger.project("welfare","Lino Welfare","""
+""",
+srcref_url_template='http://code.google.com/p/lino-welfare/source/browse%s',
+changeset_url_template='http://code.google.com/p/lino-welfare/source/detail?r=%s')
 
 blogger.set_project(LINO)
 
@@ -39,7 +44,7 @@ This is when I work on improving the first impression.
 blogger.project("lino.dev","Development process","""
 Release cycle, documentat
 """,parent=LINO)
-blogger.project("lino.cms","Content management","""
+blogger.project("cms","Content management","""
 """,parent=LINO)
 blogger.project("lino.core","Core functionality","""
 """)

@@ -1,0 +1,35 @@
+20130110
+========
+
+Excerpt from an email to a user:
+
+  Stimmt, du hast Recht. Er wird zwar dann "ANDERLECHT" und nicht
+  "Anderlecht" eintragen, aber das kann man dann ja immer noch
+  korrigieren. Inzwischen habe ich noch weitere Ideen gehabt, was das
+  automatische Erstellen von Ortsnamen betrifft. Zur Erinnerung: die
+  Combobox für Städte ist ja "lernfähig", d.h. "editierbar", und wenn man
+  dort einen unbekannten Ort einträgt (und den Record speichert), wird der Ort
+  stillschweigend angelegt. Bisher kommt dann lediglich ein Eintrag in die
+  system.log, wo es natürlich niemand bemerkt. Willst du vielleicht auch
+  gar nicht immer bemerken. Aber andere Systemverwalter wollen vielleicht
+  so eine Mail geschickt kriegen. Oder man will es vielleicht sogar
+  deaktivieren. Das alles will ich also konfigurierbar machen. Ich erzähle
+  mehr, wenn es gemacht ist.
+
+Result:
+:class:`lino_welfare.modlib.pcsw.models.BeIdReadCardAction` 
+now no longer fails if there is no City named `municipality`, 
+but silently creates it using 
+:func:`lino.utils.intantiator.lookup_or_create`.
+
+Configuration example::
+
+  from lino.utils.instantiator import auto_created
+  from django.core.mail import mail_admins
+
+  def on_auto_created(sender,**kw):
+      body = 'Record %s has been automatically created using %s' % (obj2str(sender),kw)
+      mail_admins('auto_created', body)
+
+  auto_created.connect(on_auto_created)
+

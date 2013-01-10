@@ -33,9 +33,9 @@ falls das Lookup-Feld ein :class:`BabelCharField
 <lino.utils.babel.BabelCharField>` ist, 
 werden alle verfügbaren Sprachen durchsucht.
 
-Content management
-------------------
+The template search path
+------------------------
 
-Nach einem Release auf lf.org traten einige kurzfrstige Probleme auf
+Nach einem Release auf lf.org trat folgendes Problem auf:
 
 - "KeyError 'users' at /"

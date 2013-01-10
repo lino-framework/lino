@@ -39,6 +39,58 @@ from lino.core.modeltools import obj2str
 class DataError(Exception):
     pass
     
+import django.dispatch
+
+auto_created = django.dispatch.Signal(providing_args=["field","value"])
+"""
+The :attr:`auto_created` signal is sent when 
+:func:`lookup_or_create` silently created an instance.
+
+Arguments sent with this signal:
+
+``sender``
+    The model instance that has been created. 
+    
+``field``
+    The database field 
+
+``known_values``
+    The specified known values
+
+"""
+    
+    
+    
+def lookup_or_create(model,lookup_field,value,**known_values):
+    """
+    Look-up whether there is a model instance having 
+    `lookup_field` with value `value`
+    (and the optional `known_values` matching exactly)
+    """
+    logger.info("2013011 lookup_or_create")
+    fkw = dict()
+    fkw.update(known_values)
+        
+    if isinstance(lookup_field,babel.BabelCharField):
+        flt  = babel.lookup_filter(lookup_field.name,value,**known_values)
+    else:
+        fkw[lookup_field.name+'__iexact'] = value
+        flt = models.Q(**fkw)
+        #~ flt = models.Q(**{self.lookup_field.name: value})
+    qs = model.objects.filter(flt)
+    if qs.count() > 0: # if there are multiple objects, return the first
+        if qs.count() > 1: 
+            logger.warning(
+              "%d %s instances having %s=%r (I'll return the first).",
+              qs.count(),model.__name__,lookup_field.name,value)
+        return qs[0]
+    #~ known_values[lookup_field.name] = value
+    obj = model(**known_values)
+    setattr(obj,lookup_field.name,value)
+    auto_created.send(obj,known_values=known_values)
+    obj.full_clean()
+    obj.save()
+    return obj
     
 
 class Converter(object):
@@ -68,20 +120,19 @@ class LookupConverter(Converter):
         model = self.field.rel.to
         if isinstance(value,model):
             return value
-        if isinstance(self.lookup_field,babel.BabelCharField):
-            flt  = babel.lookup_filter(self.lookup_field.name,value,**kw)
-        else:
-            kw[self.lookup_field.name] = value
-            flt = models.Q(**kw)
-            #~ flt = models.Q(**{self.lookup_field.name: value})
-        try:
-            return model.objects.get(flt)
-        except MultipleObjectsReturned,e:
-            raise model.MultipleObjectsReturned("%s.objects lookup(%r) : %s" % (model.__name__,value,e))
-            #~ raise Exception("Oops: more than 1 object in %s" % [
-                #~ obj2str(o,True) for o in model.objects.filter(flt)])
-        except model.DoesNotExist,e:
-            raise model.DoesNotExist("%s.objects lookup(%r) : %s" % (model.__name__,value,e))
+        return lookup_or_create(model,self.lookup_field,value,**kw)
+        
+        #~ if isinstance(self.lookup_field,babel.BabelCharField):
+            #~ flt  = babel.lookup_filter(self.lookup_field.name,value,**kw)
+        #~ else:
+            #~ kw[self.lookup_field.name] = value
+            #~ flt = models.Q(**kw)
+        #~ try:
+            #~ return model.objects.get(flt)
+        #~ except MultipleObjectsReturned,e:
+            #~ raise model.MultipleObjectsReturned("%s.objects lookup(%r) : %s" % (model.__name__,value,e))
+        #~ except model.DoesNotExist,e:
+            #~ raise model.DoesNotExist("%s.objects lookup(%r) : %s" % (model.__name__,value,e))
               
         
 

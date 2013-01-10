@@ -1,4 +1,4 @@
-## Copyright 2009-2012 Luc Saffre
+## Copyright 2009-2013 Luc Saffre
 ## This file is part of the Lino project.
 ## Lino is free software; you can redistribute it and/or modify 
 ## it under the terms of the GNU General Public License as published by
@@ -395,16 +395,18 @@ def run_with_language(lang,func):
     return rv
                 
                 
+LOOKUP_OP = '__iexact'
+
 def lookup_filter(fieldname,value,**kw):
-    #~ kw[field_name+'__iexact'] = value
-    kw[fieldname] = value
+    kw[fieldname+LOOKUP_OP] = value
+    #~ kw[fieldname] = value
     flt = models.Q(**kw)
-    del kw[fieldname]
+    del kw[fieldname+LOOKUP_OP]
     for lng in BABEL_LANGS:
-        kw[fieldname+'_'+lng] = value
+        kw[fieldname+'_'+lng+LOOKUP_OP] = value
         #~ flt = flt | models.Q(**{self.lookup_field.name+'_'+lng+'__iexact': value})
         #~ flt = flt | models.Q(**{self.lookup_field.name+'_'+lng: value})
         flt = flt | models.Q(**kw)
-        del kw[fieldname+'_'+lng]
+        del kw[fieldname+'_'+lng+LOOKUP_OP]
     return flt
         
