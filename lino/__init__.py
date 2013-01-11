@@ -34,14 +34,10 @@ def buildurl(*args,**kw):
     return url
         
 
-#~ from jinja2 import Template
 
 from lino.utils.xmlgen import html as xghtml
-#~ from lino.utils import babel
 
-#~ __version__ = file(os.path.join(os.path.dirname(
-    #~ __file__),'..','VERSION')).read().strip()
-__version__ = "1.5.3"
+__version__ = "1.5.4"
 """
 Lino version number. 
 """

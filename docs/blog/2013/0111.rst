@@ -30,8 +30,18 @@ gets started with Lino mass hosting.
   and new Lino setting :attr:`demo_fixtures <lino.Lino.demo_fixtures>`.
   
 
-Release
--------
+Cannot re-upload to PyPI
+------------------------
+
+Here is how I do (or rather would like to do) my releases:
+  
+  #.  upload a tarball to PyPI
+  #.  download and install that tarball on a "guinea pig" production site 
+  #.  if the guinea pig installation reveals bugs which don't require a database migration,
+      fix these bugs, rebuild and **re-upload** the tarball, return to item 2.
+  #.  have the pre-released version run at the guinea pig site for some time (usually one workday) 
+  #.  announce the new version on PyPI and increase the version number in the development trunk
+      
 
 Is it possible to use the distutils `setup.py upload` command several times for 
 the same version?
@@ -40,10 +50,20 @@ Until now I always did the following when releasing ::
 
   python setup.py register sdist --formats=gztar,zip upload
   
-But can I **upload** a version without previously **registering** it?
-Yes::
+Can I **upload** a version without previously **registering** it?
+Answer: Yes (looks as if **upload** silently calls **register**)
 
-  python setup.py sdist --formats=gztar,zip upload
+.. code-block:: bash
+
+  $ python setup.py sdist --formats=gztar,zip upload
+  running sdist
+  running egg_info
+  writing lino.egg-info\PKG-INFO
+  writing top-level names to lino.egg-info\top_level.txt
+  writing dependency_links to lino.egg-info\dependency_links.txt
+  reading manifest file 'lino.egg-info\SOURCES.txt'
+  reading manifest template 'MANIFEST.in'  
+  (...)
   adding 'lino-1.5.3\tests\misc\choices.py'
   adding 'lino-1.5.3\tests\misc\diag.py'
   removing 'lino-1.5.3' (and everything under it)
@@ -52,10 +72,41 @@ Yes::
   Server response (200): OK
   Submitting dist\lino-1.5.3.zip to http://pypi.python.org/pypi
   Server response (200): OK
+  
+But can I cannot re-upload a previously uploaded version:
 
+.. code-block:: bash
 
+  $ python setup.py sdist --formats=gztar,zip upload
+  running sdist
+  running egg_info
+  ...
+  adding 'lino-1.5.3\tests\misc\diag.py'
+  removing 'lino-1.5.3' (and everything under it)
+  running upload
+  Submitting dist\lino-1.5.3.tar.gz to http://pypi.python.org/pypi
+  Upload failed (400): A file named "lino-1.5.3.tar.gz" already exists for  lino-1.5.3. To fix problems with that file you should create a new
+   release.
+  Submitting dist\lino-1.5.3.zip to http://pypi.python.org/pypi
+  Upload failed (400): A file named "lino-1.5.3.zip" already exists for  lino-1.5.3. To fix problems with that file you should create a new re
+  lease.
 
+Of course I could fire up a browser, 
+use PyPI's web interface and delete the files before 
+somebody else could download them.
 
+The problem is the same when using `testpypi`.
 
+The only workaround is to
 
+#. build a tarball (``sdist``) **without** ``upload``
+#. upload it to some unofficial download site 
+   (currently I use `/dl <../../dl>`__)
+#. download and install that tarball to the guinea pig
+#. use this for testing at the guinea pig
+#. make a last definitive ``sdist`` **with** ``upload`` upload to PyPI when the guinea pig tests passed.
+The only problem with this workaround is that I usually **forget** 
+this last step.
+But to be honest, that's only because there are no more Lino production users 
+than the one who serves as guinea pig.
 

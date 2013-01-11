@@ -19,4 +19,5 @@ lino/apps/*/media
 lino/sandbox/*/media
 */test.db
 docs/*/appdocs
+docs/dl/*
 lino.egg-info

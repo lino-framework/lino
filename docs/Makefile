@@ -44,6 +44,7 @@ html:
 	mkdir -p $(CACHEDIR) 
 	mkdir -p $(BUILDDIR)
 	$(SPHINXBUILD) -b html -d $(CACHEDIR) $(ALLSPHINXOPTS) . $(BUILDDIR)
+	cp -ru dl $(TEMPDIR)\\html
 	@echo
 	@echo "Build finished. The HTML pages are in $(BUILDDIR)."
 
