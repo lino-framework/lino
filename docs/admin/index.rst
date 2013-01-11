@@ -10,6 +10,7 @@ Installation
     install
     pythonpath
     media
+    mass_hosting
     install_apache
     ApacheHttpAuth
     django_tests

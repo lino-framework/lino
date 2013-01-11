@@ -4,22 +4,11 @@ class Lino(Lino):
   
     title = "Cool Polls"
     
-    #~ short_name = 'Lino Polls Tutorial'
-    #~ version = '0.1'
-    #~ url = 'http://lino-framework.org/tutorials/polls.html'
-    
-    #~ admin_prefix = '/admin'
-    #~ sidebar_width = 3
-    
     def get_installed_apps(self):
         for a in super(Lino,self).get_installed_apps():
             yield a
-        #~ yield 'lino.modlib.pages' 
         yield 'lino.apps.polls_tutorial.polls' # 'mysite.polls'
 
-    def unused_get_main_html(self,request):
-        return self.modules.polls.Polls.recent_polls(request)
-        
 LINO = Lino(__file__,globals()) 
 
 DEBUG = True

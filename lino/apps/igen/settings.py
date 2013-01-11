@@ -32,6 +32,7 @@ class Lino(Lino):
     
     person_model = "contacts.Person"
     company_model = "contacts.Company"
+    user_model = "users.User"
     
     #~ residence_permit_upload_type = None
     #~ work_permit_upload_type = None
@@ -45,50 +46,31 @@ class Lino(Lino):
         #~ super(IgenSite,self).init_site_config(sc)
         #~ sc.next_partner_id = 200000
 
-    def get_app_source_file(self):
-        return __file__
+    #~ def get_app_source_file(self):
+        #~ return __file__
         
+        
+    def get_installed_apps(self):
+        for a in super(Lino,self).get_installed_apps():
+            yield a
+        yield 'django.contrib.contenttypes'
+        yield 'lino.modlib.users'
+        yield 'lino.modlib.countries'
+        
+        yield 'lino.modlib.contacts'
+        #~ 'lino.modlib.notes'
+        yield 'lino.modlib.cal'
+        yield 'lino.modlib.outbox'
+        yield 'lino.modlib.products'
+        #~ 'lino.modlib.journals',
+        yield 'lino.modlib.vat'
+        yield 'lino.modlib.accounts'
+        yield 'lino.modlib.ledger'
+        yield 'lino.modlib.sales'
+        yield 'lino.modlib.finan'
+        yield 'lino.modlib.uploads'
+        yield 'lino.apps.igen'
+        
+    demo_fixtures = 'std few_languages few_countries few_cities demo_ee demo demo2'.split()
 
 LINO = Lino(__file__,globals())
-
-#~ TIME_ZONE = 'Europe/Tallinn'
-TIME_ZONE = None
-
-# Language code for this installation. All choices can be found here:
-# http://www.i18nguy.com/unicode/language-identifiers.html
-#~ LANGUAGE_CODE = 'en'
-#~ LANGUAGE_CODE = 'en-US'
-#~ LANGUAGE_CODE = 'fr-BE'
-
-
-INSTALLED_APPS = (
-    #~ 'django.contrib.auth',
-    'lino.modlib.users',
-    'django.contrib.contenttypes',
-    'lino',
-    'lino.modlib.countries',
-    'lino.modlib.contacts',
-    #~ 'lino.modlib.notes',
-    'lino.modlib.cal',
-    'lino.modlib.mails',
-    'lino.modlib.products',
-    'lino.modlib.journals',
-    'lino.modlib.ledger',
-    'lino.modlib.sales',
-    'lino.modlib.finan',
-    'lino.modlib.uploads',
-    'lino.apps.igen',
-    #~ 'lino.modlib.properties',
-)
-
-# Put strings here, like "/home/html/django_templates" or "C:/www/django/templates".
-# Always use forward slashes, even on Windows.
-# Don't forget to use absolute paths, not relative paths.
-#~ TEMPLATE_DIRS = (
-      #~ # join(abspath(DATA_DIR),'templates'),
-      #~ join(abspath(LINO.project_dir),'templates'),
-      #~ join(abspath(dirname(lino.__file__)),'templates'),
-#~ )
-
-# Make this unique, and don't share it with anybody.
-#~ SECRET_KEY = 'cqt^18t(Fb#14a@s%mbtdif+ih8fscpf8l9aw+0ivo2!3c(c%&'

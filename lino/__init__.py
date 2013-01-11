@@ -598,13 +598,7 @@ class Lino(object):
     
     This may be used to simulate a :term:`WebDAV` location 
     on a development server.
-    For example on a Windows machine, you may set it to ``w:\`` in your 
-    :xfile:`sitecustomize_lino.py`::
-    
-        def on_init(LINO):
-            (...)
-            LINO.webdav_url = r"w:\"
-      
+    For example on a Windows machine, you may set it to ``w:\``,      
     and before invoking :term:`runserver`, you issue in a command prompt::
     
         subst w: <dev_project_path>\media\webdav
@@ -834,6 +828,21 @@ class Lino(object):
     Read-only. Applications should not set this. 
     """
     
+    django_settings = None
+    """
+    This is where Lino stores the `globals()` dictionary of your
+    :xfile:`settings.py` file (the one you provided when 
+    calling :meth:`Lino.__init__`.
+    """
+    
+    
+    demo_fixtures = ['std','demo']
+    """
+    The list of fixtures to be loaded by the 
+    `initdb_demo <lino.management.commands.initdb_demo>`
+    command.
+    """
+    
     
     
     #~ use_contenttypes = True
@@ -851,7 +860,7 @@ class Lino(object):
     _groph_ui = None
     
     
-    def __init__(self,project_file,settings_dict):
+    def __init__(self,project_file,django_settings):
       
         #~ self.user_profile_fields = ['level']
         
@@ -873,44 +882,44 @@ class Lino(object):
         self._setting_up = False
         self._setup_done = False
         #~ self._response = None
-        self.settings_dict = settings_dict
+        self.django_settings = django_settings
         
         #~ self.appy_params.update(pythonWithUnoPath=r'C:\PROGRA~1\LIBREO~1\program\python.exe')
         #~ APPY_PARAMS.update(pythonWithUnoPath=r'C:\PROGRA~1\OPENOF~1.ORG\program\python.exe')
         #~ APPY_PARAMS.update(pythonWithUnoPath='/usr/bin/libreoffice')
         #~ APPY_PARAMS.update(pythonWithUnoPath='/etc/openoffice.org3/program/python')
     
-        #~ if settings_dict: 
-            #~ self.install_settings(settings_dict)
+        #~ if django_settings: 
+            #~ self.install_settings(django_settings)
         if self.webdav_url is None:
             self.webdav_url = '/media/webdav/'
         if self.webdav_root is None:
             self.webdav_root = join(abspath(self.project_dir),'media','webdav')
             
-        settings_dict.update(MEDIA_ROOT = join(self.project_dir,'media'))
+        django_settings.update(MEDIA_ROOT = join(self.project_dir,'media'))
         if self.project_dir != self.source_dir:
-            settings_dict.update(FIXTURE_DIRS = [join(self.project_dir,"fixtures")])
+            django_settings.update(FIXTURE_DIRS = [join(self.project_dir,"fixtures")])
             #~ lino.Lino.__init__ füllte project_dir auch dann nach FIXTURES_DIR, 
             #~ wenn es zugleich das source_dir war. Was die subtile Folge hatte, 
             #~ dass alle Fixtures doppelt ausgeführt wurden. 
             #~ Dieser Bug hat mich mindestens eine Stunde lang beschäftigt.            
 
-        settings_dict.update(TEMPLATE_DIRS = (
+        django_settings.update(TEMPLATE_DIRS = (
             join(abspath(self.project_dir),'templates'),
             join(abspath(self.source_dir),'templates'),
             join(abspath(dirname(__file__)),'templates'),
         ))
         
-        settings_dict.update(
+        django_settings.update(
             MIDDLEWARE_CLASSES=tuple(
                 self.get_middleware_classes()))
                 
-        settings_dict.update(
+        django_settings.update(
             TEMPLATE_LOADERS=tuple(
                 ['lino.core.web.Loader']
                 ))
 
-        settings_dict.update(
+        django_settings.update(
             INSTALLED_APPS=tuple(
                 self.get_installed_apps()))
 
@@ -918,15 +927,25 @@ class Lino(object):
         
         if self.languages:
             lc = language_choices(*self.languages)
-            settings_dict.update(LANGUAGES = lc)
-            settings_dict.update(LANGUAGE_CODE = lc[0][0])
+            django_settings.update(LANGUAGES = lc)
+            django_settings.update(LANGUAGE_CODE = lc[0][0])
         
         try:
-            from sitecustomize_lino import on_init
+            #~ from sitecustomize_lino import on_init
+            import sitecustomize_lino
+            
+            raise Exception("""
+            Replace your sitecustomize_lino module 
+            (%s)
+            by a LocalLinoMixin
+            as documented in 
+            http://lino-framework.org/admin/local_lino.html
+            """ % sitecustomize_lino.__file__)
+            
         except ImportError:
             pass
-        else:
-            on_init(self)
+            #~ else:
+            #~ on_init(self)
         
         #~ s.update(DATABASES= {
               #~ 'default': {
@@ -935,8 +954,7 @@ class Lino(object):
               #~ }
             #~ })
         
-        
-
+       
     def get_ui(self):
         if self._extjs_ui is None:
             self.startup()
@@ -1003,7 +1021,7 @@ class Lino(object):
 
     
     #~ def get_user_model(self):
-        #~ if 'django.contrib.auth' in self.settings_dict['INSTALLED_APPS']:
+        #~ if 'django.contrib.auth' in self.django_settings['INSTALLED_APPS']:
             #~ from django.contrib.auth.models import User
             #~ return 'auth.User'
         #~ else:
@@ -1527,9 +1545,9 @@ class Lino(object):
         #~ return (self.__name__,
                 #~ self.__version__,
                 #~ self.__url__)
-        #~ return (self.settings_dict['__name__'],
-                #~ self.settings_dict['__version__'],
-                #~ self.settings_dict['__url__'])
+        #~ return (self.django_settings['__name__'],
+                #~ self.django_settings['__version__'],
+                #~ self.django_settings['__url__'])
         #~ return ("Lino App",'0.1','http://code.google.com/p/lino/')
         
         #~ raise NotImplementedError()

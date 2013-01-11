@@ -1,0 +1,61 @@
+20130111
+========
+
+Hosting multiple Lino sites
+---------------------------
+
+Before doing an upgrade in Eupen I'd like to do it on lino-framework.org, 
+and before *that* I'd like to run more tests because recently there were some 
+problems related to certain demo fixtures not working in certain 
+language configurations.
+And I had some ideas about how to automate these tests.
+New documentation page :doc:`/admin/local_lino`.
+These things are good to solve before a first partner 
+gets started with Lino mass hosting.
+
+- :meth:`lino.Lino.__init__` no longer hardcodedly tries to 
+  import a `sitecustomize_lino` module::
+
+        try:
+            from sitecustomize_lino import on_init
+        except ImportError:
+            pass
+        else:
+            on_init(self)
+
+- In :class:`lino.Lino`, renamed the site attribute `settings_dict` to 
+  :attr:`<django_settings> lino.Lino.django_settings`.
+  
+- New management command `initdb_demo <lino.management.commands.initdb_demo>`
+  and new Lino setting :attr:`demo_fixtures <lino.Lino.demo_fixtures>`.
+  
+
+Release
+-------
+
+Is it possible to use the distutils `setup.py upload` command several times for 
+the same version?
+
+Until now I always did the following when releasing ::
+
+  python setup.py register sdist --formats=gztar,zip upload
+  
+But can I **upload** a version without previously **registering** it?
+Yes::
+
+  python setup.py sdist --formats=gztar,zip upload
+  adding 'lino-1.5.3\tests\misc\choices.py'
+  adding 'lino-1.5.3\tests\misc\diag.py'
+  removing 'lino-1.5.3' (and everything under it)
+  running upload
+  Submitting dist\lino-1.5.3.tar.gz to http://pypi.python.org/pypi
+  Server response (200): OK
+  Submitting dist\lino-1.5.3.zip to http://pypi.python.org/pypi
+  Server response (200): OK
+
+
+
+
+
+
+

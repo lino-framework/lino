@@ -23,6 +23,7 @@ import decimal
 import datetime
 from dateutil import parser as dateparser
 
+from django.core.exceptions import ValidationError
 from django.core.exceptions import MultipleObjectsReturned
 from django.db import models
 from django.contrib.contenttypes.models import ContentType
@@ -41,9 +42,9 @@ class DataError(Exception):
     
 import django.dispatch
 
-auto_created = django.dispatch.Signal(providing_args=["field","value"])
+auto_create = django.dispatch.Signal(providing_args=["field","value"])
 """
-The :attr:`auto_created` signal is sent when 
+The :attr:`auto_create` signal is sent when 
 :func:`lookup_or_create` silently created an instance.
 
 Arguments sent with this signal:
@@ -63,18 +64,20 @@ Arguments sent with this signal:
     
 def lookup_or_create(model,lookup_field,value,**known_values):
     """
-    Look-up whether there is a model instance having 
-    `lookup_field` with value `value`
-    (and the optional `known_values` matching exactly)
+    Look-up whether there is a model instance having `lookup_field` with value `value`
+    (and optional other `known_values` matching exactly)
     """
-    logger.info("2013011 lookup_or_create")
+    #~ logger.info("2013011 lookup_or_create")
     fkw = dict()
     fkw.update(known_values)
         
     if isinstance(lookup_field,babel.BabelCharField):
         flt  = babel.lookup_filter(lookup_field.name,value,**known_values)
     else:
-        fkw[lookup_field.name+'__iexact'] = value
+        if isinstance(lookup_field,models.CharField):
+            fkw[lookup_field.name+'__iexact'] = value
+        else:
+            fkw[lookup_field.name] = value
         flt = models.Q(**fkw)
         #~ flt = models.Q(**{self.lookup_field.name: value})
     qs = model.objects.filter(flt)
@@ -87,8 +90,11 @@ def lookup_or_create(model,lookup_field,value,**known_values):
     #~ known_values[lookup_field.name] = value
     obj = model(**known_values)
     setattr(obj,lookup_field.name,value)
-    auto_created.send(obj,known_values=known_values)
-    obj.full_clean()
+    try:
+        obj.full_clean()
+    except ValidationError,e:
+        raise ValidationError("Failed to auto_create %s : %s" % (obj2str(obj),e))
+    auto_create.send(obj,known_values=known_values)
     obj.save()
     return obj
     

@@ -67,7 +67,7 @@ from lino.models import SiteConfig
 #~ from lino.modlib.notes import models as notes
 #~ from lino.modlib.cal import models as cal
 
-if True: # dd.is_installed('igen'):
+#~ if True: # dd.is_installed('igen'):
 
     #~ contacts = dd.get_app('contacts')
     #~ notes = dd.get_app('notes')
@@ -106,24 +106,24 @@ if True: # dd.is_installed('igen'):
             #~ app_label = 'cal'
      
      
-    dd.inject_field(
-        SiteConfig,
-        'sales_base_account',
-        models.ForeignKey("ledger.Account",
-            blank=True,null=True,
-            verbose_name=_("Sales base account"),
-            related_name='sales_base_sites'),
-        """The account where to book base amount of sales.
-        """)
+    #~ dd.inject_field(
+        #~ SiteConfig,
+        #~ 'sales_base_account',
+        #~ models.ForeignKey("ledger.Account",
+            #~ blank=True,null=True,
+            #~ verbose_name=_("Sales base account"),
+            #~ related_name='sales_base_sites'),
+        #~ """The account where to book base amount of sales.
+        #~ """)
 
-    dd.inject_field(
-        SiteConfig,
-        'sales_vat_account',
-        models.ForeignKey("ledger.Account",
-            blank=True,null=True,
-            verbose_name=_("Sales VAT account"),
-            related_name='sales_vat_sites'),
-        """The account where to book VAT amount of sales.
-        """)
+    #~ dd.inject_field(
+        #~ SiteConfig,
+        #~ 'sales_vat_account',
+        #~ models.ForeignKey("ledger.Account",
+            #~ blank=True,null=True,
+            #~ verbose_name=_("Sales VAT account"),
+            #~ related_name='sales_vat_sites'),
+        #~ """The account where to book VAT amount of sales.
+        #~ """)
 
      

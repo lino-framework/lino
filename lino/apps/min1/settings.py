@@ -19,7 +19,7 @@ import lino
 from lino.apps.std.settings import *
 
 class Lino(Lino):
-    source_dir = os.path.dirname(__file__)
+    #~ source_dir = os.path.dirname(__file__)
     title = "Lino/MinimalApp 1"
     #~ help_url = "http://lino.saffre-rumma.net/az/index.html"
     #~ migration_module = 'lino.apps.az.migrate'
@@ -39,7 +39,7 @@ class Lino(Lino):
     
     #~ remote_user_header = "REMOTE_USER"
     
-    def get_app_source_file(self):  return __file__
+    #~ def get_app_source_file(self):  return __file__
         
     def setup_quicklinks(self,ar,tb):
         tb.add_action(self.modules.contacts.Persons.detail_action)
@@ -56,22 +56,5 @@ class Lino(Lino):
         yield 'lino.apps.min1'
       
 LINO = Lino(__file__,globals())
-
-
-TIME_ZONE = None
-
-
-unused_INSTALLED_APPS = (
-  #~ 'django.contrib.auth',
-  'django.contrib.contenttypes',
-  #~ 'django.contrib.sessions',
-  #~ 'django.contrib.sites',
-  #~ 'django.contrib.markup',
-  'lino',
-  'lino.modlib.users',
-  'lino.modlib.countries',
-  'lino.modlib.contacts',
-  'lino.apps.min1',
-)
 
 

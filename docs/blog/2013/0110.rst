@@ -22,6 +22,9 @@ now no longer fails if there is no City named `municipality`,
 but silently creates it using 
 :func:`lino.utils.intantiator.lookup_or_create`.
 
+This is also my first use of a custom Django signal 
+(a great technique which I should use more often).
+
 Configuration example::
 
   from lino.utils.instantiator import auto_created

@@ -38,127 +38,126 @@ def objects():
     company = Instantiator('contacts.Company',"name zip_code city:name street street_no",country='EE').build
     yield company('Rumma & Ko OÜ','10115','Tallinn','Tartu mnt','71')
     #~ Company = resolve_model('contacts.Company')
-    #~ obj = Company(name=u'Rumma & Ko OÜ',zip_code='10115',street=u'Tartu mnt',street_no='71')
+    #~ obj = Company(name='Rumma & Ko OÜ',zip_code='10115',street='Tartu mnt',street_no='71')
     #~ print obj2str(obj)
     #~ yield obj
     
     company = Instantiator('contacts.Company',"name zip_code city:name street street_no",country='BE').build
-    yield company('Bäckerei Ausdemwald', '4700', 'Eupen',  u'Vervierser Straße','45')
-    yield company('Bäckerei Mießen',     '4700', 'Eupen',  u'Gospert','103')
-    yield company('Bäckerei Schmitz',    '4700', 'Eupen',  u'Aachener Straße','53')
-    yield company('Garage Mergelsberg',  '4720', 'Kelmis', u'Kasinostraße','13')
+    yield company('Bäckerei Ausdemwald', '4700', 'Eupen',  'Vervierser Straße','45')
+    yield company('Bäckerei Mießen',     '4700', 'Eupen',  'Gospert','103')
+    yield company('Bäckerei Schmitz',    '4700', 'Eupen',  'Aachener Straße','53')
+    yield company('Garage Mergelsberg',  '4720', 'Kelmis', 'Kasinostraße','13')
     
     company = Instantiator('contacts.Company',"name zip_code city:name street street_no",country='NL').build
-    yield company(u'Donderweer BV','4816 AR','Breda', 'Edisonstraat','12')
-    yield company(u'Van Achter NV','4836 LG','Breda', 'Hazeldonk','2')
+    yield company('Donderweer BV','4816 AR','Breda', 'Edisonstraat','12')
+    yield company('Van Achter NV','4836 LG','Breda', 'Hazeldonk','2')
     
     company = Instantiator('contacts.Company',"name zip_code city:name street street_no",country='DE').build
     yield company('Hans Flott & Co','22453','Hamburg','Niendorfer Weg','532')
-    yield company('Bernd Brechts Bücherladen','80333','München','Brienner Straße','18')
+    yield company('Bernd Brechts Bücherladen','80333','Munich','Brienner Straße','18')
     yield company('Reinhards Baumschule','12487 ','Berlin','Segelfliegerdamm','123')
     
     company = Instantiator('contacts.Company',"name zip_code city:name street street_no",country='FR').build
-    yield company(u'Moulin Rouge','75018','Paris',u'Boulevard de Clichy','82')
-    yield company(u'Auto École Verte','54000 ','Nancy',u'rue de Mon Désert','12')
+    yield company('Moulin Rouge','75018','Paris','Boulevard de Clichy','82')
+    yield company('Auto École Verte','54000 ','Nancy','rue de Mon Désert','12')
     
     City = resolve_model('countries.City')
     vigala = City.objects.get(name__exact='Vigala')
     #~ tallinn = City.objects.get(name__exact='Tallinn')
     person = Instantiator(settings.LINO.person_model,"first_name last_name",
                 country='EE',street='Uus', street_no='1',
-                addr2=u'Vana-Vigala küla',
+                addr2='Vana-Vigala küla',
                 city=vigala,zip_code='78003').build
-    #~ yield person(u'Luc',  u'Saffre', gender=Gender.male,birth_date='1968-06-01')
-    yield person(u'Luc',  u'Saffre', gender=mixins.Genders.male)
+    yield person('Luc',  'Saffre', gender=mixins.Genders.male)
     
     eupen = City.objects.get(name__exact='Eupen')
     person = Instantiator(settings.LINO.person_model,"first_name last_name",
                 country='BE',city=eupen,zip_code='4700').build
-    yield person(u'Andreas',  u'Arens',gender=mixins.Genders.male)
-    yield person(u'Annette',  u'Arens',gender=mixins.Genders.female)
-    yield person(u'Hans',     u'Altenberg',gender=mixins.Genders.male)
-    yield person(u'Alfons',   u'Ausdemwald',gender=mixins.Genders.male)
-    yield person(u'Laurent',  u'Bastiaensen',gender=mixins.Genders.male)
-    yield person(u'Charlotte', u'Collard',gender=mixins.Genders.female)
-    yield person(u'Ulrike',   u'Charlier',gender=mixins.Genders.female)
-    yield person(u'Marc',  u'Chantraine',gender=mixins.Genders.male)
-    yield person(u'Daniel',   u'Dericum',gender=mixins.Genders.male)
-    yield person(u'Dorothée', u'Demeulenaere',gender=mixins.Genders.female)
-    yield person(u'Berta',    u'Ernst',gender=mixins.Genders.female)
-    yield person(u'Bernd',    u'Evertz',gender=mixins.Genders.male)
-    yield person(u'Eberhart', u'Evers',gender=mixins.Genders.male)
-    yield person(u'Daniel',   u'Emonts',gender=mixins.Genders.male)
-    yield person(u'Edgar',    u'Engels',gender=mixins.Genders.male)
-    yield person(u'Luc',      u'Faymonville',gender=mixins.Genders.male)
-    yield person(u'Germaine', u'Gernegroß',gender=mixins.Genders.female)
-    yield person(u'Gregory',  u'Groteclaes',gender=mixins.Genders.male)
-    yield person(u'Hildegard',u'Hilgers',gender=mixins.Genders.female)
-    yield person(u'Henri',    u'Hilgers',gender=mixins.Genders.male)
-    yield person(u'Irene',    u'Ingels',gender=mixins.Genders.female)
-    yield person(u'Jérémy',   u'Jansen',gender=mixins.Genders.male)
-    yield person(u'Jacqueline', u'Jacobs',gender=mixins.Genders.female)
-    yield person(u'Johann', u'Johnen',gender=mixins.Genders.male)
-    yield person(u'Josef', u'Jonas',gender=mixins.Genders.male)
-    yield person(u'Jan',   u'Jousten',gender=mixins.Genders.male)
-    yield person(u'Karl',  u'Kaivers',gender=mixins.Genders.male)
-    yield person(u'Guido', u'Lambertz',gender=mixins.Genders.male)
-    yield person(u'Laura', u'Laschet',gender=mixins.Genders.female)
-    yield person(u'Line', u'Lazarus',gender=mixins.Genders.female)
-    yield person(u'Josefine', u'Leffin',gender=mixins.Genders.female)
-    yield person(u'Marc', u'Malmendier',gender=mixins.Genders.male)
-    yield person(u'Melissa', u'Meessen',gender=mixins.Genders.female)
-    yield person(u'Michael', u'Mießen',gender=mixins.Genders.male)
-    yield person(u'Marie-Louise', u'Meier',gender=mixins.Genders.female)
+    yield person('Andreas',  'Arens',gender=mixins.Genders.male)
+    yield person('Annette',  'Arens',gender=mixins.Genders.female)
+    yield person('Hans',     'Altenberg',gender=mixins.Genders.male)
+    yield person('Alfons',   'Ausdemwald',gender=mixins.Genders.male)
+    yield person('Laurent',  'Bastiaensen',gender=mixins.Genders.male)
+    yield person('Charlotte', 'Collard',gender=mixins.Genders.female)
+    yield person('Ulrike',   'Charlier',gender=mixins.Genders.female)
+    yield person('Marc',  'Chantraine',gender=mixins.Genders.male)
+    yield person('Daniel',   'Dericum',gender=mixins.Genders.male)
+    yield person('Dorothée', 'Demeulenaere',gender=mixins.Genders.female)
+    yield person('Berta',    'Ernst',gender=mixins.Genders.female)
+    yield person('Bernd',    'Evertz',gender=mixins.Genders.male)
+    yield person('Eberhart', 'Evers',gender=mixins.Genders.male)
+    yield person('Daniel',   'Emonts',gender=mixins.Genders.male)
+    yield person('Edgar',    'Engels',gender=mixins.Genders.male)
+    yield person('Luc',      'Faymonville',gender=mixins.Genders.male)
+    yield person('Germaine', 'Gernegroß',gender=mixins.Genders.female)
+    yield person('Gregory',  'Groteclaes',gender=mixins.Genders.male)
+    yield person('Hildegard','Hilgers',gender=mixins.Genders.female)
+    yield person('Henri',    'Hilgers',gender=mixins.Genders.male)
+    yield person('Irene',    'Ingels',gender=mixins.Genders.female)
+    yield person('Jérémy',   'Jansen',gender=mixins.Genders.male)
+    yield person('Jacqueline', 'Jacobs',gender=mixins.Genders.female)
+    yield person('Johann', 'Johnen',gender=mixins.Genders.male)
+    yield person('Josef', 'Jonas',gender=mixins.Genders.male)
+    yield person('Jan',   'Jousten',gender=mixins.Genders.male)
+    yield person('Karl',  'Kaivers',gender=mixins.Genders.male)
+    yield person('Guido', 'Lambertz',gender=mixins.Genders.male)
+    yield person('Laura', 'Laschet',gender=mixins.Genders.female)
+    yield person('Line', 'Lazarus',gender=mixins.Genders.female)
+    yield person('Josefine', 'Leffin',gender=mixins.Genders.female)
+    yield person('Marc', 'Malmendier',gender=mixins.Genders.male)
+    yield person('Melissa', 'Meessen',gender=mixins.Genders.female)
+    yield person('Michael', 'Mießen',gender=mixins.Genders.male)
+    yield person('Marie-Louise', 'Meier',gender=mixins.Genders.female)
     
     raeren = City.objects.get(name__exact='Raeren')
     person = Instantiator(settings.LINO.person_model,"first_name last_name",
                 country='BE',language=default_language(),
                 city=raeren,zip_code='4730').build
-    yield person(u'Erich',    u'Emonts',gender=mixins.Genders.male)
-    yield person(u'Erwin',    u'Emontspool',gender=mixins.Genders.male)
-    yield person(u'Erna',     u'Emonts-Gast',gender=mixins.Genders.female)
-    yield person(u'Alfons',     u'Radermacher',gender=mixins.Genders.male)
-    yield person(u'Berta',     u'Radermacher',gender=mixins.Genders.female)
-    yield person(u'Christian',     u'Radermacher',gender=mixins.Genders.male)
-    yield person(u'Daniela',     u'Radermacher',gender=mixins.Genders.female)
-    yield person(u'Edgard',     u'Radermacher',gender=mixins.Genders.male)
-    yield person(u'Fritz',     u'Radermacher',gender=mixins.Genders.male)
-    yield person(u'Guido',     u'Radermacher',gender=mixins.Genders.male)
-    yield person(u'Hans',     u'Radermacher',gender=mixins.Genders.male)
-    yield person(u'Hedi',     u'Radermacher',gender=mixins.Genders.female)
-    yield person(u'Inge',     u'Radermacher',gender=mixins.Genders.female)
-    yield person(u'Jean',     u'Radermacher',gender=mixins.Genders.male)
+    yield person('Erich',    'Emonts',gender=mixins.Genders.male)
+    yield person('Erwin',    'Emontspool',gender=mixins.Genders.male)
+    yield person('Erna',     'Emonts-Gast',gender=mixins.Genders.female)
+    yield person('Alfons',     'Radermacher',gender=mixins.Genders.male)
+    yield person('Berta',     'Radermacher',gender=mixins.Genders.female)
+    yield person('Christian',     'Radermacher',gender=mixins.Genders.male)
+    yield person('Daniela',     'Radermacher',gender=mixins.Genders.female)
+    yield person('Edgard',     'Radermacher',gender=mixins.Genders.male)
+    yield person('Fritz',     'Radermacher',gender=mixins.Genders.male)
+    yield person('Guido',     'Radermacher',gender=mixins.Genders.male)
+    yield person('Hans',     'Radermacher',gender=mixins.Genders.male)
+    yield person('Hedi',     'Radermacher',gender=mixins.Genders.female)
+    yield person('Inge',     'Radermacher',gender=mixins.Genders.female)
+    yield person('Jean',     'Radermacher',gender=mixins.Genders.male)
     
     # special challenges for alphabetic ordering
-    yield person(u'Didier',     u'di Rupo',gender=mixins.Genders.male)
-    yield person(u'David', u'da Vinci',gender=mixins.Genders.male)
-    yield person(u'Vincent',   u'van Veen',gender=mixins.Genders.male)
-    yield person(u'Rein',   u'Õunapuu',gender=mixins.Genders.male)
+    yield person('Didier',     'di Rupo',gender=mixins.Genders.male)
+    yield person('David', 'da Vinci',gender=mixins.Genders.male)
+    yield person('Vincent',   'van Veen',gender=mixins.Genders.male)
+    yield person('Rein',   'Õunap',gender=mixins.Genders.male)
     
-    yield person(u'Otto',   u'Östges',gender=mixins.Genders.male)
-    yield person(u'Erna',   u'Ärgerlich',gender=mixins.Genders.female)
+    yield person('Otto',   'Östges',gender=mixins.Genders.male)
+    yield person('Erna',   'Ärgerlich',gender=mixins.Genders.female)
     
     
-    person = Instantiator(settings.LINO.person_model,country='BE',city=City.objects.get(name__exact=u'Angleur')).build
-    yield person(first_name=u'Bernard',last_name=u'Bodard',title='Dr.')
-    yield person(first_name=u'Jean',last_name=u'Dupont')
+    person = Instantiator(settings.LINO.person_model,country='BE',city=City.objects.get(name__exact='Angleur')).build
+    yield person(first_name='Bernard',last_name='Bodard',title='Dr.')
+    yield person(first_name='Jean',last_name='Dupont')
     
-    #~ person = Instantiator(settings.LINO.person_model,country='BE',city=City.objects.get(name__exact=u'Oostende')).build
+    #~ person = Instantiator(settings.LINO.person_model,country='BE',city=City.objects.get(name__exact='Oostende')).build
     person = Instantiator(settings.LINO.person_model,country='NL',city=City.objects.get(name__exact='Amsterdam')).build
-    yield person(first_name=u'Mark',last_name=u'Martelaer',gender=mixins.Genders.male)
-    yield person(first_name=u'Rik',last_name=u'Radermecker',gender=mixins.Genders.male)
-    yield person(first_name=u'Marie-Louise',last_name=u'Vandenmeulenbos',gender=mixins.Genders.female)
+    yield person(first_name='Mark',last_name='Martelaer',gender=mixins.Genders.male)
+    yield person(first_name='Rik',last_name='Radermecker',gender=mixins.Genders.male)
+    yield person(first_name='Marie-Louise',last_name='Vandenmeulenbos',gender=mixins.Genders.female)
     
     person = Instantiator(settings.LINO.person_model,country='DE').build
-    yield person(first_name=u'Emil',last_name=u'Eierschal',gender=mixins.Genders.male)
-    yield person(first_name=u'Lisa',last_name=u'Lahm',gender=mixins.Genders.female)
-    yield person(first_name=u'Bernd',last_name=u'Brecht',gender=mixins.Genders.male)
-    yield person(first_name=u'Karl',last_name=u'Keller',gender=mixins.Genders.male)
+    yield person(first_name='Emil',last_name='Eierschal',gender=mixins.Genders.male)
+    yield person(first_name='Lisa',last_name='Lahm',gender=mixins.Genders.female)
+    yield person(first_name='Bernd',last_name='Brecht',gender=mixins.Genders.male)
+    yield person(first_name='Karl',last_name='Keller',gender=mixins.Genders.male)
     
     person = Instantiator(settings.LINO.person_model,country='FR').build
-    yield person(first_name=u'Robin',last_name=u'Dubois',gender=mixins.Genders.male)
-    yield person(first_name=u'Denis',last_name=u'Denon',gender=mixins.Genders.male)
-    yield person(first_name=u'Jérôme',last_name=u'Jeanémart',gender=mixins.Genders.male)
+    yield person(first_name='Robin',last_name='Dubois',gender=mixins.Genders.male)
+    yield person(first_name='Denis',last_name='Denon',gender=mixins.Genders.male)
+    yield person(first_name='Jérôme',last_name='Jeanémart',gender=mixins.Genders.male)
     
     
     s = u"""\
