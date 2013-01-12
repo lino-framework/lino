@@ -47,7 +47,8 @@ class Lino(Lino):
     author = 'Luc Saffre'
     author_email = 'luc.saffre@gmail.com'
     
-    demo_fixtures = 'std few_countries few_cities few_languages props demo demo2 history'.split()
+    #~ demo_fixtures = 'std few_countries few_cities few_languages props demo demo2 history'.split()
+    demo_fixtures = 'std all_countries be few_cities all_languages props democfg demo demo2 history local'.split()
     
     #~ languages = ['en']
     #~ languages = 'de fr et en'.split()

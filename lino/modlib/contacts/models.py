@@ -844,7 +844,7 @@ MODULE_LABEL = _("Contacts")
 def site_setup(site):
     site.modules.countries.Cities.set_detail_layout("""
     name country 
-    parent type id
+    type parent zip_code id 
     CitiesByCity
     contacts.PartnersByCity
     """)

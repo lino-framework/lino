@@ -1,0 +1,13 @@
+20130112
+========
+
+- Updated :mod:`lino.test_apps.20121124` because 
+  :djangoticket:`19360`(annotate the sum of related TimeField)
+  has been closed.
+  
+  
+
+The :mod:`lino.modlib.countries.fixtures.be` fixture now supposes that :mod:`few_cities` 
+has also been loaded and thus does not load the few Belgian cities defined there.
+This is because now that City is BabelNamed it is more complex to detect 
+whether a City aready has been created or not.

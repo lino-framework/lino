@@ -36,14 +36,15 @@ You'll need the following Debian packages installed:
 * Packages needed by Lino to work::
 
     python-django
-    python-dateutil python-yaml python-cheetah python-docutils python-vobject python-lxml
+    python-jinja2
+    python-sphinx
+    python-dateutil python-yaml python-docutils python-vobject python-lxml
     python-pysqlite2
     mysql-server python-mysqldb
     
   Alternatively you can use PyPI to install these::
     
     python-dateutil
-    Cheetah
     docutils
     vobject 
     lxml
@@ -177,6 +178,9 @@ into `~/snapshots/`::
   
   wget http://pypi.python.org/packages/source/o/odfpy/odfpy-0.9.4.tar.gz
   tar -xvzf odfpy-0.9.4.tar.gz
+  
+  wget http://twitter.github.com/bootstrap/assets/bootstrap.zip
+  unzip bootstrap.zip
   
   
 Note: Lino didn't yet migrate to ExtJS 4.0. See :doc:`/tickets/40`
@@ -382,6 +386,7 @@ tell Lino where certain other software is installed on your server::
   ln -s ~/snapshots/lino/media lino
   ln -s ~/snapshots/ext-3.3.1 extjs
   ln -s ~/snapshots/extensible-1.0.1 extensible
+  ln -s ~/snapshots/bootstrap bootstrap
   ln -s /usr/share/tinymce/www tinymce
   ln -s /usr/share/tinymce/www beid_jslib
   

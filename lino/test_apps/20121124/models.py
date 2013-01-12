@@ -2,6 +2,9 @@
 Is it allowed to annotate the Sum of a TimeField?
 ==================================================
 
+Answer: Not under sqlite. See :djangoticket:`19360`.
+
+
 Let's create two tickets:
 
 >>> t1 = Ticket(name="Ticket #1")

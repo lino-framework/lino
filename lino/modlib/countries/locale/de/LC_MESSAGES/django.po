@@ -8,7 +8,7 @@ msgstr ""
 "Project-Id-Version: lino.modlib.countries\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2013-01-01 10:51+0000\n"
-"PO-Revision-Date: 2012-10-17 09:35+0200\n"
+"PO-Revision-Date: 2013-01-12 07:25+0200\n"
 "Last-Translator: Luc Saffre <luc.saffre@gmail.com>\n"
 "Language-Team: de <luc.saffre@gmail.com>\n"
 "MIME-Version: 1.0\n"
@@ -52,7 +52,7 @@ msgstr "Provinz"
 
 #: .\models.py:58
 msgid "Shire"
-msgstr ""
+msgstr "Grafschaft"
 
 #: .\models.py:59
 msgid "Subregion"
@@ -96,7 +96,7 @@ msgstr "Pfarre"
 
 #: .\models.py:71
 msgid "Township"
-msgstr ""
+msgstr "Stadtteil"
 
 #: .\models.py:72
 msgid "Quarter"

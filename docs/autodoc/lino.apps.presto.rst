@@ -22,10 +22,3 @@ settings
     :show-inheritance:
 
 
-The `history` fixture
----------------------
-
-.. automodule:: lino.apps.presto.fixtures.history
-    :members:
-    :show-inheritance:
-

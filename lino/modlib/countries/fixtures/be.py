@@ -1,5 +1,5 @@
 # -*- coding: UTF-8 -*-
-## Copyright 2010-2011 Luc Saffre
+## Copyright 2010-2013 Luc Saffre
 ## This file is part of the Lino project.
 ## Lino is free software; you can redistribute it and/or modify 
 ## it under the terms of the GNU General Public License as published by
@@ -11,6 +11,10 @@
 ## GNU General Public License for more details.
 ## You should have received a copy of the GNU General Public License
 ## along with Lino; if not, see <http://www.gnu.org/licenses/>.
+"""
+Note: this fixture supposes that :mod:`few_cities` has also been loaded 
+and thus does not load the few Belgian cities defined there.
+"""
 
 from lino.core.modeltools import resolve_model
 from lino.utils.instantiator import Instantiator
@@ -64,7 +68,7 @@ belgian_cities = u"""
 1070 Anderlecht 
 6150 Anderlues 
 4821 Andrimont 
-4031 Angleur 
+# 4031 Angleur 
 7387 Angre 
 7387 Angreau 
 5537 Anhée 
@@ -419,7 +423,7 @@ belgian_cities = u"""
 1080 Brussel 8 
 1090 Brussel 9 
 3800 Brustem 
-1000 Bruxelles 1 
+# 1000 Bruxelles 1 
 1120 Bruxelles 12 
 1130 Bruxelles 13 
 1140 Bruxelles 14 
@@ -727,7 +731,7 @@ belgian_cities = u"""
 1040 Etterbeek 
 7340 Eugies (Colfontaine) 
 7080 Eugies (Frameries) 
-4700 Eupen 
+# 4700 Eupen 
 4631 Evegnée 
 5350 Evelette 
 9660 Everbeek 
@@ -1258,7 +1262,7 @@ belgian_cities = u"""
 3950 Kaulille 
 3140 Keerbergen 
 8600 Keiem 
-4720 Kelmis 
+# 4720 Kelmis 
 4367 Kemexhe 
 8956 Kemmel 
 9190 Kemzeke 
@@ -1273,7 +1277,7 @@ belgian_cities = u"""
 3010 Kessel-Lo 
 3640 Kessenich 
 1755 Kester 
-4701 Kettenis 
+# 4701 Kettenis 
 5060 Keumiée 
 9130 Kieldrecht (Beveren) 
 3640 Kinrooi 
@@ -1323,7 +1327,7 @@ belgian_cities = u"""
 3945 Kwaadmechelen 
 9690 Kwaremont 
 7080 La Bouverie 
-4720 La Calamine 
+# 4720 La Calamine 
 7611 La Glanerie 
 4987 La Gleize 
 7170 La Hestre 
@@ -1430,8 +1434,8 @@ belgian_cities = u"""
 8810 Lichtervelde 
 1770 Liedekerke 
 9400 Lieferinge 
-4000 Liège 1
-4020 Liège 2 
+# 4000 Liège 1
+# 4020 Liège 2 
 2500 Lier 
 9570 Lierde 
 4990 Lierneux 
@@ -1505,7 +1509,6 @@ belgian_cities = u"""
 3560 Lummen 
 5170 Lustin 
 6238 Luttre 
-L1217 LUXEMBOURG (BEGGEN) 
 9680 Maarkedal 
 9680 Maarke-Kerkem 
 3680 Maaseik 
@@ -1681,7 +1684,7 @@ L1217 LUXEMBOURG (BEGGEN)
 5555 Monceau-en-Ardenne 
 6592 Monceau-Imbrechies 
 6031 Monceau-sur-Sambre 
-7000 Mons 
+# 7000 Mons 
 4400 Mons-lez-Liège 
 1400 Monstreux 
 6661 Mont (Lux.) 
@@ -1879,7 +1882,7 @@ L1217 LUXEMBOURG (BEGGEN)
 9041 Oostakker 
 8670 Oostduinkerke 
 9968 Oosteeklo 
-8400 Oostende 
+# 8400 Oostende 
 9860 Oosterzele 
 3945 Oostham 
 8020 Oostkamp 
@@ -2046,7 +2049,7 @@ L1217 LUXEMBOURG (BEGGEN)
 7380 Quiévrain 
 6792 Rachecourt 
 4287 Racour 
-4730 Raeren 
+# 4730 Raeren 
 6532 Ragnies 
 4987 Rahier 
 7971 Ramegnies 
@@ -2884,7 +2887,8 @@ def objects():
         country='BE',
         type=countries.CityTypes.city).build
     for ln in belgian_cities.splitlines():
-        if ln.strip():
+        ln = ln.strip()
+        if ln and ln[0] != '#':
             args = ln.split(None,1)
             o = city(*args)
             # print "%r %r" % (o.zip_code, o.name)

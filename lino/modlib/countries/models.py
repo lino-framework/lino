@@ -56,8 +56,8 @@ add('13', _('Community'))            # fr:Communauté de: Gemeinschaft
 add('14', _('Territory'))
 #~ add('15', _('City-state'))        # et:Linnriik  de:Stadtstaat  fr:Cité-État
 
-add('20', _('County'),'county')            # et:maakond   de:Regierungsbezirk
-add('21', _('Province'),'province')
+add('20', _('County'),'county')      # et:maakond   de:Regierungsbezirk
+add('21', _('Province'),'province')  
 add('22', _('Shire'))
 add('23', _('Subregion'))
 add('24', _('Department'))
@@ -71,7 +71,7 @@ add('51', _('Town'),'town')              # et:linn      de:Kleinstadt
 add('52', _('Municipality'),'municipality')      # et:vald     de:Gemeinde fr:Commune
 #~ add('53', _('Commune'),'commune')           # de:Kommune fr:Commune
 add('54', _('Parish'),'parish')           # de:Pfarre fr:Paroisse
-add('55', _('Township'),'township')           # de:Stadtteil fr:?
+add('55', _('Township'),'township')         # de:Stadtteil fr:?
 add('56', _('Quarter'),'quarter')           # de:Viertel fr:Quartier
 
 add('61', _('Borough'),'borough')           # et:alev
@@ -225,12 +225,13 @@ class Cities(dd.Table):
     order_by = "country name".split()
     column_names = "country name type zip_code *"
     detail_layout = """
-    name type
-    country id parent zip_code
+    name country 
+    type parent zip_code id 
     CitiesByCity
     """
     
 class CitiesByCity(Cities):
+    label = _("Subdivisions")
     master_key = 'parent'
     column_names = "name type zip_code *"
     
