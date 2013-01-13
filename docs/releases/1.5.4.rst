@@ -1,0 +1,12 @@
+Version 1.5.4
+=============
+
+:checkin:`e905b89ac5ee`
+
+
+General
+-------
+
+Lots of bug fixes, also some API changes.
+See developer's blog for details.
+

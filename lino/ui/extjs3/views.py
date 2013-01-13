@@ -64,8 +64,6 @@ pages = dd.resolve_app('pages')
 class HttpResponseDeleted(http.HttpResponse):
     status_code = 204
     
-    
-
 
 def requested_actor(app_label,actor):
     x = getattr(settings.LINO.modules,app_label)
@@ -1014,69 +1012,6 @@ class ApiList(View):
             ar.ui.ar2html(ar,t,ar.data_iterator)
             doc.write(response,encoding='utf-8')
             return response
-            
-        if fmt == ext_requests.URL_FORMAT_PLAIN:
-            ar.renderer = ar.ui.plain_renderer
-            E = xghtml.E
-            
-            buttons = []
-            buttons.append( ('*',_("Home"), '/' ))
-            buttons.append( ('Ext',_("Using ExtJS"), ar.ui.ext_renderer.get_request_url(ar) ))
-            pglen = ar.limit or PLAIN_PAGE_LENGTH
-            if ar.offset is None:
-                page = 1
-            else:
-                """
-                (assuming pglen is 5)
-                offset page
-                0      1
-                5      2
-                """
-                page = int(ar.offset / pglen) + 1
-            kw = dict()
-            kw = {ext_requests.URL_PARAM_FORMAT:ext_requests.URL_FORMAT_PLAIN}
-            if pglen != PLAIN_PAGE_LENGTH:
-                kw[ext_requests.URL_PARAM_LIMIT] = pglen
-              
-            if page > 1:
-                kw[ext_requests.URL_PARAM_START] = pglen * (page-2) 
-                prev_url = ar.get_request_url(**kw)
-                kw[ext_requests.URL_PARAM_START] = 0
-                first_url = ar.get_request_url(**kw)
-            else:
-                prev_url = None
-                first_url = None
-            buttons.append( ('<<',_("First page"), first_url ))
-            buttons.append( ('<',_("Previous page"), prev_url ))
-            
-            next_start = pglen * page 
-            if next_start < ar.get_total_count():
-                kw[ext_requests.URL_PARAM_START] = next_start
-                next_url = ar.get_request_url(**kw)
-                last_page = int((ar.get_total_count()-1) / pglen)
-                kw[ext_requests.URL_PARAM_START] = pglen * last_page
-                last_url = ar.get_request_url(**kw)
-            else:
-                next_url = None 
-                last_url = None 
-            buttons.append( ('>',_("Next page"), next_url ))
-            buttons.append( ('>>',_("Last page"), last_url ))
-                
-            chunks = []
-            for text,title,url in buttons:
-                chunks.append('[')
-                if url:
-                    chunks.append(E.a(text,href=url,title=title))
-                else:
-                    chunks.append(text)
-                chunks.append('] ')
-                
-            t = xghtml.Table()
-            #~ t = doc.add_table()
-            ar.ui.ar2html(ar,t,ar.sliced_data_iterator)
-            
-            return plain_html_page(ar,ar.get_title(),E.p(*chunks),t)
-                
             
         raise http.Http404("Format %r not supported for GET on %s" % (fmt,ar.actor))
 

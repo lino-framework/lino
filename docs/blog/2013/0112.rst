@@ -1,13 +1,58 @@
 20130112
 ========
 
+Miscellaneous
+-------------
+
 - Updated :mod:`lino.test_apps.20121124` because 
   :djangoticket:`19360`(annotate the sum of related TimeField)
   has been closed.
   
-  
+- The :mod:`lino.modlib.countries.fixtures.be` fixture no longer
+  loads the Belgian cities defined 
+  in :mod:`few_cities <lino.modlib.countries.fixtures.few_cities>`.
+  This is because now that City is BabelNamed it is more complex to detect 
+  whether a City aready has been created or not.
 
-The :mod:`lino.modlib.countries.fixtures.be` fixture now supposes that :mod:`few_cities` 
-has also been loaded and thus does not load the few Belgian cities defined there.
-This is because now that City is BabelNamed it is more complex to detect 
-whether a City aready has been created or not.
+Blogging with Sphinx
+--------------------
+
+Today I discovered `Tinkerer <http://www.tinkerer.me>`__,
+a system to write static blogs using Sphinx.
+
+Tinkerer is really great, 
+but has a fundamental problem for me:  
+it requires me to 
+think of the title of a blog post before starting it.
+And to not change that title later.
+
+In fact **I am not a blogger**:
+I document my work on Lino using something which looks 
+like blogging at first glance, but it is not blogging, it is change logging. 
+The changelog is a part of Lino. 
+It's not important to me to have my changelog entries 
+published and spread quickly, they rather are a trace of what 
+I have been doing on Lino and why. They sometimes 
+help me to understand changes I have done years ago.
+A changelog has at most one entry per day,
+so it is useles to create a directory per day.
+
+Then I discovered that my biggest problem with documenting 
+code changes and releases for Lino and Lino-Welfare was the 
+fact that Lino-Welfare had a multilingual `/docs` tree.
+Changed that back to be a "technical" (English-only) 
+website for administrators and developers.
+The user manual for Lino-Welfare OTOH must be in NL, FR and DE 
+(and **not** in English).
+The sources for the user manual are in 
+`/userman` 
+and are currently not published.
+
+Wrote a new directive 
+:class:`blogindex <lino.utils.sphinxconf.BlogIndexDirective>` 
+used to generate the overview calendars in 
+:doc:`/blog/2012/index`
+and
+:doc:`/blog/2013/index`.
+See source code of these pages.
+

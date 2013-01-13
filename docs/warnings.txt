@@ -1,4 +1,5 @@
 WARNING: intersphinx identifier 'lino_welfare' is not alphanumeric
+T:\hgwork\lino\docs\blog\2013\0112.rst:7: WARNING: Inline interpreted text or phrase reference start-string without end-string.
 T:\hgwork\lino\docs\casts\lino_intro.rst:: WARNING: document isn't included in any toctree
 T:\hgwork\lino\docs\dev\versioning.rst:: WARNING: document isn't included in any toctree
 T:\hgwork\lino\docs\igen\index.rst:: WARNING: document isn't included in any toctree

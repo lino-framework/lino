@@ -23,6 +23,8 @@ Used by the Lino documentation::
 """
 
 import os
+import calendar
+
 import lino
 
 
@@ -30,7 +32,9 @@ import lino
 
 from docutils import nodes
 from docutils.parsers.rst import directives
+from sphinx.util.compat import Directive
 
+from lino.utils import babel
 
 #~ class ScreenshotDirective(directives.images.Image):
     #~ """
@@ -141,6 +145,121 @@ def autodoc_add_srcref(app,what,name,obj,options,lines):
             #~ lines.insert(0,'(We also recommend to read the source code at :srcref:`/%s.py`)' % name.replace('.','/'))
     
 
+import jinja2
+
+templates = dict()
+templates['calendar.rst'] = """
+====
+{{year}}
+====
+
+{{intro}}
+
+.. |br| raw:: html
+
+   <br />   
+
+.. |sp| raw:: html
+
+   <span style="color:white;">00</span>
+
+{{calendar}}
+
+
+"""
+
+JINJA_ENV = jinja2.Environment(
+    #~ extensions=['jinja2.ext.i18n'],
+    loader=jinja2.DictLoader(templates))
+
+
+class InsertInputDirective(Directive):
+    has_content = True
+    def get_rst(self):
+        raise NotImplementedErrro()
+        
+    def run(self):
+        out = self.get_rst()
+        #~ print '-' * 50
+        #~ print out
+        #~ print '-' * 50
+        #~ sys.exit()
+        self.state_machine.insert_input(out.splitlines(),out)
+        return []
+
+    
+class BlogIndexDirective(InsertInputDirective):
+    """
+    Directive to insert a year's calendar
+    """
+    #~ required_arguments = 1
+    
+    def get_rst(self):
+        #~ year = self.arguments[0]
+        env = self.state.document.settings.env
+        
+        intro = '\n'.join(self.content)
+        dn  = os.path.dirname(env.doc2path(env.docname))
+        year = os.path.split(dn)[-1]
+        year = int(year)
+        
+        days = set()
+            
+        for (dirpath, dirnames, filenames) in os.walk(dn):
+            for fn in filenames:
+                if fn.endswith('.rst'):
+                    s = fn[:-4]
+                    if len(s) == 4:
+                        days.add(s)
+        
+        
+        tpl = JINJA_ENV.get_template('calendar.rst')
+        
+        cal = calendar.Calendar()
+        text = ''
+        
+        for month in range(1,13):
+            
+            text += """        
+            
+.. |M%02d| replace::  **%s**""" % (month,babel.monthname(month))
+            
+            weeknum = None
+            for day in cal.itermonthdates(year,month):
+                iso_year,iso_week,iso_day = day.isocalendar()
+                if iso_week != weeknum:
+                    text += "\n  |br|"
+                    weeknum = iso_week
+                if day.month == month:
+                    label = "%02d" % day.day
+                    docname = "%02d%02d" % (day.month,day.day)
+                    if year == iso_year and docname in days:
+                        text += " :doc:`%s <%s>` " % (label,docname)
+                    else:
+                        text += ' ' + label + ' '
+                else:
+                    text += ' |sp| '
+                
+            
+            
+        text += """
+        
+===== ===== =====
+|M01| |M02| |M03|
+|M04| |M05| |M06|
+|M07| |M08| |M09|
+|M10| |M11| |M12|
+===== ===== =====
+        
+        """
+        
+        
+        return tpl.render(
+            calendar=text,intro=intro,env=env,
+            year=year,
+            days=days)
+        
+
 def setup(app):
     """
     The Sphinx setup function used for Lino-related documentation trees.
@@ -166,9 +285,12 @@ def setup(app):
     app.connect('autodoc-skip-member',autodoc_skip_member)
     app.connect('autodoc-process-docstring', autodoc_add_srcref)
 
+    #~ app.add_node(blogindex)
+    #~ app.add_node(blogindex,html=(visit_blogindex,depart_blogindex))
+    app.add_directive('blogindex', BlogIndexDirective)
     #~ app.add_directive('screenshot', ScreenshotDirective)
     #~ app.add_config_value('screenshots_root', '/screenshots/', 'html')
 
     app.add_stylesheet('linodocs.css')
 
-
+    

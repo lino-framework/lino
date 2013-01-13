@@ -44,6 +44,8 @@ logger = logging.getLogger(__name__)
 
 import sys
 import locale
+import datetime
+
 
 from django.db import models
 from django.conf import settings
@@ -137,6 +139,10 @@ def lc2locale(lang,country):
     else:
         return lang+'_'+country
         
+
+def monthname(n):
+    d = datetime.date(2013,n,1)
+    return defaultfilters.date(d,'F')
 
 def dtomy(d):
     """

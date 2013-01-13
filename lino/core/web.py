@@ -26,9 +26,6 @@ import datetime
 import inspect
 import jinja2
 
-#~ from jinja2 import Template
-
-#~ from jinja2 import Environment, PackageLoader
 
 from django.conf import settings
 from django.utils.translation import get_language
