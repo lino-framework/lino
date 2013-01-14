@@ -1,0 +1,15 @@
+#69 : central place to store the version number
+===============================================
+
+It seems that there is no "official" possibility 
+to store the version number of a Python project 
+in a single central place.
+
+Lino's :xfile:`setup.py` does an ``import lino`` to take it 
+from :attr:`lino.Lino.version`. 
+That's okay for me the author who just uses :xfile:`setup.py`
+to `sdist` and `upload`.
+
+But ``setup.py install`` of course wouldn't work.
+See also  http://stackoverflow.com/questions/6786555/automatic-version-number-both-in-setup-py-setuptools-and-source-code
+

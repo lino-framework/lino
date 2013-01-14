@@ -438,14 +438,16 @@ class Movement(mixins.Sequenced):
     @dd.virtualfield(dd.PriceField(_("Debit")))
     def debit(self,ar):
         if self.dc: 
-            return ZERO
+            #~ return ZERO
+            return None
         return self.amount
     
     @dd.virtualfield(dd.PriceField(_("Credit")))
     def credit(self,ar):
         if self.dc: 
             return self.amount
-        return ZERO
+        #~ return ZERO
+        return None
             
     @dd.displayfield(_("Voucher"))
     def voucher_link(self,ar):

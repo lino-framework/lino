@@ -956,6 +956,7 @@ class DatePickerFieldElement(FieldElement):
     
 class DateFieldElement(FieldElement):
     if settings.LINO.use_spinner:
+        raise Exception("20130114")
         value_template = "new Lino.SpinnerDateField(%s)"
     else:
         value_template = "new Lino.DateField(%s)"
@@ -1036,6 +1037,7 @@ class IncompleteDateFieldElement(CharFieldElement):
 
 
 class DecimalFieldElement(FieldElement):
+    #~ value_template = "new Ext.form.NumberField(%s)"
     filter_type = 'numeric'
     gridfilters_settings = dict(type='numeric')
     xtype = 'numberfield'
@@ -1756,7 +1758,7 @@ class GridElement(Container):
     def __init__(self,layout_handle,name,rpt,*columns,**kw):
         """
         :param layout_handle: the handle of the FormLayout owning this grid
-        :param rpt: the report being displayed
+        :param rpt: the table being displayed (:class:`lino.core.tables.AbstractTable`)
         """
         #~ assert isinstance(rpt,dd.AbstractTable), "%r is not a Table!" % rpt
         self.value_template = "new Lino.%s.GridPanel(%%s)" % rpt
@@ -1786,6 +1788,9 @@ class GridElement(Container):
         #~ //~ scrollOffset:200,
         #~ //~ enableRowBody: true,
         
+        if rpt.auto_fit_column_widths:
+            vc.update(forceFit=True)
+            
         kw.update(viewConfig=vc)
         kw.setdefault('label',rpt.label)
         

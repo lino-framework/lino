@@ -1,32 +1,32 @@
 20130114
 ========
 
-Bug-hunting in :mod:`lino.apps.cosi`.
-Problems are getting very subtle. 
+Sales invoices 
+--------------
 
-- Problem report:
-  Saving a 
-  :class:`sales.Invoice <lino.modlib.sales.models.Invoice>`
-  whose state is   
-  :class:`draft <lino.modlib.sales.models.InvoiceStates>`
-  returned no available actions ("<p><b>Draft</b></p>")
-  in :meth:`workflow_buttons <lino.core.model.Model.get_workflow_buttons>`
-  while after clicking the `Refresh` button they showed up correctly.
+Today I had a bug-hunting tour in :mod:`lino.apps.cosi`,
+more precisely at the sales invoices.
 
-- Explanation:
-  This was because 
-  :meth:`get_workflow_actions <lino.core.actors.Actor.get_workflow_actions>` 
-  called 
-  :meth:`get_actions <lino.core.actors.Actor.get_actions>` 
-  with the requesting `ar.bound_action.action`
-  (for the `Refresh` button this is a `ShowDetailAction`
-  while for the `Save` button it's a  SubmitDetail` instance).
+Saving a 
+:class:`sales.Invoice <lino.modlib.sales.models.Invoice>`
+whose state is   
+:class:`draft <lino.modlib.sales.models.InvoiceStates>`
+returned no available actions ("<p><b>Draft</b></p>")
+in :meth:`workflow_buttons <lino.core.model.Model.workflow_buttons>`
+while after clicking the `Refresh` button they showed up correctly.
 
-- Solution:
-  Changed :meth:`lino.core.actors.Actor.get_workflow_actions` 
+This was because 
+:meth:`get_workflow_actions <lino.core.actors.Actor.get_workflow_actions>` 
+called 
+:meth:`get_actions <lino.core.actors.Actor.get_actions>` 
+with the requesting `ar.bound_action.action`
+(for the `Refresh` button this is a `ShowDetailAction`
+while for the `Save` button it's a  SubmitDetail` instance).
 
-But oops, 
-I almost forgot that we're in guinea pig testing mode.
+Solution:
+Changed :meth:`lino.core.actors.Actor.get_workflow_actions` 
+
+But, oops I almost forgot that we're in guinea pig testing mode.
 And that's again a change to the framework which is not 
 allowed until the definitive release.
 Bend the rules once more and let this change pass?
@@ -34,6 +34,9 @@ Go back in time and release yesterday?
 None of both: since the change is only one line of code, 
 I manually restore the previous state, 
 do the official releases, then continue.
+
+Official release
+----------------
 
 So here they are: 
 Lino :doc:`/releases/1.5.4` is there::
@@ -55,9 +58,14 @@ didn't pass at the first attempt::
 This was because I called `setuptools.setup()` with a `name` of
 `"lino_welfare"` instead of `"lino-welfare"`.
 
+After the release, besides restoring 
+:meth:`lino.core.actors.Actor.get_workflow_actions`,
+I fiddled again with :xfile:`setup.py`.
+Opened :doc:`/tickets/69`.
 
-The total fields of invoices
-----------------------------
+
+Sales invoices (continued)
+--------------------------
 
 Another subtle problem solved: 
 the total fields of a 
@@ -91,7 +99,27 @@ of a sales invoice when you have modified some item.
 At least as long as Lino doesn't do this automatically.
 
 
+Added a new parameter
+:attr:`auto_fit_column_widths 
+<lino.core.tables.AbstractTable.auto_fit_column_widths>`
+which will set the `forceFit` config option
+of ExtJS's `Ext.grid.GridView`.
 
 
+Added `.x-form-num-field { text-align: right;}` to 
+:srcref:`/media/extjs/lino.css` after reading
+`NumberField and Right Alignment 
+<http://www.sencha.com/forum/showthread.php?70195-NumberField-and-Right-Alignment>`__
+
+[23:00] I start to be satisfied. Some quick screenshots:
+
+.. image:: 0114a.jpg
+  :scale: 40
+
+.. image:: 0114b.jpg
+  :scale: 40
+
+.. image:: 0114c.jpg
+  :scale: 40
 
 

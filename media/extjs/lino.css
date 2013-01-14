@@ -1,5 +1,5 @@
 /*
- Copyright 2009-2012 Luc Saffre
+ Copyright 2009-2013 Luc Saffre
  This file is part of the Lino project.
  Lino is free software; you can redistribute it and/or modify 
  it under the terms of the GNU General Public License as published by
@@ -337,4 +337,12 @@ $a.icon_file
 }
 .x-tbar-parameters{
 	background-image: url(images/mjames/database_gear.png) !important;
+}
+
+/* 
+Thanks to Animal in 
+http://www.sencha.com/forum/showthread.php?70195-NumberField-and-Right-Alignment
+*/
+.x-form-num-field {
+    text-align: right;
 }

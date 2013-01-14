@@ -674,6 +674,14 @@ class AbstractTable(actors.Actor):
     #~ A dictionary of default parameters for :class:`computed columns <ComputedColumn>` on this table.
     #~ """
     
+    
+    auto_fit_column_widths = False
+    """
+    Set this to True if you want to have 
+    the column widths adjusted to always fill the available width.
+    This implies that there will be no horizontal scrollbar.
+    """
+    
     #~ hide_columns = None
     #~ hidden_columns = frozenset()
     
@@ -683,13 +691,14 @@ class AbstractTable(actors.Actor):
     that should be hidden by default when rendering 
     this actor in a grid.
     
-    When specified on a :class:`lino.core.model.Model` 
-    or on a :class:`dd.Table <lino.core.dbtables.Table>`, 
+    When specified as class attribute of a 
+    :class:`lino.core.model.Model` 
+    or a :class:`dd.Table <lino.core.dbtables.Table>`, 
     this can be a single string containing 
     a space-separated list of field names. 
-    Lino will automatically 
-    resolve this using 
-    :func:`dd.fields_list <lino.core.fields.fields_list>` during server startup.
+    Lino will automatically resolve this using 
+    :func:`dd.fields_list <lino.core.fields.fields_list>` 
+    during server startup.
     
     Otherwise it must be specified as a set of strings, 
     each one the name of a data element.

@@ -379,13 +379,6 @@ Medium-term
     There should be a configuration option to handle this preference.
     Also a Regions table.
 
-#.  Für das zentrale Speichern der Versionsnummer sehe ich noch nicht klar.
-    Meine setup.py macht ein ``import lino`` um sie rauszufinden. 
-    Das funktioniert auch, solange ich setup.py nur für mich als Entwickler 
-    benutze.
-    Aber ein ``setup.py install`` würde natürlich nicht funktionieren.
-    Siehe auch http://stackoverflow.com/questions/6786555/automatic-version-number-both-in-setup-py-setuptools-and-source-code
-
 #.  Die virtuellen Felder `applies_from` und `applies_until` 
     in :class:`Meine Klienten <lino.apps.pcsw.models.MyPersons>` 
     machen jedes seinen eigenen Datenbank-Request 

@@ -284,8 +284,8 @@ class SalesDocument(
     imode = models.ForeignKey(InvoicingMode,blank=True,null=True)
     shipping_mode = models.ForeignKey(ShippingMode,blank=True,null=True)
     payment_term = models.ForeignKey(PaymentTerm,blank=True,null=True)
-    sales_remark = models.CharField("Remark for sales",
-      max_length=200,blank=True)
+    #~ sales_remark = models.CharField("Remark for sales",
+      #~ max_length=200,blank=True)
     subject = models.CharField("Subject line",max_length=200,blank=True)
     #~ vat_exempt = models.BooleanField(default=False)
     #~ item_vat = models.BooleanField(default=False)
@@ -467,10 +467,10 @@ class InvoiceItem(ProductDocItem):
 
 
 class InvoiceDetail(dd.FormLayout):
-    main = "general ledger"
+    main = "general more ledger"
     
     totals = dd.Panel("""
-    discount
+    # discount
     total_base
     total_vat
     total_incl
@@ -478,16 +478,21 @@ class InvoiceDetail(dd.FormLayout):
     """,label=_("Totals"))
     
     invoice_header = dd.Panel("""
-    id date partner language
-    order your_ref subject 
-    imode due_date:20 shipping_mode payment_term  vat_regime item_vat
-    user sales_remark project 
-    """,label=_("Header"))
+    date partner vat_regime 
+    order subject your_ref 
+    payment_term due_date:20 
+    imode shipping_mode     
+    """,label=_("Header")) # sales_remark 
     
     general = dd.Panel("""
     invoice_header:60 totals:20
     ItemsByInvoice
     """,label=_("General"))
+    
+    more = dd.Panel("""
+    id user language project item_vat
+    intro
+    """,label=_("More"))
     
     ledger = dd.Panel("""
     journal year number narration
@@ -527,7 +532,7 @@ class InvoicesByJournal(Invoices):
     #master = journals.Journal
     column_names = "number date due_date " \
                   "partner " \
-                  "total_incl order subject:10 sales_remark:10 " \
+                  "total_incl order subject:10 " \
                   "total_base total_vat user *"
                   #~ "ledger_remark:10 " \
                   
@@ -597,6 +602,9 @@ class ItemsByDocument(dd.Table):
 
 class ItemsByInvoice(ItemsByDocument):
     model = InvoiceItem
+    auto_fit_column_widths = True
+    column_names = "seqno:3 product title description:20x1 discount unit_price qty total_incl total_base total_vat"
+    hidden_columns = "seqno description total_base total_vat"
     
 
 class InvoiceItemsByProduct(ItemsByInvoice):
