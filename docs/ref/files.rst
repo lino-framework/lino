@@ -5,6 +5,10 @@ Files
 
   See :doc:`/blog/2012/0508`.
   
+.. xfile:: setup.py
+
+  Deserves more documentation.
+
 .. xfile:: settings.py
 
 See :doc:`/tutorials/polls` 

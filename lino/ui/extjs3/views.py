@@ -319,6 +319,12 @@ def form2obj_and_save(ar,data,elem,is_new,restful,file_upload=False): # **kw2sav
     
     kw = dict(success=True)
     
+    try:
+        elem.full_clean()
+    except exceptions.ValidationError, e:
+        kw = settings.LINO.ui.error(e) #,_("There was a problem while validating your data : "))
+        return json_response(kw)
+    
     #~ dirty = False
     #~ missing = object()
     #~ for k, v in original_state.iteritems():
@@ -331,12 +337,6 @@ def form2obj_and_save(ar,data,elem,is_new,restful,file_upload=False): # **kw2sav
         
         #~ if not is_new:
             #~ dblogger.log_changes(request,elem)
-            
-        try:
-            elem.full_clean()
-        except exceptions.ValidationError, e:
-            kw = settings.LINO.ui.error(e) #,_("There was a problem while validating your data : "))
-            return json_response(kw)
             
             
         kw2save = {}

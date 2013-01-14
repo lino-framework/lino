@@ -1,4 +1,4 @@
-## Copyright 2012 Luc Saffre
+## Copyright 2012-2013 Luc Saffre
 ## This file is part of the Lino project.
 ## Lino is free software; you can redistribute it and/or modify 
 ## it under the terms of the GNU General Public License as published by
@@ -177,6 +177,12 @@ purchases_base purchases_vat
 
 
 class VatTotal(dd.Model):
+    """
+    Model mixin which defines the fields 
+    `total_incl`, `total_base` and `total_vat`.
+    Used for both the document header (:class:`VatDocument`) 
+    and for each item (:class:`VatItemBase`).
+    """
     class Meta:
         abstract = True
         
@@ -184,6 +190,34 @@ class VatTotal(dd.Model):
     total_incl = dd.PriceField(_("Total incl. VAT"),blank=True,null=True)
     total_base = dd.PriceField(_("Total excl. VAT"),blank=True,null=True)
     total_vat = dd.PriceField(_("VAT"),blank=True,null=True)
+    
+    
+    _total_fields = set('total_vat total_base total_incl'.split())
+    """
+    For internal use.
+    This is the list of field names to disable when `auto_compute_totals` is True.
+    """
+    
+    auto_compute_totals = False
+    """
+    Set this to True on subclasses who compute their totals automatically.
+    """
+    
+    #~ @classmethod
+    #~ def site_setup(cls,site):
+        #~ super(VatDocument,cls).site_setup(site)
+        #~ cls._total_fields = set(dd.fields_list(cls,
+            #~ 'total_vat total_base total_incl'))
+        
+    #~ def on_create(self,ar):
+        #~ super(VatDocument,self).on_create(ar)
+    
+    def disabled_fields(self,ar):
+        fields = super(VatTotal,self).disabled_fields(ar)
+        if self.auto_compute_totals:
+            fields = fields | self._total_fields
+        return fields
+    
     
     def reset_totals(self,ar):
         pass
@@ -239,10 +273,13 @@ class VatDocument(mixins.UserAuthored,VatTotal):
     This is also used for Offers and other non-ledger documents
     """
     
-    total_based_fields = set()
+    auto_compute_totals = True
     
-    compute_totals = False
-    
+    refresh_after_item_edit = False
+    """
+    See :doc:`/tickets/68`
+    """
+        
     class Meta:
         abstract = True
   
@@ -253,23 +290,23 @@ class VatDocument(mixins.UserAuthored,VatTotal):
     declaration = models.ForeignKey("vat.Declaration",blank=True,null=True)
     
     
-    @classmethod
-    def site_setup(cls,site):
-        super(VatDocument,cls).site_setup(site)
-        cls.total_based_fields = set(dd.fields_list(cls,'total_vat total_base'))
-        
-    #~ def on_create(self,ar):
-        #~ super(VatDocument,self).on_create(ar)
-    
-    def disabled_fields(self,ar):
-        fields = super(VatDocument,self).disabled_fields(ar)
-        if not self.compute_totals:
-            fields = fields | self.total_based_fields
-        return fields
-        
     def get_trade_type(self):
         raise NotImplementedError()
         
+        
+    def compute_totals(self):
+        if self.pk is None:
+            return
+        base = Decimal()
+        vat = Decimal()
+        for i in self.items.order_by('seqno'):
+            if i.total_base is not None:
+                base += i.total_base
+                vat += i.total_vat
+        self.total_base = base
+        self.total_vat = vat
+        self.total_incl = vat + base
+      
     def get_vat_sums(self):
         sums_dict = dict()
         def book(account,amount):
@@ -279,22 +316,12 @@ class VatDocument(mixins.UserAuthored,VatTotal):
                 sums_dict[account] = amount
         #~ if self.journal.type == JournalTypes.purchases:
         tt = self.get_trade_type()
-        base = Decimal()
-        vat = Decimal()
         for i in self.items.order_by('seqno'):
             if i.total_base is not None:
-                if i.total_vat is None or i.total_incl is None:
-                    raise Exception("20121208")
-                #~ move(i.get_base_account(),i.total)
                 book(i.get_base_account(tt),i.total_base)
                 vatacc = settings.LINO.get_vat_account(tt,i.vat_class,self.vat_regime)
                 vatacc = self.journal.chart.get_account_by_ref(vatacc)
                 book(vatacc,i.total_vat)
-                base += i.total_base
-                vat += i.total_vat
-        self.total_base = base
-        self.total_vat = vat
-        self.total_incl = vat + base
         return sums_dict
         
     def get_wanted_movements(self):
@@ -309,6 +336,14 @@ class VatDocument(mixins.UserAuthored,VatTotal):
         a = self.journal.chart.get_account_by_ref(a)
         yield self.create_movement(a,a.type.dc,sum,partner=self.partner)
         
+    def full_clean(self,*args,**kw):
+        self.compute_totals()
+        super(VatDocument,self).full_clean(*args,**kw)
+        
+    def register(self,ar):
+        self.compute_totals()
+        super(VatDocument,self).register(ar)
+        
 
 #~ class DeclaredVatDocument(VatDocument):
     #~ class Meta:
@@ -319,7 +354,8 @@ class VatItemBase(mixins.Sequenced,VatTotal):
     """
     Abstract Base class for InvoiceItem and OrderItem.
     Subclasses must define a field called "voucher" 
-    which must be a FK with related_name="items" to the owning document, 
+    which must be a FK with related_name="items" to the 
+    "owning document", 
     which in turn must be a subclass of :class:`VatDocument`).
     """
     class Meta:
@@ -333,7 +369,7 @@ class VatItemBase(mixins.Sequenced,VatTotal):
         return VatClasses.get_by_name(name)
         
     def vat_class_changed(self,ar):
-        logger.info("20121204 vat_class_changed")
+        #~ logger.info("20121204 vat_class_changed")
         if self.voucher.item_vat:
             self.total_incl_changed(ar)
         else:
@@ -356,18 +392,14 @@ class VatItemBase(mixins.Sequenced,VatTotal):
             self.vat_class,
             self.voucher.vat_regime)
         
-    #~ def full_clean(self,*args,**kw):
-    def before_ui_save(self,ar):
-        if self.total_incl is None:
-            self.reset_totals(ar)
-        super(VatItemBase,self).before_ui_save(ar)
-        #~ super(VatItemBase,self).full_clean(*args,**kw)
-    #~ before_save.alters_data = True
-      
-                    
+    #~ def save(self,*args,**kw):
+        #~ super(VatItemBase,self).save(*args,**kw)
+        #~ self.voucher.full_clean()
+        #~ self.voucher.save()
+        
     def reset_totals(self,ar):
         #~ logger.info("20121204 reset_totals")
-        if not self.voucher.compute_totals:
+        if not self.voucher.auto_compute_totals:
             total = Decimal()
             for item in self.voucher.items.exclude(id=self.id):
                 total += item.total_incl
@@ -377,6 +409,26 @@ class VatItemBase(mixins.Sequenced,VatTotal):
         
         super(VatItemBase,self).reset_totals(ar)
         
+    def before_ui_save(self,ar):
+        if self.total_incl is None:
+            self.reset_totals(ar)
+        super(VatItemBase,self).before_ui_save(ar)
+        #~ super(VatItemBase,self).full_clean(*args,**kw)
+    #~ before_save.alters_data = True
+      
+                    
+    def after_ui_save(self,ar,**kw):
+        """
+        after edit of a grid cell automatically show new invoice totals 
+        See :doc:`/tickets/68`
+        """
+        kw = super(VatItemBase,self).after_ui_save(ar,**kw)
+        if self.voucher.refresh_after_item_edit:
+            kw.update(refresh_all=True) 
+            self.voucher.compute_totals()
+            self.voucher.full_clean()
+            self.voucher.save()
+        return kw
 
     #~ def __unicode__(self):
         #~ return "%s object" % self.__class__.__name__
@@ -394,9 +446,12 @@ class QtyVatItemBase(VatItemBase):
     def unit_price_changed(self,ar):
         self.reset_totals(ar)
         
+    def qty_changed(self,ar):
+        self.reset_totals(ar)
+        
     def reset_totals(self,ar):
         super(QtyVatItemBase,self).reset_totals(ar)
-        #~ if not self.voucher.compute_totals:
+        #~ if not self.voucher.auto_compute_totals:
             #~ if self.qty:
                 #~ if self.voucher.item_vat: 
                     #~ self.unit_price = self.total_incl / self.qty
@@ -437,6 +492,10 @@ class Declaration(mixins.Registrable):
                 #~ self.compute_fields()
         #~ super(Declaration,self).save(*args,**kw)
     
+    def full_clean(self,*args,**kw):
+        self.compute_fields()
+        super(Declaration,self).full_clean(*args,**kw)
+        
     def register(self,ar):
         self.compute_fields()
         super(Declaration,self).register(ar)

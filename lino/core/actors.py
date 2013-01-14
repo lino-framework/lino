@@ -775,13 +775,16 @@ class Actor(actions.Parametrizable):
 
     @classmethod
     def get_workflow_actions(self,ar,obj):
+        """
+        Return the actions to be displayed in a `workflow_buttons` field.
+        """
         state = self.get_row_state(obj)
         #~ logger.info("20130114 get_workflow_actions() for %s (state is %s)",
             #~ ar.bound_action.action,state)
         #~ u = ar.get_user()
         
-        for ba in self.get_actions(ar.bound_action.action):
-        #~ for ba in self.get_actions():
+        #~ for ba in self.get_actions(ar.bound_action.action):
+        for ba in self.get_actions():
             if ba.action.show_in_workflow:
                 #~ if obj.get_row_permission(ar,state,ba):
                 if self.get_row_permission(obj,ar,state,ba):

@@ -79,4 +79,4 @@ sdist:
 	#~ python setup.py sdist --formats=gztar,zip --dist-dir=docs/dist
   
 upload:
-	python setup.py sdist --formats=gztar,zip upload 
+	python setup.py sdist --formats=gztar,zip --dist-dir=docs/dl upload 

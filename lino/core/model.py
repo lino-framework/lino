@@ -207,6 +207,7 @@ class Model(models.Model):
         or by 
         :class:`lino_welfare.modlib.jobs.models.Contract` 
         :class:`lino_welfare.modlib.pcsw.models.Coaching` 
+        :class:`lino.modlib.vat.models.Vat` 
         """
         return kw
         

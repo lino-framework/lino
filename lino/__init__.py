@@ -37,7 +37,7 @@ def buildurl(*args,**kw):
 
 from lino.utils.xmlgen import html as xghtml
 
-__version__ = "1.5.4"
+__version__ = "1.5.4+"
 """
 Lino version number. 
 """
@@ -258,9 +258,11 @@ class Lino(object):
     title = None
     #~ domain = "www.example.com"
     
-    python_name = None
+    pypi_name = None
     """
-    The pythonic name of the top-level module. Used for PyPI.
+    The PyPI name of this application. 
+    Used in :xfile:`setup.py` file as the `name` argument to 
+    `setuptools.setup() <http://guide.python-distribute.org/creation.html>`_.
     """
     
     short_name = None # "Unnamed Lino Application"

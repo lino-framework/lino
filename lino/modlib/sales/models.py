@@ -261,7 +261,7 @@ class SalesDocument(
     #~ or inherit it from Voucher (as does Invoice)
     """
     
-    compute_totals = True
+    auto_compute_totals = True
     
     class Meta:
         abstract = True
@@ -281,7 +281,7 @@ class SalesDocument(
         #~ blank=True,null=True,
         #~ related_name="shipTo_%(class)s")
     your_ref = models.CharField(max_length=200,blank=True)
-    imode = models.ForeignKey(InvoicingMode,blank=True)
+    imode = models.ForeignKey(InvoicingMode,blank=True,null=True)
     shipping_mode = models.ForeignKey(ShippingMode,blank=True,null=True)
     payment_term = models.ForeignKey(PaymentTerm,blank=True,null=True)
     sales_remark = models.CharField("Remark for sales",
@@ -324,8 +324,8 @@ class SalesDocument(
             #~ return None
         #~ return self.total_base + self.total_vat
     
-    def update_totals(self):
-        #~ logger.info("20121202 sales.update_totals()")
+    def unused_compute_totals(self):
+        #~ logger.info("20121202 sales.compute_totals()")
         if self.pk is None:
             return
         total_base = 0
@@ -345,8 +345,12 @@ class SalesDocument(
 
             
     def full_clean(self,*args,**kw):
-        if self.imode_id is None:
-            self.imode_id = 1 # self.partner
+        """
+        """
+        if self.imode is None:
+            #~ self.imode_id = 1 # self.partner
+            #~ self.imode_id = self.partner.imode
+            self.imode = self.partner.imode
         super(SalesDocument,self).full_clean(*args,**kw)
         #~ r = get_sales_rule(self)
         #~ if r is None:
@@ -357,7 +361,6 @@ class SalesDocument(
             #~ self.shipping_mode = r.shipping_mode
         #~ if self.shipping_mode is None:
             #~ self.shipping_mode = r.shipping_mode
-        self.update_totals()
       
 #~ SALES_PRINTABLE_FIELDS = dd.fields_list(SalesDocument,
   #~ 'customer imode payment_term '
@@ -680,6 +683,11 @@ def customize_contacts():
             default=False,
             help_text=_("The default item VAT setting for sales to this customer.")))
         
+    dd.inject_field('contacts.Partner',
+        'imode',
+        models.ForeignKey(InvoicingMode,blank=True,null=True))
+        
+        
 
 #~ def customize_contacts():
 
@@ -705,7 +713,7 @@ def site_setup(site):
               site.modules.contacts.Companies):
         t.add_detail_tab("sales",
             """
-            payment_term vat_regime item_vat
+            payment_term vat_regime item_vat imode
             sales.InvoicesByPartner
             """,
             label=MODULE_LABEL)

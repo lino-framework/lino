@@ -1,7 +1,8 @@
 Version 1.5.4
 =============
 
-:checkin:`e905b89ac5ee`
+Released 2013-01-14.
+:checkin:`b8561154158c`.
 
 
 General

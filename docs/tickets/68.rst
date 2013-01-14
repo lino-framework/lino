@@ -1,0 +1,22 @@
+#68 : Automatically update invoice total when item changed
+==========================================================
+
+The total fields of an invoice are currently not automatically 
+updated each time an item is modified. 
+Users must click the Save or the Register button to see the invoices totals.
+
+
+One idea is to have
+:meth:`lino.modlib.vat.models.VatItemBase.after_ui_save` 
+insert a `refresh_all=True`
+(into the response to the PUT or POST coming from 
+Lino.GridPanel.on_afteredit).
+This has the disadvantage that the cell cursor moves 
+to the upper left corner after each cell edit.
+
+You can see how this feels by setting 
+:meth:`lino.modlib.vat.models.VatDocument.refresh_after_item_edit` 
+to True.
+
+
+

@@ -4168,7 +4168,13 @@ Lino.GridPanel = Ext.extend(Lino.GridPanel,{
         waitMsg: 'Saving your data...',
         success: Lino.action_handler( this, function(result) {
           //~ if (result.data_record) {
-          if (result.rows) {
+          if (result.refresh_all) {
+              var cw = self.get_containing_window();
+              if (cw) {
+                  cw.main_item.refresh();
+              }
+              else console.log("20120123 cannot refresh_all",self);
+          } else if (result.rows) {
               //~ self.getStore().loadData(result,true);
               var r = self.getStore().reader.readRecords(result);
               if (e.record.phantom) {
