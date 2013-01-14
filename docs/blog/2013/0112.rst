@@ -48,11 +48,14 @@ The sources for the user manual are in
 `/userman` 
 and are currently not published.
 
-Wrote a new directive 
-:class:`blogindex <lino.utils.sphinxconf.BlogIndexDirective>` 
+Wrote a new directives 
+`blogger_year`
+and 
+`blogger_index`
+in 
+:mod:`lino.utils.sphinxconf` 
 used to generate the overview calendars in 
 :doc:`/blog/2012/index`
 and
 :doc:`/blog/2013/index`.
 See source code of these pages.
-

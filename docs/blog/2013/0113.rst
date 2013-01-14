@@ -1,0 +1,32 @@
+========
+20130113
+========
+
+An diesem Wochenende habe ich mit der Dokumentation herum experimentiert.
+Sichtbare Resultate so gut wie keine.
+Ich habe erkannt, dass ich die anwendungsspezifische Dokumentation 
+von Lino-Welfare nochmals aufteilen muss in 
+"technische Dokumentation" 
+und "Benutzerhandbuch". 
+Erstere ist *nur* in Englisch, 
+zweitere ist mehrsprachig de-fr-nl (und *nicht* in English).
+
+
+`Intersphinx <http://sphinx-doc.org/ext/intersphinx.html>`__
+funktioniert leider nur für *Objekte* 
+(z.B. :class:`BeIdCardTypes <lino_welfare.modlib.pcsw.models.BeIdCardTypes>`)
+und nicht für die ``:doc:`` role. 
+Deshalb würde von den folgenden Verweise k einer funktionieren::
+
+  :doc:`1.0.8 <welfare:/releases/1.0.8>`
+  :doc:`welfare:/releases/1.0.8`
+  :doc:`/releases/1.0.8`
+
+En attendant muss ich mich mit 
+`extlinks <http://sphinx-doc.org/ext/extlinks.html>`_-Einträgen 
+begnügen, also die folgenden Verweise müssten funktionieren:
+
+- welfare technical docs : :welfare:`Version 1.0.8 </releases/1.0.8>`
+- welfare userman de : :welfareusermande:`Klienten </user/clients>`
+- welfare userman fr : :welfareusermanfr:`Fiche technique </about/fiche>`
+

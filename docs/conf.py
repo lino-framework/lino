@@ -259,6 +259,9 @@ extlinks = {
   'extjs': ('http://www.sencha.com/deploy/dev/docs/?class=%s', ''),
   'extux': ('http://extjs-ux.org/ext-docs/?class=%s', ''),
   'djangoticket': ('http://code.djangoproject.com/ticket/%s', 'Django ticket #'),
+  'welfare': ('http://welfare.lino-framework.org%s.html', ''),
+  'welfareusermande': ('http://welfare-userman.lino-framework.org/de%s.html', ''),
+  'welfareusermanfr': ('http://welfare-userman.lino-framework.org/fr%s.html', ''),
 }
     
 #~ intersphinx_mapping = {
@@ -268,7 +271,9 @@ extlinks = {
 #~ welfare_inv = os.path.join('..','..','welfare','objects.inv')
 intersphinx_mapping = {
   #~ 'welfare': ('http://packages.python.org/lino-welfare/en', None )
-  'lino_welfare': ('http://welfare.lino-framework.org/en', None )
+  'welfare': (
+    'http://welfare.lino-framework.org',
+    r'c:\temp\sphinxbuild\welfare\html\objects.inv' )
 }
 
 autosummary_generate = True

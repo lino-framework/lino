@@ -5,7 +5,7 @@ TEMPDIR                = C:\\temp\\sphinxbuild\\$(SITENAME)
 BUILDDIR               = $(TEMPDIR)\\html
 CACHEDIR               = $(TEMPDIR)\\doctrees
 OPENHTML               = 'C:\\Program Files\\Mozilla Firefox\\firefox.exe'
-AUTODOC                = python l:\\snapshots\\sphinx-autopackage-script\\generate_modules.py
+#~ AUTODOC                = python l:\\snapshots\\sphinx-autopackage-script\\generate_modules.py
 #~ LINO_SRC     = t:\\hgwork\\lino\\lino
 # LINO_SRC     = `python -c "import lino,os; print os.path.dirname(lino.__file__)"`
 
@@ -15,7 +15,8 @@ SPHINXOPTS    = -w warnings.txt -n -P
 #~ SPHINXOPTS    = -w warnings.txt -n -P -D keep_warnings=True
 #~ SPHINXOPTS    = -W 
 #~ SPHINXOPTS    = 
-SPHINXBUILD   = python l:\\snapshots\\sphinx\\sphinx-build.py
+#~ SPHINXBUILD   = python l:\\snapshots\\sphinx\\sphinx-build.py
+SPHINXBUILD   = sphinx-build
 PAPER         =
 
 # Internal variables.

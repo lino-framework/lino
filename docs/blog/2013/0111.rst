@@ -104,7 +104,9 @@ The only workaround is to
    (currently I use `/dl <../../dl>`__)
 #. download and install that tarball to the guinea pig
 #. use this for testing at the guinea pig
-#. make a last definitive ``sdist`` **with** ``upload`` upload to PyPI when the guinea pig tests passed.
+#. make a last definitive ``sdist`` **with** ``upload`` 
+   to PyPI when the guinea pig tests passed.
+
 The only problem with this workaround is that I usually **forget** 
 this last step.
 But to be honest, that's only because there are no more Lino production users 
