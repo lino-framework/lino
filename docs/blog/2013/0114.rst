@@ -1,0 +1,40 @@
+20130114
+========
+
+Bug-hunting in :mod:`lino.apps.cosi`.
+Problems are getting very subtle. 
+
+- Problem report:
+  Saving a 
+  :class:`sales.Invoice <lino.modlib.sales.models.Invoice>`
+  whose state is   
+  :class:`draft <lino.modlib.sales.models.InvoiceStates>`
+  returned no available actions ("<p><b>Draft</b></p>")
+  in :meth:`workflow_buttons <lino.core.model.Model.workflow_buttons>`
+  while after clicking the `Refresh` button they showed up correctly.
+
+- Explanation:
+  This was because 
+  :meth:`get_workflow_actions <lino.code.actors.Actor.get_workflow_actions>` 
+  called 
+  :meth:`get_actions <lino.code.actors.Actor.get_actions>` 
+  with the requesting `ar.bound_action.action`
+  (for the `Refresh` button this is a `ShowDetailAction`
+  while for the `Save` button it's a  SubmitDetail` instance).
+
+- Solution:
+  Changed :meth:`lino.code.actors.Actor.get_workflow_actions` 
+
+But oops, 
+I almost forgot that we're in guinea pig testing mode.
+And that's again a change to the framework which is not 
+allowed until the definitive release.
+Bend the rules once more and let this change pass?
+Go back in time and release yesterday?
+None of both: since the change is only one line of code, 
+I manually restore the previous state, 
+do the official releases, then continue.
+
+So here they are: 
+:doc:`/releases/1.5.4` and
+:welfare:`Version 1.0.8 </releases/1.0.8>`.

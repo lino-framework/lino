@@ -72,7 +72,9 @@ products = dd.resolve_app('products')
 #~ add('E',_("E-mail"))
 
 class InvoiceStates(dd.Workflow):
-    pass
+    """
+    This lists the possible values for the workflow of a :class:`Invoice`
+    """
 add = InvoiceStates.add_item
 add('10',_("Draft"),'draft',editable=True)
 add('20',_("Registered"),'registered',editable=False) 
@@ -376,7 +378,9 @@ class SalesDocuments(dd.Table):
 
 
 class Invoice(SalesDocument,ledger.Voucher):
-  
+    """
+    An invoice usually used for selling something.
+    """
     class Meta:
         verbose_name = _("Invoice")
         verbose_name_plural = _("Invoices")
@@ -472,9 +476,9 @@ class InvoiceDetail(dd.FormLayout):
     
     invoice_header = dd.Panel("""
     id date partner language
-    order your_ref sales_remark subject 
+    order your_ref subject 
     imode due_date:20 shipping_mode payment_term  vat_regime item_vat
-    user project 
+    user sales_remark project 
     """,label=_("Header"))
     
     general = dd.Panel("""

@@ -1,3 +1,9 @@
+T:\hgwork\lino\docs\releases\index.rst:18: WARNING: toctree glob pattern u'2010/index' didn't match any documents
+T:\hgwork\lino\docs\releases\index.rst:18: WARNING: toctree glob pattern u'2011/index' didn't match any documents
+T:\hgwork\lino\docs\blog\2013\0114.rst:: WARNING: document isn't included in any toctree
 T:\hgwork\lino\docs\casts\lino_intro.rst:: WARNING: document isn't included in any toctree
 T:\hgwork\lino\docs\dev\versioning.rst:: WARNING: document isn't included in any toctree
 T:\hgwork\lino\docs\igen\index.rst:: WARNING: document isn't included in any toctree
+<autodoc>:1: WARNING: py:class reference target not found: lino.modlib.vat.models.QtyVatItemBase
+T:\hgwork\lino\docs\blog\2013\0114.rst:6: WARNING: py:meth reference target not found: lino.core.model.Model.workflow_buttons
+T:\hgwork\lino\docs\blog\2013\0114.rst:6: WARNING: py:meth reference target not found: lino.code.actors.Actor.get_workflow_actions

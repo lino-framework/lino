@@ -241,7 +241,7 @@ class RegisterAction(actions.RowAction):
     
     #~ icon_file = 'flag_green.png'
     #~ required = dict(states='draft')
-    help_text=_("Register this object.")
+    help_text = _("Register this object.")
     
     def attach_to_actor(self,actor,name):
         if not issubclass(actor.model,Registrable):
@@ -288,7 +288,7 @@ class Registrable(model.Model):
     """
     Base class to anything that may be "registered" and "deregistered".
     E.g. Invoices, Vouchers, Declarations are candidates. 
-    "Registered" in general means "this item has been taken account of". 
+    "Registered" in general means "this object has been taken account of". 
     Registered objects generally are not editable.
     """
     class Meta:

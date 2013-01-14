@@ -1,4 +1,4 @@
-## Copyright 2009-2012 Luc Saffre
+## Copyright 2009-2013 Luc Saffre
 ## This file is part of the Lino project.
 ## Lino is free software; you can redistribute it and/or modify 
 ## it under the terms of the GNU General Public License as published by
@@ -640,10 +640,10 @@ class TableAction(Action):
 
 class RowAction(Action):
     """
-    TODO: rename RowAction to ServerSideAction or AjaxAction
     Base class for actions that are executed server-side, 
     either on an individual row (if `single_row` is True) 
     or on a list.
+    TODO: rename RowAction to ServerSideAction or AjaxAction.
     """
     single_row = True
     preprocessor = None

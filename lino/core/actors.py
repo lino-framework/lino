@@ -1,4 +1,4 @@
-## Copyright 2009-2012 Luc Saffre
+## Copyright 2009-2013 Luc Saffre
 ## This file is part of the Lino project.
 ## Lino is free software; you can redistribute it and/or modify 
 ## it under the terms of the GNU General Public License as published by
@@ -776,14 +776,20 @@ class Actor(actions.Parametrizable):
     @classmethod
     def get_workflow_actions(self,ar,obj):
         state = self.get_row_state(obj)
+        #~ logger.info("20130114 get_workflow_actions() for %s (state is %s)",
+            #~ ar.bound_action.action,state)
         #~ u = ar.get_user()
+        
         for ba in self.get_actions(ar.bound_action.action):
+        #~ for ba in self.get_actions():
             if ba.action.show_in_workflow:
                 #~ if obj.get_row_permission(ar,state,ba):
                 if self.get_row_permission(obj,ar,state,ba):
                     yield ba
                 #~ else:
-                    #~ logger.info('20121020 no permission for [%s]', unicode(ba.action.label))
+                    #~ logger.info('20130114 %s has no permission for [%s]', ar.get_user(),unicode(ba.action.label))
+            #~ else:
+                #~ logger.info('20130114 [%s] has not show_in_workflow', unicode(ba.action.label))
         
     @classmethod
     def get_label(self):

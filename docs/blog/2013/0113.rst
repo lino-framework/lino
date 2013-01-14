@@ -3,7 +3,6 @@
 ========
 
 An diesem Wochenende habe ich mit der Dokumentation herum experimentiert.
-Sichtbare Resultate so gut wie keine.
 Ich habe erkannt, dass ich die anwendungsspezifische Dokumentation 
 von Lino-Welfare nochmals aufteilen muss in 
 "technische Dokumentation" 
