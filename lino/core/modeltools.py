@@ -58,8 +58,10 @@ def is_devserver():
     
     Added the `len(sys.argv) > 1` test because in a 
     wsgi application the process is called without arguments.
+    
+    Not only for `runserver` but also for `testserver`.
     """
-    return len(sys.argv) > 1 and sys.argv[1] == 'runserver'
+    return len(sys.argv) > 1 and sys.argv[1] in ('runserver','testserver')
 
 
 def resolve_app(app_label,strict=False):

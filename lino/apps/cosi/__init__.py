@@ -39,6 +39,8 @@ et m'aider à réfléchir.)
 
 """
 
+from __future__ import unicode_literals
+
 from os.path import join, abspath, dirname
 
 from lino.apps.std.settings import *
@@ -48,7 +50,8 @@ from django.utils.translation import ugettext_lazy as _
 class Lino(Lino):
   
     #~ title = __name__
-    short_name = u"Lino Così"
+    short_name = "Lino Così"
+    #~ short_name = "Lino Cosi"
     description = _("a Lino application to make Belgian accounting simple.")
     version = "0.1"
     url = "http://www.lino-framework.org/autodoc/lino.apps.cosi"

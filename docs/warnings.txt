@@ -1,6 +1,9 @@
+T:\hgwork\lino\docs\blog\2013\0115.rst:: WARNING: document isn't included in any toctree
 T:\hgwork\lino\docs\casts\lino_intro.rst:: WARNING: document isn't included in any toctree
 T:\hgwork\lino\docs\dev\versioning.rst:: WARNING: document isn't included in any toctree
 T:\hgwork\lino\docs\igen\index.rst:: WARNING: document isn't included in any toctree
-T:\hgwork\lino\docs\blog\2013\0114.rst:10: WARNING: py:meth reference target not found: lino.core.model.Model.workflow_buttons
-T:\hgwork\lino\docs\blog\2013\0114.rst:18: WARNING: py:meth reference target not found: lino.core.actors.Actor.get_actions
-T:\hgwork\lino\docs\blog\2013\0114.rst:82: WARNING: py:meth reference target not found: django.db.models.Model.full_clean
+None:None: WARNING: toctree contains reference to nonexisting document 'admin/local_lino'
+None:None: WARNING: toctree contains reference to nonexisting document 'admin/local_lino'
+None:None: WARNING: toctree contains reference to nonexisting document 'admin/local_lino'
+None:None: WARNING: toctree contains reference to nonexisting document 'admin/local_lino'
+None:None: WARNING: toctree contains reference to nonexisting document 'admin/local_lino'

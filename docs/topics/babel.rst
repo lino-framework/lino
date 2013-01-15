@@ -1,5 +1,6 @@
-Multilingual sites
-==================
+=============================
+Multilingual database content
+=============================
 
 This is for sites who need to generate documents in different languages from a single database.
 

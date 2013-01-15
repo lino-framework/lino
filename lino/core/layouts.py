@@ -1,4 +1,4 @@
-## Copyright 2009-2012 Luc Saffre
+## Copyright 2009-2013 Luc Saffre
 ## This file is part of the Lino project.
 ## Lino is free software; you can redistribute it and/or modify 
 ## it under the terms of the GNU General Public License as published by
@@ -12,8 +12,18 @@
 ## along with Lino; if not, see <http://www.gnu.org/licenses/>.
 
 '''
+This module defines the core classes 
 
-See :doc:`/topics/layouts`
+- :class:`FormLayout`, :class:`ListLayout`,
+  :class:`ParamsLayout` and :class:`ActionParamsLayout`
+  and their common base class :class:`BaseLayout`
+- :class:`Panel`
+- The internally used :class:`LayoutHandle` class
+
+See also:
+
+- Topic overview: :doc:`/topics/layouts`
+- Tutorial: :doc:`/tutorials/layouts`
 
 '''
 
@@ -64,8 +74,6 @@ class Panel(object):
     
     Unlike a :class:`FormPanel` it cannot have any child panels 
     and cannot become a tabbed panel.
-    
-    See :doc:`/topics/layouts`.
     """
     def __init__(self,desc,label=None,**options):
         self.desc = desc
@@ -86,7 +94,6 @@ class LayoutHandle:
     resulting LayoutElements provided by the UI.
     
     """
-    
     
     #~ 20120114 def __init__(self,ui,table,layout,hidden_elements=frozenset()):
     def __init__(self,ui,layout):

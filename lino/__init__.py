@@ -21,9 +21,10 @@ file since it does not import any django module.
 import os
 import sys
 import cgi
+import inspect
 import datetime
 
-from os.path import join, abspath, dirname, normpath
+from os.path import join, abspath, dirname, normpath, isdir
 from decimal import Decimal
 from urllib import urlencode
 
@@ -37,7 +38,7 @@ def buildurl(*args,**kw):
 
 from lino.utils.xmlgen import html as xghtml
 
-__version__ = "1.5.4+"
+__version__ = "1.5.5"
 """
 Lino version number. 
 """
@@ -550,15 +551,15 @@ class Lino(object):
     Used by :class:`lino.mixins.printable.AppyBuildMethod`.
     """
     
-    source_dir = None # os.path.dirname(__file__)
-    """
-    Full path to the source directory of this Lino application.
-    Local Lino subclasses should not override this variable.
-    This is used in :mod:`lino.utils.config` to decide 
-    whether there is a local config directory.
-    """
+    #~ source_dir = None # os.path.dirname(__file__)
+    #~ """
+    #~ Full path to the source directory of this Lino application.
+    #~ Local Lino subclasses should not override this variable.
+    #~ This is used in :mod:`lino.utils.config` to decide 
+    #~ whether there is a local config directory.
+    #~ """
     
-    source_name = None  # os.path.split(source_dir)[-1]
+    #~ source_name = None  # os.path.split(source_dir)[-1]
     
     project_name = None
     """
@@ -575,7 +576,8 @@ class Lino(object):
     The local project directory is where 
     local configuration files are stored:
     
-    - :xfile:`settings.py`, :xfile:`manage.py` and :xfile:`urls.py`
+    - Your :xfile:`settings.py`
+    - Optionally the :xfile:`manage.py` and :xfile:`urls.py` files
     - Your :xfile:`media` directory
     - Optional local :xfile:`config` and :xfile:`fixtures` directories
     """
@@ -869,12 +871,7 @@ class Lino(object):
         self.project_dir = normpath(dirname(project_file))
         self.project_name = os.path.split(self.project_dir)[-1]
         
-        self.source_dir = os.path.dirname(self.get_app_source_file())
-        self.source_name = os.path.split(self.source_dir)[-1]
         
-        #~ print "settings.LINO.source_dir:", self.source_dir
-        #~ print "settings.LINO.source_name:", self.source_name
-
         self.qooxdoo_prefix = '/media/qooxdoo/lino_apps/' + self.project_name + '/build/'
         #~ self.dummy_messages = set()
         self._setting_up = False
@@ -882,6 +879,23 @@ class Lino(object):
         #~ self._response = None
         self.django_settings = django_settings
         
+        
+        installed_apps = tuple(self.get_installed_apps())
+        django_settings.update(INSTALLED_APPS=installed_apps)
+        
+        """
+        The `is_local_project_dir` flag contains `True` if this is a "local" project.
+        A project is called local if 
+        """
+        self.is_local_project_dir = self.__module__ in installed_apps
+        #~ self.is_app = os.path.exist(join(self.project_dir,'models.py'))
+        
+        #~ self.source_dir = os.path.dirname(self.get_app_source_file())
+        #~ self.source_name = os.path.split(self.source_dir)[-1]
+        
+        #~ print "settings.LINO.source_dir:", self.source_dir
+        #~ print "settings.LINO.source_name:", self.source_name
+
         #~ self.appy_params.update(pythonWithUnoPath=r'C:\PROGRA~1\LIBREO~1\program\python.exe')
         #~ APPY_PARAMS.update(pythonWithUnoPath=r'C:\PROGRA~1\OPENOF~1.ORG\program\python.exe')
         #~ APPY_PARAMS.update(pythonWithUnoPath='/usr/bin/libreoffice')
@@ -895,18 +909,32 @@ class Lino(object):
             self.webdav_root = join(abspath(self.project_dir),'media','webdav')
             
         django_settings.update(MEDIA_ROOT = join(self.project_dir,'media'))
-        if self.project_dir != self.source_dir:
-            django_settings.update(FIXTURE_DIRS = [join(self.project_dir,"fixtures")])
+        
+        """
+        If your project_dir contains no :xfile:`models.py`, 
+        but *does* contain a `fixtures` subdir, 
+        then Lino automatically adds this as "local fixtures directory" 
+        to Django's `FIXTURE_DIRS`.
+        """
+        if self.is_local_project_dir:
+            pth = join(self.project_dir,'fixtures')
+            if isdir(pth):
+                django_settings.update(FIXTURE_DIRS = [pth])
+                
+        #~ get_settings_subdirs
+            
+        #~ if self.project_dir != self.source_dir:
+            #~ django_settings.update(FIXTURE_DIRS = [join(self.project_dir,"fixtures")])
             #~ lino.Lino.__init__ füllte project_dir auch dann nach FIXTURES_DIR, 
             #~ wenn es zugleich das source_dir war. Was die subtile Folge hatte, 
             #~ dass alle Fixtures doppelt ausgeführt wurden. 
             #~ Dieser Bug hat mich mindestens eine Stunde lang beschäftigt.            
 
-        django_settings.update(TEMPLATE_DIRS = (
-            join(abspath(self.project_dir),'templates'),
-            join(abspath(self.source_dir),'templates'),
-            join(abspath(dirname(__file__)),'templates'),
-        ))
+        #~ django_settings.update(TEMPLATE_DIRS = (
+            #~ join(abspath(self.project_dir),'templates'),
+            #~ join(abspath(self.source_dir),'templates'),
+            #~ join(abspath(dirname(__file__)),'templates'),
+        #~ ))
         
         django_settings.update(
             MIDDLEWARE_CLASSES=tuple(
@@ -917,9 +945,6 @@ class Lino(object):
                 ['lino.core.web.Loader']
                 ))
 
-        django_settings.update(
-            INSTALLED_APPS=tuple(
-                self.get_installed_apps()))
 
         self.startup_time = datetime.datetime.now()
         
@@ -931,7 +956,6 @@ class Lino(object):
         try:
             #~ from sitecustomize_lino import on_init
             import sitecustomize_lino
-            
             raise Exception("""
             Replace your sitecustomize_lino module 
             (%s)
@@ -952,6 +976,19 @@ class Lino(object):
               #~ }
             #~ })
         
+    def get_settings_subdirs(self,subdir_name):
+        """
+        Yield all (existing) directories named `subdir_name` 
+        of this site's project directory and it's inherited 
+        project directories.
+        """
+        for cl in self.__class__.__mro__:
+            #~ logger.info("20130109 inspecting class %s",cl)
+            if cl is not object and not inspect.isbuiltin(cl):
+                pth = join(dirname(inspect.getfile(cl)),subdir_name)
+                if isdir(pth):
+                    yield pth
+          
        
     def get_ui(self):
         if self._extjs_ui is None:
@@ -1564,6 +1601,8 @@ class Lino(object):
         :meth:`site_version`.
         
         """
+        from lino.utils import ispure
+        assert ispure(self.short_name)
         
         #~ ai = self.get_application_info()
         #~ if ai is not None:

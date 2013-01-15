@@ -1,5 +1,4 @@
-# -*- coding: UTF-8 -*-
-## Copyright 2009-2013 Luc Saffre
+## Copyright 2009-2012 Luc Saffre
 ## This file is part of the Lino project.
 ## Lino is free software; you can redistribute it and/or modify 
 ## it under the terms of the GNU General Public License as published by
@@ -44,6 +43,7 @@ from lino import dd
 #~ from lino.utils.mti import MtiChildWrapper
 
 SUFFIX = '.py'
+#~ SUFFIX = '.dpy'
 
 class Serializer(base.Serializer):
     """
@@ -72,10 +72,10 @@ class Serializer(base.Serializer):
             
             self.stream.write('''\
 """
-This is a `Python dump <http://lino-framework.org/topics/dumpy.html>`_.
+This is a `Python dump <http://lino-framework.org/topics/dumpy.html>`_ 
+created by `%s <%s>`_.
 """
-from __future__ import unicode_literals
-''')
+''' % (name,url))
             self.stream.write('SOURCE_VERSION = %r\n' % current_version)
             #~ self.stream.write('SOURCE_VERSION = %r\n' % lino.__version__)
             self.stream.write('from decimal import Decimal\n')
@@ -83,7 +83,6 @@ from __future__ import unicode_literals
             self.stream.write('from datetime import time,date\n')
             #~ self.stream.write('from lino.utils import i2d\n')
             #~ self.stream.write('from lino.utils.mti import insert_child\n')
-            self.stream.write('from lino.utils import babel\n')
             self.stream.write('from lino.utils.mti import create_child\n')
             self.stream.write('from lino.dd import resolve_model\n')
             self.stream.write('from django.contrib.contenttypes.models import ContentType\n')
@@ -97,19 +96,8 @@ def new_content_type_id(m):
     ct = ContentType.objects.get_for_model(m)
     if ct is None: return None
     return ct.pk
-    
+                
 ''')
-            s = ','.join([
-              '%s=values[%d]' % (k,i) 
-                for i,k in enumerate(babel.AVAILABLE_LANGUAGES)])
-            self.stream.write('''
-def bv2kw(fieldname,values):
-    """
-    Needed if `lino.Lino.languages` changed between dumpdata and loaddata
-    """
-    return babel.babel_values(fieldname,%s)
-    
-''' % s)
         #~ model = queryset.model
         if self.models is None:
             self.models = sorted_models_list() # models.get_models()
@@ -124,7 +112,7 @@ def bv2kw(fieldname,values):
             #~ fields = [f for f in model._meta.fields if f.serialize]
             #~ fields = [f for f in model._meta.local_fields if f.serialize]
             self.stream.write('def create_%s(%s):\n' % (
-                model._meta.db_table,', '.join([f.attname for f in fields if not getattr(f,'_lino_babel_field',False)])))
+                model._meta.db_table,', '.join([f.attname for f in fields])))
             if model._meta.parents:
                 if len(model._meta.parents) != 1:
                     msg = "%s : model._meta.parents is %r" % (model,model._meta.parents)
@@ -141,30 +129,22 @@ def bv2kw(fieldname,values):
                 self.stream.write('    return create_child(%s,%s,%s%s)\n' % (
                     full_model_name(pm,'_'),pf.attname,full_model_name(model,'_'),attrs))
             else:
-                self.stream.write("    kw = dict()\n")
                 for f in fields:
-                    if getattr(f,'_lino_babel_field',False):
-                        continue
-                    elif isinstance(f,(babel.BabelCharField,babel.BabelTextField)):
+                    if isinstance(f,models.DecimalField):
                         self.stream.write(
-                            '    if %s is not None: kw.update(bv2kw(%r,%s))\n' % (
+                            '    if %s is not None: %s = Decimal(%s)\n' % (
                             f.attname,f.attname,f.attname))
-                    else:
-                        if isinstance(f,models.DecimalField):
-                            self.stream.write(
-                                '    if %s is not None: %s = Decimal(%s)\n' % (
-                                f.attname,f.attname,f.attname))
-                        elif isinstance(f,models.ForeignKey) and f.rel.to is ContentType:
-                            #~ self.stream.write(
-                                #~ '    %s = ContentType.objects.get_for_model(%s).pk\n' % (
-                                #~ f.attname,f.attname))
-                            self.stream.write(
-                                '    %s = new_content_type_id(%s)\n' % (
-                                f.attname,f.attname))
+                    if isinstance(f,models.ForeignKey) and f.rel.to is ContentType:
+                        #~ self.stream.write(
+                            #~ '    %s = ContentType.objects.get_for_model(%s).pk\n' % (
+                            #~ f.attname,f.attname))
                         self.stream.write(
-                            '    kw.update(%s=%s)\n' % (f.attname,f.attname))
-                            
-                self.stream.write('    return %s(**kw)\n\n' % full_model_name(model,'_'))
+                            '    %s = new_content_type_id(%s)\n' % (
+                            f.attname,f.attname))
+                self.stream.write('    return %s(%s)\n' % (
+                    full_model_name(model,'_'),
+                    ','.join([
+                        '%s=%s' % (f.attname,f.attname) for f in fields])))
         #~ self.start_serialization()
         self.stream.write('\n')
         model = None
@@ -180,7 +160,8 @@ def bv2kw(fieldname,values):
                 all_models.append(model)
                 self.stream.write('\ndef %s_objects():\n' % model._meta.db_table)
             fields = [f for f,m in model._meta.get_fields_with_model() if m is None]
-            fields = [f for f in fields if not getattr(f,'_lino_babel_field',False)]
+            #~ fields = obj._meta.local_fields
+            #~ fields = [f for f in obj._meta.local_fields if f.serialize]
             self.stream.write('    yield create_%s(%s)\n' % (
                 obj._meta.db_table,
                 ','.join([self.value2string(obj,f) for f in fields])))
@@ -269,9 +250,6 @@ def bv2kw(fieldname,values):
         #~ self._current = None
 
     def value2string(self, obj, field):
-        if isinstance(field,(babel.BabelCharField,babel.BabelTextField)):
-            #~ return repr([repr(x) for x in babel.field2args(obj,field.name)])
-            return repr(babel.field2args(obj,field.name))
         value = field._get_val_from_obj(obj)
         # Protected types (i.e., primitives like None, numbers, dates,
         # and Decimals) are passed through as is. All other values are

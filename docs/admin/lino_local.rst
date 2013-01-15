@@ -1,28 +1,28 @@
-A `local_lino` package
+A `lino_local` package
 ======================
 
 When hosting multiple Lino sites on a same host we suggest 
-to create a directory :file:`local_lino` 
+to create a directory :file:`lino_local` 
 somewhere in your :doc:`Python Path </admin/pythonpath>`,
 with an :file:`__init__.py` file to make it available 
 as Python package,
 and then create your project directories as subdirectories 
 of this.
 
-The :file:`__init__.py` of your `local_lino` package
+The :file:`__init__.py` of your `lino_local` package
 might then have the following content (adapt to your needs, 
 this is just to fire up your imagination):
 
 .. code-block:: python
 
-    # file /usr/local/mypy/local_lino/__init__.py
+    # file /usr/local/mypy/lino_local/__init__.py
     import os, sys
     from os.path import join, split, dirname, abspath
     
     MEMORY_DB = False
     
     LOCAL_PREFIX = split(dirname(abspath(__file__)))[-1] + '.'
-    # e.g. LOCAL_PREFIX will be "local_lino." 
+    # e.g. LOCAL_PREFIX will be "lino_local." 
     
     def setup(filename):
         prj = split(dirname(abspath(filename)))[-1]

@@ -337,10 +337,7 @@ the **Detail Window** on that Poll:
 .. image:: polls4.jpg
     :scale: 50
     
-To add a Detail Window to a table, you simply add a 
-:attr:`detail_layout 
-<lino.core.actors.Actor.detail_layout>` attribute to the Table's 
-class. The window above has been designed by the following code in 
+This window has been designed by the following code in 
 your :file:`models.py` file::
 
     detail_layout = """
@@ -349,7 +346,11 @@ your :file:`models.py` file::
     ChoicesByPoll
     """
 
-See :doc:`/topics/layouts` for more explanations.
+To add a Detail Window to a table, you simply add a 
+:attr:`detail_layout 
+<lino.core.actors.Actor.detail_layout>` attribute to the Table's 
+class. 
+See :doc:`/tutorials/layouts` for more explanations.
    
     
 Not all tables have a Detail Window. 
@@ -375,7 +376,7 @@ This one exists because Polls has the following
     hidden
     """,window_size=(40,'auto'))
     
-(Again: see :doc:`/topics/layouts` for more explanations).
+(Again: see :doc:`/tutorials/layouts` for more explanations.)
 
 After clicking the :guilabel:`[html]` button:
 

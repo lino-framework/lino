@@ -1,0 +1,11 @@
+20130115
+========
+
+
+This morning I solved a long-known 
+problem in the :mod:`lino.utils.dumpy` module:
+they didn't automatically handle a change in the 
+:attr:`lino.Lino.languages` settings.
+
+After this I thought it the right moment to start with a new tutorial:
+:doc:`/tutorials/babel`.

@@ -9,18 +9,18 @@ Welcome to the Project homepage of Lino the Framework.
 
 - Watch the :doc:`online demos</demos>`
 
+- Learn how to write your own Lino application by following 
+  the :doc:`/tutorials/index`.
+
 - Stay connected by subscribing to the official 
   `Lino Blog <http://blog.lino-framework.org/>`_
 
 - Read our :doc:`/community/index` page and consider 
   lending a helping hand.
 
-- See Luc's detailed :doc:`Developer Blog <blog/2012/index>` 
+- See Luc's detailed :doc:`Developer Blog <blog/2013/index>` 
   to get the hottest news about what's going on here. 
 
-- The :doc:`installation </admin/install>` 
-  is easy if you have some experience with Python.
-  
 - The final truth about what's going on is only 
   `The Source Code <http://code.google.com/p/lino/source/list>`_
   (hosted on `Googlecode <http://code.google.com/p/lino>`__).

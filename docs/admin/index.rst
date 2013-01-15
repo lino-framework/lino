@@ -9,6 +9,7 @@ Installation
 
     install
     pythonpath
+    lino_local
     media
     mass_hosting
     install_apache

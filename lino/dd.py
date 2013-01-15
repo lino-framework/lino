@@ -30,6 +30,7 @@ Tables:
 
 Extended Fields:
 
+- :class:`EnableChild <lino.utils.mti.EnableChild>`
 - :class:`NullCharField <lino.core.fields.NullCharField>`
 - :class:`IncompleteDateField <lino.core.fields.IncompleteDateField>`
 - :class:`PasswordField <lino.core.fields.PasswordField>`
@@ -44,6 +45,7 @@ Extended Fields:
 
 Babel fields:
 
+- :class:`BabelNamed <lino.utils.babel.BabelNamed>`
 - :class:`BabelCharField <lino.utils.babel.BabelCharField>`
 - :class:`BabelTextField <lino.utils.babel.BabelTextField>`
 
@@ -157,10 +159,11 @@ from lino.core.fields import RequestField, requestfield
 from lino.core.fields import Constant, constant
 from lino.core.fields import ForeignKey
 
-from lino.utils.babel import BabelCharField, BabelTextField
+from lino.utils.babel import BabelCharField, BabelTextField, BabelNamed
 #~ from lino.core.fields import MethodField
 
 from lino.utils.choosers import chooser
+from lino.utils.mti import EnableChild
 
 from lino.utils.auth import UserLevels, UserProfiles, UserGroups
 

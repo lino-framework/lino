@@ -239,7 +239,8 @@ def _contribute_to_class(field,cls,fieldclass,**kw):
     for lang in BABEL_LANGS:
         kw.update(verbose_name=string_concat(field.verbose_name,' ('+lang+')'))
         newfield = fieldclass(**kw)
-        newfield._lino_babel_field = True # used by modeltools.get_data_elems
+        #~ newfield._lino_babel_field = True # used by modeltools.get_data_elems
+        newfield._lino_babel_field = field.name # used by modeltools.get_data_elems
         cls.add_to_class(field.name + '_' + lang,newfield)
 
 class BabelCharField(models.CharField):
@@ -286,7 +287,7 @@ class BabelTextField(fields.RichTextField):
             #~ cls.add_to_class(self.name + '_' + lang,newfield)
 
 
-def kw2field(name,**kw):
+def babel_values(name,**kw):
     """
     kw2names
     """
@@ -296,8 +297,20 @@ def kw2field(name,**kw):
         if v is not None:
             d[name+'_'+lang] = v
     return d
-babel_values = kw2field
+    
+#~ kw2field = babel_values
 
+def args2kw(name,*args):
+    """
+    Takes the basename of a BabelField and the values for each language.
+    Returns a `dict` mapping the actual fieldnames to their values.
+    """
+    assert len(args) == len(AVAILABLE_LANGUAGES)
+    kw = {name:args[0]}
+    for i,lang in enumerate(BABEL_LANGS):
+        kw[name+'_'+lang] = args[i+1]
+    return kw
+        
 
 def field2kw(obj,name):
     d = { default_language() : getattr(obj,name) }
@@ -306,6 +319,12 @@ def field2kw(obj,name):
         if v:
             d[lang] = v
     return d
+  
+def field2args(obj,name):
+    l = [ getattr(obj,name) ]
+    for lang in BABEL_LANGS:
+        l.append(getattr(obj,name+'_'+lang))
+    return l
   
 
 def babelitem(**v):

@@ -1,10 +1,12 @@
-=====================
-Defining Form Layouts
-=====================
+============
+Form Layouts
+============
 
-Layouts are one of Lino's important and innovative features.
-Concept and implementation is fully the author's idea, and we 
-didn't yet find a similar approach in any other framework.
+This is the topic overview about Form Layouts
+which supposes that you have read the 
+tutorial: :doc:`/tutorials/layouts`.
+
+
 
 .. currentmodule:: lino.core.layouts
 

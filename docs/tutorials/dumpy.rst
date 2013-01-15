@@ -1,10 +1,12 @@
-Writing your own demo fixtures
-==============================
+===============
+Python fixtures
+===============
 
-You have installed Lino on your server as explained in
-:doc:`/admin/install`. 
-You can see that data through your browser.
-Now we suggest that you write your first local fixture.
+:doc:`Python fixtures </topics/dumpy>` 
+are one of Lino's the important features.
+Concept and implementation is fully the author's idea, and we 
+didn't yet find a similar approach in any other framework.
+
 
 Fixtures
 --------

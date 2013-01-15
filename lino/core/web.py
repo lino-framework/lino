@@ -52,19 +52,18 @@ def site_setup(self):
     from lino.utils import auth
     from django.utils.importlib import import_module
     
-    paths = []
-    def collect_path(*parts):
-        dirname = os.path.join(*parts)
-        if os.path.isdir(dirname):
-            paths.append(dirname)
+    #~ paths = []
+    #~ def collect_path(*parts):
+        #~ dirname = os.path.join(*parts)
+        #~ if os.path.isdir(dirname):
+            #~ paths.append(dirname)
             #~ logger.info("20130109 added directory: %s",dirname)
         #~ else:
             #~ logger.info("20130109 not a directory: %s",dirname)
+    #~ for pth in self.get_settings_dirs(SUBDIR_NAME):
+        #~ collect_path(pth)
             
-    for cl in self.__class__.__mro__:
-        #~ logger.info("20130109 inspecting class %s",cl)
-        if cl is not object and not inspect.isbuiltin(cl):
-            collect_path(os.path.dirname(inspect.getfile(cl)),SUBDIR_NAME)
+    paths = list(self.get_settings_subdirs(SUBDIR_NAME))
         
     #~ collect_path(self.project_dir,SUBDIR_NAME)
     #~ if self.project_dir != self.source_dir:

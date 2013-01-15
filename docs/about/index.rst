@@ -9,35 +9,51 @@ Rich Internet Applications
 using `Sencha ExtJS <http://www.sencha.com/products/extjs/>`_
 and `Django <https://www.djangoproject.com/>`_.
 
-Primary target users of Lino applications are agencies and companies who 
-need a customized database application.
-
 This website is for professional Python developers who
 want to develop Lino applications for their customers.
+Primary target customers for Lino applications 
+are agencies and companies who 
+need a customized database application.
+
+
+
+Design goals
+------------
+
+- agile programming
+- rapid prototyping 
+- libraries of reusable code
+- short release cycles
+- maintainable code
+- stable 
+
+
+Lino and Django
+---------------
+
+Lino explained to Django users:
+
+- Lino sites are Django projects. Lino depends on Django. 
+  You need to install Django before you can use Lino.
+- Lino provides an out-of-the box user interface. 
+  Application developers don't write HTML templates.
+- Lino works by adding a setting ``LINO`` to your 
+  :xfile:`settings.py`, which is an 
+  instance of :class:`lino.Lino`.
+- Lino replaces Django's
+  ``django.contrib.admin`` and 
+  ``django.contrib.auth`` modules by its own methods.
 
 
 Features
 --------
     
-- for application developers:
-
-  - rapid prototyping and short release cycles
-  - :doc:`data migration </topics/datamig>`
-  - :doc:`polymorphism  </topics/mti>`
-  - :doc:`user-interface agnostic form design </topics/layouts>`
-  - :doc:`multilingual database content </topics/babel>`
-  - permission management
-
-
-- for Django users:
-
-  - Lino sites are enhanced Django projects.
-  - Lino provides an out-of-the box user interface. 
-    Application developers don't write HTML templates.
-  - Lino replaces Django's
-    ``lino.contrib.admin`` and 
-    ``lino.contrib.auth`` modules by its own methods.
-
+- :doc:`/topics/layouts`
+- :doc:`/topics/babel`
+- :doc:`/topics/datamig`
+- :doc:`/topics/mti`
+- :doc:`/topics/perms`
+- :doc:`/topics/workflow`
 
 The user interface
 ------------------
@@ -49,7 +65,7 @@ first "visible" part.
 Lino is designed to have many possible user interfaces,
 but your choice is currently limited to the :term:`ExtJS` UI.
 This means that Lino applications currently always 
-"look like" those you can see at :doc:`demos`.
+"look like" those you can see at :doc:`/demos`.
 
 We started working on a first alternative user interface 
 that uses the :doc:`Qooxdoo library </topics/qooxdoo>`,
@@ -90,7 +106,10 @@ to be maintained by an independant organization.
 
 In September 2012 we purchased the domain name `lino-framework.org`.
 
-In December 2012 we announced a first prototype of `Lino Così`.
+In December 2012 we 
+`announced 
+<http://blog.lino-framework.org/2012/12/belgian-accounting-made-simple.html>`_
+a first prototype of `Lino Così`.
 
 
 

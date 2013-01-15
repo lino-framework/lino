@@ -4,19 +4,22 @@ Polymorphism
 Django's `Multi-table inheritance
 <http://docs.djangoproject.com/en/dev/topics/db/models/#multi-table-inheritance>`__
 (MTI) is a great feature,
-but when using it in practice 
-we face some typical "user-side" problems.
-:doc:`Ticket #22 </tickets/22>` gives 
-an introduction to these.
+and Lino's :doc:`Model Library </topics/modlib>` 
+uses it where appropriate.
 
-Lino adds some features to solve these problems using an
-intuitive user interface for managing MTI:
+Lino provides 
+an intuitive user interface for managing MTI
+by adding some features:
 
-- a special CheckBox widget that allows to create/delete MTI 
-  children from an MTI parent's view.
-- inheriting Detail forms from MTI parent model
+- a special CheckBox widget (:class:`EnableChild <lino.utils.mti.EnableChild>`) 
+  that allows to 
+  convert existing data records into a more specialized child model, 
+  or back into a less specialized parent model.
+  
+- :doc:`/topics/layouts` can inherit from their MTI parent model's layout.
 
 See also:
 
+- :doc:`/tickets/22` gives an introduction to MTI
 - :mod:`lino.utils.mti`
 - :mod:`lino.test_apps.1.models`

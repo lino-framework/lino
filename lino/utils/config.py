@@ -83,11 +83,10 @@ for app in settings.INSTALLED_APPS:
 
 LOCAL_CONFIG_DIR = None
 
+#~ for dirname in settings.LINO.get_settings_subdirs(SUBDIR_NAME)
 
-if settings.LINO.project_dir != settings.LINO.source_dir:
-    """
-    When called by makedocs, there is no local config dir.
-    """
+#~ if settings.LINO.project_dir != settings.LINO.source_dir:
+if settings.LINO.is_local_project_dir:
     dirname = os.path.join(settings.LINO.project_dir,SUBDIR_NAME)
     if os.path.isdir(dirname):
         LOCAL_CONFIG_DIR = ConfigDir(dirname,True)
