@@ -1,11 +1,11 @@
 from lino.apps.std.settings import *
-from lino_local import LocalLinoMixin
+from lino_local import LocalLinoMixin 
 class Lino(LocalLinoMixin,Lino):
   
     title = "Babel Tutorial"
     
-    #~ languages = ['en', 'fr']
-    languages = ['de', 'fr']
+    languages = ['en']
+    #~ languages = ['de', 'fr']
     
     def get_installed_apps(self):
         for a in super(Lino,self).get_installed_apps():

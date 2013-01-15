@@ -9,3 +9,4 @@ they didn't automatically handle a change in the
 
 After this I thought it the right moment to start with a new tutorial:
 :doc:`/tutorials/babel`.
+

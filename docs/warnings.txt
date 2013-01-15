@@ -1,7 +1,13 @@
-T:\hgwork\lino\docs\blog\2013\0115.rst:: WARNING: document isn't included in any toctree
 T:\hgwork\lino\docs\casts\lino_intro.rst:: WARNING: document isn't included in any toctree
 T:\hgwork\lino\docs\dev\versioning.rst:: WARNING: document isn't included in any toctree
 T:\hgwork\lino\docs\igen\index.rst:: WARNING: document isn't included in any toctree
+None:None: WARNING: toctree contains reference to nonexisting document 'admin/local_lino'
+t:\hgwork\lino\lino\core\kernel.py:docstring of lino.core.kernel.analyze_models:6: WARNING: py:class reference target not found: lino.dd.Model
+None:None: WARNING: toctree contains reference to nonexisting document 'admin/local_lino'
+None:None: WARNING: toctree contains reference to nonexisting document 'admin/local_lino'
+None:None: WARNING: toctree contains reference to nonexisting document 'admin/local_lino'
+None:None: WARNING: toctree contains reference to nonexisting document 'admin/local_lino'
+T:\hgwork\lino\docs\tutorials\babel.rst:77: WARNING: xfile reference target not found: models.py
 None:None: WARNING: toctree contains reference to nonexisting document 'admin/local_lino'
 None:None: WARNING: toctree contains reference to nonexisting document 'admin/local_lino'
 None:None: WARNING: toctree contains reference to nonexisting document 'admin/local_lino'

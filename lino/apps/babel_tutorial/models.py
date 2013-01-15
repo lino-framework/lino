@@ -12,7 +12,7 @@ Categories.add_item("04",_("Software"),'software')
 
 class Product(dd.BabelNamed):
   
-    price = dd.PriceField("Price",blank=True,null=True)
+    price = dd.PriceField(_("Price"),blank=True,null=True)
     
     category = Categories.field(blank=True,null=True)
     
