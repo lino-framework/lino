@@ -1619,6 +1619,10 @@ class Lino(object):
         version = getattr(jinja2,'__version__','')
         yield ("Jinja",version,"http://jinja.pocoo.org/")
         
+        import sphinx
+        version = getattr(sphinx,'__version__','')
+        yield ("Sphinx",version,"http://sphinx-doc.org/")
+        
         import dateutil
         version = getattr(dateutil,'__version__','')
         yield ("python-dateutil",version,"http://labix.org/python-dateutil")
