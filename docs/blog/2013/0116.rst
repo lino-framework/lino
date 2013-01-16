@@ -58,9 +58,12 @@ I also had to optimize :mod:`lino.utils.rstgen` :
 it supports now cells containing newlines.
 
 
-Miscellaneous
--------------
+Upgrade on Jana
+---------------
 
-Restored the old-style `sitecustomize_lino.on_init` trick, 
-but under the new name as `lino_local.on_init`.
-Started documenting it in :doc:`/admin/lino_local`.
+I'd like to run a :doc:`/topics/ddt` on Jana
+
+- Restored the old-style `sitecustomize_lino.on_init` trick, 
+  but under the new name as `lino_local.on_init`.
+  Started documenting it in :doc:`/admin/lino_local`.
+

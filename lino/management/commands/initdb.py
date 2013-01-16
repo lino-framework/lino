@@ -1,5 +1,5 @@
 # -*- coding: UTF-8 -*-
-## Copyright 2009-2012 Luc Saffre
+## Copyright 2009-2013 Luc Saffre
 ## This file is part of the Lino project.
 ## Lino is free software; you can redistribute it and/or modify
 ## it under the terms of the GNU General Public License as published by
@@ -91,6 +91,7 @@ class Command(BaseCommand):
         options.update(interactive=False)
         dblogger.info("Lino initdb %s started on database %s.", args, dbname)
         dblogger.info(settings.LINO.welcome_text())
+        dblogger.info("FIXTURE_DIRS is %s",settings.FIXTURE_DIRS)
         
         if USE_DROP_CREATE:
         
