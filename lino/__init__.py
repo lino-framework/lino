@@ -887,7 +887,7 @@ class Lino(object):
         The `is_local_project_dir` flag contains `True` if this is a "local" project.
         A project is called local if 
         """
-        self.is_local_project_dir = not self.__module__ in installed_apps:
+        self.is_local_project_dir = not self.__module__ in installed_apps
         #~ self.is_app = os.path.exist(join(self.project_dir,'models.py'))
         
         #~ self.source_dir = os.path.dirname(self.get_app_source_file())
