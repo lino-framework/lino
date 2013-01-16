@@ -954,20 +954,20 @@ class Lino(object):
             django_settings.update(LANGUAGE_CODE = lc[0][0])
         
         try:
+            from lino_local import on_init
             #~ from sitecustomize_lino import on_init
-            import sitecustomize_lino
-            raise Exception("""
-            Replace your sitecustomize_lino module 
-            (%s)
-            by a LocalLinoMixin
-            as documented in 
-            http://lino-framework.org/admin/local_lino.html
-            """ % sitecustomize_lino.__file__)
-            
+            #~ import sitecustomize_lino
+            #~ raise Exception("""
+            #~ Replace your sitecustomize_lino module 
+            #~ (%s)
+            #~ by a LocalLinoMixin
+            #~ as documented in 
+            #~ http://lino-framework.org/admin/local_lino.html
+            #~ """ % sitecustomize_lino.__file__)
         except ImportError:
             pass
-            #~ else:
-            #~ on_init(self)
+        else:
+            on_init(self)
         
         #~ s.update(DATABASES= {
               #~ 'default': {

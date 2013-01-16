@@ -5,6 +5,13 @@ Released 2013-01-14.
 :checkin:`b8561154158c`.
 
 
+modlib database changes
+-----------------------
+
+accounts.Account : ref max_length increased from 10 to 100.
+ref fields in both accounts.Group and accounts.Account are now nullable
+
+
 General
 -------
 

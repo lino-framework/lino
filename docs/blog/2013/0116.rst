@@ -1,5 +1,9 @@
+
 20130116
 ========
+
+Sphinx tools
+------------
 
 I wrote a :class:`textimage <lino.utils.sphinxconf.TextImageDirective>` 
 directive which I will need to write
@@ -54,3 +58,9 @@ I also had to optimize :mod:`lino.utils.rstgen` :
 it supports now cells containing newlines.
 
 
+Miscellaneous
+-------------
+
+Restored the old-style `sitecustomize_lino.on_init` trick, 
+but under the new name as `lino_local.on_init`.
+Started documenting it in :doc:`/admin/lino_local`.

@@ -100,3 +100,11 @@ And the :xfile:`manage.py` and :xfile:`wsgi.py` of each project are the same:
     import django.core.handlers.wsgi
     application = django.core.handlers.wsgi.WSGIHandler()      
 
+
+
+
+`lino_local.on_init`
+--------------------
+
+Another method is to define a `lino_local.on_init` function. 
+If such a function exists, 

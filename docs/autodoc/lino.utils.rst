@@ -29,6 +29,7 @@
     lino.utils.odsreader
     lino.utils.quantities
     lino.utils.ranges
+    lino.utils.rstgen
     lino.utils.sphinxconf
     lino.utils.sqllog
     lino.utils.test

@@ -1,8 +1,14 @@
 Coming
 ======
 
-modlib database changes
------------------------
+New features
+------------
 
-accounts.Account : ref max_length increased from 10 to 100.
-ref fields in both accounts.Group and accounts.Account are now nullable
+- Python fixtures can now automatically handle a change in 
+  :attr:`lino.Lino.langugages`
+  between dump and load.
+
+local changes
+-------------
+
+-  mv sitecustomize_lino.py lino_local.py
