@@ -114,12 +114,12 @@ Added `.x-form-num-field { text-align: right;}` to
 [23:00] I start to be satisfied. Some quick screenshots:
 
 .. image:: 0114a.jpg
-  :scale: 40
+  :scale: 80 %
 
 .. image:: 0114b.jpg
-  :scale: 40
+  :scale: 80 %
 
 .. image:: 0114c.jpg
-  :scale: 40
+  :scale: 80 %
 
 

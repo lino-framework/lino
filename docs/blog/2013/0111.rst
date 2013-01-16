@@ -9,7 +9,7 @@ and before *that* I'd like to run more tests because recently there were some
 problems related to certain demo fixtures not working in certain 
 language configurations.
 And I had some ideas about how to automate these tests.
-New documentation page :doc:`/admin/local_lino`.
+New documentation page :doc:`/admin/lino_local`.
 These things are good to solve before a first partner 
 gets started with Lino mass hosting.
 

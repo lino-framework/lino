@@ -40,3 +40,10 @@ table.scrollwide td {
 	white-space: nowrap;
 }
 
+/* centered image captions would be nice. doesn't work. 
+   e.g. http://lino-framework.org/tutorials/layouts.html
+*/
+p.caption {
+	width: 100%;
+	text-align: center;
+}

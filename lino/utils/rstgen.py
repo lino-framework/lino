@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-## Copyright 2011-2012 Luc Saffre
+## Copyright 2011-2013 Luc Saffre
 ## This file is part of the Lino project.
 ## Lino is free software; you can redistribute it and/or modify 
 ## it under the terms of the GNU General Public License as published by
@@ -12,7 +12,7 @@
 ## You should have received a copy of the GNU General Public License
 ## along with Lino; if not, see <http://www.gnu.org/licenses/>.
 
-"""
+r"""
 
 Usage example:
 
@@ -23,36 +23,60 @@ Usage example:
 >>> rows.append(["St. Vincent and the Grenadines","Chateaubelair","Nicole"])
 
 >>> print table(headers,rows)
-============================== ============= ======
-Country                        City          Name
-============================== ============= ======
-Belgium                        Eupen         Gerd
-Estonia                        Vigala        Luc
-St. Vincent and the Grenadines Chateaubelair Nicole
-============================== ============= ======
++--------------------------------+---------------+--------+
+| Country                        | City          | Name   |
++================================+===============+========+
+| Belgium                        | Eupen         | Gerd   |
++--------------------------------+---------------+--------+
+| Estonia                        | Vigala        | Luc    |
++--------------------------------+---------------+--------+
+| St. Vincent and the Grenadines | Chateaubelair | Nicole |
++--------------------------------+---------------+--------+
 <BLANKLINE>
 
 >>> print table(headers,rows,show_headers=False)
-============================== ============= ======
-Belgium                        Eupen         Gerd
-Estonia                        Vigala        Luc
-St. Vincent and the Grenadines Chateaubelair Nicole
-============================== ============= ======
++--------------------------------+---------------+--------+
+| Belgium                        | Eupen         | Gerd   |
++--------------------------------+---------------+--------+
+| Estonia                        | Vigala        | Luc    |
++--------------------------------+---------------+--------+
+| St. Vincent and the Grenadines | Chateaubelair | Nicole |
++--------------------------------+---------------+--------+
 <BLANKLINE>
 
-Depending on your code you might prefer to use 
-directly the :class:`SimpleTable` class:
+You might prefer to use directly the :class:`SimpleTable` class:
 
 >>> t = SimpleTable(headers)
 >>> print t.to_rst(rows)
-============================== ============= ======
-Country                        City          Name
-============================== ============= ======
-Belgium                        Eupen         Gerd
-Estonia                        Vigala        Luc
-St. Vincent and the Grenadines Chateaubelair Nicole
-============================== ============= ======
++--------------------------------+---------------+--------+
+| Country                        | City          | Name   |
++================================+===============+========+
+| Belgium                        | Eupen         | Gerd   |
++--------------------------------+---------------+--------+
+| Estonia                        | Vigala        | Luc    |
++--------------------------------+---------------+--------+
+| St. Vincent and the Grenadines | Chateaubelair | Nicole |
++--------------------------------+---------------+--------+
 <BLANKLINE>
+
+
+>>> rows.append(["St. Vincent \nand the Grenadines","Chateaubelair","Nicole"])
+>>> print table(headers,rows)
++--------------------------------+---------------+--------+
+| Country                        | City          | Name   |
++================================+===============+========+
+| Belgium                        | Eupen         | Gerd   |
++--------------------------------+---------------+--------+
+| Estonia                        | Vigala        | Luc    |
++--------------------------------+---------------+--------+
+| St. Vincent and the Grenadines | Chateaubelair | Nicole |
++--------------------------------+---------------+--------+
+| St. Vincent                    | Chateaubelair | Nicole |
+| and the Grenadines             |               |        |
++--------------------------------+---------------+--------+
+<BLANKLINE>
+
+
 
 """
 
@@ -67,8 +91,9 @@ class Column(object):
         
     def adjust_width(self,row):
         s = unicode(row[self.index])
-        if self.width is None or self.width < len(s):
-            self.width = len(s)
+        for ln in s.splitlines():
+            if self.width is None or self.width < len(ln):
+                self.width = len(ln)
 
 def html2rst(s):
     s = s.replace('<b>','**')
@@ -124,20 +149,40 @@ class SimpleTable(object):
             col.adjust_width(row)
       
     def format_row(self,row):
-        return ' '.join([unicode(row[c.index]).ljust(c.width) for c in self.cols])
+        #~ return ' '.join([unicode(row[c.index]).ljust(c.width) for c in self.cols])
+        lines = [ [] for x in self.cols ]
+        for c in self.cols:
+            cell = unicode(row[c.index])
+            for ln in cell.splitlines():
+                lines[c.index].append(ln.ljust(c.width))
+        height = 1
+        for c in self.cols:
+            height = max(height,len(lines[c.index]))
+        for c in self.cols:
+            while len(lines[c.index]) < height:
+                lines[c.index].append(''.ljust(c.width))
+        x = []
+        for i in range(height):
+            x.append('|' 
+                + '|'.join([' '+lines[c.index][i]+' ' for c in self.cols]) 
+                + '|')
+        return '\n'.join(x)
         
     def write(self,fd,rows):
+        assert len(rows) > 0
         def writeln(s):
             fd.write(s.rstrip()+'\n')
             
         for row in rows: self.adjust_widths(row)
+        header1 = '+'+'+'.join([('-' * (c.width+2)) for c in self.cols])+'+'
+        header2 = '+'+'+'.join([('=' * (c.width+2)) for c in self.cols])+'+'
+        writeln(header1)
         if self.show_headers:
-            writeln(' '.join([('=' * c.width) for c in self.cols]))
             writeln(self.format_row(self.headers))
-        writeln(' '.join([('=' * c.width) for c in self.cols]))
+            writeln(header2)
         for row in rows:
             writeln(self.format_row(row))
-        writeln(' '.join([('=' * c.width) for c in self.cols]))
+            writeln(header1)
           
     def to_rst(self,rows):
         fd = StringIO.StringIO()

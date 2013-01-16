@@ -1,0 +1,56 @@
+20130116
+========
+
+I wrote a :class:`textimage <lino.utils.sphinxconf.TextImageDirective>` 
+directive which I will need to write
+:doc:`/tutorials/layouts`.
+Thanks to:
+
+- http://sphinx-doc.org/ext/tutorial.html
+- http://docutils.sourceforge.net/docs/howto/rst-directives.html
+
+Usage::
+
+  .. textimage:: 0114a.jpg
+    :scale: 40 %
+    
+    **This is a test**. 
+    We start by including a .py file:
+    
+    .. literalinclude:: 0116a.py
+    
+    Here are some explanations.
+
+This directive 
+(an :class:`InsertInputDirective 
+<lino.utils.sphinxconf.InsertInputDirective>`)
+will generate the following intermediate rst markup::
+  
+  +-----------------------------------+----------------------+
+  | **This is a test**.               | .. image:: 0114a.jpg |
+  | We start by including a .py file: |   :scale: 40 %       |
+  |                                   |                      |
+  | .. literalinclude:: 0116a.py      |                      |
+  |                                   |                      |
+  | Here are some explanations.       |                      |
+  +-----------------------------------+----------------------+
+
+
+... leading to the final result:
+
+.. textimage:: 0114a.jpg
+  :scale: 40 %
+  
+  **This is a test**. 
+  We start by including a .py file:
+  
+  .. literalinclude:: 0116a.py
+  
+  Here are some explanations.
+  
+  
+To implement this, 
+I also had to optimize :mod:`lino.utils.rstgen` : 
+it supports now cells containing newlines.
+
+

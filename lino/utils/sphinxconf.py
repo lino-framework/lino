@@ -36,6 +36,7 @@ from docutils.parsers.rst import directives
 from sphinx.util.compat import Directive
 
 from lino.utils import babel
+from lino.utils import rstgen
 
 #~ class ScreenshotDirective(directives.images.Image):
     #~ """
@@ -175,6 +176,10 @@ JINJA_ENV = jinja2.Environment(
 
 
 class InsertInputDirective(Directive):
+    """
+    Base class for directives that work by generating rst markup
+    to be forwarded to `state_machine.insert_input()`.
+    """
     has_content = True
     def get_rst(self):
         raise NotImplementedErrro()
@@ -246,6 +251,31 @@ docs/blog/2010/0107.rst
 
 """
         
+from docutils.parsers.rst.directives import unchanged        
+    
+class TextImageDirective(InsertInputDirective):
+    """
+    See :doc:`/blog/2013/0116` for documentation.
+    """
+    required_arguments = 1
+    final_argument_whitespace = True
+    option_spec = dict(scale=unchanged)
+    #~ optional_arguments = 4
+    
+    def get_rst(self):
+        #~ print 'MainBlogIndexDirective.get_rst()'
+        #~ env = self.state.document.settings.env
+        #~ print self.arguments, self.options, self.content
+        left = '\n'.join(self.content)
+        right = ''
+        for arg in self.arguments[0].split():
+            right += '.. figure:: %s\n' % arg
+            for i in self.options.items():
+                right += "  :%s: %s\n" % i
+            right += "\n  %s\n\n" % arg
+            #~ right += "\n  \n\n" % arg
+            
+        return rstgen.table(["",""],[[left,right]],show_headers=False)
     
 class MainBlogIndexDirective(InsertInputDirective):
     """
@@ -419,6 +449,7 @@ def setup(app):
     #~ app.add_directive('changed', ChangedDirective)
     app.add_directive('blogger_year', YearBlogIndexDirective)
     app.add_directive('blogger_index', MainBlogIndexDirective)
+    app.add_directive('textimage', TextImageDirective)
     #~ app.add_directive('screenshot', ScreenshotDirective)
     #~ app.add_config_value('screenshots_root', '/screenshots/', 'html')
 
