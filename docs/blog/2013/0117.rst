@@ -1,0 +1,10 @@
+20130117
+========
+
+
+Released Lino 1.5.5
+===================
+
+I released Lino :doc:`/releases/1.5.5` with a little bugfix.
+This is the first time I release a Lino without releasing 
+a Lino-Welfare at the same time.
