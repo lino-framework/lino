@@ -5,7 +5,8 @@
 Sphinx tools
 ------------
 
-I wrote a :class:`textimage <lino.utils.sphinxconf.TextImageDirective>` 
+I wrote a 
+:class:`textimage <lino.utils.sphinxconf.TextImageDirective>` 
 directive which I will need to write
 :doc:`/tutorials/layouts`.
 Thanks to:
@@ -57,13 +58,59 @@ To implement this,
 I also had to optimize :mod:`lino.utils.rstgen` : 
 it supports now cells containing newlines.
 
+A similar thing is 
+:class:`complextable <lino.utils.sphinxconf.ComplexTableDirective>`:
+
+.. complextable:: 
+
+    **This is a test**.               
+    We start by including a .py file: 
+    
+    .. literalinclude:: 0116a.py      
+                                      
+    Here are some explanations.       
+    
+    <NEXTCELL>
+    
+    .. image:: 0114a.jpg
+      :scale: 40 %       
+
+    <NEXTROW>
+    
+    :class:`complextable <lino.utils.sphinxconf.ComplexTableDirective>`
+    is of more general use.
+    
+    <NEXTCELL>
+  
+    .. image:: 0114a.jpg
+      :scale: 40 %       
+
 
 Upgrade on Jana
 ---------------
 
-I'd like to run a :doc:`/topics/ddt` on Jana
+Now that :mod:`lino.utils.dumpy` can 
+automatically handle a change in the 
+:attr:`lino.Lino.languages` settings,
+I made a :doc:`/topics/ddt` on Jana using a dump of production data.
+Miscellaneous optimizations during the upgrade:
 
 - Restored the old-style `sitecustomize_lino.on_init` trick, 
   but under the new name as `lino_local.on_init`.
   Started documenting it in :doc:`/admin/lino_local`.
 
+- :meth:`lino.Lino.using` didn't yet yield Sphinx.
+
+- fixed an internal bug: local fixtures and configs dirs were not yet detected.
+
+
+[csv]-Ansicht zeigte nicht die richtigen Klienten an
+----------------------------------------------------
+
+Fixed a bug reported by Lino-Welfare users:
+
+- [csv]-Ansicht vergaß diverse Parameter zu berücksichtigen. 
+  Insbesondere zum Beispiel in der Liste der Klienten zeigte er 
+  nicht die gleichen Klienten wie am Bildschirm.
+  
+  

@@ -51,7 +51,7 @@ __url__ = "http://www.lino-framework.org"
 
 
 __copyright__ = """\
-Copyright (c) 2002-2012 Luc Saffre.
+Copyright (c) 2002-2013 Luc Saffre.
 This software comes with ABSOLUTELY NO WARRANTY and is
 distributed under the terms of the GNU General Public License.
 See file COPYING.txt for more information."""
@@ -843,6 +843,15 @@ class Lino(object):
     command.
     """
     
+    is_local_project_dir = None
+    """
+    This is automatically set when a :class:`Lino` is instantiated. 
+    Don't override it.
+    Contains `True` if this is a "local" project.
+    For local projects, Lino checks for local fixtures and config directories
+    and adds them to the default settings.
+    """
+    
     
     
     #~ use_contenttypes = True
@@ -883,10 +892,6 @@ class Lino(object):
         installed_apps = tuple(self.get_installed_apps())
         django_settings.update(INSTALLED_APPS=installed_apps)
         
-        """
-        The `is_local_project_dir` flag contains `True` if this is a "local" project.
-        A project is called local if 
-        """
         self.is_local_project_dir = not self.__module__ in installed_apps
         #~ self.is_app = os.path.exist(join(self.project_dir,'models.py'))
         

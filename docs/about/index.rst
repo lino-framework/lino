@@ -1,9 +1,6 @@
 About Lino
 ==========
 
-What is Lino?
--------------
-
 Lino is a framework for creating customized enterprise-level 
 Rich Internet Applications 
 using `Sencha ExtJS <http://www.sencha.com/products/extjs/>`_
@@ -13,8 +10,61 @@ This website is for professional Python developers who
 want to develop Lino applications for their customers.
 Primary target customers for Lino applications 
 are agencies and companies who 
-need a customized database application.
+need a *customized database application*.
 
+
+.. toctree::
+   :maxdepth: 1
+   
+   faq
+   license
+   why_gpl
+   thanks
+   compared
+   lino_and_django
+   why_extjs
+
+
+
+Features
+--------
+    
+Since Lino is, technically speaking, "only" 
+a collection of extensions to Django, 
+the following features (copied from the 
+`Django website <https://www.djangoproject.com/>`_) 
+also apply to Lino:
+
+- **Object-relational mapper** :
+  Define your data models entirely in Python. 
+  You get a rich, dynamic database-access API for free -- 
+  but you can still write SQL if needed.
+  
+- **Internationalization** :
+  Django has full support for multi-language applications, 
+  letting you specify translation strings and providing 
+  hooks for language-specific functionality.  
+
+- **Cache system** :
+  Hook into memcached or other cache frameworks for super performance 
+  -- caching is as granular as you need.
+  
+Lino then adds its own features to the above:
+
+- :doc:`/topics/layouts` :  
+  Design not only your models but also your forms using the Python language.
+  
+- :doc:`/topics/babel` : 
+  Use Lino's rich experience with applications that manage 
+  multilingual database content.
+  
+- :doc:`/topics/datamig` :
+  Optionally use Lino's great alternative to 
+  `South <http://south.aeracode.org/>`_
+  to manage your database migrations.
+  
+- **Other features** include 
+  :doc:`/topics/mti`, :doc:`/topics/perms` and :doc:`/topics/workflow`.
 
 
 Design goals
@@ -27,33 +77,6 @@ Design goals
 - maintainable code
 - stable 
 
-
-Lino and Django
----------------
-
-Lino explained to Django users:
-
-- Lino sites are Django projects. Lino depends on Django. 
-  You need to install Django before you can use Lino.
-- Lino provides an out-of-the box user interface. 
-  Application developers don't write HTML templates.
-- Lino works by adding a setting ``LINO`` to your 
-  :xfile:`settings.py`, which is an 
-  instance of :class:`lino.Lino`.
-- Lino replaces Django's
-  ``django.contrib.admin`` and 
-  ``django.contrib.auth`` modules by its own methods.
-
-
-Features
---------
-    
-- :doc:`/topics/layouts`
-- :doc:`/topics/babel`
-- :doc:`/topics/datamig`
-- :doc:`/topics/mti`
-- :doc:`/topics/perms`
-- :doc:`/topics/workflow`
 
 The user interface
 ------------------
@@ -113,12 +136,3 @@ a first prototype of `Lino Così`.
 
 
 
-.. toctree::
-   :maxdepth: 1
-   
-   license
-   why_gpl
-   thanks
-   compared
-   lino_and_django
-   why_extjs

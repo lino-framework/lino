@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-## Copyright 2011 Luc Saffre
+## Copyright 2011-2012 Luc Saffre
 ## This file is part of the Lino project.
 ## Lino is free software; you can redistribute it and/or modify 
 ## it under the terms of the GNU General Public License as published by
@@ -14,11 +14,8 @@
 
 """
 
-A setup funtion for Sphinx documentaton.
+Sphinx setup used to build the Lino documentation.
 
-Used by the Lino documentation::
-
-  from lino.utils.sphinx import setup
 
 """
 
@@ -277,6 +274,63 @@ class TextImageDirective(InsertInputDirective):
             
         return rstgen.table(["",""],[[left,right]],show_headers=False)
     
+class ComplexTableDirective(InsertInputDirective):
+    """
+    The `complextable` directive is used to create tables
+    with complex cell content
+    
+    Usage example::
+    
+      .. complextable::
+    
+        A1
+        <NEXTCELL>
+        A2
+        <NEXTROW>
+        B1
+        <NEXTCELL>
+        B2
+        
+    
+    Result:
+    
+    .. complextable::
+    
+        A1
+        <NEXTCELL>
+        A2
+        <NEXTROW>
+        B1
+        <NEXTCELL>
+        B2
+        
+        
+    See :doc:`/blog/2013/0116` for documentation.
+    """
+    required_arguments = 0
+    final_argument_whitespace = True
+    #~ option_spec = dict(scale=unchanged)
+    #~ optional_arguments = 4
+    
+    def get_rst(self):
+        #~ print 'MainBlogIndexDirective.get_rst()'
+        #~ env = self.state.document.settings.env
+        #~ print self.arguments, self.options, self.content
+        cellsep = '<NEXTCELL>'
+        rowsep = '<NEXTROW>'
+        if len(self.arguments) > 0:
+            cellsep = self.arguments[0]
+        if len(self.arguments) > 1:
+            rowsep = self.arguments[1]
+        
+        content = '\n'.join(self.content)
+        rows = []
+        
+        for row in content.split(rowsep):
+            rows.append(row.split(cellsep))
+            
+        return rstgen.table(["",""],rows,show_headers=False)
+    
 class MainBlogIndexDirective(InsertInputDirective):
     """
     Directive to insert a blog master archive page toctree
@@ -422,6 +476,7 @@ def docname_to_day(year,s):
 def setup(app):
     """
     The Sphinx setup function used for Lino-related documentation trees.
+   
     """
     app.add_object_type(directivename='xfile',rolename='xfile',
       indextemplate='pair: %s; file')
@@ -450,6 +505,7 @@ def setup(app):
     app.add_directive('blogger_year', YearBlogIndexDirective)
     app.add_directive('blogger_index', MainBlogIndexDirective)
     app.add_directive('textimage', TextImageDirective)
+    app.add_directive('complextable', ComplexTableDirective)
     #~ app.add_directive('screenshot', ScreenshotDirective)
     #~ app.add_config_value('screenshots_root', '/screenshots/', 'html')
 

@@ -118,6 +118,7 @@ URL_FORMAT_ODT = 'odt'
 URL_FORMAT_PRINTER = 'printer'
 URL_FORMAT_HTML = 'html'
 #~ URL_FORMAT_PLAIN = 'plain'
+URL_FORMAT_CSV = 'csv'
 
 def dict2kw(d):
     newd = {}
