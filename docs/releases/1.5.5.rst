@@ -18,7 +18,7 @@ Bugfixes
   nicht die gleichen Klienten wie am Bildschirm.
   
   
-Local changes after upgrade
+Manual tasks after upgrade
 ---------------------------
 
 -  mv sitecustomize_lino.py lino_local.py

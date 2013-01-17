@@ -9,7 +9,7 @@ Bugfixes
 --------
 
 
-Local changes after upgrade
----------------------------
+Manual tasks after upgrade
+--------------------------
 
 

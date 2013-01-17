@@ -5,6 +5,10 @@
 Released Lino 1.5.5
 ===================
 
-I released Lino :doc:`/releases/1.5.5` with a little bugfix.
+I released Lino :doc:`/releases/1.5.5` 
+with one new feature, one bugfix,  
+no change database 
+and one manual task after upgrade.
+
 This is the first time I release a Lino without releasing 
 a Lino-Welfare at the same time.
