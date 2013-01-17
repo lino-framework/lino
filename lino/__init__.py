@@ -758,8 +758,9 @@ class Lino(object):
     
     languages = ['en']
     """
-    A shortcut parameter to set the supported languages for this site.
-    If specified, this must be an iterable of 2-letter codes.
+    The language distribution used in this database.
+    
+    This must be an iterable of 2-letter codes.
     Examples::
     
       languages = "en de fr nl et".split()
@@ -768,20 +769,18 @@ class Lino(object):
     The first language in this list will be the site's 
     default language.
       
-    Lino will use it to set the Django 
+    Changing this will affect your database structure and thus require
+    an :mod:`initdb <lino.management.commands.initdb>` 
+    using a backup
+    made by :mod:`dumpdata <lino.management.commands.dumpdata>` 
+    before the change on a production site.    
+    This is of course only for applications that 
+    use :class:`BabelField <lino.utils.babel.BabelField>`s.
+    
+    Lino will use this setting to set the Django 
     settings :setting:`LANGUAGES` and  :setting:`LANGUAGE_CODE`.
-    The default value `None` means that Lino doesn't modify 
-    these settings and that you are responsible for setting them 
-    manually.
     
     """
-    
-    #~ def override_user_language(self):
-        #~ """
-        #~ Called for each request. If this returns a non-empty string, 
-        #~ it overrides the value of user's language field.
-        #~ """
-        #~ return None
     
     site_config_defaults = {}
     """
