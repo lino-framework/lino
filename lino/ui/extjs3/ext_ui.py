@@ -119,6 +119,8 @@ class HtmlRenderer(object):
     """
     Deserves more documentation.
     """
+    is_interactive = False
+    
     def __init__(self,ui):
         self.ui = ui
         
@@ -279,11 +281,13 @@ class HtmlRenderer(object):
 
   
     def obj2html(self,ar,obj,text=None):
-        url = self.instance_handler(ar,obj)
-        if text is None: text = force_unicode(obj)
-        if url is None:
-            return xghtml.E.b(text)
-        return xghtml.E.a(text,href=url)
+        if text is None: 
+            text = force_unicode(obj)
+        if self.is_interactive:
+            url = self.instance_handler(ar,obj)
+            if url is not None:
+                return xghtml.E.a(text,href=url)
+        return xghtml.E.b(text)
         
 class TextRenderer(HtmlRenderer):
     def instance_handler(self,ar,obj):
@@ -356,6 +360,8 @@ class ExtRenderer(HtmlRenderer):
     """
     Deserves more documentation.
     """
+    is_interactive = False
+    
     def pk2url(self,ar,pk,**kw):
         return None
         
@@ -2212,9 +2218,9 @@ tinymce.init({
         tble.attrib.update(cellspacing="3px",bgcolor="#ffffff", width="100%")
         
         fields = ar.ah.store.list_fields
-        headers = [force_unicode(col.label or col.name) for col in ar.ah.list_layout.main.columns]
-        cellwidths = None
         columns = ar.ah.list_layout.main.columns
+        headers = [force_unicode(col.label or col.name) for col in columns]
+        cellwidths = None
         
         if ar.request is not None:
             widths = [x for x in ar.request.REQUEST.getlist(ext_requests.URL_PARAM_WIDTHS)]
@@ -2254,7 +2260,7 @@ tinymce.init({
                     headers[i] = unicode(header)
             #~ print 20120507, oh, headers
           
-        if True:
+        if ar.renderer.is_interactive:
             #~ print 20120901, ar.order_by
             for i,e in enumerate(columns):
                 if e.sortable and ar.order_by != [e.name]:
@@ -2263,21 +2269,26 @@ tinymce.init({
                     if url is not None:
                         headers[i] = xghtml.E.a(headers[i],href=url)
         
-        sums  = [fld.zero for fld in fields]
         #~ cellattrs = dict(align="center",valign="middle",bgcolor="#eeeeee")
-        #~ cellattrs = dict(align="left",valign="top",bgcolor="#eeeeee")
-        cellattrs = dict()
-        hr = tble.add_header_row(*headers,**cellattrs)
+        cellattrs = dict(align="left",valign="top",bgcolor="#eeeeee")
+        #~ cellattrs = dict()
+        
+        #~ o = headers
+        headers = [x for x in ar.ah.store.headers2html(ar,fields,headers,**cellattrs)]        
+        sums  = [fld.zero for fld in fields]
+        #~ hr = tble.add_header_row(*headers,**cellattrs)
         if cellwidths:
-            for i,td in enumerate(hr): 
+            for i,td in enumerate(headers): 
                 td.attrib.update(width=cellwidths[i])
+        tble.head.append(xghtml.E.tr(*headers))
         #~ print 20120623, ar.actor
         recno = 0
         for row in data_iterator:
             recno += 1
-            cells = [x for x in ar.ah.store.row2html(ar,fields,row,sums)]
+            cells = [x for x in ar.ah.store.row2html(ar,fields,row,sums,**cellattrs)]
             #~ print 20120623, cells
-            tble.add_body_row(*cells,**cellattrs)
+            #~ tble.add_body_row(*cells)
+            tble.body.append(xghtml.E.tr(*cells))
             
         if recno == 0:
             tble.clear()
@@ -2291,7 +2302,9 @@ tinymce.init({
                     has_sum = True
                     break
             if has_sum:
-                tble.add_body_row(*ar.ah.store.sums2html(ar,fields,sums),**cellattrs)
+                cells = ar.ah.store.sums2html(ar,fields,sums,**cellattrs)
+                tble.body.append(xghtml.E.tr(*cells))
+                #~ tble.add_body_row(*ar.ah.store.sums2html(ar,fields,sums,**cellattrs))
             
             
     def action_response(self,rv):

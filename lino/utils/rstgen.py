@@ -154,11 +154,117 @@ the result will be a complex table:
   | St. Vincent        | Chateaubelair | Nicole |
   | and the Grenadines |               |        |
   +--------------------+---------------+--------+
+  
+  
+A table containing elementtree HTML:
+
+.. complextable::
+  :header: 
+  
+  Code <NEXTCELL> Result <NEXTROW>
+
+  >>> from lino.utils.xmlgen.html import E
+  >>> print table(
+  ...   [E.p("A ",E.b("formatted")," header"),"A plain header"],
+  ...   [[1,2],[3,4]])
+  =========================== ================
+   A **formatted** header      A plain header
+  --------------------------- ----------------
+   1                           2
+   3                           4
+  =========================== ================
+  <BLANKLINE>
+  
+  <NEXTCELL>
+  
+  =========================== ================
+   A **formatted** header      A plain header
+  --------------------------- ----------------
+   1                           2
+   3                           4
+  =========================== ================
 
 """
 
 #~ import cStringIO as StringIO
 import StringIO
+
+
+def html2rst(e):
+    return _html2rst(e).strip()
+    
+def _html2rst(e,**kw):
+    """
+    Convert a :mod:`lino.utils.xmlgen.html` element 
+    (e.g. a value of a DisplayField) to an reStructuredText string.
+    Currently it knows only P and B tags, 
+    ignoring all other formatting.
+    There's probably a better way to do this...
+    
+    Usage example:
+    
+    >>> from lino.utils.xmlgen.html import E
+    >>> e = E.p("This is a ",E.b("first")," test.")
+    >>> print html2rst(e)
+    This is a **first** test.
+    
+    >>> e = E.p(E.b("This")," is another test.")
+    >>> print html2rst(e)
+    **This** is another test.
+    
+    >>> e = E.p(E.b("This")," is ",E.em("another")," test.")
+    >>> print html2rst(e)
+    **This** is *another* test.
+    
+    >>> url = "http://example.com"
+    >>> e = E.p(E.b("This")," is ",E.a("a link",href=url),".")
+    >>> print html2rst(e)
+    **This** is `a link <http://example.com>`__.
+    
+    """
+    #~ print "20120613 html2odftext()", e.tag, e.text
+    rst = ''
+    if e.tag == 'p': 
+        rst += '\n\n'
+    elif e.tag == 'b':
+        rst += '**'
+    elif e.tag == 'em':
+        rst += '*'
+    elif e.tag == 'a':
+        rst += '`'
+    
+    #~ doesn't yet work:
+    """
+    """
+        
+    #~ if e.tag == 'a':
+        #~ return '`%s <%s>`__' % (e.text,e.get('href'))
+        
+    if e.text:
+        rst += e.text
+    for child in e:
+        rst += _html2rst(child)
+        
+    if e.tag == 'p': 
+        rst += '\n\n'
+    elif e.tag == 'b':
+        rst += '**'
+    elif e.tag == 'em':
+        rst += '*'
+    elif e.tag == 'a':
+        rst += ' <%s>`__' % e.get('href')
+        
+    if e.tail:
+        rst += e.tail
+    return rst
+
+
+#~ def html2rst(s):
+    #~ s = s.replace('<b>','**')
+    #~ s = s.replace('</b>','**')
+    #~ return s
+
+
 
 class Column(object):
     def __init__(self,index,header,width=None):
@@ -171,11 +277,6 @@ class Column(object):
         for ln in s.splitlines():
             if self.width is None or self.width < len(ln):
                 self.width = len(ln)
-
-def html2rst(s):
-    s = s.replace('<b>','**')
-    s = s.replace('</b>','**')
-    return s
 
 def write_header(fd,level,s):
     def writeln(s=''):
@@ -210,7 +311,12 @@ def _write_header(writeln,level,s):
         raise Exception("Invalid level %d" % level)
     writeln()
     
+from lino.utils.xmlgen import etree
 
+def convert(v):
+    if etree.iselement(v): 
+        return html2rst(v)
+    return unicode(v)
 
 class Table(object):
     """
@@ -220,7 +326,7 @@ class Table(object):
     simple = True
     
     def __init__(self,headers,show_headers=True):
-        self.headers = headers
+        self.headers = [convert(h) for h in headers]
         self.show_headers = show_headers
         self.cols = [ Column(i,h) for i,h in enumerate(headers)]
         self.adjust_widths(headers)
@@ -238,7 +344,7 @@ class Table(object):
         #~ return ' '.join([unicode(row[c.index]).ljust(c.width) for c in self.cols])
         lines = [ [] for x in self.cols ]
         for c in self.cols:
-            cell = unicode(row[c.index])
+            cell = row[c.index]
             for ln in cell.splitlines():
                 lines[c.index].append(ln.ljust(c.width))
         height = 1
@@ -254,8 +360,13 @@ class Table(object):
                 + self.margin)
         return '\n'.join(x)
         
-    def write(self,fd,rows):
-        assert len(rows) > 0
+    def write(self,fd,data):
+        assert len(data) > 0
+        rows = []
+        for i,row in enumerate(data):
+            assert len(row) == len(self.cols)
+            rows.append([convert(v) for v in row])
+              
         for row in rows: self.adjust_widths(row)
           
         if self.simple:

@@ -13,10 +13,12 @@
 ## along with Lino; if not, see <http://www.gnu.org/licenses/>.
 
 """
-Performs a database flush, removing *all existing tables* from the 
-database (not only Django tables), then runs Django's standard `syncdb` 
+Performs an initialization of the database, replacing all data by default 
+data (according to the specified fixtures).
+
+This command REMOVES *all existing tables* from the database 
+(not only Django tables), then runs Django's `syncdb` 
 and `loaddata` commands to load the specified fixtures for all applications.
-Also writes log entries to your dblogger.
 
 That may sound dangerous, but that's what we want when we have a 
 :doc:`python dump </topics/dumpy>` to restore our database. You know that you 
@@ -27,7 +29,7 @@ version defines new tables. In that case, flush sends a DROP TABLE
 which fails because that table doesn't exist. 
 
 Lino's `initdb` reimplements a simplified version of Django's `reset` command, 
-but without the possibility of deleting only *some* data (the thing which 
+without the possibility of deleting only *some* data (the thing which 
 caused so big problems that Django 1.3. decided to `deprecate this command
 <https://docs.djangoproject.com/en/dev/releases/1.3/#reset-and-sqlreset-management-commands>`__.
 
@@ -91,7 +93,7 @@ class Command(BaseCommand):
         options.update(interactive=False)
         dblogger.info("Lino initdb %s started on database %s.", args, dbname)
         dblogger.info(settings.LINO.welcome_text())
-        dblogger.info("FIXTURE_DIRS is %s",settings.FIXTURE_DIRS)
+        #~ dblogger.info("FIXTURE_DIRS is %s",settings.FIXTURE_DIRS)
         
         if USE_DROP_CREATE:
         

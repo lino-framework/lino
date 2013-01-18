@@ -111,7 +111,7 @@ wrap it into a <div class="htmlText">.
 	padding-top:0px;
 	padding-bottom:10px;
 	}
-.htmlText td {
+.htmlText td,th {
 	padding:0px;
 	}
 .htmlText p {

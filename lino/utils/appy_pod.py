@@ -1,4 +1,4 @@
-## Copyright 2011-2012 Luc Saffre
+## Copyright 2011-2013 Luc Saffre
 ## This file is part of the Lino project.
 ## Lino is free software; you can redistribute it and/or modify 
 ## it under the terms of the GNU General Public License as published by
@@ -100,6 +100,8 @@ def html2odftext(e,**kw):
     #~ print "20120613 html2odftext()", e.tag, e.text
     if e.tag == 'p': 
         oe = text.P(**kw)
+    #~ elif e.tag == 'td': 
+        #~ oe = text.P(**kw)
     elif e.tag == 'b':
         oe = text.Span(stylename='Bold Text')
     else:
@@ -378,7 +380,7 @@ class Renderer(AppyRenderer):
             try:
                 tc.addElement(p)
             except Exception,e:
-                logger.warning("20120614 %s %s %r %s: %s", i, fld, val, e)
+                logger.warning("20120614 addElement %s %s %r : %s", i, fld, val, e)
                 #~ print 20120614, i, fld, val, e
                 
             #~ yield P(stylename=tablecontents,text=text)

@@ -161,11 +161,13 @@ class DjangoJinjaTemplate:
   
     def render(self, context):
         # flatten the Django Context into a single dictionary.
+        #~ logger.info("20130118 %s",context)
         context_dict = {}
         for d in context.dicts:
             context_dict.update(d)
         extend_context(context_dict)
-        context_dict.update(request=None)
+        context_dict.setdefault('request',None)
+        #~ logger.info("20130118 %s",context_dict.keys())
         return self.jt.render(context_dict)  
   
   

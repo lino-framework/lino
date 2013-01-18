@@ -624,7 +624,7 @@ def on_login(request,user):
         if su:
             try:
                 su = settings.LINO.user_model.objects.get(id=int(su))
-                logger.info("20120714 su is %s",su.username)
+                #~ logger.info("20120714 su is %s",su.username)
             except settings.LINO.user_model.DoesNotExist, e:
                 su = None
         else:

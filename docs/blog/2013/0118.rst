@@ -40,3 +40,15 @@ Releases
 Released :doc:`/releases/1.5.6` 
 and :welfaredocs:`Welfare 1.0.9 </releases/1.0.9>`_
 
+
+Miscellaneous
+-------------
+
+- Combobox for jobs.Contracts.duration still didn't yet work
+- verbose_name for :class:`ContractEnding <lino_welfare.modlib.isip.models.ContractEnding>`
+  is "Reason of termination" (de: Beendigungsgrund, fr: Cause d'abandon).
+  
+- behaviour when admin substitutes to a user  who has no permission to see where admin was
+  
+- worked on formatting of plain html inside extjs. 
+  amounts now aligned right.

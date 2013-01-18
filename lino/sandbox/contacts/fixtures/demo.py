@@ -1,5 +1,5 @@
 # -*- coding: UTF-8 -*-
-## Copyright 2008-2012 Luc Saffre
+## Copyright 2008-2013 Luc Saffre
 ## This file is part of the Lino project.
 ## Lino is free software; you can redistribute it and/or modify 
 ## it under the terms of the GNU General Public License as published by
@@ -31,7 +31,7 @@ from lino.utils import Cycler
 
 from lino.sandbox.contacts import models as contacts
 
-print 20120225, 'settings.FIXTURE_DIRS is', settings.FIXTURE_DIRS
+#~ print 20120225, 'settings.FIXTURE_DIRS is', settings.FIXTURE_DIRS
 
 dblogger.info("Imported contacts demo fixture")
 

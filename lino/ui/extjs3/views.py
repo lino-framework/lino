@@ -72,6 +72,9 @@ def requested_actor(app_label,actor):
         return cl._lino_default_table
     return cl
     
+class Http403(Exception):
+    pass
+    
 def action_request(app_label,actor,request,rqdata,is_list,**kw):
     rpt = requested_actor(app_label,actor)
     action_name = rqdata.get(ext_requests.URL_PARAM_ACTION_NAME,None)
@@ -86,7 +89,8 @@ def action_request(app_label,actor,request,rqdata,is_list,**kw):
             rpt,action_name,rpt.get_url_action_names()))
     user = request.subst_user or request.user
     if not a.get_view_permission(user.profile):
-        raise Exception("Action not allowed for %s" % user)
+        raise Http403(_("As %s you have no permission to run this action.") % user.profile)
+        #~ return http.HttpResponseForbidden(_("As %s you have no permission to run this action.") % user.profile)
     ar = rpt.request(settings.LINO.ui,request,a,**kw)
     #~ ar.renderer = settings.LINO.ui.ext_renderer
     return ar
@@ -292,6 +296,11 @@ def delete_element(ar,elem):
     
     return HttpResponseDeleted()
     
+CATCHED_AJAX_EXCEPTIONS = (Warning,IntegrityError,exceptions.ValidationError)
+
+def ajax_error(e,**kw):
+    kw = settings.LINO.ui.error(e,alert=True,**kw)
+    return json_response(kw)
 
 #~ def form2obj_and_save(self,request,rh,data,elem,is_new,include_rows): # **kw2save):
 def form2obj_and_save(ar,data,elem,is_new,restful,file_upload=False): # **kw2save):
@@ -321,9 +330,13 @@ def form2obj_and_save(ar,data,elem,is_new,restful,file_upload=False): # **kw2sav
     
     try:
         elem.full_clean()
-    except exceptions.ValidationError, e:
-        kw = settings.LINO.ui.error(e) #,_("There was a problem while validating your data : "))
-        return json_response(kw)
+        
+    except CATCHED_AJAX_EXCEPTIONS,e:
+        return ajax_error(e)
+        
+    #~ except exceptions.ValidationError, e:
+        #~ kw = settings.LINO.ui.error(e) 
+        #~ return json_response(kw)
     
     #~ dirty = False
     #~ missing = object()
@@ -347,12 +360,10 @@ def form2obj_and_save(ar,data,elem,is_new,restful,file_upload=False): # **kw2sav
             
         try:
             elem.save(**kw2save)
-        #~ except Exception,e:
-        except (Warning,IntegrityError),e:
-            kw = settings.LINO.ui.error(e,alert=True) # ,_("There was a problem while saving your data : "))
+        except CATCHED_AJAX_EXCEPTIONS,e:
+            return ajax_error(e)
             #~ return views.json_response_kw(success=False,
                   #~ msg=_("There was a problem while saving your data:\n%s") % e)
-            return json_response(kw)
                   
         if is_new:
             changes.log_create(request,elem)
@@ -528,7 +539,7 @@ def choices_for_field(request,rpt,field):
             def row2dict(obj,d):
                 d[ext_requests.CHOICES_TEXT_FIELD] = unicode(obj)
                 #~ 20130117 : 'int' object has no attribute 'get_choices_text'
-                #~ d[ext_requests.CHOICES_VALUE_FIELD] = obj.get_choices_text(request,rpt,field)
+                d[ext_requests.CHOICES_VALUE_FIELD] = obj
                 return d
         elif chooser.instance_values:
             # same code as for ForeignKey
@@ -822,7 +833,6 @@ class ApiElement(View):
         data = http.QueryDict(request.raw_post_data)
         ar = action_request(app_label,actor,request,data,False)
         ar.renderer = settings.LINO.ui.ext_renderer
-        
         elem = ar.actor.get_row_by_pk(pk)
         if elem is None:
             raise http.Http404("%s has no row with primary key %r" % (rpt,pk))

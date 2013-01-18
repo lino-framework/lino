@@ -37,6 +37,7 @@ from django.contrib.contenttypes import generic
 from lino.utils import jsgen 
 from lino.utils.jsgen import py2js, Component, id2js, js_code
 from lino.utils.quantities import parse_decimal
+from lino.utils.xmlgen import etree
 
 #~ from . import ext_requests
 from lino.ui import requests as ext_requests
@@ -100,12 +101,6 @@ class StoreField(object):
         #~ print "20120426 %s value2num(%s)" % (self,v)
         return 0
         
-    def sum2html(self,ui,v):
-        if not v:
-            return ''
-        return str(v)
-        #~ return self.format_sum(v)
-        
     def format_sum(self,ar,sums,i):
         if i == 0:
             return unicode(_("Total (%d rows)")) % ar.get_total_count()
@@ -123,13 +118,22 @@ class StoreField(object):
     def full_value_from_object(self,obj,ar):
         return self.field.value_from_object(obj)
     
+    def apply_cell_format(self,e):
+        pass
+        
     def value2list(self,ar,v,l,row):
         return l.append(v)
         
     def value2dict(self,ui,v,d,row):
         d[self.name] = v
 
-    def value2html(self,ar,v):
+    def format_value(self,ar,v):
+        """
+        Return a plain textual representation of this value as a unicode string.
+        """
+        return force_unicode(v)
+        
+    def value2html(self,ar,v,**cellattrs):
         """
         Return a HTML representation of the given value. 
         The possible return values may be:
@@ -143,15 +147,12 @@ class StoreField(object):
         if self.field.primary_key:
             url = ar.renderer.pk2url(ar,v)
             if url is not None:
-                return xghtml.E.a(self.format_value(ar,v),href=url)
+                return xghtml.E.td(xghtml.E.a(self.format_value(ar,v),href=url),**cellattrs)
             #~ return ar.renderer.obj2html(ar,v,self.format_value(ar,v))
-        return self.format_value(ar,v)
+        return xghtml.E.td(self.format_value(ar,v),**cellattrs)
       
-    def format_value(self,ar,v):
-        """
-        Return a plain textual representation of this value as a unicode string.
-        """
-        return force_unicode(v)
+    def sum2html(self,ar,sums,i,**cellattrs):
+        return xghtml.E.td(self.format_sum(ar,sums,i),**cellattrs)
         
     #~ def value2odt(self,ar,v,tc,**params):
         #~ """
@@ -290,9 +291,9 @@ class ForeignKeyStoreField(RelatedMixin,ComboStoreField):
             #~ return ''
         #~ return req.ui.href_to(obj)
         
-    def value2html(self,ar,v):
+    def value2html(self,ar,v,**cellattrs):
         #~ return ar.renderer.obj2html(ar,v)
-        return xghtml.E.p(ar.obj2html(v))
+        return xghtml.E.td(ar.obj2html(v),**cellattrs)
         
         
     def get_value_text(self,v,obj):
@@ -355,6 +356,7 @@ class VirtStoreField(StoreField):
         self.value2dict = delegate.value2dict
         self.format_value = delegate.format_value
         self.format_sum = delegate.format_sum
+        self.sum2html = delegate.sum2html
         #~ self.form2obj = delegate.form2obj
         # as long as http://code.djangoproject.com/ticket/15497 is open:
         self.parse_form_value = delegate.parse_form_value
@@ -405,17 +407,28 @@ class RequestStoreField(StoreField):
         #~ d[self.options['name']] = self.format_value(ui,v)
         #~ d[self.field.name] = v
 
-    def value2html(self,ar,v):
+    def apply_cell_format(self,e):
+        #~ e.set('align','right')
+        e.attrib.update(align='right')
+        #~ logger.info("20130119 apply_cell_format %s",etree.tostring(e))
+        
+        
+    def sum2html(self,ar,sums,i,**cellattrs):
+        cellattrs.update(align="right")
+        return super(RequestStoreField,self).sum2html(ar,sums,i,**cellattrs)
+        
+    def value2html(self,ar,v,**cellattrs):
         n = v.get_total_count()
+        #~ 20130119b cellattrs.update(align="right")
         if n == 0:
-            return ''
+            return xghtml.E.td(**cellattrs)
         #~ return ar.renderer.href_to_request(v,str(n))
         url = 'javascript:' + ar.renderer.request_handler(v)
         #~ if n == 6:
             #~ logger.info("20120914 value2html(%s) --> %s",v,url)
         #~ url = ar.renderer.js2url(h)
         #~ return xghtml.E.a(cgi.escape(force_unicode(v.label)),href=url)
-        return xghtml.E.p(xghtml.E.a(str(n),href=url))
+        return xghtml.E.td(xghtml.E.a(str(n),href=url),**cellattrs)
       
         #~ s = self.format_value(ar,v)
         #~ if not s: return s
@@ -623,27 +636,6 @@ class DisableEditingStoreField(SpecialStoreField):
         #~ return extract_summary(v)
   
 
-class DecimalStoreField(StoreField):
-    zero = decimal.Decimal(0)
-    def __init__(self,field,name,**kw):
-        kw['type'] = 'float'
-        StoreField.__init__(self,field,name,**kw)
-        
-    def parse_form_value(self,v,obj):
-        return parse_decimal(v)
-
-    def value2num(self,v):
-        #~ print "20120426 %s value2num(%s)" % (self,v)
-        return v
-        
-    def format_value(self,ar,v):
-        if not v:
-            return ''
-        return decfmt(v,places=self.field.decimal_places)
-  
-    def format_sum(self,ar,sums,i):
-        return self.format_value(ar,sums[i])
-        
 
 class BooleanStoreField(StoreField):
     """
@@ -661,7 +653,8 @@ class BooleanStoreField(StoreField):
         StoreField.__init__(self,field,name,**kw)
         if not field.editable:
             def full_value_from_object(self,obj,ar):
-                return self.value2html(ar,self.field.value_from_object(obj))
+                #~ return self.value2html(ar,self.field.value_from_object(obj))
+                return self.format_value(ar,self.field.value_from_object(obj))
             self.full_value_from_object = curry(full_value_from_object,self)
         
         
@@ -673,7 +666,6 @@ class BooleanStoreField(StoreField):
         return ext_requests.parse_boolean(v)
 
         
-    #~ def value2html(self,ar,v):
     def format_value(self,ar,v):
         return force_unicode(iif(v,_("Yes"),_("No")))
         
@@ -686,16 +678,57 @@ class BooleanStoreField(StoreField):
 
 class DisplayStoreField(StoreField):
   
-    def value2html(self,ar,v):
-        return v
+    def value2html(self,ar,v,**cellattrs):
+        return xghtml.E.td(v,**cellattrs)
   
-class IntegerStoreField(StoreField):
+
+class NumberStoreField(StoreField):
+  
+    def value2num(self,v):
+        return v
+        
+    def apply_cell_format(self,e):
+        e.set('align','right')
+        
+    def sum2html(self,ar,sums,i,**cellattrs):
+        cellattrs.update(align="right")
+        return super(NumberStoreField,self).sum2html(ar,sums,i,**cellattrs)
+
+    #~ 20130119b 
+    #~ def value2html(self,ar,v,**cellattrs):
+        #~ cellattrs.update(align="right")
+        #~ return xghtml.E.td(self.format_value(ar,v),**cellattrs)
+        
+class DecimalStoreField(NumberStoreField):
+    zero = decimal.Decimal(0)
+    def __init__(self,field,name,**kw):
+        kw['type'] = 'float'
+        StoreField.__init__(self,field,name,**kw)
+        
+    def parse_form_value(self,v,obj):
+        return parse_decimal(v)
+
+    #~ def value2num(self,v):
+        #~ # print "20120426 %s value2num(%s)" % (self,v)
+        #~ return v
+        
+    def format_value(self,ar,v):
+        if not v:
+            return ''
+        return decfmt(v,places=self.field.decimal_places)
+  
+    def format_sum(self,ar,sums,i):
+        return self.format_value(ar,sums[i])
+        
+    #~ def value2html(self,ar,v,**cellattrs):
+        #~ cellattrs.update(align="right")
+        #~ return xghtml.E.td(self.format_value(ar,v),**cellattrs)
+        
+        
+class IntegerStoreField(NumberStoreField):
     def __init__(self,field,name,**kw):
         kw['type'] = 'int'
         StoreField.__init__(self,field,name,**kw)
-        
-    def value2num(self,v):
-        return v
         
         
         
@@ -1246,9 +1279,25 @@ class Store(BaseStore):
             #~ logger.info("20111209 Store.row2dict %s -> %s", f, d)
         return d
 
-    def row2html(self,ar,fields,row,sums):
+    def headers2html(self,ar,fields,headers,**cellattrs):
+        #~ logger.info("20130119 headers2html %s %s",fields,headers)
+        i = 0 
+        MAX = len(headers)
+        for fld in fields:
+            if fld.field is not None:
+                if i >= MAX:
+                    txt = ''
+                else:
+                    txt = headers[i]
+                th = xghtml.E.th(txt,**cellattrs)
+                fld.apply_cell_format(th)
+                i += 1
+                yield th
+      
+    def row2html(self,ar,fields,row,sums,**cellattrs):
         #~ for i,fld in enumerate(self.list_fields):
         for i,fld in enumerate(fields):
+        #~ for fld in fields:
             #~ print 20120115, fld.field.name
             #~ if not isinstance(fld,SpecialStoreField):
             if fld.field is not None:
@@ -1257,17 +1306,13 @@ class Store(BaseStore):
                 #~ import pdb; pdb.set_trace()
                 v = fld.full_value_from_object(row,ar)
                 if v is None:
-                    yield ''
+                    td = xghtml.E.td(**cellattrs)
                 else:
                     sums[i] += fld.value2num(v)
                     #~ yield fld.value2html(ar,v)
-                    x = fld.value2html(ar,v)
-                    #~ from django.utils.functional import Promise
-                    #~ if isinstance(x,Promise):
-                        #~ print 20120614, fld.field
-                        #~ raise Exception("20120614")
-                    yield x
-                #~ yield fld.cell_html(ar,row)
+                    td = fld.value2html(ar,v,**cellattrs)
+                fld.apply_cell_format(td)
+                yield td
                 
     def row2text(self,ar,fields,row,sums):
         for i,fld in enumerate(fields):
@@ -1279,8 +1324,10 @@ class Store(BaseStore):
                     sums[i] += fld.value2num(v)
                     yield fld.format_value(ar,v)
                 
-    def sums2html(self,ar,fields,sums):
-        return [fld.format_sum(ar,sums,i)
+    def sums2html(self,ar,fields,sums,**cellattrs):
+        #~ return [fld.format_sum(ar,sums,i)
+          #~ for i,fld in enumerate(fields)]
+        return [fld.sum2html(ar,sums,i,**cellattrs)
           for i,fld in enumerate(fields)]
       
         #~ return [fld.sum2html(ar.ui,sums[i])
