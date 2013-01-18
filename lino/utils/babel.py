@@ -12,30 +12,29 @@
 ## along with Lino; if not, see <http://www.gnu.org/licenses/>.
 
 """
-Generic support for multilingual content
-in both hard-coded values and database fields.
+Generic support for :doc:`/topics/babel`.
 
 This includes definition of *babel fields* in your Django Models 
 as well as methods to access these fields transparently.
 
-Babel Fields are normal CharFields or TextFields, except 
-that they have been automatically generated from a master field, 
-depending on your local :setting:`LANGUAGE_CODE` 
-and :setting:`LANGUAGES` settings
+
+Babel fields are fields defined using 
+:class:`dd.BabelCharField <lino.utils.babel.BabelCharField>`
+or
+:class:`dd.BabelTextField <lino.utils.babel.BabelTextField>`.
+
+Each babel field generates a series of normal 
+CharFields (or TextFields) 
+depending on your :attr:`languages <lino.Lino.languages>` setting.
 
 Example::
 
-  class Foo(models.Model):
-      name = babel.BabelCharField(_("Foo"), max_length=200)
+  class Foo(dd.Model):
+      name = dd.BabelCharField(_("Foo"), max_length=200)
       
-To handle hard-coded multilingual texts we suggest 
-the :mod:`lino.core.choicelists` module which uses
-the :class:`BabelText` class defined below.
-
-One known issue is that complex language codes are not yet 
-supported or at least not tested. 
-The :setting:`LANGUAGE_CODE` in your :xfile:`settings.py` 
-should be ``'de'``, and not ``'de-BE'`` or ``'de-CH'``.
+      
+This module also defines the model mixin :class:`dd.BabelNamed`
+      
 
 """
 
@@ -360,17 +359,17 @@ def unused_discover():
                 
                 
                 
-class BabelText(object):
-    def __init__(self,**texts):
-        self.texts = texts
+#~ class BabelText(object):
+    #~ def __init__(self,**texts):
+        #~ self.texts = texts
 
-    def __unicode__(self):
-        return unicode(babelitem(**self.texts))
+    #~ def __unicode__(self):
+        #~ return unicode(babelitem(**self.texts))
         
 
 class BabelNamed(Model):
     """
-    Mixin for models that have a non-nullable field `name` 
+    Mixin for models that have a mandatory field `name` 
     (labelled "Description") for each language.
     """
     
@@ -423,6 +422,9 @@ def run_with_language(lang,func):
 LOOKUP_OP = '__iexact'
 
 def lookup_filter(fieldname,value,**kw):
+    """
+    Deserves a docstring.
+    """
     kw[fieldname+LOOKUP_OP] = value
     #~ kw[fieldname] = value
     flt = models.Q(**kw)

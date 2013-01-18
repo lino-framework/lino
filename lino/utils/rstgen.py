@@ -13,8 +13,18 @@
 ## along with Lino; if not, see <http://www.gnu.org/licenses/>.
 
 r"""
+A suite of utilities to programmatically generate rst source text.
 
-Usage example:
+Especially the :func:`table` function is used by the 
+:class:`complextable <lino.utils.sphinxconf.ComplexTableDirective>` directive
+and by 
+:meth:`Table.to_rst <lino.core.actions.ActionRequest.to_rst>`.
+Here we present the raw API.
+
+Usage example
+-------------
+
+Here is the data we are going to render into different tables:
 
 >>> headers = ["Country","City","Name"]
 >>> rows = []
@@ -22,61 +32,128 @@ Usage example:
 >>> rows.append(["Estonia","Vigala","Luc"])
 >>> rows.append(["St. Vincent and the Grenadines","Chateaubelair","Nicole"])
 
->>> print table(headers,rows)
-+--------------------------------+---------------+--------+
-| Country                        | City          | Name   |
-+================================+===============+========+
-| Belgium                        | Eupen         | Gerd   |
-+--------------------------------+---------------+--------+
-| Estonia                        | Vigala        | Luc    |
-+--------------------------------+---------------+--------+
-| St. Vincent and the Grenadines | Chateaubelair | Nicole |
-+--------------------------------+---------------+--------+
-<BLANKLINE>
 
->>> print table(headers,rows,show_headers=False)
-+--------------------------------+---------------+--------+
-| Belgium                        | Eupen         | Gerd   |
-+--------------------------------+---------------+--------+
-| Estonia                        | Vigala        | Luc    |
-+--------------------------------+---------------+--------+
-| St. Vincent and the Grenadines | Chateaubelair | Nicole |
-+--------------------------------+---------------+--------+
-<BLANKLINE>
+The simplest case of :func:`table`:
 
-You might prefer to use directly the :class:`SimpleTable` class:
+.. complextable::
+  :header: 
+  
+  Code <NEXTCELL> Result <NEXTROW>
 
->>> t = SimpleTable(headers)
->>> print t.to_rst(rows)
-+--------------------------------+---------------+--------+
-| Country                        | City          | Name   |
-+================================+===============+========+
-| Belgium                        | Eupen         | Gerd   |
-+--------------------------------+---------------+--------+
-| Estonia                        | Vigala        | Luc    |
-+--------------------------------+---------------+--------+
-| St. Vincent and the Grenadines | Chateaubelair | Nicole |
-+--------------------------------+---------------+--------+
-<BLANKLINE>
+  >>> print table(headers,rows)
+  ================================ =============== ========
+   Country                          City            Name
+  -------------------------------- --------------- --------
+   Belgium                          Eupen           Gerd
+   Estonia                          Vigala          Luc
+   St. Vincent and the Grenadines   Chateaubelair   Nicole
+  ================================ =============== ========
+  <BLANKLINE>
+  
+  <NEXTCELL>
+  
+  `\ ` 
+  
+  ================================ =============== ========
+   Country                          City            Name
+  -------------------------------- --------------- --------
+   Belgium                          Eupen           Gerd
+   Estonia                          Vigala          Luc
+   St. Vincent and the Grenadines   Chateaubelair   Nicole
+  ================================ =============== ========
 
+A table without headers:
 
->>> rows.append(["St. Vincent \nand the Grenadines","Chateaubelair","Nicole"])
->>> print table(headers,rows)
-+--------------------------------+---------------+--------+
-| Country                        | City          | Name   |
-+================================+===============+========+
-| Belgium                        | Eupen         | Gerd   |
-+--------------------------------+---------------+--------+
-| Estonia                        | Vigala        | Luc    |
-+--------------------------------+---------------+--------+
-| St. Vincent and the Grenadines | Chateaubelair | Nicole |
-+--------------------------------+---------------+--------+
-| St. Vincent                    | Chateaubelair | Nicole |
-| and the Grenadines             |               |        |
-+--------------------------------+---------------+--------+
-<BLANKLINE>
+.. complextable::
+  :header: 
+  
+  Code <NEXTCELL> Result <NEXTROW>
 
+  >>> print table(headers,rows,show_headers=False)
+  ================================ =============== ========
+   Belgium                          Eupen           Gerd
+   Estonia                          Vigala          Luc
+   St. Vincent and the Grenadines   Chateaubelair   Nicole
+  ================================ =============== ========
+  <BLANKLINE>
 
+  <NEXTCELL>
+  
+  `\ ` 
+  
+  ================================ =============== ========
+   Belgium                          Eupen           Gerd
+   Estonia                          Vigala          Luc
+   St. Vincent and the Grenadines   Chateaubelair   Nicole
+  ================================ =============== ========
+  
+You might prefer to use directly the :class:`Table` class:
+
+.. complextable::
+  :header: 
+  
+  Code <NEXTCELL> Result <NEXTROW>
+
+  >>> t = Table(headers)
+  >>> print t.to_rst(rows)
+  ================================ =============== ========
+   Country                          City            Name
+  -------------------------------- --------------- --------
+   Belgium                          Eupen           Gerd
+   Estonia                          Vigala          Luc
+   St. Vincent and the Grenadines   Chateaubelair   Nicole
+  ================================ =============== ========
+  <BLANKLINE>
+
+  <NEXTCELL>
+  
+  `\ ` 
+  
+  ================================ =============== ========
+   Country                          City            Name
+  -------------------------------- --------------- --------
+   Belgium                          Eupen           Gerd
+   Estonia                          Vigala          Luc
+   St. Vincent and the Grenadines   Chateaubelair   Nicole
+  ================================ =============== ========
+
+If there is at least one cell that contains a newline character,
+the result will be a complex table:
+
+.. complextable::
+  :header: 
+  
+  Code <NEXTCELL> Result <NEXTROW>
+
+  >>> rows[2] = ['''St. Vincent
+  ... and the Grenadines''',"Chateaubelair","Nicole"]
+  >>> print table(headers,rows)
+  +--------------------+---------------+--------+
+  | Country            | City          | Name   |
+  +====================+===============+========+
+  | Belgium            | Eupen         | Gerd   |
+  +--------------------+---------------+--------+
+  | Estonia            | Vigala        | Luc    |
+  +--------------------+---------------+--------+
+  | St. Vincent        | Chateaubelair | Nicole |
+  | and the Grenadines |               |        |
+  +--------------------+---------------+--------+
+  <BLANKLINE>
+
+  <NEXTCELL>
+  
+  `\ ` 
+
+  +--------------------+---------------+--------+
+  | Country            | City          | Name   |
+  +====================+===============+========+
+  | Belgium            | Eupen         | Gerd   |
+  +--------------------+---------------+--------+
+  | Estonia            | Vigala        | Luc    |
+  +--------------------+---------------+--------+
+  | St. Vincent        | Chateaubelair | Nicole |
+  | and the Grenadines |               |        |
+  +--------------------+---------------+--------+
 
 """
 
@@ -106,6 +183,9 @@ def write_header(fd,level,s):
     _write_header(writeln,level,s)
     
 def header(level,text):
+    """
+    Render the text as a header with the specified level.
+    """
     result = StringIO.StringIO()
     def writeln(s=''):
         result.write(s + '\n')
@@ -131,22 +211,28 @@ def _write_header(writeln,level,s):
     writeln()
     
 
-class SimpleTable(object):
+
+class Table(object):
     """
-    Renders as a simple table.
+    Renders as a table.
     
     """
+    simple = True
+    
     def __init__(self,headers,show_headers=True):
         self.headers = headers
         self.show_headers = show_headers
         self.cols = [ Column(i,h) for i,h in enumerate(headers)]
         self.adjust_widths(headers)
+          
         
     def adjust_widths(self,row):
         if len(row) != len(self.headers):
             raise Exception("Invalid row %(row)s" % dict(row=row))
         for col in self.cols:
             col.adjust_width(row)
+            if '\n' in row[col.index]:
+                self.simple = False
       
     def format_row(self,row):
         #~ return ' '.join([unicode(row[c.index]).ljust(c.width) for c in self.cols])
@@ -163,35 +249,51 @@ class SimpleTable(object):
                 lines[c.index].append(''.ljust(c.width))
         x = []
         for i in range(height):
-            x.append('|' 
-                + '|'.join([' '+lines[c.index][i]+' ' for c in self.cols]) 
-                + '|')
+            x.append(self.margin 
+                + self.colsep.join([' '+lines[c.index][i]+' ' for c in self.cols]) 
+                + self.margin)
         return '\n'.join(x)
         
     def write(self,fd,rows):
         assert len(rows) > 0
+        for row in rows: self.adjust_widths(row)
+          
+        if self.simple:
+            self.header1 = ' '.join([('=' * (c.width+2)) for c in self.cols])
+            self.header2 = ' '.join([('-' * (c.width+2)) for c in self.cols])
+            self.margin = '' 
+            self.colsep = ' ' 
+        else:
+            self.header1 = '+'+'+'.join([('-' * (c.width+2)) for c in self.cols])+'+'
+            self.header2 = '+'+'+'.join([('=' * (c.width+2)) for c in self.cols])+'+'
+            self.margin = '|' 
+            self.colsep = '|' 
+            
         def writeln(s):
             fd.write(s.rstrip()+'\n')
             
-        for row in rows: self.adjust_widths(row)
-        header1 = '+'+'+'.join([('-' * (c.width+2)) for c in self.cols])+'+'
-        header2 = '+'+'+'.join([('=' * (c.width+2)) for c in self.cols])+'+'
-        writeln(header1)
+            
+        writeln(self.header1)
         if self.show_headers:
             writeln(self.format_row(self.headers))
-            writeln(header2)
+            writeln(self.header2)
         for row in rows:
             writeln(self.format_row(row))
-            writeln(header1)
+            if not self.simple:
+                writeln(self.header1)
+        if self.simple:
+            writeln(self.header1)
           
     def to_rst(self,rows):
         fd = StringIO.StringIO()
         self.write(fd,rows)
         return fd.getvalue()
         
+          
+
 
 def table(headers,rows,**kw):
-    t = SimpleTable(headers,**kw)
+    t = Table(headers,**kw)
     return t.to_rst(rows)
     
     

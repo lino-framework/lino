@@ -26,6 +26,20 @@ run
     :members:
     :show-inheritance:
 
+dumpdata
+--------
+
+.. automodule:: lino.management.commands.dumpdata
+    :members:
+    :show-inheritance:
+
+loaddata
+--------
+
+.. automodule:: lino.management.commands.loaddata
+    :members:
+    :show-inheritance:
+
 makedocs
 --------
 

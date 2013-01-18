@@ -1,5 +1,5 @@
 # -*- coding: UTF-8 -*-
-## Copyright 2010-2012 Luc Saffre
+## Copyright 2010-2013 Luc Saffre
 ## This file is part of the Lino project.
 ## Lino is free software; you can redistribute it and/or modify 
 ## it under the terms of the GNU General Public License as published by
@@ -49,7 +49,6 @@ from lino.utils import babel
 from lino.core.choicelists import ChoiceList, Choice
 
 from lino.core.modeltools import obj2str
-#~ from lino.core.perms import UserProfiles
 from lino.ui import requests as ext_requests
 
 
@@ -122,13 +121,18 @@ class UserGroups(ChoiceList):
 
 class UserProfile(Choice):
     
-    def __init__(self,cls,value,text,name=None,memberships=None,readonly=False,authenticated=True,**kw):
+    def __init__(self,cls,value,text,
+            name=None,memberships=None,authenticated=True,
+            readonly=False,
+            #~ expert=False,
+            **kw):
       
         super(UserProfile,self).__init__(value,text,name)
         
         #~ keys = ['level'] + [g+'_level' for g in choicelist.groups_list]
         #~ keys = ['level'] + [g+'_level' for g in choicelist.membership_keys]
         self.readonly = readonly
+        #~ self.expert = expert
         self.authenticated = authenticated
         self.memberships = memberships
         self.kw = kw
@@ -260,7 +264,7 @@ class UserProfiles(ChoiceList):
         return cls.add_item_instance(UserProfile(cls,value,text,name,memberships,**kw))
 
 #~ UserProfiles choicelist is going to be filled in `lino.Lino.setup_choicelists` 
-#~ because the attributes of each Choice depend on UserGroups
+#~ because the attributes of each item depend on UserGroups
 
 
 #~ def default_required(): return dict(auth=True)

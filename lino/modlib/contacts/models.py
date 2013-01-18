@@ -598,6 +598,8 @@ class RolesByPerson(Roles):
     label = _("Contact for")
     master_key = 'person'
     column_names = 'company type *'
+    auto_fit_column_widths = True
+    hidden_columns = 'id'
     
     
     

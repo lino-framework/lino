@@ -1,9 +1,8 @@
 20130117
 ========
 
-
 Released Lino 1.5.5
-===================
+-------------------
 
 I released Lino :doc:`/releases/1.5.5` 
 with one new feature, one bugfix,  
@@ -12,3 +11,23 @@ and one manual task after upgrade.
 
 This is the first time I release a Lino without releasing 
 a Lino-Welfare at the same time.
+
+
+Miscellaneous
+-------------
+
+- Continued research for :doc:`/tickets/69`
+
+- Fixed a bug introduced :doc:`0107`:
+  'int' object has no attribute 'get_choices_text'
+
+- Fixed an internal bug which caused 
+  :attr:`lino.Lino.is_local_project_dir` to not be initialized correctly.
+
+- :mod:`lino.utils.rstgen` now generates either a simple 
+  or a complex table, depending on whether there's at least one 
+  newline in some cell.
+
+
+
+

@@ -245,6 +245,8 @@ class MembersByPerson(Members):
     label = _("Member of")
     master_key = 'person'
     column_names = 'household role start_date end_date *'
+    auto_fit_column_widths = True
+    hide_columns = 'id'
 
 class MembersByRole(Members):
     master_key = 'role'

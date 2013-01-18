@@ -4,8 +4,9 @@ class Lino(LocalLinoMixin,Lino):
   
     title = "Babel Tutorial"
     
-    languages = ['en']
+    #~ languages = ['en']
     #~ languages = ['de', 'fr']
+    languages = ['en', 'fr']
     
     def get_installed_apps(self):
         for a in super(Lino,self).get_installed_apps():

@@ -1,5 +1,5 @@
 # -*- coding: UTF-8 -*-
-## Copyright 2012 Luc Saffre
+## Copyright 2012-2013 Luc Saffre
 ## This file is part of the Lino project.
 ## Lino is free software; you can redistribute it and/or modify 
 ## it under the terms of the GNU General Public License as published by
@@ -25,22 +25,15 @@ from django.db import models
 from django.utils.translation import ugettext_lazy as _
 from django.db.models.fields.related import ForeignRelatedObjectsDescriptor
 
-#~ from lino import dd
 from lino.core.modeltools import obj2str
 from lino.core import actions
 from lino.core import model
 
 
-#~ def duplicate_row(obj,**kw):
-    #~ obj.pk = None
-    #~ for k,v in kw.items():
-        #~ setattr(obj,k,v)
-    #~ return obj
-
-#~ from lino.core.coretools import get_data_elem
-
 class Duplicate(actions.RowAction):
-  
+    """
+    Duplicate the row on which it is being executed.
+    """
     label = _("Duplicate")
     sort_index = 11
     show_in_workflow = False

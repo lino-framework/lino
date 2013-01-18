@@ -1108,7 +1108,8 @@ class Actor(actions.Parametrizable):
         """
         Shortcut which calls :meth:`lino.Lino.startup`, 
         creates an action request for this actor 
-        and calls its :meth:`ActionRequest.to_rst` method.
+        and calls its :meth:`lino.core.actions.ActionRequest.to_rst` 
+        method.
         """
         settings.LINO.startup()
         return self.request(**kw).to_rst(column_names)

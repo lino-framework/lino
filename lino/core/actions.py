@@ -928,7 +928,7 @@ class UpdateRowAction(RowAction):
 
 class DeleteSelected(RowAction):
     """
-    Delete the row.
+    Delete the row on which it is being executed.
     """
     icon_name = 'x-tbar-delete'
     help_text = _("Delete this record")

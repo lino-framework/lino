@@ -16,15 +16,23 @@
 
 Sphinx setup used to build the Lino documentation.
 
+Thanks to 
+
+- `Creating reStructuredText Directives 
+  <http://docutils.sourceforge.net/docs/howto/rst-directives.html>`_
+
 
 """
 
 import os
+import sys
 import calendar
 import datetime
+from StringIO import StringIO
 
 import lino
 
+from django.conf import settings
 
 #~ from django.core.exceptions import ObjectDoesNotExist, MultipleObjectsReturned
 
@@ -194,6 +202,112 @@ class InsertInputDirective(Directive):
 
 
 
+class unused_Py2rstDirective(InsertInputDirective):
+    """
+    This works, but is not used.
+    """
+    def get_rst(self):
+        code = '\n'.join(self.content)
+        old = sys.stdout
+        buffer = StringIO()
+        sys.stdout = buffer
+        exec code
+        sys.stdout = old
+        return buffer.getvalue()
+        
+        
+class TextImageDirective(InsertInputDirective):
+    """
+    See :doc:`/blog/2013/0116` for documentation.
+    """
+    required_arguments = 1
+    final_argument_whitespace = True
+    option_spec = dict(scale=directives.unchanged)
+    #~ optional_arguments = 4
+    
+    def get_rst(self):
+        #~ print 'MainBlogIndexDirective.get_rst()'
+        #~ env = self.state.document.settings.env
+        #~ print self.arguments, self.options, self.content
+        left = '\n'.join(self.content)
+        right = ''
+        for arg in self.arguments[0].split():
+            right += '.. figure:: %s\n' % arg
+            for i in self.options.items():
+                right += "  :%s: %s\n" % i
+            right += "\n  %s\n\n" % arg
+            #~ right += "\n  \n\n" % arg
+            
+        return rstgen.table(["",""],[[left,right]],show_headers=False)
+    
+class ComplexTableDirective(InsertInputDirective):
+    """
+    The `complextable` directive is used to create tables
+    with complex cell content
+    
+    Usage example::
+    
+      .. complextable::
+    
+        A1
+        <NEXTCELL>
+        A2
+        <NEXTROW>
+        B1
+        <NEXTCELL>
+        B2
+        
+    
+    Result:
+    
+    .. complextable::
+    
+        A1
+        <NEXTCELL>
+        A2
+        <NEXTROW>
+        B1
+        <NEXTCELL>
+        B2
+        
+        
+    See :doc:`/blog/2013/0116` for documentation.
+    """
+    required_arguments = 0
+    final_argument_whitespace = True
+    option_spec = dict(header=directives.flag)
+    #~ option_spec = dict(scale=unchanged)
+    #~ optional_arguments = 4
+    
+    def get_rst(self):
+        #~ print 'MainBlogIndexDirective.get_rst()'
+        #~ env = self.state.document.settings.env
+        #~ print self.arguments, self.options, self.content
+        cellsep = '<NEXTCELL>'
+        rowsep = '<NEXTROW>'
+        if len(self.arguments) > 0:
+            cellsep = self.arguments[0]
+        if len(self.arguments) > 1:
+            rowsep = self.arguments[1]
+        
+        content = '\n'.join(self.content)
+        rows = []
+        
+        for row in content.split(rowsep):
+            rows.append([cell.strip() for cell in row.split(cellsep)])
+              
+        if 'header' in self.options:
+            return rstgen.table(rows[0],rows[1:])
+            
+        return rstgen.table(["",""],rows,show_headers=False)
+
+
+
+
+
+
+
+
 class Year(object):
     """
     A :class:`Year` instance is created for each 
@@ -248,88 +362,7 @@ docs/blog/2010/0107.rst
 
 """
         
-from docutils.parsers.rst.directives import unchanged        
-    
-class TextImageDirective(InsertInputDirective):
-    """
-    See :doc:`/blog/2013/0116` for documentation.
-    """
-    required_arguments = 1
-    final_argument_whitespace = True
-    option_spec = dict(scale=unchanged)
-    #~ optional_arguments = 4
-    
-    def get_rst(self):
-        #~ print 'MainBlogIndexDirective.get_rst()'
-        #~ env = self.state.document.settings.env
-        #~ print self.arguments, self.options, self.content
-        left = '\n'.join(self.content)
-        right = ''
-        for arg in self.arguments[0].split():
-            right += '.. figure:: %s\n' % arg
-            for i in self.options.items():
-                right += "  :%s: %s\n" % i
-            right += "\n  %s\n\n" % arg
-            #~ right += "\n  \n\n" % arg
-            
-        return rstgen.table(["",""],[[left,right]],show_headers=False)
-    
-class ComplexTableDirective(InsertInputDirective):
-    """
-    The `complextable` directive is used to create tables
-    with complex cell content
-    
-    Usage example::
-    
-      .. complextable::
-    
-        A1
-        <NEXTCELL>
-        A2
-        <NEXTROW>
-        B1
-        <NEXTCELL>
-        B2
-        
-    
-    Result:
-    
-    .. complextable::
-    
-        A1
-        <NEXTCELL>
-        A2
-        <NEXTROW>
-        B1
-        <NEXTCELL>
-        B2
-        
-        
-    See :doc:`/blog/2013/0116` for documentation.
-    """
-    required_arguments = 0
-    final_argument_whitespace = True
-    #~ option_spec = dict(scale=unchanged)
-    #~ optional_arguments = 4
-    
-    def get_rst(self):
-        #~ print 'MainBlogIndexDirective.get_rst()'
-        #~ env = self.state.document.settings.env
-        #~ print self.arguments, self.options, self.content
-        cellsep = '<NEXTCELL>'
-        rowsep = '<NEXTROW>'
-        if len(self.arguments) > 0:
-            cellsep = self.arguments[0]
-        if len(self.arguments) > 1:
-            rowsep = self.arguments[1]
-        
-        content = '\n'.join(self.content)
-        rows = []
-        
-        for row in content.split(rowsep):
-            rows.append(row.split(cellsep))
-            
-        return rstgen.table(["",""],rows,show_headers=False)
+   
     
 class MainBlogIndexDirective(InsertInputDirective):
     """
@@ -506,6 +539,7 @@ def setup(app):
     app.add_directive('blogger_index', MainBlogIndexDirective)
     app.add_directive('textimage', TextImageDirective)
     app.add_directive('complextable', ComplexTableDirective)
+    #~ app.add_directive('py2rst', Py2rstDirective)
     #~ app.add_directive('screenshot', ScreenshotDirective)
     #~ app.add_config_value('screenshots_root', '/screenshots/', 'html')
 

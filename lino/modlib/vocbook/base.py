@@ -1,5 +1,5 @@
 # -*- coding: UTF-8 -*-
-## Copyright 2011-2012 Luc Saffre
+## Copyright 2011-2013 Luc Saffre
 ## This file is part of the Lino project.
 ## Lino is free software; you can redistribute it and/or modify 
 ## it under the terms of the GNU General Public License as published by
@@ -40,7 +40,8 @@ from lino.utils import memo
 from lino.utils.html2xhtml import html2xhtml
 
 from lino.utils.restify import restify
-from lino.utils.rstgen import SimpleTable, write_header, html2rst
+from lino.utils.rstgen import write_header, html2rst
+from lino.utils import rstgen 
 from lino.utils import htmlgen
 
 USE_XHTML2ODT = False
@@ -533,7 +534,7 @@ class Unit(Section):
         
         words = [w for w in self.words if w.parent is None]
         if words:
-            t = SimpleTable([col.label for col in self.columns],
+            t = rstgen.Table([col.label for col in self.columns],
                     show_headers=self.show_headers)
             t.write(fd,[self.tablerow(w) for w in words])
           
@@ -787,7 +788,7 @@ class Book:
             logger.info("Generate %s",fn)
             fd = codecs.open(fn,'w','utf-8')
             write_header(fd,1,'eesti-prantsuse')
-            t = SimpleTable(['Nr.',"ET","FR",u"hääldamine","Tasand"])
+            t = rstgen.Table(['Nr.',"ET","FR",u"hääldamine","Tasand"])
             self.words.sort(sort_by_et)
             words_et = [w for w in self.words if not w.hide_et]
             t.write(fd,[

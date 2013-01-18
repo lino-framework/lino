@@ -15,6 +15,7 @@ If you want a modal window (not a full-screen window), then
 you need to specify the `window_size` keyword argument. 
 A simple FormLayout
 
+
 .. textimage:: layouts1.jpg
   :scale: 40 %
   

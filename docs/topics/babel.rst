@@ -2,25 +2,35 @@
 Multilingual database content
 =============================
 
-This is for sites who need to generate documents in different languages from a single database.
+Lino provides facilities to develop application that offer 
+support for multilingual database content.
 
-For example if you want to create a catalog in English and French, 
-you will need two database fields for the description of your products.
+For example, a Canadian company 
+might want to print catalogs and price offers in an 
+English and a French version, 
+but don't want to maintain different product tables. 
+So they need a Products table like this:
 
-See:
+  +--------------+------------------+-------------+-------+----+
+  | Designation  | Designation (fr) | Category    | Price | ID |
+  +==============+==================+=============+=======+====+
+  | Chair        | Chaise           | Accessories | 29.95 | 1  |
+  +--------------+------------------+-------------+-------+----+
+  | Table        | Table            | Accessories | 89.95 | 2  |
+  +--------------+------------------+-------------+-------+----+
+  | Monitor      | Écran            | Hardware    | 19.95 | 3  |
+  +--------------+------------------+-------------+-------+----+
+  | Mouse        | Souris           | Accessories |  2.95 | 4  |
+  +--------------+------------------+-------------+-------+----+
+  | Keyboard     | Clavier          | Accessories |  4.95 | 5  |
+  +--------------+------------------+-------------+-------+----+
 
-- :setting:`BABEL_LANGS`
-- :func:`lino.mixins.printable.getattr_lang`
-- :func:`lino.mixins.printable.add_babel_field`
+If your application is being used in Canada *and* the US, 
+then the US clients don't want to have a useless column for the 
+French designation of their products.
 
+See also:
 
-
-
-.. setting:: BABEL_LANGS
-
-  a list of additional optional languages to be supported on this site.
-  "additional" means "in addition to the default language defined by LANGUAGE_CODE".
-  Each database field declared as a "babel field" will have a cloned copy 
-  for each "babel language".
-
-    BABEL_LANGS = ['fr']
+- The :doc:`/tutorials/babel` tutorial
+- The :mod:`lino.utils.babel` module
+- The :attr:`languages <lino.Lino.languages>` setting

@@ -860,7 +860,14 @@ def fields_list(model,field_names):
     #~ if model.__name__ == 'Company':
         #~ print 20110929, [get_field(model,n) for n in field_names.split()]
     #~ return [get_field(model,n).name for n in field_names.split()]
-    return [get_data_elem(model,n).name for n in field_names.split()]
+    lst = []
+    for name in field_names.split():
+        e = get_data_elem(model,name)
+        if e is None:
+            raise models.FieldDoesNotExist("No data element %r in %s" % (name,model))
+        lst.append(e.name)
+    return lst
+    #~ return [get_data_elem(model,n).name for n in field_names.split()]
 
 
 def ForeignKey(othermodel,*args,**kw):

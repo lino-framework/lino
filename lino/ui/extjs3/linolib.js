@@ -2180,7 +2180,7 @@ Lino.show_insert_duplicate = function(panel,btn) {
 //~ };
 
 
-{%if settings.LINO.use_gridfilters %}
+{% if settings.LINO.use_gridfilters %}
 
 if (Ext.ux.grid !== undefined) {
     Lino.GridFilters = Ext.extend(Ext.ux.grid.GridFilters,{

@@ -1,5 +1,5 @@
 # -*- coding: UTF-8 -*-
-## Copyright 2008-2012 Luc Saffre
+## Copyright 2008-2013 Luc Saffre
 ## This file is part of the Lino project.
 ## Lino is free software; you can redistribute it and/or modify 
 ## it under the terms of the GNU General Public License as published by
@@ -234,9 +234,9 @@ class PropertyOccurence(dd.Model):
     A Property Occurence is when a Property occurs, possibly having a certain value.
     
     Abstract base class for 
-    | :class:`lino.apps.pcsw.models.PersonProperty`,
-    | :class:`lino.apps.pcsw.models.WantedProperty`, 
-    | :class:`lino.apps.pcsw.models.AvoidedProperty`,
+    | :class:`lino_welfare.modlib.cv.models.PersonProperty`,
+    | :class:`lino_welfare.modlib.cv.models.WantedProperty`,
+    | :class:`lino_welfare.modlib.cv.models.AvoidedProperty`,
     | ...
     
     """

@@ -526,8 +526,9 @@ def choices_for_field(request,rpt,field):
               rpt.model,field.name,qs)
         if chooser.simple_values:
             def row2dict(obj,d):
-                #~ d[ext_requests.CHOICES_TEXT_FIELD] = unicode(obj)
-                d[ext_requests.CHOICES_VALUE_FIELD] = obj.get_choices_text(request,rpt,field)
+                d[ext_requests.CHOICES_TEXT_FIELD] = unicode(obj)
+                #~ 20130117 : 'int' object has no attribute 'get_choices_text'
+                #~ d[ext_requests.CHOICES_VALUE_FIELD] = obj.get_choices_text(request,rpt,field)
                 return d
         elif chooser.instance_values:
             # same code as for ForeignKey
@@ -537,15 +538,15 @@ def choices_for_field(request,rpt,field):
                 return d
         else:
             def row2dict(obj,d):
-                #~ d[ext_requests.CHOICES_TEXT_FIELD] = unicode(obj[1])
-                d[ext_requests.CHOICES_TEXT_FIELD] = obj[1].get_choices_text(request,rpt,field)
+                d[ext_requests.CHOICES_TEXT_FIELD] = unicode(obj[1])
+                #~ d[ext_requests.CHOICES_TEXT_FIELD] = obj[1].get_choices_text(request,rpt,field)
                 d[ext_requests.CHOICES_VALUE_FIELD] = obj[0]
                 return d
     elif field.choices:
         qs = field.choices
         def row2dict(obj,d):
             if type(obj) is list or type(obj) is tuple:
-                d[ext_requests.CHOICES_TEXT_FIELD] = obj[1].get_choices_text(request,rpt,field)
+                d[ext_requests.CHOICES_TEXT_FIELD] = unicode(obj[1])
                 d[ext_requests.CHOICES_VALUE_FIELD] = obj[0]
             else:
                 d[ext_requests.CHOICES_TEXT_FIELD] = obj.get_choices_text(request,rpt,field)

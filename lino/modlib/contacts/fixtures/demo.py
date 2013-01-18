@@ -54,7 +54,11 @@ def objects():
     
     company = Instantiator('contacts.Company',"name zip_code city:name street street_no",country='DE').build
     yield company('Hans Flott & Co','22453','Hamburg','Niendorfer Weg','532')
-    yield company('Bernd Brechts Bücherladen','80333','Munich','Brienner Straße','18')
+    if 'de' in settings.LINO.languages:
+        munich = 'München'
+    else:
+        munich = 'Munich'
+    yield company('Bernd Brechts Bücherladen','80333',munich,'Brienner Straße','18')
     yield company('Reinhards Baumschule','12487 ','Berlin','Segelfliegerdamm','123')
     
     company = Instantiator('contacts.Company',"name zip_code city:name street street_no",country='FR').build

@@ -156,8 +156,9 @@ class GridColumn(jsgen.Component):
     """
     declare_type = jsgen.DECLARE_INLINE
     
-    def __init__(self,index,editor,**kw):
-        """editor may be a Panel for columns on a GenericForeignKey
+    def __init__(self,layout_handle,index,editor,**kw):
+        """
+        editor may be a Panel for columns on a GenericForeignKey
         """
         #~ print 20100515, editor.name, editor.__class__
         #~ assert isinstance(editor,FieldElement), \
@@ -171,7 +172,9 @@ class GridColumn(jsgen.Component):
         #~ kw.update(submitValue=False) # 20110406
         kw.update(colIndex=index)
         kw.update(editor.get_column_options())
-        kw.update(hidden=editor.hidden)
+        #~ kw.update(hidden=editor.hidden)
+        if editor.hidden:
+            kw.update(hidden=True)
         if settings.LINO.use_filterRow:
             if editor.filter_type:
                 if index == 0:
@@ -194,16 +197,22 @@ class GridColumn(jsgen.Component):
                 kw.update(filter=editor.gridfilters_settings)
         #~ if isinstance(editor,FieldElement) and editor.field.primary_key:
         if isinstance(editor,FieldElement):
-            if settings.LINO.use_quicktips and self.editor.field.help_text:
-                #~ GridColumn tooltips don't support html
-                if not "<" in self.editor.field.help_text:
-                    kw.update(tooltip=self.editor.field.help_text)
+            if settings.LINO.use_quicktips:
+                #~ if jsgen._for_user_profile.expert:
+                if settings.LINO.show_internal_field_names:
+                    ttt = "(%s.%s) " % (layout_handle.layout._datasource,self.editor.field.name)
+                    #~ ttt = "(%s) " % self.editor.field.name
+                else:
+                    ttt = ''
+                if self.editor.field.help_text and not "<" in self.editor.field.help_text:
+                    #~ GridColumn tooltips don't support html
+                    ttt = string_concat(ttt,self.editor.field.help_text)
+                if ttt:
+                    kw.update(tooltip=ttt)
                 
             def fk_renderer(fld,name):
                 """
-                FK fields are clickable 
-                (1) if their target has a detail view
-                (2) 
+                FK fields are clickable only if their target has a detail view
                 """
                 rpt = fld.rel.to._lino_default_table
                 if rpt.detail_action is not None:
@@ -569,15 +578,22 @@ class FieldElement(LayoutElement):
         
         if not isinstance(layout_handle.layout,layouts.ListLayout):
             #~ help_text = getattr(self.field,'help_text',None):
-            if settings.LINO.use_quicktips and self.field.help_text:
-                #~ kw.update(qtip=self.field.help_text)
-                #~ kw.update(toolTipText=self.field.help_text)
-                #~ kw.update(tooltip=self.field.help_text)
-                kw.update(listeners=dict(render=js_code(
-                  "Lino.quicktip_renderer(%s,%s)" % (
-                      py2js(self.field.verbose_name),
-                      py2js(self.field.help_text)))
-                ))
+            if settings.LINO.use_quicktips:
+                if settings.LINO.show_internal_field_names:
+                    ttt = "(%s.%s) " % (layout_handle.layout._datasource,self.field.name)
+                else:
+                    ttt = ''
+                if self.field.help_text:
+                    ttt = string_concat(ttt,self.field.help_text)
+                if ttt:
+                    #~ kw.update(qtip=self.field.help_text)
+                    #~ kw.update(toolTipText=self.field.help_text)
+                    #~ kw.update(tooltip=self.field.help_text)
+                    kw.update(listeners=dict(render=js_code(
+                      "Lino.quicktip_renderer(%s,%s)" % (
+                          py2js(self.field.verbose_name),
+                          py2js(ttt)))
+                    ))
             
 
         #~ http://www.rowlands-bcs.com/extjs/tips/tooltips-form-fields

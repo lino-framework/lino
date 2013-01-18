@@ -471,7 +471,6 @@ class TableRequest(actions.ActionRequest):
         
         
     def to_rst(self,column_names=None):
-        
         fields, headers, widths = self.get_field_info(column_names)
         
         #~ fields = self.ah.store.list_fields
@@ -650,8 +649,9 @@ class AbstractTable(actors.Actor):
     If this is None, preview requests for this table will request all rows.
     Since preview tables usually have no paging toolbar, that's what we want.
     But if there are many rows, this can lead to waste of performance.
-    Not tested. This was one idea to solve the 20130107 problem 
-    "AvailableCoaches slave table shows only 5 records".
+    
+    Not tested. This was one idea while trying to solve the 20130107 problem 
+    "AvailableCoaches slave table shows only 5 records".    
     """
     
     get_data_rows = None
@@ -668,11 +668,6 @@ class AbstractTable(actors.Actor):
     Model tables may also define such a method in case they need local filtering.
     
     """
-    
-    #~ column_defaults = {}
-    #~ """
-    #~ A dictionary of default parameters for :class:`computed columns <ComputedColumn>` on this table.
-    #~ """
     
     
     auto_fit_column_widths = False

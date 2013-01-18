@@ -109,23 +109,23 @@ class Lino(object):
     """
     Base class for the Lino Application instance stored in :setting:`LINO`.
     
-    Subclasses of this can be defined and instantiated in Django settings files.
-    
-    This class is first defined in :mod:`lino`, then subclassed by 
-    :mod:`lino.apps.pcsw.settings` or 
-    :mod:`lino.apps.igen.settings`,
+    This class is first defined in :mod:`lino`, 
+    then usually subclassed by the application developer
+    (e.g. :mod:`lino.apps.cosi.Lino`),
     which is imported into your local :xfile:`settings.py`,
     where you may subclass it another time.
     
-    To use your subclass, you must instantiate it and store the instance 
+    To activate your local Lino settings, 
+    you must instantiate it and store the instance 
     in the :setting:`LINO` variable of your :xfile:`settings.py`::
     
       LINO = Lino(__file__,globals())
       
     With the parameters `__file__` and `globals()` you give Lino information 
     about your local settings. 
-    Lino will also adapt the settings FIXTURE_DIRS, MEDIA_ROOT and TEMPLATE_DIRS 
-    for you.
+    Lino will modify the following Django settings
+    :setting:`FIXTURE_DIRS`, :setting:`MEDIA_ROOT` and :setting:`TEMPLATE_DIRS` 
+    .
     
     """
     
@@ -136,6 +136,14 @@ class Lino(object):
     This can be useful on a development server when you are debugging 
     directly on the generated :xfile:`lino*.js`.
     Or for certain unit test cases.
+    """
+    
+    show_internal_field_names = False
+    """
+    Whether the internal field names should be visible.
+    Default is `False`.
+    ExtUI implements this by prepending them to the tooltip,
+    which means that :attr:`use_quicktips` must also be `True`.
     """
     
     build_js_cache_on_startup = None
@@ -167,11 +175,14 @@ class Lino(object):
     use_spinner = False # doesn't work. leave this to False
     
     plain_prefix = '/plain' 
+    """
+    The prefix to use for the "plain html" URLs.
+    """
     
-    admin_prefix = '' 
     #~ admin_url = 'admin/'
     #~ admin_prefix = '/admin'
     #~ admin_url = '' # 
+    admin_prefix = '' 
     """
     The prefix to use for Lino admin URLs.
     
@@ -248,8 +259,19 @@ class Lino(object):
     
     
     allow_duplicate_cities = False
-    """Set this to True if that's what you want. 
-    In normal situations you shouldn't, but one exception is here :doc:`/blog/2011/0830`
+    """
+    In a default configuration (when :attr:`allow_duplicate_cities` is False), 
+    Lino declares a UNIQUE clause 
+    for :class:`Cities <lino.modlib.countries.models.Cities>` 
+    to make sure that your database never contains duplicate cities.
+    This behaviour mighr disturb e.g. when importing legacy data that 
+    did not have this restriction.
+    Set it to True to remove the UNIQUE clause.
+    
+    Changing this setting might affect your database structure 
+    and thus require a :doc:`/topics/datamig`
+    if your application uses :mod:`lino.modlib.countries`.
+    
     """
     
     
@@ -695,61 +717,12 @@ class Lino(object):
     
     """
     
-    unused_cbss_user_params = None
-    u"""
-    User parameters for CBSS SSDN (classic) services.
-    
-    Example::
-
-      class Lino(Lino):
-          ...
-          cbss_user_params = dict(
-                UserID='123', 
-                Email='123@example.com', 
-                OrgUnit='123', 
-                MatrixID=17, 
-                MatrixSubID=1)
-
-    L’ « authorized user » est l’utilisateur de l’application. 
-    Dans certains cas il s’agit de la personne physique derrière 
-    la machine client, dans d’autres d’une application utilisant les services. 
-    Ça correspond à un profil au niveau de la BCSS (cfr. IHFN et numéro de programme).
-    
-    « MatrixID » est l’identification dans la matrice, 
-    c'est-à-dire, le secteur (17 pour les CPAS).
-    
-    « SubMatrixID » est l’identification du réseau 
-    (0 pour primaire, 1 pour secondaire donc pour les CPAS...) 
-    (voir « Service and Democlient usage »).
-    
-    « OrgUnit » est un identifiant pour l’organisme demandeur; 
-    dans le cas des CPAS, le numéro KBO est utilisé.
-
-    """
-    
     cbss_environment = None
     """
     Either `None` or one of 'test', 'acpt' or 'prod'.
     See :mod:`lino.modlib.cbss.models`.
     Leaving this to `None` means that the cbss module is "inactive" even if installed.
     """
-    
-    unused_cbss_cbe_number = '0123456789'
-    """
-    Either `None` or a string of style '0123456789'
-    Needed for CBSS new style services. See :mod:`lino.modlib.cbss.models`.
-    """
-    unused_cbss_username = None
-    """
-    Either `None` or a string of style 'E0123456789'
-    Needed for CBSS new style services. See :mod:`lino.modlib.cbss.models`.
-    """
-    unused_cbss_password = None
-    """
-    Either `None` or a string of style 'p1234567890abcd1234567890abcd'
-    Needed for CBSS new style services. See :mod:`lino.modlib.cbss.models`.
-    """
-    
     
     use_davlink = False
     """
@@ -768,14 +741,10 @@ class Lino(object):
       
     The first language in this list will be the site's 
     default language.
-      
-    Changing this will affect your database structure and thus require
-    an :mod:`initdb <lino.management.commands.initdb>` 
-    using a backup
-    made by :mod:`dumpdata <lino.management.commands.dumpdata>` 
-    before the change on a production site.    
-    This is of course only for applications that 
-    use :class:`BabelField <lino.utils.babel.BabelField>`s.
+    
+    Changing this setting might affect your database structure 
+    and thus require a :doc:`/topics/datamig`
+    if your application uses :doc:`/topics/babel`.    
     
     Lino will use this setting to set the Django 
     settings :setting:`LANGUAGES` and  :setting:`LANGUAGE_CODE`.
@@ -891,7 +860,12 @@ class Lino(object):
         installed_apps = tuple(self.get_installed_apps())
         django_settings.update(INSTALLED_APPS=installed_apps)
         
-        self.is_local_project_dir = not self.__module__ in installed_apps
+        modname = self.__module__
+        i = modname.rfind('.')
+        if i != -1:
+            modname = modname[:i]
+        self.is_local_project_dir = not modname in installed_apps
+        #~ print "20130117 (not %r in %r) --> %s" % (modname , installed_apps,self.is_local_project_dir)
         #~ self.is_app = os.path.exist(join(self.project_dir,'models.py'))
         
         #~ self.source_dir = os.path.dirname(self.get_app_source_file())

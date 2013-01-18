@@ -6,8 +6,9 @@ preview_limit
 
 When a table is rendered as a slave grid in a detail window, 
 then it has no page navigator toolbar.
-Until now these slave grids tried to display as many rows as allowed 
-by the screen space (calculatePageSize()). 
+Until now these slave grids tried to display 
+"as many rows as fit into the available space" 
+using calculatePageSize()). 
 But calculatePageSize() had a hard-coded minimum of 5 rows.
 Thus, in these cases, there was a vertical scrollbar 
 and up to 5 rows even if in fact there were more than 5 rows. 

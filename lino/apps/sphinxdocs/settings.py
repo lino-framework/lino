@@ -1,5 +1,5 @@
 # -*- coding: UTF-8 -*-
-## Copyright 2012 Luc Saffre
+## Copyright 2012-2013 Luc Saffre
 ## This file is part of the Lino project.
 ## Lino is free software; you can redistribute it and/or modify 
 ## it under the terms of the GNU General Public License as published by
@@ -16,6 +16,7 @@
 
 A special settings module to be used as DJANGO_SETTINGS_MODULE 
 when Sphinx generates the Lino docs.
+
 It contains *all* modlib modules, which makes no sense in practice 
 and would raise errors if you try to initialize a database or 
 validate the models, but it is enough to have autodocs do its job. 
@@ -30,7 +31,7 @@ from lino.apps.std.settings import *
 
 
 class Lino(Lino):
-    source_dir = os.path.dirname(__file__)
+    #~ source_dir = os.path.dirname(__file__)
     title = "lino.apps.sphinxdocs"
     
     project_model = 'contacts.Person'
@@ -62,7 +63,8 @@ class Lino(Lino):
         yield 'lino.modlib.vat'
         yield 'lino.modlib.products'
         yield 'lino.modlib.sales'
-        yield 'lino.apps.presto'
+        #~ yield 'lino.modlib.pages'
+        #~ yield 'lino.apps.cosi'
 
 LINO = Lino(__file__,globals())
 

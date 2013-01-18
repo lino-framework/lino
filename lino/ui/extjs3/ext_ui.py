@@ -1,5 +1,5 @@
 # -*- coding: UTF-8 -*-
-## Copyright 2009-2012 Luc Saffre
+## Copyright 2009-2013 Luc Saffre
 ## This file is part of the Lino project.
 ## Lino is free software; you can redistribute it and/or modify 
 ## it under the terms of the GNU General Public License as published by
@@ -1781,7 +1781,7 @@ tinymce.init({
             kw.update(panel_btn_handler=js_code("Lino.%s" % a))
             
         if a.icon_name:
-            kw.update(iconCls=a.icon_name) # 'x-tbar-delete'
+            kw.update(iconCls=a.icon_name)
         else:
             kw.update(text=a.label)
         kw.update(
@@ -2078,7 +2078,7 @@ tinymce.init({
             
             
         yield "    this.ls_columns = %s;" % py2js([ 
-            ext_elems.GridColumn(i,e) for i,e 
+            ext_elems.GridColumn(rh.list_layout,i,e) for i,e 
                 in enumerate(rh.list_layout.main.columns)])
             
         #~ yield "    this.columns = this.apply_grid_config(this.gc_name,this.ls_grid_configs,this.ls_columns);"

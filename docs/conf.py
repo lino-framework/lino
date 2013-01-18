@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 #
-# Multilingual websites with Sphinx documentation build configuration file, created by
+# Sphinx documentation build configuration file, created by
 # sphinx-quickstart on Thu Nov 13 11:09:54 2008.
 #
 # This file is execfile()d with the current directory set to its containing dir.

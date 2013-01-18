@@ -1,0 +1,43 @@
+20130118
+========
+
+
+Added 
+:attr:`auto_fit_column_widths 
+<lino.core.tables.AbstractTable.auto_fit_column_widths>`
+and 
+:attr:`hidden_columns 
+<lino.core.tables.AbstractTable.hidden_columns>`
+attributes for 
+slave tables of 
+:class:`Budget <lino_welfare.modlib.debts.models.Budget>` detail
+(:class:`Entries <lino_welfare.modlib.debts.models.EntriesByBudget>`,
+:class:`Summary <lino_welfare.modlib.debts.models.BudgetSummary>`,
+:class:`Actors <lino_welfare.modlib.debts.models.ActorsByBudget>`)
+and
+:class:`Client <lino_welfare.modlib.newcomers.models.Client>` detail
+(:class:`AvailableCoaches <lino_welfare.modlib.newcomers.models.AvailableCoaches>`,
+:class:`CoachingsByClient <lino_welfare.modlib.pcsw.models.CoachingsByClient>`,
+:class:`CourseRequestsByPerson <lino_welfare.modlib.pcsw.models.CourseRequestsByPerson>`,
+:class:`PropsByPerson <lino_welfare.modlib.cv.models.PropsByPerson>`,
+:class:`CandidaturesByPerson <lino_welfare.modlib.jobs.models.CandidaturesByPerson>`,
+...)
+
+
+Some optimizations:
+
+- :func:`lino.core.fields.fields_list` now raises a `models.FieldDoesNotExist`
+  with a message indicating the invalid name.
+
+- New Lino setting 
+  :attr:`show_internal_field_names <lino.Lino.show_internal_field_names>`.
+  
+  
+  
+Releases
+--------
+
+:doc:`/releases/1.5.6` 
+and :welfaredocs:`Welfare 1.0.9 </releases/1.0.9>`_
+
+  
