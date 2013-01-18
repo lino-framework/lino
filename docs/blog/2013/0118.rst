@@ -37,7 +37,6 @@ Some optimizations:
 Releases
 --------
 
-:doc:`/releases/1.5.6` 
+Released :doc:`/releases/1.5.6` 
 and :welfaredocs:`Welfare 1.0.9 </releases/1.0.9>`_
 
-  

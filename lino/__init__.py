@@ -38,7 +38,7 @@ def buildurl(*args,**kw):
 
 from lino.utils.xmlgen import html as xghtml
 
-__version__ = "1.5.5"
+__version__ = "1.5.6"
 """
 Lino version number. 
 """
