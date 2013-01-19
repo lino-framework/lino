@@ -463,3 +463,9 @@ def setup_explorer_menu(site,ui,profile,m):
   
 
 dd.add_user_group('office',OFFICE_MODULE_LABEL)
+
+
+if settings.LINO.user_model == 'auth.User':
+    dd.inject_field(settings.LINO.user_model,'profile',dd.UserProfiles.field())
+    dd.inject_field(settings.LINO.user_model,'language',dd.LanguageField())
+    

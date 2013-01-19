@@ -153,33 +153,34 @@ def render_from_request(request,template_name,**context):
 
 #~ jinja_env.extract_translations()
 
+if False:
+  
+  class DjangoJinjaTemplate:
+    
+      def __init__(self,jt):
+          self.jt = jt
+    
+      def render(self, context):
+          # flatten the Django Context into a single dictionary.
+          #~ logger.info("20130118 %s",context)
+          context_dict = {}
+          for d in context.dicts:
+              context_dict.update(d)
+          extend_context(context_dict)
+          context_dict.setdefault('request',None)
+          #~ logger.info("20130118 %s",context_dict.keys())
+          return self.jt.render(context_dict)  
+    
+    
+  from django.template.loaders import app_directories
 
-class DjangoJinjaTemplate:
-  
-    def __init__(self,jt):
-        self.jt = jt
-  
-    def render(self, context):
-        # flatten the Django Context into a single dictionary.
-        #~ logger.info("20130118 %s",context)
-        context_dict = {}
-        for d in context.dicts:
-            context_dict.update(d)
-        extend_context(context_dict)
-        context_dict.setdefault('request',None)
-        #~ logger.info("20130118 %s",context_dict.keys())
-        return self.jt.render(context_dict)  
-  
-  
-from django.template.loaders import app_directories
+  class Loader(app_directories.Loader):  
+    
+      is_usable = True
 
-class Loader(app_directories.Loader):  
-  
-    is_usable = True
-
-    def load_template(self, template_name, template_dirs=None):
-        source, origin = self.load_template_source(template_name, template_dirs)
-        jt = settings.LINO.jinja_env.get_template(template_name)
-        template = DjangoJinjaTemplate(jt)
-        return template, origin
-        
+      def load_template(self, template_name, template_dirs=None):
+          source, origin = self.load_template_source(template_name, template_dirs)
+          jt = settings.LINO.jinja_env.get_template(template_name)
+          template = DjangoJinjaTemplate(jt)
+          return template, origin
+          

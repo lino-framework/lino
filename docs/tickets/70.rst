@@ -1,0 +1,17 @@
+#70 : Allow to use Django admin on a Lino site
+==============================================
+
+The setting :attr:`django_admin_prefix <lino.Lino.django_admin_prefix>` 
+doesn't yet work.
+It is currently not possible to run `django.contrib.admin` 
+on a Lino site because the permission systems aren't compatible.
+
+Django 1.5 allows for 
+`Substituting a custom User model
+<https://docs.djangoproject.com/en/dev/topics/auth/customizing/#auth-custom-user>`__,
+but not for substituting the permission system.
+
+It shouldn't be too difficult to make Lino's permission system optional...
+but my only motivation to do this work is my (even unconfirmed) fear that other 
+developers might not like Lino's permission system which
+is rather young, potentially unstable and poorly documented.

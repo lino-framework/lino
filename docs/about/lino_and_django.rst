@@ -43,6 +43,20 @@ line of HTML, CSS or Javascript.
 
 
 
+Why I don't use certain parts of Django
+---------------------------------------
 
-  
+None of the following are absolute truths. I just try to explain 
+my design decisions. I maybe missed certain things and 
+invite you to explain my what they are or to ask more concrete 
+questions.
+
+`django.contrib.admin`
+----------------------
+
+
+- Django lets your define only one ModelAdmin per Model, and Admin is 
+  not usable to representat a desktop-style application.
+- `django.contrib.auth` is not usable to define (and maintain) complex
+  permission systems.
   

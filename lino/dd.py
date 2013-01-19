@@ -48,6 +48,7 @@ Babel fields:
 - :class:`BabelNamed <lino.utils.babel.BabelNamed>`
 - :class:`BabelCharField <lino.utils.babel.BabelCharField>`
 - :class:`BabelTextField <lino.utils.babel.BabelTextField>`
+- :class:`LanguageField <lino.utils.babel.LanguageField>`
 
 Virtual Fields:
 
@@ -159,7 +160,7 @@ from lino.core.fields import RequestField, requestfield
 from lino.core.fields import Constant, constant
 from lino.core.fields import ForeignKey
 
-from lino.utils.babel import BabelCharField, BabelTextField, BabelNamed
+from lino.utils.babel import BabelCharField, BabelTextField, BabelNamed, LanguageField
 #~ from lino.core.fields import MethodField
 
 from lino.utils.choosers import chooser
@@ -212,6 +213,7 @@ def on_class_prepared(signal,sender=None,**kw):
       So we remove these duplicate fields from `_meta._field_cache`.
       (A better solution would be of course to not collect them.)
     """
+    #~ print("20130119 on_class_prepared",sender)
     model = sender
     #~ return
     #~ if model is None:

@@ -32,11 +32,11 @@ from lino import Lino
     #~ pass
     
 
-LINO = Lino(__file__,globals())
+#~ LINO = Lino(__file__,globals())
 
 #~ DBLOGGER = 'db'
 #~ DBLOGFILE = 'auto'
-USE_FIREBUG = False
+#~ USE_FIREBUG = False
 #~ USE_GRIDFILTERS = True
 #~ MODEL_DEBUG = True
 #~ PROJECT_DIR = normpath(dirname(__file__))
@@ -128,13 +128,6 @@ MEDIA_URL = '/media/'
 # Make this unique, and don't share it with anybody.
 SECRET_KEY = 'cqt^18t(Fb#14a@s%mbtdif+ih8fscpf8l9aw+0ivo2!3c(c%&'
 
-# List of callables that know how to import templates from various sources.
-TEMPLATE_LOADERS = (
-    'django.template.loaders.filesystem.Loader',
-    'django.template.loaders.app_directories.Loader',
-#     'django.template.loaders.eggs.load_template_source',
-)
-
 
 ROOT_URLCONF = 'lino.ui.extjs3.urls'
 
@@ -144,10 +137,10 @@ ROOT_URLCONF = 'lino.ui.extjs3.urls'
 #~ ]
 #print "baz", __file__
 
-INSTALLED_APPS = [
-  'lino.modlib.users',
-  'lino',
-]
+#~ INSTALLED_APPS = [
+  #~ 'lino.modlib.users',
+  #~ 'lino',
+#~ ]
 
 
 #~ INSTALLED_APPS = []
@@ -160,20 +153,6 @@ SERIALIZATION_MODULES = {
 }
 
 #print "done", __file__
-
-TEMPLATE_CONTEXT_PROCESSORS = (
-    #~ 'django.contrib.auth.context_processors.auth',
-    'django.core.context_processors.debug',
-    'django.core.context_processors.i18n',
-    'django.core.context_processors.media',
-    'django.core.context_processors.static',
-#    'django.core.context_processors.request',
-    #~ 'django.contrib.messages.context_processors.messages',
-)
-
-
-LOGIN_URL = '/accounts/login/'
-LOGIN_REDIRECT_URL = "/"
 
 EMAIL_HOST = "mail.example.com"
 #EMAIL_PORT = ""

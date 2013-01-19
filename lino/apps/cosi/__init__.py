@@ -109,6 +109,7 @@ class Lino(Lino):
             yield a
         yield 'django.contrib.contenttypes'
         yield 'lino.modlib.users'
+        #~ yield 'django.contrib.auth'
         yield 'lino.modlib.countries'
         #~ yield 'lino.modlib.properties'
         yield 'lino.modlib.contacts'

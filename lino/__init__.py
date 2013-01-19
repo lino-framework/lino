@@ -107,25 +107,31 @@ NOT_FOUND_MSG = '(not installed)'
 
 class Lino(object):
     """
-    Base class for the Lino Application instance stored in :setting:`LINO`.
+    Base class for the Lino instance stored in :setting:`LINO`.
+    Lino applications add one setting `LINO` 
+    which is an instance of the :class:`lino.Lino` class.
+    This simple trick brings inheritance to the settings and lets us define 
+    methods.
     
     This class is first defined in :mod:`lino`, 
     then usually subclassed by the application developer
     (e.g. :mod:`lino.apps.cosi.Lino`),
-    which is imported into your local :xfile:`settings.py`,
-    where you may subclass it another time.
+    then imported into your local :xfile:`settings.py`,
+    where you may subclass it another time before 
+    finally instantiating it, and assigning it to 
+    the :setting:`LINO` variable.
     
-    To activate your local Lino settings, 
-    you must instantiate it and store the instance 
-    in the :setting:`LINO` variable of your :xfile:`settings.py`::
+    Instiatiation is always the same line of code::
     
       LINO = Lino(__file__,globals())
       
-    With the parameters `__file__` and `globals()` you give Lino information 
-    about your local settings. 
-    Lino will modify the following Django settings
-    :setting:`FIXTURE_DIRS`, :setting:`MEDIA_ROOT` and :setting:`TEMPLATE_DIRS` 
-    .
+    With the parameters `__file__` and `globals()` you give Lino 
+    information about your local settings (where they are in the file 
+    system), and the possibility to modify your Django settings.
+    
+    Lino will modify the following Django settings:
+    :setting:`FIXTURE_DIRS`, :setting:`MEDIA_ROOT` 
+    and :setting:`TEMPLATE_DIRS`,...
     
     """
     
@@ -173,6 +179,13 @@ class Lino(object):
     """
     
     use_spinner = False # doesn't work. leave this to False
+    
+    #~ django_admin_prefix = '/django' 
+    django_admin_prefix = None
+    """
+    The prefix to use for Django admin URLs.
+    Leave this unchanged as long as :doc:`/ticket/70` is not solved.
+    """
     
     plain_prefix = '/plain' 
     """
@@ -922,7 +935,29 @@ class Lino(object):
             TEMPLATE_LOADERS=tuple(
                 ['lino.core.web.Loader']
                 ))
-
+                
+        tcp = []
+        if self.user_model == 'auth.User':
+            django_settings.update(LOGIN_URL = '/accounts/login/')
+            django_settings.update(LOGIN_REDIRECT_URL = "/")
+            tcp += [ 'django.contrib.auth.context_processors.auth' ]
+        tcp += [
+                'django.core.context_processors.debug',
+                'django.core.context_processors.i18n',
+                'django.core.context_processors.media',
+                'django.core.context_processors.static',
+            #    'django.core.context_processors.request',
+                #~ 'django.contrib.messages.context_processors.messages',
+        ]
+        django_settings.update(TEMPLATE_CONTEXT_PROCESSORS = tuple(tcp))
+        
+        tl = [
+            'django.template.loaders.filesystem.Loader',
+            'django.template.loaders.app_directories.Loader',
+            #     'django.template.loaders.eggs.load_template_source',
+        ]
+        django_settings.update(TEMPLATE_LOADERS = tuple(tl))
+        
 
         self.startup_time = datetime.datetime.now()
         
@@ -1775,11 +1810,12 @@ class Lino(object):
         This method is expected to return or yield the list of strings 
         to be stored into Django's :setting:`INSTALLED_APPS` setting.
         """
+        yield 'lino'
         if self.user_model is not None and self.remote_user_header is None:
             yield 'django.contrib.sessions' # 20121103
-        #~ 'django.contrib.sites',
+        if self.django_admin_prefix:
+            yield 'django.contrib.admin'
         #~ 'django.contrib.markup',
-        yield 'lino'
         yield 'lino.modlib.about'
         #~ if self.admin_prefix:
             #~ yield 'lino.modlib.pages'

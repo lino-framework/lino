@@ -233,10 +233,16 @@ class UI:
         urlpatterns = self.get_media_urls()
         
         if settings.LINO.plain_prefix:
-            #~ urlpatterns += self.get_plain_urls()
             urlpatterns += patterns('',
               ('^'+settings.LINO.plain_prefix[1:]+"/", include(self.get_plain_urls()))
             )
+        if settings.LINO.django_admin_prefix:
+            from django.contrib import admin
+            admin.autodiscover()
+            urlpatterns += patterns('',
+              ('^'+settings.LINO.django_admin_prefix[1:]+"/", include(admin.site.urls))
+            )
+           
         if settings.LINO.admin_prefix:
         
             urlpatterns += patterns('',
