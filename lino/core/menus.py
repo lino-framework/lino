@@ -20,7 +20,7 @@ import traceback
 import copy
 
 from django.conf import settings
-from django.conf.urls.defaults import patterns, url, include
+from django.conf.urls import patterns, url, include
 from django.shortcuts import render_to_response
 #~ from django.utils.safestring import mark_safe
 from django import template 

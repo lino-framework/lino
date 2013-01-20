@@ -48,7 +48,7 @@ from django.utils import translation
 
 from django.contrib.contenttypes.models import ContentType
 from django.contrib.contenttypes import generic
-from django.conf.urls.defaults import patterns, url, include
+from django.conf.urls import patterns, url, include
 
 
 import lino
