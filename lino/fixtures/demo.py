@@ -47,23 +47,10 @@ def root_user(lang,**kw):
 
 def objects():
     User = settings.LINO.user_model
-    #~ def create_user(lang,**kw):
-        #~ user = Instantiator('users.User',
-          #~ 'username email first_name last_name'
-          #~ ).build
-        #~ u = user(*args,**kw)
-        #~ u = User(**kw)
-        #~ u.set_password('1234')
-        #~ return u
-    #~ kw = dict()
-    #~ for f in settings.LINO.user_profile_fields:
-        #~ kw[f] = UserLevel.expert
-    for lang in babel.AVAILABLE_LANGUAGES:
-        kw = root_user(lang)
-        if kw:
-            u = User(**kw)
-            #~ u.set_password('1234')
-            yield u
-        
-    #~ yield create_user('root','root@example.com','Root','User')
-    #~ yield create_user('luc','luc@example.com','Luc','Saffre',profile='900') # UserProfiles.admin) 
+    if User is not None:
+        for lang in babel.AVAILABLE_LANGUAGES:
+            kw = root_user(lang)
+            if kw:
+                u = User(**kw)
+                #~ u.set_password('1234')
+                yield u

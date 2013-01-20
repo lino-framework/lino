@@ -535,7 +535,7 @@ class DpyDeserializer:
             else:
                 """
                 To avoid Django interpreting empty fixtures as an error, 
-                we yield one object which always exists: the SiteConfig
+                we yield one object which always exists: the SiteConfig instance
                 """
                 yield FakeDeserializedObject(self,settings.LINO.site_config)
                 #~ raise Exception("""\
