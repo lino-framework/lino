@@ -248,7 +248,7 @@ class ComboStoreField(StoreField):
     def as_js(self):
         s = StoreField.as_js(self)
         #~ s += "," + repr(self.field.name+ext_requests.CHOICES_HIDDEN_SUFFIX)
-        s += "," + repr(self.options['name']+ext_requests.CHOICES_HIDDEN_SUFFIX)
+        s += ", '%s'" % (self.options['name']+ext_requests.CHOICES_HIDDEN_SUFFIX)
         return s 
         
     def column_names(self):

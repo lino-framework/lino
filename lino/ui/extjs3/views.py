@@ -1,5 +1,5 @@
 # -*- coding: UTF-8 -*-
-## Copyright 2009-2012 Luc Saffre
+## Copyright 2009-2013 Luc Saffre
 ## This file is part of the Lino project.
 ## Lino is free software; you can redistribute it and/or modify 
 ## it under the terms of the GNU General Public License as published by
@@ -221,6 +221,9 @@ def elem2rec_detailed(ar,elem,**rec):
     if ar.actor.hide_top_toolbar:
         rec.update(title=unicode(elem))
     else:
+        print(ar.get_title())
+        print(obj2str(elem))
+        print(repr(unicode(elem)))
         rec.update(title=ar.get_title() + u" » " + unicode(elem))
     rec.update(id=elem.pk)
     rec.update(disable_delete=rh.actor.disable_delete(elem,ar))

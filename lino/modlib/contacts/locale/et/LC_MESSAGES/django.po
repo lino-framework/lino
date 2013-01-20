@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: lino.modlib.contacts\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2013-01-01 10:50+0000\n"
+"POT-Creation-Date: 2013-01-20 20:17+0000\n"
 "PO-Revision-Date: 2011-03-02 21:46+0200\n"
 "Last-Translator: Luc Saffre <luc.saffre@gmail.com>\n"
 "Language-Team: et <et>\n"
@@ -127,7 +127,7 @@ msgstr "Isik"
 msgid "Persons"
 msgstr "Isikud"
 
-#: .\models.py:430 .\models.py:693 .\models.py:736
+#: .\models.py:430 .\models.py:695 .\models.py:738
 msgid "Company"
 msgstr "Firma"
 
@@ -175,27 +175,27 @@ msgstr "Kontaktiliigid"
 msgid "Contact for"
 msgstr "Kontaktisik"
 
-#: .\models.py:699 .\models.py:742
+#: .\models.py:701 .\models.py:744
 msgid "represented by"
 msgstr ""
 
-#: .\models.py:747
+#: .\models.py:749
 msgid "represented as"
 msgstr ""
 
-#: .\models.py:814
+#: .\models.py:816
 msgid "The next automatic id for Person or Company"
 msgstr ""
 
-#: .\models.py:823
+#: .\models.py:825
 msgid "The company that runs this site"
 msgstr ""
 
-#: .\models.py:825
+#: .\models.py:827
 msgid "The Company to be used as sender in documents."
 msgstr ""
 
-#: .\models.py:842
+#: .\models.py:844
 #, fuzzy
 msgid "Contacts"
 msgstr "Kontaktid"

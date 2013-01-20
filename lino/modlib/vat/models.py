@@ -20,6 +20,8 @@ and Model mixins designed to work both with and without
 
 """
 
+from __future__ import unicode_literals
+
 import logging
 logger = logging.getLogger(__name__)
 
@@ -284,8 +286,8 @@ class VatDocument(mixins.UserAuthored,VatTotal):
         abstract = True
   
     partner = models.ForeignKey("contacts.Partner")
-    item_vat = models.BooleanField(default=False,
-      help_text=_("Whether price includes VAT or not."))
+    item_vat = models.BooleanField(_("Prices include VAT"),default=False,
+      help_text=_("Whether prices includes VAT or not."))
     vat_regime = VatRegimes.field(blank=True)
     declaration = models.ForeignKey("vat.Declaration",blank=True,null=True)
     
@@ -440,8 +442,8 @@ class QtyVatItemBase(VatItemBase):
     class Meta:
         abstract = True
         
-    unit_price = dd.PriceField(blank=True,null=True) 
-    qty = dd.QuantityField(blank=True) # ,null=True)
+    unit_price = dd.PriceField(_("Unit price"),blank=True,null=True) 
+    qty = dd.QuantityField(_("Quantity"),blank=True) # ,null=True)
     
     def unit_price_changed(self,ar):
         self.reset_totals(ar)

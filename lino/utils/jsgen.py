@@ -1,5 +1,5 @@
 # -*- coding: UTF-8 -*-
-## Copyright 2009-2012 Luc Saffre
+## Copyright 2009-2013 Luc Saffre
 ## This file is part of the Lino project.
 ## Lino is free software; you can redistribute it and/or modify 
 ## it under the terms of the GNU General Public License as published by
@@ -192,7 +192,7 @@ def py2js(v):
         #~ raise Exception("Please call the function yourself")
         return "\n".join([ln for ln in v()])
     if isinstance(v,js_code):
-        return v.s
+        return str(v.s) # v.s might be a unicode
     if v is None:
         #~ return 'undefined'
         return 'null'

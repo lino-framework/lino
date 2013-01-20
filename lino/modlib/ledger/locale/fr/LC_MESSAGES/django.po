@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2013-01-01 10:50+0000\n"
+"POT-Creation-Date: 2013-01-20 20:17+0000\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -17,84 +17,88 @@ msgstr ""
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=(n > 1)\n"
 
-#: .\models.py:79
+#: .\models.py:81
 msgid "Journal"
 msgstr ""
 
-#: .\models.py:80
+#: .\models.py:82
 msgid "Journals"
 msgstr ""
 
-#: .\models.py:186
+#: .\models.py:188
 #, python-format
 msgid "%s is not the last voucher in journal"
 msgstr ""
 
-#: .\models.py:231 .\models.py:450
+#: .\models.py:233 .\models.py:454
 msgid "Voucher"
 msgstr ""
 
-#: .\models.py:232
+#: .\models.py:234
 msgid "Vouchers"
 msgstr ""
 
-#: .\models.py:244
+#: .\models.py:246
 msgid "Narration"
 msgstr ""
 
-#: .\models.py:425
+#: .\models.py:427
 msgid "Movement"
 msgstr ""
 
-#: .\models.py:426
+#: .\models.py:428
 msgid "Movements"
 msgstr ""
 
-#: .\models.py:438
+#: .\models.py:440
 msgid "Debit"
 msgstr ""
 
-#: .\models.py:444
+#: .\models.py:447
 msgid "Credit"
 msgstr ""
 
-#: .\models.py:485
+#: .\models.py:489
 msgid "Draft"
 msgstr ""
 
-#: .\models.py:486
+#: .\models.py:490
 msgid "Registered"
 msgstr ""
 
-#: .\models.py:489
+#: .\models.py:493
 msgid "Paid"
 msgstr ""
 
-#: .\models.py:497
+#: .\models.py:501
 msgid "Invoice"
 msgstr ""
 
-#: .\models.py:498
+#: .\models.py:502
 msgid "Invoices"
 msgstr ""
 
-#: .\models.py:500
+#: .\models.py:504
 msgid "Your reference"
 msgstr ""
 
-#: .\models.py:503
+#: .\models.py:507
 msgid "Due date"
 msgstr ""
 
-#: .\models.py:552
-msgid "General"
+#: .\models.py:530
+msgid "Description"
 msgstr ""
 
 #: .\models.py:557
+msgid "General"
+msgstr ""
+
+#: .\models.py:562
 msgid "Ledger"
 msgstr ""
 
-#: .\models.py:609
+#: .\models.py:614
 msgid "Unregistered invoices"
 msgstr ""
 

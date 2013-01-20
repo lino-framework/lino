@@ -16,6 +16,8 @@ General Ledger.
 
 """
 
+from __future__ import unicode_literals
+
 import logging
 logger = logging.getLogger(__name__)
 
@@ -459,7 +461,7 @@ class Movement(mixins.Sequenced):
         #~ return self.__class__.objects.filter().order_by('seqno')
         
     def __unicode__(self):
-        return u"%s.%d" % (unicode(self.voucher),self.seqno)
+        return "%s.%d" % (unicode(self.voucher),self.seqno)
         
     
 
@@ -516,15 +518,18 @@ class AccountInvoice(vat.VatDocument,Voucher):
 
 class VoucherItem(dd.Model):
     """
-    Subclasses must define a field `voucher` which must be a FK with related_name='items'
+    Subclasses must define a field `voucher` which must 
+    be a FK with related_name='items'
     """
     
     allow_cascaded_delete = ['voucher']
     
     class Meta:
         abstract = True
+        verbose_name = _("Voucher item")
+        verbose_name_plural = _("Voucher items")
         
-    title = models.CharField(max_length=200,blank=True)
+    title = models.CharField(_("Description"),max_length=200,blank=True)
     
     def get_row_permission(self,ar,state,ba):
         """
@@ -620,7 +625,6 @@ VoucherTypes.add_item(AccountInvoice,InvoicesByJournal)
 
 
 class InvoiceItem(VoucherItem,vat.VatItemBase):
-    
     #~ document = models.ForeignKey(AccountInvoice,related_name='items') 
     voucher = models.ForeignKey(AccountInvoice,related_name='items') 
     

@@ -1,4 +1,4 @@
-DJANGO_ADMIN = python l:\\snapshots\\django\\django\\bin\\django-admin.py
+DJANGO_ADMIN = python l:/snapshots/django/django/bin/django-admin.py
 LINO_ROOT := /cygdrive/t/hgwork/lino
 LINO_ROOT := `cygpath -m $(LINO_ROOT)`
 APPS = cosi 

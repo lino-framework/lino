@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2013-01-01 10:51+0000\n"
+"POT-Creation-Date: 2013-01-20 20:17+0000\n"
 "PO-Revision-Date: 2011-11-11 11:00+0200\n"
 "Last-Translator: Luc Saffre <luc.saffre@gmail.com>\n"
 "Language-Team: \n"
@@ -16,133 +16,137 @@ msgstr ""
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=n>1;\n"
 
-#: .\models.py:46
+#: .\models.py:49
 msgid "Place Type"
 msgstr ""
 
-#: .\models.py:49
+#: .\models.py:52
 msgid "Member State"
 msgstr ""
 
-#: .\models.py:50
+#: .\models.py:53
 msgid "Division"
 msgstr ""
 
-#: .\models.py:51 .\models.py:275
+#: .\models.py:54 .\models.py:321
 msgid "Region"
 msgstr ""
 
-#: .\models.py:52
+#: .\models.py:55
 #, fuzzy
 msgid "Community"
 msgstr "Pays"
 
-#: .\models.py:53
+#: .\models.py:56
 msgid "Territory"
 msgstr ""
 
-#: .\models.py:56
+#: .\models.py:59
 #, fuzzy
 msgid "County"
 msgstr "Pays"
 
-#: .\models.py:57
+#: .\models.py:60
 msgid "Province"
 msgstr ""
 
-#: .\models.py:58
+#: .\models.py:61
 msgid "Shire"
 msgstr ""
 
-#: .\models.py:59
+#: .\models.py:62
 msgid "Subregion"
 msgstr ""
 
-#: .\models.py:60
+#: .\models.py:63
 msgid "Department"
 msgstr ""
 
-#: .\models.py:61
+#: .\models.py:64
 msgid "Arrondissement"
 msgstr ""
 
-#: .\models.py:62
+#: .\models.py:65
 msgid "Prefecture"
 msgstr ""
 
-#: .\models.py:63
+#: .\models.py:66
 msgid "District"
 msgstr ""
 
-#: .\models.py:64
+#: .\models.py:67
 msgid "Sector"
 msgstr ""
 
-#: .\models.py:66
+#: .\models.py:69
 msgid "City"
 msgstr "Ville"
 
-#: .\models.py:67
+#: .\models.py:70
 msgid "Town"
 msgstr ""
 
-#: .\models.py:68
+#: .\models.py:71
 msgid "Municipality"
 msgstr ""
 
-#: .\models.py:70
+#: .\models.py:73
 msgid "Parish"
 msgstr ""
 
-#: .\models.py:71
+#: .\models.py:74
 msgid "Township"
 msgstr ""
 
-#: .\models.py:72
+#: .\models.py:75
 msgid "Quarter"
 msgstr ""
 
-#: .\models.py:74
+#: .\models.py:77
 msgid "Borough"
 msgstr ""
 
-#: .\models.py:75
+#: .\models.py:78
 msgid "Small borough"
 msgstr ""
 
-#: .\models.py:77
+#: .\models.py:80
 msgid "Village"
 msgstr ""
 
-#: .\models.py:98
+#: .\models.py:101
 msgid "Language"
 msgstr "Langue"
 
-#: .\models.py:99
+#: .\models.py:102
 msgid "Languages"
 msgstr "Langues"
 
-#: .\models.py:125
+#: .\models.py:128
 msgid "Country"
 msgstr "Pays"
 
-#: .\models.py:126
+#: .\models.py:129
 msgid "Countries"
 msgstr "Pays"
 
-#: .\models.py:170
+#: .\models.py:173
 msgid "Place"
 msgstr ""
 
-#: .\models.py:171
+#: .\models.py:174
 msgid "Places"
 msgstr ""
 
-#: .\models.py:183
+#: .\models.py:185
 msgid "Part of"
 msgstr ""
 
-#: .\models.py:278
+#: .\models.py:234
+msgid "Subdivisions"
+msgstr ""
+
+#: .\models.py:324
 msgid "Zip code"
 msgstr ""
 

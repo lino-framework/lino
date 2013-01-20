@@ -16,6 +16,8 @@
 
 """
 
+from __future__ import unicode_literals
+
 import logging
 logger = logging.getLogger(__name__)
 import datetime
@@ -179,7 +181,7 @@ class SalesRule(dd.Model):
     payment_term = models.ForeignKey(PaymentTerm,blank=True,null=True)
     
     #~ def __unicode__(self):
-        #~ return u"SalesRule %d" % (self.id)
+        #~ return "SalesRule %d" % (self.id)
         
 #~ def get_sales_rule(doc):
     #~ for r in SalesRule.objects.all().order_by("id"):
@@ -280,13 +282,13 @@ class SalesDocument(
     #~ ship_to = models.ForeignKey(Customer,
         #~ blank=True,null=True,
         #~ related_name="shipTo_%(class)s")
-    your_ref = models.CharField(max_length=200,blank=True)
+    your_ref = models.CharField(_("Your reference"),max_length=200,blank=True)
     imode = models.ForeignKey(InvoicingMode,blank=True,null=True)
     shipping_mode = models.ForeignKey(ShippingMode,blank=True,null=True)
     payment_term = models.ForeignKey(PaymentTerm,blank=True,null=True)
     #~ sales_remark = models.CharField("Remark for sales",
       #~ max_length=200,blank=True)
-    subject = models.CharField("Subject line",max_length=200,blank=True)
+    subject = models.CharField(_("Subject line"),max_length=200,blank=True)
     #~ vat_exempt = models.BooleanField(default=False)
     #~ item_vat = models.BooleanField(default=False)
     #~ total_base = dd.PriceField(blank=True,null=True)

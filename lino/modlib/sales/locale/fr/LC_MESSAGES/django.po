@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2013-01-01 10:51+0000\n"
+"POT-Creation-Date: 2013-01-20 20:17+0000\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -17,114 +17,122 @@ msgstr ""
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=(n > 1)\n"
 
-#: .\dummy_messages.py:5
-msgid "Recipient"
-msgstr ""
-
-#: .\dummy_messages.py:6 .\models.py:567
-msgid "Date of payment"
-msgstr ""
-
-#: .\models.py:78
+#: .\models.py:81
 msgid "Draft"
 msgstr ""
 
-#: .\models.py:79
+#: .\models.py:82
 msgid "Registered"
 msgstr ""
 
-#: .\models.py:80
+#: .\models.py:83
 msgid "Signed"
 msgstr ""
 
-#: .\models.py:81
+#: .\models.py:84
 msgid "Sent"
 msgstr ""
 
-#: .\models.py:82
+#: .\models.py:85
 msgid "Paid"
 msgstr ""
 
-#: .\models.py:91
+#: .\models.py:94
 msgid "Payment Term"
 msgstr ""
 
-#: .\models.py:92
+#: .\models.py:95
 msgid "Payment Terms"
 msgstr ""
 
-#: .\models.py:118
+#: .\models.py:121
 msgid "Invoicing Mode"
 msgstr ""
 
-#: .\models.py:119
+#: .\models.py:122
 msgid "Invoicing Modes"
 msgstr ""
 
-#: .\models.py:122
+#: .\models.py:125
 msgid "Additional fee charged when using this invoicing mode."
 msgstr ""
 
-#: .\models.py:150
+#: .\models.py:153
 msgid "Shipping Mode"
 msgstr ""
 
-#: .\models.py:151
+#: .\models.py:154
 msgid "Shipping Modes"
 msgstr ""
 
-#: .\models.py:172
+#: .\models.py:175
 msgid "Sales Rule"
 msgstr ""
 
-#: .\models.py:173
+#: .\models.py:176
 msgid "Sales Rules"
 msgstr ""
 
-#: .\models.py:295 .\models.py:604
+#: .\models.py:285
+msgid "Your reference"
+msgstr ""
+
+#: .\models.py:291
+msgid "Subject line"
+msgstr ""
+
+#: .\models.py:299 .\models.py:430
 msgid "Discount"
 msgstr ""
 
-#: .\models.py:386
-msgid "Order"
-msgstr ""
-
-#: .\models.py:387
-msgid "Orders"
-msgstr ""
-
-#: .\models.py:564
+#: .\models.py:390
 msgid "Invoice"
 msgstr ""
 
-#: .\models.py:565
+#: .\models.py:391
 msgid "Invoices"
 msgstr ""
 
-#: .\models.py:603
+#: .\models.py:393
+msgid "Date of payment"
+msgstr ""
+
+#: .\models.py:429
 msgid "Description"
 msgstr ""
 
-#: .\models.py:656
+#: .\models.py:480
 msgid "Totals"
 msgstr ""
 
-#: .\models.py:663
+#: .\models.py:487
 msgid "Header"
 msgstr ""
 
-#: .\models.py:668
+#: .\models.py:492
 msgid "General"
 msgstr ""
 
-#: .\models.py:673
+#: .\models.py:497
+msgid "More"
+msgstr ""
+
+#: .\models.py:502
 msgid "Ledger"
 msgstr ""
 
-#: .\models.py:867
-msgid "is Customer"
+#: .\models.py:682
+msgid "The default payment term for sales invoices to this customer."
 msgstr ""
 
-#: .\models.py:872
+#: .\models.py:688
+msgid "The default VAT regime for sales to this customer."
+msgstr ""
+
+#: .\models.py:694
+msgid "The default item VAT setting for sales to this customer."
+msgstr ""
+
+#: .\models.py:711
 msgid "Sales"
 msgstr ""
