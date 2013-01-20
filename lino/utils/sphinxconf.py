@@ -202,7 +202,7 @@ class InsertInputDirective(Directive):
 
 
 
-class unused_Py2rstDirective(InsertInputDirective):
+class Py2rstDirective(InsertInputDirective):
     """
     This works, but is not used.
     """
@@ -211,7 +211,7 @@ class unused_Py2rstDirective(InsertInputDirective):
         old = sys.stdout
         buffer = StringIO()
         sys.stdout = buffer
-        exec code
+        exec(code,{})
         sys.stdout = old
         return buffer.getvalue()
         
@@ -539,7 +539,7 @@ def setup(app):
     app.add_directive('blogger_index', MainBlogIndexDirective)
     app.add_directive('textimage', TextImageDirective)
     app.add_directive('complextable', ComplexTableDirective)
-    #~ app.add_directive('py2rst', Py2rstDirective)
+    app.add_directive('py2rst', Py2rstDirective)
     #~ app.add_directive('screenshot', ScreenshotDirective)
     #~ app.add_config_value('screenshots_root', '/screenshots/', 'html')
 

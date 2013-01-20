@@ -4,8 +4,9 @@ Lino README
 About Lino
 ----------
 
-Lino is a framework for creating customized enterprise-level 
-Rich Internet Applications using Sencha ExtJS and Django 
+Lino is a framework for writing desktop-like web applications 
+using `Django <https://www.djangoproject.com/>`_
+and `Sencha ExtJS <http://www.sencha.com/products/extjs/>`_.
 
 More on http://lino-framework.org
 

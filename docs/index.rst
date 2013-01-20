@@ -7,7 +7,7 @@ Welcome to the Project homepage of Lino the Framework.
 
 - :doc:`What is Lino? </about/index>`
 
-- Watch the :doc:`online demos</demos>`
+- Play with the :doc:`online demos</demos>`
 
 - Learn how to write your own Lino application by following 
   the :doc:`/tutorials/index`.

@@ -1,0 +1,19 @@
+20130120
+========
+
+I discovered 
+`extjs-public
+<http://code.google.com/p/extjs-public/>`_,
+a repository containing the latest public release of ExtJS.
+This is now being used as default value 
+for :attr:`lino.Lino.extjs_base_url`.
+One thing less to install before getting started with Lino.
+
+
+I also found a solution for ticket :doc:`/tickets/69`.
+See 
+
+
+
+
+http://packages.python.org/distribute/

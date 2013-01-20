@@ -984,90 +984,94 @@ class ExtUI(base.UI):
     def html_page_lines(self,request,title=None,on_ready='',run_jasmine=False):
         """Generates the lines of Lino's HTML reponse.
         """
+        site = settings.LINO
+        
         #~ logger.info("20121003 html_page_lines %r",on_ready)
         yield '<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">'
         yield '<html><head>'
         yield '<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />'
-        yield '<title id="title">%s</title>' % settings.LINO.title or settings.LINO.short_name
+        yield '<title id="title">%s</title>' % site.title or site.short_name
         
-        def stylesheet(*args):
-            url = settings.LINO.build_media_url(*args) #  + url
+        def stylesheet(url):
+            #~ url = site.build_media_url(*args) 
             return '<link rel="stylesheet" type="text/css" href="%s" />' % url
         def javascript(url):
-            url = settings.LINO.build_media_url() + url
+            #~ url = site.build_media_url() + url
             return '<script type="text/javascript" src="%s"></script>' % url
             
         if run_jasmine: 
-            yield stylesheet("jasmine","jasmine.css")
-        yield stylesheet('extjs','resources','css','ext-all.css')
+            yield stylesheet(site.build_media_url("jasmine/jasmine.css"))
+        yield stylesheet(site.build_extjs_url('resources/css/ext-all.css'))
         
         #~ yield '<!-- overrides to base library -->'
         
-        if settings.LINO.use_extensible:
-            yield stylesheet("extensible","resources","css","extensible-all.css")
+        if site.use_extensible:
+            yield stylesheet(site.build_media_url("extensible/resources/css/extensible-all.css"))
           
-        if settings.LINO.use_vinylfox:
-            yield stylessheet('/lino/vinylfox/resources/css/htmleditorplugins.css')
+        if site.use_vinylfox:
+            yield stylesheet(site.build_media_url('lino/vinylfox/resources/css/htmleditorplugins.css'))
             #~ p = self.media_url() + '/lino/vinylfox/resources/css/htmleditorplugins.css'
             #~ yield '<link rel="stylesheet" type="text/css" href="%s" />' % p
           
-        if settings.LINO.use_filterRow:
+        if site.use_filterRow:
             #~ p = self.media_url() + '/lino/filterRow'
             #~ yield '<link rel="stylesheet" type="text/css" href="%s/filterRow.css" />' % p
-            yield stylesheet('lino','filterRow','filterRow.css')
+            yield stylesheet(site.build_media_url('lino/filterRow/filterRow.css'))
             
-        if settings.LINO.use_gridfilters:
+        if site.use_gridfilters:
             #~ yield '<link rel="stylesheet" type="text/css" href="%s/extjs/examples/ux/statusbar/css/statusbar.css" />' % self.media_url() 
             #~ yield '<link rel="stylesheet" type="text/css" href="%s/extjs/examples/ux/gridfilters/css/GridFilters.css" />' % self.media_url() 
             #~ yield '<link rel="stylesheet" type="text/css" href="%s/extjs/examples/ux/gridfilters/css/RangeMenu.css" />' % self.media_url() 
-            yield stylesheet("extjs","examples","ux","statusbar","css/statusbar.css")
-            yield stylesheet("extjs","examples","ux","gridfilters","css/GridFilters.css")
-            yield stylesheet("extjs","examples","ux","gridfilters","css","RangeMenu.css")
+            yield stylesheet(site.build_extjs_url("examples/ux/statusbar/css/statusbar.css"))
+            yield stylesheet(site.build_extjs_url("examples/ux/gridfilters/css/GridFilters.css"))
+            yield stylesheet(site.build_extjs_url("examples/ux/gridfilters/css/RangeMenu.css"))
             
-        yield '<link rel="stylesheet" type="text/css" href="%s/extjs/examples/ux/fileuploadfield/css/fileuploadfield.css" />' % settings.LINO.build_media_url() 
+        yield stylesheet(site.build_extjs_url("examples/ux/fileuploadfield/css/fileuploadfield.css"))
+            
+        #~ yield '<link rel="stylesheet" type="text/css" href="%s/extjs/examples/ux/fileuploadfield/css/fileuploadfield.css" />' % site.build_media_url() 
         
         #~ yield '<link rel="stylesheet" type="text/css" href="%s/lino/extjs/lino.css">' % self.media_url()
-        yield stylesheet("lino","extjs","lino.css")
+        yield stylesheet(site.build_media_url("lino/extjs/lino.css"))
         
-        if settings.LINO.use_awesome_uploader:
-            yield '<link rel="stylesheet" type="text/css" href="%s/lino/AwesomeUploader/AwesomeUploader.css">' % settings.LINO.build_media_url()
-            yield '<link rel="stylesheet" type="text/css" href="%s/lino/AwesomeUploader/AwesomeUploader Progress Bar.css">' % settings.LINO.build_media_url()
+        if site.use_awesome_uploader:
+            yield stylesheet(site.build_media_url("lino/AwesomeUploader/AwesomeUploader.css"))
+            yield stylesheet(site.build_media_url("lino/AwesomeUploader/AwesomeUploader Progress Bar.css"))
          
         if settings.DEBUG:
-            yield javascript('/extjs/adapter/ext/ext-base-debug.js')
-            yield javascript('/extjs/ext-all-debug.js')
-            if settings.LINO.use_extensible:
-                yield javascript('/extensible/extensible-all-debug.js')
+            yield javascript(site.build_extjs_url('adapter/ext/ext-base-debug.js'))
+            yield javascript(site.build_extjs_url('ext-all-debug.js'))
+            if site.use_extensible:
+                yield javascript(site.build_media_url('extensible/extensible-all-debug.js'))
         else:
-            yield javascript('/extjs/adapter/ext/ext-base.js')
-            yield javascript('/extjs/ext-all.js')
-            if settings.LINO.use_extensible:
-                yield javascript('/extensible/extensible-all.js')
+            yield javascript(site.build_extjs_url('adapter/ext/ext-base.js'))
+            yield javascript(site.build_extjs_url('ext-all.js'))
+            if site.use_extensible:
+                yield javascript(site.build_media_url('extensible/extensible-all.js'))
                 
         if translation.get_language() != 'en':
-            yield javascript('/extjs/src/locale/ext-lang-'+translation.get_language()+'.js')
-            if settings.LINO.use_extensible:
-                yield javascript('/extensible/src/locale/extensible-lang-'+translation.get_language()+'.js')
+            yield javascript(site.build_extjs_url('src/locale/ext-lang-'+translation.get_language()+'.js'))
+            if site.use_extensible:
+                yield javascript(site.build_media_url('extensible/src/locale/extensible-lang-'+translation.get_language()+'.js'))
             
         if False:
-            yield '<script type="text/javascript" src="%s/extjs/Exporter-all.js"></script>' % settings.LINO.build_media_url() 
+            yield '<script type="text/javascript" src="%s/extjs/Exporter-all.js"></script>' % site.build_media_url() 
             
         if False:
-            yield '<script type="text/javascript" src="%s/extjs/examples/ux/CheckColumn.js"></script>' % settings.LINO.build_media_url() 
+            yield '<script type="text/javascript" src="%s/extjs/examples/ux/CheckColumn.js"></script>' % site.build_media_url() 
 
-        yield '<script type="text/javascript" src="%s/extjs/examples/ux/statusbar/StatusBar.js"></script>' % settings.LINO.build_media_url()
+        yield javascript(site.build_extjs_url('examples/ux/statusbar/StatusBar.js'))
         
-        if settings.LINO.use_spinner:
-            yield '<script type="text/javascript" src="%s/extjs/examples/ux/Spinner.js"></script>' % settings.LINO.build_media_url()
+        if site.use_spinner:
+            yield javascript(site.build_extjs_url('examples/ux/Spinner.js'))
         
-        if settings.LINO.use_tinymce:
+        if site.use_tinymce:
             #~ p = self.media_url() + '/tinymce'
-            p = settings.LINO.build_media_url('tinymce')
+            #~ p = site.build_media_url('tinymce')
             #~ yield '<script type="text/javascript" src="Ext.ux.form.FileUploadField.js"></script>'
             #~ yield '<script type="text/javascript" src="%s/tiny_mce.js"></script>' % p
-            yield javascript("/tinymce/tiny_mce.js")
+            yield javascript(site.build_media_url("tinymce/tiny_mce.js"))
             #~ yield '<script type="text/javascript" src="%s/lino/tinymce/Ext.ux.TinyMCE.js"></script>' % self.media_url()
-            yield javascript("/lino/tinymce/Ext.ux.TinyMCE.js")
+            yield javascript(site.build_media_url("lino/tinymce/Ext.ux.TinyMCE.js"))
             yield '''<script language="javascript" type="text/javascript">
 tinymce.init({
         theme : "advanced"
@@ -1076,25 +1080,25 @@ tinymce.init({
 </script>'''
 
         #~ yield '<script type="text/javascript" src="%s/lino/extjs/Ext.ux.form.DateTime.js"></script>' % self.media_url()
-        yield javascript("/lino/extjs/Ext.ux.form.DateTime.js")
+        yield javascript(site.build_media_url("lino/extjs/Ext.ux.form.DateTime.js"))
         
-        if run_jasmine: # settings.LINO.use_jasmine:
-            yield javascript("/jasmine/jasmine.js")
-            yield javascript("/jasmine/jasmine-html.js")
+        if run_jasmine: # site.use_jasmine:
+            yield javascript(site.build_media_url("jasmine/jasmine.js"))
+            yield javascript(site.build_media_url("jasmine/jasmine-html.js"))
             
-            yield javascript("/lino/jasmine/specs.js")
+            yield javascript(site.build_media_url("lino/jasmine/specs.js"))
             
-        if settings.LINO.use_eid_jslib:
-            yield javascript('/eid-jslib/be_belgium_eid.js')
-            yield javascript('/eid-jslib/hellerim_base64.js')
+        if site.use_eid_jslib:
+            yield javascript(site.build_media_url('eid-jslib/be_belgium_eid.js'))
+            yield javascript(site.build_media_url('/eid-jslib/hellerim_base64.js'))
             
-        #~ if settings.LINO.use_bootstrap:
+        #~ if site.use_bootstrap:
             #~ yield '<script src="//ajax.googleapis.com/ajax/libs/jquery/1.8.3/jquery.min.js"></script>'
             
             
-        if settings.LINO.use_gridfilters:
+        if site.use_gridfilters:
             #~ p = self.media_url() + '/extjs/examples/ux/gridfilters'
-            p = settings.LINO.build_media_url('extjs','examples','ux','gridfilters')
+            p = site.build_extjs_url('examples/ux/gridfilters')
             #~ yield '<script type="text/javascript" src="%s/extjs/examples/ux/RowEditor.js"></script>' % self.media_url()
             yield '<script type="text/javascript" src="%s/menu/RangeMenu.js"></script>' % p
             yield '<script type="text/javascript" src="%s/menu/ListMenu.js"></script>' % p
@@ -1106,14 +1110,14 @@ tinymce.init({
             yield '<script type="text/javascript" src="%s/filter/NumericFilter.js"></script>' % p
             yield '<script type="text/javascript" src="%s/filter/BooleanFilter.js"></script>' % p
             
-        yield '<script type="text/javascript" src="%s/extjs/examples/ux/fileuploadfield/FileUploadField.js"></script>' % settings.LINO.build_media_url()
+        yield javascript(site.build_extjs_url("examples/ux/fileuploadfield/FileUploadField.js"))
         
-        if settings.LINO.use_filterRow: 
-            p = settings.LINO.build_media_url('lino','filterRow') 
+        if site.use_filterRow: 
+            p = site.build_media_url('lino','filterRow') 
             yield '<script type="text/javascript" src="%s/filterRow.js"></script>' % p
             
-        if settings.LINO.use_vinylfox:
-            p = settings.LINO.build_media_url() + '/lino/vinylfox/src/Ext.ux.form.HtmlEditor'
+        if site.use_vinylfox:
+            p = site.build_media_url() + '/lino/vinylfox/src/Ext.ux.form.HtmlEditor'
             #~ yield '<script type="text/javascript" src="Ext.ux.form.FileUploadField.js"></script>'
             yield '<script type="text/javascript" src="%s.MidasCommand.js"></script>' % p
             yield '<script type="text/javascript" src="%s.Divider.js"></script>' % p
@@ -1131,8 +1135,8 @@ tinymce.init({
             yield '<script type="text/javascript" src="%s.Heading.js"></script>' % p
             yield '<script type="text/javascript" src="%s.Plugins.js"></script>' % p
             
-        if settings.LINO.use_awesome_uploader:
-            p = settings.LINO.build_media_url() + '/lino/AwesomeUploader/'
+        if site.use_awesome_uploader:
+            p = site.build_media_url() + '/lino/AwesomeUploader/'
             #~ yield '<script type="text/javascript" src="Ext.ux.form.FileUploadField.js"></script>'
             yield '<script type="text/javascript" src="%s/Ext.ux.XHRUpload.js"></script>' % p
             yield '<script type="text/javascript" src="%s/swfupload.js"></script>' % p
@@ -1157,10 +1161,10 @@ tinymce.init({
         if user.profile.level >= dd.UserLevels.admin:
             if request.subst_user:
                 user = request.subst_user
-        if not settings.LINO.build_js_cache_on_startup:
+        if not site.build_js_cache_on_startup:
             self.build_js_cache_for_profile(user.profile,False)
         yield '<script type="text/javascript" src="%s"></script>' % (
-            settings.LINO.build_media_url(*self.lino_js_parts(user.profile)))
+            site.build_media_url(*self.lino_js_parts(user.profile)))
             
         #~ yield '<!-- page specific -->'
         yield '<script type="text/javascript">'
@@ -1219,7 +1223,7 @@ tinymce.init({
                 login_menu_items.insert(0,act_as)
                 #~ login_menu_items = [act_as,mysettings]
                 
-            if settings.LINO.remote_user_header is None:
+            if site.remote_user_header is None:
                 login_menu_items.append(dict(text=_("Log out"),handler=js_code('Lino.logout')))
                 login_menu_items.append(dict(text=_("Change password"),handler=js_code('Lino.change_password')))
                 login_menu_items.append(dict(text=_("Forgot password"),handler=js_code('Lino.forgot_password')))
@@ -1234,7 +1238,7 @@ tinymce.init({
             #~ yield "Lino.main_menu = Lino.main_menu.concat(['->',Lino.login_menu]);"
             yield "Lino.main_menu = Lino.main_menu.concat(['->',%s]);" % py2js(login_menu)
                 
-        elif settings.LINO.user_model is not None: # 20121103
+        elif site.user_model is not None: # 20121103
             login_buttons = [
               #~ dict(xtype="textfield",emptyText=_('Enter your username')),
               #~ dict(xtype="textfield",emptyText=_('Enter your password'),inputType="password"),
@@ -1257,7 +1261,7 @@ tinymce.init({
         
         if not on_ready:
             #~ print "20121115 foo"
-            main.update(html=settings.LINO.get_main_html(request))
+            main.update(html=site.get_main_html(request))
         
         win = dict(
           layout='fit',
@@ -1276,11 +1280,11 @@ tinymce.init({
         #~ yield '  Lino.body_loadMask.show();'
         yield '  Lino.viewport = new Lino.Viewport({items:%s});' % py2js(win)
         
-        if settings.LINO.use_esteid:
+        if site.use_esteid:
             yield 'Lino.init_esteid();'
         
         
-        if run_jasmine: # settings.LINO.use_jasmine:
+        if run_jasmine: # site.use_jasmine:
             yield '  jasmine.getEnv().addReporter(new jasmine.TrivialReporter());'
             yield '  jasmine.getEnv().execute();'
         else:
@@ -1293,13 +1297,13 @@ tinymce.init({
         yield "}); // end of onReady()"
         yield '</script></head><body>'
 
-        if settings.LINO.use_esteid:
+        if site.use_esteid:
             yield '<object id="esteid" type="application/x-esteid" style="width: 1px; height: 1px;"></object>'
             #~ yield "your browser doesn't support esteid"
             #~ yield '</object>'
             
-        if settings.LINO.use_eid_jslib:
-            p = settings.LINO.build_media_url('eid-jslib')
+        if site.use_eid_jslib:
+            p = site.build_media_url('eid-jslib')
             #~ print p
             yield '<applet code="org.jdesktop.applet.util.JNLPAppletLauncher"'
             yield 'codebase = "%s/"' % p
@@ -1323,9 +1327,9 @@ tinymce.init({
 
 
           
-        if settings.LINO.use_davlink:
+        if site.use_davlink:
             yield '<applet name="DavLink" code="davlink.DavLink.class"'
-            yield '        archive="%s/lino/applets/DavLink.jar"' % settings.LINO.build_media_url()
+            yield '        archive="%s/lino/applets/DavLink.jar"' % site.build_media_url()
             yield '        width="1" height="1"></applet>'
             # Note: The value of the ARCHIVE attribute is a URL of a JAR file.
         yield '<div id="body"></div>'
@@ -1346,7 +1350,7 @@ tinymce.init({
         def fn():
             yield """// lino.js --- generated %s by Lino version %s.""" % (time.ctime(),lino.__version__)
             #~ // $site.title ($lino.welcome_text())
-            yield "Ext.BLANK_IMAGE_URL = '%s/extjs/resources/images/default/s.gif';" % settings.LINO.build_media_url()
+            yield "Ext.BLANK_IMAGE_URL = '%s';" % settings.LINO.build_extjs_url('resources/images/default/s.gif')
             yield "LANGUAGE_CHOICES = %s;" % py2js(list(LANGUAGE_CHOICES))
             # TODO: replace the following lines by a generic method for all ChoiceLists
             #~ yield "STRENGTH_CHOICES = %s;" % py2js(list(STRENGTH_CHOICES))

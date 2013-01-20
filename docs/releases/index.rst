@@ -1,9 +1,13 @@
 Releases
 ========
 
-The current stable release is :doc:`1.5.5`.
+.. py2rst::
 
-We're currently working on :doc:`coming`.
+  import lino
+  v = lino.__version__
+  v = v.replace('+','')
+  print("The current stable release is :doc:`%s`. We're currently working on :doc:`coming`." % v)
+
 
 .. toctree::
    :maxdepth: 1

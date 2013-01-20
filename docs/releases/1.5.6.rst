@@ -6,7 +6,7 @@ Released 2013-01-18
 Bugfixes
 --------
 
-- Fixed a bug introduced :doc:`0107`:
+- Fixed a bug introduced :doc:`/blog/2013/0107`:
   'int' object has no attribute 'get_choices_text'
 
 - Fixed an internal bug which caused 

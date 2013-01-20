@@ -33,21 +33,34 @@ def buildurl(*args,**kw):
     if len(kw):
         url += "?" + urlencode(kw)
     return url
-        
 
 
 from lino.utils.xmlgen import html as xghtml
+from lino.utils import AttrDict
+#~ from lino import pypi_info 
+#~ from lino.pypi_info import pypi_info
 
-__version__ = "1.5.6"
+execfile(os.path.join(os.path.dirname(__file__),'version.py'))
+
+#~ execfile(os.path.join(os.path.dirname(__file__),'pypi_info.py'))
+#~ x = file(os.path.join(os.path.dirname(__file__),'pypi_info.py')).read().strip()
+#~ pypi_info = AttrDict(eval(x))
+#~ pypi_info = AttrDict(pypi_info)
+
+
+#~ __version__ = pypi_info.version
+#~ __version__ = "1.5.6"
 """
 Lino version number. 
 """
 
 __author__ = "Luc Saffre <luc.saffre@gmx.net>"
+#~ __author__ = pypi_info.author
 
 #~ __url__ = "http://lino.saffre-rumma.net"
 #~ __url__ = "http://code.google.com/p/lino/"
 __url__ = "http://www.lino-framework.org"
+#~ __url__ = pypi_info.url
 
 
 __copyright__ = """\
@@ -55,7 +68,6 @@ Copyright (c) 2002-2013 Luc Saffre.
 This software comes with ABSOLUTELY NO WARRANTY and is
 distributed under the terms of the GNU General Public License.
 See file COPYING.txt for more information."""
-
 
 gettext = lambda s: s
 
@@ -228,6 +240,18 @@ class Lino(object):
     directory has no symbolic link to the ExtJS root directory.
     """
     
+    extjs_base_url = "http://extjs-public.googlecode.com/svn/tags/extjs-3.3.1/release/"
+    """
+    The default value points to the 
+    `extjs-public <http://code.google.com/p/extjs-public/>`_
+    repository and thus requires the clients to have an connection connection.
+    
+    Set this to None if you want to serve ExtJS from your server
+    (which requires a symbolic link "extjs" in your media directory
+    or :attr:`extjs_root` pointing to the local directory 
+    where ExtJS 3.3.1 is installed).
+    """
+    
     bootstrap_root = None
     """
     Path to the Jasmine root directory. 
@@ -293,13 +317,6 @@ class Lino(object):
     #~ index_html = "This is the main page."
     title = None
     #~ domain = "www.example.com"
-    
-    pypi_name = None
-    """
-    The PyPI name of this application. 
-    Used in :xfile:`setup.py` file as the `name` argument to 
-    `setuptools.setup() <http://guide.python-distribute.org/creation.html>`_.
-    """
     
     short_name = None # "Unnamed Lino Application"
     """
@@ -1836,6 +1853,11 @@ class Lino(object):
         
     def build_plain_url(self,*args,**kw):
         return self.plain_prefix + buildurl(*args,**kw)
+        
+    def build_extjs_url(self,url):
+        if self.extjs_base_url:
+            return self.extjs_base_url + url
+        return self.build_media_url('extjs',url)
         
 
     def get_urls(self):

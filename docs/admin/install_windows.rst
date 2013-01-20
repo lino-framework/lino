@@ -68,9 +68,8 @@ HTML WYSIWYG editor control released as Open Source
 under LGPL by Moxiecode Systems AB.
 
 If you do not want a WYSYWIG editor, 
-just skip this section, but
-you'll need to set
-:attr:`lino.Lino.use_tinymce` to `False` in your 
+just skip this section, but you'll need to 
+set :attr:`lino.Lino.use_tinymce` to `False` in your 
 local settings file (see later).
 
 Browse to http://www.tinymce.com/download/download.php
@@ -84,7 +83,12 @@ http://www.tinymce.com/i18n/index.php?ctrl=lang&act=download&pr_id=1
 
 TODO: write detailed installation intructions.
 
-    
+
+Python dependencies
+-------------------
+
+If you used easy_install Lino
+
 Appy
 ====
 
@@ -108,10 +112,10 @@ If you don't, you may get it
 `here <http://gnuwin32.sourceforge.net/packages/gtar.htm>`_.
   
   
-Cheetah
+Jinja
 =======
 
-Lino needs the Cheetah templating engine, too::
+Lino needs the Jinja2 templating engine, too::
 
   c:\snapshots> wget http://pypi.python.org/packages/source/C/Cheetah/Cheetah-2.4.4.tar.gz
   c:\snapshots> tar -xvzf Cheetah-2.4.4.tar.gz

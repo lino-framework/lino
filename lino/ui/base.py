@@ -195,7 +195,8 @@ class UI:
                 if symlink is not None:
                     symlink(source,target)
             
-        setup_media_link('extjs','extjs_root')
+        if not settings.LINO.extjs_base_url:
+            setup_media_link('extjs','extjs_root')
         if settings.LINO.use_bootstrap:
             setup_media_link('bootstrap','bootstrap_root')
         if settings.LINO.use_jasmine:
