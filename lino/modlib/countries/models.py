@@ -92,7 +92,7 @@ class CountryDrivers:
     BE =  CountryDriver('21','50 70')
     EE =  CountryDriver('20','50 51 52 61 62 70')
     DE =  CountryDriver('10','50 51 52 70')
-    FR =  CountryDriver('24','52 70')
+    FR =  CountryDriver('24','50 51 52 70')
 
 
 #~ class Language(dd.Model):

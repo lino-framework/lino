@@ -1,0 +1,207 @@
+## Copyright 2011-2012 Luc Saffre
+## This file is part of the Lino project.
+## Lino is free software; you can redistribute it and/or modify 
+## it under the terms of the GNU General Public License as published by
+## the Free Software Foundation; either version 3 of the License, or
+## (at your option) any later version.
+## Lino is distributed in the hope that it will be useful, 
+## but WITHOUT ANY WARRANTY; without even the implied warranty of
+## MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the 
+## GNU General Public License for more details.
+## You should have received a copy of the GNU General Public License
+## along with Lino; if not, see <http://www.gnu.org/licenses/>.
+
+import logging
+logger = logging.getLogger(__name__)
+
+from django.db.models.signals import class_prepared
+from django.db.models.fields import FieldDoesNotExist
+from django.dispatch import receiver
+
+from lino.core import fields
+from lino.core.signals import pre_analyze
+
+PENDING_INJECTS = dict()
+PREPARED_MODELS = dict()
+
+def fix_field_cache(model):
+    """
+    Remove duplicate entries in `_field_cache` to fix Django issue #10808
+    """
+    cache = []
+    field_names = set()
+    for f,m in model._meta._field_cache:
+        if f.attname not in field_names:
+            field_names.add(f.attname)
+            cache.append( (f,m) )
+    model._meta._field_cache = tuple(cache)
+    model._meta._field_name_cache = [x for x, _ in cache]
+    #~ logger.info("20130106 fixed field_cache %s (%s)",full_model_name(model),' '.join(field_names))
+
+
+@receiver(class_prepared)
+def on_class_prepared(sender=None,**kw):
+    """
+    This is Lino's general `class_prepared` handler.
+    It does two things:
+    
+    - Run pending calls to :func:`inject_field` and :func:`update_field`.
+    
+    - Apply a workaround for Django's ticket 10808.
+      In a Diamond inheritance pattern, `_meta._field_cache` contains certain fields twice.    
+      So we remove these duplicate fields from `_meta._field_cache`.
+      (A better solution would be of course to not collect them.)
+    """
+    #~ print("20130119 on_class_prepared",sender)
+    model = sender
+    #~ return
+    #~ if model is None:
+        #~ return 
+    k = model._meta.app_label + '.' + model.__name__
+    PREPARED_MODELS[k] = model
+    #~ logger.info("20120627 on_class_prepared %r = %r",k,model)
+    todos = PENDING_INJECTS.pop(k,None)
+    if todos is not None:
+        for f in todos:
+            f(model)
+        #~ for k,v in injects.items():
+            #~ model.add_to_class(k,v)
+
+    """
+    django.db.models.options
+    """
+    if hasattr(model._meta,'_field_cache'):
+        fix_field_cache(model)
+    #~ else:
+        #~ logger.info("20120905 Could not fix Django issue #10808 for %s",model)
+
+
+
+
+@receiver(pre_analyze)
+def check_pending_injects(signal,sender,models_list=None,**kw): # called from kernel.analyze_models()
+    site = sender
+    #~ logger.info("check_pending_injects")
+    if PENDING_INJECTS:
+        msg = ''
+        for spec,funcs in PENDING_INJECTS.items():
+            msg += spec + ': ' 
+            #~ msg += '\n'.join([str(dir(func)) for func in funcs])
+            #~ msg += '\n'.join([str(func.func_code.co_consts) for func in funcs])
+            msg += str(funcs)
+        raise Exception("Oops, there are pending injects: %s" % msg)
+        #~ logger.warning("pending injects: %s", msg)
+
+    """
+    20130106
+    now we loop a last time over each model and fill it's _meta._field_cache
+    otherwise if some application module used inject_field() on a model which 
+    has subclasses, then the new field would not be seen by subclasses
+    """
+    #~ for model in models.get_models():
+    for model in models_list:
+        model._meta._fill_fields_cache()
+        fix_field_cache(model)
+
+from lino.core.modeltools import is_installed_model_spec
+
+def do_when_prepared(model_spec,todo):
+    if model_spec is None:
+        return # e.g. inject_field during autodoc when user_model is None
+        
+    if isinstance(model_spec,basestring):
+        if not is_installed_model_spec(model_spec):
+            return
+        k = model_spec
+        model = PREPARED_MODELS.get(k,None)
+        if model is None: 
+            injects = PENDING_INJECTS.setdefault(k,[])
+            injects.append(todo)
+            #~ d[name] = field
+            #~ logger.info("20120627 Defer inject_field(%r,%r,%r)", model_spec,name,field)
+            return
+    else:
+        model = model_spec
+        #~ k = model_spec._meta.app_label + '.' + model_spec.__name__
+    todo(model)
+
+
+def inject_field(model_spec,name,field,doc=None):
+    """
+    Adds the given field to the given model.
+    See also :doc:`/tickets/49`.
+    
+    Since `inject_field` is usually called at the global level 
+    of `models modules`, it cannot know whether the given `model_spec` 
+    has already been imported (and its class prepared) or not. 
+    That's why it uses Django's `class_prepared` signal to maintain 
+    its own list of models.
+    """
+    #~ logger.info("20130106 inject_field(%r,%s)",model_spec,name)
+    if doc:
+        field.__doc__ = doc
+    def todo(model):
+        model.add_to_class(name,field)
+        #~ if hasattr(model._meta,'_field_cache'):
+        model._meta._fill_fields_cache()
+        #~ fix_field_cache(model)
+        #~ for m in models_by_base(model):
+            #~ if hasattr(m._meta,'_field_cache'):
+                #~ m._meta._fill_fields_cache()
+                #~ fix_field_cache(m)
+        #~ else:
+            #~ logger.info("20130106 no need to fix_field_cache after inject_field")
+
+    return do_when_prepared(model_spec,todo)    
+    
+    
+
+def update_field(model_spec,name,**kw):
+    """
+    Update some attribute of the specified existing field.
+    For example 
+    :class:`PersonMixin <lino.modlib.contacts.models.PersonMixin>` 
+    defines a field `first_name` which may not be blank.
+    If you inherit from 
+    :class:`PersonMixin <lino.modlib.contacts.models.PersonMixin>`
+    but want `first_name` to be optional::
+    
+      class MyPerson(contacts.PersonMixin):
+        ...
+      dd.update_field(MyPerson,'first_name',blank=True)
+      
+    Or you want to change the label of a field defined in an inherited mixin,
+    as done in  :app:`lino.modlib.outbox.models`::
+    
+      dd.update_field(Mail,'user',verbose_name=_("Sender"))
+    
+    """
+    def todo(model):
+        try:
+            fld = model._meta.get_field(name)
+            #~ fld = model._meta.get_field_by_name(name)[0]
+        except FieldDoesNotExist:
+            logger.warning("Cannot update unresolved field %s.%s", model,name)
+            return
+        if fld.model != model:
+            raise Exception('20120715 update_field(%s.%s) : %s' % (model,fld,fld.model))
+            #~ logger.warning('20120715 update_field(%s.%s) : %s',model,fld,fld.model)
+        for k,v in kw.items():
+            setattr(fld,k,v)
+    return do_when_prepared(model_spec,todo)    
+        
+
+def inject_quick_add_buttons(model,name,target):
+    """
+    Injects a virtual display field `name` into the specified `model`.
+    This field will show up to three buttons
+    `[New]` `[Show last]` `[Show all]`. 
+    `target` is the table that will run these actions.
+    It must be a slave of `model`.
+    """
+    def fn(self,rr):
+        return rr.renderer.quick_add_buttons(
+          rr.spawn(target,master_instance=self))
+    inject_field(model,name,
+        fields.VirtualField(fields.DisplayField(
+            target.model._meta.verbose_name_plural),fn))

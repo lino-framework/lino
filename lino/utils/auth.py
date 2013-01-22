@@ -605,7 +605,7 @@ def on_login(request,user):
     if request.method == 'GET':
         rqdata = request.GET
     elif request.method == 'PUT':
-        rqdata = http.QueryDict(request.raw_post_data)
+        rqdata = http.QueryDict(request.body) # raw_post_data before Django 1.4
     elif request.method == 'POST':
         rqdata = request.POST
     else: # DELETE

@@ -15,12 +15,14 @@
 import logging
 logger = logging.getLogger(__name__)
 
+#~ import copy
+
 from django.db import models
 from django.conf import settings
 from django.utils.translation import ugettext as _
 
 from lino.core import fields
-from lino.core import modeltools
+from lino.core.modeltools import obj2str
 from lino.utils.xmlgen import html as xghtml
 E = xghtml.E
 
@@ -115,6 +117,11 @@ class Model(models.Model):
     _change_watcher_spec = None
     """
     Internally used by :meth:`watch_changes`
+    """
+    
+    #~ _custom_actions = dict()
+    """
+    Internally used to store custom model actions.
     """
     
     #~ _change_summary = ''
@@ -328,7 +335,7 @@ class Model(models.Model):
         
         
     def __repr__(self):
-        return modeltools.obj2str(self)
+        return obj2str(self)
 
 
     def get_related_project(self,ar):
@@ -345,3 +352,57 @@ class Model(models.Model):
         """
         return []
         
+
+    @classmethod
+    def add_model_action(self,**kw):
+        """
+        Used e.g. by :mod:`lino.modlib.cal` to add the `UpdateReminders` action 
+        to :class: `lino.modlib.users.models.User`.
+        """
+        for k,v in kw.items():
+            assert not hasattr(self,k)
+            setattr(self,k,v)
+        #~ self._custom_actions = dict(self._custom_actions)
+        #~ self._custom_actions.update(kw)
+        
+    #~ @classmethod
+    #~ def get_model_actions(self,table):
+        #~ """
+        #~ Called once for each :class:`lino.core.dbtables.Table` on this model. 
+        #~ Yield a list of (name,action) tuples to install on the table.
+        #~ """
+            
+        #~ if full_model_name(self) in settings.LINO.mergeable_models:
+            #~ yield ( 'merge_row', MergeAction(self) )
+            
+            
+
+        
+        
+    LINO_MODEL_ATTRIBS = (
+              'get_row_permission',
+              'after_ui_save',
+              #~ 'update_system_note',
+              'preferred_foreignkey_width',
+              'before_ui_save',
+              'allow_cascaded_delete',
+              'workflow_state_field',
+              'workflow_owner_field',
+              'disabled_fields',
+              'get_choices_text',
+              'summary_row',
+              #~ 'get_model_actions',
+              #~ '_custom_actions',
+              'hidden_columns',
+              'get_default_table',
+              'get_related_project',
+              'get_system_note_recipients',
+              'get_system_note_type',
+              'quick_search_fields',
+              'site_setup',
+              'disable_delete',
+              'on_duplicate',
+              'on_create')
+    """
+    Used by :mod:`lino.core.kernel`
+    """

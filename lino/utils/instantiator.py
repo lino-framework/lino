@@ -35,36 +35,21 @@ from lino.utils import i2d # for backward compatibility of .py fixtures
 from lino.utils import babel
 from lino.core import fields
 from lino.core.modeltools import obj2str
+from lino.core import signals
     
 
 class DataError(Exception):
     pass
     
-import django.dispatch
 
-auto_create = django.dispatch.Signal(providing_args=["field","value"])
-"""
-The :attr:`auto_create` signal is sent when 
-:func:`lookup_or_create` silently created an instance.
+#~ import django.dispatch
 
-Arguments sent with this signal:
-
-``sender``
-    The model instance that has been created. 
-    
-``field``
-    The database field 
-
-``known_values``
-    The specified known values
-
-"""
-    
     
     
 def lookup_or_create(model,lookup_field,value,**known_values):
     """
-    Look-up whether there is a model instance having `lookup_field` with value `value`
+    Look-up whether there is a model instance having 
+    `lookup_field` with value `value`
     (and optional other `known_values` matching exactly)
     """
     #~ logger.info("2013011 lookup_or_create")
@@ -94,7 +79,7 @@ def lookup_or_create(model,lookup_field,value,**known_values):
         obj.full_clean()
     except ValidationError,e:
         raise ValidationError("Failed to auto_create %s : %s" % (obj2str(obj),e))
-    auto_create.send(obj,known_values=known_values)
+    dd.auto_create.send(obj,known_values=known_values)
     obj.save()
     return obj
     

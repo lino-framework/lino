@@ -196,6 +196,8 @@ class Lino(object):
     django_admin_prefix = None
     """
     The prefix to use for Django admin URLs.
+    Leave this unchanged as long as :dmodules
+    oc:`/ticket/70` is not solved.
     Leave this unchanged as long as :doc:`/ticket/70` is not solved.
     """
     
@@ -244,7 +246,7 @@ class Lino(object):
     """
     The default value points to the 
     `extjs-public <http://code.google.com/p/extjs-public/>`_
-    repository and thus requires the clients to have an connection connection.
+    repository and thus requires the clients to have an internet connection.
     
     Set this to None if you want to serve ExtJS from your server
     (which requires a symbolic link "extjs" in your media directory
@@ -793,6 +795,12 @@ class Lino(object):
     by :class:`lino.modlib.cal.models.EventOwner`.
     """
     
+    #~ mergeable_models = []
+    #~ """
+    #~ A list of models that should have a "Merge" action
+    #~ (see :mod:`lino.mixins.mergeable`).
+    #~ """
+    
     override_modlib_models = []
     """
     A list of names of modlib models which are being 
@@ -820,7 +828,7 @@ class Lino(object):
     
     """
     
-    modules = None
+    modules = AttrDict()
     """
     A shortcut to access all installed models and actors.
     Read-only. Applications should not set this. 
@@ -885,6 +893,7 @@ class Lino(object):
         self._setup_done = False
         #~ self._response = None
         self.django_settings = django_settings
+        self.GFK_LIST = []
         
         
         installed_apps = tuple(self.get_installed_apps())
@@ -953,11 +962,20 @@ class Lino(object):
                 ['lino.core.web.Loader']
                 ))
                 
+        #~ tl = [
+            #~ 'django.template.loaders.filesystem.Loader',
+            #~ 'django.template.loaders.app_directories.Loader',
+            #~ #     'django.template.loaders.eggs.load_template_source',
+        #~ ]
+        #~ django_settings.update(TEMPLATE_LOADERS = tuple(tl))
+                
+                
         tcp = []
         if self.user_model == 'auth.User':
             django_settings.update(LOGIN_URL = '/accounts/login/')
             django_settings.update(LOGIN_REDIRECT_URL = "/")
             tcp += [ 'django.contrib.auth.context_processors.auth' ]
+            
         tcp += [
                 'django.core.context_processors.debug',
                 'django.core.context_processors.i18n',
@@ -967,14 +985,6 @@ class Lino(object):
                 #~ 'django.contrib.messages.context_processors.messages',
         ]
         django_settings.update(TEMPLATE_CONTEXT_PROCESSORS = tuple(tcp))
-        
-        tl = [
-            'django.template.loaders.filesystem.Loader',
-            'django.template.loaders.app_directories.Loader',
-            #     'django.template.loaders.eggs.load_template_source',
-        ]
-        django_settings.update(TEMPLATE_LOADERS = tuple(tl))
-        
 
         self.startup_time = datetime.datetime.now()
         
@@ -1872,3 +1882,14 @@ class Lino(object):
     Width of the sidebar in 1/12 of total screen width.
     Meaningful values are 0 (no sidebar), 2 or 3.
     """
+    
+    
+    def get_generic_related(self,obj):
+        from django.contrib.contenttypes.models import ContentType
+        for gfk in self.GFK_LIST:
+            ct = ContentType.objects.get_for_model(gfk.model)
+            kw = dict()
+            kw[gfk.fk_field] = obj.pk
+            yield gfk, ct.get_all_objects_for_this_type(**kw)
+        
+            

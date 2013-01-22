@@ -109,6 +109,16 @@ class Postings(dd.Table):
     column_names = 'date user owner partner *'
     order_by = ['date']
     
+    #~ @dd.action(_("Print"),icon_name='x-tbar-print')
+    #~ def print_action(cls,ar,self,**kw):
+        #~ kw.update(refresh=True)
+        #~ r = self.owner.print_from_posting(self,ar,**kw)
+        #~ if self.state in (PostingStates.open,PostingStates.ready):
+            #~ self.state = PostingStates.printed
+        #~ self.save()
+        #~ return r
+    
+    
 class MyPostings(Postings,mixins.ByUser):
     required = dict(user_groups='office')
     #~ required = dict()

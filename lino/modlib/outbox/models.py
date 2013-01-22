@@ -220,7 +220,11 @@ class Mailable(dd.Model):
     class Meta:
         abstract = True
         
-    create_mail = CreateMail()
+    @classmethod
+    def get_model_actions(self,table):
+        for x in super(Mailable,self).get_model_actions(table): yield x
+        yield 'create_mail',CreateMail()
+        
     #~ post2 = PostAction(True)
     
     #~ post_as_attachment = models.BooleanField(_("Post as attachment"),default=False)
@@ -493,6 +497,11 @@ class Mail(mixins.AutoUser,mixins.Printable,mixins.ProjectRelated,mixins.Control
         #~ if not self.owner.post_as_attachment:
             #~ return ['body']
         #~ return []
+        
+    #~ @classmethod
+    #~ def get_model_actions(self,table):
+        #~ for x in super(Mail,self).get_model_actions(table): yield x
+        #~ yield 'send_mail',SendMail()
         
     def get_print_language(self,bm):
         if self.user is not None:

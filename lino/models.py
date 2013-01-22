@@ -245,11 +245,15 @@ if settings.LINO.is_installed('contenttypes'):
       if settings.LINO.user_model:
           user = dd.ForeignKey(settings.LINO.user_model)
           
-      object_type = models.ForeignKey(ContentType,related_name='changes_by_object')
+      object_type = models.ForeignKey(ContentType,
+          related_name='changes_by_object',
+          verbose_name=_("Object type"))
       object_id = dd.GenericForeignKeyIdField(object_type)
       object = dd.GenericForeignKey('object_type','object_id',_("Object"))
       
-      master_type = models.ForeignKey(ContentType,related_name='changes_by_master')
+      master_type = models.ForeignKey(ContentType,
+          related_name='changes_by_master',
+          verbose_name=_("Master type"))
       master_id = dd.GenericForeignKeyIdField(master_type)
       master = dd.GenericForeignKey('master_type','master_id',_("Master"))
       
@@ -260,6 +264,35 @@ if settings.LINO.is_installed('contenttypes'):
       def __unicode__(self):
           #~ return "#%s - %s" % (self.id,self.time)
           return "#%s" % self.id
+          
+      # NOTE: the following code is the same as in lino.mixins.Controllable
+      # TODO: automate this behaviour in dd.GenericForeignKey
+      @chooser(instance_values=True)
+      def object_id_choices(cls,object_type):
+          if object_type:
+              return object_type.model_class().objects.all()
+          return []
+      def get_object_id_display(self,value):
+          if self.object_type:
+              try:
+                  return unicode(self.object_type.get_object_for_this_type(pk=value))
+              except self.object_type.model_class().DoesNotExist,e:
+                  return "%s with pk %r does not exist" % (
+                      full_model_name(self.object_type.model_class()),value)
+      @chooser(instance_values=True)
+      def master_id_choices(cls,master_type):
+          if master_type:
+              return master_type.model_class().objects.all()
+          return []
+      def get_master_id_display(self,value):
+          if self.master_type:
+              try:
+                  return unicode(self.master_type.get_object_for_this_type(pk=value))
+              except self.master_type.model_class().DoesNotExist,e:
+                  return "%s with pk %r does not exist" % (
+                      full_model_name(self.master_type.model_class()),value)
+      # NOTE: the above code is the same as in lino.mixins.Controllable
+          
       
   class Changes(dd.Table):
       editable = False

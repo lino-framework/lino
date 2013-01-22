@@ -40,6 +40,7 @@ from lino.core import actions
 from lino.core import fields
 from lino.core import dbtables
 from lino.core import model
+from lino.core.requests import EmptyTableRow
 from lino.utils.choosers import chooser
 from lino.mixins.duplicable import Duplicable
 
@@ -638,7 +639,7 @@ class EmptyTable(frames.Frame):
             #~ kw[k] = v
         #~ for k,f in self.parameters.items():
             #~ kw[k] = f.value_from_object(None)
-        obj = actions.EmptyTableRow(self,**kw)
+        obj = EmptyTableRow(self,**kw)
         kw = req.ah.store.row2dict(req,obj)
         obj._data = kw
         obj.update(**kw)

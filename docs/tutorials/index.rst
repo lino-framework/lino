@@ -11,9 +11,6 @@ but of course we also recommend to *try them yourself*.
 For this you must first install Lino on your computer 
 as explained in :doc:`/admin/install`.
 
-All tutorials are work in progress. 
-Please don't blame me if Lino evolves more quickly than the documentation...
-
 
 .. toctree::
    :maxdepth: 1

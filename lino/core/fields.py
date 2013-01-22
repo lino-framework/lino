@@ -1,5 +1,5 @@
 # -*- coding: UTF-8 -*-
-## Copyright 2008-2012 Luc Saffre
+## Copyright 2008-2013 Luc Saffre
 ## This file is part of the Lino project.
 ## Lino is free software; you can redistribute it and/or modify 
 ## it under the terms of the GNU General Public License as published by
@@ -654,7 +654,7 @@ class GenericForeignKeyIdField(models.PositiveIntegerField):
     
 class GenericForeignKey(generic.GenericForeignKey):
     """
-    Lino's little extension to Django's GFK.
+    Add verbose_name and help_text to Django's GFK.
     Used by :class:`lino.mixins.Controllable`.
     """
     def __init__(self, ct_field="content_type", fk_field="object_id", 
@@ -662,6 +662,24 @@ class GenericForeignKey(generic.GenericForeignKey):
         self.verbose_name = verbose_name
         self.help_text = help_text
         generic.GenericForeignKey.__init__(self,ct_field,fk_field)
+        
+    #~ def contribute_to_class(self, cls, name):
+        #~ """
+        #~ @chooser(instance_values=True)
+        #~ def object_id_choices(cls,object_type):
+            #~ if object_type:
+                #~ return object_type.model_class().objects.all()
+            #~ return []
+        #~ def get_object_id_display(self,value):
+            #~ if self.object_type:
+                #~ try:
+                    #~ return unicode(self.object_type.get_object_for_this_type(pk=value))
+                #~ except self.object_type.model_class().DoesNotExist,e:
+                    #~ return "%s with pk %r does not exist" % (
+                        #~ full_model_name(self.object_type.model_class()),value)
+        #~ """
+        #~ generic.GenericForeignKey.contribute_to_class(self, cls, name)
+        #~ if not hasattr(cls,
         
     
 #~ class FieldSet:

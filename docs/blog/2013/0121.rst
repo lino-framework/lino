@@ -1,0 +1,59 @@
+20130121-22
+===========
+
+Merging two database records
+============================
+
+Lino applications can now add a "Merge" action to any model.
+:mod:`lino.core.merge`
+
+A typical use case are duplicate partners: 
+a user realizes that due to human mistake
+a given company exists twice in their database,
+and each of them has certain number of events, invoices, contracts 
+or other related things.
+
+Clicking the "Merge" action on a Partner will 
+ask "Merge this into" (select another Partner), and if you confirm, 
+Lino will move all related data from this Partner to the other one,
+then delete the first one.
+Or in other words: if you discover a duplicate record, select the 
+one that is "too much" (usually the one with the bigger id), then 
+run the "Merge" action.
+
+Technical challenges:
+
+- this action also merges related objects linked through a generic foreign key.
+- Since I wanted a generic solution 
+  it took me some time to figure out how to make Lino support
+  ForeignKey to self for the `other` field of the 
+  action parameter dialog.
+- "hard references" (e.g. contracts) are never deleted, but unconditionally 
+  moved to the target object. But for certain tables this can be disturbing: 
+  That's why "soft references" (those who are lited in 
+  :attr:`allow_cascaded_delete <lino.core.model.Model.allow_cascaded_delete>`)
+  may optionally be automatically deleted.
+  The corresponding checkbox fields depend of course on the model,
+  so this action is a first example of an automaically generated Layout.
+  
+I also used this occasion to make more intensive usage of 
+`Django's Signals <https://docs.djangoproject.com/en/dev/topics/signals/>`__,
+a feature which I have been ignoring for far too long.
+:mod:`lino.core.signals`
+
+The change also caused a few internal optimizations:
+
+- Lino no longer uses copy.deepcopy to create copies of each action.
+  (I guess I introduced this before BoundAction existed...)
+  
+- :class:`lino.ui.base.UI` is now a new-style class because I 
+  override `get_patterns` and want to call super().
+
+- `AttributeError: 'WSGIRequest' object has no attribute 'raw_post_data'`
+  This was of course due to :djangoticket:`17323`.
+  That's nice and no problem for me since Lino doesn't need to run on Djangos before 1.4.2.
+  
+- When settings.DEBUG was off, then error messages didnt work because 
+  I had converted the error templates to Jinja, but Django's TEMPLATE_LOADERS 
+  wasn't correctly set (and :class:`lino.core.web.Loader` had never been tested).
+  

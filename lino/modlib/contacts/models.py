@@ -13,12 +13,14 @@
 ## along with Lino; if not, see <http://www.gnu.org/licenses/>.
 
 """
-This module deserves more documentation.
-
-It defines tables like 
+This module defines the tables 
 - :class:`Partner` (and their specializations :class:`Person` and :class:`Company`)
+- :class:`Role` and :class:`RoleType`
 
 """
+
+from __future__ import unicode_literals
+
 
 import logging
 logger = logging.getLogger(__name__)

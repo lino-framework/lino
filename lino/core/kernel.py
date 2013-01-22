@@ -29,7 +29,7 @@ from django.utils.functional import LazyObject
 from django.db import models
 #from django.shortcuts import render_to_response 
 #from django.contrib.auth.models import User
-
+from django.contrib.contenttypes import generic
 
 from django.core.urlresolvers import reverse
 from django.shortcuts import render_to_response, get_object_or_404
@@ -44,6 +44,7 @@ from django.utils.safestring import mark_safe
 import lino
         
 from lino import dd
+#~ from lino.core import signals
 from lino.core import actions
 from lino.core import fields
 from lino.core import actors
@@ -58,7 +59,6 @@ from lino.utils.config import load_config_files, find_config_file
 from lino.utils import choosers
 from lino.utils import codetime
 from lino.utils import curry
-from lino import dd
 #~ from lino.models import get_site_config
 from lino.utils import babel
 from lino.utils import AttrDict
@@ -68,6 +68,8 @@ from lino.utils import AttrDict
 
 
 DONE = False
+
+#~ self.GFK_LIST = []
 
 def analyze_models():
     """
@@ -86,51 +88,40 @@ def analyze_models():
     
     self = settings.LINO
     
+    """
+    Set the site's default language
+    """
+    babel.set_language(None)
+            
+    self.mtime = codetime()
+    #~ logger.info(lino.welcome_text())
+    #~ raise Exception("20111229")
+    
+    if self.build_js_cache_on_startup is None:
+        self.build_js_cache_on_startup = not (settings.DEBUG or is_devserver())
+    
+    
+    
     if self.user_model:
-        self.user_model = resolve_model(self.user_model)
+        self.user_model = resolve_model(self.user_model,strict="Unresolved model '%s' in user_model.")
     if self.person_model:
-        self.person_model = resolve_model(self.person_model)
+        self.person_model = resolve_model(self.person_model,strict="Unresolved model '%s' in person_model.")
     if self.project_model:
-        self.project_model = resolve_model(self.project_model)
+        self.project_model = resolve_model(self.project_model,strict="Unresolved model '%s' in project_model.")
         
     for m in self.override_modlib_models:
         resolve_model(m,strict="Unresolved model '%s' in override_modlib_models.")
     
-    self.setup_choicelists()
-    self.setup_workflows()
-    
-    #~ settings.LINO.setup_user_profiles()
+    models_list = models.get_models() # trigger django.db.models.loading.cache._populate()
     
     logger.info("Analyzing models...")
     
-    dd.on_analyze_models()
-    
-    
-    models_list = models.get_models() # trigger django.db.models.loading.cache._populate()
 
-    for model in models.get_models():
+    for model in models_list:
+      
         model._lino_ddh = DisableDeleteHandler(model)
-        for k in ('get_row_permission',
-                  'after_ui_save',
-                  #~ 'update_system_note',
-                  'preferred_foreignkey_width',
-                  'before_ui_save',
-                  'allow_cascaded_delete',
-                  'workflow_state_field',
-                  'workflow_owner_field',
-                  'disabled_fields',
-                  'get_choices_text',
-                  'summary_row',
-                  'hidden_columns',
-                  'get_default_table',
-                  'get_related_project',
-                  'get_system_note_recipients',
-                  'get_system_note_type',
-                  'quick_search_fields',
-                  'site_setup',
-                  'disable_delete',
-                  'on_duplicate',
-                  'on_create'):
+        
+        for k in dd.Model.LINO_MODEL_ATTRIBS:
             if not hasattr(model,k):
                 #~ setattr(model,k,getattr(dd.Model,k))
                 setattr(model,k,dd.Model.__dict__[k])
@@ -140,8 +131,23 @@ def analyze_models():
         if isinstance(model.hidden_columns,basestring):
             model.hidden_columns = dd.fields_list(model,model.hidden_columns)
 
+        if model._meta.abstract:
+            raise Exception("Aha?")
+            
+        self.modules.define(model._meta.app_label,model.__name__,model)
+                
+        for f in model._meta.virtual_fields:
+            if isinstance(f,generic.GenericForeignKey):
+                settings.LINO.GFK_LIST.append(f)
+                
+    dd.pre_analyze.send(self,models_list=models_list)
+    
+    self.setup_choicelists()
+    self.setup_workflows()
+    
+    
         
-    for model in models.get_models():
+    for model in models_list:
         
         for f, m in model._meta.get_fields_with_model():
             #~ if isinstance(f,models.CharField) and f.null:
@@ -152,7 +158,7 @@ def analyze_models():
                     #~ raise Exception(msg)
                 #~ else:
                     #~ logger.info(msg)
-            if isinstance(f,models.ForeignKey):
+            elif isinstance(f,models.ForeignKey):
                 if f.verbose_name == f.name.replace('_', ' '):
                     """
                     If verbose name was not set by user code, 
@@ -177,6 +183,9 @@ def analyze_models():
             #~ for k,v in class_dict_items(model):
                 #~ if isinstance(v,dd.VirtualField):
                     #~ v.lino_resolve_type()
+                    
+    #~ logger.info("20130121 GFK_LIST is %s",['%s.%s'%(full_model_name(f.model),f.name) for f in settings.LINO.GFK_LIST])
+    dd.post_analyze.send(self,models_list=models_list)
 
 class DisableDeleteHandler():
     """
@@ -243,15 +252,6 @@ def startup_site(self):
         
     logger.info("Starting Lino...")
     
-    """
-    Set the site's default language
-    """
-    babel.set_language(None)
-            
-    self.mtime = codetime()
-    #~ logger.info(lino.welcome_text())
-    #~ raise Exception("20111229")
-    
     #~ write_lock.acquire()
     try:
     
@@ -267,6 +267,7 @@ def startup_site(self):
       
         analyze_models()
         
+        model_count = 0
         
         for model in models.get_models():
           
@@ -282,6 +283,8 @@ def startup_site(self):
                     v.attach_to_model(model,k)
                     
             model.site_setup(self)
+            
+            model_count += 1
         
         if self.is_installed('contenttypes'):
           
@@ -295,13 +298,8 @@ def startup_site(self):
             except DatabaseError,e:
                 logger.warning("No help texts : %s",e)
                 pass
-                        
-        
-        
         
         actors.discover()
-        
-        # set _lino_default_table for all models:
         
         dbtables.discover()
         
@@ -314,7 +312,7 @@ def startup_site(self):
         #~ babel.discover() # would have to be called before model setup
         
         #~ self.modules = AttrDict()
-        self.modules = actors.MODULES
+        #~ self.modules = actors.MODULES
         
         #~ logger.info("20130105 modules is %s",self.modules.keys())
 
@@ -329,23 +327,6 @@ def startup_site(self):
                 if k.startswith('setup_'):
                     self.modules.define(app_label,k,v)
                     
-        for m in models.get_models():
-            if m._meta.abstract:
-                raise Exception("Aha?")
-            self.modules.define(m._meta.app_label,m.__name__,m)
-                
-        #~ for a in actors.actors_list:
-            #~ self.modules.define(a.app_label,a.__name__,a)
-            
-        #~ layouts.setup_layouts()
-        
-        #~ for a in actors.actors_list:
-            #~ if not hasattr(a,'_lino_detail'):
-                #~ a._lino_detail = None
-        
-        
-        #~ actors.setup_actors()
-            
             
         #~ import pprint
         #~ logger.info("settings.LINO.modules is %s" ,pprint.pformat(self.modules))
@@ -356,17 +337,6 @@ def startup_site(self):
             if fn is not None:
                 fn(self)
 
-        """
-        """
-
-        #~ for a in actors.actors_list:
-            #~ for k,v in class_dict_items(a):
-                #~ if isinstance(v,dd.VirtualField):
-                    #~ v.lino_resolve_type(a,k)
-                #~ if isinstance(v,dd.VirtualField):
-                    #~ if v.name is None:
-                        #~ a.add_virtual_field(k,v) # 20120903b
-            
         """
         Actor.after_site_setup() is called after site_setup() on each actor.
         Example: pcsw.site_setup() adds a detail to properties.Properties, 
@@ -389,53 +359,13 @@ def startup_site(self):
                 
         fields.resolve_virtual_fields()
         
-        #~ self._watch_changes_specs = {}
-        #~ print "20120921 kernel", self._watch_changes_requests
-        #~ for model,fields_spec,options in self._watch_changes_requests:
-            #~ model = resolve_model(model)
-            #~ if isinstance(fields_spec,basestring):
-                #~ fields_spec = dd.fields_list(model,fields_spec)
-            #~ if model._watch_changes_specs is None:
-                #~ model._watch_changes_specs = (fields_spec,options)
-            #~ else:
-                #~ raise NotImplementedError()
-                #~ model._watch_changes_specs = (fields,options)
-        #~ del self._watch_changes_requests
-        
-        if self.build_js_cache_on_startup is None:
-            self.build_js_cache_on_startup = not (settings.DEBUG or is_devserver())
-    
-        """
-        `after_site_setup()` definitively collects actions of each actor.
-        Now we can install permission handlers.
-        """
-        #~ load_workflows(self)
-            
-        #~ install_summary_rows()
-        
-        #~ if settings.MODEL_DEBUG:
-        #~ print 20121209, actors.actors_list
-        #~ if False:
-            #~ logger.info("ACTORS: %s",actors.actors_list)
-            #~ for k in sorted(actors.actors_dict.keys()):
-            #~ for a in actors.actors_list:
-                #~ a = actors.actors_dict[k]
-                #~ logger.debug("%s -> %r",k,a.__class__)
-                #~ logger.info("%s -> %r",a,a.debug_summary())
-                #~ logger.info("%s -> %r",a,a.debug_summary())
-                
-        #~ cls = type("Modules",tuple(),d)
-        #~ self.modules = cls()
-        #~ logger.info("20120102 modules: %s",self.modules)
-        
-        
         from lino.core import web
         web.site_setup(self)
         
-        #~ self.PAGE_TEMPLATE = web.build_page_template(self)
-        
-        logger.info("Lino Site %r started. Languages: %s. %s actors.", 
-            self.title, ', '.join(babel.AVAILABLE_LANGUAGES),len(actors.actors_list))
+        logger.info("Lino Site %r started. Languages: %s. %d models, %s actors.", 
+            self.title, ', '.join(babel.AVAILABLE_LANGUAGES),
+            model_count,
+            len(actors.actors_list))
         #~ logger.info(settings.INSTALLED_APPS)
         logger.info(self.welcome_text())
     finally:
@@ -452,3 +382,4 @@ def unused_generate_dummy_messages(self):
     self.dummy_messages
     raise Exception("use write_message_file() instead!")
     
+

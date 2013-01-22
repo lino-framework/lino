@@ -30,6 +30,8 @@ import jinja2
 from django.conf import settings
 from django.utils.translation import get_language
 from django.utils.translation import ugettext_lazy as _
+#~ from django.template.loaders import app_directories
+from django.template.loader import BaseLoader
 
 from lino.utils import babel
 from lino.utils import iif
@@ -153,8 +155,8 @@ def render_from_request(request,template_name,**context):
 
 #~ jinja_env.extract_translations()
 
-if False:
-  
+if True:
+
   class DjangoJinjaTemplate:
     
       def __init__(self,jt):
@@ -172,15 +174,17 @@ if False:
           return self.jt.render(context_dict)  
     
     
-  from django.template.loaders import app_directories
 
-  class Loader(app_directories.Loader):  
+  #~ class Loader(app_directories.Loader):  
+  class Loader(BaseLoader):  
     
       is_usable = True
 
       def load_template(self, template_name, template_dirs=None):
-          source, origin = self.load_template_source(template_name, template_dirs)
+          #~ source, origin = self.load_template_source(template_name, template_dirs)
           jt = settings.LINO.jinja_env.get_template(template_name)
           template = DjangoJinjaTemplate(jt)
-          return template, origin
-          
+          return template, None
+            
+            
+      #~ get_template_from_string

@@ -737,6 +737,13 @@ class CachedPrintable(Duplicable,Printable):
     do_print = PrintAction()
     do_clear_cache = ClearCacheAction()
     
+    #~ @classmethod
+    #~ def get_model_actions(self,table):
+        #~ for x in super(CachedPrintable,self).get_model_actions(table): yield x
+        #~ yield 'do_print',PrintAction()
+        #~ yield 'do_clear_cache',ClearCacheAction()
+    
+    
     
     class Meta:
         abstract = True

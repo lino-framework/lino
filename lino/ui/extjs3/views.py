@@ -120,13 +120,13 @@ def run_action(ar,elem):
           #~ message=unicode(e),
           #~ decide_id=ar.ui.add_decision(e))
         #~ return ar.ui.action_response(r)
-    except Warning,e:
+    except Warning as e:
         r = dict(
           success=False,
           message=unicode(e),
           alert=True)
         return ar.ui.action_response(r)
-    except Exception,e:
+    except Exception as e:
         if elem is None:
             msg = unicode(e)
         else:
@@ -221,9 +221,9 @@ def elem2rec_detailed(ar,elem,**rec):
     if ar.actor.hide_top_toolbar:
         rec.update(title=unicode(elem))
     else:
-        print(ar.get_title())
-        print(obj2str(elem))
-        print(repr(unicode(elem)))
+        #~ print(ar.get_title())
+        #~ print(obj2str(elem))
+        #~ print(repr(unicode(elem)))
         rec.update(title=ar.get_title() + u" » " + unicode(elem))
     rec.update(id=elem.pk)
     rec.update(disable_delete=rh.actor.disable_delete(elem,ar))
@@ -731,7 +731,7 @@ class Restful(View):
         ar = rpt.request(ui,request)
         rh = ar.ah
             
-        data = http.QueryDict(request.raw_post_data).get('rows')
+        data = http.QueryDict(request.body).get('rows') # raw_post_data before Django 1.4
         data = json.loads(data)
         a = rpt.get_url_action(rpt.default_list_action_name)
         ar = rpt.request(ui,request,a)
@@ -833,7 +833,7 @@ class ApiElement(View):
         raise NotImplementedError("Action %s is not implemented)" % ar)
         
     def put(self,request,app_label=None,actor=None,pk=None):
-        data = http.QueryDict(request.raw_post_data)
+        data = http.QueryDict(request.body) # raw_post_data before Django 1.4
         ar = action_request(app_label,actor,request,data,False)
         ar.renderer = settings.LINO.ui.ext_renderer
         elem = ar.actor.get_row_by_pk(pk)
@@ -1037,7 +1037,7 @@ class GridConfig(View):
         ui = settings.LINO.ui
         rpt = requested_actor(app_label,actor)
         #~ rpt = actors.get_actor2(app_label,actor)
-        PUT = http.QueryDict(request.raw_post_data)
+        PUT = http.QueryDict(request.body) # raw_post_data before Django 1.4
         gc = dict(
           widths = [int(x) for x in PUT.getlist(ext_requests.URL_PARAM_WIDTHS)],
           columns = [str(x) for x in PUT.getlist(ext_requests.URL_PARAM_COLUMNS)],

@@ -1109,7 +1109,11 @@ Indicates that this Event shouldn't prevent other Events at the same time."""))
     else:
         assigned_to = dd.DummyField()
         
-    take = TakeAssignedEvent()
+    @classmethod
+    def get_model_actions(self,table):
+        for x in super(Event,self).get_model_actions(table): yield x
+        yield 'take',TakeAssignedEvent()
+    #~ take = TakeAssignedEvent()
     
     def save(self,*args,**kw):
         #~ if not self.state and self.start_date and self.start_date < datetime.date.today():
@@ -2443,8 +2447,8 @@ def customize_users():
             help_text=_("""The default calendar for your events and tasks.""")
     ))
     
-    users = dd.resolve_app('users')
-    users.User.update_reminders = UpdateReminders()
+    #~ users = dd.resolve_app('users')
+    #~ users.User.add_model_action(update_reminders=UpdateReminders())
         
 
     
@@ -2468,10 +2472,14 @@ def site_setup(site):
     """,MODULE_LABEL,required=dict(user_groups='office'))
     #~ site.modules.users.Users.add_detail_tab('cal.TasksByUser')
     
+@dd.receiver(dd.pre_analyze)
+def pre_analyze(sender,**kw):
+    #~ logger.info("%s.set_merge_actions()",__name__)
+    #~ modules = sender.modules
+    sender.user_model.add_model_action(update_reminders=UpdateReminders())
     
     
 MODULE_LABEL = _("Calendar")
-
 
 def setup_main_menu(site,ui,profile,m): 
     m  = m.add_menu("cal",MODULE_LABEL)
@@ -2557,7 +2565,6 @@ def get_todo_tables(site,ar):
     yield (MyTasksToDo,_("%d tasks to do"))
     #~ yield (MyEventsNotified,_("%d notified events"))
     yield (EventsAssignedToMe,_("%d events assigned to you"))
-    
     
 
 #~ dd.add_user_group('office',MODULE_LABEL)

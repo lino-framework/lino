@@ -1,0 +1,249 @@
+# -*- coding: UTF-8 -*-
+## Copyright 2013 Luc Saffre
+## This file is part of the Lino project.
+## Lino is free software; you can redistribute it and/or modify 
+## it under the terms of the GNU General Public License as published by
+## the Free Software Foundation; either version 3 of the License, or
+## (at your option) any later version.
+## Lino is distributed in the hope that it will be useful, 
+## but WITHOUT ANY WARRANTY; without even the implied warranty of
+## MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the 
+## GNU General Public License for more details.
+## You should have received a copy of the GNU General Public License
+## along with Lino; if not, see <http://www.gnu.org/licenses/>.
+"""
+This defines the :class:`MergeAction` class, 
+which is available in :mod:`lino.dd`.
+
+Usage example::
+
+  @dd.receiver(dd.post_analyze)
+  def set_merge_actions(sender,**kw):
+      modules = sender.modules
+      for m in (modules.contacts.Person,modules.contacts.Company):
+          m.merge_row = dd.MergeAction(m)
+
+If should not be used on models that have MTI children.
+
+"""
+
+import logging
+logger = logging.getLogger(__name__)
+
+#~ import copy
+
+from django.db import models
+from django.conf import settings
+from django.utils.translation import ugettext as _
+
+from lino.core import actions
+from lino.core import layouts
+from lino.core import fields
+from lino.core.signals import pre_merge
+from lino.core.modeltools import obj2str, full_model_name
+from lino.utils.xmlgen import html as xghtml
+E = xghtml.E
+
+
+class MergePlan(object):
+    """
+    A MergePlan is 
+    """
+    def __init__(self,obj,merge_to,keep_volatiles={}):
+        if merge_to == obj:
+            raise Warning(_("Cannot merge an instance to itself."))
+        self.obj = obj
+        self.merge_to = merge_to
+        self.keep_volatiles = keep_volatiles
+        
+    def analyze(self):
+        self.volatiles = []
+        self.related = []
+        for m,fk in self.obj._lino_ddh.fklist:
+            qs = m.objects.filter(**{fk.name:self.obj})
+            if fk.name in m.allow_cascaded_delete and not self.keep_volatiles.get(full_model_name(m,'_')):
+                self.volatiles.append((fk,qs))
+            else:
+                self.related.append((fk,qs))
+        self.generic_related = list(settings.LINO.get_generic_related(self.obj))
+        
+              
+    def logmsg(self):
+        self.analyze()
+        lst = []
+        def add(name):
+            for f,qs in getattr(self,name):
+                if qs.count() > 0:
+                    lst.append('- %d %s %s rows using %s : %s' % (
+                        qs.count(),
+                        name,
+                        full_model_name(f.model),
+                        f.name,
+                        ' '.join([str(o.pk) for o in qs])))
+        add('volatiles')
+        add('related')
+        add('generic_related')
+        return '\n'.join(lst)
+        
+      
+    def build_confirmation_message(self):
+        self.analyze()
+        items = []
+        def collect_summary(prefix,fk_qs):
+            parts = []
+            for fld,qs in fk_qs:
+                if qs.count() > 0:
+                    parts.append("%d %s" % (qs.count(),unicode(fld.model._meta.verbose_name_plural)))
+            if len(parts) != 0: 
+                items.append(E.li(', '.join(parts),' ',E.b(prefix)))
+                
+        collect_summary(_("will be deleted."),self.volatiles)
+        collect_summary(_("will get reassigned."),self.related + self.generic_related)
+        items.append(E.li(_("%s will be deleted") % self.obj))
+        msg = _("Are you sure you want to merge %(this)s into %(merge_to)s?") % dict(
+            this=self.obj,merge_to=self.merge_to)
+        if len(items) != 0:
+            return E.div(E.p(msg),E.ul(*items),class_="htmlText")
+        return msg
+            
+
+    def execute(self):
+        self.analyze() # refresh since there may be changes since summary()
+        # give others a chance to object
+        pre_merge.send(self.obj,merge_to=self.merge_to)
+        update_count = 0
+        # change FK fields of related objects
+        for fk,qs in self.related:
+            update_count += qs.update(**{fk.name:merge_to})
+            #~ for relobj in qs:
+                #~ setattr(relobj,fk.name,merge_to)
+                #~ relobj.full_clean()
+                #~ relobj.save()
+        
+        # merge GenericForeignKey relations
+        for gfk,qs in self.generic_related:
+            update_count += qs.update(**{gfk.fk_field:merge_to.pk})
+            #~ for i in qs:
+                #~ setattr(qs,gfk.fk_field,merge_to.pk)
+                #~ # setattr(qs,gfk.name,merge_to)
+                #~ i.full_clean()
+                #~ i.save()
+            
+        # Build the return message
+        msg = _("Merged %(this)s into %(merge_to)s. Updated %(updated)d related rows.") % dict(
+            this=self.obj,merge_to=self.merge_to,updated=update_count)
+            
+        # delete any reference to the deleted object
+        self.obj.delete()
+        del self.obj
+        return msg
+
+    
+class MergeAction(actions.RowAction):
+    """
+    Merge this object into another object of same class.
+    """
+    label = _("Merge")
+    sort_index = 31
+    show_in_workflow = False
+    readonly = False 
+    required = dict(user_level='admin')
+    
+    #~ params_layout = layouts.Panel("""
+    #~ merge_to
+    #~ notify
+    #~ """,window_size=(50,'auto'))
+        
+    
+    #~ icon_name = 'x-tbar-duplicate'
+    #~ action_name = 'duplicate'
+    
+    #~ params = dict(merge_to=)
+    
+    def __init__(self,model,**kw):
+      
+        fields = dict(
+            #~ merge_from=models.ForeignKey(model,verbose_name=_("Merge...")),
+            merge_to=models.ForeignKey(model,verbose_name=_("into...")),
+            reason=models.CharField(_("Reason"),max_length=100)
+            #~ notify=models.BooleanField(_("Send notifications"))
+            )
+        
+        keep_volatiles = []
+        
+            
+        for m,fk in model._lino_ddh.fklist:
+            if fk.name in m.allow_cascaded_delete:
+                fieldname = full_model_name(m,'_')
+                if not fieldname in keep_volatiles:
+                    keep_volatiles.append(fieldname)
+                    fields[fieldname] = models.BooleanField(m._meta.verbose_name_plural)
+            
+        
+        layout = dict()
+        if len(keep_volatiles) == 0:
+            width = 50
+            main = """
+            merge_to
+            reason
+            """
+        else:
+            COLCOUNT = 2
+            width = 70
+            if len(keep_volatiles) > COLCOUNT:
+                tpl = ''
+                for i,name in enumerate(keep_volatiles):
+                    if i % COLCOUNT == 0: 
+                        tpl += '\n'
+                    else:
+                        tpl += ' '
+                    tpl += name
+            else:
+                tpl = ' '.join(weak_names)
+            main = """
+            merge_to
+            keep_volatiles
+            reason
+            """
+            layout.update(keep_volatiles=layouts.Panel(tpl,label=_("Also reassign volatile related objects")))
+        
+        layout.update(window_size=(width,'auto'))
+        #~ from lino.mixins.mergeable import MergeAction
+        kw.update(
+            parameters=fields,
+            params_layout=layouts.Panel(main,**layout))
+                
+      
+        super(MergeAction,self).__init__(**kw)
+  
+    #~ def action_param_defaults(self,ar,obj,**kw):
+        #~ kw = super(MergeAction,self).action_param_defaults(ar,obj,**kw)
+        #~ kw.update(merge_from=obj)
+        #~ return kw
+
+    def run(self,obj,ar,**kw):
+
+        #~ if not isinstance(ar,actions.ActionRequest):
+            #~ raise Exception("Expected and ActionRequest but got %r" % ar)
+        #~ related = dict()
+        #~ for m2m in self._meta.many_to_many:
+            #~ print m2m
+        #~ print self._lino_ddh.fklist
+            
+        mp = MergePlan(obj,ar.action_param_values.merge_to,ar.action_param_values)
+        msg = mp.build_confirmation_message()
+        def ok():
+            msg = mp.execute()
+            # prepare the response        
+            kw = dict()
+            kw.update(refresh=True)
+            kw.update(message=msg)
+            #~ kw.update(new_status=dict(record_id=new.pk))
+            kw.update(goto_record_id=mp.merge_to.pk)
+            return ar.success(**kw)
+        #~ return ar.confirm(ok,msg)
+        if msg is None:
+            return ok()
+        return ar.confirm(ok,msg)
+            
+        

@@ -12,6 +12,8 @@
 ## You should have received a copy of the GNU General Public License
 ## along with Lino; if not, see <http://www.gnu.org/licenses/>.
 
+from __future__ import unicode_literals
+
 import logging
 logger = logging.getLogger(__name__)
 
@@ -671,11 +673,19 @@ class ExtUI(base.UI):
         #~ base.UI.__init__(self,*args,**kw) # will create a.window_wrapper for all actions
         base.UI.__init__(self) 
         
-        #~ cause creation of the params_layout.params_store
+        #~ trigger creation of params_layout.params_store
         for res in actors.actors_list:
             for ba in res.get_actions():
                 if ba.action.parameters:
-                  ba.action.params_layout.get_layout_handle(self)
+                    ba.action.params_layout.get_layout_handle(self)
+        
+        
+        
+    def get_patterns(self):
+        """
+        """
+        self.build_site_cache()
+        return super(ExtUI,self).get_patterns()
         
         
         
@@ -1515,6 +1525,8 @@ tinymce.init({
                + dbtables.frames_list ]
                
         actors_list.extend([a for a in choicelists.CHOICELISTS.values() if settings.LINO.is_installed(a.app_label)])
+          
+          
                
         """
         Call Ext.namespace for *all* actors because e.g. outbox.Mails.FormPanel 

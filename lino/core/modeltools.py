@@ -1,3 +1,4 @@
+# -*- coding: UTF-8 -*-
 ## Copyright 2009-2013 Luc Saffre
 ## This file is part of the Lino project.
 ## Lino is free software; you can redistribute it and/or modify 
@@ -11,8 +12,12 @@
 ## You should have received a copy of the GNU General Public License
 ## along with Lino; if not, see <http://www.gnu.org/licenses/>.
 
-"""modeltools may not be used in models modules (but well during lino_site set up).
 """
+
+"""
+
+from __future__ import unicode_literals
+
 
 import logging
 logger = logging.getLogger(__name__)
@@ -47,7 +52,7 @@ def is_valid_email(s):
         return False
         
         
-        
+    
 def is_devserver():
     """
     Returns True if we are running a development server.
@@ -372,4 +377,8 @@ def get_model_report(model):
 def is_installed_model_spec(model_spec):
     app_label, model_name = model_spec.split(".")
     return settings.LINO.is_installed(app_label)
+
+
+
     
+        

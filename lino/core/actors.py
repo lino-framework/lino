@@ -37,6 +37,7 @@ from lino.core import actions
 from lino.core import layouts
 #~ from lino.core import changes
 from lino.core.modeltools import resolve_model
+from lino.core.requests import ActionRequest
 from lino.utils import curry, AttrDict
 #~ from lino.core import perms
 from lino.utils import jsgen
@@ -50,7 +51,7 @@ actors_list = None
 ACTOR_SEP = '.'
 
 
-MODULES = AttrDict()
+#~ MODULES = AttrDict()
   
 def discover():
     global actor_classes
@@ -68,7 +69,7 @@ def discover():
 
 def register_actor(a):
     #~ logger.debug("register_actor %s",a)
-    old = MODULES.define(a.app_label,a.__name__,a)
+    old = settings.LINO.modules.define(a.app_label,a.__name__,a)
     #~ old = actors_dict.get(a.actor_id,None)
     if old is not None:
         #~ logger.info("20121023 register_actor %s : %r replaced by %r",a,old,a)
@@ -366,35 +367,33 @@ class Actor(actions.Parametrizable):
     
     
     
-    #~ disabled_fields = None
-    """
-    Return a list of field names that should not be editable 
-    for the specified `obj` and `request`.
-    
-    If defined in the Table, this must be a class method that accepts 
-    two arguments `obj` and `ar` (an `ActionRequest`)::
-    
-      @classmethod
-      def disabled_fields(cls,obj,ar):
-          ...
-          return []
-          
-    
-    If not defined in the Table, Lino will look whether 
-    the Table's model has a `disabled_fields` method 
-    and install a wrapper to this model method. 
-    When defined on the model, is must be an *instance* 
-    method
-    
-      def disabled_fields(self,ar):
-          ...
-          return []
-    
-    See also :doc:`/tickets/2`.
-    """
-    
     @classmethod
     def disabled_fields(cls,obj,ar):
+        """
+        Return a list of field names that should not be editable 
+        for the specified `obj` and `request`.
+        
+        If defined in the Table, this must be a class method that accepts 
+        two arguments `obj` and `ar` (an `ActionRequest`)::
+        
+          @classmethod
+          def disabled_fields(cls,obj,ar):
+              ...
+              return []
+              
+        
+        If not defined in the Table, Lino will look whether 
+        the Table's model has a `disabled_fields` method 
+        and install a wrapper to this model method. 
+        When defined on the model, is must be an *instance* 
+        method
+        
+          def disabled_fields(self,ar):
+              ...
+              return []
+        
+        See also :doc:`/tickets/2`.
+        """
         return []
     
     
@@ -420,10 +419,10 @@ class Actor(actions.Parametrizable):
     If this is False, then then Actor won't have neither create_action nor insert_action.
     """
 
-    #~ has_navigator = True
     hide_top_toolbar = False
     """
-    Whether a Detail Window should have navigation buttons, a "New" and a "Delete" buttons.
+    Whether a Detail Window should have navigation buttons, 
+    a "New" and a "Delete" buttons.
     In ExtJS UI also influences the title of a Detail Window to specify only 
     the current element without prefixing the Tables's title.
     
@@ -571,7 +570,7 @@ class Actor(actions.Parametrizable):
             #~ print "20120524",cls, "class_init()", cls.__bases__
         #~ 20121008 cls.default_action = cls.get_default_action()
         
-        classDict = cls.__dict__
+        #~ classDict = cls.__dict__
         
         #~ dt = classDict.get('detail_template',None)
         dt = getattr(cls,'detail_template',None)
@@ -629,10 +628,9 @@ class Actor(actions.Parametrizable):
                         if cls.__dict__.get(k,None) is None:
                             #~ logger.info("20120628 %s.%s copied from %s",cls,k,b)
                             #~ label = v.label
-                            v = copy.deepcopy(v)
-                            #~ v.label = label
-                            #~ v = copy.copy(v)
-                            v.name = None
+                            #~ 20130121 : removed two following lines 
+                            #~ v = copy.deepcopy(v)
+                            #~ v.name = None
                             setattr(cls,k,v)
                             #~ cls.define_action(k,v)
                             #~ if b is EmptyTable:
@@ -823,6 +821,12 @@ class Actor(actions.Parametrizable):
         pass
         
         
+    @classmethod
+    def get_param_elem(self,name):
+        # same as in Action, but here it is a class method
+        if self.parameters:
+            return self.parameters.get(name,None)
+        return None
         
             
     @classmethod
@@ -1083,7 +1087,7 @@ class Actor(actions.Parametrizable):
               
     @classmethod
     def request(self,ui=None,request=None,action=None,**kw):
-        return actions.ActionRequest(ui,self,request,action,**kw)
+        return ActionRequest(ui,self,request,action,**kw)
 
         
     @classmethod
@@ -1124,14 +1128,3 @@ class Actor(actions.Parametrizable):
         settings.LINO.startup()
         return self.request(**kw).table2xhtml()
         
-
-#~ def workflow(target_state,**kw):
-    #~ """
-    #~ Decorator to define workflow actions.
-    #~ """
-    #~ req = kw.pop('required',{})
-    #~ def decorator(fn):
-        #~ a = ChangeStateAction(target_state,req,**kw)
-        #~ a.run = fn
-        #~ return a
-    #~ return decorator

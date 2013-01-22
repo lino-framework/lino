@@ -67,6 +67,8 @@ from lino.core.modeltools import obj2str
 from lino.core.model import Model
 
 from lino.core.fields import FakeField
+from lino.core.requests import ActionRequest
+
 from lino.ui import base
 from lino.ui import requests as ext_requests
 from lino.utils.config import Configured, load_config_files
@@ -142,7 +144,8 @@ class GridConfig(Configured):
 WARNINGS_LOGGED = dict()
 
 
-class TableRequest(actions.ActionRequest):
+
+class TableRequest(ActionRequest):
     """
     An :class:`action request <lino.core.actions.ActionRequest>` 
     on a :class:`Table`.
@@ -169,7 +172,7 @@ class TableRequest(actions.ActionRequest):
     def __init__(self,ui,actor,request=None,action=None,**kw):
         #~ if not (isinstance(actor,type) and issubclass(actor,AbstractTable)):
             #~ raise Exception("Expected an AbstractTable subclass, got %r" % actor)
-        actions.ActionRequest.__init__(self,ui,actor,request,action,**kw)
+        ActionRequest.__init__(self,ui,actor,request,action,**kw)
         #~ self.execute()
         
     def execute(self):
@@ -308,7 +311,7 @@ class TableRequest(actions.ActionRequest):
                 filter = json.loads(filter)
                 kw['gridfilters'] = [ext_requests.dict2kw(flt) for flt in filter]
                 
-        kw = actions.ActionRequest.parse_req(self,request,rqdata,**kw)
+        kw = ActionRequest.parse_req(self,request,rqdata,**kw)
         #~ raise Exception("20120121 %s.parse_req(%s)" % (self,kw))
         
         #~ kw.update(self.report.known_values)
@@ -391,7 +394,7 @@ class TableRequest(actions.ActionRequest):
         
         #~ logger.info("20120121 %s.setup() done",self)
         
-        actions.ActionRequest.setup(self,**kw)
+        ActionRequest.setup(self,**kw)
         
         """
         20120519 : outbox.MyOutbox had no phantom record when called from menu.
@@ -513,7 +516,7 @@ class TableRequest(actions.ActionRequest):
         
         
     def get_status(self,ui,**kw):
-        kw = actions.ActionRequest.get_status(self,ui,**kw)
+        kw = ActionRequest.get_status(self,ui,**kw)
         bp = kw['base_params']
         if self.quick_search:
             bp[ext_requests.URL_PARAM_FILTER] = self.quick_search

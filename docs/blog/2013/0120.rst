@@ -9,11 +9,14 @@ This is now being used as default value
 for :attr:`lino.Lino.extjs_base_url`.
 One thing less to install before getting started with Lino.
 
+Worked again on ticket :doc:`/tickets/69`.
+Although there's hope that this is going to change soon
+because we have now 
+`Distribute <http://packages.python.org/distribute/>`_.
 
-I also found a solution for ticket :doc:`/tickets/69`.
-See 
+Added some screenshots to :doc:`/demos`. 
+Which required some time for
+translations and 
+experimenting with Django's latest development version.
+(One day I should try to switch to Python 3, shouldn't I?)
 
-
-
-
-http://packages.python.org/distribute/

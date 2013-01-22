@@ -830,7 +830,7 @@ class ExtUI(base.UI):
             tab = int(request.GET.get('tab','0'))
             return json_response_kw(success=True,tab=tab,desc=rpt.detail_layouts[tab]._desc)
         if request.method == 'PUT':
-            PUT = http.QueryDict(request.raw_post_data)
+            PUT = http.QueryDict(request.body)# raw_post_data before Django 1.4
             tab = int(PUT.get('tab',0))
             desc = PUT.get('desc',None)
             if desc is None:
@@ -852,7 +852,7 @@ class ExtUI(base.UI):
                     user=request.user,report=rpt)
                 return error_response(None,msg)
             #~ return http.HttpResponseForbidden(msg)
-            PUT = http.QueryDict(request.raw_post_data)
+            PUT = http.QueryDict(request.body)# raw_post_data before Django 1.4
             gc = dict(
               widths=[int(x) for x in PUT.getlist('widths')],
               columns=[str(x) for x in PUT.getlist('columns')],
@@ -1022,7 +1022,7 @@ class ExtUI(base.UI):
             if elem is None:
                 return error_message('Tried to PUT on element -99999')
             #~ print 20110301, request.raw_post_data
-            data = http.QueryDict(request.raw_post_data)
+            data = http.QueryDict(request.body)# raw_post_data before Django 1.4
             #~ print 20110301, data
             #~ fmt = data.get('fmt',None)
             return self.form2obj_and_save(request,ah,data,elem,False) # force_update=True)

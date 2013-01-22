@@ -123,7 +123,7 @@ class Callback(object):
         return cbc
 
         
-class UI:
+class UI(object):
     """
     """
     name = None
@@ -357,7 +357,11 @@ class UI:
         The client will display the prompt and will continue this thread 
         by requesting :class:`lino.ui.extjs3.views.Threads`.
         """
-        return Callback('\n'.join([force_text(s) for s in msgs]))
+        if len(msgs) > 1:
+            msg = '\n'.join([force_text(s) for s in msgs])
+        else:
+            msg = msgs[0]
+        return Callback(msg)
           
         #~ if no is None:
             #~ no = self.abandon_response

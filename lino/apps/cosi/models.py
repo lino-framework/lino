@@ -45,3 +45,13 @@ from lino import dd
 
 #~ def site_setup(site):
     #~ site.description = 
+    
+    
+@dd.receiver(dd.post_analyze)
+def set_merge_actions(sender,**kw):
+    #~ logger.info("%s.set_merge_actions()",__name__)
+    modules = sender.modules
+    for m in (modules.contacts.Person,modules.contacts.Company):
+        #~ print repr(m)
+        m.merge_row = dd.MergeAction(m)
+    

@@ -26,9 +26,9 @@ from django.core.mail import EmailMessage
 
 
 import lino
-from lino.utils import AttrDict
-from lino.utils import curry
-from lino.utils import babel
+#~ from lino.utils import AttrDict
+#~ from lino.utils import curry
+#~ from lino.utils import babel
 #~ from lino.utils import jsgen
 #~ from lino.utils import Warning
 from lino.utils.xmlgen import html as xghtml
@@ -36,61 +36,13 @@ E = xghtml.E
 
 from lino.ui import requests as ext_requests
 
-from lino.core.modeltools import resolve_model, resolve_app
+from lino.core.modeltools import resolve_model
 from lino.core import layouts
 #~ from lino.core import changes
 from lino.core import fields
 
 #~ from lino.core.perms import UserLevels
 #~ from lino.core import perms 
-
-
-class VirtualRow(object):
-    def __init__(self,**kw):
-        self.update(**kw)
-        
-    def update(self,**kw):
-        for k,v in kw.items():
-            setattr(self,k,v)
-
-    def get_row_permission(self,ar,state,ba):
-        if ba.action.readonly:
-            return True
-        return False 
-            
-
-class PhantomRow(VirtualRow):
-    def __init__(self,request,**kw):
-        self._ar = request
-        VirtualRow.__init__(self,**kw)
-        
-    def __unicode__(self):
-        return unicode(self._ar.get_action_title())
-        
-class EmptyTableRow(VirtualRow):
-    """
-    Base class for virtual rows of an :class:`EmptyTable`.
-    """
-    def __init__(self,table,**kw):
-        self._table = table
-        VirtualRow.__init__(self,**kw)
-        
-    def __unicode__(self):
-        return unicode(self._table.label)
-        
-    def get_print_language(self,pm):
-        return babel.DEFAULT_LANGUAGE
-        
-    def get_templates_group(self):
-        return self._table.app_label + '/' + self._table.__name__
-    
-    def filename_root(self):
-        return self._table.app_label + '.' + self._table.__name__
-
-
-
-
-
 
 
 
@@ -121,33 +73,6 @@ DELETE = Hotkey(keycode=46)
     
     
 
-#~ class DecisionRequired(Exception):
-    #~ def __init__(self,msg,yes,no):
-        #~ self.yes = yes
-        #~ self.no = no
-        #~ Exception.__init__(self,msg)
-  
-#~ class ConfirmationRequired(Exception):
-    #~ """
-    #~ This is the special exception risen when an Action calls 
-    #~ :meth:`ActionRequest.confirm`.
-    #~ """
-    #~ def __init__(self,step,messages):
-        #~ self.step = step
-        #~ self.messages = messages
-        #~ Exception.__init__(self)
-        
-#~ class DialogRequired(Exception):
-    #~ """
-    #~ This is the special exception risen when an Action calls 
-    #~ :meth:`ActionRequest.dialog`.
-    #~ """
-    #~ def __init__(self,step,dlg):
-        #~ self.step = step
-        #~ self.dialog = dlg
-        #~ Exception.__init__(self)
-        
-
 
 class Permittable(object):
     """
@@ -163,7 +88,7 @@ class Permittable(object):
     required = {}
     """
     A dict with permission requirements.
-    See :func:`lino.utils.jsgen.make_permission_handler`.
+    See :func:`lino.utils.auth.make_permission_handler`.
     """
     
     workflow_state_field = None # internally needed for make_permission_handler
@@ -200,16 +125,23 @@ def add_requirements(obj,**kw):
 
 
 def register_params(cls):
+    #~ if cls.__class__.__name__ == 'Merge':
+        #~ print("20130121 register_params",cls.parameters)
+        #~ assert cls.parameters is not None
     if cls.parameters:
         for k,v in cls.parameters.items():
             v.set_attributes_from_name(k)
             v.table = cls
+            #~ v._datasource = cls
         if cls.params_layout is None:
             cls.params_layout = cls._layout_class.join_str.join(cls.parameters.keys())
         if isinstance(cls.params_layout,basestring):
             cls.params_layout = cls._layout_class(cls.params_layout,cls)
         elif isinstance(cls.params_layout,layouts.Panel):
             cls.params_layout = cls._layout_class(cls.params_layout.desc,cls,**cls.params_layout.options)
+        
+    elif cls.params_layout is not None:
+        raise Exception("params_layout but no parameters ?!")
 
 def setup_params_choosers(self):
     if self.parameters:
@@ -240,7 +172,7 @@ class Parametrizable(object):
     
     params_layout = None
     """
-    If this table has parameters, specify here how they should be 
+    If this table or action has parameters, specify here how they should be 
     laid out in the parameters panel.
     """
     
@@ -251,7 +183,6 @@ class Parametrizable(object):
     """
     
     _layout_class = NotImplementedError
-    
             
     #~ @classmethod
     #~ def install_params_on_actor(cls):
@@ -261,13 +192,16 @@ class Parametrizable(object):
             #~ setattr(cls,k,classmethod(um))
         
         
-    @classmethod
-    def get_param_elem(self,name):
-        if self.parameters:
-            return self.parameters.get(name,None)
-        #~ for pf in self.params:
-            #~ if pf.name == name:  return pf
-        return None
+    #~ @classmethod
+    #~ def get_param_elem(self,name):
+        #~ if self.__name__ == 'Merge':
+            #~ if not isinstance(self.params_layout,self._layout_class):
+                #~ raise Exception("20130121 self.params_layout is a %s" % self.params_layout.__class__)
+            #~ print("20130121 get_param_elem",self.params_layout._datasource)
+
+        #~ if self.parameters:
+            #~ return self.parameters.get(name,None)
+        #~ return None
       
     #~ @classmethod
     def get_window_layout(self,actor):
@@ -315,6 +249,7 @@ class Action(Parametrizable,Permittable):
     11    :attr:`duplicate <lino.mixins.duplicable.Duplicable.duplicate_row>`
     20    :class:`detail <ShowDetailAction>`
     30    :class:`delete <DeleteSelected>`
+    31    :class:`merge <lino.mixins.mergeable.Merge>`
     50    :class:`Print <lino.mixins.printable.BasePrintAction>`
     51    :class:`Clear Cache <lino.mixins.printable.ClearCacheAction>`
     90    default for all custom row actions created using :func:`@dd.action <action>`
@@ -455,14 +390,12 @@ class Action(Parametrizable,Permittable):
         if label is not None:
             self.label = label
             
-        register_params(self)
-        #~ setup_params_choosers(self.__class__)
             
         #~ if label is None:
             #~ label = self.label or self.url_action_name 
         for k,v in kw.items():
             if not hasattr(self,k):
-                raise Exception("Invalid keyword %s" % k)
+                raise Exception("Invalid action keyword %s" % k)
             setattr(self,k,v)
         #~ self.add_requirements()
         
@@ -477,6 +410,19 @@ class Action(Parametrizable,Permittable):
         assert self.callable_from is None or isinstance(
             self.callable_from,(tuple,type)), "%s" % self
             
+        #~ if self.parameters is None:
+            #~ assert self.params_layout is None
+        #~ else:
+            #~ assert self.params_layout is not None
+            
+        register_params(self)
+        #~ setup_params_choosers(self.__class__)
+        
+        if self.parameters is not None:
+            if not isinstance(self.params_layout,self._layout_class):
+                raise Exception("20130121 %s" % self)
+            #~ assert isinstance(self.params_layout,self._layout_class)
+            
       
     def as_html(self,ar):
         return "Oops, no as_html method for %s" % self
@@ -484,6 +430,14 @@ class Action(Parametrizable,Permittable):
     def make_params_layout_handle(self,ui):
         #~ return self.action.params_layout.get_layout_handle(ui)
         return make_params_layout_handle(self,ui)
+        
+    #~ @classmethod
+    def get_param_elem(self,name):
+        # same as in Actor but here it is an instance method
+        if self.parameters:
+            return self.parameters.get(name,None)
+        return None
+        
         
     #~ def add_requirements(self,**kw):
         #~ """
@@ -523,7 +477,7 @@ class Action(Parametrizable,Permittable):
     def as_button(self,obj,request,label=None):
         ba = self.defining_actor.get_url_action(self.action_name)
         btn = settings.LINO.ui.row_action_button(obj,request,ba,label)
-        return xghtml.E.tostring(btn)
+        return E.tostring(btn)
         
     def get_action_title(self,ar):
         return ar.get_title()
@@ -806,7 +760,6 @@ class ShowDetailAction(RowAction):
         ba = ar.bound_action
         rpt = ar.actor
         from lino.ui.extjs3 import views
-
         
         navigator = None
         if pk and pk != '-99999' and pk != '-99998':
@@ -849,7 +802,14 @@ class ShowDetailAction(RowAction):
         #~ if len(items) == 0: return ""
         main = E.form(*items)
         #~ print 20120901, lh.main.__html__(ar)
-        return E.tostring(main,method="html")
+        """
+        The method="html" argument isn't available in Python 2.6, only 2.7
+        It is useful to avoid side effects in case of empty elements:
+        the default method (xml) writes an empty E.div() as "<div/>"
+        while in HTML5 it must be "<div></div>" (the ending / is ignored)
+        """
+        #~ return E.tostring(main,method="html")
+        return E.tostring(main)
         
         
 
@@ -1036,378 +996,6 @@ class NotifyingAction(RowAction):
     
 
 
-class BaseRequest(object):
-    def __init__(self,ui,request=None,renderer=None,**kw):
-        if ui is None:
-            ui = settings.LINO.ui
-            #~ from lino.ui.extjs3 import ui
-        self.ui = ui
-        #~ self.error_response = ui.error_response
-        #~ self.success_response = ui.success_response
-        
-        #~ self.prompt = ui.callback
-        self.callback = ui.callback
-        self.confirm = ui.confirm
-        self.error = ui.error
-        self.success = ui.success
-        if renderer is None:
-            renderer = ui.text_renderer
-        self.renderer = renderer
-        #~ self.step = 0 # confirmation counter
-        #~ self.report = actor
-        self.request = request
-        if request is not None:
-            if request.method == 'PUT':
-                rqdata = http.QueryDict(request.raw_post_data)
-            else:
-                rqdata = request.REQUEST
-            kw = self.parse_req(request,rqdata,**kw)
-        #~ 20120605 self.ah = actor.get_handle(ui)
-        self.setup(**kw)
-        
-  
-    def parse_req(self,request,rqdata,**kw): 
-        #~ if self.actor.parameters:
-            #~ kw.update(param_values=self.ui.parse_params(self.ah,request))
-        kw.update(user=request.user)
-        kw.update(subst_user=request.subst_user)
-        kw.update(requesting_panel=request.requesting_panel)
-        #~ if settings.LINO.user_model:
-            #~ username = rqdata.get(ext_requests.URL_PARAM_SUBST_USER,None)
-            #~ if username:
-                #~ try:
-                    #~ kw.update(subst_user=settings.LINO.user_model.objects.get(username=username))
-                #~ except settings.LINO.user_model.DoesNotExist, e:
-                    #~ pass
-        #~ logger.info("20120723 ActionRequest.parse_req() --> %s",kw)
-        return kw
-        
-    def setup(self,
-            user=None,
-            subst_user=None,
-            requesting_panel=None,
-            renderer=None):
-        self.requesting_panel = requesting_panel
-        self.user = user 
-        if renderer is not None:
-            self.renderer = renderer
-        #~ if self.actor.parameters:
-            #~ self.param_values = AttrDict(**param_values)
-        self.subst_user = subst_user
-        
-        
-    #~ def dialog(self,dlg):
-        #~ # not finished
-        #~ self.step += 1
-        #~ if int(self.request.REQUEST.get(ext_requests.URL_PARAM_ACTION_STEP,'0')) >= self.step:
-            #~ return
-        #~ raise DialogRequired(self.step,dlg)
-        
-    #~ def confirm(self,*messages):
-        #~ """
-        #~ Calling this from an Action's :meth:`Action.run` method will
-        #~ interrupt the execution, send the specified message(s) back to 
-        #~ the user, waiting for confirmation before continuing.
-        
-        #~ Note that this is implemented without any server sessions 
-        #~ and cookies. While this system is genial, it has one drawback 
-        #~ which you should be aware of: the code execution does not 
-        #~ *continue* after the call to `confirm` but starts again at the 
-        #~ beginning (with the difference that the client this time calls it with 
-        #~ an internal `step` parameter that tells Lino that this `confirm()` 
-        #~ has been answered and should no longer raise stop execution.
-        #~ """
-        #~ assert len(messages) > 0 and messages[0], "At least one non-empty message required"
-        #~ self.step += 1
-        #~ if int(self.request.REQUEST.get(ext_requests.URL_PARAM_ACTION_STEP,'0')) >= self.step:
-            #~ return
-        #~ raise ConfirmationRequired(self.step,messages)
-        
-    #~ def decide(self,msg,yes,no=None):
-        #~ """
-        #~ Calling this from an Action's :meth:`Action.run` method will
-        #~ interrupt the execution, send the specified message(s) back to 
-        #~ the user, adding the executables `yes` and optionally `no` to a queue 
-        #~ of pending dialogs.
-        
-        #~ """
-        #~ raise DecisionRequired(msg,yes,no)
-            
-    def get_user(self):
-        """
-        Return the :class:`User <lino.modlib.users.models.User>` 
-        instance of the user who issued the request.
-        If the authenticated user is acting as somebody else, 
-        return that :class:`User <lino.modlib.users.models.User>` instance.
-        """
-        return self.subst_user or self.user
-        
-        
-    def add_system_note(self,owner,subject,body,silent):
-        """
-        System notes are a part of Lino's workflow management system. 
-        A system note is a text message attached to a given 
-        database object instance and propagated through a series of 
-        configurable channels.
-        The text part consists basically of a subject 
-        and a body, both usually generated by the application and edited 
-        by the user in an action's parameters dialog box. 
-        Executing the action will then also trigger the sending of the system note.
-        
-        """
-        #~ logger.info("20121016 add_system_note() '%s'",subject)
-        notes = resolve_app('notes')
-        if notes:
-            notes.add_system_note(self,owner,subject,body)
-        #~ if silent:
-            #~ return
-        recipients = []
-        for addr in settings.LINO.get_system_note_recipients(self,owner,silent):
-            if not '@example.com' in addr:
-                recipients.append(addr)
-        if not len(recipients):
-            return
-        sender = self.get_user().email or settings.SERVER_EMAIL
-        if not sender or '@example.com' in sender:
-            return
-        msg = EmailMessage(subject=subject, 
-            from_email=sender,body=body,to=recipients)
-        msg.send()
-        logger.info("System note '%s' from %s has been sent to %s",subject,sender,recipients)
-
-      
-class ActionRequest(BaseRequest):
-    """
-    Holds information about an indivitual web request and provides methods like
-
-    - :meth:`get_user <lino.core.actions.ActionRequest.get_user>`
-    - :meth:`callback <lino.ui.base.UI.callback>`
-    - :meth:`confirm <lino.ui.base.UI.confirm>`
-    - :meth:`success <lino.ui.base.UI.success>`
-    - :meth:`error <lino.ui.base.UI.error>`
-    - :meth:`spawn <lino.core.actions.ActionRequest.spawn>`
-
-    
-    """
-    create_kw = None
-    renderer = None
-    
-    offset = None
-    limit = None
-    order_by = None
-    
-    def __init__(self,ui,actor,request=None,action=None,renderer=None,param_values=None,**kw):
-        """
-        An ActionRequest is instantiated from different shortcut methods:
-        
-        - :meth:`lino.core.actors.Actor.request`
-        - :meth:`lino.core.actions.Action.request`
-        
-        """
-        #~ ActionRequest.__init__(self,ui,action)
-        self.actor = actor
-        #~ self.action = action or actor.default_action
-        #~ self.bound_action = BoundAction(actor,action or actor.default_action)
-        #~ if action and not isinstance(action,BoundAction):
-            #~ raise Exception("20121003 %r is not a BoundAction" % action)
-        self.bound_action = action or actor.default_action
-        BaseRequest.__init__(self,ui,request,renderer,**kw)
-        self.ah = actor.get_request_handle(self)
-        """
-        See 20120825
-        """
-        #~ if self.actor.parameters is None:
-            #~ if param_values is not None:
-                #~ raise Exception("Cannot request param_values on %s" % self.actor)
-        #~ else:
-        if self.actor.parameters is not None:
-            pv = self.actor.param_defaults(self)
-            
-            """
-            New since 20120913.
-            E.g. newcomers.Newcomers is a simple pcsw.Clients with known_values=dict(client_state=newcomer)
-            and since there is a parameter `client_state`, we override that parameter's default value.
-            """
-            for k,v in self.known_values.items():
-                if pv.has_key(k):
-                    pv[k] = v
-            """
-            New since 20120914.
-            MyClientsByGroup has a known group, this 
-            must also appear as `group` parameter value.
-            Lino now understands tables where the master_key is also a parameter.
-            """
-            if self.actor.master_key is not None:
-                if pv.has_key(self.actor.master_key):
-                    pv[self.actor.master_key] = self.master_instance
-                
-            if param_values is None:
-              if request is not None: # 20121025
-                #~ pv.update(self.ui.parse_params(self.ah,request))
-                #~ pv.update(self.ah.store.parse_params(request))
-                pv.update(self.actor.params_layout.params_store.parse_params(request))
-                
-            if param_values is not None:
-                for k in param_values.keys(): 
-                    if not pv.has_key(k):
-                        raise Exception("Invalid key %r in param_values" % k)
-                pv.update(param_values)
-                
-            self.param_values = AttrDict(**pv)
-            
-        if self.bound_action.action.parameters is not None:
-            apv = self.bound_action.action.action_param_defaults(self,None)
-            if request is not None:
-                #~ pv.update(self.ui.parse_params(self.ah,request))
-                #~ pv.update(self.ah.store.parse_params(request))
-                apv.update(self.bound_action.action.params_layout.params_store.parse_params(request))
-                
-            self.action_param_values = AttrDict(**apv)
-            
-            #~ if param_values:
-                #~ # logger.info("20120608 param_values is %s",param_values)
-                #~ for k,v in param_values.items():
-                    #~ self.param_values.define(k,v)
-                    
-        self.bound_action.setup_action_request(self)
-                
-        
-    def setup(self,
-            #~ param_values={},
-            known_values=None,
-            **kw):
-        BaseRequest.setup(self,**kw)
-        #~ 20120111 
-        #~ self.known_values = known_values or self.report.known_values
-        #~ if self.report.known_values:
-        #~ d = dict(self.report.known_values)
-        kv = dict()
-        for k,v in self.actor.known_values.items():
-            kv.setdefault(k,v)
-        if known_values:
-            kv.update(known_values)
-        self.known_values = kv
-        
-    def create_phantom_rows(self,**kw):
-        #~ logger.info('20121011 %s.create_phantom_rows(), %r', self,self.create_kw)
-        if self.create_kw is None or not self.actor.editable or not self.actor.allow_create:
-            #~ logger.info('20120519 %s.create_phantom_row(), %r', self,self.create_kw)
-            return 
-        if not self.actor.get_create_permission(self):
-            return
-        #~ # if not self.actor.get_permission(self.get_user(),self.actor.create_action):
-        #~ # if not self.actor.allow_create(self.get_user(),None,None):
-        #~ # ca = self.actor.get_url_action('create_action')
-        #~ ca = self.actor.create_action
-        #~ if ca is not None:
-            #~ # if not self.actor.create_action.allow(self.get_user(),None,None):
-            #~ # if not ca.allow(self.get_user(),None,None):
-            #~ if not ca.get_bound_action_permission(self.get_user(),None,None):
-                #~ return
-        yield PhantomRow(self,**kw)
-      
-    def create_instance(self,**kw):
-        if self.create_kw:
-            kw.update(self.create_kw)
-        #logger.debug('%s.create_instance(%r)',self,kw)
-        if self.known_values:
-            kw.update(self.known_values)
-        #~ print "20120527 create_instance", self, kw
-        obj = self.actor.create_instance(self,**kw)
-        #~ print 20120630, self.actor, 'actions.TableRequest.create_instance'
-        #~ if self.known_values is not None:
-            #~ self.ah.store.form2obj(self.known_values,obj,True)
-            #~ for k,v in self.known_values:
-                #~ field = self.model._meta.get_field(k) ...hier
-                #~ kw[k] = v
-        return obj
-        
-        
-    def get_data_iterator(self):
-        raise NotImplementedError
-        
-    def get_base_filename(self):
-        return str(self.actor)
-        #~ s = self.get_title()
-        #~ return s.encode('us-ascii','replace')
-        
-    def get_action_title(self):
-        return self.bound_action.action.get_action_title(self)
-        
-    def get_title(self):
-        return self.actor.get_title(self)
-        
-    def render_to_dict(self):
-        return self.bound_action.action.render_to_dict(self)
-        
-    def get_request_url(self,*args,**kw):
-        return self.ui.get_request_url(self,*args,**kw)
-
-    def get_action_status(self,ba,obj,**kw):
-        #~ logger.info("get_action_status %s",ba.full_name())
-        if ba.action.parameters:
-            if ba.action.params_layout.params_store is None:
-                raise Exception("20121016 %s has no store" % ba.action.params_layout)
-            kw.update(field_values=ba.action.params_layout.params_store.pv2dict(
-                self.ui,ba.action.action_param_defaults(self,obj)))
-        return kw
-      
-      
-    def get_status(self,ui,**kw):
-        if self.actor.parameters:
-            #~ kw.update(param_values=self.ah.store.pv2dict(ui,self.param_values))
-            #~ lh = self.actor.params_layout.get_layout_handle(ui)
-            kw.update(param_values=self.actor.params_layout.params_store.pv2dict(ui,self.param_values))
-        bp = kw.setdefault('base_params',{})
-        if self.subst_user is not None:
-            #~ bp[ext_requests.URL_PARAM_SUBST_USER] = self.subst_user.username
-            bp[ext_requests.URL_PARAM_SUBST_USER] = self.subst_user.id
-        #~ if self.actor.__name__ == 'MyClients':
-            #~ print "20120918 actions.get_status", kw
-        return kw
-        
-
-    def spawn(self,actor=None,**kw):
-        """
-        Create a new ActionRequest, taking default values from this one.
-        """
-        kw.setdefault('user',self.user)
-        kw.setdefault('subst_user',self.subst_user)
-        kw.setdefault('requesting_panel',self.requesting_panel)
-        kw.setdefault('renderer',self.renderer)
-        #~ kw.setdefault('request',self.request) 
-        # removed 20120702 because i don't want to inherit quick_search from spawning request
-        # and because i couldn't remember why 'request' was passed to the spawned request.
-        if actor is None:
-            actor = self.actor
-        return self.ui.request(actor,**kw)
-        
-    #~ def decide_response(self,*args,**kw): return self.ui.decide_response(self,*args,**kw)
-    #~ def prompt(self,*args,**kw): return self.ui.prompt(self,*args,**kw)
-    def summary_row(self,*args,**kw): return self.actor.summary_row(self,*args,**kw)
-    def instance_handler(self,*args,**kw): return self.renderer.instance_handler(self,*args,**kw)
-    def href_to(self,*args,**kw): return self.renderer.href_to(self,*args,**kw)
-    def pk2url(self,*args,**kw): return self.renderer.pk2url(self,*args,**kw)
-    def get_request_url(self,*args,**kw): return self.renderer.get_request_url(self,*args,**kw)
-    def obj2html(self,*args,**kw): return self.renderer.obj2html(self,*args,**kw)
-    def href_to_request(self,*args,**kw): return self.renderer.href_to_request(self,*args,**kw)
-    def row_action_button(self,obj,a,*args,**kw): return self.renderer.row_action_button(obj,self.request,a,*args,**kw)
-    def as_html(self,*args,**kw): return self.bound_action.action.as_html(self,*args,**kw)
-        
-    def absolute_uri(self,*args,**kw):
-        ar = self.spawn(*args,**kw)
-        location = ar.renderer.get_request_url(ar)
-        return self.request.build_absolute_uri(location)
-        
-            
-    def to_rst(self,column_names=None):
-        """
-        Returns a string representing this request in reStructuredText markup.
-        """
-        raise NotImplementedError()
-            
-            
-        
         
 
 def action(*args,**kw):

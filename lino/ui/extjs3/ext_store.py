@@ -54,6 +54,7 @@ from lino.utils import curry
 from lino.utils import babel
 from lino.utils import iif
 from lino.core.modeltools import obj2str
+from lino.core.requests import PhantomRow
 from lino.utils import IncompleteDate
 #~ from lino.core import tables
 #~ from lino.utils import moneyfmt
@@ -472,7 +473,11 @@ class GenericForeignKeyField(StoreField):
         
     def full_value_from_object(self,obj,ar):
         owner = getattr(obj,self.name)
-        if owner is None: return ''
+        if owner is None: 
+            #~ owner_id = getattr(obj,self.field.fk_field)
+            #~ if owner_id is None:
+                #~ return ''
+            return ''
         return ar.href_to(owner)
   
 class SpecialStoreField(StoreField):
@@ -1020,7 +1025,7 @@ class ParameterStore(BaseStore):
                 #~ raise Exception("len(%r) != len(%r)" % (self.param_fields,pv))
         if len(pv) > 0:
             if len(self.param_fields) != len(pv):
-                logger.info('20121016 %s para_fields are %s',self,[sf.field.name for sf in self.param_fields])
+                #~ logger.info('20121016 %s para_fields are %s',self,[sf.field.name for sf in self.param_fields])
                 raise Exception("Expected a list of %d values, but got %s" % (len(self.param_fields),pv))
             for i,f in enumerate(self.param_fields):
                 kw[f.field.name] = parse(f,pv[i])
@@ -1251,7 +1256,7 @@ class Store(BaseStore):
             #~ raise Exception()
         #~ logger.info("20120107 Store %s row2list(%s)", self.report.model, obj2str(row))
         l = []
-        if isinstance(row,actions.PhantomRow):
+        if isinstance(row,PhantomRow):
             for fld in self.list_fields:
                 fld.value2list(request,None,l,row)
         #~ elif isinstance(row,actions.VirtualRow):
