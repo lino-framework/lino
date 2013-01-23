@@ -2222,14 +2222,16 @@ tinymce.init({
         
     
     def table2xhtml(self,ar,max_row_count=300):
-        doc = xghtml.Document(force_unicode(ar.get_title()))
-        t = doc.add_table()
+        #~ doc = xghtml.Document(force_unicode(ar.get_title()))
+        #~ t = doc.add_table()
+        t = xghtml.Table()
         self.ar2html(ar,t,ar.data_iterator)
-        return xghtml.E.tostring(t.as_element())
+        # return xghtml.E.tostring(t.as_element())
+        return t.as_element()
         
     def ar2html(self,ar,tble,data_iterator):
         """
-        Using lino.utils.xmlgen.html
+        Render the given ActionRequest ar to html
         """
         tble.attrib.update(cellspacing="3px",bgcolor="#ffffff", width="100%")
         

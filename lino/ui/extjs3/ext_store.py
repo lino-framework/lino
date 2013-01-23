@@ -362,6 +362,7 @@ class VirtStoreField(StoreField):
         # as long as http://code.djangoproject.com/ticket/15497 is open:
         self.parse_form_value = delegate.parse_form_value
         self.set_value_in_object = vf.set_value_in_object
+        self.apply_cell_format = delegate.apply_cell_format
         #~ self.value_from_object = vf.value_from_object
         
         self.delegate = delegate
@@ -1300,6 +1301,7 @@ class Store(BaseStore):
                 yield th
       
     def row2html(self,ar,fields,row,sums,**cellattrs):
+        #~ logger.info("20130123 row2html %s",fields)
         #~ for i,fld in enumerate(self.list_fields):
         for i,fld in enumerate(fields):
         #~ for fld in fields:

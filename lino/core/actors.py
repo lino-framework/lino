@@ -332,7 +332,7 @@ class Actor(actions.Parametrizable):
     """
     Set this explicitly to True or False to make the 
     Actor per se editable or not.
-    Otherwise it will be set to `False` if the Actor is a Table has a `get_data_rows` method.
+    Otherwise it will be set to `False` if the Actor is a Table and has a `get_data_rows` method.
     
     The :class:`lino.models.Changes` table is an example where this is being used: 
     nobody should ever edit something in the table of Changes. 
@@ -1126,5 +1126,5 @@ class Actor(actions.Parametrizable):
         and calls its :meth:`ActionRequest.table2xhtml` method.
         """
         settings.LINO.startup()
-        return self.request(**kw).table2xhtml()
+        return xghtml.E.tostring(self.request(**kw).table2xhtml())
         

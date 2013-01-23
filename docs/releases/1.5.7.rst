@@ -1,0 +1,35 @@
+Version 1.5.7
+=============
+
+To be released 2013-01-24 (probably)
+
+
+New features
+------------
+
+- Merge action
+
+
+Optimizations
+-------------
+
+- Miscellaneous internal optimizations
+
+- Combobox for jobs.Contracts.duration still didn't yet work
+
+- behaviour when admin substitutes to a user  who has no permission to see where admin was
+  
+- formatting of plain html inside extjs. 
+  grid lines again visible. amounts now aligned right.
+
+
+Bugfixes
+--------
+
+- write() got an unexpected keyword argument ‘method’
+
+
+Manual tasks after upgrade
+--------------------------
+
+

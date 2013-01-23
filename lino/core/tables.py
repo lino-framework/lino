@@ -807,14 +807,27 @@ class AbstractTable(actors.Actor):
         
     @classmethod
     def class_init(self):
+        """
+        Sets table-specific default values for certain attributes.
+        """
         #~ if self.default_action is None:
             #~ self.default_action = actions.GridEdit()
     
         if self.get_data_rows is not None:
             self.show_detail_navigator = False
             
-        if self.editable is None:
+        """
+        :class:`lino_welfare.modellib.debts.models.DistByBudget` 
+        defines its own `get_data_rows` but inherits from 
+        :class:`lino_welfare.modellib.debts.models.EntriesByBudget` 
+        which has no `get_data_rows`.
+        """
+        if self.__dict__.get('editable') is None:
             self.editable = (self.get_data_rows is None)
+        #~ if self.editable is None:
+            #~ if self.get_data_rows is not None:
+                #~ self.editable = False
+            #~ self.editable = (self.get_data_rows is None)
         super(AbstractTable,self).class_init()
       
       

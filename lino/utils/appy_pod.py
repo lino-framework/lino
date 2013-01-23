@@ -35,6 +35,7 @@ from lino.utils.restify import restify
 from lino.utils.html2xhtml import html2xhtml
 from lino.ui import requests as ext_requests
 from lino.utils.xmlgen import etree
+from lino.utils.xmlgen import html as xghtml
 
 
 from django.utils.encoding import force_unicode
@@ -358,6 +359,8 @@ class Renderer(AppyRenderer):
             txt = fld.value2html(ar,val)
             #~ if isinstance(txt,etree.Element): 
             if etree.iselement(txt): 
+                if not txt.tag in ('p','div'):
+                    txt = xghtml.E.p(txt)
                 chunks = tuple(html2odftext(txt,stylename=style_name))
                 assert len(chunks) == 1
                 p = chunks[0]
@@ -366,7 +369,7 @@ class Renderer(AppyRenderer):
             else:
                 try:
                     txt = unicode(txt)
-                except UnicodeDecodeError,e:
+                except UnicodeDecodeError as e:
                     logger.warning("20120622 %r : %s", txt,e)
                     txt = repr(txt)
             #~ if not isinstance(txt,basestring): 
@@ -379,7 +382,7 @@ class Renderer(AppyRenderer):
             #~ yield p
             try:
                 tc.addElement(p)
-            except Exception,e:
+            except Exception as e:
                 logger.warning("20120614 addElement %s %s %r : %s", i, fld, val, e)
                 #~ print 20120614, i, fld, val, e
                 

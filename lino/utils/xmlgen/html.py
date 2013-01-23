@@ -44,6 +44,13 @@ Usage::
 from xml.etree import ElementTree as ET
 from lino.utils.xmlgen import Namespace, RAW
 
+def HtmlNamespace(Namespace):
+
+    def tostring(self,element,*args,**kw):
+        kw.update(method='html')
+        return super(HtmlNamespace,self).tostring(element,*args,**kw)
+
+
 #~ E = Namespace("http://www.w3.org/1999/xhtml","""
 E = Namespace(None,"""
 a 

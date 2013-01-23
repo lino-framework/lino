@@ -42,3 +42,25 @@ now stores a last image of the object .
 
 - In general this new feature is to be considered unstable and should not yet be 
   used on real data.
+
+
+Miscellaneous
+-------------
+
+- virtual price fields weren't right aligned in plain html because
+  VirtStoreField forgot to take `apply_cell_format` from the delegate
+
+- :class:`lino_welfare.modellib.debts.models.DistByBudget` 
+  was  
+  :meth:`editable <lino.core.actors.Actor.editable>`
+  although it defines its own 
+  :meth:`get_data_rows <lino.core.tables.AbstractTable.get_data_rows>`.
+  That was because it inherits from 
+  :class:`lino_welfare.modellib.debts.models.EntriesByBudget` 
+  which has no `get_data_rows`,
+  and because
+  :meth:`lino.core.tables.AbstractTable.class_init`
+  over-eagerly set it from None to False in that case.
+  
+- :class:`lino_welfare.modellib.debts.models.PrintEntriesByBudget` 
+  now also shows the original amounts for entries with periods other than 1

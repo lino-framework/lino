@@ -70,7 +70,7 @@ class Group(babel.BabelNamed):
         unique_together = ['chart','ref']
         
     chart = models.ForeignKey(Chart)
-    ref = dd.NullCharField(max_length=100)
+    ref = dd.NullCharField(max_length=20)
     #~ ref = models.CharField(max_length=100)
     account_type = AccountTypes.field(blank=True)
     help_text = dd.RichTextField(_("Introduction"),format="html",blank=True)
@@ -102,8 +102,8 @@ class Account(babel.BabelNamed,mixins.Sequenced):
 
     chart = models.ForeignKey(Chart)
     group = models.ForeignKey(Group)
-    #~ ref = models.CharField(max_length=100,blank=True)
-    ref = dd.NullCharField(max_length=100)
+    #~ ref = models.CharField(max_length=100)
+    ref = dd.NullCharField(max_length=20)
     #~ chart = models.ForeignKey(Chart)
     type = AccountTypes.field() # blank=True)
     help_text = dd.RichTextField(_("Introduction"),format="html",blank=True)

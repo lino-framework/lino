@@ -4,8 +4,15 @@ To-do list
 Short-term
 ----------
 
+#.  Lino has currently no possibility to specify a default 
+    `preferred_width` for a field. 
+    modlib.accounts.models.Group : the `ref` field has a max_length of 50, 
+    but most people use only up to 6 positions. 
+    But I don't want to add ":6" to every layout template.
+    
+
 #.  lino.ui.boy :
-    - rename "plain" to "boy"
+    - rename "plain" to "boy" (?)
     - cell_html() and "as_plain_html"?
     - detail of a pcsw.client doesn't work because as_plain_html doesn't 
     pass the `ar` to `value_from_object`.
