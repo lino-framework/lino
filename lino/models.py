@@ -46,7 +46,7 @@ from lino.core.modeltools import resolve_field, UnresolvedModel
 from lino.utils.choosers import chooser, get_for_field
 from lino.utils.restify import restify
 from lino.core import actions
-from lino.core import changes
+#~ from lino.core import changes
 from lino.utils.xmlgen import html as xghtml
 
 #~ from lino.core.changes import Change, Changes, ChangesByObject
@@ -232,85 +232,6 @@ if settings.LINO.is_installed('contenttypes'):
       
 
 
-  class Change(dd.Model):
-      """
-      Each `save()` of a watched object will generate one Change record.
-      """
-      class Meta:
-          verbose_name = _("Change")
-          verbose_name_plural = _("Changes")
-              
-      time = models.DateTimeField()
-      type = changes.ChangeTypes.field()
-      if settings.LINO.user_model:
-          user = dd.ForeignKey(settings.LINO.user_model)
-          
-      object_type = models.ForeignKey(ContentType,
-          related_name='changes_by_object',
-          verbose_name=_("Object type"))
-      object_id = dd.GenericForeignKeyIdField(object_type)
-      object = dd.GenericForeignKey('object_type','object_id',_("Object"))
-      
-      master_type = models.ForeignKey(ContentType,
-          related_name='changes_by_master',
-          verbose_name=_("Master type"))
-      master_id = dd.GenericForeignKeyIdField(master_type)
-      master = dd.GenericForeignKey('master_type','master_id',_("Master"))
-      
-      #~ summary = models.CharField(_("Summary"),max_length=200,blank=True)
-      #~ description = dd.RichTextField(format='plain')
-      diff = dd.RichTextField(_("Changes"),format='plain',blank=True)
-      
-      def __unicode__(self):
-          #~ return "#%s - %s" % (self.id,self.time)
-          return "#%s" % self.id
-          
-      # NOTE: the following code is the same as in lino.mixins.Controllable
-      # TODO: automate this behaviour in dd.GenericForeignKey
-      @chooser(instance_values=True)
-      def object_id_choices(cls,object_type):
-          if object_type:
-              return object_type.model_class().objects.all()
-          return []
-      def get_object_id_display(self,value):
-          if self.object_type:
-              try:
-                  return unicode(self.object_type.get_object_for_this_type(pk=value))
-              except self.object_type.model_class().DoesNotExist,e:
-                  return "%s with pk %r does not exist" % (
-                      full_model_name(self.object_type.model_class()),value)
-      @chooser(instance_values=True)
-      def master_id_choices(cls,master_type):
-          if master_type:
-              return master_type.model_class().objects.all()
-          return []
-      def get_master_id_display(self,value):
-          if self.master_type:
-              try:
-                  return unicode(self.master_type.get_object_for_this_type(pk=value))
-              except self.master_type.model_class().DoesNotExist,e:
-                  return "%s with pk %r does not exist" % (
-                      full_model_name(self.master_type.model_class()),value)
-      # NOTE: the above code is the same as in lino.mixins.Controllable
-          
-      
-  class Changes(dd.Table):
-      editable = False
-      model = Change
-      order_by = ['-time']
-      detail_layout = """
-      time user type master object id
-      diff
-      """
-      
-  #~ class ChangesByObject(Changes):
-  class ChangesByMaster(Changes):
-      """
-      Slave Table showing the changes related to the current object
-      """
-      column_names = 'time user type object diff object_type object_id'
-      master_key = 'master'
-
 
 
 if settings.LINO.user_model:
@@ -491,8 +412,8 @@ def setup_explorer_menu(site,ui,profile,m):
         system.add_action(dd.UserLevels)
         system.add_action(dd.UserProfiles)
         office.add_action(TextFieldTemplates)
-    if site.is_installed('contenttypes'):
-        system.add_action(Changes)
+    #~ if site.is_installed('contenttypes'):
+        #~ system.add_action(Changes)
   
 
 dd.add_user_group('office',OFFICE_MODULE_LABEL)

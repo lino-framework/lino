@@ -30,6 +30,7 @@ from django.utils.translation import ugettext as _
 from django.utils.encoding import force_unicode
 
 from lino import dd
+#~ from lino.core.signals import pre_ui_delete
 
 from lino.utils.xmlgen import html as xghtml
 E = xghtml.E
@@ -46,7 +47,7 @@ from lino.utils import auth
 from lino.core import actions
 from lino.core import actors
 from lino.core import dbtables
-from lino.core import changes
+#~ from lino.core import changes
 from lino.core import web
 
 from lino.core.modeltools import obj2str, obj2unicode
@@ -283,7 +284,9 @@ def delete_element(ar,elem):
             
     #~ dblogger.log_deleted(ar.request,elem)
     
-    changes.log_delete(ar.request,elem)
+    #~ changes.log_delete(ar.request,elem)
+    
+    dd.pre_ui_delete.send(sender=elem,request=ar.request)
     
     try:
         elem.delete()
@@ -319,7 +322,7 @@ def form2obj_and_save(ar,data,elem,is_new,restful,file_upload=False): # **kw2sav
     # store normal form data (POST or PUT)
     #~ original_state = dict(elem.__dict__)
     if not is_new:
-        watcher = changes.Watcher(elem)
+        watcher = dd.ChangeWatcher(elem)
     try:
         rh.store.form2obj(ar,data,elem,is_new)
     except exceptions.ValidationError,e:
@@ -369,12 +372,14 @@ def form2obj_and_save(ar,data,elem,is_new,restful,file_upload=False): # **kw2sav
                   #~ msg=_("There was a problem while saving your data:\n%s") % e)
                   
         if is_new:
-            changes.log_create(request,elem)
+            dd.pre_ui_create.send(elem,request=request)
+            #~ changes.log_create(request,elem)
             kw.update(
                 message=_("%s has been created.") % obj2unicode(elem))
                 #~ record_id=elem.pk)
         else:
-            watcher.log_diff(request)
+            watcher.send_update(request)
+            #~ watcher.log_diff(request)
             kw.update(message=_("%s has been updated.") % obj2unicode(elem))
         
     else:

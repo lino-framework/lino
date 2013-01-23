@@ -18,8 +18,9 @@ Since I don't want to upgrade the Python on that server and the
 "plain" view is anyway experimental, I simply remove it.
 
 
-Merge duplicate data rows
----------------------------
+
+Merge two database rows 
+-----------------------
 
 Just to have a trace of what I have been doing today...
 

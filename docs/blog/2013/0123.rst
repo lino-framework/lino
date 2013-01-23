@@ -1,0 +1,44 @@
+20130123
+========
+
+Merge two database rows (continued)
+-----------------------------------
+
+I integrated MergeAction into the changes history 
+framework which now logs 
+a new change type "Merge",
+and every merge of a watched object.
+
+If I merge a client A to another client B, 
+then A gets deleted, 
+but the change history is transferred to A.
+
+In 
+:mod:`lino.modlib.contacts.fixtures.demo`,
+added two new fictive persons 
+*Dorothée Dobbelstein*
+and 
+*Dorothée Dobbelstein-Demeulenaere*
+who are accidental duplicates of the existing 
+*Dorothée Demeulenaere*.
+Try to merge them!
+
+I also converted the changes framework to use signals, 
+which makes the whole thing more clear:
+The new :mod:`lino.modlib.changes` module is to be added to INSTALLED_APPS,
+and the application startup code must somewhere call 
+:func:`lino.modlib.changes.models.watch_changes` on the models to be observed.
+
+:func:`log_delete <lino.modlib.changes.models.log_delete>` 
+now stores a last image of the object .
+
+
+**To observe:**
+
+- Change.object_id should maybe better *not* be modified in order to show that 
+  this change was on an object instance which no longer exists.
+  I added a new attribute `dont_merge` to 
+  :class:`lino.core.fields.GenericForeignKey` specially for this.
+
+- In general this new feature is to be considered unstable and should not yet be 
+  used on real data.

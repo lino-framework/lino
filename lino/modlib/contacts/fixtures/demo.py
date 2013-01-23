@@ -87,6 +87,8 @@ def objects():
     yield person('Marc',  'Chantraine',gender=mixins.Genders.male)
     yield person('Daniel',   'Dericum',gender=mixins.Genders.male)
     yield person('Dorothée', 'Demeulenaere',gender=mixins.Genders.female)
+    yield person('Dorothée', 'Dobbelstein-Demeulenaere',gender=mixins.Genders.female)
+    yield person('Dorothée', 'Dobbelstein',gender=mixins.Genders.female)
     yield person('Berta',    'Ernst',gender=mixins.Genders.female)
     yield person('Bernd',    'Evertz',gender=mixins.Genders.male)
     yield person('Eberhart', 'Evers',gender=mixins.Genders.male)

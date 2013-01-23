@@ -55,5 +55,8 @@ The change also caused a few internal optimizations:
   
 - When settings.DEBUG was off, then error messages didnt work because 
   I had converted the error templates to Jinja, but Django's TEMPLATE_LOADERS 
-  wasn't correctly set (and :class:`lino.core.web.Loader` had never been tested).
+  wasn't correctly set (and :class:`lino.core.web.Loader` had never been 
+  tested).
+  This caused TemplateSyntaxErrors like "Could not parse the remainder: '('bootstrap','css','bootstrap.css')' from 'site.build_media_url('bootstrap','css','bootstrap.css')'"
+
   

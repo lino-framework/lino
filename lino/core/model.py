@@ -129,20 +129,6 @@ class Model(models.Model):
     #~ Internally used by :meth:`watch_changes`
     #~ """
     
-    @classmethod
-    def watch_changes(cls,*args,**kw):
-        """
-        Declare this model to be "observed" or "watched" for changes.
-        Each change to an object comprising at least one watched field
-        will lead to an entry to the `Changes` table.
-        
-        All calls to watch_changes will be grouped by model.
-        
-        See also :mod:`lino.core.changes`.
-        """
-        from lino.core import changes
-        changes.add_watcher_spec(cls,*args,**kw)
-        
     #~ def get_watcher(self,*args,**kw):
         #~ from lino.core import changes
         #~ return changes.Watcher(self,*args,**kw)

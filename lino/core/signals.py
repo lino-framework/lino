@@ -15,7 +15,7 @@
 This defines Lino's standard system signals.
 """
 
-from django.dispatch import Signal
+from django.dispatch import Signal, receiver
 
 pre_analyze = Signal(['models_list'])
 """
@@ -63,8 +63,24 @@ Arguments sent with this signal:
 """
     
 
-pre_merge = Signal(['merge_to'])
+
+pre_merge = Signal(['request'])
 """
 Sent when a model instance is being merged into another instance.
 """
+
+pre_remove_child = Signal(['request','child'])
+pre_add_child = Signal(['request'])
+pre_ui_create = Signal(['request'])
+pre_ui_delete = Signal(['request'])
+pre_ui_update = Signal(['request'])
+"""
+Sent when just before a model instance is being deleted using 
+the user interface.
+
+``request``:
+  The HttpRequest object
+  
+"""
+
 

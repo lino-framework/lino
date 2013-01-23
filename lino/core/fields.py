@@ -658,9 +658,10 @@ class GenericForeignKey(generic.GenericForeignKey):
     Used by :class:`lino.mixins.Controllable`.
     """
     def __init__(self, ct_field="content_type", fk_field="object_id", 
-          verbose_name=None,help_text=None):
+          verbose_name=None,help_text=None,dont_merge=False):
         self.verbose_name = verbose_name
         self.help_text = help_text
+        self.dont_merge = dont_merge
         generic.GenericForeignKey.__init__(self,ct_field,fk_field)
         
     #~ def contribute_to_class(self, cls, name):

@@ -65,12 +65,16 @@ class MergePlan(object):
                 self.volatiles.append((fk,qs))
             else:
                 self.related.append((fk,qs))
-        self.generic_related = list(settings.LINO.get_generic_related(self.obj))
+        self.generic_related = []
+        for gfk,qs in settings.LINO.get_generic_related(self.obj):
+            if not getattr(gfk,'dont_merge',False):
+                self.generic_related.append( (gfk,qs) )
         
               
     def logmsg(self):
-        self.analyze()
+        #~ self.analyze()
         lst = []
+        lst.append("Merge %s into %s") % (self.obj,self.merge_to)
         def add(name):
             for f,qs in getattr(self,name):
                 if qs.count() > 0:
@@ -107,14 +111,16 @@ class MergePlan(object):
         return msg
             
 
-    def execute(self):
+    def execute(self,**kw):
         self.analyze() # refresh since there may be changes since summary()
         # give others a chance to object
-        pre_merge.send(self.obj,merge_to=self.merge_to)
+        #~ pre_merge.send(self.obj,merge_to=self.merge_to)
+        kw.update(sender=self)
+        pre_merge.send(**kw)
         update_count = 0
         # change FK fields of related objects
         for fk,qs in self.related:
-            update_count += qs.update(**{fk.name:merge_to})
+            update_count += qs.update(**{fk.name:self.merge_to})
             #~ for relobj in qs:
                 #~ setattr(relobj,fk.name,merge_to)
                 #~ relobj.full_clean()
@@ -122,7 +128,7 @@ class MergePlan(object):
         
         # merge GenericForeignKey relations
         for gfk,qs in self.generic_related:
-            update_count += qs.update(**{gfk.fk_field:merge_to.pk})
+            update_count += qs.update(**{gfk.fk_field:self.merge_to.pk})
             #~ for i in qs:
                 #~ setattr(qs,gfk.fk_field,merge_to.pk)
                 #~ # setattr(qs,gfk.name,merge_to)
@@ -171,7 +177,6 @@ class MergeAction(actions.RowAction):
         
         keep_volatiles = []
         
-            
         for m,fk in model._lino_ddh.fklist:
             if fk.name in m.allow_cascaded_delete:
                 fieldname = full_model_name(m,'_')
@@ -223,17 +228,10 @@ class MergeAction(actions.RowAction):
 
     def run(self,obj,ar,**kw):
 
-        #~ if not isinstance(ar,actions.ActionRequest):
-            #~ raise Exception("Expected and ActionRequest but got %r" % ar)
-        #~ related = dict()
-        #~ for m2m in self._meta.many_to_many:
-            #~ print m2m
-        #~ print self._lino_ddh.fklist
-            
         mp = MergePlan(obj,ar.action_param_values.merge_to,ar.action_param_values)
         msg = mp.build_confirmation_message()
         def ok():
-            msg = mp.execute()
+            msg = mp.execute(request=ar.request)
             # prepare the response        
             kw = dict()
             kw.update(refresh=True)

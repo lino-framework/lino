@@ -79,11 +79,13 @@ Utilities:
 
 Signals:
 
-- :attr:`pre_analyze <lino.core.signals.pre_analyze>`
 - :attr:`pre_startup <lino.core.signals.pre_startup>`
 - :attr:`pre_merge <lino.core.signals.pre_merge>`
-- :mod:`signals <lino.core.signals>`
-- :attr:`receiver <django.dispatch.receiver>` : standard Django receiver decorator
+- :attr:`pre_ui_create <lino.core.signals.pre_ui_create>`
+- :attr:`pre_ui_update <lino.core.signals.pre_ui_update>`
+- :attr:`pre_ui_delete <lino.core.signals.pre_ui_delete>`
+- :attr:`pre_analyze <lino.core.signals.pre_analyze>`
+- :attr:`receiver <django.dispatch.receiver>` : the standard Django receiver decorator
 
 Actions:
 
@@ -191,6 +193,7 @@ from lino.core.layouts import ParamsLayout
 #~ from lino.core.layouts import DetailLayout, InsertLayout
 
 
+from lino.core.signals import pre_ui_create, pre_ui_delete, pre_ui_update
 from lino.core.signals import pre_analyze
 from lino.core.signals import post_analyze
 
@@ -232,5 +235,42 @@ def required(**kw):
         #~ kw.update(auth=True)
     kw.setdefault('auth',True)
     return kw
+    
+    
+class PseudoRequest:
+    def __init__(self,username):
+        self.username = username
+        self._user = None
+        
+    def get_user(self):
+        if self._user is None:
+            if settings.LINO.user_model is not None:
+                self._user = settings.LINO.user_model.objects.get(username=self.username)
+        return self._user
+    user = property(get_user)
+    
 
+NOT_GIVEN = object()
 
+class ChangeWatcher(object):
+    """
+    Utility to watch changes and send pre_ui_update
+    """
+    def __init__(self,watched):
+        self.original_state = dict(watched.__dict__)
+        self.watched = watched
+        #~ self.is_new = is_new
+        #~ self.request
+        
+    def is_dirty(self):
+        #~ if self.is_new: 
+            #~ return True
+        for k,v in self.original_state.iteritems():
+            if v != self.watched.__dict__.get(k, NOT_GIVEN):
+                return True
+        return False
+        
+    def send_update(self,request):
+        #~ print "ChangeWatcher.send_update()", self.watched
+        pre_ui_update.send(sender=self,request=request)
+        
