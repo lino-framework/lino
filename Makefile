@@ -66,8 +66,7 @@ tests:
 	$(DJANGO_ADMIN) test --settings=lino.apps.presto.settings $(TESTS_OPTIONS)
 
 tt:  
-	export DJANGO_SETTINGS_MODULE=lino.apps.std.settings ; python lino/modlib/accounts/utils.py
-	export DJANGO_SETTINGS_MODULE=lino.apps.std.settings ; python lino/core/choicelists.py
+	$(DJANGO_ADMIN) test --settings=lino.test_apps.1.settings  $(TESTS_OPTIONS)
 
 unused_appdocs:
 	$(DJANGO_ADMIN) makedocs --settings lino.apps.pcsw.settings docs/pcsw/appdocs

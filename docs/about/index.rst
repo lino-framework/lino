@@ -28,9 +28,8 @@ need a *customized database application*.
 Features
 --------
     
-Since Lino is, technically speaking, "only" 
-a collection of extensions to Django, 
-the following features (copied from the 
+Lino applications are, technically speaking, normal Django 
+projects, so the following features (copied from the 
 `Django website <https://www.djangoproject.com/>`_) 
 also apply to Lino:
 
@@ -49,6 +48,9 @@ also apply to Lino:
   -- caching is as granular as you need.
   
 Lino then adds its own features to the above:
+
+- An extensible collection of out-of-the-box :doc:`user interfaces </topics/ui>`.
+  Lino application developers don't waste their time writing html templates or css.
 
 - :doc:`/topics/layouts` :  
   Design not only your models but also your forms using the Python language.
@@ -69,35 +71,14 @@ Lino then adds its own features to the above:
 Design goals
 ------------
 
+- Lino applications are intuitive and easy-to-understand for the end user.
+  (Context menus, Tooltips,...)
 - agile programming
 - rapid prototyping 
 - libraries of reusable code
 - short release cycles
 - maintainable code
 - stable 
-
-
-The user interface
-------------------
-
-People tend to judge a framework by it's user interface (UI). 
-This approach is not completely wrong since the UI is the 
-first "visible" part.
-
-Lino is designed to have many possible user interfaces,
-but your choice is currently limited to the :term:`ExtJS` UI.
-This means that Lino applications currently always 
-"look like" those you can see at :doc:`/demos`.
-
-We started working on a first alternative user interface 
-that uses the :doc:`Qooxdoo library </topics/qooxdoo>`,
-and we can imagine to write other interfaces in the future 
-(simple HTML, curses, Qt, ...), but for the moment 
-Lino relies on ExtJS, because ExtJS is so cool, 
-and because writing and optimizing a user interface 
-is a rather boring work, 
-and because there are many other, 
-more interesting tasks that are waiting to be done.
 
 
 History

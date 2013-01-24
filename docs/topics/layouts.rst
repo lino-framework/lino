@@ -6,8 +6,6 @@ This is the topic overview about Form Layouts
 which supposes that you have read the 
 tutorial: :doc:`/tutorials/layouts`.
 
-
-
 .. currentmodule:: lino.core.layouts
 
 Overview

@@ -311,6 +311,7 @@ def ajax_error(e,**kw):
 #~ def form2obj_and_save(self,request,rh,data,elem,is_new,include_rows): # **kw2save):
 def form2obj_and_save(ar,data,elem,is_new,restful,file_upload=False): # **kw2save):
     """
+    Parses the data from HttpRequest to the model instance and saves it.
     """
     #~ self = settings.LINO.ui
     request = ar.request
@@ -325,21 +326,12 @@ def form2obj_and_save(ar,data,elem,is_new,restful,file_upload=False): # **kw2sav
         watcher = dd.ChangeWatcher(elem)
     try:
         rh.store.form2obj(ar,data,elem,is_new)
-    except exceptions.ValidationError,e:
-        #~ raise
-        kw = settings.LINO.ui.error(e)
-        return json_response(kw)
-       #~ return error(e,_("There was a problem while validating your data : "))
-    #~ logger.info('20120228 store.form2obj passed, elem is %s' % obj2str(elem))
-    
-    kw = dict(success=True)
-    
-    try:
         elem.full_clean()
-        
-    except CATCHED_AJAX_EXCEPTIONS,e:
+    except CATCHED_AJAX_EXCEPTIONS as e:
         return ajax_error(e)
         
+    kw = dict(success=True)
+    
     #~ except exceptions.ValidationError, e:
         #~ kw = settings.LINO.ui.error(e) 
         #~ return json_response(kw)

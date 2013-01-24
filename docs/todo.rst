@@ -4,6 +4,13 @@ To-do list
 Short-term
 ----------
 
+#. Speicherbare Tabellenansichten :
+    - pro Benutzer
+    - Button "Restore factory defaults" ("Standard-Ansicht
+      wiederherstellen" bzw. "Anpassungen löschen")
+    - Auch die Option "auto_fit_column_widths" speichern
+
+
 #.  Lino has currently no possibility to specify a default 
     `preferred_width` for a field. 
     modlib.accounts.models.Group : the `ref` field has a max_length of 50, 

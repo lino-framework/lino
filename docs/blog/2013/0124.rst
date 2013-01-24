@@ -1,0 +1,10 @@
+20130124
+========
+
+Validation errors during 
+:func:`form2obj_and_save <lino.ui.extjs3.views.form2obj_and_save>`
+didn't always lead in a visible user message.
+Fixed. 
+
+Invested another hour into the documentation:
+:doc:`/about/index` and :doc:`/topics/ui`
