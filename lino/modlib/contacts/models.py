@@ -152,12 +152,12 @@ class Partner(mti.MultiTableBase,CountryRegionCity):
     remarks = models.TextField(_("Remarks"),blank=True) # ,null=True)
     
     is_person = mti.EnableChild(
-        settings.LINO.person_model,
+        "contacts.Person",
         verbose_name=_("is Person"),
         help_text=_("Whether this Partner is a Person."))
         
     is_company = mti.EnableChild(
-        settings.LINO.company_model,
+        "contacts.Company",
         verbose_name=_("is Company"),
         help_text=_("Whether this Partner is a Company."))
         
@@ -407,7 +407,7 @@ class Persons(Partners):
     List of all Persons.
     """
     #~ required = dict(user_level='user')
-    model = settings.LINO.person_model
+    model = "contacts.Person"
     order_by = ["last_name","first_name","id"]
     column_names = "name_column:20 address_column email phone:10 gsm:10 id language:10 *"
     detail_layout = PersonDetail()
@@ -458,15 +458,18 @@ class Company(Partner):
 
 class CompanyDetail(PartnerDetail):
   
-    bottom_box = "remarks contacts.RolesByCompany"
+    bottom_box = """
+    type vat_id:12
+    remarks contacts.RolesByCompany
+    """
 
-    name_box = """prefix name type:20"""
-    info_box = "id:5 language:10 vat_id:12"
+    #~ name_box = """prefix name type:20"""
+    #~ info_box = "id:5 language:10 vat_id:12"
 
 
 
 class Companies(Partners):
-    model = settings.LINO.company_model
+    model = "contacts.Company"
     order_by = ["name"]
     detail_layout = CompanyDetail()
     insert_layout = dd.FormLayout("""
@@ -530,8 +533,8 @@ class Role(dd.Model):
     type = models.ForeignKey('contacts.RoleType',
       blank=True,null=True,
       verbose_name=_("Contact Role"))
-    person = models.ForeignKey(settings.LINO.person_model,related_name='rolesbyperson')
-    company = models.ForeignKey(settings.LINO.company_model,related_name='rolesbycompany')
+    person = models.ForeignKey("contacts.Person",related_name='rolesbyperson')
+    company = models.ForeignKey("contacts.Company",related_name='rolesbycompany')
     #~ type = models.ForeignKey('contacts.ContactType',blank=True,null=True,
       #~ verbose_name=_("contact type"))
 
@@ -589,10 +592,12 @@ class Roles(dd.Table):
     
 class RolesByCompany(Roles):
     required = dd.required()
+    auto_fit_column_widths = True
     #~ required_user_level = None
     label = _("Contact persons")
     master_key = 'company'
     column_names = 'person type *'
+    hidden_columns = 'id'
 
 class RolesByPerson(Roles):
     required = dd.required()
@@ -616,11 +621,10 @@ class PartnerDocument(dd.Model):
     class Meta:
         abstract = True
         
-    company = models.ForeignKey(settings.LINO.company_model,
+    company = models.ForeignKey("contacts.Company",
         blank=True,null=True)
         
-    person = models.ForeignKey(settings.LINO.person_model,
-        blank=True,null=True)
+    person = models.ForeignKey("contacts.Person",blank=True,null=True)
         
     def get_partner(self):
         if self.company is not None:
@@ -672,11 +676,9 @@ class PartnerDocument(dd.Model):
     def update_owned_instance(self,other):
         #~ print '20120627 PartnerDocument.update_owned_instance'
         if isinstance(other,mixins.ProjectRelated):
-            # the following hack doesn't work when loading data by dumpy
-            # because LINO.person_model are still strings at that moment
-            if isinstance(self.person,settings.LINO.person_model):
+            if isinstance(self.person,Person):
                 other.project = self.person
-            elif isinstance(self.company,settings.LINO.person_model):
+            elif isinstance(self.company,Person):
                 other.project = self.company
         other.person = self.person
         other.company = self.company
@@ -692,7 +694,7 @@ class OldCompanyContact(dd.Model):
     class Meta:
         abstract = True
         
-    company = models.ForeignKey(settings.LINO.company_model,
+    company = models.ForeignKey("contacts.Company",
         related_name="%(app_label)s_%(class)s_set_by_company",
         verbose_name=_("Company"),
         blank=True,null=True)
@@ -735,7 +737,7 @@ class ContactRelated(dd.Model):
     class Meta:
         abstract = True
         
-    company = models.ForeignKey(settings.LINO.company_model,
+    company = models.ForeignKey("contacts.Company",
         related_name="%(app_label)s_%(class)s_set_by_company",
         verbose_name=_("Company"),
         blank=True,null=True)
@@ -774,7 +776,7 @@ class ContactRelated(dd.Model):
     @classmethod
     def contact_person_choices_queryset(cls,company):
     #~ def contact_choices_queryset(cls,company):
-        return settings.LINO.person_model.objects.filter(rolesbyperson__company=company).distinct()
+        return Person.objects.filter(rolesbyperson__company=company).distinct()
 
     def full_clean(self,*args,**kw):
         if not settings.LINO.loading_from_dump:
@@ -822,7 +824,7 @@ dd.inject_field(SiteConfig,
     
 dd.inject_field(SiteConfig,
     'site_company',
-    models.ForeignKey(settings.LINO.company_model,
+    models.ForeignKey("contacts.Company",
         blank=True,null=True,
         verbose_name=_("The company that runs this site"),
         related_name='site_company_sites',
@@ -838,7 +840,7 @@ dd.inject_field(SiteConfig,
 #~ dd.inject_field(Partner,
     #~ 'is_company',
     #~ mti.EnableChild(
-        #~ settings.LINO.company_model,
+        #~ "contacts.Company",
         #~ verbose_name=_("is Company"),
         #~ help_text=_("Whether this Partner is a Company.")))
 

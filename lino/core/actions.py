@@ -237,6 +237,9 @@ class Action(Parametrizable,Permittable):
     
     _layout_class = layouts.ActionParamsLayout
     
+    hidden_elements = frozenset()
+    
+    
     sort_index = 90
     """
     

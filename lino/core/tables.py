@@ -680,7 +680,7 @@ class AbstractTable(actors.Actor):
     #~ hide_columns = None
     #~ hidden_columns = frozenset()
     
-    hidden_columns = None
+    hidden_columns = frozenset()
     """
     If given, this is specifies the data elements
     that should be hidden by default when rendering 
@@ -697,8 +697,9 @@ class AbstractTable(actors.Actor):
     
     Otherwise it must be specified as a set of strings, 
     each one the name of a data element.
-    
     """
+    
+    #~ hidden_elements = None
     
     form_class = None
     help_url = None

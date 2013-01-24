@@ -47,6 +47,11 @@ from lino import dd
     #~ site.description = 
     
     
+@dd.when_prepared('contacts.Partner')
+def hide_region(model):
+    model.hide_elements('region')
+
+        
 @dd.receiver(dd.post_analyze)
 def set_merge_actions(sender,**kw):
     #~ logger.info("%s.set_merge_actions()",__name__)
@@ -54,4 +59,7 @@ def set_merge_actions(sender,**kw):
     for m in (modules.contacts.Person,modules.contacts.Company):
         #~ print repr(m)
         m.merge_row = dd.MergeAction(m)
+        #~ m.hide_elements('region')
     
+    #~ modules.contacts.PartnerDetail.address_box.remove_element('region')
+    #~ modules.contacts.Partner.hide_elements('region')

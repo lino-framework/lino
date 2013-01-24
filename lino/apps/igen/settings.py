@@ -1,4 +1,4 @@
-## Copyright 2008-2011 Luc Saffre
+## Copyright 2008-2013 Luc Saffre
 ## This file is part of the Lino project.
 ## Lino is free software; you can redistribute it and/or modify 
 ## it under the terms of the GNU General Public License as published by
@@ -30,8 +30,8 @@ class Lino(Lino):
     domain = "igen-demo.saffre-rumma.net"
     help_url = "http://lino.saffre-rumma.net/igen/index.html"
     
-    person_model = "contacts.Person"
-    company_model = "contacts.Company"
+    #~ person_model = "contacts.Person"
+    #~ company_model = "contacts.Company"
     user_model = "users.User"
     
     #~ residence_permit_upload_type = None

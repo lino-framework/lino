@@ -270,6 +270,7 @@ class Actor(actions.Parametrizable):
     
     _layout_class = layouts.ParamsLayout
     
+    hidden_elements = frozenset()
     
     app_label = None
     """
@@ -586,7 +587,7 @@ class Actor(actions.Parametrizable):
             if isinstance(dl,basestring):
                 cls.detail_layout = layouts.FormLayout(dl,cls)
             elif dl._datasource is None:
-                dl._datasource = cls
+                dl.set_datasource(cls)
                 cls.detail_layout = dl
             elif not issubclass(cls,dl._datasource):
                 raise Exception("Cannot reuse %r detail_layout for %r" % (dl._datasource,cls))
@@ -606,7 +607,7 @@ class Actor(actions.Parametrizable):
             if isinstance(dl,basestring):
                 cls.insert_layout = layouts.FormLayout(dl,cls)
             elif dl._datasource is None:
-                dl._datasource = cls
+                dl.set_datasource(cls)
                 cls.insert_layout = dl
             elif not issubclass(cls,dl._datasource):
                 raise Exception("Cannot reuse %r insert_layout for %r" % (dl._datasource,cls))
@@ -648,6 +649,14 @@ class Actor(actions.Parametrizable):
         """
         return self.__name__
                         
+        
+    @classmethod
+    def hide_elements(self,*names):
+        for name in names:
+            if self.get_data_elem(name) is None:
+                raise Exception("%s has no element '%s'" % self,name)
+        self.hidden_elements = self.hidden_elements | set(names)
+            
         
     @classmethod
     def add_view_requirements(cls,**kw):

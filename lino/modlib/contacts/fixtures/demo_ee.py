@@ -1,5 +1,5 @@
 # -*- coding: UTF-8 -*-
-## Copyright 2009-2012 Luc Saffre
+## Copyright 2009-2013 Luc Saffre
 ## This file is part of the Lino project.
 ## Lino is free software; you can redistribute it and/or modify 
 ## it under the terms of the GNU General Public License as published by
@@ -28,12 +28,12 @@ def objects():
         # if language 'et' is not available, use the default language
         lang = settings.LINO.languages[0]
         
-    company = Instantiator(settings.LINO.company_model,country='EE',language=lang).build
+    company = Instantiator("contacts.Company",country='EE',language=lang).build
     yield company(name=u'Minu Firma OÜ')
     yield company(name=u'Mets ja Puu OÜ')
     yield company(name=u'Kenavälja OÜ')
     
-    person = Instantiator(settings.LINO.person_model,"first_name last_name",country='EE').build
+    person = Instantiator("contacts.Person","first_name last_name",country='EE').build
     yield person(u'Aare',u'Aaresild')
     yield person(u'Ahti',u'Aaspere')
     yield person(u'Peeter',u'Bach')

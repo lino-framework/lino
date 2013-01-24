@@ -1,5 +1,5 @@
 # -*- coding: UTF-8 -*-
-## Copyright 2012 Luc Saffre
+## Copyright 2012-2013 Luc Saffre
 ## This file is part of the Lino project.
 ## Lino is free software; you can redistribute it and/or modify 
 ## it under the terms of the GNU General Public License as published by
@@ -29,7 +29,7 @@ def objects():
     male_first_names = demonames.MALE_FIRST_NAMES_FRANCE
     female_first_names = demonames.FEMALE_FIRST_NAMES_FRANCE
 
-    Person = dd.resolve_model(settings.LINO.person_model)
+    Person = dd.resolve_model("contacts.Person")
     City = dd.resolve_model('countries.City')
     
     CITIES = Cycler(City.objects.filter(country_id='BE',zip_code__startswith='40'))

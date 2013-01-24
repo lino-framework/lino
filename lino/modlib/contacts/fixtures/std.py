@@ -125,7 +125,7 @@ def objects():
 
     I = Instantiator('lino.HelpText','content_type field help_text').build
     
-    Person = resolve_model(settings.LINO.person_model)
+    Person = resolve_model("contacts.Person")
     t = ContentType.objects.get_for_model(Person)
     
     #~ yield I(t,'birth_date',u"""\

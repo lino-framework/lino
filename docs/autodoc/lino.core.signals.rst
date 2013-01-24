@@ -1,8 +1,8 @@
 ========================
-:mod:`lino.core.changes`
+:mod:`lino.core.signals`
 ========================
 
-.. automodule:: lino.core.changes
+.. automodule:: lino.core.signals
     :members:
     :show-inheritance:
 

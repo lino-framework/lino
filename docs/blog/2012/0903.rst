@@ -60,7 +60,7 @@ Accessing virtual fields
 
 While working on the template for printing a sales invoice, 
 I stumbled over a missing feature which I described as follows 
-in the MTI tutorial (:mod:`lino.test_apps.1`):
+in the MTI tutorial (:mod:`lino.test_apps.mti`):
 
     :class:`lino.fields.VirtualField` instances are 
     no Django fields, Django ignores them and so doesn't 

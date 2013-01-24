@@ -64,7 +64,7 @@ Metamorphosen
 Weiter mit den eigentlich dringenden Tickets
 :doc:`/tickets/22`
 und :doc:`/tickets/23`.
-Also im Modul :mod:`lino.utils.mti` und :mod:`lino.test_apps.1.models`
+Also im Modul :mod:`lino.utils.mti` und :mod:`lino.test_apps.mti.models`
 
 
 Erstens machte ich bisher in :class:`lino.ui.extjs.ext_store.BooleanStoreField` 

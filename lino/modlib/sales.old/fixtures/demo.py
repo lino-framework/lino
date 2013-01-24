@@ -24,7 +24,7 @@ from lino.utils.instantiator import Instantiator, i2d
 
 def objects():
   
-    Company = dd.resolve_model(settings.LINO.company_model)
+    Company = dd.resolve_model("contacts.Company")
     Customer = dd.resolve_model('sales.Customer')
 
     products = dd.resolve_app('products')

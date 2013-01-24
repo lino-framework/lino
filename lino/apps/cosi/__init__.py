@@ -79,7 +79,7 @@ class Lino(Lino):
         #~ return _("a Lino application to make Belgian accounting simple.")
     #~ description = property(get_description)
         
-    def get_app_source_file(self): return __file__
+    #~ def get_app_source_file(self): return __file__
       
     #~ def get_application_info(self):
         #~ return (__name__,__version__,__url__)

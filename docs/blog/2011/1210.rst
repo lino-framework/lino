@@ -53,4 +53,4 @@ That's why :term:`dpy fixtures` now use the new function
 :func:`lino.utils.mti.create_child` 
 instead of 
 :func:`lino.utils.mti.insert_child`.
-The new function is documented and tested in :mod:`lino.test_apps.1.models`
+The new function is documented and tested in :mod:`lino.test_apps.mti.models`

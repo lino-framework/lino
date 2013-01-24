@@ -59,13 +59,13 @@ das beim PUT einer Company speziell ausgewertet wird:
 - wenn es angekreuzt ist und keiner besteht, diesen erstellen
 
 In 
-:mod:`lino.test_apps.1.models` 
+:mod:`lino.test_apps.mti.models` 
 und :mod:`lino.test_apps.2.models` 
 teste ich, wie das prinzipiell geht.
 
 Außerdem muss ich jetzt schreibbare virtuelle Felder implementieren. 
 Wenn man `is_courseprovider` verändert, muss dann
-:meth:`lino.test_apps.1.models.Company.set_is_courseprovider`
+:meth:`lino.test_apps.mti.models.Company.set_is_courseprovider`
 ausgeführt werden.
 
 Und ich muss aufpassen, dass dieses virtuelle Feld nicht 

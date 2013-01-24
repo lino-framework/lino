@@ -12,10 +12,15 @@
 ## along with Lino; if not, see <http://www.gnu.org/licenses/>.
 
 """
-A collection of tools for working with
-Multi-table inheritance (:doc:`/topics/mti`).
+A collection of tools around :doc:`/topics/mti`.
+See :doc:`/autodoc/lino.test_apps.mti`.
+Certainly not perfect, but works for me. 
+I wrote it mainly to solve ticket :doc:`/tickets/22`.
 
-Tested and documented in :mod:`lino.test_apps.1.models`.
+
+
+API
+---
 
 """
 import logging
@@ -189,7 +194,6 @@ class EnableChild(VirtualField):
     """
     Rendered as a checkbox that indicates whether an mti 
     child of the given model exists.
-    Documented and tested in :mod:`lino.test_apps.1.models`
     """
     
     editable = True
@@ -257,7 +261,6 @@ def create_child(parent_model,pk_,child_model,**kw):
     """
     Similar to :func:`insert_child`, but very tricky. 
     Used by :mod:`lino.utils.dumpy`
-    See :mod:`lino.test_apps.1.models`.
     
     The return value is an "almost normal" model instance,
     whose `save` and `full_clean` methods have been hacked. 

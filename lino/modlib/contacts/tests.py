@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-## Copyright 2008-2012 Luc Saffre
+## Copyright 2008-2013 Luc Saffre
 ## This file is part of the Lino project.
 ## Lino is free software; you can redistribute it and/or modify 
 ## it under the terms of the GNU General Public License as published by
@@ -27,7 +27,7 @@ from lino.utils.test import TestCase
 from lino.utils import babel
 
 from lino.core.modeltools import resolve_model,resolve_app
-Person = resolve_model(settings.LINO.person_model)
+Person = resolve_model("contacts.Person")
 #~ contacts = resolve_app('contacts')
 from lino.utils.instantiator import Instantiator, create_and_get
 from lino.utils.babel import babel_values
@@ -42,8 +42,8 @@ class QuickTest(TestCase):
     pass
     
     
-person = Instantiator(settings.LINO.person_model).build
-company = Instantiator(settings.LINO.company_model).build
+person = Instantiator(Person).build
+company = Instantiator("contacts.Company").build
 
 def test01(self):
     """
@@ -69,7 +69,7 @@ def test01(self):
     eupen = create_and_get('countries.City',name=u'Eupen',country=be,zip_code='4700')
     vigala = create_and_get('countries.City',name=u'Vigala',country=ee)
     
-    luc = create_and_get(settings.LINO.person_model,
+    luc = create_and_get(Person,
         first_name='Luc',last_name='Saffre',
         gender=Genders.male,
         country=ee,street='Uus', street_no='1',

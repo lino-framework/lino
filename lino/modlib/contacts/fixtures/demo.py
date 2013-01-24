@@ -68,14 +68,14 @@ def objects():
     City = resolve_model('countries.City')
     vigala = City.objects.get(name__exact='Vigala')
     #~ tallinn = City.objects.get(name__exact='Tallinn')
-    person = Instantiator(settings.LINO.person_model,"first_name last_name",
+    person = Instantiator("contacts.Person","first_name last_name",
                 country='EE',street='Uus', street_no='1',
                 addr2='Vana-Vigala küla',
                 city=vigala,zip_code='78003').build
     yield person('Luc',  'Saffre', gender=mixins.Genders.male)
     
     eupen = City.objects.get(name__exact='Eupen')
-    person = Instantiator(settings.LINO.person_model,"first_name last_name",
+    person = Instantiator("contacts.Person","first_name last_name",
                 country='BE',city=eupen,zip_code='4700').build
     yield person('Andreas',  'Arens',gender=mixins.Genders.male)
     yield person('Annette',  'Arens',gender=mixins.Genders.female)
@@ -116,7 +116,7 @@ def objects():
     yield person('Marie-Louise', 'Meier',gender=mixins.Genders.female)
     
     raeren = City.objects.get(name__exact='Raeren')
-    person = Instantiator(settings.LINO.person_model,"first_name last_name",
+    person = Instantiator("contacts.Person","first_name last_name",
                 country='BE',language=default_language(),
                 city=raeren,zip_code='4730').build
     yield person('Erich',    'Emonts',gender=mixins.Genders.male)
@@ -144,23 +144,23 @@ def objects():
     yield person('Erna',   'Ärgerlich',gender=mixins.Genders.female)
     
     
-    person = Instantiator(settings.LINO.person_model,country='BE',city=City.objects.get(name__exact='Angleur')).build
+    person = Instantiator("contacts.Person",country='BE',city=City.objects.get(name__exact='Angleur')).build
     yield person(first_name='Bernard',last_name='Bodard',title='Dr.')
     yield person(first_name='Jean',last_name='Dupont')
     
-    #~ person = Instantiator(settings.LINO.person_model,country='BE',city=City.objects.get(name__exact='Oostende')).build
-    person = Instantiator(settings.LINO.person_model,country='NL',city=City.objects.get(name__exact='Amsterdam')).build
+    #~ person = Instantiator("contacts.Person",country='BE',city=City.objects.get(name__exact='Oostende')).build
+    person = Instantiator("contacts.Person",country='NL',city=City.objects.get(name__exact='Amsterdam')).build
     yield person(first_name='Mark',last_name='Martelaer',gender=mixins.Genders.male)
     yield person(first_name='Rik',last_name='Radermecker',gender=mixins.Genders.male)
     yield person(first_name='Marie-Louise',last_name='Vandenmeulenbos',gender=mixins.Genders.female)
     
-    person = Instantiator(settings.LINO.person_model,country='DE').build
+    person = Instantiator("contacts.Person",country='DE').build
     yield person(first_name='Emil',last_name='Eierschal',gender=mixins.Genders.male)
     yield person(first_name='Lisa',last_name='Lahm',gender=mixins.Genders.female)
     yield person(first_name='Bernd',last_name='Brecht',gender=mixins.Genders.male)
     yield person(first_name='Karl',last_name='Keller',gender=mixins.Genders.male)
     
-    person = Instantiator(settings.LINO.person_model,country='FR').build
+    person = Instantiator("contacts.Person",country='FR').build
     yield person(first_name='Robin',last_name='Dubois',gender=mixins.Genders.male)
     yield person(first_name='Denis',last_name='Denon',gender=mixins.Genders.male)
     yield person(first_name='Jérôme',last_name='Jeanémart',gender=mixins.Genders.male)
@@ -273,7 +273,7 @@ Weserstraße
     
     i = 0
     nr = 1
-    for p in resolve_model(settings.LINO.person_model).objects.filter(city=eupen):
+    for p in resolve_model("contacts.Person").objects.filter(city=eupen):
         p.street = streets_of_eupen[i]
         p.stret_no = str(nr)
         p.save()

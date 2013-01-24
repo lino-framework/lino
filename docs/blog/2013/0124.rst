@@ -6,5 +6,48 @@ Validation errors during
 didn't always lead in a visible user message.
 Fixed. 
 
-Invested another hour into the documentation:
-:doc:`/about/index` and :doc:`/topics/ui`
+Invested another hour into documenting what Lino is and why I love it:
+:doc:`/about/index` and :doc:`/topics/ui`.
+
+Checkin.
+
+
+Worked on the documentation of 
+:doc:`/topics/mti`.
+:mod:`lino.utils.mti`
+and :mod:`lino.test_apps.mti`.
+tests.py is now in a separate file which does a `literalinclude` of models.py 
+
+Added an MTI example to
+:doc:`/tutorials/layouts`.
+
+
+AttributeError: 'ChildCollector' object has no attribute 'add_batch'
+--------------------------------------------------------------------
+
+This happens when running the 
+:mod:`lino.test_apps.mti` 
+suite using the newest Django development version. 
+Yes, they changed code in 
+:mod:`django.db.models.deletion.Collector`,
+and yes I am using undocumented features.
+
+
+Hiding a field in all layouts
+-----------------------------
+
+New method
+:meth:`lino.core.model.Model.hide_element`
+and new decorator
+:meth:`dd.when_prepared <lino.core.inject.when_prepared>`.
+
+Together they allow us to have :mod:`lino.apps.cosi` 
+hide the `region` field::
+
+  @dd.when_prepared('contacts.Partner')
+  def hide_region(model):
+      model.hide_elements('region')
+
+(:mod:`lino.apps.cosi` is for Belgians, and Belgians 
+don't use this field. 
+But :mod:`lino.modlib.contacts` is not only for Belgians)

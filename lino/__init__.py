@@ -369,22 +369,22 @@ class Lino(object):
     """
     
     #~ person_model = None
-    person_model = "contacts.Person"
-    """
-    If your application uses :model:`lino.modlib.contacts`,
-    set this to a string "applabel.Modelname" which identifies 
-    your Person model (which should inherit from
-    :class:`lino.modlib.contacts.models.Person`).
-    """
+    #~ person_model = "contacts.Person"
+    #~ """
+    #~ If your application uses :model:`lino.modlib.contacts`,
+    #~ set this to a string "applabel.Modelname" which identifies 
+    #~ your Person model (which should inherit from
+    #~ :class:`lino.modlib.contacts.models.Person`).
+    #~ """
     
     #~ company_model = None
-    company_model = "contacts.Company"
-    """
-    If your application uses :model:`lino.modlib.contacts`,
-    set this to a string "applabel.Modelname" which identifies 
-    your Company model (which should inherit from
-    :class:`lino.modlib.contacts.models.Company`).
-    """
+    #~ company_model = "contacts.Company"
+    #~ """
+    #~ If your application uses :model:`lino.modlib.contacts`,
+    #~ set this to a string "applabel.Modelname" which identifies 
+    #~ your Company model (which should inherit from
+    #~ :class:`lino.modlib.contacts.models.Company`).
+    #~ """
     
     project_model = None
     """

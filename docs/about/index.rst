@@ -64,8 +64,11 @@ Lino then adds its own features to the above:
   `South <http://south.aeracode.org/>`_
   to manage your database migrations.
   
-- **Other features** include 
-  :doc:`/topics/mti`, :doc:`/topics/perms` and :doc:`/topics/workflow`.
+- **Other features** include extensions to handle
+  :doc:`Polymorphism </topics/mti>`, 
+  :doc:`/topics/perms` 
+  and 
+  :doc:`/topics/workflow`.
 
 
 Design goals

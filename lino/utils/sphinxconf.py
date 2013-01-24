@@ -292,14 +292,20 @@ class ComplexTableDirective(InsertInputDirective):
         
         content = '\n'.join(self.content)
         rows = []
+        colcount = None
         
         for row in content.split(rowsep):
-            rows.append([cell.strip() for cell in row.split(cellsep)])
+            cells = [cell.strip() for cell in row.split(cellsep)]
+            if colcount is None:
+                colcount = len(cells)
+            else:
+                assert colcount == len(cells)
+            rows.append(cells)
               
         if 'header' in self.options:
             return rstgen.table(rows[0],rows[1:])
             
-        return rstgen.table(["",""],rows,show_headers=False)
+        return rstgen.table([""] * colcount,rows,show_headers=False)
 
 
 

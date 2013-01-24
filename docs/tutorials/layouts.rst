@@ -9,7 +9,81 @@ Concept and implementation is fully the author's idea, and we
 didn't yet find a similar approach in any other framework.
 
 
-TODO: continue this tutorial.
+Polymorphism
+------------
+
+:mod:`lino.modlib.contacts` 
+uses MTI to represent the fact that a Partner can be 
+either a Person or a Company. 
+here are the three resulting detail windows.
+
+
+.. textimage:: mti1.jpg
+  :scale: 30 %
+  
+  ::
+
+    class PartnerDetail(dd.FormLayout):
+      
+        main = """
+        address_box:60 contact_box:30
+        bottom_box
+        """
+        
+        address_box = dd.Panel("""
+        name_box
+        country region city zip_code:10
+        addr1
+        street_prefix street:25 street_no street_box
+        addr2
+        """,label = _("Address"))
+        
+        contact_box = dd.Panel("""
+        info_box
+        email:40 
+        url
+        phone
+        gsm fax
+        """,label = _("Contact"))
+
+        bottom_box = """
+        remarks 
+        is_person is_company #is_user
+        """
+            
+        name_box = "name"
+        info_box = "id language"
+        
+
+.. textimage:: mti2.jpg
+  :scale: 30 %
+  
+  ::
+
+    class PersonDetail(PartnerDetail):
+      
+        name_box = "last_name first_name:15 gender title:10"
+        info_box = "id:5 language:10"
+        bottom_box = "remarks contacts.RolesByPerson"
+            
+
+.. textimage:: mti3.jpg
+  :scale: 30 %
+  
+  ::
+
+    class CompanyDetail(PartnerDetail):
+      
+        bottom_box = """
+        type vat_id:12
+        remarks contacts.RolesByCompany
+        """
+
+
+
+Invoices
+---------
+
 
 If you want a modal window (not a full-screen window), then 
 you need to specify the `window_size` keyword argument. 
@@ -74,4 +148,8 @@ as a tabbed panel.
     class Invoices(SalesDocuments):
         ...
         detail_layout = InvoiceDetail()  
+        
+        
+        
+TODO: continue this tutorial.
         

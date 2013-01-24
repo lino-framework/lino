@@ -200,7 +200,7 @@ from lino.core.signals import post_analyze
 from lino.core.signals import auto_create
 from lino.core.signals import pre_merge
 
-#~ from django.db.models.signals import class_prepared
+from django.db.models.signals import class_prepared
 
 from django.dispatch import receiver
 #~ from lino.core import signals
@@ -212,6 +212,7 @@ from django.dispatch import receiver
 from lino.core.inject import inject_field
 from lino.core.inject import update_field
 from lino.core.inject import inject_quick_add_buttons
+from lino.core.inject import do_when_prepared, when_prepared
  
   
     

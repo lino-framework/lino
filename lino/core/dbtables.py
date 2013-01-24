@@ -567,10 +567,16 @@ class Table(AbstractTable):
             self.model = None
             
         if self.model is not None:
-            if self.hidden_columns is None:
-                self.hidden_columns = self.model.hidden_columns
-            elif isinstance(self.hidden_columns,basestring):
-                self.hidden_columns = fields.fields_list(self.model,self.hidden_columns)
+            if isinstance(self.hidden_columns,basestring):
+                self.hidden_columns = frozenset(fields.fields_list(self.model,self.hidden_columns))
+            self.hidden_columns = self.hidden_columns | self.model.hidden_columns
+            self.hidden_elements = self.hidden_elements | self.model.hidden_elements
+            if self.model.__name__ == 'Partner':
+                print "20130124 class_init ", self,self.hidden_elements
+            #~ if self.hidden_elements is None:
+                #~ self.hidden_elements = self.model.hidden_elements
+            #~ if isinstance(self.hidden_elements,basestring):
+                #~ self.hidden_elements = fields.fields_list(self.model,self.hidden_elements)
                 
             #~ for name,action in self.model.get_model_actions(self):
                 #~ existing_value = self.__dict__.get(name,None)

@@ -47,6 +47,7 @@ from lino import dd
 #~ from lino.core import signals
 from lino.core import actions
 from lino.core import fields
+from lino.core import layouts
 from lino.core import actors
 from lino.core import dbtables
 from lino.core.modeltools import app_labels # , data_elems # , get_unbound_meth
@@ -104,8 +105,8 @@ def analyze_models():
     
     if self.user_model:
         self.user_model = resolve_model(self.user_model,strict="Unresolved model '%s' in user_model.")
-    if self.person_model:
-        self.person_model = resolve_model(self.person_model,strict="Unresolved model '%s' in person_model.")
+    #~ if self.person_model:
+        #~ self.person_model = resolve_model(self.person_model,strict="Unresolved model '%s' in person_model.")
     if self.project_model:
         self.project_model = resolve_model(self.project_model,strict="Unresolved model '%s' in project_model.")
         
@@ -129,7 +130,7 @@ def analyze_models():
                 #~ logger.info("20121127 Install default %s for %s",k,model)
               
         if isinstance(model.hidden_columns,basestring):
-            model.hidden_columns = dd.fields_list(model,model.hidden_columns)
+            model.hidden_columns = frozenset(dd.fields_list(model,model.hidden_columns))
 
         if model._meta.abstract:
             raise Exception("Aha?")
@@ -183,6 +184,23 @@ def analyze_models():
             #~ for k,v in class_dict_items(model):
                 #~ if isinstance(v,dd.VirtualField):
                     #~ v.lino_resolve_type()
+                    
+                    
+    
+    for a in models.get_apps():
+        #~ for app_label,a in loading.cache.app_store.items():
+        app_label = a.__name__.split('.')[-2]
+        #~ logger.info("Installing %s = %s" ,app_label,a)
+        
+        for k,v in a.__dict__.items():
+            if isinstance(v,type) and issubclass(v,layouts.BaseLayout):
+                #~ print "%s.%s = %r" % (app_label,k,v)
+                self.modules.define(app_label,k,v)
+            #~ if isinstance(v,type)  and issubclass(v,dd.Module):
+                #~ logger.info("20120128 Found module %s",v)
+            if k.startswith('setup_'):
+                self.modules.define(app_label,k,v)
+                    
                     
     #~ logger.info("20130121 GFK_LIST is %s",['%s.%s'%(full_model_name(f.model),f.name) for f in settings.LINO.GFK_LIST])
     dd.post_analyze.send(self,models_list=models_list)
@@ -315,17 +333,22 @@ def startup_site(self):
         #~ self.modules = actors.MODULES
         
         #~ logger.info("20130105 modules is %s",self.modules.keys())
+        
+        if False: # moved earlier to analyze_models
 
-        for a in models.get_apps():
-            #~ for app_label,a in loading.cache.app_store.items():
-            app_label = a.__name__.split('.')[-2]
-            #~ logger.info("Installing %s = %s" ,app_label,a)
-            
-            for k,v in a.__dict__.items():
-                #~ if isinstance(v,type)  and issubclass(v,dd.Module):
-                    #~ logger.info("20120128 Found module %s",v)
-                if k.startswith('setup_'):
-                    self.modules.define(app_label,k,v)
+          for a in models.get_apps():
+              #~ for app_label,a in loading.cache.app_store.items():
+              app_label = a.__name__.split('.')[-2]
+              #~ logger.info("Installing %s = %s" ,app_label,a)
+              
+              for k,v in a.__dict__.items():
+                  if isinstance(v,type) and issubclass(v,layouts.BaseLayout):
+                      print "%s.%s = %r" % (app_label,k,v)
+                      self.modules.define(app_label,k,v)
+                  #~ if isinstance(v,type)  and issubclass(v,dd.Module):
+                      #~ logger.info("20120128 Found module %s",v)
+                  if k.startswith('setup_'):
+                      self.modules.define(app_label,k,v)
                     
             
         #~ import pprint

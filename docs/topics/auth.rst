@@ -87,7 +87,7 @@ For each request, Lino will lookup this table
     `lino.modlib.users`. 
     
     Set it to `None` to remove any user management 
-    (feature used by e.g. :mod:`lino.test_apps.1`)
+    (feature used by e.g. :mod:`lino.test_apps.mti`)
     """
     
     default_user = None

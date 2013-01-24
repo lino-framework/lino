@@ -33,7 +33,6 @@ def objects():
     #~ User = settings.LINO.user_model()
     User = resolve_model(settings.LINO.user_model)
     Project = resolve_model(settings.LINO.project_model)
-    #~ Company = resolve_model(settings.LINO.company_model)
     Note = resolve_model('notes.Note')
     NoteType = resolve_model('notes.NoteType')
     

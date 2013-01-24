@@ -446,10 +446,6 @@ class FlushDeferredObjects:
     pass
 
 class DpyDeserializer:
-    """
-    Used when ``manage.py loaddata`` encounters a `.py` fixture.
-    # new after blog/2011/0831
-    """
     
     def __init__(self):
         #~ dblogger.info("20120225 DpyDeserializer.__init__()")
@@ -590,6 +586,9 @@ class DpyDeserializer:
         l.append(obj)
 
 def Deserializer(fp, **options):
+    """
+    The Deserializer used when ``manage.py loaddata`` encounters a `.py` fixture.
+    """
     d = DpyDeserializer()
     return d.deserialize(fp, **options)
 

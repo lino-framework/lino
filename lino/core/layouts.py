@@ -88,6 +88,15 @@ class Panel(object):
         """
         self.desc = self.desc.replace(*args,**kw)
 
+    #~ def remove_element(self,*args):
+        #~ """
+        #~ Removes specified element names from this Panel's `main` template.
+        #~ """
+        #~ for name in args:
+            #~ if not name in self.desc:
+                #~ raise Exception("Panel has no element '%s'" % name)
+            #~ self.desc = self.desc.replace(name,'')
+        
 class LayoutHandle:
     """
     LayoutHandle analyzes a Layout and stores the 
@@ -296,6 +305,9 @@ class LayoutHandle:
         if e is None: return None # e.g. NullField
         # todo: cannot hide babelfields
         if name in self.layout.hidden_elements:
+            #~ print "20130124 hide element %r in %s" % (name, self)
+            if isinstance(self.layout,FormLayout):
+                return None
             e.hidden = True
         #~ setattr(self,name,e)
         self._names[name] = e
@@ -412,11 +424,12 @@ class BaseLayout(object):
         """
         #~ assert table is not None
         #~ self._table = table
-        self._datasource = datasource 
+        #~ self._datasource = datasource 
         self._labels = self.override_labels()
         self._added_panels = dict()
         #~ self._window_size = window_size
         self.hidden_elements = hidden_elements or frozenset()
+        self.set_datasource(datasource)
         self._element_options = dict()
         if main is not None:
             self.main = main
@@ -427,6 +440,15 @@ class BaseLayout(object):
             #~ if not hasattr(self,k):
                 #~ raise Exception("Got unexpected keyword %s=%r" % (k,v))
             setattr(self,k,v)
+            
+    def set_datasource(self,ds):
+        self._datasource = ds
+        if ds is not None:
+            self.hidden_elements = self.hidden_elements | ds.hidden_elements
+            #~ if str(ds).endswith('Partners'):
+                #~ print "20130124 set_datasource ", self,self.hidden_elements
+      
+            
     
     def override_labels(self):
         return dict()

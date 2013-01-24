@@ -1,5 +1,6 @@
-T:\hgwork\lino\docs\autodoc\lino.core.changes.rst:5: WARNING: autodoc can't import/find module 'lino.core.changes', it reported error: "Moved to lino.modlib.changes", please check your spelling and sys.path
 T:\hgwork\lino\docs\casts\lino_intro.rst:: WARNING: document isn't included in any toctree
 T:\hgwork\lino\docs\dev\versioning.rst:: WARNING: document isn't included in any toctree
 T:\hgwork\lino\docs\igen\index.rst:: WARNING: document isn't included in any toctree
-T:\hgwork\lino\docs\autodoc\lino.core.changes.rst:2: WARNING: py:mod reference target not found: lino.core.changes
+T:\hgwork\lino\docs\blog\2013\0124.rst:4: WARNING: py:func reference target not found: lino.ui.extjs3.views.form2obj_and_save
+T:\hgwork\lino\docs\blog\2013\0124.rst:28: WARNING: py:mod reference target not found: django.db.models.deletion.Collector
+T:\hgwork\lino\docs\blog\2013\0124.rst:39: WARNING: py:meth reference target not found: lino.core.model.Model.hide_element

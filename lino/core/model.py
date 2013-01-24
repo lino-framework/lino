@@ -85,10 +85,17 @@ class Model(models.Model):
     #~ foreign key column which points to this model. Capito?
     #~ """
     
-    hidden_columns = None
+    hidden_columns = frozenset()
     """
     If specified, this is the default value for 
     :attr:`hidden_columns <lino.core.tables.AbstractTable.hidden_columns>` 
+    of every `Table` on this model.
+    """
+    
+    hidden_elements = frozenset()
+    """
+    If specified, this is the default value for 
+    :attr:`hidden_elements <lino.core.tables.AbstractTable.hidden_elements>` 
     of every `Table` on this model.
     """
     
@@ -185,6 +192,18 @@ class Model(models.Model):
         event as user modified by setting a default state.
         """
         pass
+        
+    @classmethod
+    def hide_elements(self,*names):
+        """
+        Call this to mark the named data elements (fields) as hidden.
+        They remain in the database but are not visible in the user interface.
+        """
+        for name in names:
+            if fields.get_data_elem(self,name) is None:
+                raise Exception("%s has no element '%s'" % self,name)
+        self.hidden_elements = self.hidden_elements | set(names)
+        
         
     def after_ui_save(self,ar,**kw):
         """
@@ -380,6 +399,7 @@ class Model(models.Model):
               #~ 'get_model_actions',
               #~ '_custom_actions',
               'hidden_columns',
+              'hidden_elements',
               'get_default_table',
               'get_related_project',
               'get_system_note_recipients',

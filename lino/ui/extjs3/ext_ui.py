@@ -1740,7 +1740,7 @@ tinymce.init({
             ll = layouts.ListLayout(
                 h.actor.get_column_names(ar),
                 h.actor,
-                hidden_elements=h.actor.hidden_columns)
+                hidden_elements=h.actor.hidden_columns | h.actor.hidden_elements)
             #~ h.list_layout = layouts.ListLayoutHandle(h,ll,hidden_elements=h.actor.hidden_columns)
             h.list_layout = ll.get_layout_handle(self)
         else:

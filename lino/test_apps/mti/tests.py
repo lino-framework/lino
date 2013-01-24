@@ -1,51 +1,44 @@
 """
-Multi-table inheritance: converting between child and parent
-============================================================
 
 .. currentmodule:: lino.utils.mti
 
-This document presents the :mod:`lino.utils.mti` module, 
-a collection of tools for doing multi-table child/parent 
-conversions.
 
-It is certainly not perfect, but works for me. 
-I wrote it mainly to solve my ticket :doc:`/tickets/22`.
-If you find any bugs, please let me know.
+.. contents::
+   :local:
+   :depth: 2   
 
-This article is part of Lino's tests suite,
-it's source code is at 
-:srcref:`/lino/test_apps/1/models.py`.
+.. The following lines are here for running doctest 
+  on this document. Sphinx removes them because they are a 
+  comment, but doctest executes them.
+  
+  >>> from django.conf import settings
+  >>> settings.LINO.startup()
+  >>> mti = settings.LINO.modules.mti
+  >>> Person = mti.Person
+  >>> Restaurant = mti.Restaurant
+  >>> Place = mti.Place
+  >>> Visit = mti.Visit
+  >>> Meal = mti.Meal
 
 
-Let's go
---------
+The database models
+-------------------
+
+Here is the :file:`models.py` file used for this example.
+
+This is classical Django know-how:
+`Restaurant` inherits from `Place`, and `Place` is *not* abstract.
+That's what we call multi table inheritance.
+
+Note that we add a special virtual field `is_restaurant` 
+(we'll talk about that later)
+
+.. literalinclude:: ../../lino/test_apps/mti/models.py
 
 
-For this example we use the following models::
 
-  class Person(dd.Model):
-      name = models.CharField(max_length=50)
-      def __unicode__(self):
-          return self.name
-
-  class Place(dd.Model):  
-      name = models.CharField(max_length=50)
-      owners = models.ManyToManyField(Person)
-      is_restaurant = EnableChild('Restaurant',verbose_name="is a restaurant")
-      def __unicode__(self):
-          return "#%s (name=%s,owners=%s)" % (
-              self.pk,self.name, 
-              ','.join([unicode(o) for o in self.owners.all()]))
-          
-  class Restaurant(Place):  
-      serves_hot_dogs = models.BooleanField()
-      cooks = models.ManyToManyField(Person)
-      def __unicode__(self):
-          return "#%d (name=%s,owners=%s,cooks=%s)" % (
-              self.pk,self.name, 
-              ','.join([unicode(o) for o in self.owners.all()]),
-              ','.join([unicode(o) for o in self.cooks.all()]))
-
+Populating the database
+-----------------------
 
 Create some data:
 
@@ -69,13 +62,23 @@ Here is our data:
 >>> Place.objects.all()
 [Place #1 (u'#1 (name=First,owners=Alfred,Bert)')]
 
-Now the user discovers that Place #1 isn't actually a Restaurant, 
-and would like to "remove it's Restaurant data" from the database.
-But the primary key and related objects should remain unchanged.
 
-That's a case where :func:`delete_child` is needed:
+The :func:`delete_child` function
+---------------------------------
+
+Now imagine that a user of our application 
+discovers that Restaurant #1 isn't actually a `Restaurant`, 
+it's just a `Place`.
+They would like to "remove it's Restaurant data" from 
+the database, but keep the `Place` data.
+Especially the primary key and related objects should remain unchanged.
+That's a case where :func:`delete_child` is needed.
 
 >>> from lino.utils.mti import delete_child
+
+Here is how to "reduce" a Restaurant to a `Place` by 
+calling the :func:`delete_child` function:
+
 >>> p = Place.objects.get(id=1)
 >>> delete_child(p,Restaurant)
 
@@ -86,8 +89,15 @@ Traceback (most recent call last):
 ...
 DoesNotExist: Restaurant matching query does not exist...
 
+The :func:`insert_child` function
+----------------------------------
+
 The opposite operation, "promoting a simple Place to a Restaurant", 
-is done using :func:`insert_child`:
+is done using :func:`insert_child`.
+
+>>> from lino.utils.mti import insert_child
+  
+Let's first create a simple Place #2 with a single owner.
 
 >>> obj = Place(id=2,name="Second")
 >>> obj.save()
@@ -96,10 +106,8 @@ is done using :func:`insert_child`:
 >>> obj
 Place #2 (u'#2 (name=Second,owners=Bert)')
 
-We just created a new Place #2 with a single owner.
-Later this Place becomes a Restaurant and hires 2 cooks:
+Now this Place becomes a Restaurant and hires 2 cooks:
 
->>> from lino.utils.mti import insert_child
 >>> obj = insert_child(obj,Restaurant)
 >>> for i in 3,4:
 ...     obj.cooks.add(Person.objects.get(pk=i))
@@ -115,11 +123,12 @@ Traceback (most recent call last):
 ValidationError: [u'A Person cannot be parent for a Restaurant']
 
 
-Virtual fields
---------------
+The :class:`EnableChild` virtual field 
+--------------------------------------
 
 This section shows how the :class:`EnableChild` virtual field is being 
 used by Lino, and thus is Lino-specific.
+
 
 After the above examples our database looks like this:
 
@@ -133,28 +142,15 @@ Let's take Place #1 and look at it.
 >>> obj = Place.objects.get(pk=1)
 >>> obj
 Place #1 (u'#1 (name=First,owners=Alfred,Bert)')
-
-
-Before using virtual fields, we must setup 
-the Lino application. 
-In a Django project this is usually done 
-when the web server gets a first request and 
-imports it's  :setting:`ROOT_URLCONF`.
-This is needed to discover virtual fields:
-
->>> from django.conf import settings
->>> settings.LINO.startup()
-
 >>> obj.is_restaurant
 False
 
 
-To access the values that are "stored" in virtual fields,
+EnableField doesn't (yet) add a setter handler: 
+To modify the values that are "stored" in virtual fields,
 we must behave like a lino.ui would do, 
-by calling the methods
-:meth:`lino.fields.VirtualField.value_from_object`
-and
-:meth:`lino.fields.VirtualField.set_value_in_object`:
+by calling the method
+:meth:`set_value_in_object <lino.core.fields.VirtualField.set_value_in_object>`:
 
 
 >>> for instance in Place.objects.all():
@@ -199,29 +195,11 @@ Restaurant #2 (u'#2 (name=Second,owners=Bert,cooks=Bert)')
 
 
 
-Related ForeignKeys 
--------------------
+Related objects
+---------------
 
-In order to demonstrate what happens when there are ForeignKeys, 
-we add two more models::
-
-  class Visit(dd.Model):
-      person = models.ForeignKey(Person)
-      place = models.ForeignKey(Place)
-      purpose = models.CharField(max_length=50)
-      def __unicode__(self):
-          return "%s visit by %s at %s" % (
-            self.purpose, self.person, self.place.name)
-
-  class Meal(dd.Model):
-      allow_cascaded_delete = True
-      person = models.ForeignKey(Person)
-      restaurant = models.ForeignKey(Restaurant)
-      what = models.CharField(max_length=50)
-      def __unicode__(self):
-          return "%s eats %s at %s" % (
-            self.person, self.what, self.restaurant.name)
-
+Now let's have a more detailed look at what happens to the related 
+objects (Person, Visit and Meal)
 
 Bert, the owner of Restaurant #2 does two visits:
 
@@ -255,7 +233,7 @@ Traceback (most recent call last):
 DoesNotExist: Restaurant matching query does not exist...
 
 Note that `Meal` has :attr:`allow_cascaded_delete 
-<lino.core.modeltools.Model.allow_cascaded_delete>`
+<lino.core.model.Model.allow_cascaded_delete>`
 set to `['restaurant']`, 
 otherwise the above code would have raised a
 ValidationError "Cannot delete #2 
@@ -273,8 +251,8 @@ The owner and visits have been taken over:
 [Visit #1 (u'Say hello visit by Bert at Second'), Visit #2 (u'Hang around visit by Bert at Second')]
 
 
-The :func:`create_child <lino.utils.mti.create_child>` function
----------------------------------------------------------------
+The :func:`create_child` function
+---------------------------------
 
 This function is for rather internal use.
 
@@ -338,7 +316,6 @@ Exception: create_child() Restaurant 4 from Place : ignored non-local fields {'n
 for backwards compatibility (:doc:`/blog/2011/1210`).
 
 
-
 Related documents
 -----------------
 
@@ -350,9 +327,8 @@ Related documents
   <http://www.mail-archive.com/django-users@googlegroups.com/msg110455.html>`_
   (ringemup at django-users, 04 Nov 2010).
 
-- Django documentation on
-  `multi-table inheritance
-  <http://docs.djangoproject.com/en/dev/topics/db/models/#multi-table-inheritance>`_,
+- Django documentation on `multi-table inheritance
+  <http://docs.djangoproject.com/en/dev/topics/db/models/#multi-table-inheritance>`_
   
 - :djangoticket:`Child models overwrite data of Parent model
   <11618>`
@@ -364,52 +340,6 @@ Related documents
 - Carl Meyer's `django-model-utils project <https://github.com/carljm/django-model-utils>`_
   
 - `Figure out child type with Django MTI or specify type as field? <http://stackoverflow.com/questions/3990470/figure-out-child-type-with-django-mti-or-specify-type-as-field>`_
-  
-
 
 """
-
-from django.db import models
-from lino.utils.mti import EnableChild
-from lino import dd
-
-class Person(dd.Model):
-    name = models.CharField(max_length=50)
-    def __unicode__(self):
-        return self.name
-
-class Place(dd.Model):
-    name = models.CharField(max_length=50)
-    owners = models.ManyToManyField(Person)
-    is_restaurant = EnableChild('Restaurant',verbose_name="is a restaurant")
-    def __unicode__(self):
-        return "#%s (name=%s,owners=%s)" % (
-            self.pk,self.name, 
-            ','.join([unicode(o) for o in self.owners.all()]))
-        
-class Restaurant(Place):
-    serves_hot_dogs = models.BooleanField()
-    cooks = models.ManyToManyField(Person)
-    def __unicode__(self):
-        return "#%d (name=%s,owners=%s,cooks=%s)" % (
-            self.pk,self.name, 
-            ','.join([unicode(o) for o in self.owners.all()]),
-            ','.join([unicode(o) for o in self.cooks.all()]))
-
-class Visit(dd.Model):
-    person = models.ForeignKey(Person)
-    place = models.ForeignKey(Place)
-    purpose = models.CharField(max_length=50)
-    def __unicode__(self):
-        return "%s visit by %s at %s" % (
-          self.purpose, self.person, self.place.name)
-
-class Meal(dd.Model):
-    allow_cascaded_delete = ['restaurant']
-    person = models.ForeignKey(Person)
-    restaurant = models.ForeignKey(Restaurant)
-    what = models.CharField(max_length=50)
-    def __unicode__(self):
-        return "%s eats %s at %s" % (
-          self.person, self.what, self.restaurant.name)
 

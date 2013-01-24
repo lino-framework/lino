@@ -126,6 +126,18 @@ def do_when_prepared(model_spec,todo):
     todo(model)
 
 
+def when_prepared(model_spec):
+    """
+    Decorator to declare a function which will automatically run when 
+    the specified model has been prepared 
+    (or immediately if that model is already prepared).
+    """
+    def decorator(fn):
+        return do_when_prepared(model_spec,fn)
+    return decorator
+  
+    
+
 def inject_field(model_spec,name,field,doc=None):
     """
     Adds the given field to the given model.

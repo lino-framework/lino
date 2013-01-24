@@ -23,7 +23,7 @@ General Lino test suite
 The general Lino test suite (``make test`` in root of Lino's source tree) 
 was broken. Now almost ready again.
 
-The biggest problem was that :mod:`lino.test_apps.1` used `users` 
+The biggest problem was that :mod:`lino.test_apps.mti` used `users` 
 but not `contacts`. And users now depends on contacts. 
 New feature: It is now possible to define a userless site by setting 
 :attr:`lino.Lino.user_model` to `None`.

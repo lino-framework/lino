@@ -1,5 +1,5 @@
 # -*- coding: UTF-8 -*-
-## Copyright 2012 Luc Saffre
+## Copyright 2012-2013 Luc Saffre
 ## This file is part of the Lino project.
 ## Lino is free software; you can redistribute it and/or modify 
 ## it under the terms of the GNU General Public License as published by
@@ -206,7 +206,7 @@ List of choices is configured in `Configure --> Households --> Roles`.
     #~ partner = models.ForeignKey(contacts.Partner,
         #~ related_name='membersbypartner')
     household = models.ForeignKey('households.Household')
-    person = models.ForeignKey(settings.LINO.person_model,
+    person = models.ForeignKey("contacts.Person",
       related_name='membersbyperson')
     start_date = models.DateField(_("From"),blank=True,null=True)
     end_date = models.DateField(_("Until"),blank=True,null=True)
