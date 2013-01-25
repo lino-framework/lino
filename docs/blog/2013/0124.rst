@@ -22,6 +22,12 @@ Added an MTI example to
 :doc:`/tutorials/layouts`.
 
 
+Removed `person_model` and `company_model` attributes
+-----------------------------------------------------
+
+These are no longer necessary.
+
+
 AttributeError: 'ChildCollector' object has no attribute 'add_batch'
 --------------------------------------------------------------------
 

@@ -69,16 +69,31 @@ class RichTextField(models.TextField):
         self.textfield_format = fmt
     
   
-class PercentageField(models.SmallIntegerField):
+#~ class PercentageField(models.SmallIntegerField):
+    #~ """
+    #~ Deserves more documentation.
+    #~ """
+    #~ def __init__(self, *args, **kw):
+        #~ defaults = dict(
+            #~ max_length=3,
+            #~ )
+        #~ defaults.update(kw)
+        #~ models.SmallIntegerField.__init__(self,*args, **defaults)
+
+class PercentageField(models.DecimalField):
     """
-    Deserves more documentation.
+    A field to express a percentage. 
+    The database stores this like a DecimalField.
+    Plain HTML adds a "%".
     """
-    def __init__(self, *args, **kw):
+    def __init__(self, *args, **kwargs):
         defaults = dict(
-            max_length=3,
+            max_length=5,
+            max_digits=5,
+            decimal_places=2,
             )
-        defaults.update(kw)
-        models.SmallIntegerField.__init__(self,*args, **defaults)
+        defaults.update(kwargs)
+        super(PercentageField, self).__init__(*args, **defaults)
   
 class DatePickerField(models.DateField):
     """

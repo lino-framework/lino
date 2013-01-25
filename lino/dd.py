@@ -35,6 +35,7 @@ Extended Fields:
 - :class:`IncompleteDateField <lino.core.fields.IncompleteDateField>`
 - :class:`PasswordField <lino.core.fields.PasswordField>`
 - :class:`MonthField <lino.core.fields.MonthField>`
+- :class:`PercentageField <lino.core.fields.PercentageField>`
 - :class:`QuantityField <lino.core.fields.QuantityField>`
 - :class:`PriceField<lino.core.fields.PriceField>`
 - :class:`GenericForeignKey <lino.core.fields.GenericForeignKey>`
@@ -165,6 +166,7 @@ from lino.core.fields import DatePickerField
 from lino.core.fields import NullCharField
 from lino.core.fields import PasswordField
 from lino.core.fields import MonthField
+from lino.core.fields import PercentageField
 #~ from lino.core.fields import LinkedForeignKey
 from lino.core.fields import QuantityField
 from lino.core.fields import HtmlBox, PriceField, RichTextField

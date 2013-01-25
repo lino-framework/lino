@@ -1,0 +1,13 @@
+20130125
+========
+
+
+number fields in grids
+----------------------
+
+There are still problems with number fields 
+(quantities, percentages, prices,...)
+in a grid.
+E.g. an ExtJS numbercolumn renders null values as "0,00" .
+Quantity columns should be right aligned, 
+but also accept values like "2:30" or "2/3".

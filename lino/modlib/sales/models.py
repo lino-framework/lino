@@ -296,7 +296,8 @@ class SalesDocument(
     intro = models.TextField("Introductive Text",blank=True)
     #~ user = models.ForeignKey(settings.LINO.user_model,blank=True,null=True)
     #status = models.CharField(max_length=1, choices=STATUS_CHOICES)
-    discount = models.IntegerField(_("Discount"),blank=True,null=True)
+    #~ discount = models.IntegerField(_("Discount"),blank=True,null=True)
+    discount = dd.PercentageField(_("Discount"),blank=True,null=True)
         
     #~ @dd.chooser()
     #~ def partner_choices(self):
@@ -427,7 +428,9 @@ class ProductDocItem(ledger.VoucherItem,vat.QtyVatItemBase):
     product = models.ForeignKey('products.Product',blank=True,null=True)
     #~ title = models.CharField(max_length=200,blank=True)
     description = dd.RichTextField(_("Description"),blank=True,null=True)
-    discount = models.IntegerField(_("Discount"),default=0)
+    #~ discount = models.IntegerField(_("Discount"),default=0)
+    discount = dd.PercentageField(_("Discount"),blank=True,null=True)
+
     
     def get_base_account(self,tt):
         ref = settings.LINO.get_product_base_account(tt,self.product)
@@ -447,7 +450,10 @@ class ProductDocItem(ledger.VoucherItem,vat.QtyVatItemBase):
             if self.qty is None:
                 self.qty = Decimal("1")
             if self.product.price is not None:
-                self.unit_price = self.product.price * (HUNDRED - self.discount) / HUNDRED
+                if self.discount is None:
+                    self.unit_price = self.product.price 
+                else:
+                    self.unit_price = self.product.price * (HUNDRED - self.discount) / HUNDRED                    
                 self.unit_price_changed(ar)
         
     def before_ui_save(self,ar):

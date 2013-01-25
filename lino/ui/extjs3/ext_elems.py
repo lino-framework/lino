@@ -1,5 +1,5 @@
 # -*- coding: UTF-8 -*-
-## Copyright 2009-2012 Luc Saffre
+## Copyright 2009-2013 Luc Saffre
 ## This file is part of the Lino project.
 ## Lino is free software; you can redistribute it and/or modify 
 ## it under the terms of the GNU General Public License as published by
@@ -798,6 +798,20 @@ class CharFieldElement(FieldElement):
         #~ kw.update(margins='10px')
         return kw
         
+class QuantityFieldElement(CharFieldElement):
+    def get_field_options(self,**kw):
+        kw = CharFieldElement.get_field_options(self,**kw)
+        #~ kw.update(align='right')
+        kw.update(fieldClass="x-form-field x-form-num-field")
+        return kw
+  
+    def get_column_options(self,**kw):
+        #~ print 20130125, self.field.name
+        kw = CharFieldElement.get_column_options(self,**kw)
+        kw.update(xtype='numbercolumn')
+        #~ kw.update(align='right')
+        kw.update(format='') # 20130125
+        return kw
         
 class PasswordFieldElement(CharFieldElement):
     def get_field_options(self,**kw):
@@ -1026,12 +1040,12 @@ class URLFieldElement(CharFieldElement):
 class IntegerFieldElement(FieldElement):
     filter_type = 'numeric'
     gridfilters_settings = dict(type='numeric')
-    #~ xtype = 'numberfield'
+    xtype = 'numberfield'
     xtype = None
     sortable = True
     preferred_width = 5
     #~ data_type = 'int' 
-    value_template = "new Ext.form.NumberField(%s)"
+    #~ value_template = "new Ext.form.NumberField(%s)"
 
 class IncompleteDateFieldElement(CharFieldElement):
     """
@@ -1070,26 +1084,13 @@ class DecimalFieldElement(FieldElement):
         kw = FieldElement.get_field_options(self,**kw)
         if self.field.decimal_places:
             kw.update(decimalPrecision=self.field.decimal_places)
+            #~ kw.update(decimalPrecision=-1)
             kw.update(decimalSeparator=settings.LINO.decimal_separator)
         else:
             kw.update(allowDecimals=False)
+        if self.editable:
+            kw.update(allowBlank=self.field.blank)
         return kw
-        
-    #~ def get_column_options(self,**kw):
-        #~ kw = FieldElement.get_column_options(self,**kw)
-        #~ kw.update(xtype='numbercolumn')
-        #~ kw.update(align='right')
-        #~ if settings.LINO.decimal_separator == ',':
-            #~ fmt = "0.000"
-            #~ if self.field.decimal_places > 0:
-                #~ fmt += ',' + ("0" * self.field.decimal_places)
-                #~ fmt += "/i"
-        #~ elif settings.LINO.decimal_separator == '.':
-            #~ fmt = "0,000"
-            #~ if self.field.decimal_places > 0:
-                #~ fmt += '.' + ("0" * self.field.decimal_places)
-        #~ kw.update(format=fmt)
-        #~ return kw
         
     def get_column_options(self,**kw):
         kw = FieldElement.get_column_options(self,**kw)
@@ -1106,6 +1107,7 @@ class DecimalFieldElement(FieldElement):
         if settings.LINO.decimal_separator == ',':
             fmt += "/i"
         kw.update(format=fmt)
+        kw.update(format='') # 20130125
         return kw
         
 class DisplayElement(FieldElement):
@@ -1937,6 +1939,7 @@ _FIELD2ELEM = (
     (dd.HtmlBox, HtmlBoxElement),
     #~ (dd.QuickAction, QuickActionElement),
     (dd.DisplayField, DisplayElement),
+    (dd.QuantityField, QuantityFieldElement),
     (dd.IncompleteDateField, IncompleteDateFieldElement),
     #~ (dd.LinkedForeignKey, LinkedForeignKeyElement),
     (models.URLField, URLFieldElement),
@@ -1954,7 +1957,6 @@ _FIELD2ELEM = (
     (models.TimeField, TimeFieldElement),
     (models.IntegerField, IntegerFieldElement),
     (models.DecimalField, DecimalFieldElement),
-    (dd.QuantityField, CharFieldElement),
     (models.BooleanField, BooleanFieldElement),
     #~ (models.ManyToManyField, M2mGridElement),
     (models.ForeignKey, ForeignKeyElement),

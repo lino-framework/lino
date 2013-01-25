@@ -190,16 +190,18 @@ class StoreField(object):
         if v is None:
             # means that the field wasn't part of the submitted form. don't touch it.
             return
-        if v == '' and not self.field.empty_strings_allowed:
-            v = self.form2obj_default
-            # if a field has been posted with empty string, 
-            # we don't want it to get the field's default value! 
-            # otherwise checkboxes with default value True can never be unset!
-            # charfields have empty_strings_allowed
-            # e.g. id field may be empty
-            # but don't do this for other cases
-        else:
-            v = self.parse_form_value(v,instance)
+        if v == '':
+            #~ print 20130125, self.field.empty_strings_allowed, self.field.name, self.form2obj_default
+            if self.field.empty_strings_allowed:
+                v = self.parse_form_value(v,instance)
+                # if a field has been posted with empty string, 
+                # we don't want it to get the field's default value! 
+                # otherwise checkboxes with default value True can never be unset!
+                # charfields have empty_strings_allowed
+                # e.g. id field may be empty
+                # but don't do this for other cases
+            else:
+                v = self.form2obj_default
         if not is_new and self.field.primary_key and instance.pk is not None:
             if instance.pk == v:
                 return

@@ -571,8 +571,8 @@ class Table(AbstractTable):
                 self.hidden_columns = frozenset(fields.fields_list(self.model,self.hidden_columns))
             self.hidden_columns = self.hidden_columns | self.model.hidden_columns
             self.hidden_elements = self.hidden_elements | self.model.hidden_elements
-            if self.model.__name__ == 'Partner':
-                print "20130124 class_init ", self,self.hidden_elements
+            #~ if self.model.__name__ == 'Partner':
+                #~ print "20130124 class_init ", self,self.hidden_elements
             #~ if self.hidden_elements is None:
                 #~ self.hidden_elements = self.model.hidden_elements
             #~ if isinstance(self.hidden_elements,basestring):
