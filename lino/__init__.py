@@ -733,6 +733,9 @@ class Lino(object):
     If you change this setting, you also need to override :meth:`parse_datetime`.
     """
     
+    #~ default_number_format_extjs = '0,000.00/i'
+    default_number_format_extjs = '0,00/i'
+    
     uppercase_last_name = False
     """
     Whether last name of persons should be printed with uppercase letters.

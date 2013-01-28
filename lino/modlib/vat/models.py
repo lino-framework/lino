@@ -443,7 +443,7 @@ class QtyVatItemBase(VatItemBase):
         abstract = True
         
     unit_price = dd.PriceField(_("Unit price"),blank=True,null=True) 
-    qty = dd.QuantityField(_("Quantity"),blank=True) # ,null=True)
+    qty = dd.QuantityField(_("Quantity"),blank=True,null=True)
     
     def unit_price_changed(self,ar):
         self.reset_totals(ar)

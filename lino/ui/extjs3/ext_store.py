@@ -168,6 +168,7 @@ class StoreField(object):
         return self.field.to_python(v)
         
     def extract_form_data(self,post_data):
+        #~ logger.info("20130128 StoreField.extract_form_data %s",self.name)
         return post_data.get(self.name,None)
         #~ v = post_data.get(self.field.name,self.form2obj_default)
         #~ if v is None:
@@ -186,7 +187,7 @@ class StoreField(object):
         - sales.Invoice.number may be blank        
         """
         v = self.extract_form_data(post_data)
-        #~ logger.info("20120603 StoreField.form2obj() %s = %r",self.name,v)
+        #~ logger.info("20130128 %s.form2obj() %s = %r",self.__class__.__name__,self.name,v)
         if v is None:
             # means that the field wasn't part of the submitted form. don't touch it.
             return
@@ -202,6 +203,8 @@ class StoreField(object):
                 # but don't do this for other cases
             else:
                 v = self.form2obj_default
+        else:
+            v = self.parse_form_value(v,instance)
         if not is_new and self.field.primary_key and instance.pk is not None:
             if instance.pk == v:
                 return
@@ -261,6 +264,7 @@ class ComboStoreField(StoreField):
         yield self.name + ext_requests.CHOICES_HIDDEN_SUFFIX
         
     def extract_form_data(self,post_data):
+        #~ logger.info("20130128 ComboStoreField.extract_form_data %s",self.name)
         return post_data.get(self.name+ext_requests.CHOICES_HIDDEN_SUFFIX,None)
         
     #~ def obj2list(self,request,obj):
@@ -709,9 +713,9 @@ class NumberStoreField(StoreField):
         
 class DecimalStoreField(NumberStoreField):
     zero = decimal.Decimal(0)
-    def __init__(self,field,name,**kw):
-        kw['type'] = 'float'
-        StoreField.__init__(self,field,name,**kw)
+    #~ def __init__(self,field,name,**kw):
+        #~ kw['type'] = 'float'
+        #~ StoreField.__init__(self,field,name,**kw)
         
     def parse_form_value(self,v,obj):
         return parse_decimal(v)

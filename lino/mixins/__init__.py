@@ -306,10 +306,31 @@ class Registrable(model.Model):
     register_action = RegisterAction()
     deregister_action = DeregisterAction()
     
+    _registrable_fields = None
+    
+    @classmethod
+    def get_registrable_fields(cls,site):
+        yield 'date'
+        
+        
+    @classmethod
+    def site_setup(cls,site):
+        super(Registrable,cls).site_setup(site)
+        self._registrable_fields = set(self.get_registrable_fields(site))
+        #~ logger.info("20130128 %s %s",self,self._registrable_fields)
+    
+    def disabled_fields(self,ar):
+        if not self.state.editable:
+            return self._registrable_fields
+        return super(Registrable,self).disabled_fields(ar)
+    
+    
     def get_row_permission(self,ar,state,ba):
         """
         Only invoices in an editable state may be edited.
         """
+        #~ logger.info("20130128 Registrable.get_row_permission %s %s %s %s",
+            #~ self,state,ba.action,ar.bound_action.action.readonly)
         if state and not state.editable:
             if not ar.bound_action.action.readonly:
                 return False
@@ -464,6 +485,9 @@ class Sequenced(Duplicable):
   
 
 class Hierarizable(Sequenced):
+    """
+    Abstract model mixin for things that have a "parent" and "siblings".
+    """
     class Meta:
         abstract = True
         

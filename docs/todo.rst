@@ -4,6 +4,14 @@ To-do list
 Short-term
 ----------
 
+#.  VSEs eines Klienten im eigenen Fenster öffnen. 
+    Doppelklick in Phantomzeile, um neuen VSE ze erstellen.
+    VSE-Art auswählen und Fenster bestätigen.  
+    --> Lino schaltet nicht ins Detail und refresht auch den Bildschirm nicht.
+    Wenn man Refresh klickt, sieht man den neuen VSE.
+    Lino.FormPanel.save()
+
+
 #. Speicherbare Tabellenansichten :
     - pro Benutzer
     - Button "Restore factory defaults" ("Standard-Ansicht
@@ -15,7 +23,7 @@ Short-term
     `preferred_width` for a field. 
     modlib.accounts.models.Group : the `ref` field has a max_length of 50, 
     but most people use only up to 6 positions. 
-    But I don't want to add ":6" to every layout template.
+    And I don't want to add ":6" to every layout template.
     
 
 #.  lino.ui.boy :

@@ -98,7 +98,7 @@ from lino.utils.babel import LANGUAGE_CHOICES
 #~ STRENGTH_CHOICES = DoYouLike.get_choices()
 #~ KNOWLEDGE_CHOICES = HowWell.get_choices()
 
-NOT_GIVEN = object()
+#~ NOT_GIVEN = object()
 
 if settings.LINO.user_model:
     from lino.modlib.users import models as users
@@ -707,8 +707,8 @@ class ExtUI(base.UI):
         #~ if name != 'main' and isinstance(lh.layout,layouts.ListLayout):
         #~ required.update(lh.layout._datasource.required)
         #~ todo: requirements sind eine negativ-liste. aber auth=True muss in eine positiv-liste
-        v = kw.pop('required',NOT_GIVEN)
-        if v is not NOT_GIVEN:
+        v = kw.pop('required',dd.NOT_PROVIDED)
+        if v is not dd.NOT_PROVIDED:
             pkw.update(required=v)
         if kw:
             raise Exception("Unknown panel attributes %r for %s" % (kw,lh))
@@ -1473,6 +1473,7 @@ tinymce.init({
             self.write_lino_js(f,profile)
             #~ f.write(jscompress(js))
             f.close()
+            #~ logger.info("20130128 USED_NUMBER_FORMATS: %s", ext_elems.USED_NUMBER_FORMATS)
             return 1
         except Exception, e:
             """

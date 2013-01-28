@@ -398,6 +398,8 @@ class Invoice(SalesDocument,ledger.Voucher):
     
     workflow_state_field = 'state'
     
+    _registrable_fields = set('date author partner vat_regime payment_term due_date'.split())
+    
     def full_clean(self,*args,**kw):
         if self.due_date is None:
             if self.payment_term is not None:
@@ -406,6 +408,12 @@ class Invoice(SalesDocument,ledger.Voucher):
         #SalesDocument.before_save(self)
         #ledger.LedgerDocumentMixin.before_save(self)
         super(Invoice,self).full_clean(*args,**kw)
+        
+        
+    @classmethod
+    def get_registrable_fields(cls,site):
+        for f in super(Invoice,cls).get_registrable_fields(site): yield f
+        yield 'due_date'
 
     #~ def items(self,ar):
         #~ return ar.spawn(ItemsByInvoice,master_instance=self)
@@ -443,18 +451,22 @@ class ProductDocItem(ledger.VoucherItem,vat.QtyVatItemBase):
     #~ def full_clean(self,*args,**kw):
         #~ super(ProductDocItem,self).full_clean(*args,**kw)
 
-    def product_changed(self,ar):
+    def discount_changed(self,ar):
         if self.product:
-            self.title = self.product.name
-            self.description = self.product.description
-            if self.qty is None:
-                self.qty = Decimal("1")
             if self.product.price is not None:
                 if self.discount is None:
                     self.unit_price = self.product.price 
                 else:
                     self.unit_price = self.product.price * (HUNDRED - self.discount) / HUNDRED                    
                 self.unit_price_changed(ar)
+                
+    def product_changed(self,ar):
+        if self.product:
+            self.title = self.product.name
+            self.description = self.product.description
+            if self.qty is None:
+                self.qty = Decimal("1")
+            self.discount_changed(ar)
         
     def before_ui_save(self,ar):
         #~ if self.product:
@@ -609,6 +621,7 @@ class ItemsByDocument(dd.Table):
     
 
 class ItemsByInvoice(ItemsByDocument):
+    #~ debug_permissions = 20130128
     model = InvoiceItem
     auto_fit_column_widths = True
     column_names = "seqno:3 product title description:20x1 discount unit_price qty total_incl total_base total_vat"

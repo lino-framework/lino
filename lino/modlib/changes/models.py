@@ -43,8 +43,6 @@ from lino.core.signals import pre_add_child, pre_remove_child
 from lino.core.signals import receiver
 
 
-#~ NOT_GIVEN = object()
-
        
 class ChangeTypes(dd.ChoiceList):
     """
@@ -231,7 +229,7 @@ def on_update(sender=None,request=None,**kw):
     for k,old in sender.original_state.iteritems():
         #~ if watched_fields is None or k in watched_fields:
         if not k in cs.ignored_fields:
-            new = sender.watched.__dict__.get(k, dd.NOT_GIVEN)
+            new = sender.watched.__dict__.get(k, dd.NOT_PROVIDED)
             if old != new:
                 changes.append("%s : %s --> %s" % (k,obj2str(old),obj2str(new)))
     if len(changes) == 0:

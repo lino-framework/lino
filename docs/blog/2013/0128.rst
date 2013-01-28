@@ -1,0 +1,138 @@
+20130128
+========
+
+Number fields in grids (continued)
+----------------------------------
+
+Solved several subtil problems with 
+"number" fields in a grid:
+quantities, percentages, prices,...
+
+- Ext.grid.NumberColumn
+  renders null values as "0,00" .
+  That's why we have Lino.NullNumberColumn
+  who renders them as spaces.
+
+- Quantity fields accept values like "2:30" or "2/3"
+  and therefore are stored as CharField, not DecimalField.
+  But they are right aligned like number fields.
+
+
+What's allowed on a registered invoice?
+---------------------------------------
+
+Registrered sales invoice didn't disable their fields and their items.
+
+Here is the new code::
+
+  class Registrable(model.Model):
+
+      @classmethod
+      def get_registrable_fields(cls,site):
+          yield 'date'
+          
+          
+      @classmethod
+      def site_setup(cls,site):
+          super(Registrable,cls).site_setup(site)
+          self._registrable_fields = set(self.get_registrable_fields(site))
+      
+      def disabled_fields(self,ar):
+          if not self.state.editable:
+              return self._registrable_fields
+          return super(Registrable,self).disabled_fields(ar)
+
+
+Generators or lists?
+--------------------
+
+For the above API I wondered whether a generator function is more efficient
+than to return a list.
+Until now I've been believing this intuitively, 
+but here is a test suite which proves it::
+
+  import time
+
+  def testit(VALUES,CALLS):
+
+      def get_numbers_gen():  
+          for i in range(VALUES): yield i
+          
+      def get_numbers_list():
+          l = []
+          for i in range(VALUES): l.append(i)
+          return l
+          
+      def runit(f):
+          now = time.time()
+          for i in range(CALLS):
+              set(f())
+          return 1 + time.time() - now
+
+      return [VALUES,CALLS,runit(get_numbers_gen)/runit(get_numbers_list)]
+
+  def suite():
+      yield testit(1,10000)
+      yield testit(10000,1)
+      yield testit(1000,1000)
+      yield testit(10,10000)
+      yield testit(10000,100)
+      yield testit(100000,10)
+      
+  for row in suite():
+      print row
+
+The results are clear on my machine: 
+the generator version takes less time than the list version, leading to a ratio < 1::
+
+  $ python tt.py
+  [1, 10000, 0.9835269406046683]
+  [10000, 1, 1.0]
+  [1000, 1000, 0.8884890661076352]
+  [10, 10000, 0.9849482286261549]
+  [10000, 100, 0.9123783513935135]
+  [100000, 10, 0.8948787720221897]
+
+  $ python tt.py
+  [1, 10000, 0.9990160538337997]
+  [10000, 1, 1.0150001049041748]
+  [1000, 1000, 0.9090909090909091]
+  [10, 10000, 0.9712429171108448]
+  [10000, 100, 0.9137090679526116]
+  [100000, 10, 0.8955525776438877]
+
+
+Miscellaneous
+-------------
+- views.py used Http403 instead of PermissionDenied
+
+- ChangeStateAction  was broken. 
+  Trying to run any ChangeStateAction caused an error message "global name 'dd' is not defined". 
+  Fixed.
+
+- hidden_elements
+
+
+
+Comment dire BCSS en allemand?
+------------------------------
+
+Die Abkürzung "KBSS" ist offenbar falsch: 
+die "offizielle" Übersetzung für BCSS 
+lautet "Zentrale Datenbank der sozialen Sicherheit (ZDSS)".
+Zuständig für sowas ist die Zentrale Dienststelle für Deutsche Übersetzungen
+(ZDDÜ) in Malmedy, http://www.scta.be
+
+
+
+Zwei DSBE-spezifische Bugs
+--------------------------
+
+- watch_tim setzte das Feld "Dienst" der primären Begleitung nicht.
+
+- Coaching.full_clean() ::        
+
+      if not self.type and self.user:
+            self.type = self.user.coaching_type
+
+

@@ -2,7 +2,7 @@
 ========
 
 
-number fields in grids
+Number fields in grids
 ----------------------
 
 There are still problems with number fields 
@@ -11,3 +11,64 @@ in a grid.
 E.g. an ExtJS numbercolumn renders null values as "0,00" .
 Quantity columns should be right aligned, 
 but also accept values like "2:30" or "2/3".
+
+
+
+
+Testing Django 1.5. RC2
+-----------------------
+
+Russell Keith-Magee `wrote <https://www.djangoproject.com/weblog/2013/jan/24/delay-final-release-django-15/>`_:
+"If you want to help ensure the quality of the final release, grab the code from the 1.5 release 
+branch, and test it against your own projects and test suites."
+
+First I had to learn 
+`how to do branching with Git <http://git-scm.com/book/en/Git-Branching-Basic-Branching-and-Merging>`_
+
+All `Lino demo sites <http://lino-framework.org/demos.html>`_ 
+are now running the stable/1.5.x branch. 
+You can see this in the :menuselection:`Site --> About` menu entry.
+
+And here is the proof that :mod:`lino.utils.mti` 
+still works in 1.5 but will have a problem in 1.6:
+
+.. code-block:: bash
+
+  ~/snapshots/django$ git checkout stable/1.5.x
+  Branch stable/1.5.x set up to track remote branch stable/1.5.x from origin.
+  Switched to a new branch 'stable/1.5.x'
+
+  ~/snapshots/django$ git status
+  # On branch stable/1.5.x
+  nothing to commit (working directory clean)
+
+  ~/hgwork/django$ python django-admin.py test --settings=lino.test_apps.mti.settings --traceback
+  Creating test database for alias 'default'...
+  INFO Analyzing models...
+  INFO Starting Lino...
+  INFO Lino Site None started. Languages: en. 6 models, 12 actors.
+  INFO Using Lino 1.5.7, Django 1.5c1, ...
+  .
+  ----------------------------------------------------------------------
+  Ran 1 test in 0.892s
+  OK
+  Destroying test database for alias 'default'...
+
+  ~/hgwork/django$ git checkout master
+  Switched to branch 'master'
+  ~/hgwork/django$ git status
+  # On branch master
+  nothing to commit (working directory clean)
+
+  ~/hgwork/django$ python django-admin.py test --settings=lino.test_apps.mti.settings --traceback
+  Creating test database for alias 'default'...
+  INFO Analyzing models...
+  INFO Starting Lino...
+  INFO Lino Site None started. Languages: en. 6 models, 12 actors.
+  INFO Using Lino 1.5.7, Django 1.6.dev20130120065345, ...
+  ...
+  AttributeError: 'ChildCollector' object has no attribute 'add_batch'
+  ...
+  FAILED (failures=1)
+  Destroying test database for alias 'default'...
+  

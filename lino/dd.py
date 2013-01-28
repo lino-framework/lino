@@ -1,4 +1,4 @@
-## Copyright 2011-2012 Luc Saffre
+## Copyright 2011-2013 Luc Saffre
 ## This file is part of the Lino project.
 ## Lino is free software; you can redistribute it and/or modify 
 ## it under the terms of the GNU General Public License as published by
@@ -83,6 +83,7 @@ Signals:
 - :attr:`pre_startup <lino.core.signals.pre_startup>`
 - :attr:`pre_merge <lino.core.signals.pre_merge>`
 - :attr:`pre_ui_create <lino.core.signals.pre_ui_create>`
+- :attr:`ChangeWatcher <lino.core.signals.ChangeWatcher>`
 - :attr:`pre_ui_update <lino.core.signals.pre_ui_update>`
 - :attr:`pre_ui_delete <lino.core.signals.pre_ui_delete>`
 - :attr:`pre_analyze <lino.core.signals.pre_analyze>`
@@ -195,7 +196,7 @@ from lino.core.layouts import ParamsLayout
 #~ from lino.core.layouts import DetailLayout, InsertLayout
 
 
-from lino.core.signals import pre_ui_create, pre_ui_delete, pre_ui_update
+from lino.core.signals import pre_ui_create, pre_ui_delete, pre_ui_update, ChangeWatcher
 from lino.core.signals import pre_analyze
 from lino.core.signals import post_analyze
 
@@ -203,6 +204,7 @@ from lino.core.signals import auto_create
 from lino.core.signals import pre_merge
 
 from django.db.models.signals import class_prepared
+from django.db.models.fields import NOT_PROVIDED
 
 from django.dispatch import receiver
 #~ from lino.core import signals
@@ -253,27 +255,3 @@ class PseudoRequest:
     user = property(get_user)
     
 
-NOT_GIVEN = object()
-
-class ChangeWatcher(object):
-    """
-    Utility to watch changes and send pre_ui_update
-    """
-    def __init__(self,watched):
-        self.original_state = dict(watched.__dict__)
-        self.watched = watched
-        #~ self.is_new = is_new
-        #~ self.request
-        
-    def is_dirty(self):
-        #~ if self.is_new: 
-            #~ return True
-        for k,v in self.original_state.iteritems():
-            if v != self.watched.__dict__.get(k, NOT_GIVEN):
-                return True
-        return False
-        
-    def send_update(self,request):
-        #~ print "ChangeWatcher.send_update()", self.watched
-        pre_ui_update.send(sender=self,request=request)
-        

@@ -1,5 +1,5 @@
 # -*- coding: UTF-8 -*-
-## Copyright 2012 Luc Saffre
+## Copyright 2012-2013 Luc Saffre
 ## This file is part of the Lino project.
 ## Lino is free software; you can redistribute it and/or modify 
 ## it under the terms of the GNU General Public License as published by
@@ -28,6 +28,7 @@ from django.db import models
 
 from lino.core import actions
 from lino.core import actors
+from lino.core import signals
 #~ from lino.core import changes
 
 from lino.utils import curry, unicode_string
@@ -188,7 +189,7 @@ class ChangeStateAction(actions.RowAction):
         #~ old = row.state
         old = getattr(row,state_field_name)
         
-        watcher = dd.ChangeWatcher(row)
+        watcher = signals.ChangeWatcher(row)
         
         self.target_state.choicelist.before_state_change(row,ar,kw,old,self.target_state)
         row.before_state_change(ar,kw,old,self.target_state)
@@ -199,7 +200,7 @@ class ChangeStateAction(actions.RowAction):
         self.target_state.choicelist.after_state_change(row,ar,kw,old,self.target_state)
         row.after_state_change(ar,kw,old,self.target_state)
         
-        watcher.log_update(ar.request)
+        watcher.send_update(ar.request)
         
         return ar.ui.success(**kw)
         

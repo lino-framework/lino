@@ -27,6 +27,7 @@ setup(name = 'lino',
   author_email = 'luc.saffre@gmail.com',
   requires = ['django','appy','dateutil','PyYAML','odfpy','sphinx','jinja2'],
   url = "http://www.lino-framework.org",
+  test_suite = 'lino.test_apps',
   classifiers="""\
   Programming Language :: Python
   Programming Language :: Python :: 2

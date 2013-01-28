@@ -57,6 +57,7 @@ EXT_CHAR_HEIGHT = 22
 FULLWIDTH = '-20' 
 FULLHEIGHT = '-10' 
 
+USED_NUMBER_FORMATS = dict()
 
 #~ DEFAULT_GC_NAME = 'std'
 DEFAULT_GC_NAME = 0
@@ -167,7 +168,8 @@ class GridColumn(jsgen.Component):
             #~ self.editor = None
         #~ else:
         self.editor = editor
-        #~ self.value_template = editor.grid_column_template
+        if editor.grid_column_template is not None:
+            self.value_template = editor.grid_column_template
         kw.update(sortable=True)
         #~ kw.update(submitValue=False) # 20110406
         kw.update(colIndex=index)
@@ -279,7 +281,7 @@ class Calendar(jsgen.Component):
     
 
 
-NOT_GIVEN = object()
+#~ NOT_GIVEN = object()
 
         
 class VisibleComponent(jsgen.Component,Permittable):
@@ -324,7 +326,7 @@ class VisibleComponent(jsgen.Component,Permittable):
         
     def setup(self,width=None,height=None,label=None,
         preferred_width=None,
-        required=NOT_GIVEN,
+        required=dd.NOT_PROVIDED,
         **kw):
         self.value.update(kw)
         #~ jsgen.Component.__init__(self,name,**kw)
@@ -336,7 +338,7 @@ class VisibleComponent(jsgen.Component,Permittable):
             self.height = height
         if label is not None:
             self.label = label
-        if required is not NOT_GIVEN:
+        if required is not dd.NOT_PROVIDED:
             self.required = required
             #~ if self.name == 'newcomers_left': # required.has_key('user_groups'):
                 #~ logger.info("20121130 setup() %s %s",self,self.required)
@@ -393,6 +395,7 @@ class LayoutElement(VisibleComponent):
     sortable = False
     xtype = None # set by subclasses
     #~ grid_column_template = "new Ext.grid.Column(%s)"
+    grid_column_template = None
     collapsible = False
     hidden = False
     active_child = True
@@ -798,21 +801,6 @@ class CharFieldElement(FieldElement):
         #~ kw.update(margins='10px')
         return kw
         
-class QuantityFieldElement(CharFieldElement):
-    def get_field_options(self,**kw):
-        kw = CharFieldElement.get_field_options(self,**kw)
-        #~ kw.update(align='right')
-        kw.update(fieldClass="x-form-field x-form-num-field")
-        return kw
-  
-    def get_column_options(self,**kw):
-        #~ print 20130125, self.field.name
-        kw = CharFieldElement.get_column_options(self,**kw)
-        kw.update(xtype='numbercolumn')
-        #~ kw.update(align='right')
-        kw.update(format='') # 20130125
-        return kw
-        
 class PasswordFieldElement(CharFieldElement):
     def get_field_options(self,**kw):
         kw = super(PasswordFieldElement,self).get_field_options(**kw)
@@ -1073,7 +1061,7 @@ class DecimalFieldElement(FieldElement):
     xtype = 'numberfield'
     sortable = True
     #~ data_type = 'float' 
-    #~ grid_column_template = "new Ext.grid.NumberColumn(%s)"
+    grid_column_template = "new Lino.NullNumberColumn(%s)"
     
     def __init__(self,*args,**kw):
         FieldElement.__init__(self,*args,**kw)
@@ -1094,8 +1082,8 @@ class DecimalFieldElement(FieldElement):
         
     def get_column_options(self,**kw):
         kw = FieldElement.get_column_options(self,**kw)
-        kw.update(xtype='numbercolumn')
-        kw.update(align='right')
+        #~ kw.update(xtype='numbercolumn')
+        #~ kw.update(align='right')
         #~ if settings.LINO.decimal_group_separator:
             #~ fmt = '0' + settings.LINO.decimal_group_separator + '000'
         #~ else:
@@ -1106,10 +1094,34 @@ class DecimalFieldElement(FieldElement):
             fmt += settings.LINO.decimal_separator + ("0" * self.field.decimal_places)
         if settings.LINO.decimal_separator == ',':
             fmt += "/i"
-        kw.update(format=fmt)
-        kw.update(format='') # 20130125
+        if fmt != settings.LINO.default_number_format_extjs:
+            kw.update(format=fmt)
+        n = USED_NUMBER_FORMATS.get(fmt,0)
+        USED_NUMBER_FORMATS[fmt] = n + 1
+        #~ kw.update(format='') # 20130125
+        #~ kw.update(renderer=js_code('Lino.nullnumbercolumn_renderer')) # 20130125
         return kw
         
+class QuantityFieldElement(CharFieldElement):
+#~ class QuantityFieldElement(DecimalFieldElement):
+    #~ grid_column_template = "new Lino.NullNumberColumn(%s)"
+    #~ def get_field_options(self,**kw):
+        #~ kw = CharFieldElement.get_field_options(self,**kw)
+        #~ kw.update(align='right')
+        #~ kw.update(fieldClass="x-form-field x-form-num-field")
+        #~ return kw
+  
+    def get_column_options(self,**kw):
+        #~ print 20130125, self.field.name
+        kw = super(QuantityFieldElement,self).get_column_options(**kw)
+        #~ kw.update(xtype='numbercolumn')
+        kw.update(align='right')
+        kw.update(format='') # 20130125
+        #~ kw.update(renderer=js_code('Lino.nullnumbercolumn_renderer')) # 20130125
+        return kw
+        
+
+
 class DisplayElement(FieldElement):
     """
     ExtJS element to be used for :class:`DisplayFields <lino.core.fields.DisplayField>`.

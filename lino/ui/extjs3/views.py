@@ -73,8 +73,8 @@ def requested_actor(app_label,actor):
         return cl._lino_default_table
     return cl
     
-class Http403(Exception):
-    pass
+#~ class Http403(Exception):
+    #~ pass
     
 def action_request(app_label,actor,request,rqdata,is_list,**kw):
     rpt = requested_actor(app_label,actor)
@@ -90,7 +90,9 @@ def action_request(app_label,actor,request,rqdata,is_list,**kw):
             rpt,action_name,rpt.get_url_action_names()))
     user = request.subst_user or request.user
     if not a.get_view_permission(user.profile):
-        raise Http403(_("As %s you have no permission to run this action.") % user.profile)
+        #~ raise Http403(_("As %s you have no permission to run this action.") % user.profile)
+        raise exceptions.PermissionDenied(
+            _("As %s you have no permission to run this action.") % user.profile)
         #~ return http.HttpResponseForbidden(_("As %s you have no permission to run this action.") % user.profile)
     ar = rpt.request(settings.LINO.ui,request,a,**kw)
     #~ ar.renderer = settings.LINO.ui.ext_renderer

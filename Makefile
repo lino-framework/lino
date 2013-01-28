@@ -1,4 +1,6 @@
-DJANGO_ADMIN = python l:/snapshots/django/django/bin/django-admin.py
+#~ DJANGO_ADMIN = python l:/snapshots/django/django/bin/django-admin.py
+#~ DJANGO_ADMIN = `python -c 'import os; from django import bin;print os.path.dirname(bin.__file__)'`/django-admin.py
+DJANGO_ADMIN = `python -c "from os.path import join,dirname; from django import bin;print join(dirname(bin.__file__),'django-admin.py')"`
 LINO_ROOT := /cygdrive/t/hgwork/lino
 LINO_ROOT := `cygpath -m $(LINO_ROOT)`
 APPS = cosi 
@@ -66,7 +68,8 @@ tests:
 	$(DJANGO_ADMIN) test --settings=lino.apps.presto.settings $(TESTS_OPTIONS)
 
 tt:  
-	$(DJANGO_ADMIN) test --settings=lino.test_apps.mti.settings  $(TESTS_OPTIONS)
+	echo $(DJANGO_ADMIN) test --settings=lino.test_apps.mti.settings  $(TESTS_OPTIONS)
+	python $(DJANGO_ADMIN) test --settings=lino.test_apps.mti.settings  $(TESTS_OPTIONS)
 
 unused_appdocs:
 	$(DJANGO_ADMIN) makedocs --settings lino.apps.pcsw.settings docs/pcsw/appdocs

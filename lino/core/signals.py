@@ -83,4 +83,27 @@ the user interface.
   
 """
 
+from django.db.models.fields import NOT_PROVIDED
 
+class ChangeWatcher(object):
+    """
+    Utility to watch changes and send pre_ui_update
+    """
+    def __init__(self,watched):
+        self.original_state = dict(watched.__dict__)
+        self.watched = watched
+        #~ self.is_new = is_new
+        #~ self.request
+        
+    def is_dirty(self):
+        #~ if self.is_new: 
+            #~ return True
+        for k,v in self.original_state.iteritems():
+            if v != self.watched.__dict__.get(k, NOT_PROVIDED):
+                return True
+        return False
+        
+    def send_update(self,request):
+        #~ print "ChangeWatcher.send_update()", self.watched
+        pre_ui_update.send(sender=self,request=request)
+        

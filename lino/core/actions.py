@@ -909,6 +909,7 @@ class DeleteSelected(RowAction):
     
         
 class SubmitDetail(RowAction):
+    debug_permissions = 20130128
     sort_index = 10
     switch_to_detail = False
     icon_name = 'x-tbar-save'

@@ -1913,11 +1913,31 @@ Lino.text_renderer = function(value, metaData, record, rowIndex, colIndex, store
   return value;
 }
 
-//~ Lino.hide_zero_renderer = function(value, metaData, record, rowIndex, colIndex, store) {
-  //~ console.log("20120510");
-  //~ if (value == 0) return ''
-  //~ return value;
-//~ }
+Lino.NullNumberColumn = Ext.extend(Ext.grid.Column, {
+    align : 'right', 
+    format : '{{settings.LINO.default_number_format_extjs}}', 
+    renderer : function(value, metaData, record, rowIndex, colIndex, store) {
+        //~ console.log(20130128,"NullNumberColumn.renderer",value);
+        if (value === null) return '';
+        return Ext.util.Format.number(value, this.format);
+    }
+});
+
+//~ Lino.NullNumberColumn = Ext.extend(Ext.grid.NumberColumn, {
+    //~ align : 'right', 
+    //~ constructor: function(cfg){
+        //~ Ext.grid.NumberColumn.superclass.constructor.call(this, cfg);
+        //~ var t = this;
+        //~ this.renderer = function(value, metaData, record, rowIndex, colIndex, store) {
+          //~ console.log(20130128,"NullNumberColumn.renderer",value);
+          //~ if (value === null) return '';
+          //~ return Ext.util.Format.number(value, t.format);
+      //~ };
+    //~ }
+//~ });
+
+
+
 
 //~ Lino.cell_button_renderer = function(value, metaData, record, rowIndex, colIndex, store) {
   //~ return '<input type="button" onclick="alert(value)" value=" ? ">' ;
@@ -4065,7 +4085,7 @@ Lino.GridPanel = Ext.extend(Lino.GridPanel,{
   },
   
   on_beforeedit : function(e) {
-    //~ console.log('20120514 GridPanel.on_beforeedit()',e,e.record.data.disabled_fields);
+    //~ console.log('20130128 GridPanel.on_beforeedit()',e,e.record.data.disable_editing);
     if(this.disable_editing | e.record.data.disable_editing) {
       e.cancel = true;
       Lino.notify("{{_("This record is disabled")}}");
