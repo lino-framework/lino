@@ -1,5 +1,5 @@
 # -*- coding: UTF-8 -*-
-## Copyright 2011-2012 Luc Saffre
+## Copyright 2011-2013 Luc Saffre
 ## This file is part of the Lino project.
 ## Lino is free software; you can redistribute it and/or modify 
 ## it under the terms of the GNU General Public License as published by
@@ -801,7 +801,7 @@ def objects():
     for code,kw in LANGUAGES.items():
         iso2 = kw['iso2']
         kw = babel_values('name',**kw)
-        if kw['name']:
+        if kw.get('name'):
             n += 1
             kw.update(iso2=iso2)
             yield Language(id=code,**kw)
