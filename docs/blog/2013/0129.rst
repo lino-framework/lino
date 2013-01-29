@@ -7,3 +7,9 @@
   "Schuldenverteilung von Budget Nr. 4 für Altenberg-Charlier"
   
 - Übersetzung und Hilfetexte dist_amount und DistByBudget  
+
+- help_text of a slave table is now being used as tooltip.
+  The tooltip is anchored to the "header" part of the containing panel
+
+- The ID fields were not rendered in FormPanel
+  (IntegerFieldElement had accidentally xtype=None)

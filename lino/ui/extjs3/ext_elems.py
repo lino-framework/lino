@@ -560,6 +560,23 @@ class Spacer(LayoutElement):
     value_template = "new Ext.Spacer(%s)"
     
         
+def add_help_text(kw,help_text,title,datasource,fieldname):
+    if settings.LINO.use_quicktips:
+        if settings.LINO.show_internal_field_names:
+            ttt = "(%s.%s) " % (datasource,fieldname)
+        else:
+            ttt = ''
+        if help_text:
+            ttt = string_concat(ttt,help_text)
+        if ttt:
+            #~ kw.update(qtip=self.field.help_text)
+            #~ kw.update(toolTipText=self.field.help_text)
+            #~ kw.update(tooltip=self.field.help_text)
+            kw.update(listeners=dict(render=js_code(
+              "Lino.quicktip_renderer(%s,%s)" % (
+                  py2js(title),
+                  py2js(ttt)))
+            ))
         
         
 class FieldElement(LayoutElement):
@@ -579,24 +596,10 @@ class FieldElement(LayoutElement):
         self.field = field
         self.editable = field.editable # and not field.primary_key
         
-        if not isinstance(layout_handle.layout,layouts.ListLayout):
-            #~ help_text = getattr(self.field,'help_text',None):
-            if settings.LINO.use_quicktips:
-                if settings.LINO.show_internal_field_names:
-                    ttt = "(%s.%s) " % (layout_handle.layout._datasource,self.field.name)
-                else:
-                    ttt = ''
-                if self.field.help_text:
-                    ttt = string_concat(ttt,self.field.help_text)
-                if ttt:
-                    #~ kw.update(qtip=self.field.help_text)
-                    #~ kw.update(toolTipText=self.field.help_text)
-                    #~ kw.update(tooltip=self.field.help_text)
-                    kw.update(listeners=dict(render=js_code(
-                      "Lino.quicktip_renderer(%s,%s)" % (
-                          py2js(self.field.verbose_name),
-                          py2js(ttt)))
-                    ))
+        if not kw.has_key('listeners'):
+            if not isinstance(layout_handle.layout,layouts.ListLayout):
+                add_help_text(kw,self.field.help_text,self.field.verbose_name,
+                  layout_handle.layout._datasource,self.field.name)
             
 
         #~ http://www.rowlands-bcs.com/extjs/tips/tooltips-form-fields
@@ -1029,7 +1032,7 @@ class IntegerFieldElement(FieldElement):
     filter_type = 'numeric'
     gridfilters_settings = dict(type='numeric')
     xtype = 'numberfield'
-    xtype = None
+    #~ xtype = None
     sortable = True
     preferred_width = 5
     #~ data_type = 'int' 
@@ -1823,6 +1826,9 @@ class GridElement(Container):
             
         kw.update(viewConfig=vc)
         kw.setdefault('label',rpt.label)
+        
+        add_help_text(kw,rpt.help_text,rpt.title or rpt.label,rpt.app_label,rpt.actor_id)
+        
         
         #~ kw.update(containing_window=js_code("this.containing_window"))
         kw.update(containing_panel=js_code("this"))

@@ -800,6 +800,11 @@ class ExtUI(base.UI):
                   #~ js_code("Lino.report_window_button(Lino.%s)" % de.default_action)
                   #~ js_code("Lino.report_window_button(ww,Lino.%s)" % de.default_action)
                 ])
+                #~ if settings.LINO.use_quicktips and de.help_text:
+                    #~ kw.update(listeners=dict(render=js_code(
+                      #~ "Lino.quicktip_renderer(%s,%s)" % (py2js('Slave'),py2js(de.help_text)))
+                    #~ ))
+               
                 if de.slave_grid_format == 'grid':
                     #~ if not de.parameters:
                     kw.update(hide_top_toolbar=True)
@@ -818,6 +823,7 @@ class ExtUI(base.UI):
                     #~ else:
                         #~ print 20120619, de, 'has no insert_action'
                     field = fields.HtmlBox(verbose_name=de.label,**o)
+                    field.help_text = de.help_text
                     field.name = de.__name__
                     field._return_type_for_method = de.slave_as_summary_meth(self,'<br>')
                     lh.add_store_field(field)
@@ -833,6 +839,7 @@ class ExtUI(base.UI):
                             kw.update(ls_bbar_actions=[self.a2btn(a)])
                     field = fields.HtmlBox(verbose_name=de.label)
                     field.name = de.__name__
+                    field.help_text = de.help_text
                     field._return_type_for_method = de.slave_as_html_meth(self)
                     lh.add_store_field(field)
                     #~ kw.update(required=de.required) # e.g. lino.Home.UsersWithClients not visible for everybody

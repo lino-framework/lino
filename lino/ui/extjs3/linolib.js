@@ -1867,7 +1867,10 @@ Ext.QuickTips.init();
   
 Lino.quicktip_renderer = function(title,body) {
   return function(c) {
+    //~ if (c instanceof Ext.Panel) var t = c.bwrap; else // 20130129
+    if (c instanceof Ext.Panel) var t = c.header; else // 20130129
     var t = c.getEl();
+    //~ console.log(20130129,t,title,body);
     //~ t.dismissDelay = 0;
     Ext.QuickTips.register({
       target: t,
@@ -2361,7 +2364,6 @@ Lino.HtmlBoxPanel = Ext.extend(Lino.HtmlBoxPanel,{
           //~ console.log('HtmlBox.refresh() failed for',this.name);
         }
       };
-      //~ Lino.do_when_visible(this,todo.createDelegate(this));
       Lino.do_when_visible(box,todo.createDelegate(this));
     //~ }
   }
