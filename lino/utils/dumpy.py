@@ -39,7 +39,7 @@ from django.utils.encoding import smart_unicode, is_protected_type, force_unicod
 
 import lino
 from lino.core.modeltools import obj2str, sorted_models_list, full_model_name
-from lino.utils import dblogger
+#~ from lino.utils import dblogger
 from lino.utils import babel
 from lino import dd
 #~ from lino.utils.mti import MtiChildWrapper
@@ -121,6 +121,10 @@ def bv2kw(fieldname,values):
         self.stream.write('\n')
         for model in self.models:
             fields = [f for f,m in model._meta.get_fields_with_model() if m is None]
+            for f in fields:
+                if getattr(f,'auto_now_add',False):
+                    raise Exception("%s.%s.auto_now_add is True : values will be lost!" % (
+                        full_model_name(model),f.name))
             #~ fields = model._meta.local_fields
             #~ fields = [f for f in model._meta.fields if f.serialize]
             #~ fields = [f for f in model._meta.local_fields if f.serialize]
@@ -246,7 +250,7 @@ def bv2kw(fieldname,values):
                 full_model_name(m)+' (depends on %s)' % ", ".join([full_model_name(d) for d in deps]) for m,deps in guilty.items()])
             for ln in msg.splitlines():
                 self.stream.write('\n    # %s' % ln)
-            dblogger.info(msg)
+            logger.info(msg)
             sorted.extend(unsorted)              
         return sorted      
     
@@ -358,7 +362,7 @@ class FakeDeserializedObject(base.DeserializedObject):
         """
         """
         #~ print 'dpy.py',self.object
-        #~ dblogger.info("Loading %s...",self.name) 
+        #~ logger.info("Loading %s...",self.name) 
         
         self.try_save(*args,**kw)
         #~ if self.try_save(*args,**kw):
@@ -380,7 +384,7 @@ class FakeDeserializedObject(base.DeserializedObject):
                 m()
             obj.full_clean()
             obj.save(*args,**kw)
-            dblogger.debug("%s has been saved" % obj2str(obj))
+            logger.debug("%s has been saved" % obj2str(obj))
             self.deserializer.register_success()
             return True
         #~ except ValidationError,e:
@@ -390,7 +394,7 @@ class FakeDeserializedObject(base.DeserializedObject):
         except Exception, e:
             if not settings.LINO.loading_from_dump:
                 # hand-written fixtures are expected to not raise any exception
-                dblogger.warning("Failed to save %s:" % obj2str(obj))
+                logger.warning("Failed to save %s:" % obj2str(obj))
                 raise
             if False:
               """
@@ -407,19 +411,19 @@ class FakeDeserializedObject(base.DeserializedObject):
                 if True:
                     msg = "Failed to save %s without %s: %s." % (
                         obj.__class__,obj._meta.pk.attname,obj2str(obj))
-                    dblogger.warning(msg)
+                    logger.warning(msg)
                     raise
                 else:
-                    dblogger.exception(e)
+                    logger.exception(e)
                     raise Exception(msg)
             deps = [f.rel.to for f in obj._meta.fields if f.rel is not None]
             if not deps:
-                dblogger.exception(e)
+                logger.exception(e)
                 raise Exception("Failed to save independent %s." % obj2str(obj))
             self.deserializer.register_failure(self,e)
             return False
         #~ except Exception,e:
-            #~ dblogger.exception(e)
+            #~ logger.exception(e)
             #~ raise Exception("Failed to save %s. Abandoned." % obj2str(obj))
 
 
@@ -448,7 +452,7 @@ class FlushDeferredObjects:
 class DpyDeserializer:
     
     def __init__(self):
-        #~ dblogger.info("20120225 DpyDeserializer.__init__()")
+        #~ logger.info("20120225 DpyDeserializer.__init__()")
         self.save_later = {}
         self.saved = 0
         #~ self.count = 0
@@ -473,10 +477,10 @@ class DpyDeserializer:
                     #~ self.saved += 1
                 #~ else:
                     #~ self.save_later.append(obj)
-            dblogger.info("Saved %d instances.",self.saved)
+            logger.info("Saved %d instances.",self.saved)
             
     def deserialize(self,fp, **options):
-        #~ dblogger.info("20120225 DpyDeserializer.deserialize()")
+        #~ logger.info("20120225 DpyDeserializer.deserialize()")
         if isinstance(fp, basestring):
             raise NotImplementedError
         babel.set_language(babel.DEFAULT_LANGUAGE)
@@ -506,7 +510,7 @@ class DpyDeserializer:
                 yield FakeDeserializedObject(self,obj)
             elif hasattr(obj,'__iter__'):
             #~ if type(obj) is GeneratorType:
-                #~ dblogger.info("20120225 expand iterable %r",obj)
+                #~ logger.info("20120225 expand iterable %r",obj)
                 for o in obj: 
                     for so in expand(o): 
                         yield so
@@ -516,9 +520,9 @@ class DpyDeserializer:
                 #~ obj.deserializer = self
                 #~ yield obj
             else:
-                dblogger.warning("Ignored unknown object %r",obj)
+                logger.warning("Ignored unknown object %r",obj)
                 
-        dblogger.info("Loading %s...",fp.name)
+        logger.info("Loading %s...",fp.name)
         if not hasattr(module,'objects'):
             raise Exception("%s has no attribute 'objects'" % fp.name)
         empty_fixture = True
@@ -541,7 +545,7 @@ class DpyDeserializer:
 #~ See <https://code.djangoproject.com/ticket/18213>.
 #~ """ % fp.name)
           
-        #~ dblogger.info("Saved %d instances from %s.",self.saved,fp.name)
+        #~ logger.info("Saved %d instances from %s.",self.saved,fp.name)
         
         self.flush_deferred_objects()
         
@@ -562,7 +566,7 @@ class DpyDeserializer:
             
             msg = "Abandoning with %d unsaved instances from %s:%s" % (
                 count,fp.name,s)
-            dblogger.warning(msg)
+            logger.warning(msg)
             """
             Don't raise an exception. The unsaved instances got lost and 
             the loaddata should be done again, but meanwhile the database
@@ -582,7 +586,7 @@ class DpyDeserializer:
         d = self.save_later.setdefault(obj.object.__class__,{})
         l = d.setdefault(msg,[])
         if len(l) == 0:
-            dblogger.info("Deferred %s : %s",obj2str(obj.object),msg)
+            logger.info("Deferred %s : %s",obj2str(obj.object),msg)
         l.append(obj)
 
 def Deserializer(fp, **options):

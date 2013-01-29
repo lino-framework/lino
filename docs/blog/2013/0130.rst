@@ -25,7 +25,11 @@ Jetzt habe ich das ersetzt durch eine Methode `on_create`::
         self.date = datetime.date.today()
         super(Mail,self).on_create(ar)
 
+:class:`lino.utils.dumpy.Serializer` now raises an exception if it finds a field
+with `auto_now_add`.
 
+  $ python manage.py dumpdata --format py
+  ...
+  Error: Unable to serialize database: outbox.Mail.date.auto_now_add is True : values will be lost!
   
-      
-      
+  
