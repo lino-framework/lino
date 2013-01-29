@@ -33,8 +33,8 @@ from django.utils.translation import string_concat
 from django.utils.translation import get_language
 
 
-from django import http
-from django.views.generic import View
+#~ from django import http
+#~ from django.views.generic import View
 
 
 from lino.core import actions
@@ -150,7 +150,7 @@ class UI(object):
     #~ def media_url(self,*args,**kw):
         #~ return settings.LINO.media_url(*args,**kw)
         
-    def get_plain_urls(self):
+    def unused_get_plain_urls(self):
         from lino.ui.extjs3 import views
 
         urlpatterns = []
@@ -162,7 +162,7 @@ class UI(object):
         )
         return urlpatterns
       
-    def get_media_urls(self):
+    def unused_get_media_urls(self):
         #~ print "20121110 get_urls"
         urlpatterns = []
         from os.path import exists, join, abspath, dirname
@@ -220,7 +220,7 @@ class UI(object):
         return urlpatterns
         
         
-    def get_patterns(self):
+    def unused_get_patterns(self):
         """
         This is the method called from :mod:`lino.ui.extjs3.urls` 
         (see there for more explanations).
@@ -252,7 +252,7 @@ class UI(object):
             
             pages = resolve_app('pages')
 
-            class WebIndex(View):
+            class PagesIndex(View):
               
                 def get(self, request,ref='index'):
                     if not ref: 
@@ -266,7 +266,7 @@ class UI(object):
                     return http.HttpResponse(html)
 
             urlpatterns += patterns('',
-                (r'^(?P<ref>\w*)$', WebIndex.as_view()),
+                (r'^(?P<ref>\w*)$', PagesIndex.as_view()),
             )
         else:
             urlpatterns += self.get_urls()

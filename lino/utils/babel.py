@@ -290,7 +290,11 @@ def babel_values(name,**kw):
     """
     kw2names
     """
-    d = { name : kw.get(default_language())}
+    #~ d = { name : kw.get(default_language())}
+    d = dict()
+    v = kw.get(default_language())
+    if v is not None:
+        d[name] = v
     for lang in BABEL_LANGS:
         v = kw.get(lang,None)
         if v is not None:

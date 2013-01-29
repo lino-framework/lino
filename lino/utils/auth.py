@@ -345,7 +345,8 @@ def make_view_permission_handler_(
     if allow is None:
         def allow(action,profile):
             return True
-    if settings.LINO.user_model is not None:
+    #~ if settings.LINO.user_model is not None:
+    if True: # e.g. e.g. public readonly site
         if auth:
             allow_before_auth = allow
             def allow(action,profile):
@@ -406,7 +407,8 @@ def make_permission_handler_(
     if allow is None:
         def allow(action,user,obj,state):
             return True
-    if settings.LINO.user_model is not None:
+    #~ if settings.LINO.user_model is not None:
+    if True: # e.g. e.g. public readonly site
         if auth:
             allow_before_auth = allow
             def allow(action,user,obj,state):

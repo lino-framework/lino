@@ -221,7 +221,7 @@ class City(babel.BabelNamed):
 class Cities(dd.Table):
     #~ label = _("Cities")
     model = 'countries.City'
-    required = dd.required()
+    required = dd.required(user_level='admin')
     order_by = "country name".split()
     column_names = "country name type zip_code *"
     detail_layout = """
@@ -234,10 +234,13 @@ class CitiesByCity(Cities):
     label = _("Subdivisions")
     master_key = 'parent'
     column_names = "name type zip_code *"
+    required = dd.required()
+
     
 class CitiesByCountry(Cities):
     master_key = 'country'
     column_names = "name type zip_code *"
+    required = dd.required()
 
 
 
@@ -363,3 +366,14 @@ class CountryRegionCity(CountryCity):
             #~ return country.city_set.filter(flt).order_by('name')
         #~ return cls.city.field.rel.to.objects.order_by('name')
         
+from lino.modlib.contacts.models import MODULE_LABEL
+
+def setup_config_menu(site,ui,profile,m): 
+    m = m.add_menu("contacts",MODULE_LABEL)
+    m.add_action(Countries)
+    m.add_action(Cities)
+    m.add_action(Languages)
+
+#~ def setup_explorer_menu(site,ui,profile,m):
+    #~ m = m.add_menu("contacts",MODULE_LABEL)
+    #~ m.add_action(Cities)

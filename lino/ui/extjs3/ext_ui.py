@@ -304,6 +304,9 @@ class TextRenderer(HtmlRenderer):
         return text
   
 class PlainRenderer(HtmlRenderer):
+  
+    is_interactive = True
+    
     def instance_handler(self,ar,obj,**kw):
         a = getattr(obj,'_detail_action',None)
         if a is None:
@@ -362,7 +365,7 @@ class ExtRenderer(HtmlRenderer):
     """
     Deserves more documentation.
     """
-    is_interactive = False
+    is_interactive = True
     
     def pk2url(self,ar,pk,**kw):
         return None
@@ -956,7 +959,7 @@ class ExtUI(base.UI):
         #~ return kw
 
   
-    def get_urls(self):
+    def unused_get_urls(self):
         #~ print "20121110 get_urls"
         rx = '^'
         urlpatterns = patterns('',
@@ -1523,7 +1526,9 @@ tinymce.init({
         #~ assert user == jsgen._for_user
         assert profile == jsgen._for_user_profile
         
-        f.write("Lino.main_menu = %s;\n" % py2js(settings.LINO.get_site_menu(self,profile)))
+        menu = settings.LINO.get_site_menu(self,profile)
+        menu.add_item('home',_("Home"),javascript="Lino.close_all_windows()")
+        f.write("Lino.main_menu = %s;\n" % py2js(menu))
 
         actors_list = [
             rpt for rpt in dbtables.master_reports \

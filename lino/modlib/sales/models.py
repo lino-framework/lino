@@ -298,6 +298,8 @@ class SalesDocument(
     #status = models.CharField(max_length=1, choices=STATUS_CHOICES)
     #~ discount = models.IntegerField(_("Discount"),blank=True,null=True)
     discount = dd.PercentageField(_("Discount"),blank=True,null=True)
+    
+    
         
     #~ @dd.chooser()
     #~ def partner_choices(self):
@@ -398,7 +400,7 @@ class Invoice(SalesDocument,ledger.Voucher):
     
     workflow_state_field = 'state'
     
-    _registrable_fields = set('date author partner vat_regime payment_term due_date'.split())
+    #~ _registrable_fields = set('date author partner vat_regime payment_term due_date'.split())
     
     def full_clean(self,*args,**kw):
         if self.due_date is None:
@@ -414,22 +416,19 @@ class Invoice(SalesDocument,ledger.Voucher):
     def get_registrable_fields(cls,site):
         for f in super(Invoice,cls).get_registrable_fields(site): yield f
         yield 'due_date'
-
-    #~ def items(self,ar):
-        #~ return ar.spawn(ItemsByInvoice,master_instance=self)
+        yield 'order'
         
+        yield 'payment_term'
+        yield 'imode'
+        yield 'shipping_mode'
+        yield 'discount'
+        
+        yield 'date'
+        yield 'user'
+        yield 'partner'
+        yield 'vat_regime'
+        yield 'item_vat'
 
-    #~ def get_wanted_movements(self):
-        #~ yield self.create_movement(
-          #~ settings.LINO.get_base_account(self),
-          #~ self.total_base)
-        #~ if self.total_vat:
-            #~ yield self.create_movement(
-              #~ settings.LINO.get_vat_account(self),
-              #~ self.total_vat)
-        #~ yield self.create_movement(
-          #~ settings.LINO.site_config.customers_account,
-          #~ self.total_base+self.total_vat)
 
 
 class ProductDocItem(ledger.VoucherItem,vat.QtyVatItemBase):

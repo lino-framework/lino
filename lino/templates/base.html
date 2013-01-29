@@ -17,9 +17,15 @@
             <a href="?ul={{lang}}">{{lang}}</a> 
         {% endif -%}
       {% endfor -%}
-      &mdash;
     {% endif -%}
-    <a href="{{site.admin_prefix}}/">Admin</a>
+    {% if site.use_extjs -%}
+    &mdash;
+    <a href="{{site.admin_prefix}}/">ExtJS</a>
+    {% endif -%}
+    {% if site.plain_prefix -%}
+    &mdash;
+    <a href="{{site.plain_prefix}}/">Plain</a>
+    {% endif -%}
     </div>
     {% endblock %}
     {% block navbar %}

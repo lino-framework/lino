@@ -4,6 +4,12 @@ To-do list
 Short-term
 ----------
 
+#.  Neben dem momentanen csv-Export eine neue Möglichkeit, lokale 
+    Exportfilter zu definieren, die dann in ein für den Benutzer 
+    nicht änderbares "stabiles" Format exportieren.
+    Eine allgemeine Tabellen-Export-API. 
+    Am elegantesten ist das wahrscheinlich mittels Jinja-Templates.
+
 #.  Negative Zahlen in Rot formatieren können 
     (z.B. Gesamtsumme Zusammenfassung Budget)
 

@@ -812,23 +812,25 @@ class ContactRelated(dd.Model):
 
 
 
-from lino.models import SiteConfig
+if settings.LINO.is_installed('contacts'):
+  
+    from lino.models import SiteConfig
 
-dd.inject_field(SiteConfig,
-    'next_partner_id',
-    models.IntegerField(default=100, # first 100 for users from demo fixtures.
-        verbose_name=_("The next automatic id for Person or Company")
-    ),"""The next automatic id for Person or Company. 
-    Deserves more documentation.
-    """)
-    
-dd.inject_field(SiteConfig,
-    'site_company',
-    models.ForeignKey("contacts.Company",
-        blank=True,null=True,
-        verbose_name=_("The company that runs this site"),
-        related_name='site_company_sites',
-        help_text=_("The Company to be used as sender in documents.")))
+    dd.inject_field(SiteConfig,
+        'next_partner_id',
+        models.IntegerField(default=100, # first 100 for users from demo fixtures.
+            verbose_name=_("The next automatic id for Person or Company")
+        ),"""The next automatic id for Person or Company. 
+        Deserves more documentation.
+        """)
+        
+    dd.inject_field(SiteConfig,
+        'site_company',
+        models.ForeignKey("contacts.Company",
+            blank=True,null=True,
+            verbose_name=_("The company that runs this site"),
+            related_name='site_company_sites',
+            help_text=_("The Company to be used as sender in documents.")))
     
 
 #~ dd.inject_field(Partner,
@@ -881,9 +883,9 @@ def setup_config_menu(site,ui,profile,m):
     config_contacts = m.add_menu("contacts",MODULE_LABEL)
     config_contacts.add_action(CompanyTypes)
     config_contacts.add_action(RoleTypes)
-    config_contacts.add_action(site.modules.countries.Countries)
-    config_contacts.add_action(site.modules.countries.Cities)
-    config_contacts.add_action(site.modules.countries.Languages)
+    #~ config_contacts.add_action(site.modules.countries.Countries)
+    #~ config_contacts.add_action(site.modules.countries.Cities)
+    #~ config_contacts.add_action(site.modules.countries.Languages)
             
     #~ m  = m.add_menu("contacts",_("~Contacts"))
     #~ m.add_action('contacts.RoleTypes')
@@ -891,7 +893,7 @@ def setup_config_menu(site,ui,profile,m):
 def setup_explorer_menu(site,ui,profile,m):
     m = m.add_menu("contacts",MODULE_LABEL)
     m.add_action(site.modules.contacts.Roles)
-    m.add_action(site.modules.countries.Cities)
+    #~ m.add_action(site.modules.countries.Cities)
   
 #~ def setup_quicklinks(site,ui,user,m):
     #~ m.add_action(Person.detail_action)

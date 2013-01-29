@@ -234,6 +234,8 @@ class Lino(object):
     https://code.djangoproject.com/wiki/BackwardsIncompatibleChanges#ChangedthewayURLpathsaredetermined
     """
     
+    use_extjs = True
+    
     
     extjs_root = None
     """
@@ -413,7 +415,7 @@ class Lino(object):
     
     anonymous_user_profile = '000'
     """
-    The UserProfile (or rather it's value) to assigned to anonymous user.
+    The UserProfile to be assigned to anonymous user.
     
     """
     
@@ -1274,7 +1276,7 @@ class Lino(object):
         
     def get_site_menu(self,ui,profile):
         """
-        Return this site's main menu for the given user. 
+        Return this site's main menu for the given UserProfile. 
         Must be a :class:`lino.core.menus.Toolbar` instance.
         Applications usually should not need to override this.
         """
@@ -1286,10 +1288,9 @@ class Lino(object):
         #~ url = self.admin_url
         #~ if not url: 
             #~ url = "/"
+        #~ main.add_url_button(url,label=_("Home"))
         #~ url = "javascript:Lino.close_all_windows()"
         #~ main.add_url_button(url,label=_("Home"))
-        main.add_item('home',_("Home"),javascript="Lino.close_all_windows()")
-        
         return main
         
     def setup_quicklinks(self,ar,m):
@@ -1873,7 +1874,7 @@ class Lino(object):
         return self.build_media_url('extjs',url)
         
 
-    def get_urls(self):
+    def unused_get_urls(self):
         return []
 
     #~ def get_sidebar_html(self,request=None,node=None,**context):

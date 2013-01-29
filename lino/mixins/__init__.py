@@ -316,8 +316,8 @@ class Registrable(model.Model):
     @classmethod
     def site_setup(cls,site):
         super(Registrable,cls).site_setup(site)
-        self._registrable_fields = set(self.get_registrable_fields(site))
-        #~ logger.info("20130128 %s %s",self,self._registrable_fields)
+        cls._registrable_fields = set(cls.get_registrable_fields(site))
+        #~ logger.info("20130128 %s %s",cls,cls._registrable_fields)
     
     def disabled_fields(self,ar):
         if not self.state.editable:

@@ -1065,12 +1065,20 @@ class GridConfig(View):
         #~ logger.info(msg)
         settings.LINO.ui.build_site_cache(True)            
         return settings.LINO.ui.success(msg)
+        
+MENUS = dict()        
             
 def plain_response(ui,request,tplname,context):        
     u = request.subst_user or request.user
-    menu = settings.LINO.get_site_menu(ui,u.profile)
-    menu = menu.as_html(ui,request)
-    context.update(menu=E.tostring(menu))
+    menu = MENUS.get(u.profile,None)
+    if menu is None:
+        menu = settings.LINO.get_site_menu(ui,u.profile)
+        url = settings.LINO.plain_prefix + '/'
+        menu.add_url_button(url,label=_("Home"))
+        menu = menu.as_html(ui,request)
+        menu = E.tostring(menu)
+        MENUS[u.profile] = menu
+    context.update(menu=menu)
     web.extend_context(context)
     template = settings.LINO.jinja_env.get_template(tplname)
     
@@ -1140,7 +1148,7 @@ class PlainIndex(View):
         a = settings.LINO.get_main_action(user)
         if a is not None:
             if not a.get_view_permission(user.profile):
-                raise Exception("Action not allowed for %s" % user)
+                raise PermissionDenied("Action not allowed for %s" % user)
             ar = a.request(settings.LINO.ui,request,**kw)
             ar.renderer = ui.plain_renderer
             context.update(title=ar.get_title())

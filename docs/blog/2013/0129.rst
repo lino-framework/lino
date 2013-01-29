@@ -1,15 +1,40 @@
 20130129
 ========
 
+:mod:`lino_welfare.modlib.debts`
+--------------------------------
+
 - Beträge in Budgets (Entry.amount) können jetzt leer sein (nullable)
 
 - In der Vorschau eines Budgets stand als Titel 
-  "Schuldenverteilung von Budget Nr. 4 für Altenberg-Charlier"
+  "Schuldenverteilung von Budget Nr. 4 für Klient Soundso"
+  statt einfach nur
+  "Schuldenverteilung"
   
 - Übersetzung und Hilfetexte dist_amount und DistByBudget  
 
-- help_text of a slave table is now being used as tooltip.
+- help_text of slave tables is now being rendered as tooltip.
   The tooltip is anchored to the "header" part of the containing panel
 
 - The ID fields were not rendered in FormPanel
   (IntegerFieldElement had accidentally xtype=None)
+  
+  
+:mod:`lino.modlib.concepts`
+---------------------------
+
+A new module :mod:`lino.modlib.concepts`
+and a new application :mod:`lino.apps.belref`.
+This is an experiment: a Lino application without ExtJS
+  
+  
+  
+Neuanträge
+----------
+
+Im Modul Neuanträge waren noch zwei Bugs:
+
+- AvailableCoaches : meldete "Only for newcomers with valid SSIN", 
+  obwohl die Regel (dass begleitete Klienten eine gültige INSS haben müssen) 
+  seit 20121207 deaktiviert ist.
+- watch_tim wollte aus Klient ohne INSS in Lino eine Person machen.
