@@ -20,13 +20,22 @@
   (IntegerFieldElement had accidentally xtype=None)
   
   
-:mod:`lino.modlib.concepts`
----------------------------
+Belref
+------
 
-A new module :mod:`lino.modlib.concepts`
-and a new application :mod:`lino.apps.belref`.
-This is an experiment: a Lino application without ExtJS
-  
+The first Lino application without ExtJS:
+http://belref.lino-framework.org
+
+Less than 1 hour for the application:
+a new module :mod:`lino.modlib.concepts`,
+new application :mod:`lino.apps.belref`.
+
+Over 3 hours for the changes in the framework:
+new attribute :mod:`lino.Lino.use_extjs`.
+
+Yes, it's not finished.
+Especially the detail view is missing.
+I'll leave it there as it is until I next ideas.
   
   
 Neuanträge

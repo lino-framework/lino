@@ -1,0 +1,31 @@
+20130130
+========
+
+Release Welfare 1.0.10 und Lino 1.5.
+
+Warum man `auto_now_add` nicht benutzen sollte
+----------------------------------------------
+
+Hier was Lustiges: ich hatte einen :term:`ddt` gemacht, 
+bei dem die `a.py` kurz vor Mitternacht und die `b.py` kurz danach erstellt worden war.
+Daraufhin meldete ``diff``::
+
+  lsaffre@lino:/usr/local/django/testlino$ diff fixtures/a.py fixtures/b.py
+  34914,34915c34914,34915
+  <     yield create_outbox_mail(1,notes_Note,3545,200067,200007,date(2013,1,29),u'Ereignis/Notiz #3545',u'<h1></h1>\r\n<p>\r\nAktennotiz / Lebenslauf\r\n</p>\r\n<div>\r\n\r\n</div>\r\n<p>User: Luc Saffre</p>',dt(2012,7,30,18,25,9))
+  <     yield create_outbox_mail(2,notes_Note,3545,200067,200007,date(2013,1,29),u'Ereignis/Notiz #3545',u'<h1></h1>\r\n<p>\r\nAktennotiz / Lebenslauf\r\n</p>\r\n<div>\r\nPlease see the attached file.\r\n</div>\r\n<p>User: Luc Saffre</p>',None)
+  ---
+  >     yield create_outbox_mail(1,notes_Note,3545,200067,200007,date(2013,1,30),u'Ereignis/Notiz #3545',u'<h1></h1>\r\n<p>\r\nAktennotiz / Lebenslauf\r\n</p>\r\n<div>\r\n\r\n</div>\r\n<p>User: Luc Saffre</p>',dt(2012,7,30,18,25,9))
+  >     yield create_outbox_mail(2,notes_Note,3545,200067,200007,date(2013,1,30),u'Ereignis/Notiz #3545',u'<h1></h1>\r\n<p>\r\nAktennotiz / Lebenslauf\r\n</p>\r\n<div>\r\nPlease see the attached file.\r\n</div>\r\n<p>User: Luc Saffre</p>',None)
+  
+Der Unterschied ist das siebte Feld, `date`, das bisher mit `auto_now_add=True` war.
+Jetzt habe ich das ersetzt durch eine Methode `on_create`::
+  
+    def on_create(self,ar):
+        self.date = datetime.date.today()
+        super(Mail,self).on_create(ar)
+
+
+  
+      
+      

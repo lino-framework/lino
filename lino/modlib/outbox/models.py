@@ -473,7 +473,7 @@ class Mail(mixins.AutoUser,mixins.Printable,mixins.ProjectRelated,mixins.Control
     send_mail = SendMail()
     
     date = models.DateField(verbose_name=_("Date"),
-        auto_now_add=True,
+        #~ auto_now_add=True,
         help_text="""
         The official date to be printed on the document.
         """)
@@ -493,6 +493,11 @@ class Mail(mixins.AutoUser,mixins.Printable,mixins.ProjectRelated,mixins.Control
         #~ blank=True,null=True)
     sent = models.DateTimeField(null=True,editable=False)
 
+    def on_create(self,ar):
+        self.date = datetime.date.today()
+        super(Mail,self).on_create(ar)
+        
+        
     #~ def disabled_fields(self,ar):
         #~ if not self.owner.post_as_attachment:
             #~ return ['body']

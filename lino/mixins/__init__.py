@@ -390,7 +390,7 @@ class CreatedModified(model.Model):
     """
     Adds two timestamp fields `created` and `modified`.    
     
-    We don't use Djangos auto_now and auto_now_add features because:
+    We don't use Django's `auto_now` and `auto_now_add` features because:
     
     - 20110829 the modified field did not get updated after save()
       didn't investigate further since the workaround shown at
