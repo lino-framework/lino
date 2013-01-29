@@ -4,6 +4,9 @@ To-do list
 Short-term
 ----------
 
+#.  Negative Zahlen in Rot formatieren können 
+    (z.B. Gesamtsumme Zusammenfassung Budget)
+
 #.  VSEs eines Klienten im eigenen Fenster öffnen. 
     Doppelklick in Phantomzeile, um neuen VSE ze erstellen.
     VSE-Art auswählen und Fenster bestätigen.  

@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-## Copyright 2011-2012 Luc Saffre
+## Copyright 2011-2013 Luc Saffre
 ## This file is part of the Lino project.
 ## Lino is free software; you can redistribute it and/or modify 
 ## it under the terms of the GNU General Public License as published by
@@ -419,7 +419,7 @@ class YearBlogIndexDirective(InsertInputDirective):
     def get_rst(self):
         #~ year = self.arguments[0]
         env = self.state.document.settings.env
-        
+        today = datetime.date.today()
         
         #~ dn  = os.path.dirname(env.doc2path(env.docname))
         #~ year = os.path.split(dn)[-1]
@@ -439,6 +439,7 @@ class YearBlogIndexDirective(InsertInputDirective):
 .. |M%02d| replace::  **%s**""" % (month,babel.monthname(month))
             
             weeknum = None
+            #~ text += "\n  |br| Mo Tu We Th Fr Sa Su "
             for day in cal.itermonthdates(blogger_year.year,month):
                 iso_year,iso_week,iso_day = day.isocalendar()
                 if iso_week != weeknum:
@@ -449,6 +450,8 @@ class YearBlogIndexDirective(InsertInputDirective):
                     docname = "%02d%02d" % (day.month,day.day)
                     if blogger_year.year == iso_year and day in blogger_year.days:
                         text += " :doc:`%s <%s>` " % (label,docname)
+                    elif day > today:
+                        text += ' |sp| '
                     else:
                         text += ' ' + label + ' '
                 else:

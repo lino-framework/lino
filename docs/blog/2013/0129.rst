@@ -1,0 +1,9 @@
+20130129
+========
+
+- Beträge in Budgets (Entry.amount) können jetzt leer sein (nullable)
+
+- In der Vorschau eines Budgets stand als Titel 
+  "Schuldenverteilung von Budget Nr. 4 für Altenberg-Charlier"
+  
+- Übersetzung und Hilfetexte dist_amount und DistByBudget  
