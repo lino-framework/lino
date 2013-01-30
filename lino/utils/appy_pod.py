@@ -114,11 +114,15 @@ def html2odftext(e,**kw):
         for oc in html2odftext(child):
             #~ oe.addElement(oc)
             oe.appendChild(oc)
+    if True:
+        if e.tail:
+            oe.addText(e.tail)
     yield oe
-    if e.tail:
-        #~ yield e.tail
-        #~ yield text.Span(text=e.tail)
-        yield Text(e.tail)
+    if not True:
+        if e.tail:
+            #~ yield e.tail
+            #~ yield text.Span(text=e.tail)
+            yield Text(e.tail)
 
 
 
@@ -429,8 +433,9 @@ class Renderer(AppyRenderer):
             for i,fld in enumerate(fields):
                 tc = TableCell(stylename=cell_style)
                 stylename = fldstyle(fld)
-                tc.addElement(text.P(stylename=stylename,
-                    text=fld.format_sum(ar,sums,i)))
+                txt = tuple(html2odftext(fld.format_sum(ar,sums,i)))
+                assert len(txt) == 1
+                tc.addElement(text.P(stylename=stylename,text=txt[0]))
                 tr.addElement(tc)
             
 
