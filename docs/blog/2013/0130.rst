@@ -25,6 +25,10 @@ Jetzt habe ich das ersetzt durch eine Methode `on_create`::
         self.date = datetime.date.today()
         super(Mail,self).on_create(ar)
 
+Eine Reparatur der bestehenden Daten ist nicht nötig, 
+weil bisher erst zwei solcher manuellen Mails von Lino aus verschickt wurden.
+
+
 :class:`lino.utils.dumpy.Serializer` now raises an exception if it finds a field
 with `auto_now_add`.
 

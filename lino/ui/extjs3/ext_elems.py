@@ -1031,12 +1031,12 @@ class URLFieldElement(CharFieldElement):
 class IntegerFieldElement(FieldElement):
     filter_type = 'numeric'
     gridfilters_settings = dict(type='numeric')
-    xtype = 'numberfield'
+    #~ xtype = 'numberfield'
     #~ xtype = None
     sortable = True
     preferred_width = 5
     #~ data_type = 'int' 
-    #~ value_template = "new Ext.form.NumberField(%s)"
+    value_template = "new Ext.form.NumberField(%s)"
 
 class IncompleteDateFieldElement(CharFieldElement):
     """
@@ -1058,10 +1058,10 @@ class IncompleteDateFieldElement(CharFieldElement):
 
 
 class DecimalFieldElement(FieldElement):
-    #~ value_template = "new Ext.form.NumberField(%s)"
+    value_template = "new Ext.form.NumberField(%s)"
     filter_type = 'numeric'
     gridfilters_settings = dict(type='numeric')
-    xtype = 'numberfield'
+    #~ xtype = 'numberfield'
     sortable = True
     #~ data_type = 'float' 
     grid_column_template = "new Lino.NullNumberColumn(%s)"
