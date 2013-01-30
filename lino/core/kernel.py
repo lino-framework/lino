@@ -19,6 +19,7 @@ import os
 import sys
 #~ import imp
 import codecs
+import atexit
 #~ import collections
 from UserDict import IterableUserDict
 
@@ -385,12 +386,22 @@ def startup_site(self):
         from lino.core import web
         web.site_setup(self)
         
-        logger.info("Lino Site %r started. Languages: %s. %d models, %s actors.", 
-            self.title, ', '.join(babel.AVAILABLE_LANGUAGES),
+        if len(sys.argv) == 0:
+            process_name = 'WSGI'
+        else:
+            process_name = ' '.join(sys.argv)
+        logger.info("Started %s on %r. Languages: %s. %d models, %s actors.", 
+        #~ logger.info("Lino Site %r started. Languages: %s. %d models, %s actors.", 
+            process_name,self.title, ', '.join(babel.AVAILABLE_LANGUAGES),
             model_count,
             len(actors.actors_list))
         #~ logger.info(settings.INSTALLED_APPS)
         logger.info(self.welcome_text())
+        
+        def goodbye():
+            logger.info("Stopped %s",process_name)
+        atexit.register(goodbye)
+        
     finally:
         #~ write_lock.release()
         self._setup_done = True

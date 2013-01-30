@@ -54,3 +54,6 @@ Miscellaneous
   mehr "Total (5 Zeilen)" sondern 
   
 - Summenzeilen werden jetzt in Fett gedruckt.  
+
+- Die goodbye-Meldung in atexit, die bisher nur von watch_tim gemacht 
+  wurde, wird jetzt für alle Prozesse in kernel.site_startup gemacht.

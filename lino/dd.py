@@ -202,6 +202,8 @@ from lino.core.signals import post_analyze
 
 from lino.core.signals import auto_create
 from lino.core.signals import pre_merge
+from lino.core.signals import pre_add_child
+from lino.core.signals import pre_remove_child
 
 from django.db.models.signals import class_prepared
 from django.db.models.fields import NOT_PROVIDED
