@@ -27,6 +27,7 @@ import copy
 
 from django.db import models
 from django.conf import settings
+from django.utils.translation import ugettext_lazy as _
 
 import lino
 from lino.ui import base
@@ -1137,3 +1138,9 @@ class Actor(actions.Parametrizable):
         settings.LINO.startup()
         return xghtml.E.tostring(self.request(**kw).table2xhtml())
         
+    @classmethod
+    def get_sum_text(self,ar):
+        """
+        Return the text to display on the totals row.
+        """
+        return unicode(_("Total (%d rows)") % ar.get_total_count())

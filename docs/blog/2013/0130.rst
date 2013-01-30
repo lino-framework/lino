@@ -46,3 +46,9 @@ Miscellaneous
   
 - :class:`lino_welfare.modlib.isip.models.ContractBase`: `update_reminders` 
   ignored premature ending (`date_ended`) when creating the reminder "Contracts ends in a month".
+  
+- Im BudgetSummary fehlten jährliche Einnahmen sowie 
+  Ausgaben und Einnahmen "mit sonstiger Periodizität".
+  
+- Der Text der letzten Zeile der Übersicht eines Budgets lautet jetzt nicht 
+  mehr "Total (5 Zeilen)" sondern 

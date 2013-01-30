@@ -38,6 +38,7 @@ from lino.utils import jsgen
 from lino.utils.jsgen import py2js, Component, id2js, js_code
 from lino.utils.quantities import parse_decimal
 from lino.utils.xmlgen import etree
+from lino.utils.xmlgen.html import E
 
 #~ from . import ext_requests
 from lino.ui import requests as ext_requests
@@ -104,7 +105,7 @@ class StoreField(object):
         
     def format_sum(self,ar,sums,i):
         if i == 0:
-            return unicode(_("Total (%d rows)")) % ar.get_total_count()
+            return E.b(ar.get_sum_text())
         return ''
         
     def __repr__(self):
@@ -148,12 +149,12 @@ class StoreField(object):
         if self.field.primary_key:
             url = ar.renderer.pk2url(ar,v)
             if url is not None:
-                return xghtml.E.td(xghtml.E.a(self.format_value(ar,v),href=url),**cellattrs)
+                return E.td(E.a(self.format_value(ar,v),href=url),**cellattrs)
             #~ return ar.renderer.obj2html(ar,v,self.format_value(ar,v))
-        return xghtml.E.td(self.format_value(ar,v),**cellattrs)
+        return E.td(self.format_value(ar,v),**cellattrs)
       
     def sum2html(self,ar,sums,i,**cellattrs):
-        return xghtml.E.td(self.format_sum(ar,sums,i),**cellattrs)
+        return E.td(self.format_sum(ar,sums,i),**cellattrs)
         
     #~ def value2odt(self,ar,v,tc,**params):
         #~ """
@@ -300,7 +301,7 @@ class ForeignKeyStoreField(RelatedMixin,ComboStoreField):
         
     def value2html(self,ar,v,**cellattrs):
         #~ return ar.renderer.obj2html(ar,v)
-        return xghtml.E.td(ar.obj2html(v),**cellattrs)
+        return E.td(ar.obj2html(v),**cellattrs)
         
         
     def get_value_text(self,v,obj):
@@ -429,14 +430,14 @@ class RequestStoreField(StoreField):
         n = v.get_total_count()
         #~ 20130119b cellattrs.update(align="right")
         if n == 0:
-            return xghtml.E.td(**cellattrs)
+            return E.td(**cellattrs)
         #~ return ar.renderer.href_to_request(v,str(n))
         url = 'javascript:' + ar.renderer.request_handler(v)
         #~ if n == 6:
             #~ logger.info("20120914 value2html(%s) --> %s",v,url)
         #~ url = ar.renderer.js2url(h)
-        #~ return xghtml.E.a(cgi.escape(force_unicode(v.label)),href=url)
-        return xghtml.E.td(xghtml.E.a(str(n),href=url),**cellattrs)
+        #~ return E.a(cgi.escape(force_unicode(v.label)),href=url)
+        return E.td(E.a(str(n),href=url),**cellattrs)
       
         #~ s = self.format_value(ar,v)
         #~ if not s: return s
@@ -448,7 +449,7 @@ class RequestStoreField(StoreField):
         
     def format_sum(self,ar,sums,i):
         #~ return self.format_value(ar,sums[i])
-        return str(sums[i])
+        return E.b(str(sums[i]))
 
         
     def format_value(self,ar,v):
@@ -686,12 +687,12 @@ class BooleanStoreField(StoreField):
         return 0
       
     def format_sum(self,ar,sums,i):
-        return str(sums[i])
+        return E.b(str(sums[i]))
 
 class DisplayStoreField(StoreField):
   
     def value2html(self,ar,v,**cellattrs):
-        return xghtml.E.td(v,**cellattrs)
+        return E.td(v,**cellattrs)
   
 
 class NumberStoreField(StoreField):
@@ -709,7 +710,7 @@ class NumberStoreField(StoreField):
     #~ 20130119b 
     #~ def value2html(self,ar,v,**cellattrs):
         #~ cellattrs.update(align="right")
-        #~ return xghtml.E.td(self.format_value(ar,v),**cellattrs)
+        #~ return E.td(self.format_value(ar,v),**cellattrs)
         
 class DecimalStoreField(NumberStoreField):
     zero = decimal.Decimal(0)
@@ -730,11 +731,11 @@ class DecimalStoreField(NumberStoreField):
         return decfmt(v,places=self.field.decimal_places)
   
     def format_sum(self,ar,sums,i):
-        return self.format_value(ar,sums[i])
+        return E.b(self.format_value(ar,sums[i]))
         
     #~ def value2html(self,ar,v,**cellattrs):
         #~ cellattrs.update(align="right")
-        #~ return xghtml.E.td(self.format_value(ar,v),**cellattrs)
+        #~ return E.td(self.format_value(ar,v),**cellattrs)
         
         
 class IntegerStoreField(NumberStoreField):
@@ -1301,7 +1302,7 @@ class Store(BaseStore):
                     txt = ''
                 else:
                     txt = headers[i]
-                th = xghtml.E.th(txt,**cellattrs)
+                th = E.th(txt,**cellattrs)
                 fld.apply_cell_format(th)
                 i += 1
                 yield th
@@ -1319,7 +1320,7 @@ class Store(BaseStore):
                 #~ import pdb; pdb.set_trace()
                 v = fld.full_value_from_object(row,ar)
                 if v is None:
-                    td = xghtml.E.td(**cellattrs)
+                    td = E.td(**cellattrs)
                 else:
                     sums[i] += fld.value2num(v)
                     #~ yield fld.value2html(ar,v)
