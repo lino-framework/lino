@@ -114,15 +114,15 @@ def html2odftext(e,**kw):
         for oc in html2odftext(child):
             #~ oe.addElement(oc)
             oe.appendChild(oc)
-    if True:
-        if e.tail:
-            oe.addText(e.tail)
+    #~ if not True:
+        #~ if e.tail:
+            #~ oe.addText(e.tail)
     yield oe
-    if not True:
-        if e.tail:
-            #~ yield e.tail
-            #~ yield text.Span(text=e.tail)
-            yield Text(e.tail)
+    #~ if True:
+    if e.tail:
+        #~ yield e.tail
+        #~ yield text.Span(text=e.tail)
+        yield Text(e.tail)
 
 
 
