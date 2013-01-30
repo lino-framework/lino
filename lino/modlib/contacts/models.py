@@ -64,6 +64,7 @@ from lino.modlib.countries.models import CountryRegionCity
 from lino.utils import mti
 
 
+from lino.modlib.contacts import MODULE_LABEL
 
 
 class CompanyType(babel.BabelNamed):
@@ -847,7 +848,6 @@ if settings.LINO.is_installed('contacts'):
         #~ help_text=_("Whether this Partner is a Company.")))
 
 
-MODULE_LABEL = _("Contacts")
 
 def site_setup(site):
     site.modules.countries.Cities.set_detail_layout("""

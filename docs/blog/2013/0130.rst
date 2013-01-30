@@ -28,12 +28,21 @@ Jetzt habe ich das ersetzt durch eine Methode `on_create`::
 Eine Reparatur der bestehenden Daten ist nicht nötig, 
 weil bisher erst zwei solcher manuellen Mails von Lino aus verschickt wurden.
 
+Miscellaneous
+-------------
 
-:class:`lino.utils.dumpy.Serializer` now raises an exception if it finds a field
-with `auto_now_add`.
+- :class:`lino.utils.dumpy.Serializer` now raises an exception if it finds a field
+  with `auto_now_add`::
 
-  $ python manage.py dumpdata --format py
-  ...
-  Error: Unable to serialize database: outbox.Mail.date.auto_now_add is True : values will be lost!
+    $ python manage.py dumpdata --format py
+    ...
+    Error: Unable to serialize database: outbox.Mail.date.auto_now_add is True : values will be lost!
   
   
+- I recently had changed IntegerFieldElement and DecimalFieldElement 
+  to use `xtype` instead of `value_template`. That wasa bad idea, it caused
+  "Uncaught TypeError: Object #<Object> has no method 'getValue'" 
+  when such fields were used in a parameter panel.
+  
+- :class:`lino_welfare.modlib.isip.models.ContractBase`: `update_reminders` 
+  ignored premature ending (`date_ended`) when creating the reminder "Contracts ends in a month".

@@ -38,6 +38,7 @@ from lino.utils import babel
 
 from lino.utils.instantiator import lookup_or_create
 
+from lino.modlib.contacts import MODULE_LABEL
 
 class CityTypes(dd.ChoiceList):
     """
@@ -366,7 +367,6 @@ class CountryRegionCity(CountryCity):
             #~ return country.city_set.filter(flt).order_by('name')
         #~ return cls.city.field.rel.to.objects.order_by('name')
         
-from lino.modlib.contacts.models import MODULE_LABEL
 
 def setup_config_menu(site,ui,profile,m): 
     m = m.add_menu("contacts",MODULE_LABEL)
