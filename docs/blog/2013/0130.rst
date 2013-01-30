@@ -1,7 +1,7 @@
 20130130
 ========
 
-Release Welfare 1.0.10 und Lino 1.5.
+This morning we released Lino 1.5.7 and Lino-Welfare 1.0.10.
 
 Warum man `auto_now_add` nicht benutzen sollte
 ----------------------------------------------
@@ -57,3 +57,142 @@ Miscellaneous
 
 - Die goodbye-Meldung in atexit, die bisher nur von watch_tim gemacht 
   wurde, wird jetzt für alle Prozesse in kernel.site_startup gemacht.
+  
+
+
+After the release
+-----------------
+
+After the release some optimizations and one enlightment in Lino-Welfare:
+
+  
+- Wenn eine Tx25 gefehlt hat weil die Person nicht integriert ist, 
+  dann meldete Lino beim bloßen Anschauen dieser Tx25 (im Detail) 
+  einen AttributeError "reply instance has no attribute 'rrn_it_implicit'  "
+  an die Admins.
+  
+- Das Ankreuzfeld "Chronik" einer neuen Tx25 ist jetzt par défaut *angekreuzt*.
+
+- Erleuchtung: Nach den neuesten Erfahrungen würde ich sagen: der 
+  Bearbeitungszustand "Ungültig" für Klienten kommt komplett raus, basta. 
+  Die Gültigkeit der INSS hat keinerlei Einfluss auf irgendwelche Workflows.
+
+
+Much work for little visible result
+-----------------------------------
+
+Look at the table "Schuldenverteilung" in the screenshot below:
+
+.. image:: 0130.jpg
+  :scale: 60
+
+The last column (without header and containing numbers 47, 48 and 49) was too much.
+This bug came because of a design mistake: the `ar2html` 
+method worked using the fields of the store 
+and not using the columns of the grid.
+Don't remember what mosquito had bitten me when I had written this.
+I had seen this mistake already some time ago but knew that 
+it would improve only the inner beauty and take much time.
+Now I finally did it. 
+Took only two hours.
+Python is great! 
+Such important code changes would be much more painful in Java.
+
+
+The :mod:`show <lino.management.commands.show>` management command 
+-------------------------------------------------------------------
+
+To test the above change I added a new management command 
+:mod:`show <lino.management.commands.show>`.
+Usage examples:
+
+.. code-block:: bash
+
+  $ python manage.py show users.UsersOverview
+  ============== ======================================= =========
+   Benutzername   Benutzerprofil                          Sprache
+  -------------- --------------------------------------- ---------
+   alicia         Begleiter im DSBE                       fr
+   caroline       Berater Neuanträge                      de
+   hubert         Begleiter im DSBE                       de
+   kerstin        Schuldenberater                         de
+   melanie        Integrations-Assistent (Dienstleiter)   fr
+   robin          Verwalter                               en
+   rolf           Verwalter                               de
+   romain         Verwalter                               fr
+  ============== ======================================= =========  
+
+  $ python manage.py show pcsw.UsersWithClients
+  ====================== ======= =========== =========== ========= ========= ====================== ================= ========
+   Begleiter              Bilan   Formation   Recherche   Travail   Standby   Primäre Begleitungen   Aktive Klienten   Total
+  ---------------------- ------- ----------- ----------- --------- --------- ---------------------- ----------------- --------
+   Alicia Allmanns                2           1                     1         4                      3                 10
+   Hubert Huppertz        3       2           3           4         1         4                      12                22
+   Mélanie Mélard         4       5           4           4         6         20                     17                24
+   **Total (3 Zeilen)**   **7**   **9**       **8**       **8**     **8**     **28**                 **32**            **56**
+  ====================== ======= =========== =========== ========= ========= ====================== ================= ========
+
+
+The bootstrap UI is getting better
+----------------------------------
+
+The "plain" (bootstrap) UI is getting better:
+
+- Detail forms 
+- Pagination bar
+
+
+django-extensions
+-----------------
+
+Ich habe mir heute mal das Modul 
+`django-extensions <https://github.com/django-extensions>`_ 
+angeschaut.
+Es hat einen Befehl "dumpscript", der ähnlich wie mein 
+:mod:`lino.utils.dumpy` den Inhalt der Datenbank in ein 
+Python-Skript schreibt, das ebendiesen Inhalt wiederherstellt.
+Es ist aber klar, dass "dumpscript" eher primitiv ist und 
+sich nicht für Datenbank-Migrationen eignet.
+Hat sich nicht gelohnt.
+
+Interessanter war ein anderer Befehl ``graph_models``
+in dieser Bibliothek.
+Hier ein paar Resultate.
+Sehen schön aus, aber ehrlich gesagt 
+besteht dafür jetzt auch nicht gerade 
+ein dringender Bedarf...
+
+.. graphviz:: contacts.dot
+
+.. graphviz:: cal.dot
+
+.. graphviz:: outbox.dot
+
+.. graphviz:: courses.dot
+
+.. graphviz:: cbss.dot
+
+.. graphviz:: cbssd.dot
+
+.. graphviz:: debts.dot
+
+.. graphviz:: debtsd.dot
+
+Um den Befehl laufen zu lassen:
+Zunächst das neue Attribut :attr:`replace_django_templates 
+<lino.Lino.replace_django_templates>` kurzfristig auf 
+False setzen.
+Denn graph_models arbeitet mit Django_Templates.
+Dann die .dot-Dateien generieren::
+  
+  python manage.py graph_models outbox -g > outbox.dot
+  
+Anschließend :attr:`replace_django_templates 
+<lino.Lino.replace_django_templates>` wieder zurücksetzen.
+
+Und hier im Blog die Dateien dann mit 
+`graphviz <http://sphinx-doc.org/ext/graphviz.html>`_
+einbauen.
+
+
+

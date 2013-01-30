@@ -16,12 +16,14 @@ import logging
 logger = logging.getLogger(__name__)
 
 from cgi import escape
+import decimal
 
 from django.db import models
 from django.contrib.contenttypes.models import ContentType
 from django.contrib.contenttypes import generic
 from django.utils.translation import ugettext as _
 from django.utils.translation import string_concat
+from django.utils.encoding import force_unicode
 from django.conf import settings
 
 import lino
@@ -526,7 +528,7 @@ class LayoutElement(VisibleComponent):
 
     def as_plain_html(self,ar,obj):
         yield E.p("cannot handle %s" % self.__class__)
-            
+        
 
 
 class ConstantElement(LayoutElement):
@@ -551,7 +553,6 @@ class ConstantElement(LayoutElement):
     def as_plain_html(self,ar,obj):
         #~ return RAWXML(self.value.get('html'))
         return self.value.get('html')
-        
         
 
 class Spacer(LayoutElement):
@@ -588,6 +589,7 @@ class FieldElement(LayoutElement):
     active_change_event = 'change'
     #declaration_order = 3
     #~ ext_suffix = "_field"
+    zero = 0
     
     def __init__(self,layout_handle,field,**kw):
         if not hasattr(field,'name'):
@@ -638,6 +640,8 @@ class FieldElement(LayoutElement):
         #~ yield E.p(unicode(elem.field.verbose_name),':',E.br(),E.b(text))
         yield E.label(unicode(self.field.verbose_name))
         yield E.input(type="text",value=text)
+        if self.field.help_text:
+            yield E.span(unicode(text),class_="help-block")
         #~ yield E.p(unicode(elem.field.verbose_name),':',E.br(),E.b(text))
             
     def cell_html(self,ui,row):
@@ -713,6 +717,44 @@ class FieldElement(LayoutElement):
         kw.update(self.get_field_options())
         return kw
     
+    def apply_cell_format(self,e):
+        pass
+        
+    def value2html(self,ar,v,**cellattrs):
+        """
+        Return a HTML representation of the given value. 
+        The possible return values may be:
+        
+        - a basestring (of which any special characters will be escaped)
+        - an xml.etree.ElementTree.Element
+        
+        The default implementation returns a unicode string obtained from :meth:`format_value`.
+        """
+        #~ return "<span>%s</span>" % force_unicode(v)
+        if self.field.primary_key:
+            url = ar.renderer.pk2url(ar,v)
+            if url is not None:
+                return E.td(E.a(self.format_value(ar,v),href=url),**cellattrs)
+            #~ return ar.renderer.obj2html(ar,v,self.format_value(ar,v))
+        return E.td(self.format_value(ar,v),**cellattrs)
+      
+    def format_value(self,ar,v):
+        return self.field._lino_atomizer.format_value(ar,v)
+        
+    def sum2html(self,ar,sums,i,**cellattrs):
+        return E.td(self.format_sum(ar,sums,i),**cellattrs)
+        
+    def format_sum(self,ar,sums,i):
+        if i == 0:
+            return E.b(ar.get_sum_text())
+        return ''
+        
+    def value2num(self,v):
+        #~ print "20120426 %s value2num(%s)" % (self,v)
+        return 0
+        
+        
+            
         
 class TextFieldElement(FieldElement):
     #~ xtype = 'textarea'
@@ -780,7 +822,7 @@ class TextFieldElement(FieldElement):
         if not text: text = " "
         #~ yield E.p(unicode(elem.field.verbose_name),':',E.br(),E.b(text))
         yield E.label(unicode(self.field.verbose_name))
-        yield E.textarea(value=text,rows=str(self.preferred_height))
+        yield E.textarea(text,rows=str(self.preferred_height))
         
 class CharFieldElement(FieldElement):
     filter_type = 'string'
@@ -945,6 +987,10 @@ class ForeignKeyElement(ComplexRemoteComboFieldElement):
             return ''
         return ui.href_to(obj)
 
+    def value2html(self,ar,v,**cellattrs):
+        #~ return ar.renderer.obj2html(ar,v)
+        return E.td(ar.obj2html(v),**cellattrs)
+        
 
 class TimeFieldElement(FieldElement):
     value_template = "new Lino.TimeField(%s)"
@@ -1028,16 +1074,6 @@ class URLFieldElement(CharFieldElement):
         #~ return kw
         
     
-class IntegerFieldElement(FieldElement):
-    filter_type = 'numeric'
-    gridfilters_settings = dict(type='numeric')
-    #~ xtype = 'numberfield'
-    #~ xtype = None
-    sortable = True
-    preferred_width = 5
-    #~ data_type = 'int' 
-    value_template = "new Ext.form.NumberField(%s)"
-
 class IncompleteDateFieldElement(CharFieldElement):
     """
     Widget for :class:`lino.core.fields.IncompleteDate` fields.
@@ -1056,15 +1092,91 @@ class IncompleteDateFieldElement(CharFieldElement):
         return kw
         
 
-
-class DecimalFieldElement(FieldElement):
-    value_template = "new Ext.form.NumberField(%s)"
+class NumberFieldElement(FieldElement):
     filter_type = 'numeric'
     gridfilters_settings = dict(type='numeric')
     #~ xtype = 'numberfield'
+    #~ xtype = None
+    value_template = "new Ext.form.NumberField(%s)"
     sortable = True
-    #~ data_type = 'float' 
     grid_column_template = "new Lino.NullNumberColumn(%s)"
+
+    def apply_cell_format(self,e):
+        #~ e.set('align','right')
+        e.attrib.update(align='right')
+        #~ logger.info("20130119 apply_cell_format %s",etree.tostring(e))
+        
+    def format_sum(self,ar,sums,i):
+        return E.b(self.format_value(ar,sums[i]))
+        
+    def value2num(self,v):
+        return v
+        
+    #~ def apply_cell_format(self,e):
+        #~ e.set('align','right')
+        
+    def sum2html(self,ar,sums,i,**cellattrs):
+        cellattrs.update(align="right")
+        return super(NumberFieldElement,self).sum2html(ar,sums,i,**cellattrs)
+
+    #~ 20130119b 
+    #~ def value2html(self,ar,v,**cellattrs):
+        #~ cellattrs.update(align="right")
+        #~ return E.td(self.format_value(ar,v),**cellattrs)
+        
+        
+        
+class IntegerFieldElement(NumberFieldElement):
+    preferred_width = 5
+    #~ data_type = 'int' 
+
+class RequestFieldElement(IntegerFieldElement):
+    def value2num(self,v):
+        #~ return len(v.data_iterator)
+        return v.get_total_count()
+  
+    def value2html(self,ar,v,**cellattrs):
+        #~ logger.info("20130131 value2html %s",v)
+        n = v.get_total_count()
+        #~ 20130119b cellattrs.update(align="right")
+        if n == 0:
+            return E.td(**cellattrs)
+        #~ return ar.renderer.href_to_request(v,str(n))
+        url = 'javascript:' + ar.renderer.request_handler(v)
+        #~ if n == 6:
+            #~ logger.info("20120914 value2html(%s) --> %s",v,url)
+        #~ url = ar.renderer.js2url(h)
+        #~ return E.a(cgi.escape(force_unicode(v.label)),href=url)
+        return E.td(E.a(str(n),href=url),**cellattrs)
+      
+        #~ s = self.format_value(ar,v)
+        #~ if not s: return s
+        #~ return xghtml.RAW(s)
+
+    def format_value(self,ar,v):
+        #~ logger.info("20121116 format_value(%s)",v)
+        if v is None:
+            raise Exception("Got None value for %s" % self)
+        n = v.get_total_count()
+        if n == 0:
+            return ''
+        #~ if n == 6:
+            #~ logger.info("20120914 format_value(%s) --> %s",v,n)
+        return ar.href_to_request(v,str(n))
+
+    def format_sum(self,ar,sums,i):
+        #~ return self.format_value(ar,sums[i])
+        return E.b(str(sums[i]))
+
+
+class DecimalFieldElement(NumberFieldElement):
+    zero = decimal.Decimal(0)
+    #~ value_template = "new Ext.form.NumberField(%s)"
+    #~ filter_type = 'numeric'
+    #~ gridfilters_settings = dict(type='numeric')
+    #~ xtype = 'numberfield'
+    #~ sortable = True
+    #~ data_type = 'float' 
     
     def __init__(self,*args,**kw):
         FieldElement.__init__(self,*args,**kw)
@@ -1142,13 +1254,26 @@ class DisplayElement(FieldElement):
         FieldElement.__init__(self,*args,**kw)
         if self.field.max_length:
             self.preferred_width = self.field.max_length
+            
+    def value2html(self,ar,v,**cellattrs):
+        return E.td(v,**cellattrs)
     
-class BooleanDisplayElement(DisplayElement):
+
+class BooleanMixin(object):
+    def format_sum(self,ar,sums,i):
+        return E.b(str(sums[i]))
+    def value2num(self,v):
+        if v: return 1
+        return 0
+
+  
+class BooleanDisplayElement(BooleanMixin,DisplayElement):
     preferred_width = 20
     preferred_height = 1
+
     
                 
-class BooleanFieldElement(FieldElement):
+class BooleanFieldElement(BooleanMixin,FieldElement):
   
     value_template = "new Ext.form.Checkbox(%s)"
     #~ xtype = 'checkbox'
@@ -1346,10 +1471,26 @@ class Container(LayoutElement):
             for chunk in e.as_plain_html(ar,obj):
                 children.append(chunk)
         if self.vertical:
-            yield E.div(*children)
+            #~ for ch in children:
+                #~ yield ch
+            yield E.fieldset(*children)
         else:
-            tr = E.tr(*[E.td(ch) for ch in children])
-            yield E.table(tr)
+            #~ if len(children) > 1:
+                #~ span = 'span' + str(12 / len(children))
+                #~ children = [E.div(ch,class_=span) for ch in children]
+                #~ yield E.div(*children,class_="row-fluid")
+            #~ else:
+                #~ yield children[0]
+                
+            #~ for ch in children:
+                #~ yield E.fieldset(ch)
+                #~ yield ch
+            #~ tr = E.tr(*[E.td(ch) for ch in children])
+            tr = []
+            for e in self.elements:
+                cell = E.td(*tuple(e.as_plain_html(ar,obj)))
+                tr.append(cell)
+            yield E.table(E.tr(*tr))
         
     def subvars(self):
         return self.elements
@@ -1863,7 +2004,59 @@ class GridElement(Container):
         return kw
 
 
+    def headers2html(self,ar,columns,headers,**cellattrs):
+        #~ logger.info("20130119 headers2html %s %s",fields,headers)
+        i = 0 
+        for col in columns:
+            txt = headers[i]
+            th = E.th(txt,**cellattrs)
+            col.apply_cell_format(th)
+            i += 1
+            yield th
+      
 
+    def row2html(self,ar,columns,row,sums,**cellattrs):
+        #~ logger.info("20130123 row2html %s",fields)
+        #~ for i,fld in enumerate(self.list_fields):
+        for i,col in enumerate(columns):
+            #~ if fld.name == 'person__gsm':
+            #~ logger.info("20120406 Store.row2list %s -> %s", fld, fld.field)
+            #~ import pdb; pdb.set_trace()
+            v = col.field._lino_atomizer.full_value_from_object(row,ar)
+            if v is None:
+                td = E.td(**cellattrs)
+            else:
+                sums[i] += col.value2num(v)
+                #~ yield fld.value2html(ar,v)
+                td = col.value2html(ar,v,**cellattrs)
+            col.apply_cell_format(td)
+            yield td
+            
+    def row2text(self,ar,fields,row,sums):
+        for i,fld in enumerate(fields):
+            if fld.field is not None:
+                v = fld.field._lino_atomizer.full_value_from_object(row,ar)
+                if v is None:
+                    yield ''
+                else:
+                    sums[i] += fld.value2num(v)
+                    yield fld.format_value(ar,v)
+                
+    def sums2html(self,ar,columns,sums,**cellattrs):
+        #~ return [fld.format_sum(ar,sums,i)
+          #~ for i,fld in enumerate(fields)]
+        return [fld.sum2html(ar,sums,i,**cellattrs)
+          for i,fld in enumerate(columns)]
+      
+        #~ return [fld.sum2html(ar.ui,sums[i])
+          #~ for i,fld in enumerate(fields)]
+            
+            
+    def as_plain_html(self,ar,obj):
+        sar = ar.spawn(actor=self.actor,action=self.actor.default_action,master_instance=obj)
+        yield sar.as_html()
+        #~ yield ar.ui.table2xhtml(sar,10)
+                
 
 #~ class DetailMainPanel(Panel,MainPanel):
 class DetailMainPanel(Panel):
@@ -1956,6 +2149,7 @@ _FIELD2ELEM = (
     (dd.RecurrenceField, RecurrenceElement),
     (dd.HtmlBox, HtmlBoxElement),
     #~ (dd.QuickAction, QuickActionElement),
+    #~ (dd.RequestField, RequestFieldElement),
     (dd.DisplayField, DisplayElement),
     (dd.QuantityField, QuantityFieldElement),
     (dd.IncompleteDateField, IncompleteDateFieldElement),
@@ -2014,12 +2208,19 @@ def field2elem(layout_handle,field,**kw):
             kw.setdefault('preferred_width',20)
             return ChoicesFieldElement(layout_handle,field,**kw)
     
+    if isinstance(field,dd.RequestField):
+        return RequestFieldElement(layout_handle,field,**kw)
+        
     selector_field = field
     if isinstance(field,dd.VirtualField):
         selector_field = field.return_type
     elif isinstance(field,fields.RemoteField):
         selector_field = field.field
     
+    #~ if str(layout_handle.layout._datasource) == 'pcsw.UsersWithClients':
+        #~ if field is not selector_field:
+            #~ print 20130131, field.name, field, selector_field
+        
     if isinstance(selector_field,models.BooleanField) and not field.editable:
         return BooleanDisplayElement(layout_handle,field,**kw)
         

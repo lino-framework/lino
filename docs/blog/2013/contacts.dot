@@ -1,0 +1,217 @@
+
+digraph name {
+  fontname = "Helvetica"
+  fontsize = 8
+
+  node [
+    fontname = "Helvetica"
+    fontsize = 8
+    shape = "plaintext"
+  ]
+  edge [
+    fontname = "Helvetica"
+    fontsize = 8
+  ]
+
+
+
+subgraph cluster_lino_modlib_contacts_models {
+  label=<
+        <TABLE BORDER="0" CELLBORDER="0" CELLSPACING="0">
+        <TR><TD COLSPAN="2" CELLPADDING="4" ALIGN="CENTER"
+        ><FONT FACE="Helvetica Bold" COLOR="Black" POINT-SIZE="12"
+        >lino.modlib.contacts</FONT></TD></TR>
+        </TABLE>
+        >
+  color=olivedrab4
+  style="rounded"
+
+
+    lino_core_model_Model [label=<
+    <TABLE BGCOLOR="palegoldenrod" BORDER="0" CELLBORDER="0" CELLSPACING="0">
+     <TR><TD COLSPAN="2" CELLPADDING="4" ALIGN="CENTER" BGCOLOR="olivedrab4"
+     ><FONT FACE="Helvetica Bold" COLOR="white"
+     >Model</FONT></TD></TR>
+    
+    </TABLE>
+    >]
+
+    lino_modlib_contacts_models_Company [label=<
+    <TABLE BGCOLOR="palegoldenrod" BORDER="0" CELLBORDER="0" CELLSPACING="0">
+     <TR><TD COLSPAN="2" CELLPADDING="4" ALIGN="CENTER" BGCOLOR="olivedrab4"
+     ><FONT FACE="Helvetica Bold" COLOR="white"
+     >Company<BR/>&lt;<FONT FACE="Helvetica Italic">Partner</FONT>&gt;</FONT></TD></TR>
+    
+    </TABLE>
+    >]
+
+    lino_mixins_CreatedModified [label=<
+    <TABLE BGCOLOR="palegoldenrod" BORDER="0" CELLBORDER="0" CELLSPACING="0">
+     <TR><TD COLSPAN="2" CELLPADDING="4" ALIGN="CENTER" BGCOLOR="olivedrab4"
+     ><FONT FACE="Helvetica Bold" COLOR="white"
+     >CreatedModified<BR/>&lt;<FONT FACE="Helvetica Italic">Model</FONT>&gt;</FONT></TD></TR>
+    
+    </TABLE>
+    >]
+
+    lino_modlib_contacts_models_Person [label=<
+    <TABLE BGCOLOR="palegoldenrod" BORDER="0" CELLBORDER="0" CELLSPACING="0">
+     <TR><TD COLSPAN="2" CELLPADDING="4" ALIGN="CENTER" BGCOLOR="olivedrab4"
+     ><FONT FACE="Helvetica Bold" COLOR="white"
+     >Person<BR/>&lt;<FONT FACE="Helvetica Italic">PersonMixin,Partner</FONT>&gt;</FONT></TD></TR>
+    
+    </TABLE>
+    >]
+
+    lino_mixins_human_Born [label=<
+    <TABLE BGCOLOR="palegoldenrod" BORDER="0" CELLBORDER="0" CELLSPACING="0">
+     <TR><TD COLSPAN="2" CELLPADDING="4" ALIGN="CENTER" BGCOLOR="olivedrab4"
+     ><FONT FACE="Helvetica Bold" COLOR="white"
+     >Born<BR/>&lt;<FONT FACE="Helvetica Italic">Model</FONT>&gt;</FONT></TD></TR>
+    
+    </TABLE>
+    >]
+
+    lino_modlib_contacts_models_Partner [label=<
+    <TABLE BGCOLOR="palegoldenrod" BORDER="0" CELLBORDER="0" CELLSPACING="0">
+     <TR><TD COLSPAN="2" CELLPADDING="4" ALIGN="CENTER" BGCOLOR="olivedrab4"
+     ><FONT FACE="Helvetica Bold" COLOR="white"
+     >Partner<BR/>&lt;<FONT FACE="Helvetica Italic">MultiTableBase,CountryRegionCity</FONT>&gt;</FONT></TD></TR>
+    
+    </TABLE>
+    >]
+
+    lino_utils_babel_BabelNamed [label=<
+    <TABLE BGCOLOR="palegoldenrod" BORDER="0" CELLBORDER="0" CELLSPACING="0">
+     <TR><TD COLSPAN="2" CELLPADDING="4" ALIGN="CENTER" BGCOLOR="olivedrab4"
+     ><FONT FACE="Helvetica Bold" COLOR="white"
+     >BabelNamed<BR/>&lt;<FONT FACE="Helvetica Italic">Model</FONT>&gt;</FONT></TD></TR>
+    
+    </TABLE>
+    >]
+
+    lino_modlib_contacts_models_CompanyType [label=<
+    <TABLE BGCOLOR="palegoldenrod" BORDER="0" CELLBORDER="0" CELLSPACING="0">
+     <TR><TD COLSPAN="2" CELLPADDING="4" ALIGN="CENTER" BGCOLOR="olivedrab4"
+     ><FONT FACE="Helvetica Bold" COLOR="white"
+     >CompanyType<BR/>&lt;<FONT FACE="Helvetica Italic">BabelNamed</FONT>&gt;</FONT></TD></TR>
+    
+    </TABLE>
+    >]
+
+    lino_modlib_contacts_models_RoleType [label=<
+    <TABLE BGCOLOR="palegoldenrod" BORDER="0" CELLBORDER="0" CELLSPACING="0">
+     <TR><TD COLSPAN="2" CELLPADDING="4" ALIGN="CENTER" BGCOLOR="olivedrab4"
+     ><FONT FACE="Helvetica Bold" COLOR="white"
+     >RoleType<BR/>&lt;<FONT FACE="Helvetica Italic">BabelNamed</FONT>&gt;</FONT></TD></TR>
+    
+    </TABLE>
+    >]
+
+    lino_modlib_contacts_models_Role [label=<
+    <TABLE BGCOLOR="palegoldenrod" BORDER="0" CELLBORDER="0" CELLSPACING="0">
+     <TR><TD COLSPAN="2" CELLPADDING="4" ALIGN="CENTER" BGCOLOR="olivedrab4"
+     ><FONT FACE="Helvetica Bold" COLOR="white"
+     >Role<BR/>&lt;<FONT FACE="Helvetica Italic">Model</FONT>&gt;</FONT></TD></TR>
+    
+    </TABLE>
+    >]
+
+    lino_welfare_modlib_pcsw_models_Partner [label=<
+    <TABLE BGCOLOR="palegoldenrod" BORDER="0" CELLBORDER="0" CELLSPACING="0">
+     <TR><TD COLSPAN="2" CELLPADDING="4" ALIGN="CENTER" BGCOLOR="olivedrab4"
+     ><FONT FACE="Helvetica Bold" COLOR="white"
+     >Partner<BR/>&lt;<FONT FACE="Helvetica Italic">Partner,CreatedModified</FONT>&gt;</FONT></TD></TR>
+    
+    </TABLE>
+    >]
+
+    lino_welfare_modlib_pcsw_models_Person [label=<
+    <TABLE BGCOLOR="palegoldenrod" BORDER="0" CELLBORDER="0" CELLSPACING="0">
+     <TR><TD COLSPAN="2" CELLPADDING="4" ALIGN="CENTER" BGCOLOR="olivedrab4"
+     ><FONT FACE="Helvetica Bold" COLOR="white"
+     >Person<BR/>&lt;<FONT FACE="Helvetica Italic">Person,Born</FONT>&gt;</FONT></TD></TR>
+    
+    </TABLE>
+    >]
+
+    lino_welfare_modlib_pcsw_models_Company [label=<
+    <TABLE BGCOLOR="palegoldenrod" BORDER="0" CELLBORDER="0" CELLSPACING="0">
+     <TR><TD COLSPAN="2" CELLPADDING="4" ALIGN="CENTER" BGCOLOR="olivedrab4"
+     ><FONT FACE="Helvetica Bold" COLOR="white"
+     >Company<BR/>&lt;<FONT FACE="Helvetica Italic">Company</FONT>&gt;</FONT></TD></TR>
+    
+    </TABLE>
+    >]
+
+
+}
+
+
+  
+
+  
+  
+  lino_modlib_contacts_models_Company -> lino_modlib_contacts_models_CompanyType
+  [label="type (company)"] [arrowhead=none, arrowtail=dot];
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+  
+  lino_modlib_contacts_models_Role -> lino_modlib_contacts_models_RoleType
+  [label="type (role)"] [arrowhead=none, arrowtail=dot];
+  
+  
+  lino_modlib_contacts_models_Role -> lino_welfare_modlib_pcsw_models_Person
+  [label="person (rolesbyperson)"] [arrowhead=none, arrowtail=dot];
+  
+  
+  lino_modlib_contacts_models_Role -> lino_welfare_modlib_pcsw_models_Company
+  [label="company (rolesbycompany)"] [arrowhead=none, arrowtail=dot];
+  
+
+  
+  
+  lino_welfare_modlib_pcsw_models_Activity [label=<
+      <TABLE BGCOLOR="palegoldenrod" BORDER="0" CELLBORDER="0" CELLSPACING="0">
+      <TR><TD COLSPAN="2" CELLPADDING="4" ALIGN="CENTER" BGCOLOR="olivedrab4"
+      ><FONT FACE="Helvetica Bold" COLOR="white"
+      >Activity</FONT></TD></TR>
+      </TABLE>
+      >]
+  
+  lino_welfare_modlib_pcsw_models_Partner -> lino_welfare_modlib_pcsw_models_Activity
+  [label="activity (partner)"] [arrowhead=none, arrowtail=dot];
+  
+
+  
+
+  
+  
+  lino_welfare_modlib_pcsw_models_ClientContactType [label=<
+      <TABLE BGCOLOR="palegoldenrod" BORDER="0" CELLBORDER="0" CELLSPACING="0">
+      <TR><TD COLSPAN="2" CELLPADDING="4" ALIGN="CENTER" BGCOLOR="olivedrab4"
+      ><FONT FACE="Helvetica Bold" COLOR="white"
+      >ClientContactType</FONT></TD></TR>
+      </TABLE>
+      >]
+  
+  lino_welfare_modlib_pcsw_models_Company -> lino_welfare_modlib_pcsw_models_ClientContactType
+  [label="client_contact_type (company)"] [arrowhead=none, arrowtail=dot];
+  
+
+}

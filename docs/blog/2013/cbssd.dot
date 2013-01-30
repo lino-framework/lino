@@ -1,0 +1,152 @@
+
+digraph name {
+  fontname = "Helvetica"
+  fontsize = 8
+
+  node [
+    fontname = "Helvetica"
+    fontsize = 8
+    shape = "plaintext"
+  ]
+  edge [
+    fontname = "Helvetica"
+    fontsize = 8
+  ]
+
+
+
+subgraph cluster_lino_welfare_modlib_cbss_models {
+  label=<
+        <TABLE BORDER="0" CELLBORDER="0" CELLSPACING="0">
+        <TR><TD COLSPAN="2" CELLPADDING="4" ALIGN="CENTER"
+        ><FONT FACE="Helvetica Bold" COLOR="Black" POINT-SIZE="12"
+        >lino_welfare.modlib.cbss</FONT></TD></TR>
+        </TABLE>
+        >
+  color=olivedrab4
+  style="rounded"
+
+
+    lino_welfare_modlib_cbss_models_NewStyleRequest [label=<
+    <TABLE BGCOLOR="palegoldenrod" BORDER="0" CELLBORDER="0" CELLSPACING="0">
+     <TR><TD COLSPAN="2" CELLPADDING="4" ALIGN="CENTER" BGCOLOR="olivedrab4"
+     ><FONT FACE="Helvetica Bold" COLOR="white"
+     >NewStyleRequest<BR/>&lt;<FONT FACE="Helvetica Italic">CBSSRequest</FONT>&gt;</FONT></TD></TR>
+    
+    </TABLE>
+    >]
+
+    lino_utils_babel_BabelNamed [label=<
+    <TABLE BGCOLOR="palegoldenrod" BORDER="0" CELLBORDER="0" CELLSPACING="0">
+     <TR><TD COLSPAN="2" CELLPADDING="4" ALIGN="CENTER" BGCOLOR="olivedrab4"
+     ><FONT FACE="Helvetica Bold" COLOR="white"
+     >BabelNamed<BR/>&lt;<FONT FACE="Helvetica Italic">Model</FONT>&gt;</FONT></TD></TR>
+    
+    </TABLE>
+    >]
+
+    lino_welfare_modlib_cbss_models_WithPerson [label=<
+    <TABLE BGCOLOR="palegoldenrod" BORDER="0" CELLBORDER="0" CELLSPACING="0">
+     <TR><TD COLSPAN="2" CELLPADDING="4" ALIGN="CENTER" BGCOLOR="olivedrab4"
+     ><FONT FACE="Helvetica Bold" COLOR="white"
+     >WithPerson<BR/>&lt;<FONT FACE="Helvetica Italic">SSIN</FONT>&gt;</FONT></TD></TR>
+    
+    </TABLE>
+    >]
+
+    lino_welfare_modlib_cbss_models_SSIN [label=<
+    <TABLE BGCOLOR="palegoldenrod" BORDER="0" CELLBORDER="0" CELLSPACING="0">
+     <TR><TD COLSPAN="2" CELLPADDING="4" ALIGN="CENTER" BGCOLOR="olivedrab4"
+     ><FONT FACE="Helvetica Bold" COLOR="white"
+     >SSIN<BR/>&lt;<FONT FACE="Helvetica Italic">Model</FONT>&gt;</FONT></TD></TR>
+    
+    </TABLE>
+    >]
+
+    lino_welfare_modlib_cbss_models_SSDNRequest [label=<
+    <TABLE BGCOLOR="palegoldenrod" BORDER="0" CELLBORDER="0" CELLSPACING="0">
+     <TR><TD COLSPAN="2" CELLPADDING="4" ALIGN="CENTER" BGCOLOR="olivedrab4"
+     ><FONT FACE="Helvetica Bold" COLOR="white"
+     >SSDNRequest<BR/>&lt;<FONT FACE="Helvetica Italic">CBSSRequest</FONT>&gt;</FONT></TD></TR>
+    
+    </TABLE>
+    >]
+
+    lino_welfare_modlib_cbss_models_Sector [label=<
+    <TABLE BGCOLOR="palegoldenrod" BORDER="0" CELLBORDER="0" CELLSPACING="0">
+     <TR><TD COLSPAN="2" CELLPADDING="4" ALIGN="CENTER" BGCOLOR="olivedrab4"
+     ><FONT FACE="Helvetica Bold" COLOR="white"
+     >Sector<BR/>&lt;<FONT FACE="Helvetica Italic">BabelNamed</FONT>&gt;</FONT></TD></TR>
+    
+    </TABLE>
+    >]
+
+    lino_welfare_modlib_cbss_models_Purpose [label=<
+    <TABLE BGCOLOR="palegoldenrod" BORDER="0" CELLBORDER="0" CELLSPACING="0">
+     <TR><TD COLSPAN="2" CELLPADDING="4" ALIGN="CENTER" BGCOLOR="olivedrab4"
+     ><FONT FACE="Helvetica Bold" COLOR="white"
+     >Purpose<BR/>&lt;<FONT FACE="Helvetica Italic">BabelNamed</FONT>&gt;</FONT></TD></TR>
+    
+    </TABLE>
+    >]
+
+    lino_welfare_modlib_cbss_models_IdentifyPersonRequest [label=<
+    <TABLE BGCOLOR="palegoldenrod" BORDER="0" CELLBORDER="0" CELLSPACING="0">
+     <TR><TD COLSPAN="2" CELLPADDING="4" ALIGN="CENTER" BGCOLOR="olivedrab4"
+     ><FONT FACE="Helvetica Bold" COLOR="white"
+     >IdentifyPersonRequest<BR/>&lt;<FONT FACE="Helvetica Italic">SSDNRequest,WithPerson</FONT>&gt;</FONT></TD></TR>
+    
+    </TABLE>
+    >]
+
+    lino_welfare_modlib_cbss_models_ManageAccessRequest [label=<
+    <TABLE BGCOLOR="palegoldenrod" BORDER="0" CELLBORDER="0" CELLSPACING="0">
+     <TR><TD COLSPAN="2" CELLPADDING="4" ALIGN="CENTER" BGCOLOR="olivedrab4"
+     ><FONT FACE="Helvetica Bold" COLOR="white"
+     >ManageAccessRequest<BR/>&lt;<FONT FACE="Helvetica Italic">SSDNRequest,WithPerson</FONT>&gt;</FONT></TD></TR>
+    
+    </TABLE>
+    >]
+
+    lino_welfare_modlib_cbss_tx25_RetrieveTIGroupsRequest [label=<
+    <TABLE BGCOLOR="palegoldenrod" BORDER="0" CELLBORDER="0" CELLSPACING="0">
+     <TR><TD COLSPAN="2" CELLPADDING="4" ALIGN="CENTER" BGCOLOR="olivedrab4"
+     ><FONT FACE="Helvetica Bold" COLOR="white"
+     >RetrieveTIGroupsRequest<BR/>&lt;<FONT FACE="Helvetica Italic">NewStyleRequest,SSIN</FONT>&gt;</FONT></TD></TR>
+    
+    </TABLE>
+    >]
+
+
+}
+
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+  
+  lino_welfare_modlib_cbss_models_ManageAccessRequest -> lino_welfare_modlib_cbss_models_Sector
+  [label="sector (manageaccessrequest)"] [arrowhead=none, arrowtail=dot];
+  
+  
+  lino_welfare_modlib_cbss_models_ManageAccessRequest -> lino_welfare_modlib_cbss_models_Purpose
+  [label="purpose (manageaccessrequest)"] [arrowhead=none, arrowtail=dot];
+  
+
+  
+
+}

@@ -180,6 +180,11 @@ class Lino(object):
     or setting:`DEBUG` is set.
     """
     
+    replace_django_templates = True
+    """
+    Whether to replace Djano's template engine by Jinja.
+    """
+    
     # three constants used by lino.modlib.workflows:
     max_state_value_length = 20 
     max_action_name_length = 50
@@ -240,20 +245,27 @@ class Lino(object):
     extjs_root = None
     """
     Path to the ExtJS root directory. 
-    Only used on a development server if the `media` 
-    directory has no symbolic link to the ExtJS root directory.
+    Only used when :attr:`extjs_base_url` is None,
+    and when the `media` directory has no symbolic link named `extjs` 
+    pointing to the ExtJS root directory.
     """
     
     extjs_base_url = "http://extjs-public.googlecode.com/svn/tags/extjs-3.3.1/release/"
     """
+    The URL from where to include the ExtJS library files.
+    
     The default value points to the 
     `extjs-public <http://code.google.com/p/extjs-public/>`_
-    repository and thus requires the clients to have an internet connection.
+    repository and thus requires the clients to have an internet 
+    connection.
+    This relieves newcomers from the burden of having to 
+    specify a download location in their :xfile:`settings.py`.
     
-    Set this to None if you want to serve ExtJS from your server
-    (which requires a symbolic link "extjs" in your media directory
-    or :attr:`extjs_root` pointing to the local directory 
-    where ExtJS 3.3.1 is installed).
+    On a production site you'll probably want to download and serve 
+    these files yourself.
+    Set this to `None`, set :attr:`extjs_root` 
+    (or a symbolic link "extjs" in your :xfile:`media` directory)
+    to point to the local directory  where ExtJS 3.3.1 is installed).
     """
     
     bootstrap_root = None
@@ -962,17 +974,19 @@ class Lino(object):
             MIDDLEWARE_CLASSES=tuple(
                 self.get_middleware_classes()))
                 
-        django_settings.update(
-            TEMPLATE_LOADERS=tuple(
-                ['lino.core.web.Loader']
-                ))
-                
-        #~ tl = [
-            #~ 'django.template.loaders.filesystem.Loader',
-            #~ 'django.template.loaders.app_directories.Loader',
-            #~ #     'django.template.loaders.eggs.load_template_source',
-        #~ ]
-        #~ django_settings.update(TEMPLATE_LOADERS = tuple(tl))
+        if self.replace_django_templates:
+            django_settings.update(
+                TEMPLATE_LOADERS=tuple(
+                    ['lino.core.web.Loader']
+                    ))
+           
+        else:
+            tl = [
+                'django.template.loaders.filesystem.Loader',
+                'django.template.loaders.app_directories.Loader',
+                #     'django.template.loaders.eggs.load_template_source',
+            ]
+            django_settings.update(TEMPLATE_LOADERS = tuple(tl))
                 
                 
         tcp = []
@@ -1181,6 +1195,10 @@ class Lino(object):
         return False
         #~ return obj.id is not None and (obj.id > 10 and obj.id < 21)
                   
+        
+    def analyze_models(self):
+        from lino.core.kernel import analyze_models
+        analyze_models()
         
     def startup(self,**options):
         """
@@ -1847,6 +1865,7 @@ class Lino(object):
         if self.django_admin_prefix:
             yield 'django.contrib.admin'
         #~ 'django.contrib.markup',
+        yield 'django_extensions'
         yield 'lino.modlib.about'
         #~ if self.admin_prefix:
             #~ yield 'lino.modlib.pages'

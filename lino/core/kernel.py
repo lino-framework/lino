@@ -203,6 +203,9 @@ def analyze_models():
                 self.modules.define(app_label,k,v)
                     
                     
+    from lino.core import web
+    web.site_setup(self)
+        
     #~ logger.info("20130121 GFK_LIST is %s",['%s.%s'%(full_model_name(f.model),f.name) for f in settings.LINO.GFK_LIST])
     dd.post_analyze.send(self,models_list=models_list)
 
@@ -383,8 +386,8 @@ def startup_site(self):
                 
         fields.resolve_virtual_fields()
         
-        from lino.core import web
-        web.site_setup(self)
+        #~ from lino.core import web
+        #~ web.site_setup(self)
         
         if len(sys.argv) == 0:
             process_name = 'WSGI'

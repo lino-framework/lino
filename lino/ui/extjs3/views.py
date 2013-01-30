@@ -850,7 +850,6 @@ class ApiElement(View):
         return delete_element(ar,elem)
         
 
-PLAIN_PAGE_LENGTH = 5
         
   
 class ApiList(View):
@@ -1098,6 +1097,7 @@ class PlainList(View):
         context = dict(
           title=ar.get_title(),
           heading=ar.get_title(),
+          E=E,
           #~ tbar = buttons,
           main=ar.as_html(),
         )
@@ -1122,6 +1122,7 @@ class PlainElement(View):
         
         context = dict(
           title=ar.get_action_title(),
+          E=E,
           #~ menu = E.tostring(menu),
           #~ tbar = buttons,
           main = ar.as_html(pk),

@@ -80,5 +80,5 @@ class Lino(Lino):
         m = main.add_menu("concepts",_("Concepts"))
         m.add_action(self.modules.concepts.Concepts)
         m.add_action(self.modules.countries.Countries)
-        #~ m.add_action(self.modules.countries.C)
+        m.add_action(self.modules.countries.Cities)
         

@@ -99,6 +99,11 @@ def html2odftext(e,**kw):
     
     """
     #~ print "20120613 html2odftext()", e.tag, e.text
+    if isinstance(e,basestring):
+        oe = text.Span()
+        oe.addText(e)
+        yield oe
+        return 
     if e.tag == 'p': 
         oe = text.P(**kw)
     #~ elif e.tag == 'td': 
@@ -239,13 +244,19 @@ class Renderer(AppyRenderer):
       
         
     def insert_table(self,ar,column_names=None):
+        try:
+            return self.insert_table_(ar,column_names=None)
+        except Exception as e:
+            logger.exception(e)
+        
+    def insert_table_(self,ar,column_names=None):
         """
         Render an :class:`lino.core.actions.ActionRequest` as an OpenDocument table.
         This is the function that gets called when a template contains a 
         ``do text from table(...)`` statement.
         """
         
-        fields, headers, widths = ar.get_field_info(column_names)
+        columns, headers, widths = ar.get_field_info(column_names)
         
         tw = sum(widths)
         """
@@ -324,7 +335,7 @@ class Renderer(AppyRenderer):
         table.addElement(table_rows)
         
         # create table columns and automatic table-column styles 
-        for i,fld in enumerate(fields):
+        for i,fld in enumerate(columns):
             #~ print 20120415, repr(fld.name)
             name = str(ar.actor)+"."+fld.name
             cs = add_style(name=name, family="table-column")
@@ -339,16 +350,12 @@ class Renderer(AppyRenderer):
             #~ self.my_automaticstyles.append(cs)
             table_columns.addElement(TableColumn(stylename=name))
             
-        from lino.ui.extjs3 import ext_store
+        #~ from lino.ui.extjs3 import ext_store
+        from lino.ui.extjs3 import ext_elems
         def fldstyle(fld):
-            if isinstance(fld,ext_store.VirtStoreField):
-                fld = fld.delegate
-            if isinstance(fld,(
-                ext_store.DecimalStoreField,
-                ext_store.IntegerStoreField,
-                ext_store.RequestStoreField,
-                ext_store.AutoStoreField
-                )):
+            #~ if isinstance(fld,ext_store.VirtStoreField):
+                #~ fld = fld.delegate
+            if isinstance(fld,ext_elems.NumberFieldElement):
                 return "Number Cell"
             return "Table Contents"
         
@@ -406,7 +413,7 @@ class Renderer(AppyRenderer):
                 text=force_unicode(h)))
             hr.addElement(tc)
             
-        sums  = [fld.zero for fld in fields]
+        sums  = [fld.zero for fld in columns]
           
         for row in ar.data_iterator:
             #~ for grp in ar.group_headers(row):
@@ -414,11 +421,11 @@ class Renderer(AppyRenderer):
             tr = TableRow()
             table_rows.addElement(tr)
             
-            for i,fld in enumerate(fields):
+            for i,fld in enumerate(columns):
                 #~ tc = TableCell(stylename=CELL_STYLE_NAME)
                 tc = TableCell(stylename=cell_style)
                 #~ if fld.field is not None:
-                v = fld.full_value_from_object(row,ar)
+                v = fld.field._lino_atomizer.full_value_from_object(row,ar)
                 stylename = fldstyle(fld)
                 if v is None:
                     tc.addElement(text.P(stylename=stylename,text=''))
@@ -427,10 +434,10 @@ class Renderer(AppyRenderer):
                     sums[i] += fld.value2num(v)
                 tr.addElement(tc)
                 
-        if sums != [fld.zero for fld in fields]:
+        if sums != [fld.zero for fld in columns]:
             tr = TableRow(stylename=total_row_style)
             table_rows.addElement(tr)
-            for i,fld in enumerate(fields):
+            for i,fld in enumerate(columns):
                 tc = TableCell(stylename=cell_style)
                 stylename = fldstyle(fld)
                 txt = tuple(html2odftext(fld.format_sum(ar,sums,i)))

@@ -45,6 +45,7 @@ from lino.core import fields
 #~ from lino.core import perms 
 
 
+PLAIN_PAGE_LENGTH = 15
 
 
 class Hotkey:
@@ -665,11 +666,11 @@ class GridEdit(TableAction):
         return None
         
     def as_html(self,ar):
-        if False:
+        if True:
             buttons = []
-            buttons.append( ('*',_("Home"), '/' ))
-            buttons.append( ('Ext',_("Using ExtJS"), ar.ui.ext_renderer.get_request_url(ar) ))
-            pglen = ar.limit or PLAIN_PAGE_LENGTH
+            if ar.limit is None:
+                ar.limit = PLAIN_PAGE_LENGTH
+            pglen = ar.limit 
             if ar.offset is None:
                 page = 1
             else:
@@ -708,12 +709,20 @@ class GridEdit(TableAction):
                 last_url = None 
             buttons.append( ('>',_("Next page"), next_url ))
             buttons.append( ('>>',_("Last page"), last_url ))
+            
+            items = []
+            for symbol,label,url in buttons:
+                if url is None:
+                    items.append(E.li(E.span(symbol,class_="disabled")))
+                else:
+                    items.append(E.li(E.a(symbol,href=url)))
+            pager = E.div(E.ul(*items),class_='pagination')
+                
         
         t = xghtml.Table()
         #~ t = doc.add_table()
         ar.ui.ar2html(ar,t,ar.sliced_data_iterator)
-        t = t.as_element()
-        return E.tostring(t)
+        return E.div(pager,t.as_element())
       
         
 
@@ -812,7 +821,8 @@ class ShowDetailAction(RowAction):
         while in HTML5 it must be "<div></div>" (the ending / is ignored)
         """
         #~ return E.tostring(main,method="html")
-        return E.tostring(main)
+        #~ return E.tostring(main)
+        return main
         
         
 

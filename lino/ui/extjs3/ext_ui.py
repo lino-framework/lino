@@ -2249,7 +2249,8 @@ tinymce.init({
         tble.attrib.update(cellspacing="3px",bgcolor="#ffffff", width="100%")
         
         fields = ar.ah.store.list_fields
-        columns = ar.ah.list_layout.main.columns
+        grid = ar.ah.list_layout.main
+        columns = grid.columns
         headers = [force_unicode(col.label or col.name) for col in columns]
         cellwidths = None
         
@@ -2265,7 +2266,7 @@ tinymce.init({
                 columns = []
                 for i,cn in enumerate(col_names):
                     col = None
-                    for e in ar.ah.list_layout.main.columns:
+                    for e in grid.columns:
                         if e.name == cn:
                             col = e
                             break
@@ -2273,7 +2274,7 @@ tinymce.init({
                     #~ col = ar.ah.list_layout._main.columns[ci]
                     if col is None:
                         #~ names = [e.name for e in ar.ah.list_layout._main.walk()]
-                        raise Exception("No column named %r in %s" % (cn,ar.ah.list_layout.main.columns))
+                        raise Exception("No column named %r in %s" % (cn,grid.columns))
                     if not hiddens[i]:
                         columns.append(col)
                         fields.append(col.field._lino_atomizer)
@@ -2304,9 +2305,9 @@ tinymce.init({
         cellattrs = dict(align="left",valign="top",bgcolor="#eeeeee")
         #~ cellattrs = dict()
         
-        #~ o = headers
-        headers = [x for x in ar.ah.store.headers2html(ar,fields,headers,**cellattrs)]        
-        sums  = [fld.zero for fld in fields]
+        #~ headers = [x for x in ar.ah.store.headers2html(ar,fields,headers,**cellattrs)]        
+        headers = [x for x in grid.headers2html(ar,columns,headers,**cellattrs)]        
+        sums  = [fld.zero for fld in columns]
         #~ hr = tble.add_header_row(*headers,**cellattrs)
         if cellwidths:
             for i,td in enumerate(headers): 
@@ -2316,7 +2317,8 @@ tinymce.init({
         recno = 0
         for row in data_iterator:
             recno += 1
-            cells = [x for x in ar.ah.store.row2html(ar,fields,row,sums,**cellattrs)]
+            #~ cells = [x for x in ar.ah.store.row2html(ar,columns,row,sums,**cellattrs)]
+            cells = [x for x in grid.row2html(ar,columns,row,sums,**cellattrs)]
             #~ print 20120623, cells
             #~ tble.add_body_row(*cells)
             tble.body.append(xghtml.E.tr(*cells))
@@ -2333,7 +2335,7 @@ tinymce.init({
                     has_sum = True
                     break
             if has_sum:
-                cells = ar.ah.store.sums2html(ar,fields,sums,**cellattrs)
+                cells = grid.sums2html(ar,columns,sums,**cellattrs)
                 tble.body.append(xghtml.E.tr(*cells))
                 #~ tble.add_body_row(*ar.ah.store.sums2html(ar,fields,sums,**cellattrs))
             

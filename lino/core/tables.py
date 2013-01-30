@@ -442,7 +442,8 @@ class TableRequest(ActionRequest):
                     #~ raise Exception("No column named %r in %s" % (cn,ah.list_layout.main.columns))
                     raise Exception("No column named %r in %s" % (cn,ar.ah.list_layout.main.columns))
                 if not hiddens[i]:
-                    fields.append(col.field._lino_atomizer)
+                    fields.append(col)
+                    #~ fields.append(col.field._lino_atomizer)
                     headers.append(unicode(col.label or col.name))
                     widths.append(int(all_widths[i]))
         else:
@@ -460,7 +461,8 @@ class TableRequest(ActionRequest):
             #~ fields = ar.ah.store.list_fields
             headers = [unicode(col.label or col.name) for col in columns]
             widths = [(col.width or col.preferred_width) for col in columns]
-            fields = [col.field._lino_atomizer for col in columns]
+            #~ fields = [col.field._lino_atomizer for col in columns]
+            fields = columns
 
         oh = ar.actor.override_column_headers(ar)
         if oh:
@@ -488,12 +490,14 @@ class TableRequest(ActionRequest):
                 #~ if header is not None:
                     #~ headers[i] = unicode(header)
                     
+        grid = self.ah.list_layout.main
+                    
         sums  = [fld.zero for fld in fields]
         rows = []  
         recno = 0
         for row in self:
             recno += 1
-            rows.append([x for x in self.ah.store.row2text(self,fields,row,sums)])
+            rows.append([x for x in grid.row2text(self,fields,row,sums)])
                 
         has_sum = False
         for i in sums:
@@ -502,7 +506,7 @@ class TableRequest(ActionRequest):
                 has_sum = True
                 break
         if has_sum:
-            rows.append([x for x in self.ah.store.sums2html(self,fields,sums)])
+            rows.append([x for x in grid.sums2html(self,fields,sums)])
         from lino.utils import rstgen
         return rstgen.table(headers,rows)
       
