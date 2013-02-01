@@ -28,6 +28,8 @@ from django.utils.translation import ugettext_lazy as _
 from lino import mixins
 from lino import dd
 
+concepts = dd.resolve_app('concepts')
+
 #~ contacts = dd.resolve_app('contacts')
 #~ sales = dd.resolve_app('sales')
 
@@ -41,6 +43,10 @@ from lino import dd
 
 #~ def site_setup(site):
     #~ site.description = 
+    
+class Main(concepts.TopLevelConcepts):
+    pass
+    
     
 def site_setup(site):
     site.modules.countries.Cities.required = dd.required(auth=False)

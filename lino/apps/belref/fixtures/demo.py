@@ -25,20 +25,7 @@ from lino.utils import babel
 from lino import dd
 Concept = dd.resolve_model('concepts.Concept')
 
-
-"""
-============================================ ================================================== =================================================
-en                                           de                                                 fr
-============================================ ================================================== =================================================
-NR (National Register)                       NR (Nationalregister)                              RN (Régistre National)
-PCSW (Public Centre for Social Welfare)      ÖSHZ (Öffentliches Sozialhilfezentrum)             CPAS (Centre Public d'Action Sociale)
-SPIS (Social Integration Service)            DSBE (Dienst für Sozial-Berufliche Eingliederung)  SISP (Service d'insertion socio-professionnelle)
-ISIP (Individual social integration project) VSE (Vertrag zur Sozialen Eingliederung)           PIIS (Projet Individualisé d'Intégration Sociale)
-SSIN (Social Security Identification Number) INSS (Identifizierungsnummer der Sozialsicherheit) NISS (N° d'Identification de la Sécurité Sociale)
-============================================ ================================================== =================================================
-"""
-
-def C(en,de,fr='',nl='',**kw):
+def C(en,de,fr='',nl='',jargon=None,**kw):
     texts = dict(en=en,de=de,fr=fr,nl=nl)
     name = dict()
     abbr = dict()
@@ -54,34 +41,52 @@ def C(en,de,fr='',nl='',**kw):
             else:
                 name[lang] = t
                 #~ kw['name_'+lang] = t
-    kw = babel.babel_values('name',**name)
+    kw.update(babel.babel_values('name',**name))
     kw.update(babel.babel_values('abbr',**abbr))
-    return Concept(**kw)
+    obj = Concept(**kw)
+    yield obj
+    if jargon is not None:
+        if isinstance(jargon,dd.Model):
+            jargon = [jargon]
+        for domain in jargon:
+            yield Link(parent=domain,child=obj,type=LinkTypes.jargon)
     
 def objects():
-    yield C("NR (National Register)",
+    yield C(
+      "NR (National Register)",
       "NR (Nationalregister)",
       "RN (Registre National)",
       "RR (Rijksregister)")
-    yield C("PCSW (Public Centre for Social Welfare)",
+    cpas = C(
+      "PCSW (Public Centre for Social Welfare)",
       "ÖSHZ (Öffentliches Sozialhilfezentrum)",
       "CPAS (Centre Public d'Action Sociale)",
-      "OCMW (Openbaar Centrum voor Maatschappelijk Welzijn)")
-    yield C("SPIS (Social Integration Service)",
+      "OCMW (Openbaar Centrum voor Maatschappelijk Welzijn)",
+      is_jargon_domain=True)
+    yield cpas
+    yield C(
+      "SPIS (Social Integration Service)",
       "DSBE (Dienst für Sozial-Berufliche Eingliederung)",
       "SISP (Service d'insertion socio-professionnelle)",
-      "DSPI (Dienst Socio-Professionele Inschakeling)")
-    yield C("ISIP (Individual social integration project)",
+      "DSPI (Dienst Socio-Professionele Inschakeling)",
+      jargon=cpas)
+    yield C(
+      "ISIP (Individual social integration project)",
       "VSE (Vertrag zur Sozialen Eingliederung)",
-      "PIIS (Projet Individualisé d'Intégration Sociale)")
-    yield C("SSIN (Social Security Identification Number)",
+      "PIIS (Projet Individualisé d'Intégration Sociale)",
+      jargon=cpas)
+    yield C(
+      "SSIN (Social Security Identification Number)",
       "INSS (Identifizierungsnummer der Sozialsicherheit)",
-      "NISS (N° d'Identification de la Sécurité Sociale)")
-    yield C("Debts consulting",
+      "NISS (N° d'Identification de la Sécurité Sociale)",
+      jargon=cpas)
+    yield C(
+      "Debts consulting",
       "Schuldnerberatung",
       "Médiation de dettes",
       "Schuldbemiddeling ")
-    yield C("Social Service",
+    yield C(
+      "Social Service",
       "Sozialdienst",
       "Service Social",
       "Sociale dienst")

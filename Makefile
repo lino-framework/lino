@@ -6,7 +6,7 @@ LINO_ROOT := `cygpath -m $(LINO_ROOT)`
 APPS = cosi 
 MODULES = vat accounts ledger households outbox \
   cal products properties contacts countries notes \
-  sales finan uploads users postings about
+  sales finan uploads users postings about concepts
 TESTS_OPTIONS = --verbosity=2 --traceback
 MMOPTS := -s -a --settings lino.apps.sphinxdocs.settings
 CMOPTS := --settings lino.apps.sphinxdocs.settings

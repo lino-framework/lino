@@ -1072,7 +1072,8 @@ class GridConfig(View):
         return settings.LINO.ui.success(msg)
         
 MENUS = dict()        
-            
+
+
 def plain_response(ui,request,tplname,context):        
     u = request.subst_user or request.user
     menu = MENUS.get(u.profile,None)
@@ -1083,7 +1084,7 @@ def plain_response(ui,request,tplname,context):
         menu = menu.as_html(ui,request)
         menu = E.tostring(menu)
         MENUS[u.profile] = menu
-    context.update(menu=menu)
+    context.update(menu=menu,E=E)
     web.extend_context(context)
     template = settings.LINO.jinja_env.get_template(tplname)
     
@@ -1103,7 +1104,6 @@ class PlainList(View):
         context = dict(
           title=ar.get_title(),
           heading=ar.get_title(),
-          E=E,
           #~ tbar = buttons,
           main=ar.as_html(),
         )
@@ -1128,7 +1128,6 @@ class PlainElement(View):
         
         context = dict(
           title=ar.get_action_title(),
-          E=E,
           #~ menu = E.tostring(menu),
           #~ tbar = buttons,
           main = ar.as_html(pk),
@@ -1139,14 +1138,15 @@ class PlainElement(View):
         
         
 class PlainIndex(View):
-    """This is not a docstring
+    """
+    This is not a docstring
     Similar to AdminIndex
     """
     def get(self, request, *args, **kw):
         ui = settings.LINO.ui
         context = dict(
           title = settings.LINO.title,
-          main = '', 
+          main = '',
         )
         if settings.LINO.user_model is not None:
             user = request.subst_user or request.user

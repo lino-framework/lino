@@ -1,5 +1,5 @@
 # -*- coding: UTF-8 -*-
-## Copyright 2008-2013 Luc Saffre
+## Copyright 2013 Luc Saffre
 ## This file is part of the Lino project.
 ## Lino is free software; you can redistribute it and/or modify 
 ## it under the terms of the GNU General Public License as published by
@@ -47,21 +47,37 @@ from lino import dd
 #~ from lino import fields
 
 from lino import mixins
-from lino.utils import join_words
-from lino.utils.choosers import chooser
-from lino.utils import babel 
+#~ from lino.utils import join_words
+from lino.utils import babel
 #~ from lino.models import get_site_config
 
 #~ from lino.modlib.contacts.utils import Genders
 
 #~ from lino.modlib.countries.models import CountryCity
-from lino.modlib.countries.models import CountryRegionCity
+#~ from lino.modlib.countries.models import CountryRegionCity
 
 #~ from lino.modlib.contacts.utils import get_salutation
 #~ from lino.modlib.contacts.utils import GENDER_CHOICES, get_salutation
 
+#~ from lino.utils import mti
 
-from lino.utils import mti
+
+#~ class ConceptTypes(dd.ChoiceList):
+    #~ verbose_name = _("Concept Type")
+    #~ verbose_name_plural = _("Concept Types")
+    
+#~ add = ConceptTypes.add_item
+#~ add('10', _("Context"),'context')
+#~ add('20', _("Jargon"),'context')
+
+class LinkTypes(dd.ChoiceList):
+    verbose_name = _("Link Type")
+    verbose_name_plural = _("Link Types")
+
+add = LinkTypes.add_item
+#~ add('10', _("Context"),'context')
+add('10', _("Jargon"),'jargon')
+
 
 
 class Concept(babel.BabelNamed):
@@ -76,8 +92,18 @@ class Concept(babel.BabelNamed):
     wikipedia = babel.BabelCharField(_("Wikipedia"),max_length=200,blank=True)
       
     definition = babel.BabelTextField(_("Definition"),blank=True)
-    
+    is_jargon_domain = models.BooleanField(
+        _("Jargon domain"),
+        help_text=_("Whether this concept designates a domain of specialized vocabulary."))
         
+    def summary_row(self,ar=None):
+        if self.abbr:
+            return "%s (%s)" % (babel.babelattr(self,'name'),babel.babelattr(self,'abbr'))
+        return babel.babelattr(self,'name')
+        
+        
+    
+  
 class Concepts(dd.Table):
     #~ required = dd.required(user_level='manager')
     model = Concept
@@ -87,9 +113,45 @@ class Concepts(dd.Table):
     abbr
     definition
     wikipedia
+    Parents Children
     """
 
 
+class TopLevelConcepts(Concepts):
+    label = _("Top-level concepts")
+    filter = models.Q(is_jargon_domain=True)
+    
+    
+    
+    
+    
+    
+class Link(dd.Model):
+    
+    class Meta:
+        verbose_name = _("Link")
+        verbose_name_plural = _("Links")
+        
+    type = LinkTypes.field(blank=True,default=LinkTypes.jargon)
+    parent = dd.ForeignKey(Concept,related_name="children")
+    child = dd.ForeignKey(Concept,related_name="parents")
+    
+    @dd.chooser()
+    def child_choices(cls):
+        return Concept.objects.filter(is_jargon_domain=True) #         
+        
+class Links(dd.Table):
+    model = Link
+    
+class Parents(Links):
+    master_key = 'child'
+    label = _("Parents")
+  
+class Children(Links):
+    master_key = 'parent'
+    label = _("Children")
+
+    
 
 
 MODULE_LABEL = _("Concepts")

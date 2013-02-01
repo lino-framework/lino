@@ -46,7 +46,8 @@ class Lino(Lino):
     
     #~ anonymous_user_profile = 
     
-    languages = ['en','fr','nl','de']
+    #~ languages = ['en','fr','nl','de']
+    languages = ['fr','nl','de']
     #~ languages = 'de fr et en'.split()
     
     #~ project_model = 'tickets.Project'
@@ -77,8 +78,13 @@ class Lino(Lino):
         wouldn't fit.
         """
         from django.utils.translation import ugettext_lazy as _
-        m = main.add_menu("concepts",_("Concepts"))
+        from lino import dd
+        concepts = dd.resolve_app('concepts')
+        m = main.add_menu("concepts",concepts.MODULE_LABEL)
         m.add_action(self.modules.concepts.Concepts)
         m.add_action(self.modules.countries.Countries)
         m.add_action(self.modules.countries.Cities)
         
+
+    def get_main_action(self,user):
+        return self.modules.belref.Main.default_action

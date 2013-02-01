@@ -1,0 +1,12 @@
+{% extends "base.html" %}
+{% block title %}{{title}}{% endblock %}
+{% block main %}
+<div class="row-fluid">
+<p>({{_("Under construction")}})</p>
+<p>
+{% for obj in settings.LINO.modules.concepts.Concept.objects.all() %}
+  {{obj.summary_row()}},
+  {% endfor %}
+</p>
+</div>
+{% endblock %}
