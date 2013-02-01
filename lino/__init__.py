@@ -1620,7 +1620,7 @@ class Lino(object):
                 "No data migration to intermediate Lino version %s", __version__)
             return 
         if '+' in current_version:
-            logger.warning(
+            dblogger.warning(
                 "No data migration to intermediate %s version %s", 
                 self.short_name,current_version)
             #~ dblogger.info("Cannot migrate to intermediate version %", current_version)
