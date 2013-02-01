@@ -101,13 +101,20 @@ def ispure(s):
     if type(s) == types.StringType:
         try:
             s.decode('ascii')
-        except UnicodeDecodeError,e:
+        except UnicodeDecodeError as e:
             return False
         return True
     return False
 
 def assert_pure(s):
-    assert ispure(s), "%r: not pure" % s
+    #~ assert ispure(s), "%r: not pure" % s
+    if s is None: return 
+    if isinstance(s,unicode):
+        return True
+    try:
+        s.decode('ascii')
+    except UnicodeDecodeError as e:
+        raise Exception("%r is not pure : %s" % (s,e))
      
 
 def join_words(*words):

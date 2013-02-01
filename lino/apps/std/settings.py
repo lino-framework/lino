@@ -128,8 +128,7 @@ MEDIA_URL = '/media/'
 # Make this unique, and don't share it with anybody.
 SECRET_KEY = 'cqt^18t(Fb#14a@s%mbtdif+ih8fscpf8l9aw+0ivo2!3c(c%&'
 
-
-ROOT_URLCONF = 'lino.ui.extjs3.urls'
+#~ ROOT_URLCONF = 'lino.ui.extjs3.urls'
 
 #~ TEMPLATE_DIRS = [
       #~ join(LINO.project_dir,'templates'),
@@ -147,24 +146,17 @@ ROOT_URLCONF = 'lino.ui.extjs3.urls'
 
 
 
-SERIALIZATION_MODULES = {
-     #~ "dpy" : "lino.utils.dpy",
-     "py" : "lino.utils.dumpy",
-}
 
 #print "done", __file__
 
 EMAIL_HOST = "mail.example.com"
 #EMAIL_PORT = ""
 
-LOGGING_CONFIG = 'lino.utils.log.configure'
-LOGGING = dict(filename=None,level='INFO')
 
-
-QOOXDOO_PATH = None
-"""
-Path to the Qooxdoo SDK. Used by :term:`makeui`
-"""
+#~ QOOXDOO_PATH = None
+#~ """
+#~ Path to the Qooxdoo SDK. Used by :term:`makeui`
+#~ """
 
 # this setting will be overridden by local settings
 # it is needed for generating docs. Sphinx's autodoc needs to import the modules to introspect them, but Django would complain if no settings is specified.

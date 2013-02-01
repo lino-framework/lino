@@ -314,8 +314,8 @@ class Registrable(model.Model):
         
         
     @classmethod
-    def site_setup(cls,site):
-        super(Registrable,cls).site_setup(site)
+    def on_analyze(cls,site):
+        super(Registrable,cls).on_analyze(site)
         cls._registrable_fields = set(cls.get_registrable_fields(site))
         #~ logger.info("20130128 %s %s",cls,cls._registrable_fields)
     

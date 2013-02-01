@@ -18,7 +18,7 @@
 
 import sys
 from django.core.management.base import BaseCommand, CommandError
-from django.conf import settings
+from lino.runtime import settings
 
 class Command(BaseCommand):
     help = __doc__
@@ -27,7 +27,7 @@ class Command(BaseCommand):
     def handle(self, *args, **options):
         if len(args) == 0:
             raise CommandError("I need at least one argument.")
-        settings.LINO.startup()
+        #~ settings.LINO.startup()
         spec = args[0]
         print settings.LINO.modules.resolve(spec).to_rst()
           

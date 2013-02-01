@@ -37,8 +37,8 @@ from django.utils.translation import get_language
 #~ from django.views.generic import View
 
 
-from lino.core import actions
-from lino.core import web
+#~ from lino.core import actions
+#~ from lino.core import web
 
 
 from lino.core.modeltools import resolve_app

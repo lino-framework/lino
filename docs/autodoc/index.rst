@@ -12,6 +12,7 @@ extension.
     lino
     
     lino.dd
+    lino.runtime
     
     lino.models
     lino.management

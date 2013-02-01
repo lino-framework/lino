@@ -20,6 +20,40 @@ An extended `appy.pod` renderer that installs additional functions:
   Render a string that is in HTML (not XHTML).
 - :meth:`table <Renderer.insert_table>`
   Render a Lino Action Request as a table.
+  
+This module contains also a general utility function :func:`html2odftext`:
+
+>>> from lino.utils.xmlgen.html import E
+>>> def test(e):
+...     print(E.tostring(e))
+...     for oe in html2odftext(e):
+...         print(toxml(oe))
+>>> test(E.p("This is a ",E.b("first")," test.")) #doctest: +NORMALIZE_WHITESPACE
+<p>This is a <b>first</b> test.</p>
+<text:p xmlns:text="urn:oasis:names:tc:opendocument:xmlns:text:1.0">This 
+is a <text:span text:style-name="Bold Text">first</text:span> test.</text:p>
+
+>>> test(E.p(E.b("This")," is another test.")) #doctest: +NORMALIZE_WHITESPACE
+<p><b>This</b> is another test.</p>
+<text:p xmlns:text="urn:oasis:names:tc:opendocument:xmlns:text:1.0"><text:span 
+text:style-name="Bold Text">This</text:span> is another test.</text:p>
+
+>>> test(E.td(E.p("This is another test."))) #doctest: +NORMALIZE_WHITESPACE
+<td><p>This is another test.</p></td>
+<text:p xmlns:text="urn:oasis:names:tc:opendocument:xmlns:text:1.0">This 
+is another test.</text:p>
+
+>>> test(E.td(E.p(E.b("This")," is another test."))) #doctest: +NORMALIZE_WHITESPACE
+<td><p><b>This</b> is another test.</p></td>
+<text:p xmlns:text="urn:oasis:names:tc:opendocument:xmlns:text:1.0"><text:span 
+text:style-name="Bold Text">This</text:span> is another test.</text:p>
+
+:func:`html2odftext` converts bold text to a span with a 
+style named "Bold Text". That's currently a hard-coded name, and the 
+caller must make sure that a style of that name is defined in the 
+document.
+
+  
 
 """
 
@@ -42,12 +76,6 @@ from django.utils.encoding import force_unicode
 from django.conf import settings
 
 
-#~ from lino.utils.xmlgen import odf
-#~ from lxml import etree
-
-OAS = '<office:automatic-styles>'
-OFFICE_STYLES = '<office:styles>'
-
 from cStringIO import StringIO
 def toxml(node):
     buf = StringIO()
@@ -63,8 +91,12 @@ from odf.element import Text
 from odf import text
 from odf.table import Table, TableColumns, TableColumn, TableHeaderRows, TableRows, TableRow, TableCell
 
+OAS = '<office:automatic-styles>'
+OFFICE_STYLES = '<office:styles>'
 
-def html2odftext(e,**kw):
+PTAGS = ('p','td')
+
+def html2odftext(e,inline=None,**kw):
     """
     Convert a :mod:`lino.utils.xmlgen.html` element 
     (e.g. a value of a DisplayField) to an ODF text element.
@@ -72,57 +104,41 @@ def html2odftext(e,**kw):
     ignoring all other formatting.
     There's probably a better way to do this...
     
-    Usage example:
-    
-    >>> from lino.utils.xmlgen.html import E
-    >>> e = E.p("This is a ",E.b("first")," test.")
-    >>> print E.tostring(e)
-    <p>This is a <b>first</b> test.</p>
-    >>> oe = tuple(html2odftext(e))[0]
-    >>> print toxml(oe) #doctest: +NORMALIZE_WHITESPACE
-    <text:p xmlns:text="urn:oasis:names:tc:opendocument:xmlns:text:1.0">This 
-    is a <text:span text:style-name="Bold Text">first</text:span> test.</text:p>
-    
-    >>> e = E.p(E.b("This")," is another test.")
-    >>> print E.tostring(e)
-    <p><b>This</b> is another test.</p>
-    
-    >>> oe = tuple(html2odftext(e))[0]
-    >>> print toxml(oe) #doctest: +NORMALIZE_WHITESPACE
-    <text:p xmlns:text="urn:oasis:names:tc:opendocument:xmlns:text:1.0"><text:span 
-    text:style-name="Bold Text">This</text:span> is another test.</text:p>
-    
-    :func:`html2odftext` converts bold text to a span with a 
-    style named "Bold Text". That's currently a hard-coded name, and the 
-    caller must make sure that a style of that name is defined in the 
-    document.
-    
     """
     #~ print "20120613 html2odftext()", e.tag, e.text
-    if isinstance(e,basestring):
-        oe = text.Span()
-        oe.addText(e)
-        yield oe
+    if inline is None:
+        if e.tag in PTAGS: 
+            #~ oe = inline = text.P(**kw)
+            oe = text.P(**kw)
+        else:
+            raise NotImplementedError("%s (tag %r)" % (e,e.tag))
+    elif isinstance(e,basestring):
+        inline.addText(e)
+        #~ oe = text.Span()
+        #~ oe.addText(e)
+        #~ yield oe
         return 
-    if e.tag == 'p': 
-        oe = text.P(**kw)
-    #~ elif e.tag == 'td': 
-        #~ oe = text.P(**kw)
-    elif e.tag == 'b':
-        oe = text.Span(stylename='Bold Text')
     else:
-        #~ raise NotImplementedError("%s (tag %r)" % (e,e.tag))
-        oe = text.Span()
+        if e.tag == 'b':
+            oe = text.Span(stylename='Bold Text')
+        elif e.tag in PTAGS: 
+            oe = inline
+        else:
+            raise NotImplementedError("%s (tag %r)" % (e,e.tag))
+            #~ oe = text.Span()
+            
     if e.text:
         oe.addText(e.text)
     for child in e:
-        for oc in html2odftext(child):
-            #~ oe.addElement(oc)
+        #~ html2odftext(child,oe)
+        for oc in html2odftext(child,oe):
+            # oe.addElement(oc)
             oe.appendChild(oc)
     #~ if not True:
         #~ if e.tail:
             #~ oe.addText(e.tail)
-    yield oe
+    if oe is not inline:
+        yield oe
     #~ if True:
     if e.tail:
         #~ yield e.tail
@@ -248,6 +264,7 @@ class Renderer(AppyRenderer):
             return self.insert_table_(ar,column_names=None)
         except Exception as e:
             logger.exception(e)
+            return ''
         
     def insert_table_(self,ar,column_names=None):
         """
@@ -370,11 +387,13 @@ class Renderer(AppyRenderer):
             txt = fld.value2html(ar,val)
             #~ if isinstance(txt,etree.Element): 
             if etree.iselement(txt): 
-                if not txt.tag in ('p','div'):
-                    txt = xghtml.E.p(txt)
-                chunks = tuple(html2odftext(txt,stylename=style_name))
-                assert len(chunks) == 1
-                p = chunks[0]
+                #~ if not txt.tag in ('p','div'):
+                    #~ txt = xghtml.E.p(txt)
+                p = text.P(stylename=style_name)
+                #~ chunks = tuple(html2odftext(txt,stylename=style_name))
+                chunks = tuple(html2odftext(txt,p))
+                assert len(chunks) == 0
+                #~ p = chunks[0]
                 #~ txt = etree.tostring(txt)
                 #~ pass
             else:
@@ -439,11 +458,14 @@ class Renderer(AppyRenderer):
             table_rows.addElement(tr)
             for i,fld in enumerate(columns):
                 tc = TableCell(stylename=cell_style)
+                p = tc.addElement(text.P(stylename=stylename))
                 stylename = fldstyle(fld)
-                txt = tuple(html2odftext(fld.format_sum(ar,sums,i)))
-                assert len(txt) == 1
-                tc.addElement(text.P(stylename=stylename,text=txt[0]))
-                tr.addElement(tc)
+                txt = tuple(html2odftext(fld.format_sum(ar,sums,i),p))
+                assert len(txt) == 0
+                #~ txt = tuple(html2odftext(fld.format_sum(ar,sums,i),p))
+                #~ assert len(txt) == 1
+                #~ tc.addElement(text.P(stylename=stylename,text=txt[0]))
+                #~ tr.addElement(tc)
             
 
         doc.text.addElement(table)

@@ -1,4 +1,4 @@
-## Copyright 2010-2012 Luc Saffre
+## Copyright 2010-2013 Luc Saffre
 ## This file is part of the Lino project.
 ## Lino is free software; you can redistribute it and/or modify 
 ## it under the terms of the GNU General Public License as published by
@@ -38,29 +38,30 @@ Another example using :attr:`lino.Lino.project_dir`::
   LOGGING = dict(filename=join(LINO.project_dir,'log','system.log'),level='DEBUG')
 
   
-Example to use date-based log files 
-(this trick is not recommended since the filename is computed 
+The following example to use date-based log files 
+is **not recommended** since the filename is computed 
 once per process, causing a long-running server process to log to an old file
-even though a newer file has been created by another process)::
+even though a newer file has been created by another process::
 
   import datetime
   filename = datetime.date.today().strftime('/var/log/lino/%Y-%m-%d.log')
   LOGGING = dict(filename=filename,level='DEBUG',rotate=False)
   
 
-Logile rotation
----------------
-
-**Logfile rotation** is no longer supported here since with Django 
-it is possible to have several processes using the same :xfile:`settings.py` file.
-That might cause problems when they all try to rotate at the same time.
+Logfile rotation
+----------------
 
 On Linux systems, Lino uses WatchedFileHandler so that
 system administrators can install system-wide log rotation with `logrotate`.
 
+Django applications cannot use Python-based **Logfile rotation** 
+since with Django 
+it is possible to have several processes using the same :xfile:`settings.py` file.
+That would sooner or later cause problems when they all try to rotate at the same time.
+
+
 Remarks
 -------
-
 
 Yes, we read the `mod_wsgi documentation 
 <http://code.google.com/p/modwsgi/wiki/ApplicationIssues>`_ 
@@ -71,8 +72,6 @@ with mod_wsgi. If such code is a library module, the code should be providing a 
 specifically flag that it is a non interactive application and not use magic to 
 determine whether that is the case or not.".
 Any comments are welcome.
-
-
 
 See also :doc:`/tickets/15`
 """
@@ -131,21 +130,6 @@ Available parameters are:
                  If this is a string, Lino converts it to a list 
                  (expecting it to be a space-separated list of names).
                  
-The following options are *no longer supported* because they were for `logfile rotation`_.
-                
-:param rotate:   [deprecated] if `logfile` specified, set this to `False` if you 
-                 don't want a rotating logfile.
-                 Ignored on Windows where this feature is not available.
-                 
-:param when:     [deprecated] If this is specified, Lino will create a `TimedRotatingFileHandler
-                 <http://docs.python.org/library/logging.handlers.html#timedrotatingfilehandler>`_
-                 
-:param interval: [deprecated] If `when` is specified, you can also specify an `interval` to forward to 
-                 `TimedRotatingFileHandler`
-                 
-:param maxBytes:    [deprecated] rotate if logfile's size gets bigger than this.
-:param backupCount: [deprecated] number of rotated logfiles to keep.
-
 If there is a logfile, then console messages will never be more verbose than INFO
 because too many messages on the screen are disturbing, 
 and if the level is DEBUG you will better analyze them in the logfile.
@@ -155,7 +139,6 @@ Automatically adds an AdminEmailHandler with level ERROR to all specified logger
 Because that's rather necessary on a production server with :setting:`DEBUG` False.
 
     """
-    
     djangoLogger = logging.getLogger('django')
     linoLogger = logging.getLogger('lino')
     #~ sudsLogger = logging.getLogger('suds')

@@ -141,9 +141,20 @@ class Lino(object):
     information about your local settings (where they are in the file 
     system), and the possibility to modify your Django settings.
     
-    Lino will modify the following Django settings:
-    :setting:`FIXTURE_DIRS`, :setting:`MEDIA_ROOT` 
-    and :setting:`TEMPLATE_DIRS`,...
+    Lino will modify the following Django settings 
+    (which means that if you want to modify one of these, 
+    do it *after* instantiating your :setting:`LINO`):
+    
+      :setting:`ROOT_URLCONF`
+      :setting:`SERIALIZATION_MODULES`
+      :setting:`MEDIA_ROOT` 
+      :setting:`TEMPLATE_DIRS`
+      :setting:`FIXTURE_DIRS` 
+      :setting:`LOGGING_CONFIG`
+      :setting:`LOGGING`
+      :setting:`MIDDLEWARE_CLASSES`
+      :setting:`TEMPLATE_LOADERS`
+      ...
     
     """
     
@@ -180,10 +191,10 @@ class Lino(object):
     or setting:`DEBUG` is set.
     """
     
-    replace_django_templates = True
-    """
-    Whether to replace Djano's template engine by Jinja.
-    """
+    #~ replace_django_templates = True
+    #~ """
+    #~ Whether to replace Djano's template engine by Jinja.
+    #~ """
     
     # three constants used by lino.modlib.workflows:
     max_state_value_length = 20 
@@ -971,22 +982,37 @@ class Lino(object):
         #~ ))
         
         django_settings.update(
-            MIDDLEWARE_CLASSES=tuple(
-                self.get_middleware_classes()))
+            LOGGING_CONFIG='lino.utils.log.configure',
+            LOGGING=dict(filename=None,level='INFO'),
+            )
+        
+        django_settings.update(SERIALIZATION_MODULES = {
+            "py" : "lino.utils.dumpy",
+        })
+        
+        django_settings.update(
+            ROOT_URLCONF = 'lino.ui.extjs3.urls'
+          
+        )
+        django_settings.update(
+            MIDDLEWARE_CLASSES=tuple(self.get_middleware_classes()))
                 
-        if self.replace_django_templates:
-            django_settings.update(
-                TEMPLATE_LOADERS=tuple(
-                    ['lino.core.web.Loader']
-                    ))
-           
-        else:
-            tl = [
+        #~ if self.replace_django_templates:
+        django_settings.update(
+            TEMPLATE_LOADERS=tuple([
+                'lino.core.web.Loader',
                 'django.template.loaders.filesystem.Loader',
                 'django.template.loaders.app_directories.Loader',
+                #~ 'django.template.loaders.eggs.Loader',
+                ]))
+           
+        #~ else:
+            #~ tl = [
+                #~ 'django.template.loaders.filesystem.Loader',
+                #~ 'django.template.loaders.app_directories.Loader',
                 #     'django.template.loaders.eggs.load_template_source',
-            ]
-            django_settings.update(TEMPLATE_LOADERS = tuple(tl))
+            #~ ]
+            #~ django_settings.update(TEMPLATE_LOADERS = tuple(tl))
                 
                 
         tcp = []
@@ -1585,19 +1611,19 @@ class Lino(object):
         #~ name,current_version,url = self.using().next()
         if current_version is None:
             raise Exception("Cannot migrate to version None")
-        if '+' in __version__:
-            raise Exception(
-                "Cannot loaddata python dumps to intermediate Lino version %s" % __version__)
-        if '+' in current_version:
-            raise Exception(
-                "Cannot loaddata python dumps to intermediate %s version %s" 
-                % (self.short_name,current_version))
-            #~ dblogger.info("Cannot migrate to intermediate version %", current_version)
-            #~ return
             
         if globals_dict['SOURCE_VERSION'] == current_version:
             dblogger.info("Source version is %s : no migration needed", current_version)
             return
+        if '+' in __version__:
+            raise Exception(
+                "Cannot loaddata to intermediate Lino version %s" % __version__)
+        if '+' in current_version:
+            raise Exception(
+                "Cannot loaddata to intermediate %s version %s" 
+                % (self.short_name,current_version))
+            #~ dblogger.info("Cannot migrate to intermediate version %", current_version)
+            #~ return
         if self.migration_module:
             migmod = import_module(self.migration_module)
         else:
@@ -1865,7 +1891,7 @@ class Lino(object):
         if self.django_admin_prefix:
             yield 'django.contrib.admin'
         #~ 'django.contrib.markup',
-        yield 'django_extensions'
+        #~ yield 'django_extensions'
         yield 'lino.modlib.about'
         #~ if self.admin_prefix:
             #~ yield 'lino.modlib.pages'

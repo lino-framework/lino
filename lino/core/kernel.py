@@ -88,7 +88,10 @@ def analyze_models():
     if DONE: return
     DONE = True
     
+    #~ logger.info("Analyzing models...")
+    
     self = settings.LINO
+    #~ logger.info(self.welcome_text())
     
     """
     Set the site's default language
@@ -116,9 +119,6 @@ def analyze_models():
     
     models_list = models.get_models() # trigger django.db.models.loading.cache._populate()
     
-    logger.info("Analyzing models...")
-    
-
     for model in models_list:
       
         model._lino_ddh = DisableDeleteHandler(model)
@@ -147,8 +147,6 @@ def analyze_models():
     self.setup_choicelists()
     self.setup_workflows()
     
-    
-        
     for model in models_list:
         
         for f, m in model._meta.get_fields_with_model():
@@ -187,6 +185,8 @@ def analyze_models():
                     #~ v.lino_resolve_type()
                     
                     
+                    
+                    
     
     for a in models.get_apps():
         #~ for app_label,a in loading.cache.app_store.items():
@@ -202,12 +202,36 @@ def analyze_models():
             if k.startswith('setup_'):
                 self.modules.define(app_label,k,v)
                     
+    for model in models_list:
+      
+        """
+        Virtual fields declared on the model must have 
+        been attached before calling Model.site_setup(), 
+        e.g. because pcsw.Person.site_setup() 
+        declares `is_client` as imported field.
+        """
+      
+        model.on_analyze(self)
+            
+        for k,v in class_dict_items(model):
+            if isinstance(v,dd.VirtualField):
+                v.attach_to_model(model,k)
                     
-    from lino.core import web
-    web.site_setup(self)
+                    
+    actors.discover()
+    
+    dbtables.discover()
+    
+    choosers.discover()
+        
+                    
+    #~ from lino.core import web
+    #~ web.site_setup(self)
         
     #~ logger.info("20130121 GFK_LIST is %s",['%s.%s'%(full_model_name(f.model),f.name) for f in settings.LINO.GFK_LIST])
     dd.post_analyze.send(self,models_list=models_list)
+    
+    return models_list
 
 class DisableDeleteHandler():
     """
@@ -272,41 +296,36 @@ def startup_site(self):
         #~ logger.warning("LinoSite setup already done ?!")
         return
         
-    logger.info("Starting Lino...")
+    #~ logger.info("startup_site()")
     
     #~ write_lock.acquire()
     try:
     
         if self._setting_up:
-            logger.warning("LinoSite.startup() called recursively.")
+            logger.warning("Lino.startup() called recursively.")
             return 
             #~ raise Exception("LinoSite.setup() called recursively.")
         #~ try:
         self._setting_up = True
+        
+        logger.info(self.welcome_text())
         
         #~ self.configure(get_site_config())
         #~ self._siteconfig = get_site_config()
       
         analyze_models()
         
-        model_count = 0
+        models_list = models.get_models() 
         
-        for model in models.get_models():
+        #~ model_count = 0
+        
+        for model in models_list:
           
-            """
-            Virtual fields declared on the model must have 
-            been attached before calling Model.site_setup(), 
-            e.g. because pcsw.Person.site_setup() 
-            declares `is_client` as imported field.
-            """
-          
-            for k,v in class_dict_items(model):
-                if isinstance(v,dd.VirtualField):
-                    v.attach_to_model(model,k)
-                    
-            model.site_setup(self)
+            #~ model.site_setup(self)
+            if hasattr(model,'site_setup'):
+                raise Exception("%s still has a site_setup" % model)
             
-            model_count += 1
+            #~ model_count += 1
         
         if self.is_installed('contenttypes'):
           
@@ -318,14 +337,8 @@ def startup_site(self):
                     #~ logger.info("20120629 %s.help_text", ht)
                     resolve_field(unicode(ht)).help_text = ht.help_text
             except DatabaseError,e:
-                logger.warning("No help texts : %s",e)
+                logger.debug("No help texts : %s",e)
                 pass
-        
-        actors.discover()
-        
-        dbtables.discover()
-        
-        choosers.discover()
         
         #~ load_details(make_messages)
         
@@ -338,23 +351,6 @@ def startup_site(self):
         
         #~ logger.info("20130105 modules is %s",self.modules.keys())
         
-        if False: # moved earlier to analyze_models
-
-          for a in models.get_apps():
-              #~ for app_label,a in loading.cache.app_store.items():
-              app_label = a.__name__.split('.')[-2]
-              #~ logger.info("Installing %s = %s" ,app_label,a)
-              
-              for k,v in a.__dict__.items():
-                  if isinstance(v,type) and issubclass(v,layouts.BaseLayout):
-                      print "%s.%s = %r" % (app_label,k,v)
-                      self.modules.define(app_label,k,v)
-                  #~ if isinstance(v,type)  and issubclass(v,dd.Module):
-                      #~ logger.info("20120128 Found module %s",v)
-                  if k.startswith('setup_'):
-                      self.modules.define(app_label,k,v)
-                    
-            
         #~ import pprint
         #~ logger.info("settings.LINO.modules is %s" ,pprint.pformat(self.modules))
         #~ logger.info("settings.LINO.modules['cal']['main'] is %r" ,self.modules['cal']['main'])
@@ -380,7 +376,8 @@ def startup_site(self):
         self.on_site_startup()
             
         """
-        resolve_virtual_fields() comes after after_site_setup() because after_site_setup()
+        resolve_virtual_fields() comes even after after_site_setup() 
+        because after_site_setup()
         may add more virtual fields in custom setup_columns methods.
         """
                 
@@ -396,10 +393,9 @@ def startup_site(self):
         logger.info("Started %s on %r. Languages: %s. %d models, %s actors.", 
         #~ logger.info("Lino Site %r started. Languages: %s. %d models, %s actors.", 
             process_name,self.title, ', '.join(babel.AVAILABLE_LANGUAGES),
-            model_count,
+            len(models_list),
             len(actors.actors_list))
         #~ logger.info(settings.INSTALLED_APPS)
-        logger.info(self.welcome_text())
         
         def goodbye():
             logger.info("Stopped %s",process_name)

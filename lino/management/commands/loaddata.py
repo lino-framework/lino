@@ -20,17 +20,18 @@ This is necessary if your application has its own
 
 """
 
-from django.conf import settings
+from lino.runtime import settings
 
-from django.core.management.commands.loaddata import Command as OriginalCommand
+from django.core.management.commands.loaddata import Command
+#~ from django.core.management.commands.loaddata import Command as OriginalCommand
 
-from lino.core.kernel import analyze_models
+#~ from lino.core.kernel import analyze_models
 
-class Command(OriginalCommand):
+#~ class Command(OriginalCommand):
   
-    def handle(self, *fixture_labels, **options):
-        #~ settings.LINO.startup()
-        analyze_models()
-        # startup would create a SiteConfig object
-        return OriginalCommand.handle(self, *fixture_labels, **options)
+    #~ def handle(self, *fixture_labels, **options):
+        #~ # settings.LINO.startup()
+        #~ analyze_models()
+        #~ # startup would create a SiteConfig object
+        #~ return OriginalCommand.handle(self, *fixture_labels, **options)
   

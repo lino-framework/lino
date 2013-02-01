@@ -423,3 +423,12 @@ if settings.LINO.user_model == 'auth.User':
     dd.inject_field(settings.LINO.user_model,'profile',dd.UserProfiles.field())
     dd.inject_field(settings.LINO.user_model,'language',dd.LanguageField())
     
+    
+@dd.receiver(dd.post_analyze)
+def post_analyze(sender,**kw):
+    """
+    This is Lino's post_analyze signal handler.
+    """
+    from lino.core import web
+    web.site_setup(sender,**kw)
+    

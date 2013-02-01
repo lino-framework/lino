@@ -40,7 +40,7 @@ See also ticket :doc:`/tickets/50`.
 import logging
 from optparse import make_option 
 
-from django.conf import settings
+from lino.runtime import settings
 from django.core.management import call_command
 from django.core.management.base import BaseCommand, CommandError
 
@@ -77,8 +77,8 @@ class Command(BaseCommand):
 
     def handle(self, *args, **options):
       
-        from lino.core.kernel import analyze_models
-        analyze_models()
+        #~ from lino.core.kernel import analyze_models
+        #~ analyze_models()
       
         from lino.utils import dblogger
             
@@ -91,8 +91,8 @@ class Command(BaseCommand):
                 raise CommandError("User abort.")
             
         options.update(interactive=False)
-        dblogger.info("Lino initdb %s started on database %s.", args, dbname)
-        dblogger.info(settings.LINO.welcome_text())
+        #~ dblogger.info("Lino initdb %s started on database %s.", args, dbname)
+        #~ dblogger.info(settings.LINO.welcome_text())
         #~ dblogger.info("FIXTURE_DIRS is %s",settings.FIXTURE_DIRS)
         
         if USE_DROP_CREATE:
@@ -151,6 +151,6 @@ class Command(BaseCommand):
         
         call_command('loaddata',*args,**options)
         
-        dblogger.info("Lino initdb done %s on database %s.", args, dbname)
+        #~ dblogger.info("Lino initdb done %s on database %s.", args, dbname)
 
 #~ print 20120426, 'ok'

@@ -1,0 +1,16 @@
+#71 : How to make Django and Jinja template machines coexist
+============================================================
+
+
+I personally prefer Jinja over Django's built-in template machine. 
+I even rewrote the mandatory 403.html, 404.html and 500.html 
+to Jinja because I wanted fit into Lino's default concept of how web 
+sites should be designed.
+Lino applications by default don't need 
+Django's template machine.
+
+But of course there are other people who 
+have lots of classical Django templates 
+and don't want to rewrite them.
+
+They do not need to despair.

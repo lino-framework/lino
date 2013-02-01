@@ -136,63 +136,22 @@ Usage examples:
 The bootstrap UI is getting better
 ----------------------------------
 
-The "plain" (bootstrap) UI is getting better:
+Lino's "plain html" UI is getting better:
 
 - Detail forms 
 - Pagination bar
+
+The current internal name "plain" is misleading. 
+It's not very plain html because it uses
+bootstrap
 
 
 django-extensions
 -----------------
 
-Ich habe mir heute mal das Modul 
-`django-extensions <https://github.com/django-extensions>`_ 
+Ich habe mir mal das Modul 
+:doc:`/reviews/django-extensions`
 angeschaut.
-Es hat einen Befehl "dumpscript", der ähnlich wie mein 
-:mod:`lino.utils.dumpy` den Inhalt der Datenbank in ein 
-Python-Skript schreibt, das ebendiesen Inhalt wiederherstellt.
-Es ist aber klar, dass "dumpscript" eher primitiv ist und 
-sich nicht für Datenbank-Migrationen eignet.
-Hat sich nicht gelohnt.
-
-Interessanter war ein anderer Befehl ``graph_models``
-in dieser Bibliothek.
-Hier ein paar Resultate.
-Sehen schön aus, aber ehrlich gesagt 
-besteht dafür jetzt auch nicht gerade 
-ein dringender Bedarf...
-
-.. graphviz:: contacts.dot
-
-.. graphviz:: cal.dot
-
-.. graphviz:: outbox.dot
-
-.. graphviz:: courses.dot
-
-.. graphviz:: cbss.dot
-
-.. graphviz:: cbssd.dot
-
-.. graphviz:: debts.dot
-
-.. graphviz:: debtsd.dot
-
-Um den Befehl laufen zu lassen:
-Zunächst das neue Attribut :attr:`replace_django_templates 
-<lino.Lino.replace_django_templates>` kurzfristig auf 
-False setzen.
-Denn graph_models arbeitet mit Django_Templates.
-Dann die .dot-Dateien generieren::
-  
-  python manage.py graph_models outbox -g > outbox.dot
-  
-Anschließend :attr:`replace_django_templates 
-<lino.Lino.replace_django_templates>` wieder zurücksetzen.
-
-Und hier im Blog die Dateien dann mit 
-`graphviz <http://sphinx-doc.org/ext/graphviz.html>`_
-einbauen.
 
 
 

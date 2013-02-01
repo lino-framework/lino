@@ -32,44 +32,36 @@ from django.utils.translation import get_language
 from django.utils.translation import ugettext_lazy as _
 #~ from django.template.loaders import app_directories
 from django.template.loader import BaseLoader
+from django.template.base import TemplateDoesNotExist
 
+from lino.core.signals import boot, receiver
 from lino.utils import babel
 from lino.utils import iif
 from lino.utils.xmlgen import html as xghtml
 E = xghtml.E
+from jinja2.exceptions import TemplateNotFound
 
-SUBDIR_NAME = 'templates'
+SUBDIR_NAME = 'templates_jinja'
     
-def site_setup(self):
+def site_setup(sender,**kw):
     """
     Adds a global `jinja_env` attribute to `settings.LINO`.
+    This is being called from :func:`lino.models.post_analyze`.
     
     Lino has an automatic and currently not configurable method 
-    for building Jinja's template loader. It looks for a "templates" 
+    for building Jinja's template loader. It looks for 
+    a "templates_jinja" 
     subfolder in the following places:
     
     - the directory where your settings.py is defined.
     
     """
+    logger.debug("Setting up Jinja environment")
+    self = sender
     from lino.utils import auth
     from django.utils.importlib import import_module
     
-    #~ paths = []
-    #~ def collect_path(*parts):
-        #~ dirname = os.path.join(*parts)
-        #~ if os.path.isdir(dirname):
-            #~ paths.append(dirname)
-            #~ logger.info("20130109 added directory: %s",dirname)
-        #~ else:
-            #~ logger.info("20130109 not a directory: %s",dirname)
-    #~ for pth in self.get_settings_dirs(SUBDIR_NAME):
-        #~ collect_path(pth)
-            
     paths = list(self.get_settings_subdirs(SUBDIR_NAME))
-        
-    #~ collect_path(self.project_dir,SUBDIR_NAME)
-    #~ if self.project_dir != self.source_dir:
-        #~ collect_path(self.source_dir,SUBDIR_NAME)
         
     loaders = []
     if len(paths) > 0:
@@ -103,8 +95,6 @@ def site_setup(self):
         ar.ui.ar2html(ar,t,ar.sliced_data_iterator)
         
         #~ print ar.get_total_count()
-        if False:
-            return E.tostring(t.as_element(),method="html")
         return E.tostring(t.as_element())
         #~ return E.tostring(E.ul(*[E.li(ar.summary_row(obj)) for obj in ar]),method="html")
           
@@ -112,8 +102,6 @@ def site_setup(self):
         a = settings.LINO.modules.resolve(action_spec)
         ar = a.request(user=auth.AnonymousUser.instance())
         ar.renderer = settings.LINO.ui.plain_renderer
-        if False:
-            return E.tostring(E.ul(*[obj.as_list_item(ar) for obj in ar]),method="html")
         return E.tostring(E.ul(*[obj.as_list_item(ar) for obj in ar]))
 
     self.jinja_env.globals.update(
@@ -181,7 +169,10 @@ class Loader(BaseLoader):
 
     def load_template(self, template_name, template_dirs=None):
         #~ source, origin = self.load_template_source(template_name, template_dirs)
-        jt = settings.LINO.jinja_env.get_template(template_name)
+        try:
+            jt = settings.LINO.jinja_env.get_template(template_name)
+        except TemplateNotFound as e:
+            raise TemplateDoesNotExist(template_name)
         template = DjangoJinjaTemplate(jt)
         return template, None
           

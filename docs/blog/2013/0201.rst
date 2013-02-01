@@ -1,0 +1,19 @@
+20130201
+========
+
+
+Na das war vielleicht mal ein Bug mit unerwartet viel Arbeit:
+die Tx25 hatten beim Ausdruck immer eine leere Kolonne "Information".
+
+Zuerst musste ich mal mein lokales Skript 
+:file:`print_tx25.py` (sh. :doc:`../2012/0704`) reparieren,
+das einiges an Entwicklung verpasst hatte.
+Deshalb jetzt die Methode :meth`run_action_from_console
+<lino.core.tables.AbstractTable.run_action_from_console>`.
+
+Das eigentliche Problem war dann auch nicht ohne:
+:func:`lino.utils.appy_pod.html2odftext`, 
+vertrug es nicht, wenn `value2html` 
+ein fertiges `<TD><P>...</P></TD>` zurückgab.
+
+

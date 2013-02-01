@@ -259,8 +259,12 @@ class Model(models.Model):
         """
         return []
         
+    #~ @classmethod
+    #~ def site_setup(self,site):
+        #~ pass
+        
     @classmethod
-    def site_setup(self,site):
+    def on_analyze(self,site):
         pass
         
     @classmethod
@@ -405,7 +409,8 @@ class Model(models.Model):
               'get_system_note_recipients',
               'get_system_note_type',
               'quick_search_fields',
-              'site_setup',
+              #~ 'site_setup',
+              'on_analyze',
               'disable_delete',
               'on_duplicate',
               'on_create')

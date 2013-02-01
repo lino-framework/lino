@@ -1,5 +1,5 @@
 # -*- coding: UTF-8 -*-
-## Copyright 2012 Luc Saffre
+## Copyright 2012-2013 Luc Saffre
 ## This file is part of the Lino project.
 ## Lino is free software; you can redistribute it and/or modify
 ## it under the terms of the GNU General Public License as published by
@@ -28,13 +28,13 @@ from optparse import make_option
 from os.path import join
 
 from django.db import models
-from django.conf import settings
 from django.utils.translation import ugettext as _
 from django.utils.encoding import force_unicode
 from django.core.management import call_command
 from django.core.management.base import BaseCommand, CommandError
 
 import lino
+from lino.runtime import settings
 from lino.core.modeltools import app_labels
 from lino.utils import rstgen
 from lino.core.modeltools import obj2str, full_model_name, sorted_models_list
@@ -56,7 +56,7 @@ class Command(BaseCommand):
             
         self.options = options
         
-        settings.LINO.startup()
+        #~ settings.LINO.startup()
         
         encoding = self.stdout.encoding or 'utf-8'
         

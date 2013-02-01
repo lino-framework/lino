@@ -722,10 +722,9 @@ class FieldElement(LayoutElement):
         
     def value2html(self,ar,v,**cellattrs):
         """
-        Return a HTML representation of the given value. 
+        Return a etree element representing of the given value. 
         The possible return values may be:
         
-        - a basestring (of which any special characters will be escaped)
         - an xml.etree.ElementTree.Element
         
         The default implementation returns a unicode string obtained from :meth:`format_value`.
@@ -1093,6 +1092,9 @@ class IncompleteDateFieldElement(CharFieldElement):
         
 
 class NumberFieldElement(FieldElement):
+    """
+    Base class for integers, decimals, RequestField,...
+    """
     filter_type = 'numeric'
     gridfilters_settings = dict(type='numeric')
     #~ xtype = 'numberfield'
@@ -1100,6 +1102,7 @@ class NumberFieldElement(FieldElement):
     value_template = "new Ext.form.NumberField(%s)"
     sortable = True
     grid_column_template = "new Lino.NullNumberColumn(%s)"
+    number_format = '0'
 
     def apply_cell_format(self,e):
         #~ e.set('align','right')
@@ -1124,6 +1127,22 @@ class NumberFieldElement(FieldElement):
         #~ cellattrs.update(align="right")
         #~ return E.td(self.format_value(ar,v),**cellattrs)
         
+    def get_column_options(self,**kw):
+        kw = FieldElement.get_column_options(self,**kw)
+        #~ kw.update(xtype='numbercolumn')
+        #~ kw.update(align='right')
+        #~ if settings.LINO.decimal_group_separator:
+            #~ fmt = '0' + settings.LINO.decimal_group_separator + '000'
+        #~ else:
+        # Ext.utils.format.number() is not able to specify ' ' as group separator,
+        # so we don't use grouping at all.
+        if self.number_format != settings.LINO.default_number_format_extjs:
+            kw.update(format=self.number_format)
+        n = USED_NUMBER_FORMATS.get(self.number_format,0)
+        USED_NUMBER_FORMATS[self.number_format] = n + 1
+        #~ kw.update(format='') # 20130125
+        #~ kw.update(renderer=js_code('Lino.nullnumbercolumn_renderer')) # 20130125
+        return kw
         
         
 class IntegerFieldElement(NumberFieldElement):
@@ -1182,6 +1201,13 @@ class DecimalFieldElement(NumberFieldElement):
         FieldElement.__init__(self,*args,**kw)
         self.preferred_width = max(5,self.field.max_digits) \
                 + self.field.decimal_places
+        fmt = '0'
+        if self.field.decimal_places > 0:
+            fmt += settings.LINO.decimal_separator + ("0" * self.field.decimal_places)
+        if settings.LINO.decimal_separator == ',':
+            fmt += "/i"
+        self.number_format = fmt
+                
                 
     def get_field_options(self,**kw):
         kw = FieldElement.get_field_options(self,**kw)
@@ -1195,27 +1221,6 @@ class DecimalFieldElement(NumberFieldElement):
             kw.update(allowBlank=self.field.blank)
         return kw
         
-    def get_column_options(self,**kw):
-        kw = FieldElement.get_column_options(self,**kw)
-        #~ kw.update(xtype='numbercolumn')
-        #~ kw.update(align='right')
-        #~ if settings.LINO.decimal_group_separator:
-            #~ fmt = '0' + settings.LINO.decimal_group_separator + '000'
-        #~ else:
-        # Ext.utils.format.number() is not able to specify ' ' as group separator,
-        # so we don't use grouping at all.
-        fmt = '0'
-        if self.field.decimal_places > 0:
-            fmt += settings.LINO.decimal_separator + ("0" * self.field.decimal_places)
-        if settings.LINO.decimal_separator == ',':
-            fmt += "/i"
-        if fmt != settings.LINO.default_number_format_extjs:
-            kw.update(format=fmt)
-        n = USED_NUMBER_FORMATS.get(fmt,0)
-        USED_NUMBER_FORMATS[fmt] = n + 1
-        #~ kw.update(format='') # 20130125
-        #~ kw.update(renderer=js_code('Lino.nullnumbercolumn_renderer')) # 20130125
-        return kw
         
 class QuantityFieldElement(CharFieldElement):
 #~ class QuantityFieldElement(DecimalFieldElement):

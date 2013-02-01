@@ -46,6 +46,7 @@ u"""
 import logging
 logger = logging.getLogger(__name__)
 
+import os
 import yaml
 
 #~ from lxml import etree
@@ -992,6 +993,38 @@ class AbstractTable(actors.Actor):
         #~ return VirtualTableRequest(ui,self,request,action,**kw)
         return TableRequest(ui,self,request,action,**kw)
 
+    @classmethod
+    def run_action_from_console(self,pk=None,an=None):
+        """
+        Not yet stable. Used by print_tx25.py.
+        To be combined with the `show` management command.
+        """
+        from lino.utils import babel
+        babel.set_language(None)
+        settings.LINO.startup()
+        #~ settings.LINO.ui
+        if pk is not None:
+            elem = self.get_row_by_pk(pk)
+            #~ elem = self.model.objects.get(pk=pk)
+            if an is None:
+                an = self.default_elem_action_name
+        elif an is None:
+            an = self.default_list_action_name
+        ba = self.get_action_by_name(an)
+        #~ print ba
+        ar = self.request(action=ba)
+        #~ ar = TableRequest(None,self,None,ba)
+        kw = ba.action.run(elem,ar)
+        #~ kw = self.check_action_response(kw)
+        msg = kw.get('message')
+        if msg: 
+            print msg
+        url = kw.get('open_url') or kw.get('open_davlink_url')
+        if url:
+            os.startfile(url)
+        
+        
+        
 
 class VirtualTable(AbstractTable):
     """

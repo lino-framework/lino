@@ -866,6 +866,14 @@ class Actor(actions.Parametrizable):
     def override_column_headers(self,ar):
         return {}
         
+    @classmethod
+    def get_sum_text(self,ar):
+        """
+        Return the text to display on the totals row.
+        """
+        return unicode(_("Total (%d rows)") % ar.get_total_count())
+        
+        
     #~ @classmethod
     #~ def get_detail(self):
         #~ return self.detail_layout
@@ -997,11 +1005,12 @@ class Actor(actions.Parametrizable):
         
         
     @classmethod
-    def get_url_action(self,name):
+    def get_action_by_name(self,name):
         return self._actions_dict.get(name,None)
         #~ a = self._actions_dict.get(name,None)
         #~ if a is not None:
             #~ return actions.BoundAction(self,a)
+    get_url_action = get_action_by_name
         
     @classmethod
     def get_url_action_names(self):
@@ -1138,9 +1147,3 @@ class Actor(actions.Parametrizable):
         settings.LINO.startup()
         return xghtml.E.tostring(self.request(**kw).table2xhtml())
         
-    @classmethod
-    def get_sum_text(self,ar):
-        """
-        Return the text to display on the totals row.
-        """
-        return unicode(_("Total (%d rows)") % ar.get_total_count())

@@ -17,6 +17,9 @@ This defines Lino's standard system signals.
 
 from django.dispatch import Signal, receiver
 
+boot = Signal()
+
+
 pre_analyze = Signal(['models_list'])
 """
 Sent exactly once per process at site startup, just before Lino analyzes the models.
@@ -41,6 +44,7 @@ Sent exacty once per process before Lino starts up.
 sender: 
   the Lino instance
 """
+
 
 
 

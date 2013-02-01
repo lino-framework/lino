@@ -1,5 +1,5 @@
 # -*- coding: UTF-8 -*-
-## Copyright 2012 Luc Saffre
+## Copyright 2012-2013 Luc Saffre
 ## This file is part of the Lino project.
 ## Lino is free software; you can redistribute it and/or modify
 ## it under the terms of the GNU General Public License as published by
@@ -20,7 +20,7 @@ own :meth:`lino.Lino.setup_choicelists`.
 
 """
 
-from django.conf import settings
+from lino.runtime import settings
 
 from django.core.management.commands.dumpdata import Command as DumpdataCommand
 
@@ -31,7 +31,7 @@ class Command(DumpdataCommand):
   
     def handle(self, *app_labels, **options):
         #~ analyze_models()
-        settings.LINO.startup()
+        #~ settings.LINO.startup()
         
         options.update(format='py')
       

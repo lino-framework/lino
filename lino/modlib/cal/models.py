@@ -1225,7 +1225,7 @@ Indicates that this Event shouldn't prevent other Events at the same time."""))
         return self.user.language
         
     @classmethod
-    def site_setup(cls,lino):
+    def on_analyze(cls,lino):
         cls.DISABLED_AUTO_FIELDS = dd.fields_list(cls,
             '''summary''')
 
@@ -1642,10 +1642,11 @@ class Task(Component):
         return self.state != TaskStates.todo
         
     @classmethod
-    def site_setup(cls,lino):
+    def on_analyze(cls,lino):
         #~ lino.TASK_AUTO_FIELDS = dd.fields_list(cls,
         cls.DISABLED_AUTO_FIELDS = dd.fields_list(cls,
             '''start_date start_time summary''')
+        super(Task,cls).on_analyze(lino)
 
     #~ def __unicode__(self):
         #~ return "#" + str(self.pk)
