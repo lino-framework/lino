@@ -1616,14 +1616,15 @@ class Lino(object):
             dblogger.info("Source version is %s : no migration needed", current_version)
             return
         if '+' in __version__:
-            raise Exception(
-                "Cannot loaddata to intermediate Lino version %s" % __version__)
+            logger.warning(
+                "No data migration to intermediate Lino version %s", __version__)
+            return 
         if '+' in current_version:
-            raise Exception(
-                "Cannot loaddata to intermediate %s version %s" 
-                % (self.short_name,current_version))
+            logger.warning(
+                "No data migration to intermediate %s version %s", 
+                self.short_name,current_version)
             #~ dblogger.info("Cannot migrate to intermediate version %", current_version)
-            #~ return
+            return
         if self.migration_module:
             migmod = import_module(self.migration_module)
         else:
