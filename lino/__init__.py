@@ -1616,7 +1616,7 @@ class Lino(object):
             dblogger.info("Source version is %s : no migration needed", current_version)
             return
         if '+' in __version__:
-            logger.warning(
+            dblogger.warning(
                 "No data migration to intermediate Lino version %s", __version__)
             return 
         if '+' in current_version:
