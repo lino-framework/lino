@@ -40,3 +40,11 @@ The :mod:`ext_store` Module
     :undoc-members:
     :show-inheritance:
 
+The :mod:`views` Module
+---------------------------
+
+.. automodule:: lino.ui.extjs3.views
+    :members:
+    :undoc-members:
+    :show-inheritance:
+

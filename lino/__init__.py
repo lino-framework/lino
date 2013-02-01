@@ -1615,16 +1615,15 @@ class Lino(object):
         if globals_dict['SOURCE_VERSION'] == current_version:
             dblogger.info("Source version is %s : no migration needed", current_version)
             return
-        if '+' in __version__:
-            dblogger.warning(
-                "No data migration to intermediate Lino version %s", __version__)
-            return 
-        if '+' in current_version:
-            dblogger.warning(
-                "No data migration to intermediate %s version %s", 
-                self.short_name,current_version)
-            #~ dblogger.info("Cannot migrate to intermediate version %", current_version)
-            return
+        #~ if '+' in __version__:
+            #~ dblogger.warning(
+                #~ "No data migration to intermediate Lino version %s", __version__)
+            #~ return 
+        #~ if '+' in current_version:
+            #~ dblogger.warning(
+                #~ "No data migration to intermediate %s version %s", 
+                #~ self.short_name,current_version)
+            #~ return
         if self.migration_module:
             migmod = import_module(self.migration_module)
         else:

@@ -245,6 +245,8 @@ class DisplayField(FakeField):
     def save_form_data(self,*args,**kw): raise NotImplementedError
     def value_to_string(self,*args,**kw): raise NotImplementedError
         
+    def value_from_object(self,obj,ar=None):
+        return ''
 
 #~ class DynamicForeignKey(DisplayField):
     #~ """

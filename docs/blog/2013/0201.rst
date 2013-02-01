@@ -1,6 +1,8 @@
 20130201
 ========
 
+Converting HTML to ODF text chunks
+----------------------------------
 
 Na das war vielleicht mal ein Bug mit unerwartet viel Arbeit:
 die Tx25 hatten beim Ausdruck immer eine leere Kolonne "Information".
@@ -8,13 +10,66 @@ die Tx25 hatten beim Ausdruck immer eine leere Kolonne "Information".
 Zuerst musste ich mal mein lokales Skript 
 :file:`print_tx25.py` (sh. :doc:`../2012/0704`) reparieren,
 das einiges an Entwicklung verpasst hatte.
-Deshalb jetzt die Methode :meth`run_action_from_console
+Deshalb jetzt die Methode :meth:`run_action_from_console
 <lino.core.tables.AbstractTable.run_action_from_console>`.
 
 Das eigentliche Problem war dann auch nicht ohne:
-:func:`lino.utils.appy_pod.html2odftext`, 
+:func:`html2odf <lino.utils.html2odf.html2odf>`, 
 vertrug es nicht, wenn `value2html` 
 ein fertiges `<TD><P>...</P></TD>` zurückgab.
 
 In der `Default.odt` standen Datum und Uhrzeit 
 als "fixes" Feld. Dort muss natürlich das Druckdatum stehen.
+
+
+Two scoops of Django
+--------------------
+
+I'd like to read the book `Two scoops of Django
+<https://django.2scoops.org/>`_, 
+and I'm ready to pay 12€ for it,
+but I live in Estonia
+where credit cards aren't used for national payments 
+because we have electronic id cards. 
+Zed Shaw's comment "Ha ha, I learned something in the first chapter.
+Awesome." was probably the decisive one for me :-)
+
+
+Pre-release rush
+----------------
+
+- Found and fixed some more bugs in :mod:`lino.utils.appy_pod`.
+  One visible result is that total lines in .pdf, .odt and .rtf output 
+  are now also rendered using bold text.
+
+- I renamed the `html2odftext` function 
+  to `html2odf` and moved it from 
+  :mod:`lino.utils.appy_pod`
+  to a separate module
+  :mod:`lino.utils.html2odf`.
+ 
+
+- Optimized :func:`lino.ui.extjs3.views.ajax_error` for Django Validation Errors.
+  Users now finally see messages like this:
+  
+    Datumsbereich überschneidet sich mit Art.60§7-Konvention #12
+    
+  Until now the same message has been like this:
+  
+    [u'Datumsbereich \\xfcberschneidet sich mit Art.60\\xa77-Konvention #12']"
+    
+  The fact that nobody has complained about this during probably more than a year
+  probably shows that Lino users use Lino for **working with it** 
+  and not (yet) for **making money by selling it**.
+  
+- Lino failed with a traceback on showing the detail of a pcsw.Client.
+  Now it displays them without failur 
+  (though very funnily because it doesn't yet know how to use tabs).
+  :class:`lino.ui.extjs3.ext_ui.PlainRenderer`,
+  :class:`lino.ui.extjs3.ext_elems.FieldElement.value_from_object`...
+  
+  
+  
+
+
+

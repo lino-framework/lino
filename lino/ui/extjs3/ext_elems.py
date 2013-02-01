@@ -581,6 +581,9 @@ def add_help_text(kw,help_text,title,datasource,fieldname):
         
         
 class FieldElement(LayoutElement):
+    """
+    Base class for all Widgets on some filed-like data element.
+    """
     #~ declare_type = jsgen.DECLARE_INLINE
     #~ declare_type = jsgen.DECLARE_THIS
     declare_type = jsgen.DECLARE_VAR
@@ -633,8 +636,15 @@ class FieldElement(LayoutElement):
         
         LayoutElement.__init__(self,layout_handle,field.name,**kw)
 
+    def value_from_object(self,obj,ar):
+        """
+        Wrapper around Django's `value_from_object`. 
+        But for virtual fields it also forwards the action request `ar`.
+        """
+        return self.field.value_from_object(obj)
+        
     def as_plain_html(self,ar,obj):
-        value = self.field.value_from_object(obj)
+        value = self.value_from_object(obj,ar)
         text = unicode(value)
         if not text: text = " "
         #~ yield E.p(unicode(elem.field.verbose_name),':',E.br(),E.b(text))
@@ -1154,6 +1164,9 @@ class RequestFieldElement(IntegerFieldElement):
         #~ return len(v.data_iterator)
         return v.get_total_count()
   
+    def value_from_object(self,obj,ar):
+        return self.field.value_from_object(obj,ar)
+        
     def value2html(self,ar,v,**cellattrs):
         #~ logger.info("20130131 value2html %s",v)
         n = v.get_total_count()
@@ -1263,6 +1276,8 @@ class DisplayElement(FieldElement):
     def value2html(self,ar,v,**cellattrs):
         return E.td(v,**cellattrs)
     
+    def value_from_object(self,obj,ar):
+        return self.field.value_from_object(obj,ar)
 
 class BooleanMixin(object):
     def format_sum(self,ar,sums,i):

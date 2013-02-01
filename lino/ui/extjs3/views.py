@@ -307,6 +307,12 @@ def delete_element(ar,elem):
 CATCHED_AJAX_EXCEPTIONS = (Warning,IntegrityError,exceptions.ValidationError)
 
 def ajax_error(e,**kw):
+    """
+    Utility function that converts a catched exception 
+    to a user-friendly error message.
+    """
+    if isinstance(e,exceptions.ValidationError):
+        e = '<br>'.join(e.messages)
     kw = settings.LINO.ui.error(e,alert=True,**kw)
     return json_response(kw)
 

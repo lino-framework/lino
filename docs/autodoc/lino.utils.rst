@@ -19,6 +19,7 @@
     lino.utils.dbfreader
     lino.utils.demonames
     lino.utils.dumpy
+    lino.utils.html2odf
     lino.utils.html2text
     lino.utils.html2xhtml
     lino.utils.jsgen

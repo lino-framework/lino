@@ -361,6 +361,18 @@ class PlainRenderer(HtmlRenderer):
         label = label or ba.action.label
         return label
       
+    def window_action_button(self,request,ba,after_show={},label=None,title=None,**kw):
+        """
+        Return a HTML chunk for a button that will execute this action.
+        """
+        label = unicode(label or ba.get_button_label())
+        url = 'javascript:'+self.action_call(request,ba,after_show)
+        #~ logger.info('20121002 window_action_button %s %r',a,unicode(label))
+        return self.href_button_action(ba,url,label,title or ba.action.help_text,**kw)
+        
+    def action_call(self,request,bound_action,after_show):  
+        return "oops"
+        
 class ExtRenderer(HtmlRenderer):
     """
     Deserves more documentation.
