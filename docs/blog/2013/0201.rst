@@ -16,4 +16,5 @@ Das eigentliche Problem war dann auch nicht ohne:
 vertrug es nicht, wenn `value2html` 
 ein fertiges `<TD><P>...</P></TD>` zurückgab.
 
-
+In der `Default.odt` standen Datum und Uhrzeit 
+als "fixes" Feld. Dort muss natürlich das Druckdatum stehen.

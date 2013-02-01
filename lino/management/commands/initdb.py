@@ -84,6 +84,8 @@ class Command(BaseCommand):
             
         if not dblogger.logger.isEnabledFor(logging.INFO):
             raise CommandError("System logger must be enabled for INFO")
+        dblogger.info(settings.LINO.welcome_text())
+        #~ dblogger.info("FIXTURE_DIRS is %s",settings.FIXTURE_DIRS)
         using = options.get('database', DEFAULT_DB_ALIAS)
         dbname = settings.DATABASES[using]['NAME']
         if options.get('interactive'):
@@ -92,8 +94,6 @@ class Command(BaseCommand):
             
         options.update(interactive=False)
         #~ dblogger.info("Lino initdb %s started on database %s.", args, dbname)
-        #~ dblogger.info(settings.LINO.welcome_text())
-        #~ dblogger.info("FIXTURE_DIRS is %s",settings.FIXTURE_DIRS)
         
         if USE_DROP_CREATE:
         
