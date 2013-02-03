@@ -3,8 +3,8 @@
 
 Before I can replace MTI (Multi-Table Inheritance) 
 by OneToOne fields, 
-I need to find a user-friendly way for handling them.
-Lino cannot yet render OneToOneFields in a layout.
+I need to find a user-friendly way for handling this.
+Lino cannot yet render OneToOneFields.
 
 Module :mod:`lino.modlib.partners` 
 (which is going to replace :mod:`lino.modlib.contacts`)

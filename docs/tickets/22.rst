@@ -1,14 +1,15 @@
-#22 [closed] : How to implement MTI child/parent conversion
-===========================================================
+#22 : How to implement MTI child/parent conversion
+==================================================
 
 Solved. See :doc:`/topics/mti`.
+Reopened :doc:`/blog/2013/0202`.
 
 On a site that uses Django's MTI, Lino should provide a 
 way to "metamorphose" or convert existing data records into a 
 more specialized child model, or back into a less 
 specialized parent model.
 
-For example, in Lino/DSBE, Company might be a concrete parent model
+For example, in :mod:`lino_welfare`, Company might be a concrete parent model
 for HealthInsurance, JobProvider, Pharmacy, CourseProvider.
 
 Murphy's law states that users *will* come with the problem that a Pharmacy or

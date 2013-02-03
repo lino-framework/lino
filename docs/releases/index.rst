@@ -6,7 +6,8 @@ Releases
   import lino
   v = lino.__version__
   v = v.replace('+','')
-  print("The current stable release is :doc:`%s`. We're currently working on :doc:`coming`." % v)
+  print("The current stable release is :doc:`%s`." % v)
+  print("We're currently working on :doc:`coming`." )
 
 
 .. toctree::

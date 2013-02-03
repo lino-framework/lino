@@ -1,0 +1,23 @@
+Version 1.5.8
+=============
+
+Released 2013-02-03
+
+
+New features
+------------
+
+
+
+Optimizations
+-------------
+
+
+Bugfixes
+--------
+
+
+Manual tasks after upgrade
+--------------------------
+
+

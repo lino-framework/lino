@@ -1,0 +1,55 @@
+20130203
+========
+
+Why is Lino so complex?
+-----------------------
+
+I sometimes have been asked 
+"Why is Lino so complex? 
+Can't you split it down into smaller parts?"
+
+One answer is: Lino is rather like 
+Tolkien's "The Lord of the Rings" than 
+like Mozart's "Kleine Nachtmusik"...
+
+Another answer is: until now I didn't have to. 
+There was no reason.
+Or at least I didn't see one.
+Or at least not one that would make up for the 
+"increased administrative work" that would be caused by a split.
+
+But tonight I thought that 
+(1) most Python web application developers don't care about 
+desktop-like applications.
+(Daniel, do you also offer an accounting or 
+invoicing applcation for your customers?),
+and (2) much of my work is due to 
+Django's missing server startup signal.
+
+Google "django startup signal" comes up with 
+:djangoticket:`13024` (Signal sent on application startup)
+in first place. 
+Yes I remember that I saw this ticket long time ago.
+Oho? They closed it? And it is fixed?
+"Closing as this is fixed in a branch which needs 
+review. See #3591."
+
+:djangoticket:`3591` (add support for custom 
+app_label and verbose_name) seems truly very 
+interesting and truly very complex. 
+I'm looking forward to have it.
+Django really needs this ticket.
+But obviously it's not easy to find a good solution.
+
+After reading all this, I got enlighted on how to split Lino:
+
+- lino-tools : Includes lino.core and lino.utils
+  (i.e. my solution to send startup signals, 
+  dumpy fixtures, babel fields,...)
+  
+- lino-admin : lino.ui & Co
+
+- lino-framework : lino.modlib and lino.mixins
+
+
+

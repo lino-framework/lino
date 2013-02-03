@@ -1,7 +1,3 @@
-t:\hgwork\lino\lino\modlib\contacts\models.py:docstring of lino.modlib.contacts.models.PartnerDocument.summary_row:1: ERROR: Unknown interpreted text role "modmeth".
-t:\hgwork\lino\lino\modlib\partners\models.py:docstring of lino.modlib.partners.models.PartnerDocument.summary_row:1: ERROR: Unknown interpreted text role "modmeth".
-T:\hgwork\lino\docs\releases\index.rst:22: WARNING: toctree glob pattern u'2010/index' didn't match any documents
-T:\hgwork\lino\docs\releases\index.rst:22: WARNING: toctree glob pattern u'2011/index' didn't match any documents
 T:\hgwork\lino\docs\reviews\index.rst:4: WARNING: toctree contains reference to nonexisting document u'reviews/ :maxdepth: 1'
 T:\hgwork\lino\docs\reviews\index.rst:4: WARNING: toctree contains reference to nonexisting document u'reviews/ :glob:'
 T:\hgwork\lino\docs\reviews\index.rst:4: WARNING: toctree contains reference to nonexisting document u'reviews/django-extensions/index'
@@ -10,14 +6,3 @@ T:\hgwork\lino\docs\dev\versioning.rst:: WARNING: document isn't included in any
 T:\hgwork\lino\docs\igen\index.rst:: WARNING: document isn't included in any toctree
 T:\hgwork\lino\docs\reviews\django-extensions.rst:: WARNING: document isn't included in any toctree
 T:\hgwork\lino\docs\reviews\index.rst:: WARNING: document isn't included in any toctree
-<autodoc>:1: WARNING: py:class reference target not found: lino.modlib.countries.models.CountryRegionCity
-<autodoc>:1: WARNING: py:class reference target not found: lino.modlib.contacts.models.Partners
-t:\hgwork\lino\lino\modlib\contacts\models.py:docstring of lino.modlib.contacts.models.Role:1: WARNING: py:class reference target not found: ContactType
-T:\hgwork\lino\docs\autodoc\lino.modlib.partners.rst:7: WARNING: py:class reference target not found: RoleType
-T:\hgwork\lino\docs\autodoc\lino.modlib.partners.rst:35: WARNING: py:class reference target not found: lino.modlib.partners.models.ConcretePartner
-T:\hgwork\lino\docs\autodoc\lino.modlib.partners.rst:35: WARNING: py:class reference target not found: lino.modlib.partners.models.Addressable
-<autodoc>:1: WARNING: py:class reference target not found: lino.modlib.partners.models.ConcretePartner
-<autodoc>:1: WARNING: py:class reference target not found: lino.modlib.partners.models.Addressable
-<autodoc>:1: WARNING: py:class reference target not found: lino.modlib.partners.models.Addressables
-The current stable release is :doc:`1.5.8`. We're currently working on :doc:`coming`.
-:1: WARNING: unknown document: 1.5.8

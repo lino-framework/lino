@@ -29,6 +29,8 @@ The following plans are directly inspired by the book:
 - rename 'apps' to 'projects', 'modlib' to 'lib' or 'apps'
 
 - replace all local settings with versioned settings files.
+
+- split Lino as explained in :doc:`/2013/0203`.
   
 
 
@@ -36,7 +38,7 @@ Less urgent
 -----------
 
 - use relative imports
-- us pgsql for development
+- use pgsql for development
 - use pip, virtualenv, virtualenvwrapper
 
 Questions
@@ -44,17 +46,6 @@ Questions
 
 - You recommend github and bitbucket, why not Google code?
 
-
-General thoughts
-----------------
-
-I sometimes have been asked 
-"Why is Lino so complex? 
-Can't you split down Lino into smaller parts?"
-One answer is: Lino is rather like 
-Tolkiens "The Lord of the Rings" than some
-
-Much of my work is due to the use of Django's missing application startup signal.
 
 
 

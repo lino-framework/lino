@@ -7,7 +7,6 @@ Is multi-table inheritance bad?
 
 Daniel and Audrey were so nice to offer me a free copy 
 of their book `Two scoops of Django <https://django.2scoops.org/>`_.
-
 I gratefully accept it as a gift and an encouragement for my work on Lino.
 
 Wow! this book is so great! I just can't wait to try all the new ideas I
@@ -27,27 +26,29 @@ however, I had a sleepless night because the authors write:
   is considered by the authors and many other developers to be a 
   bad thing. We strongly recommend against using it.
   
-That statement was be a challenge to me: 
+That statement was a challenge to me. 
 I had to either *understand* 
 that they are right or *show* that they are wrong.
+
+I had to reopen ticket :doc:`/tickets/22`!
 Sigh!
-I had to reopen ticket :doc:`/tickets/22`
-although everything there seemed so clear to me!
+Everything there seemed so clear to me!
 
-And after some meditation 
-I understood that I am probably wrong and they are right.
-We *can* do it without MTI, it just depends on how the user interface handles it!
-
-An important observation seems the fact that  
+And after some meditation I understood that indeed it's not clear!
+An important observation was the fact that  
 a Partner is **either** a Person 
 **or** an Organization, **not both**.
 Another hint is the fact that :mod:`lino.utils.mti` 
 will break in Django 1.6.
+Conclusion:
+I was wrong.
+We *can* do it without MTI, 
+it just depends on how the user interface handles it!
 
-  
 As a proof of concept I wrote the new module :mod:`lino.modlib.partners` 
 which is going to replace :mod:`lino.modlib.contacts`.
-This lead to a few little optimizations:
+
+This also caused some small optimizations:
 
 - :func:`when_prepared <lino.core.inject.when_prepared>`
   now supports more than one argument, 
@@ -63,7 +64,11 @@ Also opened new ticket :doc:`/tickets/72`.
 Pre-release rush
 ----------------
 
-- "'State' object has no attribute 'editable'"
-  caused by lino.modlib.vat.models.DelarationStates
+- The Lino Cosi online demo had a 
+  "'State' object has no attribute 'editable'" traceback
+  caused by lino.modlib.vat.models.DelarationStates.
+  Fixed.
+  
+- Increased the version counters.
   
   
