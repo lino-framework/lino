@@ -1,30 +1,43 @@
 #60 : What is a Partner? 
 ------------------------
 
-(TODO: integrate these into the documentation. 
-Besides that the ticket can be considered closed.)
+Ticket reopened :doc:`/blog/2013/0202` after reading 
+`Two scoops of Django <https://django.2scoops.org/>`_.
 
-We want :mod:`lino.modlib.contacts` to be flexible enough to handle 
-a majority of applications. 
+We want :mod:`lino.modlib.contacts` to be flexible 
+enough to handle (or be an extensible base for) any application 
+which deals with "Partners": 
+Organizations, Companies, Persons, 
+Families, Customers, Providers, Households...
 
-What should the contacts.Partner model be for 
-Companies, Persons, Families, Customers, Providers, Households...:
+The crucial question is: do we need a common table of all "partners"
+
+Partners
 (1) the MTI parent or (2) a refering model?
 
 Observations
 
-- Legal documents (contracts, invoices, offers,...) 
-  usually need to be linked to a single and well identified *Partner*. 
+- Legal documents like invoices, offers, contracts,...
+  refer to a single and well identified "party" 
+  or **Partner**. 
   We call them **Partner Documents**.
   
-- A **Partner** is either a Person or a Company (or a Family...) 
-  susceptible to become recipient of a Partner Document.
-  A Partner is *either* a Person *or* a Company, not both.
+- The Partner is *either* a **Person** (*personne physique*) 
+  *or* an **Organization** (*personne morale*)
+  (or a Family, a Partner List or some other application-specific model, 
+  but Person and Organization are the omnipresent examples).
   
-- Lino does not require to differentiate between 
-  "customers" and "providers". A customer is a Partner who received 
-  at least on sales document, a provider is a Partner who received 
-  at least on purchase document.
+  A Partner is *either* a Person *or* an Organization, not both.
+  Edge case is for example a company who gets purchase invoices 
+  from a freelancer (a physical person). 
+  
+- A minimal accounting application 
+  does not require to differentiate between 
+  "customers" and "providers": a Customer is a Partner who received 
+  at least one Sales Document, a Provider is a Partner who "received" 
+  at least one Purchase Document.
+  Bigger applications may want to their own table for 
+  customers and/or providers, containing things like payment terms
   
 - A partner document, besides the mandatory (legally responsible), 
   partner, can have an optional second 
@@ -65,8 +78,8 @@ Observations
   "Delivery addresses" to the Partner detail.
   
 - Applications might want to provide a table of Persons 
-  who are not Partners. For example a song database has a list 
-  of Authors and Composers and might not even use the contacts 
+  who are not Partners. For example a bibliography database has a list 
+  of Authors and might not even use the ``contacts`` 
   module. That's why we have PersonMixin and Born, and why the 
   contacts module doesn't itself define a concrete models for 
   Persons and Companies.

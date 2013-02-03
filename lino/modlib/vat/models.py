@@ -46,6 +46,7 @@ from django.utils.translation import ugettext_lazy as _
 
 from lino.modlib.ledger.utils import FiscalYears
 #~ from lino.core.modeltools import models_by_base
+partner_model = settings.LINO.partners_app_label + '.Partner'
 
 ZERO = Decimal()
  
@@ -140,9 +141,9 @@ else:
 class DeclarationStates(dd.Workflow):
     pass
 add = DeclarationStates.add_item
-add("00",_("Draft"),"draft")
-add("10",_("Registered"),"registered")
-add("20",_("Submitted"),"submitted")
+add("00",_("Draft"),"draft",editable=True)
+add("10",_("Registered"),"registered",editable=False)
+add("20",_("Submitted"),"submitted",editable=False)
 
 
 
@@ -285,7 +286,7 @@ class VatDocument(mixins.UserAuthored,VatTotal):
     class Meta:
         abstract = True
   
-    partner = models.ForeignKey("contacts.Partner")
+    partner = models.ForeignKey(partner_model)
     item_vat = models.BooleanField(_("Prices include VAT"),default=False,
       help_text=_("Whether prices includes VAT or not."))
     vat_regime = VatRegimes.field(blank=True)
@@ -578,7 +579,7 @@ class DocumentsByDeclaration(dd.VirtualTable):
     @dd.virtualfield(models.DateField(_("Date")))
     def date(self,obj,ar=None): return obj.date
         
-    @dd.virtualfield(models.ForeignKey('contacts.Partner'))
+    @dd.virtualfield(models.ForeignKey(partner_model))
     def partner(self,obj,ar=None): return obj.partner
     
     @dd.virtualfield(dd.PriceField(_("Total incl. VAT")))

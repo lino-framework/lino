@@ -159,6 +159,8 @@ def analyze_models():
                 #~ else:
                     #~ logger.info(msg)
             elif isinstance(f,models.ForeignKey):
+                if isinstance(f.rel.to,basestring):
+                    raise Exception("%s %s relates to %r",(model,f.name,f.rel.to))
                 if f.verbose_name == f.name.replace('_', ' '):
                     """
                     If verbose name was not set by user code, 
@@ -183,8 +185,6 @@ def analyze_models():
             #~ for k,v in class_dict_items(model):
                 #~ if isinstance(v,dd.VirtualField):
                     #~ v.lino_resolve_type()
-                    
-                    
                     
                     
     
@@ -223,7 +223,6 @@ def analyze_models():
     dbtables.discover()
     
     choosers.discover()
-        
                     
     #~ from lino.core import web
     #~ web.site_setup(self)
@@ -330,12 +329,17 @@ def startup_site(self):
         if self.is_installed('contenttypes'):
           
             from django.db.utils import DatabaseError
+            from django.db.models import FieldDoesNotExist
             try:
               
                 from lino.models import HelpText
                 for ht in HelpText.objects.filter(help_text__isnull=False):
                     #~ logger.info("20120629 %s.help_text", ht)
-                    resolve_field(unicode(ht)).help_text = ht.help_text
+                    try:
+                        resolve_field(unicode(ht)).help_text = ht.help_text
+                    except FieldDoesNotExist as e:
+                        #~ logger.debug("No help texts : %s",e)
+                        pass
             except DatabaseError,e:
                 logger.debug("No help texts : %s",e)
                 pass

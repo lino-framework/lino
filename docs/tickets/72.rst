@@ -1,0 +1,64 @@
+#72 : Digesting two scoops of Django
+====================================
+
+My notes while reading 
+`Two scoops of Django <https://django.2scoops.org/>`_.
+Warning: 
+This document is work in progress and may change frequently during the coming weeks.
+
+This book is probably the first book about software which I really *loved* to read.
+I work mostly alone, while Danny and Audrey obviously communicate 
+a lot with other programmers.
+My soul was thirsting for 
+impulses from competent Python programmers 
+about how to make Lino better.
+Their book satisfies this need.
+
+
+Ideas for Lino
+--------------
+
+The following plans are directly inspired by the book:
+
+- Rename "Company" to "Organisation":
+  more to type but less to explain.
+
+- replace MTI (Multi-Table Inheritance) by OneToOne fields 
+  (which requires :doc:`73`)
+  
+- rename 'apps' to 'projects', 'modlib' to 'lib' or 'apps'
+
+- replace all local settings with versioned settings files.
+  
+
+
+Less urgent
+-----------
+
+- use relative imports
+- us pgsql for development
+- use pip, virtualenv, virtualenvwrapper
+
+Questions
+---------
+
+- You recommend github and bitbucket, why not Google code?
+
+
+General thoughts
+----------------
+
+I sometimes have been asked 
+"Why is Lino so complex? 
+Can't you split down Lino into smaller parts?"
+One answer is: Lino is rather like 
+Tolkiens "The Lord of the Rings" than some
+
+Much of my work is due to the use of Django's missing application startup signal.
+
+
+
+
+
+
+

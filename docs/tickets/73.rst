@@ -1,0 +1,12 @@
+#73 : UI concept for handling OneToOne fields 
+=============================================
+
+Before I can replace MTI (Multi-Table Inheritance) 
+by OneToOne fields, 
+I need to find a user-friendly way for handling them.
+Lino cannot yet render OneToOneFields in a layout.
+
+Module :mod:`lino.modlib.partners` 
+(which is going to replace :mod:`lino.modlib.contacts`)
+is where I am experimenting with this.
+

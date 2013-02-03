@@ -1,5 +1,5 @@
 # -*- coding: UTF-8 -*-
-## Copyright 2009-2012 Luc Saffre
+## Copyright 2009-2013 Luc Saffre
 ## This file is part of the Lino project.
 ## Lino is free software; you can redistribute it and/or modify
 ## it under the terms of the GNU General Public License as published by
@@ -20,8 +20,10 @@ from lino import dd
 
 sales = dd.resolve_app('sales')
 ledger = dd.resolve_app('ledger')
-contacts = dd.resolve_app('contacts')
 products = dd.resolve_app('products')
+
+partner_model = settings.LINO.partners_app_label + '.Partner'
+Partner = dd.resolve_model(partner_model)
 
 REQUEST = None
 
@@ -34,7 +36,7 @@ def objects():
       
         vt = ledger.VoucherTypes.get_for_model(sales.Invoice)
         JOURNALS = Cycler(vt.get_journals())
-        PARTNERS = Cycler(contacts.Partner.objects.all())
+        PARTNERS = Cycler(Partner.objects.all())
         USERS = Cycler(settings.LINO.user_model.objects.all())
         PRODUCTS = Cycler(products.Product.objects.all())
         ITEMCOUNT = Cycler(1,2,3)

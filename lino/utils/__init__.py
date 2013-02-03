@@ -405,7 +405,9 @@ class AttrDict(dict):
     """
   
     def __getattr__(self, name):
+        #~ if self.has_key(name):
         return self[name]
+        #~ raise AttributeError("%r has no attribute '%s'" % (self,name))
         
     def define2(self,name,value):
         return self.define(*name.split('.')+[value])

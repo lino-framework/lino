@@ -201,7 +201,7 @@ class Model(models.Model):
         """
         for name in names:
             if fields.get_data_elem(self,name) is None:
-                raise Exception("%s has no element '%s'" % self,name)
+                raise Exception("%s has no element '%s'" % (self,name))
         self.hidden_elements = self.hidden_elements | set(names)
         
         

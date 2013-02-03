@@ -22,7 +22,8 @@ boot = Signal()
 
 pre_analyze = Signal(['models_list'])
 """
-Sent exactly once per process at site startup, just before Lino analyzes the models.
+Sent exactly once per process at site startup, 
+just before Lino analyzes the models.
 
 sender: 
   the Lino instance

@@ -81,13 +81,13 @@ class SiteConfig(dd.Model):
     """
     This model should have exactly one instance, 
     used to store persistent global site parameters.
-    Application code sees this as ``settings.LINO.config``.
+    Application code sees this instance as ``settings.LINO.site_config``.
     """
         
     default_build_method = models.CharField(max_length=20,
-      verbose_name=_("Default build method"),
-      default='appyodt',
-      choices=printable.build_method_choices(),blank=True)
+        verbose_name=_("Default build method"),
+        default='appyodt',
+        choices=printable.build_method_choices(),blank=True)
         
     def save(self,*args,**kw):
         super(SiteConfig,self).save(*args,**kw)

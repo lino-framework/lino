@@ -70,8 +70,66 @@ Pre-release rush
   
   
   
+Continued on :mod:`lino.apps.belref`
+------------------------------------
+
+Upps, ich habe versehentlich ein bisschen an :mod:`lino.apps.belref`
+weiter gearbeitet, obwohl es zur Zeit eigentlich dringendere Dinge 
+gibt...
+
+... aber mir war eine Idee gekommen, wie ich das mit dem Fachwortschatz 
+in :mod:`lino.modlib.concepts` zu strukturieren gedenke: ein neues Modell 
+:class:`Link <lino.modlib.concepts.models.Link>`
+und neue ChoiceList
+:class:`LinkTypes <lino.modlib.concepts.models.LinkTypes>`.
+Aber das ist alles Spielerei und noch lange nicht fertig.
+Vor allem fehlt ein Suchfeld.
+Und der Inhalt der Hauptseite ist mir auch noch nicht klar...
 
 
+Lino Cosi braucht eine Währung
+------------------------------
 
+Für die Online-Demos habe ich 
+:attr:`site_config_defaults
+<lino.Lino.site_config_defaults>` auf `dict(default_build_method='appypdf')`
+gesetzt.
+Der hard-codierte Standardwert `appyodt` soll bleiben, weil nicht jeder gleich 
+einen LibreOffice-Daemon installieren will. Aber wer's getan hat, kriegt 
+eigentlich lieber PDFs statt ODTs beim Ausdruck.
 
+Wenn man in der 
+`Demo-Datenbank <http://demo4.lino-framework.org>`_
+eine Verkaufsrechnung ausdruckt, 
+fallen zwei Dinge besonders auf:
+
+- insgesamt sollte sich mal jemand mit ein paar Stunden Liebe 
+  dransetzen und das Gesamtdesign überarbeiten. 
+  Denn momentan ist das eher ein Aua- als ein Aha-Effekt.
+
+- Es fehlt jegliche Währungsangabe.
+
+Und das stimmt: seit dem Umstieg auf Euros ist das zwar für 
+mich persönlich nicht mehr akut, aber Lino Cosi sollte doch 
+zumindest eine Notion von Grundwährung haben.
+
+Da gibt es `python-money <http://code.google.com/p/python-money/>`_,
+ein sauber programmiertes wohlgepflegtes kleines übersichtliches 
+Modul. Schön ist die Implementierung eines MoneyField für Django.
+Aber für Lino Cosi wäre das Overkill:
+wir brauchen die Währung nicht mehr pro Dokument ändern zu können.
+
+Was mir weniger gefällt: dass die hardcodierte Liste aller 
+Währungen der Welt da nur mit englischen Bezeichnungen steht.
+Hier ein Auszug::
+
+  CURRENCY['KWD'] = Currency(code='KWD', numeric='414', name='Kuwaiti Dinar', countries=['KUWAIT'])
+  CURRENCY['EUR'] = Currency(code='EUR', numeric='978', name='Euro', countries=['ANDORRA', 'AUSTRIA', 'BELGIUM', 'FINLAND', 'FRANCE', 'FRENCH GUIANA', 'FRENCH SOUTHERN TERRITORIES', 'GERMANY', 'GREECE', 'GUADELOUPE', 'IRELAND', 'ITALY', 'LUXEMBOURG', 'MARTINIQUE', 'MAYOTTE', 'MONACO', 'MONTENEGRO', 'NETHERLANDS', 'PORTUGAL', 'R.UNION', 'SAINT PIERRE AND MIQUELON', 'SAN MARINO', 'SLOVENIA', 'SPAIN'])
+  CURRENCY['CHF'] = Currency(code='CHF', numeric='756', name='Swiss Franc', countries=['LIECHTENSTEIN'])
+
+Nee, das ist so nicht internationalisierbar.
+
+Für Lino Cosi brauche ich erstmal einfach 
+nur eine ChoiceList mit ein paar Währungen, und in der 
+SiteConfig dann ein Feld, wo man die Grundwährung eingibt.
 

@@ -35,8 +35,9 @@ vat = dd.resolve_app('vat')
 sales = dd.resolve_app('sales')
 ledger = dd.resolve_app('ledger')
 finan = dd.resolve_app('finan')
-contacts = dd.resolve_app('contacts')
+#~ partners = dd.resolve_app('partners')
 
+partner_model = settings.LINO.partners_app_label + '.Partner'
 
 current_group = None
 
@@ -120,7 +121,7 @@ def objects():
     MODEL = ledger.AccountInvoice
     vt = ledger.VoucherTypes.get_for_model(MODEL)
     JOURNALS = Cycler(vt.get_journals())
-    Partner = dd.resolve_model('contacts.Partner')
+    Partner = dd.resolve_model(partner_model)
     #~ logger.info("20130105 mini Partners %s",Partner.objects.all().count())
     PARTNERS = Cycler(Partner.objects.order_by('name'))
     USERS = Cycler(settings.LINO.user_model.objects.all())

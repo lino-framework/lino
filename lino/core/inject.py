@@ -1,4 +1,4 @@
-## Copyright 2011-2012 Luc Saffre
+## Copyright 2011-2013 Luc Saffre
 ## This file is part of the Lino project.
 ## Lino is free software; you can redistribute it and/or modify 
 ## it under the terms of the GNU General Public License as published by
@@ -105,35 +105,37 @@ def check_pending_injects(signal,sender,models_list=None,**kw): # called from ke
 
 from lino.core.modeltools import is_installed_model_spec
 
-def do_when_prepared(model_spec,todo):
-    if model_spec is None:
-        return # e.g. inject_field during autodoc when user_model is None
-        
-    if isinstance(model_spec,basestring):
-        if not is_installed_model_spec(model_spec):
-            return
-        k = model_spec
-        model = PREPARED_MODELS.get(k,None)
-        if model is None: 
-            injects = PENDING_INJECTS.setdefault(k,[])
-            injects.append(todo)
-            #~ d[name] = field
-            #~ logger.info("20120627 Defer inject_field(%r,%r,%r)", model_spec,name,field)
-            return
-    else:
-        model = model_spec
-        #~ k = model_spec._meta.app_label + '.' + model_spec.__name__
-    todo(model)
+def do_when_prepared(todo,*model_specs):
+    for model_spec in model_specs:
+        if model_spec is None:
+            continue # e.g. inject_field during autodoc when user_model is None
+            
+        if isinstance(model_spec,basestring):
+            if not is_installed_model_spec(model_spec):
+                continue
+            k = model_spec
+            model = PREPARED_MODELS.get(k,None)
+            if model is None: 
+                injects = PENDING_INJECTS.setdefault(k,[])
+                injects.append(todo)
+                #~ d[name] = field
+                #~ logger.info("20120627 Defer inject_field(%r,%r,%r)", model_spec,name,field)
+                continue
+        else:
+            model = model_spec
+            #~ k = model_spec._meta.app_label + '.' + model_spec.__name__
+        todo(model)
 
 
-def when_prepared(model_spec):
+def when_prepared(*model_specs):
     """
     Decorator to declare a function which will automatically run when 
-    the specified model has been prepared 
-    (or immediately if that model is already prepared).
+    the specified models has been prepared.
+    If the model has already been prepared, the function is executed 
+    immediately.
     """
     def decorator(fn):
-        return do_when_prepared(model_spec,fn)
+        return do_when_prepared(fn,*model_specs)
     return decorator
   
     
@@ -164,7 +166,7 @@ def inject_field(model_spec,name,field,doc=None):
         #~ else:
             #~ logger.info("20130106 no need to fix_field_cache after inject_field")
 
-    return do_when_prepared(model_spec,todo)    
+    return do_when_prepared(todo,model_spec)    
     
     
 
@@ -200,7 +202,7 @@ def update_field(model_spec,name,**kw):
             #~ logger.warning('20120715 update_field(%s.%s) : %s',model,fld,fld.model)
         for k,v in kw.items():
             setattr(fld,k,v)
-    return do_when_prepared(model_spec,todo)    
+    return do_when_prepared(todo,model_spec)    
         
 
 def inject_quick_add_buttons(model,name,target):

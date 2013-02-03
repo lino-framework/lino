@@ -39,6 +39,7 @@ from django.conf import settings
 from django.http import HttpResponse, Http404
 from django.utils import functional
 from django.utils.encoding import force_unicode
+from django.db.models.fields.related import SingleRelatedObjectDescriptor
 #~ from django.utils.functional import Promise
 
 from django.template.loader import get_template
@@ -779,6 +780,11 @@ class ExtUI(base.UI):
         if isinstance(de,fields.Constant):
             return ext_elems.ConstantElement(lh,de,**kw)
             
+            
+        if isinstance(de,SingleRelatedObjectDescriptor):
+            return ext_elems.SingleRelatedObjectElement(lh,de.related,**kw)
+            #~ return self.create_field_element(lh,de.related.field,**kw)
+            
         if isinstance(de,fields.RemoteField):
             return self.create_field_element(lh,de,**kw)
         if isinstance(de,models.Field):
@@ -804,6 +810,7 @@ class ExtUI(base.UI):
             de.primary_key = False # for ext_store.Store()
             lh.add_store_field(de)
             return ext_elems.GenericForeignKeyElement(lh,de,**kw)
+            
             
         #~ if isinstance(de,type) and issubclass(de,dd.Table):
         if isinstance(de,type) and issubclass(de,tables.AbstractTable):
@@ -893,6 +900,9 @@ class ExtUI(base.UI):
             msg += " Possible names are %s." % ', '.join(l)
         else:
             #~ logger.info("20121023 create_layout_element %r",lh.layout._datasource)
+            #~ l = [de.name for de in lh.layout._datasource.wildcard_data_elems()]
+            #~ print(20130202, [f.name for f in lh.layout._datasource.model._meta.fields])
+            #~ print(20130202, lh.layout._datasource.model._meta.get_all_field_names())
             msg = "Unknown element %r referred in layout <%s>." % (
                 name,lh.layout)
             msg += " Cannot handle %r" % de
@@ -936,6 +946,7 @@ class ExtUI(base.UI):
         #~ lh._store_fields.append(e.field)
         #~ return e
           
+        
     def create_field_element(self,lh,field,**kw):
         #~ e = lh.main_class.field2elem(lh,field,**kw)
         e = ext_elems.field2elem(lh,field,**kw)

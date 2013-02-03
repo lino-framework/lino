@@ -1,0 +1,69 @@
+20130202
+========
+
+
+Is multi-table inheritance bad?
+-------------------------------
+
+Daniel and Audrey were so nice to offer me a free copy 
+of their book `Two scoops of Django <https://django.2scoops.org/>`_.
+
+I gratefully accept it as a gift and an encouragement for my work on Lino.
+
+Wow! this book is so great! I just can't wait to try all the new ideas I
+got already during the five first chapters! Examples: use relative
+imports, use pip and virtualenv, move all settings to the code
+repository, ... 
+
+... but I stopped at the beginning of chapter 6 because it's too dangerous
+to continue right now: I must keep Lino and my mind *stable* during the
+next 2 weeks because I'm going to travel to Belgium and show Lino to
+potential partners and customers.
+
+The question continued to haunt me, 
+however, I had a sleepless night because the authors write:
+
+  Multi-table inheritance, sometimes called ‘concrete inheritance’, 
+  is considered by the authors and many other developers to be a 
+  bad thing. We strongly recommend against using it.
+  
+That statement was be a challenge to me: 
+I had to either *understand* 
+that they are right or *show* that they are wrong.
+Sigh!
+I had to reopen ticket :doc:`/tickets/22`
+although everything there seemed so clear to me!
+
+And after some meditation 
+I understood that I am probably wrong and they are right.
+We *can* do it without MTI, it just depends on how the user interface handles it!
+
+An important observation seems the fact that  
+a Partner is **either** a Person 
+**or** an Organization, **not both**.
+Another hint is the fact that :mod:`lino.utils.mti` 
+will break in Django 1.6.
+
+  
+As a proof of concept I wrote the new module :mod:`lino.modlib.partners` 
+which is going to replace :mod:`lino.modlib.contacts`.
+This lead to a few little optimizations:
+
+- :func:`when_prepared <lino.core.inject.when_prepared>`
+  now supports more than one argument, 
+  each of them being a model_spec.
+- Better error messages at some internal places
+
+But this proof of concept is not finised.
+The main challenge is :doc:`/tickets/73`.
+
+Also opened new ticket :doc:`/tickets/72`.
+
+
+Pre-release rush
+----------------
+
+- "'State' object has no attribute 'editable'"
+  caused by lino.modlib.vat.models.DelarationStates
+  
+  

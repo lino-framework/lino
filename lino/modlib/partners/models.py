@@ -14,7 +14,7 @@
 
 """
 This module defines the tables 
-- :class:`Partner` (and their specializations :class:`Person` and :class:`Company`)
+- :class:`Partner` (and their specializations :class:`Person` and :class:`Organisation`)
 - :class:`Role` and :class:`RoleType`
 
 """
@@ -52,72 +52,66 @@ from lino.utils.choosers import chooser
 from lino.utils import babel 
 #~ from lino.models import get_site_config
 
-#~ from lino.modlib.contacts.utils import Genders
+#~ from lino.modlib.partners.utils import Genders
 
 #~ from lino.modlib.countries.models import CountryCity
 from lino.modlib.countries.models import CountryRegionCity
 
-#~ from lino.modlib.contacts.utils import get_salutation
-#~ from lino.modlib.contacts.utils import GENDER_CHOICES, get_salutation
+#~ from lino.modlib.partners.utils import get_salutation
+#~ from lino.modlib.partners.utils import GENDER_CHOICES, get_salutation
 
 
 from lino.utils import mti
 
+from lino.modlib.partners import MODULE_LABEL
 
-from lino.modlib.contacts import MODULE_LABEL
+if False:
+
+    class PartnerType(dd.Choice):
+        
+        def __init__(self,cls,value,model_spec,name=None):
+            #~ self.model_spec = model_spec
+            super(PartnerType,self).__init__(value,model_spec,name)
+            def f(model):
+                self.model = model
+                self.text = model._meta._verbose_name
+            dd.do_when_prepared(f,model_spec)
+            
+            
+    class PartnerTypes(dd.ChoiceList):
+
+        @classmethod
+        def add_item(cls,value,model,name=None,**kw):
+            return cls.add_item_instance(PartnerType(cls,value,model,name,**kw))
+            
+    PartnerTypes.add_item('P','partners.Person','person')        
+    PartnerTypes.add_item('O','partners.Organisation','organisation')
 
 
-class CompanyType(babel.BabelNamed):
+class OrganisationType(babel.BabelNamed):
     """
     Represents a possible choice for the  `type`
-    field of a :class:`Company`.
+    field of an :class:`Organisation`.
     """
     
     class Meta:
-        verbose_name = _("company type")
-        verbose_name_plural = _("company types")
+        verbose_name = _("Organisation type")
+        verbose_name_plural = _("Organisation types")
         
     abbr = babel.BabelCharField(_("Abbreviation"),max_length=30,blank=True)
     
         
-class CompanyTypes(dd.Table):
+class OrganisationTypes(dd.Table):
     required = dd.required(user_level='manager')
-    model = 'contacts.CompanyType'
+    model = 'partners.OrganisationType'
     column_names = 'name *'
-    #~ label = _("Company types")
+    #~ label = _("Organisation types")
 
 
-
-
-#~ class Contact(mti.MultiTableBase,CountryCity):
-class Partner(mti.MultiTableBase,CountryRegionCity):
-    """
-    
-    A :class:`Partner` is anything that can act as a business partner.
-    A Partner has at least a name and usually also one "official" address.
-    Predefined subclasses of Partners are
-    :class:`Person` for physical persons and
-    :class:`Company` for companies, organisations and any kind of 
-    non-formal Partners.
-    
-    
-    Base class for anything that has contact information 
-    (postal address, email, phone,...).
-    
-    """
-    
-    """
-    preferred width for ForeignKey fields to a Partner
-    """
-    preferred_foreignkey_width = 20 
-    
-  
+class Addressable(CountryRegionCity):
     class Meta:
-        abstract = settings.LINO.is_abstract_model('contacts.Partner')
-        verbose_name = _("Partner")
-        verbose_name_plural = _("Partners")
-  
-    name = models.CharField(max_length=200,verbose_name=_('Name'))
+        abstract = True
+        
     addr1 = models.CharField(_("Address line before street"),
         max_length=200,blank=True,
         help_text="Address line before street")
@@ -149,32 +143,8 @@ class Partner(mti.MultiTableBase,CountryRegionCity):
     phone = models.CharField(_('Phone'),max_length=200,blank=True)
     gsm = models.CharField(_('GSM'),max_length=200,blank=True)
     fax = models.CharField(_('Fax'),max_length=200,blank=True)
-    
     remarks = models.TextField(_("Remarks"),blank=True) # ,null=True)
     
-    is_person = mti.EnableChild(
-        "contacts.Person",
-        verbose_name=_("is Person"),
-        help_text=_("Whether this Partner is a Person."))
-        
-    is_company = mti.EnableChild(
-        "contacts.Company",
-        verbose_name=_("is Company"),
-        help_text=_("Whether this Partner is a Company."))
-        
-    def save(self,*args,**kw):
-        if self.id is None:
-            sc = settings.LINO.site_config # get_site_config()
-            if sc.next_partner_id is not None:
-                self.id = sc.next_partner_id
-                sc.next_partner_id += 1
-                sc.save()
-        #~ logger.info("20120327 Partner.save(%s,%s)",args,kw)
-        super(Partner,self).save(*args,**kw)
-        
-    def __unicode__(self):
-        return self.name
-        
     def address_person_lines(self):
         #~ yield self.name
         yield self.get_full_name()
@@ -223,7 +193,7 @@ but e.g. :class:`PersonMixin` overrides this.
             #~ foreigner = (self.country != self.objects.get(pk=1).country)
         if self.country is not None:
             sc = settings.LINO.site_config # get_site_config()
-            if not sc.site_company or self.country != sc.site_company.country: 
+            if not sc.site_partner or self.country != sc.site_partner.country: 
                 # (if self.country != sender's country)
                 yield unicode(self.country)
             
@@ -260,8 +230,84 @@ but e.g. :class:`PersonMixin` overrides this.
         #~ return join_words(self.last_name.upper(),self.first_name)
         return unicode(self)
     
+        
 
-class PartnerDetail(dd.FormLayout):
+#~ class Contact(mti.MultiTableBase,CountryCity):
+class Partner(dd.Model):
+    """
+    
+    A :class:`Partner` is anything that can act as a business partner.
+    A Partner has at least a name and usually also one "official" address.
+    Predefined subclasses of Partners are
+    :class:`Person` for physical persons and
+    :class:`Organisation` for companies, organisations and any kind of 
+    non-formal Partners.
+    
+    
+    Base class for anything that has contact information 
+    (postal address, email, phone,...).
+    
+    """
+    
+    """
+    preferred width for ForeignKey fields to a Partner
+    """
+    preferred_foreignkey_width = 20 
+    
+  
+    class Meta:
+        abstract = settings.LINO.is_abstract_model('partners.Partner')
+        verbose_name = _("Partner")
+        verbose_name_plural = _("Partners")
+  
+    name = models.CharField(max_length=200,verbose_name=_('Name'))
+    
+    #~ type = PartnerTypes.field(blank=True)
+    
+    def save(self,*args,**kw):
+        if self.id is None:
+            sc = settings.LINO.site_config # get_site_config()
+            if sc.next_partner_id is not None:
+                self.id = sc.next_partner_id
+                sc.next_partner_id += 1
+                sc.save()
+        #~ logger.info("20120327 Partner.save(%s,%s)",args,kw)
+        super(Partner,self).save(*args,**kw)
+        
+    #~ def typed_partner(self):
+        #~ if self.organisation:
+            #~ return self.organisation
+        #~ return self.person
+            
+        
+    def __unicode__(self):
+        return self.name
+
+
+
+
+
+
+class Partners(dd.Table):
+    required = dd.required(user_level='user')
+    model = 'partners.Partner'
+    order_by = ['name','id']
+    #~ column_names = "name * id" 
+    #~ detail_layout = PartnerDetail()
+    detail_layout = """
+    id name
+    organisation person
+    """
+    insert_layout = dd.FormLayout("""
+    name
+    organisation person
+    """,window_size=(40,'auto'))
+    
+
+
+
+#~ class PartnerDetail(dd.FormLayout):
+class AddressableDetail(dd.FormLayout):
   
     main = """
     address_box:60 contact_box:30
@@ -286,7 +332,6 @@ class PartnerDetail(dd.FormLayout):
 
     bottom_box = """
     remarks 
-    is_person is_company #is_user
     """
         
     name_box = "name"
@@ -299,17 +344,9 @@ class PartnerDetail(dd.FormLayout):
   
     
     
-class Partners(dd.Table):
+class Addressables(dd.Table):
     required = dd.required(user_level='user')
-    model = 'contacts.Partner'
     column_names = "name email * id" 
-    order_by = ['name','id']
-    #~ column_names = "name * id" 
-    detail_layout = PartnerDetail()
-    insert_layout = dd.FormLayout("""
-    name
-    language email
-    """,window_size=(40,'auto'))
     
     @classmethod
     def get_queryset(self):
@@ -322,19 +359,28 @@ class Partners(dd.Table):
     #~ def get_actor_label(self):
         #~ return _("All %s") % self.model._meta.verbose_name_plural
         
-class PartnersByCity(Partners):
-    master_key = 'city'
-    order_by = 'street street_no street_box addr2'.split()
-    column_names = "street street_no street_box addr2 name language *"
+
+class ConcretePartner(dd.Model):
+    class Meta:
+        abstract = True
     
-class PartnersByCountry(Partners):
-    master_key = 'country'
-    column_names = "city street street_no name language *"
-    order_by = "city street street_no".split()
+    def get_partner_name(self):
+        raise NotImplementedError()
+        
+    def save(self,*args,**kw):
+        if self.partner_id is None:
+            assert self.id is None
+            p = Partner()
+            p.save()
+            self.id = p.id
+            self.partner = p
+            f = self._meta.get_field('partner')
+            setattr(p,self.__class__.__name__.lower(),self)
+        self.partner.name = self.get_partner_name()
+        self.partner.save()
+        super(ConcretePartner,self).save(*args,**kw)
+        
 
-
-
-  
 class PersonMixin(mixins.Human):
     """
     Can be used also for Persons that are no Partners
@@ -347,15 +393,19 @@ class PersonMixin(mixins.Human):
     """Text to print as part of the first address line in front of first_name."""
         
   
-class Person(PersonMixin,Partner):
+class Person(ConcretePartner,Addressable,PersonMixin):
     """
     Mixin for models that represent a physical person. 
     """
+    
     class Meta:
         #~ abstract = True
-        abstract = settings.LINO.is_abstract_model('contacts.Person')
+        abstract = settings.LINO.is_abstract_model('partners.Person')
         verbose_name = _("Person")
         verbose_name_plural = _("Persons")
+        
+    #~ partner = models.OneToOneField(Partner,blank=True,related_name="person")
+    partner = models.OneToOneField(Partner,blank=True)
 
     def address_person_lines(self,*args,**kw):
         "Deserves more documentation."
@@ -365,34 +415,26 @@ class Person(PersonMixin,Partner):
         #~ l = filter(lambda x:x,[self.first_name,self.last_name])
         #~ yield  " ".join(l)
         
-    def full_clean(self,*args,**kw):
-    #~ def save(self,*args,**kw):
-        """
-        Set the `name` field of this person. 
-        This field is visible in the Partner's detail but not 
-        in the Person's detail and serves for sorting 
-        when selecting a Partner. 
-        It also serves for quick search on Persons.
-        """
-        self.name = join_words(self.last_name,self.first_name)
-        super(Person,self).full_clean(*args,**kw)
+            
+    def get_partner_name(self):
+        return join_words(self.last_name,self.first_name)
 
 
 
 
 
-class PersonDetail(PartnerDetail):
+class PersonDetail(AddressableDetail):
   
     #~ main = """
     #~ address_box contact_box
-    #~ bottom_box contacts.RolesByPerson
+    #~ bottom_box partners.RolesByPerson
     #~ """
     
     name_box = "last_name first_name:15 gender title:10"
     #~ info_box = "id:5 language:10 birth_date:10"
     info_box = "id:5 language:10"
 
-    bottom_box = "remarks contacts.RolesByPerson"
+    bottom_box = "remarks partners.ContactsByPerson"
         
     
     #~ def setup_handle(self,dh):
@@ -403,12 +445,12 @@ class PersonDetail(PartnerDetail):
 
 
 #~ class Persons(dd.Table):
-class Persons(Partners):
+class Persons(Addressables):
     """
     List of all Persons.
     """
     #~ required = dict(user_level='user')
-    model = "contacts.Person"
+    model = "partners.Person"
     order_by = ["last_name","first_name","id"]
     column_names = "name_column:20 address_column email phone:10 gsm:10 id language:10 *"
     detail_layout = PersonDetail()
@@ -420,33 +462,41 @@ class Persons(Partners):
     
 
 
-#~ class CompanyMixin(dd.Model):
-class Company(Partner):
+class Organisation(ConcretePartner,Addressable):
     """
-    Abstract base class for a company.
+    Abstract base class for a Organisation.
     See also :doc:`/tickets/14`.
     """
     class Meta:
-        abstract = settings.LINO.is_abstract_model('contacts.Company')
+        abstract = settings.LINO.is_abstract_model('partners.Organisation')
         #~ abstract = True
-        app_label = 'contacts'
-        verbose_name = _("Company")
-        verbose_name_plural = _("Companies")
+        #~ app_label = 'partners'
+        verbose_name = _("Organisation")
+        verbose_name_plural = _("Organisations")
+        
+    partner = models.OneToOneField(Partner,blank=True)
+    #~ partner = models.OneToOneField(Partner,blank=True,related_name="organisation")
     
-    prefix = models.CharField(max_length=200,blank=True) 
+    name = models.CharField(max_length=200,verbose_name=_('Name'))
+
+    
+    prefix = models.CharField(max_length=200,blank=True)
     vat_id = models.CharField(_("VAT id"),max_length=200,blank=True)
     """The national VAT identification number.
     """
     
-    type = models.ForeignKey('contacts.CompanyType',blank=True,null=True,
-      verbose_name=_("Company type"))
-    """Pointer to this company's :class:`CompanyType`. 
+    type = models.ForeignKey('partners.OrganisationType',blank=True,null=True,
+      verbose_name=_("Organisation type"))
+    """Pointer to this organisation's :class:`OrganisationType`. 
     """
+    
+    def get_partner_name(self):
+        return self.name
     
     #~ def get_full_name(self,**salutation_options):
     def get_full_name(self,salutation=True,**salutation_options):
         """Deserves more documentation."""
-        #~ print '20120729 Company.get_full_name`'
+        #~ print '20120729 Organisation.get_full_name`'
         if self.type:
             return join_words(self.type.abbr,self.name)
         return self.name
@@ -456,11 +506,12 @@ class Company(Partner):
     #~ def site_setup(cls,lino):
         #~ raise Exception('20110810')
 
-class CompanyDetail(PartnerDetail):
+
+class OrganisationDetail(AddressableDetail):
   
     bottom_box = """
     type vat_id:12
-    remarks contacts.RolesByCompany
+    remarks partners.ContactsByOrganisation
     """
 
     #~ name_box = """prefix name type:20"""
@@ -468,10 +519,10 @@ class CompanyDetail(PartnerDetail):
 
 
 
-class Companies(Partners):
-    model = "contacts.Company"
+class Organisations(Addressables):
+    model = "partners.Organisation"
     order_by = ["name"]
-    detail_layout = CompanyDetail()
+    detail_layout = OrganisationDetail()
     insert_layout = dd.FormLayout("""
     name 
     language:20 email:40
@@ -496,32 +547,53 @@ class Companies(Partners):
 
 
 
-# class ContactType(babel.BabelNamed):
-class RoleType(babel.BabelNamed):
-    """
-    TODO: rename "RoleType" to "Function" or "ContactType".
+
+class PersonsByCity(Persons):
+    master_key = 'city'
+    order_by = 'street street_no street_box addr2'.split()
+    column_names = "street street_no street_box addr2 last_name first_name language *"
     
-    RoleType,name is used at "in seiner Eigenschaft als ..." 
+class PersonsByCountry(Persons):
+    master_key = 'country'
+    column_names = "city street street_no last_name first_name language *"
+    order_by = "city street street_no".split()
+
+
+class OrganisationsByCity(Organisations):
+    master_key = 'city'
+    order_by = 'street street_no street_box addr2'.split()
+    column_names = "street street_no street_box addr2 name language *"
+    
+class OrganisationsByCountry(Organisations):
+    master_key = 'country'
+    column_names = "city street street_no name language *"
+    order_by = "city street street_no".split()
+
+
+
+
+class Role(babel.BabelNamed):
+    """
+    
+    Role.name is used at "in seiner Eigenschaft als ..." 
     in document templates for contracts.    
     """
     class Meta:
-        verbose_name = _("Function")
-        verbose_name_plural = _("Functions")
+        verbose_name = _("Role")
+        verbose_name_plural = _("Roles")
 
 
-class RoleTypes(dd.Table):
+class Roles(dd.Table):
     required = dd.required(user_level='manager')
-    model = RoleType
+    model = Role
 
 
-#~ class Contact(dd.Model):
-class Role(dd.Model):
+class Contact(dd.Model):
     """
     
-    A Contact (historical model name :class:`Role`) 
-    is a :class:`Person` 
-    that has a given  role (:class:`ContactType`) 
-    in a given :class:`Company`. 
+    A Contact is a :class:`Person` 
+    that has a given (:class:`Role`) 
+    in a given :class:`Organisation`. 
     
     TODO: rename "Role" to "Contact".
     """
@@ -530,12 +602,10 @@ class Role(dd.Model):
         verbose_name = _("Contact Person")
         verbose_name_plural = _("Contact Persons")
         
-    type = models.ForeignKey('contacts.RoleType',
-      blank=True,null=True,
-      verbose_name=_("Contact Role"))
-    person = models.ForeignKey("contacts.Person",related_name='rolesbyperson')
-    company = models.ForeignKey("contacts.Company",related_name='rolesbycompany')
-    #~ type = models.ForeignKey('contacts.ContactType',blank=True,null=True,
+    role = models.ForeignKey('partners.Contact',blank=True,null=True)
+    person = models.ForeignKey("partners.Person",related_name='contactsbyperson')
+    organisation = models.ForeignKey("partners.Organisation",related_name='contactsbyorganisation')
+    #~ type = models.ForeignKey('partners.ContactType',blank=True,null=True,
       #~ verbose_name=_("contact type"))
 
     #~ def __unicode__(self):
@@ -546,65 +616,44 @@ class Role(dd.Model):
         #~ return u"%s (%s)" % (self.person, self.type)
     def __unicode__(self):
         if self.person_id is None:
-            return super(Role,self).__unicode__()
-        if self.type is None:
+            return super(Contact,self).__unicode__()
+        if self.role is None:
             return unicode(self.person)
-        return u"%s (%s)" % (self.person, self.type)
+        return u"%s (%s)" % (self.person, self.role)
             
-    #~ def address_lines(self):
-        #~ for ln in self.person.address_person_lines():
-            #~ yield ln
-        #~ if self.company:
-            #~ for ln in self.company.address_person_lines():
-                #~ yield ln
-            #~ for ln in self.company.address_location_lines():
-                #~ yield ln
-        #~ else:
-            #~ for ln in self.person.address_location_lines():
-                #~ yield ln
     def address_lines(self):
         for ln in self.person.address_person_lines():
             yield ln
-        if self.company:
-            for ln in self.company.address_person_lines():
+        if self.organisation:
+            for ln in self.organisation.address_person_lines():
                 yield ln
-            for ln in self.company.address_location_lines():
+            for ln in self.organisation.address_location_lines():
                 yield ln
         else:
             for ln in self.person.address_location_lines():
                 yield ln
 
-#~ class ContactsByCompany(dd.Table):
-    #~ model = 'contacts.RoleOccurence'
-    #~ master_key = 'company'
-    #~ column_names = 'person type *'
-
-#~ class ContactsByPerson(dd.Table):
-    #~ label = _("Contact for")
-    #~ model = 'contacts.RoleOccurence'
-    #~ master_key = 'person'
-    #~ column_names = 'company type *'
     
-class Roles(dd.Table):
+class Contacts(dd.Table):
     required = dd.required(user_level='manager')
     #~ required_user_level = UserLevels.manager
-    model = 'contacts.Role'   
+    model = 'partners.Contact'
     
-class RolesByCompany(Roles):
+class ContactsByOrganisation(Contacts):
     required = dd.required()
     auto_fit_column_widths = True
     #~ required_user_level = None
     label = _("Contact persons")
-    master_key = 'company'
-    column_names = 'person type *'
+    master_key = 'organisation'
+    column_names = 'person role *'
     hidden_columns = 'id'
 
-class RolesByPerson(Roles):
+class ContactsByPerson(Contacts):
     required = dd.required()
     #~ required_user_level = None
     label = _("Contact for")
     master_key = 'person'
-    column_names = 'company type *'
+    column_names = 'organisation role *'
     auto_fit_column_widths = True
     hidden_columns = 'id'
     
@@ -621,38 +670,38 @@ class PartnerDocument(dd.Model):
     class Meta:
         abstract = True
         
-    company = models.ForeignKey("contacts.Company",
+    organisation = models.ForeignKey("partners.Organisation",
         blank=True,null=True)
         
-    person = models.ForeignKey("contacts.Person",blank=True,null=True)
+    person = models.ForeignKey("partners.Person",blank=True,null=True)
         
     def get_partner(self):
-        if self.company is not None:
-            return self.company
+        if self.organisation is not None:
+            return self.organisation
         return self.person
         
     def get_mailable_recipients(self):
-        for p in self.company, self.person:
+        for p in self.organisation, self.person:
             if p is not None and p.email:
                 #~ yield "%s <%s>" % (p, p.email)
                 yield ('to', p)
                 #~ yield ('to', unicode(p), p.email)
         
     def get_postable_recipients(self):
-        for p in self.company, self.person:
+        for p in self.organisation, self.person:
             if p is not None:
                 yield p
         
         
     #~ def summary_row(self,ui,rr,**kw):
         #~ if self.person:
-            #~ if self.company:
-                #~ # s += ": " + ui.href_to(self.person) + " / " + ui.href_to(self.company)
-                #~ return ui.href_to(self.company) + ' ' + ugettext("attn:") + ' ' + ui.href_to(self.person)
+            #~ if self.organisation:
+                #~ # s += ": " + ui.href_to(self.person) + " / " + ui.href_to(self.organisation)
+                #~ return ui.href_to(self.organisation) + ' ' + ugettext("attn:") + ' ' + ui.href_to(self.person)
             #~ else:
                 #~ return ui.href_to(self.person)
-        #~ elif self.company:
-            #~ return ui.href_to(self.company)
+        #~ elif self.organisation:
+            #~ return ui.href_to(self.organisation)
             
     #~ def summary_row(self,ui,rr,**kw):
     def summary_row(self,ar,**kw):
@@ -664,13 +713,13 @@ class PartnerDocument(dd.Model):
         s = href_to(self)
         #~ if self.person and not dd.has_fk(rr,'person'):
         if self.person:
-            if self.company:
+            if self.organisation:
                 s += " (" + href_to(self.person) \
-                    + "/" + href_to(self.company) + ")"
+                    + "/" + href_to(self.organisation) + ")"
             else:
                 s += " (" + href_to(self.person) + ")"
-        elif self.company:
-            s += " (" + href_to(self.company) + ")"
+        elif self.organisation:
+            s += " (" + href_to(self.organisation) + ")"
         return s
             
     def update_owned_instance(self,other):
@@ -678,111 +727,112 @@ class PartnerDocument(dd.Model):
         if isinstance(other,mixins.ProjectRelated):
             if isinstance(self.person,Person):
                 other.project = self.person
-            elif isinstance(self.company,Person):
-                other.project = self.company
+            elif isinstance(self.organisation,Person):
+                other.project = self.organisation
         other.person = self.person
-        other.company = self.company
+        other.organisation = self.organisation
         super(PartnerDocument,self).update_owned_instance(other)
         
 
 
 
-class OldCompanyContact(dd.Model):
+class OldOrganisationContact(dd.Model):
     """
-    Abstract class which adds two fields `company` and `contact`.
+    Abstract class which adds two fields `organisation` and `contact`.
     """
     class Meta:
         abstract = True
         
-    company = models.ForeignKey("contacts.Company",
-        related_name="%(app_label)s_%(class)s_set_by_company",
-        verbose_name=_("Company"),
+    organisation = models.ForeignKey("partners.Organisation",
+        related_name="%(app_label)s_%(class)s_set_by_organisation",
+        verbose_name=_("Organisation"),
         blank=True,null=True)
         
-    contact = models.ForeignKey("contacts.Role",
+    contact = models.ForeignKey("partners.Role",
       related_name="%(app_label)s_%(class)s_set_by_contact",
       blank=True,null=True,
       verbose_name=_("represented by"))
       
     @chooser()
-    def contact_choices(cls,company):
-        if company is not None:
-            return cls.contact_choices_queryset(company)
+    def contact_choices(cls,organisation):
+        if organisation is not None:
+            return cls.contact_choices_queryset(organisation)
         return []
         
     @classmethod
-    def contact_choices_queryset(cls,company):
-        return Role.objects.filter(company=company)
+    def contact_choices_queryset(cls,organisation):
+        return Role.objects.filter(organisation=organisation)
 
     def full_clean(self,*args,**kw):
-        if self.company:
+        if self.organisation:
             if self.contact is None \
-              or self.contact.company is None \
-              or self.contact.company.pk != self.company.pk:
-                qs = self.contact_choices_queryset(self.company)
-                #~ qs = self.company.rolesbyparent.all()
+              or self.contact.organisation is None \
+              or self.contact.organisation.pk != self.organisation.pk:
+                qs = self.contact_choices_queryset(self.organisation)
+                #~ qs = self.organisation.rolesbyparent.all()
                 if qs.count() == 1:
                     self.contact = qs[0]
                 else:
                     #~ print "20120227 clear contact!"
                     self.contact = None
-        super(CompanyContact,self).full_clean(*args,**kw)
+        super(OrganisationContact,self).full_clean(*args,**kw)
 
 
-class ContactRelated(dd.Model):
+#~ class ContactRelated(dd.Model):
+class PartnerRelated(dd.Model):
     """
-    Abstract class for things that relate to a company represented by a person as a given role.
-    Adds 3 fields `company`, `contact_person` and `contact_role`.
+    Abstract class for things that relate to a organisation represented by a person as a given role.
+    Adds 3 fields `organisation`, `contact_person` and `contact_role`.
     """
     class Meta:
         abstract = True
         
-    company = models.ForeignKey("contacts.Company",
-        related_name="%(app_label)s_%(class)s_set_by_company",
-        verbose_name=_("Company"),
+    organisation = models.ForeignKey("partners.Organisation",
+        related_name="%(app_label)s_%(class)s_set_by_organisation",
+        verbose_name=_("Organisation"),
         blank=True,null=True)
         
-    contact_person = models.ForeignKey("contacts.Person",
+    contact_person = models.ForeignKey("partners.Person",
       related_name="%(app_label)s_%(class)s_set_by_contact_person",
       blank=True,null=True,
       verbose_name=_("represented by"))
       
-    contact_role = models.ForeignKey("contacts.RoleType",
+    contact_role = models.ForeignKey("partners.RoleType",
       related_name="%(app_label)s_%(class)s_set_by_contact_role",
       blank=True,null=True,
       verbose_name=_("represented as"))
       
     @chooser()
-    def contact_person_choices(cls,company):
-        if company is not None:
-            return cls.contact_person_choices_queryset(company)
+    def contact_person_choices(cls,organisation):
+        if organisation is not None:
+            return cls.contact_person_choices_queryset(organisation)
         return []
         
     def get_contact(self):
-        roles = Role.objects.filter(company=self.company,person=self.contact_person)
+        roles = Role.objects.filter(organisation=self.organisation,person=self.contact_person)
         #~ print '20120929 get_contact', roles
         if roles.count() == 1:
             return roles[0]
         
     def contact_person_changed(self,ar):
         #~ print '20120929 contact_person_changed'
-        if self.company and not self.contact_person_id:
-            roles = Role.objects.filter(company=self.company)
+        if self.organisation and not self.contact_person_id:
+            roles = Role.objects.filter(organisation=self.organisation)
             if roles.count() == 1:
                 self.contact_person = roles[0].person
                 self.contact_role = roles[0].type
             return 
       
     @classmethod
-    def contact_person_choices_queryset(cls,company):
-    #~ def contact_choices_queryset(cls,company):
-        return Person.objects.filter(rolesbyperson__company=company).distinct()
+    def contact_person_choices_queryset(cls,organisation):
+    #~ def contact_choices_queryset(cls,organisation):
+        return Person.objects.filter(contactsbyperson__organisation=organisation).distinct()
 
     def full_clean(self,*args,**kw):
         if not settings.LINO.loading_from_dump:
-            if self.company and self.contact_person is None:
-                qs = self.contact_person_choices_queryset(self.company)
-                #~ qs = self.company.rolesbyparent.all()
+            if self.organisation and self.contact_person is None:
+                qs = self.contact_person_choices_queryset(self.organisation)
+                #~ qs = self.organisation.rolesbyparent.all()
                 if qs.count() == 1:
                     self.contact_person = qs[0]
                 else:
@@ -798,84 +848,42 @@ class ContactRelated(dd.Model):
     
 
 
-#~ if settings.LINO.is_installed('contacts'):
-  
-    #~ """
-    #~ Don't inject fields if contacts is just being imported from some other module.
-    #~ """
-    
-#~ dd.inject_field(settings.LINO.user_model,
-    #~ 'partner',
-    #~ models.ForeignKey(Partner,
-        #~ blank=True,null=True,
-        #~ verbose_name=_("Partner")))
-
-
-
-if settings.LINO.is_installed('contacts'):
+if settings.LINO.is_installed('partners'):
   
     from lino.models import SiteConfig
 
     dd.inject_field(SiteConfig,
         'next_partner_id',
         models.IntegerField(default=100, # first 100 for users from demo fixtures.
-            verbose_name=_("The next automatic id for Person or Company")
-        ),"""The next automatic id for Person or Company. 
+            verbose_name=_("The next automatic id for Person or Organisation")
+        ),"""The next automatic id for Person or Organisation. 
         Deserves more documentation.
         """)
         
     dd.inject_field(SiteConfig,
-        'site_company',
-        models.ForeignKey("contacts.Company",
+        'site_partner',
+        models.ForeignKey("partners.Organisation",
             blank=True,null=True,
-            verbose_name=_("The company that runs this site"),
-            related_name='site_company_sites',
-            help_text=_("The Company to be used as sender in documents.")))
-    
-
-#~ dd.inject_field(Partner,
-    #~ 'is_person',
-    #~ mti.EnableChild(
-        #~ settings.LINO.person_model,
-        #~ verbose_name=_("is Person"),
-        #~ help_text=_("Whether this Partner is a Person.")))
-#~ dd.inject_field(Partner,
-    #~ 'is_company',
-    #~ mti.EnableChild(
-        #~ "contacts.Company",
-        #~ verbose_name=_("is Company"),
-        #~ help_text=_("Whether this Partner is a Company.")))
+            verbose_name=_("The partner that runs this site"),
+            related_name='site_partner_sites',
+            help_text=_("The partner to be used as sender in documents.")))
 
 
 
 def site_setup(site):
-
     site.modules.countries.Cities.set_detail_layout("""
     name country 
     type parent zip_code id 
     CitiesByCity
-    contacts.PartnersByCity
+    partners.PersonsByCity partners.OrganisationsByCity
     """)
     
-@dd.receiver(dd.pre_analyze)
-def company_model_alias(sender,**kw):
-    """
-    prepare ticket #72 which will rename Company to Organisation
-    """
-    sender.modules.contacts.Organisation = sender.modules.contacts.Company  
-
-@dd.receiver(dd.post_analyze)
-def company_tables_alias(sender,**kw):
-    """
-    prepare ticket #72 which will rename Company to Organisation
-    """
-    sender.modules.contacts.Organisations = sender.modules.contacts.Companies
 
 
 def setup_main_menu(site,ui,profile,m):
-    m = m.add_menu("contacts",MODULE_LABEL)
+    m = m.add_menu("partners",MODULE_LABEL)
     #~ actors = (Persons,Companies,Partners)
-    #~ for m in (Person,Company,Partner):
+    #~ for m in (Person,Organisation,Partner):
         #~ if m._meta.abstract: 
             #~ return 
     """
@@ -883,7 +891,7 @@ def setup_main_menu(site,ui,profile,m):
     other installed applications may want to override these tables.
     """
     #~ for a in (Persons,Companies,Partners):
-    for a in ('contacts.Persons','contacts.Companies','contacts.Partners'):
+    for a in ('partners.Persons','partners.Organisations','partners.Partners'):
         m.add_action(a)
 
 def setup_my_menu(site,ui,profile,m): 
@@ -893,19 +901,19 @@ def setup_master_menu(site,ui,profile,m):
     pass
     
 def setup_config_menu(site,ui,profile,m): 
-    config_contacts = m.add_menu("contacts",MODULE_LABEL)
-    config_contacts.add_action(CompanyTypes)
-    config_contacts.add_action(RoleTypes)
-    #~ config_contacts.add_action(site.modules.countries.Countries)
-    #~ config_contacts.add_action(site.modules.countries.Cities)
-    #~ config_contacts.add_action(site.modules.countries.Languages)
+    config_partners = m.add_menu("partners",MODULE_LABEL)
+    config_partners.add_action(OrganisationTypes)
+    config_partners.add_action(Roles)
+    #~ config_partners.add_action(site.modules.countries.Countries)
+    #~ config_partners.add_action(site.modules.countries.Cities)
+    #~ config_partners.add_action(site.modules.countries.Languages)
             
-    #~ m  = m.add_menu("contacts",_("~Contacts"))
-    #~ m.add_action('contacts.RoleTypes')
+    #~ m  = m.add_menu("partners",_("~Contacts"))
+    #~ m.add_action('partners.RoleTypes')
   
 def setup_explorer_menu(site,ui,profile,m):
-    m = m.add_menu("contacts",MODULE_LABEL)
-    m.add_action(site.modules.contacts.Roles)
+    m = m.add_menu("partners",MODULE_LABEL)
+    m.add_action(site.modules.partners.Contacts)
     #~ m.add_action(site.modules.countries.Cities)
   
 #~ def setup_quicklinks(site,ui,user,m):

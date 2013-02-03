@@ -43,6 +43,7 @@ from lino.modlib.ledger.utils import FiscalYears
 
 accounts = dd.resolve_app('accounts')
 vat = dd.resolve_app('vat')
+partner_model = settings.LINO.partners_app_label + '.Partner'
 
 ZERO = Decimal()
 
@@ -430,7 +431,7 @@ class Movement(mixins.Sequenced):
     voucher = models.ForeignKey(Voucher)
     #~ pos = models.IntegerField("Position",blank=True,null=True)
     account = models.ForeignKey(accounts.Account)
-    partner = models.ForeignKey('contacts.Partner',blank=True,null=True)
+    partner = models.ForeignKey(partner_model,blank=True,null=True)
     amount = dd.PriceField(default=0)
     dc = DebitOrCreditField()
     #~ is_credit = models.BooleanField(_("Credit"),default=False)
@@ -546,7 +547,6 @@ class VoucherItem(dd.Model):
         
         
 
-
 class InvoiceDetail(dd.FormLayout):
     main = "general ledger"
     
@@ -571,7 +571,7 @@ class InvoiceDetail(dd.FormLayout):
 class Invoices(dd.Table):
     parameters = dict(
         pyear=FiscalYears.field(blank=True),
-        ppartner=models.ForeignKey('contacts.Partner',blank=True,null=True),
+        ppartner=models.ForeignKey(partner_model,blank=True,null=True),
         pjournal=JournalRef(blank=True))
     model = AccountInvoice
     order_by = ["date","id"]
@@ -658,10 +658,9 @@ class ItemsByInvoice(dd.Table):
 MODULE_LABEL = accounts.MODULE_LABEL
 
 def site_setup(site):
-    if site.is_installed('contacts'):
-        for t in (site.modules.contacts.Partners,
-          site.modules.contacts.Persons,
-          site.modules.contacts.Companies):
+    if site.is_installed(settings.LINO.partners_app_label):
+        app = site.modules[settings.LINO.partners_app_label]
+        for t in (app.Partners,app.Persons,app.Organisations):
             t.add_detail_tab("ledger",
                 """
                 ledger.InvoicesByPartner

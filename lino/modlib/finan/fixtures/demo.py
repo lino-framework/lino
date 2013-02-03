@@ -1,5 +1,5 @@
 # -*- coding: UTF-8 -*-
-## Copyright 2009-2012 Luc Saffre
+## Copyright 2009-2013 Luc Saffre
 ## This file is part of the Lino project.
 ## Lino is free software; you can redistribute it and/or modify 
 ## it under the terms of the GNU General Public License as published by
@@ -25,15 +25,9 @@ from lino.utils import Cycler
 from lino.utils.instantiator import Instantiator, i2d
 from lino.core.modeltools import resolve_model
 
-#from lino.apps.ledger import models as ledger
-#from lino.apps.contacts import models as contacts
-#from lino.apps.journals import models as journals
-#from lino.apps.ledger.fixtures import be
+partner_model = settings.LINO.partners_app_label + '.Partner'
+Partner = dd.resolve_model(partner_model)
 
-#~ from lino import reports
-#~ #contacts = reports.get_app('contacts')
-#~ ledger = reports.get_app('ledger')
-#~ finan = reports.get_app('finan')
 
 REQUEST = None
 
@@ -43,13 +37,14 @@ def objects():
   
     ledger = dd.resolve_app('ledger')
     finan = dd.resolve_app('finan')
-    contacts = dd.resolve_app('contacts')
+    #~ partners = dd.resolve_app('partners')
+    #~ contacts = dd.resolve_app('contacts')
     
     
     MODEL = finan.BankStatement
     vt = ledger.VoucherTypes.get_for_model(MODEL)
     JOURNALS = Cycler(vt.get_journals())
-    PARTNERS = Cycler(contacts.Partner.objects.order_by('name'))
+    PARTNERS = Cycler(Partner.objects.order_by('name'))
     USERS = Cycler(settings.LINO.user_model.objects.all())
     AMOUNTS = Cycler([Decimal(x) for x in 
         "2.50 6.80 9.95 14.50 20 29.90 39.90 39.90 99.95 199.95 599.95 1599.99".split()])

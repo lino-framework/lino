@@ -50,7 +50,7 @@ from lino.utils import babel
 #~ journals = models.get_app('journals')
 #~ auth = resolve_app('auth')
 #~ from lino.modlib.users import models as auth
-contacts = dd.resolve_app('contacts')
+partners = dd.resolve_app(settings.LINO.partners_app_label)
 accounts = dd.resolve_app('accounts')
 ledger = dd.resolve_app('ledger')
 vat = dd.resolve_app('vat')
@@ -690,40 +690,34 @@ ledger.VoucherTypes.add_item(Invoice,InvoicesByJournal)
         
 
 
-def customize_contacts():
+def customize_partners():
 
     #~ for ms in 'contacts.Partner', 'contacts.Person', 'contacts.Company':
-    dd.inject_field('contacts.Partner',
+    partner_model = settings.LINO.partners_app_label + '.Partner'
+    dd.inject_field(partner_model,
         'payment_term',
         models.ForeignKey(PaymentTerm,
             blank=True,null=True,
             help_text=_("The default payment term for sales invoices to this customer.")))
         
-    dd.inject_field('contacts.Partner',
+    dd.inject_field(partner_model,
         'vat_regime',
         vat.VatRegimes.field(
             blank=True,
             help_text=_("The default VAT regime for sales to this customer.")))
             
-    dd.inject_field('contacts.Partner',
+    dd.inject_field(partner_model,
         'item_vat',
         models.BooleanField(
             default=False,
             help_text=_("The default item VAT setting for sales to this customer.")))
         
-    dd.inject_field('contacts.Partner',
+    dd.inject_field(partner_model,
         'imode',
         models.ForeignKey(InvoicingMode,blank=True,null=True))
         
         
 
-#~ def customize_contacts():
-
-    #~ dd.inject_field('contacts.Partner',
-        #~ 'is_customer',
-        #~ mti.EnableChild('sales.Customer',verbose_name=_("is Customer")),
-        #~ """Whether this Partner is also a Customer."""
-        #~ )
 
 
 MODULE_LABEL = _("Sales")
@@ -735,16 +729,15 @@ def site_setup(site):
             sales.InvoiceItemsByProduct
             """,
             label=MODULE_LABEL)
-    #~ if site.is_installed('contacts'):
-    for t in (site.modules.contacts.Partners,
-              site.modules.contacts.Persons,
-              site.modules.contacts.Companies):
-        t.add_detail_tab("sales",
-            """
-            payment_term vat_regime item_vat imode
-            sales.InvoicesByPartner
-            """,
-            label=MODULE_LABEL)
+    #~ for t in (site.modules.partners.Partners,
+              #~ site.modules.partners.Persons,
+              #~ site.modules.partners.Organisations):
+    site.modules[settings.LINO.partners_app_label].Partners.add_detail_tab("sales",
+        """
+        payment_term vat_regime item_vat imode
+        sales.InvoicesByPartner
+        """,
+        label=MODULE_LABEL)
     #~ if site.is_installed('tickets'):
         #~ site.modules.tickets.Projects.add_detail_tab("sales","sales.InvoicesByProject")
     #~ site.modules.lino.SiteConfigs.add_detail_tab("sales","""
@@ -778,7 +771,7 @@ def setup_config_menu(site,ui,profile,m):
 def setup_explorer_menu(site,ui,profile,m):
     pass
   
-customize_contacts()
+customize_partners()
 #~ customize_siteconfig()
 
   

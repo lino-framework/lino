@@ -1,5 +1,5 @@
-#71 : How to make Django and Jinja template machines coexist
-============================================================
+#71 [closed] : How to make Django and Jinja template machines coexist
+=====================================================================
 
 
 I personally prefer Jinja over Django's built-in template machine. 
@@ -13,4 +13,7 @@ But of course there are other people who
 have lots of classical Django templates 
 and don't want to rewrite them.
 
-They do not need to despair.
+The important condition for allowing both systems to coexist 
+was to use different names for the directories:
+the templates in `templates` subdirectories are for Django,
+while those in `jinja_templates` are for Jinja.

@@ -35,32 +35,16 @@ def buildurl(*args,**kw):
     return url
 
 
-from lino.utils.xmlgen import html as xghtml
-from lino.utils import AttrDict
-#~ from lino import pypi_info 
-#~ from lino.pypi_info import pypi_info
+from .utils.xmlgen import html as xghtml
+from .utils import AttrDict
 
 execfile(os.path.join(os.path.dirname(__file__),'version.py'))
 
-#~ execfile(os.path.join(os.path.dirname(__file__),'pypi_info.py'))
-#~ x = file(os.path.join(os.path.dirname(__file__),'pypi_info.py')).read().strip()
-#~ pypi_info = AttrDict(eval(x))
-#~ pypi_info = AttrDict(pypi_info)
-
-
-#~ __version__ = pypi_info.version
-#~ __version__ = "1.5.6"
-"""
-Lino version number. 
-"""
-
 __author__ = "Luc Saffre <luc.saffre@gmx.net>"
-#~ __author__ = pypi_info.author
 
 #~ __url__ = "http://lino.saffre-rumma.net"
 #~ __url__ = "http://code.google.com/p/lino/"
 __url__ = "http://www.lino-framework.org"
-#~ __url__ = pypi_info.url
 
 
 __copyright__ = """\
@@ -156,6 +140,11 @@ class Lino(object):
       :setting:`TEMPLATE_LOADERS`
       ...
     
+    """
+    
+    partners_app_label = 'contacts'
+    """
+    Temporary setting, see :doc:`/tickets/72`
     """
     
     never_build_site_cache = False
@@ -813,8 +802,13 @@ class Lino(object):
     
     site_config_defaults = {}
     """
-    Default values to be used when creating the persistent 
+    Default values to be used when creating the 
     :class:`lino.models.SiteConfig` instance.
+    
+    Usage example::
+    
+      site_config_defaults = dict(default_build_method='appypdf')
+      
     """
     
     max_auto_events = 36

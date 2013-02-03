@@ -750,26 +750,6 @@ class MethodStoreField(StoreField):
 
 class OneToOneStoreField(RelatedMixin,StoreField):
         
-    def unused_form2obj(self,instance,post_data,is_new):
-        #v = values.get(self.field.name,None)
-        v = post_data.get(self.field.name,None)
-        logger.info("OneToOneStoreField %s = %r",self.field.name,v)
-        if v == '' and self.field.null:
-            v = None
-        if v is not None:
-            v = self.field.rel.to.objects.get(pk=v)
-        setattr(instance,self.field.name,v)
-        #~ return instance
-        
-    #~ def get_from_form(self,instance,post_data):
-        #~ #v = values.get(self.field.name,None)
-        #~ v = post_data.get(self.field.name)
-        #~ if v == '' and self.field.null:
-            #~ v = None
-        #~ if v is not None:
-            #~ v = self.field.rel.to.objects.get(pk=v)
-        #~ instance[self.field.name] = v
-        
     def value_from_object(self,obj,request):
         v = self.full_value_from_object(obj,request)
         #~ try:

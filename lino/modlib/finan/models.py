@@ -24,6 +24,7 @@ import decimal
 
 #~ from django import forms
 
+from django.conf import settings
 from django.db import models
 from django.utils.translation import ugettext_lazy as _
 
@@ -35,11 +36,14 @@ from lino import mixins
 #~ from lino import fields
 #~ from lino.core.modeltools import resolve_model
 
-contacts = dd.resolve_app('contacts')
+partners = dd.resolve_app(settings.LINO.partners_app_label)
 ledger = dd.resolve_app('ledger')
 #~ from lino.modlib.ledger import models as ledger
 #~ journals = dd.resolve_app('journals')
 accounts = dd.resolve_app('accounts')
+
+partner_model = settings.LINO.partners_app_label + '.Partner'
+
 
 #~ Contact = dd.resolve_model('contacts.Contact')
 #~ Person = resolve_model('contacts.Person')
@@ -151,7 +155,7 @@ class DocItem(mixins.Sequenced,ledger.VoucherItem):
     #~ credit = dd.PriceField(default=0)
     remark = models.CharField(max_length=200,blank=True)
     account = models.ForeignKey('accounts.Account')
-    partner = models.ForeignKey('contacts.Partner',blank=True,null=True)
+    partner = models.ForeignKey(partner_model,blank=True,null=True)
     #~ person = models.ForeignKey(Person,blank=True,null=True)
     #~ company = models.ForeignKey(Company,blank=True,null=True)
     

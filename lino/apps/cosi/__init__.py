@@ -112,6 +112,7 @@ class Lino(Lino):
         #~ yield 'django.contrib.auth'
         yield 'lino.modlib.countries'
         #~ yield 'lino.modlib.properties'
+        #~ yield 'lino.modlib.partners'
         yield 'lino.modlib.contacts'
         #~ yield 'lino.modlib.households'
         yield 'lino.modlib.products'

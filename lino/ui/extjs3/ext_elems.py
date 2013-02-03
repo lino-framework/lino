@@ -595,9 +595,8 @@ class FieldElement(LayoutElement):
     zero = 0
     
     def __init__(self,layout_handle,field,**kw):
-        if not hasattr(field,'name'):
-            raise Exception("Field %s.%s has no name!" % (layout_handle,field))
-        assert field.name, Exception("field %r has no name!" % field)
+        if not getattr(field,'name',None):
+            raise Exception("Field '%s' in %s has no name!" % (field,layout_handle))
         self.field = field
         self.editable = field.editable # and not field.primary_key
         
@@ -1364,14 +1363,28 @@ class BooleanFieldElement(BooleanMixin,FieldElement):
 
 
 
+class SingleRelatedObjectElement(DisplayElement):
+    def __init__(self,lh,relobj,**kw):
+        """
+        :lh: the LayoutHandle
+        :relobj: the RelatedObject instance
+        """
+        print(20130202, relobj.parent_model, relobj.model, relobj.field)
+        self.relobj = relobj
+        self.editable = False
+        kw.update(
+            label=unicode(getattr(relobj.model._meta,'verbose_name',None)) 
+                or relobj.var_name)
+        DisplayElement.__init__(self,lh,relobj.field,**kw)
+  
+    def add_default_value(self,kw):
+        pass
+        
 class GenericForeignKeyElement(DisplayElement):
     """
     A :class:`DisplayElement` specially adapted to a :term:`GFK` field.
     """
     def __init__(self,layout_handle,field,**kw):
-        #~ if not hasattr(field,'name'):
-            #~ raise Exception("Field %s.%s has no name!" % (layout_handle.rh.actor,field))
-        #~ assert field.name, Exception("field %r has no name!" % field)
         self.field = field
         self.editable = False
         kw.update(label=getattr(field,'verbose_name',None) or field.name)
@@ -2212,6 +2225,9 @@ def field2elem(layout_handle,field,**kw):
             #~ kw.update(forceSelection=False)
             return SimpleRemoteComboFieldElement(layout_handle,field,**kw)
         else:
+            if isinstance(field,models.OneToOneField):
+                #~ return SingleRelatedObjectElement(layout_handle,field,**kw)
+                return GenericForeignKeyElement(layout_handle,field,**kw)
             if isinstance(field,models.ForeignKey):
                 return ForeignKeyElement(layout_handle,field,**kw)
             #~ elif isinstance(field,fields.GenericForeignKeyIdField):
