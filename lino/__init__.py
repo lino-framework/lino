@@ -1592,8 +1592,9 @@ class Lino(object):
         
     def install_migrations(self,globals_dict):
         """
-        Called from python dumps.
-        New in version 1.4.4. (replaces the previous migrations_module) 
+        Python dumps are generated with one line at the end which calls this method, 
+        passing it their global namespace.
+        
         """
         #~ import logging
         #~ dblogger = logging.getLogger(__name__)
@@ -1632,6 +1633,8 @@ class Lino(object):
                 to_version = m(globals_dict)
                 if not isinstance(to_version,basestring):
                     raise Exception("Oops: %s didn't return a string!" % m)
+                if to_version <= from_version:
+                    raise Exception("Oops: %s tries to migrate from version %s to %s ?!" % (m,from_version,to_version))
                 msg = "Migrating from version %s to %s" % (from_version, to_version)
                 if m.__doc__:
                     msg += ":\n" + m.__doc__

@@ -52,4 +52,8 @@ After reading all this, I got enlighted on how to split Lino:
 - lino-framework : lino.modlib and lino.mixins
 
 
+Pre-release rush
+----------------
 
+New exception "Oops: %s returned to a lower version!"  in 
+:meth:`lino.Lino.install_migrations`.
