@@ -71,7 +71,7 @@ add('20',_("Registered"),'registered',editable=False)
 
     
   
-class BankStatement(ledger.Voucher):
+class BankStatement(ledger.Voucher,mixins.Registrable):
     
     balance1 = dd.PriceField(_("Old balance"),blank=True,null=True)
     balance2 = dd.PriceField(_("New balance"),blank=True,null=True)
@@ -220,14 +220,14 @@ class BankStatements(dd.Table):
     
     
     
-class BankStatementsByJournal(BankStatements):
-    order_by = ["number"]
-    master_key = 'journal' # see django issue 10808
+class BankStatementsByJournal(BankStatements,ledger.ByJournal):
+    #~ order_by = ["number"]
+    #~ master_key = 'journal' # see django issue 10808
     params_panel_hidden = True
                   
-    @classmethod
-    def get_title_base(self,ar):
-        return unicode(ar.master_instance)
+    #~ @classmethod
+    #~ def get_title_base(self,ar):
+        #~ return unicode(ar.master_instance)
                   
 
 

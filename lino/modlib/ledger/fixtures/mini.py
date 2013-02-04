@@ -35,6 +35,7 @@ vat = dd.resolve_app('vat')
 sales = dd.resolve_app('sales')
 ledger = dd.resolve_app('ledger')
 finan = dd.resolve_app('finan')
+declarations = dd.resolve_app('declarations')
 #~ partners = dd.resolve_app('partners')
 
 partner_model = settings.LINO.partners_app_label + '.Partner'
@@ -116,6 +117,9 @@ def objects():
             
     if finan:
         yield finan.BankStatement.create_journal(chart=chart,name=u"Bestbank",account='bestbank')
+
+    if declarations:
+        yield declarations.Declaration.create_journal(chart=chart,name=u"VAT declarations")
 
 
     MODEL = ledger.AccountInvoice

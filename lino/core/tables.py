@@ -830,6 +830,7 @@ class AbstractTable(actors.Actor):
         """
         if self.__dict__.get('editable') is None:
             self.editable = (self.get_data_rows is None)
+            #~ logger.info("20130204 %s editable = %s",self.__name__,self.editable)
         #~ if self.editable is None:
             #~ if self.get_data_rows is not None:
                 #~ self.editable = False

@@ -385,7 +385,7 @@ class SalesDocuments(dd.Table):
         
 
 
-class Invoice(SalesDocument,ledger.Voucher):
+class Invoice(SalesDocument,ledger.Voucher,mixins.Registrable):
     """
     An invoice usually used for selling something.
     """

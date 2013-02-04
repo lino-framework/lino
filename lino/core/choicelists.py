@@ -511,9 +511,10 @@ Django creates copies of them when inheriting models.
         return [choice[0] for choice in self.choices if f(choice[0])]
     
     @classmethod
-    def objects(self):
+    def get_list_items(self):
         return [choice[0] for choice in self.choices]
-    items = objects
+    objects = get_list_items
+    items = get_list_items
         
     @classmethod
     def get_text_for_value(self,value):

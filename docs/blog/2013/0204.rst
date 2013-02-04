@@ -1,0 +1,15 @@
+20130204
+========
+
+
+- Yet another example that demonstrates why MTI is bad:
+  :mod:`lino.test_apps.nomti`.
+
+
+- Worked on the belgian VAT declaration in Lino Così.
+  Moved it to the new module :mod:`lino.modlib.declarations`.
+  Things start to become clear, but there's more to do.
+
+- A small internal optimization: the code timestamp is now 
+  computed only when the UI ist started, not already at 
+  server startup.

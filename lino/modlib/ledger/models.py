@@ -120,7 +120,9 @@ class Journal(babel.BabelNamed,mixins.Sequenced):
         return cl.objects.get(**kw)
         
     def create_voucher(self,**kw):
-        """Create an instance of this Journal's voucher model (:meth:`get_doc_model`)."""
+        """
+        Create an instance of this Journal's voucher model (:meth:`get_doc_model`).
+        """
         cl = self.get_doc_model()
         kw.update(journal=self) 
         try:
@@ -219,14 +221,14 @@ def VoucherNumber(**kw):
 
 
 #~ class Voucher(mixins.Controllable):
-class Voucher(mixins.UserAuthored,mixins.ProjectRelated,mixins.Registrable):
+class Voucher(mixins.UserAuthored,mixins.ProjectRelated):
     """
     A Voucher is a document that represents a monetary transaction.
     Subclasses must define a field `state`.
     This model is subclassed by sales.Invoice, ledger.AccountInvoice, 
     finan.Statement etc...
     
-    It is **not** abstract because we have a ForeignKey to Voucher in Movement,
+    It is *not* abstract because we have a ForeignKey to Voucher in Movement,
     and we want one Movement model for all ledger movements.
     
     """
@@ -238,6 +240,8 @@ class Voucher(mixins.UserAuthored,mixins.ProjectRelated,mixins.Registrable):
     #~ required_to_deregister = dict(states='registered paid')
         
     #~ controller_is_optional = False
+    
+    date = models.DateField(_("Date"),default=datetime.date.today)
     
     journal = JournalRef()
     year = FiscalYears.field(blank=True)
@@ -302,6 +306,7 @@ class Voucher(mixins.UserAuthored,mixins.ProjectRelated,mixins.Registrable):
         self.number = None
         self.movement_set.all().delete() 
         super(Voucher,self).deregister(ar)
+        
         
         
     def disable_delete(self,ar):
@@ -392,6 +397,35 @@ class Voucher(mixins.UserAuthored,mixins.ProjectRelated,mixins.Registrable):
         return self.items.model(**kw)
         #~ return super(AccountInvoice,self).add_voucher_item(**kw)
         
+
+class Vouchers(dd.Table):
+    """
+    List of all vouchers
+    """
+    model = Voucher
+    editable = False
+    order_by = ["date","number"]
+    column_names = "date number *"
+
+
+#~ class VouchersByJournal(dd.Table):
+class ByJournal(dd.Table):
+    order_by = ["number"]
+    master_key = 'journal' # see django issue 10808
+    #master = journals.Journal
+    
+    @classmethod
+    def get_title_base(self,ar):
+        """
+        Without this override we would have a title like "Invoices of journal <Invoices>"
+        """
+        return unicode(ar.master_instance)
+                  
+
+
+
+
+
 
 class DebitOrCreditField(models.BooleanField):
     pass
@@ -496,7 +530,7 @@ add('40',_("Paid"),'paid',editable=False)
 #~ InvoiceStates.draft.add_workflow(_("Deregister"),states='registered paid')
 #~ InvoiceStates.registered.add_workflow(_("Register"),states='draft')
     
-class AccountInvoice(vat.VatDocument,Voucher):
+class AccountInvoice(vat.VatDocument,Voucher,mixins.Registrable):
     
     class Meta:
         verbose_name = _("Invoice")
@@ -595,11 +629,9 @@ class Invoices(dd.Table):
         return qs
     
     
-    
-class InvoicesByJournal(Invoices):
-    order_by = ["number"]
-    master_key = 'journal' # see django issue 10808
-    #master = journals.Journal
+
+
+class InvoicesByJournal(ByJournal,Invoices):
     column_names = "number date due_date " \
                   "partner " \
                   "total_incl " \
@@ -607,12 +639,6 @@ class InvoicesByJournal(Invoices):
                   #~ "ledger_remark:10 " \
     params_panel_hidden = True
                   
-    @classmethod
-    def get_title_base(self,ar):
-        """
-        Without this override we would have a title like "Invoices of journal <Invoices>"
-        """
-        return unicode(ar.master_instance)
                   
 
     
@@ -698,6 +724,7 @@ def setup_explorer_menu(site,ui,profile,m):
     #~ m = m.add_menu("ledger",MODULE_LABEL)
     m = m.add_menu("accounts",MODULE_LABEL)
     m.add_action(Invoices)
+    m.add_action(Vouchers)
     m.add_action(VoucherTypes)
     m.add_action(Movements)
     m.add_action(FiscalYears)

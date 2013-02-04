@@ -82,6 +82,7 @@ from lino.utils import jsgen
 from lino.utils.jsgen import py2js, js_code, id2js
 from lino.utils.xmlgen import html as xghtml
 from lino.utils.config import make_dummy_messages_file
+from lino.utils import codetime
 
 from lino.utils.jscompressor import JSCompressor
 if False:
@@ -670,6 +671,8 @@ class ExtUI(base.UI):
         self.plain_renderer = PlainRenderer(self)
         self.text_renderer = TextRenderer(self)
         self.reserved_names = [getattr(ext_requests,n) for n in ext_requests.URL_PARAMS]
+        self.mtime = codetime()
+          
         names = set()
         for n in self.reserved_names:
             if n in names:
@@ -1494,9 +1497,10 @@ tinymce.init({
         fn = os.path.join(settings.MEDIA_ROOT,*self.lino_js_parts(profile)) 
         if not force and os.path.exists(fn):
             mtime = os.stat(fn).st_mtime
-            if mtime > settings.LINO.mtime:
+            #~ if mtime > settings.LINO.mtime:
+            if mtime > self.mtime:
                 #~ if not user.modified or user.modified < datetime.datetime.fromtimestamp(mtime):
-                logger.debug("%s is up to date.",fn)
+                #~ logger.info("20130204 %s is up to date.",fn)
                 return 0
                     
         logger.info("Building %s ...", fn)

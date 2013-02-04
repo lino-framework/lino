@@ -295,8 +295,6 @@ class Registrable(model.Model):
     class Meta:
         abstract = True
         
-    date = models.DateField(_("Date"),default=datetime.date.today)
-    
     workflow_state_field = 'state'
     
     required_to_register = dict(states='draft')
@@ -310,6 +308,7 @@ class Registrable(model.Model):
     
     @classmethod
     def get_registrable_fields(cls,site):
+        return
         yield 'date'
         
         

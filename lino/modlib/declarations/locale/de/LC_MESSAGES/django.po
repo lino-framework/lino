@@ -1,0 +1,221 @@
+# SOME DESCRIPTIVE TITLE.
+# Copyright (C) YEAR THE PACKAGE'S COPYRIGHT HOLDER
+# This file is distributed under the same license as the PACKAGE package.
+# FIRST AUTHOR <EMAIL@ADDRESS>, YEAR.
+#
+msgid ""
+msgstr ""
+"Project-Id-Version: \n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2013-01-20 20:17+0000\n"
+"PO-Revision-Date: 2013-01-20 22:22+0200\n"
+"Last-Translator: Luc Saffre <luc.saffre@gmail.com>\n"
+"Language-Team: \n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=2; plural=(n != 1);\n"
+"X-Generator: Poedit 1.5.4\n"
+
+#: .\models.py:61
+msgid "VAT Class"
+msgstr ""
+
+#: .\models.py:63 .\models.py:80
+msgid "Exempt"
+msgstr "Befreit von MWSt."
+
+#: .\models.py:64
+msgid "Reduced"
+msgstr "Ermäßigter MWSt-Satz"
+
+#: .\models.py:65
+msgid "Normal"
+msgstr "Normaler MWSt-Satz"
+
+#: .\models.py:73
+msgid "VAT Regime"
+msgstr "MWSt.-Regime"
+
+#: .\models.py:75
+msgid "Private person"
+msgstr "Privatperson"
+
+#: .\models.py:76
+msgid "Subject to VAT"
+msgstr "MWSt-pflichtig"
+
+#: .\models.py:77
+msgid "Co-contractor"
+msgstr "Vertragspartner"
+
+#: .\models.py:78
+msgid "Intra-community"
+msgstr "Innergemeinschaftlich"
+
+#: .\models.py:79
+msgid "Outside EU"
+msgstr "Außerhalb EU"
+
+#: .\models.py:85
+msgid "Trade Type"
+msgstr "Handelsart"
+
+#: .\models.py:88
+msgid "Sales"
+msgstr "Verkauf"
+
+#: .\models.py:89
+msgid "Purchases"
+msgstr "Einkauf"
+
+#: .\models.py:96
+msgid "VAT Period"
+msgstr "MWSt.-Periode"
+
+#: .\models.py:97
+msgid "VAT Periods"
+msgstr "MWSt.-Perioden"
+
+#: .\models.py:118
+msgid "First Quarter (January-March)"
+msgstr "Erstes Quartal (Januar-März)"
+
+#: .\models.py:119
+msgid "Second Quarter (April-June)"
+msgstr "Zweites Quartal (April-Juni)"
+
+#: .\models.py:120
+msgid "Third Quarter (July-August)"
+msgstr "Drittes Quartal (Julil-August)"
+
+#: .\models.py:121
+msgid "Fourth Quarter (September-December)"
+msgstr "Viertes Quartal (September-Dezember)"
+
+#: .\models.py:125
+msgid "January"
+msgstr ""
+
+#: .\models.py:126
+msgid "February"
+msgstr ""
+
+#: .\models.py:127
+msgid "March"
+msgstr ""
+
+#: .\models.py:128
+msgid "April"
+msgstr ""
+
+#: .\models.py:129
+msgid "May"
+msgstr ""
+
+#: .\models.py:130
+msgid "June"
+msgstr ""
+
+#: .\models.py:131
+msgid "July"
+msgstr ""
+
+#: .\models.py:132
+msgid "August"
+msgstr ""
+
+#: .\models.py:133
+msgid "September"
+msgstr ""
+
+#: .\models.py:134
+msgid "October"
+msgstr ""
+
+#: .\models.py:135
+msgid "November"
+msgstr ""
+
+#: .\models.py:136
+msgid "December"
+msgstr ""
+
+#: .\models.py:143
+msgid "Draft"
+msgstr "Entwurf"
+
+#: .\models.py:144
+msgid "Registered"
+msgstr "Registriert"
+
+#: .\models.py:145
+msgid "Submitted"
+msgstr "Eingereicht"
+
+#: .\models.py:167
+msgid "Sales base"
+msgstr "Basis Verkauf"
+
+#: .\models.py:168
+msgid "Sales VAT"
+msgstr "MWSt. Verkauf"
+
+#: .\models.py:169
+msgid "Purchases base"
+msgstr "Basis Einkauf"
+
+#: .\models.py:170
+msgid "Purchases VAT"
+msgstr "MWSt. Einkauf"
+
+#: .\models.py:192 .\models.py:584
+msgid "Total incl. VAT"
+msgstr "Total inkl. MWSt."
+
+#: .\models.py:193 .\models.py:587
+msgid "Total excl. VAT"
+msgstr "Total zzgl. MWSt."
+
+#: .\models.py:194 .\models.py:618
+msgid "VAT"
+msgstr "MWSt."
+
+#: .\models.py:289
+msgid "Prices include VAT"
+msgstr "Preis inkl. MWSt."
+
+#: .\models.py:290
+msgid "Whether prices includes VAT or not."
+msgstr "Ob Stückpreise sich inkl. MWSt. verstehen."
+
+#: .\models.py:445
+msgid "Unit price"
+msgstr "Stückpreis"
+
+#: .\models.py:446
+msgid "Quantity"
+msgstr "Menge"
+
+#: .\models.py:477
+msgid "VAT declaration"
+msgstr "MWSt.-Erklärung"
+
+#: .\models.py:478
+msgid "VAT declarations"
+msgstr "MWSt.-Erklärungen"
+
+#: .\models.py:578
+msgid "Date"
+msgstr "Datum"
+
+#: .\models.py:590
+msgid "Total VAT"
+msgstr "Total MWSt."
+
+#: .\models.py:593
+msgid "Voucher"
+msgstr "Beleg"
+
+#~ msgid "VAT Rate"
+#~ msgstr "MWSt.-Satz"

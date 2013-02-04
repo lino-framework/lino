@@ -11,6 +11,11 @@
 ## GNU General Public License for more details.
 ## You should have received a copy of the GNU General Public License
 ## along with Lino ; if not, see <http://www.gnu.org/licenses/>.
+"""
+Generates 20 fictive sales invoices, 
+distributed over more than one month.
+
+"""
 
 from decimal import Decimal
 from django.conf import settings
@@ -32,7 +37,7 @@ def objects():
     
     yield sales.InvoicingMode(**babel_values('name',en='Default',de=u"Standard",fr=u"Standard"))
     
-    if ledger: 
+    if ledger:
       
         vt = ledger.VoucherTypes.get_for_model(sales.Invoice)
         JOURNALS = Cycler(vt.get_journals())
@@ -45,7 +50,7 @@ def objects():
             invoice = sales.Invoice(journal=jnl,
               partner=PARTNERS.pop(),
               user=USERS.pop(),
-              date=settings.LINO.demo_date(-30+i))
+              date=settings.LINO.demo_date(-30+2*i))
             yield invoice
             for j in range(ITEMCOUNT.pop()):
                 item = sales.InvoiceItem(voucher=invoice,
@@ -63,4 +68,4 @@ def objects():
             invoice.register(REQUEST)
             invoice.save()
 
-    sales.Invoice
+    #~ sales.Invoice

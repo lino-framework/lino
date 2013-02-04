@@ -194,6 +194,8 @@ class LayoutHandle:
                     and self.use_as_wildcard(de) \
                 ])
             desc = desc.replace('*',wildcard_fields)
+            #~ if self.layout._datasource.__name__ == 'Vouchers':
+                #~ logger.info('20130204 %s desc -> %r',self,desc)
             #~ if 'CourseRequestsByPerson' in str(self):
                 #~ logger.info('20111003 %s desc -> %r',self,desc)
         if "\n" in desc:

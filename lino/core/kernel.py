@@ -59,7 +59,7 @@ from lino.core.modeltools import is_devserver
     
 from lino.utils.config import load_config_files, find_config_file
 from lino.utils import choosers
-from lino.utils import codetime
+#~ from lino.utils import codetime
 from lino.utils import curry
 #~ from lino.models import get_site_config
 from lino.utils import babel
@@ -98,7 +98,6 @@ def analyze_models():
     """
     babel.set_language(None)
             
-    self.mtime = codetime()
     #~ logger.info(lino.welcome_text())
     #~ raise Exception("20111229")
     

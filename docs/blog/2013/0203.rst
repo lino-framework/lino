@@ -55,5 +55,16 @@ After reading all this, I got enlighted on how to split Lino:
 Pre-release rush
 ----------------
 
-New exception "Oops: %s returned to a lower version!"  in 
-:meth:`lino.Lino.install_migrations`.
+- New exception 
+  "Oops: %s tries to migrate from version 1.0.12 to 1.0.11 ?!"
+  
+  
+After release
+-------------
+  
+  
+- Fixed:
+  Action "cbss.RetrieveTIGroupsRequests.duplicate_row" failed for Tx25-Anfrage 
+  "Tx25-Anfrage #129": type object 'RequestStates' has no attribute 'blank_item'. 
+  Ein Fehlerbericht wurde an den Systemverwalter geschickt.  
+  

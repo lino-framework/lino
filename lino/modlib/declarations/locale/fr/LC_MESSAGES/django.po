@@ -1,0 +1,218 @@
+# SOME DESCRIPTIVE TITLE.
+# Copyright (C) YEAR THE PACKAGE'S COPYRIGHT HOLDER
+# This file is distributed under the same license as the PACKAGE package.
+# FIRST AUTHOR <EMAIL@ADDRESS>, YEAR.
+#
+#, fuzzy
+msgid ""
+msgstr ""
+"Project-Id-Version: PACKAGE VERSION\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2013-01-20 20:17+0000\n"
+"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
+"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
+"Language-Team: LANGUAGE <LL@li.org>\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=2; plural=(n > 1)\n"
+
+#: .\models.py:61
+msgid "VAT Class"
+msgstr ""
+
+#: .\models.py:63 .\models.py:80
+msgid "Exempt"
+msgstr ""
+
+#: .\models.py:64
+msgid "Reduced"
+msgstr ""
+
+#: .\models.py:65
+msgid "Normal"
+msgstr ""
+
+#: .\models.py:73
+msgid "VAT Regime"
+msgstr ""
+
+#: .\models.py:75
+msgid "Private person"
+msgstr ""
+
+#: .\models.py:76
+msgid "Subject to VAT"
+msgstr ""
+
+#: .\models.py:77
+msgid "Co-contractor"
+msgstr ""
+
+#: .\models.py:78
+msgid "Intra-community"
+msgstr ""
+
+#: .\models.py:79
+msgid "Outside EU"
+msgstr ""
+
+#: .\models.py:85
+msgid "Trade Type"
+msgstr ""
+
+#: .\models.py:88
+msgid "Sales"
+msgstr ""
+
+#: .\models.py:89
+msgid "Purchases"
+msgstr ""
+
+#: .\models.py:96
+msgid "VAT Period"
+msgstr ""
+
+#: .\models.py:97
+msgid "VAT Periods"
+msgstr ""
+
+#: .\models.py:118
+msgid "First Quarter (January-March)"
+msgstr ""
+
+#: .\models.py:119
+msgid "Second Quarter (April-June)"
+msgstr ""
+
+#: .\models.py:120
+msgid "Third Quarter (July-August)"
+msgstr ""
+
+#: .\models.py:121
+msgid "Fourth Quarter (September-December)"
+msgstr ""
+
+#: .\models.py:125
+msgid "January"
+msgstr ""
+
+#: .\models.py:126
+msgid "February"
+msgstr ""
+
+#: .\models.py:127
+msgid "March"
+msgstr ""
+
+#: .\models.py:128
+msgid "April"
+msgstr ""
+
+#: .\models.py:129
+msgid "May"
+msgstr ""
+
+#: .\models.py:130
+msgid "June"
+msgstr ""
+
+#: .\models.py:131
+msgid "July"
+msgstr ""
+
+#: .\models.py:132
+msgid "August"
+msgstr ""
+
+#: .\models.py:133
+msgid "September"
+msgstr ""
+
+#: .\models.py:134
+msgid "October"
+msgstr ""
+
+#: .\models.py:135
+msgid "November"
+msgstr ""
+
+#: .\models.py:136
+msgid "December"
+msgstr ""
+
+#: .\models.py:143
+msgid "Draft"
+msgstr ""
+
+#: .\models.py:144
+msgid "Registered"
+msgstr ""
+
+#: .\models.py:145
+msgid "Submitted"
+msgstr ""
+
+#: .\models.py:167
+msgid "Sales base"
+msgstr ""
+
+#: .\models.py:168
+msgid "Sales VAT"
+msgstr ""
+
+#: .\models.py:169
+msgid "Purchases base"
+msgstr ""
+
+#: .\models.py:170
+msgid "Purchases VAT"
+msgstr ""
+
+#: .\models.py:192 .\models.py:584
+msgid "Total incl. VAT"
+msgstr ""
+
+#: .\models.py:193 .\models.py:587
+msgid "Total excl. VAT"
+msgstr ""
+
+#: .\models.py:194 .\models.py:618
+msgid "VAT"
+msgstr ""
+
+#: .\models.py:289
+msgid "Prices include VAT"
+msgstr ""
+
+#: .\models.py:290
+msgid "Whether prices includes VAT or not."
+msgstr ""
+
+#: .\models.py:445
+msgid "Unit price"
+msgstr ""
+
+#: .\models.py:446
+msgid "Quantity"
+msgstr ""
+
+#: .\models.py:477
+msgid "VAT declaration"
+msgstr ""
+
+#: .\models.py:478
+msgid "VAT declarations"
+msgstr ""
+
+#: .\models.py:578
+msgid "Date"
+msgstr ""
+
+#: .\models.py:590
+msgid "Total VAT"
+msgstr ""
+
+#: .\models.py:593
+msgid "Voucher"
+msgstr ""

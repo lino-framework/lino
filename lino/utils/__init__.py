@@ -54,7 +54,7 @@ Third test
 #~ logger = logging.getLogger(__name__)
 
 
-import os, sys, locale, types
+import os, sys, locale, types, time
 import datetime
 import re
 import fnmatch
@@ -283,12 +283,15 @@ def codetime(*args,**kw):
     Inspired by the code_changed() function in `django.utils.autoreload`.
     """
     code_mtime = None
+    pivot = None
     for name,filename in codefiles(*args,**kw):
         stat = os.stat(filename)
         mtime = stat.st_mtime
-        #~ print filename, time.ctime(mtime)
+        #~ print 20130204, filename, time.ctime(mtime) 
         if code_mtime is None or code_mtime < mtime:
             code_mtime = mtime
+            pivot = filename
+    print '20130204 codetime:', time.ctime(code_mtime), pivot
     return code_mtime
     
     
