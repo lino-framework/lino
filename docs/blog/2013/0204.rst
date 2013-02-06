@@ -13,3 +13,8 @@
 - A small internal optimization: the code timestamp is now 
   computed only when the UI ist started, not already at 
   server startup.
+  
+  
+This might be the last blog entry for about two weeks
+because I travel to Belgium and there won't be much time 
+for coding.
