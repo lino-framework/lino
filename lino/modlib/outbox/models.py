@@ -669,7 +669,7 @@ class AttachmentsByController(Attachments):
 
 MODULE_LABEL = _("Outbox")
 
-lino = dd.resolve_app('lino')
+lino = dd.resolve_app('web')
 
 def setup_main_menu(site,ui,profile,m):
     m  = m.add_menu("office",lino.OFFICE_MODULE_LABEL)

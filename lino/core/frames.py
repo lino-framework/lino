@@ -17,7 +17,7 @@ Defines classes :class:`Frame` and :class:`FrameHandle`
 import logging
 logger = logging.getLogger(__name__)
 
-from lino.ui import base
+from lino.web import base
 from lino.core import actors
 from lino.core import actions
 

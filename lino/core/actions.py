@@ -34,7 +34,8 @@ import lino
 from lino.utils.xmlgen import html as xghtml
 E = xghtml.E
 
-from lino.ui import requests as ext_requests
+#~ from lino.web import requests as ext_requests
+from lino.core import constants
 
 from lino.core.modeltools import resolve_model
 from lino.core import layouts
@@ -684,12 +685,12 @@ class GridEdit(TableAction):
             kw = dict()
             kw = {}
             if pglen != PLAIN_PAGE_LENGTH:
-                kw[ext_requests.URL_PARAM_LIMIT] = pglen
+                kw[constants.URL_PARAM_LIMIT] = pglen
               
             if page > 1:
-                kw[ext_requests.URL_PARAM_START] = pglen * (page-2) 
+                kw[constants.URL_PARAM_START] = pglen * (page-2) 
                 prev_url = ar.get_request_url(**kw)
-                kw[ext_requests.URL_PARAM_START] = 0
+                kw[constants.URL_PARAM_START] = 0
                 first_url = ar.get_request_url(**kw)
             else:
                 prev_url = None
@@ -699,10 +700,10 @@ class GridEdit(TableAction):
             
             next_start = pglen * page 
             if next_start < ar.get_total_count():
-                kw[ext_requests.URL_PARAM_START] = next_start
+                kw[constants.URL_PARAM_START] = next_start
                 next_url = ar.get_request_url(**kw)
                 last_page = int((ar.get_total_count()-1) / pglen)
-                kw[ext_requests.URL_PARAM_START] = pglen * last_page
+                kw[constants.URL_PARAM_START] = pglen * last_page
                 last_url = ar.get_request_url(**kw)
             else:
                 next_url = None 

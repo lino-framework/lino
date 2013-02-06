@@ -346,13 +346,13 @@ def add_system_note(ar,owner,subject,body,**kw):
     
     
     
-lino = dd.resolve_app('lino')
+linoweb = dd.resolve_app('web')
     
 def customize_siteconfig():
     """
-    Injects application-specific fields to :class:`SiteConfig <lino.models.SiteConfig>`.
+    Injects application-specific fields to :class:`SiteConfig <lino.web.models.SiteConfig>`.
     """
-    dd.inject_field(lino.SiteConfig,
+    dd.inject_field(linoweb.SiteConfig,
         'system_note_type',
         #~ models.ForeignKey(NoteType,
         models.ForeignKey(EventType,
@@ -364,7 +364,7 @@ If this is empty, then system notes won't create any entry to the Notes table.""
   
 
 def setup_main_menu(site,ui,profile,m):
-    m  = m.add_menu("office",lino.OFFICE_MODULE_LABEL)
+    m  = m.add_menu("office",linoweb.OFFICE_MODULE_LABEL)
     m.add_action(MyNotes)
   
 def setup_my_menu(site,ui,profile,m): 
@@ -372,7 +372,7 @@ def setup_my_menu(site,ui,profile,m):
   
 def setup_config_menu(site,ui,profile,m): 
     #~ m  = m.add_menu("notes",_("~Notes"))
-    m  = m.add_menu("office",lino.OFFICE_MODULE_LABEL)
+    m  = m.add_menu("office",linoweb.OFFICE_MODULE_LABEL)
     m.add_action(NoteTypes)
     m.add_action(EventTypes)
   

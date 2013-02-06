@@ -13,6 +13,7 @@
 """
 Defines the :class:`Dialog` class.
 """
+raise Exception("No longer used")
 
 import logging
 logger = logging.getLogger(__name__)

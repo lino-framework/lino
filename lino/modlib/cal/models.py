@@ -38,7 +38,8 @@ from lino.core import actions
 from lino.utils import babel
 from lino.utils import AttrDict
 from lino.utils import ONE_DAY
-from lino.ui import requests as ext_requests
+#~ from lino.ui import requests as ext_requests
+from lino.core import constants
 from lino.core.modeltools import resolve_model, obj2str
 #~ from lino.core.perms import UserProfiles
 
@@ -2244,8 +2245,8 @@ if settings.LINO.use_extensible:
                 for_me = for_me | models.Q(guest__partner=me.partner)
             
             # in team view, show also events of all my team members
-            tv = rqdata.get(ext_requests.URL_PARAM_TEAM_VIEW,False)
-            if tv and ext_requests.parse_boolean(tv):
+            tv = rqdata.get(constants.URL_PARAM_TEAM_VIEW,False)
+            if tv and constants.parse_boolean(tv):
                 # positive list of ACLs for events of team members
                 #~ team_classes = (AccessClasses.blank_item,AccessClasses.public,AccessClasses.show_busy) 20120829
                 team_classes = (None,AccessClasses.public,AccessClasses.show_busy)
@@ -2383,13 +2384,13 @@ class UpdateReminders(actions.RowAction):
         return ar.ui.success(msg,**kw)
         
 
-from lino import models as lino
+from lino.web import models as web
 
-class Home(lino.Home):
+class Home(web.Home):
   
     #~ debug_permissions = True 
 
-    label = lino.Home.label
+    label = web.Home.label
     app_label = 'lino'
     detail_layout = """
     quick_links:80x1

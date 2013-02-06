@@ -1,5 +1,5 @@
 # -*- coding: UTF-8 -*-
-## Copyright 2008-2012 Luc Saffre
+## Copyright 2008-2013 Luc Saffre
 ## This file is part of the Lino project.
 ## Lino is free software; you can redistribute it and/or modify 
 ## it under the terms of the GNU General Public License as published by
@@ -84,8 +84,11 @@ Every user-defined subclass of ChoiceList is also
 automatically available as a property value in 
 :mod:`lino.modlib.properties`.
 
-
 """
+
+import logging
+logger = logging.getLogger(__name__)
+
 
 import sys
 
@@ -175,8 +178,10 @@ def register_choicelist(cl):
     #~ k = cl.stored_name or cl.__name__
     k = cl.stored_name or cl.actor_id
     if CHOICELISTS.has_key(k):
-        raise Exception("ChoiceList name '%s' already defined by %s" % 
-            (k,CHOICELISTS[k]))
+        #~ raise Exception("ChoiceList name '%s' already defined by %s" % 
+            #~ (k,CHOICELISTS[k]))
+        logger.warning("ChoiceList name '%s' already defined by %s",
+            k,CHOICELISTS[k])
     CHOICELISTS[k] = cl
     
 def get_choicelist(i):

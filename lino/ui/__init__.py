@@ -1,0 +1,1 @@
+raise Exception("No longer used. Moved to lino.web.")

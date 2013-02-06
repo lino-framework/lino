@@ -36,7 +36,7 @@ from lino.utils.instantiator import make_converter
 #~ import lino
 #~ from lino.core import fields
 from lino.utils import get_class_attr
-from lino.ui import requests as ext_requests
+from lino.core import constants # as ext_requests
 
 class BaseChooser:
     pass
@@ -146,13 +146,13 @@ class Chooser(FieldChooser):
         
         # 20120202
         if tbl.master_field is not None:
-            mt = request.REQUEST.get(ext_requests.URL_PARAM_MASTER_TYPE)
+            mt = request.REQUEST.get(constants.URL_PARAM_MASTER_TYPE)
             try:
                 master = ContentType.objects.get(pk=mt).model_class()
             except ContentType.DoesNotExist,e:
                 pass
                 
-            pk = request.REQUEST.get(ext_requests.URL_PARAM_MASTER_PK,None)
+            pk = request.REQUEST.get(constants.URL_PARAM_MASTER_PK,None)
             if pk:
                 try:
                     kw[tbl.master_field.name] = master.objects.get(pk=pk)

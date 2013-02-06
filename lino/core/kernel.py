@@ -325,24 +325,6 @@ def startup_site(self):
             
             #~ model_count += 1
         
-        if self.is_installed('contenttypes'):
-          
-            from django.db.utils import DatabaseError
-            from django.db.models import FieldDoesNotExist
-            try:
-              
-                from lino.models import HelpText
-                for ht in HelpText.objects.filter(help_text__isnull=False):
-                    #~ logger.info("20120629 %s.help_text", ht)
-                    try:
-                        resolve_field(unicode(ht)).help_text = ht.help_text
-                    except FieldDoesNotExist as e:
-                        #~ logger.debug("No help texts : %s",e)
-                        pass
-            except DatabaseError,e:
-                logger.debug("No help texts : %s",e)
-                pass
-        
         #~ load_details(make_messages)
         
         #~ logger.debug("actors.discover() done")

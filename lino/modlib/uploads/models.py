@@ -1,5 +1,5 @@
 # -*- coding: UTF-8 -*-
-## Copyright 2008-2012 Luc Saffre
+## Copyright 2008-2013 Luc Saffre
 ## This file is part of the Lino project.
 ## Lino is free software; you can redistribute it and/or modify 
 ## it under the terms of the GNU General Public License as published by
@@ -103,7 +103,7 @@ class Upload(
         
     def update_reminders(self):
         """
-        Also called from :func:`lino.apps.pcsw.models.update_all_reminders`.
+        Also called from :func:`lino_welfare.modelib.pcsw.models.update_all_reminders`.
         """
         #~ logger.info("Upload.update_reminders() %s : owner is %s", self.pk, self.owner)
         
@@ -165,10 +165,10 @@ class MyUploads(Uploads,mixins.ByUser):
 
 MODULE_LABEL = _("Uploads")
 
-lino = dd.resolve_app('lino')
+linoweb = dd.resolve_app('web')
 
 def setup_main_menu(site,ui,profile,m):
-    m  = m.add_menu("office",lino.OFFICE_MODULE_LABEL)
+    m  = m.add_menu("office",linoweb.OFFICE_MODULE_LABEL)
     m.add_action(MyUploads)
 
 
@@ -187,11 +187,11 @@ def unused_setup_my_menu(site,ui,profile,m):
     m.add_action(MyUploads)
     
 def setup_config_menu(site,ui,profile,m): 
-    m  = m.add_menu("office",lino.OFFICE_MODULE_LABEL)
+    m  = m.add_menu("office",linoweb.OFFICE_MODULE_LABEL)
     #~ m  = m.add_menu("uploads",MODULE_LABEL)
     m.add_action(UploadTypes)
   
 def setup_explorer_menu(site,ui,profile,m):
-    m  = m.add_menu("office",lino.OFFICE_MODULE_LABEL)
+    m  = m.add_menu("office",linoweb.OFFICE_MODULE_LABEL)
     #~ m  = m.add_menu("uploads",MODULE_LABEL)
     m.add_action(Uploads)

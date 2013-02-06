@@ -69,9 +69,9 @@ from lino.utils.config import load_config_files, Configured
 from lino.core import actors
 from lino.core import frames
 #~ from lino.core import action_requests
-from lino.ui import base
+#~ from lino.ui import base
 
-from lino.ui import requests as ext_requests
+#~ from lino.ui import requests as ext_requests
 
 from lino.core.modeltools import resolve_model, resolve_field, full_model_name, get_field, UnresolvedModel
 #~ from lino.utils.config import LOCAL_CONFIG_DIR

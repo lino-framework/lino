@@ -49,7 +49,7 @@ from lino.utils import babel
 from lino.core.choicelists import ChoiceList, Choice
 
 from lino.core.modeltools import obj2str
-from lino.ui import requests as ext_requests
+from lino.core import constants # as ext_requests
 
 
 class UserLevels(ChoiceList):
@@ -616,12 +616,12 @@ def on_login(request,user):
         return
         
     if len(settings.LINO.languages) > 1:
-        ul = rqdata.get(ext_requests.URL_PARAM_USER_LANGUAGE,None)
+        ul = rqdata.get(constants.URL_PARAM_USER_LANGUAGE,None)
         if ul:
             translation.activate(ul)
             request.LANGUAGE_CODE = translation.get_language()
       
-    su = rqdata.get(ext_requests.URL_PARAM_SUBST_USER,None)
+    su = rqdata.get(constants.URL_PARAM_SUBST_USER,None)
     if su is not None:
         if su:
             try:
@@ -632,7 +632,7 @@ def on_login(request,user):
         else:
             su = None # e.g. when it was an empty string "su="
     request.subst_user = su
-    request.requesting_panel = rqdata.get(ext_requests.URL_PARAM_REQUESTING_PANEL,None)
+    request.requesting_panel = rqdata.get(constants.URL_PARAM_REQUESTING_PANEL,None)
     #~ logger.info("20121228 subst_user is %r",request.subst_user)
     #~ if request.subst_user is not None and not isinstance(request.subst_user,settings.LINO.user_model):
         #~ raise Exception("20121228")

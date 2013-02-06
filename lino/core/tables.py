@@ -70,8 +70,8 @@ from lino.core.model import Model
 from lino.core.fields import FakeField
 from lino.core.requests import ActionRequest
 
-from lino.ui import base
-from lino.ui import requests as ext_requests
+from lino.web import base
+from lino.core import constants #  as ext_requests
 from lino.utils.config import Configured, load_config_files
 
 
@@ -256,7 +256,7 @@ class TableRequest(ActionRequest):
             """
             #~ if master is ContentType or master is models.Model:
             if master is ContentType or master._meta.abstract:
-                mt = rqdata.get(ext_requests.URL_PARAM_MASTER_TYPE)
+                mt = rqdata.get(constants.URL_PARAM_MASTER_TYPE)
                 try:
                     master = kw['master'] = ContentType.objects.get(pk=mt).model_class()
                 except ContentType.DoesNotExist,e:
@@ -266,7 +266,7 @@ class TableRequest(ActionRequest):
                     
                 #~ print kw
             if not kw.has_key('master_instance'):
-                pk = rqdata.get(ext_requests.URL_PARAM_MASTER_PK,None)
+                pk = rqdata.get(constants.URL_PARAM_MASTER_PK,None)
                 #~ print '20100406a', self.actor,URL_PARAM_MASTER_PK,"=",pk
                 #~ if pk in ('', '-99999'):
                 if pk == '':
@@ -307,10 +307,10 @@ class TableRequest(ActionRequest):
                 kw.update(exclude=exclude)
                 
         if settings.LINO.use_gridfilters:
-            filter = rqdata.get(ext_requests.URL_PARAM_GRIDFILTER,None)
+            filter = rqdata.get(constants.URL_PARAM_GRIDFILTER,None)
             if filter is not None:
                 filter = json.loads(filter)
-                kw['gridfilters'] = [ext_requests.dict2kw(flt) for flt in filter]
+                kw['gridfilters'] = [constants.dict2kw(flt) for flt in filter]
                 
         kw = ActionRequest.parse_req(self,request,rqdata,**kw)
         #~ raise Exception("20120121 %s.parse_req(%s)" % (self,kw))
@@ -321,24 +321,24 @@ class TableRequest(ActionRequest):
             #~ if v is not None:
                 #~ kw[fieldname] = v
                 
-        quick_search = rqdata.get(ext_requests.URL_PARAM_FILTER,None)
+        quick_search = rqdata.get(constants.URL_PARAM_FILTER,None)
         if quick_search:
             kw.update(quick_search=quick_search)
             
-        sort = rqdata.get(ext_requests.URL_PARAM_SORT,None)
+        sort = rqdata.get(constants.URL_PARAM_SORT,None)
         if sort:
             #~ self.sort_column = sort
-            sort_dir = rqdata.get(ext_requests.URL_PARAM_SORTDIR,'ASC')
+            sort_dir = rqdata.get(constants.URL_PARAM_SORTDIR,'ASC')
             if sort_dir == 'DESC':
                 sort = '-' + sort
                 #~ self.sort_direction = 'DESC'
             kw.update(order_by=[sort])
         
                 
-        offset = rqdata.get(ext_requests.URL_PARAM_START,None)
+        offset = rqdata.get(constants.URL_PARAM_START,None)
         if offset:
             kw.update(offset=int(offset))
-        limit = rqdata.get(ext_requests.URL_PARAM_LIMIT,None)
+        limit = rqdata.get(constants.URL_PARAM_LIMIT,None)
         if limit:
             kw.update(limit=int(limit))
         
@@ -421,12 +421,12 @@ class TableRequest(ActionRequest):
         if ar.request is None:
             columns = None
         else:
-            columns = [str(x) for x in ar.request.REQUEST.getlist(ext_requests.URL_PARAM_COLUMNS)]
+            columns = [str(x) for x in ar.request.REQUEST.getlist(constants.URL_PARAM_COLUMNS)]
         
         if columns:
-            #~ widths = [int(x) for x in ar.request.REQUEST.getlist(ext_requests.URL_PARAM_WIDTHS)]
-            all_widths = ar.request.REQUEST.getlist(ext_requests.URL_PARAM_WIDTHS)
-            hiddens = [(x == 'true') for x in ar.request.REQUEST.getlist(ext_requests.URL_PARAM_HIDDENS)]
+            #~ widths = [int(x) for x in ar.request.REQUEST.getlist(constants.URL_PARAM_WIDTHS)]
+            all_widths = ar.request.REQUEST.getlist(constants.URL_PARAM_WIDTHS)
+            hiddens = [(x == 'true') for x in ar.request.REQUEST.getlist(constants.URL_PARAM_HIDDENS)]
             fields = []
             widths = []
             headers = []
@@ -524,7 +524,7 @@ class TableRequest(ActionRequest):
         kw = ActionRequest.get_status(self,ui,**kw)
         bp = kw['base_params']
         if self.quick_search:
-            bp[ext_requests.URL_PARAM_FILTER] = self.quick_search
+            bp[constants.URL_PARAM_FILTER] = self.quick_search
             
         if self.known_values:
             for k,v in self.known_values.items():
@@ -532,11 +532,11 @@ class TableRequest(ActionRequest):
                     bp[k] = v
         if self.master_instance is not None:
             if self.master is not None:
-                bp[ext_requests.URL_PARAM_MASTER_PK] = self.master_instance.pk
+                bp[constants.URL_PARAM_MASTER_PK] = self.master_instance.pk
                 mt = ContentType.objects.get_for_model(self.master_instance.__class__).pk
-                bp[ext_requests.URL_PARAM_MASTER_TYPE] = mt
+                bp[constants.URL_PARAM_MASTER_TYPE] = mt
             else:
-                bp[ext_requests.URL_PARAM_MASTER_PK] = self.master_instance
+                bp[constants.URL_PARAM_MASTER_PK] = self.master_instance
         return kw
         
         

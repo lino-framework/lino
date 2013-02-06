@@ -814,9 +814,9 @@ class ContactRelated(dd.Model):
 
 if settings.LINO.is_installed('contacts'):
   
-    from lino.models import SiteConfig
+    #~ from lino.models import SiteConfig
 
-    dd.inject_field(SiteConfig,
+    dd.inject_field('web.SiteConfig',
         'next_partner_id',
         models.IntegerField(default=100, # first 100 for users from demo fixtures.
             verbose_name=_("The next automatic id for Person or Company")
@@ -824,7 +824,7 @@ if settings.LINO.is_installed('contacts'):
         Deserves more documentation.
         """)
         
-    dd.inject_field(SiteConfig,
+    dd.inject_field('web.SiteConfig',
         'site_company',
         models.ForeignKey("contacts.Company",
             blank=True,null=True,

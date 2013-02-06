@@ -30,7 +30,7 @@ from django.conf import settings
 from django.utils.translation import ugettext_lazy as _
 
 import lino
-from lino.ui import base
+#~ from lino.ui import base
 
 #~ from lino.ui.base import Handled
 from lino.core import fields

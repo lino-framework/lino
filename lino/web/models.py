@@ -51,6 +51,7 @@ from lino.utils.xmlgen import html as xghtml
 
 #~ from lino.core.changes import Change, Changes, ChangesByObject
 
+from lino.web.ui import pre_web_build
 
 #~ class BuildLinoJS(dd.RowAction):
 class BuildSiteCache(dd.RowAction):
@@ -141,7 +142,7 @@ if settings.LINO.is_installed('contenttypes'):
       
       detail_layout = """
       id name app_label model base_classes
-      lino.HelpTextsByModel
+      web.HelpTextsByModel
       """
       
       @dd.displayfield(_("Base classes"))
@@ -398,8 +399,8 @@ def setup_config_menu(site,ui,profile,m):
         office.add_action(MyTextFieldTemplates)
     #~ m.add_action(site.modules.users.Users)
     if site.is_installed('contenttypes'):
-        system.add_action(site.modules.lino.ContentTypes)
-        system.add_action(site.modules.lino.HelpTexts)
+        system.add_action(site.modules.web.ContentTypes)
+        system.add_action(site.modules.web.HelpTexts)
         #~ m.add_action(site.modules.lino.Workflows)
         
   
@@ -432,3 +433,25 @@ def post_analyze(sender,**kw):
     from lino.core import web
     web.site_setup(sender,**kw)
     
+    
+@dd.receiver(pre_web_build)
+def my_pre_web_build(sender,**kw):
+    self = settings.LINO
+    if self.is_installed('contenttypes'):
+      
+        from django.db.utils import DatabaseError
+        from django.db.models import FieldDoesNotExist
+        try:
+          
+            from lino.web.models import HelpText
+            for ht in HelpText.objects.filter(help_text__isnull=False):
+                #~ logger.info("20120629 %s.help_text", ht)
+                try:
+                    resolve_field(unicode(ht)).help_text = ht.help_text
+                except FieldDoesNotExist as e:
+                    #~ logger.debug("No help texts : %s",e)
+                    pass
+        except DatabaseError,e:
+            logger.debug("No help texts : %s",e)
+            pass
+
