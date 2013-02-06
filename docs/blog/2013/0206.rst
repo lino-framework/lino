@@ -1,0 +1,25 @@
+20130206
+========
+
+I couldn't wait to do a first step for splitting Lino into more 
+digestable parts.
+
+The idea is to make the Lino kernel less intrusive. 
+For people who want to use Lino's database migration system 
+and startup signal within their existing Django applications, 
+but who don't want to have Lino manage their URLconfs and replace 
+their Django Admin.
+
+I basically moved lino.ui.extjs to `lino.web`,
+and split web-specific functionality 
+out of `lino.Lino` into `lino.web.Lino`.
+:checkin:`79edb8b79c85`.
+
+For existing applications these changes are invisible
+except for one detail:
+
+- The app_label ot the "system tables" 
+  SiteConfig, HelpText and TextFieldTemplate 
+  is now "web" instead of "lino".
+
+
