@@ -1,11 +1,9 @@
 20130206
 ========
 
-I couldn't wait to do a first step for splitting Lino into more 
-digestable parts.
-
-The idea is to make the Lino kernel less intrusive. 
-For people who want to use Lino's database migration system 
+I couldn't wait with doing a first step for splitting Lino into more 
+digestable parts: The idea is to make Lino less intrusive, 
+for people who want to use Lino's database migration system 
 and startup signal within their existing Django applications, 
 but who don't want to have Lino manage their URLconfs and replace 
 their Django Admin.
@@ -22,4 +20,4 @@ except for one detail:
   SiteConfig, HelpText and TextFieldTemplate 
   is now "web" instead of "lino".
 
-
+TODO: update documentation, write a tutorial for a web-less Lino usage.

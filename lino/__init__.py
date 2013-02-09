@@ -26,14 +26,6 @@ import datetime
 
 from os.path import join, abspath, dirname, normpath, isdir
 from decimal import Decimal
-from urllib import urlencode
-
-def buildurl(*args,**kw):
-    url = '/' + ("/".join(args))
-    if len(kw):
-        url += "?" + urlencode(kw)
-    return url
-
 
 from .utils.xmlgen import html as xghtml
 from .utils import AttrDict
@@ -244,6 +236,16 @@ class Lino(object):
     Set it to `None` to remove any user management 
     (feature used by e.g. :mod:`lino.test_apps.1`)
     """
+    
+    is_local_project_dir = False
+    """
+    This is automatically set when a :class:`Lino` is instantiated. 
+    Don't override it.
+    Contains `True` if this is a "local" project.
+    For local projects, Lino checks for local fixtures and config directories
+    and adds them to the default settings.
+    """
+    
     
     legacy_data_path = None
     """
@@ -489,15 +491,9 @@ class Lino(object):
     
     """
     
-    site_config_defaults = {}
+    site_config = None
     """
-    Default values to be used when creating the 
-    :class:`lino.models.SiteConfig` instance.
-    
-    Usage example::
-    
-      site_config_defaults = dict(default_build_method='appypdf')
-      
+    web.Lino overrides this to hold a SiteConfig instance.
     """
     
     max_auto_events = 36
@@ -939,7 +935,8 @@ class Lino(object):
         
         #~ name,current_version,url = self.using().next()
         if current_version is None:
-            raise Exception("Cannot migrate to version None")
+            dblogger.info("Unversioned Lino instance : no database migration")
+            return
             
         if globals_dict['SOURCE_VERSION'] == current_version:
             dblogger.info("Source version is %s : no migration needed", current_version)

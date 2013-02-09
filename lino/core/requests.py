@@ -98,7 +98,6 @@ class BaseRequest(object):
     def __init__(self,ui,request=None,renderer=None,**kw):
         if ui is None:
             ui = settings.LINO.ui
-            #~ from lino.ui.extjs3 import ui
         self.ui = ui
         #~ self.error_response = ui.error_response
         #~ self.success_response = ui.success_response

@@ -19,6 +19,7 @@
 import sys
 from django.core.management.base import BaseCommand, CommandError
 from lino.runtime import settings
+from django.db import models
 
 class Command(BaseCommand):
     help = __doc__
@@ -29,5 +30,10 @@ class Command(BaseCommand):
             raise CommandError("I need at least one argument.")
         #~ settings.LINO.startup()
         spec = args[0]
-        print settings.LINO.modules.resolve(spec).to_rst()
+        cl = settings.LINO.modules.resolve(spec)
+        
+        if issubclass(cl,models.Model):
+            cl = cl._lino_default_table
+        
+        print cl.to_rst()
           

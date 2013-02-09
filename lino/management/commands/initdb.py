@@ -50,6 +50,7 @@ from django.core.management.color import no_style
 from django.db import connections, transaction, DEFAULT_DB_ALIAS
 from django.db import models
 
+
 import lino
 from lino.core.modeltools import app_labels
 from lino.utils import *
@@ -82,8 +83,8 @@ class Command(BaseCommand):
       
         from lino.utils import dblogger
             
-        if not dblogger.logger.isEnabledFor(logging.INFO):
-            raise CommandError("System logger must be enabled for INFO")
+        #~ if not dblogger.logger.isEnabledFor(logging.INFO):
+            #~ raise CommandError("System logger must be enabled for INFO")
         dblogger.info(settings.LINO.welcome_text())
         #~ dblogger.info("FIXTURE_DIRS is %s",settings.FIXTURE_DIRS)
         using = options.get('database', DEFAULT_DB_ALIAS)
@@ -146,6 +147,21 @@ class Command(BaseCommand):
         #~ call_command('syncdb',**syncdb_options)
         #~ not good because all other messages "Creating table..." also disappear.
         
+        """
+        initdb must disable the post_syncdb signal 
+        which will be emitted by syncdb and would cause automatisms like 
+        `django.contrib.auth.management.create_permissions`
+        `django.contrib.auth.management.create_superuser`
+        `django.contrib.sites.management.create_default_site`
+        """
+        
+        class NullSignal:
+            def connect(*args,**kw):
+                pass
+            def send(*args,**kw):
+                pass
+        
+        models.signals.post_syncdb = NullSignal()
         
         call_command('syncdb',load_initial_data=False,**options)
         

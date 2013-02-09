@@ -89,16 +89,16 @@ class Lino(lino.Lino):
     Whether to include "experimental" features.
     """
     
-    is_local_project_dir = None
+    site_config_defaults = {}
     """
-    This is automatically set when a :class:`Lino` is instantiated. 
-    Don't override it.
-    Contains `True` if this is a "local" project.
-    For local projects, Lino checks for local fixtures and config directories
-    and adds them to the default settings.
+    Default values to be used when creating the 
+    :class:`lino.models.SiteConfig` instance.
+    
+    Usage example::
+    
+      site_config_defaults = dict(default_build_method='appypdf')
+      
     """
-    
-    
     
     
     use_spinner = False # doesn't work. leave this to False

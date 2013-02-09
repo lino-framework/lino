@@ -430,8 +430,13 @@ def post_analyze(sender,**kw):
     """
     This is Lino's post_analyze signal handler.
     """
+    site = sender
+    if site.build_js_cache_on_startup is None:
+        from lino.core.modeltools import is_devserver
+        site.build_js_cache_on_startup = not (settings.DEBUG or is_devserver())
+    
     from lino.core import web
-    web.site_setup(sender,**kw)
+    web.site_setup(site,**kw)
     
     
 @dd.receiver(pre_web_build)

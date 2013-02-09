@@ -538,12 +538,14 @@ class DpyDeserializer:
                 To avoid Django interpreting empty fixtures as an error, 
                 we yield one object which always exists: the SiteConfig instance
                 """
-                yield FakeDeserializedObject(self,settings.LINO.site_config)
-                #~ raise Exception("""\
-#~ Fixture %s decided to not create any object.
-#~ We're sorry, but Django doesn't like that. 
-#~ See <https://code.djangoproject.com/ticket/18213>.
-#~ """ % fp.name)
+                if settings.LINO.site_config:
+                    yield FakeDeserializedObject(self,settings.LINO.site_config)
+                else:
+                    raise Exception("""\
+Fixture %s decided to not create any object.
+We're sorry, but Django doesn't like that. 
+See <https://code.djangoproject.com/ticket/18213>.
+""" % fp.name)
           
         #~ logger.info("Saved %d instances from %s.",self.saved,fp.name)
         

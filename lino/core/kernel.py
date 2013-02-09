@@ -55,7 +55,6 @@ from lino.core.modeltools import app_labels # , data_elems # , get_unbound_meth
 from lino.utils import get_class_attr, class_dict_items
 
 from lino.core.modeltools import resolve_model, resolve_field, get_field, full_model_name, obj2str
-from lino.core.modeltools import is_devserver
     
 from lino.utils.config import load_config_files, find_config_file
 from lino.utils import choosers
@@ -100,11 +99,6 @@ def analyze_models():
             
     #~ logger.info(lino.welcome_text())
     #~ raise Exception("20111229")
-    
-    if self.build_js_cache_on_startup is None:
-        self.build_js_cache_on_startup = not (settings.DEBUG or is_devserver())
-    
-    
     
     if self.user_model:
         self.user_model = resolve_model(self.user_model,strict="Unresolved model '%s' in user_model.")
