@@ -69,6 +69,8 @@ class Command(BaseCommand):
     args = "fixture [fixture ...]"
     
     option_list = BaseCommand.option_list + (
+        make_option('--dumped', action='store_true', dest='dumped', default=False,
+            help='It is a dumped fixture, which requires us to disable the post_syncdb signal.'),
         make_option('--noinput', action='store_false', dest='interactive', default=True,
             help='Do not prompt for input of any kind.'),
         make_option('--database', action='store', dest='database',
@@ -148,20 +150,21 @@ class Command(BaseCommand):
         #~ not good because all other messages "Creating table..." also disappear.
         
         """
-        initdb must disable the post_syncdb signal 
-        which will be emitted by syncdb and would cause automatisms like 
+        When loading a full dump back into the database, 
+        initdb must disable the post_syncdb signal emitted by syncdb 
+        which would cause automatisms like 
         `django.contrib.auth.management.create_permissions`
         `django.contrib.auth.management.create_superuser`
         `django.contrib.sites.management.create_default_site`
         """
         
-        class NullSignal:
-            def connect(*args,**kw):
-                pass
-            def send(*args,**kw):
-                pass
-        
-        models.signals.post_syncdb = NullSignal()
+        if options.get('dumped'):
+            class NullSignal:
+                def connect(*args,**kw):
+                    pass
+                def send(*args,**kw):
+                    pass
+            models.signals.post_syncdb = NullSignal()
         
         call_command('syncdb',load_initial_data=False,**options)
         

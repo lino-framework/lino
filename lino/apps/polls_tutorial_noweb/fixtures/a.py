@@ -121,6 +121,9 @@ def create_django_site(id, domain, name):
 
 
 
+def django_site_objects():
+    yield create_django_site(1,u'example.com',u'example.com')
+
 def polls_poll_objects():
     yield create_polls_poll(1,u'What is your preferred colour?',dt(2013,2,9,0,0,0))
     yield create_polls_poll(2,u'Do you like Django?',dt(2013,2,9,0,0,0))
@@ -138,13 +141,44 @@ def polls_choice_objects():
     yield create_polls_choice(9,3,u'No',0)
     yield create_polls_choice(10,3,u'Not yet decided',0)
 
+def auth_permission_objects():
+    yield create_auth_permission(19,u'Can add log entry',admin_LogEntry,u'add_logentry')
+    yield create_auth_permission(20,u'Can change log entry',admin_LogEntry,u'change_logentry')
+    yield create_auth_permission(21,u'Can delete log entry',admin_LogEntry,u'delete_logentry')
+    yield create_auth_permission(1,u'Can add group',auth_Group,u'add_group')
+    yield create_auth_permission(4,u'Can change group',auth_Group,u'change_group')
+    yield create_auth_permission(7,u'Can delete group',auth_Group,u'delete_group')
+    yield create_auth_permission(2,u'Can add permission',auth_Permission,u'add_permission')
+    yield create_auth_permission(5,u'Can change permission',auth_Permission,u'change_permission')
+    yield create_auth_permission(8,u'Can delete permission',auth_Permission,u'delete_permission')
+    yield create_auth_permission(3,u'Can add user',auth_User,u'add_user')
+    yield create_auth_permission(6,u'Can change user',auth_User,u'change_user')
+    yield create_auth_permission(9,u'Can delete user',auth_User,u'delete_user')
+    yield create_auth_permission(10,u'Can add content type',contenttypes_ContentType,u'add_contenttype')
+    yield create_auth_permission(11,u'Can change content type',contenttypes_ContentType,u'change_contenttype')
+    yield create_auth_permission(12,u'Can delete content type',contenttypes_ContentType,u'delete_contenttype')
+    yield create_auth_permission(22,u'Can add choice',polls_Choice,u'add_choice')
+    yield create_auth_permission(24,u'Can change choice',polls_Choice,u'change_choice')
+    yield create_auth_permission(26,u'Can delete choice',polls_Choice,u'delete_choice')
+    yield create_auth_permission(23,u'Can add poll',polls_Poll,u'add_poll')
+    yield create_auth_permission(25,u'Can change poll',polls_Poll,u'change_poll')
+    yield create_auth_permission(27,u'Can delete poll',polls_Poll,u'delete_poll')
+    yield create_auth_permission(13,u'Can add session',sessions_Session,u'add_session')
+    yield create_auth_permission(14,u'Can change session',sessions_Session,u'change_session')
+    yield create_auth_permission(15,u'Can delete session',sessions_Session,u'delete_session')
+    yield create_auth_permission(16,u'Can add site',sites_Site,u'add_site')
+    yield create_auth_permission(17,u'Can change site',sites_Site,u'change_site')
+    yield create_auth_permission(18,u'Can delete site',sites_Site,u'delete_site')
+
 def auth_user_objects():
-    yield create_auth_user(1,u'root',u'',u'',u'root@example.com',u'pbkdf2_sha256$10000$DFEG51doF0oP$ohs0NG2XFJcRZgVKrVUrQxgQ00Oinxs5kc3h9Lxvcx8=',True,True,True,dt(2013,2,9,5,9,10),dt(2013,2,9,5,9,10))
+    yield create_auth_user(1,u'root',u'',u'',u'root@example.com',u'pbkdf2_sha256$10000$n4MN4nUJB8H5$WNB0yrl5jd+x5auVi86/du4rqZtnJ0677+qX0W21p1c=',True,True,True,dt(2013,2,9,5,30,9),dt(2013,2,9,5,30,9))
 
 
 def objects():
+    yield django_site_objects()
     yield polls_poll_objects()
     yield polls_choice_objects()
+    yield auth_permission_objects()
     yield auth_user_objects()
 
 settings.LINO.loading_from_dump = True
