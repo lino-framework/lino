@@ -12,7 +12,6 @@ extension.
     lino
     
     lino.dd
-    lino.runtime
     
     lino.models
     lino.management
@@ -24,7 +23,7 @@ extension.
     
     lino.apps
     
-    lino.ui
+    lino.web
     
     lino.utils
 

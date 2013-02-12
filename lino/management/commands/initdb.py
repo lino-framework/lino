@@ -40,7 +40,8 @@ See also ticket :doc:`/tickets/50`.
 import logging
 from optparse import make_option 
 
-from lino.runtime import settings
+#~ from lino.runtime import settings
+from django.conf import settings
 from django.core.management import call_command
 from django.core.management.base import BaseCommand, CommandError
 
@@ -69,8 +70,8 @@ class Command(BaseCommand):
     args = "fixture [fixture ...]"
     
     option_list = BaseCommand.option_list + (
-        make_option('--dumped', action='store_true', dest='dumped', default=False,
-            help='It is a dumped fixture, which requires us to disable the post_syncdb signal.'),
+        #~ make_option('--dumped', action='store_true', dest='dumped', default=False,
+            #~ help='It is a dumped fixture, which requires us to disable the post_syncdb signal.'),
         make_option('--noinput', action='store_false', dest='interactive', default=True,
             help='Do not prompt for input of any kind.'),
         make_option('--database', action='store', dest='database',
@@ -87,7 +88,7 @@ class Command(BaseCommand):
             
         #~ if not dblogger.logger.isEnabledFor(logging.INFO):
             #~ raise CommandError("System logger must be enabled for INFO")
-        dblogger.info(settings.LINO.welcome_text())
+        #~ dblogger.info(settings.LINO.welcome_text())
         #~ dblogger.info("FIXTURE_DIRS is %s",settings.FIXTURE_DIRS)
         using = options.get('database', DEFAULT_DB_ALIAS)
         dbname = settings.DATABASES[using]['NAME']
@@ -149,22 +150,21 @@ class Command(BaseCommand):
         #~ call_command('syncdb',**syncdb_options)
         #~ not good because all other messages "Creating table..." also disappear.
         
-        """
-        When loading a full dump back into the database, 
-        initdb must disable the post_syncdb signal emitted by syncdb 
-        which would cause automatisms like 
-        `django.contrib.auth.management.create_permissions`
-        `django.contrib.auth.management.create_superuser`
-        `django.contrib.sites.management.create_default_site`
-        """
-        
-        if options.get('dumped'):
-            class NullSignal:
-                def connect(*args,**kw):
-                    pass
-                def send(*args,**kw):
-                    pass
-            models.signals.post_syncdb = NullSignal()
+        #~ """
+        #~ When loading a full dump back into the database, 
+        #~ initdb must disable the post_syncdb signal emitted by syncdb 
+        #~ which would cause automatisms like 
+        #~ `django.contrib.auth.management.create_permissions`
+        #~ `django.contrib.auth.management.create_superuser`
+        #~ `django.contrib.sites.management.create_default_site`
+        #~ """
+        #~ if options.get('dumped'):
+            #~ class NullSignal:
+                #~ def connect(*args,**kw):
+                    #~ pass
+                #~ def send(*args,**kw):
+                    #~ pass
+            #~ models.signals.post_syncdb = NullSignal()
         
         call_command('syncdb',load_initial_data=False,**options)
         

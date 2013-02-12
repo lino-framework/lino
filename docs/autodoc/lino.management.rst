@@ -26,17 +26,10 @@ run
     :members:
     :show-inheritance:
 
-dumpdata
---------
+show
+----
 
-.. automodule:: lino.management.commands.dumpdata
-    :members:
-    :show-inheritance:
-
-loaddata
---------
-
-.. automodule:: lino.management.commands.loaddata
+.. automodule:: lino.management.commands.show
     :members:
     :show-inheritance:
 

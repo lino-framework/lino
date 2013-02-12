@@ -34,7 +34,7 @@ from lino.utils import dblogger
 
 def objects():
     #~ dblogger.info("Installing contacts demo fixture") # use --verbosity=2
-    
+    #~ print settings.LINO.languages
     company = Instantiator('contacts.Company',"name zip_code city:name street street_no",country='EE').build
     yield company('Rumma & Ko OÜ','10115','Tallinn','Tartu mnt','71')
     #~ Company = resolve_model('contacts.Company')

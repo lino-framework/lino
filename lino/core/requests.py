@@ -34,7 +34,7 @@ from lino.utils import babel
 from lino.utils.xmlgen import html as xghtml
 E = xghtml.E
 
-from lino.web import requests as ext_requests
+from lino.core import constants as ext_requests
 
 from lino.core.modeltools import resolve_model, resolve_app
 from lino.core import layouts

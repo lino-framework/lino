@@ -291,7 +291,7 @@ def codetime(*args,**kw):
         if code_mtime is None or code_mtime < mtime:
             code_mtime = mtime
             pivot = filename
-    print '20130204 codetime:', time.ctime(code_mtime), pivot
+    #~ print '20130204 codetime:', time.ctime(code_mtime), pivot
     return code_mtime
     
     

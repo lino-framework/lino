@@ -718,20 +718,13 @@ class Lino(object):
         
     def startup(self,**options):
         """
-        Start the Lino site. 
-        This is called when Django has done his work 
-        (all models modules have been imported).
+        Start the Lino instance (the object stored as :setting:`LINO` in your :xfile:`settings.py`).
+        This is called exactly once from :mod:`lino.models` 
+        when Django has has populated it's model cache.
         
-        This is called whenever a user interface 
-        (:class:`lino.ui.base.UI`) gets instantiated (which usually 
-        happenes in some URLConf, for example in:mod:`lino.ui.extjs3.urls`). 
-        Also called by some test cases.
         """
         from lino.core.kernel import startup_site
         startup_site(self,**options)
-        #~ print "20120725 save site config"
-        #~ self.site_config.save()
-        
         
     def setup_workflows(self):
         self.on_each_app('setup_workflows')
@@ -920,63 +913,12 @@ class Lino(object):
         """
         return []
         
-    def install_migrations(self,globals_dict):
+    def install_migrations(self,*args):
         """
-        Python dumps are generated with one line at the end which calls this method, 
-        passing it their global namespace.
-        
+        See :func:`lino.utils.dumpy.install_migrations`.
         """
-        #~ import logging
-        #~ dblogger = logging.getLogger(__name__)
-        from lino.utils import dblogger
-        from django.utils.importlib import import_module
-        
-        current_version = self.version
-        
-        #~ name,current_version,url = self.using().next()
-        if current_version is None:
-            dblogger.info("Unversioned Lino instance : no database migration")
-            return
-            
-        if globals_dict['SOURCE_VERSION'] == current_version:
-            dblogger.info("Source version is %s : no migration needed", current_version)
-            return
-        #~ if '+' in __version__:
-            #~ dblogger.warning(
-                #~ "No data migration to intermediate Lino version %s", __version__)
-            #~ return 
-        #~ if '+' in current_version:
-            #~ dblogger.warning(
-                #~ "No data migration to intermediate %s version %s", 
-                #~ self.short_name,current_version)
-            #~ return
-        if self.migration_module:
-            migmod = import_module(self.migration_module)
-        else:
-            migmod = self
-        while True:
-            from_version = globals_dict['SOURCE_VERSION']
-            funcname = 'migrate_from_' + from_version.replace('.','_')
-            m = getattr(migmod,funcname,None)
-            #~ func = globals().get(funcname,None)
-            if m:
-                #~ dblogger.info("Found %s()", funcname)
-                to_version = m(globals_dict)
-                if not isinstance(to_version,basestring):
-                    raise Exception("Oops: %s didn't return a string!" % m)
-                if to_version <= from_version:
-                    raise Exception("Oops: %s tries to migrate from version %s to %s ?!" % (m,from_version,to_version))
-                msg = "Migrating from version %s to %s" % (from_version, to_version)
-                if m.__doc__:
-                    msg += ":\n" + m.__doc__
-                dblogger.info(msg)
-                globals_dict['SOURCE_VERSION'] = to_version
-            else:
-                if from_version != current_version:
-                    dblogger.warning("No method for migrating from version %s to %s",
-                        from_version,current_version)
-                break
-
+        from lino.utils.dumpy import install_migrations
+        install_migrations(self,*args)
           
     #~ def get_application_info(self):
         #~ """

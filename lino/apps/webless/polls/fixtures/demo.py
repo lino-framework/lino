@@ -1,4 +1,5 @@
 from django.conf import settings
+from django.utils import timezone
 
 from lino import dd
 
@@ -15,7 +16,7 @@ def objects():
     for ln in DATA.splitlines():
         if ln:
             a = ln.split('|')
-            p = Poll(question=a[0].strip(),pub_date=settings.LINO.demo_date())
+            p = Poll(question=a[0].strip(),pub_date=timezone.now())
             yield p
             for choice in a[1:]:
                 yield Choice(choice_text=choice.strip(),poll=p,votes=0)

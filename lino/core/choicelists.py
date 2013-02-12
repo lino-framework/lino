@@ -31,7 +31,9 @@ One thing to avoid doctest side-effects is not necessary in your code:
 
 >>> for value,text in choicelist_choices():
 ...     print "%s : %s" % (value, unicode(text))
-lino.ChangeTypes : Change Types
+cal.AccessClasses : AccessClasses
+cal.DurationUnits : DurationUnits
+cal.Weekdays : Weekdays
 lino.Genders : Genders
 lino.UserGroups : User Groups
 lino.UserLevels : User Levels
@@ -684,6 +686,18 @@ class MultiChoiceListField(ChoiceListField):
 
 
 
+class Genders(ChoiceList):
+    """
+    Defines the two possible choices "male" and "female" 
+    for the gender of a person.
+    """
+    verbose_name = _("Gender")
+    app_label = 'lino'
+    #~ item_class = GenderItem
+    
+add = Genders.add_item
+add('M',_("Male"),'male')
+add('F',_("Female"),'female')
 
 
 

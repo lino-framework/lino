@@ -258,10 +258,15 @@ class Instantiator:
             kw.setdefault(k,v)
         for c in self.converters:
             kw = c.convert(**kw)
+        #~ if self.model.__name__ == 'Company':
+            #~ print 20130212, __file__, kw
+            #~ logger.info("20130212 field_cache for %s (%s)",self.model,
+              #~ ' '.join([f.name for f in self.model._meta._field_name_cache]))
+            
         m2m = kw.pop("_m2m")
         instance = self.model(**kw)
+        instance.full_clean()
         if m2m:
-            instance.full_clean()
             instance.save()
             for k,v in m2m.items():
                 queryset = getattr(instance,k)

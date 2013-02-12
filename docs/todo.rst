@@ -4,6 +4,8 @@ To-do list
 Short-term
 ----------
 
+#.  render `models.NullBooleanField` using a `tri-state checkbox
+    <http://www.sencha.com/forum/showthread.php?98241-Tri-state-checkbox-for-ExtJs-3.0>`_
 #.  Negative Zahlen in Rot formatieren können 
     (z.B. Gesamtsumme Zusammenfassung Budget)
 

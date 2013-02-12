@@ -1,3 +1,4 @@
+# This file is unchanged result of Django's polls tutorial
 from django.contrib import admin
 from polls.models import Poll
 from polls.models import Choice
@@ -27,8 +28,5 @@ class PollAdmin(admin.ModelAdmin):
     
 
 admin.site.register(Poll, PollAdmin)
-
-
-
 
 #~ admin.site.register(Choice)

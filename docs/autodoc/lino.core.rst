@@ -12,6 +12,7 @@
     lino.core.actions
     lino.core.actors
     lino.core.choicelists
+    lino.core.constants
     lino.core.dbtables
     lino.core.fields
     lino.core.inject

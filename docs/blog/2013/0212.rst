@@ -1,0 +1,20 @@
+20130212
+========
+
+Ross McFarland describes  
+an idea to simply send the server startup signal
+"at the end of your last app's models.py file"
+in his post `Django Startup Signal (Sun 24 June 2012)
+<http://www.xormedia.com/django-startup-signal/>`_.
+
+It seems that this idea is perfect for Lino!
+We just need to require that "lino" is the last application 
+of :setting:`INSTALLED_APPS`.
+No more need to override Django's 
+`loaddata` and `dumpdata` commands, no more need 
+for a `lino.runtime` module!
+
+Adapted :doc:`/tutorials/webless`.
+
+Wrote :func:`lino_welfare.modlib.pcsw.migrate.migrate_from_1_0_11`.
+

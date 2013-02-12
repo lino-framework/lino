@@ -1,0 +1,32 @@
+20130211
+========
+
+`django.contrib.contenttypes` and `post_syncdb`
+-----------------------------------------------
+
+Continued on :doc:`/tutorials/webless`.
+
+The trick that disables the `post_syncdb` signal (:doc:`0209`) 
+works for 
+`django.contrib.auth`
+and
+`django.contrib.sites`, 
+but also has consequences for `django.contrib.contenttypes`.
+And `contenttypes` is being used on production data.
+So we must be careful.
+
+Summary of tables that need special treatment in :mod:`lino.utils.dumpy`:
+
+- `ContentType` objects don't need to be stored in a dump because they 
+  can always be recreated.
+- `Site` and `Permission` objects *must* be stored and *must not* be re-created
+- `Session` can get lost in a dump and must not be stored.
+
+
+Furthermore I perceive the `--dumped` command-line option as a 
+useless complexification of the usage interface, and I had an idea how I can 
+avoid it: we let the post_syncdb handlers do what they want, 
+and then simply delete any automatically generated Site and Permission objects 
+before restoring our dump.
+That's done in :func:`lino.utils.dumpy.install_migrations`.
+

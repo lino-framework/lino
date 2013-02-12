@@ -131,7 +131,7 @@ from django.core.exceptions import ValidationError
 from django.utils.encoding import force_unicode 
 from django.utils.translation import ugettext_lazy as _
 
-from lino.mixins import Genders
+from lino.core.choicelists import Genders
 
 YEAR2000 = '='
 YEAR1900 = '-'

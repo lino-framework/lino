@@ -1,6 +1,6 @@
 #~ DJANGO_ADMIN = python l:/snapshots/django/django/bin/django-admin.py
 #~ DJANGO_ADMIN = `python -c 'import os; from django import bin;print os.path.dirname(bin.__file__)'`/django-admin.py
-DJANGO_ADMIN = `python -c "from os.path import join,dirname; from django import bin;print join(dirname(bin.__file__),'django-admin.py')"`
+DJANGO_ADMIN=python $(shell python -c "from os.path import join,dirname; from django import bin;print join(dirname(bin.__file__),'django-admin.py')")
 LINO_ROOT := /cygdrive/t/hgwork/lino
 LINO_ROOT := `cygpath -m $(LINO_ROOT)`
 APPS = cosi 
@@ -46,12 +46,12 @@ tests:
 	#~ python lino/utils/sphinx.py
 	python lino/utils/rstgen.py
 	python lino/utils/html2odf.py
-	python lino/utils/ssin.py
 	python lino/utils/memo.py
 	python lino/modlib/contacts/utils.py
 	python lino/utils/html2xhtml.py
 	python lino/utils/demonames.py
 	python lino/utils/odsreader.py
+	export DJANGO_SETTINGS_MODULE=lino.apps.std.settings ; python lino/utils/ssin.py
 	export DJANGO_SETTINGS_MODULE=lino.apps.std.settings ; python lino/core/choicelists.py
 	export DJANGO_SETTINGS_MODULE=lino.apps.std.settings ; python lino/utils/jsgen.py
 	export DJANGO_SETTINGS_MODULE=lino.apps.std.settings ; python lino/utils/ranges.py
@@ -68,8 +68,7 @@ tests:
 	$(DJANGO_ADMIN) test --settings=lino.apps.presto.settings $(TESTS_OPTIONS)
 
 tt:  
-	echo $(DJANGO_ADMIN) test --settings=lino.test_apps.mti.settings  $(TESTS_OPTIONS)
-	python $(DJANGO_ADMIN) test --settings=lino.test_apps.mti.settings  $(TESTS_OPTIONS)
+	$(DJANGO_ADMIN) test --settings=lino.test_apps.mti.settings  $(TESTS_OPTIONS)
 
 unused_appdocs:
 	$(DJANGO_ADMIN) makedocs --settings lino.apps.pcsw.settings docs/pcsw/appdocs

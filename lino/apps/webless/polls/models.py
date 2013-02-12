@@ -1,3 +1,5 @@
+# This file is unchanged result of Django's polls tutorial
+
 import datetime
 
 from django.db import models

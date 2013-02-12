@@ -363,7 +363,7 @@ class Lino(lino.Lino):
     def __init__(self,project_file,django_settings):
         lino.Lino.__init__(self,project_file,django_settings)
         
-        installed_apps = tuple(self.get_installed_apps())
+        installed_apps = tuple(self.get_installed_apps()) + ('lino',)
         django_settings.update(INSTALLED_APPS=installed_apps)
         
         modname = self.__module__
@@ -466,8 +466,10 @@ class Lino(lino.Lino):
        
     def get_ui(self):
         if self._extjs_ui is None:
-            self.startup()
-            from lino.web.ui import ExtUI
+            #~ self.startup() 20130212
+            from lino.core.kernel import startup_web
+            startup_web(self)
+            from .ui import ExtUI
             self._extjs_ui = ExtUI()
         return self._extjs_ui
     ui = property(get_ui)
@@ -742,7 +744,6 @@ class Lino(lino.Lino):
         This method is expected to return or yield the list of strings 
         to be stored into Django's :setting:`INSTALLED_APPS` setting.
         """
-        yield 'lino'
         yield 'lino.web'
         if self.user_model is not None and self.remote_user_header is None:
             yield 'django.contrib.sessions' # 20121103

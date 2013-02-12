@@ -38,12 +38,9 @@ The tricks are:
 - Unlike :mod:`lino.dd`, the :mod:`lino.runtime`
   **may not** be imported at the top level of "models modules".
 
-  
-
-
-
-
 """
+
+raise Exception("No longer needed")
 
 from django.conf import settings
 #~ settings.LINO.startup()

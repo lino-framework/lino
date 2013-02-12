@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-## Copyright 2008-2012 Luc Saffre
+## Copyright 2008-2013 Luc Saffre
 ## This file is part of the Lino project.
 ## Lino is free software; you can redistribute it and/or modify 
 ## it under the terms of the GNU General Public License as published by
@@ -23,7 +23,8 @@ from django.utils.translation import pgettext
 from django.conf import settings
 
 from lino.utils import join_words
-from lino.core import choicelists
+from lino.core.choicelists import Genders
+
 from lino.core import fields
 from lino.core import model
 
@@ -39,19 +40,6 @@ from lino.core import model
 #~ def show_salutation(b):
     #~ global SHOW_SALUTATION
     #~ SHOW_SALUTATION = b
-
-class Genders(choicelists.ChoiceList):
-    """
-    Defines the two possible choices "male" and "female" 
-    for the gender of a person.
-    """
-    verbose_name = _("Gender")
-    app_label = 'lino'
-    #~ item_class = GenderItem
-    
-add = Genders.add_item
-add('M',_("Male"),'male')
-add('F',_("Female"),'female')
 
 
 def get_salutation(gender,nominative=False):

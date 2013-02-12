@@ -125,9 +125,9 @@ def django_site_objects():
     yield create_django_site(1,u'example.com',u'example.com')
 
 def polls_poll_objects():
-    yield create_polls_poll(1,u'What is your preferred colour?',dt(2013,2,9,0,0,0))
-    yield create_polls_poll(2,u'Do you like Django?',dt(2013,2,9,0,0,0))
-    yield create_polls_poll(3,u'Do you like ExtJS?',dt(2013,2,9,0,0,0))
+    yield create_polls_poll(1,u'What is your preferred colour?',dt(2013,2,11,0,0,0))
+    yield create_polls_poll(2,u'Do you like Django?',dt(2013,2,11,0,0,0))
+    yield create_polls_poll(3,u'Do you like ExtJS?',dt(2013,2,11,0,0,0))
 
 def polls_choice_objects():
     yield create_polls_choice(1,1,u'Blue',0)
@@ -171,7 +171,7 @@ def auth_permission_objects():
     yield create_auth_permission(18,u'Can delete site',sites_Site,u'delete_site')
 
 def auth_user_objects():
-    yield create_auth_user(1,u'root',u'',u'',u'root@example.com',u'pbkdf2_sha256$10000$n4MN4nUJB8H5$WNB0yrl5jd+x5auVi86/du4rqZtnJ0677+qX0W21p1c=',True,True,True,dt(2013,2,9,5,30,9),dt(2013,2,9,5,30,9))
+    yield create_auth_user(1,u'root',u'',u'',u'root@example.com',u'pbkdf2_sha256$10000$HjAs4ueOXJ3m$Z/Dv/71uKIaXy9z2rqirkN3gyIhAc5mpsk0bfKl2AOM=',True,True,True,dt(2013,2,11,7,40,47),dt(2013,2,11,7,40,47))
 
 
 def objects():
@@ -180,7 +180,5 @@ def objects():
     yield polls_choice_objects()
     yield auth_permission_objects()
     yield auth_user_objects()
-
-settings.LINO.loading_from_dump = True
 
 settings.LINO.install_migrations(globals())

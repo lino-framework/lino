@@ -65,6 +65,7 @@ class Lino(Lino):
         yield 'lino.modlib.sales'
         #~ yield 'lino.modlib.pages'
         #~ yield 'lino.apps.cosi'
+        yield 'lino'
 
 LINO = Lino(__file__,globals())
 

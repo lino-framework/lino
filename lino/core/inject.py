@@ -36,7 +36,8 @@ def fix_field_cache(model):
             cache.append( (f,m) )
     model._meta._field_cache = tuple(cache)
     model._meta._field_name_cache = [x for x, _ in cache]
-    #~ logger.info("20130106 fixed field_cache %s (%s)",full_model_name(model),' '.join(field_names))
+    #~ if model.__name__ in ('Company','Partner'):
+        #~ logger.info("20130106 fixed field_cache %s (%s)",model,' '.join(field_names))
 
 
 @receiver(class_prepared)
@@ -52,7 +53,8 @@ def on_class_prepared(sender=None,**kw):
       So we remove these duplicate fields from `_meta._field_cache`.
       (A better solution would be of course to not collect them.)
     """
-    #~ print("20130119 on_class_prepared",sender)
+    #~ if sender.__name__ in ('Company','Partner'):
+        #~ print("20130212 on_class_prepared",sender)
     model = sender
     #~ return
     #~ if model is None:
@@ -79,9 +81,10 @@ def on_class_prepared(sender=None,**kw):
 
 
 @receiver(pre_analyze)
-def check_pending_injects(signal,sender,models_list=None,**kw): # called from kernel.analyze_models()
+def check_pending_injects(signal,sender,models_list=None,**kw): 
+    # called from kernel.analyze_models()
     site = sender
-    #~ logger.info("check_pending_injects")
+    #~ logger.info("20130212 check_pending_injects()...")
     if PENDING_INJECTS:
         msg = ''
         for spec,funcs in PENDING_INJECTS.items():
@@ -158,7 +161,7 @@ def inject_field(model_spec,name,field,doc=None):
         model.add_to_class(name,field)
         #~ if hasattr(model._meta,'_field_cache'):
         model._meta._fill_fields_cache()
-        #~ fix_field_cache(model)
+        fix_field_cache(model)
         #~ for m in models_by_base(model):
             #~ if hasattr(m._meta,'_field_cache'):
                 #~ m._meta._fill_fields_cache()

@@ -1,3 +1,5 @@
+# This file is unchanged result of Django's polls tutorial
+
 from django.views.generic import DetailView, ListView
 from django.conf.urls import patterns, url
 from django.utils import timezone

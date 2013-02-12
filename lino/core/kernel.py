@@ -72,6 +72,7 @@ DONE = False
 
 #~ self.GFK_LIST = []
 
+
 def analyze_models():
     """
     This is a part of a Lino site setup.
@@ -113,6 +114,8 @@ def analyze_models():
     models_list = models.get_models() # trigger django.db.models.loading.cache._populate()
     
     for model in models_list:
+      
+        #~ fix_field_cache(model)
       
         model._lino_ddh = DisableDeleteHandler(model)
         
@@ -272,16 +275,7 @@ class DisableDeleteHandler():
 def startup_site(self):
     """
     This is the code that runs when you call :meth:`lino.Lino.startup`.
-    
-    `self` is the Lino instance stored as :setting:`LINO` 
-    in your :xfile:`settings.py`.
-    
-    This is run once after Django has populated it's model cache, 
-    and before any Lino actor can be used.
-    Since Django has not "after startup" event, this is triggered 
-    "automagically" when it is needed the first time. 
-    For example on a mod_wsgi Web Server process it will be triggered 
-    by the first incoming request.
+    It is here in a separate module because 
     
     """
     if self._setup_done:
@@ -309,62 +303,6 @@ def startup_site(self):
         
         models_list = models.get_models() 
         
-        #~ model_count = 0
-        
-        for model in models_list:
-          
-            #~ model.site_setup(self)
-            if hasattr(model,'site_setup'):
-                raise Exception("%s still has a site_setup" % model)
-            
-            #~ model_count += 1
-        
-        #~ load_details(make_messages)
-        
-        #~ logger.debug("actors.discover() done")
-        
-        #~ babel.discover() # would have to be called before model setup
-        
-        #~ self.modules = AttrDict()
-        #~ self.modules = actors.MODULES
-        
-        #~ logger.info("20130105 modules is %s",self.modules.keys())
-        
-        #~ import pprint
-        #~ logger.info("settings.LINO.modules is %s" ,pprint.pformat(self.modules))
-        #~ logger.info("settings.LINO.modules['cal']['main'] is %r" ,self.modules['cal']['main'])
-                    
-        for app in models.get_apps():
-            fn = getattr(app,'site_setup',None)
-            if fn is not None:
-                fn(self)
-
-        """
-        Actor.after_site_setup() is called after site_setup() on each actor.
-        Example: pcsw.site_setup() adds a detail to properties.Properties, 
-        the base class for properties.PropsByGroup. 
-        The latter would not 
-        install a detail_action during her after_site_setup() 
-        and also would never get it later.
-        """
-        
-        for a in actors.actors_list:
-            #~ a.setup()
-            a.after_site_setup(self)
-            
-        self.on_site_startup()
-            
-        """
-        resolve_virtual_fields() comes even after after_site_setup() 
-        because after_site_setup()
-        may add more virtual fields in custom setup_columns methods.
-        """
-                
-        fields.resolve_virtual_fields()
-        
-        #~ from lino.core import web
-        #~ web.site_setup(self)
-        
         if len(sys.argv) == 0:
             process_name = 'WSGI'
         else:
@@ -388,6 +326,51 @@ def startup_site(self):
     #~ except Exception,e:
         #~ logger.exception(e)
         #~ raise
+
+
+
+def startup_web(self):
+  
+    models_list = models.get_models() 
+    
+    for model in models_list:
+      
+        if hasattr(model,'site_setup'):
+            raise Exception("%s still has a site_setup" % model)
+        
+                
+    for app in models.get_apps():
+        fn = getattr(app,'site_setup',None)
+        if fn is not None:
+            fn(self)
+
+    """
+    Actor.after_site_setup() is called after site_setup() on each actor.
+    Example: pcsw.site_setup() adds a detail to properties.Properties, 
+    the base class for properties.PropsByGroup. 
+    The latter would not 
+    install a detail_action during her after_site_setup() 
+    and also would never get it later.
+    """
+    
+    for a in actors.actors_list:
+        #~ a.setup()
+        a.after_site_setup(self)
+        
+    self.on_site_startup()
+        
+    """
+    resolve_virtual_fields() comes even after after_site_setup() 
+    because after_site_setup()
+    may add more virtual fields in custom setup_columns methods.
+    """
+            
+    fields.resolve_virtual_fields()
+    
+    #~ from lino.core import web
+    #~ web.site_setup(self)
+        
+
 
 def unused_generate_dummy_messages(self):
     fn = os.path.join(self.source_dir,'dummy_messages.py')
