@@ -34,7 +34,7 @@ from django.core.management import call_command
 from django.core.management.base import BaseCommand, CommandError
 
 import lino
-from lino.runtime import settings
+from django.conf import settings
 from lino.core.modeltools import app_labels
 from lino.utils import rstgen
 from lino.core.modeltools import obj2str, full_model_name, sorted_models_list
