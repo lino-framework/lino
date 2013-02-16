@@ -111,10 +111,10 @@ def analyze_models():
     for m in self.override_modlib_models:
         resolve_model(m,strict="Unresolved model '%s' in override_modlib_models.")
     
-    models_list = models.get_models() # trigger django.db.models.loading.cache._populate()
+    models_list = models.get_models(include_auto_created=True) # trigger django.db.models.loading.cache._populate()
     
     for model in models_list:
-      
+        #~ print 20130216, model
         #~ fix_field_cache(model)
       
         model._lino_ddh = DisableDeleteHandler(model)
@@ -156,7 +156,7 @@ def analyze_models():
                     #~ logger.info(msg)
             elif isinstance(f,models.ForeignKey):
                 if isinstance(f.rel.to,basestring):
-                    raise Exception("%s %s relates to %r",(model,f.name,f.rel.to))
+                    raise Exception("%s %s relates to %r" % (model,f.name,f.rel.to))
                 if f.verbose_name == f.name.replace('_', ' '):
                     """
                     If verbose name was not set by user code, 

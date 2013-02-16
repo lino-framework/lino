@@ -104,6 +104,7 @@ LONG_DATE_FMT = {
   None: 'l, F j, Y',
   'en': 'l, F j, Y',
   'de': 'l, j. F Y',
+  'nl': 'l, j. F Y',
   'fr': 'l j F Y',
   'et': 'l, j F Y.a.',
 }
@@ -112,6 +113,7 @@ SHORT_DATE_FMT = {
   None: 'Y-m-d',
   'en': 'Y-m-d',
   'de': 'd.m.Y',
+  'nl': 'd.m.Y',
   'et': 'd.m.Y',
   'fr': 'd/m/Y',
 }

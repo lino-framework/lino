@@ -225,6 +225,7 @@ class TakeAssignedEvent(dd.RowAction):
         return kw
     
   
+  
 class AssignEvent(dd.ChangeStateAction):
     label = _("Assign")
     required = dict(states='suggested draft scheduled',owner=True)
@@ -261,7 +262,7 @@ class AssignEvent(dd.ChangeStateAction):
         #~ obj.save()
         kw.update(refresh=True)
         return kw
-    
+      
         
 
 
@@ -1178,7 +1179,7 @@ Indicates that this Event shouldn't prevent other Events at the same time."""))
         
     def get_postable_recipients(self):
         """return or yield a list of Partners"""
-        if contacts and issubclass(settings.LINO.project_model,contacts.Partner):
+        if settings.LINO.is_installed('contacts') and issubclass(settings.LINO.project_model,contacts.Partner):
             if self.project:
                 yield self.project
         for g in self.guest_set.all():
@@ -1190,7 +1191,7 @@ Indicates that this Event shouldn't prevent other Events at the same time."""))
         return self.calendar
         
     def get_mailable_recipients(self):
-        if contacts and issubclass(settings.LINO.project_model,contacts.Partner):
+        if settings.LINO.is_installed('contacts') and issubclass(settings.LINO.project_model,contacts.Partner):
             if self.project:
                 yield ('to',self.project)
         for g in self.guest_set.all():
@@ -1761,8 +1762,10 @@ class Guest(mixins.TypedPrintable,outbox.Mailable):
     event = models.ForeignKey('cal.Event',
         verbose_name=_("Event")) 
         
-    if contacts:
+    if settings.LINO.is_installed('contacts'):
         partner = models.ForeignKey('contacts.Partner')
+    else:
+        partner = dd.DummyField()
 
     role = models.ForeignKey('cal.GuestRole',
         verbose_name=_("Role"),
@@ -1852,27 +1855,29 @@ class GuestsByEvent(Guests):
 class GuestsByRole(Guests):
     master_key = 'role'
 
-class GuestsByPartner(Guests):
-    master_key = 'partner'
-    column_names = 'event role workflow_buttons remark *'
+if settings.LINO.is_installed('contacts'):
+  
+  class GuestsByPartner(Guests):
+      master_key = 'partner'
+      column_names = 'event role workflow_buttons remark *'
 
-class MyPresences(GuestsByPartner):
-    required = dd.required(user_groups='office')
-    order_by = ['event__start_date','event__start_time']
-    label = _("My presences")
-    help_text = _("""Shows all my presences in calendar events, independently of their state.""")
-    column_names = 'event__start_date event__start_time event_summary role workflow_buttons remark *'
-    
-    @classmethod
-    def get_request_queryset(self,ar):
-        ar.master_instance = ar.get_user().partner
-        return super(MyPresences,self).get_request_queryset(ar)
-        
-    
-class MyPendingInvitations(MyPresences):
-    help_text = _("""Shows received invitations which I must accept or reject.""")
-    label = _("My received invitations")
-    filter = models.Q(state=GuestStates.invited)
+  class MyPresences(GuestsByPartner):
+      required = dd.required(user_groups='office')
+      order_by = ['event__start_date','event__start_time']
+      label = _("My presences")
+      help_text = _("""Shows all my presences in calendar events, independently of their state.""")
+      column_names = 'event__start_date event__start_time event_summary role workflow_buttons remark *'
+      
+      @classmethod
+      def get_request_queryset(self,ar):
+          ar.master_instance = ar.get_user().partner
+          return super(MyPresences,self).get_request_queryset(ar)
+          
+      
+  class MyPendingInvitations(MyPresences):
+      help_text = _("""Shows received invitations which I must accept or reject.""")
+      label = _("My received invitations")
+      filter = models.Q(state=GuestStates.invited)
     
 #~ class MySentInvitations(Guests):
     #~ help_text = _("""Shows invitations which I sent accept or reject.""")

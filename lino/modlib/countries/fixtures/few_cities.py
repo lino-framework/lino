@@ -61,11 +61,25 @@ def objects():
     eupen = make_city('BE','Eupen',zip_code='4700')
     yield eupen
     yield make_city('BE','Nispert',type=CityTypes.township,parent=eupen)
+    
+    reuland = make_city('BE','Burg-Reuland ',zip_code='4790')
+    yield make_city('BE','Ouren',type=CityTypes.township,parent=reuland)
+    
     yield City(country=BE,zip_code='4720',type=CityTypes.city,
       **babel_values('name',de='Kelmis',fr='La Calamine',en="Kelmis"))
     yield make_city('BE','Kettenis',zip_code='4701',type=CityTypes.village)
     yield make_city('BE','Raeren',zip_code='4730',type=CityTypes.village)
     yield make_city('BE','Angleur',zip_code='4031')
+    yield make_city('BE','Ans',zip_code='4430')
+    yield make_city('BE','Ottignies',zip_code='1340')
+    yield make_city('BE','Thieusies',zip_code='7061')
+    yield make_city('BE','Cuesmes',zip_code='7033')
+    yield make_city('BE','La Reid',zip_code='4910')
+    yield make_city('BE','Blégny ',zip_code='4670')
+    yield make_city('BE','Cerfontaine',zip_code='5630')
+    yield make_city('BE','Burdinne',zip_code='4210')
+    
+    
     yield City(country=BE,type=CityTypes.province,
       **babel_values('name',de='Lüttich',fr='Liège',en='Liège',nl="Luik"))
     yield City(country=BE,zip_code='4000',type=CityTypes.city,
@@ -78,6 +92,12 @@ def objects():
     #~ yield city(u'Brüssel','BE',zip_code='1000')
     yield City(country=BE,zip_code='8400',type=CityTypes.city,
       **babel_values('name',de='Ostende',fr='Ostende',nl="Oostende",en="Ostende"))
+    yield City(country=BE,zip_code='4750',type=CityTypes.city,
+      **babel_values('name',de='Bütgenbach',fr='Butgenbach'))
+    yield City(country=BE,zip_code='4760',type=CityTypes.city,
+      **babel_values('name',de='Büllingen',fr='Bullange'))
+    yield City(country=BE,zip_code='4780',type=CityTypes.city,
+      **babel_values('name',de='Sankt Vith',fr='Saint-Vith'))
     
     harjumaa = make_city('EE','Harjumaa',type=CityTypes.county)
     yield harjumaa
@@ -104,6 +124,8 @@ def objects():
     yield make_city('DE','Hamburg')
     yield City(country=DE,type=CityTypes.city,
       **babel_values('name',de='München',fr='Munich',en="Munich"))
+    yield City(country=DE,type=CityTypes.city,
+      **babel_values('name',de='Monschau',fr='Montjoie'))
     
     yield make_city('NL','Maastricht')
     yield make_city('NL','Amsterdam')

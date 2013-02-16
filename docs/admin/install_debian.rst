@@ -90,8 +90,8 @@ Download Lino
 
 - Consult :doc:`/releases` to see which version you want.
 
-- Download and unpack the corresponding `.tar.gz  file 
-  `from http://pypi.python.org/pypi/lino#downloads
+- Download and unpack the corresponding `.tar.gz` file 
+  from http://pypi.python.org/pypi/lino#downloads
   
 - For example::
 

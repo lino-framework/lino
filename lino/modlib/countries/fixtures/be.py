@@ -75,7 +75,7 @@ belgian_cities = u"""
 6721 Anlier 
 6890 Anloy 
 5537 Annevoie-Rouillon 
-4430 Ans 
+# 4430 Ans 
 5500 Anseremme 
 7750 Anseroeul 
 5520 Anthée 
@@ -298,7 +298,7 @@ belgian_cities = u"""
 7040 Blaregnies 
 7321 Blaton 
 7370 Blaugies 
-4670 Blégny 
+# 4670 Blégny 
 7620 Bléharies 
 4280 Blehen 
 6760 Bleid 
@@ -450,17 +450,17 @@ belgian_cities = u"""
 5580 Buissonville 
 1501 Buizingen 
 1910 Buken 
-4760 Bullange 
-4760 Büllingen 
+# 4760 Bullange 
+# 4760 Büllingen 
 8630 Bulskamp 
 3380 Bunsbeek 
 2070 Burcht 
-4210 Burdinne 
+# 4210 Burdinne 
 6927 Bure 
-4790 Burg-Reuland 
+# 4790 Burg-Reuland 
 9420 Burst 
 7602 Bury 
-4750 Bütgenbach 
+# 4750 Bütgenbach 
 3891 Buvingen 
 7133 Buvrinnes 
 6743 Buzenol 
@@ -478,7 +478,7 @@ belgian_cities = u"""
 4317 Celles (Lg.) 
 5561 Celles (Nam.) 
 4632 Cerexhe-Heuseux 
-5630 Cerfontaine 
+# 5630 Cerfontaine 
 1341 Céroux-Mousty 
 7063 Ch.-Notre-Dame-Louvignies 
 4650 Chaineux 
@@ -555,7 +555,7 @@ belgian_cities = u"""
 7120 Croix-lez-Rouveroy 
 4784 Crombach 
 5332 Crupet 
-7033 Cuesmes 
+# 7033 Cuesmes 
 6880 Cugnon 
 5660 Cul-des-Sarts 
 5562 Custinne 
@@ -1333,7 +1333,7 @@ belgian_cities = u"""
 7170 La Hestre 
 1310 La Hulpe 
 7100 La Louvière 
-4910 La Reid 
+# 4910 La Reid
 6980 La Roche-en-Ardenne 
 3400 Laar 
 9270 Laarne 
@@ -1930,7 +1930,7 @@ belgian_cities = u"""
 4360 Otrange 
 3040 Ottenburg 
 9420 Ottergem 
-1340 Ottignies 
+# 1340 Ottignies 
 9200 Oudegem 
 8600 Oudekapelle 
 9700 Oudenaarde 
@@ -2089,7 +2089,7 @@ belgian_cities = u"""
 6927 Resteigne 
 2470 Retie 
 4621 Retinne 
-4790 Reuland 
+# 4790 Reuland 
 6210 Rèves 
 5080 Rhisnes 
 1640 Rhode-Saint-Genèse 
@@ -2208,13 +2208,13 @@ belgian_cities = u"""
 7030 Saint-Symphorien 
 7100 Saint-Vaast 
 6730 Saint-Vincent 
-4780 Saint-Vith 
+# 4780 Saint-Vith 
 4671 Saive 
 6460 Salles 
 5600 Samart 
 5060 Sambreville 
 6982 Samrée 
-4780 Sankt Vith 
+# 4780 Sankt Vith 
 7080 Sars-la-Bruyère 
 6542 Sars-la-Buissière 
 5330 Sart-Bernard 
@@ -2446,7 +2446,7 @@ belgian_cities = u"""
 6717 Thiaumont 
 7070 Thieu 
 7901 Thieulain 
-7061 Thieusies 
+#7061 Thieusies 
 6230 Thiméon 
 4890 Thimister 
 4890 Thimister-Clermont 

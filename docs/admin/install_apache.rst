@@ -41,8 +41,8 @@ If you run multiple Django sites on your Apache server
 and need `WSGIApplicationGroup %{GLOBAL}`, 
 then you *must* use daemon mode and delegate 
 each Django site to a separate `WSGIProcessGroup`. 
-(`* <http://stackoverflow.com/questions/3405533/problem-using-wsgiapplicationgroup-global-in-apache-configuration>`_
-`* <http://stackoverflow.com/questions/5021424/mod-wsgi-daemon-mode-wsgiapplicationgroup-and-python-interpreter-separation>`_)
+(`* <http://stackoverflow.com/questions/3405533/problem-using-wsgiapplicationgroup-global-in-apache-configuration>`__
+`* <http://stackoverflow.com/questions/5021424/mod-wsgi-daemon-mode-wsgiapplicationgroup-and-python-interpreter-separation>`__)
 It is not possible in that case to have multiple sites on a 
 single virtual host using :attr:`lino.Lino.root_url`.
 

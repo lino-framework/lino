@@ -44,6 +44,7 @@ from lino.utils.jsgen import py2js, id2js, js_code
 from lino.utils import choosers
 from lino.utils.auth import make_view_permission_handler
 
+from lino.utils.xmlgen import etree
 from lino.utils.xmlgen import html as xghtml
 E = xghtml.E
 from lino.utils.xmlgen import RAW as RAWXML
@@ -1279,6 +1280,15 @@ class DisplayElement(FieldElement):
     
     def value_from_object(self,obj,ar):
         return self.field.value_from_object(obj,ar)
+        
+    def format_value(self,ar,v):
+        from lino.utils.xmlgen.html import E
+        from lino.utils.rstgen import html2rst
+        if etree.iselement(v): 
+            return html2rst(v)
+        return self.field._lino_atomizer.format_value(ar,v)
+        
+        
 
 class BooleanMixin(object):
     def format_sum(self,ar,sums,i):

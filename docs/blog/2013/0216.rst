@@ -1,0 +1,23 @@
+========
+20130216
+========
+
+Intermezzo : Using Lino to generate a static Website
+----------------------------------------------------
+
+I wrote a quick application 
+:mod:`lino.apps.events` and
+:mod:`lino.modlib.events`.
+The pages at 
+http://www.vor-cycling.be/de/events.html
+(three languages DE, NL and FR)
+have been generated with Lino into a Sphinx document
+using the py2rst directive::
+
+  from django.conf import settings
+  from lino.utils.rstgen import header
+  for obj in settings.LINO.modules.events.Type.objects.order_by('id'):
+      print header(2,unicode(obj))
+      print
+      print obj.EventsByType().to_rst()
+

@@ -237,12 +237,7 @@ def add_user_group(name,label):
         if g.text != label:
             g.text += " & " + unicode(label)
     
-def required(**kw):
-    #~ if not kw.has_key('auth'):
-        #~ kw.update(auth=True)
-    kw.setdefault('auth',True)
-    return kw
-    
+from lino.core.actors import get_default_required as required
     
 class PseudoRequest:
     def __init__(self,username):

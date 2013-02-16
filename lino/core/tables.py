@@ -499,6 +499,7 @@ class TableRequest(ActionRequest):
         for row in self:
             recno += 1
             rows.append([x for x in grid.row2text(self,fields,row,sums)])
+            #~ rows.append([x for x in grid.row2html(self,fields,row,sums)])
                 
         has_sum = False
         for i in sums:

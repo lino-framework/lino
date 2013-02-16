@@ -11,7 +11,7 @@ OPENHTML               = 'C:\\Program Files\\Mozilla Firefox\\firefox.exe'
 
 
 # You can set these variables from the command line.
-SPHINXOPTS    = -w warnings.txt -n -P 
+SPHINXOPTS = -w warnings.txt -n -P -W
 #~ SPHINXOPTS    = -w warnings.txt -n -P -D keep_warnings=True
 #~ SPHINXOPTS    = -W 
 #~ SPHINXOPTS    = 

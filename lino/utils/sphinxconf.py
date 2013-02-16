@@ -515,6 +515,11 @@ def docname_to_day(year,s):
             #~ entries.setdefault(env.docname)
         
 
+def setup2(app):
+    # also used by `vor/conf.py`
+    app.add_directive('complextable', ComplexTableDirective)
+    app.add_directive('py2rst', Py2rstDirective)
+    
 def setup(app):
     """
     The Sphinx setup function used for Lino-related documentation trees.
@@ -547,8 +552,7 @@ def setup(app):
     app.add_directive('blogger_year', YearBlogIndexDirective)
     app.add_directive('blogger_index', MainBlogIndexDirective)
     app.add_directive('textimage', TextImageDirective)
-    app.add_directive('complextable', ComplexTableDirective)
-    app.add_directive('py2rst', Py2rstDirective)
+    setup2(app)
     #~ app.add_directive('screenshot', ScreenshotDirective)
     #~ app.add_config_value('screenshots_root', '/screenshots/', 'html')
 

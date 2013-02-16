@@ -226,6 +226,8 @@ def _html2rst(e,**kw):
     rst = ''
     if e.tag == 'p': 
         rst += '\n\n'
+    elif e.tag == 'br':
+        rst += ' |br| \n'
     elif e.tag == 'b':
         rst += '**'
     elif e.tag == 'em':

@@ -88,6 +88,13 @@ def register_actor(a):
     
     
     
+def get_default_required(**kw):
+    #~ if not kw.has_key('auth'):
+        #~ kw.update(auth=True)
+    if settings.LINO.user_model is not None:
+        kw.setdefault('auth',True)
+    return kw
+    
     
     
 class BoundAction(object):
@@ -303,9 +310,9 @@ class Actor(actions.Parametrizable):
     """
     
     #~ required = dict()
-    #~ required = dd.required()
+    required = get_default_required()
     
-    required = dict(auth=True) # 20121116
+    #~ required = dict(auth=True) # 20121116
     
     #~ create_required = dict()
     update_required = dict()
@@ -501,7 +508,7 @@ class Actor(actions.Parametrizable):
     get_handle_name = None
     """
     Most actors use the same UI handle for each request. 
-    But debts.PrintEntriesByBudget overrides this to 
+    But e.g. debts.PrintEntriesByBudget overrides this to 
     implement dynamic columns depending on it's master_instance.
     """
         
@@ -1135,7 +1142,7 @@ class Actor(actions.Parametrizable):
         and calls its :meth:`lino.core.actions.ActionRequest.to_rst` 
         method.
         """
-        settings.LINO.startup()
+        #~ settings.LINO.startup()
         return self.request(**kw).to_rst(column_names)
         
     @classmethod
