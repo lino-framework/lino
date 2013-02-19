@@ -1,1 +1,9 @@
-Interrupted while building, starting debugger:
+T:\hgwork\lino\docs\reviews\index.rst:4: WARNING: toctree contains reference to nonexisting document u'reviews/ :maxdepth: 1'
+T:\hgwork\lino\docs\reviews\index.rst:4: WARNING: toctree contains reference to nonexisting document u'reviews/ :glob:'
+T:\hgwork\lino\docs\reviews\index.rst:4: WARNING: toctree contains reference to nonexisting document u'reviews/django-extensions/index'
+T:\hgwork\lino\docs\casts\lino_intro.rst:: WARNING: document isn't included in any toctree
+T:\hgwork\lino\docs\dev\versioning.rst:: WARNING: document isn't included in any toctree
+T:\hgwork\lino\docs\igen\index.rst:: WARNING: document isn't included in any toctree
+T:\hgwork\lino\docs\reviews\django-extensions.rst:: WARNING: document isn't included in any toctree
+T:\hgwork\lino\docs\reviews\index.rst:: WARNING: document isn't included in any toctree
+T:\hgwork\lino\docs\tutorials\webless.rst:: WARNING: document isn't included in any toctree

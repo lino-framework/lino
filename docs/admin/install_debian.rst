@@ -107,7 +107,7 @@ Go to the :file:`~/snapshots` directory and do::
   
   
 Note: don't run Lino's file `setup.py`, it is not necessary and doesn't work.  
-Just `Set up your Python path`_ manually (see below).
+Just set up your :doc:`Python Path <pythonpath>` manually.
 
 Install Django
 --------------

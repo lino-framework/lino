@@ -584,8 +584,8 @@ class Lino(object):
         
         self.qooxdoo_prefix = '/media/qooxdoo/lino_apps/' + self.project_name + '/build/'
         #~ self.dummy_messages = set()
-        self._setting_up = False
-        self._setup_done = False
+        self._starting_up = False
+        self._startup_done = False
         #~ self._response = None
         self.django_settings = django_settings
         self.GFK_LIST = []

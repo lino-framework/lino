@@ -990,7 +990,7 @@ class Actor(actions.Parametrizable):
             else:
                 logger.warning("%s.setup() called recursively" % self)
                 return False
-        #~ logger.debug("Actor.setup() %s", self)
+        #~ logger.info("20130219 Actor.after_site_setup() %s", self)
         self._setup_doing = True
         
         if not self.is_abstract():

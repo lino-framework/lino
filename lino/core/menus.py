@@ -236,6 +236,9 @@ class Menu(MenuItem):
                 #~ print 20121210, a
             else:
                 a = spec.default_action
+                if a is None:
+                    raise Exception("%r default_action is None?!" % spec)
+                
             #~ a = actors.BoundAction(spec,a)
 
         else:

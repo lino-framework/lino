@@ -275,10 +275,8 @@ class DisableDeleteHandler():
 def startup_site(self):
     """
     This is the code that runs when you call :meth:`lino.Lino.startup`.
-    It is here in a separate module because 
-    
     """
-    if self._setup_done:
+    if self._startup_done:
         #~ logger.warning("LinoSite setup already done ?!")
         return
         
@@ -287,12 +285,12 @@ def startup_site(self):
     #~ write_lock.acquire()
     try:
     
-        if self._setting_up:
+        if self._starting_up:
             logger.warning("Lino.startup() called recursively.")
             return 
             #~ raise Exception("LinoSite.setup() called recursively.")
         #~ try:
-        self._setting_up = True
+        self._starting_up = True
         
         logger.info(self.welcome_text())
         
@@ -320,8 +318,8 @@ def startup_site(self):
         
     finally:
         #~ write_lock.release()
-        self._setup_done = True
-        self._setting_up = False
+        self._startup_done = True
+        self._starting_up = False
     
     #~ except Exception,e:
         #~ logger.exception(e)
@@ -333,26 +331,19 @@ def startup_web(self):
   
     models_list = models.get_models() 
     
-    for model in models_list:
-      
-        if hasattr(model,'site_setup'):
-            raise Exception("%s still has a site_setup" % model)
-        
-                
     for app in models.get_apps():
         fn = getattr(app,'site_setup',None)
         if fn is not None:
             fn(self)
 
     """
-    Actor.after_site_setup() is called after site_setup() on each actor.
+    Actor.after_site_setup() is called after the app's site_setup().
     Example: pcsw.site_setup() adds a detail to properties.Properties, 
     the base class for properties.PropsByGroup. 
     The latter would not 
     install a detail_action during her after_site_setup() 
     and also would never get it later.
     """
-    
     for a in actors.actors_list:
         #~ a.setup()
         a.after_site_setup(self)
