@@ -82,22 +82,32 @@ def objects():
     
     yield City(country=BE,type=CityTypes.province,
       **babel_values('name',de='Lüttich',fr='Liège',en='Liège',nl="Luik"))
-    yield City(country=BE,zip_code='4000',type=CityTypes.city,
-      **babel_values('name',de='Lüttich',fr='Liège',en='Liège',nl="Luik"))
-    yield City(country=BE,zip_code='1000',type=CityTypes.city,
-      **babel_values('name',de='Brüssel',fr='Bruxelles',nl="Brussel",en="Brussels"))
-    yield City(country=BE,zip_code='7000',type=CityTypes.city,
-      **babel_values('name',de='Bergen',fr='Mons',nl="Bergen",en="Mons"))
+    #~ yield City(country=BE,zip_code='4000',type=CityTypes.city,
+      #~ **babel_values('name',de='Lüttich',fr='Liège',en='Liège',nl="Luik"))
+    #~ yield City(country=BE,zip_code='1000',type=CityTypes.city,
+      #~ **babel_values('name',de='Brüssel',fr='Bruxelles',nl="Brussel",en="Brussels"))
+    #~ yield City(country=BE,zip_code='7000',type=CityTypes.city,
+      #~ **babel_values('name',de='Bergen',fr='Mons',nl="Bergen",en="Mons"))
     #~ yield city('Brussel','BE',zip_code='1000')
     #~ yield city(u'Brüssel','BE',zip_code='1000')
-    yield City(country=BE,zip_code='8400',type=CityTypes.city,
-      **babel_values('name',de='Ostende',fr='Ostende',nl="Oostende",en="Ostende"))
-    yield City(country=BE,zip_code='4750',type=CityTypes.city,
-      **babel_values('name',de='Bütgenbach',fr='Butgenbach'))
-    yield City(country=BE,zip_code='4760',type=CityTypes.city,
-      **babel_values('name',de='Büllingen',fr='Bullange'))
-    yield City(country=BE,zip_code='4780',type=CityTypes.city,
-      **babel_values('name',de='Sankt Vith',fr='Saint-Vith'))
+    def be_city(zip_code,de,fr,nl,en):
+        return City(country=BE,zip_code=zip_code,type=CityTypes.city,
+            **babel_values('name',de=de,fr=de,nl=nl,en=en)))
+    yield be_city('1000',"Brüssel","Bruxelles","Brussel","Brussels")
+    yield be_city('4000',"Lüttich","Liège","Luik","Liège")
+    yield be_city('7000',"Bergen","Mons","Bergen","Mons")
+    yield be_city('8400',"Ostende","Ostende","Oostende","Ostende")
+    yield be_city('4750',"Bütgenbach","Butgenbach","Butgenbach","Butgenbach")
+    yield be_city('4760',"Büllingen","Bullange","Büllingen","Büllingen")
+    yield be_city('4780',"Sankt Vith","Saint-Vith","Sankt Vith","Sankt Vith")
+    #~ yield City(country=BE,zip_code='8400',type=CityTypes.city,
+      #~ **babel_values('name',de='Ostende',fr='Ostende',nl="Oostende",en="Ostende"))
+    #~ yield City(country=BE,zip_code='4750',type=CityTypes.city,
+      #~ **babel_values('name',de='Bütgenbach',fr='Butgenbach'))
+    #~ yield City(country=BE,zip_code='4760',type=CityTypes.city,
+      #~ **babel_values('name',de='Büllingen',fr='Bullange'))
+    #~ yield City(country=BE,zip_code='4780',type=CityTypes.city,
+      #~ **babel_values('name',de='Sankt Vith',fr='Saint-Vith'))
     
     harjumaa = make_city('EE','Harjumaa',type=CityTypes.county)
     yield harjumaa
