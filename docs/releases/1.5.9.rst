@@ -1,0 +1,4 @@
+Version 1.5.9
+=============
+
+- The app_label of TextFieldTemplate, SiteConfig and HelpText is no longer "lino" but "ui"
