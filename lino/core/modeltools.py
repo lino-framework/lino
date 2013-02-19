@@ -165,8 +165,8 @@ def resolve_model(model_spec,app_label=None,strict=False,seed_cache=True):
     if not isinstance(model,type) or not issubclass(model,models.Model):
         if strict:
             if isinstance(strict,basestring):
-                raise Exception(strict % model_spec)
-            raise Exception(
+                raise ImportError(strict % model_spec)
+            raise ImportError(
                 "resolve_model(%r,app_label=%r) found %r (settings %s)" % (
                 model_spec,app_label,model,settings.SETTINGS_MODULE))
         #~ logger.info("20120628 unresolved %r",model)

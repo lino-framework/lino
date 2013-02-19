@@ -28,6 +28,15 @@ I moved the concept of "INS codes" from
 to a new independent app
 :mod:`lino_welfare.modlib.statbel`.
 And added this to the INSTALLED_APPS of `lino.apps.belref`.
+Result:
+the trilingual
+`Countries <http://belref.lino-framework.org/countries/Countries>`_
+and
+`Cities <http://belref.lino-framework.org/countries/Cities>`_
+lists at `belref` now have a column with their INS code.
+These codes are added by
+:mod:`lino_welfare.modlib.statbel.fixtures.inscodes`
+
 
 
 Release

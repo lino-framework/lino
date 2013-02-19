@@ -12,6 +12,8 @@
 ## You should have received a copy of the GNU General Public License
 ## along with Lino; if not, see <http://www.gnu.org/licenses/>.
 
+#~ print '20130219 lino.modlib.school 1'  
+
 import logging
 logger = logging.getLogger(__name__)
 
@@ -72,14 +74,18 @@ from lino.core.modeltools import obj2str
 #~ # from lino.modlib.notes.models import NoteType
 #~ from lino.modlib.countries.models import Country, City
 
-if settings.LINO.user_model:
-    User = dd.resolve_model(settings.LINO.user_model,strict=True)
+#~ if settings.LINO.user_model:
+    #~ User = dd.resolve_model(settings.LINO.user_model,strict=True)
+
+
 
 users = dd.resolve_app('users')
 cal = dd.resolve_app('cal')
 contacts = dd.resolve_app('contacts')
-Company = dd.resolve_model('contacts.Company',strict=True)
+#~ print '20130219 lino.modlib.school 2'  
+#~ Company = dd.resolve_model('contacts.Company',strict=True)
 Person = dd.resolve_model('contacts.Person',strict=True)
+#~ print '20130219 lino.modlib.school 3'  
 
 
 
@@ -241,7 +247,8 @@ def setup_course_event(self,course,ev):
     #~ start_time = start_time + skip * (course.slot - 1)
     #~ ev.set_datetime('start',start_time)
     #~ ev.set_datetime('end',start_time + skip)
-    
+
+
 if not hasattr(settings.LINO,'setup_course_event'):
     #~ raise Exception("20120403")
     #~ setattr(site.__class__,'setup_course_event',setup_course_event)
@@ -417,7 +424,7 @@ class EnrolmentsByCourse(Enrolments):
 
 
 
-from lino.models import SiteConfig
+#~ from lino.ui.models import SiteConfig
 
 dd.inject_field(Person,
     'is_teacher',
@@ -464,3 +471,5 @@ def setup_explorer_menu(site,ui,profile,m):
     #~ m.add_action(Events)
     m.add_action(Enrolments)
   
+  
+#~ print '20130219 lino.modlib.school ok'  
