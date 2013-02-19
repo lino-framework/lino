@@ -29,7 +29,7 @@
     :show-inheritance:
 
 :mod:`lino.web.fixtures.demo2`
------------------------------
+------------------------------
 
 .. automodule:: lino.web.fixtures.demo2
     :members:

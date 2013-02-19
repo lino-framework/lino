@@ -159,7 +159,7 @@ class UserAuthored(model.Model):
         
     if settings.LINO.user_model: 
       
-        workflow_owner_field = 'user' # used by :mod:`lino.modlib.workflows.models`
+        workflow_owner_field = 'user' 
         
         user = models.ForeignKey(settings.LINO.user_model,
             verbose_name=_("Author"),
@@ -174,7 +174,6 @@ class UserAuthored(model.Model):
     #~ def on_duplicate(self,ar):
         #~ self.user = ar.get_user()
         #~ super(AutoUser,self).on_duplicate(ar)
-        
         
     def on_create(self,ar):
         """
@@ -216,8 +215,6 @@ class UserAuthored(model.Model):
             return False
         user = ar.get_user()
         if self.user != user and getattr(user.profile,self.manager_level_field) < auth.UserLevels.manager:
-        #~ if self.user != user and user.profile.level < auth.UserLevels.manager:
-            #~ logger.info("20120919 no permission to %s on %r because %r != %r",action,self,self.user,user)
             return ba.action.readonly
         return True
 
