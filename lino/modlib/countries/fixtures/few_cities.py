@@ -90,9 +90,11 @@ def objects():
       #~ **babel_values('name',de='Bergen',fr='Mons',nl="Bergen",en="Mons"))
     #~ yield city('Brussel','BE',zip_code='1000')
     #~ yield city(u'Brüssel','BE',zip_code='1000')
+    
     def be_city(zip_code,de,fr,nl,en):
         return City(country=BE,zip_code=zip_code,type=CityTypes.city,
-            **babel_values('name',de=de,fr=de,nl=nl,en=en)))
+            **babel_values('name',de=de,fr=de,nl=nl,en=en))
+            
     yield be_city('1000',"Brüssel","Bruxelles","Brussel","Brussels")
     yield be_city('4000',"Lüttich","Liège","Luik","Liège")
     yield be_city('7000',"Bergen","Mons","Bergen","Mons")

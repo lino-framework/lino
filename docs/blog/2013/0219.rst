@@ -40,4 +40,5 @@ Release
   :doc:`Lino 1.5.9 </releases/1.5.9>`
   :welfare:`Welfare 1.0.12 </releases/1.0.12>`
   
-  
+- :mod:`lino.modlib.countries.fixtures.few_cities` failed for 
+  sites that had English as main language.
