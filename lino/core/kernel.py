@@ -84,8 +84,12 @@ def analyze_models():
       don't inherit from it.
     
     """
+    #~ print 20130219, __file__, "setup_choicelists 1"
+    
     global DONE
-    if DONE: return
+    if DONE: 
+        #~ print "20130219 DONE"
+        return
     DONE = True
     
     #~ logger.info("Analyzing models...")
@@ -101,17 +105,26 @@ def analyze_models():
     #~ logger.info(lino.welcome_text())
     #~ raise Exception("20111229")
     
+    models_list = models.get_models(include_auto_created=True) 
+    # this also triggers django.db.models.loading.cache._populate()
+    
     if self.user_model:
-        self.user_model = resolve_model(self.user_model,strict="Unresolved model '%s' in user_model.")
+        self.user_model = resolve_model(self.user_model,
+            strict="Unresolved model '%s' in user_model.")
     #~ if self.person_model:
         #~ self.person_model = resolve_model(self.person_model,strict="Unresolved model '%s' in person_model.")
-    if self.project_model:
-        self.project_model = resolve_model(self.project_model,strict="Unresolved model '%s' in project_model.")
         
-    for m in self.override_modlib_models:
-        resolve_model(m,strict="Unresolved model '%s' in override_modlib_models.")
+    #~ print 20130219, __file__, "setup_choicelists 2"
     
-    models_list = models.get_models(include_auto_created=True) # trigger django.db.models.loading.cache._populate()
+    if self.project_model:
+        self.project_model = resolve_model(self.project_model,
+            strict="Unresolved model '%s' in project_model.")
+        
+    #~ print 20130219, __file__, "setup_choicelists 3"
+    
+    for m in self.override_modlib_models:
+        resolve_model(m,
+            strict="Unresolved model '%s' in override_modlib_models.")
     
     for model in models_list:
         #~ print 20130216, model
@@ -130,7 +143,7 @@ def analyze_models():
             model.hidden_columns = frozenset(dd.fields_list(model,model.hidden_columns))
 
         if model._meta.abstract:
-            raise Exception("Aha?")
+            raise Exception("Tiens?")
             
         self.modules.define(model._meta.app_label,model.__name__,model)
                 
@@ -139,7 +152,6 @@ def analyze_models():
                 settings.LINO.GFK_LIST.append(f)
                 
     dd.pre_analyze.send(self,models_list=models_list)
-    
     self.setup_choicelists()
     self.setup_workflows()
     
@@ -299,7 +311,7 @@ def startup_site(self):
       
         analyze_models()
         
-        models_list = models.get_models() 
+        models_list = models.get_models()
         
         if len(sys.argv) == 0:
             process_name = 'WSGI'
@@ -327,7 +339,7 @@ def startup_site(self):
 
 
 
-def startup_web(self):
+def startup_ui(self):
   
     models_list = models.get_models() 
     
@@ -358,9 +370,6 @@ def startup_web(self):
             
     fields.resolve_virtual_fields()
     
-    #~ from lino.core import ui
-    #~ ui.site_setup(self)
-        
 
 
 def unused_generate_dummy_messages(self):

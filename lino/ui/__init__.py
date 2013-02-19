@@ -468,8 +468,8 @@ class Lino(lino.Lino):
         if self._extjs_ui is None:
             self.startup() # 20130219
             #~ assert self._startup_done
-            from lino.core.kernel import startup_web
-            startup_web(self)
+            from lino.core.kernel import startup_ui
+            startup_ui(self)
             from .ui import ExtUI
             self._extjs_ui = ExtUI()
         return self._extjs_ui

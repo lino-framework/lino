@@ -23,9 +23,8 @@ from lino import mixins
 #~ from lino.modlib.cal import models as cal
 
 contacts = dd.resolve_app('contacts')
-cal = dd.resolve_app('cal')
-school = dd.resolve_app('school')
-
+#~ cal = dd.resolve_app('cal')
+#~ school = dd.resolve_app('school')
 
 class School(contacts.Company):
     class Meta:

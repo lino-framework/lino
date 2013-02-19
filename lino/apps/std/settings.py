@@ -32,7 +32,7 @@ from lino.ui import Lino
     #~ pass
     
 
-LINO = Lino(__file__,globals())
+#~ 20130219 LINO = Lino(__file__,globals())
 
 #~ DBLOGGER = 'db'
 #~ DBLOGFILE = 'auto'

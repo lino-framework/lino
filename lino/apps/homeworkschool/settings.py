@@ -1,5 +1,5 @@
 # -*- coding: UTF-8 -*-
-## Copyright 2012 Luc Saffre
+## Copyright 2012-2013 Luc Saffre
 ## This file is part of the Lino project.
 ## Lino is free software; you can redistribute it and/or modify 
 ## it under the terms of the GNU General Public License as published by
@@ -32,6 +32,8 @@ class Lino(Lino):
     #~ help_url = "http://lino.saffre-rumma.net/az/index.html"
     #~ migration_module = 'lino.apps.az.migrate'
     
+    demo_fixtures = 'std few_countries few_cities few_languages demo demo2'.split()
+    
     #~ project_model = 'contacts.Person'
     #~ project_model = 'school.Pupil'
     project_model = 'school.Course'
@@ -54,10 +56,10 @@ class Lino(Lino):
     
     #~ remote_user_header = "REMOTE_USER"
     
-    def get_app_source_file(self):  return __file__
+    #~ def get_app_source_file(self):  return __file__
         
     def get_main_action(self,user):
-        return self.modules.lino.Home.default_action
+        return self.modules.ui.Home.default_action
         
     #~ def get_application_info(self):
         #~ return (__name__,__version__,__url__)
@@ -91,6 +93,7 @@ class Lino(Lino):
         """
         This defines default user profiles for :mod:`lino_welfare`.
         """
+        #~ raise Exception(123)
         from lino import dd
         from django.utils.translation import ugettext_lazy as _
         dd.UserProfiles.reset('* office')
@@ -102,4 +105,4 @@ class Lino(Lino):
         add('900', _("Administrator"), 'A A', name='admin')
         
       
-LINO = Lino(__file__,globals())
+#~ LINO = Lino(__file__,globals())

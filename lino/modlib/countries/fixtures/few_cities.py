@@ -137,7 +137,7 @@ def objects():
     yield City(country=DE,type=CityTypes.city,
       **babel_values('name',de='München',fr='Munich',en="Munich"))
     yield City(country=DE,type=CityTypes.city,
-      **babel_values('name',de='Monschau',fr='Montjoie'))
+      **babel_values('name',de='Monschau',fr='Montjoie',en="Monschau"))
     
     yield make_city('NL','Maastricht')
     yield make_city('NL','Amsterdam')

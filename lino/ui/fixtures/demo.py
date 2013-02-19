@@ -26,6 +26,7 @@ from lino.utils import babel
 
 def root_user(lang,**kw):
     #~ kw.update(profile='900') # UserProfiles.admin) 
+    #~ print 20130219, dd.UserProfiles.items()
     kw.update(profile=dd.UserProfiles.admin) 
     kw.update(email='root@example.com') 
     kw.update(language=lang) 

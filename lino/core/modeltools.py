@@ -164,9 +164,15 @@ def resolve_model(model_spec,app_label=None,strict=False,seed_cache=True):
         model = model_spec
     if not isinstance(model,type) or not issubclass(model,models.Model):
         if strict:
+            if False:
+                from django.db.models import loading
+                print 20130219, settings.INSTALLED_APPS
+                print loading.get_models()
+                #~ if len(loading.cache.postponed) > 0:
+              
             if isinstance(strict,basestring):
-                raise ImportError(strict % model_spec)
-            raise ImportError(
+                raise Exception(strict % model_spec)
+            raise Exception(
                 "resolve_model(%r,app_label=%r) found %r (settings %s)" % (
                 model_spec,app_label,model,settings.SETTINGS_MODULE))
         #~ logger.info("20120628 unresolved %r",model)

@@ -578,6 +578,8 @@ class Lino(object):
         
         #~ self._watch_changes_requests = []
         
+        #~ print 20130219, __file__, self.__class__
+        
         self.project_dir = normpath(dirname(project_file))
         self.project_name = os.path.split(self.project_dir)[-1]
         
@@ -712,9 +714,9 @@ class Lino(object):
         #~ return obj.id is not None and (obj.id > 10 and obj.id < 21)
                   
         
-    def analyze_models(self):
-        from lino.core.kernel import analyze_models
-        analyze_models()
+    #~ def analyze_models(self):
+        #~ from lino.core.kernel import analyze_models
+        #~ analyze_models()
         
     def startup(self,**options):
         """

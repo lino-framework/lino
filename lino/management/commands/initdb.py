@@ -54,7 +54,7 @@ from django.db import models
 
 import lino
 from lino.core.modeltools import app_labels
-from lino.utils import *
+#~ from lino.utils import *
 
 USE_SQLDELETE = True
 
