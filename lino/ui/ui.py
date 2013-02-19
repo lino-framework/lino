@@ -71,8 +71,7 @@ from lino.core import layouts
 from lino.core import tables
 #~ from lino.utils.xmlgen import xhtml as xhg
 from lino.core import fields
-from lino.web import base
-#~ from lino.web.base import Callback
+from lino.ui import base
 from lino.core import actors
 from lino.core.modeltools import makedirs_if_missing
 from lino.core.modeltools import full_model_name

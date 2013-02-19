@@ -25,7 +25,9 @@ from lino.utils import babel
 from lino import dd
 Concept = dd.resolve_model('concepts.Concept')
 
-def C(en,de,fr='',nl='',jargon=None,**kw):
+from lino.modlib.concepts.models import LinkTypes
+
+def C(en,de,fr='',nl='',jargon=None,obsoletes=None,**kw):
     texts = dict(en=en,de=de,fr=fr,nl=nl)
     name = dict()
     abbr = dict()
@@ -45,6 +47,12 @@ def C(en,de,fr='',nl='',jargon=None,**kw):
     kw.update(babel.babel_values('abbr',**abbr))
     obj = Concept(**kw)
     yield obj
+    if obsoletes is not None:
+        if isinstance(obsoletes,dd.Model):
+            obsoletes = [obsoletes]
+        for obsoleted in obsoletes:
+            yield Link(parent=obsoleted,child=obj,type=LinkTypes.obsoletes)
+            
     if jargon is not None:
         if isinstance(jargon,dd.Model):
             jargon = [jargon]
@@ -52,6 +60,18 @@ def C(en,de,fr='',nl='',jargon=None,**kw):
             yield Link(parent=domain,child=obj,type=LinkTypes.jargon)
     
 def objects():
+    nsi = C(
+      "NSI (National Statistics Institute)",
+      "NIS (Nationales Institut für Statistik)",
+      "INS (Institut National de Statistique)",
+      "NIS (Nationaal Instituut voor Statistiek)")
+    yield nsi
+    yield C(
+      "Statistics Belgium",
+      "GDSWI (Generaldirektion Statistik und Wirtschaftsinformation)",
+      "DGSIE (Direction générale Statistique et Information économique)",
+      "ADSEI (Algemene Directie Statistiek en Economische Informatie)",
+      obsoletes=nsi)
     yield C(
       "NR (National Register)",
       "NR (Nationalregister)",

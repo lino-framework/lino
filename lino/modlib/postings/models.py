@@ -216,7 +216,7 @@ class Postable(dd.Model):
 #~ MODULE_LABEL = _("Outbox")
 MODULE_LABEL = _("Postings")
 
-lino = dd.resolve_app('web')
+lino = dd.resolve_app('ui')
 
 def setup_main_menu(site,ui,profile,m):
     m  = m.add_menu("office",lino.OFFICE_MODULE_LABEL)

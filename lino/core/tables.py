@@ -70,7 +70,7 @@ from lino.core.model import Model
 from lino.core.fields import FakeField
 from lino.core.requests import ActionRequest
 
-from lino.web import base
+from lino.ui import base
 from lino.core import constants #  as ext_requests
 from lino.utils.config import Configured, load_config_files
 

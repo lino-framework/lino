@@ -276,7 +276,7 @@ from lino.modlib.pages.dummy import render_node
 def setup_my_menu(site,ui,profile,m): 
     pass
   
-lino = dd.resolve_app('web')
+lino = dd.resolve_app('ui')
 def setup_config_menu(site,ui,profile,m): 
     #~ m  = m.add_menu("pages",_("~Pages"))
     m  = m.add_menu("office",lino.OFFICE_MODULE_LABEL)

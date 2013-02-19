@@ -23,7 +23,7 @@ extension.
     
     lino.apps
     
-    lino.web
+    lino.ui
     
     lino.utils
 

@@ -643,7 +643,7 @@ class ParamsLayout(BaseLayout):
     def setup_handle(self,lh):
         #~ if self.params_store is None:
         #~ from lino.ui.extjs3 import ext_store
-        from lino.web import store
+        from lino.ui import store
         self.params_store = store.ParameterStore(lh,self.url_param_name)
 
 class ActionParamsLayout(ParamsLayout):

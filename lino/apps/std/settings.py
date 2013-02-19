@@ -26,7 +26,7 @@ from tempfile import gettempdir
 from os.path import join, abspath, dirname, normpath
 import lino
 
-from lino.web import Lino
+from lino.ui import Lino
 
 #~ class Lino(Lino):
     #~ pass

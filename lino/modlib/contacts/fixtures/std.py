@@ -123,7 +123,7 @@ def objects():
     yield roletype(**babel_values('name',en="IT Manager",fr=u'Gérant informatique',de=u"EDV-Manager",et=u"IT manager"))
 
 
-    I = Instantiator('web.HelpText','content_type field help_text').build
+    I = Instantiator('ui.HelpText','content_type field help_text').build
     
     Person = resolve_model("contacts.Person")
     t = ContentType.objects.get_for_model(Person)

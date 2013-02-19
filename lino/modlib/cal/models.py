@@ -2389,13 +2389,13 @@ class UpdateReminders(actions.RowAction):
         return ar.ui.success(msg,**kw)
         
 
-from lino.web import models as web
+from lino.ui import models as ui
 
-class Home(web.Home):
+class Home(ui.Home):
   
     #~ debug_permissions = True 
 
-    label = web.Home.label
+    label = ui.Home.label
     app_label = 'lino'
     detail_layout = """
     quick_links:80x1

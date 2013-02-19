@@ -34,7 +34,6 @@ import lino
 from lino.utils.xmlgen import html as xghtml
 E = xghtml.E
 
-#~ from lino.web import requests as ext_requests
 from lino.core import constants
 
 from lino.core.modeltools import resolve_model
@@ -772,7 +771,7 @@ class ShowDetailAction(RowAction):
         ah = ar.ah
         ba = ar.bound_action
         rpt = ar.actor
-        from lino.ui.extjs3 import views
+        from lino.ui import views
         
         navigator = None
         if pk and pk != '-99999' and pk != '-99998':

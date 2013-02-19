@@ -346,11 +346,11 @@ def add_system_note(ar,owner,subject,body,**kw):
     
     
     
-linoweb = dd.resolve_app('web')
+linoweb = dd.resolve_app('ui')
     
 def customize_siteconfig():
     """
-    Injects application-specific fields to :class:`SiteConfig <lino.web.models.SiteConfig>`.
+    Injects application-specific fields to :class:`SiteConfig <lino.ui.models.SiteConfig>`.
     """
     dd.inject_field(linoweb.SiteConfig,
         'system_note_type',

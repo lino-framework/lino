@@ -1,6 +1,9 @@
 20130219
 ========
 
+Bugfixes
+--------
+
 - `watch_tim` ist nochmal wieder etwas subtiler geworden: wenn man in TIM 
   den `PAR->IdUsr` eines Klienten ändert, dann kriegt die bestehende primäre 
   Begleitung in Lino nicht einfach den Benutzer aktualisiert, sondern sie bleibt 
@@ -14,3 +17,27 @@
   a :class:`lino.mixins.UserAuthored`. That's not true. 
   The permission to edit the coachings of a client depends on many things, 
   but never on whether it is your own coaching or not.
+
+
+Miscellaneous
+-------------
+
+Cool!
+I moved the concept of "INS codes" from 
+:mod:`lino_welfare.modlib.cbss` 
+to a new independent app
+:mod:`lino_welfare.modlib.statbel`.
+And added this to the INSTALLED_APPS of `lino.apps.belref`.
+
+
+Release
+-------
+
+- Renamed the remainders of `lino.ui` to `lino.ui_old`, 
+  then renamed `lino.web` to :mod:`lino.ui`.
+  
+- Release notes:
+  :doc:`Lino 1.5.9 </releases/1.5.9>`
+  :welfare:`Welfare 1.0.12 </releases/1.0.12>`
+  
+  

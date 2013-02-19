@@ -289,7 +289,7 @@ def on_merge(sender=None,request=None,**kw):
         return
     log_change(ChangeTypes.merge,request,master,sender.obj,sender.logmsg())
 
-from lino.web.models import SYSTEM_USER_LABEL
+from lino.ui.models import SYSTEM_USER_LABEL
 
 def setup_explorer_menu(site,ui,profile,m):
     system = m.add_menu("system",SYSTEM_USER_LABEL)

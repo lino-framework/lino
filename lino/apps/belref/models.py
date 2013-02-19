@@ -52,3 +52,16 @@ def site_setup(site):
     site.modules.countries.Cities.required = dd.required(auth=False)
     site.modules.countries.Countries.required = dd.required(auth=False)
     site.modules.concepts.Concepts.required = dd.required(auth=False)
+    
+    site.modules.countries.Cities.set_detail_layout("""
+    name country inscode 
+    parent type id
+    CitiesByCity
+    """)
+    
+    site.modules.countries.Countries.set_detail_layout("""
+    isocode name short_code inscode
+    countries.CitiesByCountry
+    """)
+    
+    

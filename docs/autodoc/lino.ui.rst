@@ -1,76 +1,76 @@
-:mod:`lino.web`
+:mod:`lino.ui`
 ===============
 
-.. automodule:: lino.web
+.. automodule:: lino.ui
     :members:
     :undoc-members:
     :show-inheritance:
 
-:mod:`lino.web.models`
+:mod:`lino.ui.models`
 ----------------------
 
-.. automodule:: lino.web.models
+.. automodule:: lino.ui.models
     :members:
     :undoc-members:
     :show-inheritance:
     
-:mod:`lino.web.fixtures.std`
+:mod:`lino.ui.fixtures.std`
 -----------------------------
 
-.. automodule:: lino.web.fixtures.std
+.. automodule:: lino.ui.fixtures.std
     :members:
     :show-inheritance:
 
-:mod:`lino.web.fixtures.demo`
+:mod:`lino.ui.fixtures.demo`
 -----------------------------
 
-.. automodule:: lino.web.fixtures.demo
+.. automodule:: lino.ui.fixtures.demo
     :members:
     :show-inheritance:
 
-:mod:`lino.web.fixtures.demo2`
+:mod:`lino.ui.fixtures.demo2`
 ------------------------------
 
-.. automodule:: lino.web.fixtures.demo2
+.. automodule:: lino.ui.fixtures.demo2
     :members:
     :show-inheritance:
 
-:mod:`lino.web.ui`
+:mod:`lino.ui.ui`
 ------------------
 
-.. automodule:: lino.web.ui
+.. automodule:: lino.ui.ui
     :members:
     :undoc-members:
     :show-inheritance:
 
-:mod:`lino.web.base`
+:mod:`lino.ui.base`
 --------------------
 
-.. automodule:: lino.web.base
+.. automodule:: lino.ui.base
     :members:
     :undoc-members:
     :show-inheritance:
 
-:mod:`lino.web.elems`
+:mod:`lino.ui.elems`
 ---------------------
 
-.. automodule:: lino.web.elems
+.. automodule:: lino.ui.elems
     :members:
     :undoc-members:
     :show-inheritance:
 
-:mod:`lino.web.store`
+:mod:`lino.ui.store`
 ---------------------
 
-.. automodule:: lino.web.store
+.. automodule:: lino.ui.store
     :members:
     :undoc-members:
     :show-inheritance:
 
-:mod:`lino.web.views`
+:mod:`lino.ui.views`
 ---------------------
 
-.. automodule:: lino.web.views
+.. automodule:: lino.ui.views
     :members:
     :undoc-members:
     :show-inheritance:

@@ -77,6 +77,7 @@ class LinkTypes(dd.ChoiceList):
 add = LinkTypes.add_item
 #~ add('10', _("Context"),'context')
 add('10', _("Jargon"),'jargon')
+add('20', _("Obsoletes"),'obsoletes')
 
 
 

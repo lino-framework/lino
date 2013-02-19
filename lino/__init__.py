@@ -493,7 +493,7 @@ class Lino(object):
     
     site_config = None
     """
-    web.Lino overrides this to hold a SiteConfig instance.
+    ui.Lino overrides this to hold a SiteConfig instance.
     """
     
     max_auto_events = 36

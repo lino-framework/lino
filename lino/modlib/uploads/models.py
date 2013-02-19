@@ -165,7 +165,7 @@ class MyUploads(Uploads,mixins.ByUser):
 
 MODULE_LABEL = _("Uploads")
 
-linoweb = dd.resolve_app('web')
+linoweb = dd.resolve_app('ui')
 
 def setup_main_menu(site,ui,profile,m):
     m  = m.add_menu("office",linoweb.OFFICE_MODULE_LABEL)

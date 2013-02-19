@@ -51,7 +51,7 @@ from lino.utils.xmlgen import html as xghtml
 
 #~ from lino.core.changes import Change, Changes, ChangesByObject
 
-from lino.web.ui import pre_web_build
+from .ui import pre_web_build
 
 #~ class BuildLinoJS(dd.RowAction):
 class BuildSiteCache(dd.RowAction):
@@ -142,7 +142,7 @@ if settings.LINO.is_installed('contenttypes'):
       
       detail_layout = """
       id name app_label model base_classes
-      web.HelpTextsByModel
+      ui.HelpTextsByModel
       """
       
       @dd.displayfield(_("Base classes"))
@@ -399,8 +399,8 @@ def setup_config_menu(site,ui,profile,m):
         office.add_action(MyTextFieldTemplates)
     #~ m.add_action(site.modules.users.Users)
     if site.is_installed('contenttypes'):
-        system.add_action(site.modules.web.ContentTypes)
-        system.add_action(site.modules.web.HelpTexts)
+        system.add_action(site.modules.ui.ContentTypes)
+        system.add_action(site.modules.ui.HelpTexts)
         #~ m.add_action(site.modules.lino.Workflows)
         
   
@@ -448,7 +448,7 @@ def my_pre_web_build(sender,**kw):
         from django.db.models import FieldDoesNotExist
         try:
           
-            from lino.web.models import HelpText
+            from lino.ui.models import HelpText
             for ht in HelpText.objects.filter(help_text__isnull=False):
                 #~ logger.info("20120629 %s.help_text", ht)
                 try:

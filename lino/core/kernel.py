@@ -220,8 +220,8 @@ def analyze_models():
     
     choosers.discover()
                     
-    #~ from lino.core import web
-    #~ web.site_setup(self)
+    #~ from lino.core import ui
+    #~ ui.site_setup(self)
         
     #~ logger.info("20130121 GFK_LIST is %s",['%s.%s'%(full_model_name(f.model),f.name) for f in settings.LINO.GFK_LIST])
     dd.post_analyze.send(self,models_list=models_list)
@@ -358,8 +358,8 @@ def startup_web(self):
             
     fields.resolve_virtual_fields()
     
-    #~ from lino.core import web
-    #~ web.site_setup(self)
+    #~ from lino.core import ui
+    #~ ui.site_setup(self)
         
 
 

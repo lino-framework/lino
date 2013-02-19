@@ -424,7 +424,7 @@ class Lino(lino.Lino):
         django_settings.update(MEDIA_ROOT = join(self.project_dir,'media'))
         
         django_settings.update(
-            ROOT_URLCONF = 'lino.web.urls'
+            ROOT_URLCONF = 'lino.ui.urls'
           
         )
         django_settings.update(
@@ -745,7 +745,7 @@ class Lino(lino.Lino):
         This method is expected to return or yield the list of strings 
         to be stored into Django's :setting:`INSTALLED_APPS` setting.
         """
-        yield 'lino.web'
+        yield 'lino.ui'
         if self.user_model is not None and self.remote_user_header is None:
             yield 'django.contrib.sessions' # 20121103
         if self.django_admin_prefix:

@@ -37,7 +37,7 @@ class Lino(Lino):
     author = 'Luc Saffre'
     author_email = 'luc.saffre@gmail.com'
     
-    demo_fixtures = 'demo all_countries be few_cities'
+    demo_fixtures = 'demo all_countries be few_cities inscodes'
     #~ demo_fixtures = 'demo'
     
     #~ admin_prefix = '/admin'
@@ -63,6 +63,7 @@ class Lino(Lino):
             yield a
         #~ yield 'django.contrib.contenttypes'
         #~ yield 'lino.modlib.users'
+        yield 'lino_welfare.modlib.statbel'
         yield 'lino.modlib.countries'
         #~ yield 'lino.modlib.contacts'
         #~ yield 'lino.modlib.outbox'
