@@ -1,5 +1,5 @@
 # -*- coding: UTF-8 -*-
-## Copyright 2012 Luc Saffre
+## Copyright 2012-2013 Luc Saffre
 ## This file is part of the Lino project.
 ## Lino is free software; you can redistribute it and/or modify 
 ## it under the terms of the GNU General Public License as published by
@@ -12,7 +12,7 @@
 ## You should have received a copy of the GNU General Public License
 ## along with Lino; if not, see <http://www.gnu.org/licenses/>.
 
-print '20130219 lino.modlib.school 1'  
+#~ print '20130219 lino.modlib.school 1'  
 
 import logging
 logger = logging.getLogger(__name__)
@@ -83,9 +83,9 @@ users = dd.resolve_app('users')
 cal = dd.resolve_app('cal')
 contacts = dd.resolve_app('contacts')
 #~ Company = dd.resolve_model('contacts.Company',strict=True)
-print '20130219 lino.modlib.school 2'  
+#~ print '20130219 lino.modlib.school 2'  
 Person = dd.resolve_model('contacts.Person',strict=True)
-print '20130219 lino.modlib.school 3'  
+#~ print '20130219 lino.modlib.school 3'  
 
 
 
@@ -248,6 +248,11 @@ def setup_course_event(self,course,ev):
     #~ ev.set_datetime('start',start_time)
     #~ ev.set_datetime('end',start_time + skip)
 
+if not hasattr(settings.LINO,'setup_course_event'):
+    #~ raise Exception("20120403")
+    #~ setattr(site.__class__,'setup_course_event',setup_course_event)
+    settings.LINO.__class__.setup_course_event = setup_course_event
+    
     
 class Course(cal.EventGenerator,cal.RecurrenceSet,mixins.Printable):
     """
@@ -417,13 +422,6 @@ class EnrolmentsByCourse(Enrolments):
     
 
 
-def site_setup(site):
-
-    if not hasattr(site,'setup_course_event'):
-        #~ raise Exception("20120403")
-        #~ setattr(site.__class__,'setup_course_event',setup_course_event)
-        site.__class__.setup_course_event = setup_course_event
-    
 
 #~ from lino.ui.models import SiteConfig
 
@@ -473,4 +471,4 @@ def setup_explorer_menu(site,ui,profile,m):
     m.add_action(Enrolments)
   
   
-print '20130219 lino.modlib.school ok'  
+#~ print '20130219 lino.modlib.school ok'  

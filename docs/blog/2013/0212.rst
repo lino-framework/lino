@@ -18,3 +18,5 @@ Adapted :doc:`/tutorials/webless`.
 
 Wrote :func:`lino_welfare.modlib.pcsw.migrate.migrate_from_1_0_11`.
 
+(PS: almost perfect. 
+See :doc:`0220` for a use case that caused problem.)

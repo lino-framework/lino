@@ -1,0 +1,104 @@
+20130220
+========
+
+Why Django needs a `populated` signal
+----------------------------------------
+
+:mod:`lino.apps.homeworkschool` had a problem with the new version,
+caused by the Ross McFarland's trick of having :mod:`lino` as the last installed_app 
+and calling :mod:`lino.Lino.startup` automatically from :mod:`lino.models`.
+
+The problem is that 
+:mod:`lino.apps.homeworkschool` has apps which don't import at first run.
+The `populate` function in 
+`django.db.models.loading`
+"postpones" them and gives them a second chance.
+
+The order of installed applications is:
+
+  | ...
+  | :mod:`lino.modlib.school`
+  | ...
+  | :mod:`lino.apps.homeworkschool`
+
+These two modules have the following interdependency:
+
+- `homeworkschool` defines the concrete implementation of `contacts.Person`
+  (which is declared in :attr:`override_modlib_models
+  <lino.Lino.override_modlib_models>`)
+- `school` needs 
+  the concrete implementation of `contacts.Person`
+  at module-level to define the `Pupil` and `Teacher` classes.
+
+This means that `school` will get postponed until `homeworkschool` has been loaded.
+
+All the above is rather trivial, but it took me a lot of time to 
+understand the problem because of a "little bug":
+
+  The :func:`resolve_model <lino.core.modeltools.resolve_model>`
+  function may not use `seed_cache=True` (which causes Django 
+  to populate the models cache before looking for the model)
+  since we want to have it usable at the top-level of ``models`` 
+  modules.
+  Which is what :mod:`lino.apps.homeworkschool` did.
+  This caused a recursive populate, leading to very confusing error messages.
+
+Another piece of time went into finding out how to cope with this situation.
+Which you can admire nor in :mod:`lino.models`.
+
+All this shows how regrettable it is that Django doesn't provide a 
+`populated` signal. 
+It would be soo easy,
+just two lines of code that wouldn't hurt anybody::
+
+  populated = signals.Signal() # <<<<<<<<<<<<<<<<<<<<<<<<<
+
+  class AppCache(object): 
+
+      ...
+      
+      def _populate(self):
+          if self.loaded:
+              return
+          imp.acquire_lock()
+          try:
+              if self.loaded:
+                  return
+              for app_name in settings.INSTALLED_APPS:
+                  if app_name in self.handled:
+                      continue
+                  self.load_app(app_name, True)
+              if not self.nesting_level:
+                  for app_name in self.postponed:
+                      self.load_app(app_name)
+                  self.loaded = True
+              populated.send(sender=self)  # <<<<<<<<<<<<<<<<<<<<<<<<<
+          finally:
+              imp.release_lock() 
+              
+
+A test suite for `watch_tim`
+----------------------------
+
+A first bug in yesterday's release occured. Here is my first reaction:
+
+  Patsch, der erste Bug in der neuen Version: diese Fehlermeldung kommt,
+  wenn man in TIM einen Partner mit leerem PAR->IdUsr bearbeitet, der in
+  Lino als Klient existiert und noch keine Begleitungen hat... Im
+  vorliegenden Fall war es Partner Nummer 23633 (Kurt Sch.).
+
+  Die Unstabilität von watch_tim ist normal. Eigentlich müsste ich eine
+  ganze Latte von unit tests schreiben. Das ist technisch nicht sehr
+  kompliziert, würde aber viel Aufwand bedeuten, weil alle möglichen
+  Normal- und Sonderfälle darin vorkommen müssten. Angesichts der
+  Tatsache, dass watch_tim voraussichtlich bei euch schon bald
+  Vergangenheit ist und auch garantiert nie bei irgendeinem anderen
+  TIM-Benutzer jemals Verwendung finden wird finde ich, dass wir das
+  einfach aushalten müssen...
+
+After having written this, I nevertheless decided to start a unit test suite.
+:mod:`lino_welfare.modlib.pcsw.tests.watchtim_tests`.
+
+This took only 5 minutes, and at least this special case is now covered.
+I won't invest much energy into getting everything covered for the said 
+reasons, but who knows...

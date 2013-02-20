@@ -82,11 +82,11 @@ class Lino(Lino):
         yield 'lino.modlib.contacts'
         yield 'lino.modlib.households'
         yield 'lino.modlib.notes'
-        yield 'lino.modlib.school'
         yield 'lino.modlib.uploads'
         yield 'lino.modlib.cal'
         yield 'lino.modlib.outbox'
         yield 'lino.modlib.pages'
+        yield 'lino.modlib.school'
         yield 'lino.apps.homeworkschool'
       
     def setup_choicelists(self):

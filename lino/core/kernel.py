@@ -295,7 +295,8 @@ def startup_site(self):
     #~ logger.info("startup_site()")
     
     #~ write_lock.acquire()
-    try:
+    #~ try:
+    if True:
     
         if self._starting_up:
             logger.warning("Lino.startup() called recursively.")
@@ -328,15 +329,15 @@ def startup_site(self):
             logger.info("Stopped %s",process_name)
         atexit.register(goodbye)
         
-    finally:
-        #~ write_lock.release()
-        self._startup_done = True
-        self._starting_up = False
-    
     #~ except Exception,e:
         #~ logger.exception(e)
         #~ raise
 
+    #~ finally:
+        #~ # write_lock.release()
+        #~ self._startup_done = True
+        #~ self._starting_up = False
+    
 
 
 def startup_ui(self):

@@ -158,8 +158,8 @@ def resolve_model(model_spec,app_label=None,strict=False,seed_cache=True):
             #~ #app_label = rpt.app_label
             #~ model_name = model_spec
             
-        #~ model = models.get_model(app_label,model_name,seed_cache=False)
-        model = models.get_model(app_label,model_name,seed_cache=seed_cache)
+        model = models.get_model(app_label,model_name,seed_cache=False)
+        #~ model = models.get_model(app_label,model_name,seed_cache=seed_cache)
     else:
         model = model_spec
     if not isinstance(model,type) or not issubclass(model,models.Model):
@@ -172,7 +172,7 @@ def resolve_model(model_spec,app_label=None,strict=False,seed_cache=True):
               
             if isinstance(strict,basestring):
                 raise Exception(strict % model_spec)
-            raise Exception(
+            raise ImportError(
                 "resolve_model(%r,app_label=%r) found %r (settings %s)" % (
                 model_spec,app_label,model,settings.SETTINGS_MODULE))
         #~ logger.info("20120628 unresolved %r",model)
