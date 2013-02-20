@@ -1,14 +1,10 @@
-T:\hgwork\lino\docs\releases\index.rst:23: WARNING: toctree glob pattern u'2010/index' didn't match any documents
-T:\hgwork\lino\docs\releases\index.rst:23: WARNING: toctree glob pattern u'2011/index' didn't match any documents
 T:\hgwork\lino\docs\reviews\index.rst:4: WARNING: toctree contains reference to nonexisting document u'reviews/ :maxdepth: 1'
 T:\hgwork\lino\docs\reviews\index.rst:4: WARNING: toctree contains reference to nonexisting document u'reviews/ :glob:'
 T:\hgwork\lino\docs\reviews\index.rst:4: WARNING: toctree contains reference to nonexisting document u'reviews/django-extensions/index'
 T:\hgwork\lino\docs\casts\lino_intro.rst:: WARNING: document isn't included in any toctree
 T:\hgwork\lino\docs\dev\versioning.rst:: WARNING: document isn't included in any toctree
 T:\hgwork\lino\docs\igen\index.rst:: WARNING: document isn't included in any toctree
+T:\hgwork\lino\docs\releases\1.5.10.rst:: WARNING: document isn't included in any toctree
 T:\hgwork\lino\docs\reviews\django-extensions.rst:: WARNING: document isn't included in any toctree
 T:\hgwork\lino\docs\reviews\index.rst:: WARNING: document isn't included in any toctree
 T:\hgwork\lino\docs\tutorials\webless.rst:: WARNING: document isn't included in any toctree
-t:\hgwork\lino\lino\core\kernel.py:docstring of lino.core.kernel.analyze_models:6: WARNING: py:class reference target not found: lino.dd.Model
-<autodoc>:1: WARNING: py:class reference target not found: object
-T:\hgwork\lino\docs\blog\2013\0220.rst:20: WARNING: py:mod reference target not found: lino.modlib.school

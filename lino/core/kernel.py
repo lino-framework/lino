@@ -332,7 +332,10 @@ def startup_ui():
   
     self = settings.LINO
     
-    #~ self.startup() # 20130219
+    self.startup() 
+    """
+    20130220 needed when running as a multi-threaded wsgi application
+    """
     if not self._startup_done:
         raise Exception("startup() failed?!")
     
