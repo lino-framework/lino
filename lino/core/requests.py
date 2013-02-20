@@ -108,7 +108,8 @@ class BaseRequest(object):
         self.error = ui.error
         self.success = ui.success
         if renderer is None:
-            renderer = ui.text_renderer
+            #~ renderer = ui.text_renderer
+            renderer = ui.ext_renderer
         self.renderer = renderer
         #~ self.step = 0 # confirmation counter
         #~ self.report = actor
@@ -399,8 +400,8 @@ class ActionRequest(BaseRequest):
     def render_to_dict(self):
         return self.bound_action.action.render_to_dict(self)
         
-    def get_request_url(self,*args,**kw):
-        return self.ui.get_request_url(self,*args,**kw)
+    #~ def get_request_url(self,*args,**kw):
+        #~ return self.ui.get_request_url(self,*args,**kw)
 
     def get_action_status(self,ba,obj,**kw):
         #~ logger.info("get_action_status %s",ba.full_name())
@@ -456,7 +457,8 @@ class ActionRequest(BaseRequest):
         
     def absolute_uri(self,*args,**kw):
         ar = self.spawn(*args,**kw)
-        location = ar.renderer.get_request_url(ar)
+        #~ location = ar.renderer.get_request_url(ar)
+        location = ar.get_request_url()
         return self.request.build_absolute_uri(location)
         
             

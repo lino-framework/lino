@@ -51,3 +51,4 @@ Release
   
 - :mod:`lino.modlib.countries.fixtures.few_cities` failed for 
   sites that had English as main language.
+  

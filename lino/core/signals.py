@@ -88,6 +88,10 @@ the user interface.
   
 """
 
+pre_ui_build = Signal()
+post_ui_build = Signal()
+
+
 from django.db.models.fields import NOT_PROVIDED
 
 class ChangeWatcher(object):

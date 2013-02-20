@@ -130,13 +130,8 @@ class UI(object):
     #~ prefix = None
     verbose_name = None
     
-    def __init__(self,prefix='',**options):
+    def __init__(self):
         self.pending_threads = {}
-        #~ 20120614 settings.LINO.setup(**options)
-        assert isinstance(prefix,basestring)
-        assert len(prefix) == 0, "no longer supported"
-        assert len(options) == 0, "no longer supported"
-            
             
     #~ def pop_thread(self,id):
         #~ return self.pending_threads.pop(id,None)
@@ -403,9 +398,6 @@ class UI(object):
             #~ rv = d.no()
         #~ return self.action_response(rv)
   
-        
-
-        
     def check_action_response(self,rv):
         """
         Raise an exception if the action responded using an unknown keyword.

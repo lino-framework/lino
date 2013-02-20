@@ -12,6 +12,9 @@
 ## You should have received a copy of the GNU General Public License
 ## along with Lino; if not, see <http://www.gnu.org/licenses/>.
 
+from __future__ import unicode_literals
+
+
 import logging
 logger = logging.getLogger(__name__)
 
@@ -238,6 +241,21 @@ def analyze_models():
     #~ logger.info("20130121 GFK_LIST is %s",['%s.%s'%(full_model_name(f.model),f.name) for f in settings.LINO.GFK_LIST])
     dd.post_analyze.send(self,models_list=models_list)
     
+    if len(sys.argv) == 0:
+        process_name = 'WSGI'
+    else:
+        process_name = ' '.join(sys.argv)
+    logger.info("Started %s on %r. Languages: %s. %d models, %s actors.", 
+    #~ logger.info("Lino Site %r started. Languages: %s. %d models, %s actors.", 
+        process_name,self.title, ', '.join(babel.AVAILABLE_LANGUAGES),
+        len(models_list),
+        len(actors.actors_list))
+    #~ logger.info(settings.INSTALLED_APPS)
+    
+    def goodbye():
+        logger.info("Stopped %s",process_name)
+    atexit.register(goodbye)
+    
     return models_list
 
 class DisableDeleteHandler():
@@ -295,54 +313,34 @@ def startup_site(self):
     #~ logger.info("startup_site()")
     
     #~ write_lock.acquire()
-    #~ try:
-    if True:
-    
-        if self._starting_up:
-            logger.warning("Lino.startup() called recursively.")
-            return 
-            #~ raise Exception("LinoSite.setup() called recursively.")
-        #~ try:
-        self._starting_up = True
-        
+    if self._starting_up:
+        #~ logger.warning("Lino.startup() called recursively.")
+        #~ return 
+        raise Exception("Lino.startup() called recursively.")
+    self._starting_up = True
+    try:
         logger.info(self.welcome_text())
-        
-        #~ self.configure(get_site_config())
-        #~ self._siteconfig = get_site_config()
-      
         analyze_models()
-        
-        models_list = models.get_models()
-        
-        if len(sys.argv) == 0:
-            process_name = 'WSGI'
-        else:
-            process_name = ' '.join(sys.argv)
-        logger.info("Started %s on %r. Languages: %s. %d models, %s actors.", 
-        #~ logger.info("Lino Site %r started. Languages: %s. %d models, %s actors.", 
-            process_name,self.title, ', '.join(babel.AVAILABLE_LANGUAGES),
-            len(models_list),
-            len(actors.actors_list))
-        #~ logger.info(settings.INSTALLED_APPS)
-        
-        def goodbye():
-            logger.info("Stopped %s",process_name)
-        atexit.register(goodbye)
-        
-    #~ except Exception,e:
-        #~ logger.exception(e)
-        #~ raise
-
-    #~ finally:
-        #~ # write_lock.release()
-        #~ self._startup_done = True
-        #~ self._starting_up = False
+        self._startup_done = True
+    finally:
+        # write_lock.release()
+        self._starting_up = False
     
 
 
-def startup_ui(self):
+def startup_ui():
   
-    models_list = models.get_models() 
+    self = settings.LINO
+    
+    #~ self.startup() # 20130219
+    if not self._startup_done:
+        raise Exception("startup() failed?!")
+    
+    
+    logger.info("Initializing user interface...")
+    #~ raise Exception("20130220")
+    
+    #~ models_list = models.get_models() 
     
     for app in models.get_apps():
         fn = getattr(app,'site_setup',None)

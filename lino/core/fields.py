@@ -272,10 +272,10 @@ class HtmlBox(DisplayField):
 VIRTUAL_FIELDS = []
 
 def resolve_virtual_fields():
-    global VIRTUAL_FIELDS
+    #~ global VIRTUAL_FIELDS
     for vf in VIRTUAL_FIELDS: 
         vf.lino_resolve_type()
-    VIRTUAL_FIELDS = None
+    #~ VIRTUAL_FIELDS = None
       
 
 class VirtualField(FakeField): # (Field):

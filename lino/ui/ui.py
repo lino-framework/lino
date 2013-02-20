@@ -111,11 +111,7 @@ from lino.modlib.cal.utils import CalendarAction
     
 from . import views
 
-
-from django.dispatch import Signal, receiver
-
-pre_web_build = Signal()
-post_web_build = Signal()
+from lino.core.signals import pre_ui_build, post_ui_build
 
 
 def add_user_language(kw,ar):
@@ -673,7 +669,12 @@ class ExtUI(base.UI):
 
     #~ def __init__(self,*args,**kw):
     def __init__(self):
-        pre_web_build.send(self)
+      
+        pre_ui_build.send(self)
+        
+        from lino.core.kernel import startup_ui
+        startup_ui()
+        
         #~ raise Exception("20120614")
         #~ self.pdf_renderer = PdfRenderer(self) # 20120624
         self.ext_renderer = ExtRenderer(self)
@@ -707,7 +708,7 @@ class ExtUI(base.UI):
                 if ba.action.parameters:
                     ba.action.params_layout.get_layout_handle(self)
         
-        post_web_build.send(self)
+        post_ui_build.send(self)
         
     def get_patterns(self):
         """

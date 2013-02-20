@@ -463,17 +463,13 @@ class Lino(lino.Lino):
         ]
         django_settings.update(TEMPLATE_CONTEXT_PROCESSORS = tuple(tcp))
 
-       
-    def get_ui(self):
+    @property
+    def ui(self):
         if self._extjs_ui is None:
-            self.startup() # 20130219
-            #~ assert self._startup_done
-            from lino.core.kernel import startup_ui
-            startup_ui(self)
             from .ui import ExtUI
             self._extjs_ui = ExtUI()
         return self._extjs_ui
-    ui = property(get_ui)
+    #~ ui = property(get_ui)
 
     #~ def get_groph_ui(self):
         #~ if self._groph_ui is None:
@@ -545,7 +541,7 @@ class Lino(lino.Lino):
         Used internally. Called by SiteConfig.save() to update the cached instance.
         """
         self._site_config = sc
-        #~ print '20120801 site_conf saved', sc.propgroup_softskills
+        #~ print '20120801 site_config saved', sc.propgroup_softskills
         
     def update_site_config(self,**kw):
         """

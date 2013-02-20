@@ -18,6 +18,9 @@ that don't load any fixtures.
   
 """
 
+from __future__ import unicode_literals
+
+
 from django.conf import settings
 
 from lino.utils.test import TestCase
@@ -26,9 +29,8 @@ from lino.utils.test import TestCase
 #from lino.modlib.countries.models import Country
 from lino.utils import babel
 
-from lino.core.modeltools import resolve_model,resolve_app
-Person = resolve_model("contacts.Person")
-#~ contacts = resolve_app('contacts')
+from lino import dd
+Person = dd.resolve_model("contacts.Person")
 from lino.utils.instantiator import Instantiator, create_and_get
 from lino.utils.babel import babel_values
 
@@ -51,19 +53,19 @@ def test01(self):
     """
     ee = create_and_get('countries.Country',
         isocode='EE',**babel_values('name',
-        de=u"Estland",
-        fr=u'Estonie',
-        en=u"Estonia",
-        nl=u'Estland',
-        et=u'Eesti',
+        de="Estland",
+        fr='Estonie',
+        en="Estonia",
+        nl='Estland',
+        et='Eesti',
         ))
     be = create_and_get('countries.Country',
         isocode='BE',**babel_values('name',
-        de=u"Belgien",
-        fr=u'Belgique',
-        en=u"Belgium",
-        nl=u'Belgie',
-        et=u'Belgia',
+        de="Belgien",
+        fr='Belgique',
+        en="Belgium",
+        nl='Belgie',
+        et='Belgia',
         ))
           
     eupen = create_and_get('countries.City',name=u'Eupen',country=be,zip_code='4700')
@@ -102,7 +104,7 @@ def test02(self):
     """
     """
     u = create_and_get(settings.LINO.user_model,
-        username='root',language='')
+        username='root',language='',profile=dd.UserProfiles.admin)
     #~ lang = u.language
     #~ print 20120729, repr(u.language)
     
@@ -118,7 +120,8 @@ def test02(self):
     
     
     luc = Person.objects.get(name__exact="Saffre Luc")
-    url = '/api/contacts/Person/%d?query=&an=detail&fmt=json' % luc.pk
+    url = settings.LINO.build_admin_url('api','contacts','Person','%d?query=&an=detail&fmt=json' % luc.pk)
+    #~ url = '/api/contacts/Person/%d?query=&an=detail&fmt=json' % luc.pk
     if 'en' in babel.AVAILABLE_LANGUAGES:
         u.language = 'en'
         u.save()
@@ -138,7 +141,8 @@ def test02(self):
         self.assertEqual(result['data']['gender'],u"Männlich")
         #~ self.assertEqual(result['data']['disabled_fields'],['contact_ptr_id','id'])
         #~ self.assertEqual(result['data']['disabled_fields'],['id'])
-        self.assertEqual(result['data']['disabled_fields'],{'id': True})
+        df = result['data']['disabled_fields']
+        self.assertEqual(df['id'],True)
         
         
     if 'fr' in babel.AVAILABLE_LANGUAGES:

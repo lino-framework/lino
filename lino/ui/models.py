@@ -51,7 +51,6 @@ from lino.utils.xmlgen import html as xghtml
 
 #~ from lino.core.changes import Change, Changes, ChangesByObject
 
-from .ui import pre_web_build
 
 #~ class BuildLinoJS(dd.RowAction):
 class BuildSiteCache(dd.RowAction):
@@ -439,8 +438,8 @@ def post_analyze(sender,**kw):
     web.site_setup(site,**kw)
     
     
-@dd.receiver(pre_web_build)
-def my_pre_web_build(sender,**kw):
+@dd.receiver(dd.pre_ui_build)
+def my_pre_ui_build(sender,**kw):
     self = settings.LINO
     if self.is_installed('contenttypes'):
       

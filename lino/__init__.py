@@ -12,6 +12,8 @@
 ## You should have received a copy of the GNU General Public License
 ## along with Lino; if not, see <http://www.gnu.org/licenses/>.
 
+from __future__ import unicode_literals
+
 """
 The ``lino`` module can be imported even from a Django :xfile:`settings.py` 
 file since it does not import any django module.

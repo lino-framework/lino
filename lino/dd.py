@@ -103,6 +103,7 @@ Miscellaneous:
 - :class:`ChoiceList <lino.core.choicelists.ChoiceList>`
 - :class:`Workflow <lino.core.workflows.Workflow>`
 
+- :class:`Genders <lino.core.choicelists.Genders>`
 
 - :class:`UserProfiles <lino.utils.auth.UserProfiles>`
 - :class:`UserGroups <lino.utils.auth.UserGroups>`
@@ -152,6 +153,7 @@ from lino.core.actions import SubmitDetail, SubmitInsert
 #~ from lino.core.actions import Calendar
 
 from lino.core.choicelists import ChoiceList, Choice
+from lino.core.choicelists import Genders
 from lino.core.workflows import Workflow, ChangeStateAction
 #~ from lino.core.changes import ChangeStateAction
 from lino.core.actions import NotifyingAction
@@ -204,6 +206,10 @@ from lino.core.signals import auto_create
 from lino.core.signals import pre_merge
 from lino.core.signals import pre_add_child
 from lino.core.signals import pre_remove_child
+from lino.core.signals import pre_ui_build
+from lino.core.signals import post_ui_build
+
+from django.db.models.signals import pre_save, post_save
 
 from django.db.models.signals import class_prepared
 from django.db.models.fields import NOT_PROVIDED
