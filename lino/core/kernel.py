@@ -299,8 +299,8 @@ class DisableDeleteHandler():
         
 
         
-#~ import threading
-#~ write_lock = threading.RLock()
+import threading
+write_lock = threading.RLock()
 
 def startup_site(self):
     """
@@ -312,18 +312,19 @@ def startup_site(self):
         
     #~ logger.info("startup_site()")
     
-    #~ write_lock.acquire()
     if self._starting_up:
         #~ logger.warning("Lino.startup() called recursively.")
         #~ return 
         raise Exception("Lino.startup() called recursively.")
+        
+    write_lock.acquire()
     self._starting_up = True
     try:
         logger.info(self.welcome_text())
         analyze_models()
         self._startup_done = True
     finally:
-        # write_lock.release()
+        write_lock.release()
         self._starting_up = False
     
 
