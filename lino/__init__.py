@@ -723,6 +723,9 @@ class Lino(object):
         when Django has has populated it's model cache.
         
         """
+        import logging
+        logger = logging.getLogger(__name__)
+        
         if self._startup_done:
             #~ logger.warning("LinoSite setup already done ?!")
             return
