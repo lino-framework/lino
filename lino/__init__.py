@@ -94,6 +94,7 @@ if False:
 
 NOT_FOUND_MSG = '(not installed)'
 
+STARTUP_DONE = False
 
 class Lino(object):
     """
@@ -722,18 +723,28 @@ class Lino(object):
         This is called exactly once from :mod:`lino.models` 
         when Django has has populated it's model cache.
         
+        This can happen when running e.g. under mod_wsgi: 
+        another thread has started and not yet finished `startup_site()`, 
+        so keep your fingers away and don't start a second time.
+        
         """
         import logging
         logger = logging.getLogger(__name__)
         
-        if self._startup_done:
-            #~ logger.warning("LinoSite setup already done ?!")
+        global STARTUP_DONE
+        if STARTUP_DONE: 
+            #~ print "20130219 DONE"
             return
+        STARTUP_DONE = True
+        
+        #~ if self._startup_done:
+            #~ # logger.warning("LinoSite setup already done ?!")
+            #~ return
             
         #~ logger.info("startup_site()")
         
         from lino.core.kernel import startup_site
-        import time
+        #~ import time
 
         #~ import threading
         #~ write_lock = threading.RLock()
@@ -741,16 +752,11 @@ class Lino(object):
         
         #~ write_lock.acquire()
         
-        if self._starting_up:
-            """
-            This can happen when running e.g. under mod_wsgi: 
-            another thread has started and not yet finished `startup_site()`, 
-            so keep your fingers away and don't start a second time.
-            """
-            while self._starting_up:
-                logger.warning("Lino.startup() waiting...")
-                time.sleep(1)
-            return 
+        #~ if self._starting_up:
+            #~ while self._starting_up:
+                #~ logger.warning("Lino.startup() waiting...")
+                #~ time.sleep(1)
+            #~ return 
             
         #~ if self._starting_up:
             #~ # logger.warning("Lino.startup() called recursively.")
@@ -763,15 +769,17 @@ class Lino(object):
             #~ # return 
             #~ raise Exception("Lino.startup() called recursively.")
             
-        self._starting_up = True
+        #~ self._starting_up = True
         
-        try:
+        startup_site(self,**options)
+        
+        #~ try:
           
-            startup_site(self,**options)
+            #~ startup_site(self,**options)
         
-            self._startup_done = True
-        finally:
-            self._starting_up = False
+            #~ self._startup_done = True
+        #~ finally:
+            #~ self._starting_up = False
             #~ write_lock.release()
         
     def setup_workflows(self):

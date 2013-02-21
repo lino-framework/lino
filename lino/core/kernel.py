@@ -71,7 +71,7 @@ from lino.utils import AttrDict
 #~ BLANK_STATE = ''
 
 
-DONE = False
+#~ DONE = False
 
 #~ self.GFK_LIST = []
 
@@ -88,12 +88,6 @@ def analyze_models(self):
     
     """
     #~ print 20130219, __file__, "setup_choicelists 1"
-    
-    global DONE
-    if DONE: 
-        #~ print "20130219 DONE"
-        return
-    DONE = True
     
     #~ logger.info("Analyzing models...")
     
