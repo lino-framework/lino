@@ -315,8 +315,8 @@ def startup_site(self):
     
     if self._starting_up:
         #~ logger.warning("Lino.startup() called recursively.")
-        #~ return 
-        raise Exception("Lino.startup() called recursively.")
+        return 
+        #~ raise Exception("Lino.startup() called recursively.")
         
     write_lock.acquire()
     
