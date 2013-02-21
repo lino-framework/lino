@@ -1,10 +1,401 @@
+T:\hgwork\lino\docs\admin\oood.rst:47: WARNING: Literal block expected; none found.
+t:\hgwork\lino\lino\core\inject.py:docstring of lino.core.inject.update_field:13: ERROR: Unknown interpreted text role "app".
+t:\hgwork\lino\lino\core\signals.py:docstring of lino.core.signals.pre_startup:3: ERROR: Unexpected indentation.
+t:\hgwork\lino\lino\modlib\contacts\models.py:docstring of lino.modlib.contacts.models.PartnerDocument.summary_row:1: ERROR: Unknown interpreted text role "modmeth".
+t:\hgwork\lino\lino\modlib\partners\models.py:docstring of lino.modlib.partners.models.PartnerDocument.summary_row:1: ERROR: Unknown interpreted text role "modmeth".
+t:\hgwork\lino\lino\ui\fixtures\demo2.py:docstring of lino.ui.fixtures.demo2:11: WARNING: Block quote ends without a blank line; unexpected unindent.
+<autodoc>:0: WARNING: duplicate object description of lino.utils.auth.AnonymousUser, other instance in T:\hgwork\lino\docs\autodoc\lino.utils.ranges.rst, use :noindex: for one of them
+<autodoc>:0: WARNING: duplicate object description of lino.utils.auth.RemoteUserMiddleware, other instance in T:\hgwork\lino\docs\autodoc\lino.utils.ranges.rst, use :noindex: for one of them
+<autodoc>:0: WARNING: duplicate object description of lino.utils.auth.UserGroups, other instance in T:\hgwork\lino\docs\autodoc\lino.utils.ranges.rst, use :noindex: for one of them
+<autodoc>:0: WARNING: duplicate object description of lino.utils.auth.UserGroups.max_length, other instance in T:\hgwork\lino\docs\autodoc\lino.utils.ranges.rst, use :noindex: for one of them
+<autodoc>:0: WARNING: duplicate object description of lino.utils.auth.UserLevels, other instance in T:\hgwork\lino\docs\autodoc\lino.utils.ranges.rst, use :noindex: for one of them
+<autodoc>:0: WARNING: duplicate object description of lino.utils.auth.UserLevels.field, other instance in T:\hgwork\lino\docs\autodoc\lino.utils.ranges.rst, use :noindex: for one of them
+<autodoc>:0: WARNING: duplicate object description of lino.utils.auth.UserProfiles, other instance in T:\hgwork\lino\docs\autodoc\lino.utils.ranges.rst, use :noindex: for one of them
+<autodoc>:0: WARNING: duplicate object description of lino.utils.auth.UserProfiles.reset, other instance in T:\hgwork\lino\docs\autodoc\lino.utils.ranges.rst, use :noindex: for one of them
+<autodoc>:0: WARNING: duplicate object description of lino.utils.auth.make_permission_handler, other instance in T:\hgwork\lino\docs\autodoc\lino.utils.ranges.rst, use :noindex: for one of them
+<autodoc>:0: WARNING: duplicate object description of lino.utils.auth.make_view_permission_handler, other instance in T:\hgwork\lino\docs\autodoc\lino.utils.ranges.rst, use :noindex: for one of them
+<autodoc>:0: WARNING: duplicate object description of lino.utils.auth.on_login, other instance in T:\hgwork\lino\docs\autodoc\lino.utils.ranges.rst, use :noindex: for one of them
+<autodoc>:0: WARNING: duplicate object description of lino.utils.auth.AnonymousUser, other instance in T:\hgwork\lino\docs\autodoc\lino.utils.auth.rst, use :noindex: for one of them
+<autodoc>:0: WARNING: duplicate object description of lino.utils.auth.RemoteUserMiddleware, other instance in T:\hgwork\lino\docs\autodoc\lino.utils.auth.rst, use :noindex: for one of them
+<autodoc>:0: WARNING: duplicate object description of lino.utils.auth.UserGroups, other instance in T:\hgwork\lino\docs\autodoc\lino.utils.auth.rst, use :noindex: for one of them
+<autodoc>:0: WARNING: duplicate object description of lino.utils.auth.UserGroups.max_length, other instance in T:\hgwork\lino\docs\autodoc\lino.utils.auth.rst, use :noindex: for one of them
+<autodoc>:0: WARNING: duplicate object description of lino.utils.auth.UserLevels, other instance in T:\hgwork\lino\docs\autodoc\lino.utils.auth.rst, use :noindex: for one of them
+<autodoc>:0: WARNING: duplicate object description of lino.utils.auth.UserLevels.field, other instance in T:\hgwork\lino\docs\autodoc\lino.utils.auth.rst, use :noindex: for one of them
+<autodoc>:0: WARNING: duplicate object description of lino.utils.auth.UserProfiles, other instance in T:\hgwork\lino\docs\autodoc\lino.utils.auth.rst, use :noindex: for one of them
+<autodoc>:0: WARNING: duplicate object description of lino.utils.auth.UserProfiles.reset, other instance in T:\hgwork\lino\docs\autodoc\lino.utils.auth.rst, use :noindex: for one of them
+<autodoc>:0: WARNING: duplicate object description of lino.utils.auth.make_permission_handler, other instance in T:\hgwork\lino\docs\autodoc\lino.utils.auth.rst, use :noindex: for one of them
+<autodoc>:0: WARNING: duplicate object description of lino.utils.auth.make_view_permission_handler, other instance in T:\hgwork\lino\docs\autodoc\lino.utils.auth.rst, use :noindex: for one of them
+<autodoc>:0: WARNING: duplicate object description of lino.utils.auth.on_login, other instance in T:\hgwork\lino\docs\autodoc\lino.utils.auth.rst, use :noindex: for one of them
+t:\hgwork\lino\lino\utils\test.py:docstring of lino.utils.test.TestCase.test_them_all:1: ERROR: Unknown target name: "test".
+T:\hgwork\lino\docs\blog\2012\0108.rst:85: WARNING: Inline emphasis start-string without end-string.
+T:\hgwork\lino\docs\blog\2012\0127.rst:7: WARNING: Mismatch: both interpreted text role prefix and reference suffix.
+T:\hgwork\lino\docs\blog\2012\0131.rst:39: ERROR: Unexpected indentation.
+T:\hgwork\lino\docs\blog\2012\0210.rst:25: ERROR: Unexpected indentation.
+T:\hgwork\lino\docs\blog\2012\0210.rst:28: ERROR: Unexpected indentation.
+T:\hgwork\lino\docs\blog\2012\0210.rst:31: ERROR: Unexpected indentation.
+T:\hgwork\lino\docs\blog\2012\0210.rst:33: WARNING: Block quote ends without a blank line; unexpected unindent.
+T:\hgwork\lino\docs\blog\2012\0210.rst:34: WARNING: Block quote ends without a blank line; unexpected unindent.
+T:\hgwork\lino\docs\blog\2012\0210.rst:38: ERROR: Unexpected indentation.
+T:\hgwork\lino\docs\blog\2012\0210.rst:39: WARNING: Block quote ends without a blank line; unexpected unindent.
+T:\hgwork\lino\docs\blog\2012\0210.rst:41: WARNING: Block quote ends without a blank line; unexpected unindent.
+T:\hgwork\lino\docs\blog\2012\0210.rst:42: WARNING: Definition list ends without a blank line; unexpected unindent.
+T:\hgwork\lino\docs\blog\2012\0213.rst:57: WARNING: Definition list ends without a blank line; unexpected unindent.
+T:\hgwork\lino\docs\blog\2012\0411.rst:47: ERROR: Unexpected indentation.
+T:\hgwork\lino\docs\blog\2012\0411.rst:48: WARNING: Block quote ends without a blank line; unexpected unindent.
+T:\hgwork\lino\docs\blog\2012\0414.rst:60: WARNING: Inline interpreted text or phrase reference start-string without end-string.
+T:\hgwork\lino\docs\blog\2012\0507.rst:13: ERROR: Unknown interpreted text role "modmeth".
+T:\hgwork\lino\docs\blog\2012\0526.rst:17: ERROR: Unexpected indentation.
+T:\hgwork\lino\docs\blog\2012\0527.rst:18: ERROR: Unexpected indentation.
+T:\hgwork\lino\docs\blog\2012\0602.rst:75: WARNING: Inline interpreted text or phrase reference start-string without end-string.
+T:\hgwork\lino\docs\blog\2012\0625.rst:65: ERROR: Unexpected indentation.
+T:\hgwork\lino\docs\blog\2012\0627.rst:60: ERROR: Unknown interpreted text role "method".
+T:\hgwork\lino\docs\blog\2012\0628.rst:32: ERROR: Unexpected indentation.
+T:\hgwork\lino\docs\blog\2012\0628.rst:36: WARNING: Block quote ends without a blank line; unexpected unindent.
+T:\hgwork\lino\docs\blog\2012\0628.rst:49: WARNING: Bullet list ends without a blank line; unexpected unindent.
+T:\hgwork\lino\docs\blog\2012\0628.rst:62: WARNING: Bullet list ends without a blank line; unexpected unindent.
+T:\hgwork\lino\docs\blog\2012\0704.rst:106: ERROR: Unexpected indentation.
+T:\hgwork\lino\docs\blog\2012\0704.rst:108: WARNING: Block quote ends without a blank line; unexpected unindent.
+T:\hgwork\lino\docs\blog\2012\0714.rst:19: ERROR: Unexpected indentation.
+T:\hgwork\lino\docs\blog\2012\0716.rst:41: WARNING: Inline emphasis start-string without end-string.
+T:\hgwork\lino\docs\blog\2012\0716.rst:41: WARNING: Inline emphasis start-string without end-string.
+T:\hgwork\lino\docs\blog\2012\0716.rst:65: WARNING: Bullet list ends without a blank line; unexpected unindent.
+T:\hgwork\lino\docs\blog\2012\0818.rst:46: ERROR: Unknown interpreted text role "settings".
+T:\hgwork\lino\docs\blog\2012\0903.rst:13: ERROR: Unknown interpreted text role "menuseletion".
+T:\hgwork\lino\docs\blog\2012\0928.rst:99: WARNING: Definition list ends without a blank line; unexpected unindent.
+T:\hgwork\lino\docs\blog\2012\0928.rst:107: WARNING: Definition list ends without a blank line; unexpected unindent.
+T:\hgwork\lino\docs\blog\2012\1010.rst:193: ERROR: Unknown target name: "demo".
+T:\hgwork\lino\docs\blog\2012\1029.rst:19: ERROR: Unknown target name: "demo".
+Traceback (most recent call last):
+  File "<stdin>", line 4, in <module>
+  File "t:\hgwork\lino\lino\__init__.py", line 731, in startup
+    startup_site(self,**options)
+  File "t:\hgwork\lino\lino\core\kernel.py", line 327, in startup_site
+    analyze_models(self)
+  File "t:\hgwork\lino\lino\core\kernel.py", line 111, in analyze_models
+    models_list = models.get_models(include_auto_created=True) 
+  File "l:\snapshots\django\django\db\models\loading.py", line 189, in get_models
+    self._populate()
+  File "l:\snapshots\django\django\db\models\loading.py", line 64, in _populate
+    self.load_app(app_name, True)
+  File "l:\snapshots\django\django\db\models\loading.py", line 92, in load_app
+    models = import_module('.models', app_name)
+  File "l:\snapshots\django\django\utils\importlib.py", line 35, in import_module
+    __import__(name)
+  File "t:\hgwork\lino\lino\models.py", line 42, in <module>
+    settings.LINO.startup()
+  File "t:\hgwork\lino\lino\__init__.py", line 731, in startup
+    startup_site(self,**options)
+  File "t:\hgwork\lino\lino\core\kernel.py", line 319, in startup_site
+    raise Exception("Lino.startup() called recursively.")
+Exception: Lino.startup() called recursively.
+:4: ERROR: Unexpected indentation.
+Traceback (most recent call last):
+  File "<stdin>", line 4, in <module>
+  File "t:\hgwork\lino\lino\__init__.py", line 731, in startup
+    startup_site(self,**options)
+  File "t:\hgwork\lino\lino\core\kernel.py", line 327, in startup_site
+    analyze_models(self)
+  File "t:\hgwork\lino\lino\core\kernel.py", line 111, in analyze_models
+    models_list = models.get_models(include_auto_created=True) 
+  File "l:\snapshots\django\django\db\models\loading.py", line 189, in get_models
+    self._populate()
+  File "l:\snapshots\django\django\db\models\loading.py", line 64, in _populate
+    self.load_app(app_name, True)
+  File "l:\snapshots\django\django\db\models\loading.py", line 92, in load_app
+    models = import_module('.models', app_name)
+  File "l:\snapshots\django\django\utils\importlib.py", line 35, in import_module
+    __import__(name)
+  File "t:\hgwork\lino\lino\models.py", line 42, in <module>
+    settings.LINO.startup()
+  File "t:\hgwork\lino\lino\__init__.py", line 731, in startup
+    startup_site(self,**options)
+  File "t:\hgwork\lino\lino\core\kernel.py", line 319, in startup_site
+    raise Exception("Lino.startup() called recursively.")
+Exception: Lino.startup() called recursively.
+:5: WARNING: Block quote ends without a blank line; unexpected unindent.
+Traceback (most recent call last):
+  File "<stdin>", line 4, in <module>
+  File "t:\hgwork\lino\lino\__init__.py", line 731, in startup
+    startup_site(self,**options)
+  File "t:\hgwork\lino\lino\core\kernel.py", line 327, in startup_site
+    analyze_models(self)
+  File "t:\hgwork\lino\lino\core\kernel.py", line 111, in analyze_models
+    models_list = models.get_models(include_auto_created=True) 
+  File "l:\snapshots\django\django\db\models\loading.py", line 189, in get_models
+    self._populate()
+  File "l:\snapshots\django\django\db\models\loading.py", line 64, in _populate
+    self.load_app(app_name, True)
+  File "l:\snapshots\django\django\db\models\loading.py", line 92, in load_app
+    models = import_module('.models', app_name)
+  File "l:\snapshots\django\django\utils\importlib.py", line 35, in import_module
+    __import__(name)
+  File "t:\hgwork\lino\lino\models.py", line 42, in <module>
+    settings.LINO.startup()
+  File "t:\hgwork\lino\lino\__init__.py", line 731, in startup
+    startup_site(self,**options)
+  File "t:\hgwork\lino\lino\core\kernel.py", line 319, in startup_site
+    raise Exception("Lino.startup() called recursively.")
+Exception: Lino.startup() called recursively.
+:23: WARNING: Definition list ends without a blank line; unexpected unindent.
+Traceback (most recent call last):
+  File "<stdin>", line 1, in <module>
+  File "t:\hgwork\welfare\lino_welfare\demo\startup.py", line 4, in <module>
+    settings.LINO.startup()
+  File "t:\hgwork\lino\lino\__init__.py", line 731, in startup
+    startup_site(self,**options)
+  File "t:\hgwork\lino\lino\core\kernel.py", line 327, in startup_site
+    analyze_models(self)
+  File "t:\hgwork\lino\lino\core\kernel.py", line 111, in analyze_models
+    models_list = models.get_models(include_auto_created=True) 
+  File "l:\snapshots\django\django\db\models\loading.py", line 189, in get_models
+    self._populate()
+  File "l:\snapshots\django\django\db\models\loading.py", line 64, in _populate
+    self.load_app(app_name, True)
+  File "l:\snapshots\django\django\db\models\loading.py", line 92, in load_app
+    models = import_module('.models', app_name)
+  File "l:\snapshots\django\django\utils\importlib.py", line 35, in import_module
+    __import__(name)
+  File "t:\hgwork\lino\lino\models.py", line 42, in <module>
+    settings.LINO.startup()
+  File "t:\hgwork\lino\lino\__init__.py", line 731, in startup
+    startup_site(self,**options)
+  File "t:\hgwork\lino\lino\core\kernel.py", line 319, in startup_site
+    raise Exception("Lino.startup() called recursively.")
+Exception: Lino.startup() called recursively.
+:4: ERROR: Unexpected indentation.
+Traceback (most recent call last):
+  File "<stdin>", line 1, in <module>
+  File "t:\hgwork\welfare\lino_welfare\demo\startup.py", line 4, in <module>
+    settings.LINO.startup()
+  File "t:\hgwork\lino\lino\__init__.py", line 731, in startup
+    startup_site(self,**options)
+  File "t:\hgwork\lino\lino\core\kernel.py", line 327, in startup_site
+    analyze_models(self)
+  File "t:\hgwork\lino\lino\core\kernel.py", line 111, in analyze_models
+    models_list = models.get_models(include_auto_created=True) 
+  File "l:\snapshots\django\django\db\models\loading.py", line 189, in get_models
+    self._populate()
+  File "l:\snapshots\django\django\db\models\loading.py", line 64, in _populate
+    self.load_app(app_name, True)
+  File "l:\snapshots\django\django\db\models\loading.py", line 92, in load_app
+    models = import_module('.models', app_name)
+  File "l:\snapshots\django\django\utils\importlib.py", line 35, in import_module
+    __import__(name)
+  File "t:\hgwork\lino\lino\models.py", line 42, in <module>
+    settings.LINO.startup()
+  File "t:\hgwork\lino\lino\__init__.py", line 731, in startup
+    startup_site(self,**options)
+  File "t:\hgwork\lino\lino\core\kernel.py", line 319, in startup_site
+    raise Exception("Lino.startup() called recursively.")
+Exception: Lino.startup() called recursively.
+:5: WARNING: Block quote ends without a blank line; unexpected unindent.
+Traceback (most recent call last):
+  File "<stdin>", line 1, in <module>
+  File "t:\hgwork\welfare\lino_welfare\demo\startup.py", line 4, in <module>
+    settings.LINO.startup()
+  File "t:\hgwork\lino\lino\__init__.py", line 731, in startup
+    startup_site(self,**options)
+  File "t:\hgwork\lino\lino\core\kernel.py", line 327, in startup_site
+    analyze_models(self)
+  File "t:\hgwork\lino\lino\core\kernel.py", line 111, in analyze_models
+    models_list = models.get_models(include_auto_created=True) 
+  File "l:\snapshots\django\django\db\models\loading.py", line 189, in get_models
+    self._populate()
+  File "l:\snapshots\django\django\db\models\loading.py", line 64, in _populate
+    self.load_app(app_name, True)
+  File "l:\snapshots\django\django\db\models\loading.py", line 92, in load_app
+    models = import_module('.models', app_name)
+  File "l:\snapshots\django\django\utils\importlib.py", line 35, in import_module
+    __import__(name)
+  File "t:\hgwork\lino\lino\models.py", line 42, in <module>
+    settings.LINO.startup()
+  File "t:\hgwork\lino\lino\__init__.py", line 731, in startup
+    startup_site(self,**options)
+  File "t:\hgwork\lino\lino\core\kernel.py", line 319, in startup_site
+    raise Exception("Lino.startup() called recursively.")
+Exception: Lino.startup() called recursively.
+:25: WARNING: Definition list ends without a blank line; unexpected unindent.
+T:\hgwork\lino\docs\blog\2012\1120.rst:172: WARNING: Mismatch: both interpreted text role prefix and reference suffix.
+T:\hgwork\lino\docs\blog\2012\1130.rst:31: ERROR: Unknown interpreted text role "changeset".
+T:\hgwork\lino\docs\blog\2012\1203.rst:7: ERROR: Unknown interpreted text role "srdref".
+T:\hgwork\lino\docs\blog\2012\1204.rst:21: WARNING: Inline emphasis start-string without end-string.
+T:\hgwork\lino\docs\blog\2012\1204.rst:21: WARNING: Inline strong start-string without end-string.
+T:\hgwork\lino\docs\blog\2012\1204.rst:24: WARNING: Inline emphasis start-string without end-string.
+T:\hgwork\lino\docs\blog\2012\1204.rst:24: WARNING: Inline strong start-string without end-string.
+T:\hgwork\lino\docs\blog\2012\1204.rst:27: WARNING: Inline emphasis start-string without end-string.
+T:\hgwork\lino\docs\blog\2012\1204.rst:27: WARNING: Inline strong start-string without end-string.
+T:\hgwork\lino\docs\blog\2012\1214.rst:41: ERROR: Unknown target name: "estonian <http://en.wikipedia.org/wiki/estonian_id_card>`".
+T:\hgwork\lino\docs\blog\2012\1231.rst:13: ERROR: Unknown interpreted text role "src".
+T:\hgwork\lino\docs\blog\2013\0112.rst:7: WARNING: Inline interpreted text or phrase reference start-string without end-string.
+T:\hgwork\lino\docs\blog\2013\0118.rst:40: WARNING: Mismatch: both interpreted text role prefix and reference suffix.
+====
+2013
+====
+
+
+
+.. |br| raw:: html
+
+   <br />   
+
+.. |sp| raw:: html
+
+   <span style="color:white;">00</span>
+
+        
+            
+.. |M01| replace::  **January**
+  |br| |sp|  :doc:`01 <0101>`  02  :doc:`03 <0103>`  04  :doc:`05 <0105>`  06 
+  |br| :doc:`07 <0107>`  08  :doc:`09 <0109>`  :doc:`10 <0110>`  :doc:`11 <0111>`  :doc:`12 <0112>`  :doc:`13 <0113>` 
+  |br| :doc:`14 <0114>`  :doc:`15 <0115>`  :doc:`16 <0116>`  :doc:`17 <0117>`  :doc:`18 <0118>`  :doc:`19 <0119>`  :doc:`20 <0120>` 
+  |br| :doc:`21 <0121>`  :doc:`22 <0122>`  :doc:`23 <0123>`  :doc:`24 <0124>`  :doc:`25 <0125>`  26  27 
+  |br| :doc:`28 <0128>`  :doc:`29 <0129>`  :doc:`30 <0130>`  :doc:`31 <0131>`  |sp|  |sp|  |sp|         
+            
+.. |M02| replace::  **February**
+  |br| |sp|  |sp|  |sp|  |sp|  :doc:`01 <0201>`  :doc:`02 <0202>`  :doc:`03 <0203>` 
+  |br| :doc:`04 <0204>`  05  :doc:`06 <0206>`  07  08  :doc:`09 <0209>`  10 
+  |br| :doc:`11 <0211>`  :doc:`12 <0212>`  :doc:`13 <0213>`  14  15  :doc:`16 <0216>`  17 
+  |br| 18  :doc:`19 <0219>`  :doc:`20 <0220>`  :doc:`21 <0221>`  |sp|  |sp|  |sp| 
+  |br| |sp|  |sp|  |sp|  |sp|  |sp|  |sp|  |sp|         
+            
+.. |M03| replace::  **March**
+  |br| |sp|  |sp|  |sp|  |sp|  |sp|  |sp|  |sp| 
+  |br| |sp|  |sp|  |sp|  |sp|  |sp|  |sp|  |sp| 
+  |br| |sp|  |sp|  |sp|  |sp|  |sp|  |sp|  |sp| 
+  |br| |sp|  |sp|  |sp|  |sp|  |sp|  |sp|  |sp| 
+  |br| |sp|  |sp|  |sp|  |sp|  |sp|  |sp|  |sp|         
+            
+.. |M04| replace::  **April**
+  |br| |sp|  |sp|  |sp|  |sp|  |sp|  |sp|  |sp| 
+  |br| |sp|  |sp|  |sp|  |sp|  |sp|  |sp|  |sp| 
+  |br| |sp|  |sp|  |sp|  |sp|  |sp|  |sp|  |sp| 
+  |br| |sp|  |sp|  |sp|  |sp|  |sp|  |sp|  |sp| 
+  |br| |sp|  |sp|  |sp|  |sp|  |sp|  |sp|  |sp|         
+            
+.. |M05| replace::  **May**
+  |br| |sp|  |sp|  |sp|  |sp|  |sp|  |sp|  |sp| 
+  |br| |sp|  |sp|  |sp|  |sp|  |sp|  |sp|  |sp| 
+  |br| |sp|  |sp|  |sp|  |sp|  |sp|  |sp|  |sp| 
+  |br| |sp|  |sp|  |sp|  |sp|  |sp|  |sp|  |sp| 
+  |br| |sp|  |sp|  |sp|  |sp|  |sp|  |sp|  |sp|         
+            
+.. |M06| replace::  **June**
+  |br| |sp|  |sp|  |sp|  |sp|  |sp|  |sp|  |sp| 
+  |br| |sp|  |sp|  |sp|  |sp|  |sp|  |sp|  |sp| 
+  |br| |sp|  |sp|  |sp|  |sp|  |sp|  |sp|  |sp| 
+  |br| |sp|  |sp|  |sp|  |sp|  |sp|  |sp|  |sp| 
+  |br| |sp|  |sp|  |sp|  |sp|  |sp|  |sp|  |sp|         
+            
+.. |M07| replace::  **July**
+  |br| |sp|  |sp|  |sp|  |sp|  |sp|  |sp|  |sp| 
+  |br| |sp|  |sp|  |sp|  |sp|  |sp|  |sp|  |sp| 
+  |br| |sp|  |sp|  |sp|  |sp|  |sp|  |sp|  |sp| 
+  |br| |sp|  |sp|  |sp|  |sp|  |sp|  |sp|  |sp| 
+  |br| |sp|  |sp|  |sp|  |sp|  |sp|  |sp|  |sp|         
+            
+.. |M08| replace::  **August**
+  |br| |sp|  |sp|  |sp|  |sp|  |sp|  |sp|  |sp| 
+  |br| |sp|  |sp|  |sp|  |sp|  |sp|  |sp|  |sp| 
+  |br| |sp|  |sp|  |sp|  |sp|  |sp|  |sp|  |sp| 
+  |br| |sp|  |sp|  |sp|  |sp|  |sp|  |sp|  |sp| 
+  |br| |sp|  |sp|  |sp|  |sp|  |sp|  |sp|  |sp|         
+            
+.. |M09| replace::  **September**
+  |br| |sp|  |sp|  |sp|  |sp|  |sp|  |sp|  |sp| 
+  |br| |sp|  |sp|  |sp|  |sp|  |sp|  |sp|  |sp| 
+  |br| |sp|  |sp|  |sp|  |sp|  |sp|  |sp|  |sp| 
+  |br| |sp|  |sp|  |sp|  |sp|  |sp|  |sp|  |sp| 
+  |br| |sp|  |sp|  |sp|  |sp|  |sp|  |sp|  |sp| 
+  |br| |sp|  |sp|  |sp|  |sp|  |sp|  |sp|  |sp|         
+            
+.. |M10| replace::  **October**
+  |br| |sp|  |sp|  |sp|  |sp|  |sp|  |sp|  |sp| 
+  |br| |sp|  |sp|  |sp|  |sp|  |sp|  |sp|  |sp| 
+  |br| |sp|  |sp|  |sp|  |sp|  |sp|  |sp|  |sp| 
+  |br| |sp|  |sp|  |sp|  |sp|  |sp|  |sp|  |sp| 
+  |br| |sp|  |sp|  |sp|  |sp|  |sp|  |sp|  |sp|         
+            
+.. |M11| replace::  **November**
+  |br| |sp|  |sp|  |sp|  |sp|  |sp|  |sp|  |sp| 
+  |br| |sp|  |sp|  |sp|  |sp|  |sp|  |sp|  |sp| 
+  |br| |sp|  |sp|  |sp|  |sp|  |sp|  |sp|  |sp| 
+  |br| |sp|  |sp|  |sp|  |sp|  |sp|  |sp|  |sp| 
+  |br| |sp|  |sp|  |sp|  |sp|  |sp|  |sp|  |sp|         
+            
+.. |M12| replace::  **December**
+  |br| |sp|  |sp|  |sp|  |sp|  |sp|  |sp|  |sp| 
+  |br| |sp|  |sp|  |sp|  |sp|  |sp|  |sp|  |sp| 
+  |br| |sp|  |sp|  |sp|  |sp|  |sp|  |sp|  |sp| 
+  |br| |sp|  |sp|  |sp|  |sp|  |sp|  |sp|  |sp| 
+  |br| |sp|  |sp|  |sp|  |sp|  |sp|  |sp|  |sp| 
+  |br| |sp|  |sp|  |sp|  |sp|  |sp|  |sp|  |sp| 
+        
+===== ===== =====
+|M01| |M02| |M03|
+|M04| |M05| |M06|
+|M07| |M08| |M09|
+|M10| |M11| |M12|
+===== ===== =====
+        
+        
+
+.. toctree::
+    :hidden:
+    :maxdepth: 2
+    
+
+    0101
+    0103
+    0105
+    0107
+    0109
+    0110
+    0111
+    0112
+    0113
+    0114
+    0115
+    0116
+    0117
+    0118
+    0119
+    0120
+    0121
+    0122
+    0123
+    0124
+    0125
+    0128
+    0129
+    0130
+    0131
+    0201
+    0202
+    0203
+    0204
+    0206
+    0209
+    0211
+    0212
+    0213
+    0216
+    0219
+    0220
+    0221
+
+:113: WARNING: toctree contains reference to nonexisting document u'blog/2013/0221'
+T:\hgwork\lino\docs\releases\index.rst:23: WARNING: toctree glob pattern u'2010/index' didn't match any documents
+T:\hgwork\lino\docs\releases\index.rst:23: WARNING: toctree glob pattern u'2011/index' didn't match any documents
 T:\hgwork\lino\docs\reviews\index.rst:4: WARNING: toctree contains reference to nonexisting document u'reviews/ :maxdepth: 1'
 T:\hgwork\lino\docs\reviews\index.rst:4: WARNING: toctree contains reference to nonexisting document u'reviews/ :glob:'
 T:\hgwork\lino\docs\reviews\index.rst:4: WARNING: toctree contains reference to nonexisting document u'reviews/django-extensions/index'
-T:\hgwork\lino\docs\casts\lino_intro.rst:: WARNING: document isn't included in any toctree
-T:\hgwork\lino\docs\dev\versioning.rst:: WARNING: document isn't included in any toctree
-T:\hgwork\lino\docs\igen\index.rst:: WARNING: document isn't included in any toctree
-T:\hgwork\lino\docs\releases\1.5.10.rst:: WARNING: document isn't included in any toctree
-T:\hgwork\lino\docs\reviews\django-extensions.rst:: WARNING: document isn't included in any toctree
-T:\hgwork\lino\docs\reviews\index.rst:: WARNING: document isn't included in any toctree
-T:\hgwork\lino\docs\tutorials\webless.rst:: WARNING: document isn't included in any toctree
+T:\hgwork\lino\docs\tickets\28.rst:4: WARNING: Inline literal start-string without end-string.
+T:\hgwork\lino\docs\tickets\56.rst:27: WARNING: Inline interpreted text or phrase reference start-string without end-string.
+T:\hgwork\lino\docs\tickets\69.rst:: ERROR: Anonymous hyperlink mismatch: 1 references but 0 targets.
+See "backrefs" attribute for IDs.
+T:\hgwork\lino\docs\todo.rst:481: WARNING: Enumerated list ends without a blank line; unexpected unindent.
+T:\hgwork\lino\docs\todo.rst:485: ERROR: Unexpected indentation.
+T:\hgwork\lino\docs\todo.rst:486: WARNING: Block quote ends without a blank line; unexpected unindent.
+T:\hgwork\lino\docs\todo.rst:1024: WARNING: Enumerated list ends without a blank line; unexpected unindent.
+T:\hgwork\lino\docs\tutorials\polls.rst:202: WARNING: Include file u'T:\\hgwork\\lino\\docs\\tutorials\\../../lino/apps/polls_tutorial/templates/admin_main.html' not found or reading it failed
+T:\hgwork\lino\docs\casts\lino_intro.rst:: WARNING: docu

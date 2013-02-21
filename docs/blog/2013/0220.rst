@@ -110,31 +110,28 @@ Damit der obige Test in der Praxis taugt, müsste ich freilich erstmal die Tests
 insgesamt wieder aufpäppeln. Die habe ich in letzter Zeit vernachlässigt.
 Also ran an den Speck. Jetzt oder nie.
 
-Eine fiese Sache war folgendes: 
-
-In einem Demo-Test (:func:`test002 <lino_welfare.modlib.pcsw.tests.pcsw_demo_tests.test002>`)
+Eine zeitraubende Sache war folgendes: 
+In einem Demo-Test (:func:`test002
+<lino_welfare.modlib.pcsw.tests.pcsw_demo_tests.test002>`)
 machte er eine Abfrage nach `/api/cv/SoftSkillsByPerson`.
 Nun ist :class:`SoftSkillsByPerson <lino_welfare.modlib.cv.models.SoftSkillsByPerson>`
-aber eine dynamische Tabelle, deren Titel und Inhalt von der SiteConfig abhängt.
-Und die SiteConfig kriegt sinnvolle Werte erst wenn die Demo-Daten eingelesen werden.
-Wenn ich aber die gesamte Test-Suite laufen lasse, wurde vorher schon das UI initialisiert 
-ohne Demo-Daten.
+eine dynamische Tabelle, deren Titel und Inhalt von der SiteConfig abhängt.
+Und die SiteConfig kriegt sinnvolle Werte erst wenn die Demo-Daten 
+eingelesen werden.
+Wenn ich aber die gesamte Test-Suite laufen lasse, 
+wurde vorher 
+(`:mod:`quick_tests <lino_welfare.modlib.pcsw.tests.pcsw_tests>`)
+schon das UI initialisiert, und zwar ohne Demo-Daten.
 Und unsere dynamische Tabelle wurde natürlich nur ein einziges Mal pro Prozess 
 generiert: wenn man in den Site-Parametern eines der Felder 
 "Eigenschaftsgruppe Fähigkeiten",
 "Eigenschaftsgruppe Sozialkompetenzen"
 oder
 "Eigenschaftsgruppe Hindernisse"
-verändert hätte, müsste man anschließend den Server neustarten, damit es aktiv wird.
-Wer tut denn auch so was.
-Jawohl, unsere Testsuite tut das.
+verändert hätte, muss man anschließend den Server neustarten, 
+damit es aktiv wird.
+So war das schon immer gewesen.
+Wer will denn auch was Feineres.
+Jawohl, unsere Testsuite will das.
 
 
-Release
--------
-
-
-- Release notes:
-  :doc:`Lino 1.5.1 </releases/1.5.10>`
-  :welfare:`Welfare 1.0.13 </releases/1.0.13>`
-  

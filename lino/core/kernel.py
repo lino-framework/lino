@@ -76,7 +76,7 @@ DONE = False
 #~ self.GFK_LIST = []
 
 
-def analyze_models():
+def analyze_models(self):
     """
     This is a part of a Lino site setup.
     The Django Model definitions are done, now Lino analyzes them and does certain actions.
@@ -97,7 +97,7 @@ def analyze_models():
     
     #~ logger.info("Analyzing models...")
     
-    self = settings.LINO
+    #~ self = settings.LINO
     #~ logger.info(self.welcome_text())
     
     """
@@ -306,6 +306,7 @@ def startup_site(self):
     """
     This is the code that runs when you call :meth:`lino.Lino.startup`.
     """
+    
     if self._startup_done:
         #~ logger.warning("LinoSite setup already done ?!")
         return
@@ -318,60 +319,40 @@ def startup_site(self):
         raise Exception("Lino.startup() called recursively.")
         
     write_lock.acquire()
+    
     self._starting_up = True
     try:
         logger.info(self.welcome_text())
-        analyze_models()
+        
+        analyze_models(self)
+        
+        self.on_each_app('site_setup')
+        
+        """
+        Actor.after_site_setup() is called after the app's site_setup().
+        Example: pcsw.site_setup() adds a detail to properties.Properties, 
+        the base class for properties.PropsByGroup. 
+        The latter would not 
+        install a detail_action during her after_site_setup() 
+        and also would never get it later.
+        """
+        for a in actors.actors_list:
+            a.after_site_setup(self)
+            
+        self.on_site_startup()
+            
+        """
+        resolve_virtual_fields() comes even after after_site_setup() 
+        because after_site_setup()
+        may add more virtual fields in custom setup_columns methods.
+        """
+                
+        fields.resolve_virtual_fields()
+        
         self._startup_done = True
     finally:
         write_lock.release()
         self._starting_up = False
-    
-
-
-def startup_ui():
-  
-    self = settings.LINO
-    
-    self.startup() 
-    """
-    20130220 needed when running as a multi-threaded wsgi application
-    """
-    if not self._startup_done:
-        raise Exception("startup() failed?!")
-    
-    
-    logger.info("Initializing user interface...")
-    #~ raise Exception("20130220")
-    
-    #~ models_list = models.get_models() 
-    
-    for app in models.get_apps():
-        fn = getattr(app,'site_setup',None)
-        if fn is not None:
-            fn(self)
-
-    """
-    Actor.after_site_setup() is called after the app's site_setup().
-    Example: pcsw.site_setup() adds a detail to properties.Properties, 
-    the base class for properties.PropsByGroup. 
-    The latter would not 
-    install a detail_action during her after_site_setup() 
-    and also would never get it later.
-    """
-    for a in actors.actors_list:
-        #~ a.setup()
-        a.after_site_setup(self)
-        
-    self.on_site_startup()
-        
-    """
-    resolve_virtual_fields() comes even after after_site_setup() 
-    because after_site_setup()
-    may add more virtual fields in custom setup_columns methods.
-    """
-            
-    fields.resolve_virtual_fields()
     
 
 

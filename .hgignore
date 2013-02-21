@@ -14,6 +14,7 @@ dist
 tmp
 lino/ui/qx/app/build/resource
 */SciTE.session
+*/default.db
 lino/tutorials/*/media
 lino/apps/*/media
 lino/sandbox/*/media

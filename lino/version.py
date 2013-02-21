@@ -13,4 +13,4 @@ Related public URLs:
 
 """
 
-__version__ = '1.5.9'
+__version__ = '1.5.10'

@@ -463,12 +463,17 @@ class Lino(lino.Lino):
         ]
         django_settings.update(TEMPLATE_CONTEXT_PROCESSORS = tuple(tcp))
 
-    @property
-    def ui(self):
-        if self._extjs_ui is None:
-            from .ui import ExtUI
-            self._extjs_ui = ExtUI()
-        return self._extjs_ui
+    def on_site_startup(self):
+        super(Lino,self).on_site_startup()
+        from .ui import ExtUI
+        self.ui = ExtUI()
+        
+    #~ @property
+    #~ def ui(self):
+        #~ if self._extjs_ui is None:
+            #~ from .ui import ExtUI
+            #~ self._extjs_ui = ExtUI()
+        #~ return self._extjs_ui
     #~ ui = property(get_ui)
 
     #~ def get_groph_ui(self):

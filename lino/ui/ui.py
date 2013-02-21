@@ -672,8 +672,8 @@ class ExtUI(base.UI):
       
         pre_ui_build.send(self)
         
-        from lino.core.kernel import startup_ui
-        startup_ui()
+        #~ from lino.core.kernel import startup_ui
+        #~ startup_ui()
         
         #~ raise Exception("20120614")
         #~ self.pdf_renderer = PdfRenderer(self) # 20120624
