@@ -298,80 +298,38 @@ class DisableDeleteHandler():
         return None
         
 
-import time
-
-#~ import threading
-#~ write_lock = threading.RLock()
-#~ write_lock = threading.Lock()
 
 def startup_site(self):
     """
     This is the code that runs when you call :meth:`lino.Lino.startup`.
     """
     
-    if self._startup_done:
-        #~ logger.warning("LinoSite setup already done ?!")
-        return
-        
-    #~ logger.info("startup_site()")
+    logger.info(self.welcome_text())
     
-    #~ write_lock.acquire()
+    analyze_models(self)
     
-    if self._starting_up:
-        """
-        This can happen when running e.g. under mod_wsgi: 
-        another thread has started the work, so keep your fingers 
-        away and don't start a second time.
-        """
-        while self._starting_up:
-            logger.warning("Lino.startup() waiting...")
-            time.sleep(1)
-        return 
+    self.on_each_app('site_setup')
+    
+    """
+    Actor.after_site_setup() is called after the app's site_setup().
+    Example: pcsw.site_setup() adds a detail to properties.Properties, 
+    the base class for properties.PropsByGroup. 
+    The latter would not 
+    install a detail_action during her after_site_setup() 
+    and also would never get it later.
+    """
+    for a in actors.actors_list:
+        a.after_site_setup(self)
         
-    #~ if self._starting_up:
-        #~ # logger.warning("Lino.startup() called recursively.")
-        #~ """
-        #~ This can happen when running e.g. under mod_wsgi: 
-        #~ another thread has started the work, so keep your fingers 
-        #~ away and don't start a second time.
-        #~ """
-        #~ # write_lock.release()
-        #~ # return 
-        #~ raise Exception("Lino.startup() called recursively.")
+    self.on_site_startup()
         
-    self._starting_up = True
-    try:
-        logger.info(self.welcome_text())
-        
-        analyze_models(self)
-        
-        self.on_each_app('site_setup')
-        
-        """
-        Actor.after_site_setup() is called after the app's site_setup().
-        Example: pcsw.site_setup() adds a detail to properties.Properties, 
-        the base class for properties.PropsByGroup. 
-        The latter would not 
-        install a detail_action during her after_site_setup() 
-        and also would never get it later.
-        """
-        for a in actors.actors_list:
-            a.after_site_setup(self)
+    """
+    resolve_virtual_fields() comes even after after_site_setup() 
+    because after_site_setup()
+    may add more virtual fields in custom setup_columns methods.
+    """
             
-        self.on_site_startup()
-            
-        """
-        resolve_virtual_fields() comes even after after_site_setup() 
-        because after_site_setup()
-        may add more virtual fields in custom setup_columns methods.
-        """
-                
-        fields.resolve_virtual_fields()
-        
-        self._startup_done = True
-    finally:
-        self._starting_up = False
-        #~ write_lock.release()
+    fields.resolve_virtual_fields()
     
 
 

@@ -723,8 +723,53 @@ class Lino(object):
         when Django has has populated it's model cache.
         
         """
+        if self._startup_done:
+            #~ logger.warning("LinoSite setup already done ?!")
+            return
+            
+        #~ logger.info("startup_site()")
+        
         from lino.core.kernel import startup_site
-        startup_site(self,**options)
+        import time
+
+        #~ import threading
+        #~ write_lock = threading.RLock()
+        #~ write_lock = threading.Lock()
+        
+        #~ write_lock.acquire()
+        
+        if self._starting_up:
+            """
+            This can happen when running e.g. under mod_wsgi: 
+            another thread has started and not yet finished `startup_site()`, 
+            so keep your fingers away and don't start a second time.
+            """
+            while self._starting_up:
+                logger.warning("Lino.startup() waiting...")
+                time.sleep(1)
+            return 
+            
+        #~ if self._starting_up:
+            #~ # logger.warning("Lino.startup() called recursively.")
+            #~ """
+            #~ This can happen when running e.g. under mod_wsgi: 
+            #~ another thread has started the work, so keep your fingers 
+            #~ away and don't start a second time.
+            #~ """
+            #~ # write_lock.release()
+            #~ # return 
+            #~ raise Exception("Lino.startup() called recursively.")
+            
+        self._starting_up = True
+        
+        try:
+          
+            startup_site(self,**options)
+        
+            self._startup_done = True
+        finally:
+            self._starting_up = False
+            #~ write_lock.release()
         
     def setup_workflows(self):
         self.on_each_app('setup_workflows')
