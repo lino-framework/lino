@@ -23,3 +23,26 @@ in the long run... but not really at the right moment.
 Of course these surprises disturb my release process only because 
 I don't use branching as I should...
 
+Anyway, these problems are solved in 
+:checkin:`2bf435358358`.
+
+And still I'll spend the rest of today on the unit tests 
+(because the long-term advantages are more important than the short-term risk) 
+and without a branch (because branching does cost some "administrative" 
+overhead, and because I'd rather enjoy my freedom as long as I am the 
+only Lino developer).
+
+Insgesamt wir der Startup-Vorgang durch die gestrigen Änderungen 
+geradliniger und klarer.
+Einer der kleinen Nebeneffekte ist, dass die SiteConfig-Instanz jetzt schon gleich 
+beim Startup eingelesen und gecacht wird. 
+Ein cooler Bug kam daher: in 
+:mod:`initdb <lino.management.commands.initdb>`
+und auch
+:mod:`initdb <lino.management.commands.initdb_demo>`
+führte das zu einem Problem, das nur jedes zweite Mal auftrat:
+wenn die Datenbank von einem vorigen Lauf noch initialisiert war, 
+enthielt die SiteConfig Verweise auf andere Objekte wie den Sektor, job_agent usw. 
+Die wurden dann aber gelöscht. Und wenn dumppy die SiteConfig dann speicheren wollte, 
+bekam er bein full_clean einen ValidationError.
+

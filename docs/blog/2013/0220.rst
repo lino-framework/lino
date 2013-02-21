@@ -123,7 +123,7 @@ Und die SiteConfig kriegt sinnvolle Werte erst wenn die Demo-Daten
 eingelesen werden.
 Wenn ich aber die gesamte Test-Suite laufen lasse, 
 wurde vorher 
-(`:mod:`quick_tests <lino_welfare.modlib.pcsw.tests.pcsw_tests>`)
+(:mod:`quick_tests <lino_welfare.modlib.pcsw.tests.pcsw_tests>`)
 schon das UI initialisiert, und zwar ohne Demo-Daten.
 Und unsere dynamische Tabelle wurde natürlich nur ein einziges Mal pro Prozess 
 generiert: wenn man in den Site-Parametern eines der Felder 

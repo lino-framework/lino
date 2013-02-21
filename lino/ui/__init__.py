@@ -553,7 +553,7 @@ class Lino(lino.Lino):
         return self._site_config
     #~ site_config = property(get_site_config)
     
-    def update_site_config(self,**kw):
+    def unused_update_site_config(self,**kw):
         """
         Update and save the one and only :class:`lino.models.SiteConfig` instance.
         """
@@ -561,8 +561,10 @@ class Lino(lino.Lino):
         sc = self.site_config
         for k,v in kw.items():
             setattr(sc,k,v)
-        sc.full_clean()
-        sc.save()
+        #~ sc.full_clean() # caused problems like ValidationError: {'sector': [u'Modell Sektor mit dem Prim\xe4rschl\xfcssel 45 ist nicht vorhanden.'], ...}        
+        
+        
+        #~ sc.save()
         #~ self.on_site_config_saved(sc)
     
     def on_site_config_saved(self,sc):

@@ -165,6 +165,8 @@ class Command(BaseCommand):
                 #~ def send(*args,**kw):
                     #~ pass
             #~ models.signals.post_syncdb = NullSignal()
+            
+        settings.LINO._site_config = None # clear cached instance
         
         call_command('syncdb',load_initial_data=False,**options)
         

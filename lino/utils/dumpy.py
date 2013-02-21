@@ -392,10 +392,11 @@ class FakeDeserializedObject(base.DeserializedObject):
         #~ except (ValidationError,ObjectDoesNotExist), e:
         #~ except (ValidationError,ObjectDoesNotExist,IntegrityError), e:
         except Exception, e:
-            if not settings.LINO.loading_from_dump:
-                # hand-written fixtures are expected to not raise any exception
-                logger.warning("Failed to save %s:" % obj2str(obj))
-                raise
+            if True:
+                if not settings.LINO.loading_from_dump:
+                    # hand-written fixtures are expected to yield in savable order 
+                    logger.warning("Failed to save %s:" % obj2str(obj))
+                    raise
             if False:
               """
               20120906 deactivated this test. also fixtures from dump may yield instances without pk.
