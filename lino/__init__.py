@@ -723,9 +723,8 @@ class Lino(object):
         This is called exactly once from :mod:`lino.models` 
         when Django has has populated it's model cache.
         
-        This can happen when running e.g. under mod_wsgi: 
-        another thread has started and not yet finished `startup_site()`, 
-        so keep your fingers away and don't start a second time.
+        This code can run several times at once when running e.g. under mod_wsgi: 
+        another thread has started and not yet finished `startup_site()`.
         
         """
         import logging
@@ -738,7 +737,7 @@ class Lino(object):
             return
         STARTUP_DONE = True
         
-        logger.info("Lino startup (PID %s)",os.getpid())
+        #~ logger.info("Lino startup (PID %s)",os.getpid())
         
         #~ if self._startup_done:
             #~ # logger.warning("LinoSite setup already done ?!")

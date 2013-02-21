@@ -669,7 +669,7 @@ class ExtUI(base.UI):
 
     #~ def __init__(self,*args,**kw):
     def __init__(self):
-        logger.info("20130221 lino.ui.ExtUI.__init__()")
+        #~ logger.info("20130221 lino.ui.ExtUI.__init__()")
         pre_ui_build.send(self)
         
         #~ from lino.core.kernel import startup_ui

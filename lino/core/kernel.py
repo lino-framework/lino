@@ -76,8 +76,10 @@ from lino.utils import AttrDict
 #~ self.GFK_LIST = []
 
 
-def analyze_models(self):
+
+def startup_site(self):
     """
+    This is the code that runs when you call :meth:`lino.Lino.startup`.
     This is a part of a Lino site setup.
     The Django Model definitions are done, now Lino analyzes them and does certain actions.
     
@@ -87,6 +89,22 @@ def analyze_models(self):
       don't inherit from it.
     
     """
+    
+    if len(sys.argv) == 0:
+        process_name = 'WSGI'
+    else:
+        process_name = ' '.join(sys.argv)
+    logger.info("Started %s on %r (PID %s). Languages: %s.", 
+      process_name,self.title,os.getpid(), ', '.join(babel.AVAILABLE_LANGUAGES))
+    logger.info(self.welcome_text())
+    
+    def goodbye():
+        logger.info("Stopped %s (PID %s)",process_name,os.getpid())
+    atexit.register(goodbye)
+    
+    
+    #~ analyze_models(self)
+    
     #~ print 20130219, __file__, "setup_choicelists 1"
     
     #~ logger.info("Analyzing models...")
@@ -235,21 +253,40 @@ def analyze_models(self):
     #~ logger.info("20130121 GFK_LIST is %s",['%s.%s'%(full_model_name(f.model),f.name) for f in settings.LINO.GFK_LIST])
     dd.post_analyze.send(self,models_list=models_list)
     
-    if len(sys.argv) == 0:
-        process_name = 'WSGI'
-    else:
-        process_name = ' '.join(sys.argv)
-    logger.info("Started %s on %r. Languages: %s. %d models, %s actors.", 
-    #~ logger.info("Lino Site %r started. Languages: %s. %d models, %s actors.", 
-        process_name,self.title, ', '.join(babel.AVAILABLE_LANGUAGES),
-        len(models_list),
-        len(actors.actors_list))
+    logger.info("%d models, %s actors.",len(models_list),len(actors.actors_list))
     #~ logger.info(settings.INSTALLED_APPS)
     
-    def goodbye():
-        logger.info("Stopped %s",process_name)
-    atexit.register(goodbye)
     
+    self.on_each_app('site_setup')
+    
+    """
+    Actor.after_site_setup() is called after the app's site_setup().
+    Example: pcsw.site_setup() adds a detail to properties.Properties, 
+    the base class for properties.PropsByGroup. 
+    The latter would not 
+    install a detail_action during her after_site_setup() 
+    and also would never get it later.
+    """
+    for a in actors.actors_list:
+        a.after_site_setup(self)
+        
+    self.on_site_startup()
+        
+    """
+    resolve_virtual_fields() comes even after after_site_setup() 
+    because after_site_setup()
+    may add more virtual fields in custom setup_columns methods.
+    """
+            
+    fields.resolve_virtual_fields()
+    
+
+
+
+
+def analyze_models(self):
+    """
+    """
     return models_list
 
 class DisableDeleteHandler():
@@ -292,39 +329,6 @@ class DisableDeleteHandler():
         return None
         
 
-
-def startup_site(self):
-    """
-    This is the code that runs when you call :meth:`lino.Lino.startup`.
-    """
-    
-    logger.info(self.welcome_text())
-    
-    analyze_models(self)
-    
-    self.on_each_app('site_setup')
-    
-    """
-    Actor.after_site_setup() is called after the app's site_setup().
-    Example: pcsw.site_setup() adds a detail to properties.Properties, 
-    the base class for properties.PropsByGroup. 
-    The latter would not 
-    install a detail_action during her after_site_setup() 
-    and also would never get it later.
-    """
-    for a in actors.actors_list:
-        a.after_site_setup(self)
-        
-    self.on_site_startup()
-        
-    """
-    resolve_virtual_fields() comes even after after_site_setup() 
-    because after_site_setup()
-    may add more virtual fields in custom setup_columns methods.
-    """
-            
-    fields.resolve_virtual_fields()
-    
 
 
 def unused_generate_dummy_messages(self):
