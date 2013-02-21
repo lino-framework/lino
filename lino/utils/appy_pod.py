@@ -270,11 +270,12 @@ class Renderer(AppyRenderer):
             table_columns.addElement(TableColumn(stylename=name))
             
         #~ from lino.ui.extjs3 import ext_store
-        from lino.ui.extjs3 import ext_elems
+        #~ from lino.ui.extjs3 import ext_elems
+        from lino.ui import elems
         def fldstyle(fld):
             #~ if isinstance(fld,ext_store.VirtStoreField):
                 #~ fld = fld.delegate
-            if isinstance(fld,ext_elems.NumberFieldElement):
+            if isinstance(fld,elems.NumberFieldElement):
                 return "Number Cell"
             return "Table Contents"
         
