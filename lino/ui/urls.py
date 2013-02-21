@@ -41,7 +41,8 @@ from django.views.generic import View
 
 
 import lino
-settings.LINO.ui
+#~ settings.LINO.ui
+settings.LINO.startup()
 from lino import dd
 from . import views
 #~ import .views
