@@ -106,9 +106,12 @@ reasons, but who knows...
 à propos test suite
 -------------------
 
-Damit der obige Test in der Praxis taugt, müsste ich freilich erstmal die Testsuite 
-insgesamt wieder aufpäppeln. Die habe ich in letzter Zeit vernachlässigt.
-Also ran an den Speck. Jetzt oder nie.
+Damit der obige Test in der Praxis taugt, müsste ich freilich erstmal 
+die Testsuite wieder aufpäppeln,
+die ich in letzter Zeit vernachlässigt habe.
+Also ran an den Speck. Jetzt oder nie. 
+Zumal ich vor dem Release heute abend sowieso 
+nichts großes Neues anfangen will.
 
 Eine zeitraubende Sache war folgendes: 
 In einem Demo-Test (:func:`test002

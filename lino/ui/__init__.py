@@ -26,6 +26,7 @@ import datetime
 
 from os.path import join, abspath, dirname, normpath, isdir
 from decimal import Decimal
+
 from urllib import urlencode
 
 def buildurl(*args,**kw):
@@ -356,8 +357,11 @@ class Lino(lino.Lino):
     
     # for internal use:
     
-    _extjs_ui = None
+    #~ _extjs_ui = None
     #~ _groph_ui = None
+    
+    _site_config = None
+    
     
     
     def __init__(self,project_file,django_settings):
@@ -513,19 +517,27 @@ class Lino(lino.Lino):
         pass
 
         
-    def get_site_config(self):
+    #~ def get_site_config(self):
+      
+    @property
+    def site_config(self):
         """
         Returns the one and only :class:`lino.models.SiteConfig` instance.
         
         If no instance exists (which happens in a virgin database),
-        we create it and set some default values from :attr:`site_config_defaults`.
+        we create it and set some default values from 
+        :attr:`site_config_defaults`.
+        
+        We cannot save here because it's possible that the database 
+        doesn't yet exist.
         """
         if self._site_config is None:
             #~ print '20120801 create _site_config'
             from .models import SiteConfig
+            from django.db.utils import DatabaseError
             try:
                 self._site_config = SiteConfig.objects.get(pk=1)
-            except SiteConfig.DoesNotExist:
+            except (SiteConfig.DoesNotExist,DatabaseError):
             #~ except Exception,e:
                 kw = dict(pk=1)
                 #~ kw.update(settings.LINO.site_config_defaults)
@@ -534,20 +546,13 @@ class Lino(lino.Lino):
                 self._site_config = SiteConfig(**kw)
             
                 # 20120725 
-                # tutorials.t1 menu selection `Config --> Site Parameters` 
+                # polls_tutorial menu selection `Config --> Site Parameters` 
                 # said "SiteConfig 1 does not exist"
-                # don't remember why we wanted to NOT save the instance here 
-                self._site_config.save()
+                # cannot save the instance here because the db table possibly doesn't yet exit.
+                #~ self._site_config.save()
         return self._site_config
-    site_config = property(get_site_config)
+    #~ site_config = property(get_site_config)
     
-    def on_site_config_saved(self,sc):
-        """
-        Used internally. Called by SiteConfig.save() to update the cached instance.
-        """
-        self._site_config = sc
-        #~ print '20120801 site_config saved', sc.propgroup_softskills
-        
     def update_site_config(self,**kw):
         """
         Update and save the one and only :class:`lino.models.SiteConfig` instance.
@@ -556,9 +561,17 @@ class Lino(lino.Lino):
         sc = self.site_config
         for k,v in kw.items():
             setattr(sc,k,v)
+        sc.full_clean()
         sc.save()
         #~ self.on_site_config_saved(sc)
     
+    def on_site_config_saved(self,sc):
+        """
+        Used internally. Called by SiteConfig.save() to update the cached instance.
+        """
+        self._site_config = sc
+        #~ print '20120801 site_config saved', sc.propgroup_softskills
+        
     def is_imported_partner(self,obj):
         """
         Return whether the specified

@@ -537,6 +537,8 @@ class DpyDeserializer:
                 """
                 To avoid Django interpreting empty fixtures as an error, 
                 we yield one object which always exists: the SiteConfig instance
+                Oops, that will fail in lino_welfare if the company pointed to by 
+                SiteConfig.job_office had been deferred.
                 """
                 if settings.LINO.site_config:
                     yield FakeDeserializedObject(self,settings.LINO.site_config)

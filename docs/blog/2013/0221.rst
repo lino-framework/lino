@@ -1,11 +1,25 @@
 20130221
 ========
 
-Release
--------
+Unit testing produces problems
+------------------------------
+
+The release with yesterday's small bugfixes was almost ready:
 
 - Release notes:
   :doc:`Lino 1.5.1 </releases/1.5.10>`
   :welfare:`Welfare 1.0.13 </releases/1.0.13>`
   
+But there was time left before the evening, so I started to clean up 
+the test suite. This included a series of little internal optimizations
+in the startup process (details see yesterday (German only). 
+Everything seemed fine and innocent until I deployed it 
+on the `lino-framework.org` server:
+some strange failures, probably due to threading issues.
+Finally these small optimizations I made for the 
+test suite had triggered an avalanche of changes,
+each of them very welcome and probably making Lino better 
+in the long run... but not really at the right moment. 
+Of course these surprises disturb my release process only because 
+I don't use branching as I should...
 

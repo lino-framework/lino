@@ -567,10 +567,6 @@ class Lino(object):
     #~ index_view_action = 'lino.Home'
     
     
-    # for internal use:
-    
-    _site_config = None
-    
     
     def __init__(self,project_file,django_settings):
       
