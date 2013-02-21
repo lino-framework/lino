@@ -736,7 +736,7 @@ class Lino(object):
         global STARTUP_DONE
         if STARTUP_DONE: 
             #~ print "20130219 DONE"
-            logger.warning("Lino startup already done")
+            logger.info("Lino startup already done")
             return
         STARTUP_DONE = True
         
