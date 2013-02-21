@@ -7,4 +7,4 @@ T:\hgwork\lino\docs\igen\index.rst:: WARNING: document isn't included in any toc
 T:\hgwork\lino\docs\reviews\django-extensions.rst:: WARNING: document isn't included in any toctree
 T:\hgwork\lino\docs\reviews\index.rst:: WARNING: document isn't included in any toctree
 T:\hgwork\lino\docs\tutorials\webless.rst:: WARNING: document isn't included in any toctree
-t:\hgwork\lino\lino\core\kernel.py:docstring of lino.core.kernel.analyze_models:6: WARNING: py:class reference target not found: lino.dd.Model
+T:\hgwork\lino\docs\blog\2013\0221.rst:35: WARNING: py:mod reference target not found: lino.management.commands.initdb_demo

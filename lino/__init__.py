@@ -94,7 +94,7 @@ if False:
 
 NOT_FOUND_MSG = '(not installed)'
 
-STARTUP_DONE = False
+#~ STARTUP_DONE = False
 
 class Lino(object):
     """
@@ -586,7 +586,7 @@ class Lino(object):
         self.qooxdoo_prefix = '/media/qooxdoo/lino_apps/' + self.project_name + '/build/'
         #~ self.dummy_messages = set()
         #~ self._starting_up = False
-        #~ self._startup_done = False
+        self._startup_done = False
         #~ self._response = None
         self.django_settings = django_settings
         self.GFK_LIST = []
@@ -730,23 +730,26 @@ class Lino(object):
         import logging
         logger = logging.getLogger(__name__)
         
-        global STARTUP_DONE
-        if STARTUP_DONE: 
+        #~ global STARTUP_DONE
+        #~ if STARTUP_DONE: 
             #~ print "20130219 DONE"
             #~ logger.info("Lino startup already done")
-            return
-        STARTUP_DONE = True
+            #~ return
+        #~ STARTUP_DONE = True
         
         #~ logger.info("Lino startup (PID %s)",os.getpid())
         
-        #~ if self._startup_done:
-            #~ # logger.warning("LinoSite setup already done ?!")
-            #~ return
+        if self._startup_done:
+            #~ # logger.info("Lino startup already done")
+            return
             
+        self._startup_done = True
+        
         #~ logger.info("startup_site()")
         
         from lino.core.kernel import startup_site
         startup_site(self,**options)
+        
         
         #~ import time
 

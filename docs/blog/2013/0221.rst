@@ -32,7 +32,7 @@ and without a branch (because branching does cost some "administrative"
 overhead, and because I'd rather enjoy my freedom as long as I am the 
 only Lino developer).
 
-Insgesamt wir der Startup-Vorgang durch die gestrigen Änderungen 
+Insgesamt wird der Startup-Vorgang durch die gestrigen Änderungen 
 geradliniger und klarer.
 Einer der kleinen Nebeneffekte ist, dass die SiteConfig-Instanz jetzt schon gleich 
 beim Startup eingelesen und gecacht wird. 
@@ -47,4 +47,45 @@ Aber die wurden ja dann gelöscht.
 Und wenn dumppy die gecachte SiteConfig dann speicheren wollte, 
 bekam er bein full_clean einen ValidationError.
 
+
+Lino startup() in multi-threaded environment
+--------------------------------------------
+
+.. literalinclude:: 0221.py
+
+
+Constellation 1 is on a development server::
+
+  SINGLE_THREADED is True, WAIT_BEFORE_ACCESSING_UI is 0
+  Incoming request1:
+  Starting up . . . . done
+  yes
+  Incoming request2:
+
+Constellation 2 on a mod_wsgi until yesterday::
+
+  SINGLE_THREADED is False, WAIT_BEFORE_ACCESSING_UI is 2
+  Incoming request1:
+  Starting up . Incoming request2:
+  . . . done
+  yes
+  yes
+  
+Constellation 3 on a mod_wsgi after yesterday::
+
+  SINGLE_THREADED is False, WAIT_BEFORE_ACCESSING_UI is 0
+  Incoming request1:
+  Starting up . Incoming request2:
+  Exception in thread Thread-2:
+  Traceback (most recent call last):
+    File "c:\Python27\lib\threading.py", line 530, in __bootstrap_inner
+      self.run()
+    File "c:\Python27\lib\threading.py", line 483, in run
+      self.__target(*self.__args, **self.__kwargs)
+    File "0221.py", line 49, in main
+      print LINO.ui
+  AttributeError: 'Lino' object has no attribute 'ui'
+
+  . . . done
+  yes
 
