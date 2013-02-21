@@ -731,6 +731,8 @@ class Lino(object):
         import logging
         logger = logging.getLogger(__name__)
         
+        logger.info("Lino startup (PID %s)",os.getpid())
+        
         global STARTUP_DONE
         if STARTUP_DONE: 
             #~ print "20130219 DONE"
