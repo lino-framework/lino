@@ -7,5 +7,4 @@ T:\hgwork\lino\docs\igen\index.rst:: WARNING: document isn't included in any toc
 T:\hgwork\lino\docs\reviews\django-extensions.rst:: WARNING: document isn't included in any toctree
 T:\hgwork\lino\docs\reviews\index.rst:: WARNING: document isn't included in any toctree
 T:\hgwork\lino\docs\tutorials\webless.rst:: WARNING: document isn't included in any toctree
-T:\hgwork\lino\docs\blog\2013\0220.rst:20: WARNING: py:mod reference target not found: lino.modlib.school
-T:\hgwork\lino\docs\blog\2013\0220.rst:116: WARNING: py:class reference target not found: lino_welfare.modlib.cv.models.SoftSkillsByPerson
+t:\hgwork\lino\lino\core\kernel.py:docstring of lino.core.kernel.analyze_models:6: WARNING: py:class reference target not found: lino.dd.Model

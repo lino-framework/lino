@@ -426,6 +426,7 @@ class AdminIndex(View):
     Similar to PlainIndex
     """
     def get(self, request, *args, **kw):
+        settings.LINO.startup()
         ui = settings.LINO.ui
         if settings.LINO.user_model is not None:
             user = request.subst_user or request.user
@@ -436,6 +437,7 @@ class AdminIndex(View):
 
 class MainHtml(View):
     def get(self, request, *args, **kw):
+        settings.LINO.startup()
         ui = settings.LINO.ui
         rv = ui.success(html=settings.LINO.get_main_html(request))
         return ui.action_response(rv)

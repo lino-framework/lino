@@ -15,7 +15,7 @@
 """
 Set password "1234" for all users.
 
-This is an additive fixture designed to work also on existing data.
+This is an additive fixture designed to work also on existing data::
 
   T:\data\luc\lino_local\dsbe>python manage.py loaddata demo2
   INFO Analyzing models...
