@@ -585,8 +585,8 @@ class Lino(object):
         
         self.qooxdoo_prefix = '/media/qooxdoo/lino_apps/' + self.project_name + '/build/'
         #~ self.dummy_messages = set()
-        self._starting_up = False
-        self._startup_done = False
+        #~ self._starting_up = False
+        #~ self._startup_done = False
         #~ self._response = None
         self.django_settings = django_settings
         self.GFK_LIST = []
@@ -734,6 +734,7 @@ class Lino(object):
         global STARTUP_DONE
         if STARTUP_DONE: 
             #~ print "20130219 DONE"
+            logger.warning("Lino startup already done")
             return
         STARTUP_DONE = True
         
@@ -744,6 +745,8 @@ class Lino(object):
         #~ logger.info("startup_site()")
         
         from lino.core.kernel import startup_site
+        startup_site(self,**options)
+        
         #~ import time
 
         #~ import threading
@@ -771,7 +774,6 @@ class Lino(object):
             
         #~ self._starting_up = True
         
-        startup_site(self,**options)
         
         #~ try:
           
