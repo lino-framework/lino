@@ -731,14 +731,14 @@ class Lino(object):
         import logging
         logger = logging.getLogger(__name__)
         
-        logger.info("Lino startup (PID %s)",os.getpid())
-        
         global STARTUP_DONE
         if STARTUP_DONE: 
             #~ print "20130219 DONE"
-            logger.info("Lino startup already done")
+            #~ logger.info("Lino startup already done")
             return
         STARTUP_DONE = True
+        
+        logger.info("Lino startup (PID %s)",os.getpid())
         
         #~ if self._startup_done:
             #~ # logger.warning("LinoSite setup already done ?!")
