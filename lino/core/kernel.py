@@ -299,8 +299,8 @@ class DisableDeleteHandler():
         
 
         
-import threading
-write_lock = threading.RLock()
+#~ import threading
+#~ write_lock = threading.RLock()
 
 def startup_site(self):
     """
@@ -315,10 +315,15 @@ def startup_site(self):
     
     if self._starting_up:
         #~ logger.warning("Lino.startup() called recursively.")
+        """
+        This can happen when running e.g. under mod_wsgi: 
+        another thread has started the work, so keep your fingers 
+        away and don't start a second time.
+        """
         return 
         #~ raise Exception("Lino.startup() called recursively.")
         
-    write_lock.acquire()
+    #~ write_lock.acquire()
     
     self._starting_up = True
     try:
@@ -351,7 +356,7 @@ def startup_site(self):
         
         self._startup_done = True
     finally:
-        write_lock.release()
+        #~ write_lock.release()
         self._starting_up = False
     
 
