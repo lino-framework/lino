@@ -1,21 +1,5 @@
 Version 1.5.10
 ==============
 
-New features
-------------
-
-
-Optimizations
--------------
-
-
-Bugfixes
---------
-
 - :mod:`lino.models` now handles projects with postponed apps
-
-
-Manual tasks after upgrade
---------------------------
-
-
+- Internal optimisations of the startup process
