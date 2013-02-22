@@ -192,3 +192,10 @@ class TestCase(DjangoTestCase):
                 logger.warning("Unexpected SQL:---\n%s\n---",q['sql'])
             self.fail("Found unexpected SQL")
         reset_queries()
+
+    def assertDoesNotExist(self,model,**kw):
+        try:
+            model.objects.get(**kw)
+            self.fail("Oops, %s(%s) already exists?" % (model.__name__,kw))
+        except model.DoesNotExist:
+            pass

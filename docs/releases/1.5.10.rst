@@ -3,3 +3,4 @@ Version 1.5.10
 
 - :mod:`lino.models` now handles projects with postponed apps
 - Internal optimisations of the startup process
+

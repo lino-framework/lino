@@ -903,6 +903,7 @@ class DeleteSelected(RowAction):
     """
     Delete the row on which it is being executed.
     """
+    #~ debug_permissions = "20130222"
     icon_name = 'x-tbar-delete'
     help_text = _("Delete this record")
     auto_save = False
@@ -919,7 +920,7 @@ class DeleteSelected(RowAction):
     
         
 class SubmitDetail(RowAction):
-    debug_permissions = 20130128
+    #~ debug_permissions = 20130128
     sort_index = 10
     switch_to_detail = False
     icon_name = 'x-tbar-save'

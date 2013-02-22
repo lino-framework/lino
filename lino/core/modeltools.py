@@ -140,8 +140,28 @@ class UnresolvedModel:
     #~ def __getattr__(self,name):
         #~ raise AttributeError("%s has no attribute %r" % (self,name))
 
-def resolve_model(model_spec,app_label=None,strict=False,seed_cache=True):
+#~ def resolve_model(model_spec,app_label=None,strict=False,seed_cache=True):
+def resolve_model(model_spec,app_label=None,strict=False):
     """
+    Return the class object of the specified model.
+    This works also in combination  with :attr:`lino.Lino.override_modlib_models`,
+    so you don't need to worry about where the real class definition is.
+    
+    Attention: this function **does not** trigger a loading of Django's 
+    model cache, so you should not use it at module-level unless you 
+    know what you do.
+    
+    For example,    
+    ``dd.resolve_model("contacts.Person")`` 
+    will return the `Person` model 
+    
+    if the concrete Person model is not defined 
+    This works also if the concrete Person model is not defined 
+    in `lino.modlib.contacts.models` because it is in
+    :attr:`lino.Lino.override_modlib_models`.
+    
+    Note: when use this 
+    :func:`resolve_model <lino.core.modeltools.resolve_model>`
     See also django.db.models.fields.related.add_lazy_relation()
     """
     #~ models.get_apps() # trigger django.db.models.loading.cache._populate()

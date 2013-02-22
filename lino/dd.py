@@ -253,6 +253,7 @@ class PseudoRequest:
     def get_user(self):
         if self._user is None:
             if settings.LINO.user_model is not None:
+                #~ print 20130222, self.username
                 self._user = settings.LINO.user_model.objects.get(username=self.username)
         return self._user
     user = property(get_user)

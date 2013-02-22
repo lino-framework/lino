@@ -606,14 +606,16 @@ def on_login(request,user):
           
     if request.method == 'GET':
         rqdata = request.GET
-    elif request.method == 'PUT':
+    elif request.method in ('PUT','DELETE'):
         rqdata = http.QueryDict(request.body) # raw_post_data before Django 1.4
     elif request.method == 'POST':
         rqdata = request.POST
-    else: # DELETE
-        request.subst_user = None
-        request.requesting_panel = None
-        return
+    else: 
+        raise Exception("Unknown HTTP method '%s'" % request.method)
+    #~ else: # DELETE
+        #~ request.subst_user = None
+        #~ request.requesting_panel = None
+        #~ return
         
     if len(settings.LINO.languages) > 1:
         ul = rqdata.get(constants.URL_PARAM_USER_LANGUAGE,None)

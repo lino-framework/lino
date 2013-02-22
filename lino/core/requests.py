@@ -115,8 +115,10 @@ class BaseRequest(object):
         #~ self.report = actor
         self.request = request
         if request is not None:
-            if request.method == 'PUT':
-                rqdata = http.QueryDict(request.body) # raw_post_data before Django 1.4
+            if request.method in ('PUT','DELETE'):
+                rqdata = http.QueryDict(request.body) 
+                # note that `body` was named `raw_post_data` before Django 1.4
+                #~ print 20130222, rqdata
             else:
                 rqdata = request.REQUEST
             kw = self.parse_req(request,rqdata,**kw)

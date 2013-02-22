@@ -767,7 +767,7 @@ class Table(AbstractTable):
         if self.delete_action is None:
             return "No delete_action"
         if not self.get_row_permission(obj,ar,self.get_row_state(obj),self.delete_action):
-        #~ if not obj.get_row_permission(self.delete_action,ar.get_user()):
+            print "20130222 ar is %r" % ar
             return _("You have no permission to delete this row.")
         return obj.disable_delete(ar)
         
