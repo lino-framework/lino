@@ -74,8 +74,8 @@ class Lino(lino.Lino):
     that each file is built upon need (when a first request comes in).
     
     The default value `None` means that Lino decides automatically 
-    in :func:`lino.core.kernel.startup_site`: 
-    if becomes `False` if
+    during startup:
+    it becomes `False` if
     either :func:`lino.core.modeltools.is_devserver` returns True
     or setting:`DEBUG` is set.
     """
