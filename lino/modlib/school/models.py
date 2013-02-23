@@ -135,7 +135,7 @@ class Teacher(Person):
 class TeacherDetail(contacts.PersonDetail):
     box5 = "remarks" 
     general = dd.Panel(contacts.PersonDetail.main,label = _("General"))
-    main = "general cal.EventsByPartner school.CoursesByTeacher"
+    main = "general school.EventsByTeacher school.CoursesByTeacher"
 
     #~ def setup_handle(self,lh):
       
@@ -223,7 +223,17 @@ class Slots(dd.Table):
     school.CoursesBySlot
     """
     
-
+class EventsByTeacher(cal.Events):
+    master = Teacher
+    
+    @classmethod
+    def get_request_queryset(self,ar):
+        teacher = ar.master_instance
+        if teacher is None: return []
+        qs = super(EventsByTeacher,self).get_request_queryset(ar)
+        qs = qs.filter(project__in = teacher.course_set.all())
+        return qs
+  
 #~ def on_event_generated(self,course,ev):
 def setup_course_event(self,course,ev):
     if not course.slot: 

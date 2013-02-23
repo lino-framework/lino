@@ -23,11 +23,11 @@ If I can't, then something like `lino-basic` would be a better name.
 So: What kind of thing is a :class:`lino.Lino`?
 The current name ``settings.LINO`` says nothing about what it does. 
 The whole mechanism should get a new name.
-In fact we need two names: one for the class and one 
-for the variable which holds the instance.
+In fact we need two names: one for the class and one for the 
+variable which holds the instance.
 
-Was Lino eigentlich ist
-------------------------
+What a :class:`lino.Lino` really is
+-----------------------------------
 
 #.  Es ist ein Django-Setting, also ein globaler Name in der :xfile:`settings.py`, 
     der einmal gesetzt wird und dann im gesamten Leben des Prozesses konstant 
@@ -65,5 +65,9 @@ Und der Name ``LINO`` ist also nicht gut, weil ``settings.LINO`` nichts aussagt
 - ``settings.META``?
   But it has nothing to do with Python's `__metaclass__`.
 
+- ``settings.SERVER``?
+  Because it is the "server" who is starting...
+  but the "server" is represented by all settings, not only this one.
+  
 
 

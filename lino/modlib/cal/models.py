@@ -1383,9 +1383,9 @@ class EventsByCalendar(Events):
 #~ class EventsByType(Events):
     #~ master_key = 'type'
     
-class EventsByPartner(Events):
-    required = dd.required(user_groups='office')
-    master_key = 'user'
+#~ class EventsByPartner(Events):
+    #~ required = dd.required(user_groups='office')
+    #~ master_key = 'user'
     
 class EventsByPlace(Events):
     """
