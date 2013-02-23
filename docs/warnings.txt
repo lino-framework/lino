@@ -6,4 +6,4 @@ T:\hgwork\lino\docs\dev\versioning.rst:: WARNING: document isn't included in any
 T:\hgwork\lino\docs\igen\index.rst:: WARNING: document isn't included in any toctree
 T:\hgwork\lino\docs\reviews\django-extensions.rst:: WARNING: document isn't included in any toctree
 T:\hgwork\lino\docs\reviews\index.rst:: WARNING: document isn't included in any toctree
-T:\hgwork\lino\docs\tutorials\webless.rst:: WARNING: document isn't included in any toctree
+T:\hgwork\lino\docs\tutorials\uiless.rst:: WARNING: document isn't included in any toctree

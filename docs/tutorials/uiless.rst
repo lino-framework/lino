@@ -1,16 +1,20 @@
-The webless Lino Polls tutorial 
+The UI-less Lino Polls tutorial 
 ===============================
 
-This tutorial is for 
-people who want to use Lino's core features 
-(:doc:`/topics/dumpy`, :doc:`/topics/signals`)
-without any change to their existing templates and urlconfs.
+Lino's "user interface" which replaces Django's "Admin" 
+is a great feature, but it is much to learn and not yet 
+well documented. But Lino is more than this.
+
+This tutorial explains what Lino can do 
+without any change to your existing templates and urlconfs.
+
+It is for people who want to use Lino's basic features 
+:doc:`/topics/dumpy` and :doc:`/topics/startup`.
 
 Unlike :doc:`polls`, we are going to 
 follow Django's "Polls" tutorial *until the end*
-and then turn 
-the resulting 
-application into a **webless** Lino application.
+and then turn the resulting 
+application into a Lino application.
 
 Let's look together at the files under 
 :srcref:`lino\apps\webless`.

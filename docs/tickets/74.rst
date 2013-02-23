@@ -1,0 +1,69 @@
+#74 : Move the kernel out of Lino
+=================================
+
+Technically Lino is almost ready to have it's "kernel" or "essential part" 
+split out into a separate code project, 
+but I am lacking the name of the child.
+
+
+`django-startup` or `lino-basic`?
+----------------------------------
+
+Seems that the project name may be 
+`django-startup` (on Google code) 
+and `django_startup` on PyPI.
+
+- Project: django-startup
+- Summary: Running code after Django has populated it's model cache
+- Description: A new name for the essential part of Lino.
+
+But still I need to find a new name for ``settings.LINO``.
+If I can't, then something like `lino-basic` would be a better name.
+
+So: What kind of thing is a :class:`lino.Lino`?
+The current name ``settings.LINO`` says nothing about what it does. 
+The whole mechanism should get a new name.
+In fact we need two names: one for the class and one 
+for the variable which holds the instance.
+
+Was Lino eigentlich ist
+------------------------
+
+#.  Es ist ein Django-Setting, also ein globaler Name in der :xfile:`settings.py`, 
+    der einmal gesetzt wird und dann im gesamten Leben des Prozesses konstant 
+    bleibt und von überall her abgerufen werden kann.
+
+#.  Es ist ein spezielles Setting, dessen Datentyp nicht wie bei allen anderen
+    Settings `string` oder `list` oder `dict` ist, sondern `object`. 
+    
+    Im Gegensatz zu normalen Settings hat dieses Setting also selber 
+    Attribute, die dann nicht mehr groß geschrien zu werden brauchen.
+    Diese Attribute können Variablen oder Methoden sein.
+    Die Instanzvariablen dieses Objekts können sich ändern, ohne dass Django 
+    davon etwas mitbekommt.
+    Außerdem kann man es unterklassieren, wie z.B. 
+    :class:`lino.ui.Lino` es tut.
+    
+#.  It is a kind of extension to Django's setting concept.
+    But it is not what Ryan Roemer describes in 
+    `Extending Django Settings with Derived Attributes and Methods
+    <http://loose-bits.com/2011/04/extending-django-settings-with-derived.html>`__
+
+#.  Last but not least, it has a sophisticated method called `startup`,
+    which analyzes the populated Django model cache. 
+    This method is automagically being called when Django has 
+    finished populating it's model cache.
+    
+Und der Name ``LINO`` ist also nicht gut, weil ``settings.LINO`` nichts aussagt 
+über all dies.
+
+- class `SettingObject`?
+  But it is not just a stupid object because it has the startup method.
+  
+- class `Starter`? 
+
+- ``settings.META``?
+  But it has nothing to do with Python's `__metaclass__`.
+
+
+

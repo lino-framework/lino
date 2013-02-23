@@ -1,5 +1,5 @@
-Coming
-======
+Version 1.5.11
+==============
 
 New features
 ------------
@@ -11,6 +11,8 @@ Optimizations
 
 Bugfixes
 --------
+
+- "You have no permission to delete this row." when working as somebody else.
 
 Manual tasks after upgrade
 --------------------------

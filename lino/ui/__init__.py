@@ -47,6 +47,93 @@ class Lino(lino.Lino):
     """
     """
     
+    partners_app_label = 'contacts'
+    """
+    Temporary setting, see :doc:`/tickets/72`
+    """
+    
+    # three constants used by lino.modlib.workflows:
+    max_state_value_length = 20 
+    max_action_name_length = 50
+    max_actor_name_length = 100
+    
+    allow_duplicate_cities = False
+    """
+    In a default configuration (when :attr:`allow_duplicate_cities` is False), 
+    Lino declares a UNIQUE clause 
+    for :class:`Cities <lino.modlib.countries.models.Cities>` 
+    to make sure that your database never contains duplicate cities.
+    This behaviour mighr disturb e.g. when importing legacy data that 
+    did not have this restriction.
+    Set it to True to remove the UNIQUE clause.
+    
+    Changing this setting might affect your database structure 
+    and thus require a :doc:`/topics/datamig`
+    if your application uses :mod:`lino.modlib.countries`.
+    
+    """
+    
+    
+    uid = 'myuid'
+    """
+    A universal identifier for this Lino site. 
+    This is needed when synchronizing with CalDAV server.  
+    Locally created calendar components in remote calendars 
+    will get a UID based on this parameter,
+    using ``"%s@%s" (self.pk,settings.LINO.ui)``.
+    
+    The default value is ``'myuid'``, and
+    you should certainly override this 
+    on a production server that uses remote calendars.
+    """
+    
+    #~ person_model = None
+    #~ person_model = "contacts.Person"
+    #~ """
+    #~ If your application uses :model:`lino.modlib.contacts`,
+    #~ set this to a string "applabel.Modelname" which identifies 
+    #~ your Person model (which should inherit from
+    #~ :class:`lino.modlib.contacts.models.Person`).
+    #~ """
+    
+    #~ company_model = None
+    #~ company_model = "contacts.Company"
+    #~ """
+    #~ If your application uses :model:`lino.modlib.contacts`,
+    #~ set this to a string "applabel.Modelname" which identifies 
+    #~ your Company model (which should inherit from
+    #~ :class:`lino.modlib.contacts.models.Company`).
+    #~ """
+    
+    project_model = None
+    """
+    Optionally set this to the <applabel_modelname> of a 
+    model used as project in your application.
+    """
+    
+    #~ user_model = "users.User"
+    user_model = None
+    """
+    Set this to ``"auth.User"`` if you use `django.contrib.auth` instead of
+    `lino.modlib.users`. 
+    
+    Set it to `None` to remove any user management 
+    (feature used by e.g. :mod:`lino.test_apps.1`)
+    """
+    
+    
+    legacy_data_path = None
+    """
+    Used by custom fixtures that import data from some legacy database.    
+    """
+    
+    propvalue_max_length = 200
+    """
+    Used by :mod:`lino.modlib.properties`.
+    """
+    
+    
+    
     never_build_site_cache = False
     """
     Set this to `True` if you want that Lino 
@@ -147,6 +234,51 @@ class Lino(lino.Lino):
     """
     
     use_extjs = True
+    
+    time_format_extjs = 'H:i'
+    """
+    Format (in ExtJS syntax) to use for displaying dates to the user.
+    If you change this setting, you also need to override :meth:`parse_time`.
+    """
+    
+    date_format_extjs = 'd.m.Y'
+    """
+    Format (in ExtJS syntax) to use for displaying dates to the user.
+    If you change this setting, you also need to override :meth:`parse_date`.
+    """
+    
+    alt_date_formats_extjs = 'd/m/Y|Y-m-d'
+    """
+    Alternative date entry formats accepted by ExtJS Date widgets.
+    """
+    
+    #~ default_number_format_extjs = '0,000.00/i'
+    default_number_format_extjs = '0,00/i'
+    
+    uppercase_last_name = False
+    """
+    Whether last name of persons should be printed with uppercase letters.
+    See :mod:`lino.test_apps.human`
+    """
+    
+    cbss_live_tests = False
+    """
+    Whether unit tests should try to really connect to the cbss.
+    Some test cases of the test suite would fail with a timeout if run 
+    from behind an IP address that is not registered at the :term:`CBSS`.
+    These tests are skipped by default. To activate them, 
+    set `cbss_live_tests` to `True` in your :xfile:`settings.py`.
+    
+    """
+    
+    cbss_environment = None
+    """
+    Either `None` or one of 'test', 'acpt' or 'prod'.
+    See :mod:`lino.modlib.cbss.models`.
+    Leaving this to `None` means that the cbss module is "inactive" even if installed.
+    """
+    
+    
     
     
     extjs_root = None
@@ -354,6 +486,51 @@ class Lino(lino.Lino):
     Set this to `False` if you don't need WebDAV-enabled links.
     """
     
+    max_auto_events = 36
+    """
+    Maximum number of automatic events to be generated 
+    by :class:`lino.modlib.cal.models.EventOwner`.
+    """
+    
+    #~ mergeable_models = []
+    #~ """
+    #~ A list of models that should have a "Merge" action
+    #~ (see :mod:`lino.mixins.mergeable`).
+    #~ """
+    
+    override_modlib_models = []
+    """
+    A list of names of modlib models which are being 
+    redefined by this application.
+    
+    The following modlib models currently support this:
+    - :class:`contacts.Person <lino.modlib.contacts.models.Person>`
+    - :class:`contacts.Company <lino.modlib.contacts.models.Company>`
+    
+    Usage: in your application's `settings.py`, specify::
+    
+      class Lino(Lino):
+          override_modlib_models = ['contacts.Person']
+          
+    This will cause the modlib Person model to be abstract, 
+    and hence your application is responsible for defining another 
+    `Person` class with "contacts" as `app_label`::
+          
+      class Person(contacts.Person,mixins.Born):
+          class Meta(contacts.Person.Meta):
+              app_label = 'contacts'
+              
+          def kiss(self):
+              ...
+    
+    """
+    
+    sidebar_width = 0
+    """
+    Width of the sidebar in 1/12 of total screen width.
+    Meaningful values are 0 (no sidebar), 2 or 3.
+    """
+    
     
     # for internal use:
     
@@ -472,6 +649,24 @@ class Lino(lino.Lino):
         from .ui import ExtUI
         self.ui = ExtUI()
         
+    def is_abstract_model(self,name):
+        """
+        Return True if the named model ("myapp.MyModel") is declared in 
+        :attr:`override_modlib_models`.
+        """
+        return name in self.override_modlib_models
+        
+    def is_imported_partner(self,obj):
+        """
+        Return whether the specified
+        :class:`Partner <lino.modlib.contacts.models.Partner>` instance
+        `obj` is to be considered as imported from some legacy database.
+        """
+        #~ return obj.id is not None and (obj.id < 200000 or obj.id > 299999)
+        return False
+        #~ return obj.id is not None and (obj.id > 10 and obj.id < 21)
+                  
+        
     #~ @property
     #~ def ui(self):
         #~ if self._extjs_ui is None:
@@ -518,6 +713,93 @@ class Lino(lino.Lino):
 
         
     #~ def get_site_config(self):
+    
+    vat_quarterly = False
+    """
+    Set this to True to support quarterly VAT declarations.
+    """
+    
+    def get_vat_class(self,tt,item):
+        return 'normal'
+        
+    def get_product_vat_class(self,tt,product):
+        return 'normal'
+        
+
+    def get_product_base_account(self,tt,product):
+        """
+        Return the reference of the general account 
+        to be used to book the product movement of 
+        the trade type and product.
+        The default implementation works with the accounts created by
+        :mod:`lino.modlib.accounts.fixtures.mini`.
+        """
+        if tt.name == 'sales':
+            #~ return '7000'
+            return 'sales'
+        elif tt.name == 'purchases':
+        #~ elif item.voucher.journal.type == JournalTypes.purchases:
+            return 'purchases'
+            #~ return '6000'
+        
+    #~ def get_sales_item_account(self,item):
+        #~ return self.modules.accounts.Account.objects.get(group__ref='704000')
+        
+    def get_partner_account(self,voucher):
+        """
+        Return the reference of the general account 
+        where the partner movement of the given voucher should be booked.
+        The default implementation works with the accounts created by
+        :mod:`lino.modlib.accounts.fixtures.mini`.
+        """
+        tt = voucher.get_trade_type()
+        if tt.name == 'sales':
+            #~ return '4000'
+            return 'customers'
+        elif tt.name == 'purchases':
+            #~ return '4400'
+            return 'suppliers'
+        
+    def get_vat_account(self,tt,vc,vr):
+        """
+        Return the reference of the account where the VAT amount 
+        for the specified trade operation should be booked.
+        The operation is specified using its type `tt`, 
+        its class `vc` and its regime `vr`
+        `tt` is a :class:`TradeType` (usually either `sales` or `purchases`)
+        `vc` is a :class:`VatClass`
+        `vr` is a :class:`VatRegime`
+        
+        """
+        if tt.name == 'sales':
+            #~ return '4000'
+            return 'vat_due'
+        elif tt.name == 'purchases':
+            #~ return '4400'
+            return 'vat_deductible'
+        
+        #~ return '472100'
+
+    def get_vat_rate(self,tt,vc,vr):
+        VAT_RATES = dict(
+          exempt=Decimal(),
+          reduced=Decimal('0.07'),
+          normal=Decimal('0.20')
+        )
+        return VAT_RATES[vc.name]
+
+        
+        
+    def get_reminder_generators_by_user(self,user):
+        """
+        Override this per application to return a list of 
+        reminder generators from all models for a give ueser
+        A reminder generator is an object that has a `update_reminders` 
+        method.
+        """
+        return []
+        
+    
       
     @property
     def site_config(self):
@@ -798,14 +1080,30 @@ class Lino(lino.Lino):
     def unused_get_urls(self):
         return []
 
-    #~ def get_sidebar_html(self,request=None,node=None,**context):
-        #~ pages = dd.resolve_app('pages')
-        #~ return pages.get_sidebar_html(self,request=None,node=None,**context)
+    
+    def get_system_note_recipients(self,ar,obj,silent):
+        """
+        Return or yield a list of recipients 
+        (i.e. strings "Full Name <name@example.com>" )
+        to be notified by email about a system note issued 
+        by action request `ar` about the object instance `obj`.
         
-    sidebar_width = 0
-    """
-    Width of the sidebar in 1/12 of total screen width.
-    Meaningful values are 0 (no sidebar), 2 or 3.
-    """
-    
-    
+        Default behaviour is to simply forwar it to the `obj`'s 
+        :meth:`get_system_note_recipients <lino.core.model.Model.get_system_note_recipients>`,
+        but here is a hook to define local exceptions to the 
+        application specific default rules.
+        """
+        return obj.get_system_note_recipients(ar,silent)
+        
+
+    def get_todo_tables(self,ar):
+        """
+        Return or yield a list of tables that should be empty
+        """
+        for mod in self.get_installed_modules():
+            meth = getattr(mod,'get_todo_tables',None)
+            if meth is not None:
+                #~ dblogger.debug("Running %s of %s", methname, mod.__name__)
+                for i in meth(self,ar):
+                    yield i
+

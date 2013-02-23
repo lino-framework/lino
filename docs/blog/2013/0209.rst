@@ -1,10 +1,10 @@
 20130209
 ========
 
-Webless Lino
+UI-less Lino
 ------------
 
-Started :doc:`/tutorials/webless`.
+Started :doc:`/tutorials/uiless`.
 
 The following problem took me some time.
 Restoring the dumped fixture in our example failed with::

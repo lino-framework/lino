@@ -38,7 +38,6 @@ Note that we add a special virtual field `is_restaurant`
 .. literalinclude:: ../../lino/test_apps/mti/models.py
 
 
-
 Populating the database
 -----------------------
 

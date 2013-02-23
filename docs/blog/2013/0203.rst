@@ -51,6 +51,8 @@ After reading all this, I got enlighted on how to split Lino:
 
 - lino-framework : lino.modlib and lino.mixins
 
+(--> :doc:`/tickets/74`)
+
 
 Pre-release rush
 ----------------

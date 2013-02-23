@@ -4,7 +4,7 @@
 `django.contrib.contenttypes` and `post_syncdb`
 -----------------------------------------------
 
-Continued on :doc:`/tutorials/webless`.
+Continued on :doc:`/tutorials/uiless`.
 
 The trick that disables the `post_syncdb` signal (:doc:`0209`) 
 works for 

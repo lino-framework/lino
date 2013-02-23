@@ -48,10 +48,11 @@ Which you can admire nor in :mod:`lino.models`.
 
 All this shows how regrettable it is that Django doesn't provide a 
 `populated` signal. 
-It would be soo easy,
-just two lines of code that wouldn't hurt anybody::
+It would be so easy,
+just two lines of code in `/django/db/models/loading.py`
+that wouldn't hurt anybody::
 
-  populated = signals.Signal() # <<<<<<<<<<<<<<<<<<<<<<<<<
+  populated = signals.Signal() # <<<<<<<<<<<<<<<<<<<<<<<<< first line
 
   class AppCache(object): 
 
@@ -72,7 +73,7 @@ just two lines of code that wouldn't hurt anybody::
                   for app_name in self.postponed:
                       self.load_app(app_name)
                   self.loaded = True
-              populated.send(sender=self)  # <<<<<<<<<<<<<<<<<<<<<<<<<
+              populated.send(sender=self)  # <<<<<<<<<<<<< second line
           finally:
               imp.release_lock() 
               

@@ -137,33 +137,6 @@ class Lino(object):
     
     """
     
-    partners_app_label = 'contacts'
-    """
-    Temporary setting, see :doc:`/tickets/72`
-    """
-    
-    # three constants used by lino.modlib.workflows:
-    max_state_value_length = 20 
-    max_action_name_length = 50
-    max_actor_name_length = 100
-    
-    allow_duplicate_cities = False
-    """
-    In a default configuration (when :attr:`allow_duplicate_cities` is False), 
-    Lino declares a UNIQUE clause 
-    for :class:`Cities <lino.modlib.countries.models.Cities>` 
-    to make sure that your database never contains duplicate cities.
-    This behaviour mighr disturb e.g. when importing legacy data that 
-    did not have this restriction.
-    Set it to True to remove the UNIQUE clause.
-    
-    Changing this setting might affect your database structure 
-    and thus require a :doc:`/topics/datamig`
-    if your application uses :mod:`lino.modlib.countries`.
-    
-    """
-    
-    
     help_url = "http://code.google.com/p/lino"
     #~ site_url = 
     #~ index_html = "This is the main page."
@@ -193,53 +166,6 @@ class Lino(object):
     like :attr:`short_name` and :attr:`version`.
     """
     
-    uid = 'myuid'
-    """
-    A universal identifier for this Lino site. 
-    This is needed when synchronizing with CalDAV server.  
-    Locally created calendar components in remote calendars 
-    will get a UID based on this parameter,
-    using ``"%s@%s" (self.pk,settings.LINO.ui)``.
-    
-    The default value is ``'myuid'``, and
-    you should certainly override this 
-    on a production server that uses remote calendars.
-    """
-    
-    #~ person_model = None
-    #~ person_model = "contacts.Person"
-    #~ """
-    #~ If your application uses :model:`lino.modlib.contacts`,
-    #~ set this to a string "applabel.Modelname" which identifies 
-    #~ your Person model (which should inherit from
-    #~ :class:`lino.modlib.contacts.models.Person`).
-    #~ """
-    
-    #~ company_model = None
-    #~ company_model = "contacts.Company"
-    #~ """
-    #~ If your application uses :model:`lino.modlib.contacts`,
-    #~ set this to a string "applabel.Modelname" which identifies 
-    #~ your Company model (which should inherit from
-    #~ :class:`lino.modlib.contacts.models.Company`).
-    #~ """
-    
-    project_model = None
-    """
-    Optionally set this to the <applabel_modelname> of a 
-    model used as project in your application.
-    """
-    
-    #~ user_model = "users.User"
-    user_model = None
-    """
-    Set this to ``"auth.User"`` if you use `django.contrib.auth` instead of
-    `lino.modlib.users`. 
-    
-    Set it to `None` to remove any user management 
-    (feature used by e.g. :mod:`lino.test_apps.1`)
-    """
-    
     is_local_project_dir = False
     """
     This is automatically set when a :class:`Lino` is instantiated. 
@@ -249,11 +175,6 @@ class Lino(object):
     and adds them to the default settings.
     """
     
-    
-    legacy_data_path = None
-    """
-    Used by custom fixtures that import data from some legacy database.    
-    """
     
     migration_module = None
     """If you maintain a data migration module for your application, 
@@ -331,11 +252,6 @@ class Lino(object):
     
     """
     
-    propvalue_max_length = 200
-    """
-    Used by :mod:`lino.modlib.properties`.
-    """
-    
     appy_params = dict(ooPort=8100)
     """
     Used by :class:`lino.mixins.printable.AppyBuildMethod`.
@@ -404,27 +320,10 @@ class Lino(object):
     If you change this setting, you also need to override :meth:`parse_time`.
     """
     
-    time_format_extjs = 'H:i'
-    """
-    Format (in ExtJS syntax) to use for displaying dates to the user.
-    If you change this setting, you also need to override :meth:`parse_time`.
-    """
-    
     date_format_strftime = '%d.%m.%Y'
     """
     Format (in strftime syntax) to use for displaying dates to the user.
     If you change this setting, you also need to override :meth:`parse_date`.
-    """
-    
-    date_format_extjs = 'd.m.Y'
-    """
-    Format (in ExtJS syntax) to use for displaying dates to the user.
-    If you change this setting, you also need to override :meth:`parse_date`.
-    """
-    
-    alt_date_formats_extjs = 'd/m/Y|Y-m-d'
-    """
-    Alternative date entry formats accepted by ExtJS Date widgets.
     """
     
     #~ date_format_regex = "/^[0123]\d\.[01]\d\.-?\d+$/"
@@ -444,32 +343,6 @@ class Lino(object):
     """
     Format (in ExtJS syntax) to use for formatting timestamps in AJAX calls.
     If you change this setting, you also need to override :meth:`parse_datetime`.
-    """
-    
-    #~ default_number_format_extjs = '0,000.00/i'
-    default_number_format_extjs = '0,00/i'
-    
-    uppercase_last_name = False
-    """
-    Whether last name of persons should be printed with uppercase letters.
-    See :mod:`lino.test_apps.human`
-    """
-    
-    cbss_live_tests = False
-    """
-    Whether unit tests should try to really connect to the cbss.
-    Some test cases of the test suite would fail with a timeout if run 
-    from behind an IP address that is not registered at the :term:`CBSS`.
-    These tests are skipped by default. To activate them, 
-    set `cbss_live_tests` to `True` in your :xfile:`settings.py`.
-    
-    """
-    
-    cbss_environment = None
-    """
-    Either `None` or one of 'test', 'acpt' or 'prod'.
-    See :mod:`lino.modlib.cbss.models`.
-    Leaving this to `None` means that the cbss module is "inactive" even if installed.
     """
     
     languages = ['en']
@@ -499,45 +372,6 @@ class Lino(object):
     ui.Lino overrides this to hold a SiteConfig instance.
     """
     
-    max_auto_events = 36
-    """
-    Maximum number of automatic events to be generated 
-    by :class:`lino.modlib.cal.models.EventOwner`.
-    """
-    
-    #~ mergeable_models = []
-    #~ """
-    #~ A list of models that should have a "Merge" action
-    #~ (see :mod:`lino.mixins.mergeable`).
-    #~ """
-    
-    override_modlib_models = []
-    """
-    A list of names of modlib models which are being 
-    redefined by this application.
-    
-    The following modlib models currently support this:
-    - :class:`contacts.Person <lino.modlib.contacts.models.Person>`
-    - :class:`contacts.Company <lino.modlib.contacts.models.Company>`
-    
-    Usage: in your application's `settings.py`, specify::
-    
-      class Lino(Lino):
-          override_modlib_models = ['contacts.Person']
-          
-    This will cause the modlib Person model to be abstract, 
-    and hence your application is responsible for defining another 
-    `Person` class with "contacts" as `app_label`::
-          
-      class Person(contacts.Person,mixins.Born):
-          class Meta(contacts.Person.Meta):
-              app_label = 'contacts'
-              
-          def kiss(self):
-              ...
-    
-    """
-    
     modules = AttrDict()
     """
     A shortcut to access all installed models and actors.
@@ -559,6 +393,13 @@ class Lino(object):
     command.
     """
     
+    startup_time = None
+    """
+    Don't modify this. 
+    It contains the time when this this Lino has been instantiated,
+    iaw the startup time of this Django process.
+    """
+    
     
     #~ use_contenttypes = True
     #~ """
@@ -571,26 +412,16 @@ class Lino(object):
     
     def __init__(self,project_file,django_settings):
       
-        #~ self.user_profile_fields = ['level']
-        
-        #~ self.version = __version__
-        
-        #~ self._watch_changes_requests = []
-        
-        #~ print 20130219, __file__, self.__class__
-        
         self.project_dir = normpath(dirname(project_file))
         self.project_name = os.path.split(self.project_dir)[-1]
         
-        
-        self.qooxdoo_prefix = '/media/qooxdoo/lino_apps/' + self.project_name + '/build/'
+        #~ self.qooxdoo_prefix = '/media/qooxdoo/lino_apps/' + self.project_name + '/build/'
         #~ self.dummy_messages = set()
         #~ self._starting_up = False
         self._startup_done = False
         #~ self._response = None
         self.django_settings = django_settings
         self.GFK_LIST = []
-        
         
         django_settings.update(
             LOGGING_CONFIG='lino.utils.log.configure',
@@ -645,11 +476,9 @@ class Lino(object):
                     yield pth
           
        
-    def is_abstract_model(self,name):
-        return name in self.override_modlib_models
-        
     def parse_date(self,s):
-        """Convert a string formatted using 
+        """
+        Convert a string formatted using 
         :attr:`date_format_strftime` or  :attr:`date_format_extjs` 
         into a `(y,m,d)` tuple (not a `datetime.date` instance).
         See :doc:`/blog/2010/1130`.
@@ -660,7 +489,8 @@ class Lino(object):
         #~ return datetime.date(*ymd)
         
     def parse_time(self,s):
-        """Convert a string formatted using 
+        """
+        Convert a string formatted using 
         :attr:`time_format_strftime` or  :attr:`time_format_extjs` 
         into a datetime.time instance.
         """
@@ -668,7 +498,8 @@ class Lino(object):
         return datetime.time(*hms)
         
     def parse_datetime(self,s):
-        """Convert a string formatted using
+        """
+        Convert a string formatted using
         :attr:`datetime_format_strftime` or  :attr:`datetime_format_extjs` 
         into a datetime.datetime instance.
         """
@@ -702,24 +533,14 @@ class Lino(object):
         #~ "Override this in each application"
         #~ return __file__
         
-    def is_imported_partner(self,obj):
-        """
-        Return whether the specified
-        :class:`Partner <lino.modlib.contacts.models.Partner>` instance
-        `obj` is to be considered as imported from some legacy database.
-        """
-        #~ return obj.id is not None and (obj.id < 200000 or obj.id > 299999)
-        return False
-        #~ return obj.id is not None and (obj.id > 10 and obj.id < 21)
-                  
-        
     #~ def analyze_models(self):
         #~ from lino.core.kernel import analyze_models
         #~ analyze_models()
         
     def startup(self,**options):
         """
-        Start the Lino instance (the object stored as :setting:`LINO` in your :xfile:`settings.py`).
+        Start the Lino instance (the object stored as :setting:`LINO` in 
+        your :xfile:`settings.py`).
         This is called exactly once from :mod:`lino.models` 
         when Django has has populated it's model cache.
         
@@ -729,13 +550,6 @@ class Lino(object):
         """
         import logging
         logger = logging.getLogger(__name__)
-        
-        #~ global STARTUP_DONE
-        #~ if STARTUP_DONE: 
-            #~ print "20130219 DONE"
-            #~ logger.info("Lino startup already done")
-            #~ return
-        #~ STARTUP_DONE = True
         
         #~ logger.info("Lino startup (PID %s)",os.getpid())
         
@@ -750,43 +564,6 @@ class Lino(object):
         from lino.core.kernel import startup_site
         startup_site(self,**options)
         
-        
-        #~ import time
-
-        #~ import threading
-        #~ write_lock = threading.RLock()
-        #~ write_lock = threading.Lock()
-        
-        #~ write_lock.acquire()
-        
-        #~ if self._starting_up:
-            #~ while self._starting_up:
-                #~ logger.warning("Lino.startup() waiting...")
-                #~ time.sleep(1)
-            #~ return 
-            
-        #~ if self._starting_up:
-            #~ # logger.warning("Lino.startup() called recursively.")
-            #~ """
-            #~ This can happen when running e.g. under mod_wsgi: 
-            #~ another thread has started the work, so keep your fingers 
-            #~ away and don't start a second time.
-            #~ """
-            #~ # write_lock.release()
-            #~ # return 
-            #~ raise Exception("Lino.startup() called recursively.")
-            
-        #~ self._starting_up = True
-        
-        
-        #~ try:
-          
-            #~ startup_site(self,**options)
-        
-            #~ self._startup_done = True
-        #~ finally:
-            #~ self._starting_up = False
-            #~ write_lock.release()
         
     def setup_workflows(self):
         self.on_each_app('setup_workflows')
@@ -833,7 +610,6 @@ class Lino(object):
         add('900', _("Administrator"), name='admin', level='admin')
         
         
-        
     def add_user_field(self,name,fld):
         if self.user_model:
             from lino import dd
@@ -874,13 +650,7 @@ class Lino(object):
             if meth is not None:
                 #~ dblogger.debug("Running %s of %s", methname, mod.__name__)
                 meth(self,*args)
-        
-        
-    #~ def get_calendar_color(self,calendar,request):
-        #~ if calendar.user == request.user:
-            #~ return 5
-        #~ return 2
-        
+
     def demo_date(self,days=0,**offset):
         """
         Used e.g. in python fixtures.
@@ -893,88 +663,6 @@ class Lino(object):
         return self.startup_time.date()
         
         
-    vat_quarterly = False
-    """
-    Set this to True to support quarterly VAT declarations.
-    """
-    
-    def get_vat_class(self,tt,item):
-        return 'normal'
-        
-    def get_product_vat_class(self,tt,product):
-        return 'normal'
-        
-
-    def get_product_base_account(self,tt,product):
-        """
-        Return the reference of the general account 
-        to be used to book the product movement of 
-        the trade type and product.
-        The default implementation works with the accounts created by
-        :mod:`lino.modlib.accounts.fixtures.mini`.
-        """
-        if tt.name == 'sales':
-            #~ return '7000'
-            return 'sales'
-        elif tt.name == 'purchases':
-        #~ elif item.voucher.journal.type == JournalTypes.purchases:
-            return 'purchases'
-            #~ return '6000'
-        
-    #~ def get_sales_item_account(self,item):
-        #~ return self.modules.accounts.Account.objects.get(group__ref='704000')
-        
-    def get_partner_account(self,voucher):
-        """
-        Return the reference of the general account 
-        where the partner movement of the given voucher should be booked.
-        The default implementation works with the accounts created by
-        :mod:`lino.modlib.accounts.fixtures.mini`.
-        """
-        tt = voucher.get_trade_type()
-        if tt.name == 'sales':
-            #~ return '4000'
-            return 'customers'
-        elif tt.name == 'purchases':
-            #~ return '4400'
-            return 'suppliers'
-        
-    def get_vat_account(self,tt,vc,vr):
-        """
-        Return the reference of the account where the VAT amount should be booked.
-        `tt` is a TradeType (usually either `sales` or `purchases`)
-        `vc` is a VatClass
-        `vr` is a VatRegime
-        
-        """
-        if tt.name == 'sales':
-            #~ return '4000'
-            return 'vat_due'
-        elif tt.name == 'purchases':
-            #~ return '4400'
-            return 'vat_deductible'
-        
-        #~ return '472100'
-
-    def get_vat_rate(self,tt,vc,vr):
-        VAT_RATES = dict(
-          exempt=Decimal(),
-          reduced=Decimal('0.07'),
-          normal=Decimal('0.20')
-        )
-        return VAT_RATES[vc.name]
-
-        
-        
-    def get_reminder_generators_by_user(self,user):
-        """
-        Override this per application to return a list of 
-        reminder generators from all models for a give ueser
-        A reminder generator is an object that has a `update_reminders` 
-        method.
-        """
-        return []
-        
     def install_migrations(self,*args):
         """
         See :func:`lino.utils.dumpy.install_migrations`.
@@ -982,31 +670,6 @@ class Lino(object):
         from lino.utils.dumpy import install_migrations
         install_migrations(self,*args)
           
-    #~ def get_application_info(self):
-        #~ """
-        
-        #~ Application developers must implement 
-        #~ this in their Lino 
-        #~ subclass by something like this::
-        
-            #~ def get_application_info(self):
-                #~ from myapp import __version__, __url__
-                #~ return ("MyApp",__version__,__url__)
-        
-        #~ This function is used by 
-        #~ :meth:`using` and :meth:`site_version`.
-        
-        #~ """
-        #~ return (self.__name__,
-                #~ self.__version__,
-                #~ self.__url__)
-        #~ return (self.django_settings['__name__'],
-                #~ self.django_settings['__version__'],
-                #~ self.django_settings['__url__'])
-        #~ return ("Lino App",'0.1','http://code.google.com/p/lino/')
-        
-        #~ raise NotImplementedError()
-        
     def using(self,ui=None):
         """
         Yields a list of (name, version, url) tuples
@@ -1163,57 +826,18 @@ class Lino(object):
         #~ return "Lino " + __version__
 
 
-    #~ def watch_changes(self,model,fields=None,**options):
-        #~ """
-        #~ Declare a set of fields of a model to be "observed" or "watched".
-        #~ Each change to an object comprising at least one watched 
-        #~ will lead to an entry to the ChangesByObject table.
-        
-        #~ `model` may be a string `app.Model`.
-        #~ It will be resolved during kernel startup.
-        #~ All calls to watch_changes will be grouped by model.
-        
-        #~ See also :mod:`lino.utils.dblogger`.
-        #~ """
-        #~ self._watch_changes_requests.append((model,fields,options))
-        
-        
     #~ def setup_changelog(self):
     def on_site_startup(self):
         """
         This method is called during site startup
         """
         pass
-        
-
-    def get_system_note_recipients(self,ar,obj,silent):
-        """
-        Return or yield a list of recipients 
-        (i.e. strings "Full Name <name@example.com>" )
-        to be notified by email about a system note issued 
-        by action request `ar` about the object instance `obj`.
-        
-        Default behaviour is to simply forwar it to the `obj`'s 
-        :meth:`get_system_note_recipients <lino.core.model.Model.get_system_note_recipients>`,
-        but here is a hook to define local exceptions to the 
-        application specific default rules.
-        """
-        return obj.get_system_note_recipients(ar,silent)
-        
-
-    def get_todo_tables(self,ar):
-        """
-        Return or yield a list of tables that should be empty
-        """
-        for mod in self.get_installed_modules():
-            meth = getattr(mod,'get_todo_tables',None)
-            if meth is not None:
-                #~ dblogger.debug("Running %s of %s", methname, mod.__name__)
-                for i in meth(self,ar):
-                    yield i
-
     
     def get_generic_related(self,obj):
+        """
+        Yield all database objects in database which have a GenericForeignKey 
+        that points to the object `obj`.
+        """
         from django.contrib.contenttypes.models import ContentType
         for gfk in self.GFK_LIST:
             ct = ContentType.objects.get_for_model(gfk.model)

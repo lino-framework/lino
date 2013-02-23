@@ -1,0 +1,66 @@
+20130223
+========
+
+
+Wochenrückblick
+---------------
+
+Also diese Woche habe ich ja nochmal wieder viel Zeit mit Kleinkram 
+verbracht. Aber ich bin zufrieden: ich habe viel gelernt, und Lino ist 
+"von innen schöner" geworden.
+
+Die Testsuite läuft noch immer nicht, und ich denke 
+inzwischen, dass ich die nochmal wieder links liegen lassen sollte, 
+um mich dringenderen Dingen zu widmen. 
+Unit Tests sind zwar wichtig, machen Spaß und bringen mir 
+"Vertrauen in meinen Code", aber sie sind kein sichtbares Resultat.
+Momentan braucht Lino zuerst mal eine weitere benutzbare Anwendung.
+Stabilität wird erst wichtig, wenn es genügend Kunden gibt, die bereit 
+sind, die Kosten dafür zu zahlen.
+
+Insbesondere sollte also mal endlich 
+ein **erster Prototyp von Lino Così** fertig werden, 
+damit Andreas mit Testen anfangen kann.
+
+Vielleicht ebenso wichtig wäre die 
+Zuendeführung der begonnen Aufteilung von Lino in drei Teile.
+
+Was Lino eigentlich ist
+------------------------
+
+Was ist :class:`lino.Lino` eigentlich für ein Ding?
+
+#.  Es ist ein Django-Setting, also ein globaler Name in der :xfile:`settings.py`, 
+    der einmal gesetzt wird und dann im gesamten Leben des Prozesses konstant 
+    bleibt und von überall her abgerufen werden kann.
+
+#.  Es ist ein spezielles Setting, dessen Datentyp nicht wie bei allen anderen
+    Settings `string` oder `list` oder `dict` ist, sondern `object`. 
+    
+    Im Gegensatz zu normalen Settings hat dieses Setting also selber 
+    Attribute, die dann nicht mehr groß geschrien zu werden brauchen.
+    Diese Attribute können Variablen oder Methoden sein.
+    Die Instanzvariablen dieses Objekts können sich ändern, ohne dass Django 
+    davon etwas mitbekommt.
+    Außerdem kann man es unterklassieren, wie z.B. 
+    :class:`lino.ui.Lino` es tut.
+    
+#.  Es hat insbesondere auch eine hoch komplexe Methode namens `startup`,
+    die automagisch zu Beginn jedes Prozesses aufgerufen wird, nachdem Django 
+    seinen *module cache* fertig gefüllt hat.
+    
+Aber der Name ist nicht gut, weil ``settings.LINO`` nichts aussagt 
+über all dies.
+
+Weiter geht's im eigens dafür eröffneten Ticket :doc:`/tickets/74`.
+
+
+A quick release
+===============
+
+I promised to Gerd a bugfix release for this week-end, so here it is:
+:doc:`Lino 1.5.1 </releases/1.5.11>`
+and
+:welfare:`Welfare 1.0.13 </releases/1.0.14>`
+  
+
