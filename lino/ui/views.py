@@ -433,7 +433,7 @@ class AdminIndex(View):
             a = settings.LINO.get_main_action(user)
             if a is not None and a.get_view_permission(user.profile):
                 kw.update(on_ready=ui.ext_renderer.action_call(request,a,{}))
-        return http.HttpResponse(ui.html_page(request,**kw))
+        return http.HttpResponse(ui.ext_renderer.html_page(request,**kw))
 
 class MainHtml(View):
     def get(self, request, *args, **kw):
@@ -479,7 +479,7 @@ class RunJasmine(View):
     """
     def get(self, request, *args, **kw):
         ui = settings.LINO.ui
-        return http.HttpResponse(ui.html_page(request,run_jasmine=True))
+        return http.HttpResponse(ui.ext_renderer.html_page(request,run_jasmine=True))
 
 class EidAppletService(View):
     """
@@ -812,7 +812,7 @@ class ApiElement(View):
                 tab = int(tab)
                 after_show.update(active_tab=tab)
             
-            return http.HttpResponse(ui.html_page(request,ba.action.label,
+            return http.HttpResponse(ui.ext_renderer.html_page(request,ba.action.label,
               on_ready=ui.ext_renderer.action_call(request,ba,after_show)))
             
         if isinstance(ba.action,actions.RedirectAction):
@@ -959,7 +959,7 @@ class ApiList(View):
                 #~ ui.ext_renderer.action_call(ar.request,ar.action,after_show))
             #~ print '20110714 on_ready', params
             kw.update(title=ar.get_title())
-            return http.HttpResponse(ar.ui.html_page(request,**kw))
+            return http.HttpResponse(ar.renderer.html_page(request,**kw))
         
         if fmt == 'csv':
             #~ response = HttpResponse(mimetype='text/csv')

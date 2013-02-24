@@ -118,7 +118,7 @@ class Human(model.Model):
         
 The optional keyword argument `salutation` can be set to `False` 
 to suppress salutations. 
-See :func:`lino.apps.pcsw.tests.pcsw_tests.test04` 
+See :func:`lino_welfare.modlib.pcsw.tests.pcsw_tests.test04` 
 and
 :func:`lino.modlib.contacts.tests.test01` 
 for some examples.

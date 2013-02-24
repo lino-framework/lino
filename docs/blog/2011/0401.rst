@@ -28,7 +28,7 @@ auftreten, möglichst schmerzlos beseitigt kriegen.
       
     Wobei in der `20110401.py` folgendes steht::
       
-      from lino.apps.dsbe.models import Activity
+      from lino.projects.dsbe.models import Activity
       q = Activity.objects.filter(name='00')
       q.delete()
     

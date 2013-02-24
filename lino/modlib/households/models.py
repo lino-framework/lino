@@ -40,7 +40,6 @@ from lino.utils import babel
 from lino.utils import mti
 #~ from lino.modlib.contacts import models as contacts
 contacts = dd.resolve_app('contacts')
-#~ from lino.apps.pcsw import models as pcsw
 
 class Type(babel.BabelNamed):
     """

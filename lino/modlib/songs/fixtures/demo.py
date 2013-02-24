@@ -21,8 +21,8 @@ import os, codecs
 import yaml
 
 
-from lino.apps.songs.models import *
-from lino.apps.countries import models as countries
+from lino.modlib.songs.models import *
+from lino.modlib.countries import models as countries
 from lino.utils.instantiator import Instantiator, ManyToManyConverter
 
 

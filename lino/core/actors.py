@@ -421,7 +421,7 @@ class Actor(actions.Parametrizable):
     hide_window_title = False
     """
     This is set to `True` in home pages
-    (e.g. :class:`lino.apps.pcsw.models.Home`).
+    (e.g. :class:`lino_welfare.modlib.pcsw.models.Home`).
     """
     
     allow_create = True

@@ -4,7 +4,7 @@
 Sales invoices 
 --------------
 
-Today I had a bug-hunting tour in :mod:`lino.apps.cosi`,
+Today I had a bug-hunting tour in :mod:`lino.projects.cosi`,
 more precisely at the sales invoices.
 
 Saving a 

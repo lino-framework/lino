@@ -35,7 +35,7 @@ in Django's :setting:`SERIALIZATION_MODULES` setting::
 When developing or using Lino applications you 
 don't need to worry about this setting because 
 you inherit it automatically when you 
-do ``from lino.apps.FOO.settings import *`` in your :xfile:`settings.py`.
+do ``from lino.projects.FOO.settings import *`` in your :xfile:`settings.py`.
 Only if you happen to define your own local serialization modules,
 don't forget to also include Lino's :mod:`lino.utils.dumpy` module.
 

@@ -42,7 +42,7 @@ Der folgende Punkt ist jetzt auch fertig:
 
 War im Grunde ganz einfach, ich musste nur `_meta.local_fields` statt `_meta.fields` nehmen.
 Ich habe auch eigens einen Testcase 
-:func:`lino.apps.dsbe.tests.dsbe_tests.test01` 
+:func:`lino.projects.dsbe.tests.dsbe_tests.test01` 
 geschrieben, der allerdings nicht wirklich testet 
 sondern mir beim Überlegen behilflich war. 
   

@@ -224,6 +224,7 @@ class Slots(dd.Table):
     """
     
 class EventsByTeacher(cal.Events):
+    help_text = _("Shows events of courses of this teacher")
     master = Teacher
     
     @classmethod

@@ -644,6 +644,7 @@ class Lino(lino.Lino):
         ]
         django_settings.update(TEMPLATE_CONTEXT_PROCESSORS = tuple(tcp))
 
+        
     def on_site_startup(self):
         super(Lino,self).on_site_startup()
         from .ui import ExtUI
@@ -898,7 +899,7 @@ class Lino(lino.Lino):
         Override this 
         in application-specific (or even local) :xfile:`settings.py` files 
         to define a series of *quick links* to appear below the main menu bar.
-        Example see :meth:`lino.apps.pcsw.settings.Lino.setup_quicklinks`.
+        Example see :meth:`lino.projects.pcsw.settings.Lino.setup_quicklinks`.
         """
         self.on_each_app('setup_quicklinks',ar,m)
         

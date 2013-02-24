@@ -16,7 +16,7 @@ Saffre
 """
 
 from django.db import models
-from lino.apps.sandbox.contacts import models as contacts
+from lino.projects.sandbox.contacts import models as contacts
 
 # extends Contact
 

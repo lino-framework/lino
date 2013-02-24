@@ -70,10 +70,10 @@ Pre-release rush
   
   
   
-Continued on :mod:`lino.apps.belref`
-------------------------------------
+Continued on :mod:`lino.projects.belref`
+----------------------------------------
 
-Upps, ich habe versehentlich ein bisschen an :mod:`lino.apps.belref`
+Upps, ich habe versehentlich ein bisschen an :mod:`lino.projects.belref`
 weiter gearbeitet, obwohl es zur Zeit eigentlich dringendere Dinge 
 gibt...
 

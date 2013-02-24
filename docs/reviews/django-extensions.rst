@@ -53,8 +53,8 @@ The debts module with and without ``-d``
 
 .. graphviz:: django-extensions/debtsd.dot
 
-The :mod:`lino.apps.cms` application
-------------------------------------
+The :mod:`lino.projects.cms` application
+----------------------------------------
 
 .. graphviz:: django-extensions/cms.dot
 

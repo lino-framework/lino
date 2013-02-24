@@ -6,7 +6,7 @@ Intermezzo : Using Lino to generate a static Website
 ----------------------------------------------------
 
 I wrote a quick application 
-:mod:`lino.apps.events` and
+:mod:`lino.projects.events` and
 :mod:`lino.modlib.events`.
 The pages at 
 http://www.vor-cycling.be/de/events.html

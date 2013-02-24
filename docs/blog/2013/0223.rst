@@ -63,4 +63,29 @@ I promised to Gerd a bugfix release for this week-end, so here it is:
 and
 :welfare:`Welfare 1.0.13 </releases/1.0.14>`
   
+A bug in :mod:`lino.modlib.school`
+----------------------------------
 
+The "Events" panel on a teacher in :mod:`lino.modlib.school` 
+didn't show any rows. It shows all Events which are indirectly 
+assigned to this teacher because they are on a course of this 
+teacher.
+
+Note that :mod:`lino.projects.homeworkschool` is a sleeping project 
+which isn't even in prototype phase.
+
+
+Renamed `lino.apps` to `lino.projects`
+--------------------------------------
+
+Uff: I renamed the `lino.apps` package to `lino.projects`.
+This was another move inspired (or encouraged) by 
+`Two scoops of Django <https://django.2scoops.org/>`_
+(see also :doc:`/tickets/72`).
+
+I still think that Django's vocabulary is unfortunate:
+Django's "apps" are in fact "plugins" or "modules", 
+and Django just has no namespace left for 
+what I would call an "application", 
+but I want Lino to be easily understandable by an average Django user,
+and the name `lino.apps` was clearly too irritating.

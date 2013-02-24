@@ -1,6 +1,6 @@
-#~ from lino.apps.min1.settings import *
-#~ from lino.apps.min2.settings import *
-from lino.apps.presto.settings import *
+#~ from lino.projects.min1.settings import *
+#~ from lino.projects.min2.settings import *
+from lino.projects.presto.settings import *
 class Lino(Lino):
     title = "mini tutorial"
     languages = ['en', 'de','fr']

@@ -21,7 +21,7 @@ extension.
     lino.modlib
     lino.mixins
     
-    lino.apps
+    lino.projects
     
     lino.ui
     

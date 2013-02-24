@@ -94,7 +94,7 @@ def test01(self):
         link.a = p1
     except ValueError,e:
         self.assertEqual(str(e),
-            "Expected <class 'lino.apps.pcsw.models.Company'> instance but got <Person: First PERSON (100)>")
+            "Expected <class 'lino.projects.pcsw.models.Company'> instance but got <Person: First PERSON (100)>")
     else:
         self.fail("Failed to raise ValueError")
     

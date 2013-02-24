@@ -15,8 +15,7 @@ Any changes will be lost each time we reinitialize the demo data.
     `demo1 <http://demo1.lino-framework.org>`_
     shows the "Polls" application developed in the 
     :doc:`/tutorials/polls` tutorial.
-    A minimal Lino application which doesn't 
-    even have user management.
+    A minimal didactic Lino application without authentication.
 
   <NEXTCELL>
   
@@ -25,7 +24,10 @@ Any changes will be lost each time we reinitialize the demo data.
     :target: http://demo2.lino-framework.org
       
     `demo2 <http://demo2.lino-framework.org>`_ shows 
-    an early prototype of Lino Homeworkschool.
+    an early prototype of Lino Homeworkschool 
+    (:mod:`lino.projects.homeworkschool`).
+    Note that this is currently a sleeping project 
+    because there is no acute need.
     
   
   <NEXTROW>

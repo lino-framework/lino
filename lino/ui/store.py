@@ -927,7 +927,7 @@ class Store(BaseStore):
         self.actor = rh.actor
         """
         MTI children have two primary keys. Example::
-        >>> from lino.apps.pcsw.models import Person
+        >>> from lino.projects.pcsw.models import Person
         >>> [f for f in Person._meta.fields if f.primary_key]
         [<django.db.models.fields.AutoField: id>, <django.db.models.fields.related.OneToOneField: contact_ptr>]
         >>> Person._meta.pk

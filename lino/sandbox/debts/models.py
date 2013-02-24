@@ -16,7 +16,7 @@
 This package contains the **Debt Mediation** 
 module 
 (Schuldnerberatung, Médiation de dettes) 
-for :mod:`lino.apps.pcsw`.
+for :mod:`lino.projects.pcsw`.
 It enables social consultants to create :class:`Budgets`.
 A :class:`Budget` collects financial 
 information like monthly income, monthly expenses and debts 

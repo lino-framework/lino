@@ -102,10 +102,10 @@ and used the existing CodeChanges table.
 
 While working on this I understand that this system can also 
 be just an intermediate solution on our way to do all this 
-directly in :mod:`lino.apps.presto`.
+directly in :mod:`lino.projects.presto`.
 
 So the virtual table CodeChanges goes away, 
-and a fixture :mod:`lino.apps.presto.fixtures.history`
+and a fixture :mod:`lino.projects.presto.fixtures.history`
 imports the :mod:`lino.history` package and yields 
 them to the deserializer.
 
@@ -114,7 +114,7 @@ them to the deserializer.
 blogger.set_date(20121223)
 
 blogger.follow(DCC,933,"""
-Continued in :mod:`lino.apps.presto.fixtures.history`.
+Continued in :mod:`lino.projects.presto.fixtures.history`.
 
 Side note: 
 while reading about `tags <http://mercurial.selenic.com/wiki/Tag>`_ 

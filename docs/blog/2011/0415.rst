@@ -94,7 +94,7 @@ Conflicting translations
 Und dann habe ich noch mal an der Übersetzung für "Note" begonnen. 
 Das ist ein subtiler neuer Sonderfall, 
 weil die Standardübersetzung "Notiz" (die in :mod:`lino.modlib.notes` steht) 
-in :mod:`lino.apps.dsbe` (und nur dort) "Ereignisse/Notizen" sein soll.
+in :mod:`lino.projects.dsbe` (und nur dort) "Ereignisse/Notizen" sein soll.
 
 Was passiert, wenn zwei Django-Anwendungen das gleiche englische Wort 
 für etwas benutzen, die Übersetzungen aber verschieden sind?

@@ -16,8 +16,6 @@ import time
 from datetime import date
 from dateutil import parser as dateparser
 
-#from lino.apps.sales.models import *
-#from lino.apps.contacts import models as contacts
 from lino import dd
 from lino.modlib.sales import utils
 from lino.utils.instantiator import Instantiator, i2d

@@ -4,7 +4,8 @@ Lino pour CPAS
 
 (no longer maintained)
 
-Ceci est la page où je collectione, en français, les idées et plans pour le déceloppement futur de Lino pour CPAS.
+Ceci est la page où je collectionnaise, en français, 
+les idées et plans pour le déceloppement futur de Lino pour CPAS.
 
 Lino pour CPAS est une application Lino, 
 la première application Lino réellement utilisée,
@@ -15,7 +16,7 @@ Aperçu code source
 ------------------
 
 Au niveau du code source, Lino pour CPAS consiste en 
-l'application proprement dite :mod:`lino.apps.pcsw` 
+l'application proprement dite :mod:`lino_welfare.modlib.pcsw` 
 et de certains modules  que l'on peut considérer spécifiques 
 aux CPAS:
 

@@ -57,7 +57,7 @@ two days ago:
   to populate the models cache before looking for the model)
   since we want to have it usable at the top-level of ``models`` 
   modules.
-  Which is what :mod:`lino.apps.homeworkschool` did.
+  Which is what :mod:`lino.projects.homeworkschool` did.
   This caused a recursive populate, leading to very confusing error messages.
 
 The easiest workaround is to add the following line somewhere *before* the first call::

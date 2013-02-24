@@ -106,7 +106,7 @@ class Lino(object):
     
     This class is first defined in :mod:`lino`, 
     then usually subclassed by the application developer
-    (e.g. :mod:`lino.apps.cosi.Lino`),
+    (e.g. :mod:`lino.projects.cosi.Lino`),
     then imported into your local :xfile:`settings.py`,
     where you may subclass it another time before 
     finally instantiating it, and assigning it to 
@@ -583,8 +583,8 @@ class Lino(object):
         to provide a default list of user profiles for their 
         application.
         
-        See the source code of :mod:`lino.apps.presto` 
-        or :mod:`lino.apps.pcsw` for a usage example.
+        See the source code of :mod:`lino.projects.presto` 
+        or :mod:`lino.projects.pcsw` for a usage example.
         
         Local site administrators may again override this in their 
         :xfile:`settings.py`.

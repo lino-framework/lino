@@ -1,4 +1,4 @@
-from lino.apps.std.settings import *
+from lino.projects.std.settings import *
 
 class Lino(Lino):
     languages = ('en','de','fr')

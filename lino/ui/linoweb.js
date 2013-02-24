@@ -13,7 +13,7 @@
  along with Lino; if not, see <http://www.gnu.org/licenses/>.
 */
 
-{{ui.linolib_intro()}}
+{{ext_renderer.linolib_intro()}}
 
 /* MonthPickerPlugin: thanks to keypoint @ sencha forum
    http://www.sencha.com/forum/showthread.php?74002-3.x-Ext.ux.MonthMenu&p=356860#post356860

@@ -17,7 +17,7 @@ as required by Django.
 Application code doesn't need to worry about this.
 
 This is found by Django because 
-:mod:`lino.apps.std.settings`
+:mod:`lino.projects.std.settings`
 :setting:`ROOT_URLCONF` 
 is set to ``'lino.ui.extjs3.urls'``.
 

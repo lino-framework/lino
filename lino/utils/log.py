@@ -20,7 +20,7 @@ It defines a  :func:`configure` function which
 will be called by Django when you have your
 :setting:`LOGGING_CONFIG` set to ``'lino.utils.log.configure'``
 (the default value when you import your settings from 
-:mod:`lino.apps.std.settings`)
+:mod:`lino.projects.std.settings`)
 
 
 Examples

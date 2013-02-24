@@ -1,0 +1,9 @@
+20130224
+========
+
+
+I moved the renderers from :mod:`lino.ui` to a new :mod:`lino.ui.render`,
+and the ExtJS renderer to another :mod:`lino.ui.extjs`.
+One day I plan to turn Lino's ExtJS UI into a separate project so that 
+I can convert the other parts of Lino from GPL to BSD
+(see :doc:`/tickets/16`)

@@ -14,7 +14,7 @@
 import sys, os
 import lino
 
-os.environ['DJANGO_SETTINGS_MODULE'] = 'lino.apps.sphinxdocs.settings'
+os.environ['DJANGO_SETTINGS_MODULE'] = 'lino.projects.sphinxdocs.settings'
 """
 Trigger loading of Djangos model cache in order to avoid side effects that 
 would occur when this happens later while importing one of the models modules.

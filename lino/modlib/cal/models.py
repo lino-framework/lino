@@ -71,7 +71,7 @@ class TaskStates(dd.Workflow):
     @classmethod
     def migrate(cls,status_id):
         """
-        Used by :meth:`lino.apps.pcsw.migrate.migrate_from_1_4_4`.
+        Used by :meth:`lino.projects.pcsw.migrate.migrate_from_1_4_4`.
         """
         #~ if status_id is None: return None
         cv = {
@@ -2058,7 +2058,7 @@ def migrate_reminder(obj,reminder_date,reminder_text,
                          delay_value,delay_type,reminder_done):
     """
     This was used only for migrating to 1.2.0, 
-    see :mod:`lino.apps.pcsw.migrate`.
+    see :mod:`lino.projects.pcsw.migrate`.
     """
     raise NotImplementedError("No longer needed (and no longer supported after 20111026).")
     def delay2alarm(delay_type):
@@ -2068,7 +2068,7 @@ def migrate_reminder(obj,reminder_date,reminder_text,
         if delay_type == 'Y': return DurationUnits.years
       
     #~ # These constants must be unique for the whole Lino Site.
-    #~ # Keep in sync with auto types defined in lino.apps.pcsw.models.Person
+    #~ # Keep in sync with auto types defined in lino.projects.pcsw.models.Person
     #~ REMINDER = 5
     
     if reminder_text:

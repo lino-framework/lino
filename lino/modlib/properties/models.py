@@ -22,7 +22,7 @@ has a certain :class:`Property`.
 "Property owner" can be anything: 
 a person, a company, a product, an upload, 
 it depends on the implentation of :class:`PropOccurence`.
-For example :mod:`lino.apps.pcsw.models.PersonProperty`.
+For example :mod:`lino.projects.pcsw.models.PersonProperty`.
 
 A :class:`Property` defines the configuration of a property.
 
@@ -78,8 +78,8 @@ class HowWell(dd.ChoiceList):
     which are stored in the database as '0' to '4',
     and whose `__unicode__()` returns their translated text.
 
-    `lino.apps.pcsw.models.Languageknowledge.spoken` 
-    `lino.apps.pcsw.models.Languageknowledge.written` 
+    `lino.projects.pcsw.models.Languageknowledge.spoken` 
+    `lino.projects.pcsw.models.Languageknowledge.written` 
     """
     verbose_name = _("not at all...very well")
     

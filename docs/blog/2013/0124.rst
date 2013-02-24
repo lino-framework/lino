@@ -47,13 +47,13 @@ New method
 and new decorator
 :meth:`dd.when_prepared <lino.core.inject.when_prepared>`.
 
-Together they allow us to have :mod:`lino.apps.cosi` 
+Together they allow us to have :mod:`lino.projects.cosi` 
 hide the `region` field::
 
   @dd.when_prepared('contacts.Partner')
   def hide_region(model):
       model.hide_elements('region')
 
-(:mod:`lino.apps.cosi` is for Belgians, and Belgians 
+(:mod:`lino.projects.cosi` is for Belgians, and Belgians 
 don't use this field. 
 But :mod:`lino.modlib.contacts` is not only for Belgians)

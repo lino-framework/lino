@@ -27,7 +27,7 @@ I moved the concept of "INS codes" from
 :mod:`lino_welfare.modlib.cbss` 
 to a new independent app
 :mod:`lino_welfare.modlib.statbel`.
-And added this to the INSTALLED_APPS of `lino.apps.belref`.
+And added this to the INSTALLED_APPS of `lino.projects.belref`.
 Result:
 the trilingual
 `Countries <http://belref.lino-framework.org/countries/Countries>`_

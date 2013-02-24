@@ -15,7 +15,7 @@
 #import time
 #from datetime import date
 #from dateutil import parser as dateparser
-#from lino.apps.finan import models as finan
+#from lino.projects.finan import models as finan
 #~ import decimal
 from decimal import Decimal
 from django.conf import settings

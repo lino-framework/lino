@@ -271,7 +271,7 @@ Short-term
     Firma verloren gehen. Kann ggf. als Drittpartner eingegeben 
     werden. Betroffen sind folgende Notizen::
     
-      >>> from lino.apps.pcsw.models import Note
+      >>> from lino.projects.pcsw.models import Note
       >>> [int(n.pk) for n in Note.objects.filter(company__isnull=False)]
       [499, 501, 616, 349, 1019, 825, 425, 996, 117, 508, 822, 342, 841, 842]
       
@@ -413,7 +413,7 @@ Medium-term
     Also a Regions table.
 
 #.  Die virtuellen Felder `applies_from` und `applies_until` 
-    in :class:`Meine Klienten <lino.apps.pcsw.models.MyPersons>` 
+    in :class:`Meine Klienten <lino.projects.pcsw.models.MyPersons>` 
     machen jedes seinen eigenen Datenbank-Request 
     Also zwei zusätzlichen Requests für jede Zeile. 
     Einer für beide Felder würde reichen. 
@@ -533,7 +533,7 @@ Medium-term
 #.  Custom Quick filters 
     See :doc:`/blog/2011/1207`.
 
-#.  lino.apps.pcsw has a database design flaw: 
+#.  lino.projects.pcsw has a database design flaw: 
     Person should be split into "Clients" and "normal" persons.
     Contact Persons of a Company currently need to have an entry in the Person table.
     This is also the reason for many deferred save()s when loading a full backup.
@@ -644,7 +644,7 @@ Later
 #.  Welche weiteren Felder müssen (ähnlich wie "Stadt") lernfähig werden? 
     Vorschläge: 
     
-    - lino.apps.pcsw.models.Study.content
+    - lino.projects.pcsw.models.Study.content
     
 #.  igen : Partner.get_invoice_suggestions()
 
@@ -672,7 +672,7 @@ Later
     `work_permit_upload_type` und 
     `driving_licence_upload_type`, 
     die momentan als Klassenattribute 
-    in :class:`lino.apps.pcsw.settings.Lino`
+    in :class:`lino.projects.pcsw.settings.Lino`
     implementiert sind, sollten 
     ebenfalls zu Feldern in der SiteConfig konvertiert werden.
     Aber Vorsicht, denn wenn die verändert werden muss 
@@ -1095,7 +1095,7 @@ Documentation
 #.  Wenn ich in der INSTALLED_APPS von lino.demos.std.settings 
     auch die igen-Module reintue, dann kriege ich::
   
-     ref\python\lino.modlib.dsbe.rst:17: (WARNING/2) autodoc can't import/find module 'lino.apps.dsbe.models', 
+     ref\python\lino.modlib.dsbe.rst:17: (WARNING/2) autodoc can't import/find module 'lino.projects.dsbe.models', 
      it reported error: "resolve_model('contacts.Company',app_label='contacts',who=None) found None"
 
 #.  ``make doctest`` nutzbar machen. Siehe :doc:`/blog/2010/1024`
@@ -1112,7 +1112,7 @@ Documentation
 
 #.  Creating application-specific DetailLayouts disables the effect of eventual 
     `add_detail_tab` calls by other installed apps.
-    Example: :mod:`lino.apps.pcsw` used 
+    Example: :mod:`lino.projects.pcsw` used 
     to create its own UserDetail, a subclass of 
     :class:`lino.modlib.users.models.UserDetail`. 
     But then we started to use :meth:`lino.core.actor.Actor.add_detail_tab` 

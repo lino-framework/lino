@@ -32,7 +32,7 @@ Glossary
      "Dienst für Sozial-Berufliche Eingliederung"     
      A public service in Eupen (Belgium), 
      the first real user of a Lino application
-     :mod:`lino.apps.pcsw`.
+     :mod:`lino.projects.pcsw`.
      
   dump
     "To dump" means to write the content of a database into a text file.
@@ -68,11 +68,11 @@ Glossary
     See :mod:`lino.management.commands.initdb`
     
   initdb_tim
-    See :mod:`lino.apps.pcsw.management.commands.initdb_tim`
+    See :mod:`lino.projects.pcsw.management.commands.initdb_tim`
     
   watch_tim
     A daemon process that synchronizes data from TIM to Lino.
-    See :mod:`lino.apps.pcsw.management.commands.watch_tim`
+    See :mod:`lino_welfare.modlib.pcsw.management.commands.watch_tim`
 
   watch_calendars
     A daemon process that synchronizes remote calendars 

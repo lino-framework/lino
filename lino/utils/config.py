@@ -32,11 +32,12 @@ the only thing needed by
 One possibility might be to write a special Jinja Template class...
 
 Die Reihenfolge in :setting:`INSTALLED_APPS` sollte sein: zuerst 
-`django.contrib.*`, dann ``lino``, dann `lino.modlib.*` und dann `lino.apps.pcsw`. 
+`django.contrib.*`, dann ``lino``, dann `lino.modlib.*` 
+und dann `lino.projects.pcsw`. 
 Also vom Allgemeineren zum Spezifischeren. Und bei den config-Dirs soll diese 
 Liste umgekehrt abgeklappert werden (und die Suche beim 
 ersten Treffer aufhören): zuerst das eventuelle lokale `config_dir`, 
-dann `lino.apps.pcsw`, dann die diversen `lino.modlib.*` usw. 
+dann `lino.projects.pcsw`, dann die diversen `lino.modlib.*` usw. 
 
 """
 

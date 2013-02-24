@@ -4,12 +4,12 @@
 Why Django needs a `populated` signal
 ----------------------------------------
 
-:mod:`lino.apps.homeworkschool` had a problem with the new version,
+:mod:`lino.projects.homeworkschool` had a problem with the new version,
 caused by the Ross McFarland's trick of having :mod:`lino` as the last installed_app 
 and calling :mod:`lino.Lino.startup` automatically from :mod:`lino.models`.
 
 The problem is that 
-:mod:`lino.apps.homeworkschool` has apps which don't import at first run.
+:mod:`lino.projects.homeworkschool` has apps which don't import at first run.
 The `populate` function in 
 `django.db.models.loading`
 "postpones" them and gives them a second chance.
@@ -19,7 +19,7 @@ The order of installed applications is:
   | ...
   | :mod:`lino.modlib.school`
   | ...
-  | :mod:`lino.apps.homeworkschool`
+  | :mod:`lino.projects.homeworkschool`
 
 These two modules have the following interdependency:
 
@@ -40,7 +40,7 @@ understand the problem because of a "little bug":
   to populate the models cache before looking for the model)
   since we want to have it usable at the top-level of ``models`` 
   modules.
-  Which is what :mod:`lino.apps.homeworkschool` did.
+  Which is what :mod:`lino.projects.homeworkschool` did.
   This caused a recursive populate, leading to very confusing error messages.
 
 Another piece of time went into finding out how to cope with this situation.

@@ -1,7 +1,7 @@
 Minimal applications
 ====================
 
-The predefined applications that come with Lino are under :mod:`lino.apps`.
+The predefined applications that come with Lino are under :mod:`lino.projects`.
 
 They are basically just another module to be added to :setting:`INSTALLED_APPS`,
 but one important difference with modules from :mod:`lino.modlib` is that they 
@@ -19,10 +19,10 @@ from :doc:`/ref/modlib`.
 
 Currently Lino has the following minimal applications:
 
-- :mod:`min1 <lino.apps.min1>` :
+- :mod:`min1 <lino.projects.min1>` :
   Uses only the :mod:`contacts <lino.modlib.contacts>` module.
   
-- :mod:`min2 <lino.apps.min2>` :
+- :mod:`min2 <lino.projects.min2>` :
   Uses 
   :mod:`contacts <lino.modlib.contacts>`,
   :mod:`projects <lino.modlib.projects>`,
@@ -30,4 +30,4 @@ Currently Lino has the following minimal applications:
   :mod:`outbox <lino.modlib.outbox>`
   and :mod:`uploads <lino.modlib.uploads>`
 
-- :mod:`lino.apps.presto`
+- :mod:`lino.projects.presto`

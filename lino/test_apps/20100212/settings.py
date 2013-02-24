@@ -1,4 +1,4 @@
-from lino.apps.std.settings import *
+from lino.projects.std.settings import *
 class Lino(Lino):
     user_model = None
 LINO = Lino(__file__,globals())    

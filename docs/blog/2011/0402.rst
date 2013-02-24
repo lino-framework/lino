@@ -5,7 +5,7 @@
 Logging in :term:`watch_tim`
 ----------------------------
 
-.. currentmodule:: lino.apps.dsbe.management.commands.watch_tim
+.. currentmodule:: lino.projects.dsbe.management.commands.watch_tim
 
 Ich hatte noch eine Idee zum Logging in :term:`watch_tim`. 
 Ich brauche nicht nur den Traceback, sondern auch die 

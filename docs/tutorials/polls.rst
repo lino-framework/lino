@@ -93,13 +93,13 @@ occur in almost every Lino :xfile:`settings.py` file
 and which are the thing that turns a Django project into 
 a Lino application::
 
-    from lino.apps.std.settings import *
+    from lino.projects.std.settings import *
     class Lino(Lino):
         ...
     LINO = Lino(__file__,globals()) 
     
 - The first line caused your settings to "inherit" 
-  from :mod:`lino.apps.std`, the common ancestor 
+  from :mod:`lino.projects.std`, the common ancestor 
   of all Lino applications.
 
 - The following lines (where the ``...`` part can be much more 
@@ -133,15 +133,16 @@ method::
     def get_installed_apps(self):
         for a in super(Lino,self).get_installed_apps():
             yield a
-        yield 'lino.apps.polls_tutorial.polls' # 'mysite.polls'
+        yield 'lino.projects.polls_tutorial.polls' # 'mysite.polls'
         
 This method is used to fill Django's :setting:`INSTALLED_APPS`.
 The above code is roughly equivalent to::
 
     INSTALLED_APPS = [
-      'lino', 
+      'lino.ui', 
       'lino.modlib.about', 
-      'lino.apps.polls_tutorial.polls'
+      'lino.projects.polls_tutorial.polls',
+      'lino', 
     ]
 
 But with the difference that Lino automatically adds 

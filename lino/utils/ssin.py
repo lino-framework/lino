@@ -125,7 +125,7 @@ import os
 import cgi
 import datetime
 
-#~ os.environ.setdefault('DJANGO_SETTINGS_MODULE','lino.apps.std.settings')
+#~ os.environ.setdefault('DJANGO_SETTINGS_MODULE','lino.projects.std.settings')
   
 from django.core.exceptions import ValidationError
 from django.utils.encoding import force_unicode 

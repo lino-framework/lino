@@ -214,35 +214,6 @@ You will soon learn more about the :xfile:`settings.py` file,
 but for the moment we guess that you want to get a quick result.
 Just read on.
 
-
-You want Lino? Which Lino?
---------------------------
-
-Lino is a framework. 
-In fact you don't want "just Lino",  
-you'll have to decide which Lino application you want.
-
-Soon you will probably 
-write your own Lino application
-or get somebody else write it for you, 
-but in a first step we suggest that you choose one 
-of the applications that come out of the box with Lino:
-
-- :mod:`lino.apps.dsbe` 
-  (a database for social assistants who assist 
-  people in finding jobs or education).
-
-- :mod:`lino.apps.igen` 
-  (an accounting application focussed on sales) 
-  
-In fact you don't even need to choose. 
-Just pick a random one.
-As long as you are just playing around, 
-it is easy to switch between these applications 
-since the only difference is the line ``from lino.apps.dsbe.settings import *`` 
-in your :xfile:`settings.py`.
-
-
 Run the test suite
 ------------------
 

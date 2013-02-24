@@ -20,7 +20,6 @@ logger = logging.getLogger(__name__)
 
 import sys
 import decimal
-#import logging ; logger = logging.getLogger('lino.apps.finan')
 
 #~ from django import forms
 

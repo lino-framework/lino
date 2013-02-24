@@ -21,43 +21,7 @@ Basically it's easy:
 Which files to edit?
 --------------------
 
-List of `.po` files:
-
-- lino.apps.dsbe :
-  `fr <http://lino.googlecode.com/hg/lino/apps/dsbe/locale/fr/LC_MESSAGES/django.po>`__
-  `nl <http://lino.googlecode.com/hg/lino/apps/dsbe/locale/nl/LC_MESSAGES/django.po>`__
-  
-- `lino.modlib.cal`:
-  `fr <http://lino.googlecode.com/hg/lino/modlib/cal/locale/fr/LC_MESSAGES/django.po>`__
-  `nl <http://lino.googlecode.com/hg/lino/modlib/cal/locale/nl/LC_MESSAGES/django.po>`__
-
-- `lino.modlib.mail`:
-  `fr <http://lino.googlecode.com/hg/lino/modlib/mail/locale/fr/LC_MESSAGES/django.po>`__
-  `nl <http://lino.googlecode.com/hg/lino/modlib/mail/locale/nl/LC_MESSAGES/django.po>`__
-
-- `lino.modlib.notes`:
-  `fr <http://lino.googlecode.com/hg/lino/modlib/notes/locale/fr/LC_MESSAGES/django.po>`__
-  `nl <http://lino.googlecode.com/hg/lino/modlib/notes/locale/nl/LC_MESSAGES/django.po>`__
-
-- `lino.modlib.contacts`:
-  `fr <http://lino.googlecode.com/hg/lino/modlib/contacts/locale/fr/LC_MESSAGES/django.po>`__
-  `nl <http://lino.googlecode.com/hg/lino/modlib/contacts/locale/nl/LC_MESSAGES/django.po>`__
-
-- `lino.modlib.uploads`:
-  `fr <http://lino.googlecode.com/hg/lino/modlib/uploads/locale/fr/LC_MESSAGES/django.po>`__
-  `nl <http://lino.googlecode.com/hg/lino/modlib/uploads/locale/nl/LC_MESSAGES/django.po>`__
-
-- `lino.modlib.links`:
-  `fr <http://lino.googlecode.com/hg/lino/modlib/links/locale/fr/LC_MESSAGES/django.po>`__
-  `nl <http://lino.googlecode.com/hg/lino/modlib/links/locale/nl/LC_MESSAGES/django.po>`__
-
-- `lino.modlib.thirds`:
-  `fr <http://lino.googlecode.com/hg/lino/modlib/thirds/locale/fr/LC_MESSAGES/django.po>`__
-  `nl <http://lino.googlecode.com/hg/lino/modlib/thirds/locale/nl/LC_MESSAGES/django.po>`__
-
-- `lino.modlib.properties`:
-  `fr <http://lino.googlecode.com/hg/lino/modlib/properties/locale/fr/LC_MESSAGES/django.po>`__
-  `nl <http://lino.googlecode.com/hg/lino/modlib/properties/locale/nl/LC_MESSAGES/django.po>`__
+(TODO: how to easily publish a list of all `.po` files used by a project)
 
 
 Trucs et astuces
