@@ -764,10 +764,12 @@ class Table(AbstractTable):
         to be deleted by action request `ar`,
         or a string with a message explaining why, if not.
         """
+        #~ logger.info("20130225 dbtables.disable_delete")
         if self.delete_action is None:
             return "No delete_action"
         if not self.get_row_permission(obj,ar,self.get_row_state(obj),self.delete_action):
-            print "20130222 ar is %r" % ar
+            #~ print "20130222 ar is %r" % ar
+            #~ logger.info("20130225 dbtables.disable_delete no permission")
             return _("You have no permission to delete this row.")
         return obj.disable_delete(ar)
         

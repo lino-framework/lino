@@ -77,9 +77,9 @@ def get_media_urls():
                 'document_root': source,
                 'show_indexes': False })))
         else:
-            logger.info("Setting up symlink %s -> %s.",target,source)
             symlink = getattr(os,'symlink',None)
             if symlink is not None:
+                logger.info("Setting up symlink %s -> %s.",target,source)
                 symlink(source,target)
         
     if not settings.LINO.extjs_base_url:

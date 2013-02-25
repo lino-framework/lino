@@ -611,7 +611,9 @@ def on_login(request,user):
     elif request.method == 'POST':
         rqdata = request.POST
     else: 
-        raise Exception("Unknown HTTP method '%s'" % request.method)
+        #~ raise Exception("Unknown HTTP method '%s'" % request.method)
+        # e.g. OPTIONS
+        return
     #~ else: # DELETE
         #~ request.subst_user = None
         #~ request.requesting_panel = None

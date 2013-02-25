@@ -363,11 +363,13 @@ class RequestStoreField(StoreField):
     def value2list(self,ar,v,l,row):
         return l.append(self.format_value(ar,v))
         
-    def value2dict(self,ui,v,d,row):
-        d[self.name] = self.format_value(ui,v)
+    def value2dict(self,ar,v,d,row):
+        d[self.name] = self.format_value(ar,v)
         #~ d[self.options['name']] = self.format_value(ui,v)
         #~ d[self.field.name] = v
 
+    def format_value(self,ar,v):
+        return str(v.get_total_count())
         
     #~ def sum2html(self,ar,sums,i,**cellattrs):
         #~ cellattrs.update(align="right")
@@ -913,9 +915,7 @@ class ParameterStore(BaseStore):
 
 class Store(BaseStore):
     """
-    
-    Represents an :extjs:`Ext.data.JsonStore`.
-    
+    A Store is the collection of StoreFields for a given Table.
     """
     
     pk = None

@@ -11,6 +11,16 @@ T:\hgwork\lino\docs\igen\index.rst:: WARNING: document isn't included in any toc
 T:\hgwork\lino\docs\reviews\django-extensions.rst:: WARNING: document isn't included in any toctree
 T:\hgwork\lino\docs\reviews\index.rst:: WARNING: document isn't included in any toctree
 T:\hgwork\lino\docs\tutorials\uiless.rst:: WARNING: document isn't included in any toctree
+t:\hgwork\lino\lino\core\dbtables.py:docstring of lino.core.dbtables.Table:1: WARNING: py:class reference target not found: AbstractTable
+t:\hgwork\lino\lino\core\dbtables.py:docstring of lino.core.dbtables.Table.show_detail_navigator:1: WARNING: unknown document: /blog/2011/0701
+t:\hgwork\lino\lino\core\dbtables.py:docstring of lino.core.dbtables.Table.slave_as_summary_meth:1: WARNING: py:attr reference target not found: AbstractTable.slave_grid_format
+t:\hgwork\lino\lino\core\dbtables.py:docstring of lino.core.dbtables.add_gridfilters:1: WARNING: py:class reference target not found: django.db.models.query.QuerySet
+t:\hgwork\lino\lino\mixins\__init__.py:docstring of lino.mixins.Controllable:6: WARNING: py:mod reference target not found: lino.modlibs.cal
+t:\hgwork\lino\lino\mixins\__init__.py:docstring of lino.mixins.Controllable:10: WARNING: py:mod reference target not found: lino.modlib.purchases
+t:\hgwork\lino\lino\mixins\__init__.py:docstring of lino.mixins.CreatedModified:10: WARNING: unknown document: /blog/2011/0901
+<autodoc>:1: WARNING: py:class reference target not found: lino.core.frames.Frame
+t:\hgwork\lino\lino\mixins\__init__.py:docstring of lino.mixins.ProjectRelated:7: WARNING: py:attr reference target not found: lino.Lino.project_model
+t:\hgwork\lino\lino\mixins\__init__.py:docstring of lino.mixins.Sequenced.get_siblings:1: WARNING: py:class reference target not found: lino.modlib.thirds.models.Third
 T:\hgwork\lino\docs\autodoc\lino.ui.rst:50: WARNING: py:class reference target not found: lino.modlib.countries.models.Cities
 t:\hgwork\lino\lino\ui\__init__.py:docstring of lino.ui.Lino.cbss_environment:1: WARNING: py:mod reference target not found: lino.modlib.cbss.models
 t:\hgwork\lino\lino\ui\__init__.py:docstring of lino.ui.Lino.date_format_extjs:1: WARNING: py:meth reference target not found: parse_date
@@ -77,5 +87,5 @@ t:\hgwork\lino\lino\ui\views.py:docstring of lino.ui.views.elem2rec_detailed:3: 
 t:\hgwork\lino\lino\ui\views.py:docstring of lino.ui.views.elem2rec_detailed:3: WARNING: unknown document: /blog/2010/0721
 t:\hgwork\lino\lino\ui\views.py:docstring of lino.ui.views.elem2rec_detailed:3: WARNING: unknown document: /blog/2010/1116
 t:\hgwork\lino\lino\ui\views.py:docstring of lino.ui.views.elem2rec_detailed:3: WARNING: unknown document: /blog/2010/1207
-T:\hgwork\lino\docs\blog\2013\0224.rst:5: WARNING: py:mod reference target not found: lino.ui.render
-T:\hgwork\lino\docs\blog\2013\0224.rst:5: WARNING: py:mod reference target not found: lino.ui.extjs
+T:\hgwork\lino\docs\blog\2013\0224.rst:4: WARNING: py:mod reference target not found: lino.ui.render
+T:\hgwork\lino\docs\blog\2013\0224.rst:4: WARNING: py:mod reference target not found: lino.ui.extjs

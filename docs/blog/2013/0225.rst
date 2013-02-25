@@ -1,0 +1,32 @@
+20130225
+========
+
+
+Lino Cosi
+---------
+
+Weiter mit :mod:`lino.projects.cosi`, heute nehme ich mir mal 
+:mod:`lino.modlib.finan` vor.
+
+Erstes Problem:
+Lino lässt es ohne weiteres zu, einen registrierten Kontoauszug zu löschen.
+
+
+Kleine Bugs
+-----------
+
+- Unknown HTTP method 'OPTIONS'
+- "cercle vicieux" wegen Fehlalarm "Date range overlaps with ISIP #1".
+  Wrote new testcase 
+  :func:`test02 <lino_welfare.modlib.pcsw.tests.pcsw_tests.test02>`.
+  
+- Tx25 kennt jetzt "PseudoNationalNumbers".
+
+
+Release
+-------
+
+- Release notes:
+  Lino :doc:`/releases/1.5.12`
+  Welfare :welfare:`/releases/1.0.15`
+  

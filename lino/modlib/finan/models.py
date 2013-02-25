@@ -70,7 +70,7 @@ add('20',_("Registered"),'registered',editable=False)
 
     
   
-class BankStatement(ledger.Voucher,mixins.Registrable):
+class BankStatement(mixins.Registrable,ledger.Voucher):
     
     balance1 = dd.PriceField(_("Old balance"),blank=True,null=True)
     balance2 = dd.PriceField(_("New balance"),blank=True,null=True)

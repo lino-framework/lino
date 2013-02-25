@@ -1,5 +1,5 @@
 # -*- coding: UTF-8 -*-
-## Copyright 2012 Luc Saffre
+## Copyright 2012-2013 Luc Saffre
 ## This file is part of the Lino project.
 ## Lino is free software; you can redistribute it and/or modify 
 ## it under the terms of the GNU General Public License as published by
@@ -15,14 +15,7 @@
 """
 Set password "1234" for all users.
 
-This is an additive fixture designed to work also on existing data::
-
-  T:\data\luc\lino_local\dsbe>python manage.py loaddata demo2
-  INFO Analyzing models...
-  INFO Loading t:\hgwork\lino\lino\modlib\users\fixtures\demo2.py...
-  Installed 8 object(s) from 1 fixture(s)
-
-
+This is an additive fixture designed to work also on existing data.
 
 """
 

@@ -584,11 +584,8 @@ class EventGenerator(mixins.UserAuthored):
         
     def save(self,*args,**kw):
         super(EventGenerator,self).save(*args,**kw)
-        babel.run_with_language(self.user.language,self.update_reminders)
-        #~ lang = babel.get_language()
-        #~ babel.set_language(self.user.language)
-        #~ self.update_reminders()
-        #~ babel.set_language(lang)
+        if self.user is not None:
+            babel.run_with_language(self.user.language,self.update_reminders)
   
     def update_cal_rset(self):
         return self.exam_policy

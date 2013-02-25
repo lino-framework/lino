@@ -1,9 +1,15 @@
 20130224
 ========
 
+- Moved the renderers from :mod:`lino.ui` to a new :mod:`lino.ui.render`,
+  and the ExtJS renderer to another :mod:`lino.ui.extjs`.
+  One day I plan to turn Lino's ExtJS UI into a separate project so that 
+  I can convert the other parts of Lino from GPL to BSD
+  (see :doc:`/tickets/16`)
 
-I moved the renderers from :mod:`lino.ui` to a new :mod:`lino.ui.render`,
-and the ExtJS renderer to another :mod:`lino.ui.extjs`.
-One day I plan to turn Lino's ExtJS UI into a separate project so that 
-I can convert the other parts of Lino from GPL to BSD
-(see :doc:`/tickets/16`)
+
+- Oops, RequestField weren't correctly rendered in an ExtJS grid.
+  This bug must have sneaked in quite some time ago 
+  when I moved formatting from `store` to `elem`.
+  For the moment that's okay, but medium-term I noted :doc:`/tickets/75`.
+  

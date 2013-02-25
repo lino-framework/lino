@@ -1,0 +1,9 @@
+Version 1.5.12
+==============
+
+
+Bugfixes
+--------
+
+- Unknown HTTP method 'OPTIONS'
+

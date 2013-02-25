@@ -1,0 +1,4 @@
+#75 : Merge Store into LayoutHandle?
+====================================
+
+Or: why does StoreField not know the FieldElement it has been created for?
