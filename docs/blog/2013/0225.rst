@@ -22,6 +22,14 @@ Kleine Bugs
   
 - Tx25 kennt jetzt "PseudoNationalNumbers".
 
+- watch_tim: 
+  Had to completely rewrite 
+  :meth:`swapclass <lino_welfare.modlib.pcsw.management.commands.watch_tim.PAR.swapclass>`
+  because it wasn't able to handle conversion situations 
+  (1) from Household to Client
+  or (2) from Person to Household
+  
+
 
 Release
 -------
