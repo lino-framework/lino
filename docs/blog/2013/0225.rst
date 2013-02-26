@@ -35,6 +35,5 @@ Release
 -------
 
 - Release notes:
-  Lino :doc:`/releases/1.5.12`
-  Welfare :welfare:`/releases/1.0.15`
+  :doc:`Lino </releases/1.5.12>` and  :welfare:`Lino-Welfare </releases/1.0.15>`
   

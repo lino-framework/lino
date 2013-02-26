@@ -1,0 +1,7 @@
+20130226
+========
+
+- Added method :meth:`lino.modlib.users.models.User.get_by_username`.
+
+- Official sdist and upload to PyPI for
+  :doc:`Lino </releases/1.5.12>` and  :welfare:`Lino-Welfare </releases/1.0.15>`

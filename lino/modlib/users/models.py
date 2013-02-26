@@ -1,4 +1,4 @@
-## Copyright 2011-2012 Luc Saffre
+## Copyright 2011-2013 Luc Saffre
 ## This file is part of the Lino project.
 ## Lino is free software; you can redistribute it and/or modify 
 ## it under the terms of the GNU General Public License as published by
@@ -207,6 +207,22 @@ class User(mixins.CreatedModified):
           unicode(self.profile),', ',
           E.strong(babel.LANGUAGE_DICT.get(self.language)))
       
+    @classmethod
+    def get_by_username(cls,username,default=models.NOT_PROVIDED):
+        """
+        `User.get_by_username(x)` is equivalent to
+        `User.objects.get(username=x)` except that the text 
+        of the DoesNotExist exception is more useful.
+        """
+        try:
+            return cls.objects.get(username=username)
+        except cls.DoesNotExist,e:
+            if default is models.NOT_PROVIDED:
+                raise cls.DoesNotExist(
+                  "No %s with username %r" % (
+                      unicode(cls._meta.verbose_name),username))
+            return default
+
         
 
 
