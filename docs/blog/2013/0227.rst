@@ -12,7 +12,26 @@ oh yes, there's much to say about Lino.
 
 
 
+LegalMainAddress without HouseNumber
+------------------------------------
 
+Fixed a bug in `lino_welfare.modlib.cbss.tx25`: 
+Tx25 Nr 152 : 
+Hubert hatte erstmals eine Tx25 für jemanden gemacht, der eine 
+Legale Hauptadresse (LegalMainAddresses) mit leerem 
+Feld `HouseNumber` hat. 
+Jawohl, das gibt's, aber Lino vertrug es noch nicht.
 
+Lino und der neue Präsident
+---------------------------
 
+Verträge und viele Dokumente eines ÖSHZ werden vom 
+**Präsidenten** und vom **Sektretär** unterschrieben.
+Die Namen der beiden stehen momentan einfach in den Dokumentvorlagen drin.
+Der Präsident des ÖSHZ Eupen ändert übermorgen.
+Wie regeln wir das?
 
+Nach Gespräch mit Gerd scheinen mir zwei neue Felder 
+`secretary` und `president` pro Vertrag das Beste zu sein.
+Die müssen für bestehende Dokumente bei der Migration 
+natürlich korrekt ausgefüllt werden.

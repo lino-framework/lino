@@ -1,5 +1,5 @@
 ﻿# -*- coding: UTF-8 -*-
-## Copyright 2009-2012 Luc Saffre
+## Copyright 2009-2013 Luc Saffre
 ## This file is part of the Lino project.
 ## Lino is free software; you can redistribute it and/or modify 
 ## it under the terms of the GNU General Public License as published by
@@ -11,6 +11,9 @@
 ## GNU General Public License for more details.
 ## You should have received a copy of the GNU General Public License
 ## along with Lino; if not, see <http://www.gnu.org/licenses/>.
+
+from __future__ import unicode_literals
+
 
 from django.db import models
 from django.conf import settings
@@ -117,10 +120,11 @@ def objects():
     for ct in COMPANY_TYPES:
         yield companyType(**ct)
         
-    yield roletype(**babel_values('name',en="Manager",fr=u'Gérant',de=u"Geschäftsführer",et=u"Manager"))
-    yield roletype(**babel_values('name',en="Director",fr=u'Directeur',de=u"Direktor",et=u"Direktor"))
-    yield roletype(**babel_values('name',en="Secretary",fr=u'Sécrétaire',de=u"Sekretär",et=u"Sekretär"))
-    yield roletype(**babel_values('name',en="IT Manager",fr=u'Gérant informatique',de=u"EDV-Manager",et=u"IT manager"))
+    yield roletype(**babel_values('name',en="Manager",fr='Gérant',de="Geschäftsführer",et="Tegevjuht"))
+    yield roletype(**babel_values('name',en="Director",fr='Directeur',de="Direktor",et="Direktor"))
+    yield roletype(**babel_values('name',en="Secretary",fr='Secrétaire',de="Sekretär",et="Sekretär"))
+    yield roletype(**babel_values('name',en="IT Manager",fr='Gérant informatique',de="EDV-Manager",et="IT manager"))
+    yield roletype(**babel_values('name',en="President",fr='Président',de="Präsident",et="President"))
 
 
     I = Instantiator('ui.HelpText','content_type field help_text').build
