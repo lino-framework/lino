@@ -60,7 +60,7 @@ from lino.utils.config import find_config_file
 #~ from lino.utils.choicelists import ChoiceList
 
 
-from Cheetah.Template import Template as CheetahTemplate
+#~ from Cheetah.Template import Template as CheetahTemplate
 #~ from lino.utils import dtosl, dtos
 
 

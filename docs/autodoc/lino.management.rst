@@ -33,20 +33,6 @@ show
     :members:
     :show-inheritance:
 
-makedocs
---------
-
-.. automodule:: lino.management.commands.makedocs
-    :members:
-    :show-inheritance:
-
-makeui
-------
-
-.. automodule:: lino.management.commands.makeui
-    :members:
-    :show-inheritance:
-
 make_staff
 ----------
 

@@ -408,7 +408,8 @@ class ExtRenderer(HtmlRenderer):
         #~ yield '<!-- overrides to base library -->'
         
         if site.use_extensible:
-            yield stylesheet(site.build_media_url("extensible/resources/css/extensible-all.css"))
+            #~ yield stylesheet(site.build_media_url("extensible/resources/css/extensible-all.css"))
+            yield stylesheet(site.build_extensible_url('resources/css/extensible-all.css'))
           
         if site.use_vinylfox:
             yield stylesheet(site.build_media_url('lino/vinylfox/resources/css/htmleditorplugins.css'))
@@ -471,7 +472,7 @@ class ExtRenderer(HtmlRenderer):
             #~ p = site.build_media_url('tinymce')
             #~ yield '<script type="text/javascript" src="Ext.ux.form.FileUploadField.js"></script>'
             #~ yield '<script type="text/javascript" src="%s/tiny_mce.js"></script>' % p
-            yield javascript(site.build_media_url("tinymce/tiny_mce.js"))
+            yield javascript(site.build_tinymce_url("tiny_mce.js"))
             #~ yield '<script type="text/javascript" src="%s/lino/tinymce/Ext.ux.TinyMCE.js"></script>' % self.media_url()
             yield javascript(site.build_media_url("lino/tinymce/Ext.ux.TinyMCE.js"))
             yield '''<script language="javascript" type="text/javascript">

@@ -35,9 +35,6 @@
     lino.utils.sqllog
     lino.utils.test
     lino.utils.xmlgen
-    lino.utils.xmlgen.odf
-    lino.utils.xmlgen.cbss
-    lino.utils.xmlgen.intervat
     
 
 More modules

@@ -1,0 +1,18 @@
+20130227
+========
+
+Getting started with Lino more easily
+-------------------------------------
+
+As a result of what I learned yesterday about pip, 
+Lino now finally has a much more digestable guide for 
+:doc:`/tutorials/quickstart`.
+It is still work in progress, and the other tutorials need update... 
+oh yes, there's much to say about Lino.
+
+
+
+
+
+
+

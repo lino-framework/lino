@@ -45,7 +45,7 @@ extensions = [
   #~ 'sphinx.ext.doctest',
 ]
 
-extensions.append('sphinxcontrib.autorun')
+#~ extensions.append('sphinxcontrib.autorun')
 
 #~ autorun_languages = {}
 #~ autorun_languages['welfare'] = 'python -m lino_welfare.run_demo_script'
@@ -110,6 +110,7 @@ exclude_trees = [
   'blog/2011',
   'releases/2010',
   'releases/2011',
+  'include',
   ]
 
 # The reST default role (used for this markup: `text`) to use for all documents.

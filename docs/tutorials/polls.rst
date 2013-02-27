@@ -5,6 +5,9 @@ In this tutorial we are going to take the "Polls"
 application from Django's excellent tutorial and turn it 
 into a Lino application.
 
+
+..include:: /needs_update.rst
+
 The result of this tutorial is available as a public 
 live demo at http://demo1.lino-framework.org
 

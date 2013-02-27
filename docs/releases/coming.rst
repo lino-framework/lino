@@ -15,4 +15,16 @@ Bugfixes
 Manual tasks after upgrade
 --------------------------
 
+On existing sites,
+set the following :class:`lino.ui.Lino` attributes 
+in your :xfile:`settings.py` file
+(or in your `lino_local.on_init` function)
+to `None` because they are new and 
+their default value leads to different behaviour::
 
+    extjs_base_url = None
+    extensible_base_url = None
+    bootstrap_base_url = None
+    tinymce_base_url = None
+
+Read :attr:`lino.ui.Lino.extjs_base_url` for more information.

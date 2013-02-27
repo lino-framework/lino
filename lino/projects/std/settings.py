@@ -28,11 +28,11 @@ import lino
 
 from lino.ui import Lino
 
-#~ class Lino(Lino):
-    #~ pass
-    
-
-#~ 20130219 LINO = Lino(__file__,globals())
+LINO = Lino(__file__,globals())
+"""
+This Lino instance will normally be replaced by an instance 
+in a local settings.py file
+"""
 
 #~ DBLOGGER = 'db'
 #~ DBLOGFILE = 'auto'

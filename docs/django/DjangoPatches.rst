@@ -1,17 +1,7 @@
-Patches that I suggest for Django
-=================================
+Patches for Django
+==================
 
 Files in :srcref:`/patches`:
-
-:file:`10808b-r14404.diff` (`10808*.diff`) : 
-    My suggestion for fixing 
-    :djangoticket:`10808`
-    (Multiple inheritance (model-based) broken for __init__ of common fields in diamond inheritance).
-    In Django revision 14404 this wasn't yet included.
-    This patch is necessary to run :mod:`lino.sites.igen`, otherwise you'll get a case of :doc:`/tickets/11`.
-    This patch currently fails to patch the tests (which isn't a major problem for Lino).
-    See :doc:`/blog/2011/0225`
-
 
 :file:`20091107.diff` : 
 
@@ -30,8 +20,7 @@ How to install these patches:
 
   * Execute the following::
   
-      $ cd /var/snapshots/django
-      $ patch -p0 < /var/snapshots/lino/patches/10808b.diff
+      $ cd /path/to/django
       $ patch -p0 < /var/snapshots/lino/patches/20091107.diff
   
 How to uninstall these patches:

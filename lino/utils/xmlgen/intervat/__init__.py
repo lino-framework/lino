@@ -79,7 +79,11 @@ That's because validate checks only the "syntax", not the "content".
 
 import os
 
-from lxml import etree
+try:
+    from lxml import etree
+except ImportError:
+    from lino.utils.xmlgen import etree
+    
 SubElement = etree.SubElement
 
 from lino.utils import xmlgen as xg

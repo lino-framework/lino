@@ -85,13 +85,16 @@ def get_media_urls():
     if not settings.LINO.extjs_base_url:
         setup_media_link('extjs','extjs_root')
     if settings.LINO.use_bootstrap:
-        setup_media_link('bootstrap','bootstrap_root')
+        if not settings.LINO.bootstrap_base_url:
+            setup_media_link('bootstrap','bootstrap_root')
+    if settings.LINO.use_extensible:
+        if not settings.LINO.extensible_base_url:
+            setup_media_link('extensible','extensible_root')
+    if settings.LINO.use_tinymce:
+        if not settings.LINO.tinymce_base_url:
+            setup_media_link('tinymce','tinymce_root')
     if settings.LINO.use_jasmine:
         setup_media_link('jasmine','jasmine_root')
-    if settings.LINO.use_extensible:
-        setup_media_link('extensible','extensible_root')
-    if settings.LINO.use_tinymce:
-        setup_media_link('tinymce','tinymce_root')
     if settings.LINO.use_eid_jslib:
         setup_media_link('eid-jslib','eid_jslib_root')
         

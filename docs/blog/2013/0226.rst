@@ -3,5 +3,176 @@
 
 - Added method :meth:`lino.modlib.users.models.User.get_by_username`.
 
+- Added more tests to 
+  :mod:`lino_welfare.modlib.pcsw.tests.watchtim_tests`.
+
 - Official sdist and upload to PyPI for
   :doc:`Lino </releases/1.5.12>` and  :welfare:`Lino-Welfare </releases/1.0.15>`
+
+
+Which Python installer to use
+-----------------------------
+
+Yet another move inspired by 
+`Two scoops of Django <https://django.2scoops.org/>`_
+(see also :doc:`/tickets/72`) 
+is to start using pip-installer and virtualenv.
+
+In the
+`Differences between distribute, distutils, setuptools and distutils2?
+<http://stackoverflow.com/questions/6344076>`__
+post on Stackoverflow,
+Flimm writes rather clearly:
+
+  Here's a summary of the Python packaging landscape in February 2013:
+  
+  (...)
+
+  **Distribute** is a fork of Setuptools. It shares the same namespace, so if you have Distribute installed, import setuptools actually imports the package distributed with Distribute. It also includes an easy_install command-line tool, but it was designed to work well with Pip, which replaces it.
+  It is also designed to work well with Python 2 or 3 or both. The latest version was released on 31 December 2012, so I would consider it alive and kicking. **At the time of writing, I recommend this tool over other tools.**
+
+  (...)
+  
+  So in conclusion, out of all these options, **I would recommend Distribute**, unless your requirements are very basic and you only need Distutils. Distribute works very well with Virtualenv and Pip, tools that I highly recommend.
+
+I'm still just a little bit confused about the relation between 
+pip-installer and python-distribute.
+
+As a first step I removed all Pythons from my computer and started from scratch.
+
+Download Python 2.7.3 (for the moment I am not yet interested in Python 3)
+
+https://pypi.python.org/pypi/distribute says: 
+"distribute_setup.py is the simplest and preferred way on all systems."
+So I downloaded `distribute_setup.py <http://python-distribute.org/distribute_setup.py>`__
+and execute it using "the Python interpreter of my choice"::
+
+    c:\temp> python distribute_setup.py
+    Downloading http://pypi.python.org/packages/source/d/distribute/distribute-0.6.35.tar.gz
+    Extracting in c:\docume~1\luc\locals~1\temp\tmpxopjyi
+    Now working in c:\docume~1\luc\locals~1\temp\tmpxopjyi\distribute-0.6.35
+    Installing Distribute
+    ...
+    creating build\bdist.win32\egg\EGG-INFO
+    copying distribute.egg-info\PKG-INFO -> build\bdist.win32\egg\EGG-INFO
+    copying distribute.egg-info\SOURCES.txt -> build\bdist.win32\egg\EGG-INFO
+    copying distribute.egg-info\dependency_links.txt -> build\bdist.win32\egg\EGG-INFO
+    copying distribute.egg-info\entry_points.txt -> build\bdist.win32\egg\EGG-INFO
+    copying distribute.egg-info\top_level.txt -> build\bdist.win32\egg\EGG-INFO
+    copying distribute.egg-info\zip-safe -> build\bdist.win32\egg\EGG-INFO
+    creating dist
+    creating 'dist\distribute-0.6.35-py2.7.egg' and adding 'build\bdist.win32\egg' to it
+    removing 'build\bdist.win32\egg' (and everything under it)
+    Processing distribute-0.6.35-py2.7.egg
+    creating c:\python27\lib\site-packages\distribute-0.6.35-py2.7.egg
+    Extracting distribute-0.6.35-py2.7.egg to c:\python27\lib\site-packages
+    Adding distribute 0.6.35 to easy-install.pth file
+    Installing easy_install-script.py script to c:\Python27\Scripts
+    Installing easy_install.exe script to c:\Python27\Scripts
+    Installing easy_install-2.7-script.py script to c:\Python27\Scripts
+    Installing easy_install-2.7.exe script to c:\Python27\Scripts
+
+    Installed c:\python27\lib\site-packages\distribute-0.6.35-py2.7.egg
+    Processing dependencies for distribute==0.6.35
+    Finished processing dependencies for distribute==0.6.35
+    After install bootstrap.
+    Creating c:\Python27\Lib\site-packages\setuptools-0.6c11-py2.7.egg-info
+    Creating c:\Python27\Lib\site-packages\setuptools.pth
+
+Next step is unclear : pip first or virtualenv first?
+I chose "pip first"::
+  
+    c:\temp\> curl -O https://raw.github.com/pypa/pip/master/contrib/get-pip.py
+    c:\temp\> python get-pip.py
+    Downloading/unpacking pip
+      Downloading pip-1.2.1.tar.gz (102Kb): 102Kb downloaded
+      Running setup.py egg_info for package pip
+
+        warning: no files found matching '*.html' under directory 'docs'
+        warning: no previously-included files matching '*.txt' found under directory 'docs\_build'
+        no previously-included directories found matching 'docs\_build\_sources'
+    Installing collected packages: pip
+      Running setup.py install for pip
+
+        warning: no files found matching '*.html' under directory 'docs'
+        warning: no previously-included files matching '*.txt' found under directory 'docs\_build'
+        no previously-included directories found matching 'docs\_build\_sources'
+        Installing pip-script.py script to c:\Python27\Scripts
+        Installing pip.exe script to c:\Python27\Scripts
+        Installing pip-2.7-script.py script to c:\Python27\Scripts
+        Installing pip-2.7.exe script to c:\Python27\Scripts
+    Successfully installed pip
+    Cleaning up...
+
+After reading more about virtualenv I decided to not yet install it.
+
+Removed my `sitecustomize.py` from my PYTHONPATH which until now was my 
+self-made package installer.
+
+For my own projects I need pip's ``-e`` switch::
+
+    C:\temp>pip install -e t:\hgwork\lino
+    Obtaining file:///t%7C%5Chgwork%5Clino
+      Running setup.py egg_info for package from file:///t%7C%5Chgwork%5Clino
+
+    Installing collected packages: lino
+      Running setup.py develop for lino
+
+        Creating c:\python27\lib\site-packages\lino.egg-link (link to .)
+        Adding lino 1.5.12 to easy-install.pth file
+
+        Installed t:\hgwork\lino
+    Successfully installed lino
+    Cleaning up...
+    
+Seems that installaing with the ``-e`` switch does not automatically 
+install dependencies::
+
+    C:\temp>python
+    Python 2.7.3 (default, Apr 10 2012, 23:31:26) [MSC v.1500 32 bit (Intel)] on win32
+    Type "help", "copyright", "credits" or "license" for more information.
+    >>> import lino
+    Traceback (most recent call last):
+      File "<stdin>", line 1, in <module>
+      File "t:\hgwork\lino\lino\__init__.py", line 32, in <module>
+        from .utils.xmlgen import html as xghtml
+      File "t:\hgwork\lino\lino\utils\__init__.py", line 61, in <module>
+        from dateutil import parser as dateparser
+    ImportError: No module named dateutil
+    
+It's logical that I have to install them manually::    
+
+    C:\temp>pip install python-dateutil
+    Downloading/unpacking python-dateutil
+      Downloading python-dateutil-2.1.tar.gz (152kB): 152kB downloaded
+      Running setup.py egg_info for package python-dateutil
+
+    Downloading/unpacking six (from python-dateutil)
+      Downloading six-1.2.0.tar.gz
+      Running setup.py egg_info for package six
+
+    Installing collected packages: python-dateutil, six
+      Running setup.py install for python-dateutil
+
+      Running setup.py install for six
+
+    Successfully installed python-dateutil six
+    Cleaning up...  
+      
+    C:\temp>pip install Django
+    Downloading/unpacking Django
+      Downloading Django-1.4.5.tar.gz (7.7MB): 7.7MB downloaded
+      Running setup.py egg_info for package Django
+
+    Installing collected packages: Django
+      Running setup.py install for Django
+
+    Successfully installed Django
+    Cleaning up...
+
+Note: `lxml` needs some C compiler, and since I don't have one 
+I cannot install it easily using pip (as it seems).
+But since Lino currently no longer needs lxml, I'm leaving that for later.
+Just had to adapt some modules below :mod:`lino.utils.xmlgen` 
+so that autodoc can continue to document 
+them if lxml isn't installed.

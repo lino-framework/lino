@@ -307,6 +307,15 @@ class Lino(lino.Lino):
     to point to the local directory  where ExtJS 3.3.1 is installed).
     """
     
+    extensible_base_url = "http://ext.ensible.com/deploy/1.0.2/"
+    "Similar to :attr:`extjs_base_url` but pointing to ext.ensible.com."
+    
+    bootstrap_base_url = "http://twitter.github.com/bootstrap/assets/"
+    "Similar to :attr:`extjs_base_url` but pointing to twitter.github.com."
+    
+    tinymce_base_url = "http://www.tinymce.com/js/tinymce/jscripts/tiny_mce/"
+    "Similar to :attr:`extjs_base_url` but pointing to http://www.tinymce.com."
+    
     bootstrap_root = None
     """
     Path to the Jasmine root directory. 
@@ -314,6 +323,8 @@ class Lino(lino.Lino):
     whose `media` directory hasn't already a symbolic link or subdirectory,
     and only if :attr:`use_bootstrap` is True.
     """
+    
+    
     
     jasmine_root = None
     """
@@ -1076,6 +1087,21 @@ class Lino(lino.Lino):
         if self.extjs_base_url:
             return self.extjs_base_url + url
         return self.build_media_url('extjs',url)
+        
+    def build_extensible_url(self,url):
+        if self.extensible_base_url:
+            return self.extensible_base_url + url
+        return self.build_media_url('extensible',url)
+        
+    def build_bootstrap_url(self,url):
+        if self.bootstrap_base_url:
+            return self.bootstrap_base_url + url
+        return self.build_media_url('bootstrap',url)
+        
+    def build_tinymce_url(self,url):
+        if self.tinymce_base_url:
+            return self.tinymce_base_url + url
+        return self.build_media_url('tinymce',url)
         
 
     def unused_get_urls(self):

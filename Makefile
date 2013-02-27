@@ -8,8 +8,8 @@ MODULES = vat accounts ledger households outbox \
   cal products properties contacts countries notes \
   sales finan uploads users postings about concepts
 TESTS_OPTIONS = --verbosity=2 --traceback
-MMOPTS := -s -a --settings lino.apps.sphinxdocs.settings
-CMOPTS := --settings lino.apps.sphinxdocs.settings
+MMOPTS := -s -a --settings lino.projects.sphinxdocs.settings
+CMOPTS := --settings lino.projects.sphinxdocs.settings
 
 .PHONY: mm cm makedocs tests sdist
 
@@ -51,28 +51,30 @@ tests:
 	python lino/utils/html2xhtml.py
 	python lino/utils/demonames.py
 	python lino/utils/odsreader.py
-	export DJANGO_SETTINGS_MODULE=lino.apps.std.settings ; python lino/utils/ssin.py
-	export DJANGO_SETTINGS_MODULE=lino.apps.std.settings ; python lino/core/choicelists.py
-	export DJANGO_SETTINGS_MODULE=lino.apps.std.settings ; python lino/utils/jsgen.py
-	export DJANGO_SETTINGS_MODULE=lino.apps.std.settings ; python lino/utils/ranges.py
-	export DJANGO_SETTINGS_MODULE=lino.apps.std.settings ; python lino/modlib/ledger/utils.py
-	export DJANGO_SETTINGS_MODULE=lino.apps.std.settings ; python lino/modlib/accounts/utils.py
-	$(DJANGO_ADMIN) test --settings=lino.test_apps.mti.settings  $(TESTS_OPTIONS)
+	export DJANGO_SETTINGS_MODULE=lino.projects.std.settings ; python lino/utils/ssin.py
+	export DJANGO_SETTINGS_MODULE=lino.projects.std.settings ; python lino/core/choicelists.py
+	export DJANGO_SETTINGS_MODULE=lino.projects.std.settings ; python lino/utils/jsgen.py
+	export DJANGO_SETTINGS_MODULE=lino.projects.std.settings ; python lino/utils/ranges.py
+	export DJANGO_SETTINGS_MODULE=lino.projects.std.settings ; python lino/modlib/ledger/utils.py
+	export DJANGO_SETTINGS_MODULE=lino.projects.std.settings ; python lino/modlib/accounts/utils.py
+	#~ $(DJANGO_ADMIN) test --settings=lino.test_apps.mti.settings  $(TESTS_OPTIONS)
+	$(DJANGO_ADMIN) test --settings=lino.test_apps.nomti.settings  $(TESTS_OPTIONS)
 	$(DJANGO_ADMIN) test --settings=lino.test_apps.20100212.settings $(TESTS_OPTIONS)
-	$(DJANGO_ADMIN) test --settings=lino.test_apps.20100519.settings $(TESTS_OPTIONS)
+	$(DJANGO_ADMIN) test --settings=lino.test_apps.integer_pk.settings $(TESTS_OPTIONS)
 	$(DJANGO_ADMIN) test --settings=lino.test_apps.quantityfield.settings $(TESTS_OPTIONS)
 	$(DJANGO_ADMIN) test --settings=lino.test_apps.human.settings $(TESTS_OPTIONS)
-	#~ $(DJANGO_ADMIN) test --settings=lino.apps.std.settings
-	#~ $(DJANGO_ADMIN) test --settings=lino.apps.pcsw.settings $(TESTS_OPTIONS)
-	#~ $(DJANGO_ADMIN) test --settings=lino.apps.igen.settings $(TESTS_OPTIONS)
-	$(DJANGO_ADMIN) test --settings=lino.apps.presto.settings $(TESTS_OPTIONS)
+	#~ $(DJANGO_ADMIN) test --settings=lino.projects.std.settings
+	#~ $(DJANGO_ADMIN) test --settings=lino.projects.pcsw.settings $(TESTS_OPTIONS)
+	#~ $(DJANGO_ADMIN) test --settings=lino.projects.igen.settings $(TESTS_OPTIONS)
+	$(DJANGO_ADMIN) test --settings=lino.projects.cosi.settings $(TESTS_OPTIONS)
+	$(DJANGO_ADMIN) test --settings=lino.projects.presto.settings $(TESTS_OPTIONS)
 
 tt:  
-	$(DJANGO_ADMIN) test --settings=lino.test_apps.mti.settings  $(TESTS_OPTIONS)
+	$(DJANGO_ADMIN) test --settings=lino.test_apps.nomti.settings  $(TESTS_OPTIONS)
 
 unused_appdocs:
-	$(DJANGO_ADMIN) makedocs --settings lino.apps.pcsw.settings docs/pcsw/appdocs
-	$(DJANGO_ADMIN) makedocs --settings lino.apps.igen.settings docs/igen/appdocs
+	$(DJANGO_ADMIN) makedocs --settings lino.projects.pcsw.settings docs/pcsw/appdocs
+	$(DJANGO_ADMIN) makedocs --settings lino.projects.igen.settings docs/igen/appdocs
 
 sdist:
 	python setup.py sdist --formats=gztar,zip --dist-dir=docs/dl

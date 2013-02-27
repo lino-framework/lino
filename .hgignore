@@ -16,7 +16,7 @@ lino/ui/qx/app/build/resource
 */SciTE.session
 */default.db
 lino/tutorials/*/media
-lino/apps/*/media
+lino/projects/*/media
 lino/sandbox/*/media
 */test.db
 docs/*/appdocs

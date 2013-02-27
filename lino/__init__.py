@@ -140,7 +140,8 @@ class Lino(object):
     help_url = "http://code.google.com/p/lino"
     #~ site_url = 
     #~ index_html = "This is the main page."
-    title = None
+    #~ title = None
+    title = "Unnamed Lino site"
     #~ domain = "www.example.com"
     
     short_name = None # "Unnamed Lino Application"
@@ -177,8 +178,19 @@ class Lino(object):
     
     
     migration_module = None
-    """If you maintain a data migration module for your application, 
-    specify its name here."""
+    """
+    If you maintain a data migration module for your application, 
+    specify its name here.
+    """
+    
+    user_model = None
+    "See :attr:`lino.ui.Lino.user_model`."
+    
+    project_model = None
+    "See :attr:`lino.ui.Lino.project_model`."
+    
+    override_modlib_models = []
+    "See :attr:`lino.ui.Lino.override_modlib_models`."
    
     
     textfield_format = 'plain'
@@ -438,6 +450,14 @@ class Lino(object):
             lc = language_choices(*self.languages)
             django_settings.update(LANGUAGES = lc)
             django_settings.update(LANGUAGE_CODE = lc[0][0])
+            
+        django_settings.update(DATABASES= {
+              'default': {
+                  'ENGINE': 'django.db.backends.sqlite3',
+                  'NAME': join(self.project_dir,'default.db')
+              }
+            })
+            
         
         try:
             from lino_local import on_init
@@ -455,12 +475,6 @@ class Lino(object):
         else:
             on_init(self)
         
-        #~ s.update(DATABASES= {
-              #~ 'default': {
-                  #~ 'ENGINE': 'django.db.backends.sqlite3',
-                  #~ 'NAME': join(LINO.project_dir,'test.db')
-              #~ }
-            #~ })
         
     def get_settings_subdirs(self,subdir_name):
         """
@@ -713,9 +727,9 @@ class Lino(object):
         try:
             import Cheetah
             version = Cheetah.Version 
+            yield ("Cheetah",version ,"http://cheetahtemplate.org/")
         except ImportError:
-            version = NOT_FOUND_MSG
-        yield ("Cheetah",version ,"http://cheetahtemplate.org/")
+            pass
 
         try:
             from odf import opendocument
