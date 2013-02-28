@@ -109,6 +109,12 @@ def check_pending_injects(signal,sender,models_list=None,**kw):
 from lino.core.modeltools import is_installed_model_spec
 
 def do_when_prepared(todo,*model_specs):
+    """
+    Execute the specified function `todo` on all specified models, 
+    but only when they are prepared. 
+    If a specified model hasn't yet been prepared, 
+    adds the call to a queue and execute it later.
+    """
     for model_spec in model_specs:
         if model_spec is None:
             continue # e.g. inject_field during autodoc when user_model is None
@@ -122,11 +128,14 @@ def do_when_prepared(todo,*model_specs):
                 injects = PENDING_INJECTS.setdefault(k,[])
                 injects.append(todo)
                 #~ d[name] = field
-                #~ logger.info("20120627 Defer inject_field(%r,%r,%r)", model_spec,name,field)
+                #~ if model_spec == "ui.SiteConfig":
+                    #~ logger.info("20130228 Defer %s for %s", todo, model_spec)
                 continue
         else:
             model = model_spec
             #~ k = model_spec._meta.app_label + '.' + model_spec.__name__
+        #~ if model._meta.abstract:
+            #~ raise Exception("Trying do_when_prepared on abstract model %s" % model)
         todo(model)
 
 
@@ -154,10 +163,11 @@ def inject_field(model_spec,name,field,doc=None):
     That's why it uses Django's `class_prepared` signal to maintain 
     its own list of models.
     """
-    #~ logger.info("20130106 inject_field(%r,%s)",model_spec,name)
     if doc:
         field.__doc__ = doc
     def todo(model):
+        #~ if model.__name__ == "SiteConfig":
+            #~ logger.info("20130228 add_to_class %s %s",model.__name__,name)
         model.add_to_class(name,field)
         #~ if hasattr(model._meta,'_field_cache'):
         model._meta._fill_fields_cache()
@@ -205,6 +215,8 @@ def update_field(model_spec,name,**kw):
             #~ logger.warning('20120715 update_field(%s.%s) : %s',model,fld,fld.model)
         for k,v in kw.items():
             setattr(fld,k,v)
+        #~ if model.__name__ == "SiteConfig":
+            #~ logger.info("20130228 updated field %s in %s",name,model)
     return do_when_prepared(todo,model_spec)    
         
 

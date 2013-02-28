@@ -709,13 +709,26 @@ class Lino(lino.Lino):
     
     def site_header(self):
         """
-        Used e.g. in footnote or header of certain printed documents.
+        Used in footnote or header of certain printed documents.
+        
+        The convention is to call it as follows from an appy.pod template
+        (use the `html` function, not `xhtml`)
+        ::
+        
+          do text
+          from html(settings.LINO.site_header())
+          
+        Note that this is expected to return a unicode string possibly 
+        containing valid HTML (not XHTML) tags for formatting. 
+        
+        
         """
         if self.is_installed('contacts'):
             if self.site_config.site_company:
                 return self.site_config.site_company.address('<br/>')
                 #~ s = unicode(self.site_config.site_company) + " / "  + s
-        #~ return s
+        #~ return ''
+        
 
     def setup_main_menu(self):
         """
@@ -827,7 +840,9 @@ class Lino(lino.Lino):
         """
         if self._site_config is None:
             #~ print '20120801 create _site_config'
-            from .models import SiteConfig
+            from lino.core.modeltools import resolve_model
+            SiteConfig = resolve_model('ui.SiteConfig')
+            #~ from .models import SiteConfig
             from django.db.utils import DatabaseError
             try:
                 self._site_config = SiteConfig.objects.get(pk=1)

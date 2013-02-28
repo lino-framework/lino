@@ -1,4 +1,4 @@
-## Copyright 2009-2012 Luc Saffre
+## Copyright 2009-2013 Luc Saffre
 ## This file is part of the Lino project.
 ## Lino is free software; you can redistribute it and/or modify 
 ## it under the terms of the GNU General Public License as published by
@@ -84,6 +84,9 @@ class SiteConfig(dd.Model):
     Application code sees this instance as ``settings.LINO.site_config``.
     """
         
+    class Meta:
+        abstract = settings.LINO.is_abstract_model('ui.SiteConfig')
+        
     default_build_method = models.CharField(max_length=20,
         verbose_name=_("Default build method"),
         default='appyodt',
@@ -117,7 +120,7 @@ class SiteConfigs(dd.Table):
     Deserves more documentation.
     """
     default_action = actions.ShowDetailAction()
-    model = SiteConfig
+    model = 'ui.SiteConfig'
     required = dd.required(user_level='manager')
     #~ default_action_class = dd.OpenDetailAction
     #~ has_navigator = False

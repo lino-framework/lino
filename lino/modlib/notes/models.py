@@ -352,7 +352,7 @@ def customize_siteconfig():
     """
     Injects application-specific fields to :class:`SiteConfig <lino.ui.models.SiteConfig>`.
     """
-    dd.inject_field(linoweb.SiteConfig,
+    dd.inject_field('ui.SiteConfig',
         'system_note_type',
         #~ models.ForeignKey(NoteType,
         models.ForeignKey(EventType,

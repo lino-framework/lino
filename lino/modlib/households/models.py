@@ -257,7 +257,7 @@ class MembersByRole(Members):
 if settings.LINO.is_installed('households'):
     #~ Don't inject fields if this is just being imported from some other module.
 
-    dd.inject_field(contacts.Partner,
+    dd.inject_field('contacts.Partner',
         'is_household',
         mti.EnableChild('households.Household',verbose_name=_("is Household")),
         """Whether this Partner is a Household."""

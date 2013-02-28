@@ -1,0 +1,41 @@
+20130228
+========
+
+
+
+Lino und der neue Präsident (Fortsetzung)
+-----------------------------------------
+
+Noch kleine technische Überraschungen.
+Die Standardwerte der Felder `signer1` und `signer2` 
+sollten in der SiteConfig gespeichert sein.
+Diese Felder `signer1` haben `signer2` auch 
+Auswahllisten (chooser), und zwar die gleichen wie die, 
+die für die Verträge gelten.
+Also wollen wir das nicht doppelt schreiben, sondern wiederverwertbar machen.
+Die kleinen Unterschiede (`blank`, `null`, `default`) 
+sind ja dank `dd.update_field` kein Problem.
+Klarer Fall für ein Mixin:
+:class:`lino_welfare.modlib.isip.models.Signers`.
+Jetzt muss die `ui.SiteConfig` aber 
+in :attr:`lino.Lino.override_modlib_models` stehen 
+und wir machen unsere eigene 
+:class:`lino_welfare.modlib.pcsw.models.SiteConfig`
+mit diesem Mixin::
+
+  class SiteConfig(ui.SiteConfig,isip.Signers):
+      pass
+      
+      
+`lino.modlib.contacts.tests.QuickTest`      
+      
+Miscellaneous
+-------------
+
+- tx25: Added handler for RetirementCertificates.
+
+
+- Fixed a UnicodeEncodeError caused by wrongly calling :meth:`lino.ui.Lino.site_header`
+  from certain appy.pod document templates.
+
+

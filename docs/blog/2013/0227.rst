@@ -7,9 +7,12 @@ Getting started with Lino more easily
 As a result of what I learned yesterday about pip, 
 Lino now finally has a much more digestable guide for 
 :doc:`/tutorials/quickstart`.
-It is still work in progress, and the other tutorials need update... 
-oh yes, there's much to say about Lino.
 
+Very nice, 
+but OTOH this is still just a beginning: 
+the other tutorials need update, 
+important features aren't yet documented...
+oh yes, there's much to say about Lino!
 
 
 LegalMainAddress without HouseNumber
@@ -35,3 +38,16 @@ Nach Gespräch mit Gerd scheinen mir zwei neue Felder
 `secretary` und `president` pro Vertrag das Beste zu sein.
 Die müssen für bestehende Dokumente bei der Migration 
 natürlich korrekt ausgefüllt werden.
+
+Das gibt also eine neue Version
+:welfare:`Lino-Welfare </releases/1.0.16>`
+und wenn wir schon dabei sind auch gleich eine 
+:doc:`Lino </releases/1.5.13>`.
+
+Angezeigt werden die beiden neuen Felder gar nicht, 
+und sind sogar in der Tabellenansicht par défaut 
+unsichtbar.
+Hm.... aber der Algoritmus für Standardbelegung 
+ist noch nicht gut, dazu muss ich mir morgen 
+was einfallen lassen.
+Also noch kein Release diese Nacht.

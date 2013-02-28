@@ -1,3 +1,4 @@
+T:\hgwork\lino\docs\autodoc\lino.projects.std.rst:9: WARNING: autodoc can't import/find module 'lino.projects.std.models', it reported error: "No module named models", please check your spelling and sys.path
 T:\hgwork\lino\docs\reviews\index.rst:4: WARNING: toctree contains reference to nonexisting document u'reviews/ :maxdepth: 1'
 T:\hgwork\lino\docs\reviews\index.rst:4: WARNING: toctree contains reference to nonexisting document u'reviews/ :glob:'
 T:\hgwork\lino\docs\reviews\index.rst:4: WARNING: toctree contains reference to nonexisting document u'reviews/django-extensions/index'
@@ -8,14 +9,14 @@ T:\hgwork\lino\docs\igen\index.rst:: WARNING: document isn't included in any toc
 T:\hgwork\lino\docs\reviews\django-extensions.rst:: WARNING: document isn't included in any toctree
 T:\hgwork\lino\docs\reviews\index.rst:: WARNING: document isn't included in any toctree
 T:\hgwork\lino\docs\tutorials\uiless.rst:: WARNING: document isn't included in any toctree
-T:\hgwork\lino\docs\autodoc\lino.utils.rst:44: WARNING: py:class reference target not found: dict
-t:\hgwork\lino\lino\utils\__init__.py:docstring of lino.utils.call_on_bases:1: WARNING: unknown document: /blog/2011/0914
-t:\hgwork\lino\lino\utils\__init__.py:docstring of lino.utils.call_optional_super:1: WARNING: unknown document: /blog/2011/0914
-t:\hgwork\lino\lino\utils\__init__.py:docstring of lino.utils.codetime:1: WARNING: py:mod reference target not found: lino.ui.extjs3.ext_ui
-T:\hgwork\lino\docs\autodoc\lino.utils.rst:14: WARNING: py:class reference target not found: object
-T:\hgwork\lino\docs\autodoc\lino.utils.rst:24: WARNING: py:class reference target not found: exceptions.Exception
-T:\hgwork\lino\docs\autodoc\lino.utils.rst:7: WARNING: py:mod reference target not found: docutils.examples
-T:\hgwork\lino\docs\autodoc\lino.utils.rst:17: WARNING: py:class reference target not found: docutils.writers.html4css1.HTMLTranslator
-T:\hgwork\lino\docs\autodoc\lino.utils.rst:29: WARNING: py:class reference target not found: docutils.writers.html4css1.Writer
-t:\hgwork\lino\lino\utils\restify.py:docstring of lino.utils.restify.old_restify:1: WARNING: unknown document: /blog/2011/0525
-<autodoc>:1: WARNING: py:class reference target not found: object
+None:None: WARNING: toctree contains reference to document 'django/DjangoPitfalls' that doesn't have a title: no link will be generated
+T:\hgwork\lino\docs\autodoc\lino.projects.std.rst:2: WARNING: py:mod reference target not found: lino.projects.std
+T:\hgwork\lino\docs\autodoc\lino.projects.std.rst:6: WARNING: py:mod reference target not found: models
+None:None: WARNING: toctree contains reference to document 'django/DjangoPitfalls' that doesn't have a title: no link will be generated
+None:None: WARNING: toctree contains reference to document 'django/DjangoPitfalls' that doesn't have a title: no link will be generated
+None:None: WARNING: toctree contains reference to document 'django/DjangoPitfalls' that doesn't have a title: no link will be generated
+None:None: WARNING: toctree contains reference to document 'django/DjangoPitfalls' that doesn't have a title: no link will be generated
+None:None: WARNING: toctree contains reference to document 'django/DjangoPitfalls' that doesn't have a title: no link will be generated
+None:None: WARNING: toctree contains reference to document 'django/DjangoPitfalls' that doesn't have a title: no link will be generated
+None:None: WARNING: toctree contains reference to document 'django/DjangoPitfalls' that doesn't have a title: no link will be generated
+None:None: WARNING: toctree contains reference to document 'django/DjangoPitfalls' that doesn't have a title: no link will be generated

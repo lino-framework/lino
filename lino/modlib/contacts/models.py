@@ -223,6 +223,7 @@ but e.g. :class:`PersonMixin` overrides this.
             #~ foreigner = (self.country != self.objects.get(pk=1).country)
         if self.country is not None:
             sc = settings.LINO.site_config # get_site_config()
+            #~ print 20130228, sc.site_company_id
             if not sc.site_company or self.country != sc.site_company.country: 
                 # (if self.country != sender's country)
                 yield unicode(self.country)
