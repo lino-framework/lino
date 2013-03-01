@@ -99,6 +99,13 @@ class SiteConfig(dd.Model):
     def __unicode__(self):
         return force_unicode(_("Site Parameters"))
 
+if False:
+    @dd.receiver(dd.connection_created)
+    def my_callback(sender,**kw):
+        settings.LINO.clear_site_config()
+
+        
+
 #~ class SiteConfigDetail(dd.FormLayout):
     #~ about = """
     #~ versions:40x5 startup_time:30
@@ -427,6 +434,9 @@ if settings.LINO.user_model == 'auth.User':
     dd.inject_field(settings.LINO.user_model,'language',dd.LanguageField())
     
     
+
+
+
 @dd.receiver(dd.post_analyze)
 def post_analyze(sender,**kw):
     """

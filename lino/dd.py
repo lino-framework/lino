@@ -88,6 +88,7 @@ Signals:
 - :attr:`pre_ui_delete <lino.core.signals.pre_ui_delete>`
 - :attr:`pre_analyze <lino.core.signals.pre_analyze>`
 - :attr:`receiver <django.dispatch.receiver>` : the standard Django receiver decorator
+- (and many more)
 
 Actions:
 
@@ -210,9 +211,12 @@ from lino.core.signals import pre_ui_build
 from lino.core.signals import post_ui_build
 
 from django.db.models.signals import pre_save, post_save
+from django.db.backends.signals import connection_created
+
 
 from django.db.models.signals import class_prepared
 from django.db.models.fields import NOT_PROVIDED
+
 
 from django.dispatch import receiver
 #~ from lino.core import signals

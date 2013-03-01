@@ -94,12 +94,13 @@ def startup_site(self):
         process_name = 'WSGI'
     else:
         process_name = ' '.join(sys.argv)
-    logger.info("Started %s on %r (PID %s). Languages: %s.", 
-      process_name,self.title,os.getpid(), ', '.join(babel.AVAILABLE_LANGUAGES))
+    #~ logger.info("Started %s on %r (PID %s).", process_name,self.title,os.getpid())
+    logger.info("Started %s (using %s) --> PID %s", 
+        process_name,settings.SETTINGS_MODULE,os.getpid())
     logger.info(self.welcome_text())
     
     def goodbye():
-        logger.info("Stopped %s (PID %s)",process_name,os.getpid())
+        logger.info("Done %s (PID %s)",process_name,os.getpid())
     atexit.register(goodbye)
     
     
@@ -253,7 +254,12 @@ def startup_site(self):
     #~ logger.info("20130121 GFK_LIST is %s",['%s.%s'%(full_model_name(f.model),f.name) for f in settings.LINO.GFK_LIST])
     dd.post_analyze.send(self,models_list=models_list)
     
-    logger.info("%d models, %s actors.",len(models_list),len(actors.actors_list))
+    logger.info("Languages: %s. %d apps, %d models, %s actors.",
+        ', '.join(babel.AVAILABLE_LANGUAGES),
+        len(self.modules),
+        len(models_list),
+        len(actors.actors_list))
+    
     #~ logger.info(settings.INSTALLED_APPS)
     
     

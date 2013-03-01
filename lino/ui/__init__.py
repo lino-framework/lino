@@ -832,28 +832,31 @@ class Lino(lino.Lino):
         Returns the one and only :class:`lino.models.SiteConfig` instance.
         
         If no instance exists (which happens in a virgin database),
-        we create it and set some default values from 
-        :attr:`site_config_defaults`.
+        we create it using default values from :attr:`site_config_defaults`.
         
-        We cannot save here because it's possible that the database 
-        doesn't yet exist.
+        This property may not be used as long as there is no database 
+        connected (or not initialized).
+        
         """
         if self._site_config is None:
+            #~ raise Exception(20130301)
             #~ print '20120801 create _site_config'
             from lino.core.modeltools import resolve_model
+            #~ from lino.utils import dblogger as logger
             SiteConfig = resolve_model('ui.SiteConfig')
             #~ from .models import SiteConfig
-            from django.db.utils import DatabaseError
+            #~ from django.db.utils import DatabaseError
             try:
                 self._site_config = SiteConfig.objects.get(pk=1)
-            except (SiteConfig.DoesNotExist,DatabaseError):
+                #~ logger.info("20130301 Loaded SiteConfig record (%s)",self._site_config)
+            #~ except (SiteConfig.DoesNotExist,DatabaseError):
+            except SiteConfig.DoesNotExist:
             #~ except Exception,e:
                 kw = dict(pk=1)
                 #~ kw.update(settings.LINO.site_config_defaults)
                 kw.update(self.site_config_defaults)
-                #~ logger.debug("Creating SiteConfig record (%s)",e)
                 self._site_config = SiteConfig(**kw)
-            
+                #~ logger.info("20130301 Created SiteConfig record (%s)",self._site_config)
                 # 20120725 
                 # polls_tutorial menu selection `Config --> Site Parameters` 
                 # said "SiteConfig 1 does not exist"
@@ -861,6 +864,14 @@ class Lino(lino.Lino):
                 #~ self._site_config.save()
         return self._site_config
     #~ site_config = property(get_site_config)
+    
+    def clear_site_config(self):
+        """
+        Clear the cached SiteConfig instance. 
+        
+        This is needed e.g. when the test runner has created the test database.
+        """
+        self._site_config = None
     
     def unused_update_site_config(self,**kw):
         """
@@ -1148,4 +1159,6 @@ class Lino(lino.Lino):
                 #~ dblogger.debug("Running %s of %s", methname, mod.__name__)
                 for i in meth(self,ar):
                     yield i
+
+
 

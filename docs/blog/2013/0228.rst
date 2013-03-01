@@ -2,21 +2,22 @@
 ========
 
 
-
 Lino und der neue Präsident (Fortsetzung)
 -----------------------------------------
 
-Noch kleine technische Überraschungen.
+Noch kleine technische Überraschungen:
 Die Standardwerte der Felder `signer1` und `signer2` 
 sollten in der SiteConfig gespeichert sein.
-Diese Felder `signer1` haben `signer2` auch 
-Auswahllisten (chooser), und zwar die gleichen wie die, 
+Diese Felder haben 
+die gleichen Auswahllisten-Methoden (chooser) wie die, 
 die für die Verträge gelten.
-Also wollen wir das nicht doppelt schreiben, sondern wiederverwertbar machen.
+Also wollen wir das nicht doppelt schreiben, 
+sondern wiederverwertbar machen.
 Die kleinen Unterschiede (`blank`, `null`, `default`) 
 sind ja dank `dd.update_field` kein Problem.
 Klarer Fall für ein Mixin:
 :class:`lino_welfare.modlib.isip.models.Signers`.
+
 Jetzt muss die `ui.SiteConfig` aber 
 in :attr:`lino.Lino.override_modlib_models` stehen 
 und wir machen unsere eigene 
@@ -26,16 +27,29 @@ mit diesem Mixin::
   class SiteConfig(ui.SiteConfig,isip.Signers):
       pass
       
-      
-`lino.modlib.contacts.tests.QuickTest`      
-      
+Hier musste ich einige Aufrufe von
+:func:`dd.inject_field <lino.core.inject.inject_field>`,
+die bisher direkt die Klasse SiteConfig angaben,
+ändern nach "ui.SiteConfig". 
+Hat was mit Djangos model cache loading order zu tun:
+:func:`dd.inject_field <lino.core.inject.inject_field>`
+funktioniert natürlich nicht, wenn die Unterklasse 
+des abstrakten Modells schon geladen ist.
+Für gut sollte Lino dann eine Fehlermeldung machen, 
+aber ich habe noch nicht erkannt, wie ich das kontrollieren kann.
+En attendat Fausregel: immer einfach die 
+Modellnamen als string angeben statt das Klassenobjekt.
+
 Miscellaneous
 -------------
 
-- tx25: Added handler for RetirementCertificates.
+- :mod:`lino_welfare.modlib.cbss.tx25` : Added handler for RetirementCertificates.
 
+- Fixed a UnicodeEncodeError caused by 
+  wrongly calling :meth:`lino.ui.Lino.site_header`
+  in certain appy.pod document templates.
 
-- Fixed a UnicodeEncodeError caused by wrongly calling :meth:`lino.ui.Lino.site_header`
-  from certain appy.pod document templates.
+TODO:
 
+- `contacts.QuickTest` fails when called for a Lino-Welfare site.
 

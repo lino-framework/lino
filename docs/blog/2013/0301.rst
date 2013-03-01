@@ -1,0 +1,59 @@
+20130301
+========
+
+
+`contacts.QuickTest` failed sometimes
+-------------------------------------
+
+Gestern abend hatte ich das hier bemerkt:
+
+- `contacts.QuickTest` fails when called for a Lino-Welfare site.
+
+Das war subtil. Lag daran, dass :mod:`lino_welfare.modlib.cv` 
+folgendes machte::
+
+    @classmethod
+    def after_site_setup(self,site):
+        super(ConfiguredPropsByPerson,self).after_site_setup(site)
+        if self.propgroup_config_name:
+            def adapt(sc):
+                ...
+            adapt(site.site_config)
+            
+            ...
+
+Da wurde also während :meth:`lino.Lino.startup`
+auf :attr:`lino.Lino.site_config` zugegriffen. 
+Der versuchte dann also die `SiteConfig` zu laden::
+
+    @property
+    def site_config(self):
+        if self._site_config is None:
+            from lino.core.modeltools import resolve_model
+            SiteConfig = resolve_model('ui.SiteConfig')
+            from django.db.utils import DatabaseError
+            try:
+                self._site_config = SiteConfig.objects.get(pk=1)
+            except (SiteConfig.DoesNotExist,DatabaseError):
+                kw = dict(pk=1)
+                kw.update(self.site_config_defaults)
+                self._site_config = SiteConfig(**kw)
+        return self._site_config
+
+Erstens wenn es wegen DatabaseError
+
+    @classmethod
+    def after_site_setup(self,site):
+        super(ConfiguredPropsByPerson,self).after_site_setup(site)
+        if self.propgroup_config_name:
+            def adapt(sc):
+                ...
+            @dd.receiver(dd.connection_created)
+            def my_callback(sender,**kw):
+                adapt(settings.LINO.site_config)
+                
+            ...
+            
+
+
+

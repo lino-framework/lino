@@ -50,6 +50,3 @@ Related projects:
    autodoc/index
    demos
 
-
-..
-

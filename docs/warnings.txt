@@ -1,4 +1,3 @@
-T:\hgwork\lino\docs\autodoc\lino.projects.std.rst:9: WARNING: autodoc can't import/find module 'lino.projects.std.models', it reported error: "No module named models", please check your spelling and sys.path
 T:\hgwork\lino\docs\reviews\index.rst:4: WARNING: toctree contains reference to nonexisting document u'reviews/ :maxdepth: 1'
 T:\hgwork\lino\docs\reviews\index.rst:4: WARNING: toctree contains reference to nonexisting document u'reviews/ :glob:'
 T:\hgwork\lino\docs\reviews\index.rst:4: WARNING: toctree contains reference to nonexisting document u'reviews/django-extensions/index'
@@ -9,10 +8,6 @@ T:\hgwork\lino\docs\igen\index.rst:: WARNING: document isn't included in any toc
 T:\hgwork\lino\docs\reviews\django-extensions.rst:: WARNING: document isn't included in any toctree
 T:\hgwork\lino\docs\reviews\index.rst:: WARNING: document isn't included in any toctree
 T:\hgwork\lino\docs\tutorials\uiless.rst:: WARNING: document isn't included in any toctree
-None:None: WARNING: toctree contains reference to document 'django/DjangoPitfalls' that doesn't have a title: no link will be generated
-T:\hgwork\lino\docs\autodoc\lino.projects.std.rst:2: WARNING: py:mod reference target not found: lino.projects.std
-T:\hgwork\lino\docs\autodoc\lino.projects.std.rst:6: WARNING: py:mod reference target not found: models
-None:None: WARNING: toctree contains reference to document 'django/DjangoPitfalls' that doesn't have a title: no link will be generated
 None:None: WARNING: toctree contains reference to document 'django/DjangoPitfalls' that doesn't have a title: no link will be generated
 None:None: WARNING: toctree contains reference to document 'django/DjangoPitfalls' that doesn't have a title: no link will be generated
 None:None: WARNING: toctree contains reference to document 'django/DjangoPitfalls' that doesn't have a title: no link will be generated
