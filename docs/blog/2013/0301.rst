@@ -9,8 +9,10 @@ Gestern abend hatte ich das hier bemerkt:
 
 - `contacts.QuickTest` fails when called for a Lino-Welfare site.
 
-Das war subtil. Lag daran, dass :mod:`lino_welfare.modlib.cv` 
-folgendes machte::
+Das war subtil. 
+Lag daran, dass :mod:`lino_welfare.modlib.cv` 
+folgendes machte, um die Titel der drei Tabellen 
+"Fähigkeiten", "Sozialkompetenzen" und "Hindernisse" zu setzen::
 
     @classmethod
     def after_site_setup(self,site):
@@ -24,7 +26,10 @@ folgendes machte::
 
 Da wurde also während :meth:`lino.Lino.startup`
 auf :attr:`lino.Lino.site_config` zugegriffen. 
-Der versuchte dann also die `SiteConfig` zu laden::
+Logisch, denn diese drei Tabellen hängen nun mal davon ab, 
+was man in der SiteConfig angegeben hat.
+
+Lino versucht da also die `SiteConfig` zu laden::
 
     @property
     def site_config(self):
@@ -40,7 +45,31 @@ Der versuchte dann also die `SiteConfig` zu laden::
                 self._site_config = SiteConfig(**kw)
         return self._site_config
 
-Erstens wenn es wegen DatabaseError
+Bei einem ``manage.py test`` gelang ihm das *manchmal*, 
+und zwar dann, wenn zufällig momentan eine echte Datenbank existierte. 
+Dann hatte er das Objekt im Cache drin, aber kurz danach 
+wurde die echte Datenbank abgemeldet, um die Testdatenbank 
+anzumelden und zu erstellen.
+
+Besonders witzig war, dass es dann nicht sofort und überhaupt gar nicht immer knallte.
+Es knallte z.B., wenn ein Test dann auf `settings.LINO.site_config.site_company` zugriff.
+Dann versuchte Django, die `site_company` aus der Datenbank zu holen, deren `primary key`
+er sich zuvor selber notiert hatte. Und dann merkte er, dass eine Company mit 
+diesem pk nicht existierte.
+
+Eine erste Lösung bestand darin, nach jedem `connection_created` 
+den cache zu löschen::
+
+    @dd.receiver(dd.connection_created)
+    def my_callback(sender,**kw):
+        settings.LINO.clear_site_config()
+        
+Aber das war doch recht unelegant: 
+zufällige Daten einlesen, nur das Ganze dann wieder rückgängig zu machen?
+
+Nein, da ändern wir doch besser die obige `after_site_setup`, 
+so dass diese Funktion `adapt` nicht sofort sondern 
+nach jedem `connection_created` gerufen wird::
 
     @classmethod
     def after_site_setup(self,site):
@@ -54,6 +83,52 @@ Erstens wenn es wegen DatabaseError
                 
             ...
             
+Jetzt brauchen wir auch nicht mehr den DatabaseError abzufangen 
+in der property :attr:`site_config <lino.Lino.site_config>`. 
+Cool! Lino ist mal wieder schöner geworden.
 
 
+expected parenthesized list
+---------------------------
 
+I had the following line in my setup.py::
+
+    requires = [... 'python-dateutil'...],
+    
+That was wrong, it must be::
+
+    requires = [... 'python_dateutil'...],
+    
+Here is how Distribute told me this::
+
+  python setup.py sdist --formats=gztar,zip --dist-dir=docs/dl
+  Traceback (most recent call last):
+    File "setup.py", line 47, in <module>
+      Topic :: Software Development :: Libraries :: Application Frameworks""".splitlines())
+    File "C:\Python27\lib\distutils\core.py", line 112, in setup
+      _setup_distribution = dist = klass(attrs)
+    File "C:\Python27\lib\site-packages\distribute-0.6.35-py2.7.egg\setuptools\dist.py", line 225, in __init__
+      _Distribution.__init__(self,attrs)
+    File "C:\Python27\lib\distutils\dist.py", line 259, in __init__
+      getattr(self.metadata, "set_" + key)(val)
+    File "C:\Python27\lib\distutils\dist.py", line 1220, in set_requires
+      distutils.versionpredicate.VersionPredicate(v)
+    File "C:\Python27\lib\distutils\versionpredicate.py", line 113, in __init__
+      raise ValueError("expected parenthesized list: %r" % paren)
+  ValueError: expected parenthesized list: '-dateutil'
+  make: *** [sdist] Error 1
+  
+  
+
+Release
+-------
+
+Und jetzt kann ich die neuen Versionen für 
+:welfare:`Lino-Welfare </releases/1.0.16>`
+und :doc:`Lino </releases/1.5.13>` rauslassen und installieren.
+Genau rechtzeitig zum Amtsantritt des neuen Präsidenten.
+Willkommen im ÖSHZ, Lambert Jaegers!
+Wir kennen uns noch nicht persönlich, aber ich freue mich, 
+dass jetzt ein Ecolo-Geist mitredet.
+
+  

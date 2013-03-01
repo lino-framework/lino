@@ -13,5 +13,3 @@ None:None: WARNING: toctree contains reference to document 'django/DjangoPitfall
 None:None: WARNING: toctree contains reference to document 'django/DjangoPitfalls' that doesn't have a title: no link will be generated
 None:None: WARNING: toctree contains reference to document 'django/DjangoPitfalls' that doesn't have a title: no link will be generated
 None:None: WARNING: toctree contains reference to document 'django/DjangoPitfalls' that doesn't have a title: no link will be generated
-None:None: WARNING: toctree contains reference to document 'django/DjangoPitfalls' that doesn't have a title: no link will be generated
-None:None: WARNING: toctree contains reference to document 'django/DjangoPitfalls' that doesn't have a title: no link will be generated
