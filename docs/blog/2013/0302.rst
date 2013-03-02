@@ -12,13 +12,14 @@ I changed my mind again:
   `django-site
   <https://code.google.com/p/django-site/>`_.
   
-This change was quite some -rather dull- work. 
-On a Saturday.
-But I like the result.
+If you look at the diff (:checkin`ec7ed8317862`)
+you'll agree that this was quite some work for a Saturday.
+And the only nothing visible difference is a new mention "DjangoSite 0.0.1" 
+in the using string.
+But I really like the result.
 
 TODO:
 
 - move also dumpy and babel to django-site. 
 - change babel to do nothing if `Site.languages` is None.
 - split the docs. What will be the home url for django-site?
-- 

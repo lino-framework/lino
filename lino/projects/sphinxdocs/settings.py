@@ -30,7 +30,7 @@ import lino
 from lino.projects.std.settings import *
 
 
-class Lino(Lino):
+class Site(Site):
     #~ source_dir = os.path.dirname(__file__)
     title = "lino.projects.sphinxdocs"
     
@@ -42,7 +42,7 @@ class Lino(Lino):
     
 
     def get_installed_apps(self):
-        for a in super(Lino,self).get_installed_apps():
+        for a in super(Site,self).get_installed_apps():
             yield a
 
         yield 'django.contrib.contenttypes'
@@ -65,7 +65,7 @@ class Lino(Lino):
         yield 'lino.modlib.sales'
         #~ yield 'lino.modlib.pages'
         #~ yield 'lino.projects.cosi'
-        yield 'lino'
+        #~ yield 'lino'
 
-LINO = Lino(__file__,globals())
+SITE = Site(__file__,globals())
 

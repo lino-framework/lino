@@ -42,6 +42,8 @@ from lino.utils import AttrDict
 
 import lino
 
+  
+
 class Site(lino.Site):
     """
     """
@@ -263,26 +265,6 @@ class Site(lino.Site):
     Whether last name of persons should be printed with uppercase letters.
     See :mod:`lino.test_apps.human`
     """
-    
-    cbss_live_tests = False
-    """
-    Whether unit tests should try to really connect to the cbss.
-    Some test cases of the test suite would fail with a timeout if run 
-    from behind an IP address that is not registered at the :term:`CBSS`.
-    These tests are skipped by default. To activate them, 
-    set `cbss_live_tests` to `True` in your :xfile:`settings.py`.
-    
-    """
-    
-    cbss_environment = None
-    """
-    Either `None` or one of 'test', 'acpt' or 'prod'.
-    See :mod:`lino.modlib.cbss.models`.
-    Leaving this to `None` means that the cbss module is "inactive" even if installed.
-    """
-    
-    
-    
     
     extjs_root = None
     """
@@ -571,22 +553,6 @@ class Site(lino.Site):
         if i != -1:
             modname = modname[:i]
         self.is_local_project_dir = not modname in installed_apps
-        #~ print "20130117 (not %r in %r) --> %s" % (modname , installed_apps,self.is_local_project_dir)
-        #~ self.is_app = os.path.exist(join(self.project_dir,'models.py'))
-        
-        #~ self.source_dir = os.path.dirname(self.get_app_source_file())
-        #~ self.source_name = os.path.split(self.source_dir)[-1]
-        
-        #~ print "settings.SITE.source_dir:", self.source_dir
-        #~ print "settings.SITE.source_name:", self.source_name
-
-        #~ self.appy_params.update(pythonWithUnoPath=r'C:\PROGRA~1\LIBREO~1\program\python.exe')
-        #~ APPY_PARAMS.update(pythonWithUnoPath=r'C:\PROGRA~1\OPENOF~1.ORG\program\python.exe')
-        #~ APPY_PARAMS.update(pythonWithUnoPath='/usr/bin/libreoffice')
-        #~ APPY_PARAMS.update(pythonWithUnoPath='/etc/openoffice.org3/program/python')
-    
-        #~ if django_settings: 
-            #~ self.install_settings(django_settings)
             
         """
         If your project_dir contains no :xfile:`models.py`, 
@@ -599,23 +565,6 @@ class Site(lino.Site):
             if isdir(pth):
                 django_settings.update(FIXTURE_DIRS = [pth])
                 
-        #~ get_settings_subdirs
-            
-        #~ if self.project_dir != self.source_dir:
-            #~ django_settings.update(FIXTURE_DIRS = [join(self.project_dir,"fixtures")])
-            #~ lino.Lino.__init__ füllte project_dir auch dann nach FIXTURES_DIR, 
-            #~ wenn es zugleich das source_dir war. Was die subtile Folge hatte, 
-            #~ dass alle Fixtures doppelt ausgeführt wurden. 
-            #~ Dieser Bug hat mich mindestens eine Stunde lang beschäftigt.            
-
-        #~ django_settings.update(TEMPLATE_DIRS = (
-            #~ join(abspath(self.project_dir),'templates'),
-            #~ join(abspath(self.source_dir),'templates'),
-            #~ join(abspath(dirname(__file__)),'templates'),
-        #~ ))
-        
-        
-      
         if self.webdav_url is None:
             self.webdav_url = '/media/webdav/'
         if self.webdav_root is None:
@@ -696,34 +645,6 @@ class Site(lino.Site):
         #~ return obj.id is not None and (obj.id > 10 and obj.id < 21)
                   
         
-    #~ @property
-    #~ def ui(self):
-        #~ if self._extjs_ui is None:
-            #~ from .ui import ExtUI
-            #~ self._extjs_ui = ExtUI()
-        #~ return self._extjs_ui
-    #~ ui = property(get_ui)
-
-    #~ def get_groph_ui(self):
-        #~ if self._groph_ui is None:
-            #~ self.startup()
-            #~ from lino.ui.groph.groph_ui import UI
-            #~ self._groph_ui = UI()
-        #~ return self._groph_ui
-    #~ groph_ui = property(get_groph_ui)
-
-    #~ def get_application_description(self):
-        #~ info = self.get_application_info()
-        #~ s = """%s is yet another 
-        #~ <a href="%s">Lino</a> application.
-        #~ """ % (info[0],__url__)
-        #~ if False:
-            #~ from django.db import models
-            #~ s += """
-            #~ It features %d database tables in %d modules.
-            #~ """ % (len(list(models.get_models())),len(list(self.get_installed_apps())))
-        #~ return s
-    
     def site_header(self):
         """
         Used in footnote or header of certain printed documents.
@@ -754,94 +675,6 @@ class Site(lino.Site):
         pass
 
         
-    #~ def get_site_config(self):
-    
-    vat_quarterly = False
-    """
-    Set this to True to support quarterly VAT declarations.
-    """
-    
-    def get_vat_class(self,tt,item):
-        return 'normal'
-        
-    def get_product_vat_class(self,tt,product):
-        return 'normal'
-        
-
-    def get_product_base_account(self,tt,product):
-        """
-        Return the reference of the general account 
-        to be used to book the product movement of 
-        the trade type and product.
-        The default implementation works with the accounts created by
-        :mod:`lino.modlib.accounts.fixtures.mini`.
-        """
-        if tt.name == 'sales':
-            #~ return '7000'
-            return 'sales'
-        elif tt.name == 'purchases':
-        #~ elif item.voucher.journal.type == JournalTypes.purchases:
-            return 'purchases'
-            #~ return '6000'
-        
-    #~ def get_sales_item_account(self,item):
-        #~ return self.modules.accounts.Account.objects.get(group__ref='704000')
-        
-    def get_partner_account(self,voucher):
-        """
-        Return the reference of the general account 
-        where the partner movement of the given voucher should be booked.
-        The default implementation works with the accounts created by
-        :mod:`lino.modlib.accounts.fixtures.mini`.
-        """
-        tt = voucher.get_trade_type()
-        if tt.name == 'sales':
-            #~ return '4000'
-            return 'customers'
-        elif tt.name == 'purchases':
-            #~ return '4400'
-            return 'suppliers'
-        
-    def get_vat_account(self,tt,vc,vr):
-        """
-        Return the reference of the account where the VAT amount 
-        for the specified trade operation should be booked.
-        The operation is specified using its type `tt`, 
-        its class `vc` and its regime `vr`
-        `tt` is a :class:`TradeType` (usually either `sales` or `purchases`)
-        `vc` is a :class:`VatClass`
-        `vr` is a :class:`VatRegime`
-        
-        """
-        if tt.name == 'sales':
-            #~ return '4000'
-            return 'vat_due'
-        elif tt.name == 'purchases':
-            #~ return '4400'
-            return 'vat_deductible'
-        
-        #~ return '472100'
-
-    def get_vat_rate(self,tt,vc,vr):
-        VAT_RATES = dict(
-          exempt=Decimal(),
-          reduced=Decimal('0.07'),
-          normal=Decimal('0.20')
-        )
-        return VAT_RATES[vc.name]
-
-        
-        
-    def get_reminder_generators_by_user(self,user):
-        """
-        Override this per application to return a list of 
-        reminder generators from all models for a give ueser
-        A reminder generator is an object that has a `update_reminders` 
-        method.
-        """
-        return []
-        
-    
       
     @property
     def site_config(self):
@@ -890,20 +723,6 @@ class Site(lino.Site):
         """
         self._site_config = None
     
-    def unused_update_site_config(self,**kw):
-        """
-        Update and save the one and only :class:`lino.models.SiteConfig` instance.
-        """
-        #~ print '20120801 update_site_config', kw
-        sc = self.site_config
-        for k,v in kw.items():
-            setattr(sc,k,v)
-        #~ sc.full_clean() # caused problems like ValidationError: {'sector': [u'Modell Sektor mit dem Prim\xe4rschl\xfcssel 45 ist nicht vorhanden.'], ...}        
-        
-        
-        #~ sc.save()
-        #~ self.on_site_config_saved(sc)
-    
     def on_site_config_saved(self,sc):
         """
         Used internally. Called by SiteConfig.save() to update the cached instance.
@@ -920,7 +739,6 @@ class Site(lino.Site):
         #~ return obj.id is not None and (obj.id < 200000 or obj.id > 299999)
         return False
         #~ return obj.id is not None and (obj.id > 10 and obj.id < 21)
-                  
         
         
     def get_quicklinks(self,ar):
@@ -1060,14 +878,6 @@ class Site(lino.Site):
         return None
         
     
-    #~ MAIN_HTML_TEMPLATE = Template("""\
-    #~ <div class="htmlText">
-    #~ <h1>{{node.title}}</h1>
-    #~ {{parse(node.body)}}
-    #~ </div>""")
-
-        
-        
     def get_main_html(self,request):
         """
         Return a chunk of html to be displayed in the main area of the admin index.
@@ -1077,20 +887,6 @@ class Site(lino.Site):
         """
         from lino.core import web
         return web.render_from_request(request,'admin_main.html')
-        
-    def unused_get_main_html(self,request):
-        """
-        Return a chunk of html to be displayed in the main area of the admin index.
-        This is being called only if :meth:`get_main_action` returns `None`.
-        The default implementation returns the 
-        message "It works! But your application isn't complete. ..."
-        """
-        pages = dd.resolve_app('pages')
-        from lino.utils import babel
-        node = pages.lookup('admin')
-        if node is None:
-            return '20121221 No admin page within %s' % [cgi.escape(unicode(p)) for p in pages.get_all_pages()]
-        return pages.render_node(request,node,'admin_main.html')
 
 
     def get_installed_apps(self):
@@ -1114,11 +910,7 @@ class Site(lino.Site):
         
 
     def build_admin_url(self,*args,**kw):
-        #~ if self.admin_prefix:
-            #~ return buildurl(self.admin_prefix,*args,**kw)
-        #~ return buildurl(*args,**kw)
         return self.admin_prefix + buildurl(*args,**kw)
-    #~ build_url = build_admin_url
 
     def build_media_url(self,*args,**kw):
         return buildurl('media',*args,**kw)
@@ -1146,10 +938,6 @@ class Site(lino.Site):
             return self.tinymce_base_url + url
         return self.build_media_url('tinymce',url)
         
-
-    def unused_get_urls(self):
-        return []
-
     
     def get_system_note_recipients(self,ar,obj,silent):
         """
@@ -1165,20 +953,6 @@ class Site(lino.Site):
         """
         return obj.get_system_note_recipients(ar,silent)
         
-
-    def get_todo_tables(self,ar):
-        """
-        Return or yield a list of tables that should be empty
-        """
-        from django.db.models import loading
-        for mod in loading.get_apps():
-        #~ for mod in self.get_installed_modules():
-            meth = getattr(mod,'get_todo_tables',None)
-            if meth is not None:
-                #~ dblogger.debug("Running %s of %s", methname, mod.__name__)
-                for i in meth(self,ar):
-                    yield i
-
 
     def using(self,ui=None):
         for u in super(Site,self).using(ui): yield u

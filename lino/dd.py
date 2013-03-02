@@ -84,13 +84,13 @@ Utilities:
 
 Signals:
 
-- :attr:`pre_startup <lino.core.signals.pre_startup>`
+- :attr:`pre_analyze <django_site.signals.pre_analyze>`
+- :attr:`post_analyze <django_site.signals.post_analyze>`
 - :attr:`pre_merge <lino.core.signals.pre_merge>`
 - :attr:`pre_ui_create <lino.core.signals.pre_ui_create>`
 - :attr:`ChangeWatcher <lino.core.signals.ChangeWatcher>`
 - :attr:`pre_ui_update <lino.core.signals.pre_ui_update>`
 - :attr:`pre_ui_delete <lino.core.signals.pre_ui_delete>`
-- :attr:`pre_analyze <lino.core.signals.pre_analyze>`
 - :attr:`receiver <django.dispatch.receiver>` : the standard Django receiver decorator
 - (and many more)
 
@@ -207,8 +207,8 @@ from lino.core.layouts import ParamsLayout
 
 
 from lino.core.signals import pre_ui_create, pre_ui_delete, pre_ui_update, ChangeWatcher
-from lino.core.signals import pre_analyze
-from lino.core.signals import post_analyze
+from django_site.signals import pre_analyze
+from django_site.signals import post_analyze
 
 from lino.core.signals import auto_create
 from lino.core.signals import pre_merge

@@ -1,11 +1,11 @@
 #~ DJANGO_ADMIN = python l:/snapshots/django/django/bin/django-admin.py
 #~ DJANGO_ADMIN = `python -c 'import os; from django import bin;print os.path.dirname(bin.__file__)'`/django-admin.py
 DJANGO_ADMIN=python $(shell python -c "from os.path import join,dirname; from django import bin;print join(dirname(bin.__file__),'django-admin.py')")
+DJANGO_ADMIN := $(shell cygpath -m $(DJANGO_ADMIN))
 LINO_ROOT=$(shell python -c "from os.path import join,dirname,abspath; import lino;print abspath(join(dirname(lino.__file__),'..'))")
 #LINO_ROOT := /cygdrive/t/hgwork/lino
 #LINO_ROOT := `cygpath -m $(LINO_ROOT)`
 LINO_ROOT := $(shell cygpath -m $(LINO_ROOT))
-DJANGO_ADMIN := $(shell cygpath -m $(DJANGO_ADMIN))
 APPS = cosi 
 MODULES = vat accounts ledger households outbox \
   cal products properties contacts countries notes \

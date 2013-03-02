@@ -51,20 +51,19 @@ from django.db import models
 
 import lino
 
-from lino.core.modeltools import resolve_model
+from lino import dd
 
 from lino.utils import confirm, iif
 from lino.utils import dblogger
-from lino.core.modeltools import obj2str
 
 from lino.utils.daemoncommand import DaemonCommand
 from lino.modlib.cal.utils import aware, dt2kw, setkw
 
 
-Place = resolve_model('cal.Place')
-Calendar = resolve_model('cal.Calendar')
-Event = resolve_model('cal.Event')
-RecurrenceSet = resolve_model('cal.RecurrenceSet')
+Place = dd.resolve_model('cal.Place')
+Calendar = dd.resolve_model('cal.Calendar')
+Event = dd.resolve_model('cal.Event')
+RecurrenceSet = dd.resolve_model('cal.RecurrenceSet')
 
 #~ REQUEST = dblogger.PseudoRequest('watch_calendars')
 
@@ -300,13 +299,13 @@ def watch():
         
 
 def main(*args,**options):
-    msg = "Started watch_calendars %s..."
-    dblogger.info(msg,lino.__version__)
+    #~ msg = "Started watch_calendars %s..."
+    #~ dblogger.info(msg,lino.__version__)
         
-    def goodbye():
-        msg = "Stopped watch_calendars %s ..."
-        dblogger.info(msg,lino.__version__)
-    atexit.register(goodbye)
+    #~ def goodbye():
+        #~ msg = "Stopped watch_calendars %s ..."
+        #~ dblogger.info(msg,lino.__version__)
+    #~ atexit.register(goodbye)
     
     while True:
         watch()
@@ -324,7 +323,7 @@ class Command(DaemonCommand):
     preserve_loggers = [dblogger.logger]
     
     def handle_daemon(self, *args, **options):
-        settings.SITE.setup()
+        #~ settings.SITE.startup()
         main(*args,**options)
 
 

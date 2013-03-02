@@ -18,7 +18,9 @@ import lino
 
 from lino.projects.std.settings import *
 
-class Site(Site):
+from lino.modlib import cal
+
+class Site(Site,cal.SiteMixin):
     source_dir = os.path.dirname(__file__)
     title = "Lino/MinimalApp 2"
     #~ help_url = "http://lino.saffre-rumma.net/az/index.html"
@@ -37,7 +39,7 @@ class Site(Site):
     #~ remote_user_header = "REMOTE_USER"
     #~ remote_user_header = None
     
-    def get_app_source_file(self):  return __file__
+    #~ def get_app_source_file(self):  return __file__
         
     #~ def setup_quicklinks(self,ui,user,tb):
         #~ tb.add_action(self.modules.contacts.Persons.detail_action)
