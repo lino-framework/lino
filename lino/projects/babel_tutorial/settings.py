@@ -1,6 +1,6 @@
 from lino.projects.std.settings import *
-from lino_local import LocalLinoMixin 
-class Lino(LocalLinoMixin,Lino):
+#~ from lino_local import LocalLinoMixin 
+class Site(Site):
   
     title = "Babel Tutorial"
     
@@ -9,19 +9,19 @@ class Lino(LocalLinoMixin,Lino):
     languages = ['en', 'fr']
     
     def get_installed_apps(self):
-        for a in super(Lino,self).get_installed_apps():
+        for a in super(Site,self).get_installed_apps():
             yield a
         yield 'lino.projects.babel_tutorial' 
 
-LINO = Lino(__file__,globals()) 
+SITE = Site(__file__,globals()) 
 
 DEBUG = True
 
 # The DATABASES setting is the only thing you should take 
 # over from your original file:
-DATABASES = {
-    'default': {
-        'ENGINE': 'django.db.backends.sqlite3', 
-        'NAME': abspath(join(dirname(__file__),'test.db'))
-    }
-}
+#~ DATABASES = {
+    #~ 'default': {
+        #~ 'ENGINE': 'django.db.backends.sqlite3', 
+        #~ 'NAME': abspath(join(dirname(__file__),'test.db'))
+    #~ }
+#~ }

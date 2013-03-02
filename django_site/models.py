@@ -13,14 +13,13 @@
 ## along with Lino; if not, see <http://www.gnu.org/licenses/>.
 
 """
-This module is Lino's implementation of 
-Ross McFarland idea to simply send the server startup signal
-"at the end of your last app's models.py file"
+This module is based on Ross McFarland idea to simply send 
+the server startup signal "at the end of your last app's models.py file"
 in his post `Django Startup Signal (Sun 24 June 2012)
 <http://www.xormedia.com/django-startup-signal/>`_.
 
-Lino adds a subtle hack to also cope with postponed imports.
-If there are postponed apps, then :mod:`lino.models` must itself raise 
+This adds a subtle hack to also cope with postponed imports.
+If there are postponed apps, then :mod:`django_site.models` must itself raise 
 an `ImportError` so that it gets itself postponed and imported another 
 time.
 
@@ -33,10 +32,15 @@ import sys
 from django.db.models import loading
 
 if len(loading.cache.postponed) > 0:
-    if not 'lino' in loading.cache.postponed: # i.e. if this is the first time
+    if not 'django_site' in loading.cache.postponed: # i.e. if this is the first time
         raise ImportError("Waiting for postponed apps (%s) to import" % 
             loading.cache.postponed)
 
-
 from django.conf import settings
-settings.LINO.startup()
+try:
+    settings.SITE.startup()
+except ImportError as e:
+    import traceback
+    #~ traceback.print_exc(e)
+    #~ sys.exit(-1)
+    raise Exception("ImportError during startup: \n" + traceback.format_exc(e))

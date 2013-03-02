@@ -22,7 +22,7 @@ from lino.projects.std.settings import *
 
 from django.utils.translation import ugettext_lazy as _
 
-class Lino(Lino):
+class Site(Site):
   
     title = "Lino Events"
     #~ short_name = "Lino Così"
@@ -80,7 +80,7 @@ class Lino(Lino):
         
             
     def get_installed_apps(self):
-        for a in super(Lino,self).get_installed_apps():
+        for a in super(Site,self).get_installed_apps():
             yield a
         #~ yield 'django.contrib.contenttypes'
         #~ yield 'lino.modlib.users'

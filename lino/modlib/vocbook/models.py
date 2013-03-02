@@ -43,7 +43,7 @@ def setup_my_menu(site,ui,profile,m):
     m.add_action('cal.MyTasks')
     #~ m.add_action('cal.MyEventsToday')
     m.add_action('cal.MyEvents')
-    if settings.LINO.use_extensible:
+    if settings.SITE.use_extensible:
         m.add_action('cal.Panel')
     #~ m.add_action_(actions.Calendar())
   

@@ -218,7 +218,7 @@ class Menu(MenuItem):
         """
         """
         if isinstance(spec,basestring):
-            spec = settings.LINO.modules.resolve(spec)
+            spec = settings.SITE.modules.resolve(spec)
             #~ if a is None:
                 #~ raise Exception("Could not resolve action specifier %r" % spec)
         if isinstance(spec,actors.BoundAction):

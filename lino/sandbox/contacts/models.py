@@ -54,7 +54,7 @@ class Roles(dd.Table):
 class Address(CountryCity):
   
     class Meta:
-        abstract = settings.LINO.abstract_address
+        abstract = settings.SITE.abstract_address
         verbose_name = _("Address")
         verbose_name_plural = _("Addresses")
   
@@ -144,7 +144,7 @@ class AddressDetail(dd.FormLayout):
     addr2
     """
     
-if settings.LINO.abstract_address:
+if settings.SITE.abstract_address:
   
     AddressableMixin = Address
     
@@ -315,7 +315,7 @@ class Users(Contacts):
     column_names = 'username person company is_superuser is_staff *'
 
     
-if settings.LINO.is_installed('contacts'):
+if settings.SITE.is_installed('contacts'):
     """
     Don't inject fields if contacts is just being imported from some other module.
     """
@@ -357,6 +357,6 @@ def setup_config_menu(site,ui,profile,m):
 def setup_explorer_menu(site,ui,profile,m):
     #~ m = m.add_menu(NAME,LABEL)
     m.add_action(Contacts)
-    if not settings.LINO.abstract_address:
+    if not settings.SITE.abstract_address:
         m.add_action(Addresses)
   

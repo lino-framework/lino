@@ -18,7 +18,7 @@ import lino
 
 from lino.projects.std.settings import *
 
-class Lino(Lino):
+class Site(Site):
     source_dir = os.path.dirname(__file__)
     title = "Lino/MinimalApp 2"
     #~ help_url = "http://lino.saffre-rumma.net/az/index.html"
@@ -44,8 +44,9 @@ class Lino(Lino):
         #~ tb.add_action(self.modules.contacts.Companies.detail_action)
 
     def get_installed_apps(self):
-        for a in super(Lino,self).get_installed_apps():
+        for a in super(Site,self).get_installed_apps():
             yield a
+        yield 'django.contrib.contenttypes'
         yield 'lino.modlib.users'
         yield 'lino.modlib.countries'
         yield 'lino.modlib.contacts'
@@ -54,41 +55,7 @@ class Lino(Lino):
         yield 'lino.modlib.cal'
         yield 'lino.modlib.outbox'
         yield 'lino.modlib.pages'
-        yield 'lino.projects.min2'
+        #~ yield 'lino.projects.min2'
 
       
-LINO = Lino(__file__,globals())
-
-
-
-unused_INSTALLED_APPS = (
-  #~ 'django.contrib.auth',
-  'django.contrib.contenttypes',
-  #~ 'django.contrib.sessions',
-  #~ 'django.contrib.sites',
-  #~ 'django.contrib.markup',
-  #~ 'lino.modlib.system',
-  'lino',
-  'lino.modlib.users',
-  'lino.modlib.countries',
-  #~ 'lino.modlib.documents',
-  #~ 'lino.modlib.properties',
-  'lino.modlib.contacts',
-  'lino.modlib.projects',
-  #~ 'lino.projects.modlib.families',
-  #~ 'lino.az.notes',
-  #~ 'lino.projects.az.school',
-  #~ 'lino.modlib.links',
-  'lino.modlib.uploads',
-  #~ 'lino.modlib.thirds',
-  'lino.modlib.cal',
-  #~ 'lino.modlib.mails',
-  'lino.modlib.outbox',
-  #~ 'lino.modlib.jobs',
-  #~ 'lino.modlib.isip',
-  #~ 'lino.modlib.bcss',
-  #~ 'lino.modlib.newcomers',
-  'lino.projects.min2',
-)
-
-
+SITE = Site(__file__,globals())

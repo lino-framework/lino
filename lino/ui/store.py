@@ -55,7 +55,6 @@ from lino.utils import choosers
 from lino.utils import curry
 from lino.utils import babel
 from lino.utils import iif
-from lino.core.modeltools import obj2str
 from lino.core.requests import PhantomRow
 from lino.utils import IncompleteDate
 #~ from lino.core import tables
@@ -653,12 +652,12 @@ class DateStoreField(StoreField):
   
     def __init__(self,field,name,**kw):
         kw['type'] = 'date'
-        kw['dateFormat'] = settings.LINO.date_format_extjs # date_format # 'Y-m-d'
+        kw['dateFormat'] = settings.SITE.date_format_extjs # date_format # 'Y-m-d'
         StoreField.__init__(self,field,name,**kw)
         
     def parse_form_value(self,v,obj):
         if v:
-            v = datetime.date(*settings.LINO.parse_date(v))
+            v = datetime.date(*settings.SITE.parse_date(v))
         else:
             v = None
         return v
@@ -668,7 +667,7 @@ class DateStoreField(StoreField):
         Return a plain textual representation of this value as a unicode string.
         """
         return babel.dtos(v)
-        #~ return settings.LINO.format_date(v)
+        #~ return settings.SITE.format_date(v)
         #~ return force_unicode(v)
         
 
@@ -676,22 +675,22 @@ class IncompleteDateStoreField(StoreField):
   
     def parse_form_value(self,v,obj):
         if v:
-            v = IncompleteDate(*settings.LINO.parse_date(v))
-            #~ v = datetime.date(*settings.LINO.parse_date(v))
+            v = IncompleteDate(*settings.SITE.parse_date(v))
+            #~ v = datetime.date(*settings.SITE.parse_date(v))
         return v
 
 class DateTimeStoreField(StoreField):
   
     def parse_form_value(self,v,obj):
         if v:
-            return settings.LINO.parse_datetime(v) 
+            return settings.SITE.parse_datetime(v) 
         return None
 
 class TimeStoreField(StoreField):
   
     def parse_form_value(self,v,obj):
         if v:
-            return settings.LINO.parse_time(v) 
+            return settings.SITE.parse_time(v) 
         return None
 
 
@@ -1090,7 +1089,7 @@ class Store(BaseStore):
                     logger.warning("Exception during Store.form2obj (field %s) : %s", f.name,e)
                     logger.exception(e)
                     raise 
-                #~ logger.info("20120228 Store.form2obj %s -> %s", f, obj2str(instance))
+                #~ logger.info("20120228 Store.form2obj %s -> %s", f, dd.obj2str(instance))
         for m in changed_triggers:
             m(ar)
             #~ m()
@@ -1121,7 +1120,7 @@ class Store(BaseStore):
         #~ assert isinstance(request,dbtables.AbstractTableRequest)
         #~ if not isinstance(request,dbtables.ListActionRequest):
             #~ raise Exception()
-        #~ logger.info("20120107 Store %s row2list(%s)", self.report.model, obj2str(row))
+        #~ logger.info("20120107 Store %s row2list(%s)", self.report.model, dd.obj2str(row))
         l = []
         if isinstance(row,PhantomRow):
             for fld in self.list_fields:
@@ -1141,7 +1140,7 @@ class Store(BaseStore):
       
     def row2dict(self,ar,row,fields=None,**d):
         #~ assert isinstance(ar,dbtables.AbstractTableRequest)
-        #~ logger.info("20111209 Store.row2dict(%s)", obj2str(row))
+        #~ logger.info("20111209 Store.row2dict(%s)", dd.obj2str(row))
         if fields is None:
             fields = self.detail_fields
         for fld in fields:

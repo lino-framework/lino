@@ -33,11 +33,12 @@ from django.utils.encoding import force_unicode
 from django.core.management import call_command
 from django.core.management.base import BaseCommand, CommandError
 
-import lino
 from django.conf import settings
-from lino.core.modeltools import app_labels
+from django_site.modeltools import app_labels
+from django_site.modeltools import obj2str, full_model_name, sorted_models_list
+
+#~ import lino
 from lino.utils import rstgen
-from lino.core.modeltools import obj2str, full_model_name, sorted_models_list
 
 
 class Command(BaseCommand):
@@ -54,18 +55,21 @@ class Command(BaseCommand):
         if args:
             raise CommandError("This command doesn't accept any arguments.")
             
+        #~ print settings.SITE.__class__
+        settings.SITE.startup()
+        
         self.options = options
         
-        #~ settings.LINO.startup()
+        #~ settings.SITE.startup()
         
         encoding = self.stdout.encoding or 'utf-8'
         
         def writeln(ln):
             self.stdout.write(ln.encode(encoding,"xmlcharrefreplace") + "\n")
         
-        writeln("Lino %s" % lino.__version__)
-        #~ yield (settings.LINO.short_name, settings.LINO.version)
-        writeln(settings.LINO.title)
+        #~ writeln("Lino %s" % lino.__version__)
+        #~ yield (settings.SITE.short_name, settings.SITE.version)
+        #~ writeln(settings.SITE.title)
         models_list = sorted_models_list()
 
         apps = app_labels()

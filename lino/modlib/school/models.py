@@ -74,8 +74,8 @@ from lino.core.modeltools import obj2str
 #~ # from lino.modlib.notes.models import NoteType
 #~ from lino.modlib.countries.models import Country, City
 
-#~ if settings.LINO.user_model:
-    #~ User = dd.resolve_model(settings.LINO.user_model,strict=True)
+#~ if settings.SITE.user_model:
+    #~ User = dd.resolve_model(settings.SITE.user_model,strict=True)
 
 
 
@@ -259,10 +259,10 @@ def setup_course_event(self,course,ev):
     #~ ev.set_datetime('start',start_time)
     #~ ev.set_datetime('end',start_time + skip)
 
-if not hasattr(settings.LINO,'setup_course_event'):
+if not hasattr(settings.SITE,'setup_course_event'):
     #~ raise Exception("20120403")
     #~ setattr(site.__class__,'setup_course_event',setup_course_event)
-    settings.LINO.__class__.setup_course_event = setup_course_event
+    settings.SITE.__class__.setup_course_event = setup_course_event
     
     
 class Course(cal.EventGenerator,cal.RecurrenceSet,mixins.Printable):
@@ -303,7 +303,7 @@ class Course(cal.EventGenerator,cal.RecurrenceSet,mixins.Printable):
         #~ if self.course is not None:
         if isinstance(owned,cal.Event):
             owned.project = self
-            settings.LINO.setup_course_event(self,owned)
+            settings.SITE.setup_course_event(self,owned)
             if owned.guest_set.count() == 0:
             #~ if ev.presence_set.count() == 0:
                 for e in self.enrolment_set.all():

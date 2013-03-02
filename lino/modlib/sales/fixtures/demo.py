@@ -27,7 +27,7 @@ sales = dd.resolve_app('sales')
 ledger = dd.resolve_app('ledger')
 products = dd.resolve_app('products')
 
-partner_model = settings.LINO.partners_app_label + '.Partner'
+partner_model = settings.SITE.partners_app_label + '.Partner'
 Partner = dd.resolve_model(partner_model)
 
 REQUEST = None
@@ -42,7 +42,7 @@ def objects():
         vt = ledger.VoucherTypes.get_for_model(sales.Invoice)
         JOURNALS = Cycler(vt.get_journals())
         PARTNERS = Cycler(Partner.objects.all())
-        USERS = Cycler(settings.LINO.user_model.objects.all())
+        USERS = Cycler(settings.SITE.user_model.objects.all())
         PRODUCTS = Cycler(products.Product.objects.all())
         ITEMCOUNT = Cycler(1,2,3)
         for i in range(20):
@@ -50,7 +50,7 @@ def objects():
             invoice = sales.Invoice(journal=jnl,
               partner=PARTNERS.pop(),
               user=USERS.pop(),
-              date=settings.LINO.demo_date(-30+2*i))
+              date=settings.SITE.demo_date(-30+2*i))
             yield invoice
             for j in range(ITEMCOUNT.pop()):
                 item = sales.InvoiceItem(voucher=invoice,

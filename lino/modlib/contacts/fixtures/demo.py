@@ -20,13 +20,12 @@ from __future__ import unicode_literals
 
 
 from django.conf import settings
-from lino.core.modeltools import resolve_model, obj2str
 from lino.utils.instantiator import Instantiator
 from lino.utils.babel import default_language
 #~ from lino.modlib.contacts.utils import Gender
 from lino import mixins
 from lino.utils import dblogger
-#~ from lino import dd
+from lino import dd
 #from lino import reports
 
 #~ contacts = reports.get_app('contacts')
@@ -34,7 +33,7 @@ from lino.utils import dblogger
 
 def objects():
     #~ dblogger.info("Installing contacts demo fixture") # use --verbosity=2
-    #~ print settings.LINO.languages
+    #~ print settings.SITE.languages
     company = Instantiator('contacts.Company',"name zip_code city:name street street_no",country='EE').build
     yield company('Rumma & Ko OÜ','10115','Tallinn','Tartu mnt','71')
     #~ Company = resolve_model('contacts.Company')
@@ -54,7 +53,7 @@ def objects():
     
     company = Instantiator('contacts.Company',"name zip_code city:name street street_no",country='DE').build
     yield company('Hans Flott & Co','22453','Hamburg','Niendorfer Weg','532')
-    if 'de' in settings.LINO.languages:
+    if 'de' in settings.SITE.languages:
         munich = 'München'
     else:
         munich = 'Munich'
@@ -65,7 +64,7 @@ def objects():
     yield company('Moulin Rouge','75018','Paris','Boulevard de Clichy','82')
     yield company('Auto École Verte','54000 ','Nancy','rue de Mon Désert','12')
     
-    City = resolve_model('countries.City')
+    City = dd.resolve_model('countries.City')
     vigala = City.objects.get(name__exact='Vigala')
     #~ tallinn = City.objects.get(name__exact='Tallinn')
     person = Instantiator("contacts.Person","first_name last_name",
@@ -273,7 +272,7 @@ Weserstraße
     
     i = 0
     nr = 1
-    for p in resolve_model("contacts.Person").objects.filter(city=eupen):
+    for p in dd.resolve_model("contacts.Person").objects.filter(city=eupen):
         p.street = streets_of_eupen[i]
         p.stret_no = str(nr)
         p.save()

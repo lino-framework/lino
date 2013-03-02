@@ -25,7 +25,7 @@ from django.db import IntegrityError
 from django.utils.encoding import force_unicode
 
 
-from lino import tools
+#~ from lino import tools
 from lino import dd
 #~ from lino.utils.babel import default_language
 #~ from lino import reports

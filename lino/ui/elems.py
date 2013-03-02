@@ -130,7 +130,7 @@ def before_row_edit(panel):
         elif isinstance(e,HtmlBoxElement):
             l.append("%s.refresh();" % e.as_ext())
         elif isinstance(e,TextFieldElement):
-            if e.format == 'html' and settings.LINO.use_tinymce:
+            if e.format == 'html' and settings.SITE.use_tinymce:
                 l.append("%s.refresh();" % e.as_ext())
         elif isinstance(e,FieldElement):
             chooser = choosers.get_for_field(e.field)
@@ -182,7 +182,7 @@ class GridColumn(jsgen.Component):
         #~ kw.update(hidden=editor.hidden)
         if editor.hidden:
             kw.update(hidden=True)
-        if settings.LINO.use_filterRow:
+        if settings.SITE.use_filterRow:
             if editor.filter_type:
                 if index == 0:
                     kw.update(clearFilter=True) # first column used to show clear filter icon in this column
@@ -198,15 +198,15 @@ class GridColumn(jsgen.Component):
                   dict(value='doesnotcontain', text='Does not contain')
                 ])
               
-        if settings.LINO.use_gridfilters and editor.gridfilters_settings:
+        if settings.SITE.use_gridfilters and editor.gridfilters_settings:
             # 20121120 last minute
             if isinstance(editor,FieldElement) and not isinstance(editor.field,fields.VirtualField):
                 kw.update(filter=editor.gridfilters_settings)
         #~ if isinstance(editor,FieldElement) and editor.field.primary_key:
         if isinstance(editor,FieldElement):
-            if settings.LINO.use_quicktips:
+            if settings.SITE.use_quicktips:
                 #~ if jsgen._for_user_profile.expert:
-                if settings.LINO.show_internal_field_names:
+                if settings.SITE.show_internal_field_names:
                     ttt = "(%s.%s) " % (layout_handle.layout._datasource,self.editor.field.name)
                     #~ ttt = "(%s) " % self.editor.field.name
                 else:
@@ -565,8 +565,8 @@ class Spacer(LayoutElement):
     
         
 def add_help_text(kw,help_text,title,datasource,fieldname):
-    if settings.LINO.use_quicktips:
-        if settings.LINO.show_internal_field_names:
+    if settings.SITE.use_quicktips:
+        if settings.SITE.show_internal_field_names:
             ttt = "(%s.%s) " % (datasource,fieldname)
         else:
             ttt = ''
@@ -701,14 +701,14 @@ class FieldElement(LayoutElement):
             if self.label:
                 label = self.label
                 if self.field.help_text:
-                    if settings.LINO.use_css_tooltips:
+                    if settings.SITE.use_css_tooltips:
                         label = string_concat(
                           '<a class="tooltip" href="#">',
                           label,
                           '<span class="classic">',
                           self.field.help_text,
                           '</span></a>')
-                    elif settings.LINO.use_quicktips:
+                    elif settings.SITE.use_quicktips:
                         label = string_concat(
                           '<span style="border-bottom: 1px dotted #000000;">',
                           label,
@@ -783,9 +783,9 @@ class TextFieldElement(FieldElement):
     format = 'plain'
     def __init__(self,layout_handle,field,**kw):
         self.format = getattr(field,'textfield_format',None) \
-            or settings.LINO.textfield_format
+            or settings.SITE.textfield_format
         if self.format == 'html':
-            if settings.LINO.use_tinymce:
+            if settings.SITE.use_tinymce:
                 self.value_template = "new Lino.RichTextPanel(%s)"
                 self.active_child = True
                 #~ if self.label:
@@ -811,7 +811,7 @@ class TextFieldElement(FieldElement):
                 return LayoutElement.__init__(self,layout_handle,field.name,**kw)
             else:
                 self.value_template = "new Ext.form.HtmlEditor(%s)"
-                if settings.LINO.use_vinylfox:
+                if settings.SITE.use_vinylfox:
                     kw.update(plugins=js_code('Lino.VinylFoxPlugins()'))
         elif self.format == 'plain':
             kw.update(
@@ -1033,7 +1033,7 @@ class DatePickerFieldElement(FieldElement):
         raise Exception("not allowed in grid")
     
 class DateFieldElement(FieldElement):
-    if settings.LINO.use_spinner:
+    if settings.SITE.use_spinner:
         raise Exception("20130114")
         value_template = "new Lino.SpinnerDateField(%s)"
     else:
@@ -1044,7 +1044,7 @@ class DateFieldElement(FieldElement):
     sortable = True
     preferred_width = 8
     filter_type = 'date'
-    gridfilters_settings = dict(type='date',dateFormat=settings.LINO.date_format_extjs)
+    gridfilters_settings = dict(type='date',dateFormat=settings.SITE.date_format_extjs)
     # todo: DateFieldElement.preferred_width should be computed from Report.date_format
     #~ grid_column_template = "new Ext.grid.DateColumn(%s)"
     
@@ -1062,7 +1062,7 @@ class DateFieldElement(FieldElement):
         kw = FieldElement.get_column_options(self,**kw)
         kw.update(xtype='datecolumn')
         #~ kw.update(format=self.layout_handle.rh.actor.date_format)
-        kw.update(format=settings.LINO.date_format_extjs)
+        kw.update(format=settings.SITE.date_format_extjs)
         #~ kw.update(boxMinWidth=js_code('Lino.chars2width(%d)' % 12)) # experimental value. 
         return kw
     
@@ -1143,12 +1143,12 @@ class NumberFieldElement(FieldElement):
         kw = FieldElement.get_column_options(self,**kw)
         #~ kw.update(xtype='numbercolumn')
         #~ kw.update(align='right')
-        #~ if settings.LINO.decimal_group_separator:
-            #~ fmt = '0' + settings.LINO.decimal_group_separator + '000'
+        #~ if settings.SITE.decimal_group_separator:
+            #~ fmt = '0' + settings.SITE.decimal_group_separator + '000'
         #~ else:
         # Ext.utils.format.number() is not able to specify ' ' as group separator,
         # so we don't use grouping at all.
-        if self.number_format != settings.LINO.default_number_format_extjs:
+        if self.number_format != settings.SITE.default_number_format_extjs:
             kw.update(format=self.number_format)
         n = USED_NUMBER_FORMATS.get(self.number_format,0)
         USED_NUMBER_FORMATS[self.number_format] = n + 1
@@ -1218,8 +1218,8 @@ class DecimalFieldElement(NumberFieldElement):
                 + self.field.decimal_places
         fmt = '0'
         if self.field.decimal_places > 0:
-            fmt += settings.LINO.decimal_separator + ("0" * self.field.decimal_places)
-        if settings.LINO.decimal_separator == ',':
+            fmt += settings.SITE.decimal_separator + ("0" * self.field.decimal_places)
+        if settings.SITE.decimal_separator == ',':
             fmt += "/i"
         self.number_format = fmt
                 
@@ -1229,7 +1229,7 @@ class DecimalFieldElement(NumberFieldElement):
         if self.field.decimal_places:
             kw.update(decimalPrecision=self.field.decimal_places)
             #~ kw.update(decimalPrecision=-1)
-            kw.update(decimalSeparator=settings.LINO.decimal_separator)
+            kw.update(decimalSeparator=settings.SITE.decimal_separator)
         else:
             kw.update(allowDecimals=False)
         if self.editable:
@@ -1888,7 +1888,7 @@ class Panel(Container):
             if not isinstance(e,FieldElement): return e
             if e.label is None: return e
             if isinstance(e,HtmlBoxElement): return e
-            if settings.LINO.use_tinymce:
+            if settings.SITE.use_tinymce:
                 if isinstance(e,TextFieldElement) and e.format == 'html': 
                     # no need to wrap them since they are Panels
                     return e

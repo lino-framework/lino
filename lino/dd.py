@@ -68,6 +68,10 @@ Layouts:
   
 Utilities:
 
+- :func:`obj2str <django_site.modeltools.obj2str>`
+- :func:`obj2unicode <django_site.modeltools.obj2unicode>`
+- :func:`range_filter <django_site.modeltools.range_filter>`
+- :func:`full_model_name <django_site.modeltools.full_model_name>`
 - :func:`fields_list <lino.core.fields.fields_list>`
 - :func:`resolve_field <lino.core.modeltools.resolve_field>`
 - :func:`resolve_model <lino.core.modeltools.resolve_model>`
@@ -120,8 +124,11 @@ logger = logging.getLogger(__name__)
 from lino.core.tables import VirtualTable
 
 from lino.core.modeltools import resolve_model, resolve_app, resolve_field, get_field, UnresolvedModel
-from lino.core.modeltools import full_model_name
-from lino.core.modeltools import models_by_base
+from django_site.modeltools import obj2str
+from django_site.modeltools import obj2unicode
+from django_site.modeltools import range_filter
+from django_site.modeltools import full_model_name
+from django_site.modeltools import models_by_base
 
 from lino.core.model import Model
 from lino.core.merge import MergeAction
@@ -256,9 +263,9 @@ class PseudoRequest:
         
     def get_user(self):
         if self._user is None:
-            if settings.LINO.user_model is not None:
+            if settings.SITE.user_model is not None:
                 #~ print 20130222, self.username
-                self._user = settings.LINO.user_model.objects.get(username=self.username)
+                self._user = settings.SITE.user_model.objects.get(username=self.username)
         return self._user
     user = property(get_user)
     

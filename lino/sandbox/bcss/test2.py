@@ -91,7 +91,7 @@ def req2str(req):
 def run_request(serviceId,*args,**kw):
     srv = SERVICES[serviceId]
     srvReq = srv.instantiate(*args,**kw)
-    user = SSDNRequest.AuthorizedUserType(**settings.LINO.bcss_user_params)
+    user = SSDNRequest.AuthorizedUserType(**settings.SITE.bcss_user_params)
     service = SSDNRequest.ServiceRequestType(
       ServiceId=srv.name, 
       Version='20090409',

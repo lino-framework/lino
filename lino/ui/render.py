@@ -68,8 +68,6 @@ from lino.core import tables
 from lino.core import fields
 from lino.ui import base
 from lino.core import actors
-from lino.core.modeltools import makedirs_if_missing
-from lino.core.modeltools import full_model_name
     
 from lino.utils import choosers
 from lino.utils import babel
@@ -87,9 +85,7 @@ if False:
 else:    
     def jscompress(s): return s
       
-from lino.mixins import printable
 
-from lino.core.modeltools import app_labels
 
 
 #~ from lino.utils.choicelists import DoYouLike, HowWell
@@ -154,7 +150,7 @@ class HtmlRenderer(object):
             #~ return btn
             #~ return xghtml.E.a(btn,**kw)
             #~ kw.update(class_='x-btn-text '+icon_name)
-            img = xghtml.E.img(src=settings.LINO.build_media_url('lino','extjs','images','mjames',icon_file))
+            img = xghtml.E.img(src=settings.SITE.build_media_url('lino','extjs','images','mjames',icon_file))
             return xghtml.E.a(img,**kw)
         else:
             #~ return xghtml.E.span('[',xghtml.E.a(text,**kw),']')
@@ -253,7 +249,7 @@ class HtmlRenderer(object):
             #~ chunks.append(xghtml.E.a(_("show"),
               #~ href=self.ui.media_url(obj.file.name),target='_blank'))
             chunks.append(self.href_button(
-                settings.LINO.build_media_url(obj.file.name),_("show"),
+                settings.SITE.build_media_url(obj.file.name),_("show"),
                 target='_blank',
                 #~ icon_file='world_go.png',
                 icon_file='page_go.png',
@@ -321,7 +317,7 @@ class PlainRenderer(HtmlRenderer):
     def pk2url(self,ar,pk,**kw):
         if pk is not None:
             #~ kw[ext_requests.URL_PARAM_FORMAT] = ext_requests.URL_FORMAT_PLAIN
-            return settings.LINO.build_plain_url(
+            return settings.SITE.build_plain_url(
                 ar.actor.model._meta.app_label,
                 ar.actor.model.__name__,
                 str(pk),**kw)
@@ -329,7 +325,7 @@ class PlainRenderer(HtmlRenderer):
     def get_detail_url(self,obj,*args,**kw):
         #~ since 20121226 kw[ext_requests.URL_PARAM_FORMAT] = ext_requests.URL_FORMAT_PLAIN
         #~ since 20121226 return self.ui.build_url('api',obj._meta.app_label,obj.__class__.__name__,str(obj.pk),*args,**kw)
-        return settings.LINO.build_plain_url(obj._meta.app_label,obj.__class__.__name__,str(obj.pk),*args,**kw)
+        return settings.SITE.build_plain_url(obj._meta.app_label,obj.__class__.__name__,str(obj.pk),*args,**kw)
         
     def get_request_url(self,ar,*args,**kw):
         st = ar.get_status(self)
@@ -348,7 +344,7 @@ class PlainRenderer(HtmlRenderer):
             kw.setdefault(ext_requests.URL_PARAM_SORT,sc)
         #~ print '20120901 TODO get_request_url'
         
-        return settings.LINO.build_plain_url(ar.actor.app_label,ar.actor.__name__,*args,**kw)
+        return settings.SITE.build_plain_url(ar.actor.app_label,ar.actor.__name__,*args,**kw)
         
     def request_handler(self,ar,*args,**kw):
         return ''

@@ -64,7 +64,7 @@ def page(ref,language,title,body,parent=None,raw_html=False):
 
 
 def objects():
-    yield settings.LINO.site_config
+    yield settings.SITE.site_config
     if False:
         global PAGES
         #~ print 20121227, __file__, [obj['ref'] for obj in PAGES.values()]

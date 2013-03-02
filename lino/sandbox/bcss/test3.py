@@ -20,9 +20,9 @@ from appy.shared.dav import Resource
 from appy.shared.xml_parser import XmlUnmarshaller, XmlMarshaller
 from xml.dom.minidom import parseString
 
-#~ from django.conf import settings
-#  simulate a Django `settings` module:
-settings = Object(LINO=Object(
+#~ from django.conf import settings.SITE
+#  simulate a Django `settings.SITE` module:
+settings = Object(SITE=Object(
     bcss_user_params = dict(
           UserID='123456', 
           Email='info@exemple.be', 
@@ -97,7 +97,7 @@ def main():
 
     ssdnReq = Object(
         RequestContext=Object(
-          AuthorizedUser=Object(**settings.LINO.bcss_user_params),
+          AuthorizedUser=Object(**settings.SITE.bcss_user_params),
           Message=Object(Reference='630230001126766',TimeRequest='20110921T105230')
           ),
         ServiceRequest=Object(

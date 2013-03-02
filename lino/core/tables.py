@@ -64,7 +64,7 @@ import json
 
 from lino.core import actors
 from lino.core import actions
-from lino.core.modeltools import obj2str
+from django_site.modeltools import obj2str
 from lino.core.model import Model
 
 from lino.core.fields import FakeField
@@ -284,7 +284,7 @@ class TableRequest(ActionRequest):
                 #~ print '20100212', self #, kw['master_instance']
         #~ print '20100406b', self.actor,kw
         
-        if settings.LINO.use_filterRow:
+        if settings.SITE.use_filterRow:
             exclude = dict()
             for f in self.ah.store.fields:
                 if f.field:
@@ -306,7 +306,7 @@ class TableRequest(ActionRequest):
             if len(exclude):
                 kw.update(exclude=exclude)
                 
-        if settings.LINO.use_gridfilters:
+        if settings.SITE.use_gridfilters:
             filter = rqdata.get(constants.URL_PARAM_GRIDFILTER,None)
             if filter is not None:
                 filter = json.loads(filter)
@@ -431,7 +431,7 @@ class TableRequest(ActionRequest):
             widths = []
             headers = []
             #~ ah = ar.actor.get_handle(self.extjs_ui)
-            ah = ar.actor.get_handle(settings.LINO.ui)
+            ah = ar.actor.get_handle(settings.SITE.ui)
             for i,cn in enumerate(columns):
                 col = None
                 for e in ah.list_layout.main.columns:
@@ -452,7 +452,7 @@ class TableRequest(ActionRequest):
                 from lino.core import layouts
                 ll = layouts.ListLayout(column_names,table=ar.actor)
                 #~ lh = ll.get_layout_handle(self.extjs_ui)
-                lh = ll.get_layout_handle(settings.LINO.ui)
+                lh = ll.get_layout_handle(settings.SITE.ui)
                 columns = lh.main.columns
             else:
                 #~ ah = ar.actor.get_handle(self.extjs_ui)
@@ -1003,8 +1003,8 @@ class AbstractTable(actors.Actor):
         """
         from lino.utils import babel
         babel.set_language(None)
-        settings.LINO.startup()
-        #~ settings.LINO.ui
+        settings.SITE.startup()
+        #~ settings.SITE.ui
         if pk is not None:
             elem = self.get_row_by_pk(pk)
             #~ elem = self.model.objects.get(pk=pk)

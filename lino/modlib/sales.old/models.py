@@ -273,7 +273,7 @@ class SalesDocument(
     total_excl = dd.PriceField(default=0)
     total_vat = dd.PriceField(default=0)
     intro = models.TextField("Introductive Text",blank=True)
-    #~ user = models.ForeignKey(settings.LINO.user_model,blank=True,null=True)
+    #~ user = models.ForeignKey(settings.SITE.user_model,blank=True,null=True)
     #status = models.CharField(max_length=1, choices=STATUS_CHOICES)
         
     def can_send(self):
@@ -761,7 +761,7 @@ class InvoicesByCustomer(SalesByCustomer):
 journals.register_doctype(Order,OrdersByJournal)
 journals.register_doctype(Invoice,InvoicesByJournal)
 
-if settings.LINO.is_installed('igen'):
+if settings.SITE.is_installed('igen'):
 
     #~ from lino.modlib.contacts.models import Contact
 

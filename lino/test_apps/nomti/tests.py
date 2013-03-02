@@ -14,8 +14,8 @@ confirm that Multi-table inheritance
   Sphinx removes them because they are a comment, but doctest executes them.
   
   >>> from django.conf import settings
-  >>> settings.LINO.startup()
-  >>> nomti = settings.LINO.modules.nomti
+  >>> settings.SITE.startup()
+  >>> nomti = settings.SITE.modules.nomti
   >>> Person = nomti.Person
   >>> Restaurant = nomti.Restaurant
   >>> Bar = nomti.Bar

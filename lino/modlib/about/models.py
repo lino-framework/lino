@@ -275,7 +275,7 @@ class About(mixins.EmptyTable):
     #~ @dd.constant(_("Versions"))
     #~ @dd.constant()
     #~ def versions(cls,ui):
-        #~ return settings.LINO.welcome_html(ui)
+        #~ return settings.SITE.welcome_html(ui)
         
     @dd.constant()
     def about_html(cls,ui):
@@ -283,11 +283,11 @@ class About(mixins.EmptyTable):
     #~ @dd.displayfield()
     #~ def about_html(cls,obj,ar):
         #~ ui = ar.ui
-        #~ return settings.LINO.welcome_html(ui)
+        #~ return settings.SITE.welcome_html(ui)
         body = []
         
         p = []
-        for name,version,url in settings.LINO.using(ui):
+        for name,version,url in settings.SITE.using(ui):
             if len(p):
                 #~ body.append(xghtml.E.br())
                 p.append(', ')
@@ -296,7 +296,7 @@ class About(mixins.EmptyTable):
             p.append(version)
         body.append(xghtml.E.p(*p))
         
-        #~ print "20121112 startup_time", settings.LINO.startup_time.date()
+        #~ print "20121112 startup_time", settings.SITE.startup_time.date()
         def dtfmt(dt):
             if isinstance(dt,float):
                 dt = datetime.datetime.fromtimestamp(dt)
@@ -308,7 +308,7 @@ class About(mixins.EmptyTable):
         items = []
         E = xghtml.E
         times = []
-        times.append((_("Server uptime"),settings.LINO.startup_time))
+        times.append((_("Server uptime"),settings.SITE.startup_time))
         for src in ("lino","lino_welfare"):
             label = _("Source timestamp (%s)") % src
             value = codetime('%s.*' % src)
@@ -331,7 +331,7 @@ class About(mixins.EmptyTable):
         
     #~ @dd.virtualfield(models.DateTimeField(_("Server up since")))
     #~ def startup_time(cls,self,req):
-        #~ return settings.LINO.startup_time
+        #~ return settings.SITE.startup_time
     
 
 
@@ -419,7 +419,7 @@ class SourceFiles(dd.VirtualTable):
 
 def setup_site_menu(site,ui,profile,m): 
     m.add_action(site.modules.about.About)
-    if settings.LINO.use_experimental_features:
+    if settings.SITE.use_experimental_features:
         m.add_action(site.modules.about.Models)
         m.add_action(site.modules.about.Inspector)
         m.add_action(site.modules.about.SourceFiles)

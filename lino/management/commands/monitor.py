@@ -98,7 +98,7 @@ class Command(BaseCommand):
             
         self.options = options
         
-        #~ settings.LINO.startup()
+        #~ settings.SITE.startup()
         
         state = dict()
         state.update(timestamp = datetime.datetime.now())
@@ -106,7 +106,7 @@ class Command(BaseCommand):
         
         
         
-        states_file = os.path.join(settings.LINO.project_dir,'states.pck')
+        states_file = os.path.join(settings.SITE.project_dir,'states.pck')
         
         if os.path.exists(states_file):
             fd = open(states_file)

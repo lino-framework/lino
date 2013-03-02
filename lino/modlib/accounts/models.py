@@ -159,8 +159,8 @@ MODULE_LABEL = _("Accounting")
 
 dd.add_user_group('accounting',MODULE_LABEL)
 
-#~ settings.LINO.add_user_field('debts_level',UserLevel.field(MODULE_LABEL))
-#~ settings.LINO.add_user_group('debts',MODULE_LABEL)
+#~ settings.SITE.add_user_field('debts_level',UserLevel.field(MODULE_LABEL))
+#~ settings.SITE.add_user_group('debts',MODULE_LABEL)
 
 def site_setup(site):
     pass
@@ -186,5 +186,5 @@ def setup_explorer_menu(site,ui,profile,m):
 
 #~ dd.add_user_group('debts',MODULE_LABEL)
 
-#~ if settings.LINO.is_installed('products'):
+#~ if settings.SITE.is_installed('products'):
 customize_products()

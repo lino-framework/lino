@@ -32,7 +32,6 @@ from django.utils.translation import ugettext_lazy as _
 
 from lino import dd
 #~ from lino import commands
-from lino.core.modeltools import obj2str, full_model_name
 from lino.core import fields
 from lino.utils.choosers import chooser
 
@@ -71,8 +70,8 @@ class Change(dd.Model):
             
     time = models.DateTimeField()
     type = ChangeTypes.field()
-    if settings.LINO.user_model:
-        user = dd.ForeignKey(settings.LINO.user_model)
+    if settings.SITE.user_model:
+        user = dd.ForeignKey(settings.SITE.user_model)
         
     object_type = models.ForeignKey(ContentType,
         related_name='changes_by_object',
@@ -109,7 +108,7 @@ class Change(dd.Model):
                 return unicode(self.object_type.get_object_for_this_type(pk=value))
             except self.object_type.model_class().DoesNotExist,e:
                 return "%s with pk %r does not exist" % (
-                    full_model_name(self.object_type.model_class()),value)
+                    dd.full_model_name(self.object_type.model_class()),value)
     @chooser(instance_values=True)
     def master_id_choices(cls,master_type):
         if master_type:
@@ -121,7 +120,7 @@ class Change(dd.Model):
                 return unicode(self.master_type.get_object_for_this_type(pk=value))
             except self.master_type.model_class().DoesNotExist,e:
                 return "%s with pk %r does not exist" % (
-                    full_model_name(self.master_type.model_class()),value)
+                    dd.full_model_name(self.master_type.model_class()),value)
     # NOTE: the above code is the same as in lino.mixins.Controllable
         
     
@@ -231,7 +230,7 @@ def on_update(sender=None,request=None,**kw):
         if not k in cs.ignored_fields:
             new = sender.watched.__dict__.get(k, dd.NOT_PROVIDED)
             if old != new:
-                changes.append("%s : %s --> %s" % (k,obj2str(old),obj2str(new)))
+                changes.append("%s : %s --> %s" % (k,dd.obj2str(old),dd.obj2str(new)))
     if len(changes) == 0:
         msg = '(no changes)'
     elif len(changes) == 1:
@@ -254,7 +253,7 @@ def on_delete(sender=None,request=None,**kw):
     master = get_master(sender)
     if master is None:
         return
-    log_change(ChangeTypes.delete,request,master,sender,obj2str(sender,True))
+    log_change(ChangeTypes.delete,request,master,sender,dd.obj2str(sender,True))
     
 @receiver(pre_ui_create)
 def on_create(sender=None,request=None,**kw):
@@ -264,21 +263,21 @@ def on_create(sender=None,request=None,**kw):
     master = get_master(sender)
     if master is None:
         return
-    log_change(ChangeTypes.create,request,master,sender,obj2str(sender,True))
+    log_change(ChangeTypes.create,request,master,sender,dd.obj2str(sender,True))
 
 @receiver(pre_add_child)
 def on_add_child(sender=None,request=None,child=None,**kw):
     master = get_master(sender)
     if master is None:
         return
-    log_change(ChangeTypes.add_child,request,master,sender,full_model_name(child))
+    log_change(ChangeTypes.add_child,request,master,sender,dd.full_model_name(child))
 
 @receiver(pre_remove_child)
 def on_remove_child(sender=None,request=None,child=None,**kw):
     master = get_master(sender)
     if master is None:
         return
-    log_change(ChangeTypes.remove_child,request,master,sender,full_model_name(child))
+    log_change(ChangeTypes.remove_child,request,master,sender,dd.full_model_name(child))
 
 @receiver(pre_merge)
 def on_merge(sender=None,request=None,**kw):

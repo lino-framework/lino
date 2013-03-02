@@ -239,7 +239,7 @@ def try_full_clean(i):
         return
     
 def load_dbf(tableName,load):
-    fn = os.path.join(settings.LINO.legacy_data_path,'%s.DBF' % tableName)
+    fn = os.path.join(settings.SITE.legacy_data_path,'%s.DBF' % tableName)
     f = dbfreader.DBFFile(fn,codepage="cp850")
     logger.info("Loading %d records from %s...",len(f),fn)
     f.open()

@@ -109,7 +109,7 @@ class Mail(TypedPrintable):
     #~ def add_attached_file(self,fn):
         #~ """Doesn't work. 
         #~ """
-        #~ kv = dict(type=settings.LINO.config.residence_permit_upload_type)
+        #~ kv = dict(type=settings.SITE.config.residence_permit_upload_type)
         #~ r = uploads.UploadsByController.request(master_instance=self)
         #~ r.create_instance(**kv)
       

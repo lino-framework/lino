@@ -1,4 +1,4 @@
-## Copyright 2009-2012 Luc Saffre
+## Copyright 2009-2013 Luc Saffre
 ## This file is part of the Lino project.
 ## Lino is free software; you can redistribute it and/or modify 
 ## it under the terms of the GNU General Public License as published by
@@ -23,29 +23,9 @@ from django.utils.translation import ugettext_lazy as _
 from django.utils.encoding import force_text
 
 
-import lino
-from urllib import urlencode
 from django.conf import settings
-#~ from django.conf.urls.defaults import patterns, include, url
-from django.conf.urls import patterns, include, url
-from django.utils.translation import string_concat
-
-from django.utils.translation import get_language
 
 
-#~ from django import http
-#~ from django.views.generic import View
-
-
-#~ from lino.core import actions
-#~ from lino.core import web
-
-
-from lino.core.modeltools import resolve_app
-from lino.core.modeltools import is_devserver
-
-
-#~ from django.conf.urls.defaults import patterns, url, include
 
 
 class Handle:
@@ -140,10 +120,10 @@ class UI(object):
         return self.success(_("User abandoned"))
         
     #~ def build_admin_url(self,*args,**kw):
-        #~ return settings.LINO.build_admin_url(*args,**kw)
+        #~ return settings.SITE.build_admin_url(*args,**kw)
         
     #~ def media_url(self,*args,**kw):
-        #~ return settings.LINO.media_url(*args,**kw)
+        #~ return settings.SITE.media_url(*args,**kw)
         
     def get_urls(self):
         raise NotImplementedError()
@@ -157,7 +137,7 @@ class UI(object):
         
     def request(self,actor,**kw):
         if isinstance(actor,basestring):
-            actor = settings.LINO.modules.resolve(actor)
+            actor = settings.SITE.modules.resolve(actor)
         #~ kw.update(ui=self)
         return actor.request(self,**kw)
         

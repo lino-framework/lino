@@ -40,8 +40,6 @@ from lino.utils import AttrDict
 from lino.utils import ONE_DAY
 #~ from lino.ui import requests as ext_requests
 from lino.core import constants
-from lino.core.modeltools import resolve_model, obj2str
-#~ from lino.core.perms import UserProfiles
 
 
 
@@ -234,7 +232,7 @@ class AssignEvent(dd.ChangeStateAction):
     help_text=_("Assign responsibility of this event to another user.")
     
     parameters = dict(
-        to_user=models.ForeignKey(settings.LINO.user_model),
+        to_user=models.ForeignKey(settings.SITE.user_model),
         remark = dd.RichTextField(_("Remark"),blank=True),
         )
     
@@ -246,7 +244,7 @@ class AssignEvent(dd.ChangeStateAction):
     @dd.chooser()
     #~ def to_user_choices(cls,user):
     def to_user_choices(cls):
-        return settings.LINO.user_model.objects.exclude(profile='') # .exclude(id=user.id)
+        return settings.SITE.user_model.objects.exclude(profile='') # .exclude(id=user.id)
       
     def action_param_defaults(self,ar,obj,**kw):
         kw = super(AssignEvent,self).action_param_defaults(ar,obj,**kw)
@@ -374,7 +372,7 @@ class Calendar(mixins.PrintableType,outbox.MailableType,babel.BabelNamed):
         #~ return self.name
         
     #~ def color(self,request):
-        #~ return settings.LINO.get_calendar_color(self,request)
+        #~ return settings.SITE.get_calendar_color(self,request)
     #~ color.return_type = models.IntegerField(_("Color"))
         
         
@@ -459,7 +457,7 @@ class SubscriptionsByUser(Subscriptions):
 #~ class MySubscriptions(Subscriptions,mixins.ByUser):
     #~ pass
 
-if settings.LINO.user_model:
+if settings.SITE.user_model:
 
     class Membership(mixins.UserAuthored):
         """
@@ -478,7 +476,7 @@ if settings.LINO.user_model:
             
         #~ quick_search_fields = ('user__username','user__first_name','user__last_name')
         
-        watched_user = models.ForeignKey(settings.LINO.user_model,
+        watched_user = models.ForeignKey(settings.SITE.user_model,
             help_text=_("""\
     The user whose calendar events you want to see in team view."""))
 
@@ -486,7 +484,7 @@ if settings.LINO.user_model:
 
         @dd.chooser()
         def watched_user_choices(cls,user):
-            return settings.LINO.user_model.objects.exclude(
+            return settings.SITE.user_model.objects.exclude(
                 #~ profile=dd.UserProfiles.blank_item).exclude(id=user.id) 20120829
                 profile=None).exclude(id=user.id)
         
@@ -624,7 +622,7 @@ class EventGenerator(mixins.UserAuthored):
         #~ until = self.update_cal_until()
         #~ if not until:
             #~ date = None
-        #~ for i in range(settings.LINO.max_auto_events):
+        #~ for i in range(settings.SITE.max_auto_events):
             #~ if date:
                 #~ date = rset.every_unit.add_duration(date,rset.every)
                 #~ if until and date > until:
@@ -639,7 +637,7 @@ class EventGenerator(mixins.UserAuthored):
                 #~ date = e.start_date
                 
     def update_auto_events(self):
-        if settings.LINO.loading_from_dump: 
+        if settings.SITE.loading_from_dump: 
             #~ print "20111014 loading_from_dump"
             return 
         qs = self.get_existing_auto_events()
@@ -647,7 +645,7 @@ class EventGenerator(mixins.UserAuthored):
         current = 0
         #~ LEN = len(wanted)
         
-        msg = obj2str(self)
+        msg = dd.obj2str(self)
         msg += ", qs=" + str([e.auto_type for e in qs])
         msg += ", wanted=" + str([babel.dtos(e.start_date) for e in wanted.values()])
         #~ logger.info('20120707 ' + msg)
@@ -705,7 +703,7 @@ class EventGenerator(mixins.UserAuthored):
             return wanted
         i = 0
         obsolete = datetime.date.today() + datetime.timedelta(days=-7)
-        while i <= settings.LINO.max_auto_events:
+        while i <= settings.SITE.max_auto_events:
             i += 1
             date = rset.every_unit.add_duration(date,rset.every)
             if date > until:
@@ -963,7 +961,7 @@ Whether this is private, public or between.""")) # iCal:CLASS
         
     def disabled_fields(self,ar):
         if self.auto_type:
-            #~ return settings.LINO.TASK_AUTO_FIELDS
+            #~ return settings.SITE.TASK_AUTO_FIELDS
             return self.DISABLED_AUTO_FIELDS
         return []
         
@@ -974,9 +972,9 @@ Whether this is private, public or between.""")) # iCal:CLASS
         """
         if self.uid:
             return self.uid
-        if not settings.LINO.uid:
-            raise Exception('Cannot create local calendar components because settings.LINO.uid is empty.')
-        return "%s@%s" % (self.pk,settings.LINO.uid)
+        if not settings.SITE.uid:
+            raise Exception('Cannot create local calendar components because settings.SITE.uid is empty.')
+        return "%s@%s" % (self.pk,settings.SITE.uid)
             
 
     #~ def on_user_change(self,request):
@@ -997,7 +995,7 @@ Whether this is private, public or between.""")) # iCal:CLASS
         html = ar.href_to(self)
         if self.start_time:
             #~ html += _(" at ") + unicode(self.start_time)
-            html += _(" at ") + self.start_time.strftime(settings.LINO.time_format_strftime)
+            html += _(" at ") + self.start_time.strftime(settings.SITE.time_format_strftime)
         if self.state:
             html += ' [%s]' % cgi.escape(force_unicode(self.state))
         if self.summary:
@@ -1040,7 +1038,7 @@ class ExtAllDayField(dd.VirtualField):
         #~ obj.save()
         
     def value_from_object(self,obj,ar):
-        #~ logger.info("20120118 value_from_object() %s",obj2str(obj))
+        #~ logger.info("20120118 value_from_object() %s",dd.obj2str(obj))
         return (obj.start_time is None)
         
 #~ from lino.modlib.workflows import models as workflows # Workflowable
@@ -1099,8 +1097,8 @@ Indicates that this Event shouldn't prevent other Events at the same time."""))
     all_day = ExtAllDayField(_("all day"))
     #~ all_day = models.BooleanField(_("all day"),default=False)
     
-    if settings.LINO.user_model:
-        assigned_to = models.ForeignKey(settings.LINO.user_model,
+    if settings.SITE.user_model:
+        assigned_to = models.ForeignKey(settings.SITE.user_model,
             verbose_name=_("Assigned to"),
             related_name="cal_events_assigned",
             blank=True,null=True
@@ -1118,7 +1116,7 @@ Indicates that this Event shouldn't prevent other Events at the same time."""))
         #~ if not self.state and self.start_date and self.start_date < datetime.date.today():
             #~ self.state = EventStates.obsolete
         super(Event,self).save(*args,**kw)
-        if settings.LINO.loading_from_dump:
+        if settings.SITE.loading_from_dump:
             return
         #~ if not self.state in (EventStates.blank_item, EventStates.draft): 20120829
         if not self.state in (EventStates.suggested, EventStates.draft):
@@ -1176,7 +1174,7 @@ Indicates that this Event shouldn't prevent other Events at the same time."""))
         
     def get_postable_recipients(self):
         """return or yield a list of Partners"""
-        if settings.LINO.is_installed('contacts') and issubclass(settings.LINO.project_model,contacts.Partner):
+        if settings.SITE.is_installed('contacts') and issubclass(settings.SITE.project_model,contacts.Partner):
             if self.project:
                 yield self.project
         for g in self.guest_set.all():
@@ -1188,7 +1186,7 @@ Indicates that this Event shouldn't prevent other Events at the same time."""))
         return self.calendar
         
     def get_mailable_recipients(self):
-        if settings.LINO.is_installed('contacts') and issubclass(settings.LINO.project_model,contacts.Partner):
+        if settings.SITE.is_installed('contacts') and issubclass(settings.SITE.project_model,contacts.Partner):
             if self.project:
                 yield ('to',self.project)
         for g in self.guest_set.all():
@@ -1219,7 +1217,7 @@ Indicates that this Event shouldn't prevent other Events at the same time."""))
     #~ reminder.return_type = dd.DisplayField(_("Reminder"))
 
     def get_print_language(self,bm):
-        if settings.LINO.project_model is not None and self.project:
+        if settings.SITE.project_model is not None and self.project:
             return self.project.get_print_language(bm)
         return self.user.language
         
@@ -1301,12 +1299,12 @@ Nur Termine ab diesem Datum."""),
         dates_to = models.DateField(_("until"),
             blank=True,null=True,help_text=u"""\
 Nur Termine bis zu diesem Datum."""),
-        user = models.ForeignKey(settings.LINO.user_model,
+        user = models.ForeignKey(settings.SITE.user_model,
             verbose_name=_("Responsible user"),
             blank=True,null=True,
             help_text=u"""\
 Nur Termine dieses Benutzers."""),
-        assigned_to = models.ForeignKey(settings.LINO.user_model,
+        assigned_to = models.ForeignKey(settings.SITE.user_model,
             verbose_name=_("Assigned to"),
             blank=True,null=True,
             help_text=u"""\
@@ -1395,13 +1393,13 @@ class EventsByController(Events):
     master_key = 'owner'
     column_names = 'start_date start_time summary workflow_buttons id'
 
-if settings.LINO.project_model:    
+if settings.SITE.project_model:    
   
     class EventsByProject(Events):
         required = dd.required(user_groups='office')
         master_key = 'project'
     
-if settings.LINO.user_model:    
+if settings.SITE.user_model:    
   
     #~ class MyEvents(Events,mixins.ByUser):
     class MyEvents(Events):
@@ -1682,7 +1680,7 @@ class TasksByController(Tasks):
     column_names = 'start_date summary workflow_buttons id'
     #~ hidden_columns = set('owner_id owner_type'.split())
 
-if settings.LINO.user_model:    
+if settings.SITE.user_model:    
   
     #~ class RemindersByUser(dd.Table):
     class TasksByUser(Tasks):
@@ -1712,7 +1710,7 @@ if settings.LINO.user_model:
             start_date__lte=datetime.date.today()+dateutil.relativedelta.relativedelta(days=1),
             state__in=(TaskStates.todo,TaskStates.started))
     
-if settings.LINO.project_model:    
+if settings.SITE.project_model:    
   
     class TasksByProject(Tasks):
         master_key = 'project'
@@ -1759,7 +1757,7 @@ class Guest(mixins.TypedPrintable,outbox.Mailable):
     event = models.ForeignKey('cal.Event',
         verbose_name=_("Event")) 
         
-    if settings.LINO.is_installed('contacts'):
+    if settings.SITE.is_installed('contacts'):
         partner = models.ForeignKey('contacts.Partner')
     else:
         partner = dd.DummyField()
@@ -1852,7 +1850,7 @@ class GuestsByEvent(Guests):
 class GuestsByRole(Guests):
     master_key = 'role'
 
-if settings.LINO.is_installed('contacts'):
+if settings.SITE.is_installed('contacts'):
   
   class GuestsByPartner(Guests):
       master_key = 'partner'
@@ -1906,8 +1904,8 @@ def tasks_summary(ui,user,days_back=None,days_forward=None,**kw):
     Return a HTML summary of all open reminders for this user.
     May be called from :xfile:`welcome.html`.
     """
-    Task = resolve_model('cal.Task')
-    Event = resolve_model('cal.Event')
+    Task = dd.resolve_model('cal.Task')
+    Event = dd.resolve_model('cal.Event')
     today = datetime.date.today()
     
     past = {}
@@ -1978,11 +1976,11 @@ def tasks_summary(ui,user,days_back=None,days_forward=None,**kw):
 
 
 def update_auto_event(autotype,user,date,summary,owner,**defaults):
-    #~ model = resolve_model('cal.Event')
+    #~ model = dd.resolve_model('cal.Event')
     return update_auto_component(Event,autotype,user,date,summary,owner,**defaults)
   
 def update_auto_task(autotype,user,date,summary,owner,**defaults):
-    #~ model = resolve_model('cal.Task')
+    #~ model = dd.resolve_model('cal.Task')
     return update_auto_component(Task,autotype,user,date,summary,owner,**defaults)
     
 def update_auto_component(model,autotype,user,date,summary,owner,**defaults):
@@ -1994,9 +1992,9 @@ def update_auto_component(model,autotype,user,date,summary,owner,**defaults):
     Specifying `None` for `date` means that 
     the automatic component should be deleted.
     """
-    #~ print "20120729 update_auto_component", model,autotype,user, date, settings.LINO.loading_from_dump
+    #~ print "20120729 update_auto_component", model,autotype,user, date, settings.SITE.loading_from_dump
     #~ if SKIP_AUTO_TASKS: return 
-    if settings.LINO.loading_from_dump: 
+    if settings.SITE.loading_from_dump: 
         #~ print "20111014 loading_from_dump"
         return None
     ot = ContentType.objects.get_for_model(owner.__class__)
@@ -2103,7 +2101,7 @@ class ExtDateTimeField(dd.VirtualField):
         obj.set_datetime(self.name_prefix,value)
         
     def value_from_object(self,obj,ar):
-        #~ logger.info("20120118 value_from_object() %s",obj2str(obj))
+        #~ logger.info("20120118 value_from_object() %s",dd.obj2str(obj))
         return obj.get_datetime(self.name_prefix,self.alt_prefix)
 
 class ExtSummaryField(dd.VirtualField):
@@ -2126,7 +2124,7 @@ class ExtSummaryField(dd.VirtualField):
         obj.summary = value
         
     def value_from_object(self,obj,ar):
-        #~ logger.info("20120118 value_from_object() %s",obj2str(obj))
+        #~ logger.info("20120118 value_from_object() %s",dd.obj2str(obj))
         return event_summary(obj,ar.get_user())
 
 
@@ -2136,7 +2134,7 @@ def event_summary(obj,user):
         if obj.access_class == AccessClasses.show_busy:
             s = _("Busy")
         s = obj.user.username + ': ' + unicode(s)
-    elif settings.LINO.project_model is not None and obj.project is not None:
+    elif settings.SITE.project_model is not None and obj.project is not None:
         s += " " + unicode(_("with")) + " " + unicode(obj.project)
     if obj.state:
         s = ("(%s) " % unicode(obj.state)) + s
@@ -2152,10 +2150,10 @@ def user_calendars(qs,user):
     return qs.filter(id__in=subs)
 
 
-if settings.LINO.use_extensible:
+if settings.SITE.use_extensible:
   
     def parsedate(s):
-        return datetime.date(*settings.LINO.parse_date(s))
+        return datetime.date(*settings.SITE.parse_date(s))
   
     class CalendarPanel(dd.Frame):
         """
@@ -2278,8 +2276,8 @@ def reminders_as_html(ar,days_back=None,days_forward=None,**kw):
     """
     user = ar.get_user()
     if not user.profile.authenticated: return ''
-    #~ Task = resolve_model('cal.Task')
-    #~ Event = resolve_model('cal.Event')
+    #~ Task = dd.resolve_model('cal.Task')
+    #~ Event = dd.resolve_model('cal.Event')
     today = datetime.date.today()
     
     past = {}
@@ -2360,7 +2358,7 @@ def reminders_as_html(ar,days_back=None,days_forward=None,**kw):
     
 def update_reminders(user):
     n = 0 
-    for obj in settings.LINO.get_reminder_generators_by_user(user):
+    for obj in settings.SITE.get_reminder_generators_by_user(user):
         obj.update_reminders()
         #~ logger.info("--> %s",unicode(obj))
         n += 1
@@ -2436,14 +2434,14 @@ def customize_users():
     Injects application-specific fields to users.User.
     """
     
-    dd.inject_field(settings.LINO.user_model,
+    dd.inject_field(settings.SITE.user_model,
         'access_class',
         AccessClasses.field(
             default=AccessClasses.public,
             verbose_name=_("Default access class"),
             help_text=_("""The default access class for your calendar events and tasks.""")
     ))
-    dd.inject_field(settings.LINO.user_model,
+    dd.inject_field(settings.SITE.user_model,
         'calendar',
         models.ForeignKey(Calendar,
             blank=True,null=True,

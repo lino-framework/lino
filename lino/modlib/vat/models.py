@@ -48,7 +48,7 @@ from django.utils.translation import ugettext_lazy as _
 
 from lino.modlib.ledger.utils import FiscalYears
 #~ from lino.core.modeltools import models_by_base
-partner_model = settings.LINO.partners_app_label + '.Partner'
+partner_model = settings.SITE.partners_app_label + '.Partner'
 
 ZERO = Decimal()
  
@@ -236,7 +236,7 @@ class VatDocument(VatTotal):
         for i in self.items.order_by('seqno'):
             if i.total_base is not None:
                 book(i.get_base_account(tt),i.total_base)
-                vatacc = settings.LINO.get_vat_account(tt,i.vat_class,self.vat_regime)
+                vatacc = settings.SITE.get_vat_account(tt,i.vat_class,self.vat_regime)
                 vatacc = self.journal.chart.get_account_by_ref(vatacc)
                 book(vatacc,i.total_vat)
         return sums_dict
@@ -249,7 +249,7 @@ class VatDocument(VatTotal):
             if m:
                 yield self.create_movement(a,a.type.dc,m)
                 sum += m
-        a = settings.LINO.get_partner_account(self)
+        a = settings.SITE.get_partner_account(self)
         a = self.journal.chart.get_account_by_ref(a)
         yield self.create_movement(a,a.type.dc,sum,partner=self.partner)
         
@@ -282,7 +282,7 @@ class VatItemBase(mixins.Sequenced,VatTotal):
     vat_class = VatClasses.field(blank=True)
     
     def get_vat_class(self,tt):
-        name = settings.LINO.get_vat_class(tt,self)
+        name = settings.SITE.get_vat_class(tt,self)
         return VatClasses.get_by_name(name)
         
     def vat_class_changed(self,ar):
@@ -305,7 +305,7 @@ class VatItemBase(mixins.Sequenced,VatTotal):
         tt = self.voucher.get_trade_type()
         if self.vat_class is None:
             self.vat_class = self.get_vat_class(tt)
-        return settings.LINO.get_vat_rate(tt,
+        return settings.SITE.get_vat_rate(tt,
             self.vat_class,
             self.voucher.vat_regime)
         

@@ -50,7 +50,7 @@ from lino.utils import babel
 #~ journals = models.get_app('journals')
 #~ auth = resolve_app('auth')
 #~ from lino.modlib.users import models as auth
-partners = dd.resolve_app(settings.LINO.partners_app_label)
+partners = dd.resolve_app(settings.SITE.partners_app_label)
 accounts = dd.resolve_app('accounts')
 ledger = dd.resolve_app('ledger')
 vat = dd.resolve_app('vat')
@@ -294,7 +294,7 @@ class SalesDocument(
     #~ total_base = dd.PriceField(blank=True,null=True)
     #~ total_vat = dd.PriceField(blank=True,null=True)
     intro = models.TextField("Introductive Text",blank=True)
-    #~ user = models.ForeignKey(settings.LINO.user_model,blank=True,null=True)
+    #~ user = models.ForeignKey(settings.SITE.user_model,blank=True,null=True)
     #status = models.CharField(max_length=1, choices=STATUS_CHOICES)
     #~ discount = models.IntegerField(_("Discount"),blank=True,null=True)
     discount = dd.PercentageField(_("Discount"),blank=True,null=True)
@@ -440,11 +440,11 @@ class ProductDocItem(ledger.VoucherItem,vat.QtyVatItemBase):
 
     
     def get_base_account(self,tt):
-        ref = settings.LINO.get_product_base_account(tt,self.product)
+        ref = settings.SITE.get_product_base_account(tt,self.product)
         return self.voucher.journal.chart.get_account_by_ref(ref)
         
     def get_vat_class(self,tt):
-        name = settings.LINO.get_product_vat_class(tt,self.product)
+        name = settings.SITE.get_product_vat_class(tt,self.product)
         return vat.VatClasses.get_by_name(name)
         
     #~ def full_clean(self,*args,**kw):
@@ -563,7 +563,7 @@ class InvoicesByJournal(Invoices):
         return unicode(ar.master_instance)
                   
 
-if settings.LINO.project_model:
+if settings.SITE.project_model:
   
     class InvoicesByProject(Invoices):
         order_by = ['-date']
@@ -693,7 +693,7 @@ ledger.VoucherTypes.add_item(Invoice,InvoicesByJournal)
 def customize_partners():
 
     #~ for ms in 'contacts.Partner', 'contacts.Person', 'contacts.Company':
-    partner_model = settings.LINO.partners_app_label + '.Partner'
+    partner_model = settings.SITE.partners_app_label + '.Partner'
     dd.inject_field(partner_model,
         'payment_term',
         models.ForeignKey(PaymentTerm,
@@ -732,7 +732,7 @@ def site_setup(site):
     #~ for t in (site.modules.partners.Partners,
               #~ site.modules.partners.Persons,
               #~ site.modules.partners.Organisations):
-    site.modules[settings.LINO.partners_app_label].Partners.add_detail_tab("sales",
+    site.modules[settings.SITE.partners_app_label].Partners.add_detail_tab("sales",
         """
         payment_term vat_regime item_vat imode
         sales.InvoicesByPartner

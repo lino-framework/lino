@@ -21,5 +21,4 @@ def objects():
             for choice in a[1:]:
                 yield Choice(choice_text=choice.strip(),poll=p,votes=0)
                 
-    #~ from django.contrib.auth.models import User
-    yield settings.LINO.modules.auth.User.objects.create_superuser('root', 'root@example.com', '1234')
+    yield settings.SITE.modules.auth.User.objects.create_superuser('root', 'root@example.com', '1234')

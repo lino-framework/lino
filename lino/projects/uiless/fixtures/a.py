@@ -181,4 +181,4 @@ def objects():
     yield auth_permission_objects()
     yield auth_user_objects()
 
-settings.LINO.install_migrations(globals())
+settings.SITE.install_migrations(globals())

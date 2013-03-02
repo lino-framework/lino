@@ -58,7 +58,7 @@ MODULE_LABEL = _("Workflows")
 def action_text(a):
     return "%s (%s)" % (a.name,unicode(a.label))
 
-if settings.LINO.user_model and settings.LINO.is_installed('contenttypes'):
+if settings.SITE.user_model and settings.SITE.is_installed('contenttypes'):
       
   
   #~ class Rule(mixins.Duplicable,mixins.Sequenced):
@@ -69,15 +69,15 @@ if settings.LINO.user_model and settings.LINO.is_installed('contenttypes'):
       #~ content_type = models.ForeignKey(contenttypes.ContentType)
       #~ app_name = models.CharField(_("Module"),max_length=50)
       #~ actor_name = models.CharField(_("Actor"),max_length=50)
-      actor_name = models.CharField(_("Actor"),max_length=settings.LINO.max_actor_name_length)
+      actor_name = models.CharField(_("Actor"),max_length=settings.SITE.max_actor_name_length)
       action_name = models.CharField(_("Action"),
-          max_length=settings.LINO.max_action_name_length,
+          max_length=settings.SITE.max_action_name_length,
           blank=True,
           help_text="""
           The action to allow if this rule applies.
           If this is empty, the permission applies for all workflow actions of the actor.
           """)
-      state = models.CharField(_("State"),max_length=settings.LINO.max_state_value_length,
+      state = models.CharField(_("State"),max_length=settings.SITE.max_state_value_length,
           blank=True,
           help_text="""
           Permission applies only for objects in the given state.
@@ -106,8 +106,8 @@ if settings.LINO.user_model and settings.LINO.is_installed('contenttypes'):
       @chooser()
       def actor_name_choices(cls):
           #~ return WORKFLOWABLE_ACTORS.items()
-          #~ return settings.LINO.workflow_actors.items()
-          return settings.LINO.workflow_actor_choices
+          #~ return settings.SITE.workflow_actors.items()
+          return settings.SITE.workflow_actor_choices
           
       def get_actor_name_display(self,value):
           return str(value)
@@ -123,7 +123,7 @@ if settings.LINO.user_model and settings.LINO.is_installed('contenttypes'):
       def action_name_choices(cls,actor_name):
           choices = []
           if not actor_name: return choices
-          actor = settings.LINO.workflow_actors.get(actor_name)
+          actor = settings.SITE.workflow_actors.get(actor_name)
           if actor is None: return choices
           #~ actor = WORKFLOWABLE_ACTORS.get(actor_name)
           for a in actor.workflow_actions:
@@ -131,7 +131,7 @@ if settings.LINO.user_model and settings.LINO.is_installed('contenttypes'):
           return choices
       
       def get_action_name_display(self,action_name):
-          actor = settings.LINO.workflow_actors.get(self.actor_name)
+          actor = settings.SITE.workflow_actors.get(self.actor_name)
           if actor is None: return ''
           #~ actor = self.content_type.model_class()._lino_default_table
           a = getattr(actor,action_name)
@@ -142,7 +142,7 @@ if settings.LINO.user_model and settings.LINO.is_installed('contenttypes'):
       def state_choices(cls,actor_name):
           choices = []
           if not actor_name: return choices
-          actor = settings.LINO.workflow_actors.get(actor_name)
+          actor = settings.SITE.workflow_actors.get(actor_name)
           if actor is None: return choices
           return actor.workflow_state_field.choices
         
@@ -150,7 +150,7 @@ if settings.LINO.user_model and settings.LINO.is_installed('contenttypes'):
       #~ def get_state_after_display(self,value):
           #~ return self.get_state_display(value)
       def get_state_display(self,value):
-          actor = settings.LINO.workflow_actors.get(self.actor_name)
+          actor = settings.SITE.workflow_actors.get(self.actor_name)
           if actor is None: return ''
           return actor.workflow_state_field.choicelist.get_text_for_value(value)
           

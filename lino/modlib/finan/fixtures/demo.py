@@ -25,7 +25,7 @@ from lino.utils import Cycler
 from lino.utils.instantiator import Instantiator, i2d
 from lino.core.modeltools import resolve_model
 
-partner_model = settings.LINO.partners_app_label + '.Partner'
+partner_model = settings.SITE.partners_app_label + '.Partner'
 Partner = dd.resolve_model(partner_model)
 
 
@@ -45,7 +45,7 @@ def objects():
     vt = ledger.VoucherTypes.get_for_model(MODEL)
     JOURNALS = Cycler(vt.get_journals())
     PARTNERS = Cycler(Partner.objects.order_by('name'))
-    USERS = Cycler(settings.LINO.user_model.objects.all())
+    USERS = Cycler(settings.SITE.user_model.objects.all())
     AMOUNTS = Cycler([Decimal(x) for x in 
         "2.50 6.80 9.95 14.50 20 29.90 39.90 39.90 99.95 199.95 599.95 1599.99".split()])
     ITEMCOUNT = Cycler(1,3,10)
@@ -53,7 +53,7 @@ def objects():
         jnl = JOURNALS.pop()
         voucher = MODEL(journal=jnl,
           user=USERS.pop(),
-          date=settings.LINO.demo_date(-30+i))
+          date=settings.SITE.demo_date(-30+i))
         yield voucher
         ACCOUNTS = Cycler(jnl.get_allowed_accounts())
         for j in range(ITEMCOUNT.pop()):

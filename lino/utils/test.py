@@ -107,8 +107,8 @@ class TestCase(DjangoTestCase):
                     #~ v(self)
                   
     def setUp(self):
-        settings.LINO.never_build_site_cache = self.never_build_site_cache
-        #~ settings.LINO.remote_user_header = 'REMOTE_USER'
+        settings.SITE.never_build_site_cache = self.never_build_site_cache
+        #~ settings.SITE.remote_user_header = 'REMOTE_USER'
         super(TestCase,self).setUp()
         
     def test_them_all(self):

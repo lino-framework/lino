@@ -1,10 +1,10 @@
 from lino.projects.std.settings import *
 
-class Lino(Lino):
+class Site(Site):
     languages = ('en','de','fr')
     def get_installed_apps(self):
-        for a in super(Lino,self).get_installed_apps(): yield a
+        for a in super(Site,self).get_installed_apps(): yield a
         yield 'lino.test_apps.human'
         
-LINO = Lino(__file__,globals())    
+SITE = Site(__file__,globals())    
 

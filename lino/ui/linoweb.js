@@ -408,7 +408,7 @@ Lino.show_login_window = function() {
         //~ inspired by http://www.sencha.com/learn/a-basic-login/
         autoHeight:true,
         labelWidth:90,
-        url:'{{settings.LINO.admin_prefix}}/auth', 
+        url:'{{settings.SITE.admin_prefix}}/auth', 
         frame:true, 
         defaultType:'textfield',
         monitorValid:true,
@@ -453,7 +453,7 @@ Lino.show_login_window = function() {
 Lino.logout = function(id,name) {
     //~ console.log('20121104 gonna log out',arguments);
     //~ Lino.do_action
-    Lino.call_ajax_action(Lino.viewport,'GET','{{settings.LINO.admin_prefix}}/auth',{},'logout',undefined,undefined,function(){
+    Lino.call_ajax_action(Lino.viewport,'GET','{{settings.SITE.admin_prefix}}/auth',{},'logout',undefined,undefined,function(){
         //~ console.log('20121104 logged out',arguments);
         //~ Lino.login_window.hide();
         Lino.close_all_windows();
@@ -463,7 +463,7 @@ Lino.logout = function(id,name) {
 Lino.set_subst_user = function(id,name) {
     //~ console.log(20120714,'Lino.set_subst_user',id,name);
     Lino.subst_user = id;
-{% if settings.LINO.use_extensible and settings.LINO.is_installed('lino.modlib.cal') %}
+{% if settings.SITE.use_extensible and settings.SITE.is_installed('lino.modlib.cal') %}
     if(id) {
         Lino.eventStore.setBaseParam("{{ext_requests.URL_PARAM_SUBST_USER}}",id);
     } else {
@@ -533,7 +533,7 @@ Lino.Viewport = Ext.extend(Ext.Viewport,{
         }
       };
       var action = {
-        url : '{{settings.LINO.admin_prefix}}/api/main_html',
+        url : '{{settings.SITE.admin_prefix}}/api/main_html',
         waitMsg: "{{_('Please wait...')}}",
         failure: Lino.ajax_error_handler(caller),
         success: success,
@@ -590,7 +590,7 @@ Lino.close_window = function(status_update) {
 Lino.close_all_windows = function() {
   if (Lino.window_history.length == 0) {
       //~ Lino.viewport.refresh();
-      var url =  "{{settings.LINO.admin_prefix}}/"
+      var url =  "{{settings.SITE.admin_prefix}}/"
       //~ console.log("20121120 Lino.close_all_windows() : no window_history");
       //~ if (ADMIN_URL) 
       var p = {};
@@ -676,7 +676,7 @@ Lino.PanelMixin = {
 
 Lino.status_bar = new Ext.ux.StatusBar({defaultText:'Lino version {{lino.__version__}}.'});
 
-{% if settings.LINO.use_tinymce %}
+{% if settings.SITE.use_tinymce %}
 
 Lino.edit_tinymce_text = function(panel,options) {
   // `panel` is the RichTextPanel
@@ -821,7 +821,7 @@ Lino.edit_tinymce_text = function(panel,options) {
 
 {% endif %}
 
-{% if settings.LINO.use_vinylfox %}
+{% if settings.SITE.use_vinylfox %}
 Lino.VinylFoxPlugins = function(){
     return [
         new Ext.ux.form.HtmlEditor.Link(),
@@ -932,27 +932,27 @@ Lino.on_tab_activate = function(item) {
 }
 
 Lino.TimeField = Ext.extend(Ext.form.TimeField,{
-  format: '{{settings.LINO.time_format_extjs}}',
+  format: '{{settings.SITE.time_format_extjs}}',
   increment: 15
   });
 Lino.DateField = Ext.extend(Ext.form.DateField,{
   boxMinWidth: Lino.chars2width(11),
-  format: '{{settings.LINO.date_format_extjs}}',
-  altFormats: '{{settings.LINO.alt_date_formats_extjs}}'
+  format: '{{settings.SITE.date_format_extjs}}',
+  altFormats: '{{settings.SITE.alt_date_formats_extjs}}'
   });
 Lino.DatePickerField = Ext.extend(Ext.DatePicker,{
   //~ boxMinWidth: Lino.chars2width(11),
-  format: '{{settings.LINO.date_format_extjs}}',
-  //~ altFormats: '{{settings.LINO.alt_date_formats_extjs}}'
+  format: '{{settings.SITE.date_format_extjs}}',
+  //~ altFormats: '{{settings.SITE.alt_date_formats_extjs}}'
   formatDate : function(date){
       console.log("20121203 formatDate",this.name,date);
       return Ext.isDate(date) ? date.dateFormat(this.format) : date;
   }
   });
 Lino.DateTimeField = Ext.extend(Ext.ux.form.DateTime,{
-  dateFormat: '{{settings.LINO.date_format_extjs}}',
-  timeFormat: '{{settings.LINO.time_format_extjs}}',
-  //~ hiddenFormat: '{{settings.LINO.date_format_extjs}} {{settings.LINO.time_format_extjs}}'
+  dateFormat: '{{settings.SITE.date_format_extjs}}',
+  timeFormat: '{{settings.SITE.time_format_extjs}}',
+  //~ hiddenFormat: '{{settings.SITE.date_format_extjs}} {{settings.SITE.time_format_extjs}}'
   });
 Lino.URLField = Ext.extend(Ext.form.TriggerField,{
   triggerClass : 'x-form-search-trigger',
@@ -969,7 +969,7 @@ Lino.IncompleteDateField = Ext.extend(Ext.form.TextField,{
   //~ regex: /^[0123]\d\.[01]\d\.-?\d+$/,
   maxLength: 10,
   boxMinWidth: Lino.chars2width(10),
-  regex: {{settings.LINO.date_format_regex}},
+  regex: {{settings.SITE.date_format_regex}},
   regexText: '{{_("Enter a date in format YYYY-MM-DD (use zeroes for unknown parts).")}}'
   });
 
@@ -1056,7 +1056,7 @@ Lino.file_field_handler = function(panel,config) {
   if (panel.action_name == 'insert') {
   //~ if (panel.get_current_record().phantom) {
       panel.has_file_upload = true;
-{%if settings.LINO.use_awesome_uploader %}
+{%if settings.SITE.use_awesome_uploader %}
       return { xtype:'button', text: 'Upload', handler: Lino.show_uploader }
 {% else %}
       var f = new Lino.FileUploadField(config);
@@ -1454,7 +1454,7 @@ Lino.delete_selected = function(panel) {
         for ( var i=0; i < recs.length; i++ ) {
           Lino.do_action(panel,{
               method:'DELETE',
-              url:  '{{settings.LINO.admin_prefix}}/api' + panel.ls_url + '/' + recs[i].id,
+              url:  '{{settings.SITE.admin_prefix}}/api' + panel.ls_url + '/' + recs[i].id,
               after_success: panel.after_delete.createDelegate(panel)
           })
         }
@@ -1498,7 +1498,7 @@ Lino.action_handler = function (panel,on_success,on_confirm) {
           //~ Lino.insert_subst_user(p);
           Ext.Ajax.request({
             method: 'GET',
-            url: '{{settings.LINO.admin_prefix}}/callbacks/'+result.xcallback.id + '/' + buttonId,
+            url: '{{settings.SITE.admin_prefix}}/callbacks/'+result.xcallback.id + '/' + buttonId,
             //~ params: {bi: buttonId},
             success: Lino.action_handler(panel,on_success,on_confirm)
           });
@@ -1561,7 +1561,7 @@ Lino.action_handler = function (panel,on_success,on_confirm) {
         //~ console.log("20121212 b gonna refresh",panel);
         if (result.refresh) panel.refresh();
     }
-    {% if settings.LINO.use_davlink %}
+    {% if settings.SITE.use_davlink %}
     if (result.open_davlink_url) {
        Lino.davlink_open(result.open_davlink_url);
     }
@@ -1699,7 +1699,7 @@ Lino.MainPanel = {
     //~ console.log('get_permalink',p,this.get_permalink_params());
     if (this.is_home_page)
         //~ var url = '';
-        var url = '{{settings.LINO.admin_prefix}}/';
+        var url = '{{settings.SITE.admin_prefix}}/';
     else 
         var url = this.get_permalink_url();
     if (p.{{ext_requests.URL_PARAM_SUBST_USER}} == null) 
@@ -1708,7 +1708,7 @@ Lino.MainPanel = {
     return url;
   }
   ,get_record_url : function(record_id) {
-      var url = '{{settings.LINO.admin_prefix}}/api' + this.ls_url
+      var url = '{{settings.SITE.admin_prefix}}/api' + this.ls_url
       //~ var url = this.containing_window.config.url_data; // ls_url;
       url += '/' + (record_id === undefined ? '-99999' : String(record_id));
       //~ if (record_id !== undefined) url += '/' + String(record_id);
@@ -1716,7 +1716,7 @@ Lino.MainPanel = {
       return url;
   }
   ,get_permalink_url : function() {
-      return '{{settings.LINO.admin_prefix}}/api' + this.ls_url;
+      return '{{settings.SITE.admin_prefix}}/api' + this.ls_url;
   }
   ,get_permalink_params : function() {
       //~ return {an:'grid'};
@@ -1843,7 +1843,7 @@ Lino.ajax_error_handler = function(panel) {
 }
 // Ext.Ajax.on('requestexception',Lino.ajax_error_handler)
  
-{% if settings.LINO.use_quicktips %}
+{% if settings.SITE.use_quicktips %}
 
 Ext.QuickTips.init();
 
@@ -1918,7 +1918,7 @@ Lino.text_renderer = function(value, metaData, record, rowIndex, colIndex, store
 
 Lino.NullNumberColumn = Ext.extend(Ext.grid.Column, {
     align : 'right', 
-    format : '{{settings.LINO.default_number_format_extjs}}', 
+    format : '{{settings.SITE.default_number_format_extjs}}', 
     renderer : function(value, metaData, record, rowIndex, colIndex, store) {
         //~ console.log(20130128,"NullNumberColumn.renderer",value);
         if (value === null) return '';
@@ -2111,7 +2111,7 @@ Lino.row_action_handler = function(actionName,hm,pp) {
 
 Lino.list_action_handler = function(ls_url,actionName,hm,pp) {
   var p = {};
-  var url = '{{settings.LINO.admin_prefix}}/api' + ls_url
+  var url = '{{settings.SITE.admin_prefix}}/api' + ls_url
   var fn = function(panel,btn,step) {
       //~ console.log("20121210 Lino.list_action_handler",arguments);
       //~ var url = ADMIN_URL + '/api' + panel.ls_url
@@ -2135,7 +2135,7 @@ Lino.param_action_handler = function(window_action) { // 20121012
 
 Lino.run_row_action = function(requesting_panel,url,pk,actionName,pp) {
   //~ var panel = action.get_window().main_item;
-  url = '{{settings.LINO.admin_prefix}}/api' + url  + '/' + pk;
+  url = '{{settings.SITE.admin_prefix}}/api' + url  + '/' + pk;
   var panel = Ext.getCmp(requesting_panel);
   if (pp) var p = pp(); else var p = {};
   var fn = function(panel,btn,step) {
@@ -2203,7 +2203,7 @@ Lino.show_insert_duplicate = function(panel,btn) {
 //~ };
 
 
-{% if settings.LINO.use_gridfilters %}
+{% if settings.SITE.use_gridfilters %}
 
 if (Ext.ux.grid !== undefined) {
     Lino.GridFilters = Ext.extend(Ext.ux.grid.GridFilters,{
@@ -2370,7 +2370,7 @@ Lino.HtmlBoxPanel = Ext.extend(Lino.HtmlBoxPanel,{
 });
 //~ Ext.override(Lino.HtmlBoxPanel,Lino.FieldBoxMixin);
 
-{% if settings.LINO.use_tinymce %}
+{% if settings.SITE.use_tinymce %}
 
 Lino.RichTextPanel = Ext.extend(Ext.Panel,Lino.PanelMixin);
 Lino.RichTextPanel = Ext.extend(Lino.RichTextPanel,Lino.FieldBoxMixin);
@@ -2451,7 +2451,7 @@ Lino.RichTextPanel = Ext.extend(Lino.RichTextPanel,{
     var todo = function() {
       //~ this.set_base_params(this.containing_window.get_base_params());
       if (record) {
-        var url = '{{settings.LINO.admin_prefix}}/templates' + this.containing_panel.ls_url + "/" 
+        var url = '{{settings.SITE.admin_prefix}}/templates' + this.containing_panel.ls_url + "/" 
             + String(record.id) + "/" + this.editor.name;
         //~ console.log('RichTextPanel.refresh()',url);
         if (this.editor.ed) this.editor.ed.settings.template_external_list_url = url;
@@ -2622,7 +2622,7 @@ Lino.FormPanel = Ext.extend(Lino.FormPanel,{
             baseParams: this.get_base_params(),
             //~ value: this.containing_window.config.base_params.query,
             proxy: new Ext.data.HttpProxy({
-              url: '{{settings.LINO.admin_prefix}}/choices' + this.ls_url,
+              url: '{{settings.SITE.admin_prefix}}/choices' + this.ls_url,
               method:'GET'
             })
           }),
@@ -3049,8 +3049,8 @@ Lino.FormPanel = Ext.extend(Lino.FormPanel,{
   get_permalink_url : function() {
       var rec = this.get_current_record();
       if (rec && ! rec.phantom && rec.id != -99998)
-          return '{{settings.LINO.admin_prefix}}/api' + this.ls_url + '/' + rec.id;
-      return '{{settings.LINO.admin_prefix}}/api' + this.ls_url;
+          return '{{settings.SITE.admin_prefix}}/api' + this.ls_url + '/' + rec.id;
+      return '{{settings.SITE.admin_prefix}}/api' + this.ls_url;
     
   },
   get_permalink_params : function() {
@@ -3091,7 +3091,7 @@ Lino.FormPanel = Ext.extend(Lino.FormPanel,{
         //~ if (this.action_name != 'insert') 
             //~ console.log("Warning: phantom record, but action_name is",this.action_name)
         this.form.submit({
-          url: '{{settings.LINO.admin_prefix}}/api' + this.ls_url,
+          url: '{{settings.SITE.admin_prefix}}/api' + this.ls_url,
           method: 'POST',
           params: p, 
           scope: this,
@@ -3146,7 +3146,7 @@ Lino.FormPanel = Ext.extend(Lino.FormPanel,{
         //~ if (this.action_name != 'detail') 
             //~ console.log("Warning: non-phantom record, but action_name is",this.action_name)
         this.form.submit({
-          url: '{{settings.LINO.admin_prefix}}/api' + this.ls_url + '/' + rec.id,
+          url: '{{settings.SITE.admin_prefix}}/api' + this.ls_url + '/' + rec.id,
           method: 'PUT',
           //~ headers: { 'HTTP_X_REQUESTED_WITH' : 'XMLHttpRequest'},
           scope: this,
@@ -3332,10 +3332,10 @@ Lino.GridPanel = Ext.extend(Lino.GridPanel,{
   loadMask: {msg:"{{_('Please wait...')}}"},
   
   constructor : function(config){
-{% if settings.LINO.use_gridfilters %}
+{% if settings.SITE.use_gridfilters %}
     config.plugins = [new Lino.GridFilters()];
 {% endif %}    
-{% if settings.LINO.use_filterRow %}
+{% if settings.SITE.use_filterRow %}
     config.plugins = [new Ext.ux.grid.FilterRow()];
 {% endif %}    
     Lino.GridPanel.superclass.constructor.call(this,config);
@@ -3409,7 +3409,7 @@ Lino.GridPanel = Ext.extend(Lino.GridPanel,{
     //~ }
     var proxy = new Ext.data.HttpProxy({ 
       // 20120814 
-      url: '{{settings.LINO.admin_prefix}}/api' + this.ls_url
+      url: '{{settings.SITE.admin_prefix}}/api' + this.ls_url
       ,method: "GET"
       //~ ,url: ADMIN_URL + '/restful' + this.ls_url
       //~ ,restful: true 
@@ -3496,7 +3496,7 @@ Lino.GridPanel = Ext.extend(Lino.GridPanel,{
           listeners: { 
             scope:this_
             //~ ,change:this_.search_change
-            {% if settings.LINO.use_quicktips %}
+            {% if settings.SITE.use_quicktips %}
             ,render: Lino.quicktip_renderer("{{_('Quick Search')}}","{{_('Enter a text to use as quick search filter')}}")
             {% endif %}
             //~ ,keypress: this.search_keypress 
@@ -3525,7 +3525,7 @@ Lino.GridPanel = Ext.extend(Lino.GridPanel,{
             p.{{ext_requests.URL_PARAM_FORMAT}} = "{{ext_requests.URL_FORMAT_CSV}}";
             this.add_param_values(p);
             
-            window.open('{{settings.LINO.admin_prefix}}/api'+this.ls_url + "?" + Ext.urlEncode(p)) 
+            window.open('{{settings.SITE.admin_prefix}}/api'+this.ls_url + "?" + Ext.urlEncode(p)) 
           } },
         //~ { scope:this, 
           //~ text: "[html]", 
@@ -3546,7 +3546,7 @@ Lino.GridPanel = Ext.extend(Lino.GridPanel,{
             //~ since 20121226 p.$ext_requests.URL_PARAM_FORMAT = "$ext_requests.URL_FORMAT_PLAIN";
             this.add_param_values(p);
             //~ since 20121226 window.open(ADMIN_URL+'/api'+this.ls_url + "?" + Ext.urlEncode(p)) 
-            window.open('{{settings.LINO.plain_prefix}}'+this.ls_url + "?" + Ext.urlEncode(p)) 
+            window.open('{{settings.SITE.plain_prefix}}'+this.ls_url + "?" + Ext.urlEncode(p)) 
           } },
         { scope:this, 
           //~ text: "[pdf]", 
@@ -3557,7 +3557,7 @@ Lino.GridPanel = Ext.extend(Lino.GridPanel,{
             Ext.apply(p,this.get_base_params());
             p.{{ext_requests.URL_PARAM_FORMAT}} = "{{ext_requests.URL_FORMAT_PDF}}";
             this.add_param_values(p);
-            window.open('{{settings.LINO.admin_prefix}}/api'+this.ls_url + "?" + Ext.urlEncode(p)) 
+            window.open('{{settings.SITE.admin_prefix}}/api'+this.ls_url + "?" + Ext.urlEncode(p)) 
           } }
       ]);
     
@@ -4076,7 +4076,7 @@ Lino.GridPanel = Ext.extend(Lino.GridPanel,{
     var a = { 
       params:this.get_current_grid_config(), 
       method:'PUT',
-      url:'{{settings.LINO.admin_prefix}}/grid_config' + this.ls_url,
+      url:'{{settings.SITE.admin_prefix}}/grid_config' + this.ls_url,
       success: Lino.action_handler(this),
       scope: this,
       failure: Lino.ajax_error_handler(this)
@@ -4227,13 +4227,13 @@ Lino.GridPanel = Ext.extend(Lino.GridPanel,{
       req.params.{{ext_requests.URL_PARAM_ACTION_NAME}} = 'post'; // SubmitInsert.action_name
       Ext.apply(req,{
         method: 'POST',
-        url: '{{settings.LINO.admin_prefix}}/api' + this.ls_url
+        url: '{{settings.SITE.admin_prefix}}/api' + this.ls_url
       });
     } else {
       req.params.{{ext_requests.URL_PARAM_ACTION_NAME}} = 'put'; // SubmitDetail.action_name
       Ext.apply(req,{
         method: 'PUT',
-        url: '{{settings.LINO.admin_prefix}}/api' + this.ls_url + '/' + e.record.id
+        url: '{{settings.SITE.admin_prefix}}/api' + this.ls_url + '/' + e.record.id
       });
     }
     //~ console.log('20110406 on_afteredit',req);
@@ -4805,7 +4805,7 @@ function initializeFooBarDropZone(cmp) {
     })
 }
 
-{% if settings.LINO.use_awesome_uploader %}
+{% if settings.SITE.use_awesome_uploader %}
 Lino.AwesomeUploaderWindow = new Ext.Window({
 		title:'Awesome Uploader in a Window!'
 		,closeAction:'hide'
@@ -4856,7 +4856,7 @@ Lino.show_mti_child = function(fieldname,detail_handler) {
   }
 };
 
-{% if settings.LINO.use_davlink %}
+{% if settings.SITE.use_davlink %}
 
 Lino.davlink_open = function(webdavURL) {
   /* Calls lino.applets.davlink.DavLink.open()
@@ -4867,7 +4867,7 @@ Lino.davlink_open = function(webdavURL) {
 
 {% endif %}
 
-{% if settings.LINO.use_extensible and settings.LINO.is_installed('lino.modlib.cal') %}
+{% if settings.SITE.use_extensible and settings.SITE.is_installed('lino.modlib.cal') %}
 
 
 /*
@@ -4894,10 +4894,10 @@ Ext.ensible.cal.EventMappings = {
     Title:       {name: 'EvtTitle',  mapping: 'summary'},
     StartDate:   {name: 'StartDt',   mapping: 'start_dt', 
       type: 'date', 
-      dateFormat: "{{settings.LINO.datetime_format_extjs}}" },
+      dateFormat: "{{settings.SITE.datetime_format_extjs}}" },
     EndDate:     {name: 'EndDt',     mapping: 'end_dt', 
       type: 'date', 
-      dateFormat: "{{settings.LINO.datetime_format_extjs}}"},
+      dateFormat: "{{settings.SITE.datetime_format_extjs}}"},
     RRule:       {name: 'RecurRule', mapping: 'rsetHidden'},
     Location:    {name: 'Location',  mapping: 'placeHidden'},
     Notes:       {name: 'Desc',      mapping: 'description'},
@@ -4954,10 +4954,10 @@ Lino.on_eventupdate  = function(cp,rec,el) {
 //~ Lino.eventStore = new Ext.data.ArrayStore({ 
 Lino.eventStore = new Ext.data.JsonStore({ 
   listeners: { exception: Lino.on_store_exception }
-  ,url: '{{settings.LINO.admin_prefix}}/restful/cal/PanelEvents'
+  ,url: '{{settings.SITE.admin_prefix}}/restful/cal/PanelEvents'
   ,restful : true
   ,proxy: new Ext.data.HttpProxy({ 
-      url: '{{settings.LINO.admin_prefix}}/restful/cal/PanelEvents', 
+      url: '{{settings.SITE.admin_prefix}}/restful/cal/PanelEvents', 
       disableCaching: false // no need for cache busting when loading via Ajax
       //~ disableCaching:true,
   })
@@ -4993,7 +4993,7 @@ Lino.calendarStore = new Ext.data.JsonStore({
       listeners: { exception: Lino.on_store_exception }
       ,restful : true
       ,proxy: new Ext.data.HttpProxy({ 
-          url: '{{settings.LINO.admin_prefix}}/restful/cal/PanelCalendars?fmt={{ext_requests.URL_FORMAT_JSON}}', 
+          url: '{{settings.SITE.admin_prefix}}/restful/cal/PanelCalendars?fmt={{ext_requests.URL_FORMAT_JSON}}', 
           disableCaching: false // no need for cache busting when loading via Ajax
           //~ restful : true
           //~ method: "GET"
@@ -5010,7 +5010,7 @@ Lino.calendarStore = new Ext.data.JsonStore({
 
 
 Lino.CalendarCfg = {
-    dateParamFormat: '{{settings.LINO.date_format_extjs}}',
+    dateParamFormat: '{{settings.SITE.date_format_extjs}}',
     dateParamStart:'sd',
     dateParamEnd:'ed'
 };
@@ -5168,7 +5168,7 @@ Lino.calendar_app = function() { return {
               // Any generic view options that should be applied to all sub views:
               viewConfig: {
                   // Lino.CalendarCfg
-                  dateParamFormat: '{{settings.LINO.date_format_extjs}}',
+                  dateParamFormat: '{{settings.SITE.date_format_extjs}}',
                   dateParamStart:'sd',
                   dateParamEnd:'ed',
                 
@@ -5390,7 +5390,7 @@ function captureEvents(observable) {
  
 
 
-{% if settings.LINO.use_eid_jslib %}
+{% if settings.SITE.use_eid_jslib %}
 
 var cardReader = new be.belgium.eid.CardReader();
 
@@ -5426,8 +5426,8 @@ Lino.beid_read_card_processor = function() {
     } 
     return {
       cardNumber: card.cardNumber,
-      validityBeginDate:card.validityBeginDate.format("{{settings.LINO.date_format_extjs}}"),
-      validityEndDate: card.validityEndDate.format("{{settings.LINO.date_format_extjs}}"),
+      validityBeginDate:card.validityBeginDate.format("{{settings.SITE.date_format_extjs}}"),
+      validityEndDate: card.validityEndDate.format("{{settings.SITE.date_format_extjs}}"),
       chipNumber:card.chipNumber,
       issuingMunicipality:card.issuingMunicipality,
       nationalNumber:card.nationalNumber,
@@ -5437,7 +5437,7 @@ Lino.beid_read_card_processor = function() {
       firstName3:card.firstName3,
       nationality:card.nationality,
       birthLocation:card.birthLocation,
-      birthDate: card.birthDate.format("{{settings.LINO.date_format_extjs}}"),
+      birthDate: card.birthDate.format("{{settings.SITE.date_format_extjs}}"),
       sex:card.sex,
       nobleCondition:card.nobleCondition,
       documentType:card.documentType,
@@ -5459,7 +5459,7 @@ Lino.beid_read_card_processor = function() {
 
 {% endif %}
 
-{% if settings.LINO.use_esteid %}
+{% if settings.SITE.use_esteid %}
 
 
 

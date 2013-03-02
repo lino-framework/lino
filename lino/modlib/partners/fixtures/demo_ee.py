@@ -21,11 +21,11 @@ from lino.utils.instantiator import Instantiator
 def objects():
     #~ city = Instantiator('countries.City','name country').build
     #~ yield city('Vigala','EE')
-    if 'et' in settings.LINO.languages:
+    if 'et' in settings.SITE.languages:
         lang = 'et'
     else:
         # if language 'et' is not available, use the default language
-        lang = settings.LINO.languages[0]
+        lang = settings.SITE.languages[0]
         
     organisation = Instantiator("partners.Organisation",country='EE',language=lang).build
     yield organisation(name=u'Minu Firma OÜ')

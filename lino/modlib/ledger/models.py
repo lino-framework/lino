@@ -30,20 +30,12 @@ from django.conf import settings
 from lino import dd
 from lino import mixins
 from lino.utils import babel
-from lino.core.modeltools import full_model_name
-#~ from lino.utils.choicelists import Choice
-#contacts = reports.get_app('contacts')
-#~ from lino.modlib.journals import models as journals
-#~ journals = reports.get_app('journals')
-#from lino.modlib.contacts import models as contacts
-#from lino.modlib.journals import models as journals
 from django.utils.translation import ugettext_lazy as _
 from lino.modlib.ledger.utils import FiscalYears
-#~ from lino.modlib.accounts.utils import AccountTypes
 
 accounts = dd.resolve_app('accounts')
 vat = dd.resolve_app('vat')
-partner_model = settings.LINO.partners_app_label + '.Partner'
+partner_model = settings.SITE.partners_app_label + '.Partner'
 
 ZERO = Decimal()
 
@@ -51,7 +43,7 @@ class VoucherType(dd.Choice):
     def __init__(self,model,table_class):
         self.table_class = table_class
         self.model = model
-        value = full_model_name(model)
+        value = dd.full_model_name(model)
         text = model._meta.verbose_name + ' (%s.%s)' % (
             model.__module__,model.__name__)
         name = None
@@ -266,7 +258,7 @@ class Voucher(mixins.UserAuthored,mixins.ProjectRelated):
             #~ account = account.Account.objects.get(chart=chart,ref=account)
         if isinstance(trade_type,basestring):
             trade_type = vat.TradeTypes.get_by_name(trade_type)
-        vt = VoucherTypes.get_by_value(full_model_name(cls))
+        vt = VoucherTypes.get_by_value(dd.full_model_name(cls))
         kw.update(chart=chart)
         if account is not None:
             kw.update(account=account)
@@ -275,7 +267,7 @@ class Voucher(mixins.UserAuthored,mixins.ProjectRelated):
         
     @classmethod
     def get_journals(cls):
-        vt = VoucherTypes.get_by_value(full_model_name(cls))
+        vt = VoucherTypes.get_by_value(dd.full_model_name(cls))
         #~ doctype = get_doctype(cls)
         return Journal.objects.filter(voucher_type=vt).order_by('seqno')
             
@@ -684,8 +676,8 @@ class ItemsByInvoice(dd.Table):
 MODULE_LABEL = accounts.MODULE_LABEL
 
 def site_setup(site):
-    if site.is_installed(settings.LINO.partners_app_label):
-        app = site.modules[settings.LINO.partners_app_label]
+    if site.is_installed(settings.SITE.partners_app_label):
+        app = site.modules[settings.SITE.partners_app_label]
         for t in (app.Partners,app.Persons,app.Organisations):
             t.add_detail_tab("ledger",
                 """

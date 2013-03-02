@@ -14,6 +14,7 @@
 import logging
 logger = logging.getLogger(__name__)
 
+from django.conf import settings
 from django.db.models.signals import class_prepared
 from django.db.models.fields import FieldDoesNotExist
 from django.dispatch import receiver
@@ -106,7 +107,7 @@ def check_pending_injects(signal,sender,models_list=None,**kw):
         model._meta._fill_fields_cache()
         fix_field_cache(model)
 
-from lino.core.modeltools import is_installed_model_spec
+#~ from lino.core.modeltools import is_installed_model_spec
 
 def do_when_prepared(todo,*model_specs):
     """
@@ -120,7 +121,7 @@ def do_when_prepared(todo,*model_specs):
             continue # e.g. inject_field during autodoc when user_model is None
             
         if isinstance(model_spec,basestring):
-            if not is_installed_model_spec(model_spec):
+            if not settings.SITE.is_installed_model_spec(model_spec):
                 continue
             k = model_spec
             model = PREPARED_MODELS.get(k,None)

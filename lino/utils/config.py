@@ -55,7 +55,6 @@ from fnmatch import fnmatch
 from django.conf import settings
 from django.utils.importlib import import_module
 
-from lino.core.modeltools import makedirs_if_missing
 from lino.utils import iif
 
 SUBDIR_NAME = 'config' # we might change this to "templates" 
@@ -84,11 +83,11 @@ for app in settings.INSTALLED_APPS:
 
 LOCAL_CONFIG_DIR = None
 
-#~ for dirname in settings.LINO.get_settings_subdirs(SUBDIR_NAME)
+#~ for dirname in settings.SITE.get_settings_subdirs(SUBDIR_NAME)
 
-#~ if settings.LINO.project_dir != settings.LINO.source_dir:
-if settings.LINO.is_local_project_dir:
-    dirname = os.path.join(settings.LINO.project_dir,SUBDIR_NAME)
+#~ if settings.SITE.project_dir != settings.SITE.source_dir:
+if settings.SITE.is_local_project_dir:
+    dirname = os.path.join(settings.SITE.project_dir,SUBDIR_NAME)
     if os.path.isdir(dirname):
         LOCAL_CONFIG_DIR = ConfigDir(dirname,True)
         config_dirs.append(LOCAL_CONFIG_DIR)
@@ -228,7 +227,7 @@ class Configured(object):
             self.cd = LOCAL_CONFIG_DIR
         fn = os.path.join(self.cd.name,self.filename)
         dirname = os.path.dirname(fn)
-        makedirs_if_missing(dirname)
+        settings.SITE.makedirs_if_missing(dirname)
         #~ if not os.path.exists(dirname):
             #~ os.makedirs(dirname)
         f = codecs.open(fn,'w',encoding='utf-8')

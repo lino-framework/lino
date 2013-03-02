@@ -40,10 +40,9 @@ from lino.utils.xmlgen import html as xghtml
 from lino.utils import AttrDict
 
 
-#~ from lino import Lino
-import lino 
+import lino
 
-class Lino(lino.Lino):
+class Site(lino.Site):
     """
     """
     
@@ -56,6 +55,12 @@ class Lino(lino.Lino):
     max_state_value_length = 20 
     max_action_name_length = 50
     max_actor_name_length = 100
+    
+    #~ def add_config_value(self,name,default,help_text):
+        #~ if not hasattr(self,name):
+            #~ setattr(self,name,default)
+    
+    #~ add_config_value('allow_duplicate_cities',False)
     
     allow_duplicate_cities = False
     """
@@ -76,11 +81,11 @@ class Lino(lino.Lino):
     
     uid = 'myuid'
     """
-    A universal identifier for this Lino site. 
+    A universal identifier for this Site. 
     This is needed when synchronizing with CalDAV server.  
     Locally created calendar components in remote calendars 
     will get a UID based on this parameter,
-    using ``"%s@%s" (self.pk,settings.LINO.ui)``.
+    using ``"%s@%s" (self.pk,settings.SITE.ui)``.
     
     The default value is ``'myuid'``, and
     you should certainly override this 
@@ -305,9 +310,9 @@ class Lino(lino.Lino):
     to point to the local directory  where ExtJS 3.3.1 is installed).
     
     The same rules apply to the attributes
-    :attr:`extensible_base_url <lino.ui.Lino.extensible_base_url>`, 
-    :attr:`bootstrap_base_url <lino.ui.Lino.bootstrap_base_url>` and
-    :attr:`tinymce_base_url <lino.ui.Lino.tinymce_base_url>`.
+    :attr:`extensible_base_url <lino.ui.Site.extensible_base_url>`, 
+    :attr:`bootstrap_base_url <lino.ui.Site.bootstrap_base_url>` and
+    :attr:`tinymce_base_url <lino.ui.Site.tinymce_base_url>`.
     """
     
     extensible_base_url = "http://ext.ensible.com/deploy/1.0.2/"
@@ -523,7 +528,7 @@ class Lino(lino.Lino):
     
     Usage: in your application's `settings.py`, specify::
     
-      class Lino(Lino):
+      class Site(Site):
           override_modlib_models = ['contacts.Person']
           
     This will cause the modlib Person model to be abstract, 
@@ -556,9 +561,9 @@ class Lino(lino.Lino):
     
     
     def __init__(self,project_file,django_settings):
-        lino.Lino.__init__(self,project_file,django_settings)
+        lino.Site.__init__(self,project_file,django_settings)
         
-        installed_apps = tuple(self.get_installed_apps()) + ('lino',)
+        installed_apps = tuple(self.get_installed_apps()) + ('lino','django_site')
         django_settings.update(INSTALLED_APPS=installed_apps)
         
         modname = self.__module__
@@ -572,8 +577,8 @@ class Lino(lino.Lino):
         #~ self.source_dir = os.path.dirname(self.get_app_source_file())
         #~ self.source_name = os.path.split(self.source_dir)[-1]
         
-        #~ print "settings.LINO.source_dir:", self.source_dir
-        #~ print "settings.LINO.source_name:", self.source_name
+        #~ print "settings.SITE.source_dir:", self.source_dir
+        #~ print "settings.SITE.source_name:", self.source_name
 
         #~ self.appy_params.update(pythonWithUnoPath=r'C:\PROGRA~1\LIBREO~1\program\python.exe')
         #~ APPY_PARAMS.update(pythonWithUnoPath=r'C:\PROGRA~1\OPENOF~1.ORG\program\python.exe')
@@ -659,11 +664,20 @@ class Lino(lino.Lino):
         django_settings.update(TEMPLATE_CONTEXT_PROCESSORS = tuple(tcp))
 
         
-    def on_site_startup(self):
-        super(Lino,self).on_site_startup()
-        from .ui import ExtUI
-        self.ui = ExtUI()
+    def do_site_startup(self):
+        super(Site,self).do_site_startup()
+        #~ raise Exception("20130302")
+        #~ try:
+        if True:
+            from .ui import ExtUI
+            self.ui = ExtUI()
+        #~ except Exception as e:
+            #~ import traceback
+            #~ traceback.print_exc(e)
+            #~ sys.exit(-10)
+        #~ raise Exception("20130302")
         
+
     def is_abstract_model(self,name):
         """
         Return True if the named model ("myapp.MyModel") is declared in 
@@ -719,7 +733,7 @@ class Lino(lino.Lino):
         ::
         
           do text
-          from html(settings.LINO.site_header())
+          from html(settings.SITE.site_header())
           
         Note that this is expected to return a unicode string possibly 
         containing valid HTML (not XHTML) tags for formatting. 
@@ -856,7 +870,7 @@ class Lino(lino.Lino):
             except SiteConfig.DoesNotExist:
             #~ except Exception,e:
                 kw = dict(pk=1)
-                #~ kw.update(settings.LINO.site_config_defaults)
+                #~ kw.update(settings.SITE.site_config_defaults)
                 kw.update(self.site_config_defaults)
                 self._site_config = SiteConfig(**kw)
                 #~ logger.info("20130301 Created SiteConfig record (%s)",self._site_config)
@@ -939,7 +953,7 @@ class Lino(lino.Lino):
         Override this 
         in application-specific (or even local) :xfile:`settings.py` files 
         to define a series of *quick links* to appear below the main menu bar.
-        Example see :meth:`lino.projects.pcsw.settings.Lino.setup_quicklinks`.
+        Example see :meth:`lino.projects.pcsw.settings.Site.setup_quicklinks`.
         """
         self.on_each_app('setup_quicklinks',ar,m)
         
@@ -994,7 +1008,7 @@ class Lino(lino.Lino):
         for defining :setting:`MIDDLEWARE_CLASSES`, 
         you can simply set :setting:`MIDDLEWARE_CLASSES`
         in your :xfile:`settings.py` 
-        after the :class:`lino.Lino` has been initialized.
+        after the :class:`lino.Site` has been initialized.
         
         `Django and standard HTTP authentication
         <http://stackoverflow.com/questions/152248/can-i-use-http-basic-authentication-with-django>`_
@@ -1021,7 +1035,7 @@ class Lino(lino.Lino):
                 yield 'django.contrib.sessions.middleware.SessionMiddleware'
                 yield 'lino.utils.auth.SessionUserMiddleware'
                 #~ raise Exception("""\
-    #~ `user_model` is not None, but no `remote_user_header` in your settings.LINO.""")
+    #~ `user_model` is not None, but no `remote_user_header` in your settings.SITE.""")
         #~ yield 'lino.utils.editing.EditingMiddleware'
         yield 'lino.utils.ajax.AjaxExceptionResponse'
 
@@ -1156,7 +1170,9 @@ class Lino(lino.Lino):
         """
         Return or yield a list of tables that should be empty
         """
-        for mod in self.get_installed_modules():
+        from django.db.models import loading
+        for mod in loading.get_apps():
+        #~ for mod in self.get_installed_modules():
             meth = getattr(mod,'get_todo_tables',None)
             if meth is not None:
                 #~ dblogger.debug("Running %s of %s", methname, mod.__name__)
@@ -1164,4 +1180,36 @@ class Lino(lino.Lino):
                     yield i
 
 
+    def using(self,ui=None):
+        for u in super(Site,self).using(ui): yield u
+            
+        if ui is not None:
+            #~ version = '<script type="text/javascript">document.write(Ext.version);</script>'
+            onclick = "alert('ExtJS client version is ' + Ext.version);"
+            tip = "Click to see ExtJS client version"
+            text = "(version)"
+            #~ version = """<a href="#" onclick="%s" title="%s">%s</a>""" % (onclick,tip,text)
+            version = xghtml.E.a(text,href='#',onclick=onclick,title=tip)
+            yield ("ExtJS",version ,"http://www.sencha.com")
+            
+            if self.use_extensible:
+                onclick = "alert('Extensible Calendar version is ' + Ext.ensible.version);"
+                tip = "Click to see Extensible Calendar version"
+                text = "(version)"
+                #~ version = """<a href="#" onclick="%s" title="%s">%s</a>""" % (onclick,tip,text)
+                version = xghtml.E.a(text,href='#',onclick=onclick,title=tip)
+                yield ("Extensible",version ,"http://ext.ensible.com/products/calendar/")
+            yield ("Silk Icons",'1.3',"http://www.famfamfam.com/lab/icons/silk/")
+
+            
+          
+
+    def welcome_html(self,ui=None):
+        """
+        Text to display in the "about" dialog of a GUI application.
+        """
+        sep = '<br/>'
+        #~ sep = ', '
+        return sep.join(['<a href="%s" target="_blank">%s</a>&nbsp;%s' 
+            % (u,n,v) for n,v,u in self.using(ui)])
 

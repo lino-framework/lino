@@ -18,7 +18,7 @@ import lino
 
 from lino.projects.std.settings import *
 
-class Lino(Lino):
+class Site(Site):
     #~ source_dir = os.path.dirname(__file__)
     title = "Lino/MinimalApp 1"
     #~ help_url = "http://lino.saffre-rumma.net/az/index.html"
@@ -47,7 +47,7 @@ class Lino(Lino):
         tb.add_action(self.modules.contacts.Companies.detail_action)
         
     def get_installed_apps(self):
-        for a in super(Lino,self).get_installed_apps():
+        for a in super(Site,self).get_installed_apps():
             yield a
 
         yield 'django.contrib.contenttypes'
@@ -56,6 +56,6 @@ class Lino(Lino):
         yield 'lino.modlib.contacts'
         #~ yield 'lino.projects.min1'
       
-LINO = Lino(__file__,globals())
+SITE = Site(__file__,globals())
 
 

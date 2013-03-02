@@ -41,7 +41,7 @@ class Blogger(object):
         self.current_project = project
         
     def set_user(self,username):
-        self.user = settings.LINO.user_model.objects.get(username=username)
+        self.user = settings.SITE.user_model.objects.get(username=username)
     
     def add_object(self,obj): 
         self.objects_list.append(obj)

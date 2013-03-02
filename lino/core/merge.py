@@ -40,7 +40,7 @@ from lino.core import actions
 from lino.core import layouts
 from lino.core import fields
 from lino.core.signals import pre_merge
-from lino.core.modeltools import obj2str, full_model_name
+from django_site.modeltools import obj2str, full_model_name
 from lino.utils.xmlgen import html as xghtml
 E = xghtml.E
 
@@ -66,7 +66,7 @@ class MergePlan(object):
             else:
                 self.related.append((fk,qs))
         self.generic_related = []
-        for gfk,qs in settings.LINO.get_generic_related(self.obj):
+        for gfk,qs in settings.SITE.get_generic_related(self.obj):
             if not getattr(gfk,'dont_merge',False):
                 self.generic_related.append( (gfk,qs) )
         

@@ -480,7 +480,7 @@ class Action(Parametrizable,Permittable):
         
     def as_button(self,obj,request,label=None):
         ba = self.defining_actor.get_url_action(self.action_name)
-        btn = settings.LINO.ui.row_action_button(obj,request,ba,label)
+        btn = settings.SITE.ui.row_action_button(obj,request,ba,label)
         return E.tostring(btn)
         
     def get_action_title(self,ar):
@@ -735,7 +735,7 @@ class BeIdReadCardAction(RowAction):
         return self.label 
         
     def get_view_permission(self,profile):
-        if not settings.LINO.use_eid_jslib:
+        if not settings.SITE.use_eid_jslib:
             return False
         return super(BeIdReadCardAction,self).get_view_permission(profile)
   

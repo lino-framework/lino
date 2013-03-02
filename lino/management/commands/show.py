@@ -28,9 +28,9 @@ class Command(BaseCommand):
     def handle(self, *args, **options):
         if len(args) == 0:
             raise CommandError("I need at least one argument.")
-        #~ settings.LINO.startup()
+        #~ settings.SITE.startup()
         spec = args[0]
-        cl = settings.LINO.modules.resolve(spec)
+        cl = settings.SITE.modules.resolve(spec)
         
         if issubclass(cl,models.Model):
             cl = cl._lino_default_table

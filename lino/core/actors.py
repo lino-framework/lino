@@ -70,7 +70,7 @@ def discover():
 
 def register_actor(a):
     #~ logger.debug("register_actor %s",a)
-    old = settings.LINO.modules.define(a.app_label,a.__name__,a)
+    old = settings.SITE.modules.define(a.app_label,a.__name__,a)
     #~ old = actors_dict.get(a.actor_id,None)
     if old is not None:
         #~ logger.info("20121023 register_actor %s : %r replaced by %r",a,old,a)
@@ -91,7 +91,7 @@ def register_actor(a):
 def get_default_required(**kw):
     #~ if not kw.has_key('auth'):
         #~ kw.update(auth=True)
-    if settings.LINO.user_model is not None:
+    if settings.SITE.user_model is not None:
         kw.setdefault('auth',True)
     return kw
     
@@ -534,6 +534,18 @@ class Actor(actions.Parametrizable):
         
             
     @classmethod
+    def has_handle(self,ui):
+        if ui is None:
+            hname = '_lino_console_handler'
+        else:
+            hname = ui._handle_attr_name
+        return self.__dict__.get(hname,False)
+        
+    @classmethod
+    def on_analyze(self,site):
+        pass
+        
+    @classmethod
     def get_handle(self,ui):
         #~ assert ar is None or isinstance(ui,UI), \
             #~ "%s.get_handle() : %r is not a BaseUI" % (self,ui)
@@ -963,8 +975,9 @@ class Actor(actions.Parametrizable):
 
     @classmethod
     def add_virtual_field(cls,name,vf):
-        if cls.virtual_fields.has_key(name):
-            raise Exception("Duplicate add_virtual_field() %s.%s" % (cls,name))
+        if False: # disabled because UsersWithClients defines virtual fields on connection_created
+            if cls.virtual_fields.has_key(name):
+                raise Exception("Duplicate add_virtual_field() %s.%s" % (cls,name))
         cls.virtual_fields[name] = vf
         #~ vf.lino_resolve_type(cls,name)
         vf.name = name
@@ -1055,16 +1068,16 @@ class Actor(actions.Parametrizable):
         s = name.split('.')
         if len(s) == 1:
             #~ app_label = model._meta.app_label
-            rpt = settings.LINO.modules[self.app_label].get(name,None)
+            rpt = settings.SITE.modules[self.app_label].get(name,None)
         elif len(s) == 2:
             # 20121113
             #~ app = resolve_app(s[0])
             #~ rpt = getattr(app,s[1],None)
-            m = settings.LINO.modules.get(s[0],None)
+            m = settings.SITE.modules.get(s[0],None)
             if m is None:
                 return fields.DummyField()
             return m.get(s[1],None)
-            #~ rpt = settings.LINO.modules[s[0]].get(s[1],None)
+            #~ rpt = settings.SITE.modules[s[0]].get(s[1],None)
         else:
             raise Exception("Invalid data element name %r" % name)
         if rpt is not None: 
@@ -1142,7 +1155,7 @@ class Actor(actions.Parametrizable):
         and calls its :meth:`lino.core.actions.ActionRequest.to_rst` 
         method.
         """
-        #~ settings.LINO.startup()
+        #~ settings.SITE.startup()
         return self.request(**kw).to_rst(column_names)
         
     @classmethod
@@ -1152,6 +1165,6 @@ class Actor(actions.Parametrizable):
         creates an action request for this actor 
         and calls its :meth:`ActionRequest.table2xhtml` method.
         """
-        settings.LINO.startup()
+        settings.SITE.startup()
         return xghtml.E.tostring(self.request(**kw).table2xhtml())
         

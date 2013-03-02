@@ -23,7 +23,7 @@ from xml.dom.minidom import parseString
 
 #~ from django.conf import settings
 #  simulate a Django `settings` module:
-settings = Object(LINO=Object(
+settings = Object(SITE=Object(
     bcss_user_params = dict(
           UserID='123456', 
           Email='info@exemple.be', 
@@ -100,7 +100,7 @@ def main():
 
     ssdnReq = Object(
         RequestContext=Object(
-          AuthorizedUser=Object(**settings.LINO.bcss_user_params),
+          AuthorizedUser=Object(**settings.SITE.bcss_user_params),
           Message=Object(Reference='630230001126766',TimeRequest='20110921T105230')
           ),
         ServiceRequest=Object(

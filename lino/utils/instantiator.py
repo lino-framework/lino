@@ -34,7 +34,7 @@ from lino.core.modeltools import resolve_model, UnresolvedModel
 from lino.utils import i2d # for backward compatibility of .py fixtures
 from lino.utils import babel
 from lino.core import fields
-from lino.core.modeltools import obj2str
+from django_site.modeltools import obj2str
 from lino.core import signals
     
 

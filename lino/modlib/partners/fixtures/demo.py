@@ -50,7 +50,7 @@ def objects():
     
     organisation = Instantiator('partners.Organisation',"name zip_code city:name street street_no",country='DE').build
     yield organisation('Hans Flott & Co','22453','Hamburg','Niendorfer Weg','532')
-    if 'de' in settings.LINO.languages:
+    if 'de' in settings.SITE.languages:
         munich = 'München'
     else:
         munich = 'Munich'

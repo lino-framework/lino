@@ -445,7 +445,7 @@ Medium-term
 #.  The `setup_*` methods in models modules should be inside a Module class which 
     also has a userfriendly (and translated) description of the module.
     The kernel would instantiate these Module classes and store them as 
-    the items of `settings.LINO.modules`.
+    the items of `settings.SITE.modules`.
     
 #.  Ich gebe zu bedenken, dass wir den Begriff "aktiv" dann demnächst in 
     zwei verschiedenen Bedeutungen verwenden:

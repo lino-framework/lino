@@ -72,7 +72,7 @@ class Command(GeneratingCommand):
         #~ options.update(output_dir=QXAPP_PATH)
         if args:
             print "Warning : ignored arguments", args
-        QXAPP_PATH = os.path.join(settings.QOOXDOO_PATH,'lino_apps',settings.LINO.project_name)    
+        QXAPP_PATH = os.path.join(settings.QOOXDOO_PATH,'lino_apps',settings.SITE.project_name)    
         args = [QXAPP_PATH]
         super(Command,self).handle(*args, **options)
         
@@ -84,7 +84,7 @@ class Command(GeneratingCommand):
         subprocess.call(args)
         
     def generate_files(self):
-        settings.LINO.setup()
+        settings.SITE.setup()
         from lino.ui import qx
         src = join(dirname(qx.__file__),'qxapp_init','source')
         dest = join(self.output_dir,'source')

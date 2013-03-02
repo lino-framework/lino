@@ -173,7 +173,7 @@ class City(babel.BabelNamed):
     class Meta:
         verbose_name = _("Place")
         verbose_name_plural = _("Places")
-        if not settings.LINO.allow_duplicate_cities:
+        if not settings.SITE.allow_duplicate_cities:
             unique_together = ('country','parent','name','type')
             #~ unique_together = ('country','parent','name','type','zip_code')
     

@@ -1,6 +1,6 @@
 # Django settings for mysite project.
 
-import lino; LINO = lino.Lino(__file__,globals()) 
+import lino; SITE = lino.Site(__file__,globals()) 
 
 DEBUG = True
 TEMPLATE_DEBUG = DEBUG
@@ -116,6 +116,7 @@ INSTALLED_APPS = (
     # 'django.contrib.admindocs',
     'polls',
     'lino',
+    'django_site',
 )
 
 # A sample logging configuration. The only tangible logging

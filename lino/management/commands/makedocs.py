@@ -52,11 +52,11 @@ def fieldtype(f):
     return f.__class__.__name__
         
 def report_ref(rpt):
-    return settings.LINO.source_name + '.' + str(rpt)
-    #~ return ":ref:`%s.%s`" % (settings.LINO.source_name,str(rpt))  
+    return settings.SITE.source_name + '.' + str(rpt)
+    #~ return ":ref:`%s.%s`" % (settings.SITE.source_name,str(rpt))  
     
 def model_ref(model):
-    return settings.LINO.source_name + '.' + model._meta.app_label + '.' + model.__name__
+    return settings.SITE.source_name + '.' + model._meta.app_label + '.' + model.__name__
     
     
 def refto(x):
@@ -65,7 +65,7 @@ def refto(x):
     if issubclass(x,models.Model):
         return ':doc:`' + x.__name__ + ' <' + full_model_name(x) + '>`'
     #~ if isinstance(x,Field):
-    return ':ref:`' + x.verbose_name + ' <' + settings.LINO.source_name \
+    return ':ref:`' + x.verbose_name + ' <' + settings.SITE.source_name \
         + '.' + full_model_name(x.model) + '.' + x.name + '>`'
     
 
@@ -216,11 +216,11 @@ class Command(GeneratingCommand):
     def generate_files(self):
       
         from lino.ui.extjs3 import UI
-        #~ UI = settings.LINO.get_ui_class
+        #~ UI = settings.SITE.get_ui_class
         ui = UI(make_messages=True)
         #~ # install Lino urls under root location (`/`)
         #~ ui = urlpatterns = ui.get_patterns()
-        #~ settings.LINO.setup()
+        #~ settings.SITE.setup()
         ui.make_linolib_messages()
             
         context = dict(

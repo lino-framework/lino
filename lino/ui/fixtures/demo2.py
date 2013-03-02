@@ -22,7 +22,7 @@ This is an additive fixture designed to work also on existing data.
 from django.conf import settings
 
 def objects():
-    for u in settings.LINO.user_model.objects.exclude(profile=''):
+    for u in settings.SITE.user_model.objects.exclude(profile=''):
         u.set_password('1234')
         yield u
                 

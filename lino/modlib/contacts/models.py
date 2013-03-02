@@ -113,7 +113,7 @@ class Partner(mti.MultiTableBase,CountryRegionCity):
     
   
     class Meta:
-        abstract = settings.LINO.is_abstract_model('contacts.Partner')
+        abstract = settings.SITE.is_abstract_model('contacts.Partner')
         verbose_name = _("Partner")
         verbose_name_plural = _("Partners")
   
@@ -164,7 +164,7 @@ class Partner(mti.MultiTableBase,CountryRegionCity):
         
     def save(self,*args,**kw):
         if self.id is None:
-            sc = settings.LINO.site_config # get_site_config()
+            sc = settings.SITE.site_config # get_site_config()
             if sc.next_partner_id is not None:
                 self.id = sc.next_partner_id
                 sc.next_partner_id += 1
@@ -222,7 +222,7 @@ but e.g. :class:`PersonMixin` overrides this.
         #~ else:
             #~ foreigner = (self.country != self.objects.get(pk=1).country)
         if self.country is not None:
-            sc = settings.LINO.site_config # get_site_config()
+            sc = settings.SITE.site_config # get_site_config()
             #~ print 20130228, sc.site_company_id
             if not sc.site_company or self.country != sc.site_company.country: 
                 # (if self.country != sender's country)
@@ -354,7 +354,7 @@ class Person(PersonMixin,Partner):
     """
     class Meta:
         #~ abstract = True
-        abstract = settings.LINO.is_abstract_model('contacts.Person')
+        abstract = settings.SITE.is_abstract_model('contacts.Person')
         verbose_name = _("Person")
         verbose_name_plural = _("Persons")
 
@@ -428,7 +428,7 @@ class Company(Partner):
     See also :doc:`/tickets/14`.
     """
     class Meta:
-        abstract = settings.LINO.is_abstract_model('contacts.Company')
+        abstract = settings.SITE.is_abstract_model('contacts.Company')
         #~ abstract = True
         app_label = 'contacts'
         verbose_name = _("Company")
@@ -780,7 +780,7 @@ class ContactRelated(dd.Model):
         return Person.objects.filter(rolesbyperson__company=company).distinct()
 
     def full_clean(self,*args,**kw):
-        if not settings.LINO.loading_from_dump:
+        if not settings.SITE.loading_from_dump:
             if self.company and self.contact_person is None:
                 qs = self.contact_person_choices_queryset(self.company)
                 #~ qs = self.company.rolesbyparent.all()
@@ -799,13 +799,13 @@ class ContactRelated(dd.Model):
     
 
 
-#~ if settings.LINO.is_installed('contacts'):
+#~ if settings.SITE.is_installed('contacts'):
   
     #~ """
     #~ Don't inject fields if contacts is just being imported from some other module.
     #~ """
     
-#~ dd.inject_field(settings.LINO.user_model,
+#~ dd.inject_field(settings.SITE.user_model,
     #~ 'partner',
     #~ models.ForeignKey(Partner,
         #~ blank=True,null=True,
@@ -813,7 +813,7 @@ class ContactRelated(dd.Model):
 
 
 
-if settings.LINO.is_installed('contacts'):
+if settings.SITE.is_installed('contacts'):
   
     #~ from lino.models import SiteConfig
 
@@ -837,7 +837,7 @@ if settings.LINO.is_installed('contacts'):
 #~ dd.inject_field(Partner,
     #~ 'is_person',
     #~ mti.EnableChild(
-        #~ settings.LINO.person_model,
+        #~ settings.SITE.person_model,
         #~ verbose_name=_("is Person"),
         #~ help_text=_("Whether this Partner is a Person.")))
 #~ dd.inject_field(Partner,

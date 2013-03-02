@@ -64,7 +64,7 @@ class Household(contacts.Partner):
     list of :class:`members <Member>`.
     """
     class Meta:
-        abstract = settings.LINO.is_abstract_model('households.Household')
+        abstract = settings.SITE.is_abstract_model('households.Household')
         verbose_name = _("Household")
         verbose_name_plural = _("Households")
     
@@ -254,7 +254,7 @@ class MembersByRole(Members):
     
     
 
-if settings.LINO.is_installed('households'):
+if settings.SITE.is_installed('households'):
     #~ Don't inject fields if this is just being imported from some other module.
 
     dd.inject_field('contacts.Partner',

@@ -48,13 +48,13 @@ Person = contacts.Person
 User = contacts.User
 City = resolve_model('countries.City')
 
-if not settings.LINO.abstract_address:
+if not settings.SITE.abstract_address:
     Address = contacts.Address
     address = Instantiator(Address,"country zip_code city:name street street_no").build
 
 
 def company(name,country_id,zip_code,city,street,street_no):
-    if settings.LINO.abstract_address:
+    if settings.SITE.abstract_address:
         city = City.objects.get(name=city)
         yield Company(name=name,country_id=country_id,zip_code=zip_code,
           city=city,street=street,street_no=street_no)
@@ -65,7 +65,7 @@ def company(name,country_id,zip_code,city,street,street_no):
         yield com
 
 def person(first_name,last_name,country_id=None,zip_code='',city=None,**kw):
-    if settings.LINO.abstract_address:
+    if settings.SITE.abstract_address:
         if city is not None:
             city = City.objects.get(name=city)
         yield Person(first_name=first_name,last_name=last_name,
@@ -296,7 +296,7 @@ Weserstraße
     
     streets_of_eupen = [ line.strip() for line in s.splitlines() if len(line.strip()) > 0 ]
     
-    if settings.LINO.abstract_address:
+    if settings.SITE.abstract_address:
     
         nr = 1
         #~ CITIES = Cycler(City.objects.all())

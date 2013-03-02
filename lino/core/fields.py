@@ -31,11 +31,11 @@ from decimal import Decimal
 import logging
 logger = logging.getLogger(__name__)
 
-from lino.core.modeltools import full_model_name
-from lino.core.modeltools import obj2str
+from django_site.modeltools import full_model_name
+from django_site.modeltools import obj2str
 from lino.core.modeltools import resolve_field
 from lino.core.modeltools import resolve_model, UnresolvedModel
-from lino.core.modeltools import is_installed_model_spec
+#~ from lino.core.modeltools import is_installed_model_spec
 
 #~ from lino.utils import choosers
 from lino.utils import IncompleteDate, d2iso
@@ -269,14 +269,6 @@ class HtmlBox(DisplayField):
     
 #~ from django.db.models.fields import Field
 
-VIRTUAL_FIELDS = []
-
-def resolve_virtual_fields():
-    #~ global VIRTUAL_FIELDS
-    for vf in VIRTUAL_FIELDS: 
-        vf.lino_resolve_type()
-    #~ VIRTUAL_FIELDS = None
-      
 
 class VirtualField(FakeField): # (Field):
     """
@@ -286,7 +278,7 @@ class VirtualField(FakeField): # (Field):
     def __init__(self,return_type,get):
         self.return_type = return_type # a Django Field instance
         self.get = get
-        VIRTUAL_FIELDS.append(self)
+        settings.SITE.register_virtual_field(self)
         """
         Normal VirtualFields are read-only and not editable.
         We don't want to require application developers to explicitly 
@@ -864,7 +856,7 @@ def get_data_elem(model,name):
         #~ mod = import_module(model.__module__)
         #~ rpt = getattr(mod,name,None)
     #~ elif len(s) == 2:
-        #~ mod = getattr(settings.LINO.modules,s[0])
+        #~ mod = getattr(settings.SITE.modules,s[0])
         #~ rpt = getattr(mod,s[1],None)
     #~ else:
         #~ raise Exception("Invalid data element name %r" % name)
@@ -919,7 +911,7 @@ def ForeignKey(othermodel,*args,**kw):
     if othermodel is None: 
         return DummyField(othermodel,*args,**kw)
     if isinstance(othermodel,basestring):
-        if not is_installed_model_spec(othermodel):
+        if not settings.SITE.is_installed_model_spec(othermodel):
             return DummyField(othermodel,*args,**kw)
     return models.ForeignKey(othermodel,*args,**kw)
     

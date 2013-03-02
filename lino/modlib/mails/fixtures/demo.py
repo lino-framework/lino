@@ -30,7 +30,7 @@ def objects():
   
     Person = resolve_model("contacts.Person")
     Company = resolve_model("contacts.Company")
-    User = resolve_model(settings.LINO.user_model)
+    User = resolve_model(settings.SITE.user_model)
     
     root = User.objects.get(username='root')
     

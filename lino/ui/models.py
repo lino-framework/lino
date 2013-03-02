@@ -41,7 +41,7 @@ from lino import dd
 from lino.mixins import printable
 from lino.utils import babel
 #~ from lino import choices_method, simple_choices_method
-from lino.core.modeltools import obj2str, sorted_models_list, full_model_name
+from django_site.modeltools import obj2str, sorted_models_list, full_model_name
 from lino.core.modeltools import resolve_field, UnresolvedModel
 from lino.utils.choosers import chooser, get_for_field
 from lino.utils.restify import restify
@@ -81,11 +81,11 @@ class SiteConfig(dd.Model):
     """
     This model should have exactly one instance, 
     used to store persistent global site parameters.
-    Application code sees this instance as ``settings.LINO.site_config``.
+    Application code sees this instance as ``settings.SITE.site_config``.
     """
         
     class Meta:
-        abstract = settings.LINO.is_abstract_model('ui.SiteConfig')
+        abstract = settings.SITE.is_abstract_model('ui.SiteConfig')
         
     default_build_method = models.CharField(max_length=20,
         verbose_name=_("Default build method"),
@@ -94,7 +94,7 @@ class SiteConfig(dd.Model):
         
     def save(self,*args,**kw):
         super(SiteConfig,self).save(*args,**kw)
-        settings.LINO.on_site_config_saved(self)
+        settings.SITE.on_site_config_saved(self)
    
     def __unicode__(self):
         return force_unicode(_("Site Parameters"))
@@ -102,7 +102,7 @@ class SiteConfig(dd.Model):
 if False:
     @dd.receiver(dd.connection_created)
     def my_callback(sender,**kw):
-        settings.LINO.clear_site_config()
+        settings.SITE.clear_site_config()
 
         
 
@@ -141,7 +141,7 @@ class SiteConfigs(dd.Table):
     do_build = BuildSiteCache()
     
 
-if settings.LINO.is_installed('contenttypes'):
+if settings.SITE.is_installed('contenttypes'):
 
   class ContentTypes(dd.Table):
       """
@@ -244,7 +244,7 @@ if settings.LINO.is_installed('contenttypes'):
 
 
 
-if settings.LINO.user_model:
+if settings.SITE.user_model:
 
     class TextFieldTemplate(mixins.AutoUser):
         """A reusable block of text that can be selected from a text editor to be 
@@ -305,7 +305,7 @@ class Home(mixins.EmptyTable):
     
     @dd.virtualfield(dd.HtmlBox())
     def quick_links(cls,self,ar):
-        quicklinks = settings.LINO.get_quicklinks(ar)
+        quicklinks = settings.SITE.get_quicklinks(ar)
         if quicklinks.items:
             chunks = []
             for mi in quicklinks.items:
@@ -322,7 +322,7 @@ class Home(mixins.EmptyTable):
     #~ @dd.constant('')
     #~ @dd.constant()
     #~ def welcome(cls,ui):
-        #~ return "Welcome to the <b>%s</b> server." % cgi.escape(settings.LINO.title)
+        #~ return "Welcome to the <b>%s</b> server." % cgi.escape(settings.SITE.title)
         
     @dd.virtualfield(dd.HtmlBox(_('Welcome')))
     def welcome(cls,self,ar):
@@ -337,7 +337,7 @@ class Home(mixins.EmptyTable):
             warnings = []
             
             #~ for T in (MySuggestedCoachings,cal.MyTasksToDo):
-            for table,text in settings.LINO.get_todo_tables(ar):
+            for table,text in settings.SITE.get_todo_tables(ar):
                 r = table.request(user=u)
                 #~ r = T.request(subst_user=u)
                 #~ r = ar.spawn(T)
@@ -365,7 +365,7 @@ class Home(mixins.EmptyTable):
                 story.append(xghtml.E.p(_("Congratulatons: you have no warnings.")))
         #~ else:
             # story.append(xghtml.E.p("Please log in"))
-            #~ story.append(settings.LINO.get_guest_greeting())
+            #~ story.append(settings.SITE.get_guest_greeting())
         
         return xghtml.E.div(*story,class_="htmlText",style="margin:5px")
         
@@ -429,22 +429,21 @@ def setup_explorer_menu(site,ui,profile,m):
 dd.add_user_group('office',OFFICE_MODULE_LABEL)
 
 
-if settings.LINO.user_model == 'auth.User':
-    dd.inject_field(settings.LINO.user_model,'profile',dd.UserProfiles.field())
-    dd.inject_field(settings.LINO.user_model,'language',dd.LanguageField())
+if settings.SITE.user_model == 'auth.User':
+    dd.inject_field(settings.SITE.user_model,'profile',dd.UserProfiles.field())
+    dd.inject_field(settings.SITE.user_model,'language',dd.LanguageField())
     
     
-
 
 
 @dd.receiver(dd.post_analyze)
-def post_analyze(sender,**kw):
+def my_post_analyze(sender,**kw):
     """
     This is Lino's post_analyze signal handler.
     """
     site = sender
     if site.build_js_cache_on_startup is None:
-        from lino.core.modeltools import is_devserver
+        from django_site.modeltools import is_devserver
         site.build_js_cache_on_startup = not (settings.DEBUG or is_devserver())
     
     from lino.core import web
@@ -453,7 +452,7 @@ def post_analyze(sender,**kw):
     
 @dd.receiver(dd.pre_ui_build)
 def my_pre_ui_build(sender,**kw):
-    self = settings.LINO
+    self = settings.SITE
     if self.is_installed('contenttypes'):
       
         from django.db.utils import DatabaseError

@@ -241,7 +241,7 @@ class Pages(dd.Table):
     #~ column_names = "title user *"
     #~ order_by = ["-modified"]
 
-#~ if settings.LINO.project_model:
+#~ if settings.SITE.project_model:
   
     #~ class PagesByProject(Pages):
         #~ master_key = 'project'

@@ -134,7 +134,7 @@ Optional `salutation_options` see :func:`get_salutation`.
             words.append(self.get_salutation(**salutation_options))
         words.append(self.first_name)
         if upper is None:
-            upper = settings.LINO.uppercase_last_name
+            upper = settings.SITE.uppercase_last_name
         if upper:
             words.append(self.last_name.upper())
         else:

@@ -37,7 +37,6 @@ from django.core.exceptions import ValidationError
 
 from lino import mixins
 #~ from lino.mixins import mails
-from lino import tools
 from lino import dd
 #~ from lino.utils.babel import default_language
 #~ from lino import reports
@@ -46,7 +45,6 @@ from lino import dd
 #~ from lino.utils import printable
 from lino.utils import babel
 from lino.core import actions
-from lino.core.modeltools import obj2str
 #~ from lino.utils import call_optional_super
 from django.conf import settings
 
@@ -81,7 +79,7 @@ class Posting(mixins.AutoUser,mixins.ProjectRelated,mixins.Controllable):
         verbose_name=_("Recipient"),
         blank=True,null=True)
     state = PostingStates.field()
-    #~ sender = models.ForeignKey(settings.LINO.user_model)
+    #~ sender = models.ForeignKey(settings.SITE.user_model)
     date = models.DateField()
     
     def unused_save(self,*args,**kw):
@@ -89,8 +87,8 @@ class Posting(mixins.AutoUser,mixins.ProjectRelated,mixins.Controllable):
         if not isinstance(self.owner,Postable):
             # raise Exception("Controller of a Posting must be a Postable.")
             raise ValidationError("Controller %s (%r,%r) is not a Postable" % (
-                obj2str(self.owner),self.owner_type,self.owner_id))
-            #~ raise ValidationError("Controller %s is not a Postable" % obj2str(self.owner))
+                dd.obj2str(self.owner),self.owner_type,self.owner_id))
+            #~ raise ValidationError("Controller %s is not a Postable" % dd.obj2str(self.owner))
         super(Posting,self).save(*args,**kw)
 
     @dd.action(_("Print"),icon_name='x-tbar-print')

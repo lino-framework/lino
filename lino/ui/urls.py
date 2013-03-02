@@ -32,7 +32,7 @@ logger = logging.getLogger(__name__)
 import os
 
 from django.conf import settings
-#~ urlpatterns = settings.LINO.ui.get_patterns()
+#~ urlpatterns = settings.SITE.ui.get_patterns()
 
 from django import http
 
@@ -41,12 +41,12 @@ from django.views.generic import View
 
 
 import lino
-#~ settings.LINO.ui
-settings.LINO.startup()
+#~ settings.SITE.ui
+settings.SITE.startup()
 from lino import dd
 from . import views
 #~ import .views
-from lino.core.modeltools import is_devserver
+from django_site.modeltools import is_devserver
 
 
 def get_media_urls():
@@ -63,7 +63,7 @@ def get_media_urls():
         if exists(target):
             return
         if attr_name:
-            source = getattr(settings.LINO,attr_name)
+            source = getattr(settings.SITE,attr_name)
             if not source:
                 raise Exception(
                   "%s does not exist and LINO.%s is not set." % (
@@ -82,20 +82,20 @@ def get_media_urls():
                 logger.info("Setting up symlink %s -> %s.",target,source)
                 symlink(source,target)
         
-    if not settings.LINO.extjs_base_url:
+    if not settings.SITE.extjs_base_url:
         setup_media_link('extjs','extjs_root')
-    if settings.LINO.use_bootstrap:
-        if not settings.LINO.bootstrap_base_url:
+    if settings.SITE.use_bootstrap:
+        if not settings.SITE.bootstrap_base_url:
             setup_media_link('bootstrap','bootstrap_root')
-    if settings.LINO.use_extensible:
-        if not settings.LINO.extensible_base_url:
+    if settings.SITE.use_extensible:
+        if not settings.SITE.extensible_base_url:
             setup_media_link('extensible','extensible_root')
-    if settings.LINO.use_tinymce:
-        if not settings.LINO.tinymce_base_url:
+    if settings.SITE.use_tinymce:
+        if not settings.SITE.tinymce_base_url:
             setup_media_link('tinymce','tinymce_root')
-    if settings.LINO.use_jasmine:
+    if settings.SITE.use_jasmine:
         setup_media_link('jasmine','jasmine_root')
-    if settings.LINO.use_eid_jslib:
+    if settings.SITE.use_eid_jslib:
         setup_media_link('eid-jslib','eid_jslib_root')
         
     setup_media_link('lino',source=join(dirname(lino.__file__),'..','media'))
@@ -131,7 +131,7 @@ def get_pages_urls():
 def get_plain_urls():
 
     urlpatterns = []
-    rx = '^' # + settings.LINO.plain_prefix
+    rx = '^' # + settings.SITE.plain_prefix
     urlpatterns = patterns('',
         (rx+r'$', views.PlainIndex.as_view()),
         (rx+r'(?P<app_label>\w+)/(?P<actor>\w+)$', views.PlainList.as_view()),
@@ -160,15 +160,15 @@ def get_ext_urls():
         #~ (rx+r'plain/(?P<app_label>\w+)/(?P<actor>\w+)$', views.PlainList.as_view()),
         #~ (rx+r'plain/(?P<app_label>\w+)/(?P<actor>\w+)/(?P<pk>.+)$', views.PlainElement.as_view()),
     )
-    if settings.LINO.use_eid_applet:
+    if settings.SITE.use_eid_applet:
         urlpatterns += patterns('',
             (rx+r'eid-applet-service$', views.EidAppletService.as_view()),
         )
-    if settings.LINO.use_jasmine:
+    if settings.SITE.use_jasmine:
         urlpatterns += patterns('',
             (rx+r'run-jasmine$', views.RunJasmine.as_view()),
         )
-    if settings.LINO.use_tinymce:
+    if settings.SITE.use_tinymce:
         urlpatterns += patterns('',
             (rx+r'templates/(?P<app_label>\w+)/(?P<actor>\w+)/(?P<pk>\w+)/(?P<fldname>\w+)$', 
                 views.Templates.as_view()),
@@ -181,29 +181,29 @@ def get_ext_urls():
        
 urlpatterns = get_media_urls()
 
-if settings.LINO.plain_prefix:
+if settings.SITE.plain_prefix:
     urlpatterns += patterns('',
-      ('^'+settings.LINO.plain_prefix[1:]+"/", include(get_plain_urls()))
+      ('^'+settings.SITE.plain_prefix[1:]+"/", include(get_plain_urls()))
     )
 else:
     urlpatterns += get_plain_urls()
     
-if settings.LINO.django_admin_prefix:
+if settings.SITE.django_admin_prefix:
     from django.contrib import admin
     admin.autodiscover()
     urlpatterns += patterns('',
-      ('^'+settings.LINO.django_admin_prefix[1:]+"/", include(admin.site.urls))
+      ('^'+settings.SITE.django_admin_prefix[1:]+"/", include(admin.site.urls))
     )
    
-if settings.LINO.use_extjs:
-    if settings.LINO.admin_prefix:
+if settings.SITE.use_extjs:
+    if settings.SITE.admin_prefix:
         urlpatterns += patterns('',
-          ('^'+settings.LINO.admin_prefix[1:]+"/", include(get_ext_urls()))
+          ('^'+settings.SITE.admin_prefix[1:]+"/", include(get_ext_urls()))
         )
         urlpatterns += get_pages_urls()
     else:
         urlpatterns += get_ext_urls()
-elif settings.LINO.plain_prefix:
+elif settings.SITE.plain_prefix:
     urlpatterns += get_pages_urls()
 
 

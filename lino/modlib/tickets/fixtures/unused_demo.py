@@ -23,7 +23,7 @@ from lino.utils import dblogger
 
 def objects():
     #~ dblogger.info("Installing contacts demo fixture") # use --verbosity=2
-    User = resolve_model(settings.LINO.user_model)
+    User = resolve_model(settings.SITE.user_model)
     Company = resolve_model("contacts.Company")
     Session = resolve_model('tickets.Session')
     #~ u = User.objects.get(username='root')

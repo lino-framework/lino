@@ -50,8 +50,6 @@ from lino.core import dbtables
 #~ from lino.core import changes
 from lino.core import web
 
-from lino.core.modeltools import obj2str, obj2unicode
-from lino.core.modeltools import makedirs_if_missing
 
 #~ from lino.ui import requests as ext_requests
 from lino.core import constants as ext_requests
@@ -70,7 +68,7 @@ class HttpResponseDeleted(http.HttpResponse):
     
 
 def requested_actor(app_label,actor):
-    x = getattr(settings.LINO.modules,app_label)
+    x = getattr(settings.SITE.modules,app_label)
     cl = getattr(x,actor)
     if issubclass(cl,dd.Model):
         return cl._lino_default_table
@@ -97,8 +95,8 @@ def action_request(app_label,actor,request,rqdata,is_list,**kw):
         raise exceptions.PermissionDenied(
             _("As %s you have no permission to run this action.") % user.profile)
         #~ return http.HttpResponseForbidden(_("As %s you have no permission to run this action.") % user.profile)
-    ar = rpt.request(settings.LINO.ui,request,a,**kw)
-    #~ ar.renderer = settings.LINO.ui.ext_renderer
+    ar = rpt.request(settings.SITE.ui,request,a,**kw)
+    #~ ar.renderer = settings.SITE.ui.ext_renderer
     return ar
     
 def run_action(ar,elem):
@@ -139,7 +137,7 @@ def run_action(ar,elem):
             msg = _(
               "Action \"%(action)s\" failed for %(record)s:") % dict(
               action=ar.bound_action.full_name(),
-              record=obj2unicode(elem))
+              record=dd.obj2unicode(elem))
             msg += "\n" + unicode(e)
         msg += '.\n' + _(
           "An error report has been sent to the system administrator.")
@@ -228,7 +226,7 @@ def elem2rec_detailed(ar,elem,**rec):
         rec.update(title=unicode(elem))
     else:
         #~ print(ar.get_title())
-        #~ print(obj2str(elem))
+        #~ print(dd.obj2str(elem))
         #~ print(repr(unicode(elem)))
         rec.update(title=ar.get_title() + u" » " + unicode(elem))
     rec.update(id=elem.pk)
@@ -298,7 +296,7 @@ def delete_element(ar,elem):
     except Exception,e:
         dblogger.exception(e)
         msg = _("Failed to delete %(record)s : %(error)s."
-            ) % dict(record=obj2unicode(elem),error=e)
+            ) % dict(record=dd.obj2unicode(elem),error=e)
         #~ msg = "Failed to delete %s." % element_name(elem)
         rv = ar.ui.error(None,msg)
         return ar.ui.action_response(rv)
@@ -316,7 +314,7 @@ def ajax_error(e,**kw):
     """
     if isinstance(e,exceptions.ValidationError):
         e = '<br>'.join(e.messages)
-    kw = settings.LINO.ui.error(e,alert=True,**kw)
+    kw = settings.SITE.ui.error(e,alert=True,**kw)
     return json_response(kw)
 
 #~ def form2obj_and_save(self,request,rh,data,elem,is_new,include_rows): # **kw2save):
@@ -324,13 +322,13 @@ def form2obj_and_save(ar,data,elem,is_new,restful,file_upload=False): # **kw2sav
     """
     Parses the data from HttpRequest to the model instance and saves it.
     """
-    #~ self = settings.LINO.ui
+    #~ self = settings.SITE.ui
     request = ar.request
     rh = ar.ah
     #~ logger.info('20120814 form2obj_and_save %r', data)
     #~ print 'form2obj_and_save %r' % data
     
-    #~ logger.info('20120228 before store.form2obj , elem is %s' % obj2str(elem))
+    #~ logger.info('20120228 before store.form2obj , elem is %s' % dd.obj2str(elem))
     # store normal form data (POST or PUT)
     #~ original_state = dict(elem.__dict__)
     if not is_new:
@@ -344,7 +342,7 @@ def form2obj_and_save(ar,data,elem,is_new,restful,file_upload=False): # **kw2sav
     kw = dict(success=True)
     
     #~ except exceptions.ValidationError, e:
-        #~ kw = settings.LINO.ui.error(e) 
+        #~ kw = settings.SITE.ui.error(e) 
         #~ return json_response(kw)
     
     #~ dirty = False
@@ -378,16 +376,16 @@ def form2obj_and_save(ar,data,elem,is_new,restful,file_upload=False): # **kw2sav
             dd.pre_ui_create.send(elem,request=request)
             #~ changes.log_create(request,elem)
             kw.update(
-                message=_("%s has been created.") % obj2unicode(elem))
+                message=_("%s has been created.") % dd.obj2unicode(elem))
                 #~ record_id=elem.pk)
         else:
             watcher.send_update(request)
             #~ watcher.log_diff(request)
-            kw.update(message=_("%s has been updated.") % obj2unicode(elem))
+            kw.update(message=_("%s has been updated.") % dd.obj2unicode(elem))
         
     else:
     
-        kw.update(message=_("%s : nothing to save.") % obj2unicode(elem))
+        kw.update(message=_("%s : nothing to save.") % dd.obj2unicode(elem))
         
     kw = elem.after_ui_save(ar,**kw)
         
@@ -426,20 +424,20 @@ class AdminIndex(View):
     Similar to PlainIndex
     """
     def get(self, request, *args, **kw):
-        settings.LINO.startup()
-        ui = settings.LINO.ui
-        if settings.LINO.user_model is not None:
+        settings.SITE.startup()
+        ui = settings.SITE.ui
+        if settings.SITE.user_model is not None:
             user = request.subst_user or request.user
-            a = settings.LINO.get_main_action(user)
+            a = settings.SITE.get_main_action(user)
             if a is not None and a.get_view_permission(user.profile):
                 kw.update(on_ready=ui.ext_renderer.action_call(request,a,{}))
         return http.HttpResponse(ui.ext_renderer.html_page(request,**kw))
 
 class MainHtml(View):
     def get(self, request, *args, **kw):
-        settings.LINO.startup()
-        ui = settings.LINO.ui
-        rv = ui.success(html=settings.LINO.get_main_html(request))
+        settings.SITE.startup()
+        ui = settings.SITE.ui
+        rv = ui.success(html=settings.SITE.get_main_html(request))
         return ui.action_response(rv)
         
 class Authenticate(View):
@@ -451,7 +449,7 @@ class Authenticate(View):
             del request.session['username'] 
             del request.session['password']
             rv = dict(success=True,message="%r has been logged out" % username)
-            return settings.LINO.ui.action_response(rv)
+            return settings.SITE.ui.action_response(rv)
             
 
     def post(self, request, *args, **kw):
@@ -462,36 +460,36 @@ class Authenticate(View):
         password = request.POST.get('password')
         user = auth.authenticate(username,password)
         if user is None:
-            rv = settings.LINO.ui.error("Could not authenticate %r" % username)
-            return settings.LINO.ui.action_response(rv)
+            rv = settings.SITE.ui.error("Could not authenticate %r" % username)
+            return settings.SITE.ui.action_response(rv)
         request.session['username'] = username
         request.session['password'] = password
         #~ request.session['password'] = request.GET.get('password')
         #~ auth.login(request,request.GET.get('username'), request.GET.get('password'))
         #~ ss.save()
-        rv = settings.LINO.ui.success("Now logged in as %r" % username)
+        rv = settings.SITE.ui.success("Now logged in as %r" % username)
         #~ rv = dict(success=True,message="Now logged in as %r" % username)
-        return settings.LINO.ui.action_response(rv)
+        return settings.SITE.ui.action_response(rv)
       
 
 class RunJasmine(View):
     """
     """
     def get(self, request, *args, **kw):
-        ui = settings.LINO.ui
+        ui = settings.SITE.ui
         return http.HttpResponse(ui.ext_renderer.html_page(request,run_jasmine=True))
 
 class EidAppletService(View):
     """
     """
     def post(self, request, *args, **kw):
-        ui = settings.LINO.ui
+        ui = settings.SITE.ui
         return ui.success(html='Hallo?')
 
 
 class Callbacks(View):
     def get(self,request,thread_id,button_id):
-        return settings.LINO.ui.callback_get(request,thread_id,button_id)
+        return settings.SITE.ui.callback_get(request,thread_id,button_id)
         
 
 class Templates(View):
@@ -525,7 +523,7 @@ class Templates(View):
                 
             templates = []
             for obj in qs:
-                url = settings.LINO.build_admin_url('templates',
+                url = settings.SITE.build_admin_url('templates',
                     app_label,actor,pk,fldname,unicode(obj.pk))
                 templates.append([
                     unicode(obj.name),url,unicode(obj.description)])
@@ -580,7 +578,7 @@ def choices_for_field(request,rpt,field):
     elif isinstance(field,models.ForeignKey):
         m = field.rel.to
         t = getattr(m,'_lino_choices_table',m._lino_default_table)
-        qs = t.request(settings.LINO.ui,request).data_iterator
+        qs = t.request(settings.SITE.ui,request).data_iterator
         #~ logger.info('20120710 choices_view(FK) %s --> %s',t,qs)
         def row2dict(obj,d):
             d[ext_requests.CHOICES_TEXT_FIELD] = obj.get_choices_text(request,rpt,field)
@@ -650,7 +648,7 @@ class Choices(View):
         rpt = requested_actor(app_label,rptname)
         emptyValue = None
         if fldname is None:
-            ar = rpt.request(settings.LINO.ui,request) # ,rpt.default_action)
+            ar = rpt.request(settings.SITE.ui,request) # ,rpt.default_action)
             #~ rh = rpt.get_handle(self)
             #~ ar = ViewReportRequest(request,rh,rpt.default_action)
             #~ ar = dbtables.TableRequest(self,rpt,request,rpt.default_action)
@@ -686,7 +684,7 @@ class Restful(View):
     """
   
     def post(self,request,app_label=None,actor=None,pk=None):
-        ui = settings.LINO.ui
+        ui = settings.SITE.ui
         rpt = requested_actor(app_label,actor)
         #~ a = rpt.default_action
         if pk is None:
@@ -710,7 +708,7 @@ class Restful(View):
         
       
     def delete(self,request,app_label=None,actor=None,pk=None):
-        ui = settings.LINO.ui
+        ui = settings.SITE.ui
         rpt = requested_actor(app_label,actor)
         #~ a = rpt.default_action
         elem = rpt.get_row_by_pk(pk)
@@ -718,7 +716,7 @@ class Restful(View):
         return delete_element(ar,elem)
       
     def get(self,request,app_label=None,actor=None,pk=None):
-        ui = settings.LINO.ui
+        ui = settings.SITE.ui
         rpt = requested_actor(app_label,actor)
         #~ a = rpt.default_action
         assert pk is None, 20120814
@@ -734,7 +732,7 @@ class Restful(View):
         return json_response_kw(count=ar.get_total_count(),rows=rows)
         
     def put(self,request,app_label=None,actor=None,pk=None):
-        ui = settings.LINO.ui
+        ui = settings.SITE.ui
         rpt = requested_actor(app_label,actor)
         #~ a = rpt.default_action
         elem = rpt.get_row_by_pk(pk)
@@ -761,7 +759,7 @@ class ApiElement(View):
         
         (Source: http://en.wikipedia.org/wiki/Restful)
         """
-        ui = settings.LINO.ui
+        ui = settings.SITE.ui
         rpt = requested_actor(app_label,actor)
         #~ if not ah.actor.can_view.passes(request.user):
             #~ msg = "User %s cannot view %s." % (request.user,ah.actor)
@@ -831,7 +829,7 @@ class ApiElement(View):
         
     def post(self,request,app_label=None,actor=None,pk=None):
         ar = action_request(app_label,actor,request,request.POST,True)
-        ar.renderer = settings.LINO.ui.ext_renderer
+        ar.renderer = settings.SITE.ui.ext_renderer
         elem = ar.actor.get_row_by_pk(pk)
         if elem is None:
             raise http.Http404("%s has no row with primary key %r" % (ar.actor,pk))
@@ -845,14 +843,14 @@ class ApiElement(View):
     def put(self,request,app_label=None,actor=None,pk=None):
         data = http.QueryDict(request.body) # raw_post_data before Django 1.4
         ar = action_request(app_label,actor,request,data,False)
-        ar.renderer = settings.LINO.ui.ext_renderer
+        ar.renderer = settings.SITE.ui.ext_renderer
         elem = ar.actor.get_row_by_pk(pk)
         if elem is None:
             raise http.Http404("%s has no row with primary key %r" % (rpt,pk))
         return form2obj_and_save(ar,data,elem,False,False) # force_update=True)
             
     def delete(self,request,app_label=None,actor=None,pk=None):
-        ui = settings.LINO.ui
+        ui = settings.SITE.ui
         rpt = requested_actor(app_label,actor)
         elem = rpt.get_row_by_pk(pk)
         if elem is None:
@@ -875,7 +873,7 @@ class ApiList(View):
     """
 
     def post(self,request,app_label=None,actor=None):
-        #~ ui = settings.LINO.ui
+        #~ ui = settings.SITE.ui
         #~ rpt = requested_actor(app_label,actor)
         
         #~ action_name = request.POST.get(
@@ -887,7 +885,7 @@ class ApiList(View):
         #~ ar = rpt.request(ui,request,a)
         
         ar = action_request(app_label,actor,request,request.POST,True)
-        ar.renderer = settings.LINO.ui.ext_renderer
+        ar.renderer = settings.SITE.ui.ext_renderer
         #~ print 20121116, ar.bound_action.action.action_name
         if ar.bound_action.action.action_name in ['duplicate_row','post','poststay','insert']:
         #~ if isinstance(ar.bound_action.action,(
@@ -909,7 +907,7 @@ class ApiList(View):
     def get(self,request,app_label=None,actor=None):
         #~ ar = action_request(app_label,actor,request,request.GET,limit=PLAIN_PAGE_LENGTH)
         ar = action_request(app_label,actor,request,request.GET,True)
-        ar.renderer = settings.LINO.ui.ext_renderer
+        ar.renderer = settings.SITE.ui.ext_renderer
         rh = ar.ah
         
         #~ print 20120630, 'api_list_view'
@@ -963,7 +961,7 @@ class ApiList(View):
         
         if fmt == 'csv':
             #~ response = HttpResponse(mimetype='text/csv')
-            charset = settings.LINO.csv_params.get('encoding','utf-8')
+            charset = settings.SITE.csv_params.get('encoding','utf-8')
             response = http.HttpResponse(
               content_type='text/csv;charset="%s"' % charset)
             if False:
@@ -975,7 +973,7 @@ class ApiList(View):
                     'inline; filename="%s.csv"' % ar.actor
               
             #~ response['Content-Disposition'] = 'attachment; filename=%s.csv' % ar.get_base_filename()
-            w = ucsv.UnicodeWriter(response,**settings.LINO.csv_params)
+            w = ucsv.UnicodeWriter(response,**settings.SITE.csv_params)
             w.writerow(ar.ah.store.column_names())
             for row in ar.data_iterator:
                 w.writerow([unicode(v) for v in rh.store.row2list(ar,row)])
@@ -996,8 +994,8 @@ class ApiList(View):
             ip = ar.request.META.get('REMOTE_ADDR','unknown_ip')
             target_parts = ['cache', 'appypdf', ip, str(ar.actor) + '.' + fmt]
             target_file = os.path.join(settings.MEDIA_ROOT,*target_parts)
-            makedirs_if_missing(os.path.dirname(target_file))
-            target_url = settings.LINO.build_media_url(*target_parts)
+            settings.SITE.makedirs_if_missing(os.path.dirname(target_file))
+            target_url = settings.SITE.build_media_url(*target_parts)
             ar.renderer = ar.ui.ext_renderer # 20120624
             """
             [NOTE] :doc:`/blog/2012/0211`
@@ -1019,8 +1017,8 @@ class ApiList(View):
             if os.path.exists(target_file):
                 os.remove(target_file)
             logger.info(u"appy.pod render %s -> %s (params=%s",
-                tplfile,target_file,settings.LINO.appy_params)
-            renderer = Renderer(tplfile, context, target_file,**settings.LINO.appy_params)
+                tplfile,target_file,settings.SITE.appy_params)
+            renderer = Renderer(tplfile, context, target_file,**settings.SITE.appy_params)
             renderer.run()
             return http.HttpResponseRedirect(target_url)
             
@@ -1043,7 +1041,7 @@ class GridConfig(View):
 
     #~ def grid_config_view(self,request,app_label=None,actor=None):
     def put(self,request,app_label=None,actor=None):
-        ui = settings.LINO.ui
+        ui = settings.SITE.ui
         rpt = requested_actor(app_label,actor)
         #~ rpt = actors.get_actor2(app_label,actor)
         PUT = http.QueryDict(request.body) # raw_post_data before Django 1.4
@@ -1071,10 +1069,10 @@ class GridConfig(View):
         except IOError,e:
             msg = _("Error while saving GC for %(table)s: %(error)s") % dict(
                 table=rpt,error=e)
-            return settings.LINO.ui.error(None,msg,alert=True)
+            return settings.SITE.ui.error(None,msg,alert=True)
         #~ logger.info(msg)
-        settings.LINO.ui.build_site_cache(True)            
-        return settings.LINO.ui.success(msg)
+        settings.SITE.ui.build_site_cache(True)            
+        return settings.SITE.ui.success(msg)
         
 MENUS = dict()        
 
@@ -1083,15 +1081,15 @@ def plain_response(ui,request,tplname,context):
     u = request.subst_user or request.user
     menu = MENUS.get(u.profile,None)
     if menu is None:
-        menu = settings.LINO.get_site_menu(ui,u.profile)
-        url = settings.LINO.plain_prefix + '/'
+        menu = settings.SITE.get_site_menu(ui,u.profile)
+        url = settings.SITE.plain_prefix + '/'
         menu.add_url_button(url,label=_("Home"))
         menu = menu.as_html(ui,request)
         menu = E.tostring(menu)
         MENUS[u.profile] = menu
     context.update(menu=menu,E=E)
     web.extend_context(context)
-    template = settings.LINO.jinja_env.get_template(tplname)
+    template = settings.SITE.jinja_env.get_template(tplname)
     
     response = http.HttpResponse(
         template.render(**context),
@@ -1127,7 +1125,7 @@ class PlainElement(View):
         
         (Source: http://en.wikipedia.org/wiki/Restful)
         """
-        ui = settings.LINO.ui
+        ui = settings.SITE.ui
         ar = action_request(app_label,actor,request,request.GET,False)
         ar.renderer = ui.plain_renderer
         
@@ -1148,20 +1146,20 @@ class PlainIndex(View):
     Similar to AdminIndex
     """
     def get(self, request, *args, **kw):
-        ui = settings.LINO.ui
+        ui = settings.SITE.ui
         context = dict(
-          title = settings.LINO.title,
+          title = settings.SITE.title,
           main = '',
         )
-        if settings.LINO.user_model is not None:
+        if settings.SITE.user_model is not None:
             user = request.subst_user or request.user
         else:
             user = auth.AnonymousUser.instance()
-        a = settings.LINO.get_main_action(user)
+        a = settings.SITE.get_main_action(user)
         if a is not None:
             if not a.get_view_permission(user.profile):
                 raise PermissionDenied("Action not allowed for %s" % user)
-            ar = a.request(settings.LINO.ui,request,**kw)
+            ar = a.request(settings.SITE.ui,request,**kw)
             ar.renderer = ui.plain_renderer
             context.update(title=ar.get_title())
             # TODO: let ar generate main

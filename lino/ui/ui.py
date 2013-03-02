@@ -73,8 +73,6 @@ from lino.core import tables
 from lino.core import fields
 from lino.ui import base
 from lino.core import actors
-from lino.core.modeltools import makedirs_if_missing
-from lino.core.modeltools import full_model_name
     
 from lino.utils import choosers
 from lino.utils import babel
@@ -90,7 +88,6 @@ else:
       
 from lino.mixins import printable
 
-from lino.core.modeltools import app_labels
 
 
 #~ from lino.utils.choicelists import DoYouLike, HowWell
@@ -221,7 +218,7 @@ class ExtUI(base.UI):
         Create a layout element from the named data element.
         """
         #~ if True: 
-        if settings.LINO.catch_layout_exceptions: 
+        if settings.SITE.catch_layout_exceptions: 
             try:
                 de = lh.get_data_elem(name)
             except Exception, e:
@@ -285,7 +282,7 @@ class ExtUI(base.UI):
                   #~ js_code("Lino.report_window_button(Lino.%s)" % de.default_action)
                   #~ js_code("Lino.report_window_button(ww,Lino.%s)" % de.default_action)
                 ])
-                #~ if settings.LINO.use_quicktips and de.help_text:
+                #~ if settings.SITE.use_quicktips and de.help_text:
                     #~ kw.update(listeners=dict(render=js_code(
                       #~ "Lino.quicktip_renderer(%s,%s)" % (py2js('Slave'),py2js(de.help_text)))
                     #~ ))

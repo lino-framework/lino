@@ -18,7 +18,7 @@ from lino.utils.instantiator import Instantiator
 from lino.core.modeltools import resolve_model
 
 def objects():
-    if settings.LINO.user_model:
+    if settings.SITE.user_model:
         tft = Instantiator('ui.TextFieldTemplate',"name description text").build
         
         yield tft("hello","Inserts 'Hello, world!'","""<div>Hello, world!</div>""")
@@ -27,7 +27,7 @@ def objects():
     # the following is not really useful data, but a fixture needs to deliver at least one object 
     # otherwise Django thinks that our fixture failed
     
-    if settings.LINO.is_installed('contenttypes'):
+    if settings.SITE.is_installed('contenttypes'):
         HelpText = resolve_model('ui.HelpText')
         HT = Instantiator(HelpText,"content_type field help_text").build
         yield HT(ContentType.objects.get_for_model(HelpText),'field',"The name of the field.")

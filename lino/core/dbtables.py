@@ -62,7 +62,7 @@ from lino.core import fields
 from lino.core import actions
 from lino.utils import babel
 from lino.core.model import Model
-from lino.core.modeltools import obj2str
+from django_site.modeltools import obj2str
 from lino.utils.config import load_config_files, Configured
 #~ from lino.core import datalinks
 #~ from lino.core import boolean_texts
@@ -73,7 +73,8 @@ from lino.core import frames
 
 #~ from lino.ui import requests as ext_requests
 
-from lino.core.modeltools import resolve_model, resolve_field, full_model_name, get_field, UnresolvedModel
+from django_site.modeltools import full_model_name
+from lino.core.modeltools import resolve_model, resolve_field, get_field, UnresolvedModel
 #~ from lino.utils.config import LOCAL_CONFIG_DIR
 from lino.core.modeltools import get_model_report
 from lino.core.tables import AbstractTable, TableRequest, VirtualTable
@@ -87,7 +88,7 @@ from lino.core.tables import AbstractTable, TableRequest, VirtualTable
 def unused_parse_js_date(s,name):
     #~ v = dateparser.parse(s)
     #~ v = dateparser.parse(s,fuzzy=True)
-    return datetime.date(*settings.LINO.parse_date(s))
+    return datetime.date(*settings.SITE.parse_date(s))
     #~ print "parse_js_date %s : %r -> %s" % (name,s,v)
     #~ return v
     
@@ -242,7 +243,7 @@ def add_gridfilters(qs,gridfilters):
             kw[field.name+"__equals"] = flt['value']
             q = q & models.Q(**kw)
         elif flttype == 'date':
-            v = datetime.date(*settings.LINO.parse_date(flt['value']))
+            v = datetime.date(*settings.SITE.parse_date(flt['value']))
             #~ v = parse_js_date(flt['value'],field.name)
             cmp = str(flt['comparison'])
             if cmp == 'eq': cmp = 'exact'
@@ -965,8 +966,8 @@ def table_factory(model):
     #~ actor lookup needs it. Otherwise we'd get a 
     #~ `'module' object has no attribute 'DataControlListingTable'` error.
     
-    #~ We cannot simply do ``settings.LINO.modules.define(app_label,name,cls)``
-    #~ because this code is executed when `settings.LINO.modules` doesn't yet exist.
+    #~ We cannot simply do ``settings.SITE.modules.define(app_label,name,cls)``
+    #~ because this code is executed when `settings.SITE.modules` doesn't yet exist.
     #~ """
     
     #~ m = import_module(model.__module__)

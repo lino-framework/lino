@@ -97,7 +97,7 @@ class EmptyTableRow(VirtualRow):
 class BaseRequest(object):
     def __init__(self,ui,request=None,renderer=None,**kw):
         if ui is None:
-            ui = settings.LINO.ui
+            ui = settings.SITE.ui
         self.ui = ui
         #~ self.error_response = ui.error_response
         #~ self.success_response = ui.success_response
@@ -132,12 +132,12 @@ class BaseRequest(object):
         kw.update(user=request.user)
         kw.update(subst_user=request.subst_user)
         kw.update(requesting_panel=request.requesting_panel)
-        #~ if settings.LINO.user_model:
+        #~ if settings.SITE.user_model:
             #~ username = rqdata.get(ext_requests.URL_PARAM_SUBST_USER,None)
             #~ if username:
                 #~ try:
-                    #~ kw.update(subst_user=settings.LINO.user_model.objects.get(username=username))
-                #~ except settings.LINO.user_model.DoesNotExist, e:
+                    #~ kw.update(subst_user=settings.SITE.user_model.objects.get(username=username))
+                #~ except settings.SITE.user_model.DoesNotExist, e:
                     #~ pass
         #~ logger.info("20120723 ActionRequest.parse_req() --> %s",kw)
         return kw
@@ -222,7 +222,7 @@ class BaseRequest(object):
         #~ if silent:
             #~ return
         recipients = []
-        for addr in settings.LINO.get_system_note_recipients(self,owner,silent):
+        for addr in settings.SITE.get_system_note_recipients(self,owner,silent):
             if not '@example.com' in addr:
                 recipients.append(addr)
         if not len(recipients):

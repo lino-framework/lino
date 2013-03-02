@@ -55,7 +55,7 @@ def hide_region(model):
 @dd.receiver(dd.post_analyze)
 def set_merge_actions(sender,**kw):
     #~ logger.info("%s.set_merge_actions()",__name__)
-    app = sender.modules[settings.LINO.partners_app_label]
+    app = sender.modules[settings.SITE.partners_app_label]
     #~ print 20130202, app.keys()
     for m in (app.Person,app.Organisation):
         #~ print repr(m)

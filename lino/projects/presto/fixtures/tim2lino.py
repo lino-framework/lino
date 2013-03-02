@@ -263,7 +263,7 @@ def load_tim_data(dbpath):
     ROOT.set_password("1234")
     yield ROOT
     
-    settings.LINO.loading_from_dump = True
+    settings.SITE.loading_from_dump = True
     
     yield accounts.Chart(name="Default")
     
@@ -619,7 +619,7 @@ def load_tim_data(dbpath):
     #~ yield sba
     #~ sva = accounts.Account(group=accounts.Group.objects.get(ref='451000'))
     #~ yield sva
-    #~ settings.LINO.update_site_config(customers_account=ca)
+    #~ settings.SITE.update_site_config(customers_account=ca)
         #~ sales_base_account=sba,
         #~ sales_vat_account=sva)
         
@@ -648,6 +648,6 @@ VENDICT = dict()
 
 
 def objects():
-    settings.LINO.startup()
-    for obj in load_tim_data(settings.LINO.legacy_data_path):
+    settings.SITE.startup()
+    for obj in load_tim_data(settings.SITE.legacy_data_path):
         yield obj

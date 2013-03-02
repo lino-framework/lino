@@ -38,7 +38,6 @@ from django.core.exceptions import ValidationError
 
 from lino import mixins
 #~ from lino.mixins import mails
-from lino import tools
 from lino import dd
 from lino.core import actions
 
@@ -204,11 +203,11 @@ def list_templates(ext,group=''):
             rv = fn.startswith(group) and fn.endswith(ext)
             #~ logger.info("20130101 %r -> %s", fn,rv)
             return rv 
-        lst = settings.LINO.jinja_env.list_templates(filter_func=ff)
+        lst = settings.SITE.jinja_env.list_templates(filter_func=ff)
         L = len(group) + 1
         lst = [i[L:] for i in lst]
         return lst
-    return settings.LINO.jinja_env.list_templates(extensions=[ext])
+    return settings.SITE.jinja_env.list_templates(extensions=[ext])
     
 
 class Mailable(dd.Model):
@@ -265,7 +264,7 @@ class Mailable(dd.Model):
             #~ prefix = os.path.join(*(mt.templates_group.split('/')))
             #~ name = os.path.join(prefix,name)
             name = mt.templates_group + "/" + name
-        tpl = settings.LINO.jinja_env.get_template(name)
+        tpl = settings.SITE.jinja_env.get_template(name)
         context = dict(
           instance = self,
           dtosl = babel.dtosl,
@@ -487,7 +486,7 @@ class Mail(mixins.AutoUser,mixins.Printable,mixins.ProjectRelated,mixins.Control
     #~ type = models.ForeignKey(MailType,null=True,blank=True)
     
         
-    #~ sender = models.ForeignKey(settings.LINO.user_model,
+    #~ sender = models.ForeignKey(settings.SITE.user_model,
         #~ verbose_name=_("Sender"))
         #~ related_name='outmails_by_sender',
         #~ blank=True,null=True)
@@ -556,7 +555,7 @@ class Mails(dd.Table):
     body
     """,window_size=(60,20))
     
-if not settings.LINO.project_model:
+if not settings.SITE.project_model:
     Mails.detail_layout.remove_element('project')
     
     

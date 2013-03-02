@@ -27,7 +27,7 @@ from django.db import models
 from django.utils.translation import ugettext_lazy as _
 from django.db.models.fields.related import ForeignRelatedObjectsDescriptor
 
-from lino.core.modeltools import obj2str
+from django_site.modeltools import obj2str
 from lino.core import actions
 from lino.core import model
 

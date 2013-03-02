@@ -324,7 +324,7 @@ class Command(DaemonCommand):
     preserve_loggers = [dblogger.logger]
     
     def handle_daemon(self, *args, **options):
-        settings.LINO.setup()
+        settings.SITE.setup()
         main(*args,**options)
 
 

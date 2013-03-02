@@ -1,8 +1,11 @@
 #~ DJANGO_ADMIN = python l:/snapshots/django/django/bin/django-admin.py
 #~ DJANGO_ADMIN = `python -c 'import os; from django import bin;print os.path.dirname(bin.__file__)'`/django-admin.py
 DJANGO_ADMIN=python $(shell python -c "from os.path import join,dirname; from django import bin;print join(dirname(bin.__file__),'django-admin.py')")
-LINO_ROOT := /cygdrive/t/hgwork/lino
-LINO_ROOT := `cygpath -m $(LINO_ROOT)`
+LINO_ROOT=$(shell python -c "from os.path import join,dirname,abspath; import lino;print abspath(join(dirname(lino.__file__),'..'))")
+#LINO_ROOT := /cygdrive/t/hgwork/lino
+#LINO_ROOT := `cygpath -m $(LINO_ROOT)`
+LINO_ROOT := $(shell cygpath -m $(LINO_ROOT))
+DJANGO_ADMIN := $(shell cygpath -m $(DJANGO_ADMIN))
 APPS = cosi 
 MODULES = vat accounts ledger households outbox \
   cal products properties contacts countries notes \
@@ -27,7 +30,7 @@ mm:
 	  cd $(LINO_ROOT)/lino/modlib/$$MOD && pwd && $(DJANGO_ADMIN) makemessages $(MMOPTS); \
 	done
 	for i in $(APPS); do \
-    cd $(LINO_ROOT)/lino/apps/$$i && pwd && $(DJANGO_ADMIN) makemessages $(MMOPTS); \
+    cd $(LINO_ROOT)/lino/projects/$$i && pwd && $(DJANGO_ADMIN) makemessages $(MMOPTS); \
 	done
   
 
@@ -38,7 +41,7 @@ cm:
 	  cd $(LINO_ROOT)/lino/modlib/$$MOD && $(DJANGO_ADMIN) compilemessages $(CMOPTS); \
 	done
 	for i in $(APPS); do \
-	  cd $(LINO_ROOT)/lino/apps/$$i && $(DJANGO_ADMIN) compilemessages $(CMOPTS); \
+	  cd $(LINO_ROOT)/lino/projects/$$i && $(DJANGO_ADMIN) compilemessages $(CMOPTS); \
 	done
   
 tests:  
@@ -68,9 +71,17 @@ tests:
 	#~ $(DJANGO_ADMIN) test --settings=lino.projects.igen.settings $(TESTS_OPTIONS)
 	$(DJANGO_ADMIN) test --settings=lino.projects.cosi.settings $(TESTS_OPTIONS)
 	$(DJANGO_ADMIN) test --settings=lino.projects.presto.settings $(TESTS_OPTIONS)
+	$(DJANGO_ADMIN) test --settings=lino.projects.babel_tutorial.settings $(TESTS_OPTIONS)
+	$(DJANGO_ADMIN) test --settings=lino.projects.polls_tutorial.settings $(TESTS_OPTIONS)
+	$(DJANGO_ADMIN) test --settings=lino.projects.belref.settings $(TESTS_OPTIONS)
+	$(DJANGO_ADMIN) test --settings=lino.projects.events.settings $(TESTS_OPTIONS)
+	$(DJANGO_ADMIN) test --settings=lino.projects.homeworkschool.settings $(TESTS_OPTIONS)
+	$(DJANGO_ADMIN) test --settings=lino.projects.min1.settings $(TESTS_OPTIONS)
+	$(DJANGO_ADMIN) test --settings=lino.projects.min2.settings $(TESTS_OPTIONS)
+	#~ cd $(LINO_ROOT)/lino/projects/uiless && export DJANGO_SETTINGS_MODULE= && pwd && python manage.py test
 
-tt:  
-	$(DJANGO_ADMIN) test --settings=lino.test_apps.nomti.settings  $(TESTS_OPTIONS)
+qt:  
+	cd $(LINO_ROOT)/lino/projects/uiless && export DJANGO_SETTINGS_MODULE= && pwd && python manage.py test
 
 unused_appdocs:
 	$(DJANGO_ADMIN) makedocs --settings lino.projects.pcsw.settings docs/pcsw/appdocs

@@ -225,7 +225,7 @@ class Note(mixins.TypedPrintable,
     #~ def disabled_fields(self,ar):
         #~ if not self.build_time:
             #~ return []
-        #~ return settings.LINO.NOTE_PRINTABLE_FIELDS
+        #~ return settings.SITE.NOTE_PRINTABLE_FIELDS
 
     #~ @classmethod
     #~ def site_setup(cls,lino):
@@ -330,7 +330,7 @@ class NotesByProject(Notes):
     order_by = ["-date"]
     
 def add_system_note(ar,owner,subject,body,**kw):
-    #~ if not settings.LINO.site_config.system_note_type:
+    #~ if not settings.SITE.site_config.system_note_type:
         #~ return
     nt = owner.get_system_note_type(ar)
     if not nt: 

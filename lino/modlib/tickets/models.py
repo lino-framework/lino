@@ -337,9 +337,9 @@ class Session(mixins.AutoUser,mixins.ProjectRelated):
     def __unicode__(self):
         if self.start_time and self.end_time:
             return u"%s %s-%s" % (
-                self.date.strftime(settings.LINO.date_format_strftime),
-                self.start_time.strftime(settings.LINO.time_format_strftime),
-                self.end_time.strftime(settings.LINO.time_format_strftime))
+                self.date.strftime(settings.SITE.date_format_strftime),
+                self.start_time.strftime(settings.SITE.time_format_strftime),
+                self.end_time.strftime(settings.SITE.time_format_strftime))
         return super(Session,self).__unicode__()
         
     
@@ -360,7 +360,7 @@ class SessionsByTicket(Sessions):
 class SessionsByProject(Sessions):
     master_key = 'project'
     
-if settings.LINO.user_model:
+if settings.SITE.user_model:
   
     class MySessions(Sessions,mixins.ByUser):
         order_by = ['date','start_time']
@@ -424,7 +424,7 @@ else:
 
 
 
-if settings.LINO.user_model:    
+if settings.SITE.user_model:    
   
     class MyProjects(Projects,mixins.ByUser):
         order_by = ["name"]

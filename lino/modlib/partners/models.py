@@ -192,7 +192,7 @@ but e.g. :class:`PersonMixin` overrides this.
         #~ else:
             #~ foreigner = (self.country != self.objects.get(pk=1).country)
         if self.country is not None:
-            sc = settings.LINO.site_config # get_site_config()
+            sc = settings.SITE.site_config # get_site_config()
             if not sc.site_partner or self.country != sc.site_partner.country: 
                 # (if self.country != sender's country)
                 yield unicode(self.country)
@@ -256,7 +256,7 @@ class Partner(dd.Model):
     
   
     class Meta:
-        abstract = settings.LINO.is_abstract_model('partners.Partner')
+        abstract = settings.SITE.is_abstract_model('partners.Partner')
         verbose_name = _("Partner")
         verbose_name_plural = _("Partners")
   
@@ -266,7 +266,7 @@ class Partner(dd.Model):
     
     def save(self,*args,**kw):
         if self.id is None:
-            sc = settings.LINO.site_config # get_site_config()
+            sc = settings.SITE.site_config # get_site_config()
             if sc.next_partner_id is not None:
                 self.id = sc.next_partner_id
                 sc.next_partner_id += 1
@@ -400,7 +400,7 @@ class Person(ConcretePartner,Addressable,PersonMixin):
     
     class Meta:
         #~ abstract = True
-        abstract = settings.LINO.is_abstract_model('partners.Person')
+        abstract = settings.SITE.is_abstract_model('partners.Person')
         verbose_name = _("Person")
         verbose_name_plural = _("Persons")
         
@@ -468,7 +468,7 @@ class Organisation(ConcretePartner,Addressable):
     See also :doc:`/tickets/14`.
     """
     class Meta:
-        abstract = settings.LINO.is_abstract_model('partners.Organisation')
+        abstract = settings.SITE.is_abstract_model('partners.Organisation')
         #~ abstract = True
         #~ app_label = 'partners'
         verbose_name = _("Organisation")
@@ -829,7 +829,7 @@ class PartnerRelated(dd.Model):
         return Person.objects.filter(contactsbyperson__organisation=organisation).distinct()
 
     def full_clean(self,*args,**kw):
-        if not settings.LINO.loading_from_dump:
+        if not settings.SITE.loading_from_dump:
             if self.organisation and self.contact_person is None:
                 qs = self.contact_person_choices_queryset(self.organisation)
                 #~ qs = self.organisation.rolesbyparent.all()
@@ -848,7 +848,7 @@ class PartnerRelated(dd.Model):
     
 
 
-if settings.LINO.is_installed('partners'):
+if settings.SITE.is_installed('partners'):
   
     from lino.models import SiteConfig
 

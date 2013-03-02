@@ -22,7 +22,7 @@ from django.conf import settings
 from django.utils.translation import ugettext as _
 
 from lino.core import fields
-from lino.core.modeltools import obj2str
+from django_site.modeltools import obj2str
 from lino.utils.xmlgen import html as xghtml
 E = xghtml.E
 
@@ -348,8 +348,8 @@ class Model(models.Model):
 
 
     def get_related_project(self,ar):
-        if settings.LINO.project_model:
-            if isinstance(self,settings.LINO.project_model):
+        if settings.SITE.project_model:
+            if isinstance(self,settings.SITE.project_model):
                 return self
         
     def get_system_note_type(self,ar):
@@ -369,7 +369,9 @@ class Model(models.Model):
         to :class: `lino.modlib.users.models.User`.
         """
         for k,v in kw.items():
-            assert not hasattr(self,k)
+            if hasattr(self,k):
+                raise Exception("add_model_action tried to override '%s' in %s" 
+                    % (k,self))
             setattr(self,k,v)
         #~ self._custom_actions = dict(self._custom_actions)
         #~ self._custom_actions.update(kw)
@@ -381,7 +383,7 @@ class Model(models.Model):
         #~ Yield a list of (name,action) tuples to install on the table.
         #~ """
             
-        #~ if full_model_name(self) in settings.LINO.mergeable_models:
+        #~ if full_model_name(self) in settings.SITE.mergeable_models:
             #~ yield ( 'merge_row', MergeAction(self) )
             
             

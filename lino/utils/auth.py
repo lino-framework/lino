@@ -48,7 +48,7 @@ from django import http
 from lino.utils import babel
 from lino.core.choicelists import ChoiceList, Choice
 
-from lino.core.modeltools import obj2str
+from django_site.modeltools import obj2str
 from lino.core import constants # as ext_requests
 
 
@@ -345,7 +345,7 @@ def make_view_permission_handler_(
     if allow is None:
         def allow(action,profile):
             return True
-    #~ if settings.LINO.user_model is not None:
+    #~ if settings.SITE.user_model is not None:
     if True: # e.g. e.g. public readonly site
         if auth:
             allow_before_auth = allow
@@ -407,7 +407,7 @@ def make_permission_handler_(
     if allow is None:
         def allow(action,user,obj,state):
             return True
-    #~ if settings.LINO.user_model is not None:
+    #~ if settings.SITE.user_model is not None:
     if True: # e.g. e.g. public readonly site
         if auth:
             allow_before_auth = allow
@@ -533,13 +533,13 @@ class AnonymousUser(object):
             #~ cls._instance = super(AnonymousUser, cls).__new__(cls, *args, **kwargs)
             cls._instance = AnonymousUser()
             try:
-                cls._instance.profile = UserProfiles.get_by_value(settings.LINO.anonymous_user_profile)
+                cls._instance.profile = UserProfiles.get_by_value(settings.SITE.anonymous_user_profile)
                 if cls._instance.profile.authenticated:
                     raise Exception("20121121 profile specified by `anonymous_user_profile` is `authenticated`")
             except KeyError:
                 raise Exception(
                     "Invalid value %r for `LINO.anonymous_user_profile`. Must be one of %s" % (
-                        settings.LINO.anonymous_user_profile,
+                        settings.SITE.anonymous_user_profile,
                         [i.value for i in UserProfiles.items()]))
         return cls._instance
         
@@ -565,7 +565,7 @@ def authenticate(username,password=NOT_NEEDED):
     username = username.strip()
     
     try:
-        user = settings.LINO.user_model.objects.get(username=username)
+        user = settings.SITE.user_model.objects.get(username=username)
         if user.profile is None:
             #~ logger.info("20121127 user has no profile")
             return None
@@ -574,7 +574,7 @@ def authenticate(username,password=NOT_NEEDED):
                 #~ logger.info("20121104 password mismatch")
                 return None
         return user
-    except settings.LINO.user_model.DoesNotExist,e:
+    except settings.SITE.user_model.DoesNotExist,e:
         #~ logger.info("20121104 no username %r",username)
         return None  
         
@@ -592,9 +592,9 @@ def on_login(request,user):
     
         
     #~ if len(babel.AVAILABLE_LANGUAGES) > 1:
-    if len(settings.LINO.languages) > 1:
+    if len(settings.SITE.languages) > 1:
         
-        #~ lang = settings.LINO.override_user_language() or request.user.language
+        #~ lang = settings.SITE.override_user_language() or request.user.language
         lang = user.language
         if lang:
             translation.activate(lang)
@@ -619,7 +619,7 @@ def on_login(request,user):
         #~ request.requesting_panel = None
         #~ return
         
-    if len(settings.LINO.languages) > 1:
+    if len(settings.SITE.languages) > 1:
         ul = rqdata.get(constants.URL_PARAM_USER_LANGUAGE,None)
         if ul:
             translation.activate(ul)
@@ -629,16 +629,16 @@ def on_login(request,user):
     if su is not None:
         if su:
             try:
-                su = settings.LINO.user_model.objects.get(id=int(su))
+                su = settings.SITE.user_model.objects.get(id=int(su))
                 #~ logger.info("20120714 su is %s",su.username)
-            except settings.LINO.user_model.DoesNotExist, e:
+            except settings.SITE.user_model.DoesNotExist, e:
                 su = None
         else:
             su = None # e.g. when it was an empty string "su="
     request.subst_user = su
     request.requesting_panel = rqdata.get(constants.URL_PARAM_REQUESTING_PANEL,None)
     #~ logger.info("20121228 subst_user is %r",request.subst_user)
-    #~ if request.subst_user is not None and not isinstance(request.subst_user,settings.LINO.user_model):
+    #~ if request.subst_user is not None and not isinstance(request.subst_user,settings.SITE.user_model):
         #~ raise Exception("20121228")
     
     
@@ -662,10 +662,10 @@ class RemoteUserMiddleware(object):
     
     def process_request(self, request):
       
-        settings.LINO.startup() # trigger site startup if necessary
+        settings.SITE.startup() # trigger site startup if necessary
         
         username = request.META.get(
-            settings.LINO.remote_user_header,settings.LINO.default_user)
+            settings.SITE.remote_user_header,settings.SITE.default_user)
             
         user = authenticate(username)
         
@@ -682,7 +682,7 @@ class SessionUserMiddleware(object):
 
     def process_request(self, request):
       
-        settings.LINO.startup() # trigger site startup if necessary
+        settings.SITE.startup() # trigger site startup if necessary
         
         user = authenticate(request.session.get('username'),
             request.session.get('password'))
@@ -698,7 +698,7 @@ class NoUserMiddleware(object):
   
     def process_request(self, request):
       
-        settings.LINO.startup() # trigger site startup if necessary
+        settings.SITE.startup() # trigger site startup if necessary
         
         user = AnonymousUser.instance()
         

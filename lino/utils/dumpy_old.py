@@ -65,7 +65,7 @@ class Serializer(base.Serializer):
         if self.write_preamble:
             self.stream.write('# -*- coding: UTF-8 -*-\n')
             #~ self.stream.write('# Created using Lino version %s\n' % lino.__version__)
-            name,current_version,url = settings.LINO.using().next()
+            name,current_version,url = settings.SITE.using().next()
             if '+' in current_version:
                 raise Exception(
                     "Cannot dumpdata from intermediate version %s" % current_version)
@@ -172,10 +172,10 @@ def new_content_type_id(m):
             self.stream.write('    yield %s_objects()\n' % model._meta.db_table)
         self.stream.write('\nsettings.LINO.loading_from_dump = True\n')
         self.stream.write('\nsettings.LINO.install_migrations(globals())\n')
-        #~ if settings.LINO.migration_module:
+        #~ if settings.SITE.migration_module:
             #~ self.stream.write('\n')
             #~ self.stream.write('from %s import install\n' \
-                #~ % settings.LINO.migration_module)
+                #~ % settings.SITE.migration_module)
             #~ self.stream.write('install(globals())\n')
             
     def sort_models(self,unsorted):
@@ -365,7 +365,7 @@ class FakeDeserializedObject(base.DeserializedObject):
         #~ except (ValidationError,ObjectDoesNotExist), e:
         #~ except (ValidationError,ObjectDoesNotExist,IntegrityError), e:
         except Exception, e:
-            if not settings.LINO.loading_from_dump:
+            if not settings.SITE.loading_from_dump:
                 # hand-written fixtures are expected to not raise any exception
                 dblogger.warning("Failed to save %s:" % obj2str(obj))
                 raise
@@ -515,7 +515,7 @@ class DpyDeserializer:
                 To avoid Django interpreting empty fixtures as an error, 
                 we yield one object which always exists: the SiteConfig
                 """
-                yield FakeDeserializedObject(self,settings.LINO.site_config)
+                yield FakeDeserializedObject(self,settings.SITE.site_config)
                 #~ raise Exception("""\
 #~ Fixture %s decided to not create any object.
 #~ We're sorry, but Django doesn't like that. 

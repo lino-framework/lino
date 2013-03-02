@@ -109,7 +109,7 @@ Lino also has a setting :attr:`lino.Lino.uppercase_last_name`
 which causes this to be the default.
 
 >>> from django.conf import settings
->>> settings.LINO.uppercase_last_name = True
+>>> settings.SITE.uppercase_last_name = True
 
 >>> print p
 M. Jean DUPONT

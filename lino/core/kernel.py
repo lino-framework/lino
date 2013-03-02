@@ -54,10 +54,7 @@ from lino.core import fields
 from lino.core import layouts
 from lino.core import actors
 from lino.core import dbtables
-from lino.core.modeltools import app_labels # , data_elems # , get_unbound_meth
-from lino.utils import get_class_attr, class_dict_items
-
-from lino.core.modeltools import resolve_model, resolve_field, get_field, full_model_name, obj2str
+from lino.utils import class_dict_items
     
 from lino.utils.config import load_config_files, find_config_file
 from lino.utils import choosers
@@ -89,7 +86,6 @@ def startup_site(self):
       don't inherit from it.
     
     """
-    
     if len(sys.argv) == 0:
         process_name = 'WSGI'
     else:
@@ -103,14 +99,13 @@ def startup_site(self):
         logger.info("Done %s (PID %s)",process_name,os.getpid())
     atexit.register(goodbye)
     
-    
     #~ analyze_models(self)
     
     #~ print 20130219, __file__, "setup_choicelists 1"
     
     #~ logger.info("Analyzing models...")
     
-    #~ self = settings.LINO
+    #~ self = settings.SITE
     #~ logger.info(self.welcome_text())
     
     """
@@ -125,21 +120,21 @@ def startup_site(self):
     # this also triggers django.db.models.loading.cache._populate()
     
     if self.user_model:
-        self.user_model = resolve_model(self.user_model,
+        self.user_model = dd.resolve_model(self.user_model,
             strict="Unresolved model '%s' in user_model.")
     #~ if self.person_model:
-        #~ self.person_model = resolve_model(self.person_model,strict="Unresolved model '%s' in person_model.")
+        #~ self.person_model = dd.resolve_model(self.person_model,strict="Unresolved model '%s' in person_model.")
         
     #~ print 20130219, __file__, "setup_choicelists 2"
     
     if self.project_model:
-        self.project_model = resolve_model(self.project_model,
+        self.project_model = dd.resolve_model(self.project_model,
             strict="Unresolved model '%s' in project_model.")
         
     #~ print 20130219, __file__, "setup_choicelists 3"
     
     for m in self.override_modlib_models:
-        resolve_model(m,
+        dd.resolve_model(m,
             strict="Unresolved model '%s' in override_modlib_models.")
     
     for model in models_list:
@@ -165,9 +160,10 @@ def startup_site(self):
                 
         for f in model._meta.virtual_fields:
             if isinstance(f,generic.GenericForeignKey):
-                settings.LINO.GFK_LIST.append(f)
+                settings.SITE.GFK_LIST.append(f)
                 
     dd.pre_analyze.send(self,models_list=models_list)
+    
     self.setup_choicelists()
     self.setup_workflows()
     
@@ -250,8 +246,12 @@ def startup_site(self):
                     
     #~ from lino.core import ui
     #~ ui.site_setup(self)
+    
+    for a in actors.actors_list:
+        a.on_analyze(self)
+    
         
-    #~ logger.info("20130121 GFK_LIST is %s",['%s.%s'%(full_model_name(f.model),f.name) for f in settings.LINO.GFK_LIST])
+    #~ logger.info("20130121 GFK_LIST is %s",['%s.%s'%(full_model_name(f.model),f.name) for f in settings.SITE.GFK_LIST])
     dd.post_analyze.send(self,models_list=models_list)
     
     logger.info("Languages: %s. %d apps, %d models, %s actors.",
@@ -261,7 +261,6 @@ def startup_site(self):
         len(actors.actors_list))
     
     #~ logger.info(settings.INSTALLED_APPS)
-    
     
     self.on_each_app('site_setup')
     
@@ -276,25 +275,10 @@ def startup_site(self):
     for a in actors.actors_list:
         a.after_site_setup(self)
         
-    self.on_site_startup()
-        
-    """
-    resolve_virtual_fields() comes even after after_site_setup() 
-    because after_site_setup()
-    may add more virtual fields in custom setup_columns methods.
-    """
-            
-    fields.resolve_virtual_fields()
+    #~ self.on_site_startup()
+
+    self.resolve_virtual_fields()
     
-
-
-
-
-def analyze_models(self):
-    """
-    """
-    return models_list
-
 class DisableDeleteHandler():
     """
     Used to find out whether a known object can be deleted or not.

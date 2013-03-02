@@ -1,7 +1,7 @@
 # -*- coding: UTF-8 -*-
-## Copyright 2009-2012 Luc Saffre
+## Copyright 2013 Luc Saffre
 ## This file is part of the Lino project.
-## Lino is free software; you can redistribute it and/or modify 
+## Lino is free software; you can redistribute it and/or modify
 ## it under the terms of the GNU General Public License as published by
 ## the Free Software Foundation; either version 3 of the License, or
 ## (at your option) any later version.
@@ -13,9 +13,21 @@
 ## along with Lino; if not, see <http://www.gnu.org/licenses/>.
 
 """
-For backwards compatibility in reading 
-dumpy fixtures from versions before 1.4.4. 
-Will be removed when the last known user has migrated.
+Calls `initdb` with :attr:`lino.Lino.demo_fixtures`.
 """
 
-from lino.core.modeltools import resolve_model
+from django.conf import settings
+from .initdb import Command as BaseCommand
+
+class Command(BaseCommand):
+    help = __doc__
+
+    def handle(self, *args, **options):
+        if len(args) > 0:
+            raise CommandError("This command takes no arguments")
+            
+        args = settings.SITE.demo_fixtures
+        if isinstance(args,basestring):
+            args = args.split()
+        super(Command,self).handle(*args, **options)
+      

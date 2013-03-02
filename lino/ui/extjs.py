@@ -71,8 +71,8 @@ from lino.core import tables
 from lino.core import fields
 from lino.ui import base
 from lino.core import actors
-from lino.core.modeltools import makedirs_if_missing
-from lino.core.modeltools import full_model_name
+#~ from lino.core.modeltools import makedirs_if_missing
+#~ from lino.core.modeltools import full_model_name
     
 from lino.utils import choosers
 from lino.utils import babel
@@ -92,9 +92,8 @@ else:
       
 from lino.mixins import printable
 
-from lino.core.modeltools import app_labels
 
-if settings.LINO.user_model:
+if settings.SITE.user_model:
     from lino.modlib.users import models as users
 
 
@@ -341,7 +340,7 @@ class ExtRenderer(HtmlRenderer):
         return '[<a href="%s">%s</a>]' % (self.action_url_http(a,**params),label)
         
     def get_actor_url(self,actor,*args,**kw):
-        return settings.LINO.build_admin_url("api",actor.app_label,actor.__name__,*args,**kw)
+        return settings.SITE.build_admin_url("api",actor.app_label,actor.__name__,*args,**kw)
         
     def get_request_url(self,ar,*args,**kw):
         """
@@ -355,12 +354,12 @@ class ExtRenderer(HtmlRenderer):
         if not kw['base_params']:
             del kw['base_params']
         #~ kw = self.request2kw(rr,**kw)
-        return settings.LINO.build_admin_url('api',ar.actor.app_label,ar.actor.__name__,*args,**kw)
+        return settings.SITE.build_admin_url('api',ar.actor.app_label,ar.actor.__name__,*args,**kw)
         
     def get_detail_url(self,obj,*args,**kw):
         #~ rpt = obj._lino_default_table
         #~ return self.build_url('api',rpt.app_label,rpt.__name__,str(obj.pk),*args,**kw)
-        return settings.LINO.build_admin_url('api',obj._meta.app_label,obj.__class__.__name__,str(obj.pk),*args,**kw)
+        return settings.SITE.build_admin_url('api',obj._meta.app_label,obj.__class__.__name__,str(obj.pk),*args,**kw)
         
     #~ def request_href_js(self,rr,text=None):
         #~ url = self.request_handler(rr)
@@ -372,7 +371,7 @@ class ExtRenderer(HtmlRenderer):
         d = dict(text=prepare_label(mi),handler=js_code(handler))
         if mi.bound_action and mi.bound_action.action.icon_name:
             d.update(iconCls=mi.bound_action.action.icon_name)
-        if settings.LINO.use_quicktips and help_text:
+        if settings.SITE.use_quicktips and help_text:
             d.update(listeners=dict(render=js_code(
               "Lino.quicktip_renderer(%s,%s)" % (py2js('Foo'),py2js(help_text)))
             ))
@@ -386,7 +385,7 @@ class ExtRenderer(HtmlRenderer):
         """
         Generates the lines of Lino's HTML reponse.
         """
-        site = settings.LINO
+        site = settings.SITE
         
         #~ logger.info("20121003 html_page_lines %r",on_ready)
         yield '<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">'
@@ -749,8 +748,8 @@ tinymce.init({
         Build the site cache files under `/media/cache`,
         especially the :xfile:`lino*.js` files, one per user profile and language.
         """
-        if settings.LINO.never_build_site_cache:
-            logger.info("Not building site cache because `settings.LINO.never_build_site_cache` is True")
+        if settings.SITE.never_build_site_cache:
+            logger.info("Not building site cache because `settings.SITE.never_build_site_cache` is True")
             return 
         if not os.path.isdir(settings.MEDIA_ROOT):
             logger.warning("Not building site cache because "+
@@ -760,12 +759,12 @@ tinymce.init({
         
         started = time.time()
         
-        settings.LINO.on_each_app('setup_site_cache',force)
+        settings.SITE.on_each_app('setup_site_cache',force)
         
-        makedirs_if_missing(os.path.join(settings.MEDIA_ROOT,'upload'))
-        makedirs_if_missing(os.path.join(settings.MEDIA_ROOT,'webdav'))
+        settings.SITE.makedirs_if_missing(os.path.join(settings.MEDIA_ROOT,'upload'))
+        settings.SITE.makedirs_if_missing(os.path.join(settings.MEDIA_ROOT,'webdav'))
         
-        if force or settings.LINO.build_js_cache_on_startup:
+        if force or settings.SITE.build_js_cache_on_startup:
             count = 0
             langs = babel.AVAILABLE_LANGUAGES
             for lang in langs:
@@ -797,14 +796,14 @@ tinymce.init({
         fn = os.path.join(settings.MEDIA_ROOT,*self.lino_js_parts(profile)) 
         if not force and os.path.exists(fn):
             mtime = os.stat(fn).st_mtime
-            #~ if mtime > settings.LINO.mtime:
-            if mtime > settings.LINO.ui.mtime:
+            #~ if mtime > settings.SITE.mtime:
+            if mtime > settings.SITE.ui.mtime:
                 #~ if not user.modified or user.modified < datetime.datetime.fromtimestamp(mtime):
                 #~ logger.info("20130204 %s is up to date.",fn)
                 return 0
                     
         logger.info("Building %s ...", fn)
-        makedirs_if_missing(os.path.dirname(fn))
+        settings.SITE.makedirs_if_missing(os.path.dirname(fn))
         f = codecs.open(fn,'w',encoding='utf-8')
         try:
             self.write_lino_js(f,profile)
@@ -829,7 +828,7 @@ tinymce.init({
         
         context = dict(
             ext_renderer = self,
-            site = settings.LINO,
+            site = settings.SITE,
             settings = settings,
             lino = lino,
             ext_requests = ext_requests,
@@ -853,7 +852,7 @@ tinymce.init({
         #~ assert user == jsgen._for_user
         assert profile == jsgen._for_user_profile
         
-        menu = settings.LINO.get_site_menu(self,profile)
+        menu = settings.SITE.get_site_menu(self,profile)
         menu.add_item('home',_("Home"),javascript="Lino.close_all_windows()")
         f.write("Lino.main_menu = %s;\n" % py2js(menu))
 
@@ -864,7 +863,7 @@ tinymce.init({
                + dbtables.custom_tables \
                + dbtables.frames_list ]
                
-        actors_list.extend([a for a in choicelists.CHOICELISTS.values() if settings.LINO.is_installed(a.app_label)])
+        actors_list.extend([a for a in choicelists.CHOICELISTS.values() if settings.SITE.is_installed(a.app_label)])
           
           
                
@@ -896,7 +895,7 @@ tinymce.init({
           
         f.write("\n// ChoiceLists: \n")
         for a in choicelists.CHOICELISTS.values():
-            if settings.LINO.is_installed(a.app_label):
+            if settings.SITE.is_installed(a.app_label):
                 #~ if issubclass(a,choicelists.ChoiceList):
                 f.write("Lino.%s = %s;\n" % (a.actor_id,py2js(a.get_choices())))
                 
@@ -909,7 +908,7 @@ tinymce.init({
         def add(res,collector,fl,formpanel_name):
             # fl : a FormLayout
             if fl is not None:
-                lh = fl.get_layout_handle(settings.LINO.ui)
+                lh = fl.get_layout_handle(settings.SITE.ui)
                 if True: # 20121130 why was this?
                     for e in lh.main.walk():
                         e.loosen_requirements(res)
@@ -943,23 +942,23 @@ tinymce.init({
             
         #~ f.write('\n/* Application FormPanel subclasses */\n')
         for fl in param_panels:
-            lh = fl.get_layout_handle(settings.LINO.ui)
+            lh = fl.get_layout_handle(settings.SITE.ui)
             for ln in self.js_render_ParamsPanelSubclass(lh):
                 f.write(ln + '\n')
                 
         for fl in action_param_panels:
-            lh = fl.get_layout_handle(settings.LINO.ui)
+            lh = fl.get_layout_handle(settings.SITE.ui)
             for ln in self.js_render_ActionFormPanelSubclass(lh):
                 f.write(ln + '\n')
                 
         for fl in form_panels:
-            lh = fl.get_layout_handle(settings.LINO.ui)
+            lh = fl.get_layout_handle(settings.SITE.ui)
             for ln in self.js_render_FormPanelSubclass(lh):
                 f.write(ln + '\n')
         
         actions_written = set()
         for rpt in actors_list:
-            rh = rpt.get_handle(settings.LINO.ui) 
+            rh = rpt.get_handle(settings.SITE.ui) 
             for ba in rpt.get_actions():
                 if ba.action.parameters:
                     if not ba.action in actions_written:
@@ -969,7 +968,7 @@ tinymce.init({
                             f.write(ln + '\n')
           
         for rpt in actors_list:
-            rh = rpt.get_handle(settings.LINO.ui) 
+            rh = rpt.get_handle(settings.SITE.ui) 
             if isinstance(rpt,type) and issubclass(rpt,(tables.AbstractTable,choicelists.ChoiceList)):
                 #~ if rpt.model is None:
                 #~ f.write('// 20120621 %s\n' % rpt)
@@ -1038,8 +1037,8 @@ tinymce.init({
         env = jinja2.Environment(loader=jinja2.FileSystemLoader(os.path.dirname(__file__)))
         return env.get_template('linoweb.js')
         #~ fn = self.linolib_template_name()
-        #~ return settings.LINO.jinja2_env.Template(file(fn).read())
-        #~ return settings.LINO.jinja2_env.Template(file(fn).read())
+        #~ return settings.SITE.jinja2_env.Template(file(fn).read())
+        #~ return settings.SITE.jinja2_env.Template(file(fn).read())
         #~ return jinja2.Template(file(self.linolib_template_name()).read())
         
         #~ def docurl(ref):
@@ -1054,7 +1053,7 @@ tinymce.init({
         #~ tpl.ui = self
             
         #~ tpl._ = _
-        #~ tpl.site = settings.LINO
+        #~ tpl.site = settings.SITE
         #~ tpl.settings = settings
         #~ tpl.lino = lino
         #~ tpl.docurl = docurl
@@ -1230,7 +1229,7 @@ tinymce.init({
         yield "  auto_save: true,"
         if dh.layout.window_size and dh.layout.window_size[1] == 'auto':
             yield "  autoHeight: true,"
-        if settings.LINO.is_installed('contenttypes') and issubclass(tbl,dbtables.Table):
+        if settings.SITE.is_installed('contenttypes') and issubclass(tbl,dbtables.Table):
             yield "  content_type: %s," % py2js(ContentType.objects.get_for_model(tbl.model).pk)
         if not tbl.editable:
             yield "  disable_editing: true," 
@@ -1330,8 +1329,8 @@ tinymce.init({
         if rh.store.pk is not None:
             kw.update(ls_id_property=rh.store.pk.name)
             kw.update(pk_index=rh.store.pk_index)
-            #~ if settings.LINO.use_contenttypes:
-            if settings.LINO.is_installed('contenttypes'):
+            #~ if settings.SITE.use_contenttypes:
+            if settings.SITE.is_installed('contenttypes'):
                 kw.update(content_type=ContentType.objects.get_for_model(rh.actor.model).pk)
         kw.update(ls_quick_edit=rh.actor.cell_edit)
         kw.update(ls_bbar_actions=[
@@ -1452,7 +1451,7 @@ tinymce.init({
             #~ mainPanelClass = "Ext.ensible.cal.CalendarPanel"
         elif action.action.parameters:
             #~ mainPanelClass = "Lino.ActionParamsPanel"
-            params_panel = action.action.make_params_layout_handle(settings.LINO.ui)
+            params_panel = action.action.make_params_layout_handle(settings.SITE.ui)
             #~ logger.info("20121003 %r %s", action, params_panel)
         else:
             return 
@@ -1487,7 +1486,7 @@ tinymce.init({
             yield "  return Lino.calendar_app.get_main_panel();"
         else:
             p = dict()
-            if action.action is settings.LINO.get_main_action(profile):
+            if action.action is settings.SITE.get_main_action(profile):
                 p.update(is_home_page=True)
             #~ yield "  var p = {};" 
             if action.action.hide_top_toolbar or action.actor.hide_top_toolbar or action.action.parameters:
@@ -1526,13 +1525,13 @@ tinymce.init({
         def fn():
             yield """// lino.js --- generated %s by Lino version %s.""" % (time.ctime(),lino.__version__)
             #~ // $site.title ($lino.welcome_text())
-            yield "Ext.BLANK_IMAGE_URL = '%s';" % settings.LINO.build_extjs_url('resources/images/default/s.gif')
+            yield "Ext.BLANK_IMAGE_URL = '%s';" % settings.SITE.build_extjs_url('resources/images/default/s.gif')
             yield "LANGUAGE_CHOICES = %s;" % py2js(list(LANGUAGE_CHOICES))
             # TODO: replace the following lines by a generic method for all ChoiceLists
             #~ yield "STRENGTH_CHOICES = %s;" % py2js(list(STRENGTH_CHOICES))
             #~ yield "KNOWLEDGE_CHOICES = %s;" % py2js(list(KNOWLEDGE_CHOICES))
-            yield "MEDIA_URL = %r;" % settings.LINO.build_media_url()
-            #~ yield "ADMIN_URL = %r;" % settings.LINO.admin_prefix
+            yield "MEDIA_URL = %r;" % settings.SITE.build_media_url()
+            #~ yield "ADMIN_URL = %r;" % settings.SITE.admin_prefix
             
             #~ yield "API_URL = %r;" % self.build_url('api')
             #~ yield "TEMPLATES_URL = %r;" % self.build_url('templates')

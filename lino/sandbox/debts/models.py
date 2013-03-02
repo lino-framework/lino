@@ -818,7 +818,7 @@ class AssetsSummaryByBudget(EntriesSummaryByBudget,EntriesByType):
 MODULE_NAME = _("Debts")
 
 
-#~ settings.LINO.add_user_field('debts_level',UserLevel.field(MODULE_NAME))
+#~ settings.SITE.add_user_field('debts_level',UserLevel.field(MODULE_NAME))
     #~ UserLevel.field(verbose_name=_("Userlevel %s") % MODULE_NAME,blank=True))
 
 

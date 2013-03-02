@@ -26,11 +26,11 @@ from tempfile import gettempdir
 from os.path import join, abspath, dirname, normpath
 import lino
 
-from lino.ui import Lino
+from lino.ui import Site
 
-LINO = Lino(__file__,globals())
+SITE = Site(__file__,globals())
 """
-This Lino instance will normally be replaced by an instance 
+This Site instance will normally be replaced by an instance 
 in a local settings.py file
 """
 
@@ -47,8 +47,6 @@ in a local settings.py file
 #~ DATA_DIR = join(LINO.project_dir,"data")
 
 #~ BABEL_LANGS = []
-
-
 
 def TIM2LINO_LOCAL(alias,obj):
     """Hook for local special treatment on instances that have been imported from TIM.

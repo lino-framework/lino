@@ -35,13 +35,13 @@ from lino import mixins
 #~ from lino import fields
 #~ from lino.core.modeltools import resolve_model
 
-partners = dd.resolve_app(settings.LINO.partners_app_label)
+partners = dd.resolve_app(settings.SITE.partners_app_label)
 ledger = dd.resolve_app('ledger')
 #~ from lino.modlib.ledger import models as ledger
 #~ journals = dd.resolve_app('journals')
 accounts = dd.resolve_app('accounts')
 
-partner_model = settings.LINO.partners_app_label + '.Partner'
+partner_model = settings.SITE.partners_app_label + '.Partner'
 
 
 #~ Contact = dd.resolve_model('contacts.Contact')

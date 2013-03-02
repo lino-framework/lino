@@ -70,7 +70,7 @@ CITY_TYPES = {
   #~ 'sihtnumbrid.csv')
   
 input_file = os.path.join(
-  settings.LINO.project_dir,
+  settings.SITE.project_dir,
   'sihtnumbrid.csv')
   
 u"""  

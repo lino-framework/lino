@@ -34,7 +34,7 @@ from django.core.exceptions import ValidationError
 #~ from lino.models import Workflow
 from lino.utils import auth
 #~ from lino.utils import perms
-from lino.core.modeltools import full_model_name
+from django_site.modeltools import full_model_name
 from lino.core import frames
 from lino.core import actions
 from lino.core import fields
@@ -135,7 +135,7 @@ class Controllable(model.Model):
             #~ m(controllable)
 
     def save(self,*args,**kw):
-        if settings.LINO.loading_from_dump:
+        if settings.SITE.loading_from_dump:
             super(Controllable,self).save(*args,**kw)
         else:
             if self.owner: #  and not self.is_user_modified():
@@ -157,11 +157,11 @@ class UserAuthored(model.Model):
     class Meta:
         abstract = True
         
-    if settings.LINO.user_model: 
+    if settings.SITE.user_model: 
       
         workflow_owner_field = 'user' 
         
-        user = models.ForeignKey(settings.LINO.user_model,
+        user = models.ForeignKey(settings.SITE.user_model,
             verbose_name=_("Author"),
             related_name="%(app_label)s_%(class)s_set_by_user",
             blank=True,null=True
@@ -355,7 +355,7 @@ class Registrable(model.Model):
 
 
 
-if settings.LINO.user_model: 
+if settings.SITE.user_model: 
   
     class ByUser(dbtables.Table):
         master_key = 'user'
@@ -407,7 +407,7 @@ class CreatedModified(model.Model):
         '''
         On save, update timestamps.
         '''
-        if not settings.LINO.loading_from_dump:
+        if not settings.SITE.loading_from_dump:
             #~ if not self.pk:
             if self.created is None:
                 self.created = datetime.datetime.now()
@@ -543,9 +543,9 @@ class ProjectRelated(model.Model):
     class Meta:
         abstract = True
         
-    if settings.LINO.project_model:
+    if settings.SITE.project_model:
         project = models.ForeignKey(
-            settings.LINO.project_model,
+            settings.SITE.project_model,
             blank=True,null=True,
             related_name="%(app_label)s_%(class)s_set_by_project",
             )
@@ -553,14 +553,14 @@ class ProjectRelated(model.Model):
         project = fields.DummyField()
 
     def get_related_project(self,ar):
-        if settings.LINO.project_model:
+        if settings.SITE.project_model:
             return self.project
         
     #~ def summary_row(self,ui,rr,**kw):
     def summary_row(self,ar,**kw):
         s = ar.href_to(self)
         #~ s = ui.ext_renderer.href_to(self)
-        if settings.LINO.project_model:
+        if settings.SITE.project_model:
             #~ if self.project and not dd.has_fk(rr,'project'):
             if self.project:
                 #~ s += " (" + ui.href_to(self.project) + ")"
@@ -579,14 +579,14 @@ class ProjectRelated(model.Model):
         super(ProjectRelated,self).update_owned_instance(other)
         
     def get_mailable_recipients(self):
-        if isinstance(self.project,settings.LINO.modules.contacts.Partner):
+        if isinstance(self.project,settings.SITE.modules.contacts.Partner):
             if self.project.email:
                 yield ('to',self.project)
         for r in super(ProjectRelated,self).get_mailable_recipients():
             yield r
 
     def get_postable_recipients(self):
-        if isinstance(self.project,settings.LINO.modules.contacts.Partner):
+        if isinstance(self.project,settings.SITE.modules.contacts.Partner):
             yield self.project
         for p in super(ProjectRelated,self).get_postable_recipients():
             yield p
@@ -673,7 +673,7 @@ class EmptyTable(frames.Frame):
             return de
         a = name.split('.')
         if len(a) == 2:
-            return getattr(getattr(settings.LINO.modules,a[0]),a[1])
+            return getattr(getattr(settings.SITE.modules,a[0]),a[1])
             
 
 

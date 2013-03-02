@@ -30,5 +30,5 @@ These fixtures contain the following lines at the end::
 from django.conf import settings
 
 def install(globals_dict):
-    settings.LINO.install_migrations(globals_dict)
+    settings.SITE.install_migrations(globals_dict)
 

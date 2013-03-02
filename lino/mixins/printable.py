@@ -48,7 +48,7 @@ from lino.utils import babel
 from lino.utils.choosers import chooser
 from lino.utils.appy_pod import Renderer
 from lino.utils.config import find_template_config_files
-from lino.core.modeltools import makedirs_if_missing
+#~ from lino.core.modeltools import makedirs_if_missing
 from lino.core.model import Model
 from lino.mixins.duplicable import Duplicable
 
@@ -61,8 +61,8 @@ def decfmt(v,places=2,**kw):
     and
     :attr:`lino.Lino.decimal_separator`.
     """
-    kw.setdefault('sep',settings.LINO.decimal_group_separator)
-    kw.setdefault('dp',settings.LINO.decimal_separator)
+    kw.setdefault('sep',settings.SITE.decimal_group_separator)
+    kw.setdefault('dp',settings.SITE.decimal_separator)
     return moneyfmt(v,places=places,**kw)
 
 
@@ -142,8 +142,8 @@ class BuildMethod:
         #~ self.templates_dir = os.path.join(settings.PROJECT_DIR,'doctemplates',self.templates_name or self.name)
         if self.templates_name is None:
             self.templates_name = self.name
-        #~ self.old_templates_dir = os.path.join(settings.LINO.webdav_root,'doctemplates',self.templates_name)
-        #~ self.templates_url = settings.LINO.webdav_url + '/'.join(('doctemplates',self.templates_name))
+        #~ self.old_templates_dir = os.path.join(settings.SITE.webdav_root,'doctemplates',self.templates_name)
+        #~ self.templates_url = settings.SITE.webdav_url + '/'.join(('doctemplates',self.templates_name))
         
 
             
@@ -158,16 +158,16 @@ class BuildMethod:
         
     def get_target_name(self,action,elem):
         "return the output filename to generate on the server"
-        if self.use_webdav and settings.LINO.use_davlink:
-            return os.path.join(settings.LINO.webdav_root,*self.get_target_parts(action,elem))
+        if self.use_webdav and settings.SITE.use_davlink:
+            return os.path.join(settings.SITE.webdav_root,*self.get_target_parts(action,elem))
         return os.path.join(settings.MEDIA_ROOT,*self.get_target_parts(action,elem))
         
     def get_target_url(self,action,elem,ui):
         "return the url that points to the generated filename on the server"
-        if self.use_webdav and settings.LINO.use_davlink:
-            return settings.LINO.webdav_url + "/".join(self.get_target_parts(action,elem))
+        if self.use_webdav and settings.SITE.use_davlink:
+            return settings.SITE.webdav_url + "/".join(self.get_target_parts(action,elem))
         #~ return settings.MEDIA_URL + "/".join(self.get_target_parts(action,elem))
-        return settings.LINO.build_media_url(*self.get_target_parts(action,elem))
+        return settings.SITE.build_media_url(*self.get_target_parts(action,elem))
             
     def build(self,ar,action,elem):
         raise NotImplementedError
@@ -307,17 +307,17 @@ class AppyBuildMethod(SimpleBuildMethod):
             ar=ar,
             #~ restify=restify,
             #~ site_config = get_site_config(),
-            site_config=settings.LINO.site_config,
+            site_config=settings.SITE.site_config,
             _ = _,
             #~ knowledge_text=fields.knowledge_text,
             )
         lang = str(elem.get_print_language(self))
         logger.info(u"appy.pod render %s -> %s (language=%r,params=%s",
-            tpl,target,lang,settings.LINO.appy_params)
+            tpl,target,lang,settings.SITE.appy_params)
         #~ savelang = babel.get_language()
         #~ babel.set_language(lang)
         def f():
-            Renderer(tpl, context, target,**settings.LINO.appy_params).run()
+            Renderer(tpl, context, target,**settings.SITE.appy_params).run()
         babel.run_with_language(lang,f)
         #~ babel.set_language(savelang)
         return os.path.getmtime(target)
@@ -501,7 +501,7 @@ class BasePrintAction(actions.RowAction):
             os.remove(filename)
         else:
             #~ logger.info("20121221 makedirs_if_missing %s",os.path.dirname(filename))
-            makedirs_if_missing(os.path.dirname(filename))
+            settings.SITE.makedirs_if_missing(os.path.dirname(filename))
         logger.debug(u"%s : %s -> %s", bm,elem,filename)
         return filename
         
@@ -547,7 +547,7 @@ class PrintAction(BasePrintAction):
         else:
             kw.update(message=_("Reused %s printable from cache.") % elem)
         url = bm.get_target_url(self,elem,ar.ui)
-        if bm.use_webdav and settings.LINO.use_davlink:
+        if bm.use_webdav and settings.SITE.use_davlink:
             kw.update(open_davlink_url=ar.request.build_absolute_uri(url))
         else:
             kw.update(open_url=url)
@@ -573,7 +573,7 @@ class DirectPrintAction(BasePrintAction):
         #~ if tplname is None: tplname = 'Default'
         super(DirectPrintAction,self).__init__(label,**kw)
         #~ BasePrintAction.__init__(self,rpt,name,label)
-        #~ self.bm =  bm_dict.get(build_method or settings.LINO.preferred_build_method)
+        #~ self.bm =  bm_dict.get(build_method or settings.SITE.preferred_build_method)
         self.build_method = build_method
         self.tplname = tplname
         
@@ -592,7 +592,7 @@ class DirectPrintAction(BasePrintAction):
     def run(self,elem,ar,**kw):
         bm =  bm_dict.get(
             self.build_method or 
-            settings.LINO.site_config.default_build_method)
+            settings.SITE.site_config.default_build_method)
         #~ if self.tplname:
             #~ if not self.tplname.endswith(bm.template_ext):
                 #~ raise Exception("Invalid template for build method %r" % bm.name)
@@ -600,7 +600,7 @@ class DirectPrintAction(BasePrintAction):
         #~ target = settings.MEDIA_URL + "/".join(bm.get_target_parts(self,elem))
         #~ return rr.ui.success_response(open_url=target,**kw)
         url = bm.get_target_url(self,elem,ar.ui)
-        if bm.use_webdav and settings.LINO.use_davlink:
+        if bm.use_webdav and settings.SITE.use_davlink:
             url = ar.request.build_absolute_uri(url)
             kw.update(open_davlink_url=url)
         else:
@@ -702,8 +702,8 @@ class PrintableType(Model):
         #~ from lino.models import get_site_config
         if not build_method:
             #~ build_method = get_site_config().default_build_method 
-            #~ build_method = settings.LINO.config.default_build_method 
-            build_method = settings.LINO.site_config.default_build_method 
+            #~ build_method = settings.SITE.config.default_build_method 
+            build_method = settings.SITE.site_config.default_build_method 
         return get_template_choices(cls,build_method)
     
 class Printable(object):
@@ -784,8 +784,8 @@ class CachedPrintable(Duplicable,Printable):
         #~ return 'rtf'
         #~ from lino.models import get_site_config
         #~ return get_site_config.default_build_method 
-        return settings.LINO.site_config.default_build_method
-        #~ return settings.LINO.preferred_build_method 
+        return settings.SITE.site_config.default_build_method
+        #~ return settings.SITE.preferred_build_method 
         #~ return 'pisa'
         
     def get_target_name(self):
@@ -843,7 +843,7 @@ class TypedPrintable(CachedPrintable):
             return super(TypedPrintable,self).get_build_method()
         if ptype.build_method:
             return ptype.build_method
-        return settings.LINO.site_config.default_build_method 
+        return settings.SITE.site_config.default_build_method 
         
     def get_print_templates(self,bm,action):
         ptype = self.get_printable_type()

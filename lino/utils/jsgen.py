@@ -100,7 +100,7 @@ from lino.utils import IncompleteDate
 from lino.utils.quantities import Quantity
 from lino.utils.xmlgen import etree
 
-from lino.core.modeltools import obj2str
+from django_site.modeltools import obj2str
 from lino.utils import curry
 from lino.core.actions import Permittable
 
@@ -217,19 +217,19 @@ def py2js(v):
     if isinstance(v, (int, long, decimal.Decimal,fractions.Fraction)):
         return str(v)
     if isinstance(v, IncompleteDate):
-        return '"%s"' % v.strftime(settings.LINO.date_format_strftime)
+        return '"%s"' % v.strftime(settings.SITE.date_format_strftime)
         #~ return '"%s"' % v
     if isinstance(v, datetime.datetime):
         #~ """20120120"""
-        return '"%s"' % v.strftime(settings.LINO.datetime_format_strftime)
+        return '"%s"' % v.strftime(settings.SITE.datetime_format_strftime)
         #~ return '"%s"' % v.strftime('%Y-%m-%d %H:%M:%S')
     if isinstance(v, datetime.time):
-        return '"%s"' % v.strftime(settings.LINO.time_format_strftime)
+        return '"%s"' % v.strftime(settings.SITE.time_format_strftime)
     if isinstance(v, datetime.date):
         if v.year < 1900:
             v = IncompleteDate(v)
-            return '"%s"' % v.strftime(settings.LINO.date_format_strftime)
-        return '"%s"' % v.strftime(settings.LINO.date_format_strftime)
+            return '"%s"' % v.strftime(settings.SITE.date_format_strftime)
+        return '"%s"' % v.strftime(settings.SITE.date_format_strftime)
         #~ return 'new Date(%d,%d,%d)' % (v.year,v.month-1,v.day)
         #~ return repr('%d.%d.%d' % (v.day,v.month,v.year))
         #~ return repr(str(v))

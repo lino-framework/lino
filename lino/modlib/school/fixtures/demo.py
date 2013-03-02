@@ -108,12 +108,12 @@ def objects():
     #~ SLOTS = Cycler(1,2,3,4)
     PUPILS = Cycler(school.Pupil.objects.all())
     PLACES = Cycler(cal.Place.objects.all())
-    #~ Event = settings.LINO.modules.cal.Event
+    #~ Event = settings.SITE.modules.cal.Event
     
     #~ from lino.modlib.cal.utils import DurationUnit
     
-    year = settings.LINO.demo_date().year
-    if settings.LINO.demo_date().month < 7:
+    year = settings.SITE.demo_date().year
+    if settings.SITE.demo_date().month < 7:
         year -= 1
     for i in range(10):
         c = school.Course(
@@ -133,6 +133,6 @@ def objects():
         c.save() # fill presences
         
         #~ for j in range(5):
-            #~ yield school.Event(start_date=settings.LINO.demo_date(j*7),course=c)
+            #~ yield school.Event(start_date=settings.SITE.demo_date(j*7),course=c)
             #~ yield school.Presence()
         

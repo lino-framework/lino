@@ -362,8 +362,8 @@ class Service(Namespace):
                 #~ "Not actually sending because user_params is empty.")
         #~ self.validate_against_xsd(req)
         from django.conf import settings
-        env = settings.LINO.cbss_environment
-        user_params = settings.LINO.cbss_user_params
+        env = settings.SITE.cbss_environment
+        user_params = settings.SITE.cbss_user_params
             
         req = self.wrap_request(req,unique_id,dt,user_params)
         

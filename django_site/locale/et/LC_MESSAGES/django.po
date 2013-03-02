@@ -1,0 +1,1090 @@
+# SOME DESCRIPTIVE TITLE.
+# Copyright (C) YEAR THE PACKAGE'S COPYRIGHT HOLDER
+# This file is distributed under the same license as the PACKAGE package.
+# FIRST AUTHOR <EMAIL@ADDRESS>, YEAR.
+#
+#, fuzzy
+msgid ""
+msgstr ""
+"Project-Id-Version: PACKAGE VERSION\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2013-01-20 20:17+0000\n"
+"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
+"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
+"Language-Team: LANGUAGE <LL@li.org>\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+
+#: .\__init__.py:80
+msgid "English"
+msgstr ""
+
+#: .\__init__.py:81
+msgid "German"
+msgstr ""
+
+#: .\__init__.py:82
+msgid "French"
+msgstr ""
+
+#: .\__init__.py:83
+msgid "Dutch"
+msgstr ""
+
+#: .\__init__.py:84
+msgid "Estonian"
+msgstr ""
+
+#: .\__init__.py:1225
+msgid "Anonymous"
+msgstr ""
+
+#: .\__init__.py:1228 .\utils\auth.py:96
+msgid "User"
+msgstr ""
+
+#: .\__init__.py:1229 .\utils\auth.py:98
+msgid "Administrator"
+msgstr ""
+
+#: .\__init__.py:1278 .\models.py:324 .\core\actions.py:713
+#: .\core\actions.py:822 .\templates_old\500.html.py:4
+#: .\templates_old\base.html.py:26
+msgid "Home"
+msgstr ""
+
+#: .\__init__.py:1316 .\models.py:254
+msgid "Master"
+msgstr ""
+
+#: .\__init__.py:1322
+msgid "Reports"
+msgstr ""
+
+#: .\__init__.py:1324
+msgid "Configure"
+msgstr ""
+
+#: .\__init__.py:1326
+msgid "Explorer"
+msgstr ""
+
+#: .\__init__.py:1328
+msgid "Site"
+msgstr ""
+
+#: .\models.py:61
+msgid "Rebuild site cache"
+msgstr ""
+
+#: .\models.py:74 .\ui\base.py:299
+msgid "Success"
+msgstr ""
+
+#: .\models.py:88
+msgid "Default build method"
+msgstr ""
+
+#: .\models.py:97
+msgid "Site Parameters"
+msgstr ""
+
+#: .\models.py:147
+msgid "Base classes"
+msgstr ""
+
+#: .\models.py:170
+msgid "Help Text"
+msgstr ""
+
+#: .\models.py:171
+msgid "Help Texts"
+msgstr ""
+
+#: .\models.py:174
+msgid "Model"
+msgstr ""
+
+#: .\models.py:175
+msgid "Field"
+msgstr ""
+
+#: .\models.py:177
+msgid "HelpText"
+msgstr ""
+
+#: .\models.py:206
+msgid "Verbose name"
+msgstr ""
+
+#: .\models.py:216
+msgid "database field"
+msgstr ""
+
+#: .\models.py:240
+msgid "Change"
+msgstr ""
+
+#: .\models.py:241 .\models.py:258
+msgid "Changes"
+msgstr ""
+
+#: .\models.py:250
+msgid "Object"
+msgstr ""
+
+#: .\models.py:291
+msgid "Text Field Template"
+msgstr ""
+
+#: .\models.py:292
+msgid "Text Field Templates"
+msgstr ""
+
+#: .\models.py:294 .\utils\babel.py:381
+msgid "Designation"
+msgstr ""
+
+#: .\models.py:295 .\core\actions.py:987
+msgid "Description"
+msgstr ""
+
+#: .\models.py:297
+msgid "Template Text"
+msgstr ""
+
+#: .\models.py:363
+msgid "Welcome"
+msgstr ""
+
+#: .\models.py:371
+msgid "Hi, "
+msgstr ""
+
+#: .\models.py:398
+msgid "You have"
+msgstr ""
+
+#: .\models.py:401
+msgid "Congratulatons: you have no warnings."
+msgstr ""
+
+#: .\models.py:427
+msgid "System"
+msgstr ""
+
+#: .\models.py:428
+msgid "Office"
+msgstr ""
+
+#: .\core\actions.py:714
+msgid "Using ExtJS"
+msgstr ""
+
+#: .\core\actions.py:739 .\core\actions.py:824 .\ui\extjs3\linolib.js.py:38
+msgid "First page"
+msgstr ""
+
+#: .\core\actions.py:740 .\core\actions.py:825 .\ui\extjs3\linolib.js.py:18
+msgid "Previous page"
+msgstr ""
+
+#: .\core\actions.py:752 .\core\actions.py:826 .\ui\extjs3\linolib.js.py:3
+msgid "Next page"
+msgstr ""
+
+#: .\core\actions.py:753 .\core\actions.py:827 .\ui\extjs3\linolib.js.py:16
+msgid "Last page"
+msgstr ""
+
+#: .\core\actions.py:794
+msgid "Detail"
+msgstr ""
+
+#: .\core\actions.py:795
+msgid "Open a detail window on this record"
+msgstr ""
+
+#: .\core\actions.py:864 .\ui\extjs3\ext_ui.py:194
+msgid "New"
+msgstr ""
+
+#: .\core\actions.py:872
+msgid "Insert a new record"
+msgstr ""
+
+#: .\core\actions.py:882
+#, python-format
+msgid "Insert into %s"
+msgstr ""
+
+#: .\core\actions.py:903 .\mixins\__init__.py:415 .\mixins\duplicable.py:37
+msgid "Duplicate"
+msgstr ""
+
+#: .\core\actions.py:934
+msgid "Delete this record"
+msgstr ""
+
+#: .\core\actions.py:942 .\core\changes.py:72
+msgid "Delete"
+msgstr ""
+
+#: .\core\actions.py:952
+msgid "Save changes in this form"
+msgstr ""
+
+#: .\core\actions.py:953
+msgid "Save"
+msgstr ""
+
+#: .\core\actions.py:968 .\core\changes.py:70
+msgid "Create"
+msgstr ""
+
+#: .\core\actions.py:970
+msgid "Create the record and open a detail window on it"
+msgstr ""
+
+#: .\core\actions.py:978
+msgid "Create without detail"
+msgstr ""
+
+#: .\core\actions.py:979
+msgid "Don't open an detail window on the new record"
+msgstr ""
+
+#: .\core\actions.py:986
+msgid "Summary"
+msgstr ""
+
+#: .\core\actions.py:988
+msgid "Don't send email notification"
+msgstr ""
+
+#: .\core\changes.py:67
+msgid "Change Type"
+msgstr ""
+
+#: .\core\changes.py:68
+msgid "Change Types"
+msgstr ""
+
+#: .\core\changes.py:71
+msgid "Update"
+msgstr ""
+
+#: .\core\changes.py:73
+msgid "Remove child"
+msgstr ""
+
+#: .\core\changes.py:74
+msgid "Add child"
+msgstr ""
+
+#: .\core\choicelists.py:311
+msgid "value"
+msgstr ""
+
+#: .\core\choicelists.py:315
+msgid "text"
+msgstr ""
+
+#: .\core\choicelists.py:319
+msgid "name"
+msgstr ""
+
+#: .\core\choicelists.py:525
+#, python-format
+msgid "%(value)r (invalid choice for %(list)s)"
+msgstr ""
+
+#: .\core\dbtables.py:748
+msgid "You have no permission to delete this row."
+msgstr ""
+
+#: .\core\dbtables.py:799
+#, python-format
+msgid "%(details)s of %(master)s"
+msgstr ""
+
+#: .\core\dialogs.py:43
+msgid "OK"
+msgstr ""
+
+#: .\core\dialogs.py:46
+msgid "Cancel"
+msgstr ""
+
+#: .\core\fields.py:706
+msgid "Quantity (Decimal or Duration)"
+msgstr ""
+
+#: .\core\kernel.py:213
+#, python-format
+msgid "Cannot delete %(self)s because %(count)d %(refs)s refer to it."
+msgstr ""
+
+#: .\core\layouts.py:533
+msgid "General"
+msgstr ""
+
+#: .\core\model.py:302
+msgid "Workflow"
+msgstr ""
+
+#: .\core\tables.py:164
+msgid "No data to display"
+msgstr ""
+
+#: .\core\workflows.py:101
+msgid "State"
+msgstr ""
+
+#: .\core\workflows.py:102
+msgid "States"
+msgstr ""
+
+#: .\core\workflows.py:163
+#, python-format
+msgid "Mark this as %s"
+msgstr ""
+
+#. Translators: will also be concatenated with '(type)' '(object)'
+#: .\mixins\__init__.py:75
+msgid "Controlled by"
+msgstr ""
+
+#: .\mixins\__init__.py:94
+msgid "(type)"
+msgstr ""
+
+#: .\mixins\__init__.py:99
+msgid "(object)"
+msgstr ""
+
+#: .\mixins\__init__.py:164
+msgid "Author"
+msgstr ""
+
+#: .\mixins\__init__.py:238
+msgid "Register"
+msgstr ""
+
+#: .\mixins\__init__.py:244
+msgid "Register this object."
+msgstr ""
+
+#: .\mixins\__init__.py:263
+msgid "Deregister"
+msgstr ""
+
+#: .\mixins\__init__.py:269
+msgid "Deregister this object."
+msgstr ""
+
+#: .\mixins\__init__.py:297
+msgid "Date"
+msgstr ""
+
+#: .\mixins\__init__.py:349
+msgid "My "
+msgstr ""
+
+#: .\mixins\__init__.py:384
+msgid "Created"
+msgstr ""
+
+#: .\mixins\__init__.py:385
+msgid "Modified"
+msgstr ""
+
+#: .\mixins\__init__.py:412
+msgid "Seq.No."
+msgstr ""
+
+#: .\mixins\__init__.py:429
+#, python-format
+msgid "Row # %s"
+msgstr ""
+
+#: .\mixins\__init__.py:470
+msgid "Parent"
+msgstr ""
+
+#: .\mixins\__init__.py:591
+msgid "Reference"
+msgstr ""
+
+#: .\mixins\__init__.py:607
+msgid "(Root)"
+msgstr ""
+
+#: .\mixins\duplicable.py:135
+#, python-format
+msgid "Duplicated %(old)s to %(new)s."
+msgstr ""
+
+#: .\mixins\human.py:48
+msgid "Gender"
+msgstr ""
+
+#: .\mixins\human.py:53
+msgid "Male"
+msgstr ""
+
+#: .\mixins\human.py:54
+msgid "Female"
+msgstr ""
+
+#: .\mixins\human.py:75
+msgid "Mrs"
+msgstr ""
+
+#: .\mixins\human.py:77
+msgctxt "nominative salutation"
+msgid "Mr"
+msgstr ""
+
+#: .\mixins\human.py:78
+msgctxt "indirect salutation"
+msgid "Mr"
+msgstr ""
+
+#: .\mixins\human.py:97
+msgid "First name"
+msgstr ""
+
+#: .\mixins\human.py:102
+msgid "Last name"
+msgstr ""
+
+#: .\mixins\human.py:170
+msgid "Birth date"
+msgstr ""
+
+#: .\mixins\human.py:187
+msgid "Age"
+msgstr ""
+
+#: .\mixins\human.py:191
+msgid "unknown"
+msgstr ""
+
+#: .\mixins\human.py:192
+#, python-format
+msgid "%d years"
+msgstr ""
+
+#: .\mixins\mails.py:33
+msgid "Recipient Type"
+msgstr ""
+
+#: .\mixins\mails.py:36
+msgid "to"
+msgstr ""
+
+#: .\mixins\mails.py:37
+msgid "cc"
+msgstr ""
+
+#: .\mixins\mails.py:38
+msgid "bcc"
+msgstr ""
+
+#: .\mixins\mails.py:49
+msgid "Recipient"
+msgstr ""
+
+#: .\mixins\mails.py:50
+msgid "Recipients"
+msgstr ""
+
+#: .\mixins\mails.py:55
+msgid "Address"
+msgstr ""
+
+#: .\mixins\mails.py:56
+msgid "Name"
+msgstr ""
+
+#: .\mixins\mails.py:85
+msgid "Mail Message"
+msgstr ""
+
+#: .\mixins\mails.py:86
+msgid "Mail Messages"
+msgstr ""
+
+#: .\mixins\mails.py:94
+msgid "Subject"
+msgstr ""
+
+#: .\mixins\mails.py:98
+msgid "Body"
+msgstr ""
+
+#: .\mixins\printable.py:482
+msgid "Print"
+msgstr ""
+
+#: .\mixins\printable.py:546
+#, python-format
+msgid "%s printable has been built."
+msgstr ""
+
+#: .\mixins\printable.py:548
+#, python-format
+msgid "Reused %s printable from cache."
+msgstr ""
+
+#: .\mixins\printable.py:625
+msgid "Clear cache"
+msgstr ""
+
+#: .\mixins\printable.py:652
+msgid "This will discard all changes in the generated file."
+msgstr ""
+
+#: .\mixins\printable.py:653
+msgid "Are you sure?"
+msgstr ""
+
+#: .\mixins\printable.py:675
+msgid "Build method"
+msgstr ""
+
+#: .\mixins\printable.py:684
+msgid "Template"
+msgstr ""
+
+#: .\mixins\printable.py:731
+msgid "build time"
+msgstr ""
+
+#: .\mixins\uploadable.py:42
+msgid "upload"
+msgstr ""
+
+#: .\mixins\uploadable.py:43
+msgid "uploads"
+msgstr ""
+
+#: .\mixins\uploadable.py:45
+msgid "File"
+msgstr ""
+
+#: .\mixins\uploadable.py:48
+msgid "MIME type"
+msgstr ""
+
+#: .\templates\404.html.py:3 .\templates\404.html.py:7
+#: .\templates_old\404.html.py:4 .\templates_old\404.html.py:8
+msgid "Page not found"
+msgstr ""
+
+#: .\templates\404.html.py:9
+msgid "The requested page could not be found."
+msgstr ""
+
+#: .\templates\500.html.py:3 .\templates_old\500.html.py:6
+msgid "Server error (500)"
+msgstr ""
+
+#: .\templates\500.html.py:6 .\templates_old\500.html.py:9
+msgid "Server Error <em>(500)</em>"
+msgstr ""
+
+#: .\templates\500.html.py:7
+msgid "Congratulations, you found an error in our system."
+msgstr ""
+
+#: .\templates\500.html.py:8
+msgid "We apologize for the inconvenience."
+msgstr ""
+
+#: .\templates\500.html.py:9
+msgid "If you can reproduce this message, please tell us how you did that."
+msgstr ""
+
+#: .\templates\admin_main.html.py:5
+#, python-format
+msgid "Welcome to the <b>%s</b> site."
+msgstr ""
+
+#: .\templates\admin_main.html.py:13
+msgid "You have entered the <b>admin</b> section."
+msgstr ""
+
+#: .\templates\admin_main.html.py:14
+msgid ""
+"Unlike the <a href=\"/\">web content section</a> there is now a GUI menu bar "
+"in the upper part of the screen."
+msgstr ""
+
+#: .\templates\admin_main.html.py:19
+msgid ""
+"You will now probably want to use the <b>Log in</b> button in the upper "
+"right corner and log in."
+msgstr ""
+
+#: .\templates\admin_main.html.py:21
+#, python-format
+msgid "This demo site has %d users, they all have \"1234\" as password:"
+msgstr ""
+
+#: .\templates\admin_main.html.py:27
+msgid ""
+"Your feedback is welcome to <em>lino-users@googlegroups.com</em> or directly "
+"to the person who invited you."
+msgstr ""
+
+#: .\templates_old\404.html.py:10
+msgid "We're sorry, but the requested page could not be found."
+msgstr ""
+
+#: .\templates_old\500.html.py:4
+msgid "Server error"
+msgstr ""
+
+#: .\templates_old\500.html.py:10
+msgid ""
+"There's been an error. It's been reported to the site administrators via e-"
+"mail and should be fixed shortly. Thanks for your patience."
+msgstr ""
+
+#: .\templates_old\base_site.html.py:4
+msgid "Django site admin"
+msgstr ""
+
+#: .\templates_old\base_site.html.py:7
+msgid "Django administration"
+msgstr ""
+
+#: .\ui\base.py:91 .\ui\extjs3\linolib.js.py:15
+msgid "Confirmation"
+msgstr ""
+
+#: .\ui\base.py:145
+msgid "User abandoned"
+msgstr ""
+
+#: .\ui\base.py:338
+msgid "Aborted"
+msgstr ""
+
+#: .\ui\base.py:341 .\ui\extjs3\ext_store.py:670
+msgid "Yes"
+msgstr ""
+
+#: .\ui\base.py:342 .\ui\extjs3\ext_store.py:670
+msgid "No"
+msgstr ""
+
+#: .\ui\extjs3\ext_elems.py:934 .\ui\extjs4\ext_elems.py:569
+#: .\ui\qx\qx_elems.py:555
+#, python-format
+msgid "Select a %s..."
+msgstr ""
+
+#: .\ui\extjs3\ext_elems.py:1181 .\ui\extjs3\ext_ui.py:258
+msgid "show"
+msgstr ""
+
+#: .\ui\extjs3\ext_elems.py:1795 .\ui\extjs3\ext_ui.py:2037
+msgid "No data to display."
+msgstr ""
+
+#: .\ui\extjs3\ext_store.py:106
+#, python-format
+msgid "Total (%d rows)"
+msgstr ""
+
+#: .\ui\extjs3\ext_store.py:206 .\ui\extjs4\ext_store.py:115
+#: .\ui\qx\qx_store.py:106
+#, python-format
+msgid "Existing primary key value %r may not be modified."
+msgstr ""
+
+#: .\ui\extjs3\ext_store.py:284 .\ui\extjs4\ext_store.py:388
+#: .\ui\qx\qx_store.py:370
+#, python-format
+msgid "%r (invalid choice)"
+msgstr ""
+
+#: .\ui\extjs3\ext_ui.py:206
+msgid "Show Last"
+msgstr ""
+
+#: .\ui\extjs3\ext_ui.py:208
+msgid "Show the last record in a detail window"
+msgstr ""
+
+#: .\ui\extjs3\ext_ui.py:214
+msgid "Show All"
+msgstr ""
+
+#: .\ui\extjs3\ext_ui.py:216
+msgid "Show all records in a table window"
+msgstr ""
+
+#: .\ui\extjs3\ext_ui.py:246 .\ui\extjs4\ext_ui.py:1325 .\ui\qx\qx_ui.py:1068
+msgid "Upload"
+msgstr ""
+
+#: .\ui\extjs3\ext_ui.py:250
+msgid "Upload a file from your PC to the server."
+msgstr ""
+
+#: .\ui\extjs3\ext_ui.py:262
+msgid "Open the uploaded file in a new browser window"
+msgstr ""
+
+#: .\ui\extjs3\ext_ui.py:268 .\ui\extjs4\ext_ui.py:1333 .\ui\qx\qx_ui.py:1076
+msgid "Edit"
+msgstr ""
+
+#: .\ui\extjs3\ext_ui.py:268
+msgid "Edit metadata of the uploaded file."
+msgstr ""
+
+#: .\ui\extjs3\ext_ui.py:1183
+msgid "as"
+msgstr ""
+
+#: .\ui\extjs3\ext_ui.py:1208
+msgid "My settings"
+msgstr ""
+
+#: .\ui\extjs3\ext_ui.py:1219
+msgid "Myself"
+msgstr ""
+
+#: .\ui\extjs3\ext_ui.py:1221
+msgid "Act as..."
+msgstr ""
+
+#: .\ui\extjs3\ext_ui.py:1227
+msgid "Log out"
+msgstr ""
+
+#: .\ui\extjs3\ext_ui.py:1228
+msgid "Change password"
+msgstr ""
+
+#: .\ui\extjs3\ext_ui.py:1229
+msgid "Forgot password"
+msgstr ""
+
+#: .\ui\extjs3\ext_ui.py:1245 .\ui\extjs3\linolib.js.py:30
+msgid "Log in"
+msgstr ""
+
+#: .\ui\extjs3\linolib.js.py:4
+msgid "Please wait..."
+msgstr ""
+
+#: .\ui\extjs3\linolib.js.py:5
+msgid "Show or hide the table parameters panel"
+msgstr ""
+
+#: .\ui\extjs3\linolib.js.py:6
+msgid "Action not available on phantom record."
+msgstr ""
+
+#: .\ui\extjs3\linolib.js.py:7
+msgid "Enter a date in format YYYY-MM-DD (use zeroes for unknown parts)."
+msgstr ""
+
+#: .\ui\extjs3\linolib.js.py:8
+msgid "Next"
+msgstr ""
+
+#: .\ui\extjs3\linolib.js.py:9
+msgid "Go to record"
+msgstr ""
+
+#: .\ui\extjs3\linolib.js.py:10
+msgid "Reload current record"
+msgstr ""
+
+#: .\ui\extjs3\linolib.js.py:11
+msgid "Save changes to current record ?"
+msgstr ""
+
+#: .\ui\extjs3\linolib.js.py:12
+msgid "Edit text in own window"
+msgstr ""
+
+#: .\ui\extjs3\linolib.js.py:13
+msgid "Enter a text to use as quick search filter"
+msgstr ""
+
+#: .\ui\extjs3\linolib.js.py:14
+msgid "Username"
+msgstr ""
+
+#: .\ui\extjs3\linolib.js.py:17
+msgid "Alert"
+msgstr ""
+
+#: .\ui\extjs3\linolib.js.py:19
+msgid "Cannot show detail for empty foreign key."
+msgstr ""
+
+#: .\ui\extjs3\linolib.js.py:20
+msgid "Quick Search"
+msgstr ""
+
+#: .\ui\extjs3\linolib.js.py:21
+msgid "This record is disabled"
+msgstr ""
+
+#: .\ui\extjs3\linolib.js.py:22
+msgid "Password"
+msgstr ""
+
+#: .\ui\extjs3\linolib.js.py:23
+msgid "Displaying {0} - {1} of {2}"
+msgstr ""
+
+#: .\ui\extjs3\linolib.js.py:24
+msgid "Team view"
+msgstr ""
+
+#: .\ui\extjs3\linolib.js.py:25
+msgid "Last"
+msgstr ""
+
+#: .\ui\extjs3\linolib.js.py:26
+msgid "Edit help texts for fields on this model."
+msgstr ""
+
+#: .\ui\extjs3\linolib.js.py:27
+msgid "Show this table in plain html"
+msgstr ""
+
+#: .\ui\extjs3\linolib.js.py:28
+msgid "Export this table to a .csv file"
+msgstr ""
+
+#: .\ui\extjs3\linolib.js.py:29
+msgid "of {0}"
+msgstr ""
+
+#: .\ui\extjs3\linolib.js.py:31
+msgid "Save Grid Configuration"
+msgstr ""
+
+#: .\ui\extjs3\linolib.js.py:32
+msgid "Page"
+msgstr ""
+
+#: .\ui\extjs3\linolib.js.py:33
+msgid "First"
+msgstr ""
+
+#: .\ui\extjs3\linolib.js.py:34
+msgid "Show this panel in own window"
+msgstr ""
+
+#: .\ui\extjs3\linolib.js.py:35
+msgid "This field is disabled"
+msgstr ""
+
+#: .\ui\extjs3\linolib.js.py:36
+msgid "Delete {0} rows. Are you sure?"
+msgstr ""
+
+#: .\ui\extjs3\linolib.js.py:37
+msgid "No more records to display. Detail window has been closed."
+msgstr ""
+
+#: .\ui\extjs3\linolib.js.py:39
+msgid "Show this table as a pdf document"
+msgstr ""
+
+#: .\ui\extjs3\linolib.js.py:40
+msgid "Select another view of this report"
+msgstr ""
+
+#: .\ui\extjs3\linolib.js.py:41
+msgid "Cannot show MTI child if checkbox is off."
+msgstr ""
+
+#: .\ui\extjs3\linolib.js.py:42
+msgid "View"
+msgstr ""
+
+#: .\ui\extjs3\linolib.js.py:43
+msgid "Save changes to text ?"
+msgstr ""
+
+#: .\ui\extjs3\linolib.js.py:44
+msgid "Previous"
+msgstr ""
+
+#: .\ui\extjs3\views.py:92
+#, python-format
+msgid "As %s you have no permission to run this action."
+msgstr ""
+
+#: .\ui\extjs3\views.py:134
+#, python-format
+msgid "Action \"%(action)s\" failed for %(record)s:"
+msgstr ""
+
+#: .\ui\extjs3\views.py:139
+msgid "An error report has been sent to the system administrator."
+msgstr ""
+
+#: .\ui\extjs3\views.py:142
+msgid "Oops!"
+msgstr ""
+
+#: .\ui\extjs3\views.py:266 .\ui\extjs4\ext_ui.py:229 .\ui\qx\qx_ui.py:229
+#, python-format
+msgid "Row %(rowid)d of %(rowcount)d"
+msgstr ""
+
+#: .\ui\extjs3\views.py:268
+msgid "No navigation"
+msgstr ""
+
+#: .\ui\extjs3\views.py:292 .\ui\extjs4\ext_ui.py:1015 .\ui\qx\qx_ui.py:819
+#, python-format
+msgid "Failed to delete %(record)s : %(error)s."
+msgstr ""
+
+#: .\ui\extjs3\views.py:374 .\ui\extjs4\ext_ui.py:817 .\ui\qx\qx_ui.py:622
+#, python-format
+msgid "%s has been created."
+msgstr ""
+
+#: .\ui\extjs3\views.py:378
+#, python-format
+msgid "%s has been updated."
+msgstr ""
+
+#: .\ui\extjs3\views.py:382
+#, python-format
+msgid "%s : nothing to save."
+msgstr ""
+
+#: .\ui\extjs3\views.py:977 .\ui\extjs3\views.py:1020
+#, python-format
+msgid "List contains more than %d rows"
+msgstr ""
+
+#: .\ui\extjs3\views.py:1063
+#, python-format
+msgid "Error while saving GC for %(table)s: %(error)s"
+msgstr ""
+
+#: .\ui\extjs4\ext_ui.py:704
+msgid "Console"
+msgstr ""
+
+#: .\ui\extjs4\ext_ui.py:757 .\ui\qx\qx_ui.py:563
+#, python-format
+msgid "Welcome on Lino server %(title)r, user %(user)s"
+msgstr ""
+
+#: .\ui\extjs4\ext_ui.py:819 .\ui\qx\qx_ui.py:624
+#, python-format
+msgid "%s has been saved."
+msgstr ""
+
+#: .\ui\extjs4\ext_ui.py:827 .\ui\extjs4\ext_ui.py:851 .\ui\qx\qx_ui.py:632
+#: .\ui\qx\qx_ui.py:655
+#, python-format
+msgid "User %(user)s cannot configure %(report)s."
+msgstr ""
+
+#: .\ui\extjs4\ext_ui.py:1040 .\ui\qx\qx_ui.py:844
+#, python-format
+msgid "Insert into %s..."
+msgstr ""
+
+#: .\ui\extjs4\ext_ui.py:1068 .\ui\qx\qx_ui.py:872
+#, python-format
+msgid "Action %(action)s failed for %(record)s: %(error)s"
+msgstr ""
+
+#: .\ui\extjs4\ext_ui.py:1212 .\ui\qx\qx_ui.py:958
+#, python-format
+msgid "Choices for %s"
+msgstr ""
+
+#: .\utils\auth.py:77
+msgid "User Level"
+msgstr ""
+
+#: .\utils\auth.py:78
+msgid "User Levels"
+msgstr ""
+
+#: .\utils\auth.py:93
+msgid "Guest"
+msgstr ""
+
+#: .\utils\auth.py:95
+msgid "Secretary"
+msgstr ""
+
+#: .\utils\auth.py:97
+msgid "Manager"
+msgstr ""
+
+#: .\utils\auth.py:99
+msgid "Expert"
+msgstr ""
+
+#: .\utils\auth.py:110
+msgid "User Group"
+msgstr ""
+
+#: .\utils\auth.py:111
+msgid "User Groups"
+msgstr ""
+
+#: .\utils\auth.py:218
+msgid "User Profile"
+msgstr ""
+
+#: .\utils\auth.py:219
+msgid "User Profiles"
+msgstr ""
+
+#: .\utils\babel.py:395
+msgid "Language"
+msgstr ""
+
+#: .\utils\ssin.py:188 .\utils\ssin.py:202 .\utils\ssin.py:220
+#: .\utils\ssin.py:235 .\utils\ssin.py:246
+#, python-format
+msgid "Invalid SSIN %s : "
+msgstr ""
+
+#: .\utils\ssin.py:189 .\utils\ssin.py:203
+msgid "A raw SSIN must have 11 positions"
+msgstr ""
+
+#: .\utils\ssin.py:221
+msgid "Could not recognize checkdigit"
+msgstr ""
+
+#: .\utils\ssin.py:236
+msgid "A formatted SSIN must have 13 positions"
+msgstr ""
+
+#: .\utils\ssin.py:254
+#, python-format
+msgid "Invalid SSIN %s :"
+msgstr ""
+
+#: .\utils\ssin.py:255
+#, python-format
+msgid "Check digit is %(found)d but should be %(expected)d"
+msgstr ""

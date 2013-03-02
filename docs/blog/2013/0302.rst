@@ -1,0 +1,24 @@
+20130302
+========
+
+After concluding yesterday evening that 
+:doc:`/tickets/74` is impossible to solve,
+and after some hours of sleep,
+I changed my mind again:
+
+  `settings.LINO` will become `settings.SITE`,
+  and `lino.Lino` will become `django_site.Site`.
+  Later I will move that code to a new project
+  `django-site
+  <https://code.google.com/p/django-site/>`_.
+  
+This change was quite some -rather dull- work. 
+On a Saturday.
+But I like the result.
+
+TODO:
+
+- move also dumpy and babel to django-site. 
+- change babel to do nothing if `Site.languages` is None.
+- split the docs. What will be the home url for django-site?
+- 

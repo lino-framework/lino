@@ -46,7 +46,7 @@ from django.utils.translation import ugettext_lazy as _
 
 from lino.modlib.ledger.utils import FiscalYears
 #~ from lino.core.modeltools import models_by_base
-partner_model = settings.LINO.partners_app_label + '.Partner'
+partner_model = settings.SITE.partners_app_label + '.Partner'
 
 vat = dd.resolve_app('vat')
 ledger = dd.resolve_app('ledger')
@@ -87,7 +87,7 @@ class DeclarationPeriods(dd.ChoiceList):
     
 add = DeclarationPeriods.add_item
 
-if settings.LINO.vat_quarterly:
+if settings.SITE.vat_quarterly:
   
   add('Q1',_("First Quarter (January-March)"),months=(1,2,3))
   add('Q2',_("Second Quarter (April-June)"),months=(4,5,6,))

@@ -20,7 +20,7 @@ from lino.projects.std.settings import *
 
 #~ from lino.projects.homeworkschool import __version__, __url__, __name__
 
-class Lino(Lino):
+class Site(Site):
     #~ source_dir = os.path.dirname(__file__)
     #~ title = __name__
     version = "0.0.1"
@@ -74,7 +74,7 @@ class Lino(Lino):
         #~ tb.add_action(self.modules.jobs.MyContracts)
         
     def get_installed_apps(self):
-        for a in super(Lino,self).get_installed_apps():
+        for a in super(Site,self).get_installed_apps():
             yield a
         yield 'django.contrib.contenttypes'
         yield 'lino.modlib.users'

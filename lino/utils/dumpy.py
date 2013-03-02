@@ -38,7 +38,7 @@ from django.utils.encoding import smart_unicode, is_protected_type, force_unicod
 from django.utils.importlib import import_module
 
 import lino
-from lino.core.modeltools import obj2str, sorted_models_list, full_model_name
+from django_site.modeltools import obj2str, sorted_models_list, full_model_name
 #~ from lino.utils import dblogger
 from lino.utils import babel
 from lino import dd
@@ -66,7 +66,7 @@ class Serializer(base.Serializer):
         if self.write_preamble:
             self.stream.write('# -*- coding: UTF-8 -*-\n')
             #~ self.stream.write('# Created using Lino version %s\n' % lino.__version__)
-            name,current_version,url = settings.LINO.using().next()
+            name,current_version,url = settings.SITE.using().next()
             if '+' in current_version:
                 logger.warning(
                     "Dumpdata from intermediate version %s" % current_version)
@@ -129,7 +129,8 @@ def bv2kw(fieldname,values):
             #~ fields = [f for f in model._meta.fields if f.serialize]
             #~ fields = [f for f in model._meta.local_fields if f.serialize]
             self.stream.write('def create_%s(%s):\n' % (
-                model._meta.db_table,', '.join([f.attname for f in fields if not getattr(f,'_lino_babel_field',False)])))
+                model._meta.db_table,', '.join([f.attname 
+                    for f in fields if not getattr(f,'_lino_babel_field',False)])))
             if model._meta.parents:
                 if len(model._meta.parents) != 1:
                     msg = "%s : model._meta.parents is %r" % (model,model._meta.parents)
@@ -196,10 +197,10 @@ def bv2kw(fieldname,values):
             self.stream.write('    yield %s_objects()\n' % model._meta.db_table)
         #~ self.stream.write('\nsettings.LINO.loading_from_dump = True\n')
         self.stream.write('\nsettings.LINO.install_migrations(globals())\n')
-        #~ if settings.LINO.migration_module:
+        #~ if settings.SITE.migration_module:
             #~ self.stream.write('\n')
             #~ self.stream.write('from %s import install\n' \
-                #~ % settings.LINO.migration_module)
+                #~ % settings.SITE.migration_module)
             #~ self.stream.write('install(globals())\n')
             
     def sort_models(self,unsorted):
@@ -393,7 +394,7 @@ class FakeDeserializedObject(base.DeserializedObject):
         #~ except (ValidationError,ObjectDoesNotExist,IntegrityError), e:
         except Exception, e:
             if True:
-                if not settings.LINO.loading_from_dump:
+                if not settings.SITE.loading_from_dump:
                     # hand-written fixtures are expected to yield in savable order 
                     logger.warning("Failed to save %s:" % obj2str(obj))
                     raise
@@ -541,8 +542,8 @@ class DpyDeserializer:
                 Oops, that will fail in lino_welfare if the company pointed to by 
                 SiteConfig.job_office had been deferred.
                 """
-                if settings.LINO.site_config:
-                    yield FakeDeserializedObject(self,settings.LINO.site_config)
+                if settings.SITE.site_config:
+                    yield FakeDeserializedObject(self,settings.SITE.site_config)
                 else:
                     raise Exception("""\
 Fixture %s decided to not create any object.
@@ -607,7 +608,7 @@ def install_migrations(self,globals_dict):
     Python dumps are generated with one line at the end which calls this method, 
     passing it their global namespace::
     
-      settings.LINO.install_migrations(globals())
+      settings.SITE.install_migrations(globals())
     
     A dumped fixture should always call this, even if there is no version change 
     and no migration, because this also does certain other things:

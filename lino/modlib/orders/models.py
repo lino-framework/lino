@@ -256,11 +256,11 @@ class ProductDocItem(ledger.VoucherItem,vat.QtyVatItemBase):
     discount = models.IntegerField(_("Discount"),default=0)
     
     def get_base_account(self,tt):
-        ref = settings.LINO.get_product_base_account(tt,self.product)
+        ref = settings.SITE.get_product_base_account(tt,self.product)
         return self.voucher.journal.chart.get_account_by_ref(ref)
         
     def get_vat_class(self,tt):
-        name = settings.LINO.get_product_vat_class(tt,self.product)
+        name = settings.SITE.get_product_vat_class(tt,self.product)
         return vat.VatClasses.get_by_name(name)
         
     #~ def full_clean(self,*args,**kw):

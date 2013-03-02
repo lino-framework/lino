@@ -43,11 +43,11 @@ class Command(BaseCommand):
             
         logger.info("Running %s.", self)
         from lino.ui.extjs3 import UI
-        #~ UI = settings.LINO.get_ui_class
+        #~ UI = settings.SITE.get_ui_class
         ui = UI(make_messages=True)
         #~ # install Lino urls under root location (`/`)
         #~ ui = urlpatterns = ui.get_patterns()
-        #~ settings.LINO.setup()
+        #~ settings.SITE.setup()
         ui.make_dtl_messages()
         ui.make_linolib_messages()
         

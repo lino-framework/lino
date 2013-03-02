@@ -14,8 +14,8 @@ See :mod:`lino.test_apps.nomti`
   comment, but doctest executes them.
   
   >>> from django.conf import settings
-  >>> settings.LINO.startup()
-  >>> mti = settings.LINO.modules.mti
+  >>> settings.SITE.startup()
+  >>> mti = settings.SITE.modules.mti
   >>> Person = mti.Person
   >>> Restaurant = mti.Restaurant
   >>> Place = mti.Place

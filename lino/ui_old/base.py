@@ -132,7 +132,7 @@ class UI(object):
     
     def __init__(self,prefix='',**options):
         self.pending_threads = {}
-        #~ 20120614 settings.LINO.setup(**options)
+        #~ 20120614 settings.SITE.setup(**options)
         assert isinstance(prefix,basestring)
         assert len(prefix) == 0, "no longer supported"
         assert len(options) == 0, "no longer supported"
@@ -145,16 +145,16 @@ class UI(object):
         return self.success(_("User abandoned"))
         
     #~ def build_admin_url(self,*args,**kw):
-        #~ return settings.LINO.build_admin_url(*args,**kw)
+        #~ return settings.SITE.build_admin_url(*args,**kw)
         
     #~ def media_url(self,*args,**kw):
-        #~ return settings.LINO.media_url(*args,**kw)
+        #~ return settings.SITE.media_url(*args,**kw)
         
     def unused_get_plain_urls(self):
         from lino.ui.extjs3 import views
 
         urlpatterns = []
-        rx = '^' # + settings.LINO.plain_prefix
+        rx = '^' # + settings.SITE.plain_prefix
         urlpatterns = patterns('',
             (rx+r'$', views.PlainIndex.as_view()),
             (rx+r'(?P<app_label>\w+)/(?P<actor>\w+)$', views.PlainList.as_view()),
@@ -176,7 +176,7 @@ class UI(object):
             if exists(target):
                 return
             if attr_name:
-                source = getattr(settings.LINO,attr_name)
+                source = getattr(settings.SITE,attr_name)
                 if not source:
                     raise Exception(
                       "%s does not exist and LINO.%s is not set." % (
@@ -195,17 +195,17 @@ class UI(object):
                 if symlink is not None:
                     symlink(source,target)
             
-        if not settings.LINO.extjs_base_url:
+        if not settings.SITE.extjs_base_url:
             setup_media_link('extjs','extjs_root')
-        if settings.LINO.use_bootstrap:
+        if settings.SITE.use_bootstrap:
             setup_media_link('bootstrap','bootstrap_root')
-        if settings.LINO.use_jasmine:
+        if settings.SITE.use_jasmine:
             setup_media_link('jasmine','jasmine_root')
-        if settings.LINO.use_extensible:
+        if settings.SITE.use_extensible:
             setup_media_link('extensible','extensible_root')
-        if settings.LINO.use_tinymce:
+        if settings.SITE.use_tinymce:
             setup_media_link('tinymce','tinymce_root')
-        if settings.LINO.use_eid_jslib:
+        if settings.SITE.use_eid_jslib:
             setup_media_link('eid-jslib','eid_jslib_root')
             
         setup_media_link('lino',source=join(dirname(lino.__file__),'..','media'))
@@ -233,21 +233,21 @@ class UI(object):
         #~ )
         urlpatterns = self.get_media_urls()
         
-        if settings.LINO.plain_prefix:
+        if settings.SITE.plain_prefix:
             urlpatterns += patterns('',
-              ('^'+settings.LINO.plain_prefix[1:]+"/", include(self.get_plain_urls()))
+              ('^'+settings.SITE.plain_prefix[1:]+"/", include(self.get_plain_urls()))
             )
-        if settings.LINO.django_admin_prefix:
+        if settings.SITE.django_admin_prefix:
             from django.contrib import admin
             admin.autodiscover()
             urlpatterns += patterns('',
-              ('^'+settings.LINO.django_admin_prefix[1:]+"/", include(admin.site.urls))
+              ('^'+settings.SITE.django_admin_prefix[1:]+"/", include(admin.site.urls))
             )
            
-        if settings.LINO.admin_prefix:
+        if settings.SITE.admin_prefix:
         
             urlpatterns += patterns('',
-              ('^'+settings.LINO.admin_prefix[1:]+"/", include(self.get_urls()))
+              ('^'+settings.SITE.admin_prefix[1:]+"/", include(self.get_urls()))
             )
             
             pages = resolve_app('pages')
@@ -284,7 +284,7 @@ class UI(object):
         
     def request(self,actor,**kw):
         if isinstance(actor,basestring):
-            actor = settings.LINO.modules.resolve(actor)
+            actor = settings.SITE.modules.resolve(actor)
         #~ kw.update(ui=self)
         return actor.request(self,**kw)
         

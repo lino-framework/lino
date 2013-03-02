@@ -58,9 +58,9 @@ class Renderer(AppyRenderer):
         context.update(table=self.insert_table)
         #~ from lino.extjs import ui
         #~ self.extjs_ui = ui
-        #~ self.extjs_ui = settings.LINO.ui
+        #~ self.extjs_ui = settings.SITE.ui
         #~ context.update(ui=self.extjs_ui)
-        context.update(ui=settings.LINO.ui)
+        context.update(ui=settings.SITE.ui)
         context.update(settings=settings)
         kw.update(finalizeFunction=self.finalize_func)
         AppyRenderer.__init__(self,template,context,result, **kw)

@@ -13,7 +13,7 @@
 ## along with Lino; if not, see <http://www.gnu.org/licenses/>.
 
 """
-TODO: this fixture fails if settings.LINO.project_model is 
+TODO: this fixture fails if settings.SITE.project_model is 
 empty or points to a model that has no `name` field.
 """
 
@@ -30,9 +30,9 @@ from lino.utils import i2d, Cycler
 from lino.modlib.users import models as auth
 
 def objects():
-    #~ User = settings.LINO.user_model()
-    User = resolve_model(settings.LINO.user_model)
-    Project = resolve_model(settings.LINO.project_model)
+    #~ User = settings.SITE.user_model()
+    User = resolve_model(settings.SITE.user_model)
+    Project = resolve_model(settings.SITE.project_model)
     Note = resolve_model('notes.Note')
     NoteType = resolve_model('notes.NoteType')
     
@@ -55,7 +55,7 @@ def objects():
     
     for i in range(100):
         yield Note(user=USERS.pop(),
-            date=settings.LINO.demo_date(days=i),
+            date=settings.SITE.demo_date(days=i),
             subject="Important note %d" % i,
             #~ company=COMPANIES.pop(),
             project=PROJECTS.pop(),

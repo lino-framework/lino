@@ -43,11 +43,11 @@ from lino.core import actions
 
 #~ from lino.core.perms import UserLevels
 
-#~ if settings.LINO.is_installed('users') and settings.LINO.user_model != 'users.User':
+#~ if settings.SITE.is_installed('users') and settings.SITE.user_model != 'users.User':
     #~ raise Exception("""\
 #~ You are using lino.modlib.users in your INSTALLED_APPS, 
-#~ but settings.LINO.user_model is %r (should be 'users.User').
-#~ """ % settings.LINO.user_model)
+#~ but settings.SITE.user_model is %r (should be 'users.User').
+#~ """ % settings.SITE.user_model)
 
 class User(mixins.CreatedModified):
     """
@@ -94,7 +94,7 @@ class User(mixins.CreatedModified):
     
     language = babel.LanguageField(default=models.NOT_PROVIDED)
     
-    if settings.LINO.is_installed('contacts'):
+    if settings.SITE.is_installed('contacts'):
       
         partner = models.ForeignKey('contacts.Partner',blank=True,null=True)
         
@@ -119,7 +119,7 @@ class User(mixins.CreatedModified):
         return unicode(self)
 
 
-    if settings.LINO.is_installed('contacts'):
+    if settings.SITE.is_installed('contacts'):
         def get_person(self):
             if self.partner:
                 return self.partner.get_mti_child('person')
@@ -155,7 +155,7 @@ class User(mixins.CreatedModified):
         else:
             l = []
         #~ if self.profile:
-            #~ l += settings.LINO.user_profile_fields
+            #~ l += settings.SITE.user_profile_fields
         return l
         
     def full_clean(self,*args,**kw):
@@ -296,8 +296,8 @@ class MySettings(Users):
 class UsersOverview(Users):
     """
     >> from django.conf import settings
-    >> settings.LINO.startup()
-    >> print settings.LINO.modules.users.UsersOverview.to_rst()
+    >> settings.SITE.startup()
+    >> print settings.SITE.modules.users.UsersOverview.to_rst()
     
     
     $ python manage.py shell
@@ -307,7 +307,7 @@ class UsersOverview(Users):
     column_names = 'username profile language'
     exclude = dict(profile='')
 
-if settings.LINO.user_model:
+if settings.SITE.user_model:
   
     class Authority(mixins.UserAuthored):
         """
@@ -324,7 +324,7 @@ if settings.LINO.user_model:
             
         #~ quick_search_fields = ('user__username','user__first_name','user__last_name')
         
-        authorized = models.ForeignKey(settings.LINO.user_model,
+        authorized = models.ForeignKey(settings.SITE.user_model,
             help_text=_("""\
 The user who gets authority to act in your name."""))
 
@@ -332,7 +332,7 @@ The user who gets authority to act in your name."""))
 
         @dd.chooser()
         def authorized_choices(cls,user):
-            qs = settings.LINO.user_model.objects.exclude(
+            qs = settings.SITE.user_model.objects.exclude(
                 profile=None)
                 #~ profile=dd.UserProfiles.blank_item) 20120829
             if user is not None:

@@ -76,7 +76,7 @@ def test01(self):
         addr2=u'Vana-Vigala küla',
         city=vigala,zip_code='78003')
         
-    settings.LINO.uppercase_last_name = True
+    settings.SITE.uppercase_last_name = True
     
     if 'en' in babel.AVAILABLE_LANGUAGES:
         babel.set_language('en')
@@ -101,20 +101,20 @@ Estland''')
 def test02(self):
     """
     """
-    u = create_and_get(settings.LINO.user_model,
+    u = create_and_get(settings.SITE.user_model,
         username='root',language='')
     #~ lang = u.language
     #~ print 20120729, repr(u.language)
     
-    #~ settings.LINO.never_build_site_cache = True
+    #~ settings.SITE.never_build_site_cache = True
     
     """
     disable LINO.is_imported_partner() otherwise 
     disabled_fields may contain more than just the 'id' field.
     """
-    save_iip = settings.LINO.is_imported_partner
+    save_iip = settings.SITE.is_imported_partner
     def f(obj): return False
-    settings.LINO.is_imported_partner = f
+    settings.SITE.is_imported_partner = f
     
     
     luc = Person.objects.get(name__exact="Saffre Luc")
@@ -152,4 +152,4 @@ def test02(self):
     #~ u.language = lang
     #~ u.save()
     # restore is_imported_partner method
-    settings.LINO.is_imported_partner = save_iip
+    settings.SITE.is_imported_partner = save_iip

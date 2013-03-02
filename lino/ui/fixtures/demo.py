@@ -47,7 +47,7 @@ def root_user(lang,**kw):
     return kw
 
 def objects():
-    User = settings.LINO.user_model
+    User = settings.SITE.user_model
     if User is not None:
         for lang in babel.AVAILABLE_LANGUAGES:
             kw = root_user(lang)

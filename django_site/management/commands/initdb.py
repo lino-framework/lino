@@ -53,7 +53,7 @@ from django.db import models
 
 
 import lino
-from lino.core.modeltools import app_labels
+from django_site.modeltools import app_labels
 from lino.utils import confirm
 
 USE_SQLDELETE = True
@@ -88,7 +88,7 @@ class Command(BaseCommand):
             
         #~ if not dblogger.logger.isEnabledFor(logging.INFO):
             #~ raise CommandError("System logger must be enabled for INFO")
-        #~ dblogger.info(settings.LINO.welcome_text())
+        #~ dblogger.info(settings.SITE.welcome_text())
         #~ dblogger.info("FIXTURE_DIRS is %s",settings.FIXTURE_DIRS)
         using = options.get('database', DEFAULT_DB_ALIAS)
         dbname = settings.DATABASES[using]['NAME']
@@ -166,7 +166,7 @@ class Command(BaseCommand):
                     #~ pass
             #~ models.signals.post_syncdb = NullSignal()
             
-        settings.LINO._site_config = None # clear cached instance
+        settings.SITE._site_config = None # clear cached instance
         
         call_command('syncdb',load_initial_data=False,**options)
         

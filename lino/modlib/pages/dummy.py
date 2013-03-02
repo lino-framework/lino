@@ -45,7 +45,7 @@ from lino.utils.restify import doc2rst
 
 #~ from lino import dd
 
-#~ appname,version,url = settings.LINO.using().next()
+#~ appname,version,url = settings.SITE.using().next()
 
 DUMMY_PAGES = {}
 
@@ -80,10 +80,10 @@ def render_node(request,node,template_name='node.html',**context):
     heading = babel.babelattr(node,'title','')
     if heading:
         context.update(heading=heading)
-        context.update(title=heading + ' &middot; ' + settings.LINO.title)
+        context.update(title=heading + ' &middot; ' + settings.SITE.title)
     else:
-        context.update(heading=settings.LINO.title)
-        context.update(title=settings.LINO.title)
+        context.update(heading=settings.SITE.title)
+        context.update(title=settings.SITE.title)
     body=babel.babelattr(node,'body','')
     if not node.raw_html:
         body = restify(doc2rst(body))
@@ -95,7 +95,7 @@ def render_node(request,node,template_name='node.html',**context):
 def get_all_pages():
     return DUMMY_PAGES.values()
 
-if not settings.LINO.is_installed('pages'):
+if not settings.SITE.is_installed('pages'):
     # fill DUMMY_PAGES at import by running the std fixture
     from lino.modlib.pages.fixtures import std
     for o in std.objects():

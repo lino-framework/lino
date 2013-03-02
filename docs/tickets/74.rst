@@ -1,5 +1,5 @@
-#74 [wontfix] : A better name than ``settings.LINO``
-====================================================
+#74 : A better name than ``settings.LINO``
+==========================================
 
 Technically Lino is almost ready to have it's 
 "kernel" or "essential part" split out into a 
@@ -90,9 +90,13 @@ They are perfectionists, but they have deadlines.
 We have to live with it.
 
 
+
 Potential alternatives
 ----------------------
 
+- ``settings.ENV``
+  because one could call it the "environment".
+  
 - `settings.MAIN` or `settings.MASTER`
   and `MasterApp` or `MainApp` or `RootApp`,     
   introducing the concept of a "master app" (or "main app" or "root app").
@@ -111,24 +115,76 @@ Potential alternatives
   But it has nothing to do with Python's `__metaclass__` 
   not Django's `_meta` attribute.
 
+- ``settings.SITE`` and `Site`? Tilt!
   
-Conclusion
-----------
 
-None of the alternatives looks promising, so we stick with the current 
-name `LINO`.
+The `LINO` setting describes a Lino site
+----------------------------------------
 
-A subclass of :class:`lino.Lino` defines a Lino application, 
-which is not the same as a Django app.
+Another meaningful name is "site".
+The two lines of the above :xfile:`settings.py` file would then be::
 
-A Lino application is usually meant to work for a given 
-set of Django apps. Each Lino application defines 
+  from lino.projects.cosi.settings import *
+  SITE = Site()
+  
+Note that I even have been using this name in the beginning for 
+this concept.
+I dropped this name because it 
+clashes with Django's "sites" framework
+which defines two settings SITE_ID and a "Site" model.
+
+After reading once more the official documentation about 
+`the sites framework
+<https://docs.djangoproject.com/en/dev/ref/contrib/sites/>`__
+and `Chapter 16 of the Django Book
+<http://www.djangobook.com/en/2.0/chapter16.html>`__,
+I dare now to say: 
+
+  The kernel of Lino replaces ``django.contrib.sites``.
+
+Hence I should maybe call the kernel split code project
+"django-site" 
+
+Note that the clash is only "conceptual", not "technical":
+using `django-site` is technically possible on projects 
+which also use `django.contrib.sites`.
+
+On a new project you would rather say something like::
+
+  dd.inject_field("ui.SiteConfig","domain",
+      models.CharField(_('domain name'), max_length=100)
+  
+A :class:`django_site.Site` instance
+describes and represents the software 
+application running on a given Site.
+Where "application" is as in 
+`Software application 
+<http://en.wikipedia.org/wiki/Software_application>`_,
+not what Django calls an "app".
+
+Provides a `Site` class designed to 
+be subclassed and instantiated as `settings.SITE`.
+The base class provides a `start` method
+which runs after Django has populated it's model cache.
+This method analyzes the installed apps and
+emits different "site started" signals.
+
+A Site is usually meant to work for a given set of Django apps. 
+Each Lino application defines 
 its :setting:`INSTALLED_APPS` setting.
 
-A Lino application it not always a Django "app":
-it can be only a settings file (e.g. :mod:`lino.projects.min1`).
+A Site usually also defines a Django app, but not always:
+it can consist of just a settings file (e.g. :mod:`lino.projects.min1`).
 
-We cannot split Lino's core functionality into a separate module
-as long as we cannot find another name 
-than ``LINO`` for the setting used to store the application instance.
+Google didn't let me create a project "django-start",
+I guess because of "django-startup"
+
+Name: django-start
+Summary: An extensible replacement for `django.contrib.sites`
+Description: 
+  Emits a "site started" signal after Django has populated it's model cache.
+  Defines a `Site` class to be subclassed and instantiated in `settings.SITE`.
+
+
+
 

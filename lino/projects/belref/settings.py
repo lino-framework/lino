@@ -12,9 +12,7 @@
 ## You should have received a copy of the GNU General Public License
 ## along with Lino; if not, see <http://www.gnu.org/licenses/>.
 
-# Django settings file. Don't add anything here, the real stuff is in `__init__.py`.
-      
 from lino.projects.belref import *
 
-LINO = Lino(__file__,globals()) 
+SITE = Site(__file__,globals()) 
 

@@ -45,7 +45,7 @@ SUBDIR_NAME = 'templates_jinja'
     
 def site_setup(sender,**kw):
     """
-    Adds a global `jinja_env` attribute to `settings.LINO`.
+    Adds a global `jinja_env` attribute to `settings.SITE`.
     This is being called from :func:`lino.models.post_analyze`.
     
     Lino has an automatic and currently not configurable method 
@@ -86,9 +86,9 @@ def site_setup(sender,**kw):
 
 
     def as_table(action_spec):
-        a = settings.LINO.modules.resolve(action_spec)
+        a = settings.SITE.modules.resolve(action_spec)
         ar = a.request(user=auth.AnonymousUser.instance())
-        ar.renderer = settings.LINO.ui.plain_renderer
+        ar.renderer = settings.SITE.ui.plain_renderer
         
         t = xghtml.Table()
         #~ t = doc.add_table()
@@ -99,15 +99,15 @@ def site_setup(sender,**kw):
         #~ return E.tostring(E.ul(*[E.li(ar.summary_row(obj)) for obj in ar]),method="html")
           
     def as_ul(action_spec):
-        a = settings.LINO.modules.resolve(action_spec)
+        a = settings.SITE.modules.resolve(action_spec)
         ar = a.request(user=auth.AnonymousUser.instance())
-        ar.renderer = settings.LINO.ui.plain_renderer
+        ar.renderer = settings.SITE.ui.plain_renderer
         return E.tostring(E.ul(*[obj.as_list_item(ar) for obj in ar]))
 
     self.jinja_env.globals.update(
             settings=settings,
-            # LINO=settings.LINO,
-            #~ ui=settings.LINO.ui,
+            # LINO=settings.SITE,
+            #~ ui=settings.SITE.ui,
             site=self,
             dtos=babel.dtos,
             dtosl=babel.dtosl,
@@ -127,7 +127,7 @@ def extend_context(context):
     def parse(s):
         #~ print 20121221, s
         #~ return Template(s).render(**context)
-        return settings.LINO.jinja_env.from_string(s).render(**context)
+        return settings.SITE.jinja_env.from_string(s).render(**context)
     context.update(
         now=datetime.datetime.now(),
         parse=parse,
@@ -137,7 +137,7 @@ def extend_context(context):
 def render_from_request(request,template_name,**context):
     extend_context(context)
     context.update(request=request)
-    template = settings.LINO.jinja_env.get_template(template_name)
+    template = settings.SITE.jinja_env.get_template(template_name)
     return template.render(**context)
 
 
@@ -170,7 +170,7 @@ class Loader(BaseLoader):
     def load_template(self, template_name, template_dirs=None):
         #~ source, origin = self.load_template_source(template_name, template_dirs)
         try:
-            jt = settings.LINO.jinja_env.get_template(template_name)
+            jt = settings.SITE.jinja_env.get_template(template_name)
         except TemplateNotFound as e:
             raise TemplateDoesNotExist(template_name)
         template = DjangoJinjaTemplate(jt)

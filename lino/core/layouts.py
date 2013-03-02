@@ -608,7 +608,7 @@ add_tabpanel() on %s horizontal 'main' panel %r."""
         return "%s on %s" % (self.__class__.__name__,self._datasource)
         
     def get_choices_url(self,ui,field,**kw):
-        return settings.LINO.build_admin_url("choices",
+        return settings.SITE.build_admin_url("choices",
           self._datasource.app_label,
           self._datasource.__name__,
           field.name,**kw)
@@ -655,7 +655,7 @@ class ActionParamsLayout(ParamsLayout):
     url_param_name = constants.URL_PARAM_FIELD_VALUES
     
     def get_choices_url(self,ui,field,**kw):
-        return settings.LINO.build_admin_url("apchoices",
+        return settings.SITE.build_admin_url("apchoices",
           self._datasource.defining_actor.app_label,
           self._datasource.defining_actor.__name__,
           self._datasource.action_name,
@@ -666,7 +666,7 @@ class ActionParamsLayout(ParamsLayout):
         """
         """
         a = self._datasource
-        return settings.LINO.build_admin_url("apchoices",
+        return settings.SITE.build_admin_url("apchoices",
           field.rel.to._meta.app_label,
           field.rel.to.__name__,
           #~ 'oops', # todo: instantiate ActionParamsLayout per BoundAction (not per Action)?

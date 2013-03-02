@@ -19,7 +19,7 @@ whose value is rendered according to the current language.
 Usage:
 
 >>> from django.conf import settings
->>> settings.LINO.startup()
+>>> settings.SITE.startup()
 
 One thing to avoid doctest side-effects is not necessary in your code:
 
@@ -39,7 +39,7 @@ lino.UserGroups : User Groups
 lino.UserLevels : User Levels
 lino.UserProfiles : User Profiles
 
->>> Genders = settings.LINO.modules.lino.Genders
+>>> Genders = settings.SITE.modules.lino.Genders
 >>> for bc,text in Genders.choices:
 ...     print "%s : %s" % (bc.value, unicode(text))
 M : Male
@@ -219,7 +219,7 @@ class ChoiceListMeta(actors.ActorMetaClass):
         #~ for i in cls.items:
             #~ cls.add_item(i)
         if classname not in ('ChoiceList','Workflow'):
-            #~ if settings.LINO.is_installed(cls.app_label):
+            #~ if settings.SITE.is_installed(cls.app_label):
             register_choicelist(cls)
         return cls
   
