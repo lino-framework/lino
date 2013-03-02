@@ -8,15 +8,18 @@ I changed my mind again:
 
   `settings.LINO` will become `settings.SITE`,
   and `lino.Lino` will become `django_site.Site`.
-  Later I will move that code to a new project
-  `django-site
-  <https://code.google.com/p/django-site/>`_.
   
-If you look at the diff (:checkin`ec7ed8317862`)
+If you look at the diff (:checkin:`ec7ed8317862`)
 you'll agree that this was quite some work for a Saturday.
-And the only nothing visible difference is a new mention "DjangoSite 0.0.1" 
+
+And I even moved that code to a new project `django-site
+<https://code.google.com/p/django-site/>`_.
+  
+And the only visible difference is a new mention "django-site 0.0.1" 
 in the using string.
-But I really like the result.
+
+But I'm really glad I did it!
+
 
 TODO:
 

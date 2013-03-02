@@ -19,10 +19,3 @@ show
     :members:
     :show-inheritance:
 
-make_staff
-----------
-
-.. automodule:: lino.management.commands.make_staff
-    :members:
-    :show-inheritance:
-

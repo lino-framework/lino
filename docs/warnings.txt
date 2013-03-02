@@ -2,14 +2,15 @@ T:\hgwork\lino\docs\autodoc\lino.management.rst:25: WARNING: autodoc can't impor
 T:\hgwork\lino\docs\autodoc\lino.models.rst:5: WARNING: autodoc can't import/find module 'lino.models', it reported error: "No module named models", please check your spelling and sys.path
 T:\hgwork\lino\docs\autodoc\lino.modlib.countries.rst:31: WARNING: autodoc can't import/find module 'lino.modlib.countries.fixtures.ee', it reported error: "resolve_model('countries.City',app_label=u'countries') found None (settings lino.projects.sphinxdocs.settings)", please check your spelling and sys.path
 T:\hgwork\lino\docs\autodoc\lino.modlib.links.rst:12: WARNING: autodoc can't import/find module 'lino.modlib.links.models', it reported error: "cannot import name obj2str", please check your spelling and sys.path
-T:\hgwork\lino\docs\autodoc\lino.modlib.pages.rst:13: WARNING: autodoc can't import/find module 'lino.modlib.pages.models', it reported error: "cannot import name boot", please check your spelling and sys.path
-T:\hgwork\lino\docs\autodoc\lino.modlib.pages.rst:21: WARNING: autodoc can't import/find module 'lino.modlib.pages.fixtures.intro', it reported error: "cannot import name boot", please check your spelling and sys.path
 t:\hgwork\lino\lino\modlib\partners\models.py:docstring of lino.modlib.partners.models.PartnerDocument.summary_row:1: ERROR: Unknown interpreted text role "modmeth".
 T:\hgwork\lino\docs\autodoc\lino.modlib.partners.rst:28: WARNING: autodoc can't import/find module 'lino.modlib.partners.tests', it reported error: "resolve_model(UnresolvedModel(contacts.Person,contacts),app_label=None) found UnresolvedModel(contacts.Person,contacts) (settings lino.projects.sphinxdocs.settings)", please check your spelling and sys.path
 T:\hgwork\lino\docs\autodoc\lino.projects.cms.rst:5: WARNING: autodoc can't import/find module 'lino.projects.cms', it reported error: "name 'Lino' is not defined", please check your spelling and sys.path
 T:\hgwork\lino\docs\autodoc\lino.projects.cms.rst:13: WARNING: autodoc can't import/find module 'lino.projects.cms.models', it reported error: "name 'Lino' is not defined", please check your spelling and sys.path
-T:\hgwork\lino\docs\autodoc\lino.ui.rst:41: WARNING: autodoc can't import/find module 'lino.ui.ui', it reported error: "cannot import name boot", please check your spelling and sys.path
-T:\hgwork\lino\docs\autodoc\lino.ui.rst:73: WARNING: autodoc can't import/find module 'lino.ui.views', it reported error: "cannot import name boot", please check your spelling and sys.path
+T:\hgwork\lino\docs\autodoc\lino.projects.min2.rst:1: SEVERE: Title overline & underline mismatch.
+
+=================================
+:mod:`lino.projects.min2`
+=====================================
 T:\hgwork\lino\docs\reviews\index.rst:4: WARNING: toctree contains reference to nonexisting document u'reviews/ :maxdepth: 1'
 T:\hgwork\lino\docs\admin\which_lino.rst:: WARNING: document isn't included in any toctree
 T:\hgwork\lino\docs\casts\lino_intro.rst:: WARNING: document isn't included in any toctree
@@ -42,8 +43,7 @@ T:\hgwork\lino\docs\autodoc\lino.modlib.countries.rst:18: WARNING: py:class refe
 T:\hgwork\lino\docs\autodoc\lino.modlib.countries.rst:45: WARNING: py:class reference target not found: countries.Country
 T:\hgwork\lino\docs\autodoc\lino.modlib.countries.rst:7: WARNING: py:mod reference target not found: few_cities
 T:\hgwork\lino\docs\autodoc\lino.modlib.countries.rst:21: WARNING: py:mod reference target not found: lino.modlib.cbss.fixtures.inscodes
-T:\hgwork\lino\docs\autodoc\lino.modlib.pages.rst:10: WARNING: py:mod reference target not found: lino.modlib.pages.models
-T:\hgwork\lino\docs\autodoc\lino.modlib.pages.rst:18: WARNING: py:mod reference target not found: lino.modlib.pages.fixtures.intro
+T:\hgwork\lino\docs\autodoc\lino.modlib.ledger.rst:13: WARNING: py:meth reference target not found: lino.Lino.setup_choicelists
 T:\hgwork\lino\docs\autodoc\lino.modlib.partners.rst:7: WARNING: py:class reference target not found: RoleType
 T:\hgwork\lino\docs\autodoc\lino.modlib.partners.rst:35: WARNING: py:class reference target not found: lino.modlib.partners.models.ConcretePartner
 T:\hgwork\lino\docs\autodoc\lino.modlib.partners.rst:35: WARNING: py:class reference target not found: lino.modlib.partners.models.Addressable
@@ -53,14 +53,8 @@ T:\hgwork\lino\docs\autodoc\lino.modlib.partners.rst:35: WARNING: py:class refer
 T:\hgwork\lino\docs\autodoc\lino.projects.cms.rst:2: WARNING: py:mod reference target not found: lino.projects.cms
 T:\hgwork\lino\docs\autodoc\lino.ui.rst:50: WARNING: py:class reference target not found: lino.modlib.countries.models.Cities
 t:\hgwork\lino\lino\ui\__init__.py:docstring of lino.ui.Site.build_js_cache_on_startup:8: WARNING: py:func reference target not found: lino.core.modeltools.is_devserver
-t:\hgwork\lino\lino\ui\__init__.py:docstring of lino.ui.Site.cbss_environment:1: WARNING: py:mod reference target not found: lino.modlib.cbss.models
 t:\hgwork\lino\lino\ui\__init__.py:docstring of lino.ui.Site.date_format_extjs:1: WARNING: py:meth reference target not found: parse_date
 t:\hgwork\lino\lino\ui\__init__.py:docstring of lino.ui.Site.django_admin_prefix:1: WARNING: unknown document: /ticket/70
-t:\hgwork\lino\lino\ui\__init__.py:docstring of lino.ui.Site.get_partner_account:1: WARNING: py:mod reference target not found: lino.modlib.accounts.fixtures.mini
-t:\hgwork\lino\lino\ui\__init__.py:docstring of lino.ui.Site.get_product_base_account:1: WARNING: py:mod reference target not found: lino.modlib.accounts.fixtures.mini
-t:\hgwork\lino\lino\ui\__init__.py:docstring of lino.ui.Site.get_vat_account:1: WARNING: py:class reference target not found: TradeType
-t:\hgwork\lino\lino\ui\__init__.py:docstring of lino.ui.Site.get_vat_account:1: WARNING: py:class reference target not found: VatClass
-t:\hgwork\lino\lino\ui\__init__.py:docstring of lino.ui.Site.get_vat_account:1: WARNING: py:class reference target not found: VatRegime
 t:\hgwork\lino\lino\ui\__init__.py:docstring of lino.ui.Site.is_local_project_dir:1: WARNING: xfile reference target not found: models.py
 t:\hgwork\lino\lino\ui\__init__.py:docstring of lino.ui.Site.max_auto_events:1: WARNING: py:class reference target not found: lino.modlib.cal.models.EventOwner
 t:\hgwork\lino\lino\ui\__init__.py:docstring of lino.ui.Site.never_build_site_cache:1: WARNING: xfile reference target not found: lino*.js
@@ -68,7 +62,6 @@ t:\hgwork\lino\lino\ui\__init__.py:docstring of lino.ui.Site.setup_quicklinks:1:
 t:\hgwork\lino\lino\ui\__init__.py:docstring of lino.ui.Site.site_config:1: WARNING: py:class reference target not found: lino.models.SiteConfig
 t:\hgwork\lino\lino\ui\__init__.py:docstring of lino.ui.Site.site_config_defaults:1: WARNING: py:class reference target not found: lino.models.SiteConfig
 t:\hgwork\lino\lino\ui\__init__.py:docstring of lino.ui.Site.time_format_extjs:1: WARNING: py:meth reference target not found: parse_time
-t:\hgwork\lino\lino\ui\__init__.py:docstring of lino.ui.Site.unused_update_site_config:1: WARNING: py:class reference target not found: lino.models.SiteConfig
 t:\hgwork\lino\lino\ui\__init__.py:docstring of lino.ui.Site.use_css_tooltips:1: WARNING: py:class reference target not found: lino.models.HelpText
 t:\hgwork\lino\lino\ui\__init__.py:docstring of lino.ui.Site.use_eid_applet:1: WARNING: unknown document: /blog/2012/1105
 t:\hgwork\lino\lino\ui\__init__.py:docstring of lino.ui.Site.use_filterRow:1: WARNING: unknown document: /blog/2011/0630
@@ -81,7 +74,8 @@ t:\hgwork\lino\lino\ui\__init__.py:docstring of lino.ui.Site.webdav_url:7: WARNI
 T:\hgwork\lino\docs\autodoc\lino.ui.rst:16: WARNING: py:class reference target not found: About
 T:\hgwork\lino\docs\autodoc\lino.ui.rst:76: WARNING: py:class reference target not found: ContentType
 t:\hgwork\lino\lino\ui\models.py:docstring of lino.ui.models.SiteConfigs:1: WARNING: py:meth reference target not found: lino.Lino.get_site_config
-T:\hgwork\lino\docs\autodoc\lino.ui.rst:38: WARNING: py:mod reference target not found: lino.ui.ui
+T:\hgwork\lino\docs\autodoc\lino.ui.rst:19: WARNING: py:attr reference target not found: ACTION_RESPONSES
+T:\hgwork\lino\docs\autodoc\lino.ui.rst:69: WARNING: py:meth reference target not found: ExtRenderer.row_action_button
 T:\hgwork\lino\docs\autodoc\lino.ui.rst:20: WARNING: py:class reference target not found: object
 T:\hgwork\lino\docs\autodoc\lino.ui.rst:48: WARNING: py:class reference target not found: object
 T:\hgwork\lino\docs\autodoc\lino.ui.rst:63: WARNING: py:class reference target not found: object
@@ -97,4 +91,24 @@ t:\hgwork\lino\lino\ui\store.py:docstring of lino.ui.store.MethodStoreField:1: W
 <autodoc>:1: WARNING: py:class reference target not found: object
 <autodoc>:1: WARNING: py:class reference target not found: object
 t:\hgwork\lino\lino\ui\store.py:docstring of lino.ui.store.StoreField.list_values_count:1: WARNING: py:attr reference target not found: Store.pk_index
-T:\hgwork\lino\docs\autodoc\lino.ui.rst:70: WARNING: py:mod reference target not found: lino.ui.views
+T:\hgwork\lino\docs\autodoc\lino.ui.rst:11: WARNING: py:class reference target not found: django.views.generic.base.View
+T:\hgwork\lino\docs\autodoc\lino.ui.rst:21: WARNING: py:class reference target not found: django.views.generic.base.View
+T:\hgwork\lino\docs\autodoc\lino.ui.rst:33: WARNING: py:class reference target not found: django.views.generic.base.View
+T:\hgwork\lino\docs\autodoc\lino.ui.rst:62: WARNING: py:class reference target not found: django.views.generic.base.View
+<autodoc>:1: WARNING: py:class reference target not found: django.views.generic.base.View
+<autodoc>:1: WARNING: py:class reference target not found: django.views.generic.base.View
+<autodoc>:1: WARNING: py:class reference target not found: django.views.generic.base.View
+<autodoc>:1: WARNING: py:class reference target not found: django.views.generic.base.View
+<autodoc>:1: WARNING: py:class reference target not found: django.views.generic.base.View
+<autodoc>:1: WARNING: py:class reference target not found: django.http.HttpResponse
+<autodoc>:1: WARNING: py:class reference target not found: django.views.generic.base.View
+<autodoc>:1: WARNING: py:class reference target not found: django.views.generic.base.View
+<autodoc>:1: WARNING: py:class reference target not found: django.views.generic.base.View
+<autodoc>:1: WARNING: py:class reference target not found: django.views.generic.base.View
+<autodoc>:1: WARNING: py:class reference target not found: django.views.generic.base.View
+<autodoc>:1: WARNING: py:class reference target not found: django.views.generic.base.View
+<autodoc>:1: WARNING: py:class reference target not found: django.views.generic.base.View
+t:\hgwork\lino\lino\ui\views.py:docstring of lino.ui.views.elem2rec_detailed:3: WARNING: unknown document: /blog/2010/0716
+t:\hgwork\lino\lino\ui\views.py:docstring of lino.ui.views.elem2rec_detailed:3: WARNING: unknown document: /blog/2010/0721
+t:\hgwork\lino\lino\ui\views.py:docstring of lino.ui.views.elem2rec_detailed:3: WARNING: unknown document: /blog/2010/1116
+t:\hgwork\lino\lino\ui\views.py:docstring of lino.ui.views.elem2rec_detailed:3: WARNING: unknown document: /blog/2010/1207
