@@ -16,6 +16,7 @@ we recommend to read
 `Part 1 of the Django tutorial
 <https://docs.djangoproject.com/en/1.4/intro/tutorial01/>`_,
 which applies entirely for a Lino project.
+
 The Django documentation is good,
 and it introduces some important notions about
 Creating a project,

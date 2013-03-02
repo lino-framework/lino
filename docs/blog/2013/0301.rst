@@ -132,3 +132,10 @@ Wir kennen uns noch nicht persönlich, aber ich freue mich,
 dass jetzt ein Ecolo-Geist mitredet.
 
   
+  
+New naming ideas 
+----------------
+
+Continued to think on :doc:`/tickets/74`.
+
+

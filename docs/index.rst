@@ -15,10 +15,7 @@ Welcome to the Project homepage of Lino the Framework.
 - Stay connected by subscribing to the official 
   `Lino Blog <http://blog.lino-framework.org/>`_
 
-- Read our :doc:`/community/index` page and consider 
-  lending a helping hand.
-
-- See Luc's detailed :doc:`Developer Blog <blog/2013/index>` 
+- See Luc's :doc:`Developer Blog <blog/2013/index>` 
   to get the hottest news about what's going on here. 
 
 - The final truth about what's going on is only 
@@ -38,15 +35,14 @@ Related projects:
    :hidden:
 
    about/index
-   community/index
+   demos
+   tutorials/index
    blog/index
    releases/index
-   tutorials/index
    todo
    tickets/index
    admin/index
    topics/index
    ref/index
    autodoc/index
-   demos
 

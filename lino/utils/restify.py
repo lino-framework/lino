@@ -174,27 +174,30 @@ except ImportError: # sphinx 0.6.6 didn't have this
           return True, match.group(1), match.group(2)
       return False, text, text
 
+def install_sphinx_emu():
+    """
+    install some roles to emulate sphinx.
+    """
+    def mod_role(role, rawtext, text, lineno, inliner,options={}, content=[]):
+        has_explicit_title, title, target = split_explicit_title(text)                   
+        ref = 'http://not_implemented/'  + target
+        return [nodes.reference(rawtext, utils.unescape(title), refuri=ref,
+            **options)], []
+    roles.register_local_role('mod', mod_role)
 
-def mod_role(role, rawtext, text, lineno, inliner,options={}, content=[]):
-    has_explicit_title, title, target = split_explicit_title(text)                   
-    ref = 'http://not_implemented/'  + target
-    return [nodes.reference(rawtext, utils.unescape(title), refuri=ref,
-        **options)], []
-roles.register_local_role('mod', mod_role)
+    def class_role(role, rawtext, text, lineno, inliner,options={}, content=[]):
+        has_explicit_title, title, target = split_explicit_title(text)                   
+        ref = 'http://not_implemented/'  + target
+        return [nodes.reference(rawtext, utils.unescape(title), refuri=ref,
+            **options)], []
+    roles.register_local_role('class', class_role)
 
-def class_role(role, rawtext, text, lineno, inliner,options={}, content=[]):
-    has_explicit_title, title, target = split_explicit_title(text)                   
-    ref = 'http://not_implemented/'  + target
-    return [nodes.reference(rawtext, utils.unescape(title), refuri=ref,
-        **options)], []
-roles.register_local_role('class', class_role)
-
-def srcref_role(role, rawtext, text, lineno, inliner,options={}, content=[]):
-    has_explicit_title, title, target = split_explicit_title(text)                   
-    ref = 'http://not_implemented/'  + target
-    return [nodes.reference(rawtext, utils.unescape(title), refuri=ref,
-        **options)], []
-roles.register_local_role('srcref', srcref_role)
+    def srcref_role(role, rawtext, text, lineno, inliner,options={}, content=[]):
+        has_explicit_title, title, target = split_explicit_title(text)                   
+        ref = 'http://not_implemented/'  + target
+        return [nodes.reference(rawtext, utils.unescape(title), refuri=ref,
+            **options)], []
+    roles.register_local_role('srcref', srcref_role)
 
 #~ import sphinx
 #~ print sphinx.__file__

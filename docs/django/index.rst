@@ -5,7 +5,7 @@ Lino and Django
    :maxdepth: 2
    
    DjangoPatches
-   DjangoPitfalls
+
    
    
 

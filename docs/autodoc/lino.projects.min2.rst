@@ -6,10 +6,10 @@
     :members:
     :show-inheritance:
 
-models
-------
+settings
+--------
 
-.. automodule:: lino.projects.min2.models
+.. automodule:: lino.projects.min2.settings
     :members:
     :show-inheritance:
 

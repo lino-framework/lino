@@ -28,6 +28,7 @@ class Lino(Lino):
     #~ project_model = 'contacts.Person'
     #~ project_model = 'contacts.Person'
     #~ project_model = None
+    user_model = 'users.User'
     #~ user_model = None
     
     default_user = 'root'
@@ -53,7 +54,7 @@ class Lino(Lino):
         yield 'lino.modlib.users'
         yield 'lino.modlib.countries'
         yield 'lino.modlib.contacts'
-        yield 'lino.projects.min1'
+        #~ yield 'lino.projects.min1'
       
 LINO = Lino(__file__,globals())
 

@@ -1,30 +1,25 @@
-#74 : Move the kernel out of Lino
-=================================
+#74 [wontfix] : A better name than ``settings.LINO``
+====================================================
 
-Technically Lino is almost ready to have it's "kernel" or "essential part" 
-split out into a separate code project, 
-but I am lacking the name of the child.
+Technically Lino is almost ready to have it's 
+"kernel" or "essential part" split out into a 
+separate code project, but I am lacking a proper name for it.
 
+The name for the new project may be `django-startup`.
 
-`django-startup` or `lino-basic`?
-----------------------------------
+But before I can actually start to split it off
+I'd need to find a new name for ``settings.LINO``.
 
-Seems that the project name may be 
-`django-startup` (on Google code) 
-and `django_startup` on PyPI.
+Currently a Django project becomes a "Lino application" 
+by the following two lines in its :xfile:`settings.py` file::
 
-- Project: django-startup
-- Summary: Running code after Django has populated it's model cache
-- Description: A new name for the essential part of Lino.
+  from lino.projects.cosi.settings import *
+  LINO = Lino()
 
-But still I need to find a new name for ``settings.LINO``.
-If I can't, then something like `lino-basic` would be a better name.
+But nobody knows what a "Lino" is. 
+The name ``LINO`` says nothing about what it does. 
+We should use some more meaningful name here. 
 
-So: What kind of thing is a :class:`lino.Lino`?
-The current name ``settings.LINO`` says nothing about what it does. 
-The whole mechanism should get a new name.
-In fact we need two names: one for the class and one for the 
-variable which holds the instance.
 
 What a :class:`lino.Lino` really is
 -----------------------------------
@@ -34,14 +29,14 @@ What a :class:`lino.Lino` really is
     bleibt und von überall her abgerufen werden kann.
 
 #.  Es ist ein spezielles Setting, dessen Datentyp nicht wie bei allen anderen
-    Settings `string` oder `list` oder `dict` ist, sondern `object`. 
+    Settings `string`, `list` oder `dict` ist, sondern `object`. 
     
     Im Gegensatz zu normalen Settings hat dieses Setting also selber 
-    Attribute, die dann nicht mehr groß geschrien zu werden brauchen.
+    Attribute, die dann nicht mehr groß geschrieben zu werden brauchen.
     Diese Attribute können Variablen oder Methoden sein.
     Die Instanzvariablen dieses Objekts können sich ändern, ohne dass Django 
     davon etwas mitbekommt.
-    Außerdem kann man es unterklassieren, wie z.B. 
+    Außerdem kann man ein Lino unterklassieren, wie z.B. 
     :class:`lino.ui.Lino` es tut.
     
 #.  It is a kind of extension to Django's setting concept.
@@ -54,20 +49,86 @@ What a :class:`lino.Lino` really is
     This method is automagically being called when Django has 
     finished populating it's model cache.
     
-Und der Name ``LINO`` ist also nicht gut, weil ``settings.LINO`` nichts aussagt 
-über all dies.
 
-- class `SettingObject`?
-  But it is not just a stupid object because it has the startup method.
+The `LINO` setting describes a Lino application
+-----------------------------------------------
+
+The truth is that a Lino object describes a **Lino application**.
+A Lino application is a software application which uses the Lino framework.
+If we want to use meaningful names, 
+the two lines of the above :xfile:`settings.py` file should rather be::
+
+  from lino.projects.cosi.settings import *
+  APP = App()
+
+But the average Django programmer will object here because
+Django uses the word "app" for something else. 
+Daniel and Audrey say it in a diplomatic way:
+
+  "It’s not uncommon for new Django developers to become understandably 
+  confused by Django’s usage of the word ‘app’."
+
+They are too polite to say the cruel truth:
+Django is wrong. 
+Django says "app" where it should say "plugin".
+An application is a standalone piece of software.
+`django.contrib.contenttypes` is not an application, it is a plugin.
+
+Many Django people are probably aware of that problem,
+but it would be really much work to fix this problem
+because the word is used in variables like
+`app_label` and :setting:`INSTALLED_APPS`.
+
+Too much work for "just a linguistic" problem.
+Still it's a pity because it leaves us
+with no namespace left for what a `Software application 
+<http://en.wikipedia.org/wiki/Software_application>`_ 
+really is.
+
+But it's clear that they won't fix it.
+They are perfectionists, but they have deadlines.
+We have to live with it.
+
+
+Potential alternatives
+----------------------
+
+- `settings.MAIN` or `settings.MASTER`
+  and `MasterApp` or `MainApp` or `RootApp`,     
+  introducing the concept of a "master app" (or "main app" or "root app").
+
+- `settings.SITE` and `Site` because it describes the site.
+  But that word is already used by `django.contrib.sites`...
   
-- class `Starter`? 
-
-- ``settings.META``?
-  But it has nothing to do with Python's `__metaclass__`.
-
 - ``settings.SERVER``?
   Because it is the "server" who is starting...
   but the "server" is represented by all settings, not only this one.
   
+- class `SettingObject`?
+  But it is not just a stupid object because it has the startup method.
+  
+- ``settings.META``?
+  But it has nothing to do with Python's `__metaclass__` 
+  not Django's `_meta` attribute.
 
+  
+Conclusion
+----------
+
+None of the alternatives looks promising, so we stick with the current 
+name `LINO`.
+
+A subclass of :class:`lino.Lino` defines a Lino application, 
+which is not the same as a Django app.
+
+A Lino application is usually meant to work for a given 
+set of Django apps. Each Lino application defines 
+its :setting:`INSTALLED_APPS` setting.
+
+A Lino application it not always a Django "app":
+it can be only a settings file (e.g. :mod:`lino.projects.min1`).
+
+We cannot split Lino's core functionality into a separate module
+as long as we cannot find another name 
+than ``LINO`` for the setting used to store the application instance.
 

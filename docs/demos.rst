@@ -1,15 +1,16 @@
+==========
 Demo sites
 ==========
 
-The demo databases are writeable. 
+The demo databases contain fictive data. 
+All names of persons are generated.
 You may edit according to the user permissions. 
 Any changes will be lost each time we reinitialize the demo data.
-
-  
+ 
 .. complextable::
 
   .. figure:: /tutorials/polls1.jpg
-    :scale: 30
+    :scale: 30 %
     :target: http://demo1.lino-framework.org
     
     `demo1 <http://demo1.lino-framework.org>`_
@@ -20,7 +21,7 @@ Any changes will be lost each time we reinitialize the demo data.
   <NEXTCELL>
   
   .. figure:: /screenshots/cal.Panel.jpg
-    :scale: 24
+    :scale: 24 %
     :target: http://demo2.lino-framework.org
       
     `demo2 <http://demo2.lino-framework.org>`_ shows 

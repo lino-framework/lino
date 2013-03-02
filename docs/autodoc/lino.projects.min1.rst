@@ -5,10 +5,10 @@
     :members:
     :show-inheritance:
 
-models
-------
+settings
+--------
 
-.. automodule:: lino.projects.min1.models
+.. automodule:: lino.projects.min1.settings
     :members:
     :show-inheritance:
 

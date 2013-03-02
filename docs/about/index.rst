@@ -22,6 +22,7 @@ need a *customized database application*.
    compared
    lino_and_django
    why_extjs
+   /community/index
 
 
 

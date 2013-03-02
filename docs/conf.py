@@ -72,7 +72,7 @@ master_doc = 'index'
 
 # General information about the project.
 project = u"Lino"
-copyright = u'2002-2012, Luc Saffre'
+copyright = u'2002-2013, Luc Saffre'
 
 # The version info for the project you're documenting, acts as replacement for
 # |version| and |release|, also used in various other places throughout the
@@ -108,6 +108,7 @@ exclude_trees = [
   'blog/2009',
   'blog/2010',
   'blog/2011',
+  'blog/2012',
   'releases/2010',
   'releases/2011',
   'include',

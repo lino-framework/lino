@@ -195,8 +195,6 @@ class Lino(lino.Lino):
     django_admin_prefix = None
     """
     The prefix to use for Django admin URLs.
-    Leave this unchanged as long as :dmodules
-    oc:`/ticket/70` is not solved.
     Leave this unchanged as long as :doc:`/ticket/70` is not solved.
     """
     
@@ -301,10 +299,15 @@ class Lino(lino.Lino):
     specify a download location in their :xfile:`settings.py`.
     
     On a production site you'll probably want to download and serve 
-    these files yourself.
-    Set this to `None`, set :attr:`extjs_root` 
+    these files yourself by setting this to `None` and 
+    setting :attr:`extjs_root` 
     (or a symbolic link "extjs" in your :xfile:`media` directory)
     to point to the local directory  where ExtJS 3.3.1 is installed).
+    
+    The same rules apply to the attributes
+    :attr:`extensible_base_url <lino.ui.Lino.extensible_base_url>`, 
+    :attr:`bootstrap_base_url <lino.ui.Lino.bootstrap_base_url>` and
+    :attr:`tinymce_base_url <lino.ui.Lino.tinymce_base_url>`.
     """
     
     extensible_base_url = "http://ext.ensible.com/deploy/1.0.2/"

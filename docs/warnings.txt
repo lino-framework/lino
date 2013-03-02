@@ -1,15 +1,74 @@
 T:\hgwork\lino\docs\reviews\index.rst:4: WARNING: toctree contains reference to nonexisting document u'reviews/ :maxdepth: 1'
-T:\hgwork\lino\docs\reviews\index.rst:4: WARNING: toctree contains reference to nonexisting document u'reviews/ :glob:'
-T:\hgwork\lino\docs\reviews\index.rst:4: WARNING: toctree contains reference to nonexisting document u'reviews/django-extensions/index'
 T:\hgwork\lino\docs\admin\which_lino.rst:: WARNING: document isn't included in any toctree
 T:\hgwork\lino\docs\casts\lino_intro.rst:: WARNING: document isn't included in any toctree
 T:\hgwork\lino\docs\dev\versioning.rst:: WARNING: document isn't included in any toctree
 T:\hgwork\lino\docs\igen\index.rst:: WARNING: document isn't included in any toctree
-T:\hgwork\lino\docs\reviews\django-extensions.rst:: WARNING: document isn't included in any toctree
 T:\hgwork\lino\docs\reviews\index.rst:: WARNING: document isn't included in any toctree
-T:\hgwork\lino\docs\tutorials\uiless.rst:: WARNING: document isn't included in any toctree
-None:None: WARNING: toctree contains reference to document 'django/DjangoPitfalls' that doesn't have a title: no link will be generated
-None:None: WARNING: toctree contains reference to document 'django/DjangoPitfalls' that doesn't have a title: no link will be generated
-None:None: WARNING: toctree contains reference to document 'django/DjangoPitfalls' that doesn't have a title: no link will be generated
-None:None: WARNING: toctree contains reference to document 'django/DjangoPitfalls' that doesn't have a title: no link will be generated
-None:None: WARNING: toctree contains reference to document 'django/DjangoPitfalls' that doesn't have a title: no link will be generated
+T:\hgwork\lino\docs\autodoc\lino.ui.rst:50: WARNING: py:class reference target not found: lino.modlib.countries.models.Cities
+t:\hgwork\lino\lino\ui\__init__.py:docstring of lino.ui.Lino.cbss_environment:1: WARNING: py:mod reference target not found: lino.modlib.cbss.models
+t:\hgwork\lino\lino\ui\__init__.py:docstring of lino.ui.Lino.date_format_extjs:1: WARNING: py:meth reference target not found: parse_date
+t:\hgwork\lino\lino\ui\__init__.py:docstring of lino.ui.Lino.django_admin_prefix:1: WARNING: unknown document: /ticket/70
+t:\hgwork\lino\lino\ui\__init__.py:docstring of lino.ui.Lino.get_partner_account:1: WARNING: py:mod reference target not found: lino.modlib.accounts.fixtures.mini
+t:\hgwork\lino\lino\ui\__init__.py:docstring of lino.ui.Lino.get_product_base_account:1: WARNING: py:mod reference target not found: lino.modlib.accounts.fixtures.mini
+t:\hgwork\lino\lino\ui\__init__.py:docstring of lino.ui.Lino.get_vat_account:1: WARNING: py:class reference target not found: TradeType
+t:\hgwork\lino\lino\ui\__init__.py:docstring of lino.ui.Lino.get_vat_account:1: WARNING: py:class reference target not found: VatClass
+t:\hgwork\lino\lino\ui\__init__.py:docstring of lino.ui.Lino.get_vat_account:1: WARNING: py:class reference target not found: VatRegime
+t:\hgwork\lino\lino\ui\__init__.py:docstring of lino.ui.Lino.is_local_project_dir:1: WARNING: xfile reference target not found: models.py
+t:\hgwork\lino\lino\ui\__init__.py:docstring of lino.ui.Lino.max_auto_events:1: WARNING: py:class reference target not found: lino.modlib.cal.models.EventOwner
+t:\hgwork\lino\lino\ui\__init__.py:docstring of lino.ui.Lino.never_build_site_cache:1: WARNING: xfile reference target not found: lino*.js
+t:\hgwork\lino\lino\ui\__init__.py:docstring of lino.ui.Lino.setup_quicklinks:1: WARNING: py:meth reference target not found: lino.projects.pcsw.settings.Lino.setup_quicklinks
+t:\hgwork\lino\lino\ui\__init__.py:docstring of lino.ui.Lino.site_config:1: WARNING: py:class reference target not found: lino.models.SiteConfig
+t:\hgwork\lino\lino\ui\__init__.py:docstring of lino.ui.Lino.site_config_defaults:1: WARNING: py:class reference target not found: lino.models.SiteConfig
+t:\hgwork\lino\lino\ui\__init__.py:docstring of lino.ui.Lino.time_format_extjs:1: WARNING: py:meth reference target not found: parse_time
+t:\hgwork\lino\lino\ui\__init__.py:docstring of lino.ui.Lino.unused_update_site_config:1: WARNING: py:class reference target not found: lino.models.SiteConfig
+t:\hgwork\lino\lino\ui\__init__.py:docstring of lino.ui.Lino.use_css_tooltips:1: WARNING: py:class reference target not found: lino.models.HelpText
+t:\hgwork\lino\lino\ui\__init__.py:docstring of lino.ui.Lino.use_eid_applet:1: WARNING: unknown document: /blog/2012/1105
+t:\hgwork\lino\lino\ui\__init__.py:docstring of lino.ui.Lino.use_filterRow:1: WARNING: unknown document: /blog/2011/0630
+t:\hgwork\lino\lino\ui\__init__.py:docstring of lino.ui.Lino.use_quicktips:1: WARNING: py:class reference target not found: lino.models.HelpText
+t:\hgwork\lino\lino\ui\__init__.py:docstring of lino.ui.Lino.use_tinymce:1: WARNING: unknown document: /blog/2011/0523
+t:\hgwork\lino\lino\ui\__init__.py:docstring of lino.ui.Lino.use_vinylfox:1: WARNING: unknown document: /blog/2011/0523
+t:\hgwork\lino\lino\ui\__init__.py:docstring of lino.ui.Lino.user_model:4: WARNING: py:mod reference target not found: lino.test_apps.1
+t:\hgwork\lino\lino\ui\__init__.py:docstring of lino.ui.Lino.webdav_url:7: WARNING: term not in glossary: webdav
+t:\hgwork\lino\lino\ui\__init__.py:docstring of lino.ui.Lino.webdav_url:7: WARNING: term not in glossary: runserver
+T:\hgwork\lino\docs\autodoc\lino.ui.rst:16: WARNING: py:class reference target not found: About
+T:\hgwork\lino\docs\autodoc\lino.ui.rst:76: WARNING: py:class reference target not found: ContentType
+t:\hgwork\lino\lino\ui\models.py:docstring of lino.ui.models.SiteConfigs:1: WARNING: py:meth reference target not found: lino.Lino.get_site_config
+T:\hgwork\lino\docs\autodoc\lino.ui.rst:19: WARNING: py:attr reference target not found: ACTION_RESPONSES
+T:\hgwork\lino\docs\autodoc\lino.ui.rst:69: WARNING: py:meth reference target not found: ExtRenderer.row_action_button
+T:\hgwork\lino\docs\autodoc\lino.ui.rst:20: WARNING: py:class reference target not found: object
+T:\hgwork\lino\docs\autodoc\lino.ui.rst:48: WARNING: py:class reference target not found: object
+T:\hgwork\lino\docs\autodoc\lino.ui.rst:63: WARNING: py:class reference target not found: object
+t:\hgwork\lino\lino\ui\base.py:docstring of lino.ui.base.UI.callback:5: WARNING: py:meth reference target not found: Action.run
+t:\hgwork\lino\lino\ui\base.py:docstring of lino.ui.base.UI.callback:5: WARNING: py:class reference target not found: lino.ui.extjs3.views.Threads
+<autodoc>:1: WARNING: py:class reference target not found: object
+t:\hgwork\lino\lino\ui\elems.py:docstring of lino.ui.elems.Container:1: WARNING: py:class reference target not found: FormPanel
+t:\hgwork\lino\lino\ui\elems.py:docstring of lino.ui.elems.Container:1: WARNING: py:class reference target not found: GridPanel
+t:\hgwork\lino\lino\ui\elems.py:docstring of lino.ui.elems.IncompleteDateFieldElement:1: WARNING: py:class reference target not found: lino.core.fields.IncompleteDate
+T:\hgwork\lino\docs\autodoc\lino.ui.rst:26: WARNING: py:class reference target not found: object
+t:\hgwork\lino\lino\ui\store.py:docstring of lino.ui.store.DisableEditingStoreField:1: WARNING: unknown document: /blog/2011/0830
+t:\hgwork\lino\lino\ui\store.py:docstring of lino.ui.store.MethodStoreField:1: WARNING: unknown document: /blog/2012/0327
+<autodoc>:1: WARNING: py:class reference target not found: object
+<autodoc>:1: WARNING: py:class reference target not found: object
+t:\hgwork\lino\lino\ui\store.py:docstring of lino.ui.store.StoreField.list_values_count:1: WARNING: py:attr reference target not found: Store.pk_index
+T:\hgwork\lino\docs\autodoc\lino.ui.rst:11: WARNING: py:class reference target not found: django.views.generic.base.View
+T:\hgwork\lino\docs\autodoc\lino.ui.rst:21: WARNING: py:class reference target not found: django.views.generic.base.View
+T:\hgwork\lino\docs\autodoc\lino.ui.rst:33: WARNING: py:class reference target not found: django.views.generic.base.View
+T:\hgwork\lino\docs\autodoc\lino.ui.rst:62: WARNING: py:class reference target not found: django.views.generic.base.View
+<autodoc>:1: WARNING: py:class reference target not found: django.views.generic.base.View
+<autodoc>:1: WARNING: py:class reference target not found: django.views.generic.base.View
+<autodoc>:1: WARNING: py:class reference target not found: django.views.generic.base.View
+<autodoc>:1: WARNING: py:class reference target not found: django.views.generic.base.View
+<autodoc>:1: WARNING: py:class reference target not found: django.views.generic.base.View
+<autodoc>:1: WARNING: py:class reference target not found: django.http.HttpResponse
+<autodoc>:1: WARNING: py:class reference target not found: django.views.generic.base.View
+<autodoc>:1: WARNING: py:class reference target not found: django.views.generic.base.View
+<autodoc>:1: WARNING: py:class reference target not found: django.views.generic.base.View
+<autodoc>:1: WARNING: py:class reference target not found: django.views.generic.base.View
+<autodoc>:1: WARNING: py:class reference target not found: django.views.generic.base.View
+<autodoc>:1: WARNING: py:class reference target not found: django.views.generic.base.View
+<autodoc>:1: WARNING: py:class reference target not found: django.views.generic.base.View
+t:\hgwork\lino\lino\ui\views.py:docstring of lino.ui.views.elem2rec_detailed:3: WARNING: unknown document: /blog/2010/0716
+t:\hgwork\lino\lino\ui\views.py:docstring of lino.ui.views.elem2rec_detailed:3: WARNING: unknown document: /blog/2010/0721
+t:\hgwork\lino\lino\ui\views.py:docstring of lino.ui.views.elem2rec_detailed:3: WARNING: unknown document: /blog/2010/1116
+t:\hgwork\lino\lino\ui\views.py:docstring of lino.ui.views.elem2rec_detailed:3: WARNING: unknown document: /blog/2010/1207
+T:\hgwork\lino\docs\tickets\70.rst:14: WARNING: py:attr reference target not found: lino.Lino.django_admin_prefix

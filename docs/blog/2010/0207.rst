@@ -4,10 +4,9 @@ Mann, das war nicht einfach, dass die Slave Grids nicht mehr die Textfelder verd
 
 Nachdem ich die [20100206 Frage] im ExtJS-Forum gestellt hatte, kam die Antwort kurz darauf von einem Programmierer aus Miami, und das war nur ein Satz. Aber allein die Frage zu stellen hat mich einige Stunden gekostet. Die anschließende Integration in Lino war dann dagegen überraschend einfach.
 
-<a href="http://lino.googlecode.com/hg/screenshots/20100207.jpg">
-<img src="http://lino.googlecode.com/hg/screenshots/20100207.jpg" width="70%"/>
-</a>
-
+.. image:: 0207.jpg
+  :scale:70
+  
 Momentan haben die Slave Grids `autoWidth=True` (bin nicht sicher, ob das so bleiben kann) und reagieren noch nicht auf Klicks, aber ich bin zufrieden.
 
 ----

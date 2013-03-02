@@ -5,8 +5,7 @@ In this tutorial we are going to take the "Polls"
 application from Django's excellent tutorial and turn it 
 into a Lino application.
 
-
-..include:: /needs_update.rst
+.. include:: /include/needs_update.rst
 
 The result of this tutorial is available as a public 
 live demo at http://demo1.lino-framework.org
@@ -19,49 +18,21 @@ live demo at http://demo1.lino-framework.org
 Create a local Django project
 -----------------------------
 
-Lino applications are Django projects.
-That's why we start by reading
+Before reading on, please follow
 `Part 1 of the Django tutorial
 <https://docs.djangoproject.com/en/1.4/intro/tutorial01/>`_,
 which applies entirely for a Lino application.
+Afterwards we meet here again. See you later!
 
-The Django documentation is good,
-and it introduces some important notions about
-Creating a project,
-The development server,
-Database setup,
-Creating models,
-Activating models,
-and Playing with the API.
-
-If you have already installed Lino and 
-set up your Python Path as explained in 
-:doc:`/admin/pythonpath`, we suggest that 
-you take :file:`~/mypy/mysite` 
-(or :file:`c:\\mypy\\mysite` if you are under Windows)
-as your Django project directory and 
-`mysite.settings`
-for your :envvar:`DJANGO_SETTINGS_MODULE`
-when following the Django tutorial.
-
-- So please go now and follow
-  `Part 1 of the Django tutorial
-  <https://docs.djangoproject.com/en/1.4/intro/tutorial01/>`_.
-  Afterwards we meet here again. See you later!
-
-Done? Now we go further.
-
+Done? Okay, let's go further.
 You have now a set of files in your "project directory". 
 Your project is still lacking the most visible part:
 a web interface.
 
 The Django tutorial continues by introducing 
-Django's Admin module to create a prototype web interface.
-Although it is technically perfectly feasable to have both 
-a Lino and an Admin interface, 
-we now leave the Django philosophy 
-and continue "the Lino way" of defining 
-our application's web interface.
+Django's Admin module to create a web interface.
+We now leave the Django philosophy and continue 
+"the Lino way" of defining our application's web interface.
 Lino is an alternative to Django's Admin module.
 
 Most files remain unchanged, they are the same as with every Django project:
@@ -69,7 +40,7 @@ Most files remain unchanged, they are the same as with every Django project:
 :xfile:`urls.py` and :xfile:`wsgi.py`.
 You might want to compare your files with our version 
 which you can see in the code repository at
-:srcref:`/lino/apps/polls_tutorial`.
+:srcref:`/lino/projects/polls_tutorial`.
 
 But we are now going to modify the files 
 :xfile:`settings.py` and
@@ -86,8 +57,7 @@ especially if you maintain Lino sites for several customers.
   to the following (except for the :setting:`DATABASES` setting,
   which you should take over from your original file):
 
-.. literalinclude:: ../../lino/apps/polls_tutorial/settings.py
-
+.. literalinclude:: ../../lino/projects/polls_tutorial/settings.py
 
 A few explanations:
 
@@ -171,7 +141,7 @@ The :xfile:`models.py` file
 - Change the contents of your :xfile:`polls/models.py` 
   to the following:
 
-.. literalinclude:: ../../lino/apps/polls_tutorial/polls/models.py
+.. literalinclude:: ../../lino/projects/polls_tutorial/polls/models.py
 
 A few explanations while looking at that file:
 
@@ -203,7 +173,7 @@ The main index
 The following template is used to 
 build the HTML to be displayed in our Main Window. 
 
-.. literalinclude:: ../../lino/apps/polls_tutorial/templates/admin_main.html
+.. literalinclude:: ../../lino/projects/polls_tutorial/templates/admin_main.html
 
 The `<div class="htmlText">` specifies that this fragment 
 contains simple html text inside an ExtJS component. 
@@ -249,7 +219,7 @@ Because that's so easy, we'll also quickly add a demo fixture.
   :doc:`dumpy` tutorial.
   
 - Download the file   
-  :srcref:`polls/fixtures/demo.py </lino/apps/polls_tutorial/polls/fixtures/demo.py>`  
+  :srcref:`polls/fixtures/demo.py </lino/projects/polls_tutorial/polls/fixtures/demo.py>`  
   from the Lino repository and add it 
   below your project directory.
   

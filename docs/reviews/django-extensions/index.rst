@@ -31,32 +31,32 @@ besteht dafür jetzt auch nicht gerade
 ein dringender Bedarf...
 
 
-.. graphviz:: django-extensions/contacts.dot
+.. graphviz:: contacts.dot
 
-.. graphviz:: django-extensions/cal.dot
+.. graphviz:: cal.dot
 
-.. graphviz:: django-extensions/outbox.dot
+.. graphviz:: outbox.dot
 
-.. graphviz:: django-extensions/courses.dot
+.. graphviz:: courses.dot
 
 The cbss module with and without ``-d``
 ---------------------------------------
 
-.. graphviz:: django-extensions/cbss.dot
+.. graphviz:: cbss.dot
 
-.. graphviz:: django-extensions/cbssd.dot
+.. graphviz:: cbssd.dot
 
 The debts module with and without ``-d``
 ----------------------------------------
 
-.. graphviz:: django-extensions/debts.dot
+.. graphviz:: debts.dot
 
-.. graphviz:: django-extensions/debtsd.dot
+.. graphviz:: debtsd.dot
 
 The :mod:`lino.projects.cms` application
 ----------------------------------------
 
-.. graphviz:: django-extensions/cms.dot
+.. graphviz:: cms.dot
 
 Um den Befehl laufen zu lassen:
 Zunächst das neue Attribut :attr:`replace_django_templates 
