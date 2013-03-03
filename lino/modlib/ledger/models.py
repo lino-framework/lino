@@ -29,7 +29,6 @@ from django.conf import settings
 
 from lino import dd
 from lino import mixins
-from lino.utils import babel
 from django.utils.translation import ugettext_lazy as _
 from lino.modlib.ledger.utils import FiscalYears
 
@@ -68,7 +67,7 @@ class VoucherTypes(dd.ChoiceList):
         return cls.add_item_instance(VoucherType(model,table_class))
     
 
-class Journal(babel.BabelNamed,mixins.Sequenced):
+class Journal(dd.BabelNamed,mixins.Sequenced):
   
     class Meta:
         verbose_name = _("Journal")
@@ -88,7 +87,7 @@ class Journal(babel.BabelNamed,mixins.Sequenced):
     #~ account = models.CharField(max_length=6,blank=True)
     #~ pos = models.IntegerField()
     #~ printed_name = models.CharField(max_length=100,blank=True)
-    printed_name = babel.BabelCharField(max_length=100,blank=True)
+    printed_name = dd.BabelCharField(max_length=100,blank=True)
     
     @dd.chooser()
     def account_choices(self,chart):
@@ -153,10 +152,10 @@ class Journal(babel.BabelNamed,mixins.Sequenced):
         s = super(Journal,self).__unicode__()
         if self.ref:
             s += " (%s)" % self.ref
-            #~ return '%s (%s)' % (babel.BabelNamed.__unicode__(self),self.ref or self.id)
+            #~ return '%s (%s)' % (d.BabelNamed.__unicode__(self),self.ref or self.id)
         return s
-            #~ return self.ref +'%s (%s)' % babel.BabelNamed.__unicode__(self)
-            #~ return self.id +' (%s)' % babel.BabelNamed.__unicode__(self)
+            #~ return self.ref +'%s (%s)' % dd.BabelNamed.__unicode__(self)
+            #~ return self.id +' (%s)' % dd.BabelNamed.__unicode__(self)
         
     def save(self,*args,**kw):
         #~ self.before_save()

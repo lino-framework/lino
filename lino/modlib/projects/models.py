@@ -25,10 +25,9 @@ from django.utils.translation import ugettext as _
 
 from lino import dd
 from lino import mixins
-from lino.utils import babel
 
 
-class ProjectType(babel.BabelNamed):
+class ProjectType(dd.BabelNamed):
     class Meta:
         verbose_name = _("Project Type")
         verbose_name_plural = _("Project Types")

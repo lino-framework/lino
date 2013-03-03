@@ -75,7 +75,7 @@ from lino.ui import base
 from lino.core import actors
     
 from lino.utils import choosers
-from lino.utils import babel
+from north import babel
 from lino.utils.jsgen import py2js, js_code, id2js
 from lino.utils.xmlgen import html as xghtml
 from lino.utils.config import make_dummy_messages_file

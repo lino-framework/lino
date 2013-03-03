@@ -21,7 +21,7 @@ from __future__ import unicode_literals
 
 from django.conf import settings
 from lino.utils.instantiator import Instantiator
-from lino.utils.babel import default_language
+from north.babel import default_language
 #~ from lino.modlib.contacts.utils import Gender
 from lino import mixins
 from lino.utils import dblogger

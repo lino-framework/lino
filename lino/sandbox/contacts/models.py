@@ -24,7 +24,6 @@ from django.utils.translation import ugettext_lazy as _
 from lino import dd
 #~ from lino.utils.mti import EnableChild
 from lino.modlib.countries.models import CountryCity
-from lino.utils import babel 
 from lino.models import get_site_config
 from lino.utils.choicelists import Gender
 from lino.utils import join_words
@@ -32,7 +31,7 @@ from lino.utils import join_words
 
 
 
-#~ class AddressType(babel.BabelNamed):
+#~ class AddressType(dd.BabelNamed):
     #~ class Meta:
         #~ verbose_name = _("Address Type")
         #~ verbose_name_plural = _("Address Types")
@@ -42,7 +41,7 @@ from lino.utils import join_words
     #~ column_names = 'name *'
     
     
-class Role(babel.BabelNamed):
+class Role(dd.BabelNamed):
     class Meta:
         verbose_name = _("Role")
         verbose_name_plural = _("Roles")
@@ -228,7 +227,7 @@ class Contact(dd.Model):
     company = models.ForeignKey(Company,null=True,blank=True)
     role = models.ForeignKey(Role,null=True,blank=True)
     
-    language = babel.LanguageField()
+    language = dd.LanguageField()
     
     #~ address = models.ForeignKey(Address,null=True,blank=True)
     #~ address_type = models.ForeignKey(AddressType,blank=True,null=True)

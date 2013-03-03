@@ -35,7 +35,7 @@ from lino import dd
 from lino.core import actions
 from lino import mixins
 from lino.utils import mti
-from lino.utils import babel 
+from north import babel 
 #~ from lino.utils.babel import add_babel_field, babelattr
 
 
@@ -55,7 +55,7 @@ from lino.modlib.contacts import models as contacts
 #~ from lino.modlib.contacts import models as contacts
 
 
-class PaymentTerm(babel.BabelNamed):
+class PaymentTerm(dd.BabelNamed):
     """Represents a convention on how an Invoice should be paid. 
     """
     
@@ -106,7 +106,7 @@ add('P',_("Paper"))
 add('E',_("E-mail"))
 
 
-class InvoicingMode(mixins.PrintableType,babel.BabelNamed):
+class InvoicingMode(mixins.PrintableType,dd.BabelNamed):
     """Represents a method of issuing/sending invoices.
     """
     class Meta:
@@ -119,7 +119,7 @@ class InvoicingMode(mixins.PrintableType,babel.BabelNamed):
     id = models.CharField(max_length=3, primary_key=True)
     journal = journals.JournalRef()
     #journal = models.ForeignKey(journals.Journal)
-    #~ name = babel.BabelCharField(max_length=200)
+    #~ name = dd.BabelCharField(max_length=200)
     price = dd.PriceField(blank=True,null=True)
     "Additional fee charged when using this method."
     channel = Channel.field(help_text="""
@@ -147,9 +147,9 @@ class InvoicingModes(dd.Table):
     
     
     
-class ShippingMode(babel.BabelNamed):
+class ShippingMode(dd.BabelNamed):
     id = models.CharField(max_length=10, primary_key=True)
-    #~ name = babel.BabelCharField(max_length=200)
+    #~ name = dd.BabelCharField(max_length=200)
     price = dd.PriceField(blank=True,null=True)
     
     #~ def __unicode__(self):
@@ -253,7 +253,7 @@ class SalesDocument(
         #~ related_name="%(app_label)s_%(class)s_by_contact",
         #~ related_name="%(app_label)s_%(class)s_related",
         )
-    language = babel.LanguageField(default=babel.DEFAULT_LANGUAGE)
+    language = dd.LanguageField(default=babel.DEFAULT_LANGUAGE)
     
     creation_date = models.DateField(blank=True,auto_now_add=True)
     #~ customer = models.ForeignKey(Customer,

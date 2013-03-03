@@ -31,7 +31,7 @@ from django.utils.translation import ugettext as _
 from lino.utils import i2d, Cycler
 from lino.utils.instantiator import Instantiator
 from lino.core.modeltools import resolve_model
-from lino.utils.babel import babel_values
+from north.babel import babel_values
 
 from lino.modlib.cal import models as cal
 

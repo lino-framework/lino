@@ -38,7 +38,6 @@ from lino import dd
 #~ from lino.utils import perms
 from lino.utils.restify import restify
 #~ from lino.utils import printable
-from lino.utils import babel
 from lino import mixins
 from django.conf import settings
 #~ from lino import choices_method, simple_choices_method
@@ -53,7 +52,7 @@ postings = dd.resolve_app('postings')
 
 #~ TEMPLATE_GROUP = 'notes'
 
-class NoteType(babel.BabelNamed,mixins.PrintableType,outbox.MailableType):
+class NoteType(dd.BabelNamed,mixins.PrintableType,outbox.MailableType):
   
     templates_group = 'notes/Note'
     
@@ -88,7 +87,7 @@ class NoteTypes(dd.Table):
     notes.NotesByType
     """
 
-class EventType(babel.BabelNamed):
+class EventType(dd.BabelNamed):
     """
     A possible choice for :attr:`Note.event_type`.
     """
@@ -96,9 +95,9 @@ class EventType(babel.BabelNamed):
         verbose_name = pgettext_lazy(u"notes",u"Event Type")
         #~ verbose_name = _("Event Type")
         verbose_name_plural = _("Event Types")
-    #~ name = babel.BabelCharField(max_length=200,verbose_name=_("Designation"))
+    #~ name = dd.BabelCharField(max_length=200,verbose_name=_("Designation"))
     remark = models.TextField(verbose_name=_("Remark"),blank=True)
-    body = babel.BabelTextField(_("Body"),blank=True,format='html')
+    body = dd.BabelTextField(_("Body"),blank=True,format='html')
     
 
 
@@ -166,7 +165,7 @@ class Note(mixins.TypedPrintable,
     #~ person = models.ForeignKey("contacts.Person",blank=True,null=True)
     #~ company = models.ForeignKey("contacts.Company",blank=True,null=True)
     #~ url = models.URLField(verify_exists=True,blank=True,null=True)
-    language = babel.LanguageField(default=babel.default_language)
+    language = dd.LanguageField()
     
     # partner = models.ForeignKey("contacts.Partner",blank=True,null=True)
     

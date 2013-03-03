@@ -20,7 +20,7 @@ from django.conf import settings
 #~ from lino.utils.instantiator import Instantiator
 
 from lino import dd
-from lino.utils import babel
+from north import babel
 from lino.utils import AttrDict
 from lino.utils.restify import restify
 from lino.utils.restify import doc2rst

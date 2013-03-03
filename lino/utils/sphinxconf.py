@@ -40,7 +40,7 @@ from docutils import nodes
 from docutils.parsers.rst import directives
 from sphinx.util.compat import Directive
 
-from lino.utils import babel
+from north import babel
 from lino.utils import rstgen
 
 #~ class ScreenshotDirective(directives.images.Image):

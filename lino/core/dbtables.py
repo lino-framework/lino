@@ -60,7 +60,6 @@ import lino
 #~ from lino import layouts
 from lino.core import fields
 from lino.core import actions
-from lino.utils import babel
 from lino.core.model import Model
 from django_site.modeltools import obj2str
 from lino.utils.config import load_config_files, Configured

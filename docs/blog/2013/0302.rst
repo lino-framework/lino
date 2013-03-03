@@ -1,22 +1,21 @@
 20130302
 ========
 
-After concluding yesterday evening that 
-:doc:`/tickets/74` is impossible to solve,
-and after some hours of sleep,
-I changed my mind again:
+Yesterday evening I concluded that 
+:doc:`/tickets/74` is impossible to solve.
+But after some hours of sleep I changed my mind again:
 
   `settings.LINO` will become `settings.SITE`,
   and `lino.Lino` will become `django_site.Site`.
   
-If you look at the diff (:checkin:`ec7ed8317862`)
-you'll agree that this was quite some work for a Saturday.
-
-And I even moved that code to a new project `django-site
+And I even made everything public and moved that code to a new project `django-site
 <https://code.google.com/p/django-site/>`_.
   
 And the only visible difference is a new mention "django-site 0.0.1" 
 in the using string.
+
+If you look at the diff (:checkin:`ec7ed8317862`)
+you'll agree that this was quite some work for a Saturday.
 
 But I'm really glad I did it!
 

@@ -27,7 +27,7 @@ from django.utils.translation import ugettext_lazy as _
 
 from django.db import models
 from django.conf import settings
-from lino.utils.babel import babel_values
+from north.babel import babel_values
 
 
 

@@ -48,7 +48,7 @@ from lino import dd
 
 from lino import mixins
 #~ from lino.utils import join_words
-from lino.utils import babel
+from north import babel
 #~ from lino.models import get_site_config
 
 #~ from lino.modlib.contacts.utils import Genders
@@ -81,7 +81,7 @@ add('20', _("Obsoletes"),'obsoletes')
 
 
 
-class Concept(babel.BabelNamed):
+class Concept(dd.BabelNamed):
     """
     """
     
@@ -89,10 +89,10 @@ class Concept(babel.BabelNamed):
         verbose_name = _("Concept")
         verbose_name_plural = _("Concepts")
         
-    abbr = babel.BabelCharField(_("Abbreviation"),max_length=30,blank=True)
-    wikipedia = babel.BabelCharField(_("Wikipedia"),max_length=200,blank=True)
+    abbr = dd.BabelCharField(_("Abbreviation"),max_length=30,blank=True)
+    wikipedia = dd.BabelCharField(_("Wikipedia"),max_length=200,blank=True)
       
-    definition = babel.BabelTextField(_("Definition"),blank=True)
+    definition = dd.BabelTextField(_("Definition"),blank=True)
     is_jargon_domain = models.BooleanField(
         _("Jargon domain"),
         help_text=_("Whether this concept designates a domain of specialized vocabulary."))

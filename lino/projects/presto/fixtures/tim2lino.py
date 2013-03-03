@@ -41,7 +41,7 @@ from django.core.management.base import BaseCommand, CommandError
 from lino.utils import dbfreader
 from lino.utils import dblogger
 from lino.utils import mti
-from lino.utils import dumpy
+from north import dumppy
 #~ from lino import diag
 
 from lino.modlib.accounts.utils import AccountTypes
@@ -608,7 +608,7 @@ def load_tim_data(dbpath):
     yield load_dbf(dbpath,r'RUMMA\GEN',load_gen1)
     yield load_dbf(dbpath,r'RUMMA\GEN',load_gen2)
     
-    yield dumpy.FlushDeferredObjects
+    yield dumppy.FlushDeferredObjects
     
     PROD_617010.sales_account=accounts.Account.objects.get(ref='617010')
     PROD_617010.save()
@@ -630,7 +630,7 @@ def load_tim_data(dbpath):
     yield load_dbf(dbpath,'PAR',load_par)
     yield load_dbf(dbpath,'PRJ',load_prj)
     
-    yield dumpy.FlushDeferredObjects
+    yield dumppy.FlushDeferredObjects
     """
     We need a FlushDeferredObjects here because otherwise most Project 
     objects don't get saved at the first attempt

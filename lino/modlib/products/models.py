@@ -16,20 +16,16 @@ from django.db import models
 from django.utils.translation import ugettext_lazy as _
 
 from lino import dd
-#journals = models.get_app('journals')
-#~ from lino import reports
-#~ from lino import layouts
-from lino.utils import babel
 
 
-class ProductCat(babel.BabelNamed):
+class ProductCat(dd.BabelNamed):
     """
     """
     class Meta:
         verbose_name = _("Product Category")
         verbose_name_plural = _("Product Categories")
 
-    #~ name = babel.BabelCharField(max_length=200)
+    #~ name = dd.BabelCharField(max_length=200)
     description = models.TextField(blank=True)
     #~ def __unicode__(self):
         #~ return self.name
@@ -44,13 +40,13 @@ class ProductCats(dd.Table):
     ProductsByCategory
     """
 
-class Product(babel.BabelNamed):
+class Product(dd.BabelNamed):
   
     class Meta:
         verbose_name = _("Product")
         verbose_name_plural = _("Products")
     
-    description = babel.BabelTextField(blank=True,null=True)
+    description = dd.BabelTextField(blank=True,null=True)
     cat = models.ForeignKey(ProductCat,
         verbose_name="Category",
         blank=True,null=True)

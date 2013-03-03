@@ -24,7 +24,7 @@ from lino.utils.test import TestCase
 #from lino.igen import models
 #from lino.modlib.contacts.models import Contact, Companies
 #from lino.modlib.countries.models import Country
-from lino.utils import babel
+from north import babel
 
 from lino.core.modeltools import resolve_model,resolve_app
 Person = resolve_model("contacts.Person")

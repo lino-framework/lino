@@ -37,7 +37,6 @@ from lino import dd
 #~ from lino import commands
 from lino.core import actors
 from lino.mixins import printable
-from lino.utils import babel
 #~ from lino import choices_method, simple_choices_method
 from lino.core.modeltools import obj2str, sorted_models_list
 from lino.core.modeltools import resolve_field

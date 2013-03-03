@@ -46,7 +46,7 @@ An open range is a range that has at least one limit set to `None`.
 
 
 """
-from lino.utils import babel
+from north import babel
 
 
 def constrain(value,lowest,highest):

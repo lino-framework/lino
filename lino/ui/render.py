@@ -70,7 +70,7 @@ from lino.ui import base
 from lino.core import actors
     
 from lino.utils import choosers
-from lino.utils import babel
+from north import babel
 from lino.core import choicelists
 from lino.core import menus
 from lino.utils import jsgen

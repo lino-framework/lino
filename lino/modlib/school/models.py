@@ -56,7 +56,6 @@ from lino import mixins
 #~ from lino.utils.choicelists import ChoiceList
 #~ from lino.modlib.properties.utils import KnowledgeField #, StrengthField
 #~ from lino.modlib.uploads.models import UploadsByPerson
-from lino.utils import babel 
 from lino.utils.choosers import chooser
 from lino.utils import mti
 from lino.mixins.printable import DirectPrintAction, Printable
@@ -89,7 +88,7 @@ Person = dd.resolve_model('contacts.Person',strict=True)
 
 
 
-#~ class PresenceStatus(babel.BabelNamed):
+#~ class PresenceStatus(dd.BabelNamed):
     #~ class Meta:
         #~ verbose_name = _("Presence Status")
         #~ verbose_name_plural = _("Presence Statuses")
@@ -97,7 +96,7 @@ Person = dd.resolve_model('contacts.Person',strict=True)
 #~ class PresenceStatuses(dd.Table):
     #~ model = PresenceStatus
     
-class Content(babel.BabelNamed):
+class Content(dd.BabelNamed):
     class Meta:
         verbose_name = _("Course Content")
         verbose_name_plural = _('Course Contents')
@@ -115,7 +114,7 @@ class Contents(dd.Table):
     """
     
         
-#~ class Room(babel.BabelNamed):
+#~ class Room(dd.BabelNamed):
     #~ class Meta:
         #~ verbose_name = _("Classroom")
         #~ verbose_name_plural = _("Classrooms")

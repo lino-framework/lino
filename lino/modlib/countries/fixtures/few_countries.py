@@ -21,7 +21,7 @@ from django.db import models
 #countries = models.get_app('countries')
 
 from lino.utils.instantiator import Instantiator
-from lino.utils.babel import babel_values
+from north.babel import babel_values
 
 
 def objects():

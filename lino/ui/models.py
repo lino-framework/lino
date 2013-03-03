@@ -39,7 +39,6 @@ from lino import mixins
 from lino import dd
 #~ from lino import commands
 from lino.mixins import printable
-from lino.utils import babel
 #~ from lino import choices_method, simple_choices_method
 from django_site.modeltools import obj2str, sorted_models_list, full_model_name
 from lino.core.modeltools import resolve_field, UnresolvedModel
@@ -99,7 +98,8 @@ class SiteConfig(dd.Model):
     def __unicode__(self):
         return force_unicode(_("Site Parameters"))
 
-if False:
+if True:
+  
     @dd.receiver(dd.connection_created)
     def my_callback(sender,**kw):
         settings.SITE.clear_site_config()

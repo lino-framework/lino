@@ -44,7 +44,7 @@ from lino import dd
 #~ from lino.utils import perms
 from lino.utils.restify import restify
 #~ from lino.utils import printable
-from lino.utils import babel
+from north import babel
 #~ from lino.utils import call_optional_super
 from django.conf import settings
 #~ from lino import choices_method, simple_choices_method
@@ -60,7 +60,7 @@ from Cheetah.Template import Template as CheetahTemplate
 if True:
 
 
-  class MailType(mixins.PrintableType,babel.BabelNamed):
+  class MailType(mixins.PrintableType,dd.BabelNamed):
       "Deserves more documentation."
     
       templates_group = 'mails/Mail'

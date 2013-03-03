@@ -45,7 +45,6 @@ from django.utils import translation
 from django.conf import settings
 from django import http
 
-from lino.utils import babel
 from lino.core.choicelists import ChoiceList, Choice
 
 from django_site.modeltools import obj2str

@@ -47,24 +47,6 @@ This software comes with ABSOLUTELY NO WARRANTY and is
 distributed under the terms of the GNU General Public License.
 See file COPYING.txt for more information."""
 
-gettext = lambda s: s
-
-def language_choices(*args):
-    """
-    A subset of Django's LANGUAGES.
-    See :doc:`/blog/2011/0226`.
-    """
-    _langs = dict(
-        en=gettext('English'),
-        de=gettext('German'),
-        fr=gettext('French'),
-        nl=gettext('Dutch'),
-        et=gettext('Estonian'),
-    )
-    return [(x,_langs[x]) for x in args]
-      
-
-
 
 if False: 
     """
@@ -94,7 +76,8 @@ if False:
 
 NOT_FOUND_MSG = '(not installed)'
 
-from django_site import Site
+#~ from django_site import Site
+from north import Site
 
 class Site(Site):
     """
@@ -180,28 +163,6 @@ class Site(Site):
     Used by :class:`lino.mixins.printable.AppyBuildMethod`.
     """
     
-    languages = ['en']
-    """
-    The language distribution used in this database.
-    
-    This must be an iterable of 2-letter codes.
-    Examples::
-    
-      languages = "en de fr nl et".split()
-      languages = ['en']
-      
-    The first language in this list will be the site's 
-    default language.
-    
-    Changing this setting might affect your database structure 
-    and thus require a :doc:`/topics/datamig`
-    if your application uses :doc:`/topics/babel`.    
-    
-    Lino will use this setting to set the Django 
-    settings :setting:`LANGUAGES` and  :setting:`LANGUAGE_CODE`.
-    
-    """
-    
     
     #~ decimal_separator = '.'
     decimal_separator = ','
@@ -262,10 +223,6 @@ class Site(Site):
             LOGGING_CONFIG='lino.utils.log.configure',
             LOGGING=dict(filename=None,level='INFO'),
             )
-        
-        lc = language_choices(*self.languages)
-        django_settings.update(LANGUAGES = lc)
-        django_settings.update(LANGUAGE_CODE = lc[0][0])
         
         try:
             from lino_local import on_init

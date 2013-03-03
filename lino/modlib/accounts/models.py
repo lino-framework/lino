@@ -27,7 +27,6 @@ from django.conf import settings
 
 from lino import dd
 from lino import mixins
-from lino.utils import babel
 #~ from lino.utils.choicelists import ChoiceList
 #contacts = reports.get_app('contacts')
 #~ from lino.modlib.journals import models as journals
@@ -40,7 +39,7 @@ from lino.modlib.accounts.utils import AccountTypes, DEBIT, CREDIT
 
 
 
-class Chart(babel.BabelNamed):
+class Chart(dd.BabelNamed):
   
     class Meta:
         verbose_name = _("Account Chart")
@@ -61,8 +60,8 @@ class Charts(dd.Table):
     GroupsByChart
     """
     
-#~ class Group(babel.BabelNamed,mixins.Sequenced):
-class Group(babel.BabelNamed):
+#~ class Group(dd.BabelNamed,mixins.Sequenced):
+class Group(dd.BabelNamed):
   
     class Meta:
         verbose_name = _("Account Group")
@@ -94,7 +93,7 @@ class GroupsByChart(Groups):
     order_by = ['ref']
     column_names = 'ref name account_type *'
 
-class Account(babel.BabelNamed,mixins.Sequenced):
+class Account(dd.BabelNamed,mixins.Sequenced):
     class Meta:
         verbose_name = _("Account")
         verbose_name_plural = _("Accounts")

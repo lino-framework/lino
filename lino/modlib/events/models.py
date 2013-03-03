@@ -27,7 +27,7 @@ from django.conf import settings
 from django.utils.translation import ugettext_lazy as _
 
 from lino.utils.xmlgen.html import E
-from lino.utils import babel
+from north import babel
 from lino import mixins
 from lino import dd
 

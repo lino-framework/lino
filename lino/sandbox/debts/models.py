@@ -68,7 +68,6 @@ from lino.models import get_site_config
 from lino.core.modeltools import get_field
 from lino.core.modeltools import resolve_field
 from lino.core.modeltools import range_filter
-from lino.utils import babel 
 from lino.core import actions
 from lino.utils.choosers import chooser
 from lino.utils import mti
@@ -373,7 +372,7 @@ class BudgetsByPartner(Budgets):
     master_key = 'partner'
     
 
-class AccountGroup(mixins.Sequenced,babel.BabelNamed):
+class AccountGroup(mixins.Sequenced,dd.BabelNamed):
     class Meta:
         verbose_name = _("Budget Account Group")
         verbose_name_plural = _("Budget Account Groups")
@@ -385,7 +384,7 @@ class AccountGroups(dd.Table):
     model = AccountGroup
     required_user_groups = ['debts']
     
-class Account(mixins.Sequenced,babel.BabelNamed):
+class Account(mixins.Sequenced,dd.BabelNamed):
     class Meta:
         verbose_name = _("Budget Account")
         verbose_name_plural = _("Budget Accounts")
@@ -731,7 +730,7 @@ class AssetsSummaryByBudget(EntriesSummaryByBudget,EntriesByType):
 
 
 
-#~ class DebtType(babel.BabelNamed):
+#~ class DebtType(dd.BabelNamed):
     #~ class Meta:
         #~ verbose_name = _("Debt Type")
         #~ verbose_name_plural = _("Debt Types")

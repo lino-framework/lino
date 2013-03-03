@@ -1001,7 +1001,7 @@ class AbstractTable(actors.Actor):
         Not yet stable. Used by print_tx25.py.
         To be combined with the `show` management command.
         """
-        from lino.utils import babel
+        from north import babel
         babel.set_language(None)
         settings.SITE.startup()
         #~ settings.SITE.ui

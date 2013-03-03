@@ -73,7 +73,7 @@ current language.
 >>> print p
 Mr Jean Dupont
 
->>> from lino.utils import babel
+>>> from north import babel
 
 >>> babel.set_language('fr')
 >>> print p

@@ -21,9 +21,11 @@ from django.contrib.contenttypes.models import ContentType
 
 from django.utils.translation import ugettext as _
 
+from north import babel
+from north.babel import babel_values
+
 from lino.core.modeltools import resolve_model
 from lino.utils.instantiator import Instantiator
-from lino.utils.babel import babel_values, DEFAULT_LANGUAGE, AVAILABLE_LANGUAGES
 
 
 companyType = Instantiator('contacts.CompanyType',"abbr name").build
@@ -67,7 +69,7 @@ def parse(s):
 LANGS = {}
 
 for i, lang in enumerate(COMPANY_TYPES_FORMAT.split()):
-    if lang in AVAILABLE_LANGUAGES:
+    if lang in babel.AVAILABLE_LANGUAGES:
     #~ if lang == default_language() or (lang in settings.BABEL_LANGS):
         LANGS[lang] = i
         
@@ -81,7 +83,7 @@ for ln in COMPANY_TYPES_TEXT.splitlines():
         d = dict()
         for lang,i in LANGS.items():
             kw = parse(a[i])
-            if lang == DEFAULT_LANGUAGE:
+            if lang == babel.DEFAULT_LANGUAGE:
                 d.update(kw)
             else:
                 for k,v in kw.items():

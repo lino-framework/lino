@@ -41,8 +41,6 @@ from lino import dd
 from lino.core import actions
 from lino import mixins
 from lino.utils import mti
-from lino.utils import babel 
-#~ from lino.utils.babel import add_babel_field, babelattr
 #~ from lino.utils.quantities import Duration
 
 
@@ -85,7 +83,7 @@ add('40',_("Sent"),'sent',editable=False)
 add('50',_("Paid"),'paid',editable=False)
 
 
-class PaymentTerm(babel.BabelNamed):
+class PaymentTerm(dd.BabelNamed):
     """
     A convention on how an Invoice should be paid. 
     """
@@ -114,7 +112,7 @@ class PaymentTerms(dd.Table):
     order_by = ["id"]
   
 
-class InvoicingMode(mixins.PrintableType,babel.BabelNamed):
+class InvoicingMode(mixins.PrintableType,dd.BabelNamed):
     """Represents a method of issuing/sending invoices.
     """
     class Meta:
@@ -137,7 +135,7 @@ How many days in advance invoices should be posted so that the customer
 has a chance to pay them in time.""")
     
     #~ def __unicode__(self):
-        #~ return unicode(babel.babelattr(self,'name'))
+        #~ return unicode(dd.babelattr(self,'name'))
         
 #~ add_babel_field(InvoicingMode,'name')
         
@@ -147,7 +145,7 @@ class InvoicingModes(dd.Table):
     
     
     
-class ShippingMode(babel.BabelNamed):
+class ShippingMode(dd.BabelNamed):
     price = dd.PriceField(blank=True,null=True)
     class Meta:
         verbose_name = _("Shipping Mode")
@@ -275,7 +273,7 @@ class SalesDocument(
         #~ related_name="%(app_label)s_%(class)s_by_contact",
         #~ related_name="%(app_label)s_%(class)s_related",
         #~ )
-    language = babel.LanguageField(default=babel.DEFAULT_LANGUAGE)
+    language = dd.LanguageField()
     
     #~ customer = models.ForeignKey(Customer,
         #~ related_name="customer_%(class)s")

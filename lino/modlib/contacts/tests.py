@@ -27,12 +27,12 @@ from lino.utils.test import TestCase
 #from lino.igen import models
 #from lino.modlib.contacts.models import Contact, Companies
 #from lino.modlib.countries.models import Country
-from lino.utils import babel
+from north import babel
 
 from lino import dd
 Person = dd.resolve_model("contacts.Person")
 from lino.utils.instantiator import Instantiator, create_and_get
-from lino.utils.babel import babel_values
+from north.babel import babel_values
 
 from lino import mixins
 Genders = mixins.Genders
@@ -79,6 +79,14 @@ def test01(self):
         city=vigala,zip_code='78003')
         
     settings.SITE.uppercase_last_name = True
+    
+    """
+    If the following tests raise a
+    "DoesNotExist: Company matching query does not exist"
+    then this may come because Site._site_config has been 
+    filled before the database switched from the real db to test db.
+    and not properly reset.
+    """
     
     if 'en' in babel.AVAILABLE_LANGUAGES:
         babel.set_language('en')

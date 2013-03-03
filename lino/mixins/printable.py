@@ -43,7 +43,7 @@ import lino
 from lino.core import actions
 from lino.core import fields
 from lino.utils import iif, moneyfmt
-from lino.utils import babel 
+from north import babel 
 #~ from lino.utils import call_optional_super
 from lino.utils.choosers import chooser
 from lino.utils.appy_pod import Renderer

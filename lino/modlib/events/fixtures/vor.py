@@ -14,7 +14,7 @@
 from __future__ import unicode_literals
 from lino import dd
 from lino.utils import i2d
-from lino.utils import babel
+from north import babel
 Country = dd.resolve_model("countries.Country")
 City = dd.resolve_model("countries.City")
 Type = dd.resolve_model("events.Type")

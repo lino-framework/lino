@@ -49,7 +49,6 @@ from lino import dd
 from lino import mixins
 from lino.utils import join_words
 from lino.utils.choosers import chooser
-from lino.utils import babel 
 #~ from lino.models import get_site_config
 
 #~ from lino.modlib.contacts.utils import Genders
@@ -67,7 +66,7 @@ from lino.utils import mti
 from lino.modlib.contacts import MODULE_LABEL
 
 
-class CompanyType(babel.BabelNamed):
+class CompanyType(dd.BabelNamed):
     """
     Represents a possible choice for the  `type`
     field of a :class:`Company`.
@@ -77,7 +76,7 @@ class CompanyType(babel.BabelNamed):
         verbose_name = _("company type")
         verbose_name_plural = _("company types")
         
-    abbr = babel.BabelCharField(_("Abbreviation"),max_length=30,blank=True)
+    abbr = dd.BabelCharField(_("Abbreviation"),max_length=30,blank=True)
     
         
 class CompanyTypes(dd.Table):
@@ -142,7 +141,7 @@ class Partner(mti.MultiTableBase,CountryRegionCity):
         #~ max_length=10,blank=True)
     #~ region = models.CharField(_("Region"),
         #~ max_length=200,blank=True)
-    language = babel.LanguageField()
+    language = dd.LanguageField()
     
     email = models.EmailField(_('E-Mail'),blank=True) # ,null=True)
     url = models.URLField(_('URL'),blank=True)
@@ -497,8 +496,8 @@ class Companies(Partners):
 
 
 
-# class ContactType(babel.BabelNamed):
-class RoleType(babel.BabelNamed):
+# class ContactType(dd.BabelNamed):
+class RoleType(dd.BabelNamed):
     """
     TODO: rename "RoleType" to "Function" or "ContactType".
     

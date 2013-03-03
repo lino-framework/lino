@@ -20,7 +20,7 @@ abbrRE = re.compile("^(.*)\s*\((.*)\)\s*",re.DOTALL)
 
 
 
-from lino.utils import babel
+from north import babel
 
 from lino import dd
 Concept = dd.resolve_model('concepts.Concept')

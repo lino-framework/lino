@@ -35,13 +35,12 @@ from lino import mixins
 from lino.utils import join_words
 from lino.utils.choosers import chooser
 #~ from lino.modlib.contacts.utils import Gender
-from lino.utils import babel
 
 from lino.utils import mti
 #~ from lino.modlib.contacts import models as contacts
 contacts = dd.resolve_app('contacts')
 
-class Type(babel.BabelNamed):
+class Type(dd.BabelNamed):
     """
     Type of a household.
     http://www.belgium.be/fr/famille/couple/cohabitation/
@@ -149,7 +148,7 @@ class HouseholdsByType(Households):
 
 
 
-class Role(babel.BabelNamed):
+class Role(dd.BabelNamed):
     """
     The role of a :class:`Member` in a :class:`Household`.
     """
@@ -165,7 +164,7 @@ its value is computed by joining the `Last Name`
 of all name-giving members with a dash ("-").
       """)
       
-    #~ header = babel.BabelCharField(_("Header"),
+    #~ header = dd.BabelCharField(_("Header"),
         #~ max_length=50,blank=True,
         #~ help_text="""\
 #~ Default header when a member with this Role is being automatically 

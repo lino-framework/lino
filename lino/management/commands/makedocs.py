@@ -40,7 +40,7 @@ from lino.core.modeltools import app_labels
 from lino.utils import confirm, curry
 from lino.utils.config import find_config_file
 from lino.utils import rstgen 
-from lino.utils import babel
+from north import babel
 from lino.utils.restify import doc2rst, abstract
 from lino.core import dbtables
 

@@ -27,12 +27,10 @@ from django.utils.encoding import force_unicode
 
 #~ from lino import tools
 from lino import dd
-#~ from lino.utils.babel import default_language
 #~ from lino import reports
 #~ from lino import layouts
 from lino.utils.restify import restify
 #~ from lino.utils import printable
-from lino.utils import babel
 from lino import mixins
 from django.conf import settings
 #~ from lino import choices_method, simple_choices_method
@@ -41,7 +39,7 @@ from django.conf import settings
 
 #~ TEMPLATE_GROUP = 'notes'
 
-class EntryType(babel.BabelNamed,mixins.PrintableType):
+class EntryType(dd.BabelNamed,mixins.PrintableType):
   
     templates_group = 'blogs/Entry'
     
@@ -94,7 +92,7 @@ class Entry(mixins.TypedPrintable,
     #~ owner_type = models.ForeignKey(ContentType,blank=True,null=True)
     #~ owner_id = models.PositiveIntegerField(blank=True,null=True)
     #~ owner = generic.GenericForeignKey('owner_type', 'owner_id')
-    language = babel.LanguageField()
+    language = dd.LanguageField()
     type = models.ForeignKey(EntryType,blank=True,null=True)
     title = models.CharField(_("Heading"),max_length=200,blank=True) # ,null=True)
     #~ summary = dd.RichTextField(_("Summary"),blank=True,format='html') 

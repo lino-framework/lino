@@ -22,7 +22,7 @@ import datetime
 from django.conf import settings
 from lino import dd
 from lino.utils.instantiator import Instantiator
-from lino.utils import babel
+from north import babel
 
 def root_user(lang,**kw):
     #~ kw.update(profile='900') # UserProfiles.admin) 

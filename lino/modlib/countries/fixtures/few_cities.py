@@ -22,10 +22,10 @@ logger = logging.getLogger(__name__)
 
 from django.core.exceptions import MultipleObjectsReturned
 from lino.utils import dblogger
-from lino.utils import babel
+from north import babel
 from lino.core.modeltools import resolve_model
 from lino.utils.instantiator import Instantiator
-from lino.utils.babel import babel_values
+from north.babel import babel_values
 
 
 from lino import dd

@@ -68,14 +68,13 @@ from django.utils.encoding import force_unicode
 
 from lino import mixins
 from lino import dd
-from lino.utils import babel
 #~ from lino.modlib.cal import models as cal
 
 blogs = dd.resolve_app('blogs')
 
 from lino.modlib.tickets.utils import TicketStates
 
-class ProjectType(mixins.PrintableType,babel.BabelNamed):
+class ProjectType(mixins.PrintableType,dd.BabelNamed):
     "Deserves more documentation."
   
     templates_group = 'tickets/Project'
@@ -89,7 +88,7 @@ class ProjectTypes(dd.Table):
     column_names = 'name build_method template *'
 
 
-class SessionType(babel.BabelNamed):
+class SessionType(dd.BabelNamed):
     "Deserves more documentation."
   
     class Meta:

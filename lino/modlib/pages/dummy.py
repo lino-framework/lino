@@ -28,7 +28,7 @@ from django.conf import settings
 from django.db import models
 
 from lino.utils import AttrDict
-from lino.utils import babel
+from north import babel
 from lino.utils import iif
 from lino.utils.xmlgen import html as xghtml
 from lino.core import web

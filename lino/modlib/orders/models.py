@@ -39,8 +39,6 @@ from lino import dd
 from lino.core import actions
 from lino import mixins
 from lino.utils import mti
-from lino.utils import babel 
-#~ from lino.utils.babel import add_babel_field, babelattr
 #~ from lino.utils.quantities import Duration
 
 

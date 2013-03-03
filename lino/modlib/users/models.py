@@ -27,7 +27,7 @@ from django.contrib.auth.hashers import (
 
 
 from lino import dd
-from lino.utils import babel
+from north import babel
 from lino.utils import mti
 from lino.utils.xmlgen.html import E
 #~ from lino.utils import choicelists
@@ -92,7 +92,7 @@ class User(mixins.CreatedModified):
     
     remarks = models.TextField(_("Remarks"),blank=True) # ,null=True)
     
-    language = babel.LanguageField(default=models.NOT_PROVIDED)
+    language = dd.LanguageField(default=models.NOT_PROVIDED)
     
     if settings.SITE.is_installed('contacts'):
       

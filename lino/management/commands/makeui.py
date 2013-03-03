@@ -48,7 +48,7 @@ from lino.core.modeltools import app_labels
 from lino.utils import confirm
 from lino.utils.config import find_config_file
 from lino.utils import rstgen 
-from lino.utils import babel
+from north import babel
 from lino.core.menus import Menu, MenuItem
 #~ from lino.utils.jsgen import py2js
 from lino.utils import jsgen

@@ -29,12 +29,11 @@ from lino import mixins
 from lino.dd import VirtualField
 from lino.core.modeltools import obj2str
 #~ from lino import layouts
-from lino.utils import babel 
 from lino.utils.choosers import chooser
 
 #~ tools.requires_apps('auth','contenttypes')
 
-class LinkType(babel.BabelNamed):
+class LinkType(dd.BabelNamed):
     "Implements :class:`links.LinkType`."
     
     class Meta:

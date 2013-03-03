@@ -4,7 +4,7 @@
 <div class="row-fluid">
 <p>({{_("Under construction")}})</p>
 <p>
-{% for obj in settings.LINO.modules.concepts.Concept.objects.all() %}
+{% for obj in settings.SITE.modules.concepts.Concept.objects.all() %}
   {{obj.summary_row()}},
   {% endfor %}
 </p>

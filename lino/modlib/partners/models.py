@@ -49,7 +49,6 @@ from lino import dd
 from lino import mixins
 from lino.utils import join_words
 from lino.utils.choosers import chooser
-from lino.utils import babel 
 #~ from lino.models import get_site_config
 
 #~ from lino.modlib.partners.utils import Genders
@@ -88,7 +87,7 @@ if False:
     PartnerTypes.add_item('O','partners.Organisation','organisation')
 
 
-class OrganisationType(babel.BabelNamed):
+class OrganisationType(dd.BabelNamed):
     """
     Represents a possible choice for the  `type`
     field of an :class:`Organisation`.
@@ -98,7 +97,7 @@ class OrganisationType(babel.BabelNamed):
         verbose_name = _("Organisation type")
         verbose_name_plural = _("Organisation types")
         
-    abbr = babel.BabelCharField(_("Abbreviation"),max_length=30,blank=True)
+    abbr = dd.BabelCharField(_("Abbreviation"),max_length=30,blank=True)
     
         
 class OrganisationTypes(dd.Table):
@@ -136,7 +135,7 @@ class Addressable(CountryRegionCity):
         #~ max_length=10,blank=True)
     #~ region = models.CharField(_("Region"),
         #~ max_length=200,blank=True)
-    language = babel.LanguageField()
+    language = dd.LanguageField()
     
     email = models.EmailField(_('E-Mail'),blank=True) # ,null=True)
     url = models.URLField(_('URL'),blank=True)
@@ -572,7 +571,7 @@ class OrganisationsByCountry(Organisations):
 
 
 
-class Role(babel.BabelNamed):
+class Role(dd.BabelNamed):
     """
     
     Role.name is used at "in seiner Eigenschaft als ..." 

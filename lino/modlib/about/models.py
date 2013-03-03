@@ -29,7 +29,7 @@ from lino.utils import AttrDict
 from lino.utils.xmlgen import html as xghtml
 
 from lino.utils import codetime, codefiles
-from lino.utils import babel
+from north import babel
 from lino import mixins
 from lino import dd
 

@@ -34,7 +34,7 @@ from django.utils.translation import ugettext_lazy as _
 from django.template.loader import BaseLoader
 from django.template.base import TemplateDoesNotExist
 
-from lino.utils import babel
+from north import babel
 from lino.utils import iif
 from lino.utils.xmlgen import html as xghtml
 E = xghtml.E

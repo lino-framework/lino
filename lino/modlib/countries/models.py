@@ -33,7 +33,7 @@ from django.core.exceptions import ValidationError
 
 from lino.utils.choosers import chooser
 #~ from lino.utils.babel import add_babel_field, babelattr
-from lino.utils import babel 
+from north import babel 
 #~ from lino.utils import dblogger
 
 from lino.utils.instantiator import lookup_or_create
@@ -97,7 +97,7 @@ class CountryDrivers:
 
 
 #~ class Language(dd.Model):
-class Language(babel.BabelNamed):
+class Language(dd.BabelNamed):
     class Meta:
         verbose_name = _("Language")
         verbose_name_plural = _("Languages")
@@ -120,7 +120,7 @@ class Languages(dd.Table):
 
 
 
-class Country(babel.BabelNamed):
+class Country(dd.BabelNamed):
     """
     Implements the :class:`countries.Country` convention.
     """
@@ -131,7 +131,7 @@ class Country(babel.BabelNamed):
         
     isocode = models.CharField(max_length=4,primary_key=True)
     #~ name = models.CharField(max_length=200)
-    #~ name = babel.BabelCharField(max_length=200,verbose_name=_("Designation"))
+    #~ name = d.BabelCharField(max_length=200,verbose_name=_("Designation"))
     short_code = models.CharField(max_length=4,blank=True)
     iso3 = models.CharField(max_length=3,blank=True)
     
@@ -165,7 +165,7 @@ class Countries(dd.Table):
 FREQUENT_COUNTRIES = ['BE','NL','DE', 'FR', 'LU']
 
 
-class City(babel.BabelNamed):
+class City(dd.BabelNamed):
     """
     Implements the :class:`countries.City` convention.
     """

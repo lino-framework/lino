@@ -53,7 +53,7 @@ from lino import dd
 #~ from lino.modlib.properties import models as properties
 from lino.utils import choosers
 from lino.utils import curry
-from lino.utils import babel
+from north import babel
 from lino.utils import iif
 from lino.core.requests import PhantomRow
 from lino.utils import IncompleteDate

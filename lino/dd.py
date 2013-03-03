@@ -44,12 +44,12 @@ Extended Fields:
 - :class:`DummyField <lino.core.fields.DummyField>`
 - :func:`ForeignKey <lino.core.fields.ForeignKey>`
 
-Babel fields:
+Multilingual database content:
 
-- :class:`BabelNamed <lino.utils.babel.BabelNamed>`
-- :class:`BabelCharField <lino.utils.babel.BabelCharField>`
-- :class:`BabelTextField <lino.utils.babel.BabelTextField>`
-- :class:`LanguageField <lino.utils.babel.LanguageField>`
+- :class:`BabelNamed <north.babel.BabelNamed>`
+- :class:`BabelCharField <north.babel.BabelCharField>`
+- :class:`BabelTextField <fields.BabelTextField>`
+- :class:`LanguageField <north.babel.LanguageField>`
 
 Virtual Fields:
 
@@ -74,7 +74,7 @@ Utilities:
 - :func:`full_model_name <django_site.modeltools.full_model_name>`
 - :func:`fields_list <lino.core.fields.fields_list>`
 - :func:`resolve_field <lino.core.modeltools.resolve_field>`
-- :func:`resolve_model <lino.core.modeltools.resolve_model>`
+- :func:`resolve_model <north.utils.resolve_model>`
 - :func:`resolve_app <lino.core.modeltools.resolve_app>` 
 - :func:`chooser <lino.utils.choosers.chooser>` 
 - :func:`add_user_group` 
@@ -123,7 +123,9 @@ logger = logging.getLogger(__name__)
 
 from lino.core.tables import VirtualTable
 
-from lino.core.modeltools import resolve_model, resolve_app, resolve_field, get_field, UnresolvedModel
+from north.utils import resolve_model, UnresolvedModel
+
+from lino.core.modeltools import resolve_app, resolve_field, get_field
 from django_site.modeltools import obj2str
 from django_site.modeltools import obj2unicode
 from django_site.modeltools import range_filter
@@ -187,8 +189,10 @@ from lino.core.fields import VirtualField, virtualfield
 from lino.core.fields import RequestField, requestfield
 from lino.core.fields import Constant, constant
 from lino.core.fields import ForeignKey
+from lino.core.fields import BabelTextField
 
-from lino.utils.babel import BabelCharField, BabelTextField, BabelNamed, LanguageField
+from north.babel import BabelCharField, BabelNamed, LanguageField
+#~ from north.babel import BabelCharField, BabelTextField, BabelNamed, LanguageField
 #~ from lino.core.fields import MethodField
 
 from lino.utils.choosers import chooser

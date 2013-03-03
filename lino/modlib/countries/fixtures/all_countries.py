@@ -39,7 +39,7 @@ from xml.dom import minidom
 
 from lino.utils import ucsv
 from lino.utils import dblogger as logger
-from lino.utils.babel import babel_values, DEFAULT_LANGUAGE
+from north.babel import babel_values, DEFAULT_LANGUAGE
 from lino.modlib.countries.models import Country
 
 TABLE2 = """

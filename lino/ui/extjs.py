@@ -29,7 +29,7 @@ import codecs
 import jinja2
 
 
-from lino.utils.babel import LANGUAGE_CHOICES
+from north.babel import LANGUAGE_CHOICES
 from lino.modlib.cal.utils import CalendarAction
 
 from django.db import models
@@ -75,7 +75,7 @@ from lino.core import actors
 #~ from lino.core.modeltools import full_model_name
     
 from lino.utils import choosers
-from lino.utils import babel
+from north import babel
 from lino.core import choicelists
 from lino.core import menus
 from lino.utils import jsgen

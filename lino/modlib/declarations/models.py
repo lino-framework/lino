@@ -33,7 +33,6 @@ from django.conf import settings
 
 from lino import dd
 from lino import mixins
-from lino.utils import babel
 #~ from lino.core.modeltools import full_model_name
 #~ from lino.utils.choicelists import ChoiceList
 #contacts = reports.get_app('contacts')

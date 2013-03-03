@@ -38,12 +38,10 @@ from django.core.exceptions import ValidationError
 from lino import mixins
 #~ from lino.mixins import mails
 from lino import dd
-#~ from lino.utils.babel import default_language
 #~ from lino import reports
 #~ from lino import layouts
 #~ from lino.utils import perms
 #~ from lino.utils import printable
-from lino.utils import babel
 from lino.core import actions
 #~ from lino.utils import call_optional_super
 from django.conf import settings

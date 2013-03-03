@@ -29,11 +29,8 @@ from lino import mixins
 from lino import dd
 #~ from lino.core import reports
 from lino.core import actions
-from lino.utils import babel
 from lino.utils import dblogger
 from lino.core.modeltools import resolve_model
-
-from lino.utils.babel import dtosl
 
 
 def setup_main_menu(site,ui,profile,m): pass

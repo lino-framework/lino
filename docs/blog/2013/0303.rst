@@ -1,0 +1,106 @@
+20130303
+========
+
+When moving :mod:`lino.utils.dumpy` and
+:mod:`lino.utils.babel` from Lino to Django-Site
+I should use the occasion and find better names for them.
+
+
+A better name for "dumpy" 
+------------------------------------
+
+
+``dumpy`` will probably become ``pyfixtures``
+because producing dumps is only one usage.
+They have different usages:
+  
+- Used by unit tests for 
+  "Loading a database with a specific, known set of data" 
+  (from Wikipedia `Test fixture 
+  <http://en.wikipedia.org/wiki/Test_fixture>`_ article)
+  
+- The same feature also serves to produce prototypes and 
+  demo databases.
+  
+- dump ("serialize") the content of a database to a python script
+  which can be loaded ("deserialized") to reproduce an exact duplicate 
+  of the original database.
+  
+- read the dump from a previous version, performing database 
+  conversions (migration).
+  
+Is there a better word than "fixture" to designate these features?
+
+
+A better name for "babel"
+-------------------------
+
+``lino.utils.babel``
+must get a new name because it 
+clashes with the existing 
+`babel <http://pythonhosted.org/Babel/>`__ 
+project.
+  
+My first idea was ``mld`` (for "multilingual data") 
+  
+A Google query for "multilingual database content" shows that 
+the topic is complex and has no one-for-all solution:
+
+- `Schema for a multilanguage database
+  <http://stackoverflow.com/questions/316780/schema-for-a-multilanguage-database>`__
+  (2008-11-25) by `jwojciak <http://stackoverflow.com/users/5348/qbeuek>`__.
+  
+- `Multilingual database design approaches
+  <http://fczaja.blogspot.com/2010/08/multilanguage-database-design.html>`__
+  (2010-08-30) by `Filip Czaja
+  <http://www.blogger.com/profile/12289949072596625867>`__
+  
+- On 2011-06-07 Reinhout van Rees (NL)
+  `writes <http://reinout.vanrees.org/weblog/2011/06/07/multilingual-orm.html>`__
+  about Jonas Obrist's (CH)
+  `django-nani <http://django-nani.readthedocs.org>`__ project.
+  After reading the `Quickstart page
+  <http://django-nani.readthedocs.org/en/0.0.3/public/quickstart.html>`__
+  I say: the fundamental differences to my work is that
+  `lino.utils.babel` is single-table, 
+  which is possible because
+  database conversions and migrations are handled 
+  by `lino.utils.dumpy`.
+  Another difference is that 
+  `lino.utils.babel` has no integration facilities for 
+  Django's Admin (though it shouldn't be too difficult to add it, 
+  that's just because I personally have no need for it).
+    
+- Kristian Øllegaard (DK)
+  wrote a fork of `django-nani` called 
+  `django-hvad <https://github.com/KristianOellegaard/django-hvad>`__
+  which unlike django-nani "does not affect the default queries, 
+  which means that everything will continue to work as it was before.")
+  
+The division goes on
+---------------------
+
+Maybe I should even move them to separate projects and not to `django-site`?
+Because it should be possible to use `django-site` together 
+with `django-nani` or `django-hvad`.
+
+Here we go for the next new projects:
+
+- "django-pyfixtures", 
+- "django-stml" for "single-table multilingual database content"?
+
+Or a common new project for these two, because it makes no sense to 
+use them separately?
+
+- Maybe "django-north", because it does database migrations using 
+  another approach than South? 
+  
+That sounds good:
+
+  `django-north <https://code.google.com/p/django-north/>`__:
+  Another way to migrate Django databases
+  
+  A Python code serializer/deserializer for Django which lets you write intelligent fixtures and generate database dumps. Includes an optional single-table solution for handling multilingual database content. Optionally usable as an alternative to South for managing database migrations.
+  
+  
+

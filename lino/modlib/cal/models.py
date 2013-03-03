@@ -35,7 +35,6 @@ from lino import mixins
 from lino import dd
 #~ from lino.core import reports
 from lino.core import actions
-from lino.utils import babel
 from lino.utils import AttrDict
 from lino.utils import ONE_DAY
 #~ from lino.ui import requests as ext_requests
@@ -47,7 +46,8 @@ from lino.modlib.cal.utils import \
     DurationUnits, setkw, dt2kw, \
     Weekdays, AccessClasses, CalendarAction
 
-from lino.utils.babel import dtosl
+from north import babel
+from north.babel import dtosl
 
 
 #~ from lino.modlib.contacts import models as contacts
@@ -298,7 +298,7 @@ from django.core.validators import MinValueValidator
 
 
 #~ class Calendar(mixins.UserAuthored):
-class Calendar(mixins.PrintableType,outbox.MailableType,babel.BabelNamed):
+class Calendar(mixins.PrintableType,outbox.MailableType,dd.BabelNamed):
     """
     A Calendar is a collection of events and tasks.
     There are local calendars and remote calendars.
@@ -501,7 +501,7 @@ if settings.SITE.user_model:
 
 
 
-class Place(babel.BabelNamed):
+class Place(dd.BabelNamed):
     """
     A location where Events can happen.
     For a given Place you can see the :class:`EventsByPlace` 
@@ -520,7 +520,7 @@ class Places(dd.Table):
     cal.EventsByPlace
     """
     
-class Priority(babel.BabelNamed):
+class Priority(dd.BabelNamed):
     "The priority of a Task or Event."
     class Meta:
         verbose_name = _("Priority")
@@ -533,7 +533,7 @@ class Priorities(dd.Table):
     column_names = 'name *'
 
 
-#~ class EventType(mixins.PrintableType,outbox.MailableType,babel.BabelNamed):
+#~ class EventType(mixins.PrintableType,outbox.MailableType,dd.BabelNamed):
     #~ """The type of an Event.
     #~ Determines which build method and template to be used for printing the event.
     #~ """
@@ -1717,7 +1717,7 @@ if settings.SITE.project_model:
         column_names = 'start_date user summary workflow_buttons *'
     
 
-class GuestRole(mixins.PrintableType,outbox.MailableType,babel.BabelNamed):
+class GuestRole(mixins.PrintableType,outbox.MailableType,dd.BabelNamed):
     """
     A possible value for the `role` field of an :class:`Guest`.
     """
@@ -2267,7 +2267,6 @@ if settings.SITE.use_extensible:
             
             
 
-from lino.utils.babel import dtosl
 
     
 def reminders_as_html(ar,days_back=None,days_forward=None,**kw):

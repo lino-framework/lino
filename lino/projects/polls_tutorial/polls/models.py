@@ -5,7 +5,6 @@ from django.db import models
 from django.conf import settings
 
 from lino import dd
-from lino.utils import babel
 
 
 class Poll(dd.Model):

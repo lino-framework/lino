@@ -67,7 +67,22 @@ class RichTextField(models.TextField):
         
     def set_format(self,fmt):
         self.textfield_format = fmt
-    
+
+
+
+from north.babel import contribute_to_class
+
+class BabelTextField(RichTextField):
+    """
+    Define a variable number of clones of the "master" field, 
+    one for each language .
+    """
+    def contribute_to_class(self, cls, name):
+        super(BabelTextField,self).contribute_to_class(cls, name)
+        contribute_to_class(self,cls,RichTextField,
+            format=self.textfield_format)
+
+
   
 #~ class PercentageField(models.SmallIntegerField):
     #~ """

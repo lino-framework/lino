@@ -61,7 +61,7 @@ from lino.utils import choosers
 #~ from lino.utils import codetime
 from lino.utils import curry
 #~ from lino.models import get_site_config
-from lino.utils import babel
+from north import babel
 from lino.utils import AttrDict
 #~ from lino.core import perms
 

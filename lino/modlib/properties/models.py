@@ -45,7 +45,7 @@ from django.utils.encoding import force_unicode
 
 
 from lino import dd
-from lino.utils import babel
+from north import babel
 #~ from lino.utils.babel import babelattr
 #~ from lino.utils import printable
 from lino import mixins
@@ -94,7 +94,7 @@ add('4',_("very well"))
 
 
 
-class PropType(babel.BabelNamed):
+class PropType(dd.BabelNamed):
     """
     The type of the values that a property accepts.
     Each PropType may (or may not) imply a list of choices.
@@ -108,7 +108,7 @@ class PropType(babel.BabelNamed):
         verbose_name = _("Property Type")
         verbose_name_plural = _("Property Types")
         
-    #~ name = babel.BabelCharField(max_length=200,verbose_name=_("Designation"))
+    #~ name = dd.BabelCharField(max_length=200,verbose_name=_("Designation"))
     
     choicelist = models.CharField(
         max_length=50, blank=True,

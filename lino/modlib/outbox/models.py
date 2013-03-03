@@ -47,7 +47,7 @@ from lino.core import actions
 #~ from lino.utils import perms
 from lino.utils.restify import restify
 #~ from lino.utils import printable
-from lino.utils import babel
+from north import babel
 #~ from lino.utils import call_optional_super
 #~ from lino import choices_method, simple_choices_method
 

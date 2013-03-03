@@ -45,7 +45,7 @@ from lino import dd
 #~ from lino.utils import perms
 #~ from lino.utils.restify import restify
 #~ from lino.utils import printable
-from lino.utils import babel
+from north import babel
 from lino.utils import iif
 from lino.utils.xmlgen import html as xghtml
 E = xghtml.E
@@ -122,9 +122,9 @@ class Page(mixins.Referrable,mixins.Hierarizable):
     #~ language = babel.LanguageField(blank=True)
     
     #~ type = models.ForeignKey(PageType,blank=True,null=True)
-    title = babel.BabelCharField(_("Title"),max_length=200,blank=True) # ,null=True)
+    title = dd.BabelCharField(_("Title"),max_length=200,blank=True) # ,null=True)
     #~ abstract = dd.RichTextField(_("Abstract"),blank=True,format='html')
-    body = babel.BabelTextField(_("Body"),blank=True,format='plain')
+    body = dd.BabelTextField(_("Body"),blank=True,format='plain')
     
     #~ special = models.BooleanField(_("Special"),default=False)
     raw_html = models.BooleanField(_("raw html"),default=False)
