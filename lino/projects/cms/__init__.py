@@ -23,7 +23,7 @@ from lino.projects.std.settings import *
 
 from django.utils.translation import ugettext_lazy as _
 
-class Lino(Lino):
+class Site(Site):
   
     #~ title = __name__
     short_name = u"Lino CMS"

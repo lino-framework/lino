@@ -5,7 +5,6 @@ When moving :mod:`lino.utils.dumpy` and
 :mod:`lino.utils.babel` from Lino to Django-Site
 I should use the occasion and find better names for them.
 
-
 A better name for "dumpy" 
 ------------------------------------
 
@@ -98,9 +97,39 @@ use them separately?
 That sounds good:
 
   `django-north <https://code.google.com/p/django-north/>`__:
+  
   Another way to migrate Django databases
   
   A Python code serializer/deserializer for Django which lets you write intelligent fixtures and generate database dumps. Includes an optional single-table solution for handling multilingual database content. Optionally usable as an alternative to South for managing database migrations.
   
   
+Summary
+-------
+
+This weekend Lino spawned two new projects:
+
+- `django-site <https://code.google.com/p/django-site/>`__ provides 
+  startup signals and the `settings.SITE` object.
+  
+- `django-north <https://code.google.com/p/django-north/>`__
+  provides python dumps, babel fields and data migration.
+  
+Neither of them brings anything new, they just separate and encapsulate
+some functionality out of Lino.
+Lino depends on `django-north <https://code.google.com/p/django-north/>`__
+which depends on `django-site <https://code.google.com/p/django-site/>`__.
+
+This took about a whole weekend and there is no visible result.
+But it was clear that Lino had become too complex.
+Thanks again to 
+`Two scoops of Django <https://django.2scoops.org/>`_
+which helped me to understand how important this is.
+
+The documentation is still very uncomplete, 
+especially the tutorials need revision.
+Just be patient because all this is voluntary work
+(and because there's even more to come).
+
+Note that I also switched from GPL to BSD for the new projects, 
+which was possible because they don't use any GPL-licensed product.
 

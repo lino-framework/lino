@@ -36,7 +36,7 @@ from django.db.models import loading
 
 #~ from django_site.modeltools import 
 
-from north.utils import resolve_model, UnresolvedModel
+from north.dbutils import resolve_model, UnresolvedModel
 
 def resolve_app(app_label,strict=False):
     """

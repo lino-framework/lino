@@ -27,7 +27,6 @@ from lino import dd
 #~ from lino import tools
 from lino import mixins
 from lino.dd import VirtualField
-from lino.core.modeltools import obj2str
 #~ from lino import layouts
 from lino.utils.choosers import chooser
 

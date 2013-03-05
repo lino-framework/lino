@@ -30,7 +30,7 @@ from lino.core.modeltools import resolve_model,resolve_app
 Person = resolve_model("contacts.Person")
 #~ contacts = resolve_app('contacts')
 from lino.utils.instantiator import Instantiator, create_and_get
-from lino.utils.babel import babel_values
+from north.babel import babel_values
 
 from lino import mixins
 Genders = mixins.Genders

@@ -13,7 +13,6 @@ extension.
     
     lino.dd
     
-    lino.models
     lino.management
     
     lino.core

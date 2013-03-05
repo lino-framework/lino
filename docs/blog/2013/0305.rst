@@ -1,0 +1,29 @@
+20130305
+========
+
+Tested docs
+===========
+
+Nach knapp 16 Stunden "Forschungsarbeit" habe ich heute 
+einen sensationellen Erfolg erlebt:
+Man *kann* Djangos `settings` zur Laufzeit ändern! 
+Und es *ist* möglich, mehrere Anwendungen in einem Testlauf zu testen!
+
+Seit ich mit Django und Sphinx arbeite, habe ich da immer wieder nach 
+gesucht und nie eine Lösung gefunden. 
+Viele Leute scheinen nicht viel von Doctests zu halten und 
+das Problem deshalb zu vernachlässigen,
+aber mich störte es, dass man mit Spinx angeblich 
+immer nur *einen* Django-Site pro Sphinx-Doctree 
+dokumentieren können soll.
+Ich will in meinem Blog doch immer wieder mal schnell ein 
+getestetes Dokument schreiben können.
+
+
+Jetzt habe ich mich mal drangesetzt und selber eine Lösung entwickelt.
+Eine Direktive "djangotestdoc":
+
+http://site.lino-framework.org/tested/index.html 
+zeigt zwei erste Dokumente, die inhaltlich eher veraltet sind, 
+aber die mir als erste Versuchskaninchen dienten.
+

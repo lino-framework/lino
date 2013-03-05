@@ -17,15 +17,27 @@ This defines Lino's standard system signals.
 
 from django.dispatch import Signal, receiver
 
-#~ boot = Signal()
+pre_analyze = Signal(['models_list'])
+"""
+Sent exactly once per process at site startup, 
+just before Lino analyzes the models.
+
+sender: 
+  the Site instance
+  
+models_list:
+  list of models 
+  
+"""
+
+post_analyze = Signal(['models_list'])
+"""
+Sent exactly once per process at site startup, 
+just after Site has finished to analyze the models.
+"""
 
 
-#~ pre_startup = Signal(['model'])
-#~ """
-#~ Sent exacty once per process before Lino starts up.
-#~ sender: 
-  #~ the Lino instance
-#~ """
+
 
 
 auto_create = Signal(["field","value"])

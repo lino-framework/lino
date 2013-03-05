@@ -52,7 +52,6 @@ if True:
             yield line.encode('utf-8')
 
 from lino.modlib.countries.models import CityTypes
-city = Instantiator('countries.City',country='EE').build
 
 CITY_TYPES = {
   u'küla' : CityTypes.village,
@@ -78,6 +77,7 @@ MAAKOND;VALD;LINN/ ALEV/ ALEVIK/ KÜLA;TÄNAV/TALU;AADRESSILIIK;MAJAALGUS;MAJALO
 """
   
 def objects():
+    city = Instantiator('countries.City',country='EE').build
     f = codecs.open(input_file,'r','latin-1','replace')
     #~ f = codecs.open(input_file,'r','utf-8','replace')
     f.readline()

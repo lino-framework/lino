@@ -7,16 +7,16 @@ Welcome to the Project homepage of Lino the Framework.
 
 - :doc:`What is Lino? </about/index>`
 
-- Play with the :doc:`online demos</demos>`
+- Play with the :doc:`online demos </demos>`
 
 - Learn how to write your own Lino application by following 
   the :doc:`/tutorials/index`.
 
+- See Luc's :doc:`Developer Blog <blog/2013/index>` 
+  to get detailed news about what's going on here. 
+
 - Stay connected by subscribing to the official 
   `Lino Blog <http://blog.lino-framework.org/>`_
-
-- See Luc's :doc:`Developer Blog <blog/2013/index>` 
-  to get the hottest news about what's going on here. 
 
 - The final truth about what's going on is only 
   `The Source Code <http://code.google.com/p/lino/source/list>`_

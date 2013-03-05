@@ -1,5 +1,10 @@
-#74 : A better name than ``settings.LINO``
-==========================================
+#74 [fixed] : A better name than ``settings.LINO``
+==================================================
+
+(Thoughts in this ticket are obsolete now, 
+they are just a historic trace of why
+`django-site <http://site.lino-framework.org>`__
+was born)
 
 Technically Lino is almost ready to have it's 
 "kernel" or "essential part" split out into a 

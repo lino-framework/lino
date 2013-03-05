@@ -28,7 +28,7 @@ from django.conf import settings
 from lino.utils import AttrDict
 from lino.utils.xmlgen import html as xghtml
 
-from lino.utils import codetime, codefiles
+from lino.utils.code import codetime, codefiles, SourceFile
 from north import babel
 from lino import mixins
 from lino import dd
@@ -337,55 +337,6 @@ class About(mixins.EmptyTable):
 
 
 
-def is_start_of_docstring(line):
-    for delim in '"""',"'''":
-        if line.startswith(delim) or line.startswith('u'+delim) or line.startswith('r'+delim) or line.startswith('ru'+delim):
-            return delim
-            
-class SourceFile(object):
-    def __init__(self,modulename,filename):
-        self.modulename = modulename
-        self.filename = filename
-        self.analyze()
-        
-    def analyze(self):
-        self.count_code, self.count_total, self.count_blank, self.count_doc = 0, 0, 0, 0
-        self.count_comment = 0
-        #~ count_code, count_total, count_blank, count_doc = 0, 0, 0, 0
-        skip_until = None
-        for line in open(self.filename).readlines():
-            self.count_total += 1
-            line = line.strip()
-            if not line:
-                self.count_blank += 1
-            else:
-                if line.startswith('#'):
-                    self.count_comment += 1
-                    continue
-                if skip_until is None:
-                    skip_until = is_start_of_docstring(line)
-                    if skip_until is not None:
-                        self.count_doc += 1
-                        #~ skip_until = '"""'
-                        continue
-                    #~ if line.startswith('"""') or line.startswith('u"""'):
-                        #~ count_doc += 1
-                        #~ skip_until = '"""'
-                        #~ continue
-                    #~ if line.startswith("'''") or line.startswith("u'''"):
-                        #~ count_doc += 1
-                        #~ skip_until = "'''"
-                        #~ continue
-                    self.count_code += 1
-                else:
-                    self.count_doc += 1
-                    #~ if line.startswith(skip_until):
-                    if skip_until in line:
-                        skip_until = None
-
-        #~ self.count_code, count_total, count_blank, count_doc
-        
-        
 class SourceFiles(dd.VirtualTable):
     label = _("Source files")
     column_names = 'module_name code_lines doc_lines'

@@ -40,7 +40,6 @@ from docutils import nodes
 from docutils.parsers.rst import directives
 from sphinx.util.compat import Directive
 
-from north import babel
 from lino.utils import rstgen
 
 #~ class ScreenshotDirective(directives.images.Image):
@@ -417,6 +416,8 @@ class YearBlogIndexDirective(InsertInputDirective):
     
       
     def get_rst(self):
+        from north import babel
+  
         #~ year = self.arguments[0]
         env = self.state.document.settings.env
         today = datetime.date.today()
@@ -558,4 +559,6 @@ def setup(app):
 
     app.add_stylesheet('linodocs.css')
 
+    from django_site import djangodoctest
+    djangodoctest.setup(app)
     

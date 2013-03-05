@@ -13,6 +13,7 @@
     lino.utils.auth
     lino.utils.babel
     lino.utils.choosers
+    lino.utils.code
     lino.utils.config
     lino.utils.log
     lino.utils.dblogger

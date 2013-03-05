@@ -74,7 +74,7 @@ Utilities:
 - :func:`full_model_name <django_site.modeltools.full_model_name>`
 - :func:`fields_list <lino.core.fields.fields_list>`
 - :func:`resolve_field <lino.core.modeltools.resolve_field>`
-- :func:`resolve_model <north.utils.resolve_model>`
+- :func:`resolve_model <north.dbutils.resolve_model>`
 - :func:`resolve_app <lino.core.modeltools.resolve_app>` 
 - :func:`chooser <lino.utils.choosers.chooser>` 
 - :func:`add_user_group` 
@@ -84,8 +84,9 @@ Utilities:
 
 Signals:
 
-- :attr:`pre_analyze <django_site.signals.pre_analyze>`
-- :attr:`post_analyze <django_site.signals.post_analyze>`
+- :attr:`startup <django_site.signals.startup>`
+- :attr:`pre_analyze <lino.core.signals.pre_analyze>`
+- :attr:`post_analyze <lino.core.signals.post_analyze>`
 - :attr:`pre_merge <lino.core.signals.pre_merge>`
 - :attr:`pre_ui_create <lino.core.signals.pre_ui_create>`
 - :attr:`ChangeWatcher <lino.core.signals.ChangeWatcher>`
@@ -123,7 +124,7 @@ logger = logging.getLogger(__name__)
 
 from lino.core.tables import VirtualTable
 
-from north.utils import resolve_model, UnresolvedModel
+from north.dbutils import resolve_model, UnresolvedModel
 
 from lino.core.modeltools import resolve_app, resolve_field, get_field
 from django_site.modeltools import obj2str
@@ -211,9 +212,10 @@ from lino.core.layouts import ParamsLayout
 
 
 from lino.core.signals import pre_ui_create, pre_ui_delete, pre_ui_update, ChangeWatcher
-from django_site.signals import pre_analyze
-from django_site.signals import post_analyze
+from django_site.signals import startup
 
+from lino.core.signals import pre_analyze
+from lino.core.signals import post_analyze
 from lino.core.signals import auto_create
 from lino.core.signals import pre_merge
 from lino.core.signals import pre_add_child

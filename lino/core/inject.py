@@ -20,7 +20,7 @@ from django.db.models.fields import FieldDoesNotExist
 from django.dispatch import receiver
 
 from lino.core import fields
-from django_site.signals import pre_analyze
+from lino.core.signals import pre_analyze
 
 PENDING_INJECTS = dict()
 PREPARED_MODELS = dict()

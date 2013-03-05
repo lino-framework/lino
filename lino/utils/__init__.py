@@ -62,7 +62,10 @@ from dateutil import parser as dateparser
 from decimal import Decimal
 import stat
 
-from django_site.utils import AttrDict, Cycler
+# backwards compatibility:
+from django_site import AttrDict
+from north.utils import Cycler
+from .code import codefiles, codetime
 
 #~ import lino
 
@@ -258,44 +261,6 @@ curry = lambda func, *args, **kw:\
                  
     
 
-#~ def codefiles(pattern='.*', flags=0):
-def codefiles(pattern='*'):
-    """
-    Yield a list of the source files corresponding to the currently 
-    imported modules which match the given pattern
-    """
-    #~ exp = re.compile(pattern, flags)
-    
-    for name,mod in sys.modules.items():
-        if fnmatch.fnmatch(name, pattern):
-        #~ if exp.match(name):
-            filename = getattr(mod, "__file__", None)
-            if filename is not None:
-                if filename.endswith(".pyc") or filename.endswith(".pyo"):
-                    filename = filename[:-1]
-                if filename.endswith("$py.class"):
-                    filename = filename[:-9] + ".py"
-                if os.path.exists(filename): # File might be in an egg, so there's no source available
-                    yield name,filename
-            
-def codetime(*args,**kw):
-    """
-    Return the modification time of the youngest source code in memory.
-    Used by :mod:`lino.ui.extjs3.ext_ui` to avoid generating lino.js files if not necessary.
-    Inspired by the code_changed() function in `django.utils.autoreload`.
-    """
-    code_mtime = None
-    pivot = None
-    for name,filename in codefiles(*args,**kw):
-        stat = os.stat(filename)
-        mtime = stat.st_mtime
-        #~ print 20130204, filename, time.ctime(mtime) 
-        if code_mtime is None or code_mtime < mtime:
-            code_mtime = mtime
-            pivot = filename
-    #~ print '20130204 codetime:', time.ctime(code_mtime), pivot
-    return code_mtime
-    
     
 class IncompleteDate:
     """

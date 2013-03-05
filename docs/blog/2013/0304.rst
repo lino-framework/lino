@@ -1,0 +1,51 @@
+20130304
+========
+
+I spent the whole day working on the documentation for 
+`django-site <http://site.lino-framework.org>`__.
+
+And it is not finished!
+Although `django-site` is by far the smallest part of Lino.
+
+Just out of curiosity I made a script to confirm that 
+it is about 1,2% of the total code base:
+
+  ============== ============ =========== =============== =============
+   name           count_code   count_doc   count_comment   count_total
+  ============== ============ =========== =============== =============
+   lino           15816        13461       10355           48904
+   lino_welfare   2471         4519        2668            11950
+   north          284          189         89              722
+   django_site    226          265         141             796
+  -------------- ------------ ----------- --------------- -------------
+   total          18797        18434       13253           62372
+  ============== ============ =========== =============== =============
+
+
+This table has been produced using a file `analyze_code.py` ::
+
+  from lino.utils.code import analyze_rst
+  print analyze_rst('lino','lino_welfare','north','django_site')
+
+executed in a Lino-Welfare project directory using the command::
+
+  $ python manage.py run lines.py
+  
+
+Optimized testing
+-----------------
+
+The `django-site` documentation features a page of 
+`Tested documents 
+<http://site.lino-framework.org/tested/index.html>`__.
+The only improvement compared to `lino.test_apps` is that
+I no longer need to have a `test_apps` submodel.
+Not really sure though whether this is worth the effort.
+
+Today I also used 
+`coverage.py <http://nedbatchelder.com/code/coverage/>`__
+and 
+`unipath 
+<http://sluggo.scrapping.cc/python/unipath/Unipath-current/README.html>`__ 
+for the first time.
+
