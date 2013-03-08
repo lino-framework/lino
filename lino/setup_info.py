@@ -14,8 +14,11 @@
 #~ """
 #~ __version__ = 
 
-SETUP_INFO=dict(name = 'lino',
+SETUP_INFO = dict(name = 'lino',
   version = '1.6.0',
+  requires = ['north>=0.0.2','Django','appy',
+    'python_dateutil','PyYAML','odfpy','sphinx','jinja2',
+    ],
   description = "A framework for writing desktop-like web applications using Django and ExtJS",
   long_description = """\
 Lino is a framework for writing desktop-like web applications 
@@ -52,7 +55,6 @@ The following real-world applications use the Lino framework:
   packages = ['lino'],
   author = 'Luc Saffre',
   author_email = 'luc.saffre@gmail.com',
-  requires = ['Django','appy','python_dateutil','PyYAML','odfpy','sphinx','jinja2'],
   url = "http://www.lino-framework.org",
   #~ test_suite = 'lino.test_apps',
   classifiers="""\
