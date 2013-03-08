@@ -71,8 +71,8 @@ from lino.core import tables
 from lino.core import fields
 from lino.ui import base
 from lino.core import actors
-#~ from lino.core.modeltools import makedirs_if_missing
-#~ from lino.core.modeltools import full_model_name
+#~ from lino.core.dbutils import makedirs_if_missing
+#~ from lino.core.dbutils import full_model_name
     
 from lino.utils import choosers
 from north import babel
@@ -391,7 +391,7 @@ class ExtRenderer(HtmlRenderer):
         yield '<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">'
         yield '<html><head>'
         yield '<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />'
-        yield '<title id="title">%s</title>' % site.title or site.short_name
+        yield '<title id="title">%s</title>' % site.title or site.verbose_name
         
         def stylesheet(url):
             #~ url = site.build_media_url(*args) 

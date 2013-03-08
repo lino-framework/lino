@@ -37,7 +37,7 @@ from lino.core import fields
 from lino.core import actions
 from lino.core import layouts
 #~ from lino.core import changes
-from lino.core.modeltools import resolve_model
+from lino.core.dbutils import resolve_model
 from lino.core.requests import ActionRequest
 from lino.utils import curry, AttrDict
 #~ from lino.core import perms

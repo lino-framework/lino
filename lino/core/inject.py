@@ -107,7 +107,7 @@ def check_pending_injects(signal,sender,models_list=None,**kw):
         model._meta._fill_fields_cache()
         fix_field_cache(model)
 
-#~ from lino.core.modeltools import is_installed_model_spec
+#~ from lino.core.dbutils import is_installed_model_spec
 
 def do_when_prepared(todo,*model_specs):
     """

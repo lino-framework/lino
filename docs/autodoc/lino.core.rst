@@ -20,7 +20,7 @@
     lino.core.layouts
     lino.core.menus
     lino.core.model
-    lino.core.modeltools
+    lino.core.dbutils
     lino.core.perms
     lino.core.signals
     lino.core.tables

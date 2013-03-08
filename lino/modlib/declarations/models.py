@@ -33,7 +33,7 @@ from django.conf import settings
 
 from lino import dd
 from lino import mixins
-#~ from lino.core.modeltools import full_model_name
+#~ from lino.core.dbutils import full_model_name
 #~ from lino.utils.choicelists import ChoiceList
 #contacts = reports.get_app('contacts')
 #~ from lino.modlib.journals import models as journals
@@ -44,7 +44,7 @@ from django.utils.translation import ugettext_lazy as _
 #~ from lino.modlib.accounts.utils import AccountTypes
 
 from lino.modlib.ledger.utils import FiscalYears
-#~ from lino.core.modeltools import models_by_base
+#~ from lino.core.dbutils import models_by_base
 partner_model = settings.SITE.partners_app_label + '.Partner'
 
 vat = dd.resolve_app('vat')

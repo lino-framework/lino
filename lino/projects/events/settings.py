@@ -25,8 +25,8 @@ from django.utils.translation import ugettext_lazy as _
 class Site(Site):
   
     title = "Lino Events"
-    #~ short_name = "Lino Così"
-    #~ short_name = "Lino Cosi"
+    verbose_name = "Lino Events"
+    #~ verbose_name = "Lino Cosi"
     #~ description = _("a Lino application to make Belgian accounting simple.")
     #~ version = "0.1"
     #~ url = "http://www.lino-framework.org/autodoc/lino.projects.cosi"

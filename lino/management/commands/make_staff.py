@@ -20,7 +20,7 @@ from django.conf import settings
 from django.core.management import call_command
 from django.core.management.base import BaseCommand, CommandError
 
-from lino.core.modeltools import app_labels
+from lino.core.dbutils import app_labels
 
 from lino.utils import *
 

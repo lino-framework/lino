@@ -100,7 +100,7 @@ from lino.utils import IncompleteDate
 from lino.utils.quantities import Quantity
 from lino.utils.xmlgen import etree
 
-from django_site.modeltools import obj2str
+from lino.core.dbutils import obj2str
 from lino.utils import curry
 from lino.core.actions import Permittable
 

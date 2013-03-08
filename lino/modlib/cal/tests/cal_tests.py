@@ -16,7 +16,7 @@ import logging
 logger = logging.getLogger(__name__)
 
 from lino.utils import i2d
-from lino.core.modeltools import resolve_model
+from lino.core.dbutils import resolve_model
 #Companies = resolve_model('contacts.Companies')
 from lino.utils.test import TestCase
 

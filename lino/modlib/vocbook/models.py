@@ -30,7 +30,7 @@ from lino import dd
 #~ from lino.core import reports
 from lino.core import actions
 from lino.utils import dblogger
-from lino.core.modeltools import resolve_model
+from lino.core.dbutils import resolve_model
 
 
 def setup_main_menu(site,ui,profile,m): pass

@@ -149,7 +149,7 @@ A few explanations while looking at that file:
   used by application programmers in their `models.py` modules. 
   `dd` stands for "data definition".
   
-- :class:`dd.Model <lino.core.modeltools.Model>` 
+- :class:`dd.Model <lino.core.model.Model>` 
   is a thin and optional wrapper around Django's Model class.
   For this tutorial you could use Django's `models.Model` as well,
   but we recommend to use `dd.Model` when there's no doubt that 

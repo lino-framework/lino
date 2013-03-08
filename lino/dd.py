@@ -68,14 +68,14 @@ Layouts:
   
 Utilities:
 
-- :func:`obj2str <django_site.modeltools.obj2str>`
-- :func:`obj2unicode <django_site.modeltools.obj2unicode>`
-- :func:`range_filter <django_site.modeltools.range_filter>`
-- :func:`full_model_name <django_site.modeltools.full_model_name>`
+- :func:`obj2str <djangosite.dbutils.obj2str>`
+- :func:`obj2unicode <djangosite.dbutils.obj2unicode>`
+- :func:`range_filter <djangosite.dbutils.range_filter>`
+- :func:`full_model_name <djangosite.dbutils.full_model_name>`
 - :func:`fields_list <lino.core.fields.fields_list>`
-- :func:`resolve_field <lino.core.modeltools.resolve_field>`
+- :func:`resolve_field <lino.core.dbutils.resolve_field>`
 - :func:`resolve_model <north.dbutils.resolve_model>`
-- :func:`resolve_app <lino.core.modeltools.resolve_app>` 
+- :func:`resolve_app <lino.core.dbutils.resolve_app>` 
 - :func:`chooser <lino.utils.choosers.chooser>` 
 - :func:`add_user_group` 
 - :func:`update_field <lino.core.inject.update_field>` 
@@ -84,7 +84,7 @@ Utilities:
 
 Signals:
 
-- :attr:`startup <django_site.signals.startup>`
+- :attr:`startup <djangosite.signals.startup>`
 - :attr:`pre_analyze <lino.core.signals.pre_analyze>`
 - :attr:`post_analyze <lino.core.signals.post_analyze>`
 - :attr:`pre_merge <lino.core.signals.pre_merge>`
@@ -126,12 +126,12 @@ from lino.core.tables import VirtualTable
 
 from north.dbutils import resolve_model, UnresolvedModel
 
-from lino.core.modeltools import resolve_app, resolve_field, get_field
-from django_site.modeltools import obj2str
-from django_site.modeltools import obj2unicode
-from django_site.modeltools import range_filter
-from django_site.modeltools import full_model_name
-from django_site.modeltools import models_by_base
+from lino.core.dbutils import resolve_app, resolve_field, get_field
+from djangosite.dbutils import obj2str
+from djangosite.dbutils import obj2unicode
+from djangosite.dbutils import range_filter
+from djangosite.dbutils import full_model_name
+from djangosite.dbutils import models_by_base
 
 from lino.core.model import Model
 from lino.core.merge import MergeAction
@@ -212,7 +212,7 @@ from lino.core.layouts import ParamsLayout
 
 
 from lino.core.signals import pre_ui_create, pre_ui_delete, pre_ui_update, ChangeWatcher
-from django_site.signals import startup
+from djangosite.signals import startup
 
 from lino.core.signals import pre_analyze
 from lino.core.signals import post_analyze

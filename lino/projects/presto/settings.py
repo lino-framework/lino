@@ -18,12 +18,12 @@ from lino.projects.std.settings import *
 class Site(Site):
   
     #~ title = __name__
-    short_name = "Lino Presto"
+    verbose_name = "Lino Presto"
     version = "0.1"
     url = "http://www.lino-framework.org/autodoc/lino.projects.presto"
     #~ description = "a Lino application for Belgian Public Welfare Centres"
-    author = 'Luc Saffre'
-    author_email = 'luc.saffre@gmail.com'
+    #~ author = 'Luc Saffre'
+    #~ author_email = 'luc.saffre@gmail.com'
     
     #~ demo_fixtures = 'std few_countries few_cities few_languages props demo demo2 history'.split()
     demo_fixtures = 'std all_countries be few_cities all_languages props democfg demo demo2 history local'.split()

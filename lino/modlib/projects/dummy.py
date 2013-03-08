@@ -14,6 +14,6 @@
 
 """
 The :term:`dummy module` for `projects`, 
-used by :func:`lino.core.modeltools.resolve_app`.
+used by :func:`lino.core.dbutils.resolve_app`.
 """
 

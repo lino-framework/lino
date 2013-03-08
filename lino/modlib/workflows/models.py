@@ -38,8 +38,8 @@ from lino import dd
 from lino.core import actors
 from lino.mixins import printable
 #~ from lino import choices_method, simple_choices_method
-from lino.core.modeltools import obj2str, sorted_models_list
-from lino.core.modeltools import resolve_field
+from lino.core.dbutils import obj2str, sorted_models_list
+from lino.core.dbutils import resolve_field
 from lino.utils.choosers import chooser, get_for_field
 from lino.utils.restify import restify
 from lino.core import actions

@@ -239,7 +239,132 @@ class Document(object):
           E.head(*headers),
           E.body(*body)
           )
-          
+
+
+
+
+
+def _html2rst(e,**kw):
+    """
+    Convert a :mod:`lino.utils.xmlgen.html` element 
+    (e.g. a value of a :class:`DisplayField <lino.core.fields.DisplayField>`) 
+    to an reStructuredText string.
+    Currently it knows only P and B tags, 
+    ignoring all other formatting.
+    
+    Usage example:
+    
+    >>> from lino.utils.xmlgen.html import E, html2rst
+    >>> e = E.p("This is a ",E.b("first")," test.")
+    >>> print html2rst(e)
+    This is a **first** test.
+    
+    >>> e = E.p(E.b("This")," is another test.")
+    >>> print html2rst(e)
+    **This** is another test.
+    
+    >>> e = E.p(E.b("This")," is ",E.em("another")," test.")
+    >>> print html2rst(e)
+    **This** is *another* test.
+    
+    >>> url = "http://example.com"
+    >>> e = E.p(E.b("This")," is ",E.a("a link",href=url),".")
+    >>> print html2rst(e)
+    **This** is `a link <http://example.com>`__.
+    
+    """
+    #~ print "20120613 html2odftext()", e.tag, e.text
+    rst = ''
+    if e.tag == 'p': 
+        rst += '\n\n'
+    elif e.tag == 'br':
+        rst += ' |br| \n'
+    elif e.tag == 'b':
+        rst += '**'
+    elif e.tag == 'em':
+        rst += '*'
+    elif e.tag == 'a':
+        rst += '`'
+    
+    #~ doesn't yet work:
+    """
+    """
+        
+    #~ if e.tag == 'a':
+        #~ return '`%s <%s>`__' % (e.text,e.get('href'))
+        
+    if e.text:
+        rst += e.text
+    for child in e:
+        rst += _html2rst(child)
+        
+    if e.tag == 'p': 
+        rst += '\n\n'
+    elif e.tag == 'b':
+        rst += '**'
+    elif e.tag == 'em':
+        rst += '*'
+    elif e.tag == 'a':
+        rst += ' <%s>`__' % e.get('href')
+        
+    if e.tail:
+        rst += e.tail
+    return rst
+
+def html2rst(e):
+    return _html2rst(e).strip()
+    
+
+from lino.utils.xmlgen import etree
+from djangosite.utils import rstgen
+
+
+
+
+class RstTable(rstgen.Table):
+    """\
+A table containing elementtree HTML:
+
+.. complextable::
+  :header: 
+  
+  Code <NEXTCELL> Result <NEXTROW>
+
+  >>> from lino.utils.xmlgen.html import E, RstTable
+  >>> print table(
+  ...   [E.p("A ",E.b("formatted")," header"),"A plain header"],
+  ...   [[1,2],[3,4]])
+  =========================== ================
+   A **formatted** header      A plain header
+  --------------------------- ----------------
+   1                           2
+   3                           4
+  =========================== ================
+  <BLANKLINE>
+  
+  <NEXTCELL>
+  
+  =========================== ================
+   A **formatted** header      A plain header
+  --------------------------- ----------------
+   1                           2
+   3                           4
+  =========================== ================
+
+    """
+    def convert(self,v):
+        if etree.iselement(v): 
+            return html2rst(v)
+        return rstgen.Table.convert(self,v)
+
+
+
+
+
+
+
+
+
 
 def _test():
     import doctest

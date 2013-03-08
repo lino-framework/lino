@@ -1,7 +1,7 @@
 Special model attributes and methods
 ------------------------------------
 
-See :class:`lino.core.modeltools.Model`
+See :class:`lino.core.model.Model`
 
 .. modattr:: _lino_preferred_width
 

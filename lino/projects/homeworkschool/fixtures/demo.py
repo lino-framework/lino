@@ -15,7 +15,7 @@
 
 #~ from lino import dd
 from lino.utils.instantiator import Instantiator, i2d
-#~ from lino.core.modeltools import resolve_model
+#~ from lino.core.dbutils import resolve_model
 from django.utils.translation import ugettext_lazy as _
 
 

@@ -33,7 +33,7 @@ from lino import mixins
 
 
 #~ from lino import fields
-#~ from lino.core.modeltools import resolve_model
+#~ from lino.core.dbutils import resolve_model
 
 partners = dd.resolve_app(settings.SITE.partners_app_label)
 ledger = dd.resolve_app('ledger')

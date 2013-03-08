@@ -41,8 +41,8 @@ from django.utils.translation import get_language
 #~ from lino.core import web
 
 
-from lino.core.modeltools import resolve_app
-from lino.core.modeltools import is_devserver
+from lino.core.dbutils import resolve_app
+from lino.core.dbutils import is_devserver
 
 
 #~ from django.conf.urls.defaults import patterns, url, include

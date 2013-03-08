@@ -12,6 +12,8 @@
 ## You should have received a copy of the GNU General Public License
 ## along with Lino; if not, see <http://www.gnu.org/licenses/>.
 
+from decimal import Decimal
+
 class SiteMixin(object):
   
     vat_quarterly = False

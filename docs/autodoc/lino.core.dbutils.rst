@@ -1,7 +1,7 @@
-:mod:`lino.core.modeltools`
+:mod:`lino.core.dbutils`
 ---------------------------
 
-.. automodule:: lino.core.modeltools
+.. automodule:: lino.core.dbutils
     :members:
     :show-inheritance:
 

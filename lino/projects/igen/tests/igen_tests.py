@@ -22,7 +22,7 @@ logger = logging.getLogger(__name__)
 #from lino.modlib.countries.models import Country
 #~ from lino.modlib.contacts.models import Companies
 
-from lino.core.modeltools import resolve_model
+from lino.core.dbutils import resolve_model
 #Companies = resolve_model('contacts.Companies')
 from lino.utils.test import TestCase
 

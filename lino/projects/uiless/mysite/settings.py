@@ -116,7 +116,7 @@ INSTALLED_APPS = (
     # 'django.contrib.admindocs',
     'polls',
     'lino',
-    'django_site',
+    'djangosite',
 )
 
 # A sample logging configuration. The only tangible logging

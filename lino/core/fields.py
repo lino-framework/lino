@@ -31,11 +31,11 @@ from decimal import Decimal
 import logging
 logger = logging.getLogger(__name__)
 
-from django_site.modeltools import full_model_name
-from django_site.modeltools import obj2str
-from lino.core.modeltools import resolve_field
-from lino.core.modeltools import resolve_model, UnresolvedModel
-#~ from lino.core.modeltools import is_installed_model_spec
+from djangosite.dbutils import full_model_name
+from djangosite.dbutils import obj2str
+from lino.core.dbutils import resolve_field
+from lino.core.dbutils import resolve_model, UnresolvedModel
+#~ from lino.core.dbutils import is_installed_model_spec
 
 #~ from lino.utils import choosers
 from lino.utils import IncompleteDate, d2iso

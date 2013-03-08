@@ -44,7 +44,7 @@ from django.db.models import loading
 import lino
 from lino.core import dbtables
 from lino.core import actions
-from lino.core.modeltools import app_labels
+from lino.core.dbutils import app_labels
 from lino.utils import confirm
 from lino.utils.config import find_config_file
 from lino.utils import rstgen 
@@ -52,7 +52,7 @@ from north import babel
 from lino.core.menus import Menu, MenuItem
 #~ from lino.utils.jsgen import py2js
 from lino.utils import jsgen
-from lino.core.modeltools import makedirs_if_missing
+from lino.core.dbutils import makedirs_if_missing
 from lino.management.commands.makedocs import GeneratingCommand
 
 def a2class(a):

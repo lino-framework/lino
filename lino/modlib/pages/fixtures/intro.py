@@ -34,9 +34,9 @@ from lino.modlib.pages.builder import page, objects
 
 page('index','en','',"""
 Welcome to the **{{site.title}}** site.
-{% if site.short_name %}
-This is an online demo of `{{site.short_name}} <{{site.url}}>`__
-version {{site.version}}, {{site.description}}
+{% if site.verbose_name %}
+This is an online demo of `{{site.verbose_name}} <{{site.url}}>`__
+version {{site.version}}.
 {% endif %}
 
 {% if site.admin_prefix %}
@@ -55,10 +55,10 @@ you should go to the `Admin <{{site.admin_prefix}}/>`__ section.
 
 page('index','fr','',"""
 Bienvenue sur **{{site.title}}**.
-{% if site.short_name %}
+{% if site.verbose_name %}
 Ce site est une démonstration en ligne de
-`{{site.short_name}} <{{site.url}}>`__
-version {{site.version}}, {{site.description}}
+`{{site.verbose_name}} <{{site.url}}>`__
+version {{site.version}}.
 {% endif %}
 
 {% if site.admin_prefix %}
@@ -75,10 +75,10 @@ dans la `section administrative <{{site.admin_prefix}}/>`__.
     
 page('index','de','',"""
 Willkommen auf {{site.title}}.
-{% if site.short_name %}
+{% if site.verbose_name %}
 Diese Site ist eine Online-Demo von
-`{{site.short_name}} <{{site.url}}>`__
-version {{site.version}}, {{site.description}}
+`{{site.verbose_name}} <{{site.url}}>`__
+version {{site.version}}.
 {% endif %}
 
 {% if site.admin_prefix %}
@@ -95,16 +95,16 @@ in den `Verwaltungsbereich <{{site.admin_prefix}}/>`__ gehen.
     
 page('about','en','About',"""
 This website is a life demonstration of 
-`{{site.short_name}} <{{site.url}}>`__.    
+`{{site.verbose_name}} <{{site.url}}>`__.    
 """)
     
 page('about','fr','À propos',"""
 Ce site est une démonstration en ligne de 
-`{{site.short_name}} <{{site.url}}>`__.
+`{{site.verbose_name}} <{{site.url}}>`__.
 """)
     
 page('about','de','Info',"""
-Diese Site ist eine online-Demo von `{{site.short_name}} <{{site.url}}>`__.
+Diese Site ist eine online-Demo von `{{site.verbose_name}} <{{site.url}}>`__.
 """)
     
 if False:
@@ -115,8 +115,8 @@ if False:
 
     Welcome to the **{{site.title}}** site.
     We are running 
-    `{{site.short_name}} <{{site.url}}>`__
-    version {{site.version}}, {{site.description}}
+    `{{site.verbose_name}} <{{site.url}}>`__
+    version {{site.version}}.
 
     {% endif %}
 
@@ -145,8 +145,8 @@ if False:
     {% if not site.admin_prefix %}
     Willkommen auf {{site.title}}.
     Diese Site ist eine Online-Demo von
-    `{{site.short_name}} <{{site.url}}>`__
-    version {{site.version}}, {{site.description}}
+    `{{site.verbose_name}} <{{site.url}}>`__
+    version {{site.version}}.
     {% endif %}
 
     Sie sind im Verwaltungsbereich.
@@ -170,8 +170,8 @@ if False:
     {% if not site.admin_prefix %}
     Bienvenue sur **{{site.title}}**.
     Ce site est une démonstration en ligne de
-    `{{site.short_name}} <{{site.url}}>`__
-    version {{site.version}}, {{site.description}}
+    `{{site.verbose_name}} <{{site.url}}>`__
+    version {{site.version}}.
     {% endif %}
 
     Vous êtes dans la section administrative qui,

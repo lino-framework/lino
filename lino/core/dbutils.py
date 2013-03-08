@@ -13,6 +13,7 @@
 ## along with Lino; if not, see <http://www.gnu.org/licenses/>.
 
 """
+A collection of database utilities, i.e. Django-related
 
 """
 
@@ -34,9 +35,12 @@ from django.db.models.fields import FieldDoesNotExist
 from django.utils.importlib import import_module
 from django.db.models import loading
 
-#~ from django_site.modeltools import 
 
+from djangosite.dbutils import obj2str, full_model_name, app_labels
+from djangosite.dbutils import sorted_models_list
+from djangosite.dbutils import is_devserver
 from north.dbutils import resolve_model, UnresolvedModel
+
 
 def resolve_app(app_label,strict=False):
     """
@@ -66,17 +70,12 @@ def resolve_app(app_label,strict=False):
     for app_name in settings.INSTALLED_APPS:
         if app_name == app_label or app_name.endswith('.'+app_label):
             return import_module('.models', app_name)
-    #~ return import_module('lino.modlib.%s.dummy' % app_label)
     try:
         return import_module('lino.modlib.%s.dummy' % app_label)
     except ImportError:
         if strict: 
             raise
             #~ raise Exception("strict resolve_app failed for app_label %r" % app_label)
-        
-    #~ if not emptyOK:
-    #~ raise ImportError("No application labeled %r." % app_label)
-#~ resolve_app = get_app
 
 #~ def get_models_for(app_label):
     #~ a = models.get_app(app_label)

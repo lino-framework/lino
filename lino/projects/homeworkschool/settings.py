@@ -24,10 +24,10 @@ class Site(Site):
     #~ source_dir = os.path.dirname(__file__)
     #~ title = __name__
     version = "0.0.1"
-    short_name = "Lino-HWS"
+    verbose_name = "Lino-HWS"
     url = "http://www.lino-framework.org/autodoc/lino.projects.homeworkschool"
-    author = "Luc Saffre"
-    author_email = "luc.saffre@gmx.net"
+    #~ author = "Luc Saffre"
+    #~ author_email = "luc.saffre@gmx.net"
     
     #~ help_url = "http://lino.saffre-rumma.net/az/index.html"
     #~ migration_module = 'lino.projects.az.migrate'

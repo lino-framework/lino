@@ -29,13 +29,13 @@ from lino.modlib import ledger, cal
 class Site(Site,cal.SiteMixin,ledger.SiteMixin):
   
     #~ title = __name__
-    short_name = "Lino Così"
-    #~ short_name = "Lino Cosi"
+    verbose_name = "Lino Così"
+    #~ verbose_name = "Lino Cosi"
     description = _("a Lino application to make Belgian accounting simple.")
     version = "0.1"
     url = "http://www.lino-framework.org/autodoc/lino.projects.cosi"
-    author = 'Luc Saffre'
-    author_email = 'luc.saffre@gmail.com'
+    #~ author = 'Luc Saffre'
+    #~ author_email = 'luc.saffre@gmail.com'
     
     demo_fixtures = 'std few_countries few_cities few_languages demo demo2 userman'.split()
     
@@ -115,5 +115,5 @@ class Site(Site,cal.SiteMixin,ledger.SiteMixin):
         yield 'lino.projects.cosi'
 
 
-SITE = Site(__file__,globals()) 
+SITE = Site(__file__,globals())
 

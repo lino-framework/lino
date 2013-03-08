@@ -47,9 +47,9 @@ except ImproperlyConfigured:
 
 
 import lino
-from lino.core.modeltools import app_labels
+from lino.core.dbutils import app_labels
 from lino.utils import rstgen
-from lino.core.modeltools import obj2str, full_model_name, sorted_models_list
+from lino.core.dbutils import obj2str, full_model_name, sorted_models_list
 
 
 def diffs(old,new,prefix=''):

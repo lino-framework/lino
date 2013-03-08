@@ -32,7 +32,7 @@ from django.db.models.fields.related import ForeignRelatedObjectsDescriptor
 from django.contrib.contenttypes.models import ContentType
 
 
-from lino.core.modeltools import obj2str, full_model_name
+from lino.core.dbutils import obj2str, full_model_name
 from lino.core import actions
 from lino.core import layouts
 from lino.core import model

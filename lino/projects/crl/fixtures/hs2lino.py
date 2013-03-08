@@ -42,7 +42,7 @@ from lino.modlib.contacts.utils import name2kw, street2kw, join_words
 from lino.modlib.contacts.models import GENDER_MALE, GENDER_FEMALE
 from lino.utils.instantiator import Instantiator
 
-from lino.core.modeltools import resolve_model, obj2str
+from lino.core.dbutils import resolve_model, obj2str
 import lino
 
 from lino.utils import confirm, iif

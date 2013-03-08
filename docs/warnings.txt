@@ -1,22 +1,7 @@
-t:\hgwork\lino\lino\modlib\partners\models.py:docstring of lino.modlib.partners.models.PartnerDocument.summary_row:1: ERROR: Unknown interpreted text role "modmeth".
-T:\hgwork\lino\docs\autodoc\lino.modlib.partners.rst:28: WARNING: autodoc can't import/find module 'lino.modlib.partners.tests', it reported error: "resolve_model(UnresolvedModel(contacts.Person,contacts),app_label=None) found UnresolvedModel(contacts.Person,contacts) (settings lino.projects.sphinxdocs.settings)", please check your spelling and sys.path
 T:\hgwork\lino\docs\reviews\index.rst:4: WARNING: toctree contains reference to nonexisting document u'reviews/ :maxdepth: 1'
 T:\hgwork\lino\docs\admin\which_lino.rst:: WARNING: document isn't included in any toctree
 T:\hgwork\lino\docs\casts\lino_intro.rst:: WARNING: document isn't included in any toctree
 T:\hgwork\lino\docs\dev\versioning.rst:: WARNING: document isn't included in any toctree
 T:\hgwork\lino\docs\igen\index.rst:: WARNING: document isn't included in any toctree
 T:\hgwork\lino\docs\reviews\index.rst:: WARNING: document isn't included in any toctree
-T:\hgwork\lino\docs\autodoc\lino.modlib.links.rst:13: WARNING: py:class reference target not found: links.Link
-<autodoc>:1: WARNING: py:class reference target not found: north.babel.BabelNamed
-t:\hgwork\lino\lino\modlib\links\models.py:docstring of lino.modlib.links.models.LinkType:1: WARNING: py:class reference target not found: links.LinkType
-<autodoc>:1: WARNING: py:class reference target not found: lino.modlib.links.models.Links
-:1: WARNING: py:class reference target not found: Model
-:1: WARNING: py:class reference target not found: Model
-T:\hgwork\lino\docs\autodoc\lino.modlib.partners.rst:7: WARNING: py:class reference target not found: RoleType
-T:\hgwork\lino\docs\autodoc\lino.modlib.partners.rst:35: WARNING: py:class reference target not found: lino.modlib.partners.models.ConcretePartner
-T:\hgwork\lino\docs\autodoc\lino.modlib.partners.rst:35: WARNING: py:class reference target not found: lino.modlib.partners.models.Addressable
-<autodoc>:1: WARNING: py:class reference target not found: north.babel.BabelNamed
-<autodoc>:1: WARNING: py:class reference target not found: lino.modlib.partners.models.ConcretePartner
-<autodoc>:1: WARNING: py:class reference target not found: lino.modlib.partners.models.Addressable
-<autodoc>:1: WARNING: py:class reference target not found: lino.modlib.partners.models.Addressables
-<autodoc>:1: WARNING: py:class reference target not found: north.babel.BabelNamed
+T:\hgwork\lino\docs\blog\2013\0306.rst:10: WARNING: py:mod reference target not found: djangosite

@@ -38,10 +38,11 @@ from lino.utils import AttrDict
 from lino.utils import iif, curry
 from lino.utils import memo
 from lino.utils.html2xhtml import html2xhtml
+from lino.utils.xmlgen.html import html2rst
 
 from lino.utils.restify import restify
-from lino.utils.rstgen import write_header, html2rst
-from lino.utils import rstgen 
+from djangosite.utils.rstgen import write_header
+from djangosite.utils import rstgen 
 from lino.utils import htmlgen
 
 USE_XHTML2ODT = False

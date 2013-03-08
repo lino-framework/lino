@@ -46,7 +46,7 @@ settings.SITE.startup()
 from lino import dd
 from . import views
 #~ import .views
-from django_site.modeltools import is_devserver
+from lino.core.dbutils import is_devserver
 
 
 def get_media_urls():

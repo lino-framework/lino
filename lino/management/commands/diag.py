@@ -34,8 +34,7 @@ from django.core.management import call_command
 from django.core.management.base import BaseCommand, CommandError
 
 from django.conf import settings
-from django_site.modeltools import app_labels
-from django_site.modeltools import obj2str, full_model_name, sorted_models_list
+from lino.core.dbutils import obj2str, full_model_name, sorted_models_list, app_labels
 
 #~ import lino
 from lino.utils import rstgen
@@ -68,7 +67,7 @@ class Command(BaseCommand):
             self.stdout.write(ln.encode(encoding,"xmlcharrefreplace") + "\n")
         
         #~ writeln("Lino %s" % lino.__version__)
-        #~ yield (settings.SITE.short_name, settings.SITE.version)
+        #~ yield (settings.SITE.verbose_name, settings.SITE.version)
         #~ writeln(settings.SITE.title)
         models_list = sorted_models_list()
 

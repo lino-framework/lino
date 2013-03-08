@@ -36,7 +36,7 @@ E = xghtml.E
 
 from lino.core import constants as ext_requests
 
-from lino.core.modeltools import resolve_model, resolve_app
+from lino.core.dbutils import resolve_model, resolve_app
 from lino.core import layouts
 #~ from lino.core import changes
 from lino.core import fields

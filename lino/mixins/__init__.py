@@ -34,7 +34,7 @@ from django.core.exceptions import ValidationError
 #~ from lino.models import Workflow
 from lino.utils import auth
 #~ from lino.utils import perms
-from django_site.modeltools import full_model_name
+from lino.core.dbutils import full_model_name
 from lino.core import frames
 from lino.core import actions
 from lino.core import fields

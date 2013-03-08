@@ -23,7 +23,7 @@ from django.conf import settings
 from lino import dd
 from lino.utils import Cycler
 from lino.utils.instantiator import Instantiator, i2d
-from lino.core.modeltools import resolve_model
+from lino.core.dbutils import resolve_model
 
 partner_model = settings.SITE.partners_app_label + '.Partner'
 Partner = dd.resolve_model(partner_model)

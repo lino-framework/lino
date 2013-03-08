@@ -65,15 +65,15 @@ from lino.utils.choicelists import ChoiceList
 #~ from lino.modlib.properties.utils import KnowledgeField #, StrengthField
 #~ from lino.modlib.uploads.models import UploadsByPerson
 from lino.models import get_site_config
-from lino.core.modeltools import get_field
-from lino.core.modeltools import resolve_field
-from lino.core.modeltools import range_filter
+from lino.core.dbutils import get_field
+from lino.core.dbutils import resolve_field
+from lino.core.dbutils import range_filter
 from lino.core import actions
 from lino.utils.choosers import chooser
 from lino.utils import mti
 from lino.mixins.printable import DirectPrintAction, Printable
 #~ from lino.mixins.reminder import ReminderEntry
-from lino.core.modeltools import obj2str
+from lino.core.dbutils import obj2str
 
 from lino.utils.perms import UserLevels
 

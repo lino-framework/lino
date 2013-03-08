@@ -17,6 +17,8 @@ SPHINXOPTS = -w warnings.txt -n -P
 #~ SPHINXOPTS    = 
 #~ SPHINXBUILD   = python l:\\snapshots\\sphinx\\sphinx-build.py
 SPHINXBUILD   = sphinx-build
+#~ SPHINXBUILD   = sphinx-build-script.py
+
 PAPER         =
 
 # Internal variables.

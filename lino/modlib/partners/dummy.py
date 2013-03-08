@@ -14,7 +14,7 @@
 
 """
 The :term:`dummy module` for `contacts`, 
-used by :func:`lino.core.modeltools.resolve_app`.
+used by :func:`lino.core.dbutils.resolve_app`.
 """
 
 class Partner(object): pass

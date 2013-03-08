@@ -20,7 +20,7 @@ distributed over more than one month.
 from decimal import Decimal
 from django.conf import settings
 from lino.utils import Cycler
-from lino.utils.babel import babel_values
+from north.babel import babel_values
 from lino import dd
 
 sales = dd.resolve_app('sales')

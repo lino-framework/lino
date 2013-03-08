@@ -34,7 +34,7 @@ from django.core.exceptions import ObjectDoesNotExist
 from django.core.exceptions import ValidationError
 
 
-from lino.core.modeltools import resolve_model
+from lino.core.dbutils import resolve_model
 from lino.core.fields import VirtualField
 from lino.core.signals import pre_remove_child, pre_add_child
 #~ from lino.core import changes

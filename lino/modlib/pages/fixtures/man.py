@@ -32,18 +32,18 @@ from lino.modlib.pages.builder import page, objects
 
 page('man','en','User manual',"""
 This is the user manual for 
-`{{site.short_name}} <{{site.url}}>`__
-version {{site.version}}, {{site.description}}
+`{{site.verbose_name}} <{{site.url}}>`__
+version {{site.version}}.
 """)
 
 page('man','de','Benutzerhandbuch',"""
 Benutzerhandbuch für 
-`{{site.short_name}} <{{site.url}}>`__
-version {{site.version}}, {{site.description}}
+`{{site.verbose_name}} <{{site.url}}>`__
+version {{site.version}}.
 """)
 
 page('models','en','Model reference',"""
-These are the models used in {{site.short_name}}.
+These are the models used in {{site.verbose_name}}.
 
 {{as_table('about.Models')}}
 

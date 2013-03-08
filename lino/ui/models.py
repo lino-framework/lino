@@ -40,8 +40,8 @@ from lino import dd
 #~ from lino import commands
 from lino.mixins import printable
 #~ from lino import choices_method, simple_choices_method
-from django_site.modeltools import obj2str, sorted_models_list, full_model_name
-from lino.core.modeltools import resolve_field, UnresolvedModel
+from lino.core.dbutils import obj2str, sorted_models_list, full_model_name
+from lino.core.dbutils import resolve_field, UnresolvedModel
 from lino.utils.choosers import chooser, get_for_field
 from lino.utils.restify import restify
 from lino.core import actions
@@ -443,7 +443,7 @@ def my_post_analyze(sender,**kw):
     """
     site = sender
     if site.build_js_cache_on_startup is None:
-        from django_site.modeltools import is_devserver
+        from lino.core.dbutils import is_devserver
         site.build_js_cache_on_startup = not (settings.DEBUG or is_devserver())
     
     from lino.core import web

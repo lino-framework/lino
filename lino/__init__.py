@@ -32,20 +32,21 @@ from decimal import Decimal
 from .utils.xmlgen import html as xghtml
 from .utils import AttrDict
 
-execfile(os.path.join(os.path.dirname(__file__),'version.py'))
+execfile(os.path.join(os.path.dirname(__file__),'setup_info.py'))
+__version__ = SETUP_INFO['version'] # 
 
-__author__ = "Luc Saffre <luc.saffre@gmx.net>"
+#~ __author__ = "Luc Saffre <luc.saffre@gmx.net>"
 
 #~ __url__ = "http://lino.saffre-rumma.net"
 #~ __url__ = "http://code.google.com/p/lino/"
-__url__ = "http://www.lino-framework.org"
+#~ __url__ = "http://www.lino-framework.org"
 
 
-__copyright__ = """\
-Copyright (c) 2002-2013 Luc Saffre.
-This software comes with ABSOLUTELY NO WARRANTY and is
-distributed under the terms of the GNU General Public License.
-See file COPYING.txt for more information."""
+#~ __copyright__ = """\
+#~ Copyright (c) 2002-2013 Luc Saffre.
+#~ This software comes with ABSOLUTELY NO WARRANTY and is
+#~ distributed under the terms of the GNU General Public License.
+#~ See file COPYING.txt for more information."""
 
 
 if False: 
@@ -56,7 +57,7 @@ if False:
     # Copied from Sphinx <http://sphinx.pocoo.org>
     from os import path
     package_dir = path.abspath(path.dirname(__file__))
-    if '+' in __version__ or 'pre' in __version__:
+    if '+' in SETUP_INFO['version'] or 'pre' in SETUP_INFO['version']:
         # try to find out the changeset hash if checked out from hg, and append
         # it to __version__ (since we use this value from setup.py, it gets
         # automatically propagated to an installed copy as well)
@@ -74,9 +75,6 @@ if False:
             pass
 
 
-NOT_FOUND_MSG = '(not installed)'
-
-#~ from django_site import Site
 from north import Site
 
 class Site(Site):
@@ -118,6 +116,13 @@ class Site(Site):
        resolve_field('Bar.foo').set_format('html')
        
     """
+    
+    help_url = "http://code.google.com/p/lino"
+    #~ site_url = 
+    #~ index_html = "This is the main page."
+    #~ title = None
+    title = "Unnamed Lino site"
+    #~ domain = "www.example.com"
     
     
     catch_layout_exceptions = True
@@ -213,23 +218,24 @@ class Site(Site):
     
     
     
-    def __init__(self,project_file,django_settings):
-        super(Site,self).__init__(project_file,django_settings)
-      
+    def init_nolocal(self,*args):
+        super(Site,self).init_nolocal(*args)
+        
         self.GFK_LIST = []
         self.VIRTUAL_FIELDS = []
         
-        django_settings.update(
+        self.update_settings(
             LOGGING_CONFIG='lino.utils.log.configure',
             LOGGING=dict(filename=None,level='INFO'),
             )
         
-        try:
-            from lino_local import on_init
-        except ImportError:
-            pass
-        else:
-            on_init(self)
+        
+        #~ try:
+            #~ from lino_local import on_init
+        #~ except ImportError:
+            #~ pass
+        #~ else:
+            #~ on_init(self)
         
         
     def parse_date(self,s):
@@ -395,7 +401,7 @@ class Site(Site):
         for u in super(Site,self).using(ui): yield u
 
         import lino
-        yield ("Lino",lino.__version__,"http://www.lino-framework.org")
+        yield ("Lino",SETUP_INFO['version'],SETUP_INFO['url'])
         
         import jinja2
         version = getattr(jinja2,'__version__','')
@@ -420,21 +426,21 @@ class Site(Site):
             from odf import opendocument
             version = opendocument.__version__
         except ImportError:
-            version = NOT_FOUND_MSG
+            version = self.not_found_msg
         yield ("OdfPy",version ,"http://pypi.python.org/pypi/odfpy")
 
         try:
             import docutils
             version = docutils.__version__
         except ImportError:
-            version = NOT_FOUND_MSG
+            version = self.not_found_msg
         yield ("docutils",version ,"http://docutils.sourceforge.net/")
 
         try:
             import suds
             version = suds.__version__
         except ImportError:
-            version = NOT_FOUND_MSG
+            version = self.not_found_msg
         yield ("suds",version ,"https://fedorahosted.org/suds/")
 
         import yaml
@@ -446,7 +452,7 @@ class Site(Site):
                 import pyratemp
                 version = getattr(pyratemp,'__version__','')
             except ImportError:
-                version = NOT_FOUND_MSG
+                version = self.not_found_msg
             yield ("pyratemp",version,"http://www.simple-is-better.org/template/pyratemp.html")
         
         if False:
@@ -461,7 +467,7 @@ class Site(Site):
                 import reportlab
                 version = reportlab.Version
             except ImportError:
-                version = NOT_FOUND_MSG
+                version = self.not_found_msg
             yield ("ReportLab",version,"http://www.reportlab.org/rl_toolkit.html")
                    
         try:
@@ -469,8 +475,13 @@ class Site(Site):
             from appy import version
             version = version.verbose
         except ImportError:
-            version = NOT_FOUND_MSG
+            version = self.not_found_msg
         yield ("Appy",version ,"http://appyframework.org/pod.html")
         
         
         
+#~ class Site(BaseSite):
+  
+    #~ def __init__(self,*args,**kwargs):
+        #~ super(Site,self).__init__(*args)
+        #~ self.run_djangosite_local(**kwargs)

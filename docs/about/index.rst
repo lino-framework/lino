@@ -1,35 +1,18 @@
 About Lino
 ==========
 
-Lino is a framework for writing desktop-like web applications 
-using `Django <https://www.djangoproject.com/>`_
-and `Sencha ExtJS <http://www.sencha.com/products/extjs/>`_.
 
-Lino is for Python developers who want to develop 
-Lino applications for their customers.
-Primary target customers for Lino applications 
-are agencies and companies who need a 
-*customized database application*.
+Overview
+--------
 
-Lino the framework consists of different parts:
+.. py2rst::
 
-- `django-site <http://site.lino-framework.org>`__
-  (split off from main project in March 2013)
-  provides startup signals and the `settings.SITE` object
-  
-- `django-north <https://code.google.com/p/django-north/>`__
-  (split off from main project in March 2013)
-  provides python dumps, babel fields and data migration.
-
-- :mod:`lino.modlib`, a collection of reusable Django apps
-- The default "plain" user interface 
-- The optional ExtJS user interface 
-
-List of existing Lino applications:
-
-- `Lino-Welfare <http://welfare.lino-framework.org>`__
+  import lino
+  print lino.SETUP_INFO['long_description']
 
 
+Contents
+--------
 
 .. toctree::
    :maxdepth: 1

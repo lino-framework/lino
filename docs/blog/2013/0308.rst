@@ -1,0 +1,10 @@
+20130308
+========
+
+
+- More changes in :class:`djangosite.Site`:
+  - renamed `short_name` to `verbose_name`
+  - removed `description`
+- Moved the local site_setup system from Lino to Djangosite.
+  System admins must rename all "lino_local" modules to "djangosite_local"
+  and the `on_init` therein to `setup_site`.

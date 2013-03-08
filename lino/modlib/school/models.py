@@ -60,7 +60,7 @@ from lino.utils.choosers import chooser
 from lino.utils import mti
 from lino.mixins.printable import DirectPrintAction, Printable
 #~ from lino.mixins.reminder import ReminderEntry
-from lino.core.modeltools import obj2str
+from lino.core.dbutils import obj2str
 
 #~ from lino.modlib.countries.models import CountryCity
 #~ from lino.modlib.cal import models as cal

@@ -9,7 +9,7 @@ Glossary
     See :doc:`/topics/customization`.
     
   dummy module
-    See :func:`lino.core.modeltools.resolve_app`.
+    See :func:`lino.core.dbutils.resolve_app`.
 
   testing
     The version that is currently being tested.

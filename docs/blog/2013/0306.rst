@@ -1,0 +1,48 @@
+20130306
+========
+
+Internal renames
+------------------
+
+As long as nobody looks at my work, 
+I used my freedom and applied some internal renames:
+
+- Renamed ``django_site`` to :mod:`djangosite`.
+  Because it's  clear enough without the underscore.
+  Not sure whether I should also rename the official project 
+  from "django-site" to "djangosite".
+  
+- Converted `djangosite.utils` to a package.
+
+- Renamed `djangosite.modeltools` to `djangosite.dbutils`
+
+- `lino.core.modeltools` to `lino.core.dbutils`
+- `lino.utils.sphinxconf` to `djangosite.utils.sphinxconf`
+
+- `djangosite.djangodoctests` to `djangosite.utils.doctests`
+- `lino.utils.rstgen` to `djangosite.utils.rstgen`
+
+
+`What’s the difference between “tool” and “utility”?
+<http://english.stackexchange.com/questions/80384/whats-the-difference-between-tool-and-utility>`__
+
+
+Zwischenbemerkung:
+ich war wohl echt zufrieden mit Lino, 
+wie gut er die obigen Änderungen mitgemacht hat.
+
+
+43% coverage
+------------
+
+Ich habe erstmals ein offizielles 
+Coverate-Resultat für `djangosite`: 43%.
+Nicht gerade glorreich, aber es ist ja auch das erste Mal, 
+dass ich mich überhaupt um Abdeckung kümmere.
+
+
+Bua, das war noch mal wieder zeitaufwändig! 
+Da sind so viele Teufel im Detail.
+`setup.py test` and coverage
+
+

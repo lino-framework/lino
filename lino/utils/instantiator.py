@@ -29,12 +29,12 @@ from django.db import models
 from django.contrib.contenttypes.models import ContentType
 
 #~ import lino
-from lino.core.modeltools import resolve_model, UnresolvedModel
+from lino.core.dbutils import resolve_model, UnresolvedModel
 
 from lino.utils import i2d # for backward compatibility of .py fixtures
 from north import babel
 from lino.core import fields
-from django_site.modeltools import obj2str
+from lino.core.dbutils import obj2str
     
 
 class DataError(Exception):
@@ -199,13 +199,24 @@ def make_converter(f,lookup_fields={}):
         return DecimalConverter(f)
       
 class Instantiator:
+    def is_active(self):
+      
+        if isinstance(self.model,UnresolvedModel): return False
+        if self.model._meta.pk is None: return False
+        return True
+          
     def __init__(self,model,fieldnames=None,converter_classes={},**kw):
-        self.model = resolve_model(model,strict=True)
+        #~ self.model = resolve_model(model,strict=True)
+        self.model = resolve_model(model)
         #~ if isinstance(self.model,UnresolvedModel):
             #~ logger.warning("20120818 unresolved model %s",model)
             #~ return 
-        if self.model._meta.pk is None: 
-            raise Exception("Model %r is not installed (_meta.pk is None)." % self.model)
+        if not self.is_active():
+            def noop(*values,**kw): pass
+            self.build = noop
+            return
+        #~ if self.model._meta.pk is None: 
+            #~ raise Exception("Model %r is not installed (_meta.pk is None)." % self.model)
         #~ if type(fieldnames) == str:
         if isinstance(fieldnames,basestring):
             fieldnames = fieldnames.split()

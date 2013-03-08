@@ -16,7 +16,7 @@ Note: this fixture supposes that :mod:`few_cities` has also been loaded
 and thus does not load the few Belgian cities defined there.
 """
 
-from lino.core.modeltools import resolve_model
+from lino.core.dbutils import resolve_model
 from lino.utils.instantiator import Instantiator
 from lino import dd
 

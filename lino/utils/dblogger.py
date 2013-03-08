@@ -11,15 +11,16 @@
 ## You should have received a copy of the GNU General Public License
 ## along with Lino; if not, see <http://www.gnu.org/licenses/>.
 
-
 """
-:mod:`lino.utils.dblogger` -- Logging database changes
-------------------------------------------------------
+Just a shortcut and encapsulation. Instead of writing::
 
-This module contains utilities for logging changes in a 
-Django database.
-Since logging of database changes will inevitably cause some extra work, 
-this feature is optional per site and per model.
+    import logging
+    logger = logging.getLogger(__name__)
+    
+I (sometimes) prefer to write::
+
+    from lino.utils import dblogger
+
 """
 
 import logging
@@ -32,7 +33,7 @@ debug = logger.debug
 #~ getLevel = logger.getLevel
 #~ setLevel = logger.setLevel
 
-from django_site.modeltools import obj2str
+from lino.core.dbutils import obj2str
 
 def log_deleted(request,elem):
     #~ on_user_change(request,elem)

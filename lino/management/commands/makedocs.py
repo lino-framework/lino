@@ -36,7 +36,7 @@ from django.db.models import loading
 #~ from lino.utils import get_class_attr
 
 import lino
-from lino.core.modeltools import app_labels
+from lino.core.dbutils import app_labels
 from lino.utils import confirm, curry
 from lino.utils.config import find_config_file
 from lino.utils import rstgen 
@@ -44,7 +44,7 @@ from north import babel
 from lino.utils.restify import doc2rst, abstract
 from lino.core import dbtables
 
-from lino.core.modeltools import makedirs_if_missing, full_model_name
+from lino.core.dbutils import makedirs_if_missing, full_model_name
 
 def fieldtype(f):
     if isinstance(f,models.ForeignKey):

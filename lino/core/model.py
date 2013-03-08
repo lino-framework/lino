@@ -22,7 +22,7 @@ from django.conf import settings
 from django.utils.translation import ugettext as _
 
 from lino.core import fields
-from django_site.modeltools import obj2str
+from djangosite.dbutils import obj2str
 from lino.utils.xmlgen import html as xghtml
 E = xghtml.E
 

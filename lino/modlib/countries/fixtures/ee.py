@@ -32,7 +32,7 @@ import codecs
 
 from django.conf import settings
 
-from lino.core.modeltools import resolve_model
+from lino.core.dbutils import resolve_model
 from lino.utils.instantiator import Instantiator
 from lino.utils.ucsv import UnicodeReader
 

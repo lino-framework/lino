@@ -47,7 +47,7 @@ from django import http
 
 from lino.core.choicelists import ChoiceList, Choice
 
-from django_site.modeltools import obj2str
+from lino.core.dbutils import obj2str
 from lino.core import constants # as ext_requests
 
 

@@ -15,12 +15,6 @@
 """
 
 
-:func:`iif` (inline ``if``)
----------------------------
-
->>> iif(1>2,'yes','no')
-'no'
-
 :func:`str2hex` and :func:`hex2str`
 -----------------------------------
 
@@ -62,32 +56,15 @@ from dateutil import parser as dateparser
 from decimal import Decimal
 import stat
 
-# backwards compatibility:
-from django_site import AttrDict
+# encapsulate where they come from:
+
+from djangosite.utils import AttrDict, iif, ispure, assert_pure, confirm
+from djangosite.utils import rstgen
+from djangosite.utils import sphinxconf
 from north.utils import Cycler
 from .code import codefiles, codetime
 
-#~ import lino
 
-def confirm(prompt=None):
-    """
-    Ask for user confirmation from the console.
-    """
-    while True:
-        ln = raw_input(prompt)
-        if ln.lower() in ('y','j','o'):
-            return True
-        if ln.lower() == 'n':
-            return False
-        print "Please anwer Y or N"
-
-def iif(l,y,f): 
-    """
-    "Inline If" : an ``if`` statement as a function.
-    """
-    if l: return y 
-    return f
-    
 def isiterable(x):
     "Returns `True` if the specified object is iterable."
     try:
@@ -97,30 +74,6 @@ def isiterable(x):
     return True
     
     
-def ispure(s):
-    """Returns `True` if the specified string `s` is either a unicode 
-    string or contains only ASCII characters."""
-    if s is None: return True 
-    if type(s) == types.UnicodeType:
-        return True
-    if type(s) == types.StringType:
-        try:
-            s.decode('ascii')
-        except UnicodeDecodeError as e:
-            return False
-        return True
-    return False
-
-def assert_pure(s):
-    #~ assert ispure(s), "%r: not pure" % s
-    if s is None: return 
-    if isinstance(s,unicode):
-        return True
-    try:
-        s.decode('ascii')
-    except UnicodeDecodeError as e:
-        raise Exception("%r is not pure : %s" % (s,e))
-     
 
 def join_words(*words):
     """

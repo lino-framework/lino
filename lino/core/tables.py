@@ -48,8 +48,7 @@ logger = logging.getLogger(__name__)
 
 import os
 import yaml
-
-#~ from lxml import etree
+import json
 
 from django.db import models
 from django.conf import settings
@@ -59,12 +58,13 @@ from django.contrib.contenttypes import generic
 from django.db.models.query import QuerySet
 from django.utils.translation import ugettext_lazy as _
 from django.utils.encoding import force_unicode
-#~ from django.utils import simplejson as json
-import json
+
+from djangosite.utils import rstgen
+
 
 from lino.core import actors
 from lino.core import actions
-from django_site.modeltools import obj2str
+from lino.core.dbutils import obj2str
 from lino.core.model import Model
 
 from lino.core.fields import FakeField
@@ -74,9 +74,10 @@ from lino.ui import base
 from lino.core import constants #  as ext_requests
 from lino.utils.config import Configured, load_config_files
 
-
 class InvalidRequest(Exception):
     pass
+
+from lino.utils.xmlgen.html import RstTable
 
 
 class GridConfig(Configured):
@@ -509,8 +510,11 @@ class TableRequest(ActionRequest):
                 break
         if has_sum:
             rows.append([x for x in grid.sums2html(self,fields,sums)])
-        from lino.utils import rstgen
-        return rstgen.table(headers,rows)
+              
+        t = RstTable(headers,**kw)
+        return t.to_rst(rows)
+        
+        #~ return HtmlTable(headers,rows)
       
         
         

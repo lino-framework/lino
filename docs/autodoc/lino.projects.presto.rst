@@ -1,6 +1,5 @@
-=======================
 :mod:`lino.projects.presto`
-=======================
+============================
 
 .. automodule:: lino.projects.presto
     :members:

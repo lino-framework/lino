@@ -11,7 +11,6 @@
     
     lino.utils.appy_pod
     lino.utils.auth
-    lino.utils.babel
     lino.utils.choosers
     lino.utils.code
     lino.utils.config
@@ -19,7 +18,6 @@
     lino.utils.dblogger
     lino.utils.dbfreader
     lino.utils.demonames
-    lino.utils.dumpy
     lino.utils.html2odf
     lino.utils.html2text
     lino.utils.html2xhtml
@@ -31,8 +29,6 @@
     lino.utils.odsreader
     lino.utils.quantities
     lino.utils.ranges
-    lino.utils.rstgen
-    lino.utils.sphinxconf
     lino.utils.sqllog
     lino.utils.test
     lino.utils.xmlgen

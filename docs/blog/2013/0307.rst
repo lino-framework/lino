@@ -1,0 +1,47 @@
+20130307
+========
+
+Today I started to use `Fabric <http://www.fabfile.org>`_
+and to replace my Makefiles by a single `fabfile.py`, 
+the same for all projects. Currently there are four 
+projects I plan to manage with this system:
+djangosite, north, lino and welfare.
+
+
+Coverage.py warning: No data was collected.
+-------------------------------------------
+
+Here is a strange phenomen:
+
+If you import some Python module (here `djangosite`), then 
+its `__file__` attribute contains sometimes a relative path 
+and sometimes an absolute path.
+
+  T:\hgwork\site\djangosite>python -c "import djangosite; print djangosite.__file__"
+  t:\hgwork\site\djangosite\__init__.pyc
+
+  T:\hgwork\site\djangosite>cd ..
+
+  T:\hgwork\site>python -c "import djangosite; print djangosite.__file__"
+  djangosite\__init__.pyc
+  
+The explanation is here:
+http://stackoverflow.com/questions/7116889/python-file-attribute-absolute-or-relative
+
+
+I had the following in my `t:\hgwork\site\.coveragerc`::
+
+  [run]
+  source = djangosite
+
+The problem is that the `source
+<http://nedbatchelder.com/code/coverage/source.html#source>`__ 
+specifies "either a package name or a directory name".
+And what happens if both apply?
+You get a "Coverage.py warning: No data was collected."
+
+To work around this I specified the absolute path::
+
+  [run]
+  source = t:\hgwork\site\djangosite
+

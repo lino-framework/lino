@@ -20,9 +20,6 @@ file since it does not import any django module.
 
 import os
 import sys
-import cgi
-import inspect
-import datetime
 
 from os.path import join, abspath, dirname, normpath, isdir
 from decimal import Decimal
@@ -41,8 +38,6 @@ from lino.utils import AttrDict
 
 
 import lino
-
-  
 
 class Site(lino.Site):
     """
@@ -170,7 +165,7 @@ class Site(lino.Site):
     The default value `None` means that Lino decides automatically 
     during startup:
     it becomes `False` if
-    either :func:`lino.core.modeltools.is_devserver` returns True
+    either :func:`lino.core.dbutils.is_devserver` returns True
     or setting:`DEBUG` is set.
     """
     
@@ -540,13 +535,11 @@ class Site(lino.Site):
     
     _site_config = None
     
+    def init_nolocal(self,*args):
+        super(Site,self).init_nolocal(*args)
     
-    
-    def __init__(self,project_file,django_settings):
-        lino.Site.__init__(self,project_file,django_settings)
-        
-        installed_apps = tuple(self.get_installed_apps()) + ('lino','django_site')
-        django_settings.update(INSTALLED_APPS=installed_apps)
+        installed_apps = tuple(self.get_installed_apps()) + ('lino','djangosite')
+        self.update_settings(INSTALLED_APPS=installed_apps)
         
         modname = self.__module__
         i = modname.rfind('.')
@@ -563,23 +556,23 @@ class Site(lino.Site):
         if self.is_local_project_dir:
             pth = join(self.project_dir,'fixtures')
             if isdir(pth):
-                django_settings.update(FIXTURE_DIRS = [pth])
+                self.update_settings(FIXTURE_DIRS = [pth])
                 
         if self.webdav_url is None:
             self.webdav_url = '/media/webdav/'
         if self.webdav_root is None:
             self.webdav_root = join(abspath(self.project_dir),'media','webdav')
             
-        django_settings.update(MEDIA_ROOT = join(self.project_dir,'media'))
+        self.update_settings(MEDIA_ROOT = join(self.project_dir,'media'))
         
-        django_settings.update(
+        self.update_settings(
             ROOT_URLCONF = 'lino.ui.urls'
           
         )
-        django_settings.update(
+        self.update_settings(
             MIDDLEWARE_CLASSES=tuple(self.get_middleware_classes()))
                 
-        django_settings.update(
+        self.update_settings(
             TEMPLATE_LOADERS=tuple([
                 'lino.core.web.Loader',
                 'django.template.loaders.filesystem.Loader',
@@ -593,13 +586,13 @@ class Site(lino.Site):
                 #~ 'django.template.loaders.app_directories.Loader',
                 #     'django.template.loaders.eggs.load_template_source',
             #~ ]
-            #~ django_settings.update(TEMPLATE_LOADERS = tuple(tl))
+            #~ self.update_settings(TEMPLATE_LOADERS = tuple(tl))
                 
                 
         tcp = []
         if self.user_model == 'auth.User':
-            django_settings.update(LOGIN_URL = '/accounts/login/')
-            django_settings.update(LOGIN_REDIRECT_URL = "/")
+            self.update_settings(LOGIN_URL = '/accounts/login/')
+            self.update_settings(LOGIN_REDIRECT_URL = "/")
             tcp += [ 'django.contrib.auth.context_processors.auth' ]
             
         tcp += [
@@ -610,9 +603,8 @@ class Site(lino.Site):
             #    'django.core.context_processors.request',
                 #~ 'django.contrib.messages.context_processors.messages',
         ]
-        django_settings.update(TEMPLATE_CONTEXT_PROCESSORS = tuple(tcp))
-
-        
+        self.update_settings(TEMPLATE_CONTEXT_PROCESSORS = tuple(tcp))
+       
     def do_site_startup(self):
         super(Site,self).do_site_startup()
         #~ raise Exception("20130302")
@@ -691,7 +683,7 @@ class Site(lino.Site):
         if self._site_config is None:
             #~ raise Exception(20130301)
             #~ print '20120801 create _site_config'
-            from lino.core.modeltools import resolve_model
+            from lino.core.dbutils import resolve_model
             #~ from lino.utils import dblogger as logger
             SiteConfig = resolve_model('ui.SiteConfig')
             #~ from .models import SiteConfig
