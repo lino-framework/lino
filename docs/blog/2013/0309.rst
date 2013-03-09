@@ -123,3 +123,22 @@ Then again on the remote machine I
   $ chmod og-r .ssh/authorized_keys
   $ chmod og-rwx -R .ssh
 
+
+
+
+
+
+
+
+
+
+
+/home/luc/snapshots/django/django/conf/__init__.py
+
+
+
+mod = importlib.import_module(self.SETTINGS_MODULE)
+#try:
+#    mod = importlib.import_module(self.SETTINGS_MODULE)
+#except ImportError as e:
+#    raise ImportError("Could not import settings '%s' (Is it on sys.path?): %s" % (self.SETTINGS_MODULE, e))
