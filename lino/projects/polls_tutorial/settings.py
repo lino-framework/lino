@@ -3,6 +3,7 @@ from lino.projects.std.settings import *
 class Site(Site):
   
     title = "Cool Polls"
+    languages = ['en'] # TODO: remove this here
     
     def get_installed_apps(self):
         for a in super(Site,self).get_installed_apps():
