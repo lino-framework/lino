@@ -9,7 +9,7 @@
   <div class="container-fluid">
     {% block header %}
     <div class="row-fluid header">
-    {% if len(site.languages) > 1 -%}
+    {% if site.languages and len(site.languages) > 1 -%}
       {% for lang in site.languages -%}
         {% if lang == requested_language -%}
             {{lang}}
