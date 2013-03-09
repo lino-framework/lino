@@ -1,12 +1,14 @@
+.. _mldbc_tutorial:
+
 ======================
 Multilingual databases
 ======================
 
 One of Lino's key features is 
-:doc:`support for multilingual database content  </topics/babel>`.
+:ref:`support for multilingual database content  <mldbc>`.
 This tutorial tries to explain what it is.
 
-Note: If you have a :doc:`lino_local </admin/lino_local>` 
+Note: If you have a :ref:`djangosite_local <site:djangosite_local>` 
 directory with your 
 :attr:`extjs_root <lino.Lino.extjs_root>` defined, 
 then you can run directly from the Lino source repository:
