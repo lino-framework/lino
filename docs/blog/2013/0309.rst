@@ -1,0 +1,71 @@
+20130309
+========
+
+I renamed "django-north" to "North" on PyPI.
+
+  t:\hgwork\north> pip uninstall django-north
+
+In setup.py, change `name` from "django-north" to "North"
+
+  t:\hgwork\north> python setup.py register
+  t:\hgwork\north> pip install -e .
+  
+In a first attempt I had the following error message::
+
+  running check
+  Traceback (most recent call last):
+    File "setup.py", line 4, in <module>
+      setup(**SETUP_INFO)
+    File "c:\Python27\lib\distutils\core.py", line 152, in setup
+      dist.run_commands()
+    File "c:\Python27\lib\distutils\dist.py", line 953, in run_commands
+      self.run_command(cmd)
+    File "c:\Python27\lib\distutils\dist.py", line 972, in run_command
+      cmd_obj.run()
+    File "c:\Python27\lib\site-packages\distribute-0.6.35-py2.7.egg\setuptools\command\register.py", line 9, in run
+      _register.run(self)
+    File "c:\Python27\lib\distutils\command\register.py", line 50, in run
+      self.run_command(cmd_name)
+    File "c:\Python27\lib\distutils\cmd.py", line 326, in run_command
+      self.distribution.run_command(command)
+    File "c:\Python27\lib\distutils\dist.py", line 972, in run_command
+      cmd_obj.run()
+    File "c:\Python27\lib\distutils\command\check.py", line 70, in run
+      self.check_restructuredtext()
+    File "c:\Python27\lib\distutils\command\check.py", line 114, in check_restructuredtext
+      for warning in self._check_rst_data(data):
+    File "c:\Python27\lib\distutils\command\check.py", line 141, in _check_rst_data
+      parser.parse(data, document)
+    File "c:\Python27\lib\site-packages\docutils\parsers\rst\__init__.py", line 172, in parse
+      self.statemachine.run(inputlines, document, inliner=self.inliner)
+    File "c:\Python27\lib\site-packages\docutils\parsers\rst\states.py", line 174, in run
+      input_source=document['source'])
+    File "c:\Python27\lib\site-packages\docutils\statemachine.py", line 239, in run
+      context, state, transitions)
+    File "c:\Python27\lib\site-packages\docutils\statemachine.py", line 460, in check_line
+      return method(match, context, next_state)
+    File "c:\Python27\lib\site-packages\docutils\parsers\rst\states.py", line 2720, in text
+      paragraph, literalnext = self.paragraph(lines, startline)
+    File "c:\Python27\lib\site-packages\docutils\parsers\rst\states.py", line 422, in paragraph
+      textnodes, messages = self.inline_text(text, lineno)
+    File "c:\Python27\lib\site-packages\docutils\parsers\rst\states.py", line 431, in inline_text
+      return self.inliner.parse(text, lineno, self.memo, self.parent)
+    File "c:\Python27\lib\site-packages\docutils\parsers\rst\states.py", line 517, in parse
+      lineno)
+    File "c:\Python27\lib\site-packages\docutils\parsers\rst\states.py", line 779, in interpreted_or_phrase_ref
+      lineno)
+    File "c:\Python27\lib\site-packages\docutils\parsers\rst\states.py", line 842, in interpreted
+      return ([self.problematic(rawsource, rawsource, msg)],
+    File "c:\Python27\lib\site-packages\docutils\parsers\rst\states.py", line 721, in problematic
+      msgid = self.document.set_id(message, self.parent)
+    File "c:\Python27\lib\site-packages\docutils\nodes.py", line 1021, in set_id
+      for id in node['ids']:
+  TypeError: 'NoneType' object has no attribute '__getitem__'
+
+
+This was because I used an unknown text role "xfile" in 
+my :xfile:`README.txt` file::
+
+  Basic usage in your :xfile:`settings.py` file is...
+  
+  

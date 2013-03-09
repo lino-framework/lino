@@ -39,6 +39,8 @@ from django.db.models import loading
 from djangosite.dbutils import obj2str, full_model_name, app_labels
 from djangosite.dbutils import sorted_models_list
 from djangosite.dbutils import is_devserver
+from djangosite.dbutils import is_valid_email
+from djangosite.dbutils import is_valid_url
 from north.dbutils import resolve_model, UnresolvedModel
 
 

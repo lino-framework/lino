@@ -22,3 +22,5 @@ lino/sandbox/*/media
 docs/*/appdocs
 docs/dl/*
 lino.egg-info
+.build
+htmlcov

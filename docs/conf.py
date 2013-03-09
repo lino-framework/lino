@@ -12,6 +12,11 @@
 # serve to show the default.
 
 import sys, os
+from unipath import Path
+DOCSDIR = Path(__file__).parent.absolute()
+sys.path.append(DOCSDIR)
+
+
 import lino
 
 os.environ['DJANGO_SETTINGS_MODULE'] = 'lino.projects.sphinxdocs.settings'
@@ -42,7 +47,7 @@ extensions = [
   'sphinx.ext.extlinks',
   'sphinx.ext.graphviz',
   'sphinx.ext.intersphinx',
-  #~ 'sphinx.ext.doctest',
+  'sphinx.ext.doctest',
 ]
 
 #~ extensions.append('sphinxcontrib.autorun')
@@ -272,13 +277,24 @@ extlinks = {
   #~ 'django': ('http://docs.djangoproject.com', 'http://docs.djangoproject.com/en/dev/objects.inv')
 #~ }
 
-#~ welfare_inv = os.path.join('..','..','welfare','objects.inv')
-intersphinx_mapping = {
-  #~ 'welfare': ('http://packages.python.org/lino-welfare/en', None )
-  'welfare': (
+
+HGWORK = DOCSDIR.ancestor(2)
+intersphinx_mapping = dict()
+intersphinx_mapping.update(site=(
+    'http://site.lino-framework.org',
+    Path(HGWORK,'site','docs','.build','objects.inv')))
+intersphinx_mapping.update(north=(
+    'http://north.lino-framework.org',
+    Path(HGWORK,'north','docs','.build','objects.inv')))
+intersphinx_mapping.update(lino=(
+    'http://www.lino-framework.org',
+    Path(HGWORK,'lino','docs','.build','objects.inv')))
+intersphinx_mapping.update(welfare=(
     'http://welfare.lino-framework.org',
-    r'c:\temp\sphinxbuild\welfare\html\objects.inv' )
-}
+    Path(HGWORK,'welfare','docs','.build','objects.inv')))
+
+
+
 
 autosummary_generate = True
 

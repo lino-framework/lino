@@ -1,11 +1,20 @@
 Getting started
 ===============
 
+This document is targeted to **Lino application developers**.
+
+
+
 If your computer has Python and pip installed, then just type::
 
   C:\temp> pip install lino
+  
+  C:\temp> pip install -U lino
+  
+  C:\temp> pip install -U --find-links http://lino.saffre-rumma.net/dl lino
  
-For other situations and methods of installing Lino, see :doc:`/admin/index`.
+For other situations and methods of installing Lino, 
+see :doc:`/admin/index`.
 
 We begin by creating a Django project::
 
@@ -30,19 +39,19 @@ Now take the :xfile:`settings.py` file of your project
 and replace it's content with the following two lines::
 
   from lino.projects.cosi.settings import *
-  LINO = Lino(__file__,globals())
+  SITE = Site(__file__,globals())
 
 That is, we import settings from Lino Così, 
 one of the out-of-the-box projects included with Lino.
-Then we create a :setting:`LINO` setting which for the moment 
-is just an instance of an unmodified :class:`lino.Lino` setting object.
+Then we create a :setting:`SITE` setting which for the moment 
+is just an instance of an unmodified :class:`lino.Site` setting object.
 This second line occurs in this same form in every 
 Lino :xfile:`settings.py` file.
 
 Next we create a database with some content.
 This is just one command to type::
 
-  python manage.py initdb_demo
+  C:\temp> python manage.py initdb_demo
 
 Lino will ask you::
 
@@ -73,7 +82,7 @@ That's what we want, so go on and type ``y``::
 
 Now we can start the development server::
 
-  python manage.py runserver
+  C:\temp> python manage.py runserver
   
 which should output something like::  
   

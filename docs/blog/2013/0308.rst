@@ -8,3 +8,20 @@
 - Moved the local site_setup system from Lino to Djangosite.
   System admins must rename all "lino_local" modules to "djangosite_local"
   and the `on_init` therein to `setup_site`.
+  
+  
+
+
+Traceback (most recent call last):
+  File "c:\Python27\lib\site-packages\fabric\main.py", line 739, in main
+    *args, **kwargs
+  File "c:\Python27\lib\site-packages\fabric\tasks.py", line 353, in execute
+    results['<local-only>'] = task.run(*args, **new_kwargs)
+  File "c:\Python27\lib\site-packages\fabric\tasks.py", line 123, in run
+    return self.wrapped(*args, **kwargs)
+  File "T:\hgwork\fabfile.py", line 144, in setup_sdist
+    run_setup('setup.py',args)
+  File "c:\Python27\lib\distutils\core.py", line 238, in run_setup
+    script_name
+RuntimeError: 'distutils.core.setup()' was never called -- perhaps 'setup.py' is not a Distutils setup script?
+

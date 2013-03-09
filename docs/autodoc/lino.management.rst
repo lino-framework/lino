@@ -22,7 +22,7 @@ show
 initdb_demo
 -----------
 
-.. automodule:: djangosite.management.commands.initdb_demo
+.. automodule:: lino.management.commands.initdb_demo
     :members:
     :show-inheritance:
 
