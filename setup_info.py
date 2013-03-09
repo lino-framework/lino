@@ -16,7 +16,7 @@
 
 SETUP_INFO = dict(name = 'lino',
   version = '1.6.0',
-  requires = ['North (>=0.0.2)','appy',
+  requires = ['North','appy',
     'python_dateutil','PyYAML','odfpy','sphinx','jinja2',
     ],
   description = "A framework for writing desktop-like web applications using Django and ExtJS",
