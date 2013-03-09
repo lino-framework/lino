@@ -41,7 +41,7 @@ Lino the framework consists of different parts:
   (split off from main project in March 2013)
   provides python dumps, babel fields and data migration.
 
-- :mod:`lino.modlib`, a collection of reusable Django apps
+- `lino.modlib`, a collection of reusable Django apps
 - A collection of out-of-the-box demo applications
 - The default "plain" user interface 
 - The optional ExtJS user interface 
