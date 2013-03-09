@@ -19,7 +19,7 @@ from django.utils.translation import ugettext_lazy as _
 
 
 from django.conf import settings
-from lino.utils.babel import babel_values, babelitem
+from north.babel import babel_values, babelitem
 
 
 def objects():
