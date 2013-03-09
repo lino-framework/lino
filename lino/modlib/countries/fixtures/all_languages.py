@@ -33,7 +33,7 @@ import codecs
 #~ logger = logging.getLogger('lino')
 from lino.utils import dblogger as logger
 
-from lino.utils.babel import babel_values, DEFAULT_LANGUAGE
+from north.babel import babel_values, DEFAULT_LANGUAGE
 from lino.modlib.countries.models import Language
 
 

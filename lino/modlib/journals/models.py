@@ -36,7 +36,7 @@ from django.utils.translation import ugettext_lazy as _
 
 from lino import dd
 from lino import mixins
-from lino.utils.babel import babelattr, BabelCharField
+from north.babel import babelattr, BabelCharField
 #~ from lino.modlib.documents import models as documents
 #~ from lino import mixins
 from lino.utils import mti

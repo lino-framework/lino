@@ -32,7 +32,6 @@ from django.utils.translation import pgettext_lazy
 from django.core.exceptions import ValidationError
 
 from lino.utils.choosers import chooser
-#~ from lino.utils.babel import add_babel_field, babelattr
 from north import babel 
 #~ from lino.utils import dblogger
 

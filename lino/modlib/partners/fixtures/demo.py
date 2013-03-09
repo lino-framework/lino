@@ -22,7 +22,7 @@ from __future__ import unicode_literals
 from django.conf import settings
 from lino.core.dbutils import resolve_model, obj2str
 from lino.utils.instantiator import Instantiator
-from lino.utils.babel import default_language
+from north.babel import default_language
 from lino import mixins
 from lino.utils import dblogger
 #~ from lino import dd
