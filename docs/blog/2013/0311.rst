@@ -12,5 +12,8 @@
   attribute from :mod:`north`   to :mod:`djangosite`.
 
 - Started to use `sphinx-apidoc
-  <http://sphinx-doc.org/invocation.html#invocation-of-sphinx-apidoc>`__
+  <http://sphinx-doc.org/invocation.html#invocation-of-sphinx-apidoc>`__.
+  (Currently the api tree is truncated because of some problem when running sphinx through fabric...)
   
+- Updated :doc:`/tutorials/quickstart` for Harsh.
+

@@ -42,7 +42,8 @@ from north import babel
 from lino.utils.restify import doc2rst, abstract
 from lino.core import dbtables
 
-from lino.core.dbutils import makedirs_if_missing, full_model_name
+#~ from lino.core.dbutils import makedirs_if_missing, full_model_name
+from lino.dd import full_model_name
 
 def fieldtype(f):
     if isinstance(f,models.ForeignKey):
@@ -188,7 +189,7 @@ class GeneratingCommand(BaseCommand):
         #~ else:
             #~ mkdir_if(os.path.dirname(fn))
             
-        makedirs_if_missing(os.path.dirname(fn))
+        settings.SITE.makedirs_if_missing(os.path.dirname(fn))
         
         logger.info("Generating %s",fn)
         #~ logger.info("Generating %s from %s",fn,tpl_filename)

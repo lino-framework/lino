@@ -25,6 +25,10 @@ If you want to install the newest pre-release versions, type::
 or even::
 
   C:\temp> pip install -U --force-reinstall -f http://lino.saffre-rumma.net/dl lino
+  
+or even::
+
+  C:\temp> pip install -U --noindex --force-reinstall -f http://lino.saffre-rumma.net/dl lino
  
 For other situations and methods of installing Lino, see :doc:`/admin/index`.
 

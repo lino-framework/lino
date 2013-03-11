@@ -1,6 +1,6 @@
 from lino.projects.std.settings import *
 
-class Lino(Lino):
+class Site(Site):
   
     title = "Lino LETS Tutorial (1)"
     
@@ -21,17 +21,17 @@ class Lino(Lino):
         m.add_action(self.modules.lets.Places)
     
     
-LINO = Lino(__file__,globals()) 
+SITE = Site(__file__,globals()) 
 
 DEBUG = True
 
-DATABASES = {
-    'default': {
-        'ENGINE': 'django.db.backends.sqlite3', 
-        'NAME': abspath(join(
-            dirname(__file__),'test.db')),
-    }
-}
+#~ DATABASES = {
+    #~ 'default': {
+        #~ 'ENGINE': 'django.db.backends.sqlite3', 
+        #~ 'NAME': abspath(join(
+            #~ dirname(__file__),'test.db')),
+    #~ }
+#~ }
 
 INSTALLED_APPS = (
   'django.contrib.contenttypes',
@@ -40,7 +40,8 @@ INSTALLED_APPS = (
   'lino.tutorials.lets1.lets'
 )
 
-LOGGING = dict(level='DEBUG')
-logdir = join(LINO.project_dir,'log')
-if os.path.exists(logdir):
-    LOGGING.update(filename=join(logdir,'system.log'))
+#~ LOGGING = dict(level='DEBUG')
+#~ logdir = join(SITE.project_dir,'log')
+#~ if os.path.exists(logdir):
+    #~ LOGGING.update(filename=join(logdir,'system.log'))
+    

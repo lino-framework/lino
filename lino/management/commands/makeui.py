@@ -52,7 +52,7 @@ from north import babel
 from lino.core.menus import Menu, MenuItem
 #~ from lino.utils.jsgen import py2js
 from lino.utils import jsgen
-from lino.core.dbutils import makedirs_if_missing
+#~ from lino.core.dbutils import makedirs_if_missing
 from lino.management.commands.makedocs import GeneratingCommand
 
 def a2class(a):
@@ -126,7 +126,7 @@ class Command(GeneratingCommand):
         for d in (join(self.output_dir,'source','translation'),
                   join(self.output_dir,'source','script'),
                   join(self.output_dir,'source','resource','lino')):
-            makedirs_if_missing(d)            
+            settings.SITE.makedirs_if_missing(d)            
             
         
 
