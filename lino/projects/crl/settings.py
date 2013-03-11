@@ -23,7 +23,7 @@ from lino.projects.std.settings import *
 
 from lino.utils.jsgen import js_code
 
-class Lino(Lino):
+class Site(Site):
   
     languages = ('en','fr', 'de')
     
@@ -33,16 +33,13 @@ class Lino(Lino):
     help_url = "http://lino.saffre-rumma.net/crl/index.html"
     #~ migration_module = 'lino.projects.polo.migrate'
     
-    def get_app_source_file(self):
-        return __file__
-        
     def is_abstract_model(self,name):
         if name == 'contacts.Person':
             return True
         return False
         
 
-LINO = Lino(__file__,globals())
+SITE = Site(__file__,globals())
 
 
 #~ PROJECT_DIR = abspath(dirname(__file__))

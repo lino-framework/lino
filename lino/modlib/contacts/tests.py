@@ -126,6 +126,11 @@ def test02(self):
     def f(obj): return False
     settings.SITE.is_imported_partner = f
     
+    """
+    Note that we must specify the language both in the user 
+    and in HTTP_ACCEPT_LANGUAGE because...
+    """
+    
     
     luc = Person.objects.get(name__exact="Saffre Luc")
     url = settings.SITE.build_admin_url('api','contacts','Person','%d?query=&an=detail&fmt=json' % luc.pk)
@@ -133,7 +138,7 @@ def test02(self):
     if 'en' in babel.AVAILABLE_LANGUAGES:
         u.language = 'en'
         u.save()
-        response = self.client.get(url,REMOTE_USER='root') # ,HTTP_ACCEPT_LANGUAGE='en')
+        response = self.client.get(url,REMOTE_USER='root',HTTP_ACCEPT_LANGUAGE='en')
         result = self.check_json_result(response,'navinfo disable_delete data id title')
         self.assertEqual(result['data']['country'],"Estonia")
         self.assertEqual(result['data']['gender'],"Male")
@@ -141,7 +146,7 @@ def test02(self):
     if 'de' in babel.AVAILABLE_LANGUAGES:
         u.language = 'de'
         u.save()
-        response = self.client.get(url,REMOTE_USER='root') # ,HTTP_ACCEPT_LANGUAGE='de')
+        response = self.client.get(url,REMOTE_USER='root',HTTP_ACCEPT_LANGUAGE='de')
         result = self.check_json_result(
           response,
           'navinfo disable_delete data id title')
@@ -156,7 +161,7 @@ def test02(self):
     if 'fr' in babel.AVAILABLE_LANGUAGES:
         u.language = 'fr'
         u.save()
-        response = self.client.get(url,REMOTE_USER='root') # ,HTTP_ACCEPT_LANGUAGE='fr')
+        response = self.client.get(url,REMOTE_USER='root',HTTP_ACCEPT_LANGUAGE='fr')
         result = self.check_json_result(response,'navinfo disable_delete data id title')
         self.assertEqual(result['data']['country'],"Estonie")
         self.assertEqual(result['data']['gender'],u"Masculin")

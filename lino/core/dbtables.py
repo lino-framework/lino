@@ -571,34 +571,9 @@ class Table(AbstractTable):
                 self.hidden_columns = frozenset(fields.fields_list(self.model,self.hidden_columns))
             self.hidden_columns = self.hidden_columns | self.model.hidden_columns
             self.hidden_elements = self.hidden_elements | self.model.hidden_elements
-            #~ if self.model.__name__ == 'Partner':
-                #~ print "20130124 class_init ", self,self.hidden_elements
-            #~ if self.hidden_elements is None:
-                #~ self.hidden_elements = self.model.hidden_elements
-            #~ if isinstance(self.hidden_elements,basestring):
-                #~ self.hidden_elements = fields.fields_list(self.model,self.hidden_elements)
-                
-            #~ for name,action in self.model.get_model_actions(self):
-                #~ existing_value = self.__dict__.get(name,None)
-                #~ if existing_value is not None:
-                    #~ if not isinstance(existing_value,actions.Action):
-                        #~ raise Exception(
-                            #~ "%s cannot get model action %s because name is already used for %r" %
-                            #~ self,name,existing_value)
-                #~ else:
-                    #~ setattr(self,name,action)
             
             
         super(Table,self).class_init()
-        #~ if self.model is None:
-            #~ if self.base_queryset is not None:
-                #~ self.model = self.base_queryset.model
-            # raise Exception("No model in %s" %  self)
-        #~ else:
-            #~ self.model = resolve_model(self.model,self.app_label)
-            
-        #~ logger.debug("20120731 class_init(%r) : model is %s",self,self.model)
-        
         
         if self.model is not None:
               

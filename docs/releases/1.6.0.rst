@@ -1,0 +1,4 @@
+Version 1.6.0
+=============
+
+The first release after splitting out north and djangosite.

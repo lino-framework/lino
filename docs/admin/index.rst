@@ -36,4 +36,5 @@ Other
     ConfigureNotesTemplates
     tim2lino
     settings
+    which_lino
    

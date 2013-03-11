@@ -38,15 +38,17 @@ from lino.utils import dblogger
 #~ from lino.utils import crl2hex, hex2crl
 
 
-from lino.modlib.contacts.utils import name2kw, street2kw, join_words
-from lino.modlib.contacts.models import GENDER_MALE, GENDER_FEMALE
+from lino.utils import join_words
+from lino.modlib.contacts.utils import name2kw, street2kw
+#~ from lino.modlib.contacts.models import GENDER_MALE, GENDER_FEMALE
+from lino import dd
 from lino.utils.instantiator import Instantiator
 
 from lino.core.dbutils import resolve_model, obj2str
 import lino
 
 from lino.utils import confirm, iif
-from lino.core.coretools import app_labels
+from lino.core.dbutils import app_labels
 from lino.projects.crl.models import CRL
 
 Country = resolve_model('countries.Country')
@@ -297,35 +299,35 @@ def load_P_(row):
     title = row['PQ']
     if title:
         if title == 'Mme':
-            kw.update(language='fr',gender=GENDER_FEMALE)
+            kw.update(language='fr',gender=dd.Genders.female)
         elif title == 'Mlle':
-            kw.update(language='fr',gender=GENDER_FEMALE)
+            kw.update(language='fr',gender=dd.Genders.female)
         elif title == 'M.':
-            kw.update(language='fr',gender=GENDER_MALE)
+            kw.update(language='fr',gender=dd.Genders.male)
         elif title == 'dHr':
-            kw.update(language='nl',gender=GENDER_MALE)
+            kw.update(language='nl',gender=dd.Genders.male)
         elif title == 'Mvw':
-            kw.update(language='nl',gender=GENDER_FEMALE)
+            kw.update(language='nl',gender=dd.Genders.female)
         elif title == 'Mr':
-            kw.update(language='en',gender=GENDER_MALE)
+            kw.update(language='en',gender=dd.Genders.male)
         elif title == 'Mrs':
-            kw.update(language='en',gender=GENDER_FEMALE)
+            kw.update(language='en',gender=dd.Genders.female)
         elif title == 'Hrrn':
-            kw.update(language='de',gender=GENDER_MALE)
+            kw.update(language='de',gender=dd.Genders.male)
         elif title == 'Fr':
-            kw.update(language='de',gender=GENDER_FEMALE)
+            kw.update(language='de',gender=dd.Genders.female)
         elif title == 'Fr.':
-            kw.update(language='fr',gender=GENDER_MALE,title=u"Frère")
+            kw.update(language='fr',gender=dd.Genders.male,title=u"Frère")
         elif title == 'Frl':
-            kw.update(language='de',gender=GENDER_FEMALE)
+            kw.update(language='de',gender=dd.Genders.female)
         elif title == 'Bx':
-            kw.update(gender=GENDER_MALE,title="Bx")
+            kw.update(gender=dd.Genders.male,title="Bx")
         elif title == 'Bse':
-            kw.update(gender=GENDER_FEMALE,title="Bse")
+            kw.update(gender=dd.Genders.female,title="Bse")
         elif title == 'St':
-            kw.update(gender=GENDER_MALE,title="St")
+            kw.update(gender=dd.Genders.male,title="St")
         elif title == 'Ste':
-            kw.update(gender=GENDER_FEMALE,title="Ste")
+            kw.update(gender=dd.Genders.female,title="Ste")
         else:
             dblogger.warning("Ignored PQ value %r" % title)
       

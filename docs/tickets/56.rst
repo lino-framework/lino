@@ -25,7 +25,7 @@ Das ist ziemlich lang. Aber wenn ich record_id statt data_record verwende, krieg
     { "record_id": -99999 })'>Upload</a>
     
 Das kann nicht funktionieren, weil er die known value `type` nicht 
-richtig übergibt (muss auch `typeHidden´ setzen).
+richtig übergibt (muss auch `typeHidden` setzen).
 Und wenn er's täte, bin ich nicht sicher, was FormPanel daraus machen würde.
 
 Für 

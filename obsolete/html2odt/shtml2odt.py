@@ -241,7 +241,7 @@ class HTML2ODTParser(HTMLParser):
            'code':      ['Source_20_Text', {'fontname':"Courier", 'fontnameasian':"Courier",'fontnamecomplex':"Courier" }],
            'dfn':      ['Definition',{ }],
            'em':      ['Emphasis', {'fontstyle':"italic", 'fontstyleasian':"italic", 'fontstylecomplex':"italic" }],
-           'strong':   ['Strong_20_Emphasis': {'fontweight':"bold",'fontweightasian':"bold",'fontweightcomplex':"bold"}],
+           'strong':   ['Strong_20_Emphasis', {'fontweight':"bold",'fontweightasian':"bold",'fontweightcomplex':"bold"}],
            'var':      ['Variable', {'fontstyle':"italic", 'fontstyleasian':"italic", 'fontstylecomplex':"italic" }],
            }
         stylename = tagdict.get(tag,'Emphasis')

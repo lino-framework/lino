@@ -37,8 +37,9 @@ Some optimizations:
 Releases
 --------
 
-Released :doc:`/releases/1.5.6` 
-and :welfaredoc:`Welfare 1.0.9 </releases/1.0.9>`_
+Released :doc:`/releases/1.5.6`
+and :welfare:`Welfare 1.0.9 </releases/1.0.9>`.
+
 
 
 Miscellaneous

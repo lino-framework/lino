@@ -896,6 +896,8 @@ class Site(lino.Site):
         yield 'lino.modlib.about'
         #~ if self.admin_prefix:
             #~ yield 'lino.modlib.pages'
+        for a in self.user_apps:
+            yield a
         
     #~ def get_guest_greeting(self):
         #~ return xghtml.E.p("Please log in")

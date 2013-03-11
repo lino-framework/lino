@@ -15,5 +15,6 @@ you'll now want to know how to do it yourself.
    layouts
    mini
    lets
+   auto_create/index
 
 

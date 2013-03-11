@@ -1,4 +1,4 @@
-## Copyright 2011 Luc Saffre
+## Copyright 2011-2013 Luc Saffre
 ## This file is part of the Lino project.
 ## Lino is free software; you can redistribute it and/or modify 
 ## it under the terms of the GNU General Public License as published by
@@ -13,8 +13,6 @@
 
 """
 Extensions to the `django.test` package.
-
-Used in :mod:`lino.modlib.pcsw.tests.pcsw_tests`
 
 """
 
@@ -113,8 +111,8 @@ class TestCase(DjangoTestCase):
         
     def test_them_all(self):
         """
-        This method will be executed automatically since it's 
-        name starts with 'test_'.
+        This method will be executed automatically since its 
+        name starts with ``test_``.
         """
         m = import_module(self.defining_module or self.__module__)
         #~ for k,v in m.__dict__.items():

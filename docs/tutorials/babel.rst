@@ -15,12 +15,12 @@ then you can run directly from the Lino source repository:
 
 .. code-block:: bash
 
-  $ cd ~/snapshots/lino/lino/apps/babel_tutorial
+  $ cd ~/snapshots/lino/lino/projects/babel_tutorial
   $ mkdir media
   $ python manage.py testserver demo
   Creating test database for alias 'default'...
   INFO Analyzing models...
-  INFO Loading ~/snapshots/lino/lino/apps/babel_tutorial/fixtures/demo.py...
+  INFO Loading ~/snapshots/lino/lino/projects/babel_tutorial/fixtures/demo.py...
   Installed 6 object(s) from 1 fixture(s)
   Validating models...
 
@@ -71,7 +71,7 @@ that's why we deliberately didn't translate the user interface in this tutorial.
 The :xfile:`settings.py` file
 -----------------------------
 
-.. literalinclude:: ../../lino/apps/babel_tutorial/settings.py
+.. literalinclude:: ../../lino/projects/babel_tutorial/settings.py
 
 This is where you specify the :attr:`lino.Lino.languages` setting.
 
@@ -79,7 +79,7 @@ This is where you specify the :attr:`lino.Lino.languages` setting.
 The :xfile:`models.py` file
 ---------------------------
 
-.. literalinclude:: ../../lino/apps/babel_tutorial/models.py
+.. literalinclude:: ../../lino/projects/babel_tutorial/models.py
 
 Note that this is the first time we use a 
 :class:`dd.ChoiceList <lino.core.choicelists.ChoiceList>`
@@ -90,9 +90,7 @@ they deserve another tutorial on their own.
 The `demo` fixture
 ------------------
 
-
-
-.. literalinclude:: ../../lino/apps/babel_tutorial/fixtures/demo.py
+.. literalinclude:: ../../lino/projects/babel_tutorial/fixtures/demo.py
 
 Note how the application developer doesn't know which 
 will be the :attr:`lino.Lino.languages` setting at runtime.

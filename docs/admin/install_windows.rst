@@ -203,8 +203,6 @@ files in your :file:`c:\\mypy\\mysite`:
 #.  A file :xfile:`manage.py` with the following content:
     
     .. literalinclude:: manage.py
-    
-    Our suggestion for an :doc:`optimized </blog/2011/0531>`
 
 #.  And a file :xfile:`settings.py` with the following content:
 

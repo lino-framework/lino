@@ -1,5 +1,5 @@
 # -*- coding: UTF-8 -*-
-## Copyright 2011-2012 Luc Saffre
+## Copyright 2011-2013 Luc Saffre
 ## This file is part of the Lino project.
 ## Lino is free software; you can redistribute it and/or modify 
 ## it under the terms of the GNU General Public License as published by
@@ -19,12 +19,16 @@ from lino.modlib.vocbook.fr import French, Autre, Nom, NomPropre, Adjectif, Nume
 from lino.modlib.vocbook.et import Estonian
 from lino.modlib.vocbook.base import Book, FR, M, F, ET, PRON, GEON, GEOM, GEOF
 
-if len(sys.argv) != 3:
-    raise Exception("""
-Usage : %(cmd)s rst OUTPUT_ROOT_DIR
-    %(cmd)s odt OUTPUT_FILE
-""" % dict(cmd=sys.argv[0]))
-output_format = sys.argv[1]
+if __name__ == '__main__':
+    if len(sys.argv) != 3:
+        raise Exception("""
+    Usage : %(cmd)s rst OUTPUT_ROOT_DIR
+        %(cmd)s odt OUTPUT_FILE
+    """ % dict(cmd=sys.argv[0]))
+    output_format = sys.argv[1]
+else:
+    output_format = 'rst' # 
+    
 if output_format == "rst":
     FULL_CONTENT = False
 else:
@@ -2230,7 +2234,7 @@ if HAS_EXERCICES:
 Õpilased loevad ette.
 Ainult lugeda, mitte tõlkida.
 """)
-    Exercice.parse_words(None,u"""
+    Exercices.parse_words(None,u"""
     au clair de lune [okläärdə'lün] : kuuvalguses
     le cœur de filet [kÖÖr də fi'lä] : veise sisefilee
     le dessert [des'säär] : magustoit
@@ -2247,7 +2251,7 @@ Ainult lugeda, mitte tõlkida.
 Õpetaja loeb ette sari sõnu.
 Õpilased kirjutavad paberile, kasutades hääldamiskirjelduse tähestik.
 """)
-    Exercice.parse_words(None,u"""
+    Exercices.parse_words(None,u"""
 le chevreuil [šəv'rÖj] : metskits
 le soleil [so'leij] : päike
 la boisson [bwa'sO~] : jook

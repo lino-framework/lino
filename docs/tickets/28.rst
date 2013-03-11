@@ -1,7 +1,7 @@
 # 28 [closed] : Automated data migrations
 -----------------------------------------
 
-Siehe auch :doc:``/blog/2011/0303`.
+Siehe auch `/blog/2011/0303`.
 
 Grundidee: 
 `dumpy.Serializer` 

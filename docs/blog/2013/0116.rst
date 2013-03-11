@@ -89,7 +89,7 @@ A similar thing is
 Upgrade on Jana
 ---------------
 
-Now that :mod:`lino.utils.dumpy` can 
+Now that :mod:`north.dpy` can 
 automatically handle a change in the 
 :attr:`lino.Lino.languages` settings,
 I made a :doc:`/topics/ddt` on Jana using a dump of production data.

@@ -12,9 +12,10 @@
 ## along with Lino; if not, see <http://www.gnu.org/licenses/>.
 
 """
+Not used.
 """
 
-raise Exception("Not used")
+#~ raise Exception("Not used")
 
 import logging
 logger = logging.getLogger(__name__)
@@ -41,11 +42,9 @@ from lino.mixins import printable
 from lino.core.dbutils import obj2str, sorted_models_list
 from lino.core.dbutils import resolve_field
 from lino.utils.choosers import chooser, get_for_field
-from lino.utils.restify import restify
 from lino.core import actions
 #~ from lino.utils.choicelists import UserLevel, UserGroup
 #~ from lino.modlib.users.models import UserLevel, UserGroup
-from lino.core.perms import UserLevels, UserGroups
 
 #~ from lino.modlib.users.models
 
@@ -83,12 +82,12 @@ if settings.SITE.user_model and settings.SITE.is_installed('contenttypes'):
           If this is empty, the permission applies for all states.
           """)
       #~ state_after = models.CharField(_("State after"),max_length=20)
-      user_level = UserLevels.field(blank=True,
+      user_level = dd.UserLevels.field(blank=True,
           help_text="""
           If not empty, this permission applies only for users having at least the given level.
           """)
       #~ user_groups = UserGroup.field(max_length=200,blank=True,force_selection=False) # TODO: multiple=True 
-      user_group = UserGroups.field(
+      user_group = dd.UserGroups.field(
           help_text="""
           If not empty, this permission applies only for members of the given group.
           """) # TODO: multiple=True 

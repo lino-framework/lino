@@ -39,7 +39,7 @@ I'm open to comments and discussion, and maybe I'll even change my mind.
 One reason to make me change my mind might be if I hear that people 
 who would otherwise collaborate on Lino, refrain from doing so 
 because of the GPL licensing. Let me know if you are one of them. 
-See also :doc:`/topics/16`.
+See also :doc:`/tickets/16`.
   
 On the other hand, here are some thoughts of other developers against the GPL that *did not* make me change my mind:
 

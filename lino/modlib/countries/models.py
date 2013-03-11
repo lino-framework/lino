@@ -35,7 +35,7 @@ from lino.utils.choosers import chooser
 from north import babel 
 #~ from lino.utils import dblogger
 
-from lino.utils.instantiator import lookup_or_create
+#~ from lino.utils.instantiator import lookup_or_create
 
 from lino.modlib.contacts import MODULE_LABEL
 
@@ -293,7 +293,7 @@ class CountryCity(dd.Model):
         Try to auto-create it.
         """
         if self.country is not None:
-            return lookup_or_create(City,City._meta.get_field('name'),text,country=self.country)
+            return City.lookup_or_create('name',text,country=self.country)
             
             #~ qs = self.country.city_set.filter(name__iexact=text)
             #~ if qs.count() == 0:

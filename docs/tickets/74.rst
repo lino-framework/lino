@@ -185,10 +185,12 @@ Google didn't let me create a project "django-start",
 I guess because of "django-startup"
 
 Name: django-start
+
 Summary: An extensible replacement for `django.contrib.sites`
-Description: 
-  Emits a "site started" signal after Django has populated it's model cache.
-  Defines a `Site` class to be subclassed and instantiated in `settings.SITE`.
+
+Description: Emits a "site started" signal after Django has populated 
+its model cache. Defines a `Site` class to be subclassed and instantiated 
+in `settings.SITE`.
 
 
 

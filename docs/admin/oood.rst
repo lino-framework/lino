@@ -1,7 +1,7 @@
 Install OpenOffice.org server 
 =============================
 
-See also :doc:`/blog/2010/1116`. But basically:
+See also :srcref:`/docs/blog/2010/1116`. But basically:
 
 - Install a headless version > 2.3 of openoffice or libreoffice::
     
@@ -41,6 +41,5 @@ See also :doc:`/blog/2010/1116`. But basically:
     # update-rc.d oood defaults
     
     
-- In your local :xfile:`settings.py`::
 
 

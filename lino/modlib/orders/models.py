@@ -27,7 +27,7 @@ from dateutil.relativedelta import relativedelta
 ONE_DAY = relativedelta(days=1)
 
 from django.db import models
-from django import forms
+#~ from django import forms
 from django.conf import settings
 #~ from django.contrib.auth import models as auth
 from django.core.exceptions import ValidationError
@@ -47,6 +47,7 @@ accounts = dd.resolve_app('accounts')
 ledger = dd.resolve_app('ledger')
 vat = dd.resolve_app('vat')
 products = dd.resolve_app('products')
+sales = dd.resolve_app('sales')
 
 
 
@@ -59,7 +60,7 @@ add('30',_("Inactive"),'inactive',editable=False)
 
 
 
-class Order(SalesDocument,mixins.ProjectRelated,mixins.Registrable):
+class Order(sales.SalesDocument,mixins.ProjectRelated,mixins.Registrable):
     """
     An Order is when a :class:`Customer` asks us to "deliver" a 
     given set of "products".
@@ -211,7 +212,7 @@ class Order(SalesDocument,mixins.ProjectRelated,mixins.Registrable):
             
         
 
-class Orders(SalesDocuments):
+class Orders(sales.SalesDocuments):
     model = Order
     #~ order_by = ["number"]
     
@@ -232,17 +233,17 @@ class Orders(SalesDocuments):
                   #~ "cycle start_date covered_until"
     
 
-class PendingOrdersParams(forms.Form):
-    make_until = forms.DateField(label="Make invoices until",
-      initial=datetime.date.today()+ONE_DAY,required=False)
+#~ class PendingOrdersParams(forms.Form):
+    #~ make_until = forms.DateField(label="Make invoices until",
+      #~ initial=datetime.date.today()+ONE_DAY,required=False)
 
-class PendingOrders(Orders):
-    param_form = PendingOrdersParams
+#~ class PendingOrders(Orders):
+    #~ param_form = PendingOrdersParams
     
-    @classmethod
-    def get_queryset(self,master_instance,make_until=None):
-        assert master_instance is None
-        return Order.objects.pending(make_until=make_until)
+    #~ @classmethod
+    #~ def get_queryset(self,master_instance,make_until=None):
+        #~ assert master_instance is None
+        #~ return Order.objects.pending(make_until=make_until)
 
 
 

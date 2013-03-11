@@ -43,7 +43,7 @@ just after Site has finished to analyze the models.
 auto_create = Signal(["field","value"])
 """
 The :attr:`auto_create` signal is sent when 
-:func:`lookup_or_create` silently created a model instance.
+:func:`lookup_or_create <>` silently created a model instance.
 
 Arguments sent with this signal:
 

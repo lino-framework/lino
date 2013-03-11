@@ -43,6 +43,7 @@ Related projects:
    tickets/index
    admin/index
    topics/index
+   reviews/index
    ref/index
    API <api/lino>
 

@@ -70,6 +70,9 @@ def discover():
 
 def register_actor(a):
     #~ logger.debug("register_actor %s",a)
+    if not settings.SITE.is_installed(a.app_label):
+        # happens when sphinx autodoc imports a non installed module
+        return
     old = settings.SITE.modules.define(a.app_label,a.__name__,a)
     #~ old = actors_dict.get(a.actor_id,None)
     if old is not None:

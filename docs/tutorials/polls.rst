@@ -173,7 +173,7 @@ The main index
 The following template is used to 
 build the HTML to be displayed in our Main Window. 
 
-.. literalinclude:: ../../lino/projects/polls_tutorial/templates/admin_main.html
+.. literalinclude:: ../../lino/projects/polls_tutorial/templates_jinja/admin_main.html
 
 The `<div class="htmlText">` specifies that this fragment 
 contains simple html text inside an ExtJS component. 

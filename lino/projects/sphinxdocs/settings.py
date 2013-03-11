@@ -29,8 +29,10 @@ import lino
 
 from lino.projects.std.settings import *
 
+from lino.modlib import ledger, cal
 
-class Site(Site):
+class Site(Site,cal.SiteMixin,ledger.SiteMixin):
+
     #~ source_dir = os.path.dirname(__file__)
     title = "lino.projects.sphinxdocs"
     
@@ -63,6 +65,8 @@ class Site(Site):
         yield 'lino.modlib.vat'
         yield 'lino.modlib.products'
         yield 'lino.modlib.sales'
+        yield 'lino.modlib.concepts'
+        yield 'lino.modlib.school'
         #~ yield 'lino.modlib.pages'
         #~ yield 'lino.projects.cosi'
         #~ yield 'lino'

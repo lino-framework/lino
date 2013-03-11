@@ -477,30 +477,11 @@ Medium-term
 #.  What about Cédric Krier's `HgNested extension
     <http://mercurial.selenic.com/wiki/HgNestedExtension>`_?
 
-#.   There is also an almost philosphical question: where should the label "Calendar" 
-    (and it's translations) be defined? Currently it is in 
-    :class:`lino.reports.Calendar`. The whole pot-pourri of actors and actions 
-    (Table, Frame, Detail, Action) might get an internal revision soon: 
-    - is it necessary to instantiate Actors? 
-      Should the instantiation of an actor represent a request?
-    - Split "Report" into "List" and "Detail": both of them get their own store. 
-      Note that one Detail would contain the equivalent of all .dtl files.
-      Replace .dtl files (one per tab) by a single configuration file.
-      The possibility of local configuration should remain, but convert them to Python code.
-    - Actions should be rather like fields: instantiated within the subclass definition.
-
-
 #.  Support for eID cards: (1) read data from card and (2) user authentication.
 
     http://code.google.com/p/eid-javascript-lib/downloads/list
-    
     http://www.e-contract.be/
     http://code.google.com/p/eid-applet/
-    
-#.  Notizen per E-Mail verschicken können.    
-    Soll Text der Notiz in den Body der E-Mail kopiert werden 
-    und dort bearbeitbar sein? Dadurch würden die Benutzer allerdings 
-    zu redundanter Arbeitsweise erzogen... zu meditieren.
     
 #.  contacts.Group: Eine Kontaktgruppe hat keine zusätzlichen Felder, 
     das Modell wäre lediglich da, um eine Liste aller Gruppen anzeigen 
@@ -1020,14 +1001,16 @@ Long-term
    um bei Diskussionen um Django-Tickets mitreden zu können.
    (sh. :doc:`/blog/2010/1103`)
   
-#. Use event managers as suggested by Jonathan Julian (Tip #2 in
-  http://www.slideshare.net/jonathanjulian/five-tips-to-improve-your-ext-js-application). 
-   Maybe for each report::
+#.  Use event managers as suggested by Jonathan Julian (Tip #2 in
+    http://www.slideshare.net/jonathanjulian/five-tips-to-improve-your-ext-js-application). 
+    Maybe for each report::
   
-     Lino.contacts.Persons.eventManager = new Ext.util.EventManager();
-     Lino.contacts.Persons.eventManager.addEvents('changed');
+      Lino.contacts.Persons.eventManager = new Ext.util.EventManager();
+      Lino.contacts.Persons.eventManager.addEvents('changed');
     
-   Lino could use this to have an automatic refresh of each window that displays data. Maybe rather only one central event manager because if any data gets changed, basically all open windows may need a refresh.
+    Lino could use this to have an automatic refresh of each window that displays data. 
+    Maybe rather only one central event manager because if any data gets changed, 
+    basically all open windows may need a refresh.
 
 #.  :doc:`/tickets/16`
 
@@ -1035,9 +1018,6 @@ Long-term
 
 #.  Use :meth:`Action.run` in general, not only for RowAction. 
     See :doc:`/blog/2010/1124`
-  
-#.  Check whether the approach at http://djangosnippets.org/snippets/14/ 
-    is easier than south
   
 #.  Warnung, wenn das gleiche Feld mehrmals in einem Detail 
     vorkommt (z.B. in verschiedenen Reitern).

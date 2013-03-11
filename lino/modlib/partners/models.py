@@ -705,7 +705,7 @@ class PartnerDocument(dd.Model):
     #~ def summary_row(self,ui,rr,**kw):
     def summary_row(self,ar,**kw):
         """
-        A :modmeth:`summary_row` method for partner documents.
+        A :meth:`lino.code.model.Model.summary_row` method for PartnerDocument.
         """
         href_to = ar.href_to
         #~ href_to = ui.ext_renderer.href_to

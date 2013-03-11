@@ -21,7 +21,14 @@ from django.db import models
 from django.conf import settings
 from django.utils.translation import ugettext as _
 
+from django.core.exceptions import ValidationError
+#~ from django.core.exceptions import MultipleObjectsReturned
+
+
+from north import babel
+
 from lino.core import fields
+from lino.core import signals
 from djangosite.dbutils import obj2str
 from lino.utils.xmlgen import html as xghtml
 E = xghtml.E
@@ -267,6 +274,58 @@ class Model(models.Model):
     def on_analyze(self,site):
         pass
         
+    #~ def lookup_or_create(self,*args,**kwargs):
+        #~ from lino.utils.instantiator import lookup_or_create
+        #~ lookup_or_create(self,*args,**kwargs)
+        
+        
+    @classmethod
+    def lookup_or_create(model,lookup_field,value,**known_values):
+        """
+        Look-up whether there is a model instance having 
+        `lookup_field` with value `value`
+        (and optionally other `known_values` matching exactly).
+        
+        If it doesn't exist, create it and emit an 
+        :attr:`auto_create <lino.core.signals.auto_create>` signal.
+        
+        """
+        #~ logger.info("2013011 lookup_or_create")
+        fkw = dict()
+        fkw.update(known_values)
+            
+        if isinstance(lookup_field,basestring):
+            lookup_field = model._meta.get_field(lookup_field)
+        if isinstance(lookup_field,babel.BabelCharField):
+            flt  = babel.lookup_filter(lookup_field.name,value,**known_values)
+        else:
+            if isinstance(lookup_field,models.CharField):
+                fkw[lookup_field.name+'__iexact'] = value
+            else:
+                fkw[lookup_field.name] = value
+            flt = models.Q(**fkw)
+            #~ flt = models.Q(**{self.lookup_field.name: value})
+        qs = model.objects.filter(flt)
+        if qs.count() > 0: # if there are multiple objects, return the first
+            if qs.count() > 1: 
+                logger.warning(
+                  "%d %s instances having %s=%r (I'll return the first).",
+                  qs.count(),model.__name__,lookup_field.name,value)
+            return qs[0]
+        #~ known_values[lookup_field.name] = value
+        obj = model(**known_values)
+        setattr(obj,lookup_field.name,value)
+        try:
+            obj.full_clean()
+        except ValidationError,e:
+            raise ValidationError("Failed to auto_create %s : %s" % (obj2str(obj),e))
+        signals.auto_create.send(obj,known_values=known_values)
+        obj.save()
+        return obj
+    
+
+        
+        
     @classmethod
     def setup_table(cls,t):
         """
@@ -414,6 +473,7 @@ class Model(models.Model):
               #~ 'site_setup',
               'on_analyze',
               'disable_delete',
+              'lookup_or_create',
               'on_duplicate',
               'on_create')
     """

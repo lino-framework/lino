@@ -846,7 +846,7 @@ class ApiElement(View):
         ar.renderer = settings.SITE.ui.ext_renderer
         elem = ar.actor.get_row_by_pk(pk)
         if elem is None:
-            raise http.Http404("%s has no row with primary key %r" % (rpt,pk))
+            raise http.Http404("%s has no row with primary key %r" % (actor,pk))
         return form2obj_and_save(ar,data,elem,False,False) # force_update=True)
             
     def delete(self,request,app_label=None,actor=None,pk=None):

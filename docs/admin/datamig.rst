@@ -47,8 +47,10 @@ command::
 The double dump test
 -----------------------------------------------------
 
-When :mod:`initdb <lino.management.commands.initdb>` 
-successfully terminated without any warnings and error messages, 
+When :mod:`initdb
+<djangosite.management.commands.initdb>` 
+successfully terminated without any warnings 
+and error messages, 
 then there are good chances 
 that your database has been successfully migrated. 
 
@@ -102,7 +104,7 @@ If there's no difference between the two dumps, then the test succeeded!
   
 .. note:: 
 
-  With versions before :doc:`/blog/2011/0901` there were still 
+  With versions before 20110901 there were still 
   differences if your database contained records with 
   `auto_now 
   <https://docs.djangoproject.com/en/dev/ref/models/fields/#django.db.models.DateField.auto_now>`_

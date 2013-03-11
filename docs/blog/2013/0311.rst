@@ -2,18 +2,38 @@
 ========
 
 - New implementation for 
-  `dtos <djangosite.dbutils.dtos>` 
+  :func:`dtos <djangosite.dbutils.dtos>` 
   and
-  `dtosl <djangosite.dbutils.dtosl>` 
+  :func:`dtosl <djangosite.dbutils.dtosl>` 
   using Django's :setting:`FORMAT_MODULE_PATH` setting.
 
 - Moved the 
   :attr:`languages <djangosite.Site.languages>` 
   attribute from :mod:`north`   to :mod:`djangosite`.
 
-- Started to use `sphinx-apidoc
-  <http://sphinx-doc.org/invocation.html#invocation-of-sphinx-apidoc>`__.
-  (Currently the api tree is truncated because of some problem when running sphinx through fabric...)
-  
 - Updated :doc:`/tutorials/quickstart` for Harsh.
 
+
+- Fixed a user traceback "global name 'dd' is not defined".
+  Wrote a doctest article to test this:
+  :doc:`/tutorials/auto_create/index`
+  
+- Fixed a user traceback "NameError at /api/debts/ExpensesByBudget/920: 
+  global name 'rpt' is not defined".
+  
+- Getting the doctest suite to pass for Lino is quite 
+  some work.
+  
+- Oops, it was naive to believe that 
+  :meth:`update_settings 
+  <djangosite.utils.doctest.DjangoDocTester.update_settings`
+  is possible.
+  It works only in certain limited cases. 
+  For example most modlib apps cannot get re-imported.
+
+- Started to use `sphinx-apidoc
+  <http://sphinx-doc.org/invocation.html#invocation-of-sphinx-apidoc>`__
+  and sphinx-build's `-W` option ("consider warnings as errors").
+  This turned out to be more expensive than expected because 
+  it caused a lot of tidy-up work.
+  

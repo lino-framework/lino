@@ -1,12 +1,12 @@
-#69 : Where to store the version number?
-========================================
+#69 [closed] : Where to store the version number?
+=================================================
 
 It seems that there is no "official" way
 to store the version number of a Python project 
 in a single central place.
 
 Lino's :xfile:`setup.py` does an ``import lino`` to take it 
-from :attr:`lino.Lino.version`. 
+from :attr:`lino.Site.version`. 
 That's okay for me the author who just uses :xfile:`setup.py`
 to ``sdist`` and ``upload``.
 But ``setup.py install`` of course wouldn't work.
@@ -17,10 +17,10 @@ See also
   code? <http://stackoverflow.com/questions/6786555>`__
 
 - `How can I get the version defined in setup.py (setuptools) in my package?
-  <http://stackoverflow.com/questions/2058802>`_
+  <http://stackoverflow.com/questions/2058802>`__
 
 - `Standard way to embed version into python package?
-  http://stackoverflow.com/questions/458550>`__
+  <http://stackoverflow.com/questions/458550>`__
 
 
 - `PEP 8 <http://www.python.org/dev/peps/pep-0008/#version-bookkeeping>`__

@@ -58,11 +58,11 @@ Lino then adds its own features to the above:
 - :doc:`/topics/layouts` :  
   Design not only your models but also your forms using the Python language.
   
-- :doc:`/topics/babel` : 
+- :ref:`mldbc` : 
   Use Lino's rich experience with applications that manage 
   multilingual database content.
   
-- :doc:`/topics/datamig` :
+- :ref:`datamig` :
   Optionally use Lino's great alternative to 
   `South <http://south.aeracode.org/>`_
   to manage your database migrations.

@@ -1,11 +1,12 @@
 20130112
 ========
 
+
 Miscellaneous
 -------------
 
 - Updated :mod:`lino.test_apps.20121124` because 
-  :djangoticket:`19360`(annotate the sum of related TimeField)
+  :djangoticket:`19360` (annotate the sum of related TimeField)
   has been closed.
   
 - The :mod:`lino.modlib.countries.fixtures.be` fixture no longer
@@ -53,9 +54,9 @@ Wrote a new directives
 and 
 `blogger_index`
 in 
-:mod:`lino.utils.sphinxconf` 
+:mod:`djangosite.utils.sphinxconf` 
 used to generate the overview calendars in 
-:doc:`/blog/2012/index`
+:srcref:`/docs/blog/2012/index`
 and
 :doc:`/blog/2013/index`.
 See source code of these pages.

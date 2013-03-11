@@ -23,8 +23,6 @@ import decimal
 import datetime
 from dateutil import parser as dateparser
 
-from django.core.exceptions import ValidationError
-from django.core.exceptions import MultipleObjectsReturned
 from django.db import models
 from django.contrib.contenttypes.models import ContentType
 
@@ -33,9 +31,9 @@ from lino.core.dbutils import resolve_model, UnresolvedModel
 
 from lino.utils import i2d # for backward compatibility of .py fixtures
 from north import babel
-from lino.core import fields
+#~ from lino.core import fields
+#~ from lino.core import signals
 from lino.core.dbutils import obj2str
-    
 
 class DataError(Exception):
     pass
@@ -45,44 +43,6 @@ class DataError(Exception):
 
     
     
-def lookup_or_create(model,lookup_field,value,**known_values):
-    """
-    Look-up whether there is a model instance having 
-    `lookup_field` with value `value`
-    (and optional other `known_values` matching exactly)
-    """
-    #~ logger.info("2013011 lookup_or_create")
-    fkw = dict()
-    fkw.update(known_values)
-        
-    if isinstance(lookup_field,babel.BabelCharField):
-        flt  = babel.lookup_filter(lookup_field.name,value,**known_values)
-    else:
-        if isinstance(lookup_field,models.CharField):
-            fkw[lookup_field.name+'__iexact'] = value
-        else:
-            fkw[lookup_field.name] = value
-        flt = models.Q(**fkw)
-        #~ flt = models.Q(**{self.lookup_field.name: value})
-    qs = model.objects.filter(flt)
-    if qs.count() > 0: # if there are multiple objects, return the first
-        if qs.count() > 1: 
-            logger.warning(
-              "%d %s instances having %s=%r (I'll return the first).",
-              qs.count(),model.__name__,lookup_field.name,value)
-        return qs[0]
-    #~ known_values[lookup_field.name] = value
-    obj = model(**known_values)
-    setattr(obj,lookup_field.name,value)
-    try:
-        obj.full_clean()
-    except ValidationError,e:
-        raise ValidationError("Failed to auto_create %s : %s" % (obj2str(obj),e))
-    dd.auto_create.send(obj,known_values=known_values)
-    obj.save()
-    return obj
-    
-
 class Converter(object):
     def __init__(self,field):
         self.field = field
@@ -110,7 +70,7 @@ class LookupConverter(Converter):
         model = self.field.rel.to
         if isinstance(value,model):
             return value
-        return lookup_or_create(model,self.lookup_field,value,**kw)
+        return model.lookup_or_create(self.lookup_field,value,**kw)
         
         #~ if isinstance(self.lookup_field,babel.BabelCharField):
             #~ flt  = babel.lookup_filter(self.lookup_field.name,value,**kw)

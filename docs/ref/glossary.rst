@@ -14,6 +14,11 @@ Glossary
   testing
     The version that is currently being tested.
   
+  DDT
+    A `Double Dump Test` is a method to test 
+    for possible database problems e.g. after 
+    a :ref:`datamig`.
+    
   DavLink
     See :doc:`/davlink/index`
     

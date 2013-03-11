@@ -11,7 +11,7 @@ nicht korrekt ausliest,
 sondern lediglich einen Workaround benutzt.
 
 Also nochmal zum Thema "belgische eID-Karten einlesen".
-Vergleiche auch :doc:`../2012/1105`.
+Vergleiche auch :srcref:`/docs/blog/2012/1105`.
 
 Offiziell gibt es das "eID-Applet", die "Middleware" und den "Viewer", 
 die vom `Fedict <http://www.fedict.belgium.be/de/>`_ 

@@ -88,7 +88,7 @@ Download Lino
 
 **To install a released version of Lino**
 
-- Consult :doc:`/releases` to see which version you want.
+- Consult :doc:`/releases/index` to see which version you want.
 
 - Download and unpack the corresponding `.tar.gz` file 
   from http://pypi.python.org/pypi/lino#downloads
@@ -261,61 +261,6 @@ For the moment we suppose that you want to get a quick result.
 The ``polls`` subdirectory which you maybe created during the Django 
 Tutorial is not necessary for now, but you'll need it again 
 later.
-
-
-Create a project from scratch
------------------------------
-
-You don't need Django's startproject command.
-To install a Lino project from scratch, 
-we suggest the following :xfile:`__init__.py` and :xfile:`manage.py`.
-
-The :file:`__init__.py` must exist but can be empty::
-
-    touch __init__.py
-    
-We suggest the following :doc:`optimized </blog/2011/0531>`
-:xfile:`manage.py`::
-
-    #!/usr/bin/env python
-    import os
-    prj = os.path.split(os.path.dirname(os.path.abspath(__file__)))[-1]
-    os.environ['DJANGO_SETTINGS_MODULE'] = prj + '.settings'
-
-    from django.core.management import execute_manager
-    import settings # Required to be in the same directory.
-    from django.core.management import setup_environ
-    setup_environ(settings)
-
-    if __name__ == "__main__":
-        execute_manager(settings)
-        
-Or, after Django 1.4::        
-        
-    #!/usr/bin/env python
-    import os
-    import sys
-
-    if __name__ == "__main__":
-        import os
-        prj = os.path.split(os.path.dirname(os.path.abspath(__file__)))[-1]
-        os.environ['DJANGO_SETTINGS_MODULE'] = 'lino_local.' + prj + '.settings'
-
-        from django.core.management import execute_from_command_line
-
-        execute_from_command_line(sys.argv)        
-
-
-Note: if you prefer, you can replace the lines::
-
-    prj = os.path.split(os.path.dirname(os.path.abspath(__file__)))[-1]
-    os.environ['DJANGO_SETTINGS_MODULE'] = 'lino_local.' + prj + '.settings'
-
-by::
-
-    os.environ.setdefault("DJANGO_SETTINGS_MODULE", "mypy.demo1.settings")
-
-
 
 Run the test suite
 ------------------

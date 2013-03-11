@@ -163,7 +163,7 @@ Weblinks
   Pisa
     http://www.xhtml2pdf.com/
     HTML/CSS to PDF converter written in Python.
-    See also :doc:`/blog/2010/1020`
+    See also :srcref:`/docs/blog/2010/1020`
     
   odtwriter
     http://www.rexx.com/~dkuhlman/odtwriter.html

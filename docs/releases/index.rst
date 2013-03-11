@@ -24,8 +24,6 @@ Older releases
    :maxdepth: 1
    :glob:
 
-   2010/index
-   2011/index
    1.3.*
    1.4.?
    1.4.1?
