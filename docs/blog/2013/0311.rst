@@ -10,3 +10,7 @@
 - Moved the 
   :attr:`languages <djangosite.Site.languages>` 
   attribute from :mod:`north`   to :mod:`djangosite`.
+
+- Started to use `sphinx-apidoc
+  <http://sphinx-doc.org/invocation.html#invocation-of-sphinx-apidoc>`__
+  

@@ -20,7 +20,7 @@ import sys
 from os.path import join,dirname, normpath, abspath
 from lino.projects.std.settings import *
 
-class Lino(Lino):
+class Site(Site):
   
     languages = ['en']
     
@@ -73,4 +73,4 @@ class Lino(Lino):
         
     demo_fixtures = 'std few_languages few_countries few_cities demo_ee demo demo2'.split()
 
-LINO = Lino(__file__,globals())
+SITE = Site(__file__,globals())

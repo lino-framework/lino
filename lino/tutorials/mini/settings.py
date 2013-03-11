@@ -19,11 +19,11 @@ DEBUG = True
 
 LOGGING = dict(level='DEBUG')
 #~ LOGGING = dict(filename=filename,level='DEBUG',rotate=False)  
-#~ LOGGING = dict(filename=join(LINO.project_dir,'log',filename),level='DEBUG')
-#~ LOGGING = dict(filename=join(LINO.project_dir,'log',filename),level='DEBUG')
+#~ LOGGING = dict(filename=join(SITE.project_dir,'log',filename),level='DEBUG')
+#~ LOGGING = dict(filename=join(SITE.project_dir,'log',filename),level='DEBUG')
 import datetime
 filename = datetime.date.today().strftime('%Y-%m-%d.log')
-logdir = join(LINO.project_dir,'log')
+logdir = join(SITE.project_dir,'log')
 import os
 if os.path.exists(logdir):
     LOGGING.update(filename=join(logdir,filename))
