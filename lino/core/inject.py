@@ -199,7 +199,7 @@ def update_field(model_spec,name,**kw):
       dd.update_field(MyPerson,'first_name',blank=True)
       
     Or you want to change the label of a field defined in an inherited mixin,
-    as done in  :app:`lino.modlib.outbox.models`::
+    as done in  :mod:`lino.modlib.outbox.models`::
     
       dd.update_field(Mail,'user',verbose_name=_("Sender"))
     

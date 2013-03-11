@@ -691,7 +691,7 @@ class FieldElement(LayoutElement):
         
         # When used as editor of an EditorGridPanel, don't set the name attribute
         # because it is not needed for grids and might conflict with fields of a 
-        # surronding detail form. See ticket #38 (:doc:`/blog/2011/0408`).
+        # surronding detail form. See ticket #38 (`/blog/2011/0408`).
         # Also don't set a label then.
         if not isinstance(self.layout_handle.layout,layouts.ListLayout):
             kw.update(name=self.field.name)

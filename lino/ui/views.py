@@ -211,10 +211,10 @@ def elem2rec_detailed(ar,elem,**rec):
     first and last record relative to this record in this report. 
     (This information can be relatively expensive for records that are towards 
     the end of the report. 
-    See :doc:`/blog/2010/0716`,
-    :doc:`/blog/2010/0721`,
-    :doc:`/blog/2010/1116`,
-    :doc:`/blog/2010/1207`.)
+    See `/blog/2010/0716`,
+    `/blog/2010/0721`,
+    `/blog/2010/1116`,
+    `/blog/2010/1207`.)
     
     recno 0 means "the requested element exists but is not contained in the requested queryset".
     This can happen after changing the quick filter (search_change) of a detail view.
@@ -250,7 +250,7 @@ def navinfo(ar,elem):
         id_list = list(ar.data_iterator.values_list('pk',flat=True))
         """
         Uncommented the following assert because it failed in certain circumstances 
-        (see :doc:`/blog/2011/1220`)
+        (see `/blog/2011/1220`)
         """
         #~ assert len(id_list) == ar.total_count, \
             #~ "len(id_list) is %d while ar.total_count is %d" % (len(id_list),ar.total_count)
@@ -998,7 +998,7 @@ class ApiList(View):
             target_url = settings.SITE.build_media_url(*target_parts)
             ar.renderer = ar.ui.ext_renderer # 20120624
             """
-            [NOTE] :doc:`/blog/2012/0211`
+            [NOTE] `/blog/2012/0211`
             
             """
             context = dict(

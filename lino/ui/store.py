@@ -502,7 +502,7 @@ class DisableEditingStoreField(SpecialStoreField):
     """
     A field whose value is the result of the `get_row_permission` 
     method on that row.
-    New feature since :doc:`/blog/2011/0830`
+    New feature since `/blog/2011/0830`
     """
     name = 'disable_editing'
         
@@ -701,7 +701,7 @@ class FileFieldStoreField(StoreField):
         return ff.name
         
 class MethodStoreField(StoreField):
-    "Deprecated. See :doc:`/blog/2012/0327`."
+    "Deprecated. See `/blog/2012/0327`."
     def full_value_from_object(self,obj,request):
         unbound_meth = self.field._return_type_for_method
         assert unbound_meth.func_code.co_argcount >= 2, (self.name, unbound_meth.func_code.co_varnames)

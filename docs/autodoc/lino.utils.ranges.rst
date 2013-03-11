@@ -1,8 +1,8 @@
-======================
-:mod:`lino.utils.auth`
-======================
+========================
+:mod:`lino.utils.ranges`
+========================
 
-.. automodule:: lino.utils.auth
+.. automodule:: lino.utils.ranges
     :members:
     :show-inheritance:
 

@@ -13,8 +13,8 @@
 ## along with Lino; if not, see <http://www.gnu.org/licenses/>.
 """
 This is abandoned. 
-See :doc:`/blog/2011/0523`,
-:doc:`/blog/2012/0414`
+See `/blog/2011/0523`,
+`/blog/2012/0414`
 """
 
 from HTMLParser import HTMLParser

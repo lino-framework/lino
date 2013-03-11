@@ -21,8 +21,6 @@ import sys
 from optparse import make_option 
 from os.path import join
 
-from Cheetah.Template import Template as CheetahTemplate
-
 from django.db import models
 from django.conf import settings
 from django.utils.translation import ugettext as _
@@ -169,6 +167,8 @@ class GeneratingCommand(BaseCommand):
         logger.info("Generated %s files",self.generated_count)
         
     def generate(self,tplname,fn,**context):
+        from Cheetah.Template import Template as CheetahTemplate
+
         #~ if self.tmpl_dir:
             #~ tplname = join(self.tmpl_dir,tplname)
         #~ tplname = self.subcommand + '/' + tplname

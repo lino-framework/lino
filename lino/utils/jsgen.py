@@ -49,7 +49,7 @@ console.log("Hello, World!")
 }
 <BLANKLINE>
 
-And yet another example (:doc:`/blog/2012/0208`)...
+And yet another example (`/blog/2012/0208`)...
 
 >>> chunk = '<a href="javascript:alert({&quot;record_id&quot;: 122 })">Test</a>'
 >>> print py2js(chunk)

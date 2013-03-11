@@ -284,7 +284,7 @@ def rst2odt(input_string,source_path=None, destination_path=None,
 def old_restify(s,**kw):
     """
     (Didn't work when the reST text contained a root title).
-    See :doc:`/blog/2011/0525`.
+    See `/blog/2011/0525`.
     """
     html = html_body(s,**kw)
     if html.startswith('<div class="document">\n') and html.endswith('</div>\n'):

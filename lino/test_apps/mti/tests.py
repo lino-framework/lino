@@ -314,7 +314,7 @@ Traceback (most recent call last):
 Exception: create_child() Restaurant 4 from Place : ignored non-local fields {'name': 'A new name'}
 
 (Until 20120930 this it was silently ignored
-for backwards compatibility (:doc:`/blog/2011/1210`).
+for backwards compatibility (`/blog/2011/1210`).
 
 
 Related documents

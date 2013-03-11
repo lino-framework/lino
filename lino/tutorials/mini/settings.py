@@ -1,21 +1,21 @@
 #~ from lino.projects.min1.settings import *
 #~ from lino.projects.min2.settings import *
 from lino.projects.presto.settings import *
-class Lino(Lino):
+class Site(Site):
     title = "mini tutorial"
     languages = ['en', 'de','fr']
     #~ languages = ['en']
     
-LINO = Lino(__file__,globals()) 
+SITE = Site(__file__,globals()) 
 
 DEBUG = True
 
-DATABASES = {
-    'default': {
-        'ENGINE': 'django.db.backends.sqlite3', 
-        'NAME': 'test.db',
-    }
-}
+#~ DATABASES = {
+    #~ 'default': {
+        #~ 'ENGINE': 'django.db.backends.sqlite3', 
+        #~ 'NAME': 'test.db',
+    #~ }
+#~ }
 
 LOGGING = dict(level='DEBUG')
 #~ LOGGING = dict(filename=filename,level='DEBUG',rotate=False)  

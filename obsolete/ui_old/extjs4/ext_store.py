@@ -123,7 +123,7 @@ class StoreField(object):
 
 class DisabledFieldsStoreField(StoreField):
     """
-    See :doc:`/blog/2010/0803`
+    See `/blog/2010/0803`
     """
     field = None 
     def __init__(self,store):

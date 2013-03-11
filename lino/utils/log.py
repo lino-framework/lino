@@ -86,7 +86,7 @@ from logging.handlers import WatchedFileHandler
 from django.utils.log import AdminEmailHandler
 
 def file_handler(filename,rotate,**kw):
-    #~ See also :doc:`/blog/2010/1129`
+    #~ See also `/blog/2010/1129`
     kw.setdefault('encoding','UTF-8')
     if sys.platform == 'win32': 
         cl = logging.FileHandler
@@ -154,7 +154,7 @@ Because that's rather necessary on a production server with :setting:`DEBUG` Fal
     logfile = config.get('filename',None)
     rotate = config.get('rotate',True)
     tty = config.get('tty',True)
-    logger_names = config.get('loggers','lino')
+    logger_names = config.get('loggers','djangosite north lino')
     #~ when = config.get('when',None)
     #~ interval = config.get('interval',None)
     level = getattr(logging,config.get('level','notset').upper())

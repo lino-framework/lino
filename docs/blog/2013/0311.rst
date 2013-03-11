@@ -1,0 +1,12 @@
+20130311
+========
+
+- New implementation for 
+  `dtos <djangosite.dbutils.dtos>` 
+  and
+  `dtosl <djangosite.dbutils.dtosl>` 
+  using Django's :setting:`FORMAT_MODULE_PATH` setting.
+
+- Moved the 
+  :attr:`languages <djangosite.Site.languages>` 
+  attribute from :mod:`north`   to :mod:`djangosite`.

@@ -378,7 +378,7 @@ class Site(lino.Site):
     using the official 
     `eid-applet <http://code.google.com/p/eid-applet>`_.
     This option is experimental and doesn't yet work.
-    See :doc:`/blog/2012/1105`.
+    See `/blog/2012/1105`.
     """
     
     use_eid_jslib = False
@@ -402,7 +402,7 @@ class Site(lino.Site):
     
     use_filterRow = not use_gridfilters
     """
-    See :doc:`/blog/2011/0630`.
+    See `/blog/2011/0630`.
     This option was experimental and doesn't yet work (and maybe never will).
     """
     
@@ -416,7 +416,7 @@ class Site(lino.Site):
     """
     Whether to use TinyMCE instead of Ext.form.HtmlEditor. 
     See also :attr:`tinymce_root`.
-    See :doc:`/blog/2011/0523`.
+    See `/blog/2011/0523`.
     """
     
     use_bootstrap = True
@@ -451,7 +451,7 @@ class Site(lino.Site):
     """
     Whether to use VinylFox extensions for HtmlEditor. 
     This feature was experimental and doesn't yet work (and maybe never will).
-    See :doc:`/blog/2011/0523`.
+    See `/blog/2011/0523`.
     """
     
     webdav_root = None

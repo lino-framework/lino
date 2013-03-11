@@ -151,7 +151,7 @@ def class_dict_items(cl,exclude=None):
 
 def call_optional_super(cls,self,name,*args,**kw):
     """
-    Doesn't work. See :doc:`/blog/2011/0914`.
+    Doesn't work. See `20110914`.
     """
     s = super(cls,self)
     m = getattr(s,'name',None)
@@ -160,7 +160,7 @@ def call_optional_super(cls,self,name,*args,**kw):
 
 def call_on_bases(cls,name,*args,**kw):
     """
-    Doesn't work. See :doc:`/blog/2011/0914`.
+    Doesn't work. See `20110914`.
     This is necessary because we want to call `setup_report`
     on the model and all base classes of the model.
     We cannot use super() for this because the `setup_report` 

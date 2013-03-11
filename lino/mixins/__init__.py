@@ -394,7 +394,7 @@ class CreatedModified(model.Model):
       http://stackoverflow.com/questions/1737017/django-auto-now-and-auto-now-add
       is ok for me.
       
-    - :doc:`/blog/2011/0901`
+    - `/blog/2011/0901`
     
     """
     class Meta:

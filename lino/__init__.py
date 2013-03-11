@@ -244,7 +244,7 @@ class Site(Site):
         Convert a string formatted using 
         :attr:`date_format_strftime` or  :attr:`date_format_extjs` 
         into a `(y,m,d)` tuple (not a `datetime.date` instance).
-        See :doc:`/blog/2010/1130`.
+        See `/blog/2010/1130`.
         """
         ymd = tuple(reversed(map(int,s.split('.'))))
         assert len(ymd) == 3

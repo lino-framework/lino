@@ -440,7 +440,7 @@ class Table(AbstractTable):
     #~ """
     
     #~ default_params = {}
-    """See :doc:`/blog/2011/0701`.
+    """See `/blog/2011/0701`.
     """
     
     use_as_default_table = True

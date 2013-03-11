@@ -234,7 +234,7 @@ class TableRequest(ActionRequest):
     def get_total_count(self):
         """
         Calling `len()` on a QuerySet will execute the whole SELECT.
-        See :doc:`/blog/2012/0124`
+        See `/blog/2012/0124`
         """
         di = self.data_iterator
         if isinstance(di,QuerySet):

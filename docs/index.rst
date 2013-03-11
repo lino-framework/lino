@@ -44,5 +44,5 @@ Related projects:
    admin/index
    topics/index
    ref/index
-   autodoc/index
+   API <api/lino>
 

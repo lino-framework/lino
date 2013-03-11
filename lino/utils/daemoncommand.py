@@ -28,15 +28,15 @@ POSSIBILITY OF SUCH DAMAGE.
 Modifications by Luc Saffre :
 
 - fixed: Overriding default values in a subclass didn't work.
-  :doc:`/blog/2010/1210`
+  `/blog/2010/1210`
   
 - added `DaemonCommand.preserve_loggers` class variable 
   and :func:`get_handlers` and :func:`get_logger_files`.
-  :doc:`/blog/2010/1214`
+  `/blog/2010/1214`
   
 - when a pidfile is specified and a file of that name already exists, 
   DaemonCommand now no longer waits forever but raises a LockTimeout 
-  See :doc:`/blog/2011/0126`
+  See `/blog/2011/0126`
   and http://packages.python.org/lockfile/lockfile.html#lockfile.FileLock.acquire.
   
 

@@ -17,7 +17,7 @@
 
 import unittest
 
-from lino.modlib.tools import resolve_model
+from lino.dd import resolve_model
 
 Song = resolve_model('songs.Song')
 Author = resolve_model('songs.Author')

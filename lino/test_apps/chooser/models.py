@@ -44,6 +44,7 @@ In an entry form for a Contact you want only the cities of that country when sel
 
 How to use a Chooser on a ForeignKey:
 
+  >>> from lino.core.dbutils import get_field
   >>> city = choosers.get_for_field(get_field(Contact,'city'))
   >>> [unicode(o) for o in city.get_choices(country=be)]
   [u'Brussels', u'Eupen']
@@ -92,7 +93,7 @@ Note that `Chooser.get_choices()` ignores any unused keyword arguments:
 from django.db import models
 from lino import dd
 from lino.utils import choosers
-from lino.modlib.tools import obj2str, get_field
+from lino.dd import obj2str
 
 YEAR_IN_SCHOOL_CHOICES = (
     ('FR', 'Freshman'),

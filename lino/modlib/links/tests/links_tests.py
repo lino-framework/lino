@@ -49,7 +49,7 @@ class QuickTest(TestCase):
   
 def test01(self):
     """
-    Used on :doc:`/blog/2011/0414`.
+    Used on `/blog/2011/0414`.
     See the source code at :srcref:`/lino/apps/pcsw/tests/pcsw_tests.py`.
     """
 

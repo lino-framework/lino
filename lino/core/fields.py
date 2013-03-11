@@ -452,7 +452,7 @@ def requestfield(*args,**kw):
 
 class MethodField(VirtualField):
     """
-    Not used. See :doc:`/blog/2011/1221`.
+    Not used. See `/blog/2011/1221`.
     Similar to VirtualField, but the `get` argument to `__init__` 
     must be a string which is the name of a model method to be called 
     without a `request`.

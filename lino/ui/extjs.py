@@ -109,7 +109,7 @@ def prepare_label(mi):
     return mi.label
     """
     The original idea doesn't work any more with lazy translation.
-    See :doc:`/blog/2011/1112`
+    See `/blog/2011/1112`
     """
     #~ label = unicode(mi.label) # trigger translation
     #~ n = label.find(mi.HOTKEY_MARKER)
