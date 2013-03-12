@@ -477,7 +477,7 @@ class TableRequest(ActionRequest):
         return fields, headers, widths
         
         
-    def to_rst(self,column_names=None):
+    def to_rst(self,column_names=None,**kwargs):
         fields, headers, widths = self.get_field_info(column_names)
         
         #~ fields = self.ah.store.list_fields
@@ -511,7 +511,7 @@ class TableRequest(ActionRequest):
         if has_sum:
             rows.append([x for x in grid.sums2html(self,fields,sums)])
               
-        t = RstTable(headers,**kw)
+        t = RstTable(headers,**kwargs)
         return t.to_rst(rows)
         
         #~ return HtmlTable(headers,rows)

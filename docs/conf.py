@@ -148,7 +148,7 @@ html_style = 'default.css'
 
 # The name for this set of Sphinx documents.  If None, it defaults to
 # "<project> v<release> documentation".
-html_title = u"Lino the Framework"
+html_title = u"Lino the framework"
 
 # A shorter title for the navigation bar.  Default is the same as html_title.
 #html_short_title = None
@@ -205,7 +205,8 @@ html_copy_source = True
 # contain a <link> tag referring to it.  The value of this option must be the
 # base URL from which the finished HTML is served.
 #html_use_opensearch = ''
-html_use_opensearch = 'http://lino.saffre-rumma.net'
+#~ html_use_opensearch = 'http://lino.saffre-rumma.net'
+html_use_opensearch = lino.SETUP_INFO['url']
 
 # If nonempty, this is the file name suffix for HTML files (e.g. ".xhtml").
 #html_file_suffix = ''
@@ -281,24 +282,10 @@ extlinks = {
 
 HGWORK = DOCSDIR.ancestor(2)
 intersphinx_mapping = dict()
-#~ intersphinx_mapping.update(site=(
-    #~ 'http://site.lino-framework.org',
-    #~ Path(HGWORK,'site','docs','.build','objects.inv')))
-#~ intersphinx_mapping.update(north=(
-    #~ 'http://north.lino-framework.org',
-    #~ Path(HGWORK,'north','docs','.build','objects.inv')))
-#~ intersphinx_mapping.update(lino=(
-    #~ 'http://www.lino-framework.org',
-    #~ Path(HGWORK,'lino','docs','.build','objects.inv')))
-#~ intersphinx_mapping.update(welfare=(
-    #~ 'http://welfare.lino-framework.org',
-    #~ Path(HGWORK,'welfare','docs','.build','objects.inv')))
-
 for n in ('site','north','lino','welfare'):
     p = Path(HGWORK,n,'docs','.build','objects.inv')
     if p.exists():
         intersphinx_mapping[n] = ('http://%s.lino-framework.org' % n,p)
-
 
 
 

@@ -1,0 +1,57 @@
+=================================
+20130312 (Tuesday, 12 March 2013)
+=================================
+
+- The new module :mod:`djangosite.utils.fablib` 
+  contains the library file for fabric on which I have 
+  been working during the last weeks.
+
+- Oops, the installation instruction in 
+  :doc:`/tutorials/quickstart` didn't work 
+  because my source distributions at http://lino-framework.org/dl weren't 
+  correctly organized.
+  (In fact I didn't test them at all)
+  And the `--no-index` option was nonsense there: 
+  it needs to consult PyPI because of all the other needed 
+  packages (Django,Sphinx,unipath,...)
+  
+- Added a new fabric command `fab blog`.
+  How to write a correct full date in English?
+  http://www.englishclub.com/vocabulary/time-date.htm
+  
+  
+Sequenced Stages
+================
+
+Jacky noticed an apparently innocent "typo" in 
+the event calendar of the East Belgian Cyclists Federation
+(`www.vor-cycling.be <http://www.vor-cycling.be/fr/events.html>`__):
+
+  20.7 TRW : ETAPPE VON ANS NACH EUPEN und nicht anders rum.
+  
+As their webmaster I manage this calendar using a Lino application
+:mod:`lino.projects.events`.
+
+  
+That wasn't a typo, here is how this event is being defined in the 
+:mod:`lino.modlib.events.fixtures.vor`
+fixture::
+
+    yield event(strasse,20130720,
+      "Etappenankunft Tour de la Région Wallonne (TRW)",
+      "Aankomst etappe Tour de la Région Wallonne (TRW)",
+      "Arrivée d'étape du Tour de la Région Wallonne (TRW)",
+      cities=["Ans","Eupen"])
+
+The explanation was that when querying a *simple* ManyToManyField 
+(i.e. one without a `through
+<https://docs.djangoproject.com/en/dev/topics/db/models/#intermediary-manytomany>`__)
+clause)
+you cannot guarantee to have the rows rendered in the same order 
+as they have been created.
+I had to define an intermediary Model 
+:class:`Stage <lino.modlib.events.models.Stage>` 
+to solve this.
+
+Regenerating the html for this site also revealed some problems 
+due to the recent changes.

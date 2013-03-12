@@ -78,7 +78,7 @@ def test01(self):
         
     settings.SITE.uppercase_last_name = True
     
-    if 'en' in babel.AVAILABLE_LANGUAGES:
+    if 'en' in settings.SITE.AVAILABLE_LANGUAGES:
         babel.set_language('en')
         self.assertEquals(luc.address(), u'''\
 Mr Luc SAFFRE
@@ -86,7 +86,7 @@ Uus 1
 Vana-Vigala küla
 78003 Vigala
 Estonia''')
-    if 'de' in babel.AVAILABLE_LANGUAGES:
+    if 'de' in settings.SITE.AVAILABLE_LANGUAGES:
         babel.set_language('de')
         self.assertEquals(luc.address(), u'''\
 Herrn Luc SAFFRE
@@ -119,7 +119,7 @@ def test02(self):
     
     luc = Person.objects.get(name__exact="Saffre Luc")
     url = '/api/contacts/Person/%d?query=&an=detail&fmt=json' % luc.pk
-    if 'en' in babel.AVAILABLE_LANGUAGES:
+    if 'en' in settings.SITE.AVAILABLE_LANGUAGES:
         u.language = 'en'
         u.save()
         response = self.client.get(url,REMOTE_USER='root') # ,HTTP_ACCEPT_LANGUAGE='en')
@@ -127,7 +127,7 @@ def test02(self):
         self.assertEqual(result['data']['country'],"Estonia")
         self.assertEqual(result['data']['gender'],"Male")
     
-    if 'de' in babel.AVAILABLE_LANGUAGES:
+    if 'de' in settings.SITE.AVAILABLE_LANGUAGES:
         u.language = 'de'
         u.save()
         response = self.client.get(url,REMOTE_USER='root') # ,HTTP_ACCEPT_LANGUAGE='de')
@@ -141,7 +141,7 @@ def test02(self):
         self.assertEqual(result['data']['disabled_fields'],{'id': True})
         
         
-    if 'fr' in babel.AVAILABLE_LANGUAGES:
+    if 'fr' in settings.SITE.AVAILABLE_LANGUAGES:
         u.language = 'fr'
         u.save()
         response = self.client.get(url,REMOTE_USER='root') # ,HTTP_ACCEPT_LANGUAGE='fr')

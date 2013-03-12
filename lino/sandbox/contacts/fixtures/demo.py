@@ -21,8 +21,7 @@ from django.utils.translation import ugettext as _
 
 from lino.core.dbutils import resolve_model
 from lino.utils.instantiator import Instantiator
-from lino.utils.babel import default_language
-from lino.utils.babel import babel_values
+from north.babel import babel_values
 #~ from lino.utils.choicelists import Gender
 #~ from lino.utils.perms import UserLevels
 #~ from lino.core.perms import UserProfiles

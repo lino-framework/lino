@@ -22,7 +22,6 @@ from __future__ import unicode_literals
 from django.conf import settings
 from lino.core.dbutils import resolve_model, obj2str
 from lino.utils.instantiator import Instantiator
-from north.babel import default_language
 from lino import mixins
 from lino.utils import dblogger
 #~ from lino import dd
@@ -113,7 +112,7 @@ def objects():
     
     raeren = City.objects.get(name__exact='Raeren')
     person = Instantiator("partners.Person","first_name last_name",
-                country='BE',language=default_language(),
+                country='BE',language=settings.SITE.default_language(),
                 city=raeren,zip_code='4730').build
     yield person('Erich',    'Emonts',gender=mixins.Genders.male)
     yield person('Erwin',    'Emontspool',gender=mixins.Genders.male)

@@ -16,99 +16,42 @@
 
 """
 
+
 from __future__ import unicode_literals
 
-from lino.projects.std.settings import *
+try:
 
-from django.utils.translation import ugettext_lazy as _
+    from lino.projects.std.settings import *
 
-class Site(Site):
-  
-    title = "Lino Events"
-    verbose_name = "Lino Events"
-    #~ verbose_name = "Lino Cosi"
-    #~ description = _("a Lino application to make Belgian accounting simple.")
-    #~ version = "0.1"
-    #~ url = "http://www.lino-framework.org/autodoc/lino.projects.cosi"
-    #~ author = 'Luc Saffre'
-    #~ author_email = 'luc.saffre@gmail.com'
-    
-    demo_fixtures = 'std few_countries few_cities vor'.split()
-    
-    languages = ['de','fr','nl']
-    #~ languages = 'de fr et en'.split()
-    
-    #~ project_model = 'tickets.Project'
-    #~ user_model = 'users.User'
-    
-    #~ remote_user_header = "REMOTE_USER"
-    
-    #~ override_modlib_models = [ 'contacts.Partner' ]
-    #~ override_modlib_models = [
-      #~ 'contacts.Person','contacts.Company',
-      #~ 'households.Household']
-    
-    #~ def get_description(self):
-        #~ from django.utils.translation import ugettext_lazy as _
-        #~ from django.utils.translation import string_concat
-        #~ return _("a Lino application to make Belgian accounting simple.")
-    #~ description = property(get_description)
-        
-    #~ def get_app_source_file(self): return __file__
+    #~ from django.utils.translation import ugettext_lazy as _
+
+    class Site(Site):
       
-    #~ def get_application_info(self):
-        #~ return (__name__,__version__,__url__)
-      
-    #~ def get_main_action(self,user):
-        #~ return self.modules.lino.Home.default_action
+        title = "Lino Events"
+        verbose_name = "Lino Events"
+        #~ verbose_name = "Lino Cosi"
+        #~ description = _("a Lino application to make Belgian accounting simple.")
+        #~ version = "0.1"
+        #~ url = "http://www.lino-framework.org/autodoc/lino.projects.cosi"
+        #~ author = 'Luc Saffre'
+        #~ author_email = 'luc.saffre@gmail.com'
         
-    #~ def setup_quicklinks(self,ui,user,tb):
-        #~ tb.add_action(self.modules.contacts.Persons.detail_action)
+        demo_fixtures = 'std few_countries few_cities vor'.split()
         
-    #~ def setup_choicelists(self):
-        #~ """
-        #~ Defines application-specific default user profiles.
-        #~ Local site administrators can override this in their :xfile:.
-        #~ """
-        #~ from lino import dd
-        #~ from django.utils.translation import ugettext_lazy as _
-        #~ dd.UserProfiles.reset('* office accounting')
-        #~ add = dd.UserProfiles.add_item
-        #~ add('000', _("Anonymous"),       '_ _ _', 'anonymous',readonly=True,authenticated=False)
-        #~ add('100', _("User"),            'U U U', 'user')
-        #~ add('900', _("Administrator"),   'A A A', 'admin')
+        languages = ['de','fr','nl']
+        #~ languages = 'de fr et en'.split()
         
-            
-    def get_installed_apps(self):
-        for a in super(Site,self).get_installed_apps():
-            yield a
-        #~ yield 'django.contrib.contenttypes'
-        #~ yield 'lino.modlib.users'
-        #~ yield 'django.contrib.auth'
-        yield 'lino.modlib.countries'
-        #~ yield 'lino.modlib.properties'
-        #~ yield 'lino.modlib.partners'
-        #~ yield 'lino.modlib.contacts'
-        #~ yield 'lino.modlib.households'
-        #~ yield 'lino.modlib.products'
-        #~ yield 'lino.modlib.accounts'
-        #~ yield 'lino.modlib.ledger'
-        #~ yield 'lino.modlib.vat'
-        #~ yield 'lino.modlib.declarations'
-        #~ 'lino.modlib.journals',
-        #~ yield 'lino.modlib.sales'
-        #~ yield 'lino.modlib.finan'
-        #~ 'lino.modlib.projects',
-        #~ yield 'lino.modlib.blogs'
-        #~ yield 'lino.modlib.tickets'
-        #~ 'lino.modlib.links',
-        #~ yield 'lino.modlib.uploads'
-        #~ 'lino.modlib.thirds',
-        yield 'lino.modlib.events'
-        #~ yield 'lino.modlib.cal'
-        #~ yield 'lino.modlib.outbox'
-        #~ yield 'lino.modlib.postings'
-        #~ yield 'lino.modlib.pages'
-        #~ yield 'lino.projects.cosi'
-        #~ yield 'lino_local.vor'
+                
+        def get_installed_apps(self):
+            for a in super(Site,self).get_installed_apps():
+                yield a
+            yield 'lino.modlib.countries'
+            yield 'lino.modlib.events'
 
+
+    SITE = Site(__file__,globals())
+    
+except Exception as e:
+    import traceback
+    traceback.print_exc(e)
+    sys.exit(1)

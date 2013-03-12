@@ -1,7 +1,5 @@
-T:\hgwork\lino\docs\reviews\index.rst:4: WARNING: toctree contains reference to nonexisting document u'reviews/ :maxdepth: 1'
-T:\hgwork\lino\docs\admin\which_lino.rst:: WARNING: document isn't included in any toctree
-T:\hgwork\lino\docs\casts\lino_intro.rst:: WARNING: document isn't included in any toctree
-T:\hgwork\lino\docs\dev\versioning.rst:: WARNING: document isn't included in any toctree
-T:\hgwork\lino\docs\igen\index.rst:: WARNING: document isn't included in any toctree
-T:\hgwork\lino\docs\reviews\index.rst:: WARNING: document isn't included in any toctree
-T:\hgwork\lino\docs\blog\2013\0306.rst:10: WARNING: py:mod reference target not found: djangosite
+None:None: WARNING: toctree contains reference to document 'tickets/76' that doesn't have a title: no link will be generated
+None:None: WARNING: toctree contains reference to document 'tickets/76' that doesn't have a title: no link will be generated
+None:None: WARNING: toctree contains reference to document 'tickets/76' that doesn't have a title: no link will be generated
+None:None: WARNING: toctree contains reference to document 'tickets/76' that doesn't have a title: no link will be generated
+None:None: WARNING: toctree contains reference to document 'tickets/76' that doesn't have a title: no link will be generated

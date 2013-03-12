@@ -201,7 +201,7 @@ class City(dd.BabelNamed):
         
     def get_choices_text(self,request,rpt,field):
         names = [self.name]
-        for lng in babel.BABEL_LANGS:
+        for lng in settings.SITE.BABEL_LANGS:
             n = getattr(self,'name_'+lng)
             if n and not n in names:
                 names.append(n)

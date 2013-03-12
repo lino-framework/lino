@@ -16,5 +16,6 @@ you'll now want to know how to do it yourself.
    mini
    lets
    auto_create/index
+   human/index
 
 

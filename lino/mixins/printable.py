@@ -245,7 +245,7 @@ class SimpleBuildMethod(BuildMethod):
                 elem.__class__.__name__,tpls))
         tpl_leaf = tpls[0]
         lang = elem.get_print_language(self)
-        if lang != babel.DEFAULT_LANGUAGE:
+        if lang != settings.SITE.DEFAULT_LANGUAGE:
             name = tpl_leaf[:-len(self.template_ext)] + "_" + lang + self.template_ext
             from lino.utils.config import find_config_file
             if find_config_file(name,self.get_group(elem)):
@@ -711,7 +711,7 @@ class Printable(object):
     """
   
     def get_print_language(self,pm):
-        return babel.DEFAULT_LANGUAGE
+        return settings.SITE.DEFAULT_LANGUAGE
         
     def get_templates_group(self):
         return model_group(self)

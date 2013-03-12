@@ -16,12 +16,16 @@ Note that Lino doesn't yet run under Python3, you need Python 2.7 or 2.6.
   
 If your computer has Python and pip installed, then just type::
 
-  C:\temp> pip install -U --noindex --force-reinstall -f http://lino.saffre-rumma.net/dl lino
+  C:\temp> pip install -f http://lino.saffre-rumma.net/dl lino
   
 (That is: 
 tell pip to not use PyPI, and to not care about version numbers.
-Lino is currently in a testing phase and I'm expecting problem reports from everybody who tries this guide.
+Lino is currently in a testing phase and I'm expecting problem 
+reports from everybody who tries this guide.
 It would be overkill to make an official release on PyPI for each change.)
+
+
+
  
 For other situations and methods of installing Lino, see :doc:`/admin/index`.
 

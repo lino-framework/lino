@@ -33,7 +33,7 @@ import codecs
 #~ logger = logging.getLogger('lino')
 from lino.utils import dblogger as logger
 
-from north.babel import babel_values, DEFAULT_LANGUAGE
+from north.babel import babel_values
 from lino.modlib.countries.models import Language
 
 
@@ -806,6 +806,6 @@ def objects():
             kw.update(iso2=iso2)
             yield Language(id=code,**kw)
         else:
-            logger.debug("%r : no name for default babel language %s",code,DEFAULT_LANGUAGE)
+            logger.debug("%r : no name for default babel language %s",code,settings.SITE.DEFAULT_LANGUAGE)
     #~ logger.info("Installed %d languages",n)
           

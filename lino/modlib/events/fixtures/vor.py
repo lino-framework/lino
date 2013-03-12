@@ -11,7 +11,10 @@
 ## GNU General Public License for more details.
 ## You should have received a copy of the GNU General Public License
 ## along with Lino; if not, see <http://www.gnu.org/licenses/>.
+"""
+"""
 from __future__ import unicode_literals
+
 from lino import dd
 from lino.utils import i2d
 from north import babel
@@ -19,6 +22,7 @@ Country = dd.resolve_model("countries.Country")
 City = dd.resolve_model("countries.City")
 Type = dd.resolve_model("events.Type")
 Event = dd.resolve_model("events.Event")
+Stage = dd.resolve_model("events.Stage")
 Place = dd.resolve_model("events.Place")
 Feature = dd.resolve_model("events.Feature")
 
@@ -41,7 +45,11 @@ def event(type,date,name,name_nl,name_fr,*features,**kw):
     if features:
         e.features=features
     if cities:
-        e.cities = [get_city(n) for n in cities]
+        for name in cities:
+            stage = Stage(event=e,city=get_city(name))
+            stage.full_clean()
+            stage.save()
+        #~ e.cities = [get_city(n) for n in cities]
     return e
     
 def objects():
@@ -112,11 +120,18 @@ def objects():
     yield galmei
     
     
-    f1 = Feature(name="Mountain-Bike-Ausfahrt",name_nl="Mountain Bike tocht")
+    f1 = Feature(name="Mountain-Bike-Ausfahrt",
+        name_nl="Mountain Bike tocht",
+        name_fr="Sortie Mountain Bike")
     yield f1
-    f2 = Feature(name="Volksradfahren",name_nl="Recreatiev fietsen")
+    f2 = Feature(name="Volksradfahren",
+        name_nl="Recreatiev fietsen",
+        name_fr="Cyclisme récréatif")
     yield f2
-    f3 = Feature(name="Straße- und Mountain Bike Touren")
+    f3 = Feature(
+        name="Straße- und Mountain Bike Touren",
+        name_nl="Straße- und Mountain Bike Touren",
+        name_fr="Randonnées route et Mountain Bike")
     yield f3
     
     
@@ -157,7 +172,8 @@ def objects():
     yield event(strasse,20130720,
       "Etappenankunft Tour de la Région Wallonne (TRW)",
       "Aankomst etappe Tour de la Région Wallonne (TRW)",
-      "Etappenankunft Tour de la Région Wallonne (TRW)",cities=["Ans","Eupen"])
+      "Arrivée d'étape du Tour de la Région Wallonne (TRW)",
+      cities=["Ans","Eupen"])
       
       
     yield event(trophy,20130316,'','','',cities=["Ottignies"])

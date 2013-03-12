@@ -15,16 +15,20 @@
 Extensions to the `django.test` package.
 
 """
-
 import logging
 logger = logging.getLogger(__name__)
+
+import os
+import six
+
+import doctest
+from django.utils import unittest
 
 from django.conf import settings
 from django.utils import simplejson
 from django.utils.importlib import import_module
 from django.test import TestCase as DjangoTestCase
 from django.db import connection, reset_queries
-
 
 class TestCase(DjangoTestCase):
     """
@@ -197,3 +201,15 @@ class TestCase(DjangoTestCase):
             self.fail("Oops, %s(%s) already exists?" % (model.__name__,kw))
         except model.DoesNotExist:
             pass
+
+
+class DocTest(unittest.TestCase):
+    doctest_files = ["index.rst"]
+    def test_files(self):
+        g = dict(print_=six.print_)
+        g.update(settings=settings)
+        for n in self.doctest_files:
+            f = os.path.join(settings.SITE.project_dir,n)
+            #~ print f
+            doctest.testfile(f,module_relative=False,globs=g)
+        

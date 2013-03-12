@@ -103,7 +103,7 @@ def add_user_language(kw,ar):
     lang = babel.get_language()
     if u and u.language and lang != u.language:
         kw.setdefault(ext_requests.URL_PARAM_USER_LANGUAGE,lang)
-    elif lang != babel.DEFAULT_LANGUAGE:
+    elif lang != settings.SITE.DEFAULT_LANGUAGE:
         kw.setdefault(ext_requests.URL_PARAM_USER_LANGUAGE,lang)
 
 

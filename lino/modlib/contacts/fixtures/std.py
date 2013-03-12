@@ -69,7 +69,7 @@ def parse(s):
 LANGS = {}
 
 for i, lang in enumerate(COMPANY_TYPES_FORMAT.split()):
-    if lang in babel.AVAILABLE_LANGUAGES:
+    if lang in settings.SITE.AVAILABLE_LANGUAGES:
     #~ if lang == default_language() or (lang in settings.BABEL_LANGS):
         LANGS[lang] = i
         
@@ -83,7 +83,7 @@ for ln in COMPANY_TYPES_TEXT.splitlines():
         d = dict()
         for lang,i in LANGS.items():
             kw = parse(a[i])
-            if lang == babel.DEFAULT_LANGUAGE:
+            if lang == settings.SITE.DEFAULT_LANGUAGE:
                 d.update(kw)
             else:
                 for k,v in kw.items():

@@ -166,7 +166,7 @@ class User(mixins.CreatedModified):
                     setattr(self,n,getattr(p,n))
             #~ self.language = p.language
         if not self.language:
-            self.language = babel.DEFAULT_LANGUAGE
+            self.language = settings.SITE.DEFAULT_LANGUAGE
         if not self.password:
             self.set_unusable_password()
         super(User,self).full_clean(*args,**kw)
@@ -205,7 +205,7 @@ class User(mixins.CreatedModified):
         return E.li(E.strong(self.username),' : ',
           unicode(self),', ',
           unicode(self.profile),', ',
-          E.strong(babel.LANGUAGE_DICT.get(self.language)))
+          E.strong(settings.SITE.LANGUAGE_DICT.get(self.language)))
       
     @classmethod
     def get_by_username(cls,username,default=models.NOT_PROVIDED):

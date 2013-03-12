@@ -49,7 +49,7 @@ def root_user(lang,**kw):
 def objects():
     User = settings.SITE.user_model
     if User is not None:
-        for lang in babel.AVAILABLE_LANGUAGES:
+        for lang in settings.SITE.AVAILABLE_LANGUAGES:
             kw = root_user(lang)
             if kw:
                 u = User(**kw)

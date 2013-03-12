@@ -20,7 +20,7 @@ from django.utils.translation import ugettext as _
 
 from lino.core.dbutils import resolve_model
 from lino.utils.instantiator import Instantiator
-from north.babel import babel_values, DEFAULT_LANGUAGE, AVAILABLE_LANGUAGES
+from north.babel import babel_values
 
 
 organisationType = Instantiator('partners.OrganisationType',"abbr name").build
@@ -64,7 +64,7 @@ def parse(s):
 LANGS = {}
 
 for i, lang in enumerate(COMPANY_TYPES_FORMAT.split()):
-    if lang in AVAILABLE_LANGUAGES:
+    if lang in settings.SITE.AVAILABLE_LANGUAGES:
     #~ if lang == default_language() or (lang in settings.BABEL_LANGS):
         LANGS[lang] = i
         
@@ -78,7 +78,7 @@ for ln in COMPANY_TYPES_TEXT.splitlines():
         d = dict()
         for lang,i in LANGS.items():
             kw = parse(a[i])
-            if lang == DEFAULT_LANGUAGE:
+            if lang == settings.SITE.DEFAULT_LANGUAGE:
                 d.update(kw)
             else:
                 for k,v in kw.items():

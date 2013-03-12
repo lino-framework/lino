@@ -249,9 +249,9 @@ class ExtUI(base.UI):
             return self.create_field_element(lh,de,**kw)
         if isinstance(de,models.Field):
             if isinstance(de,(babel.BabelCharField,babel.BabelTextField)):
-                if len(babel.BABEL_LANGS) > 0:
+                if len(settings.SITE.BABEL_LANGS) > 0:
                     elems = [ self.create_field_element(lh,de,**kw) ]
-                    for lang in babel.BABEL_LANGS:
+                    for lang in settings.SITE.BABEL_LANGS:
                         bf = lh.get_data_elem(name+'_'+lang)
                         elems.append(self.create_field_element(lh,bf,**kw))
                     return elems

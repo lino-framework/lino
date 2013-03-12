@@ -56,7 +56,8 @@ def get_media_urls():
     
     logger.info("Checking /media URLs ")
     prefix = settings.MEDIA_URL[1:]
-    assert prefix.endswith('/')
+    if not prefix.endswith('/'):
+        raise Exception("MEDIA_URL %r doesn't end with a '/'!" % settings.MEDIA_URL)
     
     def setup_media_link(short_name,attr_name=None,source=None):
         target = join(settings.MEDIA_ROOT,short_name)

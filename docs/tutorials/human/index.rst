@@ -1,30 +1,16 @@
-# -*- coding: utf-8 -*-
-## Copyright 2008-2012 Luc Saffre
-## This file is part of the Lino project.
-## Lino is free software; you can redistribute it and/or modify 
-## it under the terms of the GNU General Public License as published by
-## the Free Software Foundation; either version 3 of the License, or
-## (at your option) any later version.
-## Lino is distributed in the hope that it will be useful, 
-## but WITHOUT ANY WARRANTY; without even the implied warranty of
-## MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the 
-## GNU General Public License for more details.
-## You should have received a copy of the GNU General Public License
-## along with Lino; if not, see <http://www.gnu.org/licenses/>.
+About Humans
+============
 
-"""
 This test application explains some basic truths about humans.
 
 The database structure used for the following examples is very simple,
 we define a single model `Person` 
 which just inherits :class:`lino.mixins.human.Human`:
 
-.. code-block:: python
+.. literalinclude:: models.py
 
-    from lino.mixins import Human
 
-    class Person(Human):
-        pass
+>>> from tutorials.human.models import Person
 
 
 Overview
@@ -32,14 +18,17 @@ Overview
 
 Lino is not complicated. Humans have three properties: 
 `first_name`, `last_name` and `gender`.
-All these fields may be blank, 
-except if your application changed that rule, 
-using :func:`lino.dd.update_field`.
+All these fields may be blank
+(except if your application changed that rule, 
+using :func:`dd.update_field <lino.core.inject.update_field>`).
+
+Genders
+-------
 
 The :class:`Genders <lino.mixins.human.Genders>` choicelist
 defines the possible values for the `gender` field of a Human.
 
->>> from lino.mixins import Genders
+>>> from lino.dd import Genders
 >>> [g.value for g in Genders.objects()]
 ['M', 'F']
 >>> [unicode(g) for g in Genders.objects()]
@@ -153,10 +142,3 @@ Templates should use the third argument to handle this case properly:
 >>> print p.mf("He","She","He or she")
 He or she
 
-
-"""
-
-from lino.mixins import Human, Genders
-
-class Person(Human):
-    pass

@@ -567,7 +567,9 @@ class Site(lino.Site):
         
         self.update_settings(
             ROOT_URLCONF = 'lino.ui.urls'
-          
+        )
+        self.update_settings(
+            MEDIA_URL = '/media/'
         )
         self.update_settings(
             MIDDLEWARE_CLASSES=tuple(self.get_middleware_classes()))

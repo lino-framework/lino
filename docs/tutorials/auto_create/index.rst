@@ -13,17 +13,7 @@ We define a single simple model:
 
 .. literalinclude:: models.py
 
-
-.. djangodoctest:: tutorials.auto_create.settings
-
-Create an empty database:
-
->>> call_command('initdb',interactive=False)
-Creating tables ...
-Creating table ui_siteconfig
-Creating table auto_create_tag
-Installing custom SQL ...
-Installing indexes ...
+>>> from tutorials.auto_create.models import *
 
 Define a handler for the auto_create signal:
 

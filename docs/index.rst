@@ -1,13 +1,26 @@
 ==================
-Lino the Framework
+Lino the framework
 ==================
 
+Welcome to the project homepage of Lino the framework. 
+Related projects:
+`django-site <http://site.lino-framework.org>`__
+`North <http://north.lino-framework.org>`__
+`Lino-Welfare <http://welfare.lino-framework.org>`__
+`Lino Così <http://cosi.lino-framework.org>`__
 
-Welcome to the Project homepage of Lino the Framework. 
+.. py2rst::
 
-- :doc:`What is Lino? </about/index>`
+  import lino
+  print lino.SETUP_INFO['long_description']
 
-- Play with the :doc:`online demos </demos>`
+
+Suggestions du chef
+-------------------
+
+- Try the :doc:`online demos </demos>`
+
+- Read :doc:`more about Lino </about/index>`
 
 - Learn how to write your own Lino application by following 
   the :doc:`/tutorials/index`.
@@ -19,16 +32,11 @@ Welcome to the Project homepage of Lino the Framework.
   `Lino Blog <http://blog.lino-framework.org/>`_
 
 - The final truth about what's going on is only 
-  `The Source Code <http://code.google.com/p/lino/source/list>`_
-  (hosted on `Googlecode <http://code.google.com/p/lino>`__).
+  the `source code <http://code.google.com/p/lino/source/list>`__.
   
 - Lino is listed on `PyPI <http://pypi.python.org/pypi/lino>`_, 
   the Python Package Index.
  
-Related projects:
-
-- `Lino-Welfare <http://welfare.lino-framework.org>`__
-- `Lino Così <http://cosi.lino-framework.org>`__
 
 .. toctree::
    :maxdepth: 2

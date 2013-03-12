@@ -109,7 +109,7 @@ def startup_site(self):
     #~ logger.info(self.welcome_text())
     
     """
-    Set the site's default language
+    Activate the site's default language
     """
     babel.set_language(None)
             
@@ -255,7 +255,7 @@ def startup_site(self):
     dd.post_analyze.send(self,models_list=models_list)
     
     logger.info("Languages: %s. %d apps, %d models, %s actors.",
-        ', '.join(babel.AVAILABLE_LANGUAGES),
+        ', '.join(self.AVAILABLE_LANGUAGES),
         len(self.modules),
         len(models_list),
         len(actors.actors_list))

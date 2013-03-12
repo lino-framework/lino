@@ -29,7 +29,7 @@ import codecs
 import jinja2
 
 
-from north.babel import LANGUAGE_CHOICES
+#~ from north.babel import LANGUAGE_CHOICES
 from lino.modlib.cal.utils import CalendarAction
 
 from django.db import models
@@ -146,7 +146,7 @@ class ExtRenderer(HtmlRenderer):
         """
         Additional converting logic for serializing Python values to json.
         """
-        if v is LANGUAGE_CHOICES:
+        if v is settings.SITE.LANGUAGE_CHOICES:
             return js_code('LANGUAGE_CHOICES')
         #~ if v is STRENGTH_CHOICES:
             #~ return js_code('STRENGTH_CHOICES')
@@ -766,7 +766,7 @@ tinymce.init({
         
         if force or settings.SITE.build_js_cache_on_startup:
             count = 0
-            langs = babel.AVAILABLE_LANGUAGES
+            langs = settings.SITE.AVAILABLE_LANGUAGES
             for lang in langs:
                 babel.set_language(lang)
                 for profile in dd.UserProfiles.objects():
@@ -1526,7 +1526,7 @@ tinymce.init({
             yield """// lino.js --- generated %s by Lino version %s.""" % (time.ctime(),lino.__version__)
             #~ // $site.title ($lino.welcome_text())
             yield "Ext.BLANK_IMAGE_URL = '%s';" % settings.SITE.build_extjs_url('resources/images/default/s.gif')
-            yield "LANGUAGE_CHOICES = %s;" % py2js(list(LANGUAGE_CHOICES))
+            yield "LANGUAGE_CHOICES = %s;" % py2js(list(settings.SITE.LANGUAGE_CHOICES))
             # TODO: replace the following lines by a generic method for all ChoiceLists
             #~ yield "STRENGTH_CHOICES = %s;" % py2js(list(STRENGTH_CHOICES))
             #~ yield "KNOWLEDGE_CHOICES = %s;" % py2js(list(KNOWLEDGE_CHOICES))

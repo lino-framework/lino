@@ -1,19 +1,6 @@
 About Lino
 ==========
 
-
-Overview
---------
-
-.. py2rst::
-
-  import lino
-  print lino.SETUP_INFO['long_description']
-
-
-Contents
---------
-
 .. toctree::
    :maxdepth: 1
    

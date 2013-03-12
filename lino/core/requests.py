@@ -80,7 +80,7 @@ class EmptyTableRow(VirtualRow):
         return unicode(self._table.label)
         
     def get_print_language(self,pm):
-        return babel.DEFAULT_LANGUAGE
+        return settings.SITE.DEFAULT_LANGUAGE
         
     def get_templates_group(self):
         return self._table.app_label + '/' + self._table.__name__

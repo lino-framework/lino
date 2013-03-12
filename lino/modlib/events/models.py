@@ -69,12 +69,23 @@ class Event(dd.BabelNamed):
     place = dd.ForeignKey(Place,blank=True,null=True)
     type = dd.ForeignKey(Type)
     features = models.ManyToManyField(Feature)
-    cities = models.ManyToManyField('countries.City')
+    #~ cities = models.ManyToManyField('countries.City')
+
+class Stage(mixins.Sequenced): 
+    event = dd.ForeignKey('events.Event',related_name="stages")
+    city = dd.ForeignKey('countries.City',related_name="stages")
     
+    def __unicode__(self):
+        return unicode(self.city)
+    
+    def get_siblings(self):
+        return self.event.stages.order_by('seqno')
+    
+
 dd.update_field(Event,'name',blank=True)
 
-class CitiesByEvent(dd.Table):
-    model = Event.cities.through
+class StagesByEvent(dd.Table):
+    model = Stage # Event.cities.through
     master_key = 'event'
 
 class FeaturesByEvent(dd.Table):
@@ -87,7 +98,7 @@ class Events(dd.Table):
     column_names = "date place type"
     detail_layout = """
     type date place
-    CitiesByEvent FeaturesByEvent
+    StagesByEvent FeaturesByEvent
     """
     
     @dd.displayfield(_("When"))
@@ -98,7 +109,8 @@ class Events(dd.Table):
     def where(self,obj,ar):
         if obj.place is not None:
             return E.p(unicode(obj.place), ' ', E.b(unicode(obj.place.city)))
-        return E.p(*sepjoin(obj.cities.all(),' -- '))
+        # remember: "von Ans nach Eupen und nicht andersrum"
+        return E.p(*sepjoin(obj.stages.order_by('seqno'),' -- '))
 
     @dd.displayfield(_("What"))
     def what(self,obj,ar):

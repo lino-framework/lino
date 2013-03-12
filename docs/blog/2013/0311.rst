@@ -6,6 +6,11 @@
   and
   :func:`dtosl <djangosite.dbutils.dtosl>` 
   using Django's :setting:`FORMAT_MODULE_PATH` setting.
+  
+- Some implementation changes in :mod:`north.babel`. 
+  It is no longer necessar to reduce Django's :setting:`LANGUAGES` setting
+  to the babel languages.
+  Bug danger. 
 
 - Moved the 
   :attr:`languages <djangosite.Site.languages>` 
