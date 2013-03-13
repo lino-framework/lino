@@ -12,7 +12,10 @@
   
 - Moved lino.utils.test to djangosite.utils.test  
 
-- More testing commands in `fablib.py`.
+- More testing commands in `fablib.py`. 
+  My favourite command is now::
+
+    fab ci test html sdist pub
 
 - The automated sphinx-apidoc lacks two things:
 

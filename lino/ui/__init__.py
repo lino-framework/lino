@@ -604,7 +604,7 @@ class Site(lino.Site):
         self.define_settings(
             MIDDLEWARE_CLASSES=tuple(self.get_middleware_classes()))
                 
-        print 20130313, self.django_settings['MIDDLEWARE_CLASSES']
+        #~ print 20130313, self.django_settings['MIDDLEWARE_CLASSES']
         
        
     def do_site_startup(self):

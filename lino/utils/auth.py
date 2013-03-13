@@ -586,7 +586,7 @@ def on_login(request,user):
     because those don't have request data
     (is that still true in Django 1.5)
     """
-    logger.info("20130313 on_login(%s)" % user)
+    #~ logger.info("20130313 on_login(%s)" % user)
     request.user = user
     
         
