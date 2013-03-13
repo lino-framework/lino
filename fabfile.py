@@ -25,7 +25,7 @@ env.django_admin_tests += [
       "lino.test_apps.quantityfield.settings",
       #~ "lino.test_apps.human.settings",
       "lino.projects.cosi.settings",
-      "lino.projects.presto.settings", 
+      #~ "lino.projects.presto.settings", 
       "lino.projects.babel_tutorial.settings",
       "lino.projects.polls_tutorial.settings",
       "lino.projects.belref.settings",

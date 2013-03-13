@@ -76,6 +76,9 @@ class Human(model.Model):
     """
     Base class for all models that represent a human.
     It defines three fields `first_name`, `last_name` and `gender`.
+    
+    See :doc:`/tutorial/human/index`.
+    
     """
     class Meta:
         abstract = True

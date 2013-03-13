@@ -351,50 +351,7 @@ class Person(PersonMixin,Partner):
     """
     Mixin for models that represent a physical person. 
     
-    >>> from lino import dd 
-    >>> from six import print_
-    >>> Person = dd.resolve_model('contacts.Person')
-    >>> person = Person(
-    ...     first_name="Andreas",last_name="Arens",
-    ...     gender=dd.Genders.male)
-    >>> person.save()
-
-    The property "full_name" (without parentheses) of Person 
-    is an alias for the function call `get_full_name()` without parameters.
-
-    >>> from north import babel
-    >>> babel.set_language('de')
-    >>> settings.SITE.uppercase_last_name = True
-    >>> print_(person.full_name)
-    Herrn Andreas ARENS
-
-    >>> settings.SITE.uppercase_last_name = False
-    >>> print_(person.full_name)
-    Herrn Andreas Arens
-
-    >>> print_(person.get_full_name())
-    Herrn Andreas Arens
-
-    The :func:`get_full_name <lino.modlib.contacts.models.Person.get_full_name>` 
-    function has 2 optional parameters `nominative` and `salutation`:
-
-    >>> print_( person.get_full_name(nominative=True) )
-    Herr Andreas Arens
-
-    >>> print_( person.get_full_name(salutation=False) )
-    Andreas Arens
-
-    You can also get the components of the full name separately:
-
-    >>> print_( person.get_salutation(nominative=True) )
-    Herr
-    >>> print_( person.first_name )
-    Andreas
-    >>> print_( person.last_name )
-    Arens
-
-    
-
+    See :doc:`/tutorial/human/index`.
 
     """
     class Meta:
