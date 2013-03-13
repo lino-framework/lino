@@ -29,8 +29,9 @@ import datetime
 from os.path import join, abspath, dirname, normpath, isdir
 from decimal import Decimal
 
-from .utils.xmlgen import html as xghtml
-from .utils import AttrDict
+from lino.utils.xmlgen import html as xghtml
+from lino.utils import AttrDict
+from north import Site
 
 #~ execfile(os.path.join(os.path.dirname(__file__),'setup_info.py'))
 execfile(os.path.join(os.path.dirname(__file__),'..','setup_info.py'))
@@ -76,7 +77,6 @@ if False:
             pass
 
 
-from north import Site
 
 class Site(Site):
     """

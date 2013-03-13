@@ -16,7 +16,7 @@
 
 SETUP_INFO = dict(name = 'lino',
   version = '1.6.1',
-  requires = ['North','appy',
+  requires = ['North(==0.0.3)','appy',
     'python_dateutil','PyYAML','odfpy','sphinx','jinja2',
     ],
   description = "A framework for writing desktop-like web applications using Django and ExtJS",
@@ -50,7 +50,7 @@ The following real-world applications use the Lino framework:
   
   """,
   license = 'GPL',
-  packages = ['lino'],
+  #~ packages = ['lino' ],
   author = 'Luc Saffre',
   author_email = 'luc.saffre@gmail.com',
   url = "http://www.lino-framework.org",
