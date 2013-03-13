@@ -24,7 +24,7 @@ logger = logging.getLogger(__name__)
 
 from lino.core.dbutils import resolve_model
 #Companies = resolve_model('contacts.Companies')
-from lino.utils.test import TestCase
+from djangosite.utils.test import TestCase
 
 #~ Person = resolve_model('contacts.Person')
 Invoice = resolve_model('sales.Invoice')

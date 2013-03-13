@@ -20,7 +20,7 @@ that don't load any fixtures.
 
 from django.conf import settings
 
-from lino.utils.test import TestCase
+from djangosite.utils.test import TestCase
 #from lino.igen import models
 #from lino.modlib.contacts.models import Contact, Companies
 #from lino.modlib.countries.models import Country

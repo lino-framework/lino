@@ -1,0 +1,19 @@
+===================================
+20130313 (Wednesday, 13 March 2013)
+===================================
+
+- Moved `/lino/projects/sphinxdocs/settings.py` to `docs`.
+  Added new command ``initdb`` to :mod:`djangosite.utils.fablib` 
+  which runs an `initdb_demo`
+  on the docs database.
+  
+- removed usage of the `djangodoctest` directive and the 
+  :mod:`djangosite.utils.doctest` module.
+  
+- Moved lino.utils.test to djangosite.utils.test  
+
+- The automated sphinx-apidoc lacks two things:
+  - Specify a list of modules to exclude
+  - An option to specify a list of packages for which
+    we want a separate page per module instead of
+    grouping all modules of a package into a same page.

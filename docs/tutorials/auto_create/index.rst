@@ -13,7 +13,8 @@ We define a single simple model:
 
 .. literalinclude:: models.py
 
->>> from tutorials.auto_create.models import *
+..
+  >>> from tutorials.auto_create.models import *
 
 Define a handler for the auto_create signal:
 

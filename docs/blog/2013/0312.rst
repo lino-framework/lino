@@ -53,5 +53,18 @@ I had to define an intermediary Model
 :class:`Stage <lino.modlib.events.models.Stage>` 
 to solve this.
 
+
 Regenerating the html for this site also revealed some problems 
 due to the recent changes.
+Used this to write a test case:
+:mod:`lino.modlib.events.tests`.
+
+Continued with the test suite
+-----------------------------
+
+It turned out that my `djangodoctest` directive isn't usable.
+But I found a new promising system: run_django_doctests.
+The first examples which pass are 
+:doc:`/tutorials/human/index`
+and
+:doc:`/tutorials/auto_create/index`.

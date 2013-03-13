@@ -74,8 +74,6 @@ incomes     |Incomes        |Credit
 expenses    |Expenses       |Debit
 capital     |Capital        |Credit
 
-Yes.
-
 
 TODO
 ----
