@@ -535,9 +535,15 @@ class Site(lino.Site):
     
     _site_config = None
     
-    def init_nolocal(self,*args):
-        super(Site,self).init_nolocal(*args)
+    #~ def init_nolocal(self,*args):
+        #~ super(Site,self).init_nolocal(*args)
     
+        
+    def override_defaults(self,**kwargs):
+        """
+        """
+        super(Site,self).override_defaults(**kwargs)
+        
         installed_apps = tuple(self.get_installed_apps()) + ('lino','djangosite')
         self.update_settings(INSTALLED_APPS=installed_apps)
         
@@ -572,9 +578,6 @@ class Site(lino.Site):
             MEDIA_URL = '/media/'
         )
         self.update_settings(
-            MIDDLEWARE_CLASSES=tuple(self.get_middleware_classes()))
-                
-        self.update_settings(
             TEMPLATE_LOADERS=tuple([
                 'lino.core.web.Loader',
                 'django.template.loaders.filesystem.Loader',
@@ -582,15 +585,6 @@ class Site(lino.Site):
                 #~ 'django.template.loaders.eggs.Loader',
                 ]))
            
-        #~ else:
-            #~ tl = [
-                #~ 'django.template.loaders.filesystem.Loader',
-                #~ 'django.template.loaders.app_directories.Loader',
-                #     'django.template.loaders.eggs.load_template_source',
-            #~ ]
-            #~ self.update_settings(TEMPLATE_LOADERS = tuple(tl))
-                
-                
         tcp = []
         if self.user_model == 'auth.User':
             self.update_settings(LOGIN_URL = '/accounts/login/')
@@ -606,6 +600,12 @@ class Site(lino.Site):
                 #~ 'django.contrib.messages.context_processors.messages',
         ]
         self.update_settings(TEMPLATE_CONTEXT_PROCESSORS = tuple(tcp))
+        
+        self.define_settings(
+            MIDDLEWARE_CLASSES=tuple(self.get_middleware_classes()))
+                
+        print 20130313, self.django_settings['MIDDLEWARE_CLASSES']
+        
        
     def do_site_startup(self):
         super(Site,self).do_site_startup()

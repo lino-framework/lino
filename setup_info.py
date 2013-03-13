@@ -15,7 +15,7 @@
 #~ __version__ = 
 
 SETUP_INFO = dict(name = 'lino',
-  version = '1.6.0',
+  version = '1.6.1',
   requires = ['North','appy',
     'python_dateutil','PyYAML','odfpy','sphinx','jinja2',
     ],

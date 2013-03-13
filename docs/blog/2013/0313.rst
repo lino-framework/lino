@@ -12,8 +12,24 @@
   
 - Moved lino.utils.test to djangosite.utils.test  
 
+- More testing commands in `fablib.py`.
+
 - The automated sphinx-apidoc lacks two things:
+
   - Specify a list of modules to exclude
   - An option to specify a list of packages for which
     we want a separate page per module instead of
     grouping all modules of a package into a same page.
+    
+    
+- New error message "Using remote authentication, but no 
+  user credentials found.". On a development server with a 
+  :attr:`lino.ui.Site.remote_user_header` 
+  but without 
+  :attr:`lino.ui.Site.default_user`.
+  
+  
+- Started test phase for meta-release:
+  Lino 1.6.1
+  
+  

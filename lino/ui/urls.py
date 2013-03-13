@@ -67,7 +67,7 @@ def get_media_urls():
             source = getattr(settings.SITE,attr_name)
             if not source:
                 raise Exception(
-                  "%s does not exist and LINO.%s is not set." % (
+                  "%s does not exist and SITE.%s is not set." % (
                   target,attr_name))
         if not exists(source):
             raise Exception("LINO.%s (%s) does not exist" % (attr_name,source))

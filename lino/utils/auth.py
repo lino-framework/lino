@@ -586,7 +586,7 @@ def on_login(request,user):
     because those don't have request data
     (is that still true in Django 1.5)
     """
-    
+    logger.info("20130313 on_login(%s)" % user)
     request.user = user
     
         
@@ -663,10 +663,12 @@ class RemoteUserMiddleware(object):
     
     def process_request(self, request):
       
-        settings.SITE.startup() # trigger site startup if necessary
-        
+        #~ settings.SITE.startup() # trigger site startup if necessary
         username = request.META.get(
             settings.SITE.remote_user_header,settings.SITE.default_user)
+            
+        if not username:
+            raise Exception("Using remote authentication, but no user credentials found.")
             
         user = authenticate(username)
         
@@ -683,7 +685,9 @@ class SessionUserMiddleware(object):
 
     def process_request(self, request):
       
-        settings.SITE.startup() # trigger site startup if necessary
+        #~ print 20130313, request.session.get('username')
+        
+        #~ settings.SITE.startup() # trigger site startup if necessary
         
         user = authenticate(request.session.get('username'),
             request.session.get('password'))
@@ -699,7 +703,7 @@ class NoUserMiddleware(object):
   
     def process_request(self, request):
       
-        settings.SITE.startup() # trigger site startup if necessary
+        #~ settings.SITE.startup() # trigger site startup if necessary
         
         user = AnonymousUser.instance()
         
