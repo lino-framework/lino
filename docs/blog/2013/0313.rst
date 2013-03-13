@@ -16,6 +16,7 @@
   My favourite command is now::
 
     fab ci test html sdist pub
+    fab ci sdist pub
 
 - The automated sphinx-apidoc lacks two things:
 
