@@ -34,6 +34,8 @@
   
   
 - Started test phase for meta-release:
-  Lino 1.6.1
+  Lino 1.6.1, 1.6.2
+  North 0.0.3 through 0.0.4
+  django-site 0.0.3 through 0.0.4
   
   

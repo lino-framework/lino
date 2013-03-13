@@ -1,5 +1,5 @@
 from djangosite.utils.fablib import *
-setup_from_project()  
+setup_from_project('lino')  
 
 env.django_doctests.append('tutorials.auto_create.settings')
 env.django_doctests.append('tutorials.human.settings')
