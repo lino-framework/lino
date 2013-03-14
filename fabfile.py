@@ -1,6 +1,8 @@
 from djangosite.utils.fablib import *
 setup_from_project('lino')  
 
+env.tolerate_sphinx_warnings = True
+
 env.django_doctests.append('tutorials.auto_create.settings')
 env.django_doctests.append('tutorials.human.settings')
 

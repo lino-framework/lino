@@ -54,9 +54,6 @@ But there are still a lot of stupid packaging problems which make it break.
   but a pragmatical solution seems to move this directory 
   one level down into the `lino` package.
     
-- Moved the uiless tutorial from lino to north where it is 
-  called The Polls tutorial. 
-  
   
   
   

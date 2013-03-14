@@ -4,3 +4,12 @@
 
 Still working on the "pip install lino" problem.
 Which takes so much time because I want to solve the "better automated testing" problem.
+
+
+- Moved the uiless tutorial from lino to north where it is 
+  called The Polls tutorial. This caused yet another testing 
+  method :func:`run_bash_tests <djangosite.utils.fablib.run_bash_tests>`.
+  
+
+- Tried the solution to move the `media` directory 
+  one level down into the `lino` package.
