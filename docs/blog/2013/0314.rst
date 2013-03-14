@@ -14,4 +14,5 @@ Which takes so much time because I want to solve the "better automated testing" 
   one level down into the `lino` package.
 
 - Deleted and re-uploaded once more the "official" PyPI releases 
-  (django-site and Nort 0.0.4, Lino 1.6.2)
+  (django-site and Nort 0.0.4, Lino 1.6.2).
+  
