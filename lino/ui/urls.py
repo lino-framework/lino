@@ -48,6 +48,7 @@ from . import views
 #~ import .views
 from lino.core.dbutils import is_devserver
 
+from pkg_resources import Requirement, resource_filename
 
 def get_media_urls():
     #~ print "20121110 get_urls"
@@ -74,6 +75,7 @@ def get_media_urls():
         elif not exists(source):
             raise Exception("%s does not exist" % source)
         if is_devserver():
+            logger.info("django.views.static serving /%s from %s",short_name,source)
             urlpatterns.extend(patterns('django.views.static',
             (r'^%s%s/(?P<path>.*)$' % (prefix,short_name), 
                 'serve', {
@@ -81,7 +83,9 @@ def get_media_urls():
                 'show_indexes': False })))
         else:
             symlink = getattr(os,'symlink',None)
-            if symlink is not None:
+            if symlink is None:
+                raise Exception("Cannot run a production server on an OS that doesn't have symlinks")
+            else:
                 logger.info("Setting up symlink %s -> %s.",target,source)
                 symlink(source,target)
         
@@ -101,8 +105,11 @@ def get_media_urls():
     if settings.SITE.use_eid_jslib:
         setup_media_link('eid-jslib','eid_jslib_root')
         
+    #~ setup_media_link('lino',source=join(dirname(lino.__file__),'media'))
     #~ setup_media_link('lino',source=join(dirname(lino.__file__),'..','media'))
-    setup_media_link('lino',source=join(dirname(lino.__file__),'media'))
+    setup_media_link('lino',source=resource_filename(Requirement.parse("lino"),"media"))
+    
+    
 
     if is_devserver():
         urlpatterns += patterns('django.views.static',

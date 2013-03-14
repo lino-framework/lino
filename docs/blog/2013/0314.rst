@@ -3,16 +3,100 @@
 ==================================
 
 Still working on the "pip install lino" problem.
-Which takes so much time because I want to solve the "better automated testing" problem.
+Which takes so much time because I also work on 
+the "better automated testing" problem.
 
 
 - Moved the uiless tutorial from lino to north where it is 
   called The Polls tutorial. This caused yet another testing 
   method :func:`run_bash_tests <djangosite.utils.fablib.run_bash_tests>`.
   
-- Tried the solution to move the `media` directory 
-  one level down into the `lino` package.
+- Trying the solution to move the `media` directory 
+  one level down into the `lino` package:
+  ``hg mv media lino`` and one line in :mod:`lino.ui.urls` to change
+  (todo: instructions for existing servers to move their symbolic link)
 
 - Deleted and re-uploaded once more the "official" PyPI releases 
   (django-site and Nort 0.0.4, Lino 1.6.2).
   
+How to include data files to a Python egg
+-----------------------------------------
+
+I'd like that ``pip install lino`` also installs the 
+files under `/media` so that Lino users can use it out of the box.
+
+It wasn't enough to just move the `/media` source directory 
+to `/lino/media`. 
+Why does it work for files like :srcref:`/lino/ui/linoweb.js`?
+Because they are in a Python package, and because 
+MANIFEST.in has an `global-include` instruction to include 
+`*.js` files.
+
+Should I have to turn it (and all the subdirectories!) 
+into Python packages?
+One of them is e.g. `lino/media/extjs/images/default/grid`.
+That would be a few dozen of otherwise useless `__init__.py` files.
+No, there must be a better way.
+  
+- Distribute is a fork of the Setuptools project:
+  `Documentation <http://pythonhosted.org/distribute/>`__  
+  `Bitbucket <https://bitbucket.org/tarek/distribute/wiki/Home>`__
+  `PyPI entry <https://pypi.python.org/pypi/distribute>`__
+ 
+The documentation section 
+`Accessing Data Files at Runtime
+<http://pythonhosted.org/distribute/setuptools.html#accessing-data-files-at-runtime>`__
+says clearly what I'm doing wrong:
+
+  Typically, existing programs manipulate a package’s __file__ attribute in order to find the location of data files. However, this manipulation isn’t compatible with PEP 302-based import hooks, including importing from zip files and Python Eggs. It is strongly recommended that, if you are using data files, you should use the Resource Management API of pkg_resources to access them.
+  
+And the 
+`Accessing Package Resources
+<http://peak.telecommunity.com/DevCenter/PythonEggs#accessing-package-resources>`__
+link explains how to make it better.
+
+Note that we are not yet trying to convert the `linoweb.js` file into 
+a package resource because that's an even more sophisticated case 
+because Lino also maintains an automatically generated messages file 
+`linoweb.js.py` to handle translation messages from this template.
+
+In :mod:`lino.ui.urls`, instead of saying...
+
+::
+
+  setup_media_link('lino',source=join(dirname(lino.__file__),'..','media'))
+
+... I must say::
+
+  from pkg_resources import Requirement, resource_filename
+  setup_media_link('lino',source=resource_filename(Requirement.parse("lino"),"media"))
+
+This works on the development server of my machine 
+where Lino is installed in editable mode using ``pip install -e``.
+The `resource_filename` function correctly returns the name 
+of that directory (I added a new INFO message to verify this)::
+
+  INFO django.views.static serving /lino from t:\hgwork\lino\media
+
+But will it work from a zipped egg? 
+If `resource_filename` unzips these files to a new temporary directory 
+each time, then we must expect problems. The development server would 
+just need longer to start and fill the temporaty folder, but on a 
+production server Lino creates a symbolic link to that directory,
+which is probably not what we want.
+
+Maybe I should leave `zip_safe` to `False` because of this.
+Anyway it must remain False as long as the `linoweb.js` file 
+is being read using `__file__`.
+
+Of course I must also use either `package_data` 
+or `include_package_data` so that these files get distributed.
+
+If set to True, this tells setuptools to automatically include 
+any data files it finds inside your package directories, that 
+are either under CVS or Subversion control, or which are specified 
+by your MANIFEST.in file. 
+
+While working at these things I used the occasion to start splitting 
+off the ExtJS UI into a separate project. 
+

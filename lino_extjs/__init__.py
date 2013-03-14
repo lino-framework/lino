@@ -54,12 +54,9 @@ from django.conf.urls import patterns, url, include
 
 import lino
 from lino.core import constants as ext_requests
-from . import elems as ext_elems
-from . import store as ext_store
-#~ from lino.ui.extjs3 import ext_elems
-#~ from lino.ui.extjs3 import ext_store
-#~ from lino.ui.extjs3 import ext_windows
-#~ from lino.ui import requests as ext_requests
+from lino.ui import elems as ext_elems
+from lino.ui import store as ext_store
+from lino.ui.render import HtmlRenderer
 
 from lino import dd
 from lino.core import actions 
@@ -68,9 +65,6 @@ from lino.core import dbtables
 from lino.core import layouts
 from lino.core import tables
 #~ from lino.utils.xmlgen import xhtml as xhg
-from lino.core import fields
-from lino.ui import base
-from lino.core import actors
 #~ from lino.core.dbutils import makedirs_if_missing
 #~ from lino.core.dbutils import full_model_name
     
@@ -119,7 +113,6 @@ def prepare_label(mi):
     #~ return label
     
 
-from .render import HtmlRenderer
 
 
 class ExtRenderer(HtmlRenderer):
@@ -1034,7 +1027,8 @@ tinymce.init({
         return os.path.join(os.path.dirname(__file__),'linolib.js')
         
     def linolib_template(self):
-        env = jinja2.Environment(loader=jinja2.FileSystemLoader(os.path.dirname(__file__)))
+        env = jinja2.Environment(loader=jinja2.FileSystemLoader(
+            os.path.dirname(__file__)))
         return env.get_template('linoweb.js')
         #~ fn = self.linolib_template_name()
         #~ return settings.SITE.jinja2_env.Template(file(fn).read())

@@ -4,13 +4,6 @@ None:None: WARNING: toctree contains reference to document 'tickets/76' that doe
 None:None: WARNING: toctree contains reference to document 'tickets/76' that doesn't have a title: no link will be generated
 None:None: WARNING: toctree contains reference to document 'tickets/76' that doesn't have a title: no link will be generated
 None:None: WARNING: toctree contains reference to document 'tickets/76' that doesn't have a title: no link will be generated
-t:\hgwork\lino\lino\ui\__init__.py:docstring of lino.ui.Site.django_admin_prefix:1: WARNING: unknown document: /ticket/70
-t:\hgwork\lino\lino\ui\__init__.py:docstring of lino.ui.Site.webdav_url:7: WARNING: term not in glossary: webdav
-t:\hgwork\lino\lino\ui\__init__.py:docstring of lino.ui.Site.webdav_url:7: WARNING: term not in glossary: runserver
-None:None: WARNING: toctree contains reference to document 'tickets/76' that doesn't have a title: no link will be generated
-None:None: WARNING: toctree contains reference to document 'tickets/76' that doesn't have a title: no link will be generated
-None:None: WARNING: toctree contains reference to document 'tickets/76' that doesn't have a title: no link will be generated
-None:None: WARNING: toctree contains reference to document 'tickets/76' that doesn't have a title: no link will be generated
 None:None: WARNING: toctree contains reference to document 'tickets/76' that doesn't have a title: no link will be generated
 None:None: WARNING: toctree contains reference to document 'tickets/76' that doesn't have a title: no link will be generated
 None:None: WARNING: toctree contains reference to document 'tickets/76' that doesn't have a title: no link will be generated

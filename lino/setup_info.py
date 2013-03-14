@@ -150,6 +150,7 @@ The following real-world applications use the Lino framework:
   """,
   license = 'GPL',
   packages = PACKAGES,
+  include_package_data = True,
   zip_safe = False,
   author = 'Luc Saffre',
   author_email = 'luc.saffre@gmail.com',
