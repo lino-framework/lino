@@ -1,29 +1,7 @@
-#~ """
-#~ This is the current Lino version number.
-
-#~ After editing this file, also edit the following files:
-
-#~ - Release notes : ../docs/releases/<__version__>.rst
-#~ - Releases overview: edit ../docs/releases/index.rst
-
-#~ Related public URLs:
-
-#~ - http://lino-framework.org/releases/
-#~ - http://pypi.python.org/pypi/lino
-
-#~ """
-#~ __version__ = 
-
-
-PACKAGES = [n for n in """
+PACKAGES = [str(n) for n in """
 lino
 lino.core
 lino.history
-lino.sandbox.bcss
-lino.sandbox.contacts
-lino.sandbox.contacts.fixtures
-lino.sandbox.debts
-lino.sandbox.debts.fixtures
 lino.modlib
 lino.modlib.contacts
 lino.modlib.contacts.fixtures
@@ -131,10 +109,6 @@ lino.projects.polls_tutorial.polls.fixtures
 lino.projects.presto
 lino.projects.presto.fixtures
 lino.projects.std
-lino.projects.uiless.fixtures
-lino.projects.uiless.mysite
-lino.projects.uiless.polls
-lino.projects.uiless.polls.fixtures
 lino.projects.babel_tutorial
 lino.projects.babel_tutorial.fixtures
 """.splitlines() if n]
@@ -176,6 +150,7 @@ The following real-world applications use the Lino framework:
   """,
   license = 'GPL',
   packages = PACKAGES,
+  zip_safe = False,
   author = 'Luc Saffre',
   author_email = 'luc.saffre@gmail.com',
   url = "http://www.lino-framework.org",

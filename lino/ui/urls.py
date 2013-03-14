@@ -63,14 +63,16 @@ def get_media_urls():
         target = join(settings.MEDIA_ROOT,short_name)
         if exists(target):
             return
-        if attr_name:
+        if attr_name is not None:
             source = getattr(settings.SITE,attr_name)
             if not source:
                 raise Exception(
                   "%s does not exist and SITE.%s is not set." % (
                   target,attr_name))
-        if not exists(source):
-            raise Exception("LINO.%s (%s) does not exist" % (attr_name,source))
+            if not exists(source):
+                raise Exception("SITE.%s (%s) does not exist" % (attr_name,source))
+        elif not exists(source):
+            raise Exception("%s does not exist" % source)
         if is_devserver():
             urlpatterns.extend(patterns('django.views.static',
             (r'^%s%s/(?P<path>.*)$' % (prefix,short_name), 

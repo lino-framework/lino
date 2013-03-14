@@ -2,6 +2,14 @@
 20130313 (Wednesday, 13 March 2013)
 ===================================
 
+More fun with packaging
+-----------------------
+
+Oops, the installation instruction in :doc:`/tutorials/quickstart` 
+still doesn't work.
+And I'm decided to get this working soon. 
+But there are still a lot of stupid packaging problems which make it break. 
+
 - Moved `/lino/projects/sphinxdocs/settings.py` to `docs`.
   Added new command ``initdb`` to :mod:`djangosite.utils.fablib` 
   which runs an `initdb_demo`
@@ -33,9 +41,24 @@
   :attr:`lino.ui.Site.default_user`.
   
   
-- Started test phase for meta-release:
-  Lino 1.6.1, 1.6.2
-  North 0.0.3 through 0.0.4
-  django-site 0.0.3 through 0.0.4
+- Started test phase with several releases for Lino, North and Django-Site.
+  - Lino 1.6.1, 1.6.2
+  - North 0.0.3 through 0.0.4
+  - django-site 0.0.3 through 0.0.4
+  
+  Certain files weren't includedd in the Python egg:
+  `setup_info.py` file and Lino's static `media` directory 
+  (the one that gets linked more or less automatically to 
+  the `/media/lino` url).
+  It seems that this topic is very hot for the moment,
+  but a pragmatical solution seems to move this directory 
+  one level down into the `lino` package.
+    
+- Moved the uiless tutorial from lino to north where it is 
+  called The Polls tutorial. 
+  
+  
+  
+  
   
   
