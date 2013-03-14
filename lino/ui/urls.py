@@ -101,7 +101,8 @@ def get_media_urls():
     if settings.SITE.use_eid_jslib:
         setup_media_link('eid-jslib','eid_jslib_root')
         
-    setup_media_link('lino',source=join(dirname(lino.__file__),'..','media'))
+    #~ setup_media_link('lino',source=join(dirname(lino.__file__),'..','media'))
+    setup_media_link('lino',source=join(dirname(lino.__file__),'media'))
 
     if is_devserver():
         urlpatterns += patterns('django.views.static',

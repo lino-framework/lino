@@ -10,6 +10,8 @@ Which takes so much time because I want to solve the "better automated testing" 
   called The Polls tutorial. This caused yet another testing 
   method :func:`run_bash_tests <djangosite.utils.fablib.run_bash_tests>`.
   
-
 - Tried the solution to move the `media` directory 
   one level down into the `lino` package.
+
+- Deleted and re-uploaded once more the "official" PyPI releases 
+  (django-site and Nort 0.0.4, Lino 1.6.2)
