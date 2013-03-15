@@ -497,7 +497,8 @@ class TableRequest(ActionRequest):
         sums  = [fld.zero for fld in fields]
         rows = []  
         recno = 0
-        for row in self:
+        #~ for row in self:
+        for row in self.sliced_data_iterator:
             recno += 1
             rows.append([x for x in grid.row2text(self,fields,row,sums)])
             #~ rows.append([x for x in grid.row2html(self,fields,row,sums)])

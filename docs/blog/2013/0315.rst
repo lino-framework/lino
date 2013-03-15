@@ -1,0 +1,79 @@
+================================
+20130315 (Friday, 15 March 2013)
+================================
+
+
+Kandidaturen auf Probe
+----------------------
+
+Eine Kandidatur 
+(:class:`Candidature <lino_welfare.modlib.jobs.models.Candidature>`) 
+hatte bisher lediglich ein Ankreuzfeld "Aktiv". 
+Das wurde ersetzt durch ein Auswahlfeld "Zustand" mit den möglichen 
+Werten "Aktiv", "Probezeit", "Inaktiv".
+(:class:`CandidatureStates 
+<lino_welfare.modlib.jobs.models.CandidatureStates>`)
+
+
+Nicht zu verwechseln: eine *aktive* Kandidatur bedeutet, 
+dass der Klient *keinen* aktiven Art-60*7 hat.
+
+In der Übersicht Art-60*7 
+(:class:`JobsOverview <lino_welfare.modlib.jobs.models.JobsOverview>`)
+wird dieser Status der Kandidaturen jetzt berücksichtigt:
+Als "Kandidaten" stehen jetzt nur noch Kandidaturen 
+im Zustand "Aktiv" (bisher standen dort alle Kandidaturen).
+Als "Probezeit" stehen jetzt nur noch Kandidaturen im Zustand "Probezeit".
+
+
+Documentation for Lino-Welfare
+------------------------------
+
+Worked on the documentation at 
+`Lino-Welfare Technical Reference <http://welfare.lino-framework.org/>`__
+which passes now using `tolerate_sphinx_warnings`
+
+- changed "autodocs" to "api"
+
+- Removed :file:`/lino_welfare/releases.py` after moving the information 
+  there to :file:`/docs/releases/index.rst`.
+  But this is not used.
+  I'm still waiting for the ultimate solution for managing the releases 
+  of my collection of interdepent projects...
+  
+- Removed :file:`/lino_welfare/modlib/cbss/management/commands/cbss_testconnection.py`
+  because it was hopelessly obsolete.
+  
+- Added a new role 
+  :func:`:blogref: <djangosite.utils.sphinxconf.blogref_role>`
+  and started to replace existing references which had become invalid.
+  An example is the docstring of 
+  :func:`migrate_from_1_2_2 <lino_welfare.modlib.pcsw.migrate_old.migrate_from_1_2_2>`.
+
+- Found jmbowman's pull request 
+  `Allow apidoc to exclude individual files  
+  <https://bitbucket.org/birkenfeld/sphinx/pull-request/110/allow-apidoc-to-exclude-individual-files/diff>`__
+  for Sphinx issue #944 `sphinx-apidoc: add ability to exclude specific files or filepatterns
+  <https://bitbucket.org/birkenfeld/sphinx/issue/944/sphinx-apidoc-add-ability-to-exclude>`__.
+  Very nice.
+  So I can simply wait (as long as there's no urgent need).
+  
+- The :class:`rst2py <djangosite.utils.sphinxconf.Py2rstDirective>`
+  directive now has :attr:`settings.SITE.modules <lino.Site.modules>` 
+  as default context. This is used to write dynamically generated tables 
+  in the docstrings of of
+  :class:`<lino_welfare.modlib.jobs.models.Job>`
+  or
+  :class:`<lino_welfare.modlib.jobs.models.CandidatureStates>`.
+  
+- The above made me discover and eliminate a bug (empty bold text) in 
+  :func:`html2rst <lino.utils.xmlgen.html.html2rst>`.
+  An empty text was converted to ``****`` which caused a docutils parser error::
+  
+    <autodoc>:0: SEVERE: Unexpected section title or transition.
+  
+  Another meta-bug was that the :mod:`lino.utils.xmlgen.html` 
+  module wasn't yet being doctested because the following line 
+  was missing in :srcref:`/fabfile.py`::
+  
+    env.simple_doctests.append('lino/utils/xmlgen/html.py')

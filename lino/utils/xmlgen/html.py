@@ -27,7 +27,7 @@ Usage::
     <body class="main">
     <h1>Hello World !</h1>
     </body>
-    </html>    
+    </html>
     
     
     >>> kw = dict(title=u'Ein süßes Beispiel')
@@ -37,7 +37,7 @@ Usage::
     >>> print E.tostring_pretty(html)
     <a href="foo/bar.html" title="Ein s&#252;&#223;es Beispiel">
     <button class="x-btn-text x-tbar-upload" type="button" />
-    </a>    
+    </a>
     
 """
 
@@ -245,34 +245,6 @@ class Document(object):
 
 
 def _html2rst(e,**kw):
-    """
-    Convert a :mod:`lino.utils.xmlgen.html` element 
-    (e.g. a value of a :class:`DisplayField <lino.core.fields.DisplayField>`) 
-    to an reStructuredText string.
-    Currently it knows only P and B tags, 
-    ignoring all other formatting.
-    
-    Usage example:
-    
-    >>> from lino.utils.xmlgen.html import E, html2rst
-    >>> e = E.p("This is a ",E.b("first")," test.")
-    >>> print html2rst(e)
-    This is a **first** test.
-    
-    >>> e = E.p(E.b("This")," is another test.")
-    >>> print html2rst(e)
-    **This** is another test.
-    
-    >>> e = E.p(E.b("This")," is ",E.em("another")," test.")
-    >>> print html2rst(e)
-    **This** is *another* test.
-    
-    >>> url = "http://example.com"
-    >>> e = E.p(E.b("This")," is ",E.a("a link",href=url),".")
-    >>> print html2rst(e)
-    **This** is `a link <http://example.com>`__.
-    
-    """
     #~ print "20120613 html2odftext()", e.tag, e.text
     rst = ''
     if e.tag == 'p': 
@@ -301,9 +273,15 @@ def _html2rst(e,**kw):
     if e.tag == 'p': 
         rst += '\n\n'
     elif e.tag == 'b':
-        rst += '**'
+        if rst == '**':
+            rst = ''
+        else:
+            rst += '**'
     elif e.tag == 'em':
-        rst += '*'
+        if rst == '*':
+            rst = ''
+        else:
+            rst += '*'
     elif e.tag == 'a':
         rst += ' <%s>`__' % e.get('href')
         
@@ -312,6 +290,37 @@ def _html2rst(e,**kw):
     return rst
 
 def html2rst(e):
+    """
+    Convert a :mod:`lino.utils.xmlgen.html` element 
+    (e.g. a value of a :class:`DisplayField <lino.core.fields.DisplayField>`) 
+    to an reStructuredText string.
+    Currently it knows only P and B tags, 
+    ignoring all other formatting.
+    
+    Usage example:
+    
+    >>> from lino.utils.xmlgen.html import E, html2rst
+    >>> e = E.p("This is a ",E.b("first")," test.")
+    >>> print html2rst(e)
+    This is a **first** test.
+    
+    >>> e = E.p(E.b("This")," is another test.")
+    >>> print html2rst(e)
+    **This** is another test.
+    
+    >>> e = E.p(E.b("This")," is ",E.em("another")," test.")
+    >>> print html2rst(e)
+    **This** is *another* test.
+    
+    >>> url = "http://example.com"
+    >>> e = E.p(E.b("This")," is ",E.a("a link",href=url),".")
+    >>> print html2rst(e)
+    **This** is `a link <http://example.com>`__.
+    
+    >>> e = E.p("An empty bold text:",E.b(""))
+    >>> print html2rst(e)
+    An empty bold text:
+    """
     return _html2rst(e).strip()
     
 
@@ -331,25 +340,25 @@ A table containing elementtree HTML:
   Code <NEXTCELL> Result <NEXTROW>
 
   >>> from lino.utils.xmlgen.html import E, RstTable
-  >>> print table(
-  ...   [E.p("A ",E.b("formatted")," header"),"A plain header"],
-  ...   [[1,2],[3,4]])
-  =========================== ================
-   A **formatted** header      A plain header
-  --------------------------- ----------------
-   1                           2
-   3                           4
-  =========================== ================
+  >>> headers = [E.p("A ",E.b("formatted")," header"),"A plain header"]
+  >>> rows = [[1,2],[3,4]]
+  >>> print RstTable(headers).to_rst(rows)
+  ============================ ================
+   A **formatted** header       A plain header
+  ---------------------------- ----------------
+   1                            2
+   3                            4
+  ============================ ================
   <BLANKLINE>
   
   <NEXTCELL>
   
-  =========================== ================
-   A **formatted** header      A plain header
-  --------------------------- ----------------
-   1                           2
-   3                           4
-  =========================== ================
+  ============================ ================
+   A **formatted** header       A plain header
+  ---------------------------- ----------------
+   1                            2
+   3                            4
+  ============================ ================
 
     """
     def convert(self,v):

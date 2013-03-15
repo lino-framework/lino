@@ -130,7 +130,6 @@ Lino cannot yet be used from a Python egg because of the above problems.
 I updated :doc:`/tutorials/quickstart` accordingly.
 
 
-
 Preparing a release for Lino-Welfare
 ------------------------------------
 
@@ -141,4 +140,3 @@ Preparing a release for Lino-Welfare
   So I restored ExtJS's default behaviour.
   That's needed for :class:`lino_welfare.modlib.jobs.models.NewJobsOverview`.
   
-

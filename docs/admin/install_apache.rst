@@ -1,6 +1,8 @@
 Running Lino under Apache
 =========================
  
+.. _mod_wsgi:
+
 Set up Apache and `mod_wsgi`
 ----------------------------
 

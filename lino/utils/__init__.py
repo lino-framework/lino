@@ -52,7 +52,6 @@ import os, sys, locale, types, time
 import datetime
 import re
 import fnmatch
-from dateutil import parser as dateparser
 from decimal import Decimal
 import stat
 
@@ -61,6 +60,8 @@ import stat
 from djangosite.utils import AttrDict, iif, ispure, assert_pure, confirm
 from djangosite.utils import rstgen
 from djangosite.utils import sphinxconf
+from djangosite.utils import i2d
+from djangosite.utils import i2t
 from north.utils import Cycler
 from .code import codefiles, codetime
 
@@ -87,46 +88,6 @@ def d2iso(d):
     "Supports also dates before 1900."
     return "%04d-%02d-%02d" % (d.year, d.month, d.day)
 
-def i2d(i):
-    """
-    Convert `int` to `date`. Examples:
-    
-    >>> i2d(20121224)
-    datetime.date(2012, 12, 24)
-    
-    """
-    d = dateparser.parse(str(i))
-    d = datetime.date(d.year,d.month,d.day)
-    #print i, "->", v
-    return d
-    
-def i2t(s):
-    """
-    Convert `int` to `time`. Examples:
-    
-    >>> i2t(815)
-    datetime.time(8, 15)
-    
-    >>> i2t(1230)
-    datetime.time(12, 30)
-    
-    >>> i2t(12)
-    datetime.time(12, 0)
-    
-    >>> i2t(1)
-    datetime.time(1, 0)
-    
-    """
-    s = str(s)
-    if len(s) == 4:
-        return datetime.time(int(s[:2]),int(s[2:]))
-    if len(s) == 3:
-        return datetime.time(int(s[:1]),int(s[1:]))
-    if len(s) <= 2:
-        return datetime.time(int(s),0)
-    raise ValueError(s)
-
-    
     
 def get_class_attr(cl,name):
     value = getattr(cl,name,None)
@@ -305,7 +266,6 @@ class IncompleteDate:
             self.year or 1900, 
             self.month or 1, 
             self.day or 1)
-        
 
 
 #~ class Warning(Exception): 

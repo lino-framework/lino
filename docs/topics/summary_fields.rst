@@ -1,3 +1,5 @@
+.. _summary_fields:
+
 Summary fields
 ==============
 
