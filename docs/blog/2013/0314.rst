@@ -89,14 +89,56 @@ Maybe I should leave `zip_safe` to `False` because of this.
 Anyway it must remain False as long as the `linoweb.js` file 
 is being read using `__file__`.
 
-Of course I must also use either `package_data` 
-or `include_package_data` so that these files get distributed.
+Of course I must also use either specify `package_data` 
+or `include_package_data` 
+in :srcref:`/lino/setup_info.py`
+so that these files get distributed.
 
-If set to True, this tells setuptools to automatically include 
+`include_package_data` : 
+if set to True, this tells setuptools to automatically include 
 any data files it finds inside your package directories, that 
 are either under CVS or Subversion control, or which are specified 
 by your MANIFEST.in file. 
 
 While working at these things I used the occasion to start splitting 
 off the ExtJS UI into a separate project. 
+
+Once more I removed and replaced the Lino 1.6.2, North 0.0.4 and 
+djangosite 0.0.4 releases at PyPI.
+
+But when I try this on rose, I get::
+
+  Exception: /home/luc/luc/lib/python2.7/site-packages/media does not exist
+  
+The media directory with all these files *is* 
+contained in the `lino-1.6.2.tar.gz` file,
+and the `resource_filename` function *did* 
+return a string with a full path,
+but obviously there is no such directory
+`.../python2.7/site-packages/media`,
+and anyway it should be rather 
+`.../python2.7/site-packages/lino/media`.
+
+Maybe I must use `package_data` instead of `include_package_data`.
+Or maybe it's enough to just move the `media` directory one level down to `lino` (again).
+
+But stop here now!
+A customer is waiting for a Lino-Welfare release, 
+and I decided to have the eggability problem wait 
+now until the customer is satisfied. 
+Lino cannot yet be used from a Python egg because of the above problems.
+I updated :doc:`/tutorials/quickstart` accordingly.
+
+
+
+Preparing a release for Lino-Welfare
+------------------------------------
+
+- Fixed a bug "global name 'PermissionDenied' is not defined" 
+  which occured on demo4
+  
+- Removed the css style `x-grid3-cell-inner` which defined a hard-coded height of 18px.
+  So I restored ExtJS's default behaviour.
+  That's needed for :class:`lino_welfare.modlib.jobs.models.NewJobsOverview`.
+  
 

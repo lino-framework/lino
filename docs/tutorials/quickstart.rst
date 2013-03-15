@@ -3,8 +3,6 @@ Getting started
 
 This document is the first unit of a planned series of tutorial-style 
 lessons for *Lino application developers*.
-The shell examples in this document were made on a Windows machine 
-but should work the same on every platform.
 
 **This document is work in progress.**
 The examples are likely to not work exactly as described when you try them.
@@ -12,26 +10,51 @@ But that's part of the game and you are going to learn from each problem.
 Please report any problems (and joys and questions) which you experienced 
 during this fist lesson.
 
+Installation
+------------
+
 Note that Lino doesn't yet run under Python3, you need Python 2.7 or 2.6.  
+
+You cannot (yet) just do ``pip install lino`` 
+due to some subtle packaging problems (see :doc:`/blog/2013/0314`).
+
+So I suggest to install a development version of Lino and 
+its related projects. 
+Anyway a future Lino application developer should know 
+how to play with these things.
+
+Create a directory (e.g. :file:`~/hgwork`) meant to hold your 
+working copies of version-controlled software projects,
+`cd` to that directory and and do::
+
+  $ hg clone https://lino.googlecode.com/hg/ lino
+  $ hg clone https://django-north.googlecode.com/hg/ django-north
+  $ hg clone https://django-site.googlecode.com/hg/ django-site
   
-If your computer has Python and pip installed, then just type::
-
-  C:\temp> pip install -f http://lino.saffre-rumma.net/dl lino
+(The ``hg`` command is from Mercurial. Run `sudo aptitude install mercurial`  if necessary.)
   
-(That is: 
-tell pip to not use PyPI, and to not care about version numbers.
-Lino is currently in a testing phase and I'm expecting problem 
-reports from everybody who tries this guide.
-It would be overkill to make an official release on PyPI for each change.)
+Then install these projects as editable packages::
 
 
+  $ sudo pip install -e lino
+  $ sudo pip install -e north
+  $ sudo pip install -e django-site
+  
+Run `sudo aptitude install python-pip` if you didn't yet have pip.
+Use `python-virtualenv` if you cannot or don't want to perform system-wide installs.
+  
+You will also need some other dependencies for 
+which the regular pip installation will work::
 
- 
-For other situations and methods of installing Lino, see :doc:`/admin/index`.
+  $ sudo pip install Django unipath Sphinx
 
-We begin by creating a Django project::
+Start your project
+------------------
 
-  C:\temp> django-admin startproject mysite
+We begin by creating a plain Django project::
+
+  $ cd
+  $ django-admin startproject mysite
   
 In case the above command is new to you, 
 we recommend to read
@@ -53,6 +76,8 @@ with the following two lines::
 
   from lino.projects.cosi.settings import *
   SITE = Site(__file__,globals())
+  
+  DEBUG = True
 
 That is, we import settings from Lino Così, 
 one of the out-of-the-box projects included with Lino.
@@ -61,10 +86,15 @@ is just an instance of an unmodified :class:`lino.Site` setting object.
 This second line occurs in this same form in every 
 Lino :xfile:`settings.py` file.
 
+And the `DEBUG = True` is to avoid skip certain beginner problems.
+
+Initial data
+------------
+
 Next we create a database with some content.
 This is just one command to type::
 
-  C:\temp\mysite> python manage.py initdb_demo
+  $ python manage.py initdb_demo
 
 Lino will ask you::
 
@@ -72,7 +102,7 @@ Lino will ask you::
   INFO This is Lino Così 0.1 using Python 2.7.3, Django 1.4.5, django-site 0.0.2, North 0.0.2, Lino 1.6.0, Jinja 2.6, Sphinx 1.1.3, python-dat
   eutil 2.1, OdfPy ODFPY/0.9.6, docutils 0.10, suds 0.4, PyYaml 3.10, Appy 0.8.3 (2013/02/22 15:29).
   INFO Languages: en, de, fr. 16 apps, 37 models, 93 actors.
-  We are going to flush your database (C:\temp\mysite\mysite\default.db).
+  We are going to flush your database (/home/luc/mysite/mysite/default.db).
   Are you sure (y/n) ?
 
 If you answer "y" here, 
@@ -85,15 +115,21 @@ That's what we want, so go on and type ``y``::
   ...
   Installing custom SQL ...
   Installing indexes ...
-  INFO Loading t:\hgwork\lino\lino\ui\fixtures\std.py...
+  INFO Loading /home/luc/hgwork/lino/lino/ui/fixtures/std.py...
   ...
-  INFO Loading t:\hgwork\lino\lino\projects\cosi\fixtures\userman.py...
+  INFO Loading /home/luc/hgwork/lino/lino/projects/cosi/fixtures/userman.py...
   Installed 361 object(s) from 14 fixture(s)
   INFO Stopped manage.py initdb_demo (PID 3780)  
 
+There's a lot to say about what we just did
+(e.g. :ref:`dpy`).
+
+Start the web server
+--------------------
+
 Now we can start the development server::
 
-  C:\temp> python manage.py runserver
+  $ python manage.py runserver
   
 which should output something like::  
   
@@ -111,14 +147,12 @@ the `online demo of Lino Così
 .. image:: quickstart.jpg
   :scale: 80
 
-
 Congratulations for having installed your first Lino application.
-
 
 Note what the development server does when the first web request arrives::
 
   INFO Checking /media URLs
-  INFO Building C:\temp\mysite\mysite\media\cache\js\lino_000_de.js ...
+  INFO Building /home/luc/mysite/mysite/media/cache/js/lino_000_de.js ...
   [27/Feb/2013 10:42:36] "GET / HTTP/1.1" 200 4465
   [27/Feb/2013 10:42:40] "GET /media/cache/js/lino_000_de.js HTTP/1.1" 200 198655
 

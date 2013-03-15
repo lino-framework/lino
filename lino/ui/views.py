@@ -1158,7 +1158,7 @@ class PlainIndex(View):
         a = settings.SITE.get_main_action(user)
         if a is not None:
             if not a.get_view_permission(user.profile):
-                raise PermissionDenied("Action not allowed for %s" % user)
+                raise exceptions.PermissionDenied("Action not allowed for %s" % user)
             ar = a.request(settings.SITE.ui,request,**kw)
             ar.renderer = ui.plain_renderer
             context.update(title=ar.get_title())

@@ -1,4 +1,5 @@
 PACKAGES = [str(n) for n in """
+lino_extjs
 lino
 lino.core
 lino.history

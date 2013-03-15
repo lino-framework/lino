@@ -85,28 +85,6 @@ it will inherit the group of the directory.
 Download Lino
 -------------
 
-
-**To install a released version of Lino**
-
-- Consult :doc:`/releases/index` to see which version you want.
-
-- Download and unpack the corresponding `.tar.gz` file 
-  from http://pypi.python.org/pypi/lino#downloads
-  
-- For example::
-
-    cd ~/snapshots
-    wget http://pypi.python.org/packages/source/l/lino/lino-1.5.0.tar.gz
-    
-
-**To install a development version of Lino**
-
-Go to the :file:`~/snapshots` directory and do::
-
-  hg clone https://lino.googlecode.com/hg/ lino-dev
-  
-  
-Note: don't run Lino's file `setup.py`, it is not necessary and doesn't work.  
 Just set up your :doc:`Python Path <pythonpath>` manually.
 
 Install Django

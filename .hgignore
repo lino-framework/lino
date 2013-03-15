@@ -15,6 +15,7 @@ tmp
 lino/ui/qx/app/build/resource
 */SciTE.session
 */default.db
+docs/media/cache
 lino/tutorials/*/media
 lino/projects/*/media
 lino/sandbox/*/media
