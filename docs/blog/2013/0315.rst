@@ -29,9 +29,10 @@ Als "Probezeit" stehen jetzt nur noch Kandidaturen im Zustand "Probezeit".
 Documentation for Lino-Welfare
 ------------------------------
 
+A little sprint before releasing Lino-Welfare:
 Worked on the documentation at 
 `Lino-Welfare Technical Reference <http://welfare.lino-framework.org/>`__
-which passes now using `tolerate_sphinx_warnings`
+which passes now (and *without* using `tolerate_sphinx_warnings`!).
 
 - changed "autodocs" to "api"
 
