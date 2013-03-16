@@ -44,6 +44,7 @@ from djangosite.dbutils import is_valid_url
 
 from north.dbutils import BabelCharField
 from north.dbutils import run_with_language
+from north.dbutils import lookup_filter
 from north.dbutils import resolve_model, UnresolvedModel
 
 

@@ -1,4 +1,9 @@
 
-Warning, treated as error:
-None:None: WARNING: toctree contains reference to document 'tickets/76' that doesn't have a title: no link will be generated
-
+Exception occurred:
+  File "c:\Python27\lib\site-packages\sphinx\builders\html.py", line 407, in get_doc_context
+    display_toc = (self.env.toc_num_entries[docname] > 1),
+KeyError: 'tickets/76'
+The full traceback has been saved in c:\docume~1\luc\locals~1\temp\sphinx-err-ayunhe.log, if you want to report the issue to the developers.
+Please also report this if it was a user error, so that a better error message can be provided next time.
+Either send bugs to the mailing list at <http://groups.google.com/group/sphinx-dev/>,
+or report them in the tracker at <http://bitbucket.org/birkenfeld/sphinx/issues/>. Thanks!

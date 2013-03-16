@@ -73,3 +73,13 @@ names in :attr:`north.Site.languages`.
 To test the new feature I wrote a tutorial
 :doc:`/tutorials/de_BE/index`.
 
+
+Installing mysql-python in a virtualenv on Debian
+-------------------------------------------------
+
+
+
+
+aptitude install libmysqlclient-dev python-dev
+pip install MySQL-python
+
