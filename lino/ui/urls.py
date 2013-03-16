@@ -110,6 +110,7 @@ def get_media_urls():
     try:
         setup_media_link('lino',source=resource_filename(Requirement.parse("lino"),"lino/media"))
     except DistributionNotFound as e:
+        # if it is not installed using pip, link directly to the source tree
         setup_media_link('lino',source=join(dirname(lino.__file__),'media'))
     
     

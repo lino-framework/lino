@@ -1,3 +1,6 @@
+T:\hgwork\lino\docs\blog\2013\0316.rst:116: ERROR: Unexpected indentation.
+T:\hgwork\lino\docs\blog\2013\0316.rst:117: WARNING: Block quote ends without a blank line; unexpected unindent.
+T:\hgwork\lino\docs\blog\2013\0316.rst:80: ERROR: Unknown target name: "lf".
 T:\hgwork\lino\docs\api\lino.mixins.rst:25: WARNING: unknown document: /tutorial/human/index
 t:\hgwork\lino\lino\modlib\contacts\models.py:docstring of lino.modlib.contacts.models.Person:3: WARNING: unknown document: /tutorial/human/index
 t:\hgwork\lino\lino\modlib\users\models.py:docstring of lino.modlib.users.models.User:3: WARNING: unknown document: /topics/http_auth

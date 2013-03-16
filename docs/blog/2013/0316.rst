@@ -77,7 +77,7 @@ To test the new feature I wrote a tutorial
 Installing mysql-python in a virtualenv on Debian Squeeze
 ---------------------------------------------------------
 
-Release on LF.org, including a move to virtualenv.
+Release on lf_, including a move to virtualenv.
 
 `pip install MySQL-python` didn't work
 
@@ -85,6 +85,35 @@ This was a bit tricky: had to do::
 
   $ aptitude install libmysqlclient-dev python-dev
   
+There wer still several little bugs.
 
+Printing is currently broken on :ref:`lf`. For some reason
+  
 
+Deploying data files
+--------------------
+
+To continue where I stopped :blogref:`20130314`: if was indeed quite 
+close to the result.
+It was enough to just move the `media` directory one level down to `lino` (again).
+And of course `include_package_data = True` in my setup.py.
+
+And one more detail:
+to access the files to be served at `media/lino`, I had replaced the line::
+
+  setup_media_link('lino',source=join(dirname(lino.__file__),'media'))
+    
+by::
+
+  from pkg_resources import Requirement, resource_filename
+  setup_media_link('lino',source=resource_filename(Requirement.parse("lino"),"lino/media"))
+    
+But in fact I can keep both possibilities: 
+if Lino is not installed using pip, fall back to using the source tree:
+        
+  from pkg_resources import Requirement, resource_filename, DistributionNotFound
+  try:
+      setup_media_link('lino',source=resource_filename(Requirement.parse("lino"),"lino/media"))
+  except DistributionNotFound as e:
+      setup_media_link('lino',source=join(dirname(lino.__file__),'media'))
 
