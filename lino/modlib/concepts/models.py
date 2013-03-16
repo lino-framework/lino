@@ -48,7 +48,7 @@ from lino import dd
 
 from lino import mixins
 #~ from lino.utils import join_words
-from north import babel
+from north import dbutils
 #~ from lino.models import get_site_config
 
 #~ from lino.modlib.contacts.utils import Genders
@@ -99,8 +99,8 @@ class Concept(dd.BabelNamed):
         
     def summary_row(self,ar=None):
         if self.abbr:
-            return "%s (%s)" % (babel.babelattr(self,'name'),babel.babelattr(self,'abbr'))
-        return babel.babelattr(self,'name')
+            return "%s (%s)" % (dbutils.babelattr(self,'name'),dbutils.babelattr(self,'abbr'))
+        return dbutils.babelattr(self,'name')
         
         
     

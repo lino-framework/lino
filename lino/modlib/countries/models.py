@@ -32,7 +32,6 @@ from django.utils.translation import pgettext_lazy
 from django.core.exceptions import ValidationError
 
 from lino.utils.choosers import chooser
-from north import babel 
 #~ from lino.utils import dblogger
 
 #~ from lino.utils.instantiator import lookup_or_create
@@ -202,7 +201,8 @@ class City(dd.BabelNamed):
     def get_choices_text(self,request,rpt,field):
         names = [self.name]
         for lng in settings.SITE.BABEL_LANGS:
-            n = getattr(self,'name_'+lng)
+            #~ n = getattr(self,'name_'+lng)
+            n = getattr(self,'name'+lng.suffix)
             if n and not n in names:
                 names.append(n)
                 #~ s += ' / ' + n

@@ -1006,8 +1006,8 @@ class AbstractTable(actors.Actor):
         Not yet stable. Used by print_tx25.py.
         To be combined with the `show` management command.
         """
-        from north import babel
-        babel.set_language(None)
+        from north import dbutils
+        dbutils.set_language(None)
         settings.SITE.startup()
         #~ settings.SITE.ui
         if pk is not None:

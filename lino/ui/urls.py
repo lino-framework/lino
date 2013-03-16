@@ -84,9 +84,10 @@ def get_media_urls():
         else:
             symlink = getattr(os,'symlink',None)
             if symlink is None:
-                raise Exception("Cannot run a production server on an OS that doesn't have symlinks")
+                logger.info("Cannot create symlink %s -> %s.",target,source)
+                #~ raise Exception("Cannot run a production server on an OS that doesn't have symlinks")
             else:
-                logger.info("Setting up symlink %s -> %s.",target,source)
+                #~ logger.info("Setting up symlink %s -> %s.",target,source)
                 symlink(source,target)
         
     if not settings.SITE.extjs_base_url:

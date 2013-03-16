@@ -24,7 +24,7 @@ from django.core.exceptions import ValidationError
 
 from lino import dd
 from lino.utils import i2d
-from north import babel
+from north import dbutils
 from djangosite.utils.test import TestCase
 
 class DemoTest(TestCase):
@@ -34,7 +34,7 @@ class DemoTest(TestCase):
 
 def test_01(self):
     etypes = settings.SITE.modules.events.Type.objects.order_by('id')
-    babel.set_language('de')
+    dbutils.set_language('de')
     lst = [unicode(obj) for obj in etypes]
     expected = ['Breitensport',
      'Radrennen Stra\xdfe',

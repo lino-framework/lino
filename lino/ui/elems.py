@@ -1161,6 +1161,15 @@ class IntegerFieldElement(NumberFieldElement):
     preferred_width = 5
     #~ data_type = 'int' 
 
+class AutoFieldElement(NumberFieldElement):
+    preferred_width = 5
+    #~ data_type = 'int' 
+    
+    def value2num(self,v):
+        return 0
+        
+    
+
 class RequestFieldElement(IntegerFieldElement):
     def value2num(self,v):
         #~ return len(v.data_iterator)
@@ -2217,7 +2226,7 @@ _FIELD2ELEM = (
     (models.BooleanField, BooleanFieldElement),
     #~ (models.ManyToManyField, M2mGridElement),
     (models.ForeignKey, ForeignKeyElement),
-    (models.AutoField, IntegerFieldElement),
+    (models.AutoField, AutoFieldElement),
 )
     
 TRIGGER_BUTTON_WIDTH = 3

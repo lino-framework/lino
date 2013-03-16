@@ -112,7 +112,7 @@ def objects():
     
     raeren = City.objects.get(name__exact='Raeren')
     person = Instantiator("partners.Person","first_name last_name",
-                country='BE',language=settings.SITE.default_language(),
+                country='BE',language=settings.SITE.DEFAULT_LANGUAGE.django_code,
                 city=raeren,zip_code='4730').build
     yield person('Erich',    'Emonts',gender=mixins.Genders.male)
     yield person('Erwin',    'Emontspool',gender=mixins.Genders.male)

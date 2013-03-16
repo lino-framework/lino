@@ -25,10 +25,9 @@ from django.core.exceptions import ValidationError
 #~ from django.core.exceptions import MultipleObjectsReturned
 
 
-from north import babel
-
 from lino.core import fields
 from lino.core import signals
+from lino.core import dbutils
 from djangosite.dbutils import obj2str
 from lino.utils.xmlgen import html as xghtml
 E = xghtml.E
@@ -296,8 +295,8 @@ class Model(models.Model):
             
         if isinstance(lookup_field,basestring):
             lookup_field = model._meta.get_field(lookup_field)
-        if isinstance(lookup_field,babel.BabelCharField):
-            flt  = babel.lookup_filter(lookup_field.name,value,**known_values)
+        if isinstance(lookup_field,dbutils.BabelCharField):
+            flt  = dbutils.lookup_filter(lookup_field.name,value,**known_values)
         else:
             if isinstance(lookup_field,models.CharField):
                 fkw[lookup_field.name+'__iexact'] = value

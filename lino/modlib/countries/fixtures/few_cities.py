@@ -22,10 +22,10 @@ logger = logging.getLogger(__name__)
 
 from django.core.exceptions import MultipleObjectsReturned
 from lino.utils import dblogger
-from north import babel
+from north import dbutils
 from lino.core.dbutils import resolve_model
 from lino.utils.instantiator import Instantiator
-from north.babel import babel_values
+from north.dbutils import babel_values
 
 
 from lino import dd
@@ -43,7 +43,7 @@ def objects():
         #~ kw.update()
         #~ if name:
             #~ kw.update(name=name)
-        flt = babel.lookup_filter('name',name,country__isocode=country_id,**kw)
+        flt = dbutils.lookup_filter('name',name,country__isocode=country_id,**kw)
         try:
             return City.objects.exclude(type__in=[CityTypes.county,CityTypes.province]).get(flt)
             #~ return City.objects.exclude(type=CityTypes.county).get(

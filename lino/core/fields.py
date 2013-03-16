@@ -70,7 +70,7 @@ class RichTextField(models.TextField):
 
 
 
-from north.babel import contribute_to_class
+from north.dbutils import contribute_to_class
 
 class BabelTextField(RichTextField):
     """

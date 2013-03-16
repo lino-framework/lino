@@ -136,7 +136,7 @@ Lino consists of different parts:
   
 - `django-north <https://code.google.com/p/django-north/>`__
   (split off from main project in March 2013)
-  provides python dumps, babel fields and data migration.
+  provides python dumps, multilingual database content and data migration.
 
 - A collection of reusable Django apps and 
   out-of-the-box demo applications

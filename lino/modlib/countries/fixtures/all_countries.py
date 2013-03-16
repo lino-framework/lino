@@ -39,7 +39,7 @@ from xml.dom import minidom
 
 from lino.utils import ucsv
 from lino.utils import dblogger as logger
-from north.babel import babel_values
+from north.dbutils import babel_values
 from lino.modlib.countries.models import Country
 
 TABLE2 = """
@@ -114,8 +114,8 @@ def objects():
             n += 1
             yield Country(**kw)
         else:
-            logger.debug("%r : no name for default babel language %s",
-                code,settings.SITE.DEFAULT_LANGUAGE)
+            logger.debug("%r : no name for default site language %s",
+                code,settings.SITE.DEFAULT_LANGUAGE.django_code)
             
     for ln in TABLE2.splitlines():
         ln = ln.strip()

@@ -1,17 +1,4 @@
-T:\hgwork\lino\docs\api\lino.modlib.school.rst:7: WARNING: autodoc can't import/find module 'lino.modlib.school.models', it reported error: "resolve_model('contacts.Person',app_label=u'contacts') found None (settings settings)", please check your spelling and sys.path
-T:\hgwork\lino\docs\api\lino.modlib.school.fixtures.rst:7: WARNING: autodoc can't import/find module 'lino.modlib.school.fixtures.demo', it reported error: "resolve_model('contacts.Person',app_label=u'contacts') found None (settings settings)", please check your spelling and sys.path
-T:\hgwork\lino\docs\api\lino.ui.rst:56: WARNING: autodoc can't import/find module 'lino.ui.urls', it reported error: "Cannot run a production server on an OS that doesn't have symlinks", please check your spelling and sys.path
+
+Warning, treated as error:
 None:None: WARNING: toctree contains reference to document 'tickets/76' that doesn't have a title: no link will be generated
-None:None: WARNING: toctree contains reference to document 'tickets/76' that doesn't have a title: no link will be generated
-None:None: WARNING: toctree contains reference to document 'tickets/76' that doesn't have a title: no link will be generated
-None:None: WARNING: toctree contains reference to document 'tickets/76' that doesn't have a title: no link will be generated
-t:\hgwork\lino\lino\ui\__init__.py:docstring of lino.ui.Site.django_admin_prefix:1: WARNING: unknown document: /ticket/70
-t:\hgwork\lino\lino\ui\__init__.py:docstring of lino.ui.Site.webdav_url:7: WARNING: term not in glossary: webdav
-t:\hgwork\lino\lino\ui\__init__.py:docstring of lino.ui.Site.webdav_url:7: WARNING: term not in glossary: runserver
-None:None: WARNING: toctree contains reference to document 'tickets/76' that doesn't have a title: no link will be generated
-None:None: WARNING: toctree contains reference to document 'tickets/76' that doesn't have a title: no link will be generated
-None:None: WARNING: toctree contains reference to document 'tickets/76' that doesn't have a title: no link will be generated
-None:None: WARNING: toctree contains reference to document 'tickets/76' that doesn't have a title: no link will be generated
-None:None: WARNING: toctree contains reference to document 'tickets/76' that doesn't have a title: no link will be generated
-None:None: WARNING: toctree contains reference to document 'tickets/76' that doesn't have a title: no link will be generated
-None:None: WARNING: toctree contains reference to document 'tickets/76' that doesn't have a title: no link will be generated
+

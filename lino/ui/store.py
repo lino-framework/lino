@@ -53,7 +53,6 @@ from lino import dd
 #~ from lino.modlib.properties import models as properties
 from lino.utils import choosers
 from lino.utils import curry
-from north import babel
 from lino.utils import iif
 from lino.core.requests import PhantomRow
 from lino.utils import IncompleteDate
@@ -666,7 +665,7 @@ class DateStoreField(StoreField):
         """
         Return a plain textual representation of this value as a unicode string.
         """
-        return babel.dtos(v)
+        return dd.dtos(v)
         #~ return settings.SITE.format_date(v)
         #~ return force_unicode(v)
         

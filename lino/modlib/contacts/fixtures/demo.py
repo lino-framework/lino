@@ -21,7 +21,7 @@ from __future__ import unicode_literals
 
 from django.conf import settings
 from lino.utils.instantiator import Instantiator
-#~ from north.babel import default_language
+#~ from north.dbutils import default_language
 #~ from lino.modlib.contacts.utils import Gender
 from lino import mixins
 from lino.utils import dblogger
@@ -116,7 +116,7 @@ def objects():
     
     raeren = City.objects.get(name__exact='Raeren')
     person = Instantiator("contacts.Person","first_name last_name",
-                country='BE',language=settings.SITE.default_language(),
+                country='BE',language=settings.SITE.DEFAULT_LANGUAGE.django_code,
                 city=raeren,zip_code='4730').build
     yield person('Erich',    'Emonts',gender=mixins.Genders.male)
     yield person('Erwin',    'Emontspool',gender=mixins.Genders.male)

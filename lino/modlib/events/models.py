@@ -27,7 +27,7 @@ from django.conf import settings
 from django.utils.translation import ugettext_lazy as _
 
 from lino.utils.xmlgen.html import E
-from north import babel
+from north import dbutils
 from lino import mixins
 from lino import dd
 
@@ -103,7 +103,7 @@ class Events(dd.Table):
     
     @dd.displayfield(_("When"))
     def when(self,obj,ar):
-        return babel.dtosl(obj.date)
+        return dbutils.dtosl(obj.date)
 
     @dd.displayfield(_("Where"))
     def where(self,obj,ar):

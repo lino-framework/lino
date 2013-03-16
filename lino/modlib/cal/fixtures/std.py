@@ -30,7 +30,7 @@ from django.utils.translation import ugettext as _
 from lino.utils import i2d
 from lino.utils.instantiator import Instantiator
 from lino.core.dbutils import resolve_model
-from north.babel import babel_values
+from north.dbutils import babel_values
 
 
 

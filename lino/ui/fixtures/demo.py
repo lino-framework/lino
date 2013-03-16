@@ -22,13 +22,13 @@ import datetime
 from django.conf import settings
 from lino import dd
 from lino.utils.instantiator import Instantiator
-from north import babel
 
 def root_user(lang,**kw):
     #~ kw.update(profile='900') # UserProfiles.admin) 
     #~ print 20130219, dd.UserProfiles.items()
     kw.update(profile=dd.UserProfiles.admin) 
     kw.update(email='root@example.com') 
+    lang = lang.django_code
     kw.update(language=lang) 
     if lang == 'de':
         #~ kw.update(first_name="Rudi",last_name=u"Rutté")
@@ -49,7 +49,7 @@ def root_user(lang,**kw):
 def objects():
     User = settings.SITE.user_model
     if User is not None:
-        for lang in settings.SITE.AVAILABLE_LANGUAGES:
+        for lang in settings.SITE.languages:
             kw = root_user(lang)
             if kw:
                 u = User(**kw)

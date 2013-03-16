@@ -29,7 +29,7 @@ from lino.utils import AttrDict
 from lino.utils.xmlgen import html as xghtml
 
 from lino.utils.code import codetime, codefiles, SourceFile
-from north import babel
+from north import dbutils
 from lino import mixins
 from lino import dd
 
@@ -302,7 +302,7 @@ class About(mixins.EmptyTable):
                 dt = datetime.datetime.fromtimestamp(dt)
                 #~ raise ValueError("Expected float, go %r" % dt)
             return unicode(_("%(date)s at %(time)s")) % dict(
-              date=babel.dtosl(dt.date()),
+              date=dbutils.dtosl(dt.date()),
               time=dt.time())
             
         items = []

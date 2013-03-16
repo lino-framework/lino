@@ -75,7 +75,6 @@ from lino.ui import base
 from lino.core import actors
     
 from lino.utils import choosers
-from north import babel
 from lino.utils.jsgen import py2js, js_code, id2js
 from lino.utils.xmlgen import html as xghtml
 from lino.utils.config import make_dummy_messages_file
@@ -248,11 +247,12 @@ class ExtUI(base.UI):
         if isinstance(de,fields.RemoteField):
             return self.create_field_element(lh,de,**kw)
         if isinstance(de,models.Field):
-            if isinstance(de,(babel.BabelCharField,babel.BabelTextField)):
+            if isinstance(de,(dd.BabelCharField,dd.BabelTextField)):
                 if len(settings.SITE.BABEL_LANGS) > 0:
                     elems = [ self.create_field_element(lh,de,**kw) ]
                     for lang in settings.SITE.BABEL_LANGS:
-                        bf = lh.get_data_elem(name+'_'+lang)
+                        #~ bf = lh.get_data_elem(name+'_'+lang)
+                        bf = lh.get_data_elem(name+lang.suffix)
                         elems.append(self.create_field_element(lh,bf,**kw))
                     return elems
             return self.create_field_element(lh,de,**kw)

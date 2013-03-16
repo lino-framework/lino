@@ -28,7 +28,6 @@ from django.core.mail import EmailMessage
 import lino
 from lino.utils import AttrDict
 from lino.utils import curry
-from north import babel
 #~ from lino.utils import jsgen
 #~ from lino.utils import Warning
 from lino.utils.xmlgen import html as xghtml
@@ -80,7 +79,7 @@ class EmptyTableRow(VirtualRow):
         return unicode(self._table.label)
         
     def get_print_language(self,pm):
-        return settings.SITE.DEFAULT_LANGUAGE
+        return settings.SITE.DEFAULT_LANGUAGE.django_code
         
     def get_templates_group(self):
         return self._table.app_label + '/' + self._table.__name__

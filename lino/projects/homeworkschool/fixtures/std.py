@@ -19,7 +19,7 @@ from django.utils.translation import ugettext_lazy as _
 
 
 from django.conf import settings
-from north.babel import babel_values, babelitem
+from north.dbutils import babel_values
 
 
 def objects():

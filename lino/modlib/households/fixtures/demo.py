@@ -27,7 +27,7 @@ from django.utils.translation import ugettext_lazy as _
 
 from django.db import models
 from django.conf import settings
-from north.babel import babel_values
+from north.dbutils import babel_values
 from lino.utils import Cycler
 #~ from lino.modlib.contacts.utils import Gender
 from lino import mixins

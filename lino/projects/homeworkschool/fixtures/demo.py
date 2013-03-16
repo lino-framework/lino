@@ -19,9 +19,6 @@ from lino.utils.instantiator import Instantiator, i2d
 from django.utils.translation import ugettext_lazy as _
 
 
-#~ from django.conf import settings
-#~ from lino.utils.babel import babel_values, babelitem
-
 
 def objects():
    

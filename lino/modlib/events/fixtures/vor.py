@@ -17,7 +17,7 @@ from __future__ import unicode_literals
 
 from lino import dd
 from lino.utils import i2d
-from north import babel
+from north import dbutils
 Country = dd.resolve_model("countries.Country")
 City = dd.resolve_model("countries.City")
 Type = dd.resolve_model("events.Type")
@@ -29,7 +29,7 @@ Feature = dd.resolve_model("events.Feature")
 from lino.modlib.countries.models import CityTypes
 
 def get_city(name):
-    flt = babel.lookup_filter('name',name)
+    flt = dbutils.lookup_filter('name',name)
     try:
         return City.objects.exclude(
             type__in=[CityTypes.county,CityTypes.province]).get(flt)

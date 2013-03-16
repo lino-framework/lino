@@ -34,7 +34,6 @@ from django.core.exceptions import ValidationError
 
 #~ from lino import dd
 #~ from lino.utils import i2d
-#~ from north import babel
 #~ from lino.core.dbutils import resolve_model
 #Companies = resolve_model('contacts.Companies')
 from djangosite.utils.test import TestCase

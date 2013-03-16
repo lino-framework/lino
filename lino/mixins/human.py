@@ -45,14 +45,12 @@ from lino.core import model
 def get_salutation(gender,nominative=False):
     """
     Returns "Mr" or "Mrs" or a translation thereof, 
-    depending on the gender and the current babel language.
+    depending on the gender and the current language.
     
     Note that the English abbreviations 
     `Mr <http://en.wikipedia.org/wiki/Mr.>`_ and 
     `Mrs <http://en.wikipedia.org/wiki/Mrs.>`_
-    are written either with (AE) or 
-    without (BE) a dot. Since the babel module doesn't yet allow 
-    to differentiate dialects, we opted for the british version.
+    are written either with (AE) or without (BE) a dot. 
     
     The optional keyword argument `nominative` used only when babel language
     is "de": specifying ``nominative=True`` will return "Herr" instead of default 

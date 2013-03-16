@@ -34,7 +34,7 @@ from django.utils.translation import ugettext_lazy as _
 from django.template.loader import BaseLoader
 from django.template.base import TemplateDoesNotExist
 
-from north import babel
+from north import dbutils
 from lino.utils import iif
 from lino.utils.xmlgen import html as xghtml
 E = xghtml.E
@@ -108,8 +108,8 @@ def site_setup(sender,**kw):
             # LINO=settings.SITE,
             #~ ui=settings.SITE.ui,
             site=self,
-            dtos=babel.dtos,
-            dtosl=babel.dtosl,
+            dtos=dbutils.dtos,
+            dtosl=dbutils.dtosl,
             as_ul=as_ul,
             as_table=as_table,
             iif=iif,

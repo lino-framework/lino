@@ -1,0 +1,75 @@
+==================================
+20130316 (Saturday, 16 March 2013)
+==================================
+
+Ein letztes Wort vor dem Release...
+-----------------------------------
+
+Das oben erwähnte Wort "Probezeit" ist ja neu, also muss ich mich 
+nochmal um Übersetzung kümmern. 
+
+Die Befehle dazu sind momentan noch in der `Makefile`, 
+es sind ungefähr die letzten, die ich noch nicht durch 
+fabric ersetzt habe.
+
+Aber wenn ich mich schon da dran setze, will ich auch 
+Nägel mit Köpfen zu machen und schau ich mir zunächst 
+einmal python-babel etwas genauer an.
+
+Weil ich ja auch das Problem mit dem selbstgewurstelten 
+Message extraction aus der linoweb.js habe.
+
+Nach 2 Seiten weiß ich: jawohl, ich will jetzt sofort auf Babel 
+umsteigen.
+Und nach der `dritten Seite 
+<http://babel.edgewall.org/wiki/Documentation/dates.html>`_
+weiß ich: wenn ich schon vor einigen Tagen umgestiegen wäre, hätte ich 
+mir einige Stunden Arbeit ersparen können.
+Da steht doch tatsächlich genau das dokumentiert, 
+was ich vor ein paar Tagen (:blogref:`20130311`) 
+programmiert habe:
+
+>>> import datetime
+>>> from babel.dates import format_date
+>>> d = datetime.date(2013,3,15)
+>>> format_date(d, format='full', locale='de')
+u'Freitag, 15. M\xe4rz 2013'
+>>> format_date(d, format='full', locale='en_US')
+u'Friday, March 15, 2013'
+>>> format_date(d, format='full', locale='en_GB')
+u'Friday, 15 March 2013'
+
+I felt a bit ashamed for having reinvented a wheel 
+which is obviously rather well known...
+
+I found some relief when I saw that it is a common problem.
+Babel uses "en_US" to designate Americal English while 
+Django uses "en-us". 
+
+>>> format_date(d, format='full', locale='en-us')
+Traceback (most recent call last):
+...
+ValueError: expected only letters, got 'en-us'
+
+That's a historic trace of the fact that people are constantly reinventing wheels.
+
+Fortunately I'm obviously not the first who had this problem,
+and Django already has a solution, the `to_locale()` function:
+
+>>> from django.utils.translation import to_locale
+>>> format_date(d, format='full', locale=to_locale('en-us'))
+u'Friday, March 15, 2013'
+>>> to_locale('de')
+'de'
+>>> to_locale('de-be')
+'de_BE'
+
+After these experiments (BTW this blog page is being 
+doctested while I'm writing it) I start to feel ready 
+for another invisible but important change: 
+support for locale names instead of simple language 
+names in :attr:`north.Site.languages`.
+
+To test the new feature I wrote a tutorial
+:doc:`/tutorials/de_BE/index`.
+

@@ -16,7 +16,7 @@
 from django.utils.translation import ugettext as _
 
 from lino.utils.instantiator import Instantiator
-from north.babel import babel_values
+from north.dbutils import babel_values
 from lino.modlib.properties import models as properties
 
 #~ def objects():

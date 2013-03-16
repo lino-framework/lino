@@ -69,7 +69,6 @@ from lino.core import tables
 #~ from lino.core.dbutils import full_model_name
     
 from lino.utils import choosers
-from north import babel
 from lino.core import choicelists
 from lino.core import menus
 from lino.utils import jsgen
@@ -761,15 +760,15 @@ tinymce.init({
             count = 0
             langs = settings.SITE.AVAILABLE_LANGUAGES
             for lang in langs:
-                babel.set_language(lang)
+                dd.set_language(lang)
                 for profile in dd.UserProfiles.objects():
                     count += self.build_js_cache_for_profile(profile,force)
             #~ qs = users.User.objects.exclude(profile='')
             #~ for lang in langs:
-                #~ babel.set_language(lang)
+                #~ dd.set_language(lang)
                 #~ for user in qs:
                     #~ count += self.build_js_cache_for_user(user,force)
-            babel.set_language(None)
+            dd.set_language(None)
                 
             logger.info("%d lino*.js files have been built in %s seconds.",
                 count,time.time()-started)

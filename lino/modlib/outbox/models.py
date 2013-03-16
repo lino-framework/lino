@@ -41,13 +41,12 @@ from lino import mixins
 from lino import dd
 from lino.core import actions
 
-#~ from lino.utils.babel import default_language
 #~ from lino import reports
 #~ from lino import layouts
 #~ from lino.utils import perms
 from lino.utils.restify import restify
 #~ from lino.utils import printable
-from north import babel
+from north import dbutils
 #~ from lino.utils import call_optional_super
 #~ from lino import choices_method, simple_choices_method
 
@@ -228,10 +227,6 @@ class Mailable(dd.Model):
     
     #~ post_as_attachment = models.BooleanField(_("Post as attachment"),default=False)
         
-        
-    #~ def get_print_language(self,pm):
-        #~ return babel.DEFAULT_LANGUAGE
-        
     def get_mailable_type(self):  
         raise NotImplementedError()
         #~ return self.type
@@ -251,8 +246,8 @@ class Mailable(dd.Model):
         tpl = CheetahTemplate(file(fn).read().decode('utf-8'))
         #~ tpl.self = elem # doesn't work because Cheetah adds itself a name 'self' 
         tpl.instance = self
-        tpl.dtosl = babel.dtosl
-        tpl.dtos = babel.dtos
+        tpl.dtosl = dbutils.dtosl
+        tpl.dtos = dbutils.dtos
         tpl.ar = ar
         return unicode(tpl)
         
@@ -267,8 +262,8 @@ class Mailable(dd.Model):
         tpl = settings.SITE.jinja_env.get_template(name)
         context = dict(
           instance = self,
-          dtosl = babel.dtosl,
-          dtos = babel.dtos,
+          dtosl = dbutils.dtosl,
+          dtos = dbutils.dtos,
           ar = ar,
         )
         return tpl.render(**context)
@@ -282,8 +277,8 @@ class Mailable(dd.Model):
         #~ tpl = CheetahTemplate(file(fn).read().decode('utf-8'))
         #~ # tpl.self = elem # doesn't work because Cheetah adds itself a name 'self' 
         #~ tpl.instance = self
-        #~ tpl.dtosl = babel.dtosl
-        #~ tpl.dtos = babel.dtos
+        #~ tpl.dtosl = dbutils.dtosl
+        #~ tpl.dtos = dbutils.dtos
         #~ tpl.ar = ar
         #~ return unicode(tpl)
         

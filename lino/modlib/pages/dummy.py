@@ -28,7 +28,7 @@ from django.conf import settings
 from django.db import models
 
 from lino.utils import AttrDict
-from north import babel
+from north import dbutils
 from lino.utils import iif
 from lino.utils.xmlgen import html as xghtml
 from lino.core import web
@@ -77,14 +77,14 @@ def lookup(ref,default=models.NOT_PROVIDED):
     
 def render_node(request,node,template_name='node.html',**context):
     context.update(node=node)
-    heading = babel.babelattr(node,'title','')
+    heading = dbutils.babelattr(node,'title','')
     if heading:
         context.update(heading=heading)
         context.update(title=heading + ' &middot; ' + settings.SITE.title)
     else:
         context.update(heading=settings.SITE.title)
         context.update(title=settings.SITE.title)
-    body=babel.babelattr(node,'body','')
+    body=dbutils.babelattr(node,'body','')
     if not node.raw_html:
         body = restify(doc2rst(body))
     #~ logger.info("20121227 render_node %s -> body is %s",node,body)

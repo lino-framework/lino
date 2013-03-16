@@ -41,8 +41,9 @@ from django.template.loader import get_template
 from django.template import RequestContext
 
 from django.utils.translation import ugettext as _
+from django.utils.translation import get_language
 #~ from django.utils import simplejson as json
-from django.utils import translation
+#~ from django.utils import translation
 
 from django.contrib.contenttypes.models import ContentType
 from django.contrib.contenttypes import generic
@@ -70,7 +71,6 @@ from lino.ui import base
 from lino.core import actors
     
 from lino.utils import choosers
-from north import babel
 from lino.core import choicelists
 from lino.core import menus
 from lino.utils import jsgen
@@ -100,10 +100,10 @@ from . import views
 
 def add_user_language(kw,ar):
     u = ar.get_user()
-    lang = babel.get_language()
+    lang = get_language()
     if u and u.language and lang != u.language:
         kw.setdefault(ext_requests.URL_PARAM_USER_LANGUAGE,lang)
-    elif lang != settings.SITE.DEFAULT_LANGUAGE:
+    elif lang != settings.SITE.DEFAULT_LANGUAGE.django_code:
         kw.setdefault(ext_requests.URL_PARAM_USER_LANGUAGE,lang)
 
 

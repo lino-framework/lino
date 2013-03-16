@@ -38,7 +38,7 @@ from lino.core.dbutils import app_labels
 from lino.utils import confirm, curry
 from lino.utils.config import find_config_file
 from lino.utils import rstgen 
-from north import babel
+from north import dbutils
 from lino.utils.restify import doc2rst, abstract
 from lino.core import dbtables
 
@@ -80,15 +80,14 @@ def model_overview(model):
     #~ headers.append("help text")
     #~ formatters.append(lambda f: f.help_text)
     def verbose_name(f):
-        babel.set_language(babel.DEFAULT_LANGUAGE)
+        settings.SITE.set_language(None)
         label_en = force_unicode(_(f.verbose_name))
         babel_labels = []
-        for lng in babel.AVAILABLE_LANGUAGES:
-            if lng != babel.DEFAULT_LANGUAGE:
-                babel.set_language(lng)
-                label = force_unicode(_(f.verbose_name))
-                if label != label_en:
-                    babel_labels.append(label)
+        for lng in settings.SITE.languages[1:]:
+            dbutils.set_language(lng.django_code)
+            label = force_unicode(_(f.verbose_name))
+            if label != label_en:
+                babel_labels.append(label)
         if babel_labels:
             label_en += " (%s)" % ",".join(babel_labels)
         return label_en

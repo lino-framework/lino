@@ -16,7 +16,7 @@ from __future__ import unicode_literals
 
 from lino.utils.instantiator import Instantiator
 
-from north.babel import babel_values
+from north.dbutils import babel_values
 
 
 def objects():

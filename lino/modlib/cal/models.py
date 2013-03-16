@@ -46,8 +46,8 @@ from lino.modlib.cal.utils import \
     DurationUnits, setkw, dt2kw, \
     Weekdays, AccessClasses, CalendarAction
 
-from north import babel
-from north.babel import dtosl
+from north import dbutils
+from north.dbutils import dtosl
 
 
 #~ from lino.modlib.contacts import models as contacts
@@ -126,7 +126,7 @@ class RejectInvitation(dd.ChangeStateAction,dd.NotifyingAction):
     
     def get_notify_subject(self,ar,obj):
         return _("Cannot accept invitation %(day)s at %(time)s") % dict(
-           day=babel.dtos(obj.event.start_date),
+           day=dbutils.dtos(obj.event.start_date),
            time=str(obj.event.start_time))
 
   
@@ -583,7 +583,7 @@ class EventGenerator(mixins.UserAuthored):
     def save(self,*args,**kw):
         super(EventGenerator,self).save(*args,**kw)
         if self.user is not None:
-            babel.run_with_language(self.user.language,self.update_reminders)
+            dbutils.run_with_language(self.user.language,self.update_reminders)
   
     def update_cal_rset(self):
         return self.exam_policy
@@ -647,7 +647,7 @@ class EventGenerator(mixins.UserAuthored):
         
         msg = dd.obj2str(self)
         msg += ", qs=" + str([e.auto_type for e in qs])
-        msg += ", wanted=" + str([babel.dtos(e.start_date) for e in wanted.values()])
+        msg += ", wanted=" + str([dbutils.dtos(e.start_date) for e in wanted.values()])
         #~ logger.info('20120707 ' + msg)
         
         for e in qs:
@@ -834,7 +834,7 @@ class StartedSummaryDescription(Started):
         if self.summary:
             html += '&nbsp;: %s' % cgi.escape(force_unicode(self.summary))
             #~ html += ui.href_to(self,force_unicode(self.summary))
-        html += _(" on ") + babel.dtos(self.start_date)
+        html += _(" on ") + dbutils.dtos(self.start_date)
         return html
         
 
@@ -985,7 +985,7 @@ Whether this is private, public or between.""")) # iCal:CLASS
         #~ html = contacts.PartnerDocument.summary_row(self,ui,rr,**kw)
         #~ if self.summary:
             #~ html += '&nbsp;: %s' % cgi.escape(force_unicode(self.summary))
-        #~ html += _(" on ") + babel.dtos(self.start_date)
+        #~ html += _(" on ") + dbutils.dtos(self.start_date)
         #~ return html
         
     def summary_row(self,ar,**kw):
@@ -1001,7 +1001,7 @@ Whether this is private, public or between.""")) # iCal:CLASS
         if self.summary:
             html += '&nbsp;: %s' % cgi.escape(force_unicode(self.summary))
             #~ html += ui.href_to(self,force_unicode(self.summary))
-        #~ html += _(" on ") + babel.dtos(self.start_date)
+        #~ html += _(" on ") + dbutils.dtos(self.start_date)
         #~ if self.owner and not self.owner.__class__.__name__ in ('Person','Company'):
             #~ html += " (%s)" % reports.summary_row(self.owner,ui,rr)
         if self.project:
@@ -2179,7 +2179,7 @@ if settings.SITE.use_extensible:
             
         @dd.displayfield()
         def babel_name(cls,self,ar):
-            return babel.babelattr(self,'name')
+            return dbutils.babelattr(self,'name')
             
         @dd.virtualfield(models.BooleanField(_('Hidden')))
         def is_hidden(cls,self,ar):

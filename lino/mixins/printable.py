@@ -43,7 +43,7 @@ import lino
 from lino.core import actions
 from lino.core import fields
 from lino.utils import iif, moneyfmt
-from north import babel 
+from north import dbutils 
 #~ from lino.utils import call_optional_super
 from lino.utils.choosers import chooser
 from lino.utils.appy_pod import Renderer
@@ -245,7 +245,7 @@ class SimpleBuildMethod(BuildMethod):
                 elem.__class__.__name__,tpls))
         tpl_leaf = tpls[0]
         lang = elem.get_print_language(self)
-        if lang != settings.SITE.DEFAULT_LANGUAGE:
+        if lang != settings.SITE.DEFAULT_LANGUAGE.django_code:
             name = tpl_leaf[:-len(self.template_ext)] + "_" + lang + self.template_ext
             from lino.utils.config import find_config_file
             if find_config_file(name,self.get_group(elem)):
@@ -294,12 +294,12 @@ class AppyBuildMethod(SimpleBuildMethod):
         #~ from appy.pod.renderer import Renderer
         #~ renderer = None
         context = dict(self=elem,
-            dtos=babel.dtos,
-            dtosl=babel.dtosl,
-            dtomy=babel.dtomy,
-            babelattr=babel.babelattr,
-            babelitem=babel.babelitem,
-            tr=babel.babelitem,
+            dtos=dbutils.dtos,
+            dtosl=dbutils.dtosl,
+            dtomy=dbutils.dtomy,
+            babelattr=dbutils.babelattr,
+            babelitem=dbutils.babelitem,
+            tr=dbutils.babelitem,
             iif=iif,
             mtos=decfmt,
             settings=settings,
@@ -313,12 +313,12 @@ class AppyBuildMethod(SimpleBuildMethod):
         lang = str(elem.get_print_language(self))
         logger.info(u"appy.pod render %s -> %s (language=%r,params=%s",
             tpl,target,lang,settings.SITE.appy_params)
-        #~ savelang = babel.get_language()
-        #~ babel.set_language(lang)
+        #~ savelang = dbutils.get_language()
+        #~ dbutils.set_language(lang)
         def f():
             Renderer(tpl, context, target,**settings.SITE.appy_params).run()
-        babel.run_with_language(lang,f)
-        #~ babel.set_language(savelang)
+        dbutils.run_with_language(lang,f)
+        #~ dbutils.set_language(savelang)
         return os.path.getmtime(target)
         
 
@@ -711,7 +711,7 @@ class Printable(object):
     """
   
     def get_print_language(self,pm):
-        return settings.SITE.DEFAULT_LANGUAGE
+        return settings.SITE.DEFAULT_LANGUAGE.django_code
         
     def get_templates_group(self):
         return model_group(self)

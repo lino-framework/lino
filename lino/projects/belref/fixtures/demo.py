@@ -20,7 +20,7 @@ abbrRE = re.compile("^(.*)\s*\((.*)\)\s*",re.DOTALL)
 
 
 
-from north import babel
+from north import dbutils
 
 from lino import dd
 Concept = dd.resolve_model('concepts.Concept')
@@ -43,8 +43,8 @@ def C(en,de,fr='',nl='',jargon=None,obsoletes=None,**kw):
             else:
                 name[lang] = t
                 #~ kw['name_'+lang] = t
-    kw.update(babel.babel_values('name',**name))
-    kw.update(babel.babel_values('abbr',**abbr))
+    kw.update(dbutils.babel_values('name',**name))
+    kw.update(dbutils.babel_values('abbr',**abbr))
     obj = Concept(**kw)
     yield obj
     if obsoletes is not None:

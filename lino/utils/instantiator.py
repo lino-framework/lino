@@ -30,7 +30,6 @@ from django.contrib.contenttypes.models import ContentType
 from lino.core.dbutils import resolve_model, UnresolvedModel
 
 from lino.utils import i2d # for backward compatibility of .py fixtures
-from north import babel
 #~ from lino.core import fields
 #~ from lino.core import signals
 from lino.core.dbutils import obj2str

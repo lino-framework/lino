@@ -41,6 +41,9 @@ from djangosite.dbutils import sorted_models_list
 from djangosite.dbutils import is_devserver
 from djangosite.dbutils import is_valid_email
 from djangosite.dbutils import is_valid_url
+
+from north.dbutils import BabelCharField
+from north.dbutils import run_with_language
 from north.dbutils import resolve_model, UnresolvedModel
 
 

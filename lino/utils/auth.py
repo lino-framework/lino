@@ -590,7 +590,7 @@ def on_login(request,user):
     request.user = user
     
         
-    if len(settings.SITE.AVAILABLE_LANGUAGES) > 1:
+    if len(settings.SITE.languages) > 1:
     #~ if settings.SITE.languages != None and len(settings.SITE.languages) > 1:
         
         #~ lang = settings.SITE.override_user_language() or request.user.language
@@ -618,7 +618,7 @@ def on_login(request,user):
         #~ request.requesting_panel = None
         #~ return
         
-    if len(settings.SITE.AVAILABLE_LANGUAGES) > 1:
+    if len(settings.SITE.languages) > 1:
     #~ if settings.SITE.languages != None and len(settings.SITE.languages) > 1:
       
         ul = rqdata.get(constants.URL_PARAM_USER_LANGUAGE,None)

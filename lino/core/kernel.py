@@ -61,7 +61,7 @@ from lino.utils import choosers
 #~ from lino.utils import codetime
 from lino.utils import curry
 #~ from lino.models import get_site_config
-from north import babel
+#~ from north import babel
 from lino.utils import AttrDict
 #~ from lino.core import perms
 
@@ -111,7 +111,7 @@ def startup_site(self):
     """
     Activate the site's default language
     """
-    babel.set_language(None)
+    dd.set_language(None)
             
     #~ logger.info(lino.welcome_text())
     #~ raise Exception("20111229")
@@ -255,7 +255,7 @@ def startup_site(self):
     dd.post_analyze.send(self,models_list=models_list)
     
     logger.info("Languages: %s. %d apps, %d models, %s actors.",
-        ', '.join(self.AVAILABLE_LANGUAGES),
+        ', '.join([li.django_code for li in self.languages]),
         len(self.modules),
         len(models_list),
         len(actors.actors_list))

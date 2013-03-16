@@ -28,7 +28,7 @@ from decimal import Decimal
 
 from django.conf import settings
 from lino.utils import Cycler
-from north.babel import babel_values
+from north.dbutils import babel_values
 from lino import dd
 accounts = dd.resolve_app('accounts')
 vat = dd.resolve_app('vat')

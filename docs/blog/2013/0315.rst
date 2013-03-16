@@ -78,3 +78,5 @@ which passes now (and *without* using `tolerate_sphinx_warnings`!).
   was missing in :srcref:`/fabfile.py`::
   
     env.simple_doctests.append('lino/utils/xmlgen/html.py')
+
+

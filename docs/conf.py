@@ -25,7 +25,8 @@ Trigger loading of Djangos model cache in order to avoid side effects that
 would occur when this happens later while importing one of the models modules.
 """
 from django.conf import settings
-#settings.SITE.startup()
+settings.SITE.startup()
+
 #~ from lino.core import kernel
 #~ kernel.analyze_models()
 

@@ -39,13 +39,12 @@ from django.utils.encoding import force_unicode
 
 #~ from lino import tools
 from lino import dd
-#~ from lino.utils.babel import default_language
 #~ from lino import reports
 #~ from lino import layouts
 #~ from lino.utils import perms
 #~ from lino.utils.restify import restify
 #~ from lino.utils import printable
-from north import babel
+from north import dbutils
 from lino.utils import iif
 from lino.utils.xmlgen import html as xghtml
 E = xghtml.E
@@ -64,7 +63,7 @@ from django.conf import settings
 
 #~ from lino.modlib.pages import dummy
 
-#~ class PageType(babel.BabelNamed,mixins.PrintableType,outbox.MailableType):
+#~ class PageType(dbutils.BabelNamed,mixins.PrintableType,outbox.MailableType):
   
     #~ templates_group = 'pages/Page'
     
@@ -118,8 +117,8 @@ class Page(mixins.Referrable,mixins.Hierarizable):
         
     #~ ref = dd.NullCharField(_("Reference"),blank=True,max_length=100) # ,unique=True)
     #~ ref = models.CharField(_("Reference"),max_length=100,blank=True,unique=True)
-    #~ language = babel.LanguageField(default=babel.get_language,blank=True)
-    #~ language = babel.LanguageField(blank=True)
+    #~ language = dbutils.LanguageField(default=dbutils.get_language,blank=True)
+    #~ language = dbutils.LanguageField(blank=True)
     
     #~ type = models.ForeignKey(PageType,blank=True,null=True)
     title = dd.BabelCharField(_("Title"),max_length=200,blank=True) # ,null=True)
@@ -147,7 +146,7 @@ class Page(mixins.Referrable,mixins.Hierarizable):
         
     def get_sidebar_caption(self):
         if self.title:
-            return babel.babelattr(self,'title') 
+            return dbutils.babelattr(self,'title') 
         if self.ref == 'index':
             return unicode(_('Home'))
         if self.ref:
@@ -190,7 +189,7 @@ class Page(mixins.Referrable,mixins.Hierarizable):
         #~ if qs is not None:
         for obj in qs:
             if obj.ref and obj.title:
-                yield ('/'+obj.ref,obj.ref,babel.babelattr(obj,'title'))
+                yield ('/'+obj.ref,obj.ref,dbutils.babelattr(obj,'title'))
             #~ else:
                 #~ yield ('/','index',obj.title)
         

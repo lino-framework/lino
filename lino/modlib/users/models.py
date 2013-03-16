@@ -27,7 +27,6 @@ from django.contrib.auth.hashers import (
 
 
 from lino import dd
-from north import babel
 from lino.utils import mti
 from lino.utils.xmlgen.html import E
 #~ from lino.utils import choicelists
@@ -166,7 +165,7 @@ class User(mixins.CreatedModified):
                     setattr(self,n,getattr(p,n))
             #~ self.language = p.language
         if not self.language:
-            self.language = settings.SITE.DEFAULT_LANGUAGE
+            self.language = settings.SITE.DEFAULT_LANGUAGE.django_code
         if not self.password:
             self.set_unusable_password()
         super(User,self).full_clean(*args,**kw)

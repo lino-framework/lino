@@ -1,11 +1,15 @@
 from djangosite.utils.fablib import *
 setup_from_project('lino')  
 
-env.tolerate_sphinx_warnings = True
+#~ env.tolerate_sphinx_warnings = True
 
+# invoke only these with ``fab t3``:
+env.django_doctests.append('tutorials.de_BE.settings')
 env.django_doctests.append('tutorials.auto_create.settings')
 env.django_doctests.append('tutorials.human.settings')
 
+# invoke only these with ``fab t4``:
+env.simple_doctests.append('docs/blog/2013/0315.rst')
 env.simple_doctests.append('lino/utils/xmlgen/html.py')
 env.simple_doctests.append('lino/utils/html2odf.py')
 env.simple_doctests.append('lino/utils/memo.py')

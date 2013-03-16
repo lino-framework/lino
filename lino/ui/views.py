@@ -39,7 +39,7 @@ from lino.utils.jsgen import py2js, js_code, id2js
 from lino.utils.config import find_config_file
 from lino.utils import ucsv
 from lino.utils import choosers
-from north import babel
+from north import dbutils
 from lino.utils import isiterable
 from lino.utils import dblogger
 from lino.utils import auth
@@ -1004,12 +1004,12 @@ class ApiList(View):
             context = dict(
                 ar=ar,
                 title=unicode(ar.get_title()),
-                dtos=babel.dtos,
-                dtosl=babel.dtosl,
-                dtomy=babel.dtomy,
-                babelattr=babel.babelattr,
-                babelitem=babel.babelitem,
-                tr=babel.babelitem,
+                dtos=dbutils.dtos,
+                dtosl=dbutils.dtosl,
+                dtomy=dbutils.dtomy,
+                babelattr=dbutils.babelattr,
+                babelitem=dbutils.babelitem,
+                tr=dbutils.babelitem,
                 settings=settings,
                 _ = _,
                 #~ knowledge_text=fields.knowledge_text,

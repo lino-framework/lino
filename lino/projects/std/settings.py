@@ -46,7 +46,6 @@ in a local settings.py file
   #~ ]
 #~ DATA_DIR = join(LINO.project_dir,"data")
 
-#~ BABEL_LANGS = []
 
 def TIM2LINO_LOCAL(alias,obj):
     """Hook for local special treatment on instances that have been imported from TIM.

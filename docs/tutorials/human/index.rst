@@ -65,21 +65,21 @@ Mr Jean Dupont
 
 The same object will render differently when we switch to French...
 
->>> from north import babel
->>> babel.set_language('fr')
+>>> from north.dbutils import set_language
+>>> set_language('fr')
 >>> print p
 M. Jean Dupont
 
 ... or to German...
 
->>> babel.set_language('de')
+>>> set_language('de')
 >>> print p
 Herrn Jean Dupont
 
 
 Switch back to English:
 
->>> babel.set_language(None)
+>>> set_language(None)
 
 
 The full name
@@ -105,7 +105,7 @@ function has 2 optional parameters `nominative` and `salutation`.
 
 In German you may need to get a nominative form of the salutation:
 
->>> babel.set_language('de')
+>>> set_language('de')
 
 >>> print p.get_full_name(nominative=True)
 Herr Jean Dupont
@@ -130,7 +130,7 @@ Uppercase last name
 
 In France it is usual to print the last name with captial letters.
 
->>> babel.set_language('fr')
+>>> set_language('fr')
 >>> print p.get_full_name(upper=True)
 M. Jean DUPONT
 
@@ -157,7 +157,7 @@ The :meth:`mf <lino.mixins.humans.Human.mf>` method of a Human
 is useful in document templates when you want to generate texts 
 that differ depending on the gender of a Human.
 
->>> babel.set_language('en')
+>>> set_language('en')
 >>> mankind = [Person(first_name="Adam", gender=Genders.male),
 ...   Person(first_name="Eva", gender=Genders.female)]
 

@@ -21,8 +21,7 @@ from django.contrib.contenttypes.models import ContentType
 
 from django.utils.translation import ugettext as _
 
-from north import babel
-from north.babel import babel_values
+from lino.dd import babel_values
 
 from lino.core.dbutils import resolve_model
 from lino.utils.instantiator import Instantiator
@@ -69,9 +68,9 @@ def parse(s):
 LANGS = {}
 
 for i, lang in enumerate(COMPANY_TYPES_FORMAT.split()):
-    if lang in settings.SITE.AVAILABLE_LANGUAGES:
-    #~ if lang == default_language() or (lang in settings.BABEL_LANGS):
-        LANGS[lang] = i
+    li = settings.SITE.get_language_info(lang)
+    if li is not None:
+        LANGS[li.index] = i
         
 #~ print LANGS        
 
@@ -81,13 +80,13 @@ for ln in COMPANY_TYPES_TEXT.splitlines():
         if len(a) != 4:
             raise Exception("Line %r has %d fields (expected 4)" % len(a))
         d = dict()
-        for lang,i in LANGS.items():
+        for index,i in LANGS.items():
             kw = parse(a[i])
-            if lang == settings.SITE.DEFAULT_LANGUAGE:
+            if index == 0:
                 d.update(kw)
             else:
                 for k,v in kw.items():
-                    d[k+'_'+lang] = v
+                    d[k+settings.SITE.languages[index].suffix] = v
         def not_empty(x):
             return x
         #~ print d

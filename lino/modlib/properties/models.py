@@ -45,8 +45,8 @@ from django.utils.encoding import force_unicode
 
 
 from lino import dd
-from north import babel
-#~ from lino.utils.babel import babelattr
+from north import dbutils
+#~ from lino.utils.dbutils import babelattr
 #~ from lino.utils import printable
 from lino import mixins
 #~ from lino import fields
@@ -152,14 +152,14 @@ class PropType(dd.BabelNamed):
         for v in value.split(MULTIPLE_VALUES_SEP):
             try:
                 pc = PropChoice.objects.get(value=v,type=self)
-                v = babel.babelattr(pc,'text')
+                v = dbutils.babelattr(pc,'text')
             except PropChoice.DoesNotExist:
                 pass
             l.append(v)
         return ','.join(l)
         
     #~ def __unicode__(self):
-        #~ return babel.babelattr(self,'name')
+        #~ return dbutils.babelattr(self,'name')
         
     def choices_for(self,property):
         if self.choicelist:
@@ -192,7 +192,7 @@ class PropChoice(dd.Model):
         
     type = models.ForeignKey(PropType,verbose_name=_("Property Type"))
     value = models.CharField(max_length=settings.SITE.propvalue_max_length,verbose_name=_("Value"))
-    text = babel.BabelCharField(max_length=200,verbose_name=_("Designation"),blank=True)
+    text = dbutils.BabelCharField(max_length=200,verbose_name=_("Designation"),blank=True)
     
     def save(self,*args,**kw):
         if not self.text:
@@ -201,9 +201,9 @@ class PropChoice(dd.Model):
         return r
         
     def __unicode__(self):
-        return babel.babelattr(self,'text')
+        return dbutils.babelattr(self,'text')
 
-class PropGroup(babel.BabelNamed):
+class PropGroup(dbutils.BabelNamed):
     """
     A Property Group defines a list of Properties that fit together under a common name.
     Examples of Property Groups: Skills, Soft Skills, Obstacles
@@ -215,17 +215,17 @@ class PropGroup(babel.BabelNamed):
         
 
 
-class Property(babel.BabelNamed):
+class Property(dbutils.BabelNamed):
     class Meta:
         verbose_name = _("Property")
         verbose_name_plural = _("Properties")
         
-    #~ name = babel.BabelCharField(max_length=200,verbose_name=_("Designation"))
+    #~ name = dbutils.BabelCharField(max_length=200,verbose_name=_("Designation"))
     group = models.ForeignKey(PropGroup,verbose_name=_("Property Group"))
     type = models.ForeignKey(PropType,verbose_name=_("Property Type"))
     
     #~ def __unicode__(self):
-        #~ return babel.babelattr(self,'name')
+        #~ return dbutils.babelattr(self,'name')
 #~ add_babel_field(Property,'name')
 
 
@@ -255,7 +255,7 @@ class PropertyOccurence(dd.Model):
     
     #~ def get_text(self):
         #~ c = PropChoice.objects.get(type=self.property.type,value=self.value)
-        #~ return babel.babelattr(c,'name')
+        #~ return dbutils.babelattr(c,'name')
     
     @chooser()
     def value_choices(cls,property):

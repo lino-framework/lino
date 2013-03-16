@@ -1,5 +1,5 @@
 # -*- coding: UTF-8 -*-
-## Copyright 2012 Luc Saffre
+## Copyright 2012-2013 Luc Saffre
 ## This file is part of the Lino project.
 ## Lino is free software; you can redistribute it and/or modify 
 ## it under the terms of the GNU General Public License as published by
@@ -20,7 +20,6 @@ from django.conf import settings
 #~ from lino.utils.instantiator import Instantiator
 
 from lino import dd
-#~ from north import babel
 from lino.utils import AttrDict
 from lino.utils.restify import restify
 from lino.utils.restify import doc2rst
@@ -28,12 +27,12 @@ from lino.utils.restify import doc2rst
 #~ PAGES = {}
 
 def babelfield(name,language):
-    if language == settings.SITE.DEFAULT_LANGUAGE: 
+    if language == settings.SITE.DEFAULT_LANGUAGE.django_code: 
         return name
     return name + '_' + language
 
 def page(ref,language,title,body,parent=None,raw_html=False):
-    if not language in settings.SITE.AVAILABLE_LANGUAGES:
+    if not settings.SITE.get_language_info(language):
         return
     pages = dd.resolve_app('pages',strict=True)
     obj = pages.lookup(ref,None)
