@@ -1,11 +1,11 @@
 # -*- coding: UTF-8 -*-
 from __future__ import unicode_literals
 
-from north.dbutils import kw2fields # babel_values
+from north.dbutils import babelkw 
 from tutorials.de_BE.models import Expression
 
 def O(fr,en,de,de_BE):
-    return Expression(**kw2fields('name',de=de,de_BE=de_BE,en=en,fr=fr))
+    return Expression(**babelkw('name',de=de,de_BE=de_BE,en=en,fr=fr))
 
 def objects():
     yield O("l'atelier","the workshop","die Werkstatt","das Atelier")

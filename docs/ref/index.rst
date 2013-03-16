@@ -12,7 +12,7 @@ Reference
    settings
    javascript
    model_methods
-   abbrevs
+   jargon
    obsolete
    
    
