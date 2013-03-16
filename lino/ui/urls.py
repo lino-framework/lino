@@ -48,7 +48,7 @@ from . import views
 #~ import .views
 from lino.core.dbutils import is_devserver
 
-from pkg_resources import Requirement, resource_filename
+from pkg_resources import Requirement, resource_filename, DistributionNotFound
 
 def get_media_urls():
     #~ print "20121110 get_urls"
@@ -106,9 +106,11 @@ def get_media_urls():
     if settings.SITE.use_eid_jslib:
         setup_media_link('eid-jslib','eid_jslib_root')
         
-    #~ setup_media_link('lino',source=join(dirname(lino.__file__),'media'))
     #~ setup_media_link('lino',source=join(dirname(lino.__file__),'..','media'))
-    setup_media_link('lino',source=resource_filename(Requirement.parse("lino"),"media"))
+    try:
+        setup_media_link('lino',source=resource_filename(Requirement.parse("lino"),"lino/media"))
+    except DistributionNotFound as e:
+        setup_media_link('lino',source=join(dirname(lino.__file__),'media'))
     
     
 
