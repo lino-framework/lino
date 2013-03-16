@@ -50,7 +50,7 @@ Multilingual database content:
 - :class:`BabelCharField <north.dbutils.BabelCharField>`
 - :class:`BabelTextField <fields.BabelTextField>`
 - :class:`LanguageField <north.dbutils.LanguageField>`
-- :class:`babel_values <north.dbutils.babel_values>`
+- :class:`babelkw <north.dbutils.babelkw>`
 
 Virtual Fields:
 
@@ -194,7 +194,8 @@ from lino.core.fields import ForeignKey
 from lino.core.fields import BabelTextField
 
 from north.dbutils import BabelCharField, BabelNamed, LanguageField
-from north.dbutils import babel_values
+from north.dbutils import babelkw
+from north.dbutils import babel_values # alias for babelkw for backward compat
 from north.dbutils import set_language
 from north.dbutils import dtos, dtosl
 #~ from north.dbutils import BabelCharField, BabelTextField, BabelNamed, LanguageField

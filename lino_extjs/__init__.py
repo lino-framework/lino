@@ -759,9 +759,9 @@ tinymce.init({
         
         if force or settings.SITE.build_js_cache_on_startup:
             count = 0
-            langs = settings.SITE.AVAILABLE_LANGUAGES
-            for lang in langs:
-                dd.set_language(lang)
+            #~ langs = settings.SITE.AVAILABLE_LANGUAGES
+            for lng in settings.SITE.languages:
+                dd.set_language(lng.django_code)
                 for profile in dd.UserProfiles.objects():
                     count += self.build_js_cache_for_profile(profile,force)
             #~ qs = users.User.objects.exclude(profile='')

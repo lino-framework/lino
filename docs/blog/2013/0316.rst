@@ -77,7 +77,7 @@ To test the new feature I wrote a tutorial
 Installing mysql-python in a virtualenv on Debian Squeeze
 ---------------------------------------------------------
 
-Release on lf_, including a move to virtualenv.
+Release on :ref:`lf`, including a move to virtualenv.
 
 `pip install MySQL-python` didn't work
 

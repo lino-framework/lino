@@ -32,7 +32,7 @@ from north import dbutils
 from lino import dd
 Person = dd.resolve_model("contacts.Person")
 from lino.utils.instantiator import Instantiator, create_and_get
-from north.dbutils import babel_values
+from north.dbutils import babelkw
 
 from lino import mixins
 Genders = mixins.Genders
@@ -52,7 +52,7 @@ def test01(self):
     Tests some basic funtionality.
     """
     ee = create_and_get('countries.Country',
-        isocode='EE',**babel_values('name',
+        isocode='EE',**babelkw('name',
         de="Estland",
         fr='Estonie',
         en="Estonia",
@@ -60,7 +60,7 @@ def test01(self):
         et='Eesti',
         ))
     be = create_and_get('countries.Country',
-        isocode='BE',**babel_values('name',
+        isocode='BE',**babelkw('name',
         de="Belgien",
         fr='Belgique',
         en="Belgium",
