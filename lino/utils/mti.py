@@ -256,4 +256,5 @@ class EnableChild(VirtualField):
 
 
 
+from north.dpy import create_mti_child as create_child
 
