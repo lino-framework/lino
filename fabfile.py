@@ -1,7 +1,7 @@
 from djangosite.utils.fablib import *
 setup_from_project('lino')  
 
-#~ env.tolerate_sphinx_warnings = True
+env.tolerate_sphinx_warnings = True
 
 # invoke only these with ``fab t3``:
 env.django_doctests.append('tutorials.de_BE.settings')

@@ -492,7 +492,7 @@ Django creates copies of them when inheriting models.
             return None
             
     @classmethod
-    def get_by_value(self,value):
+    def get_by_value(self,value,*args):
         """
         Return the item (a :class:`Choice` instance) 
         corresponding to the specified `value`.
@@ -502,7 +502,7 @@ Django creates copies of them when inheriting models.
         #~ print "get_text_for_value"
         #~ return self.items_dict.get(value,None)
         #~ return self.items_dict.get(value)
-        return self.items_dict[value]
+        return self.items_dict.get(value,*args)
       
     #~ @classmethod
     #~ def items(self):

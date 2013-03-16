@@ -750,6 +750,7 @@ tinymce.init({
             return
         
         started = time.time()
+        #~ logger.info("build_site_cache started")
         
         settings.SITE.on_each_app('setup_site_cache',force)
         

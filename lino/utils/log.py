@@ -154,7 +154,7 @@ Because that's rather necessary on a production server with :setting:`DEBUG` Fal
     logfile = config.get('filename',None)
     rotate = config.get('rotate',True)
     tty = config.get('tty',True)
-    logger_names = config.get('loggers','djangosite north lino')
+    logger_names = config.get('loggers','djangosite north lino lino_extjs')
     #~ when = config.get('when',None)
     #~ interval = config.get('interval',None)
     level = getattr(logging,config.get('level','notset').upper())

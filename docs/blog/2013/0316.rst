@@ -74,12 +74,17 @@ To test the new feature I wrote a tutorial
 :doc:`/tutorials/de_BE/index`.
 
 
-Installing mysql-python in a virtualenv on Debian
--------------------------------------------------
+Installing mysql-python in a virtualenv on Debian Squeeze
+---------------------------------------------------------
+
+Release on LF.org, including a move to virtualenv.
+
+`pip install MySQL-python` didn't work
+
+This was a bit tricky: had to do::
+
+  $ aptitude install libmysqlclient-dev python-dev
+  
 
 
-
-
-aptitude install libmysqlclient-dev python-dev
-pip install MySQL-python
 

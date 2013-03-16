@@ -155,6 +155,8 @@ def get_plain_urls():
 
 def get_ext_urls():
     #~ print "20121110 get_urls"
+    settings.SITE.ui.ext_renderer.build_site_cache()
+    
     rx = '^'
     urlpatterns = patterns('',
         (rx+'$', views.AdminIndex.as_view()),

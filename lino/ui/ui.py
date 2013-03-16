@@ -157,11 +157,11 @@ class ExtUI(base.UI):
         
         post_ui_build.send(self)
         
-    def get_patterns(self):
-        """
-        """
-        self.ext_renderer.build_site_cache()
-        return super(ExtUI,self).get_patterns()
+    #~ def get_patterns(self):
+        #~ """
+        #~ """
+        #~ self.ext_renderer.build_site_cache()
+        #~ return super(ExtUI,self).get_patterns()
         
         
     def create_layout_panel(self,lh,name,vertical,elems,**kw):
