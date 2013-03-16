@@ -31,6 +31,9 @@ import os
 import codecs
 #~ import logging
 #~ logger = logging.getLogger('lino')
+
+from django.conf import settings
+
 from lino.utils import dblogger as logger
 
 from north.dbutils import babel_values
