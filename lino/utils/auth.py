@@ -663,8 +663,8 @@ class RemoteUserMiddleware(object):
     
     def process_request(self, request):
       
-        #~ settings.SITE # trigger site startup if necessary
-        settings.SITE.startup() # trigger site startup if necessary
+        settings.SITE.startup() # trigger site startup to load UserProfiles
+        
         username = request.META.get(
             settings.SITE.remote_user_header,settings.SITE.default_user)
             
@@ -688,8 +688,7 @@ class SessionUserMiddleware(object):
       
         #~ print 20130313, request.session.get('username')
         
-        #~ settings.SITE # trigger site startup if necessary
-        settings.SITE.startup() # trigger site startup if necessary
+        settings.SITE.startup() # trigger site startup to load UserProfiles
         
         user = authenticate(request.session.get('username'),
             request.session.get('password'))
@@ -705,8 +704,7 @@ class NoUserMiddleware(object):
   
     def process_request(self, request):
       
-        #~ settings.SITE # trigger site startup if necessary
-        settings.SITE.startup() # trigger site startup if necessary
+        settings.SITE.startup() # trigger site startup to load UserProfiles
         
         user = AnonymousUser.instance()
         

@@ -484,11 +484,11 @@ Django creates copies of them when inheriting models.
         
     @classmethod
     def get_by_name(self,name,*args):
-        return getattr(self,name,*args)
-        #~ if name:
-            #~ return getattr(self,name,*args)
-        #~ else:
-            #~ return None
+        #~ return getattr(self,name,*args)
+        if name:
+            return getattr(self,name,*args)
+        else:
+            return None
             
     @classmethod
     def get_by_value(self,value,*args):
