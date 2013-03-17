@@ -43,6 +43,7 @@ def test_01(self):
     self.assertEqual(lst,expected)
     
     s = etypes[0].EventsByType().to_rst()
+    #~ print s
     expected = """\
 +----------------------------+--------------------------------------------------+---------------------------------------+
 | Wann                       | Was                                              | Wo                                    |

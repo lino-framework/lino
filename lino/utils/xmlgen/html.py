@@ -247,7 +247,7 @@ class Document(object):
 def _html2rst(e,**kw):
     #~ print "20120613 html2odftext()", e.tag, e.text
     rst = ''
-    if e.tag == 'p': 
+    if e.tag in ('p','li'): 
         rst += '\n\n'
     elif e.tag == 'br':
         rst += ' |br| \n'
@@ -284,8 +284,8 @@ def _html2rst(e,**kw):
             rst += '*'
     elif e.tag == 'a':
         rst += ' <%s>`__' % e.get('href')
-    else:
-        rst += ' '
+    #~ else:
+        #~ rst += ' '
         
     if e.tail:
         rst += e.tail

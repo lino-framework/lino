@@ -9,12 +9,12 @@
   <div class="container-fluid">
     {% block header %}
     <div class="row-fluid header">
-    {% if site.languages and len(site.languages) > 1 -%}
+    {% if len(site.languages) > 1 -%}
       {% for lang in site.languages -%}
-        {% if lang == requested_language -%}
-            {{lang}}
+        {% if lang.django_code == requested_language -%}
+            {{lang.django_code}}
         {% else -%}
-            <a href="?ul={{lang}}">{{lang}}</a> 
+            <a href="?ul={{lang.django_code}}">{{lang.text}}</a> 
         {% endif -%}
       {% endfor -%}
     {% endif -%}
