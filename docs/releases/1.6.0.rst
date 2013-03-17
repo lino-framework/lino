@@ -2,3 +2,8 @@ Version 1.6.0
 =============
 
 The first release after splitting out north and djangosite.
+
+Manual tasks after upgrade
+--------------------------
+
+- In local settings.py files, replace "Lino" by "Site" and "LINO" by "SITE".

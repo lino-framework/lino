@@ -1,0 +1,27 @@
+==========================
+Version 1.6.3
+==========================
+
+20130317 (Sunday, 17 March 2013)
+
+I am pleased to announce the release of 
+version 1.6.3 of `Lino <http://www.lino-framework.org>`__.
+
+Luc Saffre
+
+List of changes
+===============
+
+New features
+------------
+
+Optimizations
+-------------
+
+Bugfixes
+--------
+
+Manual tasks after upgrade
+--------------------------
+
+

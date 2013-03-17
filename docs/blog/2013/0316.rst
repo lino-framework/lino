@@ -109,9 +109,10 @@ by::
   setup_media_link('lino',source=resource_filename(Requirement.parse("lino"),"lino/media"))
     
 But in fact I can keep both possibilities: 
-if Lino is not installed using pip, fall back to using the source tree:
+if Lino is not installed using pip, fall back to using the source tree::
         
   from pkg_resources import Requirement, resource_filename, DistributionNotFound
+  
   try:
       setup_media_link('lino',source=resource_filename(Requirement.parse("lino"),"lino/media"))
   except DistributionNotFound as e:
