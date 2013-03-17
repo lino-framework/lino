@@ -483,13 +483,12 @@ Django creates copies of them when inheriting models.
         #~ return _(bc)
         
     @classmethod
-    def get_by_name(self,name):
-        if name:
-            #~ return getattr(self,name,None)
-            return getattr(self,name)
-        else:
-            #~ return self.blank_item
-            return None
+    def get_by_name(self,name,*args):
+        return getattr(self,name,*args)
+        #~ if name:
+            #~ return getattr(self,name,*args)
+        #~ else:
+            #~ return None
             
     @classmethod
     def get_by_value(self,value,*args):

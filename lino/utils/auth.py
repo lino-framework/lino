@@ -262,7 +262,7 @@ class UserProfiles(ChoiceList):
     def add_item(cls,value,text,memberships=None,name=None,**kw):
         return cls.add_item_instance(UserProfile(cls,value,text,name,memberships,**kw))
 
-#~ UserProfiles choicelist is going to be filled in `lino.Lino.setup_choicelists` 
+#~ UserProfiles choicelist is going to be filled in `lino.Site.setup_choicelists` 
 #~ because the attributes of each item depend on UserGroups
 
 
@@ -537,7 +537,7 @@ class AnonymousUser(object):
                     raise Exception("20121121 profile specified by `anonymous_user_profile` is `authenticated`")
             except KeyError:
                 raise Exception(
-                    "Invalid value %r for `LINO.anonymous_user_profile`. Must be one of %s" % (
+                    "Invalid value %r for `SITE.anonymous_user_profile`. Must be one of %s" % (
                         settings.SITE.anonymous_user_profile,
                         [i.value for i in UserProfiles.items()]))
         return cls._instance
@@ -663,6 +663,7 @@ class RemoteUserMiddleware(object):
     
     def process_request(self, request):
       
+        settings.SITE # trigger site startup if necessary
         #~ settings.SITE.startup() # trigger site startup if necessary
         username = request.META.get(
             settings.SITE.remote_user_header,settings.SITE.default_user)
@@ -687,6 +688,7 @@ class SessionUserMiddleware(object):
       
         #~ print 20130313, request.session.get('username')
         
+        settings.SITE # trigger site startup if necessary
         #~ settings.SITE.startup() # trigger site startup if necessary
         
         user = authenticate(request.session.get('username'),
@@ -703,6 +705,7 @@ class NoUserMiddleware(object):
   
     def process_request(self, request):
       
+        settings.SITE # trigger site startup if necessary
         #~ settings.SITE.startup() # trigger site startup if necessary
         
         user = AnonymousUser.instance()
