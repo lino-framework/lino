@@ -1,0 +1,22 @@
+================================
+20130317 (Sunday, 17 March 2013)
+================================
+
+
+- NotImplementedError: <ul> inside <text:p>
+
+  :mod:`lino.utils.html2odf` isn't yet able to convert  
+  <ul>, <ol> and <li> elements to a OpenDocument chunk.
+  
+- :mod:`djangosite.utils.fablib` now touches the 
+  blog's `index.rst` file when it starts a new entry.
+
+- py2rst directives now also get "self" and "env" 
+  variables in their context.
+  
+- Started to write release notes for
+  `Lino-Welfare 1.1.0 <http://welfare.lino-framework.org/releases/1.1.0.html>`__.
+  I did some experiments with new methods for writing
+  `User documentation <http://welfare.lino-framework.org/user/index.html>`_.
+  A little visible result of the rather internal work of the last weeks. Wow.
+  

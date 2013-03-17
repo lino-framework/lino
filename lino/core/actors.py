@@ -1158,6 +1158,10 @@ class Actor(actions.Parametrizable):
         and calls its :meth:`lino.core.actions.ActionRequest.to_rst` 
         method.
         """
+        if settings.SITE.user_model is not None:
+            username = kw.pop('username',None)
+            if username:
+                kw['user'] = settings.SITE.user_model.objects.get(username=username)
         #~ settings.SITE.startup()
         return self.request(**kw).to_rst(column_names)
         

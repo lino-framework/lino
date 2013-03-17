@@ -13,7 +13,7 @@
 
 """
   
-This module contains also a utility function :func:`html2odf` 
+This module contains mainly a utility function :func:`html2odf` 
 which converts an HTML ElementTree object to 
 
 >>> from lino.utils.xmlgen.html import E
@@ -40,6 +40,18 @@ is another test.</text:p>
 <text:p xmlns:text="urn:oasis:names:tc:opendocument:xmlns:text:1.0"><text:span 
 text:style-name="Bold Text">This</text:span> is another test.</text:p>
 
+>>> test(E.ul(E.li("First item"),E.li("Second item"))) #doctest: +NORMALIZE_WHITESPACE
+<ul><li>First item</li><li>Second item</li></ul>
+<text:list xmlns:text="urn:oasis:names:tc:opendocument:xmlns:text:1.0" 
+text:style-name="podBulletedList"><text:list-item><text:p 
+text:style-name="podBulletItem">First item</text:p></text:list-item><text:list-item><text:p 
+text:style-name="podBulletItem">Second item</text:p></text:list-item></text:list>
+
+Note that the above chunk is obviously not correct since Writer doesn't display it.
+(How can I debug a generated odt file? 
+I mean if my content.xml is syntactically valid but Writer ...)
+Idea: validate test it against the using lxml
+
 :func:`html2odf` converts bold text to a span with a 
 style named "Bold Text". That's currently a hard-coded name, and the 
 caller must make sure that a style of that name is defined in the 
@@ -53,11 +65,6 @@ logger = logging.getLogger(__name__)
 
 import os
 
-from appy.pod.renderer import Renderer as AppyRenderer
-
-from lino.utils.restify import restify
-from lino.utils.html2xhtml import html2xhtml
-from lino.utils.xmlgen import etree
 from lino.utils.xmlgen.html import E
 
 
@@ -66,6 +73,7 @@ from django.conf import settings
 
 
 from cStringIO import StringIO
+#~ from StringIO import StringIO
 def toxml(node):
     buf = StringIO()
     node.toXml(0, buf)
@@ -87,18 +95,20 @@ def toxml(node):
     return buf.getvalue()
 
 
+#~ PTAGS = ('p','td','li')
 PTAGS = ('p','td')
 
 def html2odf(e,ct=None,**ctargs):
     """
-    Convert a :mod:`lino.utils.xmlgen.html` element 
-    to an ODF text element.
-    Currently it knows only P and B tags, 
-    ignoring all other formatting.
-    
+    Convert a :mod:`lino.utils.xmlgen.html` element to an ODF text element.
+    Most formats are not implemented.
     There's probably a better way to do this...
     """
     #~ print "20120613 html2odf()", e.tag, e.text
+    if e.tag == 'ul': 
+        ct = text.List(stylename='podBulletedList')
+        ctargs = dict(stylename='podBulletItem')
+        #~ ctargs = dict()
     if ct is None:
         ct = text.P(**ctargs)
         #~ if e.tag in PTAGS: 
@@ -114,12 +124,25 @@ def html2odf(e,ct=None,**ctargs):
         #~ yield oe
         return 
         
+    text_container = None
+    
     if e.tag == 'b':
         oe = text.Span(stylename='Bold Text')
     elif e.tag == 'a':
         oe = text.Span(stylename='Bold Text')
     elif e.tag == 'img':
         return # ignore images
+    elif e.tag == 'ul': 
+        oe = ct
+    #~ elif e.tag in ('ul','ol'): 
+        #~ oe = text.List(stylename=e.tag.upper())
+        #~ ctargs = dict(stylename=e.tag.upper()+"_P")
+    elif e.tag == 'li':
+        #~ oe = ct
+        oe = text.ListItem()
+        text_container = text.P(**ctargs)
+        oe.appendChild(text_container)
+        
     elif e.tag in PTAGS: 
         oe = ct
     else:
@@ -127,11 +150,13 @@ def html2odf(e,ct=None,**ctargs):
         raise NotImplementedError("<%s> inside <%s>" % (e.tag,ct.tagName))
         #~ oe = text.Span()
             
+    if text_container is None:
+        text_container = oe
     if e.text:
-        oe.addText(e.text)
+        text_container.addText(e.text)
     for child in e:
         #~ html2odf(child,oe)
-        html2odf(child,oe)
+        html2odf(child,text_container,**ctargs)
         #~ for oc in html2odf(child,oe):
             #~ # oe.addElement(oc)
             #~ oe.appendChild(oc)

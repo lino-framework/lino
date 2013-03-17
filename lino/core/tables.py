@@ -61,6 +61,7 @@ from django.utils.encoding import force_unicode
 
 from djangosite.utils import rstgen
 
+from north import dbutils
 
 from lino.core import actors
 from lino.core import actions
@@ -73,11 +74,17 @@ from lino.core.requests import ActionRequest
 from lino.ui import base
 from lino.core import constants #  as ext_requests
 from lino.utils.config import Configured, load_config_files
+from lino.utils.config import find_config_file
+
+from lino.utils.appy_pod import Renderer
+
 
 class InvalidRequest(Exception):
     pass
 
 from lino.utils.xmlgen.html import RstTable
+
+MAX_ROW_COUNT = 300
 
 
 class GridConfig(Configured):
@@ -517,6 +524,38 @@ class TableRequest(ActionRequest):
         
         #~ return HtmlTable(headers,rows)
       
+    def appy_render(ar,target_file):
+        
+        if ar.get_total_count() > MAX_ROW_COUNT:
+            raise Exception(_("List contains more than %d rows") % MAX_ROW_COUNT)
+    
+        tpl_leaf = "Table.odt" 
+        tplgroup = None
+        tplfile = find_config_file(tpl_leaf,tplgroup)
+        if not tplfile:
+            raise Exception("No file %s / %s" % (tplgroup,tpl_leaf))
+            
+        ar.renderer = ar.ui.ext_renderer # 20120624
+        
+        context = dict(
+            ar=ar,
+            title=unicode(ar.get_title()),
+            dtos=dbutils.dtos,
+            dtosl=dbutils.dtosl,
+            dtomy=dbutils.dtomy,
+            babelattr=dbutils.babelattr,
+            babelitem=dbutils.babelitem,
+            tr=dbutils.babelitem,
+            settings=settings,
+            _ = _,
+            #~ knowledge_text=fields.knowledge_text,
+            )
+        if os.path.exists(target_file):
+            os.remove(target_file)
+        logger.info(u"appy.pod render %s -> %s (params=%s",
+            tplfile,target_file,settings.SITE.appy_params)
+        renderer = Renderer(tplfile, context, target_file,**settings.SITE.appy_params)
+        renderer.run()
         
         
     def get_title(self):

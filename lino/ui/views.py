@@ -36,10 +36,8 @@ from lino.utils.xmlgen import html as xghtml
 E = xghtml.E
 
 from lino.utils.jsgen import py2js, js_code, id2js
-from lino.utils.config import find_config_file
 from lino.utils import ucsv
 from lino.utils import choosers
-from north import dbutils
 from lino.utils import isiterable
 from lino.utils import dblogger
 from lino.utils import auth
@@ -980,46 +978,15 @@ class ApiList(View):
             return response
             
         if fmt in (ext_requests.URL_FORMAT_PDF,ext_requests.URL_FORMAT_ODT):
-            if ar.get_total_count() > MAX_ROW_COUNT:
-                raise Exception(_("List contains more than %d rows") % MAX_ROW_COUNT)
-        
-            from lino.utils.appy_pod import Renderer
-            
-            tpl_leaf = "Table.odt" 
-            tplgroup = None
-            tplfile = find_config_file(tpl_leaf,tplgroup)
-            if not tplfile:
-                raise Exception("No file %s / %s" % (tplgroup,tpl_leaf))
-                
+          
             ip = ar.request.META.get('REMOTE_ADDR','unknown_ip')
             target_parts = ['cache', 'appypdf', ip, str(ar.actor) + '.' + fmt]
             target_file = os.path.join(settings.MEDIA_ROOT,*target_parts)
             settings.SITE.makedirs_if_missing(os.path.dirname(target_file))
             target_url = settings.SITE.build_media_url(*target_parts)
-            ar.renderer = ar.ui.ext_renderer # 20120624
-            """
-            [NOTE] `/blog/2012/0211`
+          
+            ar.appy_render(target_file)
             
-            """
-            context = dict(
-                ar=ar,
-                title=unicode(ar.get_title()),
-                dtos=dbutils.dtos,
-                dtosl=dbutils.dtosl,
-                dtomy=dbutils.dtomy,
-                babelattr=dbutils.babelattr,
-                babelitem=dbutils.babelitem,
-                tr=dbutils.babelitem,
-                settings=settings,
-                _ = _,
-                #~ knowledge_text=fields.knowledge_text,
-                )
-            if os.path.exists(target_file):
-                os.remove(target_file)
-            logger.info(u"appy.pod render %s -> %s (params=%s",
-                tplfile,target_file,settings.SITE.appy_params)
-            renderer = Renderer(tplfile, context, target_file,**settings.SITE.appy_params)
-            renderer.run()
             return http.HttpResponseRedirect(target_url)
             
         if fmt == ext_requests.URL_FORMAT_PRINTER:

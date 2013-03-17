@@ -1,8 +1,13 @@
 #!/usr/bin/env python
-"""html2text: Turn HTML into equivalent Markdown-structured text."""
-"""
+"""html2text: Turn HTML into equivalent Markdown-structured text.
 
-Almost unmodified copy from http://www.aaronsw.com/2002/html2text/ 
+This is an almost unmodified copy of Aaron Swartz's 
+`html2text <http://www.aaronsw.com/2002/html2text/>`.
+
+Lino uses this in :mod:`lino.modlib.outbox`
+for attaching a text version of a generated email.
+
+Modifications:
 
 - set `UNICODE_SNOB` to 1
 

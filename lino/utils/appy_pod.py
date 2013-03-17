@@ -1,3 +1,4 @@
+# -*- coding: UTF-8 -*-
 ## Copyright 2011-2013 Luc Saffre
 ## This file is part of the Lino project.
 ## Lino is free software; you can redistribute it and/or modify 
@@ -23,6 +24,7 @@ An extended `appy.pod` renderer that installs additional functions:
 
 """
 
+from __future__ import unicode_literals
 
 import logging
 logger = logging.getLogger(__name__)
@@ -40,12 +42,30 @@ from django.conf import settings
 
 from odf.opendocument import OpenDocumentText
 from odf.style import Style, TextProperties, ParagraphProperties
+from odf.text import ListStyle
+from odf.style import ListLevelProperties
+#~ from odf.style import ListLevelLabelAlignment # ImportError: cannot import name ListLevelLabelAlignment
 from odf.style import TableColumnProperties, TableRowProperties, TableCellProperties
 from odf import text
 from odf.table import Table, TableColumns, TableColumn, TableHeaderRows, TableRows, TableRow, TableCell
 
 OAS = '<office:automatic-styles>'
 OFFICE_STYLES = '<office:styles>'
+UL_LIST_STYLE = """\
+<style:style style:name="UL_P" style:family="paragraph" style:parent-style-name="Standard" style:list-style-name="UL"/>
+<text:list-style style:name="UL">
+<text:list-level-style-bullet text:level="1" text:style-name="Bullet_20_Symbols" text:bullet-char="•"><style:list-level-properties text:list-level-position-and-space-mode="label-alignment"><style:list-level-label-alignment text:label-followed-by="listtab" text:list-tab-stop-position="1.27cm" fo:text-indent="-0.635cm" fo:margin-left="1.27cm"/></style:list-level-properties></text:list-level-style-bullet>
+<text:list-level-style-bullet text:level="2" text:style-name="Bullet_20_Symbols" text:bullet-char="◦"><style:list-level-properties text:list-level-position-and-space-mode="label-alignment"><style:list-level-label-alignment text:label-followed-by="listtab" text:list-tab-stop-position="1.905cm" fo:text-indent="-0.635cm" fo:margin-left="1.905cm"/></style:list-level-properties></text:list-level-style-bullet>
+<text:list-level-style-bullet text:level="3" text:style-name="Bullet_20_Symbols" text:bullet-char="▪"><style:list-level-properties text:list-level-position-and-space-mode="label-alignment"><style:list-level-label-alignment text:label-followed-by="listtab" text:list-tab-stop-position="2.54cm" fo:text-indent="-0.635cm" fo:margin-left="2.54cm"/></style:list-level-properties></text:list-level-style-bullet>
+<text:list-level-style-bullet text:level="4" text:style-name="Bullet_20_Symbols" text:bullet-char="•"><style:list-level-properties text:list-level-position-and-space-mode="label-alignment"><style:list-level-label-alignment text:label-followed-by="listtab" text:list-tab-stop-position="3.175cm" fo:text-indent="-0.635cm" fo:margin-left="3.175cm"/></style:list-level-properties></text:list-level-style-bullet>
+<text:list-level-style-bullet text:level="5" text:style-name="Bullet_20_Symbols" text:bullet-char="◦"><style:list-level-properties text:list-level-position-and-space-mode="label-alignment"><style:list-level-label-alignment text:label-followed-by="listtab" text:list-tab-stop-position="3.81cm" fo:text-indent="-0.635cm" fo:margin-left="3.81cm"/></style:list-level-properties></text:list-level-style-bullet>
+<text:list-level-style-bullet text:level="6" text:style-name="Bullet_20_Symbols" text:bullet-char="▪"><style:list-level-properties text:list-level-position-and-space-mode="label-alignment"><style:list-level-label-alignment text:label-followed-by="listtab" text:list-tab-stop-position="4.445cm" fo:text-indent="-0.635cm" fo:margin-left="4.445cm"/></style:list-level-properties></text:list-level-style-bullet>
+<text:list-level-style-bullet text:level="7" text:style-name="Bullet_20_Symbols" text:bullet-char="•"><style:list-level-properties text:list-level-position-and-space-mode="label-alignment"><style:list-level-label-alignment text:label-followed-by="listtab" text:list-tab-stop-position="5.08cm" fo:text-indent="-0.635cm" fo:margin-left="5.08cm"/></style:list-level-properties></text:list-level-style-bullet>
+<text:list-level-style-bullet text:level="8" text:style-name="Bullet_20_Symbols" text:bullet-char="◦"><style:list-level-properties text:list-level-position-and-space-mode="label-alignment"><style:list-level-label-alignment text:label-followed-by="listtab" text:list-tab-stop-position="5.715cm" fo:text-indent="-0.635cm" fo:margin-left="5.715cm"/></style:list-level-properties></text:list-level-style-bullet>
+<text:list-level-style-bullet text:level="9" text:style-name="Bullet_20_Symbols" text:bullet-char="▪"><style:list-level-properties text:list-level-position-and-space-mode="label-alignment"><style:list-level-label-alignment text:label-followed-by="listtab" text:list-tab-stop-position="6.35cm" fo:text-indent="-0.635cm" fo:margin-left="6.35cm"/></style:list-level-properties></text:list-level-style-bullet>
+<text:list-level-style-bullet text:level="10" text:style-name="Bullet_20_Symbols" text:bullet-char="•"><style:list-level-properties text:list-level-position-and-space-mode="label-alignment"><style:list-level-label-alignment text:label-followed-by="listtab" text:list-tab-stop-position="6.985cm" fo:text-indent="-0.635cm" fo:margin-left="6.985cm"/></style:list-level-properties></text:list-level-style-bullet>
+</text:list-style>
+"""
 
 from lino.utils.html2odf import html2odf, toxml
 
@@ -123,18 +143,22 @@ class Renderer(AppyRenderer):
         #~ print "finalize_func()", self.automaticstyles.values()
         #~ fn = os.path.join(fn,'..','content.xml')
         #~ fn = os.path.join(fn,'content.xml')
+        #~ if not self.stylesManager.styles.getStyle('UL'):
+            #~ self.insert_chunk(fn,'content.xml',OAS,UL_LIST_STYLE)
         self.insert_chunk(fn,'content.xml',OAS,''.join(
-          [toxml(e) for e in self.my_automaticstyles]))
+          [toxml(e).decode('utf-8') for e in self.my_automaticstyles]))
         self.insert_chunk(fn,'styles.xml',OFFICE_STYLES,''.join(
-          [toxml(e) for e in self.my_styles]))
+          [toxml(e).decode('utf-8') for e in self.my_styles]))
         
     def insert_chunk(self,root,leaf,insert_marker,chunk):
         """
         post-process specified xml file by inserting a chunk of XML text after the specified insert_marker 
         """
+        #~ insert_marker = insert_marker.encode('utf-8')
+        #~ chunk = chunk.encode('utf-8')
         fn = os.path.join(root,leaf)
         fd = open(fn)
-        s = fd.read()
+        s = fd.read().decode('utf-8')
         fd.close()
         chunks = s.split(insert_marker)
         if len(chunks) != 2:
@@ -144,7 +168,8 @@ class Renderer(AppyRenderer):
         s = chunks[0] + insert_marker + chunk + chunks[1]
         #~ fd = open('tmp.xml',"w")
         fd = open(fn,"w")
-        fd.write(s)
+        #~ fd.write(s)
+        fd.write(s.encode('utf-8'))
         fd.close()
         #~ raise Exception(fn)
         
@@ -199,7 +224,7 @@ class Renderer(AppyRenderer):
             self.my_styles.append(st)
             return st
 
-        # create some visible styles
+        # create some *visible* styles
         
         st = add_style(name="Table Contents", family="paragraph",parentstylename="Default")
         st.addElement(ParagraphProperties(numberlines="false", 
@@ -214,8 +239,7 @@ class Renderer(AppyRenderer):
         st = self.stylesManager.styles.getStyle(dn)
         if st is None:
             st = add_style(name=dn, family="paragraph",parentstylename="Table Contents")
-            st.addElement(ParagraphProperties(numberlines="false", 
-                linenumber="0"))
+            st.addElement(ParagraphProperties(numberlines="false", linenumber="0"))
             st.addElement(TextProperties(fontweight="bold"))
         
         dn = "Bold Text"
@@ -224,6 +248,28 @@ class Renderer(AppyRenderer):
             st = add_style(name=dn, family="text",parentstylename="Default")
             #~ st = add_style(name=dn, family="text")
             st.addElement(TextProperties(fontweight="bold"))
+
+        if False:
+            dn = "L1"
+            st = self.stylesManager.styles.getStyle(dn)
+            if st is None:
+                st = ListStyle(name=dn)
+                doc.styles.addElement(st)
+                p = ListLevelProperties(listlevelpositionandspacemode="label-alignment")
+                st.addElement(p)
+                #~ label-followed-by="listtab" text:list-tab-stop-position="1.27cm" fo:text-indent="-0.635cm" fo:margin-left="1.27cm"/>
+                p.addElement(ListLevelLabelAlignment(labelfollowedby="listtab",
+                    listtabstopposition="1.27cm",
+                    textindent="-0.635cm",
+                    marginleft="1.27cm"
+                  ))
+                self.my_styles.append(st)
+                
+                #~ list_style = add_style(name=dn, family="list")
+                bullet = text.ListLevelStyleBullet(level=1,stylename="Bullet_20_Symbols",bulletchar=u"•")
+                #~ bullet = text.ListLevelStyleBullet(level=1,stylename="Bullet_20_Symbols",bulletchar=u"*")
+                #~ <text:list-level-style-bullet text:level="1" text:style-name="Bullet_20_Symbols" text:bullet-char="•">
+                st.addElement(bullet)
         
         # create some automatic styles
         

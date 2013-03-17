@@ -284,6 +284,8 @@ def _html2rst(e,**kw):
             rst += '*'
     elif e.tag == 'a':
         rst += ' <%s>`__' % e.get('href')
+    else:
+        rst += ' '
         
     if e.tail:
         rst += e.tail

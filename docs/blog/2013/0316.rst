@@ -117,3 +117,7 @@ if Lino is not installed using pip, fall back to using the source tree:
   except DistributionNotFound as e:
       setup_media_link('lino',source=join(dirname(lino.__file__),'media'))
 
+
+
+
+
