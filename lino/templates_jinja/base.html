@@ -14,7 +14,7 @@
         {% if lang.django_code == requested_language -%}
             {{lang.django_code}}
         {% else -%}
-            <a href="?ul={{lang.django_code}}">{{lang.text}}</a> 
+            <a href="?ul={{lang.django_code}}">{{lang.django_code}}</a> 
         {% endif -%}
       {% endfor -%}
     {% endif -%}
