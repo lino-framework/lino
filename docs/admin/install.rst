@@ -2,6 +2,8 @@
 Installing Lino
 ===============
 
+.. include:: /include/needs_update.rst
+
 
 .. toctree::
     :maxdepth: 2

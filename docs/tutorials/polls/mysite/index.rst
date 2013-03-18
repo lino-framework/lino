@@ -51,75 +51,70 @@ But we are now going to modify the files
 The :file:`settings.py` file
 -----------------------------
 
-Lino uses some tricks to make Django :xfile:`settings.py`
+Lino uses some tricks to make Django :file:`settings.py`
 files more pleasant to work with,
 especially if you maintain Lino sites for several customers.
 
 - Change the contents of your :file:`settings.py` 
-  to the following (except for the :setting:`DATABASES` setting,
-  which you should take over from your original file):
+  to the following:
 
-.. literalinclude:: ../../lino/projects/polls_tutorial/settings.py
+.. literalinclude:: settings.py
 
 A few explanations:
 
-Look at the following four lines of code which 
-occur in almost every Lino :xfile:`settings.py` file 
-and which are the thing that turns a Django project into 
-a Lino application::
+This instantiates your local ``SITE`` setting.
+Every Lino application requires a setting named ``SITE`` 
+which must be a :class:`lino.ui.Site` instance.
 
-    from lino.projects.std.settings import *
-    class Site(Site):
-        ...
-    SITE = Site(__file__,globals()) 
-    
-- The first line caused your settings to "inherit" 
-  from :mod:`lino.projects.std`, the common ancestor 
-  of all Lino applications.
-
-- The following lines (where the ``...`` part can be much more 
-  than in our example) optionally override some of the class 
-  attributes and methods defined for :class:`lino.Site`. 
-  For example the :attr:`lino.Site.title` is a simple string to 
-  occur in the browser's title bar (and possibly at other places).
-  :meth:`setup_menu <lino.Site.setup_menu>` 
-  defines the structure of the main menu.
-  And 
-  :meth:`get_main_html <lino.Site.get_main_html>` 
-  returns the HTML to be displayed in the index page.
-
-- The last line finally *instantiates* your local ``LINO``.
-  Every Lino application requires a setting named ``LINO`` 
-  which must be a :class:`lino.Lino` instance.
-  It is available in your application code as ``settings.LINO``.
+The first argument of the instantiator is the built-in 
+Python variable `__file__`.
+This is how Lino knows the full path of your local settings file.
   
-  The first argument of the instantiator is the built-in 
-  Python variable `__file__`.
-  This is how Lino knows the full path of your local settings file.
+The second argument is the `global()` namespace of your settings module.
+Lino uses this to fill "intelligent default values" to your settings.
+That's why these lines should be at the *beginning* of your file.
+
+All remaining positional arguments will go into the :setting:`INSTALLED_APPS` setting.
+In our example we have only one positional argument ``'polls'``.
+
+Lino automatically adds some more apps before and after your app
+As an application developer you don't need to worry about those 
+additional "system" apps. 
+Just trust Lino that he will fill into :setting:`INSTALLED_APPS` what is needed. 
+Trust is good, control is better, so let's 
+be curious and have a look at them:
+
+Open a Django shell in your project directory::
+
+  $ python manage.py shell
   
-  The second argument is the `global()` namespace of your settings module.
-  Lino uses this to fill "intelligent default values" to your settings.
-  That's why these lines should be at the *beginning* of your file.
+And then enter the following Python instructions there:  
+
+>>> from django.conf import settings
+>>> settings.INSTALLED_APPS
+('lino.ui', 'lino.modlib.about', 'polls', 'lino', 'djangosite')
+
+This shows that your 'polls' app has been embedded into a series of other apps:
+:mod:`lino.ui` and :mod:`lino.modlib.about` come first, then your app, 
+followed by :mod:`lino` and :mod:`djangosite`.
+
+Other Django setting for which Lino sets default values are:
+
+- :setting:`DATABASES` : a SQLite database in a file :file:`default.db` 
+  in your project directory. On a production server you are of course going 
+  to set your own :setting:`DATABASES`, but this default value is what we 
+  think the best choice for beginners.
+  
+- :setting:`SER` : a file :file:`default.db` in your project directory.
+
+- :setting:`USE_L10N` and  :setting:`LANGUAGE_CODE` : see :attr:``
 
 
-One important setting to be defined by every Lino application 
-is the :meth:`get_installed_apps <lino.Site.get_installed_apps>` 
-method:: 
 
-    def get_installed_apps(self):
-        for a in super(Site,self).get_installed_apps():
-            yield a
-        yield 'lino.projects.polls_tutorial.polls' # 'mysite.polls'
-        
-This method is used to fill Django's :setting:`INSTALLED_APPS`.
-The above code is roughly equivalent to::
 
-    INSTALLED_APPS = [
-      'lino.ui', 
-      'lino.modlib.about', 
-      'lino.projects.polls_tutorial.polls',
-      'lino', 
-    ]
+>>> settings.SITE.title
+'Cool Polls'
+
 
 But with the difference that Lino automatically adds 
 certain system modules when needed.
@@ -144,7 +139,7 @@ The :xfile:`models.py` file
 - Change the contents of your :xfile:`polls/models.py` 
   to the following:
 
-.. literalinclude:: ../../lino/projects/polls_tutorial/polls/models.py
+.. literalinclude:: ../polls/models.py
 
 A few explanations while looking at that file:
 
@@ -176,7 +171,7 @@ The main index
 The following template is used to 
 build the HTML to be displayed in our Main Window. 
 
-.. literalinclude:: ../../lino/projects/polls_tutorial/templates_jinja/admin_main.html
+.. literalinclude:: templates_jinja/admin_main.html
 
 The `<div class="htmlText">` specifies that this fragment 
 contains simple html text inside an ExtJS component. 

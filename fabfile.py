@@ -26,10 +26,11 @@ env.simple_doctests.append('lino/modlib/accounts/utils.py')
 
 # invoke only these with ``fab t5``:
 env.django_databases.append('docs/tutorials/polls')
+env.django_databases.append('docs/tutorials/quickstart')
 
   
 env.django_admin_tests += [
-      "lino.projects.cosi.settings",
+      #~ "lino.projects.cosi.settings", # covered by docs/tutorials/quickstart
       "lino.projects.events.settings",
       "lino.test_apps.nomti.settings",
       "lino.test_apps.20100212.settings",

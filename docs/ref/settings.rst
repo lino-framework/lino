@@ -65,17 +65,8 @@ We are also working on alternative user interfaces
 
 .. setting:: INSTALLED_APPS
 
-See Django documentation.
+See https://docs.djangoproject.com/en/dev/ref/settings/#installed-apps
 
-.. setting:: USE_GRIDFILTERS
-
-If True, the generated JavaScript uses the :extjs:`Ext.ux.grid.GridFilters` extension.
-
-
-.. setting:: USE_FIREBUG
-
-  If True, the generated JavaScript contains instructions that use the FireBug console. 
-  This is useful for profiling and debugging, but the client then needs FireBug installed and active.
 
 .. setting:: MEDIA_ROOT
 
@@ -90,7 +81,7 @@ If True, the generated JavaScript uses the :extjs:`Ext.ux.grid.GridFilters` exte
 .. setting:: SERIALIZATION_MODULES
 
 See `Django doc <https://docs.djangoproject.com/en/1.3/ref/settings/#serialization-modules>`_ 
-and :doc:`/topics/dpy`.
+and :class:`north.Site`.
 
 
 Obsolete Lino-specific settings

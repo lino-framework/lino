@@ -535,9 +535,6 @@ class Site(lino.Site):
     
     _site_config = None
     
-    #~ def init_nolocal(self,*args):
-        #~ super(Site,self).init_nolocal(*args)
-    
         
     def override_defaults(self,**kwargs):
         """
@@ -547,23 +544,6 @@ class Site(lino.Site):
         installed_apps = tuple(self.get_installed_apps()) + ('lino','djangosite')
         self.update_settings(INSTALLED_APPS=installed_apps)
         
-        modname = self.__module__
-        i = modname.rfind('.')
-        if i != -1:
-            modname = modname[:i]
-        self.is_local_project_dir = not modname in installed_apps
-            
-        """
-        If your project_dir contains no :xfile:`models.py`, 
-        but *does* contain a `fixtures` subdir, 
-        then Lino automatically adds this as "local fixtures directory" 
-        to Django's `FIXTURE_DIRS`.
-        """
-        if self.is_local_project_dir:
-            pth = join(self.project_dir,'fixtures')
-            if isdir(pth):
-                self.update_settings(FIXTURE_DIRS = [pth])
-                
         if self.webdav_url is None:
             self.webdav_url = '/media/webdav/'
         if self.webdav_root is None:

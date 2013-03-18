@@ -10,6 +10,7 @@ syntax: glob
 *.zip
 *.dtl.py
 *.js.py
+*.bat
 dist
 tmp
 lino/ui/qx/app/build/resource

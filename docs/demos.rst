@@ -9,13 +9,13 @@ Any changes will be lost each time we reinitialize the demo data.
  
 .. complextable::
 
-  .. figure:: /tutorials/polls1.jpg
+  .. figure:: /tutorials/polls/mysite/polls1.jpg
     :scale: 30 %
     :target: http://demo1.lino-framework.org
     
     `demo1 <http://demo1.lino-framework.org>`_
     shows the "Polls" application developed in the 
-    :doc:`/tutorials/polls` tutorial.
+    :doc:`/tutorials/polls/index` tutorial.
     A minimal didactic Lino application without authentication.
 
   <NEXTCELL>

@@ -219,8 +219,8 @@ class Site(Site):
     
     
     
-    def init_nolocal(self,*args):
-        super(Site,self).init_nolocal(*args)
+    def init_before_local(self,*args):
+        super(Site,self).init_before_local(*args)
         
         self.GFK_LIST = []
         self.VIRTUAL_FIELDS = []

@@ -14,7 +14,7 @@ No more need to override Django's
 `loaddata` and `dumpdata` commands, no more need 
 for a `lino.runtime` module!
 
-Adapted :doc:`/tutorials/uiless`.
+Adapted `/tutorials/uiless`.
 
 Wrote :func:`lino_welfare.modlib.pcsw.migrate.migrate_from_1_0_11`.
 

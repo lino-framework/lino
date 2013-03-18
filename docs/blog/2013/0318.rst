@@ -52,7 +52,68 @@ Worked on
 :ref:`north.tutorial.polls`
 and
 :ref:`lino.tutorial.polls`.
+Also :ref:`lino.tutorial.quickstart`.
 
 :meth:`djangosite.Site.get_settings_subdirs` 
 failed to detect a local directory if the class was 
 directly instantiated without subclassing it).
+
+Values instance has no attribute 'file_insertion_enabled'
+---------------------------------------------------------
+
+Hm... I had once more the following traceback which 
+was caused by a wrong file path in a ``.. figure::``. 
+Instead of saying "file not found" I got::
+
+  # Sphinx version: 1.1.3
+  # Python version: 2.7.3
+  # Docutils version: 0.10 release
+  # Jinja2 version: 2.6
+  Traceback (most recent call last):
+    File "c:\Python27\lib\site-packages\sphinx\cmdline.py", line 189, in main
+      app.build(force_all, filenames)
+    File "c:\Python27\lib\site-packages\sphinx\application.py", line 204, in build
+      self.builder.build_update()
+    File "c:\Python27\lib\site-packages\sphinx\builders\__init__.py", line 196, in build_update
+      'out of date' % len(to_build))
+    File "c:\Python27\lib\site-packages\sphinx\builders\__init__.py", line 252, in build
+      self.write(docnames, list(updated_docnames), method)
+    File "c:\Python27\lib\site-packages\sphinx\builders\__init__.py", line 292, in write
+      self.write_doc(docname, doctree)
+    File "c:\Python27\lib\site-packages\sphinx\builders\html.py", line 419, in write_doc
+      self.docwriter.write(doctree, destination)
+    File "c:\Python27\lib\site-packages\docutils\writers\__init__.py", line 80, in write
+      self.translate()
+    File "c:\Python27\lib\site-packages\sphinx\writers\html.py", line 38, in translate
+      self.document.walkabout(visitor)
+    File "c:\Python27\lib\site-packages\docutils\nodes.py", line 174, in walkabout
+      if child.walkabout(visitor):
+    File "c:\Python27\lib\site-packages\docutils\nodes.py", line 174, in walkabout
+      if child.walkabout(visitor):
+    File "c:\Python27\lib\site-packages\docutils\nodes.py", line 174, in walkabout
+      if child.walkabout(visitor):
+    File "c:\Python27\lib\site-packages\docutils\nodes.py", line 174, in walkabout
+      if child.walkabout(visitor):
+    File "c:\Python27\lib\site-packages\docutils\nodes.py", line 174, in walkabout
+      if child.walkabout(visitor):
+    File "c:\Python27\lib\site-packages\docutils\nodes.py", line 174, in walkabout
+      if child.walkabout(visitor):
+    File "c:\Python27\lib\site-packages\docutils\nodes.py", line 174, in walkabout
+      if child.walkabout(visitor):
+    File "c:\Python27\lib\site-packages\docutils\nodes.py", line 174, in walkabout
+      if child.walkabout(visitor):
+    File "c:\Python27\lib\site-packages\docutils\nodes.py", line 174, in walkabout
+      if child.walkabout(visitor):
+    File "c:\Python27\lib\site-packages\docutils\nodes.py", line 166, in walkabout
+      visitor.dispatch_visit(self)
+    File "c:\Python27\lib\site-packages\docutils\nodes.py", line 1627, in dispatch_visit
+      return method(node)
+    File "c:\Python27\lib\site-packages\sphinx\writers\html.py", line 377, in visit_image
+      BaseTranslator.visit_image(self, node)
+    File "c:\Python27\lib\site-packages\docutils\writers\html4css1\__init__.py", line 1032, in visit_image
+      and self.settings.file_insertion_enabled):
+  AttributeError: Values instance has no attribute 'file_insertion_enabled'
+
+Once this disappeared after 
+a :func:`fab clean <djangosite.utils.fablib.clean>`.
+

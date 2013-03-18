@@ -92,7 +92,7 @@ Upgrade on Jana
 Now that :mod:`north.dpy` can 
 automatically handle a change in the 
 :attr:`lino.Lino.languages` settings,
-I made a :doc:`/topics/ddt` on Jana using a dump of production data.
+I made a :ref:`ddt` on Jana using a dump of production data.
 Miscellaneous optimizations during the upgrade:
 
 - Restored the old-style `sitecustomize_lino.on_init` trick, 

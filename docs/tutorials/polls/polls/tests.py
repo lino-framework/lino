@@ -1,1 +1,1 @@
-from djangosite.utils.test import DocTest
+# from djangosite.utils.test import DocTest

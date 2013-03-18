@@ -1,20 +1,3 @@
-T:\hgwork\lino\docs\api\lino.projects.polls_tutorial.rst:7: WARNING: autodoc can't import/find module 'lino.projects.polls_tutorial', it reported error: "No module named polls_tutorial", please check your spelling and sys.path
-T:\hgwork\lino\docs\api\lino.projects.polls_tutorial.rst:14: WARNING: autodoc can't import/find module 'lino.projects.polls_tutorial.manage', it reported error: "No module named polls_tutorial.manage", please check your spelling and sys.path
-T:\hgwork\lino\docs\api\lino.projects.polls_tutorial.rst:21: WARNING: autodoc can't import/find module 'lino.projects.polls_tutorial.settings', it reported error: "No module named polls_tutorial.settings", please check your spelling and sys.path
-T:\hgwork\lino\docs\api\lino.projects.polls_tutorial.polls.rst:7: WARNING: autodoc can't import/find module 'lino.projects.polls_tutorial.polls.models', it reported error: "No module named polls_tutorial.polls.models", please check your spelling and sys.path
-T:\hgwork\lino\docs\api\lino.projects.polls_tutorial.polls.fixtures.rst:7: WARNING: autodoc can't import/find module 'lino.projects.polls_tutorial.polls.fixtures.demo', it reported error: "No module named polls_tutorial.polls.fixtures.demo", please check your spelling and sys.path
-T:\hgwork\lino\docs\demos.rst:3: WARNING: image file not readable: tutorials/polls1.jpg
-T:\hgwork\lino\docs\tutorials\index.rst:7: WARNING: toctree contains reference to nonexisting document u'tutorials/polls/index'
-T:\hgwork\lino\docs\tutorials\polls\mysite\index.rst:62: WARNING: Include file u'T:\\hgwork\\lino\\docs\\tutorials\\polls\\mysite\\../../lino/projects/polls_tutorial/settings.py' not found or reading it failed
-T:\hgwork\lino\docs\tutorials\polls\mysite\index.rst:147: WARNING: Include file u'T:\\hgwork\\lino\\docs\\tutorials\\polls\\mysite\\../../lino/projects/polls_tutorial/polls/models.py' not found or reading it failed
-T:\hgwork\lino\docs\tutorials\polls\mysite\index.rst:179: WARNING: Include file u'T:\\hgwork\\lino\\docs\\tutorials\\polls\\mysite\\../../lino/projects/polls_tutorial/templates_jinja/admin_main.html' not found or reading it failed
-T:\hgwork\lino\docs\tutorials\polls\mysite\index.rst:: WARNING: document isn't included in any toctree
-
-Exception occurred:
-  File "c:\Python27\lib\site-packages\docutils\writers\html4css1\__init__.py", line 1032, in visit_image
-    and self.settings.file_insertion_enabled):
-AttributeError: Values instance has no attribute 'file_insertion_enabled'
-The full traceback has been saved in c:\docume~1\luc\locals~1\temp\sphinx-err-di0mya.log, if you want to report the issue to the developers.
-Please also report this if it was a user error, so that a better error message can be provided next time.
-Either send bugs to the mailing list at <http://groups.google.com/group/sphinx-dev/>,
-or report them in the tracker at <http://bitbucket.org/birkenfeld/sphinx/issues/>. Thanks!
+T:\hgwork\lino\docs\api\lino.modlib.school.rst:7: WARNING: autodoc can't import/find module 'lino.modlib.school.models', it reported error: "resolve_model('contacts.Person',app_label=u'contacts') found None (settings settings)", please check your spelling and sys.path
+T:\hgwork\lino\docs\api\lino.modlib.school.fixtures.rst:7: WARNING: autodoc can't import/find module 'lino.modlib.school.fixtures.demo', it reported error: "resolve_model('contacts.Person',app_label=u'contacts') found None (settings settings)", please check your spelling and sys.path
+T:\hgwork\lino\docs\tutorials\polls\mysite\index.rst:216: WARNING: unknown document: dumpy

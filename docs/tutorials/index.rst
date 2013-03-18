@@ -7,9 +7,9 @@ you'll now want to know how to do it yourself.
 .. toctree::
    :maxdepth: 1
 
-   quickstart
+   quickstart/mysite/index
+   polls/mysite/index
    dumpy
-   polls/index
    babel
    layouts
    mini

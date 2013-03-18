@@ -2,6 +2,9 @@
 Installing Lino on a Debian server
 ==================================
 
+.. include:: /include/needs_update.rst
+
+
 For a Lino production site you'll need a 
 Linux computer that acts as Server.
 The easiest choice is a Debian distribution 
