@@ -61,7 +61,7 @@ def site_setup(sender,**kw):
     from django.utils.importlib import import_module
     
     paths = list(self.get_settings_subdirs(SUBDIR_NAME))
-        
+    
     loaders = []
     if len(paths) > 0:
         loaders.append(jinja2.FileSystemLoader(paths))

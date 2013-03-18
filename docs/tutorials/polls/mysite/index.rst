@@ -1,14 +1,16 @@
-The Polls tutorial 
-==================
+.. _lino.tutorial.polls:
+
+The Lino Polls tutorial 
+=======================
 
 In this tutorial we are going to take the "Polls" 
 application from Django's excellent tutorial and turn it 
 into a Lino application.
 
-.. include:: /include/needs_update.rst
-
 The result of this tutorial is available as a public 
 live demo at http://demo1.lino-framework.org
+
+You might compare this with :ref:`north.tutorial.polls`.
 
 .. contents:: Table of Contents
  :local:
@@ -36,24 +38,24 @@ We now leave the Django philosophy and continue
 Lino is an alternative to Django's Admin module.
 
 Most files remain unchanged, they are the same as with every Django project:
-:xfile:`__init__.py`, :xfile:`manage.py`,
-:xfile:`urls.py` and :xfile:`wsgi.py`.
+:file:`__init__.py`, :file:`manage.py`,
+:file:`urls.py` and :file:`wsgi.py`.
 You might want to compare your files with our version 
 which you can see in the code repository at
 :srcref:`/lino/projects/polls_tutorial`.
 
 But we are now going to modify the files 
-:xfile:`settings.py` and
-:xfile:`polls/models.py`.
+:file:`settings.py` and
+:file:`polls/models.py`.
 
-The :xfile:`settings.py` file
+The :file:`settings.py` file
 -----------------------------
 
 Lino uses some tricks to make Django :xfile:`settings.py`
 files more pleasant to work with,
 especially if you maintain Lino sites for several customers.
 
-- Change the contents of your :xfile:`settings.py` 
+- Change the contents of your :file:`settings.py` 
   to the following (except for the :setting:`DATABASES` setting,
   which you should take over from your original file):
 
@@ -67,9 +69,9 @@ and which are the thing that turns a Django project into
 a Lino application::
 
     from lino.projects.std.settings import *
-    class Lino(Lino):
+    class Site(Site):
         ...
-    LINO = Lino(__file__,globals()) 
+    SITE = Site(__file__,globals()) 
     
 - The first line caused your settings to "inherit" 
   from :mod:`lino.projects.std`, the common ancestor 
@@ -77,13 +79,13 @@ a Lino application::
 
 - The following lines (where the ``...`` part can be much more 
   than in our example) optionally override some of the class 
-  attributes and methods defined for :class:`lino.Lino`. 
-  For example the :attr:`lino.Lino.title` is a simple string to 
+  attributes and methods defined for :class:`lino.Site`. 
+  For example the :attr:`lino.Site.title` is a simple string to 
   occur in the browser's title bar (and possibly at other places).
-  :meth:`setup_menu <lino.Lino.setup_menu>` 
+  :meth:`setup_menu <lino.Site.setup_menu>` 
   defines the structure of the main menu.
   And 
-  :meth:`get_main_html <lino.Lino.get_main_html>` 
+  :meth:`get_main_html <lino.Site.get_main_html>` 
   returns the HTML to be displayed in the index page.
 
 - The last line finally *instantiates* your local ``LINO``.
@@ -91,7 +93,8 @@ a Lino application::
   which must be a :class:`lino.Lino` instance.
   It is available in your application code as ``settings.LINO``.
   
-  The first argument of the instantiator is the built-in Python variable `__file__`.
+  The first argument of the instantiator is the built-in 
+  Python variable `__file__`.
   This is how Lino knows the full path of your local settings file.
   
   The second argument is the `global()` namespace of your settings module.
@@ -100,11 +103,11 @@ a Lino application::
 
 
 One important setting to be defined by every Lino application 
-is the :meth:`get_installed_apps <lino.Lino.get_installed_apps>` 
+is the :meth:`get_installed_apps <lino.Site.get_installed_apps>` 
 method:: 
 
     def get_installed_apps(self):
-        for a in super(Lino,self).get_installed_apps():
+        for a in super(Site,self).get_installed_apps():
             yield a
         yield 'lino.projects.polls_tutorial.polls' # 'mysite.polls'
         

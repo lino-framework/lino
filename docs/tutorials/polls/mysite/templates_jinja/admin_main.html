@@ -1,0 +1,22 @@
+<div class="htmlText">
+<h1>Recent polls</h1>
+<ul>
+{% for poll in site.modules.polls.Poll.objects.filter(hidden=False).order_by('pub_date') %}
+<li>
+{{poll.question}} 
+{% set sep = joiner(" / ") %}
+{% for obj in poll.choice_set.all() %}
+  {{ sep() }}
+  {{ site.modules.polls.Choices.vote.as_button(obj,request,unicode(obj))}}
+{% endfor %}
+<br/><small>Published {{dtosl(poll.pub_date)}}
+<br/>Results:
+{% set sep = joiner(", ") %}
+{% for obj in poll.choice_set.all() %}
+  {{ sep() }}{{obj.votes}}x {{unicode(obj)}}
+{% endfor %}
+</small>
+</li>
+{% endfor %}
+</ul>
+</div>

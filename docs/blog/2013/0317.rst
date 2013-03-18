@@ -2,11 +2,12 @@
 20130317 (Sunday, 17 March 2013)
 ================================
 
-
 - NotImplementedError: <ul> inside <text:p>
 
   :mod:`lino.utils.html2odf` isn't yet able to convert  
   <ul>, <ol> and <li> elements to a OpenDocument chunk.
+  
+  Did some trials
   
 - :mod:`djangosite.utils.fablib` now touches the 
   blog's `index.rst` file when it starts a new entry.
@@ -20,3 +21,26 @@
   `User documentation <http://welfare.lino-framework.org/user/index.html>`_.
   A little visible result of the rather internal work of the last weeks. Wow.
   
+- Release notes are now being created automatically.
+
+- Issuing `fab summary` produces an overview table:
+
++------------------------------------------+-------------+-------------+
+| Project                                  | Old version | New version |
++==========================================+=============+=============+
+| `djangosite <http://site.lino-           | 0.0.4       | 0.1.0       |
+| framework.org>`__ -- A server startup    |             |             |
+| signal for Django                        |             |             |
++------------------------------------------+-------------+-------------+
+| `north <http://north.lino-               | 0.0.4       | 0.1.0       |
+| framework.org>`__ -- Another way to      |             |             |
+| migrate Django databases                 |             |             |
++------------------------------------------+-------------+-------------+
+| `lino <http://www.lino-framework.org>`__ | 1.6.2       | 1.6.3       |
+| -- A framework for writing desktop-like  |             |             |
+| web applications using Django and ExtJS  |             |             |
++------------------------------------------+-------------+-------------+
+| `lino_welfare <http://welfare.lino-      | 1.0.16      | 1.1.0       |
+| framework.org>`__ -- A Lino application  |             |             |
+| for Belgian Public Welfare Centres       |             |             |
++------------------------------------------+-------------+-------------+

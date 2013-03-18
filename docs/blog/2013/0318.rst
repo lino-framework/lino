@@ -1,0 +1,58 @@
+================================
+20130318 (Monday, 18 March 2013)
+================================
+
+
+Monatsrückblick
+---------------
+
+Seit ich aus Belgien zurück bin (17.02.13-17.03.13) 
+habe ich einen arbeitsrintensiven Monat hinter mir mit 
+fast 200 Arbeitsstunden:
+
+=============== ======== ========
+Week              TIM      Lino     
+--------------- -------- --------
+Week  8/2013 :     15:47    17:37 
+Week  9/2013 :     17:37    27:18 
+Week 10/2013 :      4:49    46:06 
+Week 11/2013 :     10:21    53:54 
+--------------- -------- --------
+Total              48:34   144:55 
+=============== ======== ========
+
+Was habe ich denn eigentlich gemacht in dieser Zeit? 
+Meine Ticketverwaltung hilft mir nur bedingt, weil die Arbeiten 
+oft ticketübergreifend und schwer zuweisbar waren.
+
+Insgesamt kann man das alles unter dem Titel 
+"Folgen des Buchs '2 Scoops of Django'" zusammenfassen. 
+Konkret:
+
+- Weiterentwicklung der "technischen Verwaltungsarbeit": fabric, distribute, virtualenv und pip sind Tools, die in dem Buch empfohlen werden.
+
+- Abspaltung der Unterprojekte djangosite und North (aus der Erkenntnis heraus, dass Lino als Projekt viel zu komplex ist; auch hier empfahl das Buch, seine Projekte möglichst klein zu halten)
+
+Die Ziele oder erhofften Vorteile dieser Arbeiten sind:
+
+- Bessere Abdeckung durch automatisierte Tests (Qualitätskontrolle)
+- Bessere Dokumentation für potentielle Mitentwickler
+- Bessere Dokumentationsmöglichkeiten für Endbenutzer
+- Automatisierung des Release-Prozesses (Delegierbarkeit)
+
+In den kommenden Wochen möchte ich jetzt aber endlich mal mit 
+Lino Così weitermachen.
+
+
+
+Polls tutorial
+--------------
+
+Worked on 
+:ref:`north.tutorial.polls`
+and
+:ref:`lino.tutorial.polls`.
+
+:meth:`djangosite.Site.get_settings_subdirs` 
+failed to detect a local directory if the class was 
+directly instantiated without subclassing it).

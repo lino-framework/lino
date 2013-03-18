@@ -2,6 +2,23 @@ Jargon
 =============
 
 
+.. _admin:
+
+System administrator
+--------------------
+
+A system administrator is a person who installs an existing Lino application.
+He or she doesn't need to write Python code except for the :xfile:`settings.py` 
+file.
+
+.. _dev:
+
+Lino application developer
+--------------------------
+
+A Lino application developer is a Python programmer who uses Lino while 
+writing his own application.
+
 .. _lf:
 
 lino-framework.org

@@ -2,9 +2,9 @@ Getting started
 ===============
 
 This document is the first unit of a planned series of tutorial-style 
-lessons for *Lino application developers*.
+lessons for :ref:`Lino application developers <dev>`.
 
-**This document is work in progress.**
+This document is work in progress.
 The examples are likely to not work exactly as described when you try them.
 But that's part of the game and you are going to learn from each problem.
 Please report any problems (and joys and questions) which you experienced 
@@ -15,11 +15,14 @@ Installation
 
 Note that Lino doesn't yet run under Python3, you need Python 2.7 or 2.6.  
 
-You cannot (yet) just do ``pip install lino`` 
-due to some subtle packaging problems (see :doc:`/blog/2013/0314`).
+The easiest way is to simply type::
 
-So I suggest to install a development version of Lino and 
-its related projects. 
+  pip install lino
+
+If this works, then you can skip to the next section.
+
+Another possibility is to install a development version of Lino 
+and its related projects. 
 Anyway a future Lino application developer should know 
 how to play with these things.
 
@@ -31,10 +34,10 @@ working copies of version-controlled software projects,
   $ hg clone https://django-north.googlecode.com/hg/ django-north
   $ hg clone https://django-site.googlecode.com/hg/ django-site
   
-(The ``hg`` command is from Mercurial. Run `sudo aptitude install mercurial`  if necessary.)
+(The ``hg`` command is from Mercurial. 
+Run `sudo aptitude install mercurial`  if necessary.)
   
 Then install these projects as editable packages::
-
 
   $ sudo pip install -e lino
   $ sudo pip install -e north

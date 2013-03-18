@@ -23,6 +23,10 @@ env.simple_doctests.append('lino/utils/jsgen.py')
 env.simple_doctests.append('lino/utils/ranges.py')
 env.simple_doctests.append('lino/modlib/ledger/utils.py')
 env.simple_doctests.append('lino/modlib/accounts/utils.py')
+
+# invoke only these with ``fab t5``:
+env.django_databases.append('docs/tutorials/polls')
+
   
 env.django_admin_tests += [
       "lino.projects.cosi.settings",
@@ -34,7 +38,7 @@ env.django_admin_tests += [
       "lino.projects.cosi.settings",
       #~ "lino.projects.presto.settings", 
       "lino.projects.babel_tutorial.settings",
-      "lino.projects.polls_tutorial.settings",
+      #~ "lino.projects.polls_tutorial.settings",
       "lino.projects.belref.settings",
       "lino.projects.events.settings",
       "lino.projects.homeworkschool.settings",

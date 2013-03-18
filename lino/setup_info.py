@@ -104,9 +104,9 @@ lino.projects.igen
 lino.projects.igen.tests
 lino.projects.min1
 lino.projects.min2
-lino.projects.polls_tutorial
-lino.projects.polls_tutorial.polls
-lino.projects.polls_tutorial.polls.fixtures
+lino.projects.unused_polls_tutorial
+lino.projects.unused_polls_tutorial.polls
+lino.projects.unused_polls_tutorial.polls.fixtures
 lino.projects.presto
 lino.projects.presto.fixtures
 lino.projects.std
@@ -115,7 +115,7 @@ lino.projects.babel_tutorial.fixtures
 """.splitlines() if n]
   
 SETUP_INFO = dict(name = 'lino',
-  version = '1.6.3',
+  version = '1.6.3+',
   install_requires = ['North==0.1.0','appy','PyYAML','odfpy','jinja2'],
   description = "A framework for writing desktop-like web applications using Django and ExtJS",
   long_description = """\
