@@ -34,10 +34,10 @@ Tag #1 (u'Foo')
 
 The signal was not emitted here because the Foo tag existed before.
 
->>> print_(Tag.lookup_or_create("name","Bar"))
+>>> print Tag.lookup_or_create("name","Bar")
 My auto_create handler was called with Bar
 Bar
->>> print_(Tag.objects.all())
+>>> print Tag.objects.all()
 [Tag #1 (u'Foo'), Tag #2 (u'Bar')]
 
 Voilà, that's all for the moment.
