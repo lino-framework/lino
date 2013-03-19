@@ -1,5 +1,8 @@
-lookup_or_create and the auto_create signal
-===========================================
+.. _lino.tutorial.auto_create:
+
+================================================
+`lookup_or_create` and the `auto_create` signal
+================================================
 
 This document describes and tests the
 :meth:`lookup_or_create <lino.core.model.Model.lookup_or_create>`
@@ -7,7 +10,7 @@ method and the
 :attr:`auto_create <lino.core.signals.auto_create>` signal.
 I wrote it primarily to reproduce and test the 
 "NameError / global name 'dd' is not defined"
-on :doc:`/blog/2013/0311`.
+on :blogref:`20130311`.
 
 We define a single simple model:
 
@@ -21,7 +24,7 @@ Define a handler for the auto_create signal:
 >>> from lino import dd
 >>> @dd.receiver(dd.auto_create)
 ... def my_auto_create_handler(sender,**kw):
-...    print_("My auto_create handler was called with",sender)
+...    print "My auto_create handler was called with",sender
 
 Manually create a Tag:
 

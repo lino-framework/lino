@@ -1,3 +1,5 @@
+.. _lino.tutorial.human:
+
 About Humans
 ============
 
@@ -38,7 +40,7 @@ defines the possible values for the `gender` field of a Human.
 The default `__unicode__` method of a Human includes 
 the "salutation" which indicates the gender:
 
->>> print_(Person(first_name="John", last_name="Smith",gender=Genders.male))
+>>> print Person(first_name="John", last_name="Smith",gender=Genders.male)
 Mr John Smith
 
 >>> print Person(last_name="Smith",gender=Genders.female)
@@ -87,17 +89,17 @@ The full name
 
 Calling `unicode` on a person actually returns the same as the property `full_name`:
 
->>> print_(p)
+>>> print p
 Mr Jean Dupont
 
->>> print_(p.full_name)
+>>> print p.full_name
 Mr Jean Dupont
 
 They are equivalent *here*, but remember that applications may override 
 one of them (usually `__unicode__`) because in reality not all humans 
 are equal. 
 
->>> print_(p.get_full_name())
+>>> print p.get_full_name()
 Mr Jean Dupont
 
 The :func:`get_full_name <lino.modlib.contacts.models.Person.get_full_name>` 
@@ -118,7 +120,7 @@ Jean Dupont
 The property `full_name` (without parentheses) of Person 
 is an alias for the function call `get_full_name()` without parameters.
 
->>> print_(p.full_name)
+>>> print p.full_name
 Herrn Jean Dupont
 
 

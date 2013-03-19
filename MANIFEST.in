@@ -9,6 +9,7 @@ include bash/*
 prune docs
 prune obsolete
 prune rtlib
+prune lino/sandbox
 prune screenshots
 prune extjs-showcases
 prune tmp

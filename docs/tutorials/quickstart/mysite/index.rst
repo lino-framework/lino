@@ -4,9 +4,6 @@
 Getting started
 ===============
 
-This document is the first unit of a planned series of tutorial-style 
-lessons for :ref:`Lino application developers <dev>`.
-
 Installation
 ------------
 
@@ -18,41 +15,18 @@ The easiest way is to simply type::
 
 If this works, then you can skip to the next section.
 
+It may take some time because Lino uses a lot of other Python packages 
+which pip must possibly download.
+
 If you didn't yet have `pip <http://www.pip-installer.org/en/latest/>`_, 
-run `sudo aptitude install python-pip` after reading 
+run `sudo aptitude install python-pip`.
 If you cannot or don't want to perform system-wide installs, 
-use `python-virtualenv`.
+use `virtualenv <https://pypi.python.org/pypi/virtualenv>`_.
 
 Another possibility is to install a development version of Lino 
-and its related projects. 
+and its related projects, as described in :ref:`lino.dev.install`.
 
-Create a directory (e.g. :file:`~/hgwork`) meant to hold your 
-working copies of version-controlled software projects,
-`cd` to that directory and and do::
-
-  $ hg clone https://lino.googlecode.com/hg/ lino
-  $ hg clone https://django-north.googlecode.com/hg/ django-north
-  $ hg clone https://django-site.googlecode.com/hg/ django-site
   
-(The ``hg`` command is from Mercurial. 
-Run `sudo aptitude install mercurial`  if necessary.)
-  
-Then install these projects *as editable packages*::
-
-  $ sudo pip install -e lino
-  $ sudo pip install -e north
-  $ sudo pip install -e django-site
-  
-Anyway a future Lino application developer should know 
-how to play with these things.
-  
-  
-  
-You will also need some other dependencies for 
-which the regular pip installation will work::
-
-  $ sudo pip install Django unipath Sphinx
-
 Start your project
 ------------------
 

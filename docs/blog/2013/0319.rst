@@ -1,0 +1,35 @@
+=================================
+20130319 (Tuesday, 19 March 2013)
+=================================
+
+sphinxcontrib-newsfeed
+----------------------
+
+I discovered and had a look at 
+`sphinxcontrib-newsfeed <https://pypi.python.org/pypi/sphinxcontrib-newsfeed>`_,
+a well made Sphinx extension to generate an rss feed from my blog entries.
+
+What I'm missing is that it lacks an auto-discovery function. 
+I have to add myself every blog entry also to the ``.. feed::`` 
+directive. For example in my :file:`index.rst` I have::
+
+    .. feed::
+       :rss: index.rss
+       :title: Luc's blog
+
+       blog/index
+       blog/2013/0318
+       blog/2013/0319
+       
+It would be enough to add a ``:glob:`` option as for ``.. toctree::``.
+
+
+Changes
+-------
+
+- Removed some internal dependencies from djangosite to north.
+- Added German translations for the new things in :ref:`welfare.jobs`.
+- There were still some `print_` function calls instead of `print` 
+  statements hanging around. E.g. in 
+  :ref:`lino.tutorial.auto_create` and
+  :ref:`lino.tutorial.human`.

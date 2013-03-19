@@ -49,10 +49,9 @@ Polls tutorial
 --------------
 
 Worked on 
-:ref:`north.tutorial.polls`
-and
-:ref:`lino.tutorial.polls`.
-Also :ref:`lino.tutorial.quickstart`.
+:ref:`north.tutorial.polls`, 
+:ref:`lino.tutorial.polls` and
+:ref:`lino.tutorial.quickstart`.
 
 :meth:`djangosite.Site.get_settings_subdirs` 
 failed to detect a local directory if the class was 
@@ -61,7 +60,7 @@ directly instantiated without subclassing it).
 Values instance has no attribute 'file_insertion_enabled'
 ---------------------------------------------------------
 
-Hm... I had once more the following traceback which 
+I had once more the following traceback which 
 was caused by a wrong file path in a ``.. figure::``. 
 Instead of saying "file not found" I got::
 
@@ -114,6 +113,4 @@ Instead of saying "file not found" I got::
       and self.settings.file_insertion_enabled):
   AttributeError: Values instance has no attribute 'file_insertion_enabled'
 
-Once this disappeared after 
-a :func:`fab clean <djangosite.utils.fablib.clean>`.
 

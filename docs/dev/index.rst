@@ -119,5 +119,6 @@ Conventions
    datamig
    actors
    versioning
+   install
 
 
