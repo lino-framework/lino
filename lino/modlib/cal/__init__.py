@@ -1,5 +1,5 @@
 # -*- coding: UTF-8 -*-
-## Copyright 2011-2012 Luc Saffre
+## Copyright 2011-2013 Luc Saffre
 ## This file is part of the Lino project.
 ## Lino is free software; you can redistribute it and/or modify 
 ## it under the terms of the GNU General Public License as published by
@@ -14,36 +14,37 @@
 
 """
 This module turns Lino into a basic calendar client. 
-To be combined with :attr:`lino.Lino.use_extensible`.
+To be combined with :attr:`lino.ui.Site.use_extensible`.
 Supports remote calendars.
-Events and Tasks can get attributed to a :attr:`Project <lino.Lino.project_model>`.
+Events and Tasks can get attributed to a :attr:`Project <lino.Site.project_model>`.
 
 """
 
-class SiteMixin(object):
-  
-    def get_reminder_generators_by_user(self,user):
-        """
-        Override this per application to return a list of 
-        reminder generators from all models for a give ueser
-        A reminder generator is an object that has a `update_reminders` 
-        method.
-        """
-        return []
+#~ class SiteMixin(object):
+    #~ """
+    #~ Class methods and attibutes added to a Site by this module.
+    #~ """
+    #~ def get_reminder_generators_by_user(self,user):
+        #~ """
+        #~ Override this per application to return a list of 
+        #~ reminder generators from all models for a give ueser
+        #~ A reminder generator is an object that has a `update_reminders` 
+        #~ method.
+        #~ """
+        #~ return []
         
     
-    def get_todo_tables(self,ar):
-        """
-        Return or yield a list of tables that should be empty
-        """
-        from django.db.models import loading
-        for mod in loading.get_apps():
-        #~ for mod in self.get_installed_modules():
-            meth = getattr(mod,'get_todo_tables',None)
-            if meth is not None:
+    #~ def get_todo_tables(self,ar):
+        #~ """
+        #~ Return or yield a list of tables that should be empty
+        #~ """
+        #~ from django.db.models import loading
+        #~ for mod in loading.get_apps():
+            #~ meth = getattr(mod,'get_todo_tables',None)
+            #~ if meth is not None:
                 #~ dblogger.debug("Running %s of %s", methname, mod.__name__)
-                for i in meth(self,ar):
-                    yield i
+                #~ for i in meth(self,ar):
+                    #~ yield i
 
 
   

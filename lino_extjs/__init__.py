@@ -116,7 +116,8 @@ def prepare_label(mi):
 
 class ExtRenderer(HtmlRenderer):
     """
-    Deserves more documentation.
+    A HTML renderer that uses the ExtJS Javascript toolkit.
+    
     """
     is_interactive = True
     

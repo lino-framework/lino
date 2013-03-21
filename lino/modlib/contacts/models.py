@@ -816,25 +816,26 @@ class ContactRelated(dd.Model):
 
 
 
-if settings.SITE.is_installed('contacts'):
+#~ if settings.SITE.is_installed('contacts'):
   
     #~ from lino.models import SiteConfig
 
-    dd.inject_field('ui.SiteConfig',
-        'next_partner_id',
-        models.IntegerField(default=100, # first 100 for users from demo fixtures.
-            verbose_name=_("The next automatic id for Person or Company")
-        ),"""The next automatic id for Person or Company. 
-        Deserves more documentation.
-        """)
-        
-    dd.inject_field('ui.SiteConfig',
-        'site_company',
-        models.ForeignKey("contacts.Company",
-            blank=True,null=True,
-            verbose_name=_("The company that runs this site"),
-            related_name='site_company_sites',
-            help_text=_("The Company to be used as sender in documents.")))
+PARTNER_NUMBERS_START_AT = 100
+"""
+"""
+
+dd.inject_field('ui.SiteConfig',
+    'next_partner_id',
+    models.IntegerField(default=PARTNER_NUMBERS_START_AT, #
+        verbose_name=_("The next automatic id for a manually created partner.")))
+    
+dd.inject_field('ui.SiteConfig',
+    'site_company',
+    models.ForeignKey("contacts.Company",
+        blank=True,null=True,
+        verbose_name=_("The company that runs this site"),
+        related_name='site_company_sites',
+        help_text=_("The Company to be used as sender in documents.")))
     
 
 #~ dd.inject_field(Partner,

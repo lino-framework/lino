@@ -23,7 +23,7 @@ See also :srcref:`/docs/blog/2010/1116`. But basically:
 
     Looks good.  
 
-    
+   
 - Install the startup script::
 
     # cp /var/snapshots/lino/bash/oood /etc/init.d

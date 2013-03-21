@@ -1,5 +1,5 @@
 # -*- coding: UTF-8 -*-
-## Copyright 2012 Luc Saffre
+## Copyright 2012-2013 Luc Saffre
 ## This file is part of the Lino project.
 ## Lino is free software; you can redistribute it and/or modify 
 ## it under the terms of the GNU General Public License as published by
@@ -18,10 +18,11 @@ import lino
 
 from lino.projects.std.settings import *
 
-from lino.modlib import cal
+#~ from lino.modlib import cal
 
-class Site(Site,cal.SiteMixin):
-    source_dir = os.path.dirname(__file__)
+#~ class Site(Site,cal.SiteMixin):
+class Site(Site):
+    #~ source_dir = os.path.dirname(__file__)
     title = "Lino/MinimalApp 2"
     #~ help_url = "http://lino.saffre-rumma.net/az/index.html"
     #~ migration_module = 'lino.projects.az.migrate'
@@ -32,7 +33,7 @@ class Site(Site,cal.SiteMixin):
     user_model = "users.User"
     
     #~ languages = ('de', 'fr')
-    languages = ['en','et']
+    languages = 'en et'
     
     #~ index_view_action = "dsbe.Home"
     

@@ -1,0 +1,3 @@
+T:\hgwork\lino\docs\api\lino.modlib.school.rst:7: WARNING: autodoc can't import/find module 'lino.modlib.school.models', it reported error: "resolve_model('contacts.Person',app_label=u'contacts') found None (settings settings)", please check your spelling and sys.path
+T:\hgwork\lino\docs\api\lino.modlib.school.fixtures.rst:7: WARNING: autodoc can't import/find module 'lino.modlib.school.fixtures.demo', it reported error: "resolve_model('contacts.Person',app_label=u'contacts') found None (settings settings)", please check your spelling and sys.path
+T:\hgwork\lino\docs\blog\2013\0321.rst:46: WARNING: Definition list ends without a blank line; unexpected unindent.

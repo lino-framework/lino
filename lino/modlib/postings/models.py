@@ -243,7 +243,7 @@ def setup_explorer_menu(site,ui,profile,m):
     #~ m  = m.add_menu("postings",MODULE_LABEL)
     m.add_action(Postings)
   
-def get_todo_tables(site,ar):
+def get_todo_tables(ar):
     yield (PostingsReady,_("%d postings ready to print"))
                 
   

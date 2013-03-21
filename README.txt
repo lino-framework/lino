@@ -24,8 +24,8 @@ Lino consists of different parts:
   (split off from main project in March 2013)
   provides python dumps, multilingual database content and data migration.
 
-- A collection of reusable Django apps and 
-  out-of-the-box demo applications
+- A collection of reusable Django apps and out-of-the-box demo applications
+
 - A collection of *user interface renderers*.
   Currently there's one for ExtJS 
   and another for Twitter/Bootstrap-based "plain" interface.
@@ -34,6 +34,6 @@ The following real-world applications use the Lino framework:
 
 - `Lino-Welfare <http://welfare.lino-framework.org>`__
   
-  
+
 
 Read more on http://www.lino-framework.org

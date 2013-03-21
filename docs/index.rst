@@ -53,5 +53,6 @@ Suggestions du chef
    topics/index
    reviews/index
    ref/index
+   user/index
    API <api/lino>
 

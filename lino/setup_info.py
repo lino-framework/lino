@@ -1,4 +1,63 @@
-PACKAGES = [str(n) for n in """
+SETUP_INFO = dict(name = 'lino',
+  version = '1.6.4',
+  install_requires = ['North==0.1.1','appy','PyYAML','odfpy','jinja2'],
+  description = "A framework for writing desktop-like web applications using Django and ExtJS",
+  license = 'GPL',
+  include_package_data = True,
+  zip_safe = False,
+  author = 'Luc Saffre',
+  author_email = 'luc.saffre@gmail.com',
+  url = "http://www.lino-framework.org",
+  #~ test_suite = 'lino.test_apps',
+  classifiers="""\
+  Programming Language :: Python
+  Programming Language :: Python :: 2
+  Development Status :: 4 - Beta
+  Environment :: Web Environment
+  Framework :: Django
+  Intended Audience :: Developers
+  Intended Audience :: System Administrators
+  License :: OSI Approved :: GNU General Public License (GPL)
+  Natural Language :: English
+  Natural Language :: French
+  Natural Language :: German
+  Operating System :: OS Independent
+  Topic :: Database :: Front-Ends
+  Topic :: Home Automation
+  Topic :: Office/Business
+  Topic :: Software Development :: Libraries :: Application Frameworks""".splitlines())
+
+SETUP_INFO.update(long_description = """\
+Lino is a high-level framework for writing desktop-like web applications
+based on `Django <https://www.djangoproject.com/>`_
+and `Sencha ExtJS <http://www.sencha.com/products/extjs/>`_.
+
+Lino is for IT professionals who want to develop customized database 
+applications for their customers without writing any HTML or CSS.
+
+Lino consists of different parts:
+
+- `django-site <http://site.lino-framework.org>`__
+  (split off from main project in March 2013)
+  provides startup signals and the `settings.SITE` object.
+  
+- `django-north <https://code.google.com/p/django-north/>`__
+  (split off from main project in March 2013)
+  provides python dumps, multilingual database content and data migration.
+
+- A collection of reusable Django apps and out-of-the-box demo applications
+
+- A collection of *user interface renderers*.
+  Currently there's one for ExtJS 
+  and another for Twitter/Bootstrap-based "plain" interface.
+
+The following real-world applications use the Lino framework:
+
+- `Lino-Welfare <http://welfare.lino-framework.org>`__
+  
+""")
+
+SETUP_INFO.update(packages = [str(n) for n in """
 lino_extjs
 lino
 lino.core
@@ -112,63 +171,5 @@ lino.projects.presto.fixtures
 lino.projects.std
 lino.projects.babel_tutorial
 lino.projects.babel_tutorial.fixtures
-""".splitlines() if n]
+""".splitlines() if n])
   
-SETUP_INFO = dict(name = 'lino',
-  version = '1.6.3+',
-  install_requires = ['North==0.1.0','appy','PyYAML','odfpy','jinja2'],
-  description = "A framework for writing desktop-like web applications using Django and ExtJS",
-  long_description = """\
-Lino is a high-level framework for writing desktop-like web applications
-based on `Django <https://www.djangoproject.com/>`_
-and `Sencha ExtJS <http://www.sencha.com/products/extjs/>`_.
-
-Lino is for IT professionals who want to develop customized database 
-applications for their customers without writing any HTML or CSS.
-
-Lino consists of different parts:
-
-- `django-site <http://site.lino-framework.org>`__
-  (split off from main project in March 2013)
-  provides startup signals and the `settings.SITE` object.
-  
-- `django-north <https://code.google.com/p/django-north/>`__
-  (split off from main project in March 2013)
-  provides python dumps, multilingual database content and data migration.
-
-- A collection of reusable Django apps and 
-  out-of-the-box demo applications
-- A collection of *user interface renderers*.
-  Currently there's one for ExtJS 
-  and another for Twitter/Bootstrap-based "plain" interface.
-
-The following real-world applications use the Lino framework:
-
-- `Lino-Welfare <http://welfare.lino-framework.org>`__
-  
-  """,
-  license = 'GPL',
-  packages = PACKAGES,
-  include_package_data = True,
-  zip_safe = False,
-  author = 'Luc Saffre',
-  author_email = 'luc.saffre@gmail.com',
-  url = "http://www.lino-framework.org",
-  #~ test_suite = 'lino.test_apps',
-  classifiers="""\
-  Programming Language :: Python
-  Programming Language :: Python :: 2
-  Development Status :: 4 - Beta
-  Environment :: Web Environment
-  Framework :: Django
-  Intended Audience :: Developers
-  Intended Audience :: System Administrators
-  License :: OSI Approved :: GNU General Public License (GPL)
-  Natural Language :: English
-  Natural Language :: French
-  Natural Language :: German
-  Operating System :: OS Independent
-  Topic :: Database :: Front-Ends
-  Topic :: Home Automation
-  Topic :: Office/Business
-  Topic :: Software Development :: Libraries :: Application Frameworks""".splitlines())

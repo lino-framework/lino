@@ -57,19 +57,25 @@ from . import elems as ext_elems
 
 MAX_ROW_COUNT = 300
 
-E = xghtml.E
 
-pages = dd.resolve_app('pages')
 
 class HttpResponseDeleted(http.HttpResponse):
     status_code = 204
     
 
 def requested_actor(app_label,actor):
+    """
+    Utility function which returns the requested actor, 
+    either directly or (if specified name is a model) that 
+    model's default actor.
+    """
     x = getattr(settings.SITE.modules,app_label)
     cl = getattr(x,actor)
-    if issubclass(cl,dd.Model):
+    if issubclass(cl,models.Model):
         return cl._lino_default_table
+    if not issubclass(cl,actors.Actor):
+        #~ raise http.Http404("%r is not an actor" % cl)
+        raise Exception("%r is not an actor" % cl)
     return cl
     
 #~ class Http403(Exception):
@@ -323,7 +329,7 @@ def form2obj_and_save(ar,data,elem,is_new,restful,file_upload=False): # **kw2sav
     #~ self = settings.SITE.ui
     request = ar.request
     rh = ar.ah
-    #~ logger.info('20120814 form2obj_and_save %r', data)
+    #~ logger.info('20130321 form2obj_and_save %r', data)
     #~ print 'form2obj_and_save %r' % data
     
     #~ logger.info('20120228 before store.form2obj , elem is %s' % dd.obj2str(elem))
@@ -491,13 +497,18 @@ class Callbacks(View):
         
 
 class Templates(View):
-  
+    """
+    Called by TinyMCE (`template_external_list_url 
+    <http://www.tinymce.com/wiki.php/configuration:external_template_list_url>`_)
+    to fill the list of available templates.
+    
+    """
     #~ def templates_view(self,request,
     def get(self,request,
         app_label=None,actor=None,pk=None,fldname=None,tplname=None,**kw):
       
         if request.method == 'GET':
-            from lino.models import TextFieldTemplate
+            from lino.ui.models import TextFieldTemplate
             if tplname:
                 tft = TextFieldTemplate.objects.get(pk=int(tplname))
                 return http.HttpResponse(tft.text)
@@ -506,18 +517,20 @@ class Templates(View):
                 
             elem = rpt.get_row_by_pk(pk)
 
-                
             if elem is None:
                 raise http.Http404("%s %s does not exist." % (rpt,pk))
                 
-            #~ TextFieldTemplate.templates
-            m = getattr(elem,"%s_templates" % fldname,None)
-            if m is None:
-                q = models.Q(user=request.user) | models.Q(user=None)
-                #~ q = models.Q(user=request.user)
-                qs = TextFieldTemplate.objects.filter(q).order_by('name')
-            else:
-                qs = m(request)
+            #~ q = models.Q(user=request.user) | models.Q(user__group__in=request.user.group_set.all())
+            groups = [o.group for o in request.user.membership_set.all()]
+            flt = models.Q(group__isnull=True)|models.Q(group__in=groups)
+            qs = TextFieldTemplate.objects.filter(flt).order_by('name')
+                
+            #~ m = getattr(elem,"%s_templates" % fldname,None)
+            #~ if m is None:
+                #~ q = models.Q(user=request.user) | models.Q(user=None)
+                #~ qs = TextFieldTemplate.objects.filter(q).order_by('name')
+            #~ else:
+                #~ qs = m(request)
                 
             templates = []
             for obj in qs:
@@ -995,7 +1008,7 @@ class ApiList(View):
             #~ ar.renderer = ui.ext_renderer
             response = http.HttpResponse(content_type='text/html;charset="utf-8"')
             doc = xghtml.Document(force_unicode(ar.get_title()))
-            doc.body.append(xghtml.E.h1(doc.title))
+            doc.body.append(E.h1(doc.title))
             t = doc.add_table()
             ar.ui.ar2html(ar,t,ar.data_iterator)
             doc.write(response,encoding='utf-8')
@@ -1082,7 +1095,9 @@ class PlainList(View):
         
 
 class PlainElement(View):
-  
+    """
+    Render a single record from :class:`lino.ui.PlainRenderer`.
+    """
     def get(self,request,app_label=None,actor=None,pk=None):
         """
         GET : Retrieve a representation of the addressed member of the collection expressed in an appropriate MIME type.
@@ -1126,8 +1141,9 @@ class PlainIndex(View):
         if a is not None:
             if not a.get_view_permission(user.profile):
                 raise exceptions.PermissionDenied("Action not allowed for %s" % user)
-            ar = a.request(settings.SITE.ui,request,**kw)
-            ar.renderer = ui.plain_renderer
+            kw.update(renderer=ui.plain_renderer)
+            ar = a.request(ui,request,**kw)
+            #~ ar.renderer = ui.plain_renderer
             context.update(title=ar.get_title())
             # TODO: let ar generate main
             # context.update(main=ui.plain_renderer.action_call(request,a,{}))

@@ -46,7 +46,7 @@ Extended Fields:
 
 Multilingual database content:
 
-- :class:`BabelNamed <north.dbutils.BabelNamed>`
+- :class:`BabelNamed <lino.mixins.BabelNamed>`
 - :class:`BabelCharField <north.dbutils.BabelCharField>`
 - :class:`BabelTextField <fields.BabelTextField>`
 - :class:`LanguageField <north.dbutils.LanguageField>`
@@ -82,6 +82,9 @@ Utilities:
 - :func:`update_field <lino.core.inject.update_field>` 
 - :func:`inject_field <lino.core.inject.inject_field>` 
 - :func:`inject_quick_add_buttons <lino.core.inject.inject_quick_add_buttons>` 
+- :func:`models_by_base <djangosite.dbutils.models_by_base>` 
+
+
 
 Signals:
 
@@ -193,7 +196,9 @@ from lino.core.fields import Constant, constant
 from lino.core.fields import ForeignKey
 from lino.core.fields import BabelTextField
 
-from north.dbutils import BabelCharField, BabelNamed, LanguageField
+from lino.mixins import BabelNamed
+
+from north.dbutils import BabelCharField, LanguageField
 from north.dbutils import babelkw
 from north.dbutils import babel_values # alias for babelkw for backward compat
 from north.dbutils import set_language

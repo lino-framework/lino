@@ -650,6 +650,19 @@ class Site(lino.Site):
 
         
       
+    #~ @property
+    #~ def site_config(self):
+        #~ SiteConfig = self.modules.ui.SiteConfig
+        #~ try:
+            #~ return SiteConfig.objects.get(pk=1)
+        #~ except SiteConfig.DoesNotExist:
+            #~ kw = dict(pk=1)
+            #~ kw.update(self.site_config_defaults)
+            #~ sc = SiteConfig(**kw)
+            #~ sc.full_clean()
+            #~ sc.save()
+            #~ return sc
+      
     @property
     def site_config(self):
         """
@@ -658,21 +671,20 @@ class Site(lino.Site):
         If no instance exists (which happens in a virgin database),
         we create it using default values from :attr:`site_config_defaults`.
         
-        This property may not be used as long as there is no database 
-        connected (or not initialized).
-        
         """
         if self._site_config is None:
             #~ raise Exception(20130301)
-            #~ print '20120801 create _site_config'
-            from lino.core.dbutils import resolve_model
+            #~ print '20130320 create _site_config'
+            #~ from lino.core.dbutils import resolve_model
+            #~ from lino.core.dbutils import obj2str
             #~ from lino.utils import dblogger as logger
-            SiteConfig = resolve_model('ui.SiteConfig')
+            #~ SiteConfig = resolve_model('ui.SiteConfig')
+            SiteConfig = self.modules.ui.SiteConfig
             #~ from .models import SiteConfig
             #~ from django.db.utils import DatabaseError
             try:
-                self._site_config = SiteConfig.objects.get(pk=1)
-                #~ logger.info("20130301 Loaded SiteConfig record (%s)",self._site_config)
+                self._site_config = SiteConfig.real_objects.get(pk=1)
+                #~ print "20130301 Loaded SiteConfig record", obj2str(self._site_config,True)
             #~ except (SiteConfig.DoesNotExist,DatabaseError):
             except SiteConfig.DoesNotExist:
             #~ except Exception,e:
@@ -680,7 +692,7 @@ class Site(lino.Site):
                 #~ kw.update(settings.SITE.site_config_defaults)
                 kw.update(self.site_config_defaults)
                 self._site_config = SiteConfig(**kw)
-                #~ logger.info("20130301 Created SiteConfig record (%s)",self._site_config)
+                #~ print "20130301 Created SiteConfig record", obj2str(self._site_config,True)
                 # 20120725 
                 # polls_tutorial menu selection `Config --> Site Parameters` 
                 # said "SiteConfig 1 does not exist"
@@ -693,16 +705,20 @@ class Site(lino.Site):
         """
         Clear the cached SiteConfig instance. 
         
-        This is needed e.g. when the test runner has created the test database.
+        This is needed e.g. when the test runner has created a new 
+        test database.
         """
         self._site_config = None
+        #~ print "20130320 clear_site_config"
     
-    def on_site_config_saved(self,sc):
-        """
-        Used internally. Called by SiteConfig.save() to update the cached instance.
-        """
-        self._site_config = sc
-        #~ print '20120801 site_config saved', sc.propgroup_softskills
+    #~ def on_site_config_saved(self,sc):
+        #~ """
+        #~ Used internally. Called by SiteConfig.save() to update the cached instance.
+        #~ """
+        #~ pass
+        #~ self._site_config = sc
+        #~ from lino.core.dbutils import obj2str
+        #~ print '20120801 site_config saved', obj2str(sc,True)
         
     def is_imported_partner(self,obj):
         """
@@ -800,7 +816,7 @@ class Site(lino.Site):
         for defining :setting:`MIDDLEWARE_CLASSES`, 
         you can simply set :setting:`MIDDLEWARE_CLASSES`
         in your :xfile:`settings.py` 
-        after the :class:`lino.Site` has been initialized.
+        after the :class:`lino.Site` has been instantiated.
         
         `Django and standard HTTP authentication
         <http://stackoverflow.com/questions/152248/can-i-use-http-basic-authentication-with-django>`_

@@ -44,6 +44,7 @@ from lino.core.requests import EmptyTableRow
 from lino.utils.choosers import chooser
 from lino.mixins.duplicable import Duplicable
 
+from north.dbutils import BabelCharField
 
 #~ class Owned(dd.Model):
 class Controllable(model.Model):
@@ -675,6 +676,31 @@ class EmptyTable(frames.Frame):
         if len(a) == 2:
             return getattr(getattr(settings.SITE.modules,a[0]),a[1])
             
+
+if True:
+  
+  from north.dbutils import BabelNamed
+  
+else: # not yet convinced that it is necessary.
+
+  class BabelNamed(model.Model):
+    """
+    Same as :class:`north.dbutils.BabelNamed` except that we now inherit 
+    from Lino's extended `Model` instead of Django's plain `Model`.
+    
+    The advantage is that subclasses can call super() when they 
+    override one of methods in :class:`dd.Model <lino.core.model.Model>`.
+    
+    """
+    
+    class Meta:
+        abstract = True
+        
+    name = BabelCharField(max_length=200,verbose_name=_("Designation"))
+    
+    def __unicode__(self):
+        return babelattr(self,'name')
+    
 
 
 #~ from lino.models import Workflowable

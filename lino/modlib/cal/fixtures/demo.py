@@ -1,5 +1,5 @@
 # -*- coding: UTF-8 -*-
-## Copyright 2011 Luc Saffre
+## Copyright 2011-2013 Luc Saffre
 ## This file is part of the Lino project.
 ## Lino is free software; you can redistribute it and/or modify 
 ## it under the terms of the GNU General Public License as published by
@@ -83,7 +83,8 @@ def objects():
           ))
           
     yield calendar(color=12,
-        invite_team_members=True,email_template='Team.eml.html',
+        #~ invite_team_members=True,email_template='Team.eml.html',
+        email_template='Team.eml.html',
         **babel_values('name',
           de=u"Team-Besprechungen",
           fr=u"Coordinations en équipe",

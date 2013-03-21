@@ -24,9 +24,9 @@ from lino.projects.std.settings import *
 
 from django.utils.translation import ugettext_lazy as _
 
-from lino.modlib import ledger, cal
+from lino.modlib import ledger
 
-class Site(Site,cal.SiteMixin,ledger.SiteMixin):
+class Site(Site,ledger.SiteMixin):
   
     #~ title = __name__
     verbose_name = "Lino Così"

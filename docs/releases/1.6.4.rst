@@ -1,0 +1,22 @@
+==========================
+Version 1.6.4
+==========================
+
+Released :blogref:`20130320`.
+
+List of changes
+===============
+
+New features
+------------
+
+Optimizations
+-------------
+
+Bugfixes
+--------
+
+Manual tasks after upgrade
+--------------------------
+
+

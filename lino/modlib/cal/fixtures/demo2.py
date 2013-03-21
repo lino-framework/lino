@@ -91,10 +91,10 @@ def objects():
     #~ yield event(user=user,start_date=settings.SITE.demo_date(days=2),type=2)
     
     #~ for u in settings.SITE.user_model.objects.all():
-        for obj in settings.SITE.user_model.objects.exclude(
-              #~ profile=dd.UserProfiles.blank_item).exclude(id=u.id): 20120829
-              profile=None).exclude(id=u.id):
-            yield cal.Membership(user=u,watched_user=obj)
+        if False:
+            for obj in settings.SITE.user_model.objects.exclude(
+                  profile=None).exclude(id=u.id):
+                yield cal.Membership(user=u,watched_user=obj)
         for obj in cal.Calendar.objects.all():
             yield cal.Subscription(user=u,calendar=obj)
     

@@ -1,0 +1,158 @@
+===================================
+20130320 (Wednesday, 20 March 2013)
+===================================
+
+
+type object 'Country' has no attribute 'default_elem_action_name'
+-----------------------------------------------------------------
+
+The following traceback happened when trying to show the 
+:ref:`lino.ui.detail` of a :ref:`lino.countries.Country` 
+while using the :ref:`lino.ui.plain`::
+
+  201303-20 03:20:54 ERROR base : Internal Server Error: /countries/Country/BE
+  Traceback (most recent call last):
+    File "/usr/local/pythonenv/demo/lib/python2.6/site-packages/django/core/handlers/base.py", line 115, in get_response
+      response = callback(request, *callback_args, **callback_kwargs)
+    File "/usr/local/pythonenv/demo/lib/python2.6/site-packages/django/views/generic/base.py", line 68, in view
+      return self.dispatch(request, *args, **kwargs)
+    File "/usr/local/pythonenv/demo/lib/python2.6/site-packages/django/views/generic/base.py", line 86, in dispatch
+      return handler(request, *args, **kwargs)
+    File "/home/luc/hgwork/lino/lino/ui/views.py", line 1096, in get
+      ar = action_request(app_label,actor,request,request.GET,False)
+    File "/home/luc/hgwork/lino/lino/ui/views.py", line 85, in action_request
+      action_name = rpt.default_elem_action_name
+  AttributeError: type object 'Country' has no attribute 'default_elem_action_name'
+
+The reason for this was somewhere else: 
+:func:`lino.ui.views.requested_actor` tested on dd.Model instead of models.Model::
+
+    if issubclass(cl,models.Model):
+        return cl._lino_default_table
+
+This incident also raised the question whether we need a `lino.mixins.BabelNamed`.
+This would be the same as :class:`north.dbutils.BabelNamed` except that we now inherit 
+from Lino's extended `Model` instead of Django's plain `Model`.
+The advantage would be that subclasses can call super() when they 
+override one of the methods in :class:`dd.Model <lino.core.model.Model>`.
+
+I leave this commented out since I cannot see any concrete usage case at the moment
+and because it is possible that even `super()` would work 
+since these attributes and methods are injected into plain Django models at startup.
+
+
+Einfügetexte
+------------
+
+So, den Bug bei den Einfügetexten habe ich jetzt gefunden, 
+das war ein Tippfehler in der :class:`lino.ui.views.Templates`
+(bzw. eine Nachwehe der Aufteilung von `lino.Site` nach `lino.ui.Site`).
+
+Benutzergruppen
+---------------
+
+Aber bevor ich das bei Gerd release, nehme ich mir noch etwas Zeit um über 
+den anderen Teil der Anfrage nachzudenken: 
+dass Lino außer "nur für mich" und "für alle Benutzer" auch einen weiteren 
+Sichtbarkeitsgrad "nur für Gruppenmitglieder" der Einfügetexte ermöglichen sollte.
+
+Die Frage hier ist: was sind Gruppenmitglieder? 
+Wie und wo definieren wir diese Gruppen?
+Ich denke es ist Zeit für eine allgemeine Tabelle der Benutzergruppen, 
+die dann auch z.B. im :ref:`lino.modlib.cal` genutzt werden könnte 
+(wo sie das unsauber implementierte Konzept der "Teams" ersetzen würde).
+
+Soll das eine echte Datebanktabelle sein oder eine ChoiceList? 
+Natürlich eine Datenbanktabelle, weil ein Lino-Experte das 
+konfigurieren können soll, ohne den Systemverwalter zu belästigen 
+oder den Server neustarten zu müssen.
+
+Somit kriegt :mod:`lino.modlib.users` auch ein Modell "Group" und 
+wird somit dem Original von Django wieder etwas ähnlicher.
+Insgesamt kein Problem, 
+aber das erinnert mich an folgendes:
+
+Die Benutzerverwaltung ist ja ein empfindliches Thema, weil Lino 
+sich hier von Django trennt wegen des m.E. untauglichem Gesamtkonzepts 
+zur Verwaltung der Zugriffsrechte. 
+Aber dieses Urteil "untauglich" ist erstens ziemlich alt 
+(Django hat sich inzwischen entwickelt) und zweitens nur mein eigenes:
+ich habe bisher von niemandem (der sich auskennt) bestätigt bekommen, 
+dass Django's Gesamtkonzept zur Verwaltung der Zugriffsrechte untauglich sei.
+Im Gegenteil, alle außer mir kommen scheinbar wunderbar damit zurecht und 
+schreiben tolle Erweiterungen, die ich wegen meiner Starrköpfigkeit 
+dann nicht benutzen kann.
+Soll ich also zurück zu Django's `django.contrib.auth`?
+
+Okay, diese Frage ist aber komplex und sollte nicht überstürzt werden. 
+Und eine neue Tabelle `users.Group` ist ja keine Arbeit.
+Aber jetzt gehe ich erstmal schlafen.
+
+
+users.Group and users.Memberships
+---------------------------------
+
+Here we go:
+
+- new models `Group` and `Membership` in :mod:`lino.modlib.users`
+- removed model `Membership` in :mod:`lino.modlib.cal`
+- Adapted cal.Event.save(), views.Templates.get(), ...
+- cal.Calendar.invite_team_members is no longer a 
+  BooleanField but a FK to user.Group
+
+
+About SiteMixin
+---------------
+
+A traceback 
+`AttributeError: 'Site' object has no attribute 'get_todo_tables'` 
+arrived from http://demo2.lino-framework.org 
+because :mod:`lino.projects.homeworkschool` 
+forgot to inherit from the `SiteMixin` of :mod:`lino.modlib.cal`.
+At least for :mod:`lino.modlib.cal` I removed the necessity for this Mixin.
+
+
+Lino-Welfare test suite on demo data
+------------------------------------
+
+The above changes would require more testing, and instead of doing it manually,
+I'd like to add more unit tests.
+A first step would be to reactivate
+:mod:`lino_welfare.modlib.pcsw.tests.pcsw_demo_tests`...
+
+Aber diese Suite ist ja so ekelhaft zu warten!
+Jetzt habe ich schon über eine Stunde nach einem doofen Fehler gesucht, 
+der nur dort auftritt, hat was mit der SiteConfig zu tun, die ja 
+gecached ist und offenbar doch noch nicht in jedem Fall gelöscht wird, 
+wenn ein TestCase sein Datenbank gelöscht kriegt.
+Aber bon, c'est la vie...
+
+
+
+Release
+-------
+
+(Started, but not yet committed.)
+
+Filled in the new version numbers for the coming release:
+
++------------------------------------------+-------------+-------------+
+| Project                                  | Old version | New version |
++==========================================+=============+=============+
+| `djangosite <http://site.lino-           | 0.1.0       | 0.1.1       |
+| framework.org>`__ -- A server startup    |             |             |
+| signal for Django                        |             |             |
++------------------------------------------+-------------+-------------+
+| `north <http://north.lino-               | 0.1.0       | 0.1.1       |
+| framework.org>`__ -- Another way to      |             |             |
+| migrate Django databases                 |             |             |
++------------------------------------------+-------------+-------------+
+| `lino <http://www.lino-framework.org>`__ | 1.6.3       | 1.6.4       |
+| -- A framework for writing desktop-like  |             |             |
+| web applications using Django and ExtJS  |             |             |
++------------------------------------------+-------------+-------------+
+| `lino_welfare <http://welfare.lino-      | 1.1.0       | 1.1.1       |
+| framework.org>`__ -- A Lino application  |             |             |
+| for Belgian Public Welfare Centres       |             |             |
++------------------------------------------+-------------+-------------+
+

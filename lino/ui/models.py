@@ -73,7 +73,11 @@ Please report any anomalies.""",
             alert=_("Success"))
 
     
+class SiteConfigManager(models.Manager):
+    def get(self, *args, **kwargs):
+        return settings.SITE.site_config
 
+    
 
     
 class SiteConfig(dd.Model):
@@ -86,23 +90,44 @@ class SiteConfig(dd.Model):
     class Meta:
         abstract = settings.SITE.is_abstract_model('ui.SiteConfig')
         
+    objects = SiteConfigManager()
+    real_objects = models.Manager()
+        
     default_build_method = models.CharField(max_length=20,
         verbose_name=_("Default build method"),
         default='appyodt',
         choices=printable.build_method_choices(),blank=True)
         
-    def save(self,*args,**kw):
-        super(SiteConfig,self).save(*args,**kw)
-        settings.SITE.on_site_config_saved(self)
-   
     def __unicode__(self):
         return force_unicode(_("Site Parameters"))
 
-if True:
-  
-    @dd.receiver(dd.connection_created)
-    def my_callback(sender,**kw):
-        settings.SITE.clear_site_config()
+    def save(self,*args,**kw):
+        #~ print "20130321 SiteConfig.save()", dd.obj2str(self,True)
+        super(SiteConfig,self).save(*args,**kw)
+        #~ settings.SITE.on_site_config_saved(self)
+        #~ settings.SITE.clear_site_config()
+   
+
+def my_callback(sender,**kw):
+    settings.SITE.clear_site_config()
+dd.connection_created.connect(my_callback)
+models.signals.post_syncdb.connect(my_callback)
+from djangosite.utils.test import testcase_setup
+testcase_setup.connect(my_callback)
+#~ dd.startup.connect(my_callback)
+#~ models.signals.post_save.connect(my_callback,sender=SiteConfig)
+#~ NOTE : I didn't manage to get that last line working. 
+#~ When specifying a `sender`, the signal seems to just not get sent.
+#~ Worked around this by overriding SiteConfig.save() to call directly clear_site_config()
+
+
+#~ @dd.receiver(models.signals.post_save, sender=SiteConfig)
+#~ def my_callback2(sender,**kw):
+    #~ print "callback2"
+    #~ settings.SITE.clear_site_config()
+#~ models.signals.post_save.connect(my_callback2,sender=SiteConfig)
+#~ from django.test.signals import setting_changed
+#~ setting_changed.connect(my_callback)
 
         
 
@@ -257,16 +282,25 @@ if settings.SITE.user_model:
             
         name = models.CharField(_("Designation"),max_length=200)
         description = dd.RichTextField(_("Description"),
-            blank=True,null=True,format='html')
+            blank=True,null=True,format='plain')
+            #~ blank=True,null=True,format='html')
         text = dd.RichTextField(_("Template Text"),
             blank=True,null=True,format='html')
+        group = models.ForeignKey('users.Group',blank=True,null=True,
+            help_text=_("If not empty, then this template is reserved to members of this group."))
         
         def __unicode__(self):
             return self.name
             
     class TextFieldTemplates(dd.Table):
+      
+        insert_layout = dd.FormLayout("""
+        id name user group
+        description
+        """,window_size=(60,'auto'))
+        
         detail_layout = """
-        id name user
+        id name user group
         description
         text
         """
@@ -276,6 +310,20 @@ if settings.SITE.user_model:
     class MyTextFieldTemplates(TextFieldTemplates,mixins.ByUser):
         pass
         
+
+
+def get_installed_todo_tables(ar):
+    """
+    Return or yield a list of tables that should be empty
+    """
+    for app_module in models.get_apps():
+        meth = getattr(app_module,'get_todo_tables',None)
+        if meth is not None:
+            #~ dblogger.debug("Running %s of %s", methname, mod.__name__)
+            for i in meth(ar):
+                yield i
+
+
 
 
 class Home(mixins.EmptyTable):
@@ -337,7 +385,7 @@ class Home(mixins.EmptyTable):
             warnings = []
             
             #~ for T in (MySuggestedCoachings,cal.MyTasksToDo):
-            for table,text in settings.SITE.get_todo_tables(ar):
+            for table,text in get_installed_todo_tables(ar):
                 r = table.request(user=u)
                 #~ r = T.request(subst_user=u)
                 #~ r = ar.spawn(T)
@@ -405,6 +453,7 @@ def setup_config_menu(site,ui,profile,m):
     if site.user_model and profile.authenticated:
         system.add_instance_action(site.site_config)
         system.add_action(site.user_model)
+        system.add_action(site.modules.users.Groups)
         office.add_action(MyTextFieldTemplates)
     #~ m.add_action(site.modules.users.Users)
     if site.is_installed('contenttypes'):

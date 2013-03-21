@@ -29,9 +29,9 @@ import lino
 
 from lino.projects.std.settings import *
 
-from lino.modlib import ledger, cal
+from lino.modlib import ledger
 
-class Site(Site,cal.SiteMixin,ledger.SiteMixin):
+class Site(Site,ledger.SiteMixin):
 
     #~ source_dir = os.path.dirname(__file__)
     title = "lino.projects.sphinxdocs"

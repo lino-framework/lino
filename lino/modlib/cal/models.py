@@ -30,6 +30,11 @@ from django.utils.translation import pgettext_lazy
 #~ from django.utils.translation import string_concat
 from django.contrib.contenttypes.models import ContentType
 from django.utils.encoding import force_unicode
+from django.db.models import loading
+
+from north import dbutils
+from north.dbutils import dtosl
+
 
 from lino import mixins
 from lino import dd
@@ -45,9 +50,6 @@ from lino.core import constants
 from lino.modlib.cal.utils import \
     DurationUnits, setkw, dt2kw, \
     Weekdays, AccessClasses, CalendarAction
-
-from north import dbutils
-from north.dbutils import dtosl
 
 
 #~ from lino.modlib.contacts import models as contacts
@@ -325,8 +327,9 @@ class Calendar(mixins.PrintableType,outbox.MailableType,dd.BabelNamed):
     password = dd.PasswordField(_("Password"),
         max_length=200,blank=True) # ,null=True)
     readonly = models.BooleanField(_("read-only"),default=False)
-    invite_team_members = models.BooleanField(
-        _("Invite team members"),default=False)
+    #~ invite_team_members = models.BooleanField(
+        #~ _("Invite team members"),default=False)
+    invite_team_members = dd.ForeignKey('users.Group',blank=True,null=True)
     #~ is_default = models.BooleanField(
         #~ _("is default"),default=False)
     #~ is_private = models.BooleanField(
@@ -456,8 +459,12 @@ class SubscriptionsByUser(Subscriptions):
 
 #~ class MySubscriptions(Subscriptions,mixins.ByUser):
     #~ pass
+    
+from lino.modlib.users.models import Membership    
 
-if settings.SITE.user_model:
+if False: # 20130320
+  
+  if settings.SITE.user_model:
 
     class Membership(mixins.UserAuthored):
         """
@@ -1113,6 +1120,8 @@ Indicates that this Event shouldn't prevent other Events at the same time."""))
     #~ take = TakeAssignedEvent()
     
     def save(self,*args,**kw):
+        """
+        """
         #~ if not self.state and self.start_date and self.start_date < datetime.date.today():
             #~ self.state = EventStates.obsolete
         super(Event,self).save(*args,**kw)
@@ -1124,9 +1133,12 @@ Indicates that this Event shouldn't prevent other Events at the same time."""))
             if self.calendar and self.calendar.invite_team_members:
                 if self.guest_set.all().count() == 0:
                     #~ print 20120711
-                    for obj in Membership.objects.filter(user=self.user):
-                        if obj.watched_user.partner:
-                            Guest(event=self,partner=obj.watched_user.partner).save()
+                    ug = self.calendar.invite_team_members
+                    for obj in Membership.objects.filter(group=ug).exclude(user=self.user):
+                        #~ if obj.watched_user.partner:
+                        if obj.user.partner:
+                            #~ Guest(event=self,partner=obj.watched_user.partner).save()
+                            Guest(event=self,partner=obj.user.partner).save()
         
     def is_user_modified(self):
         return self.state != EventStates.suggested
@@ -2355,7 +2367,18 @@ def reminders_as_html(ar,days_back=None,days_forward=None,**kw):
     return s
     
     
+    
+    
 def update_reminders(user):
+    n = 0 
+    for model in dd.models_by_base(EventGenerator):
+        for obj in model.objects.filter(user=user):
+            obj.update_reminders()
+            #~ logger.info("--> %s",unicode(obj))
+            n += 1
+    return n
+      
+def unused_update_reminders(user):
     n = 0 
     for obj in settings.SITE.get_reminder_generators_by_user(user):
         obj.update_reminders()
@@ -2452,7 +2475,9 @@ def customize_users():
     #~ users.User.add_model_action(update_reminders=UpdateReminders())
         
 
-    
+  
+
+
 
 def site_setup(site):
     """
@@ -2461,12 +2486,13 @@ def site_setup(site):
     Adds a "Calendar" tab and the :class:`UpdateReminders` 
     action to `users.User`
     """
+    
     #~ site.modules.users.User.update_reminders = UpdateReminders()
     
     site.modules.users.Users.add_detail_panel('cal_left',"""
     calendar access_class 
     cal.SubscriptionsByUser
-    cal.MembershipsByUser
+    # cal.MembershipsByUser
     """)
     site.modules.users.Users.add_detail_tab('cal',"""
     cal_left:30 cal.TasksByUser:60
@@ -2540,7 +2566,7 @@ def setup_explorer_menu(site,ui,profile,m):
     m.add_action(Tasks)
     m.add_action(Guests)
     m.add_action(Subscriptions)
-    m.add_action(Memberships)
+    #~ m.add_action(Memberships)
     m.add_action(EventStates)
     m.add_action(GuestStates)
     m.add_action(TaskStates)
@@ -2560,7 +2586,7 @@ def setup_quicklinks(site,ar,m):
     #~ MyEventsAssigned
     #~ MyEventsNotified
     
-def get_todo_tables(site,ar):
+def get_todo_tables(ar):
     yield (MyUnclearEvents, _("%d unclear events approaching.")) # "%d unklare Termine kommen näher"
     yield (MyPendingInvitations, _("%d invitations are waiting for your answer."))
     yield (MyTasksToDo,_("%d tasks to do"))

@@ -235,8 +235,8 @@ class UserDetail(dd.FormLayout):
     """
 
     main = """
-    box1
-    remarks AuthoritiesGiven 
+    box1:40 MembershipsByUser:20
+    remarks:40 AuthoritiesGiven:20
     """
     
 class UserInsert(dd.FormLayout):
@@ -306,55 +306,87 @@ class UsersOverview(Users):
     column_names = 'username profile language'
     exclude = dict(profile='')
 
-if settings.SITE.user_model:
+#~ if settings.SITE.user_model:
   
-    class Authority(mixins.UserAuthored):
-        """
-        An Authority is when a User gives another User the right to "represent him"
-       
-        :user: points to the user who gives the right of representation. author of this Authority
-        :authorized: points to the user who gets the right to represent the author
+class Group(mixins.BabelNamed):
+    class Meta:
+        verbose_name = _("User Group")
+        verbose_name_plural = _("User Group")
         
-        """
+class Groups(dd.Table):
+    required = dict(user_level='manager')
+    model = Group
+    
+    
+    
+class Membership(mixins.UserAuthored):
+    class Meta:
+        verbose_name = _("Membership")
+        verbose_name_plural = _("Memberships")
+    
+    group = models.ForeignKey('users.Group')
+    
+    
+class Memberships(dd.Table):
+    required = dict(user_level='manager')
+    model = Membership
+
+
+class MembershipsByUser(mixins.ByUser,Memberships):
+    #~ required = dict()
+    master_key = 'user'
+    column_names = 'group'
+    auto_fit_column_widths = True
+
+
+class Authority(mixins.UserAuthored):
+    """
+    An Authority is when a User gives another User the right to "represent him"
+   
+    :user: points to the user who gives the right of representation. author of this Authority
+    :authorized: points to the user who gets the right to represent the author
+    
+    """
+    
+    class Meta:
+        verbose_name = _("Authority")
+        verbose_name_plural = _("Authorities")
         
-        class Meta:
-            verbose_name = _("Authority")
-            verbose_name_plural = _("Authorities")
-            
-        #~ quick_search_fields = ('user__username','user__first_name','user__last_name')
+    #~ quick_search_fields = ('user__username','user__first_name','user__last_name')
+    
+    authorized = models.ForeignKey(settings.SITE.user_model,
+        help_text=_("The user who gets authority to act in your name."))
+
+
+
+    @dd.chooser()
+    def authorized_choices(cls,user):
+        qs = settings.SITE.user_model.objects.exclude(
+            profile=None)
+            #~ profile=dd.UserProfiles.blank_item) 20120829
+        if user is not None:
+            qs = qs.exclude(id=user.id)
+            #~ .exclude(level__gte=UserLevels.admin)
+        return qs
+    
         
-        authorized = models.ForeignKey(settings.SITE.user_model,
-            help_text=_("""\
-The user who gets authority to act in your name."""))
+class Authorities(dd.Table):
+    required = dict(user_level='manager')
+    model = Authority
 
 
+class AuthoritiesGiven(Authorities):
+    required = dict()
+    master_key = 'user'
+    label = _("Authorities given")
+    column_names = 'authorized'
+    auto_fit_column_widths = True
 
-        @dd.chooser()
-        def authorized_choices(cls,user):
-            qs = settings.SITE.user_model.objects.exclude(
-                profile=None)
-                #~ profile=dd.UserProfiles.blank_item) 20120829
-            if user is not None:
-                qs = qs.exclude(id=user.id)
-                #~ .exclude(level__gte=UserLevels.admin)
-            return qs
-        
-            
-    class Authorities(dd.Table):
-        required = dict(user_level='manager')
-        model = Authority
-
-
-    class AuthoritiesGiven(Authorities):
-        required = dict()
-        master_key = 'user'
-        label = _("Authorities given")
-        column_names = 'authorized'
-
-    class AuthoritiesTaken(Authorities):
-        required = dict()
-        master_key = 'authorized'
-        label = _("Authorities taken")
-        column_names = 'user'
+class AuthoritiesTaken(Authorities):
+    required = dict()
+    master_key = 'authorized'
+    label = _("Authorities taken")
+    column_names = 'user'
+    auto_fit_column_widths = True
 
 

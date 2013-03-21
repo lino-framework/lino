@@ -15,15 +15,22 @@
 """
 This module contains some relatively quick tests 
 that don't load any fixtures.
+
+To run only this test::
+
+  manage.py test contacts.QuickTest
   
 """
 
 from __future__ import unicode_literals
 
+from pprint import pprint
 
 from django.conf import settings
 
 from djangosite.utils.test import TestCase
+from django.test.utils import override_settings
+
 #from lino.igen import models
 #from lino.modlib.contacts.models import Contact, Companies
 #from lino.modlib.countries.models import Country
@@ -34,6 +41,8 @@ Person = dd.resolve_model("contacts.Person")
 from lino.utils.instantiator import Instantiator, create_and_get
 from north.dbutils import babelkw
 
+from lino.modlib.contacts import models as contacts
+
 from lino import mixins
 Genders = mixins.Genders
 
@@ -41,7 +50,17 @@ class QuickTest(TestCase):
     #~ fixtures = [ 'std', 'few_countries', 'ee', 'be', 'demo', 'demo_ee']
     #~ fixtures = 'few_countries few_languages demo_cities std demo demo_ee'.split()
     #~ fixtures = 'std few_countries few_cities few_languages props demo'.split()
-    pass
+    def __call__(self,*args,**kw):
+        # these tests use remote http authentication, so we override the run() 
+        # method to simulate 
+        #~ settings.SITE.remote_user_header = 'REMOTE_USER'
+        settings.SITE.override_defaults(remote_user_header='REMOTE_USER')
+        mysettings = dict()
+        for k in ('MIDDLEWARE_CLASSES',):
+            mysettings[k] = settings.SITE.django_settings.get(k)
+        #~ MIDDLEWARE_CLASSES = settings.SITE.django_settings.get('MIDDLEWARE_CLASSES')
+        with self.settings(**mysettings):
+            return super(QuickTest,self).__call__(*args,**kw)
     
     
 person = Instantiator(Person).build
@@ -51,6 +70,8 @@ def test01(self):
     """
     Tests some basic funtionality.
     """
+    #~ self.assertEqual(settings.MIDDLEWARE_CLASSES,1)
+    
     ee = create_and_get('countries.Country',
         isocode='EE',**babelkw('name',
         de="Estland",
@@ -67,8 +88,9 @@ def test01(self):
         nl='Belgie',
         et='Belgia',
         ))
-          
+        
     eupen = create_and_get('countries.City',name=u'Eupen',country=be,zip_code='4700')
+        
     vigala = create_and_get('countries.City',name=u'Vigala',country=ee)
     
     luc = create_and_get(Person,
@@ -115,13 +137,14 @@ def test02(self):
     """
     u = create_and_get(settings.SITE.user_model,
         username='root',language='',profile=dd.UserProfiles.admin)
+        
     #~ lang = u.language
     #~ print 20120729, repr(u.language)
     
     #~ settings.SITE.never_build_site_cache = True
     
     """
-    disable LINO.is_imported_partner() otherwise 
+    disable SITE.is_imported_partner() otherwise 
     disabled_fields may contain more than just the 'id' field.
     """
     save_iip = settings.SITE.is_imported_partner
@@ -133,8 +156,9 @@ def test02(self):
     and in HTTP_ACCEPT_LANGUAGE because...
     """
     
-    
     luc = Person.objects.get(name__exact="Saffre Luc")
+    self.assertEqual(luc.pk,contacts.PARTNER_NUMBERS_START_AT)
+    
     url = settings.SITE.build_admin_url('api','contacts','Person','%d?query=&an=detail&fmt=json' % luc.pk)
     #~ url = '/api/contacts/Person/%d?query=&an=detail&fmt=json' % luc.pk
     if settings.SITE.get_language_info('en'):
@@ -172,3 +196,72 @@ def test02(self):
     #~ u.save()
     # restore is_imported_partner method
     settings.SITE.is_imported_partner = save_iip
+
+def test03(self):
+    """
+    Test the following situation:
+    
+    - User 1 opens the :menuselection:`Configure --> System--> System Parameters` dialog
+    - User 2 creates a new Person (which increases next_partner_id)
+    - User 1 clicks on `Save`.
+    
+    `next_partner_id` may not get overwritten 
+    
+    """
+    # User 1
+    SiteConfigs = settings.SITE.modules.ui.SiteConfigs
+    elem = SiteConfigs.get_row_by_pk(1)
+    self.assertEqual(elem.next_partner_id,contacts.PARTNER_NUMBERS_START_AT + 1) 
+    
+    elem.next_partner_id = 12345
+    elem.full_clean()
+    elem.save()
+    #~ print "saved"
+    self.assertEqual(settings.SITE.site_config.next_partner_id,12345)
+    john = create_and_get(Person,first_name='John',last_name='Smith')
+    self.assertEqual(john.pk,12345)
+    self.assertEqual(elem.next_partner_id,12346)
+    self.assertEqual(settings.SITE.site_config.next_partner_id,12346)
+    
+    
+def unused_test03(self):
+    """
+    Test the following situation:
+    
+    - User 1 opens the :menuselection:`Configure --> System--> System Parameters` dialog
+    - User 2 creates a new Person (which increases next_partner_id)
+    - User 1 clicks on `Save`.
+    
+    `next_partner_id` may not get overwritten 
+    
+    """
+    
+    url = settings.SITE.build_admin_url('api','ui','SiteConfigs','1?an=detail&fmt=json')
+    response = self.client.get(url,REMOTE_USER='root')
+    result = self.check_json_result(response,'navinfo disable_delete data id title')
+    """
+    `test01` created one Person, so next_partner_id should be at 101:
+    """
+    data = result['data']
+    self.assertEqual(data['next_partner_id'],contacts.PARTNER_NUMBERS_START_AT + 1) 
+    
+    
+    data['next_partner_id'] = 12345
+    #~ pprint(data)
+    response = self.client.put(url,data,
+      #~ content_type="application/x-www-form-urlencoded; charset=UTF-8",
+      REMOTE_USER='root')
+    
+    result = self.check_json_result(response,'message rows success data_record')
+    data = result['data_record']['data']
+    
+    john = create_and_get(Person,first_name='John',last_name='Smith')
+    # fails: self.assertEqual(john.pk,12345)
+    """
+    I no longer understand how to call test.Client.put() with normal form data...
+    Furthermore this seems to change between 1.4 and 1.5, so I'll wait until all 
+    my users have moved to 1.5.
+    """
+    
+
+    

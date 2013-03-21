@@ -296,6 +296,11 @@ class TextRenderer(HtmlRenderer):
         return text
   
 class PlainRenderer(HtmlRenderer):
+    """
+    A "plain" HTML render that uses bootstrap and jQuery.
+    It is called "plain" because that's much more lightweight than 
+    :class:`lino_extjs.ExtRenderer`.
+    """
   
     is_interactive = True
     

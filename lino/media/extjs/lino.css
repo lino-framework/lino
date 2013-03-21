@@ -15,12 +15,13 @@
 
 /* 
 http://stackoverflow.com/questions/2106104/word-wrap-grid-cells-in-ext-js 
+e.g. welfare.jobs.NewJobsOverview needs
 */
 /* 
-e.g. jobs.NewJobsOverview
 .x-grid3-cell-inner {
   /* white-space: normal; changed from nowrap 
-  height:18px; overflow:hidden;
+  height:18px; 
+  overflow:hidden;
 }
 */
 

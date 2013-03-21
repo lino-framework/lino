@@ -18,8 +18,8 @@ which converts an HTML ElementTree object to
 
 >>> from lino.utils.xmlgen.html import E
 >>> def test(e):
-...     print(E.tostring(e))
-...     print(toxml(html2odf(e)))
+...     print E.tostring(e)
+...     print toxml(html2odf(e))
 >>> test(E.p("This is a ",E.b("first")," test.")) #doctest: +NORMALIZE_WHITESPACE
 <p>This is a <b>first</b> test.</p>
 <text:p xmlns:text="urn:oasis:names:tc:opendocument:xmlns:text:1.0">This 
@@ -50,12 +50,20 @@ text:style-name="podBulletItem">Second item</text:p></text:list-item></text:list
 Note that the above chunk is obviously not correct since Writer doesn't display it.
 (How can I debug a generated odt file? 
 I mean if my content.xml is syntactically valid but Writer ...)
-Idea: validate test it against the using lxml
+Idea: validate it against the using lxml
+
+
 
 :func:`html2odf` converts bold text to a span with a 
 style named "Bold Text". That's currently a hard-coded name, and the 
 caller must make sure that a style of that name is defined in the 
 document.
+
+
+Edge case:
+
+>>> print toxml(html2odf("Plain string"))
+<text:p xmlns:text="urn:oasis:names:tc:opendocument:xmlns:text:1.0">Plain string</text:p>
 
 """
 
@@ -105,10 +113,6 @@ def html2odf(e,ct=None,**ctargs):
     There's probably a better way to do this...
     """
     #~ print "20120613 html2odf()", e.tag, e.text
-    if e.tag == 'ul': 
-        ct = text.List(stylename='podBulletedList')
-        ctargs = dict(stylename='podBulletItem')
-        #~ ctargs = dict()
     if ct is None:
         ct = text.P(**ctargs)
         #~ if e.tag in PTAGS: 
@@ -122,7 +126,12 @@ def html2odf(e,ct=None,**ctargs):
         #~ oe = text.Span()
         #~ oe.addText(e)
         #~ yield oe
-        return 
+        return ct
+        
+    if e.tag == 'ul': 
+        ct = text.List(stylename='podBulletedList')
+        ctargs = dict(stylename='podBulletItem')
+        #~ ctargs = dict()
         
     text_container = None
     

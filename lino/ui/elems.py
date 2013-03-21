@@ -179,6 +179,8 @@ class GridColumn(jsgen.Component):
         #~ kw.update(submitValue=False) # 20110406
         kw.update(colIndex=index)
         kw.update(editor.get_column_options())
+        #~ kw.update(style='overflow:hidden') # 20130319
+        #~ kw.update(style='height:18px') # 20130319
         #~ kw.update(hidden=editor.hidden)
         if editor.hidden:
             kw.update(hidden=True)

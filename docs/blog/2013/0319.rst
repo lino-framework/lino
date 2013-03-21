@@ -9,7 +9,8 @@ I discovered and had a look at
 `sphinxcontrib-newsfeed <https://pypi.python.org/pypi/sphinxcontrib-newsfeed>`_,
 a well made Sphinx extension to generate an rss feed from my blog entries.
 
-What I'm missing is that it lacks an auto-discovery function. 
+What I'm missing is an auto-discovery function. 
+It would be enough to add a ``:glob:`` option as for ``.. toctree::``.
 I have to add myself every blog entry also to the ``.. feed::`` 
 directive. For example in my :file:`index.rst` I have::
 
@@ -21,15 +22,104 @@ directive. For example in my :file:`index.rst` I have::
        blog/2013/0318
        blog/2013/0319
        
-It would be enough to add a ``:glob:`` option as for ``.. toctree::``.
 
 
-Changes
--------
+Code changes
+------------
 
 - Removed some internal dependencies from djangosite to north.
-- Added German translations for the new things in :ref:`welfare.jobs`.
+- Added German translations for the new things in :ref:`welfare.jobs.Candidature`.
 - There were still some `print_` function calls instead of `print` 
   statements hanging around. E.g. in 
   :ref:`lino.tutorial.auto_create` and
   :ref:`lino.tutorial.human`.
+- Added "Den" as name prefix in :mod:`lino.modlib.contacts.utils`.
+- :func:`html2odf <lino.utils.html2odf.html2odf>` failed when it was 
+  called with a plain string. Added this edge case to the tested docstring.
+  
+Miscellaneous
+-------------
+
+- Tried to understand how to make it configurable per table whether 
+  rows should have fixed height or not.
+  
+- There is a language switching problem in http://belref.lino-framework.org, 
+  maybe caused by the upgrade to Django 1.5. 
+  This is probably because :mod:`lino.utils.auth` does not collaborate 
+  well with Django's `LocaleMiddleware`.
+  Needs more thinking. 
+  Not urgent.
+  
+Fiddling with the Python-UNO bridge
+-----------------------------------
+
+Trying to print in one of the online demos still fails with a message
+
+    Action "sales.InvoicesByJournal.do_print" failed for Rechnung "#5 (Verkaufsrechnungen 2013)": Extension of result file is "pdf". In order to perform conversion from ODT to this format we need to call LibreOffice. But the Python interpreter which runs the current script does not know UNO, the library that allows to connect to LibreOffice in server mode. If you can't install UNO in this Python interpreter, you can specify, in parameter "pythonWithUnoPath", the path to a UNO-enabled Python interpreter. One such interpreter may be found in /program.. Ein Fehlerbericht wurde an den Systemverwalter geschickt.
+  
+Until recently it worked. 
+I guess that this is due to my switch to virtualenv,
+because `python /usr/share/doc/python-openoffice/examples/check-installation` reports::
+  
+    Can't import the uno-bridge module 'uno'.
+    Make sure the package 'openoffice.org-pyuno' is installed,
+    is matching your Python version 2.6 and the file uno.py is on
+    your $PYTHONPATH.
+    For Debian, Ubuntu and related distributions, the package
+    is called, eg. 'python-uno'.  
+  
+These instructions seem very clear, but unfortunately I could not 
+find out which package they mean.
+
+  
+Tried::
+  
+  pip search uno
+  pip search openoffice
+  aptitude search openoffice
+  
+
+  (demo)luc@vps:~$ aptitude show openoffice.org-headless
+  No current or candidate version found for openoffice.org-headless
+  Package: openoffice.org-headless
+  State: not a real package
+  Provided by: openoffice.org-core
+  
+  (demo)luc@vps:~$ aptitude show python-uno
+  Package: python-uno
+  State: installed
+  Automatically installed: yes
+  Version: 1:3.2.1-11+squeeze8
+  Priority: optional
+  Section: python
+  Maintainer: Debian OpenOffice Team <debian-openoffice@lists.debian.org>
+  Uncompressed Size: 1,978 k
+  Depends: openoffice.org-core (= 1:3.2.1-11+squeeze8), python (< 2.7), python (>= 2.6), python-central (>= 0.6.11), libc6 (>= 2.2.5), libgcc1
+
+           (>= 1:4.1.1), libpython2.6 (>= 2.6), libstdc++6 (>= 4.1.1), ure (>= 1.4.0)
+  Replaces: openoffice.org-common (< 1.9.82)
+  Description: Python-UNO bridge
+   The Python-UNO bridge allows use of the standard OpenOffice.org API with the Python scripting language. It additionally allows others to
+   develop UNO components in Python, thus Python UNO components may be run within the OpenOffice.org process and can be called from C++ or the
+
+   built in StarBasic scripting language.
+  Homepage: http://udk.openoffice.org/python/python-bridge.html  
+
+
+  (demo)luc@vps:~$ aptitude show openoffice.org-core
+  Package: openoffice.org-core
+  State: installed
+  Automatically installed: no
+  Version: 1:3.2.1-11+squeeze8
+  ...
+
+Tried also (once again) to understandwhat OOo itself writes about this 
+mysterious `Python-UNO bridge 
+<http://www.openoffice.org/de/doc/entwicklung/python_bruecke.html>`_...
+but sorry, but I still don't understand most of this.
+  
+Appy `pythonWithUnoPath`parameter is `'/etc/openoffice.org3/program/python'`.
+Indeed there is no such file on the system. But that doesn't mean so much
+Appy maybe never used this parameter, 
+it uses it only when python-uno cannot be imported.
+

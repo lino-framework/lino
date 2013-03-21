@@ -120,7 +120,7 @@ class Languages(dd.Table):
 
 class Country(dd.BabelNamed):
     """
-    Implements the :class:`countries.Country` convention.
+    Each instance of this model represents a :ref:`lino.lib.countries.Country`.
     """
     
     class Meta:
@@ -165,7 +165,7 @@ FREQUENT_COUNTRIES = ['BE','NL','DE', 'FR', 'LU']
 
 class City(dd.BabelNamed):
     """
-    Implements the :class:`countries.City` convention.
+    Each instance of this model represents a :ref:`lino.lib.countries.City`.
     """
     
     class Meta:

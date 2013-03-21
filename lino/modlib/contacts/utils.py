@@ -1,5 +1,5 @@
 # -*- coding: UTF-8 -*-
-## Copyright 2010-2012 Luc Saffre
+## Copyright 2010-2013 Luc Saffre
 ## This file is part of the Lino project.
 ## Lino is free software; you can redistribute it and/or modify 
 ## it under the terms of the GNU General Public License as published by
@@ -12,7 +12,15 @@
 ## You should have received a copy of the GNU General Public License
 ## along with Lino; if not, see <http://www.gnu.org/licenses/>.
 
+"""
+Some utilities for parsing contact data.
 
+- :func:`name2kw` to separate first name from last name
+
+- :func:`street2kw` to separate house number and optional 
+  flat number from street
+
+"""
 
 import re
 
@@ -23,7 +31,7 @@ import re
 #~ from django.utils.translation import ugettext_lazy as _
 
 
-name_prefixes1 = ("HET", "'T",'VAN','DER', 'TER',
+name_prefixes1 = ("HET", "'T",'VAN','DER', 'TER', 'DEN',
   'VOM','VON','OF', "DE", "DU", "EL", "AL", "DI")
 name_prefixes2 = ("VAN DEN","VAN DER","VAN DE",
   "IN HET", "VON DER","DE LA")
@@ -48,6 +56,8 @@ Examples:
 {'first_name': 'Jan', 'last_name': "'T Jampens"}
 >>> name2kw("Van den Bossche Marc Antoine Bernard")
 {'first_name': 'Marc Antoine Bernard', 'last_name': 'Van den Bossche'}
+>>> name2kw("Den Tandt Marc Antoine Bernard")
+{'first_name': 'Marc Antoine Bernard', 'last_name': 'Den Tandt'}
 
 In more complicated cases, a comma is required to help:
 
@@ -66,6 +76,8 @@ Some examples with `first_name` first:
 {'first_name': 'Jan', 'last_name': "'T Jampens"}
 >>> name2kw("Marc Antoine Bernard Van den Bossche",False)
 {'first_name': 'Marc Antoine Bernard', 'last_name': 'Van den Bossche'}
+>>> name2kw("Marc Antoine Bernard Den Tandt",False)
+{'first_name': 'Marc Antoine Bernard', 'last_name': 'Den Tandt'}
 
 Edge cases:
 

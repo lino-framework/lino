@@ -581,15 +581,11 @@ def authenticate(username,password=NOT_NEEDED):
 def on_login(request,user):
     """
     on multilingual sites, 
-    if URL_PARAM_USER_LANGUAGE is present it overrides user.language,
-    except for DELETE requests 
-    because those don't have request data
-    (is that still true in Django 1.5)
+    if URL_PARAM_USER_LANGUAGE is present it overrides user.language.
     """
     #~ logger.info("20130313 on_login(%s)" % user)
     request.user = user
     
-        
     if len(settings.SITE.languages) > 1:
     #~ if settings.SITE.languages != None and len(settings.SITE.languages) > 1:
         

@@ -18,8 +18,9 @@ import lino
 
 from lino.projects.std.settings import *
 
-#~ from lino.projects.homeworkschool import __version__, __url__, __name__
+from lino.modlib import cal
 
+#~ class Site(Site,cal.SiteMixin):
 class Site(Site):
     #~ source_dir = os.path.dirname(__file__)
     #~ title = __name__
