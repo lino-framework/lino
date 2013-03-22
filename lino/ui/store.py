@@ -467,19 +467,23 @@ class DisabledFieldsStoreField(SpecialStoreField):
         d = dict()
         #~ if self.store.actor.disabled_fields is not None:
         for name in self.store.actor.disabled_fields(obj,ar):
-            d[name] = True
+            if name is not None: 
+                d[name] = True
         #~ l = list(self.store.actor.disabled_fields(obj,request))
         
         for name in self.disabled_fields:
+            if name is None: raise Exception('20130322a')
             d[name] = True
         
         # disable the primary key field if pk is set (i.e. on saved instance):
         if self.store.pk is not None and obj.pk is not None:
+            if self.store.pk.attname is None: raise Exception('20130322b')
             d[self.store.pk.attname] = True
             #~ l.append(self.store.pk.attname)
             # MTI children have two "primary keys":
             if isinstance(self.store.pk,models.OneToOneField):
                 #~ l.append(self.store.pk.rel.field_name)
+                if self.store.pk.rel.field_name is None: raise Exception('20130322c')
                 d[self.store.pk.rel.field_name] = True
         return d
         

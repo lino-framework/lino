@@ -24,6 +24,7 @@ from decimal import Decimal
 
 from django.db import models
 from django.conf import settings
+settings.SITE.add_site_attribute('accounts_ref_length',20)
 
 from lino import dd
 from lino import mixins
@@ -35,7 +36,6 @@ from lino import mixins
 from django.utils.translation import ugettext_lazy as _
 
 from lino.modlib.accounts.utils import AccountTypes, DEBIT, CREDIT
-
 
 
 
@@ -69,7 +69,7 @@ class Group(dd.BabelNamed):
         unique_together = ['chart','ref']
         
     chart = models.ForeignKey(Chart)
-    ref = dd.NullCharField(max_length=20)
+    ref = dd.NullCharField(max_length=settings.SITE.accounts_ref_length)
     #~ ref = models.CharField(max_length=100)
     account_type = AccountTypes.field(blank=True)
     help_text = dd.RichTextField(_("Introduction"),format="html",blank=True)
@@ -102,7 +102,7 @@ class Account(dd.BabelNamed,mixins.Sequenced):
     chart = models.ForeignKey(Chart)
     group = models.ForeignKey(Group)
     #~ ref = models.CharField(max_length=100)
-    ref = dd.NullCharField(max_length=20)
+    ref = dd.NullCharField(max_length=settings.SITE.accounts_ref_length)
     #~ chart = models.ForeignKey(Chart)
     type = AccountTypes.field() # blank=True)
     help_text = dd.RichTextField(_("Introduction"),format="html",blank=True)
@@ -124,12 +124,14 @@ class Accounts(dd.Table):
     model = Account
     order_by = ['ref']
     #~ required=dict(user_groups=['debts'],user_level='manager')
+    column_names = "ref name group *"
     
 #~ class AccountsByChart(Accounts):
     #~ master_key = 'chart'
 
 class AccountsByGroup(Accounts):
     master_key = 'group'
+    column_names = "ref name *"
 
     
 
@@ -150,6 +152,8 @@ def customize_products():
             related_name="products_purchases",
             help_text=_("The account to move when this product is used in a purchases invoice.")
         ))
+
+customize_products()
 
 
 
@@ -185,5 +189,3 @@ def setup_explorer_menu(site,ui,profile,m):
 
 #~ dd.add_user_group('debts',MODULE_LABEL)
 
-#~ if settings.SITE.is_installed('products'):
-customize_products()

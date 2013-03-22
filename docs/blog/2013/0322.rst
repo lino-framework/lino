@@ -1,0 +1,24 @@
+================================
+20130322 (Friday, 22 March 2013)
+================================
+
+
+Renamed `users.Group` to `users.Team` to avoid the name conflict with 
+:class:`lino.utils.auth.UserGroups`. 
+Because "Team" is how the users in Eupen call it. 
+A Team is a group of users who meet regularily and have a common set of rules.
+:class:`lino.utils.auth.UserGroups` still should be renamed.
+
+pcsw_demo_test is back. 
+I disabled many of the hard-to-maintain cases
+and did a big effort to define and maintain list of queries to test.
+
+:class:`djangosite.utils.test.RemoteAuthTestCase`
+
+There are tests which are much easier to write and maintain using doctest:
+new page :ref:`welfare.tested`.
+
+Lino now defines a version of dtos which supports IncompleteDate.
+
+
+

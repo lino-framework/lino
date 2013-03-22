@@ -41,6 +41,7 @@ logger = logging.getLogger(__name__)
 
 from django.utils.translation import ugettext_lazy as _
 
+from django.core import exceptions
 from django.utils import translation
 from django.conf import settings
 from django import http
@@ -55,6 +56,7 @@ class UserLevels(ChoiceList):
     """
     The level of a user is one way of differenciating users when 
     defining access permissions and workflows. 
+    
     Lino speaks about user *level* where Plone speaks about user *role*.
     Unlike user roles in Plone, user levels are hierarchic:
     a "Manager" is higher than a simple "User" and thus 
@@ -100,10 +102,12 @@ UserLevels.SHORT_NAMES = dict(A='admin',U='user',_=None,M='manager',G='guest',S=
 
 class UserGroups(ChoiceList):
     """
-    User Groups are another way of differenciating users when 
+    TODO: Rename this to "FunctionalGroups" or sth similar.
+    
+    Functional Groups are another way of differenciating users when 
     defining access permissions and workflows. 
     
-    Applications will 
+    Applications can define their functional groups
     
     """
     verbose_name = _("User Group")
@@ -665,13 +669,16 @@ class RemoteUserMiddleware(object):
             settings.SITE.remote_user_header,settings.SITE.default_user)
             
         if not username:
-            raise Exception("Using remote authentication, but no user credentials found.")
+            raise exceptions.PermissionDenied(
+                "Using remote authentication, but no user credentials found.")
+            #~ raise Exception("Using remote authentication, but no user credentials found.")
             
         user = authenticate(username)
         
         if user is None:
             #~ logger.exception("Unknown username %s from request %s",username, request)
-            raise Exception(
+            #~ raise Exception(
+            raise exceptions.PermissionDenied(
               "Unknown or inactive username %r. Please contact your system administrator." 
               % username)
               

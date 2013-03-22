@@ -104,6 +104,8 @@ Yes, there is much to do:
 
 - Write unit tests for the new features in :ref:`welfare.jobs`
 
+- rename auth.UserGroups to auth.PermissionGroups
+
 - implement new user requests for :ref:`welfare.debts`.
 
 - start translating the :ref:`welfare.userman`, 
@@ -123,4 +125,10 @@ Yes, there is much to do:
   I don't want to edit four files and rebuild the whole html docs .
   to change this sentence
   
+  
+User requests for :ref:`welfare.debts`
+--------------------------------------
+
+- The Reference field of an Account wasn't visible
+- add_site_attribute()
   

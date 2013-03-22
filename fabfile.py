@@ -9,6 +9,7 @@ env.django_doctests.append('tutorials.auto_create.settings')
 env.django_doctests.append('tutorials.human.settings')
 
 # invoke only these with ``fab t4``:
+env.simple_doctests.append('lino/utils/__init__.py')
 env.simple_doctests.append('lino/utils/html2odf.py')
 env.simple_doctests.append('docs/blog/2013/0316.rst')
 env.simple_doctests.append('lino/utils/xmlgen/html.py')

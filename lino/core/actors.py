@@ -1153,8 +1153,7 @@ class Actor(actions.Parametrizable):
     @classmethod
     def to_rst(self,column_names=None,**kw):
         """
-        Shortcut which calls :meth:`lino.Lino.startup`, 
-        creates an action request for this actor 
+        Shortcut which creates an action request for this actor 
         and calls its :meth:`lino.core.actions.ActionRequest.to_rst` 
         method.
         """
@@ -1163,6 +1162,7 @@ class Actor(actions.Parametrizable):
             if username:
                 kw['user'] = settings.SITE.user_model.objects.get(username=username)
         #~ settings.SITE.startup()
+        kw.update(renderer=settings.SITE.ui.text_renderer)
         return self.request(**kw).to_rst(column_names)
         
     @classmethod

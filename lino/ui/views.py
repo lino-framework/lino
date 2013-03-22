@@ -71,6 +71,8 @@ def requested_actor(app_label,actor):
     """
     x = getattr(settings.SITE.modules,app_label)
     cl = getattr(x,actor)
+    if not isinstance(cl,type):
+        raise Exception("%s.%s is not a class" % (app_label,actor))
     if issubclass(cl,models.Model):
         return cl._lino_default_table
     if not issubclass(cl,actors.Actor):
@@ -496,6 +498,10 @@ class Callbacks(View):
         return settings.SITE.ui.callback_get(request,thread_id,button_id)
         
 
+
+from jinja2 import Template as JinjaTemplate
+from lino.ui.models import TextFieldTemplate
+
 class Templates(View):
     """
     Called by TinyMCE (`template_external_list_url 
@@ -508,21 +514,23 @@ class Templates(View):
         app_label=None,actor=None,pk=None,fldname=None,tplname=None,**kw):
       
         if request.method == 'GET':
-            from lino.ui.models import TextFieldTemplate
-            if tplname:
-                tft = TextFieldTemplate.objects.get(pk=int(tplname))
-                return http.HttpResponse(tft.text)
-                
+          
             rpt = requested_actor(app_label,actor)
-                
             elem = rpt.get_row_by_pk(pk)
-
             if elem is None:
                 raise http.Http404("%s %s does not exist." % (rpt,pk))
                 
+            if tplname:
+                tft = TextFieldTemplate.objects.get(pk=int(tplname))
+                #~ return http.HttpResponse(tft.text)
+                template = JinjaTemplate(tft.text)
+                context = dict(request=request,instance=elem,**settings.SITE.modules)
+                return http.HttpResponse(template.render(**context))
+                
+                
             #~ q = models.Q(user=request.user) | models.Q(user__group__in=request.user.group_set.all())
-            groups = [o.group for o in request.user.membership_set.all()]
-            flt = models.Q(group__isnull=True)|models.Q(group__in=groups)
+            teams = [o.group for o in request.user.users_membership_set_by_user.all()]
+            flt = models.Q(team__isnull=True) | models.Q(team__in=teams)
             qs = TextFieldTemplate.objects.filter(flt).order_by('name')
                 
             #~ m = getattr(elem,"%s_templates" % fldname,None)

@@ -308,14 +308,14 @@ class UsersOverview(Users):
 
 #~ if settings.SITE.user_model:
   
-class Group(mixins.BabelNamed):
+class Team(mixins.BabelNamed):
     class Meta:
-        verbose_name = _("User Group")
-        verbose_name_plural = _("User Group")
+        verbose_name = _("Team")
+        verbose_name_plural = _("Teams")
         
-class Groups(dd.Table):
+class Teams(dd.Table):
     required = dict(user_level='manager')
-    model = Group
+    model = Team
     
     
     
@@ -324,7 +324,7 @@ class Membership(mixins.UserAuthored):
         verbose_name = _("Membership")
         verbose_name_plural = _("Memberships")
     
-    group = models.ForeignKey('users.Group')
+    team = models.ForeignKey('users.Team')
     
     
 class Memberships(dd.Table):
@@ -335,7 +335,7 @@ class Memberships(dd.Table):
 class MembershipsByUser(mixins.ByUser,Memberships):
     #~ required = dict()
     master_key = 'user'
-    column_names = 'group'
+    column_names = 'team'
     auto_fit_column_widths = True
 
 

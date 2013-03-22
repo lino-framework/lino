@@ -22,7 +22,8 @@ def objects():
         tft = Instantiator('ui.TextFieldTemplate',"name description text").build
         
         yield tft("hello","Inserts 'Hello, world!'","""<div>Hello, world!</div>""")
-        yield tft("mfg","",'<p>Mit freundlichen Gr&uuml;&szlig;en<br><p class="data_field">root</p>')
+        #~ yield tft("mfg","",'<p>Mit freundlichen Gr&uuml;&szlig;en<br><p class="data_field">root</p>')
+        yield tft("mfg","",'<p>Mit freundlichen Gr&uuml;&szlig;en<br><p>{{request.subst_user or request.user}}</p>')
     
     # the following is not really useful data, but a fixture needs to deliver at least one object 
     # otherwise Django thinks that our fixture failed

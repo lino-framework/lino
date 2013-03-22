@@ -19,7 +19,7 @@
 -----------------------------------
 
 >>> str2hex('-L')
-'2d4c'x
+'2d4c'
 
 >>> hex2str('2d4c')
 '-L'
@@ -63,7 +63,7 @@ from djangosite.utils import sphinxconf
 from djangosite.utils import i2d
 from djangosite.utils import i2t
 from north.utils import Cycler
-from .code import codefiles, codetime
+from lino.utils.code import codefiles, codetime
 
 
 def isiterable(x):
@@ -178,16 +178,23 @@ curry = lambda func, *args, **kw:\
     
 class IncompleteDate:
     """
-    Naive representation of an incomplete gregorian date.
+    Naive representation of a potentially incomplete gregorian date.
     
+    Once upon a time in the year 2011:
     >>> print IncompleteDate(2011,0,0).strftime("%d.%m.%Y")
     00.00.2011
+    
     >>> print IncompleteDate(1532,0,0)
     1532-00-00
     >>> print IncompleteDate(1990,0,1)
     1990-00-01
     >>> print IncompleteDate(0,6,1)
     0000-06-01
+    
+    W.A. Mozart's birth date:
+    
+    >>> print IncompleteDate(1756,1,27)
+    1756-01-27
     
     Christ's birth date:
     
@@ -196,6 +203,17 @@ class IncompleteDate:
     >>> print IncompleteDate(-7,12,25).strftime("%d.%m.%Y")
     25.12.-7
     
+    Note that you cannot convert all incomplete dates 
+    to real datetime.date objects:
+    
+    >>> IncompleteDate(-7,12,25).as_date() 
+    Traceback (most recent call last):
+    ...
+    ValueError: year is out of range
+    
+    >>> IncompleteDate(1756,1,27).as_date()
+    datetime.date(1756, 1, 27)
+    
     An IncompleteDate is allowed to be complete:
     
     >>> d = IncompleteDate.parse('2011-11-19')
@@ -203,6 +221,8 @@ class IncompleteDate:
     2011-11-19
     >>> d.is_complete()
     True
+    >>> print repr(d.as_date())
+    datetime.date(2011, 11, 19)
     
     """
     
@@ -223,7 +243,6 @@ class IncompleteDate:
     @classmethod
     def from_date(cls,date):
         return cls(date.year,date.month,date.day)
-        
         
     def is_complete(self):
         if self.year and self.month and self.day:

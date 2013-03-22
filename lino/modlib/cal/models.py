@@ -329,7 +329,7 @@ class Calendar(mixins.PrintableType,outbox.MailableType,dd.BabelNamed):
     readonly = models.BooleanField(_("read-only"),default=False)
     #~ invite_team_members = models.BooleanField(
         #~ _("Invite team members"),default=False)
-    invite_team_members = dd.ForeignKey('users.Group',blank=True,null=True)
+    invite_team_members = dd.ForeignKey('users.Team',blank=True,null=True)
     #~ is_default = models.BooleanField(
         #~ _("is default"),default=False)
     #~ is_private = models.BooleanField(

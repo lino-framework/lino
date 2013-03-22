@@ -28,7 +28,7 @@ from pprint import pprint
 
 from django.conf import settings
 
-from djangosite.utils.test import TestCase
+from djangosite.utils.test import RemoteAuthTestCase
 from django.test.utils import override_settings
 
 #from lino.igen import models
@@ -46,22 +46,8 @@ from lino.modlib.contacts import models as contacts
 from lino import mixins
 Genders = mixins.Genders
 
-class QuickTest(TestCase):
-    #~ fixtures = [ 'std', 'few_countries', 'ee', 'be', 'demo', 'demo_ee']
-    #~ fixtures = 'few_countries few_languages demo_cities std demo demo_ee'.split()
-    #~ fixtures = 'std few_countries few_cities few_languages props demo'.split()
-    def __call__(self,*args,**kw):
-        # these tests use remote http authentication, so we override the run() 
-        # method to simulate 
-        #~ settings.SITE.remote_user_header = 'REMOTE_USER'
-        settings.SITE.override_defaults(remote_user_header='REMOTE_USER')
-        mysettings = dict()
-        for k in ('MIDDLEWARE_CLASSES',):
-            mysettings[k] = settings.SITE.django_settings.get(k)
-        #~ MIDDLEWARE_CLASSES = settings.SITE.django_settings.get('MIDDLEWARE_CLASSES')
-        with self.settings(**mysettings):
-            return super(QuickTest,self).__call__(*args,**kw)
-    
+class QuickTest(RemoteAuthTestCase):
+    pass
     
 person = Instantiator(Person).build
 company = Instantiator("contacts.Company").build

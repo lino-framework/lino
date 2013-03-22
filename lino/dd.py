@@ -202,7 +202,6 @@ from north.dbutils import BabelCharField, LanguageField
 from north.dbutils import babelkw
 from north.dbutils import babel_values # alias for babelkw for backward compat
 from north.dbutils import set_language
-from north.dbutils import dtos, dtosl
 #~ from north.dbutils import BabelCharField, BabelTextField, BabelNamed, LanguageField
 #~ from lino.core.fields import MethodField
 
@@ -285,4 +284,17 @@ class PseudoRequest:
         return self._user
     user = property(get_user)
     
+
+from lino.utils import IncompleteDate
+
+from north.dbutils import dtosl
+from north.dbutils import dtos as dtos_
+
+def dtos(d):
+    """
+    Also supports IncompleteDate
+    """
+    if isinstance(d,IncompleteDate):
+        return dtos_(d.as_date())
+    return dtos_(d)
 

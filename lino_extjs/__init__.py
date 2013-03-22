@@ -742,10 +742,10 @@ tinymce.init({
         especially the :xfile:`lino*.js` files, one per user profile and language.
         """
         if settings.SITE.never_build_site_cache:
-            logger.info("Not building site cache because `settings.SITE.never_build_site_cache` is True")
+            logger.debug("Not building site cache because `settings.SITE.never_build_site_cache` is True")
             return 
         if not os.path.isdir(settings.MEDIA_ROOT):
-            logger.warning("Not building site cache because "+
+            logger.debug("Not building site cache because "+
             "directory '%s' (settings.MEDIA_ROOT) does not exist.", 
             settings.MEDIA_ROOT)
             return

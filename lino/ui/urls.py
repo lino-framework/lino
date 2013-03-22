@@ -55,7 +55,7 @@ def get_media_urls():
     urlpatterns = []
     from os.path import exists, join, abspath, dirname
     
-    logger.info("Checking /media URLs ")
+    logger.debug("Checking /media URLs ")
     prefix = settings.MEDIA_URL[1:]
     if not prefix.endswith('/'):
         raise Exception("MEDIA_URL %r doesn't end with a '/'!" % settings.MEDIA_URL)
@@ -75,7 +75,7 @@ def get_media_urls():
         elif not exists(source):
             raise Exception("%s does not exist" % source)
         if is_devserver():
-            logger.info("django.views.static serving /%s from %s",short_name,source)
+            logger.debug("django.views.static serving /%s from %s",short_name,source)
             urlpatterns.extend(patterns('django.views.static',
             (r'^%s%s/(?P<path>.*)$' % (prefix,short_name), 
                 'serve', {
