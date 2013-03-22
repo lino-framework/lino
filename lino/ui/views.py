@@ -499,56 +499,60 @@ class Callbacks(View):
         
 
 
-from jinja2 import Template as JinjaTemplate
-from lino.ui.models import TextFieldTemplate
+#~ if settings.SITE.user_model:
+if settings.SITE.user_model and settings.SITE.use_tinymce:
+  
+    from jinja2 import Template as JinjaTemplate
+    from lino.ui.models import TextFieldTemplate
 
-class Templates(View):
-    """
-    Called by TinyMCE (`template_external_list_url 
-    <http://www.tinymce.com/wiki.php/configuration:external_template_list_url>`_)
-    to fill the list of available templates.
-    
-    """
-    #~ def templates_view(self,request,
-    def get(self,request,
-        app_label=None,actor=None,pk=None,fldname=None,tplname=None,**kw):
+    class Templates(View):
+      """
+      Called by TinyMCE (`template_external_list_url 
+      <http://www.tinymce.com/wiki.php/configuration:external_template_list_url>`_)
+      to fill the list of available templates.
       
-        if request.method == 'GET':
+      """
+      #~ def templates_view(self,request,
+      def get(self,request,
+          app_label=None,actor=None,pk=None,fldname=None,tplname=None,**kw):
+        
           
-            rpt = requested_actor(app_label,actor)
-            elem = rpt.get_row_by_pk(pk)
-            if elem is None:
-                raise http.Http404("%s %s does not exist." % (rpt,pk))
-                
-            if tplname:
-                tft = TextFieldTemplate.objects.get(pk=int(tplname))
-                #~ return http.HttpResponse(tft.text)
-                template = JinjaTemplate(tft.text)
-                context = dict(request=request,instance=elem,**settings.SITE.modules)
-                return http.HttpResponse(template.render(**context))
-                
-                
-            #~ q = models.Q(user=request.user) | models.Q(user__group__in=request.user.group_set.all())
-            teams = [o.group for o in request.user.users_membership_set_by_user.all()]
-            flt = models.Q(team__isnull=True) | models.Q(team__in=teams)
-            qs = TextFieldTemplate.objects.filter(flt).order_by('name')
-                
-            #~ m = getattr(elem,"%s_templates" % fldname,None)
-            #~ if m is None:
-                #~ q = models.Q(user=request.user) | models.Q(user=None)
-                #~ qs = TextFieldTemplate.objects.filter(q).order_by('name')
-            #~ else:
-                #~ qs = m(request)
-                
-            templates = []
-            for obj in qs:
-                url = settings.SITE.build_admin_url('templates',
-                    app_label,actor,pk,fldname,unicode(obj.pk))
-                templates.append([
-                    unicode(obj.name),url,unicode(obj.description)])
-            js = "var tinyMCETemplateList = %s;" % py2js(templates)
-            return http.HttpResponse(js,content_type='text/json')
-        raise http.Http404("Method %r not supported" % request.method)
+          if request.method == 'GET':
+            
+              rpt = requested_actor(app_label,actor)
+              elem = rpt.get_row_by_pk(pk)
+              if elem is None:
+                  raise http.Http404("%s %s does not exist." % (rpt,pk))
+                  
+              if tplname:
+                  tft = TextFieldTemplate.objects.get(pk=int(tplname))
+                  #~ return http.HttpResponse(tft.text)
+                  template = JinjaTemplate(tft.text)
+                  context = dict(request=request,instance=elem,**settings.SITE.modules)
+                  return http.HttpResponse(template.render(**context))
+                  
+                  
+              #~ q = models.Q(user=request.user) | models.Q(user__group__in=request.user.group_set.all())
+              teams = [o.group for o in request.user.users_membership_set_by_user.all()]
+              flt = models.Q(team__isnull=True) | models.Q(team__in=teams)
+              qs = TextFieldTemplate.objects.filter(flt).order_by('name')
+                  
+              #~ m = getattr(elem,"%s_templates" % fldname,None)
+              #~ if m is None:
+                  #~ q = models.Q(user=request.user) | models.Q(user=None)
+                  #~ qs = TextFieldTemplate.objects.filter(q).order_by('name')
+              #~ else:
+                  #~ qs = m(request)
+                  
+              templates = []
+              for obj in qs:
+                  url = settings.SITE.build_admin_url('templates',
+                      app_label,actor,pk,fldname,unicode(obj.pk))
+                  templates.append([
+                      unicode(obj.name),url,unicode(obj.description)])
+              js = "var tinyMCETemplateList = %s;" % py2js(templates)
+              return http.HttpResponse(js,content_type='text/json')
+          raise http.Http404("Method %r not supported" % request.method)
 
 
 

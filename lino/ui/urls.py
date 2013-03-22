@@ -185,7 +185,7 @@ def get_ext_urls():
         urlpatterns += patterns('',
             (rx+r'run-jasmine$', views.RunJasmine.as_view()),
         )
-    if settings.SITE.use_tinymce:
+    if settings.SITE.user_model and settings.SITE.use_tinymce:
         urlpatterns += patterns('',
             (rx+r'templates/(?P<app_label>\w+)/(?P<actor>\w+)/(?P<pk>\w+)/(?P<fldname>\w+)$', 
                 views.Templates.as_view()),
