@@ -12,7 +12,8 @@ which just inherits :class:`lino.mixins.human.Human`:
 .. literalinclude:: models.py
 
 
->>> from tutorials.human.models import Person
+.. 
+  >>> from tutorials.human.models import Person
 
 
 Overview
@@ -20,15 +21,15 @@ Overview
 
 Lino is not complicated. Humans have three properties: 
 `first_name`, `last_name` and `gender`.
-All these fields may be blank
-(except if your application changed that rule, 
-using :func:`dd.update_field <lino.core.inject.update_field>`).
+All these fields may be blank,
+except if your application changed that rule
+using :func:`dd.update_field <lino.core.inject.update_field>`.
 
 
 Genders
 -------
 
-The :class:`Genders <lino.mixins.human.Genders>` choicelist
+The :class:`Genders <lino.core.choicelists.Genders>` choicelist
 defines the possible values for the `gender` field of a Human.
 
 >>> from lino.dd import Genders
@@ -46,7 +47,7 @@ Mr John Smith
 >>> print Person(last_name="Smith",gender=Genders.female)
 Mrs Smith
 
-If you don't specify a gender, Lino assumes it's a male:
+If you don't specify a gender, Lino doesn't print any salutation:
 
 >>> print Person(first_name="John", last_name="Smith")
 John Smith
@@ -136,7 +137,8 @@ In France it is usual to print the last name with captial letters.
 >>> print p.get_full_name(upper=True)
 M. Jean DUPONT
 
-Lino also has a setting :attr:`lino.Lino.uppercase_last_name`
+Lino also has a setting 
+:attr:`uppercase_last_name <lino.ui.Site.uppercase_last_name>`
 which causes this to be the default.
 
 >>> from django.conf import settings
@@ -145,8 +147,10 @@ which causes this to be the default.
 >>> print p
 M. Jean DUPONT
 
-When setting :attr:`lino.Lino.uppercase_last_name` is set and you 
-*don't* want uppercase last names, then you must specify it explicitly:
+When setting 
+:attr:`uppercase_last_name <lino.ui.Site.uppercase_last_name>`
+is set to True and you (exceptionally) do *not* want uppercase last names, 
+then you must specify it explicitly:
 
 >>> print p.get_full_name(upper=False)
 M. Jean Dupont
@@ -155,7 +159,7 @@ M. Jean Dupont
 The `mf` method
 ---------------
 
-The :meth:`mf <lino.mixins.humans.Human.mf>` method of a Human
+The :meth:`mf <lino.mixins.human.Human.mf>` method of a Human
 is useful in document templates when you want to generate texts 
 that differ depending on the gender of a Human.
 

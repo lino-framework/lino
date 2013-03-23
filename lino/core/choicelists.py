@@ -692,6 +692,7 @@ class Genders(ChoiceList):
     """
     Defines the two possible choices "male" and "female" 
     for the gender of a person.
+    See :ref:`lino.tutorial.human` for examples.
     """
     verbose_name = _("Gender")
     app_label = 'lino'

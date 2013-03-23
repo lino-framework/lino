@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version:  \n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2013-03-23 03:47+0100\n"
+"POT-Creation-Date: 2013-03-23 22:22+0100\n"
 "PO-Revision-Date: 2012-12-05 17:10+0200\n"
 "Last-Translator: Luc Saffre <luc.saffre@gmail.com>\n"
 "Language-Team: \n"
@@ -15,7 +15,7 @@ msgstr ""
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=utf-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"Generated-By: Babel 0.9.6\n"
+"Generated-By: Babel 1.0dev-r661\n"
 
 #: lino/__init__.py:372 lino/projects/cosi/settings.py:81
 #: lino/projects/homeworkschool/settings.py:103
@@ -62,7 +62,7 @@ msgstr ""
 
 #: lino/core/actions.py:786 lino/extjs/__init__.py:850
 #: lino/modlib/pages/models.py:151 lino/modlib/pages/models.py:186
-#: lino/ui/models.py:336 lino/ui/views.py:1078
+#: lino/ui/models.py:336 lino/ui/views.py:1081
 msgid "Home"
 msgstr "Départ"
 
@@ -256,7 +256,7 @@ msgstr ""
 msgid "No data to display"
 msgstr "Aucun enregistrement"
 
-#: lino/core/tables.py:530 lino/ui/views.py:1019
+#: lino/core/tables.py:530 lino/ui/views.py:1022
 #, python-format
 msgid "List contains more than %d rows"
 msgstr ""
@@ -291,7 +291,7 @@ msgid "Myself"
 msgstr ""
 
 #: lino/extjs/__init__.py:616
-#, fuzzy, python-format
+#, fuzzy
 msgid "Act as..."
 msgstr "Choisir %s..."
 
@@ -399,6 +399,16 @@ msgstr ""
 #: lino/mixins/human.py:61
 msgid "Mrs"
 msgstr "Mme"
+
+#: lino/mixins/human.py:63
+msgctxt "nominative salutation"
+msgid "Mr"
+msgstr "M."
+
+#: lino/mixins/human.py:64
+msgctxt "indirect salutation"
+msgid "Mr"
+msgstr "M."
 
 #: lino/mixins/human.py:86 lino/modlib/users/models.py:88
 #, fuzzy
@@ -1359,7 +1369,7 @@ msgstr ""
 msgid "Master type"
 msgstr "Type d'organisation"
 
-#: lino/modlib/changes/models.py:88 lino/ui/__init__.py:793
+#: lino/modlib/changes/models.py:88 lino/ui/__init__.py:799
 msgid "Master"
 msgstr "Signalétique"
 
@@ -3107,19 +3117,19 @@ msgid ""
 "directly to the person who invited you."
 msgstr ""
 
-#: lino/ui/__init__.py:799
+#: lino/ui/__init__.py:805
 msgid "Reports"
 msgstr ""
 
-#: lino/ui/__init__.py:801
+#: lino/ui/__init__.py:807
 msgid "Configure"
 msgstr "Configuration"
 
-#: lino/ui/__init__.py:803
+#: lino/ui/__init__.py:809
 msgid "Explorer"
 msgstr "Explorateur"
 
-#: lino/ui/__init__.py:805
+#: lino/ui/__init__.py:811
 msgid "Site"
 msgstr "Site"
 
@@ -3334,12 +3344,12 @@ msgstr "Enregistrement %s a été mis à jour."
 msgid "%s : nothing to save."
 msgstr ""
 
-#: lino/ui/views.py:1062
+#: lino/ui/views.py:1065
 #, python-format
 msgid "Error while saving GC for %(table)s: %(error)s"
 msgstr ""
-"Une erreur est apparue pendant la sauvgarde de la configuration pour %(table)s: "
-"%(error)s"
+"Une erreur est apparue pendant la sauvgarde de la configuration pour "
+"%(table)s: %(error)s"
 
 #: lino/utils/auth.py:78
 msgid "User Level"

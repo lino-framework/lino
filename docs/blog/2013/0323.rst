@@ -2,15 +2,17 @@
 20130323 (Saturday, 23 March 2013)
 ==================================
 
-Extract messages using Babel
-----------------------------
+Extract messages using Babel instead of Django
+----------------------------------------------
 
-Replacing Django's `makemessages` 
-command by the system provided with Babel_
-(and Jinja's `Babel Integration <http://jinja.pocoo.org/docs/integration/>`__).
+Cool! Today I replaced the sophisticated and intransparent system for handling 
+internationalization (which used only Django's builtin possibilities and 
+needed :srcref:`/Makefile`) 
+by a transparent and easy-to-use system using Babel_
+(and Jinja's `Babel Integration 
+<http://jinja.pocoo.org/docs/integration/>`__).
 
 .. _Babel: http://babel.edgewall.org/wiki/Documentation/setup.html
-
 
 The configuration is in :srcref:`/lino/setup_info.py`::
 
@@ -25,11 +27,12 @@ The configuration is in :srcref:`/lino/setup_info.py`::
   })
 
 
+The raw commands to issue (supposing locale "de" ) are::
 
-setup.py extract_messages -o lino/locale/django.pot
-setup.py init_catalog    --domain django -d lino/locale -l de -i lino/locale/django.pot
-setup.py update_catalog  --domain django -d lino/locale -l de -i lino/locale/django.pot
-setup.py compile_catalog --domain django -d lino/locale -l de
+  setup.py extract_messages -o lino/locale/django.pot
+  setup.py init_catalog    --domain django -d lino/locale -l de -i lino/locale/django.pot
+  setup.py update_catalog  --domain django -d lino/locale -l de -i lino/locale/django.pot
+  setup.py compile_catalog --domain django -d lino/locale -l de
 
 
 A first nice surprise is the following message:
@@ -50,14 +53,81 @@ Here is the Windows shell command used to get a list of the German ones::
 
   T:\hgwork\lino>dir /s django.po /b | grep de\\
 
+Another little difference:
 Django's makemessages command automatically removed the .pot files,
 I am going to leave the :srcref:`/lino/locale/django.pot` file hanging around.
 
-The above commands are now implemented in :mod:`djangosite.utils.fablib` as::
+The above commands are now fully implemented in :mod:`djangosite.utils.fablib` as::
 
   fab em
   fab im
   fab um
   fab cm
+  
+  
+While converting lino_welfare to the new system I 
+noticed that I can now finally also put the central things 
+like the settings.py file, demo fixtures and management commands
+to where they belong (to the top-level directory)
+I used the occasion to split the central parts of 
+:mod:`lino_welfare.modlib.pcsw.models`
+into a new module :mod:`lino_welfare.models`.
+
+:class:`north.Site` now does the same for `LOCALE_PATHS` as for `FIXTURE_DIRS`: 
+it extends Django's automatic discovery system by searching also for 
+"locale" subdirectories relative to any Python module 
+that defines a subclass of :class:`north.Site` 
+(usually a :file:`settings.py` file) 
+and which are *not* part of an app 
+(in which case a locale directory should not be mentioned there because 
+Django already searches them, as explained
+in `How Django discovers translations
+<https://docs.djangoproject.com/en/dev/topics/i18n/translation/#how-django-discovers-translations>`_).
+
+One "detail" causes still headache: Babel_ doesn't seem to 
+support message contexts, at least it doesn't extract them 
+using `pgettext` instead of `gettext`.
+A ticket `278 <http://babel.edgewall.org/ticket/278>`_ 
+mentioned this, but it has been closed as duplicate
+of `277 <http://babel.edgewall.org/ticket/277>`_
+which afaics doesn't speak at all about pgettext.
+
+An example of where this causes problem is 
+the German male salutation "Herr" or "Herrn":
+both salutations are "Mr" in English, 
+but in German there are two cases. 
+Lino provides some utility functions for this, 
+see :ref:`lino.tutorial.human`. 
+This is done using pgettext (see source code at
+:srcref:`/lino/mixins/human.py`),
+but Babel seems to simply ignore these.
+It does read the file::
+
+  ...
+  extracting messages from lino\mixins\human.py
+  ...
+  
+
+UPDATE: What a funny coincidence! 
+The last post in Babel's mailinglist was exactly 
+about this problem, and it told me that Babel *can* 
+do pgettext, but they just didn't yet release it officially! 
+Tried with a checkout of the latest trunk version 
+(which is not completely trivial but 
+`there are clear instructions 
+<http://babel.edgewall.org/wiki/SubversionCheckout>`_): yes, that works.
+
+Only remaining problem is that I'd prefer to use a released 
+version on my customer's site.
+
+
+To trust or not to trust?
+-------------------------
+
+Before releasing yesterdays new "textfield templates are now parsed using Jinja" 
+feature to lf_, 
+I'd rather add the new attribute :attr:`lino.ui.Site.trusted_templates` which is False 
+by default. So sorry, you cannot see this feature in our live demos.
+
 
 

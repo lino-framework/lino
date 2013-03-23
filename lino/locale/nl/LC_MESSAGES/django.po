@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version:  lino.modlib.systen\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2013-03-23 03:47+0100\n"
+"POT-Creation-Date: 2013-03-23 22:22+0100\n"
 "PO-Revision-Date: 2013-01-29 18:13+0200\n"
 "Last-Translator: Luc Saffre <luc.saffre@gmail.com>\n"
 "Language-Team: \n"
@@ -15,7 +15,7 @@ msgstr ""
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=utf-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"Generated-By: Babel 0.9.6\n"
+"Generated-By: Babel 1.0dev-r661\n"
 
 #: lino/__init__.py:372 lino/projects/cosi/settings.py:81
 #: lino/projects/homeworkschool/settings.py:103
@@ -62,7 +62,7 @@ msgstr "Detail-Fenster auf diesem Datensatz öffnen"
 
 #: lino/core/actions.py:786 lino/extjs/__init__.py:850
 #: lino/modlib/pages/models.py:151 lino/modlib/pages/models.py:186
-#: lino/ui/models.py:336 lino/ui/views.py:1078
+#: lino/ui/models.py:336 lino/ui/views.py:1081
 msgid "Home"
 msgstr "Startseite"
 
@@ -248,7 +248,7 @@ msgstr "Arbeitsablauf"
 msgid "No data to display"
 msgstr "Keine Daten anzuzeigen"
 
-#: lino/core/tables.py:530 lino/ui/views.py:1019
+#: lino/core/tables.py:530 lino/ui/views.py:1022
 #, python-format
 msgid "List contains more than %d rows"
 msgstr "Liste enthält mehr als %d Zeilen"
@@ -382,6 +382,16 @@ msgstr "%(old)s wurde dupliziert nach  %(new)s."
 #: lino/mixins/human.py:61
 msgid "Mrs"
 msgstr "Frau"
+
+#: lino/mixins/human.py:63
+msgctxt "nominative salutation"
+msgid "Mr"
+msgstr ""
+
+#: lino/mixins/human.py:64
+msgctxt "indirect salutation"
+msgid "Mr"
+msgstr ""
 
 #: lino/mixins/human.py:86 lino/modlib/users/models.py:88
 #, fuzzy
@@ -1301,7 +1311,7 @@ msgid "months"
 msgstr ""
 
 #: lino/modlib/cal/utils.py:150
-#, fuzzy, python-format
+#, fuzzy
 msgid "years"
 msgstr "Jahre"
 
@@ -1367,7 +1377,7 @@ msgstr "Thema"
 msgid "Master type"
 msgstr "Letzte Seite"
 
-#: lino/modlib/changes/models.py:88 lino/ui/__init__.py:793
+#: lino/modlib/changes/models.py:88 lino/ui/__init__.py:799
 msgid "Master"
 msgstr "Stammdaten"
 
@@ -2054,7 +2064,7 @@ msgid "Fiscal Year"
 msgstr ""
 
 #: lino/modlib/ledger/utils.py:47
-#, fuzzy, python-format
+#, fuzzy
 msgid "Fiscal Years"
 msgstr "Jahre"
 
@@ -2478,7 +2488,7 @@ msgid "Property Types"
 msgstr ""
 
 #: lino/modlib/properties/models.py:109
-#, fuzzy, python-format
+#, fuzzy
 msgid "Choices List"
 msgstr "Auswahlmöglichkeiten für %s"
 
@@ -3140,19 +3150,19 @@ msgstr ""
 "Reaktionen und Kommentare sind willkommen an lino-users@googlegroups.com "
 "oder direkt die Person, die Sie eingeladen hat."
 
-#: lino/ui/__init__.py:799
+#: lino/ui/__init__.py:805
 msgid "Reports"
 msgstr ""
 
-#: lino/ui/__init__.py:801
+#: lino/ui/__init__.py:807
 msgid "Configure"
 msgstr "Konfigurierung"
 
-#: lino/ui/__init__.py:803
+#: lino/ui/__init__.py:809
 msgid "Explorer"
 msgstr ""
 
-#: lino/ui/__init__.py:805
+#: lino/ui/__init__.py:811
 msgid "Site"
 msgstr "Site"
 
@@ -3363,7 +3373,7 @@ msgstr "%s wurde aktualisiert."
 msgid "%s : nothing to save."
 msgstr "%s : nichts zu speichern."
 
-#: lino/ui/views.py:1062
+#: lino/ui/views.py:1065
 #, python-format
 msgid "Error while saving GC for %(table)s: %(error)s"
 msgstr ""
@@ -3436,164 +3446,4 @@ msgstr "Ungültige belgische NR-Nrummer %s :"
 #, python-format
 msgid "Check digit is %(found)d but should be %(expected)d"
 msgstr ""
-
-#~ msgid "English"
-#~ msgstr "Englisch"
-
-#~ msgid "German"
-#~ msgstr "Deutsch"
-
-#~ msgid "French"
-#~ msgstr "Französisch"
-
-#~ msgid "Dutch"
-#~ msgstr "Niederländisch"
-
-#~ msgid "Estonian"
-#~ msgstr "Estnisch"
-
-#~ msgid "Using ExtJS"
-#~ msgstr ""
-
-#~ msgid "OK"
-#~ msgstr ""
-
-#~ msgid "Mr"
-#~ msgstr "Herr"
-
-#~ msgid "Mail Message"
-#~ msgstr ""
-
-#~ msgid "Mail Messages"
-#~ msgstr ""
-
-#~ msgid "We're sorry, but the requested page could not be found."
-#~ msgstr ""
-
-#~ msgid "Server error"
-#~ msgstr ""
-
-#~ msgid ""
-#~ "There's been an error. It's been "
-#~ "reported to the site administrators via"
-#~ " e-mail and should be fixed shortly."
-#~ " Thanks for your patience."
-#~ msgstr ""
-
-#~ msgid "Django site admin"
-#~ msgstr ""
-
-#~ msgid "Django administration"
-#~ msgstr ""
-
-#~ msgid "Please wait..."
-#~ msgstr "Bitte warten..."
-
-#~ msgid "Show or hide the table parameters panel"
-#~ msgstr "Parameter-Panel ein- bzw. ausblenden"
-
-#~ msgid "Action not available on phantom record."
-#~ msgstr "Aktion nicht verfügbar auf dem Phantom-Record."
-
-#~ msgid "Enter a date in format YYYY-MM-DD (use zeroes for unknown parts)."
-#~ msgstr "Bitte ein Datum im Format YYYY-MM-DD eingeben (0 für unbekannte Teile)."
-
-#~ msgid "Next"
-#~ msgstr "Nächster"
-
-#~ msgid "Go to record"
-#~ msgstr "Gehe zu Datensatz"
-
-#~ msgid "Reload current record"
-#~ msgstr "Aktuellen Record neu laden"
-
-#~ msgid "Save changes to current record ?"
-#~ msgstr "Änderungen in diesem Formular speichern?"
-
-#~ msgid "Edit text in own window"
-#~ msgstr "Text in eigenem Fenster bearbeiten."
-
-#~ msgid "Enter a text to use as quick search filter"
-#~ msgstr "Hier Text eingeben für Schnellsuche."
-
-#~ msgid "Alert"
-#~ msgstr "Warnung"
-
-#~ msgid "Cannot show detail for empty foreign key."
-#~ msgstr ""
-
-#~ msgid "Quick Search"
-#~ msgstr "Schnellsuche"
-
-#~ msgid "This record is disabled"
-#~ msgstr "Dieser Datensatz ist deaktiviert"
-
-#~ msgid "Displaying {0} - {1} of {2}"
-#~ msgstr "Zeilen {0} bis {1} von {2}"
-
-#~ msgid "Team view"
-#~ msgstr "Team-Ansicht"
-
-#~ msgid "Edit help texts for fields on this model."
-#~ msgstr "Hilfetexte der Eingabefelder dieser Tabelle bearbeiten"
-
-#~ msgid "Show this table in plain html"
-#~ msgstr "Tabelle als HTML anzeigen"
-
-#~ msgid "Export this table to a .csv file"
-#~ msgstr "Diese Tabelle in eine .csv-Datei exportieren"
-
-#~ msgid "of {0}"
-#~ msgstr "von {0}"
-
-#~ msgid "Save Grid Configuration"
-#~ msgstr "Tabellenkonfiguration speichern"
-
-#~ msgid "Page"
-#~ msgstr "Seite"
-
-#~ msgid "First"
-#~ msgstr "Erste"
-
-#~ msgid "Show this panel in own window"
-#~ msgstr "Tabelle in eigenem Fenster bearbeiten."
-
-#~ msgid "This field is disabled"
-#~ msgstr "Dieses Feld ist deaktiviert"
-
-#~ msgid "Delete {0} rows. Are you sure?"
-#~ msgstr "Es werden {0} Datensätze gelöscht. Sind Sie sicher?"
-
-#~ msgid "No more records to display. Detail window has been closed."
-#~ msgstr "Keine weiteren Records vorhanden. Detail-Fenster wird geschlossen."
-
-#~ msgid "Show this table as a pdf document"
-#~ msgstr "Diese Tabelle in eine .pdf-Datei exportieren"
-
-#~ msgid "Select another view of this report"
-#~ msgstr "Andere Ansicht auswählen"
-
-#~ msgid "Cannot show MTI child if checkbox is off."
-#~ msgstr "Kann MTI-Kind nicht anzeigen wenn Checkbox abgeschlatet ist."
-
-#~ msgid "View"
-#~ msgstr "Ansicht"
-
-#~ msgid "Save changes to text ?"
-#~ msgstr "Änderungen im Text speichern?"
-
-#~ msgid "Welcome on Lino server %(title)r, user %(user)s"
-#~ msgstr "Willkommen auf dem Lino-server %(title)r, %(user)s"
-
-#~ msgid "%s has been saved."
-#~ msgstr "%s wurde gespeichert."
-
-#~ msgid "User %(user)s cannot configure %(report)s."
-#~ msgstr ""
-
-#~ msgid "Insert into %s..."
-#~ msgstr "Einfügen nach %s..."
-
-#~ msgid "Action %(action)s failed for %(record)s: %(error)s"
-#~ msgstr ""
 

@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version:  lino.modlib.systen\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2013-03-23 03:47+0100\n"
+"POT-Creation-Date: 2013-03-23 22:22+0100\n"
 "PO-Revision-Date: 2013-01-20 21:56+0200\n"
 "Last-Translator: Luc Saffre <luc.saffre@gmail.com>\n"
 "Language-Team: \n"
@@ -15,7 +15,7 @@ msgstr ""
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=utf-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"Generated-By: Babel 0.9.6\n"
+"Generated-By: Babel 1.0dev-r661\n"
 
 #: lino/__init__.py:372 lino/projects/cosi/settings.py:81
 #: lino/projects/homeworkschool/settings.py:103
@@ -62,7 +62,7 @@ msgstr "Detail-Fenster auf diesem Datensatz öffnen"
 
 #: lino/core/actions.py:786 lino/extjs/__init__.py:850
 #: lino/modlib/pages/models.py:151 lino/modlib/pages/models.py:186
-#: lino/ui/models.py:336 lino/ui/views.py:1078
+#: lino/ui/models.py:336 lino/ui/views.py:1081
 msgid "Home"
 msgstr "Startseite"
 
@@ -249,7 +249,7 @@ msgstr "Arbeitsablauf"
 msgid "No data to display"
 msgstr "Keine Daten anzuzeigen"
 
-#: lino/core/tables.py:530 lino/ui/views.py:1019
+#: lino/core/tables.py:530 lino/ui/views.py:1022
 #, python-format
 msgid "List contains more than %d rows"
 msgstr "Liste enthält mehr als %d Zeilen"
@@ -281,7 +281,6 @@ msgid "Myself"
 msgstr "ich selbst"
 
 #: lino/extjs/__init__.py:616
-#, python-format
 msgid "Act as..."
 msgstr "Arbeiten als..."
 
@@ -384,6 +383,16 @@ msgstr "%(old)s wurde dupliziert nach  %(new)s."
 #: lino/mixins/human.py:61
 msgid "Mrs"
 msgstr "Frau"
+
+#: lino/mixins/human.py:63
+msgctxt "nominative salutation"
+msgid "Mr"
+msgstr "Herr"
+
+#: lino/mixins/human.py:64
+msgctxt "indirect salutation"
+msgid "Mr"
+msgstr "Herrn"
 
 #: lino/mixins/human.py:86 lino/modlib/users/models.py:88
 #, fuzzy
@@ -1333,7 +1342,7 @@ msgstr "Thema"
 msgid "Master type"
 msgstr "Organisationsart"
 
-#: lino/modlib/changes/models.py:88 lino/ui/__init__.py:793
+#: lino/modlib/changes/models.py:88 lino/ui/__init__.py:799
 msgid "Master"
 msgstr "Stammdaten"
 
@@ -3098,19 +3107,19 @@ msgstr ""
 "Reaktionen und Kommentare sind willkommen an lino-users@googlegroups.com "
 "oder direkt die Person, die Sie eingeladen hat."
 
-#: lino/ui/__init__.py:799
+#: lino/ui/__init__.py:805
 msgid "Reports"
 msgstr ""
 
-#: lino/ui/__init__.py:801
+#: lino/ui/__init__.py:807
 msgid "Configure"
 msgstr "Konfigurierung"
 
-#: lino/ui/__init__.py:803
+#: lino/ui/__init__.py:809
 msgid "Explorer"
 msgstr ""
 
-#: lino/ui/__init__.py:805
+#: lino/ui/__init__.py:811
 msgid "Site"
 msgstr "Site"
 
@@ -3321,7 +3330,7 @@ msgstr "%s wurde aktualisiert."
 msgid "%s : nothing to save."
 msgstr "%s : nichts zu speichern."
 
-#: lino/ui/views.py:1062
+#: lino/ui/views.py:1065
 #, python-format
 msgid "Error while saving GC for %(table)s: %(error)s"
 msgstr ""

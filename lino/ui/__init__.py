@@ -53,6 +53,12 @@ class Site(lino.Site):
     max_action_name_length = 50
     max_actor_name_length = 100
     
+    trusted_templates = False
+    """
+    Set this to True if you are sure that the users of your site won't try to 
+    misuse Jinja's capabilities.
+    """
+    
     #~ def add_config_value(self,name,default,help_text):
         #~ if not hasattr(self,name):
             #~ setattr(self,name,default)

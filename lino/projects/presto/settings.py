@@ -15,9 +15,9 @@
 from lino.projects.std.settings import *
 #~ from lino.projects.presto import __version__, __url__, __name__
 
-from lino.modlib import ledger, cal
+from lino.modlib import ledger
 
-class Site(Site,cal.SiteMixin,ledger.SiteMixin):
+class Site(Site,ledger.SiteMixin):
 
     #~ title = __name__
     verbose_name = "Lino Presto"

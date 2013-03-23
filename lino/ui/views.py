@@ -526,10 +526,13 @@ if settings.SITE.user_model and settings.SITE.use_tinymce:
                   
               if tplname:
                   tft = TextFieldTemplate.objects.get(pk=int(tplname))
-                  #~ return http.HttpResponse(tft.text)
-                  template = JinjaTemplate(tft.text)
-                  context = dict(request=request,instance=elem,**settings.SITE.modules)
-                  return http.HttpResponse(template.render(**context))
+                  if settings.SITE.trusted_templates:
+                      #~ return http.HttpResponse(tft.text)
+                      template = JinjaTemplate(tft.text)
+                      context = dict(request=request,instance=elem,**settings.SITE.modules)
+                      return http.HttpResponse(template.render(**context))
+                  else:
+                      return http.HttpResponse(tft.text)
                   
                   
               #~ q = models.Q(user=request.user) | models.Q(user__group__in=request.user.group_set.all())
