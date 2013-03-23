@@ -136,7 +136,7 @@ class ExtUI(base.UI):
         #~ raise Exception("20120614")
         #~ self.pdf_renderer = PdfRenderer(self) # 20120624
         if settings.SITE.use_extjs:
-            from lino_extjs import ExtRenderer
+            from lino.extjs import ExtRenderer
             self.ext_renderer = ExtRenderer(self)
         from .render import PlainRenderer, TextRenderer
         self.plain_renderer = PlainRenderer(self)

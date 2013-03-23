@@ -58,9 +58,9 @@ The following real-world applications use the Lino framework:
 """)
 
 SETUP_INFO.update(packages = [str(n) for n in """
-lino_extjs
 lino
 lino.core
+lino.extjs
 lino.history
 lino.modlib
 lino.modlib.contacts
@@ -173,3 +173,15 @@ lino.projects.babel_tutorial
 lino.projects.babel_tutorial.fixtures
 """.splitlines() if n])
   
+SETUP_INFO.update(message_extractors = {
+    'lino': [
+        ('**/sandbox/**',        'ignore', None),
+        ('**/cache/**',          'ignore', None),
+        ('**.py',                'python', None),
+        ('**.js',                'javascript', None),
+        ('**/templates_jinja/**.html', 'jinja2', None),
+        #~ ('**/templates/**.txt',  'genshi', {
+            #~ 'template_class': 'genshi.template:TextTemplate'
+        #~ })
+    ],
+})

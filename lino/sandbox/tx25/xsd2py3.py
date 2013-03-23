@@ -13,7 +13,7 @@ def xsd2py(fn,nsname):
     tree = etree.parse(fn) 
     root = tree.getroot()
     yield "from lino.utils.bcss import Namespace"
-    yield "%s = Namespace(%r,%r):" % (nsname,nsname,str(root.get('targetNamespace'))
+    yield "%s = Namespace(%r,%r):" % (nsname,nsname,str(root.get('targetNamespace')))
     for e in root:
         if e.tag == XSD + 'complexType':
             na = e.get('name',None)
@@ -49,7 +49,9 @@ def xsd2py(fn,nsname):
             yield indent + "# unhandled element %s" % e.tag
 
 
-fn = os.path.join('XSD','RetrieveTIGroupsV3.xsd')
-for ln in xsd2py(fn,'tx25'):
-    print ln
-    
+def main():
+  
+    fn = os.path.join('XSD','RetrieveTIGroupsV3.xsd')
+    for ln in xsd2py(fn,'tx25'):
+        print ln
+

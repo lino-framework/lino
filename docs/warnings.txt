@@ -1,9 +1,2 @@
 T:\hgwork\lino\docs\api\lino.modlib.school.rst:7: WARNING: autodoc can't import/find module 'lino.modlib.school.models', it reported error: "resolve_model('contacts.Person',app_label=u'contacts') found None (settings settings)", please check your spelling and sys.path
 T:\hgwork\lino\docs\api\lino.modlib.school.fixtures.rst:7: WARNING: autodoc can't import/find module 'lino.modlib.school.fixtures.demo', it reported error: "resolve_model('contacts.Person',app_label=u'contacts') found None (settings settings)", please check your spelling and sys.path
-T:\hgwork\lino\docs\blog\2013\0321.rst:46: WARNING: Definition list ends without a blank line; unexpected unindent.
-t:\hgwork\lino\lino\modlib\contacts\models.py:docstring of lino.modlib.contacts.models.Person:3: WARNING: unknown document: /tutorial/human/index
-t:\hgwork\lino\lino\modlib\users\models.py:docstring of lino.modlib.users.models.User:3: WARNING: unknown document: /topics/http_auth
-t:\hgwork\lino\lino\ui\__init__.py:docstring of lino.ui.Site.django_admin_prefix:1: WARNING: unknown document: /ticket/70
-t:\hgwork\lino\lino\ui\__init__.py:docstring of lino.ui.Site.webdav_url:7: WARNING: term not in glossary: webdav
-t:\hgwork\lino\lino\ui\__init__.py:docstring of lino.ui.Site.webdav_url:7: WARNING: term not in glossary: runserver
-T:\hgwork\lino\docs\api\lino.utils.rst:7: WARNING: unknown document: /autodoc/lino.test_apps.mti

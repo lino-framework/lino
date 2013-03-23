@@ -1,0 +1,63 @@
+==================================
+20130323 (Saturday, 23 March 2013)
+==================================
+
+Extract messages using Babel
+----------------------------
+
+Replacing Django's `makemessages` 
+command by the system provided with Babel_
+(and Jinja's `Babel Integration <http://jinja.pocoo.org/docs/integration/>`__).
+
+.. _Babel: http://babel.edgewall.org/wiki/Documentation/setup.html
+
+
+The configuration is in :srcref:`/lino/setup_info.py`::
+
+  SETUP_INFO.update(message_extractors = {
+      'lino': [
+          ('**/sandbox/**',        'ignore', None),
+          ('**/cache/**',          'ignore', None),
+          ('**.py',                'python', None),
+          ('**.js',                'javascript', None),
+          ('**/templates_jinja/**.html', 'jinja2', None),
+      ],
+  })
+
+
+
+setup.py extract_messages -o lino/locale/django.pot
+setup.py init_catalog    --domain django -d lino/locale -l de -i lino/locale/django.pot
+setup.py update_catalog  --domain django -d lino/locale -l de -i lino/locale/django.pot
+setup.py compile_catalog --domain django -d lino/locale -l de
+
+
+A first nice surprise is the following message:
+
+  SyntaxError: python refuses to compile code with both a UTF8 byte-order-mark and a magic encoding comment
+
+There were indeed a few files with this problem (which had never occured 
+on my machine, though, and I'm not going to research why).
+
+One fundamental difference is: until now I had a 
+lot of `locale` directories (one for each app), 
+but I'm going to have now a single one in 
+:srcref:`/lino/locale`.
+Because that simplifies everything a lot!
+Except that I'll need to find out how to recover the 
+existing translations. 
+Here is the Windows shell command used to get a list of the German ones::
+
+  T:\hgwork\lino>dir /s django.po /b | grep de\\
+
+Django's makemessages command automatically removed the .pot files,
+I am going to leave the :srcref:`/lino/locale/django.pot` file hanging around.
+
+The above commands are now implemented in :mod:`djangosite.utils.fablib` as::
+
+  fab em
+  fab im
+  fab um
+  fab cm
+
+

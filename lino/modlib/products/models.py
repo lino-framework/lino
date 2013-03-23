@@ -46,12 +46,14 @@ class Product(dd.BabelNamed):
         verbose_name = _("Product")
         verbose_name_plural = _("Products")
     
-    description = dd.BabelTextField(blank=True,null=True)
-    cat = models.ForeignKey(ProductCat,
-        verbose_name="Category",
+    description = dd.BabelTextField(
+        verbose_name=_("Long description"),
         blank=True,null=True)
-    vatExempt = models.BooleanField(default=False)
-    price = dd.PriceField(blank=True,null=True)
+    cat = models.ForeignKey(ProductCat,
+        verbose_name=_("Category"),
+        blank=True,null=True)
+    vatExempt = models.BooleanField(verbose_name=_("VAT exempt"),default=False)
+    price = dd.PriceField(verbose_name=_("Price"),blank=True,null=True)
     #image = models.ImageField(blank=True,null=True,
     # upload_to=".")
     
