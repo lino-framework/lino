@@ -1,0 +1,5 @@
+================================
+20130324 (Sunday, 24 March 2013)
+================================
+
+Checked in yesterday's changes in :mod:`lino_welfare`.
