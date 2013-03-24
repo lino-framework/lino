@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2013-03-23 22:22+0100\n"
+"POT-Creation-Date: 2013-03-24 19:31+0100\n"
 "PO-Revision-Date: 2011-03-02 21:46+0200\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: et <LL@li.org>\n"
@@ -37,19 +37,19 @@ msgstr ""
 msgid "Administrator"
 msgstr ""
 
-#: lino/core/actions.py:696 lino/core/actions.py:788
+#: lino/core/actions.py:696 lino/core/actions.py:788 lino/extjs/linoweb.js:3600
 msgid "First page"
 msgstr ""
 
-#: lino/core/actions.py:697 lino/core/actions.py:789
+#: lino/core/actions.py:697 lino/core/actions.py:789 lino/extjs/linoweb.js:3602
 msgid "Previous page"
 msgstr ""
 
-#: lino/core/actions.py:709 lino/core/actions.py:790
+#: lino/core/actions.py:709 lino/core/actions.py:790 lino/extjs/linoweb.js:3603
 msgid "Next page"
 msgstr ""
 
-#: lino/core/actions.py:710 lino/core/actions.py:791
+#: lino/core/actions.py:710 lino/core/actions.py:791 lino/extjs/linoweb.js:3601
 msgid "Last page"
 msgstr ""
 
@@ -160,15 +160,15 @@ msgstr ""
 msgid "%(value)r (invalid choice for %(list)s)"
 msgstr ""
 
-#: lino/core/choicelists.py:696
+#: lino/core/choicelists.py:697
 msgid "Gender"
 msgstr ""
 
-#: lino/core/choicelists.py:701
+#: lino/core/choicelists.py:702
 msgid "Male"
 msgstr ""
 
-#: lino/core/choicelists.py:702
+#: lino/core/choicelists.py:703
 msgid "Female"
 msgstr ""
 
@@ -295,12 +295,168 @@ msgstr ""
 msgid "Forgot password"
 msgstr ""
 
-#: lino/extjs/__init__.py:640
+#: lino/extjs/__init__.py:640 lino/extjs/linoweb.js:402
+#: lino/extjs/linoweb.js:434
 msgid "Log in"
 msgstr ""
 
 #: lino/extjs/__init__.py:1341 lino/ui/elems.py:2009
 msgid "No data to display."
+msgstr ""
+
+#: lino/extjs/linoweb.js:416 lino/modlib/cal/models.py:325
+#: lino/modlib/users/models.py:78
+msgid "Username"
+msgstr ""
+
+#: lino/extjs/linoweb.js:422 lino/modlib/cal/models.py:327
+#: lino/modlib/users/models.py:84
+msgid "Password"
+msgstr ""
+
+#: lino/extjs/linoweb.js:498 lino/extjs/linoweb.js:537
+#: lino/extjs/linoweb.js:1617 lino/extjs/linoweb.js:2698
+#: lino/extjs/linoweb.js:3332
+msgid "Please wait..."
+msgstr ""
+
+#: lino/extjs/linoweb.js:792 lino/extjs/linoweb.js:1447
+#: lino/extjs/linoweb.js:1490 lino/extjs/linoweb.js:1514
+#: lino/extjs/linoweb.js:2872 lino/ui/base.py:71
+msgid "Confirmation"
+msgstr ""
+
+#: lino/extjs/linoweb.js:794
+msgid "Save changes to text ?"
+msgstr ""
+
+#: lino/extjs/linoweb.js:873 lino/extjs/linoweb.js:4098
+msgid "This field is disabled"
+msgstr ""
+
+#: lino/extjs/linoweb.js:973
+msgid "Enter a date in format YYYY-MM-DD (use zeroes for unknown parts)."
+msgstr ""
+
+#: lino/extjs/linoweb.js:1413
+msgid "Show this panel in own window"
+msgstr ""
+
+#: lino/extjs/linoweb.js:1448
+msgid "Delete {0} rows. Are you sure?"
+msgstr ""
+
+#: lino/extjs/linoweb.js:1533
+#, fuzzy
+msgid "Alert"
+msgstr "Tänav"
+
+#: lino/extjs/linoweb.js:1742
+msgid "Show or hide the table parameters panel"
+msgstr ""
+
+#: lino/extjs/linoweb.js:2068
+msgid "Action not available on phantom record."
+msgstr ""
+
+#: lino/extjs/linoweb.js:2178
+msgid "Cannot show detail for empty foreign key."
+msgstr ""
+
+#: lino/extjs/linoweb.js:2430
+msgid "Edit text in own window"
+msgstr ""
+
+#: lino/extjs/linoweb.js:2637
+msgid "Go to record"
+msgstr ""
+
+#: lino/extjs/linoweb.js:2643
+msgid "First"
+msgstr ""
+
+#: lino/extjs/linoweb.js:2645
+msgid "Previous"
+msgstr ""
+
+#: lino/extjs/linoweb.js:2647
+msgid "Next"
+msgstr ""
+
+#: lino/extjs/linoweb.js:2649
+msgid "Last"
+msgstr ""
+
+#: lino/extjs/linoweb.js:2660
+msgid "Reload current record"
+msgstr ""
+
+#: lino/extjs/linoweb.js:2874
+msgid "Save changes to current record ?"
+msgstr ""
+
+#: lino/extjs/linoweb.js:2944
+msgid "No more records to display. Detail window has been closed."
+msgstr ""
+
+#: lino/extjs/linoweb.js:3363
+msgid "Save Grid Configuration"
+msgstr ""
+
+#: lino/extjs/linoweb.js:3500
+msgid "Quick Search"
+msgstr ""
+
+#: lino/extjs/linoweb.js:3500
+msgid "Enter a text to use as quick search filter"
+msgstr ""
+
+#: lino/extjs/linoweb.js:3517
+msgid "Export this table to a .csv file"
+msgstr ""
+
+#: lino/extjs/linoweb.js:3541
+msgid "Show this table in plain html"
+msgstr ""
+
+#: lino/extjs/linoweb.js:3553
+msgid "Show this table as a pdf document"
+msgstr ""
+
+#: lino/extjs/linoweb.js:3579
+msgid "View"
+msgstr ""
+
+#: lino/extjs/linoweb.js:3581
+msgid "Select another view of this report"
+msgstr ""
+
+#: lino/extjs/linoweb.js:3597
+msgid "Page"
+msgstr ""
+
+#: lino/extjs/linoweb.js:3598
+msgid "of {0}"
+msgstr ""
+
+#: lino/extjs/linoweb.js:3599
+msgid "Displaying {0} - {1} of {2}"
+msgstr ""
+
+#: lino/extjs/linoweb.js:4093
+msgid "This record is disabled"
+msgstr ""
+
+#: lino/extjs/linoweb.js:4622
+msgid "Edit help texts for fields on this model."
+msgstr ""
+
+#: lino/extjs/linoweb.js:4852
+msgid "Cannot show MTI child if checkbox is off."
+msgstr ""
+
+#: lino/extjs/linoweb.js:5141
+msgid "Team view"
 msgstr ""
 
 #: lino/mixins/__init__.py:77
@@ -816,14 +972,6 @@ msgstr ""
 
 #: lino/modlib/cal/models.py:323
 msgid "URL template"
-msgstr ""
-
-#: lino/modlib/cal/models.py:325 lino/modlib/users/models.py:78
-msgid "Username"
-msgstr ""
-
-#: lino/modlib/cal/models.py:327 lino/modlib/users/models.py:84
-msgid "Password"
 msgstr ""
 
 #: lino/modlib/cal/models.py:329
@@ -3065,10 +3213,6 @@ msgstr ""
 
 #: lino/ui/__init__.py:811
 msgid "Site"
-msgstr ""
-
-#: lino/ui/base.py:71
-msgid "Confirmation"
 msgstr ""
 
 #: lino/ui/base.py:120

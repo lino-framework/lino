@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version:  lino.modlib.systen\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2013-03-23 22:22+0100\n"
+"POT-Creation-Date: 2013-03-24 19:31+0100\n"
 "PO-Revision-Date: 2013-01-20 21:56+0200\n"
 "Last-Translator: Luc Saffre <luc.saffre@gmail.com>\n"
 "Language-Team: \n"
@@ -36,19 +36,19 @@ msgstr "Benutzer"
 msgid "Administrator"
 msgstr ""
 
-#: lino/core/actions.py:696 lino/core/actions.py:788
+#: lino/core/actions.py:696 lino/core/actions.py:788 lino/extjs/linoweb.js:3600
 msgid "First page"
 msgstr "Erste Seite"
 
-#: lino/core/actions.py:697 lino/core/actions.py:789
+#: lino/core/actions.py:697 lino/core/actions.py:789 lino/extjs/linoweb.js:3602
 msgid "Previous page"
 msgstr "Vorige Seite"
 
-#: lino/core/actions.py:709 lino/core/actions.py:790
+#: lino/core/actions.py:709 lino/core/actions.py:790 lino/extjs/linoweb.js:3603
 msgid "Next page"
 msgstr "Nächste Seite"
 
-#: lino/core/actions.py:710 lino/core/actions.py:791
+#: lino/core/actions.py:710 lino/core/actions.py:791 lino/extjs/linoweb.js:3601
 msgid "Last page"
 msgstr "Letzte Seite"
 
@@ -141,14 +141,12 @@ msgid "Total (%d rows)"
 msgstr "Total (%d Zeilen)"
 
 #: lino/core/choicelists.py:318
-#, fuzzy
 msgid "value"
 msgstr "Wert"
 
 #: lino/core/choicelists.py:322
-#, fuzzy
 msgid "text"
-msgstr "Nächster"
+msgstr "Text"
 
 #: lino/core/choicelists.py:326 lino/modlib/about/models.py:73
 #: lino/modlib/about/models.py:114
@@ -160,15 +158,15 @@ msgstr ""
 msgid "%(value)r (invalid choice for %(list)s)"
 msgstr "%(value)r (ungültige Auswahl für %(list)s)"
 
-#: lino/core/choicelists.py:696
+#: lino/core/choicelists.py:697
 msgid "Gender"
 msgstr "Geschlecht"
 
-#: lino/core/choicelists.py:701
+#: lino/core/choicelists.py:702
 msgid "Male"
 msgstr "Männlich"
 
-#: lino/core/choicelists.py:702
+#: lino/core/choicelists.py:703
 msgid "Female"
 msgstr "Weiblich"
 
@@ -225,7 +223,6 @@ msgid "Merged %(this)s into %(merge_to)s. Updated %(updated)d related rows."
 msgstr ""
 
 #: lino/core/merge.py:152 lino/modlib/changes/models.py:60
-#, fuzzy
 msgid "Merge"
 msgstr "Fusionieren"
 
@@ -259,9 +256,8 @@ msgid "State"
 msgstr "Zustand"
 
 #: lino/core/workflows.py:103
-#, fuzzy
 msgid "States"
-msgstr "Zustand"
+msgstr "Zustände"
 
 #: lino/core/workflows.py:164
 #, python-format
@@ -296,13 +292,168 @@ msgstr "Passwort ändern"
 msgid "Forgot password"
 msgstr "Passwort vergessen"
 
-#: lino/extjs/__init__.py:640
+#: lino/extjs/__init__.py:640 lino/extjs/linoweb.js:402
+#: lino/extjs/linoweb.js:434
 msgid "Log in"
 msgstr "Anmelden"
 
 #: lino/extjs/__init__.py:1341 lino/ui/elems.py:2009
 msgid "No data to display."
 msgstr "Keine Daten anzuzeigen."
+
+#: lino/extjs/linoweb.js:416 lino/modlib/cal/models.py:325
+#: lino/modlib/users/models.py:78
+msgid "Username"
+msgstr "Benutzername"
+
+#: lino/extjs/linoweb.js:422 lino/modlib/cal/models.py:327
+#: lino/modlib/users/models.py:84
+msgid "Password"
+msgstr "Passwort"
+
+#: lino/extjs/linoweb.js:498 lino/extjs/linoweb.js:537
+#: lino/extjs/linoweb.js:1617 lino/extjs/linoweb.js:2698
+#: lino/extjs/linoweb.js:3332
+msgid "Please wait..."
+msgstr "Bitte warten..."
+
+#: lino/extjs/linoweb.js:792 lino/extjs/linoweb.js:1447
+#: lino/extjs/linoweb.js:1490 lino/extjs/linoweb.js:1514
+#: lino/extjs/linoweb.js:2872 lino/ui/base.py:71
+msgid "Confirmation"
+msgstr "Bestätigung"
+
+#: lino/extjs/linoweb.js:794
+msgid "Save changes to text ?"
+msgstr "Änderungen im Text speichern?"
+
+#: lino/extjs/linoweb.js:873 lino/extjs/linoweb.js:4098
+msgid "This field is disabled"
+msgstr "Dieses Feld ist deaktiviert"
+
+#: lino/extjs/linoweb.js:973
+msgid "Enter a date in format YYYY-MM-DD (use zeroes for unknown parts)."
+msgstr "Datum im Format JJJJ-MM-TT eingeben (Nullen für unbekannte Teile)"
+
+#: lino/extjs/linoweb.js:1413
+msgid "Show this panel in own window"
+msgstr "Dieses Panel in eigenem Fenster öffnen"
+
+#: lino/extjs/linoweb.js:1448
+msgid "Delete {0} rows. Are you sure?"
+msgstr "Es werden {0} Datensätze gelöscht. Sind Sie sicher?"
+
+#: lino/extjs/linoweb.js:1533
+msgid "Alert"
+msgstr "Alarm"
+
+#: lino/extjs/linoweb.js:1742
+msgid "Show or hide the table parameters panel"
+msgstr "Parameter-Panel ein- bzw. ausblenden"
+
+#: lino/extjs/linoweb.js:2068
+msgid "Action not available on phantom record."
+msgstr "Aktion nicht verfügbar auf dem Phantom-Record."
+
+#: lino/extjs/linoweb.js:2178
+msgid "Cannot show detail for empty foreign key."
+msgstr ""
+
+#: lino/extjs/linoweb.js:2430
+msgid "Edit text in own window"
+msgstr ""
+
+#: lino/extjs/linoweb.js:2637
+msgid "Go to record"
+msgstr "Gehe zu Datensatz"
+
+#: lino/extjs/linoweb.js:2643
+msgid "First"
+msgstr "Erster"
+
+#: lino/extjs/linoweb.js:2645
+msgid "Previous"
+msgstr "Voriger"
+
+#: lino/extjs/linoweb.js:2647
+msgid "Next"
+msgstr "Nächster"
+
+#: lino/extjs/linoweb.js:2649
+msgid "Last"
+msgstr "Letzter"
+
+#: lino/extjs/linoweb.js:2660
+msgid "Reload current record"
+msgstr "Datensatz neu laden"
+
+#: lino/extjs/linoweb.js:2874
+msgid "Save changes to current record ?"
+msgstr "Änderungen in diesem Datensatz speichern?"
+
+#: lino/extjs/linoweb.js:2944
+msgid "No more records to display. Detail window has been closed."
+msgstr "Keine weiteren Datensätze zu sehen. Detail-Fenster wird geschlossen."
+
+#: lino/extjs/linoweb.js:3363
+msgid "Save Grid Configuration"
+msgstr "Tabellenkonfiguration speichern"
+
+#: lino/extjs/linoweb.js:3500
+msgid "Quick Search"
+msgstr "Schnellsuche"
+
+#: lino/extjs/linoweb.js:3500
+msgid "Enter a text to use as quick search filter"
+msgstr "Hier Text eingeben für Schnellsuche."
+
+#: lino/extjs/linoweb.js:3517
+msgid "Export this table to a .csv file"
+msgstr "Diese Tabelle in eine .csv-Datei exportieren"
+
+#: lino/extjs/linoweb.js:3541
+msgid "Show this table in plain html"
+msgstr "Tabelle als HTML anzeigen"
+
+#: lino/extjs/linoweb.js:3553
+msgid "Show this table as a pdf document"
+msgstr "Diese Tabelle in eine .pdf-Datei exportieren"
+
+#: lino/extjs/linoweb.js:3579
+msgid "View"
+msgstr "Ansicht"
+
+#: lino/extjs/linoweb.js:3581
+msgid "Select another view of this report"
+msgstr "Andere Ansicht auswählen"
+
+#: lino/extjs/linoweb.js:3597
+msgid "Page"
+msgstr "Seite"
+
+#: lino/extjs/linoweb.js:3598
+msgid "of {0}"
+msgstr "von {0}"
+
+#: lino/extjs/linoweb.js:3599
+msgid "Displaying {0} - {1} of {2}"
+msgstr "Zeilen {0} bis {1} von {2}"
+
+#: lino/extjs/linoweb.js:4093
+msgid "This record is disabled"
+msgstr "Dieser Datensatz ist deaktiviert"
+
+#: lino/extjs/linoweb.js:4622
+msgid "Edit help texts for fields on this model."
+msgstr "Hilfetexte der Eingabefelder dieser Tabelle bearbeiten"
+
+#: lino/extjs/linoweb.js:4852
+msgid "Cannot show MTI child if checkbox is off."
+msgstr "Kann MTI-Kind nicht anzeigen wenn Checkbox abgeschlatet ist."
+
+#: lino/extjs/linoweb.js:5141
+msgid "Team view"
+msgstr "Team-Ansicht"
 
 #: lino/mixins/__init__.py:77
 msgid "Controlled by"
@@ -395,7 +546,6 @@ msgid "Mr"
 msgstr "Herrn"
 
 #: lino/mixins/human.py:86 lino/modlib/users/models.py:88
-#, fuzzy
 msgid "First name"
 msgstr "Vorname"
 
@@ -404,9 +554,8 @@ msgid "Last name"
 msgstr "Familienname"
 
 #: lino/mixins/human.py:159
-#, fuzzy
 msgid "Birth date"
-msgstr "Erste Seite"
+msgstr "Geburtsdatum"
 
 #: lino/mixins/human.py:176
 msgid "Age"
@@ -417,7 +566,7 @@ msgid "unknown"
 msgstr ""
 
 #: lino/mixins/human.py:181
-#, fuzzy, python-format
+#, python-format
 msgid "%d years"
 msgstr "%d Jahre"
 
@@ -649,9 +798,8 @@ msgid "Capital"
 msgstr "Kapital"
 
 #: lino/modlib/accounts/utils.py:181
-#, fuzzy
 msgid "Bank accounts"
-msgstr "Konto für Verkäufe"
+msgstr "Bankkonten"
 
 #: lino/modlib/accounts/utils.py:189
 msgid "Account Type"
@@ -680,14 +828,12 @@ msgid "Blog Entry"
 msgstr ""
 
 #: lino/modlib/blogs/models.py:88
-#, fuzzy
 msgid "Blog Entries"
-msgstr "Länder"
+msgstr "Blog-Einträge"
 
 #: lino/modlib/blogs/models.py:97
-#, fuzzy
 msgid "Heading"
-msgstr "Änderung"
+msgstr "Überschrift"
 
 #: lino/modlib/blogs/models.py:99 lino/modlib/codechanges/models.py:104
 #: lino/modlib/notes/models.py:99 lino/modlib/notes/models.py:157
@@ -820,16 +966,6 @@ msgstr "Kalenderliste"
 #: lino/modlib/cal/models.py:323
 msgid "URL template"
 msgstr "URL-Vorlage"
-
-#: lino/modlib/cal/models.py:325 lino/modlib/users/models.py:78
-#, fuzzy
-msgid "Username"
-msgstr "Benutzername"
-
-#: lino/modlib/cal/models.py:327 lino/modlib/users/models.py:84
-#, fuzzy
-msgid "Password"
-msgstr ""
 
 #: lino/modlib/cal/models.py:329
 msgid "read-only"
@@ -3123,10 +3259,6 @@ msgstr ""
 msgid "Site"
 msgstr "Site"
 
-#: lino/ui/base.py:71
-msgid "Confirmation"
-msgstr "Bestätigung"
-
 #: lino/ui/base.py:120
 msgid "User abandoned"
 msgstr ""
@@ -3369,32 +3501,29 @@ msgid "User Profile"
 msgstr "Benutzerprofil"
 
 #: lino/utils/auth.py:222
-#, fuzzy
 msgid "User Profiles"
-msgstr "Benutzerprofil"
+msgstr "Benutzerprofile"
 
 #: lino/utils/ssin.py:188 lino/utils/ssin.py:202 lino/utils/ssin.py:220
 #: lino/utils/ssin.py:235 lino/utils/ssin.py:246
 #, fuzzy, python-format
 msgid "Invalid SSIN %s : "
-msgstr "Ungültige belgische NR-Nrummer %s : "
+msgstr "Ungültige belgische NR-Nummer %s : "
 
 #: lino/utils/ssin.py:189 lino/utils/ssin.py:203
-#, fuzzy
 msgid "A raw SSIN must have 11 positions"
-msgstr "Eine belgische NR-Nummer hat immer 13 Positionen"
+msgstr "Eine unformatierte NR-Nummer hat 11 Positionen"
 
 #: lino/utils/ssin.py:221
 msgid "Could not recognize checkdigit"
 msgstr "Konnte keine Prüfziffer erkennen"
 
 #: lino/utils/ssin.py:236
-#, fuzzy
 msgid "A formatted SSIN must have 13 positions"
 msgstr "Eine formatierte belgische NR-Nummer hat immer 13 Positionen"
 
 #: lino/utils/ssin.py:254
-#, fuzzy, python-format
+#, python-format
 msgid "Invalid SSIN %s :"
 msgstr "Ungültige belgische NR-Nummer %s :"
 

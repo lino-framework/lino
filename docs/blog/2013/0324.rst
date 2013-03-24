@@ -2,4 +2,14 @@
 20130324 (Sunday, 24 March 2013)
 ================================
 
-Checked in yesterday's changes in :mod:`lino_welfare`.
+Checkin of yesterday's changes in :mod:`lino_welfare`.
+
+`unicode` of an :class:`Account <lino.modlib.accounts.models.Account>` 
+now displays it's `ref`.
+
+Translatable messages in :srcref:`/lino/extjs/linolib.js` 
+didn't get extracted because it wrongly used 
+extraction method `javascript`. Must be `jinja`.
+
+Added new testcase 
+:func:`lino_welfare.tests.pcsw_tests.test02c`.

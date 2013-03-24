@@ -178,7 +178,8 @@ SETUP_INFO.update(message_extractors = {
         ('**/sandbox/**',        'ignore', None),
         ('**/cache/**',          'ignore', None),
         ('**.py',                'python', None),
-        ('**.js',                'javascript', None),
+        ('**/linoweb.js',        'jinja2', None),
+        #~ ('**.js',                'javascript', None),
         ('**/templates_jinja/**.html', 'jinja2', None),
         #~ ('**/templates/**.txt',  'genshi', {
             #~ 'template_class': 'genshi.template:TextTemplate'

@@ -119,6 +119,11 @@ class Account(dd.BabelNamed,mixins.Sequenced):
             #~ self.chart = self.group.chart
         super(Account,self).full_clean(*args,**kw)
         
+    def __unicode__(self):
+        return "(%(ref)s) %(title)s" % dict(ref=self.ref,
+            title=settings.SITE.babelattr(self,'name'))
+        
+        
     
 class Accounts(dd.Table):
     model = Account
