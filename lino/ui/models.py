@@ -59,7 +59,7 @@ class BuildSiteCache(dd.RowAction):
     """
     label = _("Rebuild site cache")
     url_action_name = "buildjs"
-    def run(self,elem,ar):
+    def run_from_ui(self,elem,ar):
         #~ rr.confirm(_("Are you sure?"))
         #~ rr.confirm(_("Are you really sure?"))
         ar.ui.build_site_cache(True)

@@ -226,7 +226,7 @@ class MergeAction(actions.RowAction):
         #~ kw.update(merge_from=obj)
         #~ return kw
 
-    def run(self,obj,ar,**kw):
+    def run_from_ui(self,obj,ar,**kw):
 
         mp = MergePlan(obj,ar.action_param_values.merge_to,ar.action_param_values)
         msg = mp.build_confirmation_message()

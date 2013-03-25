@@ -187,7 +187,7 @@ class ResetEvent(dd.ChangeStateAction):
     required = dict(states='notified scheduled rescheduled',owner=True)
     help_text=_("Return to Draft state and restart workflow for this event.")
   
-    def run(self,obj,ar,**kw):
+    def run_from_ui(self,obj,ar,**kw):
         if obj.guest_set.exclude(state=GuestStates.invited).count() > 0:
             def ok():
                 for g in obj.guest_set.all():
@@ -196,7 +196,7 @@ class ResetEvent(dd.ChangeStateAction):
             return ar.confirm(ok,_("This will reset all invitations"),_("Are you sure?"))
         else:
             ar.confirm(self.help_text,_("Are you sure?"))
-        kw = super(ResetEvent,self).run(obj,ar,**kw)
+        kw = super(ResetEvent,self).run_from_ui(obj,ar,**kw)
         return kw
     
 #~ class TakeAssignedEvent(dd.ChangeStateAction):
@@ -215,7 +215,7 @@ class TakeAssignedEvent(dd.RowAction):
             return False
         return super(TakeAssignedEvent,self).get_action_permission(ar,obj,state)
         
-    def run(self,obj,ar,**kw):
+    def run_from_ui(self,obj,ar,**kw):
         ar.confirm(self.help_text,_("Are you sure?"))
         obj.user = ar.get_user()
         obj.assigned_to = None
@@ -256,9 +256,9 @@ class AssignEvent(dd.ChangeStateAction):
         return kw
     
     
-    def run(self,obj,ar,**kw):
+    def run_from_ui(self,obj,ar,**kw):
         obj.user = ar.action_param_values.to_user
-        kw = super(AssignEvent,self).run(obj,ar,**kw)
+        kw = super(AssignEvent,self).run_from_ui(obj,ar,**kw)
         #~ obj.save()
         kw.update(refresh=True)
         return kw
@@ -2396,7 +2396,7 @@ class UpdateReminders(actions.RowAction):
     
     callable_from = (actions.GridEdit, actions.ShowDetailAction)
         
-    def run(self,user,ar,**kw):
+    def run_from_ui(self,user,ar,**kw):
         logger.info("Updating reminders for %s",unicode(user))
         n = update_reminders(user)
         kw.update(success=True)

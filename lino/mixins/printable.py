@@ -462,7 +462,7 @@ def get_build_method(elem):
     
     
 #~ class PrintTableAction(actions.TableAction):
-    #~ def run(self,ar,**kw):
+    #~ def run_from_ui(self,ar,**kw):
         #~ bm = get_build_method(elem)
         #~ url = bm.get_target_url(self,elem,ui)
         #~ kw.update(open_url=url)
@@ -553,7 +553,7 @@ class PrintAction(BasePrintAction):
         return kw
         #~ return rr.ui.success_response(open_url=target,**kw)
         
-    def run(self,elem,ar,**kw):
+    def run_from_ui(self,elem,ar,**kw):
         #~ kw = self.run_(ar.request,rr.ui,elem,**kw)
         kw = self.run_(ar,elem,**kw)
         return ar.ui.success(**kw)
@@ -588,7 +588,7 @@ class DirectPrintAction(BasePrintAction):
         #~ return super(DirectPrintAction,self).get_print_templates(bm,elem)
         
         
-    def run(self,elem,ar,**kw):
+    def run_from_ui(self,elem,ar,**kw):
         bm =  bm_dict.get(
             self.build_method or 
             settings.SITE.site_config.default_build_method)
@@ -610,7 +610,7 @@ class DirectPrintAction(BasePrintAction):
     #~ name = 'tpledit'
     #~ label = _('Edit template')
     
-    #~ def run(self,rr,elem,**kw):
+    #~ def run_from_ui(self,rr,elem,**kw):
         #~ bm = get_build_method(elem)
         #~ target = bm.get_template_url(self,elem)
         #~ return rr.ui.success_response(open_url=target,**kw)
@@ -637,7 +637,7 @@ class ClearCacheAction(actions.RowAction):
             return False
         return super(ClearCacheAction,self).get_action_permission(ar,obj,state)
     
-    def run(self,elem,ar):
+    def run_from_ui(self,elem,ar):
         def doit():
             #~ elem.must_build = True
             elem.build_time = None
@@ -761,7 +761,7 @@ class CachedPrintable(Duplicable,Printable):
         #~ return super(CachedPrintable,self).get_row_permission(user,state,action)
       
     def print_from_posting(self,posting,ar,**kw):
-        return self.do_print.run(self,ar,**kw)
+        return self.do_print.run_from_ui(self,ar,**kw)
         
     def on_duplicate(self,ar,master):
         super(CachedPrintable,self).on_duplicate(ar,master)

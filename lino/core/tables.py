@@ -1060,7 +1060,7 @@ class AbstractTable(actors.Actor):
         #~ print ba
         ar = self.request(action=ba)
         #~ ar = TableRequest(None,self,None,ba)
-        kw = ba.action.run(elem,ar)
+        kw = ba.action.run_from_ui(elem,ar)
         #~ kw = self.check_action_response(kw)
         msg = kw.get('message')
         if msg: 

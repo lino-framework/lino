@@ -42,7 +42,7 @@ from lino.core import dbtables
 from lino.core import model
 from lino.core.requests import EmptyTableRow
 from lino.utils.choosers import chooser
-from lino.mixins.duplicable import Duplicable
+from lino.mixins.duplicable import Duplicable, Duplicate
 
 from north.dbutils import BabelCharField
 
@@ -249,7 +249,7 @@ class RegisterAction(actions.RowAction):
         self.required = self.target_model.required_to_register
         super(RegisterAction,self).attach_to_actor(actor,name)
   
-    def run(self,obj,ar,**kw):
+    def run_from_ui(self,obj,ar,**kw):
         #~ ar.confirm(self.help_text,_("Are you sure?"))
         obj.register(ar)
         obj.save()
@@ -275,7 +275,7 @@ class DeregisterAction(actions.RowAction):
         #~ logger.info("20121208 DeregisterAction.attach_to_actor() %s %s",actor,actor.model.required_to_deregister)
         super(DeregisterAction,self).attach_to_actor(actor,name)
   
-    def run(self,obj,ar,**kw):
+    def run_from_ui(self,obj,ar,**kw):
         #~ ar.confirm(self.help_text,_("Are you sure?"))
         obj.deregister(ar)
         obj.save()
@@ -418,6 +418,23 @@ class CreatedModified(model.Model):
 
 #~ class DuplicateAction(actions.RowAction)
 
+class DuplicateSequenced(Duplicate):
+  
+    def run_from_code(self,obj,ar,**kw):
+  
+        #~ print '20120605 duplicate', self.seqno, self.account
+        seqno = obj.seqno
+        qs = obj.get_siblings().filter(seqno__gte=seqno).reverse()
+        if qs is None:
+            raise Exception("20121227 TODO: Tried to duplicate a root element?")
+        for s in qs:
+            #~ print '20120605 duplicate inc', s.seqno, s.account
+            s.seqno += 1
+            s.save()
+        kw.update(seqno=seqno)
+        return super(DuplicateSequenced,self).run_from_code(obj,ar,**kw)
+  
+
 class Sequenced(Duplicable):
     """
     Abstract base class for models that have a sequence number `seqno`.
@@ -431,19 +448,18 @@ class Sequenced(Duplicable):
         blank=True,null=False,
         verbose_name=_("Seq.No."))
         
+    duplicate = DuplicateSequenced()
         
-    @actions.action(_("Duplicate"))
-    def duplicate_row(self,ar):
-        #~ print '20120605 duplicate_row', self.seqno, self.account
-        seqno = self.seqno
-        qs = self.get_siblings().filter(seqno__gte=seqno).reverse()
-        if qs is None:
-            raise Exception("20121227 TODO: Tried to duplicate a root element?")
-        for s in qs:
-            #~ print '20120605 duplicate_row inc', s.seqno, s.account
-            s.seqno += 1
-            s.save()
-        return super(Sequenced,self).duplicate_row.run(self,ar,seqno=seqno)
+    #~ @actions.action(_("Duplicate"))
+    #~ def duplicate(self,ar):
+        #~ seqno = self.seqno
+        #~ qs = self.get_siblings().filter(seqno__gte=seqno).reverse()
+        #~ if qs is None:
+            #~ raise Exception("20121227 TODO: Tried to duplicate a root element?")
+        #~ for s in qs:
+            #~ s.seqno += 1
+            #~ s.save()
+        #~ return super(Sequenced,self).duplicate.run(self,ar,seqno=seqno)
         
     def __unicode__(self):
         return unicode(_("Row # %s") % self.seqno)

@@ -214,6 +214,18 @@ class Parametrizable(object):
         #~ cls.register_params()
         #~ return cls
       
+class ActionRunner(object):
+  
+    def __init__(self,action,actor,instance,owner):
+        #~ self.action = action
+        self.bound_action = actor.get_action_by_name(action.action_name)
+        self.instance = instance
+        self.owner = owner
+        
+    def __call__(self,**kw):
+        #~ print self,args, kw
+        ar = self.bound_action.request(**kw)
+        return self.bound_action.action.run_from_code(self.instance,ar)
 
 
 class Action(Parametrizable,Permittable):
@@ -249,7 +261,7 @@ class Action(Parametrizable,Permittable):
     value action
     ===== =================================
     10    :class:`insert <InsertRow>`
-    11    :attr:`duplicate <lino.mixins.duplicable.Duplicable.duplicate_row>`
+    11    :attr:`duplicate <lino.mixins.duplicable.Duplicable.duplicate>`
     20    :class:`detail <ShowDetailAction>`
     30    :class:`delete <DeleteSelected>`
     31    :class:`merge <lino.mixins.mergeable.Merge>`
@@ -426,7 +438,17 @@ class Action(Parametrizable,Permittable):
                 raise Exception("20130121 %s" % self)
             #~ assert isinstance(self.params_layout,self._layout_class)
             
+        if hasattr(self,'run'):
+            raise Exception(str(self))
+            
       
+    def __get__(self, instance, owner):
+        """
+        """
+        return ActionRunner(self,instance.get_default_table(),instance,owner)
+        
+        
+        
     def as_html(self,ar):
         return "Oops, no as_html method for %s" % self
 
@@ -561,7 +583,10 @@ class Action(Parametrizable,Permittable):
         """
         return True
         
-    #~ def run(self,elem,ar,**kw):
+    def run_from_code(self,obj,ar,**kw):
+        return self.run_from_ui(obj,ar,**kw)
+        
+    #~ def run_from_ui(self,elem,ar,**kw):
         #~ raise NotImplementedError("%s has no run() method" % self.__class__)
 
     #~ def request(self,*args,**kw):
@@ -620,7 +645,7 @@ class RowAction(Action):
         h += ")"
         return h 
         
-    def run(self,row,ar,**kw):
+    def run_from_ui(self,row,ar,**kw):
         """
         Execute the action on the given `row`. `ar` is an :class:`ActionRequest` 
         object representing the context where the action is running.
@@ -991,10 +1016,10 @@ class NotifyingAction(RowAction):
         if s is not None: kw.update(notify_body=s)
         return kw
         
-    def run(self,obj,ar,**kw):
+    def run_from_ui(self,obj,ar,**kw):
         kw.update(message=ar.action_param_values.notify_subject)
         kw.update(alert=True)
-        kw = super(NotifyingAction,self).run(obj,ar,**kw)
+        kw = super(NotifyingAction,self).run_from_ui(obj,ar,**kw)
         self.add_system_note(ar,obj)
         return kw
     

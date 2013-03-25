@@ -49,7 +49,7 @@ class Duplicate(actions.RowAction):
             return False
         return super(Duplicate,self).get_action_permission(ar,obj,state)
         
-    def run(self,obj,ar,**kw):
+    def run_from_code(self,obj,ar,**known_values):
         #~ if not isinstance(ar,actions.ActionRequest):
             #~ raise Exception("Expected and ActionRequest but got %r" % ar)
         #~ related = dict()
@@ -58,7 +58,7 @@ class Duplicate(actions.RowAction):
         #~ print self._lino_ddh.fklist
         related = []
         for m,fk in obj._lino_ddh.fklist:
-            #~ related[fk] = m.objects.filter(**kw)
+            #~ related[fk] = m.objects.filter(**known_values)
             if fk.name in m.allow_cascaded_delete:
                 related.append((fk,m.objects.filter(**{fk.name:obj})))
             #~ if issubclass(m,Duplicable):
@@ -68,7 +68,7 @@ class Duplicate(actions.RowAction):
         #~ raise Exception("20120612")
         #~ for name,de in self.duplicated_fields:
             #~ if isinstance(de,models.Field):
-                #~ kw[name] = getattr(self,name)
+                #~ known_values[name] = getattr(self,name)
             #~ elif isinstance(de,ForeignRelatedObjectsDescriptor):
                 #~ ro = getattr(self,name)
                 #~ related[de] = ro
@@ -82,13 +82,13 @@ class Duplicate(actions.RowAction):
             #~ else:
                 #~ raise Exception("20120612 Cannot handle %r" % de)
                 
-        #~ print 20120608, kw
+        #~ print 20120608, known_values
         if True:
-            #~ kw = dict()
+            #~ known_values = dict()
             for f in obj._meta.fields:
                 if not f.primary_key:
-                    kw[f.name] = getattr(obj,f.name)
-            new = obj.__class__(**kw)
+                    known_values[f.name] = getattr(obj,f.name)
+            new = obj.__class__(**known_values)
             #~ new = ar.create_instance(**kw)
             """
             20120704 create_instances causes fill_from_person() on a CBSS request.
@@ -103,7 +103,7 @@ class Duplicate(actions.RowAction):
         
         #~ print 20120704, obj2str(new)
         new.save(force_insert=True)
-        #~ new = duplicate_row(self)
+        #~ new = duplicate(self)
         #~ new.on_duplicate(ar)
         new.on_duplicate(ar,None)
         #~ m = getattr(new,'on_duplicate',None)
@@ -131,7 +131,10 @@ class Duplicate(actions.RowAction):
                     #~ m(ar,new)
                 #~ obj.save()
                 
-                
+        return new
+        
+    def run_from_ui(self,obj,ar,**kw):
+        new = self.run_from_code(obj,ar)
         kw = dict()
         kw.update(refresh=True)
         kw.update(message=_("Duplicated %(old)s to %(new)s.") % dict(old=obj,new=new))
@@ -156,10 +159,11 @@ class Duplicable(model.Model):
     class Meta:
         abstract = True
         
-    duplicate_row = Duplicate()
+    duplicate = Duplicate()
+    
         
     #~ @dd.action(_("Duplicate"),sort_index=60,show_in_workflow=False,readonly=True)
-    #~ def duplicate_row(self,ar,**kw):
+    #~ def duplicate(self,ar,**kw):
         #~ related = []
         #~ for m,fk in self._lino_ddh.fklist:
             #~ if m.allow_cascaded_delete:

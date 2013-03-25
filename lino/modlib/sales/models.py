@@ -569,7 +569,7 @@ if settings.SITE.project_model:
     
 class SignAction(actions.Action):
     label = "Sign"
-    def run(self,obj,ar):
+    def run_from_ui(self,obj,ar):
         def ok():
             for row in ar.selected_rows:
                 row.instance.user = ar.get_user()

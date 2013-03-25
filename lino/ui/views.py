@@ -913,7 +913,7 @@ class ApiList(View):
         ar = action_request(app_label,actor,request,request.POST,True)
         ar.renderer = settings.SITE.ui.ext_renderer
         #~ print 20121116, ar.bound_action.action.action_name
-        if ar.bound_action.action.action_name in ['duplicate_row','post','poststay','insert']:
+        if ar.bound_action.action.action_name in ['duplicate','post','poststay','insert']:
         #~ if isinstance(ar.bound_action.action,(
               #~ actions.InsertRow,
               #~ actions.DuplicateAction,

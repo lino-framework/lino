@@ -176,7 +176,7 @@ class CreatePostings(dd.RowAction):
         actions.ShowEmptyTable) # but not from InsertRow
     
     
-    def run(self,elem,ar,**kw):
+    def run_from_ui(self,elem,ar,**kw):
         recs = tuple(elem.get_postable_recipients())
         ar.confirm(
           _("Going to create %(num)d postings for %(elem)s") 

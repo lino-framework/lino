@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version:  lino.modlib.systen\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2013-03-24 19:31+0100\n"
+"POT-Creation-Date: 2013-03-25 17:28+0100\n"
 "PO-Revision-Date: 2013-01-20 21:56+0200\n"
 "Last-Translator: Luc Saffre <luc.saffre@gmail.com>\n"
 "Language-Team: \n"
@@ -36,102 +36,101 @@ msgstr "Benutzer"
 msgid "Administrator"
 msgstr ""
 
-#: lino/core/actions.py:696 lino/core/actions.py:788 lino/extjs/linoweb.js:3600
+#: lino/core/actions.py:715 lino/core/actions.py:807 lino/extjs/linoweb.js:3600
 msgid "First page"
 msgstr "Erste Seite"
 
-#: lino/core/actions.py:697 lino/core/actions.py:789 lino/extjs/linoweb.js:3602
+#: lino/core/actions.py:716 lino/core/actions.py:808 lino/extjs/linoweb.js:3602
 msgid "Previous page"
 msgstr "Vorige Seite"
 
-#: lino/core/actions.py:709 lino/core/actions.py:790 lino/extjs/linoweb.js:3603
+#: lino/core/actions.py:728 lino/core/actions.py:809 lino/extjs/linoweb.js:3603
 msgid "Next page"
 msgstr "Nächste Seite"
 
-#: lino/core/actions.py:710 lino/core/actions.py:791 lino/extjs/linoweb.js:3601
+#: lino/core/actions.py:729 lino/core/actions.py:810 lino/extjs/linoweb.js:3601
 msgid "Last page"
 msgstr "Letzte Seite"
 
-#: lino/core/actions.py:759
+#: lino/core/actions.py:778
 msgid "Detail"
 msgstr ""
 
-#: lino/core/actions.py:760
+#: lino/core/actions.py:779
 msgid "Open a detail window on this record"
 msgstr "Detail-Fenster auf diesem Datensatz öffnen"
 
-#: lino/core/actions.py:786 lino/extjs/__init__.py:850
+#: lino/core/actions.py:805 lino/extjs/__init__.py:850
 #: lino/modlib/pages/models.py:151 lino/modlib/pages/models.py:186
 #: lino/ui/models.py:336 lino/ui/views.py:1081
 msgid "Home"
 msgstr "Startseite"
 
-#: lino/core/actions.py:836 lino/ui/render.py:188
+#: lino/core/actions.py:855 lino/ui/render.py:188
 msgid "New"
 msgstr "Neu"
 
-#: lino/core/actions.py:844
+#: lino/core/actions.py:863
 msgid "Insert a new record"
 msgstr "Neuen Datensatz erstellen"
 
-#: lino/core/actions.py:854
+#: lino/core/actions.py:873
 #, python-format
 msgid "Insert into %s"
 msgstr "Einfügen in %s"
 
-#: lino/core/actions.py:875 lino/mixins/__init__.py:435
-#: lino/mixins/duplicable.py:39
+#: lino/core/actions.py:894 lino/mixins/duplicable.py:39
 msgid "Duplicate"
 msgstr "Duplizieren"
 
-#: lino/core/actions.py:907
+#: lino/core/actions.py:926
 msgid "Delete this record"
 msgstr "Diesen Datensatz löschen"
 
-#: lino/core/actions.py:915 lino/modlib/changes/models.py:57
+#: lino/core/actions.py:934 lino/modlib/changes/models.py:57
 msgid "Delete"
 msgstr "Löschen"
 
-#: lino/core/actions.py:926
+#: lino/core/actions.py:945
 msgid "Save changes in this form"
 msgstr "Änderungen in diesem Formular speichern"
 
-#: lino/core/actions.py:927
+#: lino/core/actions.py:946
 msgid "Save"
 msgstr "Speichern"
 
-#: lino/core/actions.py:942 lino/modlib/changes/models.py:55
+#: lino/core/actions.py:961 lino/modlib/changes/models.py:55
 msgid "Create"
 msgstr "Erstellen"
 
-#: lino/core/actions.py:944
+#: lino/core/actions.py:963
 msgid "Create the record and open a detail window on it"
 msgstr "Datensatz erstellen und dann im Detail-Fenster öffnen"
 
-#: lino/core/actions.py:952
+#: lino/core/actions.py:971
 msgid "Create without detail"
 msgstr "Erstellen ohne Detail"
 
-#: lino/core/actions.py:953
+#: lino/core/actions.py:972
 msgid "Don't open an detail window on the new record"
 msgstr "Nach Erstellen des Datensatzes kein Detail-Fenster öffnen"
 
-#: lino/core/actions.py:960 lino/modlib/cal/models.py:833
+#: lino/core/actions.py:979 lino/modlib/cal/models.py:833
 #: lino/modlib/cal/models.py:2218 lino/modlib/tickets/models.py:223
 #: lino/modlib/tickets/models.py:317
 msgid "Summary"
 msgstr "Kurzbeschreibung"
 
-#: lino/core/actions.py:961 lino/modlib/cal/models.py:322
+#: lino/core/actions.py:980 lino/modlib/cal/models.py:322
 #: lino/modlib/cal/models.py:834 lino/modlib/ledger/models.py:558
 #: lino/modlib/orders/models.py:254 lino/modlib/sales/models.py:435
 #: lino/modlib/tickets/models.py:125 lino/modlib/tickets/models.py:229
 #: lino/modlib/tickets/models.py:320 lino/modlib/uploads/models.py:83
 #: lino/ui/models.py:284
 msgid "Description"
-msgstr ""
+msgstr "Beschreibung"
 
-#: lino/core/actions.py:962
+#: lino/core/actions.py:981
 msgid "Don't send email notification"
 msgstr "Keine Benachrichtigung per E-Mail schicken"
 
@@ -499,32 +498,32 @@ msgstr "Erstellt"
 msgid "Modified"
 msgstr "Bearbeitet"
 
-#: lino/mixins/__init__.py:432
+#: lino/mixins/__init__.py:449
 msgid "Seq.No."
 msgstr "Seq.-Nr."
 
-#: lino/mixins/__init__.py:449
+#: lino/mixins/__init__.py:465
 #, python-format
 msgid "Row # %s"
 msgstr "Zeile Nr. %s"
 
-#: lino/mixins/__init__.py:493 lino/modlib/tickets/models.py:120
+#: lino/mixins/__init__.py:509 lino/modlib/tickets/models.py:120
 #, fuzzy
 msgid "Parent"
 msgstr "Drucken"
 
-#: lino/mixins/__init__.py:614
+#: lino/mixins/__init__.py:630
 msgid "Reference"
 msgstr "Referenz"
 
-#: lino/mixins/__init__.py:630
+#: lino/mixins/__init__.py:646
 msgid "(Root)"
 msgstr ""
 
-#: lino/mixins/__init__.py:699 lino/modlib/properties/models.py:189
+#: lino/mixins/__init__.py:715 lino/modlib/properties/models.py:189
 #: lino/ui/models.py:283
 msgid "Designation"
-msgstr "Beschreibung"
+msgstr "Bezeichnung"
 
 #: lino/mixins/duplicable.py:137
 #, python-format
@@ -749,23 +748,23 @@ msgstr "Konto"
 msgid "Accounts"
 msgstr "Konten"
 
-#: lino/modlib/accounts/models.py:142
+#: lino/modlib/accounts/models.py:147
 msgid "Sales account"
 msgstr "Konto für Verkäufe"
 
-#: lino/modlib/accounts/models.py:145
+#: lino/modlib/accounts/models.py:150
 msgid "The account to move when this product is used in a sales invoice."
 msgstr ""
 
-#: lino/modlib/accounts/models.py:150
+#: lino/modlib/accounts/models.py:155
 msgid "Purchases account"
 msgstr "Konto für Einkäufe"
 
-#: lino/modlib/accounts/models.py:153
+#: lino/modlib/accounts/models.py:158
 msgid "The account to move when this product is used in a purchases invoice."
 msgstr ""
 
-#: lino/modlib/accounts/models.py:161
+#: lino/modlib/accounts/models.py:166
 msgid "Accounting"
 msgstr "Buchhaltung"
 

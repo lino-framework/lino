@@ -1,0 +1,39 @@
+================================
+20130325 (Monday, 25 March 2013)
+================================
+
+
+A :ref:`welfare.debts.Budget` now has two 
+new checkbox fields
+:ref:`welfare.debts.Budget.print_empty_rows`
+and
+:ref:`welfare.debts.Budget.ignore_yearly_incomes`.
+
+Discovered and fixed some little Nachwehen of the conversion to babel.
+For example the string "Working" is translated differently in
+:mod:`lino.modlib.tickets.models`
+than in 
+:mod:`lino_welfare.modlib.jobs.models`.
+Or the difference between a Designation ("Bezeichnung") 
+and a Description ("Beschreibung").
+
+
+ActionRunner
+------------
+
+An internal syntactical optimization: 
+:class:`lino.core.actions.Action` 
+now has a descriptor (a `__get__` method) 
+which returns an
+:class:`ActionRunner <lino.core.actions.ActionRunner>`.
+Result:
+I can now execute actions more easily from Python code.
+I use this to write tested documents 
+like :ref:` welfare.tested.debts`
+or the new test case 
+:func:`lino_welfare.tests.pcsw_tests.test10`.
+
+Internally I splitted `Action.run` into two parts: 
+`run_from_ui` and `run_from_code`.
+`run_from_code` can return an action-specific value, e.g. 
+obj.duplicate() will return new newly created object.

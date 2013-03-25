@@ -169,7 +169,7 @@ class CreateMail(dd.RowAction):
                 return False
         return super(CreateMail,self).get_action_permission(ar,obj,state)
         
-    def run(self,elem,ar,**kw):
+    def run_from_ui(self,elem,ar,**kw):
       
         as_attachment = elem.attach_to_email(ar)
         
@@ -375,7 +375,7 @@ class SendMail(dd.RowAction):
             return False
         return super(SendMail,self).get_action_permission(ar,obj,state)
         
-    def run(self,elem,ar,**kw):
+    def run_from_ui(self,elem,ar,**kw):
         #~ if elem.sent:
             #~ return rr.ui.error(message='Mail has already been sent.')
         #~ subject = elem.subject

@@ -60,7 +60,7 @@ class Model(models.Model):
     has ``allow_cascaded_delete = ['mail']``.
     
     Note that this currently is also consulted by
-    :meth:`lino.mixins.duplicable.Duplicable.duplicate_row`
+    :meth:`lino.mixins.duplicable.Duplicable.duplicate`
     to decide whether slaves of a record being duplicated
     should be duplicated as well.
     
@@ -177,7 +177,7 @@ class Model(models.Model):
         """
         return self._lino_ddh.disable_delete_on_object(self)
         
-    def get_default_table(self,ar):
+    def get_default_table(self):
         return self._lino_default_table
         
     def disabled_fields(self,ar):
@@ -335,7 +335,7 @@ class Model(models.Model):
         
     def on_duplicate(self,ar,master):
         """
-        Called by :meth:`lino.mixins.duplicable.Duplicable.duplicate_row`.
+        Called by :meth:`lino.mixins.duplicable.Duplicable.duplicate`.
         `ar` is the action request that asked to duplicate.
         If `master` is not None, then this is a cascaded duplicate initiated
         be a duplicate() on the specifie `master`.

@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version:  \n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2013-03-24 19:31+0100\n"
+"POT-Creation-Date: 2013-03-25 17:28+0100\n"
 "PO-Revision-Date: 2012-12-05 17:10+0200\n"
 "Last-Translator: Luc Saffre <luc.saffre@gmail.com>\n"
 "Language-Team: \n"
@@ -36,96 +36,95 @@ msgstr "Utilisateur"
 msgid "Administrator"
 msgstr "Administrateur"
 
-#: lino/core/actions.py:696 lino/core/actions.py:788 lino/extjs/linoweb.js:3600
+#: lino/core/actions.py:715 lino/core/actions.py:807 lino/extjs/linoweb.js:3600
 msgid "First page"
 msgstr "Première page"
 
-#: lino/core/actions.py:697 lino/core/actions.py:789 lino/extjs/linoweb.js:3602
+#: lino/core/actions.py:716 lino/core/actions.py:808 lino/extjs/linoweb.js:3602
 msgid "Previous page"
 msgstr "Page précédente"
 
-#: lino/core/actions.py:709 lino/core/actions.py:790 lino/extjs/linoweb.js:3603
+#: lino/core/actions.py:728 lino/core/actions.py:809 lino/extjs/linoweb.js:3603
 msgid "Next page"
 msgstr "Page suivante"
 
-#: lino/core/actions.py:710 lino/core/actions.py:791 lino/extjs/linoweb.js:3601
+#: lino/core/actions.py:729 lino/core/actions.py:810 lino/extjs/linoweb.js:3601
 msgid "Last page"
 msgstr "Dernière page"
 
-#: lino/core/actions.py:759
+#: lino/core/actions.py:778
 msgid "Detail"
 msgstr "Détail"
 
-#: lino/core/actions.py:760
+#: lino/core/actions.py:779
 msgid "Open a detail window on this record"
 msgstr ""
 
-#: lino/core/actions.py:786 lino/extjs/__init__.py:850
+#: lino/core/actions.py:805 lino/extjs/__init__.py:850
 #: lino/modlib/pages/models.py:151 lino/modlib/pages/models.py:186
 #: lino/ui/models.py:336 lino/ui/views.py:1081
 msgid "Home"
 msgstr "Départ"
 
-#: lino/core/actions.py:836 lino/ui/render.py:188
+#: lino/core/actions.py:855 lino/ui/render.py:188
 msgid "New"
 msgstr "Nouveau"
 
-#: lino/core/actions.py:844
+#: lino/core/actions.py:863
 #, fuzzy
 msgid "Insert a new record"
 msgstr "Insérer"
 
-#: lino/core/actions.py:854
+#: lino/core/actions.py:873
 #, python-format
 msgid "Insert into %s"
 msgstr "Insérer dans %s"
 
-#: lino/core/actions.py:875 lino/mixins/__init__.py:435
-#: lino/mixins/duplicable.py:39
+#: lino/core/actions.py:894 lino/mixins/duplicable.py:39
 msgid "Duplicate"
 msgstr "Dupliquer"
 
-#: lino/core/actions.py:907
+#: lino/core/actions.py:926
 #, fuzzy
 msgid "Delete this record"
 msgstr "Aller vers enregistrement"
 
-#: lino/core/actions.py:915 lino/modlib/changes/models.py:57
+#: lino/core/actions.py:934 lino/modlib/changes/models.py:57
 msgid "Delete"
 msgstr "Supprimer"
 
-#: lino/core/actions.py:926
+#: lino/core/actions.py:945
 #, fuzzy
 msgid "Save changes in this form"
 msgstr "Enregistrer vos changements au texte?"
 
-#: lino/core/actions.py:927
+#: lino/core/actions.py:946
 msgid "Save"
 msgstr "Enregistrer"
 
-#: lino/core/actions.py:942 lino/modlib/changes/models.py:55
+#: lino/core/actions.py:961 lino/modlib/changes/models.py:55
 msgid "Create"
 msgstr "Créer"
 
-#: lino/core/actions.py:944
+#: lino/core/actions.py:963
 msgid "Create the record and open a detail window on it"
 msgstr ""
 
-#: lino/core/actions.py:952
+#: lino/core/actions.py:971
 msgid "Create without detail"
 msgstr ""
 
-#: lino/core/actions.py:953
+#: lino/core/actions.py:972
 msgid "Don't open an detail window on the new record"
 msgstr ""
 
-#: lino/core/actions.py:960 lino/modlib/cal/models.py:833
+#: lino/core/actions.py:979 lino/modlib/cal/models.py:833
 #: lino/modlib/cal/models.py:2218 lino/modlib/tickets/models.py:223
 #: lino/modlib/tickets/models.py:317
 msgid "Summary"
 msgstr ""
 
-#: lino/core/actions.py:961 lino/modlib/cal/models.py:322
+#: lino/core/actions.py:980 lino/modlib/cal/models.py:322
 #: lino/modlib/cal/models.py:834 lino/modlib/ledger/models.py:558
 #: lino/modlib/orders/models.py:254 lino/modlib/sales/models.py:435
 #: lino/modlib/tickets/models.py:125 lino/modlib/tickets/models.py:229
@@ -134,7 +133,7 @@ msgstr ""
 msgid "Description"
 msgstr "Description"
 
-#: lino/core/actions.py:962
+#: lino/core/actions.py:981
 msgid "Don't send email notification"
 msgstr ""
 
@@ -528,29 +527,29 @@ msgstr "Créé"
 msgid "Modified"
 msgstr "Modèle"
 
-#: lino/mixins/__init__.py:432
+#: lino/mixins/__init__.py:449
 msgid "Seq.No."
 msgstr "N° de séq"
 
-#: lino/mixins/__init__.py:449
+#: lino/mixins/__init__.py:465
 #, python-format
 msgid "Row # %s"
 msgstr ""
 
-#: lino/mixins/__init__.py:493 lino/modlib/tickets/models.py:120
+#: lino/mixins/__init__.py:509 lino/modlib/tickets/models.py:120
 #, fuzzy
 msgid "Parent"
 msgstr "Imprimer"
 
-#: lino/mixins/__init__.py:614
+#: lino/mixins/__init__.py:630
 msgid "Reference"
 msgstr ""
 
-#: lino/mixins/__init__.py:630
+#: lino/mixins/__init__.py:646
 msgid "(Root)"
 msgstr ""
 
-#: lino/mixins/__init__.py:699 lino/modlib/properties/models.py:189
+#: lino/mixins/__init__.py:715 lino/modlib/properties/models.py:189
 #: lino/ui/models.py:283
 msgid "Designation"
 msgstr "Description"
@@ -782,23 +781,23 @@ msgstr "Compte"
 msgid "Accounts"
 msgstr "Comptes"
 
-#: lino/modlib/accounts/models.py:142
+#: lino/modlib/accounts/models.py:147
 msgid "Sales account"
 msgstr "Compte Ventes"
 
-#: lino/modlib/accounts/models.py:145
+#: lino/modlib/accounts/models.py:150
 msgid "The account to move when this product is used in a sales invoice."
 msgstr ""
 
-#: lino/modlib/accounts/models.py:150
+#: lino/modlib/accounts/models.py:155
 msgid "Purchases account"
 msgstr "Compte Achats"
 
-#: lino/modlib/accounts/models.py:153
+#: lino/modlib/accounts/models.py:158
 msgid "The account to move when this product is used in a purchases invoice."
 msgstr ""
 
-#: lino/modlib/accounts/models.py:161
+#: lino/modlib/accounts/models.py:166
 msgid "Accounting"
 msgstr "Comptabilité"
 

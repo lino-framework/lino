@@ -291,7 +291,7 @@ class ExtRenderer(HtmlRenderer):
         a = getattr(obj,'_detail_action',None)
         if a is None:
             #~ a = obj.get_default_table(ar).get_url_action('detail_action')
-            a = obj.get_default_table(ar).detail_action
+            a = obj.get_default_table().detail_action
             #~ a = obj.__class__._lino_default_table.get_url_action('detail_action')
         if a is not None:
             if ar is None or a.get_bound_action_permission(ar,obj,None):
