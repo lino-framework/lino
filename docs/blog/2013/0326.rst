@@ -7,8 +7,17 @@ I want it to contain a test for the new features.
 The problem here is that Lino doesn't yet have a satisfying API for doing such things,
 and I'm using the occasion to work on that.
 
-New class :class:`VirtualGetter <lino.core.fields.VirtualGetter>`.
-
-
 Und dann noch die so harmlos klingende Frage 
 "In der Zusammenfassung möchten wir auch eine Summe der Schulden sehen".
+In Wirklichkeit müssen da zwei Zusammenfassungen stehen, 
+zumindest wenn man wie ich unter "Zusammenfassung" 
+eine "Liste von Zahlen, deren Summe ebenfalls Sinn macht" vesteht.
+
+
+Subtle opimizations in the framework:
+- New class :class:`VirtualGetter <lino.core.fields.VirtualGetter>`.
+
+- 
+
+
+

@@ -247,7 +247,10 @@ class BaseRequest(object):
         # and because i couldn't remember why 'request' was passed to the spawned request.
         return self.ui.request(actor,**kw)
         
-    def show(self,spec,column_names=None,**kw):
+    def show(self,*args,**kw):
+        print self.to_rst(*args,**kw)
+        
+    def unused_show(self,spec,column_names=None,**kw):
         if isinstance(spec,ActionRequest):
             ar = spec
         else:
