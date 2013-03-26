@@ -1063,7 +1063,7 @@ def action(*args,**kw):
         kw.setdefault('custom_handler',True)
         a = RowAction(*args,**kw)
         #~ a.run = curry(fn,a)
-        a.run = fn
+        a.run_from_ui = fn
         return a
     return decorator
         

@@ -108,7 +108,7 @@ class BaseRequest(object):
         self.success = ui.success
         if renderer is None:
             #~ renderer = ui.text_renderer
-            renderer = ui.ext_renderer
+            renderer = ui.default_renderer
         self.renderer = renderer
         #~ self.step = 0 # confirmation counter
         #~ self.report = actor

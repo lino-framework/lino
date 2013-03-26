@@ -135,13 +135,18 @@ class ExtUI(base.UI):
         
         #~ raise Exception("20120614")
         #~ self.pdf_renderer = PdfRenderer(self) # 20120624
-        if settings.SITE.use_extjs:
-            from lino.extjs import ExtRenderer
-            self.ext_renderer = ExtRenderer(self)
         from .render import PlainRenderer, TextRenderer
         self.plain_renderer = PlainRenderer(self)
         self.text_renderer = TextRenderer(self)
         self.reserved_names = [getattr(ext_requests,n) for n in ext_requests.URL_PARAMS]
+          
+        if settings.SITE.use_extjs:
+            from lino.extjs import ExtRenderer
+            self.default_renderer = self.ext_renderer = ExtRenderer(self)
+        else:
+            self.default_renderer = self.plain_renderer
+            
+          
           
         names = set()
         for n in self.reserved_names:
