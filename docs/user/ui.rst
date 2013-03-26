@@ -35,7 +35,7 @@ than the :ref:`lino.ui.extjs`.
 UI views
 ==========
 
-Independently of which :ref:`renderer <lino.ui.renderers>_
+Independently of which :ref:`renderer <lino.ui.renderers>`
 
 .. _lino.ui.grid:
 

@@ -1,0 +1,14 @@
+=================================
+20130326 (Tuesday, 26 March 2013)
+=================================
+
+Continued on :ref:`welfare.tested.debts`.
+I want it to contain a test for the new features.
+The problem here is that Lino doesn't yet have a satisfying API for doing such things,
+and I'm using the occasion to work on that.
+
+New class :class:`VirtualGetter <lino.core.fields.VirtualGetter>`.
+
+
+Und dann noch die so harmlos klingende Frage 
+"In der Zusammenfassung möchten wir auch eine Summe der Schulden sehen".

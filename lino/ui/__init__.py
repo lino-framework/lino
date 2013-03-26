@@ -203,7 +203,7 @@ class Site(lino.Site):
     django_admin_prefix = None
     """
     The prefix to use for Django admin URLs.
-    Leave this unchanged as long as :doc:`/ticket/70` is not solved.
+    Leave this unchanged as long as :doc:`/tickets/70` is not solved.
     """
     
     plain_prefix = '/plain' 

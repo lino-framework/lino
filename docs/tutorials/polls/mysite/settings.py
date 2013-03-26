@@ -3,3 +3,4 @@ SITE = Site(__file__,globals(),'polls',title="Cool Polls",no_local=True)
 # your local settings here
 DEBUG = True
 # DATABASES = ...
+SECRET_KEY = 'abc123'
