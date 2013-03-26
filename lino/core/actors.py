@@ -580,9 +580,22 @@ class Actor(actions.Parametrizable):
         
         
     @classmethod
-    def do_setup(self):
-        pass
+    def do_setup(cls):
     
+        if cls.master is not None:
+            if not isinstance(cls.master,type):
+                raise Exception("%s.master is %r" % (cls,cls.master))
+            if not issubclass(cls.master,models.Model):
+                raise Exception("%s.master is %r" % (cls,cls.master))
+            name = cls.__name__
+            if cls.app_label == cls.master._meta.app_label:
+                if hasattr(cls.master,name):
+                    logger.debug("%s.%s already defined",cls.master,name)
+                else:
+                    def m(obj,ar):
+                        return ar.spawn(cls,master_instance=obj,title=cls.label)
+                    setattr(cls.master,name,m)
+                        
     
     
     #~ submit_action = actions.SubmitDetail()
@@ -664,6 +677,7 @@ class Actor(actions.Parametrizable):
                 #~ if bd:
                     #~ for k,v in bd.items():
                         #~ cls._actions_dict[k] = cls.add_action(copy.deepcopy(v),k)
+                        
                         
     @classmethod
     def get_actor_label(self):
@@ -1157,13 +1171,13 @@ class Actor(actions.Parametrizable):
         and calls its :meth:`lino.core.actions.ActionRequest.to_rst` 
         method.
         """
-        if settings.SITE.user_model is not None:
-            username = kw.pop('username',None)
-            if username:
-                kw['user'] = settings.SITE.user_model.objects.get(username=username)
-        #~ settings.SITE.startup()
-        kw.update(renderer=settings.SITE.ui.text_renderer)
-        return self.request(**kw).to_rst(column_names)
+        kw.update(actor=self)
+        return settings.SITE.ui.text_renderer.request(**kw).to_rst(column_names)
+        #~ username = kw.pop('username',None)
+        #~ if username and settings.SITE.user_model is not None:
+            #~ kw['user'] = settings.SITE.user_model.objects.get(username=username)
+        #~ kw.update(renderer=settings.SITE.ui.text_renderer)
+        #~ return self.request(**kw).to_rst(column_names)
         
     @classmethod
     def to_html(self,**kw):

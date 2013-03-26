@@ -215,7 +215,9 @@ class Parametrizable(object):
         #~ return cls
       
 class ActionRunner(object):
-  
+    """
+    Wrapper object used to run actions from Python code.
+    """
     def __init__(self,action,actor,instance,owner):
         #~ self.action = action
         self.bound_action = actor.get_action_by_name(action.action_name)
@@ -647,7 +649,7 @@ class RowAction(Action):
         
     def run_from_ui(self,row,ar,**kw):
         """
-        Execute the action on the given `row`. `ar` is an :class:`ActionRequest` 
+        Execute the action on the given `row`. `ar` is an :class:`ActionRequest <lino.core.requests.ActionRequest>` 
         object representing the context where the action is running.
         """
         raise NotImplementedError("%s has no run() method" % self.__class__)
@@ -975,7 +977,7 @@ class SubmitInsertAndStay(SubmitInsert):
     switch_to_detail = False
     action_name = 'poststay'
     label = _("Create without detail")
-    help_text = _("Don't open an detail window on the new record")
+    help_text = _("Don't open a detail window on the new record")
 
     
     

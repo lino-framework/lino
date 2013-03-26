@@ -985,3 +985,9 @@ class Site(lino.Site):
         return sep.join(['<a href="%s" target="_blank">%s</a>&nbsp;%s' 
             % (u,n,v) for n,v,u in self.using(ui)])
 
+    def login(self,username):
+        from lino.core import requests
+        return requests.BaseRequest(self.ui,
+            renderer=self.ui.text_renderer,
+            user=self.user_model.objects.get(username=username))
+        

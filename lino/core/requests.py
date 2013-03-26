@@ -234,6 +234,33 @@ class BaseRequest(object):
         msg.send()
         logger.info("System note '%s' from %s has been sent to %s",subject,sender,recipients)
 
+    def spawn(self,actor,**kw):
+        """
+        Create a new ActionRequest, taking default values from this one.
+        """
+        kw.setdefault('user',self.user)
+        kw.setdefault('subst_user',self.subst_user)
+        kw.setdefault('requesting_panel',self.requesting_panel)
+        kw.setdefault('renderer',self.renderer)
+        #~ kw.setdefault('request',self.request) 
+        # removed 20120702 because i don't want to inherit quick_search from spawning request
+        # and because i couldn't remember why 'request' was passed to the spawned request.
+        return self.ui.request(actor,**kw)
+        
+    def show(self,spec,column_names=None,**kw):
+        if isinstance(spec,ActionRequest):
+            ar = spec
+        else:
+            from lino.core.menus import create_item
+            mi = create_item(spec)
+            kw.setdefault('user',self.user)
+            kw.setdefault('subst_user',self.subst_user)
+            #~ kw.setdefault('action',mi.bound_action)
+            kw.setdefault('renderer',self.renderer)
+            ar = mi.bound_action.request(self.ui,**kw)
+        print ar.to_rst(column_names)
+            
+        
       
 class ActionRequest(BaseRequest):
     """
@@ -245,7 +272,6 @@ class ActionRequest(BaseRequest):
     - :meth:`success <lino.ui.base.UI.success>`
     - :meth:`error <lino.ui.base.UI.error>`
     - :meth:`spawn <lino.core.actions.ActionRequest.spawn>`
-
     
     """
     create_kw = None
@@ -429,19 +455,9 @@ class ActionRequest(BaseRequest):
         
 
     def spawn(self,actor=None,**kw):
-        """
-        Create a new ActionRequest, taking default values from this one.
-        """
-        kw.setdefault('user',self.user)
-        kw.setdefault('subst_user',self.subst_user)
-        kw.setdefault('requesting_panel',self.requesting_panel)
-        kw.setdefault('renderer',self.renderer)
-        #~ kw.setdefault('request',self.request) 
-        # removed 20120702 because i don't want to inherit quick_search from spawning request
-        # and because i couldn't remember why 'request' was passed to the spawned request.
         if actor is None:
             actor = self.actor
-        return self.ui.request(actor,**kw)
+        return super(ActionRequest,self).spawn(actor,**kw)
         
     #~ def decide_response(self,*args,**kw): return self.ui.decide_response(self,*args,**kw)
     #~ def prompt(self,*args,**kw): return self.ui.prompt(self,*args,**kw)

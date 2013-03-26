@@ -284,6 +284,12 @@ class HtmlRenderer(object):
         return xghtml.E.b(text)
         
 class TextRenderer(HtmlRenderer):
+    user = None
+    
+    def __init__(self,ui):
+        HtmlRenderer.__init__(self,ui)
+        self.user = None
+        
     def instance_handler(self,ar,obj):
         return None
     def pk2url(self,ar,pk,**kw):
@@ -294,6 +300,17 @@ class TextRenderer(HtmlRenderer):
         if text is None:
             text = '#'
         return text
+        
+    def request(self,actor=None,**kw):
+        #~ username = kw.pop('username',None)
+        #~ if username:
+            #~ self.login(username)
+        #~ if self.user:
+            #~ kw.setdefault('user',self.user)
+        kw.update(renderer=self)
+        #~ raise Exception(kw)
+        return actor.request(**kw)
+        
   
 class PlainRenderer(HtmlRenderer):
     """

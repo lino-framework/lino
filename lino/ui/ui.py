@@ -119,7 +119,7 @@ class ExtUI(base.UI):
     _handle_attr_name = '_extjs3_handle'
     #~ _response = None
     name = 'extjs3'
-    verbose_name = "ExtJS with Windows"
+    #~ verbose_name = "ExtJS with Windows"
     #~ Panel = ext_elems.Panel
     
     

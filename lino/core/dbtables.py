@@ -573,8 +573,6 @@ class Table(AbstractTable):
             self.hidden_elements = self.hidden_elements | self.model.hidden_elements
             
             
-        super(Table,self).class_init()
-        
         if self.model is not None:
               
             #~ for b in self.model.mro():
@@ -666,6 +664,8 @@ class Table(AbstractTable):
                 self.master_field = fk
         #~ else:
             #~ assert self.master is None
+        
+        super(Table,self).class_init()
         
         
         if self.order_by is not None:

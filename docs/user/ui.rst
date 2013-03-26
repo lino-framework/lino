@@ -40,13 +40,19 @@ Independently of which :ref:`renderer <lino.ui.renderers>_
 .. _lino.ui.grid:
 
 Grid
-----
+====
 
 .. _lino.ui.detail:
 
 Detail
-------
+======
 
 The detail view is when you see only one row at a time. 
 
 
+.. _lino.ui.detail.Save:
+
+Save
+----
+
+Click this button to save your changes in the form.

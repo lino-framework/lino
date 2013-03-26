@@ -51,6 +51,7 @@ Multilingual database content:
 - :class:`BabelTextField <fields.BabelTextField>`
 - :class:`LanguageField <north.dbutils.LanguageField>`
 - :class:`babelkw <north.dbutils.babelkw>`
+- :class:`babelattr <north.dbutils.babelattr>`
 
 Virtual Fields:
 
@@ -200,6 +201,7 @@ from lino.mixins import BabelNamed
 
 from north.dbutils import BabelCharField, LanguageField
 from north.dbutils import babelkw
+from north.dbutils import babelattr
 from north.dbutils import babel_values # alias for babelkw for backward compat
 from north.dbutils import set_language
 #~ from north.dbutils import BabelCharField, BabelTextField, BabelNamed, LanguageField

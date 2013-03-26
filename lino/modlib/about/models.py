@@ -101,7 +101,7 @@ class Models(dd.VirtualTable):
 class FieldsByModel(dd.VirtualTable):
     label = _("Fields")
     #~ master_key = "model"
-    master = Models
+    #~ master = Models
     column_names = "name verbose_name help_text_column"
     
     @classmethod

@@ -444,6 +444,11 @@ class Model(models.Model):
         #~ if full_model_name(self) in settings.SITE.mergeable_models:
             #~ yield ( 'merge_row', MergeAction(self) )
             
+    def to_html(self,**kw):
+        kw.update(actor=self.get_default_table())
+        ar = settings.SITE.ui.text_renderer.request(**kw)
+        return self.preview(ar)
+        #~ username = kw.pop('username',None)
             
 
         

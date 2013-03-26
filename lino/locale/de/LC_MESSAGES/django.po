@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version:  lino.modlib.systen\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2013-03-25 17:28+0100\n"
+"POT-Creation-Date: 2013-03-26 09:50+0100\n"
 "PO-Revision-Date: 2013-01-20 21:56+0200\n"
 "Last-Translator: Luc Saffre <luc.saffre@gmail.com>\n"
 "Language-Team: \n"
@@ -36,92 +36,92 @@ msgstr "Benutzer"
 msgid "Administrator"
 msgstr ""
 
-#: lino/core/actions.py:715 lino/core/actions.py:807 lino/extjs/linoweb.js:3600
+#: lino/core/actions.py:723 lino/core/actions.py:815 lino/extjs/linoweb.js:3600
 msgid "First page"
 msgstr "Erste Seite"
 
-#: lino/core/actions.py:716 lino/core/actions.py:808 lino/extjs/linoweb.js:3602
+#: lino/core/actions.py:724 lino/core/actions.py:816 lino/extjs/linoweb.js:3602
 msgid "Previous page"
 msgstr "Vorige Seite"
 
-#: lino/core/actions.py:728 lino/core/actions.py:809 lino/extjs/linoweb.js:3603
+#: lino/core/actions.py:736 lino/core/actions.py:817 lino/extjs/linoweb.js:3603
 msgid "Next page"
 msgstr "Nächste Seite"
 
-#: lino/core/actions.py:729 lino/core/actions.py:810 lino/extjs/linoweb.js:3601
+#: lino/core/actions.py:737 lino/core/actions.py:818 lino/extjs/linoweb.js:3601
 msgid "Last page"
 msgstr "Letzte Seite"
 
-#: lino/core/actions.py:778
+#: lino/core/actions.py:786
 msgid "Detail"
 msgstr ""
 
-#: lino/core/actions.py:779
+#: lino/core/actions.py:787
 msgid "Open a detail window on this record"
 msgstr "Detail-Fenster auf diesem Datensatz öffnen"
 
-#: lino/core/actions.py:805 lino/extjs/__init__.py:850
+#: lino/core/actions.py:813 lino/extjs/__init__.py:850
 #: lino/modlib/pages/models.py:151 lino/modlib/pages/models.py:186
 #: lino/ui/models.py:336 lino/ui/views.py:1081
 msgid "Home"
 msgstr "Startseite"
 
-#: lino/core/actions.py:855 lino/ui/render.py:188
+#: lino/core/actions.py:863 lino/ui/render.py:188
 msgid "New"
 msgstr "Neu"
 
-#: lino/core/actions.py:863
+#: lino/core/actions.py:871
 msgid "Insert a new record"
 msgstr "Neuen Datensatz erstellen"
 
-#: lino/core/actions.py:873
+#: lino/core/actions.py:881
 #, python-format
 msgid "Insert into %s"
 msgstr "Einfügen in %s"
 
-#: lino/core/actions.py:894 lino/mixins/duplicable.py:39
+#: lino/core/actions.py:902 lino/mixins/duplicable.py:39
 msgid "Duplicate"
 msgstr "Duplizieren"
 
-#: lino/core/actions.py:926
+#: lino/core/actions.py:934
 msgid "Delete this record"
 msgstr "Diesen Datensatz löschen"
 
-#: lino/core/actions.py:934 lino/modlib/changes/models.py:57
+#: lino/core/actions.py:942 lino/modlib/changes/models.py:57
 msgid "Delete"
 msgstr "Löschen"
 
-#: lino/core/actions.py:945
+#: lino/core/actions.py:953
 msgid "Save changes in this form"
 msgstr "Änderungen in diesem Formular speichern"
 
-#: lino/core/actions.py:946
+#: lino/core/actions.py:954
 msgid "Save"
 msgstr "Speichern"
 
-#: lino/core/actions.py:961 lino/modlib/changes/models.py:55
+#: lino/core/actions.py:969 lino/modlib/changes/models.py:55
 msgid "Create"
 msgstr "Erstellen"
 
-#: lino/core/actions.py:963
+#: lino/core/actions.py:971
 msgid "Create the record and open a detail window on it"
 msgstr "Datensatz erstellen und dann im Detail-Fenster öffnen"
 
-#: lino/core/actions.py:971
+#: lino/core/actions.py:979
 msgid "Create without detail"
 msgstr "Erstellen ohne Detail"
 
-#: lino/core/actions.py:972
-msgid "Don't open an detail window on the new record"
+#: lino/core/actions.py:980
+msgid "Don't open a detail window on the new record"
 msgstr "Nach Erstellen des Datensatzes kein Detail-Fenster öffnen"
 
-#: lino/core/actions.py:979 lino/modlib/cal/models.py:833
+#: lino/core/actions.py:987 lino/modlib/cal/models.py:833
 #: lino/modlib/cal/models.py:2218 lino/modlib/tickets/models.py:223
 #: lino/modlib/tickets/models.py:317
 msgid "Summary"
 msgstr "Kurzbeschreibung"
 
-#: lino/core/actions.py:980 lino/modlib/cal/models.py:322
+#: lino/core/actions.py:988 lino/modlib/cal/models.py:322
 #: lino/modlib/cal/models.py:834 lino/modlib/ledger/models.py:558
 #: lino/modlib/orders/models.py:254 lino/modlib/sales/models.py:435
 #: lino/modlib/tickets/models.py:125 lino/modlib/tickets/models.py:229
@@ -130,7 +130,7 @@ msgstr "Kurzbeschreibung"
 msgid "Description"
 msgstr "Beschreibung"
 
-#: lino/core/actions.py:981
+#: lino/core/actions.py:989
 msgid "Don't send email notification"
 msgstr "Keine Benachrichtigung per E-Mail schicken"
 
@@ -169,16 +169,16 @@ msgstr "Männlich"
 msgid "Female"
 msgstr "Weiblich"
 
-#: lino/core/dbtables.py:748
+#: lino/core/dbtables.py:757
 msgid "You have no permission to delete this row."
 msgstr "Sie haben nicht die Berechtigung, diese Zeile zu löschen."
 
-#: lino/core/dbtables.py:799
+#: lino/core/dbtables.py:808
 #, python-format
 msgid "%(details)s of %(master)s"
 msgstr "%(details)s von %(master)s"
 
-#: lino/core/fields.py:749
+#: lino/core/fields.py:761
 msgid "Quantity (Decimal or Duration)"
 msgstr "Menge (Zahl oder Dauer)"
 
@@ -525,7 +525,7 @@ msgstr ""
 msgid "Designation"
 msgstr "Bezeichnung"
 
-#: lino/mixins/duplicable.py:137
+#: lino/mixins/duplicable.py:140
 #, python-format
 msgid "Duplicated %(old)s to %(new)s."
 msgstr "%(old)s wurde dupliziert nach  %(new)s."

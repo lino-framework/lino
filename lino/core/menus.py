@@ -32,6 +32,7 @@ from django.utils.encoding import force_unicode
 from django.db import models
 
 from lino.core import actors
+from lino.core import requests
 from lino.utils.jsgen import js_code
 from lino.utils.xmlgen import html as xghtml
 E = xghtml.E
@@ -45,8 +46,9 @@ class MenuItem:
     HOTKEY_MARKER = '~'
     
     name = None
+    parent = None
     
-    def __init__(self,parent,action,
+    def __init__(self,action,
                  name=None,label=None,doc=None,enabled=True,
                  #~ can_view=None,
                  hotkey=None,
@@ -56,7 +58,7 @@ class MenuItem:
                  instance=None,
                  javascript=None,
                  href=None):
-        self.parent = parent
+        #~ self.parent = parent
         if action is not None:
             if not isinstance(action,actors.BoundAction):
                 raise Exception("20121003 not a BoundAction: %r")
@@ -165,6 +167,51 @@ def has_items(menu):
         if not i.label.startswith('-'):
             return True
     return False
+    
+    
+def create_item(spec,action=None,help_text=None,**kw):
+    """
+    """
+    if isinstance(spec,basestring):
+        spec = settings.SITE.modules.resolve(spec)
+        #~ if a is None:
+            #~ raise Exception("Could not resolve action specifier %r" % spec)
+    if isinstance(spec,actors.BoundAction):
+        a = spec
+    elif isinstance(spec,type) and issubclass(spec,models.Model):
+        spec = spec._lino_default_table
+        assert spec is not None
+        #~ if action:
+            #~ a = spec._lino_default_table.get_url_action(action)
+        #~ else:
+            #~ a = spec._lino_default_table.default_action
+        
+    if isinstance(spec,type) and issubclass(spec,actors.Actor):
+        if action:
+            a = spec.get_url_action(action)
+            #~ print 20121210, a
+        else:
+            a = spec.default_action
+            if a is None:
+                raise Exception("%r default_action is None?!" % spec)
+            
+        #~ a = actors.BoundAction(spec,a)
+    else:
+        raise Exception("%r is not a valid action_spec" % spec)
+    if a is None:
+        raise Exception("add_action(%r,%r,%r) found None" % (spec,action,kw))
+    #~ if kw.has_key('params'):
+        #~ if a.actor.__name__ == 'Contacts':
+          #~ raise Exception("20120103")
+    if help_text is None:
+        if a == a.actor.default_action:
+            help_text = a.actor.help_text or a.action.help_text
+        else:
+            help_text = a.action.help_text
+    if help_text is not None:
+        kw.update(help_text=help_text)
+    return MenuItem(a,**kw)
+    
 
 
 class Menu(MenuItem):
@@ -174,7 +221,8 @@ class Menu(MenuItem):
     """
     #~ template_to_response = 'lino/menu.html'
     def __init__(self,user_profile,name,label=None,parent=None,**kw):
-        MenuItem.__init__(self,parent,None,name,label,**kw)
+        MenuItem.__init__(self,None,name,label,**kw)
+        self.parent = parent
         self.user_profile = user_profile
         self.clear()
 
@@ -214,48 +262,9 @@ class Menu(MenuItem):
                 newitems.append(mi)
         self.items = newitems
                 
-    def add_action(self,spec,action=None,help_text=None,**kw):
-        """
-        """
-        if isinstance(spec,basestring):
-            spec = settings.SITE.modules.resolve(spec)
-            #~ if a is None:
-                #~ raise Exception("Could not resolve action specifier %r" % spec)
-        if isinstance(spec,actors.BoundAction):
-            a = spec
-        elif isinstance(spec,type) and issubclass(spec,models.Model):
-            spec = spec._lino_default_table
-            assert spec is not None
-            #~ if action:
-                #~ a = spec._lino_default_table.get_url_action(action)
-            #~ else:
-                #~ a = spec._lino_default_table.default_action
-        if isinstance(spec,type) and issubclass(spec,actors.Actor):
-            if action:
-                a = spec.get_url_action(action)
-                #~ print 20121210, a
-            else:
-                a = spec.default_action
-                if a is None:
-                    raise Exception("%r default_action is None?!" % spec)
-                
-            #~ a = actors.BoundAction(spec,a)
-
-        else:
-            raise Exception("%r is not a valid actor" % spec)
-        if a is None:
-            raise Exception("add_action(%r,%r,%r) found None" % (spec,action,kw))
-        #~ if kw.has_key('params'):
-            #~ if a.actor.__name__ == 'Contacts':
-              #~ raise Exception("20120103")
-        if help_text is None:
-            if a == a.actor.default_action:
-                help_text = a.actor.help_text or a.action.help_text
-            else:
-                help_text = a.action.help_text
-        if help_text is not None:
-            kw.update(help_text=help_text)
-        return self._add_item(MenuItem(self,a,**kw))
+    def add_action(self,*args,**kw):
+        mi = create_item(*args,**kw)
+        return self._add_item(mi)
         
     #~ def add_action_(self,action,**kw):
         #~ return self._add_item(MenuItem(self,action,**kw))
@@ -263,19 +272,19 @@ class Menu(MenuItem):
     #~ def add_item(self,**kw):
         #~ return self._add_item(Action(self,**kw))
         
-    def add_request_action(self,rr,**kw):
-        kw.update(request=rr)
-        return self._add_item(MenuItem(self,rr.action,**kw))
+    #~ def add_request_action(self,ar,**kw):
+        #~ kw.update(request=ar)
+        #~ return self._add_item(MenuItem(self,ar.action,**kw))
         
     def add_instance_action(self,obj,**kw):
         kw.update(instance=obj)
-        return self._add_item(MenuItem(self,None,**kw))
+        return self._add_item(MenuItem(None,**kw))
     
     def add_item(self,name,label,**kw):
-        return self._add_item(MenuItem(self,None,name,label,**kw))
+        return self._add_item(MenuItem(None,name,label,**kw))
         
     def add_separator(self,label,**kw):
-        return self._add_item(MenuItem(self,None,None,label,**kw))
+        return self._add_item(MenuItem(None,None,label,**kw))
         
     def add_menu(self,name,label,**kw):
         return self._add_item(Menu(self.user_profile,name,label,self,**kw))
@@ -286,13 +295,14 @@ class Menu(MenuItem):
     #~ def add_url_button(self,url,label):
     def add_url_button(self,url,**kw):
         kw.update(href=url)
-        return self._add_item(MenuItem(self,None,**kw))
+        return self._add_item(MenuItem(None,**kw))
         #~ self.items.append(dict(
           #~ xtype='button',text=label,
           #~ handler=js_code("function() {window.location='%s';}" % url)))
 
     def _add_item(self,mi):
         assert isinstance(mi,MenuItem)
+        mi.parent = self
         if mi.bound_action is not None:
             #~ if not mi.action.actor.get_view_permission(self.user):
             if not mi.bound_action.get_view_permission(self.user_profile):

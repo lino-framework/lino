@@ -9,7 +9,7 @@ new checkbox fields
 and
 :ref:`welfare.debts.Budget.ignore_yearly_incomes`.
 
-Discovered and fixed some little Nachwehen of the conversion to babel.
+Discovered and fixed a few little aftermaths of the conversion to babel.
 For example the string "Working" is translated differently in
 :mod:`lino.modlib.tickets.models`
 than in 
@@ -29,7 +29,7 @@ which returns an
 Result:
 I can now execute actions more easily from Python code.
 I use this to write tested documents 
-like :ref:` welfare.tested.debts`
+like :ref:`welfare.tested.debts`
 or the new test case 
 :func:`lino_welfare.tests.pcsw_tests.test10`.
 

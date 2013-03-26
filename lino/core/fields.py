@@ -284,6 +284,18 @@ class HtmlBox(DisplayField):
     
 #~ from django.db.models.fields import Field
 
+class VirtualGetter(object):
+    """
+    A wrapper object for getting the content of 
+    a virtual field programmatically. 
+    """
+    def __init__(self,vf,instance):
+        self.vf  = vf
+        self.instance = instance
+        
+    def __call__(self,ar=None):
+        return self.vf.value_from_object(self.instance,ar)
+        
 
 class VirtualField(FakeField): # (Field):
     """
@@ -384,7 +396,7 @@ class VirtualField(FakeField): # (Field):
         
     def __get__(self,instance,owner):
         if instance is None: return self
-        return self.value_from_object(instance)
+        return VirtualGetter(self,instance)
         
     def __set__(self,instance,value):
         return self.set_value_in_object(None,instance,value)

@@ -107,7 +107,7 @@ def action_request(app_label,actor,request,rqdata,is_list,**kw):
     
 def run_action(ar,elem):
     try:
-        rv = ar.bound_action.action.run(elem,ar)
+        rv = ar.bound_action.action.run_from_ui(elem,ar)
         if rv is None:
             rv  = ui.success()
         return ar.ui.action_response(rv)
