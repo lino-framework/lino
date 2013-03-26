@@ -582,7 +582,12 @@ class Table(AbstractTable):
             if True:
                 for b in self.model.mro():
                     for k,v in b.__dict__.items():
+                        
+                        #~ if isinstance(v,actions.ActionRunner):
+                            #~ print "20130326 ActionRunner %s" % v
+                            #~ v = v.bound_action.action
                         if isinstance(v,actions.Action):
+                            #~ print "20130326 %s.%s = action %s from %s" % (self,k,v,b)
                             existing_value = self.__dict__.get(k,None)
                             if existing_value is not None:
                                 if not isinstance(existing_value,actions.Action):

@@ -219,6 +219,7 @@ class ActionRunner(object):
     Wrapper object used to run actions from Python code.
     """
     def __init__(self,action,actor,instance,owner):
+        #~ print "Bar"
         #~ self.action = action
         self.bound_action = actor.get_action_by_name(action.action_name)
         self.instance = instance
@@ -229,6 +230,12 @@ class ActionRunner(object):
         ar = self.bound_action.request(**kw)
         return self.bound_action.action.run_from_code(self.instance,ar)
 
+    #~ def as_button(self,obj,request,label=None):
+        #~ print "Foo"
+        #~ ba = self.defining_actor.get_url_action(self.action_name)
+        #~ btn = settings.SITE.ui.row_action_button(obj,request,ba,label)
+        #~ return E.tostring(btn)
+        
 
 class Action(Parametrizable,Permittable):
     """
@@ -446,7 +453,11 @@ class Action(Parametrizable,Permittable):
       
     def __get__(self, instance, owner):
         """
+        Getting an Action instance of an *Actor* (which is a class) will return the 
         """
+        #~ print "__get__ %r / %r / %r" % (self, instance, owner)
+        if instance is None:
+            return self
         return ActionRunner(self,instance.get_default_table(),instance,owner)
         
         
