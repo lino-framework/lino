@@ -168,7 +168,7 @@ class ExtRenderer(HtmlRenderer):
             if v.bound_action is not None:
                 if v.params:
                     #~ ar = v.action.actor.request(self.ui,None,v.action,**v.params)
-                    ar = v.bound_action.request(self.ui,**v.params)
+                    ar = v.bound_action.request(**v.params)
                     js = "function() {%s}" % self.request_handler(ar)
                     return self.handler_item(v,js,v.help_text)
                     #~ return dict(text=prepare_label(v),handler=js_code(handler))

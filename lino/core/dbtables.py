@@ -467,12 +467,23 @@ class Table(AbstractTable):
     """
     
     
+    #~ @classmethod
+    #~ def request(self,ui=None,request=None,action=None,**kw):
+        #~ if action is None:
+            #~ action = self.default_action
+            #~ assert action is not None
+        #~ return TableRequest(ui,self,request,action,**kw)
+        
     @classmethod
-    def request(self,ui=None,request=None,action=None,**kw):
-        if action is None:
-            action = self.default_action
-            assert action is not None
-        return TableRequest(ui,self,request,action,**kw)
+    def request(self,master_instance=None,**kw): # 20130327
+        kw.update(actor=self)
+        if master_instance is not None:
+            kw.update(master_instance=master_instance)
+        kw.setdefault('action',self.default_action)
+        #~ if action is None:
+            #~ action = self.default_action
+            #~ assert action is not None
+        return TableRequest(**kw)
         
     @classmethod
     def column_choices(self):

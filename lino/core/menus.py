@@ -136,7 +136,7 @@ class MenuItem:
 
     def as_html(self,ui,request,level=None):
         if self.bound_action:
-            sr = ui.request(self.bound_action.actor,
+            sr = self.bound_action.actor.request(
                 action=self.bound_action,
                 user=request.user,subst_user=request.subst_user,
                 requesting_panel=request.requesting_panel,

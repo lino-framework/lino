@@ -42,6 +42,7 @@ from lino.core.requests import ActionRequest
 from lino.utils import curry, AttrDict
 #~ from lino.core import perms
 from lino.utils import jsgen
+from lino.utils import uncamel
 
         
 
@@ -182,10 +183,11 @@ class ActorMetaClass(type):
             
         
         """
-        attributes that are not inherited from base classes:
+        attributes that are never inherited from base classes:
         """
         # classDict.setdefault('name',classname)
         classDict.setdefault('label',None)
+        #~ classDict.setdefault('related_name',None)
         #~ classDict.setdefault('button_label',None)
         classDict.setdefault('title',None)
         classDict.setdefault('help_text',None)
@@ -294,6 +296,11 @@ class Actor(actions.Parametrizable):
     
     :func:`lino.core.table.table_factory` also uses this.
     """
+    
+    #~ related_name = None
+    #~ """
+    
+    #~ """
     
     window_size = None
     """
@@ -581,20 +588,27 @@ class Actor(actions.Parametrizable):
         
     @classmethod
     def do_setup(cls):
-    
-        if cls.master is not None:
-            if not isinstance(cls.master,type):
-                raise Exception("%s.master is %r" % (cls,cls.master))
-            if not issubclass(cls.master,models.Model):
-                raise Exception("%s.master is %r" % (cls,cls.master))
-            name = cls.__name__
-            if cls.app_label == cls.master._meta.app_label:
-                if hasattr(cls.master,name):
-                    logger.debug("%s.%s already defined",cls.master,name)
-                else:
-                    def m(obj,ar):
-                        return ar.spawn(cls,master_instance=obj,title=cls.label)
-                    setattr(cls.master,name,m)
+        if False:
+            """
+            See :blogref:`20130327`
+            
+            """
+            
+            if cls.master is not None:
+                if not isinstance(cls.master,type):
+                    raise Exception("%s.master is %r" % (cls,cls.master))
+                if not issubclass(cls.master,models.Model):
+                    raise Exception("%s.master is %r" % (cls,cls.master))
+                name = cls.related_name or uncamel(cls.__name__)
+                if cls.app_label == cls.master._meta.app_label:
+                    if hasattr(cls.master,name):
+                        logger.debug("Name %s.%s already defined",cls.master,name)
+                    else:
+                        #~ def m(obj,ar):
+                            #~ return ar.spawn(cls,master_instance=obj,title=cls.label)
+                        def m(obj):
+                            return cls.request(master_instance=obj,title=cls.label)
+                        setattr(cls.master,name,m)
                         
     
     
@@ -1142,9 +1156,14 @@ class Actor(actions.Parametrizable):
             kw[k] = pf.get_default()
         return kw
               
+    #~ @classmethod
+    #~ def request(self,ui=None,request=None,action=None,**kw):
+        #~ return ActionRequest(ui,self,request,action,**kw)
+
     @classmethod
-    def request(self,ui=None,request=None,action=None,**kw):
-        return ActionRequest(ui,self,request,action,**kw)
+    def request(self,*args,**kw):
+        kw.update(actor=self)
+        return ActionRequest(*args,**kw)
 
         
     @classmethod
@@ -1154,10 +1173,10 @@ class Actor(actions.Parametrizable):
         :attr:`AbstractTable.slave_grid_format` is `html`.
         """
         def meth(master,ar):
-            ar = self.request(ui,request=ar.request,
-                #~ action=self.default_action,
-                master_instance=master,param_values={})
-            ar.renderer = ui.ext_renderer
+            #~ ar = self.request(ui,request=ar.request,
+                #~ master_instance=master,param_values={})
+            ar = self.request(master,request=ar.request,param_values={})
+            ar.renderer = ui.default_renderer
             #~ s = ui.table2xhtml(ar).tostring()
             return ui.table2xhtml(ar)
             #~ s = etree.tostring(ui.table2xhtml(ar))
@@ -1165,14 +1184,20 @@ class Actor(actions.Parametrizable):
         return meth
         
     @classmethod
-    def to_rst(self,column_names=None,**kw):
+    def to_rst(self,master_instance=None,column_names=None,**known_values):
         """
         Shortcut which creates an action request for this actor 
         and calls its :meth:`lino.core.actions.ActionRequest.to_rst` 
         method.
         """
+        kw = dict()
+        if master_instance is not None:
+            kw.update(master_instance=master_instance)
         kw.update(actor=self)
-        return settings.SITE.ui.text_renderer.request(**kw).to_rst(column_names)
+        kw.update(known_values=known_values)
+        kw.update(renderer=settings.SITE.ui.text_renderer)
+        return self.request(**kw).to_rst(column_names)
+        #~ return settings.SITE.ui.text_renderer.request(**kw).to_rst(column_names)
         #~ username = kw.pop('username',None)
         #~ if username and settings.SITE.user_model is not None:
             #~ kw['user'] = settings.SITE.user_model.objects.get(username=username)
@@ -1189,3 +1214,5 @@ class Actor(actions.Parametrizable):
         settings.SITE.startup()
         return xghtml.E.tostring(self.request(**kw).table2xhtml())
         
+    def show(self,*args,**kw):
+        print self.to_rst(*args,**kw)

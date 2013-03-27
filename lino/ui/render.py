@@ -301,12 +301,17 @@ class TextRenderer(HtmlRenderer):
             text = '#'
         return text
         
-    def request(self,actor=None,**kw):
+    def show(self,ar,*args,**kw):
+        print ar.to_rst(*args,**kw)
+        
+        
+    def unused_request(self,actor=None,**kw):
         #~ username = kw.pop('username',None)
         #~ if username:
             #~ self.login(username)
         #~ if self.user:
             #~ kw.setdefault('user',self.user)
+        kw.setdefault('user',settings.SITE.console_user)
         kw.update(renderer=self)
         #~ raise Exception(kw)
         return actor.request(**kw)

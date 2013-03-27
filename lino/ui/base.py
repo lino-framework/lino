@@ -106,9 +106,9 @@ class Callback(object):
 class UI(object):
     """
     """
-    name = None
+    #~ name = None
     #~ prefix = None
-    verbose_name = None
+    #~ verbose_name = None
     
     def __init__(self):
         self.pending_threads = {}
@@ -135,11 +135,11 @@ class UI(object):
     def setup_handle(self,h,ar):
         pass
         
-    def request(self,actor,**kw):
-        if isinstance(actor,basestring):
-            actor = settings.SITE.modules.resolve(actor)
-        #~ kw.update(ui=self)
-        return actor.request(self,**kw)
+    #~ def request(self,actor,**kw):
+        #~ if isinstance(actor,basestring):
+            #~ actor = settings.SITE.modules.resolve(actor)
+        #~ return actor.request(self,**kw)
+        
         
     def success(self,message=None,alert=None,**kw):
         """

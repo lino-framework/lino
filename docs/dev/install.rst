@@ -40,16 +40,7 @@ Then install these projects *as editable packages*::
 You will also need some other dependencies for 
 which the regular pip installation will work::
 
-  $ pip install Django Unipath Sphinx Jinja2 
-  
-.. important:: 
-
-  Lino currently requires the development version of python-babel 
-  which requires some manual work as explained on their site in
-  `Setting up Babel from a Subversion Checkout
-  <http://babel.edgewall.org/wiki/SubversionCheckout>`_.
-  See :blogref:`20130323`
-  
+  $ pip install Django Unipath Sphinx Jinja2 Babel
   
 You should also install `Fabric <http://docs.fabfile.org>`_:
 

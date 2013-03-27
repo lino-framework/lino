@@ -1,0 +1,57 @@
+===================================
+20130327 (Wednesday, 27 March 2013)
+===================================
+
+After having seen the demo sites at :ref:`lf` 
+work even without the released version of Babel_,
+I understood that the warning
+"Lino currently requires the development version of python-babel 
+which requires some manual work as explained on their site in
+`Setting up Babel from a Subversion Checkout
+<http://babel.edgewall.org/wiki/SubversionCheckout>`_, 
+see :blogref:`20130323`" 
+in :ref:`lino.dev.install`
+was wrong and removed it.
+Because the development version is needed only 
+for extracting messages with pgettext and writing catalog 
+files, but not for using them. 
+
+.. _Babel: http://babel.edgewall.org
+
+Today I still continued to work on the API 
+for writing tested docs, used in 
+:ref:`welfare.tested.debts`
+and :ref:`welfare.tested.misc`.
+
+Redesigned the signatures of 
+:meth:`lino.core.actors.Actor.request`
+and
+:meth:`lino.ui.Site.login`.
+
+
+I had an idea which would enable us to replace calls like::
+
+  ses.show(debts.ExpensesByBudget.request(obj))
+  
+by:: 
+
+  ses.show(obj.expenses_by_budget())
+  
+Lino would have automagically converted a string like "ExpensesByBudget" to 
+"expenses_by_budget" (using :func:`lino.util.uncamel`), 
+and even use a new optimal class attribute `Actor.related_name` 
+to give custom names.
+
+But I then dropped this feature because it creates an additional 
+copy of the actor's name. 
+This would cause additional work when an actor needs to be renamed.
+So we refuse this feature deliberately.
+
+Adapted appy_pod.Renderer to the new interface.
+Added another new style of test
+in :ref:`welfare.tested.debts`: 
+print a document using appy_pod!
+It is a pity though that the appy_pod renderer 
+has appearently no option to *not* 
+catch any exception that occurs during the rendering.
+So the test isn't yet really perfect.

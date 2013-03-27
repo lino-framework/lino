@@ -316,7 +316,7 @@ class AppyBuildMethod(SimpleBuildMethod):
         #~ savelang = dbutils.get_language()
         #~ dbutils.set_language(lang)
         def f():
-            Renderer(tpl, context, target,**settings.SITE.appy_params).run()
+            Renderer(ar,tpl, context, target,**settings.SITE.appy_params).run()
         dbutils.run_with_language(lang,f)
         #~ dbutils.set_language(savelang)
         return os.path.getmtime(target)

@@ -43,6 +43,8 @@ class Site(lino.Site):
     """
     """
     
+    console_user = None
+    
     partners_app_label = 'contacts'
     """
     Temporary setting, see :doc:`/tickets/72`
@@ -986,8 +988,8 @@ class Site(lino.Site):
             % (u,n,v) for n,v,u in self.using(ui)])
 
     def login(self,username):
+        #~ self.console_user = self.user_model.objects.get(username=username)
         from lino.core import requests
-        return requests.BaseRequest(self.ui,
-            renderer=self.ui.text_renderer,
+        return requests.BaseRequest(renderer=self.ui.text_renderer,
             user=self.user_model.objects.get(username=username))
         

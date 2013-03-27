@@ -399,6 +399,28 @@ def workdays(start,end):
     
     
 
+UNCAMEL_RE = re.compile('((?<=[a-z0-9])[A-Z]|(?!^)[A-Z](?=[a-z]))')      
+
+
+def uncamel(s):
+    """
+    
+    Thanks to `nickl <http://stackoverflow.com/users/1522117/nickl>`_
+    in `Stackoverflow  <http://stackoverflow.com/questions/1175208>`_
+    
+    >>> from lino.utils import uncamel 
+    >>> uncamel('EventsByClient')
+    'events_by_client'
+    >>> uncamel('Events')
+    'events'
+    >>> uncamel('HTTPResponseCodeXYZ')
+    'http_response_code_xyz'
+    
+    """
+    return UNCAMEL_RE.sub(r'_\1', s).lower()
+    
+    
+
 
 def _test():
     import doctest

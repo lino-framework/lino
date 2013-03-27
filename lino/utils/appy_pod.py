@@ -71,7 +71,8 @@ from lino.utils.html2odf import html2odf, toxml
 
 class Renderer(AppyRenderer):
   
-    def __init__(self, template, context, result, **kw):
+    def __init__(self, ar, template, context, result, **kw):
+        self.ar = ar
         #~ context.update(appy_renderer=self)
         context.update(restify=self.restify_func)
         context.update(html=self.html_func)
@@ -82,6 +83,7 @@ class Renderer(AppyRenderer):
         #~ context.update(ui=self.extjs_ui)
         context.update(ui=settings.SITE.ui)
         context.update(settings=settings)
+        context.update(settings.SITE.modules)
         kw.update(finalizeFunction=self.finalize_func)
         AppyRenderer.__init__(self,template,context,result, **kw)
         #~ self.my_automaticstyles = odf.style.automaticstyles()
@@ -186,9 +188,9 @@ class Renderer(AppyRenderer):
         
       
         
-    def insert_table(self,ar,column_names=None):
+    def insert_table(self,*args,**kw):
         try:
-            return self.insert_table_(ar,column_names=None)
+            return self.insert_table_(*args,**kw)
         except Exception as e:
             logger.exception(e)
             return ''
@@ -199,6 +201,9 @@ class Renderer(AppyRenderer):
         This is the function that gets called when a template contains a 
         ``do text from table(...)`` statement.
         """
+        ar.setup_from(self.ar)
+
+        #~ ar  = self.ar
         
         columns, headers, widths = ar.get_field_info(column_names)
         

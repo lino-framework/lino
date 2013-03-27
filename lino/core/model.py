@@ -445,8 +445,10 @@ class Model(models.Model):
             #~ yield ( 'merge_row', MergeAction(self) )
             
     def to_html(self,**kw):
-        kw.update(actor=self.get_default_table())
-        ar = settings.SITE.ui.text_renderer.request(**kw)
+        actor=self.get_default_table()
+        kw.update(renderer=settings.SITE.ui.text_renderer)
+        #~ ar = settings.SITE.ui.text_renderer.request(**kw)
+        ar = actor.request(**kw)
         return self.preview(ar)
         #~ username = kw.pop('username',None)
             

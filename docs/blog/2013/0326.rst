@@ -14,10 +14,10 @@ zumindest wenn man wie ich unter "Zusammenfassung"
 eine "Liste von Zahlen, deren Summe ebenfalls Sinn macht" vesteht.
 
 
-Subtle opimizations in the framework:
-- New class :class:`VirtualGetter <lino.core.fields.VirtualGetter>`.
+Subtle optimizations in the framework:
 
-- 
+- New class :class:`VirtualGetter <lino.core.fields.VirtualGetter>`.
+- Slave tables are now generally accessible from instances of their master model
 
 
 

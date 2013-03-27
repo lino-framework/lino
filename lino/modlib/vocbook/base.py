@@ -806,13 +806,14 @@ class Book:
         if os.path.exists(target):
             os.remove(target)
         #~ tpl = os.path.join(os.path.dirname(__filename__),'cfr.odt')
+        ses = settings.SITE.login("root") # not tested after 20130327
         context = dict(
             self=self,
             iif=iif,
             )
         appy_params = dict()
         logger.info(u"appy.pod render %s -> %s (params=%s)",self.input_template,target,appy_params)
-        renderer = Renderer(self.input_template, context, target,**appy_params)
+        renderer = Renderer(ses,self.input_template, context, target,**appy_params)
         #~ setup_renderer(renderer)
         #~ renderer.context.update(restify=debug_restify)
         self.writing_format = 'odt'

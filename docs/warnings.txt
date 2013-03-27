@@ -1,0 +1,3 @@
+t:\hgwork\lino\lino\ui\__init__.py:docstring of lino.ui.Site.webdav_url:7: WARNING: term not in glossary: webdav
+t:\hgwork\lino\lino\ui\__init__.py:docstring of lino.ui.Site.webdav_url:7: WARNING: term not in glossary: runserver
+T:\hgwork\lino\docs\api\lino.utils.rst:7: WARNING: unknown document: /autodoc/lino.test_apps.mti

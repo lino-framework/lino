@@ -116,9 +116,10 @@ class ExtUI(base.UI):
     """
     The central instance of Lino's ExtJS3 User Interface.
     """
-    _handle_attr_name = '_extjs3_handle'
+    #~ _handle_attr_name = '_extjs3_handle'
+    _handle_attr_name = '_lino_ui_handle'
     #~ _response = None
-    name = 'extjs3'
+    #~ name = 'extjs3'
     #~ verbose_name = "ExtJS with Windows"
     #~ Panel = ext_elems.Panel
     

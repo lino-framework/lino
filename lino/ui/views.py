@@ -101,7 +101,7 @@ def action_request(app_label,actor,request,rqdata,is_list,**kw):
         raise exceptions.PermissionDenied(
             _("As %s you have no permission to run this action.") % user.profile)
         #~ return http.HttpResponseForbidden(_("As %s you have no permission to run this action.") % user.profile)
-    ar = rpt.request(settings.SITE.ui,request,a,**kw)
+    ar = rpt.request(request=request,action=a,**kw)
     #~ ar.renderer = settings.SITE.ui.ext_renderer
     return ar
     
@@ -604,7 +604,7 @@ def choices_for_field(request,rpt,field):
     elif isinstance(field,models.ForeignKey):
         m = field.rel.to
         t = getattr(m,'_lino_choices_table',m._lino_default_table)
-        qs = t.request(settings.SITE.ui,request).data_iterator
+        qs = t.request(request=request).data_iterator
         #~ logger.info('20120710 choices_view(FK) %s --> %s',t,qs)
         def row2dict(obj,d):
             d[ext_requests.CHOICES_TEXT_FIELD] = obj.get_choices_text(request,rpt,field)
@@ -674,7 +674,7 @@ class Choices(View):
         rpt = requested_actor(app_label,rptname)
         emptyValue = None
         if fldname is None:
-            ar = rpt.request(settings.SITE.ui,request) # ,rpt.default_action)
+            ar = rpt.request(request=request) # ,rpt.default_action)
             #~ rh = rpt.get_handle(self)
             #~ ar = ViewReportRequest(request,rh,rpt.default_action)
             #~ ar = dbtables.TableRequest(self,rpt,request,rpt.default_action)
@@ -710,14 +710,14 @@ class Restful(View):
     """
   
     def post(self,request,app_label=None,actor=None,pk=None):
-        ui = settings.SITE.ui
+        #~ ui = settings.SITE.ui
         rpt = requested_actor(app_label,actor)
         #~ a = rpt.default_action
         if pk is None:
             elem = None
         else:
             elem = rpt.get_row_by_pk(pk)
-        ar = rpt.request(ui,request)
+        ar = rpt.request(request=request)
             
         instance = ar.create_instance()
         # store uploaded files. 
@@ -734,15 +734,15 @@ class Restful(View):
         
       
     def delete(self,request,app_label=None,actor=None,pk=None):
-        ui = settings.SITE.ui
+        #~ ui = settings.SITE.ui
         rpt = requested_actor(app_label,actor)
         #~ a = rpt.default_action
         elem = rpt.get_row_by_pk(pk)
-        ar = rpt.request(ui,request)
+        ar = rpt.request(request=request)
         return delete_element(ar,elem)
       
     def get(self,request,app_label=None,actor=None,pk=None):
-        ui = settings.SITE.ui
+        #~ ui = settings.SITE.ui
         rpt = requested_actor(app_label,actor)
         #~ a = rpt.default_action
         assert pk is None, 20120814
@@ -750,7 +750,7 @@ class Restful(View):
             #~ elem = None
         #~ else:
             #~ elem = rpt.get_row_by_pk(pk)
-        ar = rpt.request(ui,request)
+        ar = rpt.request(request=request)
         rh = ar.ah
         rows = [ 
           rh.store.row2dict(ar,row,rh.store.list_fields) 
@@ -758,17 +758,17 @@ class Restful(View):
         return json_response_kw(count=ar.get_total_count(),rows=rows)
         
     def put(self,request,app_label=None,actor=None,pk=None):
-        ui = settings.SITE.ui
+        #~ ui = settings.SITE.ui
         rpt = requested_actor(app_label,actor)
         #~ a = rpt.default_action
         elem = rpt.get_row_by_pk(pk)
-        ar = rpt.request(ui,request)
+        ar = rpt.request(request=request)
         rh = ar.ah
             
         data = http.QueryDict(request.body).get('rows') # raw_post_data before Django 1.4
         data = json.loads(data)
         a = rpt.get_url_action(rpt.default_list_action_name)
-        ar = rpt.request(ui,request,a)
+        ar = rpt.request(request=request,action=a)
         ar.renderer = ui.ext_renderer
         return form2obj_and_save(ar,data,elem,False,True) # force_update=True)
           
@@ -806,7 +806,7 @@ class ApiElement(View):
             raise http.Http404("%s has no action %r" % (rpt,action_name))
             
         #~ ar = rpt.request(ui,request,a)
-        ar = ba.request(ui,request)
+        ar = ba.request(request=request)
         ar.renderer = ui.ext_renderer
         ah = ar.ah
         
@@ -876,12 +876,12 @@ class ApiElement(View):
         return form2obj_and_save(ar,data,elem,False,False) # force_update=True)
             
     def delete(self,request,app_label=None,actor=None,pk=None):
-        ui = settings.SITE.ui
+        #~ ui = settings.SITE.ui
         rpt = requested_actor(app_label,actor)
         elem = rpt.get_row_by_pk(pk)
         if elem is None:
             raise http.Http404("%s has no row with primary key %r" % (rpt,pk))
-        ar = rpt.request(ui,request)
+        ar = rpt.request(request=request)
         return delete_element(ar,elem)
         
 
@@ -1157,7 +1157,7 @@ class PlainIndex(View):
             if not a.get_view_permission(user.profile):
                 raise exceptions.PermissionDenied("Action not allowed for %s" % user)
             kw.update(renderer=ui.plain_renderer)
-            ar = a.request(ui,request,**kw)
+            ar = a.request(request=request,**kw)
             #~ ar.renderer = ui.plain_renderer
             context.update(title=ar.get_title())
             # TODO: let ar generate main

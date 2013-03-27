@@ -178,11 +178,13 @@ class TableRequest(ActionRequest):
     _data_iterator = None
     _sliced_data_iterator = None
     
-    def __init__(self,ui,actor,request=None,action=None,**kw):
-        #~ if not (isinstance(actor,type) and issubclass(actor,AbstractTable)):
-            #~ raise Exception("Expected an AbstractTable subclass, got %r" % actor)
-        ActionRequest.__init__(self,ui,actor,request,action,**kw)
-        #~ self.execute()
+    #~ def __init__(self,master_instance=None,*args,**kw):
+        #~ if master_instance is not None:
+            #~ kw.update(master_instance=master_instance)
+        #~ ActionRequest.__init__(self,*args,**kw)
+        
+    #~ def __init__(self,ui,actor,request=None,action=None,**kw):
+        #~ ActionRequest.__init__(self,ui,actor,request,action,**kw)
         
     def execute(self):
         #~ if self.actor.parameters:
@@ -194,6 +196,9 @@ class TableRequest(ActionRequest):
         if self.limit is not None:
             self._sliced_data_iterator = self._sliced_data_iterator[:self.limit]
             
+    def must_execute(self):
+        return self._data_iterator is None
+        
     def get_data_iterator_property(self):
         if self._data_iterator is None:
             self.execute()
@@ -369,6 +374,9 @@ class TableRequest(ActionRequest):
             extra=None,
             **kw):
             
+        if self.actor.__name__ == 'PrintExpensesByBudget':
+            assert master_instance is not None
+            
         self.quick_search = quick_search
         self.order_by = order_by
         
@@ -391,6 +399,10 @@ class TableRequest(ActionRequest):
             assert master_instance is None
             master_instance = self.master.objects.get(pk=master_id)
             
+        #~ if master is not None:
+            #~ if not isinstance(master_instance,master):
+                #~ raise Exception("%r is not a %r" % (master_instance,master))
+            
         self.master_instance = master_instance
         
         #~ AbstractTableRequest.setup(self,**kw)
@@ -403,7 +415,13 @@ class TableRequest(ActionRequest):
         
         #~ logger.info("20120121 %s.setup() done",self)
         
+        #~ if self.actor.__name__ == 'PrintExpensesByBudget':
+            #~ print '20130327 1 tables.py', kw.get('master_instance')
+            
         ActionRequest.setup(self,**kw)
+        
+        #~ if self.actor.__name__ == 'PrintExpensesByBudget':
+            #~ print '20130327 2 tables.py', self, self.master_instance
         
         """
         20120519 : outbox.MyOutbox had no phantom record when called from menu.
@@ -458,7 +476,8 @@ class TableRequest(ActionRequest):
         else:
             if column_names:
                 from lino.core import layouts
-                ll = layouts.ListLayout(column_names,table=ar.actor)
+                #~ assert ar.actor is not None
+                ll = layouts.ListLayout(column_names,datasource=ar.actor)
                 #~ lh = ll.get_layout_handle(self.extjs_ui)
                 lh = ll.get_layout_handle(settings.SITE.ui)
                 columns = lh.main.columns
@@ -554,7 +573,7 @@ class TableRequest(ActionRequest):
             os.remove(target_file)
         logger.info(u"appy.pod render %s -> %s (params=%s",
             tplfile,target_file,settings.SITE.appy_params)
-        renderer = Renderer(tplfile, context, target_file,**settings.SITE.appy_params)
+        renderer = Renderer(ar,tplfile, context, target_file,**settings.SITE.appy_params)
         renderer.run()
         
         
@@ -1031,13 +1050,23 @@ class AbstractTable(actors.Actor):
         #~ logger.info('20120519 %s.get_filter_kw(%r) --> %r',self,master_instance,kw)
         return kw
         
+    #~ @classmethod
+    #~ def request(cls,ui=None,request=None,action=None,**kw):
+        #~ self = cls
+        #~ if action is None:
+            #~ action = self.default_action
+        #~ return TableRequest(ui,self,request,action,**kw)
+        
     @classmethod
-    def request(cls,ui=None,request=None,action=None,**kw):
-        self = cls
-        if action is None:
-            action = self.default_action
-        #~ return VirtualTableRequest(ui,self,request,action,**kw)
-        return TableRequest(ui,self,request,action,**kw)
+    def request(self,master_instance=None,**kw):
+        kw.update(actor=self)
+        kw.update(master_instance=master_instance)
+        ar = TableRequest(**kw)
+        #~ if self.__name__ == 'PrintExpensesByBudget':
+            #~ assert ar.master_instance is not None
+            #~ print '20130327 tables.py', self, ar.master_instance
+        return ar
+        
 
     @classmethod
     def run_action_from_console(self,pk=None,an=None):
@@ -1079,8 +1108,4 @@ class VirtualTable(AbstractTable):
     By nature it cannot have database fields, only virtual fields.
     """
     
-
-
-
-
 

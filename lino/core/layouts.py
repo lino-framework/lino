@@ -431,13 +431,13 @@ class BaseLayout(object):
         self._added_panels = dict()
         #~ self._window_size = window_size
         self.hidden_elements = hidden_elements or frozenset()
-        self.set_datasource(datasource)
         self._element_options = dict()
         if main is not None:
             self.main = main
         #~ elif not hasattr(self,'main'):
         elif self.main is None:
             raise Exception("Cannot instantiate %s without `main`." % self.__class__)
+        self.set_datasource(datasource)
         for k,v in kw.items():
             #~ if not hasattr(self,k):
                 #~ raise Exception("Got unexpected keyword %s=%r" % (k,v))
@@ -628,6 +628,11 @@ class ListLayout(BaseLayout):
     A Layout description for the columns of a GridPanel.
     """
     join_str = " "
+    
+    def set_datasource(self,ds):
+        if ds is None:
+            raise Exception("20130327 No datasource for %r" % self)
+        super(ListLayout,self).set_datasource(ds)
 
 class ParamsLayout(BaseLayout):
     """

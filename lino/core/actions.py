@@ -214,7 +214,8 @@ class Parametrizable(object):
         #~ cls.register_params()
         #~ return cls
       
-class ActionRunner(object):
+#~ class ActionRunner(object):
+class InstanceAction(object):
     """
     Wrapper object used to run actions from Python code.
     """
@@ -225,9 +226,11 @@ class ActionRunner(object):
         self.instance = instance
         self.owner = owner
         
-    def __call__(self,**kw):
+    #~ def __call__(self,ar,**kw):
+    def run_from_session(self,ses,**kw):
         #~ print self,args, kw
         ar = self.bound_action.request(**kw)
+        ar.setup_from(ses)
         return self.bound_action.action.run_from_code(self.instance,ar)
 
     #~ def as_button(self,obj,request,label=None):
@@ -458,7 +461,7 @@ class Action(Parametrizable,Permittable):
         #~ print "__get__ %r / %r / %r" % (self, instance, owner)
         if instance is None:
             return self
-        return ActionRunner(self,instance.get_default_table(),instance,owner)
+        return InstanceAction(self,instance.get_default_table(),instance,owner)
         
         
         

@@ -94,10 +94,11 @@ class EmptyTableRow(VirtualRow):
 
 
 class BaseRequest(object):
-    def __init__(self,ui,request=None,renderer=None,**kw):
-        if ui is None:
-            ui = settings.SITE.ui
-        self.ui = ui
+    def __init__(self,request=None,renderer=None,**kw):
+        #~ if ui is None:
+            #~ ui = settings.SITE.ui
+        #~ self.ui = ui
+        self.ui = ui = settings.SITE.ui
         #~ self.error_response = ui.error_response
         #~ self.success_response = ui.success_response
         
@@ -108,7 +109,7 @@ class BaseRequest(object):
         self.success = ui.success
         if renderer is None:
             #~ renderer = ui.text_renderer
-            renderer = ui.default_renderer
+            renderer = self.ui.default_renderer
         self.renderer = renderer
         #~ self.step = 0 # confirmation counter
         #~ self.report = actor
@@ -124,6 +125,18 @@ class BaseRequest(object):
         #~ 20120605 self.ah = actor.get_handle(ui)
         self.setup(**kw)
         
+    def must_execute(self):
+        return True
+        
+    def setup_from(self,other):
+        """
+        """
+        if not other.must_execute():
+            raise Exception("Request %r was already executed" % other)
+        self.renderer = other.renderer
+        self.user = other.user
+        self.subst_user = other.subst_user
+        #~ self.requesting_panel = other.requesting_panel
   
     def parse_req(self,request,rqdata,**kw): 
         #~ if self.actor.parameters:
@@ -245,25 +258,35 @@ class BaseRequest(object):
         #~ kw.setdefault('request',self.request) 
         # removed 20120702 because i don't want to inherit quick_search from spawning request
         # and because i couldn't remember why 'request' was passed to the spawned request.
-        return self.ui.request(actor,**kw)
+        #~ return self.ui.request(actor,**kw)
+        return actor.request(**kw)
         
-    def show(self,*args,**kw):
-        print self.to_rst(*args,**kw)
+    #~ def show(self,*args,**kw):
+        #~ print self.to_rst(*args,**kw)
         
-    def unused_show(self,spec,column_names=None,**kw):
-        if isinstance(spec,ActionRequest):
-            ar = spec
+    def run(self,ia,*args,**kw):
+        return ia.run_from_session(self,*args,**kw)
+        
+    def show(self,ar,column_names=None,**kw):
+        if isinstance(ar,ActionRequest):
+            for k,v in kw.items():
+                assert hasattr(ar,k)
+                setattr(ar,k,v)
+            #~ if kw:
+                #~ ar = ar.spawn(**kw)
+                #~ raise Exception(20130327)
         else:
             from lino.core.menus import create_item
-            mi = create_item(spec)
-            kw.setdefault('user',self.user)
-            kw.setdefault('subst_user',self.subst_user)
-            #~ kw.setdefault('action',mi.bound_action)
-            kw.setdefault('renderer',self.renderer)
-            ar = mi.bound_action.request(self.ui,**kw)
+            mi = create_item(ar)
+            ar = mi.bound_action.request(**kw)
+        ar.setup_from(self)
+        #~ ar.user = self.user
+        #~ ar.subst_user = self.subst_user
+        #~ ar.renderer = self.renderer
         print ar.to_rst(column_names)
-            
         
+            
+
       
 class ActionRequest(BaseRequest):
     """
@@ -284,7 +307,7 @@ class ActionRequest(BaseRequest):
     limit = None
     order_by = None
     
-    def __init__(self,ui,actor,request=None,action=None,renderer=None,param_values=None,**kw):
+    def __init__(self,actor=None,request=None,action=None,renderer=None,param_values=None,**kw):
         """
         An ActionRequest is instantiated from different shortcut methods:
         
@@ -298,8 +321,12 @@ class ActionRequest(BaseRequest):
         #~ self.bound_action = BoundAction(actor,action or actor.default_action)
         #~ if action and not isinstance(action,BoundAction):
             #~ raise Exception("20121003 %r is not a BoundAction" % action)
+            
+        #~ if actor.__name__ == 'PrintExpensesByBudget':
+            #~ print '20130327 requests.ActionRequest.__init__', kw.get('master_instance')
+            
         self.bound_action = action or actor.default_action
-        BaseRequest.__init__(self,ui,request,renderer,**kw)
+        BaseRequest.__init__(self,request=request,renderer=renderer,**kw)
         self.ah = actor.get_request_handle(self)
         """
         See 20120825
