@@ -19,4 +19,12 @@ Bugfixes
 Manual tasks after upgrade
 --------------------------
 
+`FIXTURE_DIRS` is now a tuple, no longer a list.
 
+Replace::
+
+  FIXTURE_DIRS.append('/var/log/lino/backups')
+  
+with::
+
+  FIXTURE_DIRS += ('/var/log/lino/backups',)
