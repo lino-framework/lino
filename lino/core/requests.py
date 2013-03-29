@@ -257,7 +257,7 @@ class BaseRequest(object):
         msg.send()
         logger.info("System note '%s' from %s has been sent to %s",subject,sender,recipients)
 
-    def spawn(self,actor,**kw):
+    def spawn(self,actor,*args,**kw):
         """
         Create a new ActionRequest, taking default values from this one.
         """
@@ -269,7 +269,7 @@ class BaseRequest(object):
         # removed 20120702 because i don't want to inherit quick_search from spawning request
         # and because i couldn't remember why 'request' was passed to the spawned request.
         #~ return self.ui.request(actor,**kw)
-        return actor.request(**kw)
+        return actor.request(*args,**kw)
         
     #~ def show(self,*args,**kw):
         #~ print self.to_rst(*args,**kw)
@@ -494,7 +494,7 @@ class ActionRequest(BaseRequest):
         return kw
         
 
-    def spawn(self,actor=None,**kw):
+    def spawn(self,actor,**kw):
         if actor is None:
             actor = self.actor
         return super(ActionRequest,self).spawn(actor,**kw)

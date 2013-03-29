@@ -669,16 +669,16 @@ class EmptyTable(frames.Frame):
     
     
     @classmethod
-    def create_instance(self,req,**kw):
+    def create_instance(self,ar,**kw):
         if self.parameters:
-            kw.update(req.param_values)
+            kw.update(ar.param_values)
 
         #~ for k,v in req.param_values.items():
             #~ kw[k] = v
         #~ for k,f in self.parameters.items():
             #~ kw[k] = f.value_from_object(None)
         obj = EmptyTableRow(self,**kw)
-        kw = req.ah.store.row2dict(req,obj)
+        kw = ar.ah.store.row2dict(ar,obj)
         obj._data = kw
         obj.update(**kw)
         return obj

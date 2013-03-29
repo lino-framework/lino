@@ -343,11 +343,12 @@ class VirtualField(FakeField): # (Field):
         #~ self.return_type.name = self.name
         if isinstance(self.return_type,models.ForeignKey):
             f = self.return_type
-            f.rel.to = resolve_model(f.rel.to)
-            #~ if f.name is None:
-            f.verbose_name = f.rel.to._meta.verbose_name
-                #~ from lino.core.kernel import set_default_verbose_name
-                #~ set_default_verbose_name(self.return_type)
+            if f.verbose_name is None:
+                f.rel.to = resolve_model(f.rel.to)
+                #~ if f.name is None:
+                f.verbose_name = f.rel.to._meta.verbose_name
+                    #~ from lino.core.kernel import set_default_verbose_name
+                    #~ set_default_verbose_name(self.return_type)
             
 
         #~ removed 20120919 self.return_type.editable = self.editable

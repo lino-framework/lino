@@ -33,10 +33,6 @@ import os
 
 from appy.pod.renderer import Renderer as AppyRenderer
 
-from lino.utils.restify import restify
-from lino.utils.html2xhtml import html2xhtml
-
-
 from django.utils.encoding import force_unicode
 from django.conf import settings
 
@@ -48,6 +44,11 @@ from odf.style import ListLevelProperties
 from odf.style import TableColumnProperties, TableRowProperties, TableCellProperties
 from odf import text
 from odf.table import Table, TableColumns, TableColumn, TableHeaderRows, TableRows, TableRow, TableCell
+
+from lino.utils.restify import restify
+from lino.utils.html2xhtml import html2xhtml
+from lino.utils.html2odf import html2odf, toxml
+
 
 OAS = '<office:automatic-styles>'
 OFFICE_STYLES = '<office:styles>'
@@ -67,7 +68,6 @@ UL_LIST_STYLE = """\
 </text:list-style>
 """
 
-from lino.utils.html2odf import html2odf, toxml
 
 class Renderer(AppyRenderer):
   
@@ -77,6 +77,7 @@ class Renderer(AppyRenderer):
         context.update(restify=self.restify_func)
         context.update(html=self.html_func)
         context.update(table=self.insert_table)
+        context.update(html2odf=html2odf)
         #~ from lino.extjs import ui
         #~ self.extjs_ui = ui
         #~ self.extjs_ui = settings.SITE.ui
@@ -320,8 +321,6 @@ class Renderer(AppyRenderer):
             #~ self.my_automaticstyles.append(cs)
             table_columns.addElement(TableColumn(stylename=name))
             
-        #~ from lino.ui.extjs3 import ext_store
-        #~ from lino.ui.extjs3 import ext_elems
         from lino.ui import elems
         def fldstyle(fld):
             #~ if isinstance(fld,ext_store.VirtStoreField):

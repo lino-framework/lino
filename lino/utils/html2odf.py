@@ -47,10 +47,10 @@ text:style-name="podBulletedList"><text:list-item><text:p
 text:style-name="podBulletItem">First item</text:p></text:list-item><text:list-item><text:p 
 text:style-name="podBulletItem">Second item</text:p></text:list-item></text:list>
 
-Note that the above chunk is obviously not correct since Writer doesn't display it.
+N.B.: the above chunk is obviously not correct since Writer doesn't display it.
 (How can I debug a generated odt file? 
 I mean if my content.xml is syntactically valid but Writer ...)
-Idea: validate it against the using lxml
+Idea: validate it against the ODF specification using lxml
 
 
 
@@ -104,7 +104,7 @@ def toxml(node):
 
 
 #~ PTAGS = ('p','td','li')
-PTAGS = ('p','td')
+PTAGS = ('p','td','div')
 
 def html2odf(e,ct=None,**ctargs):
     """
@@ -139,6 +139,10 @@ def html2odf(e,ct=None,**ctargs):
         oe = text.Span(stylename='Bold Text')
     elif e.tag == 'a':
         oe = text.Span(stylename='Bold Text')
+    elif e.tag == 'span':
+        oe = text.Span()
+    elif e.tag == 'br':
+        oe = text.LineBreak()
     elif e.tag == 'img':
         return # ignore images
     elif e.tag == 'ul': 

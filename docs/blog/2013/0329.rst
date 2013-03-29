@@ -6,4 +6,133 @@ Released :ref:`welfare.1.1.1` & Co
 ----------------------------------
 
 - Added a test in French to :ref:`welfare.tested.debts`.
+
 - "Inactive" wasn't yet translated to German.
+
+- Upgrading a Lino site that hasn't installed pip requires quite some manual work.
+  Here is an excerpt::
+
+    $ cd /var/snapshots/
+
+    $ wget http://www.lino-framework.org/dl/lino/lino-1.6.4.tar.gz
+    $ wget http://www.lino-framework.org/dl/North/North-0.1.1.tar.gz
+    $ wget http://www.lino-framework.org/dl/djangosite/djangosite-0.1.1.tar.gz
+    $ wget http://www.lino-framework.org/dl/lino-welfare/lino-welfare-1.1.1.tar.gz
+
+    $ tar xvzf djangosite-0.1.1.tar.gz
+    $ tar xvzf North-0.1.1.tar.gz
+    $ tar xvzf lino-1.6.4.tar.gz
+    $ tar xvzf lino-welfare-1.1.1.tar.gz
+
+    $ cd /usr/local/django/mysite/using
+    $ ll
+    total 0
+    lrwxrwxrwx 1 lsaffre www-data 25 Mar 17 19:06 lino -> /var/snapshots/lino-1.6.3
+    lrwxrwxrwx 1 lsaffre www-data 26 Mar 27 20:45 north -> /var/snapshots/North-0.1.0
+    lrwxrwxrwx 1 lsaffre www-data 31 Mar 17 19:05 site -> /var/snapshots/djangosite-0.1.0
+    lrwxrwxrwx 1 lsaffre www-data 33 Mar 17 19:06 welfare -> /var/snapshots/lino-welfare-1.1.0
+    $ rm *
+    $ ln -s /var/snapshots/lino-1.6.4 lino
+    $ ln -s /var/snapshots/North-0.1.1 north
+    $ ln -s /var/snapshots/djangosite-0.1.1 site
+    $ ln -s /var/snapshots/lino-welfare-1.1.1 welfare
+
+
+sphinx-apidoc and the `__init__.py` files
+-----------------------------------------
+
+`sphinx-apidoc <http://sphinx-doc.org/man/sphinx-apidoc.html>`__ 
+generates the wrong automodule directive for 
+the `__init__.py` file of a package. 
+For example, here is an excerpt of the 
+file `/docs/api/djangosite.rst`, as it
+was generated for my for :mod:`djangosite` package
+before I patched my copy of `sphinx-apidoc`::
+
+    :mod:`djangosite` Package
+    -------------------------
+
+    .. automodule:: djangosite.__init__  <<<------------- PROBLEM
+        :members:
+        :show-inheritance:
+
+    :mod:`dbutils` Module
+    ---------------------
+
+    .. automodule:: djangosite.dbutils
+        :members:
+        :show-inheritance:
+
+
+(In case you noticed it, I had specified 
+`os.environ.update(SPHINX_APIDOC_OPTIONS="members,show-inheritance")`
+while running sphinx-apidoc)
+
+The problem is that a ``:class:`` reference to
+``djangosite.Site``
+didn't work, I had to write 
+``djangosite.__init__.Site``.
+
+I solved this for myself by finding the following function definition in the `apidoc.py` file::
+
+  def format_directive(module, package=None):
+      """Create the automodule directive and add the options."""
+      directive = '.. automodule:: %s\n' % makename(package, module)
+      for option in OPTIONS:
+          directive += '    :%s:\n' % option
+      return directive
+
+And adding a ``.replace('.__init__','')`` to the following line::
+
+    directive = '.. automodule:: %s\n' % makename(package, module).replace('.__init__','')
+
+
+Now a reference to :class:`djangosite.Site` works.
+
+
+A selection list for number fields
+----------------------------------
+
+One customer request is about the "Amount" field of a Budget Entry. 
+This field ist filled with a default value that 
+comes from `Account.default_amount` (a field that is injected 
+into the Account model by 
+:func:`lino_welfare.modlib.debts.models.customize_accounts`).
+Here is the request:
+
+  The default amount works well, but for certain accounts 
+  I'd like to configure not only one default amount 
+  but a list of a few possible amounts to choose from.
+
+The Lino part is easy: just write a :func:`lino.core.chooser` method for this field::
+
+    @chooser(simple_values=True)
+    def amount_choices(cls,account):
+        return account.default.amount.split(';')
+        
+But the problem is how to render such a field! ExtJS has no "NumberComboBox".
+
+Ext.form.ComboBox extends Ext.form.TriggerField which extends 
+Ext.form.TextField, but Ext.form.NumberField also just extends Ext.form.TextField. 
+You cannot configure a ComboBox to use a displayField which is a NumberField and 
+not a TextField.
+
+To implement a "NumberComboBox" we would have to duplicate a lot of ExtJS JavaScript code.
+No I refuse to do that for the moment, at least as long as we didn't migrate to ExtJS4.
+
+A workaround (admittedly a suboptimal one) is to define several accounts in that case.
+
+Default verbose_name for ForeignKey parameter fields
+----------------------------------------------------
+
+The :func:`lino.core.kernel.set_default_verbose_name` 
+is now also being used for ForeignKey fields in an Actor's parameter panel 
+(:attr:`lino.core.actors.Actor.parameters`).
+
+Yet another JobsOverview
+------------------------
+
+Wrote a new version of :class:`lino_welfare.modlib.debts.NewJobsOverview`.
+
+
+

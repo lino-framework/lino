@@ -149,6 +149,11 @@ def setup_params_choosers(self):
         for k,fld in self.parameters.items():
             if isinstance(fld,models.ForeignKey):
                 fld.rel.to = resolve_model(fld.rel.to)
+                from lino.core.kernel import set_default_verbose_name
+                set_default_verbose_name(fld)
+                #~ if fld.verbose_name is None:
+                    #~ fld.verbose_name = fld.rel.to._meta.verbose_name
+                
             check_for_chooser(self,fld)
 
 def make_params_layout_handle(self,ui):

@@ -662,6 +662,14 @@ class Actor(actions.Parametrizable):
         if cls.label is None:
             #~ self.label = capfirst(self.model._meta.verbose_name_plural)
             cls.label = cls.get_actor_label()
+            
+        #~ if cls.parameters is not None:
+            #~ for name,f in cls.parameters.items():
+                #~ if isinstance(f,models.ForeignKey):
+                    #~ if f.verbose_name is None:
+                        #~ f.rel.to = resolve_model(f.rel.to)
+                        #~ f.verbose_name = f.rel.to._meta.verbose_name
+          
           
                 
         if False:
@@ -1202,12 +1210,10 @@ class Actor(actions.Parametrizable):
     @classmethod
     def to_html(self,**kw):
         """
-        Shortcut which calls :meth:`lino.Lino.startup`, 
-        creates an action request for this actor 
-        and calls its :meth:`ActionRequest.table2xhtml` method.
         """
-        settings.SITE.startup()
+        #~ settings.SITE.startup()
         return xghtml.E.tostring(self.request(**kw).table2xhtml())
+        #~ return self.request(**kw).table2xhtml()
         
     def show(self,*args,**kw):
         print self.to_rst(*args,**kw)
