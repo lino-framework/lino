@@ -989,7 +989,11 @@ class Site(lino.Site):
 
     def login(self,username):
         #~ self.console_user = self.user_model.objects.get(username=username)
+        u = self.user_model.objects.get(username=username)
         from lino.core import requests
+        if u.language:
+            from north.dbutils import set_language
+            set_language(u.language)
         return requests.BaseRequest(renderer=self.ui.text_renderer,
-            user=self.user_model.objects.get(username=username))
+            user=u)
         

@@ -2,4 +2,8 @@
 20130329 (Friday, 29 March 2013)
 ================================
 
-Released :ref:`welfare.1.1.1` and related.
+Released :ref:`welfare.1.1.1` & Co
+----------------------------------
+
+- Added a test in French to :ref:`welfare.tested.debts`.
+- "Inactive" wasn't yet translated to German.

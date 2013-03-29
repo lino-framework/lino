@@ -582,7 +582,7 @@ msgstr ""
 #: lino/mixins/human.py:181
 #, fuzzy, python-format
 msgid "%d years"
-msgstr "Jahre"
+msgstr "%d jaren"
 
 #: lino/mixins/printable.py:481 lino/modlib/postings/models.py:92
 msgid "Print"
@@ -712,9 +712,9 @@ msgid "Show information about this site."
 msgstr ""
 
 #: lino/modlib/about/models.py:304
-#, fuzzy, python-format
+#, python-format
 msgid "%(date)s at %(time)s"
-msgstr "%(details)s von %(master)s"
+msgstr "%(date)s om %(time)s"
 
 #: lino/modlib/about/models.py:311
 msgid "Server uptime"
@@ -3474,7 +3474,7 @@ msgstr "Existierender ID-Wert %r darf nicht verändert werden."
 #: lino/ui/store.py:259
 #, python-format
 msgid "%r (invalid choice)"
-msgstr "%r (ungültige Auswahl)"
+msgstr "%r (ongeldig selectie)"
 
 #: lino/ui/views.py:102
 #, fuzzy, python-format
@@ -3484,7 +3484,7 @@ msgstr "Sie haben nicht die Berechtigung, diese Zeile zu löschen."
 #: lino/ui/views.py:143
 #, python-format
 msgid "Action \"%(action)s\" failed for %(record)s:"
-msgstr ""
+msgstr "Action \"%(action)s\" failed for %(record)s:"
 
 #: lino/ui/views.py:148
 msgid "An error report has been sent to the system administrator."
@@ -3492,7 +3492,7 @@ msgstr "Ein Fehlerbericht wurde an den Systemverwalter geschickt."
 
 #: lino/ui/views.py:152
 msgid "Oops!"
-msgstr "Upps!"
+msgstr "Oeps!"
 
 #: lino/ui/views.py:276
 #, python-format

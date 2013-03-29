@@ -2231,7 +2231,7 @@ msgstr ""
 
 #: lino/modlib/orders/models.py:59
 msgid "Inactive"
-msgstr ""
+msgstr "Inaktiv"
 
 #: lino/modlib/orders/models.py:72
 #, fuzzy
