@@ -10,6 +10,9 @@
 ## GNU General Public License for more details.
 ## You should have received a copy of the GNU General Public License
 ## along with Lino; if not, see <http://www.gnu.org/licenses/>.
+"""
+Defines classes :class:`BaseRequest` and :class:`ActionRequest`.
+"""
 
 import logging
 logger = logging.getLogger(__name__)
@@ -94,6 +97,13 @@ class EmptyTableRow(VirtualRow):
 
 
 class BaseRequest(object):
+    """
+    Base class for :class:`ActionRequest` and :class:`TableRequest <lino.core.tables.TableRequest>`.
+    
+    This holds information like the current user and renderer.
+    A bare BaseRequest instance is returned as a "session" by 
+    :meth:`login <lino.ui.Site.login>`.
+    """
     def __init__(self,request=None,renderer=None,**kw):
         #~ if ui is None:
             #~ ui = settings.SITE.ui
