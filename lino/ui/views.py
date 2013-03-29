@@ -451,11 +451,13 @@ class Authenticate(View):
     def get(self, request, *args, **kw):
         action_name = request.GET.get(ext_requests.URL_PARAM_ACTION_NAME)
         if action_name == 'logout':
-            username = request.session['username'] 
-            del request.session['username'] 
-            del request.session['password']
-            rv = dict(success=True,message="%r has been logged out" % username)
+            username = request.session.pop('username',None)
+            request.session.pop('password',None)
+            #~ username = request.session['username']
+            #~ del request.session['password']
+            rv = dict(success=True,message="User %r logged out." % username)
             return settings.SITE.ui.action_response(rv)
+        raise http.Http404()
             
 
     def post(self, request, *args, **kw):
@@ -474,7 +476,6 @@ class Authenticate(View):
         #~ auth.login(request,request.GET.get('username'), request.GET.get('password'))
         #~ ss.save()
         rv = settings.SITE.ui.success("Now logged in as %r" % username)
-        #~ rv = dict(success=True,message="Now logged in as %r" % username)
         return settings.SITE.ui.action_response(rv)
       
 

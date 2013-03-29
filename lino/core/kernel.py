@@ -73,6 +73,15 @@ from lino.utils import AttrDict
 #~ self.GFK_LIST = []
 
 
+def set_default_verbose_name(f):
+    """
+    If the verbose_name of a ForeignKey was not set by user code, 
+    Django sets it to ``field.name.replace('_', ' ')``.
+    We replace this default value by ``f.rel.to._meta.verbose_name``.
+    This rule holds also for virtual FK fields.
+    """
+    if f.verbose_name == f.name.replace('_', ' '):
+        f.verbose_name = f.rel.to._meta.verbose_name
 
 def startup_site(self):
     """
@@ -181,14 +190,7 @@ def startup_site(self):
             elif isinstance(f,models.ForeignKey):
                 if isinstance(f.rel.to,basestring):
                     raise Exception("%s %s relates to %r" % (model,f.name,f.rel.to))
-                if f.verbose_name == f.name.replace('_', ' '):
-                    """
-                    If verbose name was not set by user code, 
-                    Django sets it to ``field.name.replace('_', ' ')``.
-                    We replace this default value by
-                    ``f.rel.to._meta.verbose_name``.
-                    """
-                    f.verbose_name = f.rel.to._meta.verbose_name
+                set_default_verbose_name(f)
                     
                 """
                 If JobProvider is an MTI child of Company,

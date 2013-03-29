@@ -1,0 +1,49 @@
+==================================
+20130328 (Thursday, 28 March 2013)
+==================================
+
+Final spurt before the next release
+-----------------------------------
+
+
+- Internal Server Error at `/auth` when there was no action name, 
+  no username and/or no password specified.
+
+- Tried to find a way to have appy_pod renderer send a message or 
+  do some other action when an error occurs. 
+  Without succes. Posted a `question
+  <https://answers.launchpad.net/appy/+question/225356>`_.
+  
+- The template for a Budget didn't yet include the new 
+  `welfare.debts.DebtsByBudget` table.
+  
+
+About virtual fields
+--------------------
+
+A very subtle thing: :class:`debts.PrintEntriesByBudget 
+<lino_welfare.modlib.debts.models.PrintEntriesByBudget>` 
+is a VirtualTable which defines one column `partner`. 
+We might simply declare it like this::
+
+    @dd.displayfield(_("Partner"))
+    def partner(self,obj,ar):
+        return obj.partner
+  
+
+But it is better to define it like this::
+  
+    @dd.virtualfield(models.ForeignKey('contacts.Partner'))
+    def partner(self,obj,ar):
+        return obj.partner
+        
+This is because we really want it to simulate a (read-only) ForeignKey 
+to Partner. This won't make the field editable (e.g. you'll not 
+get a ComboBox on that field), but certain properties like the *preferred 
+display width* and the *verbose name* have default values as if it were a real 
+FK to `contacts.Partner`. Also, when this table is being rendered 
+in a ExtJS HTML panel, the partner's name will be clickable and open the 
+detail window for that partner.
+
+(I wrote this because today I discovered and fixed the bug that the 
+*verbose name* was *not* set correctly.)

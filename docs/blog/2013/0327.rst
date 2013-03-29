@@ -28,7 +28,6 @@ Redesigned the signatures of
 and
 :meth:`lino.ui.Site.login`.
 
-
 I had an idea which would enable us to replace calls like::
 
   ses.show(debts.ExpensesByBudget.request(obj))
@@ -41,17 +40,24 @@ Lino would have automagically converted a string like "ExpensesByBudget" to
 "expenses_by_budget" (using :func:`lino.util.uncamel`), 
 and even use a new optimal class attribute `Actor.related_name` 
 to give custom names.
-
 But I then dropped this feature because it creates an additional 
 copy of the actor's name. 
 This would cause additional work when an actor needs to be renamed.
 So we refuse this feature deliberately.
 
 Adapted appy_pod.Renderer to the new interface.
-Added another new style of test
+Cool: added another new style of test
 in :ref:`welfare.tested.debts`: 
 print a document using appy_pod!
 It is a pity though that the appy_pod renderer 
 has appearently no option to *not* 
 catch any exception that occurs during the rendering.
 So the test isn't yet really perfect.
+
+Upgrade on testlino
+-------------------
+
+- Wrote and tested :func:`lino_welfare.migrate.migrate_from_1_1_0`
+- There was a funny little bug in :mod:`north.dpy` : 
+  it wrote the Python version (instead of `settings.SITE.version`) to `SOURCE_VERSION`.
+  

@@ -588,12 +588,7 @@ class Actor(actions.Parametrizable):
         
     @classmethod
     def do_setup(cls):
-        if False:
-            """
-            See :blogref:`20130327`
-            
-            """
-            
+        if False: # see :blogref:`20130327`
             if cls.master is not None:
                 if not isinstance(cls.master,type):
                     raise Exception("%s.master is %r" % (cls,cls.master))

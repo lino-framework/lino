@@ -336,10 +336,19 @@ class VirtualField(FakeField): # (Field):
             #~ if self.name != name:
                 #~ raise Exception("Tried to re-use %s.%s" % (actor_or_model,name))
         #~ self.name = name
+            
         if isinstance(self.return_type,basestring):
             self.return_type = resolve_field(self.return_type)
+            
+        #~ self.return_type.name = self.name
         if isinstance(self.return_type,models.ForeignKey):
-            self.return_type.rel.to = resolve_model(self.return_type.rel.to)
+            f = self.return_type
+            f.rel.to = resolve_model(f.rel.to)
+            #~ if f.name is None:
+            f.verbose_name = f.rel.to._meta.verbose_name
+                #~ from lino.core.kernel import set_default_verbose_name
+                #~ set_default_verbose_name(self.return_type)
+            
 
         #~ removed 20120919 self.return_type.editable = self.editable
         for k in ('''to_python choices save_form_data 

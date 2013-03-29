@@ -2453,7 +2453,7 @@ Lino.RichTextPanel = Ext.extend(Lino.RichTextPanel,{
       if (record) {
         var url = '{{settings.SITE.admin_prefix}}/templates' + this.containing_panel.ls_url + "/" 
             + String(record.id) + "/" + this.editor.name;
-        console.log('RichTextPanel.refresh()',url);
+        //~ console.log('RichTextPanel.refresh()',url);
         if (this.editor.ed) this.editor.ed.settings.template_external_list_url = url;
         this.set_base_params(this.containing_panel.get_master_params());
         //~ var v = record ? this.format_data(record.data[this.editor.name]) : ''
