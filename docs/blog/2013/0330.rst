@@ -1,0 +1,17 @@
+==================================
+20130330 (Saturday, 30 March 2013)
+==================================
+
+Finishing :class:`NewJobsOverview <lino_welfare.modlib.jobs.models.NewJobsOverview>`.
+
+- In ::mod:`lino.utils.appy_pod`, renamed `html2odf` to `ehtml`
+
+- In the `Default.odt`, changed document header and default text style.
+
+- Converted :meth:`lino.ui.ui.ExtUI.ar2html` to use 
+  :meth:`lino.core.tables.TableRequest.get_field_info`.
+  Visible result is that the columns of the preview have 
+  the wanted widths distribution.
+
+- Better docstrings at different places.
+

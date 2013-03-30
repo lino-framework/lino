@@ -443,7 +443,13 @@ class TableRequest(ActionRequest):
         return self.ui.table2xhtml(self)
         
     def get_field_info(ar,column_names=None):
-      
+        """
+        Return a tuple (fields, headers, widths) which expresses which columns, headers 
+        and widths the user wants for this TableRequest. If `self` has web request info, 
+        checks for GET parameters cn, cw and ch (coming from the grid widget). Otherwise 
+        Also apply the tables's :meth:`override_column_headers 
+        <lino.core.actors.Actor.override_column_headers>` method.
+        """
         if ar.request is None:
             columns = None
         else:
@@ -488,7 +494,7 @@ class TableRequest(ActionRequest):
                 #~ columns = ar.ah.list_layout.main.columns
             #~ fields = ar.ah.store.list_fields
             headers = [unicode(col.label or col.name) for col in columns]
-            widths = [(col.width or col.preferred_width) for col in columns]
+            widths = ["%d%%" % (col.width or col.preferred_width) for col in columns]
             #~ fields = [col.field._lino_atomizer for col in columns]
             fields = columns
 
@@ -503,46 +509,6 @@ class TableRequest(ActionRequest):
         return fields, headers, widths
         
         
-    def to_rst(self,column_names=None,**kwargs):
-        fields, headers, widths = self.get_field_info(column_names)
-        
-        #~ fields = self.ah.store.list_fields
-        #~ headers = [force_unicode(col.label or col.name) for col in self.ah.list_layout.main.columns]
-        #~ cellwidths = None
-        #~ columns = self.ah.list_layout.main.columns
-        
-        #~ oh = self.actor.override_column_headers(self)
-        #~ if oh:
-            #~ for i,e in enumerate(columns):
-                #~ header = oh.get(e.name,None)
-                #~ if header is not None:
-                    #~ headers[i] = unicode(header)
-                    
-        grid = self.ah.list_layout.main
-                    
-        sums  = [fld.zero for fld in fields]
-        rows = []  
-        recno = 0
-        #~ for row in self:
-        for row in self.sliced_data_iterator:
-            recno += 1
-            rows.append([x for x in grid.row2text(self,fields,row,sums)])
-            #~ rows.append([x for x in grid.row2html(self,fields,row,sums)])
-                
-        has_sum = False
-        for i in sums:
-            if i:
-                #~ print '20120914 zero?', repr(i)
-                has_sum = True
-                break
-        if has_sum:
-            rows.append([x for x in grid.sums2html(self,fields,sums)])
-              
-        t = RstTable(headers,**kwargs)
-        return t.to_rst(rows)
-        
-        #~ return HtmlTable(headers,rows)
-      
     def appy_render(ar,target_file):
         
         if ar.get_total_count() > MAX_ROW_COUNT:
@@ -1098,7 +1064,35 @@ class AbstractTable(actors.Actor):
         if url:
             os.startfile(url)
         
+    @classmethod
+    def to_rst(cls,ar,column_names=None,**kwargs):
+        fields, headers, widths = ar.get_field_info(column_names)
         
+        grid = ar.ah.list_layout.main
+                    
+        sums  = [fld.zero for fld in fields]
+        rows = []  
+        recno = 0
+        #~ for row in ar:
+        for row in ar.sliced_data_iterator:
+            recno += 1
+            rows.append([x for x in grid.row2text(ar,fields,row,sums)])
+            #~ rows.append([x for x in grid.row2html(ar,fields,row,sums)])
+                
+        has_sum = False
+        for i in sums:
+            if i:
+                #~ print '20120914 zero?', repr(i)
+                has_sum = True
+                break
+        if has_sum:
+            rows.append([x for x in grid.sums2html(ar,fields,sums)])
+              
+        t = RstTable(headers,**kwargs)
+        return t.to_rst(rows)
+        
+        #~ return HtmlTable(headers,rows)
+      
         
 
 class VirtualTable(AbstractTable):

@@ -490,63 +490,67 @@ class ExtUI(base.UI):
             #~ if issubclass(h.report,dbtables.EmptyTable):
                 #~ h.store = ext_store.Store(h)
           
-    def table2xhtml(self,ar,max_row_count=300):
+    def table2xhtml(self,ar,max_row_count=300,**kw):
         #~ doc = xghtml.Document(force_unicode(ar.get_title()))
         #~ t = doc.add_table()
         t = xghtml.Table()
-        self.ar2html(ar,t,ar.data_iterator)
+        self.ar2html(ar,t,ar.data_iterator,**kw)
         # return xghtml.E.tostring(t.as_element())
         return t.as_element()
         
-    def ar2html(self,ar,tble,data_iterator):
+    def ar2html(self,ar,tble,data_iterator,column_names=None):
         """
         Render the given ActionRequest ar to html
         """
         tble.attrib.update(cellspacing="3px",bgcolor="#ffffff", width="100%")
         
-        fields = ar.ah.store.list_fields
         grid = ar.ah.list_layout.main
         columns = grid.columns
-        headers = [force_unicode(col.label or col.name) for col in columns]
-        cellwidths = None
-        
-        if ar.request is not None:
-            widths = [x for x in ar.request.REQUEST.getlist(ext_requests.URL_PARAM_WIDTHS)]
-            col_names = [str(x) for x in ar.request.REQUEST.getlist(ext_requests.URL_PARAM_COLUMNS)]
-            hiddens = [(x == 'true') for x in ar.request.REQUEST.getlist(ext_requests.URL_PARAM_HIDDENS)]
-        
-            if col_names:
-                fields = []
-                headers = []
-                cellwidths = []
-                columns = []
-                for i,cn in enumerate(col_names):
-                    col = None
-                    for e in grid.columns:
-                        if e.name == cn:
-                            col = e
-                            break
-                    #~ col = ar.ah.list_layout._main.find_by_name(cn)
-                    #~ col = ar.ah.list_layout._main.columns[ci]
-                    if col is None:
-                        #~ names = [e.name for e in ar.ah.list_layout._main.walk()]
-                        raise Exception("No column named %r in %s" % (cn,grid.columns))
-                    if not hiddens[i]:
-                        columns.append(col)
-                        fields.append(col.field._lino_atomizer)
-                        headers.append(force_unicode(col.label or col.name))
-                        cellwidths.append(widths[i])
+        if True:
+            fields, headers, cellwidths = ar.get_field_info(column_names)
+            columns = fields
+            #~ print 20130330, cellwidths
+        else:
+          
+            fields = ar.ah.store.list_fields
+            headers = [force_unicode(col.label or col.name) for col in columns]
+            cellwidths = None
+            
+            if ar.request is not None:
+                widths = [x for x in ar.request.REQUEST.getlist(ext_requests.URL_PARAM_WIDTHS)]
+                col_names = [str(x) for x in ar.request.REQUEST.getlist(ext_requests.URL_PARAM_COLUMNS)]
+                hiddens = [(x == 'true') for x in ar.request.REQUEST.getlist(ext_requests.URL_PARAM_HIDDENS)]
+            
+                if col_names:
+                    fields = []
+                    headers = []
+                    cellwidths = []
+                    columns = []
+                    for i,cn in enumerate(col_names):
+                        col = None
+                        for e in grid.columns:
+                            if e.name == cn:
+                                col = e
+                                break
+                        #~ col = ar.ah.list_layout._main.find_by_name(cn)
+                        #~ col = ar.ah.list_layout._main.columns[ci]
+                        if col is None:
+                            #~ names = [e.name for e in ar.ah.list_layout._main.walk()]
+                            raise Exception("No column named %r in %s" % (cn,grid.columns))
+                        if not hiddens[i]:
+                            columns.append(col)
+                            fields.append(col.field._lino_atomizer)
+                            headers.append(force_unicode(col.label or col.name))
+                            cellwidths.append(widths[i])
           
         
-        #~ for k,v in ar.actor.override_column_headers(ar):
-            
-        oh = ar.actor.override_column_headers(ar)
-        if oh:
-            for i,e in enumerate(columns):
-                header = oh.get(e.name,None)
-                if header is not None:
-                    headers[i] = unicode(header)
-            #~ print 20120507, oh, headers
+            oh = ar.actor.override_column_headers(ar)
+            if oh:
+                for i,e in enumerate(columns):
+                    header = oh.get(e.name,None)
+                    if header is not None:
+                        headers[i] = unicode(header)
+                #~ print 20120507, oh, headers
           
         if ar.renderer.is_interactive:
             #~ print 20120901, ar.order_by
@@ -561,8 +565,7 @@ class ExtUI(base.UI):
         cellattrs = dict(align="left",valign="top",bgcolor="#eeeeee")
         #~ cellattrs = dict()
         
-        #~ headers = [x for x in ar.ah.store.headers2html(ar,fields,headers,**cellattrs)]        
-        headers = [x for x in grid.headers2html(ar,columns,headers,**cellattrs)]        
+        headers = [x for x in grid.headers2html(ar,columns,headers,**cellattrs)]
         sums  = [fld.zero for fld in columns]
         #~ hr = tble.add_header_row(*headers,**cellattrs)
         if cellwidths:
@@ -582,9 +585,8 @@ class ExtUI(base.UI):
         if recno == 0:
             tble.clear()
             tble.body.append(ar.no_data_text)
-            
         
-        if not ar.actor.hide_sums:
+        if False: # not ar.actor.hide_sums:
             has_sum = False
             for i in sums:
                 if i:

@@ -26,6 +26,7 @@ Tables:
 
 - :class:`Table <lino.core.dbtables.Table>`
 - :class:`VirtualTable <lino.core.tables.VirtualTable>`
+- :class:`EmptyTable <lino.mixins.EmptyTable>`
 - :class:`Frame <lino.core.frames.Frame>`
 
 Extended Fields:
@@ -128,6 +129,7 @@ logger = logging.getLogger(__name__)
 
 
 from lino.core.tables import VirtualTable
+from lino.mixins import EmptyTable
 
 from north.dbutils import resolve_model, UnresolvedModel
 

@@ -13,14 +13,32 @@
 ## along with Lino; if not, see <http://www.gnu.org/licenses/>.
 
 """
-An extended `appy.pod` renderer that installs additional functions:
+An extended :term:`appy.pod` renderer that installs additional functions
+to be used in `do text|section|table... from ...
+<http://appyframework.org/podWritingAdvancedTemplates.html>`__ 
+statements.
 
-- :meth:`restify <Renderer.restify_func>`: 
-  Render a string that is in reStructuredText markup.
-- :meth:`html <Renderer.html_func>` :
+
+- `restify(s)`: 
+  Render a string `s` which contains reStructuredText markup.
+  The string is first passed to 
+  :func:`lino.utils.restify.restify` to convert it to XHTML, 
+  then to `appy.pod`'s built in `xhtml` function.
+  Without this, users would have to write each time something like::
+
+    do text
+    from xhtml(restify(self.body).encode('utf-8'))
+
+- `html(s)` :
   Render a string that is in HTML (not XHTML).
-- :meth:`table <Renderer.insert_table>`
-  Render a Lino Action Request as a table.
+
+- `ehtml(e)` :
+  Render an ElementTree HTML object 
+  (generated using :mod:`lino.utils.xmlgen.html`)
+  by passing it to :mod:`lino.utils.html2odf`.
+
+- `table(ar,column_names=None)` : render an :class:`lino.core.tables.TableRequest` 
+  as a table.
 
 """
 
@@ -77,7 +95,8 @@ class Renderer(AppyRenderer):
         context.update(restify=self.restify_func)
         context.update(html=self.html_func)
         context.update(table=self.insert_table)
-        context.update(html2odf=html2odf)
+        #~ context.update(html2odf=html2odf)
+        context.update(ehtml=html2odf)
         #~ from lino.extjs import ui
         #~ self.extjs_ui = ui
         #~ self.extjs_ui = settings.SITE.ui
@@ -94,19 +113,6 @@ class Renderer(AppyRenderer):
   
     def restify_func(self,unicode_string,**kw):
         """
-        Renders a string in reStructuredText markup by passing it to 
-        :func:`lino.utils.restify.restify` to convert it to XHTML, 
-        then through :term:`appy.pod`'s built in `xhtml` function.
-        
-        Without this, users would have to write each time something 
-        like::
-
-          do text
-          from xhtml(restify(self.body).encode('utf-8'))
-            
-          do text
-          from xhtml(restify(self.body,output_encoding='utf-8'))
-
         
         """
         if not unicode_string:
@@ -198,7 +204,6 @@ class Renderer(AppyRenderer):
         
     def insert_table_(self,ar,column_names=None):
         """
-        Render an :class:`lino.core.actions.ActionRequest` as an OpenDocument table.
         This is the function that gets called when a template contains a 
         ``do text from table(...)`` statement.
         """

@@ -14,7 +14,9 @@
 """
   
 This module contains mainly a utility function :func:`html2odf` 
-which converts an HTML ElementTree object to 
+which converts an ElementTree object 
+generated using :mod:`lino.utils.xmlgen.html`
+to a fragment of ODF.
 
 >>> from lino.utils.xmlgen.html import E
 >>> def test(e):
