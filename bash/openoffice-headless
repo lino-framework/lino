@@ -1,0 +1,64 @@
+#!/bin/bash
+# openoffice.org  headless server script
+#
+# chkconfig: 2345 80 30
+# description: headless openoffice server script
+# processname: openoffice
+#
+# Author: Vic Vijayakumar
+# Modified by Federico Ch. Tomasczik
+# Lsb + compatibility for rhel and debian added by Glenn Enright
+#
+### BEGIN INIT INFO
+# Provides:          openoffice-headless
+# Required-Start:    $remote_fs $syslog
+# Required-Stop:     $remote_fs $syslog
+# Default-Start:     2 3 4 5
+# Default-Stop:      0 1 6
+# Short-Description: Manage openoffice document conversion daemon
+# Description:       Enable service provided by daemon.
+### END INIT INFO
+
+[ -e /etc/init.d/functions ] && . /etc/rc.d/init.d/functions
+
+OOo_HOME=/usr/bin
+SOFFICE_PATH=$OOo_HOME/soffice
+PIDFILE=/var/run/openoffice-server.pid
+
+set -e
+
+function start {
+if [ -f $PIDFILE ]; then
+echo "OpenOffice headless server has already started."
+return
+fi
+echo "Starting OpenOffice headless server"
+# $SOFFICE_PATH -headless -nologo -nofirststartwizard -accept="socket,host=127.0.0.1,port=8100;urp" &> /dev/null 2>&1
+$SOFFICE_PATH -accept="socket,host=127.0.0.1,port=8100;urp;" -nologo -headless -nofirststartwizard >/dev/null 2>&1 &
+touch $PIDFILE
+}
+function stop {
+if [ -f $PIDFILE ]; then
+echo "Stopping OpenOffice headless server."
+killall -9 soffice && killall -9 soffice.bin
+rm -f $PIDFILE
+return
+fi
+echo "Openoffice headless server is not running."
+}
+
+case "$1" in
+start)
+start
+;;
+stop)
+stop
+;;
+restart)
+stop
+echo "Pausing a moment to allow full shutdown" && sleep 5
+start
+;;
+*)
+echo "Usage: $0 {start|stop|restart}"
+esac

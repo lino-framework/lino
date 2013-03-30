@@ -47,3 +47,8 @@ distributed with Lino.
   Johan De Schutter's `eid-javascript-lib <http://code.google.com/p/eid-javascript-lib/>`_
   to read data from Belgian eID cards
   (See also :attr:`lino.Lino.use_eid_jslib`).
+  
+- The Lino distribution contains also a 
+  :srcref:`/bash/openoffice-headless` script which has obviously many authors,
+  I found it in a `blog post by Glenn Enright <http://thepocketsite.com/blog/2010/10/12/openoffice-headless-mode/>`_.
+  

@@ -2,7 +2,7 @@
 20130330 (Saturday, 30 March 2013)
 ==================================
 
-Finishing :class:`NewJobsOverview <lino_welfare.modlib.jobs.models.NewJobsOverview>`.
+Finishing :ref:`welfare.jobs.JobsOverview`:
 
 - In ::mod:`lino.utils.appy_pod`, renamed `html2odf` to `ehtml`
 
@@ -14,4 +14,28 @@ Finishing :class:`NewJobsOverview <lino_welfare.modlib.jobs.models.NewJobsOvervi
   the wanted widths distribution.
 
 - Better docstrings at different places.
+
+
+How to install python-uno in a virtualenv on Debian Squeeze
+-----------------------------------------------------------
+
+I have a virtualenv "demo" which has been created without 
+site-packages. This Python interpreter as expected, doesn't 
+find any `uno` module: ``import uno`` raises an ImportError.
+And I could not find any pypi package to be installed using pip.
+
+Solution: the `uno.py` is in :file:`/usr/share/pyshared`. 
+Just add this directory to your PYTHONPATH.
+
+There are different methods to achive this; for me the easiest seems 
+to create a file `local.pth` in 
+:file:`/usr/local/pythonenv/demo/lib/python2.6/site-packages` 
+with one line of text: `/usr/share/pyshared`.
+
+Another problem was to have the openoffice daemon start.
+Because my :srcref:`/bash/oood` didn't seem to work I surfed around 
+and found an almost identical one, but LSB compatible, 
+`here <http://thepocketsite.com/blog/2010/10/12/openoffice-headless-mode/>`_.
+this is now :srcref:`/bash/openoffice-headless`.
+
 
