@@ -20,8 +20,8 @@ How to install python-uno in a virtualenv on Debian Squeeze
 -----------------------------------------------------------
 
 I have a virtualenv "demo" which has been created without 
-site-packages. This Python interpreter as expected, doesn't 
-find any `uno` module: ``import uno`` raises an ImportError.
+site-packages. This Python interpreter, as expected, doesn't 
+find any `uno` module: ``import uno`` raises an `ImportError`.
 And I could not find any pypi package to be installed using pip.
 
 Solution: the `uno.py` is in :file:`/usr/share/pyshared`. 
@@ -33,9 +33,11 @@ to create a file `local.pth` in
 with one line of text: `/usr/share/pyshared`.
 
 Another problem was to have the openoffice daemon start.
-Because my :srcref:`/bash/oood` didn't seem to work I surfed around 
-and found an almost identical one, but LSB compatible, 
-`here <http://thepocketsite.com/blog/2010/10/12/openoffice-headless-mode/>`_.
-this is now :srcref:`/bash/openoffice-headless`.
+Because at first my :srcref:`/bash/oood` didn't seem to work, 
+I surfed around and found 
+an almost identical one, but LSB compatible, 
+in a `blog post by Glenn Enright
+<http://thepocketsite.com/blog/2010/10/12/openoffice-headless-mode/>`_.
+This is now in :srcref:`/bash/openoffice-headless`.
 
 

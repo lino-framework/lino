@@ -1,0 +1,26 @@
+================================
+20130331 (Sunday, 31 March 2013)
+================================
+
+Switching from GPL to BSD
+=========================
+
+My decision to switch from GPL to BSD was already done 
+when splitting the first versions of djangosite and North from Lino in March 2013, 
+but I didn't yet take time 
+to do the dirty work of adapting the copyright headers in source files accordingly.
+Now I did it for both :mod:`djangosite` and :mod:`north`.
+See also :ref:`djangosite.changes` and :ref:`north.changes`.
+
+Why do I switch from GPL to BSD? 
+Because I have become more reasonable :-)
+I still believe that copyright is evil and should be abolished,
+and the GPL uses the copyleft concept to fight against copyright,
+but I understood that fighting against it is --for me!-- a waste of time.
+I believe that you should fight *for the good* things, not *against the bad* ones...
+And you cannot ask Beelzebul to fight against Satan...
+
+Lino itself must yet remain GPL as long as the ExtJS and Ext.ensible 
+user interface are still integrated. The same applies to Lino-Welfare.
+See :doc:`/tickets/16`
+
