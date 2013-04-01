@@ -11,16 +11,37 @@ but I didn't yet take time
 to do the dirty work of adapting the copyright headers in source files accordingly.
 Now I did it for both :mod:`djangosite` and :mod:`north`.
 See also :ref:`djangosite.changes` and :ref:`north.changes`.
-
-Why do I switch from GPL to BSD? 
-Because I have become more reasonable :-)
-I still believe that copyright is evil and should be abolished,
-and the GPL uses the copyleft concept to fight against copyright,
-but I understood that fighting against it is --for me!-- a waste of time.
-I believe that you should fight *for the good* things, not *against the bad* ones...
-And you cannot ask Beelzebul to fight against Satan...
-
 Lino itself must yet remain GPL as long as the ExtJS and Ext.ensible 
 user interface are still integrated. The same applies to Lino-Welfare.
 See :doc:`/tickets/16`
 
+Why do I switch from GPL to BSD? 
+
+  Because I have become more reasonable :-)
+  I still believe that copyright is evil and should be abolished,
+  and I acknowledge the GPL which uses the copyleft concept to fight against copyright,
+  but I understood that fighting against it is --for me!-- a waste of time.
+  I believe that you should fight *for the good* things, not *against the bad* ones...
+  And you cannot ask Beelzebul to fight against Satan...
+
+Did I say that copyright is evil? 
+
+  Maybe not evil, but at least nonsense.
+  It is nonsense to claim property of something you said or wrote. 
+  As soon as you say something, the information has passed over to 
+  your listeners and it becomes their's as well. 
+  Nobody can "own" an idea.
+  We must find other methods for remunerating people who do creative spiritual work.
+  The concepts of spiritual property and copyright are nonsense.
+  Okay this nonsense has grown for historical reasons, 
+  yes, the patents laws have had their reasons to be,
+  and no I don't condemn the actors 
+  and no I don't invite anybody to break existing laws 
+  and yes it will be much work for humanity to get rid of it...
+  but still it is nonsense.
+
+
+External links:
+
+  - http://en.wikipedia.org/wiki/Anti-copyright
+  - http://www.arrangersagainstcopyright.org/?page_id=2

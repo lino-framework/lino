@@ -12,6 +12,8 @@
 ## You should have received a copy of the GNU General Public License
 ## along with Lino; if not, see <http://www.gnu.org/licenses/>.
 
+from __future__ import unicode_literals
+
 import logging
 logger = logging.getLogger(__name__)
 
@@ -485,3 +487,33 @@ class Model(models.Model):
     """
     Used by :mod:`lino.core.kernel`
     """
+    
+
+    @classmethod
+    def subclasses_graph(self):
+        """
+        Returns a `graphviz` directive 
+        Used in welfare.userdocs to generate a internationalized graphviz::
+        
+          \.. py2rst:: print contacts.Partner.model_graphviz()
+          
+        """
+        from lino import dd
+        pairs = []
+        def collect(m):
+            for b in dd.models_by_base(m):
+              if b is not m and (m in b.__bases__):
+                pairs.append((m._meta.verbose_name,b._meta.verbose_name))
+                collect(b)
+        collect(self)
+        s = '\n'.join(['    "%s" -> "%s"' % x for x in pairs])
+        s = """
+
+.. graphviz:: 
+   
+   digraph foo {
+%s   
+  }
+  
+""" % s
+        return s

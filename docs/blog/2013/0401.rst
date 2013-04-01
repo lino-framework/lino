@@ -1,0 +1,121 @@
+================================
+20130401 (Monday, 01 April 2013)
+================================
+
+Multilingual user docs using Sphinx's i18n
+------------------------------------------
+
+I worked on :mod:`djangosite.utils.fablib` to support an optional 
+internationalized "user manual" per project.
+The new aliases
+`emu`, `umu`, `imu` and `cmu`
+do for `/userdocs`
+the same as the aliases 
+`em`, `um`, `im` and `cm`
+do for the Python code.
+
+The project's `fabfile` must set `env.languages` to something like::
+
+  env.languages = 'fr nl de'.split()
+
+
+The new method :meth:`lino.core.model.Model.subclasses_graph`
+generates a graphviz directive which
+
+
+
+Upgrade Sphinx from 1.1.3 to 1.2b1
+----------------------------------
+
+Georg Brandl has released a new version of Sphinx and asked to test it.
+The upgrade itself was smooth::
+
+  > pip install -U Sphinx
+  Downloading/unpacking Sphinx from http://pypi.python.org/packages/source/S/Sphinx/Sphinx-1.2b1.tar.gz#md5=67bea6df63be8e2a76ebedc76d8f71a3
+    Downloading Sphinx-1.2b1.tar.gz (3.0MB): 3.0MB downloaded
+    Running setup.py egg_info for package Sphinx
+
+      warning: no files found matching 'README'
+      no previously-included directories found matching 'doc\_build'
+  Requirement already up-to-date: Pygments>=1.2 in c:\python27\lib\site-packages (from Sphinx)
+  Requirement already up-to-date: Jinja2>=2.3 in c:\python27\lib\site-packages (from Sphinx)
+  Requirement already up-to-date: docutils>=0.7 in c:\python27\lib\site-packages (from Sphinx)
+  Installing collected packages: Sphinx
+    Found existing installation: Sphinx 1.1.3
+      Uninstalling Sphinx:
+        Successfully uninstalled Sphinx
+    Running setup.py install for Sphinx
+
+      warning: no files found matching 'README'
+      no previously-included directories found matching 'doc\_build'
+      Installing sphinx-apidoc-script.py script to c:\Python27\Scripts
+      Installing sphinx-apidoc.exe script to c:\Python27\Scripts
+      Installing sphinx-build-script.py script to c:\Python27\Scripts
+      Installing sphinx-build.exe script to c:\Python27\Scripts
+      Installing sphinx-quickstart-script.py script to c:\Python27\Scripts
+      Installing sphinx-quickstart.exe script to c:\Python27\Scripts
+      Installing sphinx-autogen-script.py script to c:\Python27\Scripts
+      Installing sphinx-autogen.exe script to c:\Python27\Scripts
+  Successfully installed Sphinx
+  Cleaning up...
+
+
+I rebuilt the following sites:
+
+- http://www.lino-framework.org/
+- http://welfare-user.lino-framework.org
+- http://welfare.lino-framework.org/
+- http://site.lino-framework.org/index.html
+- http://north.lino-framework.org/index.html
+
+
+One little problem was because I had been using the fact that a hidden doctree was still visible in the sidebar. On http://www.lino-framework.org/ there is a heading "Suggestions du chef" which was a kind of manually written "best of" toctree. But the sidebar still was meant to show the official toctree. The new version forced me to remove the :hidden: and add a "Sitemap" section there. I think the new version is right, and I'll remove my "Suggestions du chef" section soon.
+
+
+
+ValueError: need more than 1 value to unpack
+--------------------------------------------
+
+The following problem (which I didn't yet report to the mailing list) 
+is still not solved in Sphinx 1.2b1::
+
+  Traceback (most recent call last):
+    File "setup.py", line 3, in <module>
+      setup(**SETUP_INFO)
+    File "c:\Python27\lib\distutils\core.py", line 152, in setup
+      dist.run_commands()
+    File "c:\Python27\lib\distutils\dist.py", line 953, in run_commands
+      self.run_command(cmd)
+    File "c:\Python27\lib\distutils\dist.py", line 972, in run_command
+      cmd_obj.run()
+    File "c:\Python27\lib\site-packages\babel-1.0dev_r661-py2.7.egg\babel\messages\frontend.py", line 577, in run
+      template = read_po(infile)
+    File "c:\Python27\lib\site-packages\babel-1.0dev_r661-py2.7.egg\babel\messages\pofile.py", line 220, in read_po
+      _add_message()
+    File "c:\Python27\lib\site-packages\babel-1.0dev_r661-py2.7.egg\babel\messages\pofile.py", line 173, in _add_message
+      catalog[msgid] = message
+    File "c:\Python27\lib\site-packages\babel-1.0dev_r661-py2.7.egg\babel\messages\catalog.py", line 617, in __setitem__
+      self.mime_headers = _parse_header(message.string).items()
+    File "c:\Python27\lib\site-packages\babel-1.0dev_r661-py2.7.egg\babel\messages\catalog.py", line 372, in _set_mime_headers
+      value, tzoffset, _ = re.split('([+-]\d{4})$', value, 1)
+  ValueError: need more than 1 value to unpack
+
+The exception happens in Babel because Sphinx's gettext builder 
+generates `POT-Creation-Date` headers without timezone information.
+The generated .pot files contain::
+
+  "POT-Creation-Date: 2013-04-01 07:09\n"
+
+but it should be ::
+
+  "POT-Creation-Date: 2013-04-01 07:09+0300\n"
+  
+
+Workaround for me is to find line 160 of `sphinx/builders/gettext.py`::
+
+    ctime = datetime.now().strftime('%Y-%m-%d %H:%M%z'),
+    
+and to replace it by::
+
+    ctime = datetime.now().strftime('%Y-%m-%d %H:%M%z+0300'), # Estonian summertime
+

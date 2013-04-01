@@ -36,11 +36,12 @@ Suggestions du chef
   
 - Lino is listed on `PyPI <http://pypi.python.org/pypi/lino>`_, 
   the Python Package Index.
- 
+
+Sitemap
+-------
 
 .. toctree::
    :maxdepth: 2
-   :hidden:
 
    about/index
    demos
@@ -55,4 +56,5 @@ Suggestions du chef
    ref/index
    user/index
    API <api/lino>
+   changes
 

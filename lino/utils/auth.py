@@ -202,7 +202,8 @@ class UserProfile(Choice):
         if self.name:
             s += "." + self.name
         s += ":" + self.value + "("
-        s += "level=%s" % self.level.name
+        #~ s += "level=%s" % self.level.name
+        s += "level=%s" % self.level
         for g in UserGroups.items():
             if g.value: # no level for UserGroups.blank_item
                 v = getattr(self,g.value+'_level',None)
