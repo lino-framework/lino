@@ -150,8 +150,14 @@ django-extensions
 -----------------
 
 Ich habe mir mal das Modul 
-:doc:`/reviews/django-extensions`
+:doc:`django-extensions/index`
 angeschaut.
 
+.. toctree::
+   :maxdepth: 2
 
+  django-extensions/index
+  
+  
+  
 

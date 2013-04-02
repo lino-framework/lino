@@ -12,6 +12,7 @@ About Lino
    lino_and_django
    why_extjs
    /community/index
+   ui
 
 
 

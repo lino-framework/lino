@@ -1,10 +1,7 @@
 DavLink
 =======
 
-.. warning::
-
-  This document page is work in progress.
-  
+.. include:: /include/wip.rst
 
 
 DavLink is an applet that 

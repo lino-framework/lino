@@ -497,7 +497,7 @@ Medium-term
     Zu meditieren.
 
 #.  Uploads mit Sonderzeichen im Dateinamen funktionieren noch nicht.
-    See :doc:`/blog/20110725` and :doc:`/blog/20110809`.
+    See :blogref:`20110725` and :blogref:`20110809`.
 
 #.  Buttons sollten gleich nach einem Klick deaktiviert werden, 
     bis die Aktion abgeschlossen ist.
@@ -512,7 +512,7 @@ Medium-term
     but this folder already exists."
 
 #.  Custom Quick filters 
-    See :doc:`/blog/2011/1207`.
+    See :blogref:`20111207`.
 
 #.  lino.projects.pcsw has a database design flaw: 
     Person should be split into "Clients" and "normal" persons.
@@ -576,7 +576,7 @@ http://lino/api/pcsw/LanguageKnowledgesByPerson?_dc=1315554805581&sort=written&d
 #.  Bug in :term:`appy.pod`: https://bugs.launchpad.net/appy/+bug/815019
 
 #.  Client-seitiger Ersatz für den "Memo"-Button, der seit 
-    :doc`/blog/2011/0605` wieder raus ist.
+    :blogref`20110605` wieder raus ist.
     Mir war klargeworden, dass diese Lösung (Memo-Felder auf Anfrage 
     schon serverseitig abzuschneiden) erstens theoretisch Unsinn war 
     und zweitens in der Praxis noch einige Bugs hatte. Momentan wird 
@@ -795,7 +795,7 @@ Later
    Er soll sie dann auch unabhängig von der Sprache finden. 
    Vielleicht werde ich doctemplates in die config-directories verschieben 
    und mein System von config-Dateien erweitern, dass es auch Unterverzeichnisse verträgt.
-   Siehe :doc:`/blog/2010/1029`, :doc:`/blog/2010/1112`.
+   Siehe :blogref:`20101029`, :blogref:`20101112`.
   
 #.  Hauptmenü nicht anzeigen, wenn ein Fenster offen ist. 
     Stattdessen ein bequemer Button, um ein weiteres Browserfenster mit Lino zu öffnen.
@@ -873,7 +873,7 @@ Long-term
   - `Forms with vbox Layout <http://dev.sencha.com/deploy/dev/examples/form/vbox-form.html>`_ 
   - `Composite Form Fields <http://dev.sencha.com/deploy/dev/examples/form/composite-field.html>`_ 
 
-#. Filter auf virtuelle Kolonnen setzen können. Siehe :doc:`/blog/2010/0811`.
+#. Filter auf virtuelle Kolonnen setzen können. Siehe :blogref:`20100811`.
 
 #. In Kolonne Sprachkenntnisse kann man noch keinen Filter setzen. 
    Wenn man es tut, kommt auf dem Server ein 
@@ -999,7 +999,7 @@ Long-term
 
 #. Django Test-Suite ans Laufen kriegen und Git-Benutzung lernen, 
    um bei Diskussionen um Django-Tickets mitreden zu können.
-   (sh. :doc:`/blog/2010/1103`)
+   (sh. :blogref:`20101103`)
   
 #.  Use event managers as suggested by Jonathan Julian (Tip #2 in
     http://www.slideshare.net/jonathanjulian/five-tips-to-improve-your-ext-js-application). 
@@ -1017,7 +1017,7 @@ Long-term
 #.  Mehr über Nuxeo lesen: http://doc.nuxeo.org/5.3/books/nuxeo-book/html/index.html
 
 #.  Use :meth:`Action.run` in general, not only for RowAction. 
-    See :doc:`/blog/2010/1124`
+    See :blogref:`20101124`
   
 #.  Warnung, wenn das gleiche Feld mehrmals in einem Detail 
     vorkommt (z.B. in verschiedenen Reitern).
@@ -1043,7 +1043,7 @@ Long-term
 #.  Check whether Lino should use
     http://django-rest-framework.org/
     instead of reinventing the wheel.
-    (Discovered :doc:`/blog/2011/0311`)
+    (Discovered :blogref:`20110311`)
     
     
     
@@ -1078,7 +1078,7 @@ Documentation
      ref\python\lino.modlib.dsbe.rst:17: (WARNING/2) autodoc can't import/find module 'lino.projects.dsbe.models', 
      it reported error: "resolve_model('contacts.Company',app_label='contacts',who=None) found None"
 
-#.  ``make doctest`` nutzbar machen. Siehe :doc:`/blog/2010/1024`
+#.  ``make doctest`` nutzbar machen. Siehe :blogref:`20101024`
 
 #.  Check whether 
     `pydocweb <https://github.com/pv/pydocweb/tree/master/docweb>`_    
@@ -1120,11 +1120,13 @@ Benutzern überlegen.
     kriegen können.
     Zu analysieren mit den Benutzern.
 
-Sonstige
---------
 
-Here also some collected todo entries.
 
-.. todolist::
+Tickets
+-------
 
+.. toctree::
+   :maxdepth: 2
+   
+   tickets/index
 

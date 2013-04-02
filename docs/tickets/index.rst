@@ -1,17 +1,17 @@
 Tickets
 =======
 
-This is the place where we invite other developers to drop in and join the project. 
-
-In case you need to install Lino and get one of the demo application running, 
-please follow the instructions on :doc:`/admin/install` 
-and let us know when they are unclear. 
+Here is a list of currently open tickets.
 
 .. toctree::
    :maxdepth: 1
-   :glob:
    
-   ?
-   ??
+   62
+   66
+   67
+   68
+   70
+   73
+   75
    
-
+   all

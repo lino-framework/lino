@@ -1,3 +1,4 @@
+T:\hgwork\lino\docs\blog\2013\0130.rst:156: WARNING: toctree contains reference to nonexisting document u'blog/2013/ :maxdepth: 2'
 T:\hgwork\lino\docs\blog\2013\0321.rst:46: WARNING: Definition list ends without a blank line; unexpected unindent.
 T:\hgwork\lino\docs\blog\2013\0323.rst:127: ERROR: Unknown target name: "lf".
 T:\hgwork\lino\docs\about\license.rst:10: WARNING: unknown document: /tutorials/polls
@@ -14,7 +15,6 @@ t:\hgwork\lino\lino\ui\__init__.py:docstring of lino.ui.Site.webdav_url:7: WARNI
 t:\hgwork\lino\lino\ui\__init__.py:docstring of lino.ui.Site.webdav_url:7: WARNING: term not in glossary: runserver
 T:\hgwork\lino\docs\api\lino.utils.rst:7: WARNING: unknown document: /autodoc/lino.test_apps.mti
 T:\hgwork\lino\docs\blog\2013\0130.rst:9: WARNING: term not in glossary: ddt
-T:\hgwork\lino\docs\blog\2013\0130.rst:152: WARNING: unknown document: /reviews/django-extensions
 T:\hgwork\lino\docs\blog\2013\0201.rst:10: WARNING: unknown document: ../2012/0704
 T:\hgwork\lino\docs\blog\2013\0209.rst:7: WARNING: unknown document: /tutorials/uiless
 T:\hgwork\lino\docs\blog\2013\0211.rst:7: WARNING: unknown document: /tutorials/uiless
@@ -111,16 +111,6 @@ T:\hgwork\lino\docs\tickets\65.rst:4: WARNING: unknown document: /blog/2011/0311
 T:\hgwork\lino\docs\tickets\70.rst:9: WARNING: unknown document: /tutorials/uiless
 T:\hgwork\lino\docs\tickets\72.rst:33: WARNING: unknown document: /2013/0203
 T:\hgwork\lino\docs\tickets\8.rst:13: WARNING: unknown document: /blog/2010/1026
-T:\hgwork\lino\docs\todo.rst:499: WARNING: unknown document: /blog/20110725
-T:\hgwork\lino\docs\todo.rst:499: WARNING: unknown document: /blog/20110809
-T:\hgwork\lino\docs\todo.rst:514: WARNING: unknown document: /blog/2011/1207
-T:\hgwork\lino\docs\todo.rst:794: WARNING: unknown document: /blog/2010/1029
-T:\hgwork\lino\docs\todo.rst:794: WARNING: unknown document: /blog/2010/1112
-T:\hgwork\lino\docs\todo.rst:876: WARNING: unknown document: /blog/2010/0811
-T:\hgwork\lino\docs\todo.rst:1000: WARNING: unknown document: /blog/2010/1103
-T:\hgwork\lino\docs\todo.rst:1019: WARNING: unknown document: /blog/2010/1124
-T:\hgwork\lino\docs\todo.rst:1043: WARNING: unknown document: /blog/2011/0311
-T:\hgwork\lino\docs\todo.rst:1081: WARNING: unknown document: /blog/2010/1024
 T:\hgwork\lino\docs\topics\bcss.rst:14: WARNING: unknown document: /blog/2012/0330
 T:\hgwork\lino\docs\topics\bcss.rst:15: WARNING: unknown document: /blog/2011/0922
 T:\hgwork\lino\docs\topics\bcss.rst:16: WARNING: unknown document: /blog/2011/0923
@@ -133,7 +123,7 @@ T:\hgwork\lino\docs\topics\layouts.rst:44: WARNING: term not in glossary: slave 
 T:\hgwork\lino\docs\topics\layouts.rst:94: WARNING: unknown document: /blog/2012/0630
 T:\hgwork\lino\docs\topics\minimal_apps.rst:15: WARNING: unknown document: /ref/modlib
 T:\hgwork\lino\docs\topics\mti.rst:26: WARNING: unknown document: /autodoc/lino.test_apps.mti
+T:\hgwork\lino\docs\topics\ui.rst:37: WARNING: undefined label: lino.ui.renderers (if the link has no caption the label must precede a section header)
 T:\hgwork\lino\docs\tutorials\dumpy.rst:168: WARNING: unknown document: /tutorials/polls
 T:\hgwork\lino\docs\tutorials\lets.rst:4: WARNING: unknown document: polls
 T:\hgwork\lino\docs\tutorials\polls\mysite\index.rst:216: WARNING: unknown document: dumpy
-T:\hgwork\lino\docs\user\ui.rst:38: WARNING: undefined label: lino.ui.renderers (if the link has no caption the label must precede a section header)

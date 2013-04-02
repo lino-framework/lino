@@ -7,6 +7,5 @@ Topics
    
    *
    /django/index
-   /dev/index
    /tests
    /davlink/index

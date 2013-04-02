@@ -47,14 +47,8 @@ Sitemap
    demos
    tutorials/index
    blog/index
-   releases/index
-   todo
-   tickets/index
    admin/index
-   topics/index
-   reviews/index
+   dev/index
    ref/index
-   user/index
-   API <api/lino>
    changes
 

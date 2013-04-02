@@ -14,5 +14,6 @@ Reference
    model_methods
    jargon
    obsolete
+   /topics/index
    
    
