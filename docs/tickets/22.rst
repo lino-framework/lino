@@ -2,7 +2,7 @@
 ==================================================
 
 Solved. See :doc:`/topics/mti`.
-Reopened :doc:`/blog/2013/0202`.
+Reopened :blogref:`20130202`.
 
 On a site that uses Django's MTI, Lino should provide a 
 way to "metamorphose" or convert existing data records into a 

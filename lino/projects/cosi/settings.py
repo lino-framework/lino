@@ -83,6 +83,8 @@ class Site(Site,ledger.SiteMixin):
         add('900', _("Administrator"),   'A A A', 'admin')
         
             
+    partners_app_label = 'partners'
+    
     def get_installed_apps(self):
         for a in super(Site,self).get_installed_apps():
             yield a
@@ -91,8 +93,8 @@ class Site(Site,ledger.SiteMixin):
         #~ yield 'django.contrib.auth'
         yield 'lino.modlib.countries'
         #~ yield 'lino.modlib.properties'
-        #~ yield 'lino.modlib.partners'
-        yield 'lino.modlib.contacts'
+        yield 'lino.modlib.partners'
+        #~ yield 'lino.modlib.contacts'
         #~ yield 'lino.modlib.households'
         yield 'lino.modlib.products'
         yield 'lino.modlib.accounts'

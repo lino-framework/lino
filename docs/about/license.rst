@@ -11,10 +11,10 @@ This section explains how the author of Lino understands the GPL
   your own Lino application.
   A Lino application can be something as simple as
   the "Polls" application described in 
-  :doc:`The Polls tutorial </tutorials/polls>`.
+  :ref:`lino.tutorial.polls`.
   
 - You may also write your own collection of Lino plugins,
-  a concurrent to the :doc:`Lino Modules Library </topics/modlib>`.
+  a concurrent to the :ref:`modlib`.
   
 - You may write some other extension to Lino, or even start a fork 
   which does certain things in a better way.

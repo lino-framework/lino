@@ -3,7 +3,7 @@
 
 Continued on `lino.apps.presto`: mainly sales, journals and ledger.
 
-Edited :doc:`/blog/2012/0514` 
+Edited :blogref:`20120514` 
 so that the last paragraph becomes 
 understandable by somebody else.
 Also adapted the docstring of 

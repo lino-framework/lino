@@ -1,12 +1,15 @@
-T:\hgwork\lino\docs\blog\2013\0130.rst:156: WARNING: toctree contains reference to nonexisting document u'blog/2013/ :maxdepth: 2'
-T:\hgwork\lino\docs\blog\2013\0321.rst:46: WARNING: Definition list ends without a blank line; unexpected unindent.
-T:\hgwork\lino\docs\blog\2013\0323.rst:127: ERROR: Unknown target name: "lf".
-T:\hgwork\lino\docs\about\license.rst:10: WARNING: unknown document: /tutorials/polls
-T:\hgwork\lino\docs\admin\which_lino.rst:8: WARNING: unknown document: /tutorials/polls
-T:\hgwork\lino\docs\api\lino.mixins.rst:25: WARNING: unknown document: /tutorial/human/index
-t:\hgwork\lino\lino\modlib\contacts\models.py:docstring of lino.modlib.contacts.models.Person:3: WARNING: unknown document: /tutorial/human/index
-T:\hgwork\lino\docs\api\lino.modlib.countries.rst:18: WARNING: undefined label: lino.lib.countries.city (if the link has no caption the label must precede a section header)
-t:\hgwork\lino\lino\modlib\countries\models.py:docstring of lino.modlib.countries.models.Country:1: WARNING: undefined label: lino.lib.countries.country (if the link has no caption the label must precede a section header)
+T:\hgwork\lino\docs\api\lino.modlib.partners.rst:28: WARNING: autodoc: failed to import module u'lino.modlib.partners.tests'; the following exception was raised:
+Traceback (most recent call last):
+  File "c:\Python27\lib\site-packages\sphinx\ext\autodoc.py", line 326, in import_object
+    __import__(self.modname)
+ImportError: No module named tests
+T:\hgwork\lino\docs\blog\2013\index.rst:3: SEVERE: Unexpected section title or transition.
+
+====
+None:4: SEVERE: Unexpected section title.
+
+2013
+====
 t:\hgwork\lino\lino\modlib\users\models.py:docstring of lino.modlib.users.models.User:3: WARNING: unknown document: /topics/http_auth
 T:\hgwork\lino\docs\api\lino.projects.igen.rst:7: WARNING: unknown document: /igen/index
 T:\hgwork\lino\docs\api\lino.projects.unused_polls_tutorial.rst:7: WARNING: unknown document: /tutorials/polls
@@ -20,110 +23,24 @@ T:\hgwork\lino\docs\blog\2013\0209.rst:7: WARNING: unknown document: /tutorials/
 T:\hgwork\lino\docs\blog\2013\0211.rst:7: WARNING: unknown document: /tutorials/uiless
 T:\hgwork\lino\docs\blog\2013\0320.rst:9: WARNING: undefined label: lino.countries.country (if the link has no caption the label must precede a section header)
 T:\hgwork\lino\docs\blog\2013\0320.rst:59: WARNING: undefined label: lino.modlib.cal (if the link has no caption the label must precede a section header)
-+---------------------------------------------------------------+----------------------------------------------------+
-| .. figure:: /tutorials/polls/mysite/polls1.jpg                | .. figure:: /screenshots/cal.Panel.jpg             |
-|   :scale: 30 %                                                |   :scale: 24 %                                     |
-|   :target: http://demo1.lino-framework.org                    |   :target: http://demo2.lino-framework.org         |
-|                                                               |                                                    |
-|   `demo1 <http://demo1.lino-framework.org>`_                  |   `demo2 <http://demo2.lino-framework.org>`_ shows |
-|   shows the "Polls" application developed in the              |   an early prototype of Lino Homeworkschool        |
-|   :doc:`/tutorials/polls/index` tutorial.                     |   (:mod:`lino.projects.homeworkschool`).           |
-|   A minimal didactic Lino application without authentication. |   Note that this is currently a sleeping project   |
-|                                                               |   because there is no acute need.                  |
-+---------------------------------------------------------------+----------------------------------------------------+
-| .. figure:: /screenshots/purchase.Invoices.html.jpg           | .. figure:: /screenshots/sales.Invoice.jpg         |
-|   :scale: 22                                                  |   :scale: 30                                       |
-|   :target: http://demo3.lino-framework.org                    |   :target: http://demo4.lino-framework.org         |
-|                                                               |                                                    |
-|   `demo3 <http://demo3.lino-framework.org>`_                  |   `demo4 <http://demo4.lino-framework.org>`_       |
-|   shows an early prototype of Lino Presto.                    |   shows an early prototype of Lino Cos?.           |
-+---------------------------------------------------------------+----------------------------------------------------+
-:7: WARNING: unknown document: /tutorials/polls/index
-T:\hgwork\lino\docs\django\DjangoPatches.rst:14: WARNING: unknown document: /blog/2011/0225
-T:\hgwork\lino\docs\ref\files.rst:6: WARNING: unknown document: /blog/2012/0508
-T:\hgwork\lino\docs\ref\files.rst:14: WARNING: unknown document: /tutorials/polls
-T:\hgwork\lino\docs\ref\glossary.rst:61: WARNING: unknown document: /blog/2010/0809
 T:\hgwork\lino\docs\ref\glossary.rst:104: WARNING: term not in glossary: report
-T:\hgwork\lino\docs\ref\javascript.rst:13: WARNING: unknown document: /blog/2010/0716
-T:\hgwork\lino\docs\ref\javascript.rst:36: WARNING: unknown document: /blog/2010/0714
-T:\hgwork\lino\docs\ref\javascript.rst:50: WARNING: unknown document: /blog/2010/0714
-T:\hgwork\lino\docs\ref\javascript.rst:62: WARNING: unknown document: /blog/2010/0706
-T:\hgwork\lino\docs\ref\obsolete.rst:9: WARNING: unknown document: /blog/2010/0803
-T:\hgwork\lino\docs\ref\obsolete.rst:18: WARNING: unknown document: /blog/2010/0803
-T:\hgwork\lino\docs\ref\settings.rst:79: WARNING: unknown document: /blog/2010/0716
-T:\hgwork\lino\docs\ref\settings.rst:92: WARNING: unknown document: /blog/2010/0624
-T:\hgwork\lino\docs\releases\1.3.4.rst:4: WARNING: unknown document: /blog/2012/0124
 T:\hgwork\lino\docs\releases\1.3.4.rst:4: WARNING: unknown document: /download
-T:\hgwork\lino\docs\releases\1.3.5.rst:4: WARNING: unknown document: /blog/2012/0125
 T:\hgwork\lino\docs\releases\1.3.5.rst:4: WARNING: unknown document: /download
-T:\hgwork\lino\docs\releases\1.3.6.rst:4: WARNING: unknown document: /blog/2012/0126
 T:\hgwork\lino\docs\releases\1.3.6.rst:4: WARNING: unknown document: /download
-T:\hgwork\lino\docs\releases\1.3.7.rst:4: WARNING: unknown document: /blog/2012/0128
 T:\hgwork\lino\docs\releases\1.3.7.rst:4: WARNING: unknown document: /download
-T:\hgwork\lino\docs\releases\1.3.8.rst:102: WARNING: unknown document: /blog/2012/0206
-T:\hgwork\lino\docs\releases\1.3.8.rst:102: WARNING: unknown document: /blog/2012/0207
-T:\hgwork\lino\docs\releases\1.4.0.rst:6: WARNING: unknown document: /blog/2012/0217
-T:\hgwork\lino\docs\releases\1.4.0.rst:81: WARNING: unknown document: /blog/2012/0214
-T:\hgwork\lino\docs\releases\1.4.3.rst:24: WARNING: unknown document: /blog/2012/0228
-T:\hgwork\lino\docs\releases\1.4.3.rst:33: WARNING: unknown document: /blog/2012/0227
-T:\hgwork\lino\docs\releases\1.4.5.rst:37: WARNING: unknown document: /blog/2012/0525
-T:\hgwork\lino\docs\releases\1.4.5.rst:65: WARNING: unknown document: /blog/2012/0305
-T:\hgwork\lino\docs\releases\1.4.5.rst:70: WARNING: unknown document: /blog/2012/0305
-T:\hgwork\lino\docs\releases\1.4.9.rst:9: WARNING: unknown document: /blog/2012/0728
-T:\hgwork\lino\docs\releases\1.4.9.rst:11: WARNING: unknown document: /blog/2012/0725
-T:\hgwork\lino\docs\releases\1.4.9.rst:18: WARNING: unknown document: /blog/2012/0725
-T:\hgwork\lino\docs\releases\1.4.9.rst:26: WARNING: unknown document: /blog/2012/0725
-T:\hgwork\lino\docs\tickets\1.rst:105: WARNING: unknown document: /blog/2010/1007
-T:\hgwork\lino\docs\tickets\1.rst:105: WARNING: unknown document: /blog/2010/1011
-T:\hgwork\lino\docs\tickets\1.rst:105: WARNING: unknown document: /blog/2010/1026
 T:\hgwork\lino\docs\tickets\10.rst:4: WARNING: unknown document: /releases/2010/1027
-T:\hgwork\lino\docs\tickets\14.rst:34: WARNING: unknown document: /blog/2010/1110
-T:\hgwork\lino\docs\tickets\18.rst:17: WARNING: unknown document: /blog/2010/1208
-T:\hgwork\lino\docs\tickets\18.rst:17: WARNING: unknown document: /blog/2010/1209
-T:\hgwork\lino\docs\tickets\19.rst:82: WARNING: unknown document: /blog/2010/1221
-T:\hgwork\lino\docs\tickets\19.rst:85: WARNING: unknown document: /blog/2010/1221
-T:\hgwork\lino\docs\tickets\2.rst:39: WARNING: unknown document: /blog/2010/1011
-T:\hgwork\lino\docs\tickets\2.rst:40: WARNING: unknown document: /blog/2010/1103
-T:\hgwork\lino\docs\tickets\2.rst:41: WARNING: unknown document: /blog/2010/1104
-T:\hgwork\lino\docs\tickets\21.rst:94: WARNING: unknown document: /blog/2011/0218
-T:\hgwork\lino\docs\tickets\3.rst:5: WARNING: unknown document: /blog/2010/0709
-T:\hgwork\lino\docs\tickets\3.rst:5: WARNING: unknown document: /blog/2010/1015
-T:\hgwork\lino\docs\tickets\30.rst:32: WARNING: unknown document: /blog/2011/0308
-T:\hgwork\lino\docs\tickets\30.rst:33: WARNING: unknown document: /blog/2011/0331
-T:\hgwork\lino\docs\tickets\30.rst:34: WARNING: unknown document: /blog/2011/0401
 T:\hgwork\lino\docs\tickets\31.rst:23: WARNING: unknown document: /topics/http_auth
 T:\hgwork\lino\docs\tickets\32.rst:4: WARNING: unknown document: /dsbe/index
 T:\hgwork\lino\docs\tickets\34.rst:1: WARNING: term not in glossary: .dtl
-T:\hgwork\lino\docs\tickets\40.rst:4: WARNING: unknown document: /blog/2011/0425
-T:\hgwork\lino\docs\tickets\41.rst:85: WARNING: unknown document: /blog/2011/0502
-T:\hgwork\lino\docs\tickets\44.rst:10: WARNING: unknown document: /blog/2011/0605
 T:\hgwork\lino\docs\tickets\45.rst:23: WARNING: unknown document: /davlink
-T:\hgwork\lino\docs\tickets\46.rst:18: WARNING: unknown document: /blog/2011/0809
-T:\hgwork\lino\docs\tickets\48.rst:12: WARNING: unknown document: /blog/2011/0822
-T:\hgwork\lino\docs\tickets\48.rst:12: WARNING: unknown document: /blog/2011/0823
-T:\hgwork\lino\docs\tickets\5.rst:10: WARNING: unknown document: /blog/2010/0916
-T:\hgwork\lino\docs\tickets\5.rst:12: WARNING: unknown document: /blog/2010/1001
-T:\hgwork\lino\docs\tickets\50.rst:15: WARNING: unknown document: /blog/2011/0831
-T:\hgwork\lino\docs\tickets\50.rst:15: WARNING: unknown document: /blog/2011/0907
 T:\hgwork\lino\docs\tickets\51.rst:5: WARNING: unknown document: /blog/2011/1122
 T:\hgwork\lino\docs\tickets\51.rst:56: WARNING: unknown document: /blog/2011/1207
 T:\hgwork\lino\docs\tickets\65.rst:4: WARNING: unknown document: /blog/2011/0311
 T:\hgwork\lino\docs\tickets\70.rst:9: WARNING: unknown document: /tutorials/uiless
 T:\hgwork\lino\docs\tickets\72.rst:33: WARNING: unknown document: /2013/0203
-T:\hgwork\lino\docs\tickets\8.rst:13: WARNING: unknown document: /blog/2010/1026
-T:\hgwork\lino\docs\topics\bcss.rst:14: WARNING: unknown document: /blog/2012/0330
-T:\hgwork\lino\docs\topics\bcss.rst:15: WARNING: unknown document: /blog/2011/0922
-T:\hgwork\lino\docs\topics\bcss.rst:16: WARNING: unknown document: /blog/2011/0923
-T:\hgwork\lino\docs\topics\bcss.rst:17: WARNING: unknown document: /blog/2011/1003
-T:\hgwork\lino\docs\topics\bcss.rst:18: WARNING: unknown document: /blog/2011/1020
-T:\hgwork\lino\docs\topics\bcss.rst:19: WARNING: unknown document: /blog/2011/1028
-T:\hgwork\lino\docs\topics\bcss.rst:20: WARNING: unknown document: /blog/2011/1110
-T:\hgwork\lino\docs\topics\layouts.rst:25: WARNING: unknown document: /tutorials/polls
 T:\hgwork\lino\docs\topics\layouts.rst:44: WARNING: term not in glossary: slave table
-T:\hgwork\lino\docs\topics\layouts.rst:94: WARNING: unknown document: /blog/2012/0630
 T:\hgwork\lino\docs\topics\minimal_apps.rst:15: WARNING: unknown document: /ref/modlib
 T:\hgwork\lino\docs\topics\mti.rst:26: WARNING: unknown document: /autodoc/lino.test_apps.mti
 T:\hgwork\lino\docs\topics\ui.rst:37: WARNING: undefined label: lino.ui.renderers (if the link has no caption the label must precede a section header)
-T:\hgwork\lino\docs\tutorials\dumpy.rst:168: WARNING: unknown document: /tutorials/polls
 T:\hgwork\lino\docs\tutorials\lets.rst:4: WARNING: unknown document: polls
 T:\hgwork\lino\docs\tutorials\polls\mysite\index.rst:216: WARNING: unknown document: dumpy

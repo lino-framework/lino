@@ -1,7 +1,7 @@
 Version 0.8.15
 ==============
 
-Released :doc:`/blog/2010/1209`.
+Released :blogref:`20101209`.
 
 New features
 ------------

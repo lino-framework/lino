@@ -23,7 +23,7 @@
   `:meth:`lino.utils.dpy.Serializer.value2string` didn't
   handle :class:`django.db.models.fields.NOT_PROVIDED` correctly.
 
-- Das gleiche Problem wie das ImproperlyConfigured vom :doc:`/blog/2010/0913`
+- Das gleiche Problem wie das ImproperlyConfigured vom :blogref:`20100913`
   hat mir heute nochmal 2 Stunden Sucherei beschert.
   Bei meinen manuellen Arbeiten zur Migration 
   waren die Datenbank-Datei (und auch die `db.log`), 

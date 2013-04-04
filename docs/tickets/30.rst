@@ -29,9 +29,9 @@ which explains the problem.
 
 Related blog entries: 
 
-- :doc:`/blog/2011/0308`
-- :doc:`/blog/2011/0331`
-- :doc:`/blog/2011/0401`
+- :blogref:`20110308`
+- :blogref:`20110331`
+- :blogref:`20110401`
 
 
 Here are some fragments of the things I tried without success:

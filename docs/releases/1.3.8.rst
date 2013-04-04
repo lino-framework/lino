@@ -99,5 +99,5 @@ Sichtbare Änderungen
 Known bugs
 ----------
 
-See :doc:`/blog/2012/0206` and :doc:`/blog/2012/0207`
+See :blogref:`20120206` and :blogref:`20120207`
 

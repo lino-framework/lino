@@ -18,6 +18,10 @@
 #~ from django.utils import simplejson as json
 #~ from django.conf import settings
 
+
+_handle_attr_name = '_lino_ui_handle'
+
+
 CHOICES_TEXT_FIELD = 'text'
 CHOICES_VALUE_FIELD = 'value'
 CHOICES_HIDDEN_SUFFIX = "Hidden"

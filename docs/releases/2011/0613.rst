@@ -14,8 +14,8 @@ Visible changes
 - Some more translations (fr and de)
 
 See 
-:doc:`/blog/2011/0613` and
-:doc:`/blog/2011/0615`.
+:blogref:`20110613` and
+:blogref:`20110615`.
 
 New features
 ------------

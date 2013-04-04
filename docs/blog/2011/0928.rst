@@ -33,7 +33,7 @@ ERROR: 'Contact with this ID already exists.'
 This happened in :term:`watch_tim` when 
 `PAR.swap_class` was called (i.e. when TIM data was 
 modified so that a Person became a Company or vice-versa).
-This bug was due to :doc:`/tickets/48` (since :doc:`/blog/2011/0822`).
+This bug was due to :doc:`/tickets/48` (since :blogref:`20110822`).
 
 When fixing this bug I fixed a related bug that wasn't yet discovered:
 When a a Person became a Company or vice-versa, then all related data in Lino 
@@ -46,7 +46,7 @@ Preparing release 1.2.3
 -----------------------
 
 - Adapted :func:`lino.apps.dsbe.migrate.migrate_from_1_2_2` 
-  to the changes of :doc:`/blog/2011/0915`.
+  to the changes of :blogref:`20110915`.
   
   
   

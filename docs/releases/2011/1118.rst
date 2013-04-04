@@ -54,7 +54,7 @@ Benutzer
 Administrator
 -------------
   
-- Details zur Vorlage "Lebenslauf" siehe :doc:`/blog/2011/1118`.
+- Details zur Vorlage "Lebenslauf" siehe :blogref:`20111118`.
 
 - :menuselection:`Konfigurierung --> Stellen --> Vertragsarten`
   und :menuselection:`Konfigurierung --> VSEs --> Vertragsarten`:

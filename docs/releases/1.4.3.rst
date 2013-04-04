@@ -22,7 +22,7 @@ Lino 1.4.3 behebt vor allem eine Serie von Bugs in der vorigen Version.
   und "Vertreten durch" noch auf dem alten Wert stand.
   
 - Layout-Bug im Insert-Fenster von Verträgen (nicht im Detail).
-  Detaillierte Beschreibung siehe :doc:`/blog/2012/0228`.
+  Detaillierte Beschreibung siehe :blogref:`20120228`.
 
 - Man konnte keinen Termine vom Kalender-Panel aus erstellen.
 
@@ -30,7 +30,7 @@ Lino 1.4.3 behebt vor allem eine Serie von Bugs in der vorigen Version.
   Wenn man einen Kolonnenfilter setzte, kam auf dem Server ein Traceback
   "global name 'json' is not defined", und der Filter wurde nicht aktiv.
 
-- Some more little bugs discovered internally, see :doc:`/blog/2012/0227` 
+- Some more little bugs discovered internally, see :blogref:`20120227` 
   for details.
 
 

@@ -29,7 +29,7 @@ Lino site, see :doc:`/admin/upgrade`.
 
 - Edit your local `settings.py` and replace 
   ``APPY_PARAMS`` with ``LINO.appy_params``
-  (:doc:`/blog/2011/0531`).
+  (:blogref:`20110531`).
   For example, if you had::
 
     APPY_PARAMS.update(pythonWithUnoPath='/etc/openoffice.org3/program/python')
@@ -40,7 +40,7 @@ Lino site, see :doc:`/admin/upgrade`.
     
 - In case you have local fixtures: rename all `.dpy` files to `.py`.
   Change your `dump` script.
-  See :doc:`/blog/2011/0601`.
+  See :blogref:`20110601`.
 
 - Adapt your document templates for text fields in Note and Contract.
 
@@ -68,7 +68,7 @@ Lino site, see :doc:`/admin/upgrade`.
   - (not necessary because TinyMCE also accepts plain text)
     Existing content in `notes.Note.body` must be converted using 
     :func:`lino.utils.restify.restify`.
-    See :doc:`/blog/2011/0525`.
+    See :blogref:`20110525`.
     
 
   

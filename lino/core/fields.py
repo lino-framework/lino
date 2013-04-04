@@ -805,6 +805,20 @@ class IncompleteDateField(models.CharField):
 
     def __init__(self,*args,**kw):
         kw.update(max_length=11)
+        msgkw = dict()
+        msgkw.update(ex1=IncompleteDate(1980,0,0).strftime(settings.SITE.date_format_strftime))
+        msgkw.update(ex2=IncompleteDate(1980,7,0).strftime(settings.SITE.date_format_strftime))
+        msgkw.update(ex3=IncompleteDate(0,7,23).strftime(settings.SITE.date_format_strftime))
+        kw.setdefault('help_text',_("""\
+Uncomplete dates are allowed, e.g. 
+"%(ex1)s" means "some day in 1980", 
+"%(ex2)s" means "in July 1980"
+or "%(ex3)s" means "on a 23th of July".""") % msgkw)
+        #~ kw.setdefault('help_text',u"""\
+#~ Unkomplette Datumsangaben sind erlaubt, z.B. 
+#~ "%(ex1)s" heißt "irgendwann im Jahr 1980", 
+#~ "%(ex2)s" heißt "im Juli 1980"
+#~ oder "%(ex3)s" heißt "an einem 23. Juli".""")
         models.CharField.__init__(self,*args,**kw)
       
     #~ def get_internal_type(self):

@@ -76,7 +76,7 @@ See https://docs.djangoproject.com/en/dev/ref/settings/#installed-apps
 
 .. setting:: DEBUG
 
-  See :doc:`/blog/2010/0716`
+  See :blogref:`20100716`
   
 .. setting:: SERIALIZATION_MODULES
 
@@ -89,7 +89,7 @@ Obsolete Lino-specific settings
 
 .. setting:: USER_INTERFACES
   
-   Lino-specific setting. See :doc:`/blog/2010/0624`.
+   Lino-specific setting. See :blogref:`20100624`.
 
 .. setting:: PROJECT_DIR
 

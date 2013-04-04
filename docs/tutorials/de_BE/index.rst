@@ -48,7 +48,7 @@ Installed 4 object(s) from 2 fixture(s)
 
 Here is the result:
 
->>> print Expressions.to_rst()
+>>> Expressions.show()
 ==== ============== ================== =====================
  ID   Designation    Designation (de)   Designation (de-be)
 ---- -------------- ------------------ ---------------------

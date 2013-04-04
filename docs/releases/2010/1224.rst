@@ -1,5 +1,5 @@
 Version 1.0 RC 1
 ================
 
-Released :doc:`/blog/2010/1224`.
+Released :blogref:`20101224`.
 

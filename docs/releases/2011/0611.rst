@@ -11,7 +11,7 @@ Bugs fixed
   avoid duplicates.
 
 - Optimizations in :mod:`lino.management.commands.diag`.
-  See :doc:`/blog/2011/0611`.
+  See :blogref:`20110611`.
   
 - `manage.py test` no longer fails on a mysql database with local collations.
 

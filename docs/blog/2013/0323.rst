@@ -125,7 +125,7 @@ To trust or not to trust?
 -------------------------
 
 Before releasing yesterdays new "textfield templates are now parsed using Jinja" 
-feature to lf_, 
+feature to :ref:`lf`, 
 I'd rather add the new attribute :attr:`lino.ui.Site.trusted_templates` which is False 
 by default. So sorry, you cannot see this feature in our live demos.
 

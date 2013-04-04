@@ -13,6 +13,10 @@ The final truth about what's going on is only
 Version 1.6.5 (in development)
 ==============================
 
+- :class:`lino.core.fields.IncompleteDateField` now has a 
+  default `help_text` (adapted from `birth_date` field 
+  in :class:`lino.mixins.human.Born`)
+
 - The new method :meth:`lino.core.model.Model.subclasses_graph`
   generates a graphviz directive which shows this model and the 
   submodels.

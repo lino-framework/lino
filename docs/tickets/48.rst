@@ -9,5 +9,5 @@ This change is triggered by our need for a
 user-friendly way to add recipients to an :class:`lino.modlib.mails.models.OutMail`.
 A Contact is "a Company, a Person, a User or a Group of Contacts".
 
-Started :doc:`/blog/2011/0822`,
-finished :doc:`/blog/2011/0823`
+Started :blogref:`20110822`,
+finished :blogref:`20110823`

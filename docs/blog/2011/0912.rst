@@ -6,7 +6,7 @@ to understand why the Detail of the new :model:`dsbe.jobs.Offer` model
 complained about not finding the `jobs.PersonsByOffer` 
 slave report. Explanation that this was called 
 `contacts.PersonsByOffer` according to my own rules established 
-:doc:`/blog/2011/0822`.
+:blogref:`20110822`.
 
 The `app_label` of a Report
 ---------------------------

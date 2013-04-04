@@ -103,6 +103,6 @@ Chrome        |ch1b|        |ch2b|
 
  
 Blog entries
-:doc:`/blog/2010/1007`,
-:doc:`/blog/2010/1011`,
-:doc:`/blog/2010/1026`
+:blogref:`20101007`,
+:blogref:`20101011`,
+:blogref:`20101026`

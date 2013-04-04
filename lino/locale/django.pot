@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: lino 1.6.4\n"
 "Report-Msgid-Bugs-To: EMAIL@ADDRESS\n"
-"POT-Creation-Date: 2013-03-26 09:50+0100\n"
+"POT-Creation-Date: 2013-04-02 07:22+0100\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -36,92 +36,92 @@ msgstr ""
 msgid "Administrator"
 msgstr ""
 
-#: lino/core/actions.py:723 lino/core/actions.py:815 lino/extjs/linoweb.js:3600
+#: lino/core/actions.py:742 lino/core/actions.py:834 lino/extjs/linoweb.js:3600
 msgid "First page"
 msgstr ""
 
-#: lino/core/actions.py:724 lino/core/actions.py:816 lino/extjs/linoweb.js:3602
+#: lino/core/actions.py:743 lino/core/actions.py:835 lino/extjs/linoweb.js:3602
 msgid "Previous page"
 msgstr ""
 
-#: lino/core/actions.py:736 lino/core/actions.py:817 lino/extjs/linoweb.js:3603
+#: lino/core/actions.py:755 lino/core/actions.py:836 lino/extjs/linoweb.js:3603
 msgid "Next page"
 msgstr ""
 
-#: lino/core/actions.py:737 lino/core/actions.py:818 lino/extjs/linoweb.js:3601
+#: lino/core/actions.py:756 lino/core/actions.py:837 lino/extjs/linoweb.js:3601
 msgid "Last page"
 msgstr ""
 
-#: lino/core/actions.py:786
+#: lino/core/actions.py:805
 msgid "Detail"
 msgstr ""
 
-#: lino/core/actions.py:787
+#: lino/core/actions.py:806
 msgid "Open a detail window on this record"
 msgstr ""
 
-#: lino/core/actions.py:813 lino/extjs/__init__.py:850
+#: lino/core/actions.py:832 lino/extjs/__init__.py:850
 #: lino/modlib/pages/models.py:151 lino/modlib/pages/models.py:186
-#: lino/ui/models.py:336 lino/ui/views.py:1081
+#: lino/ui/models.py:336 lino/ui/views.py:1082
 msgid "Home"
 msgstr ""
 
-#: lino/core/actions.py:863 lino/ui/render.py:188
+#: lino/core/actions.py:882 lino/ui/render.py:188
 msgid "New"
 msgstr ""
 
-#: lino/core/actions.py:871
+#: lino/core/actions.py:890
 msgid "Insert a new record"
 msgstr ""
 
-#: lino/core/actions.py:881
+#: lino/core/actions.py:900
 #, python-format
 msgid "Insert into %s"
 msgstr ""
 
-#: lino/core/actions.py:902 lino/mixins/duplicable.py:39
+#: lino/core/actions.py:921 lino/mixins/duplicable.py:39
 msgid "Duplicate"
 msgstr ""
 
-#: lino/core/actions.py:934
+#: lino/core/actions.py:953
 msgid "Delete this record"
 msgstr ""
 
-#: lino/core/actions.py:942 lino/modlib/changes/models.py:57
+#: lino/core/actions.py:961 lino/modlib/changes/models.py:57
 msgid "Delete"
 msgstr ""
 
-#: lino/core/actions.py:953
+#: lino/core/actions.py:972
 msgid "Save changes in this form"
 msgstr ""
 
-#: lino/core/actions.py:954
+#: lino/core/actions.py:973
 msgid "Save"
 msgstr ""
 
-#: lino/core/actions.py:969 lino/modlib/changes/models.py:55
+#: lino/core/actions.py:988 lino/modlib/changes/models.py:55
 msgid "Create"
 msgstr ""
 
-#: lino/core/actions.py:971
+#: lino/core/actions.py:990
 msgid "Create the record and open a detail window on it"
 msgstr ""
 
-#: lino/core/actions.py:979
+#: lino/core/actions.py:998
 msgid "Create without detail"
 msgstr ""
 
-#: lino/core/actions.py:980
+#: lino/core/actions.py:999
 msgid "Don't open a detail window on the new record"
 msgstr ""
 
-#: lino/core/actions.py:987 lino/modlib/cal/models.py:833
+#: lino/core/actions.py:1006 lino/modlib/cal/models.py:833
 #: lino/modlib/cal/models.py:2218 lino/modlib/tickets/models.py:223
 #: lino/modlib/tickets/models.py:317
 msgid "Summary"
 msgstr ""
 
-#: lino/core/actions.py:988 lino/modlib/cal/models.py:322
+#: lino/core/actions.py:1007 lino/modlib/cal/models.py:322
 #: lino/modlib/cal/models.py:834 lino/modlib/ledger/models.py:558
 #: lino/modlib/orders/models.py:254 lino/modlib/sales/models.py:435
 #: lino/modlib/tickets/models.py:125 lino/modlib/tickets/models.py:229
@@ -130,11 +130,11 @@ msgstr ""
 msgid "Description"
 msgstr ""
 
-#: lino/core/actions.py:989
+#: lino/core/actions.py:1008
 msgid "Don't send email notification"
 msgstr ""
 
-#: lino/core/actors.py:897
+#: lino/core/actors.py:928
 #, python-format
 msgid "Total (%d rows)"
 msgstr ""
@@ -169,20 +169,29 @@ msgstr ""
 msgid "Female"
 msgstr ""
 
-#: lino/core/dbtables.py:757
+#: lino/core/dbtables.py:764
 msgid "You have no permission to delete this row."
 msgstr ""
 
-#: lino/core/dbtables.py:808
+#: lino/core/dbtables.py:815
 #, python-format
 msgid "%(details)s of %(master)s"
 msgstr ""
 
-#: lino/core/fields.py:761
+#: lino/core/fields.py:771
 msgid "Quantity (Decimal or Duration)"
 msgstr ""
 
-#: lino/core/kernel.py:314
+#: lino/core/fields.py:812
+#, python-format
+msgid ""
+"Uncomplete dates are allowed, e.g. \n"
+"\"%(ex1)s\" means \"some day in 1980\", \n"
+"\"%(ex2)s\" means \"in July 1980\"\n"
+"or \"%(ex3)s\" means \"on a 23th of July\"."
+msgstr ""
+
+#: lino/core/kernel.py:316
 #, python-format
 msgid "Cannot delete %(self)s because %(count)d %(refs)s refer to it."
 msgstr ""
@@ -237,7 +246,7 @@ msgstr ""
 msgid "Also reassign volatile related objects"
 msgstr ""
 
-#: lino/core/model.py:376
+#: lino/core/model.py:378
 msgid "Workflow"
 msgstr ""
 
@@ -245,7 +254,7 @@ msgstr ""
 msgid "No data to display"
 msgstr ""
 
-#: lino/core/tables.py:530 lino/ui/views.py:1022
+#: lino/core/tables.py:515 lino/ui/views.py:1023
 #, python-format
 msgid "List contains more than %d rows"
 msgstr ""
@@ -529,41 +538,41 @@ msgstr ""
 msgid "Duplicated %(old)s to %(new)s."
 msgstr ""
 
-#: lino/mixins/human.py:61
+#: lino/mixins/human.py:66
 msgid "Mrs"
 msgstr ""
 
-#: lino/mixins/human.py:63
+#: lino/mixins/human.py:68
 msgctxt "nominative salutation"
 msgid "Mr"
 msgstr ""
 
-#: lino/mixins/human.py:64
+#: lino/mixins/human.py:69
 msgctxt "indirect salutation"
 msgid "Mr"
 msgstr ""
 
-#: lino/mixins/human.py:86 lino/modlib/users/models.py:88
+#: lino/mixins/human.py:89 lino/modlib/users/models.py:88
 msgid "First name"
 msgstr ""
 
-#: lino/mixins/human.py:91 lino/modlib/users/models.py:89
+#: lino/mixins/human.py:94 lino/modlib/users/models.py:89
 msgid "Last name"
 msgstr ""
 
-#: lino/mixins/human.py:159
+#: lino/mixins/human.py:162
 msgid "Birth date"
 msgstr ""
 
-#: lino/mixins/human.py:176
+#: lino/mixins/human.py:174
 msgid "Age"
 msgstr ""
 
-#: lino/mixins/human.py:180
+#: lino/mixins/human.py:178
 msgid "unknown"
 msgstr ""
 
-#: lino/mixins/human.py:181
+#: lino/mixins/human.py:179
 #, python-format
 msgid "%d years"
 msgstr ""
@@ -1469,7 +1478,7 @@ msgstr ""
 msgid "Master type"
 msgstr ""
 
-#: lino/modlib/changes/models.py:88 lino/ui/__init__.py:799
+#: lino/modlib/changes/models.py:88 lino/ui/__init__.py:801
 msgid "Master"
 msgstr ""
 
@@ -3161,19 +3170,19 @@ msgid ""
 "directly to the person who invited you."
 msgstr ""
 
-#: lino/ui/__init__.py:805
+#: lino/ui/__init__.py:807
 msgid "Reports"
 msgstr ""
 
-#: lino/ui/__init__.py:807
+#: lino/ui/__init__.py:809
 msgid "Configure"
 msgstr ""
 
-#: lino/ui/__init__.py:809
+#: lino/ui/__init__.py:811
 msgid "Explorer"
 msgstr ""
 
-#: lino/ui/__init__.py:811
+#: lino/ui/__init__.py:813
 msgid "Site"
 msgstr ""
 
@@ -3379,7 +3388,7 @@ msgstr ""
 msgid "%s : nothing to save."
 msgstr ""
 
-#: lino/ui/views.py:1065
+#: lino/ui/views.py:1066
 #, python-format
 msgid "Error while saving GC for %(table)s: %(error)s"
 msgstr ""
@@ -3412,11 +3421,11 @@ msgstr ""
 msgid "User Groups"
 msgstr ""
 
-#: lino/utils/auth.py:221
+#: lino/utils/auth.py:222
 msgid "User Profile"
 msgstr ""
 
-#: lino/utils/auth.py:222
+#: lino/utils/auth.py:223
 msgid "User Profiles"
 msgstr ""
 

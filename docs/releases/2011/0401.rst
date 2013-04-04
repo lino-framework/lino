@@ -20,7 +20,7 @@ Lino site, see :doc:`/admin/upgrade`).
   ``from lino.apps.foo.settings import *``
 
 - Database migration needed due to changes in table `auth_user`.
-  See :doc:`/blog/2011/0309`
+  See :blogref:`20110309`
 
 
 Possible issues

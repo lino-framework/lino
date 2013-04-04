@@ -952,7 +952,7 @@ tinymce.init({
         
         actions_written = set()
         for rpt in actors_list:
-            rh = rpt.get_handle(settings.SITE.ui) 
+            rh = rpt.get_handle() 
             for ba in rpt.get_actions():
                 if ba.action.parameters:
                     if not ba.action in actions_written:
@@ -962,7 +962,7 @@ tinymce.init({
                             f.write(ln + '\n')
           
         for rpt in actors_list:
-            rh = rpt.get_handle(settings.SITE.ui) 
+            rh = rpt.get_handle() 
             if isinstance(rpt,type) and issubclass(rpt,(tables.AbstractTable,choicelists.ChoiceList)):
                 #~ if rpt.model is None:
                 #~ f.write('// 20120621 %s\n' % rpt)

@@ -36,7 +36,7 @@ New features
   
   Die Verträge einer Person stehen jetzt nicht mehr im Reiter "Dokumente", sondern zusammen mit den Vertragsanfragen in einem neuen Reiter "Stellen".
   
-  Details siehe :doc:`/blog/2011/0716`
+  Details siehe :blogref:`20110716`
     
 - Neues Modul **Kalender**.
   Auch hier einige Änderungen, die die Benutzer betreffen:
@@ -58,7 +58,7 @@ New features
   Die Termine werden wir bis auf weiteres noch nicht benutzen 
   (sind noch nicht synchronisiert mit GroupWise).
 
-  Details siehe :doc:`/blog/2011/0625` und :doc:`/blog/2011/0627`.
+  Details siehe :blogref:`20110625` und :blogref:`20110627`.
   
 - **Standardfilter** : Inaktive Personen werden jetzt nicht mehr angezeigt 
   in Auswahllisten und der Gesamtliste :menuselection:`Kontakte --> Personen`.
@@ -66,7 +66,7 @@ New features
   bestehenden Record finden, der auf die Person verweist und dort 
   deren Detail aufrufen, oder :menuselection:`Konfigurierung --> 
   Explorer --> Personen (alle)`.
-  Sh. :doc:`/blog/2011/0701`.
+  Sh. :blogref:`20110701`.
 
 - **Kontrollliste**. 
   Wenn Person.national_id nicht leer ist, muss es jetzt eine gültige 
@@ -78,7 +78,7 @@ New features
   (der aber keine NISS war). 
   Solchen Fälle ersehen wir also zukünftig wenigstens aus der 
   Kontrollliste. 
-  Sh. :doc:`/blog/2011/0712`.
+  Sh. :blogref:`20110712`.
   
 - **Einfügetexte** :
   im Text-Editor gibt es jetzt einen neuen Button "Inhalt aus Vorlage einfügen".
@@ -92,7 +92,7 @@ New features
   Ich warte auf erste Erfahrungsberichte, bevor ich kontextabhängige 
   Auswahl einbaue.
   
-  Details siehe :doc:`/blog/2011/0722`
+  Details siehe :blogref:`20110722`
   
 - **Active fields** :   
   Die drei Felder :guilabel:`Stelle`, :guilabel:`Stellenanbieter` und 
@@ -117,7 +117,7 @@ Internal optimizations
 Bugs fixed
 ----------
 
-- :term:`watch_tim` ignorierte das Leeren eines Feldes (:doc:`/blog/2011/0711`)
+- :term:`watch_tim` ignorierte das Leeren eines Feldes (:blogref:`20110711`)
 
 Known Bugs
 ----------

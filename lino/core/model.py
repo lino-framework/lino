@@ -23,6 +23,7 @@ from django.db import models
 from django.conf import settings
 from django.utils.translation import ugettext as _
 
+
 from django.core.exceptions import ValidationError
 #~ from django.core.exceptions import MultipleObjectsReturned
 
@@ -30,7 +31,7 @@ from django.core.exceptions import ValidationError
 from lino.core import fields
 from lino.core import signals
 from lino.core import dbutils
-from djangosite.dbutils import obj2str
+from djangosite.dbutils import obj2str, full_model_name
 from lino.utils.xmlgen import html as xghtml
 E = xghtml.E
 
@@ -483,14 +484,15 @@ class Model(models.Model):
               'disable_delete',
               'lookup_or_create',
               'on_duplicate',
-              'on_create')
+              'on_create',
+              'print_subclasses_graph')
     """
     Used by :mod:`lino.core.kernel`
     """
     
 
     @classmethod
-    def subclasses_graph(self):
+    def print_subclasses_graph(self):
         """
         Returns a `graphviz` directive 
         Used in welfare.userdocs to generate a internationalized graphviz::
@@ -516,4 +518,4 @@ class Model(models.Model):
   }
   
 """ % s
-        return s
+        print s

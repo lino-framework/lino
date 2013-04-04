@@ -7,7 +7,7 @@ New features
 ------------
 
 - New field `street_prefix` in :class:`lino.modlib.contacts.models.Addressable`. 
-  See :doc:`/blog/2011/0609`.
+  See :blogref:`20110609`.
 
 
 Bugs fixed
@@ -33,7 +33,7 @@ Lino site, see :doc:`/admin/upgrade`.
 - Database migration: 
 
   - New field `street_prefix` in :class:`lino.modlib.contacts.models.Addressable`. 
-    See :doc:`/blog/2011/0609`.
+    See :blogref:`20110609`.
 
   
 

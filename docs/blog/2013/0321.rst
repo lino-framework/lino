@@ -38,8 +38,7 @@ certain moments::
 
 But when to call this method?
 There is unfortunately no single clear signal to which to connect it.
-That's why we connect it to all the following signals
-
+That's why we connect it to all the following signals::
 
     def my_callback(sender,**kw):
         settings.SITE.clear_site_config()

@@ -34,7 +34,7 @@ Sichtbare Änderungen
 - Die Benutzerverwaltung ist komplexer geworden. 
   Es gibt jetzt "Benutzerprofile", "Benutzerlevel", "Abonnements" und "Vollmachten".
   
-- Benutzer sind keine Partner mehr. Siehe :doc:`/blog/2012/0525`.
+- Benutzer sind keine Partner mehr. Siehe :blogref:`20120525`.
   
 - Neue Module :mod:`Schuldnerberatung <lino.modlib.debts.models>`
   und :mod:`Haushalte <lino.modlib.households.models>` 
@@ -65,11 +65,11 @@ Bugfixes
 - Wenn man z.B. in der Liste der Stellen 
   auf einen Stellenanbieter klickte um dessen Detail zu sehen, 
   kam stattdessen ein Traceback auf dem Server.
-  (:doc:`/blog/2012/0305`)
+  (:blogref:`20120305`)
   
 - Die "(zeigen)"-Links im Detail Organisation und Person 
   funktionierten nicht. 
-  (:doc:`/blog/2012/0305`)
+  (:blogref:`20120305`)
   
 - "Remote fields" funktionierte noch nicht. 
   Kamen allerdings bisher nur in 

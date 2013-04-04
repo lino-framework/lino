@@ -1,7 +1,7 @@
 Version 1.3.6
 =============
 
-Released :doc:`/blog/2012/0126`.
+Released :blogref:`20120126`.
 Available from :doc:`/download`.
 
 Diese Version behebt eine weitere Serie von Bugs.

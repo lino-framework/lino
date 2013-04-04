@@ -30,12 +30,11 @@ from django.conf import settings
 
 class Handle:
   
-    def __init__(self,ui):
-        self.ui = ui
+    def __init__(self):
+        self.ui = settings.SITE.ui
         
     def setup(self,ar):
-        if self.ui is not None:
-            self.ui.setup_handle(self,ar)
+        self.ui.setup_handle(self,ar)
 
 
 ACTION_RESPONSES = frozenset((

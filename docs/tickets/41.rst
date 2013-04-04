@@ -89,7 +89,7 @@ Here is a list of changes I had to do when moving from ExtJS 3 to 4.
   Store no longer has a `fields` config option 
   (though it doesn't complain if you give it).
   The new philosophy is to define a Model class that holds the `fields`.
-  See :doc:`/blog/2011/0502`.
+  See :blogref:`20110502`.
   
 - In the items of the `tools` config option of ´Panel`, replace `id` by `type`.
   

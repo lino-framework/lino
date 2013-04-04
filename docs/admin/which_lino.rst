@@ -6,13 +6,14 @@ In fact you don't want "just Lino",
 you'll have to decide which Lino application you want.
 
 Soon you will probably want to 
-:doc:`write your own Lino application </tutorials/polls>` 
+:ref:`write your own Lino application <lino.tutorial.polls>`
 or get somebody else write it for you, 
 but in a first step we suggest that you choose one 
 of the "batteries included" applications:
 
 - :mod:`lino.projects.cosi` 
 - :mod:`lino.projects.presto` 
+- :mod:`lino_welfare` 
 
 - :mod:`lino.projects.igen` 
   (an accounting application focussed on sales) 

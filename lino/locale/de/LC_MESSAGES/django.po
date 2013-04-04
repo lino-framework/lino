@@ -5,17 +5,18 @@
 #
 msgid ""
 msgstr ""
-"Project-Id-Version:  lino.modlib.systen\n"
+"Project-Id-Version: lino.modlib.systen\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2013-03-26 09:50+0100\n"
-"PO-Revision-Date: 2013-01-20 21:56+0200\n"
+"POT-Creation-Date: 2013-04-02 07:22+0100\n"
+"PO-Revision-Date: 2013-04-02 09:26+0200\n"
 "Last-Translator: Luc Saffre <luc.saffre@gmail.com>\n"
 "Language-Team: \n"
-"Plural-Forms: nplurals=2; plural=(n != 1)\n"
+"Plural-Forms: nplurals=2; plural=(n != 1);\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=utf-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Generated-By: Babel 1.0dev-r661\n"
+"X-Generator: Poedit 1.5.5\n"
 
 #: lino/__init__.py:372 lino/projects/cosi/settings.py:81
 #: lino/projects/homeworkschool/settings.py:103
@@ -36,92 +37,96 @@ msgstr "Benutzer"
 msgid "Administrator"
 msgstr ""
 
-#: lino/core/actions.py:723 lino/core/actions.py:815 lino/extjs/linoweb.js:3600
+#: lino/core/actions.py:742 lino/core/actions.py:834
+#: lino/extjs/linoweb.js:3600
 msgid "First page"
 msgstr "Erste Seite"
 
-#: lino/core/actions.py:724 lino/core/actions.py:816 lino/extjs/linoweb.js:3602
+#: lino/core/actions.py:743 lino/core/actions.py:835
+#: lino/extjs/linoweb.js:3602
 msgid "Previous page"
 msgstr "Vorige Seite"
 
-#: lino/core/actions.py:736 lino/core/actions.py:817 lino/extjs/linoweb.js:3603
+#: lino/core/actions.py:755 lino/core/actions.py:836
+#: lino/extjs/linoweb.js:3603
 msgid "Next page"
 msgstr "Nächste Seite"
 
-#: lino/core/actions.py:737 lino/core/actions.py:818 lino/extjs/linoweb.js:3601
+#: lino/core/actions.py:756 lino/core/actions.py:837
+#: lino/extjs/linoweb.js:3601
 msgid "Last page"
 msgstr "Letzte Seite"
 
-#: lino/core/actions.py:786
+#: lino/core/actions.py:805
 msgid "Detail"
 msgstr ""
 
-#: lino/core/actions.py:787
+#: lino/core/actions.py:806
 msgid "Open a detail window on this record"
 msgstr "Detail-Fenster auf diesem Datensatz öffnen"
 
-#: lino/core/actions.py:813 lino/extjs/__init__.py:850
+#: lino/core/actions.py:832 lino/extjs/__init__.py:850
 #: lino/modlib/pages/models.py:151 lino/modlib/pages/models.py:186
-#: lino/ui/models.py:336 lino/ui/views.py:1081
+#: lino/ui/models.py:336 lino/ui/views.py:1082
 msgid "Home"
 msgstr "Startseite"
 
-#: lino/core/actions.py:863 lino/ui/render.py:188
+#: lino/core/actions.py:882 lino/ui/render.py:188
 msgid "New"
 msgstr "Neu"
 
-#: lino/core/actions.py:871
+#: lino/core/actions.py:890
 msgid "Insert a new record"
 msgstr "Neuen Datensatz erstellen"
 
-#: lino/core/actions.py:881
+#: lino/core/actions.py:900
 #, python-format
 msgid "Insert into %s"
 msgstr "Einfügen in %s"
 
-#: lino/core/actions.py:902 lino/mixins/duplicable.py:39
+#: lino/core/actions.py:921 lino/mixins/duplicable.py:39
 msgid "Duplicate"
 msgstr "Duplizieren"
 
-#: lino/core/actions.py:934
+#: lino/core/actions.py:953
 msgid "Delete this record"
 msgstr "Diesen Datensatz löschen"
 
-#: lino/core/actions.py:942 lino/modlib/changes/models.py:57
+#: lino/core/actions.py:961 lino/modlib/changes/models.py:57
 msgid "Delete"
 msgstr "Löschen"
 
-#: lino/core/actions.py:953
+#: lino/core/actions.py:972
 msgid "Save changes in this form"
 msgstr "Änderungen in diesem Formular speichern"
 
-#: lino/core/actions.py:954
+#: lino/core/actions.py:973
 msgid "Save"
 msgstr "Speichern"
 
-#: lino/core/actions.py:969 lino/modlib/changes/models.py:55
+#: lino/core/actions.py:988 lino/modlib/changes/models.py:55
 msgid "Create"
 msgstr "Erstellen"
 
-#: lino/core/actions.py:971
+#: lino/core/actions.py:990
 msgid "Create the record and open a detail window on it"
 msgstr "Datensatz erstellen und dann im Detail-Fenster öffnen"
 
-#: lino/core/actions.py:979
+#: lino/core/actions.py:998
 msgid "Create without detail"
 msgstr "Erstellen ohne Detail"
 
-#: lino/core/actions.py:980
+#: lino/core/actions.py:999
 msgid "Don't open a detail window on the new record"
 msgstr "Nach Erstellen des Datensatzes kein Detail-Fenster öffnen"
 
-#: lino/core/actions.py:987 lino/modlib/cal/models.py:833
+#: lino/core/actions.py:1006 lino/modlib/cal/models.py:833
 #: lino/modlib/cal/models.py:2218 lino/modlib/tickets/models.py:223
 #: lino/modlib/tickets/models.py:317
 msgid "Summary"
 msgstr "Kurzbeschreibung"
 
-#: lino/core/actions.py:988 lino/modlib/cal/models.py:322
+#: lino/core/actions.py:1007 lino/modlib/cal/models.py:322
 #: lino/modlib/cal/models.py:834 lino/modlib/ledger/models.py:558
 #: lino/modlib/orders/models.py:254 lino/modlib/sales/models.py:435
 #: lino/modlib/tickets/models.py:125 lino/modlib/tickets/models.py:229
@@ -130,11 +135,11 @@ msgstr "Kurzbeschreibung"
 msgid "Description"
 msgstr "Beschreibung"
 
-#: lino/core/actions.py:989
+#: lino/core/actions.py:1008
 msgid "Don't send email notification"
 msgstr "Keine Benachrichtigung per E-Mail schicken"
 
-#: lino/core/actors.py:897
+#: lino/core/actors.py:928
 #, python-format
 msgid "Total (%d rows)"
 msgstr "Total (%d Zeilen)"
@@ -169,20 +174,32 @@ msgstr "Männlich"
 msgid "Female"
 msgstr "Weiblich"
 
-#: lino/core/dbtables.py:757
+#: lino/core/dbtables.py:764
 msgid "You have no permission to delete this row."
 msgstr "Sie haben nicht die Berechtigung, diese Zeile zu löschen."
 
-#: lino/core/dbtables.py:808
+#: lino/core/dbtables.py:815
 #, python-format
 msgid "%(details)s of %(master)s"
 msgstr "%(details)s von %(master)s"
 
-#: lino/core/fields.py:761
+#: lino/core/fields.py:771
 msgid "Quantity (Decimal or Duration)"
 msgstr "Menge (Zahl oder Dauer)"
 
-#: lino/core/kernel.py:314
+#: lino/core/fields.py:812
+#, python-format
+msgid ""
+"Uncomplete dates are allowed, e.g. \n"
+"\"%(ex1)s\" means \"some day in 1980\", \n"
+"\"%(ex2)s\" means \"in July 1980\"\n"
+"or \"%(ex3)s\" means \"on a 23th of July\"."
+msgstr ""
+"Unkomplette Datumsangaben sind erlaubt, z.B. \"%(ex1)s\" heißt \"irgendwann "
+"im Jahr 1980\", \"%(ex2)s\" heißt \"im Juli 1980\"oder \"%(ex3)s\" heißt "
+"\"an einem 23. Juli\"."
+
+#: lino/core/kernel.py:316
 #, python-format
 msgid "Cannot delete %(self)s because %(count)d %(refs)s refer to it."
 msgstr "Kann %(self)s nicht löschen weil %(count)d %(refs)s darauf verweisen."
@@ -214,7 +231,8 @@ msgstr "%s wird gelöscht"
 #: lino/core/merge.py:107
 #, python-format
 msgid "Are you sure you want to merge %(this)s into %(merge_to)s?"
-msgstr "Sind Sie sicher, dass Sie %(this)s nach %(merge_to)s fusionieren wollen?"
+msgstr ""
+"Sind Sie sicher, dass Sie %(this)s nach %(merge_to)s fusionieren wollen?"
 
 #: lino/core/merge.py:139
 #, python-format
@@ -237,7 +255,7 @@ msgstr "Begründung"
 msgid "Also reassign volatile related objects"
 msgstr ""
 
-#: lino/core/model.py:376
+#: lino/core/model.py:378
 msgid "Workflow"
 msgstr "Arbeitsablauf"
 
@@ -245,7 +263,7 @@ msgstr "Arbeitsablauf"
 msgid "No data to display"
 msgstr "Keine Daten anzuzeigen"
 
-#: lino/core/tables.py:530 lino/ui/views.py:1022
+#: lino/core/tables.py:515 lino/ui/views.py:1023
 #, python-format
 msgid "List contains more than %d rows"
 msgstr "Liste enthält mehr als %d Zeilen"
@@ -530,41 +548,41 @@ msgstr "Bezeichnung"
 msgid "Duplicated %(old)s to %(new)s."
 msgstr "%(old)s wurde dupliziert nach  %(new)s."
 
-#: lino/mixins/human.py:61
+#: lino/mixins/human.py:66
 msgid "Mrs"
 msgstr "Frau"
 
-#: lino/mixins/human.py:63
+#: lino/mixins/human.py:68
 msgctxt "nominative salutation"
 msgid "Mr"
 msgstr "Herr"
 
-#: lino/mixins/human.py:64
+#: lino/mixins/human.py:69
 msgctxt "indirect salutation"
 msgid "Mr"
 msgstr "Herrn"
 
-#: lino/mixins/human.py:86 lino/modlib/users/models.py:88
+#: lino/mixins/human.py:89 lino/modlib/users/models.py:88
 msgid "First name"
 msgstr "Vorname"
 
-#: lino/mixins/human.py:91 lino/modlib/users/models.py:89
+#: lino/mixins/human.py:94 lino/modlib/users/models.py:89
 msgid "Last name"
 msgstr "Familienname"
 
-#: lino/mixins/human.py:159
+#: lino/mixins/human.py:162
 msgid "Birth date"
 msgstr "Geburtsdatum"
 
-#: lino/mixins/human.py:176
+#: lino/mixins/human.py:174
 msgid "Age"
 msgstr "Alter"
 
-#: lino/mixins/human.py:180
+#: lino/mixins/human.py:178
 msgid "unknown"
 msgstr ""
 
-#: lino/mixins/human.py:181
+#: lino/mixins/human.py:179
 #, python-format
 msgid "%d years"
 msgstr "%d Jahre"
@@ -589,7 +607,8 @@ msgstr "Cache löschen"
 
 #: lino/mixins/printable.py:651
 msgid "This will discard all changes in the generated file."
-msgstr "Dadurch gehen alle manuellen Änderungen im generierten Dokument verloren."
+msgstr ""
+"Dadurch gehen alle manuellen Änderungen im generierten Dokument verloren."
 
 #: lino/mixins/printable.py:652 lino/modlib/cal/models.py:196
 #: lino/modlib/cal/models.py:198 lino/modlib/cal/models.py:219
@@ -998,8 +1017,7 @@ msgstr "versteckt"
 
 #: lino/modlib/cal/models.py:444
 msgid ""
-"Whether this subscription should initially be hidden in your calendar "
-"panel."
+"Whether this subscription should initially be hidden in your calendar panel."
 msgstr "Ob dieser Kalender im Kalender-Fenster anfangs deaktiviert sein sol."
 
 #: lino/modlib/cal/models.py:481 lino/modlib/users/models.py:324
@@ -1089,7 +1107,8 @@ msgid "Transparent"
 msgstr "nicht blockierend"
 
 #: lino/modlib/cal/models.py:1091
-msgid "Indicates that this Event shouldn't prevent other Events at the same time."
+msgid ""
+"Indicates that this Event shouldn't prevent other Events at the same time."
 msgstr "Dieser Termin lässt auch andere Termine zur gleichen Zeit zu."
 
 #: lino/modlib/cal/models.py:1104
@@ -1229,7 +1248,8 @@ msgid "My presences"
 msgstr "Meine Anwesenheiten"
 
 #: lino/modlib/cal/models.py:1875
-msgid "Shows all my presences in calendar events, independently of their state."
+msgid ""
+"Shows all my presences in calendar events, independently of their state."
 msgstr ""
 
 #: lino/modlib/cal/models.py:1885
@@ -1477,7 +1497,7 @@ msgstr "Thema"
 msgid "Master type"
 msgstr "Organisationsart"
 
-#: lino/modlib/changes/models.py:88 lino/ui/__init__.py:799
+#: lino/modlib/changes/models.py:88 lino/ui/__init__.py:801
 msgid "Master"
 msgstr "Stammdaten"
 
@@ -3212,8 +3232,8 @@ msgstr "Sie sind im <b>Verwaltungsbereich</b>."
 
 #: lino/templates_jinja/admin_main.html:14
 msgid ""
-"Unlike the <a href=\"/\">web content section</a> there is now a GUI menu "
-"bar in the upper part of the screen."
+"Unlike the <a href=\"/\">web content section</a> there is now a GUI menu bar "
+"in the upper part of the screen."
 msgstr ""
 "Anders als im  <a href=\"/\">öffentlichen Bereich</a> sehen Sie hier ein "
 "Menü am oberen Bildschirmrand."
@@ -3236,25 +3256,25 @@ msgstr ""
 #: lino/templates_jinja/admin_main.html:27
 #, fuzzy
 msgid ""
-"Your feedback is welcome to <em>lino-users@googlegroups.com</em> or "
-"directly to the person who invited you."
+"Your feedback is welcome to <em>lino-users@googlegroups.com</em> or directly "
+"to the person who invited you."
 msgstr ""
 "Reaktionen und Kommentare sind willkommen an lino-users@googlegroups.com "
 "oder direkt die Person, die Sie eingeladen hat."
 
-#: lino/ui/__init__.py:805
+#: lino/ui/__init__.py:807
 msgid "Reports"
 msgstr ""
 
-#: lino/ui/__init__.py:807
+#: lino/ui/__init__.py:809
 msgid "Configure"
 msgstr "Konfigurierung"
 
-#: lino/ui/__init__.py:809
+#: lino/ui/__init__.py:811
 msgid "Explorer"
 msgstr ""
 
-#: lino/ui/__init__.py:811
+#: lino/ui/__init__.py:813
 msgid "Site"
 msgstr "Site"
 
@@ -3461,7 +3481,7 @@ msgstr "%s wurde aktualisiert."
 msgid "%s : nothing to save."
 msgstr "%s : nichts zu speichern."
 
-#: lino/ui/views.py:1065
+#: lino/ui/views.py:1066
 #, python-format
 msgid "Error while saving GC for %(table)s: %(error)s"
 msgstr ""
@@ -3495,11 +3515,11 @@ msgstr "Benutzergruppe"
 msgid "User Groups"
 msgstr "Benutzergruppe"
 
-#: lino/utils/auth.py:221
+#: lino/utils/auth.py:222
 msgid "User Profile"
 msgstr "Benutzerprofil"
 
-#: lino/utils/auth.py:222
+#: lino/utils/auth.py:223
 msgid "User Profiles"
 msgstr "Benutzerprofile"
 
@@ -3530,4 +3550,3 @@ msgstr "Ungültige belgische NR-Nummer %s :"
 #, python-format
 msgid "Check digit is %(found)d but should be %(expected)d"
 msgstr "Prüfziffer ist %(found)d, müsste sein %(expected)d"
-

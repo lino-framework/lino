@@ -10,5 +10,5 @@ Maybe Saki's Examples can help:
 http://examples.extjs.eu/
 
 
-:doc:`/blog/2010/1026`
+:blogref:`20101026`
 

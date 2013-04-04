@@ -11,12 +11,12 @@ http://www.ksz-bcss.fgov.be
 
 Some blog entries:
 
-- :doc:`/blog/2012/0330`
-- :doc:`/blog/2011/0922`
-- :doc:`/blog/2011/0923`
-- :doc:`/blog/2011/1003`
-- :doc:`/blog/2011/1020`
-- :doc:`/blog/2011/1028`
-- :doc:`/blog/2011/1110`
+- :blogref:`20120330`
+- :blogref:`20110922`
+- :blogref:`20110923`
+- :blogref:`20111003`
+- :blogref:`20111020`
+- :blogref:`20111028`
+- :blogref:`20111110`
 
 

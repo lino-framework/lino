@@ -72,16 +72,16 @@ Bugs fixed
 - watch_tim : Partner aus TIM werden nach Eingabe MwSt-Nr. 
   keine Organisation (bzw. nach Löschen der MWSt-Nr keine Person). 
   Beispiele: Mosaik, Frauenliga,...
-  Siehe :doc:`/blog/2011/0928`.
+  Siehe :blogref:`20110928`.
   
 - :menuselection:`Kontakte --> Alle Kontakte`: 
   In dieser Liste konnte man importierte Partner bearbeiten.
   Behoben.
-  Siehe :doc:`/blog/2011/0928`.
+  Siehe :blogref:`20110928`.
   
 - Wenn man z.B. die Combobox in "Kontaktpersonen"  aufklappte, ohne vorher 
   ein paar Buchstaben des gesuchten Namens eingegeben zu haben, dann konnte 
-  das u.U. (in Google Chrome Version 12) zu einer Fehlermeldung "Seiten reagieren nicht" führen. Lag daran, dass choices_view die Parameter `start` und `limit` ignorierte. Siehe :doc:`/blog/2011/0929`.
+  das u.U. (in Google Chrome Version 12) zu einer Fehlermeldung "Seiten reagieren nicht" führen. Lag daran, dass choices_view die Parameter `start` und `limit` ignorierte. Siehe :blogref:`20110929`.
   
 - Filter setzen auf einer Datum-Kolonne funktionierte nicht. 
   Behoben.  
@@ -108,14 +108,14 @@ Bugs fixed
   einer Organisation aus bedient werden. Im Detail eines Kursanbieters 
   oder Arbeitgebers waren sie fälschlicherweise nicht deaktiviert. 
   Jetzt wohl.
-  Siehe :doc:`/blog/2011/1001`.
+  Siehe :blogref:`20111001`.
   
 - Wenn man versuchte, einen Kursanbieter direkt zu erstellen 
   (nicht indem man auf einer bestehenden Organisation das Feld 
   "Kursanbieter" ankreuzt), dann kam ein Traceback 
   "AssertionError at /api/dsbe/CourseProviders" auf dem Server.
   Behoben.
-  Siehe :doc:`/blog/2011/1001`.
+  Siehe :blogref:`20111001`.
 
 - Lino 1.2.2 ließ es fälschlicherweise zu, die Partnernummer von Personen 
   und Organisationen zu ändern. Behoben.

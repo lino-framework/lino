@@ -3,7 +3,7 @@ Files
 
 .. xfile:: media/cache/wsdl
 
-  See :doc:`/blog/2012/0508`.
+  See :blogref:`20120508`.
   
 .. xfile:: setup.py
 
@@ -11,7 +11,7 @@ Files
 
 .. xfile:: settings.py
 
-See :doc:`/tutorials/polls` 
+See :ref:`lino.tutorial.polls` 
 
 .. xfile:: urls.py
 

@@ -39,6 +39,7 @@ from lino.core import layouts
 #~ from lino.core import changes
 from lino.core.dbutils import resolve_model
 from lino.core.requests import ActionRequest
+from lino.core.constants import _handle_attr_name
 from lino.utils import curry, AttrDict
 #~ from lino.core import perms
 from lino.utils import jsgen
@@ -526,8 +527,8 @@ class Actor(actions.Parametrizable):
     def get_request_handle(self,ar):
         # don't override
         if self.get_handle_name is None:
-            return self._get_handle(ar,ar.ui,ar.ui._handle_attr_name)
-        return self._get_handle(ar,ar.ui,self.get_handle_name(ar))
+            return self._get_handle(ar,_handle_attr_name)
+        return self._get_handle(ar,self.get_handle_name(ar))
         
     @classmethod
     def is_valid_row(self,row):
@@ -545,42 +546,43 @@ class Actor(actions.Parametrizable):
             
     @classmethod
     def has_handle(self,ui):
-        if ui is None:
-            hname = '_lino_console_handler'
-        else:
-            hname = ui._handle_attr_name
-        return self.__dict__.get(hname,False)
+        #~ if ui is None:
+            #~ hname = '_lino_console_handler'
+        #~ else:
+            #~ hname = _handle_attr_name
+        #~ return self.__dict__.get(hname,False)
+        return self.__dict__.get(_handle_attr_name,False)
         
     @classmethod
     def on_analyze(self,site):
         pass
         
     @classmethod
-    def get_handle(self,ui):
+    def summary_row(cls,ar,obj,**kw):
+        return obj.summary_row(ar,**kw)
+    
+    @classmethod
+    def get_handle(self):
         #~ assert ar is None or isinstance(ui,UI), \
             #~ "%s.get_handle() : %r is not a BaseUI" % (self,ui)
         if self.get_handle_name is not None:
             raise Exception(
                 "Tried to get static handle for %s (get_handle_name is %r)" 
                 % (self,self.get_handle_name))
-        if ui is None:
-            hname = '_lino_console_handler'
-        else:
-            hname = ui._handle_attr_name
-        return self._get_handle(None,ui,hname)
+        #~ if ui is None:
+            #~ hname = '_lino_console_handler'
+        #~ else:
+            #~ hname = _handle_attr_name
+        return self._get_handle(None,_handle_attr_name)
         
     @classmethod
-    def summary_row(cls,ar,obj,**kw):
-        return obj.summary_row(ar,**kw)
-    
-    @classmethod
-    def _get_handle(self,ar,ui,hname):
-        # attention, don't inherit from parent!
+    def _get_handle(self,ar,hname):
+        # don't inherit from parent!
         h = self.__dict__.get(hname,None)
         if h is None:
             #~ if self._replaced_by is not None:
                 #~ raise Exception("Trying to get handle for %s which is replaced by %s" % (self,self._replaced_by))
-            h = self._handle_class(ui,self)
+            h = self._handle_class(self)
             setattr(self,hname,h)
             h.setup(ar)
         return h
@@ -1187,7 +1189,7 @@ class Actor(actions.Parametrizable):
         return meth
         
     @classmethod
-    def to_rst(self,master_instance=None,column_names=None,**known_values):
+    def show(self,master_instance=None,column_names=None,**known_values):
         """
         Shortcut which creates an action request for this actor 
         and calls its :meth:`lino.core.actions.ActionRequest.to_rst` 
@@ -1199,7 +1201,7 @@ class Actor(actions.Parametrizable):
         kw.update(actor=self)
         kw.update(known_values=known_values)
         kw.update(renderer=settings.SITE.ui.text_renderer)
-        return self.request(**kw).to_rst(column_names)
+        print self.request(**kw).to_rst(column_names)
         #~ return settings.SITE.ui.text_renderer.request(**kw).to_rst(column_names)
         #~ username = kw.pop('username',None)
         #~ if username and settings.SITE.user_model is not None:
@@ -1215,5 +1217,6 @@ class Actor(actions.Parametrizable):
         return xghtml.E.tostring(self.request(**kw).table2xhtml())
         #~ return self.request(**kw).table2xhtml()
         
-    def show(self,*args,**kw):
-        print self.to_rst(*args,**kw)
+    #~ def show(self,*args,**kw):
+        #~ print self.to_rst(*args,**kw)
+

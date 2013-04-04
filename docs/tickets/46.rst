@@ -15,5 +15,5 @@ And also for all other templates there should be an out-of-the-box
 default template that can serve as basis for a corresponding 
 local template.
 
-Done :doc:`/blog/2011/0809`.
+Done :blogref:`20110809`.
 

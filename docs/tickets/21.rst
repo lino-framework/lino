@@ -91,7 +91,7 @@ http://lino.googlecode.com/hg/extjs-showcases/21a.html
 
 History:
 
-- :doc:`/blog/2011/0218` started this document
+- :blogref:`20110218` started this document
 
 
 

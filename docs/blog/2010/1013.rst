@@ -12,7 +12,7 @@ Tilt! Ich habe verstanden, wie ich das folgende Problem lösen muss:
   Rausfinden, ob man das nicht doch irgendwie automatisieren kann.
   Der Anfang ist gemacht in :srcref:`/Makefile`.
   Siehe auch: 
-  :doc:`/blog/2010/1008`, 
+  :blogref:`20101008`, 
   :doc:`/topics/i18n`
   
 Ich muss einfach dafür sorgen, dass der "Lino-Kernel" inner- bzw. unterhalb von :mod:`lino.modlib.system` steht. Weil `makemessages` ja in den Verzeichnissen unterhalb jeder Django-Anwendung automatisch sucht.

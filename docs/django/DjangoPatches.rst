@@ -11,7 +11,7 @@ Files in :srcref:`/patches`:
 
 :srcref:`/patches/extjs_checkboxes.diff` :
 
-    Not necessary to run Lino.  See :doc:`/blog/2011/0225`
+    Not necessary to run Lino.  See :blogref:`20110225`
 
 
 How to install these patches:

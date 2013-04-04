@@ -36,6 +36,6 @@ whether a delete will succeed or not.
     
 Blog entries:
 
-- :doc:`/blog/2010/1011`
-- :doc:`/blog/2010/1103`
-- :doc:`/blog/2010/1104`
+- :blogref:`20101011`
+- :blogref:`20101103`
+- :blogref:`20101104`

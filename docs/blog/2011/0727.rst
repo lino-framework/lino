@@ -168,4 +168,4 @@ Also z.B. statt bisher "Max MUSTERMANN (97)" steht dort jetzt
 Die dummy_messages.py wurde schon seit Längerem zu früh geschrieben, 
 so dass die Texte aus der :xfile:`linolib.js` nicht drin waren.
 Behoben. Oder auch nicht. 
-Erstmals richtig eigentlich erst am :doc:`/blog/2011/0826`.
+Erstmals richtig eigentlich erst am :blogref:`20110826`.

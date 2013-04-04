@@ -1,7 +1,7 @@
 #60 : What is a Partner? 
 ------------------------
 
-Ticket reopened :doc:`/blog/2013/0202` after reading 
+Ticket reopened :blogref:`20130202` after reading 
 `Two scoops of Django <https://django.2scoops.org/>`_.
 
 We want :mod:`lino.modlib.contacts` to be flexible 

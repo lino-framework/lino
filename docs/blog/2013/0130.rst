@@ -150,14 +150,11 @@ django-extensions
 -----------------
 
 Ich habe mir mal das Modul 
-:doc:`django-extensions/index`
-angeschaut.
+`django-extensions` angeschaut.
 
 .. toctree::
    :maxdepth: 2
 
-  django-extensions/index
+   django-extensions/index
   
   
-  
-

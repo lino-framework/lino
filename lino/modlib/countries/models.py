@@ -119,19 +119,24 @@ class Languages(dd.Table):
 
 
 class Country(dd.BabelNamed):
-    """
-    Each instance of this model represents a :ref:`lino.lib.countries.Country`.
-    """
     
     class Meta:
         verbose_name = _("Country")
         verbose_name_plural = _("Countries")
         
-    isocode = models.CharField(max_length=4,primary_key=True)
+    isocode = models.CharField(max_length=4,primary_key=True,
+        verbose_name=_("ISO code"),
+        help_text=_("""\
+        The two-letter code for this country as defined by ISO 3166-1. 
+        For countries that no longer exist it may be a 4-letter code."""))
     #~ name = models.CharField(max_length=200)
     #~ name = d.BabelCharField(max_length=200,verbose_name=_("Designation"))
-    short_code = models.CharField(max_length=4,blank=True)
-    iso3 = models.CharField(max_length=3,blank=True)
+    short_code = models.CharField(max_length=4,blank=True,
+        verbose_name=_("Short code"),
+        help_text=_("""A short abbreviation for regional usage. Obsolete."""))
+    iso3 = models.CharField(max_length=3,blank=True,
+        verbose_name=_("ISO-3 code"),
+        help_text=_("""The three-letter code for this country as defined by ISO 3166-1."""))
     
     #~ def __unicode__(self):
         #~ return babel.babelattr(self,'name')
@@ -146,9 +151,9 @@ class Country(dd.BabelNamed):
 #~ add_babel_field(Country,'name')
         
 class Countries(dd.Table):
-    """
-    Shows the global list of countries.
-    """
+    help_text = _("""
+    A country is a geographic entity considered a "nation".
+    """)
     #~ label = _("Countries")
     model = 'countries.Country'
     required = dd.required()
@@ -164,9 +169,6 @@ FREQUENT_COUNTRIES = ['BE','NL','DE', 'FR', 'LU']
 
 
 class City(dd.BabelNamed):
-    """
-    Each instance of this model represents a :ref:`lino.lib.countries.City`.
-    """
     
     class Meta:
         verbose_name = _("Place")
@@ -181,7 +183,8 @@ class City(dd.BabelNamed):
     type = CityTypes.field(blank=True)
     parent = models.ForeignKey('self',
         blank=True,null=True,
-        verbose_name=_("Part of"))
+        verbose_name=_("Part of"),
+        help_text=_("The superordinate geographic place of which this place is a part."))
     
     #~ def __unicode__(self):
         #~ return self.name
@@ -212,14 +215,15 @@ class City(dd.BabelNamed):
         #~ return s
         #~ return unicode(self)
         
-            
-    #~ def save(self,*args,**kw):
-        #~ super(City,self).save(*args,**kw)
-        #~ if self.name == "Eupen" and self.id != 708:
-            #~ raise Exception("20121114")
       
 class Cities(dd.Table):
-    #~ label = _("Cities")
+    help_text = _("""
+    The table of known geographical places.
+    A geographical place can be a city, a town, a suburb, 
+    a province, a lake... any named geographic entity,
+    except for countries because these have their own table.
+    """)
+  
     model = 'countries.City'
     required = dd.required(user_level='admin')
     order_by = "country name".split()

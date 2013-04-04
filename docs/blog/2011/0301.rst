@@ -8,7 +8,7 @@ Tagsüber
 Heute habe ich den ganzen Tag an folgender Frage gearbeitet:
 
 #.  Funktioniert lino.PARSE_DATE noch nach den Änderungen vom 
-    :doc:`/blog/2011/0226`?
+    :blogref:`20110226`?
 
 Die Antwort lautet übrigens "Ja", und das hätte ich ohne 
 unit tests in 5 Minuten rausgefunden.

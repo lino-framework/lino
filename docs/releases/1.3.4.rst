@@ -1,7 +1,7 @@
 Version 1.3.4
 =============
 
-Released :doc:`/blog/2012/0124`.
+Released :blogref:`20120124`.
 Available from :doc:`/download`.
 
 

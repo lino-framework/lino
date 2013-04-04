@@ -14,7 +14,7 @@ Die ursprüngliche Fehlermeldung war wie folgt:
      chrome://dotnetassistant/content/contenttype.js :: anonymous :: line 44" data: no]
    
 
-See also :doc:`/blog/2010/1208` and :doc:`/blog/2010/1209`
+See also :blogref:`20101208` and :blogref:`20101209`
 
 The documentation for 
 :extjs:`Ext.form.FormPanel` 

@@ -79,7 +79,7 @@ For more general instructions on how to upgrade an existing
 Lino site, see :doc:`/admin/upgrade`.
 
 #.  Reorganize local :xfile:`doctemplates` directory 
-    (see in :doc:`/blog/2011/0809`). Concretely::
+    (see in :blogref:`20110809`). Concretely::
     
       mkdir config/jobs
       mkdir config/jobs/Contract

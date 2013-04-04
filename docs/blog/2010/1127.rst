@@ -15,7 +15,7 @@ TODO:
   (Lag an den Browsereinstellungen: das gilt für den Browser als Pop-up-Fenster.)
   
 - locale wird nicht gesetzt (Daten sind in Englisch)
-  (fixed :doc:`/blog/2010/1129`)
+  (fixed :blogref:`20101129`)
 
 - webdav scheint nicht aktiv: wenn man "Vorlage bearbeiten" klickt, 
   schlägt der Browser Dateidownload vor.

@@ -14,7 +14,7 @@ New features
 #.  `dpy.Deserializer` generiert für MTI-Kinder jetzt Code, 
     der :func:`lino.utils.mti.insert_child` aufruft
     statt einfach nur eine Instanz mit `parent_ptr` zu machen (was nicht funktioniert, 
-    siehe :doc:`/blog/2011/0415`).
+    siehe :blogref:`20110415`).
     Dazu müsste ich eigentlich noch mehr Tests schreiben. Bei Gelegenheit.
 
 #.  Ein paar Übersetzungen fehlten noch (z.B. "Address line after Street")

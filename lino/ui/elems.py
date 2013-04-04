@@ -1387,6 +1387,10 @@ class BooleanFieldElement(BooleanMixin,FieldElement):
 
 
 class SingleRelatedObjectElement(DisplayElement):
+    """
+    The widget used to render a `SingleRelatedObjectDescriptor`,
+    i.e. the other side of a `OneToOneField`.
+    """
     def __init__(self,lh,relobj,**kw):
         """
         :lh: the LayoutHandle
@@ -1994,7 +1998,7 @@ class GridElement(Container):
         self.value_template = "new Lino.%s.GridPanel(%%s)" % rpt
         self.actor = rpt
         if len(columns) == 0:
-            self.rh = rpt.get_handle(layout_handle.ui)
+            self.rh = rpt.get_handle()
             if not hasattr(self.rh,'list_layout'):
                 raise Exception("%s has no list_layout" % self.rh)
             columns = self.rh.list_layout.main.columns

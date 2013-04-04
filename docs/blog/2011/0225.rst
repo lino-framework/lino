@@ -97,7 +97,7 @@ Unkomplette Liste dessen, was ich gemacht habe:
     
     
 #.  Noch mal wieder das gleiche Problem (angebliches ImproperlyConfigured) 
-    wie am :doc:`/blog/2010/0913`. 
+    wie am :blogref:`20100913`. 
     Django mag schön stabil sein, aber leider sind seine Macken deshalb 
     ebenfalls sehr stabil.
 

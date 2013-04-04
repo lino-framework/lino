@@ -7,7 +7,7 @@ New features
 - BCSS-Anbindung erste Versuche. Vom neuen Reiter "BCSS" solltet ihr
   vorläufig noch die Finger von lassen, der ist nur zu 
   Experimentierzwecken für Gerd und mich gedacht.
-  Siehe :doc:`/blog/2011/1110`.
+  Siehe :blogref:`20111110`.
 
 - Support for user-specific language of the web interface. 
   On a site with more than one language, Lino selects now the user 

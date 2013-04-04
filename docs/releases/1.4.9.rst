@@ -6,26 +6,26 @@ Version 1.4.9 (20120729)
 
 Bugfixes:
 
-- vor allem der Bug im watch_tim (sh. :doc:`/blog/2012/0728`
+- vor allem der Bug im watch_tim (sh. :blogref:`20120728`
 
 - Im Grid-Fenster Personen. Schnellsuche "Muster", dann Doppelklick auf Max Mustermann, 
   dann im GeheZu nach 'jupa' suchen: Klienten mit "jupa" werden zwar im 
   Dropdown angezeigt, aber Lino springt nach Auswahl nicht darauf.
   Im Detail-Fenster blieb (zumindest für manche Operationen) 
   der quick-search-text aus der grid aktiv.
-  Siehe auch :doc:`/blog/2012/0725`.
+  Siehe auch :blogref:`20120725`.
   
 - __repr__ of a choicelist Choice failed under Python 2.6.6, 
   saying "Error in formatting: encode() takes no keyword arguments".
   Der Fehler schlug zu in watch_tim, wenn in TIM ein ChoiceListField 
   geändert worden war (z.B,. Geschlecht, Id-Karten-Art,...) und der neue 
   oder alte Wert in Lino einen Umlaut enthielt.
-  (:doc:`/blog/2012/0725`)
+  (:blogref:`20120725`)
   
   
 - Traceback when trying to print a calendar 
   event whose Calendar.build_method is empty.
-  (:doc:`/blog/2012/0725`)
+  (:blogref:`20120725`)
 
 - Tracebacks
   "Cannot re-execute Tx25-Anfrage #9 with non-empty ticket"

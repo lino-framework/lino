@@ -41,7 +41,7 @@ Lino site, see :doc:`/admin/upgrade`).
 
 - Database migration needed : In Model Upload, the fields 
   person and company have been replaced by owner_type and owner_id.
-  See :doc:`/blog/2011/0415`
+  See :blogref:`20110415`
 
 
 Possible issues

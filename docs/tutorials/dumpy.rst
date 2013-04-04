@@ -165,5 +165,5 @@ Fixtures are good as long as
 Where to go now
 ---------------
 
-Now we suggesst that your continue to read
-:doc:`/tutorials/polls`
+Now we suggest that your continue to read
+:ref:`lino.tutorial.polls`

@@ -9,7 +9,7 @@ der bisherigen Geschichte von Lino ruft mich Gerd an und meldet:
 "Sag mal, ich bin als Gerd angemeldet, aber im Hauptmenü 
 oben rechts steht 'Luc' und nicht 'Gerd'."
 
-Erklärung: Das Hauptmenü sitzt ja seit :doc:`/blog/2012/0622` 
+Erklärung: Das Hauptmenü sitzt ja seit :blogref:`20120622` 
 in einer Variablen 
 `Lino.main_menu` in der :xfile:`lino*.js` und wird also nicht 
 mehr bei jedem Request neu generiert, 

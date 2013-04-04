@@ -600,9 +600,9 @@ class TableHandle(base.Handle):
   
     _layouts = None
     
-    def __init__(self,ui,actor):
+    def __init__(self,actor):
         self.actor = actor
-        base.Handle.__init__(self,ui)
+        base.Handle.__init__(self)
   
     def __str__(self):
         #~ return str(self.ui.__class__)+str(self.actor) + 'Handle'

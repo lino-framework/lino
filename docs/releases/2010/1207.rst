@@ -1,7 +1,7 @@
 Version 0.8.14
 ==============
 
-Released :doc:`/blog/2010/1207`.
+Released :blogref:`20101207`.
 
 New features
 ------------
@@ -12,7 +12,7 @@ New features
 
 - Doppelklick oder ENTER öffnet jetzt das Detail-Fenster.
   Um eine Zelle in der Grid zu bearbeiten, muss man jetzt F2 drücken.
-  Siehe :doc:`/blog/2010/1204`.
+  Siehe :blogref:`20101204`.
   
 - Unsere Dokumentvorlage heißt jetzt art60-7.odt statt bisher 
   "Konvention Sozialoekonomie.odt"

@@ -7,7 +7,7 @@ Ich habe die neue Version 1.4 genannt, weil sie wieder einige schöne
 aber heftige interne Änderungen mitbringt. 
 Vor allem nehmen wir mit ihr Abschied von den .dtl-Dateien.
 Beschreibung und Diskussion dieser fundamentalen (aber für die Benutzer 
-kaum sichtbaren) Änderung siehe :doc:`/blog/2012/0217`.
+kaum sichtbaren) Änderung siehe :blogref:`20120217`.
 Diesmal sind es immerhin 
 "nur" Änderungen im Python-Code, weniger im Javascript-Code. 
 Also leichter testbar. 
@@ -80,5 +80,5 @@ Nach dem Upgrade
 
 - Felder mit Hilfetexten haben momentan zwar ihr Label gepunktet unterstrichen, 
   aber wenn man mit der Maus drüberfährt, erscheint dennoch nicht der Hilfetext.
-  Siehe :doc:`/blog/2012/0214`.
+  Siehe :blogref:`20120214`.
 

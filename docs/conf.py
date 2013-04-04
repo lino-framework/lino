@@ -16,6 +16,9 @@ import sys, os
 from djangosite.utils.sphinxconf import configure
 configure(__file__,globals())
 
+extensions += ['djangosite.utils.sphinxconf.blog']
+
+
 #~ from unipath import Path
 #~ DOCSDIR = Path(__file__).parent.absolute()
 #~ sys.path.append(DOCSDIR)

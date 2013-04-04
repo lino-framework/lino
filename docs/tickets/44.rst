@@ -7,4 +7,4 @@ would mess up the grid layout if row height is variable.
 That's why we display only the first line by default.
 OTOH the user needs a possibilty to "expand" these cells.
 
-:doc:`/blog/2011/0605`
+:blogref:`20110605`

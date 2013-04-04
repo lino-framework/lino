@@ -25,10 +25,10 @@ class FrameHandle(base.Handle):
     """
     Deserves more documentation.
     """
-    def __init__(self,ui,frame):
+    def __init__(self,frame):
         #~ assert issubclass(frame,Frame)
         self.actor = frame
-        base.Handle.__init__(self,ui)
+        base.Handle.__init__(self)
 
     def get_actions(self,*args,**kw):
         return self.actor.get_actions(*args,**kw)

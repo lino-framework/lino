@@ -1,7 +1,7 @@
 Lino 0.8.8 and DSBE 0.1.7
 =========================
 
-Released :doc:`/blog/2010/1012`
+Released :blogref:`20101012`
 
 Changes
 -------
@@ -16,7 +16,7 @@ Changes
   springt er auf den ersten sichtbaren Record.
   
 - Miscellaneous bugfixes and maybe some performance optimizations
-  (see :doc:`/blog/2010/1012`)
+  (see :blogref:`20101012`)
 
 
 Upgrade instructions

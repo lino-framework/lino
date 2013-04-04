@@ -149,19 +149,13 @@ class Addressable(CountryRegionCity):
         yield self.get_full_name()
         
     def get_full_name(self,*args,**kw):
-        """\
-Returns a one-line string representing this Partner.
-The default returns simply the `name` field, ignoring any parameters, 
-but e.g. :class:`PersonMixin` overrides this.
         """
-        #~ print '20120729 Partner.get_full_name`'
-        
-        #~ try:
-            #~ p = getattr(self,'person')
-            #~ return p.get_full_name(*args,**kw)
-        #~ except ObjectDoesNotExist:
-            #~ pass
-        return self.name
+        Returns a one-line string representing this Partner.
+        The default returns simply the `name` field, ignoring any parameters, 
+        but e.g. :class:`PersonMixin` overrides this.
+        """
+        raise NotImplementedError()
+        #~ return self.name
     full_name = property(get_full_name)
         
         
@@ -418,6 +412,15 @@ class Person(ConcretePartner,Addressable,PersonMixin):
     def get_partner_name(self):
         return join_words(self.last_name,self.first_name)
 
+    def get_full_name(self,*args,**kw):
+        """
+        Returns a one-line string representing this Partner.
+        The default returns simply the `name` field, ignoring any parameters, 
+        but e.g. :class:`PersonMixin` overrides this.
+        """
+        return self.get_partner_name()
+        
+    full_name = property(get_full_name)
 
 
 
@@ -849,7 +852,7 @@ class PartnerRelated(dd.Model):
 
 if settings.SITE.is_installed('partners'):
   
-    from lino.models import SiteConfig
+    from lino.ui.models import SiteConfig
 
     dd.inject_field(SiteConfig,
         'next_partner_id',

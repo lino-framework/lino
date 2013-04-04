@@ -21,7 +21,7 @@ Bugs fixed
 Upgrade instructions
 --------------------
 
-- (:doc:`/blog/2010/1027`) Move your local `templates` directory from DATA_DIR to PROJECT_DIR and rename it 
+- (:blogref:`20101027`) Move your local `templates` directory from DATA_DIR to PROJECT_DIR and rename it 
   to `doctemplates`::
   
     $ cd /use/local/django/myproject

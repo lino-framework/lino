@@ -35,7 +35,7 @@ auftreten, möglichst schmerzlos beseitigt kriegen.
   - Wenn man versuchte, etwas auszudrucken, bekam man 
     `'Lino' object has no attribute 'config'`. 
     Das war noch eine späte Folge 
-    der Änderungen vom :doc:`/blog/2011/0307`.
+    der Änderungen vom :blogref:`20110307`.
   
 
 Qooxdoo Wochenrückblick

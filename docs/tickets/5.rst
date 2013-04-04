@@ -7,6 +7,6 @@
 - Showcase: 
   :srcref:`/extjs-showcases/20100916.html`
 
-- Initial Blog entry: :doc:`/blog/2010/0916`
+- Initial Blog entry: :blogref:`20100916`
 
-- Solution (for me):  :doc:`/blog/2010/1001`
+- Solution (for me):  :blogref:`20101001`

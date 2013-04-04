@@ -26,7 +26,7 @@ Lino site, see :doc:`/admin/upgrade`).
   really from :mod:`lino.modlib.users` and no longer 
   (partly) from django.contrib.auth
   tablename is now `users_user` instead of `auth_user`, and there's no password field anymore.
-  See :doc:`/blog/2011/0407`
+  See :blogref:`20110407`
 
 
 Possible issues

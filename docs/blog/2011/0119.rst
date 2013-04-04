@@ -4,7 +4,7 @@
 #.  Die Felder `Adelstitel` und `eID-Karte ausgestellt durch` sind jetzt 
     ebenfalls in Reiter 1 von Personen sichtbar.
 
-#.  Der sogenannte Cache-Bug (sh. :doc:`/blog/2011/0110`) ist doch noch 
+#.  Der sogenannte Cache-Bug (sh. :blogref:`20110110`) ist doch noch 
     da, aber in anderer Form:
 
       Wenn ich einen Suchbegriff in die Schnellsuche eintrage, kann ich

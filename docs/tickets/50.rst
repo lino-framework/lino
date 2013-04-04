@@ -13,5 +13,5 @@ does quite some tricks and uses ``SET FOREIGN_KEY_CHECKS``.
 But Django's `flush` management command calls this only on Django tables. 
 
 Related blog entries:
-:doc:`/blog/2011/0831`
-:doc:`/blog/2011/0907`
+:blogref:`20110831`
+:blogref:`20110907`

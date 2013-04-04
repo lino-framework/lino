@@ -48,7 +48,7 @@ Nachtrag 28.07.
     
 #.  Die "seltsamen AJAX failure" beim Bearbeiten der Stelle eines Vertrags
     haben eine einfache Erklärung und Lösung. 
-    Siehe :doc:`/blog/2011/0727`.
+    Siehe :blogref:`20110727`.
     
 #.  Der Menübefehl für die Liste der Stellenanbieter ist jetzt nicht mehr unter 
     :menuselection:`Kurse --> Stellenanbieter`, 

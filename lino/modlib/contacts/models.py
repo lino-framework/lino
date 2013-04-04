@@ -66,6 +66,10 @@ from lino.utils import mti
 from lino.modlib.contacts import MODULE_LABEL
 
 
+PARTNER_NUMBERS_START_AT = 100 # used for generating demo data and tests
+
+
+
 class CompanyType(dd.BabelNamed):
     """
     Represents a possible choice for the  `type`
@@ -351,7 +355,7 @@ class Person(PersonMixin,Partner):
     """
     Mixin for models that represent a physical person. 
     
-    See :doc:`/tutorial/human/index`.
+    See :ref:`lino.tutorial.human`.
 
     """
     class Meta:
@@ -820,9 +824,6 @@ class ContactRelated(dd.Model):
   
     #~ from lino.models import SiteConfig
 
-PARTNER_NUMBERS_START_AT = 100
-"""
-"""
 
 dd.inject_field('ui.SiteConfig',
     'next_partner_id',

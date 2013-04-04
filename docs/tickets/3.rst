@@ -4,8 +4,8 @@
 Status:
   This ticket is closed.
   I found myself the answer to this question before I could post it. see :srcref:`/extjs-showcases/20100711.html` and 
-  :doc:`/blog/2010/0709`.
-  In :doc:`/blog/2010/1015` I learned more.
+  :blogref:`20100709`.
+  In :blogref:`20101015` I learned more.
 
 
 I have an :extjs:`Ext.Viewport` with a border layout. The top element contains a menu. 

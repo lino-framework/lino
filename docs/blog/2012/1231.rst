@@ -5,7 +5,7 @@ Switching from Cheetah Template to Jinja2
 -----------------------------------------
 
 People who are used to templates now no longer get shocked 
-when they read the :doc:`/tutorials/polls`.
+when they read the :ref:`lino.tutorial.polls`.
 
 The content for the "admin" main page is no longer 
 stored in a pages.Page, but directly in `admin_main.html`.

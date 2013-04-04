@@ -12,12 +12,12 @@ New features
 - Man kann jetzt pro Firmenart eine Vertragsart angeben, die Lino dann par défaut 
   in neuen Verträgen mit dieser Firma einträgt.
 
-- New buttons "Clear cache" and "Edit template" on printables. (See :doc:`/blog/2010/1124`)
+- New buttons "Clear cache" and "Edit template" on printables. (See :blogref:`20101124`)
 
 - Grid no longer has a bottom toolbar. row actions accessible only through context menu. 
-  "Save GC" button now as a window tool button. (See :doc:`/blog/2010/1124`)
+  "Save GC" button now as a window tool button. (See :blogref:`20101124`)
   
-- New module "Uploads". (See :doc:`/blog/2010/1122`)
+- New module "Uploads". (See :blogref:`20101122`)
 
 - database changes logging. Änderungen in den Daten an sich werden jetzt in 
   einer separaten Datei :file:`/var/log/lino/db.log` geloggt.
@@ -28,14 +28,14 @@ New features
 Bugs fixed
 ----------
 
-- Standard values on a phantom row are no longer visible.  (:doc:`/blog/2010/1116`)
+- Standard values on a phantom row are no longer visible.  (:blogref:`20101116`)
 
-- Coachings and user were missing in a Person's detail.  (:doc:`/blog/2010/1116`)
+- Coachings and user were missing in a Person's detail.  (:blogref:`20101116`)
 
 - performance of previous/next buttons in Detail view of 
-  reports with over thousand records might be better. (:doc:`/blog/2010/1116`)
+  reports with over thousand records might be better. (:blogref:`20101116`)
 
-- problem of distorted pictures might be solved (:doc:`/blog/2010/1116`)
+- problem of distorted pictures might be solved (:blogref:`20101116`)
 
 - Lino should now start to send an email to the admins for every error.
 
@@ -60,7 +60,7 @@ Upgrade instructions
       cd /usr/local/django/myproject
       mv doctemplates /usr/local/lino/media/webdav
       
-  See :doc:`/blog/2010/1124`.
+  See :blogref:`20101124`.
     
   
 - The usual things in your local directory::

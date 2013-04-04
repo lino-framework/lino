@@ -586,10 +586,12 @@ add_tabpanel() on %s horizontal 'main' panel %r."""
         """
         #~ assert ui is None or isinstance(ui,UI), \
             #~ "%s.get_handle() : %r is not a BaseUI" % (self,ui)
-        if ui is None:
-            hname = '_lino_console_handler'
-        else:
-            hname = ui._handle_attr_name
+        #~ if ui is None:
+            #~ hname = '_lino_console_handler'
+        #~ else:
+            #~ hname = ui._handle_attr_name
+        hname = constants._handle_attr_name
+            
             
         #~ write_lock.acquire()
         #~ try:

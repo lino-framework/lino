@@ -1,7 +1,7 @@
 #40 [closed] : Learning Comboboxes (quick insert)
 =================================================
 
-In Comboboxen konnte man bis :doc:`/blog/2011/0425` nur Texte tippen, 
+In Comboboxen konnte man bis :blogref:`20110425` nur Texte tippen, 
 die auch in der Auswahlliste drin stehen. 
 Lino hatte noch keine "automatische Lernfunktion". 
 Außerdem verhielt er sich nicht sehr höflich, 

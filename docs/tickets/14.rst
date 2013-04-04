@@ -31,4 +31,4 @@ correctly.
 
 It seems that Django also clears the `verbose_name_plural` meta option of abstract models
 
-See :doc:`/blog/2010/1110`
+See :blogref:`20101110`

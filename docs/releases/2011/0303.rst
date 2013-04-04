@@ -96,7 +96,7 @@ Nach dem Upgrade
 
 #.  (DSBE) In bestehenden Dokumentvorlagen (betroffen sind nur die beiden Verträge) 
     muss "address" durch "address_location" ersetzt werden.
-    Siehe :doc:`/blog/2011/0302`
+    Siehe :blogref:`20110302`
 
 #. (DSBE) In your templates, replace `tr()` by `babelattr()`.
    ``tr`` is now an alias for :func:`lino.utils.babel.babelitem`.

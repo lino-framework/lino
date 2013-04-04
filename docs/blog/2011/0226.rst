@@ -10,7 +10,7 @@ kamen noch eine Serie von Problemen in :mod:`lino.ui.extjs.ext_store`:
 - IntegerField (Invoice.number) : muss er leer erlauben, und dann selber ausfüllen
 - OneToOneField.form2obj machte Dummheiten mit dem salesdocument_ptr
 
-Das mit dem :meth:`before_save` (sh. :doc:`/blog/2010/0804`) 
+Das mit dem :meth:`before_save` (sh. :blogref:`20100804`) 
 scheint nun geregelt zu sein: alle Fälle habe ich durch 
 entsprechende :meth:`full_clean` auf diesen Modellen ersetzt.
 Die war auch zum Setzen der Dokumentnummer nötig.

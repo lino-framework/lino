@@ -60,7 +60,7 @@ Lino site, see :doc:`/admin/upgrade`.
 - Database migration: 
 
   - Field `native_language` has been removed from :class:`lino.apps.dsbe.models.Person`.
-    How to migrate existing data, see :doc:`/blog/2011/0615`.
+    How to migrate existing data, see :blogref:`20110615`.
   - New field `duties_person` in :class:`lino.apps.dsbe.models.Contract`.
   
   

@@ -59,7 +59,7 @@ Glossary
     
   GC
     Grid Configuration. 
-    See :doc:`/blog/2010/0809`,...
+    See :blogref:`20100809`,...
     
   disabled fields
     Fields that the user cannot edit (read-only fields). 

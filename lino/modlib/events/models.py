@@ -30,6 +30,7 @@ from lino.utils.xmlgen.html import E
 from north import dbutils
 from lino import mixins
 from lino import dd
+from lino.core.constants import _handle_attr_name
 
 def sepjoin(items,sep=', '):
     rv = []
@@ -131,7 +132,7 @@ class EventsByType(Events):
         
     @classmethod
     def get_handle_name(self,ar):
-        hname = ar.ui._handle_attr_name
+        hname = _handle_attr_name
         #~ hname = super(PrintEntriesByBudget,self).get_handle_name(ar)
         hname += ar.master_instance.events_column_names.replace(" ","_")
         return hname

@@ -2,7 +2,7 @@
 ========
 
 
-Continued on :doc:`/tutorials/polls` and :mod:`lino.tutorials.t1`.
+Continued on :ref:`lino.tutorial.polls` and :mod:`lino.tutorials.t1`.
 
 - New attribute :attr:`lino.core.actions.Action.custom_handler`
   to avoid having to specify show_in_workflow in 

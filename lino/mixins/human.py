@@ -11,6 +11,11 @@
 ## GNU General Public License for more details.
 ## You should have received a copy of the GNU General Public License
 ## along with Lino; if not, see <http://www.gnu.org/licenses/>.
+"""
+
+See :ref:`lino.tutorial.human`.
+    
+"""
 
 import logging
 logger = logging.getLogger(__name__)
@@ -74,8 +79,6 @@ class Human(model.Model):
     """
     Base class for all models that represent a human.
     It defines three fields `first_name`, `last_name` and `gender`.
-    
-    See :doc:`/tutorial/human/index`.
     
     """
     class Meta:
@@ -155,13 +158,7 @@ class Born(model.Model):
         abstract = True
         
     birth_date = fields.IncompleteDateField(
-        blank=True,
-        verbose_name=_("Birth date"),
-        help_text = u"""\
-Unkomplette Geburtsdaten sind erlaubt, z.B. 
-<br>"00.00.1980" heißt "irgendwann im Jahr 1980", 
-<br>"00.07.1980" heißt "im Juli 1980"
-<br>oder"23.07.0000" heißt "Geburtstag am 23. Juli, Alter unbekannt".""")
+        blank=True,verbose_name=_("Birth date"))
         
     
     def get_age_years(self,today=None):

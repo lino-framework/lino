@@ -1,3 +1,5 @@
+.. _modlib:
+
 The Lino Model Library 
 ======================
 

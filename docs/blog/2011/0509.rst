@@ -45,7 +45,7 @@ Hier die Felddefintion in der `lino.js`::
 
 Da isser: die darf keine Option `templateHidden` haben!
 Bug behoben.
-Also dieser Bug war wahrscheinclih seit :doc:`/blog/2011/0408` drin.
+Also dieser Bug war wahrscheinlich seit :blogref:`20110408` drin.
 
 Leere Site-Konfiguration
 ------------------------
