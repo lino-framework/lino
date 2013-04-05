@@ -1,59 +1,39 @@
-==================================
-Installing Lino on a Debian server
-==================================
+====================================================
+Installing a Lino application on a production server
+====================================================
 
 .. include:: /include/needs_update.rst
 
 
-For a Lino production site you'll need a 
-Linux computer that acts as Server.
-The easiest choice is a Debian distribution 
-since the following instructions are 
-currently rather Debian centrated.
+Before setting up a production server you should be familiar 
+with setting up and running a development server
+as documented in :ref:`lino.dev.install`.
 
-.. note:: 
+For a Lino production server you'll need a Linux computer that acts as server.
 
-  This document contains instructions for Linux system administrators.
-  Don't apply them without understanding what you are doing.  
-  This document is work in progress.
-  Please help us to make it better by sending your 
-  feedback to the author.  
+Basically you do the same as for Django. 
+We recommend the method using `mod_wsgi` and `virtualenv` 
+as described in the following documents:
 
-.. contents:: Table of Contents
-   :local:
-   :depth: 2
+- https://docs.djangoproject.com/en/dev/howto/deployment/wsgi/modwsgi/
+- https://code.google.com/p/modwsgi/wiki/VirtualEnvironments
 
 
-Software prerequisites
-----------------------
+Debian packages
+---------------
 
 You'll need the following Debian packages installed:
 
 * Packages needed by Django applications to run in Apache2::
 
-    apache2 apache2-doc apache2-mpm-prefork \
-      libexpat1 libapache2-mod-wsgi
+    apache2 apache2-doc apache2-mpm-prefork libexpat1 libapache2-mod-wsgi
       
     ssl-cert       
     
 * Packages needed by Lino to work::
 
-    python-django
-    python-jinja2
-    python-sphinx
-    python-dateutil python-yaml python-docutils python-vobject python-lxml
-    python-pysqlite2
-    mysql-server python-mysqldb
-    
-  Alternatively you can use PyPI to install these::
-    
-    python-dateutil
-    docutils
-    vobject 
-    lxml
-    pysqlite2
-    MySQL-python    
-    
+    python-virtualenv
+
 * If :attr:`lino.Lino.use_tinymce` is `True` (probably yes)::
 
     tinymce
@@ -71,58 +51,14 @@ You'll need the following Debian packages installed:
     mercurial subversion unzip patch
 
 
+Install Lino
+------------
 
-Create directories
-------------------
+Create and activate a virtualenv for your Lino application, 
+then install Lino using pip::
 
-Create the following directories and make them writeable by www-data::
+  $ pip install lino
 
-  # mkdir ~/snapshots /var/log/lino /usr/local/django
-  # chgrp -R www-data ~/snapshots /var/log/lino /usr/local/django
-  # chmod -R g+ws ~/snapshots /var/log/lino  /usr/local/django
-
-``chmod g+s`` sets the SGID to ensure that when a new file is created in the directory 
-it will inherit the group of the directory.
-
-
-Download Lino
--------------
-
-Just set up your :doc:`Python Path <pythonpath>` manually.
-
-Install Django
---------------
-
-To see whether Django is installed (and which version)::
-
-  $ python -c 'import django; print django.get_version()'
-
-Lino requires Django version 1.3 or later. 
-If you have it, then you can skip to the next section.
-
-To manually install a snapshot of Django 1.4::
-
-  cd ~/snapshots
-  wget https://www.djangoproject.com/m/releases/1.4/Django-1.4.tar.gz
-  tar xzvf Django-1.4.tar.gz
-  ln -s Django-1.4 django
-
-Or to install Django's latest development snapshot::
-
-  cd ~/snapshots
-  svn co http://code.djangoproject.com/svn/django/trunk/ django
-  
-We suggest to *not* run Django's :file:`setup.py` since that's 
-not needed for Lino and makes it more difficult to switch from one 
-version to the other.
-In both cases, just remember where you installed it and 
-specify this in your your :doc:`Python path <pythonpath>`
-
-
-Set up the Python Path
-----------------------
-
-Please read :doc:`pythonpath`
 
 
 Test whether Lino is installed
@@ -136,15 +72,29 @@ Test whether Lino is installed
   >>> import lino
   >>> print lino.welcome_text()
   Using Lino 1.4.4, Django 1.5.dev17937, python-dateutil 1.5, Cheetah 2.4.4, OdfPy ODFPY/0.9.4, docutils 0.7, suds 0.4.1, PyYaml 3.08, Appy 0.8.0 (2011/12/15 22:41), Python 2.7.1.  
+  
+  
+Create a local Lino project
+---------------------------
+
+Every Lino project should have at least its own :file:`settings.py` and 
+project directory (the directory containing this file).
+Local Lino :file:`settings.py` files on production servers 
+are usually rather short. Something like::
+
+  from foo.bar.settings import *
+  SITE = Site(globals())
    
 
-Install other software
-----------------------
+Serving Javascript frameworks
+-----------------------------
 
-You'll also need to install
-:term:`ExtJS` 
-and :term:`appy_pod` 
-into `~/snapshots/`::
+On a production server you will probably want to serve yourself 
+the third-party Javascript libraries used by Lino.
+
+::
+
+  cd /var/snapshots/
 
   wget http://extjs.cachefly.net/ext-3.3.1.zip
   unzip ext-3.3.1.zip
@@ -154,18 +104,22 @@ into `~/snapshots/`::
   unzip extensible-1.0.1.zip
   rm extensible-1.0.1.zip
 
-  wget http://launchpad.net/appy/0.8/0.8.0/+download/appy0.8.1.zip
-  unzip appy0.8.1.zip -d appy
-  
-  wget http://pypi.python.org/packages/source/o/odfpy/odfpy-0.9.4.tar.gz
-  tar -xvzf odfpy-0.9.4.tar.gz
-  
   wget http://twitter.github.com/bootstrap/assets/bootstrap.zip
   unzip bootstrap.zip
   
-  
-Note: Lino didn't yet migrate to ExtJS 4.0. See :doc:`/tickets/40`
 
+Then in you settings.py (or your djangosite_local.py) you'll set 
+the `lino.ui.Site.extjs_root` attributes accordingly::
+
+
+  extjs_root = '/var/snapshots/ext-3.3.1'
+  extensible_root = '/var/snapshots/extensible-1.0.1'
+  bootstrap_root = '/var/snapshots/bootstrap'
+  
+Lino will use these values to create symbolic links in 
+your media directory.
+  
+  
 Install TinyMCE language packs
 ------------------------------
 
@@ -180,16 +134,17 @@ Simplified instructions::
   # unzip tinymce_language_pack.zip
   
   
-Create a MySQL database
------------------------
+Use a MySQL database
+--------------------
 
 If you decided to use MySQL as database frontend, 
-you must now create a database for your project and a 
-user ``django@localhost``.
+you must create a database and a 
+user ``django@localhost`` for your project.
 
 To install mysql on your site::
 
     $ sudo aptitude install mysql-server python-mysqldb
+    $ pip install MySQL-python
     
 For your first project, you create a user::
     
@@ -207,41 +162,6 @@ For each new project::
 See also http://dev.mysql.com/doc/refman/5.0/en/charset-database.html
 
 
-Create a local Django project
------------------------------
-
-Lino applications are Django projects.
-In case you don't know Django, we
-suggest that you also read 
-`Part 1 of the Django tutorial
-<https://docs.djangoproject.com/en/dev/intro/tutorial01/>`_
-which applies entirely for a Lino application.
-It introduces some important notions about
-Creating a project,
-The development server,
-Database setup,
-Creating models,
-Activating models,
-and Playing with the API.
-
-When that you've done and learned all this, 
-modify the file
-:xfile:`settings.py`
-of your Django project directory 
-`/usr/local/django/mysite`.
-
-Replace your :xfile:`settings.py` with the following 
-(but maintaining the DATABASES setting you chose during the Django Tutorial):
-
-.. literalinclude:: settings.py
-    
-You'll soon learn more about the :xfile:`settings.py` 
-file.
-For the moment we suppose that you want to get a quick result.
-
-The ``polls`` subdirectory which you maybe created during the Django 
-Tutorial is not necessary for now, but you'll need it again 
-later.
 
 Run the test suite
 ------------------
@@ -250,8 +170,8 @@ Try the following command to run Lino's unit test suite on your project::
 
   python manage.py test
   
-Create your database
---------------------
+Initialize your database
+------------------------
 
 Go to your :file:`/usr/local/django/mysite` directory and run::
 
@@ -295,47 +215,4 @@ the Lino server will
 automatically create other subdirectories 
 `cache`, `uploads` and `webdav` in :xfile:`media`.
 
-
-Start a development server
---------------------------
-
-Now finally we are ready to go::
-
-  python manage.py runserver
-  
-This should run something like::  
-  
-  Validating models...
-
-  0 errors found
-  Django version 1.4 pre-alpha SVN-16376, using settings 'pcsw.settings'
-  Development server is running at http://127.0.0.1:8000/
-  Quit the server with CTRL-BREAK.
-  
-  
-Then point a browser to http://127.0.0.1:8000/ 
-and enjoy your Lino application.
-Congratulations.
-
-
-As the `Django docs 
-<https://docs.djangoproject.com/en/dev/intro/tutorial01/#the-development-server>`_  
-say: 
-
-  You've started the Django development server, a lightweight Web server written purely in Python. We've included this with Django so you can develop things rapidly, without having to deal with configuring a production server -- such as Apache -- until you're ready for production.
-
-  Now's a good time to note: DON'T use this server in anything resembling a production environment. 
-  It's intended only for use while developing
-
-
-Where to go from here
----------------------
-
-- If you want to seriously install Lino on your server right now,
-  read :doc:`install_apache` and get Lino running under `mod_wsgi`.
-
-
-
-.. toctree::
-    :maxdepth: 2
 

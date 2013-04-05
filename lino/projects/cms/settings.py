@@ -61,6 +61,6 @@ class Site(Site):
         yield 'lino.modlib.pages'
         yield 'lino.projects.cms'
 
-SITE = Site(__file__,globals()) 
+SITE = Site(globals()) 
 
 

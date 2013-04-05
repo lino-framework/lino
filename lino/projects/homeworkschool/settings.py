@@ -22,7 +22,6 @@ from lino.modlib import cal
 
 #~ class Site(Site,cal.SiteMixin):
 class Site(Site):
-    #~ source_dir = os.path.dirname(__file__)
     #~ title = __name__
     version = "0.0.1"
     verbose_name = "Lino-HWS"
@@ -57,8 +56,7 @@ class Site(Site):
     
     #~ remote_user_header = "REMOTE_USER"
     
-    #~ def get_app_source_file(self):  return __file__
-        
+       
     def get_main_action(self,user):
         return self.modules.ui.Home.default_action
         
@@ -106,4 +104,3 @@ class Site(Site):
         add('900', _("Administrator"), 'A A', name='admin')
         
       
-#~ LINO = Lino(__file__,globals())

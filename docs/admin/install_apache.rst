@@ -57,7 +57,24 @@ Django docs on Apache and mod_wsgi:
   - :doc:`/tickets/9`
   - :doc:`/tickets/10`
   
-  
+
+Permissions
+-----------
+
+The directories with log files, and those containing source code,
+need to be writeable by the Apache process 
+("www-data" on a standard Debian).
+
+Create the following directories and make them writeable by www-data::
+
+  # mkdir ~/snapshots /var/log/lino /usr/local/django
+  # chgrp -R www-data ~/snapshots /var/log/lino /usr/local/django
+  # chmod -R g+ws ~/snapshots /var/log/lino  /usr/local/django
+
+``chmod g+s`` sets the SGID to ensure that when a new file is created in the directory 
+it will inherit the group of the directory.
+
+
 
 
 Miscellaneous

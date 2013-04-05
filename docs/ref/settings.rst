@@ -1,9 +1,9 @@
-========
-Settings
-========
+============
+Settings API
+============
 
 
-.. setting:: LINO
+.. setting:: SITE
 
 Lino expects one important variable ``LINO`` in your :xfile:`settings.py`.
 This deserves more documentation.

@@ -28,12 +28,6 @@ from urllib import urlencode
 import codecs
 import jinja2
 
-#~ from lxml import etree
-
-
-#~ import Cheetah
-#~ from Cheetah.Template import Template as CheetahTemplate
-
 from django.db import models
 from django.conf import settings
 from django.http import HttpResponse, Http404
@@ -125,9 +119,18 @@ class ExtUI(base.UI):
     
     
     #~ USE_WINDOWS = False  # If you change this, then change also Lino.USE_WINDOWS in lino.js
-
+    
     #~ def __init__(self,*args,**kw):
-    def __init__(self):
+    #~ def __init__(self):
+    def setup_ui_plugin(self):
+        #~ logger.info('20130404 __init__')
+        #~ super(ExtUI,self).__init__()
+        #~ pass
+        
+    #~ def before_site_startup(self,site):
+        #~ logger.info('20130404 on_site_startup')
+        #~ site.ui = self
+
         #~ logger.info("20130221 lino.ui.ExtUI.__init__()")
         pre_ui_build.send(self)
         
@@ -154,7 +157,7 @@ class ExtUI(base.UI):
             if n in names:
                 raise Exception("Duplicate reserved name %r" % n)
             names.add(n)
-        base.UI.__init__(self) 
+        #~ base.UI.__init__(self)
         
         #~ trigger creation of params_layout.params_store
         for res in actors.actors_list:
@@ -613,6 +616,3 @@ class ExtUI(base.UI):
         See :meth:`ExtRenderer.row_action_button`
         """
         return self.ext_renderer.row_action_button(*args,**kw)
-
-
-

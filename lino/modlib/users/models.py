@@ -252,9 +252,12 @@ class UserInsert(dd.FormLayout):
     
  
 class Users(dd.Table):
-    """
+    help_text = _("""
     Shows the list of all users on this site.
-    """
+    
+    A User is somebody who can log into the application.
+    
+    """)
     #~ debug_actions  = True
     required = dict(user_level='manager')
     model = User

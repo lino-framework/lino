@@ -6,7 +6,7 @@ class Site(Site):
     languages = ['en', 'de','fr']
     #~ languages = ['en']
     
-SITE = Site(__file__,globals()) 
+SITE = Site(globals()) 
 
 DEBUG = True
 

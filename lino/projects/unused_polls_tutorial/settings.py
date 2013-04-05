@@ -10,7 +10,7 @@ class Site(Site):
             yield a
         yield 'lino.projects.polls_tutorial.polls' # 'mysite.polls'
 
-SITE = Site(__file__,globals()) 
+SITE = Site(globals()) 
 
 DEBUG = True
 

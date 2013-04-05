@@ -39,7 +39,7 @@ class Site(Site):
         return False
         
 
-SITE = Site(__file__,globals())
+SITE = Site(globals())
 
 
 #~ PROJECT_DIR = abspath(dirname(__file__))

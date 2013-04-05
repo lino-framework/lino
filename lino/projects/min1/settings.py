@@ -19,7 +19,6 @@ import lino
 from lino.projects.std.settings import *
 
 class Site(Site):
-    #~ source_dir = os.path.dirname(__file__)
     title = "Lino/MinimalApp 1"
     #~ help_url = "http://lino.saffre-rumma.net/az/index.html"
     #~ migration_module = 'lino.projects.az.migrate'
@@ -40,8 +39,6 @@ class Site(Site):
     
     #~ remote_user_header = "REMOTE_USER"
     
-    #~ def get_app_source_file(self):  return __file__
-        
     def setup_quicklinks(self,ar,tb):
         tb.add_action(self.modules.contacts.Persons.detail_action)
         tb.add_action(self.modules.contacts.Companies.detail_action)
@@ -56,6 +53,6 @@ class Site(Site):
         yield 'lino.modlib.contacts'
         #~ yield 'lino.projects.min1'
       
-SITE = Site(__file__,globals())
+SITE = Site(globals())
 
 

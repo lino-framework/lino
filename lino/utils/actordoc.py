@@ -48,6 +48,43 @@ from djangosite.dbutils import set_language
 
 from djangosite.utils.sphinxconf import Py2rstDirective
 
+
+import lino.ui.urls # hack: trigger ui instantiation
+
+
+def refto(x):
+    if x is None: 
+        return '`None`'
+    if issubclass(x,models.Model):
+        #~ return ':ref:`' + x.__name__ + ' <' + full_model_name(x) + '>`'
+        return ':ref:`' + force_unicode(x._meta.verbose_name) + ' <' \
+            + settings.SITE.userdocs_prefix + full_model_name(x) + '>`'
+    #~ if isinstance(x,Field):
+    return ':ref:`' + x.verbose_name + ' <' + settings.SITE.userdocs_prefix \
+        + full_model_name(x.model) + '.' + x.name + '>`'
+        
+def actor_ref(rpt):
+    label = force_unicode(rpt.label or rpt.title or str(rpt))
+    target = settings.SITE.userdocs_prefix + str(rpt)
+    #~ return label
+    return ':ref:`%s <%s>`' % (label,target)
+
+def model_ref(m):
+    label = force_unicode(m._meta.verbose_name)
+    #~ target = settings.SITE.userdocs_prefix + full_model_name(m)
+    target = settings.SITE.userdocs_prefix + str(m._lino_default_table)
+    #~ return label
+    return ':ref:`%s <%s>`' % (label,target)
+
+def rptlist(l):
+    return ', '.join([actor_ref(a) for a in l])
+    #~ return ', '.join([
+        #~ ":ref:`%s (%s) <%s>`" % (str(rpt),force_unicode(rpt.label),actor_ref(rpt)) 
+        #~ for rpt in l])
+
+
+
+
 def get_actor_description(self):
     
     body = "\n\n"
@@ -61,35 +98,6 @@ def get_actor_description(self):
     #~ ]
     headers.append("verbose name")
     headers.append("help text")
-    def refto(x):
-        if x is None: 
-            return '`None`'
-        if issubclass(x,models.Model):
-            #~ return ':ref:`' + x.__name__ + ' <' + full_model_name(x) + '>`'
-            return ':ref:`' + force_unicode(x._meta.verbose_name) + ' <' \
-                + settings.SITE.userdocs_prefix + full_model_name(x) + '>`'
-        #~ if isinstance(x,Field):
-        return ':ref:`' + x.verbose_name + ' <' + settings.SITE.userdocs_prefix \
-            + full_model_name(x.model) + '.' + x.name + '>`'
-            
-    def actor_ref(rpt):
-        label = force_unicode(rpt.label or rpt.title or str(rpt))
-        target = settings.SITE.userdocs_prefix + str(rpt)
-        return label
-        #~ return ':ref:`%s <%s>`' % (label,target)
-
-    def model_ref(m):
-        label = force_unicode(m._meta.verbose_name)
-        target = settings.SITE.userdocs_prefix + full_model_name(m)
-        return label
-        #~ return ':ref:`%s <%s>`' % (label,target)
-
-    def rptlist(l):
-        return ', '.join([actor_ref(a) for a in l])
-        #~ return ', '.join([
-            #~ ":ref:`%s (%s) <%s>`" % (str(rpt),force_unicode(rpt.label),actor_ref(rpt)) 
-            #~ for rpt in l])
-    
     def fieldtype(f):
         if isinstance(f,models.ForeignKey):
             #~ return f.__class__.__name__ + " to " + refto(f.rel.to)
@@ -112,7 +120,8 @@ def get_actor_description(self):
     ll = self.get_handle().list_layout
     if ll is None:
         raise Exception("%s has no list_layout" % self)
-    rows = [ rowfmt(e.field) for e in ll.main.columns]
+    rows = [ rowfmt(e.field) for e in ll.main.columns 
+        if not hasattr(e.field,'_lino_babel_field')]
     body += rstgen.table(headers,rows)
     
     #~ model_reports = [r for r in dbtables.master_reports if r.model is self.model]
@@ -220,6 +229,19 @@ if False:
         StandardDomain.roles['table'] = XRefRole(innernodeclass=ref_nodeclass)    
 
 
+class ActorsOverviewDirective(Py2rstDirective):
+    def get_rst(self):
+        lng = self.state.document.settings.env.config.language
+        set_language(lng)
+        actor_names = ' '.join(self.content).split()
+        items = []
+        for an in actor_names:
+            cls = settings.SITE.modules.resolve(an)
+            if not isinstance(cls,type):
+                raise Exception("%s is not an actor." % self.content[0])
+            items.append("%s : %s" % (actor_ref(cls),cls.help_text or ''))
+        return rstgen.ul(items)
+    
 class LinoTableDirective(Py2rstDirective):
     #~ has_content = False
     titles_allowed = True
@@ -230,10 +252,7 @@ class LinoTableDirective(Py2rstDirective):
         #~ from djangosite.dbutils import set_language
 
         lng = self.state.document.settings.env.config.language
-        
         set_language(lng)
-        #~ print self.arguments
-        #~ print self.content
         cls = settings.SITE.modules.resolve(self.content[0])
         if not isinstance(cls,type):
             raise Exception("%s is not an actor." % self.content[0])
@@ -304,3 +323,4 @@ class LinoTableDirective(Py2rstDirective):
 def setup(app):
     
     app.add_directive('actor', LinoTableDirective)
+    app.add_directive('actors_overview', ActorsOverviewDirective)

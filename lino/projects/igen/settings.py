@@ -24,7 +24,6 @@ class Site(Site):
   
     languages = ['en']
     
-    #~ source_dir = os.path.dirname(__file__)
   
     title = "Lino/iGen"
     domain = "igen-demo.saffre-rumma.net"
@@ -46,8 +45,6 @@ class Site(Site):
         #~ super(IgenSite,self).init_site_config(sc)
         #~ sc.next_partner_id = 200000
 
-    #~ def get_app_source_file(self):
-        #~ return __file__
         
         
     def get_installed_apps(self):
@@ -73,4 +70,4 @@ class Site(Site):
         
     demo_fixtures = 'std few_languages few_countries few_cities demo_ee demo demo2'.split()
 
-SITE = Site(__file__,globals())
+SITE = Site(globals())

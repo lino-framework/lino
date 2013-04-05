@@ -1,2 +1,2 @@
 from lino.ui import Site
-SITE = Site(__file__,globals(),'tutorials.auto_create')
+SITE = Site(globals(),'tutorials.auto_create')

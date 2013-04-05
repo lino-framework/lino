@@ -5,6 +5,14 @@ Installing Lino
 .. include:: /include/needs_update.rst
 
 
+::
+
+  $ pip install lino-welfare
+
+
+
+
+
 .. toctree::
     :maxdepth: 2
 
@@ -13,9 +21,4 @@ Installing Lino
     install_apache
 
 
-
-Where to go from here
----------------------
-
-- Now you are ready for our :doc:`/tutorials/index` section.
 

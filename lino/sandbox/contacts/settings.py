@@ -1,5 +1,5 @@
 from lino.projects.std.settings import *
-class Lino(Lino):
+class Site(Site):
     user_model = 'contacts.User'
     #~ use_contenttypes = False
     
@@ -10,8 +10,6 @@ class Lino(Lino):
     After changing this setting, you must rebuild the database.
     """
 
-    def get_app_source_file(self):
-        return __file__
         
     def setup_quicklinks(self,ar,tb):
         tb.add_action(self.modules.contacts.Persons.detail_action)
@@ -45,7 +43,7 @@ class Lino(Lino):
         doit('setup_site_menu',self,ui,user,m)
         #~ self.modules.lino.setup_site_menu(self,ui,user,m)
 
-LINO = Lino(__file__,globals())    
+SITE = Site(globals())    
 
 INSTALLED_APPS = (
   #~ 'django.contrib.contenttypes', 

@@ -49,7 +49,7 @@ try:
             yield 'lino.modlib.events'
 
 
-    SITE = Site(__file__,globals())
+    SITE = Site(globals())
     
 except Exception as e:
     import traceback

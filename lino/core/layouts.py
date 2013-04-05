@@ -105,14 +105,14 @@ class LayoutHandle:
     """
     
     #~ 20120114 def __init__(self,ui,table,layout,hidden_elements=frozenset()):
-    def __init__(self,ui,layout):
+    def __init__(self,layout):
       
         #~ logger.debug('20111113 %s.__init__(%s,%s)',self.__class__.__name__,rh,layout)
         assert isinstance(layout,BaseLayout)
         #assert isinstance(link,reports.ReportHandle)
         #~ base.Handle.__init__(self,ui)
         self.layout = layout
-        self.ui = ui
+        #~ self.ui = settings.SITE.ui
         #~ self.rh = rh
         #~ self.datalink = layout.get_datalink(ui)
         #~ self.label = layout.label # or ''
@@ -251,7 +251,7 @@ class LayoutHandle:
             elems[0].setup(**kw)
             return elems[0]
         #~ kw.update(self.layout.panel_options.get(elemname,{}))
-        e = self.ui.create_layout_panel(self,elemname,vertical,elems,**kw)
+        e = settings.SITE.ui.create_layout_panel(self,elemname,vertical,elems,**kw)
         #~ e.allow_read = curry(perms.make_permission(self.layout._datasource,**e.required),e)
         return e
             
@@ -302,7 +302,7 @@ class LayoutHandle:
             #~ if name == 'start':
                 #~ print 20121021, repr(name), "not a panel", repr(self.layout)
             #~ return self.define_panel(name,desc)
-        e = self.ui.create_layout_element(self,name,**pkw)
+        e = settings.SITE.ui.create_layout_element(self,name,**pkw)
         #~ e = self.ui.create_layout_element(self,name)
         if e is None: return None # e.g. NullField
         # todo: cannot hide babelfields
@@ -351,28 +351,13 @@ class LayoutHandle:
         if isinstance(self.layout,ListLayout):
             if de.name == self.layout._datasource.master_key: return False
         return True
-        
-        return True
   
     def get_data_elem(self,name): 
         return self.layout.get_data_elem(name)
         
     def get_choices_url(self,*args,**kw):
-        return self.layout.get_choices_url(self.ui,*args,**kw)
+        return self.layout.get_choices_url(settings.SITE.ui,*args,**kw)
         
-
-class unused_ListLayoutHandle(LayoutHandle):
-  
-    def __init__(self,rh,*args,**kw):
-        self.rh = rh
-        #~ 20120114 LayoutHandle.__init__(self,rh.ui,rh.report,*args,**kw)
-        LayoutHandle.__init__(self,rh.ui,*args,**kw)
-        
-    def use_as_wildcard(self,de):
-        if de.name.endswith('_ptr'): return False
-        #~ and (de.name not in self.hidden_elements) \
-        #~ and (de.name not in self.rh.report.known_values.keys()) \
-
 
 
 
@@ -598,7 +583,8 @@ add_tabpanel() on %s horizontal 'main' panel %r."""
         # we do not want any inherited handle
         h = self.__dict__.get(hname,None)
         if h is None:
-            h = self._handle_class(ui,self)
+            #~ print 20130404, self._handle_class
+            h = self._handle_class(self)
             setattr(self,hname,h)
             #~ h.setup()
         #~ finally:

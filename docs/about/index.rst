@@ -50,6 +50,8 @@ Lino then adds its own features to the above:
   Use Lino's rich experience with applications that manage 
   multilingual database content.
   
+- Use Lino's tools for generating :ref:`userdocs`.
+  
 - :ref:`datamig` :
   Optionally use Lino's great alternative to 
   `South <http://south.aeracode.org/>`_

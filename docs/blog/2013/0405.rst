@@ -1,0 +1,50 @@
+================================
+20130405 (Friday, 05 April 2013)
+================================
+
+
+The docs below `/admin` need a serious redesign and most of 
+them are currently obsolete.
+While working on them I noticed that 
+the first argument to :meth:`djangosite.Site.__init__` 
+was a useless requirement: 
+if a file passes its `globals()` dictionary, 
+there is no need to also ask for the value of the `__file__` 
+key of that same dictionary!
+
+
+I'll use the freedom I have as long as the only known production 
+servers are maintained by myself
+and do a backwards incompatbile change in the :doc:`/ref/settings`:
+
+
+Adapt your :file:`settings.py` files!
+-------------------------------------
+
+Lino until now required to write in your :file:`settings.py` file::
+
+  SITE = Site(__file__,globals(),...)
+  
+Now you just write::  
+  
+  SITE = Site(globals(),...)
+
+
+Moving towards a pluggable user interface
+-----------------------------------------
+
+I am working on moving towards a pluggable user interface.
+One benefit of this will be :doc:`/tickets/16`.
+
+The :meth:`lino.ui.base.Handle.__init__` no longer 
+takes the `ui` as argument.
+
+
+More multilingual userdocs
+---------------------------
+
+Continued to fill the Lino-Welfare user manual,
+:ref:`welfare.userdocs`,
+my guinea pig for Lino's multilingual userdocs feature.
+
+

@@ -42,10 +42,6 @@ class Site(Site,ledger.SiteMixin):
       'contacts.Person','contacts.Company',
       'households.Household']
     
-    #~ def get_app_source_file(self): return __file__
-      
-    #~ def get_application_info(self):
-        #~ return (__name__,__version__,__url__)
       
     def get_main_action(self,user):
         return self.modules.lino.Home.default_action
@@ -114,5 +110,5 @@ class Site(Site,ledger.SiteMixin):
 
 
 
-SITE = Site(__file__,globals()) 
+SITE = Site(globals()) 
 

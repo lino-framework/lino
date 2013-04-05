@@ -1,7 +1,7 @@
 from lino.projects.std.settings import *
 class Site(Site):
     user_model = None
-SITE = Site(__file__,globals())    
+SITE = Site(globals())    
 
 INSTALLED_APPS = (
   'lino', 

@@ -13,7 +13,7 @@ class Site(Site):
             yield a
         yield 'lino.projects.babel_tutorial' 
 
-SITE = Site(__file__,globals()) 
+SITE = Site(globals()) 
 
 DEBUG = True
 

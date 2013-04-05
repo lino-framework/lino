@@ -33,7 +33,6 @@ from lino.modlib import ledger
 
 class Site(Site,ledger.SiteMixin):
 
-    #~ source_dir = os.path.dirname(__file__)
     title = "lino.projects.sphinxdocs"
     
     project_model = 'contacts.Person'
@@ -71,5 +70,5 @@ class Site(Site,ledger.SiteMixin):
         #~ yield 'lino.projects.cosi'
         #~ yield 'lino'
 
-SITE = Site(__file__,globals())
+SITE = Site(globals())
 

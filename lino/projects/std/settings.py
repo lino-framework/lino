@@ -28,7 +28,7 @@ import lino
 
 from lino.ui import Site
 
-SITE = Site(__file__,globals())
+SITE = Site(globals())
 """
 This Site instance will normally be replaced by an instance 
 in a local settings.py file

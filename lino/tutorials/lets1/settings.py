@@ -21,7 +21,7 @@ class Site(Site):
         m.add_action(self.modules.lets.Places)
     
     
-SITE = Site(__file__,globals()) 
+SITE = Site(globals()) 
 
 DEBUG = True
 

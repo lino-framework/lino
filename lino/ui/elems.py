@@ -544,7 +544,8 @@ class ConstantElement(LayoutElement):
     vflex = True
     
     def __init__(self,lh,fld,**kw):
-        kw.update(html=fld.text_fn(lh.layout._datasource,lh.ui))
+        #~ kw.update(html=fld.text_fn(lh.layout._datasource,lh.ui))
+        kw.update(html=fld.text_fn(lh.layout._datasource))
         #~ kw.update(html=fld.text)
         #~ kw.update(autoHeight=True)
         LayoutElement.__init__(self,lh,fld.name,**kw)

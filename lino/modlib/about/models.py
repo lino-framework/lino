@@ -278,7 +278,8 @@ class About(mixins.EmptyTable):
         #~ return settings.SITE.welcome_html(ui)
         
     @dd.constant()
-    def about_html(cls,ui):
+    def about_html(cls):
+    #~ def about_html(cls,ui):
       
     #~ @dd.displayfield()
     #~ def about_html(cls,obj,ar):
@@ -287,7 +288,8 @@ class About(mixins.EmptyTable):
         body = []
         
         p = []
-        for name,version,url in settings.SITE.using(ui):
+        #~ for name,version,url in settings.SITE.using(ui):
+        for name,version,url in settings.SITE.using():
             if len(p):
                 #~ body.append(xghtml.E.br())
                 p.append(', ')

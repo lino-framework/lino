@@ -1,7 +1,7 @@
 from lino.projects.std.settings import *
 #~ class Lino(Lino):
     #~ user_model = None
-SITE = Site(__file__,globals(),'lino','lino.test_apps.mti')
+SITE = Site(globals(),'lino','lino.test_apps.mti')
 
 #~ INSTALLED_APPS = (
   #~ # 'django.contrib.contenttypes', 

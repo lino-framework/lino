@@ -381,6 +381,10 @@ class Calendar(mixins.PrintableType,outbox.MailableType,dd.BabelNamed):
         
     
 class Calendars(dd.Table):
+    help_text = _("""
+    A Calendar is a list of calendar events which have certain things in common.
+    They are being displayed in the :ref:`welfare.cal.Panel` in a given colour.
+    """)
     required = dd.required(user_groups='office',user_level='manager')
     model = 'cal.Calendar'
     column_names = "name type color readonly build_method template *"

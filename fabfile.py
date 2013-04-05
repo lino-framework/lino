@@ -20,7 +20,7 @@ env.simple_doctests.append('lino/utils/html2xhtml.py')
 env.simple_doctests.append('lino/utils/demonames.py')
 env.simple_doctests.append('lino/utils/odsreader.py')
 env.simple_doctests.append('lino/utils/ssin.py')
-env.simple_doctests.append('lino/core/choicelists.py')
+#~ env.simple_doctests.append('lino/core/choicelists.py')
 env.simple_doctests.append('lino/utils/jsgen.py')
 env.simple_doctests.append('lino/utils/ranges.py')
 env.simple_doctests.append('lino/modlib/ledger/utils.py')
@@ -31,10 +31,11 @@ env.django_databases.append('docs/tutorials/polls')
 env.django_databases.append('docs/tutorials/quickstart')
 
   
+# invoke only these with ``fab t2``:
 env.django_admin_tests += [
       #~ "lino.projects.cosi.settings", # covered by docs/tutorials/quickstart
       "lino.projects.events.settings",
-      "lino.test_apps.nomti.settings",
+      #~ "lino.test_apps.nomti.settings",
       "lino.test_apps.20100212.settings",
       "lino.test_apps.quantityfield.settings",
       #~ "lino.test_apps.human.settings",

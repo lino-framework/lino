@@ -448,6 +448,7 @@ class Model(models.Model):
             #~ yield ( 'merge_row', MergeAction(self) )
             
     def to_html(self,**kw):
+        import lino.ui.urls # hack: trigger ui instantiation
         actor=self.get_default_table()
         kw.update(renderer=settings.SITE.ui.text_renderer)
         #~ ar = settings.SITE.ui.text_renderer.request(**kw)

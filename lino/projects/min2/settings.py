@@ -22,7 +22,6 @@ from lino.projects.std.settings import *
 
 #~ class Site(Site,cal.SiteMixin):
 class Site(Site):
-    #~ source_dir = os.path.dirname(__file__)
     title = "Lino/MinimalApp 2"
     #~ help_url = "http://lino.saffre-rumma.net/az/index.html"
     #~ migration_module = 'lino.projects.az.migrate'
@@ -40,8 +39,6 @@ class Site(Site):
     #~ remote_user_header = "REMOTE_USER"
     #~ remote_user_header = None
     
-    #~ def get_app_source_file(self):  return __file__
-        
     #~ def setup_quicklinks(self,ui,user,tb):
         #~ tb.add_action(self.modules.contacts.Persons.detail_action)
         #~ tb.add_action(self.modules.contacts.Companies.detail_action)
@@ -61,4 +58,4 @@ class Site(Site):
         #~ yield 'lino.projects.min2'
 
       
-SITE = Site(__file__,globals())
+SITE = Site(globals())

@@ -18,6 +18,10 @@ file since it does not import any django module.
 
 """
 
+import logging
+logger = logging.getLogger(__name__)
+
+
 import os
 import sys
 
@@ -543,10 +547,13 @@ class Site(lino.Site):
     
     _site_config = None
     
+    #~ def init_before_local(self,*args):
+        #~ super(Site,self).init_before_local(*args)
         
     def override_defaults(self,**kwargs):
         """
         """
+        #~ logger.info("20130404 lino.ui.Site.override_defaults")
         super(Site,self).override_defaults(**kwargs)
         
         installed_apps = tuple(self.get_installed_apps()) + ('lino','djangosite')
@@ -594,14 +601,17 @@ class Site(lino.Site):
                 
         #~ print 20130313, self.django_settings['MIDDLEWARE_CLASSES']
         
+    #~ def get_plugins(self):
+        #~ from lino.ui.ui import ExtUI
+        #~ yield ExtUI()
        
-    def do_site_startup(self):
-        super(Site,self).do_site_startup()
+    #~ def do_site_startup(self):
         #~ raise Exception("20130302")
         #~ try:
-        if True:
-            from .ui import ExtUI
-            self.ui = ExtUI()
+        #~ super(Site,self).do_site_startup()
+            
+        #~ if True:
+            #~ self.ui = 
         #~ except Exception as e:
             #~ import traceback
             #~ traceback.print_exc(e)
@@ -986,13 +996,14 @@ class Site(lino.Site):
         #~ sep = ', '
         return sep.join(['<a href="%s" target="_blank">%s</a>&nbsp;%s' 
             % (u,n,v) for n,v,u in self.using(ui)])
-
+              
     def login(self,username):
         """
         """
         #~ self.console_user = self.user_model.objects.get(username=username)
         u = self.user_model.objects.get(username=username)
         from lino.core import requests
+        import lino.ui.urls # hack: trigger ui instantiation
         #~ if u.language:
             #~ from north.dbutils import set_language
             #~ set_language(u.language)

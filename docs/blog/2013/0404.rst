@@ -13,16 +13,16 @@ documentation.
 too audacious experiments because it is being used 
 as a document)
 
-:mod:`djangosite.utils.sphinxconf` is now a package.
+:mod:`djangosite.utils.sphinxconf` is now a package,
+and the blogging logic is 
+moved into a sepaarate module 
+:mod:`djangosite.utils.sphinxconf.blog` 
+to be used as a a Sphinx extension.
 
-:mod:`djangosite.utils.sphinxconf.actordoc` 
-is a Sphinx extension which adds an ``
-
-The :meth:`lino.ui.base.Handle.__init__` no longer 
-takes the `ui` as argument.
+Another new Sphinx extension is :mod:`lino.utils.actordoc`.
 
 :meth:`lino.ui.Site.login` no longer calls 
-:func:`north.dbutils.set_language`. 
+:func:`djangosite.dbutils.set_language`. 
 Because in a multilingual userdocs we want to write `py2rst` 
 examples which require a user because of their permission 
 requirements, but they should render in the language of the 
