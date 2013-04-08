@@ -1,0 +1,38 @@
+================================
+20130408 (Monday, 08 April 2013)
+================================
+
+More multilingual userdocs
+---------------------------
+
+Continued to fill the Lino-Welfare user manual,
+:ref:`welfare.userdocs`,
+my guinea pig for Lino's multilingual userdocs feature.
+
+- A "Reference" part per module justs lists automatically generated 
+  actor descriptions. But using a manual sort order and options about 
+  how detailed to be.
+
+- Where to put the definition of a actor? 
+  (a model, a table, a choicelist) 
+  The `help_text` of a model's standard table.
+  
+  The userdocs author should decide the order in which the different 
+  concepts of an application should be presented to the user.
+  
+  The user doesn't need two entries distinct sections "Course" and "Courses", 
+  (one for the model and the other for the default table).
+  
+I agree with what the Sphinx docs says: 
+Using `ref <http://sphinx-doc.org/markup/inline.html#role-ref>`_ is 
+advised over standard reStructuredText links to sections (like `Section title`_) 
+because it works across files, when section headings are changed, and for 
+all builders that support cross-references.  
+
+But I didn't yet manage to have the ``.. actor::`` directive generate 
+two ``:ref:`` entries that link to the *same* section title, 
+one with the *singular* label and the other with the *plural* label.
+I guess I need to understand `sphinx/domains/std.py` in order to find an answer.
+Must add another 
+  
+  

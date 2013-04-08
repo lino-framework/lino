@@ -41,6 +41,7 @@ from django.utils.encoding import force_unicode
 
 
 from lino.core import actors
+from lino.core import choicelists
 from lino.core import dbtables
 from djangosite.utils import rstgen, unindent
 from djangosite.dbutils import full_model_name
@@ -257,20 +258,22 @@ class LinoTableDirective(Py2rstDirective):
         if not isinstance(cls,type):
             raise Exception("%s is not an actor." % self.content[0])
         if issubclass(cls,actors.Actor):
+          
+            if issubclass(cls,dbtables.Table):
+                if cls.model is not None:
+                    if cls.model._lino_default_table is cls:
+                        self.add_model_index_entry(cls.model)
+                        #~ name = settings.SITE.userdocs_prefix + full_model_name(cls.model)
+                        #~ s += '\n\n.. _'+ name + ':\n\n'
+                    
+          
             title = force_unicode(cls.label or cls.title)
             indextext = _('%s (table in module %s)') % (title,cls.app_label)
             name = settings.SITE.userdocs_prefix + str(cls)
             self.index_entries.append(('single', indextext, name, ''))
             self.add_ref_target(name)
+            
             s = ''
-            if issubclass(cls,dbtables.Table):
-                if cls.model is not None:
-                    if cls.model._lino_default_table is cls:
-                        self.add_model_index_entry(cls.model)
-                        name = settings.SITE.userdocs_prefix + full_model_name(cls.model)
-                        s += '\n\n.. _'+ name + ':\n\n'
-                    
-                    
             s += '\n\n.. _'+ settings.SITE.userdocs_prefix + str(cls) + ':\n\n'
             s += rstgen.header(3,title)
             s += '\n\n'
@@ -279,13 +282,6 @@ class LinoTableDirective(Py2rstDirective):
             return s
         raise Exception("Cannot handle actor %r." % cls)
             
-    def add_model_index_entry(self,model):
-        title = force_unicode(model._meta.verbose_name)
-        indextext = _('%s (model in module %s)') % (title,model._meta.app_label)
-        name = settings.SITE.userdocs_prefix + full_model_name(model)
-        self.index_entries.append(('single', indextext, name, ''))
-        self.add_ref_target(name)
-        
     def add_ref_target(self, fullname):
         #~ fullname = settings.SITE.userdocs_prefix  + str(cls)
         #~ modname = self.options.get(
@@ -308,6 +304,24 @@ class LinoTableDirective(Py2rstDirective):
                     line=self.lineno)
             objects[fullname] = (self.env.docname, 'actor')
 
+        
+    def add_model_index_entry(self,model):
+        title = force_unicode(model._meta.verbose_name)
+        indextext = _('%s (model in module %s)') % (title,model._meta.app_label)
+        name = settings.SITE.userdocs_prefix + full_model_name(model)
+        name = name.lower()
+        labelid = name.replace('.','-')
+        self.index_entries.append(('single', indextext, name, ''))
+        #~ self.add_ref_target(name)
+        
+        env = self.env
+        labels = env.domaindata['std']['labels'] 
+        # a dict mapping labelname -> docname, labelid, sectionname
+        labels[name] = (self.env.docname,labelid,title)
+        
+        env.domaindata['std']['anonlabels'][name] = (self.env.docname,labelid)
+        
+        #~ print '20130408 %s --> %s' % (name,  title)
         
     
     def run(self):

@@ -137,24 +137,7 @@ class RejectInvitation(dd.ChangeStateAction,dd.NotifyingAction):
 
 #~ class EventStates(ChoiceList):
 class EventStates(dd.Workflow):
-    """
-    Workflow state of a Calendar Event. 
-    """
-    #~ label = _("State")
-    
-    #~ @classmethod
-    #~ def allow_state_suggest(cls,self,user):
-        #~ if not self.start_time: return False
-        #~ return True
-        
-    #~ @classmethod
-    #~ def before_state_change(cls,obj,ar,kw,oldstate,newstate):
-      
-        #~ if newstate.name == 'draft':
-            #~ ar.confirm(_("This will reset all invitations"))
-            #~ for g in obj.guest_set.all():
-                #~ g.state = GuestStates.invited
-                #~ g.save()
+    help_text = _("""List of the possible states of a calendar event.""")
         
         
         
@@ -381,10 +364,9 @@ class Calendar(mixins.PrintableType,outbox.MailableType,dd.BabelNamed):
         
     
 class Calendars(dd.Table):
-    help_text = _("""
-    A Calendar is a list of calendar events which have certain things in common.
-    They are being displayed in the :ref:`welfare.cal.Panel` in a given colour.
-    """)
+    help_text = _("""The list of calendars defined on this system.
+    A calendar is a list of events which have certain things in common,
+    especially they are displayed in the same colour in the calendar panel""")
     required = dd.required(user_groups='office',user_level='manager')
     model = 'cal.Calendar'
     column_names = "name type color readonly build_method template *"
@@ -524,6 +506,7 @@ class Place(dd.BabelNamed):
         
   
 class Places(dd.Table):
+    help_text = _("List of places where calendar events can happen.")
     required = dd.required(user_groups='office')
     model = Place
     detail_layout = """
@@ -539,6 +522,7 @@ class Priority(dd.BabelNamed):
     ref = models.CharField(max_length='1')
 
 class Priorities(dd.Table):
+    help_text = _("List of possible priorities of calendar events.")
     required = dd.required(user_groups='office')
     model = Priority
     column_names = 'name *'
@@ -1284,6 +1268,7 @@ class EventInsert(EventDetail):
 unclear_event_states = (EventStates.suggested,EventStates.draft,EventStates.notified)
 
 class Events(dd.Table):
+    help_text = _("A List of calendar entries. Each entry is called an event.")
     #~ debug_permissions = True
     model = 'cal.Event'
     required = dd.required(user_groups='office',user_level='manager')
@@ -1666,6 +1651,8 @@ class Task(Component):
         
 
 class Tasks(dd.Table):
+    help_text = _("""A calendar task is something you need to do.
+    """)
     #~ debug_permissions = True
     model = 'cal.Task'
     required = dd.required(user_groups='office')
@@ -1734,10 +1721,6 @@ if settings.SITE.project_model:
     
 
 class GuestRole(mixins.PrintableType,outbox.MailableType,dd.BabelNamed):
-    """
-    A possible value for the `role` field of an :class:`Guest`.
-    """
-    
     templates_group = 'cal/Guest'
     
     class Meta:
@@ -1746,9 +1729,8 @@ class GuestRole(mixins.PrintableType,outbox.MailableType,dd.BabelNamed):
 
 
 class GuestRoles(dd.Table):
-    """
-    Table showing all :class:`GuestRole` objects.
-    """
+    help_text = _("""The role of a guest expresses what the 
+    partner is going to do there.""")
     model = GuestRole
     required = dd.required(user_groups='office')
     detail_layout = """
@@ -1759,9 +1741,6 @@ class GuestRoles(dd.Table):
     
 
 class Guest(mixins.TypedPrintable,outbox.Mailable):
-    """
-    A Guest is a Partner who is invited to an :class:`Event`.
-    """
     
     workflow_state_field = 'state'
     
@@ -1848,6 +1827,8 @@ class Guest(mixins.TypedPrintable,outbox.Mailable):
     
 #~ class Guests(dd.Table,workflows.Workflowable):
 class Guests(dd.Table):
+    help_text = _("""A guest is a partner invited to an event.
+    """)
     model = Guest
     required = dd.required(user_groups='office')
     column_names = 'partner role workflow_buttons remark event *'

@@ -40,11 +40,3 @@ The :meth:`lino.ui.base.Handle.__init__` no longer
 takes the `ui` as argument.
 
 
-More multilingual userdocs
----------------------------
-
-Continued to fill the Lino-Welfare user manual,
-:ref:`welfare.userdocs`,
-my guinea pig for Lino's multilingual userdocs feature.
-
-
