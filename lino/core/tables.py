@@ -59,7 +59,7 @@ from django.db.models.query import QuerySet
 from django.utils.translation import ugettext_lazy as _
 from django.utils.encoding import force_unicode
 
-from djangosite.utils import rstgen
+from atelier import rstgen
 
 from north import dbutils
 

@@ -670,16 +670,16 @@ class RemoteUserMiddleware(object):
             settings.SITE.remote_user_header,settings.SITE.default_user)
             
         if not username:
-            raise exceptions.PermissionDenied(
-                "Using remote authentication, but no user credentials found.")
-            #~ raise Exception("Using remote authentication, but no user credentials found.")
+            #~ msg = "Using remote authentication, but no user credentials found."
+            #~ raise exceptions.PermissionDenied(msg)
+            raise Exception("Using remote authentication, but no user credentials found.")
             
         user = authenticate(username)
         
         if user is None:
             #~ logger.exception("Unknown username %s from request %s",username, request)
-            #~ raise Exception(
-            raise exceptions.PermissionDenied(
+            raise Exception(
+            #~ raise exceptions.PermissionDenied(
               "Unknown or inactive username %r. Please contact your system administrator." 
               % username)
               

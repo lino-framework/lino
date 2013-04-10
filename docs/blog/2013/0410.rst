@@ -1,0 +1,22 @@
+===================================
+20130410 (Wednesday, 10 April 2013)
+===================================
+
+Before releasing a new version with the MergeAction bug fixed
+I'd like to write a test case for this.
+And before writing that test case I'd like to convert
+the current testing framework (which uses fablib) 
+to a normal one (callable using `setup.py test`).
+
+For Lino, this conversion is now done. 
+
+    $ python setup.py test
+    
+I can now run individual test cases::
+
+    $ python setup.py test -s tests.PackagesTests
+    $ python setup.py test -s tests.ProjectsTests.test_cosi
+    
+New module :mod:`lino.projects.cosi.tests.cosi_tests`
+does already the preliminary stuff. 
+TODO: 

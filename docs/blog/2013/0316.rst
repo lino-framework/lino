@@ -62,7 +62,7 @@ u'Friday, March 15, 2013'
 >>> to_locale('de')
 'de'
 >>> to_locale('de-be')
-'de_BE'
+u'de_BE'
 
 After these experiments (BTW this blog page is being 
 doctested while I'm writing it) I start to feel ready 

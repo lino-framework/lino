@@ -42,6 +42,7 @@ Usage::
 """
 
 from xml.etree import ElementTree as ET
+from atelier import rstgen
 from lino.utils.xmlgen import Namespace, RAW
 
 def HtmlNamespace(Namespace):
@@ -327,7 +328,6 @@ def html2rst(e):
     
 
 from lino.utils.xmlgen import etree
-from djangosite.utils import rstgen
 
 
 

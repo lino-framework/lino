@@ -13,11 +13,12 @@
 ## along with Lino; if not, see <http://www.gnu.org/licenses/>.
 
 """
-Calls `initdb` with :attr:`lino.Lino.demo_fixtures`.
+Calls `initdb` with :attr:`lino.Site.demo_fixtures`.
 """
 
 from django.conf import settings
 from djangosite.management.commands.initdb import Command as BaseCommand
+from djangosite.management.commands.initdb import CommandError
 
 class Command(BaseCommand):
     help = __doc__

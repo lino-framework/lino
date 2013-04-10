@@ -44,8 +44,8 @@ SUBDIR_NAME = 'templates_jinja'
     
 def site_setup(sender,**kw):
     """
-    Adds a global `jinja_env` attribute to `settings.SITE`.
-    This is being called from :func:`lino.models.post_analyze`.
+    Adds a `jinja_env` attribute to `settings.SITE`.
+    This is being called from :func:`lino.ui.models.post_analyze`.
     
     Lino has an automatic and currently not configurable method 
     for building Jinja's template loader. It looks for 

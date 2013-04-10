@@ -57,11 +57,11 @@ import stat
 
 # encapsulate where they come from:
 
-from djangosite.utils import AttrDict, iif, ispure, assert_pure, confirm
-from djangosite.utils import rstgen
-from djangosite.utils import sphinxconf
-from djangosite.utils import i2d
-from djangosite.utils import i2t
+from atelier.utils import AttrDict, iif, ispure, assert_pure, confirm
+from atelier import rstgen
+from atelier import sphinxconf
+from atelier.utils import i2d
+from atelier.utils import i2t
 from north.utils import Cycler
 from lino.utils.code import codefiles, codetime
 

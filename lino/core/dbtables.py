@@ -713,9 +713,6 @@ class Table(AbstractTable):
         else:
             self._slaves = []
             
-        #~ m = getattr(self.model,'setup_report',None)
-        #~ if m:
-            #~ m(self)
         m = getattr(self.model,'setup_table',None)
         if m is not None:
             m(self)

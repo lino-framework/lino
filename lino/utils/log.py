@@ -16,11 +16,10 @@ Provides the default logging configuration interface
 shipped with Lino applications
 for out-of-the-box usage in typical situations.
     
-It defines a  :func:`configure` function which
+It defines a  function :func:`configure` which
 will be called by Django when you have your
 :setting:`LOGGING_CONFIG` set to ``'lino.utils.log.configure'``
-(the default value when you import your settings from 
-:mod:`lino.projects.std.settings`)
+(the default value set when you instantiate a :class:`lino.Site`)
 
 
 Examples
@@ -30,12 +29,12 @@ A simple common example::
 
   LOGGING = dict(filename='/var/log/lino/system.log',level='INFO')
   
-Another example using :attr:`lino.Lino.project_dir`::
+Another example using :attr:`djangosite.Site.project_dir`::
 
   ...
-  LINO = Lino(__file__,globals()) 
+  SITE = Site(globals()) 
   ...
-  LOGGING = dict(filename=join(LINO.project_dir,'log','system.log'),level='DEBUG')
+  LOGGING = dict(filename=join(SITE.project_dir,'log','system.log'),level='DEBUG')
 
   
 The following example to use date-based log files 
@@ -125,10 +124,10 @@ Available parameters are:
 :param encoding: the encoding for the logfile
 :param tty:      whether to install a default logger to the terminal
 
-:param loggers:  A list or tuple of names of loggers to configure.
-                 Default is ['lino'].
-                 If this is a string, Lino converts it to a list 
-                 (expecting it to be a space-separated list of names).
+:param logger_names:  A list or tuple of names of loggers to configure.
+                      If this is a string, Lino converts it to a list 
+                      (expecting it to be a space-separated list of names).
+                      Default value is 'djangosite north lino'.
                  
 If there is a logfile, then console messages will never be more verbose than INFO
 because too many messages on the screen are disturbing, 
@@ -154,13 +153,19 @@ Because that's rather necessary on a production server with :setting:`DEBUG` Fal
     logfile = config.get('filename',None)
     rotate = config.get('rotate',True)
     tty = config.get('tty',True)
-    logger_names = config.get('loggers','djangosite north lino')
+    #~ logger_names = config.get('logger_names','djangosite north lino')
+    logger_names = config.get('logger_names',None)
+    if not logger_names:
+        return # Django 1.5 calls this function twice (#20229)
+        #~ raise Exception("Missing keyword argument `logger_names` in %s." % config)
     #~ when = config.get('when',None)
     #~ interval = config.get('interval',None)
     level = getattr(logging,config.get('level','notset').upper())
-    #~ print 20120613, logger_names
     if isinstance(logger_names,basestring):
         logger_names = logger_names.split()
+    #~ print 20130409, __file__, logger_names
+    #~ if not 'lino_welfare' in logger_names:
+        #~ raise Exception("20130409")
     loggers = [logging.getLogger(n) for n in logger_names]
     
     for l in loggers: l.setLevel(level)

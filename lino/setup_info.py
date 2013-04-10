@@ -9,6 +9,7 @@ SETUP_INFO = dict(name = 'lino',
   author_email = 'luc.saffre@gmail.com',
   url = "http://www.lino-framework.org",
   #~ test_suite = 'lino.test_apps',
+  test_suite = 'tests',
   classifiers="""\
   Programming Language :: Python
   Programming Language :: Python :: 2
@@ -154,6 +155,7 @@ lino.projects.cms
 lino.projects.cms.fixtures
 lino.projects.cosi
 lino.projects.cosi.fixtures
+lino.projects.cosi.tests
 lino.projects.crl
 lino.projects.crl.fixtures
 lino.projects.events

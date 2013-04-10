@@ -203,6 +203,19 @@ class Model(models.Model):
         pass
         
     @classmethod
+    def define_action(cls,**kw):
+        """
+        Adds one or several actions to this model.
+        Actions must be specified using keyword arguments.
+        
+        """
+        for k,v in kw.items():
+            if hasattr(cls,k):
+                raise Exception("Tried to redefine %s.%s" % (cls,k))
+            setattr(cls,k,v)
+        
+        
+    @classmethod
     def hide_elements(self,*names):
         """
         Call this to mark the named data elements (fields) as hidden.

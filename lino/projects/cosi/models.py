@@ -52,14 +52,15 @@ def hide_region(model):
     model.hide_elements('region')
 
         
-@dd.receiver(dd.post_analyze)
+@dd.receiver(dd.pre_analyze)
 def set_merge_actions(sender,**kw):
     #~ logger.info("%s.set_merge_actions()",__name__)
-    app = sender.modules[settings.SITE.partners_app_label]
+    partners = sender.modules[settings.SITE.partners_app_label]
     #~ print 20130202, app.keys()
-    for m in (app.Person,app.Organisation):
+    for m in (partners.Person,partners.Organisation):
         #~ print repr(m)
-        m.merge_row = dd.MergeAction(m)
+        m.define_action(merge_row=dd.MergeAction(m))
+        #~ m.merge_row = dd.MergeAction(m)
         #~ m.hide_elements('region')
     
     #~ modules.contacts.PartnerDetail.address_box.remove_element('region')

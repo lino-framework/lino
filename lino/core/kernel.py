@@ -170,6 +170,20 @@ def startup_site(self):
         for f in model._meta.virtual_fields:
             if isinstance(f,generic.GenericForeignKey):
                 settings.SITE.GFK_LIST.append(f)
+
+    for a in models.get_apps():
+        #~ for app_label,a in loading.cache.app_store.items():
+        app_label = a.__name__.split('.')[-2]
+        #~ logger.info("Installing %s = %s" ,app_label,a)
+        
+        for k,v in a.__dict__.items():
+            if isinstance(v,type) and issubclass(v,layouts.BaseLayout):
+                #~ print "%s.%s = %r" % (app_label,k,v)
+                self.modules.define(app_label,k,v)
+            #~ if isinstance(v,type)  and issubclass(v,dd.Module):
+                #~ logger.info("20120128 Found module %s",v)
+            if k.startswith('setup_'):
+                self.modules.define(app_label,k,v)
                 
     dd.pre_analyze.send(self,models_list=models_list)
     
@@ -210,20 +224,6 @@ def startup_site(self):
                     
                     
     
-    for a in models.get_apps():
-        #~ for app_label,a in loading.cache.app_store.items():
-        app_label = a.__name__.split('.')[-2]
-        #~ logger.info("Installing %s = %s" ,app_label,a)
-        
-        for k,v in a.__dict__.items():
-            if isinstance(v,type) and issubclass(v,layouts.BaseLayout):
-                #~ print "%s.%s = %r" % (app_label,k,v)
-                self.modules.define(app_label,k,v)
-            #~ if isinstance(v,type)  and issubclass(v,dd.Module):
-                #~ logger.info("20120128 Found module %s",v)
-            if k.startswith('setup_'):
-                self.modules.define(app_label,k,v)
-                    
     for model in models_list:
       
         """

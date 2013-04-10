@@ -13,6 +13,13 @@ The final truth about what's going on is only
 Version 1.6.5 (in development)
 ==============================
 
+- Exceptions "Using remote authentication, but no user credentials 
+  found." and "Unknown or inactive username %r. Please contact your 
+  system administrator."
+  raised by :class:`lino.utils.auth.RemoteUserMiddleware`
+  no longer is a PermissionDenied but a simple Exception.
+  See :blogref:`20130409`.
+
 - :class:`lino.core.fields.IncompleteDateField` now has a 
   default `help_text` (adapted from `birth_date` field 
   in :class:`lino.mixins.human.Born`)

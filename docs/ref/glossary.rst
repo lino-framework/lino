@@ -17,6 +17,9 @@ Glossary
   DavLink
     See :doc:`/davlink/index`
     
+  WebDAV
+    See :doc:`/davlink/index`
+    
   Tups
      The machine that served the `saffre-rumma.net` 
      domain until 2010

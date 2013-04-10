@@ -1,0 +1,144 @@
+=================================
+20130409 (Tuesday, 09 April 2013)
+=================================
+
+I moved from my 4-year-old Acer Aspire 7000 with Windows XP 
+to a HP ProBook 4540s with Ubuntu for my daily work.
+This revealed some minor problems like stray CR-LF newlines 
+in some files.
+
+These ones took me quite some time although the reason is rather 
+the new Django version than the new environment:
+
+- The exceptions "Using remote authentication, but no user credentials 
+  found" and "Unknown or inactive username %r. Please contact your 
+  system administrator" raised by 
+  :class:`lino.utils.auth.RemoteUserMiddleware`
+  were `PermissionDenied`. This caused Django 1.5 to not show 
+  the exception's message at all, even on a development server 
+  with DEBUG set to True. Now it's again a "normal" Exception,
+  causing an email to the admins if it happens.
+
+Django 1.5 and the SECRET_KEY setting
+-------------------------------------
+
+Many tests failed under Django 1.5 because it refuses an empty 
+SECRET_KEY setting.
+
+I created :djangoticket:`20227` 
+"Accept an empty SECRET_KEY when DEBUG is True",
+but they didn't agree.
+So I need to either update all test cases and instructions 
+or set a trivial default value for it. 
+I choose the latter, at least as long as there is no better solution.
+ 
+
+How to login through ssh without typing your password each time
+---------------------------------------------------------------
+
+On the client (the machine from which I want to login to 
+a remote server)::
+
+    (py27)luc@hoppel:~$ ssh-keygen -t dsa -f .ssh/id_dsa -P ''
+    Generating public/private dsa key pair.
+    Your identification has been saved in .ssh/id_dsa.
+    Your public key has been saved in .ssh/id_dsa.pub.
+    The key fingerprint is:
+    4f:a8:35:74:f7:5e:ac:7e:2d:5f:c5:8d:f3:94:57:51 luc@hoppel
+    The key's randomart image is:
+    +--[ DSA 1024]----+
+    |               .E|
+    |                .|
+    |        . . .   .|
+    |       . o . . ++|
+    |        S .   +.O|
+    |       o +   . *o|
+    |      .   .   o +|
+    |             .. +|
+    |              .+.|
+    +-----------------+
+
+    (py27)luc@hoppel:~$ scp .ssh/id_dsa.pub luc@remote-host-org:~/
+    luc@lino-framework.org's password: ***
+    id_dsa.pub                                    100%  600     0.6KB/s   00:00    
+
+On the remote host::    
+    
+    (demo)luc@remote:~$ cat id_dsa.pub >> .ssh/authorized_keys 
+    (demo)luc@remote:~$ rm id_dsa.pub
+    
+
+(Thanks to http://www.csua.berkeley.edu/~ranga/notes/ssh_nopass.html 
+for the cheat sheet)
+
+
+Sphinx cannot embed stylesheet
+--------------------------------
+
+When I run `fab docs` for lino on hoppel, then Sphinx 1.2b1 and docutils 0.10 say
+"Cannot embed stylesheet '...docutils/writers/html4css1/html4css1.css': 
+No such file or directory.", or more exactly::
+
+    <partial node>:: (ERROR/3) Cannot embed stylesheet '../../../\
+    pythonenvs/py27/local/lib/python2.7/site-packages/docutils/writers\
+    /html4css1/html4css1.css': No such file or directory.
+
+
+Incompatible changes to LOGGING config in Django 1.5
+----------------------------------------------------
+
+Ouch, Django 1.5 has changed how to  `Configure logging 
+<https://docs.djangoproject.com/en/dev/topics/logging/#configuring-logging>`_:
+
+    Prior to Django 1.5, the LOGGING setting overwrote the default 
+    Django logging configuration. From Django 1.5 forward, the 
+    project’s logging configuration is merged with Django’s 
+    defaults, hence you can decide if you want to add to, or replace 
+    the existing configuration. To completely override the default 
+    configuration, set the disable_existing_loggers key to True in 
+    the LOGGING dictConfig. Alternatively you can redefine some or 
+    all of the loggers.
+    
+
+It took me some time to find out that even setting 
+`disable_existing_loggers` to `True` doesn't help: Django 
+will call my `LOGGING_CONFIG` function twice, once with hard-coded default 
+values, then another time with the local settings::
+
+    if self.LOGGING_CONFIG:
+        from django.utils.log import DEFAULT_LOGGING
+        # First find the logging configuration function ...
+        logging_config_path, logging_config_func_name = self.LOGGING_CONFIG.rsplit('.', 1)
+        logging_config_module = importlib.import_module(logging_config_path)
+        logging_config_func = getattr(logging_config_module, logging_config_func_name)
+
+        logging_config_func(DEFAULT_LOGGING)
+
+        if self.LOGGING:
+            # Backwards-compatibility shim for #16288 fix
+            compat_patch_logging_config(self.LOGGING)
+
+            # ... then invoke it with the logging settings
+            logging_config_func(self.LOGGING)
+
+
+This is not a nice change! Sigh! 
+Opened :djangoticket:`20229` to see what they think about it.
+
+Where is the MergeAction?
+-------------------------
+
+The `Merge` action (:mod:`lino.core.merge`) had disappeared.
+Because it was added using the `post_analyze` signal.
+But (after a change during the last weeks) that's too late, must use pre_analyze. 
+Actions defined on the model are "inherited" by each table on that model.
+Since this inheriting is done during the analyze phase, our customization 
+must happen before.
+
+New method :meth:`lino.core.model.Model.define_action` 
+to make thistype of customization more bullet-proof.
+TODO: define_action should raise an Exception if it is too 
+late (because some tables on this model have already been initialized).
+
+
+

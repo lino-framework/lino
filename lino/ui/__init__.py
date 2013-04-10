@@ -18,9 +18,6 @@ file since it does not import any django module.
 
 """
 
-import logging
-logger = logging.getLogger(__name__)
-
 
 import os
 import sys

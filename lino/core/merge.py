@@ -17,11 +17,11 @@ which is available in :mod:`lino.dd`.
 
 Usage example::
 
-  @dd.receiver(dd.post_analyze)
+  @dd.receiver(dd.pre_analyze)
   def set_merge_actions(sender,**kw):
       modules = sender.modules
       for m in (modules.contacts.Person,modules.contacts.Company):
-          m.merge_row = dd.MergeAction(m)
+          m.define_action(merge_row=dd.MergeAction(m))
 
 If should not be used on models that have MTI children.
 
@@ -146,9 +146,7 @@ class MergePlan(object):
 
     
 class MergeAction(actions.RowAction):
-    """
-    Merge this object into another object of same class.
-    """
+    help_text = _("Merge this object into another object of same class.")
     label = _("Merge")
     sort_index = 31
     show_in_workflow = False

@@ -21,6 +21,7 @@ lino/tutorials/*/media
 lino/projects/*/media
 lino/sandbox/*/media
 */test.db
+docs/media
 docs/*/appdocs
 docs/dl/*
 docs/api

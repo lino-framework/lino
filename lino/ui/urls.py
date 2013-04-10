@@ -56,7 +56,7 @@ settings.SITE.ui.setup_ui_plugin()
 
 
 def get_media_urls():
-    #~ print "20121110 get_urls"
+    #~ print "20121110 get_media_urls"
     urlpatterns = []
     from os.path import exists, join, abspath, dirname
     
@@ -68,6 +68,7 @@ def get_media_urls():
     def setup_media_link(short_name,attr_name=None,source=None):
         target = join(settings.MEDIA_ROOT,short_name)
         if exists(target):
+            #~ logger.info("20130409 path exists: %s",target)
             return
         if attr_name is not None:
             source = getattr(settings.SITE,attr_name)
@@ -80,7 +81,7 @@ def get_media_urls():
         elif not exists(source):
             raise Exception("%s does not exist" % source)
         if is_devserver():
-            logger.debug("django.views.static serving /%s from %s",short_name,source)
+            #~ logger.info("django.views.static serving /%s%s from %s",prefix,short_name,source)
             urlpatterns.extend(patterns('django.views.static',
             (r'^%s%s/(?P<path>.*)$' % (prefix,short_name), 
                 'serve', {
@@ -92,7 +93,7 @@ def get_media_urls():
                 logger.info("Cannot create symlink %s -> %s.",target,source)
                 #~ raise Exception("Cannot run a production server on an OS that doesn't have symlinks")
             else:
-                #~ logger.info("Setting up symlink %s -> %s.",target,source)
+                logger.info("Create symlink %s -> %s.",target,source)
                 symlink(source,target)
         
     if not settings.SITE.extjs_base_url:
@@ -100,6 +101,10 @@ def get_media_urls():
     if settings.SITE.use_bootstrap:
         if not settings.SITE.bootstrap_base_url:
             setup_media_link('bootstrap','bootstrap_root')
+        #~ else:
+            #~ logger.info("20130409 settings.SITE.bootstrap_base_url is %s",settings.SITE.bootstrap_base_url)
+    #~ else:
+        #~ logger.info("20130409 settings.SITE.use_bootstrap is False")
     if settings.SITE.use_extensible:
         if not settings.SITE.extensible_base_url:
             setup_media_link('extensible','extensible_root')
@@ -120,6 +125,7 @@ def get_media_urls():
     
     
 
+    #~ logger.info("20130409 is_devserver() returns %s.",is_devserver())
     if is_devserver():
         urlpatterns += patterns('django.views.static',
             (r'^%s(?P<path>.*)$' % prefix, 'serve', 
@@ -178,7 +184,8 @@ def get_ext_urls():
         (rx+r'choices/(?P<app_label>\w+)/(?P<rptname>\w+)$', views.Choices.as_view()),
         (rx+r'choices/(?P<app_label>\w+)/(?P<rptname>\w+)/(?P<fldname>\w+)$', views.Choices.as_view()),
         (rx+r'apchoices/(?P<app_label>\w+)/(?P<actor>\w+)/(?P<an>\w+)/(?P<field>\w+)$', views.ActionParamChoices.as_view()),
-        (rx+r'callbacks/(?P<thread_id>\w+)/(?P<button_id>\w+)$', views.Callbacks.as_view()),
+        # the thread_id can be a negative number:
+        (rx+r'callbacks/(?P<thread_id>[\-0-9a-zA-Z]+)/(?P<button_id>\w+)$', views.Callbacks.as_view()),
         #~ (rx+r'plain/(?P<app_label>\w+)/(?P<actor>\w+)$', views.PlainList.as_view()),
         #~ (rx+r'plain/(?P<app_label>\w+)/(?P<actor>\w+)/(?P<pk>.+)$', views.PlainElement.as_view()),
     )

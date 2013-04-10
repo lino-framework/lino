@@ -231,6 +231,7 @@ class UI(object):
         #~ return r 
         
     def callback_get(self,request,thread_id,button_id):
+        logger.info("20130409 callback_get")
         thread_id = int(thread_id)
         cb = self.pending_threads.pop(thread_id,None)
         #~ d = self.pop_thread(int(thread_id))

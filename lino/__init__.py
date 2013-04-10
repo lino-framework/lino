@@ -227,7 +227,11 @@ class Site(Site):
         
         self.update_settings(
             LOGGING_CONFIG='lino.utils.log.configure',
-            LOGGING=dict(filename=None,level='INFO'),
+            LOGGING=dict(filename=None,
+                level='INFO',
+                logger_names='djangosite north lino',
+                disable_existing_loggers=True, # Django >= 1.5
+                ),
             )
         
         
