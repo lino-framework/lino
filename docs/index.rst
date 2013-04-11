@@ -4,10 +4,10 @@ Lino the framework
 
 Welcome to the project homepage of Lino the framework. 
 Related projects:
-`django-site <http://site.lino-framework.org>`__
-`North <http://north.lino-framework.org>`__
+`atelier <http://atelier.lino-framework.org>`__,
+`djangosite <http://site.lino-framework.org>`__,
+`North <http://north.lino-framework.org>`__ and
 `Lino-Welfare <http://welfare.lino-framework.org>`__
-`Lino Così <http://cosi.lino-framework.org>`__
 
 .. py2rst::
 

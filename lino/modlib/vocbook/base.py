@@ -41,8 +41,8 @@ from lino.utils.html2xhtml import html2xhtml
 from lino.utils.xmlgen.html import html2rst
 
 from lino.utils.restify import restify
-from djangosite.utils.rstgen import write_header
-from djangosite.utils import rstgen 
+from atelier.rstgen import write_header
+from atelier import rstgen 
 from lino.utils import htmlgen
 
 USE_XHTML2ODT = False

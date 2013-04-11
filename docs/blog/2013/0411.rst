@@ -1,0 +1,86 @@
+==================================
+20130411 (Thursday, 11 April 2013)
+==================================
+
+One of the "details" which need work before Lino can become industrial
+is due to the fact that I invented the :doc:`"using" directory trick </admin/using/>` 
+before Django's `staticfiles <https://docs.djangoproject.com/en/dev/howto/static-files/>`_ 
+became available (or before I discovered it). 
+
+TODO:
+
+- Move :file:`/lino/lino/media` to  :file:`/lino/lino/ui/static`
+  
+- Replace "/media/" by "/static" in the relevant places
+  (e.g. :mod:`lino.ui.urls`)
+
+- Have Lino manage the settings
+  `STATIC_URL <https://docs.djangoproject.com/en/dev/ref/settings/#std:setting-STATIC_URL>`_,
+  `STATIC_ROOT <https://docs.djangoproject.com/en/dev/ref/settings/#std:setting-STATIC_ROOT>`_
+  and
+  `STATICFILES_DIRS <https://docs.djangoproject.com/en/dev/ref/settings/#staticfiles-dirs>`_
+  
+- Start using the 
+  `collectstatic <https://docs.djangoproject.com/en/dev/ref/contrib/staticfiles/#django-admin-collectstatic>`_
+  and
+  `findstatic <https://docs.djangoproject.com/en/dev/ref/contrib/staticfiles/#django-admin-findstatic>`_
+  commands.
+  
+- Adapt documentation. 
+
+
+UnicodeDecodeError in Python 2.6 standard logging
+-------------------------------------------------
+
+
+
+[Wed Apr 10 16:18:12 2013] [error] Traceback (most recent call last):
+[Wed Apr 10 16:18:12 2013] [error]   File "/usr/lib/python2.6/logging/__init__.py", line 776, in emit
+[Wed Apr 10 16:18:12 2013] [error]     msg = self.format(record)
+[Wed Apr 10 16:18:12 2013] [error]   File "/usr/lib/python2.6/logging/__init__.py", line 654, in format
+[Wed Apr 10 16:18:12 2013] [error]     return fmt.format(record)
+[Wed Apr 10 16:18:12 2013] [error]   File "/usr/lib/python2.6/logging/__init__.py", line 436, in format
+[Wed Apr 10 16:18:12 2013] [error]     record.message = record.getMessage()
+[Wed Apr 10 16:18:12 2013] [error]   File "/usr/lib/python2.6/logging/__init__.py", line 306, in getMessage
+[Wed Apr 10 16:18:12 2013] [error]     msg = msg % self.args
+[Wed Apr 10 16:18:12 2013] [error] UnicodeDecodeError: 'ascii' codec can't decode byte 0xc3 in position 45: ordinal not in range(128)
+
+
+
+Edit `/usr/lib/python2.6/logging/__init__.py`, line 306::
+
+        if self.args:
+            msg = msg % self.args
+            
+Change the above to::            
+ 
+        if self.args:
+            try:
+              msg = msg % self.args
+            except UnicodeDecodeError,e:
+              raise UnicodeDecodeError("Failed to decode %r" % self.args)
+ 
+ 
+ 
+TypeError: 'NoneType' object is not iterable 
+--------------------------------------------
+
+::
+
+    Traceback (most recent call last):
+      File "/usr/local/pythonenv/demo/lib/python2.6/site-packages/django/core/handlers/wsgi.py", line 255, in __call__
+        response = self.get_response(request)
+      File "/usr/local/pythonenv/demo/lib/python2.6/site-packages/django/core/handlers/base.py", line 178, in get_response
+        response = self.handle_uncaught_exception(request, resolver, sys.exc_info())
+      File "/usr/local/pythonenv/demo/lib/python2.6/site-packages/django/core/handlers/base.py", line 220, in handle_uncaught_exception
+        if resolver.urlconf_module is None:
+      File "/usr/local/pythonenv/demo/lib/python2.6/site-packages/django/core/urlresolvers.py", line 342, in urlconf_module
+        self._urlconf_module = import_module(self.urlconf_name)
+      File "/usr/local/pythonenv/demo/lib/python2.6/site-packages/django/utils/importlib.py", line 35, in import_module
+        __import__(name)
+      File "/home/luc/hgwork/lino/lino/ui/urls.py", line 55, in <module>
+        settings.SITE.ui.setup_ui_plugin()
+      File "/home/luc/hgwork/lino/lino/ui/ui.py", line 163, in setup_ui_plugin
+        for res in actors.actors_list:
+    TypeError: 'NoneType' object is not iterable
+

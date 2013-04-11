@@ -43,11 +43,12 @@ from django.utils.encoding import force_unicode
 from lino.core import actors
 from lino.core import choicelists
 from lino.core import dbtables
-from djangosite.utils import rstgen, unindent
+from atelier.utils import unindent
+from atelier import rstgen
 from djangosite.dbutils import full_model_name
 from djangosite.dbutils import set_language
 
-from djangosite.utils.sphinxconf import Py2rstDirective
+from atelier.sphinxconf import Django2rstDirective
 
 
 import lino.ui.urls # hack: trigger ui instantiation
@@ -230,7 +231,7 @@ if False:
         StandardDomain.roles['table'] = XRefRole(innernodeclass=ref_nodeclass)    
 
 
-class ActorsOverviewDirective(Py2rstDirective):
+class ActorsOverviewDirective(Django2rstDirective):
     def get_rst(self):
         lng = self.state.document.settings.env.config.language
         set_language(lng)
@@ -243,7 +244,7 @@ class ActorsOverviewDirective(Py2rstDirective):
             items.append("%s : %s" % (actor_ref(cls),cls.help_text or ''))
         return rstgen.ul(items)
     
-class LinoTableDirective(Py2rstDirective):
+class LinoTableDirective(Django2rstDirective):
     #~ has_content = False
     titles_allowed = True
     #~ debug = True

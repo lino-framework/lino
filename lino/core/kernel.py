@@ -281,6 +281,13 @@ def startup_site(self):
 
     self.resolve_virtual_fields()
     
+    #~ trigger creation of params_layout.params_store
+    for res in actors.actors_list:
+        for ba in res.get_actions():
+            if ba.action.parameters:
+                ba.action.params_layout.get_layout_handle(self)
+    
+    
 class DisableDeleteHandler():
     """
     Used to find out whether a known object can be deleted or not.

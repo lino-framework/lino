@@ -13,10 +13,10 @@
 
 import sys, os
 
-from djangosite.utils.sphinxconf import configure
-configure(__file__,globals())
+from atelier.sphinxconf import configure
+configure(globals(),'settings')
 
-extensions += ['djangosite.utils.sphinxconf.blog']
+extensions += ['atelier.sphinxconf.blog']
 
 
 #~ from unipath import Path
@@ -266,7 +266,7 @@ latex_documents = [
 #~ from lino.utils.sphinxconf import setup
 def setup(app):
     app.add_stylesheet('linodocs.css')
-    from djangosite.utils.sphinxconf import setup
+    from atelier.sphinxconf import setup
     setup(app)
     #~ app.add_stylesheet('dialog.css')
     #~ app.add_stylesheet('scrollwide.css')

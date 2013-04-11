@@ -19,4 +19,16 @@ I can now run individual test cases::
     
 New module :mod:`lino.projects.cosi.tests.cosi_tests`
 does already the preliminary stuff. 
-TODO: 
+
+I then realized that it is time for another split 
+(which I have been planning for a few weeks): 
+
+The new project :mod:`atelier`
+contains those parts of :mod:`djangosite`
+which are useful also without Django.
+But :class:`atelier.test.SubProcessTestCase` is new.
+
+
+
+
+

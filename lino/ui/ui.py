@@ -160,10 +160,10 @@ class ExtUI(base.UI):
         #~ base.UI.__init__(self)
         
         #~ trigger creation of params_layout.params_store
-        for res in actors.actors_list:
-            for ba in res.get_actions():
-                if ba.action.parameters:
-                    ba.action.params_layout.get_layout_handle(self)
+        #~ for res in actors.actors_list:
+            #~ for ba in res.get_actions():
+                #~ if ba.action.parameters:
+                    #~ ba.action.params_layout.get_layout_handle(self)
         
         post_ui_build.send(self)
         
