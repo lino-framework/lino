@@ -20,6 +20,7 @@ logger = logging.getLogger(__name__)
 import traceback
 #~ from django.utils.translation import ugettext as _
 from django.utils.translation import ugettext_lazy as _
+from north.dbutils import set_language
 from django.utils.encoding import force_unicode
 from django.conf import settings
 from django import http
@@ -276,6 +277,10 @@ class BaseRequest(object):
         
     def run(self,ia,*args,**kw):
         return ia.run_from_session(self,*args,**kw)
+        
+    def set_language(self,*args):
+        set_language(*args)
+        
         
     def show(self,ar,column_names=None,**kw):
         if isinstance(ar,ActionRequest):

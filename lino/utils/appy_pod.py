@@ -196,11 +196,16 @@ class Renderer(AppyRenderer):
       
         
     def insert_table(self,*args,**kw):
-        try:
+        #~ since i cannot yet tell appy_pod to alert me when there is an 
+        #~ exception, here at least i write it to the logger
+        if False:
             return self.insert_table_(*args,**kw)
-        except Exception as e:
-            logger.exception(e)
-            return ''
+        else:
+            try:
+                return self.insert_table_(*args,**kw)
+            except Exception as e:
+                logger.exception(e)
+                return ''
         
     def insert_table_(self,ar,column_names=None):
         """

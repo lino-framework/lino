@@ -13,4 +13,3 @@ prune lino/sandbox
 prune screenshots
 prune extjs-showcases
 prune tmp
-prune htmlcov

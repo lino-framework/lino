@@ -32,27 +32,37 @@ TODO:
 UnicodeDecodeError in Python 2.6 standard logging
 -------------------------------------------------
 
+I sometimes see the following traceback in my `error.log`::
 
+    [Wed Apr 10 16:18:12 2013] [error] Traceback (most recent call last):
+    [Wed Apr 10 16:18:12 2013] [error]   File "/usr/lib/python2.6/logging/__init__.py", line 776, in emit
+    [Wed Apr 10 16:18:12 2013] [error]     msg = self.format(record)
+    [Wed Apr 10 16:18:12 2013] [error]   File "/usr/lib/python2.6/logging/__init__.py", line 654, in format
+    [Wed Apr 10 16:18:12 2013] [error]     return fmt.format(record)
+    [Wed Apr 10 16:18:12 2013] [error]   File "/usr/lib/python2.6/logging/__init__.py", line 436, in format
+    [Wed Apr 10 16:18:12 2013] [error]     record.message = record.getMessage()
+    [Wed Apr 10 16:18:12 2013] [error]   File "/usr/lib/python2.6/logging/__init__.py", line 306, in getMessage
+    [Wed Apr 10 16:18:12 2013] [error]     msg = msg % self.args
+    [Wed Apr 10 16:18:12 2013] [error] UnicodeDecodeError: 'ascii' codec can't decode byte 0xc3 in position 45: ordinal not in range(128)
 
-[Wed Apr 10 16:18:12 2013] [error] Traceback (most recent call last):
-[Wed Apr 10 16:18:12 2013] [error]   File "/usr/lib/python2.6/logging/__init__.py", line 776, in emit
-[Wed Apr 10 16:18:12 2013] [error]     msg = self.format(record)
-[Wed Apr 10 16:18:12 2013] [error]   File "/usr/lib/python2.6/logging/__init__.py", line 654, in format
-[Wed Apr 10 16:18:12 2013] [error]     return fmt.format(record)
-[Wed Apr 10 16:18:12 2013] [error]   File "/usr/lib/python2.6/logging/__init__.py", line 436, in format
-[Wed Apr 10 16:18:12 2013] [error]     record.message = record.getMessage()
-[Wed Apr 10 16:18:12 2013] [error]   File "/usr/lib/python2.6/logging/__init__.py", line 306, in getMessage
-[Wed Apr 10 16:18:12 2013] [error]     msg = msg % self.args
-[Wed Apr 10 16:18:12 2013] [error] UnicodeDecodeError: 'ascii' codec can't decode byte 0xc3 in position 45: ordinal not in range(128)
+Okay, there's probably some bug in my code which asks to log a non-unicode 
+string with non-ascii characters. But where? The traceback unfortunately 
+gives no hint about this.
 
+I tried to reproduce this error using things like::
 
+  # -*- coding: UTF-8 -*-
+  import logging
+  logging.warning('Watch out!') 
+  logging.warning('Watch out, %s!', "Mike") 
+  logging.warning('Regarde, %s!', "Jürgen") 
 
-Edit `/usr/lib/python2.6/logging/__init__.py`, line 306::
+No success. I then edited the `/usr/lib/python2.6/logging/__init__.py`, line 306::
 
         if self.args:
             msg = msg % self.args
             
-Change the above to::            
+Changed the above to::            
  
         if self.args:
             try:
@@ -60,12 +70,14 @@ Change the above to::
             except UnicodeDecodeError,e:
               raise UnicodeDecodeError("Failed to decode %r" % self.args)
  
- 
+So now I hope that when it happens again I can at least see what it 
+was trying to decode...
  
 TypeError: 'NoneType' object is not iterable 
 --------------------------------------------
 
-::
+Another bug due to recent changes (pluggable UI) occured only 
+in a multi-threaded situation::
 
     Traceback (most recent call last):
       File "/usr/local/pythonenv/demo/lib/python2.6/site-packages/django/core/handlers/wsgi.py", line 255, in __call__
@@ -83,4 +95,32 @@ TypeError: 'NoneType' object is not iterable
       File "/home/luc/hgwork/lino/lino/ui/ui.py", line 163, in setup_ui_plugin
         for res in actors.actors_list:
     TypeError: 'NoneType' object is not iterable
+
+Test suite for Lino-Welfare
+---------------------------
+
+Converted the last test suite (Lino-Welfare) to the new system 
+using `setup.py test` instead of `fab test`.
+
+Note: It was a mistake to implement these tests using fab because 
+(1) it was not possible to run only individual tests 
+(an important thing when you are working on a particular test case)
+and (2) it was not the standard method and thus not visible to tools 
+who run a test suite of a package automatically.
+OTOH I'm still grateful to fabric who helped me discover these testing 
+methods.
+
+A command to test them all
+--------------------------
+
+And now finally: I wrote a bash command `rt` (for "run tests") 
+which runs the test suites of all my projects at once.
+When no suite fails, it says::
+
+  All tests passed (for projects atelier site north lino welfare)
+  Congratulations!
+
+Currently they are five, but there will be more.
+
+And now I can go to sleep :-)
 

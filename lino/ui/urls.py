@@ -50,10 +50,10 @@ from lino.core.dbutils import is_devserver
 
 from pkg_resources import Requirement, resource_filename, DistributionNotFound
 
-from lino.ui.ui import ExtUI
-settings.SITE.ui = ExtUI()
-settings.SITE.ui.setup_ui_plugin()
-
+#~ from lino.ui.ui import ExtUI
+#~ settings.SITE.ui = ExtUI()
+#~ settings.SITE.ui.setup_ui_plugin()
+#~ 
 
 def get_media_urls():
     #~ print "20121110 get_media_urls"
