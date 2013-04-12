@@ -1,0 +1,30 @@
+================================
+20130412 (Friday, 12 April 2013)
+================================
+
+A command to test them all (continued)
+--------------------------------------
+
+Yesterday I was already happy with something like the 
+following in my `.bash_aliases`::
+
+    PROJECTS="atelier site north lino welfare"
+
+    function rt() { 
+    for i in $PROJECTS; do
+    echo ========= RUNNING TEST SUITE FOR $i =====
+    cd ~/hgwork/$i
+    python setup.py -q test
+    [ "$?" == 0 ] || return 1
+    done
+    echo "All tests passed (for projects $PROJECTS)"
+    echo "Congratulations!"
+    }
+
+But today I want more. I wrote a script 
+`/scripts/per_project` as part 
+of the `atelier` package. Now I can simply open a shell and type::
+
+  $ pp test # run all tests on all projects
+  $ pp adocs # build all docs on all projects
+  $ pp pub # publish docs on all projects

@@ -122,5 +122,8 @@ When no suite fails, it says::
 
 Currently they are five, but there will be more.
 
+Similar commands `mad` ("make all docs")
+and `all_ci`.
+
 And now I can go to sleep :-)
 
