@@ -28,3 +28,19 @@ of the `atelier` package. Now I can simply open a shell and type::
   $ pp test # run all tests on all projects
   $ pp adocs # build all docs on all projects
   $ pp pub # publish docs on all projects
+
+
+Sphinx cannot embed stylesheet (continued)
+------------------------------------------
+
+(Continued from :blogref:`20130409`)
+
+http://docutils.sourceforge.net/docs/dev/repository.html
+
+
+$ mkdir svnwork
+$ svn checkout http://svn.code.sf.net/p/docutils/code/trunk docutils-code
+$ cd docutils-code
+$ pip uninstall docutils
+$ pip install -e docutils
+

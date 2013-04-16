@@ -282,16 +282,7 @@ def startup_site(self):
     self.resolve_virtual_fields()
     
     from lino.ui.ui import ExtUI
-    self.ui = ExtUI()
-    self.ui.setup_ui_plugin()
-    
-    
-    #~ trigger creation of params_layout.params_store
-    for res in actors.actors_list:
-        for ba in res.get_actions():
-            if ba.action.parameters:
-                ba.action.params_layout.get_layout_handle(self)
-    
+    self.ui = ExtUI(self)
     
 class DisableDeleteHandler():
     """

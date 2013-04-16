@@ -40,10 +40,18 @@ import yaml
 #~ write_lock = threading.RLock()
 
 
+from django.db import models
 from django.conf import settings
 from django.utils.translation import ugettext_lazy as _
+from django.db.models.fields import NOT_PROVIDED
+from django.db.models.fields.related import SingleRelatedObjectDescriptor
+#~ from django.contrib.contenttypes.models import ContentType
+from django.contrib.contenttypes import generic
+
 
 from lino.core import constants # as ext_requests
+
+#~ from lino import dd
 
 #~ from lino.core import perms
 #~ from lino.utils import curry
@@ -251,7 +259,7 @@ class LayoutHandle:
             elems[0].setup(**kw)
             return elems[0]
         #~ kw.update(self.layout.panel_options.get(elemname,{}))
-        e = settings.SITE.ui.create_layout_panel(self,elemname,vertical,elems,**kw)
+        e = create_layout_panel(self,elemname,vertical,elems,**kw)
         #~ e.allow_read = curry(perms.make_permission(self.layout._datasource,**e.required),e)
         return e
             
@@ -302,7 +310,7 @@ class LayoutHandle:
             #~ if name == 'start':
                 #~ print 20121021, repr(name), "not a panel", repr(self.layout)
             #~ return self.define_panel(name,desc)
-        e = settings.SITE.ui.create_layout_element(self,name,**pkw)
+        e = create_layout_element(self,name,**pkw)
         #~ e = self.ui.create_layout_element(self,name)
         if e is None: return None # e.g. NullField
         # todo: cannot hide babelfields
@@ -667,3 +675,267 @@ class ActionParamsLayout(ParamsLayout):
           #~ ba.actor.__name__,
           a.action_name,
           field.name,**kw)
+
+
+
+def create_layout_panel(lh,name,vertical,elems,**kw):
+    """
+    This also must translate ui-agnostic parameters 
+    like `label_align` to their ExtJS equivalent `labelAlign`.
+    """
+    from lino.ui import elems as ext_elems
+    pkw = dict()
+    pkw.update(labelAlign=kw.pop('label_align','top'))
+    pkw.update(hideCheckBoxLabels=kw.pop('hideCheckBoxLabels',True))
+    pkw.update(label=kw.pop('label',None))
+    pkw.update(width=kw.pop('width',None))
+    pkw.update(height=kw.pop('height',None))
+    #~ required = {}
+    #~ main panel 
+    # 20121116
+    #~ if False and name == 'main' and isinstance(lh.layout,ListLayout):
+    #~ if name != 'main' and isinstance(lh.layout,ListLayout):
+    #~ required.update(lh.layout._datasource.required)
+    #~ todo: requirements sind eine negativ-liste. aber auth=True muss in eine positiv-liste
+    v = kw.pop('required',NOT_PROVIDED)
+    if v is not NOT_PROVIDED:
+        pkw.update(required=v)
+    if kw:
+        raise Exception("Unknown panel attributes %r for %s" % (kw,lh))
+    if name == 'main':
+        if isinstance(lh.layout,ListLayout):
+            #~ return ext_elems.GridMainPanel(lh,name,vertical,*elems,**pkw)
+            #~ return ext_elems.GridMainPanel(lh,name,lh.layout._datasource,*elems,**pkw)
+            e = ext_elems.GridElement(lh,name,lh.layout._datasource,*elems,**pkw)
+        elif isinstance(lh.layout,ActionParamsLayout) : 
+            e = ext_elems.ActionParamsPanel(lh,name,vertical,*elems,**pkw)
+        elif isinstance(lh.layout,ParamsLayout) : 
+            e = ext_elems.ParamsPanel(lh,name,vertical,*elems,**pkw)
+            #~ fkw = dict(layout='fit', autoHeight= True, frame= True, items=pp)
+            #~ if lh.layout._datasource.params_panel_hidden:
+                #~ fkw.update(hidden=True)
+            #~ return ext_elems.FormPanel(**fkw)
+        elif isinstance(lh.layout,FormLayout): 
+            if len(elems) == 1 or vertical:
+                e = ext_elems.DetailMainPanel(lh,name,vertical,*elems,**pkw)
+            else:
+                e = ext_elems.TabPanel(lh,name,*elems,**pkw)
+        else:
+            raise Exception("No element class for layout %r" % lh.layout)
+        #~ actions.loosen_requirements(e,**lh.layout._datasource.required)
+        #~ e.debug_permissions = True
+        return e
+    return ext_elems.Panel(lh,name,vertical,*elems,**pkw)
+
+def create_layout_element(lh,name,**kw):
+    """
+    Create a layout element from the named data element.
+    """
+    from north.dbutils import BabelCharField, BabelTextField
+    from lino.ui import elems as ext_elems
+    from lino.core import fields
+    from lino.core import tables
+    from lino.utils.jsgen import js_code
+    #~ if True: 
+    if settings.SITE.catch_layout_exceptions: 
+        try:
+            de = lh.get_data_elem(name)
+        except Exception, e:
+            logger.exception(e)
+            de = None
+            name += " (" + str(e) + ")"
+    else:
+        de = lh.get_data_elem(name)
+        
+    #~ if isinstance(de,fields.FieldSet):
+        #~ # return lh.desc2elem(ext_elems.FieldSetPanel,name,de.desc)
+        #~ return lh.desc2elem(name,de.desc,**kw)
+        
+    #~ if isinstance(de,fields.NullField):
+        #~ return None
+        
+    if isinstance(de,fields.DummyField):
+        return None
+    if isinstance(de,fields.Constant):
+        return ext_elems.ConstantElement(lh,de,**kw)
+        
+        
+    if isinstance(de,SingleRelatedObjectDescriptor):
+        return ext_elems.SingleRelatedObjectElement(lh,de.related,**kw)
+        #~ return create_field_element(lh,de.related.field,**kw)
+        
+    if isinstance(de,fields.RemoteField):
+        return create_field_element(lh,de,**kw)
+    if isinstance(de,models.Field):
+        if isinstance(de,(BabelCharField,BabelTextField)):
+            if len(settings.SITE.BABEL_LANGS) > 0:
+                elems = [ create_field_element(lh,de,**kw) ]
+                for lang in settings.SITE.BABEL_LANGS:
+                    #~ bf = lh.get_data_elem(name+'_'+lang)
+                    bf = lh.get_data_elem(name+lang.suffix)
+                    elems.append(create_field_element(lh,bf,**kw))
+                return elems
+        return create_field_element(lh,de,**kw)
+        
+    #~ if isinstance(de,fields.LinkedForeignKey):
+        #~ de.primary_key = False # for ext_store.Store()
+        #~ lh.add_store_field(de)
+        #~ return ext_elems.LinkedForeignKeyElement(lh,de,**kw)
+        
+    if isinstance(de,generic.GenericForeignKey):
+        # create a horizontal panel with 2 comboboxes
+        #~ print 20111123, name,de.ct_field + ' ' + de.fk_field
+        #~ return lh.desc2elem(panelclass,name,de.ct_field + ' ' + de.fk_field,**kw)
+        #~ return ext_elems.GenericForeignKeyField(lh,name,de,**kw)
+        de.primary_key = False # for ext_store.Store()
+        lh.add_store_field(de)
+        return ext_elems.GenericForeignKeyElement(lh,de,**kw)
+        
+        
+    #~ if isinstance(de,type) and issubclass(de,dd.Table):
+    if isinstance(de,type) and issubclass(de,tables.AbstractTable):
+        kw.update(master_panel=js_code("this"))
+        if isinstance(lh.layout,FormLayout):
+            """a Table in a DetailWindow"""
+            kw.update(tools=[
+              js_code("Lino.show_in_own_window_button(Lino.%s)" % de.default_action.full_name())
+              #~ js_code("Lino.report_window_button(Lino.%s)" % de.default_action)
+              #~ js_code("Lino.report_window_button(ww,Lino.%s)" % de.default_action)
+            ])
+            #~ if settings.SITE.use_quicktips and de.help_text:
+                #~ kw.update(listeners=dict(render=js_code(
+                  #~ "Lino.quicktip_renderer(%s,%s)" % (py2js('Slave'),py2js(de.help_text)))
+                #~ ))
+           
+            if de.slave_grid_format == 'grid':
+                #~ if not de.parameters:
+                kw.update(hide_top_toolbar=True)
+                if de.preview_limit is not None:
+                    kw.update(preview_limit=de.preview_limit)
+                e = ext_elems.GridElement(lh,name,de,**kw)
+                return e
+            elif de.slave_grid_format == 'summary':
+                # a Table in a DetailWindow, displayed as a summary in a HtmlBox 
+                o = dict(drop_zone="FooBar")
+                #~ a = de.get_action('insert')
+                a = de.insert_action
+                if a is not None:
+                    kw.update(ls_insert_handler=js_code("Lino.%s" % a.full_name()))
+                    kw.update(ls_bbar_actions=[settings.SITE.ui.ext_renderer.a2btn(a)])
+                #~ else:
+                    #~ print 20120619, de, 'has no insert_action'
+                field = fields.HtmlBox(verbose_name=de.label,**o)
+                field.help_text = de.help_text
+                field.name = de.__name__
+                #~ field._return_type_for_method = de.slave_as_summary_meth(self,'<br>')
+                field._return_type_for_method = de.slave_as_summary_meth('<br>')
+                lh.add_store_field(field)
+                e = ext_elems.HtmlBoxElement(lh,field,**kw)
+                return e
+                
+            elif de.slave_grid_format == 'html':
+                #~ a = de.get_action('insert')
+                if de.editable:
+                    a = de.insert_action
+                    if a is not None:
+                        kw.update(ls_insert_handler=js_code("Lino.%s" % a.full_name()))
+                        kw.update(ls_bbar_actions=[settings.SITE.ui.ext_renderer.a2btn(a)])
+                field = fields.HtmlBox(verbose_name=de.label)
+                field.name = de.__name__
+                field.help_text = de.help_text
+                #~ field._return_type_for_method = de.slave_as_html_meth(self)
+                field._return_type_for_method = de.slave_as_html_meth()
+                lh.add_store_field(field)
+                #~ kw.update(required=de.required) # e.g. lino.Home.UsersWithClients not visible for everybody
+                e = ext_elems.HtmlBoxElement(lh,field,**kw)
+                e.add_requirements(**de.required)
+                return e
+        else:
+            #~ field = fields.TextField(verbose_name=de.label)
+            field = fields.HtmlBox(verbose_name=de.label)
+            field.name = de.__name__
+            #~ field._return_type_for_method = de.slave_as_summary_meth(self,', ')
+            field._return_type_for_method = de.slave_as_summary_meth(', ')
+            lh.add_store_field(field)
+            e = ext_elems.HtmlBoxElement(lh,field,**kw)
+            return e
+            
+    if isinstance(de,fields.VirtualField):
+        return create_vurt_element(lh,name,de,**kw)
+        
+    if callable(de):
+        rt = getattr(de,'return_type',None)
+        if rt is not None:
+            return create_meth_element(lh,name,de,rt,**kw)
+            
+    if not name in ('__str__','__unicode__','name','label'):
+        value = getattr(lh,name,None)
+        if value is not None:
+            return value
+            
+    if hasattr(lh,'rh'):
+        msg = "Unknown element %r referred in layout <%s of %s>." % (
+            name,lh.layout,lh.rh.actor)
+        l = [de.name for de in lh.rh.actor.wildcard_data_elems()]
+        model = getattr(lh.rh.actor,'model',None) # VirtualTables don't have a model
+        if getattr(model,'_lino_slaves',None):
+            l += [str(rpt) for rpt in model._lino_slaves.values()]
+        msg += " Possible names are %s." % ', '.join(l)
+    else:
+        #~ logger.info("20121023 create_layout_element %r",lh.layout._datasource)
+        #~ l = [de.name for de in lh.layout._datasource.wildcard_data_elems()]
+        #~ print(20130202, [f.name for f in lh.layout._datasource.model._meta.fields])
+        #~ print(20130202, lh.layout._datasource.model._meta.get_all_field_names())
+        msg = "Unknown element %r referred in layout <%s>." % (
+            name,lh.layout)
+        msg += " Cannot handle %r" % de
+    raise KeyError(msg)
+    
+
+def create_vurt_element(lh,name,vf,**kw):
+    #~ assert vf.get.func_code.co_argcount == 2, (name, vf.get.func_code.co_varnames)
+    e = create_field_element(lh,vf,**kw)
+    if not vf.is_enabled(lh):
+        e.editable = False
+    return e
+    
+def create_meth_element(lh,name,meth,rt,**kw):
+    #~ if hasattr(rt,'_return_type_for_method'):
+        #~ raise Exception(
+          #~ "%s.%s : %r has already an attribute '_return_type_for_method'" % (
+            #~ lh,name,rt))
+    rt.name = name
+    rt._return_type_for_method = meth
+    if meth.func_code.co_argcount < 2:
+        raise Exception("Method %s has %d arguments (must have at least 2)" % (meth,meth.func_code.co_argcount))
+        #~ , (name, meth.func_code.co_varnames)
+    #~ kw.update(editable=False)
+    e = create_field_element(lh,rt,**kw)
+    #~ if lh.rh.actor.actor_id == 'contacts.Persons':
+        #~ print 'ext_ui.py create_meth_element',name,'-->',e
+    #~ if name == 'preview':
+        #~ print 20110714, 'ext_ui.create_meth_element', meth, repr(e)
+    return e
+    #~ e = lh.main_class.field2elem(lh,return_type,**kw)
+    #~ assert e.field is not None,"e.field is None for %s.%s" % (lh.layout,name)
+    #~ lh._store_fields.append(e.field)
+    #~ return e
+        
+    #~ if rt is None:
+        #~ rt = models.TextField()
+        
+    #~ e = ext_elems.MethodElement(lh,name,meth,rt,**kw)
+    #~ assert e.field is not None,"e.field is None for %s.%s" % (lh.layout,name)
+    #~ lh._store_fields.append(e.field)
+    #~ return e
+      
+    
+def create_field_element(lh,field,**kw):
+    #~ e = lh.main_class.field2elem(lh,field,**kw)
+    from lino.ui import elems as ext_elems
+    e = ext_elems.field2elem(lh,field,**kw)
+    assert e.field is not None,"e.field is None for %s.%s" % (lh.layout,name)
+    lh.add_store_field(e.field)
+    return e
+    #return FieldElement(field,**kw)
+    

@@ -50,21 +50,21 @@ class PackagesTests(LinoTestCase):
 
 class ProjectsTests(LinoTestCase):
     
-    def test_cosi(self): self.run_django_admin_tests("lino.projects.cosi.settings") # covered by docs/tutorials/quickstart
-    def test_events(self): self.run_django_admin_tests("lino.projects.events.settings") 
-    def test_presto(self): self.run_django_admin_tests("lino.projects.presto.settings") 
-    def test_belref(self): self.run_django_admin_tests("lino.projects.belref.settings") 
-    def test_babel_tutorial(self): self.run_django_admin_tests("lino.projects.babel_tutorial.settings") 
-    def test_homeworkschool(self): self.run_django_admin_tests("lino.projects.homeworkschool.settings") 
-    def test_min1(self): self.run_django_admin_tests("lino.projects.min1.settings") 
-    def test_min2(self): self.run_django_admin_tests("lino.projects.min2.settings") 
+    def test_cosi(self): self.run_django_admin_test("lino.projects.cosi.settings") # covered by docs/tutorials/quickstart
+    def test_events(self): self.run_django_admin_test("lino.projects.events.settings") 
+    def test_presto(self): self.run_django_admin_test("lino.projects.presto.settings") 
+    def test_belref(self): self.run_django_admin_test("lino.projects.belref.settings") 
+    def test_babel_tutorial(self): self.run_django_admin_test("lino.projects.babel_tutorial.settings") 
+    def test_homeworkschool(self): self.run_django_admin_test("lino.projects.homeworkschool.settings") 
+    def test_min1(self): self.run_django_admin_test("lino.projects.min1.settings") 
+    def test_min2(self): self.run_django_admin_test("lino.projects.min2.settings") 
     
 class TestAppsTests(LinoTestCase):
     
-    #~ def test_nomti(self): self.run_django_admin_tests("lino.test_apps.nomti.settings") 
+    #~ def test_nomti(self): self.run_django_admin_test("lino.test_apps.nomti.settings") 
     #~ NotImplementedError: No LayoutElement for owners (<class 'django.db.models.fields.related.ManyToManyField'>) in ListLayout on nomti.PlaceTable
     
-    def test_20100212(self): self.run_django_admin_tests("lino.test_apps.20100212.settings") 
-    def test_quantityfield(self): self.run_django_admin_tests("lino.test_apps.quantityfield.settings") 
+    def test_20100212(self): self.run_django_admin_test("lino.test_apps.20100212.settings") 
+    def test_quantityfield(self): self.run_django_admin_test("lino.test_apps.quantityfield.settings") 
     
 

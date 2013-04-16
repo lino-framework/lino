@@ -1,0 +1,7 @@
+=================================
+20130416 (Tuesday, 16 April 2013)
+=================================
+
+
+py2rst and django2rst directives have now 
+titles_allowed = True.

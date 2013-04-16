@@ -494,7 +494,8 @@ class TableRequest(ActionRequest):
                 #~ columns = ar.ah.list_layout.main.columns
             #~ fields = ar.ah.store.list_fields
             headers = [unicode(col.label or col.name) for col in columns]
-            widths = ["%d%%" % (col.width or col.preferred_width) for col in columns]
+            widths = ["%d" % (col.width or col.preferred_width) for col in columns]
+            #~ 20130415 widths = ["%d%%" % (col.width or col.preferred_width) for col in columns]
             #~ fields = [col.field._lino_atomizer for col in columns]
             fields = columns
 
@@ -577,7 +578,7 @@ class TableRequest(ActionRequest):
             #~ kw.update(master_instance=self.master_instance.pk)
             kw.update(master_instance=obj2str(self.master_instance))
         if self.filter is not None:
-            kw.update(filter=str(self.filter))
+            kw.update(filter=repr(self.filter))
         if self.known_values:
             kw.update(known_values=self.known_values)
         u = self.get_user()

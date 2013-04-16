@@ -679,9 +679,9 @@ class RemoteUserMiddleware(object):
         if user is None:
             #~ logger.exception("Unknown username %s from request %s",username, request)
             #~ raise Exception(
-            raise exceptions.PermissionDenied(
-              "Unknown or inactive username %r. Please contact your system administrator." 
-              % username)
+            #~ raise exceptions.PermissionDenied("Unknown or inactive username %r. Please contact your system administrator." 
+            logger.info("Unknown or inactive username %r.",username)
+            raise exceptions.PermissionDenied()
               
         on_login(request,user)
     

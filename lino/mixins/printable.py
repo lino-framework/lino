@@ -16,6 +16,9 @@
 See :doc:`/admin/printable`
 
 """
+
+from __future__ import unicode_literals
+
 import logging
 logger = logging.getLogger(__name__)
 
@@ -311,10 +314,10 @@ class AppyBuildMethod(SimpleBuildMethod):
             #~ knowledge_text=fields.knowledge_text,
             )
         lang = str(elem.get_print_language(self))
-        logger.info(u"appy.pod render %s -> %s (language=%r,params=%s",
-            tpl,target,lang,settings.SITE.appy_params)
         #~ savelang = dbutils.get_language()
         #~ dbutils.set_language(lang)
+        logger.info(u"appy.pod render %s -> %s (language=%r,params=%s",
+            tpl,target,lang,settings.SITE.appy_params)
         def f():
             Renderer(ar,tpl, context, target,**settings.SITE.appy_params).run()
         dbutils.run_with_language(lang,f)
@@ -496,7 +499,7 @@ class BasePrintAction(actions.RowAction):
         if not filename:
             return
         if os.path.exists(filename):
-            logger.info(u"%s %s -> overwrite existing %s.",bm,elem,filename)
+            logger.debug(u"%s %s -> overwrite existing %s.",bm,elem,filename)
             os.remove(filename)
         else:
             #~ logger.info("20121221 makedirs_if_missing %s",os.path.dirname(filename))
@@ -618,6 +621,11 @@ class DirectPrintAction(BasePrintAction):
 class ClearCacheAction(actions.RowAction):
     """
     Defines the :guilabel:`Clear cache` button on a Printable record.
+    
+    The `run_from_ui` method has an optional keyword argmuent
+     `force`. This is set to True in `docs/tests/debts.rst` 
+     to avoid compliations.
+    
     """
     sort_index = 51
     url_action_name = 'clear'
@@ -639,9 +647,7 @@ class ClearCacheAction(actions.RowAction):
     
     def run_from_ui(self,elem,ar):
         def doit():
-            #~ elem.must_build = True
-            elem.build_time = None
-            elem.save()
+            elem.clear_cache()
             return ar.success("%s printable cache has been cleared." % elem,refresh=True)
             
         t = elem.get_cache_mtime()
@@ -736,29 +742,10 @@ class CachedPrintable(Duplicable,Printable):
     do_print = PrintAction()
     do_clear_cache = ClearCacheAction()
     
-    #~ @classmethod
-    #~ def get_model_actions(self,table):
-        #~ for x in super(CachedPrintable,self).get_model_actions(table): yield x
-        #~ yield 'do_print',PrintAction()
-        #~ yield 'do_clear_cache',ClearCacheAction()
-    
-    
     
     class Meta:
         abstract = True
         
-    #~ @classmethod
-    #~ def setup_report(cls,rpt):
-        #~ rpt.add_action(PrintAction())
-        #~ rpt.add_action(ClearCacheAction())
-        
-    #~ def get_row_permission(self,user,state,action):
-        #~ """
-        #~ Cached printables may not be edited after they have been printed.
-        #~ """
-        #~ if self.build_time and not action.readonly:
-            #~ return False
-        #~ return super(CachedPrintable,self).get_row_permission(user,state,action)
       
     def print_from_posting(self,posting,ar,**kw):
         return self.do_print.run_from_ui(self,ar,**kw)
@@ -803,6 +790,10 @@ class CachedPrintable(Duplicable,Printable):
             return None
         return datetime.datetime.fromtimestamp(t)
         
+    def clear_cache(self):
+        #~ elem.must_build = True
+        self.build_time = None
+        self.save()
         
 
 class TypedPrintable(CachedPrintable):

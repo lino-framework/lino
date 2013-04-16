@@ -1,0 +1,104 @@
+================================
+20130415 (Monday, 15 April 2013)
+================================
+
+Discovered several subtle problems especially in the welfare test suite.
+
+Moved the `test_them_all` method 
+from :class:`djangosite.utils.test.TestCase` 
+to a separate class
+:class:`djangosite.utils.test.AutoTestCase` 
+and converted all existing tests to not use it.
+
+
+demo databases
+--------------
+
+The concept of the "demo database" of a project is indeed important 
+for the test suite.
+
+The demo database is a Django "project" 
+with a persistent half-temporary database used for different purposes:
+
+- It is the active DJANGO_SETTINGS_MODULE while generating docs 
+  and/or userdocs using Sphinx.
+  
+- Certain non-destructive tests may use it
+
+"persistent" means that it is not populated automatically for each 
+test run. When debugging a given test case it would be waste of time 
+to populate a volatile memory database for each run.
+
+"half-temporary" means that it can be re-generated easily using a
+simple command (probably `fab initdb`, which simply runs initdb_demo 
+on this database). 
+The developer decides whether it is necessary to re-create it.
+
+The current implementation (`env.django_databases` in `fabfile.py`, 
+now renamed  to `env.demo_databases`), 
+has the drawback of not being accessible by the 
+project test suite. (I am not going to load the `fabfile.py` just 
+to get the name of the demo database, am I?)
+
+Because there's is no easy solution for this problem, we currently 
+need to explicitly repeat the name of the demo database in 
+`tests/__init__.py`
+
+Printing a Budget
+-----------------
+
+The "Printing a Budget" section of `tested/debts.rst` 
+was the guinea pig for the demo database.
+It did something like this:
+
+>>> pprint(ses.run(obj.do_clear_cache))
+{'message': u'Budget Nr. 3 f\xfcr Altenberg-Charlier printable cache has been cleared.',
+ 'refresh': True,
+ 'success': True}
+>>> pprint(ses.run(obj.do_print)) #doctest: +NORMALIZE_WHITESPACE
+{'message': u'Dokument Budget Nr. 3 f\xfcr Altenberg-Charlier wurde generiert.',
+ 'open_url': u'/media/userdocs/appyodt/debts.Budget-3.odt',
+ 'refresh': True,
+ 'success': True}
+ 
+But even with the demo database reimplemented this still posed problems 
+because the do_clear_cache action returns different messages 
+depending on whether the document had been previously generated and/or  
+user-modified.
+
+To avoid these complications, I added a method 
+`clear_cache` which is called by the do_clear_cache action
+and which can be called directly from code:
+
+>>> obj.clear_cache()
+>>> pprint(ses.run(obj.do_print)) #doctest: +NORMALIZE_WHITESPACE
+{'message': u'Dokument Budget Nr. 3 f\xfcr Altenberg-Charlier wurde generiert.',
+ 'open_url': u'/media/userdocs/appyodt/debts.Budget-3.odt',
+ 'refresh': True,
+ 'success': True}
+
+Detecting exceptions during appy_pod render
+-------------------------------------------
+
+Worked on https://bugs.launchpad.net/appy/+bug/1169217
+
+Most painful was the fact that appy has no setup.py and thus cannot be 
+installed into a virtual environment using "pip install -e".
+
+I tried to use it directly from the development trunk by adding it 
+manually to the PYTHONPATH. 
+That worked seemingly... but when i started my 
+own `setup.py test` there was some automatism causing another appy egg 
+to be automatically downloaded and used.
+
+So I finally reinstalled a released appy 0.8.3 and 
+manually patched the egg.
+
+Since the half solution works for me, I'm now finally (h)appy: 
+I could reproduce a bug during printout of a debts.Budget 
+with a single command (and which is new, in a few seconds)::
+
+  $ python setup.py test -s tests.DocsTests.test_debts
+
+The bug itself took then only a few minutes to find and eliminate. 
+It was in :meth:`lino.core.tables.TableRequest.get_field_info`.

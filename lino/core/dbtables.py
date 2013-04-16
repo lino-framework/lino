@@ -901,7 +901,8 @@ class Table(AbstractTable):
         return instance
         
     @classmethod
-    def slave_as_summary_meth(self,ui,row_separator):
+    def slave_as_summary_meth(self,row_separator):
+    #~ def slave_as_summary_meth(self,ui,row_separator):
         """
         Creates and returns the method to be used when 
         :attr:`AbstractTable.slave_grid_format` is 'summary'.

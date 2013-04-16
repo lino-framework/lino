@@ -111,7 +111,8 @@ but it should be ::
   "POT-Creation-Date: 2013-04-01 07:09+0300\n"
   
 
-Workaround for me is to find line 160 of `sphinx/builders/gettext.py`::
+Workaround for me is to find line 160 of `sphinx/builders/gettext.py` 
+(below a comment "XXX should supply tz")::
 
     ctime = datetime.now().strftime('%Y-%m-%d %H:%M%z'),
     

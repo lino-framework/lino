@@ -204,10 +204,12 @@ class Renderer(AppyRenderer):
             try:
                 return self.insert_table_(*args,**kw)
             except Exception as e:
+                logger.warning("Exception during insert_table(%s)" % args[0])
+                raise
                 logger.exception(e)
                 return ''
         
-    def insert_table_(self,ar,column_names=None):
+    def insert_table_(self,ar,column_names=None,table_width=180):
         """
         This is the function that gets called when a template contains a 
         ``do text from table(...)`` statement.
@@ -217,20 +219,27 @@ class Renderer(AppyRenderer):
         #~ ar  = self.ar
         
         columns, headers, widths = ar.get_field_info(column_names)
-        
+        widths = map(int,widths)
         tw = sum(widths)
         """
         specifying relative widths doesn't seem to work
-        (and that's a pity because absolute widths requires a 
-        hard-coded table width). 
+        (and that's a pity because absolute widths requires us 
+        to know the table_width). 
         """
         use_relative_widths = False
         if use_relative_widths:
             width_specs = ["%d*" % (w*100/tw) for w in widths]
             #~ width_specs = [(w*100/tw) for w in widths]
         else:
-            aw = 180 # suppose table width = 18cm = 180mm
-            width_specs = ["%dmm" % (aw*w/tw) for w in widths]
+            #~ total_width = 180 # suppose table width = 18cm = 180mm
+            width_specs = ["%dmm" % (table_width*w/tw) for w in widths]
+        #~ else:
+            #~ width_specs = []
+            #~ for w in widths:
+				#~ if w.endswith('%'):
+					#~ mm = float(w[:-1]) * table_width / 100
+					#~ width_specs.append("%dmm" % mm)
+				#~ else:
         #~ print 20120419, width_specs 
         
         doc = OpenDocumentText()

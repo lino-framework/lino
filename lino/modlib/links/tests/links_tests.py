@@ -44,58 +44,57 @@ from lino.modlib.links.models import Link, LinkType
 
 
 class QuickTest(TestCase):
-    pass
             
   
-def test01(self):
-    """
-    Used on `/blog/2011/0414`.
-    See the source code at :srcref:`/lino/apps/pcsw/tests/pcsw_tests.py`.
-    """
+    def test01(self):
+        """
+        Used on `/blog/2011/0414`.
+        See the source code at :srcref:`/lino/apps/pcsw/tests/pcsw_tests.py`.
+        """
 
-    Person = resolve_model("contacts.Person")
-    Company = resolve_model("contacts.Company")
-    
-    p1 = Person(first_name="First",last_name="Person")
-    p1.save()
-    p2 = Person(first_name="Second",last_name="Person")
-    p2.save()
-    c1 = Company(name="First Company")
-    c1.save()
-    
-    lt = LinkType(name="Director",
-        a_type=ContentType.objects.get_for_model(Company),
-        b_type=ContentType.objects.get_for_model(Person))
-    lt.save()
-    
-    link = Link(type=lt,a=c1,b=p1)
-    link.save()
-    
-    p1s = unicode(p1)
-    c1s = unicode(c1)
-    
-    self.assertEqual(unicode(link),
-        "%s is Director of %s" % (p1s,c1s))
-    
-    self.assertEqual(link.a,c1)
-    self.assertEqual(link.b,p1)
-    
-    link.b = p2
-    link.save()
-    self.assertEqual(link.b,p2)
-    
-    link = Link.objects.get(pk=1)
-    
-    self.assertEqual(link.b,p2)
-    self.assertEqual(link.a,c1)
-    
-    try:
-        link.a = p1
-    except ValueError,e:
-        self.assertEqual(str(e),
-            "Expected <class 'lino.projects.pcsw.models.Company'> instance but got <Person: First PERSON (100)>")
-    else:
-        self.fail("Failed to raise ValueError")
-    
-    
-    
+        Person = resolve_model("contacts.Person")
+        Company = resolve_model("contacts.Company")
+        
+        p1 = Person(first_name="First",last_name="Person")
+        p1.save()
+        p2 = Person(first_name="Second",last_name="Person")
+        p2.save()
+        c1 = Company(name="First Company")
+        c1.save()
+        
+        lt = LinkType(name="Director",
+            a_type=ContentType.objects.get_for_model(Company),
+            b_type=ContentType.objects.get_for_model(Person))
+        lt.save()
+        
+        link = Link(type=lt,a=c1,b=p1)
+        link.save()
+        
+        p1s = unicode(p1)
+        c1s = unicode(c1)
+        
+        self.assertEqual(unicode(link),
+            "%s is Director of %s" % (p1s,c1s))
+        
+        self.assertEqual(link.a,c1)
+        self.assertEqual(link.b,p1)
+        
+        link.b = p2
+        link.save()
+        self.assertEqual(link.b,p2)
+        
+        link = Link.objects.get(pk=1)
+        
+        self.assertEqual(link.b,p2)
+        self.assertEqual(link.a,c1)
+        
+        try:
+            link.a = p1
+        except ValueError,e:
+            self.assertEqual(str(e),
+                "Expected <class 'lino.projects.pcsw.models.Company'> instance but got <Person: First PERSON (100)>")
+        else:
+            self.fail("Failed to raise ValueError")
+        
+        
+        

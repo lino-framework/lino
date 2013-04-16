@@ -15,6 +15,8 @@
 This module deserves a better docstring.
 """
 
+from __future__ import unicode_literals
+
 import logging
 logger = logging.getLogger(__name__)
 import os
@@ -82,6 +84,9 @@ class Callback(object):
         #~ d = Decision(yes,no)
         #~ self.pending_dialogs[d.hash()] = d
         
+    def __repr__(self):
+		return "Callback(%r)" % self.message
+		
     def set_title(self,title):
         self.title = title
         
@@ -104,13 +109,15 @@ class Callback(object):
         
 class UI(object):
     """
+    Base class for UI plugins.
     """
     #~ name = None
     #~ prefix = None
     #~ verbose_name = None
     
-    def __init__(self):
+    def __init__(self,site):
         self.pending_threads = {}
+        self.site = site
             
     #~ def pop_thread(self,id):
         #~ return self.pending_threads.pop(id,None)

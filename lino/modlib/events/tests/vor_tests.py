@@ -32,19 +32,19 @@ class DemoTest(TestCase):
     fixtures = settings.SITE.demo_fixtures
     never_build_site_cache = True
 
-def test_01(self):
-    etypes = settings.SITE.modules.events.Type.objects.order_by('id')
-    dbutils.set_language('de')
-    lst = [unicode(obj) for obj in etypes]
-    expected = ['Breitensport',
-     'Radrennen Stra\xdfe',
-     'MTB Rennen \u2265 15-j\xe4hrige',
-     'Mountainbike Rennsport -- Kids Trophy O2 Biker/V.O.R.-Lotto']    
-    self.assertEqual(lst,expected)
-    
-    s = etypes[0].EventsByType().to_rst()
-    #~ print s
-    expected = """\
+    def test_01(self):
+        etypes = settings.SITE.modules.events.Type.objects.order_by('id')
+        dbutils.set_language('de')
+        lst = [unicode(obj) for obj in etypes]
+        expected = ['Breitensport',
+         'Radrennen Stra\xdfe',
+         'MTB Rennen \u2265 15-j\xe4hrige',
+         'Mountainbike Rennsport -- Kids Trophy O2 Biker/V.O.R.-Lotto']    
+        self.assertEqual(lst,expected)
+        
+        s = etypes[0].EventsByType().to_rst()
+        #~ print s
+        expected = """\
 +----------------------------+--------------------------------------------------+---------------------------------------+
 | Wann                       | Was                                              | Wo                                    |
 +============================+==================================================+=======================================+
@@ -61,5 +61,5 @@ def test_01(self):
 |                            | Volksradfahren, Straße- und Mountain Bike Touren |                                       |
 +----------------------------+--------------------------------------------------+---------------------------------------+
 """
-    self.assertEqual(s,expected)
-    
+        self.assertEqual(s,expected)
+        

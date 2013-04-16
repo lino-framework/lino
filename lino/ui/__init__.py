@@ -18,14 +18,20 @@ file since it does not import any django module.
 
 """
 
+from __future__ import unicode_literals
+
+import logging
+logger = logging.getLogger(__name__)
 
 import os
 import sys
 
-from os.path import join, abspath, dirname, normpath, isdir
+from os.path import join, abspath, dirname, normpath, isdir, exists
 from decimal import Decimal
 
 from urllib import urlencode
+
+from pkg_resources import Requirement, resource_filename, DistributionNotFound
 
 def buildurl(*args,**kw):
     url = '/' + ("/".join(args))
@@ -39,6 +45,9 @@ from lino.utils import AttrDict
 
 
 import lino
+
+
+
 
 class Site(lino.Site):
     """
@@ -1008,3 +1017,216 @@ class Site(lino.Site):
             renderer=self.ui.text_renderer,
             user=u)
         
+
+
+
+
+
+
+
+    def get_media_urls(self):
+        #~ print "20121110 get_media_urls"
+        from django.conf.urls import patterns, url, include
+        from lino.core.dbutils import is_devserver
+        from django.conf import settings
+        
+        urlpatterns = []
+        
+        logger.debug("Checking /media URLs ")
+        prefix = settings.MEDIA_URL[1:]
+        if not prefix.endswith('/'):
+            raise Exception("MEDIA_URL %r doesn't end with a '/'!" % settings.MEDIA_URL)
+        
+        def setup_media_link(short_name,attr_name=None,source=None):
+            target = join(settings.MEDIA_ROOT,short_name)
+            if exists(target):
+                #~ logger.info("20130409 path exists: %s",target)
+                return
+            if attr_name is not None:
+                source = getattr(self,attr_name)
+                if not source:
+                    raise Exception(
+                      "%s does not exist and SITE.%s is not set." % (
+                      target,attr_name))
+                if not exists(source):
+                    raise Exception("SITE.%s (%s) does not exist" % (attr_name,source))
+            elif not exists(source):
+                raise Exception("%s does not exist" % source)
+            if is_devserver():
+                #~ logger.info("django.views.static serving /%s%s from %s",prefix,short_name,source)
+                urlpatterns.extend(patterns('django.views.static',
+                (r'^%s%s/(?P<path>.*)$' % (prefix,short_name), 
+                    'serve', {
+                    'document_root': source,
+                    'show_indexes': False })))
+            else:
+                symlink = getattr(os,'symlink',None)
+                if symlink is None:
+                    logger.info("Cannot create symlink %s -> %s.",target,source)
+                    #~ raise Exception("Cannot run a production server on an OS that doesn't have symlinks")
+                else:
+                    logger.info("Create symlink %s -> %s.",target,source)
+                    symlink(source,target)
+            
+        if not self.extjs_base_url:
+            setup_media_link('extjs','extjs_root')
+        if self.use_bootstrap:
+            if not self.bootstrap_base_url:
+                setup_media_link('bootstrap','bootstrap_root')
+            #~ else:
+                #~ logger.info("20130409 self.bootstrap_base_url is %s",self.bootstrap_base_url)
+        #~ else:
+            #~ logger.info("20130409 self.use_bootstrap is False")
+        if self.use_extensible:
+            if not self.extensible_base_url:
+                setup_media_link('extensible','extensible_root')
+        if self.use_tinymce:
+            if not self.tinymce_base_url:
+                setup_media_link('tinymce','tinymce_root')
+        if self.use_jasmine:
+            setup_media_link('jasmine','jasmine_root')
+        if self.use_eid_jslib:
+            setup_media_link('eid-jslib','eid_jslib_root')
+            
+        #~ setup_media_link('lino',source=join(dirname(lino.__file__),'..','media'))
+        try:
+            setup_media_link('lino',source=resource_filename(Requirement.parse("lino"),"lino/media"))
+        except DistributionNotFound as e:
+            # if it is not installed using pip, link directly to the source tree
+            setup_media_link('lino',source=join(dirname(lino.__file__),'media'))
+        
+        
+
+        #~ logger.info("20130409 is_devserver() returns %s.",is_devserver())
+        if is_devserver():
+            urlpatterns += patterns('django.views.static',
+                (r'^%s(?P<path>.*)$' % prefix, 'serve', 
+                  { 'document_root': settings.MEDIA_ROOT, 
+                    'show_indexes': True }),
+            )
+
+        return urlpatterns
+            
+    def get_pages_urls(self):
+        from django.conf.urls import patterns, url, include
+        from django import http
+        from django.views.generic import View
+        from lino import dd
+        pages = dd.resolve_app('pages')
+        class PagesIndex(View):
+          
+            def get(self, request,ref='index'):
+                if not ref: 
+                    ref = 'index'
+              
+                #~ print 20121220, ref
+                obj = pages.lookup(ref,None)
+                if obj is None:
+                    raise http.Http404("Unknown page %r" % ref)
+                html = pages.render_node(request,obj)
+                return http.HttpResponse(html)
+
+        return patterns('',
+            (r'^(?P<ref>\w*)$', PagesIndex.as_view()),
+        )
+        
+    def get_plain_urls(self):
+
+        from django.conf.urls import patterns, url, include
+        from lino.ui import views
+        urlpatterns = []
+        rx = '^' # + self.plain_prefix
+        urlpatterns = patterns('',
+            (rx+r'$', views.PlainIndex.as_view()),
+            (rx+r'(?P<app_label>\w+)/(?P<actor>\w+)$', views.PlainList.as_view()),
+            (rx+r'(?P<app_label>\w+)/(?P<actor>\w+)/(?P<pk>.+)$', views.PlainElement.as_view()),
+        )
+        return urlpatterns
+      
+            
+
+    def get_ext_urls(self):
+        
+        from django.conf.urls import patterns, url, include
+        from lino.ui import views
+        
+        #~ print "20121110 get_urls"
+        self.ui.ext_renderer.build_site_cache()
+        
+        rx = '^'
+        urlpatterns = patterns('',
+            (rx+'$', views.AdminIndex.as_view()),
+            (rx+r'api/main_html$', views.MainHtml.as_view()),
+            (rx+r'auth$', views.Authenticate.as_view()),
+            (rx+r'grid_config/(?P<app_label>\w+)/(?P<actor>\w+)$', views.GridConfig.as_view()),
+            (rx+r'api/(?P<app_label>\w+)/(?P<actor>\w+)$', views.ApiList.as_view()),
+            (rx+r'api/(?P<app_label>\w+)/(?P<actor>\w+)/(?P<pk>.+)$', views.ApiElement.as_view()),
+            (rx+r'restful/(?P<app_label>\w+)/(?P<actor>\w+)$', views.Restful.as_view()),
+            (rx+r'restful/(?P<app_label>\w+)/(?P<actor>\w+)/(?P<pk>.+)$', views.Restful.as_view()),
+            (rx+r'choices/(?P<app_label>\w+)/(?P<rptname>\w+)$', views.Choices.as_view()),
+            (rx+r'choices/(?P<app_label>\w+)/(?P<rptname>\w+)/(?P<fldname>\w+)$', views.Choices.as_view()),
+            (rx+r'apchoices/(?P<app_label>\w+)/(?P<actor>\w+)/(?P<an>\w+)/(?P<field>\w+)$', views.ActionParamChoices.as_view()),
+            # the thread_id can be a negative number:
+            (rx+r'callbacks/(?P<thread_id>[\-0-9a-zA-Z]+)/(?P<button_id>\w+)$', views.Callbacks.as_view()),
+            #~ (rx+r'plain/(?P<app_label>\w+)/(?P<actor>\w+)$', views.PlainList.as_view()),
+            #~ (rx+r'plain/(?P<app_label>\w+)/(?P<actor>\w+)/(?P<pk>.+)$', views.PlainElement.as_view()),
+        )
+        if self.use_eid_applet:
+            urlpatterns += patterns('',
+                (rx+r'eid-applet-service$', views.EidAppletService.as_view()),
+            )
+        if self.use_jasmine:
+            urlpatterns += patterns('',
+                (rx+r'run-jasmine$', views.RunJasmine.as_view()),
+            )
+        if self.user_model and self.use_tinymce:
+            urlpatterns += patterns('',
+                (rx+r'templates/(?P<app_label>\w+)/(?P<actor>\w+)/(?P<pk>\w+)/(?P<fldname>\w+)$', 
+                    views.Templates.as_view()),
+                (rx+r'templates/(?P<app_label>\w+)/(?P<actor>\w+)/(?P<pk>\w+)/(?P<fldname>\w+)/(?P<tplname>\w+)$', 
+                    views.Templates.as_view()),
+            )
+
+        return urlpatterns
+        
+    def get_patterns(self):
+        from django.conf.urls import patterns, url, include
+
+        urlpatterns = self.get_media_urls()
+
+        if self.plain_prefix:
+            urlpatterns += patterns('',
+              ('^'+self.plain_prefix[1:]+"/", include(self.get_plain_urls()))
+            )
+        else:
+            urlpatterns += self.get_plain_urls()
+            
+        if self.django_admin_prefix: # todo
+            from django.contrib import admin
+            admin.autodiscover()
+            urlpatterns += patterns('',
+              ('^'+self.django_admin_prefix[1:]+"/", include(admin.site.urls))
+            )
+           
+        if self.use_extjs:
+            if self.admin_prefix:
+                urlpatterns += patterns('',
+                  ('^'+self.admin_prefix[1:]+"/", include(self.get_ext_urls()))
+                ) 
+                urlpatterns += self.get_pages_urls()
+            else:
+                urlpatterns += self.get_ext_urls()
+        elif self.plain_prefix:
+            urlpatterns += self.get_pages_urls()
+            
+        return urlpatterns
+
+
+
+
+
+
+
+
+
+

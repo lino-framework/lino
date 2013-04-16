@@ -26,26 +26,23 @@ from djangosite.utils.test import TestCase
 
 
 class QuickTest(TestCase):
-    """
-    """
-    pass
             
   
-def test01(self):
-    """
-    """
-    from lino.modlib.cal.utils import DurationUnits
-    
-    start_date = i2d(20111026)
-    self.assertEqual(DurationUnits.months.add_duration(start_date,2),i2d(20111226))
-    self.assertEqual(DurationUnits.months.add_duration(start_date,-2),i2d(20110826))
-    
-    start_date = i2d(20110131)
-    self.assertEqual(DurationUnits.months.add_duration(start_date,1),i2d(20110228))
-    self.assertEqual(DurationUnits.months.add_duration(start_date,-1),i2d(20101231))
-    self.assertEqual(DurationUnits.months.add_duration(start_date,-2),i2d(20101130))
-    
-    
-    
-    
-    
+    def test01(self):
+        """
+        """
+        from lino.modlib.cal.utils import DurationUnits
+        
+        start_date = i2d(20111026)
+        self.assertEqual(DurationUnits.months.add_duration(start_date,2),i2d(20111226))
+        self.assertEqual(DurationUnits.months.add_duration(start_date,-2),i2d(20110826))
+        
+        start_date = i2d(20110131)
+        self.assertEqual(DurationUnits.months.add_duration(start_date,1),i2d(20110228))
+        self.assertEqual(DurationUnits.months.add_duration(start_date,-1),i2d(20101231))
+        self.assertEqual(DurationUnits.months.add_duration(start_date,-2),i2d(20101130))
+        
+        
+        
+        
+        

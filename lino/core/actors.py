@@ -1172,7 +1172,7 @@ class Actor(actions.Parametrizable):
 
         
     @classmethod
-    def slave_as_html_meth(self,ui):
+    def slave_as_html_meth(self):
         """
         Creates and returns the method to be used when 
         :attr:`AbstractTable.slave_grid_format` is `html`.
@@ -1181,9 +1181,9 @@ class Actor(actions.Parametrizable):
             #~ ar = self.request(ui,request=ar.request,
                 #~ master_instance=master,param_values={})
             ar = self.request(master,request=ar.request,param_values={})
-            ar.renderer = ui.default_renderer
+            ar.renderer = settings.SITE.ui.default_renderer
             #~ s = ui.table2xhtml(ar).tostring()
-            return ui.table2xhtml(ar)
+            return settings.SITE.ui.table2xhtml(ar)
             #~ s = etree.tostring(ui.table2xhtml(ar))
             #~ return s
         return meth

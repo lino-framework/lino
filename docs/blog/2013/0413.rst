@@ -1,0 +1,52 @@
+==================================
+20130413 (Saturday, 13 April 2013)
+==================================
+
+Hosting multiple Lino applications
+----------------------------------
+
+I read (again) Daniel's and Audrey's chapter about `settings.py` files.
+They recommend to use only "canned" (version-controlled) settings.
+And to use environment variables for private settings like 
+SECRET_KEY.
+
+One objection against this approach is that 
+even the `Django documentation 
+<https://docs.djangoproject.com/en/dev/howto/deployment/wsgi/>`_  
+itself says:
+
+  Since environment variables are process-wide, this doesn’t work when 
+  you run multiple Django sites in the same process. 
+  This happens with mod_wsgi.
+
+  To avoid this problem, use mod_wsgi’s daemon mode with each site in 
+  its own daemon process, 
+  or override the value from the environment by enforcing 
+  `os.environ["DJANGO_SETTINGS_MODULE"] = "mysite.settings"` in your `wsgi.py`.
+  
+Q: Does this mean that I can avoid using mod_wsgi's daemon mode if I 
+do *not* use system variables in the Apache configuaration?
+
+A: Maybe. But the question isn't important since even the 
+`mod_wsgi docs <http://code.google.com/p/modwsgi/>`_ recommend to use daemon mode: 
+
+    (...) unless you are adept at configuring Apache, always use daemon mode when available. 
+    Overall, for large Python web applications you wouldn't normally expect to see any 
+    significant difference between daemon mode and embedded mode, as the bottlenecks 
+    are going to be in the Python web application or any database access. 
+
+
+I still tend to prefer a "one directory per project" approach.
+This  implies that each project directory contains a local 
+`settings.py` file which is usually very small and *not* version 
+controlled.
+The main reason for this is that 
+when doing manual maintenance work in a shell via management commands
+I prefer to have *the current working directory* and not an *environment variable*
+determine which project I'm working on.
+  
+The trick is to have a local `configure` function called 
+by both the `manage.py` and `wsgi.py` files.
+These files can then always be `wsgi.py` the same, 
+just copies of a site-wide template.
+
