@@ -1,0 +1,22 @@
+==================================
+20130418 (Thursday, 18 April 2013)
+==================================
+
+AttributeError: 'Site' object has no attribute 'getlanguage_info'
+-----------------------------------------------------------------
+
+A little bug caused Tx25 documents to not be printable.
+Fixing the bug took 5 minutes, plus another 25 minutes to 
+write a testcase, this one as a "tested doc": 
+:ref:`welfare.tested.cbss`.
+
+This also revealed another error 
+"AttributeError: 'Settings' object has no attribute 'LINO'"
+in the template for printing a Tx25 (which just caused the version to 
+not appear on the printed document)
+
+Another bug
+"Exception: Request <TableRequest pcsw.UsersWithClients.grid({})> was already executed"
+caused the print table as pdf function to not work.
+Tested in :ref:`welfare.tested.pcsw`
+

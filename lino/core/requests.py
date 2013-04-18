@@ -142,12 +142,13 @@ class BaseRequest(object):
     def setup_from(self,other):
         """
         """
-        if not other.must_execute():
-            raise Exception("Request %r was already executed" % other)
+        if not self.must_execute():
+            return
+            #~ raise Exception("Request %r was already executed" % other)
         self.renderer = other.renderer
         self.user = other.user
         self.subst_user = other.subst_user
-        #~ self.requesting_panel = other.requesting_panel
+        self.requesting_panel = other.requesting_panel
   
     def parse_req(self,request,rqdata,**kw): 
         #~ if self.actor.parameters:
@@ -257,8 +258,28 @@ class BaseRequest(object):
             from_email=sender,body=body,to=recipients)
         msg.send()
         logger.info("System note '%s' from %s has been sent to %s",subject,sender,recipients)
+        
+    def spawn(self,spec,**kw):
+        if isinstance(spec,ActionRequest):
+            for k,v in kw.items():
+                assert hasattr(spec,k)
+                setattr(spec,k,v)
+            #~ if kw:
+                #~ ar = ar.spawn(**kw)
+                #~ raise Exception(20130327)
+        else:
+            from lino.core.menus import create_item
+            mi = create_item(spec)
+            spec = mi.bound_action.request(**kw)
+        spec.setup_from(self)
+        #~ ar.user = self.user
+        #~ ar.subst_user = self.subst_user
+        #~ ar.renderer = self.renderer
+        return spec
+        
+        
 
-    def spawn(self,actor,*args,**kw):
+    def old_spawn(self,actor,*args,**kw):
         """
         Create a new ActionRequest, taking default values from this one.
         """
@@ -282,22 +303,8 @@ class BaseRequest(object):
         set_language(*args)
         
         
-    def show(self,ar,column_names=None,**kw):
-        if isinstance(ar,ActionRequest):
-            for k,v in kw.items():
-                assert hasattr(ar,k)
-                setattr(ar,k,v)
-            #~ if kw:
-                #~ ar = ar.spawn(**kw)
-                #~ raise Exception(20130327)
-        else:
-            from lino.core.menus import create_item
-            mi = create_item(ar)
-            ar = mi.bound_action.request(**kw)
-        ar.setup_from(self)
-        #~ ar.user = self.user
-        #~ ar.subst_user = self.subst_user
-        #~ ar.renderer = self.renderer
+    def show(self,spec,column_names=None,**kw):
+        ar = self.spawn(spec,**kw)
         print ar.to_rst(column_names)
         
             

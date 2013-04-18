@@ -1,0 +1,4 @@
+/home/luc/hgwork/lino/docs/admin/install_windows.rst:209: WARNING: Include file u'/home/luc/hgwork/lino/docs/admin/settings.py' not found or reading it failed
+/home/luc/hgwork/lino/docs/blog/2013/0408.rst:26: ERROR: Unknown target name: "section title".
+
+interrupted!

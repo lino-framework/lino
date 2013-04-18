@@ -21,7 +21,6 @@ class DocsTests(LinoTestCase):
     
     def test_04(self): self.run_django_manage_test('docs/tutorials/polls')
     def test_04(self): self.run_django_manage_test('docs/tutorials/quickstart')
-    
 
 
 class UtilsTests(LinoTestCase):

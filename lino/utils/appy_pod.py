@@ -215,6 +215,7 @@ class Renderer(AppyRenderer):
         ``do text from table(...)`` statement.
         """
         ar.setup_from(self.ar)
+        #~ ar.renderer = self.ar.renderer
 
         #~ ar  = self.ar
         

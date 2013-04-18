@@ -463,7 +463,8 @@ class TableRequest(ActionRequest):
             widths = []
             headers = []
             #~ ah = ar.actor.get_handle(self.extjs_ui)
-            ah = ar.actor.get_handle(settings.SITE.ui)
+            #~ ah = ar.actor.get_handle(settings.SITE.ui)
+            ah = ar.actor.get_handle()
             for i,cn in enumerate(columns):
                 col = None
                 for e in ah.list_layout.main.columns:

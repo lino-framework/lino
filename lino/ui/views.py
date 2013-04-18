@@ -318,8 +318,14 @@ def ajax_error(e,**kw):
     Utility function that converts a catched exception 
     to a user-friendly error message.
     """
+    logger.info("20130418 ajax_error(%s",e.messages)
     if isinstance(e,exceptions.ValidationError):
-        e = '<br>'.join(e.messages)
+        #~ if isinstance(e.messages,dict):
+        md = getattr(e,'message_dict',None)
+        if md is not None:
+            e = '<br>'.join(["%s : %s" % kv for kv in md.items()])
+        else:
+            e = '<br>'.join(e.messages)
     kw = settings.SITE.ui.error(e,alert=True,**kw)
     return json_response(kw)
 
@@ -334,7 +340,7 @@ def form2obj_and_save(ar,data,elem,is_new,restful,file_upload=False): # **kw2sav
     #~ logger.info('20130321 form2obj_and_save %r', data)
     #~ print 'form2obj_and_save %r' % data
     
-    #~ logger.info('20120228 before store.form2obj , elem is %s' % dd.obj2str(elem))
+    logger.info('20130418 before calling store.form2obj , elem is %s' % dd.obj2str(elem))
     # store normal form data (POST or PUT)
     #~ original_state = dict(elem.__dict__)
     if not is_new:
@@ -770,7 +776,7 @@ class Restful(View):
         data = json.loads(data)
         a = rpt.get_url_action(rpt.default_list_action_name)
         ar = rpt.request(request=request,action=a)
-        ar.renderer = ui.ext_renderer
+        ar.renderer = settings.SITE.ui.ext_renderer
         return form2obj_and_save(ar,data,elem,False,True) # force_update=True)
           
   
@@ -1002,6 +1008,11 @@ class ApiList(View):
             #~ response['Content-Disposition'] = 'attachment; filename=%s.csv' % ar.get_base_filename()
             w = ucsv.UnicodeWriter(response,**settings.SITE.csv_params)
             w.writerow(ar.ah.store.column_names())
+            if True: # 20130418 : also column headers, not only internal names
+                column_names = None
+                fields, headers, cellwidths = ar.get_field_info(column_names)
+                w.writerow(headers)
+                
             for row in ar.data_iterator:
                 w.writerow([unicode(v) for v in rh.store.row2list(ar,row)])
             return response

@@ -711,62 +711,60 @@ class GridEdit(TableAction):
         return None
         
     def as_html(self,ar):
-        if True:
-            buttons = []
-            if ar.limit is None:
-                ar.limit = PLAIN_PAGE_LENGTH
-            pglen = ar.limit 
-            if ar.offset is None:
-                page = 1
-            else:
-                """
-                (assuming pglen is 5)
-                offset page
-                0      1
-                5      2
-                """
-                page = int(ar.offset / pglen) + 1
-            kw = dict()
-            kw = {}
-            if pglen != PLAIN_PAGE_LENGTH:
-                kw[constants.URL_PARAM_LIMIT] = pglen
-              
-            if page > 1:
-                kw[constants.URL_PARAM_START] = pglen * (page-2) 
-                prev_url = ar.get_request_url(**kw)
-                kw[constants.URL_PARAM_START] = 0
-                first_url = ar.get_request_url(**kw)
-            else:
-                prev_url = None
-                first_url = None
-            buttons.append( ('<<',_("First page"), first_url ))
-            buttons.append( ('<',_("Previous page"), prev_url ))
-            
-            next_start = pglen * page 
-            if next_start < ar.get_total_count():
-                kw[constants.URL_PARAM_START] = next_start
-                next_url = ar.get_request_url(**kw)
-                last_page = int((ar.get_total_count()-1) / pglen)
-                kw[constants.URL_PARAM_START] = pglen * last_page
-                last_url = ar.get_request_url(**kw)
-            else:
-                next_url = None 
-                last_url = None 
-            buttons.append( ('>',_("Next page"), next_url ))
-            buttons.append( ('>>',_("Last page"), last_url ))
-            
-            items = []
-            for symbol,label,url in buttons:
-                if url is None:
-                    items.append(E.li(E.span(symbol,class_="disabled")))
-                else:
-                    items.append(E.li(E.a(symbol,href=url)))
-            pager = E.div(E.ul(*items),class_='pagination')
-                
-        
         t = xghtml.Table()
-        #~ t = doc.add_table()
-        ar.ui.ar2html(ar,t,ar.sliced_data_iterator)
+        settings.SITE.ui.ar2html(ar,t,ar.sliced_data_iterator)
+        #~ return t.as_element() # 20130418
+        buttons = []
+        if ar.limit is None:
+            ar.limit = PLAIN_PAGE_LENGTH
+        pglen = ar.limit 
+        if ar.offset is None:
+            page = 1
+        else:
+            """
+            (assuming pglen is 5)
+            offset page
+            0      1
+            5      2
+            """
+            page = int(ar.offset / pglen) + 1
+        kw = dict()
+        kw = {}
+        if pglen != PLAIN_PAGE_LENGTH:
+            kw[constants.URL_PARAM_LIMIT] = pglen
+          
+        if page > 1:
+            kw[constants.URL_PARAM_START] = pglen * (page-2) 
+            prev_url = ar.get_request_url(**kw)
+            kw[constants.URL_PARAM_START] = 0
+            first_url = ar.get_request_url(**kw)
+        else:
+            prev_url = None
+            first_url = None
+        buttons.append( ('<<',_("First page"), first_url ))
+        buttons.append( ('<',_("Previous page"), prev_url ))
+        
+        next_start = pglen * page 
+        if next_start < ar.get_total_count():
+            kw[constants.URL_PARAM_START] = next_start
+            next_url = ar.get_request_url(**kw)
+            last_page = int((ar.get_total_count()-1) / pglen)
+            kw[constants.URL_PARAM_START] = pglen * last_page
+            last_url = ar.get_request_url(**kw)
+        else:
+            next_url = None 
+            last_url = None 
+        buttons.append( ('>',_("Next page"), next_url ))
+        buttons.append( ('>>',_("Last page"), last_url ))
+        
+        items = []
+        for symbol,label,url in buttons:
+            if url is None:
+                items.append(E.li(E.span(symbol,class_="disabled")))
+            else:
+                items.append(E.li(E.a(symbol,href=url)))
+        pager = E.div(E.ul(*items),class_='pagination')
+        
         return E.div(pager,t.as_element())
       
         

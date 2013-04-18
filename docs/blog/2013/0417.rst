@@ -1,0 +1,12 @@
+===================================
+20130417 (Wednesday, 17 April 2013)
+===================================
+
+I converted the 
+http://www.vor-cycling.be 
+website so that it now also uses Sphinx 
+internationalization system.
+
+Some optimizations in :mod:`atelier.fablib`:
+
+- New command `fab mm` is equivalemt to Django's `makemessages` command.

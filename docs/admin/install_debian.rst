@@ -26,9 +26,10 @@ You'll need the following Debian packages installed:
 
 * Packages needed by Django applications to run in Apache2::
 
-    apache2 apache2-doc apache2-mpm-prefork libexpat1 libapache2-mod-wsgi
+    $ sudo aptitude install libapache2-mod-wsgi
       
     ssl-cert       
+    apache2 apache2-doc apache2-mpm-prefork libexpat1
     
 * Packages needed by Lino to work::
 

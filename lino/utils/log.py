@@ -144,7 +144,7 @@ Because that's rather necessary on a production server with :setting:`DEBUG` Fal
     
     if len(linoLogger.handlers) != 0:
         msg = "Not configuring logging because lino logger already configured."
-        #~ print 20120613, msg
+        #~ print 20130418, __file__, msg
         linoLogger.info(msg)
         return 
     
@@ -156,6 +156,7 @@ Because that's rather necessary on a production server with :setting:`DEBUG` Fal
     #~ logger_names = config.get('logger_names','djangosite north lino')
     logger_names = config.get('logger_names',None)
     if not logger_names:
+        #~ print 20130418, __file__, 'no logger names'
         return # Django 1.5 calls this function twice (#20229)
         #~ raise Exception("Missing keyword argument `logger_names` in %s." % config)
     #~ when = config.get('when',None)
@@ -163,7 +164,7 @@ Because that's rather necessary on a production server with :setting:`DEBUG` Fal
     level = getattr(logging,config.get('level','notset').upper())
     if isinstance(logger_names,basestring):
         logger_names = logger_names.split()
-    #~ print 20130409, __file__, logger_names
+    #~ print "20130418 configure loggers", logger_names, config
     #~ if not 'lino_welfare' in logger_names:
         #~ raise Exception("20130409")
     loggers = [logging.getLogger(n) for n in logger_names]
@@ -219,3 +220,4 @@ Because that's rather necessary on a production server with :setting:`DEBUG` Fal
             
     
     #~ linoLogger.info("20120408 linoLogger.handlers: %s", linoLogger.handlers)
+

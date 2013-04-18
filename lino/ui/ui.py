@@ -115,8 +115,7 @@ class ExtUI(base.UI):
     #~ def __init__(self,*args,**kw):
     def __init__(self,site):
         
-        
-        #~ logger.info('20130404 __init__')
+        #~ site.logger.info('20130418 lino.ui.ui.ExtUI.__init__()')
         super(ExtUI,self).__init__(site)
         #~ pass
         
@@ -323,7 +322,7 @@ class ExtUI(base.UI):
         #~ hr = tble.add_header_row(*headers,**cellattrs)
         if cellwidths:
             for i,td in enumerate(headers): 
-                td.attrib.update(width=cellwidths[i])
+                td.attrib.update(width=str(cellwidths[i]))
         tble.head.append(xghtml.E.tr(*headers))
         #~ print 20120623, ar.actor
         recno = 0

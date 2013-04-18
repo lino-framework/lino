@@ -1005,6 +1005,14 @@ class Site(lino.Site):
               
     def login(self,username):
         """
+        For usage from a shell.
+        
+        The :meth:`login <lino.ui.Site.login>` method doesn't require any 
+        password because when somebody has command-line access we trust 
+        that she has already authenticated. It returns a 
+        :class:`BaseRequest <lino.core.requests.BaseRequest>` object which 
+        has a :meth:`show <lino.core.requests.BaseRequest.show>` method.
+        
         """
         #~ self.console_user = self.user_model.objects.get(username=username)
         u = self.user_model.objects.get(username=username)
@@ -1190,6 +1198,8 @@ class Site(lino.Site):
         return urlpatterns
         
     def get_patterns(self):
+        self.startup()
+        #~ self.logger.info("20130418 get_patterns()")
         from django.conf.urls import patterns, url, include
 
         urlpatterns = self.get_media_urls()
