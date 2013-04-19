@@ -1,0 +1,152 @@
+================================
+20130419 (Friday, 19 April 2013)
+================================
+
+Running multiple Lino versions
+==============================
+
+I have a production site
+running Lino on a stable Debian (i.e. squeeze), 
+**without** pip and virtualenv.
+I want to "upgrade" this server to use pip and virtualenv.
+
+First I need to install pip and virtualenv.
+The next steps are to create two virtual environments 
+"stable" and "testing", play with them, and finally 
+to tell Apache to use them.
+
+
+How to install pip and virtualenv on a production site
+------------------------------------------------------
+
+
+Matthew Rankin explains on Stackoverflow how to do it:
+`What's the proper way to install pip, virtualenv, and distribute 
+for Python?
+<http://stackoverflow.com/questions/4324558/whats-the-proper-way-to-install-pip-virtualenv-and-distribute-for-python>`__.
+Thank you, Matthew!
+Very good, so I can install them without danger on my production site.
+
+The following is how I applied Matthew's instructions. 
+
+It starts with a problem:
+
+    lsaffre@lino:~$ curl -O https://pypi.python.org/packages/source/v/virtualenv/virtualenv-1.9.1.tar.gz
+    -bash: curl: command not found
+
+Okay, we need to install curl first::
+
+    lsaffre@lino:~$ sudo aptitude install curl
+    The following NEW packages will be installed:
+      curl libcurl3{a} libssh2-1{a} 
+    0 packages upgraded, 3 newly installed, 0 to remove and 40 not upgraded.
+    Need to get 594 kB of archives. After unpacking 1,147 kB will be used.
+    Do you want to continue? [Y/n/?] 
+    
+Yes. But oops::
+    
+    Get:1 http://ftp.be.debian.org/debian/ squeeze/main libssh2-1 amd64 1.2.6-1 [80.9 kB]
+    Err http://ftp.be.debian.org/debian/ squeeze/main libcurl3 amd64 7.21.0-1
+      404  Not Found [IP: 77.243.184.65 80]
+    Err http://ftp.be.debian.org/debian/ squeeze/main curl amd64 7.21.0-1
+      404  Not Found [IP: 77.243.184.65 80]
+    Fetched 80.9 kB in 0s (267 kB/s)
+    Selecting previously deselected package libssh2-1.
+    (Reading database ... 46423 files and directories currently installed.)
+    Unpacking libssh2-1 (from .../libssh2-1_1.2.6-1_amd64.deb) ...
+    Setting up libssh2-1 (1.2.6-1) ...
+    E: Failed to fetch http://ftp.be.debian.org/debian/pool/main/c/curl/libcurl3_7.21.0-1_amd64.deb: 404  Not Found [IP: 77.243.184.65 80]
+
+Hm, is the Debian server down or not reachable? No, a `ping ftp.be.debian.org`
+confirms that this is not the reason.
+The solution was this::
+
+  lsaffre@lino:~$ sudo aptitude update
+  
+(TODO: explain why...)
+
+Now it works::
+
+    lsaffre@lino:~$ python virtualenv-1.9.1/virtualenv.py --distribute envs/boot
+    lsaffre@lino:~$ sudo aptitude install curl
+    lsaffre@lino:~$ curl -O https://pypi.python.org/packages/source/v/virtualenv/virtualenv-1.9.1.tar.gz
+    lsaffre@lino:~$ tar xvzf virtualenv-1.9.1.tar.gz
+    
+I then created a directoy "pythonenvs" in my home directory, then a first 
+environment "boot"::
+
+    lsaffre@lino:~$ mkdir pythonenvs
+    lsaffre@lino:~$ python virtualenv-1.9.1/virtualenv.py --distribute pythonenvs/boot
+    New python executable in pythonenvs/boot/bin/python
+    Installing distribute.............done.
+    Installing pip................done.    
+
+To activate the boot environment::
+
+    lsaffre@lino:~$ . pythonenvs/boot/bin/activate
+    (boot)lsaffre@lino:~$
+    
+Reuse the `.tar.gz` file to install virtualenv into the boot environment::
+
+    (boot)lsaffre@lino:~$ pip install virtualenv-1.9.1.tar.gz
+    Unpacking ./virtualenv-1.9.1.tar.gz
+    ...
+    Successfully installed virtualenv
+    Cleaning up...
+    
+No longer needed::
+    
+    (boot)lsaffre@lino:~$ rm -r virtualenv-1.9.1
+    (boot)lsaffre@lino:~$ rm virtualenv-1.9.1.tar.gz
+ 
+
+Create a `stable` environment
+-----------------------------
+
+How to create a virtualenv which is a copy of the 
+current site-packages?
+
+::
+
+    lsaffre@lino:~$ ll /usr/local/django/cpas_eupen/using
+    total 0
+    lrwxrwxrwx 1 lsaffre www-data 25 Mar 29 02:58 lino -> /var/snapshots/lino-1.6.4
+    lrwxrwxrwx 1 lsaffre www-data 26 Mar 29 02:58 north -> /var/snapshots/North-0.1.1
+    lrwxrwxrwx 1 lsaffre www-data 31 Mar 29 02:58 site -> /var/snapshots/djangosite-0.1.1
+    lrwxrwxrwx 1 lsaffre www-data 33 Mar 29 02:59 welfare -> /var/snapshots/lino-welfare-1.1.1
+
+
+    lsaffre@lino:~$ . pythonenvs/boot/bin/activate
+    (boot)lsaffre@lino:~$ 
+    
+    (boot)lsaffre@lino:~$ virtualenv --distribute pythonenvs/stable
+    Using real prefix '/usr'
+    New python executable in pythonenvs/stable/bin/python
+    Installing distribute...........................................................................................................................................................................................................................done.
+    Installing pip................done.
+
+   
+    (boot)lsaffre@lino:~$ . pythonenvs/stable/bin/activate
+    (stable)lsaffre@lino:~$ pip install lino-welfare
+    ...
+    
+Voilà.
+
+
+New version numbers
+-------------------
+
+Updated the version numbers in the repositories:
+**from**
+(lino-welfare-1.1.1
+lino-1.6.4
+north-0.1.1
+djangosite-0.1.1)
+
+**to**
+(lino-welfare-1.1.2
+lino-1.6.5
+north-0.1.2
+djangosite-0.1.2
+atelier-0.0.1)
+
