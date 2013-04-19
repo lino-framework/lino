@@ -16,7 +16,26 @@ in the template for printing a Tx25 (which just caused the version to
 not appear on the printed document)
 
 Another bug
-"Exception: Request <TableRequest pcsw.UsersWithClients.grid({})> was already executed"
+"Exception: Request <TableRequest pcsw.UsersWithClients.grid({})> was 
+already executed"
 caused the print table as pdf function to not work.
 Tested in :ref:`welfare.tested.pcsw`
 
+A third bug, 
+"TypeError at /plain/pcsw/UsersWithClients, cannot serialize 90 (type int)"
+was even more tricky to test. This one is in pcsw_demo_tests.
+
+Installed Apache and mod_wsgi on hoppel
+---------------------------------------
+
+This revealed another bug due to threading side effects.
+
+
+New project : Garden
+--------------------
+
+I created the project `django-garden`, meant to help creating automated 
+Lino projects. But the first implementation isn't yet ready. 
+And maybe is never going to be. While working on this I understood that 
+it is probably better to generate "stupid" manage.py and wsgi.py files 
+instead of doing sophisticated Python magics.
