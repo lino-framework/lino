@@ -39,6 +39,9 @@ Modifications by Luc Saffre :
   See `/blog/2011/0126`
   and http://packages.python.org/lockfile/lockfile.html#lockfile.FileLock.acquire.
   
+- now works with versions of `daemon` who use "pidfile" instead 
+  of "pidlockfile".
+  
 
 =============
 DaemonCommand
@@ -109,9 +112,13 @@ def get_logger_files(loggers):
     return l
 
 try:
-    import daemon
-    from daemon import pidlockfile
-
+    import daemon # pip install python-daemon
+    # in older versions it's called pidlockfile, later just pidfile
+    try:
+        from daemon import pidlockfile
+    except ImportError:
+        from daemon import pidfile as pidlockfile
+        
 except ImportError:
   
   class DaemonCommand(BaseCommand):

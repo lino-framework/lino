@@ -26,7 +26,7 @@ from django.conf import settings
 from django.db import models
 from django.db.models import Q
 from django.utils.translation import ugettext_lazy as _
-from django.utils.translation import pgettext_lazy
+from django.utils.translation import pgettext_lazy as pgettext
 #~ from django.utils.translation import string_concat
 from django.contrib.contenttypes.models import ContentType
 from django.utils.encoding import force_unicode
@@ -93,7 +93,7 @@ add = TaskStates.add_item
 
 #~ add('00', _("Virgin"),'todo')
 add('10', _("To do"),'todo')
-add('20', pgettext_lazy(u"cal",u"Started"),'started')
+add('20', pgettext(u"cal",u"Started"),'started')
 add('30', _("Done"),'done')
 #~ add('40', _("Sleeping"),'sleeping')
 add('50', _("Cancelled"),'cancelled')
@@ -536,8 +536,8 @@ class Priorities(dd.Table):
     #~ templates_group = 'cal/Event'
     
     #~ class Meta:
-        #~ verbose_name = pgettext_lazy(u"cal",u"Event Type")
-        #~ verbose_name_plural = pgettext_lazy(u"cal",u'Event Types')
+        #~ verbose_name = pgettext(u"cal",u"Event Type")
+        #~ verbose_name_plural = pgettext(u"cal",u'Event Types')
 
 #~ class EventTypes(dd.Table):
     #~ model = EventType
@@ -1073,8 +1073,8 @@ class Event(Component,Ended,
     
     class Meta:
         #~ abstract = True
-        verbose_name = pgettext_lazy(u"cal",u"Event")
-        verbose_name_plural = pgettext_lazy(u"cal",u"Events")
+        verbose_name = pgettext(u"cal",u"Event")
+        verbose_name_plural = pgettext(u"cal",u"Events")
         
     transparent = models.BooleanField(_("Transparent"),default=False,help_text=_("""\
 Indicates that this Event shouldn't prevent other Events at the same time."""))
@@ -2623,7 +2623,7 @@ def setup_workflows(site):
     EventStates.rescheduled.add_workflow(_("Reschedule"),
         owner=True,
         states='scheduled notified',icon_file='date_edit.png')
-    EventStates.cancelled.add_workflow(pgettext_lazy(u"calendar event action",u"Cancel"),
+    EventStates.cancelled.add_workflow(pgettext(u"calendar event action",u"Cancel"),
         owner=True,
         states='scheduled notified',
         icon_file='cross.png')

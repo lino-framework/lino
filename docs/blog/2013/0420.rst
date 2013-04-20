@@ -1,0 +1,187 @@
+==================================
+20130420 (Saturday, 20 April 2013)
+==================================
+
+I am converting the production server "dsbe" from the obsolete
+system "without pip and virtualenv" to the new system which 
+uses these tools. 
+
+
+Miscellaneous notes
+-------------------
+
+- I learned that you cannot (easily) rename nor copy virtual environments.
+
+- The following Python packages (pip install ) are optional 
+  and therefore not automatically installed:
+
+    - mysql-python
+    
+    - python-daemon (there are many PyPI modules for "daemon",
+      but we need this one)
+
+
+- "appy" was missing in `install_requires` of :mod:`lino`.
+
+
+
+
+
+Including data files with a Python egg
+--------------------------------------
+
+Yesterday I wasn't yet sure whether the `testing` environment 
+should use a local source repository (pip install -e) or rather 
+a temporary packages index.
+The following log message showed me that I do need the latter method::
+
+    [Sat Apr 20 03:38:54 2013] [error] [client 10.187.17.134] 
+    IOError: [Errno 2] No such file or directory: 
+    '.../env/lib/python2.6/site-packages/lino_welfare/modlib/cbss/WSDL/RetrieveTIGroupsV3.wsdl'
+    
+The sdist of lino_welfare was missing all the "data" files.
+Not only `*.wsdl` and `*.xsd` were missing, also `*.mo* and `*.odt`.
+
+IOW: The testing environment must use the unofficial sdists 
+from lino-framework.org. A new "dev" environment uses the development 
+code.
+
+Solving the problem itself took me even more time.
+It seems that there are still many white areas on the map of this land!
+The most correct documentation seems to be `Including Data Files
+<http://pythonhosted.org/distribute/setuptools.html#including-data-files>`_
+
+
+These files are being listed in `global-include` 
+of the `MANIFEST.in`. 
+This causes them to be included into the `sdist` archive file.
+
+And because until now I unpacked 
+these files manually they were available.
+
+But they are *not* available when installing a package using pip.
+For this I have to also declare them in the 
+`package_data` keyword of the setup function.
+Or some other combination of `include_package_data`.
+
+Okay, there is 
+`setuptools_hg <https://bitbucket.org/jezdez/setuptools_hg/wiki/Home>`_
+but I'm afraid that this might cause even more complications due to 
+dependencies.
+
+
+
+ <http://docs.python.org/2/distutils/setupscript.html#installing-package-data>
+
+
+something like the following to 
+setup_info.py::
+
+  package_data={'lino_welfare.modlib.cbss': [
+    'WSDL/*.wsdl',
+    'XSD/*.xsd',
+    'XSD/SSDN/Common/*.xsd',
+    'XSD/SSDN/OCMW_CPAS/IdentifyPerson/*.xsd',
+    'XSD/SSDN/OCMW_CPAS/ManageAccess/*.xsd',
+    'XSD/SSDN/OCMW_CPAS/PerformInvestigation/*.xsd',
+    'XSD/SSDN/OCMW_CPAS/Loi65Wet65/*.xsd',
+    'XSD/SSDN/Person/*.xsd',
+    'XSD/SSDN/Service/*.xsd',
+    ]
+  
+
+find lino -name '*.odt'
+
+
+
+The `testing` environment
+-------------------------
+
+This environment is used for final tests before the official release.
+These final tests include the packaging process.
+
+How to do a release cycle in `testing` (here as example for `welfare`):
+
+**On the development machine**
+
+Create a "source distribution" archive file::
+
+    $ go welfare 
+    $ fab sdist
+    
+The `fab sdist` command stores the archive file in the download 
+section of the Lino website. 
+To make it available for the production server you must build 
+and publish the website::
+    
+    $ go lino
+    $ fab docs pub
+
+**On the testing server**
+
+- Activate the "testing" environment
+
+- Uninstall and the re-install the package::
+
+    $ pip uninstall lino-welfare
+    $ pip install --extra-index-url http://lino-framework.org/dl lino-welfare
+    
+- Restart the web server::    
+
+    $ sudo apache2ctl restart
+    
+ 
+Translations
+------------
+
+The German menu entry "Termine" wasn't translated. 
+It took me some time to find out that this had a double cause.
+First it uses pgettext, and on hoppel I was using the released 
+version of Babel.
+See :blogref:`20130323`".
+Solution was
+`Setting up Babel from a Subversion Checkout
+<http://babel.edgewall.org/wiki/SubversionCheckout>`_.
+
+Another thing was that Babel doesn't recognize Django's 
+`pgettext_lazy`. So instead of writing::
+
+    from django.utils.translation import pgettext_lazy
+    ...
+    verbose_name_plural = pgettext_lazy(u"cal",u"Events")
+    
+I must write::    
+    
+    from django.utils.translation import pgettext_lazy as pgettext
+    ...
+    verbose_name_plural = pgettext(u"cal",u"Events")
+
+
+
+
+Which `daemon` package? Which  `lockfile` package?
+--------------------------------------------------
+
+:mod:`lino.utils.daemoncommand` now works with 
+versions of `daemon` who use "pidfile" instead 
+of "pidlockfile".
+
+
+try:
+    import daemon # pip install python-daemon
+    # in older versions it's called pidlockfile, later just pidfile
+    try:
+        from daemon import pidlockfile
+    except ImportError:
+        from daemon import pidfile as pidlockfile
+        
+        
+
+Until now 
+
+- watch_tim --> daemoncommand:
+
+  daemon import pidlockfile   or daemon import lockfile ?
+  
+  
+  

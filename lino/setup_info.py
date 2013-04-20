@@ -1,6 +1,6 @@
 SETUP_INFO = dict(name = 'lino',
   version = '1.6.5',
-  install_requires = ['North==0.1.2','PyYAML','odfpy','jinja2'],
+  install_requires = ['North==0.1.2','PyYAML','odfpy','jinja2','appy'],
   description = "A framework for writing desktop-like web applications using Django and ExtJS",
   license = 'GPL',
   include_package_data = True,
@@ -188,3 +188,18 @@ SETUP_INFO.update(message_extractors = {
         #~ })
     ],
 })
+
+SETUP_INFO.update(package_data=dict())
+def add_package_data(package,*patterns):
+    l = SETUP_INFO['package_data'].setdefault(package,[])
+    l.extend(patterns)
+    return l
+
+add_package_data('lino','config/*.odt')
+add_package_data('lino.modlib.cal','config/*.odt')
+add_package_data('lino.modlib.notes','config/notes/Note/*.odt')
+add_package_data('lino.modlib.outbox','config/outbox/Mail/*.odt')
+
+l = add_package_data('lino')
+for lng in 'de fr et nl'.split():
+    l.append('locale/%s/LC_MESSAGES/*.mo' % lng)

@@ -19,7 +19,6 @@ to tell Apache to use them.
 How to install pip and virtualenv on a production site
 ------------------------------------------------------
 
-
 Matthew Rankin explains on Stackoverflow how to do it:
 `What's the proper way to install pip, virtualenv, and distribute 
 for Python?
@@ -29,7 +28,7 @@ Very good, so I can install them without danger on my production site.
 
 The following is how I applied Matthew's instructions. 
 
-It starts with a problem:
+It starts with a problem::
 
     lsaffre@lino:~$ curl -O https://pypi.python.org/packages/source/v/virtualenv/virtualenv-1.9.1.tar.gz
     -bash: curl: command not found
@@ -131,6 +130,30 @@ current site-packages?
     ...
     
 Voilà.
+Hm, there is at least one difference: 
+this environment installed Django 1.5.1 because lino-welfare doesn't 
+specify any restriction on the Django version. But the 
+current "environment" on this production server is::
+
+    $ python manage.py validate
+    ...
+    INFO This is Lino Welfare 1.1.1 using Python 2.6.6, Django 1.4.2, djangosite 0.1.1, Babel 0.9.6, North 0.1.1, Lino 1.6.4, Jinja 2.6, Sphinx 1.1.3, python-dateutil 1.4.1, Cheetah 2.4.2.1, OdfPy ODFPY/0.9.4, docutils 0.10, suds 0.3.9, PyYaml 3.09, Appy 0.7.0 (2011/09/15 15:55).
+    INFO Languages: de, fr, en. 25 apps, 92 models, 294 actors.
+    0 errors found
+    INFO Done manage.py validate (PID 9408)
+
+In order to really reproduce this environment I must say::
+
+  lsaffre@lino:~$ pythonenvs/stable/bin/pip freeze > pythonenvs/dsbe20130419.txt
+  lsaffre@lino:~$ nano pythonenvs/dsbe20130419.txt
+  
+I then edited that requirements file manually, and if I'd feel very 
+careful-traditional then I'd use it like this::
+  
+  lsaffre@lino:~$ pythonenvs/stable/bin/pip install -r pythonenvs/dsbe20130419.txt
+  
+But probably I'm rather going to feel audacious and have Django 1.5.1 
+tried on a production site.
 
 
 New version numbers
@@ -142,11 +165,119 @@ Updated the version numbers in the repositories:
 lino-1.6.4
 north-0.1.1
 djangosite-0.1.1)
-
 **to**
 (lino-welfare-1.1.2
 lino-1.6.5
 north-0.1.2
 djangosite-0.1.2
 atelier-0.0.1)
+
+Followed by::
+
+  $ pp ci 
+  $ pp test 
+  $ pp sdist alldocs pub
+  
+(pp is my alias for atelier's per_project script)
+
+Oops, the sdist command should not yet register the new version 
+number to PyPI since we are still testing after all.
+That's not a big problem since I didn't actually upload the files.
+
+
+
+The testing environment
+-----------------------
+
+There are two possibilities to implement a testing environment: 
+
+- using a  `pip install --editable` on a checkout of my projects
+- using a temporary distribution site
+  (and telling pip to prefer this over the PyPI index,
+  i.e. `pip install --find-links=http://www.lino-framework.org/dl`
+  
+
+Why a Belgian lives in Estonia
+------------------------------
+
+An interview with me was 
+published on the first page of a much-read Estonian news portal:
+`Belglane jättis kodumaal tasuva töö ja kolis Eestisse. 
+Miks?
+<http://eestielu.delfi.ee/eesti/raplamaa/marjamaa/elu/belglane-jattis-kodumaal-tasuva-too-ja-kolis-eestisse-miks.d?id=65981786>`_.
+
+Estonians of course enjoy stories of (European) foreigners who 
+feel well in their little country.
+
+So I received public attention, 
+unfortunately only because I happened to move from Belgium 
+to Estonia 12 years ago and still feel happy about it.
+Which is not at all my merit.
+What a shame: it's still not yet *for my work on Lino* that I'm getting
+famous ;-)
+
+
+
+Apache mod_wsgi and virtualenv
+------------------------------
+
+The mod_wsgi documentation about 
+`Virtual Environments
+<http://code.google.com/p/modwsgi/wiki/VirtualEnvironments>`_
+is perfect.
+
+My summary:
+
+- use only mod_wsgi and not try and use mod_python on the same server at the same time. 
+
+- in the global part of the main Apache configuration files::
+
+    WSGIPythonHome /home/lsaffre/pythonenvs/boot
+    
+  This environment will be used as the baseline environment 
+  for all WSGI applications, whether they be run
+  in embedded mode or daemon mode. 
+    
+- In every application's wsgi.py file::
+
+    import site
+    site.addsitedir('/usr/local/pythonenv/stable/lib/python2.6/site-packages')
+    
+
+The `env` symbolik link
+-----------------------
+
+Convention: per project I create a symbolic link called "env" which 
+points to the virtualenv for this project.
+
+How to install MySQLdb using pip
+--------------------------------
+
+Theroretically it's easy::
+
+    $ sudo aptitude install python-dev
+    $ pip install mysql-python
+    
+But reality is sometimes more complex::    
+
+    Downloading/unpacking mysql-python
+    ...
+
+    EnvironmentError: mysql_config not found
+
+This error message meant that libmysqlclient-dev was missing::
+
+  $ sudo aptitude install libmysqlclient-dev
+
+After having installed libmysqlclient-dev, it failed again with:
+
+  unable to execute gcc: No such file or directory  
+  
+So I did::  
+
+  $ sudo aptitude install gcc
+  
+After this it worked.
+
+
 
