@@ -164,24 +164,14 @@ Which `daemon` package? Which  `lockfile` package?
 
 :mod:`lino.utils.daemoncommand` now works with 
 versions of `daemon` who use "pidfile" instead 
-of "pidlockfile".
+of "pidlockfile"::
 
-
-try:
-    import daemon # pip install python-daemon
-    # in older versions it's called pidlockfile, later just pidfile
     try:
-        from daemon import pidlockfile
-    except ImportError:
-        from daemon import pidfile as pidlockfile
+        import daemon # pip install python-daemon
+        # in older versions it's called pidlockfile, later just pidfile
+        try:
+            from daemon import pidlockfile
+        except ImportError:
+            from daemon import pidfile as pidlockfile
+            
         
-        
-
-Until now 
-
-- watch_tim --> daemoncommand:
-
-  daemon import pidlockfile   or daemon import lockfile ?
-  
-  
-  

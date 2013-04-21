@@ -392,13 +392,14 @@ class PasswordStoreField(StoreField):
 class GenericForeignKeyField(StoreField):
         
     def full_value_from_object(self,obj,ar):
-        owner = getattr(obj,self.name)
-        if owner is None: 
-            #~ owner_id = getattr(obj,self.field.fk_field)
-            #~ if owner_id is None:
-                #~ return ''
-            return ''
-        return ar.href_to(owner)
+        return getattr(obj,self.name,None)
+        #~ owner = getattr(obj,self.name)
+        #~ if owner is None: 
+            #~ # owner_id = getattr(obj,self.field.fk_field)
+            #~ # if owner_id is None:
+                #~ # return ''
+            #~ return ''
+        #~ return ar.href_to(owner)
   
 class SpecialStoreField(StoreField):
     field = None 

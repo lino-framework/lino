@@ -1416,19 +1416,6 @@ if settings.SITE.user_model:
             kw.update(user=ar.get_user())
             return kw
         
-    #~ class EventsReserved(Events):
-        #~ help_text = _("Table of all reserved events.")
-        #~ label = _("Reserved Events")
-        #~ required = dict(user_groups='office',user_level='manager')
-        #~ column_names = 'start_date start_time user project summary workflow_buttons *'
-        #~ known_values = dict(state=EventStates.reserved)
-        
-    #~ class MyEventsReserved(EventsReserved,MyEvents):
-        #~ help_text = _("Table of my reserved events (to become scheduled).")
-        #~ required = dict(user_groups='office')
-        #~ column_names = 'start_date start_time project summary workflow_buttons *'
-        #~ label = _("My reserved Events")
-        
         
     class MyUnclearEvents(MyEvents):
         label = _("My unclear events")
@@ -2307,9 +2294,12 @@ def reminders_as_html(ar,days_back=None,days_forward=None,**kw):
     #~ filterkw.update(user=user)
     
     events = ar.spawn(MyEvents,
-        master_instance=user,
+        #~ master_instance=user,
+        user=user,
         filter=flt & (models.Q(state=None) | models.Q(state__lte=EventStates.scheduled)))
-    tasks = ar.spawn(MyTasks,master_instance=user,
+    tasks = ar.spawn(MyTasks,
+        #~ master_instance=user,
+        user=user,
         #~ filter=flt & models.Q(state__in=[TaskState.blank_item,TaskState.todo])) 20120829
         filter=flt & models.Q(state__in=[None,TaskStates.todo]))
     
@@ -2394,7 +2384,9 @@ class UpdateReminders(actions.RowAction):
 from lino.ui import models as ui
 
 class Home(ui.Home):
-  
+    """
+    Deserves better documentation.
+    """
     #~ debug_permissions = True 
 
     label = ui.Home.label

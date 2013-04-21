@@ -141,6 +141,10 @@ class BaseRequest(object):
         
     def setup_from(self,other):
         """
+        Copy certain values 
+        (render, user, subst_user & requesting_panel) 
+        from this request to the other.
+        
         """
         if not self.must_execute():
             return
@@ -260,6 +264,10 @@ class BaseRequest(object):
         logger.info("System note '%s' from %s has been sent to %s",subject,sender,recipients)
         
     def spawn(self,spec,**kw):
+        """
+        Create a new ActionRequest, taking an "action specificator" 
+        and using default values from this one (via :meth:setup_from`).
+        """
         if isinstance(spec,ActionRequest):
             for k,v in kw.items():
                 assert hasattr(spec,k)

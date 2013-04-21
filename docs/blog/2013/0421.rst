@@ -1,0 +1,98 @@
+================================
+20130421 (Sunday, 21 April 2013)
+================================
+
+"Upcoming" and "Missed" events
+------------------------------
+
+The `coming_reminders` and `missed_reminders`
+virtual fields of :class:`lino.modlib.cal.models.Home` 
+("Ausblick" und "Verpasste Termine")
+showed also events of other users.
+
+Added a new case to :ref:`welfare.tested.misc` and 
+fixed the bug.
+
+Which revealed that this bug is probably at least one release old.
+The fact that nobody complained indicates that 
+these two panels are obsolete and should be replaced by something 
+better.
+
+
+Sphinx: unsupported build info format in .buildinfo
+---------------------------------------------------
+
+I sometimes had the following Sphinx warnings::
+
+  WARNING: unsupported build info format in u'/home/luc/hgwork/welfare/docs/.build/.buildinfo', building all
+  
+Which disturbed me because it stopped the build 
+(because I have -W option turned on and want it to stay like this).
+
+This invalid `.buildinfo` file contained::
+
+    # Sphinx build info version 1
+    # This file hashes the configuration used when building these files. When it is not found, a full rebuild will be done.
+    config: 
+    tags: 
+
+It is indeed not normal to have this file exist with "empty" entries. 
+Possible that this comes because I use complex configurations.
+But still it was Sphinx herself who generated this file and now 
+she complains about the content. That's not correct!
+Here is the responsible code in `/sphinx/builders/html.py`::
+
+    try:
+        fp = open(path.join(self.outdir, '.buildinfo'))
+        try:
+            version = fp.readline()
+            if version.rstrip() != '# Sphinx build info version 1':
+                raise ValueError
+            fp.readline()  # skip commentary
+            cfg, old_config_hash = fp.readline().strip().split(': ')
+            if cfg != 'config':
+                raise ValueError
+            tag, old_tags_hash = fp.readline().strip().split(': ')
+            if tag != 'tags':
+                raise ValueError
+        finally:
+            fp.close()
+    except ValueError:
+        self.warn('unsupported build info format in %r, building all' %
+                  path.join(self.outdir, '.buildinfo'))
+    except Exception:
+        pass
+
+A principal problem with this code is that it uses the 
+standard exception `ValueError` to handle a custom problem.
+It's a mousetrap, and my concrete case of invalid build file 
+makes Sphinx step into this trap.
+In fact (AFAICS) the author wants Sphinx to warn only in those 
+special cases and to silently ignore (without any warning)
+any "really invalid" .buildinfo file.
+So I suggest to replace "ValueError" by a custom exception "InvalidInfo"::
+
+    class InvalidInfo(Exception): 
+        pass
+        
+    try:
+        fp = open(path.join(self.outdir, '.buildinfo'))
+        try:
+            version = fp.readline()
+            if version.rstrip() != '# Sphinx build info version 1':
+                raise InvalidInfo
+            fp.readline()  # skip commentary
+            cfg, old_config_hash = fp.readline().strip().split(': ')
+            if cfg != 'config':
+                raise InvalidInfo
+            tag, old_tags_hash = fp.readline().strip().split(': ')
+            if tag != 'tags':
+                raise InvalidInfo
+        finally:
+            fp.close()
+    except InvalidInfo:
+        self.warn('unsupported build info format in %r, building all' %
+                  path.join(self.outdir, '.buildinfo'))
+    except Exception:
+        pass
+
