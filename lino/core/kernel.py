@@ -185,8 +185,6 @@ def startup_site(self):
             if k.startswith('setup_'):
                 self.modules.define(app_label,k,v)
                 
-    dd.pre_analyze.send(self,models_list=models_list)
-    
     self.setup_choicelists()
     self.setup_workflows()
     
@@ -216,6 +214,10 @@ def startup_site(self):
                     #~ f.rel.to._lino_ddh.add_fk(model,f) # 20120728
                     f.rel.to._lino_ddh.add_fk(m or model,f)
                         
+    dd.pre_analyze.send(self,models_list=models_list)
+    # MergeAction are defined in pre_analyze. 
+    # And MergeAction needs the info in _lino_ddh to correctly find keep_volatiles
+    
     #~ for model in models.get_models():
 
             #~ for k,v in class_dict_items(model):
@@ -241,9 +243,7 @@ def startup_site(self):
                     
                     
     actors.discover()
-    
     dbtables.discover()
-    
     choosers.discover()
                     
     #~ from lino.core import ui

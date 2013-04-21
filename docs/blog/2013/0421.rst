@@ -96,3 +96,47 @@ So I suggest to replace "ValueError" by a custom exception "InvalidInfo"::
     except Exception:
         pass
 
+
+
+More bugs fixed
+---------------
+
+- pcsw.Client.print_eid_content didn't work. 
+- Added a test case to :ref:`welfare.tested.pcsw`.
+
+
+
+Merging imported Partners
+-------------------------
+
+Es war ein Denkfehler, die Aktion "Fusionieren" für importierte
+Partner zu verbieten. 
+Zumindest im Fall "23219 nach 23624 fusionieren" ist dieses Verbot
+falsch. Also raus mit folgendem Code 
+(aus der :class:`lino_welfare.modlib.pcsw.models.Partner`)::
+
+    def get_row_permission(self,ar,state,ba):
+        if isinstance(ba.action,dd.MergeAction) and settings.SITE.is_imported_partner(self):
+            return False
+        return super(Partner,self).get_row_permission(ar,state,ba)
+
+
+
+Oho, another surprise:
+adding MergeAction in post_analyze is too late, but adding 
+it in pre_analyze is too early! 
+See also :blogref:`20130409`: 
+MergeAction needs the info in _lino_ddh to fill keep_volatiles.
+Solution: pre_analyze is now being emitted a little bit later: after 
+setup_choicelists(), setup_workflows() and the loop which fills 
+`_lino_ddh`.
+
+
+TODO:
+
+- File does not exist: /usr/local/django/cpas_eupen/media/eid-jslib/media
+
+- Shouldn't we remove `allow_cascaded_delete = ['client']`  on 
+  pcsw.Coaching? because it sounds more intuitive that you cannot 
+  delete a Client without first manually deleting every Coaching.
+

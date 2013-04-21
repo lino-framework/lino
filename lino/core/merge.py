@@ -175,12 +175,14 @@ class MergeAction(actions.RowAction):
         
         keep_volatiles = []
         
+        #~ logger.info("20130421 MergeAction for %s : _lino_ddh.fklist is %s",model,model._lino_ddh.fklist)
         for m,fk in model._lino_ddh.fklist:
             if fk.name in m.allow_cascaded_delete:
                 fieldname = full_model_name(m,'_')
                 if not fieldname in keep_volatiles:
                     keep_volatiles.append(fieldname)
                     fields[fieldname] = models.BooleanField(m._meta.verbose_name_plural)
+            #~ logger.info("20130421 %r in %r",fk.name,m.allow_cascaded_delete)
             
         
         layout = dict()
@@ -202,7 +204,7 @@ class MergeAction(actions.RowAction):
                         tpl += ' '
                     tpl += name
             else:
-                tpl = ' '.join(weak_names)
+                tpl = ' '.join(keep_volatiles)
             main = """
             merge_to
             keep_volatiles

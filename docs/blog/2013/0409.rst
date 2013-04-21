@@ -136,7 +136,7 @@ Since this inheriting is done during the analyze phase, our customization
 must happen before.
 
 New method :meth:`lino.core.model.Model.define_action` 
-to make thistype of customization more bullet-proof.
+to make this type of customization more bullet-proof.
 TODO: define_action should raise an Exception if it is too 
 late (because some tables on this model have already been initialized).
 

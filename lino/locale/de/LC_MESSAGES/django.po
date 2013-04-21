@@ -8,7 +8,7 @@ msgstr ""
 "Project-Id-Version: lino.modlib.systen\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2013-04-20 22:38+0300\n"
-"PO-Revision-Date: 2013-04-20 22:40+0300\n"
+"PO-Revision-Date: 2013-04-21 20:50+0300\n"
 "Last-Translator: Luc Saffre <luc.saffre@gmx.net>\n"
 "Language-Team: \n"
 "Plural-Forms: nplurals=2; plural=(n != 1)\n"
@@ -280,7 +280,7 @@ msgstr "Begründung"
 
 #: lino/core/merge.py:211
 msgid "Also reassign volatile related objects"
-msgstr ""
+msgstr "Auch vergängliche verknüpfte Objekte überweisen"
 
 #: lino/core/model.py:392
 msgid "Workflow"
