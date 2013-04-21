@@ -46,7 +46,7 @@ import lino
 from lino.core import actions
 from lino.core import fields
 from lino.utils import iif, moneyfmt
-from north import dbutils 
+from north import dbutils
 #~ from lino.utils import call_optional_super
 from lino.utils.choosers import chooser
 from lino.utils.appy_pod import Renderer
@@ -296,8 +296,9 @@ class AppyBuildMethod(SimpleBuildMethod):
         #~ from lino.models import get_site_config
         #~ from appy.pod.renderer import Renderer
         #~ renderer = None
+        from lino import dd
         context = dict(self=elem,
-            dtos=dbutils.dtos,
+            dtos=dd.dtos,
             dtosl=dbutils.dtosl,
             dtomy=dbutils.dtomy,
             babelattr=dbutils.babelattr,

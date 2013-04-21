@@ -419,7 +419,6 @@ def uncamel(s):
     """
     return UNCAMEL_RE.sub(r'_\1', s).lower()
     
-    
 
 
 def _test():
