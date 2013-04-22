@@ -28,3 +28,4 @@ docs/api
 lino.egg-info
 .build
 htmlcov
+warnings_linkcheck.txt

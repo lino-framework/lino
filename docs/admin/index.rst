@@ -1,6 +1,12 @@
 Administrator's Manual 
 ======================
 
+This section is for system administrators who set up or maintain a 
+server which hosts one or several Lino applications.
+You are not expected to be a Python programmer.
+Experience with hosting Django projects is useful, 
+but if you are new we'll provide external links to the relevant entry points.
+
 Installation
 ------------
 
@@ -8,22 +14,10 @@ Installation
     :maxdepth: 2
 
     install
-    pythonpath
-    lino_local
+    djangosite_local
     media
-    mass_hosting
-    install_apache
-    ApacheHttpAuth
-    django_tests
-    upgrade
-    datamig
-    apache_webdav
-    using
-    webdav
-    install_shell_scripts
-    oood
-    watch_tim
    
+
 Other
 -----
 
@@ -37,4 +31,18 @@ Other
     tim2lino
     settings
     which_lino
+    install_windows
+    pythonpath
    
+    permissions
+    ApacheHttpAuth
+    django_tests
+    upgrade
+    datamig
+    apache_webdav
+    install_apache
+    using
+    webdav
+    install_shell_scripts
+    oood
+    watch_tim

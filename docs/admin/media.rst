@@ -5,11 +5,16 @@ The `media` directory is a subdirectory of your project directory,
 containing symbolic links to various sets of static files which Lino
 expects to be served under the `/media/` location.
 
-The **development server** will mount it automatically.
-On a **production server** you will add a line like the following 
+Lino manages the content of this directory more or less automatically, 
+but **only if it exists** (and if `www-data` has write permission on 
+it).
+
+The *development server* will mount it automatically.
+On a *production server* you will add a line like the following 
 to your Apache config::
 
   Alias /media/ /usr/local/django/myproject/media/
+  
   
 Description of the individual `media` sub-directories:
 

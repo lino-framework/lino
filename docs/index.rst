@@ -3,11 +3,6 @@ Lino the framework
 ==================
 
 Welcome to the project homepage of Lino the framework. 
-Related projects:
-`atelier <http://atelier.lino-framework.org>`__,
-`djangosite <http://site.lino-framework.org>`__,
-`North <http://north.lino-framework.org>`__ and
-`Lino-Welfare <http://welfare.lino-framework.org>`__
 
 .. py2rst::
 
@@ -33,9 +28,6 @@ Suggestions du chef
 
 - The final truth about what's going on is only 
   the `source code <http://code.google.com/p/lino/source/list>`__.
-  
-- Lino is listed on `PyPI <http://pypi.python.org/pypi/lino>`_, 
-  the Python Package Index.
 
 Sitemap
 -------

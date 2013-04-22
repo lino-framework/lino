@@ -2,6 +2,9 @@
 Installing Lino on a Windows computer
 =====================================
 
+.. include:: /include/needs_update.rst
+
+
 
 .. contents:: Table of Contents
    :local:
