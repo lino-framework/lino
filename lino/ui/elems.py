@@ -2096,7 +2096,10 @@ class GridElement(Container):
     def row2text(self,ar,fields,row,sums):
         for i,fld in enumerate(fields):
             if fld.field is not None:
-                v = fld.field._lino_atomizer.full_value_from_object(row,ar)
+                try: # was used to find bug 20130422
+                    v = fld.field._lino_atomizer.full_value_from_object(row,ar)
+                except Exception as e:
+                    v = "%s:\n%s" % (fld.field,e)
                 if v is None:
                     yield ''
                 else:
@@ -2276,10 +2279,11 @@ def field2elem(layout_handle,field,**kw):
         return RequestFieldElement(layout_handle,field,**kw)
         
     selector_field = field
-    if isinstance(field,dd.VirtualField):
-        selector_field = field.return_type
-    elif isinstance(field,fields.RemoteField):
+    if isinstance(field,fields.RemoteField):
         selector_field = field.field
+    if isinstance(selector_field,dd.VirtualField):
+        selector_field = selector_field.return_type
+    # remeber the case of RemoteField to VirtualField
     
     #~ if str(layout_handle.layout._datasource) == 'pcsw.UsersWithClients':
         #~ if field is not selector_field:
@@ -2295,7 +2299,7 @@ def field2elem(layout_handle,field,**kw):
         raise NotImplementedError("No LayoutElement for VirtualField %s on %s in %s" % (
           field.name,field.return_type.__class__,layout_handle.layout))
     if isinstance(field,fields.RemoteField):
-        raise NotImplementedError("No LayoutElement for RemoteField %s on %s" % (
+        raise NotImplementedError("No LayoutElement for RemoteField %s to %s" % (
           field.name,field.field.__class__))
     raise NotImplementedError("No LayoutElement for %s (%s) in %s" 
         % (field.name,field.__class__,layout_handle.layout))

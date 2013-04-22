@@ -773,86 +773,89 @@ class OneToOneStoreField(RelatedMixin,StoreField):
         #~ d[self.field.name] = self.value_from_object(request,obj)
         
 
+
+def create_field(fld,name):
+    if isinstance(fld,fields.RemoteField):
+        """
+        Hack: we create a StoreField based on the remote field,
+        then modify its behaviour.
+        """
+        sf = create_field(fld.field,fld.name)
+        def value_from_object(sf,obj,ar):
+            m = fld.func
+            return m(obj)
+            
+        def full_value_from_object(sf,obj,ar):
+            #~ logger.info("20120406 %s.full_value_from_object(%s)",sf.name,sf)
+            m = fld.func
+            return m(obj)
+            
+        sf.value_from_object = curry(value_from_object,sf)
+        sf.full_value_from_object = curry(full_value_from_object,sf)
+        #~ sf.field = fld.field
+        #~ sf.value2list = curry(value2list,sf)
+        return sf
+    #~ if isinstance(fld,tables.ComputedColumn):
+        #~ logger.info("20111230 Store.create_field(%s)", fld)
+        #~ return ComputedColumnField(fld)
+    meth = getattr(fld,'_return_type_for_method',None)
+    if meth is not None:
+        # uh, this is tricky...
+        return MethodStoreField(fld,name)
+    #~ if isinstance(fld,fields.HtmlBox):
+        #~ ...
+    #~ if isinstance(fld,dd.LinkedForeignKey):
+        #~ return LinkedForeignKeyField(fld,name)
+    if isinstance(fld,dd.RequestField):
+        delegate = create_field(fld.return_type,fld.name)
+        return RequestStoreField(fld,delegate,name)
+    if isinstance(fld,dd.VirtualField):
+        delegate = create_field(fld.return_type,fld.name)
+        return VirtStoreField(fld,delegate,name)
+    if isinstance(fld,models.FileField):
+        return FileFieldStoreField(fld,name)
+    if isinstance(fld,models.ManyToManyField):
+        return StoreField(fld,name)
+    if isinstance(fld,dd.PasswordField):
+        return PasswordStoreField(fld,name)
+    if isinstance(fld,models.OneToOneField):
+        return OneToOneStoreField(fld,name)
+    if isinstance(fld,generic.GenericForeignKey):
+        return GenericForeignKeyField(fld,name)
+    if isinstance(fld,dd.GenericForeignKeyIdField):
+        return ComboStoreField(fld,name)
+    if isinstance(fld,models.ForeignKey):
+        return ForeignKeyStoreField(fld,name)
+    if isinstance(fld,models.TimeField):
+        return TimeStoreField(fld,name)
+    if isinstance(fld,models.DateTimeField):
+        return DateTimeStoreField(fld,name)
+    if isinstance(fld,dd.IncompleteDateField):
+        return IncompleteDateStoreField(fld,name)
+    if isinstance(fld,models.DateField):
+        return DateStoreField(fld,name)
+    if isinstance(fld,models.BooleanField):
+        return BooleanStoreField(fld,name)
+    if isinstance(fld,models.DecimalField):
+        return DecimalStoreField(fld,name)
+    if isinstance(fld,models.AutoField):
+        return AutoStoreField(fld,name)
+        #~ kw.update(type='int')
+    if isinstance(fld,models.SmallIntegerField):
+        return IntegerStoreField(fld,name)
+    if isinstance(fld,dd.DisplayField):
+        return DisplayStoreField(fld,name)
+    if isinstance(fld,models.IntegerField):
+        return IntegerStoreField(fld,name)
+    kw = {}
+    if choosers.uses_simple_values(fld):
+        return StoreField(fld,name,**kw)
+    else:
+        return ComboStoreField(fld,name,**kw)
+
+
 class BaseStore(object):
-        
-    def create_field(self,fld,name):
-        if isinstance(fld,fields.RemoteField):
-            """
-            Hack: we create a StoreField based on the remote field,
-            then modify its behaviour.
-            """
-            sf = self.create_field(fld.field,fld.name)
-            def value_from_object(sf,obj,ar):
-                m = fld.func
-                return m(obj)
-                
-            def full_value_from_object(sf,obj,ar):
-                #~ logger.info("20120406 %s.full_value_from_object(%s)",sf.name,sf)
-                m = fld.func
-                return m(obj)
-                
-            sf.value_from_object = curry(value_from_object,sf)
-            sf.full_value_from_object = curry(full_value_from_object,sf)
-            #~ sf.field = fld.field
-            #~ sf.value2list = curry(value2list,sf)
-            return sf
-        #~ if isinstance(fld,tables.ComputedColumn):
-            #~ logger.info("20111230 Store.create_field(%s)", fld)
-            #~ return ComputedColumnField(fld)
-        meth = getattr(fld,'_return_type_for_method',None)
-        if meth is not None:
-            # uh, this is tricky...
-            return MethodStoreField(fld,name)
-        #~ if isinstance(fld,fields.HtmlBox):
-            #~ ...
-        #~ if isinstance(fld,dd.LinkedForeignKey):
-            #~ return LinkedForeignKeyField(fld,name)
-        if isinstance(fld,dd.RequestField):
-            delegate = self.create_field(fld.return_type,fld.name)
-            return RequestStoreField(fld,delegate,name)
-        if isinstance(fld,dd.VirtualField):
-            delegate = self.create_field(fld.return_type,fld.name)
-            return VirtStoreField(fld,delegate,name)
-        if isinstance(fld,models.FileField):
-            return FileFieldStoreField(fld,name)
-        if isinstance(fld,models.ManyToManyField):
-            return StoreField(fld,name)
-        if isinstance(fld,dd.PasswordField):
-            return PasswordStoreField(fld,name)
-        if isinstance(fld,models.OneToOneField):
-            return OneToOneStoreField(fld,name)
-        if isinstance(fld,generic.GenericForeignKey):
-            return GenericForeignKeyField(fld,name)
-        if isinstance(fld,dd.GenericForeignKeyIdField):
-            return ComboStoreField(fld,name)
-        if isinstance(fld,models.ForeignKey):
-            return ForeignKeyStoreField(fld,name)
-        if isinstance(fld,models.TimeField):
-            return TimeStoreField(fld,name)
-        if isinstance(fld,models.DateTimeField):
-            return DateTimeStoreField(fld,name)
-        if isinstance(fld,dd.IncompleteDateField):
-            return IncompleteDateStoreField(fld,name)
-        if isinstance(fld,models.DateField):
-            return DateStoreField(fld,name)
-        if isinstance(fld,models.BooleanField):
-            return BooleanStoreField(fld,name)
-        if isinstance(fld,models.DecimalField):
-            return DecimalStoreField(fld,name)
-        if isinstance(fld,models.AutoField):
-            return AutoStoreField(fld,name)
-            #~ kw.update(type='int')
-        if isinstance(fld,models.SmallIntegerField):
-            return IntegerStoreField(fld,name)
-        if isinstance(fld,dd.DisplayField):
-            return DisplayStoreField(fld,name)
-        if isinstance(fld,models.IntegerField):
-            return IntegerStoreField(fld,name)
-        kw = {}
-        if choosers.uses_simple_values(fld):
-            return StoreField(fld,name,**kw)
-        else:
-            return ComboStoreField(fld,name,**kw)
+    pass
 
 class ParameterStore(BaseStore):
         
@@ -861,7 +864,7 @@ class ParameterStore(BaseStore):
         
         for pf in params_layout_handle._store_fields:
         #~ for pf in rh.report.params:
-            self.param_fields.append(self.create_field(pf,pf.name))
+            self.param_fields.append(create_field(pf,pf.name))
         
         self.param_fields = tuple(self.param_fields)
         self.url_param = url_param
@@ -1032,7 +1035,7 @@ class Store(BaseStore):
     def add_field_for(self,fields,df):
         sf = getattr(df,'_lino_atomizer',None)
         if sf is None:
-            sf = self.create_field(df,df.name)
+            sf = create_field(df,df.name)
             setattr(df,'_lino_atomizer',sf)
             
         if not sf in self.all_fields:

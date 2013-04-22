@@ -1069,6 +1069,10 @@ class AbstractTable(actors.Actor):
     @classmethod
     def to_rst(cls,ar,column_names=None,**kwargs):
         fields, headers, widths = ar.get_field_info(column_names)
+        #~ # in case column_names contains remote fields
+        #~ settings.SITE.startup() 
+        #~ settings.SITE.resolve_virtual_fields()
+
         
         grid = ar.ah.list_layout.main
                     

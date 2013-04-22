@@ -15,7 +15,6 @@ and several more pages.
 To-do-Liste
 -----------
 
-
 - Übersicht Art60*7 neues Layout wie in Mail von Melanie vom 03/29/2013
   12:49 (funktioniert bei mir schon, aber da scheint das
   LibreOffice eures Servers zu alt zu sein)
@@ -26,7 +25,7 @@ To-do-Liste
     zwei Zuständen "Aktiv" und "Inaktiv"
   - In Liste "Offene Kursanfragen" eine Kolonne mit den Initialien
     (oder dem Namen?) des zuständigen Sozi anzeigen. "Zuständiger Sozi"
-   ist der Benutzer der aktiven Begleitung im Dienst "DSBE".
+    ist der Benutzer der aktiven Begleitung im Dienst "DSBE".
 
 - Benutzerfreundliche Warnung "Vertragsart darf nicht leer sein"
   statt "Server-side failure (1048, "Column 'type_id' cannot be null")"
@@ -40,10 +39,25 @@ Official release
 Hackerzacker! Kaum hatte ich die Auswahlliste Kandidatur-Zustände 
 übersetzt, fiel mir ein, dass ich ja vorher noch das offizielle Release 
 machen wollte.
+Das ist ja jetzt nur noch eine Formalität::
 
-$ pp test
-$ pp ci 
+    $ pp test
+    $ pp ci 
+    $ pp upload
 
 Vorher kleine Änderung: wenn man "ci" mit "n" beantwortet 
 (z.B. weil keine Änderungen da sind), gilt das nicht als Fehler, 
-damit pp weiter macht.
+damit pp trotzdem weiter macht.
+
+New feature: remote virtual fields
+----------------------------------
+
+The following user request looked so innocent:
+
+- In Liste "Offene Kursanfragen" eine Kolonne mit den Initialien
+  (oder dem Namen?) des zuständigen Sozi anzeigen. "Zuständiger Sozi"
+  ist der Benutzer der aktiven Begleitung im Dienst "DSBE".
+
+But it caused another little avalanche (3..4h) 
+of bugfixes and new features. They are documented and tested in
+:ref:`welfare.tested.courses`.

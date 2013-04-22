@@ -1,3 +1,5 @@
+.. _layouts_tutorial:
+
 ==========================
 An introduction to layouts
 ==========================

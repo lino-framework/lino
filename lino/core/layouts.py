@@ -741,7 +741,7 @@ def create_layout_element(lh,name,**kw):
         try:
             de = lh.get_data_elem(name)
         except Exception, e:
-            logger.exception(e)
+            #~ logger.exception(e) # removed 20130422 caused disturbing output when running tests
             de = None
             name += " (" + str(e) + ")"
     else:
@@ -888,7 +888,8 @@ def create_layout_element(lh,name,**kw):
         #~ print(20130202, lh.layout._datasource.model._meta.get_all_field_names())
         msg = "Unknown element %r referred in layout <%s>." % (
             name,lh.layout)
-        msg += " Cannot handle %r" % de
+        if de is not None:
+            msg += " Cannot handle %r" % de
     raise KeyError(msg)
     
 

@@ -1106,14 +1106,23 @@ class Actor(actions.Parametrizable):
             #~ app_label = model._meta.app_label
             rpt = settings.SITE.modules[self.app_label].get(name,None)
         elif len(s) == 2:
+            if True:
+                return settings.SITE.modules.resolve(name)
+            else: 
+                """
+                20130422
+                Yes it was a nice feature to silently ignore non installed app_labels
+                but mistakenly specifying "person.first_name" instead of "person__first_name"
+                did not raise an error.
+                """
+                m = settings.SITE.modules.get(s[0],None)
+                if m is None:
+                    return fields.DummyField()
+                return m.get(s[1],None)
             # 20121113
-            #~ app = resolve_app(s[0])
-            #~ rpt = getattr(app,s[1],None)
-            m = settings.SITE.modules.get(s[0],None)
-            if m is None:
-                return fields.DummyField()
-            return m.get(s[1],None)
-            #~ rpt = settings.SITE.modules[s[0]].get(s[1],None)
+            # app = resolve_app(s[0])
+            # rpt = getattr(app,s[1],None)
+            # rpt = settings.SITE.modules[s[0]].get(s[1],None)
         else:
             raise Exception("Invalid data element name %r" % name)
         if rpt is not None: 

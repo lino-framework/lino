@@ -43,7 +43,6 @@ from lino.utils import IncompleteDate, d2iso
 from lino.utils import quantities 
 from lino.utils import get_class_attr
 
-
 class PasswordField(models.CharField):
     """Stored as plain text in database, but not displayed in user interface."""
     pass
@@ -223,6 +222,16 @@ class RemoteField(FakeField):
         self.verbose_name = fld.verbose_name
         self.max_length = getattr(fld,'max_length',None)
         #~ print 20120424, self.name
+        #~ settings.SITE.register_virtual_field(self)
+        
+        #~ store = top_model.get_default_table().get_handle().store
+        #~ store = self.field.model.get_default_table().get_handle().store
+        from lino.ui import store
+        self._lino_atomizer = store.create_field(self,name)
+        
+        
+    #~ def lino_resolve_type(self):
+        #~ self._lino_atomizer = self.field._lino_atomizer
 
     def value_from_object(self,obj,ar=None):
         """
@@ -305,6 +314,7 @@ class VirtualField(FakeField): # (Field):
     def __init__(self,return_type,get):
         self.return_type = return_type # a Django Field instance
         self.get = get
+        
         settings.SITE.register_virtual_field(self)
         """
         Normal VirtualFields are read-only and not editable.
@@ -359,6 +369,13 @@ class VirtualField(FakeField): # (Field):
           blank'''.split()):
             setattr(self,k,getattr(self.return_type,k,None))
         #~ logger.info('20120831 VirtualField %s on %s',name,actor_or_model)
+        
+        #~ store = self.model.get_default_table().get_handle().store
+        #~ self._lino_atomizer = store.create_field(self,self.name)
+        #~ self._lino_atomizer = self.return_type._lino_atomizer
+        from lino.ui import store
+        self._lino_atomizer = store.create_field(self,self.name)
+        
       
     def unused_contribute_to_class(self, cls, name):
         ## if defined in abstract base class, called once on each submodel
@@ -872,28 +889,39 @@ def get_data_elem(model,name):
     #~ logger.info("20120202 get_data_elem %r,%r",model,name)
     parts = name.split('__')
     if len(parts) > 1:
+        """It's going to be a RemoteField
+        """
         # logger.warning("20120406 RemoteField %s in %s",name,self)
         #~ model = self.model
+
+        field_chain = []
         for n in parts:
             assert model is not None
+            model.get_default_table().get_handle() # make sure that all atomizers of those fields get created.
             fld = get_data_elem(model,n)
             if fld is None:
                 # raise Exception("Part %s of %s got None" % (n,model))
                 raise Exception(
-                    "Invalid RemoteField %s.%s (no %s in %s)" % 
-                    (full_model_name(self.model),name,n,full_model_name(model)))
+                    "Invalid RemoteField %s.%s (no field %s in %s)" % 
+                    (full_model_name(model),name,n,full_model_name(model)))
+            field_chain.append(fld)
             if fld.rel:
                 model = fld.rel.to
             else:
                 model = None
         def func(obj,ar=None):
-            # logger.info('20120109 %s',name)
+            #~ print '20130422',name,obj, [fld.name for fld in field_chain]
             try:
-                for n in parts:
-                    obj = getattr(obj,n)
-                # logger.info('20120109 %s --> %r', name,obj)
+                for fld in field_chain:
+                    #~ obj = fld.value_from_object(obj)
+                    obj = fld._lino_atomizer.full_value_from_object(obj,ar)
+                #~ for n in parts:
+                    #~ obj = getattr(obj,n)
+                #~ print '20130422 %s --> %r', fld.name,obj
                 return obj
             except Exception,e:
+                logger.exception(e)
+                return str(e)
                 return None
         return RemoteField(func,name,fld)
     

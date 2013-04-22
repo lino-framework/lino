@@ -180,6 +180,7 @@ class Model(models.Model):
         """
         return self._lino_ddh.disable_delete_on_object(self)
         
+    @classmethod # classmethod since 20130422
     def get_default_table(self):
         return self._lino_default_table
         
