@@ -196,24 +196,28 @@ class Renderer(AppyRenderer):
       
         
     def insert_table(self,*args,**kw):
+        """
+        This is the function that gets called when a template contains a 
+        ``do text from table(...)`` statement.
+        """
         #~ since i cannot yet tell appy_pod to alert me when there is an 
         #~ exception, here at least i write it to the logger
         if False:
             return self.insert_table_(*args,**kw)
         else:
             try:
-                return self.insert_table_(*args,**kw)
+                s = self.insert_table_(*args,**kw)
             except Exception as e:
-                logger.warning("Exception during insert_table(%s)" % args[0])
+                logger.warning("Exception during insert_table(%s):" % args[0])
                 raise
-                logger.exception(e)
-                return ''
+            s = s.decode('utf-8')
+            logger.info("""\
+20130423 appy_pod.Renderer.insert_table(%s) inserts =======
+%s
+=======""", args[0], s)
+            return s
         
     def insert_table_(self,ar,column_names=None,table_width=180):
-        """
-        This is the function that gets called when a template contains a 
-        ``do text from table(...)`` statement.
-        """
         ar.setup_from(self.ar)
         #~ ar.renderer = self.ar.renderer
 

@@ -29,3 +29,29 @@ But in some cases Lino cannot determine a default value.
 In this cases, the user saw only a message "Server-side failure" 
 instead of something meaningful which says that she just forgot 
 to fill in the "Contract type" field.
+:class:`lino_welfare.modlib.isip.models.ContractBase`
+now raises ValidationErrror "You must specify a contract type."
+Optimizations in 
+:mod:lino.ui.views`
+and :mod:lino.ui.store`.
+
+
+.pdf table doesn't always render
+--------------------------------
+
+:ref:`welfare.jobs.NewJobsOverview` implements the new user-requested 
+layout and works very well... on `hoppel` and on `lf.org`, 
+but *not* on `dsbe`.
+
+Here is a table with some first observations:
+
+======= === ============ =========================== ========
+machine ok  LO/OOo       OS                          Python
+======= === ============ =========================== ========
+hoppel  ok  libreoffice  Ubuntu                      2.7
+lf.org  ok  openoffice   Debian Lenny stable         2.6.6
+dsbe    -   libreoffice  Debian Lenny stable         2.6.6
+======= === ============ =========================== ========
+
+To gather more information I added a temporary call to `logging.info` in 
+:meth:`lino.utils.appy_pod.Renderer.insert_table`.

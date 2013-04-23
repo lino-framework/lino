@@ -140,10 +140,12 @@ def run_action(ar,elem):
         if elem is None:
             msg = unicode(e)
         else:
+            if isinstance(elem,models.Model):
+                elem = dd.obj2unicode(elem)
             msg = _(
               "Action \"%(action)s\" failed for %(record)s:") % dict(
               action=ar.bound_action.full_name(),
-              record=dd.obj2unicode(elem))
+              record=elem)
             msg += "\n" + unicode(e)
         msg += '.\n' + _(
           "An error report has been sent to the system administrator.")
