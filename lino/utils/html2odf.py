@@ -141,6 +141,8 @@ def html2odf(e,ct=None,**ctargs):
         oe = text.Span(stylename='Bold Text')
     elif e.tag == 'a':
         oe = text.Span(stylename='Bold Text')
+    elif e.tag in ('i','em'):
+        oe = text.Span(stylename='Italic Text')
     elif e.tag == 'span':
         oe = text.Span()
     elif e.tag == 'br':
@@ -161,7 +163,7 @@ def html2odf(e,ct=None,**ctargs):
     elif e.tag in PTAGS: 
         oe = ct
     else:
-        logger.info("20130201 %s",E.tostring(e))
+        #~ logger.info("20130201 %s",E.tostring(e))
         raise NotImplementedError("<%s> inside <%s>" % (e.tag,ct.tagName))
         #~ oe = text.Span()
             
