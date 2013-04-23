@@ -10,8 +10,23 @@ The final truth about what's going on is only
 `The Source Code <http://code.google.com/p/lino/source/list>`_.
 
 
-Version 1.6.5 (in development)
+Version 1.6.6 (in development)
 ==============================
+
+- Lino now supports 
+  :class:`lino.core.fields.RemoteField` to a 
+  :class:`lino.core.fields.VirtualField`.
+  See :blogref:`20130422`
+
+- :mod:`lino.utils.auth` forgot to set `request.subst_user` to `None`
+  for html HEAD requests.
+  (:blogref:`20130423`)
+  
+- Readable user message when contract type empty
+  (:blogref:`20130423`)
+
+Version 1.6.5 (released :blogref:`20130422`)
+============================================
 
 - Exceptions "Using remote authentication, but no user credentials 
   found." and "Unknown or inactive username %r. Please contact your 

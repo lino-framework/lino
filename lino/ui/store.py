@@ -1090,8 +1090,10 @@ class Store(BaseStore):
                         m = getattr(instance,f.name + "_changed",None)
                         if m is not None:
                             changed_triggers.append(m)
-                except exceptions.ValidationError,e:
+                except exceptions.ValidationError as e:
                     raise exceptions.ValidationError({f.name:e})
+                except ValueError as e:
+                    raise exceptions.ValidationError({f.name:_("Invalid value for this field (%s).") % e})
                 except Exception,e:
                     logger.warning("Exception during Store.form2obj (field %s) : %s", f.name,e)
                     logger.exception(e)

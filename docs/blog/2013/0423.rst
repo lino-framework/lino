@@ -1,0 +1,31 @@
+=================================
+20130423 (Tuesday, 23 April 2013)
+=================================
+
+'WSGIRequest' object has no attribute 'subst_user'
+--------------------------------------------------
+
+I finally looked up why I received often a series of error messages
+"'WSGIRequest' object has no attribute 'subst_user'" from the demo 
+sites. These server tracebacks were caused by html HEAD requests 
+issued by my own monitor.
+:mod:`lino.utils.auth` forgot to set `request.subst_user` to `None`
+in such cases.
+Wrote some docstrings in module :mod:`lino.utils.auth`.
+New class :mod:`lino.utils.auth.AuthMiddleWareBase`.
+
+User message when contract type empty
+-------------------------------------
+
+The `type` field of 
+:ref:`welfare.isip.Contract`
+and
+:ref:`welfare.jobs.Contract`
+is declared `blank=True` but `null=False`.
+Which is what we want: 
+if the user submits an empty value for this field, 
+Lino should fill a default value before saving it.
+But in some cases Lino cannot determine a default value.
+In this cases, the user saw only a message "Server-side failure" 
+instead of something meaningful which says that she just forgot 
+to fill in the "Contract type" field.

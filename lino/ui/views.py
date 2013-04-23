@@ -313,17 +313,21 @@ def delete_element(ar,elem):
     
 CATCHED_AJAX_EXCEPTIONS = (Warning,IntegrityError,exceptions.ValidationError)
 
-def ajax_error(e,**kw):
+def ajax_error(e,rh,**kw):
     """
     Utility function that converts a catched exception 
     to a user-friendly error message.
     """
-    logger.info("20130418 ajax_error(%s",e.messages)
     if isinstance(e,exceptions.ValidationError):
+        def fieldlabel(name):
+            de = rh.actor.get_data_elem(name)
+            #~ print 20130423, de
+            return force_unicode(getattr(de,'verbose_name',name))
+        #~ logger.info("20130418 ajax_error(%s",e.messages)
         #~ if isinstance(e.messages,dict):
         md = getattr(e,'message_dict',None)
         if md is not None:
-            e = '<br>'.join(["%s : %s" % kv for kv in md.items()])
+            e = '<br>'.join(["%s : %s" % (fieldlabel(k),v) for k,v in md.items()])
         else:
             e = '<br>'.join(e.messages)
     kw = settings.SITE.ui.error(e,alert=True,**kw)
@@ -340,7 +344,7 @@ def form2obj_and_save(ar,data,elem,is_new,restful,file_upload=False): # **kw2sav
     #~ logger.info('20130321 form2obj_and_save %r', data)
     #~ print 'form2obj_and_save %r' % data
     
-    logger.info('20130418 before calling store.form2obj , elem is %s' % dd.obj2str(elem))
+    #~ logger.info('20130418 before calling store.form2obj , elem is %s' % dd.obj2str(elem))
     # store normal form data (POST or PUT)
     #~ original_state = dict(elem.__dict__)
     if not is_new:
@@ -349,7 +353,7 @@ def form2obj_and_save(ar,data,elem,is_new,restful,file_upload=False): # **kw2sav
         rh.store.form2obj(ar,data,elem,is_new)
         elem.full_clean()
     except CATCHED_AJAX_EXCEPTIONS as e:
-        return ajax_error(e)
+        return ajax_error(e,rh)
         
     kw = dict(success=True)
     
@@ -380,7 +384,7 @@ def form2obj_and_save(ar,data,elem,is_new,restful,file_upload=False): # **kw2sav
         try:
             elem.save(**kw2save)
         except CATCHED_AJAX_EXCEPTIONS,e:
-            return ajax_error(e)
+            return ajax_error(e,rh)
             #~ return views.json_response_kw(success=False,
                   #~ msg=_("There was a problem while saving your data:\n%s") % e)
                   

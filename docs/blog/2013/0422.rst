@@ -49,6 +49,33 @@ Vorher kleine Änderung: wenn man "ci" mit "n" beantwortet
 (z.B. weil keine Änderungen da sind), gilt das nicht als Fehler, 
 damit pp trotzdem weiter macht.
 
+Hier auch nochmal ein modifizierter Output von `fab summary`:
+
++------------------------------------------+-------------+
+| Project                                  | New version |
++==========================================+=============+
+| `atelier <http://atelier.lino-           | 0.0.1       |
+| framework.org>`__ -- A collection of     |             |
+| tools for software artists               |             |
++------------------------------------------+-------------+
+| `djangosite <http://site.lino-           | 0.1.2       |
+| framework.org>`__ -- A server startup    |             |
+| signal for Django                        |             |
++------------------------------------------+-------------+
+| `north <http://north.lino-               | 0.1.2       |
+| framework.org>`__ -- Another way to      |             |
+| migrate Django databases                 |             |
++------------------------------------------+-------------+
+| `lino <http://www.lino-framework.org>`__ | 1.6.5       |
+| -- A framework for writing desktop-like  |             |
+| web applications using Django and ExtJS  |             |
++------------------------------------------+-------------+
+| `lino_welfare <http://welfare.lino-      | 1.1.2       |
+| framework.org>`__ -- A Lino application  |             |
+| for Belgian Public Welfare Centres       |             |
++------------------------------------------+-------------+
+
+
 New feature: remote virtual fields
 ----------------------------------
 

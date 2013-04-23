@@ -555,101 +555,132 @@ class AnonymousUser(object):
 class NOT_NEEDED:
     pass
     
-def authenticate(username,password=NOT_NEEDED):
-
-    if not username:
-        return AnonymousUser.instance()
+class AuthMiddleWareBase(object):
+    """
+    Common base class for 
+    :class:`RemoteUserMiddleware`,
+    :class:`SessionsUserMiddleware`
+    and
+    :class:`NoUserMiddleware`.
+    """
+    def get_user_from_request(self, request):
+        raise NotImplementedError
         
-    """
-    20120110 : alicia hatte es geschafft, 
-    beim Anmelden ein Leerzeichen vor ihren Namen zu setzen. 
-    Apache ließ sie als " alicia" durch.
-    Und Lino legte brav einen neuen User " alicia" an.
-    """
-    username = username.strip()
-    
-    try:
-        user = settings.SITE.user_model.objects.get(username=username)
-        if user.profile is None:
-            #~ logger.info("20121127 user has no profile")
-            return None
-        if password != NOT_NEEDED:
-            if not user.check_password(password):
-                #~ logger.info("20121104 password mismatch")
+    def process_request(self, request):
+      
+        #~ print 20130313, request.session.get('username')
+        
+        settings.SITE.startup() 
+        """
+        first request will trigger site startup to load UserProfiles
+        """
+        
+        user = self.get_user_from_request(request)
+        
+        self.on_login(request,user)
+        
+        
+    def authenticate(self,username,password=NOT_NEEDED):
+
+        if not username:
+            return AnonymousUser.instance()
+            
+        """
+        20120110 : alicia hatte es geschafft, 
+        beim Anmelden ein Leerzeichen vor ihren Namen zu setzen. 
+        Apache ließ sie als " alicia" durch.
+        Und Lino legte brav einen neuen User " alicia" an.
+        """
+        username = username.strip()
+        
+        try:
+            user = settings.SITE.user_model.objects.get(username=username)
+            if user.profile is None:
+                #~ logger.info("20121127 user has no profile")
                 return None
-        return user
-    except settings.SITE.user_model.DoesNotExist,e:
-        #~ logger.info("20121104 no username %r",username)
-        return None  
-        
-        
-def on_login(request,user):
-    """
-    on multilingual sites, 
-    if URL_PARAM_USER_LANGUAGE is present it overrides user.language.
-    """
-    #~ logger.info("20130313 on_login(%s)" % user)
-    request.user = user
-    
-    if len(settings.SITE.languages) > 1:
-    #~ if settings.SITE.languages != None and len(settings.SITE.languages) > 1:
-        
-        #~ lang = settings.SITE.override_user_language() or request.user.language
-        lang = user.language
-        if lang:
-            translation.activate(lang)
-            request.LANGUAGE_CODE = translation.get_language()
-            #~ logger.info("20121205 on_login %r",lang)
+            if password != NOT_NEEDED:
+                if not user.check_password(password):
+                    #~ logger.info("20121104 password mismatch")
+                    return None
+            return user
+        except settings.SITE.user_model.DoesNotExist,e:
+            #~ logger.info("20121104 no username %r",username)
+            return None  
             
-        #~ logger.info("20121205 on_login %r",translation.get_language())
+            
+    def on_login(self,request,user):
+        """
+        The method which is applied when the user has been determined.
+        On multilingual sites, 
+        if URL_PARAM_USER_LANGUAGE is present it overrides user.language.
+        """
+        #~ logger.info("20130313 on_login(%s)" % user)
+        request.user = user
         
+        if len(settings.SITE.languages) > 1:
+        #~ if settings.SITE.languages != None and len(settings.SITE.languages) > 1:
+            
+            #~ lang = settings.SITE.override_user_language() or request.user.language
+            lang = user.language
+            if lang:
+                translation.activate(lang)
+                request.LANGUAGE_CODE = translation.get_language()
+                #~ logger.info("20121205 on_login %r",lang)
+                
+            #~ logger.info("20121205 on_login %r",translation.get_language())
+            
+              
+        if request.method == 'GET':
+            rqdata = request.GET
+        elif request.method in ('PUT','DELETE'):
+            rqdata = http.QueryDict(request.body) # raw_post_data before Django 1.4
+        elif request.method == 'POST':
+            rqdata = request.POST
+        else: 
+            # e.g. OPTIONS, HEAD
+            request.requesting_panel = None
+            request.subst_user = None
+            return
+        #~ else: # DELETE
+            #~ request.subst_user = None
+            #~ request.requesting_panel = None
+            #~ return
+            
+        if len(settings.SITE.languages) > 1:
+        #~ if settings.SITE.languages != None and len(settings.SITE.languages) > 1:
           
-    if request.method == 'GET':
-        rqdata = request.GET
-    elif request.method in ('PUT','DELETE'):
-        rqdata = http.QueryDict(request.body) # raw_post_data before Django 1.4
-    elif request.method == 'POST':
-        rqdata = request.POST
-    else: 
-        #~ raise Exception("Unknown HTTP method '%s'" % request.method)
-        # e.g. OPTIONS
-        return
-    #~ else: # DELETE
-        #~ request.subst_user = None
-        #~ request.requesting_panel = None
-        #~ return
+            ul = rqdata.get(constants.URL_PARAM_USER_LANGUAGE,None)
+            if ul:
+                translation.activate(ul)
+                request.LANGUAGE_CODE = translation.get_language()
+          
+        su = rqdata.get(constants.URL_PARAM_SUBST_USER,None)
+        if su is not None:
+            if su:
+                try:
+                    su = settings.SITE.user_model.objects.get(id=int(su))
+                    #~ logger.info("20120714 su is %s",su.username)
+                except settings.SITE.user_model.DoesNotExist, e:
+                    su = None
+            else:
+                su = None # e.g. when it was an empty string "su="
+        request.subst_user = su
+        request.requesting_panel = rqdata.get(constants.URL_PARAM_REQUESTING_PANEL,None)
+        #~ logger.info("20121228 subst_user is %r",request.subst_user)
+        #~ if request.subst_user is not None and not isinstance(request.subst_user,settings.SITE.user_model):
+            #~ raise Exception("20121228")
         
-    if len(settings.SITE.languages) > 1:
-    #~ if settings.SITE.languages != None and len(settings.SITE.languages) > 1:
-      
-        ul = rqdata.get(constants.URL_PARAM_USER_LANGUAGE,None)
-        if ul:
-            translation.activate(ul)
-            request.LANGUAGE_CODE = translation.get_language()
-      
-    su = rqdata.get(constants.URL_PARAM_SUBST_USER,None)
-    if su is not None:
-        if su:
-            try:
-                su = settings.SITE.user_model.objects.get(id=int(su))
-                #~ logger.info("20120714 su is %s",su.username)
-            except settings.SITE.user_model.DoesNotExist, e:
-                su = None
-        else:
-            su = None # e.g. when it was an empty string "su="
-    request.subst_user = su
-    request.requesting_panel = rqdata.get(constants.URL_PARAM_REQUESTING_PANEL,None)
-    #~ logger.info("20121228 subst_user is %r",request.subst_user)
-    #~ if request.subst_user is not None and not isinstance(request.subst_user,settings.SITE.user_model):
-        #~ raise Exception("20121228")
-    
-    
+        
             
             
 
             
-class RemoteUserMiddleware(object):
+class RemoteUserMiddleware(AuthMiddleWareBase):
     """
+    Middleware which Lino automatically uses when bith
+    :attr:`remote_user_header <lino.Site.remote_user_header>` 
+    and :attr:`user_model <lino.Site.user_model>` are not empty.
+    
     This does the same as
     `django.contrib.auth.middleware.RemoteUserMiddleware`, 
     but in a simplified manner and without using Sessions.
@@ -662,10 +693,7 @@ class RemoteUserMiddleware(object):
     
     """
     
-    def process_request(self, request):
-      
-        settings.SITE.startup() # trigger site startup to load UserProfiles
-        
+    def get_user_from_request(self, request):
         username = request.META.get(
             settings.SITE.remote_user_header,settings.SITE.default_user)
             
@@ -674,7 +702,7 @@ class RemoteUserMiddleware(object):
             #~ raise exceptions.PermissionDenied(msg)
             raise Exception("Using remote authentication, but no user credentials found.")
             
-        user = authenticate(username)
+        user = self.authenticate(username)
         
         if user is None:
             #~ logger.exception("Unknown username %s from request %s",username, request)
@@ -683,35 +711,36 @@ class RemoteUserMiddleware(object):
             logger.info("Unknown or inactive username %r.",username)
             raise exceptions.PermissionDenied()
               
-        on_login(request,user)
+        return user
     
 
-class SessionUserMiddleware(object):
+class SessionUserMiddleware(AuthMiddleWareBase):
+    """
+    Middleware which Lino automatically uses when 
+    :attr:`remote_user_header <lino.Site.remote_user_header>` is None
+    and :attr:`user_model <lino.Site.user_model>` not.
+    """
 
-    def process_request(self, request):
+    def get_user_from_request(self, request):
       
-        #~ print 20130313, request.session.get('username')
-        
-        settings.SITE.startup() # trigger site startup to load UserProfiles
-        
-        user = authenticate(request.session.get('username'),
+        user = self.authenticate(request.session.get('username'),
             request.session.get('password'))
         
         if user is None:
             logger.debug("Login failed from session %s", request.session)
             user = AnonymousUser.instance()
         
-        on_login(request,user)
+        return user
         
         
-class NoUserMiddleware(object):
-  
-    def process_request(self, request):
-      
-        settings.SITE.startup() # trigger site startup to load UserProfiles
+class NoUserMiddleware(AuthMiddleWareBase):
+    """
+    Middleware which Lino automatically uses when 
+    :attr:`lino.Site.user_model` is None.
+    """
+    def get_user_from_request(self, request):
         
-        user = AnonymousUser.instance()
+        return AnonymousUser.instance()
         
-        on_login(request,user)
         
         
