@@ -209,6 +209,7 @@ class Renderer(AppyRenderer):
                 s = self.insert_table_(*args,**kw)
             except Exception as e:
                 logger.warning("Exception during insert_table(%s):" % args[0])
+                logger.exception(e)
                 raise
             s = s.decode('utf-8')
             logger.info("""\
