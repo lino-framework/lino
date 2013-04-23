@@ -555,6 +555,35 @@ class AnonymousUser(object):
 class NOT_NEEDED:
     pass
     
+    
+def authenticate(username,password=NOT_NEEDED):
+
+    if not username:
+        return AnonymousUser.instance()
+        
+    """
+    20120110 : alicia hatte es geschafft, 
+    beim Anmelden ein Leerzeichen vor ihren Namen zu setzen. 
+    Apache ließ sie als " alicia" durch.
+    Und Lino legte brav einen neuen User " alicia" an.
+    """
+    username = username.strip()
+    
+    try:
+        user = settings.SITE.user_model.objects.get(username=username)
+        if user.profile is None:
+            #~ logger.info("20121127 user has no profile")
+            return None
+        if password != NOT_NEEDED:
+            if not user.check_password(password):
+                #~ logger.info("20121104 password mismatch")
+                return None
+        return user
+    except settings.SITE.user_model.DoesNotExist,e:
+        #~ logger.info("20121104 no username %r",username)
+        return None  
+    
+    
 class AuthMiddleWareBase(object):
     """
     Common base class for 
@@ -580,32 +609,6 @@ class AuthMiddleWareBase(object):
         self.on_login(request,user)
         
         
-    def authenticate(self,username,password=NOT_NEEDED):
-
-        if not username:
-            return AnonymousUser.instance()
-            
-        """
-        20120110 : alicia hatte es geschafft, 
-        beim Anmelden ein Leerzeichen vor ihren Namen zu setzen. 
-        Apache ließ sie als " alicia" durch.
-        Und Lino legte brav einen neuen User " alicia" an.
-        """
-        username = username.strip()
-        
-        try:
-            user = settings.SITE.user_model.objects.get(username=username)
-            if user.profile is None:
-                #~ logger.info("20121127 user has no profile")
-                return None
-            if password != NOT_NEEDED:
-                if not user.check_password(password):
-                    #~ logger.info("20121104 password mismatch")
-                    return None
-            return user
-        except settings.SITE.user_model.DoesNotExist,e:
-            #~ logger.info("20121104 no username %r",username)
-            return None  
             
             
     def on_login(self,request,user):
@@ -702,7 +705,7 @@ class RemoteUserMiddleware(AuthMiddleWareBase):
             #~ raise exceptions.PermissionDenied(msg)
             raise Exception("Using remote authentication, but no user credentials found.")
             
-        user = self.authenticate(username)
+        user = authenticate(username)
         
         if user is None:
             #~ logger.exception("Unknown username %s from request %s",username, request)
@@ -723,7 +726,7 @@ class SessionUserMiddleware(AuthMiddleWareBase):
 
     def get_user_from_request(self, request):
       
-        user = self.authenticate(request.session.get('username'),
+        user = authenticate(request.session.get('username'),
             request.session.get('password'))
         
         if user is None:
