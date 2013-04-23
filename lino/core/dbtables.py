@@ -590,47 +590,20 @@ class Table(AbstractTable):
                 #~ for k,v in b.__dict__.items():
                     #~ if isinstance(v,actions.Action):
                         #~ raise Exception("20130121 Must convert %s.%s to get_model_actions()" % (self.model,k))
-            if True:
-                for b in self.model.mro():
-                    for k,v in b.__dict__.items():
-                        
-                        #~ if isinstance(v,actions.ActionRunner):
-                            #~ print "20130326 ActionRunner %s" % v
-                            #~ v = v.bound_action.action
-                        if isinstance(v,actions.Action):
-                            #~ print "20130326 %s.%s = action %s from %s" % (self,k,v,b)
-                            existing_value = self.__dict__.get(k,None)
-                            if existing_value is not None:
-                                if not isinstance(existing_value,actions.Action):
-                                    raise Exception(
-                                        "%s cannot get model action %s because name is already used for %r" %
-                                        self,k,existing_value)
-                                #~ if self.__dict__.has_key(k):
-                                #~ """
-                                #~ Actions defined in 
-                                #~ If a Table has an attribute
-                                #~ When there is an Action called `foo` 
-                                #~ """
-                                #~ logger.debug("Not overriding %s.%s from %s",self,k,b)
-                                #~ pass
-                            else:
-                                #~ 20130121 : removed two following lines 
-                                #~ v = copy.deepcopy(v)
-                                #~ v.name = None
-                                
-                                #~ def meth(action,ar,elem):
-                                #~     return v.run()
-                                #~ v.run = meth
-                                setattr(self,k,v)
+            for b in self.model.mro():
+                for k,v in b.__dict__.items():
+                    if isinstance(v,actions.Action):
+                        #~ print "20130326 %s.%s = action %s from %s" % (self,k,v,b)
+                        existing_value = self.__dict__.get(k,None)
+                        if existing_value is not None:
+                            if not isinstance(existing_value,actions.Action):
+                                raise Exception(
+                                    "%s cannot get model action %s because name is already used for %r" %
+                                    self,k,existing_value)
+                        else:
+                            setattr(self,k,v)
                       
           
-            #~ ma = getattr(self.model,'_lino_model_actions',None)
-            #~ if ma is not None:
-                #~ for k,v in ma.items():
-                    #~ v = copy.deepcopy(v)
-                    #~ v.name = None
-                    #~ setattr(self,k,v)
-                    
                     
               
             for name in ('workflow_state_field','workflow_owner_field'):

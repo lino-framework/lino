@@ -25,12 +25,17 @@ to a fragment of ODF.
 >>> test(E.p("This is a ",E.b("first")," test.")) #doctest: +NORMALIZE_WHITESPACE
 <p>This is a <b>first</b> test.</p>
 <text:p xmlns:text="urn:oasis:names:tc:opendocument:xmlns:text:1.0">This 
-is a <text:span text:style-name="Bold Text">first</text:span> test.</text:p>
+is a <text:span text:style-name="Strong Emphasis">first</text:span> test.</text:p>
 
 >>> test(E.p(E.b("This")," is another test.")) #doctest: +NORMALIZE_WHITESPACE
 <p><b>This</b> is another test.</p>
 <text:p xmlns:text="urn:oasis:names:tc:opendocument:xmlns:text:1.0"><text:span 
-text:style-name="Bold Text">This</text:span> is another test.</text:p>
+text:style-name="Strong Emphasis">This</text:span> is another test.</text:p>
+
+>>> test(E.p(E.i("This")," is another test.")) #doctest: +NORMALIZE_WHITESPACE
+<p><i>This</i> is another test.</p>
+<text:p xmlns:text="urn:oasis:names:tc:opendocument:xmlns:text:1.0"><text:span 
+text:style-name="Emphasis">This</text:span> is another test.</text:p>
 
 >>> test(E.td(E.p("This is another test."))) #doctest: +NORMALIZE_WHITESPACE
 <td><p>This is another test.</p></td>
@@ -40,7 +45,7 @@ is another test.</text:p>
 >>> test(E.td(E.p(E.b("This")," is another test."))) #doctest: +NORMALIZE_WHITESPACE
 <td><p><b>This</b> is another test.</p></td>
 <text:p xmlns:text="urn:oasis:names:tc:opendocument:xmlns:text:1.0"><text:span 
-text:style-name="Bold Text">This</text:span> is another test.</text:p>
+text:style-name="Strong Emphasis">This</text:span> is another test.</text:p>
 
 >>> test(E.ul(E.li("First item"),E.li("Second item"))) #doctest: +NORMALIZE_WHITESPACE
 <ul><li>First item</li><li>Second item</li></ul>
@@ -57,9 +62,11 @@ Idea: validate it against the ODF specification using lxml
 
 
 :func:`html2odf` converts bold text to a span with a 
-style named "Bold Text". That's currently a hard-coded name, and the 
+style named "Strong Emphasis". That's currently a hard-coded name, and the 
 caller must make sure that a style of that name is defined in the 
 document.
+
+The text formats `<i>` and `<em>` are converted to a style "Emphasis".
 
 
 Edge case:
@@ -138,11 +145,13 @@ def html2odf(e,ct=None,**ctargs):
     text_container = None
     
     if e.tag == 'b':
-        oe = text.Span(stylename='Bold Text')
+        #~ oe = text.Span(stylename='Bold Text')
+        oe = text.Span(stylename='Strong Emphasis')
     elif e.tag == 'a':
-        oe = text.Span(stylename='Bold Text')
+        oe = text.Span(stylename='Strong Emphasis')
+        #~ oe = text.Span(stylename='Bold Text')
     elif e.tag in ('i','em'):
-        oe = text.Span(stylename='Italic Text')
+        oe = text.Span(stylename='Emphasis')
     elif e.tag == 'span':
         oe = text.Span()
     elif e.tag == 'br':

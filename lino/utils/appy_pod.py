@@ -212,10 +212,10 @@ class Renderer(AppyRenderer):
                 logger.exception(e)
                 raise
             s = s.decode('utf-8')
-            logger.info("""\
-20130423 appy_pod.Renderer.insert_table(%s) inserts =======
-%s
-=======""", args[0], s)
+            #~ logger.info("""\
+#~ 20130423 appy_pod.Renderer.insert_table(%s) inserts =======
+#~ %s
+#~ =======""", args[0], s)
             return s
         
     def insert_table_(self,ar,column_names=None,table_width=180):

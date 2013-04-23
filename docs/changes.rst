@@ -13,6 +13,11 @@ The final truth about what's going on is only
 Version 1.6.6 (in development)
 ==============================
 
+- :mod:`lino.utils.html2odf` now converts the text formats `<i>` 
+  and `<em>` to a style "Emphasis".
+  `<b>` is no longer converted to "Bold Text" but 
+  to "Strong Emphasis".
+
 - Lino now supports 
   :class:`lino.core.fields.RemoteField` to a 
   :class:`lino.core.fields.VirtualField`.

@@ -461,13 +461,13 @@ class Action(Parametrizable,Permittable):
       
     def __get__(self, instance, owner):
         """
-        Getting an Action instance of an *Actor* (which is a class) will return the 
+        Getting an Action instance of an *Actor* (which is a class) 
+        will return the 
         """
         #~ print "__get__ %r / %r / %r" % (self, instance, owner)
         if instance is None:
             return self
         return InstanceAction(self,instance.get_default_table(),instance,owner)
-        
         
         
     def as_html(self,ar):
