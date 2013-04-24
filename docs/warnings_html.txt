@@ -1,4 +1,2 @@
 /home/luc/hgwork/lino/docs/admin/index.rst:24: WARNING: toctree contains reference to nonexisting document u'admin/install_apache'
 /home/luc/hgwork/lino/docs/api/lino.utils.rst:7: WARNING: unknown document: /autodoc/lino.test_apps.mti
-/home/luc/hgwork/lino/docs/blog/2013/0423.rst:42: WARNING: undefined label: welfare.jobs.newjobsoverview (if the link has no caption the label must precede a section header)
-/home/luc/hgwork/lino/docs/blog/2013/0423.rst:59: WARNING: undefined label: welfare.jobs.newjobsoverview (if the link has no caption the label must precede a section header)

@@ -88,43 +88,44 @@ def rptlist(l):
 
 
 def get_actor_description(self):
-    
+    """
+    `self` is the actor
+    """
     body = "\n\n"
     if self.help_text:
         body += unindent(force_unicode(self.help_text).strip()) + "\n\n"
-   
-    headers = ["name","type"]
-    #~ formatters = [
-      #~ lambda f: f.name,
-      #~ lambda f: f.__class__.__name__,
-    #~ ]
-    headers.append("verbose name")
-    headers.append("help text")
-    def fieldtype(f):
-        if isinstance(f,models.ForeignKey):
-            #~ return f.__class__.__name__ + " to " + refto(f.rel.to)
-            return f.__class__.__name__ + " to " + model_ref(f.rel.to)
-        return f.__class__.__name__
-    
-    def rowfmt(f):
-        cells = [
-          f.name,
-          fieldtype(f),
-          f.verbose_name,
-          f.help_text
-        ]
-        #~ for lng in babel.AVAILABLE_LANGUAGES:
-            #~ babel.set_language(lng)
-            #~ cells.append(force_unicode(_(f.verbose_name)))
-        #~ cells.append(f.help_text)
-        return cells
-    #~ rows = [ rowfmt(f) for f in self.model._meta.fields if not hasattr(f,'_lino_babel_field')]
+
     ll = self.get_handle().list_layout
-    if ll is None:
-        raise Exception("%s has no list_layout" % self)
-    rows = [ rowfmt(e.field) for e in ll.main.columns 
-        if not hasattr(e.field,'_lino_babel_field')]
-    body += rstgen.table(headers,rows)
+    if ll is not None:
+        headers = ["name","type"]
+        #~ formatters = [
+          #~ lambda f: f.name,
+          #~ lambda f: f.__class__.__name__,
+        #~ ]
+        headers.append("verbose name")
+        headers.append("help text")
+        def fieldtype(f):
+            if isinstance(f,models.ForeignKey):
+                #~ return f.__class__.__name__ + " to " + refto(f.rel.to)
+                return f.__class__.__name__ + " to " + model_ref(f.rel.to)
+            return f.__class__.__name__
+        
+        def rowfmt(f):
+            cells = [
+              f.name,
+              fieldtype(f),
+              f.verbose_name,
+              f.help_text
+            ]
+            #~ for lng in babel.AVAILABLE_LANGUAGES:
+                #~ babel.set_language(lng)
+                #~ cells.append(force_unicode(_(f.verbose_name)))
+            #~ cells.append(f.help_text)
+            return cells
+        #~ rows = [ rowfmt(f) for f in self.model._meta.fields if not hasattr(f,'_lino_babel_field')]
+        rows = [ rowfmt(e.field) for e in ll.main.columns 
+            if not hasattr(e.field,'_lino_babel_field')]
+        body += rstgen.table(headers,rows)
     
     #~ model_reports = [r for r in dbtables.master_reports if r.model is self.model]
     #~ if model_reports:

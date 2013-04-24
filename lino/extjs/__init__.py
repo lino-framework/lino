@@ -1320,7 +1320,7 @@ tinymce.init({
         kw = dict()
         #~ kw.update(empty_title=%s,rh.actor.get_button_label()
         kw.update(ls_url=ext_elems.rpt2url(rh.actor))
-        kw.update(ls_store_fields=[js_code(f.as_js()) for f in rh.store.list_fields])
+        kw.update(ls_store_fields=[js_code(f.as_js(f.name)) for f in rh.store.list_fields])
         if rh.store.pk is not None:
             kw.update(ls_id_property=rh.store.pk.name)
             kw.update(pk_index=rh.store.pk_index)

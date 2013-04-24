@@ -93,10 +93,15 @@ class EmptyTableRow(VirtualRow):
         return self._table.app_label + '.' + self._table.__name__
         
     def __getattr__(self,name):
+        """
+        Since there is only one EmptyTableRow class, we simulate a 
+        getter here by manually creating an InstanceAction.
+        """
         v = getattr(self._table,name)
         if isinstance(v,actions.Action):
             return actions.InstanceAction(v,self._table,self,None)
-        return v
+        #~ raise Exception("")
+        raise AttributeError("EmptyTableRow on %s has no action '%s'" % (self._table,name))
 
 
 

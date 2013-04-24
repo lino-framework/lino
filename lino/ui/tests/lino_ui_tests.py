@@ -37,29 +37,33 @@ from djangosite.utils.test import NoAuthTestCase
 
 
 class QuickTest(NoAuthTestCase):
-    pass
+
+
+    def test01(self):
+        """
+        Try wether the index page loads.
+        """
+        if settings.SITE.is_installed('pages'):
+            from lino.modlib.pages.fixtures import std
+            from north import dpy 
+            dpy.load_fixture_from_module(std)
+            #~ d = load_fixture(std)
+            #~ self.assertEqual(d.saved,1)
             
-
-
-def test01(self):
-    """
-    Try wether the index page loads.
-    """
-    if settings.SITE.is_installed('pages'):
-        from lino.modlib.pages.fixtures import std
-        from north import dpy 
-        dpy.load_fixture_from_module(std)
-        #~ d = load_fixture(std)
-        #~ self.assertEqual(d.saved,1)
+        #~ with self.settings(DEBUG=True):
+            
+        response = self.client.get('')
+            #~ response = self.client.get('/',REMOTE_USER='root',HTTP_ACCEPT_LANGUAGE='en')
+        #~ print response.content
+        self.assertEqual(response.status_code,200)
         
-    #~ with self.settings(DEBUG=True):
+
+        response = self.client.get('/foo')
+        self.assertEqual(response.status_code,404)
+
+        response = self.client.head('')
+        self.assertEqual(response.status_code,200)
         
-    response = self.client.get('')
-        #~ response = self.client.get('/',REMOTE_USER='root',HTTP_ACCEPT_LANGUAGE='en')
-    #~ print response.content
-    self.assertEqual(response.status_code,200)
-
-
-    response = self.client.get('/foo')
-    self.assertEqual(response.status_code,404)
-    
+        response = self.client.options('')
+        self.assertEqual(response.status_code,200)
+        

@@ -687,7 +687,12 @@ class FieldElement(LayoutElement):
             kw.update(sortable=False)
         w = self.width or self.preferred_width
         #~ kw.update(width=w*EXT_CHAR_WIDTH)
-        kw.update(width=js_code("Lino.chars2width(%d)" % w))
+        kw.update(width=js_code("Lino.chars2width(%d)" % (w+1)))
+        """
+        We add 1 character (9 pixels) to the theoretic width.
+        e.g. the columns "16-24" etc in `courses.PendingCourseRequests`
+        has w=5 and should be rendered so that the header is visible.
+        """
         return kw    
         
         

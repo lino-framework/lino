@@ -1,0 +1,44 @@
+===================================
+20130424 (Wednesday, 24 April 2013)
+===================================
+
+
+Virtual remote fields in an ExtJS grid
+--------------------------------------
+
+Solved a subtle last problem which had managed to slip through the tests:
+virtual remote fields in an ExtJS grid were rendered without value
+because `StoreField.as_js` gave them the name of the delegated field.
+
+
+More accurate column widths
+---------------------------
+
+The age slice columns of :ref:`welfare.courses.PendingCourseRequests`
+were rendered in ExtJS always a l ittle bit to narrowly so that one had 
+to adjust their width in order to see their header.
+
+In `linoweb.js` Lino defines the following JavaScript function::
+
+  Lino.chars2width = function(cols) {  return cols * 9; }
+  
+And Lino generated the following JS code for each columns::
+  
+  new Lino.NullNumberColumn({ "colIndex": 11, "sortable": false, 
+  "format": "0", "editable": false, 
+  "tooltip": "(courses.PendingCourseRequests.a16) ", 
+  "header": "16-24", "dataIndex": "a16", 
+  "width": Lino.chars2width(5) }  
+
+So ExtJS gave that column a with of `5 * 9 = 45` pixels.
+
+The width of the rendered JS code comes from :mod:`lino.ui.elems`::
+
+    kw.update(width=js_code("Lino.chars2width(%d)" % (w)))
+    
+I replaced this by::    
+
+  kw.update(width=js_code("Lino.chars2width(%d)" % (w+1)))
+
+IOW I add 1 character (9 pixels) to the theoretic column width.
+

@@ -88,13 +88,18 @@ class StoreField(object):
         #~ else:
             #~ self.editable = field.editable # VirtualField changes this
         #~ options.update(name=name or field.name)
-        options.update(name=name)
         self.options = options
         
     #~ def __repr__(self):
         #~ return self.__class__.__name__ + ' ' + self.field.name
         
-    def as_js(self):
+    def as_js(self,name):
+        """
+        possible side effect. but self.options is used only for as_js(),
+        and in case of virtual remote fields they use the virtual field's 
+        delegate as_js method but with their own name.
+        """
+        self.options.update(name=name)
         return py2js(self.options)
         
     def __repr__(self):
@@ -219,10 +224,10 @@ class ComboStoreField(StoreField):
   
     list_values_count = 2
     
-    def as_js(self):
-        s = StoreField.as_js(self)
+    def as_js(self,name):
+        s = StoreField.as_js(self,name)
         #~ s += "," + repr(self.field.name+ext_requests.CHOICES_HIDDEN_SUFFIX)
-        s += ", '%s'" % (self.options['name']+ext_requests.CHOICES_HIDDEN_SUFFIX)
+        s += ", '%s'" % (name+ext_requests.CHOICES_HIDDEN_SUFFIX)
         return s 
         
     def column_names(self):

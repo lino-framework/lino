@@ -79,3 +79,9 @@ For Actions of an EmptyTable it wasn't yet possible to access
 the :class:`lino.core.actions.InstanceAction`.
 
 
+Inaktive Kursanfragen
+---------------------
+
+
+:ref:`welfare.courses.CourseRequestStates`
+    

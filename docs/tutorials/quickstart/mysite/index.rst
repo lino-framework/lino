@@ -44,7 +44,7 @@ Now we assume that you know what the
 Open this file and replace the whole content with the following two lines::
 
   from lino.projects.cosi.settings import *
-  SITE = Site(__file__,globals())
+  SITE = Site(globals())
   
   DEBUG = True
 
