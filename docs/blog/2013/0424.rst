@@ -42,3 +42,20 @@ I replaced this by::
 
 IOW I add 1 character (9 pixels) to the theoretic column width.
 
+
+Preparing for the next release
+------------------------------
+
+The next release will be only for 
+Lino Welfare, not for atelier, site and north because there 
+were no important changes in those projects.
+
+Lino 1.6.6 
+Lino-Welfare 1.1.3
+
+
+Updated the LETS tutorial
+-------------------------
+
+For Michaël: :ref:`lino.tutorial.lets` 
+

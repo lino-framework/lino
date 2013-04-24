@@ -58,6 +58,10 @@ class ProjectsTests(LinoTestCase):
     def test_min1(self): self.run_django_admin_test("lino.projects.min1.settings") 
     def test_min2(self): self.run_django_admin_test("lino.projects.min2.settings") 
     
+class Tutorials(LinoTestCase):
+    def test_lets(self): self.run_django_admin_test("lino.tutorials.lets1.settings") 
+    def test_mini(self): self.run_django_admin_test("lino.tutorials.mini.settings") 
+    
 class TestAppsTests(LinoTestCase):
     
     #~ def test_nomti(self): self.run_django_admin_test("lino.test_apps.nomti.settings") 
