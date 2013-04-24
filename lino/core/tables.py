@@ -941,12 +941,14 @@ class AbstractTable(actors.Actor):
     #~ @classmethod
     #~ def get_detail(self):
         #~ return None
-        
-    @classmethod
-    def get_row_permission(self,obj,ar,state,ba):
-        if self.get_data_rows:
-            return ba.action.readonly
-        return True
+
+    #~ removed 20130424 because that doesn't work for PendingCourseRequests
+    #~ i.e. both get_data_rows and editable
+    #~ @classmethod
+    #~ def get_row_permission(self,obj,ar,state,ba):
+        #~ if self.get_data_rows:
+            #~ return ba.action.readonly
+        #~ return True
         
         
     @classmethod

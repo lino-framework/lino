@@ -106,20 +106,29 @@ class GuestStates(dd.Workflow):
     #~ label = _("Guest State")
     #~ label = _("State")
     
-    @classmethod
-    def allow_state_present(self,obj,user):
-        return obj.event.state == EventStates.took_place
+    #~ @classmethod
+    #~ def allow_state_absent(self,obj,user):
+        #~ return obj.event.state == EventStates.took_place
+    #~ def allow_state_present(self,obj,user):
+        #~ return obj.event.state == EventStates.took_place
         
-    @classmethod
-    def allow_state_absent(self,obj,user):
-        return obj.event.state == EventStates.took_place
+    #~ @classmethod
+    #~ def allow_transition(self,obj,user,new_state):
+        #~ """
+        #~ A Guest can be marked
+        #~ """
+        #~ if new_state.name in ('present','absent'):
+            #~ return obj.event.state == EventStates.took_place
+        
+
         
 add = GuestStates.add_item
 add('10', _("Invited"),'invited')
-add('20', _("Accepted"),'accepted') #,required=dict(states=['','invited'],owner=False),action_label=_("Accept"))
-add('30', _("Rejected"),'rejected')# ,required=dict(states=['','invited'],owner=False),action_label=_("Reject"))
-add('40', _("Present"),'present')# ,required=dict(states=['invited','accepted'],owner=True))
-add('50', _("Absent"),'absent')# ,required=dict(states=['invited','accepted'],owner=True))
+add('20', _("Accepted"),'accepted') 
+add('30', _("Rejected"),'rejected')
+add('40', _("Present"),'present')
+add('50', _("Absent"),'absent')
+    
 
 class RejectInvitation(dd.ChangeStateAction,dd.NotifyingAction):
     label = _("Reject")
@@ -2580,74 +2589,61 @@ customize_users()
 def setup_workflows(site):
   
   
-    TaskStates.todo.add_workflow(_("Reopen"),states='done cancelled')
-    #~ TaskStates.todo.add_workflow(_("Wake up"),states='sleeping')
-    #~ TaskStates.started.add_workflow(states='_ todo')
-    TaskStates.done.add_workflow(states='todo started',icon_file='accept.png')
-    #~ TaskStates.sleeping.add_workflow(states='_ todo')
-    TaskStates.cancelled.add_workflow(states='todo started',icon_file='cancel.png')
+    TaskStates.todo.add_transition(_("Reopen"),states='done cancelled')
+    TaskStates.done.add_transition(states='todo started',icon_file='accept.png')
+    TaskStates.cancelled.add_transition(states='todo started',icon_file='cancel.png')
 
-    EventStates.draft.add_workflow(_("Accept"),
+    EventStates.draft.add_transition(_("Accept"),
         #~ states='new assigned',
         states='suggested',
         owner=True,
         icon_file='book.png',
         help_text=_("User takes responsibility for this event. Planning continues."))
-    #~ EventStates.draft.add_workflow(TakeAssignedEvent)
-    EventStates.notified.add_workflow( #_("Notify guests"), 
+    #~ EventStates.draft.add_transition(TakeAssignedEvent)
+    EventStates.notified.add_transition( #_("Notify guests"), 
         #~ icon_file='eye.png',
         #~ icon_file='telephone.png',
         icon_file='hourglass.png',
         states='suggested draft',
         help_text=_("Invitations have been sent. Waiting for feedback from invited guests."))
-    EventStates.scheduled.add_workflow(_("Confirm"), 
+    EventStates.scheduled.add_transition(_("Confirm"), 
         #~ states='new draft assigned',
         states='suggested draft notified',
         owner=True,
         icon_file='accept.png',
         help_text=_("Mark this as Scheduled. All participants have been informed."))
-    EventStates.took_place.add_workflow(
+    EventStates.took_place.add_transition(
         states='scheduled notified',
         owner=True,
         help_text=_("Event took place."),
         icon_file='emoticon_smile.png')
-    EventStates.absent.add_workflow(states='scheduled notified',icon_file='emoticon_unhappy.png')
-    EventStates.rescheduled.add_workflow(_("Reschedule"),
+    EventStates.absent.add_transition(states='scheduled notified',icon_file='emoticon_unhappy.png')
+    EventStates.rescheduled.add_transition(_("Reschedule"),
         owner=True,
         states='scheduled notified',icon_file='date_edit.png')
-    EventStates.cancelled.add_workflow(pgettext(u"calendar event action",u"Cancel"),
+    EventStates.cancelled.add_transition(pgettext(u"calendar event action",u"Cancel"),
         owner=True,
         states='scheduled notified',
         icon_file='cross.png')
-    #~ EventStates.assigned.add_workflow(AssignEvent)
-    EventStates.draft.add_workflow(ResetEvent)
+    #~ EventStates.assigned.add_transition(AssignEvent)
+    EventStates.draft.add_transition(ResetEvent)
     
-    #~ EventStates.obsolete.add_workflow()
-    #~ EventStates.draft.add_workflow(_("Restart"),
-        #~ states='notified scheduled rescheduled',
-        #~ notify=True,
-        #~ icon_file='arrow_undo.png',
-        #~ help_text=_("Return to Draft state and restart workflow for this event."))
-
-    #~ EventStates.add_statechange('draft',help_text=_("Default state of a new event."))
-    #~ EventStates.add_statechange('assigned',_("Suggest"),states='_ draft')
-    #~ EventStates.add_statechange('notified',_("Notify guests"), states='draft')
-    #~ EventStates.add_statechange('scheduled',_("Confirm"), states='_draft assigned'
-        #~ help_text=_("Confirmed. All participants have been informed."))
-    #~ EventStates.add_statechange('took_place',states='scheduled notified')
-    #~ EventStates.add_statechange('rescheduled',_("Reschedule"),states='assigned scheduled notified')
-    #~ EventStates.add_statechange('cancelled',_("Cancel"),states='assigned scheduled notified')
-    #~ EventStates.add_statechange('absent',states='scheduled notified')
-    #~ EventStates.add_statechange('obsolete')
-        
 
 
+    """
+    A Guest can be marked absent or present only for events that took place
+    """
+    #~ def allow_transition(obj,user,new_state):
+    def event_took_place(action,user,obj,state):
+        #~ if new_state.name in ('present','absent'):
+        return obj.event.state == EventStates.took_place
 
-    #~ GuestStates.invited.add_workflow(_("Invite"),states='_',owner=True)
-    GuestStates.accepted.add_workflow(_("Accept"),states='_ invited',owner=False)
-    #~ GuestStates.rejected.add_workflow(_("Reject"),states='_ invited',owner=False)
-    GuestStates.rejected.add_workflow(RejectInvitation)
-    GuestStates.present.add_workflow(states='invited accepted',owner=True)
-    GuestStates.absent.add_workflow(states='invited accepted',owner=True)
+    #~ kw = dict(allow=allow_transition)
+    #~ GuestStates.invited.add_transition(_("Invite"),states='_',owner=True)
+    GuestStates.accepted.add_transition(_("Accept"),states='_ invited',owner=False)
+    #~ GuestStates.rejected.add_transition(_("Reject"),states='_ invited',owner=False)
+    GuestStates.rejected.add_transition(RejectInvitation)
+    GuestStates.present.add_transition(states='invited accepted',owner=True,allow=event_took_place)
+    GuestStates.absent.add_transition(states='invited accepted',owner=True,allow=event_took_place)
 
 

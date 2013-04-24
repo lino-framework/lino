@@ -249,10 +249,11 @@ class Model(models.Model):
     def get_row_permission(self,ar,state,ba):
         """
         Returns True or False whether this row instance 
-        gives permission the specified action request `ar` 
+        gives permission the ActionRequest `ar` 
         to run the specified action.
         """
-        #~ logger.info("20121020 Model.get_row_permission %s",unicode(ba.action.label))
+        #~ if ba.action.action_name == 'wf7':
+            #~ logger.info("20130424 Model.get_row_permission() gonna call %r.get_bound_action_permission()",ba)
         return ba.get_bound_action_permission(ar,self,state)
 
     def update_owned_instance(self,controllable):

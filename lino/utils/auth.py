@@ -394,11 +394,14 @@ def make_view_permission_handler_(
             return True
     
     if debug_permissions: # False:
+        #~ logger.info("20130424 install debug_permissions for %s",
+            #~ [actor,readonly,debug_permissions,
+            #~ user_level,user_groups,allow,auth,owner,states])
         allow4 = allow
         def allow(action,profile):
             v = allow4(action,profile)
             if True: # not v:
-                logger.info(u"debug_permissions %r required(%s,%s), allow(%s)--> %s",
+                logger.info(u"debug_permissions (view) %r required(%s,%s), allow(%s)--> %s",
                   action,user_level,user_groups,profile,v)
             return v
     return allow
@@ -407,6 +410,14 @@ def make_view_permission_handler_(
 def make_permission_handler_(
     elem,actor,readonly,debug_permissions,
     user_level=None,user_groups=None,states=None,allow=None,owner=None,auth=False):
+        
+    #~ if str(actor) == 'courses.PendingCourseRequests':
+        #~ if allow is None: raise Exception("20130424")
+    
+    #~ if debug_permissions: # False:
+        #~ logger.info("20130424 install debug_permissions for %s",
+            #~ [elem,actor,readonly,debug_permissions,
+            #~ user_level,user_groups,states,allow,owner,auth])
     
     if allow is None:
         def allow(action,user,obj,state):
@@ -417,6 +428,8 @@ def make_permission_handler_(
             allow_before_auth = allow
             def allow(action,user,obj,state):
                 if not user.profile.authenticated:
+                    #~ if action.action_name == 'wf7':
+                        #~ logger.info("20130424 allow_before_auth returned False")
                     return False
                 return allow_before_auth(action,user,obj,state)
             
@@ -427,6 +440,8 @@ def make_permission_handler_(
                 #~ if user.profile.level is None or user.profile.level < user_level:
                 if user.profile.level < user_level:
                     #~ print 20120715, user.profile.level
+                    #~ if action.action_name == 'wf7':
+                        #~ logger.info("20130424 allow_user_level returned False")
                     return False
                 return allow_user_level(action,user,obj,state)
                 
@@ -434,6 +449,8 @@ def make_permission_handler_(
             allow_owner = allow
             def allow(action,user,obj,state):
                 if obj is not None and (user == obj.user) != owner:
+                    #~ if action.action_name == 'wf7':
+                        #~ logger.info("20130424 allow_owner returned False")
                     return False
                 return allow_owner(action,user,obj,state)
                 
@@ -449,7 +466,10 @@ def make_permission_handler_(
                     #~ raise Exception("Invalid UserGroup %r" % g)
             allow1 = allow
             def allow(action,user,obj,state):
-                if not allow1(action,user,obj,state): return False
+                if not allow1(action,user,obj,state): 
+                    #~ if action.action_name == 'wf7':
+                        #~ logger.info("20130424 allow1 returned False")
+                    return False
                 for g in user_groups:
                     level = getattr(user.profile,g+'_level')
                     if level >= user_level:
@@ -506,11 +526,8 @@ def make_permission_handler_(
         allow4 = allow
         def allow(action,user,obj,state):
             v = allow4(action,user,obj,state)
-            if True: # not v:
-                #~ logger.info(u"debug_permissions %s %s.required(%s,%s,%s), allow(%s,%s,%s)--> %s",
-                  #~ actor,action.action_name,user_level,user_groups,states,user.username,obj2str(obj),state,v)
-                logger.info(u"debug_permissions %r required(%s,%s,%s), allow(%s,%s,%s)--> %s",
-                  action,user_level,user_groups,states,user.username,obj2str(obj),state,v)
+            logger.info(u"debug_permissions %r required(%s,%s,%s), allow(%s,%s,%s)--> %s",
+              action,user_level,user_groups,states,user.username,obj2str(obj),state,v)
             return v
     return allow
         

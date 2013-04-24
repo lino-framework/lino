@@ -529,12 +529,15 @@ class Action(Parametrizable,Permittable):
         return ar.get_title()
         
     def __repr__(self):
-        return "%s %s.%s" % (self.__class__.__name__,self.defining_actor,self.action_name)
+        #~ return "<%s %s.%s>" % (self.__class__.__name__,self.defining_actor,self.action_name)
+        if self.label is None:
+            return "<%s %s>" % (self.__class__.__name__,self.action_name)
+        return "<%s %s (%r)>" % (self.__class__.__name__,self.action_name,unicode(self.label))
         
-    def __str__(self):
-        if self.defining_actor is None:
-            return repr(self)
-        return unicode(self.defining_actor.label).encode('ascii','replace') + ' : ' + unicode(self.label).encode('ascii','replace')
+    #~ def __str__(self):
+        #~ if self.defining_actor is None:
+            #~ return repr(self)
+        #~ return unicode(self.defining_actor.label).encode('ascii','replace') + ' : ' + unicode(self.label).encode('ascii','replace')
         
     def unused__str__(self):
         raise Exception("20121003 Must use full_name(actor)") 

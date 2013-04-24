@@ -38,12 +38,15 @@ from lino.core import choicelists
 
 class State(choicelists.Choice):
     """
-    A State is a specialized `Choice` that adds the `add_workflow` method.
+    A State is a specialized `Choice` that adds the `add_transition` method.
+    `Choice.add_transition` declares or creates a `ChangeStateAction`
+    which makes the object **enter this state**.
     """
-    def add_workflow(self,label=None,
+    def add_transition(self,label=None,
         help_text=None,
         notify=False,
         icon_file=None,
+        debug_permissions=None,
         **required):
         """
         `label` can be either a string or a subclass of ChangeStateAction
@@ -56,9 +59,13 @@ class State(choicelists.Choice):
         if icon_file is not None:
             kw.update(icon_file=icon_file)
         kw.update(sort_index=10+i)
-        if label and not isinstance(label,(basestring,Promise)):#issubclass(label,ChangeStateAction):
+        if label and not isinstance(label,(basestring,Promise)):
+            if required:
+                raise Exception("Cannot specify requirements when using your own class")
             if notify:
                 raise Exception("Cannot specify notify=True when using your own class")
+            if debug_permissions:
+                raise Exception("Cannot specify debug_permissions when using your own class")
             a = label(self,required,**kw)
         else:
             if notify:
@@ -66,11 +73,13 @@ class State(choicelists.Choice):
             else:
                 cl = ChangeStateAction
             a = cl(self,required,label=label or self.text,**kw)
+            if debug_permissions:
+                a.debug_permissions = debug_permissions
         #~ name = 'mark_' + self.value
         name = 'wf' + str(i+1)
         a.attach_to_workflow(self.choicelist,name)
         ba = self.choicelist.bind_action(a) # 
-        #~ print 20120709, self, name, a
+        #~ print 20130424, ba.actor, self, name, ba.action
         """
         TODO: `workflow_actions` is perhaps not nevessary: use Actor._actions_list instead
         """
@@ -83,6 +92,9 @@ class State(choicelists.Choice):
         #~ if help_text is not None:
             #~ self.help_text = help_text
         #~ self.required = required
+        
+    add_workflow = add_transition # backwards compat
+        
         
     #~ def set_required(self,**kw):
         #~ from lino.core import perms
@@ -151,9 +163,35 @@ class ChangeStateAction(actions.RowAction):
         new_required = dict(self.required)
         new_required.update(required)
         if target_state.name:
-            m = getattr(target_state.choicelist,'allow_state_'+target_state.name,None)
-            #~ m = getattr(actor.model,'allow_state_'+target_state.name,None)
+            
+            m = getattr(target_state.choicelist,'allow_transition',None)
             if m is not None:
+                assert not required.has_key('allowed')
+                def allow(action,user,obj,state):
+                    return m(obj,user,target_state)
+                new_required.update(allow=allow)
+                
+            m = getattr(target_state.choicelist,'allow_state_'+target_state.name,None)
+            if m is not None:
+                raise Exception("""
+                
+The allow_state_xxx magic is no longer allowed.
+Because this is too magic. One day I needed about 4 hours
+to find the explanation why some transition did not become 
+visible, and it was because of a forgotten `allow_state_candidature`
+method::
+                
+    @classmethod
+    def allow_state_candidate(cls,self,user):
+        if self.course:
+            return True
+        return False
+        
+    @classmethod
+    def allow_state_change(cls,self,user,newstate):
+        
+                
+                """)
                 assert not required.has_key('allowed')
                 def allow(action,user,obj,state):
                     return m(obj,user)

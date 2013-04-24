@@ -64,8 +64,32 @@ For Michaël: :ref:`lino.tutorial.lets`
 
 
 
-TODO
-----
+A parameter panel for PendingCourseRequests
+-------------------------------------------
 
 In der :ref:`welfare.courses.PendingCourseRequests` muss ich noch 
 ein params_panel machen, damit man bequem filtern kann.
+
+Hier hat Lino mich nochmal wieder überrascht: es war kinderleicht, 
+die Filterparameter von pcsw.Clients zu "erben" und in den eigenen 
+Filter zu übernehmen.
+
+
+More workflow management for course requests
+--------------------------------------------
+
+Added a `workflow_buttons` column to 
+:ref:`welfare.courses.PendingCourseRequests`
+and two workflow actions: from inactive to active and retour.
+Also added a `CourseRequest.get_row_permission` to hide the "Register" 
+action in this table (because it would always say 
+"cannot register to unknown course").
+
+TODO:
+
+- warum kann man ein CourseRequest nicht auf aktiv zurücksetzen?
+- Problem userdocs: :ref:`welfare.courses.PendingCourseRequests`
+  funktioniert nicht.
+
+
+

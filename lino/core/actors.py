@@ -129,13 +129,21 @@ class BoundAction(object):
         #~ def wrap(a,required,fn):
             #~ return fn
             
-        debug = actor.debug_permissions and action.debug_permissions
+        debug_permissions = actor.debug_permissions and action.debug_permissions
         
+        if debug_permissions:
+            if settings.DEBUG:
+                logger.info("debug_permissions for %r (required=%s)",self,required)
+            else:
+                raise Exception("debug_permissions for %r (required=%s)",self,required)
+            
         from lino.utils.auth import make_permission_handler, make_view_permission_handler
         self.allow_view = curry(make_view_permission_handler(
-            self,action.readonly,debug,**required),action)
-        self.allow = curry(make_permission_handler(
-            action,actor,action.readonly,debug,**required),action)
+            self,action.readonly,debug_permissions,**required),action)
+        self._allow = curry(make_permission_handler(
+            action,actor,action.readonly,debug_permissions,**required),action)
+        #~ if debug_permissions:
+            #~ logger.info("20130424 _allow is %s",self._allow)
         #~ actor.actions.define(a.action_name,ba)
         
         
@@ -164,15 +172,22 @@ class BoundAction(object):
         
     def get_bound_action_permission(self,ar,obj,state):
         if not self.action.get_action_permission(ar,obj,state):
+            #~ if self.action.action_name == 'wf7':
+                #~ logger.info("20130424 actors.BoundAction.get_bound_action_permission")
             return False
-        return self.allow(ar.get_user(),obj,state)
+        if self.action.action_name == 'wf7':
+            rv = self._allow(ar.get_user(),obj,state)
+            #~ logger.info("20130424 actors.BoundAction.get_bound_action_permission called %s and got %s",self._allow,rv)
+            return rv
+        return self._allow(ar.get_user(),obj,state)
         
     def get_view_permission(self,profile):
         if not self.action.get_view_permission(profile):
             return False
         return self.allow_view(profile)
         
-
+    def __repr__(self):
+        return "<%s(%s,%r)>" % (self.__class__.__name__,self.actor,self.action)
     
 
 
@@ -805,7 +820,7 @@ class Actor(actions.Parametrizable):
             for a in cls.workflow_state_field.choicelist.workflow_actions:
                 #~ print 20120709, cls,name,a
                 #~ setattr(cls,name,fn())
-                setattr(cls,a.action_name,a)
+                setattr(cls,a.action_name,a) 
 
         #~ if cls.__name__.startswith('OutboxBy'):
             #~ print '20120524 collect_actions',cls, cls.insert_action, cls.detail_action, cls.editable
@@ -831,6 +846,9 @@ class Actor(actions.Parametrizable):
         
     @classmethod
     def bind_action(self,a):
+        #~ if a.action_name in self._actions_dict:
+            #~ raise Exception("20130424 Attempt to re-bind %r to %r" % (a,self))
+            #~ logger.warning("20130424 re-binding %r to %r",a,self)
         ba = BoundAction(self,a)
         if a.action_name is not None:
             self._actions_dict.define(a.action_name,ba)
@@ -843,8 +861,8 @@ class Actor(actions.Parametrizable):
         Return the actions to be displayed in a `workflow_buttons` field.
         """
         state = self.get_row_state(obj)
-        #~ logger.info("20130114 get_workflow_actions() for %s (state is %s)",
-            #~ ar.bound_action.action,state)
+        #~ logger.info("20130424 get_workflow_actions() for %s (state is %s)",
+            #~ obj,state)
         #~ u = ar.get_user()
         
         #~ for ba in self.get_actions(ar.bound_action.action):
@@ -854,9 +872,9 @@ class Actor(actions.Parametrizable):
                 if self.get_row_permission(obj,ar,state,ba):
                     yield ba
                 #~ else:
-                    #~ logger.info('20130114 %s has no permission for [%s]', ar.get_user(),unicode(ba.action.label))
+                    #~ logger.info('20130424 [%s] is not allowed for %s',ba,ar.get_user())
             #~ else:
-                #~ logger.info('20130114 [%s] has not show_in_workflow', unicode(ba.action.label))
+                #~ logger.info('20130424 [%s] has not show_in_workflow', ba)
         
     @classmethod
     def get_label(self):

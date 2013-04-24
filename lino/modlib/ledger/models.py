@@ -518,8 +518,8 @@ add('20',_("Registered"),'registered',editable=False)
 #~ add('30',_("Sent"),'sent')
 add('40',_("Paid"),'paid',editable=False)
 
-#~ InvoiceStates.draft.add_workflow(_("Deregister"),states='registered paid')
-#~ InvoiceStates.registered.add_workflow(_("Register"),states='draft')
+#~ InvoiceStates.draft.add_transition(_("Deregister"),states='registered paid')
+#~ InvoiceStates.registered.add_transition(_("Register"),states='draft')
     
 class AccountInvoice(vat.VatDocument,Voucher,mixins.Registrable):
     
