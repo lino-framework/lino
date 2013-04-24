@@ -1,1 +1,2 @@
 /home/luc/hgwork/lino/docs/admin/index.rst:24: WARNING: toctree contains reference to nonexisting document u'admin/install_apache'
+/home/luc/hgwork/lino/docs/blog/2013/0423.rst:89: WARNING: undefined label: courses.pendingcourserequests (if the link has no caption the label must precede a section header)

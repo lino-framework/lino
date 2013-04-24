@@ -82,6 +82,12 @@ the :class:`lino.core.actions.InstanceAction`.
 Inaktive Kursanfragen
 ---------------------
 
-
+Wir brauchen kein neues Feld "Status" einer Kursanfrage, 
+weil es das schon gibt:
 :ref:`welfare.courses.CourseRequestStates`
+
+Was fehlte, war ein weiterer Status "Inaktiv" und dass dass 
+Feld nicht sichtbar war in der 
+:ref:`welfare.courses.PendingCourseRequests`.
+
     

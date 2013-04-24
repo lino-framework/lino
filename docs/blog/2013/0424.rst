@@ -10,6 +10,9 @@ Solved a subtle last problem which had managed to slip through the tests:
 virtual remote fields in an ExtJS grid were rendered without value
 because `StoreField.as_js` gave them the name of the delegated field.
 
+The new column "Coaches" in :ref:`welfare.courses.PendingCourseRequests`
+was empty in the extJS version.
+
 
 More accurate column widths
 ---------------------------
@@ -59,3 +62,10 @@ Updated the LETS tutorial
 
 For Michaël: :ref:`lino.tutorial.lets` 
 
+
+
+TODO
+----
+
+In der :ref:`welfare.courses.PendingCourseRequests` muss ich noch 
+ein params_panel machen, damit man bequem filtern kann.
