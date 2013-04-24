@@ -9,11 +9,11 @@ you'll now want to know how to do it yourself.
 
    quickstart/mysite/index
    polls/mysite/index
+   lets
    dumpy
    babel
    layouts
    mini
-   lets
    auto_create/index
    human/index
    de_BE/index
