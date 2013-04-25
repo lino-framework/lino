@@ -179,13 +179,13 @@ def add_quick_search_filter(qs,search_text):
     return qs.filter(quick_search_filter(qs.model,search_text))
     
 def quick_search_filter(model,search_text,prefix=''):
-    logger.info("20130425 quick_search_filter(%s,%r)",model,search_text)
+    #~ logger.info("20130425 quick_search_filter(%s,%r)",model,search_text)
     q = models.Q()
     if model.quick_search_fields is not None:
         for fn in model.quick_search_fields:
             kw = {prefix+fn+"__icontains": search_text}
             q = q | models.Q(**kw)
-            logger.info("20130425 %s",kw)
+            #~ logger.info("20130425 %s",kw)
     else:
         for field in model._meta.fields:
             if isinstance(field,models.CharField):

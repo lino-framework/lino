@@ -1030,8 +1030,12 @@ class AbstractTable(actors.Actor):
     @classmethod
     def request(self,master_instance=None,**kw):
         kw.update(actor=self)
-        kw.update(master_instance=master_instance)
+        if master_instance is not None:
+            kw.update(master_instance=master_instance)
         ar = TableRequest(**kw)
+        #~ if self.__name__ == 'RetrieveTIGroupsResult':
+            #~ print 20130425, __file__, ar
+        
         #~ if self.__name__ == 'PrintExpensesByBudget':
             #~ assert ar.master_instance is not None
             #~ print '20130327 tables.py', self, ar.master_instance

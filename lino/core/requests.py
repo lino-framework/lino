@@ -290,6 +290,7 @@ class BaseRequest(object):
         else:
             from lino.core.menus import create_item
             mi = create_item(spec)
+            #~ print 20130425, __file__, mi.bound_action
             spec = mi.bound_action.request(**kw)
         spec.setup_from(self)
         #~ ar.user = self.user

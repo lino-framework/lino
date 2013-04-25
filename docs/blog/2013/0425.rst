@@ -2,6 +2,8 @@
 20130425 (Thursday, 25 April 2013)
 ==================================
 
+Coosing the company of a ClientContact
+--------------------------------------
 
 It was not possible to choose a company in :ref:`welfare.pcsw.ClientContact`.
 (Already in the last release?).
@@ -32,4 +34,41 @@ for the above bug.
 
 One of these cases discovered another bug and is still failing because 
 /choices ignores the "query=mutu" string.
+
+
+`master_instance` of a VirtualTable
+-----------------------------------
+
+Another bug was reported by Uwe:
+Tabelle "Resultat" einer Tx25 ist leer.
+
+This was because of a syntactical mousetrap: 
+`TableRequest.parse_req(...,**kw)` does::
+
+    if not kw.has_key('master_instance'): ...
+
+but `AbstractTable.request` did::
+
+    @classmethod
+    def request(self,master_instance=None,**kw):
+        kw.update(actor=self)
+        # WRONG:
+        # kw.update(master_instance=master_instance)
+        # CORRECT:
+        if master_instance is not None:
+            kw.update(master_instance=master_instance)
+        ar = TableRequest(**kw)
+
+
+References to the userdocs
+--------------------------
+
+References to the userdocs of 
+http://welfare-user.lino-framework.org
+were broken because 
+in :mod:`atelier.sphinxconf`
+the `intersphinx_mapping` was wrong.
+(TODO: These values of course should be configurable...)
+
+
 
