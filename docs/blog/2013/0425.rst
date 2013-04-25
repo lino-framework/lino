@@ -60,6 +60,7 @@ but `AbstractTable.request` did::
         ar = TableRequest(**kw)
 
 
+
 References to the userdocs
 --------------------------
 
@@ -85,5 +86,18 @@ Last-minute changes
 :ref:`welfare.jobs.NewJobsOverview` : Kolonnen "Probezeit" und "Kandidate" ausgetauscht
 
 
+
+
+TODO
+----
+
+- Added another new testcase to :mod:`lino_welfare.tests.pcsw_demo_tests` 
+  for the `master_instance` of a VirtualTable bug. 
+  Now "fab test" fails with "There's no RetrieveTIGroupsRequest 
+  with primary key u'16'". But 
+  "python manage.py test lino_welfare.DemoTest" 
+  runs it successfully.
+  I guess some setUp/tearDown problem.
+  
 
 
