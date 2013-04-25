@@ -783,8 +783,7 @@ class ContactRelated(dd.Model):
       
     @classmethod
     def contact_person_choices_queryset(cls,company):
-    #~ def contact_choices_queryset(cls,company):
-        return Person.objects.filter(rolesbyperson__company=company).distinct()
+        return settings.SITE.modules.contacts.Person.objects.filter(rolesbyperson__company=company).distinct()
 
     def full_clean(self,*args,**kw):
         if not settings.SITE.loading_from_dump:

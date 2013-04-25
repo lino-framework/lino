@@ -869,7 +869,8 @@ class Site(lino.Site):
                 #~ raise Exception("""\
     #~ `user_model` is not None, but no `remote_user_header` in your settings.SITE.""")
         #~ yield 'lino.utils.editing.EditingMiddleware'
-        yield 'lino.utils.ajax.AjaxExceptionResponse'
+        if True:
+            yield 'lino.utils.ajax.AjaxExceptionResponse'
 
         if False: # not BYPASS_PERMS:
             yield 'django.contrib.auth.middleware.RemoteUserMiddleware'

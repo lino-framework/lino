@@ -1,0 +1,35 @@
+==================================
+20130425 (Thursday, 25 April 2013)
+==================================
+
+
+It was not possible to choose a company in :ref:`welfare.pcsw.ClientContact`.
+(Already in the last release?).
+The reason was a double bug:
+
+- `company_choices` still used 
+  the old interface where any additional keywords were interpreted 
+  as `known_values`.
+  
+- Finding the default contact person for a company failed when
+  the modlib Person model was overridden, raising an AttributeError 
+  "type object 'Person' has no attribute 'objects'"::
+
+    File "/home/luc/pythonenvs/py27/local/lib/python2.7/site-packages/django/core/handlers/base.py", line 115, in get_response
+    (...)
+    File "/home/luc/hgwork/lino/lino/modlib/contacts/models.py", line 792, in full_clean
+    qs = self.contact_person_choices_queryset(self.company)
+    File "/home/luc/hgwork/lino/lino/modlib/contacts/models.py", line 787, in contact_person_choices_queryset
+    return Person.objects.filter(rolesbyperson__company=company).distinct()  
+
+
+:mod:`lino.utils.ajax` now also logs a warning on the development 
+server. Much easier to read than opening firebug and look at the 
+response.
+
+Added new testcase to :mod:`lino_welfare.tests.pcsw_demo_tests` 
+for the above bug.
+
+One of these cases discovered another bug and is still failing because 
+/choices ignores the "query=mutu" string.
+
