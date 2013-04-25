@@ -8,7 +8,6 @@ syntax: glob
 *.log
 *.class
 *.zip
-*.dtl.py
 *.js.py
 *.bat
 dist
