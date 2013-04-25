@@ -70,5 +70,20 @@ in :mod:`atelier.sphinxconf`
 the `intersphinx_mapping` was wrong.
 (TODO: These values of course should be configurable...)
 
+Last-minute changes
+-------------------
+
+- Im Kontext Sprachkurse wurde "Register" versehentlich durch 
+  "Registrieren" statt "Eintragen" übersetzt.
+  
+- CandidatesByCourse und ParticipantsByCourse: 
+
+  - Kolonne "Zustand" ist sinnlos weil es jetzt workflow_buttons gibt
+  - :attr:`auto_fit_column_widths <lino.core.tables.AbstractTable.auto_fit_column_widths>` 
+    eingeschaltet 
+
+:ref:`welfare.jobs.NewJobsOverview` : Kolonnen "Probezeit" und "Kandidate" ausgetauscht
+
+
 
 
