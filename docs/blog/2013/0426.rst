@@ -1,0 +1,13 @@
+================================
+20130426 (Friday, 26 April 2013)
+================================
+
+Trying to show the detail of a country in http://belref.lino-framework.org
+resulted in a traceback::
+
+
+  DatabaseError at /countries/Country/EG
+  (1146, "Table 'belref.django_content_type' doesn't exist")
+
+
+

@@ -565,8 +565,9 @@ class TableRequest(ActionRequest):
         if self.master_instance is not None:
             if self.master is not None:
                 bp[constants.URL_PARAM_MASTER_PK] = self.master_instance.pk
-                mt = ContentType.objects.get_for_model(self.master_instance.__class__).pk
-                bp[constants.URL_PARAM_MASTER_TYPE] = mt
+                if ContentType._meta.installed:
+                    mt = ContentType.objects.get_for_model(self.master_instance.__class__).pk
+                    bp[constants.URL_PARAM_MASTER_TYPE] = mt
             else:
                 bp[constants.URL_PARAM_MASTER_PK] = self.master_instance
         return kw
