@@ -1,0 +1,34 @@
+=================================
+20130501 (Wednesday, 01 May 2013)
+=================================
+
+Lino-Patrols
+------------
+
+Started a first prototype for "Lino-Patrols", 
+a Lino application for managing and planning patrols.
+
+  "A patrol is commonly a group of personnel, such as police officers or
+  soldiers, that are assigned to monitor a specific geographic area." 
+  (Wikipedia)
+  
+The basic ideas are formulated here in French:  
+
+    Pas besoin du module calendrier vu que notre application ne parlera 
+    pas de tranches d'heures.
+
+    Je vois 3 entités principales:
+
+    - Areas ("Régions") càd chez vous les secteurs répartis en pôles
+
+    - Teams ("Équipes") : composées de "personnes" et/ou
+      "ressources" telles que voiture, chien, ..., ayant une durée de vie 
+      (dates de-à) déterminée. Chez vous il y aura un algoritme pour 
+      générer les patrouilles pour une période donnée.
+
+    - Patrols : a patrol is when a given Team "works" at a given Place on a
+      given date.
+
+    Le but du jeu sera d'avoir pour chaque jour et chaque Endroit une 
+    patrouille, càd une équipe prévue pour cette date à cet endroit.
+

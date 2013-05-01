@@ -143,10 +143,10 @@ class Choice(object):
         
     def __repr__(self):
         if self.name is None:
-            #~ return "%s (%s:%s)" % (self,self.choicelist.__name__,self.value)
-        #~ return "%s (%s.%s:%s)" % (self,self.choicelist.__name__,self.name,self.value)
-            return "%s:%s" % (self.choicelist.__name__,self.value)
-        return "%s.%s:%s" % (self.choicelist.__name__,self.name,self.value)
+            s = "%s:%s" % (self.choicelist.__name__,self.value)
+        else:
+            s = "%s.%s:%s" % (self.choicelist.__name__,self.name,self.value)
+        return "<%s(%s)>" % (self.__class__.__name__,s)
         
         
     def __str__(self):

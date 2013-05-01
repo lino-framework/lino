@@ -191,7 +191,7 @@ def quick_search_filter(model,search_text,prefix=''):
             if isinstance(field,models.CharField):
                 kw = {prefix+field.name+"__icontains": search_text}
                 q = q | models.Q(**kw)
-                logger.info("20120709 %s__icontains=%r",field.name,search_text)
+                #~ logger.info("20120709 %s__icontains=%r",field.name,search_text)
             #~ else:
                 #~ logger.info("20120709 %s : not a CharField",field.name)
     if search_text.isdigit():

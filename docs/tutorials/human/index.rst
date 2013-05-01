@@ -19,24 +19,89 @@ which just inherits :class:`lino.mixins.human.Human`:
 Overview
 ---------
 
-Lino is not complicated. Humans have three properties: 
+Humans have three properties: 
 `first_name`, `last_name` and `gender`.
-All these fields may be blank,
-except if your application changed that rule
-using :func:`dd.update_field <lino.core.inject.update_field>`.
+All these fields may be blank
+(except if your application changed that rule
+using :func:`dd.update_field <lino.core.inject.update_field>`).
 
 
-Genders
+Gender
 -------
 
 The :class:`Genders <lino.core.choicelists.Genders>` choicelist
 defines the possible values for the `gender` field of a Human.
 
+A :class:`lino.core.choicelist.Choicelist` is
+a "hard-coded" list of translatable values.
+
+It's a new concept introduceed by Lino and deserves more 
+documentation, but here is at least a short introduction 
+to choicelists:
+
 >>> from lino.dd import Genders
+
+>>> print Genders
+lino.Genders
+
+A Choicelist is an "Actor", another Lino concept, but basically this 
+means that it is globally accessible using the above name.
+
+A Choicelist has an `objects` method (not attribute) which returns an 
+iterator over the "Choices":
+
+>>> print Genders.objects()
+[<Choice(Genders.male:M)>, <Choice(Genders.female:F)>]
+
+Each Choice has a "value", a "name" and a "text". 
+
+The **value** is what gets stored when this choice is assigned 
+to a database field. 
+
 >>> [g.value for g in Genders.objects()]
 ['M', 'F']
+
+The **name** is how Python code can refer to this choice.
+
+>>> [g.name for g in Genders.objects()]
+['male', 'female']
+>>> print repr(Genders.male)
+<Choice(Genders.male:M)>
+
+The **text** is what the user sees.
+It is a translatable string, 
+implemented using Django's i18n machine:
+
+>>> [g.text for g in Genders.objects()] # doctest: +ELLIPSIS
+[<django.utils.functional.__proxy__ object at ...>, <django.utils.functional.__proxy__ object at ...>]
+
+Calling `unicode` of a choice is (usually) the same as calling unicode on its `text` attribute:
+
 >>> [unicode(g) for g in Genders.objects()]
 [u'Male', u'Female']
+>>> [unicode(g.text) for g in Genders.objects()]
+[u'Male', u'Female']
+
+
+The text of a choice depends on the current user language.
+
+>>> from north.dbutils import set_language
+
+>>> set_language('fr')
+>>> [unicode(g) for g in Genders.objects()]
+[u'Masculin', u'F\xe9minin']
+
+>>> set_language('de')
+>>> [unicode(g) for g in Genders.objects()]
+[u'M\xe4nnlich', u'Weiblich']
+
+>>> set_language('et')
+>>> [unicode(g) for g in Genders.objects()]
+[u'Mees', u'Naine']
+
+
+Salutation
+----------
 
 The default `__unicode__` method of a Human includes 
 the "salutation" which indicates the gender:
@@ -68,7 +133,6 @@ Mr Jean Dupont
 
 The same object will render differently when we switch to French...
 
->>> from north.dbutils import set_language
 >>> set_language('fr')
 >>> print p
 M. Jean Dupont

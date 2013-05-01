@@ -695,6 +695,8 @@ class RedirectAction(Action):
 
 
 class GridEdit(TableAction):
+    
+    #~ debug_permissions = 20130429 # Melanie doesn't see :menulabel:`Explorer --> Courses`
   
     use_param_panel = True
     show_in_workflow = False

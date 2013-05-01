@@ -1,0 +1,72 @@
+=================================
+20130430 (Tuesday, 30 April 2013)
+=================================
+
+
+VirtualBox machine in a LAN
+---------------------------
+
+I have a VirtualBox VM with a Windows XP which I 
+use to test and maintain TIM. 
+I installed it using an originial SP2 installation disk 
+bought in 2005 with a machine which was always running under Debian.
+After installation I "activated" this copy and ran Windows Upgrade
+(which wasn't completely fool-proof anymore due to the venerable age, 
+but it worked). 
+Let's call it HoppelXP (because it's the Windows XP running on Hoppel).
+I also had no serious problem to copy data from Armand to HoppelXP.
+I got TIM running there and started to use it to write down my 
+internal work reports.
+
+Then the problems started.
+I don't know what I changed, but HoppelXP cannot see anymore
+neither the internet nor the other machines of our LAN.
+
+During the first few minutes after starting the VM, issuing "net use"
+in a command prompt produces::
+
+  System error 1222 has occured.
+  
+  The network is not present or not started.
+
+and double-clicking the `Network connections` icon of the 
+Control Panel opens an empty window with an hourglass cursor.
+
+After some minutes of pure waiting, the window fills and 
+
+
+The `VB user manual 
+<http://www.virtualbox.org/manual/ch09.html#changenat>`_ says:
+
+    In NAT mode, the guest network interface is assigned to the IPv4 
+    range 10.0.x.0/24 by default where x corresponds to the instance 
+    of the NAT interface +2. So x is 2 when there is only one NAT 
+    instance active. In that case the guest is assigned to the 
+    address 10.0.2.15, the gateway is set to 10.0.2.2 and the name 
+    server can be found at 10.0.2.3.
+
+    If, for any reason, the NAT network needs to be changed, this 
+    can be achieved with the following command:
+
+    VBoxManage modifyvm "VM name" --natnet1 "192.168/16"
+    
+    This command would reserve the network addresses from 
+    192.168.0.0 to 192.168.254.254 for the first NAT network 
+    instance of "VM name". The guest IP would be assigned to 
+    192.168.0.15 and the default gateway could be found at 
+    192.168.0.2.
+
+
+Seems that the default, NAT mode, is what I need and always had.
+Is it still active? Yes, because 
+`VBoxManage showvminfo "Windows XP" --machinereadable` 
+says (among others)::
+
+  natnet1="nat"
+  
+Which is the same as for a newly created VM.  
+
+Time to learn about 
+`VBoxManage <http://www.virtualbox.org/manual/ch08.html#idp18579328>`_.
+
+

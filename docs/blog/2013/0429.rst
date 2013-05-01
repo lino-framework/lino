@@ -1,0 +1,48 @@
+================================
+20130429 (Monday, 29 April 2013)
+================================
+
+About the Pyramid Web Application Development Framework
+-------------------------------------------------------
+
+I've been asked what I think about
+`Pyramid <http://docs.pylonsproject.org/projects/pyramid>`_.
+
+Yes, Pyramid looks nice.
+
+But I chose Django because of the *ORM*, not because of 
+the *web framework*.
+There are many Python-based web frameworks and I am certainly not 
+the one who is going to write a better comparison of them.
+
+Pyramid, unlike Django, doesn't force you to use a given ORM. 
+You can use your own, or an existing one like 
+SQLAlchemy or ZODB.
+
+`SQLAlchemy <http://docs.sqlalchemy.org/en/latest/orm/tutorial.html>`_
+is beautiful and similar to Django's ORM.
+If I had time or need for a comparison, I'd have a deeper look at it 
+by implementing some example application also in SQLAlchemy.
+Maybe one day out of curiosity.
+Maybe when I write a tutorial about querying data.
+
+
+Miscellaneous
+-------------
+
+I noticed that Melanie didn't have the
+:menulabel:`Explorer` menu. But at least 
+:menulabel:`Explorer --> Courses` is meant to be visible for 
+her profile ("chef de service" without being 
+"system administrator").
+
+This was because the `Site` defined in 
+:mod:`lino_welfare.settings` 
+defines it's own 
+:meth:`lino.ui.Site.setup_menu`
+method (a rather obsolete way to do it)
+which never called `setup_explorer_menu` for user profiles 
+that were not system admins. Fixed.
+
+
+
