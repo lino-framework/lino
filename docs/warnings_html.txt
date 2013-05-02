@@ -1,1 +1,4 @@
 /home/luc/hgwork/lino/docs/admin/index.rst:24: WARNING: toctree contains reference to nonexisting document u'admin/install_apache'
+/home/luc/hgwork/lino/docs/blog/2013/0429.rst:33: ERROR: Unknown interpreted text role "menulabel".
+/home/luc/hgwork/lino/docs/blog/2013/0429.rst:33: ERROR: Unknown interpreted text role "menulabel".
+/home/luc/hgwork/lino/docs/releases/index.rst:1: WARNING: unknown document: 1.6.6

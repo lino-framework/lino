@@ -303,3 +303,11 @@ def dtos(d):
     return dtos_(d)
 
     
+#~ from lino.mixins import Born
+
+from lino.mixins import (ProjectRelated, UserAuthored, 
+    Sequenced, Hierarizable)
+
+from lino.mixins.printable import Printable, PrintableType, CachedPrintable, TypedPrintable, DirectPrintAction
+from lino.mixins.uploadable import Uploadable
+from lino.mixins.human import Human, Born, Genders

@@ -296,6 +296,12 @@ class AppyBuildMethod(SimpleBuildMethod):
         #~ from lino.models import get_site_config
         #~ from appy.pod.renderer import Renderer
         #~ renderer = None
+        """
+        When the source string contains non-ascii characters, then 
+        we must convert it to a unicode string.
+        """
+        def translate(s):
+            return _(s.decode('utf8'))
         from lino import dd
         context = dict(self=elem,
             dtos=dd.dtos,
@@ -311,7 +317,7 @@ class AppyBuildMethod(SimpleBuildMethod):
             #~ restify=restify,
             #~ site_config = get_site_config(),
             site_config=settings.SITE.site_config,
-            _ = _,
+            _ = translate,
             #~ knowledge_text=fields.knowledge_text,
             )
         lang = str(elem.get_print_language(self))

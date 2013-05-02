@@ -1,4 +1,4 @@
-## Copyright 2008-2012 Luc Saffre
+## Copyright 2008-2013 Luc Saffre
 ## This file is part of the Lino project.
 ## Lino is free software; you can redistribute it and/or modify 
 ## it under the terms of the GNU General Public License as published by
@@ -108,15 +108,16 @@ class Account(dd.BabelNamed,mixins.Sequenced):
     help_text = dd.RichTextField(_("Introduction"),format="html",blank=True)
     
     def full_clean(self,*args,**kw):
-        self.chart  = self.group.chart
-        if not self.ref:
-            self.ref = str(self.chart.account_set.count()+1)
-        if not self.name:
-            self.name = self.group.name
-        if not self.type:
-            self.type = self.group.account_type
-        #~ if not self.chart:
-            #~ self.chart = self.group.chart
+        if self.group_id is not None:
+            self.chart  = self.group.chart
+            if not self.ref:
+                self.ref = str(self.chart.account_set.count()+1)
+            if not self.name:
+                self.name = self.group.name
+            if not self.type:
+                self.type = self.group.account_type
+            #~ if not self.chart:
+                #~ self.chart = self.group.chart
         super(Account,self).full_clean(*args,**kw)
         
     def __unicode__(self):
