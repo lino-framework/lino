@@ -1,0 +1,48 @@
+================================
+20130502 (Thursday, 02 May 2013)
+================================
+
+More models in Lino-Patrols
+---------------------------
+
+Added more models to :mod:`lino_patrols.models`.
+
+:mod:`lino.dd` now also includes the names defined 
+in :mod:`lino.mixins`.
+
+New feature
+-----------
+
+:meth:`north.Site.babelattr` now supports an optional 
+keyword `language`. If this is not None, then it overrides 
+the current Django language.
+
+Änderungen Schuldnerberatung
+----------------------------
+
+- `Buchhaltung --> Konten` : hier wurde das Feld "Perioden" nicht 
+  angezeigt.
+
+- In :ref:`welfare.debts.Budget`, replaced field 
+  `ignore_yearly_incomes` by `include_yearly_incomes`
+  (meaning is inversed because the most frequent case is to ignore them).
+  
+- When adding a new account in `accounts.Accounts`, the user got an 
+  internal server response. Fixed and added a test case in 
+  :mod:`lino_welfare.tests.pcsw_tests`.
+  
+- Beim Erstellen eines Budgets werden die Bezeichnungen der einzelnen 
+  Posten jetzt entsprechend der Sprache des Partners ausgefüllt 
+  (statt bisher in der Sprache des Benutzers).
+  
+- Traductions diverses dans le modèle d'impression d'un budget
+
+- Imprimer un budget ne sélectionnait pas la langue du partenaire.
+
+TODO:
+
+- Merge the few_countries and few_cities fixtures into demo
+- Convert all_countries to use data from python-babel
+
+
+
