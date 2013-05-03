@@ -51,7 +51,7 @@ A Choicelist has an `objects` method (not attribute) which returns an
 iterator over the "Choices":
 
 >>> print Genders.objects()
-[<Choice(Genders.male:M)>, <Choice(Genders.female:F)>]
+[<Genders.male:M>, <Genders.female:F>]
 
 Each Choice has a "value", a "name" and a "text". 
 
@@ -65,8 +65,9 @@ The **name** is how Python code can refer to this choice.
 
 >>> [g.name for g in Genders.objects()]
 ['male', 'female']
+
 >>> print repr(Genders.male)
-<Choice(Genders.male:M)>
+<Genders.male:M>
 
 The **text** is what the user sees.
 It is a translatable string, 

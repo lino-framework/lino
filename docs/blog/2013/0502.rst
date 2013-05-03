@@ -44,5 +44,3 @@ TODO:
 - Merge the few_countries and few_cities fixtures into demo
 - Convert all_countries to use data from python-babel
 
-
-

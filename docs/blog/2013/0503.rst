@@ -1,0 +1,72 @@
+==============================
+20130503 (Friday, 03 May 2013)
+==============================
+
+Python fixtures and big databases
+---------------------------------
+
+Yesterday evening I saw for the first time that the process of 
+the `initdb` command got killed by the OS
+while loading a backup `b20130502_201829.py` that was 18 MB big::
+
+    (dev)$ python manage.py initdb b20130502_201829
+    ...
+    We are going to flush your database (test_dsbe).
+    Are you sure (y/n) ?y
+    Creating tables ...
+    ...
+    INFO Loading /var/log/lino/backups/b20130502_201829.py...
+    Killed
+    (dev)$    
+
+Note that this happens before any data is actually stored in the database.
+Looks as if the mere compilation of the .py file requires so much memory 
+that the OS decides to kill the process.
+
+Yes, a :ref:`Python fixture <dpy>` 
+needs to write the whole database content into a single file
+(at least as long as we use it as a `Django serializer
+<https://docs.djangoproject.com/en/dev/topics/serialization/>`_).
+
+If I stop Apache and watch_tim and try the same command again, 
+then it works.
+
+Here is an attempt to reproduce this situation:
+
+.. literalinclude:: 0502/a.py
+
+Trying to run this script will of course exhaust memory after 
+some time... but in a different way::
+
+    153000000
+    Traceback (most recent call last):
+      File "0502.py", line 5, in <module>
+        L.append(time.time())
+    MemoryError
+
+Then I found the `Process "Killed" 
+<http://bytes.com/topic/python/answers/833603-process-killed>`__
+thread asked by dieter in August 2008.
+Where Eric Wertmann wrote:
+
+  This is the behavior you'll see when your os has run out of some
+  memory resource. The kernel sends a 9 signal. I'm pretty sure that
+  if you exceed a soft limit your program will abort with out of memory
+  error.
+  
+The directory :file:`/var/log/lino/backups`
+contained 108 files, all named like `b20130503_020101.py`.
+Deleted 70 of them.
+Restarted apache and watch_tim.
+Tried again: it works without problem.
+
+Conclusion:
+
+Of course when you import a Python source file with 
+more than 18 MB of code text, then this will use some memory 
+resources of your computer.
+If one day it appears that the single file is a problem when working 
+with huge databases, then I'll probably write 
+two separate commands "dump" and "load" that work with 
+separate text files to hold the raw data.
+But that day has still to come.
