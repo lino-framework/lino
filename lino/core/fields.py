@@ -190,6 +190,8 @@ class FakeField(object):
     editable = False
     name = None
     help_text = None
+    preferred_width = 30
+    preferred_height = 3
     
     def is_enabled(self,lh):
         """

@@ -43,8 +43,10 @@ from lino.core import model
 from lino.core.requests import EmptyTableRow
 from lino.utils.choosers import chooser
 from lino.mixins.duplicable import Duplicable, Duplicate
-
+from lino.core.dbutils import navinfo
+from lino.utils import AttrDict
 from north.dbutils import BabelCharField
+from lino.utils.xmlgen.html import E
 
 #~ class Owned(dd.Model):
 class Controllable(model.Model):
@@ -416,7 +418,31 @@ class CreatedModified(model.Model):
         super(CreatedModified, self).save(*args, **kwargs)
 
 
-#~ class DuplicateAction(actions.RowAction)
+
+class MoveUp(actions.RowAction):
+    label = "Up"
+    custom_handler = True
+    def run_from_ui(self,obj,ar,**kw):
+        obj.swap_seqno(-1)
+        #~ obj.move_up()
+        kw = dict()
+        #~ kw.update(refresh=True)
+        kw.update(refresh_all=True)
+        kw.update(message=_("Moved up."))
+        return ar.success(**kw)
+        
+class MoveDown(actions.RowAction):
+    label = "Down"
+    custom_handler = True
+    def run_from_ui(self,obj,ar,**kw):
+        obj.swap_seqno(1)
+        #~ obj.move_down()
+        kw = dict()
+        #~ kw.update(refresh=True)
+        kw.update(refresh_all=True)
+        kw.update(message=_("Moved down."))
+        return ar.success(**kw)
+        
 
 class DuplicateSequenced(Duplicate):
   
@@ -437,7 +463,8 @@ class DuplicateSequenced(Duplicate):
 
 class Sequenced(Duplicable):
     """
-    Abstract base class for models that have a sequence number `seqno`.
+    Abstract base class for models that have a field `seqno`
+    containing a "sequence number".
     """
   
     class Meta:
@@ -449,21 +476,11 @@ class Sequenced(Duplicable):
         verbose_name=_("Seq.No."))
         
     duplicate = DuplicateSequenced()
-        
-    #~ @actions.action(_("Duplicate"))
-    #~ def duplicate(self,ar):
-        #~ seqno = self.seqno
-        #~ qs = self.get_siblings().filter(seqno__gte=seqno).reverse()
-        #~ if qs is None:
-            #~ raise Exception("20121227 TODO: Tried to duplicate a root element?")
-        #~ for s in qs:
-            #~ s.seqno += 1
-            #~ s.save()
-        #~ return super(Sequenced,self).duplicate.run(self,ar,seqno=seqno)
+    move_up = MoveUp()
+    move_down = MoveDown()
         
     def __unicode__(self):
         return unicode(_("Row # %s") % self.seqno)
-        
     
     def get_siblings(self):
         """
@@ -496,6 +513,63 @@ class Sequenced(Duplicable):
         if self.seqno is None:
             self.set_seqno()
         super(Sequenced,self).full_clean(*args,**kw)
+        
+    #~ def move_up(self)
+        #~ """
+        #~ Move this row "one position up" within its siblings
+        #~ """
+        #~ qs = self.get_siblings()
+        #~ if qs is None:
+            #~ return
+        #~ nav = AttrDict(**navinfo(qs,self))
+        #~ if not nav.recno:
+            #~ return
+        #~ if not nav.prev:
+            #~ return
+        #~ prev = qs.get(pk=nav.prev)
+        #~ if self.seqno == prev.seqno:
+            #~ return
+        #~ prev_seqno  = prev.seqno 
+        #~ prev.seqno = self.seqno
+        #~ self.seqno = prev_seqno 
+        #~ self.save()
+        #~ prev.save()
+        
+    def swap_seqno(self,offset):
+        """
+        Move this row "up or down" within its siblings
+        """
+        qs = self.get_siblings()
+        if qs is None:
+            return
+        nav = AttrDict(**navinfo(qs,self))
+        if not nav.recno:
+            return
+        new_recno = nav.recno + offset
+        if new_recno <= 0:
+            return
+        if new_recno > qs.count():
+            return
+        other = qs[new_recno-1]
+        prev_seqno  = other.seqno 
+        other.seqno = self.seqno
+        self.seqno = prev_seqno 
+        self.save()
+        other.save()
+        
+    @fields.displayfield(_("Move"),preferred_width=5)
+    def move_buttons(obj,ar):
+        """
+        Displays the buttons for this row and this user.
+        """
+        actor = ar.actor
+        l = []
+        for n in ('move_up','move_down'):
+            ba = actor.get_action_by_name(n)
+            l.append(ar.renderer.action_button(obj,ar,ba))
+            l.append(' ')
+        return E.p(*l)
+        
   
 
 class Hierarizable(Sequenced):

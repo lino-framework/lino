@@ -26,7 +26,7 @@ lino-framework.org
 
 `lino-framework.org` is currently Lino's primary domain. 
 It is hosted in collaboration with 
-`Active Systems OÜ <http://active.ee>`.
+`Active Systems OÜ <http://active.ee>`_.
 
 .. _ddt:
 
@@ -41,3 +41,14 @@ fixture `a.py`, then we use `manage.py initdb a` to load that picture
 to the database, then perform a second dump to a fixture `b.py`. 
 And then we launch `diff a.py b.py` to veryfy that both pictures are identical.
     
+
+.. _patrols: 
+
+Lino Patrols
+------------
+
+See http://patrols.lino-framework.org
+
+
+
+

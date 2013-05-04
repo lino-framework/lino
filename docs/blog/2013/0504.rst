@@ -1,0 +1,47 @@
+================================
+20130504 (Saturday, 04 May 2013)
+================================
+
+Miscellaneous
+-------------
+
+- :ref:`watch_tim` caused an error "The database backend does not 
+  accept 0 as a value for AutoField." when TIM wrote a changelog for 
+  `PAR:0000000`.
+  
+- Adding a new account in :ref:`welfare.accounts.Accounts`
+  caused an internal server error `DoesNotExist`.
+  
+- :ref:`welfare.pcsw.ClientsTest` produced a traceback
+  `'NoneType' object has no attribute 'strip'` for Clients 
+  with national_id is None.
+  
+- New actions MoveUp and MoveDown, renderable in a column "move_buttons".
+  Firs use case is :ref:`welfare.debts.EntriesByBudget`
+
+- `auto_fit_column_widths` was ignored when a table was being 
+  displayed as the main grid of a window.
+  The code to generate the js code for viewConfig was duplicated,
+  viewConfig  was generated once for the GridPanel subclass 
+  definition and a second time when instantiating a slave grid. 
+  Removed the second time.
+
+TODO
+----
+
+- jobs.Overview : Seitenwechsel gibt zwischen die verschiedenen Kategorien (Majorés, Intern, usw.)
+- Duplizieren ist total buggy
+
+- Ausdruck: 
+
+  - Kontaktangaben: da steht immer Komma am Ende.
+  - Tabelle Guthaben, Schulden, Verpflichtungen : hier fehlt die Kolonne "Monatsrate".
+  - Unter dieser Tabelle eine weitere Tabelle "Gerichtsvollzieher", in der nur GV-Schulden sind.
+
+- Merge the few_countries and few_cities fixtures into demo
+- Convert all_countries to use data from python-babel
+- Sequenced : action up and down
+- accounts : optionally with automatic seqencing (ref not visible/used)
+
+- `pcsw_demo_tests.py` : 
+  "/choices/pcsw/ContactsByClient/company?type=1&query=mutu got 5 rows instead of [2]"

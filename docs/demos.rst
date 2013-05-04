@@ -6,6 +6,7 @@ The demo databases contain fictive data.
 All names of persons are generated.
 You may edit according to the user permissions. 
 Any changes will be lost each time we reinitialize the demo data.
+
  
 .. complextable::
 
@@ -48,6 +49,27 @@ Any changes will be lost each time we reinitialize the demo data.
       
     `demo4 <http://demo4.lino-framework.org>`_ 
     shows an early prototype of Lino Così.
+
+
+  <NEXTROW>
+
+  .. figure:: /screenshots/purchase.Invoices.html.jpg
+    :scale: 22
+    :target: http://demo5.lino-framework.org
+  
+    `demo5 <http://demo5.lino-framework.org>`_  
+    shows an early prototype of :ref:`patrols`.
+    
+  <NEXTCELL>
+
+  .. figure:: /screenshots/sales.Invoice.jpg
+    :scale: 30
+    :target: http://belref.lino-framework.org
+      
+    `belref <http://belref.lino-framework.org>`_ 
+    shows an early prototype of the Belref project
+    which has a read-only user interface and doesn't 
+    need ExtJS.
 
 
   

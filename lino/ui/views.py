@@ -47,6 +47,7 @@ from lino.core import actors
 from lino.core import dbtables
 #~ from lino.core import changes
 from lino.core import web
+from lino.core.dbutils import navinfo
 
 
 #~ from lino.ui import requests as ext_requests
@@ -240,50 +241,10 @@ def elem2rec_detailed(ar,elem,**rec):
     rec.update(id=elem.pk)
     rec.update(disable_delete=rh.actor.disable_delete(elem,ar))
     if rh.actor.show_detail_navigator:
-        rec.update(navinfo=navinfo(ar,elem))
+        rec.update(navinfo=navinfo(ar.data_iterator,elem))
     return rec
             
-    
 
-def navinfo(ar,elem):
-    first = None
-    prev = None
-    next = None
-    last = None
-    recno = 0
-    message = None
-    LEN = ar.get_total_count()
-    if LEN > 0:
-        # this algorithm is clearly quicker on queries with a few thousand rows
-        id_list = list(ar.data_iterator.values_list('pk',flat=True))
-        """
-        Uncommented the following assert because it failed in certain circumstances 
-        (see `/blog/2011/1220`)
-        """
-        #~ assert len(id_list) == ar.total_count, \
-            #~ "len(id_list) is %d while ar.total_count is %d" % (len(id_list),ar.total_count)
-        #~ print 20111220, id_list
-        try:
-            i = id_list.index(elem.pk)
-        except ValueError:
-            pass
-        else:
-            recno = i + 1
-            first = id_list[0]
-            last = id_list[-1]
-            if i > 0:
-                prev = id_list[i-1]
-            if i < len(id_list) - 1:
-                next = id_list[i+1]
-            message = _("Row %(rowid)d of %(rowcount)d") % dict(rowid=recno,rowcount=LEN)
-    if message is None:
-        message = _("No navigation")
-    return dict(
-        first=first,prev=prev,next=next,last=last,recno=recno,
-        message=message)
-  
-    
-    
 
 
 def delete_element(ar,elem):

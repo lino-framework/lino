@@ -1341,6 +1341,8 @@ tinymce.init({
         vc = dict(emptyText=_("No data to display."))
         if rh.actor.editable:
             vc.update(getRowClass=js_code('Lino.getRowClass'))
+        if rh.actor.auto_fit_column_widths:
+            vc.update(forceFit=True)
         kw.update(viewConfig=vc)
         
         

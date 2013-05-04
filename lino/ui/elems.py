@@ -1278,8 +1278,8 @@ class DisplayElement(FieldElement):
     """
     ExtJS element to be used for :class:`DisplayFields <lino.core.fields.DisplayField>`.
     """
-    preferred_width = 30
-    preferred_height = 3
+    #~ preferred_width = 30
+    #~ preferred_height = 3
     ext_suffix = "_disp"
     #~ declare_type = jsgen.DECLARE_THIS
     declare_type = jsgen.DECLARE_VAR
@@ -1289,6 +1289,8 @@ class DisplayElement(FieldElement):
         kw.setdefault('value','<br/>') # see blog/2012/0527
         kw.update(always_enabled=True)
         FieldElement.__init__(self,*args,**kw)
+        self.preferred_height = self.field.preferred_height
+        self.preferred_width = self.field.preferred_width
         if self.field.max_length:
             self.preferred_width = self.field.max_length
             
@@ -2016,22 +2018,13 @@ class GridElement(Container):
         #~ kw.update(boxMinWidth=500)
         self.columns = columns
         
-        vc = dict(emptyText=_("No data to display."))
-        if rpt.editable:
-            vc.update(getRowClass=js_code('Lino.getRowClass'))
+        #~ vc = dict(emptyText=_("No data to display."))
+        #~ if rpt.editable:
+            #~ vc.update(getRowClass=js_code('Lino.getRowClass'))
+        #~ if rpt.auto_fit_column_widths:
+            #~ vc.update(forceFit=True)
+        #~ kw.update(viewConfig=vc)
         
-        #~ //autoScroll:true,
-        #~ //autoFill:true,
-        #~ //forceFit=True,
-        #~ //enableRowBody=True,
-        #~ //~ showPreview:true,
-        #~ //~ scrollOffset:200,
-        #~ //~ enableRowBody: true,
-        
-        if rpt.auto_fit_column_widths:
-            vc.update(forceFit=True)
-            
-        kw.update(viewConfig=vc)
         kw.setdefault('label',rpt.label)
         
         add_help_text(kw,rpt.help_text,rpt.title or rpt.label,rpt.app_label,rpt.actor_id)

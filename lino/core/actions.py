@@ -610,13 +610,14 @@ class Action(Parametrizable,Permittable):
     def run_from_code(self,obj,ar,**kw):
         return self.run_from_ui(obj,ar,**kw)
         
-    #~ def run_from_ui(self,elem,ar,**kw):
-        #~ raise NotImplementedError("%s has no run() method" % self.__class__)
+    def run_from_ui(self,row,ar,**kw):
+        """
+        Execute the action on the given `row`. 
+        `ar` is an :class:`ActionRequest <lino.core.requests.ActionRequest>` 
+        object representing the context where the action is running.
+        """
+        raise NotImplementedError("%s has no run_from_ui() method" % self.__class__)
 
-    #~ def request(self,*args,**kw):
-        #~ kw.update(action=self)
-        #~ return self.defining_actor.request(*args,**kw)
-        
     def action_param_defaults(self,ar,obj,**kw):
         """
         Same as Actor.param_defaults, except that here it is a instance method
@@ -669,13 +670,6 @@ class RowAction(Action):
         h += ")"
         return h 
         
-    def run_from_ui(self,row,ar,**kw):
-        """
-        Execute the action on the given `row`. `ar` is an :class:`ActionRequest <lino.core.requests.ActionRequest>` 
-        object representing the context where the action is running.
-        """
-        raise NotImplementedError("%s has no run() method" % self.__class__)
-
     #~ def get_action_permission(self,user,obj):
         #~ return self.actor.get_row_permission(self,ar,obj)
             
@@ -1068,7 +1062,10 @@ def action(*args,**kw):
     In practice you'll possibly use:
     :attr:`label <Action.label>`,
     :attr:`help_text <Action.help_text>` and
-    :attr:`required <Action.required>`
+    :attr:`required <Action.required>`.
+    
+    The decorated function must return a `dict` which allowed 
+    keys are defined in :attr:`lino.ui.base.ACTION_RESPONSES`.
     """
     def decorator(fn):
         kw.setdefault('custom_handler',True)

@@ -34,6 +34,7 @@ from django.db.models import Q
 from django.db.models.fields import FieldDoesNotExist
 from django.utils.importlib import import_module
 from django.db.models import loading
+from django.utils.translation import ugettext as _
 
 
 from djangosite.dbutils import obj2str, full_model_name, app_labels
@@ -163,3 +164,61 @@ def get_model_report(model):
         raise Exception("%r has no _lino_default_table" % model)
     return model._lino_default_table
 
+
+
+#~ def navinfo(ar,elem):
+def navinfo(qs,elem):
+    """
+    Return a dict with navigation information for the given model 
+    instance `elem` within the given queryset. 
+    The dictionary contains the following keys:
+    
+    :recno:   row number (index +1) of elem in qs
+    :first:   pk of the first element in qs (None if qs is empty)
+    :prev:    pk of the previous element in qs (None if qs is empty)
+    :next:    pk of the next element in qs (None if qs is empty)
+    :last:    pk of the last element in qs (None if qs is empty)
+    :message: text "Row x of y" or "No navigation"
+    
+    
+    """
+    first = None
+    prev = None
+    next = None
+    last = None
+    recno = 0
+    message = None
+    #~ LEN = ar.get_total_count()
+    LEN = qs.count()
+    if LEN > 0:
+        # this algorithm is clearly quicker on queries with a few thousand rows
+        #~ id_list = list(ar.data_iterator.values_list('pk',flat=True))
+        id_list = list(qs.values_list('pk',flat=True))
+        """
+        Uncommented the following assert because it failed in certain circumstances 
+        (see `/blog/2011/1220`)
+        """
+        #~ assert len(id_list) == ar.total_count, \
+            #~ "len(id_list) is %d while ar.total_count is %d" % (len(id_list),ar.total_count)
+        #~ print 20111220, id_list
+        try:
+            i = id_list.index(elem.pk)
+        except ValueError:
+            pass
+        else:
+            recno = i + 1
+            first = id_list[0]
+            last = id_list[-1]
+            if i > 0:
+                prev = id_list[i-1]
+            if i < len(id_list) - 1:
+                next = id_list[i+1]
+            message = _("Row %(rowid)d of %(rowcount)d") % dict(rowid=recno,rowcount=LEN)
+    if message is None:
+        message = _("No navigation")
+    return dict(
+        first=first,prev=prev,next=next,last=last,recno=recno,
+        message=message)
+  
+    
+    

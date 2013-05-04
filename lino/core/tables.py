@@ -585,7 +585,7 @@ class TableRequest(ActionRequest):
             kw.update(known_values=self.known_values)
         u = self.get_user()
         if u is not None:
-            kw.update(su=u.username)
+            kw.update(user=u.username)
         #~ return self.__class__.__name__ + '(%s)' % kw
         #~ return self.__class__.__name__ + ' '+str(self.bound_action)+'(%s)' % kw
         return "<%s %s(%s)>" %  (self.__class__.__name__,self.bound_action.full_name(),kw)
