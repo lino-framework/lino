@@ -17,10 +17,8 @@ template.
 :menuselection:`Site --> About` now also shows the sourcecode 
 timestamps for django, atelier, djangosite and north.
 
-Ausdruck eines Budgets:
-
-- Tabelle "Guthaben, Schulden, Verpflichtungen" : 
-  hier fehlte die Kolonne "Monatsrate".
+Ausdruck eines Budgets: Tabelle "Guthaben, Schulden, Verpflichtungen":
+hier fehlte die Kolonne "Monatsrate".
 
 TODO
 ----

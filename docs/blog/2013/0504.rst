@@ -17,7 +17,7 @@ Miscellaneous
   with national_id is None.
   
 - New actions MoveUp and MoveDown, renderable in a column "move_buttons".
-  Firs use case is :ref:`welfare.debts.EntriesByBudget`
+  First use case is :ref:`welfare.debts.EntriesByBudget`
 
 - `auto_fit_column_widths` was ignored when a table was being 
   displayed as the main grid of a window.

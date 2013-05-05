@@ -10,8 +10,8 @@ The final truth about what's going on is only
 `The Source Code <http://code.google.com/p/lino/source/list>`_.
 
 
-Version 1.6.6 (in development)
-==============================
+Version 1.6.6 (released :blogref:`20130505`)
+============================================
 
 - :mod:`lino.utils.html2odf` now converts the text formats `<i>` 
   and `<em>` to a style "Emphasis".
