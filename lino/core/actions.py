@@ -823,7 +823,7 @@ class ShowDetailAction(RowAction):
                 #~ raise Exception("20120327 %s.get_row_by_pk(%r)" % (rpt,pk))
             if ar.actor.show_detail_navigator:
               
-                navinfo = views.navinfo(ar,elem)
+                navinfo = views.navinfo(ar.data_iterator,elem)
                 if navinfo:
                     buttons = []
                     buttons.append( ('*',_("Home"), '/' ))
