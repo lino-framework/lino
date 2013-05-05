@@ -115,7 +115,7 @@ def site_setup(sender,**kw):
             iif=iif,
             unicode=unicode,
             len=len,
-            # E=xghtml.E,
+            E=E,
             _= _,
     )
     

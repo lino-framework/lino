@@ -16,3 +16,33 @@ template.
 
 :menuselection:`Site --> About` now also shows the sourcecode 
 timestamps for django, atelier, djangosite and north.
+
+Ausdruck eines Budgets:
+
+- Tabelle "Guthaben, Schulden, Verpflichtungen" : 
+  hier fehlte die Kolonne "Monatsrate".
+
+TODO
+----
+
+- jobs.Overview : Seitenwechsel gibt zwischen die verschiedenen Kategorien (Majorés, Intern, usw.)
+- Duplizieren ist total buggy
+
+- Ausdruck: 
+
+  - Kontaktangaben: da steht immer Komma am Ende.
+  - Unter der Tabelle "Guthaben, Schulden, Verpflichtungen" eine 
+    weitere Tabelle "Gerichtsvollzieher", in der nur GV-Schulden sind.
+
+- Merge the few_countries and few_cities fixtures into demo
+- Convert all_countries to use data from python-babel
+- Sequenced : action up and down
+- accounts : optionally with automatic seqencing (ref not visible/used)
+
+- `pcsw_demo_tests.py` : 
+  "/choices/pcsw/ContactsByClient/company?type=1&query=mutu got 5 rows instead of [2]"
+
+- write unit tests to test the plain ui. 
+  The best place would be a tested document with a Django test client.
+  But how to instantiate a Django test client from a testcase which 
+  does *not* use a test database but the project's demo database?

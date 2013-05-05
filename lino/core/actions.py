@@ -36,6 +36,7 @@ E = xghtml.E
 from lino.core import constants
 
 from lino.core.dbutils import resolve_model
+from lino.core.dbutils import navinfo
 from lino.core import layouts
 #~ from lino.core import changes
 from lino.core import fields
@@ -813,7 +814,7 @@ class ShowDetailAction(RowAction):
         ah = ar.ah
         ba = ar.bound_action
         rpt = ar.actor
-        from lino.ui import views
+
         
         navigator = None
         if pk and pk != '-99999' and pk != '-99998':
@@ -823,15 +824,15 @@ class ShowDetailAction(RowAction):
                 #~ raise Exception("20120327 %s.get_row_by_pk(%r)" % (rpt,pk))
             if ar.actor.show_detail_navigator:
               
-                navinfo = views.navinfo(ar.data_iterator,elem)
-                if navinfo:
+                ni = navinfo(ar.data_iterator,elem)
+                if ni:
                     buttons = []
                     buttons.append( ('*',_("Home"), '/' ))
                     
-                    buttons.append( ('<<',_("First page"), ar.pk2url(navinfo['first']) ))
-                    buttons.append( ('<',_("Previous page"), ar.pk2url(navinfo['prev']) ))
-                    buttons.append( ('>',_("Next page"), ar.pk2url(navinfo['next']) ))
-                    buttons.append( ('>>',_("Last page"), ar.pk2url(navinfo['last']) ))
+                    buttons.append( ('<<',_("First page"), ar.pk2url(ni['first']) ))
+                    buttons.append( ('<',_("Previous page"), ar.pk2url(ni['prev']) ))
+                    buttons.append( ('>',_("Next page"), ar.pk2url(ni['next']) ))
+                    buttons.append( ('>>',_("Last page"), ar.pk2url(ni['last']) ))
                         
                     chunks = []
                     for text,title,url in buttons:
