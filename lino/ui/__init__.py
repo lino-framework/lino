@@ -995,14 +995,16 @@ class Site(lino.Site):
             
           
 
-    def welcome_html(self,ui=None):
-        """
-        Text to display in the "about" dialog of a GUI application.
-        """
-        sep = '<br/>'
-        #~ sep = ', '
-        return sep.join(['<a href="%s" target="_blank">%s</a>&nbsp;%s' 
-            % (u,n,v) for n,v,u in self.using(ui)])
+    #~ def welcome_html(self,ui=None):
+        #~ """
+        #~ Text to display in the "about" dialog of a GUI application.
+        #~ """
+        #~ sep = '<br/>'
+        #~ kw = dict(me=self.site_version(),
+          #~ using = sep.join(['<a href="%s" target="_blank">%s</a>&nbsp;%s' 
+            #~ % (u,n,v) for n,v,u in self.using(ui)]))
+        #~ return  "This is %(me)s using %(using)s." % kw
+            
               
     def login(self,username):
         """

@@ -288,15 +288,28 @@ class About(mixins.EmptyTable):
         body = []
         
         p = []
-        #~ for name,version,url in settings.SITE.using(ui):
+        
+        E = xghtml.E
+        
+        sep = ''
+        if settings.SITE.verbose_name:
+            p.append(_("This is "))
+            if settings.SITE.url:
+                p.append(E.a(settings.SITE.verbose_name,href=settings.SITE.url,target='_blank'))
+            else:
+                p.append(E.b(settings.SITE.verbose_name))
+            if settings.SITE.version:
+                p.append(' ')
+                p.append(settings.SITE.version)
+            sep = _(' using ')
+        
         for name,version,url in settings.SITE.using():
-            if len(p):
-                #~ body.append(xghtml.E.br())
-                p.append(', ')
-            p.append(xghtml.E.a(name,href=url,target='_blank'))
+            p.append(sep)
+            p.append(E.a(name,href=url,target='_blank'))
             p.append(' ')
             p.append(version)
-        body.append(xghtml.E.p(*p))
+            sep = ', '
+        body.append(E.p(*p))
         
         #~ print "20121112 startup_time", settings.SITE.startup_time.date()
         def dtfmt(dt):
@@ -308,19 +321,23 @@ class About(mixins.EmptyTable):
               time=dt.time())
             
         items = []
-        E = xghtml.E
         times = []
-        times.append((_("Server uptime"),settings.SITE.startup_time))
-        for src in ("lino","lino_welfare"):
-            label = _("Source timestamp (%s)") % src
+        value = settings.SITE.startup_time
+        label = _("Server uptime")
+        body.append(E.p(unicode(label),' : ',E.b(dtfmt(value))))
+        body.append(E.p(unicode(_("Source timestamps:"))))
+        for src in ("lino","lino_welfare",'django','djangosite','north','atelier'):
+            label = src
             value = codetime('%s.*' % src)
-            times.append((label,value))
-        for label,value in times:
             if value is not None:
-                items.append(E.li(unicode(label),' : ',E.b(dtfmt(value))))
+                times.append((label,value))
+        def mycmp(a,b): return cmp(b[1],a[1])
+        times.sort(mycmp)
+        for label,value in times:
+            items.append(E.li(unicode(label),' : ',E.b(dtfmt(value))))
         body.append(E.ul(*items))
         
-        return xghtml.E.div(*body,class_='htmlText')
+        return E.div(*body,class_='htmlText')
         
         
     #~ @dd.displayfield(_("Versions"))
