@@ -9,10 +9,11 @@ see the `hg st` of each project. As long as I answer "n" to the
 confirmations everybody is happy.
 
 bug fixed:
-:menuselection: `Site --> About` didn't display
+:menuselection:`Site --> About` didn't display
 the application's version.
+
 Removed the `welcome_html` method from :class:`lino.ui.Site` as is 
 was no longer used.
 
-:menuselection: `Site --> About` now also shows the sourcecode 
+:menuselection:`Site --> About` now also shows the sourcecode 
 timestamps for django, atelier, djangosite and north.
