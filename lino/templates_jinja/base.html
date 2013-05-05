@@ -56,9 +56,7 @@
 {% if request %}
 &copy; Copyright {{now.year}} by <a href="http://{{request.get_host()}}">{{site.title}}</a>.
 {% endif %}
-Using
-{% set sep = joiner(", ") %}
-{% for name,version,url in site.using() %}{{ sep() }}<a href="{{url}}">{{name}}</a> {{version}}{% endfor %}
+{{E.tostring(site.welcome_html())}}
 </p>
 {% endblock %}
 </footer>

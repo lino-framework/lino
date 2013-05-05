@@ -11,9 +11,8 @@ confirmations everybody is happy.
 bug fixed:
 :menuselection:`Site --> About` didn't display
 the application's version.
-
-Removed the `welcome_html` method from :class:`lino.ui.Site` as is 
-was no longer used.
+Idem for the :srcref:`/lino/lino/templates_jinja/base.html` 
+template.
 
 :menuselection:`Site --> About` now also shows the sourcecode 
 timestamps for django, atelier, djangosite and north.

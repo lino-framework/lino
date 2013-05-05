@@ -34,7 +34,6 @@ from lino import mixins
 from lino import dd
 
 
-
 from lino.utils.xmlgen import html as xghtml
 E = xghtml.E
 
@@ -287,29 +286,7 @@ class About(mixins.EmptyTable):
         #~ return settings.SITE.welcome_html(ui)
         body = []
         
-        p = []
-        
-        E = xghtml.E
-        
-        sep = ''
-        if settings.SITE.verbose_name:
-            p.append(_("This is "))
-            if settings.SITE.url:
-                p.append(E.a(settings.SITE.verbose_name,href=settings.SITE.url,target='_blank'))
-            else:
-                p.append(E.b(settings.SITE.verbose_name))
-            if settings.SITE.version:
-                p.append(' ')
-                p.append(settings.SITE.version)
-            sep = _(' using ')
-        
-        for name,version,url in settings.SITE.using():
-            p.append(sep)
-            p.append(E.a(name,href=url,target='_blank'))
-            p.append(' ')
-            p.append(version)
-            sep = ', '
-        body.append(E.p(*p))
+        body.append(settings.SITE.welcome_html())
         
         #~ print "20121112 startup_time", settings.SITE.startup_time.date()
         def dtfmt(dt):

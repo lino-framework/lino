@@ -992,9 +992,38 @@ class Site(lino.Site):
                 yield ("Extensible",version ,"http://ext.ensible.com/products/calendar/")
             yield ("Silk Icons",'1.3',"http://www.famfamfam.com/lab/icons/silk/")
 
-            
-          
 
+    def welcome_html(self,ui=None):
+        """
+        Return a HTML version of the "This is APPLICATION 
+        version VERSION using ..." text. to be displayed in the 
+        About dialog, in the plain html footer, and maybe at other 
+        places.
+        """
+        from lino.utils.xmlgen.html import E
+        from django.utils.translation import ugettext as _
+        
+        p = []
+        sep = ''
+        if self.verbose_name:
+            p.append(_("This is "))
+            if self.url:
+                p.append(E.a(self.verbose_name,href=self.url,target='_blank'))
+            else:
+                p.append(E.b(self.verbose_name))
+            if self.version:
+                p.append(' ')
+                p.append(self.version)
+            sep = _(' using ')
+        
+        for name,version,url in self.using():
+            p.append(sep)
+            p.append(E.a(name,href=url,target='_blank'))
+            p.append(' ')
+            p.append(version)
+            sep = ', '
+        return E.span(*p)
+        
     #~ def welcome_html(self,ui=None):
         #~ """
         #~ Text to display in the "about" dialog of a GUI application.
