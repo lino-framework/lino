@@ -91,7 +91,7 @@ A beginner discovering the world of virtual boxes...
 I have many files which I'd like to see from both 
 operating systems (Ubuntu and Windows XP).
 What I need is `Shared Folders
-<http://www.virtuatopia.com/index.php/VirtualBox_Shared_Folders>`.
+<http://www.virtuatopia.com/index.php/VirtualBox_Shared_Folders>`_.
 
 To access shared folders from a virtual machine I need 
 the `Guest Additions <http://www.virtualbox.org/manual/ch04.html>`_.
@@ -106,6 +106,7 @@ Seems that I installed the wrong version
 (downloaded directly from Oracle, but apparently there's a more 
 free one).
 There is VirtualBox and VirtualBox, don't mix them up!
+`Wikipedia <http://en.wikipedia.org/wiki/VirtualBox>`_ explains it all.
 
 Removed the following line from :file:`/etc/apt/sources.list`::
 

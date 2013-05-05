@@ -1,0 +1,9 @@
+==============================
+20130505 (Sunday, 05 May 2013)
+==============================
+
+:mod:`atelier.fablib` : The `checkin` command now checks whether a 
+blog entry exists after displaying `hg st` and asking whether to 
+checkin. The advantage is that I can now run "pp ci" just to 
+see the `hg st` of each project. As long as I answer "n" to the 
+confirmations everybody is happy.
