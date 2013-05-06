@@ -1,0 +1,27 @@
+==============================
+20130506 (Monday, 06 May 2013)
+==============================
+
+
+Fixed 2 bugs
+
+- AttributeError at /api/debts/MyBudgets/1: 
+  'Entry' object has no attribute 'remarks'. 
+  This was a typo bug. 
+
+- AttributeError at /:
+  'OneToOneField' object has no attribute 'preferred_height'
+  
+
+
+Debts with a bailiff
+--------------------
+
+Bei einem Analyzegespräch haben wir rausgefunden, dass
+"Gerichtsvollzieher" nicht eine Kontengruppe ist, 
+sondern eine neue Kolonne in 
+:ref:`welfare.debts.LiabilitiesByBudget`.
+Jede Schuld, egal welcher Art kann irgendwann zu einer 
+Gerichtsvollzieher-Sache werden. 
+Und diese Schulden werden besonders gehandhabt und stehen deshalb 
+beim Ausdruck in einer eigenen Tabelle "Schulden (Gerichtsvollzieher)".

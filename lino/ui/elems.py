@@ -1410,7 +1410,16 @@ class SingleRelatedObjectElement(DisplayElement):
         kw.update(
             label=unicode(getattr(relobj.model._meta,'verbose_name',None)) 
                 or relobj.var_name)
-        DisplayElement.__init__(self,lh,relobj.field,**kw)
+        #~ DisplayElement.__init__(self,lh,relobj.field,**kw)
+        
+        #~ kw.setdefault('value','<br/>') # see blog/2012/0527
+        #~ kw.update(always_enabled=True)
+        FieldElement.__init__(self,lh,relobj.field,**kw)
+        #~ self.preferred_height = self.field.preferred_height
+        #~ self.preferred_width = self.field.preferred_width
+        #~ if self.field.max_length:
+            #~ self.preferred_width = self.field.max_length
+        
   
     def add_default_value(self,kw):
         pass
