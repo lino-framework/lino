@@ -1,2 +1,4 @@
 /home/luc/hgwork/lino/docs/admin/index.rst:24: WARNING: toctree contains reference to nonexisting document u'admin/install_apache'
 /home/luc/hgwork/lino/docs/blog/2013/0507.rst:8: WARNING: undefined label: welfare.debts.entries (if the link has no caption the label must precede a section header)
+/home/luc/hgwork/lino/docs/changes.rst:16: WARNING: undefined label: welfare.debts.printliabilitiesbybudget (if the link has no caption the label must precede a section header)
+/home/luc/hgwork/lino/docs/releases/index.rst:1: WARNING: unknown document: 1.6.7

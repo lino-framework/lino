@@ -15,7 +15,12 @@
   benutze.
   
 
-Budget entry #%d has no account_type  
+Since bulk_create() doesn't call full_clean and save(), it is 
+possible to create invalid database rows.
+For example during my tests I had 
+"Budget entry #%d has no account_type".
+I am still experimenting with how to handle this.
+Here is a code draft for an "integrity test" that detects such cases:
   
 >>> import os
 >>> os.environ['DJANGO_SETTINGS_MODULE'] = 'lino_welfare.demo.settings'
