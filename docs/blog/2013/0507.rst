@@ -72,12 +72,14 @@ is run in a separate subprocess, it has its own
 Python interpreter and thus I can use it for as many Django projects 
 as I want (one project per .rst file).
 
-Now I can remove the following item from my todo list:
+Now I can remove the following item from my todo list...
 
 - write unit tests to test the plain ui. 
   The best place would be a tested document with a Django test client.
   But how to instantiate a Django test client from a testcase which 
   does *not* use a test database but the project's demo database?
+  
+... by writing a few lines of code:  
 
 >>> url = '/plain/products/Products'
 >>> res = client.get(url,REMOTE_USER='robin')
@@ -121,29 +123,18 @@ time to increase the version numbers.
 +------------------------------------------+-------------+-------------+
 
 
+VirtualBox Windows guest cannot see shared folders
+--------------------------------------------------
 
-TODO
-----
+I discovered the solution for one problem: 
+I had the network adapter configured as "NAT", but what 
+I wanted was "Bridged".
 
-- wie sagt man Schuldnerberater in FR? Médiateur de dettes
+The other problem remains: the Windows guest doesnt see any 
+host named "vboxsrv".
 
-- jobs.Overview : Seitenwechsel gibt zwischen die verschiedenen Kategorien (Majorés, Intern, usw.)
-
-- Duplizieren ist total buggy
-
-- Ausdruck: 
-
-  - Kontaktangaben: da steht immer Komma am Ende.
-  - Unter der Tabelle "Guthaben, Schulden, Verpflichtungen" eine 
-    weitere Tabelle "Gerichtsvollzieher", in der nur GV-Schulden sind.
-
-- Sequenced : action up and down
-
-- accounts : optionally with automatic seqencing (ref not visible/used)
-
-- `pcsw_demo_tests.py` : 
-  "/choices/pcsw/ContactsByClient/company?type=1&query=mutu got 5 rows instead of [2]"
+Observation: The services manager says that "VirtualBox Guest Additions Service" ist not started.
+And when I start it, it says "Could not start the VirtualBox Guest Additions Service service on Local Computer. 
+Error 1053: The service did not respond to the start or control request in a timely fashion."
 
 
-- Merge the few_countries and few_cities fixtures into demo
-- Convert all_countries to use data from python-babel

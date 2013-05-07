@@ -1,0 +1,49 @@
+=================================
+20130508 (Wednesday, 08 May 2013)
+=================================
+
+
+- "Duplizieren ist total buggy" : zumindest in der momentanen 
+  Development-Version kriege ich keine Probleme reproduziert.
+  Ich höre auf mit aktiver Suche und warte mal auf euer Feedback 
+  nach dem nächsten Release.
+  
+- SiteConfig.master_budget ("Kopiervorlage für Budgets")
+ 
+- Das Erstellen eines Budgets geht jetzt spürbar schneller, 
+  weil ich beim Kopieren jetzt select_related() und bulk_create() 
+  benutze.
+  
+
+Budget entry #%d has no account_type  
+  
+>>> import os
+>>> os.environ['DJANGO_SETTINGS_MODULE'] = 'lino_welfare.demo.settings'
+>>> from lino.runtime import *
+>>> for model in (debts.Entry,):
+...     for o in model.objects.all():
+...         o.full_clean()
+
+
+
+TODO
+----
+
+- wie sagt man Schuldnerberater in FR? Médiateur de dettes
+
+- jobs.Overview : Seitenwechsel zwischen die verschiedenen Kategorien (Majorés, Intern, usw.)
+
+- Ausdruck: 
+
+  - Kontaktangaben: da steht immer Komma am Ende.
+
+- Sequenced : action up and down
+
+- accounts : optionally with automatic seqencing (ref not visible/used)
+
+- `pcsw_demo_tests.py` : 
+  "/choices/pcsw/ContactsByClient/company?type=1&query=mutu got 5 rows instead of [2]"
+
+
+- Merge the few_countries and few_cities fixtures into demo
+- Convert all_countries to use data from python-babel

@@ -17,6 +17,7 @@ class LinoTestCase(TestCase):
 class BlogTest(LinoTestCase):
     def test_20130316(self): self.run_simple_doctests('docs/blog/2013/0316.rst')
     def test_20130507(self): self.run_simple_doctests('docs/blog/2013/0507.rst')
+    def test_20130508(self): self.run_simple_doctests('docs/blog/2013/0508.rst')
     
 class DocsTests(LinoTestCase):
 
