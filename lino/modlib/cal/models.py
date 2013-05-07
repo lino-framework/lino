@@ -31,6 +31,7 @@ from django.utils.translation import pgettext_lazy as pgettext
 from django.contrib.contenttypes.models import ContentType
 from django.utils.encoding import force_unicode
 from django.db.models import loading
+from django.core import exceptions
 
 from north import dbutils
 from north.dbutils import dtosl
@@ -2227,6 +2228,18 @@ if settings.SITE.use_extensible:
             # who am i ?
             me = request.subst_user or request.user
             
+            """
+            If you override `parse_req`, then keep in mind that it will
+            be called *before* Lino checks the requirements. 
+            For example the user may be AnonymousUser even if 
+            the requirements won't let it be executed.
+            """
+            
+            if not me.profile.authenticated: 
+                raise exceptions.PermissionDenied(
+                    _("As %s you have no permission to run this action.") % me.profile)
+                
+                
             # show al my events
             for_me = models.Q(user=me)
             
@@ -2241,13 +2254,12 @@ if settings.SITE.use_extensible:
             tv = rqdata.get(constants.URL_PARAM_TEAM_VIEW,False)
             if tv and constants.parse_boolean(tv):
                 # positive list of ACLs for events of team members
-                #~ team_classes = (AccessClasses.blank_item,AccessClasses.public,AccessClasses.show_busy) 20120829
                 team_classes = (None,AccessClasses.public,AccessClasses.show_busy)
-                #~ logger.info('20120710 %r', tv)
-                team_ids = Membership.objects.filter(user=me).values_list('watched_user__id',flat=True)
-                #~ team.append(request.user.id)
-                for_me = for_me | models.Q(user__id__in=team_ids,access_class__in=team_classes)
-                #~ kw.update(exclude = models.Q(user__id__in=team))
+                my_teams = Membership.objects.filter(user=me)
+                we = settings.SITE.user_model.objects.filter(users_membership_set_by_user__team__in=my_teams)
+                #~ team_ids = Membership.objects.filter(user=me).values_list('watched_user__id',flat=True)
+                #~ for_me = for_me | models.Q(user__id__in=team_ids,access_class__in=team_classes)
+                for_me = for_me | models.Q(user__in=we,access_class__in=team_classes)
             filter = filter & for_me
             #~ logger.info('20120710 %s', filter)
             kw.update(filter=filter)

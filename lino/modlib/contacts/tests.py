@@ -28,7 +28,7 @@ from pprint import pprint
 
 from django.conf import settings
 
-from djangosite.utils.test import RemoteAuthTestCase
+from djangosite.utils.djangotest import RemoteAuthTestCase
 from django.test.utils import override_settings
 
 #from lino.igen import models

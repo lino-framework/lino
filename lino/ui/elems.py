@@ -973,6 +973,11 @@ class ForeignKeyElement(ComplexRemoteComboFieldElement):
         #~ print 20100903,repr(self.field.rel.to)
         #~ assert issubclass(self.field.rel.to,dd.Model), "%r is not a model" % self.field.rel.to
         #~ pw = getattr(field.rel.to,'_lino_preferred_width',None)
+        if isinstance(field.rel.to,basestring):
+            from lino.core.dbutils import resolve_model
+            field.rel.to = resolve_model(field.rel.to)
+            #~ field.lino_resolve_type()
+            #~ raise Exception("20130507 %s : %s" % (field,field.rel.to))
         pw = field.rel.to.preferred_foreignkey_width
         if pw is not None:
             kw.setdefault('preferred_width',pw)

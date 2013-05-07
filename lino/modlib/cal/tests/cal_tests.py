@@ -18,7 +18,7 @@ logger = logging.getLogger(__name__)
 from lino.utils import i2d
 from lino.core.dbutils import resolve_model
 #Companies = resolve_model('contacts.Companies')
-from djangosite.utils.test import TestCase
+from djangosite.utils.djangotest import TestCase
 
 #~ Person = resolve_model('contacts.Person')
 #~ Property = resolve_model('properties.Property')

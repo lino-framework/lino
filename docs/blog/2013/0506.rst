@@ -19,7 +19,7 @@ Debts with a bailiff
 
 Bei einem Analyzegespräch haben wir rausgefunden, dass
 "Gerichtsvollzieher" nicht eine Kontengruppe ist, 
-sondern eine neue Kolonne in 
+sondern eine neue Kolonne in `bailiff`
 :ref:`welfare.debts.LiabilitiesByBudget`.
 Jede Schuld, egal welcher Art kann irgendwann zu einer 
 Gerichtsvollzieher-Sache werden. 

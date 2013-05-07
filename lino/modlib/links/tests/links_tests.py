@@ -38,7 +38,7 @@ from lino.utils import i2d
 from lino.core.dbutils import resolve_model
 from lino.core.dbutils import obj2str
 #Companies = resolve_model('contacts.Companies')
-from djangosite.utils.test import TestCase
+from djangosite.utils.djangotest import TestCase
 
 from lino.modlib.links.models import Link, LinkType
 

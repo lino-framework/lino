@@ -563,6 +563,7 @@ class Site(lino.Site):
         super(Site,self).override_defaults(**kwargs)
         
         installed_apps = tuple(self.get_installed_apps()) + ('lino','djangosite')
+        installed_apps = tuple([str(x) for x in installed_apps])
         self.update_settings(INSTALLED_APPS=installed_apps)
         
         if self.webdav_url is None:

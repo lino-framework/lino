@@ -28,10 +28,11 @@ class Site(Site,ledger.SiteMixin):
     #~ author_email = 'luc.saffre@gmail.com'
     
     #~ demo_fixtures = 'std few_countries few_cities few_languages props demo demo2 history'.split()
-    demo_fixtures = 'std all_countries be few_cities all_languages props democfg demo demo2 history local'.split()
+    #~ demo_fixtures = 'std all_countries be few_cities few_languages props democfg demo demo2'.split()
+    demo_fixtures = 'std few_countries few_cities few_languages props democfg demo demo2'.split()
     
     #~ languages = ['en']
-    #~ languages = 'de fr et en'.split()
+    languages = 'de fr et en'
     
     project_model = 'tickets.Project'
     user_model = 'users.User'

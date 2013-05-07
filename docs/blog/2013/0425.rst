@@ -2,8 +2,8 @@
 20130425 (Thursday, 25 April 2013)
 ==================================
 
-Coosing the company of a ClientContact
---------------------------------------
+Choosing the company of a ClientContact
+---------------------------------------
 
 It was not possible to choose a company in :ref:`welfare.pcsw.ClientContact`.
 (Already in the last release?).

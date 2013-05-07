@@ -34,12 +34,8 @@ from django.utils.encoding import force_unicode
 from django.core.exceptions import ValidationError
 
 from lino import dd
-#~ from lino.utils import i2d
-#~ from lino.core.dbutils import resolve_model
-#Companies = resolve_model('contacts.Companies')
-#~ from djangosite.utils.test import TestCase
 
-from djangosite.utils.test import RemoteAuthTestCase
+from djangosite.utils.djangotest import RemoteAuthTestCase
 
 partners = dd.resolve_app(settings.SITE.partners_app_label)
 

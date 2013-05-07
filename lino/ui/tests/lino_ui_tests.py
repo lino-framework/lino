@@ -33,7 +33,7 @@ from django.utils.encoding import force_unicode
 from django.core.exceptions import ValidationError
 
 #~ from lino import dd
-from djangosite.utils.test import NoAuthTestCase
+from djangosite.utils.djangotest import NoAuthTestCase
 
 
 class QuickTest(NoAuthTestCase):

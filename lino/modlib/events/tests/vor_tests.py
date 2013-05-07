@@ -25,7 +25,7 @@ from django.core.exceptions import ValidationError
 from lino import dd
 from lino.utils import i2d
 from north import dbutils
-from djangosite.utils.test import TestCase
+from djangosite.utils.djangotest import TestCase
 
 class DemoTest(TestCase):
     #~ fixtures = [ 'std','demo' ]

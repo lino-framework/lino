@@ -25,7 +25,7 @@ class AjaxExceptionResponse:
                 response += tb
             import logging
             logger = logging.getLogger(__name__)
-            logger.warning("AjxExceptionRsponse:\n" + response)
+            logger.warning("AjaxExceptionResponse:\n" + response)
             return HttpResponseServerError(response)
                 
                 

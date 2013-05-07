@@ -31,8 +31,8 @@ Miscellaneous
 -------------
 
 I noticed that Melanie didn't have the
-:menulabel:`Explorer` menu. But at least 
-:menulabel:`Explorer --> Courses` is meant to be visible for 
+:menuselection:`Explorer` menu. But at least 
+:menuselection:`Explorer --> Courses` is meant to be visible for 
 her profile ("chef de service" without being 
 "system administrator").
 
