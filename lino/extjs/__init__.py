@@ -840,8 +840,9 @@ tinymce.init({
         Make the dummy messages file.
         But only when generating for root user.
         """
-        if jsgen._for_user_profile == dd.UserProfiles.admin:
-            make_dummy_messages_file(self.linolib_template_name(),messages)
+        if False: # no longer needed because babel extracts them
+            if jsgen._for_user_profile == dd.UserProfiles.admin:
+                make_dummy_messages_file(self.linolib_template_name(),messages)
         
         #~ assert user == jsgen._for_user
         assert profile == jsgen._for_user_profile

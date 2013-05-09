@@ -120,4 +120,40 @@ Let's try this::
     $ sudo aptitude reinstall virtualbox-dkms
     
 Then it worked.  
-Summary: 
+
+Summary: Maybe i was just lacking the correct linux-headers package.
+Which means that there seems to be some problem 
+with a missing dependence declaration, 
+but i didn't really find a clear explanation
+ and don't have an environment for doing such tests...
+
+
+Renaming files from a bash command line
+---------------------------------------
+
+The easiest way to rename a series of files to make their names 
+download-friendly (replace spaces by "_", "ü" by "u",...) is::
+
+  $ rename -n 's/ /_/g' *
+  $ rename -n 's/ü/u/g' *
+
+(thanks to Mornedhel on http://ubuntuforums.org/showthread.php?t=1190887)
+
+
+
+
+Menübefehl :menuselection:`Budget-Kopiervorlage`
+------------------------------------------------
+
+- Es gibt einen neuen Menübefehl 
+  :menuselection:`Konfigurierung --> Schuldnerberatung --> Budget-Kopiervorlage`,
+  und der ist auch für Kerstin sichtbar.
+
+Das war nicht ganz einfach, denn Lino-Welfare benutzte noch die 
+veraltete Methode, das Menü "Konfiguration" für alle Nicht-Systemverwalter 
+komplett rauszulassen. Das tut er jetzt nicht mehr.
+Aber das hat zur Folge, dass dieses Menü für alle Nicht-Systemverwalter 
+eine ganze Serie unnützer Befehle enthält. Einfach nur, weil ich in den 
+entsprechenden Tabellen noch keine `required` gesetzt habe.
+Lästige Arbeit und könnte zu unerwünschten kleinen Überraschungen 
+führen. 

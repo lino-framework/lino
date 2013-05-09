@@ -13,6 +13,7 @@
 ## along with Lino; if not, see <http://www.gnu.org/licenses/>.
 
 import os,sys
+import time
 import fnmatch
 
 #~ def codefiles(pattern='.*', flags=0):
@@ -46,8 +47,8 @@ def codetime(*args,**kw):
     for name,filename in codefiles(*args,**kw):
         stat = os.stat(filename)
         mtime = stat.st_mtime
-        #~ print 20130204, filename, time.ctime(mtime) 
         if code_mtime is None or code_mtime < mtime:
+            #~ print 20130204, filename, time.ctime(mtime) 
             code_mtime = mtime
             pivot = filename
     #~ print '20130204 codetime:', time.ctime(code_mtime), pivot

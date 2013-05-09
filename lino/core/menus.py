@@ -219,6 +219,32 @@ class Menu(MenuItem):
     Represents a menu. A menu is conceptually a :class:`MenuItem` 
     which contains other menu items.
     """
+    
+    avoid_lonely_items = False
+    """
+    If set to True, avoid lonely menu items by lifting them up one level.
+    This is not done for top-level menus
+    
+    For example the following menu::
+        
+        Foo           Bar         Baz
+        |Foobar       |BarBaz
+         |Copy
+         |Paste
+        |FooBarBaz
+         | Insert
+         
+    would become::
+         
+        Foo           BarBaz        Baz
+        |Foobar       
+         |Copy
+         |Paste
+        |Insert
+         
+    
+    """
+    
     #~ template_to_response = 'lino/menu.html'
     def __init__(self,user_profile,name,label=None,parent=None,**kw):
         MenuItem.__init__(self,None,name,label,**kw)
@@ -246,11 +272,9 @@ class Menu(MenuItem):
                     #~ newitems.append(mi)
                 #~ if len(mi.items) > 0:
                 if has_items(mi) > 0:
-                    #~ if self.parent is None or len(mi.items) > 1:
-                        #~ newitems.append(mi)
-                    #~ elif len(mi.items) == 1:
-                        #~ newitems.append(mi.items[0])
-                    if len(mi.items) == 1:
+                    if not self.avoid_lonely_items:
+                        newitems.append(mi)
+                    elif len(mi.items) == 1:
                         if not mi.items[0].label.startswith('-'):
                             if self.parent is None:
                                 newitems.append(mi)
