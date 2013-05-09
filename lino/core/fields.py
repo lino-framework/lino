@@ -229,7 +229,8 @@ class RemoteField(FakeField):
         #~ store = top_model.get_default_table().get_handle().store
         #~ store = self.field.model.get_default_table().get_handle().store
         from lino.ui import store
-        self._lino_atomizer = store.create_field(self,name)
+        #~ self._lino_atomizer = store.create_field(self,name)
+        store.get_atomizer(self,name)
         
         
     #~ def lino_resolve_type(self):
@@ -376,7 +377,8 @@ class VirtualField(FakeField): # (Field):
         #~ self._lino_atomizer = store.create_field(self,self.name)
         #~ self._lino_atomizer = self.return_type._lino_atomizer
         from lino.ui import store
-        self._lino_atomizer = store.create_field(self,self.name)
+        #~ self._lino_atomizer = store.create_field(self,self.name)
+        store.get_atomizer(self,self.name)
         
       
     def unused_contribute_to_class(self, cls, name):
@@ -896,16 +898,19 @@ def get_data_elem(model,name):
         # logger.warning("20120406 RemoteField %s in %s",name,self)
         #~ model = self.model
 
+        from lino.ui import store
+        
         field_chain = []
         for n in parts:
             assert model is not None
-            model.get_default_table().get_handle() # make sure that all atomizers of those fields get created.
+            #~ 20130508 model.get_default_table().get_handle() # make sure that all atomizers of those fields get created.
             fld = get_data_elem(model,n)
             if fld is None:
                 # raise Exception("Part %s of %s got None" % (n,model))
                 raise Exception(
                     "Invalid RemoteField %s.%s (no field %s in %s)" % 
                     (full_model_name(model),name,n,full_model_name(model)))
+            store.get_atomizer(fld,fld.name) # make sure that the atomizer gets created.
             field_chain.append(fld)
             if fld.rel:
                 model = fld.rel.to

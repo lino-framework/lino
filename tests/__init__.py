@@ -53,9 +53,12 @@ class PackagesTests(LinoTestCase):
     """
     def test_01(self): self.run_packages_test(SETUP_INFO['packages'])
 
+class CosiTests(LinoTestCase):
+    def test_cosi(self):      self.run_django_admin_test("lino.projects.cosi.settings") # covered by docs/tutorials/quickstart
+    def test_cosi_demo(self): self.run_simple_doctests('docs/tested/test_cosi_demo.rst')
+        
 class ProjectsTests(LinoTestCase):
     
-    def test_cosi(self): self.run_django_admin_test("lino.projects.cosi.settings") # covered by docs/tutorials/quickstart
     def test_events(self): self.run_django_admin_test("lino.projects.events.settings") 
     def test_presto(self): self.run_django_admin_test("lino.projects.presto.test_settings") 
     def test_belref(self): self.run_django_admin_test("lino.projects.belref.settings") 

@@ -47,7 +47,8 @@ from django.utils.translation import ugettext_lazy as _
 
 from lino.modlib.ledger.utils import FiscalYears
 #~ from lino.core.dbutils import models_by_base
-partner_model = settings.SITE.partners_app_label + '.Partner'
+#~ partner_model = settings.SITE.partners_app_label + '.Partner'
+partners = dd.resolve_app(settings.SITE.partners_app_label)
 
 ZERO = Decimal()
  
@@ -200,10 +201,18 @@ class VatDocument(VatTotal):
     class Meta:
         abstract = True
   
-    partner = models.ForeignKey(partner_model)
+    #~ partner = models.ForeignKey(partner_model)
+    partner = partners.PartnerField()
     item_vat = models.BooleanField(_("Prices include VAT"),default=False,
       help_text=_("Whether prices includes VAT or not."))
     vat_regime = VatRegimes.field(blank=True)
+    
+    #~ @classmethod
+    #~ def get_filter_kw(self,ar,**kw):
+        #~ kw = super(VatDocument,self).get_filter_kw(ar,**kw)
+        #~ master_instance = kw.get('master_instance')
+        #~ if master_instance is not None:
+            #~ kw.update(master_instance = master_instance.get_partner_instance())
     
     
     def get_trade_type(self):

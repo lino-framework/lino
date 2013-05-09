@@ -90,7 +90,8 @@ Utilities:
 
 Signals:
 
-- :attr:`startup <djangosite.signals.startup>`
+- :attr:`pre_startup <djangosite.signals.pre_startup>`
+- :attr:`post_startup <djangosite.signals.post_startup>`
 - :attr:`pre_analyze <lino.core.signals.pre_analyze>`
 - :attr:`post_analyze <lino.core.signals.post_analyze>`
 - :attr:`pre_merge <lino.core.signals.pre_merge>`
@@ -225,7 +226,7 @@ from lino.core.layouts import ParamsLayout
 
 
 from lino.core.signals import pre_ui_create, pre_ui_delete, pre_ui_update, ChangeWatcher
-from djangosite.signals import startup
+from djangosite.signals import pre_startup, post_startup
 
 from lino.core.signals import pre_analyze
 from lino.core.signals import post_analyze

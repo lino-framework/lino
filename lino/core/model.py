@@ -472,6 +472,12 @@ class Model(models.Model):
         #~ username = kw.pop('username',None)
             
 
+    def get_typed_instance(self,model):
+        """
+        Used when implementing :ref:`polymorphism`.
+        """
+        assert model is self.__class__
+        return self
         
         
     LINO_MODEL_ATTRIBS = (
@@ -501,6 +507,7 @@ class Model(models.Model):
               'lookup_or_create',
               'on_duplicate',
               'on_create',
+              'get_typed_instance',
               'print_subclasses_graph')
     """
     Used by :mod:`lino.core.kernel`

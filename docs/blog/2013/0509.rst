@@ -1,0 +1,18 @@
+================================
+20130509 (Thursday, 09 May 2013)
+================================
+
+The Cosi demo site had generated an interesting traceback 
+which lead to another step in the evolution of 
+:mod:`lino.modlib.partners` (which is currently 
+being used by :mod:`lino.projects.cosi`).
+The challenge was to display a table with the ledger invoices of 
+a Person or Organisation in a way that works with both 
+possible choices for :attr:`lino.ui.Site.partners_app_label`.
+The new method :meth:`lino.core.model.Model.get_typed_instance`
+is necessary for this. 
+
+New document :ref:`cosi.tested` with a first 
+section "Person #115 is not a Partner"
+which reproduced the traceback.
+

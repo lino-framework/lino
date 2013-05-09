@@ -57,7 +57,7 @@ class Site(lino.Site):
     
     partners_app_label = 'contacts'
     """
-    Temporary setting, see :doc:`/tickets/72`
+    Temporary setting, see :ref:`polymorphism`.
     """
     
     # three constants used by lino.modlib.workflows:

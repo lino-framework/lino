@@ -14,6 +14,7 @@ Developer's Guide
    datamig
    actors
    versioning
-   ../ref/model_methods
+   /ref/model_methods
    /todo
    API </api/lino>
+   /tested/index

@@ -264,6 +264,8 @@ but e.g. :class:`PersonMixin` overrides this.
         #~ return join_words(self.last_name.upper(),self.first_name)
         return unicode(self)
     
+    def get_partner_instance(self):
+        return self # compatibility with lino.modlib.partners
 
 class PartnerDetail(dd.FormLayout):
   
@@ -917,3 +919,6 @@ def setup_explorer_menu(site,ui,profile,m):
     #~ m.add_action(Person.detail_action)
         
   
+def PartnerField(**kw):
+    return models.ForeignKey(Partner,**kw)
+    

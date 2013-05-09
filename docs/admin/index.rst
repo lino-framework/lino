@@ -40,7 +40,6 @@ Other
     upgrade
     datamig
     apache_webdav
-    install_apache
     using
     webdav
     install_shell_scripts

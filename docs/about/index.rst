@@ -66,11 +66,12 @@ Lino then adds its own features to the above:
   to manage your database migrations.
   
 - **Other features** include extensions to handle
-  :doc:`Polymorphism </topics/mti>`, 
+  :ref:`polymorphism`, 
   :doc:`/topics/perms` 
   and 
   :doc:`/topics/workflow`.
   
+
 
 Components
 ----------

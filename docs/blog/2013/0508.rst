@@ -2,6 +2,8 @@
 20130508 (Wednesday, 08 May 2013)
 =================================
 
+Schuldnerberatung
+-----------------
 
 - "Duplizieren ist total buggy" : zumindest in der momentanen 
   Development-Version kriege ich keine Probleme reproduziert.
@@ -31,6 +33,32 @@ Here is a code draft for an "integrity test" that detects such cases:
 
 
 
+
+Änderungen wurden nicht festgehalten
+------------------------------------
+
+Ein Bug, den niemand bemerkt hatte: Lino-Welfare schrieb keinerlei 
+:mod:`lino.modlib.changes` mehr. 
+Behoben.
+djangosite sendet jetzt Signale `pre_startup` und `post_startup` 
+statt einfach nur `startup`.
+
+Dieser Bug fiel auf bei der Analyse des folgenden Problems,
+und die test cases in 
+:mod:`lino_welfare.tests.watchtim_tests`
+decken jetzt auch diese Funktionalität grösstenteils ab.
+
+
+Unerwünschte Neuzugänge
+-----------------------
+
+Ein Lauf mit tim2lino und watch_tim hatte ca 200 "Neuzugänge" geschaffen, 
+die eigentlich gar keine waren. Subtile Änderungen in 
+:mod:`watchtim <lino_welfare.management.commands.watchtim>`
+und 
+der Dokumentation (:ref:`welfare.watch_tim`).
+Ausserdem akrybische unit tests in :mod:`lino_welfare.tests.watchtim_tests`.
+
 TODO
 ----
 
@@ -52,3 +80,5 @@ TODO
 
 - Merge the few_countries and few_cities fixtures into demo
 - Convert all_countries to use data from python-babel
+
+

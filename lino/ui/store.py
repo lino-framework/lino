@@ -196,8 +196,9 @@ class StoreField(object):
 #~ class RemoteStoreField(StoreField):
     #~ def __init__(self,store,rf):
         #~ self.remote_field = rf
-        #~ self.delegate = store.create_field(rf.field)
+        #~ self.delegate = store.create_atomizer(rf.field)
         #~ StoreField.__init__
+      
       
 class RelatedMixin(object):
         
@@ -778,14 +779,20 @@ class OneToOneStoreField(RelatedMixin,StoreField):
         #~ d[self.field.name] = self.value_from_object(request,obj)
         
 
+def get_atomizer(fld,name):
+    sf = getattr(fld,'_lino_atomizer',None)
+    if sf is None:
+        sf = create_atomizer(fld,name)
+        setattr(fld,'_lino_atomizer',sf)
+    return sf
 
-def create_field(fld,name):
+def create_atomizer(fld,name):
     if isinstance(fld,fields.RemoteField):
         """
         Hack: we create a StoreField based on the remote field,
         then modify its behaviour.
         """
-        sf = create_field(fld.field,fld.name)
+        sf = create_atomizer(fld.field,fld.name)
         def value_from_object(sf,obj,ar):
             m = fld.func
             return m(obj)
@@ -801,7 +808,7 @@ def create_field(fld,name):
         #~ sf.value2list = curry(value2list,sf)
         return sf
     #~ if isinstance(fld,tables.ComputedColumn):
-        #~ logger.info("20111230 Store.create_field(%s)", fld)
+        #~ logger.info("20111230 Store.create_atomizer(%s)", fld)
         #~ return ComputedColumnField(fld)
     meth = getattr(fld,'_return_type_for_method',None)
     if meth is not None:
@@ -812,10 +819,10 @@ def create_field(fld,name):
     #~ if isinstance(fld,dd.LinkedForeignKey):
         #~ return LinkedForeignKeyField(fld,name)
     if isinstance(fld,dd.RequestField):
-        delegate = create_field(fld.return_type,fld.name)
+        delegate = create_atomizer(fld.return_type,fld.name)
         return RequestStoreField(fld,delegate,name)
     if isinstance(fld,dd.VirtualField):
-        delegate = create_field(fld.return_type,fld.name)
+        delegate = create_atomizer(fld.return_type,fld.name)
         return VirtStoreField(fld,delegate,name)
     if isinstance(fld,models.FileField):
         return FileFieldStoreField(fld,name)
@@ -869,7 +876,7 @@ class ParameterStore(BaseStore):
         
         for pf in params_layout_handle._store_fields:
         #~ for pf in rh.report.params:
-            self.param_fields.append(create_field(pf,pf.name))
+            self.param_fields.append(create_atomizer(pf,pf.name))
         
         self.param_fields = tuple(self.param_fields)
         self.url_param = url_param
@@ -1038,17 +1045,14 @@ class Store(BaseStore):
         
 
     def add_field_for(self,fields,df):
-        sf = getattr(df,'_lino_atomizer',None)
-        if sf is None:
-            sf = create_field(df,df.name)
-            setattr(df,'_lino_atomizer',sf)
+        sf = get_atomizer(df,df.name)
             
         if not sf in self.all_fields:
             self.all_fields.append(sf)
             
         #~ sf = self.df2sf.get(df,None)
         #~ if sf is None:
-            #~ sf = self.create_field(df,df.name)
+            #~ sf = self.create_atomizer(df,df.name)
             #~ self.all_fields.append(sf)
             #~ self.df2sf[df] = sf
         fields.append(sf)

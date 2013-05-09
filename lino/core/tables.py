@@ -1012,10 +1012,12 @@ class AbstractTable(actors.Actor):
             if master_instance is None:
                 if not self.master_field.null:
                     #~ logger.info('20120519 %s.get_filter_kw()--> None',self)
-                    return # cannot add rows to this report
-            elif not isinstance(master_instance,self.master):
-                raise Exception("%r is not a %s (master_key is %r)" % (
-                  master_instance,self.master.__name__,self.master_field))
+                    return # cannot add rows to this table
+            else:
+                master_instance = master_instance.get_typed_instance(self.master)
+                if not isinstance(master_instance,self.master):
+                    raise Exception("%r is not a %s (%s.master_key = '%s')" % (
+                      master_instance.__class__,self.master,self,self.master_key))
             kw[self.master_field.name] = master_instance
             
         #~ logger.info('20120519 %s.get_filter_kw(%r) --> %r',self,master_instance,kw)

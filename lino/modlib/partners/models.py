@@ -73,7 +73,7 @@ if False:
             super(PartnerType,self).__init__(value,model_spec,name)
             def f(model):
                 self.model = model
-                self.text = model._meta._verbose_name
+                self.text = model._meta.verbose_name
             dd.do_when_prepared(f,model_spec)
             
             
@@ -359,6 +359,16 @@ class ConcretePartner(dd.Model):
     
     def get_partner_name(self):
         raise NotImplementedError()
+        
+    def get_typed_instance(self,model):
+        if model is self.__class__: return self
+        return self.partner
+        #~ if model is Person: return self.
+        
+    #~ def get_partner_instance(self):
+        #~ if self.partner_id is None:
+            #~ return None
+        #~ return self.partner
         
     def save(self,*args,**kw):
         if self.partner_id is None:
@@ -922,3 +932,10 @@ def setup_explorer_menu(site,ui,profile,m):
     #~ m.add_action(Person.detail_action)
         
   
+  
+def PartnerField(**kw):
+    #~ return dd.FieldsGroup(
+        #~ partner_type=PartnerTypes.field(),
+        #~ partner=models.ForeignKey(ConcretePartner,**kw))
+    return models.ForeignKey(Partner,**kw)
+    

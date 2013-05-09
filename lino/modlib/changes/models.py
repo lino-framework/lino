@@ -190,6 +190,7 @@ def watch_changes(model,ignore=[],master_key=None,**options):
         if not f.editable:
             ignore.add(f.name)
     model._change_watcher_spec = WatcherSpec(ignore,get_master)
+    #~ logger.info("20130508 watch_changes(%s)",model)
 
 
 def get_master(obj):

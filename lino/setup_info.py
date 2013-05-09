@@ -153,6 +153,7 @@ lino.projects.cms.fixtures
 lino.projects.cosi
 lino.projects.cosi.fixtures
 lino.projects.cosi.tests
+lino.projects.cosi.settings
 lino.projects.crl
 lino.projects.crl.fixtures
 lino.projects.events
