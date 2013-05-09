@@ -2,6 +2,9 @@
 20130509 (Thursday, 09 May 2013)
 ================================
 
+Polymorphism
+------------
+
 The Cosi demo site had generated an interesting traceback 
 which lead to another step in the evolution of 
 :mod:`lino.modlib.partners` (which is currently 
@@ -16,3 +19,105 @@ New document :ref:`cosi.tested` with a first
 section "Person #115 is not a Partner"
 which reproduced the traceback.
 
+(Yes :ref:`polymorphism` without MTI isn't yet fully functional
+needs better documentation)
+
+
+Kernel driver not installed
+---------------------------
+
+Using Ubuntu LTS 12.04 with precise-proposed.
+I just had a kernel upgrade from 3.5.0-28-generic to 3.5.0-29-generic.
+Now I get the folowing message when I try to start my VirtualBox VM:
+
+    **Error in suplibOsInit**
+
+    Kernel driver not installed (rc=-1908)
+
+    The VirtualBox Linux kernel driver (vboxdrv) is either not 
+    loaded or there is a permission problem with /dev/vboxdrv. 
+    Please reinstall the kernel module by executing
+
+    '/etc/init.d/vboxdrv setup'
+
+    as root. If it is available in your distribution, you should 
+    install the DKMS package first. This package keeps track of 
+    Linux kernel changes and recompiles the vboxdrv kernel module if 
+    necessary.
+
+
+I remember to have had similar messages 
+:doc:`some days ago <0503>`.
+But this time I have also::
+
+    $ ls /lib/modules/`uname -r`/updates/dkms/vbox*
+    ls: cannot access /lib/modules/3.5.0-29-generic/updates/dkms/vbox*: No such file or directory
+
+So maybe its enough to say::
+
+  $ sudo apt-get install --reinstall virtualbox-dkms
+
+But no::
+
+    ------------------------------
+    Deleting module version: 4.1.12
+    completely from the DKMS tree.
+    ------------------------------
+    Done.
+    Unpacking replacement virtualbox-dkms ...
+    Setting up virtualbox-dkms (4.1.12-dfsg-2ubuntu0.3) ...
+    Loading new virtualbox-4.1.12 DKMS files...
+    Building only for 3.5.0-29-generic
+    Module build for the currently running kernel was skipped since the
+    kernel source for this kernel does not seem to be installed.
+     * Stopping VirtualBox kernel modules                                [ OK ] 
+     * Starting VirtualBox kernel modules                                [ OK ]
+     * No suitable module for running kernel found
+
+Let's try this::
+
+    $ sudo apt-get remove --purge virtualbox virtualbox-guest-additions
+    $ sudo apt-get clean
+    $ sudo rm /lib/modules/3.5.0-28-generic/updates/dkms/vbox*
+    rm: cannot remove `/lib/modules/3.5.0-28-generic/updates/dkms/vbox*': No such file or directory
+    $ sudo reboot
+    $ sudo aptitude install virtualbox virtualbox-guest-additions
+    The following NEW packages will be installed:
+      virtualbox virtualbox-dkms{a} virtualbox-guest-additions virtualbox-qt{a} 
+    0 packages upgraded, 4 newly installed, 0 to remove and 0 not upgraded.
+    Need to get 23.0 MB of archives. After unpacking 69.6 MB will be used.
+    Do you want to continue? [Y/n/?] 
+    (...)
+    Setting up virtualbox-guest-additions (4.1.12-1) ...
+    Processing triggers for python-central ...
+    Setting up virtualbox-dkms (4.1.12-dfsg-2ubuntu0.3) ...
+    Loading new virtualbox-4.1.12 DKMS files...
+    First Installation: checking all kernels...
+    Building only for 3.5.0-29-generic
+    Module build for the currently running kernel was skipped since the
+    kernel source for this kernel does not seem to be installed.
+     * Stopping VirtualBox kernel modules                                [ OK ] 
+     * Starting VirtualBox kernel modules
+     * No suitable module for running kernel found                       [fail]
+                                                                                                                                                    [fail]
+    invoke-rc.d: initscript virtualbox, action "restart" failed.
+    Setting up virtualbox-qt (4.1.12-dfsg-2ubuntu0.3) ...
+
+    $ sudo aptitude install linux-headers-`uname -r`-pae
+    $ sudo aptitude install linux-headers-`uname -r`
+    The following NEW packages will be installed:
+      linux-headers-3.5.0-29{a} linux-headers-3.5.0-29-generic 
+    0 packages upgraded, 2 newly installed, 0 to remove and 0 not upgraded.
+    ...
+    run-parts: executing /etc/kernel/header_postinst.d/dkms 3.5.0-29-generic /boot/vmlinuz-3.5.0-29-generic
+    Error! Could not locate dkms.conf file.
+    File:  does not exist.
+    
+    $ sudo aptitude reinstall dkms
+    $ sudo aptitude install linux-headers-`uname -r`
+    (same error as before)
+
+    $ sudo aptitude reinstall virtualbox-dkms
+    
+Then it worked.  
+Summary: 

@@ -183,7 +183,7 @@ def objects():
     yield event(trophy,20130519,'','','',cities=["La Reid"])
     yield event(trophy,20130525,'','','',cities=["Eupen"])
     yield event(trophy,20130706,'','','',cities=["Sankt Vith"])
-    yield event(trophy,20130713,'','','',cities=["Ouren"])
+    #~ yield event(trophy,20130713,'','','',cities=["Ouren"])
     yield event(trophy,20130824,'','','',cities=["Blégny"])
     yield event(trophy,20130901,'','','',cities=["Kelmis"])
     yield event(trophy,20130914,'','','',cities=["Cerfontaine"])
@@ -199,10 +199,10 @@ def objects():
       "UCI 2 MTB koers",
       "Course MTB UCI 2",
       cities=["Sankt Vith"])
-    yield event(mtb,20130714,
-      'Merida Cup – 6\. Lauf',
-      "Merida Cup – 6de manche",
-      "Merida Cup – 6e manche",
-      cities=["Ouren"])
+    #~ yield event(mtb,20130714,
+      #~ 'Merida Cup – 6\. Lauf',
+      #~ "Merida Cup – 6de manche",
+      #~ "Merida Cup – 6e manche",
+      #~ cities=["Ouren"])
       
       
