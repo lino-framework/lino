@@ -55,7 +55,7 @@ from django.utils.encoding import force_unicode
 from django.conf import settings
 
 from odf.opendocument import OpenDocumentText
-from odf.style import Style, TextProperties, ParagraphProperties
+from odf.style import Style, TextProperties, ParagraphProperties, TableProperties
 from odf.text import ListStyle
 from odf.style import ListLevelProperties
 #~ from odf.style import ListLevelLabelAlignment # ImportError: cannot import name ListLevelLabelAlignment
@@ -249,12 +249,18 @@ class Renderer(AppyRenderer):
         #~ print 20120419, width_specs 
         
         doc = OpenDocumentText()
+        
         def add_style(**kw):
             st = Style(**kw)
             doc.styles.addElement(st)
             self.my_styles.append(st)
             return st
+            
 
+        table_style_name = str(ar.actor)
+        st = add_style(name=table_style_name, family="table",parentstylename="Default")
+        st.addElement(TableProperties(align="margins", maybreakbetweenrows="0"))
+        
         # create some *visible* styles
         
         st = add_style(name="Table Contents", family="paragraph",parentstylename="Default")
@@ -322,7 +328,7 @@ class Renderer(AppyRenderer):
         total_row_style = add_style(name="Lino Total Row",family="table-row",parentstylename=cell_style)
         total_row_style.addElement(TableRowProperties(backgroundcolor="#ffffff"))
         
-        table = Table()
+        table = Table(name=table_style_name,stylename=table_style_name)
         table_columns = TableColumns()
         table.addElement(table_columns)
         table_header_rows = TableHeaderRows()

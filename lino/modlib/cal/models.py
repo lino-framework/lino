@@ -68,6 +68,7 @@ class TaskStates(dd.Workflow):
     State of a Calendar Task. Used as Workflow selector.
     """
     #~ label = _("State")
+    required = dd.required(user_level='admin')
     
     @classmethod
     def migrate(cls,status_id):
@@ -104,6 +105,7 @@ class GuestStates(dd.Workflow):
     """
     State of a Calendar Event Guest. Used as Workflow selector.
     """
+    required = dd.required(user_level='admin')
     #~ label = _("Guest State")
     #~ label = _("State")
     
@@ -147,6 +149,7 @@ class RejectInvitation(dd.ChangeStateAction,dd.NotifyingAction):
 
 #~ class EventStates(ChoiceList):
 class EventStates(dd.Workflow):
+    required = dd.required(user_level='admin')
     help_text = _("""List of the possible states of a calendar event.""")
         
         
@@ -517,7 +520,7 @@ class Place(dd.BabelNamed):
   
 class Places(dd.Table):
     help_text = _("List of places where calendar events can happen.")
-    required = dd.required(user_groups='office')
+    required = dd.required(user_groups='office',user_level='manager')
     model = Place
     detail_layout = """
     id name
@@ -533,7 +536,7 @@ class Priority(dd.BabelNamed):
 
 class Priorities(dd.Table):
     help_text = _("List of possible priorities of calendar events.")
-    required = dd.required(user_groups='office')
+    required = dd.required(user_groups='office',user_level='manager')
     model = Priority
     column_names = 'name *'
 
@@ -1652,7 +1655,7 @@ class Tasks(dd.Table):
     """)
     #~ debug_permissions = True
     model = 'cal.Task'
-    required = dd.required(user_groups='office')
+    required = dd.required(user_groups='office',user_level='manager')
     column_names = 'start_date summary workflow_buttons *'
     order_by = ["-start_date","-start_time"]
     #~ hidden_columns = set('owner_id owner_type'.split())
@@ -1677,6 +1680,7 @@ class Tasks(dd.Table):
     
 class TasksByController(Tasks):
     master_key = 'owner'
+    required = dd.required(user_groups='office')
     column_names = 'start_date summary workflow_buttons id'
     #~ hidden_columns = set('owner_id owner_type'.split())
 
@@ -1690,6 +1694,7 @@ if settings.SITE.user_model:
         #~ model = Task
         #~ label = _("Reminders")
         master_key = 'user'
+        required = dd.required(user_groups='office')
         #~ column_names = "start_date summary *"
         #~ order_by = ["start_date"]
         #~ filter = Q(auto_type__isnull=False)
@@ -1701,7 +1706,6 @@ if settings.SITE.user_model:
         column_names = 'start_date summary workflow_buttons *'
     
     class MyTasksToDo(MyTasks):
-        required = dd.required(user_groups='office')
         help_text = _("Table of my tasks marked 'to do'.")
         column_names = 'start_date summary workflow_buttons *'
         label = _("To-do list")
@@ -1713,6 +1717,7 @@ if settings.SITE.user_model:
 if settings.SITE.project_model:    
   
     class TasksByProject(Tasks):
+        required = dd.required(user_groups='office')
         master_key = 'project'
         column_names = 'start_date user summary workflow_buttons *'
     
@@ -1729,7 +1734,7 @@ class GuestRoles(dd.Table):
     help_text = _("""The role of a guest expresses what the 
     partner is going to do there.""")
     model = GuestRole
-    required = dd.required(user_groups='office')
+    required = dd.required(user_groups='office',user_level='admin')
     detail_layout = """
     id name
     build_method template email_template attach_to_email
@@ -1827,7 +1832,7 @@ class Guests(dd.Table):
     help_text = _("""A guest is a partner invited to an event.
     """)
     model = Guest
-    required = dd.required(user_groups='office')
+    required = dd.required(user_groups='office',user_level='admin')
     column_names = 'partner role workflow_buttons remark event *'
     #~ workflow_state_field = 'state'
     #~ column_names = 'contact role state remark event *'
@@ -1840,14 +1845,17 @@ class Guests(dd.Table):
         
 class GuestsByEvent(Guests):
     master_key = 'event'
+    required = dd.required(user_groups='office')
 
 class GuestsByRole(Guests):
     master_key = 'role'
+    required = dd.required(user_groups='office')
 
 if settings.SITE.is_installed('contacts'):
   
   class GuestsByPartner(Guests):
       master_key = 'partner'
+      required = dd.required(user_groups='office')
       column_names = 'event role workflow_buttons remark *'
 
   class MyPresences(GuestsByPartner):

@@ -50,6 +50,7 @@ class Type(dd.BabelNamed):
         verbose_name_plural = _("Household Types")
 
 class Types(dd.Table):
+    required = dd.required(user_level='admin')
     model = Type
     detail_layout = """
     name 
@@ -134,6 +135,7 @@ class HouseholdDetail(dd.FormLayout):
 #~ class Households(pcsw.Partners):
 class Households(contacts.Partners):
     model = 'households.Household'
+    required = dd.required()
     order_by = ["name"]
     detail_layout = HouseholdDetail()
     
@@ -178,6 +180,7 @@ of all name-giving members with a dash ("-").
 
 class Roles(dd.Table):
     model = Role
+    required = dd.required(user_level='admin')
     detail_layout = """
     name name_giving
     #male
@@ -232,14 +235,17 @@ List of choices is configured in `Configure --> Households --> Roles`.
 
 class Members(dd.Table):
     model = Member
+    required = dd.required(user_level='admin')
     order_by = ['start_date', 'end_date']
     
 class MembersByHousehold(Members):
+    required = dd.required()
     label = _("Household Members")
     master_key = 'household'
     column_names = 'person role start_date end_date *'
 
 class MembersByPerson(Members):
+    required = dd.required()
     label = _("Member of")
     master_key = 'person'
     column_names = 'household role start_date end_date *'
@@ -247,6 +253,7 @@ class MembersByPerson(Members):
     hide_columns = 'id'
 
 class MembersByRole(Members):
+    required = dd.required()
     master_key = 'role'
     column_names = 'person household start_date end_date *'
     

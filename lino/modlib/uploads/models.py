@@ -49,6 +49,7 @@ class UploadType(dd.Model):
         return self.name
         
 class UploadTypes(dd.Table):
+    required = dd.required(user_level='admin')
     model = 'uploads.UploadType'
     column_names = "name *"
     order_by = ["name"]
@@ -119,6 +120,7 @@ class Upload(
           
         
 class Uploads(dd.Table):
+    required = dd.required(user_level='admin')
     model = Upload
     order_by = ["modified"]
     column_names = "file user created modified *"
@@ -151,12 +153,14 @@ class Uploads(dd.Table):
     #~ show_slave_grid = False
     
 class UploadsByController(Uploads):
+    required = dd.required()
     master_key = 'owner'
     column_names = "file type description user * "
     slave_grid_format = 'summary'
     
     
 class MyUploads(Uploads,mixins.ByUser):
+    required = dd.required()
     #~ column_names = "file user person company owner created modified"
     column_names = "file description user owner *"
     #~ label = _("My uploads")

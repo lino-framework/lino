@@ -31,6 +31,8 @@ from django import template
 from django.utils.encoding import force_unicode
 from django.db import models
 
+from atelier import rstgen
+
 from lino.core import actors
 from lino.core import requests
 from lino.utils.jsgen import js_code
@@ -59,8 +61,10 @@ class MenuItem:
                  javascript=None,
                  href=None):
         #~ self.parent = parent
-        if action is not None:
-            if not isinstance(action,actors.BoundAction):
+        if action is None:
+            if instance is not None:
+                action = instance.__class__.get_default_table().default_action
+        elif not isinstance(action,actors.BoundAction):
                 raise Exception("20121003 not a BoundAction: %r")
         self.bound_action = action
         self.params = params
@@ -158,9 +162,26 @@ class MenuItem:
         #~ return '<a href="%s">%s</a>' % (
               #~ self.get_url_path(),self.label)
               
-    def unused_menu_request(self,user_profile):
-        #~ if self.can_view.passes(user):
-        return self
+    def as_rst(self,ar,level=None):
+        """
+        Render this menu item as an rst string.
+        Currently used only for writing test cases.
+        """
+        #~ if self.bound_action:
+            #~ sr = self.bound_action.actor.request(
+                #~ action=self.bound_action,
+                #~ user=request.user,subst_user=request.subst_user,
+                #~ requesting_panel=request.requesting_panel,
+                #~ renderer=ui.plain_renderer,**self.params)
+          #~ 
+            #~ url = sr.get_request_url()
+        #~ else:
+            #~ url = self.href
+        #~ assert self.label is not None
+        #~ if url is None:
+            #~ return E.p() # spacer
+        #~ return E.li(E.a(self.label,href=url,tabindex="-1"))
+        return unicode(self.label)
         
 def has_items(menu):
     for i in menu.items:
@@ -288,30 +309,35 @@ class Menu(MenuItem):
                 
     def add_action(self,*args,**kw):
         mi = create_item(*args,**kw)
-        return self._add_item(mi)
+        return self.add_item_instance(mi)
         
     #~ def add_action_(self,action,**kw):
-        #~ return self._add_item(MenuItem(self,action,**kw))
+        #~ return self.add_item_instance(MenuItem(self,action,**kw))
 
     #~ def add_item(self,**kw):
-        #~ return self._add_item(Action(self,**kw))
+        #~ return self.add_item_instance(Action(self,**kw))
         
     #~ def add_request_action(self,ar,**kw):
         #~ kw.update(request=ar)
-        #~ return self._add_item(MenuItem(self,ar.action,**kw))
+        #~ return self.add_item_instance(MenuItem(self,ar.action,**kw))
         
     def add_instance_action(self,obj,**kw):
+        """
+        Add an action which displays the given object (a Django model instance)
+        in a detail form for editing.
+        Used e.g. for the SiteConfig object.
+        """
         kw.update(instance=obj)
-        return self._add_item(MenuItem(None,**kw))
+        return self.add_item_instance(MenuItem(None,**kw))
     
     def add_item(self,name,label,**kw):
-        return self._add_item(MenuItem(None,name,label,**kw))
+        return self.add_item_instance(MenuItem(None,name,label,**kw))
         
     def add_separator(self,label,**kw):
-        return self._add_item(MenuItem(None,None,label,**kw))
+        return self.add_item_instance(MenuItem(None,None,label,**kw))
         
     def add_menu(self,name,label,**kw):
-        return self._add_item(Menu(self.user_profile,name,label,self,**kw))
+        return self.add_item_instance(Menu(self.user_profile,name,label,self,**kw))
 
     def get_item(self,name):
         return self.items_dict[name]
@@ -319,16 +345,20 @@ class Menu(MenuItem):
     #~ def add_url_button(self,url,label):
     def add_url_button(self,url,**kw):
         kw.update(href=url)
-        return self._add_item(MenuItem(None,**kw))
+        return self.add_item_instance(MenuItem(None,**kw))
         #~ self.items.append(dict(
           #~ xtype='button',text=label,
           #~ handler=js_code("function() {window.location='%s';}" % url)))
 
-    def _add_item(self,mi):
+    def add_item_instance(self,mi):
+        """
+        Adds the specified MenuItem to this menu after checking whether 
+        it has view permission.
+        """
         assert isinstance(mi,MenuItem)
         mi.parent = self
         if mi.bound_action is not None:
-            #~ if not mi.action.actor.get_view_permission(self.user):
+            #~ if not mi.bound_action.actor.get_view_permission(self.user):
             if not mi.bound_action.get_view_permission(self.user_profile):
                 return 
             #~ logger.info("20130129 _add_item %s for %s",mi.label,self.user_profile)
@@ -395,6 +425,27 @@ class Menu(MenuItem):
             menu_title,
             E.ul(*items,class_='dropdown-menu'),
             class_=cl)
+            
+    def as_rst(self,ar,level=1):
+        """
+        Render this menu as an rst string.
+        Currently used only for writing test cases.
+        """
+        has_submenus = False
+        for i in self.items:
+            if isinstance(i,Menu):
+                has_submenus = True
+        items = [mi.as_rst(ar,level+1) for mi in self.items]
+        if has_submenus:
+            s = rstgen.ul(items).strip() + '\n'
+            if self.label is not None:
+                s = unicode(self.label) + ' :\n\n' + s
+        else:
+            s = ', '.join(items)
+            if self.label is not None:
+                s = unicode(self.label) + ' : ' + s
+        return s
+            
       
 
 class Toolbar(Menu):

@@ -142,8 +142,10 @@ download-friendly (replace spaces by "_", "ü" by "u",...) is::
 
 
 
-Menübefehl :menuselection:`Budget-Kopiervorlage`
-------------------------------------------------
+Menu command to edit `debts_master_budget`
+------------------------------------------
+
+Worked on the following user request:
 
 - Es gibt einen neuen Menübefehl 
   :menuselection:`Konfigurierung --> Schuldnerberatung --> Budget-Kopiervorlage`,
@@ -157,3 +159,5 @@ eine ganze Serie unnützer Befehle enthält. Einfach nur, weil ich in den
 entsprechenden Tabellen noch keine `required` gesetzt habe.
 Lästige Arbeit und könnte zu unerwünschten kleinen Überraschungen 
 führen. 
+
+Neue Option :attr:`lino.core.menus.Menu.avoid_lonely_items`.

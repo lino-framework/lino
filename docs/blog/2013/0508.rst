@@ -59,22 +59,3 @@ und
 der Dokumentation (:ref:`welfare.watch_tim`).
 Ausserdem akrybische unit tests in :mod:`lino_welfare.tests.watchtim_tests`.
 
-TODO
-----
-
-- wie sagt man Schuldnerberater in FR? Médiateur de dettes
-
-- jobs.Overview : Seitenwechsel zwischen die verschiedenen Kategorien (Majorés, Intern, usw.)
-
-- Ausdruck: 
-
-  - Kontaktangaben: da steht immer Komma am Ende.
-
-- `pcsw_demo_tests.py` : 
-  "/choices/pcsw/ContactsByClient/company?type=1&query=mutu got 5 rows instead of [2]"
-
-
-- Merge the few_countries and few_cities fixtures into demo
-- Convert all_countries to use data from python-babel
-
-

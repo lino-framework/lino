@@ -125,6 +125,8 @@ class Change(dd.Model):
         
     
 class Changes(dd.Table):
+    required = dd.required(user_level='admin')
+
     editable = False
     model = Change
     order_by = ['-time']
@@ -138,6 +140,7 @@ class ChangesByMaster(Changes):
     """
     Slave Table showing the changes related to the current object
     """
+    required = dd.required()
     column_names = 'time user type object diff object_type object_id'
     master_key = 'master'
 

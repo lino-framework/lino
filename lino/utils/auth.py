@@ -47,6 +47,7 @@ from django.conf import settings
 from django import http
 
 from lino.core.choicelists import ChoiceList, Choice
+from lino.core.actors import get_default_required as required
 
 from lino.core.dbutils import obj2str
 from lino.core import constants # as ext_requests
@@ -78,6 +79,7 @@ class UserLevels(ChoiceList):
     verbose_name = _("User Level")
     verbose_name_plural = _("User Levels")
     app_label = 'lino'
+    required = required(user_level='admin')
     
     
     @classmethod
@@ -110,6 +112,7 @@ class UserGroups(ChoiceList):
     Applications can define their functional groups
     
     """
+    required = required(user_level='admin')
     verbose_name = _("User Group")
     verbose_name_plural = _("User Groups")
     app_label = 'lino'
@@ -218,6 +221,7 @@ class UserProfiles(ChoiceList):
     """
     Deserves a docstring.
     """
+    required = required(user_level='admin')
     #~ item_class = UserProfile
     verbose_name = _("User Profile")
     verbose_name_plural = _("User Profiles")

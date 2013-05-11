@@ -55,6 +55,7 @@ class Chart(dd.BabelNamed):
         
 class Charts(dd.Table):
     model = Chart
+    required = dd.required(user_level='manager')
     detail_layout = """
     id name
     GroupsByChart
@@ -76,6 +77,7 @@ class Group(dd.BabelNamed):
     
 class Groups(dd.Table):
     model = Group
+    required = dd.required(user_level='manager')
     order_by = ['chart','ref']
     column_names = 'chart ref name account_type *'
     #~ required = dict(user_groups=['debts'],user_level='manager')
@@ -128,6 +130,7 @@ class Account(dd.BabelNamed,mixins.Sequenced):
     
 class Accounts(dd.Table):
     model = Account
+    required = dd.required(user_level='manager')
     order_by = ['ref']
     #~ required=dict(user_groups=['debts'],user_level='manager')
     column_names = "ref name group *"
@@ -136,6 +139,7 @@ class Accounts(dd.Table):
     #~ master_key = 'chart'
 
 class AccountsByGroup(Accounts):
+    required = dd.required()
     master_key = 'group'
     column_names = "ref name *"
 
@@ -189,9 +193,9 @@ def setup_config_menu(site,ui,profile,m):
     m.add_action(Groups)
     m.add_action(Accounts)
   
-def setup_explorer_menu(site,ui,profile,m):
-    m  = m.add_menu("accounts",MODULE_LABEL)
-    m.add_action(AccountTypes)
+#~ def setup_explorer_menu(site,ui,profile,m):
+    #~ m  = m.add_menu("accounts",MODULE_LABEL)
+    #~ m.add_action(AccountTypes)
 
 #~ dd.add_user_group('debts',MODULE_LABEL)
 

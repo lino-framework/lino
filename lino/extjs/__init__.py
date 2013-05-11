@@ -884,7 +884,7 @@ tinymce.init({
                 #~ new_actors_list.append(a)
         #~ actors_list = new_actors_list
         
-        actors_list = [a for a in actors_list if a.get_view_permission(jsgen._for_user_profile)]
+        actors_list = [a for a in actors_list if a.default_action.get_view_permission(jsgen._for_user_profile)]
         
         #~ actors_list = [a for a in actors_list if a.get_view_permission(jsgen._for_user)]
           

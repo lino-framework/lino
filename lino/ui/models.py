@@ -151,10 +151,9 @@ class SiteConfigs(dd.Table):
     See also :meth:`lino.Lino.get_site_config`.
     Deserves more documentation.
     """
-    default_action = actions.ShowDetailAction()
     model = 'ui.SiteConfig'
     required = dd.required(user_level='manager')
-    #~ default_action_class = dd.OpenDetailAction
+    default_action = actions.ShowDetailAction()
     #~ has_navigator = False
     hide_top_toolbar = True
     #~ can_delete = perms.never
@@ -173,6 +172,8 @@ if settings.SITE.is_installed('contenttypes'):
       Deserves more documentation.
       """
       model = contenttypes.ContentType
+      
+      required = dd.required(user_level='manager')
       
       detail_layout = """
       id name app_label model base_classes
@@ -259,6 +260,7 @@ if settings.SITE.is_installed('contenttypes'):
               
               
   class HelpTexts(dd.Table):
+      required = dd.required(user_level='manager')
       model = HelpText
       column_names = "field verbose_name help_text id content_type"
       
@@ -293,7 +295,8 @@ if settings.SITE.user_model:
             return self.name
             
     class TextFieldTemplates(dd.Table):
-      
+        model = TextFieldTemplate
+        required = dd.required(user_groups='office',user_level='admin')
         insert_layout = dd.FormLayout("""
         name 
         user team
@@ -304,11 +307,9 @@ if settings.SITE.user_model:
         description
         text
         """
-        model = TextFieldTemplate
-        required = dd.required(user_groups='office')
 
     class MyTextFieldTemplates(TextFieldTemplates,mixins.ByUser):
-        pass
+        required = dd.required(user_groups='office')
         
 
 
@@ -450,8 +451,8 @@ def setup_config_menu(site,ui,profile,m):
     office = m.add_menu("office",OFFICE_MODULE_LABEL)
     system = m.add_menu("system",SYSTEM_USER_LABEL)
     #~ m.add_action('links.LinkTypes')
+    system.add_instance_action(site.site_config)
     if site.user_model and profile.authenticated:
-        system.add_instance_action(site.site_config)
         system.add_action(site.user_model)
         system.add_action(site.modules.users.Teams)
         office.add_action(MyTextFieldTemplates)

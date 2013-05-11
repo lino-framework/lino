@@ -182,6 +182,11 @@ class BoundAction(object):
         return self._allow(ar.get_user(),obj,state)
         
     def get_view_permission(self,profile):
+        """
+        20130511
+        """
+        if not self.actor.get_view_permission(profile):
+            return False
         if not self.action.get_view_permission(profile):
             return False
         return self.allow_view(profile)
@@ -739,8 +744,9 @@ class Actor(actions.Parametrizable):
     def get_view_permission(self,profile):
         #~ return self.default_action.action.allow(user,None,None)
         #~ return self.default_action.get_bound_action_permission(user,None,None)
-        return self.default_action.get_view_permission(profile)
+        #~ 20130511 return self.default_action.get_view_permission(profile)
         #~ return self.allow_read(user,None,None)
+        return True # 20130511 
 
     @classmethod
     def get_create_permission(self,ar):

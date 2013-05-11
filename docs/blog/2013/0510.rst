@@ -1,0 +1,20 @@
+==============================
+20130510 (Friday, 10 May 2013)
+==============================
+
+
+Menu command to edit `debts_master_budget` (continued)
+------------------------------------------------------
+Wrote a new series of `check_menu` tests in 
+:mod:`lino_welfare.tests.pcsw_tests` 
+to protect us against surprises like 
+the one with the Explorer menu.
+
+This test required a new 
+method :meth:`lino.core.menus.Menu.to_rst` is used in 
+to test the menu of certain users. 
+Also extended and refined 
+:func:`atelier.rstgen.ul`.
+Wrote *en passant*  a new function
+:func:`atelier.rstgen.ol`.
+

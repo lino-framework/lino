@@ -137,4 +137,7 @@ Observation: The services manager says that "VirtualBox Guest Additions Service"
 And when I start it, it says "Could not start the VirtualBox Guest Additions Service service on Local Computer. 
 Error 1053: The service did not respond to the start or control request in a timely fashion."
 
+Edit 20130509 : the solution for this was to find two virtual devices 
+in Windows device manager which were disabled. Enable them, then 
+restart the VM.
 

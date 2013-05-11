@@ -644,14 +644,15 @@ class Attachment(mixins.Controllable):
         
         
 class Attachments(dd.Table):
+    required = dd.required(user_level='manager',user_groups='office')
     model = Attachment
-    required = dd.required(user_groups='office')
     #~ window_size = (400,500)
     #~ detail_layout = """
     #~ mail owner
     #~ """
     
 class AttachmentsByMail(Attachments):
+    required = dd.required(user_groups='office')
     master_key = 'mail'
     slave_grid_format = 'summary'
 

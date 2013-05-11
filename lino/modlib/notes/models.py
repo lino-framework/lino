@@ -74,7 +74,7 @@ class NoteTypes(dd.Table):
     Displays all rows of :class:`NoteType`.
     """
     model = 'notes.NoteType'
-    required = dd.required(user_groups='office')
+    required = dd.required(user_level='admin',user_groups='office')
     #~ label = _("Note types")
     column_names = 'name build_method template *'
     order_by = ["name"]
@@ -106,7 +106,7 @@ class EventTypes(dd.Table):
     List of all Event Types.
     """
     model = 'notes.EventType'
-    required = dd.required(user_groups='office')
+    required = dd.required(user_level='admin',user_groups='office')
     column_names = 'name *'
     order_by = ["name"]
     
@@ -275,6 +275,8 @@ class NoteDetail(dd.FormLayout):
 
     
 class Notes(dd.Table):
+    required = dd.required(user_groups='office',user_level='admin')
+    
     model = 'notes.Note'
     detail_layout = NoteDetail()
     #~ column_names = "id date user type event_type subject * body_html"
@@ -323,6 +325,7 @@ class NotesByEventType(Notes):
     
 
 class NotesByProject(Notes):
+    required = dd.required(user_groups='office')
     master_key = 'project'
     column_names = "date event_type type subject body user *"
     order_by = ["-date"]

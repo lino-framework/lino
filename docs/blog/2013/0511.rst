@@ -1,0 +1,63 @@
+================================
+20130511 (Saturday, 11 May 2013)
+================================
+
+Menu command to edit `debts_master_budget` (continued)
+------------------------------------------------------
+
+The new `check_menu` tests where useful for the benedictine work of 
+adding `user_level='admin'` requirements to many configuration tables 
+which until now were invisible to non-adminstrators only because 
+:class:`lino_welfare.Site` used the obsolete paradigm of hiding these 
+menus completely for non-administrators.
+
+:meth:`lino.core.menus.Menu.add_item_instance` didn't filter the 
+`Site Parameters` command for non-administrators.
+:meth:`lino.core.actors.Actor.get_view_permission` 
+no longer calls the actor's default action's `get_view_permission` 
+method,
+but instead this is done by 
+:meth:`lino.core.actors.BoundAction.get_view_permission`.
+
+
+No page breaks within tables
+----------------------------
+
+Solved the following user request:
+
+- jobs.Overview : Seitenwechsel zwischen die verschiedenen Kategorien 
+  (Majorés, Intern, usw.)
+  
+The solution was to simply have the
+:meth:`table <lino.utils.appy_pod.Renderer.insert_table>` 
+template function
+insert a table style with a `may-break-between-rows` 
+property set to "false"`. Only 3 lines of code::
+
+    table_style_name = str(ar.actor)
+    st = add_style(name=table_style_name, family="table",parentstylename="Default")
+    st.addElement(TableProperties(align="margins", maybreakbetweenrows="0"))
+
+I might make this configurable per 
+:class:`lino.core.tables.AbstractTable`,
+but at the moment I don't see any problem with having this 
+for all (Lino-generated) tables.
+
+
+TODO
+----
+
+- wie sagt man Schuldnerberater in FR? Médiateur de dettes
+  (Prüfen, wie ein Ausdruck Budget in FR aussieht)
+
+- Ausdruck Budget: bei Kontaktangaben steht immer ein Komma am Ende.
+  N.B.: nur wenn weder Telefon noch E-Mail angegeben ist.
+
+- `pcsw_demo_tests.py` : 
+  "/choices/pcsw/ContactsByClient/company?type=1&query=mutu got 5 rows instead of [2]"
+
+- Merge the few_countries and few_cities fixtures into demo
+- Convert all_countries to use data from python-babel
+- get docs work on readthedocs. 
+  at least the intersphinx links are breaking things.
+
