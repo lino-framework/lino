@@ -1,0 +1,33 @@
+==============================
+20130512 (Sunday, 12 May 2013)
+==============================
+
+- fixed: Site-Params zeigte Liste statt Detail
+- fixed: atelier blockierte alles, wenn `/etc/atelier/config.py`
+  nicht existierte.
+  
+Lino-Welfare 1.1.4 is coming
+----------------------------
+
+I started the release of 
+:ref:`Lino-Welfare 1.1.4 <welfare.changes>`
+(together with the dependent new versions of Lino, North, 
+djangosite & atelier).
+
+
+TODO
+----
+
+- wie sagt man Schuldnerberater in FR? Médiateur de dettes
+  (Prüfen, wie ein Ausdruck Budget in FR aussieht)
+- Ausdruck Budget: bei Kontaktangaben steht immer ein Komma am Ende.
+  N.B.: aber nur wenn weder Telefon noch E-Mail angegeben ist.
+
+- `pcsw_demo_tests.py` : 
+  "/choices/pcsw/ContactsByClient/company?type=1&query=mutu got 5 rows instead of [2]"
+- Merge the few_countries and few_cities fixtures into demo
+- Convert all_countries to use data from python-babel
+- get docs work on readthedocs. 
+  at least the intersphinx links are breaking things.
+- development server doesn't reload ui when process restarts after 
+  code change.

@@ -64,8 +64,9 @@ class MenuItem:
         if action is None:
             if instance is not None:
                 action = instance.__class__.get_default_table().default_action
+                #~ logger.info("20130512 %s",instance.__class__.get_default_table())
         elif not isinstance(action,actors.BoundAction):
-                raise Exception("20121003 not a BoundAction: %r")
+            raise Exception("20121003 not a BoundAction: %r")
         self.bound_action = action
         self.params = params
         self.href = href

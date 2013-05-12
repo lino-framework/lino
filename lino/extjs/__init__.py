@@ -165,7 +165,17 @@ class ExtRenderer(HtmlRenderer):
                 #return py2js(kw)
             return dict(text=prepare_label(v),menu=dict(items=v.items))
         if isinstance(v,menus.MenuItem):
-            if v.bound_action is not None:
+            if v.instance is not None:
+                h = self.instance_handler(None,v.instance)
+                assert h is not None
+                js = "function() {%s}" % h
+                return self.handler_item(v,js,None)
+                #~ handler = "function(){%s}" % self.instance_handler(v.instance)
+                #~ return dict(text=prepare_label(v),handler=js_code(handler))
+              
+                #~ url = self.get_detail_url(v.instance,an='detail')
+                #~ url = self.get_detail_url(v.instance)
+            elif v.bound_action is not None:
                 if v.params:
                     #~ ar = v.action.actor.request(self.ui,None,v.action,**v.params)
                     ar = v.bound_action.request(**v.params)
@@ -190,16 +200,6 @@ class ExtRenderer(HtmlRenderer):
             #~ elif v.request is not None:
                 #~ raise Exception("20120918 request %r still used?" % v.request)
                 #~ url = self.get_request_url(v.request)
-            elif v.instance is not None:
-                h = self.instance_handler(None,v.instance)
-                assert h is not None
-                js = "function() {%s}" % h
-                return self.handler_item(v,js,None)
-                #~ handler = "function(){%s}" % self.instance_handler(v.instance)
-                #~ return dict(text=prepare_label(v),handler=js_code(handler))
-              
-                #~ url = self.get_detail_url(v.instance,an='detail')
-                #~ url = self.get_detail_url(v.instance)
             else:
                 # a separator
                 #~ return dict(text=v.label)
