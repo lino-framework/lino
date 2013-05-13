@@ -1,0 +1,13 @@
+==============================
+20130513 (Monday, 13 May 2013)
+==============================
+
+
+At least one bug is in Lino 1.6.7 which had passed the unit test suite:
+all users except system administrators were unable to show the detail 
+of a :ref:`welfare.pcsw.Client`.
+
+Fixed that bug. Checkin.
+
+
+$ sudo aptitude install phantomjs

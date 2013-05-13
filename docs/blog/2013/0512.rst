@@ -9,10 +9,40 @@
 Lino-Welfare 1.1.4 is coming
 ----------------------------
 
-I started the release of 
+I released 
 :ref:`Lino-Welfare 1.1.4 <welfare.changes>`
-(together with the dependent new versions of Lino, North, 
-djangosite & atelier).
+and the corresponding versions of 
+Lino, North, djangosite & atelier.
+
++------------------------------------------+-------------+
+| Project                                  | version     |
++==========================================+=============+
+| `atelier <http://atelier.lino-           | 0.0.2       |
+| framework.org>`__ -- A collection of     |             |
+| tools for software artists               |             |
++------------------------------------------+-------------+
+| `djangosite <http://site.lino-           | 0.1.4       |
+| framework.org>`__ -- A server startup    |             |
+| signal for Django                        |             |
++------------------------------------------+-------------+
+| `north <http://north.lino-               | 0.1.4       |
+| framework.org>`__ -- Another way to      |             |
+| migrate Django databases                 |             |
++------------------------------------------+-------------+
+| `lino <http://www.lino-framework.org>`__ | 1.6.7       |
+| -- A framework for writing desktop-like  |             |
+| web applications using Django and ExtJS  |             |
++------------------------------------------+-------------+
+| `lino_welfare <http://welfare.lino-      | 1.1.4       |
+| framework.org>`__ -- A Lino application  |             |
+| for Belgian Public Welfare Centres       |             |
++------------------------------------------+-------------+
+
+(No release of 
+`lino_patrols <http://patrols.lino-framework.org>`__
+right now)
+
+
 
 
 TODO

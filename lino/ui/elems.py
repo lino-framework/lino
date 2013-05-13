@@ -2062,14 +2062,10 @@ class GridElement(Container):
             
             
     def get_view_permission(self,profile):
-        #~ if not super(GridElement,self).get_view_permission():
         # skip Container parent:
-        #~ return super(Container,self).get_view_permission(user)
-        #~ return LayoutElement.get_view_permission(self,user)
         if not super(Container,self).get_view_permission(profile): 
             return False
-        return self.actor.get_view_permission(profile)
-        #~ return self.actor.get_permission(actions.VIEW,jsgen._for_user_profile,None)
+        return self.actor.default_action.get_view_permission(profile)
         
     def ext_options(self,**kw):
         #~ not direct parent (Container), only LayoutElement
