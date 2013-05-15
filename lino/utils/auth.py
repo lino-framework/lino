@@ -579,6 +579,7 @@ class NOT_NEEDED:
     
 def authenticate(username,password=NOT_NEEDED):
 
+    print "20130515 authenticate %s,%s" % (username,password)
     if not username:
         return AnonymousUser.instance()
         
@@ -729,7 +730,7 @@ class RemoteUserMiddleware(AuthMiddleWareBase):
         user = authenticate(username)
         
         if user is None:
-            #~ logger.exception("Unknown username %s from request %s",username, request)
+            #~ logger.info("20130514 Unknown username %s from request %s",username, request)
             #~ raise Exception(
             #~ raise exceptions.PermissionDenied("Unknown or inactive username %r. Please contact your system administrator." 
             logger.info("Unknown or inactive username %r.",username)

@@ -1,0 +1,55 @@
+===============================
+20130514 (Tuesday, 14 May 2013)
+===============================
+
+Tested screenshots
+------------------
+
+Still working on how to use screenshots in the general 
+documentation and testing framework.
+
+One challenge:
+When I run ``pp fab test`` then this one command needs to start 
+and shutdown different development servers.
+
+Liste des TI connus
+-------------------
+
+- Tx25 : added new handler for "TemporaryRegistrations" TI
+
+- Started to convert the existing handlers so that their documentation 
+  can get automatically generated. 
+  The converted TI handlers are now listed on :ref:`welfare.cbss`.
+  
+
+
+Miscellaneous:
+
+- watch_tim : new variable IGNORABLE_ERRORS contains errors that are 
+  not sent to the admins per email, just logged to the `system.log`.
+  Ignorable errors were until now all ValidationError instances,
+  now also IntegrityError. Because this is usually 
+  "Duplicate entry '...' for key 'national_id'".
+
+
+TODO
+----
+
+- wie sagt man Schuldnerberater in FR? Médiateur de dettes
+  (Prüfen, wie ein Ausdruck Budget in FR aussieht)
+- Ausdruck Budget: bei Kontaktangaben steht immer ein Komma am Ende.
+  N.B.: aber nur wenn weder Telefon noch E-Mail angegeben ist.
+- Define local tooltips, esp. for `Partner.obsolete`:
+  "Veralteter bzw. inaktiver Partner (TIM) oder Attribut W (TIM)"
+
+
+- `pcsw_demo_tests.py` : 
+  "/choices/pcsw/ContactsByClient/company?type=1&query=mutu got 5 rows instead of [2]"
+- Merge the few_countries and few_cities fixtures into demo
+- Convert all_countries to use data from python-babel
+- get docs work on readthedocs. 
+  at least the intersphinx links are breaking things.
+- development server doesn't reload ui when process restarts after 
+  code change.
+
+

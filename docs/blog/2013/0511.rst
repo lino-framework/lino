@@ -15,8 +15,7 @@ menus completely for non-administrators.
 `Site Parameters` command for non-administrators.
 :meth:`lino.core.actors.Actor.get_view_permission` 
 no longer calls the actor's default action's `get_view_permission` 
-method,
-but instead this is done by 
+method, but instead this is done by 
 :meth:`lino.core.actors.BoundAction.get_view_permission`.
 
 

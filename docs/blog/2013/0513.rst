@@ -5,9 +5,38 @@
 
 At least one bug is in Lino 1.6.7 which had passed the unit test suite:
 all users except system administrators were unable to show the detail 
-of a :ref:`welfare.pcsw.Client`.
+of a :ref:`welfare.pcsw.Client` (they got a "Uncaught TypeError: undefined 
+is not a function" message in their Javascript console instead).
 
-Fixed that bug. Checkin.
+The bug was in :mod:`lino.ui.elems` where in one place I must now 
+take into account that 
+:meth:`Actor.get_view_permission <lino.core.actors.Actor.get_view_permission>` 
+no longer calls the actor's default action's `get_view_permission` 
+method, but instead this is done by 
+:meth:`lino.core.actors.BoundAction.get_view_permission`.
+
+Fixed that bug. Checkin. Manually applied the change 
+on the production site so that users can work.
+
+The more interesting thing is: how can I avoid that this kind of 
+bugs slips through the nets of my unit test suite?
+It is time to (re)start using `PhantomJS <http://phantomjs.org/>`_.
+
+A simple `sudo aptitude install phantomjs`  
+wasn't enough because it installs an obsolete version of 
+phantomjs which showed an error message 
+"Unknown module system for require()".
+But downloading the newest version directy from the project 
+homepage was easy.
+
+The existing files from my earlier tests are
+:file:`/lino/media/phantomjs/screenshooter.js`
+and  
+:file:`/welfare/docs/make_screenshoots.js`.
+Part of them was reusable, but they basically get 
+replaced by the new :mod:`lino.utils.screenshots` module.
+Because unlike when I wrote them I now see more clearly 
+how to integrate them into the general documentation and
+testing framework.
 
 
-$ sudo aptitude install phantomjs

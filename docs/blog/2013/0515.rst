@@ -1,0 +1,14 @@
+=================================
+20130515 (Wednesday, 15 May 2013)
+=================================
+
+ich beginne meinen dritten Arbeitstag mit dem Problem der 
+(automatisierten, getesteten und in der Dokumentation verwendbaren) 
+Screenshots. Ausgelöst ist das alles ja wegen des durchgeschlüpften 
+Bugs "Doppelklick auf Klient funktioniert nicht". Die Materie ist 
+komplexer als ich am Montagmorgen dachte... ich hatte da vor Monaten 
+schon mal mit begonnen und es dann stehen lassen. Ich muss da mit 
+PhantomJS arbeiten, muss einen Serverprozess selber starten und 
+wieder runterfahren... momentan suche ich noch nach einer Lösung für 
+die Authentifizierung... 
+
