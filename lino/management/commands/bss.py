@@ -110,8 +110,7 @@ page.open('http://127.0.0.1:8000/auth','post',data,function (status) {
 var page = require('webpage').create();
 // page.settings = { userName: '%(username)s', password: '%(password)s'};
 // page.customHeaders = { %(remote_user_header)s: '%(username)s'};
-page.customHeaders = {
-  'HTTP_%(remote_user_header)s': '%(username)s'};
+// page.customHeaders = { 'HTTP_%(remote_user_header)s': '%(username)s'};
 
 page.viewportSize = { width: 1024, height: 768};
 page.onConsoleMessage = function (msg) { console.log(msg); };
@@ -129,9 +128,10 @@ var is_loaded = function() {
         if (typeof Lino != "undefined") {
             if (Lino.current_window) {
                 if (Lino.current_window.main_item.is_loading()) 
-                    return true;
-                console.log("Lino.current_window still loading in ",document.documentElement.innerHTML);
-                return false;
+                    return false;
+                // console.log("Lino.current_window still loading in ",document.documentElement.innerHTML);
+                console.log("Lino.current_window", Lino.current_window.main_item,"still loading." );
+                return true;
             }
         }
         // console.log("No Lino in ",document.documentElement.innerHTML);
@@ -143,8 +143,10 @@ var is_loaded = function() {
 var todo = function(ok) { 
     console.log("Rendering to",output,ok);
     page.render(output);
-    phantom.exit();
-    
+    if (ok) 
+        phantom.exit();
+    else
+        phantom.exit(2);
 };
 
 var on_opened = function(status) { 
@@ -152,7 +154,7 @@ var on_opened = function(status) {
         console.log('Unable to load ',address,'status is:',status);
         phantom.exit(1);
     } else {
-        waitfor(output,is_loaded,3,todo);
+        waitfor(output,is_loaded,6,todo);
     }
 };
 

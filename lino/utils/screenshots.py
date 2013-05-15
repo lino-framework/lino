@@ -50,7 +50,7 @@ class Screenshot(object):
         return '%s/%s/%s.jpg' % (root,language,self.name)
         
     def get_url(self,root,language):
-        return '%s%s?lng=%s' % (root,self.url,language)
+        return '%s%s?ul=%s' % (root,self.url,language)
 
 def register_screenshot(*args,**kw):
     ss = Screenshot(*args,**kw)

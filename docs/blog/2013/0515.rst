@@ -2,7 +2,7 @@
 20130515 (Wednesday, 15 May 2013)
 =================================
 
-ich beginne meinen dritten Arbeitstag mit dem Problem der 
+Ich beginne meinen dritten Arbeitstag mit dem Problem der 
 (automatisierten, getesteten und in der Dokumentation verwendbaren) 
 Screenshots. Ausgelöst ist das alles ja wegen des durchgeschlüpften 
 Bugs "Doppelklick auf Klient funktioniert nicht". Die Materie ist 

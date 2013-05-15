@@ -578,8 +578,8 @@ class NOT_NEEDED:
     
     
 def authenticate(username,password=NOT_NEEDED):
-
     print "20130515 authenticate %s,%s" % (username,password)
+
     if not username:
         return AnonymousUser.instance()
         
@@ -594,15 +594,15 @@ def authenticate(username,password=NOT_NEEDED):
     try:
         user = settings.SITE.user_model.objects.get(username=username)
         if user.profile is None:
-            #~ logger.info("20121127 user has no profile")
+            logger.info("20121127 user has no profile")
             return None
         if password != NOT_NEEDED:
             if not user.check_password(password):
-                #~ logger.info("20121104 password mismatch")
+                logger.info("20121104 password mismatch")
                 return None
         return user
     except settings.SITE.user_model.DoesNotExist,e:
-        #~ logger.info("20121104 no username %r",username)
+        logger.info("20121104 no username %r",username)
         return None  
     
     

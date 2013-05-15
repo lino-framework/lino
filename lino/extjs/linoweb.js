@@ -1670,7 +1670,7 @@ Lino.MainPanel = {
   setting_param_values : false,
   config_containing_window : function(wincfg) { }
   ,init_containing_window : function(win) { }
-  ,is_loading : function() { return true; } // overridden by subclasses
+  ,is_loading : function() { return false; } // overridden by subclasses
   ,do_when_clean : function(auto_save,todo) { todo() }
   ,get_master_params : function() {
     var p = {}
@@ -2728,11 +2728,14 @@ Lino.FormPanel = Ext.extend(Lino.FormPanel,{
   },
   
   is_loading : function() { 
-    if (this.current_record == null) return true; 
+    if (this.current_record == null) {
+        console.log("20130515 current_record is null");
+        return true; 
+    }
     var loading = false;
     this.cascade(function(cmp){
         if (cmp instanceof Lino.GridPanel && cmp.is_loading()) {
-            //~ console.log(cmp.title,'is loading');
+            console.log(20130515, cmp.title,'is loading');
             loading = true;
             return false;
         }
@@ -3348,6 +3351,7 @@ Lino.GridPanel = Ext.extend(Lino.GridPanel,{
   },
   
   is_loading : function() { 
+    console.log(20130515);
     //~ return this.store.getCount() > 0; 
     return !this.loadMask.disabled; 
   },
@@ -5067,7 +5071,7 @@ Lino.CalendarAppPanel = Ext.extend(Lino.CalendarAppPanel,{
   ,layout: 'fit'
   ,is_loading : function() { 
       var loading = Lino.calendarStore.getCount() == 0 | Lino.eventStore.getCount() == 0
-      //~ console.log("CalendarPanel loading:",loading);
+      console.log("CalendarPanel loading:",loading);
       return loading; 
   }
   ,get_base_params : function() {
