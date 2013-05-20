@@ -22,3 +22,9 @@ Version shown in status bar
 
 Lino.status_bar showed the Lino version, but the most interesting is 
 the application's version.
+
+
+Endspurt
+--------
+
+Started preparations to release Lino-Welfare 1.1.5 and Lino 1.6.8.
