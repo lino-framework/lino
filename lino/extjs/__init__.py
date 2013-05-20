@@ -347,6 +347,8 @@ class ExtRenderer(HtmlRenderer):
         if not kw['base_params']:
             del kw['base_params']
         #~ kw = self.request2kw(rr,**kw)
+        if ar.bound_action != ar.actor.default_action:
+            kw[ext_requests.URL_PARAM_ACTION_NAME] = ar.bound_action.action.action_name
         return settings.SITE.build_admin_url('api',ar.actor.app_label,ar.actor.__name__,*args,**kw)
         
     def get_detail_url(self,obj,*args,**kw):

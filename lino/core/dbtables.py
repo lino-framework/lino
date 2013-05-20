@@ -264,7 +264,7 @@ def rc_name(rptclass):
 
     
     
-# TODO : move these global variables to LinoSite
+# TODO : move these global variables to a better place
 master_reports = []
 slave_reports = []
 generic_slaves = {}
@@ -272,7 +272,7 @@ frames_list = []
 custom_tables = []
 #~ rptname_choices = []
 
-config_dirs = []
+#~ config_dirs = []
 
   
 def register_frame(frm):
@@ -433,6 +433,11 @@ class Table(AbstractTable):
     
     show_detail_navigator = True
     
+    screenshot_profiles = ['admin']
+    """
+    The user profile(s) for which we want a screenshot of this table.
+    """
+    
     #~ base_queryset = None 
     #~ """Internally used to store one Queryset instance that is reused for each request.
     #~ Didn't yet measure this, but I believe that this is important for performance 
@@ -488,6 +493,23 @@ class Table(AbstractTable):
     @classmethod
     def column_choices(self):
         return [ de.name for de in self.wildcard_data_elems() ]
+        
+    @classmethod
+    def get_screenshot_requests(self,language):
+        if self.model is None: return
+        if self.model._meta.abstract: return
+        if self is not self.model._lino_default_table: return
+        
+        profiles2user = dict()
+        for u in settings.SITE.user_model.objects.filter(language=language):
+            if u.profile and u.profile.name in self.screenshot_profiles and not u.profile in profiles2user:
+                profiles2user[u.profile] = u
+        for user in profiles2user.values():
+            #~ if user.profile.name != 'admin': return
+            #~ yield self.default_action.request(user=user)
+            if self.detail_action: # and self.default_action is not self.detail_action:
+                yield self.detail_action.request(user=user)
+    
           
     #~ @classmethod
     #~ def elem_filename_root(cls,elem):

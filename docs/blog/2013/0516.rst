@@ -1,0 +1,149 @@
+================================
+20130516 (Thursday, 16 May 2013)
+================================
+
+Tested screenshots
+------------------
+
+This is the fourth day that I'm working on the 
+:mod:`makescreenshots 
+<lino.management.commands.makescreenshots>` command.
+I launch this command usually using 
+:mod:`fab mss <atelier.fablib>`.
+
+It still generated a lot of tracebacks like the following::
+
+    Exception happened during processing of request from ('127.0.0.1', 52677)
+    Traceback (most recent call last):
+      File "/home/luc/pythonenvs/py27/local/lib/python2.7/site-packages/django/test/testcases.py", line 998, in _handle_request_noblock
+        self.process_request(request, client_address)
+      File "/usr/lib/python2.7/SocketServer.py", line 310, in process_request
+        self.finish_request(request, client_address)
+      File "/usr/lib/python2.7/SocketServer.py", line 323, in finish_request
+        self.RequestHandlerClass(request, client_address, self)
+      File "/home/luc/pythonenvs/py27/local/lib/python2.7/site-packages/django/core/servers/basehttp.py", line 150, in __init__
+        super(WSGIRequestHandler, self).__init__(*args, **kwargs)
+      File "/usr/lib/python2.7/SocketServer.py", line 640, in __init__
+        self.finish()
+      File "/usr/lib/python2.7/SocketServer.py", line 693, in finish
+        self.wfile.flush()
+      File "/usr/lib/python2.7/socket.py", line 304, in flush
+        self._sock.sendall(view[write_offset:write_offset+buffer_size])
+    error: [Errno 32] Broken pipe
+
+
+The
+`Django Broken pipe in Debug mode
+<http://stackoverflow.com/questions/7912672/django-broken-pipe-in-debug-mode>`__
+discussion thread explains it.
+The following workaround (by Igor Katson in above thread) worked for me::
+
+    # Monkeypatch python not to print "Broken Pipe" errors to stdout.
+    import SocketServer
+    from wsgiref import handlers
+    SocketServer.BaseServer.handle_error = lambda *args, **kwargs: None
+    handlers.BaseHandler.log_exception = lambda *args, **kwargs: None
+
+It still fails to correctly detect when all components of a page have 
+finished rendering and all AJAX requests are satisfied.
+Current workaround is to wait 6 seconds per screenshot...
+
+It still fails to correctly terminate the StoppableWSGIServer which I 
+launch in a subprocess (and which itself obviously launches 2 more child 
+processes).
+Sometimes I get an "address already in use" error and then I must do 
+`ps aux | grep django-admin.py` and kill them.
+
+The command currently generates one screenshot per detail window.
+This default behaviour is not enough 
+(for tabbed details it should generate one file per tab),
+and i still need to think about how to modify the default 
+behaviour (overriding :meth:`lino.core.actors.Actor.get_screenshot_requests`).
+
+I decided to let this project wait here because there are so many 
+other urgent things to do.
+
+TODO:
+
+- `syncscreenshots` command to compare the latest screenshots 
+  (under :file:`gen/screenshots`) with the 
+  "approved" ones (those under :file:`userdocs/gen/screenshots`) 
+- Make actordoc show the screenshots per actor.
+- Generate an overview .rst page with all screenshots.
+
+Generate documentation for Tx25
+-------------------------------
+
+Continued to convert the existing handlers so that their 
+documentation can get automatically generated. 
+The converted TI handlers are now listed on :ref:`welfare.cbss`.
+(The table there is still far from being complete. 
+The conversion is much work, but it will make future maintenance 
+easier.
+  
+Statistic reports Integration Service
+-------------------------------------
+
+The Integration Service gets some more concepts which 
+help to establish certain statistic reports.
+Detailed description in German only:
+
+    Um gewisse Zahlen für "statistische" Berichte (Tätigkeitsbericht DG,
+    Radioscopie CPAS wallons, interne Anfragen) effizient ermitteln zu
+    können, braucht der DSBE noch ein paar kleine Änderungen in Lino.
+
+    Prinzipiell sind wir uns einig, dass Lino nicht Excel ersetzen soll,
+    sondern dass die Informationen lediglich als .csv-Dateien aus Lino
+    extrahiert werden und anderweitig verarbeitet und formatiert werden.
+
+    Beschreibung der Änderungen in Lino:
+
+    1)  Erweiterung der Parameter-Panels und Kolonnen der Tabellen
+        "Art-60-7-Vereinbarungen" und "VSEs", um Fragen im folgenden Stil zu
+        beantworten:
+        Welche (Wieviele) Verträge
+        
+        - waren aktiv am X
+        - wurden unterzeichnet / abgeschlossen / beendet
+          in der Periode vom X bis Y
+        - pro Kategorie (Sozialwirtschaft, Interne, Externe Ã¶ffentlich,
+          Externe Privat,...)
+        - pro Beendigungsgrund
+        - pro Partnerorganisation
+        - pro Ausbildungsart
+
+    2)  Tabelle "Vertragsbeendigungsgründe" : hier müssen weitere Felder rein:
+
+        - Checkbox "Art.60-7"
+        - Checkbox "VSE"
+        - Checkbox "Erfolg" --> ob es sich um eine "erfolgreiche" Beendigung
+          im Sinne des Tätigkeitsberichts handelt.
+        - Checkbox "vorzeitig" --> ob Beendigungsdatum ausgefüllt sein muss
+
+        Neue Regel : ein abgeschlossener Vertrag muss jetzt immer einen
+        Beendigungsgrund haben (nicht mehr wie bisher nur im Falle einer
+        vorzeitigen Beendigung)
+
+    3)  Neues Feld "Ausbildungsart" eines VSE. Pro VSE-Vertragsart eine
+        Checkbox "Ausbildungsart", die besagt, ob man dieses Feld ausfüllen muss
+        oder nicht.
+        
+        Hier schlage ich vor, dass das ein ForeignKey zur bestehenden Tabelle
+        "Ausbildungsarten" wird, die schon im Reiter "Ausbildung" der Klienten
+        benutzt wird. Es ist das gleiche Konzept, aber mit unterschiedlichem
+        Verwendungszweck. Falls nötig könnten wir später immer noch eine eigene
+        Tabelle dafür machen.
+
+    4)  Neue Tabelle "Begleitungsbeendigungsgründe" mit Einträgen wie z.B.
+        "Übergabe an Kollege", "Einstellung des Anrechts auf SH", "Umzug in
+        andere Gemeinde", "Hat selber Arbeit gefunden",... Ein Feld:
+        - Dienst (optional) --> wenn ausgefüllt, darf dieser Grund nur für
+        Begleitungen in diesem Dienst angegeben werden)
+
+    5)  Neue Tabellen "Befreiungen von der Verfügbarkeit auf dem
+        Arbeitsmarkt" pro Klient : Datum von / Datum bis / Grund, sowie
+        Konfigurationstabelle der Dispensgründe (z.B. "Gesundheitlich",
+        "Studium/Ausbildung", "Familiär", "Sonstige",....)
+
+
+:ref:`welfare.pcsw.CoachingEndings`

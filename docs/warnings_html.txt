@@ -1,6 +1,1 @@
-/home/luc/hgwork/lino/docs/blog/2013/0511.rst:30: WARNING: Inline interpreted text or phrase reference start-string without end-string.
 /home/luc/hgwork/lino/docs/tested/test_cosi_demo.rst:: WARNING: document isn't included in any toctree
-/home/luc/hgwork/lino/lino/ui/__init__.py:docstring of lino.ui.Site.webdav_url:7: WARNING: term not in glossary: runserver
-/home/luc/hgwork/lino/docs/api/lino.utils.rst:7: WARNING: unknown document: /autodoc/lino.test_apps.mti
-/home/luc/hgwork/lino/docs/changes.rst:16: WARNING: undefined label: welfare.debts.printliabilitiesbybudget (if the link has no caption the label must precede a section header)
-/home/luc/hgwork/lino/docs/releases/index.rst:1: WARNING: unknown document: 1.6.7

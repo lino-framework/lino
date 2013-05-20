@@ -65,13 +65,13 @@ def objects():
     yield company('Auto École Verte','54000 ','Nancy','rue de Mon Désert','12')
     
     City = dd.resolve_model('countries.City')
-    vigala = City.objects.get(name__exact='Vigala')
-    #~ tallinn = City.objects.get(name__exact='Tallinn')
-    person = Instantiator("contacts.Person","first_name last_name",
-                country='EE',street='Uus', street_no='1',
-                addr2='Vana-Vigala küla',
-                city=vigala,zip_code='78003').build
-    yield person('Luc',  'Saffre', gender=mixins.Genders.male)
+    
+    #~ vigala = City.objects.get(name__exact='Vigala')
+    #~ person = Instantiator("contacts.Person","first_name last_name",
+                #~ country='EE',street='Uus', street_no='1',
+                #~ addr2='Vana-Vigala küla',
+                #~ city=vigala,zip_code='78003').build
+    #~ yield person('Luc',  'Saffre', gender=mixins.Genders.male)
     
     eupen = City.objects.get(name__exact='Eupen')
     person = Instantiator("contacts.Person","first_name last_name",

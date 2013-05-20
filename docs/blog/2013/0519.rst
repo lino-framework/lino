@@ -1,0 +1,79 @@
+==============================
+20130519 (Sunday, 19 May 2013)
+==============================
+
+Shared folders are slow
+-----------------------
+
+It seemas that virtualbox shared folders are slower than using a 
+Samba share.
+So I try once more to get that running.
+But either I'm stupid or it is difficult::
+
+    Microsoft Windows XP [Version 5.1.2600]
+    (C) Copyright 1985-2001 Microsoft Corp.
+
+    C:\Documents and Settings\Luc Saffre>net view \\hoppel
+    Shared resources at \\hoppel
+    hoppel server (Samba, Ubuntu)
+    Share name              Type   Used as  Comment
+    -------------------------------------------------------------------------------
+    homes                   Disk            Home Directories
+    Samsung-ML-2160-Series  Print           Samsung ML-2160 Series
+    The command completed successfully.
+
+    C:\Documents and Settings\Luc Saffre>net use h: \\hoppel\homes
+    Enter the user name for 'hoppel': luc
+    Enter the password for hoppel:
+    System error 67 has occurred.
+    The network name cannot be found.
+
+    C:\Documents and Settings\Luc Saffre>ping hoppel
+    Pinging hoppel.lan [192.168.1.69] with 32 bytes of data:
+    Reply from 192.168.1.69: bytes=32 time<1ms TTL=64
+    Reply from 192.168.1.69: bytes=32 time<1ms TTL=64
+    Reply from 192.168.1.69: bytes=32 time<1ms TTL=64
+
+    Ping statistics for 192.168.1.69:
+        Packets: Sent = 3, Received = 3, Lost = 0 (0% loss),
+    Approximate round trip times in milli-seconds:
+        Minimum = 0ms, Maximum = 0ms, Average = 0ms
+        
+    C:\Documents and Settings\Luc Saffre>net use h: \\192.168.1.69\homes
+    Enter the user name for '192.168.1.69': luc
+    Enter the password for 192.168.1.69:
+    System error 67 has occurred.
+    The network name cannot be found.
+
+    C:\Documents and Settings\Luc Saffre>
+
+
+Testing tim2lino
+----------------
+
+Load a current backup::
+
+  $ python manage.py initdb b20130517_123030
+
+Reproduce the problem (more than 200 "new" clients)::
+
+  $ python manage.py show newcomers.NewClients --username caroline
+  
+Run `watch_tim` on directory with a full `changelog.json`::
+
+    $ python manage.py watch_tim tim2lino
+    INFO Started manage.py watch_tim tim2lino/changelog (using lino_local.dsbe.settings) --> PID 3947
+    INFO This is Lino Welfare 1.1.4 using djangosite 0.1.4, Python 2.7.3, Django 1.5.1, Babel 1.0dev-r661, Lino 1.6.7, Jinja 2.6, Sphinx 1.2b1, python-dateutil 2.1, OdfPy ODFPY/0.9.6, docutils 0.10, suds 0.4, PyYaml 3.10, Appy 0.8.3 (2013/02/22 15:29).
+    INFO Languages: de, fr, en. 26 apps, 96 models, 301 actors.
+    INFO Processing file tim2lino/changelog/changelog.watching.json
+    INFO PAR:0000000000 : PUT becomes POST
+    INFO PAR:0000000005 (Client #5 (u'AIR Liquide Belgium (5)')) : Client becomes Company
+    WARNING B-4720 : get() returned more than one City -- it returned 2! Lookup parameters were {'country': <Country: Belgien>, 'zip_code__exact': u'4720'}
+    WARNING Exception 'ValidationError({'first_name': [u'This field cannot be blank.']})' while processing changelog line:
+    {"method":"PUT","alias":"PAR","id":"0000000184","time":"20130517 12:33:46","user":"","data":{"IDPAR":"0000000184","FIRME":"_Niederau","NAME2":"","RUE":"Herbesthaler Straße","CP":"4700","IDPRT":"I","PAYS":"B","TEL":"","FAX":"","COMPTE1":"","NOTVA":"","COMPTE3":"","IDPGP":"","DEBIT":"","CREDIT":"","ATTRIB":"W","IDMFC":"","LANGUE":"D","IDBUD":"","PROF":"83","CODE1":"","CODE2":"","CODE3":"","DATCREA":{"__date__":{"year":1997,"month":3,"day":13}},"ALLO":"AG","NB1":"","NB2":"","IDDEV":"","MEMO":"","COMPTE2":"","RUENUM":"","RUEBTE":"","DEBIT2":"","CREDIT2":"","IMPDATE":{"__date__":{"year":1996,"month":2,"day":12}},"ATTRIB2":"","CPTSYSI":"","EMAIL":"","MVIDATE":{"__date__":{"year":0,"month":0,"day":0}},"IDUSR":"","DOMI1":""}}
+
+    WARNING Exception 'ValidationError({'language': [u"Value 'nl' is not a valid choice."]})' while processing changelog line:
+    {"method":"PUT","alias":"PAR","id":"0000000292","time":"20130517 12:33:49","user":"","data":{"IDPAR":"0000000292","FIRME":"Wellcome Belgium","NAME2":"","RUE":"Avenue Broustin 85","CP":"1080","IDPRT":"I","PAYS":"B","TEL":"02/4240802","FAX":"","COMPTE1":"","NOTVA":"BE-0401.987.992","COMPTE3":"","IDPGP":"","DEBIT":"","CREDIT":"","ATTRIB":"","IDMFC":"30","LANGUE":"N","IDBUD":"","PROF":"19","CODE1":"","CODE2":"","CODE3":"","DATCREA":{"__date__":{"year":1985,"month":8,"day":6}},"ALLO":"S.A.","NB1":"","NB2":"","IDDEV":"","MEMO":"","COMPTE2":"","RUENUM":"","RUEBTE":"","DEBIT2":"","CREDIT2":"","IMPDATE":{"__date__":{"year":0,"month":0,"day":0}},"ATTRIB2":"","CPTSYSI":"","EMAIL":"","MVIDATE":{"__date__":{"year":0,"month":0,"day":0}},"IDUSR":"","DOMI1":""}}
+
+
+

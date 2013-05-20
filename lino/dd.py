@@ -312,3 +312,5 @@ from lino.mixins import (ProjectRelated, UserAuthored,
 from lino.mixins.printable import Printable, PrintableType, CachedPrintable, TypedPrintable, DirectPrintAction
 from lino.mixins.uploadable import Uploadable
 from lino.mixins.human import Human, Born, Genders
+
+#~ from lino.utils.screenshots import register_screenshot

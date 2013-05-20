@@ -130,7 +130,7 @@ class Model(models.Model):
     """
     
     #~ _watch_changes_specs = None
-    _change_watcher_spec = None
+    change_watcher_spec = None
     """
     Internally used by :meth:`watch_changes`
     """
@@ -501,6 +501,7 @@ class Model(models.Model):
               'get_system_note_recipients',
               'get_system_note_type',
               'quick_search_fields',
+              'change_watcher_spec',
               #~ 'site_setup',
               'on_analyze',
               'disable_delete',
@@ -510,6 +511,8 @@ class Model(models.Model):
               'get_typed_instance',
               'print_subclasses_graph')
     """
+    A list of the attributes to be copied to Django models which do not inherit from 
+    :class:`lino.core.model.Model`.
     Used by :mod:`lino.core.kernel`
     """
     

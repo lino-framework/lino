@@ -45,17 +45,12 @@ from lino.utils import curry, AttrDict
 from lino.utils import jsgen
 from lino.utils import uncamel
 
-        
-
 
 actor_classes = []
 actors_list = None
 
 ACTOR_SEP = '.'
 
-
-#~ MODULES = AttrDict()
-  
 def discover():
     global actor_classes
     global actors_list
@@ -85,13 +80,6 @@ def register_actor(a):
     actors_list.append(a)
     return a
   
-    #~ actor.setup()
-    #~ assert not actors_dict.has_key(actor.actor_id), "duplicate actor_id %s" % actor.actor_id
-    #~ actors_dict[actor.actor_id] = actor
-    #~ return actor
-    
-    
-    
     
 def get_default_required(**kw):
     #~ if not kw.has_key('auth'):
@@ -1253,3 +1241,11 @@ class Actor(actions.Parametrizable):
     #~ def show(self,*args,**kw):
         #~ print self.to_rst(*args,**kw)
 
+    @classmethod
+    def get_screenshot_requests(self,language):
+        """
+        Return or yield a list of screenshots to generate for this actor.
+        Not yet stable. Don't override this. 
+        Don't worry if you don't understand. 
+        """
+        return []

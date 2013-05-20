@@ -674,7 +674,8 @@ Lino.PanelMixin = {
 };
 
 
-Lino.status_bar = new Ext.ux.StatusBar({defaultText:'Lino version {{lino.__version__}}.'});
+// Lino.status_bar = new Ext.ux.StatusBar({defaultText:'Lino version {{lino.__version__}}.'});
+Lino.status_bar = new Ext.ux.StatusBar({defaultText:'{{settings.SITE.site_version()}}.'});
 
 {% if settings.SITE.use_tinymce %}
 
@@ -1670,7 +1671,11 @@ Lino.MainPanel = {
   setting_param_values : false,
   config_containing_window : function(wincfg) { }
   ,init_containing_window : function(win) { }
-  ,is_loading : function() { return false; } // overridden by subclasses
+  ,is_loading : function() { 
+      if (!this.rendered) return true;
+      //~ return (Ext.select('.x-loading-msg').elements.length > 0);
+      return true; 
+    } 
   ,do_when_clean : function(auto_save,todo) { todo() }
   ,get_master_params : function() {
     var p = {}
@@ -2727,15 +2732,24 @@ Lino.FormPanel = Ext.extend(Lino.FormPanel,{
     
   },
   
-  is_loading : function() { 
+  unused_is_loading : function() { 
     if (this.current_record == null) {
-        console.log("20130515 current_record is null");
+        //~ console.log("20130515 current_record is null");
         return true; 
     }
+    
+    if (! this.loadMask) return true; // not even rendered: 
+    if (! this.loadMask.el) return true; // not even rendered: 
+    // thanks to Marco Pegoraro http://movableapp.com/2011/09/sencha-touch-loadmask-isvisible/
+    var loading = (this.loadMask.el.select('.x-loading-msg').elements.length > 0);
+    //~ console.log('20130515 GridPanel.is_loading() returns',loading);
+    return loading;
+
+    
     var loading = false;
     this.cascade(function(cmp){
         if (cmp instanceof Lino.GridPanel && cmp.is_loading()) {
-            console.log(20130515, cmp.title,'is loading');
+            //~ console.log(20130515, cmp.title,'is loading');
             loading = true;
             return false;
         }
@@ -3272,7 +3286,6 @@ Lino.GridStore = Ext.extend(Ext.data.ArrayStore,{
     options.params.{{ext_requests.URL_PARAM_REQUESTING_PANEL}} = this.grid_panel.getId();
     Lino.insert_subst_user(options.params); // since 20121016
       
-    
     if (this.grid_panel.hide_top_toolbar) {
         //~ console.log("20120206 GridStore.load() toolbar is hidden");
         options.params.{{ext_requests.URL_PARAM_START}} = 0;
@@ -3350,10 +3363,17 @@ Lino.GridPanel = Ext.extend(Lino.GridPanel,{
     
   },
   
-  is_loading : function() { 
-    console.log(20130515);
+  unused_is_loading : function() { 
+    if (! this.loadMask.el) return true; // not even rendered: 
+    // thanks to Marco Pegoraro http://movableapp.com/2011/09/sencha-touch-loadmask-isvisible/
+    var loading = (this.loadMask.el.select('.x-loading-msg').elements.length > 0);
+    //~ console.log('20130515 GridPanel.is_loading() returns',loading);
+    return loading;
     //~ return this.store.getCount() > 0; 
-    return !this.loadMask.disabled; 
+    //~ return (this.loadMask.el.select('.x-loading-msg').elements.length)
+    //~ return !this.viewReady; 
+    //~ return this.loadMask.isVisible(); 
+    //~ return !this.loadMask.disabled; 
   },
   
   unused_config_containing_window : function(wincfg) { 
@@ -5069,9 +5089,9 @@ Lino.CalendarAppPanel = Ext.extend(Lino.CalendarAppPanel,{
   ,set_status : function(status) { this.refresh();}
   ,refresh : function() {Lino.eventStore.reload();}
   ,layout: 'fit'
-  ,is_loading : function() { 
+  ,unused_is_loading : function() { 
       var loading = Lino.calendarStore.getCount() == 0 | Lino.eventStore.getCount() == 0
-      console.log("CalendarPanel loading:",loading);
+      //~ console.log("CalendarPanel loading:",loading);
       return loading; 
   }
   ,get_base_params : function() {

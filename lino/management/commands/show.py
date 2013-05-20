@@ -17,6 +17,8 @@
 """
 
 import sys
+from optparse import make_option 
+
 from django.core.management.base import BaseCommand, CommandError
 from django.conf import settings
 from django.db import models
@@ -24,6 +26,12 @@ from django.db import models
 class Command(BaseCommand):
     help = __doc__
     args = "action_spec [args ...]"
+    
+    option_list = BaseCommand.option_list + (
+        make_option('--username', action='store', 
+            dest='username', default='root',
+            help='The username to act as. Default is "root".'),
+    ) 
     
     def handle(self, *args, **options):
         if len(args) == 0:
@@ -34,6 +42,7 @@ class Command(BaseCommand):
         
         if issubclass(cl,models.Model):
             cl = cl._lino_default_table
-        
-        print cl.to_rst()
+        username = options['username']
+        ses = settings.SITE.login(username)
+        ses.show(cl)
           

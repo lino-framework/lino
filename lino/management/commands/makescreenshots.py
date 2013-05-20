@@ -13,13 +13,13 @@
 ## along with Lino; if not, see <http://www.gnu.org/licenses/>.
 
 """
-Writes a diagnostic status report about the data on this Site. 
-Used to get a quick overview on the differences in two databases. 
+Writes screenshots to <project_dir>/media/cache/screenshots
 """
 
 import logging
 logger = logging.getLogger(__name__)
 
+import subprocess
 import os
 import errno
 #~ import codecs
@@ -48,30 +48,6 @@ from lino.utils import screenshots
 from atelier.utils import SubProcessParent
 
 
-from lino.utils.screenshots import register_screenshot
-register_screenshot('index','');
-register_screenshot('cal.CalendarPanel','/api/cal/CalendarPanel',username='alicia');
-#~ register_screenshot('/api/cal/CalendarPanel?su=8&ul='+LANGUAGE,'cal.CalendarPanel-su.png');
-#~ //~ register_screenshot('/api/cal/PanelEvents/266?an=detail&ul='+LANGUAGE,'cal.Event.detail.png');
-#~ register_screenshot('/api/cal/PanelEvents/105?an=detail&ul='+LANGUAGE,'cal.Event.detail.png');
-#~ 
-#~ register_screenshot('/api/pcsw/Clients?ul='+LANGUAGE,'pcsw.Clients.grid.png');
-#~ register_screenshot('/api/pcsw/Clients/122?ul='+LANGUAGE,'pcsw.Client.detail.png');
-#~ register_screenshot('/api/pcsw/Clients/122?tab=1&ul='+LANGUAGE,'pcsw.Client.detail.1.png');
-#~ register_screenshot('/api/pcsw/Clients/122?tab=2&ul='+LANGUAGE,'pcsw.Client.detail.2.png');
-#~ 
-#~ register_screenshot('/api/debts/Budgets/2?ul='+LANGUAGE,'debts.Budget.detail.png');
-#~ register_screenshot('/api/debts/Budgets/2?tab=1&ul='+LANGUAGE,'debts.Budget.detail.1.png');
-#~ register_screenshot('/api/debts/Budgets/2?tab=2&ul='+LANGUAGE,'debts.Budget.detail.2.png');
-#~ register_screenshot('/api/debts/Budgets/2?tab=3&ul='+LANGUAGE,'debts.Budget.detail.3.png');
-#~ register_screenshot('/api/debts/Budgets/2?tab=4&ul='+LANGUAGE,'debts.Budget.detail.4.png');
-#~ register_screenshot('/api/jobs/JobsOverview?ul='+LANGUAGE,'jobs.JobsOverview.png');
-#~ 
-#~ 
-
-
-
-
 PHANTOMJS = '/home/luc/snapshots/phantomjs-1.9.0-linux-i686/bin/phantomjs'
 
 JS_SRC = """
@@ -88,7 +64,7 @@ function waitfor(msg,until,limit,todo) {
       //~ task_done(msg,false);
       return;
     };
-    console.log('Retry',msg,'('+String(limit),"attempts left)");
+    // console.log('Retry',msg,'('+String(limit),"attempts left)");
     window.setTimeout(function() { waitfor(msg,until,limit-1,todo)},1000);
 };
 
@@ -101,7 +77,7 @@ var address = '%(url)s';
 var data = 'username=%(username)s&password=%(password)s';
 var page = require('webpage').create();
 page.open('http://127.0.0.1:8000/auth','post',data,function (status) {
-    console.log('opened auth!');
+    // console.log('opened auth!');
     if (status !== 'success') {
         console.log('Unable to authenticate!');
         phantom.exit();
@@ -112,7 +88,10 @@ var page = require('webpage').create();
 // page.customHeaders = { %(remote_user_header)s: '%(username)s'};
 // page.customHeaders = { 'HTTP_%(remote_user_header)s': '%(username)s'};
 
-page.viewportSize = { width: 1024, height: 768};
+page.viewportSize = { width: 1400, height: 800};
+// page.viewportSize = { width: 1024, height: 768};
+// page.viewportSize = { width: 1366, height: 744};
+// page.viewportSize = { width: 800, height: 600};
 page.onConsoleMessage = function (msg) { console.log(msg); };
 page.onError = function (msg, trace) {
     console.log(msg);
@@ -124,18 +103,20 @@ page.onError = function (msg, trace) {
 var is_loaded = function() { 
   return page.evaluate(function() { 
       // console.log('evaluate()');
-        //~ return !Ext.Ajax.isLoading();
+        // return !Ext.Ajax.isLoading();
+        // return (document.readyState == 'complete');
         if (typeof Lino != "undefined") {
             if (Lino.current_window) {
-                if (Lino.current_window.main_item.is_loading()) 
-                    return false;
+                if (!Lino.current_window.main_item.is_loading())
+                    return true;
                 // console.log("Lino.current_window still loading in ",document.documentElement.innerHTML);
-                console.log("Lino.current_window", Lino.current_window.main_item,"still loading." );
-                return true;
+                // console.log("Lino.current_window", Lino.current_window.main_item,"still loading." );
+                // return true;
             }
         }
         // console.log("No Lino in ",document.documentElement.innerHTML);
-        console.log("No Lino in response");
+        // console.log("No Lino in response");
+        return false;
     }
   );
 };
@@ -179,18 +160,18 @@ def start_server():
     except KeyboardInterrupt:
         sys.exit(0)
 
-    
-def start_server2(): # 
-    pp = SubProcessParent()
-    args = ['django-admin.py']
-    args += ['runserver']
-    args += ['--settings', settings.SETTINGS_MODULE]
-    p = pp.open_subprocess(args)
-    p.wait()
+def stop_server():
+    #~ server.terminate()
+    HTTPD.shutdown()
+    HTTPD.server_close()
+    logger.info("terminated server.")
     
 
+def main(force=False,**kw):
+    settings.SITE.startup()
+        
+    outputbase = os.path.join(settings.MEDIA_ROOT,'cache','screenshots')
 
-def build_screenshots(outputbase,force=False,**kw):
     urlbase = "http://" + ADDR + ":" + str(PORT)
     #~ urlbase="http://127.0.0.1:8000"
     pp = SubProcessParent()
@@ -203,13 +184,25 @@ def build_screenshots(outputbase,force=False,**kw):
     assert not settings.SITE.remote_user_header
     try:
         for lng in settings.SITE.languages:
-            for ss in screenshots.SCREENSHOTS.values():
-                target = ss.get_filename(outputbase,lng.django_code)
+          if lng.django_code == 'de': # temporary
+            for ss in screenshots.get_screenshots(lng.django_code):
+            #~ print "20130515 got screenshot", ss
+                target = ss.get_filename(outputbase)
                 if not force and os.path.exists(target):
                     logger.info("%s exists",target)
                     continue
+                for fn in (target, target+'.log'):
+                    if os.path.exists(fn):
+                        os.remove(fn)
+                url = ss.get_url(urlbase)
+                if url is None:
+                    logger.info("No url for %s",target)
+                    continue
                 logger.info("Build %s...",target)
-                ctx = dict(url=ss.get_url(urlbase,lng.django_code),target=target,username=ss.username)
+                ctx = dict(
+                    url=url,
+                    target=target,
+                    username=ss.ar.get_user().username)
                 ctx.update(password='1234')
                 ctx.update(remote_user_header=settings.SITE.remote_user_header)
                 f = file('tmp.js','wt')
@@ -217,23 +210,32 @@ def build_screenshots(outputbase,force=False,**kw):
                 f.close()
                 args = [PHANTOMJS]
                 args += ['--cookies-file=phantomjs_cookies.txt']
+                args += ['--disk-cache=true']
                 args += ['tmp.js']
                 
-                p = pp.open_subprocess(args,**kw)
-                p.wait()
-                rc = p.returncode
-                print rc
+                try:
+                    output = pp.check_output(args,**kw)
+                except subprocess.CalledProcessError as e:
+                    output = e.output
+                    file(target+'.log','wt').write(output)
                 count += 1
-                if rc != 0:
-                    raise Exception("`%s` returned %s" % (" ".join(args),rc))
+                
+                #~ p = pp.open_subprocess(args,**kw)
+                #~ p.wait()
+                #~ rc = p.returncode
+                #~ if rc != 0:
+                    #~ raise Exception("`%s` returned %s" % (" ".join(args),rc))
                 if not os.path.exists(target):
-                    raise Exception("File %s has not been created" % target)
-    finally:
+                    raise Exception("File %s has not been created." % target)
         logger.info("Built %d screenshots.",count)
-        #~ server.terminate()
-        HTTPD.shutdown()
-        HTTPD.server_close()
-        logger.info("terminated server.")
+    except Exception as e:
+        import traceback
+        traceback.print_exc(e)
+        #~ print e
+        stop_server()
+        raise
+    finally:
+        stop_server()
 
     
 
@@ -242,18 +244,30 @@ def build_screenshots(outputbase,force=False,**kw):
 
 class Command(BaseCommand):
     help = __doc__
-    args = "output_dir"
+    
+    option_list = BaseCommand.option_list + (
+        make_option('--force', action='store_true', 
+            dest='force', default=False,
+            help='Overwrite existing files.'),
+    ) 
     
     
     def handle(self, *args, **options):
-        if len(args) != 1:
-            raise CommandError("Required argument: output_dir")
-            
-        output_dir = args[0]
-            
-        #~ print settings.SITE.__class__
-        settings.SITE.startup()
-        #~ translation.activate(settings.LANGUAGE_CODE)
         
-        build_screenshots(output_dir,force=True)
+        
+        if len(args):
+            raise CommandError("Unexpected arguments %r" % args)
+            
+        # Igor Katson writes an interesting answer in 
+        # `Django Broken pipe in Debug mode
+        # <http://stackoverflow.com/questions/7912672/django-broken-pipe-in-debug-mode>`__::
+        # Monkeypatch python not to print "Broken Pipe" errors to stdout.
+        import SocketServer
+        from wsgiref import handlers
+        SocketServer.BaseServer.handle_error = lambda *args, **kwargs: None
+        handlers.BaseHandler.log_exception = lambda *args, **kwargs: None
+            
+            
+        main(force=options['force'])
+        #~ main()
         

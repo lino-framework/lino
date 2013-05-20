@@ -166,7 +166,7 @@ def watch_changes(model,ignore=[],master_key=None,**options):
     
     """
     #~ if ignore is None:
-        #~ model._change_watcher_spec = None
+        #~ model.change_watcher_spec = None
         #~ return
     #~ from lino import dd
     if isinstance(ignore,basestring):
@@ -186,19 +186,19 @@ def watch_changes(model,ignore=[],master_key=None,**options):
             return getattr(obj,master_key.name)
     ignore = set(ignore)
     #~ cs = WATCH_SPECS.get(model)
-    cs = model._change_watcher_spec
+    cs = model.change_watcher_spec
     if cs is not None:
         ignore |= cs.ignored_fields
     for f in model._meta.fields:
         if not f.editable:
             ignore.add(f.name)
-    model._change_watcher_spec = WatcherSpec(ignore,get_master)
+    model.change_watcher_spec = WatcherSpec(ignore,get_master)
     #~ logger.info("20130508 watch_changes(%s)",model)
 
 
 def get_master(obj):
     
-    cs = obj._change_watcher_spec
+    cs = obj.change_watcher_spec
     
     #~ print 20120921, cs
     if cs is None:
@@ -227,7 +227,7 @@ def on_update(sender=None,request=None,**kw):
     if master is None:
         return
         
-    cs = sender.watched._change_watcher_spec
+    cs = sender.watched.change_watcher_spec
     changes = []
     for k,old in sender.original_state.iteritems():
         #~ if watched_fields is None or k in watched_fields:

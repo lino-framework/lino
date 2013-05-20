@@ -1,0 +1,24 @@
+==============================
+20130520 (Monday, 20 May 2013)
+==============================
+
+
+Updated :ref:`welfare.watch_tim` (Apotheken, Krankenkassen, Klientenkontakte)
+
+
+'City' object has no attribute '_change_watcher_spec'
+-----------------------------------------------------
+
+Fixed a bug which caused the above error message when 
+trying to edit a City:
+:attr:`change_watcher_spec <lino.core.model.Model.change_watcher_spec>` : was not 
+listed in :attr:`LINO_MODEL_ATTRIBS <lino.core.model.Model.LINO_MODEL_ATTRIBS>`.
+Removed the underscore (renamed it from `_change_watcher_spec` 
+to `change_watcher_spec` so that the documentation can link it.
+
+
+Version shown in status bar
+---------------------------
+
+Lino.status_bar showed the Lino version, but the most interesting is 
+the application's version.
