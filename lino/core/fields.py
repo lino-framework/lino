@@ -891,46 +891,47 @@ class RecurrenceField(models.CharField):
 
 def get_data_elem(model,name):
     #~ logger.info("20120202 get_data_elem %r,%r",model,name)
-    parts = name.split('__')
-    if len(parts) > 1:
-        """It's going to be a RemoteField
-        """
-        # logger.warning("20120406 RemoteField %s in %s",name,self)
-        #~ model = self.model
+    if not name.startswith('__'):
+        parts = name.split('__')
+        if len(parts) > 1:
+            """It's going to be a RemoteField
+            """
+            # logger.warning("20120406 RemoteField %s in %s",name,self)
+            #~ model = self.model
 
-        from lino.ui import store
-        
-        field_chain = []
-        for n in parts:
-            assert model is not None
-            #~ 20130508 model.get_default_table().get_handle() # make sure that all atomizers of those fields get created.
-            fld = get_data_elem(model,n)
-            if fld is None:
-                # raise Exception("Part %s of %s got None" % (n,model))
-                raise Exception(
-                    "Invalid RemoteField %s.%s (no field %s in %s)" % 
-                    (full_model_name(model),name,n,full_model_name(model)))
-            store.get_atomizer(fld,fld.name) # make sure that the atomizer gets created.
-            field_chain.append(fld)
-            if fld.rel:
-                model = fld.rel.to
-            else:
-                model = None
-        def func(obj,ar=None):
-            #~ print '20130422',name,obj, [fld.name for fld in field_chain]
-            try:
-                for fld in field_chain:
-                    #~ obj = fld.value_from_object(obj)
-                    obj = fld._lino_atomizer.full_value_from_object(obj,ar)
-                #~ for n in parts:
-                    #~ obj = getattr(obj,n)
-                #~ print '20130422 %s --> %r', fld.name,obj
-                return obj
-            except Exception,e:
-                logger.exception(e)
-                return str(e)
-                return None
-        return RemoteField(func,name,fld)
+            from lino.ui import store
+            
+            field_chain = []
+            for n in parts:
+                assert model is not None
+                #~ 20130508 model.get_default_table().get_handle() # make sure that all atomizers of those fields get created.
+                fld = get_data_elem(model,n)
+                if fld is None:
+                    # raise Exception("Part %s of %s got None" % (n,model))
+                    raise Exception(
+                        "Invalid RemoteField %s.%s (no field %s in %s)" % 
+                        (full_model_name(model),name,n,full_model_name(model)))
+                store.get_atomizer(fld,fld.name) # make sure that the atomizer gets created.
+                field_chain.append(fld)
+                if fld.rel:
+                    model = fld.rel.to
+                else:
+                    model = None
+            def func(obj,ar=None):
+                #~ print '20130422',name,obj, [fld.name for fld in field_chain]
+                try:
+                    for fld in field_chain:
+                        #~ obj = fld.value_from_object(obj)
+                        obj = fld._lino_atomizer.full_value_from_object(obj,ar)
+                    #~ for n in parts:
+                        #~ obj = getattr(obj,n)
+                    #~ print '20130422 %s --> %r', fld.name,obj
+                    return obj
+                except Exception,e:
+                    logger.exception(e)
+                    return str(e)
+                    return None
+            return RemoteField(func,name,fld)
     
     try:
         return model._meta.get_field(name)
