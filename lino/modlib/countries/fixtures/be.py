@@ -491,7 +491,7 @@ belgian_cities = u"""
 7903 Chapelle-à-Wattines 
 7160 Chapelle-lez-Herlaimont 
 4537 Chapon-Seraing 
-6000 Charleroi 
+6000 Charleroi
 4654 Charneux 
 6824 Chassepierre 
 1450 Chastre 
@@ -1751,7 +1751,7 @@ belgian_cities = u"""
 5550 Nafraiture 
 6120 Nalinnes 
 5300 Namêche 
-5000 Namur 
+# 5000 Namur
 4550 Nandrin 
 5100 Naninne 
 5555 Naomé 

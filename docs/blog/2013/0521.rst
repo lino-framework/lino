@@ -1,0 +1,14 @@
+===============================
+20130521 (Tuesday, 21 May 2013)
+===============================
+
+- Official release of Lino and Lino-WElf<re on PyPI.
+
+- a bug in :mod:`lino.modlib.countries.fixtures.few_cities`:
+  caused French designations of cities like Mons and Liège 
+  to be ignored.
+
+- Choosing :menuselection:`Concepts --> Places` in belref 
+  caused all places to show up.
+  :meth:`lino.core.tables.TableRequest.parse_req` now gives a 
+  hard-coded default value of `limit=15`.

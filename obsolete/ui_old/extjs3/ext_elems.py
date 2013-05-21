@@ -1369,7 +1369,7 @@ class SingleRelatedObjectElement(DisplayElement):
         :lh: the LayoutHandle
         :relobj: the RelatedObject instance
         """
-        print(20130202, relobj.parent_model, relobj.model, relobj.field)
+        #~ print(20130202, relobj.parent_model, relobj.model, relobj.field)
         self.relobj = relobj
         self.editable = False
         kw.update(

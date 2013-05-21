@@ -260,6 +260,9 @@ class TableRequest(ActionRequest):
     
         
     def parse_req(self,request,rqdata,**kw):
+        """
+        parse the given Django request and setup from it.
+        """
         #~ logger.info("20120723 %s.parse_req()",self.actor)
         #~ rh = self.ah
         master = kw.get('master',self.actor.master)
@@ -351,7 +354,8 @@ class TableRequest(ActionRequest):
         offset = rqdata.get(constants.URL_PARAM_START,None)
         if offset:
             kw.update(offset=int(offset))
-        limit = rqdata.get(constants.URL_PARAM_LIMIT,None)
+        #~ limit = rqdata.get(constants.URL_PARAM_LIMIT,None)
+        limit = rqdata.get(constants.URL_PARAM_LIMIT,15) 
         if limit:
             kw.update(limit=int(limit))
         
