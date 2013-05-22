@@ -326,9 +326,20 @@ class BaseRequest(object):
         
     def show(self,spec,column_names=None,**kw):
         ar = self.spawn(spec,**kw)
-        print ar.to_rst(column_names)
+        #~ print ar.to_rst(column_names)
+        return ar.renderer.show(ar,column_names)
         
+    def summary_row(self,obj,**kw):
+        return obj.summary_row(self,**kw)
             
+    def instance_handler(self,*args,**kw): return self.renderer.instance_handler(self,*args,**kw)
+    def href_to(self,*args,**kw): return self.renderer.href_to(self,*args,**kw)
+    def pk2url(self,*args,**kw): return self.renderer.pk2url(self,*args,**kw)
+    def get_request_url(self,*args,**kw): return self.renderer.get_request_url(self,*args,**kw)
+    def obj2html(self,*args,**kw): return self.renderer.obj2html(self,*args,**kw)
+    def href_to_request(self,*args,**kw): return self.renderer.href_to_request(self,*args,**kw)
+    def window_action_button(self,*args,**kw): return self.renderer.window_action_button(self,*args,**kw)
+    def row_action_button(self,obj,a,*args,**kw): return self.renderer.row_action_button(obj,self.request,a,*args,**kw)
 
       
 class ActionRequest(BaseRequest):
@@ -536,13 +547,6 @@ class ActionRequest(BaseRequest):
     #~ def prompt(self,*args,**kw): return self.ui.prompt(self,*args,**kw)
     def summary_row(self,*args,**kw): return self.actor.summary_row(self,*args,**kw)
     def get_sum_text(self): return self.actor.get_sum_text(self)
-    def instance_handler(self,*args,**kw): return self.renderer.instance_handler(self,*args,**kw)
-    def href_to(self,*args,**kw): return self.renderer.href_to(self,*args,**kw)
-    def pk2url(self,*args,**kw): return self.renderer.pk2url(self,*args,**kw)
-    def get_request_url(self,*args,**kw): return self.renderer.get_request_url(self,*args,**kw)
-    def obj2html(self,*args,**kw): return self.renderer.obj2html(self,*args,**kw)
-    def href_to_request(self,*args,**kw): return self.renderer.href_to_request(self,*args,**kw)
-    def row_action_button(self,obj,a,*args,**kw): return self.renderer.row_action_button(obj,self.request,a,*args,**kw)
     def as_html(self,*args,**kw): return self.bound_action.action.as_html(self,*args,**kw)
         
     def absolute_uri(self,*args,**kw):
@@ -557,4 +561,3 @@ class ActionRequest(BaseRequest):
         Returns a string representing this request in reStructuredText markup.
         """
         return self.actor.to_rst(self,*args,**kw)
-        #~ raise NotImplementedError()

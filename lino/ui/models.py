@@ -313,17 +313,6 @@ if settings.SITE.user_model:
         
 
 
-def get_installed_todo_tables(ar):
-    """
-    Return or yield a list of tables that should be empty
-    """
-    for app_module in models.get_apps():
-        meth = getattr(app_module,'get_todo_tables',None)
-        if meth is not None:
-            #~ dblogger.debug("Running %s of %s", methname, mod.__name__)
-            for i in meth(ar):
-                yield i
-
 
 
 
@@ -386,7 +375,7 @@ class Home(mixins.EmptyTable):
             warnings = []
             
             #~ for T in (MySuggestedCoachings,cal.MyTasksToDo):
-            for table,text in get_installed_todo_tables(ar):
+            for table,text in settings.SITE.get_todo_tables(ar):
                 r = table.request(user=u)
                 #~ r = T.request(subst_user=u)
                 #~ r = ar.spawn(T)

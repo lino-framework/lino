@@ -5,7 +5,7 @@
 Shared folders are slow
 -----------------------
 
-It seemas that virtualbox shared folders are slower than using a 
+It seems that virtualbox shared folders are slower than using a 
 Samba share.
 So I try once more to get that running.
 But either I'm stupid or it is difficult::

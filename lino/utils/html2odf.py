@@ -113,7 +113,7 @@ def toxml(node):
 
 
 #~ PTAGS = ('p','td','li')
-PTAGS = ('p','td','div')
+PTAGS = ('p','td','div','table','tr')
 
 def html2odf(e,ct=None,**ctargs):
     """

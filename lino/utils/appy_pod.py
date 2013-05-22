@@ -97,6 +97,7 @@ class Renderer(AppyRenderer):
         context.update(table=self.insert_table)
         #~ context.update(html2odf=html2odf)
         context.update(ehtml=html2odf)
+        context.update(toxml=toxml)
         #~ from lino.extjs import ui
         #~ self.extjs_ui = ui
         #~ self.extjs_ui = settings.SITE.ui

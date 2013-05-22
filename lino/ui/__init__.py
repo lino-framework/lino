@@ -903,7 +903,18 @@ class Site(lino.Site):
         """
         from lino.core import web
         return web.render_from_request(request,'admin_main.html')
-
+        
+    def get_todo_tables(self,ar):
+        """
+        Return or yield a list of tables that should be empty
+        """
+        from django.db import models
+        for app_module in models.get_apps():
+            meth = getattr(app_module,'get_todo_tables',None)
+            if meth is not None:
+                #~ dblogger.debug("Running %s of %s", methname, mod.__name__)
+                for i in meth(ar):
+                    yield i
 
     def get_installed_apps(self):
         """

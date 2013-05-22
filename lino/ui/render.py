@@ -302,8 +302,10 @@ class TextRenderer(HtmlRenderer):
         return text
         
     def show(self,ar,*args,**kw):
+        """
+        Returns a string representing this request in reStructuredText markup.
+        """
         print ar.to_rst(*args,**kw)
-        
         
     def unused_request(self,actor=None,**kw):
         #~ username = kw.pop('username',None)

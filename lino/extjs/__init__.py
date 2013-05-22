@@ -74,6 +74,7 @@ from lino.core import menus
 from lino.utils import jsgen
 from lino.utils.jsgen import py2js, js_code, id2js
 from lino.utils.xmlgen import html as xghtml
+from lino.utils.xmlgen.html import E
 from lino.utils.config import make_dummy_messages_file
 from lino.utils import codetime
 
@@ -124,6 +125,12 @@ class ExtRenderer(HtmlRenderer):
     def __init__(self,ui):
         HtmlRenderer.__init__(self,ui)
         jsgen.register_converter(self.py2js_converter)
+        
+        
+    def show(self,ar,*args,**kw):
+        return E.tostring(ar.table2xhtml())
+        
+        
         
     def pk2url(self,ar,pk,**kw):
         return None
@@ -647,18 +654,25 @@ tinymce.init({
                 
         
         #~ yield "Lino.load_mask = new Ext.LoadMask(Ext.getBody(), {msg:'Immer mit der Ruhe...'});"
+        
+        dashboard = dict(
+            id="dashboard",
+            xtype='container',
+            autoScroll=True,
+            )
           
         main=dict(
-          id="main_area",
-          xtype='container',
-          region="center",
-          autoScroll=True,
-          layout='fit'
-        )
+            id="main_area",
+            xtype='container',
+            region="center",
+            #~ autoScroll=True,
+            layout='fit',
+            items=dashboard,
+            )
         
         if not on_ready:
             #~ print "20121115 foo"
-            main.update(html=site.get_main_html(request))
+            dashboard.update(html=site.get_main_html(request))
         
         win = dict(
           layout='fit',

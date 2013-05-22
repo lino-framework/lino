@@ -104,7 +104,8 @@ wrap it into a <div class="htmlText">.
 */
 
 .htmlText {
-	font-family: arial,tahoma;
+	/* font-family: arial,tahoma; */
+    font: normal 11px arial,tahoma,verdana,helvetica;
 }
 .htmlText h1 {
 	font-size:16px;
@@ -112,10 +113,16 @@ wrap it into a <div class="htmlText">.
 	padding-bottom:12px;
 	}
 .htmlText h2 {
-	font-size:13px;
-	padding-top:0px;
-	padding-bottom:10px;
+	font-size:14px;
+	padding-top:2px;
+	padding-bottom:2px;
 	}
+.htmlText h3 {
+	font-size:12px;
+	font-style: italic;
+	padding-top:1px;
+	padding-bottom:1px;
+    }
 .htmlText td,th {
 	padding:0px;
 	}

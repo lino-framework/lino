@@ -133,9 +133,15 @@ def extend_context(context):
         requested_language=get_language(),
         )
 
+from lino.core import requests
+
 def render_from_request(request,template_name,**context):
     extend_context(context)
     context.update(request=request)
+    ar = requests.BaseRequest(
+        renderer=settings.SITE.ui.ext_renderer,
+        request=request)
+    context.update(ar=ar)
     template = settings.SITE.jinja_env.get_template(template_name)
     return template.render(**context)
 

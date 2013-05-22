@@ -1,5 +1,5 @@
 <div class="htmlText">
-{% if not request.user.is_authenticated %}
+{% if not request.user.profile.authenticated %}
 {% if not site.admin_prefix %}
   <p>
   {{_("Welcome to the <b>%s</b> site.") % site.title}}

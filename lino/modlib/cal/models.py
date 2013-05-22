@@ -47,6 +47,7 @@ from lino.utils import ONE_DAY
 from lino.core import constants
 
 
+from lino.utils.xmlgen.html import E
 
 from lino.modlib.cal.utils import \
     DurationUnits, setkw, dt2kw, \
@@ -2282,21 +2283,22 @@ if settings.SITE.use_extensible:
 
 
     
+def reminders_as_html_old(ar,days_back=None,days_forward=None,**kw):
+    s = '<div class="htmlText" style="margin:5px">%s</div>' % reminders_as_html(ar,days_back=None,days_forward=None,**kw)
+    return s
+    
 def reminders_as_html(ar,days_back=None,days_forward=None,**kw):
     """
     Return a HTML summary of all open reminders for this user.
     """
     user = ar.get_user()
     if not user.profile.authenticated: return ''
-    #~ Task = dd.resolve_model('cal.Task')
-    #~ Event = dd.resolve_model('cal.Event')
     today = datetime.date.today()
     
     past = {}
     future = {}
     def add(cmp):
         if cmp.start_date < today:
-        #~ if task.dt_alarm < today:
             lookup = past
         else:
             lookup = future
@@ -2307,29 +2309,17 @@ def reminders_as_html(ar,days_back=None,days_forward=None,**kw):
         else:
             day.append(cmp)
             
-    #~ filterkw = {}
     flt = models.Q()
     if days_back is not None:
         flt = flt & models.Q(start_date__gte = today - datetime.timedelta(days=days_back))
-        #~ filterkw.update({ 
-            #~ 'start_date__gte' : today - datetime.timedelta(days=days_back)
-        #~ })
     if days_forward is not None:
         flt = flt & models.Q(start_date__lte=today + datetime.timedelta(days=days_forward))
-        #~ filterkw.update({ 
-            #~ 'start_date__lte' : today + datetime.timedelta(days=days_forward)
-        #~ })
-    #~ filterkw.update(dt_alarm__isnull=False)
-    #~ filterkw.update(user=user)
     
     events = ar.spawn(MyEvents,
-        #~ master_instance=user,
         user=user,
         filter=flt & (models.Q(state=None) | models.Q(state__lte=EventStates.scheduled)))
     tasks = ar.spawn(MyTasks,
-        #~ master_instance=user,
         user=user,
-        #~ filter=flt & models.Q(state__in=[TaskState.blank_item,TaskState.todo])) 20120829
         filter=flt & models.Q(state__in=[None,TaskStates.todo]))
     
     for o in events:
@@ -2340,38 +2330,31 @@ def reminders_as_html(ar,days_back=None,days_forward=None,**kw):
         o._detail_action = MyTasks.get_url_action('detail_action')
         add(o)
         
-    #~ for o in Event.objects.filter(
-        #~ models.Q(state=None) | models.Q(state__lte=EventStates.scheduled),
-        #~ **filterkw).order_by('start_date'):
-        #~ add(o)
-        
-    #~ filterkw.update(done=False)
-    #~ filterkw.update(state__in=[TaskState.blank_item,TaskState.todo])
-            
-    #~ for task in Task.objects.filter(**filterkw).order_by('start_date'):
-        #~ add(task)
-        
     def loop(lookup,reverse):
         sorted_days = lookup.keys()
         sorted_days.sort()
         if reverse: 
             sorted_days.reverse()
         for day in sorted_days:
+            #~ yield E.h3(dtosl(day))
             yield '<h3>'+dtosl(day) + '</h3>'
-            #~ yield dd.summary(ar,lookup[day],**kw)
             yield dd.summary(ar,lookup[day],**kw)
             
+    #~ if days_back is not None:
+        #~ return loop(past,True)
+    #~ else:
+        #~ return loop(future,False)
+        
     if days_back is not None:
         s = ''.join([chunk for chunk in loop(past,True)])
     else:
         s = ''.join([chunk for chunk in loop(future,False)])
         
-    #~ s = '<div class="htmlText" width="30%%">%s</div>' % s
-    s = '<div class="htmlText" style="margin:5px">%s</div>' % s
+    #~ s = '<div class="htmlText" style="margin:5px">%s</div>' % s
     return s
     
     
-    
+settings.SITE.reminders_as_html = reminders_as_html
     
 def update_reminders(user):
     n = 0 
@@ -2547,8 +2530,8 @@ def setup_main_menu(site,ui,profile,m):
     #~ m.add_action(MyPendingSentInvitations)
     
   
-def setup_master_menu(site,ui,profile,m): 
-    pass
+#~ def setup_master_menu(site,ui,profile,m): 
+    #~ pass
     
 #~ def setup_my_menu(site,ui,profile,m): 
     #~ pass
