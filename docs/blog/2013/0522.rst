@@ -1,0 +1,21 @@
+=================================
+20130522 (Wednesday, 22 May 2013)
+=================================
+
+Statistik-Erweiterungen DSBE
+----------------------------
+
+Some minor changes from user feedback after the release:
+
+- Modulbezeichnung "Stellen" ändern nach "Art.60§7"
+
+- Detail Vertragsbeendigungsgrund: Liste der Verträge mit dieser 
+  Beendigung.
+  Auf einem Vertragsbeendigungsgrund kann man jetzt eine Detail-Ansicht 
+  öffnen und sieht dann alle VSEs und Art.60§7-Konventionen mit diesem 
+  Beendigunggrund.
+
+- "Dienstleiter" ersetzt durch "Manager" (nicht "EDV-Verantwortlicher" 
+  oder "kann konfigurieren", aber wie besprochen wird "Dienstleiter" 
+  hier nicht mehr benutzt).
+

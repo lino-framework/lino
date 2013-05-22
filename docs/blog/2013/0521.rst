@@ -2,7 +2,7 @@
 20130521 (Tuesday, 21 May 2013)
 ===============================
 
-- Official release of Lino and Lino-WElf<re on PyPI.
+- Official release of Lino and Lino-Welfare on PyPI.
 
 - a bug in :mod:`lino.modlib.countries.fixtures.few_cities`:
   caused French designations of cities like Mons and Liège 
@@ -12,3 +12,32 @@
   caused all places to show up.
   :meth:`lino.core.tables.TableRequest.parse_req` now gives a 
   hard-coded default value of `limit=15`.
+
+
+- Miguel Grinberg gives a good summary of what "RESTful" 
+  actually means in his blog entry 
+  `Designing a RESTful API with Python and Flask
+  <http://blog.miguelgrinberg.com/post/designing-a-restful-api-with-python-and-flask>`_.
+  
+PublicSecurityNumbers instance has no attribute 'PublicSecurityNumbers'  
+-----------------------------------------------------------------------
+
+A typo bug caused by the internal conversion in 
+:mod:`lino_welfare.modlib.cbss.tx25` had slipped through the 
+test suite. A super efficient way to test this is to check 
+whether each Tx25 of the demo database has at least one row of 
+result::
+
+    for obj in cbss.RetrieveTIGroupsRequest.objects.all():
+        msg = "%s has no result" % obj
+        self.assertNotEqual(obj.Result(ses).get_total_count(),0,msg)
+        
+The challenge was: the problem is actually being reproduced only with 
+our private collection of Tx25 requests. 
+This collection is private because it contains data about real people. 
+Currently I must remember to run the test suite also manually in a
+project directory which loads these non-public xml files.
+TODO: how to integrate optional private test suites into an 
+open source project?
+
+Internals: changed `print_action` to `do_print`.
