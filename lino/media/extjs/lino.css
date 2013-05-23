@@ -123,7 +123,7 @@ wrap it into a <div class="htmlText">.
 	padding-top:1px;
 	padding-bottom:1px;
     }
-.htmlText td,th {
+table.htmlText td,th {
 	padding:0px;
 	}
 .htmlText p {

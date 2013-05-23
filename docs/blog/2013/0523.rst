@@ -5,4 +5,46 @@
 - Checked in yesterday's work.
 
 
+VirtualBox error in suplibOsInit
+--------------------------------
 
+Once again after a kernel upgrade:
+
+    Kernel driver not installed (rc=-1908)
+
+    The VirtualBox Linux kernel driver (vboxdrv) is either not loaded or there is a permission problem with /dev/vboxdrv. Please reinstall the kernel module by executing
+
+    '/etc/init.d/vboxdrv setup'
+
+    as root. If it is available in your distribution, you should install the DKMS package first. This package keeps track of Linux kernel changes and recompiles the vboxdrv kernel module if necessary.
+    
+
+This time the following two commands were enough to help::    
+
+    $ sudo aptitude install linux-headers-`uname -r`    
+    $ sudo aptitude reinstall virtualbox-dkms
+
+
+Compare :blogref:`20130509`.
+
+
+Statistiken DSBE
+----------------
+
+Mein Experiment von gestern gefällt mir noch immer...
+
+TODO:
+In den Parameter-Panels von Klienten und Verträgen (VSEs und Art60§7) 
+konnte man bisher nur *ein* Datum angeben und nicht einen Datums\ *bereich*. 
+Für Klienten habe ich das jetzt schon erweitert. 
+Für Verträge mach ich das irgendwann mal.
+
+Zum Beispiel Fragen wie
+"Wieviele neue Klienten sind im Jahr 2013 hinzugekommen?",
+"Wieviele Verträge im Jahr 2013 unterschrieben?".
+Könnte lästig werden, weil es viele 
+Verknüpfungen und komplexe Fälle gibt, und weil diese Filterkriterien 
+noch nicht gut durch test cases abgedeckt sind.
+
+Ausserdem auch eine kleine Tabelle ContractActions ähnlich wie 
+CoachingActions, aber zusätzlich mit einer Aktion "signed".

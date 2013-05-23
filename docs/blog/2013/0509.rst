@@ -125,7 +125,7 @@ Summary: Maybe i was just lacking the correct linux-headers package.
 Which means that there seems to be some problem 
 with a missing dependence declaration, 
 but i didn't really find a clear explanation
- and don't have an environment for doing such tests...
+and don't have an environment for doing such tests...
 
 
 Renaming files from a bash command line

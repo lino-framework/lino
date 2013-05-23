@@ -255,6 +255,7 @@ class ExtUI(base.UI):
         Render the given ActionRequest ar to html
         """
         tble.attrib.update(cellspacing="3px",bgcolor="#ffffff", width="100%")
+        #~ tble.attrib.update(cellspacing="3px",bgcolor="#d0def0", width="100%")
         
         grid = ar.ah.list_layout.main
         columns = grid.columns
@@ -315,6 +316,7 @@ class ExtUI(base.UI):
         
         #~ cellattrs = dict(align="center",valign="middle",bgcolor="#eeeeee")
         cellattrs = dict(align="left",valign="top",bgcolor="#eeeeee")
+        #~ cellattrs = dict(align="left",valign="top",bgcolor="#d0def0")
         #~ cellattrs = dict()
         
         headers = [x for x in grid.headers2html(ar,columns,headers,**cellattrs)]

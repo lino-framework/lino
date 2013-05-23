@@ -689,6 +689,20 @@ class MultiChoiceListField(ChoiceListField):
         return ', '.join([self.choicelist.get_text_for_value(bc.value) for bc in value])
 
 
+class YesNo(ChoiceList):
+    """
+    Used to define parameter panel fields for BooleanFields::
+    
+      foo = dd.YesNo.field(_("Foo"),blank=True)
+      
+    """
+    app_label = 'lino'
+    verbose_name_plural = _("Yes or no")
+add = YesNo.add_item
+add('y', _("Yes"),'yes')
+add('n', _("No"),'no')
+
+
 
 class Genders(ChoiceList):
     """
@@ -703,6 +717,7 @@ class Genders(ChoiceList):
 add = Genders.add_item
 add('M',_("Male"),'male')
 add('F',_("Female"),'female')
+
 
 
 

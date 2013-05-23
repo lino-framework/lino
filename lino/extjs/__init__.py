@@ -128,7 +128,8 @@ class ExtRenderer(HtmlRenderer):
         
         
     def show(self,ar,*args,**kw):
-        return E.tostring(ar.table2xhtml())
+        return ar.table2xhtml()
+        #~ return E.tostring(ar.table2xhtml())
         
         
         

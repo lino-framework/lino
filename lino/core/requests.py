@@ -76,6 +76,7 @@ class EmptyTableRow(VirtualRow):
     """
     Base class for virtual rows of an :class:`EmptyTable`.
     """
+    pk = -99998
     def __init__(self,table,**kw):
         self._table = table
         VirtualRow.__init__(self,**kw)
@@ -411,15 +412,15 @@ class ActionRequest(BaseRequest):
                     pv[self.actor.master_key] = self.master_instance
                 
             if param_values is None:
-              if request is not None: # 20121025
-                #~ pv.update(self.ui.parse_params(self.ah,request))
-                #~ pv.update(self.ah.store.parse_params(request))
-                pv.update(self.actor.params_layout.params_store.parse_params(request))
-                
+                if request is not None: # 20121025
+                    #~ pv.update(self.ui.parse_params(self.ah,request))
+                    #~ pv.update(self.ah.store.parse_params(request))
+                    pv.update(self.actor.params_layout.params_store.parse_params(request))
+                    
             if param_values is not None:
                 for k in param_values.keys(): 
                     if not pv.has_key(k):
-                        raise Exception("Invalid key %r in param_values" % k)
+                        raise Exception("Invalid key '%s' in param_values of %s request (possible keys are %s)" % (k,actor,pv.keys()))
                 pv.update(param_values)
                 
             self.param_values = AttrDict(**pv)

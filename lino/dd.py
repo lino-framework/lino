@@ -173,6 +173,7 @@ from lino.core.actions import SubmitDetail, SubmitInsert
 
 from lino.core.choicelists import ChoiceList, Choice
 from lino.core.choicelists import Genders
+from lino.core.choicelists import YesNo
 from lino.core.workflows import Workflow, ChangeStateAction
 #~ from lino.core.changes import ChangeStateAction
 from lino.core.actions import NotifyingAction
