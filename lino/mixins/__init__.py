@@ -40,11 +40,13 @@ from lino.core import actions
 from lino.core import fields
 from lino.core import dbtables
 from lino.core import model
-from lino.core.requests import EmptyTableRow
+from lino.core.requests import VirtualRow
+from lino.core.actors import Actor
 from lino.utils.choosers import chooser
 from lino.mixins.duplicable import Duplicable, Duplicate
 from lino.core.dbutils import navinfo
 from lino.utils import AttrDict
+from lino.utils import curry
 from north.dbutils import BabelCharField
 from lino.utils.xmlgen.html import E
 
@@ -721,6 +723,46 @@ class Referrable(model.Model):
 
 
 
+
+class EmptyTableRow(VirtualRow):
+    """
+    Base class for virtual rows of an :class:`EmptyTable`.
+    An EmptyTableRow instance 
+    """
+    pk = -99998
+    def __init__(self,table,**kw):
+        self._table = table
+        VirtualRow.__init__(self,**kw)
+        
+    def __unicode__(self):
+        return unicode(self._table.label)
+        
+    def get_print_language(self,pm):
+        return settings.SITE.DEFAULT_LANGUAGE.django_code
+        
+    def get_templates_group(self):
+        return self._table.app_label + '/' + self._table.__name__
+    
+    def filename_root(self):
+        return self._table.app_label + '.' + self._table.__name__
+        
+    def __getattr__(self,name):
+        """
+        Since there is only one EmptyTableRow class, we simulate a 
+        getter here by manually creating an InstanceAction.
+        """
+        v = getattr(self._table,name)
+        if isinstance(v,actions.Action):
+            return actions.InstanceAction(v,self._table,self,None)
+        # 20130525 dd.Report calls `get_story` on `self`, not on the `cls`
+        if callable(v):
+            return curry(v,self)
+        #~ return v 
+        #~ raise Exception("")
+        raise AttributeError("EmptyTableRow on %s has no action and no callable '%s'" % (self._table,name))
+
+
+
 class EmptyTable(frames.Frame):
     """
     A "Table" that has exactly one virtual row and thus is visible 
@@ -765,6 +807,43 @@ class EmptyTable(frames.Frame):
         a = name.split('.')
         if len(a) == 2:
             return getattr(getattr(settings.SITE.modules,a[0]),a[1])
+            
+            
+class Report(EmptyTable):
+    
+    detail_layout = "body"
+    
+    @fields.virtualfield(fields.HtmlBox())
+    def body(cls,self,ar):
+        html = []
+        #~ for item in self.get_story(self,ar):
+        for item in self.get_story(ar):
+            if E.iselement(item):
+                html.append(item)
+            elif isinstance(item,type) and issubclass(item,Actor):
+                html.append(ar.show(item,master_instance=self))
+            else:
+                raise Exception("Cannot handle %r" % item)
+                
+        return E.div(*html)
+
+    @classmethod
+    def as_appy_pod_xml(cls,self,apr):
+        from lino.utils.html2odf import html2odf, toxml
+
+        chunks = []
+        for item in self.get_story(apr.ar):
+            if E.iselement(item):
+                chunks.append(toxml(html2odf(item)))
+            elif isinstance(item,type) and issubclass(item,Actor):
+                sar = apr.ar.spawn(item,master_instance=self)
+                chunks.append(apr.insert_table(sar))
+            else:
+                raise Exception("Cannot handle %r" % item)
+                
+        return ''.join(chunks)
+    
+            
             
 
 if True:

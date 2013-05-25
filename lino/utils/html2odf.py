@@ -121,6 +121,7 @@ def html2odf(e,ct=None,**ctargs):
     Most formats are not implemented.
     There's probably a better way to do this...
     """
+    sections_counter = 1
     #~ print "20120613 html2odf()", e.tag, e.text
     if ct is None:
         ct = text.P(**ctargs)
@@ -156,6 +157,19 @@ def html2odf(e,ct=None,**ctargs):
         oe = text.Span()
     elif e.tag == 'br':
         oe = text.LineBreak()
+        
+    elif e.tag == 'h1':
+        """
+        <text:h text:style-name="Heading_20_1" text:outline-level="1">
+        """
+        oe = text.H(stylename="Heading 1",outlinelevel=1)
+    elif e.tag == 'h2':
+        oe = text.H(stylename="Heading 2",outlinelevel=2)
+    elif e.tag == 'h3':
+        oe = text.H(stylename="Heading 3",outlinelevel=3)
+    elif e.tag == 'div':
+        oe = text.Section(name="S"+str(sections_counter))
+        
     elif e.tag == 'img':
         return # ignore images
     elif e.tag == 'ul': 
@@ -171,6 +185,10 @@ def html2odf(e,ct=None,**ctargs):
         
     elif e.tag in PTAGS: 
         oe = ct
+        #~ if ct.tagName == 'p':
+            #~ oe = ct
+        #~ else:
+            #~ oe = text.P(**ctargs)
     else:
         #~ logger.info("20130201 %s",E.tostring(e))
         raise NotImplementedError("<%s> inside <%s>" % (e.tag,ct.tagName))

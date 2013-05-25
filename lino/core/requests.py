@@ -71,42 +71,6 @@ class PhantomRow(VirtualRow):
         
     def __unicode__(self):
         return unicode(self._ar.get_action_title())
-        
-class EmptyTableRow(VirtualRow):
-    """
-    Base class for virtual rows of an :class:`EmptyTable`.
-    """
-    pk = -99998
-    def __init__(self,table,**kw):
-        self._table = table
-        VirtualRow.__init__(self,**kw)
-        
-    def __unicode__(self):
-        return unicode(self._table.label)
-        
-    def get_print_language(self,pm):
-        return settings.SITE.DEFAULT_LANGUAGE.django_code
-        
-    def get_templates_group(self):
-        return self._table.app_label + '/' + self._table.__name__
-    
-    def filename_root(self):
-        return self._table.app_label + '.' + self._table.__name__
-        
-    def __getattr__(self,name):
-        """
-        Since there is only one EmptyTableRow class, we simulate a 
-        getter here by manually creating an InstanceAction.
-        """
-        v = getattr(self._table,name)
-        if isinstance(v,actions.Action):
-            return actions.InstanceAction(v,self._table,self,None)
-        #~ raise Exception("")
-        raise AttributeError("EmptyTableRow on %s has no action '%s'" % (self._table,name))
-
-
-
-
 
 
 

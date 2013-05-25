@@ -27,6 +27,7 @@ Tables:
 - :class:`Table <lino.core.dbtables.Table>`
 - :class:`VirtualTable <lino.core.tables.VirtualTable>`
 - :class:`EmptyTable <lino.mixins.EmptyTable>`
+- :class:`Report <lino.mixins.Report>`
 - :class:`Frame <lino.core.frames.Frame>`
 
 Extended Fields:
@@ -73,7 +74,8 @@ Utilities:
 
 - :func:`obj2str <djangosite.dbutils.obj2str>`
 - :func:`obj2unicode <djangosite.dbutils.obj2unicode>`
-- :func:`range_filter <djangosite.dbutils.range_filter>`
+- :func:`range_filter <djangosite.dbutils.range_filter>`,
+  :func:`inrange_filter <djangosite.dbutils.inrange_filter>`
 - :func:`full_model_name <djangosite.dbutils.full_model_name>`
 - :func:`fields_list <lino.core.fields.fields_list>`
 - :func:`resolve_field <lino.core.dbutils.resolve_field>`
@@ -131,6 +133,7 @@ logger = logging.getLogger(__name__)
 
 from lino.core.tables import VirtualTable
 from lino.mixins import EmptyTable
+from lino.mixins import Report
 
 from north.dbutils import resolve_model, UnresolvedModel
 
@@ -138,6 +141,7 @@ from lino.core.dbutils import resolve_app, resolve_field, get_field
 from djangosite.dbutils import obj2str
 from djangosite.dbutils import obj2unicode
 from djangosite.dbutils import range_filter
+from djangosite.dbutils import inrange_filter
 from djangosite.dbutils import full_model_name
 from djangosite.dbutils import models_by_base
 

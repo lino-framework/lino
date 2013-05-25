@@ -95,6 +95,8 @@ class Renderer(AppyRenderer):
         context.update(restify=self.restify_func)
         context.update(html=self.html_func)
         context.update(table=self.insert_table)
+        context.update(as_odt=self.as_odt)
+        #~ context.update(story=self.insert_story)
         #~ context.update(html2odf=html2odf)
         context.update(ehtml=html2odf)
         context.update(toxml=toxml)
@@ -196,16 +198,32 @@ class Renderer(AppyRenderer):
         
       
         
+    #~ def insert_story(self,story):
+        #~ from lino.core.actors import Actor
+        #~ chunks = []
+        #~ for item in story:
+            #~ if E.iselement(item):
+                #~ chunks.append(html2odf(item))
+            #~ elif isinstance(item,type) and issubclass(item,Actor):
+                #~ chunks.append(self.ar.show(item,master_instance=self))
+            #~ else:
+                #~ raise Exception("Cannot handle %r" % item)
+        #~ return ''.join(chunks)
+            
+        
+    def as_odt(self,obj):
+        return obj.as_appy_pod_xml(self)
+        
     def insert_table(self,*args,**kw):
         """
         This is the function that gets called when a template contains a 
         ``do text from table(...)`` statement.
         """
-        #~ since i cannot yet tell appy_pod to alert me when there is an 
-        #~ exception, here at least i write it to the logger
-        if False:
+        if True:
             return self.insert_table_(*args,**kw)
         else:
+            #~ since i cannot yet tell appy_pod to alert me when there is an 
+            #~ exception, here at least i write it to the logger
             try:
                 s = self.insert_table_(*args,**kw)
             except Exception as e:
@@ -221,9 +239,6 @@ class Renderer(AppyRenderer):
         
     def insert_table_(self,ar,column_names=None,table_width=180):
         ar.setup_from(self.ar)
-        #~ ar.renderer = self.ar.renderer
-
-        #~ ar  = self.ar
         
         columns, headers, widths = ar.get_field_info(column_names)
         widths = map(int,widths)

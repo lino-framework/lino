@@ -43,6 +43,7 @@ Usage::
 
 from xml.etree import ElementTree as ET
 from atelier import rstgen
+from lino.utils.xmlgen import etree
 from lino.utils.xmlgen import Namespace, RAW
 
 def HtmlNamespace(Namespace):
@@ -327,7 +328,6 @@ def html2rst(e):
     return _html2rst(e).strip()
     
 
-from lino.utils.xmlgen import etree
 
 
 

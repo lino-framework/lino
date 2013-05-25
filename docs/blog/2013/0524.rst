@@ -2,5 +2,13 @@
 20130524 (Friday, 24 May 2013)
 ==============================
 
-Checkin.
+Continued to work on the "Activity Report", an application-specific 
+detailed summary report. All numbers are clickable: 
+clicking on it shows the table from where it comes...
+I'm currently exploring the technical possibilities.
+
+
+New 
+:func:`djangosite.dbutils.inrange_filter`
+exposed in :mod:`lino.dd`.
 

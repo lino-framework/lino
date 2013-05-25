@@ -264,9 +264,12 @@ class ExtRenderer(HtmlRenderer):
         """
         #~ label = unicode(label or ba.get_button_label())
         label = label or ba.action.label
-        url = 'javascript:Lino.%s(%r,%s)' % (
-                ba.full_name(),str(request.requesting_panel),
-                py2js(obj.pk))
+        if request is None:
+            rp = None
+        else:
+            rp = request.requesting_panel
+        url = 'javascript:Lino.%s(%s,%s)' % (
+                ba.full_name(),py2js(rp),py2js(obj.pk))
         return self.href_button_action(ba,url,label,title or ba.action.help_text,**kw)
         #~ if a.action.help_text:
             #~ return self.href_button(url,label,a.action.help_text)

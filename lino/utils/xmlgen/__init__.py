@@ -120,6 +120,9 @@ class Namespace(object):
             self.define_names(self.names)
         self.setup_namespace()
         
+    def iselement(self,*args,**kw):
+        return etree.iselement(*args,**kw)
+
     def setup_namespace(self):
         pass
         
@@ -210,6 +213,7 @@ class Namespace(object):
         return e
         
 RAW = etree.XML
+
 
 
 def _test():

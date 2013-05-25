@@ -67,7 +67,6 @@ from lino.utils.choicelists import ChoiceList
 from lino.models import get_site_config
 from lino.core.dbutils import get_field
 from lino.core.dbutils import resolve_field
-from lino.core.dbutils import range_filter
 from lino.core import actions
 from lino.utils.choosers import chooser
 from lino.utils import mti
