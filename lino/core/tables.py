@@ -39,7 +39,7 @@ u"""
 ...         return obj[2]
 ...
 
->>> CitiesAndInhabitants.request().render_to_html()
+>>> CitiesAndInhabitants.to_rst()
 
 """
 
@@ -444,7 +444,7 @@ class TableRequest(ActionRequest):
             
     
     def table2xhtml(self):
-        return self.ui.table2xhtml(self)
+        return settings.SITE.ui.table2xhtml(self)
         
     def get_field_info(ar,column_names=None):
         """
@@ -526,7 +526,7 @@ class TableRequest(ActionRequest):
         if not tplfile:
             raise Exception("No file %s / %s" % (tplgroup,tpl_leaf))
             
-        ar.renderer = ar.ui.ext_renderer # 20120624
+        ar.renderer = settings.SITE.ui.ext_renderer # 20120624
         
         context = dict(
             ar=ar,
@@ -610,6 +610,7 @@ class TableHandle(base.Handle):
     def __init__(self,actor):
         self.actor = actor
         base.Handle.__init__(self)
+        #~ super(TableHandle,self).__init__()
   
     def __str__(self):
         #~ return str(self.ui.__class__)+str(self.actor) + 'Handle'
@@ -621,7 +622,7 @@ class TableHandle(base.Handle):
         self._layouts = [ self.list_layout ] 
               
     def get_actor_url(self,*args,**kw):
-        return self.ui.get_actor_url(self.actor,*args,**kw)
+        return settings.SITE.ui.get_actor_url(self.actor,*args,**kw)
         
     def submit_elems(self):
         return []
@@ -636,7 +637,8 @@ class TableHandle(base.Handle):
         return lh.main.columns
         
     def get_slaves(self):
-        return [ sl.get_handle(self.ui) for sl in self.actor._slaves ]
+        #~ return [ sl.get_handle(self.ui) for sl in self.actor._slaves ]
+        return [ sl.get_handle(settings.SITE.ui) for sl in self.actor._slaves ]
             
         
 

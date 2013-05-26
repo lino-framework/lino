@@ -111,7 +111,7 @@ def run_action(ar,elem):
         rv = ar.bound_action.action.run_from_ui(elem,ar)
         if rv is None:
             rv  = ui.success()
-        return ar.ui.action_response(rv)
+        return settings.SITE.ui.action_response(rv)
         #~ return rv
     #~ except actions.ConfirmationRequired,e:
         #~ r = dict(
@@ -136,7 +136,7 @@ def run_action(ar,elem):
           success=False,
           message=unicode(e),
           alert=True)
-        return ar.ui.action_response(r)
+        return settings.SITE.ui.action_response(r)
     except Exception as e:
         if elem is None:
             msg = unicode(e)
@@ -152,8 +152,8 @@ def run_action(ar,elem):
           "An error report has been sent to the system administrator.")
         logger.warning(msg)
         logger.exception(e)
-        r = ar.ui.error(e,msg,alert=_("Oops!"))
-        return ar.ui.action_response(r)
+        r = settings.SITE.ui.error(e,msg,alert=_("Oops!"))
+        return settings.SITE.ui.action_response(r)
           
     
   
@@ -209,7 +209,7 @@ def elem2rec_empty(ar,ah,elem,**rec):
     #~ rec.update(id=elem.pk) or -99999)
     if ar.actor.parameters:
         #~ rec.update(param_values=ar.ah.store.pv2dict(ar.ui,ar.param_values))
-        rec.update(param_values=ar.actor.params_layout.params_store.pv2dict(ar.ui,ar.param_values))
+        rec.update(param_values=ar.actor.params_layout.params_store.pv2dict(settings.SITE.ui,ar.param_values))
     return rec
 
 def elem2rec_detailed(ar,elem,**rec):
@@ -251,8 +251,8 @@ def delete_element(ar,elem):
     assert elem is not None
     msg = ar.actor.disable_delete(elem,ar)
     if msg is not None:
-        rv = ar.ui.error(None,msg,alert=True)
-        return ar.ui.action_response(rv)
+        rv = ar.error(None,msg,alert=True)
+        return settings.SITE.ui.action_response(rv)
             
     #~ dblogger.log_deleted(ar.request,elem)
     
@@ -267,8 +267,8 @@ def delete_element(ar,elem):
         msg = _("Failed to delete %(record)s : %(error)s."
             ) % dict(record=dd.obj2unicode(elem),error=e)
         #~ msg = "Failed to delete %s." % element_name(elem)
-        rv = ar.ui.error(None,msg)
-        return ar.ui.action_response(rv)
+        rv = ar.error(None,msg)
+        return settings.SITE.ui.action_response(rv)
         #~ raise Http404(msg)
         
     
@@ -938,13 +938,14 @@ class ApiList(View):
               #~ disabled_actions=rpt.disabled_actions(ar,None),
               #~ gc_choices=[gc.data for gc in ar.actor.grid_configs])
             if ar.actor.parameters:
-                #~ kw.update(param_values=ar.ah.store.pv2dict(ar.ui,ar.param_values))
-                kw.update(param_values=ar.actor.params_layout.params_store.pv2dict(ar.ui,ar.param_values))
+                #~ kw.update(param_values=ar.actor.params_layout.params_store.pv2dict(settings.SITE.ui,ar.param_values))
+                kw.update(param_values=ar.actor.params_layout.params_store.pv2dict(settings.SITE.ui,ar.param_values))
             return json_response(kw) 
                 
         if fmt == ext_requests.URL_FORMAT_HTML:
             #~ ar.renderer = ui.ext_renderer
-            after_show = ar.get_status(ar.ui)
+            #~ after_show = ar.get_status(ar.ui)
+            after_show = ar.get_status(settings.SITE.ui)
             if isinstance(ar.bound_action.action,actions.InsertRow):
                 elem = ar.create_instance()
                 #~ print 20120630
@@ -1004,7 +1005,7 @@ class ApiList(View):
             doc = xghtml.Document(force_unicode(ar.get_title()))
             doc.body.append(E.h1(doc.title))
             t = doc.add_table()
-            ar.ui.ar2html(ar,t,ar.data_iterator)
+            settings.SITE.ui.ar2html(ar,t,ar.data_iterator)
             doc.write(response,encoding='utf-8')
             return response
             
@@ -1077,14 +1078,14 @@ class PlainList(View):
   
     def get(self,request,app_label=None,actor=None):
         ar = action_request(app_label,actor,request,request.GET,True)
-        ar.renderer = ar.ui.plain_renderer
+        ar.renderer = settings.SITE.ui.plain_renderer
         context = dict(
           title=ar.get_title(),
           heading=ar.get_title(),
           #~ tbar = buttons,
           main=ar.as_html(),
         )
-        return plain_response(ar.ui,request,'table.html',context)
+        return plain_response(settings.SITE.ui,request,'table.html',context)
         
         
 

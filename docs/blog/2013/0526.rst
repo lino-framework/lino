@@ -1,0 +1,57 @@
+==============================
+20130526 (Sunday, 26 May 2013)
+==============================
+
+Some questions of an Ubuntu user who switched from Windows
+----------------------------------------------------------
+
+When I start a new document in LibreOffice, the paper size is "Letter". 
+How can I change this to "A4"?
+
+Answer::
+
+  $ sudo paperconfig -p a4
+  
+  
+When I start LibreOffice, it uses **inches** as measurement unit. 
+How can I change this to "Centimeters"?
+
+Answer: 
+
+  :menuselection:`Tools --> Options --> Writer --> General`
+
+
+Usually I can enter special characters by typing 
+:kbd:`Shift+Ctrl+U`,
+ë
+followed by their hexadecimal unicode code 
+(e.g. **df** for a German ß) and a **space**.
+But not in Geany.
+How can I tell Geany to also use this trick?
+
+Note: It seems that Geany has somehow overridden :kbd:`Shift+Ctrl+U`
+by some other function: a kind of white rectangle appears 
+(the meaning of which I haven't guessed yet).
+
+Answer:
+The meaning of that rectangle *is* to insert unicode characters,
+but the trick is that you must continue to hold Ctrl and Shift keys 
+while typing the hexadecimal code.
+As explained in the 
+`Manual <http://www.geany.org/manual/dev/index.html#inserting-unicode-characters>`_.
+
+This was with Geany 0.21 (the version included with Ubuntu 12.04 LTS), 
+which then still had the problem that you could not use it with unicode 
+characters whose hexadecimal code contained an "f" because typing 
+that "f" would open up the find in files dialog box.
+
+The whole problem vanishes if you use the latest Geany version which you 
+can get from the 
+`Geany developers PPA <https://launchpad.net/~geany-dev/+archive/ppa>`_ 
+and  install as follows::
+
+  $ sudo add-apt-repository ppa:geany-dev/ppa
+  $ sudo aptitude update safe-upgrade
+  
+The newer version doesn't require you to hold
+Ctrl and Shift keys while typing the hexadecimal code.

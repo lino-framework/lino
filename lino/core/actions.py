@@ -849,7 +849,7 @@ class ShowDetailAction(RowAction):
         
         wl = ar.bound_action.get_window_layout()
         #~ print 20120901, wl.main
-        lh = wl.get_layout_handle(ar.ui)
+        lh = wl.get_layout_handle(settings.SITE.ui)
         
         #~ items = list(render_detail(ar,elem,lh.main))
         items = list(lh.main.as_plain_html(ar,elem))

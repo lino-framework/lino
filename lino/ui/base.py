@@ -37,6 +37,7 @@ class Handle:
         
     def setup(self,ar):
         self.ui.setup_handle(self,ar)
+        #~ settings.SITE.ui.setup_handle(self,ar)
 
 
 ACTION_RESPONSES = frozenset((

@@ -635,7 +635,7 @@ class Attachment(mixins.Controllable):
         super(Attachment,self).save(*args,**kw)
         
     def summary_row(self,ar,**kw):
-        url = self.owner.get_target_url(ar.ui)
+        url = self.owner.get_target_url()
         #~ url = ui.build_url(*parts)
         text = url.split('/')[-1]
         #~ return ui.ext_renderer.href(url,text)

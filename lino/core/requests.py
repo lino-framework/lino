@@ -82,23 +82,23 @@ class BaseRequest(object):
     A bare BaseRequest instance is returned as a "session" by 
     :meth:`login <lino.ui.Site.login>`.
     """
-    def __init__(self,request=None,renderer=None,**kw):
+    renderer = None
+    
+    #~ def __init__(self,request=None,renderer=None,**kw):
+    def __init__(self,request=None,**kw):
         #~ if ui is None:
             #~ ui = settings.SITE.ui
-        #~ self.ui = ui
-        self.ui = ui = settings.SITE.ui
-        #~ self.error_response = ui.error_response
-        #~ self.success_response = ui.success_response
+        #~ self.ui = ui = settings.SITE.ui
         
         #~ self.prompt = ui.callback
-        self.callback = ui.callback
-        self.confirm = ui.confirm
-        self.error = ui.error
-        self.success = ui.success
-        if renderer is None:
-            #~ renderer = ui.text_renderer
-            renderer = self.ui.default_renderer
-        self.renderer = renderer
+        #~ self.callback = ui.callback
+        #~ self.confirm = ui.confirm
+        #~ self.error = ui.error
+        #~ self.success = ui.success
+        
+        #~ if renderer is None:
+            #~ renderer = ui.default_renderer
+        #~ self.renderer = renderer
         #~ self.step = 0 # confirmation counter
         #~ self.report = actor
         self.request = request
@@ -113,6 +113,11 @@ class BaseRequest(object):
         #~ 20120605 self.ah = actor.get_handle(ui)
         self.setup(**kw)
         
+    def callback(self,*args,**kw): return settings.SITE.ui.callback(*args,**kw)
+    def confirm(self,*args,**kw): return settings.SITE.ui.confirm(*args,**kw)
+    def error(self,*args,**kw): return settings.SITE.ui.error(*args,**kw)
+    def success(self,*args,**kw): return settings.SITE.ui.success(*args,**kw)
+    
     def must_execute(self):
         return True
         
@@ -347,13 +352,6 @@ class ActionRequest(BaseRequest):
         self.bound_action = action or actor.default_action
         BaseRequest.__init__(self,request=request,renderer=renderer,**kw)
         self.ah = actor.get_request_handle(self)
-        """
-        See 20120825
-        """
-        #~ if self.actor.parameters is None:
-            #~ if param_values is not None:
-                #~ raise Exception("Cannot request param_values on %s" % self.actor)
-        #~ else:
         if self.actor.parameters is not None:
             pv = self.actor.param_defaults(self)
             
@@ -441,7 +439,15 @@ class ActionRequest(BaseRequest):
             #~ if not ca.get_bound_action_permission(self.get_user(),None,None):
                 #~ return
         yield PhantomRow(self,**kw)
-      
+        
+    #~ def get_actor_handle(self):
+        #~ if self._actor_handle is None:
+            #~ self._actor_handle = self.actor.get_request_handle(self)
+        #~ return self._actor_handle
+        #~ 
+    #~ ah = property(get_actor_handle)
+            
+        
     def create_instance(self,**kw):
         if self.create_kw:
             kw.update(self.create_kw)
@@ -485,7 +491,7 @@ class ActionRequest(BaseRequest):
             if ba.action.params_layout.params_store is None:
                 raise Exception("20121016 %s has no store" % ba.action.params_layout)
             kw.update(field_values=ba.action.params_layout.params_store.pv2dict(
-                self.ui,ba.action.action_param_defaults(self,obj)))
+                settings.SITE.ui,ba.action.action_param_defaults(self,obj)))
         return kw
       
       

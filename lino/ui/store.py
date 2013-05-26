@@ -118,7 +118,7 @@ class StoreField(object):
     def value2list(self,ar,v,l,row):
         return l.append(v)
         
-    def value2dict(self,ui,v,d,row):
+    def value2dict(self,v,d,row):
         d[self.name] = v
 
     #~ def value2odt(self,ar,v,tc,**params):
@@ -247,7 +247,7 @@ class ComboStoreField(StoreField):
         l += [text,value]
         
     #~ def obj2dict(self,request,obj,d):
-    def value2dict(self,request,v,d,row):
+    def value2dict(self,v,d,row):
         value,text = self.get_value_text(v,row)
         d[self.name] = text
         d[self.name + ext_requests.CHOICES_HIDDEN_SUFFIX] = value
@@ -367,8 +367,8 @@ class RequestStoreField(StoreField):
     def value2list(self,ar,v,l,row):
         return l.append(self.format_value(ar,v))
         
-    def value2dict(self,ar,v,d,row):
-        d[self.name] = self.format_value(ar,v)
+    def value2dict(self,v,d,row):
+        d[self.name] = self.format_value(settings.SITE.ui,v)
         #~ d[self.options['name']] = self.format_value(ui,v)
         #~ d[self.field.name] = v
 
@@ -416,7 +416,7 @@ class SpecialStoreField(StoreField):
         self.options = dict(name=self.name)
         self.store = store
         
-    #~ def value2dict(self,ui,v,d):
+    #~ def value2dict(self,v,d):
         #~ d[self.name] = v
 
     #~ def obj2dict(self,request,obj,d):
@@ -895,7 +895,7 @@ class ParameterStore(BaseStore):
     def pv2dict(self,ui,pv,**d):
         for fld in self.param_fields:
             v = pv.get(fld.name,None)
-            fld.value2dict(ui,v,d,None)
+            fld.value2dict(v,d,None)
         return d
 
     def parse_params(self,request,**kw):
@@ -1164,7 +1164,7 @@ class Store(BaseStore):
         for fld in fields:
             #~ logger.info("20111209 Store.row2dict %s %s", row,fld)
             v = fld.full_value_from_object(row,ar)
-            fld.value2dict(ar.ui,v,d,row)
+            fld.value2dict(v,d,row)
             #~ logger.info("20111209 Store.row2dict %s -> %s", f, d)
         return d
 

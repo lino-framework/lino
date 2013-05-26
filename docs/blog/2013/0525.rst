@@ -2,12 +2,13 @@
 20130525 (Saturday, 25 May 2013)
 ================================
 
-Cool: Lino now has the conecpt of a "Report".
-a Report is a longer document with a "story": a sequence of 
-headings, tables and free text.
+Cool: Lino now has the concept of a "Report".
+a Report is a longer document with a "story": 
+a sequence of headings, free text and (that's what's new:) 
+Tables.
 One important fact is that Lino can render a Report 
 as an ExtJS window or as a pdf document.
 (the latter isn't yet fully functional, and my guinea pig report 
-needs more enduser feedback, so i don't dare to publish 
+needs more end-user feedback, so i don't dare to publish 
 screenshots)
 

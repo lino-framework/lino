@@ -164,7 +164,7 @@ class BuildMethod:
             return os.path.join(settings.SITE.webdav_root,*self.get_target_parts(action,elem))
         return os.path.join(settings.MEDIA_ROOT,*self.get_target_parts(action,elem))
         
-    def get_target_url(self,action,elem,ui):
+    def get_target_url(self,action,elem):
         "return the url that points to the generated filename on the server"
         if self.use_webdav and settings.SITE.use_davlink:
             return settings.SITE.webdav_url + "/".join(self.get_target_parts(action,elem))
@@ -474,7 +474,7 @@ def get_build_method(elem):
 #~ class PrintTableAction(actions.TableAction):
     #~ def run_from_ui(self,ar,**kw):
         #~ bm = get_build_method(elem)
-        #~ url = bm.get_target_url(self,elem,ui)
+        #~ url = bm.get_target_url(self,elem)
         #~ kw.update(open_url=url)
         #~ return ar.ui.success_response(**kw)
   
@@ -555,7 +555,7 @@ class PrintAction(BasePrintAction):
                 kw.update(message=_("%s printable has been built.") % elem)
         else:
             kw.update(message=_("Reused %s printable from cache.") % elem)
-        url = bm.get_target_url(self,elem,ar.ui)
+        url = bm.get_target_url(self,elem)
         if bm.use_webdav and settings.SITE.use_davlink:
             kw.update(open_davlink_url=ar.request.build_absolute_uri(url))
         else:
@@ -566,7 +566,7 @@ class PrintAction(BasePrintAction):
     def run_from_ui(self,elem,ar,**kw):
         #~ kw = self.run_(ar.request,rr.ui,elem,**kw)
         kw = self.run_(ar,elem,**kw)
-        return ar.ui.success(**kw)
+        return ar.success(**kw)
       
 class DirectPrintAction(BasePrintAction):
     """
@@ -608,13 +608,13 @@ class DirectPrintAction(BasePrintAction):
         bm.build(ar,self,elem)
         #~ target = settings.MEDIA_URL + "/".join(bm.get_target_parts(self,elem))
         #~ return rr.ui.success_response(open_url=target,**kw)
-        url = bm.get_target_url(self,elem,ar.ui)
+        url = bm.get_target_url(self,elem)
         if bm.use_webdav and settings.SITE.use_davlink:
             url = ar.request.build_absolute_uri(url)
             kw.update(open_davlink_url=url)
         else:
             kw.update(open_url=url)
-        return ar.ui.success(**kw)
+        return ar.success(**kw)
     
 #~ class EditTemplateAction(dd.RowAction):
     #~ name = 'tpledit'
@@ -785,8 +785,8 @@ class CachedPrintable(Duplicable,Printable):
         if self.build_time:
             return get_build_method(self).get_target_name(self.do_print,self)
         
-    def get_target_url(self,ui):
-        return get_build_method(self).get_target_url(self.do_print,self,ui)
+    def get_target_url(self):
+        return get_build_method(self).get_target_url(self.do_print,self)
         
     def get_cache_mtime(self):
         filename = self.get_target_name()
