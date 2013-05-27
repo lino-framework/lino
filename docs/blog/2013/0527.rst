@@ -22,3 +22,20 @@ to reproduce it.
 New attribute :attr:`lino.core.tables.AbstractTable.hide_zero_rows` 
 is a practical solution for tables like JobProvidersAndContracts 
 in the ActivityReport.
+
+
+Releasing Lino and Lino-Welfare
+-------------------------------
+
+
++------------------------------------------+-------------+-------------+
+| Project                                  | Old version | New version |
++==========================================+=============+=============+
+| `lino <http://www.lino-framework.org>`__ | 1.6.8       | 1.6.9       |
+| -- A framework for writing desktop-like  |             |             |
+| web applications using Django and ExtJS  |             |             |
++------------------------------------------+-------------+-------------+
+| `lino_welfare <http://welfare.lino-      | 1.1.5       | 1.1.6       |
+| framework.org>`__ -- A Lino application  |             |             |
+| for Belgian Public Welfare Centres       |             |             |
++------------------------------------------+-------------+-------------+
