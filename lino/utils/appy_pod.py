@@ -432,23 +432,24 @@ class Renderer(AppyRenderer):
                     sums[i] += fld.value2num(v)
                 tr.addElement(tc)
                 
-        if sums != [fld.zero for fld in columns]:
-            tr = TableRow(stylename=total_row_style)
-            table_rows.addElement(tr)
-            for i,fld in enumerate(columns):
-                tc = TableCell(stylename=cell_style)
-                stylename = fldstyle(fld)
-                p = text.P(stylename=stylename)
-                e = fld.format_sum(ar,sums,i)
-                html2odf(e,p)
-                tc.addElement(p)
-                #~ if len(txt) != 0: 
-                    #~ msg = "html2odf() returned "
-                    #~ logger.warning(msg)
-                #~ txt = tuple(html2odf(fld.format_sum(ar,sums,i),p))
-                #~ assert len(txt) == 1
-                #~ tc.addElement(text.P(stylename=stylename,text=txt[0]))
-                tr.addElement(tc)
+        if not ar.actor.hide_sums:
+            if sums != [fld.zero for fld in columns]:
+                tr = TableRow(stylename=total_row_style)
+                table_rows.addElement(tr)
+                for i,fld in enumerate(columns):
+                    tc = TableCell(stylename=cell_style)
+                    stylename = fldstyle(fld)
+                    p = text.P(stylename=stylename)
+                    e = fld.format_sum(ar,sums,i)
+                    html2odf(e,p)
+                    tc.addElement(p)
+                    #~ if len(txt) != 0: 
+                        #~ msg = "html2odf() returned "
+                        #~ logger.warning(msg)
+                    #~ txt = tuple(html2odf(fld.format_sum(ar,sums,i),p))
+                    #~ assert len(txt) == 1
+                    #~ tc.addElement(text.P(stylename=stylename,text=txt[0]))
+                    tr.addElement(tc)
             
 
         doc.text.addElement(table)

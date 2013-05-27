@@ -1,0 +1,20 @@
+==============================
+20130527 (Monday, 27 May 2013)
+==============================
+
+When rendering a slave table as html, the column headers were 
+clickable as if for changing the sort order, 
+but clicking on them didn't work.
+Now they are no longer clickable.
+
+Yesterday I made a few minor internal changes. 
+One of them is that ActionRequest instances no longer have an `ui` 
+attribute.
+This had created a bug which I discovered only today because 
+it had slipped through our test suite.
+Let's call this kind of bugs "one-day bugs" because they lived
+only for a short time.
+But they are still bugs, and it is good to learn from them:
+added a new snippet in
+:ref:`welfare.tested.debts`
+to reproduce it.

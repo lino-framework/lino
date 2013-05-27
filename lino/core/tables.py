@@ -251,6 +251,8 @@ class TableRequest(ActionRequest):
         di = self.data_iterator
         if isinstance(di,QuerySet):
             return di.count()
+        #~ if di is None:
+            #~ raise Exception("data_iterator is None: %s" % self)
         return len(di)
         
 

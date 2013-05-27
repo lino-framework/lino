@@ -259,54 +259,12 @@ class ExtUI(base.UI):
         
         grid = ar.ah.list_layout.main
         columns = grid.columns
-        if True:
-            fields, headers, cellwidths = ar.get_field_info(column_names)
-            columns = fields
-            #~ print 20130330, cellwidths
-        else:
+        fields, headers, cellwidths = ar.get_field_info(column_names)
+        columns = fields
+        #~ print 20130330, cellwidths
           
-            fields = ar.ah.store.list_fields
-            headers = [force_unicode(col.label or col.name) for col in columns]
-            cellwidths = None
-            
-            if ar.request is not None:
-                widths = [x for x in ar.request.REQUEST.getlist(ext_requests.URL_PARAM_WIDTHS)]
-                col_names = [str(x) for x in ar.request.REQUEST.getlist(ext_requests.URL_PARAM_COLUMNS)]
-                hiddens = [(x == 'true') for x in ar.request.REQUEST.getlist(ext_requests.URL_PARAM_HIDDENS)]
-            
-                if col_names:
-                    fields = []
-                    headers = []
-                    cellwidths = []
-                    columns = []
-                    for i,cn in enumerate(col_names):
-                        col = None
-                        for e in grid.columns:
-                            if e.name == cn:
-                                col = e
-                                break
-                        #~ col = ar.ah.list_layout._main.find_by_name(cn)
-                        #~ col = ar.ah.list_layout._main.columns[ci]
-                        if col is None:
-                            #~ names = [e.name for e in ar.ah.list_layout._main.walk()]
-                            raise Exception("No column named %r in %s" % (cn,grid.columns))
-                        if not hiddens[i]:
-                            columns.append(col)
-                            fields.append(col.field._lino_atomizer)
-                            headers.append(force_unicode(col.label or col.name))
-                            cellwidths.append(widths[i])
-          
-        
-            oh = ar.actor.override_column_headers(ar)
-            if oh:
-                for i,e in enumerate(columns):
-                    header = oh.get(e.name,None)
-                    if header is not None:
-                        headers[i] = unicode(header)
-                #~ print 20120507, oh, headers
-          
-        if ar.renderer.is_interactive:
-            #~ print 20120901, ar.order_by
+        if ar.renderer.is_interactive and ar.master_instance is None:
+            #~ print 20130527, ar.order_by
             for i,e in enumerate(columns):
                 if e.sortable and ar.order_by != [e.name]:
                     kw = {ext_requests.URL_PARAM_SORT:e.name}
