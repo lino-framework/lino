@@ -2087,6 +2087,8 @@ class GridElement(Container):
     def row2html(self,ar,columns,row,sums,**cellattrs):
         #~ logger.info("20130123 row2html %s",fields)
         #~ for i,fld in enumerate(self.list_fields):
+        has_numeric_value = False
+        cells = []
         for i,col in enumerate(columns):
             #~ if fld.name == 'person__gsm':
             #~ logger.info("20120406 Store.row2list %s -> %s", fld, fld.field)
@@ -2095,11 +2097,16 @@ class GridElement(Container):
             if v is None:
                 td = E.td(**cellattrs)
             else:
-                sums[i] += col.value2num(v)
-                #~ yield fld.value2html(ar,v)
+                nv = col.value2num(v)
+                if nv != 0:
+                    sums[i] += nv
+                    has_numeric_value = True
                 td = col.value2html(ar,v,**cellattrs)
             col.apply_cell_format(td)
-            yield td
+            cells.append(td)
+        if ar.actor.hide_zero_rows and not has_numeric_value:
+            return None
+        return cells
             
     def row2text(self,ar,fields,row,sums):
         for i,fld in enumerate(fields):

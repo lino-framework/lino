@@ -287,12 +287,10 @@ class ExtUI(base.UI):
         #~ print 20120623, ar.actor
         recno = 0
         for row in data_iterator:
-            recno += 1
-            #~ cells = [x for x in ar.ah.store.row2html(ar,columns,row,sums,**cellattrs)]
-            cells = [x for x in grid.row2html(ar,columns,row,sums,**cellattrs)]
-            #~ print 20120623, cells
-            #~ tble.add_body_row(*cells)
-            tble.body.append(xghtml.E.tr(*cells))
+            cells = grid.row2html(ar,columns,row,sums,**cellattrs)
+            if cells is not None:
+                recno += 1
+                tble.body.append(xghtml.E.tr(*cells))
             
         if recno == 0:
             tble.clear()

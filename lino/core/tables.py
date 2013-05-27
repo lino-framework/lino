@@ -672,6 +672,13 @@ class AbstractTable(actors.Actor):
     """
     _handle_class = TableHandle
     
+    hide_zero_rows = False
+    """
+    Set this to `True` if you want to remove rows which contain no 
+    values when rendering this table as plain HTML.
+    This is ignored when rendered as ExtJS.
+    """
+    
     column_names = '*'
     """
     A string that describes the list of columns of this table.

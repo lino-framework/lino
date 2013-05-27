@@ -18,3 +18,7 @@ But they are still bugs, and it is good to learn from them:
 added a new snippet in
 :ref:`welfare.tested.debts`
 to reproduce it.
+
+New attribute :attr:`lino.core.tables.AbstractTable.hide_zero_rows` 
+is a practical solution for tables like JobProvidersAndContracts 
+in the ActivityReport.
