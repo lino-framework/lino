@@ -394,11 +394,6 @@ class EventGenerator(mixins.UserAuthored):
     class Meta:
         abstract = True
         
-    max_occurences = models.PositiveIntegerField(
-        _("Number of occurences"),
-        blank=True,null=True)
-        
-        
     def save(self,*args,**kw):
         super(EventGenerator,self).save(*args,**kw)
         if self.user is not None:
@@ -504,8 +499,8 @@ class EventGenerator(mixins.UserAuthored):
         #~ if until < wanted:
             #~ raise Warning("Series ends before it was started!")
         i = 0
-        max_occurences = self.max_occurences or settings.SITE.max_auto_events
-        while i <= self.max_occurences:
+        max_occurences = rset.max_occurences or settings.SITE.max_auto_events
+        while i <= max_occurences:
             i += 1
             if until is not None and date > until:
                 return wanted
@@ -648,6 +643,11 @@ class RecurrenceSet(StartedSummaryDescription,Ended):
     saturday  = models.BooleanField(Weekdays.saturday.text)
     sunday    = models.BooleanField(Weekdays.sunday.text)
     
+    max_occurences = models.PositiveIntegerField(
+        _("Number of occurences"),
+        blank=True,null=True)
+        
+        
     @dd.displayfield(_("Where"))
     def where_text(self,ar):
         return unicode(self.company.city or self.company)

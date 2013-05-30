@@ -69,7 +69,7 @@ def objects():
     #~ for i in range(20):
     for u in settings.SITE.user_model.objects.exclude(email=''):
         #~ u = USERS.pop()
-        if False:
+        if True:
             date = settings.SITE.demo_date()
             for i in range(12):
                 if i % 3:
@@ -83,8 +83,8 @@ def objects():
                   summary=s)
                 kw.update(access_class=ACL.pop())
                 kw.update(state=STATES.pop())
-                if settings.SITE.project_model:
-                    kw.update(project=PROJECTS.pop())
+                #~ if settings.SITE.project_model:
+                    #~ kw.update(project=PROJECTS.pop())
                 e = cal.Event(**kw)
                 e.set_datetime('end',e.get_datetime('start')+ DURATIONS.pop())
                 yield e

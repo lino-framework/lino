@@ -94,13 +94,16 @@ class ParameterPanel(object):
     def __init__(self,**kw):
         self.fields = kw
         #~ object.__init__(self,**kw)
-        for n in ('__getitem__','get','items','keys','values','__iter__','__len__'):
-            setattr(self,n,getattr(kw,n))
+        #~ for n in ('__getitem__','get','items','keys','values','__iter__','__len__'):
+            #~ setattr(self,n,getattr(kw,n))
         
+    def values(self,*args,**kw): return self.fields.values(*args,**kw)
+    def keys(self,*args,**kw): return self.fields.keys(*args,**kw)
+    def __iter__(self,*args,**kw): return self.fields.__iter__(*args,**kw)
     def __len__(self,*args,**kw): return self.fields.__len__(*args,**kw)
     def __getitem__(self,*args,**kw): return self.fields.__getitem__(*args,**kw)
     def get(self,*args,**kw):   return self.fields.get(*args,**kw)
-    def items(self,*args,**kw):   return self.fields.get(name,*args,**kw)
+    def items(self,*args,**kw):   return self.fields.items(*args,**kw)
         
 class ObservedPeriod(ParameterPanel):
     def __init__(self,**kw):
