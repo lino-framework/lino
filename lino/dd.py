@@ -150,6 +150,7 @@ from lino.core.model import Model
 from lino.core.merge import MergeAction
 
 #~ from lino.core.table import fields_list, inject_field
+from lino.core.actors import (ParameterPanel,ObservedPeriod)
 from lino.core.dbtables import has_fk
 from lino.core.dbtables import Table
 from django.db.models.fields import FieldDoesNotExist

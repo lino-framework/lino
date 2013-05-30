@@ -88,6 +88,33 @@ def get_default_required(**kw):
         kw.setdefault('auth',True)
     return kw
     
+
+
+class ParameterPanel(object):
+    def __init__(self,**kw):
+        self.fields = kw
+        #~ object.__init__(self,**kw)
+        for n in ('__getitem__','get','items','keys','values'):
+            setattr(self,n,getattr(kw,n))
+        
+    #~ def __getitem__(self,name):
+        #~ return self.fields.__getitem__(name)
+    #~ def get(self,name,*args):
+        #~ return self.fields.get(name,*args)
+        
+class ObservedPeriod(ParameterPanel):
+    def __init__(self,**kw):
+        kw.update(
+            start_date = models.DateField(_("Period from"),
+                blank=True,null=True,
+                help_text="""Start date of observed period"""),
+            end_date = models.DateField(_("until"),
+                blank=True,null=True,
+                help_text="""End date of observed period"""),
+            )
+        super(ObservedPeriod,self).__init__(**kw)
+
+
     
     
 class BoundAction(object):
@@ -1161,7 +1188,7 @@ class Actor(actions.Parametrizable):
         whose default value is empty::
         
           class Clients(dd.Table):
-              parameters = dict(
+              parameters = dd.ParameterPanel(
                 ...
                 coached_since=models.DateField(blank=True))
                 

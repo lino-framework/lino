@@ -126,6 +126,7 @@ class Line(dd.BabelNamed):
         
 class Lines(dd.Table):
     model = Line
+    required = dd.required(user_level='manager')
     detail_layout = """
     id name
     school.CoursesByLine
@@ -229,6 +230,7 @@ class Slot(mixins.Sequenced,StartEndTime):
         
 class Slots(dd.Table):
     model = Slot
+    required = dd.required(user_level='manager')
     insert_layout = """
     start_time end_time 
     name
@@ -279,9 +281,6 @@ def unused_setup_course_event(self,course,ev):
     
     
 class CourseStates(dd.Workflow):
-    """
-    State of a Calendar Event Guest. Used as Workflow selector.
-    """
     required = dd.required(user_level='admin')
 
 add = CourseStates.add_item
@@ -308,7 +307,7 @@ class Course(contacts.ContactRelated,cal.EventGenerator,cal.RecurrenceSet,mixins
         
     workflow_state_field = 'state'
     
-    line = models.ForeignKey(Line)
+    line = models.ForeignKey('school.Line')
     teacher = models.ForeignKey(Teacher)
     #~ place = models.ForeignKey(Place,verbose_name=_("Place"),null=True,blank=True) # iCal:LOCATION
     #~ room = models.ForeignKey(Room,blank=True,null=True)
@@ -342,6 +341,19 @@ class Course(contacts.ContactRelated,cal.EventGenerator,cal.RecurrenceSet,mixins
         
     def update_cal_subject(self,i):
         return _("Lesson %d") % i
+        
+    @dd.displayfield(_("Info"))
+    def info(self,ar):
+        return ar.obj2html(self)
+        
+    @dd.requestfield(_("Requested"))
+    def requested(self,ar):
+        #~ return ar.spawn(EnrolmentsByCourse,master_instance=self,param_values=dict(state=EnrolmentStates.requested))
+        return EnrolmentsByCourse.request(self,param_values=dict(state=EnrolmentStates.requested))
+        
+    @dd.requestfield(_("Confirmed"))
+    def confirmed(self,ar):
+        return EnrolmentsByCourse.request(self,param_values=dict(state=EnrolmentStates.confirmed))
         
 dd.update_field(Course,'contact_person',verbose_name = _("Contact person"))
           
@@ -408,6 +420,50 @@ class Courses(dd.Table):
     #~ order_by = ['date','start_time']
     detail_layout = CourseDetail() 
     column_names = "line teacher place slot summary *"
+    order_by = ['start_date']
+    
+    parameters = dd.ObservedPeriod(
+        company = models.ForeignKey('contacts.Company',blank=True,null=True),
+        teacher = models.ForeignKey('school.Teacher',blank=True,null=True),
+        line = models.ForeignKey('school.Line',blank=True,null=True),
+        state = CourseStates.field(blank=True),
+        )
+    params_layout = """line company teacher state"""
+    
+    simple_param_fields = 'teacher company line state'.split()
+    
+    @classmethod
+    def get_request_queryset(self,ar):
+        qs = super(Courses,self).get_request_queryset(ar)
+        if isinstance(qs,list): return qs
+        for n in self.simple_param_fields:
+            v = ar.param_values.get(n)
+            if v:
+                qs = qs.filter(**{n:v})
+                #~ print 20130530, qs.query
+        
+        #~ if ar.param_values.teacher is not None: 
+            #~ qs = qs.filter(teacher=ar.param_values.teacher)
+            #~ 
+        #~ if ar.param_values.line is not None: 
+            #~ qs = qs.filter(line=ar.param_values.line)
+            #~ 
+        #~ if ar.param_values.state is not None:
+            #~ qs = qs.filter(state=ar.param_values.state)
+            
+        return qs
+        
+    @classmethod
+    def get_title_tags(self,ar):
+        for t in super(Courses,self).get_title_tags(ar):
+            yield t
+            
+        for n in self.simple_param_fields:
+            v = ar.param_values.get(n)
+            if v:
+                yield unicode(v)
+                
+    
 
 class CoursesByTeacher(Courses):
     master_key = "teacher"
@@ -415,7 +471,6 @@ class CoursesByTeacher(Courses):
 
 class CoursesByLine(Courses):
     master_key = "line"
-    order_by = ['start_date']
     column_names = "what_text weekdays_text where_text times_text teacher place summary"
 
 class CoursesByTopic(Courses):
@@ -434,8 +489,32 @@ class CoursesBySlot(Courses):
 
 class CoursesByCompany(Courses):
     master_key = "company"
+    
+    
+class ActiveCourses(Courses):
+    
+    label = _("Active courses")
+    column_names = 'info teacher company place requested confirmed'
+    @classmethod
+    def param_defaults(self,ar,**kw):
+        kw = super(ActiveCourses,self).param_defaults(ar,**kw)
+        kw.update(state=CourseStates.started)
+        return kw
 
-class Enrolment(dd.Model):
+    
+    
+class EnrolmentStates(dd.Workflow):
+    required = dd.required(user_level='admin')
+
+add = EnrolmentStates.add_item
+add('10', _("Requested"),'requested')
+add('20', _("Confirmed"),'confirmed')
+add('30', _("Certified"),'certified')
+add('40', _("Cancelled"),'cancelled')
+    
+
+#~ class Enrolment(dd.Model):
+class Enrolment(dd.UserAuthored,dd.SimplyPrintable):
   
     class Meta:
         verbose_name = _("Enrolment")
@@ -444,17 +523,80 @@ class Enrolment(dd.Model):
     #~ teacher = models.ForeignKey(Teacher)
     course = models.ForeignKey(Course)
     pupil = models.ForeignKey(Pupil)
+    request_date = models.DateField(_("Date of request"),default=datetime.date.today)
+    state = EnrolmentStates.field(default=EnrolmentStates.requested)
+
 
 class Enrolments(dd.Table):
+    required = dd.required(user_level='manager')
     model = Enrolment
+    parameters = dd.ObservedPeriod(
+        author = dd.ForeignKey(settings.SITE.user_model,blank=True,null=True),
+        state = EnrolmentStates.field(blank=True,null=True),
+        )
+    params_layout = """start_date end_date author state"""
+    order_by = ['request_date']
+    column_names = 'request_date course pupil state workflow_buttons user *'
+        
+    @classmethod
+    def get_request_queryset(self,ar):
+        qs = super(Enrolments,self).get_request_queryset(ar)
+        if ar.param_values.user is not None:
+            qs = qs.filter(user=ar.param_values.user)
+            
+        if ar.param_values.state:
+            qs = qs.filter(state=ar.param_values.state)
+            
+        if ar.param_values.start_date is None or ar.param_values.end_date is None:
+            period = None
+        else:
+            period = (ar.param_values.start_date, ar.param_values.end_date)
+        if period is not None:
+            qs = qs.filter(dd.inrange_filter('request_date',period))
+                
+        return qs
+        
+    @classmethod
+    def get_title_tags(self,ar):
+        for t in super(Enrolments,self).get_title_tags(ar):
+            yield t
+            
+        if ar.param_values.state:
+            yield unicode(ar.param_values.state)
+        if ar.param_values.user:
+            yield unicode(ar.param_values.user)
+        
 
+class RequestedEnrolments(Enrolments):
+    
+    label = _("Requested enrolments")
+    
+    @classmethod
+    def param_defaults(self,ar,**kw):
+        kw = super(RequestedEnrolments,self).param_defaults(ar,**kw)
+        kw.update(state=EnrolmentStates.requested)
+        return kw
+        
+class ConfirmedEnrolments(Enrolments):
+    label = _("Confirmed enrolments")
+    @classmethod
+    def param_defaults(self,ar,**kw):
+        kw = super(ConfirmedEnrolments,self).param_defaults(ar,**kw)
+        kw.update(state=EnrolmentStates.confirmed)
+        return kw
+        
+    
 class EnrolmentsByPupil(Enrolments):
+    required = dd.required()
     master_key = "pupil"
 
 class EnrolmentsByCourse(Enrolments):
+    required = dd.required()
     master_key = "course"
 
 
+def get_todo_tables(ar):
+    yield (RequestedEnrolments, _("%d enrolments to confirm.")) 
 
 
 
@@ -534,16 +676,18 @@ dd.inject_field(Person,
     """Whether this Person is also a Pupil."""
     )
 
-
+MODULE_LABEL = _("School")
     
 def setup_main_menu(site,ui,profile,main):
     m = main.get_item("contacts")
     m.add_action(Teachers)
     m.add_action(Pupils)
-    m = main.add_menu("school",_("School"))
+    m = main.add_menu("school",MODULE_LABEL)
     m.add_action(Courses)
     m.add_action(Teachers)
     m.add_action(Pupils)
+    m.add_action(RequestedEnrolments)
+    m.add_action(ConfirmedEnrolments)
   
 def unused_setup_master_menu(site,ui,profile,m): 
     #~ m = m.add_menu("school",_("School"))
@@ -556,7 +700,7 @@ def unused_setup_master_menu(site,ui,profile,m):
 def setup_my_menu(site,ui,profile,m): pass
   
 def setup_config_menu(site,ui,profile,m):
-    m = m.add_menu("school",_("School"))
+    m = m.add_menu("school",MODULE_LABEL)
     #~ m.add_action(Rooms)
     m.add_action(Topics)
     m.add_action(Lines)
@@ -564,7 +708,7 @@ def setup_config_menu(site,ui,profile,m):
     #~ m.add_action(PresenceStatuses)
   
 def setup_explorer_menu(site,ui,profile,m):
-    m = m.add_menu("school",_("School"))
+    m = m.add_menu("school",MODULE_LABEL)
     #~ m.add_action(Presences)
     #~ m.add_action(Events)
     m.add_action(Enrolments)
