@@ -61,7 +61,7 @@ def objects():
           
     if False:
     
-        place = Instantiator('cal.Place').build
+        place = Instantiator('cal.Room').build
         yield place(**babel_values('name',
               de=u"Büro",
               fr=u"Bureau",

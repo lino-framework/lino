@@ -25,7 +25,7 @@ from django.utils.translation import ugettext_lazy as _
 
 from django.db import models
 from django.conf import settings
-from north.dbutils import babel_values
+from north.dbutils import babelkw
 
 Person = dd.resolve_model('contacts.Person')
 
@@ -41,12 +41,12 @@ def objects():
   
             
     #~ yield school.Room(name="A")
-    yield cal.Place(name="A")
-    yield cal.Place(name="B")
-    yield cal.Place(name="C")
-    yield cal.Place(name="D")
-    yield cal.Place(name="E")
-    yield cal.Place(name="F")
+    #~ yield cal.Place(name="A")
+    #~ yield cal.Place(name="B")
+    #~ yield cal.Place(name="C")
+    #~ yield cal.Place(name="D")
+    #~ yield cal.Place(name="E")
+    #~ yield cal.Place(name="F")
 
     n = 0
     for p in Person.objects.all():
@@ -61,7 +61,7 @@ def objects():
         #~ PS = Cycler(school.PresenceStatus.objects.all())
         CONTENTS = Cycler(school.Line.objects.all())
         USERS = Cycler(users.User.objects.all())
-        PLACES = Cycler(cal.Place.objects.all())
+        PLACES = Cycler(cal.Room.objects.all())
         TEACHERS = Cycler(school.Teacher.objects.all())
         SLOTS = Cycler(school.Slot.objects.all())
         #~ SLOTS = Cycler(1,2,3,4)
@@ -77,7 +77,7 @@ def objects():
             c = school.Course(
               user=USERS.pop(),
               teacher=TEACHERS.pop(),
-              line=CONTENTS.pop(),place=PLACES.pop(),
+              line=CONTENTS.pop(),room=PLACES.pop(),
               start_date=datetime.date(year,9,1+i),
               end_date=datetime.date(year+1,6,30),
               every=1,

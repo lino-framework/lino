@@ -296,7 +296,7 @@ add('50', _("Cancelled"),'cancelled')
 class Course(contacts.ContactRelated,cal.EventGenerator,cal.RecurrenceSet,mixins.Printable):
     """
     A Course is a group of pupils that regularily 
-    meet with a given teacher in a given place.
+    meet with a given teacher in a given room.
     """
     
     FILL_EVENT_GUESTS = False
@@ -309,9 +309,8 @@ class Course(contacts.ContactRelated,cal.EventGenerator,cal.RecurrenceSet,mixins
     
     line = models.ForeignKey('school.Line')
     teacher = models.ForeignKey(Teacher)
-    #~ place = models.ForeignKey(Place,verbose_name=_("Place"),null=True,blank=True) # iCal:LOCATION
     #~ room = models.ForeignKey(Room,blank=True,null=True)
-    place = models.ForeignKey(cal.Place,blank=True,null=True)
+    room = dd.ForeignKey('cal.Room',blank=True,null=True)
     slot = models.ForeignKey(Slot,blank=True,null=True)
     
     state = CourseStates.field(default=CourseStates.draft)
@@ -320,7 +319,7 @@ class Course(contacts.ContactRelated,cal.EventGenerator,cal.RecurrenceSet,mixins
         #~ blank=True,null=True)
     
     def __unicode__(self):
-        return u"%s (%s, %s)" % (self.line,self.company.city or self.company,self.start_date)
+        return u"%s (%s, %s)" % (self.line,self.room,dd.dtos(self.start_date))
           
     def update_cal_rset(self):
         return self
@@ -356,6 +355,7 @@ class Course(contacts.ContactRelated,cal.EventGenerator,cal.RecurrenceSet,mixins
         return EnrolmentsByCourse.request(self,param_values=dict(state=EnrolmentStates.confirmed))
         
 dd.update_field(Course,'contact_person',verbose_name = _("Contact person"))
+dd.update_field(Course,'company',verbose_name = _("Organizer"))
           
           
 @dd.receiver(dd.pre_save, sender=cal.Event,dispatch_uid="setup_event_from_course")
@@ -370,6 +370,7 @@ def setup_event_from_course(sender=None,instance=None,**kw):
     event.project = course
     #~ settings.SITE.setup_course_event(course,event)
     
+    event.room = course.room
     if course.slot: 
         event.start_time = course.slot.start_time
         event.end_time = course.slot.end_time
@@ -402,11 +403,10 @@ class CourseDetail(dd.FormLayout):
     #~ start end freq
     main = "general school.EnrolmentsByCourse cal.EventsByController"
     general = dd.Panel("""
-    id:8 user state calendar
-    summary line place slot
-    company contact_person teacher
-    start_date max_occurences end_date every every_unit
+    line start_date room teacher #slot state id:8
+    max_occurences end_date every every_unit
     monday tuesday wednesday thursday friday saturday sunday
+    company contact_person user calendar
     description
     """,label=_("General"))
     
@@ -419,7 +419,7 @@ class Courses(dd.Table):
     model = Course
     #~ order_by = ['date','start_time']
     detail_layout = CourseDetail() 
-    column_names = "line teacher place slot summary *"
+    column_names = "line teacher room slot summary *"
     order_by = ['start_date']
     
     parameters = dd.ObservedPeriod(
@@ -467,16 +467,16 @@ class Courses(dd.Table):
 
 class CoursesByTeacher(Courses):
     master_key = "teacher"
-    column_names = "line place slot summary *"
+    column_names = "line room slot summary *"
 
 class CoursesByLine(Courses):
     master_key = "line"
-    column_names = "what_text weekdays_text where_text times_text teacher place summary"
+    column_names = "what_text weekdays_text where_text times_text teacher room summary"
 
 class CoursesByTopic(Courses):
     master = Topic
     order_by = ['start_date']
-    column_names = "what_text weekdays_text where_text times_text teacher place summary"
+    column_names = "what_text weekdays_text where_text times_text teacher room summary"
     
     @classmethod
     def get_request_queryset(self,ar):
@@ -494,7 +494,7 @@ class CoursesByCompany(Courses):
 class ActiveCourses(Courses):
     
     label = _("Active courses")
-    column_names = 'info teacher company place requested confirmed'
+    column_names = 'info teacher company room requested confirmed'
     @classmethod
     def param_defaults(self,ar,**kw):
         kw = super(ActiveCourses,self).param_defaults(ar,**kw)

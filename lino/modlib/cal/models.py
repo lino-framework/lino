@@ -15,6 +15,9 @@
 """
 
 """
+
+from __future__ import unicode_literals
+
 import logging
 logger = logging.getLogger(__name__)
 
@@ -313,24 +316,32 @@ if False: # 20130320
 
 
 
-class Place(dd.BabelNamed):
+class Room(dd.BabelNamed,contacts.ContactRelated):
     """
     A location where Events can happen.
-    For a given Place you can see the :class:`EventsByPlace` 
+    For a given Room you can see the :class:`EventsByRoom` 
     that happened (or will happen) there.
     """
     class Meta:
         verbose_name = _("Room")
         verbose_name_plural = _("Rooms")
         
+    def __unicode__(self):
+        s = dd.BabelNamed.__unicode__(self)
+        if self.company and self.company.city: 
+            s = '%s (%s)' % (self.company.city,s)
+        return s
+        
+
+        
   
-class Places(dd.Table):
-    help_text = _("List of places where calendar events can happen.")
+class Rooms(dd.Table):
+    help_text = _("List of rooms where calendar events can happen.")
     required = dd.required(user_groups='office',user_level='manager')
-    model = Place
+    model = Room
     detail_layout = """
-    id name
-    cal.EventsByPlace
+    id name company contact_person contact_role
+    cal.EventsByRoom
     """
     
 class Priority(dd.BabelNamed):
@@ -437,9 +448,9 @@ class EventGenerator(mixins.UserAuthored):
         wanted = self.get_wanted_auto_events()
         current = 0
         
-        msg = dd.obj2str(self)
-        msg += ", qs=" + str([e.auto_type for e in qs])
-        msg += ", wanted=" + str([dbutils.dtos(e.start_date) for e in wanted.values()])
+        #~ msg = dd.obj2str(self)
+        #~ msg += ", qs=" + str([e.auto_type for e in qs])
+        #~ msg += ", wanted=" + str([dbutils.dtos(e.start_date) for e in wanted.values()])
         #~ logger.info('20130528 ' + msg)
         
         for e in qs:
@@ -500,7 +511,7 @@ class EventGenerator(mixins.UserAuthored):
             #~ raise Warning("Series ends before it was started!")
         i = 0
         max_occurences = rset.max_occurences or settings.SITE.max_auto_events
-        while i <= max_occurences:
+        while i < max_occurences:
             i += 1
             if until is not None and date > until:
                 return wanted
@@ -919,7 +930,7 @@ class Event(Component,Ended,
     transparent = models.BooleanField(_("Transparent"),default=False,help_text=_("""\
 Indicates that this Event shouldn't prevent other Events at the same time."""))
     #~ type = models.ForeignKey(EventType,null=True,blank=True)
-    place = models.ForeignKey(Place,null=True,blank=True) # iCal:LOCATION
+    room = models.ForeignKey(Room,null=True,blank=True) # iCal:LOCATION
     priority = models.ForeignKey(Priority,null=True,blank=True)
     #~ priority = Priority.field(_("Priority"),blank=True) # iCal:PRIORITY
     state = EventStates.field(default=EventStates.suggested) # iCal:STATUS
@@ -1047,7 +1058,7 @@ class EventDetail(dd.FormLayout):
     main = """
     calendar summary user assigned_to
     start end #all_day #duration state
-    place priority access_class transparent #rset 
+    room priority access_class transparent #rset 
     owner created:20 modified:20  
     description
     GuestsByEvent outbox.MailsByController
@@ -1056,7 +1067,7 @@ class EventInsert(EventDetail):
     main = """
     calendar summary 
     start end 
-    place priority access_class transparent 
+    room priority access_class transparent 
     """
     
 #~ class NextDateAction(dd.ListAction):
@@ -1087,7 +1098,7 @@ class Events(dd.Table):
     column_names = 'start_date start_time user summary calendar *'
     
     hidden_columns = """
-    place priority access_class transparent
+    room priority access_class transparent
     owner created modified
     description
     uid sequence auto_type build_time owner owner_id owner_type 
@@ -1194,11 +1205,11 @@ class EventsByCalendar(Events):
     #~ required = dd.required(user_groups='office')
     #~ master_key = 'user'
     
-class EventsByPlace(Events):
+class EventsByRoom(Events):
     """
-    Displays the :class:`Events <Event>` at a given :class:`Place`.
+    Displays the :class:`Events <Event>` at a given :class:`Room`.
     """
-    master_key = 'place'
+    master_key = 'room'
 
 class EventsByController(Events):
     required = dd.required(user_groups='office')
@@ -1552,10 +1563,7 @@ class Guest(mixins.TypedPrintable,outbox.Mailable):
     event = models.ForeignKey('cal.Event',
         verbose_name=_("Event")) 
         
-    if settings.SITE.is_installed('contacts'):
-        partner = models.ForeignKey('contacts.Partner')
-    else:
-        partner = dd.DummyField()
+    partner = dd.ForeignKey('contacts.Partner')
 
     role = models.ForeignKey('cal.GuestRole',
         verbose_name=_("Role"),
@@ -1997,7 +2005,7 @@ if settings.SITE.use_extensible:
         use_as_default_table = False
         #~ parameters = dict(team_view=models.BooleanField(_("Team View")))
         
-        column_names = 'id start_dt end_dt summary description user place calendar #rset url all_day reminder'
+        column_names = 'id start_dt end_dt summary description user room calendar #rset url all_day reminder'
         
         start_dt = ExtDateTimeField('start',None,_("Start"))
         end_dt = ExtDateTimeField('end','start',_("End"))
@@ -2336,7 +2344,7 @@ def setup_main_menu(site,ui,profile,m):
     
 def setup_config_menu(site,ui,profile,m): 
     m  = m.add_menu("cal",MODULE_LABEL)
-    m.add_action(Places)
+    m.add_action(Rooms)
     m.add_action(Priorities)
     #~ m.add_action(AccessClasses)
     #~ m.add_action(EventStatuses)
