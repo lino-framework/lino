@@ -58,63 +58,23 @@ def objects():
           et=u"Sekretär",
           ))
           
-    calendar = Instantiator('cal.Calendar').build
-    #~ yield calendar(**babel_values('name',
-          #~ de=u"Klientengespräche intern",
-          #~ fr=u"Rencontres internes avec client",
-          #~ en=u"Internal meetings with client",
-          #~ ))
-    yield calendar(color=1,**babel_values('name',
-          de=u"Klientengespräche extern",
-          fr=u"Rencontres client externes",
-          en=u"External meetings with client",
-          ))
-    
-    yield calendar(color=4,**babel_values('name',
-          de=u"Versammlung intern",
-          fr=u"Réunions internes",
-          en=u"Internal meetings",
-          ))
-    
-    yield calendar(color=8,**babel_values('name',
-          de=u"Versammlung extern",
-          fr=u"Réunions externes",
-          en=u"External meetings",
-          ))
           
-    yield calendar(color=12,
-        #~ invite_team_members=True,email_template='Team.eml.html',
-        email_template='Team.eml.html',
-        **babel_values('name',
-          de=u"Team-Besprechungen",
-          fr=u"Coordinations en équipe",
-          en=u"Team Meetings",
-          ))
-    #~ yield etype(**babel_values('name',
-          #~ de=u"Erstgespräch",
-          #~ fr=u"Première rencontre",
-          #~ en=u"First meeting",
-          #~ ))
-    #~ yield etype(**babel_values('name',
-          #~ de=u"Auswertungsgespräch",
-          #~ fr=u"Évaluation",
-          #~ en=u"Evaluation",
-          #~ ))
+    if False:
     
-    place = Instantiator('cal.Place').build
-    yield place(**babel_values('name',
-          de=u"Büro",
-          fr=u"Bureau",
-          en=u"Office",
-          ))
-    yield place(**babel_values('name',
-          de=u"Beim Klienten",
-          fr=u"Chez le client",
-          en=u"A the client's",
-          ))
-    yield place(**babel_values('name',
-          de=u"beim Arbeitgeber",
-          fr=u"chez l'employeur",
-          en=u"at employer's",
-          ))
+        place = Instantiator('cal.Place').build
+        yield place(**babel_values('name',
+              de=u"Büro",
+              fr=u"Bureau",
+              en=u"Office",
+              ))
+        yield place(**babel_values('name',
+              de=u"Beim Klienten",
+              fr=u"Chez le client",
+              en=u"A the client's",
+              ))
+        yield place(**babel_values('name',
+              de=u"beim Arbeitgeber",
+              fr=u"chez l'employeur",
+              en=u"at employer's",
+              ))
 

@@ -733,6 +733,9 @@ class Printable(object):
         return self._meta.app_label + '.' + self.__class__.__name__ + '-' + str(self.pk)
         
   
+class SimplyPrintable(Printable):
+    simply_print = DirectPrintAction(_("Print")) # ,'Default')
+    
 class CachedPrintable(Duplicable,Printable):
     """
     Mixin for Models that generate a unique external file at a 

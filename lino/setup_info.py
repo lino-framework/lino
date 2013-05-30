@@ -88,6 +88,7 @@ lino.modlib.cal.management
 lino.modlib.cal.management.commands
 lino.modlib.cal.fixtures
 lino.modlib.cal.tests
+lino.modlib.cal.workflows
 lino.modlib.tickets
 lino.modlib.tickets.fixtures
 lino.modlib.vocbook

@@ -281,6 +281,11 @@ class Site(Site):
         #~ d = datetime.date(*self.parse_date(s[0]))
         #~ return datetime.combine(d,t)
 
+    ignore_dates_before = datetime.date.today() + datetime.timedelta(days=-7)
+    """
+    Ignore dates before the gived date. 
+    Set this to None if you want no limit.
+    """
     
     #~ def get_user_model(self):
         #~ if 'django.contrib.auth' in self.django_settings['INSTALLED_APPS']:

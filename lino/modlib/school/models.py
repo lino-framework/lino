@@ -12,7 +12,10 @@
 ## You should have received a copy of the GNU General Public License
 ## along with Lino; if not, see <http://www.gnu.org/licenses/>.
 
+from __future__ import unicode_literals
+
 #~ print '20130219 lino.modlib.school 1'  
+
 
 import logging
 logger = logging.getLogger(__name__)
@@ -96,23 +99,41 @@ Person = dd.resolve_model('contacts.Person',strict=True)
 #~ class PresenceStatuses(dd.Table):
     #~ model = PresenceStatus
     
-class Content(dd.BabelNamed):
+class Topic(dd.BabelNamed,dd.SimplyPrintable):
     class Meta:
-        verbose_name = _("Course Content")
-        verbose_name_plural = _('Course Contents')
-    #~ name = models.CharField(max_length=200,
-          #~ blank=True,# null=True,
-          #~ verbose_name=_("Name"))
-    #~ def __unicode__(self):
-        #~ return unicode(self.name)
+        verbose_name = _("Topic")
+        verbose_name_plural = _('Topics')
         
-class Contents(dd.Table):
-    model = Content
+    #~ print_eid_content = DirectPrintAction(_("eID sheet"),'eid-content',icon_name='x-tbar-vcard')
+        
+class Topics(dd.Table):
+    model = Topic
     detail_layout = """
     id name
-    school.CoursesByContent
+    school.LinesByTopic
+    school.CoursesByTopic
     """
     
+class Line(dd.BabelNamed):
+    class Meta:
+        verbose_name = _("Course Line")
+        verbose_name_plural = _('Course Lines')
+    topic = models.ForeignKey(Topic)
+    
+    #~ def __unicode__(self):
+        #~ return "%s (%s)" % (dd.BabelNamed.__unicode__(self),self.topic)
+          
+        
+class Lines(dd.Table):
+    model = Line
+    detail_layout = """
+    id name
+    school.CoursesByLine
+    """
+    
+class LinesByTopic(Lines):
+    master_key = "topic"
+
         
 #~ class Room(dd.BabelNamed):
     #~ class Meta:
@@ -129,11 +150,15 @@ class Teacher(Person):
         verbose_name = _("Teacher")
         verbose_name_plural = _("Teachers")
     
+    def __unicode__(self):
+        #~ return self.get_full_name(salutation=False)
+        return self.last_name
+      
 #~ site.modules.contacts.Persons.add_detail_tab('school.CoursesByTeacher')
 
 class TeacherDetail(contacts.PersonDetail):
-    box5 = "remarks" 
     general = dd.Panel(contacts.PersonDetail.main,label = _("General"))
+    box5 = "remarks" 
     main = "general school.EventsByTeacher school.CoursesByTeacher"
 
     #~ def setup_handle(self,lh):
@@ -143,7 +168,7 @@ class TeacherDetail(contacts.PersonDetail):
 
 class Teachers(contacts.Persons):
     model = Teacher
-    detail_layout = TeacherDetail()
+    #~ detail_layout = TeacherDetail()
   
 
 class Pupil(Person):
@@ -159,7 +184,7 @@ class PupilDetail(contacts.PersonDetail):
     school = dd.Panel("""
     EnrolmentsByPupil 
     # PresencesByPupil
-    cal.GuestsByPartner
+    # cal.GuestsByPartner
     """,label = _("School"))
     
     main = "general school"
@@ -172,16 +197,23 @@ class PupilDetail(contacts.PersonDetail):
 
 class Pupils(contacts.Persons):
     model = Pupil
-    detail_layout = PupilDetail()
+    #~ detail_layout = PupilDetail()
 
 
 
 
-  
+class StartEndTime(dd.Model):
+    class Meta:
+        abstract = True
+    start_time = models.TimeField(
+        blank=True,null=True,
+        verbose_name=_("Start Time"))
+    end_time = models.TimeField(
+        blank=True,null=True,
+        verbose_name=_("End Time"))
     
-#~ class Course(cal.RecurrenceSet,mixins.Printable):
-  
-class Slot(mixins.Sequenced):
+ 
+class Slot(mixins.Sequenced,StartEndTime):
     """
     """
     class Meta:
@@ -189,36 +221,20 @@ class Slot(mixins.Sequenced):
         verbose_name_plural = _('Timetable Slots')
         
     name = models.CharField(max_length=200,
-          unique=True,
+          blank=True,
           verbose_name=_("Name"))
-    #~ weekday = cal.Weekday.field()
-    monday    = models.BooleanField(cal.Weekdays.monday.text)
-    tuesday   = models.BooleanField(cal.Weekdays.tuesday.text)
-    wednesday = models.BooleanField(cal.Weekdays.wednesday.text)
-    thursday  = models.BooleanField(cal.Weekdays.thursday.text)
-    friday    = models.BooleanField(cal.Weekdays.friday.text)
-    saturday  = models.BooleanField(cal.Weekdays.saturday.text)
-    sunday    = models.BooleanField(cal.Weekdays.sunday.text)
-    start_time = models.TimeField(
-        blank=True,null=True,
-        verbose_name=_("Start Time"))
-    end_time = models.TimeField(
-        blank=True,null=True,
-        verbose_name=_("End Time"))
   
     def __unicode__(self):
-        return self.name
-        
-    def is_available_on(self,date):
-        wd = date.isoweekday() # Monday:1, Tuesday:2 ... Sunday:7
-        wd = cal.Weekdays.get_by_value(str(wd))
-        return getattr(self,wd.name)
+        return self.name or "%s-%s" % (self.start_time,self.end_time)
         
 class Slots(dd.Table):
     model = Slot
+    insert_layout = """
+    start_time end_time 
+    name
+    """
     detail_layout = """
     name start_time end_time 
-    monday tuesday wednesday thursday friday saturday sunday
     school.CoursesBySlot
     """
     
@@ -235,7 +251,7 @@ class EventsByTeacher(cal.Events):
         return qs
   
 #~ def on_event_generated(self,course,ev):
-def setup_course_event(self,course,ev):
+def unused_setup_course_event(self,course,ev):
     if not course.slot: 
         return
     if not ev.start_date: 
@@ -258,58 +274,113 @@ def setup_course_event(self,course,ev):
     #~ ev.set_datetime('start',start_time)
     #~ ev.set_datetime('end',start_time + skip)
 
-if not hasattr(settings.SITE,'setup_course_event'):
-    #~ raise Exception("20120403")
-    #~ setattr(site.__class__,'setup_course_event',setup_course_event)
-    settings.SITE.__class__.setup_course_event = setup_course_event
+#~ if not hasattr(settings.SITE,'setup_course_event'):
+    #~ settings.SITE.__class__.setup_course_event = setup_course_event
     
     
-class Course(cal.EventGenerator,cal.RecurrenceSet,mixins.Printable):
+class CourseStates(dd.Workflow):
+    """
+    State of a Calendar Event Guest. Used as Workflow selector.
+    """
+    required = dd.required(user_level='admin')
+
+add = CourseStates.add_item
+add('10', _("Draft"),'draft')
+add('20', _("Scheduled"),'scheduled')
+add('30', _("Started"),'started')
+add('40', _("Ended"),'ended')
+add('50', _("Cancelled"),'cancelled')
+    
+    
+    
+#~ class Course(StartEndTime,cal.EventGenerator,cal.RecurrenceSet,mixins.Printable):
+class Course(contacts.ContactRelated,cal.EventGenerator,cal.RecurrenceSet,mixins.Printable):
     """
     A Course is a group of pupils that regularily 
     meet with a given teacher in a given place.
     """
+    
+    FILL_EVENT_GUESTS = False
+    
     class Meta:
         verbose_name = _("Course")
         verbose_name_plural = _('Courses')
         
-    content = models.ForeignKey(Content)
+    workflow_state_field = 'state'
+    
+    line = models.ForeignKey(Line)
     teacher = models.ForeignKey(Teacher)
     #~ place = models.ForeignKey(Place,verbose_name=_("Place"),null=True,blank=True) # iCal:LOCATION
     #~ room = models.ForeignKey(Room,blank=True,null=True)
     place = models.ForeignKey(cal.Place,blank=True,null=True)
     slot = models.ForeignKey(Slot,blank=True,null=True)
+    
+    state = CourseStates.field(default=CourseStates.draft)
+    
     #~ slot = models.PositiveSmallIntegerField(_("Time slot"),
         #~ blank=True,null=True)
     
     def __unicode__(self):
-        return u"%s (%s)" % (self.content,self.teacher)
+        return u"%s (%s, %s)" % (self.line,self.company.city or self.company,self.start_date)
           
     def update_cal_rset(self):
         return self
         
     def update_cal_from(self):
-        return self.start_date
+        if self.state in (CourseStates.draft,CourseStates.cancelled): 
+            return None
+        if self.start_date is None:
+            return None
+        # if every is per_weekday, actual start may be later than self.start_date
+        return self.get_next_date(self.start_date+datetime.timedelta(days=-1))
         
     def update_cal_until(self):
         return self.end_date
         
+    def update_cal_calendar(self,i):
+        return self.calendar
+        
     def update_cal_subject(self,i):
-        return _("Lesson %d") % (i + 1)
+        return _("Lesson %d") % i
         
+dd.update_field(Course,'contact_person',verbose_name = _("Contact person"))
           
-    def update_owned_instance(self,owned):
-        #~ if self.course is not None:
-        if isinstance(owned,cal.Event):
-            owned.project = self
-            settings.SITE.setup_course_event(self,owned)
-            if owned.guest_set.count() == 0:
-            #~ if ev.presence_set.count() == 0:
-                for e in self.enrolment_set.all():
-                    cal.Guest(partner=e.pupil,event=owned).save()
-                    #~ Presence(pupil=e.pupil,event=ev).save()
-        super(Course,self).update_owned_instance(owned)
-        
+          
+@dd.receiver(dd.pre_save, sender=cal.Event,dispatch_uid="setup_event_from_course")
+def setup_event_from_course(sender=None,instance=None,**kw):
+    #~ logger.info("20130528 setup_event_from_course")
+    if settings.SITE.loading_from_dump: return
+    event = instance
+    if event.is_user_modified(): return
+    if not event.is_editable_state(): return
+    if not isinstance(event.owner,Course): return
+    course = event.owner
+    event.project = course
+    #~ settings.SITE.setup_course_event(course,event)
+    
+    if course.slot: 
+        event.start_time = course.slot.start_time
+        event.end_time = course.slot.end_time
+    else:
+        event.start_time = course.start_time
+        event.end_time = course.end_time
+    
+       
+if Course.FILL_EVENT_GUESTS:
+    
+    @dd.receiver(dd.post_save, sender=cal.Event,dispatch_uid="fill_event_guests_from_course")
+    def fill_event_guests_from_course(sender=None,instance=None,**kw):
+        #~ logger.info("20130528 fill_event_guests_from_course")
+        if settings.SITE.loading_from_dump: return
+        event = instance
+        if event.is_user_modified(): return
+        if not event.is_editable_state(): return
+        if not isinstance(event.owner,Course): return
+        course = event.owner
+        if event.guest_set.count() > 0: return
+        for e in course.enrolment_set.all():
+            cal.Guest(partner=e.pupil,event=event).save()
+    
   
 
 class CourseDetail(dd.FormLayout):
@@ -317,15 +388,15 @@ class CourseDetail(dd.FormLayout):
     #~ end = "end_date end_time"
     #~ freq = "every every_unit"
     #~ start end freq
-    main = """
-    id:8 user teacher content place 
-    summary
-    start_date end_date slot every every_unit
+    main = "general school.EnrolmentsByCourse cal.EventsByController"
+    general = dd.Panel("""
+    id:8 user state calendar
+    summary line place slot
+    company contact_person teacher
+    start_date max_occurences end_date every every_unit
+    monday tuesday wednesday thursday friday saturday sunday
     description
-    #remark
-    #rrule
-    school.EnrolmentsByCourse cal.EventsByController
-    """
+    """,label=_("General"))
     
     #~ def setup_handle(self,dh):
         #~ dh.start.label = _("Start")
@@ -336,16 +407,33 @@ class Courses(dd.Table):
     model = Course
     #~ order_by = ['date','start_time']
     detail_layout = CourseDetail() 
-    column_names = "content teacher place slot summary *"
+    column_names = "line teacher place slot summary *"
 
 class CoursesByTeacher(Courses):
     master_key = "teacher"
+    column_names = "line place slot summary *"
 
-class CoursesByContent(Courses):
-    master_key = "content"
+class CoursesByLine(Courses):
+    master_key = "line"
+    order_by = ['start_date']
+    column_names = "what_text weekdays_text where_text times_text teacher place summary"
+
+class CoursesByTopic(Courses):
+    master = Topic
+    order_by = ['start_date']
+    column_names = "what_text weekdays_text where_text times_text teacher place summary"
+    
+    @classmethod
+    def get_request_queryset(self,ar):
+        topic = ar.master_instance
+        if topic is None: return []
+        return Course.objects.filter(line__topic=topic)
 
 class CoursesBySlot(Courses):
     master_key = "slot"
+
+class CoursesByCompany(Courses):
+    master_key = "company"
 
 class Enrolment(dd.Model):
   
@@ -463,14 +551,15 @@ def unused_setup_master_menu(site,ui,profile,m):
     m.add_action(Pupils)
     #~ m.add_action(CourseOffers)
     #~ m.add_action(Courses)
-            
+
 
 def setup_my_menu(site,ui,profile,m): pass
   
 def setup_config_menu(site,ui,profile,m):
     m = m.add_menu("school",_("School"))
     #~ m.add_action(Rooms)
-    m.add_action(Contents)
+    m.add_action(Topics)
+    m.add_action(Lines)
     m.add_action(Slots)
     #~ m.add_action(PresenceStatuses)
   

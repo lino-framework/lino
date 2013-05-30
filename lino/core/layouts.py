@@ -265,10 +265,10 @@ class LayoutHandle:
             
     def define_panel(self,name,desc,**kw):
         if not desc:
-            raise Exception(
-                'Failed to define empty element %s (in %s)' 
-                % (name,self.layout))
-            #~ return
+            return 
+            #~ raise Exception(
+                #~ 'Failed to define empty element %s (in %s)' 
+                #~ % (name,self.layout))
         #~ if hasattr(self,name):
         if self._names.has_key(name):
             raise Exception(

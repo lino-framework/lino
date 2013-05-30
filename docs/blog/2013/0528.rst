@@ -1,0 +1,21 @@
+===============================
+20130528 (Tuesday, 28 May 2013)
+===============================
+
+Lino-Faggio
+-----------
+
+Ich habe mit einem Prototypen für die Eiche VoG begonnen. 
+Ausgangsbasis war :mod:`lino.projects.homeworkschool`.
+Aber diesmal mache ich gleich ein selbstständiges Projekt 
+`Lino-Faggio <http://faggio.lino-framework.org/>`__
+daraus
+(der Code ist noch nicht öffentlich, 
+weil es noch viel zu tun gibt bevor ich Feedback brauchen kann).
+
+Eine Optimierung hat es schon in :mod:`lino.modlib.cal` gebracht: 
+statt die save-Methode von 
+:mod:`lino.modlib.cal.models.Event` zu überschreiben 
+benutze ich jetzt das post_save-Signal
+(:mod:`fill_event_guests_from_team_members 
+<lino.modlib.cal.models.fill_event_guests_from_team_members>`).

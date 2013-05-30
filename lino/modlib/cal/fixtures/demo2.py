@@ -69,28 +69,26 @@ def objects():
     #~ for i in range(20):
     for u in settings.SITE.user_model.objects.exclude(email=''):
         #~ u = USERS.pop()
-        date = settings.SITE.demo_date()
-        for i in range(12):
-            if i % 3:
-                date += ONE_DAY # relativedelta(days=1)
-            s = SUMMARIES.pop().get(u.language,None) or SUMMARIES.pop().get('en')
-            st = TIMES.pop()
-            kw = dict(user=u,
-              start_date=date,
-              calendar=ETYPES.pop(),
-              start_time=st,
-              summary=s)
-            kw.update(access_class=ACL.pop())
-            kw.update(state=STATES.pop())
-            if settings.SITE.project_model:
-                kw.update(project=PROJECTS.pop())
-            e = cal.Event(**kw)
-            e.set_datetime('end',e.get_datetime('start')+ DURATIONS.pop())
-            yield e
-    #~ yield event(user=user,start_date=settings.SITE.demo_date(days=1),type=2)
-    #~ yield event(user=user,start_date=settings.SITE.demo_date(days=2),type=2)
-    
-    #~ for u in settings.SITE.user_model.objects.all():
+        if False:
+            date = settings.SITE.demo_date()
+            for i in range(12):
+                if i % 3:
+                    date += ONE_DAY # relativedelta(days=1)
+                s = SUMMARIES.pop().get(u.language,None) or SUMMARIES.pop().get('en')
+                st = TIMES.pop()
+                kw = dict(user=u,
+                  start_date=date,
+                  calendar=ETYPES.pop(),
+                  start_time=st,
+                  summary=s)
+                kw.update(access_class=ACL.pop())
+                kw.update(state=STATES.pop())
+                if settings.SITE.project_model:
+                    kw.update(project=PROJECTS.pop())
+                e = cal.Event(**kw)
+                e.set_datetime('end',e.get_datetime('start')+ DURATIONS.pop())
+                yield e
+            
         if False:
             for obj in settings.SITE.user_model.objects.exclude(
                   profile=None).exclude(id=u.id):

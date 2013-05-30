@@ -129,7 +129,6 @@ class DurationUnit(dd.Choice):
                     day -= 1
                 else:
                     raise
-    
   
     
 class DurationUnits(dd.ChoiceList):
@@ -148,6 +147,20 @@ add('D', _('days')   ,'days'   )
 add('W', _('weeks')  ,'weeks'  )
 add('M', _('months') ,'months' )
 add('Y', _('years')  ,'years'  )
+
+
+class Recurrencies(dd.ChoiceList):
+    verbose_name = _("Recurrency")
+    item_class = DurationUnit
+    
+add = Recurrencies.add_item
+add('D', _('daily')   ,'daily'   )
+add('W', _('weekly')  ,'weekly'  )
+add('M', _('monthly') ,'monthly' )
+add('Y', _('yearly')  ,'yearly'  )
+add('P', _('per weekday')  ,'per_weekday'  )
+    
+
 
 
 def amonthago():

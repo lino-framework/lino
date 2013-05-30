@@ -135,6 +135,7 @@ from lino.core.tables import VirtualTable
 from lino.mixins import EmptyTable
 from lino.mixins import Report
 
+
 from north.dbutils import resolve_model, UnresolvedModel
 
 from lino.core.dbutils import resolve_app, resolve_field, get_field
@@ -314,7 +315,8 @@ def dtos(d):
 from lino.mixins import (ProjectRelated, UserAuthored, 
     Sequenced, Hierarizable)
 
-from lino.mixins.printable import Printable, PrintableType, CachedPrintable, TypedPrintable, DirectPrintAction
+from lino.mixins import Printable, PrintableType, CachedPrintable, TypedPrintable, DirectPrintAction
+from lino.mixins import SimplyPrintable
 from lino.mixins.uploadable import Uploadable
 from lino.mixins.human import Human, Born, Genders
 

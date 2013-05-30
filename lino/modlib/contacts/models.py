@@ -472,6 +472,7 @@ class CompanyDetail(PartnerDetail):
     remarks contacts.RolesByCompany
     """
 
+    name_box = "prefix name"
     #~ name_box = """prefix name type:20"""
     #~ info_box = "id:5 language:10 vat_id:12"
 
@@ -553,6 +554,7 @@ class Role(dd.Model):
         #~ if self.type is None:
             #~ return unicode(self.person)
         #~ return u"%s (%s)" % (self.person, self.type)
+        
     def __unicode__(self):
         if self.person_id is None:
             return super(Role,self).__unicode__()
@@ -744,6 +746,7 @@ class ContactRelated(dd.Model):
     Abstract class for things that relate to a company represented by a person as a given role.
     Adds 3 fields `company`, `contact_person` and `contact_role`.
     """
+    
     class Meta:
         abstract = True
         

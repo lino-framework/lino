@@ -62,7 +62,7 @@ class BuildSiteCache(dd.RowAction):
     def run_from_ui(self,elem,ar):
         #~ rr.confirm(_("Are you sure?"))
         #~ rr.confirm(_("Are you really sure?"))
-        ar.ui.build_site_cache(True)
+        settings.SITE.ui.build_site_cache(True)
         return ar.success(
             """\
 Seems that it worked. Refresh your browser. 
@@ -190,7 +190,7 @@ if settings.SITE.is_installed('contenttypes'):
                   if getattr(cl,'_meta',False) and not cl._meta.abstract:
                       #~ logger.info("20120205 adding(%r)",cl)
                       ct = contenttypes.ContentType.objects.get_for_model(cl)
-                      #~ chunks.append(ar.ui.ext_renderer.href_to(ct,unicode(cl._meta.verbose_name)))
+                      #~ chunks.append(settings.SITE.ui.ext_renderer.href_to(ct,unicode(cl._meta.verbose_name)))
                       chunks.append(ar.href_to(ct,unicode(cl._meta.verbose_name)))
           if obj is not None:
               #~ add(obj.model_class())
@@ -348,7 +348,7 @@ class Home(mixins.EmptyTable):
             chunks = []
             for mi in quicklinks.items:
                 chunks.append(' ')
-                chunks.append(ar.ui.ext_renderer.window_action_button(
+                chunks.append(settings.SITE.ui.ext_renderer.window_action_button(
                   ar,mi.bound_action))
             return xghtml.E.p('Quick Links:',*chunks)
       

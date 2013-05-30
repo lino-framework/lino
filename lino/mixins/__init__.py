@@ -685,7 +685,9 @@ class ProjectRelated(model.Model):
             yield p
 
 
-from lino.mixins.printable import Printable, PrintableType, CachedPrintable, TypedPrintable, DirectPrintAction
+from lino.mixins.printable import (Printable, PrintableType, 
+    CachedPrintable, TypedPrintable, 
+    DirectPrintAction, SimplyPrintable)
 from lino.mixins.uploadable import Uploadable
 from lino.mixins.human import Human, Born, Genders
 #~ from lino.mixins.mails import Recipient, Mail

@@ -500,7 +500,7 @@ class Site(lino.Site):
     Set this to `False` if you don't need WebDAV-enabled links.
     """
     
-    max_auto_events = 36
+    max_auto_events = 72
     """
     Maximum number of automatic events to be generated 
     by :class:`lino.modlib.cal.models.EventOwner`.

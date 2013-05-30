@@ -39,50 +39,6 @@ users = dd.resolve_app('users')
 
 def objects():
   
-    #~ yield school.PresenceStatus(**babel_values('name',
-          #~ de=u"Anwesend",
-          #~ fr=u"présent",
-          #~ en=u"present",
-          #~ ))
-    #~ yield school.PresenceStatus(**babel_values('name',
-          #~ de=u"Abwesend",
-          #~ fr=u"absent",
-          #~ en=u"absent",
-          #~ ))
-    #~ yield school.PresenceStatus(**babel_values('name',
-          #~ de=u"Entschuldigt",
-          #~ fr=u"excusé",
-          #~ en=u"excused",
-          #~ ))
-    yield school.Content(**babel_values('name',
-          de=u"Deutsch Anfänger",
-          fr=u"Allemand débutants",
-          en=u"German beginners",
-          ))
-    yield school.Content(**babel_values('name',
-          de=u"Französisch Anfänger",
-          fr=u"Français débutants",
-          en=u"French beginners",
-          ))
-          
-    #~ def slotkw(weekday,hour,**kw):
-        #~ if hour == 1:
-            #~ kw.update(start_time="13:00",end_time="14:00")
-        #~ elif hour == 2:
-            #~ kw.update(start_time="14:00",end_time="15:00")
-        #~ elif hour == 3:
-            #~ kw.update(start_time="15:00",end_time="16:00")
-        #~ elif hour == 4:
-            #~ kw.update(start_time="16:00",end_time="17:00")
-        #~ elif hour == 5:
-            #~ kw.update(start_time="17:00",end_time="18:00")
-        #~ elif hour == 6:
-            #~ kw.update(start_time="18:00",end_time="19:00")
-        #~ return kw
-        
-    #~ for weekday in ("1","2","3","4","5"):
-        #~ for n in [i+1 for i in range(5)]:
-            #~ yield school.Slot(weekday=weekday,n,**slotkw(weekday,n))
             
     #~ yield school.Room(name="A")
     yield cal.Place(name="A")
@@ -100,39 +56,41 @@ def objects():
             yield mti.insert_child(p,school.Teacher)
         n += 1
         
-    #~ PS = Cycler(school.PresenceStatus.objects.all())
-    CONTENTS = Cycler(school.Content.objects.all())
-    USERS = Cycler(users.User.objects.all())
-    TEACHERS = Cycler(school.Teacher.objects.all())
-    SLOTS = Cycler(school.Slot.objects.all())
-    #~ SLOTS = Cycler(1,2,3,4)
-    PUPILS = Cycler(school.Pupil.objects.all())
-    PLACES = Cycler(cal.Place.objects.all())
-    #~ Event = settings.SITE.modules.cal.Event
-    
-    #~ from lino.modlib.cal.utils import DurationUnit
-    
-    year = settings.SITE.demo_date().year
-    if settings.SITE.demo_date().month < 7:
-        year -= 1
-    for i in range(10):
-        c = school.Course(
-          user=USERS.pop(),
-          teacher=TEACHERS.pop(),
-          content=CONTENTS.pop(),place=PLACES.pop(),
-          start_date=datetime.date(year,9,1+i),
-          end_date=datetime.date(year+1,6,30),
-          every=1,
-          every_unit=cal.DurationUnits.weeks,
-          slot=SLOTS.pop(),
-          )
-        yield c
-        for j in range(5):
-            yield school.Enrolment(pupil=PUPILS.pop(),course=c)
+    if False:
+        
+        #~ PS = Cycler(school.PresenceStatus.objects.all())
+        CONTENTS = Cycler(school.Line.objects.all())
+        USERS = Cycler(users.User.objects.all())
+        PLACES = Cycler(cal.Place.objects.all())
+        TEACHERS = Cycler(school.Teacher.objects.all())
+        SLOTS = Cycler(school.Slot.objects.all())
+        #~ SLOTS = Cycler(1,2,3,4)
+        PUPILS = Cycler(school.Pupil.objects.all())
+        #~ Event = settings.SITE.modules.cal.Event
+        
+        #~ from lino.modlib.cal.utils import DurationUnit
+        
+        year = settings.SITE.demo_date().year
+        if settings.SITE.demo_date().month < 7:
+            year -= 1
+        for i in range(10):
+            c = school.Course(
+              user=USERS.pop(),
+              teacher=TEACHERS.pop(),
+              line=CONTENTS.pop(),place=PLACES.pop(),
+              start_date=datetime.date(year,9,1+i),
+              end_date=datetime.date(year+1,6,30),
+              every=1,
+              every_unit=cal.DurationUnits.weeks,
+              slot=SLOTS.pop(),
+              )
+            yield c
+            for j in range(5):
+                yield school.Enrolment(pupil=PUPILS.pop(),course=c)
+                
+            c.save() # fill presences
             
-        c.save() # fill presences
-        
-        #~ for j in range(5):
-            #~ yield school.Event(start_date=settings.SITE.demo_date(j*7),course=c)
-            #~ yield school.Presence()
-        
+            #~ for j in range(5):
+                #~ yield school.Event(start_date=settings.SITE.demo_date(j*7),course=c)
+                #~ yield school.Presence()
+            

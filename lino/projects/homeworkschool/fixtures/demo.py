@@ -1,5 +1,5 @@
 # -*- coding: UTF-8 -*-
-## Copyright 2012 Luc Saffre
+## Copyright 2012-2013 Luc Saffre
 ## This file is part of the Lino project.
 ## Lino is free software; you can redistribute it and/or modify 
 ## it under the terms of the GNU General Public License as published by
@@ -13,7 +13,7 @@
 ## along with Lino; if not, see <http://www.gnu.org/licenses/>.
 
 
-#~ from lino import dd
+from lino import dd
 from lino.utils.instantiator import Instantiator, i2d
 #~ from lino.core.dbutils import resolve_model
 from django.utils.translation import ugettext_lazy as _
@@ -36,3 +36,18 @@ def objects():
     yield slot("Mittwochs 16 Uhr","16:00","17:00",**kw)
     yield slot("Mittwochs 17 Uhr","17:00","18:00",**kw)
     yield slot("Mittwochs 18 Uhr","18:00","19:00",**kw)
+    
+    school = dd.resolve_app('school')
+
+
+    yield school.Content(**babel_values('name',
+          de=u"Deutsch Anfänger",
+          fr=u"Allemand débutants",
+          en=u"German beginners",
+          ))
+    yield school.Content(**babel_values('name',
+          de=u"Französisch Anfänger",
+          fr=u"Français débutants",
+          en=u"French beginners",
+          ))
+          

@@ -32,6 +32,7 @@ from django.contrib.contenttypes.models import ContentType
 from django.utils.encoding import force_unicode
 from django.db.models import loading
 from django.core import exceptions
+from django.utils.importlib import import_module
 
 from north import dbutils
 from north.dbutils import dtosl
@@ -50,217 +51,21 @@ from lino.core import constants
 from lino.utils.xmlgen.html import E
 
 from lino.modlib.cal.utils import \
-    DurationUnits, setkw, dt2kw, \
+    DurationUnits, Recurrencies, setkw, dt2kw, \
     Weekdays, AccessClasses, CalendarAction
-
-
-#~ from lino.modlib.contacts import models as contacts
-#~ from lino.modlib.outbox import models as outbox
-#~ from lino.modlib.postings import models as postings
-
+    
+def format_time(t):
+    return t.strftime(settings.SITE.time_format_strftime)
+    
 contacts = dd.resolve_app('contacts')
 postings = dd.resolve_app('postings')
 outbox = dd.resolve_app('outbox')
 
+workflow = import_module('lino.modlib.cal.workflows.welfare')
+#~ workflow = import_module('lino.modlib.cal.workflows.faggio')
 
-
-class TaskStates(dd.Workflow):
-    """
-    State of a Calendar Task. Used as Workflow selector.
-    """
-    #~ label = _("State")
-    required = dd.required(user_level='admin')
-    
-    @classmethod
-    def migrate(cls,status_id):
-        """
-        Used by :meth:`lino.projects.pcsw.migrate.migrate_from_1_4_4`.
-        """
-        #~ if status_id is None: return None
-        cv = {
-          None: TaskStates.todo,
-          1:TaskStates.todo,
-          2:TaskStates.started,
-          #~ 2:TaskStates.todo,
-          3:TaskStates.done,
-          4:TaskStates.cancelled,
-          }
-        return cv[status_id]
-    
-add = TaskStates.add_item
-#~ add('10', _("To do"),'todo',required=dict(states=['']))
-#~ add('20', pgettext_lazy(u"cal",u"Started"),'started',required=dict(states=['','todo']))
-#~ add('30', _("Done"),'done',required=dict(states=['','todo','started']))
-#~ add('40', _("Sleeping"),'sleeping',required=dict(states=['','todo']))
-#~ add('50', _("Cancelled"),'cancelled',required=dict(states=['todo','sleeping']))
-
-#~ add('00', _("Virgin"),'todo')
-add('10', _("To do"),'todo')
-add('20', pgettext(u"cal",u"Started"),'started')
-add('30', _("Done"),'done')
-#~ add('40', _("Sleeping"),'sleeping')
-add('50', _("Cancelled"),'cancelled')
-
-    
-class GuestStates(dd.Workflow):
-    """
-    State of a Calendar Event Guest. Used as Workflow selector.
-    """
-    required = dd.required(user_level='admin')
-    #~ label = _("Guest State")
-    #~ label = _("State")
-    
-    #~ @classmethod
-    #~ def allow_state_absent(self,obj,user):
-        #~ return obj.event.state == EventStates.took_place
-    #~ def allow_state_present(self,obj,user):
-        #~ return obj.event.state == EventStates.took_place
-        
-    #~ @classmethod
-    #~ def allow_transition(self,obj,user,new_state):
-        #~ """
-        #~ A Guest can be marked
-        #~ """
-        #~ if new_state.name in ('present','absent'):
-            #~ return obj.event.state == EventStates.took_place
-        
-
-        
-add = GuestStates.add_item
-add('10', _("Invited"),'invited')
-add('20', _("Accepted"),'accepted') 
-add('30', _("Rejected"),'rejected')
-add('40', _("Present"),'present')
-add('50', _("Absent"),'absent')
-    
-
-class RejectInvitation(dd.ChangeStateAction,dd.NotifyingAction):
-    label = _("Reject")
-    help_text = _("Reject this invitation.")  
-    required = dict(states='invited',owner=False)
-    
-    def get_notify_subject(self,ar,obj):
-        return _("Cannot accept invitation %(day)s at %(time)s") % dict(
-           day=dbutils.dtos(obj.event.start_date),
-           time=str(obj.event.start_time))
-
-  
-
-
-
-#~ class EventStates(ChoiceList):
-class EventStates(dd.Workflow):
-    required = dd.required(user_level='admin')
-    help_text = _("""List of the possible states of a calendar event.""")
-        
-        
-        
-#~ def allow_scheduled(action,user,obj,state):
-    #~ if not obj.start_time: return False
-    #~ return True
-    
-
-add = EventStates.add_item
-add('10', _("Suggested"), 'suggested',help_text=_("Automatically suggested. Default state of an automatic event."))
-#~ add('15', _("Suggested"), 'suggested',
-  #~ help_text=_("Suggested by colleague. External guests are notified, but user must confirm."))
-#~ add('15', _("Assigned"), 'assigned',
-  #~ help_text=_("Assigned by colleague. External guests are notified, but user must confirm."))
-add('20', _("Draft"), 'draft')
-add('30', _("Notified"),'notified')
-add('40', _("Scheduled"), 'scheduled')
-add('50', _("Took place"),'took_place')
-add('60', _("Rescheduled"),'rescheduled')
-add('70', _("Cancelled"),'cancelled')
-add('80', _("Absent"),'absent')
-#~ add('90', _("Obsolete"),'obsolete')
-
-
-
-class ResetEvent(dd.ChangeStateAction):
-    label = _("Reset")
-    icon_file = 'cancel.png'
-    #~ required = dict(states='assigned',owner=True)
-    required = dict(states='notified scheduled rescheduled',owner=True)
-    help_text=_("Return to Draft state and restart workflow for this event.")
-  
-    def run_from_ui(self,obj,ar,**kw):
-        if obj.guest_set.exclude(state=GuestStates.invited).count() > 0:
-            def ok():
-                for g in obj.guest_set.all():
-                    g.state = GuestStates.invited
-                    g.save()
-            return ar.confirm(ok,_("This will reset all invitations"),_("Are you sure?"))
-        else:
-            ar.confirm(self.help_text,_("Are you sure?"))
-        kw = super(ResetEvent,self).run_from_ui(obj,ar,**kw)
-        return kw
-    
-#~ class TakeAssignedEvent(dd.ChangeStateAction):
-class TakeAssignedEvent(dd.RowAction):
-    label = _("Take")
-    show_in_workflow = True
-    
-    #~ icon_file = 'cancel.png'
-    icon_file = 'flag_green.png'
-    #~ required = dict(states='new assigned',owner=False)
-    required = dict(owner=False)
-    help_text=_("Take responsibility for this event.")
-  
-    def get_action_permission(self,ar,obj,state):
-        if obj.assigned_to != ar.get_user():
-            return False
-        return super(TakeAssignedEvent,self).get_action_permission(ar,obj,state)
-        
-    def run_from_ui(self,obj,ar,**kw):
-        ar.confirm(self.help_text,_("Are you sure?"))
-        obj.user = ar.get_user()
-        obj.assigned_to = None
-        #~ kw = super(TakeAssignedEvent,self).run(obj,ar,**kw)
-        obj.save()
-        kw.update(refresh=True)
-        return kw
-    
-  
-  
-class AssignEvent(dd.ChangeStateAction):
-    label = _("Assign")
-    required = dict(states='suggested draft scheduled',owner=True)
-    
-    icon_file = 'flag_blue.png'
-    help_text=_("Assign responsibility of this event to another user.")
-    
-    parameters = dict(
-        to_user=models.ForeignKey(settings.SITE.user_model),
-        remark = dd.RichTextField(_("Remark"),blank=True),
-        )
-    
-    params_layout = dd.Panel("""
-    to_user
-    remark
-    """,window_size=(50,15))
-    
-    @dd.chooser()
-    #~ def to_user_choices(cls,user):
-    def to_user_choices(cls):
-        return settings.SITE.user_model.objects.exclude(profile='') # .exclude(id=user.id)
-      
-    def action_param_defaults(self,ar,obj,**kw):
-        kw = super(AssignEvent,self).action_param_defaults(ar,obj,**kw)
-        kw.update(
-            remark=unicode(_("I made up this event for you. %s")) 
-                % ar.user)
-        return kw
-    
-    
-    def run_from_ui(self,obj,ar,**kw):
-        obj.user = ar.action_param_values.to_user
-        kw = super(AssignEvent,self).run_from_ui(obj,ar,**kw)
-        #~ obj.save()
-        kw.update(refresh=True)
-        return kw
-      
-        
+for n in ('TaskStates','EventStates','GuestStates'):
+    globals()[n] = getattr(workflow,n)
 
 
 
@@ -515,8 +320,8 @@ class Place(dd.BabelNamed):
     that happened (or will happen) there.
     """
     class Meta:
-        verbose_name = _("Place")
-        verbose_name_plural = _("Places")
+        verbose_name = _("Room")
+        verbose_name_plural = _("Rooms")
         
   
 class Places(dd.Table):
@@ -589,6 +394,11 @@ class EventGenerator(mixins.UserAuthored):
     class Meta:
         abstract = True
         
+    max_occurences = models.PositiveIntegerField(
+        _("Number of occurences"),
+        blank=True,null=True)
+        
+        
     def save(self,*args,**kw):
         super(EventGenerator,self).save(*args,**kw)
         if self.user is not None:
@@ -598,14 +408,17 @@ class EventGenerator(mixins.UserAuthored):
         return self.exam_policy
         
     def update_cal_from(self):
+        """
+        Return the date of the first Event to be generated.
+        Return None if no Events should be generated.
+        """
         return self.applies_from
-        
-    #~ def update_cal_event_type(self,i):
-    def update_cal_calendar(self,i):
-        return None
         
     def update_cal_until(self):
         return self.date_ended or self.applies_until
+        
+    def update_cal_calendar(self,i):
+        return None
         
     def update_cal_subject(self,i):
         raise NotImplementedError()
@@ -621,30 +434,6 @@ class EventGenerator(mixins.UserAuthored):
         """
         return self.update_auto_events()
             
-        #~ rset = self.update_cal_rset()
-        #~ if rset and rset.every > 0 and rset.every_unit:
-            #~ date = self.update_cal_from()
-            #~ defaults = dict(start_time=rset.start_time,end_time=rset.end_time)
-        #~ else:
-            #~ date = None
-            #~ defaults = dict()
-        #~ until = self.update_cal_until()
-        #~ if not until:
-            #~ date = None
-        #~ for i in range(settings.SITE.max_auto_events):
-            #~ if date:
-                #~ date = rset.every_unit.add_duration(date,rset.every)
-                #~ if until and date > until:
-                    #~ date = None
-            #~ subject = self.update_cal_subject(i)
-            #~ e = update_auto_event(
-              #~ i + 1,
-              #~ self.user,
-              #~ date,subject,self,
-              #~ **defaults)
-            #~ if e: # [NOTE1]
-                #~ date = e.start_date
-                
     def update_auto_events(self):
         if settings.SITE.loading_from_dump: 
             #~ print "20111014 loading_from_dump"
@@ -652,12 +441,11 @@ class EventGenerator(mixins.UserAuthored):
         qs = self.get_existing_auto_events()
         wanted = self.get_wanted_auto_events()
         current = 0
-        #~ LEN = len(wanted)
         
         msg = dd.obj2str(self)
         msg += ", qs=" + str([e.auto_type for e in qs])
         msg += ", wanted=" + str([dbutils.dtos(e.start_date) for e in wanted.values()])
-        #~ logger.info('20120707 ' + msg)
+        #~ logger.info('20130528 ' + msg)
         
         for e in qs:
             ae = wanted.pop(e.auto_type,None)
@@ -679,6 +467,7 @@ class EventGenerator(mixins.UserAuthored):
         # create new Events for remaining wanted
         for ae in wanted.values():
             Event(**ae).save()
+        #~ logger.info("20130528 update_auto_events done")
             
     def compare_auto_event(self,obj,ae):
         original_state = dict(obj.__dict__)
@@ -699,6 +488,10 @@ class EventGenerator(mixins.UserAuthored):
             obj.save()
       
     def get_wanted_auto_events(self):
+        """
+        Return a dict which maps sequence number 
+        to AttrDict instances which hold the wanted event.
+        """
         wanted = dict()
         rset = self.update_cal_rset()
         if rset and rset.every > 0 and rset.every_unit:
@@ -708,16 +501,15 @@ class EventGenerator(mixins.UserAuthored):
         else:
             return wanted
         until = self.update_cal_until()
-        if not until:
-            return wanted
+        #~ if until < wanted:
+            #~ raise Warning("Series ends before it was started!")
         i = 0
-        obsolete = datetime.date.today() + datetime.timedelta(days=-7)
-        while i <= settings.SITE.max_auto_events:
+        max_occurences = self.max_occurences or settings.SITE.max_auto_events
+        while i <= self.max_occurences:
             i += 1
-            date = rset.every_unit.add_duration(date,rset.every)
-            if date > until:
+            if until is not None and date > until:
                 return wanted
-            if date > obsolete:
+            if settings.SITE.ignore_dates_before is None or date >= settings.SITE.ignore_dates_before:
                 wanted[i] = AttrDict(
                     auto_type=i,
                     user=self.user,
@@ -727,6 +519,7 @@ class EventGenerator(mixins.UserAuthored):
                     calendar=self.update_cal_calendar(i),
                     start_time=rset.start_time,
                     end_time=rset.end_time)
+            date = rset.get_next_date(date)
         return wanted
                     
         
@@ -736,26 +529,6 @@ class EventGenerator(mixins.UserAuthored):
             owner_type=ot,owner_id=self.pk,
             auto_type__isnull=False).order_by('auto_type')
         
-        #~ if date and date >= datetime.date.today() + datetime.timedelta(days=-7):
-            #~ defaults.setdefault('user',user)
-            #~ obj,created = model.objects.get_or_create(
-              #~ defaults=defaults,
-              #~ owner_id=owner.pk,
-              #~ owner_type=ot,
-              #~ auto_type=autotype)
-            #~ if not obj.is_user_modified():
-                #~ original_state = dict(obj.__dict__)
-                #~ if obj.user != user:
-                    #~ obj.user = user
-                #~ summary = force_unicode(summary)
-                #~ if obj.summary != summary:
-                    #~ obj.summary = summary
-                #~ if obj.start_date != date:
-                    #~ obj.start_date = date
-                #~ if created or obj.__dict__ != original_state:
-                    #~ obj.save()
-            #~ return obj
-                
 
 
 
@@ -846,7 +619,7 @@ class StartedSummaryDescription(Started):
         html += _(" on ") + dbutils.dtos(self.start_date)
         return html
         
-
+    
 class RecurrenceSet(StartedSummaryDescription,Ended):
     """
     Abstract base for models that group together all instances 
@@ -860,13 +633,49 @@ class RecurrenceSet(StartedSummaryDescription,Ended):
         verbose_name = _("Recurrence Set")
         verbose_name_plural = _("Recurrence Sets")
     
-    every = models.IntegerField(_("Evaluation every X months"),
+    every = models.IntegerField(_("Repeat every (value)"),
         default=0)
-    every_unit = DurationUnits.field(_("Duration unit"),
-        default=DurationUnits.months,
+    #~ every_unit = DurationUnits.field(_("Repeat every (unit)"),
+    every_unit = Recurrencies.field(_("Repeat every (unit)"),
+        default=Recurrencies.monthly,
         blank=True) # iCal:DURATION
         
-    calendar = models.ForeignKey(Calendar,null=True,blank=True)
+    monday    = models.BooleanField(Weekdays.monday.text)
+    tuesday   = models.BooleanField(Weekdays.tuesday.text)
+    wednesday = models.BooleanField(Weekdays.wednesday.text)
+    thursday  = models.BooleanField(Weekdays.thursday.text)
+    friday    = models.BooleanField(Weekdays.friday.text)
+    saturday  = models.BooleanField(Weekdays.saturday.text)
+    sunday    = models.BooleanField(Weekdays.sunday.text)
+    
+    @dd.displayfield(_("Where"))
+    def where_text(self,ar):
+        return unicode(self.company.city or self.company)
+        
+    @dd.displayfield(_("Description"))
+    def what_text(self,ar):
+        return unicode(self)
+        
+    @dd.displayfield(_("Times"))
+    def times_text(self,ar):
+
+        return "%s-%s" % (format_time(self.start_time),format_time(self.end_time))
+        
+    @dd.displayfield(_("When"))
+    def weekdays_text(self,ar):
+        weekdays = []
+        for wd in Weekdays.objects():
+            if getattr(self,wd.name):
+                weekdays.append(unicode(wd.text))
+        weekdays = ', '.join(weekdays)
+        if self.every == 1:
+            return _("Every %s") % weekdays
+        return _("Every %snd %s") % (self.every,weekdays)
+        
+        
+    calendar = models.ForeignKey(Calendar,null=True,blank=True,
+        help_text=_("""\
+The calendar to which events will be generated."""))
     #~ event_type = models.ForeignKey(EventType,null=True,blank=True)
     
     #~ rdates = models.TextField(_("Recurrence dates"),blank=True)
@@ -874,6 +683,23 @@ class RecurrenceSet(StartedSummaryDescription,Ended):
     #~ rrules = models.TextField(_("Recurrence Rules"),blank=True)
     #~ exrules = models.TextField(_("Exclusion Rules"),blank=True)
     
+    def get_next_date(self,date):
+        if self.every_unit == Recurrencies.per_weekday:
+            for i in range(7):
+                date += ONE_DAY
+                if self.is_available_on(date):
+                    return date
+            raise Exception("Failed to find available weekday.")
+        return self.every_unit.add_duration(date,self.every)
+    
+    def is_available_on(self,date):
+        wd = date.isoweekday() # Monday:1, Tuesday:2 ... Sunday:7
+        wd = Weekdays.get_by_value(str(wd))
+        rv = getattr(self,wd.name)
+        #~ logger.info('20130529 is_available_on(%s) -> %s -> %s',date,wd,rv)
+        return rv 
+        
+        
 class RecurrenceSets(dd.Table):
     """
     The list of all :class:`Recurrence Sets <RecurrenceSet>`.
@@ -1115,32 +941,9 @@ Indicates that this Event shouldn't prevent other Events at the same time."""))
     else:
         assigned_to = dd.DummyField()
         
-    @classmethod
-    def get_model_actions(self,table):
-        for x in super(Event,self).get_model_actions(table): yield x
-        yield 'take',TakeAssignedEvent()
-    #~ take = TakeAssignedEvent()
-    
-    def save(self,*args,**kw):
-        """
-        """
-        #~ if not self.state and self.start_date and self.start_date < datetime.date.today():
-            #~ self.state = EventStates.obsolete
-        super(Event,self).save(*args,**kw)
-        if settings.SITE.loading_from_dump:
-            return
-        #~ if not self.state in (EventStates.blank_item, EventStates.draft): 20120829
-        if not self.state in (EventStates.suggested, EventStates.draft):
-        #~ if self.state != EventStates.draft:
-            if self.calendar and self.calendar.invite_team_members:
-                if self.guest_set.all().count() == 0:
-                    #~ print 20120711
-                    ug = self.calendar.invite_team_members
-                    for obj in Membership.objects.filter(group=ug).exclude(user=self.user):
-                        #~ if obj.watched_user.partner:
-                        if obj.user.partner:
-                            #~ Guest(event=self,partner=obj.watched_user.partner).save()
-                            Guest(event=self,partner=obj.user.partner).save()
+        
+    def is_editable_state(self):
+        return self.state in (EventStates.suggested, EventStates.draft)
         
     def is_user_modified(self):
         return self.state != EventStates.suggested
@@ -1150,20 +953,15 @@ Indicates that this Event shouldn't prevent other Events at the same time."""))
             self.state = EventStates.notified
             kw['message'] += '\n('  +_("Event %s has been marked *notified*.") % self + ')'
             self.save()
-        #~ else:
-            #~ kw['message'] += '\n(' + _("Event remains *%s*.") % self.state + ')'
             
     def before_ui_save(self,ar,**kw):
         """
         Mark the event as "user modified" by setting a default state.
         This is important because EventGenerators may not modify any user-modified Events.
         """
+        #~ logger.info("20130528 before_ui_save")
         if self.state is EventStates.suggested:
             self.state = EventStates.draft
-            #~ if self.user != ar.get_user():
-                #~ self.state = EventStates.assigned
-            #~ else:
-                #~ self.state = EventStates.draft
         return super(Event,self).before_ui_save(ar,**kw)
         
     def on_create(self,ar):
@@ -1242,6 +1040,7 @@ Indicates that this Event shouldn't prevent other Events at the same time."""))
 
 dd.update_field(Event,'user',verbose_name=_("Responsible user"))
 
+
 class EventDetail(dd.FormLayout):
     start = "start_date start_time"
     end = "end_date end_time"
@@ -1277,8 +1076,6 @@ class EventInsert(EventDetail):
         #~ # return ar.success_response(refresh=True)
     
     
-   
-   
 unclear_event_states = (EventStates.suggested,EventStates.draft,EventStates.notified)
 
 class Events(dd.Table):
@@ -1444,7 +1241,7 @@ if settings.SITE.user_model:
             kw = super(MyUnclearEvents,self).param_defaults(ar,**kw)
             kw.update(unclear=True)
             kw.update(dates_from=datetime.date.today())
-            kw.update(dates_to=datetime.date.today()+datetime.timedelta(days=1))
+            kw.update(dates_to=datetime.date.today()+ONE_DAY)
             return kw
         
     class EventsAssignedToMe(Events):
@@ -1791,7 +1588,6 @@ class Guest(mixins.TypedPrintable,outbox.Mailable):
         
     def get_mailable_type(self):  
         return self.role
-        
 
     def get_mailable_recipients(self):
         yield ('to',self.partner)
@@ -2587,66 +2383,5 @@ def get_todo_tables(ar):
 
 customize_users()
 
-
-
-def setup_workflows(site):
-  
-  
-    TaskStates.todo.add_transition(_("Reopen"),states='done cancelled')
-    TaskStates.done.add_transition(states='todo started',icon_file='accept.png')
-    TaskStates.cancelled.add_transition(states='todo started',icon_file='cancel.png')
-
-    EventStates.draft.add_transition(_("Accept"),
-        #~ states='new assigned',
-        states='suggested',
-        owner=True,
-        icon_file='book.png',
-        help_text=_("User takes responsibility for this event. Planning continues."))
-    #~ EventStates.draft.add_transition(TakeAssignedEvent)
-    EventStates.notified.add_transition( #_("Notify guests"), 
-        #~ icon_file='eye.png',
-        #~ icon_file='telephone.png',
-        icon_file='hourglass.png',
-        states='suggested draft',
-        help_text=_("Invitations have been sent. Waiting for feedback from invited guests."))
-    EventStates.scheduled.add_transition(_("Confirm"), 
-        #~ states='new draft assigned',
-        states='suggested draft notified',
-        owner=True,
-        icon_file='accept.png',
-        help_text=_("Mark this as Scheduled. All participants have been informed."))
-    EventStates.took_place.add_transition(
-        states='scheduled notified',
-        owner=True,
-        help_text=_("Event took place."),
-        icon_file='emoticon_smile.png')
-    EventStates.absent.add_transition(states='scheduled notified',icon_file='emoticon_unhappy.png')
-    EventStates.rescheduled.add_transition(_("Reschedule"),
-        owner=True,
-        states='scheduled notified',icon_file='date_edit.png')
-    EventStates.cancelled.add_transition(pgettext(u"calendar event action",u"Cancel"),
-        owner=True,
-        states='scheduled notified',
-        icon_file='cross.png')
-    #~ EventStates.assigned.add_transition(AssignEvent)
-    EventStates.draft.add_transition(ResetEvent)
-    
-
-
-    """
-    A Guest can be marked absent or present only for events that took place
-    """
-    #~ def allow_transition(obj,user,new_state):
-    def event_took_place(action,user,obj,state):
-        #~ if new_state.name in ('present','absent'):
-        return obj.event.state == EventStates.took_place
-
-    #~ kw = dict(allow=allow_transition)
-    #~ GuestStates.invited.add_transition(_("Invite"),states='_',owner=True)
-    GuestStates.accepted.add_transition(_("Accept"),states='_ invited',owner=False)
-    #~ GuestStates.rejected.add_transition(_("Reject"),states='_ invited',owner=False)
-    GuestStates.rejected.add_transition(RejectInvitation)
-    GuestStates.present.add_transition(states='invited accepted',owner=True,allow=event_took_place)
-    GuestStates.absent.add_transition(states='invited accepted',owner=True,allow=event_took_place)
 
 

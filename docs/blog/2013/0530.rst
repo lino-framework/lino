@@ -1,0 +1,13 @@
+================================
+20130530 (Thursday, 30 May 2013)
+================================
+
+Lino-Faggio
+-----------
+
+Weiter mit dem Prototypen für die Eiche VoG. 
+
+Weitere Änderungen in :mod:`lino.modlib.cal`: 
+
+- pluggable workflow
+- new field `EventGenerator.max_occurences`

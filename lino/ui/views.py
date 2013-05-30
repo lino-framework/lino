@@ -274,7 +274,8 @@ def delete_element(ar,elem):
     
     return HttpResponseDeleted()
     
-CATCHED_AJAX_EXCEPTIONS = (Warning,IntegrityError,exceptions.ValidationError)
+#CATCHED_AJAX_EXCEPTIONS = (Warning,IntegrityError,exceptions.ValidationError)
+CATCHED_AJAX_EXCEPTIONS = (Warning,exceptions.ValidationError)
 
 def ajax_error(e,rh,**kw):
     """
