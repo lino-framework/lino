@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version:  \n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2013-05-31 10:04+0300\n"
+"POT-Creation-Date: 2013-05-31 15:33+0300\n"
 "PO-Revision-Date: 2013-04-27 03:34+0300\n"
 "Last-Translator: Luc Saffre <luc.saffre@gmx.net>\n"
 "Language-Team: et\n"
@@ -171,11 +171,11 @@ msgstr ""
 msgid "Yes or no"
 msgstr ""
 
-#: lino/core/choicelists.py:702 lino/ui/base.py:202 lino/ui/store.py:606
+#: lino/core/choicelists.py:702 lino/ui/base.py:203 lino/ui/store.py:606
 msgid "Yes"
 msgstr ""
 
-#: lino/core/choicelists.py:703 lino/ui/base.py:203 lino/ui/store.py:606
+#: lino/core/choicelists.py:703 lino/ui/base.py:204 lino/ui/store.py:606
 msgid "No"
 msgstr ""
 
@@ -626,7 +626,7 @@ msgstr ""
 msgid "%d years"
 msgstr ""
 
-#: lino/mixins/printable.py:491 lino/mixins/printable.py:737
+#: lino/mixins/printable.py:491 lino/mixins/printable.py:738
 #: lino/modlib/postings/models.py:92
 msgid "Print"
 msgstr ""
@@ -641,15 +641,15 @@ msgstr ""
 msgid "Reused %s printable from cache."
 msgstr ""
 
-#: lino/mixins/printable.py:639
+#: lino/mixins/printable.py:640
 msgid "Clear cache"
 msgstr ""
 
-#: lino/mixins/printable.py:664
+#: lino/mixins/printable.py:665
 msgid "This will discard all changes in the generated file."
 msgstr ""
 
-#: lino/mixins/printable.py:665 lino/modlib/cal/workflows/faggio.py:127
+#: lino/mixins/printable.py:666 lino/modlib/cal/workflows/faggio.py:127
 #: lino/modlib/cal/workflows/faggio.py:129
 #: lino/modlib/cal/workflows/faggio.py:149
 #: lino/modlib/cal/workflows/welfare.py:161
@@ -658,15 +658,15 @@ msgstr ""
 msgid "Are you sure?"
 msgstr ""
 
-#: lino/mixins/printable.py:687
+#: lino/mixins/printable.py:688
 msgid "Build method"
 msgstr ""
 
-#: lino/mixins/printable.py:696
+#: lino/mixins/printable.py:697
 msgid "Template"
 msgstr ""
 
-#: lino/mixins/printable.py:746
+#: lino/mixins/printable.py:747
 msgid "build time"
 msgstr ""
 
@@ -1491,7 +1491,7 @@ msgstr "Telefon"
 #: lino/modlib/cal/workflows/faggio.py:108
 #: lino/modlib/cal/workflows/welfare.py:90
 #: lino/modlib/cal/workflows/welfare.py:142 lino/modlib/school/models.py:323
-#: lino/modlib/school/models.py:550 lino/modlib/tickets/utils.py:66
+#: lino/modlib/school/models.py:551 lino/modlib/tickets/utils.py:66
 msgid "Cancelled"
 msgstr ""
 
@@ -1713,7 +1713,7 @@ msgstr ""
 msgid "Master type"
 msgstr "Firmaliik"
 
-#: lino/modlib/changes/models.py:88 lino/ui/__init__.py:818
+#: lino/modlib/changes/models.py:88 lino/ui/__init__.py:820
 msgid "Master"
 msgstr ""
 
@@ -3043,12 +3043,12 @@ msgstr ""
 msgid "Info"
 msgstr ""
 
-#: lino/modlib/school/models.py:385 lino/modlib/school/models.py:547
+#: lino/modlib/school/models.py:385 lino/modlib/school/models.py:548
 #, fuzzy
 msgid "Requested"
 msgstr "Tänav"
 
-#: lino/modlib/school/models.py:390 lino/modlib/school/models.py:548
+#: lino/modlib/school/models.py:390 lino/modlib/school/models.py:549
 msgid "Confirmed"
 msgstr ""
 
@@ -3061,52 +3061,47 @@ msgstr "Kontaktiliigid"
 msgid "Organizer"
 msgstr ""
 
-#: lino/modlib/school/models.py:533
+#: lino/modlib/school/models.py:534
 msgid "Active courses"
 msgstr ""
 
-#: lino/modlib/school/models.py:549
+#: lino/modlib/school/models.py:550
 msgid "Certified"
 msgstr ""
 
-#: lino/modlib/school/models.py:559
+#: lino/modlib/school/models.py:560
 msgid "Enrolment"
 msgstr ""
 
-#: lino/modlib/school/models.py:560
+#: lino/modlib/school/models.py:561
 msgid "Enrolments"
 msgstr ""
 
-#: lino/modlib/school/models.py:565
+#: lino/modlib/school/models.py:566
 msgid "Date of request"
 msgstr ""
 
-#: lino/modlib/school/models.py:576
+#: lino/modlib/school/models.py:581
 msgid "Course state"
 msgstr ""
 
-#: lino/modlib/school/models.py:618
-msgid "Requested enrolments"
+#: lino/modlib/school/models.py:623
+msgid "Pending requested enrolments"
 msgstr ""
 
-#: lino/modlib/school/models.py:627
-msgid "Uncertified enrolments"
-msgstr ""
-
-#: lino/modlib/school/models.py:648
-#, python-format
-msgid "%d enrolments to confirm."
-msgstr ""
-
-#: lino/modlib/school/models.py:658
-msgid "is a teacher"
+#: lino/modlib/school/models.py:632
+msgid "Pending confirmed enrolments"
 msgstr ""
 
 #: lino/modlib/school/models.py:663
+msgid "is a teacher"
+msgstr ""
+
+#: lino/modlib/school/models.py:668
 msgid "is a pupil"
 msgstr ""
 
-#: lino/modlib/school/models.py:667 lino/projects/homeworkschool/models.py:32
+#: lino/modlib/school/models.py:672 lino/projects/homeworkschool/models.py:32
 msgid "School"
 msgstr ""
 
@@ -3570,47 +3565,47 @@ msgid ""
 "directly to the person who invited you."
 msgstr ""
 
-#: lino/ui/__init__.py:824
+#: lino/ui/__init__.py:826
 msgid "Reports"
 msgstr ""
 
-#: lino/ui/__init__.py:826
+#: lino/ui/__init__.py:828
 msgid "Configure"
 msgstr ""
 
-#: lino/ui/__init__.py:828
+#: lino/ui/__init__.py:830
 msgid "Explorer"
 msgstr ""
 
-#: lino/ui/__init__.py:830
+#: lino/ui/__init__.py:832
 msgid "Site"
 msgstr ""
 
-#: lino/ui/__init__.py:1023
+#: lino/ui/__init__.py:1025
 msgid "This is "
 msgstr ""
 
-#: lino/ui/__init__.py:1031
+#: lino/ui/__init__.py:1033
 msgid " using "
 msgstr ""
 
-#: lino/ui/__init__.py:1288
+#: lino/ui/__init__.py:1290
 msgid "Busy"
 msgstr ""
 
-#: lino/ui/__init__.py:1291
+#: lino/ui/__init__.py:1293
 msgid "with"
 msgstr ""
 
-#: lino/ui/base.py:127
+#: lino/ui/base.py:128
 msgid "User abandoned"
 msgstr ""
 
-#: lino/ui/base.py:159 lino/ui/models.py:73
+#: lino/ui/base.py:160 lino/ui/models.py:73
 msgid "Success"
 msgstr ""
 
-#: lino/ui/base.py:199
+#: lino/ui/base.py:200
 msgid "Aborted"
 msgstr ""
 
@@ -3871,6 +3866,12 @@ msgstr ""
 msgid "Check digit is %(found)d but should be %(expected)d"
 msgstr ""
 
-#~ msgid "Confirmed enrolments"
+#~ msgid "Requested enrolments"
+#~ msgstr ""
+
+#~ msgid "Uncertified enrolments"
+#~ msgstr ""
+
+#~ msgid "%d enrolments to confirm."
 #~ msgstr ""
 

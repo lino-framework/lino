@@ -576,7 +576,8 @@ class DirectPrintAction(BasePrintAction):
     icon_name='x-tbar-print'
     
     #~ def __init__(self,rpt,name,label,bmname,tplname):
-    def __init__(self,label=None,tplname='Default',build_method=None,**kw):
+    #~ def __init__(self,label=None,tplname='Default',build_method=None,**kw):
+    def __init__(self,label=None,tplname=None,build_method=None,**kw):
         #~ if name is None: name = 'print'
         #~ if label is None: label = _("Print")
         #~ if tplname is None: tplname = 'Default'

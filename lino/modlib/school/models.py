@@ -325,7 +325,7 @@ add('50', _("Cancelled"),'cancelled')
     
     
 #~ class Course(StartEndTime,cal.EventGenerator,cal.RecurrenceSet,mixins.Printable):
-class Course(contacts.ContactRelated,cal.EventGenerator,cal.RecurrenceSet,mixins.Printable):
+class Course(contacts.ContactRelated,cal.EventGenerator,cal.RecurrenceSet,dd.SimplyPrintable):
     """
     A Course is a group of pupils that regularily 
     meet with a given teacher in a given room.
@@ -390,6 +390,10 @@ class Course(contacts.ContactRelated,cal.EventGenerator,cal.RecurrenceSet,mixins
     @dd.requestfield(_("Confirmed"))
     def confirmed(self,ar):
         return EnrolmentsByCourse.request(self,param_values=dict(state=EnrolmentStates.confirmed))
+        
+    @dd.requestfield(_("Enrolments"))
+    def enrolements(self,ar):
+        return EnrolmentsByCourse.request(self)
         
 dd.update_field(Course,'contact_person',verbose_name = _("Contact person"))
 dd.update_field(Course,'company',verbose_name = _("Organizer"))
@@ -460,14 +464,15 @@ class Courses(dd.Table):
     order_by = ['start_date']
     
     parameters = dd.ObservedPeriod(
+        line = models.ForeignKey('school.Line',blank=True,null=True),
+        topic = models.ForeignKey('school.Topic',blank=True,null=True),
         company = models.ForeignKey('contacts.Company',blank=True,null=True),
         teacher = models.ForeignKey('school.Teacher',blank=True,null=True),
-        line = models.ForeignKey('school.Line',blank=True,null=True),
         state = CourseStates.field(blank=True),
         )
-    params_layout = """line company teacher state"""
+    params_layout = """topic line company teacher state"""
     
-    simple_param_fields = 'teacher company line state'.split()
+    simple_param_fields = 'topic line teacher company state'.split()
     
     @classmethod
     def get_request_queryset(self,ar):
@@ -531,7 +536,8 @@ class CoursesByCompany(Courses):
 class ActiveCourses(Courses):
     
     label = _("Active courses")
-    column_names = 'info requested confirmed teacher company room'
+    #~ column_names = 'info requested confirmed teacher company room'
+    column_names = 'info enrolements teacher company room'
     @classmethod
     def param_defaults(self,ar,**kw):
         kw = super(ActiveCourses,self).param_defaults(ar,**kw)
@@ -565,6 +571,10 @@ class Enrolment(dd.UserAuthored,dd.SimplyPrintable):
     request_date = models.DateField(_("Date of request"),default=datetime.date.today)
     state = EnrolmentStates.field(default=EnrolmentStates.requested)
 
+    def get_print_templates(self,bm,action):
+        #~ if self.state:
+        return [self.state.name + bm.template_ext]
+        #~ return super(Enrolment,self).get_print_templates(bm,action)
 
 class Enrolments(dd.Table):
     debug_permissions=20130531
@@ -578,6 +588,7 @@ class Enrolments(dd.Table):
     params_layout = """start_date end_date author state course_state"""
     order_by = ['request_date']
     column_names = 'request_date course pupil workflow_buttons user *'
+    hidden_columns = 'id state'
         
     @classmethod
     def get_request_queryset(self,ar):
@@ -613,21 +624,24 @@ class Enrolments(dd.Table):
             yield unicode(ar.param_values.user)
         
 
-class RequestedEnrolments(Enrolments):
+class PendingRequestedEnrolments(Enrolments):
     
-    label = _("Requested enrolments")
+    label = _("Pending requested enrolments")
+    auto_fit_column_widths = True
     
     @classmethod
     def param_defaults(self,ar,**kw):
-        kw = super(RequestedEnrolments,self).param_defaults(ar,**kw)
+        kw = super(PendingRequestedEnrolments,self).param_defaults(ar,**kw)
         kw.update(state=EnrolmentStates.requested)
         return kw
         
-class UncertifiedEnrolments(Enrolments):
-    label = _("Uncertified enrolments")
+class PendingConfirmedEnrolments(Enrolments):
+    label = _("Pending confirmed enrolments")
+    auto_fit_column_widths = True
+    
     @classmethod
     def param_defaults(self,ar,**kw):
-        kw = super(UncertifiedEnrolments,self).param_defaults(ar,**kw)
+        kw = super(PendingConfirmedEnrolments,self).param_defaults(ar,**kw)
         kw.update(state=EnrolmentStates.confirmed)
         kw.update(course_state=CourseStates.ended)
         return kw
@@ -642,11 +656,12 @@ class EnrolmentsByCourse(Enrolments):
     required = dd.required()
     master_key = "course"
     column_names = 'request_date pupil workflow_buttons user *'
+    auto_fit_column_widths = True
 
 
 def get_todo_tables(ar):
-    yield (RequestedEnrolments, _("%d enrolments to confirm.")) 
-    yield (UncertifiedEnrolments, None) 
+    yield (PendingRequestedEnrolments, None) 
+    yield (PendingConfirmedEnrolments, None) 
 
 
 
@@ -674,8 +689,8 @@ def setup_main_menu(site,ui,profile,main):
     m.add_action(Courses)
     #~ m.add_action(Teachers)
     #~ m.add_action(Pupils)
-    m.add_action(RequestedEnrolments)
-    m.add_action(UncertifiedEnrolments)
+    m.add_action(PendingRequestedEnrolments)
+    m.add_action(PendingConfirmedEnrolments)
   
 def unused_setup_master_menu(site,ui,profile,m): 
     #~ m = m.add_menu("school",_("School"))
