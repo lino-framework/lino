@@ -577,7 +577,7 @@ class Enrolment(dd.UserAuthored,dd.SimplyPrintable):
         #~ return super(Enrolment,self).get_print_templates(bm,action)
 
 class Enrolments(dd.Table):
-    debug_permissions=20130531
+    #~ debug_permissions=20130531
     required = dd.required(user_level='manager')
     model = Enrolment
     parameters = dd.ObservedPeriod(
@@ -628,6 +628,7 @@ class PendingRequestedEnrolments(Enrolments):
     
     label = _("Pending requested enrolments")
     auto_fit_column_widths = True
+    params_panel_hidden = True
     
     @classmethod
     def param_defaults(self,ar,**kw):
@@ -638,6 +639,7 @@ class PendingRequestedEnrolments(Enrolments):
 class PendingConfirmedEnrolments(Enrolments):
     label = _("Pending confirmed enrolments")
     auto_fit_column_widths = True
+    params_panel_hidden = True
     
     @classmethod
     def param_defaults(self,ar,**kw):
@@ -648,11 +650,13 @@ class PendingConfirmedEnrolments(Enrolments):
         
     
 class EnrolmentsByPupil(Enrolments):
+    params_panel_hidden = True
     required = dd.required()
     master_key = "pupil"
     column_names = 'request_date course user workflow_buttons *'
 
 class EnrolmentsByCourse(Enrolments):
+    params_panel_hidden = True
     required = dd.required()
     master_key = "course"
     column_names = 'request_date pupil workflow_buttons user *'
