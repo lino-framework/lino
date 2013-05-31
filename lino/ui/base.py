@@ -246,7 +246,8 @@ class UI(object):
         cb = settings.SITE.pending_threads.pop(thread_id,None)
         #~ d = self.pop_thread(int(thread_id))
         if cb is None: 
-            return self.action_response(self.error("Unknown callback %r" % thread_id))
+            logger.info("20130531 No callback %r in %r" % (thread_id,settings.SITE.pending_threads))
+            return self.action_response(self.error("Unknown callback %r" % thread_id)
         #~ buttonId = request.GET[ext_requests.URL_PARAM_'bi']
         #~ print buttonId
         for c in cb.choices:
@@ -276,6 +277,8 @@ class UI(object):
         elif isinstance(rv,Callback):
             h = hash(rv)
             settings.SITE.pending_threads[h] = rv
+            logger.info("20130531 Stored %r in %r" % (h,settings.SITE.pending_threads))
+            
             #~ def cb2dict(c):
                 #~ return dict(name=c.name,label=c.label)
             #~ choices=[cb2dict(c) for c in rv.choices]
