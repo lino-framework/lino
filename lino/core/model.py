@@ -523,16 +523,25 @@ class Model(models.Model):
         Returns a `graphviz` directive 
         Used in welfare.userdocs to generate a internationalized graphviz::
         
-          \.. py2rst:: print contacts.Partner.model_graphviz()
+          \.. py2rst:: print contacts.Partner.print_subclasses_graph()
           
         """
         from lino import dd
         pairs = []
+        
         def collect(m):
-            for b in dd.models_by_base(m):
-              if b is not m and (m in b.__bases__):
-                pairs.append((m._meta.verbose_name,b._meta.verbose_name))
-                collect(b)
+            for c in dd.models_by_base(m):
+                #~ if c is not m and (m in c.__bases__):
+                #~ if c is not m:
+                #~ if m in c.__bases__:
+                if c is not m:
+                    ok = True
+                    #~ for cb in c.__bases__:
+                        #~ if cb in m.mro():
+                            #~ ok = False
+                    if ok:
+                        pairs.append((m._meta.verbose_name,c._meta.verbose_name))
+                    collect(c)
         collect(self)
         s = '\n'.join(['    "%s" -> "%s"' % x for x in pairs])
         s = """

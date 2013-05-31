@@ -107,6 +107,7 @@ class Callback(object):
         self.choices_dict[name] = cbc
         return cbc
 
+pending_threads = {}
         
 class UI(object):
     """
@@ -117,7 +118,7 @@ class UI(object):
     #~ verbose_name = None
     
     def __init__(self,site):
-        self.pending_threads = {}
+        #~ self.pending_threads = {}
         self.site = site
             
     #~ def pop_thread(self,id):
@@ -242,7 +243,7 @@ class UI(object):
     def callback_get(self,request,thread_id,button_id):
         logger.info("20130409 callback_get")
         thread_id = int(thread_id)
-        cb = self.pending_threads.pop(thread_id,None)
+        cb = pending_threads.pop(thread_id,None)
         #~ d = self.pop_thread(int(thread_id))
         if cb is None: 
             return self.action_response(self.error("Unknown callback %r" % thread_id))
@@ -274,7 +275,7 @@ class UI(object):
             rv = self.success()
         elif isinstance(rv,Callback):
             h = hash(rv)
-            self.pending_threads[h] = rv
+            pending_threads[h] = rv
             #~ def cb2dict(c):
                 #~ return dict(name=c.name,label=c.label)
             #~ choices=[cb2dict(c) for c in rv.choices]
