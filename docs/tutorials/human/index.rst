@@ -142,7 +142,7 @@ M. Jean Dupont
 
 >>> set_language('de')
 >>> print p
-Herrn Jean Dupont
+Herr Jean Dupont
 
 
 Switch back to English:
@@ -174,6 +174,9 @@ function has 2 optional parameters `nominative` and `salutation`.
 In German you may need to get a nominative form of the salutation:
 
 >>> set_language('de')
+
+>>> print p.get_full_name()
+Herrn Jean Dupont
 
 >>> print p.get_full_name(nominative=True)
 Herr Jean Dupont

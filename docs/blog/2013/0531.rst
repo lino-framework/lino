@@ -1,0 +1,12 @@
+==============================
+20130531 (Friday, 31 May 2013)
+==============================
+
+
+Lino-Faggio
+-----------
+
+Weiter mit dem Prototypen für die Eiche VoG. 
+- renamed "Place" to "Room" 
+- internal changes in workflow_actions
+

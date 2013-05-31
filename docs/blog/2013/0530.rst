@@ -11,3 +11,4 @@ Weitere Änderungen in :mod:`lino.modlib.cal`:
 
 - pluggable workflow
 - new field `EventGenerator.max_occurences`
+

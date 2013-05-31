@@ -480,12 +480,13 @@ def make_permission_handler_(
                         return True
                 return False
             
-    if states is not None and actor.workflow_state_field is not None:
+    if states is not None:
         #~ if not isinstance(actor.workflow_state_field,choicelists.ChoiceListField):
-            #~ raise Exception(
-                #~ """\
-#~ Cannot specify `states` when `workflow_state_field` is %r.
-                #~ """ % actor.workflow_state_field)
+        if actor.workflow_state_field is None:
+            raise Exception(
+                """\
+Cannot specify `states` when %s.workflow_state_field is %r.
+                """ % (actor,actor.workflow_state_field))
         #~ else:
             #~ print 20120621, "ok", actor
         lst = actor.workflow_state_field.choicelist

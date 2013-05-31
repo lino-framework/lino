@@ -65,6 +65,8 @@ from lino.mixins.printable import DirectPrintAction, Printable
 #~ from lino.mixins.reminder import ReminderEntry
 from lino.core.dbutils import obj2str
 
+from north.dbutils import day_and_month
+
 #~ from lino.modlib.countries.models import CountryCity
 #~ from lino.modlib.cal import models as cal
 #~ from lino.modlib.contacts.models import Partner
@@ -99,110 +101,7 @@ Person = dd.resolve_model('contacts.Person',strict=True)
 #~ class PresenceStatuses(dd.Table):
     #~ model = PresenceStatus
     
-class Topic(dd.BabelNamed,dd.SimplyPrintable):
-    class Meta:
-        verbose_name = _("Topic")
-        verbose_name_plural = _('Topics')
-        
-    #~ print_eid_content = DirectPrintAction(_("eID sheet"),'eid-content',icon_name='x-tbar-vcard')
-        
-class Topics(dd.Table):
-    model = Topic
-    detail_layout = """
-    id name
-    school.LinesByTopic
-    school.CoursesByTopic
-    """
     
-class Line(dd.BabelNamed):
-    class Meta:
-        verbose_name = _("Course Line")
-        verbose_name_plural = _('Course Lines')
-    topic = models.ForeignKey(Topic)
-    
-    #~ def __unicode__(self):
-        #~ return "%s (%s)" % (dd.BabelNamed.__unicode__(self),self.topic)
-          
-        
-class Lines(dd.Table):
-    model = Line
-    required = dd.required(user_level='manager')
-    detail_layout = """
-    id name
-    school.CoursesByLine
-    """
-    
-class LinesByTopic(Lines):
-    master_key = "topic"
-
-        
-#~ class Room(dd.BabelNamed):
-    #~ class Meta:
-        #~ verbose_name = _("Classroom")
-        #~ verbose_name_plural = _("Classrooms")
-        
-#~ class Rooms(dd.Table):
-    #~ model = Room
-        
-        
-class Teacher(Person):
-    class Meta:
-        #~ app_label = 'school'
-        verbose_name = _("Teacher")
-        verbose_name_plural = _("Teachers")
-    
-    def __unicode__(self):
-        #~ return self.get_full_name(salutation=False)
-        return self.last_name
-      
-#~ site.modules.contacts.Persons.add_detail_tab('school.CoursesByTeacher')
-
-class TeacherDetail(contacts.PersonDetail):
-    general = dd.Panel(contacts.PersonDetail.main,label = _("General"))
-    box5 = "remarks" 
-    main = "general school.EventsByTeacher school.CoursesByTeacher"
-
-    #~ def setup_handle(self,lh):
-      
-        #~ lh.general.label = _("General")
-        #~ lh.notes.label = _("Notes")
-
-class Teachers(contacts.Persons):
-    model = Teacher
-    #~ detail_layout = TeacherDetail()
-  
-
-class Pupil(Person):
-    class Meta:
-        #~ app_label = 'courses'
-        verbose_name = _("Pupil")
-        verbose_name_plural = _("Pupils")
-    
-class PupilDetail(contacts.PersonDetail):
-    box5 = "remarks" 
-    general = dd.Panel(contacts.PersonDetail.main,label = _("General"))
-    
-    school = dd.Panel("""
-    EnrolmentsByPupil 
-    # PresencesByPupil
-    # cal.GuestsByPartner
-    """,label = _("School"))
-    
-    main = "general school"
-
-    #~ def setup_handle(self,lh):
-      
-        #~ lh.general.label = _("General")
-        #~ lh.school.label = _("School")
-        #~ lh.notes.label = _("Notes")
-
-class Pupils(contacts.Persons):
-    model = Pupil
-    #~ detail_layout = PupilDetail()
-
-
-
-
 class StartEndTime(dd.Model):
     class Meta:
         abstract = True
@@ -240,9 +139,142 @@ class Slots(dd.Table):
     school.CoursesBySlot
     """
     
+    
+class Topic(dd.BabelNamed,dd.SimplyPrintable):
+    class Meta:
+        verbose_name = _("Topic")
+        verbose_name_plural = _('Topics')
+        
+class Topics(dd.Table):
+    model = Topic
+    required = dd.required(user_level='manager')
+    detail_layout = """
+    id name
+    school.LinesByTopic
+    school.CoursesByTopic
+    """
+    
+class Line(dd.BabelNamed):
+    class Meta:
+        verbose_name = _("Course Line")
+        verbose_name_plural = _('Course Lines')
+    topic = models.ForeignKey(Topic)
+    
+    #~ def __unicode__(self):
+        #~ return "%s (%s)" % (dd.BabelNamed.__unicode__(self),self.topic)
+          
+        
+class Lines(dd.Table):
+    model = Line
+    required = dd.required(user_level='manager')
+    detail_layout = """
+    id name
+    school.CoursesByLine
+    """
+    
+class LinesByTopic(Lines):
+    master_key = "topic"
+
+
+class TeacherType(dd.BabelNamed,dd.SimplyPrintable):
+    class Meta:
+        verbose_name = _("Teacher type")
+        verbose_name_plural = _('Teacher types')
+        
+class TeacherTypes(dd.Table):
+    model = TeacherType
+    required = dd.required(user_level='manager')
+    detail_layout = """
+    id name
+    school.TeachersByType
+    """
+
+
+
+class Teacher(Person):
+    class Meta:
+        verbose_name = _("Teacher")
+        verbose_name_plural = _("Teachers")
+        
+    teacher_type = dd.ForeignKey('school.TeacherType')
+    
+    def __unicode__(self):
+        #~ return self.get_full_name(salutation=False)
+        return self.last_name
+      
+class TeacherDetail(contacts.PersonDetail):
+    general = dd.Panel(contacts.PersonDetail.main,label = _("General"))
+    box5 = "remarks" 
+    main = "general school.CoursesByTeacher school.EventsByTeacher cal.GuestsByPartner"
+
+    #~ def setup_handle(self,lh):
+      
+        #~ lh.general.label = _("General")
+        #~ lh.notes.label = _("Notes")
+
+class Teachers(contacts.Persons):
+    model = Teacher
+    #~ detail_layout = TeacherDetail()
+  
+class TeachersByType(Teachers):
+    master_key = 'teacher_type'
+
+
+
+
+class PupilType(dd.BabelNamed,dd.SimplyPrintable):
+    class Meta:
+        verbose_name = _("Pupil type")
+        verbose_name_plural = _('Pupil types')
+        
+class PupilTypes(dd.Table):
+    model = PupilType
+    required = dd.required(user_level='manager')
+    detail_layout = """
+    id name
+    school.PupilsByType
+    """
+
+
+
+class Pupil(Person):
+    class Meta:
+        #~ app_label = 'courses'
+        verbose_name = _("Pupil")
+        verbose_name_plural = _("Pupils")
+        
+    pupil_type = dd.ForeignKey('school.PupilType')
+    
+class PupilDetail(contacts.PersonDetail):
+    main = "general school.EnrolmentsByPupil"
+
+    general = dd.Panel(contacts.PersonDetail.main,label = _("General"))
+    box5 = "remarks" 
+    
+    #~ pupil = dd.Panel("""
+    #~ EnrolmentsByPupil
+    #~ """,label = _("Pupil"))
+    
+    #~ def setup_handle(self,lh):
+      
+        #~ lh.general.label = _("General")
+        #~ lh.school.label = _("School")
+        #~ lh.notes.label = _("Notes")
+
+class Pupils(contacts.Persons):
+    model = Pupil
+    #~ detail_layout = PupilDetail()
+
+class PupilsByType(Pupils):
+    master_key = 'pupil_type'
+
+
+    
 class EventsByTeacher(cal.Events):
     help_text = _("Shows events of courses of this teacher")
     master = Teacher
+    column_names = 'when_text:20 project__line summary room state'
+    auto_fit_column_widths = True
     
     @classmethod
     def get_request_queryset(self,ar):
@@ -319,7 +351,7 @@ class Course(contacts.ContactRelated,cal.EventGenerator,cal.RecurrenceSet,mixins
         #~ blank=True,null=True)
     
     def __unicode__(self):
-        return u"%s (%s, %s)" % (self.line,self.room,dd.dtos(self.start_date))
+        return u"%s (%s %s)" % (self.line,dd.dtos(self.start_date),self.room)
           
     def update_cal_rset(self):
         return self
@@ -344,6 +376,11 @@ class Course(contacts.ContactRelated,cal.EventGenerator,cal.RecurrenceSet,mixins
     @dd.displayfield(_("Info"))
     def info(self,ar):
         return ar.obj2html(self)
+        
+    @dd.displayfield(_("Events"))
+    def events_text(self,ar):
+        return ', '.join([day_and_month(e.start_date)
+            for e in self.cal_event_set_by_project.order_by('start_date')])
         
     @dd.requestfield(_("Requested"))
     def requested(self,ar):
@@ -467,16 +504,16 @@ class Courses(dd.Table):
 
 class CoursesByTeacher(Courses):
     master_key = "teacher"
-    column_names = "line room slot summary *"
+    column_names = "start_date start_time end_time line room *"
 
 class CoursesByLine(Courses):
     master_key = "line"
-    column_names = "what_text weekdays_text where_text times_text teacher room summary"
+    column_names = "start_date start_time end_time weekdays_text where_text times_text teacher room"
 
 class CoursesByTopic(Courses):
     master = Topic
     order_by = ['start_date']
-    column_names = "what_text weekdays_text where_text times_text teacher room summary"
+    column_names = "start_date:8 line:20 room__company__city:10 weekdays_text:10 times_text:10"
     
     @classmethod
     def get_request_queryset(self,ar):
@@ -494,7 +531,7 @@ class CoursesByCompany(Courses):
 class ActiveCourses(Courses):
     
     label = _("Active courses")
-    column_names = 'info teacher company room requested confirmed'
+    column_names = 'info requested confirmed teacher company room'
     @classmethod
     def param_defaults(self,ar,**kw):
         kw = super(ActiveCourses,self).param_defaults(ar,**kw)
@@ -515,6 +552,8 @@ add('40', _("Cancelled"),'cancelled')
 
 #~ class Enrolment(dd.Model):
 class Enrolment(dd.UserAuthored,dd.SimplyPrintable):
+    
+    workflow_state_field = 'state'
   
     class Meta:
         verbose_name = _("Enrolment")
@@ -528,15 +567,17 @@ class Enrolment(dd.UserAuthored,dd.SimplyPrintable):
 
 
 class Enrolments(dd.Table):
+    debug_permissions=20130531
     required = dd.required(user_level='manager')
     model = Enrolment
     parameters = dd.ObservedPeriod(
         author = dd.ForeignKey(settings.SITE.user_model,blank=True,null=True),
         state = EnrolmentStates.field(blank=True,null=True),
+        course_state = CourseStates.field(_("Course state"),blank=True,null=True),
         )
-    params_layout = """start_date end_date author state"""
+    params_layout = """start_date end_date author state course_state"""
     order_by = ['request_date']
-    column_names = 'request_date course pupil state workflow_buttons user *'
+    column_names = 'request_date course pupil workflow_buttons user *'
         
     @classmethod
     def get_request_queryset(self,ar):
@@ -546,6 +587,9 @@ class Enrolments(dd.Table):
             
         if ar.param_values.state:
             qs = qs.filter(state=ar.param_values.state)
+            
+        if ar.param_values.course_state:
+            qs = qs.filter(course__state=ar.param_values.course_state)
             
         if ar.param_values.start_date is None or ar.param_values.end_date is None:
             period = None
@@ -563,6 +607,8 @@ class Enrolments(dd.Table):
             
         if ar.param_values.state:
             yield unicode(ar.param_values.state)
+        if ar.param_values.course_state:
+            yield unicode(Course._meta.verbose_name) + ' ' + unicode(ar.param_values.course_state)
         if ar.param_values.user:
             yield unicode(ar.param_values.user)
         
@@ -577,89 +623,31 @@ class RequestedEnrolments(Enrolments):
         kw.update(state=EnrolmentStates.requested)
         return kw
         
-class ConfirmedEnrolments(Enrolments):
-    label = _("Confirmed enrolments")
+class UncertifiedEnrolments(Enrolments):
+    label = _("Uncertified enrolments")
     @classmethod
     def param_defaults(self,ar,**kw):
-        kw = super(ConfirmedEnrolments,self).param_defaults(ar,**kw)
+        kw = super(UncertifiedEnrolments,self).param_defaults(ar,**kw)
         kw.update(state=EnrolmentStates.confirmed)
+        kw.update(course_state=CourseStates.ended)
         return kw
         
     
 class EnrolmentsByPupil(Enrolments):
     required = dd.required()
     master_key = "pupil"
+    column_names = 'request_date course user workflow_buttons *'
 
 class EnrolmentsByCourse(Enrolments):
     required = dd.required()
     master_key = "course"
+    column_names = 'request_date pupil workflow_buttons user *'
 
 
 def get_todo_tables(ar):
     yield (RequestedEnrolments, _("%d enrolments to confirm.")) 
+    yield (UncertifiedEnrolments, None) 
 
-
-
-#~ class Lesson(models.Model,mixins.Printable):
-#~ class Event(cal.EventBase):
-    #~ class Meta:
-        #~ app_label = 'cal'
-        #~ verbose_name = _("Lesson")
-        #~ verbose_name_plural = _('Lessons')
-        
-    #~ def __unicode__(self):
-        #~ return u"%s %s (%s)" % (
-          #~ babel.dtos(self.start_date),
-          #~ self.start_time,
-          #~ self.user)
-  
-
-
-#~ class Events(dd.Table):
-    #~ model = Event
-    #~ order_by = ['start_date','start_time']
-    #~ detail_layout = EventDetail()
-
-#~ class EventsByTeacher(Events):
-    #~ master_key = "user"
-
-#~ class EventsByCourse(Events):
-    #~ master_key = "course"
-
-
-#~ class Presence(dd.Model):
-  
-    #~ class Meta:
-        #~ verbose_name = _("Presence")
-        #~ verbose_name_plural = _('Presences')
-
-    #~ # teacher = models.ForeignKey(Teacher)
-    #~ event = models.ForeignKey(cal.Event)
-    #~ pupil = models.ForeignKey(Pupil)
-    #~ absent = models.BooleanField(_("Absent"))
-    #~ excused = models.BooleanField(_("Excused"))
-    #~ remark = models.CharField(_("Remark"),max_length=200,blank=True)
-    #~ # status = models.ForeignKey(PresenceStatus,null=True,blank=True)
-    
-    #~ def save(self,*args,**kw):
-        #~ if self.excused and not self.absent:
-            #~ self.absent = True
-        #~ super(Presence,self).save(*args,**kw)
-        
-    #~ def absent_changed(self,rr):
-        #~ if not self.absent:
-            #~ self.excused = False
-
-#~ class Presences(dd.Table):
-    #~ model = Presence
-    #~ order_by = ['event__start_date','event__start_time']
-
-#~ class PresencesByPupil(Presences):
-    #~ master_key = "pupil"
-
-#~ class PresencesByEvent(Presences):
-    #~ master_key = "event"
-    
 
 
 
@@ -684,10 +672,10 @@ def setup_main_menu(site,ui,profile,main):
     m.add_action(Pupils)
     m = main.add_menu("school",MODULE_LABEL)
     m.add_action(Courses)
-    m.add_action(Teachers)
-    m.add_action(Pupils)
+    #~ m.add_action(Teachers)
+    #~ m.add_action(Pupils)
     m.add_action(RequestedEnrolments)
-    m.add_action(ConfirmedEnrolments)
+    m.add_action(UncertifiedEnrolments)
   
 def unused_setup_master_menu(site,ui,profile,m): 
     #~ m = m.add_menu("school",_("School"))
@@ -702,6 +690,8 @@ def setup_my_menu(site,ui,profile,m): pass
 def setup_config_menu(site,ui,profile,m):
     m = m.add_menu("school",MODULE_LABEL)
     #~ m.add_action(Rooms)
+    m.add_action(TeacherTypes)
+    m.add_action(PupilTypes)
     m.add_action(Topics)
     m.add_action(Lines)
     m.add_action(Slots)

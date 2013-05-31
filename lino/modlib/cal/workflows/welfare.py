@@ -236,7 +236,7 @@ def setup_models(sender=None,**kw):
     
     site.modules.cal.Event.take = TakeAssignedEvent()
 
-@dd.receiver(dd.post_analyze)
+@dd.receiver(dd.pre_analyze)
 def setup_workflows(sender=None,**kw):
     
     site = sender

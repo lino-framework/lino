@@ -30,6 +30,7 @@ from django.db import models
 from django.db.models import Q
 from django.utils.translation import ugettext_lazy as _
 from django.utils.translation import pgettext_lazy as pgettext
+from django.utils import translation
 #~ from django.utils.translation import string_concat
 from django.contrib.contenttypes.models import ContentType
 from django.utils.encoding import force_unicode
@@ -39,6 +40,8 @@ from django.utils.importlib import import_module
 
 from north import dbutils
 from north.dbutils import dtosl
+from babel.dates import format_datetime
+from north import to_locale
 
 
 from lino import mixins
@@ -59,6 +62,18 @@ from lino.modlib.cal.utils import \
     
 def format_time(t):
     return t.strftime(settings.SITE.time_format_strftime)
+    
+def when_text(d,t):
+    #~ if d.year == datetime.date.today().year:
+        #~ fmt = "%a" + settings.SITE.time_format_strftime
+    #~ else:
+        #~ fmt = "%a %y %b %d" + settings.SITE.time_format_strftime
+    #~ fmt = "%a %Y %b %d " + settings.SITE.time_format_strftime
+    #~ return datetime.datetime.combine(d,t).strftime(fmt)
+    fmt = "yyyy MMM dd (EE) HH:mm"
+    return format_datetime(datetime.datetime.combine(d,t),fmt,locale=to_locale(translation.get_language()))
+
+    
     
 contacts = dd.resolve_app('contacts')
 postings = dd.resolve_app('postings')
@@ -1030,10 +1045,13 @@ Indicates that this Event shouldn't prevent other Events at the same time."""))
                 yield "%s <%s>" % (unicode(g.partner),g.partner.email)
       
         
+    @dd.displayfield(_("When"))
+    def when_text(self,ar):
+        return when_text(self.start_date,self.start_time)
+        
             
     @dd.displayfield(_("Link URL"))
-    def url(self,request): return 'foo'
-    #~ url.return_type = dd.DisplayField(_("Link URL"))
+    def url(self,ar): return 'foo'
     
     @dd.virtualfield(dd.DisplayField(_("Reminder")))
     def reminder(self,request): return False
@@ -1095,10 +1113,11 @@ class Events(dd.Table):
     model = 'cal.Event'
     required = dd.required(user_groups='office',user_level='manager')
     #~ column_names = 'start_date start_time user summary workflow_buttons calendar *'
-    column_names = 'start_date start_time user summary calendar *'
+    column_names = 'when_text:20 user summary calendar *'
+    #~ column_names = 'start_date start_time user summary calendar *'
     
     hidden_columns = """
-    room priority access_class transparent
+    priority access_class transparent
     owner created modified
     description
     uid sequence auto_type build_time owner owner_id owner_type 
@@ -1214,7 +1233,7 @@ class EventsByRoom(Events):
 class EventsByController(Events):
     required = dd.required(user_groups='office')
     master_key = 'owner'
-    column_names = 'start_date start_time summary workflow_buttons id'
+    column_names = 'when_text:20 summary workflow_buttons id'
 
 if settings.SITE.project_model:    
   
@@ -1230,7 +1249,7 @@ if settings.SITE.user_model:
         help_text = _("Table of all my calendar events.")
         required = dd.required(user_groups='office')
         #~ column_names = 'start_date start_time calendar project summary workflow_buttons *'
-        column_names = 'start_date start_time calendar project summary *'
+        column_names = 'when_text:20 calendar project summary *'
         
         @classmethod
         def param_defaults(self,ar,**kw):
@@ -1243,7 +1262,7 @@ if settings.SITE.user_model:
         label = _("My unclear events")
         help_text = _("Events which probably need your attention.")
         #~ required = dd.required(user_groups='office')
-        column_names = 'start_date start_time project summary workflow_buttons *'
+        column_names = 'when_text:20 project summary workflow_buttons *'
         #~ known_values = dict(assigned_to=EventStates.assigned)
         #~ master_key = 'assigned_to'
         
@@ -1260,7 +1279,7 @@ if settings.SITE.user_model:
         help_text = _("Table of events assigned to me.")
         #~ master_key = 'assigned_to'
         required = dd.required(user_groups='office')
-        column_names = 'start_date start_time project summary workflow_buttons *'
+        column_names = 'when_text:20 project summary workflow_buttons *'
         #~ known_values = dict(assigned_to=EventStates.assigned)
         
         @classmethod
@@ -1932,23 +1951,8 @@ class ExtSummaryField(dd.VirtualField):
         
     def value_from_object(self,obj,ar):
         #~ logger.info("20120118 value_from_object() %s",dd.obj2str(obj))
-        return event_summary(obj,ar.get_user())
+        return settings.SITE.get_event_summary(obj,ar.get_user())
 
-
-def event_summary(obj,user):
-    s = obj.summary
-    if obj.user != user:
-        if obj.access_class == AccessClasses.show_busy:
-            s = _("Busy")
-        s = obj.user.username + ': ' + unicode(s)
-    elif settings.SITE.project_model is not None and obj.project is not None:
-        s += " " + unicode(_("with")) + " " + unicode(obj.project)
-    if obj.state:
-        s = ("(%s) " % unicode(obj.state)) + s
-    n = obj.guest_set.all().count()
-    if n:
-        s = ("[%d] " % n) + s
-    return s
 
 def user_calendars(qs,user):
     #~ Q = models.Q

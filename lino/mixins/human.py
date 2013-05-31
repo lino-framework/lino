@@ -110,7 +110,7 @@ class Human(model.Model):
         return u or m
         
     def __unicode__(self):
-        return self.get_full_name()
+        return self.get_full_name(nominative=True)
       
     def get_salutation(self,**salutation_options):
         return get_salutation(

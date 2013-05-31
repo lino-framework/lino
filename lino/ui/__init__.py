@@ -913,8 +913,10 @@ class Site(lino.Site):
             meth = getattr(app_module,'get_todo_tables',None)
             if meth is not None:
                 #~ dblogger.debug("Running %s of %s", methname, mod.__name__)
-                for i in meth(ar):
-                    yield i
+                for table,text in meth(ar):
+                    if text is None:
+                        text = "%d " + unicode(table.label)
+                    yield (table,text)
 
     def get_installed_apps(self):
         """
@@ -1277,6 +1279,22 @@ class Site(lino.Site):
 
 
 
+
+    def get_event_summary(self,event,user):
+        from django.utils.translation import ugettext as _
+        s = event.summary
+        if event.user != user:
+            if event.access_class == self.modules.cal.AccessClasses.show_busy:
+                s = _("Busy")
+            s = event.user.username + ': ' + unicode(s)
+        elif self.project_model is not None and event.project is not None:
+            s += " " + unicode(_("with")) + " " + unicode(event.project)
+        if event.state:
+            s = ("(%s) " % unicode(event.state)) + s
+        n = event.guest_set.all().count()
+        if n:
+            s = ("[%d] " % n) + s
+        return s
 
 
 

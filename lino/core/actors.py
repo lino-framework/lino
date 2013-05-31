@@ -418,12 +418,6 @@ class Actor(actions.Parametrizable):
     
     
     
-    #~ workflow_actions = None
-    #~ """
-    #~ A list of action names to be governed by workflows.
-    #~ """
-      
-    
     
     
     @classmethod
@@ -842,6 +836,7 @@ class Actor(actions.Parametrizable):
         if cls.workflow_state_field is not None:
             #~ for name,a in cls.get_state_actions():
             for a in cls.workflow_state_field.choicelist.workflow_actions:
+            #~ for a in cls.workflow_state_field.choicelist._actions_list: # 20130531 
                 #~ print 20120709, cls,name,a
                 #~ setattr(cls,name,fn())
                 setattr(cls,a.action_name,a) 

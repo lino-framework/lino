@@ -52,6 +52,7 @@ class State(choicelists.Choice):
         `label` can be either a string or a subclass of ChangeStateAction
         """
         i = len(self.choicelist.workflow_actions)
+        #~ i = len(self.choicelist._actions_list) # 20130531 
         #~ if label and issubclass(label,actions.Action):
         kw = dict()
         if help_text is not None:
@@ -78,11 +79,12 @@ class State(choicelists.Choice):
         #~ name = 'mark_' + self.value
         name = 'wf' + str(i+1)
         a.attach_to_workflow(self.choicelist,name)
-        ba = self.choicelist.bind_action(a) # 
+        #~ ba = self.choicelist.bind_action(a) # 20130531 why was this?
         #~ print 20130424, ba.actor, self, name, ba.action
-        """
-        TODO: `workflow_actions` is perhaps not nevessary: use Actor._actions_list instead
-        """
+        #~ """
+        #~ TODO: `workflow_actions` is perhaps not nevessary: use Actor._actions_list instead
+        #~ done 20130531
+        #~ """
         self.choicelist.workflow_actions = self.choicelist.workflow_actions + [ a ]
         #~ self.choicelist.workflow_actions.append(a) 
         #~ yield name,a
@@ -240,7 +242,7 @@ method::
         
         watcher.send_update(ar.request)
         
-        return ar.ui.success(**kw)
+        return ar.success(**kw)
         
         
 class NotifyingChangeStateAction(ChangeStateAction,actions.NotifyingAction):

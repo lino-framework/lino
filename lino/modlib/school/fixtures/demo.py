@@ -12,6 +12,8 @@
 ## You should have received a copy of the GNU General Public License
 ## along with Lino; if not, see <http://www.gnu.org/licenses/>.
 
+from __future__ import unicode_literals
+
 import datetime
 
 #~ from django.contrib.contenttypes.models import ContentType
@@ -48,12 +50,15 @@ def objects():
     #~ yield cal.Place(name="E")
     #~ yield cal.Place(name="F")
 
+    PTYPES = Cycler(school.PupilType.objects.all())
+    TTYPES = Cycler(school.TeacherType.objects.all())
+    
     n = 0
     for p in Person.objects.all():
-        if n % 3 == 0:
-            yield mti.insert_child(p,school.Pupil)
-        if n % 10 == 0:
-            yield mti.insert_child(p,school.Teacher)
+        if n % 2 == 0:
+            yield mti.insert_child(p,school.Pupil,pupil_type=PTYPES.pop())
+        if n % 9 == 0:
+            yield mti.insert_child(p,school.Teacher,teacher_type=TTYPES.pop())
         n += 1
         
     if False:

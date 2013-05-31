@@ -181,7 +181,8 @@ class UI(object):
         #~ return self.action_response(kw)
         return kw
     
-    def confirm(self,ok_func,*msgs,**kw):
+    #~ def confirm(self,ok_func,*msgs,**kw):
+    def confirm(self,ok_func,*msgs):
         """
         Execute the specified callable `ok` after the user has confirmed 
         the specified message.

@@ -194,7 +194,7 @@ class AssignEvent(dd.ChangeStateAction):
         return kw
     
 
-@dd.receiver(dd.post_analyze)
+@dd.receiver(dd.pre_analyze)
 def setup_workflows(sender=None,**kw):
     
     site = sender
