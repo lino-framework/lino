@@ -53,7 +53,7 @@ class Site(lino.Site):
     """
     """
     
-    pending_threads = {}
+    #~ 20130531 pending_threads = {}
     
     console_user = None
     

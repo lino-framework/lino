@@ -118,7 +118,7 @@ class UI(object):
     #~ verbose_name = None
     
     def __init__(self,site):
-        #~ self.pending_threads = {}
+        self.pending_threads = {}
         self.site = site
             
     #~ def pop_thread(self,id):
@@ -243,10 +243,10 @@ class UI(object):
     def callback_get(self,request,thread_id,button_id):
         #~ logger.info("20130409 callback_get")
         thread_id = int(thread_id)
-        cb = settings.SITE.pending_threads.pop(thread_id,None)
+        cb = self.pending_threads.pop(thread_id,None)
         #~ d = self.pop_thread(int(thread_id))
         if cb is None: 
-            logger.info("20130531 No callback %r in %r" % (thread_id,settings.SITE.pending_threads))
+            #~ logger.info("20130531 No callback %r in %r" % (thread_id,settings.SITE.pending_threads))
             return self.action_response(self.error("Unknown callback %r" % thread_id))
         #~ buttonId = request.GET[ext_requests.URL_PARAM_'bi']
         #~ print buttonId
@@ -276,8 +276,8 @@ class UI(object):
             rv = self.success()
         elif isinstance(rv,Callback):
             h = hash(rv)
-            settings.SITE.pending_threads[h] = rv
-            logger.info("20130531 Stored %r in %r" % (h,settings.SITE.pending_threads))
+            self.pending_threads[h] = rv
+            #~ logger.info("20130531 Stored %r in %r" % (h,settings.SITE.pending_threads))
             
             #~ def cb2dict(c):
                 #~ return dict(name=c.name,label=c.label)
