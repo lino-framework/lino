@@ -141,8 +141,6 @@ class ExtUI(base.UI):
             self.default_renderer = self.ext_renderer = ExtRenderer(self)
         else:
             self.default_renderer = self.plain_renderer
-            
-          
           
         names = set()
         for n in self.reserved_names:

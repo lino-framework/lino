@@ -53,6 +53,8 @@ class Site(lino.Site):
     """
     """
     
+    pending_threads = {}
+    
     console_user = None
     
     partners_app_label = 'contacts'
