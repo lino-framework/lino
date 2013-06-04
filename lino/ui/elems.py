@@ -1185,7 +1185,6 @@ class AutoFieldElement(NumberFieldElement):
 
 class RequestFieldElement(IntegerFieldElement):
     def value2num(self,v):
-        #~ return len(v.data_iterator)
         return v.get_total_count()
   
     def value_from_object(self,obj,ar):

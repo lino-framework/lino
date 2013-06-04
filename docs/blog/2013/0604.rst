@@ -17,6 +17,11 @@ DONE:
 
 - Beendigungen pro Dienst : Tabelle komplett raus
 
+- plain html didn't render any sums anymore. fixed.
+
+- hide_zero_rows was ignored in appy_pod
+
+
 TODO:
 
 - nur Dienst (CoachingType) dsbe in allen Filtern

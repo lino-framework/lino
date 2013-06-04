@@ -300,7 +300,7 @@ class ExtUI(base.UI):
             tble.clear()
             tble.body.append(ar.no_data_text)
         
-        if False: # not ar.actor.hide_sums:
+        if not ar.actor.hide_sums:
             has_sum = False
             for i in sums:
                 if i:

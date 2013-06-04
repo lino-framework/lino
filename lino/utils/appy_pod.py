@@ -417,7 +417,8 @@ class Renderer(AppyRenderer):
             #~ for grp in ar.group_headers(row):
                 #~ raise NotImplementedError()
             tr = TableRow()
-            table_rows.addElement(tr)
+            
+            has_numeric_value = False
             
             for i,fld in enumerate(columns):
                 #~ tc = TableCell(stylename=CELL_STYLE_NAME)
@@ -429,8 +430,17 @@ class Renderer(AppyRenderer):
                     tc.addElement(text.P(stylename=stylename,text=''))
                 else:
                     value2cell(ar,i,fld,v,stylename,tc)
-                    sums[i] += fld.value2num(v)
+                    
+                    
+                    nv = fld.value2num(v)
+                    if nv != 0:
+                        sums[i] += nv
+                        has_numeric_value = True
+                    #~ sums[i] += fld.value2num(v)
                 tr.addElement(tc)
+            
+            if has_numeric_value or not ar.actor.hide_zero_rows:
+                table_rows.addElement(tr)
                 
         if not ar.actor.hide_sums:
             if sums != [fld.zero for fld in columns]:

@@ -162,7 +162,7 @@ def html2odf(e,ct=None,**ctargs):
         """
         <text:h text:style-name="Heading_20_1" text:outline-level="1">
         """
-        ct = text.H(stylename="Heading 1",outlinelevel=1)
+        oe = ct = text.H(stylename="Heading 1",outlinelevel=1)
     elif e.tag == 'h2':
         oe = ct = text.H(stylename="Heading 2",outlinelevel=2)
     elif e.tag == 'h3':
