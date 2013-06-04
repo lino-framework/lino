@@ -1,0 +1,12 @@
+===============================
+20130602 (Sunday, 02 June 2013)
+===============================
+
+Switched Lino Cosi back to use contacts (not partners).
+
+Worked on a user-reported problems in Lino-Welfare:
+
+- watch_tim : datum_bis einer primären Begleitung eines Ehemaligen darf
+  nicht leer sein. Wenn es das ist, soll watch_tim es auf 01.01.1990
+  setzen. 
+  

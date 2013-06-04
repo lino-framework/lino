@@ -515,21 +515,17 @@ class BasePrintAction(actions.RowAction):
         return filename
         
         
-class PrintAction(BasePrintAction):
-    """Note that this action should rather be called 
+class CachedPrintAction(BasePrintAction):
+    """
+    Note that this action should rather be called 
     'Open a printable document' than 'Print'.
     For the user they are synonyms as long as 
     Lino doesn't support server-side printing.
     """
-    #~ callable_from = None
-    
-    #~ needs_selection = True
     
     icon_name = 'x-tbar-print'
     
-    
     def before_build(self,bm,elem):
-        #~ if not elem.must_build:
         if elem.build_time:
             return
         return BasePrintAction.before_build(self,bm,elem)
@@ -537,22 +533,16 @@ class PrintAction(BasePrintAction):
     def get_print_templates(self,bm,elem):
         return elem.get_print_templates(bm,self)
         
-    #~ def run_(self,request,ui,elem,**kw):
-    def run_(self,ar,elem,**kw):
+    def run_from_ui(self,elem,ar,**kw):
         bm = get_build_method(elem)
-        #~ if elem.must_build:
         if not elem.build_time:
             t = bm.build(ar,self,elem)
             if t is None:
                 raise Exception("%s : build() returned None?!")
-                #~ kw.update(message=_("%s printable has been built.") % elem)
-            else:
-                elem.build_time = datetime.datetime.fromtimestamp(t)
-                #~ bm.build(self,elem)
-                #~ elem.must_build = False
-                elem.save()
-                kw.update(refresh=True)
-                kw.update(message=_("%s printable has been built.") % elem)
+            elem.build_time = datetime.datetime.fromtimestamp(t)
+            elem.save()
+            kw.update(refresh=True)
+            kw.update(message=_("%s printable has been built.") % elem)
         else:
             kw.update(message=_("Reused %s printable from cache.") % elem)
         url = bm.get_target_url(self,elem)
@@ -560,13 +550,8 @@ class PrintAction(BasePrintAction):
             kw.update(open_davlink_url=ar.request.build_absolute_uri(url))
         else:
             kw.update(open_url=url)
-        return kw
-        #~ return rr.ui.success_response(open_url=target,**kw)
-        
-    def run_from_ui(self,elem,ar,**kw):
-        #~ kw = self.run_(ar.request,rr.ui,elem,**kw)
-        kw = self.run_(ar,elem,**kw)
         return ar.success(**kw)
+        
       
 class DirectPrintAction(BasePrintAction):
     """
@@ -719,11 +704,8 @@ class PrintableType(Model):
             build_method = settings.SITE.site_config.default_build_method 
         return get_template_choices(cls,build_method)
     
-class Printable(object):
-    """
-    Mixin for Models whose instances can "print" (generate a printable document).
-    """
-  
+class BasePrintable(object):
+    
     def get_print_language(self,pm):
         return settings.SITE.DEFAULT_LANGUAGE.django_code
         
@@ -732,38 +714,6 @@ class Printable(object):
         
     def filename_root(self):
         return self._meta.app_label + '.' + self.__class__.__name__ + '-' + str(self.pk)
-        
-  
-class SimplyPrintable(Printable):
-    simply_print = DirectPrintAction(_("Print")) # ,'Default')
-    
-class CachedPrintable(Duplicable,Printable):
-    """
-    Mixin for Models that generate a unique external file at a 
-    determined place when being printed.
-    
-    """
-    #~ must_build = models.BooleanField(_("must build"),default=True,editable=False)
-    build_time = models.DateTimeField(_("build time"),null=True,editable=False)
-    """
-    Timestamp of the built target file. Contains `None` 
-    if no build hasn't been called yet.
-    """
-    
-    do_print = PrintAction()
-    do_clear_cache = ClearCacheAction()
-    
-    
-    class Meta:
-        abstract = True
-        
-      
-    def print_from_posting(self,posting,ar,**kw):
-        return self.do_print.run_from_ui(self,ar,**kw)
-        
-    def on_duplicate(self,ar,master):
-        super(CachedPrintable,self).on_duplicate(ar,master)
-        self.build_time = None
         
     def get_print_templates(self,bm,action):
         """Return a list of filenames of templates for the specified build method.
@@ -784,6 +734,43 @@ class CachedPrintable(Duplicable,Printable):
         return settings.SITE.site_config.default_build_method
         #~ return settings.SITE.preferred_build_method 
         #~ return 'pisa'
+        
+class Printable(BasePrintable):
+    """
+    Mixin for Models whose instances can "print" (generate a printable document).
+    """
+  
+    do_print = DirectPrintAction() 
+    
+   
+class CachedPrintable(Duplicable,BasePrintable):
+    """
+    Mixin for Models that generate a unique external file at a 
+    determined place when being printed.
+    
+    """
+    do_print = CachedPrintAction()
+    
+    #~ must_build = models.BooleanField(_("must build"),default=True,editable=False)
+    build_time = models.DateTimeField(_("build time"),null=True,editable=False)
+    """
+    Timestamp of the built target file. Contains `None` 
+    if no build hasn't been called yet.
+    """
+    
+    do_clear_cache = ClearCacheAction()
+    
+    
+    class Meta:
+        abstract = True
+        
+      
+    def print_from_posting(self,posting,ar,**kw):
+        return self.do_print.run_from_ui(self,ar,**kw)
+        
+    def on_duplicate(self,ar,master):
+        super(CachedPrintable,self).on_duplicate(ar,master)
+        self.build_time = None
         
     def get_target_name(self):
         if self.build_time:

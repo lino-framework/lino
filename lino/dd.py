@@ -26,6 +26,7 @@ Tables:
 
 - :class:`Table <lino.core.dbtables.Table>`
 - :class:`VirtualTable <lino.core.tables.VirtualTable>`
+- :class:`VentilatingTable <lino.core.tables.VentilatingTable>`
 - :class:`EmptyTable <lino.mixins.EmptyTable>`
 - :class:`Report <lino.mixins.Report>`
 - :class:`Frame <lino.core.frames.Frame>`
@@ -101,6 +102,7 @@ Signals:
 - :attr:`ChangeWatcher <lino.core.signals.ChangeWatcher>`
 - :attr:`pre_ui_update <lino.core.signals.pre_ui_update>`
 - :attr:`pre_ui_delete <lino.core.signals.pre_ui_delete>`
+- :attr:`database_connected <lino.core.signals.database_connected>`
 - :attr:`receiver <django.dispatch.receiver>` : the standard Django receiver decorator
 - (and many more)
 
@@ -163,6 +165,7 @@ from django.conf import settings
 from lino.core.dbtables import summary, summary_row
 
 from lino.core.frames import Frame
+from lino.core.tables import VentilatingTable
 #~ from lino.core.dialogs import Dialog
 
 from lino.core.actions import action
@@ -233,6 +236,8 @@ from lino.core.layouts import ParamsLayout
 
 
 from lino.core.signals import pre_ui_create, pre_ui_delete, pre_ui_update, ChangeWatcher
+from lino.core.signals import database_connected
+from lino.core.signals import database_ready
 from djangosite.signals import pre_startup, post_startup
 
 from lino.core.signals import pre_analyze
@@ -317,8 +322,12 @@ from lino.mixins import (ProjectRelated, UserAuthored,
     Sequenced, Hierarizable)
 
 from lino.mixins import Printable, PrintableType, CachedPrintable, TypedPrintable, DirectPrintAction
-from lino.mixins import SimplyPrintable
+#~ from lino.mixins import SimplyPrintable
 from lino.mixins.uploadable import Uploadable
 from lino.mixins.human import Human, Born, Genders
 
 #~ from lino.utils.screenshots import register_screenshot
+
+
+
+

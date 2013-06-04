@@ -674,7 +674,7 @@ class ItemsByInvoice(dd.Table):
 #~ MODULE_LABEL = _("Ledger")
 MODULE_LABEL = accounts.MODULE_LABEL
 
-def site_setup(site):
+def unused_site_setup(site):
     if site.is_installed(settings.SITE.partners_app_label):
         app = site.modules[settings.SITE.partners_app_label]
         for t in (app.Partners,app.Persons,app.Organisations):

@@ -107,13 +107,28 @@ class SiteConfig(dd.Model):
         #~ settings.SITE.on_site_config_saved(self)
         #~ settings.SITE.clear_site_config()
    
-
-def my_callback(sender,**kw):
+#~ def my_handler(sender=None,**kw):
+def my_handler(sender,**kw):
     settings.SITE.clear_site_config()
-dd.connection_created.connect(my_callback)
-models.signals.post_syncdb.connect(my_callback)
+    #~ kw.update(sender=sender)
+    dd.database_connected.send(sender)
+    #~ dd.database_connected.send(sender,**kw)
+    
 from djangosite.utils.djangotest import testcase_setup
-testcase_setup.connect(my_callback)
+testcase_setup.connect(my_handler)
+dd.connection_created.connect(my_handler)
+models.signals.post_syncdb.connect(my_handler)
+        
+   
+   
+#~ @dd.receiver(dd.database_connected)
+#~ def my_callback(sender,**kw):
+    #~ settings.SITE.clear_site_config()
+    
+#~ dd.connection_created.connect(my_callback)
+#~ models.signals.post_syncdb.connect(my_callback)
+#~ from djangosite.utils.djangotest import testcase_setup
+#~ testcase_setup.connect(my_callback)
 #~ dd.startup.connect(my_callback)
 #~ models.signals.post_save.connect(my_callback,sender=SiteConfig)
 #~ NOTE : I didn't manage to get that last line working. 

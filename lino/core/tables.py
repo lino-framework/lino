@@ -63,16 +63,19 @@ from atelier import rstgen
 
 from north import dbutils
 
+from lino.core import constants
 from lino.core import actors
 from lino.core import actions
+from lino.core import fields
+from lino.core import signals
+
 from lino.core.dbutils import obj2str
 from lino.core.model import Model
 
-from lino.core.fields import FakeField
+#~ from lino.core.fields import FakeField
 from lino.core.requests import ActionRequest
 
 from lino.ui import base
-from lino.core import constants #  as ext_requests
 from lino.utils.config import Configured, load_config_files
 from lino.utils.config import find_config_file
 
@@ -888,38 +891,28 @@ class AbstractTable(actors.Actor):
       
         
       
-    @classmethod
-    def do_setup(self):
-      
-        self.setup_columns()
-        
-        super(AbstractTable,self).do_setup()
-        
-        self.grid_configs = []
-        
-        def loader(content,cd,filename):
-            data = yaml.load(content)
-            gc = GridConfig(self,data,filename,cd)
-            self.grid_configs.append(gc)
-            
-        load_config_files(loader,'%s.*gc' % self)
-        
-        #~ self.default_action = self.add_action(actions.GridEdit())
-        #~ self.setup_detail_layouts()
-        #~ self.set_actions([])
-        #~ self.add_action(self.default_action)
-        #~ self.setup_actions()
-        #~ if self.default_action.actor != self:
-            #~ raise Exception("20120103 %r.do_setup() : default.action.actor is %r" % (
-              #~ self,self.default_action.actor))
-                
-        #~ if self.button_label is None:
-            #~ self.button_label = self.label
-            
+    #~ @classmethod
+    #~ def do_setup(self):
+      #~ 
+        #~ self.setup_columns()
+        #~ 
+        #~ super(AbstractTable,self).do_setup()
+        #~ 
+        #~ self.grid_configs = []
+        #~ 
+        #~ def loader(content,cd,filename):
+            #~ data = yaml.load(content)
+            #~ gc = GridConfig(self,data,filename,cd)
+            #~ self.grid_configs.append(gc)
+            #~ 
+        #~ load_config_files(loader,'%s.*gc' % self)
+        #~ 
         
     @classmethod
     def setup_columns(self):
         pass
+        
+        
         
     @classmethod
     def get_column_names(self,ar):
@@ -1133,3 +1126,35 @@ class VirtualTable(AbstractTable):
     """
     
 
+
+
+class VentilatingTable(AbstractTable):
+    """
+    A mixin for tables that have a series of automatically generated 
+    columns
+    """
+    ventilated_column_suffix = ':5'
+    
+    @fields.virtualfield(models.CharField(_("Description"),max_length=30))
+    def description(self,obj,ar):
+        return unicode(obj)
+                
+    @classmethod
+    def setup_columns(self):
+        self.column_names = 'description '
+        for i,vf in enumerate(self.get_ventilated_columns()):
+            self.add_virtual_field('vc'+str(i),vf)
+            self.column_names += ' ' + vf.name+self.ventilated_column_suffix
+    
+    @classmethod
+    def get_ventilated_columns(self):
+        return []
+        
+
+
+@signals.receiver(signals.database_ready)
+def setup_ventilated_columns(sender,**kw):
+    for a in actors.actors_list:
+        if issubclass(a,AbstractTable):
+            a.setup_columns()
+    sender.resolve_virtual_fields()

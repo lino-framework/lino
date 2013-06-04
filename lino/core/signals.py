@@ -82,6 +82,10 @@ the user interface.
 pre_ui_build = Signal()
 post_ui_build = Signal()
 
+database_connected = Signal()
+
+database_ready = Signal()
+
 
 from django.db.models.fields import NOT_PROVIDED
 

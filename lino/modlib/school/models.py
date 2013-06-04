@@ -140,7 +140,7 @@ class Slots(dd.Table):
     """
     
     
-class Topic(dd.BabelNamed,dd.SimplyPrintable):
+class Topic(dd.BabelNamed,dd.Printable):
     class Meta:
         verbose_name = _("Topic")
         verbose_name_plural = _('Topics')
@@ -158,7 +158,8 @@ class Line(dd.BabelNamed):
     class Meta:
         verbose_name = _("Course Line")
         verbose_name_plural = _('Course Lines')
-    topic = models.ForeignKey(Topic)
+    topic = models.ForeignKey(Topic,blank=True,null=True)
+    description = dd.BabelTextField(_("Description"),blank=True)
     
     #~ def __unicode__(self):
         #~ return "%s (%s)" % (dd.BabelNamed.__unicode__(self),self.topic)
@@ -169,6 +170,7 @@ class Lines(dd.Table):
     required = dd.required(user_level='manager')
     detail_layout = """
     id name
+    description
     school.CoursesByLine
     """
     
@@ -176,7 +178,7 @@ class LinesByTopic(Lines):
     master_key = "topic"
 
 
-class TeacherType(dd.BabelNamed,dd.SimplyPrintable):
+class TeacherType(dd.BabelNamed,dd.Printable):
     class Meta:
         verbose_name = _("Teacher type")
         verbose_name_plural = _('Teacher types')
@@ -222,7 +224,7 @@ class TeachersByType(Teachers):
 
 
 
-class PupilType(dd.BabelNamed,dd.SimplyPrintable):
+class PupilType(dd.BabelNamed,dd.Printable):
     class Meta:
         verbose_name = _("Pupil type")
         verbose_name_plural = _('Pupil types')
@@ -273,7 +275,7 @@ class PupilsByType(Pupils):
 class EventsByTeacher(cal.Events):
     help_text = _("Shows events of courses of this teacher")
     master = Teacher
-    column_names = 'when_text:20 project__line summary room state'
+    column_names = 'when_text:20 project__line room state'
     auto_fit_column_widths = True
     
     @classmethod
@@ -325,7 +327,7 @@ add('50', _("Cancelled"),'cancelled')
     
     
 #~ class Course(StartEndTime,cal.EventGenerator,cal.RecurrenceSet,mixins.Printable):
-class Course(contacts.ContactRelated,cal.EventGenerator,cal.RecurrenceSet,dd.SimplyPrintable):
+class Course(contacts.ContactRelated,cal.EventGenerator,cal.RecurrenceSet,dd.Printable):
     """
     A Course is a group of pupils that regularily 
     meet with a given teacher in a given room.
@@ -442,13 +444,13 @@ class CourseDetail(dd.FormLayout):
     #~ end = "end_date end_time"
     #~ freq = "every every_unit"
     #~ start end freq
-    main = "general school.EnrolmentsByCourse cal.EventsByController"
+    main = "general cal.EventsByController"
     general = dd.Panel("""
     line start_date room teacher #slot state id:8
     max_occurences end_date every every_unit
     monday tuesday wednesday thursday friday saturday sunday
     company contact_person user calendar
-    description
+    school.EnrolmentsByCourse
     """,label=_("General"))
     
     #~ def setup_handle(self,dh):
@@ -460,7 +462,7 @@ class Courses(dd.Table):
     model = Course
     #~ order_by = ['date','start_time']
     detail_layout = CourseDetail() 
-    column_names = "line teacher room slot summary *"
+    column_names = "line teacher room slot *"
     order_by = ['start_date']
     
     parameters = dd.ObservedPeriod(
@@ -557,7 +559,7 @@ add('40', _("Cancelled"),'cancelled')
     
 
 #~ class Enrolment(dd.Model):
-class Enrolment(dd.UserAuthored,dd.SimplyPrintable):
+class Enrolment(dd.UserAuthored,dd.Printable):
     
     workflow_state_field = 'state'
   

@@ -1,0 +1,35 @@
+===============================
+20130603 (Monday, 03 June 2013)
+===============================
+
+
+Continued to work on some user-reported problems in Lino-Welfare.
+
+DONE:
+
+- watch_tim : datum_bis einer primären Begleitung eines Ehemaligen darf
+  nicht leer sein. Wenn es das ist, soll watch_tim es auf 01.01.1990
+  setzen. Also Erweitungung der Doku (:ref:`welfare.clients`):
+  
+  - `bis` : entweder leer (wenn es eine aktive Begleitung ist) 
+    oder 01.01.1990 (wenn es ein Neuzugänge oder ehemaliger Klient ist)
+    
+  Added a new test case (or more precisely: extended the only one) 
+  in :mod:`lino_welfare.tests.watchtim_tests`.
+  
+
+Discovered a bug: 
+:mod:`lino.core.tables.VentilatingTable`
+caused everything to fail when 
+there was no database at all.
+Added new signals 
+`database_connected`
+and
+`database_ready`
+to solve this.
+
+Restructured `lino_welfare.demo.settings` to `lino_welfare.settings.demo`.
+
+New module :mod:`lino_welfare.modlib.integ`. 
+  
+

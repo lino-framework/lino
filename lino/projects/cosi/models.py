@@ -25,7 +25,7 @@ from django.conf import settings
 from django.utils.translation import ugettext_lazy as _
 
 
-from lino import mixins
+#~ from lino import mixins
 from lino import dd
 
 #~ contacts = dd.resolve_app('contacts')

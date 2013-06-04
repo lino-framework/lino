@@ -47,7 +47,6 @@ from django.utils.translation import ugettext_lazy as _
 
 from lino.modlib.ledger.utils import FiscalYears
 #~ from lino.core.dbutils import models_by_base
-#~ partner_model = settings.SITE.partners_app_label + '.Partner'
 partners = dd.resolve_app(settings.SITE.partners_app_label)
 
 ZERO = Decimal()
@@ -216,6 +215,9 @@ class VatDocument(VatTotal):
     
     
     def get_trade_type(self):
+        """
+        Expected to return one choice of :class:`TradeTypes`
+        """
         raise NotImplementedError()
         
         

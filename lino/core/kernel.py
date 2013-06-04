@@ -85,7 +85,7 @@ def set_default_verbose_name(f):
 
 def startup_site(self):
     """
-    This is the code that runs when you call :meth:`lino.Lino.startup`.
+    This is the code that runs when you call :meth:`lino.Site.startup`.
     This is a part of a Lino site setup.
     The Django Model definitions are done, now Lino analyzes them and does certain actions.
     

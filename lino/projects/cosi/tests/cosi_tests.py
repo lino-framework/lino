@@ -52,9 +52,9 @@ class QuickTest(RemoteAuthTestCase):
                 
         #~ def test01(self):
         self.assertEqual(1+1,2)
-        o1 = partners.Organisation(name="Example")
+        o1 = partners.Company(name="Example")
         o1.save()
-        o2 = partners.Organisation(name="Example")
+        o2 = partners.Company(name="Example")
         o2.save()
         
         p1 = partners.Person(first_name="John",last_name="Doe")
@@ -62,29 +62,30 @@ class QuickTest(RemoteAuthTestCase):
         p2 = partners.Person(first_name="Johny",last_name="Doe")
         p2.save()
         
-        partners.Contact(person=p1,organisation=o1).save()
-        partners.Contact(person=p2,organisation=o2).save()
+        partners.Role(person=p1,company=o1).save()
+        partners.Role(person=p2,company=o2).save()
         
-        s = partners.ContactsByOrganisation.request(o1).to_rst()
+        #~ s = partners.ContactsByOrganisation.request(o1).to_rst()
+        s = partners.RolesByCompany.request(o1).to_rst()
         #~ six.print_('\n'+s)
         self.assertEqual(s,"""\
-========== ================ ====
- Person     Contact Person   ID
----------- ---------------- ----
- Doe John                    1
-========== ================ ====
+========== ============== ====
+ Person     Contact Role   ID
+---------- -------------- ----
+ John DOE                  1
+========== ============== ====
 """)
         
-        s = partners.ContactsByOrganisation.request(o2).to_rst()
+        s = partners.RolesByCompany.request(o2).to_rst()
         #~ six.print_('\n'+s)
         self.assertEqual(s,"""\
-=========== ================ ====
- Person      Contact Person   ID
------------ ---------------- ----
- Doe Johny                    2
-=========== ================ ====
+=========== ============== ====
+ Person      Contact Role   ID
+----------- -------------- ----
+ Johny DOE                  2
+=========== ============== ====
 """)
-        url = "/api/partners/Persons/115?fv=115&fv=fff&an=merge_row"
+        url = "/api/contacts/Persons/115?fv=115&fv=fff&an=merge_row"
         #~ self.fail("TODO: execute a merge action using the web interface")
         res = self.client.get(url,REMOTE_USER='root')
         

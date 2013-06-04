@@ -33,6 +33,9 @@ logger = logging.getLogger(__name__)
 
 from djangosite.dbutils import full_model_name
 from djangosite.dbutils import obj2str
+
+from north.dbutils import contribute_to_class
+
 from lino.core.dbutils import resolve_field
 from lino.core.dbutils import resolve_model, UnresolvedModel
 #~ from lino.core.dbutils import is_installed_model_spec
@@ -69,7 +72,6 @@ class RichTextField(models.TextField):
 
 
 
-from north.dbutils import contribute_to_class
 
 class BabelTextField(RichTextField):
     """
@@ -189,6 +191,7 @@ class FakeField(object):
     primary_key = False
     editable = False
     name = None
+    #~ verbose_name = None
     help_text = None
     preferred_width = 30
     preferred_height = 3

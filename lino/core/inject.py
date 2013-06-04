@@ -42,7 +42,7 @@ def fix_field_cache(model):
 
 
 @receiver(class_prepared)
-def on_class_prepared(sender=None,**kw):
+def on_class_prepared(sender,**kw):
     """
     This is Lino's general `class_prepared` handler.
     It does two things:
@@ -82,7 +82,7 @@ def on_class_prepared(sender=None,**kw):
 
 
 @receiver(pre_analyze)
-def check_pending_injects(signal,sender,models_list=None,**kw): 
+def check_pending_injects(sender,models_list=None,**kw): # def check_pending_injects(signal,sender,models_list=None,**kw): 
     # called from kernel.analyze_models()
     site = sender
     #~ logger.info("20130212 check_pending_injects()...")

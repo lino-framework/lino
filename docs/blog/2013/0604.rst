@@ -1,0 +1,26 @@
+================================
+20130604 (Tuesday, 04 June 2013)
+================================
+
+Weiter mit dem Aktivitätsbericht.
+
+DONE:
+
+- Der Aktivitätsbericht steht jetzt im Menü *DSBE* statt *Listings*.
+
+- Die alte Version der "Übersicht Art.60§7-Konventionen"
+  haben wir wie angekündigt aus Menü *Listings* rausgeholt.
+
+- Organisations externes et contrats : header erste Kolonne ist "Ausbildungsart" statt "Organisation"
+
+- Causes d'arrêt des VSEs : als Vertragsarten nimmt er die von Art607
+
+- Beendigungen pro Dienst : Tabelle komplett raus
+
+TODO:
+
+- nur Dienst (CoachingType) dsbe in allen Filtern
+- keine User, die nicht im DSBE sind
+- insgesamt fehlen Summen (vertikal und horizontal)
+
+

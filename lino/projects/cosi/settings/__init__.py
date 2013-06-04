@@ -82,7 +82,7 @@ class Site(Site,ledger.SiteMixin):
         add('900', _("Administrator"),   'A A A', 'admin')
         
             
-    partners_app_label = 'partners'
+    #~ partners_app_label = 'partners'
     #~ partners_app_label = 'contacts'
     
     def get_installed_apps(self):
@@ -100,9 +100,9 @@ class Site(Site,ledger.SiteMixin):
         yield 'lino.modlib.ledger'
         yield 'lino.modlib.vat'
         yield 'lino.modlib.declarations'
-        #~ 'lino.modlib.journals',
         yield 'lino.modlib.sales'
         yield 'lino.modlib.finan'
+        #~ 'lino.modlib.journals',
         #~ 'lino.modlib.projects',
         #~ yield 'lino.modlib.blogs'
         #~ yield 'lino.modlib.tickets'
@@ -116,5 +116,4 @@ class Site(Site,ledger.SiteMixin):
         yield 'lino.projects.cosi'
 
 
-SITE = Site(globals())
 

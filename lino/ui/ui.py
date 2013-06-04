@@ -157,7 +157,13 @@ class ExtUI(base.UI):
         
         post_ui_build.send(self)
         
-        #~ trigger creation of params_layout.params_store
+        #~ """
+        #~ setup_columns() methods may access the database
+        #~ """
+        #~ for res in actors.actors_list:
+            #~ res.setup_columns()
+
+        # trigger creation of params_layout.params_store
         for res in actors.actors_list:
             for ba in res.get_actions():
                 if ba.action.parameters:

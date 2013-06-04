@@ -1247,6 +1247,8 @@ class Site(lino.Site):
         
     def get_patterns(self):
         self.startup()
+        from lino.core.signals import database_ready
+        database_ready.send(self)
         #~ self.logger.info("20130418 get_patterns()")
         from django.conf.urls import patterns, url, include
 

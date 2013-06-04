@@ -641,7 +641,8 @@ class StartedSummaryDescription(Started):
         return html
         
     
-class RecurrenceSet(StartedSummaryDescription,Ended):
+#~ class RecurrenceSet(StartedSummaryDescription,Ended):
+class RecurrenceSet(Started,Ended):
     """
     Abstract base for models that group together all instances 
     of a set of recurring calendar components.

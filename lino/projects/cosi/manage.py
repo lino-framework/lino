@@ -2,7 +2,7 @@
 if __name__ == "__main__":
 
     import os
-    os.environ['DJANGO_SETTINGS_MODULE'] = 'lino.projects.cosi.settings'
+    os.environ['DJANGO_SETTINGS_MODULE'] = 'lino.projects.cosi.settings.demo'
 
     import settings
 

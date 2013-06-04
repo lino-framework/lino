@@ -687,7 +687,8 @@ class ProjectRelated(model.Model):
 
 from lino.mixins.printable import (Printable, PrintableType, 
     CachedPrintable, TypedPrintable, 
-    DirectPrintAction, SimplyPrintable)
+    DirectPrintAction)
+    
 from lino.mixins.uploadable import Uploadable
 from lino.mixins.human import Human, Born, Genders
 #~ from lino.mixins.mails import Recipient, Mail
@@ -726,7 +727,7 @@ class Referrable(model.Model):
 
 
 
-class EmptyTableRow(VirtualRow):
+class EmptyTableRow(VirtualRow,Printable):
     """
     Base class for virtual rows of an :class:`EmptyTable`.
     An EmptyTableRow instance 
