@@ -21,11 +21,11 @@ DONE:
 
 - hide_zero_rows was ignored in appy_pod
 
+- insgesamt fehlten Summen vertikal und horizontal
 
 TODO:
 
-- nur Dienst (CoachingType) dsbe in allen Filtern
+- nur Dienst (CoachingType) DSBE in allen Filtern
 - keine User, die nicht im DSBE sind
-- insgesamt fehlen Summen (vertikal und horizontal)
 
 
