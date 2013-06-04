@@ -40,7 +40,7 @@ from django.utils.importlib import import_module
 
 from north import dbutils
 from north.dbutils import dtosl
-from babel.dates import format_datetime
+from babel.dates import format_datetime, format_date
 from north import to_locale
 
 
@@ -64,6 +64,8 @@ def format_time(t):
     return t.strftime(settings.SITE.time_format_strftime)
     
 def when_text(d,t):
+    if d is None: return ''
+    if t is None: return format_date(d,'yyyy MMM dd',locale=to_locale(translation.get_language()))
     #~ if d.year == datetime.date.today().year:
         #~ fmt = "%a" + settings.SITE.time_format_strftime
     #~ else:

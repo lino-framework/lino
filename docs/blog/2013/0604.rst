@@ -2,7 +2,7 @@
 20130604 (Tuesday, 04 June 2013)
 ================================
 
-Weiter mit dem Aktivitätsbericht.
+Weiter mit dem Tätigkeitsbericht.
 
 DONE:
 
@@ -23,9 +23,14 @@ DONE:
 
 - insgesamt fehlten Summen vertikal und horizontal
 
-TODO:
-
 - nur Dienst (CoachingType) DSBE in allen Filtern
+
 - keine User, die nicht im DSBE sind
+
+Release Lino-Welfare 1.1.7 & Lino 1.6.10
+========================================
+
+- Einige Übersetzungen (z.B. Tätigkeitsbericht statt Aktivitätsbericht)
+- :mod:`lino_welfare.migrate`.
 
 

@@ -18,7 +18,7 @@ DONE:
   in :mod:`lino_welfare.tests.watchtim_tests`.
   
 
-Discovered a bug: 
+Discovered an internal bug: 
 :mod:`lino.core.tables.VentilatingTable`
 caused everything to fail when 
 there was no database at all.

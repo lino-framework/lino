@@ -15,6 +15,9 @@
 /home/luc/hgwork/lino/docs/blog/2013/0320.rst:9: WARNING: undefined label: lino.countries.country (if the link has no caption the label must precede a section header)
 /home/luc/hgwork/lino/docs/blog/2013/0320.rst:59: WARNING: undefined label: lino.modlib.cal (if the link has no caption the label must precede a section header)
 /home/luc/hgwork/lino/docs/blog/2013/0321.rst:110: WARNING: undefined label: welfare.userman (if the link has no caption the label must precede a section header)
+/home/luc/hgwork/lino/docs/blog/2013/0423.rst:42: WARNING: undefined label: welfare.jobs.newjobsoverview (if the link has no caption the label must precede a section header)
+/home/luc/hgwork/lino/docs/blog/2013/0423.rst:59: WARNING: undefined label: welfare.jobs.newjobsoverview (if the link has no caption the label must precede a section header)
+/home/luc/hgwork/lino/docs/blog/2013/0425.rst:86: WARNING: undefined label: welfare.jobs.newjobsoverview (if the link has no caption the label must precede a section header)
 /home/luc/hgwork/lino/docs/blog/2013/0504.rst:8: WARNING: undefined label: watch_tim (if the link has no caption the label must precede a section header)
 /home/luc/hgwork/lino/docs/blog/2013/0506.rst:20: WARNING: undefined label: welfare.debts.liabilitiesbybudget (if the link has no caption the label must precede a section header)
 /home/luc/hgwork/lino/docs/changes.rst:16: WARNING: undefined label: welfare.debts.printliabilitiesbybudget (if the link has no caption the label must precede a section header)
@@ -24,7 +27,7 @@
 /home/luc/hgwork/lino/docs/releases/1.3.5.rst:4: WARNING: unknown document: /download
 /home/luc/hgwork/lino/docs/releases/1.3.6.rst:4: WARNING: unknown document: /download
 /home/luc/hgwork/lino/docs/releases/1.3.7.rst:4: WARNING: unknown document: /download
-/home/luc/hgwork/lino/docs/releases/index.rst:1: WARNING: unknown document: 1.6.9
+/home/luc/hgwork/lino/docs/releases/index.rst:1: WARNING: unknown document: 1.6.10
 /home/luc/hgwork/lino/docs/tickets/10.rst:4: WARNING: unknown document: /releases/2010/1027
 /home/luc/hgwork/lino/docs/tickets/31.rst:23: WARNING: unknown document: /topics/http_auth
 /home/luc/hgwork/lino/docs/tickets/32.rst:4: WARNING: unknown document: /dsbe/index
