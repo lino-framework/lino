@@ -30,7 +30,6 @@ from django.db import models
 from django.db.models import Q
 from django.utils.translation import ugettext_lazy as _
 from django.utils.translation import pgettext_lazy as pgettext
-from django.utils import translation
 #~ from django.utils.translation import string_concat
 from django.contrib.contenttypes.models import ContentType
 from django.utils.encoding import force_unicode
@@ -40,8 +39,6 @@ from django.utils.importlib import import_module
 
 from north import dbutils
 from north.dbutils import dtosl
-from babel.dates import format_datetime, format_date
-from north import to_locale
 
 
 from lino import mixins
@@ -56,25 +53,11 @@ from lino.core import constants
 
 from lino.utils.xmlgen.html import E
 
-from lino.modlib.cal.utils import \
-    DurationUnits, Recurrencies, setkw, dt2kw, \
-    Weekdays, AccessClasses, CalendarAction
-    
-def format_time(t):
-    return t.strftime(settings.SITE.time_format_strftime)
-    
-def when_text(d,t):
-    if d is None: return ''
-    if t is None: return format_date(d,'yyyy MMM dd',locale=to_locale(translation.get_language()))
-    #~ if d.year == datetime.date.today().year:
-        #~ fmt = "%a" + settings.SITE.time_format_strftime
-    #~ else:
-        #~ fmt = "%a %y %b %d" + settings.SITE.time_format_strftime
-    #~ fmt = "%a %Y %b %d " + settings.SITE.time_format_strftime
-    #~ return datetime.datetime.combine(d,t).strftime(fmt)
-    fmt = "yyyy MMM dd (EE) HH:mm"
-    return format_datetime(datetime.datetime.combine(d,t),fmt,locale=to_locale(translation.get_language()))
-
+from lino.modlib.cal.utils import (
+    DurationUnits, Recurrencies, 
+    setkw, dt2kw, 
+    when_text, format_time,
+    Weekdays, AccessClasses, CalendarAction)
     
     
 contacts = dd.resolve_app('contacts')

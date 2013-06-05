@@ -47,6 +47,7 @@ class UtilsTests(LinoTestCase):
     def test_24(self): self.run_simple_doctests('lino/modlib/ledger/utils.py')
     def test_25(self): self.run_simple_doctests('lino/modlib/accounts/utils.py')
     def test_26(self): self.run_simple_doctests('lino/modlib/contacts/utils.py')
+    def test_cal_utils(self): self.run_simple_doctests('lino/modlib/cal/utils.py')
 
 class PackagesTests(LinoTestCase):
     """

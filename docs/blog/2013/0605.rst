@@ -1,0 +1,22 @@
+==================================
+20130605 (Wednesday, 05 June 2013)
+==================================
+
+Added a test case to 
+:ref:`faggio.tested.faggio`
+and some feast days to 
+:mod:`lino_faggio.fixtures.eiche`,
+added some doctests to 
+:mod:`lino.modlib.cal.utils`,
+added a simple doctest
+`tests.UtilsTests.test_cal_utils`
+on that module to Lino test suite...
+all this to reproduce a tiny one-day bug 
+in :func:`lino.modlib.cal.utils.when_text`
+which I discovered yesterday while releasing 
+Lino-Welfare 1.1.7.
+
+:func:`atelier.sphinxconf.configure` now 
+automatically adds the intersphinx entries 
+for projects managed in this atelier.
+

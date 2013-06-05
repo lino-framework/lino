@@ -13,15 +13,22 @@
 ## along with Lino; if not, see <http://www.gnu.org/licenses/>.
 
 """
-This module deserves more documentation.
+Some calendar utilities
 
 """
+
+from __future__ import unicode_literals
+
 import datetime
 
 from dateutil.tz import tzlocal
 
 from django.utils.translation import ugettext_lazy as _
 from django.utils.translation import pgettext_lazy 
+from django.utils import translation
+
+from babel.dates import format_datetime, format_date
+from north import to_locale
 
 from lino.core import actions
 #~ from lino.core.actors import 
@@ -33,7 +40,14 @@ def aware(d):
 
 def dt2kw(dt,name,**d):
     """
-    Store given timestamp `dt` in a field dict. `name` can be 'start' or 'end'. 
+    Store given timestamp `dt` in a field dict. 
+    `name` is the base name of the fields. 
+    Examples:
+    
+    >>> dt = datetime.datetime(2013,12,25,17,15,00)
+    >>> dt2kw(dt,'foo')
+    {u'foo_date': datetime.date(2013, 12, 25), u'foo_time': datetime.time(17, 15)}
+    
     """
     if dt:
         if isinstance(dt,datetime.datetime):
@@ -55,6 +69,43 @@ def dt2kw(dt,name,**d):
 def setkw(obj,**kw):
     for k,v in kw.items():
         setattr(obj,k,v)
+   
+def format_time(t):
+    return t.strftime(settings.SITE.time_format_strftime)
+    
+
+        
+def when_text(d,t=None):
+    """
+    Return a string with a concise representation of the given 
+    date and time combination.
+    Examples:
+    
+    >>> when_text(datetime.date(2013,12,25))
+    u'2013 Dec 25 (Wed)'
+    
+    >>> when_text(datetime.date(2013,12,25),datetime.time(17,15,00))
+    u'2013 Dec 25 (Wed) 17:15'
+    
+    >>> when_text(None)
+    u''
+    
+    """
+    if d is None: return ''
+    fmt = 'yyyy MMM dd (EE)'
+    if t is None: 
+        return format_date(d,fmt,locale=to_locale(translation.get_language()))
+    #~ if d.year == datetime.date.today().year:
+        #~ fmt = "%a" + settings.SITE.time_format_strftime
+    #~ else:
+        #~ fmt = "%a %y %b %d" + settings.SITE.time_format_strftime
+    #~ fmt = "%a %Y %b %d " + settings.SITE.time_format_strftime
+    #~ return datetime.datetime.combine(d,t).strftime(fmt)
+    fmt += " HH:mm"
+    return format_datetime(datetime.datetime.combine(d,t),fmt,locale=to_locale(translation.get_language()))
+
+    
+        
                               
 class CalendarAction(actions.Action):
     """
@@ -92,7 +143,7 @@ class DurationUnit(dd.Choice):
         
         >>> start_date = datetime.date(2011,10,26)
         >>> DurationUnits.months.add_duration(start_date,2)
-        datetime.date(2011,12,26)
+        datetime.date(2011, 12, 26)
         
         See more usage examples in :func:`lino.modlib.cal.tests.cal_test.test01`.
         """
@@ -150,6 +201,9 @@ add('Y', _('years')  ,'years'  )
 
 
 class Recurrencies(dd.ChoiceList):
+    """
+    List of possible choices for a 'recurrency' field.
+    """
     verbose_name = _("Recurrency")
     item_class = DurationUnit
     

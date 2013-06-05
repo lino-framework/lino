@@ -76,6 +76,7 @@ And yet another example (`/blog/2012/0208`)...
 
 """
 
+from __future__ import unicode_literals
 
 import logging
 logger = logging.getLogger(__name__)

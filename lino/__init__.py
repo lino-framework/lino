@@ -36,6 +36,8 @@ from north import Site
 execfile(os.path.join(os.path.dirname(__file__),'setup_info.py'))
 #~ execfile(os.path.join(os.path.dirname(__file__),'..','setup_info.py'))
 __version__ = SETUP_INFO['version'] # 
+intersphinx_url = "http://docs.lino-framework.org"
+
 
 #~ __author__ = "Luc Saffre <luc.saffre@gmx.net>"
 

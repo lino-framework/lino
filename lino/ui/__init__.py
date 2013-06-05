@@ -247,10 +247,14 @@ class Site(lino.Site):
     
     
     See also  
-    http://groups.google.com/group/django-users/browse_thread/thread/c95ba83e8f666ae5?pli=1
-    http://groups.google.com/group/django-users/browse_thread/thread/27f035aa8e566af6
-    https://code.djangoproject.com/ticket/8906
-    https://code.djangoproject.com/wiki/BackwardsIncompatibleChanges#ChangedthewayURLpathsaredetermined
+    
+    - `telling Django to recognize a different application root url
+      <http://groups.google.com/group/django-users/browse_thread/thread/c95ba83e8f666ae5?pli=1>`__
+    - `How to get site's root path in Django 
+      <http://groups.google.com/group/django-users/browse_thread/thread/27f035aa8e566af6>`__
+    - `#8906 django.contrib.auth settings.py URL's aren't portable <https://code.djangoproject.com/ticket/8906>`__
+    - `Changed the way URL paths are determined 
+      <https://code.djangoproject.com/wiki/BackwardsIncompatibleChanges#ChangedthewayURLpathsaredetermined>`__
     """
     
     use_extjs = True
