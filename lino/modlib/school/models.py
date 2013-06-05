@@ -349,6 +349,11 @@ class Course(contacts.ContactRelated,cal.EventGenerator,cal.RecurrenceSet,dd.Pri
     
     state = CourseStates.field(default=CourseStates.draft)
     
+    max_places = models.PositiveIntegerField(
+        _("Places"),
+        help_text=("Maximal number of participants"),
+        blank=True,null=True)
+        
     #~ slot = models.PositiveSmallIntegerField(_("Time slot"),
         #~ blank=True,null=True)
     
@@ -394,7 +399,7 @@ class Course(contacts.ContactRelated,cal.EventGenerator,cal.RecurrenceSet,dd.Pri
         return EnrolmentsByCourse.request(self,param_values=dict(state=EnrolmentStates.confirmed))
         
     @dd.requestfield(_("Enrolments"))
-    def enrolements(self,ar):
+    def enrolments(self,ar):
         return EnrolmentsByCourse.request(self)
         
 dd.update_field(Course,'contact_person',verbose_name = _("Contact person"))
@@ -446,8 +451,8 @@ class CourseDetail(dd.FormLayout):
     #~ start end freq
     main = "general cal.EventsByController"
     general = dd.Panel("""
-    line start_date room teacher #slot state id:8
-    max_occurences end_date every every_unit
+    line teacher start_date start_time room #slot state id:8
+    max_places max_events end_date end_time every every_unit
     monday tuesday wednesday thursday friday saturday sunday
     company contact_person user calendar
     school.EnrolmentsByCourse
@@ -462,7 +467,7 @@ class Courses(dd.Table):
     model = Course
     #~ order_by = ['date','start_time']
     detail_layout = CourseDetail() 
-    column_names = "line teacher room slot *"
+    column_names = "info line teacher room slot *"
     order_by = ['start_date']
     
     parameters = dd.ObservedPeriod(
@@ -539,7 +544,7 @@ class ActiveCourses(Courses):
     
     label = _("Active courses")
     #~ column_names = 'info requested confirmed teacher company room'
-    column_names = 'info enrolements teacher company room'
+    column_names = 'info enrolments max_places teacher company room'
     @classmethod
     def param_defaults(self,ar,**kw):
         kw = super(ActiveCourses,self).param_defaults(ar,**kw)
@@ -554,8 +559,12 @@ class EnrolmentStates(dd.Workflow):
 add = EnrolmentStates.add_item
 add('10', _("Requested"),'requested')
 add('20', _("Confirmed"),'confirmed')
-add('30', _("Certified"),'certified')
-add('40', _("Cancelled"),'cancelled')
+add('30', _("Cancelled"),'cancelled')
+add('40', _("Certified"),'certified')
+#~ add('40', _("Started"),'started')
+#~ add('50', _("Success"),'success')
+#~ add('60', _("Award"),'award')
+#~ add('90', _("Abandoned"),'abandoned')
     
 
 #~ class Enrolment(dd.Model):
@@ -577,6 +586,9 @@ class Enrolment(dd.UserAuthored,dd.Printable):
         #~ if self.state:
         return [self.state.name + bm.template_ext]
         #~ return super(Enrolment,self).get_print_templates(bm,action)
+        
+    def __unicode__(self):
+        return "%s / %s" % (self.course,self.pupil)
 
 class Enrolments(dd.Table):
     #~ debug_permissions=20130531
@@ -586,23 +598,36 @@ class Enrolments(dd.Table):
         author = dd.ForeignKey(settings.SITE.user_model,blank=True,null=True),
         state = EnrolmentStates.field(blank=True,null=True),
         course_state = CourseStates.field(_("Course state"),blank=True,null=True),
+        participants_only = models.BooleanField(_("Participants only"),
+            help_text=_("Hide cancelled enrolments. Ignored if you specify an explicit enrolment state."),
+            default=True),
         )
-    params_layout = """start_date end_date author state course_state"""
+    params_layout = """start_date end_date author state course_state participants_only"""
     order_by = ['request_date']
     column_names = 'request_date course pupil workflow_buttons user *'
     hidden_columns = 'id state'
+    detail_layout = """
+    course pupil user request_date state
+    # courses.EventsByEnrolment
+    # sales.InvoicingsByEnrolment
+    """
         
     @classmethod
     def get_request_queryset(self,ar):
         qs = super(Enrolments,self).get_request_queryset(ar)
+        if isinstance(qs,list): return qs
         if ar.param_values.user is not None:
             qs = qs.filter(user=ar.param_values.user)
             
         if ar.param_values.state:
             qs = qs.filter(state=ar.param_values.state)
+        else:
+            if ar.param_values.participants_only:
+                qs = qs.exclude(state=EnrolmentStates.cancelled)
             
         if ar.param_values.course_state:
             qs = qs.filter(course__state=ar.param_values.course_state)
+            
             
         if ar.param_values.start_date is None or ar.param_values.end_date is None:
             period = None
@@ -620,6 +645,8 @@ class Enrolments(dd.Table):
             
         if ar.param_values.state:
             yield unicode(ar.param_values.state)
+        elif not ar.param_values.participants_only:
+            yield unicode(_("Also ")) + unicode(EnrolmentStates.cancelled.text)
         if ar.param_values.course_state:
             yield unicode(Course._meta.verbose_name) + ' ' + unicode(ar.param_values.course_state)
         if ar.param_values.user:

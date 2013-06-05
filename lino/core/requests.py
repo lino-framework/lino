@@ -378,14 +378,14 @@ class ActionRequest(BaseRequest):
                     #~ pv.update(self.ui.parse_params(self.ah,request))
                     #~ pv.update(self.ah.store.parse_params(request))
                     pv.update(self.actor.params_layout.params_store.parse_params(request))
-                    
-            if param_values is not None:
+            else:
                 for k in param_values.keys(): 
                     if not pv.has_key(k):
                         raise Exception("Invalid key '%s' in param_values of %s request (possible keys are %s)" % (k,actor,pv.keys()))
                 pv.update(param_values)
                 
             self.param_values = AttrDict(**pv)
+            #~ logger.info("20130605 core/requests.py param_values is %r",pv)
             
         #~ print 20130121, __file__, self.bound_action.action, self.bound_action.action.parameters
         
@@ -500,6 +500,7 @@ class ActionRequest(BaseRequest):
             #~ kw.update(param_values=self.ah.store.pv2dict(ui,self.param_values))
             #~ lh = self.actor.params_layout.get_layout_handle(ui)
             kw.update(param_values=self.actor.params_layout.params_store.pv2dict(ui,self.param_values))
+            
         bp = kw.setdefault('base_params',{})
         if self.subst_user is not None:
             #~ bp[ext_requests.URL_PARAM_SUBST_USER] = self.subst_user.username

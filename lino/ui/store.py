@@ -40,9 +40,7 @@ from lino.utils.quantities import parse_decimal
 #~ from lino.utils.xmlgen import etree
 #~ from lino.utils.xmlgen.html import E
 
-#~ from . import ext_requests
-#~ from lino.ui import requests as ext_requests
-from lino.core import constants as ext_requests
+from lino.core import constants 
 
 import lino
 from lino.core import dbtables
@@ -227,19 +225,19 @@ class ComboStoreField(StoreField):
     
     def as_js(self,name):
         s = StoreField.as_js(self,name)
-        #~ s += "," + repr(self.field.name+ext_requests.CHOICES_HIDDEN_SUFFIX)
-        s += ", '%s'" % (name+ext_requests.CHOICES_HIDDEN_SUFFIX)
+        #~ s += "," + repr(self.field.name+constants.CHOICES_HIDDEN_SUFFIX)
+        s += ", '%s'" % (name+constants.CHOICES_HIDDEN_SUFFIX)
         return s 
         
     def column_names(self):
         #~ yield self.options['name']
-        #~ yield self.options['name'] + ext_requests.CHOICES_HIDDEN_SUFFIX
+        #~ yield self.options['name'] + constants.CHOICES_HIDDEN_SUFFIX
         yield self.name
-        yield self.name + ext_requests.CHOICES_HIDDEN_SUFFIX
+        yield self.name + constants.CHOICES_HIDDEN_SUFFIX
         
     def extract_form_data(self,post_data):
         #~ logger.info("20130128 ComboStoreField.extract_form_data %s",self.name)
-        return post_data.get(self.name+ext_requests.CHOICES_HIDDEN_SUFFIX,None)
+        return post_data.get(self.name+constants.CHOICES_HIDDEN_SUFFIX,None)
         
     #~ def obj2list(self,request,obj):
     def value2list(self,ar,v,l,row):
@@ -250,7 +248,7 @@ class ComboStoreField(StoreField):
     def value2dict(self,v,d,row):
         value,text = self.get_value_text(v,row)
         d[self.name] = text
-        d[self.name + ext_requests.CHOICES_HIDDEN_SUFFIX] = value
+        d[self.name + constants.CHOICES_HIDDEN_SUFFIX] = value
         
     def get_value_text(self,v,obj):
         #~ v = self.full_value_from_object(None,obj)
@@ -599,7 +597,7 @@ class BooleanStoreField(StoreField):
         Ext.ensible CalendarPanel sends boolean values as 
         """
         #~ print "20110717 parse_form_value", self.field.name, v, obj
-        return ext_requests.parse_boolean(v)
+        return constants.parse_boolean(v)
 
         
     def format_value(self,ar,v):

@@ -947,6 +947,13 @@ class ApiList(View):
             #~ ar.renderer = ui.ext_renderer
             #~ after_show = ar.get_status(ar.ui)
             after_show = ar.get_status(settings.SITE.ui)
+            
+            sp = request.GET.get(ext_requests.URL_PARAM_SHOW_PARAMS_PANEL,None)
+            if sp is not None: 
+                #~ after_show.update(show_params_panel=sp)
+                after_show.update(show_params_panel=ext_requests.parse_boolean(sp))
+            
+            
             if isinstance(ar.bound_action.action,actions.InsertRow):
                 elem = ar.create_instance()
                 #~ print 20120630

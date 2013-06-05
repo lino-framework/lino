@@ -388,6 +388,7 @@ class Invoice(SalesDocument,ledger.Voucher,mixins.Registrable):
     An invoice usually used for selling something.
     """
     class Meta:
+        abstract = settings.SITE.is_abstract_model('sales.Invoice')
         verbose_name = _("Invoice")
         verbose_name_plural = _("Invoices")
     
@@ -479,9 +480,37 @@ class ProductDocItem(ledger.VoucherItem,vat.QtyVatItemBase):
       
 
 
-class InvoiceItem(ProductDocItem):
-    voucher = models.ForeignKey(Invoice,related_name='items') 
+#~ class ItemsByDocumentListLayout(layouts.ListLayout):
+    #~ title_box = """
+    #~ product
+    #~ title
+    #~ """
+    #~ main = "pos:3 title_box description:20x1 discount unit_price qty total"
 
+class ItemsByDocument(dd.Table):
+    column_names = "seqno:3 product title description:20x1 discount unit_price qty total_incl *"
+    master_key = 'voucher'
+    order_by = ["seqno"]
+
+    
+class InvoiceItem(ProductDocItem):
+    class Meta:
+        abstract = settings.SITE.is_abstract_model('sales.InvoiceItem')
+        
+    voucher = models.ForeignKey('sales.Invoice',related_name='items') 
+
+class ItemsByInvoice(ItemsByDocument):
+    #~ debug_permissions = 20130128
+    model = 'sales.InvoiceItem'
+    auto_fit_column_widths = True
+    column_names = "seqno:3 product title description:20x1 discount unit_price qty total_incl total_base total_vat"
+    hidden_columns = "seqno description total_base total_vat"
+    
+
+class InvoiceItemsByProduct(ItemsByInvoice):
+    master_key = 'product'
+
+    
 
 class InvoiceDetail(dd.FormLayout):
     main = "general more ledger"
@@ -507,7 +536,7 @@ class InvoiceDetail(dd.FormLayout):
     """,label=_("General"))
     
     more = dd.Panel("""
-    id user language project item_vat
+    id user language #project item_vat
     intro
     """,label=_("More"))
     
@@ -521,7 +550,7 @@ class Invoices(SalesDocuments):
     parameters = dict(
         year=ledger.FiscalYears.field(blank=True),
         journal=ledger.JournalRef(blank=True))
-    model = Invoice
+    model = 'sales.Invoice'
     order_by = ["id"]
     column_names = "id date partner total_incl user *" 
     detail_layout = InvoiceDetail()
@@ -561,11 +590,11 @@ class InvoicesByJournal(Invoices):
         return unicode(ar.master_instance)
                   
 
-if settings.SITE.project_model:
-  
-    class InvoicesByProject(Invoices):
-        order_by = ['-date']
-        master_key = 'project' 
+#~ if settings.SITE.project_model:
+  #~ 
+    #~ class InvoicesByProject(Invoices):
+        #~ order_by = ['-date']
+        #~ master_key = 'project' 
     
 class SignAction(actions.Action):
     label = "Sign"
@@ -604,43 +633,8 @@ class DocumentsToSign(Invoices):
 
 
     
-#~ class ItemsByDocumentListLayout(layouts.ListLayout):
-    #~ title_box = """
-    #~ product
-    #~ title
-    #~ """
-    #~ main = "pos:3 title_box description:20x1 discount unit_price qty total"
-
-class ItemsByDocument(dd.Table):
-    column_names = "seqno:3 product title description:20x1 discount unit_price qty total_incl *"
-    master_key = 'voucher'
-    order_by = ["seqno"]
     
 
-class ItemsByInvoice(ItemsByDocument):
-    #~ debug_permissions = 20130128
-    model = InvoiceItem
-    auto_fit_column_widths = True
-    column_names = "seqno:3 product title description:20x1 discount unit_price qty total_incl total_base total_vat"
-    hidden_columns = "seqno description total_base total_vat"
-    
-
-class InvoiceItemsByProduct(ItemsByInvoice):
-    master_key = 'product'
-
-    
-
-
-#~ class DocumentsByPartnerDetail(layouts.PageLayout):
-    #~ label = "Sales"
-    #~ main = """
-            #~ company person
-            #~ DocumentsByPartner
-            #~ """
-#~ contacts.Partners.register_page_layout(DocumentsByPartnerDetail)
-            
-
-    
 
 class InvoicesByPartner(Invoices):
     #~ model = 'sales.Invoice'
@@ -657,8 +651,9 @@ class InvoicesByPartner(Invoices):
 
         
 
-
-ledger.VoucherTypes.add_item(Invoice,InvoicesByJournal)
+@dd.receiver(dd.pre_analyze)
+def add_voucher_type(sender,**kw):
+    ledger.VoucherTypes.add_item('sales.Invoice',InvoicesByJournal)
 
 
 #~ def customize_siteconfig():

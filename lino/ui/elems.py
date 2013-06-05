@@ -915,10 +915,19 @@ class ChoicesFieldElement(ComboFieldElement):
         return kw
         
 class ChoiceListFieldElement(ChoicesFieldElement):
+    """
+    Like :class:`ChoicesFieldElement`, but we use the fact that 
+    choicelists are actors to define them once and refer to them.
+    Special case are choicelist fields with blank=True: these 
+    must dynamicaly add a blank choice to the the choicelist.
+    """
     def get_field_options(self,**kw):
         kw = ComboFieldElement.get_field_options(self,**kw)
         #~ kw.update(store=js_code('Lino.%s.choices' % self.field.choicelist.actor_id))
-        kw.update(store=js_code('Lino.%s' % self.field.choicelist.actor_id))
+        js = 'Lino.%s' % self.field.choicelist.actor_id
+        if self.field.blank:
+            js = "[['','<br>']].concat(%s)" % js
+        kw.update(store=js_code(js))
         return kw
 
 class RemoteComboFieldElement(ComboFieldElement):
@@ -1352,6 +1361,7 @@ class BooleanFieldElement(BooleanMixin,FieldElement):
                 return 
                 #~ dv = dv()
             kw.update(checked=dv)
+            #~ kw.update(value=dv)
             #~ self.remove('value')
 
     def get_field_options(self,**kw):

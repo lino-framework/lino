@@ -608,7 +608,8 @@ class ChoiceListField(models.CharField):
         """
         HACK: Django by default stores a copy of our list 
         when the `choices` of a field are evaluated for the 
-        first time.
+        first time. We don't want that because ChoiceLists may 
+        change afterwards.
         """
         return self.choicelist.choices
         #~ if hasattr(self._choices, 'next'):

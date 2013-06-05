@@ -510,8 +510,8 @@ class EventGenerator(mixins.UserAuthored):
         #~ if until < wanted:
             #~ raise Warning("Series ends before it was started!")
         i = 0
-        max_occurences = rset.max_occurences or settings.SITE.max_auto_events
-        while i < max_occurences:
+        max_events = rset.max_events or settings.SITE.max_auto_events
+        while i < max_events:
             i += 1
             if until is not None and date > until:
                 return wanted
@@ -655,8 +655,8 @@ class RecurrenceSet(Started,Ended):
     saturday  = models.BooleanField(Weekdays.saturday.text)
     sunday    = models.BooleanField(Weekdays.sunday.text)
     
-    max_occurences = models.PositiveIntegerField(
-        _("Number of occurences"),
+    max_events = models.PositiveIntegerField(
+        _("Number of events"),
         blank=True,null=True)
         
         

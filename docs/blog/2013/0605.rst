@@ -2,6 +2,9 @@
 20130605 (Wednesday, 05 June 2013)
 ==================================
 
+Miscellaneous
+-------------
+
 Added a test case to 
 :ref:`faggio.tested.faggio`
 and some feast days to 
@@ -19,4 +22,61 @@ Lino-Welfare 1.1.7.
 :func:`atelier.sphinxconf.configure` now 
 automatically adds the intersphinx entries 
 for projects managed in this atelier.
+(The above link to
+:ref:`faggio.tested.faggio`
+didn't work because :mod:`lino_faggio` 
+wasn't yet in the list of projects because this list was still 
+hard-coded).
 
+
+Weiter mit Lino-Faggio
+----------------------
+
+Die folgenden Punkte sind jetzt geregelt (aber noch nicht veröffentlicht):
+
+- Jeder Kurs hat eine maximale Anzahl Plätze. Neues Feld.
+  Renamed `max_occurences` to `max_events`
+  New field `Course.max_participants`.
+  
+- New parameter `participants_only` to 
+  :class:`lino.modlib.school.models.Enrolments`
+  
+- Felder "beginnt um" und "endet um" fehlen in Detail-Fenster
+
+- In "Schule --> Kurse" - erste Kolonnen sollten nicht anklickbar
+  sein (oder zum Detail führen)
+  
+- Startseite (ActiveCourses) : stornierte Einschreibungen nicht mitrechnen. 
+  Anzahl freier Plätze anzeigen.
+  
+- Button "Druckvorlage bearbeiten"
+
+
+Kosmetik
+--------
+
+Fixed an old bug: when there is a checkbox in a parameter panel whose 
+default value is True (checked), then 
+it was not possible to check it back after having it 
+unchecked.
+
+Cause seems to be a bug in ExtJS 3.3.1 : 
+Checkbox fields don't 
+mark their form as dirty when check is fired.
+Or more precisely: form.Field.isDirty() still returns false in 
+such a case.
+
+Added "force_dirty" parameter to 
+`Lino.MainPanel.add_param_values()`
+to work around this.
+
+While I was there, I also fixed another old problem:
+ChoiceList comboboxes with blank=True didn't display a blank choice.
+Now they do.
+:class:`lino.ui.elems.ChoiceListFieldElement`
+
+And because all good things are three, I fixed a 
+third old bug: the permalink of a window didn't preserve whether the 
+parameter panel was visible or not.
+New variable `URL_PARAM_SHOW_PARAMS_PANEL`
+in :mod:`lino.core.constants`.

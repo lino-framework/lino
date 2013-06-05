@@ -41,6 +41,7 @@ ZERO = Decimal()
 class VoucherType(dd.Choice):
     def __init__(self,model,table_class):
         self.table_class = table_class
+        model = dd.resolve_model(model)
         self.model = model
         value = dd.full_model_name(model)
         text = model._meta.verbose_name + ' (%s.%s)' % (
@@ -59,6 +60,7 @@ class VoucherTypes(dd.ChoiceList):
     @classmethod
     def get_for_model(self,model):
         for o in self.objects():
+            #~ o.model = dd.resolve_model(o.model) # TODO: resolve only once
             if o.model is model:
                 return o
           
@@ -212,7 +214,8 @@ def VoucherNumber(**kw):
 
 
 #~ class Voucher(mixins.Controllable):
-class Voucher(mixins.UserAuthored,mixins.ProjectRelated):
+#~ class Voucher(mixins.UserAuthored,mixins.ProjectRelated):
+class Voucher(mixins.UserAuthored):
     """
     A Voucher is a document that represents a monetary transaction.
     Subclasses must define a field `state`.

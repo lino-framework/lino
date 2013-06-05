@@ -263,18 +263,22 @@ class SimpleBuildMethod(BuildMethod):
         #~ tpl = self.get_template_leaf(action,elem)
         #~ return self.templates_url + '/' + tpl
         
-    def build(self,ar,action,elem):
-        #~ if elem is None:
-            #~ return
+    def get_template_file(self,ar,action,elem):
         from lino.utils.config import find_config_file
-        target = action.before_build(self,elem)
-        if not target:
-            return
         tpl_leaf = self.get_template_leaf(action,elem)
         tplfile = find_config_file(tpl_leaf,self.get_group(elem))
         if not tplfile:
             raise Warning("No file %s / %s" % (self.get_group(elem),tpl_leaf))
         #~ tplfile = os.path.normpath(os.path.join(self.templates_dir,tpl_leaf))
+        return tplfile
+        
+    def build(self,ar,action,elem):
+        #~ if elem is None:
+            #~ return
+        target = action.before_build(self,elem)
+        if not target:
+            return
+        tplfile = self.get_template_file(ar,action,elem)
         return self.simple_build(ar,elem,tplfile,target)
         
     def simple_build(self,ar,elem,tpl,target):
@@ -498,6 +502,9 @@ class BasePrintAction(actions.RowAction):
         #~ self.actor = rpt
         #~ actions.RowAction.__init__(self,*args,**kw)
     
+    def get_print_templates(self,bm,elem):
+        return elem.get_print_templates(bm,self)
+        
     def before_build(self,bm,elem):
         """Return the target filename if a document needs to be built,
         otherwise return ``None``.
@@ -530,9 +537,6 @@ class CachedPrintAction(BasePrintAction):
             return
         return BasePrintAction.before_build(self,bm,elem)
             
-    def get_print_templates(self,bm,elem):
-        return elem.get_print_templates(bm,self)
-        
     def run_from_ui(self,elem,ar,**kw):
         bm = get_build_method(elem)
         if not elem.build_time:
@@ -552,6 +556,27 @@ class CachedPrintAction(BasePrintAction):
             kw.update(open_url=url)
         return ar.success(**kw)
         
+
+
+class EditTemplate(BasePrintAction):
+    sort_index = 51
+    url_action_name = 'edit_tpl'
+    label = _('Edit Print Template')
+    required = dict(user_level='manager')
+    
+    def run_from_ui(self,elem,ar,**kw):
+        bm = get_build_method(elem)
+        tplfile = bm.get_template_file(ar,self,elem)
+        kw.update(message=_("Template file: %s ") % tplfile)
+        kw.update(alert=True)
+        url = "file://" + tplfile
+        if bm.use_webdav and settings.SITE.use_davlink:
+            kw.update(open_davlink_url=ar.request.build_absolute_uri(url))
+        else:
+            kw.update(open_url=url)
+        return ar.success(**kw)
+    
+
       
 class DirectPrintAction(BasePrintAction):
     """
@@ -741,6 +766,7 @@ class Printable(BasePrintable):
     """
   
     do_print = DirectPrintAction() 
+    edit_template = EditTemplate()
     
    
 class CachedPrintable(Duplicable,BasePrintable):

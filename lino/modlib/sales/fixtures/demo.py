@@ -38,8 +38,9 @@ def objects():
     yield sales.InvoicingMode(**babel_values('name',en='Default',de=u"Standard",fr=u"Standard"))
     
     if ledger:
-      
-        vt = ledger.VoucherTypes.get_for_model(sales.Invoice)
+        Invoice = dd.resolve_model('sales.Invoice')
+        InvoiceItem = dd.resolve_model('sales.InvoiceItem')
+        vt = ledger.VoucherTypes.get_for_model(Invoice)
         JOURNALS = Cycler(vt.get_journals())
         PARTNERS = Cycler(Partner.objects.all())
         USERS = Cycler(settings.SITE.user_model.objects.all())
@@ -47,13 +48,13 @@ def objects():
         ITEMCOUNT = Cycler(1,2,3)
         for i in range(20):
             jnl = JOURNALS.pop()
-            invoice = sales.Invoice(journal=jnl,
+            invoice = Invoice(journal=jnl,
               partner=PARTNERS.pop(),
               user=USERS.pop(),
               date=settings.SITE.demo_date(-30+2*i))
             yield invoice
             for j in range(ITEMCOUNT.pop()):
-                item = sales.InvoiceItem(voucher=invoice,
+                item = InvoiceItem(voucher=invoice,
                     #~ account=jnl.get_allowed_accounts()[0],
                     product=PRODUCTS.pop(),
                     )

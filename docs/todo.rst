@@ -6,6 +6,9 @@ Short-term
 
 #.  render `models.NullBooleanField` using a `tri-state checkbox
     <http://www.sencha.com/forum/showthread.php?98241-Tri-state-checkbox-for-ExtJs-3.0>`_
+    (workaround, with maybe even more intuitive usage is to use a 
+    `lino.core.choicelists.YesNo.field` with bnlank=True.
+    
 #.  Negative Zahlen in Rot formatieren können 
     (z.B. Gesamtsumme Zusammenfassung Budget)
 
@@ -447,14 +450,6 @@ Medium-term
     The kernel would instantiate these Module classes and store them as 
     the items of `settings.SITE.modules`.
     
-#.  Ich gebe zu bedenken, dass wir den Begriff "aktiv" dann demnächst in 
-    zwei verschiedenen Bedeutungen verwenden:
-    (a) Checkbox "aktiv" angeschaltet (Feld wird aus TIM importiert) 
-    (b) einer aktiven Integrationsphase zugewiesen
-    Ich könnte z.B. das aus TIM importierte "aktiv" umbenennen 
-    nach "versteckt" (und bei der Migration die Werte umkehren). 
-    Lohnt sich die Arbeit?
-
 #.  Links to :class:`lino.dd.Table` don't work. 
     Must say :class:`lino.core.table.Table`
 

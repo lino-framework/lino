@@ -1699,6 +1699,14 @@ Lino.MainPanel = {
     delete p.fmt;
     //~ if (p.fmt) delete p.fmt;
     Ext.apply(p,this.get_permalink_params());
+    
+    if (this.toggle_params_panel_btn) {
+        p.{{ext_requests.URL_PARAM_SHOW_PARAMS_PANEL}} = this.toggle_params_panel_btn.pressed;
+        //~ if (this.toggle_params_panel_btn.pressed == this.params_panel_hidden) {
+          //~ p.{{ext_requests.URL_PARAM_SHOW_PARAMS_PANEL}} = true;
+        //~ }
+    }
+    
     //~ Lino.insert_subst_user(p);
      //~ p.fmt = 'html';
     //~ console.log('get_permalink',p,this.get_permalink_params());
@@ -1728,7 +1736,7 @@ Lino.MainPanel = {
       var p = {};
       if (this.action_name)
           p.{{ext_requests.URL_PARAM_ACTION_NAME}} = this.action_name;
-      this.add_param_values(p)
+      this.add_param_values(p,false)
       return p;
   }
   ,set_status : function(status) {}
@@ -1741,7 +1749,7 @@ Lino.MainPanel = {
   }
   ,add_params_panel : function (tbar) {
       if (this.params_panel) {
-        tbar = tbar.concat([{ scope:this, 
+        this.toggle_params_panel_btn = new Ext.Button({ scope:this, 
           //~ text: "$_("[parameters]")", // gear
           iconCls: 'x-tbar-parameters',
           tooltip:"{{_('Show or hide the table parameters panel')}}",
@@ -1760,7 +1768,8 @@ Lino.MainPanel = {
             } else this.params_panel.hide();
             this.get_containing_window().doLayout();
           }
-        }]);
+        });
+        tbar = tbar.concat([this.toggle_params_panel_btn]);
         var t = this;
         var refresh = function() {if (!t.setting_param_values) t.refresh();}
         Ext.each(this.params_panel.fields,function(f) {
@@ -1783,7 +1792,7 @@ Lino.MainPanel = {
       }
       return tbar;
   }
-  ,add_param_values : function (p) {
+  ,add_param_values : function (p,force_dirty) {
     if (this.params_panel) {
       /* 
       20120918 add param_values to the request string 
@@ -1792,10 +1801,15 @@ Lino.MainPanel = {
       
       20121023 But IntegClients.params_default has non-empty default values. 
       Users must have the possibility to make them empty.
+      * 20130605 : added force parameter because Checkbox fields don't 
+      * mark their form as dirty when check is fired
+      * 
       */
-      if (this.params_panel.form.isDirty()) {
+      if (force_dirty || this.params_panel.form.isDirty()) {
         p.{{ext_requests.URL_PARAM_PARAM_VALUES}} = this.get_param_values();
+        //~ console.log("20130605 form.isDirty",p);
       }else{
+        //~ console.log("20130605 form not dirty:",this.params_panel.form);
         if (this.status_param_values) 
           p.{{ext_requests.URL_PARAM_PARAM_VALUES}} = Lino.fields2array(
             this.params_panel.fields,this.status_param_values);
@@ -2554,8 +2568,13 @@ Lino.ActionFormPanel = Ext.extend(Lino.ActionFormPanel,{
   }
 });
 
+//~ Lino.add_blank = function(oa) {
+    //~ return [].concat(oa)
+    //~ return 
+    //~ }
+    
 Lino.fields2array = function(fields,values) {
-    //~ console.log('20120116 gonna loop on', fields);
+    //~ console.log('20130605 fields2array gonna loop on', fields,values);
     var pv = Array(fields.length);
     for(var i=0; i < fields.length;i++) {
         var f = fields[i]
@@ -2774,6 +2793,7 @@ Lino.FormPanel = Ext.extend(Lino.FormPanel,{
       st.param_values = this.status_param_values;
       return st;
   },
+  /* FormPanel */
   set_status : function(status,rp){
     this.requesting_panel = Ext.getCmp(rp);
     //~ console.log('20120918 FormPanel.set_status()',status);
@@ -3318,7 +3338,7 @@ Lino.GridStore = Ext.extend(Ext.data.ArrayStore,{
       
     }
       
-    this.grid_panel.add_param_values(options.params);
+    this.grid_panel.add_param_values(options.params,true);
     //~ Lino.insert_subst_user(options.params);
     //~ console.log("20120814 GridStore.load()",options.params,this.baseParams);
     //~ if (FOO > 0) {
@@ -3547,7 +3567,7 @@ Lino.GridPanel = Ext.extend(Lino.GridPanel,{
             var p = this.get_current_grid_config();
             Ext.apply(p,this.get_base_params());
             p.{{ext_requests.URL_PARAM_FORMAT}} = "{{ext_requests.URL_FORMAT_CSV}}";
-            this.add_param_values(p);
+            this.add_param_values(p,true);
             
             window.open('{{settings.SITE.admin_prefix}}/api'+this.ls_url + "?" + Ext.urlEncode(p)) 
           } },
@@ -3568,7 +3588,7 @@ Lino.GridPanel = Ext.extend(Lino.GridPanel,{
             var p = this.get_current_grid_config();
             Ext.apply(p,this.get_base_params());
             //~ since 20121226 p.$ext_requests.URL_PARAM_FORMAT = "$ext_requests.URL_FORMAT_PLAIN";
-            this.add_param_values(p);
+            this.add_param_values(p,true);
             //~ since 20121226 window.open(ADMIN_URL+'/api'+this.ls_url + "?" + Ext.urlEncode(p)) 
             window.open('{{settings.SITE.plain_prefix}}'+this.ls_url + "?" + Ext.urlEncode(p)) 
           } },
@@ -3580,7 +3600,7 @@ Lino.GridPanel = Ext.extend(Lino.GridPanel,{
             var p = this.get_current_grid_config();
             Ext.apply(p,this.get_base_params());
             p.{{ext_requests.URL_PARAM_FORMAT}} = "{{ext_requests.URL_FORMAT_PDF}}";
-            this.add_param_values(p);
+            this.add_param_values(p,true);
             window.open('{{settings.SITE.admin_prefix}}/api'+this.ls_url + "?" + Ext.urlEncode(p)) 
           } }
       ]);
@@ -3751,12 +3771,18 @@ Lino.GridPanel = Ext.extend(Lino.GridPanel,{
   Lino.GridPanel.set_status() 
   */
   set_status : function(status){
-    //~ console.log("20120918 GridPanel.set_status",status);
+    //~ console.log("20130605 GridPanel.set_status",status);
     this.clear_base_params();
     if (status == undefined) status = {};
     this.set_param_values(status.param_values);
     if (status.base_params) { 
       this.set_base_params(status.base_params);
+    }
+    if (status.show_params_panel != undefined) {
+        if (this.toggle_params_panel_btn) {
+            //~ this.toggle_params_panel_btn.toggle(status.show_params_panel=='true');
+            this.toggle_params_panel_btn.toggle(status.show_params_panel);
+        }
     }
     if (!this.hide_top_toolbar) {
       //~ console.log("20120213 GridPanel.getTopToolbar().changePage",

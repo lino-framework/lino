@@ -330,9 +330,9 @@ class Registrable(model.Model):
         """
         Only invoices in an editable state may be edited.
         """
-        if isinstance(ba.action,actions.DeleteSelected):
-            logger.info("20130128 Registrable.get_row_permission %s %s %s %s",
-                self,state,ba.action,ar.bound_action.action.readonly)
+        #~ if isinstance(ba.action,actions.DeleteSelected):
+            #~ logger.info("20130128 Registrable.get_row_permission %s %s %s %s",
+                #~ self,state,ba.action,ar.bound_action.action.readonly)
         if state and not state.editable:
             if not ar.bound_action.action.readonly:
                 return False
