@@ -59,6 +59,7 @@ class Chooser(FieldChooser):
     simple_values = False
     instance_values = True
     force_selection = True
+    choice_display_method = None # not yet used. 
     #~ quick_search_fields = None
     #~ force_selection = True
     #~ on_quick_insert = None
@@ -70,7 +71,7 @@ class Chooser(FieldChooser):
         #~ self.field = model._meta.get_field(fldname)
         self.meth = meth
         if not isinstance(field,models.ForeignKey):
-            self.simple_values = getattr(meth,'simple_values',False)        
+            self.simple_values = getattr(meth,'simple_values',False)
             self.instance_values = getattr(meth,'instance_values',False)
             self.force_selection = getattr(meth,'force_selection',self.force_selection)
         #~ self.context_params = meth.func_code.co_varnames[1:meth.func_code.co_argcount]
@@ -105,6 +106,11 @@ class Chooser(FieldChooser):
         #~ if get_class_attr(model,"create_%s_choice" % field.name):
         if hasattr(model,"create_%s_choice" % field.name):
             self.can_create_choice = True
+            
+        #~ if hasattr(model,"get_%s_display" % field.name):
+        m = getattr(model,"%s_choice_display" % field.name,None)
+        if m is not None:
+            self.choice_display_method = m
             
     def __str__(self):
         return "Chooser(%s.%s,%s)" % (

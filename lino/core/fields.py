@@ -195,6 +195,8 @@ class FakeField(object):
     help_text = None
     preferred_width = 30
     preferred_height = 3
+    max_digits = None
+    decimal_places = None
     
     def is_enabled(self,lh):
         """
@@ -226,6 +228,8 @@ class RemoteField(FakeField):
         self.rel = self.field.rel
         self.verbose_name = fld.verbose_name
         self.max_length = getattr(fld,'max_length',None)
+        self.max_digits = getattr(fld,'max_digits',None)
+        self.decimal_places = getattr(fld,'decimal_places',None)
         #~ print 20120424, self.name
         #~ settings.SITE.register_virtual_field(self)
         
@@ -931,8 +935,9 @@ def get_data_elem(model,name):
                     #~ print '20130422 %s --> %r', fld.name,obj
                     return obj
                 except Exception,e:
-                    logger.exception(e)
-                    return str(e)
+                    if False: # only for debugging
+                        logger.exception(e)
+                        return str(e) 
                     return None
             return RemoteField(func,name,fld)
     

@@ -32,7 +32,8 @@ class SiteMixin(object):
         """
         Return the reference of the general account 
         to be used to book the product movement of 
-        the trade type and product.
+        the specified trade type and product.
+        
         The default implementation works with the accounts created by
         :mod:`lino.modlib.accounts.fixtures.mini`.
         """

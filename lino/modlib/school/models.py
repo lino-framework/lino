@@ -31,6 +31,7 @@ from django.conf import settings
 from django.core.exceptions import ValidationError
 from django.utils.safestring import mark_safe
 from django.utils.translation import ugettext_lazy as _
+from django.utils.translation import pgettext_lazy as pgettext
 from django.utils.translation import string_concat
 from django.utils.encoding import force_unicode 
 from django.utils.functional import lazy
@@ -81,17 +82,28 @@ from north.dbutils import day_and_month
 #~ if settings.SITE.user_model:
     #~ User = dd.resolve_model(settings.SITE.user_model,strict=True)
 
-
+#~ try:
 
 users = dd.resolve_app('users')
 cal = dd.resolve_app('cal')
 contacts = dd.resolve_app('contacts')
 #~ Company = dd.resolve_model('contacts.Company',strict=True)
 #~ print '20130219 lino.modlib.school 2'  
+
+"""
+Here we must use `resolve_model` with strict=True
+because we want the concrete model 
+and we don't know whether it is overridden
+by this application.
+"""
 Person = dd.resolve_model('contacts.Person',strict=True)
+#~ from lino.modlib.contacts.models import Person
 #~ print '20130219 lino.modlib.school 3'  
 
-
+#~ except ImportError as e:
+    #~ import traceback
+    #~ traceback.print_exc(e)
+    #~ raise Exception("20130607")
 
 #~ class PresenceStatus(dd.BabelNamed):
     #~ class Meta:
@@ -347,10 +359,12 @@ class Course(contacts.ContactRelated,cal.EventGenerator,cal.RecurrenceSet,dd.Pri
     room = dd.ForeignKey('cal.Room',blank=True,null=True)
     slot = models.ForeignKey(Slot,blank=True,null=True)
     
+    price = dd.PriceField(verbose_name=_("Price"),blank=True,null=True)
+    
     state = CourseStates.field(default=CourseStates.draft)
     
     max_places = models.PositiveIntegerField(
-        _("Places"),
+        pgettext("in a course","Places"),
         help_text=("Maximal number of participants"),
         blank=True,null=True)
         
@@ -402,6 +416,9 @@ class Course(contacts.ContactRelated,cal.EventGenerator,cal.RecurrenceSet,dd.Pri
     def enrolments(self,ar):
         return EnrolmentsByCourse.request(self)
         
+"""
+customize fields to override their inherited default verbose_names
+"""
 dd.update_field(Course,'contact_person',verbose_name = _("Contact person"))
 dd.update_field(Course,'company',verbose_name = _("Organizer"))
           
@@ -452,9 +469,9 @@ class CourseDetail(dd.FormLayout):
     main = "general cal.EventsByController"
     general = dd.Panel("""
     line teacher start_date start_time room #slot state id:8
-    max_places max_events end_date end_time every every_unit
+    max_places max_events end_date end_time every_unit every 
     monday tuesday wednesday thursday friday saturday sunday
-    company contact_person user calendar
+    company contact_person user calendar price
     school.EnrolmentsByCourse
     """,label=_("General"))
     
@@ -544,7 +561,7 @@ class ActiveCourses(Courses):
     
     label = _("Active courses")
     #~ column_names = 'info requested confirmed teacher company room'
-    column_names = 'info enrolments max_places teacher company room'
+    column_names = 'info enrolments price max_places teacher company room'
     @classmethod
     def param_defaults(self,ar,**kw):
         kw = super(ActiveCourses,self).param_defaults(ar,**kw)
@@ -609,7 +626,7 @@ class Enrolments(dd.Table):
     detail_layout = """
     course pupil user request_date state
     # courses.EventsByEnrolment
-    # sales.InvoicingsByEnrolment
+    sales.InvoicingsByEnrolment
     """
         
     @classmethod

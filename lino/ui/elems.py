@@ -2108,7 +2108,10 @@ class GridElement(Container):
             else:
                 nv = col.value2num(v)
                 if nv != 0:
-                    sums[i] += nv
+                    try:
+                        sums[i] += nv
+                    except TypeError as e:
+                        raise Exception("Cannot compute %r + %r" % (sums[i],nv))
                     has_numeric_value = True
                 td = col.value2html(ar,v,**cellattrs)
             col.apply_cell_format(td)

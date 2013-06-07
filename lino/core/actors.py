@@ -393,6 +393,17 @@ class Actor(actions.Parametrizable):
     Otherwise it will be set to `False` if the Actor 
     is a Table and has a `get_data_rows` method.
     
+    Note that this attribute is not inherited to subclasses.
+    (TODO: explain why... because at least for 
+    `lino_faggio.models.InvoicingsByEnrolment` it is disturbing 
+    to not inherit it.    
+    Has to do with :class:`DistByBudget <lino_welfare.modellib.debts.models.DistByBudget>` 
+    which defines its own `get_data_rows` but inherits from 
+    :class:`EntriesByBudget
+    <lino_welfare.modellib.debts.models.EntriesByBudget>` 
+    which has no `get_data_rows`.)
+    
+    
     The :class:`lino.models.Changes` table is an example where this is being used: 
     nobody should ever edit something in the table of Changes. 
     The user interface uses this to generate optimized JS code for this case.
@@ -1274,3 +1285,15 @@ class Actor(actions.Parametrizable):
         Don't worry if you don't understand. 
         """
         return []
+
+
+    @classmethod
+    def get_choices_text(self,obj,request,field):
+        """
+        Return the text to be displayed in a combo box 
+        for the field `field` of this actor to represent 
+        the choice `obj`.
+        Override this if you want a customized representation.
+        For example :class:`lino_faggio.models.InvoiceItems`
+        """
+        return obj.get_choices_text(request,self,field)

@@ -534,35 +534,39 @@ if settings.SITE.user_model and settings.SITE.use_tinymce:
 
 
 
-def choices_for_field(request,rpt,field):
+def choices_for_field(request,actor,field):
+    """
+    Return the choices for the given field and the given web request 
+    (whose requesting actor has already been identified and is given 
+    as `actor`).
+    """
     #~ logger.info("20120202 %r",field)
     chooser = choosers.get_for_field(field)
     if chooser:
         #~ logger.info('20120710 choices_view() : has chooser')
-        qs = chooser.get_request_choices(request,rpt)
-        #~ qs = list(chooser.get_request_choices(ar,rpt))
+        qs = chooser.get_request_choices(request,actor)
+        #~ qs = list(chooser.get_request_choices(ar,actor))
         #~ logger.info("20120213 %s",qs)
         #~ if qs is None:
             #~ qs = []
         assert isiterable(qs), \
               "%s.%s_choices() returned %r which is not iterable." % (
-              rpt.model,field.name,qs)
+              actor.model,field.name,qs)
         if chooser.simple_values:
             def row2dict(obj,d):
                 d[ext_requests.CHOICES_TEXT_FIELD] = unicode(obj)
-                #~ 20130117 : 'int' object has no attribute 'get_choices_text'
                 d[ext_requests.CHOICES_VALUE_FIELD] = obj
                 return d
         elif chooser.instance_values:
             # same code as for ForeignKey
             def row2dict(obj,d):
-                d[ext_requests.CHOICES_TEXT_FIELD] = obj.get_choices_text(request,rpt,field)
+                #~ d[ext_requests.CHOICES_TEXT_FIELD] = obj.get_choices_text(request,actor,field)
+                d[ext_requests.CHOICES_TEXT_FIELD] = actor.get_choices_text(obj,request,field)
                 d[ext_requests.CHOICES_VALUE_FIELD] = obj.pk
                 return d
-        else:
+        else: # values are (value,text) tuples
             def row2dict(obj,d):
                 d[ext_requests.CHOICES_TEXT_FIELD] = unicode(obj[1])
-                #~ d[ext_requests.CHOICES_TEXT_FIELD] = obj[1].get_choices_text(request,rpt,field)
                 d[ext_requests.CHOICES_VALUE_FIELD] = obj[0]
                 return d
     elif field.choices:
@@ -572,7 +576,8 @@ def choices_for_field(request,rpt,field):
                 d[ext_requests.CHOICES_TEXT_FIELD] = unicode(obj[1])
                 d[ext_requests.CHOICES_VALUE_FIELD] = obj[0]
             else:
-                d[ext_requests.CHOICES_TEXT_FIELD] = obj.get_choices_text(request,rpt,field)
+                #~ d[ext_requests.CHOICES_TEXT_FIELD] = obj.get_choices_text(request,actor,field)
+                d[ext_requests.CHOICES_TEXT_FIELD] = actor.get_choices_text(obj,request,field)
                 d[ext_requests.CHOICES_VALUE_FIELD] = unicode(obj)
             return d
         
@@ -582,7 +587,8 @@ def choices_for_field(request,rpt,field):
         qs = t.request(request=request).data_iterator
         #~ logger.info('20120710 choices_view(FK) %s --> %s',t,qs)
         def row2dict(obj,d):
-            d[ext_requests.CHOICES_TEXT_FIELD] = obj.get_choices_text(request,rpt,field)
+            #~ d[ext_requests.CHOICES_TEXT_FIELD] = obj.get_choices_text(request,actor,field)
+            d[ext_requests.CHOICES_TEXT_FIELD] = actor.get_choices_text(obj,request,field)
             d[ext_requests.CHOICES_VALUE_FIELD] = obj.pk 
             return d
     else:

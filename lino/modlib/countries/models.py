@@ -201,7 +201,12 @@ class City(dd.BabelNamed):
             return [(i,t) for i,t in CityTypes.choices if i in allowed]
         return CityTypes.choices
         
-    def get_choices_text(self,request,rpt,field):
+    def get_choices_text(self,request,actor,field):
+        """
+        Extends the default behaviour (which would simply diplay this 
+        city in the current language) by also adding the name in other 
+        languages.
+        """
         names = [self.name]
         for lng in settings.SITE.BABEL_LANGS:
             #~ n = getattr(self,'name_'+lng)

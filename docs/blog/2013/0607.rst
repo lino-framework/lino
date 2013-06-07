@@ -26,6 +26,10 @@ Which version is he using?
 Going to set up a test environment for Apache HTTP authentication 
 since the problem might occur only then.
 
+The problem must be somewhere in his Apache configuration
+because the error message is issued by Apache.  
+Apache doesn't even forward that request to the WSGI process. 
+
 Fixed a bug which is probably unrelated:
 :meth:`ExtRenderer <lino.extjs.ExtRenderer.html_page_lines>`
 generated a line which requested a file 
@@ -33,5 +37,71 @@ generated a line which requested a file
 which always lead to a 404 error, but that did no harm since 
 it was useless.
 
-Checkin and ask Flavio to try with this version.
+Checkin.
+
+Oops, the above bug was even more subtile: 
+the link wasn't useless at all 
+(when 
+:attr:`use_extensible <lino.ui.Site.use_extensible>` 
+is set, which just happenes to not be the case in Lino Così), 
+and the bug was that Lino 
+didn't take 
+into account here
+:attr:`extensible_base_url <lino.ui.Site.extensible_base_url>`
+setting.
+
+
+Lino-Faggio
+-----------
+
+Continued with :mod:`lino_faggio`.
+We are facing a new challenge for Lino:
+how to integrate the modlib sales invoicing 
+to a meeting manager application.
+And the first steps were very promising.
+But let me get it up and running before talking
+more about it...
+
+One challenge was: when selecting an enrolment in an 
+invoice item, we want to
+(1) show only the enrolements of the invoice receiver 
+(this was easily done using a chooser)
+(2) format the choices to be displayed in the combo box 
+to not repeat the participant's name.
+That was more difficult because it is the first use case of 
+such a situation.
+
+Solution:
+Added a new customization hook 
+for displaying a choice's text:
+:meth:`get_choices_text <lino.core.actors.Actor.get_choices_text>`
+on the **actor**.
+Unlike a 
+:meth:`get_choices_text <lino.core.model.Model.get_choices_text>`
+method on a **model**, 
+this time we want to customize only forthe calling actor.
+
+Note that I prefer this paradigm over another magic 
+method `FOO_choice_display` on the model because:
+
+- magic model methods aren't a good practice
+- The :meth:`get_choices_text <lino.core.actors.Actor.get_choices_text>`
+  trick works even when there is no chooser at all.
+  
+Cool!
+
+One detail remains to be done though (because it is not new and i 
+consider it secondary): 
+when the invoice receiver changes, then the combobox should reload 
+its store.
+
+
+Overriding modlib models
+-------------------------
+
+I reached a next level of understanding how Lino should provide 
+a possibility to override modlib models.
+The 
+
+
 

@@ -445,17 +445,18 @@ class ExtRenderer(HtmlRenderer):
             yield stylesheet(site.build_media_url("lino/AwesomeUploader/AwesomeUploader.css"))
             yield stylesheet(site.build_media_url("lino/AwesomeUploader/AwesomeUploader Progress Bar.css"))
          
-        if site.use_extensible:
-            if settings.DEBUG:
-                yield javascript(site.build_extjs_url('adapter/ext/ext-base-debug.js'))
-                yield javascript(site.build_extjs_url('ext-all-debug.js'))
-                #~ if site.use_extensible:
-                    #~ yield javascript(site.build_media_url('extensible/extensible-all-debug.js'))
-            else:
-                yield javascript(site.build_extjs_url('adapter/ext/ext-base.js'))
-                yield javascript(site.build_extjs_url('ext-all.js'))
-                #~ if site.use_extensible:
-                    #~ yield javascript(site.build_media_url('extensible/extensible-all.js'))
+        if settings.DEBUG:
+            yield javascript(site.build_extjs_url('adapter/ext/ext-base-debug.js'))
+            yield javascript(site.build_extjs_url('ext-all-debug.js'))
+            if site.use_extensible:
+                #~ yield javascript(site.build_media_url('extensible/extensible-all-debug.js'))
+                yield javascript(site.build_extensible_url('extensible-all-debug.js'))
+        else:
+            yield javascript(site.build_extjs_url('adapter/ext/ext-base.js'))
+            yield javascript(site.build_extjs_url('ext-all.js'))
+            if site.use_extensible:
+                #~ yield javascript(site.build_media_url('extensible/extensible-all.js'))
+                yield javascript(site.build_extensible_url('extensible-all.js'))
                 
         if translation.get_language() != 'en':
             yield javascript(site.build_extjs_url('src/locale/ext-lang-'+translation.get_language()+'.js'))
