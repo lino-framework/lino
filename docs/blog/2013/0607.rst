@@ -1,0 +1,31 @@
+===============================
+20130607 (Friday, 07 June 2013)
+===============================
+
+
+"api/ui/Home/-99998 was not found on this server"
+-------------------------------------------------
+
+Trying to reproduce a problem report by Flavio:
+
+    Following the recommendations according to Lino web site, I set up a deployment environment with Apache and HTTP authentication, first for demo application Lino Cosí. The application loads the Javascript files, accesses the database and returns back the full name of the logged-in user, but got the following error after the authentication:
+
+    | "Not Found
+    | The requested URL / api/ui/Home/-99998 was not found on this server."
+
+    Which happens in any attempt to access the information in the database such as in /api/contacts/Persons.
+
+
+At first sight I could not reproduce this problem with the latest 
+development version.
+Which version is he using?
+
+- Fixed a bug which is probably unrelated:
+  :meth:`ExtRenderer <lino.extjs.ExtRenderer.html_page_lines>`
+  generated a line which requested a file 
+  "/media/extensible/extensible-all-debug.js"
+  which always lead to a 404 error, but that did no harm since 
+  it was useless.
+
+Checkin and ask Flavio to try with this version.
+
