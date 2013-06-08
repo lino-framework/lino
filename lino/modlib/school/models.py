@@ -359,7 +359,7 @@ class Course(contacts.ContactRelated,cal.EventGenerator,cal.RecurrenceSet,dd.Pri
     room = dd.ForeignKey('cal.Room',blank=True,null=True)
     slot = models.ForeignKey(Slot,blank=True,null=True)
     
-    price = dd.PriceField(verbose_name=_("Price"),blank=True,null=True)
+    #~ price = dd.PriceField(verbose_name=_("Price"),blank=True,null=True)
     
     state = CourseStates.field(default=CourseStates.draft)
     
@@ -471,7 +471,7 @@ class CourseDetail(dd.FormLayout):
     line teacher start_date start_time room #slot state id:8
     max_places max_events end_date end_time every_unit every 
     monday tuesday wednesday thursday friday saturday sunday
-    company contact_person user calendar price
+    company contact_person user calendar 
     school.EnrolmentsByCourse
     """,label=_("General"))
     
@@ -561,7 +561,7 @@ class ActiveCourses(Courses):
     
     label = _("Active courses")
     #~ column_names = 'info requested confirmed teacher company room'
-    column_names = 'info enrolments price max_places teacher company room'
+    column_names = 'info enrolments #price max_places teacher company room'
     @classmethod
     def param_defaults(self,ar,**kw):
         kw = super(ActiveCourses,self).param_defaults(ar,**kw)

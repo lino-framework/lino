@@ -1,1 +1,8 @@
+/home/luc/hgwork/lino/docs/api/lino.modlib.products.fixtures.rst:7: WARNING: autodoc: failed to import module u'lino.modlib.products.fixtures.demo'; the following exception was raised:
+Traceback (most recent call last):
+  File "/home/luc/pythonenvs/py27/local/lib/python2.7/site-packages/sphinx/ext/autodoc.py", line 326, in import_object
+    __import__(self.modname)
+ImportError: No module named demo
 /home/luc/hgwork/lino/docs/tested/test_cosi_demo.rst:: WARNING: document isn't included in any toctree
+/home/luc/hgwork/lino/docs/changes.rst:16: WARNING: undefined label: welfare.debts.printliabilitiesbybudget (if the link has no caption the label must precede a section header)
+/home/luc/hgwork/lino/docs/releases/index.rst:1: WARNING: unknown document: 1.6.10

@@ -100,8 +100,21 @@ Overriding modlib models
 -------------------------
 
 I reached a next level of understanding how Lino should provide 
-a possibility to override modlib models.
-The 
+a possibility to override modlib models:
+Lino-Faggio overrides a whole modlib module by defining 
+:mod:`lino_faggio.contacts`.
+
+TODO: explain why this is necessary. 
+Summary: The :mod:`lino.modlib.school` 
+requires the concrete class of `contacts.Person`, and because 
+:mod:`lino_faggio.models` (who defines this class) 
+cannot then also *use* the schools module.
+So I had to split :mod:`lino_faggio.models`: one who implements the 
+concrete Person model and another who uses the school module.
+And because I didn't want to create a new `app_name`, 
+I tried to override the :mod:`lino.modlib.contacts` module.
+
+
 
 
 
