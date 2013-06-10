@@ -104,7 +104,7 @@ a possibility to override modlib models:
 Lino-Faggio overrides a whole modlib module by defining 
 :mod:`lino_faggio.contacts`.
 
-TODO: explain why this is necessary. 
+Why is this necessary?
 Summary: The :mod:`lino.modlib.school` 
 requires the concrete class of `contacts.Person`, and because 
 :mod:`lino_faggio.models` (who defines this class) 

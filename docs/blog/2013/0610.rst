@@ -20,3 +20,31 @@ now compatible with Django 1.5.
 :menuselection:`Schuldnerberatung --> Budget-Vorlage` auch für Kerstin
 ----------------------------------------------------------------------
 
+Another seemingly innocent user request took more than 3 hours to 
+solve. 
+
+The subtle thing is: Kerstin is not manager. She can see
+:ref:`welfare.debts.MyBudgets`
+but not 
+:ref:`welfare.debts.Budgets`.
+Now they want her to see the :menuselection:`Schuldnerberatung --> 
+Budget-Vorlage` command.
+
+Here is the code that defines this command::
+
+    def setup_config_menu(site,ui,profile,m):
+        m  = m.add_menu("debts",MODULE_LABEL)
+        mb = site.site_config.master_budget
+        if mb is not None:
+            fld = site.modules.ui.SiteConfig._meta.get_field('master_budget')
+            m.add_instance_action(mb,label=unicode(fld.verbose_name),
+                action=MyBudgets.detail_action)
+
+TODO: find a more elegant solution.
+
+End sprint before release
+-------------------------
+
+Incremented version counters:
+- Lino-Welfare to 1.1.8 
+- Lino 1.6.11
