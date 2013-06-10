@@ -299,9 +299,10 @@ class ExtRenderer(HtmlRenderer):
         #~ return None
 
     def instance_handler(self,ar,obj):
+        #~ if True: # obj.__class__.__name__ == 'Budget':
+            #~ raise Exception('20130610, %s' % obj.__class__.__name__)
         a = getattr(obj,'_detail_action',None)
         if a is None:
-            #~ a = obj.get_default_table(ar).get_url_action('detail_action')
             a = obj.get_default_table().detail_action
             #~ a = obj.__class__._lino_default_table.get_url_action('detail_action')
         if a is not None:
@@ -815,7 +816,7 @@ tinymce.init({
             #~ if mtime > settings.SITE.mtime:
             if mtime > settings.SITE.ui.mtime:
                 #~ if not user.modified or user.modified < datetime.datetime.fromtimestamp(mtime):
-                #~ logger.info("20130204 %s is up to date.",fn)
+                logger.info("20130204 %s is up to date.",fn)
                 return 0
                     
         logger.info("Building %s ...", fn)

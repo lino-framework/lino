@@ -50,8 +50,9 @@ class MenuItem:
     name = None
     parent = None
     
-    def __init__(self,action,
+    def __init__(self,
                  name=None,label=None,doc=None,enabled=True,
+                 action=None,
                  #~ can_view=None,
                  hotkey=None,
                  params={},
@@ -60,13 +61,16 @@ class MenuItem:
                  instance=None,
                  javascript=None,
                  href=None):
-        #~ self.parent = parent
         if action is None:
-            if instance is not None:
-                action = instance.__class__.get_default_table().default_action
-                #~ logger.info("20130512 %s",instance.__class__.get_default_table())
+            pass
+            #~ if instance is not None:
+                #~ action = instance.get_default_table().default_action
         elif not isinstance(action,actors.BoundAction):
-            raise Exception("20121003 not a BoundAction: %r")
+            raise Exception("20121003 not a BoundAction: %r" % action)
+        if instance is not None:
+            if action is None:
+                raise Exception("20130610")
+            instance._detail_action = action
         self.bound_action = action
         self.params = params
         self.href = href
@@ -201,7 +205,8 @@ def create_item(spec,action=None,help_text=None,**kw):
     if isinstance(spec,actors.BoundAction):
         a = spec
     elif isinstance(spec,type) and issubclass(spec,models.Model):
-        spec = spec._lino_default_table
+        spec = spec.get_default_table()
+        #~ spec = spec._lino_default_table
         assert spec is not None
         #~ if action:
             #~ a = spec._lino_default_table.get_url_action(action)
@@ -232,7 +237,8 @@ def create_item(spec,action=None,help_text=None,**kw):
             help_text = a.action.help_text
     if help_text is not None:
         kw.update(help_text=help_text)
-    return MenuItem(a,**kw)
+    kw.update(action=a)
+    return MenuItem(**kw)
     
 
 
@@ -269,7 +275,7 @@ class Menu(MenuItem):
     
     #~ template_to_response = 'lino/menu.html'
     def __init__(self,user_profile,name,label=None,parent=None,**kw):
-        MenuItem.__init__(self,None,name,label,**kw)
+        MenuItem.__init__(self,name,label,**kw)
         self.parent = parent
         self.user_profile = user_profile
         self.clear()
@@ -329,13 +335,18 @@ class Menu(MenuItem):
         Used e.g. for the SiteConfig object.
         """
         kw.update(instance=obj)
-        return self.add_item_instance(MenuItem(None,**kw))
+        da = kw.get('action',None)
+        if da is None: 
+            da = obj.get_default_table().detail_action
+            kw.update(action=da)
+        #~ obj._detail_action = da
+        return self.add_item_instance(MenuItem(**kw))
     
     def add_item(self,name,label,**kw):
-        return self.add_item_instance(MenuItem(None,name,label,**kw))
+        return self.add_item_instance(MenuItem(name,label,**kw))
         
     def add_separator(self,label,**kw):
-        return self.add_item_instance(MenuItem(None,None,label,**kw))
+        return self.add_item_instance(MenuItem(None,label,**kw))
         
     def add_menu(self,name,label,**kw):
         return self.add_item_instance(Menu(self.user_profile,name,label,self,**kw))
@@ -346,7 +357,7 @@ class Menu(MenuItem):
     #~ def add_url_button(self,url,label):
     def add_url_button(self,url,**kw):
         kw.update(href=url)
-        return self.add_item_instance(MenuItem(None,**kw))
+        return self.add_item_instance(MenuItem(**kw))
         #~ self.items.append(dict(
           #~ xtype='button',text=label,
           #~ handler=js_code("function() {window.location='%s';}" % url)))

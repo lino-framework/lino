@@ -128,6 +128,7 @@ class ExtUI(base.UI):
         
         from lino.utils import codetime
         self.mtime = codetime()
+        #~ logger.info("20130610 codetime is %s", datetime.datetime.fromtimestamp(self.mtime))
         
         #~ raise Exception("20120614")
         #~ self.pdf_renderer = PdfRenderer(self) # 20120624

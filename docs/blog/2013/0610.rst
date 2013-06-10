@@ -1,0 +1,22 @@
+===============================
+20130610 (Monday, 10 June 2013)
+===============================
+
+`daemoncommand.py` and Django 1.5
+---------------------------------
+
+An innocent typo bug in watch_tim uncovered a deeper issue:
+The `BaseCommand` in Django 1.5
+now uses variables and options named 
+"stdin", "stdout" and "stderr",
+in a way which clashes with their 
+use by Sean Creeley's code. 
+
+Adapted 
+:mod:`lino.utils.daemoncommand` so that it is 
+now compatible with Django 1.5.
+
+
+:menuselection:`Schuldnerberatung --> Budget-Vorlage` auch für Kerstin
+----------------------------------------------------------------------
+

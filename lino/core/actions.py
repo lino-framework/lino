@@ -462,10 +462,9 @@ class Action(Parametrizable,Permittable):
       
     def __get__(self, instance, owner):
         """
-        Getting an Action instance of an *Actor* (which is a class) 
-        will return the 
+        When a model has an action "foo", then getting an attribute
+        "foo" of a model instance will return an :class:`InstanceAction`.
         """
-        #~ print "__get__ %r / %r / %r" % (self, instance, owner)
         if instance is None:
             return self
         return InstanceAction(self,instance.get_default_table(),instance,owner)

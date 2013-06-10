@@ -42,6 +42,15 @@ Modifications by Luc Saffre :
 - now works with versions of `daemon` who use "pidfile" instead 
   of "pidlockfile".
   
+- 20130610 Changes  needed for Django 1.5:
+  No longer overrides `handle` but `execute`. 
+  Converts any options 'stdout' and 'stderr' if given because Django 
+  expects them to be file-like objects (not names of files).
+  Removed the stderr, stdout and stdin class attributes because 
+  they interferred with Django.
+
+  
+  
 
 =============
 DaemonCommand
@@ -112,6 +121,8 @@ def get_logger_files(loggers):
     return l
 
 try:
+    #~ raise ImportError('20130610')
+
     import daemon # pip install python-daemon
     # in older versions it's called pidlockfile, later just pidfile
     try:
@@ -120,16 +131,13 @@ try:
         from daemon import pidfile as pidlockfile
         
 except ImportError:
-  
-  class DaemonCommand(BaseCommand):
-    """On systems that don't support daemons, we just emulate.
-    """
-    def handle(self, *args, **options):
-        self.handle_daemon(*args, **options)
 
-else:
+  daemon = None
   
-  class DaemonCommand(BaseCommand):
+  """On systems that don't support daemons, we just emulate.
+  """
+
+class DaemonCommand(BaseCommand):
     
     """
     If you have an existing Django management command, 
@@ -177,9 +185,9 @@ else:
     umask = 0
     detach_process = True
     prevent_core = True
-    stdin = None
-    stdout = None
-    stderr = None
+    # stdin = None
+    # stdout = None
+    # stderr = None
     pidfile = None
     uid = None
     gid = None    
@@ -198,9 +206,9 @@ else:
             umask = self.umask,
             detach_process = self.detach_process,
             prevent_core = self.prevent_core,
-            stdin = self.stdin,
-            stdout = self.stdout,
-            stderr = self.stderr,
+            # stdin = self.stdin,
+            # stdout = self.stdout,
+            # stderr = self.stderr,
             pidfile = self.pidfile,
             uid = self.uid,
             gid = self.gid)
@@ -217,7 +225,7 @@ else:
         #~ print name, ' ', value
         #~ return value
     
-    def handle(self, *args, **options):
+    def execute(self, *args, **options):
         """
         Takes the options and starts a daemon context from them. 
         
@@ -227,52 +235,62 @@ else:
                 --stdout=/var/log/cb/links.out --stderr=/var/log/cb/links.err
         
         """
+        # print 20130610, 'execute', __file__
         
         #~ print options
-        
-        context = daemon.DaemonContext()
-        
-        context.chroot_directory = self.get_option_value(options, 'chroot_directory')
-        context.working_directory = self.get_option_value(options, 'working_directory', '/')
-        context.umask = self.get_option_value(options, 'umask', 0)
-        context.detach_process = self.get_option_value(options, 'detach_process')
-        context.prevent_core = self.get_option_value(options, 'prevent_core', True)
-        if self.preserve_loggers:
-            context.files_preserve = get_logger_files(self.preserve_loggers)
-        
-        #Get file objects
-        stdin =  self.get_option_value(options, 'stdin')
-        if stdin is not None:
-            context.stdin = open(stdin, "r")
-        
-        stdout = self.get_option_value(options, 'stdout')
-        if stdout is not None:
-            context.stdout = open(stdout, "a+")
-        
-        stderr = self.get_option_value(options, 'stderr')
-        if stderr is not None:
-            context.stderr = open(stderr, "a+")  
-        
-        #Make pid lock file
-        pidfile = self.get_option_value(options, 'pidfile')
-        if pidfile is not None:
-            #~ context.pidfile=pidlockfile.PIDLockFile(pidfile)
-            context.pidfile=pidlockfile.TimeoutPIDLockFile(pidfile,0)
-        
-        uid = self.get_option_value(options, 'uid')
-        if uid is not None:
-            context.uid = uid
-        
-        gid = self.get_option_value(options, 'gid')
-        if gid is not None:
-            context.gid = uid
-            
-        context.open()        
-        
-        self.handle_daemon(*args, **options)
 
-    def handle_daemon(self, *args, **options):
-        """
-        Perform the command's actions in the given daemon context
-        """
-        raise NotImplementedError()
+        if daemon is not None:
+        
+            context = daemon.DaemonContext()
+            
+            context.chroot_directory = self.get_option_value(options, 'chroot_directory')
+            context.working_directory = self.get_option_value(options, 'working_directory', '/')
+            context.umask = self.get_option_value(options, 'umask', 0)
+            context.detach_process = self.get_option_value(options, 'detach_process')
+            context.prevent_core = self.get_option_value(options, 'prevent_core', True)
+            if self.preserve_loggers:
+                context.files_preserve = get_logger_files(self.preserve_loggers)
+            
+            #Get file objects
+            # stdin =  self.get_option_value(options, 'stdin')
+            stdin = options.pop('stdin',None)
+            if stdin is not None:
+                options['stdin'] = context.stdin = open(stdin, "r")
+            
+            # stdout = self.get_option_value(options, 'stdout')
+            stdout = options.pop('stdout',None)
+            if stdout is not None:
+                options['stdout'] = context.stdout = open(stdout, "a+")
+            
+            # stderr = self.get_option_value(options, 'stderr')
+            stderr = options.pop('stderr',None)
+            if stderr is not None:
+                self.stderr = options['stderr'] = context.stderr = open(stderr, "a+")  
+            # self.stderr is needed in case there is an exception during execute. 
+            # Django then would try to write to sys.stderr which is None because 
+            # we are a daemon
+            
+            #Make pid lock file
+            pidfile = self.get_option_value(options, 'pidfile')
+            if pidfile is not None:
+                #~ context.pidfile=pidlockfile.PIDLockFile(pidfile)
+                context.pidfile=pidlockfile.TimeoutPIDLockFile(pidfile,0)
+            
+            uid = self.get_option_value(options, 'uid')
+            if uid is not None:
+                context.uid = uid
+            
+            gid = self.get_option_value(options, 'gid')
+            if gid is not None:
+                context.gid = uid
+                
+            context.open()        
+
+        # Django 1.5.1 needs them:
+        # for k in ('stdout','stderr'):
+        #     options[k] = getattr(context,k,None)
+        
+        # self.handle_daemon(*args, **options)
+        BaseCommand.execute(self,*args,**options)
+        # print 20130610, 'execute ok', __file__
+
