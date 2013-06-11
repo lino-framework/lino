@@ -1,0 +1,25 @@
+================================
+20130611 (Tuesday, 11 June 2013)
+================================
+
+watch_tim und Personen ohne Vornamen
+------------------------------------
+
+:ref:`welfare.watch_tim` now has a new rule: 
+um Klient oder Person werden zu können, muss ein Partner mindestens 
+auch einen Vornamen haben (d.h. der Name1 muss mindestens ein Leerzeichen 
+enthalten). 
+Hat er das nicht, wird die Information in `PAR->NB1` 
+oder `PAR->NB2` ignoriert.
+
+
+
+Filtering in PendingCourseRequests
+-----------------------------------------------------
+
+- Fixed a bug which caused a traceback 
+  "Cannot resolve keyword 'provider' into field."
+  when filtering on course provider in PendingCourseRequests.
+  
+- Added a new filter parameter "Course offer".
+  

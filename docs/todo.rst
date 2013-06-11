@@ -4,6 +4,11 @@ To-do list
 Short-term
 ----------
 
+
+#.  Momentan kann man leider keine Regel einbauen, dass Systemverwalter 
+    nach jeweiliger Bestätigung auch importierte Partner löschen und 
+    bearbeiten können. This would require to extend the actions API.
+
 #.  render `models.NullBooleanField` using a `tri-state checkbox
     <http://www.sencha.com/forum/showthread.php?98241-Tri-state-checkbox-for-ExtJs-3.0>`_
     (workaround, with maybe even more intuitive usage is to use a 

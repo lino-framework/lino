@@ -1,22 +1,8 @@
-/home/luc/hgwork/lino/docs/admin/install.rst:104: WARNING: Inline interpreted text or phrase reference start-string without end-string.
-/home/luc/hgwork/lino/docs/admin/install_windows.rst:212: WARNING: Include file u'/home/luc/hgwork/lino/docs/admin/settings.py' not found or reading it failed
 /home/luc/hgwork/lino/docs/api/lino.modlib.products.fixtures.rst:7: WARNING: autodoc: failed to import module u'lino.modlib.products.fixtures.demo'; the following exception was raised:
 Traceback (most recent call last):
   File "/home/luc/pythonenvs/py27/local/lib/python2.7/site-packages/sphinx/ext/autodoc.py", line 326, in import_object
     __import__(self.modname)
 ImportError: No module named demo
-/home/luc/hgwork/lino/docs/blog/2013/0408.rst:26: ERROR: Unknown target name: "section title".
-/home/luc/hgwork/lino/docs/blog/2013/0420.rst:93: WARNING: Inline emphasis start-string without end-string.
-/home/luc/hgwork/lino/docs/blog/2013/0511.rst:30: WARNING: Inline interpreted text or phrase reference start-string without end-string.
-/home/luc/hgwork/lino/docs/tested/index.rst:5: ERROR: Error in "toctree" directive:
-invalid option value: (option: "glob"; value: 'true')
-no argument is allowed; "true" supplied.
-
-.. toctree::
-   :maxdepth: 1
-   :glob: true
-
-   test*
 /home/luc/hgwork/lino/docs/tested/test_cosi_demo.rst:: WARNING: document isn't included in any toctree
 /home/luc/hgwork/lino/docs/admin/install.rst:60: WARNING: undefined label: welfare (if the link has no caption the label must precede a section header)
 /home/luc/hgwork/lino/lino/modlib/users/models.py:docstring of lino.modlib.users.models.User:3: WARNING: unknown document: /topics/http_auth
