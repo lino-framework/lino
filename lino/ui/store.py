@@ -210,7 +210,7 @@ class RelatedMixin(object):
         # but the full object this field refers to
         relto_model = self.get_rel_to(obj)
         if not relto_model:
-            logger.warning("%s get_rel_to returned None",self.field)
+            #~ logger.warning("%s get_rel_to returned None",self.field)
             return None
         try:
             return getattr(obj,self.name)
@@ -393,10 +393,16 @@ class PasswordStoreField(StoreField):
             return "*" * len(v)
         return v
         
-class GenericForeignKeyField(StoreField):
+class GenericForeignKeyField(ForeignKeyStoreField):
+    
+    #~ def get_rel_to(self,obj):
+        #~ ct = getattr(obj,self.field.ct_field)
+        #~ return ct.model_class()
         
     def full_value_from_object(self,obj,ar):
-        return getattr(obj,self.name,None)
+        v = getattr(obj,self.name,None)
+        #~ logger.info("20130611 full_value_from_object() %s",v)
+        return v
         #~ owner = getattr(obj,self.name)
         #~ if owner is None: 
             #~ # owner_id = getattr(obj,self.field.fk_field)
@@ -405,6 +411,27 @@ class GenericForeignKeyField(StoreField):
             #~ return ''
         #~ return ar.href_to(owner)
   
+
+class unused_GenericForeignKeyField(StoreField):
+        
+    def full_value_from_object(self,obj,ar):
+        v = getattr(obj,self.name,None)
+        #~ logger.info("full_value_from_object() %s",v)
+        return v
+        #~ owner = getattr(obj,self.name)
+        #~ if owner is None: 
+            #~ # owner_id = getattr(obj,self.field.fk_field)
+            #~ # if owner_id is None:
+                #~ # return ''
+            #~ return ''
+        #~ return ar.href_to(owner)
+  
+    def value2list(self,ar,v,l,row):
+        return l.append(unicode(v))
+        
+    def value2dict(self,v,d,row):
+        d[self.name] = unicode(v)
+
 class SpecialStoreField(StoreField):
     field = None 
     name = None
@@ -1148,10 +1175,11 @@ class Store(BaseStore):
             for fld in self.list_fields:
                 v = fld.full_value_from_object(row,request)
                 #~ if fld.name == 'person__age':
-                    #~ logger.info("20120406 Store.row2list %s -> %s", fld, v)
+                #~ logger.info("20120406 Store.row2list %s -> %s", fld, v)
                 fld.value2list(request,v,l,row)
                 #~ if fld.name == 'person__age':
                     #~ logger.info("20120406 Store.row2list %s -> %s", fld, l)
+        #~ logger.info("20130611 Store row2list() --> %r", l)
         return l
       
     def row2dict(self,ar,row,fields=None,**d):

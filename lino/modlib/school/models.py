@@ -86,6 +86,7 @@ from north.dbutils import day_and_month
 
 users = dd.resolve_app('users')
 cal = dd.resolve_app('cal')
+sales = dd.resolve_app('sales')
 contacts = dd.resolve_app('contacts')
 #~ Company = dd.resolve_model('contacts.Company',strict=True)
 #~ print '20130219 lino.modlib.school 2'  
@@ -97,6 +98,9 @@ and we don't know whether it is overridden
 by this application.
 """
 Person = dd.resolve_model('contacts.Person',strict=True)
+# equivalent alternative :
+#~ Person = settings.SITE.modules.contacts.Person
+
 #~ from lino.modlib.contacts.models import Person
 #~ print '20130219 lino.modlib.school 3'  
 
@@ -585,7 +589,7 @@ add('40', _("Certified"),'certified')
     
 
 #~ class Enrolment(dd.Model):
-class Enrolment(dd.UserAuthored,dd.Printable):
+class Enrolment(dd.UserAuthored,dd.Printable,sales.Invoiceable):
     
     workflow_state_field = 'state'
   
@@ -606,6 +610,17 @@ class Enrolment(dd.UserAuthored,dd.Printable):
         
     def __unicode__(self):
         return "%s / %s" % (self.course,self.pupil)
+        
+    invoiceable_date_field = 'request_date'
+    invoiceable_partner_field = 'pupil'
+    
+    def get_invoiceable_product(self): 
+        if self.course: 
+            return self.course.tariff
+            
+    def get_invoiceable_qty(self): 
+            return 1
+    
 
 class Enrolments(dd.Table):
     #~ debug_permissions=20130531
@@ -626,7 +641,7 @@ class Enrolments(dd.Table):
     detail_layout = """
     course pupil user request_date state
     # courses.EventsByEnrolment
-    sales.InvoicingsByEnrolment
+    sales.InvoicingsByInvoiceable
     """
         
     @classmethod

@@ -23,3 +23,28 @@ Filtering in PendingCourseRequests
   
 - Added a new filter parameter "Course offer".
   
+
+
+Lino-Faggio
+-----------
+
+Da war noch ein konzeptuelles Problem: 
+
+New class Invoiceable. 
+"Fakturierbare Objekte" sind (1) Einschreibungen und (2) 
+Termine von Drittveranstaltern.
+
+Cool. It works using GenericForeignKey and an action "Fill" 
+on the invoice.
+
+TODO: 
+
+- The `invoiceable` field is read-only and should get rendered 
+  like a ForeignKey using a clickable link to the invoiceable's detail 
+  window.
+  
+- The "Fill" action is not enough: we need a main menu action 
+  "generate all invoiceable invoices" and a table of all invoiceables.
+
+- move the generally usable code to the modlib
+  

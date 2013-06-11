@@ -935,7 +935,7 @@ def create_field_element(lh,field,**kw):
     #~ e = lh.main_class.field2elem(lh,field,**kw)
     from lino.ui import elems as ext_elems
     e = ext_elems.field2elem(lh,field,**kw)
-    assert e.field is not None,"e.field is None for %s.%s" % (lh.layout,name)
+    assert e.field is not None,"e.field is None for %s.%s" % (lh.layout,kw)
     lh.add_store_field(e.field)
     return e
     #return FieldElement(field,**kw)

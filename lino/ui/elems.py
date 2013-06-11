@@ -25,6 +25,7 @@ from django.utils.translation import ugettext as _
 from django.utils.translation import string_concat
 from django.utils.encoding import force_unicode
 from django.conf import settings
+from django.contrib.contenttypes import generic
 
 import lino
 
@@ -76,6 +77,8 @@ def form_field_name(f):
     else:
         return f.name
         
+def has_fk_renderer(fld):
+    isinstance(fld,(models.ForeignKey,generic.GenericForeignKey))
 
 def rpt2url(rpt):
     return '/' + rpt.app_label + '/' + rpt.__name__
@@ -242,11 +245,12 @@ class GridColumn(jsgen.Component):
             #~ elif isinstance(editor.field,dd.LinkedForeignKey):
                 #~ rend = "Lino.lfk_renderer(this,'%s')" % \
                   #~ (editor.field.name + ext_requests.CHOICES_HIDDEN_SUFFIX)
-            elif isinstance(editor.field,models.ForeignKey):
+            #~ elif isinstance(editor.field,models.ForeignKey):
+            elif has_fk_renderer(editor.field):
                 rend = fk_renderer(editor.field,editor.field.name)
             elif isinstance(editor.field,fields.VirtualField):
                 kw.update(sortable=False)
-                if isinstance(editor.field.return_type,models.ForeignKey):
+                if has_fk_renderer(editor.field.return_type):
                     rend = fk_renderer(editor.field.return_type,editor.field.name)
                 #~ elif isinstance(editor.field.return_type,models.DecimalField):
                     #~ print "20120510 Lino.hide_zero_renderer", editor.field.name
@@ -2264,6 +2268,7 @@ _FIELD2ELEM = (
     #~ (models.ManyToManyField, M2mGridElement),
     (models.ForeignKey, ForeignKeyElement),
     (models.AutoField, AutoFieldElement),
+    #~ (generic.GenericForeignKey, GenericForeignKeyElement),
 )
     
 TRIGGER_BUTTON_WIDTH = 3

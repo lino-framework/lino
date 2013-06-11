@@ -83,6 +83,45 @@ add('40',_("Sent"),'sent',editable=False)
 add('50',_("Paid"),'paid',editable=False)
 
 
+class Invoiceable(dd.Model):
+    """
+    Mixin for things that are "invoiceable", i.e. for which a customer
+    is going to pay a given amount.
+    """
+    invoiceable_date_field = ''
+    """
+    The name of the field which holds the invoiceable date.
+    """
+    
+    invoiceable_partner_field = ''
+    """
+    The name of the field which holds the invoiceable partner.
+    """
+    
+    class Meta:
+        abstract = True
+        
+    invoiced = dd.ForeignKey('sales.Invoice',
+        #~ verbose_name=_("Invoice"),
+        blank=True,null=True)
+
+    def get_invoiceable_product(self): return None
+    def get_invoiceable_qty(self): return None
+        
+    @classmethod
+    def get_invoiceables_for(cls,partner,max_date=None):
+        for m in dd.models_by_base(cls):
+            fkw = dict()
+            fkw[m.invoiceable_partner_field] = partner
+            fkw.update(invoiced__isnull=True)
+            if max_date is not None:
+                fkw["%s__lte" % m.invoiceable_date_field] = max_date
+            for obj in m.objects.filter(**fkw).order_by(m.invoiceable_date_field):
+                yield obj
+        
+
+
+
 class PaymentTerm(dd.BabelNamed):
     """
     A convention on how an Invoice should be paid. 
