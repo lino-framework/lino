@@ -322,6 +322,8 @@ class LayoutHandle:
         #~ setattr(self,name,e)
         self._names[name] = e
         #~ self.setup_element(e)
+        #~ if name == 'invoiceable':
+            #~ logger.info("20130612 create_element() --> %r", e)
         return e
         
     #~ def splitdesc(self,picture,**kw):

@@ -78,7 +78,8 @@ def form_field_name(f):
         return f.name
         
 def has_fk_renderer(fld):
-    isinstance(fld,(models.ForeignKey,generic.GenericForeignKey))
+    #~ return isinstance(fld,(models.ForeignKey,generic.GenericForeignKey))
+    return isinstance(fld,models.ForeignKey)
 
 def rpt2url(rpt):
     return '/' + rpt.app_label + '/' + rpt.__name__
@@ -167,7 +168,6 @@ class GridColumn(jsgen.Component):
     
     def __init__(self,layout_handle,index,editor,**kw):
         """
-        editor may be a Panel for columns on a GenericForeignKey
         """
         #~ print 20100515, editor.name, editor.__class__
         #~ assert isinstance(editor,FieldElement), \
@@ -226,7 +226,7 @@ class GridColumn(jsgen.Component):
                 """
                 FK fields are clickable only if their target has a detail view
                 """
-                rpt = fld.rel.to._lino_default_table
+                rpt = fld.rel.to.get_default_table()
                 if rpt.detail_action is not None:
                     if rpt.detail_action.get_view_permission(jsgen._for_user_profile):
                         return "Lino.fk_renderer('%s','Lino.%s')" % (
@@ -1382,7 +1382,7 @@ class BooleanFieldElement(BooleanMixin,FieldElement):
                 #~ js = "Lino.show_mti_child('%s','%s')" % (self.field.name,url)
                 #~ label += """ (<a href="javascript:%s">%s</a>)""" % (js,_("show"))
             if isinstance(self.field,mti.EnableChild):
-                rpt = self.field.child_model._lino_default_table
+                rpt = self.field.child_model.get_default_table()
                 if rpt.detail_action is not None:
                     js = "Lino.show_mti_child('%s',Lino.%s)" % (
                       self.field.name,

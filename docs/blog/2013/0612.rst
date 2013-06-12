@@ -1,0 +1,38 @@
+==================================
+20130612 (Wednesday, 12 June 2013)
+==================================
+
+Lino-Welfare:
+
+- Fixed a little bug: 
+  the `admin_main.html` template of Lino-Welfare displayed
+  :ref:`welfare.pcsw.UsersWithClients` also to 
+  users without permission to view it. 
+
+- DispensesByClient and ActivityReport had wrong `required`.
+
+Framework:
+
+- Lino is now able to render
+  `GenericForeignKey` fields correctly in a Grid.
+
+- Removed a temporary exception "20120521 More than 300 items in %s"
+
+  
+Lino-Faggio:
+
+- The `invoiceable` field (a `GenericForeignKey`) is now rendered 
+  using a clickable link to the invoiceable's detail window.
+
+
+TODO: 
+
+- The "Fill" action is not enough: we need a main menu action 
+  "generate all invoiceable invoices", 
+  a table of all invoiceables, ...
+
+- Move the "invoiceable" code from :mod:`lino_faggio.models` to 
+  :mod:`lino.modlib.sales`
+  
+
+

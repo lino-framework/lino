@@ -393,45 +393,6 @@ class PasswordStoreField(StoreField):
             return "*" * len(v)
         return v
         
-class GenericForeignKeyField(ForeignKeyStoreField):
-    
-    #~ def get_rel_to(self,obj):
-        #~ ct = getattr(obj,self.field.ct_field)
-        #~ return ct.model_class()
-        
-    def full_value_from_object(self,obj,ar):
-        v = getattr(obj,self.name,None)
-        #~ logger.info("20130611 full_value_from_object() %s",v)
-        return v
-        #~ owner = getattr(obj,self.name)
-        #~ if owner is None: 
-            #~ # owner_id = getattr(obj,self.field.fk_field)
-            #~ # if owner_id is None:
-                #~ # return ''
-            #~ return ''
-        #~ return ar.href_to(owner)
-  
-
-class unused_GenericForeignKeyField(StoreField):
-        
-    def full_value_from_object(self,obj,ar):
-        v = getattr(obj,self.name,None)
-        #~ logger.info("full_value_from_object() %s",v)
-        return v
-        #~ owner = getattr(obj,self.name)
-        #~ if owner is None: 
-            #~ # owner_id = getattr(obj,self.field.fk_field)
-            #~ # if owner_id is None:
-                #~ # return ''
-            #~ return ''
-        #~ return ar.href_to(owner)
-  
-    def value2list(self,ar,v,l,row):
-        return l.append(unicode(v))
-        
-    def value2dict(self,v,d,row):
-        d[self.name] = unicode(v)
-
 class SpecialStoreField(StoreField):
     field = None 
     name = None
@@ -636,6 +597,51 @@ class DisplayStoreField(StoreField):
     #~ def value2html(self,ar,v,**cellattrs):
         #~ return E.td(v,**cellattrs)
   
+
+#~ class GenericForeignKeyField(ForeignKeyStoreField):
+class GenericForeignKeyField(DisplayStoreField):
+    
+    #~ def get_rel_to(self,obj):
+        #~ ct = getattr(obj,self.field.ct_field)
+        #~ return ct.model_class()
+        
+    def full_value_from_object(self,obj,ar):
+        v = getattr(obj,self.name,None)
+        #~ logger.info("20130611 full_value_from_object() %s",v)
+        if v is None: return ''
+        if ar is None: return unicode(v)
+        if ar.renderer is None: return unicode(v)
+        return ar.href_to(v)
+        #~ owner = getattr(obj,self.name)
+        #~ if owner is None: 
+            #~ # owner_id = getattr(obj,self.field.fk_field)
+            #~ # if owner_id is None:
+                #~ # return ''
+            #~ return ''
+        #~ return ar.href_to(owner)
+  
+
+class unused_GenericForeignKeyField(StoreField):
+        
+    def full_value_from_object(self,obj,ar):
+        v = getattr(obj,self.name,None)
+        #~ logger.info("full_value_from_object() %s",v)
+        return v
+        #~ owner = getattr(obj,self.name)
+        #~ if owner is None: 
+            #~ # owner_id = getattr(obj,self.field.fk_field)
+            #~ # if owner_id is None:
+                #~ # return ''
+            #~ return ''
+        #~ return ar.href_to(owner)
+  
+    def value2list(self,ar,v,l,row):
+        return l.append(unicode(v))
+        
+    def value2dict(self,v,d,row):
+        d[self.name] = unicode(v)
+
+
 
 class DecimalStoreField(StoreField):
     #~ def __init__(self,field,name,**kw):

@@ -87,8 +87,7 @@ class InvalidRequest(Exception):
 
 from lino.utils.xmlgen.html import RstTable
 
-MAX_ROW_COUNT = 300
-
+MAX_ROW_COUNT = 900
 
 class GridConfig(Configured):
   
@@ -226,9 +225,9 @@ class TableRequest(ActionRequest):
             try:
                 rows = self.actor.get_data_rows(self)
                 for row in rows:
-                    if len(l) > 300:
-                        raise Exception("20120521 More than 300 items in %s" % 
-                            unicode(rows))
+                    #~ if len(l) > 300:
+                        #~ raise Exception("20120521 More than 300 items in %s" % 
+                            #~ unicode(rows))
                     group = self.actor.group_from_row(row)
                     group.process_row(l,row)
             except Warning,e:
