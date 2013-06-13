@@ -6,3 +6,20 @@ After talking with Marc I worked two hours
 on :mod:`lino_patrols` and updated the 
 demo site.
 
+
+Lino-Welfare:
+
+- Added two new observed events 
+  for client filters: 
+  `ClientEvents.isip`
+  and
+  `ClientEvents.jobs`.
+
+  Quick manual test seems to work.
+  (The whole filtering is still waiting to receive 
+  an exhaustive test suite...)
+  
+- overridden `get_siblings` for `debts.Entry` so that up/down 
+  actions no longer fail when seqno's are spread accross 
+  different account_types.
+
