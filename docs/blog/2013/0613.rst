@@ -1,0 +1,8 @@
+=================================
+20130613 (Thursday, 13 June 2013)
+=================================
+
+After talking with Marc I worked two hours 
+on :mod:`lino_patrols` and updated the 
+demo site.
+
