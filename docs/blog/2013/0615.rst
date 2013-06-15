@@ -1,0 +1,9 @@
+=================================
+20130615 (Saturday, 15 June 2013)
+=================================
+
+
+"'NoneType' object is not iterable" error
+in `/home/luc/hgwork/lino/lino/core/tables.py` 
+in setup_ventilated_columns, line 1156
+

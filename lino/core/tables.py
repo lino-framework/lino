@@ -1153,7 +1153,8 @@ class VentilatingTable(AbstractTable):
 
 @signals.receiver(signals.database_ready)
 def setup_ventilated_columns(sender,**kw):
-    for a in actors.actors_list:
-        if issubclass(a,AbstractTable):
-            a.setup_columns()
+    if actors.actors_list is not None:
+        for a in actors.actors_list:
+            if issubclass(a,AbstractTable):
+                a.setup_columns()
     sender.resolve_virtual_fields()
