@@ -36,6 +36,8 @@ from django.utils.translation import string_concat
 from django.utils.encoding import force_unicode 
 from django.utils.functional import lazy
 
+from django.contrib.contenttypes.models import ContentType
+
 #~ import lino
 #~ logger.debug(__file__+' : started')
 #~ from django.utils import translation
@@ -214,7 +216,7 @@ class Teacher(Person):
         verbose_name = _("Teacher")
         verbose_name_plural = _("Teachers")
         
-    teacher_type = dd.ForeignKey('school.TeacherType')
+    teacher_type = dd.ForeignKey('school.TeacherType',blank=True,null=True)
     
     def __unicode__(self):
         #~ return self.get_full_name(salutation=False)
@@ -261,7 +263,7 @@ class Pupil(Person):
         verbose_name = _("Pupil")
         verbose_name_plural = _("Pupils")
         
-    pupil_type = dd.ForeignKey('school.PupilType')
+    pupil_type = dd.ForeignKey('school.PupilType',blank=True,null=True)
     
 class PupilDetail(contacts.PersonDetail):
     main = "general school.EnrolmentsByPupil"
@@ -374,6 +376,14 @@ class Course(contacts.ContactRelated,cal.EventGenerator,cal.RecurrenceSet,dd.Pri
         
     #~ slot = models.PositiveSmallIntegerField(_("Time slot"),
         #~ blank=True,null=True)
+        
+        
+    tariff = models.ForeignKey('products.Product',
+        blank=True,null=True,
+        verbose_name=_("Tariff"),
+        related_name='courses_by_tariff')
+        
+        
     
     def __unicode__(self):
         return u"%s (%s %s)" % (self.line,dd.dtos(self.start_date),self.room)
@@ -722,6 +732,132 @@ class EnrolmentsByCourse(Enrolments):
     master_key = "course"
     column_names = 'request_date pupil workflow_buttons user *'
     auto_fit_column_widths = True
+
+
+
+
+
+
+
+class AutoFillAction(dd.RowAction):
+    label = _("Fill")
+    
+    def run_from_ui(self,obj,ar,**kw):
+        L = list(sales.Invoiceable.get_invoiceables_for(obj.partner,obj.date))
+        if len(L) == 0:
+            return ar.error(_("No invoiceables found for %s.") % obj.partner)
+        def ok():
+            for ii in L:
+                i = InvoiceItem(voucher=obj,invoiceable=ii,product=ii.get_invoiceable_product())
+                i.product_changed(ar)
+                i.full_clean()
+                i.save()
+            kw.update(refresh=True)
+            return kw
+        msg = _("This will add %d invoice items.") % len(L)
+        return ar.confirm(ok, msg, _("Are you sure?"))
+    
+    
+class Invoice(sales.Invoice):
+    
+    auto_fill = AutoFillAction()
+    
+    class Meta(sales.Invoice.Meta):
+        app_label = 'sales'
+        verbose_name = _("Invoice")
+        verbose_name_plural = _("Invoices")
+    
+class InvoiceItem(sales.InvoiceItem):
+    
+    invoiceable_label = _("Invoiceable")
+    
+    class Meta(sales.InvoiceItem.Meta):
+        app_label = 'sales'
+        verbose_name = _("Voucher item")
+        verbose_name_plural = _("Voucher items")
+    
+    
+    invoiceable_type = dd.ForeignKey(ContentType,
+        editable=False,blank=True,null=True,
+        verbose_name=string_concat(invoiceable_label,' ',_('(type)')))
+    invoiceable_id = dd.GenericForeignKeyIdField(
+        invoiceable_type,
+        editable=False,blank=True,null=True,
+        verbose_name=string_concat(invoiceable_label,' ',_('(object)')))
+    invoiceable = dd.GenericForeignKey(
+        'invoiceable_type', 'invoiceable_id',
+        verbose_name=invoiceable_label)
+    
+    #~ @dd.chooser()
+    #~ def enrolment_choices(self,voucher):
+        #~ Enrolment = dd.resolve_model('school.Enrolment')
+        #~ # print 20130605, voucher.partner.pk
+        #~ return Enrolment.objects.filter(pupil__id=voucher.partner.pk).order_by('request_date')
+        #~ 
+    #~ def enrolment_changed(self,ar):
+        #~ if self.enrolment is not None and self.enrolment.course is not None:
+            #~ self.product = self.enrolment.course.tariff
+        #~ self.product_changed(ar)
+    
+class ItemsByInvoice(sales.ItemsByInvoice):
+    app_label = 'sales' # we want to "override" the original table
+
+    column_names = "invoiceable product title description:20x1 discount unit_price qty total_incl total_base total_vat"
+    
+    #~ @classmethod
+    #~ def get_choices_text(self,obj,request,field):
+        #~ if field.name == 'enrolment':
+            #~ return unicode(obj.course)
+        #~ # raise Exception("20130607 field.name is %r" % field.name)
+        #~ return super(ItemsByInvoice,self).get_choices_text(obj,field,request)
+    
+#~ class InvoicingsByEnrolment(sales.InvoiceItemsByProduct):
+    #~ app_label = 'sales'
+    #~ master_key = 'enrolment'
+    #~ editable = False
+    #~ 
+class InvoicingsByInvoiceable(sales.InvoiceItemsByProduct):
+    app_label = 'sales'
+    master_key = 'invoiceable'
+    editable = False
+    
+#~ sales.ItemsByInvoice.column_names = "enrolment product title description:20x1 discount unit_price qty total_incl total_base total_vat"
+    
+
+
+
+
+
+class InvoiceablesByPartner(dd.VirtualTable):
+    app_label = 'sales'
+    master = 'contacts.Partner'
+    column_names = 'date info'
+    
+    @classmethod
+    def get_data_rows(self,ar):
+        rows = []
+        mi = ar.master_instance
+        if mi is None:
+            return rows
+        for m in dd.models_by_base(sales.Invoiceable):
+            fkw = {m.invoiceable_partner_field:mi}
+            for obj in m.objects.filter(**fkw).order_by(m.invoiceable_date_field):
+                rows.append((getattr(obj,m.invoiceable_date_field),obj))
+        def f(a,b): return cmp(a[0],b[0])
+        rows.sort(f)
+        return rows
+        
+    @dd.virtualfield(models.DateField(_("Date")))
+    def date(self,row,ar):
+        return row[0]
+    
+    @dd.displayfield(_("Invoiceable"))
+    def info(self,row,ar):
+        return ar.obj2html(row[1])
+    
+
+
+
 
 
 def get_todo_tables(ar):

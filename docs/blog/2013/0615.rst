@@ -7,3 +7,22 @@
 in `/home/luc/hgwork/lino/lino/core/tables.py` 
 in setup_ventilated_columns, line 1156
 
+:mod:`lino.projects.homeworkschool` was broken
+after the evolutions in :mod:`lino.modlib.school` 
+caused by :mod:`lino_faggio`.
+
+Added another general test case in :mod:`lino.ui.tests.lino_ui_tests`
+which automatically tests whether the index page after authentication 
+works.
+Because a trivial bug "no data element 'place' in cal.EventDetail" 
+had slipped through the suite. 
+
+
+New virtual table 
+:class:`lino.modlib.school.models.InvoiceablesByPartner`.
+
+:attr:`lino.core.actor.Actor.master` is now allowed to contain a 
+string which will be resolved during startup.
+
+
+

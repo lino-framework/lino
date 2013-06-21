@@ -8,7 +8,7 @@ msgstr ""
 "Project-Id-Version: lino.modlib.systen\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2013-06-07 16:50+0300\n"
-"PO-Revision-Date: 2013-06-07 16:53+0300\n"
+"PO-Revision-Date: 2013-06-16 23:04+0100\n"
 "Last-Translator: Luc Saffre <luc.saffre@gmx.net>\n"
 "Language-Team: \n"
 "Plural-Forms: nplurals=2; plural=(n != 1)\n"
@@ -1447,7 +1447,7 @@ msgstr ""
 #: lino/modlib/cal/models.py:2372
 #, python-format
 msgid "%d unclear events approaching."
-msgstr "%d unklare Termine, die näher kommen."
+msgstr "%d unklare anstehende Termine"
 
 #: lino/modlib/cal/models.py:2373
 #, python-format

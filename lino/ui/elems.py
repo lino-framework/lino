@@ -864,6 +864,15 @@ class CharFieldElement(FieldElement):
         if self.field.max_length is not None:
             if self.field.max_length <= 10:
                 kw.update(boxMinWidth=js_code('Lino.chars2width(%d)' % self.field.max_length))
+                
+        for lino_name,extjs_name in (
+          ('regex','regex'),
+          ('mask_re','maskRe'),
+          ('strip_chars_re','stripCharsRe'),
+          ):
+            v = getattr(self.field,lino_name,None)
+            if v is not None:
+                kw[extjs_name] = js_code(v)
         
         #~ kw.update(style=dict(padding=DEFAULT_PADDING))
         #~ kw.update(margins='10px')

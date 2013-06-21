@@ -584,80 +584,82 @@ tinymce.init({
         
         #~ yield "console.time('onReady');"
         
-        if request.user.profile.authenticated:
+        if settings.SITE.user_model is not None:
+
+            if request.user.profile.authenticated:
           
-            if request.subst_user:
-                #~ yield "Lino.subst_user = %s;" % py2js(request.subst_user.id)
-                yield "Lino.set_subst_user(%s,%s);" % (
-                    py2js(request.subst_user.id),
-                    py2js(unicode(request.subst_user)))
-                user_text = unicode(request.user) + " (" + _("as") + " " + unicode(request.subst_user) + ")"
+                if request.subst_user:
+                    #~ yield "Lino.subst_user = %s;" % py2js(request.subst_user.id)
+                    yield "Lino.set_subst_user(%s,%s);" % (
+                        py2js(request.subst_user.id),
+                        py2js(unicode(request.subst_user)))
+                    user_text = unicode(request.user) + " (" + _("as") + " " + unicode(request.subst_user) + ")"
+                else:
+                    #~ yield "Lino.subst_user = null;"
+                    yield "Lino.set_subst_user();"
+                    user_text = unicode(request.user) 
+                    
+                user = request.user
+                
+                yield "Lino.user = %s;" % py2js(dict(id=user.id,name=unicode(user)))
+                
+                if user.profile.level >= dd.UserLevels.admin:
+                    authorities = [(u.id,unicode(u)) 
+                        #~ for u in users.User.objects.exclude(profile=dd.UserProfiles.blank_item)] 20120829
+                        #~ for u in users.User.objects.filter(profile__isnull=False)]
+                        for u in users.User.objects.exclude(profile='').exclude(id=user.id)]
+                        #~ for u in users.User.objects.filter(profile__gte=dd.UserLevels.guest)]
+                else:
+                    authorities = [(a.user.id,unicode(a.user)) 
+                        for a in users.Authority.objects.filter(authorized=user)]
+                
+                #~ handler = self.ext_renderer.instance_handler(user)
+                #~ a = users.MySettings.get_url_action('default_action')
+                a = users.MySettings.default_action
+                handler = self.action_call(None,a,dict(record_id=user.pk))
+                handler = "function(){%s}" % handler
+                mysettings = dict(text=_("My settings"),handler=js_code(handler))
+                login_menu_items = [mysettings]
+                if len(authorities):
+                    #~ act_as = [
+                        #~ dict(text=unicode(u),handler=js_code("function(){Lino.set_subst_user(%s)}" % i)) 
+                            #~ for i,u in user.get_received_mandates()]
+                    act_as = [
+                        dict(text=t,handler=js_code("function(){Lino.set_subst_user(%s,%s)}" % (v,py2js(t)))) 
+                            for v,t in authorities]
+                            #~ for v,t in user.get_received_mandates()]
+                    act_as.insert(0,dict(
+                        text=_("Myself"),
+                        handler=js_code("function(){Lino.set_subst_user(null)}")))
+                    act_as = dict(text=_("Act as..."),menu=dict(items=act_as))
+                    
+                    login_menu_items.insert(0,act_as)
+                    #~ login_menu_items = [act_as,mysettings]
+                    
+                if site.remote_user_header is None:
+                    login_menu_items.append(dict(text=_("Log out"),handler=js_code('Lino.logout')))
+                    login_menu_items.append(dict(text=_("Change password"),handler=js_code('Lino.change_password')))
+                    login_menu_items.append(dict(text=_("Forgot password"),handler=js_code('Lino.forgot_password')))
+                
+                login_menu = dict(
+                    text=user_text,
+                    menu=dict(items=login_menu_items))
+                #~ else:
+                    #~ login_menu = dict(text=user_text,handler=js_code(handler))
+                    
+                #~ yield "Lino.login_menu = %s;" % py2js(login_menu)
+                #~ yield "Lino.main_menu = Lino.main_menu.concat(['->',Lino.login_menu]);"
+                yield "Lino.main_menu = Lino.main_menu.concat(['->',%s]);" % py2js(login_menu)
+                
             else:
-                #~ yield "Lino.subst_user = null;"
-                yield "Lino.set_subst_user();"
-                user_text = unicode(request.user) 
-                
-            user = request.user
-            
-            yield "Lino.user = %s;" % py2js(dict(id=user.id,name=unicode(user)))
-            
-            if user.profile.level >= dd.UserLevels.admin:
-                authorities = [(u.id,unicode(u)) 
-                    #~ for u in users.User.objects.exclude(profile=dd.UserProfiles.blank_item)] 20120829
-                    #~ for u in users.User.objects.filter(profile__isnull=False)]
-                    for u in users.User.objects.exclude(profile='').exclude(id=user.id)]
-                    #~ for u in users.User.objects.filter(profile__gte=dd.UserLevels.guest)]
-            else:
-                authorities = [(a.user.id,unicode(a.user)) 
-                    for a in users.Authority.objects.filter(authorized=user)]
-            
-            #~ handler = self.ext_renderer.instance_handler(user)
-            #~ a = users.MySettings.get_url_action('default_action')
-            a = users.MySettings.default_action
-            handler = self.action_call(None,a,dict(record_id=user.pk))
-            handler = "function(){%s}" % handler
-            mysettings = dict(text=_("My settings"),handler=js_code(handler))
-            login_menu_items = [mysettings]
-            if len(authorities):
-                #~ act_as = [
-                    #~ dict(text=unicode(u),handler=js_code("function(){Lino.set_subst_user(%s)}" % i)) 
-                        #~ for i,u in user.get_received_mandates()]
-                act_as = [
-                    dict(text=t,handler=js_code("function(){Lino.set_subst_user(%s,%s)}" % (v,py2js(t)))) 
-                        for v,t in authorities]
-                        #~ for v,t in user.get_received_mandates()]
-                act_as.insert(0,dict(
-                    text=_("Myself"),
-                    handler=js_code("function(){Lino.set_subst_user(null)}")))
-                act_as = dict(text=_("Act as..."),menu=dict(items=act_as))
-                
-                login_menu_items.insert(0,act_as)
-                #~ login_menu_items = [act_as,mysettings]
-                
-            if site.remote_user_header is None:
-                login_menu_items.append(dict(text=_("Log out"),handler=js_code('Lino.logout')))
-                login_menu_items.append(dict(text=_("Change password"),handler=js_code('Lino.change_password')))
-                login_menu_items.append(dict(text=_("Forgot password"),handler=js_code('Lino.forgot_password')))
-            
-            login_menu = dict(
-                text=user_text,
-                menu=dict(items=login_menu_items))
-            #~ else:
-                #~ login_menu = dict(text=user_text,handler=js_code(handler))
-                
-            #~ yield "Lino.login_menu = %s;" % py2js(login_menu)
-            #~ yield "Lino.main_menu = Lino.main_menu.concat(['->',Lino.login_menu]);"
-            yield "Lino.main_menu = Lino.main_menu.concat(['->',%s]);" % py2js(login_menu)
-                
-        elif site.user_model is not None: # 20121103
-            login_buttons = [
-              #~ dict(xtype="textfield",emptyText=_('Enter your username')),
-              #~ dict(xtype="textfield",emptyText=_('Enter your password'),inputType="password"),
-              dict(xtype="button",text=_("Log in"),handler=js_code('Lino.show_login_window')),
-              #~ dict(xtype="button",text="Register",handler=Lino.register),
-              ]
-            yield "Lino.main_menu = Lino.main_menu.concat(['->',%s]);" % py2js(login_buttons)
-                
+                login_buttons = [
+                  #~ dict(xtype="textfield",emptyText=_('Enter your username')),
+                  #~ dict(xtype="textfield",emptyText=_('Enter your password'),inputType="password"),
+                  dict(xtype="button",text=_("Log in"),handler=js_code('Lino.show_login_window')),
+                  #~ dict(xtype="button",text="Register",handler=Lino.register),
+                  ]
+                yield "Lino.main_menu = Lino.main_menu.concat(['->',%s]);" % py2js(login_buttons)
+                    
                 
         
         #~ yield "Lino.load_mask = new Ext.LoadMask(Ext.getBody(), {msg:'Immer mit der Ruhe...'});"

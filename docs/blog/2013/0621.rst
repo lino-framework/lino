@@ -1,0 +1,53 @@
+===============================
+20130621 (Friday, 21 June 2013)
+===============================
+
+Input masks for text fields 
+---------------------------
+
+Flavio asked:
+
+    In Django I used a library with JQuery for input masks for
+    fields like phone number etc. I think a more elegant solution could
+    be the mask already be implicit in the field type, and/or a field
+    attribute to the mask string, which would be handled by the
+    framework. I would like to know how to proceed to use input masks
+    with Lino.
+
+Added a new class :class:`dd.CharField <lino.core.fields.CharField>`
+which extends the default Django CharField.
+
+See the :class:`dd.CharField <lino.core.fields.CharField>`
+and also:
+
+- http://docs.sencha.com/extjs/3.4.0/#!/api/Ext.form.TextField
+- http://www.w3schools.com/jsref/jsref_obj_regexp.asp
+- http://www.sencha.com/forum/showthread.php?64461-textfield-regex
+
+
+Usage example in the new `input_mask_test` 
+field of :ref:`lino.tutorial.polls`::
+
+    input_mask_test = dd.CharField("Question text", 
+        blank=True,
+        max_length=200,
+        help_text="""This field is here to play with the 
+        CharField parameters regex, mask_re and strip_chars_re.
+        By default it accepts all letters except Z.
+        """,
+        #~ regex='/^[a-yA-Y]*$/')
+        mask_re='/^[a-yA-Y]*$/')
+        #~ strip_chars_re='/^[a-yA-Y]*$/')
+
+Since the public tutorial site is read-only you can see 
+the effect 
+only when running it
+locally after having modifed 
+:attr:`anonymous_user_profile <lino.Site.anonymous_user_profile` to 
+'900' in 
+:srcref:`/docs/tutorials/polls/mysite/settings.py`.
+
+
+
+
+

@@ -33,6 +33,7 @@ Tables:
 
 Extended Fields:
 
+- :class:`CharField <fields.CharField>`
 - :class:`EnableChild <lino.utils.mti.EnableChild>`
 - :class:`NullCharField <lino.core.fields.NullCharField>`
 - :class:`IncompleteDateField <lino.core.fields.IncompleteDateField>`
@@ -209,6 +210,7 @@ from lino.core.fields import RequestField, requestfield
 from lino.core.fields import Constant, constant
 from lino.core.fields import ForeignKey
 from lino.core.fields import BabelTextField
+from lino.core.fields import CharField
 
 from lino.mixins import BabelNamed
 

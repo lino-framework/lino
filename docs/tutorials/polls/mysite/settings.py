@@ -4,3 +4,5 @@ SITE = Site(globals(),'polls',title="Cool Polls",no_local=True)
 DEBUG = True
 # DATABASES = ...
 SECRET_KEY = 'abc123'
+
+#~ SITE.anonymous_user_profile = '900'

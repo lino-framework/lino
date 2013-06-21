@@ -550,6 +550,7 @@ class AnonymousUser(object):
     modified = None
     partner = None
     language = None
+    #~ id = None
     
     _instance = None
     
@@ -561,7 +562,8 @@ class AnonymousUser(object):
             try:
                 cls._instance.profile = UserProfiles.get_by_value(settings.SITE.anonymous_user_profile)
                 if cls._instance.profile.authenticated:
-                    raise Exception("20121121 profile specified by `anonymous_user_profile` is `authenticated`")
+                    #~ raise Exception("20121121 profile specified by `anonymous_user_profile` is `authenticated`")
+                    logger.warning("20121121 profile specified by `anonymous_user_profile` is `authenticated`")
             except KeyError:
                 raise Exception(
                     "Invalid value %r for `SITE.anonymous_user_profile`. Must be one of %s" % (

@@ -34,12 +34,13 @@ from django.core.exceptions import ValidationError
 
 #~ from lino import dd
 from djangosite.utils.djangotest import NoAuthTestCase
+from djangosite.utils.djangotest import RemoteAuthTestCase
 
 
-class QuickTest(NoAuthTestCase):
+class NoAuthTest(NoAuthTestCase):
 
 
-    def test01(self):
+    def test_anonymous_requests(self):
         """
         Try wether the index page loads.
         """
@@ -67,3 +68,27 @@ class QuickTest(NoAuthTestCase):
         response = self.client.options('')
         self.assertEqual(response.status_code,200)
         
+
+class RemoteAuthTest(RemoteAuthTestCase):
+    maxDiff = None
+
+
+    def test00(self):
+        """
+        Initialization.
+        """
+        if settings.SITE.user_model is None: 
+            return
+            
+        #~ print "20130321 test00 started"
+        self.user_root = settings.SITE.user_model(username='robin',language='en',profile='900')
+        self.user_root.save()
+        
+        response = self.client.get('',REMOTE_USER='foo',HTTP_ACCEPT_LANGUAGE='en')
+        self.assertEqual(response.status_code,403)
+        
+        response = self.client.get('',REMOTE_USER='robin',HTTP_ACCEPT_LANGUAGE='en')
+        #~ logger.info('20130616 %r',response.content)
+        self.assertEqual(response.status_code,200)
+        
+

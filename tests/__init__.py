@@ -65,7 +65,7 @@ class ProjectsTests(LinoTestCase):
     def test_presto(self): self.run_django_admin_test("lino.projects.presto.test_settings") 
     def test_belref(self): self.run_django_admin_test("lino.projects.belref.settings") 
     def test_babel_tutorial(self): self.run_django_admin_test("lino.projects.babel_tutorial.settings") 
-    def test_homeworkschool(self): self.run_django_admin_test("lino.projects.homeworkschool.settings") 
+    def test_homeworkschool(self): self.run_django_admin_test("lino.projects.homeworkschool.settings.demo") 
     def test_min1(self): self.run_django_admin_test("lino.projects.min1.settings") 
     def test_min2(self): self.run_django_admin_test("lino.projects.min2.settings") 
     

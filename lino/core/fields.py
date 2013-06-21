@@ -774,9 +774,45 @@ class GenericForeignKey(generic.GenericForeignKey):
 
 
 
+class CharField(models.CharField):
+    """
+    
+    An extension around Django's `models.CharField`.
+    
+    Adds two keywords `mask_re` and
+    `strip_chars_re` which, when using the ExtJS ui, 
+    will be rendered as the 
+    `maskRe` and `stripCharsRe` config options 
+    of 
+    `TextField` 
+    as described in the 
+    `ExtJS documentation 
+    <http://docs.sencha.com/extjs/3.4.0/#!/api/Ext.form.TextField>`__,
+    converting naming conventions as follows:
+    
+    =============== ============ ==========================
+    regex           regex        A JavaScript RegExp object to be tested against the field value during validation (defaults to null). If the test fails, the field will be marked invalid using regexText.
+    mask_re         maskRe       An input mask regular expression that will be used to filter keystrokes that do not match (defaults to null). The maskRe will not operate on any paste events.
+    strip_chars_re  stripCharsRe A JavaScript RegExp object used to strip unwanted content from the value before validation (defaults to null).
+    =============== ============ ==========================
+    
+    
+    Example usage:
+    
+      belgian_phone_no = dd.CharField(max_length=15,strip_chars_re='')
+    
+    
+    """
+    
+    def __init__(self,*args,**kw):
+        self.strip_chars_re = kw.pop('strip_chars_re',None)
+        self.mask_re = kw.pop('mask_re',None)
+        self.regex = kw.pop('regex',None)
+        models.CharField.__init__(self,*args,**kw)
        
   
-class QuantityField(models.CharField):
+class QuantityField(CharField):
+#~ class QuantityField(models.CharField):
 #~ class QuantityField(models.DecimalField):
 #~ class QuantityField(models.Field):
     """
@@ -842,11 +878,6 @@ Uncomplete dates are allowed, e.g.
 "%(ex1)s" means "some day in 1980", 
 "%(ex2)s" means "in July 1980"
 or "%(ex3)s" means "on a 23th of July".""") % msgkw)
-        #~ kw.setdefault('help_text',u"""\
-#~ Unkomplette Datumsangaben sind erlaubt, z.B. 
-#~ "%(ex1)s" heißt "irgendwann im Jahr 1980", 
-#~ "%(ex2)s" heißt "im Juli 1980"
-#~ oder "%(ex3)s" heißt "an einem 23. Juli".""")
         models.CharField.__init__(self,*args,**kw)
       
     #~ def get_internal_type(self):
@@ -885,6 +916,8 @@ class DummyField(object):
     def set_attributes_from_name(self,k):
         pass
 
+      
+    
 class RecurrenceField(models.CharField):
     """
     Deserves more documentation.

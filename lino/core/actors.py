@@ -665,13 +665,18 @@ class Actor(actions.Parametrizable):
         #~ classDict = cls.__dict__
         
         #~ dt = classDict.get('detail_template',None)
-        dt = getattr(cls,'detail_template',None)
-        if dt is not None:
-            raise Exception("Please rename detail_template to detail_layout")
+        #~ dt = getattr(cls,'detail_template',None)
+        #~ if dt is not None:
+            #~ raise Exception("Please rename detail_template to detail_layout")
             #~ if dl is not None:
                 #~ raise Exception("%r has both detail_template and detail_layout" % cls)
             #~ dl = dt
             
+        master = getattr(cls,'master',None)
+        if master is not None:
+            cls.master = resolve_model(master)
+                
+                
         #~ dl = classDict.get('detail_layout',None)
         dl = getattr(cls,'detail_layout',None)
         if dl is not None:

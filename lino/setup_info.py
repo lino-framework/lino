@@ -155,6 +155,7 @@ lino.projects.crl
 lino.projects.crl.fixtures
 lino.projects.events
 lino.projects.homeworkschool
+lino.projects.homeworkschool.settings
 lino.projects.homeworkschool.fixtures
 lino.projects.igen
 lino.projects.igen.tests
