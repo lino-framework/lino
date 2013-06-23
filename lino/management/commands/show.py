@@ -31,6 +31,9 @@ class Command(BaseCommand):
         make_option('--username', action='store', 
             dest='username', default='root',
             help='The username to act as. Default is "root".'),
+        make_option('--language', action='store', 
+            dest='language', 
+            help="The language to use. Default is the site's default language."),
     ) 
     
     def handle(self, *args, **options):
@@ -38,11 +41,17 @@ class Command(BaseCommand):
             raise CommandError("I need at least one argument.")
         #~ settings.SITE.startup()
         spec = args[0]
-        cl = settings.SITE.modules.resolve(spec)
         
-        if issubclass(cl,models.Model):
-            cl = cl._lino_default_table
+        #~ cl = settings.SITE.modules.resolve(spec)
+        #~ if issubclass(cl,models.Model):
+            #~ cl = cl._lino_default_table
+            
         username = options['username']
         ses = settings.SITE.login(username)
-        ses.show(cl)
+        
+        #~ language = options['language']
+        #~ if language:
+            #~ ses.set_language(language)
+        
+        ses.show(spec,language=options['language'])
           

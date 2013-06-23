@@ -245,7 +245,7 @@ class BaseRequest(object):
         msg.send()
         logger.info("System note '%s' from %s has been sent to %s",subject,sender,recipients)
         
-    def spawn(self,spec,**kw):
+    def spawn(self,spec,language=None,**kw):
         """
         Create a new ActionRequest, taking an "action specificator" 
         and using default values from this one (via :meth:setup_from`).
@@ -263,6 +263,9 @@ class BaseRequest(object):
             #~ print 20130425, __file__, mi.bound_action
             spec = mi.bound_action.request(**kw)
         spec.setup_from(self)
+        if language:
+            spec.set_language(language)
+        
         #~ ar.user = self.user
         #~ ar.subst_user = self.subst_user
         #~ ar.renderer = self.renderer

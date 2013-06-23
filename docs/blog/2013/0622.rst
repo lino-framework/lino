@@ -1,0 +1,77 @@
+=================================
+20130622 (Saturday, 22 June 2013)
+=================================
+
+Lino learns Portuguese
+----------------------
+
+Added pt-br to the list of supported locales:
+
+- .po and .mo files contributed by Flavio
+- `env.languages` in :file:`fabfile.py`
+
+Demo users in :mod:`lino.ui.fixtures.demo` :
+
+Added a warning "No demo user for language %r." to be 
+issued when :attr:`languages <north.Site.languages>` 
+contains an unsupported language.
+
+Added a fictive demo user "Ronaldo Rosa" for `pt-br`.
+
+Added `pt-br` as language in :mod:`lino.projects.min1.settings`.
+
+Added this blog entry to the list of tested docs which makes 
+it part of the test suite. When working on it I do::
+
+  $ python setup.py test -s tests.BlogTest.test_20130622
+  
+(EDIT: later I removed the entry again. The following snippets 
+are now obsolete and no longer being tested 
+and are only for history documentation purposes.)
+  
+.. first some general stuff  
+
+    >>> import os
+    >>> os.environ['DJANGO_SETTINGS_MODULE'] = 'lino.projects.min1.settings'
+    >>> from lino.runtime import *
+    >>> from django.test import Client
+    >>> client = Client()
+    
+>>> ses = settings.SITE.login('ronaldo')
+
+>>> ses.set_language('pt-br')
+
+Django silently ignores it when you try to activate an invalid language,
+so we explicitely test whether pt-br is activated:
+
+>>> from django.utils import translation
+>>> translation.get_language() 
+'pt-br'
+
+The following table should render in Portuguese:
+
+>>> ses.show('users.UsersOverview')
+================= ================== ==========
+ Nome de usuário   Perfil do usuário  Idioma
+----------------- ------------------ ----------
+ robin             Administrator      en
+ ronaldo           Administrator      pt-br
+================= ================== ==========
+<BLANKLINE>
+
+But it doesn't (the above snippet fails).
+
+And the same table in German? This works:
+
+>>> ses.set_language('de')
+>>> ses.show('users.UsersOverview')
+============== ================ =========
+ Benutzername   Benutzerprofil   Sprache
+-------------- ---------------- ---------
+ robin          Administrator    en
+ ronaldo        Administrator    pt-br
+============== ================ =========
+<BLANKLINE>
+
+Hm... still meditating on that (no checkin).
+

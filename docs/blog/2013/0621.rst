@@ -16,9 +16,7 @@ Flavio asked:
 
 Added a new class :class:`dd.CharField <lino.core.fields.CharField>`
 which extends the default Django CharField.
-
-See the :class:`dd.CharField <lino.core.fields.CharField>`
-and also:
+See the docstring and the following external references:
 
 - http://docs.sencha.com/extjs/3.4.0/#!/api/Ext.form.TextField
 - http://www.w3schools.com/jsref/jsref_obj_regexp.asp
@@ -39,11 +37,13 @@ field of :ref:`lino.tutorial.polls`::
         mask_re='/^[a-yA-Y]*$/')
         #~ strip_chars_re='/^[a-yA-Y]*$/')
 
-Since the public tutorial site is read-only you can see 
-the effect 
-only when running it
+Since the 
+`public tutorial site 
+<http://demo1.lino-framework.org/api/polls/Polls/1?an=detail>`__
+is read-only you can see 
+the effect only when running it
 locally after having modifed 
-:attr:`anonymous_user_profile <lino.Site.anonymous_user_profile` to 
+:attr:`anonymous_user_profile <lino.ui.Site.anonymous_user_profile>` to 
 '900' in 
 :srcref:`/docs/tutorials/polls/mysite/settings.py`.
 

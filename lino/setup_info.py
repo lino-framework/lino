@@ -157,6 +157,7 @@ lino.projects.events
 lino.projects.homeworkschool
 lino.projects.homeworkschool.settings
 lino.projects.homeworkschool.fixtures
+lino.projects.i18n
 lino.projects.igen
 lino.projects.igen.tests
 lino.projects.min1

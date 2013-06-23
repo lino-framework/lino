@@ -1,5 +1,5 @@
 # -*- coding: UTF-8 -*-
-## Copyright 2012 Luc Saffre
+## Copyright 2012-2013 Luc Saffre
 ## This file is part of the Lino project.
 ## Lino is free software; you can redistribute it and/or modify 
 ## it under the terms of the GNU General Public License as published by
@@ -20,20 +20,16 @@ from lino.projects.std.settings import *
 
 class Site(Site):
     title = "Lino/MinimalApp 1"
-    #~ help_url = "http://lino.saffre-rumma.net/az/index.html"
-    #~ migration_module = 'lino.projects.az.migrate'
     
     use_extensible = False
-    #~ project_model = 'contacts.Person'
-    #~ project_model = 'contacts.Person'
-    #~ project_model = None
     user_model = 'users.User'
     #~ user_model = None
     
     default_user = 'root'
     
-    #~ languages = ('de', 'fr')
-    languages = ['en']
+    demo_fixtures = 'std few_countries few_cities demo'
+    
+    languages = 'en'
     
     #~ index_view_action = "dsbe.Home"
     

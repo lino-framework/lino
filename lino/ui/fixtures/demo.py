@@ -11,12 +11,19 @@
 ## GNU General Public License for more details.
 ## You should have received a copy of the GNU General Public License
 ## along with Lino; if not, see <http://www.gnu.org/licenses/>.
+
 """
 This installs fictive root users (administrators), one for each language.
 We are trying to sound realistic without actually hitting any real person.
 These names are also visible in the :doc:`Lino demo sites </demos>`.
 
 """
+
+from __future__ import unicode_literals
+
+import logging
+logger = logging.getLogger(__name__)
+
 
 import datetime
 from django.conf import settings
@@ -32,16 +39,19 @@ def root_user(lang,**kw):
     kw.update(language=lang) 
     if lang == 'de':
         #~ kw.update(first_name="Rudi",last_name=u"Rutté")
-        kw.update(first_name="Rolf",last_name=u"Rompen")
+        kw.update(first_name="Rolf",last_name="Rompen")
     elif lang == 'fr':
-        kw.update(first_name=u"Romain",last_name=u"Raffault")
+        kw.update(first_name="Romain",last_name="Raffault")
     elif lang == 'et':
-        kw.update(first_name="Rando",last_name=u"Roosi")
+        kw.update(first_name="Rando",last_name="Roosi")
     elif lang == 'en':
         kw.update(first_name="Robin",last_name="Rood")
+    elif lang == 'pt-br':
+        kw.update(first_name="Ronaldo",last_name="Rosa")
     elif lang == 'nl':
         kw.update(first_name="Rik",last_name="Rozenbos")
     else:
+        logger.warning("No demo user for language %r.",lang)
         return None
     kw.update(username=kw.get('first_name').lower()) 
     return kw

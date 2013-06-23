@@ -19,6 +19,7 @@ class BlogTest(LinoTestCase):
     def test_20130507(self): self.run_simple_doctests('docs/blog/2013/0507.rst')
     def test_20130508(self): self.run_simple_doctests('docs/blog/2013/0508.rst')
     #~ def test_20130513(self): self.run_simple_doctests('docs/blog/2013/0513.rst')
+    #~ def test_20130622(self): self.run_simple_doctests('docs/blog/2013/0622.rst')
     
 class DocsTests(LinoTestCase):
 
@@ -50,11 +51,11 @@ class UtilsTests(LinoTestCase):
     def test_cal_utils(self): self.run_simple_doctests('lino/modlib/cal/utils.py')
 
 class PackagesTests(LinoTestCase):
-    """
-    Runs certain tests related to packaging.
-    """
     def test_01(self): self.run_packages_test(SETUP_INFO['packages'])
 
+class I18nTests(LinoTestCase):
+    def test_i18n(self): self.run_simple_doctests('docs/tested/test_i18n.rst')
+    
 class CosiTests(LinoTestCase):
     def test_cosi(self):      self.run_django_admin_test("lino.projects.cosi.settings") # covered by docs/tutorials/quickstart
     def test_cosi_demo(self): self.run_simple_doctests('docs/tested/test_cosi_demo.rst')

@@ -1,0 +1,47 @@
+===============================
+20130623 (Sunday, 23 June 2013)
+===============================
+
+Lino learns Portuguese (continued)
+----------------------------------
+
+:mod:`lino.management.commands.show`: 
+added new command-line parameter `--language`
+and optimized it to not do things which are done by
+:meth:`lino.core.requests.BaseRequest.spawn`.
+
+Added a project :mod:`lino.projects.i18n`
+and a tested docs page :ref:`lino.tested.i18n`.
+
+Found the explanation why Django doesn't 
+find the `pt-br` locales:
+because Lino had no `pt` locale.
+
+-   In Django you cannot have a variant of a language 
+    without having the base language.
+    The advantage of this sophistication is that 
+    `pt-br` automatically inherits from `pt`.
+
+Flavio, what's the difference 
+between Brazilian Portuguese and plain Portuguese?
+Are you able to maintain both locales?
+
+
+The :ref:`lino.tested.i18n` page was still failing 
+because 
+:meth:`atelier.test.TestCase.run_simple_doctests` 
+uses `python -m doctest` 
+which doesn't let us specify an input encoding for 
+the file.
+It was a well-known bug that 
+:meth:`atelier.test.TestCase.run_simple_doctests` 
+didn't yet support non-ascii characters.
+
+Now it does. 
+Had to add a new module :mod:`atelier.doctest_utf8`
+for this. 
+Because we need to run each doctest in a separate subprocess 
+and because the command-line interface
+of `python -m doctest`  has no way to specify an encoding 
+of the input file.
+
