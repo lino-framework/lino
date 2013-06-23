@@ -3,3 +3,7 @@ Authors
 
 Lino is written and maintained by Luc Saffre <luc.saffre@gmail.com>.
 
+Contributors:
+
+- Flavio Gondin <flvgondin@gmail.com>
+

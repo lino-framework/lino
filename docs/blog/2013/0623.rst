@@ -45,3 +45,6 @@ and because the command-line interface
 of `python -m doctest`  has no way to specify an encoding 
 of the input file.
 
+Checked in revision `f4205eee7d76
+<http://code.google.com/p/lino/source/detail?r=f4205eee7d765e709f0d75d4a897e3169b4b52f4>`__
+for Flavio to test.
