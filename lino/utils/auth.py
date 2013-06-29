@@ -36,6 +36,8 @@ Documented classes and functions
 
 import os
 import logging
+from django.utils.importlib import import_module
+
 logger = logging.getLogger(__name__)
 
 
@@ -573,41 +575,15 @@ class AnonymousUser(object):
         
     def __str__(self):
         return self.username
-    
 
+def get_auth_middleware():
+    module, obj = settings.SITE.auth_middleware.rsplit('.', 1)
+    module = import_module(module)
+    return getattr(module, obj)
 
-class NOT_NEEDED:
-    pass
-    
-    
-def authenticate(username,password=NOT_NEEDED):
-    #~ print "20130515 authenticate %s,%s" % (username,password)
-
-    if not username:
-        return AnonymousUser.instance()
-        
-    """
-    20120110 : alicia hatte es geschafft, 
-    beim Anmelden ein Leerzeichen vor ihren Namen zu setzen. 
-    Apache ließ sie als " alicia" durch.
-    Und Lino legte brav einen neuen User " alicia" an.
-    """
-    username = username.strip()
-    
-    try:
-        user = settings.SITE.user_model.objects.get(username=username)
-        if user.profile is None:
-            #~ logger.info("20121127 user has no profile")
-            return None
-        if password != NOT_NEEDED:
-            if not user.check_password(password):
-                #~ logger.info("20121104 password mismatch")
-                return None
-        return user
-    except settings.SITE.user_model.DoesNotExist,e:
-        #~ logger.info("20121104 no username %r",username)
-        return None  
-    
+def authenticate(*args, **kwargs):
+    middleware = get_auth_middleware()
+    return middleware.authenticate(*args, **kwargs)
     
 class AuthMiddleWareBase(object):
     """
@@ -633,7 +609,38 @@ class AuthMiddleWareBase(object):
         
         self.on_login(request,user)
         
-        
+    class NOT_NEEDED:
+        pass
+
+    @classmethod
+    def authenticate(cls, username, password=NOT_NEEDED):
+        #~ print "20130515 authenticate %s,%s" % (username,password)
+
+        if not username:
+            return AnonymousUser.instance()
+
+        """
+        20120110 : alicia hatte es geschafft,
+        beim Anmelden ein Leerzeichen vor ihren Namen zu setzen.
+        Apache ließ sie als " alicia" durch.
+        Und Lino legte brav einen neuen User " alicia" an.
+        """
+        username = username.strip()
+
+        try:
+            user = settings.SITE.user_model.objects.get(username=username)
+            if user.profile is None:
+                #~ logger.info("20121127 user has no profile")
+                return None
+            if password != cls.NOT_NEEDED:
+                if not user.check_password(password):
+                    #~ logger.info("20121104 password mismatch")
+                    return None
+            return user
+        except settings.SITE.user_model.DoesNotExist,e:
+            #~ logger.info("20121104 no username %r",username)
+            return None
+
             
             
     def on_login(self,request,user):
@@ -730,7 +737,7 @@ class RemoteUserMiddleware(AuthMiddleWareBase):
             #~ raise exceptions.PermissionDenied(msg)
             raise Exception("Using remote authentication, but no user credentials found.")
             
-        user = authenticate(username)
+        user = self.authenticate(username)
         
         if user is None:
             #~ logger.info("20130514 Unknown username %s from request %s",username, request)
@@ -751,7 +758,7 @@ class SessionUserMiddleware(AuthMiddleWareBase):
 
     def get_user_from_request(self, request):
       
-        user = authenticate(request.session.get('username'),
+        user = self.authenticate(request.session.get('username'),
             request.session.get('password'))
         
         if user is None:
