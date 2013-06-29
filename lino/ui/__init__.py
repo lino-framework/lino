@@ -142,7 +142,13 @@ class Site(lino.Site):
     Set it to `None` to remove any user management 
     (feature used by e.g. :mod:`lino.test_apps.1`)
     """
-    
+
+    auth_middleware = None
+    """
+    Override used Authorisation middlewares with supplied touple of middleware class names.
+
+    If None, use logic described in :doc:`/topics/auth`
+    """
     
     legacy_data_path = None
     """
@@ -863,16 +869,21 @@ class Site(lino.Site):
         #~ if self.user_model is None:
             #~ yield 'lino.utils.auth.NoUserMiddleware'
         #~ elif self.remote_user_header:
-        if self.user_model is None:
-            yield 'lino.utils.auth.NoUserMiddleware'
+
+        if self.auth_middleware:
+            yield self.auth_middleware
         else:
-            if self.remote_user_header:
-                yield 'lino.utils.auth.RemoteUserMiddleware'
-                #~ yield 'django.middleware.doc.XViewMiddleware'
+            if self.user_model is None:
+                yield 'lino.utils.auth.NoUserMiddleware'
             else:
-                # 20121003 : not using remote http auth, so we need sessions
-                yield 'django.contrib.sessions.middleware.SessionMiddleware'
-                yield 'lino.utils.auth.SessionUserMiddleware'
+                if self.remote_user_header:
+                    yield 'lino.utils.auth.RemoteUserMiddleware'
+                    #~ yield 'django.middleware.doc.XViewMiddleware'
+                else:
+                    # 20121003 : not using remote http auth, so we need sessions
+                    yield 'django.contrib.sessions.middleware.SessionMiddleware'
+                    yield 'lino.utils.auth.SessionUserMiddleware'
+
                 #~ raise Exception("""\
     #~ `user_model` is not None, but no `remote_user_header` in your settings.SITE.""")
         #~ yield 'lino.utils.editing.EditingMiddleware'
