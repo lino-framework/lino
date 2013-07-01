@@ -5,5 +5,5 @@ Lino is written and maintained by Luc Saffre <luc.saffre@gmail.com>.
 
 Contributors:
 
-- Flavio Gondin <flvgondin@gmail.com>
-
+- Flavio Gondin <flvgondin@gmail.com> (:blogref:`20130622`, :blogref:`20130623`)
+- Josef Kejzlar <cuchac@email.cz> (:blogref:`20130701`).

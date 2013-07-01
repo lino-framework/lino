@@ -145,7 +145,8 @@ class Site(lino.Site):
 
     auth_middleware = None
     """
-    Override used Authorisation middlewares with supplied touple of middleware class names.
+    Override used Authorisation middlewares with supplied tuple of 
+    middleware class names.
 
     If None, use logic described in :doc:`/topics/auth`
     """

@@ -1,0 +1,17 @@
+===============================
+20130701 (Monday, 01 July 2013)
+===============================
+
+Lino has a first code contributor: 
+Josef Kejzlar contributed the new :attr:`auth_middleware
+<lino.ui.Lino.auth_middleware>` setting:
+
+  I need to make custom authentication (to LDAP) and therefore I had 
+  to allow replacing authentication middleware. I've also moved 
+  authenticate method into middleware class, so that it is possible 
+  to reimplement auth.authenticate method that login view uses. The 
+  change is backward compatible because auth.authenticate method is 
+  reimplemented and all tests passes. I think it could be useful for 
+  others as well. Especially the reimplementable auth.authenticate 
+  method could be handy.
+
