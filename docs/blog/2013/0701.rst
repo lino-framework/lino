@@ -15,3 +15,8 @@ Josef Kejzlar contributed the new :attr:`auth_middleware
   others as well. Especially the reimplementable auth.authenticate 
   method could be handy.
 
+
+AFAICS we can remove the module-level 
+`get_auth_middleware` and `authenticate` 
+functions.
+
