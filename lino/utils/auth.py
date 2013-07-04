@@ -576,14 +576,14 @@ class AnonymousUser(object):
     def __str__(self):
         return self.username
 
-#~ def get_auth_middleware():
-    #~ module, obj = settings.SITE.auth_middleware.rsplit('.', 1)
-    #~ module = import_module(module)
-    #~ return getattr(module, obj)
-#~ 
-#~ def authenticate(*args, **kwargs):
-    #~ middleware = get_auth_middleware()
-    #~ return middleware.authenticate(*args, **kwargs)
+def get_auth_middleware():
+    module, obj = settings.SITE.auth_middleware.rsplit('.', 1)
+    module = import_module(module)
+    return getattr(module, obj)
+
+def authenticate(*args, **kwargs):
+    middleware = get_auth_middleware()
+    return middleware.authenticate(*args, **kwargs)
     
 class AuthMiddleWareBase(object):
     """

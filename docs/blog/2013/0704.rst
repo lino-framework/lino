@@ -58,3 +58,16 @@ and
 
 Re-built a new self-signed `DavLink.jar` file included with Lino 
 because the old one had expired.
+
+TODO: automate the signature update and run it with every release.
+
+Small changes to welfare, patrols and faggio
+--------------------------------------------
+
+I checked in some small changes to welfare, patrols and 
+faggio. 
+
+
+Updated demo sites on lino-framework.org
+----------------------------------------
+
