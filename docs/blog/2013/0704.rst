@@ -1,0 +1,60 @@
+=================================
+20130704 (Thursday, 04 July 2013)
+=================================
+
+
+About Content Security Policy
+-----------------------------
+
+I read the article 
+`Bodyguard für Webseiten
+<http://www.heise.de/security/artikel/XSS-Bremse-Content-Security-Policy-1888522.html>`_.
+which explains Content Security Policy
+for people like me.
+It also mentions the
+`XSS Filter Evasion Cheat Sheet
+<https://www.owasp.org/index.php/XSS_Filter_Evasion_Cheat_Sheet>`_.
+
+I then asked Google to find 
+`django-csp
+<http://django-csp.readthedocs.org>`_
+a model-less Django "app"
+which adds Content-Security-Policy headers to 
+Django applications.
+It works using a middleware and some decorators.
+Especially the `configuration
+<http://django-csp.readthedocs.org/en/latest/configuration.html>`_
+is well done.
+It starts by stating: 
+"`Content-Security-Policy <http://www.w3.org/TR/CSP/>`_ 
+ is a complicated header. There are many values you may need to tweak 
+ here."
+
+CSP is important for applications that accept arbitrary 
+input from anonymous users.
+
+
+
+Uncaught TypeError: Cannot read property 'main_item' of null
+------------------------------------------------------------
+
+Dieser JS-Fehler kam manchmal, wenn man als jemand anderer gearbeitet 
+hatte und dann zurück als "ich selbst" schalten wollte.
+Wenn Permalink nicht ermittelbar
+weil `Lino.current_window` nicht definiert ist, 
+dann soll er ja trotzdem wenigstens umschalten und dann eben 
+auf die Startseite springen.
+
+
+Updated DavLink signature
+-------------------------
+
+
+More updates in documentation for DavLink:
+:doc:`/davlink/index`, 
+:doc:`/davlink/usage`
+and
+:doc:`/davlink/client`.
+
+Re-built a new self-signed `DavLink.jar` file included with Lino 
+because the old one had expired.

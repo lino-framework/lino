@@ -1655,7 +1655,13 @@ Lino.permalink_handler = function (ww) {
   return function() { 
     //~ console.log(20100923,ww.get_permalink());
     //~ document.location = ww.main_item.get_permalink();
-    Lino.load_url(ww.main_item.get_permalink());
+    
+    /* Uncaught TypeError: Cannot read property 'main_item' of null  */
+    if (ww) {
+        Lino.load_url(ww.main_item.get_permalink());
+    } else {
+        Lino.load_url('{{settings.SITE.admin_prefix}}/');
+    }
     //~ console.log(20120715, ww.main_item.get_permalink());
     //~ document.location = "?permalink=" + ww.get_permalink();
     //~ document.location = "?permalink=" + ww.config.permalink_name +'()';

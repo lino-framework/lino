@@ -17,7 +17,7 @@ JC = javac
 .java.class:
 	$(JC) $(JFLAGS) $*.java
 
-JARFILE = ../media/applets/DavLink.jar
+JARFILE = ../lino/media/applets/DavLink.jar
 CLASSES = davlink/DavLink.java
 
 default: jar

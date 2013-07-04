@@ -1,19 +1,26 @@
 DavLink
 =======
 
-.. include:: /include/wip.rst
-
-
 DavLink is an applet that 
 launches the client's desktop's office application,
 passing it the URL of a webdav file 
 as command line argument.
 
-This might become a solution for :doc:`/tickets/45`.
+It is actively being used since 2011 as a solution for 
+:doc:`/tickets/45`.
+
+It is published and maintained by the author 
+as a part of the Lino project.
 
 Supported Office suites: Microsoft, OpenOffice, LibreOffice
 
-Supported Platforms: Windows, Unix
+Supported client platforms: Windows, Unix
+
+.. toctree::
+   :maxdepth: 2
+
+   usage
+   client
 
   
 Thanks to 
@@ -52,22 +59,5 @@ Alternatives
   :scale: 80
   
 
-
-Installation
-------------
-
-.. image:: not_verified.jpg
-  :scale: 80
-  
-
-
-
-Self-signed certificate: 
-`Saffre-Rumma.cer <Saffre-Rumma.cer>`_
-
-
-
-Java Tutorials `Chapter 10: Signed Applets
-<http://java.sun.com/developer/onlineTraining/Programming/JDCBook/signed.html>`_
 
 

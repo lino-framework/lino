@@ -1,0 +1,8 @@
+==================================
+20130703 (Wednesday, 03 July 2013)
+==================================
+
+
+Updated :doc:`/davlink/index` and 
+the header of 
+:srcref:`/java/davlink/DavLink.java`
