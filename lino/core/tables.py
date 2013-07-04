@@ -1151,10 +1151,12 @@ class VentilatingTable(AbstractTable):
         
 
 
-@signals.receiver(signals.database_ready)
+from djangosite.signals import database_ready
+
+@signals.receiver(database_ready)
 def setup_ventilated_columns(sender,**kw):
     if actors.actors_list is not None:
         for a in actors.actors_list:
             if issubclass(a,AbstractTable):
                 a.setup_columns()
-    sender.resolve_virtual_fields()
+    settings.SITE.resolve_virtual_fields()

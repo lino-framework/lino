@@ -33,6 +33,8 @@ from urllib import urlencode
 
 from pkg_resources import Requirement, resource_filename, DistributionNotFound
 
+
+
 def buildurl(*args,**kw):
     url = '/' + ("/".join(args))
     if len(kw):
@@ -638,6 +640,7 @@ class Site(lino.Site):
             #~ sys.exit(-10)
         #~ raise Exception("20130302")
         
+        
 
     def is_abstract_model(self,name):
         """
@@ -739,6 +742,10 @@ class Site(lino.Site):
         return self._site_config
     #~ site_config = property(get_site_config)
     
+    #~ def shutdown(self):
+        #~ self.clear_site_config()
+        #~ return super(Site,self).shutdown()
+        
     def clear_site_config(self):
         """
         Clear the cached SiteConfig instance. 
@@ -1088,11 +1095,6 @@ class Site(lino.Site):
         return requests.BaseRequest(
             renderer=self.ui.text_renderer,
             user=u)
-        
-
-
-
-
 
 
 
@@ -1215,7 +1217,6 @@ class Site(lino.Site):
         )
         return urlpatterns
       
-            
 
     def get_ext_urls(self):
         
@@ -1263,8 +1264,10 @@ class Site(lino.Site):
         
     def get_patterns(self):
         self.startup()
-        from lino.core.signals import database_ready
+        
+        from djangosite.signals import database_ready
         database_ready.send(self)
+        
         #~ self.logger.info("20130418 get_patterns()")
         from django.conf.urls import patterns, url, include
 

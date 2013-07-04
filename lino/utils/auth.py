@@ -305,6 +305,14 @@ def make_permission_handler(*args,**kw):
         required to get the permission.
         The default value `None` means that no special user level is required.
         
+        When `user_groups` is not specified, 
+        then the profile's default level (`UserProfile.level`) 
+        is being tested, otherwise the userlevel for the group 
+        membership.
+        E.g. `dd.required(user_level='manager',user_groups='integ')` 
+        will pass when `profile.level` is "user" and `profile.integ_level` is "manager"
+        
+        
     `user_groups`
         List of strings naming the user groups for which membership is required 
         to get permission to view this Actor.
@@ -356,7 +364,7 @@ def make_view_permission_handler_(
         def allow(action,profile):
             return True
     #~ if settings.SITE.user_model is not None:
-    if True: # e.g. e.g. public readonly site
+    if True: # e.g. public readonly site
         if auth:
             allow_before_auth = allow
             def allow(action,profile):
@@ -364,20 +372,13 @@ def make_view_permission_handler_(
                     return False
                 return allow_before_auth(action,profile)
             
-        if user_level is not None:
-            user_level = getattr(UserLevels,user_level)
-            allow_user_level = allow
-            def allow(action,profile):
-                if profile.level < user_level:
-                    return False
-                return allow_user_level(action,profile)
-                
         if user_groups is not None:
             if isinstance(user_groups,basestring):
                 user_groups = user_groups.split()
             if user_level is None:
                 user_level = UserLevels.user
-                #~ raise Exception("20120621")
+            else:
+                user_level = getattr(UserLevels,user_level)
             for g in user_groups:
                 UserGroups.get_by_value(g) # raise Exception if no such group exists
                 #~ if not UserGroups.get_by_name(g):
@@ -389,8 +390,18 @@ def make_view_permission_handler_(
                     level = getattr(profile,g+'_level')
                     if level >= user_level:
                         return True
+                    elif debug_permissions:
+                        logger.info("20130704 level %r < %r",level,user_level)
                 return False
     
+        elif user_level is not None:
+            user_level = getattr(UserLevels,user_level)
+            allow_user_level = allow
+            def allow(action,profile):
+                if profile.level < user_level:
+                    return False
+                return allow_user_level(action,profile)
+                
     if not readonly:
         allow3 = allow
         def allow(action,profile):
@@ -429,7 +440,7 @@ def make_permission_handler_(
         def allow(action,user,obj,state):
             return True
     #~ if settings.SITE.user_model is not None:
-    if True: # e.g. e.g. public readonly site
+    if True: # e.g. public readonly site
         if auth:
             allow_before_auth = allow
             def allow(action,user,obj,state):
@@ -439,18 +450,6 @@ def make_permission_handler_(
                     return False
                 return allow_before_auth(action,user,obj,state)
             
-        if user_level is not None:
-            user_level = getattr(UserLevels,user_level)
-            allow_user_level = allow
-            def allow(action,user,obj,state):
-                #~ if user.profile.level is None or user.profile.level < user_level:
-                if user.profile.level < user_level:
-                    #~ print 20120715, user.profile.level
-                    #~ if action.action_name == 'wf7':
-                        #~ logger.info("20130424 allow_user_level returned False")
-                    return False
-                return allow_user_level(action,user,obj,state)
-                
         if owner is not None:
             allow_owner = allow
             def allow(action,user,obj,state):
@@ -465,7 +464,8 @@ def make_permission_handler_(
                 user_groups = user_groups.split()
             if user_level is None:
                 user_level = UserLevels.user
-                #~ raise Exception("20120621")
+            else:
+                user_level = getattr(UserLevels,user_level)
             for g in user_groups:
                 UserGroups.get_by_value(g) # raise Exception if no such group exists
                 #~ if not UserGroups.get_by_name(g):
@@ -482,6 +482,18 @@ def make_permission_handler_(
                         return True
                 return False
             
+        elif user_level is not None:
+            user_level = getattr(UserLevels,user_level)
+            allow_user_level = allow
+            def allow(action,user,obj,state):
+                #~ if user.profile.level is None or user.profile.level < user_level:
+                if user.profile.level < user_level:
+                    #~ print 20120715, user.profile.level
+                    #~ if action.action_name == 'wf7':
+                        #~ logger.info("20130424 allow_user_level returned False")
+                    return False
+                return allow_user_level(action,user,obj,state)
+                
     if states is not None:
         #~ if not isinstance(actor.workflow_state_field,choicelists.ChoiceListField):
         if actor.workflow_state_field is None:
@@ -734,7 +746,7 @@ class RemoteUserMiddleware(AuthMiddleWareBase):
             #~ logger.info("20130514 Unknown username %s from request %s",username, request)
             #~ raise Exception(
             #~ raise exceptions.PermissionDenied("Unknown or inactive username %r. Please contact your system administrator." 
-            logger.info("Unknown or inactive username %r.",username)
+            #~ logger.info("Unknown or inactive username %r.",username)
             raise exceptions.PermissionDenied()
               
         return user

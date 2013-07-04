@@ -68,10 +68,10 @@ Sent when a model instance is being merged into another instance.
 pre_remove_child = Signal(['request','child'])
 pre_add_child = Signal(['request'])
 pre_ui_create = Signal(['request'])
-pre_ui_delete = Signal(['request'])
 pre_ui_update = Signal(['request'])
+pre_ui_delete = Signal(['request'])
 """
-Sent when just before a model instance is being deleted using 
+Sent just before a model instance is being deleted using 
 the user interface.
 
 ``request``:
@@ -84,7 +84,7 @@ post_ui_build = Signal()
 
 database_connected = Signal()
 
-database_ready = Signal()
+#~ database_ready = Signal()
 
 
 from django.db.models.fields import NOT_PROVIDED

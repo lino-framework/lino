@@ -90,22 +90,22 @@ Utilities:
 - :func:`inject_quick_add_buttons <lino.core.inject.inject_quick_add_buttons>` 
 - :func:`models_by_base <djangosite.dbutils.models_by_base>` 
 
-
-
 Signals:
 
+- :attr:`pre_startup <djangosite.signals.database_ready>`
 - :attr:`pre_startup <djangosite.signals.pre_startup>`
 - :attr:`post_startup <djangosite.signals.post_startup>`
 - :attr:`pre_analyze <lino.core.signals.pre_analyze>`
 - :attr:`post_analyze <lino.core.signals.post_analyze>`
 - :attr:`pre_merge <lino.core.signals.pre_merge>`
 - :attr:`pre_ui_create <lino.core.signals.pre_ui_create>`
-- :attr:`ChangeWatcher <lino.core.signals.ChangeWatcher>`
 - :attr:`pre_ui_update <lino.core.signals.pre_ui_update>`
 - :attr:`pre_ui_delete <lino.core.signals.pre_ui_delete>`
 - :attr:`database_connected <lino.core.signals.database_connected>`
-- :attr:`receiver <django.dispatch.receiver>` : the standard Django receiver decorator
 - (and many more)
+
+- :attr:`ChangeWatcher <lino.core.signals.ChangeWatcher>`
+- :attr:`receiver <django.dispatch.receiver>` : the standard Django receiver decorator
 
 Actions:
 
@@ -239,7 +239,9 @@ from lino.core.layouts import ParamsLayout
 
 from lino.core.signals import pre_ui_create, pre_ui_delete, pre_ui_update, ChangeWatcher
 from lino.core.signals import database_connected
-from lino.core.signals import database_ready
+#~ from lino.core.signals import database_ready
+from djangosite.signals import database_ready
+
 from djangosite.signals import pre_startup, post_startup
 
 from lino.core.signals import pre_analyze

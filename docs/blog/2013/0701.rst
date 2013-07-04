@@ -3,7 +3,8 @@
 ===============================
 
 Lino has a first code contributor: 
-Josef Kejzlar contributed the new :attr:`auth_middleware
+Josef Kejzlar contributed the new 
+:attr:`auth_middleware
 <lino.ui.Site.auth_middleware>` setting:
 
   I need to make custom authentication (to LDAP) and therefore I had 
@@ -19,4 +20,9 @@ Josef Kejzlar contributed the new :attr:`auth_middleware
 AFAICS we can remove the module-level 
 `get_auth_middleware` and `authenticate` 
 functions.
+
+EDIT 20130704: both are indeed necessary, 
+and they didn't work
+when :attr:`auth_middleware
+<lino.ui.Site.auth_middleware>`.
 

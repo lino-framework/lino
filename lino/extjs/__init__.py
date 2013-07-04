@@ -818,7 +818,7 @@ tinymce.init({
             #~ if mtime > settings.SITE.mtime:
             if mtime > settings.SITE.ui.mtime:
                 #~ if not user.modified or user.modified < datetime.datetime.fromtimestamp(mtime):
-                logger.info("20130204 %s is up to date.",fn)
+                #~ logger.info("20130204 %s is up to date.",fn)
                 return 0
                     
         logger.info("Building %s ...", fn)

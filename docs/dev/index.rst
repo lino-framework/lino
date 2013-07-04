@@ -8,6 +8,7 @@ Developer's Guide
 
    install
    userdocs
+   signals
    intro
    modlib
    style

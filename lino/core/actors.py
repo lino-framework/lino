@@ -597,6 +597,17 @@ class Actor(actions.Parametrizable):
         return self.__dict__.get(_handle_attr_name,False)
         
     @classmethod
+    def clear_handle(self):
+        """
+        When an actor has dynamic columns which depend on database 
+        content, then its layout handle may not persist between 
+        different Django test cases because a handle from a first
+        test case may refer to elements which no longer exist in a 
+        second test case.
+        """
+        setattr(self,_handle_attr_name,None)
+        
+    @classmethod
     def on_analyze(self,site):
         pass
         

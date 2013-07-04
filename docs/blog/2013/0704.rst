@@ -71,3 +71,73 @@ faggio.
 Updated demo sites on lino-framework.org
 ----------------------------------------
 
+Updated the :doc:`demo sites </demos>` on `lino-framework.org`.
+
+This made me discover a bug:
+the `get_auth_middleware` and `authenticate` 
+in :mod:`lino.utils.auth` functions
+are indeed necessary, and they needed a 
+bugfix for when :attr:`auth_middleware
+<lino.ui.Site.auth_middleware>`.
+
+TODO: 
+
+- Add a test case that would have detected this 
+  bug. This view is being used only when not remote http auth.
+  
+- Check with Joe whether there is a better solution for his problem
+  than :attr:`auth_middleware <lino.ui.Site.auth_middleware>`.
+
+
+requirements with both `user_groups` and `user_level`
+-----------------------------------------------------
+
+Fixed the behaviour with requirements having 
+both `user_groups` and `user_level`.
+
+Melanie cannot see :menuselection:`Configuration --> DSBE --> Fonctions`.
+
+
+        When `user_groups` is not specified, 
+        then the profile's default level (`UserProfile.level`) 
+        is being tested, otherwise the userlevel for the group 
+        membership.
+        E.g. `dd.required(user_level='manager',user_groups='integ')` 
+        will pass when `profile.level` is "user" and `profile.integ_level` is "manager"
+
+Startup signals
+---------------
+
+The :mod:`lino_welfare` test suite had a failure which occured only 
+when running certain combinations of cases within a same runner. 
+The following two commands worked::
+
+  python manage.py test lino_welfare.DemoTest
+  python manage.py test lino_welfare.QuickTests 
+  
+But running them together fails::
+
+  python manage.py test lino_welfare.QuickTests lino_welfare.DemoTest
+
+This was complex. 
+For example I didn't yet know that Django creates the test 
+database and loads any test fixtures *before* calling the setUp() 
+method.
+
+
+
+Added a new method `lino.core.actors.Actor.clear_handle` 
+and manually call it in the database_ready handler 
+which configures the dynamic columns of
+:class:`UsersWithClients
+<lino_welfare.modlib.pcsw.models.UsersWithClients>`:
+
+When an actor has dynamic columns which depend on database 
+content, then its layout handle must not persist between 
+different Django test cases because a handle from a first
+test case may refer to elements which no longer exist in a 
+second test case.
+
+While trying to understand these reasons,
+I started a new document :ref:`lino.signals`.
+

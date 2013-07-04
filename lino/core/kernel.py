@@ -83,6 +83,11 @@ def set_default_verbose_name(f):
     if f.verbose_name == f.name.replace('_', ' '):
         f.verbose_name = f.rel.to._meta.verbose_name
 
+#~ def shutdown_site(self):
+    #~ models_list = models.get_models(include_auto_created=True)
+    #~ for m in models_list:
+        #~ ...
+    
 def startup_site(self):
     """
     This is the code that runs when you call :meth:`lino.Site.startup`.

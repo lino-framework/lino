@@ -337,8 +337,12 @@ class Site(Site):
         super(Site,self).do_site_startup()
         from lino.core.kernel import startup_site
         startup_site(self)
-
         
+    #~ def shutdown(self):
+        #~ return super(Site,self).shutdown()
+        #~ from lino.core.kernel import shutdown_site
+        #~ shutdown_site(self)
+#~ 
         
     def setup_workflows(self):
         self.on_each_app('setup_workflows')

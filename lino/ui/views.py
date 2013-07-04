@@ -421,6 +421,9 @@ class MainHtml(View):
         return ui.action_response(rv)
         
 class Authenticate(View):
+    """
+    This view is being used only when not remote http auth
+    """
   
     def get(self, request, *args, **kw):
         action_name = request.GET.get(ext_requests.URL_PARAM_ACTION_NAME)
