@@ -89,24 +89,34 @@ TODO:
   than :attr:`auth_middleware <lino.ui.Site.auth_middleware>`.
 
 
+
 requirements with both `user_groups` and `user_level`
 -----------------------------------------------------
 
-Fixed the behaviour with requirements having 
-both `user_groups` and `user_level`.
+- Melanie cannot see :menuselection:`Configuration --> DSBE --> Fonctions`.
 
-Melanie cannot see :menuselection:`Configuration --> DSBE --> Fonctions`.
+This innocent user-reported Lino-Welfare 
+problem revealed some subtle issues
+which caused me a few hours of internal work.
+
+BTW this wasn't being tested.
+Added a test case for profile 110: integ manager.
 
 
-        When `user_groups` is not specified, 
-        then the profile's default level (`UserProfile.level`) 
-        is being tested, otherwise the userlevel for the group 
-        membership.
-        E.g. `dd.required(user_level='manager',user_groups='integ')` 
-        will pass when `profile.level` is "user" and `profile.integ_level` is "manager"
+Requirements having 
+both `user_groups` and `user_level`
+didn't work as expected.
 
-Startup signals
----------------
+When `user_groups` is not specified, 
+then the profile's default level (`UserProfile.level`) 
+is being tested, 
+but otherwise Lino now tests only 
+the userlevel of the group membership.
+
+E.g. `dd.required(user_level='manager',user_groups='integ')` 
+will pass when `profile.integ_level` is "manager"
+even when `profile.level` is only "user".
+
 
 The :mod:`lino_welfare` test suite had a failure which occured only 
 when running certain combinations of cases within a same runner. 
@@ -123,7 +133,6 @@ This was complex.
 For example I didn't yet know that Django creates the test 
 database and loads any test fixtures *before* calling the setUp() 
 method.
-
 
 
 Added a new method `lino.core.actors.Actor.clear_handle` 

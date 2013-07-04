@@ -90,22 +90,9 @@ Utilities:
 - :func:`inject_quick_add_buttons <lino.core.inject.inject_quick_add_buttons>` 
 - :func:`models_by_base <djangosite.dbutils.models_by_base>` 
 
-Signals:
+Signals: 
 
-- :attr:`pre_startup <djangosite.signals.database_ready>`
-- :attr:`pre_startup <djangosite.signals.pre_startup>`
-- :attr:`post_startup <djangosite.signals.post_startup>`
-- :attr:`pre_analyze <lino.core.signals.pre_analyze>`
-- :attr:`post_analyze <lino.core.signals.post_analyze>`
-- :attr:`pre_merge <lino.core.signals.pre_merge>`
-- :attr:`pre_ui_create <lino.core.signals.pre_ui_create>`
-- :attr:`pre_ui_update <lino.core.signals.pre_ui_update>`
-- :attr:`pre_ui_delete <lino.core.signals.pre_ui_delete>`
-- :attr:`database_connected <lino.core.signals.database_connected>`
-- (and many more)
-
-- :attr:`ChangeWatcher <lino.core.signals.ChangeWatcher>`
-- :attr:`receiver <django.dispatch.receiver>` : the standard Django receiver decorator
+- See :ref:`lino.signals`
 
 Actions:
 
