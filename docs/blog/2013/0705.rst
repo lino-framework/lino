@@ -1,0 +1,8 @@
+===============================
+20130705 (Friday, 05 July 2013)
+===============================
+
+
+DavLink now throws a RuntimeException "Unknown os.name xyz" 
+when `System.getProperty("os.name")` doesn't start 
+with "Windows", "Linux" or "Mac".

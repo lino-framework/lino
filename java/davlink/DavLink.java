@@ -208,6 +208,8 @@ public class DavLink extends Applet {
         if (os_name.startsWith("Windows")) name = windowsName;
         else if (os_name.startsWith("Linux")) name = linuxName;
         else if (os_name.startsWith("Mac")) name = macName;
+        else
+            throw new RuntimeException("Unknown os.name " + os_name);
       
         if (name == null) {
             return;
@@ -322,7 +324,7 @@ public class DavLink extends Applet {
             generate_default_prefs();
         String path = prefs.get(ext,null);
         if (path == null) 
-            throw new RuntimeException("No launcher defined for " + fileName);
+            throw new RuntimeException("No launcher defined for extension '" + ext + "'");
         return path;
         
     }
