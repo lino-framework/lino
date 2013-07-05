@@ -2,7 +2,72 @@
 20130705 (Friday, 05 July 2013)
 ===============================
 
+Trying to reproduce a "java.lang.SecurityException: JVM Shared, 
+not allowed to set security manager"
+reported by a user (client running Windows, Firefox) after they 
+upgraded Java6 to Java7.
 
-DavLink now throws a RuntimeException "Unknown os.name xyz" 
-when `System.getProperty("os.name")` doesn't start 
-with "Windows", "Linux" or "Mac".
+Discovering the 
+`jconsole <http://docs.oracle.com/javase/6/docs/technotes/guides/management/jconsole.html>`_
+command.
+This command opens an application window which shows a lot of things, 
+except what I expected it to show: a java console (i.e. error messages, exceptions 
+and simple messages to stdout).
+The :menuselection:`Help --> About` says:
+
+  | JConsole version: 1.6.0_27-b27
+  | Java VM version: OpenJDK Server VM, 20.0-b12
+  
+Explanation: the java console messages are displayed at the terminal 
+from which I launched `jconsole`...
+
+Code changes:
+
+- DavLink now throws a RuntimeException "Unknown os.name xyz" 
+  when `System.getProperty("os.name")` doesn't start 
+  with "Windows", "Linux" or "Mac".
+
+- Added :func:`lino_welfare.migrate.migrate_from_1_1_7`.
+
+Aha, here is about the same problem on my machine::
+
+    java version "1.7.0_21"
+    OpenJDK Runtime Environment (IcedTea 2.3.9) (7u21-2.3.9-0ubuntu0.12.04.1)
+    OpenJDK Server VM (build 23.7-b01, mixed mode)
+    java.io.IOException: http://testlino:8080/media/eid-jslib//media/eid-jslib/beid_java_plugin.jnlp
+        at net.sourceforge.jnlp.JNLPFile.openURL(JNLPFile.java:282)
+        at net.sourceforge.jnlp.JNLPFile.<init>(JNLPFile.java:204)
+        at net.sourceforge.jnlp.PluginBridge.<init>(PluginBridge.java:63)
+        at net.sourceforge.jnlp.NetxPanel.runLoader(NetxPanel.java:127)
+        at sun.applet.AppletPanel.run(AppletPanel.java:380)
+        at java.lang.Thread.run(Thread.java:722)
+    Initializing
+    java.lang.SecurityException: Changing the SecurityManager is not allowed.
+        at net.sourceforge.jnlp.runtime.JNLPSecurityManager.checkPermission(JNLPSecurityManager.java:270)
+        at java.lang.System.setSecurityManager0(System.java:295)
+        at java.lang.System.setSecurityManager(System.java:286)
+        at davlink.DavLink.init(DavLink.java:227)
+        at sun.applet.AppletPanel.run(AppletPanel.java:436)
+        at java.lang.Thread.run(Thread.java:722)
+    Jul 05, 2013 8:59:54 AM java.util.prefs.FileSystemPreferences syncWorld
+    WARNING: Couldn't flush system prefs: java.util.prefs.BackingStoreException: /etc/.java/.systemPrefs/lino create failed.
+    java.lang.reflect.InvocationTargetException
+        at sun.reflect.NativeMethodAccessorImpl.invoke0(Native Method)
+        at sun.reflect.NativeMethodAccessorImpl.invoke(NativeMethodAccessorImpl.java:57)
+        at sun.reflect.DelegatingMethodAccessorImpl.invoke(DelegatingMethodAccessorImpl.java:43)
+        at java.lang.reflect.Method.invoke(Method.java:601)
+        at sun.applet.PluginAppletSecurityContext$4.run(PluginAppletSecurityContext.java:670)
+        at java.security.AccessController.doPrivileged(Native Method)
+        at sun.applet.PluginAppletSecurityContext.handleMessage(PluginAppletSecurityContext.java:667)
+        at sun.applet.AppletSecurityContextManager.handleMessage(AppletSecurityContextManager.java:68)
+        at sun.applet.PluginStreamHandler.handleMessage(PluginStreamHandler.java:235)
+        at sun.applet.PluginMessageHandlerWorker.run(PluginMessageHandlerWorker.java:78)
+    Caused by: java.lang.RuntimeException: No launcher defined for extension 'rtf'
+        at davlink.DavLink.getLauncherFor(DavLink.java:327)
+        at davlink.DavLink.open(DavLink.java:333)
+        ... 10 more
+    Error on Java side: No launcher defined for extension 'rtf' 
+    Jul 05, 2013 9:00:24 AM java.util.prefs.FileSystemPreferences syncWorld
+    WARNING: Couldn't flush system prefs: java.util.prefs.BackingStoreException: /etc/.java/.systemPrefs/lino create failed.
+
+All this is caused by "java.lang.SecurityException: Changing the SecurityManager is not allowed."

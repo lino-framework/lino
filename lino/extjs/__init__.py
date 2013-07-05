@@ -736,13 +736,15 @@ tinymce.init({
             yield '<param name="subapplet.classname" value="be.belgium.beid.BEID_Applet">'
             yield '<param name="progressbar" value="true">'
             yield '<param name="jnlpNumExtensions" value="1">'
-            yield '<param name="jnlpExtension1" value= "' + p + '/beid.jnlp">'
+            #~ yield '<param name="jnlpExtension1" value= "' + p + '/beid.jnlp">'
+            yield '<param name="jnlpExtension1" value= "beid.jnlp">'
 
             yield '<param name="debug" value="false"/>'
             yield '<param name="Reader" value=""/>'
             yield '<param name="OCSP" value="-1"/>'
             yield '<param name="CRL" value="-1"/>'
-            yield '<param name="jnlp_href" value="' + p + '/beid_java_plugin.jnlp" />'
+            #~ yield '<param name="jnlp_href" value="' + p + '/beid_java_plugin.jnlp" />'
+            yield '<param name="jnlp_href" value="beid_java_plugin.jnlp" />'
             yield '</applet>'
 
 
