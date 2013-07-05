@@ -70,9 +70,9 @@ Aha, here is about the same problem on my machine::
     Jul 05, 2013 9:00:24 AM java.util.prefs.FileSystemPreferences syncWorld
     WARNING: Couldn't flush system prefs: java.util.prefs.BackingStoreException: /etc/.java/.systemPrefs/lino create failed.
 
-The first `java.io.IOException` is due to a bug in 
-:meth:`lino.extjs.ExtRenderer.html_page_lines` when 
-:attr:`lino.ui.Site.use_eid_jslib` ist True.
+The first `java.io.IOException` is due to some bugs
+in how Lino refers to the eid-jslib
+when :attr:`lino.ui.Site.use_eid_jslib` ist True.
 
 All the remaining errors are caused by "java.lang.SecurityException: Changing the SecurityManager is not allowed."
 

@@ -221,7 +221,7 @@ public class DavLink extends Applet {
     }
     
     
-    public void init() {
+    public void unused_init() {
         System.out.println("Initializing");
         //~ System.out.println("toto");
         System.setSecurityManager(new SecurityManager()
