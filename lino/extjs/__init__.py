@@ -724,6 +724,7 @@ tinymce.init({
             
         if site.use_eid_jslib:
             p = site.build_media_url('eid-jslib')
+            p = request.build_absolute_uri(p)
             #~ print p
             yield '<applet code="org.jdesktop.applet.util.JNLPAppletLauncher"'
             yield 'codebase = "%s/"' % p
