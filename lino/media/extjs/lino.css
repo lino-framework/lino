@@ -281,6 +281,13 @@ adapted for usage in an ExtJS application.
 /* border: 1px solid #FFAD33;  */
 
 
+.x-tbar-moveup{
+	background-image: url(images/mjames/arrow_up.png) !important;
+}
+.x-tbar-movedown{
+	background-image: url(images/mjames/arrow_down.png) !important;
+}
+
 .x-tbar-delete{
 	background-image: url(images/mjames/delete.png) !important;
 }

@@ -1,0 +1,11 @@
+=================================
+20130706 (Saturday, 06 July 2013)
+=================================
+
+Budget-Einträge eingeben:
+
+- die erste Zeile hatte unlogischerweise einen Up-Button
+  und die letzte einen Down-Button. Jetzt nicht mehr.
+- Statt der Wörter "Up" und "Down" sieht man jetzt zwei grüne Pfeile.
+- in "Verpflichtungen" und "Vermögen" fehlten die move_buttons
+

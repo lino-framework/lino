@@ -15,6 +15,8 @@
 
 """
 
+from __future__ import unicode_literals
+
 import logging
 logger = logging.getLogger(__name__)
 
@@ -422,10 +424,23 @@ class CreatedModified(model.Model):
 
 
 class MoveUp(actions.RowAction):
-    label = "Up"
+    label = _("Up")
+    #~ label = "\u2191" thin arrow up
+    #~ label = "\u25b2" # triangular arrow up
     custom_handler = True
+    icon_name = 'x-tbar-moveup'
+    icon_file = 'arrow_up.png'
+    help_text = _("Move this row one row upwards")
+    
+    def get_action_permission(self,ar,obj,state):
+        #~ return False
+        if ar.data_iterator is None: return False
+        if ar.data_iterator.count() == 0: return False
+        if ar.data_iterator[0] == obj: return False
+        return super(MoveUp,self).get_action_permission(ar,obj,state)
+    
     def run_from_ui(self,obj,ar,**kw):
-        obj.swap_seqno(-1)
+        obj.swap_seqno(ar,-1)
         #~ obj.move_up()
         kw = dict()
         #~ kw.update(refresh=True)
@@ -434,10 +449,24 @@ class MoveUp(actions.RowAction):
         return ar.success(**kw)
         
 class MoveDown(actions.RowAction):
-    label = "Down"
+    label = _("Down")
+    #~ label = "\u2193"
+    #~ label = "\u25bc" # triangular arrow down
     custom_handler = True
+    icon_name = 'x-tbar-movedown'
+    icon_file = 'arrow_down.png'
+    help_text = _("Move this row one row downwards")
+    
+    def get_action_permission(self,ar,obj,state):
+        if ar.data_iterator is None: return False
+        if ar.data_iterator.count() == 0: return False
+        if ar.data_iterator[ar.data_iterator.count()-1] == obj: return False
+        if obj.__class__.__name__=='Entry' and obj.seqno == 25:
+            print 20130706, ar.data_iterator.count(), ar.data_iterator
+        return super(MoveDown,self).get_action_permission(ar,obj,state)
+    
     def run_from_ui(self,obj,ar,**kw):
-        obj.swap_seqno(1)
+        obj.swap_seqno(ar,1)
         #~ obj.move_down()
         kw = dict()
         #~ kw.update(refresh=True)
@@ -488,10 +517,13 @@ class Sequenced(Duplicable):
         """
         Return a Django Queryset with all siblings of this,
         or `None` if this is a root element which cannot have anu siblings.
-        The queryset will of course include this.
+        The queryset will of course include self.
         The default implementation sets a global sequencing
-        by returning all objects of this model.
-        Overridden in :class:`lino.modlib.thirds.models.Third`.
+        by returning all objects of self's model.
+        Overridden e.g. in 
+        :class:`lino.modlib.thirds.models.Third`
+        or
+        :class:`lino_welfare.modlib.debts.models.Entry`.
         """
         return self.__class__.objects.order_by('seqno')      
         
@@ -537,11 +569,12 @@ class Sequenced(Duplicable):
         #~ self.save()
         #~ prev.save()
         
-    def swap_seqno(self,offset):
+    def swap_seqno(self,ar,offset):
         """
         Move this row "up or down" within its siblings
         """
-        qs = self.get_siblings()
+        #~ qs = self.get_siblings()
+        qs = ar.data_iterator
         if qs is None:
             return
         nav = AttrDict(**navinfo(qs,self))
@@ -566,10 +599,12 @@ class Sequenced(Duplicable):
         """
         actor = ar.actor
         l = []
+        state = None # TODO: support a possible state?
         for n in ('move_up','move_down'):
             ba = actor.get_action_by_name(n)
-            l.append(ar.renderer.action_button(obj,ar,ba))
-            l.append(' ')
+            if ba.get_bound_action_permission(ar,obj,state):
+                l.append(ar.renderer.action_button(obj,ar,ba))
+                l.append(' ')
         return E.p(*l)
         
   

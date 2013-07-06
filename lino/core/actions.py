@@ -596,7 +596,10 @@ class Action(Parametrizable,Permittable):
     def get_action_permission(self,ar,obj,state):
         """
         Derived Action classes may override this to add vetos.
-        E.g. DispatchAction is not available for a User with empty partner.
+        E.g. DispatchAction is not available for a User with empty 
+        partner.
+        Or MoveUp action of a Sequenced is not available on the first 
+        row of given `ar`.
         """
         return True
         
