@@ -132,8 +132,8 @@ But there are still two automatic packages remaining::
     i A openjdk-7-jre-headless                                              - OpenJDK Java runtime, using Hotspot JIT (headless)                           
     i A openjdk-7-jre-lib                                                   - OpenJDK Java runtime (architecture independent libraries)      
 
-How to find out which packages caused the above pages to install?
+How to find out which package(s) caused a given 
+package to install automatically?
 
-  $ dpkg-query -p openjdk-7-jre-lib
   
   

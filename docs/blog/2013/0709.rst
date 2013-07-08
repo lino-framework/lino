@@ -1,0 +1,37 @@
+================================
+20130709 (Tuesday, 09 July 2013)
+================================
+
+Endspurt vor eventuellem Release Lino-Welfare 1.1.8
+---------------------------------------------------
+
+- Added template file `lino_welfare/config/notes/Note/cv.odt`
+
+- Fixed a test suite failure related to the `use_davlink` setting::
+
+    $ python setup.py test -s tests.DocsTests.test_cbss
+    File "docs/tested/cbss.rst", line 43, in cbss.rst
+    Failed example:
+        pprint(ses.run(obj.do_print)) #doctest: +NORMALIZE_WHITESPACE
+    Exception raised:
+        Traceback (most recent call last):
+          File "/usr/lib/python2.7/doctest.py", line 1289, in __run
+            compileflags, 1) in test.globs
+          File "<doctest cbss.rst[6]>", line 1, in <module>
+            pprint(ses.run(obj.do_print)) #doctest: +NORMALIZE_WHITESPACE
+          File "/home/luc/hgwork/lino/lino/core/requests.py", line 294, in run
+            return ia.run_from_session(self,*args,**kw)
+          File "/home/luc/hgwork/lino/lino/core/actions.py", line 240, in run_from_session
+            return self.bound_action.action.run_from_code(self.instance,ar)
+          File "/home/luc/hgwork/lino/lino/core/actions.py", line 614, in run_from_code
+            return self.run_from_ui(obj,ar,**kw)
+          File "/home/luc/hgwork/lino/lino/mixins/printable.py", line 624, in run_from_ui
+            url = ar.request.build_absolute_uri(url)
+        AttributeError: 'NoneType' object has no attribute 'build_absolute_uri'
+
+
+- In :class:`djangosite.utils.djangotest.TestCase`, added 
+  new attribute 
+  :attr:`override_djangosite_settings <djangosite.utils.djangotest.TestCase.override_djangosite_settings>`
+  and removed 
+  attribute `never_build_site_cache` which is no longer relevant.

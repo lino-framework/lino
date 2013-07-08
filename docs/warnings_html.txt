@@ -1,2 +1,0 @@
-/home/luc/hgwork/lino/docs/tested/test_cosi_demo.rst:: WARNING: document isn't included in any toctree
-/home/luc/hgwork/lino/docs/tested/test_i18n.rst:: WARNING: document isn't included in any toctree
