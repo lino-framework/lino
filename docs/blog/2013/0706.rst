@@ -9,3 +9,57 @@ Budget-Einträge eingeben:
 - Statt der Wörter "Up" und "Down" sieht man jetzt zwei grüne Pfeile.
 - in "Verpflichtungen" und "Vermögen" fehlten die move_buttons
 
+
+How to see the java console of an applet
+----------------------------------------
+
+It took me some time to figure out that `jconsole` is **not** 
+the right thing to see the java console output of an applet running 
+in a browser.
+The following thread led me to enlightment:
+`IcedTea - how to show the applet console..?
+<http://stackoverflow.com/questions/8157432/icedtea-how-to-show-the-applet-console>`__
+
+So the simple answer is *one of the following*::
+
+  $ tail -f ~/.icedtea/log/java.stderr 
+  $ tail -f ~/.icedtea/log/java.stdout
+  $ tail -f ~/.icedtea/log/java.stderr ~/.icedtea/log/java.stdout
+  $ multitail ~/.icedtea/log/java.stderr ~/.icedtea/log/java.stdout
+  
+  
+Allowing DavLink applet to store preferences
+--------------------------------------------
+
+Now that I can finally read the Java console, I can start with 
+some real problem: DavLink obviously doesn't yet work when it 
+is being used from a Linux client.
+Let's get that running.
+
+The console says::
+
+    WARNING: Couldn't flush system prefs: java.util.prefs.BackingStoreException: /etc/.java/.systemPrefs/lino create failed.
+    
+Reaction::    
+
+    $ sudo mkdir /etc/.java/.systemPrefs/lino
+    
+Now it says::    
+
+    WARNING: Couldn't flush system prefs: java.util.prefs.BackingStoreException: java.io.FileNotFoundException: /etc/.java/.systemPrefs/lino/prefs.tmp (Permission denied)
+    
+Reaction::    
+
+    $ sudo chgrp www-data /etc/.java/.systemPrefs/lino
+    $ sudo chmod g+ws /etc/.java/.systemPrefs/lino
+
+Now that part works.    
+To see what the applet wrote to your preferences::
+
+    $ less /etc/.java/.systemPrefs/lino/davlink/prefs.xml 
+
+Next problem is (when I try to open an URL ending with `.odt`) 
+that it still says "java.lang.RuntimeException: 
+No launcher defined for extension 'odt'".
+Theoretically it should find `libreoffice` automatically.
+

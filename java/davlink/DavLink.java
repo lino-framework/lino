@@ -33,6 +33,7 @@ import java.io.FilePermission;
 
 
 import java.util.prefs.Preferences;
+//~ import javax.swing.JOptionPane;
 
 
 //~ enum OS { LINUX, WINDOWS }
@@ -212,6 +213,7 @@ public class DavLink extends Applet {
             throw new RuntimeException("Unknown os.name " + os_name);
       
         if (name == null) {
+            //~ System.err.println("20130708 name is null");
             return;
         }
         for (String ext : extensions) {
@@ -222,8 +224,15 @@ public class DavLink extends Applet {
     
     
     public void unused_init() {
-        System.out.println("Initializing");
+        System.err.println("Gonna disable the security manager...");
+        System.setSecurityManager(null);
+        System.err.println("Security manager has been disabled ");
+    }
+    
+    public void init() {
+        System.err.println("Gonna set the security manager...");
         //~ System.out.println("toto");
+        
         System.setSecurityManager(new SecurityManager()
         {
           @Override
@@ -246,11 +255,11 @@ public class DavLink extends Applet {
              java.security.AccessController.checkPermission(permission);
           }
         });
+        System.err.println("Initialized");
     }
     
     public void generate_default_prefs() {
-        //~ System.out.println("generate_default_prefs()");
-      
+        //~ System.err.println("20130708 generate_default_prefs()");
       
         add_program("winword.exe", null,          null,   "rtf","doc");
         add_program("swriter.exe", "libreoffice", null,   "rtf","doc","odt");
@@ -274,15 +283,20 @@ public class DavLink extends Applet {
           bindirs = new String[] { "/usr/bin/" };
         } 
         
-        //~ System.out.println(bindirs);
+        //~ System.err.println("20130708 bindirs.length is " + bindirs.length);
+        if (bindirs.length == 0) {
+            throw new RuntimeException("No binary dirs! Seems that your OS is not supported!");        
+        }
       
         File[] roots = File.listRoots();  //~ Object localObject 
-        //~ System.out.println(roots);
+        //~ System.err.println("20130708 roots.length is " + roots.length);
       
         for (int j = 0; j < roots.length; j++) {
             if (! drives.contains(roots[j]))
                 drives.add(roots[j]);
         }
+        
+        //~ System.err.println("20130708 drives.size() is " + drives.size());
         
         try {
             Searcher search = new Searcher(this);
@@ -323,31 +337,55 @@ public class DavLink extends Applet {
         if (prefs.get("",null) == null) 
             generate_default_prefs();
         String path = prefs.get(ext,null);
-        if (path == null) 
+        if (path == null) {
             throw new RuntimeException("No launcher defined for extension '" + ext + "'");
+        }
         return path;
         
     }
     
-   public void open(String fileName) {
-        String path = getLauncherFor(fileName);
-        String[] cmd = { path, fileName };
-        System.out.println(path + " " + fileName);
+   public String open(String fileName) {
+       /*
+        * Launches the application associated with the specified fileName.
+        * returns null upon success, otherwise the exception object.
+        * 
+        * */
         try {
+            String path = getLauncherFor(fileName);
+            String[] cmd = { path, fileName };
+            //~ System.out.println(path + " " + fileName);
             Process p = Runtime.getRuntime().exec(cmd);
+            return null;
             //~ p.waitFor();
             //~ System.out.println(p.exitValue());
-        } catch (Exception err) {
-            err.printStackTrace();
+        } catch (Exception e) {
+            //~ JOptionPane.showMessageDialog(null, 
+                //~ e, 
+                //~ "Error",
+                 //~ JOptionPane.ERROR_MESSAGE);        
+            //~ e.printStackTrace();
         //~ } catch (IOException err) {
-            //~ err.printStackTrace();
+            //~ e.printStackTrace();
         //~ } catch (InterruptedException err) {
-            //~ err.printStackTrace();
+            //~ e.printStackTrace();
+            return e.toString();
         }
-          
     }
     
-    //~ public static void main(String args[]) {
-       //~ theOneAndOnly.open(args[0]);
-    //~ }
+    public static void main(String args[]) {
+        DavLink a = new DavLink();
+        a.init();
+        //~ try {
+            for (String arg : args) {
+                //~ Exception e = a.open(arg);
+                //~ if (e != null)
+                    //~ e.printStackTrace();
+                String msg = a.open(arg);
+                if (msg != null)
+                    System.err.println(msg);
+            }
+        //~ } catch (IOException err) {
+            //~ err.printStackTrace();
+        //~ }
+    }
 }

@@ -623,10 +623,9 @@ class AuthMiddleWareBase(object):
             return AnonymousUser.instance()
 
         """
-        20120110 : alicia hatte es geschafft,
-        beim Anmelden ein Leerzeichen vor ihren Namen zu setzen.
-        Apache ließ sie als " alicia" durch.
-        Und Lino legte brav einen neuen User " alicia" an.
+        20120110 : Alicia once managed to add a space char in front of 
+        her username log in the login dialog. 
+        Apache let her in as " alicia".
         """
         username = username.strip()
 

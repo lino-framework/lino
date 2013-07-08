@@ -512,7 +512,8 @@ class Site(lino.Site):
     
     use_davlink = False
     """
-    Set this to `False` if you don't need WebDAV-enabled links.
+    Set this to `True` if this site should feature WebDAV-enabled links 
+    using :ref:`davlink`.
     """
     
     max_auto_events = 72

@@ -10,7 +10,7 @@ to `True` in your :file:`settings.py`.
 
 Basically you need to:
 
-- Download :srcref:`DavLink.jar
+- Download `DavLink.jar
   <http://lino.googlecode.com/hg/lino/media/applets/DavLink.jar>` 
   and make it available on your web server.
   
@@ -30,7 +30,7 @@ Basically you need to:
 Compile the `.java` file into a signed `.jar` file
 --------------------------------------------------
 
-:srcref:`DavLink.jar
+`DavLink.jar
   <http://lino.googlecode.com/hg/lino/media/applets/DavLink.jar>` 
 is a self-signed archive which expires after 6 months. 
 In case you use some Lino version for more than 6 months, 

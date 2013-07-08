@@ -26,7 +26,7 @@ classes: $(CLASSES:.java=.class)
 
 jar: classes
 	jar cvf $(JARFILE) davlink
-	jarsigner $(JARFILE) mykey
+	jarsigner -storepass "`cat ~/.keystore_password`" $(JARFILE) mykey
 
 clean:
 	rm davlink/*.class

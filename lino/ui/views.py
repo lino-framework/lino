@@ -1090,7 +1090,7 @@ def plain_response(ui,request,tplname,context):
     return response
             
 
-  
+
 class PlainList(View):
   
     def get(self,request,app_label=None,actor=None):

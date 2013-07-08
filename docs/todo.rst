@@ -333,6 +333,13 @@ Short-term
 Medium-term
 -----------
 
+#.  "it took me almost an hour to create my first working Lino user."
+    --> 
+    Maybe this can be solved for future newcomers by adding some 
+    dbinit hook which asks to create a superuser, as 
+    `django.contrib.auth` does.
+
+
 #.  Must I implement a way to make sure that for any existing 
     Voucher record there's always one and only one MTI child in one of the 
     VoucherType tables?

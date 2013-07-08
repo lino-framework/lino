@@ -1,0 +1,139 @@
+===============================
+20130708 (Monday, 08 July 2013)
+===============================
+
+
+No launcher defined for extension 'odt'
+---------------------------------------
+
+:ref:`davlink` doesn't work (out of the box) on an Ubuntu client.
+It says "No launcher defined for extension 'odt'" even though 
+libreoffice is installed.
+Re-learning to develop and maintain a Java applet.
+
+How to have DavLink re-scan your system for launchers::
+
+  $ rm /etc/.java/.systemPrefs/lino/davlink/prefs.xml
+
+(This will later cause a warning "Prefs file removed in background 
+/etc/.java/.systemPrefs/lino/davlink/prefs.xml", but I didn't 
+observe other problems than this)
+
+Added a main method to DavLink applet so I can run it from a 
+command line like this::
+
+  $ cd ~/hgwork/lino/java
+  $ java davlink.DavLink file:///path/to/document.odt
+
+
+Enhanced :srcref:`java/Makefile` so that it reads my keystore password 
+from a file :file:`~/.keystore_password` to avoid typing it again and 
+again when working on the DavLink applet.
+
+
+One question was: how to make error messages more evident?
+I tried displaying them in a `javax.swing.JOptionPane` but didn't 
+like the result. Want to get a standard Javascript alert message.
+
+Solution: The applet method `DavLink.open` now returns the error 
+message as a string. A return value f `null` means that there was no 
+error. And `Lino.davlink_open` then calls alert on this.
+Learned that I cannot return the plain Exception object,
+it must be some simple data type like String.
+
+The actual problem is still not solved: how can I configure my 
+machine so that DavLink has permission to do what I want it to do?
+When the applet's init method calls 
+`setSecurityManager
+<http://docs.oracle.com/javase/7/docs/api/java/lang/System.html#setSecurityManager(java.lang.SecurityManager)>`__
+to install my own security manager, then I get (client using IcedTea)::
+
+    java.lang.SecurityException: Changing the SecurityManager is not allowed.
+        at net.sourceforge.jnlp.runtime.JNLPSecurityManager.checkPermission(JNLPSecurityManager.java:270)
+        at java.lang.System.setSecurityManager0(System.java:295)
+        at java.lang.System.setSecurityManager(System.java:286)
+        at davlink.DavLink.init(DavLink.java:229)
+        at sun.applet.AppletPanel.run(AppletPanel.java:436)
+        at java.lang.Thread.run(Thread.java:722)
+        
+A customer (client using Oracle JRE) reports a similar message::
+        
+    java.lang.SecurityException: JVM Shared, not allowed to set security manager
+        at sun.plugin2.applet.SecurityManagerHelper.checkPermissionHelper(Unknown Source)
+        at sun.plugin2.applet.AWTAppletSecurityManager.checkPermission(Unknown Source)
+        at java.lang.System.setSecurityManager0(Unknown Source)
+        at java.lang.System.setSecurityManager(Unknown Source)
+        at davlink.DavLink.init(DavLink.java:215)
+        at com.sun.deploy.uitoolkit.impl.awt.AWTAppletAdapter.init(Unknown Source)
+        at sun.plugin2.applet.Plugin2Manager$AppletExecutionRunnable.run(Unknown Source)
+        at java.lang.Thread.run(Unknown Source)
+        
+This problem has appeared after upgrading from Java 6 to 7.
+
+Note that the visible result varies heavily depending 
+on the circumstances 
+because exceptions during the init method are silently 
+ignored (don't ask me why).
+
+Note: `Setting the Security Level of the Java Client
+<http://docs.oracle.com/javase/7/docs/technotes/guides/jweb/client-security.html>`_
+
+
+Some docs
+(e.g. `JOGL not launching on Ubuntu 12.04 LTS
+<http://forum.jogamp.org/JOGL-not-launching-on-Ubuntu-12-04-LTS-td4005531.html>`__)
+indicate that the answer must be to add something like the following to your 
+:file:`java.policy` file::
+
+    grant codeBase "http://127.0.0.1:8000/-" {
+            permission java.security.AllPermission;
+    };
+
+One difficulty is to find the location of your :file:`java.policy`
+file. A `ps aux | grep icedtea` says::
+
+  luc      12676  4.5  0.7 1382728 60392 ?       Sl   19:11   0:02 /usr/lib/jvm/java-7-openjdk-i386/bin/java -Xbootclasspath/a:/usr/share/icedtea-web/netx.jar:/usr/share/icedtea-web/plugin.jar -classpath /usr/lib/jvm/java-7-openjdk-i386/lib/rt.jar sun.applet.PluginMain /tmp/icedteaplugin-luc/12666-icedteanp-plugin-to-appletviewer /tmp/icedteaplugin-luc/12666-icedteanp-appletviewer-to-plugin
+
+So I guessed that my file is 
+:file:`/usr/lib/jvm/java-7-openjdk-i386/jre/lib/security/java.policy`.
+
+Yes, this is a solution, the DavLink applet now works 
+from an Ubuntu 12.04 LTS using IcedTea and Java7.
+
+Note that the "Changing the SecurityManager is not allowed." 
+exception still comes. But the whole init method has become 
+useless. 
+
+Explanation:
+It was a security bug in Java6 to not raise this exception...
+Users *must* edit their :file:`java.policy` 
+file in order to allow DavLink to work.
+
+Downgrading Java 7 to 6
+-----------------------
+
+A last proof of the above explanation would be to switch back to Java 6::
+
+  $ sudo aptitude remove openjdk-7-jre
+  
+Now Chromium said 
+"Java(TM) is required to display some elements on this page",
+and an "Install plugins" button leads me to 
+http://java.com/en/download/index.jsp
+which suggests "Version 7 Update 25".
+Not exactly what I want.
+
+Ah, this one is better::
+
+  $ sudo aptitude remove openjdk-7-jre icedtea-7-jre-jamvm icedtea-7-plugin
+
+But there are still two automatic packages remaining::
+
+    i A openjdk-7-jre-headless                                              - OpenJDK Java runtime, using Hotspot JIT (headless)                           
+    i A openjdk-7-jre-lib                                                   - OpenJDK Java runtime (architecture independent libraries)      
+
+How to find out which packages caused the above pages to install?
+
+  $ dpkg-query -p openjdk-7-jre-lib
+  
+  

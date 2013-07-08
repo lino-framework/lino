@@ -4918,7 +4918,8 @@ Lino.davlink_open = function(webdavURL) {
   /* Calls lino.applets.davlink.DavLink.open()
   */
   //~ console.log('Going to call document.applets.DavLink.open(',webdavURL,')');
-  document.applets.DavLink.open(webdavURL);
+  var rv = document.applets.DavLink.open(webdavURL);
+  if (rv) window.alert(rv);
 }
 
 {% endif %}
