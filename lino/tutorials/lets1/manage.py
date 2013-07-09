@@ -1,14 +1,7 @@
 #!/usr/bin/env python
-# -*- coding: UTF-8 -*-
+import os
+import sys
 if __name__ == "__main__":
-    import os
-    prj = os.path.split(os.path.dirname(os.path.abspath(__file__)))[-1]
-    os.environ['DJANGO_SETTINGS_MODULE'] = 'lino.tutorials.' + prj + '.settings'
-    #~ print "DJANGO_SETTINGS_MODULE=%s" % os.environ['DJANGO_SETTINGS_MODULE']
-
-    from django.core.management import execute_manager
-    import settings # Required to be in the same directory.
-    from django.core.management import setup_environ
-    setup_environ(settings)
-
-    execute_manager(settings)
+    os.environ['DJANGO_SETTINGS_MODULE'] = 'lino.tutorials.lets1.settings'
+    from django.core.management import execute_from_command_line
+    execute_from_command_line(sys.argv)

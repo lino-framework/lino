@@ -35,3 +35,28 @@ Endspurt vor eventuellem Release Lino-Welfare 1.1.8
   :attr:`override_djangosite_settings <djangosite.utils.djangotest.TestCase.override_djangosite_settings>`
   and removed 
   attribute `never_build_site_cache` which is no longer relevant.
+
+
+Testing Django 1.6b1
+--------------------
+
+During my holidays 
+`Django 1.6 beta 1 has been released
+<https://www.djangoproject.com/weblog/2013/jun/28/django-16-beta-1-released/>`_.
+time to test how Lino likes it.
+I expect some serious problems with the :mod:`lino.utils.mti` module.
+
+How to install it::
+
+  $ pip uninstall Django
+  $ pip install -e git+https://github.com/django/django.git@1.6b1#egg=django
+
+The Lino test suite revealed that there were still some 
+`manage.py` files containing the deprecated `execute_manager` 
+hanging around.
+
+TODO: :mod:`lino.core.inject` seems to have problems. 
+Which is not too surprising as it uses some subtle but undocumented hacks.
+Will have a closer look at this when a first release will be 
+visible on PyPI.
+

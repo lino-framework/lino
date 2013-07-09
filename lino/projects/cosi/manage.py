@@ -1,18 +1,7 @@
 #!/usr/bin/env python
+import os
+import sys
 if __name__ == "__main__":
-
-    import os
     os.environ['DJANGO_SETTINGS_MODULE'] = 'lino.projects.cosi.settings.demo'
-
-    import settings
-
-    from django.core.management import execute_manager
-
-    execute_manager(settings)
-
-
-
-
-
-
-
+    from django.core.management import execute_from_command_line
+    execute_from_command_line(sys.argv)

@@ -95,7 +95,9 @@ file. A `ps aux | grep icedtea` says::
   luc      12676  4.5  0.7 1382728 60392 ?       Sl   19:11   0:02 /usr/lib/jvm/java-7-openjdk-i386/bin/java -Xbootclasspath/a:/usr/share/icedtea-web/netx.jar:/usr/share/icedtea-web/plugin.jar -classpath /usr/lib/jvm/java-7-openjdk-i386/lib/rt.jar sun.applet.PluginMain /tmp/icedteaplugin-luc/12666-icedteanp-plugin-to-appletviewer /tmp/icedteaplugin-luc/12666-icedteanp-appletviewer-to-plugin
 
 So I guessed that my file is 
-:file:`/usr/lib/jvm/java-7-openjdk-i386/jre/lib/security/java.policy`.
+:file:`/usr/lib/jvm/java-7-openjdk-i386/jre/lib/security/java.policy`
+or its link
+:file:`/etc/java-7-openjdk/security/java.policy`.
 
 Yes, this is a solution, the DavLink applet now works 
 from an Ubuntu 12.04 LTS using IcedTea and Java7.
