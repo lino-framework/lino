@@ -111,3 +111,6 @@ Solution:
 - New Site attribute :attr:`is_demo_site <lino.Site.is_demo_site>`
 - Added usage of Jinja's `template inheritance 
   <http://jinja.pocoo.org/docs/templates/#template-inheritance>`__.
+
+
+Checkin and upgrade on :ref:`lf`.

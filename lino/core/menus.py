@@ -204,29 +204,29 @@ def create_item(spec,action=None,help_text=None,**kw):
             #~ raise Exception("Could not resolve action specifier %r" % spec)
     if isinstance(spec,actors.BoundAction):
         a = spec
-    elif isinstance(spec,type) and issubclass(spec,models.Model):
-        spec = spec.get_default_table()
-        #~ spec = spec._lino_default_table
-        assert spec is not None
-        #~ if action:
-            #~ a = spec._lino_default_table.get_url_action(action)
-        #~ else:
-            #~ a = spec._lino_default_table.default_action
-        
-    if isinstance(spec,type) and issubclass(spec,actors.Actor):
-        if action:
-            a = spec.get_url_action(action)
-            #~ print 20121210, a
-        else:
-            a = spec.default_action
-            if a is None:
-                raise Exception("%r default_action is None?!" % spec)
-            
-        #~ a = actors.BoundAction(spec,a)
     else:
-        raise Exception("%r is not a valid action_spec" % spec)
-    if a is None:
-        raise Exception("add_action(%r,%r,%r) found None" % (spec,action,kw))
+        if isinstance(spec,type) and issubclass(spec,models.Model):
+            spec = spec.get_default_table()
+            #~ spec = spec._lino_default_table
+            assert spec is not None
+            #~ if action:
+                #~ a = spec._lino_default_table.get_url_action(action)
+            #~ else:
+                #~ a = spec._lino_default_table.default_action
+        
+        if isinstance(spec,type) and issubclass(spec,actors.Actor):
+            if action:
+                a = spec.get_url_action(action)
+                #~ print 20121210, a
+                if a is None:
+                    raise Exception("add_action(%r,%r,%r) found None" % (spec,action,kw))
+            else:
+                a = spec.default_action
+                if a is None:
+                    raise Exception("%r default_action is None?!" % spec)
+        else:
+            raise Exception("%r is not a valid action_spec" % spec)
+            
     #~ if kw.has_key('params'):
         #~ if a.actor.__name__ == 'Contacts':
           #~ raise Exception("20120103")
