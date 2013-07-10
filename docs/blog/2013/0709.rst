@@ -37,14 +37,14 @@ Endspurt vor eventuellem Release Lino-Welfare 1.1.8
   attribute `never_build_site_cache` which is no longer relevant.
 
 
-Testing Django 1.6b1
---------------------
+Lino and  Django 1.6b1
+----------------------
 
 During my holidays 
 `Django 1.6 beta 1 has been released
 <https://www.djangoproject.com/weblog/2013/jun/28/django-16-beta-1-released/>`_.
-time to test how Lino likes it.
-I expect some serious problems with the :mod:`lino.utils.mti` module.
+Time to test how Lino likes it.
+I expect problems with the :mod:`lino.utils.mti` module.
 
 How to install it::
 
@@ -59,4 +59,40 @@ TODO: :mod:`lino.core.inject` seems to have problems.
 Which is not too surprising as it uses some subtle but undocumented hacks.
 Will have a closer look at this when a first release will be 
 visible on PyPI.
+
+App inheritance
+---------------
+
+Added a new :mod:`lino.modlib.auto.sales` which 
+extends :mod:`lino.modlib.sales` and
+is a next example of what I'd call "app inheritance".
+
+It works basically like :mod:`lino_faggio.contacts`
+which extends :mod:`lino.modlib.contacts` (see :blogref:`20130607`).
+
+This time there was a new challenge: how can I say that I want 
+to "inherit" the document template for Invoices?
+The answer is inspired by a technique to extend the Pythonpath:
+simply add a file 
+:srcref:`config.pth <lino/modlib/auto/sales/config.pth>`
+(the name must end with :file:`.pth`) to the app's directory 
+(i.e. the directory which contains the :file:`models.py` file).
+This file should contain one line for each additional 
+`config` dir to add.
+
+
+Lino-Faggio continued
+---------------------
+
+- `lino.modlib.cal.Event` and `lino.modlib.cal.Room` are now 
+  overridable.
+  
+- :mod:`lino_faggio` uses this to make Events invoiceable
+- cal.Room is no longer a ContactRelated by default because many 
+  applications don't need this. :mod:`lino_faggio` 
+  overrides it to make it ContactRelated.
+  
+- :mod:`lino_faggio` now also adds new fields 
+  `Event.organizer`
+  `cal.Room.tariff`
 

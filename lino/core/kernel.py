@@ -56,7 +56,7 @@ from lino.core import actors
 from lino.core import dbtables
 from lino.utils import class_dict_items
     
-from lino.utils.config import load_config_files, find_config_file
+#~ from lino.utils.config import load_config_files, find_config_file
 from lino.utils import choosers
 #~ from lino.utils import codetime
 from lino.utils import curry

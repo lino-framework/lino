@@ -33,7 +33,6 @@ Partner = dd.resolve_model(partner_model)
 REQUEST = None
 
 def objects():
-
     
     yield sales.InvoicingMode(**babel_values('name',en='Default',de=u"Standard",fr=u"Standard"))
     

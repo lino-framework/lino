@@ -49,6 +49,7 @@ logger = logging.getLogger(__name__)
 import os
 import sys
 import codecs
+import glob
 
 from fnmatch import fnmatch
 
@@ -65,7 +66,7 @@ class ConfigDir:
     
     """
     def __init__(self,name,writeable):
-        self.name = name
+        self.name = os.path.abspath(name)
         self.writeable = writeable
         
     def __repr__(self):
@@ -75,11 +76,26 @@ class ConfigDir:
 # similar logic as in django.template.loaders.app_directories
 fs_encoding = sys.getfilesystemencoding() or sys.getdefaultencoding()
 config_dirs = []
-for app in settings.INSTALLED_APPS:
-    mod = import_module(app)
-    dirname = os.path.join(os.path.dirname(mod.__file__), SUBDIR_NAME)
+
+def add_config_dir(dirname):
     if os.path.isdir(dirname):
         config_dirs.append(ConfigDir(dirname.decode(fs_encoding),False))
+
+for app in settings.INSTALLED_APPS:
+    mod = import_module(app)
+    #~ parent = getattr(mod,'CONFIG_PARENT',None)
+    #~ for m in (mod, parent):
+    #~ if m is not None:
+    appdir = os.path.dirname(mod.__file__)
+    for pthfile in glob.glob(os.path.join(appdir, '*.pth')):
+    #~ pthfile = os.path.join(appdir, 'config.pth')
+    #~ if os.path.exists(pthfile):
+        for dirname in open(pthfile).readlines():
+            dirname = dirname.strip()
+            if dirname and not dirname.startswith('#'):
+                add_config_dir(os.path.join(appdir,dirname))
+    add_config_dir(os.path.join(appdir, SUBDIR_NAME))
+    
 
 LOCAL_CONFIG_DIR = None
 

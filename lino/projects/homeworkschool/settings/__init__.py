@@ -93,7 +93,7 @@ class Site(Site,ledger.SiteMixin):
         yield 'lino.modlib.ledger'
         yield 'lino.modlib.vat'
         yield 'lino.modlib.products'
-        yield 'lino.modlib.sales'
+        yield 'lino.modlib.auto.sales'
         
         yield 'lino.modlib.school'
         yield 'lino.projects.homeworkschool'

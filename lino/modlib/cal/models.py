@@ -256,7 +256,7 @@ Whether this subscription should initially be hidden in your calendar panel.""")
 
 class Subscriptions(dd.Table):
     required = dd.required(user_groups='office',user_level='manager')
-    model = Subscription
+    model = 'cal.Subscription'
 
 class SubscriptionsByCalendar(Subscriptions):
     master_key = 'calendar'
@@ -316,21 +316,26 @@ if False: # 20130320
 
 
 
-class Room(dd.BabelNamed,contacts.ContactRelated):
+#~ ROOM_BASES = (dd.BabelNamed,contacts.ContactRelated):
+#~ class Room(ROOM_BASES):
+#~ class Room(dd.BabelNamed,contacts.ContactRelated):
+class Room(dd.BabelNamed):
     """
     A location where Events can happen.
     For a given Room you can see the :class:`EventsByRoom` 
     that happened (or will happen) there.
+    A Room is BabelNamed (has a multilingual name).
     """
     class Meta:
+        abstract = settings.SITE.is_abstract_model('cal.Room')
         verbose_name = _("Room")
         verbose_name_plural = _("Rooms")
         
-    def __unicode__(self):
-        s = dd.BabelNamed.__unicode__(self)
-        if self.company and self.company.city: 
-            s = '%s (%s)' % (self.company.city,s)
-        return s
+    #~ def __unicode__(self):
+        #~ s = dd.BabelNamed.__unicode__(self)
+        #~ if self.company and self.company.city: 
+            #~ s = '%s (%s)' % (self.company.city,s)
+        #~ return s
         
 
         
@@ -338,9 +343,9 @@ class Room(dd.BabelNamed,contacts.ContactRelated):
 class Rooms(dd.Table):
     help_text = _("List of rooms where calendar events can happen.")
     required = dd.required(user_groups='office',user_level='manager')
-    model = Room
+    model = 'cal.Room'
     detail_layout = """
-    id name company contact_person contact_role
+    id name 
     cal.EventsByRoom
     """
     
@@ -472,7 +477,7 @@ class EventGenerator(mixins.UserAuthored):
                 self.compare_auto_event(e,ae)
         # create new Events for remaining wanted
         for ae in wanted.values():
-            Event(**ae).save()
+            settings.SITE.modules.cal.Event(**ae).save()
         #~ logger.info("20130528 update_auto_events done")
             
     def compare_auto_event(self,obj,ae):
@@ -531,7 +536,7 @@ class EventGenerator(mixins.UserAuthored):
         
     def get_existing_auto_events(self):
         ot = ContentType.objects.get_for_model(self.__class__)
-        return Event.objects.filter(
+        return settings.SITE.modules.cal.Event.objects.filter(
             owner_type=ot,owner_id=self.pk,
             auto_type__isnull=False).order_by('auto_type')
         
@@ -923,6 +928,7 @@ class Event(Component,Ended,
     """
     
     class Meta:
+        abstract = settings.SITE.is_abstract_model('cal.Event')
         #~ abstract = True
         verbose_name = pgettext(u"cal",u"Event")
         verbose_name_plural = pgettext(u"cal",u"Events")
@@ -930,7 +936,7 @@ class Event(Component,Ended,
     transparent = models.BooleanField(_("Transparent"),default=False,help_text=_("""\
 Indicates that this Event shouldn't prevent other Events at the same time."""))
     #~ type = models.ForeignKey(EventType,null=True,blank=True)
-    room = models.ForeignKey(Room,null=True,blank=True) # iCal:LOCATION
+    room = dd.ForeignKey('cal.Room',null=True,blank=True) # iCal:LOCATION
     priority = models.ForeignKey(Priority,null=True,blank=True)
     #~ priority = Priority.field(_("Priority"),blank=True) # iCal:PRIORITY
     state = EventStates.field(default=EventStates.suggested) # iCal:STATUS

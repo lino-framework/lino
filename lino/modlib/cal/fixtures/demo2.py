@@ -33,16 +33,22 @@ from lino.utils.instantiator import Instantiator
 from lino.core.dbutils import resolve_model
 from north.dbutils import babel_values
 
-from lino.modlib.cal import models as cal
 
 from lino import dd
+
+from lino.modlib.cal import models as cal
+
+Event = dd.resolve_model('cal.Event')
+Calendar = dd.resolve_model('cal.Calendar')
+Subscription = dd.resolve_model('cal.Subscription')
+Membership = dd.resolve_model('cal.Membership')
 
 def objects():
     
     if settings.SITE.project_model:
         PROJECTS = Cycler(settings.SITE.project_model.objects.all())
     #~ USERS = Cycler(settings.SITE.user_model.objects.all())
-    ETYPES = Cycler(cal.Calendar.objects.all())
+    ETYPES = Cycler(Calendar.objects.all())
     def s2duration(s):
         h,m = map(int,s.split(':'))
         #~ return relativedelta(hours=h,minutes=m)
@@ -85,15 +91,15 @@ def objects():
                 kw.update(state=STATES.pop())
                 #~ if settings.SITE.project_model:
                     #~ kw.update(project=PROJECTS.pop())
-                e = cal.Event(**kw)
+                e = Event(**kw)
                 e.set_datetime('end',e.get_datetime('start')+ DURATIONS.pop())
                 yield e
             
         if False:
             for obj in settings.SITE.user_model.objects.exclude(
                   profile=None).exclude(id=u.id):
-                yield cal.Membership(user=u,watched_user=obj)
-        for obj in cal.Calendar.objects.all():
-            yield cal.Subscription(user=u,calendar=obj)
+                yield Membership(user=u,watched_user=obj)
+        for obj in Calendar.objects.all():
+            yield Subscription(user=u,calendar=obj)
     
     
