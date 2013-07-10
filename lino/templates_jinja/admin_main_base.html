@@ -1,0 +1,55 @@
+<div class="htmlText" style="margin:5px">
+{% if request.user.profile.authenticated %}
+    {% block hello_user %}
+        <p>{{_("Quick links:")}}
+        {% for mi in settings.SITE.get_quicklinks(ar).items %}
+        [{{E.tostring(ar.window_action_button(mi.bound_action))}}]
+        {% endfor %}
+        </p>
+        <h2>{{_("Welcome")}}</h2>
+        <p>{{_("Hi, %(first_name)s!") % dict(first_name=ar.get_user().first_name)}}
+        {% set sep = joiner(',') %}
+        {% for table,text in settings.SITE.get_todo_tables(ar) %}
+            {% set r = table.request(user=ar.get_user()) %}
+            {% if r.get_total_count() != 0 %}
+              {{ sep() or _("You have") }} {{ E.tostring(ar.href_to_request(r,text % r.get_total_count())) }} 
+            {% endif %}
+        {% endfor %}
+        </p>
+        {% block feedback %}
+        {% if site.is_demo_site %}
+        <p>
+        {{_("Your feedback is welcome to <em>lino-users@googlegroups.com</em> or directly to the person who invited you.")}}
+        </p>
+        {% endif %}
+        {% endblock %}
+    {% endblock %}
+{% else %}
+  {% block hello_anonymous %}
+      {% if site.admin_prefix %}
+        <p>
+        {{_("You have entered the <b>admin</b> section.")}}
+        {{_("Unlike the <a href=\"/\">web content section</a> there is now a GUI menu bar in the upper part of the screen.")}}
+        </p>
+      {% else %}
+        <p>
+        {{_("Welcome to the <b>%s</b> site.") % site.title}}
+        {% if site.verbose_name %}
+        We are running <a href="{{site.url}}">{{site.verbose_name}}</a>
+        version {{site.version}}.
+        {% endif %}
+        </p>
+      {% endif %}
+      <p>
+      {{_("You will now probably want to use the <b>Log in</b> button in the upper right corner and log in.")}}
+      </p>
+      {% if site.user_model and site.is_demo_site %}
+        <p>
+        {{_("This demo site has %d users, they all have \"1234\" as password:") % site.modules.users.UsersOverview.request().get_total_count()}}
+        </p>
+        {{as_ul('users.UsersOverview')}}
+      {% endif %}
+      {{ self.feedback() }}
+  {% endblock %}
+{% endif %}
+</div>

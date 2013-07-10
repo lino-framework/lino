@@ -48,15 +48,19 @@ Inheriting `config` directory of another app (continued)
 --------------------------------------------------------
 
 After having checked in the above changes, I understood that we don't 
-want an additional file `config.pth`,
-it is better to use just a new magic module-level variable `PARENT_APP`:
-because that's one file less, and because the 
-`config.pth` trick didn't work for making 
-:mod:`lino_faggio.cal` inherit the config of :mod:`lino.modlib.cal` 
-(because the former cannot easily know the path of the latter).
+want an additional file `config.pth`:
 
+- that's one file more
+- it doesn't work for making 
+  :mod:`lino_faggio.cal` inherit the config of :mod:`lino.modlib.cal` 
+  (because the former cannot easily know the path of the latter).
   
-A side effect is that we cannot any longer 
+The new approach is to use magic module-level 
+variable `PARENT_APP` which holds as a string 
+the full Python name of the parent app.
+I also want this to happen in the `models` module 
+and not in the app's `__init__.py` file.
+A side effect is that I cannot any longer 
 import mod:`lino.utils.config` at the global level of a models module
 because importing it will fill the config dirs, i.e. will try to import 
 every installed `models` module.
@@ -73,3 +77,37 @@ Lino-Faggio continued
 
 - Renamed `lino.modlib.school` to `lino.modlib.courses`.
 - New module :mod:`lino_faggio.courses` extends :mod:`lino.modlib.courses`.
+- Repaired test suites 
+
+
+Is it a demo site or not?
+-------------------------
+
+There are meanwhile at least three 
+different versions of 
+:file:`admin_main.html`
+templates, partly with overlapping content, 
+and already there are some subtle bugs.
+
+The :file:`admin_main.html`
+has sections that are important on a public demo site, 
+but certainly not on a production site. 
+For example the list of possible user names and their password::
+
+    <p>
+    {{_("This demo site has %d users, they all have \"1234\" as password:") % 
+    site.modules.users.UsersOverview.request().get_total_count()}}
+    </p>
+    {{as_ul('users.UsersOverview')}}
+    
+Or (on another place of the template)::
+    
+    <p>
+    {{_("Your feedback is welcome to <em>lino-users@googlegroups.com</em> or directly to the person who invited you.")}}
+    </p>
+    
+Solution:
+
+- New Site attribute :attr:`is_demo_site <lino.Site.is_demo_site>`
+- Added usage of Jinja's `template inheritance 
+  <http://jinja.pocoo.org/docs/templates/#template-inheritance>`__.
