@@ -76,8 +76,6 @@ from lino.core.model import Model
 from lino.core.requests import ActionRequest
 
 from lino.ui import base
-from lino.utils.config import Configured, load_config_files
-from lino.utils.config import find_config_file
 
 from lino.utils.appy_pod import Renderer
 
@@ -89,7 +87,11 @@ from lino.utils.xmlgen.html import RstTable
 
 MAX_ROW_COUNT = 900
 
-class GridConfig(Configured):
+if False: # 20130710
+
+  from lino.utils.config import Configured
+  
+  class GridConfig(Configured):
   
     def __init__(self,report,data,*args,**kw):
         self.report = report
@@ -520,6 +522,8 @@ class TableRequest(ActionRequest):
         
         
     def appy_render(ar,target_file):
+        
+        from lino.utils.config import find_config_file
         
         if ar.get_total_count() > MAX_ROW_COUNT:
             raise Exception(_("List contains more than %d rows") % MAX_ROW_COUNT)
@@ -961,6 +965,7 @@ class AbstractTable(actors.Actor):
         
     @classmethod
     def save_grid_config(self,index,data):
+        raise Exception("20130710")
         if len(self.grid_configs) == 0:
             gc = GridConfig(self,data,'%s.gc' % self)
             self.grid_configs.append(gc)

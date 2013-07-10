@@ -319,6 +319,12 @@ from lino.mixins.human import Human, Born, Genders
 
 #~ from lino.utils.screenshots import register_screenshot
 
+from django.utils.importlib import import_module
+
+def extends_app(name,globals_dict):
+    globals_dict.update(PARENT_APP=name)
+    m = import_module(name+'.models')
+    globals_dict.update(m.__dict__)
 
 
 

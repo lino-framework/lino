@@ -2339,7 +2339,7 @@ def setup_main_menu(site,ui,profile,m):
     
 def setup_config_menu(site,ui,profile,m): 
     m  = m.add_menu("cal",MODULE_LABEL)
-    m.add_action(Rooms)
+    m.add_action('cal.Rooms')
     m.add_action(Priorities)
     #~ m.add_action(AccessClasses)
     #~ m.add_action(EventStatuses)

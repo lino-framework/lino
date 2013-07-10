@@ -42,7 +42,7 @@ from jinja2.exceptions import TemplateNotFound
 
 SUBDIR_NAME = 'templates_jinja'
     
-def site_setup(sender,**kw):
+def web_setup(sender,**kw):
     """
     Adds a `jinja_env` attribute to `settings.SITE`.
     This is being called from :func:`lino.ui.models.post_analyze`.
@@ -57,7 +57,6 @@ def site_setup(sender,**kw):
     """
     logger.debug("Setting up Jinja environment")
     self = sender
-    from lino.utils import auth
     from django.utils.importlib import import_module
     
     paths = list(self.get_settings_subdirs(SUBDIR_NAME))
@@ -85,6 +84,7 @@ def site_setup(sender,**kw):
 
 
     def as_table(action_spec):
+        from lino.utils import auth
         a = settings.SITE.modules.resolve(action_spec)
         ar = a.request(user=auth.AnonymousUser.instance())
         ar.renderer = settings.SITE.ui.plain_renderer
@@ -98,6 +98,7 @@ def site_setup(sender,**kw):
         #~ return E.tostring(E.ul(*[E.li(ar.summary_row(obj)) for obj in ar]),method="html")
           
     def as_ul(action_spec):
+        from lino.utils import auth
         a = settings.SITE.modules.resolve(action_spec)
         ar = a.request(user=auth.AnonymousUser.instance())
         ar.renderer = settings.SITE.ui.plain_renderer

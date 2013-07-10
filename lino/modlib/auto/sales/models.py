@@ -44,8 +44,14 @@ from lino import dd
 #~ sales = dd.resolve_app('sales')
 #~ contacts = dd.resolve_app('contacts')
 
-from lino.modlib.sales.models import *
+dd.extends_app('lino.modlib.sales',globals())
+
+#~ from lino.modlib.sales.models import *
+#~ PARENT_APP = 'lino.modlib.sales'
+
+#~ from lino.modlib.sales import models as PARENT_APP
 #~ from lino.modlib.sales import models as sales
+#~ from lino.modlib.sales import models as CONFIG_PARENT
 #~ CONFIG_PARENT = sales # inherit `config` subdir
 
 

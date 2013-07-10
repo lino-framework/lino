@@ -62,7 +62,6 @@ from lino.core import fields
 from lino.core import actions
 from lino.core.model import Model
 from djangosite.dbutils import obj2str
-from lino.utils.config import load_config_files, Configured
 #~ from lino.core import datalinks
 #~ from lino.core import boolean_texts
 from lino.core import actors

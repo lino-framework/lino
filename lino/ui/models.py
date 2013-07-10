@@ -500,8 +500,8 @@ def my_post_analyze(sender,**kw):
         from lino.core.dbutils import is_devserver
         site.build_js_cache_on_startup = not (settings.DEBUG or is_devserver())
     
-    from lino.core import web
-    web.site_setup(site,**kw)
+    from lino.core.web import web_setup
+    web_setup(site,**kw)
     
     
 @dd.receiver(dd.pre_ui_build)

@@ -54,7 +54,6 @@ from north import dbutils
 
 from lino.utils.html2text import html2text
 from django.core.mail import EmailMultiAlternatives
-from lino.utils.config import find_config_file
 #~ from lino.utils.choicelists import ChoiceList
 
 
@@ -236,6 +235,7 @@ class Mailable(dd.Model):
         #~ return isinstance(self,mixins.CachedPrintable)
         
     def unused_get_mailable_intro(self,ar):
+        from lino.utils.config import find_config_file
         mt = self.get_mailable_type()
         #~ tplname = self._meta.app_label + '/' + self.__class__.__name__ + '/email.html'
         fn = find_config_file(mt.email_template,mt.templates_group)

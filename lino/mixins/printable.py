@@ -50,7 +50,6 @@ from north import dbutils
 #~ from lino.utils import call_optional_super
 from lino.utils.choosers import chooser
 from lino.utils.appy_pod import Renderer
-from lino.utils.config import find_template_config_files
 from lino.core.model import Model
 from lino.mixins.duplicable import Duplicable
 
@@ -444,6 +443,7 @@ def get_template_choices(elem,bmname):
     bm = bm_dict.get(bmname,None)
     if bm is None:
         raise Exception("%r : invalid print method name." % bmname)
+    from lino.utils.config import find_template_config_files
     return find_template_config_files(bm.template_ext,bm.get_group(elem))
     
     #~ files = find_config_files('*' + bm.template_ext,bm.get_group(elem))

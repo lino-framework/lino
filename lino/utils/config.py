@@ -13,10 +13,13 @@
 ## along with Lino; if not, see <http://www.gnu.org/licenses/>.
 
 """
-The Lino process creates a list config_dirs of all 
-configuration directories on server startup
-by looping through :setting:`INSTALLED_APPS` that have a :xfile:`config` 
-subdir.
+This creates a list `config_dirs` of all 
+configuration directories by looping through :setting:`INSTALLED_APPS` 
+and taking those whose source directory has a :xfile:`config` subdir.
+
+DO NOT import this module at the global level of a models module
+because importing it will fill the config dirs, i.e. will try to import 
+every installed `models` module.
 
 The mechanism in this module emulates the behaviour of Django's 
 (or Jinja's) template loaders. 
@@ -47,14 +50,16 @@ import logging
 logger = logging.getLogger(__name__)
 
 import os
+from os.path import join, abspath, dirname, normpath, isdir
+
 import sys
 import codecs
 import glob
 
 from fnmatch import fnmatch
 
-from django.conf import settings
 from django.utils.importlib import import_module
+from django.conf import settings
 
 from lino.utils import iif
 
@@ -73,39 +78,55 @@ class ConfigDir:
         return "ConfigDir %s" % self.name + iif(self.writeable," (writeable)","")
         
 
-# similar logic as in django.template.loaders.app_directories
 fs_encoding = sys.getfilesystemencoding() or sys.getdefaultencoding()
 config_dirs = []
 
-def add_config_dir(dirname):
-    if os.path.isdir(dirname):
-        config_dirs.append(ConfigDir(dirname.decode(fs_encoding),False))
+def add_config_dir(mod):
+    pth = join(dirname(mod.__file__),SUBDIR_NAME)    
+    if isdir(pth):
+        config_dirs.append(ConfigDir(pth.decode(fs_encoding),False))
+
+#~ for pth in settings.SITE.get_settings_subdirs(SUBDIR_NAME)
+#~ dirs = []
 
 for app in settings.INSTALLED_APPS:
-    mod = import_module(app)
-    #~ parent = getattr(mod,'CONFIG_PARENT',None)
-    #~ for m in (mod, parent):
-    #~ if m is not None:
-    appdir = os.path.dirname(mod.__file__)
-    for pthfile in glob.glob(os.path.join(appdir, '*.pth')):
-    #~ pthfile = os.path.join(appdir, 'config.pth')
-    #~ if os.path.exists(pthfile):
-        for dirname in open(pthfile).readlines():
-            dirname = dirname.strip()
-            if dirname and not dirname.startswith('#'):
-                add_config_dir(os.path.join(appdir,dirname))
-    add_config_dir(os.path.join(appdir, SUBDIR_NAME))
+    app_mod = import_module(app)
+    #~ parent = getattr(app_mod,'PARENT_APP',None)
+    #~ if parent:
+        #~ parent = import_module(parent)
+        #~ add_config_dir(parent)
+    try:
+        models_mod = import_module(app+'.models')
+    except ImportError:
+        pass
+    else:
+        parent = getattr(models_mod,'PARENT_APP',None)
+        if parent:
+            #~ print 20130710, parent
+            parent = import_module(parent)
+            add_config_dir(parent)
+        
+    add_config_dir(app_mod)
+    
+    #~ for mod in (parent,app_mod):
+        #~ if mod is not None:
+            #~ add_config_dir(join(dirname(mod.__file__),SUBDIR_NAME))
+    #~ appdir = dirname(mod.__file__)
+    #~ for pthfile in glob.glob(join(appdir, '*.pth')):
+        #~ for name in open(pthfile).readlines():
+            #~ name = name.strip()
+            #~ if name and not name.startswith('#'):
+                #~ add_config_dir(join(appdir,name))
+    #~ add_config_dir(join(appdir, SUBDIR_NAME))
     
 
 LOCAL_CONFIG_DIR = None
 
-#~ for dirname in settings.SITE.get_settings_subdirs(SUBDIR_NAME)
-
 #~ if settings.SITE.project_dir != settings.SITE.source_dir:
 if settings.SITE.is_local_project_dir:
-    dirname = os.path.join(settings.SITE.project_dir,SUBDIR_NAME)
-    if os.path.isdir(dirname):
-        LOCAL_CONFIG_DIR = ConfigDir(dirname,True)
+    p = join(settings.SITE.project_dir,SUBDIR_NAME)
+    if isdir(p):
+        LOCAL_CONFIG_DIR = ConfigDir(p,True)
         config_dirs.append(LOCAL_CONFIG_DIR)
 
 config_dirs.reverse()
@@ -117,10 +138,10 @@ config_dirs = tuple(config_dirs)
     #~ app = import_module(app_name)
     #~ fn = getattr(app,'__file__',None)
     #~ if fn is not None:
-        #~ dirname = os.path.join(os.path.dirname(fn),'config')
-        #~ if os.path.isdir(dirname):
-            #~ config_dirs.append(ConfigDir(dirname,False))
-    #~ LOCAL_CONFIG_DIR = ConfigDir(os.path.join(settings.PROJECT_DIR,'config'),True)
+        #~ pth = join(dirname(fn),'config')
+        #~ if isdir(pth):
+            #~ config_dirs.append(ConfigDir(pth,False))
+    #~ LOCAL_CONFIG_DIR = ConfigDir(join(settings.PROJECT_DIR,'config'),True)
     #~ config_dirs.append(LOCAL_CONFIG_DIR)
 
   
@@ -128,11 +149,11 @@ def find_config_file(fn,group=''):
     if os.path.isabs(fn):
         return fn
     if group:
-        prefix = os.path.join(*(group.split('/')))
+        prefix = join(*(group.split('/')))
     else:
         prefix = ''
     for cd in config_dirs:
-        ffn = os.path.join(cd.name,prefix,fn)
+        ffn = join(cd.name,prefix,fn)
         if os.path.exists(ffn):
             return ffn
 
@@ -149,23 +170,23 @@ def find_config_files(pattern,group=''):
     
     """
     if group:
-        prefix = os.path.sep + os.path.join(*(group.split('/')))
+        prefix = os.path.sep + join(*(group.split('/')))
         #~ if not group.endswith('/'):
             #~ group += '/'
     else:
         prefix = ''
     files = {}
     for cd in config_dirs:
-        #~ print 'find_config_files() discover', dirname, pattern
-        dirname = cd.name + prefix
-        if os.path.exists(dirname):
-            for fn in os.listdir(dirname):
+        pth = cd.name + prefix
+        #~ print 'find_config_files() discover', pth, pattern
+        if isdir(pth):
+            for fn in os.listdir(pth):
                 if fnmatch(fn,pattern):
                     files.setdefault(fn,cd)
                     #~ if not files.has_key(fn):
                         #~ files[fn] = cd
         #~ else:
-            #~ print 'find_config_files() not a directory:', dirname
+            #~ print 'find_config_files() not a directory:', pth
     return files
     
 def find_template_config_files(template_ext,templates_group):
@@ -210,8 +231,8 @@ def load_config_files(loader,pattern,group=''):
     files.sort(fcmp)
     prefix = group.replace("/",os.sep)
     for filename,cd in files:
-        filename = os.path.join(prefix,filename)
-        ffn = os.path.join(cd.name,filename)
+        filename = join(prefix,filename)
+        ffn = join(cd.name,filename)
         logger.debug("Loading %s...",ffn)
         s = codecs.open(ffn,encoding='utf-8').read()
         loader(s,cd,filename)
@@ -241,11 +262,11 @@ class Configured(object):
         if not self.cd.writeable:
             #~ print self.cd, "is not writable", self.filename
             self.cd = LOCAL_CONFIG_DIR
-        fn = os.path.join(self.cd.name,self.filename)
-        dirname = os.path.dirname(fn)
-        settings.SITE.makedirs_if_missing(dirname)
-        #~ if not os.path.exists(dirname):
-            #~ os.makedirs(dirname)
+        fn = join(self.cd.name,self.filename)
+        pth = dirname(fn)
+        settings.SITE.makedirs_if_missing(pth)
+        #~ if not os.path.exists(pth):
+            #~ os.makedirs(pth)
         f = codecs.open(fn,'w',encoding='utf-8')
         self.write_content(f)
         f.close()
@@ -260,7 +281,7 @@ class Configured(object):
         """
         if not self.filename: return
         if self.cd is None: return
-        fn = os.path.join(self.cd.name,self.filename)
+        fn = join(self.cd.name,self.filename)
         if self.cd.writeable: 
             logger.info("Not writing %s because %s is writeable",
                 self.filename,self.cd.name)
