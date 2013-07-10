@@ -37,8 +37,8 @@ class Site(Site,ledger.SiteMixin):
     demo_fixtures = 'std few_countries few_cities few_languages demo demo2'.split()
     
     #~ project_model = 'contacts.Person'
-    #~ project_model = 'school.Pupil'
-    project_model = 'school.Course'
+    #~ project_model = 'courses.Pupil'
+    project_model = 'courses.Course'
     #~ project_model = None
     user_model = 'users.User'
     
@@ -95,7 +95,7 @@ class Site(Site,ledger.SiteMixin):
         yield 'lino.modlib.products'
         yield 'lino.modlib.auto.sales'
         
-        yield 'lino.modlib.school'
+        yield 'lino.modlib.courses'
         yield 'lino.projects.homeworkschool'
       
     def setup_choicelists(self):

@@ -1,3 +1,2 @@
-/home/luc/hgwork/lino/docs/admin/install_windows.rst:212: WARNING: Include file u'/home/luc/hgwork/lino/docs/admin/settings.py' not found or reading it failed
 /home/luc/hgwork/lino/docs/tested/test_cosi_demo.rst:: WARNING: document isn't included in any toctree
 /home/luc/hgwork/lino/docs/tested/test_i18n.rst:: WARNING: document isn't included in any toctree

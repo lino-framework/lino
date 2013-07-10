@@ -14,7 +14,12 @@
 
 from __future__ import unicode_literals
 
-#~ print '20130219 lino.modlib.school 1'  
+"""
+Deserves a docstring
+"""
+
+
+#~ print '20130219 lino.modlib.courses 1'  
 
 
 import logging
@@ -91,7 +96,7 @@ cal = dd.resolve_app('cal')
 sales = dd.resolve_app('sales')
 contacts = dd.resolve_app('contacts')
 #~ Company = dd.resolve_model('contacts.Company',strict=True)
-#~ print '20130219 lino.modlib.school 2'  
+#~ print '20130219 lino.modlib.courses 2'  
 
 """
 Here we must use `resolve_model` with strict=True
@@ -104,7 +109,7 @@ Person = dd.resolve_model('contacts.Person',strict=True)
 #~ Person = settings.SITE.modules.contacts.Person
 
 #~ from lino.modlib.contacts.models import Person
-#~ print '20130219 lino.modlib.school 3'  
+#~ print '20130219 lino.modlib.courses 3'  
 
 #~ except ImportError as e:
     #~ import traceback
@@ -154,7 +159,7 @@ class Slots(dd.Table):
     """
     detail_layout = """
     name start_time end_time 
-    school.CoursesBySlot
+    courses.CoursesBySlot
     """
     
     
@@ -168,8 +173,8 @@ class Topics(dd.Table):
     required = dd.required(user_level='manager')
     detail_layout = """
     id name
-    school.LinesByTopic
-    school.CoursesByTopic
+    courses.LinesByTopic
+    courses.CoursesByTopic
     """
     
 class Line(dd.BabelNamed):
@@ -189,7 +194,7 @@ class Lines(dd.Table):
     detail_layout = """
     id name
     description
-    school.CoursesByLine
+    courses.CoursesByLine
     """
     
 class LinesByTopic(Lines):
@@ -206,7 +211,7 @@ class TeacherTypes(dd.Table):
     required = dd.required(user_level='manager')
     detail_layout = """
     id name
-    school.TeachersByType
+    courses.TeachersByType
     """
 
 
@@ -216,7 +221,7 @@ class Teacher(Person):
         verbose_name = _("Teacher")
         verbose_name_plural = _("Teachers")
         
-    teacher_type = dd.ForeignKey('school.TeacherType',blank=True,null=True)
+    teacher_type = dd.ForeignKey('courses.TeacherType',blank=True,null=True)
     
     def __unicode__(self):
         #~ return self.get_full_name(salutation=False)
@@ -225,7 +230,7 @@ class Teacher(Person):
 class TeacherDetail(contacts.PersonDetail):
     general = dd.Panel(contacts.PersonDetail.main,label = _("General"))
     box5 = "remarks" 
-    main = "general school.CoursesByTeacher school.EventsByTeacher cal.GuestsByPartner"
+    main = "general courses.CoursesByTeacher courses.EventsByTeacher cal.GuestsByPartner"
 
     #~ def setup_handle(self,lh):
       
@@ -252,7 +257,7 @@ class PupilTypes(dd.Table):
     required = dd.required(user_level='manager')
     detail_layout = """
     id name
-    school.PupilsByType
+    courses.PupilsByType
     """
 
 
@@ -263,10 +268,10 @@ class Pupil(Person):
         verbose_name = _("Pupil")
         verbose_name_plural = _("Pupils")
         
-    pupil_type = dd.ForeignKey('school.PupilType',blank=True,null=True)
+    pupil_type = dd.ForeignKey('courses.PupilType',blank=True,null=True)
     
 class PupilDetail(contacts.PersonDetail):
-    main = "general school.EnrolmentsByPupil"
+    main = "general courses.EnrolmentsByPupil"
 
     general = dd.Panel(contacts.PersonDetail.main,label = _("General"))
     box5 = "remarks" 
@@ -278,7 +283,7 @@ class PupilDetail(contacts.PersonDetail):
     #~ def setup_handle(self,lh):
       
         #~ lh.general.label = _("General")
-        #~ lh.school.label = _("School")
+        #~ lh.courses.label = _("School")
         #~ lh.notes.label = _("Notes")
 
 class Pupils(contacts.Persons):
@@ -359,7 +364,7 @@ class Course(contacts.ContactRelated,cal.EventGenerator,cal.RecurrenceSet,dd.Pri
         
     workflow_state_field = 'state'
     
-    line = models.ForeignKey('school.Line')
+    line = models.ForeignKey('courses.Line')
     teacher = models.ForeignKey(Teacher)
     #~ room = models.ForeignKey(Room,blank=True,null=True)
     room = dd.ForeignKey('cal.Room',blank=True,null=True)
@@ -486,7 +491,7 @@ class CourseDetail(dd.FormLayout):
     max_places max_events end_date end_time every_unit every 
     monday tuesday wednesday thursday friday saturday sunday
     company contact_person user calendar 
-    school.EnrolmentsByCourse
+    courses.EnrolmentsByCourse
     """,label=_("General"))
     
     #~ def setup_handle(self,dh):
@@ -502,10 +507,10 @@ class Courses(dd.Table):
     order_by = ['start_date']
     
     parameters = dd.ObservedPeriod(
-        line = models.ForeignKey('school.Line',blank=True,null=True),
-        topic = models.ForeignKey('school.Topic',blank=True,null=True),
+        line = models.ForeignKey('courses.Line',blank=True,null=True),
+        topic = models.ForeignKey('courses.Topic',blank=True,null=True),
         company = models.ForeignKey('contacts.Company',blank=True,null=True),
-        teacher = models.ForeignKey('school.Teacher',blank=True,null=True),
+        teacher = models.ForeignKey('courses.Teacher',blank=True,null=True),
         state = CourseStates.field(blank=True),
         )
     params_layout = """topic line company teacher state"""
@@ -556,13 +561,14 @@ class CoursesByLine(Courses):
 class CoursesByTopic(Courses):
     master = Topic
     order_by = ['start_date']
-    column_names = "start_date:8 line:20 room__company__city:10 weekdays_text:10 times_text:10"
+    column_names = "start_date:8 line:20 room:10 weekdays_text:10 times_text:10"
     
     @classmethod
     def get_request_queryset(self,ar):
         topic = ar.master_instance
         if topic is None: return []
         return Course.objects.filter(line__topic=topic)
+        
 
 class CoursesBySlot(Courses):
     master_key = "slot"
@@ -770,7 +776,7 @@ def setup_main_menu(site,ui,profile,main):
     m = main.get_item("contacts")
     m.add_action(Teachers)
     m.add_action(Pupils)
-    m = main.add_menu("school",MODULE_LABEL)
+    m = main.add_menu("courses",MODULE_LABEL)
     m.add_action(Courses)
     #~ m.add_action(Teachers)
     #~ m.add_action(Pupils)
@@ -778,7 +784,7 @@ def setup_main_menu(site,ui,profile,main):
     m.add_action(PendingConfirmedEnrolments)
   
 def unused_setup_master_menu(site,ui,profile,m): 
-    #~ m = m.add_menu("school",_("School"))
+    #~ m = m.add_menu("courses",_("School"))
     m.add_action(Teachers)
     m.add_action(Pupils)
     #~ m.add_action(CourseOffers)
@@ -788,7 +794,7 @@ def unused_setup_master_menu(site,ui,profile,m):
 def setup_my_menu(site,ui,profile,m): pass
   
 def setup_config_menu(site,ui,profile,m):
-    m = m.add_menu("school",MODULE_LABEL)
+    m = m.add_menu("courses",MODULE_LABEL)
     #~ m.add_action(Rooms)
     m.add_action(TeacherTypes)
     m.add_action(PupilTypes)
@@ -798,10 +804,10 @@ def setup_config_menu(site,ui,profile,m):
     #~ m.add_action(PresenceStatuses)
   
 def setup_explorer_menu(site,ui,profile,m):
-    m = m.add_menu("school",MODULE_LABEL)
+    m = m.add_menu("courses",MODULE_LABEL)
     #~ m.add_action(Presences)
     #~ m.add_action(Events)
     m.add_action(Enrolments)
   
   
-#~ print '20130219 lino.modlib.school ok'  
+#~ print '20130219 lino.modlib.courses ok'  

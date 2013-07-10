@@ -668,7 +668,7 @@ class Table(AbstractTable):
                             break
                 if master_model is None:
                     raise Exception("%s : no master for master_key %r in %s" % (
-                        self,self.master_key,self.model.__name__))
+                        self,self.master_key,self.model))
                 self.master = master_model
                 #~ self.fk = fk
                 self.master_field = fk

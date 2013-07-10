@@ -5,9 +5,13 @@
 Inheriting `config` directory of another app
 --------------------------------------------
 
-Added a new :mod:`lino.modlib.auto.sales` which 
-extends :mod:`lino.modlib.sales` and
+Added a new module :mod:`lino.modlib.auto.sales` 
+which extends :mod:`lino.modlib.sales` and
 is a next example of what I'd call "app inheritance".
+
+The base `sales` app is for writing sales invoices,
+the "auto" sales app is for having Lino automatically 
+generate sales invoices.
 
 It works basically like :mod:`lino_faggio.contacts`
 (which extends :mod:`lino.modlib.contacts`, see :blogref:`20130607`).
@@ -57,20 +61,15 @@ import mod:`lino.utils.config` at the global level of a models module
 because importing it will fill the config dirs, i.e. will try to import 
 every installed `models` module.
 
-
+Added new function :func:`lino.dd.extends_app`.
 To have :mod:`lino_faggio.cal` extend :mod:`lino.modlib.cal`,
-we currently need two lines of code::
-
-  from lino.modlib.cal.models import *
-  PARENT_APP = 'lino.modlib.cal'
-  
-The following would be more concise::
+we now need only one line of code::
 
   dd.extends_app('lino.modlib.sales',globals())
   
 
-def extends_app(name,globals_dict):
-    m = import_module(name)
-    globals_dict.update(PARENT_APP=name)
-    globals_dict.update(m.__dict__)
-    
+Lino-Faggio continued
+---------------------
+
+- Renamed `lino.modlib.school` to `lino.modlib.courses`.
+- New module :mod:`lino_faggio.courses` extends :mod:`lino.modlib.courses`.

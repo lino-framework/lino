@@ -14,6 +14,9 @@ class LinoTestCase(TestCase):
     #~ default_environ = dict(DJANGO_SETTINGS_MODULE="lino.projects.std.settings")
     project_root = ROOTDIR
     
+class PackagesTests(LinoTestCase):
+    def test_01(self): self.run_packages_test(SETUP_INFO['packages'])
+
 class BlogTest(LinoTestCase):
     def test_20130316(self): self.run_simple_doctests('docs/blog/2013/0316.rst')
     def test_20130507(self): self.run_simple_doctests('docs/blog/2013/0507.rst')
@@ -49,9 +52,6 @@ class UtilsTests(LinoTestCase):
     def test_25(self): self.run_simple_doctests('lino/modlib/accounts/utils.py')
     def test_26(self): self.run_simple_doctests('lino/modlib/contacts/utils.py')
     def test_cal_utils(self): self.run_simple_doctests('lino/modlib/cal/utils.py')
-
-class PackagesTests(LinoTestCase):
-    def test_01(self): self.run_packages_test(SETUP_INFO['packages'])
 
 class I18nTests(LinoTestCase):
     def test_i18n(self): self.run_simple_doctests('docs/tested/test_i18n.rst')

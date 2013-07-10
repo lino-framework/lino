@@ -31,7 +31,7 @@ from north.dbutils import babelkw
 
 Person = dd.resolve_model('contacts.Person')
 
-school = dd.resolve_app('school')
+courses = dd.resolve_app('courses')
 cal = dd.resolve_app('cal')
 users = dd.resolve_app('users')
 #~ Room = resolve_model('courses.Room')
@@ -42,7 +42,7 @@ users = dd.resolve_app('users')
 def objects():
   
             
-    #~ yield school.Room(name="A")
+    #~ yield courses.Room(name="A")
     #~ yield cal.Place(name="A")
     #~ yield cal.Place(name="B")
     #~ yield cal.Place(name="C")
@@ -50,27 +50,27 @@ def objects():
     #~ yield cal.Place(name="E")
     #~ yield cal.Place(name="F")
 
-    PTYPES = Cycler(school.PupilType.objects.all())
-    TTYPES = Cycler(school.TeacherType.objects.all())
+    PTYPES = Cycler(courses.PupilType.objects.all())
+    TTYPES = Cycler(courses.TeacherType.objects.all())
     
     n = 0
     for p in Person.objects.all():
         if n % 2 == 0:
-            yield mti.insert_child(p,school.Pupil,pupil_type=PTYPES.pop())
+            yield mti.insert_child(p,courses.Pupil,pupil_type=PTYPES.pop())
         if n % 9 == 0:
-            yield mti.insert_child(p,school.Teacher,teacher_type=TTYPES.pop())
+            yield mti.insert_child(p,courses.Teacher,teacher_type=TTYPES.pop())
         n += 1
         
     if False:
         
-        #~ PS = Cycler(school.PresenceStatus.objects.all())
-        CONTENTS = Cycler(school.Line.objects.all())
+        #~ PS = Cycler(courses.PresenceStatus.objects.all())
+        CONTENTS = Cycler(courses.Line.objects.all())
         USERS = Cycler(users.User.objects.all())
         PLACES = Cycler(cal.Room.objects.all())
-        TEACHERS = Cycler(school.Teacher.objects.all())
-        SLOTS = Cycler(school.Slot.objects.all())
+        TEACHERS = Cycler(courses.Teacher.objects.all())
+        SLOTS = Cycler(courses.Slot.objects.all())
         #~ SLOTS = Cycler(1,2,3,4)
-        PUPILS = Cycler(school.Pupil.objects.all())
+        PUPILS = Cycler(courses.Pupil.objects.all())
         #~ Event = settings.SITE.modules.cal.Event
         
         #~ from lino.modlib.cal.utils import DurationUnit
@@ -79,7 +79,7 @@ def objects():
         if settings.SITE.demo_date().month < 7:
             year -= 1
         for i in range(10):
-            c = school.Course(
+            c = courses.Course(
               user=USERS.pop(),
               teacher=TEACHERS.pop(),
               line=CONTENTS.pop(),room=PLACES.pop(),
@@ -91,11 +91,11 @@ def objects():
               )
             yield c
             for j in range(5):
-                yield school.Enrolment(pupil=PUPILS.pop(),course=c)
+                yield courses.Enrolment(pupil=PUPILS.pop(),course=c)
                 
             c.save() # fill presences
             
             #~ for j in range(5):
-                #~ yield school.Event(start_date=settings.SITE.demo_date(j*7),course=c)
-                #~ yield school.Presence()
+                #~ yield courses.Event(start_date=settings.SITE.demo_date(j*7),course=c)
+                #~ yield courses.Presence()
             

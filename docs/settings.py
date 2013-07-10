@@ -41,6 +41,11 @@ class Site(Site,ledger.SiteMixin):
     #~ languages = ('de', 'fr', 'nl', 'en')
     languages = ['en']
     
+    override_modlib_models = [
+        'sales.Invoice',
+        'sales.InvoiceItem',
+    ]
+    
 
     def get_installed_apps(self):
         for a in super(Site,self).get_installed_apps():
@@ -63,9 +68,10 @@ class Site(Site,ledger.SiteMixin):
         yield 'lino.modlib.ledger'
         yield 'lino.modlib.vat'
         yield 'lino.modlib.products'
-        yield 'lino.modlib.sales'
+        #~ yield 'lino.modlib.sales'
+        yield 'lino.modlib.auto.sales'
         yield 'lino.modlib.concepts'
-        #~ yield 'lino.modlib.school'
+        yield 'lino.modlib.courses'
         #~ yield 'lino.modlib.pages'
         #~ yield 'lino.projects.cosi'
         #~ yield 'lino'

@@ -23,7 +23,7 @@ from north.dbutils import babelkw
 
 def objects():
    
-    #~ slot = Instantiator('school.Slot','name start_time end_time').build
+    #~ slot = Instantiator('courses.Slot','name start_time end_time').build
     #~ 
     #~ kw = dict(monday=True,tuesday=True,wednesday=False,thursday=True,friday=True)
     #~ yield slot("Erste Stunde","16:00","17:00",**kw)
@@ -38,14 +38,14 @@ def objects():
     #~ yield slot("Mittwochs 17 Uhr","17:00","18:00",**kw)
     #~ yield slot("Mittwochs 18 Uhr","18:00","19:00",**kw)
     
-    school = dd.resolve_app('school')
+    courses = dd.resolve_app('courses')
 
-    yield school.Line(**babelkw('name',
+    yield courses.Line(**babelkw('name',
           de=u"Deutsch Anfänger",
           fr=u"Allemand débutants",
           en=u"German beginners",
           ))
-    yield school.Line(**babelkw('name',
+    yield courses.Line(**babelkw('name',
           de=u"Französisch Anfänger",
           fr=u"Français débutants",
           en=u"French beginners",

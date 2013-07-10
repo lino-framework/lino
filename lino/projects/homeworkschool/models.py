@@ -180,7 +180,7 @@ def setup_main_menu(site,ui,profile,main):
 
 
 def customize_school():
-    dd.inject_field('school.Pupil',
+    dd.inject_field('courses.Pupil',
         'school',
         models.ForeignKey(School,
             blank=True,null=True,

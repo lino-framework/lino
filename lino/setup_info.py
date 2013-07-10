@@ -57,6 +57,8 @@ lino.core
 lino.extjs
 lino.history
 lino.modlib
+lino.modlib.auto
+lino.modlib.auto.sales
 lino.modlib.contacts
 lino.modlib.contacts.fixtures
 lino.modlib.countries
@@ -97,8 +99,8 @@ lino.modlib.accounts
 lino.modlib.vat
 lino.modlib.households
 lino.modlib.households.fixtures
-lino.modlib.school
-lino.modlib.school.fixtures
+lino.modlib.courses
+lino.modlib.courses.fixtures
 lino.modlib.about
 lino.modlib.pages
 lino.modlib.pages.fixtures
