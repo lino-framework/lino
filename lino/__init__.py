@@ -93,14 +93,14 @@ class Site(Site):
     override_modlib_models = []
     "See :attr:`lino.ui.Lino.override_modlib_models`."
     
-    is_demo_site = True
+    is_demo_site = False
     """
     Set this to `True` if this site should run in "demo" mode. 
     This means:
     
-    - :srcref:`admin_main.html </lino/templates_jinja/admin_main.html>` 
-      says "This demo site has %d users, they all have \"1234\" as 
-      password", followed by a list of available usernames.
+    - the welcome text for anonymous users says "This demo site has X 
+      users, they all have "1234" as password", 
+      followed by a list of available usernames.
     
     """
    

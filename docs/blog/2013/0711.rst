@@ -1,0 +1,12 @@
+=================================
+20130711 (Thursday, 11 July 2013)
+=================================
+
+Lino-Faggio continued
+---------------------
+
+Added invoiceable events organized by external partners.
+
+- No, not Event is invoiceable but Course. 
+  We don't need the additional field `Event.organizer`.
+  

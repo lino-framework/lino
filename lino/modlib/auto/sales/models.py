@@ -78,7 +78,7 @@ class Invoiceable(dd.Model):
     class Meta:
         abstract = True
         
-    invoiced = dd.ForeignKey('sales.Invoice',
+    invoice = dd.ForeignKey('sales.Invoice',
         #~ verbose_name=_("Invoice"),
         blank=True,null=True)
 
@@ -88,20 +88,23 @@ class Invoiceable(dd.Model):
         
     @classmethod
     def get_invoiceables_for(cls,partner,max_date=None):
+        #~ logger.info('20130711 get_invoiceables_for (%s,%s)', partner, max_date)
         for m in dd.models_by_base(cls):
             fkw = dict()
             fkw[m.invoiceable_partner_field] = partner
-            fkw.update(invoiced__isnull=True)
-            if max_date is not None:
-                fkw["%s__lte" % m.invoiceable_date_field] = max_date
+            fkw.update(invoice__isnull=True)
+            #~ if max_date is not None:
+                #~ fkw["%s__lte" % m.invoiceable_date_field] = max_date
+            #~ logger.info('20130711 %s %s', m, fkw)
             for obj in m.objects.filter(**fkw).order_by(m.invoiceable_date_field):
                 yield obj
         
 
 
 
-class AutoFillAction(dd.RowAction):
+class FillInvoice(dd.RowAction):
     label = _("Fill")
+    help_text = _("Fill this invoice using invoiceable items")
     
     def run_from_ui(self,obj,ar,**kw):
         L = list(Invoiceable.get_invoiceables_for(obj.partner,obj.date))
@@ -110,7 +113,8 @@ class AutoFillAction(dd.RowAction):
         def ok():
             for ii in L:
                 i = InvoiceItem(voucher=obj,invoiceable=ii,
-                    product=ii.get_invoiceable_product())
+                    product=ii.get_invoiceable_product(),
+                    qty=ii.get_invoiceable_qty())
                 i.product_changed(ar)
                 i.full_clean()
                 i.save()
@@ -122,12 +126,30 @@ class AutoFillAction(dd.RowAction):
     
 class Invoice(Invoice): # 20130709
     
-    auto_fill = AutoFillAction()
+    fill_invoice = FillInvoice()
     
     class Meta(Invoice.Meta): # 20130709
         #~ app_label = 'sales'
         verbose_name = _("Invoice")
         verbose_name_plural = _("Invoices")
+        
+    def register(self,ar):
+        for i in self.items.filter(invoiceable_id__isnull=False):
+            if i.invoiceable.invoice != self:
+                i.invoiceable.invoice = self
+                i.invoiceable.save()
+                #~ logger.info("20130711 %s now invoiced",i.invoiceable)
+        return super(Invoice,self).register(ar)
+        
+    def deregister(self,ar):
+        for i in self.items.filter(invoiceable_id__isnull=False):
+            if i.invoiceable.invoice != self:
+                logger.warning("Oops: i.invoiceable.invoice != self in %s",self)
+            i.invoiceable.invoice = None
+            i.invoiceable.save()
+            #~ logger.info("20130711 %s no longer invoiced",i.invoiceable)
+        return super(Invoice,self).deregister(ar)
+        
     
 class InvoiceItem(InvoiceItem): # 20130709
     
@@ -202,10 +224,13 @@ class InvoiceablesByPartner(dd.VirtualTable):
         mi = ar.master_instance
         if mi is None:
             return rows
-        for m in dd.models_by_base(Invoiceable):
-            fkw = {m.invoiceable_partner_field:mi}
-            for obj in m.objects.filter(**fkw).order_by(m.invoiceable_date_field):
-                rows.append((getattr(obj,m.invoiceable_date_field),obj))
+        for obj in Invoiceable.get_invoiceables_for(mi):
+            rows.append((getattr(obj,obj.invoiceable_date_field),obj))
+        
+        #~ for m in dd.models_by_base(Invoiceable):
+            #~ fkw = {m.invoiceable_partner_field:mi}
+            #~ for obj in m.objects.filter(**fkw).order_by(m.invoiceable_date_field):
+                #~ rows.append((getattr(obj,m.invoiceable_date_field),obj))
         def f(a,b): return cmp(a[0],b[0])
         rows.sort(f)
         return rows

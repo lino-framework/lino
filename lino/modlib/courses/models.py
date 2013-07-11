@@ -359,13 +359,14 @@ class Course(contacts.ContactRelated,cal.EventGenerator,cal.RecurrenceSet,dd.Pri
     FILL_EVENT_GUESTS = False
     
     class Meta:
+        abstract = settings.SITE.is_abstract_model('courses.Course')
         verbose_name = _("Course")
         verbose_name_plural = _('Courses')
         
     workflow_state_field = 'state'
     
     line = models.ForeignKey('courses.Line')
-    teacher = models.ForeignKey(Teacher)
+    teacher = models.ForeignKey(Teacher,blank=True,null=True)
     #~ room = models.ForeignKey(Room,blank=True,null=True)
     room = dd.ForeignKey('cal.Room',blank=True,null=True)
     slot = models.ForeignKey(Slot,blank=True,null=True)
@@ -436,7 +437,7 @@ class Course(contacts.ContactRelated,cal.EventGenerator,cal.RecurrenceSet,dd.Pri
         return EnrolmentsByCourse.request(self)
         
 """
-customize fields to override their inherited default verbose_names
+customize fields coming from mixins to override their inherited default verbose_names
 """
 dd.update_field(Course,'contact_person',verbose_name = _("Contact person"))
 dd.update_field(Course,'company',verbose_name = _("Organizer"))
@@ -500,7 +501,7 @@ class CourseDetail(dd.FormLayout):
         #~ dh.freq.label = _("Frequency")
   
 class Courses(dd.Table):
-    model = Course
+    model = 'courses.Course'
     #~ order_by = ['date','start_time']
     detail_layout = CourseDetail() 
     column_names = "info line teacher room slot *"
@@ -567,7 +568,7 @@ class CoursesByTopic(Courses):
     def get_request_queryset(self,ar):
         topic = ar.master_instance
         if topic is None: return []
-        return Course.objects.filter(line__topic=topic)
+        return settings.SITE.modules.courses.Course.objects.filter(line__topic=topic)
         
 
 class CoursesBySlot(Courses):
@@ -613,7 +614,7 @@ class Enrolment(dd.UserAuthored,dd.Printable,sales.Invoiceable):
         verbose_name_plural = _('Enrolments')
 
     #~ teacher = models.ForeignKey(Teacher)
-    course = models.ForeignKey(Course)
+    course = models.ForeignKey('courses.Course')
     pupil = models.ForeignKey(Pupil)
     request_date = models.DateField(_("Date of request"),default=datetime.date.today)
     state = EnrolmentStates.field(default=EnrolmentStates.requested)
@@ -699,7 +700,7 @@ class Enrolments(dd.Table):
         elif not ar.param_values.participants_only:
             yield unicode(_("Also ")) + unicode(EnrolmentStates.cancelled.text)
         if ar.param_values.course_state:
-            yield unicode(Course._meta.verbose_name) + ' ' + unicode(ar.param_values.course_state)
+            yield unicode(settings.SITE.modules.courses.Course._meta.verbose_name) + ' ' + unicode(ar.param_values.course_state)
         if ar.param_values.user:
             yield unicode(ar.param_values.user)
         

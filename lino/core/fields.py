@@ -845,6 +845,8 @@ class QuantityField(CharField):
     def to_python(self, value):
         if isinstance(value,Decimal):
             return value
+        if isinstance(value,int):
+            return Decimal(value)
         if value:
             return quantities.parse(value)
         return None
