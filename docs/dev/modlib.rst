@@ -2,30 +2,11 @@ Overriding modlib models
 ------------------------
 
 The :mod:`lino.modlib` modules are ready-to-use 
-application modules (Django calls them "applications") 
-that may be included in your :setting:`INSTALLED_APPS`::
-
-  INSTALLED_APPS = (
-  
-    # manatory django.contrib applications needed by Lino
-    'django.contrib.auth',
-    'django.contrib.contenttypes',
-    'django.contrib.sessions',
-    'django.contrib.sites',
-    
-    # your selection of lino.modlib applications:
-    
-    'lino.modlib.system',
-    'lino.modlib.countries',
-    'lino.modlib.contacts',
-    'lino.modlib.projects',
-    'lino.modlib.notes',
-    
-    # optionally you may write your own Django application that adds new models or reimplements models from lino.modlib.
-    'myapp',  
-  )
+"apps" (as Django calls them) 
+which may be included in your :setting:`INSTALLED_APPS`.
 
 Django identifies models and SQL tables using a string of format `app_label.model_name`. 
+
 The `app_label` is usually added automatically by taking the second-last 
 part of the full Python module name. 
 

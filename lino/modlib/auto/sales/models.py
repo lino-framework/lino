@@ -49,9 +49,9 @@ from lino import dd
 #~ sales = dd.resolve_app('sales')
 #~ contacts = dd.resolve_app('contacts')
 
-dd.extends_app('lino.modlib.sales',globals())
+#~ dd.extends_app('lino.modlib.sales',globals())
 
-#~ from lino.modlib.sales.models import *
+from lino.modlib.sales.models import *
 #~ PARENT_APP = 'lino.modlib.sales'
 
 #~ from lino.modlib.sales import models as PARENT_APP

@@ -321,7 +321,7 @@ from lino.mixins.human import Human, Born, Genders
 
 from django.utils.importlib import import_module
 
-def extends_app(name,globals_dict):
+def unused_extends_app(name,globals_dict):
     """
     Tell Lino that this app extends another app, 
     and import the namespace of that app's `models` module.

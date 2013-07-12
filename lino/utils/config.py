@@ -17,9 +17,11 @@ This creates a list `config_dirs` of all
 configuration directories by looping through :setting:`INSTALLED_APPS` 
 and taking those whose source directory has a :xfile:`config` subdir.
 
-DO NOT import this module at the global level of a models module
-because importing it will fill the config dirs, i.e. will try to import 
-every installed `models` module.
+..
+
+  DO NOT import this module at the global level of a models module
+  because importing it will fill the config dirs, i.e. will try to import 
+  every installed `models` module.
 
 The mechanism in this module emulates the behaviour of Django's 
 (or Jinja's) template loaders. 
@@ -61,6 +63,7 @@ from fnmatch import fnmatch
 from django.utils.importlib import import_module
 from django.conf import settings
 
+from lino import ad
 from lino.utils import iif
 
 SUBDIR_NAME = 'config' # we might change this to "templates" 
@@ -88,23 +91,21 @@ def add_config_dir(mod):
 
 #~ for pth in settings.SITE.get_settings_subdirs(SUBDIR_NAME)
 #~ dirs = []
-
 for app in settings.INSTALLED_APPS:
     app_mod = import_module(app)
-    #~ parent = getattr(app_mod,'PARENT_APP',None)
-    #~ if parent:
-        #~ parent = import_module(parent)
-        #~ add_config_dir(parent)
-    try:
-        models_mod = import_module(app+'.models')
-    except ImportError:
-        pass
-    else:
-        parent = getattr(models_mod,'PARENT_APP',None)
-        if parent:
-            #~ print 20130710, parent
-            parent = import_module(parent)
-            add_config_dir(parent)
+    app = getattr(app_mod,'App',None)
+    if isinstance(app,ad.App) and app.extends:
+        parent = import_module(app.extends)
+        add_config_dir(parent)
+    #~ try:
+        #~ models_mod = import_module(app+'.models')
+    #~ except ImportError:
+        #~ pass
+    #~ else:
+        #~ parent = getattr(models_mod,'PARENT_APP',None)
+        #~ if parent:
+            #~ parent = import_module(parent)
+            #~ add_config_dir(parent)
         
     add_config_dir(app_mod)
     

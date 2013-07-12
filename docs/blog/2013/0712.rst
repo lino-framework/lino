@@ -1,0 +1,64 @@
+===============================
+20130712 (Friday, 12 July 2013)
+===============================
+
+Even more app inheritance
+-------------------------
+
+I understood the necessity of even more inter-app stuff.
+Removed `dd.extends_app` and replaced it by
+a new module :mod:`lino.ad`.
+
+Usage:
+
+For example if you write an app `myproject.courses`
+which extends (inherits from) 
+:mod:`lino.modlib.courses`, then you write in your 
+app's :file:`__init__.py`::
+
+    from lino import ad
+        
+    class App(ad.App):
+
+        extends = 'lino.modlib.sales'
+
+And in your app's  :file:`models.py`::
+
+    from lino.modlib.sales.models import *
+    
+
+This works because we add a new convention: 
+
+    Lino requires the modules specified in :setting:`INSTALLED_APPS`
+    (not their `.models` modules) to be importable 
+    while Django's settings are being loaded. Or in other words: 
+    these modules may not do `from django.conf import settings`.
+
+Inheriting fixtures
+-------------------
+
+Lino cannot give you a method to automatically 
+inherit `fixture` directories. 
+That's because 
+we would have to add them to :setting:`FIXTURE_DIRS`, and this would 
+cause an unexpected loading order.
+Django's will always load first fixtures of INSTALLED_APPS and only 
+then those in :setting:`FIXTURE_DIRS`.
+
+So if you want the fixtures of your parent app to load also 
+for your child app, then you need to do this explicitly for each 
+fixture by creating a `fixtures` dir in the child app, 
+with an empty 
+:file:`__init__.py` and one `.py` file for each fixture.
+Usually this will be at least a file :file:`demo.py`::
+
+  from <parent_app>.fixtures.demo import *
+  
+
+TODO: More plans
+----------------
+
+The :mod:`lino.ad` idea opens doors for new possibilities:
+
+- :attr:`lino.ad.App.verbose_name
+- :attr:`lino.ad.App.depends

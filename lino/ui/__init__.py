@@ -582,6 +582,9 @@ class Site(lino.Site):
         installed_apps = tuple([str(x) for x in installed_apps])
         self.update_settings(INSTALLED_APPS=installed_apps)
         
+        #~ fd = list()
+        #~ self.update_settings(FIXTURE_DIRS=tuple(settings_subdirs('fixtures')))
+        
         if self.webdav_url is None:
             self.webdav_url = '/media/webdav/'
         if self.webdav_root is None:
