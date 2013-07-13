@@ -34,30 +34,23 @@ from django.core.management import call_command
 from django.core.management.base import BaseCommand, CommandError
 
 from django.conf import settings
-from lino.core.dbutils import obj2str, full_model_name, sorted_models_list, app_labels
-
-#~ import lino
-from lino.utils import rstgen
-
 
 class Command(BaseCommand):
     help = __doc__
     args = "output_dir"
     
-    option_list = BaseCommand.option_list + (
-        make_option('--noinput', action='store_false', 
-            dest='interactive', default=True,
-            help='Do not prompt for input of any kind.'),
-    ) 
+    #~ option_list = BaseCommand.option_list + (
+        #~ make_option('--noinput', action='store_false', 
+            #~ dest='interactive', default=True,
+            #~ help='Do not prompt for input of any kind.'),
+    #~ ) 
     
     def handle(self, *args, **options):
         if args:
             raise CommandError("This command doesn't accept any arguments.")
             
         #~ print settings.SITE.__class__
-        settings.SITE.startup()
-        
-        self.options = options
+        #~ self.options = options
         
         #~ settings.SITE.startup()
         
@@ -66,48 +59,6 @@ class Command(BaseCommand):
         def writeln(ln):
             self.stdout.write(ln.encode(encoding,"xmlcharrefreplace") + "\n")
         
-        #~ writeln("Lino %s" % lino.__version__)
-        #~ yield (settings.SITE.verbose_name, settings.SITE.version)
-        #~ writeln(settings.SITE.title)
-        models_list = sorted_models_list()
-
-        apps = app_labels()
-        writeln("%d applications: %s." % (len(apps), ", ".join(apps)))
-        writeln("%d models:" % len(models_list))
-        i = 0
-        headers = [
-            #~ "No.",
-            "Name",
-            #~ "Class",
-            #~ "M",
-            "#fields",
-            "#rows",
-            #~ ,"first","last"
-            ]
-        rows = []
-        for model in models_list:
-          if model._meta.managed:
-            i += 1
-            cells = []
-            #~ cells.append(str(i))
-            cells.append(full_model_name(model))
-            #~ cells.append(str(model))
-            #~ if model._meta.managed:
-                #~ cells.append('X')
-            #~ else:
-                #~ cells.append('')
-            cells.append(str(len(model._meta.fields)))
-            #~ qs = model.objects.all()
-            qs = model.objects.order_by('pk')
-            n = qs.count()
-            cells.append(str(n))
-            #~ if n:
-                #~ cells.append(obj2str(qs[0]))
-                #~ cells.append(obj2str(qs[n-1]))
-            #~ else:
-                #~ cells.append('')
-                #~ cells.append('')
-                
-            rows.append(cells)
-        writeln(rstgen.table(headers,rows))
+        settings.SITE.startup()
+        writeln(settings.SITE.get_db_overview_rst())
         

@@ -505,6 +505,60 @@ class Site(Site):
             version = self.not_found_msg
         yield ("Appy",version ,"http://appyframework.org/pod.html")
         
+    def get_db_overview_rst(self):
+        """
+        Returns a reStructredText-formatted "database overview" report.
+        Used by the :mod:`diag <lino.management.commands.diag>` command 
+        and in test cases.
+        """
+        from atelier import rstgen
+        from lino.core.dbutils import obj2str, full_model_name, sorted_models_list, app_labels
+        
+        #~ writeln("Lino %s" % lino.__version__)
+        #~ yield (settings.SITE.verbose_name, settings.SITE.version)
+        #~ writeln(settings.SITE.title)
+        models_list = sorted_models_list()
+
+        apps = app_labels()
+        s = "%d applications: %s." % (len(apps), ", ".join(apps))
+        s += "\n%d models:\n" % len(models_list)
+        i = 0
+        headers = [
+            #~ "No.",
+            "Name",
+            #~ "Class",
+            #~ "M",
+            "#fields",
+            "#rows",
+            #~ ,"first","last"
+            ]
+        rows = []
+        for model in models_list:
+          if model._meta.managed:
+            i += 1
+            cells = []
+            #~ cells.append(str(i))
+            cells.append(full_model_name(model))
+            #~ cells.append(str(model))
+            #~ if model._meta.managed:
+                #~ cells.append('X')
+            #~ else:
+                #~ cells.append('')
+            cells.append(str(len(model._meta.fields)))
+            #~ qs = model.objects.all()
+            qs = model.objects.order_by('pk')
+            n = qs.count()
+            cells.append(str(n))
+            #~ if n:
+                #~ cells.append(obj2str(qs[0]))
+                #~ cells.append(obj2str(qs[n-1]))
+            #~ else:
+                #~ cells.append('')
+                #~ cells.append('')
+                
+            rows.append(cells)
+        s += rstgen.table(headers,rows)
+        return s
         
         
 #~ class Site(BaseSite):

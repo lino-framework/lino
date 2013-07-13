@@ -62,3 +62,13 @@ The :mod:`lino.ad` idea opens doors for new possibilities:
 
 - :attr:`lino.ad.App.verbose_name
 - :attr:`lino.ad.App.depends
+
+
+Lino-Faggio
+-----------
+
+The test suite didn't detect a simple failure to load the demo fixture
+although there was a corresponding 
+test case with fixtures in `lino_faggio/tests/faggio_tests.py`.
+The pitfall was that such a test case  must have at least one method 
+whose name starts with "test" in order to run.

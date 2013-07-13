@@ -1,0 +1,30 @@
+=================================
+20130713 (Saturday, 13 July 2013)
+=================================
+
+Comparing two databases
+-----------------------
+
+How can you say whether two databases have the same content?
+
+Answer: compare their "diagnostic database reports",
+i.e. the output of a
+:mod:`manage.py diag <lino.management.commands.diag>` 
+on each of them.
+The main purpose of this report is to have a "hash code" 
+of a database in human-readable form.
+
+I once wrote this command 
+and almost never used it so far.
+
+Now I moved the code to generate this report from 
+:mod:`lino.management.commands.diag` to 
+:meth:`lino.ui.Site.get_db_overview_rst`
+and added three test cases that check whether in has the expected result
+when run on the demo databases for
+:mod:`lino_welfare`,
+:mod:`lino_patrols`
+and
+:mod:`lino_faggio`.
+
+
