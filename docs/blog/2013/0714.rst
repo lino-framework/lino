@@ -1,0 +1,47 @@
+===============================
+20130714 (Sunday, 14 July 2013)
+===============================
+
+Continued on Lino-Faggio
+------------------------
+
+- Added new table :ref:`faggio.sales.InvoiceablePartners`
+- Added a new tab  `sales.InvoiceablesByPartner` to detail window 
+  of :ref:`faggio.contacts.Partners`.
+  
+Miscellaneous
+-------------
+
+- :func:`lino.core.dbutils.navinfo` now also works on lists.
+
+Linking to multilingual userdocs
+--------------------------------
+
+added `faggio` to the `intersphinx_mapping` of this blog so that 
+the above links to the userdocs work. Or at least they are now 
+clickable and get their text from the actor's label.
+  
+TODO: urls of intersphinx links to multilingual userdocs still have a 
+problem: should the base language (usually 'en', but 'fr' 
+for welfare) be at the root 
+(e.g. `http://welfare-user.lino-framework.org`
+or like the other languages in a subdirectory
+(e.g. `http://welfare-user.lino-framework.org/en`?
+I'd prefer the former, but the language selector html then needs 
+to become more intelligent. It currently does::
+  
+    {%- for lng in ('de','fr') %} 
+    {%- if lng == language %}
+      {{lng.upper()}}
+    {%- else %}
+      <a href="{{pathto("../"+lng+"/"+pagename)}}">{{lng.upper()}}</a> 
+    {%- endif %}
+    {%- endfor %} 
+    
+Probably something like::
+    
+    {%- for lng in settings.SITE.languages %} 
+    <a href="{{pathto(lng.url_from(lng,pagename))}}">{{lng}}</a> 
+    {%- endfor %} 
+    
+  

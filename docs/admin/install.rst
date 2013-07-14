@@ -101,13 +101,6 @@ are usually rather short. Something like::
   from foo.bar.settings import *
   SITE = Site(globals())
    
-Possible values for ``foo.bar`` are:
-:mod:`lino.projects.
-
-
-
-
-
 
 Serving Javascript frameworks
 -----------------------------
@@ -135,14 +128,12 @@ Then in your :file:`settings.py` (or your :file:`djangosite_local.py`)
 you'll set the `FOO_root <lino.ui.Site.extjs_root>` attributes 
 accordingly::
 
-
   extjs_root = '/var/snapshots/ext-3.3.1'
   extensible_root = '/var/snapshots/extensible-1.0.1'
   bootstrap_root = '/var/snapshots/bootstrap'
   
 Lino will use these values to create symbolic links in 
 your media directory.
-
  
   
 Install TinyMCE language packs

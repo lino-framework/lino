@@ -189,11 +189,15 @@ def navinfo(qs,elem):
     recno = 0
     message = None
     #~ LEN = ar.get_total_count()
-    LEN = qs.count()
-    if LEN > 0:
+    if isinstance(qs,list):
+        LEN = len(qs)
+        id_list = [obj.pk for obj in qs]
+        logger.info('20130714')
+    else:
+        LEN = qs.count()
         # this algorithm is clearly quicker on queries with a few thousand rows
-        #~ id_list = list(ar.data_iterator.values_list('pk',flat=True))
         id_list = list(qs.values_list('pk',flat=True))
+    if LEN > 0:
         """
         Uncommented the following assert because it failed in certain circumstances 
         (see `/blog/2011/1220`)

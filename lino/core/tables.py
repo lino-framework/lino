@@ -873,8 +873,9 @@ class AbstractTable(actors.Actor):
         #~ if self.default_action is None:
             #~ self.default_action = actions.GridEdit()
     
-        if self.get_data_rows is not None:
-            self.show_detail_navigator = False
+        #~ 20130714 navinfo now also works on lists
+        #~ if self.get_data_rows is not None:
+            #~ self.show_detail_navigator = False
             
         """
         :class:`lino_welfare.modellib.debts.models.DistByBudget` 

@@ -3041,18 +3041,16 @@ Lino.FormPanel = Ext.extend(Lino.FormPanel,{
       };
       
       if (record.navinfo && ! this.hide_top_toolbar && ! this.hide_navigator) {
-        //~ if (record.navinfo.recno == 0) {
-            //~ this.first.setDisabled(true);
-            //~ this.prev.setDisabled(true);
-            //~ this.next.setDisabled(true);
-            //~ this.last.setDisabled(true);
-        //~ } else {
-            this.first.setDisabled(!record.navinfo.first);
-            this.prev.setDisabled(!record.navinfo.prev);
-            this.next.setDisabled(!record.navinfo.next);
-            this.last.setDisabled(!record.navinfo.last);
-        //~ }
+        this.first.setDisabled(!record.navinfo.first);
+        this.prev.setDisabled(!record.navinfo.prev);
+        this.next.setDisabled(!record.navinfo.next);
+        this.last.setDisabled(!record.navinfo.last);
         this.displayItem.setText(record.navinfo.message);
+      } else {
+        this.first.setDisabled(true);
+        this.prev.setDisabled(true);
+        this.next.setDisabled(true);
+        this.last.setDisabled(true);
       }
     } else {
       if (this.form.rendered) 

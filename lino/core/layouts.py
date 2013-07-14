@@ -501,8 +501,8 @@ In %s, updating attribute %r:
            raise Exception("name may not contain any newline") 
         if ' ' in name:
            raise Exception("name may not contain any whitespace") 
-        if getattr(self,name,None) is not None:
-           raise Exception("name %r already defined in %s" % (name,self)) 
+        #~ if getattr(self,name,None) is not None:
+           #~ raise Exception("name %r already defined in %s" % (name,self)) 
         self._add_panel(name,tpl,label,options)
         
     #~ @classmethod    

@@ -99,6 +99,20 @@ class Invoiceable(dd.Model):
             for obj in m.objects.filter(**fkw).order_by(m.invoiceable_date_field):
                 yield obj
         
+    @classmethod
+    def get_invoiceables_count(cls,partner,max_date=None):
+        #~ logger.info('20130711 get_invoiceables_count (%s,%s)', partner, max_date)
+        n = 0
+        for m in dd.models_by_base(cls):
+            fkw = dict()
+            fkw[m.invoiceable_partner_field] = partner
+            fkw.update(invoice__isnull=True)
+            #~ if max_date is not None:
+                #~ fkw["%s__lte" % m.invoiceable_date_field] = max_date
+            #~ logger.info('20130711 %s %s', m, fkw)
+            n += m.objects.filter(**fkw).count()
+        return n
+        
 
 
 
@@ -210,10 +224,43 @@ class InvoicingsByInvoiceable(InvoiceItemsByProduct): # 20130709
     
 
 
+contacts = dd.resolve_app('contacts')
 
-
-
+class InvoiceablePartners(contacts.Partners):
+    """
+    TODO: read https://docs.djangoproject.com/en/dev/topics/db/aggregation/
+    """
+    label = _("Invoiceable partners")
+    help_text = _("Table of all partners who have at least one invoiceable item.")
+    model = 'contacts.Partner'
+    
+    @classmethod
+    def get_data_rows(self,ar):
+        qs = settings.SITE.modules.contacts.Partner.objects.all()
+        lst = []
+        for obj in qs:
+            if Invoiceable.get_invoiceables_count(obj) > 0:
+                lst.append(obj)
+        return lst
+        
+    #~ @classmethod
+    #~ def get_request_queryset(self,ar):
+        #~ qs = super(InvoiceablePartners,self).get_request_queryset(ar)
+        #~ flt = Q()
+        #~ for m in dd.models_by_base(Invoiceable):
+            #~ mname = full_model_name(m,'_')
+            #~ qs = qs.annotate(mname+'_count'=Count(mname))
+            #~ flt = flt | Q(**{mname+'_count__gt':0})
+        #~ qs = qs.filter(flt)
+            #~ fkw = dict()
+            #~ fkw[m.invoiceable_partner_field] = partner
+            #~ fkw.update(invoice__isnull=True)
+            #~ items = m.objects.filter(**fkw).aggregate(models.Count())
+        
+        #~ return qs
+    
 class InvoiceablesByPartner(dd.VirtualTable):
+    label = _("Invoiceables")
     #~ app_label = 'sales'
     master = 'contacts.Partner'
     column_names = 'date info'
@@ -246,3 +293,8 @@ class InvoiceablesByPartner(dd.VirtualTable):
 
 
 
+#~ f = setup_main_menu
+def setup_main_menu(site,ui,profile,m): 
+    #~ f(site,ui,profile,m)
+    m = m.add_menu("sales",MODULE_LABEL)
+    m.add_action('sales.InvoiceablePartners')
