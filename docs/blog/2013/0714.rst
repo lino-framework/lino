@@ -44,4 +44,73 @@ Probably something like::
     <a href="{{pathto(lng.url_from(lng,pagename))}}">{{lng}}</a> 
     {%- endfor %} 
     
-  
+A complex queryset
+------------------
+
+Two last pieces are missing in :ref:`faggio.sales.InvoiceablePartners` 
+before it's time for a *visite de chantier*:
+
+The current implementation is rather unefficient because it 
+retrieves all partners and issues two SQL statements per partner to 
+determine whether a partner has some invoiceable::
+
+    @classmethod
+    def get_data_rows(self,ar):
+        qs = settings.SITE.modules.contacts.Partner.objects.all()
+        lst = []
+        for obj in qs:
+            if Invoiceable.get_invoiceables_count(obj) > 0:
+                lst.append(obj)
+        return lst
+
+I tested the following code snippets in the demo database using::
+
+    python setup.py test -s tests.BlogTest.test_20130714
+
+Test case setup:    
+
+>>> import os
+>>> os.environ['DJANGO_SETTINGS_MODULE'] = 'lino_faggio.settings.test'
+>>> from lino.runtime import *
+>>> from lino import dd
+>>> from django.db import models
+>>> from django.db.models import Q
+
+The primitive implementation found 38 partners:
+
+>>> sales.InvoiceablePartners.request().get_total_count()
+38
+
+The question then was: 
+how to get the same restul using a single SQL statement?
+
+>>> qs = settings.SITE.modules.contacts.Partner.objects.all()
+>>> qs.count()
+88
+
+>>> from lino.modlib.auto.sales.models import Invoiceable
+>>> flt = Q()
+>>> for m in dd.models_by_base(Invoiceable):
+...     subquery = m.objects.filter(invoice__isnull=True).values(m.invoiceable_partner_field+'__id')
+...     flt = flt | Q(id__in=subquery)
+>>> qs = qs.filter(flt)
+>>> qs.count()
+38
+
+Note that the above code is no longer being tested
+because I removed the corresponding line 
+from :srcref:`tests/__init__.py`
+when the solution was found.
+
+And the last missing piece: added a :class:`Create 
+Invoice <lino.modlib.auto.sales.models.CreateInvoiceForPartner>`
+action to `InvoiceablePartners`.
+
+Works like a charm!
+And these last pieces took me less than one hour!
+(After one day of family trip to Murika beach...)
+And this morning I estimated that this would take me a whole day!
+Lino is really cool! 
+
+
+

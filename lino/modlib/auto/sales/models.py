@@ -23,6 +23,7 @@ import logging
 logger = logging.getLogger(__name__)
 
 import os
+import datetime
 
 from django.db import models
 from django.db.models import Q
@@ -136,6 +137,34 @@ class FillInvoice(dd.RowAction):
             return kw
         msg = _("This will add %d invoice items.") % len(L)
         return ar.confirm(ok, msg, _("Are you sure?"))
+        
+class CreateInvoiceForPartner(dd.RowAction):
+    "CreateInvoiceForPartner"
+    label = _("Create invoice")
+    help_text = _("Create invoice for this partner using invoiceable items")
+    
+    def run_from_ui(self,obj,ar,**kw):
+        L = list(Invoiceable.get_invoiceables_for(obj))
+        if len(L) == 0:
+            return ar.error(_("No invoiceables found for %s.") % obj)
+        def ok():
+            jnl = Invoice.get_journals()[0]
+            invoice = Invoice(partner=obj,journal=jnl,date=datetime.date.today())
+            invoice.save()
+            for ii in L:
+                i = InvoiceItem(voucher=invoice,invoiceable=ii,
+                    product=ii.get_invoiceable_product(),
+                    qty=ii.get_invoiceable_qty())
+                i.product_changed(ar)
+                i.full_clean()
+                i.save()
+            #~ kw.update(refresh=True)
+            js = ar.renderer.instance_handler(ar,invoice)
+            kw.update(eval_js=js)
+            return kw
+        msg = _("This will create an invoice for %s.") % obj
+        return ar.confirm(ok, msg, _("Are you sure?"))
+        
     
     
 class Invoice(Invoice): # 20130709
@@ -226,6 +255,8 @@ class InvoicingsByInvoiceable(InvoiceItemsByProduct): # 20130709
 
 contacts = dd.resolve_app('contacts')
 
+#~ contacts.Partners.
+
 class InvoiceablePartners(contacts.Partners):
     """
     TODO: read https://docs.djangoproject.com/en/dev/topics/db/aggregation/
@@ -233,20 +264,26 @@ class InvoiceablePartners(contacts.Partners):
     label = _("Invoiceable partners")
     help_text = _("Table of all partners who have at least one invoiceable item.")
     model = 'contacts.Partner'
+    create_invoice = CreateInvoiceForPartner()
     
-    @classmethod
-    def get_data_rows(self,ar):
-        qs = settings.SITE.modules.contacts.Partner.objects.all()
-        lst = []
-        for obj in qs:
-            if Invoiceable.get_invoiceables_count(obj) > 0:
-                lst.append(obj)
-        return lst
-        
     #~ @classmethod
-    #~ def get_request_queryset(self,ar):
-        #~ qs = super(InvoiceablePartners,self).get_request_queryset(ar)
-        #~ flt = Q()
+    #~ def get_data_rows(self,ar):
+        #~ qs = settings.SITE.modules.contacts.Partner.objects.all()
+        #~ lst = []
+        #~ for obj in qs:
+            #~ if Invoiceable.get_invoiceables_count(obj) > 0:
+                #~ lst.append(obj)
+        #~ return lst
+        
+    @classmethod
+    def get_request_queryset(self,ar):
+        qs = super(InvoiceablePartners,self).get_request_queryset(ar)
+        flt = Q()
+        for m in dd.models_by_base(Invoiceable):
+            subquery = m.objects.filter(invoice__isnull=True).values(m.invoiceable_partner_field+'__id')
+            flt = flt | Q(id__in=subquery)
+        return qs.filter(flt)
+        
         #~ for m in dd.models_by_base(Invoiceable):
             #~ mname = full_model_name(m,'_')
             #~ qs = qs.annotate(mname+'_count'=Count(mname))

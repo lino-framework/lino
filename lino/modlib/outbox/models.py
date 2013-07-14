@@ -187,9 +187,6 @@ class CreateMail(dd.RowAction):
             a = Attachment(mail=m,owner=elem)
             a.save()
         js = ar.renderer.instance_handler(ar,m)
-        #~ url = rr.renderer.js2url(js)
-        #~ kw.update(open_url=rr.renderer.get_detail_url(m))
-        #~ kw.update(open_url=url)
         kw.update(eval_js=js)
         return ar.success(**kw)
         
