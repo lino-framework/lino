@@ -1031,10 +1031,11 @@ class NotifyingAction(RowAction):
         
     def action_param_defaults(self,ar,obj,**kw):
         kw = super(NotifyingAction,self).action_param_defaults(ar,obj,**kw)
-        s = self.get_notify_subject(ar,obj)
-        if s is not None: kw.update(notify_subject=s)
-        s = self.get_notify_body(ar,obj)
-        if s is not None: kw.update(notify_body=s)
+        if obj is not None:
+            s = self.get_notify_subject(ar,obj)
+            if s is not None: kw.update(notify_subject=s)
+            s = self.get_notify_body(ar,obj)
+            if s is not None: kw.update(notify_body=s)
         return kw
         
     def run_from_ui(self,obj,ar,**kw):

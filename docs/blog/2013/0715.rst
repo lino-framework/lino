@@ -1,0 +1,28 @@
+===============================
+20130715 (Monday, 15 July 2013)
+===============================
+
+Empfangsverwaltung
+-----------------------
+
+Started a new module :mod:`lino.modlib.welcome` 
+This module is for managing a waiting room: 
+register clients into a waiting queue 
+as they present themself at a welcome checkin (Empfangsschalter),
+and unregister them when they have been welcomed by a user 
+(i.e. a social worker, a physician, a clerk...).
+Users can see a list of the people in the waiting room.
+
+TODO:
+
+- Eine erste Konsequenz auf das Kalendermodul wird sein: 
+  bisher hatten wir eine 
+  ungeschriebene Regel, dass ein Termin für einen bestimmten Klienten
+  diesen Klienten als Gast hat, ohne dass der Klient in der Liste der 
+  Gäste des Termins steht. Weil das selbstverständlich ist für 
+  Termine vom Typ "Klientengespräche".
+  Ich glaube, dass ich diese Regel raushole, und dass Lino also 
+  für geplante Termine automatisch den Klienten als Gast eintragen muss.
+  Wichtig ist, dass man  gleich auf dem Termin "Stattgefunden" klicken kann.
+
+- Checkout und Checkin müssen unabhängig von Zustand sein.

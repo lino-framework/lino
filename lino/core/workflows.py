@@ -67,6 +67,9 @@ class State(choicelists.Choice):
                 raise Exception("Cannot specify notify=True when using your own class")
             if debug_permissions:
                 raise Exception("Cannot specify debug_permissions when using your own class")
+            for a in self.choicelist.workflow_actions:
+                if isinstance(a,label):
+                    raise Exception("20130715 duplicate transition %s" % a)
             a = label(self,required,**kw)
         else:
             if notify:

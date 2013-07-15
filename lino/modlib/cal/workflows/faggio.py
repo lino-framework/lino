@@ -13,7 +13,7 @@
 ## along with Lino; if not, see <http://www.gnu.org/licenses/>.
 
 """
-
+Not used.
 """
 import logging
 logger = logging.getLogger(__name__)
@@ -49,31 +49,16 @@ from lino.core import constants
 
 from lino.utils.xmlgen.html import E
 
+from .base import TaskStates, GuestStates, EventStates
 
-class TaskStates(dd.Workflow):
-    """
-    State of a Calendar Task. Used as Workflow selector.
-    """
-    #~ label = _("State")
-    required = dd.required(user_level='admin')
-    app_label = 'cal'
-    
+
 add = TaskStates.add_item
-
 add('10', _("To do"),'todo')
 add('20', pgettext(u"cal",u"Started"),'started')
 add('30', _("Done"),'done')
-#~ add('40', _("Sleeping"),'sleeping')
 add('50', _("Cancelled"),'cancelled')
 
     
-class GuestStates(dd.Workflow):
-    """
-    State of a Calendar Event Guest. Used as Workflow selector.
-    """
-    required = dd.required(user_level='admin')
-    app_label = 'cal'
-
 add = GuestStates.add_item
 add('10', _("Invited"),'invited')
 add('20', _("Accepted"),'accepted') 
@@ -82,22 +67,6 @@ add('40', _("Present"),'present')
 add('50', _("Absent"),'absent')
     
 
-class RejectInvitation(dd.ChangeStateAction,dd.NotifyingAction):
-    label = _("Reject")
-    help_text = _("Reject this invitation.")  
-    required = dict(states='invited',owner=False)
-    
-    def get_notify_subject(self,ar,obj):
-        return _("Cannot accept invitation %(day)s at %(time)s") % dict(
-           day=dbutils.dtos(obj.event.start_date),
-           time=str(obj.event.start_time))
-
-#~ class EventStates(ChoiceList):
-class EventStates(dd.Workflow):
-    required = dd.required(user_level='admin')
-    help_text = _("""List of the possible states of a calendar event.""")
-    app_label = 'cal'
-        
 add = EventStates.add_item
 add('10', _("Suggested"), 'suggested',help_text=_("Automatically suggested. Default state of an automatic event."))
 add('20', _("Draft"), 'draft')
@@ -109,90 +78,6 @@ add('70', _("Cancelled"),'cancelled')
 add('80', _("Absent"),'absent')
 #~ add('90', _("Obsolete"),'obsolete')
 
-
-
-class ResetEvent(dd.ChangeStateAction):
-    label = _("Reset")
-    icon_file = 'cancel.png'
-    #~ required = dict(states='assigned',owner=True)
-    required = dict(states='notified scheduled rescheduled',owner=True)
-    help_text=_("Return to Draft state and restart workflow for this event.")
-  
-    def run_from_ui(self,obj,ar,**kw):
-        if obj.guest_set.exclude(state=GuestStates.invited).count() > 0:
-            def ok():
-                for g in obj.guest_set.all():
-                    g.state = GuestStates.invited
-                    g.save()
-            return ar.confirm(ok,_("This will reset all invitations"),_("Are you sure?"))
-        else:
-            ar.confirm(self.help_text,_("Are you sure?"))
-        kw = super(ResetEvent,self).run_from_ui(obj,ar,**kw)
-        return kw
-    
-class TakeAssignedEvent(dd.RowAction):
-    label = _("Take")
-    show_in_workflow = True
-    
-    #~ icon_file = 'cancel.png'
-    icon_file = 'flag_green.png'
-    #~ required = dict(states='new assigned',owner=False)
-    required = dict(owner=False)
-    help_text=_("Take responsibility for this event.")
-  
-    def get_action_permission(self,ar,obj,state):
-        if obj.assigned_to != ar.get_user():
-            return False
-        return super(TakeAssignedEvent,self).get_action_permission(ar,obj,state)
-        
-    def run_from_ui(self,obj,ar,**kw):
-        ar.confirm(self.help_text,_("Are you sure?"))
-        obj.user = ar.get_user()
-        obj.assigned_to = None
-        #~ kw = super(TakeAssignedEvent,self).run(obj,ar,**kw)
-        obj.save()
-        kw.update(refresh=True)
-        return kw
-    
-  
-  
-class AssignEvent(dd.ChangeStateAction):
-    label = _("Assign")
-    required = dict(states='suggested draft scheduled',owner=True)
-    
-    icon_file = 'flag_blue.png'
-    help_text=_("Assign responsibility of this event to another user.")
-    
-    parameters = dict(
-        to_user=models.ForeignKey(settings.SITE.user_model),
-        remark = dd.RichTextField(_("Remark"),blank=True),
-        )
-    
-    params_layout = dd.Panel("""
-    to_user
-    remark
-    """,window_size=(50,15))
-    
-    @dd.chooser()
-    #~ def to_user_choices(cls,user):
-    def to_user_choices(cls):
-        return settings.SITE.user_model.objects.exclude(profile='') # .exclude(id=user.id)
-      
-    def action_param_defaults(self,ar,obj,**kw):
-        kw = super(AssignEvent,self).action_param_defaults(ar,obj,**kw)
-        kw.update(
-            remark=unicode(_("I made up this event for you. %s")) 
-                % ar.user)
-        return kw
-    
-    
-    def run_from_ui(self,obj,ar,**kw):
-        obj.user = ar.action_param_values.to_user
-        kw = super(AssignEvent,self).run_from_ui(obj,ar,**kw)
-        #~ obj.save()
-        kw.update(refresh=True)
-        return kw
-    
 
 @dd.receiver(dd.pre_analyze)
 def setup_workflows(sender=None,**kw):
