@@ -28,6 +28,7 @@ logger = logging.getLogger(__name__)
 import os
 import cgi
 import datetime
+from decimal import Decimal
 
 from django.db import models
 from django.db.models import Q
@@ -639,7 +640,8 @@ class Enrolment(dd.UserAuthored,dd.Printable,sales.Invoiceable):
             return self.course
 
     def get_invoiceable_qty(self): 
-            return 1
+        if self.course: 
+            return Decimal(1)
     
 
 class Enrolments(dd.Table):

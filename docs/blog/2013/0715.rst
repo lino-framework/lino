@@ -3,26 +3,56 @@
 ===============================
 
 Empfangsverwaltung
------------------------
+------------------
 
-Started a new module :mod:`lino.modlib.welcome` 
-This module is for managing a waiting room: 
+Started a new module :mod:`lino.modlib.reception` ("Empfang").
+This module is for managing a reception desk and a waiting room: 
 register clients into a waiting queue 
-as they present themself at a welcome checkin (Empfangsschalter),
-and unregister them when they have been welcomed by a user 
+as they present themself at a reception desk (Empfangsschalter),
+and unregister them when they have been received by a user 
 (i.e. a social worker, a physician, a clerk...).
 Users can see a list of the people in the waiting room.
 
-TODO:
+N.B.: 
 
-- Eine erste Konsequenz auf das Kalendermodul wird sein: 
-  bisher hatten wir eine 
-  ungeschriebene Regel, dass ein Termin für einen bestimmten Klienten
-  diesen Klienten als Gast hat, ohne dass der Klient in der Liste der 
-  Gäste des Termins steht. Weil das selbstverständlich ist für 
-  Termine vom Typ "Klientengespräche".
-  Ich glaube, dass ich diese Regel raushole, und dass Lino also 
-  für geplante Termine automatisch den Klienten als Gast eintragen muss.
-  Wichtig ist, dass man  gleich auf dem Termin "Stattgefunden" klicken kann.
+- Die Aktionen Checkout und Checkin funktionieren unabhängig vom 
+  Gast-Zustand ("eingeladen", "bestätigt", ...)
 
-- Checkout und Checkin müssen unabhängig von Zustand sein.
+- "Neuanträge" und "Empfang" sind verschiedene Dinge. 
+
+
+Klientengespräche und Gäste in Lino-Welfare
+-------------------------------------------
+
+(Das Folgende ist noch nicht begonnen, ich plane noch)
+
+Eine erste Konsequenz des neuen Empfangsmoduls auf das Kalendermodul:
+bisher funktionierte  Lino so, 
+dass ein Termin für einen bestimmten Klienten immer 
+"selbstverständlich" diesen Klienten als Gast hatte, 
+ohne dass der Klient explizit in der Liste der Gäste des Termins steht.
+
+Das war so, weil die Anwesenheit des Klienten selbstverständlich ist 
+für Termine vom Typ "Klientengespräche".
+Ich fand es unnötig kompliziert, dass ansonsten in den meisten Fällen gleich 
+zwei Records pro Termin angelegt würden: einer für den Termin an sich 
+und ein anderer für den (einzigen) Gast.
+
+Ich glaube, dass ich diese Regel raushole. 
+Dadurch wird die Sache zunächst mal scheinbar komplexer, 
+aber schon beim zweiten Blick wird alles logischer.
+Konsequenzen: 
+
+- Lino muss für geplante Termine automatisch den Klienten als Gast eintragen.
+- Wir brauchen dann auch keinen Terminzustand "Abwesend" mehr, sondern 
+  das wird pro Gast gesagt.
+- Die Aktionen "Anwesend" und "Abwesend" werden nur noch für Gäste 
+  gefragt, deren Termin "Stattgefunden" ist.
+- Neue Tabelle "Stattgefundene Termine" zeigt alle Termine in der 
+  Vergangenheit, die noch im zustand "Geplant" oder "Entwurf" stehen. 
+  Diese Tabelle kriegt man im Willkommensgruß präsentiert wenn sie 
+  nicht leer ist. 
+  Hier muss man pro Termin "Stattgefunden" klicken können, und dadurch 
+  würden alle "eingeladenen" und "bestätigten" Gäste des Termins als 
+  "Anwesend" markiert.
+

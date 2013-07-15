@@ -117,26 +117,26 @@ class Invoiceable(dd.Model):
 
 
 
-class FillInvoice(dd.RowAction):
-    label = _("Fill")
-    help_text = _("Fill this invoice using invoiceable items")
-    
-    def run_from_ui(self,obj,ar,**kw):
-        L = list(Invoiceable.get_invoiceables_for(obj.partner,obj.date))
-        if len(L) == 0:
-            return ar.error(_("No invoiceables found for %s.") % obj.partner)
-        def ok():
-            for ii in L:
-                i = InvoiceItem(voucher=obj,invoiceable=ii,
-                    product=ii.get_invoiceable_product(),
-                    qty=ii.get_invoiceable_qty())
-                i.product_changed(ar)
-                i.full_clean()
-                i.save()
-            kw.update(refresh=True)
-            return kw
-        msg = _("This will add %d invoice items.") % len(L)
-        return ar.confirm(ok, msg, _("Are you sure?"))
+#~ class FillInvoice(dd.RowAction):
+    #~ label = _("Fill")
+    #~ help_text = _("Fill this invoice using invoiceable items")
+    #~ 
+    #~ def run_from_ui(self,obj,ar,**kw):
+        #~ L = list(Invoiceable.get_invoiceables_for(obj.partner,obj.date))
+        #~ if len(L) == 0:
+            #~ return ar.error(_("No invoiceables found for %s.") % obj.partner)
+        #~ def ok():
+            #~ for ii in L:
+                #~ i = InvoiceItem(voucher=obj,invoiceable=ii,
+                    #~ product=ii.get_invoiceable_product(),
+                    #~ qty=ii.get_invoiceable_qty())
+                #~ i.product_changed(ar)
+                #~ i.full_clean()
+                #~ i.save()
+            #~ kw.update(refresh=True)
+            #~ return kw
+        #~ msg = _("This will add %d invoice items.") % len(L)
+        #~ return ar.confirm(ok, msg, _("Are you sure?"))
         
 class CreateInvoiceForPartner(dd.RowAction):
     "CreateInvoiceForPartner"
@@ -169,7 +169,7 @@ class CreateInvoiceForPartner(dd.RowAction):
     
 class Invoice(Invoice): # 20130709
     
-    fill_invoice = FillInvoice()
+    #~ fill_invoice = FillInvoice()
     
     class Meta(Invoice.Meta): # 20130709
         #~ app_label = 'sales'

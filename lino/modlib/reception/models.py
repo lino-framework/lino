@@ -13,7 +13,7 @@
 ## along with Lino; if not, see <http://www.gnu.org/licenses/>.
 
 """
-Defines models for :mod:`lino.modlib.outbox`.
+Defines models for :mod:`lino.modlib.reception`.
 """
 
 import logging
@@ -41,8 +41,11 @@ from lino import dd
 cal = dd.resolve_app('cal')
 
 from lino.modlib.cal.models import GuestStates
-add = GuestStates.add_item
-add('21', _("Waiting"),'waiting')
+
+from lino.modlib.reception import App
+
+#~ add = GuestStates.add_item
+#~ add('21', _("Waiting"),'waiting')
 
 dd.inject_field('cal.Guest','waiting_since',models.DateTimeField(_("Waiting since"),editable=False,blank=True,null=True))
 dd.inject_field('cal.Guest','waiting_until',models.DateTimeField(_("Waiting until"),editable=False,blank=True,null=True))
@@ -54,7 +57,7 @@ class CheckinGuest(dd.NotifyingAction):
     show_in_workflow = True
     
     #~ required = dict(states='invited accepted')
-    required = dict(user_groups='invited accepted')
+    required = dict(user_groups='reception')
     
     def get_notify_subject(self,ar,obj):
         return _("%(partner)s has arrived for %(event)s") % dict(
@@ -77,7 +80,7 @@ class CheckoutGuest(dd.NotifyingAction):
     help_text = _("Guest left from welcome queue")
     show_in_workflow = True
     
-    required = dict(states='waiting')
+    #~ required = dict(states='waiting')
     
     def get_notify_subject(self,ar,obj):
         return _("%(partner)s has left for %(event)s") % dict(
@@ -94,19 +97,24 @@ class CheckoutGuest(dd.NotifyingAction):
         return kw
 
 
-class Welcome(cal.Guests):
-    label = _("Welcome")
+class ReceptionDesk(cal.Guests):
+    label = _("Reception desk")
     filter = Q(waiting_since__isnull=True,
         state__in=[GuestStates.invited,GuestStates.accepted])
     column_names = 'partner event__user workflow_buttons'
     checkin = CheckinGuest()
+    required = dict(user_groups='reception')
     
 class WaitingGuests(cal.Guests):
     label = _("Waiting guests")
-    known_values = dict(state=GuestStates.waiting)
+    #~ known_values = dict(state=GuestStates.waiting)
+    filter = Q(waiting_since__isnull=False,
+        waiting_until__isnull=True,
+        state__in=[GuestStates.invited,GuestStates.accepted])
     column_names = 'waiting_since partner event__user workflow_buttons'
     order_by = ['waiting_since']
     checkout = CheckoutGuest()
+    required = dict(user_groups='reception integ')
     
 #~ @dd.receiver(dd.post_analyze)
 #~ def setup_workflows(sender=None,dispatch_uid='lino.modlib.welcome.setup_workflows',**kw):
@@ -115,10 +123,12 @@ class WaitingGuests(cal.Guests):
     #~ GuestStates.waiting.add_transition(CheckinGuest)
     #~ GuestStates.invited.add_transition(CheckoutGuest)
 
-lino = dd.resolve_app('ui')
+#~ lino = dd.resolve_app('ui')
 
 def setup_main_menu(site,ui,profile,m):
-    m  = m.add_menu("office",lino.OFFICE_MODULE_LABEL)
-    m.add_action(Welcome)
+    #~ m  = m.add_menu("office",lino.OFFICE_MODULE_LABEL)
+    m  = m.add_menu("reception",_(App.verbose_name))
+    m.add_action(ReceptionDesk)
     m.add_action(WaitingGuests)
 
+dd.add_user_group('reception',_(App.verbose_name))

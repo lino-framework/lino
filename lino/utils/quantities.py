@@ -201,7 +201,8 @@ class Duration(Quantity):
 def parse(s):
     """
     """
-    assert isinstance(s,basestring)
+    if not isinstance(s,basestring):
+        raise Exception("Expected a string, got %r" % s)
     if ':' in s:
         return Duration(s)
     if '/' in s:

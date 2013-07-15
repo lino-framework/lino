@@ -87,6 +87,7 @@ lino.modlib.cal.management.commands
 lino.modlib.cal.fixtures
 lino.modlib.cal.tests
 lino.modlib.cal.workflows
+lino.modlib.reception
 lino.modlib.tickets
 lino.modlib.tickets.fixtures
 lino.modlib.vocbook
@@ -114,7 +115,6 @@ lino.modlib.declarations
 lino.modlib.events
 lino.modlib.events.fixtures
 lino.modlib.events.tests
-lino.modlib.welcome
 lino.test_apps
 lino.test_apps.20090714
 lino.test_apps.20090717
