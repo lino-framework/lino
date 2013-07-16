@@ -528,32 +528,7 @@ class Site(lino.Site):
     #~ (see :mod:`lino.mixins.mergeable`).
     #~ """
     
-    override_modlib_models = []
-    """
-    A list of names of modlib models which are being 
-    redefined by this application.
-    
-    The following modlib models currently support this:
-    - :class:`contacts.Person <lino.modlib.contacts.models.Person>`
-    - :class:`contacts.Company <lino.modlib.contacts.models.Company>`
-    
-    Usage: in your application's `settings.py`, specify::
-    
-      class Site(Site):
-          override_modlib_models = ['contacts.Person']
-          
-    This will cause the modlib Person model to be abstract, 
-    and hence your application is responsible for defining another 
-    `Person` class with "contacts" as `app_label`::
-          
-      class Person(contacts.Person,mixins.Born):
-          class Meta(contacts.Person.Meta):
-              app_label = 'contacts'
-              
-          def kiss(self):
-              ...
-    
-    """
+    override_modlib_models = None
     
     sidebar_width = 0
     """
@@ -581,6 +556,18 @@ class Site(lino.Site):
         installed_apps = tuple(self.get_installed_apps()) + ('lino','djangosite')
         installed_apps = tuple([str(x) for x in installed_apps])
         self.update_settings(INSTALLED_APPS=installed_apps)
+        
+        if self.override_modlib_models is None:
+            self.override_modlib_models = set()
+            from django.utils.importlib import import_module
+            for n in installed_apps:
+                m = import_module(n)
+                app = getattr(m,'App',None)
+                if app is not None:
+                    if app.extends_models is not None:
+                        for m in app.extends_models:
+                            self.override_modlib_models.add(m)
+                            
         
         #~ fd = list()
         #~ self.update_settings(FIXTURE_DIRS=tuple(settings_subdirs('fixtures')))
@@ -952,7 +939,7 @@ class Site(lino.Site):
         This method is expected to return or yield the list of strings 
         to be stored into Django's :setting:`INSTALLED_APPS` setting.
         """
-        yield 'lino.ui'
+        #~ yield 'lino.ui'
         if self.user_model is not None and self.remote_user_header is None:
             yield 'django.contrib.sessions' # 20121103
         if self.django_admin_prefix:

@@ -4922,7 +4922,7 @@ Lino.davlink_open = function(webdavURL) {
 
 {% endif %}
 
-{% if settings.SITE.use_extensible and settings.SITE.is_installed('lino.modlib.cal') %}
+{% if settings.SITE.use_extensible and settings.SITE.is_installed('cal') %}
 
 
 /*

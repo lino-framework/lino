@@ -30,7 +30,8 @@ Eine erste Konsequenz des neuen Empfangsmoduls auf das Kalendermodul:
 bisher funktionierte  Lino so, 
 dass ein Termin für einen bestimmten Klienten immer 
 "selbstverständlich" diesen Klienten als Gast hatte, 
-ohne dass der Klient explizit in der Liste der Gäste des Termins steht.
+ohne dass der Klient explizit in der Liste der Gäste des Termins 
+(:ref:`welfare.cal.GuestsByEvent`) steht.
 
 Das war so, weil die Anwesenheit des Klienten selbstverständlich ist 
 für Termine vom Typ "Klientengespräche".
@@ -43,16 +44,30 @@ Dadurch wird die Sache zunächst mal scheinbar komplexer,
 aber schon beim zweiten Blick wird alles logischer.
 Konsequenzen: 
 
-- Lino muss für geplante Termine automatisch den Klienten als Gast eintragen.
+- Lino trägt für geplante Termine automatisch den Klienten des Termins 
+  als einzigen Gast ein, wenn der Termin (1) noch keine Gäste hat, 
+  (2) sein Zustand mindestens "Geplant" ist und (3) die Terminart die Option 
+  "Klient als Gast einladen" angekreuzt hat.
+  
+  Terminzustände kriegen ein Attribut "fill_guests", das die
+  Anwendung für den Zustand "Geplant" auf True setzt.
+  
 - Wir brauchen dann auch keinen Terminzustand "Abwesend" mehr, sondern 
   das wird pro Gast gesagt.
+  
 - Die Aktionen "Anwesend" und "Abwesend" werden nur noch für Gäste 
   gefragt, deren Termin "Stattgefunden" ist.
+  
 - Neue Tabelle "Stattgefundene Termine" zeigt alle Termine in der 
   Vergangenheit, die noch im zustand "Geplant" oder "Entwurf" stehen. 
   Diese Tabelle kriegt man im Willkommensgruß präsentiert wenn sie 
   nicht leer ist. 
-  Hier muss man pro Termin "Stattgefunden" klicken können, und dadurch 
-  würden alle "eingeladenen" und "bestätigten" Gäste des Termins als 
-  "Anwesend" markiert.
+  Hier muss man pro Termin angeben: 
+  
+  - "Stattgefunden" wodurch 
+    alle "eingeladenen" oder "bestätigten" Gäste des Termins als 
+    "Anwesend" markiert werden.
+ 
+  - "Ausgefallen" (wodurch alle alle eingeladenen oder bestätigten 
+    Gäste des Termins als "Abwesend" markiert würden.
 

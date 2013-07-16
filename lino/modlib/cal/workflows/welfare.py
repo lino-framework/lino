@@ -15,6 +15,7 @@
 """
 
 """
+
 import logging
 logger = logging.getLogger(__name__)
 
@@ -49,61 +50,9 @@ from lino.core import constants
 
 from lino.utils.xmlgen.html import E
 
+from lino.modlib.cal.workflows import (TaskStates,
+    EventStates,GuestStates)
 
-
-class TaskStates(dd.Workflow):
-    """
-    State of a Calendar Task. Used as Workflow selector.
-    """
-    #~ label = _("State")
-    required = dd.required(user_level='admin')
-    app_label = 'cal'
-    
-    @classmethod
-    def migrate(cls,status_id):
-        """
-        Used by :meth:`lino.projects.pcsw.migrate.migrate_from_1_4_4`.
-        """
-        #~ if status_id is None: return None
-        cv = {
-          None: TaskStates.todo,
-          1:TaskStates.todo,
-          2:TaskStates.started,
-          #~ 2:TaskStates.todo,
-          3:TaskStates.done,
-          4:TaskStates.cancelled,
-          }
-        return cv[status_id]
-    
-add = TaskStates.add_item
-#~ add('10', _("To do"),'todo',required=dict(states=['']))
-#~ add('20', pgettext_lazy(u"cal",u"Started"),'started',required=dict(states=['','todo']))
-#~ add('30', _("Done"),'done',required=dict(states=['','todo','started']))
-#~ add('40', _("Sleeping"),'sleeping',required=dict(states=['','todo']))
-#~ add('50', _("Cancelled"),'cancelled',required=dict(states=['todo','sleeping']))
-
-#~ add('00', _("Virgin"),'todo')
-add('10', _("To do"),'todo')
-add('20', pgettext(u"cal",u"Started"),'started')
-add('30', _("Done"),'done')
-#~ add('40', _("Sleeping"),'sleeping')
-add('50', _("Cancelled"),'cancelled')
-
-    
-class GuestStates(dd.Workflow):
-    """
-    State of a Calendar Event Guest. Used as Workflow selector.
-    """
-    required = dd.required(user_level='admin')
-    app_label = 'cal'
-
-add = GuestStates.add_item
-add('10', _("Invited"),'invited')
-add('20', _("Accepted"),'accepted') 
-add('30', _("Rejected"),'rejected')
-add('40', _("Present"),'present')
-add('50', _("Absent"),'absent')
-    
 
 class RejectInvitation(dd.ChangeStateAction,dd.NotifyingAction):
     label = _("Reject")
@@ -115,41 +64,11 @@ class RejectInvitation(dd.ChangeStateAction,dd.NotifyingAction):
            day=dbutils.dtos(obj.event.start_date),
            time=str(obj.event.start_time))
 
-#~ class EventStates(ChoiceList):
-class EventStates(dd.Workflow):
-    required = dd.required(user_level='admin')
-    help_text = _("""List of the possible states of a calendar event.""")
-    app_label = 'cal'
-        
-        
-        
-#~ def allow_scheduled(action,user,obj,state):
-    #~ if not obj.start_time: return False
-    #~ return True
-    
-
-add = EventStates.add_item
-add('10', _("Suggested"), 'suggested',help_text=_("Automatically suggested. Default state of an automatic event."))
-#~ add('15', _("Suggested"), 'suggested',
-  #~ help_text=_("Suggested by colleague. External guests are notified, but user must confirm."))
-#~ add('15', _("Assigned"), 'assigned',
-  #~ help_text=_("Assigned by colleague. External guests are notified, but user must confirm."))
-add('20', _("Draft"), 'draft')
-add('30', _("Notified"),'notified')
-add('40', _("Scheduled"), 'scheduled')
-add('50', _("Took place"),'took_place')
-add('60', _("Rescheduled"),'rescheduled')
-add('70', _("Cancelled"),'cancelled')
-add('80', _("Absent"),'absent')
-#~ add('90', _("Obsolete"),'obsolete')
-
-
-
 class ResetEvent(dd.ChangeStateAction):
     label = _("Reset")
     icon_file = 'cancel.png'
     #~ required = dict(states='assigned',owner=True)
-    required = dict(states='notified scheduled rescheduled',owner=True)
+    required = dict(states='scheduled rescheduled',owner=True)
     help_text=_("Return to Draft state and restart workflow for this event.")
   
     def run_from_ui(self,obj,ar,**kw):
@@ -237,7 +156,7 @@ def setup_models(sender=None,**kw):
     site.modules.cal.Event.take = TakeAssignedEvent()
 
 @dd.receiver(dd.pre_analyze)
-def setup_workflows(sender=None,**kw):
+def my_setup_workflows(sender=None,**kw):
     
     site = sender
    
@@ -245,40 +164,32 @@ def setup_workflows(sender=None,**kw):
     TaskStates.done.add_transition(states='todo started',icon_file='accept.png')
     TaskStates.cancelled.add_transition(states='todo started',icon_file='cancel.png')
 
-    EventStates.draft.add_transition(_("Accept"),
-        #~ states='new assigned',
-        states='suggested',
-        owner=True,
-        icon_file='book.png',
-        help_text=_("User takes responsibility for this event. Planning continues."))
+    #~ EventStates.draft.add_transition(_("Accept"),
+        #~ states='suggested',
+        #~ owner=True,
+        #~ icon_file='book.png',
+        #~ help_text=_("User takes responsibility for this event. Planning continues."))
     #~ EventStates.draft.add_transition(TakeAssignedEvent)
-    EventStates.notified.add_transition( #_("Notify guests"), 
-        #~ icon_file='eye.png',
-        #~ icon_file='telephone.png',
-        icon_file='hourglass.png',
-        states='suggested draft',
-        help_text=_("Invitations have been sent. Waiting for feedback from invited guests."))
     EventStates.scheduled.add_transition(_("Confirm"), 
         #~ states='new draft assigned',
-        states='suggested draft notified',
+        states='suggested draft',
         owner=True,
         icon_file='accept.png',
         help_text=_("Mark this as Scheduled. All participants have been informed."))
     EventStates.took_place.add_transition(
-        states='scheduled notified',
+        states='scheduled',
         owner=True,
         help_text=_("Event took place."),
         icon_file='emoticon_smile.png')
-    EventStates.absent.add_transition(states='scheduled notified',icon_file='emoticon_unhappy.png')
+    #~ EventStates.absent.add_transition(states='scheduled',icon_file='emoticon_unhappy.png')
     EventStates.rescheduled.add_transition(_("Reschedule"),
         owner=True,
-        states='scheduled notified',icon_file='date_edit.png')
+        states='scheduled',icon_file='date_edit.png')
     EventStates.cancelled.add_transition(pgettext(u"calendar event action",u"Cancel"),
         owner=True,
-        states='scheduled notified',
+        states='scheduled',
         icon_file='cross.png')
-    #~ EventStates.assigned.add_transition(AssignEvent)
-    EventStates.draft.add_transition(ResetEvent)
+    #~ EventStates.draft.add_transition(ResetEvent)
     
 
 
@@ -299,23 +210,18 @@ def setup_workflows(sender=None,**kw):
     GuestStates.absent.add_transition(states='invited accepted',owner=True,allow=event_took_place)
     
     
-    @dd.receiver(dd.post_save, sender=site.modules.cal.Event)
-    def fill_event_guests_from_team_members(sender=None,instance=None,**kw):
-        """
-        If this is a team event, fill the team members as guests.
-        """
-        if site.loading_from_dump: return
-        self = instance
-        #~ logger.info("20130528 fill_event_guests_from_team_members")
-        #~ if not self.state in (EventStates.blank_item, EventStates.draft): 20120829
-        if not self.is_user_modified(): return
-        if not self.is_editable_state(): return 
-        if self.calendar and self.calendar.invite_team_members:
-            if self.guest_set.all().count() == 0:
-                #~ print 20120711
-                ug = self.calendar.invite_team_members
-                for obj in site.modules.cal.Membership.objects.filter(group=ug).exclude(user=self.user):
-                    #~ if obj.watched_user.partner:
-                    if obj.user.partner:
-                        #~ Guest(event=self,partner=obj.watched_user.partner).save()
-                        site.modules.cal.Guest(event=self,partner=obj.user.partner).save()
+    #~ @dd.receiver(dd.post_save, sender=site.modules.cal.Event)
+    #~ def fill_event_guests_from_team_members(sender=None,instance=None,**kw):
+        #~ """
+        #~ If this is a team event, fill the team members as guests.
+        #~ """
+        #~ if site.loading_from_dump: return
+        #~ self = instance
+        #~ if not self.is_user_modified(): return
+        #~ if not self.is_editable_state(): return 
+        #~ if self.calendar and self.calendar.invite_team_members:
+            #~ if self.guest_set.all().count() == 0:
+                #~ ug = self.calendar.invite_team_members
+                #~ for obj in site.modules.cal.Membership.objects.filter(group=ug).exclude(user=self.user):
+                    #~ if obj.user.partner:
+                        #~ site.modules.cal.Guest(event=self,partner=obj.user.partner).save()

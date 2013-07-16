@@ -5,11 +5,4 @@ Traceback (most recent call last):
   File "/home/luc/hgwork/lino/lino/modlib/cal/workflows/faggio.py", line 52, in <module>
     from .base import TaskStates, GuestStates, EventStates
 ImportError: No module named base
-/home/luc/hgwork/lino/lino/modlib/users/models.py:docstring of lino.modlib.users.models.User:3: WARNING: unknown document: /topics/http_auth
-/home/luc/hgwork/lino/docs/api/lino.projects.igen.rst:7: WARNING: unknown document: /igen/index
-/home/luc/hgwork/lino/docs/api/lino.projects.unused_polls_tutorial.rst:7: WARNING: unknown document: /tutorials/polls
-/home/luc/hgwork/lino/lino/tutorials/lets1/fixtures/demo.py:docstring of lino.tutorials.lets1.fixtures.demo.objects:1: WARNING: term not in glossary: north
-/home/luc/hgwork/lino/lino/ui/__init__.py:docstring of lino.ui.Site.webdav_url:7: WARNING: term not in glossary: runserver
-/home/luc/hgwork/lino/docs/api/lino.utils.rst:7: WARNING: unknown document: /autodoc/lino.test_apps.mti
-/home/luc/hgwork/lino/docs/changes.rst:16: WARNING: undefined label: welfare.debts.printliabilitiesbybudget (if the link has no caption the label must precede a section header)
-/home/luc/hgwork/lino/docs/releases/index.rst:1: WARNING: unknown document: 1.6.11
+/home/luc/hgwork/lino/docs/blog/2013/0715.rst:29: WARNING: undefined label: welfare.cal.guestsbyevent (if the link has no caption the label must precede a section header)

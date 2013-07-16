@@ -1064,3 +1064,16 @@ def ForeignKey(othermodel,*args,**kw):
             return DummyField(othermodel,*args,**kw)
     return models.ForeignKey(othermodel,*args,**kw)
     
+
+class ImportedFields(object):
+    """
+    Utility mixin to easily declare "imported fields"
+    """
+    _imported_fields = set()
+    
+    @classmethod
+    def declare_imported_fields(cls,names):
+        cls._imported_fields = cls._imported_fields | set(fields_list(cls,names))
+        #~ logger.info('20120801 %s.declare_imported_fields() --> %s' % (
+            #~ cls,cls._imported_fields))
+        

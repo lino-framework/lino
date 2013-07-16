@@ -80,11 +80,13 @@ Utilities:
   :func:`inrange_filter <djangosite.dbutils.inrange_filter>`
 - :func:`full_model_name <djangosite.dbutils.full_model_name>`
 - :func:`fields_list <lino.core.fields.fields_list>`
+- :func:`chooser <lino.utils.choosers.chooser>` 
+
+Inter-app relations:
+
 - :func:`resolve_field <lino.core.dbutils.resolve_field>`
 - :func:`resolve_model <north.dbutils.resolve_model>`
 - :func:`resolve_app <lino.core.dbutils.resolve_app>` 
-- :func:`chooser <lino.utils.choosers.chooser>` 
-- :func:`add_user_group` 
 - :func:`update_field <lino.core.inject.update_field>` 
 - :func:`inject_field <lino.core.inject.inject_field>` 
 - :func:`inject_quick_add_buttons <lino.core.inject.inject_quick_add_buttons>` 
@@ -99,20 +101,27 @@ Actions:
 - :class:`AuthorRowAction <lino.mixins.AuthorRowAction>`
 - :class:`RowAction <lino.core.actions.RowAction>`
 - :class:`AjaxAction <lino.core.actions.RowAction>`
-- :class:`ChangeStateAction <lino.core.changes.ChangeStateAction>`
+- :class:`ChangeStateAction <lino.core.workflows.ChangeStateAction>`
 - :class:`NotifyingAction <lino.core.actions.NotifyingAction>`
 - :class:`MergeAction <lino.core.merge.MergeAction>`
 
-Miscellaneous:
-
-- :class:`ChoiceList <lino.core.choicelists.ChoiceList>`
-- :class:`Workflow <lino.core.workflows.Workflow>`
-
-- :class:`Genders <lino.core.choicelists.Genders>`
+Permissions:
 
 - :class:`UserProfiles <lino.utils.auth.UserProfiles>`
 - :class:`UserGroups <lino.utils.auth.UserGroups>`
 - :class:`UserLevels <lino.utils.auth.UserLevels>`
+- :func:`add_user_group` 
+
+
+Workflows:
+
+- :class:`ChoiceList <lino.core.choicelists.ChoiceList>`
+- :class:`Workflow <lino.core.workflows.Workflow>`
+- :class:`State <lino.core.workflows.State>`
+
+Miscellaneous:
+
+- :class:`Genders <lino.core.choicelists.Genders>`
 
 
 """
@@ -171,12 +180,11 @@ from lino.core.actions import SubmitDetail, SubmitInsert
 from lino.core.choicelists import ChoiceList, Choice
 from lino.core.choicelists import Genders
 from lino.core.choicelists import YesNo
-from lino.core.workflows import Workflow, ChangeStateAction
-#~ from lino.core.changes import ChangeStateAction
+from lino.core.workflows import State, Workflow, ChangeStateAction
 from lino.core.actions import NotifyingAction
 
 
-from lino.core.fields import fields_list
+from lino.core.fields import fields_list, ImportedFields
 from lino.core.fields import DummyField
 from lino.core.fields import RecurrenceField
 from lino.core.fields import GenericForeignKey

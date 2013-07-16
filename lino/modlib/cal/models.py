@@ -51,7 +51,6 @@ from lino.utils import ONE_DAY
 #~ from lino.ui import requests as ext_requests
 from lino.core import constants
 
-
 from lino.utils.xmlgen.html import E
 
 from lino.modlib.cal.utils import (
@@ -65,12 +64,13 @@ contacts = dd.resolve_app('contacts')
 postings = dd.resolve_app('postings')
 outbox = dd.resolve_app('outbox')
 
-workflow = import_module('lino.modlib.cal.workflows.welfare')
+#~ workflow = import_module('lino.modlib.cal.workflows.welfare')
 #~ workflow = import_module('lino.modlib.cal.workflows.faggio')
+#~ for n in ('TaskStates','EventStates','GuestStates'):
+    #~ globals()[n] = getattr(workflow,n)
 
-for n in ('TaskStates','EventStates','GuestStates'):
-    globals()[n] = getattr(workflow,n)
-
+from lino.modlib.cal.workflows import (TaskStates,
+    EventStates,GuestStates)
 
 
 class CalendarType(object):
@@ -105,7 +105,6 @@ from django.core.validators import MinValueValidator
 
 
 
-#~ class Calendar(mixins.UserAuthored):
 class Calendar(mixins.PrintableType,outbox.MailableType,dd.BabelNamed):
     """
     A Calendar is a collection of events and tasks.
@@ -118,6 +117,7 @@ class Calendar(mixins.PrintableType,outbox.MailableType,dd.BabelNamed):
     templates_group = 'cal/Event'
     
     class Meta:
+        abstract = settings.SITE.is_abstract_model('cal.Calendar')
         verbose_name = _("Calendar")
         verbose_name_plural = _("Calendars")
         
@@ -133,9 +133,6 @@ class Calendar(mixins.PrintableType,outbox.MailableType,dd.BabelNamed):
     password = dd.PasswordField(_("Password"),
         max_length=200,blank=True) # ,null=True)
     readonly = models.BooleanField(_("read-only"),default=False)
-    #~ invite_team_members = models.BooleanField(
-        #~ _("Invite team members"),default=False)
-    invite_team_members = dd.ForeignKey('users.Team',blank=True,null=True)
     #~ is_default = models.BooleanField(
         #~ _("is default"),default=False)
     #~ is_private = models.BooleanField(
@@ -198,14 +195,14 @@ class Calendars(dd.Table):
     type name id 
     # description
     url_template username password
-    readonly invite_team_members color start_date
+    readonly color start_date
     build_method template email_template attach_to_email
     EventsByCalendar SubscriptionsByCalendar
     """
 
     insert_layout = dd.FormLayout("""
     name 
-    type invite_team_members color 
+    type color 
     """,window_size=(60,'auto'))
 
 #~ def default_calendar(user):
@@ -246,7 +243,7 @@ class Subscription(mixins.UserAuthored):
     #~ quick_search_fields = ('user__username','user__first_name','user__last_name')
     
 
-    calendar = models.ForeignKey(Calendar,help_text=_("""\
+    calendar = models.ForeignKey('cal.Calendar',help_text=_("""\
 The calendar you want to subscribe to.
 You can subscribe to *non-private* calendars of *other* users."""))
     is_hidden = models.BooleanField(
@@ -270,52 +267,6 @@ class SubscriptionsByUser(Subscriptions):
     #~ pass
     
 from lino.modlib.users.models import Membership    
-
-if False: # 20130320
-  
-  if settings.SITE.user_model:
-
-    class Membership(mixins.UserAuthored):
-        """
-        A Membership is when a User decides that subscribes to somebody else's Calendar.
-        
-        :user: points to the author (recipient) of this membership
-        :watched_user: points to the watched user
-        
-        """
-        
-        manager_level_field = 'office_level'
-        
-        class Meta:
-            verbose_name = _("Membership")
-            verbose_name_plural = _("Memberships")
-            
-        #~ quick_search_fields = ('user__username','user__first_name','user__last_name')
-        
-        watched_user = models.ForeignKey(settings.SITE.user_model,
-            help_text=_("""\
-    The user whose calendar events you want to see in team view."""))
-
-
-
-        @dd.chooser()
-        def watched_user_choices(cls,user):
-            return settings.SITE.user_model.objects.exclude(
-                #~ profile=dd.UserProfiles.blank_item).exclude(id=user.id) 20120829
-                profile=None).exclude(id=user.id)
-        
-            
-    class Memberships(dd.Table):
-        required = dd.required(user_groups='office',user_level='manager')
-        model = Membership
-
-
-    class MembershipsByUser(Memberships):
-        required = dd.required(user_groups='office')
-        master_key = 'user'
-        label = _("Team Members")
-
-
 
 #~ ROOM_BASES = (dd.BabelNamed,contacts.ContactRelated):
 #~ class Room(ROOM_BASES):
@@ -690,7 +641,7 @@ class RecurrenceSet(Started,Ended):
         return _("Every %snd %s") % (self.every,weekdays)
         
         
-    calendar = models.ForeignKey(Calendar,null=True,blank=True,
+    calendar = models.ForeignKey('cal.Calendar',null=True,blank=True,
         help_text=_("""\
 The calendar to which events will be generated."""))
     #~ event_type = models.ForeignKey(EventType,null=True,blank=True)
@@ -765,7 +716,7 @@ class Component(ComponentBase,
     class Meta:
         abstract = True
         
-    calendar = models.ForeignKey(Calendar,verbose_name=_("Calendar"),blank=True,null=True)
+    calendar = models.ForeignKey('cal.Calendar',blank=True,null=True)
         
     access_class = AccessClasses.field(blank=True,help_text=_("""\
 Whether this is private, public or between.""")) # iCal:CLASS
@@ -966,11 +917,42 @@ Indicates that this Event shouldn't prevent other Events at the same time."""))
     def is_user_modified(self):
         return self.state != EventStates.suggested
         
-    def after_send_mail(self,mail,ar,kw):
-        if self.state == EventStates.assigned:
-            self.state = EventStates.notified
-            kw['message'] += '\n('  +_("Event %s has been marked *notified*.") % self + ')'
-            self.save()
+    #~ def after_send_mail(self,mail,ar,kw):
+        #~ if self.state == EventStates.assigned:
+            #~ self.state = EventStates.notified
+            #~ kw['message'] += '\n('  +_("Event %s has been marked *notified*.") % self + ')'
+            #~ self.save()
+            
+    def save(self,*args,**kw):
+        r = super(Event,self).save(*args,**kw)
+        self.add_guests()
+        return r
+            
+    def add_guests(self):
+        """
+        Decide whether it is time to add Guest instances for this event,
+        and if yes, call :meth:`suggest_guests` to instantiate them.
+        """
+        if settings.SITE.loading_from_dump: return
+        if not self.is_user_modified(): return
+        if not self.is_editable_state(): return 
+        if self.guest_set.all().count() > 0: return
+        for g in self.suggest_guests():
+            g.save()
+            
+    def suggest_guests(self):
+        """
+        Yield a list of Guest instances for this Event.
+        This method is called when :meth:`add_guests` decided so.
+        """
+        if self.calendar is None: return
+        if self.calendar.invite_team_members:
+            ug = self.calendar.invite_team_members
+            for obj in settings.SITE.modules.cal.Membership.objects.filter(group=ug).exclude(user=self.user):
+                if obj.user.partner:
+                    yield site.modules.cal.Guest(event=self,partner=obj.user.partner)
+        
+        
             
     def before_ui_save(self,ar,**kw):
         """
@@ -1097,7 +1079,8 @@ class EventInsert(EventDetail):
         #~ # return ar.success_response(refresh=True)
     
     
-unclear_event_states = (EventStates.suggested,EventStates.draft,EventStates.notified)
+#~ unclear_event_states = (EventStates.suggested,EventStates.draft,EventStates.notified)
+unclear_event_states = (EventStates.suggested,EventStates.draft)
 
 class Events(dd.Table):
     help_text = _("A List of calendar entries. Each entry is called an event.")
@@ -2254,7 +2237,7 @@ def customize_users():
     ))
     dd.inject_field(settings.SITE.user_model,
         'calendar',
-        models.ForeignKey(Calendar,
+        models.ForeignKey('cal.Calendar',
             blank=True,null=True,
             verbose_name=_("Default calendar"),
             help_text=_("""The default calendar for your events and tasks.""")

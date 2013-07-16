@@ -90,8 +90,8 @@ class Site(Site):
     project_model = None
     "See :attr:`lino.ui.Lino.project_model`."
     
-    override_modlib_models = []
-    "See :attr:`lino.ui.Lino.override_modlib_models`."
+    override_modlib_models = set()
+    "See :attr:`lino.ui.Site.override_modlib_models`."
     
     is_demo_site = False
     """

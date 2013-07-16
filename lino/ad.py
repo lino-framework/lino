@@ -49,3 +49,9 @@ class App(object):
     
     """
     
+    extends_models = None
+    """
+    If specified, a list of modlib model names for which this
+    app provides a subclass.
+    """
+    

@@ -12,9 +12,9 @@ on
 `faggio-demo <http://faggio-demo.lino-framework.org/>`_
 I got the above traceback.
 This was because Lino's 
-:meth:`lino.core.fields.QuantityField.to_python`
+:meth:`QuantityField.to_python <lino.core.fields.QuantityField.to_python>`
 implementation wasn't yet robust enough.
-Here some test cases::
+Here some test cases:
 
 >>> from decimal import Decimal
 >>> import os
@@ -30,4 +30,41 @@ Decimal('30')
 None
 >>> f.to_python(Decimal(0))
 Decimal('0')
+
+Events, Guests and Clients
+--------------------------
+
+I found a way for making workflows configurable.
+See 
+
+I replaced the `fill_event_guests_from_team_members` function 
+(a receiver for the `post_save` signal on `Event`) by
+two methods 
+:meth:`lino.modlib.cal.Event.add_guests`
+and
+:meth:`lino.modlib.cal.Event.suggest_guests`.
+Which shows that 
+I prefer subclassing over signals 
+for making these things customizable.
+
+
+Then I applied the new ideas for inheriting apps to lino_welfare: 
+New modules 
+:mod:`lino_welfare.modlib.cal`,
+:mod:`lino_welfare.modlib.contacts`
+and
+:mod:`lino_welfare.modlib.ui`
+
+
+Aha! And here is also another missing piece: 
+:attr:`lino.ad.app.extends_models` instead of having 
+to specify them in 
+:attr:`lino.ui.Site.override_modlib_models`.
+
+
+Checkin.
+
+TODO: some tests are failing 
+because `lino.ui` is no longer automatically being yeld by 
+get_installed_apps.
 
