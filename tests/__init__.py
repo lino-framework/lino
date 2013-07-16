@@ -24,6 +24,7 @@ class BlogTest(LinoTestCase):
     #~ def test_20130513(self): self.run_simple_doctests('docs/blog/2013/0513.rst')
     #~ def test_20130622(self): self.run_simple_doctests('docs/blog/2013/0622.rst')
     #~ def test_20130714(self): self.run_simple_doctests('docs/blog/2013/0714.rst')
+    def test_20130716(self): self.run_simple_doctests('docs/blog/2013/0716.rst')
     
 class DocsTests(LinoTestCase):
 

@@ -843,12 +843,31 @@ class QuantityField(CharField):
         #~ return "CharField"
         
     def to_python(self, value):
+        """
+        
+        Excerpt from `Django doc 
+        <https://docs.djangoproject.com/en/dev/howto/custom-model-fields/#django.db.models.Field.to_python>`__:
+        
+            As a general rule, the method should deal gracefully with any of the following arguments:
+
+            - An instance of the correct type (e.g., Hand in our ongoing example).
+            - A string (e.g., from a deserializer).
+            - Whatever the database returns for the column type you’re using.
+            
+        I'd add "Any value specified for this field when instantiating a model."
+       
+        >>> to_python(None)
+        >>> to_python(30)
+        >>> to_python(30L)
+        >>> to_python('')
+        >>> to_python(Decimal(0))
+        """
         if isinstance(value,Decimal):
             return value
-        if isinstance(value,int):
-            return Decimal(value)
         if value:
-            return quantities.parse(value)
+            if isinstance(value,basestring):
+                return quantities.parse(value)
+            return Decimal(value)
         return None
         
     #~ def get_db_prep_save(self, value, connection):

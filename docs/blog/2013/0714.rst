@@ -102,9 +102,10 @@ because I removed the corresponding line
 from :srcref:`tests/__init__.py`
 when the solution was found.
 
-And the last missing piece: added a :class:`Create 
+And the last missing piece: added a 
+:class:`Create 
 Invoice <lino.modlib.auto.sales.models.CreateInvoiceForPartner>`
-action to `InvoiceablePartners`.
+action to :ref:`faggio.sales.InvoiceablePartners`.
 
 Works like a charm!
 And these last pieces took me less than one hour!

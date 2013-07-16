@@ -1,0 +1,33 @@
+================================
+20130716 (Tuesday, 16 July 2013)
+================================
+
+Expected a string, got 30L
+--------------------------
+
+When trying the :class:`Create 
+Invoice <lino.modlib.auto.sales.models.CreateInvoiceForPartner>`
+action to :ref:`faggio.sales.InvoiceablePartners`
+on 
+`faggio-demo <http://faggio-demo.lino-framework.org/>`_
+I got the above traceback.
+This was because Lino's 
+:meth:`lino.core.fields.QuantityField.to_python`
+implementation wasn't yet robust enough.
+Here some test cases::
+
+>>> from decimal import Decimal
+>>> import os
+>>> os.environ['DJANGO_SETTINGS_MODULE'] = 'lino.projects.min1.settings'
+>>> from lino import dd
+>>> f = dd.QuantityField()
+>>> f.to_python(None)
+>>> f.to_python(30)
+Decimal('30')
+>>> f.to_python(30L)
+Decimal('30')
+>>> print f.to_python('')
+None
+>>> f.to_python(Decimal(0))
+Decimal('0')
+
