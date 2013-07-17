@@ -27,7 +27,7 @@ gets started with Lino mass hosting.
   :attr:`<django_settings> lino.Lino.django_settings`.
   
 - New management command `initdb_demo <lino.management.commands.initdb_demo>`
-  and new Lino setting :attr:`demo_fixtures <lino.Lino.demo_fixtures>`.
+  and new Lino setting :attr:`demo_fixtures <lino.ui.Site.demo_fixtures>`.
   
 
 Cannot re-upload to PyPI

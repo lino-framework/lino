@@ -661,10 +661,10 @@ class AttachmentsByController(Attachments):
 
 MODULE_LABEL = _("Outbox")
 
-lino = dd.resolve_app('ui')
+system = dd.resolve_app('system')
 
 def setup_main_menu(site,ui,profile,m):
-    m  = m.add_menu("office",lino.OFFICE_MODULE_LABEL)
+    m  = m.add_menu("office",system.OFFICE_MODULE_LABEL)
     m.add_action(MyOutbox)
 
   
@@ -683,7 +683,7 @@ def unused_setup_my_menu(site,ui,profile,m):
   
 def setup_explorer_menu(site,ui,profile,m):
     #~ if user.level >= UserLevels.manager:
-    m  = m.add_menu("office",lino.OFFICE_MODULE_LABEL)
+    m  = m.add_menu("office",system.OFFICE_MODULE_LABEL)
     #~ m  = m.add_menu("outbox",MODULE_LABEL)
     m.add_action(Mails)
     m.add_action(Attachments)

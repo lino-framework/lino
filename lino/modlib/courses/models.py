@@ -760,8 +760,6 @@ def get_todo_tables(ar):
 
 
 
-#~ from lino.ui.models import SiteConfig
-
 dd.inject_field(Person,
     'is_teacher',
     mti.EnableChild(Teacher,verbose_name=_("is a teacher")),

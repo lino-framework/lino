@@ -286,9 +286,6 @@ def startup_site(self):
 
     self.resolve_virtual_fields()
     
-    from lino.ui.ui import ExtUI
-    self.ui = ExtUI(self)
-    
 class DisableDeleteHandler():
     """
     Used to find out whether a known object can be deleted or not.

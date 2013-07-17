@@ -19,7 +19,6 @@ from django.utils.translation import ugettext_lazy as _
 
 from lino import dd
 from lino import mixins
-from lino.ui.models import SiteConfig
 from lino.modlib.countries import models as countries
 from lino.modlib.contacts import models as contacts
 #~ from lino.modlib.notes import models as notes

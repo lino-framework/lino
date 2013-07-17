@@ -7,6 +7,7 @@ Developer's Guide
    :maxdepth: 2
 
    install
+   help_texts
    userdocs
    signals
    intro

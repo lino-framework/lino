@@ -1,0 +1,42 @@
+==================================
+20130717 (Wednesday, 17 July 2013)
+==================================
+
+
+Update your :meth:`get_installed_apps <lino.ui.Site.get_installed_apps>`
+------------------------------------------------------------------------
+
+After yesterday's changes, some tests were failing 
+because :mod:`lino.ui` is no longer automatically being 
+yielded by :meth:`lino.ui.Site.get_installed_apps`.
+
+This change was necessary because otherwise it was impossible 
+to override the "ui" app
+(and :mod:`lino_welfare` now does exactly that).
+
+This forced me to tidy up a few things.
+I decided that :mod:`lino.ui` is no longer an app. 
+The models SiteConfig, HelpText and TextFieldTemplate 
+and some system fixtures and tests
+are now defined in a new module :mod:`lino.modlib.system`.
+References to these models have now the app_label "system" and no longer "ui".
+
+The :mod:`lino.ui` module remains, but it is no longer a Django app. 
+It is an important core module.
+:class:`lino.ui.Site` is the base for all Lino Site classes.
+The separation between :class:`lino.Site` and 
+:class:`lino.ui.Site` is currently not important. 
+It exists theoretically in case one day somebody comes who wants 
+Lino, but wants to write her own user interface.
+
+Existing Lino applications must add :mod:`lino.modlib.system`
+to the list of apps yielded by 
+:meth:`lino.ui.Site.get_installed_apps`.
+
+More detailed instructions in :doc:`/changes`.
+
+
+
+
+
+

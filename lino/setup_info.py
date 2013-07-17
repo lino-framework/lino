@@ -115,6 +115,9 @@ lino.modlib.declarations
 lino.modlib.events
 lino.modlib.events.fixtures
 lino.modlib.events.tests
+lino.modlib.system
+lino.modlib.system.fixtures
+lino.modlib.system.tests
 lino.test_apps
 lino.test_apps.20090714
 lino.test_apps.20090717
@@ -143,8 +146,6 @@ lino.management
 lino.management.commands
 lino.mixins
 lino.ui
-lino.ui.fixtures
-lino.ui.tests
 lino.projects
 lino.projects.belref
 lino.projects.belref.fixtures
@@ -165,9 +166,6 @@ lino.projects.igen
 lino.projects.igen.tests
 lino.projects.min1
 lino.projects.min2
-lino.projects.unused_polls_tutorial
-lino.projects.unused_polls_tutorial.polls
-lino.projects.unused_polls_tutorial.polls.fixtures
 lino.projects.presto
 lino.projects.presto.fixtures
 lino.projects.std

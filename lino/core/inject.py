@@ -129,7 +129,7 @@ def do_when_prepared(todo,*model_specs):
                 injects = PENDING_INJECTS.setdefault(k,[])
                 injects.append(todo)
                 #~ d[name] = field
-                #~ if model_spec == "ui.SiteConfig":
+                #~ if model_spec == "system.SiteConfig":
                     #~ logger.info("20130228 Defer %s for %s", todo, model_spec)
                 continue
         else:

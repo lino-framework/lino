@@ -12,8 +12,7 @@
 ## along with Lino; if not, see <http://www.gnu.org/licenses/>.
 
 """
-Defines some system models, especially the :class:`SiteConfig` model.
-Expected to be installed in every Lino application.
+The models module of the :mod:`lino.modlib.system` app.
 """
 
 import logging
@@ -88,7 +87,7 @@ class SiteConfig(dd.Model):
     """
         
     class Meta:
-        abstract = settings.SITE.is_abstract_model('ui.SiteConfig')
+        abstract = settings.SITE.is_abstract_model('system.SiteConfig')
         
     objects = SiteConfigManager()
     real_objects = models.Manager()
@@ -166,7 +165,7 @@ class SiteConfigs(dd.Table):
     See also :meth:`lino.Lino.get_site_config`.
     Deserves more documentation.
     """
-    model = 'ui.SiteConfig'
+    model = 'system.SiteConfig'
     required = dd.required(user_level='manager')
     default_action = actions.ShowDetailAction()
     #~ has_navigator = False
@@ -192,7 +191,7 @@ if settings.SITE.is_installed('contenttypes'):
       
       detail_layout = """
       id name app_label model base_classes
-      ui.HelpTextsByModel
+      system.HelpTextsByModel
       """
       
       @dd.displayfield(_("Base classes"))
@@ -462,8 +461,8 @@ def setup_config_menu(site,ui,profile,m):
         office.add_action(MyTextFieldTemplates)
     #~ m.add_action(site.modules.users.Users)
     if site.is_installed('contenttypes'):
-        system.add_action(site.modules.ui.ContentTypes)
-        system.add_action(site.modules.ui.HelpTexts)
+        system.add_action(site.modules.system.ContentTypes)
+        system.add_action(site.modules.system.HelpTexts)
         #~ m.add_action(site.modules.lino.Workflows)
         
   
@@ -487,23 +486,7 @@ if settings.SITE.user_model == 'auth.User':
     dd.inject_field(settings.SITE.user_model,'profile',dd.UserProfiles.field())
     dd.inject_field(settings.SITE.user_model,'language',dd.LanguageField())
     
-    
 
-
-@dd.receiver(dd.post_analyze)
-def my_post_analyze(sender,**kw):
-    """
-    This is Lino's post_analyze signal handler.
-    """
-    site = sender
-    if site.build_js_cache_on_startup is None:
-        from lino.core.dbutils import is_devserver
-        site.build_js_cache_on_startup = not (settings.DEBUG or is_devserver())
-    
-    from lino.core.web import web_setup
-    web_setup(site,**kw)
-    
-    
 @dd.receiver(dd.pre_ui_build)
 def my_pre_ui_build(sender,**kw):
     self = settings.SITE
@@ -513,7 +496,7 @@ def my_pre_ui_build(sender,**kw):
         from django.db.models import FieldDoesNotExist
         try:
           
-            from lino.ui.models import HelpText
+            HelpText = dd.resolve_model('system.HelpText')
             for ht in HelpText.objects.filter(help_text__isnull=False):
                 #~ logger.info("20120629 %s.help_text", ht)
                 try:

@@ -829,12 +829,12 @@ class ContactRelated(dd.Model):
     #~ from lino.models import SiteConfig
 
 
-dd.inject_field('ui.SiteConfig',
+dd.inject_field('system.SiteConfig',
     'next_partner_id',
     models.IntegerField(default=PARTNER_NUMBERS_START_AT, #
         verbose_name=_("The next automatic id for a manually created partner.")))
     
-dd.inject_field('ui.SiteConfig',
+dd.inject_field('system.SiteConfig',
     'site_company',
     models.ForeignKey("contacts.Company",
         blank=True,null=True,

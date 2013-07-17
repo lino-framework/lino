@@ -481,7 +481,7 @@ class Callbacks(View):
 if settings.SITE.user_model and settings.SITE.use_tinymce:
   
     from jinja2 import Template as JinjaTemplate
-    from lino.ui.models import TextFieldTemplate
+    TextFieldTemplate = settings.SITE.modules.system.TextFieldTemplate
 
     class Templates(View):
       """

@@ -62,8 +62,8 @@ class Site(Site,ledger.SiteMixin):
     #~ def get_application_info(self):
         #~ return (__name__,__version__,__url__)
       
-    def get_main_action(self,user):
-        return self.modules.ui.Home.default_action
+    #~ def get_main_action(self,user):
+        #~ return self.modules.system.Home.default_action
         
     #~ def setup_quicklinks(self,ui,user,tb):
         #~ tb.add_action(self.modules.contacts.Persons.detail_action)
@@ -89,6 +89,7 @@ class Site(Site,ledger.SiteMixin):
         for a in super(Site,self).get_installed_apps():
             yield a
         yield 'django.contrib.contenttypes'
+        yield 'lino.modlib.system'
         yield 'lino.modlib.users'
         #~ yield 'django.contrib.auth'
         yield 'lino.modlib.countries'

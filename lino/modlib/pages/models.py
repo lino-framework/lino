@@ -39,11 +39,6 @@ from django.utils.encoding import force_unicode
 
 #~ from lino import tools
 from lino import dd
-#~ from lino import reports
-#~ from lino import layouts
-#~ from lino.utils import perms
-#~ from lino.utils.restify import restify
-#~ from lino.utils import printable
 from north import dbutils
 from lino.utils import iif
 from lino.utils.xmlgen import html as xghtml
@@ -275,15 +270,15 @@ from lino.modlib.pages.dummy import render_node
 def setup_my_menu(site,ui,profile,m): 
     pass
   
-lino = dd.resolve_app('ui')
+system = dd.resolve_app('system')
 def setup_config_menu(site,ui,profile,m): 
     #~ m  = m.add_menu("pages",_("~Pages"))
-    m  = m.add_menu("office",lino.OFFICE_MODULE_LABEL)
+    m  = m.add_menu("office",system.OFFICE_MODULE_LABEL)
     m.add_action(Pages)
     #~ m.add_action(PageTypes)
   
 #~ def setup_explorer_menu(site,ui,profile,m):
-    #~ m  = m.add_menu("office",lino.OFFICE_MODULE_LABEL)
+    #~ m  = m.add_menu("office",system.OFFICE_MODULE_LABEL)
     #~ m.add_action(Pages)
   
 

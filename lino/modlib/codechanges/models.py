@@ -30,7 +30,7 @@ from django.conf import settings
 
 from lino.utils import i2d
 from lino import dd
-from lino.ui.models import SYSTEM_USER_LABEL
+from lino.modlib.system.models import SYSTEM_USER_LABEL
 from lino.utils.restify import restify, doc2rst
 
 #~ CHANGES_LIST = []

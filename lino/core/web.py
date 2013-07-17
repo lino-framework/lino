@@ -42,10 +42,10 @@ from jinja2.exceptions import TemplateNotFound
 
 SUBDIR_NAME = 'templates_jinja'
     
-def web_setup(sender,**kw):
+def web_setup(sender):
     """
     Adds a `jinja_env` attribute to `settings.SITE`.
-    This is being called from :func:`lino.ui.models.post_analyze`.
+    This is being called from :func:`lino.modlib.system.post_analyze`.
     
     Lino has an automatic and currently not configurable method 
     for building Jinja's template loader. It looks for 

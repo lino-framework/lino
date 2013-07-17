@@ -862,9 +862,7 @@ class PartnerRelated(dd.Model):
 
 if settings.SITE.is_installed('partners'):
   
-    from lino.ui.models import SiteConfig
-
-    dd.inject_field(SiteConfig,
+    dd.inject_field('system.SiteConfig',
         'next_partner_id',
         models.IntegerField(default=100, # first 100 for users from demo fixtures.
             verbose_name=_("The next automatic id for Person or Organisation")
@@ -872,7 +870,7 @@ if settings.SITE.is_installed('partners'):
         Deserves more documentation.
         """)
         
-    dd.inject_field(SiteConfig,
+    dd.inject_field('system.SiteConfig',
         'site_partner',
         models.ForeignKey("partners.Organisation",
             blank=True,null=True,

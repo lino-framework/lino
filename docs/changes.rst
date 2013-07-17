@@ -10,8 +10,43 @@ The final truth about what's going on is only
 `The Source Code <http://code.google.com/p/lino/source/list>`_.
 
 
-Version 1.6.7 (in development)
+Version 1.6.11 (in development)
 ============================================
+
+- Check the new setting :attr:`is_demo_site <lino.ui.Site.is_demo_site>`
+  which defaults to `True`.
+
+- Existing Lino applications must add :mod:`lino.modlib.system`
+  to the list of apps yielded by their
+  :meth:`lino.Site.ui.get_installed_apps`.
+  See :blogref:`20130717` for background. 
+  
+  Migration instructions:
+  
+  If you don't override the :class:`lino.ui.Site` class, then your 
+  instantiating code in settings.py is something like::
+  
+    SITE = Site(globals(),'foo','bar')
+
+  Change this to::
+  
+    SITE = Site(globals(),'lino.modlib.system','foo','bar')
+    
+  If you do override it, then change your `get_installed_apps` method::
+  
+    def get_installed_apps(self):
+        for a in super(Site,self).get_installed_apps():
+            yield a
+        yield 'lino.modlib.system' ## <<< this line added
+        yield 'lino.modlib.users'
+        # continue with your own modules
+        
+  Also the models `SiteConfig`, `HelpText` and `TextFieldTemplate` 
+  have now the app_label "system" instead of "ui".
+  If you have production data, you'll need to write a data migration 
+  to rename these tables. See :mod:`lino_welfare.migrate` for 
+  an example on how to automate this.
+  
 
 - Optimization: 
   virtual fields to a foreignkey 

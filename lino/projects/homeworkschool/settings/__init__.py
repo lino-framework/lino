@@ -60,8 +60,8 @@ class Site(Site,ledger.SiteMixin):
     #~ remote_user_header = "REMOTE_USER"
     
        
-    def get_main_action(self,user):
-        return self.modules.ui.Home.default_action
+    #~ def get_main_action(self,user):
+        #~ return self.modules.ui.Home.default_action
         
     #~ def get_application_info(self):
         #~ return (__name__,__version__,__url__)
@@ -79,6 +79,7 @@ class Site(Site,ledger.SiteMixin):
         for a in super(Site,self).get_installed_apps():
             yield a
         yield 'django.contrib.contenttypes'
+        yield 'lino.modlib.system'
         yield 'lino.modlib.users'
         yield 'lino.modlib.countries'
         yield 'lino.modlib.contacts'

@@ -123,8 +123,6 @@ class WaitingGuests(cal.Guests):
     #~ GuestStates.waiting.add_transition(CheckinGuest)
     #~ GuestStates.invited.add_transition(CheckoutGuest)
 
-#~ lino = dd.resolve_app('ui')
-
 def setup_main_menu(site,ui,profile,m):
     #~ m  = m.add_menu("office",lino.OFFICE_MODULE_LABEL)
     m  = m.add_menu("reception",_(App.verbose_name))

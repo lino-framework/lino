@@ -1,4 +1,5 @@
-## Copyright 2011-2012 Luc Saffre
+# -*- coding: UTF-8 -*-
+## Copyright 2012-2013 Luc Saffre
 ## This file is part of the Lino project.
 ## Lino is free software; you can redistribute it and/or modify 
 ## it under the terms of the GNU General Public License as published by
@@ -12,25 +13,16 @@
 ## along with Lino; if not, see <http://www.gnu.org/licenses/>.
 
 """
+Set password "1234" for all users.
 
-Lino's :mod:`lino.modlib.users` is an alternative to Django's 
-:mod:`django.contrib.auth` module.
-
-This module is much more simple and does not require
-:mod:`django.contrib.sessions` to be installed.
-See :doc:`/tickets/31` for discussion.
-
-To use it, you must define the following things in your :class:`lino.Lino`::
-
-    user_model = 'users.User'
-    
-    def get_installed_apps(self):
-        for a in super(Lino,self).get_installed_apps():
-            yield a
-        yield 'lino.modlib.system'
-        yield 'lino.modlib.users'
-        # continue with your own modules
-
+This is an additive fixture designed to work also on existing data.
 
 """
 
+from django.conf import settings
+
+def objects():
+    for u in settings.SITE.user_model.objects.exclude(profile=''):
+        u.set_password('1234')
+        yield u
+                

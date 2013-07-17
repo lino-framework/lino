@@ -195,7 +195,7 @@ Estland''')
         
         """
         # User 1
-        SiteConfigs = settings.SITE.modules.ui.SiteConfigs
+        SiteConfigs = settings.SITE.modules.system.SiteConfigs
         elem = SiteConfigs.get_row_by_pk(1)
         self.assertEqual(elem.next_partner_id,contacts.PARTNER_NUMBERS_START_AT + 1) 
         
@@ -222,7 +222,7 @@ Estland''')
         
         """
         
-        url = settings.SITE.build_admin_url('api','ui','SiteConfigs','1?an=detail&fmt=json')
+        url = settings.SITE.build_admin_url('api','system','SiteConfigs','1?an=detail&fmt=json')
         response = self.client.get(url,REMOTE_USER='root')
         result = self.check_json_result(response,'navinfo disable_delete data id title')
         """

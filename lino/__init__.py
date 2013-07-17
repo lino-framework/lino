@@ -93,17 +93,6 @@ class Site(Site):
     override_modlib_models = set()
     "See :attr:`lino.ui.Site.override_modlib_models`."
     
-    is_demo_site = False
-    """
-    Set this to `True` if this site should run in "demo" mode. 
-    This means:
-    
-    - the welcome text for anonymous users says "This demo site has X 
-      users, they all have "1234" as password", 
-      followed by a list of available usernames.
-    
-    """
-   
     
     textfield_format = 'plain'
     """

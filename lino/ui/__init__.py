@@ -219,6 +219,32 @@ class Site(lino.Site):
       
     """
     
+    is_demo_site = True
+    """
+    When this is `True`, then this site runs in "demo" mode.     
+    "Demo mode" means:
+    
+    - the welcome text for anonymous users says "This demo site has X 
+      users, they all have "1234" as password", 
+      followed by a list of available usernames.
+    
+    Default value is `True`.
+    On a production site you will of course set this to `False`.
+    
+    See also :attr:`demo_fixtures`.
+    
+    """
+    
+    demo_fixtures = ['std','demo','demo2']
+    """
+    The list of fixtures to be loaded by the 
+    `initdb_demo <lino.management.commands.initdb_demo>`
+    command.
+    
+    """
+    
+    
+   
     
     use_spinner = False # doesn't work. leave this to False
     
@@ -471,7 +497,8 @@ class Site(lino.Site):
     """
     Whether to make use of `Ext.QuickTips
     <http://docs.sencha.com/ext-js/3-4/#!/api/Ext.QuickTips>`_
-    when displaying help texts defined in :class:`lino.models.HelpText`
+    when displaying :ref:`help_texts`.
+    
     """
     
     use_css_tooltips = False
@@ -632,6 +659,24 @@ class Site(lino.Site):
         #~ raise Exception("20130302")
         
         
+    def do_site_startup(self):
+        """
+        """
+        super(Site,self).do_site_startup()
+        
+        from django.conf import settings
+        
+        if self.build_js_cache_on_startup is None:
+            from lino.core.dbutils import is_devserver
+            self.build_js_cache_on_startup = not (settings.DEBUG or is_devserver())
+        
+        from lino.core.web import web_setup
+        web_setup(self)
+        
+        from lino.ui.ui import ExtUI
+        self.ui = ExtUI(self)
+    
+
 
     def is_abstract_model(self,name):
         """
@@ -684,7 +729,7 @@ class Site(lino.Site):
       
     #~ @property
     #~ def site_config(self):
-        #~ SiteConfig = self.modules.ui.SiteConfig
+        #~ SiteConfig = self.modules.system.SiteConfig
         #~ try:
             #~ return SiteConfig.objects.get(pk=1)
         #~ except SiteConfig.DoesNotExist:
@@ -710,8 +755,8 @@ class Site(lino.Site):
             #~ from lino.core.dbutils import resolve_model
             #~ from lino.core.dbutils import obj2str
             #~ from lino.utils import dblogger as logger
-            #~ SiteConfig = resolve_model('ui.SiteConfig')
-            SiteConfig = self.modules.ui.SiteConfig
+            #~ SiteConfig = resolve_model('system.SiteConfig')
+            SiteConfig = self.modules.system.SiteConfig
             #~ from .models import SiteConfig
             #~ from django.db.utils import DatabaseError
             try:
@@ -936,7 +981,7 @@ class Site(lino.Site):
 
     def get_installed_apps(self):
         """
-        This method is expected to return or yield the list of strings 
+        This method is expected to yield the list of strings 
         to be stored into Django's :setting:`INSTALLED_APPS` setting.
         """
         #~ yield 'lino.ui'

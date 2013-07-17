@@ -38,13 +38,13 @@ Now we wrote a Python fixture with some data:
 We load this fixture using Django's standard loaddata command:
 
 >>> from django.core.management import call_command
->>> call_command('initdb','demo',interactive=False)
+>>> call_command('initdb_demo',interactive=False)
 Creating tables ...
-Creating table ui_siteconfig
 Creating table de_BE_expression
 Installing custom SQL ...
 Installing indexes ...
-Installed 4 object(s) from 2 fixture(s)
+Installed 3 object(s) from 1 fixture(s)
+
 
 Here is the result:
 

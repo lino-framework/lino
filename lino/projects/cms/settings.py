@@ -52,6 +52,7 @@ class Site(Site):
         for a in super(Site,self).get_installed_apps():
             yield a
         yield 'django.contrib.contenttypes'
+        yield 'lino.modlib.system'
         yield 'lino.modlib.users'
         yield 'lino.modlib.countries'
         yield 'lino.modlib.contacts'

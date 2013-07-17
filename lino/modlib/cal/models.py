@@ -48,7 +48,6 @@ from lino import dd
 from lino.core import actions
 from lino.utils import AttrDict
 from lino.utils import ONE_DAY
-#~ from lino.ui import requests as ext_requests
 from lino.core import constants
 
 from lino.utils.xmlgen.html import E
@@ -2176,15 +2175,15 @@ class UpdateReminders(actions.RowAction):
         return ar.ui.success(msg,**kw)
         
 
-from lino.ui import models as ui
+system = dd.resolve_app('system')
 
-class Home(ui.Home):
+class Home(system.Home):
     """
     Deserves better documentation.
     """
     #~ debug_permissions = True 
 
-    label = ui.Home.label
+    label = system.Home.label
     app_label = 'lino'
     detail_layout = """
     quick_links:80x1

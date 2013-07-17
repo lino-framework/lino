@@ -32,7 +32,7 @@ def bv2kw(fieldname,values):
     
 polls_Choice = resolve_model("polls.Choice")
 polls_Poll = resolve_model("polls.Poll")
-ui_SiteConfig = resolve_model("ui.SiteConfig")
+ui_SiteConfig = resolve_model("system.SiteConfig")
 
 def create_polls_choice(id, poll_id, choice, votes):
     kw = dict()

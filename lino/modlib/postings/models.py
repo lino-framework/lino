@@ -34,17 +34,12 @@ from django.db import IntegrityError
 from django.utils.encoding import force_unicode
 from django.core.exceptions import ValidationError
 
+from django.conf import settings
 
 from lino import mixins
 #~ from lino.mixins import mails
 from lino import dd
-#~ from lino import reports
-#~ from lino import layouts
-#~ from lino.utils import perms
-#~ from lino.utils import printable
 from lino.core import actions
-#~ from lino.utils import call_optional_super
-from django.conf import settings
 
 
 
@@ -212,10 +207,10 @@ class Postable(dd.Model):
 #~ MODULE_LABEL = _("Outbox")
 MODULE_LABEL = _("Postings")
 
-lino = dd.resolve_app('ui')
+system = dd.resolve_app('system')
 
 def setup_main_menu(site,ui,profile,m):
-    m  = m.add_menu("office",lino.OFFICE_MODULE_LABEL)
+    m  = m.add_menu("office",system.OFFICE_MODULE_LABEL)
     m  = m.add_menu("postings",MODULE_LABEL)
     m.add_action(MyPostings)
     m.add_action(PostingsReady)
@@ -239,7 +234,7 @@ def setup_config_menu(site,ui,profile,m):
   
 def setup_explorer_menu(site,ui,profile,m):
     #~ if user.level >= UserLevels.manager:
-    m  = m.add_menu("office",lino.OFFICE_MODULE_LABEL)
+    m  = m.add_menu("office",system.OFFICE_MODULE_LABEL)
     #~ m  = m.add_menu("postings",MODULE_LABEL)
     m.add_action(Postings)
   
