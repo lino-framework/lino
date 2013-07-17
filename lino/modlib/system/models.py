@@ -100,6 +100,13 @@ class SiteConfig(dd.Model):
     def __unicode__(self):
         return force_unicode(_("Site Parameters"))
 
+    def update(self,**kw):
+        for k,v in kw.items():
+            if not hasattr(self,k): 
+                raise Exception("Siteconfig has no attribute %r" % k)
+            setattr(self,k,v)
+        self.save()
+        
     def save(self,*args,**kw):
         #~ print "20130321 SiteConfig.save()", dd.obj2str(self,True)
         super(SiteConfig,self).save(*args,**kw)

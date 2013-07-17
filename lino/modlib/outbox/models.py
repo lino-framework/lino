@@ -173,6 +173,7 @@ class CreateMail(dd.RowAction):
         as_attachment = elem.attach_to_email(ar)
         
         m = Mail(user=ar.get_user(),
+            date=datetime.date.today(),
             subject=elem.get_mailable_subject(),
             owner=elem)
         #~ if as_attachment:
@@ -192,6 +193,7 @@ class CreateMail(dd.RowAction):
         
 
 def list_templates(ext,group=''):
+    logger.info("20130717 list_templates(%r,%r)",ext,group)
     if group:
         #~ prefix = os.path.join(*(group.split('/')))
         def ff(fn):
@@ -208,16 +210,19 @@ def list_templates(ext,group=''):
 class Mailable(dd.Model):
     """
     Mixin for models that provide a "Post" button.
-    A Mailable model must also inherit mixins.CachedPrintable (or mixins.TypedPrintable)
+    A Mailable model must also inherit either 
+    :class:`lino.mixins.printable.BasePrintable`.
     """
 
     class Meta:
         abstract = True
         
-    @classmethod
-    def get_model_actions(self,table):
-        for x in super(Mailable,self).get_model_actions(table): yield x
-        yield 'create_mail',CreateMail()
+    create_mail = CreateMail()
+        
+    #~ @classmethod
+    #~ def get_model_actions(self,table):
+        #~ for x in super(Mailable,self).get_model_actions(table): yield x
+        #~ yield 'create_mail',CreateMail()
         
     #~ post2 = PostAction(True)
     
@@ -231,27 +236,12 @@ class Mailable(dd.Model):
         return self.get_mailable_type().attach_to_email
         #~ return isinstance(self,mixins.CachedPrintable)
         
-    def unused_get_mailable_intro(self,ar):
-        from lino.utils.config import find_config_file
-        mt = self.get_mailable_type()
-        #~ tplname = self._meta.app_label + '/' + self.__class__.__name__ + '/email.html'
-        fn = find_config_file(mt.email_template,mt.templates_group)
-        if fn is None:
-            raise Exception("No config file %s / %s" % (mt.templates_group,mt.email_template))
-            #~ return ''
-        #~ logger.info("Using email template %s",fn)
-        tpl = CheetahTemplate(file(fn).read().decode('utf-8'))
-        #~ tpl.self = elem # doesn't work because Cheetah adds itself a name 'self' 
-        tpl.instance = self
-        tpl.dtosl = dbutils.dtosl
-        tpl.dtos = dbutils.dtos
-        tpl.ar = ar
-        return unicode(tpl)
-        
     def get_mailable_intro(self,ar):
         mt = self.get_mailable_type()
         #~ print 20130101, mt.email_template
         name = mt.email_template
+        if not name: 
+            return ''
         if mt.templates_group is not None:
             #~ prefix = os.path.join(*(mt.templates_group.split('/')))
             #~ name = os.path.join(prefix,name)
@@ -265,22 +255,6 @@ class Mailable(dd.Model):
         )
         return tpl.render(**context)
         
-        #~ # tplname = self._meta.app_label + '/' + self.__class__.__name__ + '/email.html'
-        #~ fn = find_config_file(mt.email_template,mt.templates_group)
-        #~ if fn is None:
-            #~ raise Exception("No config file %s / %s" % (mt.templates_group,mt.email_template))
-            #~ # return ''
-        #~ # logger.info("Using email template %s",fn)
-        #~ tpl = CheetahTemplate(file(fn).read().decode('utf-8'))
-        #~ # tpl.self = elem # doesn't work because Cheetah adds itself a name 'self' 
-        #~ tpl.instance = self
-        #~ tpl.dtosl = dbutils.dtosl
-        #~ tpl.dtos = dbutils.dtos
-        #~ tpl.ar = ar
-        #~ return unicode(tpl)
-        
-    #~ def get_mailable_body(self,ar):
-        #~ raise NoteImplementdError()
         
     def get_mailable_subject(self):
         """
@@ -429,7 +403,7 @@ class SendMail(dd.RowAction):
             msg.attach_file(fn)
             
         uploads = dd.resolve_app("uploads")
-        for up in uploads.UploadsByController.request(ar.ui,master_instance=elem):
+        for up in uploads.UploadsByController.request(elem):
         #~ for up in uploads.Upload.objects.filter(owner=elem):
             fn = os.path.join(settings.MEDIA_ROOT,up.file.name)
             msg.attach_file(fn)

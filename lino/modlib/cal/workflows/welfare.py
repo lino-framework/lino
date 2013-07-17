@@ -57,12 +57,13 @@ from lino.modlib.cal.workflows import (TaskStates,
 class RejectInvitation(dd.ChangeStateAction,dd.NotifyingAction):
     label = _("Reject")
     help_text = _("Reject this invitation.")  
-    required = dict(states='invited',owner=False)
+    required = dict(states='invited accepted') # ,owner=False)
     
     def get_notify_subject(self,ar,obj):
-        return _("Cannot accept invitation %(day)s at %(time)s") % dict(
-           day=dbutils.dtos(obj.event.start_date),
-           time=str(obj.event.start_time))
+        return _("%(guest)s cannot accept invitation %(day)s at %(time)s") % dict(
+            guest=obj.partner,
+            day=dbutils.dtos(obj.event.start_date),
+            time=str(obj.event.start_time))
 
 class ResetEvent(dd.ChangeStateAction):
     label = _("Reset")
@@ -203,7 +204,7 @@ def my_setup_workflows(sender=None,**kw):
 
     #~ kw = dict(allow=allow_transition)
     #~ GuestStates.invited.add_transition(_("Invite"),states='_',owner=True)
-    GuestStates.accepted.add_transition(_("Accept"),states='_ invited',owner=False)
+    GuestStates.accepted.add_transition(_("Accept"),states='_ invited rejected') # ,owner=False)
     #~ GuestStates.rejected.add_transition(_("Reject"),states='_ invited',owner=False)
     GuestStates.rejected.add_transition(RejectInvitation)
     GuestStates.present.add_transition(states='invited accepted',owner=True,allow=event_took_place)

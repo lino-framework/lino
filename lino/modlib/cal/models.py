@@ -900,14 +900,11 @@ Indicates that this Event shouldn't prevent other Events at the same time."""))
     all_day = ExtAllDayField(_("all day"))
     #~ all_day = models.BooleanField(_("all day"),default=False)
     
-    if settings.SITE.user_model:
-        assigned_to = models.ForeignKey(settings.SITE.user_model,
-            verbose_name=_("Assigned to"),
-            related_name="cal_events_assigned",
-            blank=True,null=True
-            )
-    else:
-        assigned_to = dd.DummyField()
+    assigned_to = dd.ForeignKey(settings.SITE.user_model,
+        verbose_name=_("Assigned to"),
+        related_name="cal_events_assigned",
+        blank=True,null=True
+        )
         
         
     def is_editable_state(self):
@@ -932,24 +929,25 @@ Indicates that this Event shouldn't prevent other Events at the same time."""))
         Decide whether it is time to add Guest instances for this event,
         and if yes, call :meth:`suggest_guests` to instantiate them.
         """
+        #~ print "20130717 add_guests"
         if settings.SITE.loading_from_dump: return
-        if not self.is_user_modified(): return
-        if not self.is_editable_state(): return 
+        if not self.is_user_modified(): 
+            #~ print "not is_user_modified"
+            return
+        if not self.is_editable_state(): 
+            #~ print "not an editable state"
+            return 
         if self.guest_set.all().count() > 0: return
         for g in self.suggest_guests():
             g.save()
+            #~ settings.SITE.modules.cal.Guest(event=self,partner=p).save()
             
     def suggest_guests(self):
         """
-        Yield a list of Guest instances for this Event.
+        Yield a list of Partner instances to be invited to this Event.
         This method is called when :meth:`add_guests` decided so.
         """
-        if self.calendar is None: return
-        if self.calendar.invite_team_members:
-            ug = self.calendar.invite_team_members
-            for obj in settings.SITE.modules.cal.Membership.objects.filter(group=ug).exclude(user=self.user):
-                if obj.user.partner:
-                    yield site.modules.cal.Guest(event=self,partner=obj.user.partner)
+        return []
         
         
             
@@ -1632,18 +1630,23 @@ class Guests(dd.Table):
     model = Guest
     required = dd.required(user_groups='office',user_level='admin')
     column_names = 'partner role workflow_buttons remark event *'
-    #~ workflow_state_field = 'state'
-    #~ column_names = 'contact role state remark event *'
-    #~ workflow_actions = ['invite','notify']
-    #~ workflow_owner_field = 'event__user'
+    detail_layout = """
+    event partner role
+    state remark
+    outbox.MailsByController
+    """
+    insert_layout = dd.FormLayout("""
+    event 
+    partner 
+    role
+    """,window_size=(60,'auto'))
     
-    #~ def setup_actions(self):
-        #~ super(dd.Table,self).setup_actions()
-        #~ self.add_action(mails.CreateMailAction())
         
 class GuestsByEvent(Guests):
     master_key = 'event'
     required = dd.required(user_groups='office')
+    auto_fit_column_widths = True
+    column_names = 'partner role workflow_buttons'
 
 class GuestsByRole(Guests):
     master_key = 'role'

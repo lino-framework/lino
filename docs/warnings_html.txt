@@ -1,3 +1,0 @@
-/home/luc/hgwork/lino/lino/ui/__init__.py:docstring of lino.ui.Site.webdav_url:7: WARNING: term not in glossary: runserver
-/home/luc/hgwork/lino/docs/blog/2013/0111.rst:7: WARNING: unknown document: /admin/lino_local
-/home/luc/hgwork/lino/docs/changes.rst:51: WARNING: undefined label: welfare.debts.printliabilitiesbybudget (if the link has no caption the label must precede a section header)

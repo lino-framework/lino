@@ -47,8 +47,7 @@ from lino.utils import AttrDict
 
 
 import lino
-
-
+from lino import ad
 
 
 class Site(lino.Site):
@@ -235,10 +234,15 @@ class Site(lino.Site):
     
     """
     
+    demo_email = 'demo@example.com'
+    """
+    
+    """
+    
     demo_fixtures = ['std','demo','demo2']
     """
     The list of fixtures to be loaded by the 
-    `initdb_demo <lino.management.commands.initdb_demo>`
+    :mod:`initdb_demo <lino.management.commands.initdb_demo>`
     command.
     
     """
@@ -1355,6 +1359,25 @@ class Site(lino.Site):
             s = ("[%d] " % n) + s
         return s
 
+
+    def for_each_app(self,func,*args,**kw):
+        """
+        Successor of :meth:`djangosite.Site.on_each_app`. 
+        This also loops over 
+        
+        - apps that don't have a models module
+        - inherited apps
+        
+        """
+        from django.utils.importlib import import_module
+
+        for app_name in self.get_installed_apps():
+            app_mod = import_module(app_name)
+            app = getattr(app_mod,'App',None)
+            if app is not None and issubclass(app,ad.App) and app.extends:
+                parent = import_module(app.extends)
+                func(app.extends,parent,*args,**kw)
+            func(app_name,app_mod,*args,**kw)
 
 
 

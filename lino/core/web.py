@@ -21,6 +21,7 @@ import logging
 logger = logging.getLogger(__name__)
 
 import os
+from os.path import join, abspath, dirname, normpath, isdir
 import cgi
 import datetime
 import inspect
@@ -40,35 +41,49 @@ from lino.utils.xmlgen import html as xghtml
 E = xghtml.E
 from jinja2.exceptions import TemplateNotFound
 
-SUBDIR_NAME = 'templates_jinja'
+#~ SUBDIR_NAME = 'templates_jinja'
+SUBDIR_NAME = 'config'
     
 def web_setup(sender):
     """
     Adds a `jinja_env` attribute to `settings.SITE`.
-    This is being called from :func:`lino.modlib.system.post_analyze`.
+    This is being called from :meth:`lino.ui.Site.on_site_startup`.
     
     Lino has an automatic and currently not configurable method 
     for building Jinja's template loader. It looks for 
-    a "templates_jinja" 
-    subfolder in the following places:
+    a "templates_jinja" subfolder in the following places:
     
     - the directory where your settings.py is defined.
+    - the directories of each installed app
     
     """
-    logger.debug("Setting up Jinja environment")
+    #~ logger.debug("Setting up Jinja environment")
     self = sender
     from django.utils.importlib import import_module
     
-    paths = list(self.get_settings_subdirs(SUBDIR_NAME))
-    
     loaders = []
+    
+    def func(name,m):
+        if isdir(join(dirname(m.__file__),SUBDIR_NAME)):
+            #~ logger.info("20130717 jinja loader %s",name)
+            loaders.append(jinja2.PackageLoader(name, SUBDIR_NAME))
+    settings.SITE.for_each_app(func)
+    
+    paths = list(self.get_settings_subdirs(SUBDIR_NAME))
+    if settings.SITE.is_local_project_dir:
+        p = join(settings.SITE.project_dir,SUBDIR_NAME)
+        if isdir(p):
+            paths.append(p)
+    #~ logger.info("20130717 web.py paths %s",paths)
     if len(paths) > 0:
         loaders.append(jinja2.FileSystemLoader(paths))
+        
     
-    for name in self.get_installed_apps():
-        m = import_module(name)
-        if os.path.isdir(os.path.join(os.path.dirname(m.__file__),SUBDIR_NAME)):
-            loaders.append(jinja2.PackageLoader(name, SUBDIR_NAME))
+
+    #~ for name in self.get_installed_apps():
+        #~ m = import_module(name)
+        #~ if os.path.isdir(os.path.join(os.path.dirname(m.__file__),SUBDIR_NAME)):
+            #~ loaders.append(jinja2.PackageLoader(name, SUBDIR_NAME))
     
     #~ loaders = reversed(loaders)
     #~ print 20130109, loaders

@@ -84,43 +84,24 @@ class ConfigDir:
 fs_encoding = sys.getfilesystemencoding() or sys.getdefaultencoding()
 config_dirs = []
 
-def add_config_dir(mod):
+for pth in settings.SITE.get_settings_subdirs(SUBDIR_NAME):
+    config_dirs.append(ConfigDir(pth.decode(fs_encoding),False))
+
+def add_config_dir(name,mod):
     pth = join(dirname(mod.__file__),SUBDIR_NAME)    
     if isdir(pth):
         config_dirs.append(ConfigDir(pth.decode(fs_encoding),False))
-
-#~ for pth in settings.SITE.get_settings_subdirs(SUBDIR_NAME)
-#~ dirs = []
-for app in settings.INSTALLED_APPS:
-    app_mod = import_module(app)
-    app = getattr(app_mod,'App',None)
-    if isinstance(app,ad.App) and app.extends:
-        parent = import_module(app.extends)
-        add_config_dir(parent)
-    #~ try:
-        #~ models_mod = import_module(app+'.models')
-    #~ except ImportError:
-        #~ pass
-    #~ else:
-        #~ parent = getattr(models_mod,'PARENT_APP',None)
-        #~ if parent:
-            #~ parent = import_module(parent)
-            #~ add_config_dir(parent)
         
-    add_config_dir(app_mod)
-    
-    #~ for mod in (parent,app_mod):
-        #~ if mod is not None:
-            #~ add_config_dir(join(dirname(mod.__file__),SUBDIR_NAME))
-    #~ appdir = dirname(mod.__file__)
-    #~ for pthfile in glob.glob(join(appdir, '*.pth')):
-        #~ for name in open(pthfile).readlines():
-            #~ name = name.strip()
-            #~ if name and not name.startswith('#'):
-                #~ add_config_dir(join(appdir,name))
-    #~ add_config_dir(join(appdir, SUBDIR_NAME))
-    
+settings.SITE.for_each_app(add_config_dir)
 
+#~ for app in settings.INSTALLED_APPS:
+    #~ app_mod = import_module(app)
+    #~ app = getattr(app_mod,'App',None)
+    #~ if isinstance(app,ad.App) and app.extends:
+        #~ parent = import_module(app.extends)
+        #~ add_config_dir(parent)
+    #~ add_config_dir(app_mod)
+    
 LOCAL_CONFIG_DIR = None
 
 #~ if settings.SITE.project_dir != settings.SITE.source_dir:

@@ -31,33 +31,35 @@ from lino.modlib.cal import models as cal
 
 
 def objects():
+    
+    if False:
 
-    guest_role = Instantiator('cal.GuestRole').build
-    yield guest_role(**babel_values('name',
-          de=u"Teilnehmer",
-          fr=u"Participant",
-          en=u"Participant",
-          et=u"Osavõtja",
-          ))
-    yield guest_role(**babel_values('name',
-          de=u"Reiseführer",
-          fr=u"Guide",
-          en=u"Guide",
-          et=u"Reisijuht",
-          ))
-    yield guest_role(**babel_values('name',
-          de=u"Vorsitzender",
-          fr=u"Président",
-          en=u"Presider",
-          et=u"Eesistuja",
-          ))
-    yield guest_role(**babel_values('name',
-          de=u"Protokollführer",
-          fr=u"Greffier",
-          en=u"Reporter",
-          et=u"Sekretär",
-          ))
-          
+        guest_role = Instantiator('cal.GuestRole').build
+        yield guest_role(**babel_values('name',
+              de=u"Teilnehmer",
+              fr=u"Participant",
+              en=u"Participant",
+              et=u"Osavõtja",
+              ))
+        yield guest_role(**babel_values('name',
+              de=u"Reiseführer",
+              fr=u"Guide",
+              en=u"Guide",
+              et=u"Reisijuht",
+              ))
+        yield guest_role(**babel_values('name',
+              de=u"Vorsitzender",
+              fr=u"Président",
+              en=u"Presider",
+              et=u"Eesistuja",
+              ))
+        yield guest_role(**babel_values('name',
+              de=u"Protokollführer",
+              fr=u"Greffier",
+              en=u"Reporter",
+              et=u"Sekretär",
+              ))
+              
           
     if False:
     

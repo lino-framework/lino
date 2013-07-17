@@ -730,7 +730,9 @@ class PrintableType(Model):
         return get_template_choices(cls,build_method)
     
 class BasePrintable(object):
-    
+    """
+    Common base for :class:`Printable`.and :class:`CachedPrintable`.
+    """
     def get_print_language(self,pm):
         return settings.SITE.DEFAULT_LANGUAGE.django_code
         

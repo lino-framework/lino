@@ -1,5 +1,5 @@
 # -*- coding: UTF-8 -*-
-## Copyright 2010-2012 Luc Saffre
+## Copyright 2010-2013 Luc Saffre
 ## This file is part of the Lino project.
 ## Lino is free software; you can redistribute it and/or modify 
 ## it under the terms of the GNU General Public License as published by
@@ -34,7 +34,7 @@ def root_user(lang,**kw):
     #~ kw.update(profile='900') # UserProfiles.admin) 
     #~ print 20130219, dd.UserProfiles.items()
     kw.update(profile=dd.UserProfiles.admin) 
-    kw.update(email='root@example.com') 
+    kw.update(email=settings.SITE.demo_email)  # 'root@example.com'
     lang = lang.django_code
     kw.update(language=lang) 
     if lang == 'de':

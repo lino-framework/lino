@@ -36,7 +36,59 @@ to the list of apps yielded by
 More detailed instructions in :doc:`/changes`.
 
 
+Klientengespräche und Gäste in Lino-Welfare (weiter)
+----------------------------------------------------
 
+So. Nachdem wir die oben beschriebenen "kleinen technischen Details" 
+geregelt haben, können wir weitermachen mit dem Empfangsmodul bzw. 
+den Neuerungen im Kalendermodul.
 
+:ref:`welfare.cal.Calendar` hat jetzt ein neues Feld 
+`invite_client`, welches für Klientengespräche angekreuzt ist
+(zumindest in der Demo-Datenbank. Produktionsdaten nach Release manuell 
+anpassen).
 
+Die Demo-Termine hatten keinen Klienten. Jetzt wohl.
+
+Die Tabelle der Gäste eines Termins hat jetzt ein Detail-Layout.
+
+CreateMail didn't work. 
+
+New setting :attr:`lino.ui.Site.demo_email` used by
+:mod:`lino.modlib.system.fixtures.demo` 
+and
+:mod:`lino_welfare.fixtures.demo` 
+
+Lino-Welfare has two new SiteConfig fields client_guestrole and team_guestrole.
+
+In der Demo-Datenbank gibt es jetzt sinnvolere Gastrollen. 
+"Reiseführer" und "Teilnehmer" sind raus.
+Neue Rollen sind "Besucher" und "Kollege". 
+Von der Gastrolle hängt die Formulierung der Einladung ab.
+
+TODO: Templates "Visitor.eml.html" und "Colleague.eml.html"
+
+`jinja_templates` directories versus `config` directories
+---------------------------------------------------------
+
+Until now, all Jinja templates were in 
+`jinja_templates` directories
+while "config files" 
+(such as `.odt` templates for :mod:`lino.mixins.printable`) 
+were in `config` directories.
+Now these trees are merged:
+existing applications must rename each `jinja_templates` directory 
+to `config` 
+(or, if a sibling `config` directory already exists, 
+merge the `jinja_templates` content to `content`).
+
+These directory trees work like Django's `templates` loading algorithm
+but with subtle differences, the biggerst one being that you can 
+have "per-setting" and "local" config trees.
+
+For both types of files Lino has a separate algorithm to load these 
+trees at startup. 
+These algorithms are in :mod:`lino.core.web`
+for Jinja templates and in 
+:mod:`lino.utils.config` for config files directories.
 
