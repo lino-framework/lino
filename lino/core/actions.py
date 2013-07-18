@@ -1041,7 +1041,9 @@ class NotifyingAction(RowAction):
     def run_from_ui(self,obj,ar,**kw):
         kw.update(message=ar.action_param_values.notify_subject)
         kw.update(alert=True)
-        kw = super(NotifyingAction,self).run_from_ui(obj,ar,**kw)
+        kw.update(refresh=True)
+        kw.update(success=True)
+        #~ kw = super(NotifyingAction,self).run_from_ui(obj,ar,**kw)
         self.add_system_note(ar,obj)
         return kw
     

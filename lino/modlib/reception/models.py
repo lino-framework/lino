@@ -59,16 +59,19 @@ class CheckinGuest(dd.NotifyingAction):
     #~ required = dict(states='invited accepted')
     required = dict(user_groups='reception')
     
+    def get_action_permission(self,ar,obj,state):
+        if obj.waiting_since is not None and obj.waiting_until is None:
+            return False
+        return super(CheckinGuest,self).get_action_permission(ar,obj,state)
+    
     def get_notify_subject(self,ar,obj):
         return _("%(partner)s has arrived for %(event)s") % dict(
             event=obj,
            partner=obj.partner)
     
-    #~ def before_row_save(self,row,ar):
-        #~ row.waiting_since = datetime.datetime.now()
-        #~ 
     def run_from_ui(self,obj,ar,**kw):
         obj.waiting_since = datetime.datetime.now()
+        obj.waiting_until = None
         obj.save()
         kw = super(CheckinGuest,self).run_from_ui(obj,ar,**kw)
         return kw
@@ -77,10 +80,15 @@ class CheckinGuest(dd.NotifyingAction):
 #~ class CheckoutGuest(dd.ChangeStateAction,dd.NotifyingAction):
 class CheckoutGuest(dd.NotifyingAction):
     label = _("Checkout")
-    help_text = _("Guest left from welcome queue")
+    help_text = _("Guest left from reception queue")
     show_in_workflow = True
     
     #~ required = dict(states='waiting')
+    
+    def get_action_permission(self,ar,obj,state):
+        if obj.waiting_until is not None:
+            return False
+        return super(CheckoutGuest,self).get_action_permission(ar,obj,state)
     
     def get_notify_subject(self,ar,obj):
         return _("%(partner)s has left for %(event)s") % dict(
@@ -93,8 +101,11 @@ class CheckoutGuest(dd.NotifyingAction):
     def run_from_ui(self,obj,ar,**kw):
         obj.waiting_until = datetime.datetime.now()
         obj.save()
-        kw = super(CheckinGuest,self).run_from_ui(obj,ar,**kw)
+        kw = super(CheckoutGuest,self).run_from_ui(obj,ar,**kw)
         return kw
+        
+cal.Guest.checkout = CheckoutGuest()
+cal.Guest.checkin = CheckinGuest()
 
 
 class ReceptionDesk(cal.Guests):
@@ -102,7 +113,7 @@ class ReceptionDesk(cal.Guests):
     filter = Q(waiting_since__isnull=True,
         state__in=[GuestStates.invited,GuestStates.accepted])
     column_names = 'partner event__user workflow_buttons'
-    checkin = CheckinGuest()
+    #~ checkin = CheckinGuest()
     required = dict(user_groups='reception')
     
 class WaitingGuests(cal.Guests):
@@ -113,7 +124,7 @@ class WaitingGuests(cal.Guests):
         state__in=[GuestStates.invited,GuestStates.accepted])
     column_names = 'waiting_since partner event__user workflow_buttons'
     order_by = ['waiting_since']
-    checkout = CheckoutGuest()
+    #~ checkout = CheckoutGuest()
     required = dict(user_groups='reception integ')
     
 #~ @dd.receiver(dd.post_analyze)

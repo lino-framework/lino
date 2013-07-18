@@ -284,34 +284,9 @@ extlinks = {
   'welfareusermanfr': ('http://welfare-userman.lino-framework.org/fr%s.html', ''),
 }
 
-HGWORK = Path(__file__).ancestor(3).absolute()
-def f(prj,lng=None):
-    if lng:
-        p = Path(HGWORK,prj,'userdocs','.build',lng,'objects.inv')
-    else:
-        p = Path(HGWORK,prj,'userdocs','.build','objects.inv')
-    if p.exists():
-        if lng:
-            k = '%suser%s' % (prj,lng)
-            url = 'http://%s-user.lino-framework.org/%s' % (prj,lng)
-        else:
-            k = '%suser' % prj
-            url = 'http://%s-user.lino-framework.org' % prj
-        intersphinx_mapping[k] = (url,p)
-f('welfare','fr')
-f('faggio')
-    
 #~ intersphinx_mapping = {
   #~ 'django': ('http://docs.djangoproject.com', 'http://docs.djangoproject.com/en/dev/objects.inv')
 #~ }
-
-
-#~ HGWORK = DOCSDIR.ancestor(2)
-#~ intersphinx_mapping = dict()
-#~ for n in ('site','north','lino','welfare'):
-    #~ p = Path(HGWORK,n,'docs','.build','objects.inv')
-    #~ if p.exists():
-        #~ intersphinx_mapping[n] = ('http://%s.lino-framework.org' % n,p)
 
 
 

@@ -1107,29 +1107,30 @@ class Events(dd.Table):
     parameters = dict(
         #~ dates_from = dd.DatePickerField(_("Date from"),
         dates_from = models.DateField(_("Date from"),
-            blank=True,null=True,help_text=u"""\
-Nur Termine ab diesem Datum."""),
+            blank=True,null=True,
+            help_text="""Nur Termine ab diesem Datum."""),
         #~ dates_to = dd.DatePickerField(_("until"),
         dates_to = models.DateField(_("until"),
-            blank=True,null=True,help_text=u"""\
-Nur Termine bis zu diesem Datum."""),
-        user = models.ForeignKey(settings.SITE.user_model,
+            blank=True,null=True,
+            help_text="""Nur Termine bis zu diesem Datum."""),
+        user = dd.ForeignKey(settings.SITE.user_model,
             verbose_name=_("Responsible user"),
             blank=True,null=True,
-            help_text=u"""\
-Nur Termine dieses Benutzers."""),
+            help_text="""Nur Termine dieses Benutzers."""),
+        project = dd.ForeignKey(settings.SITE.project_model,
+            blank=True,null=True),
         assigned_to = models.ForeignKey(settings.SITE.user_model,
             verbose_name=_("Assigned to"),
             blank=True,null=True,
-            help_text=u"""\
-Nur Termine, die diesem Benutzer zugewiesen sind."""),
-        state = EventStates.field(blank=True,help_text=u"""\
-Nur Termine in diesem Bearbeitungszustand."""),
+            help_text="""Nur Termine, die diesem Benutzer zugewiesen sind."""),
+        state = EventStates.field(blank=True,
+            help_text="""Nur Termine in diesem Bearbeitungszustand."""),
         unclear = models.BooleanField(_("Unclear events"))
     )
     
     params_layout = """
-    dates_from dates_to user assigned_to state unclear
+    dates_from dates_to user assigned_to state 
+    unclear project
     """
     #~ params_layout = dd.Panel("""
     #~ dates_from dates_to other
@@ -1149,6 +1150,8 @@ Nur Termine in diesem Bearbeitungszustand."""),
             
         if ar.param_values.user:
             qs = qs.filter(user=ar.param_values.user)
+        if settings.SITE.project_model is not None and ar.param_values.project:
+            qs = qs.filter(project=ar.param_values.project)
         if ar.param_values.assigned_to:
             qs = qs.filter(assigned_to=ar.param_values.assigned_to)
 
@@ -1182,6 +1185,9 @@ Nur Termine in diesem Bearbeitungszustand."""),
         if ar.param_values.user:
             yield unicode(ar.param_values.user)
             
+        if settings.SITE.project_model is not None and ar.param_values.project:
+            yield unicode(ar.param_values.project)
+            
         if ar.param_values.assigned_to:
             yield unicode(self.parameters['assigned_to'].verbose_name) + ' ' + unicode(ar.param_values.assigned_to)
 
@@ -1212,6 +1218,9 @@ if settings.SITE.project_model:
     class EventsByProject(Events):
         required = dd.required(user_groups='office')
         master_key = 'project'
+        auto_fit_column_widths = True
+        column_names = 'when_text user summary workflow_buttons'
+
     
 if settings.SITE.user_model:    
   
@@ -1632,7 +1641,7 @@ class Guests(dd.Table):
     column_names = 'partner role workflow_buttons remark event *'
     detail_layout = """
     event partner role
-    state remark
+    state remark workflow_buttons
     outbox.MailsByController
     """
     insert_layout = dd.FormLayout("""
@@ -1655,9 +1664,11 @@ class GuestsByRole(Guests):
 if settings.SITE.is_installed('contacts'):
   
   class GuestsByPartner(Guests):
+      label = _("Presences")
       master_key = 'partner'
       required = dd.required(user_groups='office')
-      column_names = 'event role workflow_buttons remark *'
+      column_names = 'event__when_text workflow_buttons'
+      auto_fit_column_widths = True
 
   class MyPresences(GuestsByPartner):
       required = dd.required(user_groups='office')

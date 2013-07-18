@@ -508,6 +508,7 @@ class Mails(dd.Table):
     required = dd.required(user_level='manager',user_groups='office')
     model = Mail
     column_names = "sent recipients subject * body"
+    hidden_columns = 'body'
     order_by = ["sent"]
     detail_layout = dd.FormLayout("""
     subject project date 

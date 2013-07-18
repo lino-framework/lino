@@ -54,25 +54,39 @@ from lino.modlib.cal.workflows import (TaskStates,
     EventStates,GuestStates)
 
 
-class RejectInvitation(dd.ChangeStateAction,dd.NotifyingAction):
-    label = _("Reject")
-    help_text = _("Reject this invitation.")  
-    required = dict(states='invited accepted') # ,owner=False)
-    
+class InvitationFeedback(dd.ChangeStateAction,dd.NotifyingAction):
+    def get_action_permission(self,ar,obj,state):
+        if obj.event.state != EventStates.scheduled:
+            return False
+        return super(InvitationFeedback,self).get_action_permission(ar,obj,state)
+        
     def get_notify_subject(self,ar,obj):
-        return _("%(guest)s cannot accept invitation %(day)s at %(time)s") % dict(
+        return self.notify_subject % dict(
             guest=obj.partner,
             day=dbutils.dtos(obj.event.start_date),
             time=str(obj.event.start_time))
+            
+class RejectInvitation(InvitationFeedback):
+    label = _("Reject")
+    help_text = _("Reject this invitation.")  
+    required = dict(states='invited accepted') # ,owner=False)
+    notify_subject = _("%(guest)s cannot accept invitation %(day)s at %(time)s")
+    
+class AcceptInvitation(InvitationFeedback):
+    label = _("Accept")
+    help_text = _("Accept this invitation.")  
+    required = dict(states='invited rejected') # ,owner=False)
+    notify_subject = _("%(guest)s confirmed invitation %(day)s at %(time)s")
+    
 
 class ResetEvent(dd.ChangeStateAction):
     label = _("Reset")
     icon_file = 'cancel.png'
     #~ required = dict(states='assigned',owner=True)
-    required = dict(states='scheduled rescheduled',owner=True)
-    help_text=_("Return to Draft state and restart workflow for this event.")
+    required = dict(states='scheduled rescheduled draft took_place')#,owner=True)
+    #~ help_text=_("Return to Draft state and restart workflow for this event.")
   
-    def run_from_ui(self,obj,ar,**kw):
+    def unused_run_from_ui(self,obj,ar,**kw):
         if obj.guest_set.exclude(state=GuestStates.invited).count() > 0:
             def ok():
                 for g in obj.guest_set.all():
@@ -171,26 +185,26 @@ def my_setup_workflows(sender=None,**kw):
         #~ icon_file='book.png',
         #~ help_text=_("User takes responsibility for this event. Planning continues."))
     #~ EventStates.draft.add_transition(TakeAssignedEvent)
-    EventStates.scheduled.add_transition(_("Confirm"), 
+    EventStates.scheduled.add_transition(#_("Confirm"), 
         #~ states='new draft assigned',
         states='suggested draft',
-        owner=True,
+        #~ owner=True,
         icon_file='accept.png',
         help_text=_("Mark this as Scheduled. All participants have been informed."))
     EventStates.took_place.add_transition(
         states='scheduled',
-        owner=True,
+        #~ owner=True,
         help_text=_("Event took place."),
         icon_file='emoticon_smile.png')
     #~ EventStates.absent.add_transition(states='scheduled',icon_file='emoticon_unhappy.png')
     EventStates.rescheduled.add_transition(_("Reschedule"),
-        owner=True,
+        #~ owner=True,
         states='scheduled',icon_file='date_edit.png')
     EventStates.cancelled.add_transition(pgettext(u"calendar event action",u"Cancel"),
-        owner=True,
+        #~ owner=True,
         states='scheduled',
         icon_file='cross.png')
-    #~ EventStates.draft.add_transition(ResetEvent)
+    EventStates.draft.add_transition(ResetEvent)
     
 
 
@@ -204,11 +218,14 @@ def my_setup_workflows(sender=None,**kw):
 
     #~ kw = dict(allow=allow_transition)
     #~ GuestStates.invited.add_transition(_("Invite"),states='_',owner=True)
-    GuestStates.accepted.add_transition(_("Accept"),states='_ invited rejected') # ,owner=False)
+    #~ GuestStates.accepted.add_transition(_("Accept"),states='_ invited rejected') # ,owner=False)
     #~ GuestStates.rejected.add_transition(_("Reject"),states='_ invited',owner=False)
+    GuestStates.rejected.add_transition(AcceptInvitation)
     GuestStates.rejected.add_transition(RejectInvitation)
-    GuestStates.present.add_transition(states='invited accepted',owner=True,allow=event_took_place)
-    GuestStates.absent.add_transition(states='invited accepted',owner=True,allow=event_took_place)
+    GuestStates.present.add_transition(states='invited accepted',#owner=True,
+        allow=event_took_place)
+    GuestStates.absent.add_transition(states='invited accepted',#owner=True,
+        allow=event_took_place)
     
     
     #~ @dd.receiver(dd.post_save, sender=site.modules.cal.Event)

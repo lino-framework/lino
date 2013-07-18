@@ -1,0 +1,12 @@
+=================================
+20130718 (Thursday, 18 July 2013)
+=================================
+
+- In :menuselection:`Klient --> Detail --> Kalender` haben wir jetzt 
+  neben den Terminen auch die Anwesenheiten (:ref:`welfare.cal.GuestsByPartner`).
+  
+- Aktionen "Checkin" und "Checkout" sind jetzt von jedem Gast aus verfügbar.
+
+- Neues Filterkriterium "Klient" in Globalsicht aller Termine 
+  (:ref:`welfare.cal.Events`):
+  
