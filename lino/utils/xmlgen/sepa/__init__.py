@@ -13,7 +13,7 @@
 ## along with Lino; if not, see <http://www.gnu.org/licenses/>.
 
 """
-A set of HTML generator tags for building HTML documents.
+A set of generator tags for building SEPA documents.
 
 Usage:
 
@@ -26,7 +26,6 @@ Usage:
 ...     E.Grpg("MIXD") ,
 ...     E.InitgPty(E.Nm("ÖSHZ Nispert")) )
 ...   )
-
 >>> print E.tostring_pretty(x)
 <pain.001.001.02 xmlns="urn:iso:std:iso:20022:tech:xsd:pain.001.001.02">
 <GrpHdr>

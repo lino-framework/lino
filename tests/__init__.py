@@ -39,7 +39,8 @@ class DocsTests(LinoTestCase):
 class UtilsTests(LinoTestCase):
     def test_01(self): self.run_simple_doctests('lino/utils/__init__.py')
     def test_02(self): self.run_simple_doctests('lino/utils/html2odf.py')
-    def test_04(self): self.run_simple_doctests('lino/utils/xmlgen/html.py')
+    def test_xmlgen_html(self): self.run_simple_doctests('lino/utils/xmlgen/html.py')
+    def test_xmlgen_sepa(self): self.run_simple_doctests('lino/utils/xmlgen/sepa.py')
     def test_05(self): self.run_simple_doctests('lino/utils/memo.py')
     def test_06(self): self.run_simple_doctests('lino/utils/html2xhtml.py')
     def test_07(self): self.run_simple_doctests('lino/utils/demonames.py')
