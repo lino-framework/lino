@@ -15,11 +15,10 @@
 """
 This module is for managing a reception desk and a waiting queue: 
 register clients into a waiting queue 
-as they present themself at a reception desk (Empfangsschalter),
-and unregister them when they leave again. 
+as they present themselves at a reception desk (Empfangsschalter),
+and unregister them when they leave again.
 
-Users (i.e. a social workers, a physicians, consultants...)
-can see a list of the people in the waiting room.
+User documentation see e.g. :ref:`welfare.reception`.
 
 """
 from lino import ad

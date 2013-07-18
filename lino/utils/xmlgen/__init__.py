@@ -187,6 +187,7 @@ class Namespace(object):
     def define_names(self,names):
         for tag in names.split():
             iname = tag.replace("-","_")
+            iname = iname.replace(".","_")
             #~ if iname in ('class','for','in','def'):
             if iname in RESERVED_WORDS:
                 iname += "_"

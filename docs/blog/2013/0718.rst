@@ -10,3 +10,70 @@
 - Neues Filterkriterium "Klient" in Globalsicht aller Termine 
   (:ref:`welfare.cal.Events`):
   
+- Started user documentation page  
+  :ref:`welfare.reception`.
+  
+
+SEPA is coming
+--------------
+
+There are only 197 days until the SEPA migration end date 
+(01/02/2014).
+It's time for me to dive into this because 
+:mod:`lino.modlib.finan` should of course 
+be able to generate payment orders based 
+on the registered purchase invoices and communicate them to the bank.
+
+- http://www.sepabelgium.be 
+  ► `Virements <http://www.sepabelgium.be/fr/node/63>`_
+  ► `Les virements et SEPA <http://www.sepabelgium.be/fr/node/228>`_
+  ► `Shortcut to The SEPA Credit Transfert Scheme <http://www.sepabelgium.be/fr/node/199>`_:
+  "With the launch of the SEPA Credit Transfer, EU banks are the 
+  first in the world to deploy the global UNIFI (ISO 20022) XML message 
+  standard for mass euro payment transactions."
+
+Another more detailed document (FeBelFin, 
+`Message XML pour l’ordre de virement --
+Directives d’implémentation Version 1.3
+<http://www.febelfin.be/sites/default/files/files/Astandard-credittransfer-XML-v13-FR.pdf>`_) says:
+
+    La description des modèles de document UNIFI en XML est réalisée au sein de schémas. Un
+    schéma utilise un langage de description spécifique (XSD). Les schémas permettent de décrire les
+    balises qui sont présentes dans le document, la structure et l’enchaînement de ces balises
+    (hiérarchie des balises) ainsi que les codes autorisés pour certaines données, le nombre
+    d’occurrences possibles, la présence obligatoire ou facultative de certaines données...
+    Le XSD général pour pain.001.001.02 peut être obtenu auprès de www.iso20022.org > Catalogue
+    of UNIFI Messages > Payments > Payment Inititation > CustomerCreditTransferInitiationV02
+    Un fichier qui contient un message XML pain.001.001.02 suit la structure suivante::
+    
+        <?xml version="1.0" encoding="UTF-8"?>
+        <Document xmlns="urn:iso:std:iso:20022:tech:xsd:pain.001.001.02"
+          xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+          <pain.001.001.02>
+            message contenu...
+          </pain.001.001.02>
+        </Document>
+
+Yes, that's it! It's the XSD I want! 
+`ISO 20022 Payments messages <http://www.iso20022.org/payments_messages.page>`_
+But oops, that file appearently isn't available at the moment.
+
+In fact... where other payment messages have a link "Schema" 
+to a .zip containing an xsd file, 
+They say "To be provided by CBI".
+Where CBI stands for "Corporate Banking Interbancario"
+(according to 
+`Message Definition Report - Part 1
+<http://www.iso20022.org/documents/general/Payments_AFI_MDR_January2013.zip>`_).
+
+After some time these problems vanished and I could download 
+two versions of .xsd files for "CustomerCreditTransferInitiation":
+
+- `pain.001.001.02.xsd`
+  downloaded from http://wiki.xmldation.com/General_Information/ISO_20022/pain.001
+
+- `pain.001.001.05.xsd`   
+  downloaded from 
+  http://www.iso20022.org/payments_messages.page  20130718
+
+New module :mod:`lino.utils.xmlgen.sepa`.

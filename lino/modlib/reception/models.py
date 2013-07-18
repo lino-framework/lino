@@ -47,8 +47,14 @@ from lino.modlib.reception import App
 #~ add = GuestStates.add_item
 #~ add('21', _("Waiting"),'waiting')
 
-dd.inject_field('cal.Guest','waiting_since',models.DateTimeField(_("Waiting since"),editable=False,blank=True,null=True))
-dd.inject_field('cal.Guest','waiting_until',models.DateTimeField(_("Waiting until"),editable=False,blank=True,null=True))
+dd.inject_field('cal.Guest','waiting_since',
+    models.DateTimeField(_("Waiting since"),
+    editable=False,blank=True,null=True,
+    help_text = _("Time when the visitor arrived (checked in).")))
+dd.inject_field('cal.Guest','waiting_until',
+    models.DateTimeField(_("Waiting until"),
+    editable=False,blank=True,null=True,
+    help_text = _("Time when the visitor left (checked out).")))
 
 #~ class CheckinGuest(dd.ChangeStateAction,dd.NotifyingAction):
 class CheckinGuest(dd.NotifyingAction):
@@ -108,21 +114,22 @@ cal.Guest.checkout = CheckoutGuest()
 cal.Guest.checkin = CheckinGuest()
 
 
-class ReceptionDesk(cal.Guests):
-    label = _("Reception desk")
+class ExpectedGuests(cal.Guests):
+    label = _("Expected Guests")
     filter = Q(waiting_since__isnull=True,
         state__in=[GuestStates.invited,GuestStates.accepted])
-    column_names = 'partner event__user workflow_buttons'
+    column_names = 'partner event__user event__summary workflow_buttons'
     #~ checkin = CheckinGuest()
     required = dict(user_groups='reception')
     
 class WaitingGuests(cal.Guests):
     label = _("Waiting guests")
+    help_text = _("Shows the visitors in the waiting room.")
     #~ known_values = dict(state=GuestStates.waiting)
     filter = Q(waiting_since__isnull=False,
         waiting_until__isnull=True,
         state__in=[GuestStates.invited,GuestStates.accepted])
-    column_names = 'waiting_since partner event__user workflow_buttons'
+    column_names = 'waiting_since partner event__user event__summary workflow_buttons'
     order_by = ['waiting_since']
     #~ checkout = CheckoutGuest()
     required = dict(user_groups='reception integ')
