@@ -120,10 +120,10 @@ class ExpectedGuests(cal.Guests):
         state__in=[GuestStates.invited,GuestStates.accepted])
     column_names = 'partner event__user event__summary workflow_buttons'
     #~ checkin = CheckinGuest()
-    required = dict(user_groups='reception')
+    required = dd.required(user_groups='reception')
     
 class WaitingGuests(cal.Guests):
-    label = _("Waiting guests")
+    label = _("Waiting Guests")
     help_text = _("Shows the visitors in the waiting room.")
     #~ known_values = dict(state=GuestStates.waiting)
     filter = Q(waiting_since__isnull=False,
@@ -132,7 +132,7 @@ class WaitingGuests(cal.Guests):
     column_names = 'waiting_since partner event__user event__summary workflow_buttons'
     order_by = ['waiting_since']
     #~ checkout = CheckoutGuest()
-    required = dict(user_groups='reception integ')
+    required = dd.required(user_groups='reception integ debts')
     
 #~ @dd.receiver(dd.post_analyze)
 #~ def setup_workflows(sender=None,dispatch_uid='lino.modlib.welcome.setup_workflows',**kw):
@@ -144,7 +144,7 @@ class WaitingGuests(cal.Guests):
 def setup_main_menu(site,ui,profile,m):
     #~ m  = m.add_menu("office",lino.OFFICE_MODULE_LABEL)
     m  = m.add_menu("reception",_(App.verbose_name))
-    m.add_action(ReceptionDesk)
+    m.add_action(ExpectedGuests)
     m.add_action(WaitingGuests)
 
 dd.add_user_group('reception',_(App.verbose_name))

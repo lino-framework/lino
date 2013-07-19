@@ -963,8 +963,7 @@ class Site(lino.Site):
         """
         Return a chunk of html to be displayed in the main area of the admin index.
         This is being called only if :meth:`get_main_action` returns `None`.
-        The default implementation returns the message 
-        "You are now in the admin section..."
+        The default implementation renders the `admin_main.html` template.
         """
         from lino.core import web
         return web.render_from_request(request,'admin_main.html')

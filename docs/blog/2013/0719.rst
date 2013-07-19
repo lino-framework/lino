@@ -20,3 +20,8 @@ The following snippet reproduced this bug:
 'name_column,client_state'
 
 
+Wrote a new script :mod:`lino.utils.xmlgen.sepa.validate` 
+which I used for developing a template for TIM to render 
+a payment order as SEPA XML.
+
+

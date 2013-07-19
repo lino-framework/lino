@@ -404,6 +404,7 @@ class AdminIndex(View):
     Similar to PlainIndex
     """
     def get(self, request, *args, **kw):
+        #~ logger.info("20130719 AdminIndex")
         settings.SITE.startup()
         ui = settings.SITE.ui
         if settings.SITE.user_model is not None:
@@ -415,6 +416,7 @@ class AdminIndex(View):
 
 class MainHtml(View):
     def get(self, request, *args, **kw):
+        #~ logger.info("20130719 MainHtml")
         settings.SITE.startup()
         ui = settings.SITE.ui
         rv = ui.success(html=settings.SITE.get_main_html(request))
