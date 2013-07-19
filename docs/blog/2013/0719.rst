@@ -1,0 +1,22 @@
+===============================
+20130719 (Friday, 19 July 2013)
+===============================
+
+Discovered an old bug: the csv view failed for tables which contained 
+at least one :class:`DisplayField <lino.core.fields.DisplayField>`.
+The following snippet reproduced this bug:
+
+>>> import os
+>>> os.environ['DJANGO_SETTINGS_MODULE'] = 'lino_welfare.settings.test'
+>>> from pprint import pprint
+>>> from django.test import Client
+>>> from lino.runtime import *
+>>> client = Client()
+>>> url = 'http://welfare-demo.lino-framework.org/api/newcomers/NewClients?fmt=csv'
+>>> res = client.get(url,REMOTE_USER='rolf')
+>>> pprint(res.status_code)
+200
+>>> pprint(res.content[:24])
+'name_column,client_state'
+
+

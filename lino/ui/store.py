@@ -106,7 +106,10 @@ class StoreField(object):
         return "%s '%s'" % (self.__class__.__name__, self.name)
         
     def column_names(self):
-        yield self.options['name']
+        #~ if not self.options.has_key('name'):
+            #~ raise Exception("20130719 %s has no option 'name'" % self)
+        #~ yield self.options['name']
+        yield self.name
         
     def value_from_object(self,obj,ar):
         return self.full_value_from_object(obj,ar)

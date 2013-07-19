@@ -224,17 +224,6 @@ class BankStatementsByJournal(BankStatements,ledger.ByJournal):
     #~ master_key = 'journal' # see django issue 10808
     params_panel_hidden = True
                   
-    #~ @classmethod
-    #~ def get_title_base(self,ar):
-        #~ return unicode(ar.master_instance)
-                  
-
-
-
-    
-#~ class BankStatements(journals.DocumentsByJournal):
-    #~ model = BankStatement
-    #~ column_names = "number date balance1 balance2 ledger_remark value_date"
    
     
     
