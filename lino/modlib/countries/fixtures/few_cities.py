@@ -83,28 +83,33 @@ def objects():
     def be_province(de,fr,nl):
         return City(country=BE,type=CityTypes.province,
             **babel_values('name',de=de,fr=fr,nl=nl,en=fr))
+    
+    def be_city(zip_code,de,fr,nl,en,**kw):
+        kw.update(babel_values('name',de=de,fr=fr,nl=nl,en=en))
+        return City(country=BE,zip_code=zip_code,type=CityTypes.city,**kw)
+            
     yield be_province("Antwerpen","Anvers","Antwerpen")
     yield be_province("Luxemburg","Luxembourg","Luxemburg")
     yield be_province("Limburg","Limbourg","Limburg")
     yield be_province("Namür","Namur","Namen")
-    yield be_province("Lüttich","Liège","Luik")
+    
+    prov = be_province("Lüttich","Liège","Luik")
+    yield prov
+    yield be_city('4000',"Lüttich","Liège","Luik","Liège",parent=prov)
+    yield be_city('4750',"Bütgenbach","Butgenbach","Butgenbach","Butgenbach",parent=prov)
+    yield be_city('4760',"Büllingen","Bullange","Büllingen","Büllingen",parent=prov)
+    yield be_city('4780',"Sankt Vith","Saint-Vith","Sankt Vith","Sankt Vith",parent=prov)
+    yield be_city('4780',"Recht","Recht","Recht","Recht",parent=prov)
+    
     yield be_province("Hennegau","Hainaut","Henegouwen")
     yield be_province("Wallonisch-Brabant","Brabant wallon","Waals-Brabant")
     yield be_province("Flämisch-Brabant","Brabant flamant","Vlaams-Brabant")
     yield be_province("Ostflandern","Flandre de l'Est","Oost-Vlaanderen")
     yield be_province("Westflandern","Flandre de l'Ouest","West-Vlaanderen")
     
-    def be_city(zip_code,de,fr,nl,en):
-        return City(country=BE,zip_code=zip_code,type=CityTypes.city,
-            **babel_values('name',de=de,fr=fr,nl=nl,en=en))
-            
     yield be_city('1000',"Brüssel","Bruxelles","Brussel","Brussels")
-    yield be_city('4000',"Lüttich","Liège","Luik","Liège")
     yield be_city('7000',"Bergen","Mons","Bergen","Mons")
     yield be_city('8400',"Ostende","Ostende","Oostende","Ostende")
-    yield be_city('4750',"Bütgenbach","Butgenbach","Butgenbach","Butgenbach")
-    yield be_city('4760',"Büllingen","Bullange","Büllingen","Büllingen")
-    yield be_city('4780',"Sankt Vith","Saint-Vith","Sankt Vith","Sankt Vith")
     yield be_city('5000',"Namür","Namur","Namen","Namur")
     
     harjumaa = make_city('EE','Harjumaa',type=CityTypes.county)

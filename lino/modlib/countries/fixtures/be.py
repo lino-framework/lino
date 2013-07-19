@@ -2068,7 +2068,7 @@ belgian_cities = u"""
 7804 Rebaix 
 1430 Rebecq 
 1430 Rebecq-Rognon 
-4780 Recht 
+# 4780 Recht
 6800 Recogne 
 6890 Redu 
 2840 Reet 
