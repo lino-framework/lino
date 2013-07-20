@@ -278,6 +278,21 @@ class UserProfiles(ChoiceList):
 
 
 #~ def default_required(): return dict(auth=True)
+class Requirements(object):
+    """
+    Not yet used. TODO: implement requirements as a class. 
+    - handle conversions (like accepting both list and string for `user_groups` ),
+    - implement loosen_requirements as __or__() 
+    - implement add_requirements as __and__() 
+    """
+    user_level = None
+    user_groups = None
+    states = None
+    allow = None
+    auth = True
+    owner = None
+    
+
 
 def make_permission_handler(*args,**kw):
     """
@@ -354,8 +369,7 @@ def make_view_permission_handler(*args,**kw):
     
 def make_view_permission_handler_(
     actor,readonly,debug_permissions,
-    user_level=None,user_groups=None,allow=None,auth=False,
-    owner=None,states=None):
+    user_level=None,user_groups=None,allow=None,auth=False,owner=None,states=None):
     #~ if states is not None:
         #~ logger.info("20121121 ignoring required states %s for %s",states,actor)
     #~ if owner is not None:
@@ -390,8 +404,8 @@ def make_view_permission_handler_(
                     level = getattr(profile,g+'_level')
                     if level >= user_level:
                         return True
-                    elif debug_permissions:
-                        logger.info("20130704 level %r < %r",level,user_level)
+                    #~ elif debug_permissions:
+                        #~ logger.info("20130704 level %r < %r",level,user_level)
                 return False
     
         elif user_level is not None:
@@ -426,7 +440,7 @@ def make_view_permission_handler_(
 
 def make_permission_handler_(
     elem,actor,readonly,debug_permissions,
-    user_level=None,user_groups=None,states=None,allow=None,owner=None,auth=False):
+    user_level=None,user_groups=None,allow=None,auth=False,owner=None,states=None):
         
     #~ if str(actor) == 'courses.PendingCourseRequests':
         #~ if allow is None: raise Exception("20130424")

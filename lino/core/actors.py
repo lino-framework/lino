@@ -79,8 +79,8 @@ def register_actor(a):
     #~ actors_dict[a.actor_id] = a
     actors_list.append(a)
     return a
-  
-    
+
+
 def get_default_required(**kw):
     #~ if not kw.has_key('auth'):
         #~ kw.update(auth=True)

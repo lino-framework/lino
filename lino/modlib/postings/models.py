@@ -95,7 +95,7 @@ class Posting(mixins.AutoUser,mixins.ProjectRelated,mixins.Controllable):
     
 
 class Postings(dd.Table):
-    required=dict(user_level='manager')
+    required = dd.Required(user_level='manager',user_groups='office')
     model = Posting
     column_names = 'date user owner partner *'
     order_by = ['date']
@@ -111,13 +111,13 @@ class Postings(dd.Table):
     
     
 class MyPostings(Postings,mixins.ByUser):
-    required = dict(user_groups='office')
+    required = dd.Required(user_groups='office')
     #~ required = dict()
     #~ master_key = 'owner'
     column_names = 'date partner state workflow_buttons *'
   
 class PostingsByState(Postings):
-    required = dict(user_level='secretary')
+    required = dd.Required(user_groups='office',user_level='secretary')
     column_names = 'date user partner workflow_buttons *'
     
 class PostingsReady(PostingsByState):
@@ -133,17 +133,17 @@ class PostingsSent(PostingsByState):
     known_values = dict(state=PostingStates.sent)
     
 class PostingsByController(Postings):
-    required = dict()
+    required = dd.Required(user_groups='office')
     master_key = 'owner'
     column_names = 'date partner state workflow_buttons *'
   
 class PostingsByPartner(Postings):
-    required = dict()
+    required = dd.Required(user_groups='office')
     master_key = 'partner'
     column_names = 'date owner state workflow_buttons *'
     
 class PostingsByProject(Postings):
-    required = dict()
+    required = dd.Required(user_groups='office')
     master_key = 'project'
     column_names = 'date partner state workflow_buttons *'
     

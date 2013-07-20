@@ -286,6 +286,7 @@ def add_user_group(name,label):
             g.text += " & " + unicode(label)
     
 from lino.core.actors import get_default_required as required
+Required = required
     
 class PseudoRequest:
     def __init__(self,username):

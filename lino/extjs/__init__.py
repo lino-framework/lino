@@ -912,7 +912,8 @@ tinymce.init({
                 #~ new_actors_list.append(a)
         #~ actors_list = new_actors_list
         
-        actors_list = [a for a in actors_list if a.default_action.get_view_permission(jsgen._for_user_profile)]
+        actors_list = [a for a in actors_list 
+            if a.default_action.get_view_permission(jsgen._for_user_profile)]
         
         #~ actors_list = [a for a in actors_list if a.get_view_permission(jsgen._for_user)]
           
@@ -930,20 +931,20 @@ tinymce.init({
         action_param_panels = set()
         def add(res,collector,fl,formpanel_name):
             # fl : a FormLayout
-            if fl is not None:
-                lh = fl.get_layout_handle(settings.SITE.ui)
-                if True: # 20121130 why was this?
-                    for e in lh.main.walk():
-                        e.loosen_requirements(res)
-                else:
-                    lh.main.loosen_requirements(res)
-                if fl in collector:
-                    pass
-                    #~ fl._using_actors.append(actor)
-                else:
-                    fl._formpanel_name = formpanel_name
-                    #~ fl._using_actors = [actor]
-                    collector.add(fl)
+            if fl is None: return
+            lh = fl.get_layout_handle(settings.SITE.ui)
+            if True: # 20121130 why was this?
+                for e in lh.main.walk():
+                    e.loosen_requirements(res)
+            else:
+                lh.main.loosen_requirements(res)
+            if fl in collector:
+                pass
+                #~ fl._using_actors.append(actor)
+            else:
+                fl._formpanel_name = formpanel_name
+                #~ fl._using_actors = [actor]
+                collector.add(fl)
                     
         #~ assert user == jsgen._for_user
         assert profile == jsgen._for_user_profile
@@ -1238,14 +1239,15 @@ tinymce.init({
         yield "});"
         yield ""
       
-    #~ def js_render_FormPanelSubclass(self,dh,user):
     def js_render_FormPanelSubclass(self,dh):
         
         tbl = dh.layout._datasource
         if not dh.main.get_view_permission(jsgen._for_user_profile):
             msg = "No view permission for main panel of %s :" % dh.layout._formpanel_name
-            msg += " actor %s requires %s, but main requires %s)" % (tbl,tbl.required,dh.main.required)
-            raise Exception(msg)
+            msg += " main requires %s, but actor %s requires %s)" % (dh.main.required,tbl,tbl.required)
+            #~ raise Exception(msg)
+            logger.warning(msg)
+            return 
         
         yield ""
         yield "Lino.%s = Ext.extend(Lino.FormPanel,{" % dh.layout._formpanel_name

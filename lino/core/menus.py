@@ -291,15 +291,12 @@ class Menu(MenuItem):
         """
         for mi in self.items:
             mi.compress()
+            
         newitems = []
+        
         for mi in self.items:
             if isinstance(mi,Menu):
-                #~ if len(mi.items) == 1:
-                    #~ newitems.append(mi.items[0])
-                #~ elif len(mi.items) > 1:
-                    #~ newitems.append(mi)
-                #~ if len(mi.items) > 0:
-                if has_items(mi) > 0:
+                if has_items(mi):
                     if not self.avoid_lonely_items:
                         newitems.append(mi)
                     elif len(mi.items) == 1:
@@ -312,6 +309,7 @@ class Menu(MenuItem):
                         newitems.append(mi)
             else:
                 newitems.append(mi)
+                
         self.items = newitems
                 
     def add_action(self,*args,**kw):
@@ -346,7 +344,8 @@ class Menu(MenuItem):
         return self.add_item_instance(MenuItem(name,label,**kw))
         
     def add_separator(self,label,**kw):
-        return self.add_item_instance(MenuItem(None,label,**kw))
+        if len(self.items) > 0 and not self.items[-1].label.startswith('-'):
+            return self.add_item_instance(MenuItem(None,label,**kw))
         
     def add_menu(self,name,label,**kw):
         return self.add_item_instance(Menu(self.user_profile,name,label,self,**kw))

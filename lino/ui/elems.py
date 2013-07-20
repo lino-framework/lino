@@ -450,21 +450,54 @@ class LayoutElement(VisibleComponent):
         
     def loosen_requirements(self,actor):
         """
-        Retain only those requirements of obj which are also in actor.
+        Retain only those requirements of `self` which are 
+        also in `actor`.
+        
+        For example an InsertFormPanel has initially the requirements 
+        of the actor who defines it. The actor may not be visible to the current user. 
+        But the panel may be used by other actors which are visible 
+        because they have with less requirements.
         """
+        #~ if str(self.layout_handle.layout._datasource) == 'cal.Guests':
+            #~ logger.info("20130720 %s loosens requirements from %s",self.layout_handle.layout,actor)
         if self.layout_handle.layout._datasource == actor:
-            return 
+            return # nothing to loosen
+            
+        
         #~ kw = actor.required
         new = dict()
-        loosened = set()
+        loosened = False
         for k,v in self.required.items():
-            if actor.required.has_key(k):
+            if k == 'user_groups': # 
+                """
+                loosening user_groups requirements means to *add* them
+                """
+                if actor.required.has_key(k):
+                    user_groups = actor.required[k]
+                    if isinstance(user_groups,basestring):
+                        user_groups = user_groups.split()
+                    if isinstance(self.required[k],basestring):
+                        self.required[k] = self.required[k].split()
+                    for group in user_groups:
+                        if not group in self.required[k]:
+                            self.required[k].append(group)
+                            loosened = True
+                    #~ self.required[k] = ' '.join(set(actor.required[k].split() + self.required[k].split()))
+                else:
+                    del self.required[k]
+                    loosened = True
+            elif actor.required.has_key(k):
                 if actor.required[k] < v:
-                    loosened.add(k)
+                    loosened = True
                     self.required[k] = actor.required[k]
             else:
-                loosened.add(k)
+                loosened = True
                 del self.required[k]
+            
+        #~ if self.layout_handle.layout._datasource == actor:
+            #~ if loosened:
+                #~ raise Exception("20130720 Expected nothing to loosen")
+            #~ return # nothing to loosen
             
         #~ for k,v in actor.required.items():
             #~ new[k] = v
@@ -473,10 +506,13 @@ class LayoutElement(VisibleComponent):
                     #~ removed.add(k)
             #~ else:
                 #~ removed.add(k)
+        #~ if str(actor) == 'cal.Guests':
+            #~ logger.info("20130720 loosen_requirements %r of %s from %s",','.join(loosened),self.layout_handle.layout,actor)
         if loosened:
             #~ self.required = new
             self.install_permission_handler()
-            #~ logger.info("20121116 loosened requirements %s using %s by %s",,self.layout_handle.layout,actor)
+            #~ if str(actor) == 'cal.Guests':
+                #~ logger.info("20121116 loosened requirements %s of %s from %s",loosened,self.layout_handle.layout,actor)
             #~ logger.info("20121116 %s uses %s loosening requirements %s",actor,self.layout_handle.layout,','.join(loosened))
             #~ if self.layout_handle.layout._datasource != actor:
                 #~ raise Exception("%s != %s" % (self.layout_handle.layout._datasource,actor))

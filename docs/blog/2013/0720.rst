@@ -39,3 +39,50 @@ This was because watch_tim set
 to `1990-01-01` instead of `Coaching.start_date`.
 
 Updated the documentation about :ref:`dpy` which was very scattered.
+
+
+
+Permission problem for Theresia
+-------------------------------
+
+A third subtle bug.
+
+When logging in as Theresia on the Lino-Welfare demo, then I got 
+a traceback
+
+  No view permission for main panel of reception.ExpectedGuests.InsertFormPanel : 
+  main requires {'auth': True, 'user_groups': u'office'}, 
+  but actor cal.Guests requires {'user_level': u'admin', 'auth': True, 'user_groups': u'office'})
+
+When I disabled this security check, then it generated the following code::
+
+    Lino.reception.ExpectedGuests.insertPanel = Ext.extend(Lino.reception.ExpectedGuests.InsertFormPanel,{
+      empty_title: "Neu Expected Guests",
+      hide_navigator: true,
+      ls_bbar_actions: [ { "itemId": "post", "menu_item_text": "Erstellen", "tooltip": "Datensatz erstellen und dann im Detail-Fenster \u00f6ffnen", "panel_btn_handler": function(panel){panel.save(null,true,'post')}, "text": "Erstellen", "overflowText": "Erstellen", "auto_save": false }, { "itemId": "poststay", "menu_item_text": "Erstellen ohne Detail", "tooltip": "Nach Erstellen des Datensatzes kein Detail-Fenster \u00f6ffnen", "panel_btn_handler": function(panel){panel.save(null,false,'poststay')}, "text": "Erstellen ohne Detail", "overflowText": "Erstellen ohne Detail", "auto_save": false } ],
+      ls_url: "/reception/ExpectedGuests",
+      action_name: "insert",
+      initComponent : function() {
+        this.ls_detail_handler = Lino.reception.ExpectedGuests.detail;
+        this.ls_insert_handler = Lino.reception.ExpectedGuests.insert;
+        Lino.reception.ExpectedGuests.insertPanel.superclass.initComponent.call(this);
+      }
+    });
+
+which failed because a `Lino.reception.ExpectedGuests.InsertFormPanel` 
+has not been defined.
+
+The reason was a bug in Lino's requirement arithmethics: 
+:meth:`lino.ui.elems.LayoutElement.loosen_requirements`
+must treat `user_groups` differently than `user_level`.
+There are probably more bugs like this, and the 
+only real solution will be a class 
+:class:`lino.utils.auth.Requirements`.
+But that's not urgent.
+
+
+And finally Theresia revealed another bug:
+the :menuselection:`Calendar` menu didn't 
+suppress separators when they were useless because there were no 
+items to separate (which may happen due to permission requirements).
+
