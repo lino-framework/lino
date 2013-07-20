@@ -33,14 +33,13 @@ It is hosted in collaboration with
 Double Dump Test
 ----------------
 
-A `Double Dump Test` is a method to test 
-for possible database problems e.g. after 
-a :ref:`datamig`: 
-a first dump writes a picture of the database to a Python 
-fixture `a.py`, then we use `manage.py initdb a` to load that picture 
-to the database, then perform a second dump to a fixture `b.py`. 
-And then we launch `diff a.py b.py` to veryfy that both pictures are identical.
-    
+A `Double Dump Test` is a method to test for possible problems e.g. after a :ref:`datamig`: 
+we make a first dump of the database to a Python fixture `a.py`, 
+then we load that picture to the database, 
+then we make a second dump to a fixture `b.py`. 
+And finally we launch `diff a.py b.py` to verify that both pictures are identical.
+See :ref:`dpy` for details.
+
 
 .. _patrols: 
 

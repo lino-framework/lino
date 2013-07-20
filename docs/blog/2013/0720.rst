@@ -12,13 +12,30 @@ get() returned more than one City --
 it returned 2! Lookup parameters were {'zip_code__exact': u'4780'}"
 because both Recht and Sankt Vith have the same zip code 4780.
 
-It took me some time to find a rather subtle pitfall:
+And another rather subtle pitfall which took me some time to find:
 
-The RequestFields in 
-:mod:`UsersWithClients <lino_welfare.modlib.pcsw.UsersWithClients>`
-sometimes used some date in the past.
+Users complained that when 
+clicking on one of the RequestFields in 
+:ref:`UsersWithClients <welfare.pcsw.UsersWithClients>`
+to open the correspondingly filtered list of 
+:ref:`Clients <welfare.pcsw.Clients>`,
+Lino sometimes used some date in the past for the observed period.
 This was because the columns of this table are being dynamically 
 built when `database_ready`, and in that signal handler I use a 
 variable `today` which holds the current date.
-And of course I must evaluate `today` for each
-request, not only once at the beginning of the handler.
+And that variable, I initialized it only once at the beginning of 
+the handler. But of course I must evaluate it for each request.
+
+Migration
+---------
+
+Updated :func:`lino_welfare.migrate.migrate_from_1_1_7`.
+
+WARNING Abandoning with 57 unsaved instances from north.dpy_tmp_70496696:
+- pcsw.Coaching [u'Begleitungsperiode endet bevor sie startet.'] (57 object(s) with primary key 3639, 6145, 6172, 6178, 6181, 6192, 6201, 6236, 6242, 6243, 7155, 7167, 7171, 7267, 7290, 7297, 7327, 7336, 7338, 7349, 7352, 7356, 7359, 7360, 7362, 7364, 7365, 7366, 7372, 7373, 7374, 7375, 7376, 7377, 7378, 7379, 7380, 7381, 7382, 7383, 7384, 7385, 7386, 7387, 7388, 7389, 7390, 7391, 7392, 7393, 7395, 7396, 7397, 7398, 7400, 7521, 7522)
+
+This was because watch_tim set 
+`end_date` of the primary coaching of non-coached clients
+to `1990-01-01` instead of `Coaching.start_date`.
+
+Updated the documentation about :ref:`dpy` which was very scattered.

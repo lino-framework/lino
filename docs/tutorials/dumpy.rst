@@ -1,50 +1,19 @@
-===============
-Python fixtures
-===============
+========================================
+Playing with intelligent Python fixtures
+========================================
 
-:doc:`Python fixtures </topics/dumpy>` 
-are one of Lino's the important features.
-Concept and implementation is fully the author's idea, and we 
-didn't yet find a similar approach in any other framework.
+Python fixtures are one of Lino's important features.
+We suppose that you have read at least the beginning of
+their documentation article :ref:`dpy`.
+In this tutorial we are going to show how to use *intelligent fixtures*.
 
-
-Fixtures
---------
-
-A fixture is a portion of data (a collection of data records 
-in one or several tables) which can be loaded into a database.
-Read more about fixtures in the `Providing initial data for models
-<https://docs.djangoproject.com/en/dev/howto/initial-data/>`_
-article of the Django documentation.
-
-Django's documentation 
-says that "fixtures can be written as XML, YAML, or JSON documents". 
-Lino adds another format to this list: 
-Python modules. 
-
-`.py` fixtures are pure Python modules which define 
-a function named ``objects`` which is expected to return 
-(or `yield <http://stackoverflow.com/questions/231767/the-python-yield-keyword-explained>`_) 
-the list of Model instances you want to create. A fictive minimal Example::
-
-  from myapp.models import Foo
-  def objects():
-      yield Foo(name="First")
-      yield Foo(name="Second")
-
-If you are curious, read more details in :doc:`/topics/dumpy`.
-
-
-More about the :mod:`initdb <lino.management.commands.initdb>` command
-----------------------------------------------------------------------
+The :mod:`initdb <lino.management.commands.initdb>` command
+-----------------------------------------------------------
 
 Remember that we told you (in :doc:`/admin/install`) to "prepare your database" 
 by running the command::
 
   python manage.py initdb std all_countries few_cities all_languages props demo 
-  
-The words "std", "all_countries", "few_cities" etc. are names of some *fixtures* 
-included with Lino.
   
 The :xfile:`manage.py` Python script is the standard Django interface to 
 run management commands.
@@ -52,6 +21,11 @@ I you don't know what *Django management commands* are,
 please read this:
 `django-admin.py and manage.py <https://docs.djangoproject.com/en/dev/ref/django-admin/>`_.
 
+The words "std", "all_countries", "few_cities" etc. 
+are names of some *demo fixtures* included with Lino. 
+They are "intelligent" Python fixtures, not dumb database dumps!
+"Intelligent" means that a human has written them.
+  
 The :mod:`initdb <lino.management.commands.initdb>` 
 command is a 
 `custom management command <https://docs.djangoproject.com/en/dev/howto/custom-management-commands/>`_ 
@@ -77,7 +51,6 @@ The above line is roughly equivalent to::
   python manage.py flush
   python manage.py syncdb
   python manage.py loaddata std all_countries few_cities all_languages props demo 
-
 
 
 Writing your own fixture
@@ -154,7 +127,7 @@ Play with them::
 Conclusion
 ----------
 
-Fixtures are good as long as 
+Self-written "intelligent" fixtures are an important tool as long as 
 
 - you are in "demo mode"
 - you are preparing your local demo database

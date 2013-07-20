@@ -60,10 +60,9 @@ Lino then adds its own features to the above:
   
 - Use Lino's tools for generating :ref:`userdocs`.
   
-- :ref:`datamig` :
-  Optionally use Lino's great alternative to 
-  `South <http://south.aeracode.org/>`_
-  to manage your database migrations.
+- Lino includes :ref:`dpy`, 
+  a great alternative to `South <http://south.aeracode.org/>`_
+  to manage your :ref:`database migrations <datamig>`.
   
 - **Other features** include extensions to handle
   :ref:`polymorphism`, 
