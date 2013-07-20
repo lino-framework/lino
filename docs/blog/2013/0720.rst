@@ -2,6 +2,8 @@
 20130720 (Saturday, 20 July 2013)
 =================================
 
+Two subtle bugs
+---------------
 
 :mod:`lino_welfare.fixtures.demo` had a problem when it was together 
 with :mod:`lino.modlib.countries.fixtures.be`. It said
@@ -9,3 +11,14 @@ with :mod:`lino.modlib.countries.fixtures.be`. It said
 get() returned more than one City -- 
 it returned 2! Lookup parameters were {'zip_code__exact': u'4780'}"
 because both Recht and Sankt Vith have the same zip code 4780.
+
+It took me some time to find a rather subtle pitfall:
+
+The RequestFields in 
+:mod:`UsersWithClients <lino_welfare.modlib.pcsw.UsersWithClients>`
+sometimes used some date in the past.
+This was because the columns of this table are being dynamically 
+built when `database_ready`, and in that signal handler I use a 
+variable `today` which holds the current date.
+And of course I must evaluate `today` for each
+request, not only once at the beginning of the handler.

@@ -811,9 +811,8 @@ class Table(AbstractTable):
     @classmethod
     def get_queryset(self):
         """
-        Return an iterable over the items processed by this report.
-        Override this to use e.g. select_related()
-        or to return a list.
+        Return an iterable over the items processed by this table.
+        Override this to use e.g. select_related() or to return a list.
         """
         return self.model.objects.all()
       
