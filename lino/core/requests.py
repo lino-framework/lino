@@ -366,6 +366,7 @@ class ActionRequest(BaseRequest):
             for k,v in self.known_values.items():
                 if pv.has_key(k):
                     pv[k] = v
+            
             """
             New since 20120914.
             MyClientsByGroup has a known group, this 
@@ -375,20 +376,24 @@ class ActionRequest(BaseRequest):
             if self.actor.master_key is not None:
                 if pv.has_key(self.actor.master_key):
                     pv[self.actor.master_key] = self.master_instance
+                    
+            logger.info("20130605 a core/requests.py param_values is %r",pv)
                 
             if param_values is None:
                 if request is not None: # 20121025
                     #~ pv.update(self.ui.parse_params(self.ah,request))
                     #~ pv.update(self.ah.store.parse_params(request))
                     pv.update(self.actor.params_layout.params_store.parse_params(request))
+                    logger.info("20130605 b core/requests.py param_values is %r",pv)
             else:
                 for k in param_values.keys(): 
                     if not pv.has_key(k):
                         raise Exception("Invalid key '%s' in param_values of %s request (possible keys are %s)" % (k,actor,pv.keys()))
                 pv.update(param_values)
+                logger.info("20130605 c core/requests.py param_values is %r",pv)
                 
             self.param_values = AttrDict(**pv)
-            #~ logger.info("20130605 core/requests.py param_values is %r",pv)
+            logger.info("20130605 d core/requests.py param_values is %r",pv)
             
         #~ print 20130121, __file__, self.bound_action.action, self.bound_action.action.parameters
         

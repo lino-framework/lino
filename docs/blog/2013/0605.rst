@@ -71,7 +71,7 @@ Added "force_dirty" parameter to
 to work around this.
 
 While I was there, I also fixed another old problem:
-ChoiceList comboboxes with blank=True didn't display a blank choice.
+ChoiceList comboboxes with `blank=True` didn't display a blank choice.
 Now they do.
 :class:`lino.ui.elems.ChoiceListFieldElement`
 

@@ -80,9 +80,9 @@ only real solution will be a class
 :class:`lino.utils.auth.Requirements`.
 But that's not urgent.
 
+And finally Theresia revealed another bug: the :menuselection:`Calendar` 
+menu didn't suppress separators when they were useless 
+(because there were no items to separate, 
+which may happen due to permission requirements).
 
-And finally Theresia revealed another bug:
-the :menuselection:`Calendar` menu didn't 
-suppress separators when they were useless because there were no 
-items to separate (which may happen due to permission requirements).
 

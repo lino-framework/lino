@@ -1,0 +1,27 @@
+===============================
+20130721 (Sunday, 21 July 2013)
+===============================
+
+parameters for `cal.Guests`
+---------------------------
+
+:mod:`lino.modlib.cal` and :mod:`lino.modlib.reception`:
+
+Added parameters to `cal.Guests`
+and reimplemented the "Expected Guests" and "Waiting Guests" tables.
+
+Discovered and fixed an internal bug in the development version 
+which was there since :blogref:`20130605`:
+When a table overrides `param_defaults`, then these are meant to be the 
+default values of parameter fields. But this wasn't taken into account any more, e.g. 
+`pcsw.IntegClients` now showed all clients by default instead of only 
+those coached by the requesting user.
+
+`blogref` links
+---------------
+
+`blogref` links had been pointing to the 
+.rst version of the blog entry.
+Now they finally point again to the real blog entry.
+TODO: make the blog location configurable, 
+see :func:`atelier.sphinxconf.get_blog_url`.

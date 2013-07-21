@@ -1777,7 +1777,7 @@ Lino.MainPanel = {
         });
         tbar = tbar.concat([this.toggle_params_panel_btn]);
         var t = this;
-        var refresh = function() {if (!t.setting_param_values) t.refresh();}
+        var refresh = function() {if (!t.setting_param_values) {t._force_dirty = true; t.refresh();}}
         Ext.each(this.params_panel.fields,function(f) {
           //~ f.on('valid',function() {t.refresh()});
           if (f instanceof Ext.form.Checkbox) {
@@ -1798,20 +1798,24 @@ Lino.MainPanel = {
       }
       return tbar;
   }
-  ,add_param_values : function (p,force_dirty) {
+  ,add_param_values : function (p,unused_force_dirty) {
     if (this.params_panel) {
       /* 
-      20120918 add param_values to the request string 
-      *only if the params_form is dirty*.
-      Otherwise Actor.default_params() would never be used.
-      
-      20121023 But IntegClients.params_default has non-empty default values. 
-      Users must have the possibility to make them empty.
-      * 20130605 : added force parameter because Checkbox fields don't 
-      * mark their form as dirty when check is fired
+      * 20120918 add param_values to the request string 
+      * *only if the params_form is dirty*.
+      * Otherwise Actor.default_params() would never be used.
+      *
+      * 20121023 But IntegClients.params_default has non-empty default values. 
+      * Users must have the possibility to make them empty.
+      * 
+      * 20130605 : added `force_dirty` parameter because Checkbox fields don't 
+      * mark their form as dirty when check is fired.
+      * 
+      * 20130721 : `force_dirty` not as a parameter but as 
+      * `this._force_dirty` because
       * 
       */
-      if (force_dirty || this.params_panel.form.isDirty()) {
+      if (this._force_dirty || this.params_panel.form.isDirty()) {
         p.{{ext_requests.URL_PARAM_PARAM_VALUES}} = this.get_param_values();
         //~ console.log("20130605 form.isDirty",p);
       }else{

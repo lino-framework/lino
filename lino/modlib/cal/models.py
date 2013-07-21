@@ -1067,11 +1067,11 @@ class EventInsert(EventDetail):
     #~ def setup_action_request(self,actor,ar):
         #~ # print "coucou"
         #~ # assert row is None
-        #~ dates_from = ar.param_values.dates_from or datetime.date.today()
-        #~ dates_to = ar.param_values.dates_to or dates_from
-        #~ ar.param_values.define('dates_from',dates_from + ONE_DAY)
-        #~ ar.param_values.define('dates_to',dates_to + ONE_DAY)
-        #~ # ar.param_values.dates_to += ONE_DAY
+        #~ start_date = ar.param_values.start_date or datetime.date.today()
+        #~ end_date = ar.param_values.end_date or start_date
+        #~ ar.param_values.define('start_date',start_date + ONE_DAY)
+        #~ ar.param_values.define('end_date',end_date + ONE_DAY)
+        #~ # ar.param_values.end_date += ONE_DAY
         #~ # logger.info("20121203 cal.NextDateAction.setup_action_request() %s",ar.param_values)
         #~ # return ar.success_response(refresh=True)
     
@@ -1104,36 +1104,28 @@ class Events(dd.Table):
     
     params_panel_hidden = True
     
-    parameters = dict(
-        #~ dates_from = dd.DatePickerField(_("Date from"),
-        dates_from = models.DateField(_("Date from"),
-            blank=True,null=True,
-            help_text="""Nur Termine ab diesem Datum."""),
-        #~ dates_to = dd.DatePickerField(_("until"),
-        dates_to = models.DateField(_("until"),
-            blank=True,null=True,
-            help_text="""Nur Termine bis zu diesem Datum."""),
+    parameters = dd.ObservedPeriod(
         user = dd.ForeignKey(settings.SITE.user_model,
             verbose_name=_("Responsible user"),
             blank=True,null=True,
-            help_text="""Nur Termine dieses Benutzers."""),
+            help_text=_("Only events managed by this user.")),
         project = dd.ForeignKey(settings.SITE.project_model,
             blank=True,null=True),
         assigned_to = models.ForeignKey(settings.SITE.user_model,
             verbose_name=_("Assigned to"),
             blank=True,null=True,
-            help_text="""Nur Termine, die diesem Benutzer zugewiesen sind."""),
+            help_text=_("Only events assigned to this user.")),
         state = EventStates.field(blank=True,
-            help_text="""Nur Termine in diesem Bearbeitungszustand."""),
+            help_text=_("Only events having this state.")),
         unclear = models.BooleanField(_("Unclear events"))
     )
     
     params_layout = """
-    dates_from dates_to user assigned_to state 
+    start_date end_date user assigned_to state 
     unclear project
     """
     #~ params_layout = dd.Panel("""
-    #~ dates_from dates_to other
+    #~ start_date end_date other
     #~ """,other="""
     #~ user 
     #~ assigned_to 
@@ -1161,23 +1153,23 @@ class Events(dd.Table):
         if ar.param_values.unclear:
             qs = qs.filter(state__in=unclear_event_states)
             
-        if ar.param_values.dates_from:
-            if ar.param_values.dates_to:
-                qs = qs.filter(start_date__gte=ar.param_values.dates_from)
+        if ar.param_values.start_date:
+            if ar.param_values.end_date:
+                qs = qs.filter(start_date__gte=ar.param_values.start_date)
             else:
-                qs = qs.filter(start_date=ar.param_values.dates_from)
-        if ar.param_values.dates_to:
-            qs = qs.filter(start_date__lte=ar.param_values.dates_to)
+                qs = qs.filter(start_date=ar.param_values.start_date)
+        if ar.param_values.end_date:
+            qs = qs.filter(start_date__lte=ar.param_values.end_date)
         return qs
         
     @classmethod
     def get_title_tags(self,ar):
         for t in super(Events,self).get_title_tags(ar):
             yield t
-        if ar.param_values.dates_from or ar.param_values.dates_to:
+        if ar.param_values.start_date or ar.param_values.end_date:
             yield unicode(_("Dates %(min)s to %(max)s") % dict(
-              min=ar.param_values.dates_from or'...',
-              max=ar.param_values.dates_to or '...'))
+              min=ar.param_values.start_date or'...',
+              max=ar.param_values.end_date or '...'))
               
         if ar.param_values.state:
             yield unicode(ar.param_values.state)
@@ -1251,8 +1243,8 @@ if settings.SITE.user_model:
         def param_defaults(self,ar,**kw):
             kw = super(MyUnclearEvents,self).param_defaults(ar,**kw)
             kw.update(unclear=True)
-            kw.update(dates_from=datetime.date.today())
-            kw.update(dates_to=datetime.date.today()+ONE_DAY)
+            kw.update(start_date=datetime.date.today())
+            kw.update(end_date=datetime.date.today()+ONE_DAY)
             return kw
         
     class EventsAssignedToMe(Events):
@@ -1649,6 +1641,69 @@ class Guests(dd.Table):
     partner 
     role
     """,window_size=(60,'auto'))
+    
+    parameters = dd.ObservedPeriod(
+        user = dd.ForeignKey(settings.SITE.user_model,
+            verbose_name=_("Responsible user"),
+            blank=True,null=True,
+            help_text=_("Only events managed by this user.")),
+        project = dd.ForeignKey(settings.SITE.project_model,
+            blank=True,null=True),
+        event_state = EventStates.field(blank=True,
+            help_text=_("Only events having this state.")),
+        guest_state = GuestStates.field(blank=True,
+            help_text=_("Only guests having this state.")),
+    )
+    
+    params_layout = "start_date end_date user event_state guest_state project"
+    
+    @classmethod
+    def get_request_queryset(self,ar):
+        #~ logger.info("20121010 Clients.get_request_queryset %s",ar.param_values)
+        qs = super(Guests,self).get_request_queryset(ar)
+            
+        if ar.param_values.user:
+            qs = qs.filter(user=ar.param_values.user)
+        if settings.SITE.project_model is not None and ar.param_values.project:
+            qs = qs.filter(project=ar.param_values.project)
+
+        if ar.param_values.event_state:
+            qs = qs.filter(event__state=ar.param_values.event_state)
+            
+        if ar.param_values.guest_state:
+            qs = qs.filter(state=ar.param_values.guest_state)
+            
+        if ar.param_values.start_date:
+            if ar.param_values.end_date:
+                qs = qs.filter(start_date__gte=ar.param_values.start_date)
+            else:
+                qs = qs.filter(start_date=ar.param_values.start_date)
+        if ar.param_values.end_date:
+            qs = qs.filter(start_date__lte=ar.param_values.end_date)
+        return qs
+        
+    @classmethod
+    def get_title_tags(self,ar):
+        for t in super(Guests,self).get_title_tags(ar):
+            yield t
+        if ar.param_values.start_date or ar.param_values.end_date:
+            yield unicode(_("Dates %(min)s to %(max)s") % dict(
+              min=ar.param_values.start_date or'...',
+              max=ar.param_values.end_date or '...'))
+              
+        if ar.param_values.event_state:
+            yield unicode(ar.param_values.event_state)
+            
+        if ar.param_values.guest_state:
+            yield unicode(ar.param_values.guest_state)
+            
+        if ar.param_values.user:
+            yield unicode(ar.param_values.user)
+            
+        if settings.SITE.project_model is not None and ar.param_values.project:
+            yield unicode(ar.param_values.project)
+            
+    
     
         
 class GuestsByEvent(Guests):

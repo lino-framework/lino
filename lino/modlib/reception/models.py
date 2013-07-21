@@ -114,25 +114,78 @@ cal.Guest.checkout = CheckoutGuest()
 cal.Guest.checkin = CheckinGuest()
 
 
-class ExpectedGuests(cal.Guests):
+class Guests(cal.Guests):
+    
+    use_as_default_table = False
+    
+    parameters = dd.ParameterPanel(
+        only_waiting = models.BooleanField(verbose_name=_("Waiting")),
+        only_expected = models.BooleanField(verbose_name=_("Expected")),
+        **cal.Guests.parameters)
+    
+    params_layout = cal.Guests.params_layout + " only_waiting only_expected"
+    
+    @classmethod
+    def get_request_queryset(self,ar):
+        #~ logger.info("20121010 Clients.get_request_queryset %s",ar.param_values)
+        qs = super(Guests,self).get_request_queryset(ar)
+            
+        if ar.param_values.only_waiting:
+            qs = qs.filter(waiting_since__isnull=False,waiting_until__isnull=True)
+        if ar.param_values.only_expected:
+            today = datetime.date.today()
+            qs = qs.filter(
+                waiting_since__isnull=True,
+                #~ state__in=[GuestStates.invited,GuestStates.accepted],
+                event__start_date=today,
+                event__end_date=today)
+        return qs
+        
+    @classmethod
+    def get_title_tags(self,ar):
+        for t in super(Guests,self).get_title_tags(ar):
+            yield t
+            
+        if ar.param_values.only_waiting:
+            yield unicode(self.parameters['only_waiting'].verbose_name)
+        if ar.param_values.only_expected:
+            yield unicode(self.parameters['only_expected'].verbose_name)
+
+    
+class ExpectedGuests(Guests): 
     label = _("Expected Guests")
-    filter = Q(waiting_since__isnull=True,
-        state__in=[GuestStates.invited,GuestStates.accepted])
+    #~ filter = Q(waiting_since__isnull=True,
+        #~ state__in=[GuestStates.invited,GuestStates.accepted])
     column_names = 'partner event__user event__summary workflow_buttons'
     #~ checkin = CheckinGuest()
     required = dd.Required(user_groups='reception')
     
-class WaitingGuests(cal.Guests):
+    #~ @classmethod
+    #~ def param_defaults(self,ar,**kw):
+        #~ kw = super(ExpectedGuests,self).param_defaults(ar,**kw)
+        #~ kw.update(only_expected=True)
+        #~ return kw
+    
+    
+class WaitingGuests(Guests):
     label = _("Waiting Guests")
     help_text = _("Shows the visitors in the waiting room.")
     #~ known_values = dict(state=GuestStates.waiting)
-    filter = Q(waiting_since__isnull=False,
-        waiting_until__isnull=True,
-        state__in=[GuestStates.invited,GuestStates.accepted])
+    #~ filter = Q(waiting_since__isnull=False,
+        #~ waiting_until__isnull=True,
+        #~ state__in=[GuestStates.invited,GuestStates.accepted])
     column_names = 'waiting_since partner event__user event__summary workflow_buttons'
     order_by = ['waiting_since']
     #~ checkout = CheckoutGuest()
     required = dd.Required(user_groups='reception integ debts')
+    
+    #~ @classmethod
+    #~ def param_defaults(self,ar,**kw):
+        #~ kw = super(WaitingGuests,self).param_defaults(ar,**kw)
+        #~ kw.update(only_waiting=True)
+        #~ return kw
+    
+    
     
 #~ @dd.receiver(dd.post_analyze)
 #~ def setup_workflows(sender=None,dispatch_uid='lino.modlib.welcome.setup_workflows',**kw):
@@ -145,7 +198,10 @@ def setup_main_menu(site,ui,profile,m):
     #~ m  = m.add_menu("office",lino.OFFICE_MODULE_LABEL)
     #~ m  = m.add_menu("reception",_(App.verbose_name))
     m  = m.add_menu("cal",cal.MODULE_LABEL)
-    m.add_action(ExpectedGuests)
-    m.add_action(WaitingGuests)
+    m.add_separator("-")
+    #~ m.add_action(ExpectedGuests)
+    #~ m.add_action(WaitingGuests)
+    m.add_action(ExpectedGuests,params=dict(param_values=dict(only_expected=True)))
+    m.add_action(WaitingGuests,params=dict(param_values=dict(only_waiting=True)))
 
 dd.add_user_group('reception',_(App.verbose_name))

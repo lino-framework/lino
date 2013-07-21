@@ -330,26 +330,3 @@ from lino.mixins.human import Human, Born, Genders
 
 from django.utils.importlib import import_module
 
-def unused_extends_app(name,globals_dict):
-    """
-    Tell Lino that this app extends another app, 
-    and import the namespace of that app's `models` module.
-    
-    To be called from the `models` module of the extending app.
-    
-    For example, in :mod:`lino.modlib.auto.sales` we write::
-    
-        dd.extends_app('lino.modlib.sales',globals())
-      
-    The above example is equivalent to::
-
-        from lino.modlib.cal.models import *
-        PARENT_APP = 'lino.modlib.cal'
-    
-    """
-    globals_dict.update(PARENT_APP=name)
-    m = import_module(name+'.models')
-    globals_dict.update(m.__dict__)
-
-
-
