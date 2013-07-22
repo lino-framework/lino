@@ -75,8 +75,10 @@ there will be a real-time solution.
 That's why the reception clerk has the right 
 to shortcut that responsibility.
 
-Checkin in will reassign the event from Theresia to Alicia
+New warning "Checkin in will reassign the event from Theresia to Alicia"
 
+New field SiteConfig.client_calender needed because 
+CreateClientEvent must set this, otherwise the Guest won't get created.
 
 Reading Belgian eID cards
 -------------------------

@@ -81,8 +81,8 @@ class CheckinGuest(dd.NotifyingAction):
             obj.waiting_since = datetime.datetime.now()
             obj.waiting_until = None
             obj.save()
-            kw = super(CheckinGuest,self).run_from_ui(obj,ar,**kw)
-            return kw
+            kw.update(success=True)
+            return super(CheckinGuest,self).run_from_ui(obj,ar,**kw)
         if obj.event.assigned_to is not None:
             def ok():
                 obj.event.user = obj.event.assigned_to

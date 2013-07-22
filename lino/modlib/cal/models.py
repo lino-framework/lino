@@ -929,6 +929,7 @@ Indicates that this Event shouldn't prevent other Events at the same time."""))
         Decide whether it is time to add Guest instances for this event,
         and if yes, call :meth:`suggest_guests` to instantiate them.
         """
+        #~ print "20130722 Event.save"
         #~ print "20130717 add_guests"
         if settings.SITE.loading_from_dump: return
         if not self.is_user_modified(): 
@@ -937,7 +938,9 @@ Indicates that this Event shouldn't prevent other Events at the same time."""))
         if not self.is_editable_state(): 
             #~ print "not an editable state"
             return 
-        if self.guest_set.all().count() > 0: return
+        if self.guest_set.all().count() > 0: 
+            #~ print "guest_set not empty"
+            return
         for g in self.suggest_guests():
             g.save()
             #~ settings.SITE.modules.cal.Guest(event=self,partner=p).save()
