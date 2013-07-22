@@ -1,0 +1,21 @@
+===============================
+20130722 (Monday, 22 July 2013)
+===============================
+
+Worked on 
+:ref:`welfare.reception.ExpectedGuests`
+and
+:ref:`welfare.reception.WaitingGuests`.
+They start to be ready.
+
+New action "Appointment" (pcsw.Clients.create_event = CreateClientEvent())
+for checking in visitors without appointment.
+This action is currently declared `show_in_workflow`, so it is not in 
+the top toolbar but in the workflow buttons (Status tab).
+    
+
+
+
+TODO: 
+- Checkin action should check for valid eid card and issue a warning when appropriate.
+

@@ -964,8 +964,8 @@ Indicates that this Event shouldn't prevent other Events at the same time."""))
     def on_create(self,ar):
         self.start_date = datetime.date.today()
         self.start_time = datetime.datetime.now().time()
-        #~ if ar.subst_user is not None:
-        self.assigned_to = ar.subst_user
+        if self.assigned_to is None: # 20130722 e.g. CreateClientEvent sets it explicitly
+            self.assigned_to = ar.subst_user
         super(Event,self).on_create(ar)
         
     #~ def on_create(self,ar):
@@ -1650,8 +1650,10 @@ class Guests(dd.Table):
         project = dd.ForeignKey(settings.SITE.project_model,
             blank=True,null=True),
         event_state = EventStates.field(blank=True,
+            verbose_name=_("Event state"),
             help_text=_("Only events having this state.")),
         guest_state = GuestStates.field(blank=True,
+            verbose_name=_("Guest state"),
             help_text=_("Only guests having this state.")),
     )
     
@@ -1663,9 +1665,9 @@ class Guests(dd.Table):
         qs = super(Guests,self).get_request_queryset(ar)
             
         if ar.param_values.user:
-            qs = qs.filter(user=ar.param_values.user)
+            qs = qs.filter(event__user=ar.param_values.user)
         if settings.SITE.project_model is not None and ar.param_values.project:
-            qs = qs.filter(project=ar.param_values.project)
+            qs = qs.filter(event__project=ar.param_values.project)
 
         if ar.param_values.event_state:
             qs = qs.filter(event__state=ar.param_values.event_state)
@@ -1675,11 +1677,11 @@ class Guests(dd.Table):
             
         if ar.param_values.start_date:
             if ar.param_values.end_date:
-                qs = qs.filter(start_date__gte=ar.param_values.start_date)
+                qs = qs.filter(event__start_date__gte=ar.param_values.start_date)
             else:
-                qs = qs.filter(start_date=ar.param_values.start_date)
+                qs = qs.filter(event__start_date=ar.param_values.start_date)
         if ar.param_values.end_date:
-            qs = qs.filter(start_date__lte=ar.param_values.end_date)
+            qs = qs.filter(event__end_date__lte=ar.param_values.end_date)
         return qs
         
     @classmethod

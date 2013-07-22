@@ -358,6 +358,10 @@ class ActionRequest(BaseRequest):
         if self.actor.parameters is not None:
             pv = self.actor.param_defaults(self)
             
+            for k in pv.keys():
+                if not k in self.actor.parameters:
+                    raise Exception("%s.param_defaults() returned invalid keyword %r" % (self.actor,k))
+            
             """
             New since 20120913.
             E.g. newcomers.Newcomers is a simple pcsw.Clients with known_values=dict(client_state=newcomer)
@@ -377,23 +381,23 @@ class ActionRequest(BaseRequest):
                 if pv.has_key(self.actor.master_key):
                     pv[self.actor.master_key] = self.master_instance
                     
-            logger.info("20130605 a core/requests.py param_values is %r",pv)
+            #~ logger.info("20130721 a core/requests.py param_values is %r",pv)
                 
             if param_values is None:
                 if request is not None: # 20121025
                     #~ pv.update(self.ui.parse_params(self.ah,request))
                     #~ pv.update(self.ah.store.parse_params(request))
                     pv.update(self.actor.params_layout.params_store.parse_params(request))
-                    logger.info("20130605 b core/requests.py param_values is %r",pv)
+                    #~ logger.info("20130721 b core/requests.py param_values is %r",pv)
             else:
                 for k in param_values.keys(): 
                     if not pv.has_key(k):
                         raise Exception("Invalid key '%s' in param_values of %s request (possible keys are %s)" % (k,actor,pv.keys()))
                 pv.update(param_values)
-                logger.info("20130605 c core/requests.py param_values is %r",pv)
+                #~ logger.info("20130721 c core/requests.py param_values is %r",pv)
                 
             self.param_values = AttrDict(**pv)
-            logger.info("20130605 d core/requests.py param_values is %r",pv)
+            #~ logger.info("20130721 d core/requests.py param_values is %r",pv)
             
         #~ print 20130121, __file__, self.bound_action.action, self.bound_action.action.parameters
         
