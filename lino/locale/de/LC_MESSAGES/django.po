@@ -8,7 +8,7 @@ msgstr ""
 "Project-Id-Version: lino.modlib.systen\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2013-07-22 05:17+0300\n"
-"PO-Revision-Date: 2013-07-22 05:20+0300\n"
+"PO-Revision-Date: 2013-07-22 19:05+0300\n"
 "Last-Translator: Luc Saffre <luc.saffre@gmx.net>\n"
 "Language-Team: \n"
 "Plural-Forms: nplurals=2; plural=(n != 1)\n"
@@ -3295,7 +3295,7 @@ msgstr "%(partner)s wartet nicht mehr auf  %(user)s"
 
 #: lino/modlib/reception/models.py:160
 msgid "Expected Guests"
-msgstr "Erwartete Gäste"
+msgstr "Erwartete Besucher"
 
 #: lino/modlib/reception/models.py:161
 msgid "Consult this table when checking in a partner who has an appointment."

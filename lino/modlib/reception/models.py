@@ -77,11 +77,22 @@ class CheckinGuest(dd.NotifyingAction):
             partner=obj.partner)
     
     def run_from_ui(self,obj,ar,**kw):
-        obj.waiting_since = datetime.datetime.now()
-        obj.waiting_until = None
-        obj.save()
-        kw = super(CheckinGuest,self).run_from_ui(obj,ar,**kw)
-        return kw
+        def doit():
+            obj.waiting_since = datetime.datetime.now()
+            obj.waiting_until = None
+            obj.save()
+            kw = super(CheckinGuest,self).run_from_ui(obj,ar,**kw)
+            return kw
+        if obj.event.assigned_to is not None:
+            def ok():
+                obj.event.user = obj.event.assigned_to
+                obj.event.assigned_to = None
+                obj.event.save()
+                return doit()
+            return ar.confirm(ok,
+                _("Checkin in will reassign the event from %(old)s to %(new)s.") % 
+                dict(old=obj.event.user,new=obj.event.assigned_to),_("Are you sure?"))
+        return doit()
         
     
 #~ class CheckoutGuest(dd.ChangeStateAction,dd.NotifyingAction):

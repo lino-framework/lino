@@ -22,7 +22,7 @@ hinzu.
 
 - Die `Middleware <http://code.google.com/p/eid-mw>`_
   ist eine Sammlung von Komponenten "for using the Belgian eID on your computer".
-  Seit Version 4 hat die Middleware sich radikal verändert:
+  Seit Version 4 (released im Januar 2012) hat die Middleware sich radikal verändert:
   "We will no longer define our own API, but in fact use the 
   cryptografic token interface standard PKCS#11 v2.11 API.  
   (...)
@@ -33,7 +33,8 @@ hinzu.
   Applets can do smartcard operations right in the JVM. 
   This fact removes the need for client side middleware dependencies.
   Fedict provides and maintains a pure Java eid applet. 
-  Around the "eid-applet", other applications are built to ease integration with web based applications. 
+  Around the "eid-applet", other applications are built to ease 
+  integration with web based applications. 
   We suggest users of SDK 3.5 Java to move on to this platform."
   (`[*] <http://code.google.com/p/eid-mw/wiki/SDK40>`__)
   

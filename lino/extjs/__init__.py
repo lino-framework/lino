@@ -501,7 +501,7 @@ tinymce.init({
             
         if site.use_eid_jslib:
             yield javascript(site.build_media_url('eid-jslib/be_belgium_eid.js'))
-            yield javascript(site.build_media_url('/eid-jslib/hellerim_base64.js'))
+            yield javascript(site.build_media_url('eid-jslib/hellerim_base64.js'))
             
         #~ if site.use_bootstrap:
             #~ yield '<script src="//ajax.googleapis.com/ajax/libs/jquery/1.8.3/jquery.min.js"></script>'

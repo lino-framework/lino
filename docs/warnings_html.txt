@@ -1,9 +1,0 @@
-/home/luc/hgwork/lino/docs/api/lino.modlib.reception.rst:14: WARNING: autodoc: failed to import module u'lino.modlib.reception.models'; the following exception was raised:
-Traceback (most recent call last):
-  File "/home/luc/pythonenvs/py27/local/lib/python2.7/site-packages/sphinx/ext/autodoc.py", line 326, in import_object
-    __import__(self.modname)
-  File "/home/luc/hgwork/lino/lino/modlib/reception/models.py", line 117, in <module>
-    class Guests(cal.Guests):
-  File "/home/luc/hgwork/lino/lino/modlib/reception/models.py", line 126, in Guests
-    params_layout = cal.Guests.params_layout + " only_waiting only_expected"
-TypeError: unsupported operand type(s) for +: 'ParamsLayout' and 'str'

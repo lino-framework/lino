@@ -2,20 +2,151 @@
 20130722 (Monday, 22 July 2013)
 ===============================
 
-Worked on 
-:ref:`welfare.reception.ExpectedGuests`
-and
-:ref:`welfare.reception.WaitingGuests`.
-They start to be ready.
+ExpectedGuests, WaitingGuests, CreateClientEvent
+------------------------------------------------
 
-New action "Appointment" (pcsw.Clients.create_event = CreateClientEvent())
-for checking in visitors without appointment.
-This action is currently declared `show_in_workflow`, so it is not in 
-the top toolbar but in the workflow buttons (Status tab).
+Worked on the :ref:`welfare.reception` module.
+
+- :ref:`welfare.reception.ExpectedGuests`
+  and
+  :ref:`welfare.reception.WaitingGuests`
+  start to be ready.
+
+- New action "Appointment" (pcsw.Clients.create_event = CreateClientEvent())
+  for checking in visitors without appointment.
+  This action is currently declared `show_in_workflow`, so it is not in 
+  the top toolbar but in the workflow buttons (Status tab).
     
-
-
-
 TODO: 
+
+- CreateClientEvent : default values for date and user
 - Checkin action should check for valid eid card and issue a warning when appropriate.
 
+
+How to mount a Samba share on a Linux client
+--------------------------------------------
+
+Q: I have a server named `jana` on my LAN and would like to 
+tell Shotwell to store its photos on this server and to use the 
+same pictures from different Linux clients.
+
+On each client (here hoppel)::
+
+
+    luc@hoppel:~$ mkdir jana
+    luc@hoppel:~$ sshfs luc@jana:/smb ~/jana
+    luc@jana's password: 
+    
+That's all. Verify that it worked::
+    
+    luc@hoppel:~$ ls jana
+    audio  backup  collect  fotos  screencasts  tmp  to_print  videos
+    luc@hoppel:~/jana$ 
+    
+
+Checkin in will reassign the event
+----------------------------------
+
+Worked on `CreateClientEvent`. 
+Lino can now handle a client checkin without prior appointment.
+
+The basic idea is to simply first create an appointment.
+
+Let's say that Theresia is reception clerk and the 
+client wants to see Alicia.
+
+Theresia opens the Detail of the Client and 
+clicks on "Appointment".
+
+creates an event for the client and her colleague Alicia
+The new event is
+
+Selects Alicia as user.
+
+Lino won't store directly Alicia as responsible user. 
+That's because we have the rule: when somebody creates a calendar 
+event for a colleague, then the colleague must first accept her 
+responsibility for that event by clicking "Accept" in the 
+"My assigned events" table.
+
+But when a client is physically present and checked in, 
+then that rule is not realistic, 
+there will be a real-time solution.
+That's why the reception clerk has the right 
+to shortcut that responsibility.
+
+Checkin in will reassign the event from Theresia to Alicia
+
+
+Reading Belgian eID cards
+-------------------------
+
+Re-vamped once more an old topic (see :blogref:`20130105`).
+
+Most Lino-Welfare users, but especially those of the 
+:ref:`welfare.reception` module,
+need to electronically read Belgian eID cards of clients and 
+store the data of these cards (name, birth date, picture,...) 
+in their database.
+
+This is currently working well thanks to Johan De Schutter's 
+`eid-javascript-lib <http://code.google.com/p/eid-javascript-lib/>`_, 
+which does exactly what we need:
+a JavaScript class "CardReader" which I can instantiate and call it's `read` method.
+
+But `eid-javascript-lib` is built on 
+`Middleware <http://code.google.com/p/eid-mw>`_ 3.5 
+and therefore causes a compatibility warning on computers with a 
+newer MW (version 4.0. was released in January 2012).
+Furthermore I'm afraid that Johan won't easily upgrade `eid-javascript-lib`
+because in the `wiki <https://code.google.com/p/eid-mw/wiki/SDK40>`_ of the MW 
+I read "This 4.0 eidmw SDK will break radically with 
+the older 2.x and 3.5 SDK API's. (...) SDK 4.0 will not provide Java 
+examples. Java has evolved over time and smartcard access is now 
+provided by the JVM. Applets can do smartcard operations right in the 
+JVM. This fact removes the need for client side middleware dependencies."
+
+Note that I still don't really understand what the MW actually does:
+it "offers components for using the Belgian eID on your computer.", 
+but what does that mean concretely?
+
+I just need an applet like the eid-javascript-lib, but one that doesn't 
+depend on the old Middleware.
+
+Should I write my own applet which accesses the smartcard directly?
+Johan obviously started a project like that, `eid-nomw-sdk-applet
+<https://code.google.com/p/eid-nomw-sdk-applet/source/list>`_,
+but that was in September 2012 and I have no news since then.
+
+Koen De Causmaecker
+Frederik Vernelen
+Frank Marien
+Frank Cornelis
+
+
+Other projects:
+
+- `eid-viewer <https://code.google.com/p/eid-viewer>`_
+  seems to be the current GUI viewer.
+
+- `commons-eid-viewer
+  <https://code.google.com/p/commons-eid-viewer/>`_:
+  Next-Gen eID viewer built upon the robust commons-eid classes.
+  Only one commit "first experiments" from June 12, 2013
+  Owner: .
+
+- `commons-eid <https://code.google.com/p/commons-eid/>`_:
+  The Commons eID Library provides a very generic library to handle 
+  the Belgian eID. The library can be used both for desktop 
+  applications as well as browser based applets.
+  
+This last one sounds interesting. But the README says::
+
+    The following is required for compiling the Commons eID software:
+    * Oracle Java 1.6.0_33
+    * Apache Maven 3.0.4
+    * Java Cryptography Extension (JCE) Unlimited Strength Jurisdiction Policy
+
+So before continuing in this direction I'd have to learn about
+`Maven <http://maven.apache.org/>`_.
+Okay... not feeling ready for this right now...
