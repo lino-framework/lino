@@ -156,3 +156,18 @@ Acting as another user
 Discovered and fixed a first bug in the freshly released Lino 1.6.11:
 Acting as somebody else didn't work when calling it while in 
 the main viewport.
+
+Übersicht Art-60§7-Konventionen
+-------------------------------
+
+Noch zwei Bugs auf einmal:
+
+Bugs fixed:
+
+- Übersicht Art-60§7-Konventionen : wenn man im Parameter-Panel 
+  eine Stellenart auswählte, kam Fehlermeldung 
+  "'JobType' object is not iterable"
+
+TODO:
+
+- Übersicht Art-60§7-Konventionen : Vorschau ist leer. 

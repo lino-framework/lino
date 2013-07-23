@@ -2394,7 +2394,7 @@ Lino.HtmlBoxPanel = Ext.extend(Lino.HtmlBoxPanel,{
         var el = box.getEl();
         if (el) {
           el.update(record ? this.format_data(record.data[this.name]) : '');
-          //~ console.log('HtmlBox.refresh()',this.name);
+          console.log('20130723 HtmlBox.refresh()',this.name);
         //~ } else {
           //~ console.log('HtmlBox.refresh() failed for',this.name);
         }
@@ -3049,18 +3049,19 @@ Lino.FormPanel = Ext.extend(Lino.FormPanel,{
               //~ }
           //~ }
       };
-      
-      if (record.navinfo && ! this.hide_top_toolbar && ! this.hide_navigator) {
-        this.first.setDisabled(!record.navinfo.first);
-        this.prev.setDisabled(!record.navinfo.prev);
-        this.next.setDisabled(!record.navinfo.next);
-        this.last.setDisabled(!record.navinfo.last);
-        this.displayItem.setText(record.navinfo.message);
-      } else {
-        this.first.setDisabled(true);
-        this.prev.setDisabled(true);
-        this.next.setDisabled(true);
-        this.last.setDisabled(true);
+      if (this.first) {
+        if (record.navinfo  && ! this.hide_navigator) {
+          this.first.setDisabled(!record.navinfo.first);
+          this.prev.setDisabled(!record.navinfo.prev);
+          this.next.setDisabled(!record.navinfo.next);
+          this.last.setDisabled(!record.navinfo.last);
+          this.displayItem.setText(record.navinfo.message);
+        } else {
+          this.first.setDisabled(true);
+          this.prev.setDisabled(true);
+          this.next.setDisabled(true);
+          this.last.setDisabled(true);
+        }
       }
     } else {
       if (this.form.rendered) 
