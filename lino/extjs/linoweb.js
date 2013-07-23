@@ -2394,7 +2394,7 @@ Lino.HtmlBoxPanel = Ext.extend(Lino.HtmlBoxPanel,{
         var el = box.getEl();
         if (el) {
           el.update(record ? this.format_data(record.data[this.name]) : '');
-          console.log('20130723 HtmlBox.refresh()',this.name);
+          //~ console.log('20130723 HtmlBox.refresh()',this.name);
         //~ } else {
           //~ console.log('HtmlBox.refresh() failed for',this.name);
         }
