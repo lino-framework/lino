@@ -2,6 +2,23 @@
 20130723 (Tuesday, 23 July 2013)
 ================================
 
+A `pywhich` command
+===================
+
+Here is a `pywhich` command defined in my `.bash_aliases`::
+
+    function pywhich() { 
+      python -c "import $1; print $1.__file__"
+    }
+    
+
+"Model %(model)s with pk %(pk)r does not exist."
+================================================
+
+I submitted :djangoticket:`20791`. Yes this is nit-picky 
+but I happen to see that message rather often when loading a backup 
+in which :mod:`north.dpy` has to defer instances.
+
 Released Lino-Welfare 1.1.8
 ===========================
 
@@ -26,10 +43,116 @@ lino_welfare 1.1.7            1.1.8
 
 I increased the version numbers already some time ago.
 
-$ go welfare
-$ fab sdist
-$ go lino
-$ fab sdist
-$ fab docs pub
+On prodsite, stop services and make a backup::
+
+    $ cd /usr/local/django/prod
+    $ ./stop
+    $ ./backup
+    $ ls -l /var/log/lino/backups/b20130723*.py
+    -rw-r--r-- 1 www-data www-data 23781742 Jul 23 02:02 /var/log/lino/backups/b20130723_020101.py    
+    
+Import that backup to testlino after pulling the latest development 
+versions::
+    
+    $ pull
+    $ cd /usr/local/django/test
+    $ . env/bin/activate
+    $ python manage.py initdb --traceback b20130723_020101
+    
+    
+
+On my machine, create **sdist** for lino and welfare and publish them to
+http://www.lino-framework.org/dl::
+
+    $ go welfare
+    $ fab sdist
+    $ go lino
+    $ fab sdist
+    $ fab docs pub
+
+On prodsite, upgrade prod using `pip --extra-index-url`::
+
+    $ cd /usr/local/django/prod
+    $ . env/bin/activate
+    $ pip install -U --extra-index-url=http://www.lino-framework.org/dl lino-welfare
+    $ python manage.py initdb --traceback b20130723_020101
+
+Noted that this also upgraded **appy** from 0.8.3 to 0.8.4 
+and **docutils** from 0.10 to 0.11.
+Just in case of surprises...
+
+Oops::
+
+    Traceback (most recent call last):
+      File "/home/lsaffre/pythonenvs/stable/lib/python2.6/site-packages/django/core/management/base.py", line 222, in run_from_argv
+        self.execute(*args, **options.__dict__)
+      File "/home/lsaffre/pythonenvs/stable/lib/python2.6/site-packages/django/core/management/base.py", line 254, in execute
+        self.validate()
+      File "/home/lsaffre/pythonenvs/stable/lib/python2.6/site-packages/django/core/management/base.py", line 280, in validate
+        num_errors = get_validation_errors(s, app)
+      File "/home/lsaffre/pythonenvs/stable/lib/python2.6/site-packages/django/core/management/validation.py", line 35, in get_validation_errors
+        for (app_name, error) in get_app_errors().items():
+      File "/home/lsaffre/pythonenvs/stable/lib/python2.6/site-packages/django/db/models/loading.py", line 166, in get_app_errors
+        self._populate()
+      File "/home/lsaffre/pythonenvs/stable/lib/python2.6/site-packages/django/db/models/loading.py", line 75, in _populate
+        self.load_app(app_name)
+      File "/home/lsaffre/pythonenvs/stable/lib/python2.6/site-packages/django/db/models/loading.py", line 96, in load_app
+        models = import_module('.models', app_name)
+      File "/home/lsaffre/pythonenvs/stable/lib/python2.6/site-packages/django/utils/importlib.py", line 35, in import_module
+        __import__(name)
+      File "/home/lsaffre/pythonenvs/stable/lib/python2.6/site-packages/lino/modlib/about/models.py", line 33, in <module>
+        from lino import mixins
+      File "/home/lsaffre/pythonenvs/stable/lib/python2.6/site-packages/lino/mixins/__init__.py", line 37, in <module>
+        from lino.utils import auth
+      File "/home/lsaffre/pythonenvs/stable/lib/python2.6/site-packages/lino/utils/auth.py", line 51, in <module>
+        from lino.core.choicelists import ChoiceList, Choice
+      File "/home/lsaffre/pythonenvs/stable/lib/python2.6/site-packages/lino/core/choicelists.py", line 108, in <module>
+        from lino.core import tables
+      File "/home/lsaffre/pythonenvs/stable/lib/python2.6/site-packages/lino/core/tables.py", line 1160, in <module>
+        from djangosite.signals import database_ready
+    ImportError: cannot import name database_ready
+
+This means that also djangosite needs a release.
+
+On my machine, create **sdist** for site and publish it to
+http://www.lino-framework.org/dl::
+
+    $ go site
+    $ fab sdist
+    $ go lino
+    $ fab docs pub
+
+On prodsite, upgrade prod once more using `pip --extra-index-url`::
+
+    $ cd /usr/local/django/prod
+    $ pip install -U --extra-index-url=http://www.lino-framework.org/dl lino-welfare
+    $ python manage.py initdb --traceback b20130723_020101
 
 
+After some more changes (which show that it is important to test using 
+sdist before officially releasing on PyPI) I finally did it:
+ I officially relased 
+
+- djangosite   0.1.6            
+- lino         1.6.11
+- lino_welfare 1.1.8
+
+
+New module `lino.modlib.attestations`
+-------------------------------------
+
+:ref:`welfare.receptions` is not yet fully functional, 
+but my brain is already preparing the next steps:
+There will be a new module `lino.modlib.attestations`.
+An "attestation" is an "official" document 
+which attests (confirms) something.
+Part of the current `lino_welfare.modlib.notes` will move there.
+Notes are just "internal notes", but a CV is rather such an attestation.
+
+
+Acting as another user
+----------------------
+
+Discovered and fixed a first bug in the freshly released Lino 1.6.11:
+Acting as somebody else didn't work when calling it while in 
+the main viewport.

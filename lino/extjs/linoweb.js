@@ -461,7 +461,7 @@ Lino.logout = function(id,name) {
 }
 
 Lino.set_subst_user = function(id,name) {
-    //~ console.log(20120714,'Lino.set_subst_user',id,name);
+    //~ console.log(20130723,'Lino.set_subst_user',id,name,Lino.current_window,Lino.viewport);
     Lino.subst_user = id;
 {% if settings.SITE.use_extensible and settings.SITE.is_installed('lino.modlib.cal') %}
     if(id) {
@@ -472,7 +472,8 @@ Lino.set_subst_user = function(id,name) {
 {% endif %}
     if (Lino.current_window) 
         Lino.current_window.main_item.set_base_param("{{ext_requests.URL_PARAM_SUBST_USER}}",id);
-    if (Lino.viewport) Lino.permalink_handler(Lino.current_window)();
+    if (Lino.viewport) 
+        Lino.permalink_handler(Lino.current_window)();
 }
 
 
@@ -490,8 +491,190 @@ Lino.rows2height = function(cols) {  return cols * 20; }
 
 
 
-Lino.Viewport = Ext.extend(Ext.Viewport,{
-  layout:"fit"
+Lino.MainPanel = {
+  is_home_page : false,
+  setting_param_values : false,
+  config_containing_window : function(wincfg) { }
+  ,init_containing_window : function(win) { }
+  ,is_loading : function() { 
+      if (!this.rendered) return true;
+      //~ return (Ext.select('.x-loading-msg').elements.length > 0);
+      return true; 
+    } 
+  ,do_when_clean : function(auto_save,todo) { todo() }
+  ,get_master_params : function() {
+    var p = {}
+    p['{{ext_requests.URL_PARAM_MASTER_TYPE}}'] = this.content_type; 
+    rec = this.get_current_record()
+    if (rec) {
+      if (rec.phantom) {
+          p['{{ext_requests.URL_PARAM_MASTER_PK}}'] = undefined; 
+      }else{
+          p['{{ext_requests.URL_PARAM_MASTER_PK}}'] = rec.id; 
+      }
+    } else {
+      p['mk'] = undefined;
+    }
+    //~ console.log('get_master_params returns',p,'using record',rec);
+    return p;
+  }
+  ,get_permalink : function() {
+    //~ var p = this.main_item.get_base_params() || {};
+    var p = Ext.apply({},this.get_base_params());
+    delete p.fmt;
+    //~ if (p.fmt) delete p.fmt;
+    Ext.apply(p,this.get_permalink_params());
+    
+    if (this.toggle_params_panel_btn) {
+        p.{{ext_requests.URL_PARAM_SHOW_PARAMS_PANEL}} = this.toggle_params_panel_btn.pressed;
+        //~ if (this.toggle_params_panel_btn.pressed == this.params_panel_hidden) {
+          //~ p.{{ext_requests.URL_PARAM_SHOW_PARAMS_PANEL}} = true;
+        //~ }
+    }
+    
+    //~ Lino.insert_subst_user(p);
+     //~ p.fmt = 'html';
+    //~ console.log('get_permalink',p,this.get_permalink_params());
+    if (this.is_home_page)
+        //~ var url = '';
+        var url = '{{settings.SITE.admin_prefix}}/';
+    else 
+        var url = this.get_permalink_url();
+    if (p.{{ext_requests.URL_PARAM_SUBST_USER}} == null) 
+        delete p.{{ext_requests.URL_PARAM_SUBST_USER}};
+    if (Ext.urlEncode(p)) url = url + "?" + Ext.urlEncode(p);
+    return url;
+  }
+  ,get_record_url : function(record_id) {
+      var url = '{{settings.SITE.admin_prefix}}/api' + this.ls_url
+      //~ var url = this.containing_window.config.url_data; // ls_url;
+      url += '/' + (record_id === undefined ? '-99999' : String(record_id));
+      //~ if (record_id !== undefined) url += '/' + String(record_id);
+      //~ url += '/' + String(record_id);
+      return url;
+  }
+  ,get_permalink_url : function() {
+      return '{{settings.SITE.admin_prefix}}/api' + this.ls_url;
+  }
+  ,get_permalink_params : function() {
+      //~ return {an:'grid'};
+      var p = {};
+      if (this.action_name)
+          p.{{ext_requests.URL_PARAM_ACTION_NAME}} = this.action_name;
+      this.add_param_values(p,false)
+      return p;
+  }
+  ,set_status : function(status) {}
+  ,get_status : function() { return {}}
+  ,refresh : function() {}
+  ,get_base_params : function() { 
+    var p = {};
+    Lino.insert_subst_user(p);
+    return p;
+  }
+  ,add_params_panel : function (tbar) {
+      if (this.params_panel) {
+        this.toggle_params_panel_btn = new Ext.Button({ scope:this, 
+          //~ text: "$_("[parameters]")", // gear
+          iconCls: 'x-tbar-parameters',
+          tooltip:"{{_('Show or hide the table parameters panel')}}",
+          enableToggle: true,
+          //~ pressed: ! this.params_panel.hidden,
+          pressed: ! this.params_panel_hidden,
+          toggleHandler: function(btn,state) { 
+            //~ if (this.params_panel.isVisible()) 
+                //~ this.params_panel.hide();
+            //~ else
+                //~ this.params_panel.show();
+            //~ console.log("20120210 add_params_panel",state,this.params_panel);
+            if (state) {
+              this.params_panel.show();
+              this.params_panel.doLayout();
+            } else this.params_panel.hide();
+            this.get_containing_window().doLayout();
+          }
+        });
+        tbar = tbar.concat([this.toggle_params_panel_btn]);
+        var t = this;
+        var refresh = function() {if (!t.setting_param_values) {t._force_dirty = true; t.refresh();}}
+        Ext.each(this.params_panel.fields,function(f) {
+          //~ f.on('valid',function() {t.refresh()});
+          if (f instanceof Ext.form.Checkbox) {
+              f.on('check',refresh);
+          } else if (f instanceof Ext.DatePicker) {
+              f.on('select',refresh);
+          } else if (f instanceof Ext.form.TriggerField) {
+              f.on('select',refresh);
+              //~ f.on('change',refresh);
+              //~ f.on('valid',refresh);
+          } else {
+              if (! f.on) 
+                  console.log("20121010 no method 'on'",f);
+              else
+                  f.on('change',refresh);
+            }
+          });
+      }
+      return tbar;
+  }
+  ,add_param_values : function (p,unused_force_dirty) {
+    if (this.params_panel) {
+      /* 
+      * 20120918 add param_values to the request string 
+      * *only if the params_form is dirty*.
+      * Otherwise Actor.default_params() would never be used.
+      *
+      * 20121023 But IntegClients.params_default has non-empty default values. 
+      * Users must have the possibility to make them empty.
+      * 
+      * 20130605 : added `force_dirty` parameter because Checkbox fields don't 
+      * mark their form as dirty when check is fired.
+      * 
+      * 20130721 : `force_dirty` not as a parameter but as 
+      * `this._force_dirty` because
+      * 
+      */
+      if (this._force_dirty || this.params_panel.form.isDirty()) {
+        p.{{ext_requests.URL_PARAM_PARAM_VALUES}} = this.get_param_values();
+        //~ console.log("20130605 form.isDirty",p);
+      }else{
+        //~ console.log("20130605 form not dirty:",this.params_panel.form);
+        if (this.status_param_values) 
+          p.{{ext_requests.URL_PARAM_PARAM_VALUES}} = Lino.fields2array(
+            this.params_panel.fields,this.status_param_values);
+      }
+      //~ if (!this.params_panel.form.isDirty()) return;
+      //~ p.{{ext_requests.URL_PARAM_PARAM_VALUES}} = this.get_param_values();
+      //~ console.log("20120203 add_param_values added pv",pv,"to",p);
+    }
+  },
+  get_param_values : function() { // similar to get_field_values()
+      return Lino.fields2array(this.params_panel.fields);
+  },
+  set_param_values : function(pv) {
+    if (this.params_panel) {
+      //~ console.log('20120203 MainPanel.set_param_values', pv);
+      this.status_param_values = pv;
+      //~ this.params_panel.form.suspendEvents(false);
+      this.setting_param_values = true;
+      if (pv) { 
+          this.params_panel.form.my_loadRecord(pv);
+      } else { 
+        this.params_panel.form.reset(); 
+      }
+      this.setting_param_values = false;
+      //~ this.params_panel.form.resumeEvents();
+    }
+  }
+};
+
+
+
+
+Lino.Viewport = Ext.extend(Ext.Viewport,Lino.MainPanel);
+Lino.Viewport = Ext.extend(Lino.Viewport,{
+  layout : "fit"
+  ,is_home_page : true
   ,initComponent : function(){
     Lino.Viewport.superclass.initComponent.call(this);
     this.on('render',function(){
@@ -506,7 +689,7 @@ Lino.Viewport = Ext.extend(Ext.Viewport,{
   }
   ,refresh : function() {
       var caller = this;
-      console.log("20121120 Lino.Viewport.refresh()");
+      //~ console.log("20121120 Lino.Viewport.refresh()");
       if (caller.loadMask) caller.loadMask.show();
       var success = function(response) {
         if (caller.loadMask) caller.loadMask.hide();
@@ -545,6 +728,8 @@ Lino.Viewport = Ext.extend(Ext.Viewport,{
     
   }
 });
+
+
 
 
 Lino.open_window = function(win,st,requesting_panel) {
@@ -1653,202 +1838,23 @@ Lino.do_action = function(caller,action) {
 //~ };
 Lino.permalink_handler = function (ww) {
   return function() { 
-    //~ console.log(20100923,ww.get_permalink());
     //~ document.location = ww.main_item.get_permalink();
+    //~ console.log('20130723 Lino.permalink_handler',ww);
     
     /* Uncaught TypeError: Cannot read property 'main_item' of null  */
     if (ww) {
-        Lino.load_url(ww.main_item.get_permalink());
+        var url = ww.main_item.get_permalink();
     } else {
-        Lino.load_url('{{settings.SITE.admin_prefix}}/');
+        var url = Lino.viewport.get_permalink();
+        //~ var url = '{{settings.SITE.admin_prefix}}/';
     }
-    //~ console.log(20120715, ww.main_item.get_permalink());
-    //~ document.location = "?permalink=" + ww.get_permalink();
-    //~ document.location = "?permalink=" + ww.config.permalink_name +'()';
+    Lino.load_url(url);
   }
 };
 //~ Lino.run_permalink = function() {
   //~ var plink = Lino.gup('permalink');
   //~ if(plink) { eval('Lino.'+plink); }
 //~ }
-
-Lino.MainPanel = {
-  is_home_page : false,
-  setting_param_values : false,
-  config_containing_window : function(wincfg) { }
-  ,init_containing_window : function(win) { }
-  ,is_loading : function() { 
-      if (!this.rendered) return true;
-      //~ return (Ext.select('.x-loading-msg').elements.length > 0);
-      return true; 
-    } 
-  ,do_when_clean : function(auto_save,todo) { todo() }
-  ,get_master_params : function() {
-    var p = {}
-    p['{{ext_requests.URL_PARAM_MASTER_TYPE}}'] = this.content_type; 
-    rec = this.get_current_record()
-    if (rec) {
-      if (rec.phantom) {
-          p['{{ext_requests.URL_PARAM_MASTER_PK}}'] = undefined; 
-      }else{
-          p['{{ext_requests.URL_PARAM_MASTER_PK}}'] = rec.id; 
-      }
-    } else {
-      p['mk'] = undefined;
-    }
-    //~ console.log('get_master_params returns',p,'using record',rec);
-    return p;
-  }
-  ,get_permalink : function() {
-    //~ var p = this.main_item.get_base_params() || {};
-    var p = Ext.apply({},this.get_base_params());
-    delete p.fmt;
-    //~ if (p.fmt) delete p.fmt;
-    Ext.apply(p,this.get_permalink_params());
-    
-    if (this.toggle_params_panel_btn) {
-        p.{{ext_requests.URL_PARAM_SHOW_PARAMS_PANEL}} = this.toggle_params_panel_btn.pressed;
-        //~ if (this.toggle_params_panel_btn.pressed == this.params_panel_hidden) {
-          //~ p.{{ext_requests.URL_PARAM_SHOW_PARAMS_PANEL}} = true;
-        //~ }
-    }
-    
-    //~ Lino.insert_subst_user(p);
-     //~ p.fmt = 'html';
-    //~ console.log('get_permalink',p,this.get_permalink_params());
-    if (this.is_home_page)
-        //~ var url = '';
-        var url = '{{settings.SITE.admin_prefix}}/';
-    else 
-        var url = this.get_permalink_url();
-    if (p.{{ext_requests.URL_PARAM_SUBST_USER}} == null) 
-        delete p.{{ext_requests.URL_PARAM_SUBST_USER}};
-    if (Ext.urlEncode(p)) url = url + "?" + Ext.urlEncode(p);
-    return url;
-  }
-  ,get_record_url : function(record_id) {
-      var url = '{{settings.SITE.admin_prefix}}/api' + this.ls_url
-      //~ var url = this.containing_window.config.url_data; // ls_url;
-      url += '/' + (record_id === undefined ? '-99999' : String(record_id));
-      //~ if (record_id !== undefined) url += '/' + String(record_id);
-      //~ url += '/' + String(record_id);
-      return url;
-  }
-  ,get_permalink_url : function() {
-      return '{{settings.SITE.admin_prefix}}/api' + this.ls_url;
-  }
-  ,get_permalink_params : function() {
-      //~ return {an:'grid'};
-      var p = {};
-      if (this.action_name)
-          p.{{ext_requests.URL_PARAM_ACTION_NAME}} = this.action_name;
-      this.add_param_values(p,false)
-      return p;
-  }
-  ,set_status : function(status) {}
-  ,get_status : function() { return {}}
-  ,refresh : function() {}
-  ,get_base_params : function() { 
-    var p = {};
-    Lino.insert_subst_user(p);
-    return p;
-  }
-  ,add_params_panel : function (tbar) {
-      if (this.params_panel) {
-        this.toggle_params_panel_btn = new Ext.Button({ scope:this, 
-          //~ text: "$_("[parameters]")", // gear
-          iconCls: 'x-tbar-parameters',
-          tooltip:"{{_('Show or hide the table parameters panel')}}",
-          enableToggle: true,
-          //~ pressed: ! this.params_panel.hidden,
-          pressed: ! this.params_panel_hidden,
-          toggleHandler: function(btn,state) { 
-            //~ if (this.params_panel.isVisible()) 
-                //~ this.params_panel.hide();
-            //~ else
-                //~ this.params_panel.show();
-            //~ console.log("20120210 add_params_panel",state,this.params_panel);
-            if (state) {
-              this.params_panel.show();
-              this.params_panel.doLayout();
-            } else this.params_panel.hide();
-            this.get_containing_window().doLayout();
-          }
-        });
-        tbar = tbar.concat([this.toggle_params_panel_btn]);
-        var t = this;
-        var refresh = function() {if (!t.setting_param_values) {t._force_dirty = true; t.refresh();}}
-        Ext.each(this.params_panel.fields,function(f) {
-          //~ f.on('valid',function() {t.refresh()});
-          if (f instanceof Ext.form.Checkbox) {
-              f.on('check',refresh);
-          } else if (f instanceof Ext.DatePicker) {
-              f.on('select',refresh);
-          } else if (f instanceof Ext.form.TriggerField) {
-              f.on('select',refresh);
-              //~ f.on('change',refresh);
-              //~ f.on('valid',refresh);
-          } else {
-              if (! f.on) 
-                  console.log("20121010 no method 'on'",f);
-              else
-                  f.on('change',refresh);
-            }
-          });
-      }
-      return tbar;
-  }
-  ,add_param_values : function (p,unused_force_dirty) {
-    if (this.params_panel) {
-      /* 
-      * 20120918 add param_values to the request string 
-      * *only if the params_form is dirty*.
-      * Otherwise Actor.default_params() would never be used.
-      *
-      * 20121023 But IntegClients.params_default has non-empty default values. 
-      * Users must have the possibility to make them empty.
-      * 
-      * 20130605 : added `force_dirty` parameter because Checkbox fields don't 
-      * mark their form as dirty when check is fired.
-      * 
-      * 20130721 : `force_dirty` not as a parameter but as 
-      * `this._force_dirty` because
-      * 
-      */
-      if (this._force_dirty || this.params_panel.form.isDirty()) {
-        p.{{ext_requests.URL_PARAM_PARAM_VALUES}} = this.get_param_values();
-        //~ console.log("20130605 form.isDirty",p);
-      }else{
-        //~ console.log("20130605 form not dirty:",this.params_panel.form);
-        if (this.status_param_values) 
-          p.{{ext_requests.URL_PARAM_PARAM_VALUES}} = Lino.fields2array(
-            this.params_panel.fields,this.status_param_values);
-      }
-      //~ if (!this.params_panel.form.isDirty()) return;
-      //~ p.{{ext_requests.URL_PARAM_PARAM_VALUES}} = this.get_param_values();
-      //~ console.log("20120203 add_param_values added pv",pv,"to",p);
-    }
-  },
-  get_param_values : function() { // similar to get_field_values()
-      return Lino.fields2array(this.params_panel.fields);
-  },
-  set_param_values : function(pv) {
-    if (this.params_panel) {
-      //~ console.log('20120203 MainPanel.set_param_values', pv);
-      this.status_param_values = pv;
-      //~ this.params_panel.form.suspendEvents(false);
-      this.setting_param_values = true;
-      if (pv) { 
-          this.params_panel.form.my_loadRecord(pv);
-      } else { 
-        this.params_panel.form.reset(); 
-      }
-      this.setting_param_values = false;
-      //~ this.params_panel.form.resumeEvents();
-    }
-  }
-};
-
 
 Lino.ajax_error_handler = function(panel) {
   return function(response,options) {
