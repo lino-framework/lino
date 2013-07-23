@@ -10,8 +10,8 @@ The final truth about what's going on is only
 `The Source Code <http://code.google.com/p/lino/source/list>`_.
 
 
-Version 1.6.11 (in development)
-============================================
+Version 1.6.11 (released :blogref:`20130723`)
+=============================================
 
 - Check the new setting :attr:`is_demo_site <lino.ui.Site.is_demo_site>`
   which defaults to `True`.

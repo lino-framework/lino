@@ -1,3 +1,7 @@
+/home/luc/hgwork/lino/docs/changes.rst:14: WARNING: Title underline too short.
+
+Version 1.6.11 (released :blogref:`20130723`)
+============================================
 /home/luc/hgwork/lino/docs/admin/install.rst:60: WARNING: undefined label: welfare (if the link has no caption the label must precede a section header)
 /home/luc/hgwork/lino/lino/modlib/users/models.py:docstring of lino.modlib.users.models.User:3: WARNING: unknown document: /topics/http_auth
 /home/luc/hgwork/lino/docs/api/lino.projects.igen.rst:7: WARNING: unknown document: /igen/index
@@ -19,7 +23,6 @@
 /home/luc/hgwork/lino/docs/blog/2013/0504.rst:8: WARNING: undefined label: watch_tim (if the link has no caption the label must precede a section header)
 /home/luc/hgwork/lino/docs/blog/2013/0506.rst:20: WARNING: undefined label: welfare.debts.liabilitiesbybudget (if the link has no caption the label must precede a section header)
 /home/luc/hgwork/lino/docs/blog/2013/0715.rst:29: WARNING: undefined label: welfare.cal.guestsbyevent (if the link has no caption the label must precede a section header)
-/home/luc/hgwork/lino/docs/blog/2013/0722.rst:150: WARNING: undefined label: welfare.changed (if the link has no caption the label must precede a section header)
 /home/luc/hgwork/lino/docs/changes.rst:51: WARNING: undefined label: welfare.debts.printliabilitiesbybudget (if the link has no caption the label must precede a section header)
 /home/luc/hgwork/lino/docs/ref/glossary.rst:12: WARNING: undefined label: admin.install (if the link has no caption the label must precede a section header)
 /home/luc/hgwork/lino/docs/ref/glossary.rst:110: WARNING: term not in glossary: report

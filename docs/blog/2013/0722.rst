@@ -143,7 +143,7 @@ Final sprint before release
 
 The :ref:`welfare.reception` module isn't yet perfect, 
 but tonight we plan to release Lino-Welfare 1.1.8.
-See :ref:`welfare.changed`
+See :ref:`welfare.changes`.
 
 TODO:
 
