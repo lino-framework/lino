@@ -37,6 +37,21 @@ That's all. Verify that it worked::
     luc@hoppel:~$ ls jana
     audio  backup  collect  fotos  screencasts  tmp  to_print  videos
     luc@hoppel:~/jana$ 
+
+Edit: that's not yet all. 
+How can I now automatically mount this each time I start?
+But in fact not really each time... e.g. not when I'm not home.
+This is where `autofs <https://help.ubuntu.com/community/Autofs>`_
+becomes interesting::
+    
+    $ sudo aptitude install autofs
+    [sudo] password for luc: 
+    The following NEW packages will be installed:
+      autofs autofs5{a} libgssglue1{a} libnfsidmap2{a} libtirpc1{a} nfs-common{a} rpcbind{a} 
+    0 packages upgraded, 7 newly installed, 0 to remove and 0 not upgraded.
+    Need to get 1,064 kB of archives. After unpacking 2,842 kB will be used.
+    Do you want to continue? [Y/n/?] 
+    
     
 
 Checkin in will reassign the event
@@ -106,6 +121,19 @@ but what does that mean concretely?
 I just need an applet like the eid-javascript-lib, but one that doesn't 
 depend on the old Middleware.
 
+The official `eid-applet <https://code.google.com/p/eid-applet/>`_ 
+is not what we want. We don't want authentication via eID, 
+we just want to read the data *without* prior authentication.
+Even if some day in the future we would want our users to authenticate 
+using the eID, then we won't use the eid-applet to read data from 
+clients eID cards. The reception clerk is not going to ask 
+clients to enter a PIN of their eID card.
+Some excerpts from the applet dev guide confirm this: "The eID 
+Applet will not proceed when it detects a non SSL browser session. ... 
+The eID Applet cannot be accessed from Javascript for cross-site 
+scripting security reasons." 
+and then the eID Applet requires an "applet service" to run. 
+
 Should I write my own applet which accesses the smartcard directly?
 Johan obviously started a project like that, `eid-nomw-sdk-applet
 <https://code.google.com/p/eid-nomw-sdk-applet/source/list>`_,
@@ -137,6 +165,10 @@ This last one sounds interesting. But the README says::
 So before continuing in this direction I'd have to learn about
 `Maven <http://maven.apache.org/>`_.
 Okay... not feeling ready for this right now...
+
+So it seems that the Lino users in Eupen will start to 
+actively Johan's eid-javascript-lib within the next months
+because AFAICS this library remains the only working solution.
 
 Final sprint before release
 ---------------------------

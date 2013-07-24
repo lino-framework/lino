@@ -52,7 +52,8 @@ from lino.core.choicelists import ChoiceList, Choice
 from lino.core.actors import get_default_required as required
 
 from lino.core.dbutils import obj2str
-from lino.core import constants # as ext_requests
+from lino.core import constants 
+from lino.core import workflows
 
 
 class UserLevels(ChoiceList):
@@ -374,7 +375,16 @@ def make_view_permission_handler_(
         #~ logger.info("20121121 ignoring required states %s for %s",states,actor)
     #~ if owner is not None:
         #~ logger.info("20121121 ignoring required owner %s for %s",owner,actor)
-    if allow is None:
+    #~ if allow is None:
+    if allow is not None:
+        if not isinstance(actor.action,workflows.ChangeStateAction):
+            raise Exception("20130724 %s" % actor)
+    if True: 
+        """
+        ignore `allow` requirement for view_permission
+        because 
+        workflows.Choice.add_transition
+        """
         def allow(action,profile):
             return True
     #~ if settings.SITE.user_model is not None:

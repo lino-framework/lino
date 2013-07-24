@@ -35,6 +35,9 @@ from django.contrib.contenttypes import generic
 from django.db import IntegrityError
 from django.utils.encoding import force_unicode
 from django.core.exceptions import ValidationError
+from django.contrib.humanize.templatetags.humanize import naturaltime
+
+from lino.utils.xmlgen.html import E
 
 from lino import dd
 
@@ -55,6 +58,150 @@ dd.inject_field('cal.Guest','waiting_until',
     models.DateTimeField(_("Waiting until"),
     editable=False,blank=True,null=True,
     help_text = _("Time when the visitor left (checked out).")))
+    
+    
+class CreateClientEvent(dd.RowAction):
+    label = _("Quick appointment")
+    #~ show_in_workflow = True
+    show_in_row_actions = True
+    parameters = dict(
+        #~ date=models.DateField(_("Date"),blank=True,null=True),
+        user=dd.ForeignKey(settings.SITE.user_model),
+        summary=models.CharField(verbose_name=_("Summary"),blank=True))
+    params_layout = """
+    user 
+    summary
+    """
+    #~ required = dict(states='coached')
+    
+    #~ @classmethod
+    def action_param_defaults(self,ar,obj,**kw):
+        kw = super(CreateClientEvent,self).action_param_defaults(ar,obj,**kw)
+        kw.update(user=ar.get_user())
+        #~ kw.update(date=datetime.date.today())
+        return kw
+        
+    def get_notify_subject(self,ar,obj):
+        return _("Created appointment for %(user)s with %(partner)s") % dict(
+            event=obj,
+            user=obj.event.user,
+            partner=obj.partner)
+     
+    def run_from_ui(self,obj,ar,**kw):
+        ekw = dict(project=obj,user=ar.get_user()) 
+        #~ ekw.update(state=cal.EventStates.draft)
+        #~ ekw.update(state=EventStates.scheduled)
+        today = datetime.date.today()
+        ekw.update(start_date=today)
+        ekw.update(end_date=today)
+        ekw.update(calendar=settings.SITE.site_config.client_calender)
+        ekw.update(user=ar.action_param_values.user)
+        if ar.action_param_values.summary:
+            ekw.update(summary=ar.action_param_values.summary)
+        event = cal.Event(**ekw)
+        event.save()
+        cal.Guest(event=event,partner=obj,waiting_since=datetime.datetime.now()).save()
+        #~ event.full_clean()
+        #~ print 20130722, ekw, ar.action_param_values.user, ar.get_user()
+        #~ kw = super(CreateClientEvent,self).run_from_ui(obj,ar,**kw)
+        kw.update(success=True)
+        #~ kw.update(eval_js=ar.renderer.instance_handler(ar,event))
+        kw.update(refresh=True)
+        return kw
+
+    
+    
+class ClientDetail(dd.FormLayout):
+    
+    main = """
+    box1 box2 AppointmentsByClient
+    box4 image:15
+    
+    """
+    
+    box1 = """
+    info
+    action_buttons
+    """
+    
+    #~ box1 = dd.Panel("""
+    #~ last_name first_name:15 title:10
+    #~ address_column
+    #~ """,label = _("Address"))
+    
+    box2 = dd.Panel("""
+    email
+    phone
+    gsm
+    """,label = _("Contact"))
+    
+    box3 = dd.Panel("""
+    gender:10 birth_date age:10 
+    birth_country birth_place nationality:15 national_id:15 
+    """,label = _("Birth"))
+    
+    eid_panel = dd.Panel("""
+    card_number:12 card_valid_from:12 card_valid_until:12 card_issuer:10 card_type:12
+    """,label = _("eID card"))
+
+    box4 = """
+    box3
+    eid_panel
+    """
+    
+    def override_labels(self):
+        return dict(
+            card_number = _("number"),
+            card_valid_from = _("valid from"),
+            card_valid_until = _("valid until"),
+            card_issuer = _("issued by"),
+            card_type = _("eID card type"))
+    
+def fld2html(fld,value) :
+    if value:
+        return ("%s: " % f.verbose_name,E.b(value))
+    return []
+    
+class Clients(dd.Table):
+    model = 'pcsw.Client'
+    column_names = "name_column address_column national_id" 
+    auto_fit_column_widths = True
+    required = dd.Required(user_groups='reception')
+    detail_layout = ClientDetail()
+    editable = False
+
+    create_event = CreateClientEvent()
+    
+    #~ @dd.virtualfield(dd.HtmlBox())
+    #~ def eid_card(cls,self,ar):
+        #~ for fldname in 'card_number card_valid_from card_valid_until card_issuer card_type'
+        #~ fld2html()
+        
+    @dd.virtualfield(dd.HtmlBox())
+    def info(cls,self,ar):
+        lines = []
+        for ln in list(self.address_person_lines()) + list(self.address_location_lines()):
+            lines += [ln, E.br()]
+        #~ return E.div(*lines,align="center",style="font-size:18px;font-weigth:bold;text-align:middle;")
+        return E.div(*lines,style="font-size:18px;font-weigth:bold;vertical-align:bottom;text-align:middle")
+    
+        
+class AppointmentsByClient(dd.Table):
+    label = _("Appointments")
+    model = 'cal.Guest'
+    master_key = 'partner'
+    column_names = 'event__start_date event__user action_buttons'
+    #~ slave_grid_format = 'html'
+    editable = False
+    
+    @classmethod
+    def get_request_queryset(self,ar):
+        # logger.info("20121010 Clients.get_request_queryset %s",ar.param_values)
+        qs = super(AppointmentsByClient,self).get_request_queryset(ar)
+        start_date = datetime.date.today() - datetime.timedelta(days=17)
+        end_date = datetime.date.today() + datetime.timedelta(days=17)
+        qs = qs.filter(event__start_date__gte=start_date,event__start_date__lte=end_date)
+        return qs
 
 #~ class CheckinGuest(dd.ChangeStateAction,dd.NotifyingAction):
 class CheckinGuest(dd.NotifyingAction):
@@ -173,7 +320,7 @@ class ExpectedGuests(cal.Guests):
     filter = Q(waiting_since__isnull=True,
         state__in=[GuestStates.invited,GuestStates.accepted]
         )
-    column_names = 'partner event__user event__summary workflow_buttons waiting_since waiting_until'
+    column_names = 'partner event__user event__summary action_buttons waiting_since waiting_until'
     hidden_columns = 'waiting_since waiting_until'
     #~ checkin = CheckinGuest()
     required = dd.Required(user_groups='reception')
@@ -193,18 +340,24 @@ class WaitingGuests(cal.Guests):
     help_text = _("Shows the visitors in the waiting room.")
     #~ known_values = dict(state=GuestStates.waiting)
     filter = Q(waiting_since__isnull=False,waiting_until__isnull=True)
-    column_names = 'waiting_since partner event__user event__summary workflow_buttons waiting_until'
+    column_names = 'since partner event__user event__summary action_buttons waiting_until'
     hidden_columns = 'waiting_until'
     order_by = ['waiting_since']
     #~ checkout = CheckoutGuest()
     required = dd.Required(user_groups='reception integ debts')
+
+    @dd.displayfield(_('Since'))
+    def since(self,obj,ar):
+        return naturaltime(obj.waiting_since)
+    
     
 
 def setup_main_menu(site,ui,profile,m):
     #~ m  = m.add_menu("office",lino.OFFICE_MODULE_LABEL)
-    #~ m  = m.add_menu("reception",_(App.verbose_name))
-    m  = m.add_menu("cal",cal.MODULE_LABEL)
-    m.add_separator("-")
+    m  = m.add_menu("reception",_(App.verbose_name))
+    #~ m  = m.add_menu("cal",cal.MODULE_LABEL)
+    #~ m.add_separator("-")
+    m.add_action(Clients)
     m.add_action(ExpectedGuests)
     m.add_action(WaitingGuests)
     #~ m.add_action(ExpectedGuests,params=dict(param_values=dict(only_expected=True)))

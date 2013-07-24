@@ -622,22 +622,7 @@ class DocumentsToSign(Invoices):
                   "subject:10 total_incl total_base total_vat "
     #~ actions = Invoices.actions + [ SignAction() ]
     
-    #~ def get_row_actions(self,renderer):
-        #~ l = super(Invoices,self).get_row_actions(renderer)
-        
-        #~ def sign(renderer):
-            #~ for row in renderer.selected_rows():
-                #~ row.instance.user = renderer.request.user
-                #~ row.instance.save()
-            #~ renderer.must_refresh()
-            
-        #~ l.append( ('sign', sign) )
-        #~ return l 
 
-
-
-    
-    
 
 
 class InvoicesByPartner(Invoices):

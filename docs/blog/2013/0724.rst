@@ -1,0 +1,27 @@
+==================================
+20130724 (Wednesday, 24 July 2013)
+==================================
+
+Continued to work
+on the :ref:`welfare.reception` module.
+
+Added a "Quick appointment" action which
+creates (1) a calendar event that belongs to the selected user
+and (2) a checked-in Guest for this event.
+
+Actions
+-------
+
+I added a new virtual column
+:meth:`action_buttons <lino.core.model.Model.action_buttons>`
+which is similar to the existing
+:meth:`workflow_buttons <lino.core.model.Model.workflow_buttons>` column.
+The new attribute :attr:`lino.core.actions.Action.show_in_row_actions`
+defines whether this action should be displayed in this column.
+
+The difference is subtle:
+it does not display the state, nor does it automatically include 
+any state change actions.
+The whole system for defining actions is not yet really 
+transparent and consistent.
+

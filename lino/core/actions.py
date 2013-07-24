@@ -395,11 +395,18 @@ class Action(Parametrizable,Permittable):
     Whether this action should be displayed as a button in the bottom toolbar and the context menu.
     """
     
+    show_in_row_actions = False
+    """
+    Whether this action should be displayed as a button in the 
+    :meth:`action_buttons <lino.core.model.Model.action_buttons>`    
+    column.
+    """
+    
     show_in_workflow = False
     """
     Used internally.
     Whether this action should be displayed 
-    as the :meth:`workflow_buttons <lino.core.model.Model.workflow_buttons>`.
+    as the :meth:`workflow_buttons <lino.core.model.Model.workflow_buttons>` column.
     """
     
     custom_handler = False
@@ -437,6 +444,9 @@ class Action(Parametrizable,Permittable):
             self.show_in_bbar = False
         else:
             self.show_in_bbar = True
+            
+        if self.show_in_row_actions:
+            self.custom_handler = True
         
         
         #~ self.set_required(**required)
@@ -796,6 +806,8 @@ class ShowDetailAction(RowAction):
     #~ icon_file = 'application_form.png'
     opens_a_window = True
     show_in_workflow = False
+    #~ show_in_row_actions = True
+    
     
     sort_index = 20
     callable_from = (GridEdit,)
@@ -1002,6 +1014,8 @@ class SubmitInsertAndStay(SubmitInsert):
     
 class NotifyingAction(RowAction):
     
+    show_in_row_actions = True
+    
     parameters = dict(
         notify_subject = models.CharField(_("Summary"),blank=True,max_length=200),
         notify_body = fields.RichTextField(_("Description"),blank=True),
@@ -1075,6 +1089,7 @@ def action(*args,**kw):
     """
     def decorator(fn):
         kw.setdefault('custom_handler',True)
+        kw.setdefault('show_in_row_actions',True)
         a = RowAction(*args,**kw)
         #~ a.run = curry(fn,a)
         a.run_from_ui = fn

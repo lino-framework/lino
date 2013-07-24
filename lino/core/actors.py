@@ -902,6 +902,20 @@ class Actor(actions.Parametrizable):
         return ba
 
     @classmethod
+    def get_row_actions(self,ar,obj):
+        state = self.get_row_state(obj)
+        profile = ar.get_user().profile
+        for ba in self.get_actions(ar.bound_action.action):
+        #~ for ba in self.get_actions():
+            #~ if isinstance(ba.action,actions.RowAction):
+            if ba.action.show_in_row_actions:
+                #~ if ba.action.action_name is not None:
+                #~ if ba.action.custom_handler is not None:
+                    if ba.get_view_permission(profile):
+                        if self.get_row_permission(obj,ar,state,ba):
+                            yield ba
+                
+    @classmethod
     def get_workflow_actions(self,ar,obj):
         """
         Return the actions to be displayed in a `workflow_buttons` field.

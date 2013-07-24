@@ -160,14 +160,94 @@ the main viewport.
 Übersicht Art-60§7-Konventionen
 -------------------------------
 
-Noch zwei Bugs auf einmal:
-
-Bugs fixed:
+Two more bugs fixed:
 
 - Übersicht Art-60§7-Konventionen : wenn man im Parameter-Panel 
   eine Stellenart auswählte, kam Fehlermeldung 
   "'JobType' object is not iterable"
 
-TODO:
-
 - Übersicht Art-60§7-Konventionen : Vorschau ist leer. 
+  Da kam stattdessen eine Fehlermeldung in der JS-Console, weil das 
+  Fenster keinen Navigator hatte und dennoch versuchte, die 
+  Navigationsbuttons zu deaktivieren.
+  
+  
+Menüstruktur
+------------
+
+Eher unnütze Gedanken über ein scheinbar banales Thema, 
+das ich aber für relativ wichtig halte.
+
+Das Modul "Empfang" bringt -soweit ich sehen kann- nur zwei 
+oder höchstens drei neue Befehle hinzu:
+
+- "Klienten" Der Empfang muss sicherlich eine eigene Ansicht aller
+  Klienten kriegen, mit nur ein paar Kolonnen und einem eigenen 
+  Detail-Layout.
+
+- "Wartesaal" oder "Wartende Besucher", also eine Liste der anwesenden
+  (eingecheckten) Leute. 
+
+- Der dritte "Erwartete Besucher" ist eine theoretisch mögliche Liste
+  aller Leute, die einen Termin haben (und noch nicht eingecheckt
+  sind). Habe aber Zweifel, dass ihr den brauchen werdet.
+
+Alle drei Befehle sollen potentiell auch für andere Benutzerprofile 
+aktivierbar sein. Z.B. könnten in kleineren ÖSHZ manche Benutzer
+Funktionenhäufung haben.
+
+Die Frage ist: soll ich ein eigenes Menü "Empfang" machen oder nicht? 
+
+Wenn ich ein eigenes Menü mache, dann wird das Hauptmenü für 
+Systemverwalter langsam unübersichtlich. 
+
+Außerdem widerspricht das der "allgemeinen Menü-Philosophie", die mir vorschwebt. 
+
+Welche "allgemeine Menü-Philosophie"?
+
+Lino unterscheidet die "technischen Module" und die "Benutzer-Module". 
+Es gibt viel mehr technische Module als Benutzer-Module. 
+
+"Empfang" ist ein technisches Modul: pro ÖSHZ und pro Benutzerprofil 
+soll man auswählen können, ob es diese Funktionalität geben soll 
+oder nicht. 
+
+In der "allgemeinen Menü-Philosophie", die mir vorschwebt, 
+kategorisiere ich bewusst nicht nach "Modulen", 
+sondern nach... naja, wonach eigentlich? 
+
+Vielleicht müssten die Menü-Titel "DSBE", "Neuanträge" 
+und "Schuldnerberatung" raus, und stattdessen: 
+
+- Kontakte : alle Partner, inkl. Stellenabieter, Kursanbieter usw.
+- Kalender : wie bisher
+- Verträge : VSEs, Art60§7, Stellen, Stellenangebote
+- Kurse : Kurse, Anfragen
+- Berichte : 
+  - DSBE : Übersicht Art60§7, Tätigkeitsbericht
+- Konfigurierung : (wie bisher)
+- Explorer : (wie bisher)
+
+Murmel, grübel... nein, das wäre falsch. 
+Befehle wie "Stellenabieter" oder "Kursanbieter" 
+kann man nicht einfach mit den allgemeinen Kontakten 
+in den gleichen Topf werfen. 
+Und "Empfang" ist nicht nur ein technisches Modul, 
+sondern auch eine "Abteilung", ein "Dienst", 
+ein "funktionaler Bereich", der für Endbenutzer Sinn macht.
+
+Fazit: Ja, wie brauchen ein neues Menü "Empfang". 
+
+Fazit2: Aber was ist mit dem Menü "Neuzugänge"? 
+Das hat ja nur einen einzigen Befehl "Neue Klienten"! 
+
+
+Klientenansicht "Empfang"
+-------------------------
+
+New :menuselection:`Reception --> Clients`
+shows a :ref:`welfare.reception.Clients` table
+with simplified columns and detail which
+does *not* inherit from the "usual" 
+:ref:`welfare.pcsw.Clients` table.
+  
