@@ -54,13 +54,14 @@ Thus the need for an intermediate level.
 But this was maybe an unnecessary complication. 
 Removed it. Waiting for user feedback.
 
-
-
 The two actions to manage Belgian eID cards
 (which were previously in 
 :mod:`lino_welfare.modlib.pcsw.models`) 
 are now in a separate 
 module :mod:`lino.modlib.reception.beid`.
+
+TODO: model mixin `BeidCardHolder` and make it even an 
+independant app and make the `linoweb.js` fragmented...
 
 The :ref:`welfare.reception` module starts to get ready,
 but two technical challenges are yet TODO:
@@ -78,30 +79,14 @@ but two technical challenges are yet TODO:
 Merge
 -----
 
-::
+A simply typo bug occured when trying to merge::
 
     TypeError
     unsupported operand type(s) for %: 'NoneType' and 'tuple'
 
     TRACEBACK:
-      File "/home/luc/pythonenvs/py27/local/lib/python2.7/site-packages/django/core/handlers/base.py", line 115, in get_response
-        response = callback(request, *callback_args, **callback_kwargs)
-      File "/home/luc/pythonenvs/py27/local/lib/python2.7/site-packages/django/views/generic/base.py", line 68, in view
-        return self.dispatch(request, *args, **kwargs)
-      File "/home/luc/pythonenvs/py27/local/lib/python2.7/site-packages/django/views/generic/base.py", line 86, in dispatch
-        return handler(request, *args, **kwargs)
-      File "/home/luc/hgwork/lino/lino/ui/views.py", line 478, in get
-        return settings.SITE.ui.callback_get(request,thread_id,button_id)
-      File "/home/luc/hgwork/lino/lino/ui/base.py", line 256, in callback_get
-        rv = c.func()
-      File "/home/luc/hgwork/lino/lino/core/merge.py", line 234, in ok
-        msg = mp.execute(request=ar.request)
-      File "/home/luc/hgwork/lino/lino/core/merge.py", line 119, in execute
-        pre_merge.send(**kw)
-      File "/home/luc/pythonenvs/py27/local/lib/python2.7/site-packages/django/dispatch/dispatcher.py", line 170, in send
-        response = receiver(signal=self, sender=sender, **named)
-      File "/home/luc/hgwork/lino/lino/modlib/changes/models.py", line 293, in on_merge
-        log_change(ChangeTypes.merge,request,master,sender.obj,sender.logmsg())
+      ...
       File "/home/luc/hgwork/lino/lino/core/merge.py", line 77, in logmsg
         lst.append("Merge %s into %s") % (self.obj,self.merge_to)
+
 

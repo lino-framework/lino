@@ -2138,6 +2138,15 @@ Lino.row_action_handler = function(actionName,hm,pp) {
   var p = {};
   var fn = function(panel,btn,step) {
       if (pp) { p = pp(); if (! p) return; }
+      
+      if (panel.get_current_record == undefined) { // AFTER_20130725
+        panel = Ext.getCmp(panel);
+        if (panel == undefined) {
+          Lino.notify("Invalid panel spec.");
+          return;
+        }
+      }
+      
       Lino.do_on_current_record(panel,function(rec) {
           //~ console.log(panel);
           //~ 20120723 Lino.call_ajax_action(panel,rec.id,actionName,step,fn);
@@ -2535,6 +2544,10 @@ Lino.ActionFormPanel = Ext.extend(Lino.ActionFormPanel,{
     //~ console.log("on_ok",this.requesting_panel,arguments);
     //~ Lino.row_action_handler()
     var panel = this.requesting_panel;
+    if (panel == undefined) {
+        Lino.alert("Sorry, this action don't work when called directly from the Home page");
+        return;
+    }
     var actionName = this.action_name;
     var rec = panel.get_current_record();
     var self = this;

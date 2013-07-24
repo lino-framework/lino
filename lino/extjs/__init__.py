@@ -90,6 +90,7 @@ from lino.mixins import printable
 if settings.SITE.user_model:
     from lino.modlib.users import models as users
 
+AFTER_20130725 = True
 
 #~ from lino.utils.choicelists import DoYouLike, HowWell
 #~ STRENGTH_CHOICES = DoYouLike.get_choices()
@@ -256,7 +257,7 @@ class ExtRenderer(HtmlRenderer):
     def row_action_button(self,obj,request,ba,label=None,title=None,**kw):
         """
         Return a HTML fragment that displays a button-like link 
-        which runs the action when clicked.
+        which runs the bound action `ba` when clicked.
         """
         #~ label = unicode(label or ba.get_button_label())
         label = label or ba.action.label
@@ -264,8 +265,11 @@ class ExtRenderer(HtmlRenderer):
             rp = None
         else:
             rp = request.requesting_panel
-        url = 'javascript:Lino.%s(%s,%s)' % (
-                ba.full_name(),py2js(rp),py2js(obj.pk))
+        if AFTER_20130725:
+            url = 'javascript:%s(%s)' % (ba.get_panel_btn_handler(),py2js(rp))
+        else:
+            url = 'javascript:Lino.%s(%s,%s)' % (
+                    ba.full_name(),py2js(rp),py2js(obj.pk))
         return self.href_button_action(ba,url,label,title or ba.action.help_text,**kw)
         #~ if a.action.help_text:
             #~ return self.href_button(url,label,a.action.help_text)
@@ -1429,10 +1433,8 @@ tinymce.init({
         """
         Defines the non-window action handler used by :meth:`row_action_button`
         """
-        
         # 20120723 : removed useless js param "action"
         yield "Lino.%s = function(rp,pk) { " % action.full_name()
-        #~ panel = "Lino.%s.GridPanel.ls_url" % action 
         url = ext_elems.rpt2url(rh.actor)
         yield "  Lino.run_row_action(rp,%s,pk,%s);" % (
             py2js(url),py2js(action.action.action_name))

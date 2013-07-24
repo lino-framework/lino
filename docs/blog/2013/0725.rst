@@ -1,0 +1,25 @@
+=================================
+20130725 (Thursday, 25 July 2013)
+=================================
+
+One of the two technical challenges seems solved:
+
+- Executing the "Read eID card" action on a client 
+  using the JS link of the new "Actions" 
+  field now works.
+  
+Since all this is very complex and not automatically tested, 
+it might cause bugs at the JavaScript level.
+So I marked this change with "AFTER_20130725" in `linoweb.js` 
+and `extjs/__init__.py`
+
+The second challenge is even more sophisticated and not yet solved:
+
+- A reception clerk sees the :ref:`welfare.reception.ExpectedGuests` table
+  rendered as HTML in their `admin_main.html`, very nice, 
+  but the "Checkout" actions don't work from there.
+
+Buttons for actions with parameters aren't yet possible 
+when rendering to plain HTML.
+But Lino now at least says 
+"Sorry, this action don't work when called directly from the Home page".
