@@ -55,6 +55,7 @@ But this was maybe an unnecessary complication.
 Removed it. Waiting for user feedback.
 
 
+
 The two actions to manage Belgian eID cards
 (which were previously in 
 :mod:`lino_welfare.modlib.pcsw.models`) 
@@ -69,8 +70,38 @@ but two technical challenges are yet TODO:
   using the toolbar button and using the JS link of the new "Actions" 
   field. The latter doesn't work because the JS isn't correct.
   
-- Theresia sees the :ref:`welfare.reception.ExpectedGuests` table
-  rendered as HTML in her `admin_main.html`, very nice, 
+- A reception clerk sees the :ref:`welfare.reception.ExpectedGuests` table
+  rendered as HTML in their `admin_main.html`, very nice, 
   but the "Checkout" actions don't work from there.
   
-  
+
+Merge
+-----
+
+::
+
+    TypeError
+    unsupported operand type(s) for %: 'NoneType' and 'tuple'
+
+    TRACEBACK:
+      File "/home/luc/pythonenvs/py27/local/lib/python2.7/site-packages/django/core/handlers/base.py", line 115, in get_response
+        response = callback(request, *callback_args, **callback_kwargs)
+      File "/home/luc/pythonenvs/py27/local/lib/python2.7/site-packages/django/views/generic/base.py", line 68, in view
+        return self.dispatch(request, *args, **kwargs)
+      File "/home/luc/pythonenvs/py27/local/lib/python2.7/site-packages/django/views/generic/base.py", line 86, in dispatch
+        return handler(request, *args, **kwargs)
+      File "/home/luc/hgwork/lino/lino/ui/views.py", line 478, in get
+        return settings.SITE.ui.callback_get(request,thread_id,button_id)
+      File "/home/luc/hgwork/lino/lino/ui/base.py", line 256, in callback_get
+        rv = c.func()
+      File "/home/luc/hgwork/lino/lino/core/merge.py", line 234, in ok
+        msg = mp.execute(request=ar.request)
+      File "/home/luc/hgwork/lino/lino/core/merge.py", line 119, in execute
+        pre_merge.send(**kw)
+      File "/home/luc/pythonenvs/py27/local/lib/python2.7/site-packages/django/dispatch/dispatcher.py", line 170, in send
+        response = receiver(signal=self, sender=sender, **named)
+      File "/home/luc/hgwork/lino/lino/modlib/changes/models.py", line 293, in on_merge
+        log_change(ChangeTypes.merge,request,master,sender.obj,sender.logmsg())
+      File "/home/luc/hgwork/lino/lino/core/merge.py", line 77, in logmsg
+        lst.append("Merge %s into %s") % (self.obj,self.merge_to)
+

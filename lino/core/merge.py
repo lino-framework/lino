@@ -74,7 +74,7 @@ class MergePlan(object):
     def logmsg(self):
         #~ self.analyze()
         lst = []
-        lst.append("Merge %s into %s") % (self.obj,self.merge_to)
+        lst.append(_("Merge %(origin)s into %(target)s") % dict(origin=self.obj,target=self.merge_to))
         def add(name):
             for f,qs in getattr(self,name):
                 if qs.count() > 0:

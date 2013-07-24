@@ -363,7 +363,23 @@ class WaitingGuests(cal.Guests):
     @dd.displayfield(_('Since'))
     def since(self,obj,ar):
         return naturaltime(obj.waiting_since)
+        
+class MyWaitingGuests(WaitingGuests):
+    column_names = 'since partner event__summary action_buttons waiting_until'
+    label = _("Waiting Guests")
     
+    @classmethod
+    def param_defaults(self,ar,**kw):
+        kw = super(MyWaitingGuests,self).param_defaults(ar,**kw)
+        kw.update(user=ar.get_user())
+        return kw
+        
+    
+
+        
+    
+def get_todo_tables(ar):
+    yield (MyWaitingGuests, None) 
     
 
 def setup_main_menu(site,ui,profile,m):
