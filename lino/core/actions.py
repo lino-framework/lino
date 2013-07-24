@@ -615,7 +615,7 @@ class Action(Parametrizable,Permittable):
         
     def get_view_permission(self,profile):
         """
-        Overridden by :class:`lino_welfare.modlib.pcsw.models.BeIdReadCardAction`
+        Overridden e.g. by `BeIdReadCardAction`
         to make it available only when :attr:`lino.Lino.use_eid_jslib` is True.
         """
         return True
@@ -781,19 +781,6 @@ class GridEdit(TableAction):
       
         
 
-
-class BeIdReadCardAction(RowAction):
-    preprocessor = 'Lino.beid_read_card_processor'
-    http_method = 'POST'
-    
-    def get_button_label(self,actor):
-        return self.label 
-        
-    def get_view_permission(self,profile):
-        if not settings.SITE.use_eid_jslib:
-            return False
-        return super(BeIdReadCardAction,self).get_view_permission(profile)
-  
 
 
 
@@ -1054,7 +1041,7 @@ class NotifyingAction(RowAction):
         
     def run_from_ui(self,obj,ar,**kw):
         kw.update(message=ar.action_param_values.notify_subject)
-        kw.update(alert=True)
+        #~ kw.update(alert=True)
         kw.update(refresh=True)
         kw.update(success=True)
         #~ kw = super(NotifyingAction,self).run_from_ui(obj,ar,**kw)

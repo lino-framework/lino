@@ -306,7 +306,7 @@ class PartnerDetail(dd.FormLayout):
     
     
 class Partners(dd.Table):
-    required = dd.required(user_level='user')
+    required = dd.Required(user_level='user',user_groups='office')
     model = 'contacts.Partner'
     column_names = "name email * id" 
     order_by = ['name','id']

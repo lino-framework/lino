@@ -135,7 +135,7 @@ class HouseholdDetail(dd.FormLayout):
 #~ class Households(pcsw.Partners):
 class Households(contacts.Partners):
     model = 'households.Household'
-    required = dd.required()
+    required = dd.Required(user_groups='office')
     order_by = ["name"]
     detail_layout = HouseholdDetail()
     

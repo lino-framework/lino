@@ -117,7 +117,8 @@ class MyPostings(Postings,mixins.ByUser):
     column_names = 'date partner state workflow_buttons *'
   
 class PostingsByState(Postings):
-    required = dd.Required(user_groups='office',user_level='secretary')
+    #~ required = dd.Required(user_groups='office',user_level='secretary')
+    required = dd.Required(user_groups='office')
     column_names = 'date user partner workflow_buttons *'
     
 class PostingsReady(PostingsByState):

@@ -113,7 +113,7 @@ class Language(dd.BabelNamed):
 
 class Languages(dd.Table):
     model = Language
-    required = dd.required()
+    required = dd.required(user_groups='office')
 
 
 
@@ -156,7 +156,7 @@ class Countries(dd.Table):
     """)
     #~ label = _("Countries")
     model = 'countries.Country'
-    required = dd.required()
+    required = dd.Required(user_groups='office')
     order_by = ["name","isocode"]
     column_names = "name isocode *"
     detail_layout = """
@@ -230,7 +230,7 @@ class Cities(dd.Table):
     """)
   
     model = 'countries.City'
-    required = dd.required(user_level='admin')
+    required = dd.Required(user_level='admin',user_groups='office')
     order_by = "country name".split()
     column_names = "country name type zip_code *"
     detail_layout = """
@@ -243,13 +243,13 @@ class CitiesByCity(Cities):
     label = _("Subdivisions")
     master_key = 'parent'
     column_names = "name type zip_code *"
-    required = dd.required()
+    required = dd.Required(user_groups='office')
 
     
 class CitiesByCountry(Cities):
     master_key = 'country'
     column_names = "name type zip_code *"
-    required = dd.required()
+    required = dd.Required(user_groups='office')
 
 
 

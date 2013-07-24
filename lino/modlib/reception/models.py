@@ -23,6 +23,7 @@ import os
 import sys
 import cgi
 import datetime
+import base64
 
 
 from django.db import models
@@ -38,6 +39,8 @@ from django.core.exceptions import ValidationError
 from django.contrib.humanize.templatetags.humanize import naturaltime
 
 from lino.utils.xmlgen.html import E
+from lino.utils import ssin
+from lino.utils import join_words
 
 from lino import dd
 
@@ -46,6 +49,7 @@ cal = dd.resolve_app('cal')
 from lino.modlib.cal.models import GuestStates
 
 from lino.modlib.reception import App
+from lino.modlib.reception import beid
 
 #~ add = GuestStates.add_item
 #~ add('21', _("Waiting"),'waiting')
@@ -60,7 +64,8 @@ dd.inject_field('cal.Guest','waiting_until',
     help_text = _("Time when the visitor left (checked out).")))
     
     
-class CreateClientEvent(dd.RowAction):
+    
+class QuickClientEvent(dd.RowAction):
     label = _("Quick appointment")
     #~ show_in_workflow = True
     show_in_row_actions = True
@@ -74,12 +79,12 @@ class CreateClientEvent(dd.RowAction):
     """
     #~ required = dict(states='coached')
     
-    #~ @classmethod
-    def action_param_defaults(self,ar,obj,**kw):
-        kw = super(CreateClientEvent,self).action_param_defaults(ar,obj,**kw)
-        kw.update(user=ar.get_user())
+    #~ def action_param_defaults(self,ar,obj,**kw):
+        #~ kw = super(QuickClientEvent,self).action_param_defaults(ar,obj,**kw)
+        #~ kw.update(user=ar.get_user())
         #~ kw.update(date=datetime.date.today())
-        return kw
+        #~ return kw
+        
         
     def get_notify_subject(self,ar,obj):
         return _("Created appointment for %(user)s with %(partner)s") % dict(
@@ -103,7 +108,7 @@ class CreateClientEvent(dd.RowAction):
         cal.Guest(event=event,partner=obj,waiting_since=datetime.datetime.now()).save()
         #~ event.full_clean()
         #~ print 20130722, ekw, ar.action_param_values.user, ar.get_user()
-        #~ kw = super(CreateClientEvent,self).run_from_ui(obj,ar,**kw)
+        #~ kw = super(QuickClientEvent,self).run_from_ui(obj,ar,**kw)
         kw.update(success=True)
         #~ kw.update(eval_js=ar.renderer.instance_handler(ar,event))
         kw.update(refresh=True)
@@ -114,7 +119,7 @@ class CreateClientEvent(dd.RowAction):
 class ClientDetail(dd.FormLayout):
     
     main = """
-    box1 box2 AppointmentsByClient
+    box1 AppointmentsByClient box2
     box4 image:15
     
     """
@@ -170,7 +175,10 @@ class Clients(dd.Table):
     detail_layout = ClientDetail()
     editable = False
 
-    create_event = CreateClientEvent()
+    read_beid = beid.BeIdReadCardAction('pcsw.Client')
+    find_by_beid = beid.FindByBeIdAction('pcsw.Client')
+    
+    quick_event = QuickClientEvent()
     
     #~ @dd.virtualfield(dd.HtmlBox())
     #~ def eid_card(cls,self,ar):
@@ -198,6 +206,7 @@ class AppointmentsByClient(dd.Table):
     def get_request_queryset(self,ar):
         # logger.info("20121010 Clients.get_request_queryset %s",ar.param_values)
         qs = super(AppointmentsByClient,self).get_request_queryset(ar)
+        if isinstance(qs,list): return qs
         start_date = datetime.date.today() - datetime.timedelta(days=17)
         end_date = datetime.date.today() + datetime.timedelta(days=17)
         qs = qs.filter(event__start_date__gte=start_date,event__start_date__lte=end_date)
@@ -212,7 +221,10 @@ class CheckinGuest(dd.NotifyingAction):
     #~ required = dict(states='invited accepted') 
     required = dd.Required(user_groups='reception')
     
+    
     def get_action_permission(self,ar,obj,state):
+        if obj.event.start_date != datetime.date.today():
+            return False
         if obj.waiting_since is not None and obj.waiting_until is None:
             return False
         return super(CheckinGuest,self).get_action_permission(ar,obj,state)
@@ -254,6 +266,8 @@ class CheckoutGuest(dd.NotifyingAction):
         if obj.waiting_since is None:
             return False
         if obj.waiting_until is not None:
+            return False
+        if obj.event.start_date != datetime.date.today():
             return False
         return super(CheckoutGuest,self).get_action_permission(ar,obj,state)
     
@@ -357,6 +371,7 @@ def setup_main_menu(site,ui,profile,m):
     m  = m.add_menu("reception",_(App.verbose_name))
     #~ m  = m.add_menu("cal",cal.MODULE_LABEL)
     #~ m.add_separator("-")
+    m.add_action(Clients,'find_by_beid')
     m.add_action(Clients)
     m.add_action(ExpectedGuests)
     m.add_action(WaitingGuests)

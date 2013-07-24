@@ -25,3 +25,52 @@ any state change actions.
 The whole system for defining actions is not yet really 
 transparent and consistent.
 
+
+Secretaries
+-----------
+
+Is "secretary" a "user role" (currently called "level") or a 
+"functional group"?
+The answer to this question depends on the application. 
+The framework should not make some presumption.
+
+The reception clerk should not see the contacts module.
+I think the best solution for this is to change
+the general :mod:`lino.modlib.contacts` module
+so that these commands also require `user_groups='office'`.
+
+The default `UserLevels` had an entry "secretary", 
+situated between "guest" and "user". 
+I renamed this (back) to "restricted".
+
+The "restricted" user level was used in 
+:mod:`lino.modlib.postings`: 
+the idea was that "secretaries" do certain general jobs 
+for the "specialists".
+They are members of these "user groups", 
+but have less rights than the real users. 
+They are more than "guests" however.
+Thus the need for an intermediate level.
+But this was maybe an unnecessary complication. 
+Removed it. Waiting for user feedback.
+
+
+The two actions to manage Belgian eID cards
+(which were previously in 
+:mod:`lino_welfare.modlib.pcsw.models`) 
+are now in a separate 
+module :mod:`lino.modlib.reception.beid`.
+
+The :ref:`welfare.reception` module starts to get ready,
+but two technical challenges are yet TODO:
+
+- There are two ways to 
+  execute the "Read eID card" action on a client: 
+  using the toolbar button and using the JS link of the new "Actions" 
+  field. The latter doesn't work because the JS isn't correct.
+  
+- Theresia sees the :ref:`welfare.reception.ExpectedGuests` table
+  rendered as HTML in her `admin_main.html`, very nice, 
+  but the "Checkout" actions don't work from there.
+  
+  

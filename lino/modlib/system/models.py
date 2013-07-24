@@ -369,8 +369,8 @@ class Home(mixins.EmptyTable):
             chunks = []
             for mi in quicklinks.items:
                 chunks.append(' ')
-                chunks.append(settings.SITE.ui.ext_renderer.window_action_button(
-                  ar,mi.bound_action))
+                chunks.append(ar.window_action_button(mi.bound_action))
+                #~ chunks.append(settings.SITE.ui.ext_renderer.window_action_button(ar,mi.bound_action))
             return xghtml.E.p('Quick Links:',*chunks)
       
     #~ @dd.virtualfield(dd.HtmlBox())

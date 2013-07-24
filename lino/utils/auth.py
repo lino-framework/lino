@@ -98,12 +98,28 @@ class UserLevels(ChoiceList):
 add = UserLevels.add_item
 add('10', _("Guest"),'guest')
 #~ add('20', _("Restricted"),'restricted')
-add('20', _("Secretary"),'secretary')
+#~ add('20', _("Secretary"),'secretary')
 add('30', _("User"), "user")
 add('40', _("Manager"), "manager")
 add('50', _("Administrator"), "admin")
 add('90', _("Expert"), "expert")
-UserLevels.SHORT_NAMES = dict(A='admin',U='user',_=None,M='manager',G='guest',S='secretary')
+#~ UserLevels.SHORT_NAMES = dict(A='admin',U='user',_=None,M='manager',G='guest',S='secretary')
+#~ UserLevels.SHORT_NAMES = dict(A='admin',U='user',_=None,M='manager',G='guest',R='restricted')
+UserLevels.SHORT_NAMES = dict(A='admin',U='user',_=None,M='manager',G='guest')
+
+"""
+The "restricted" user level was once used in 
+:mod:`lino.modlib.postings`: 
+the idea was that "secretaries" do certain general jobs 
+for the "specialists".
+They are members of the same "user groups", 
+but have less rights than the "real users". 
+They are more than "guests" however.
+Thus the need for an intermediate level.
+But this was maybe an unnecessary complication. 
+Removed it. Waiting for concrete use-case.
+
+"""
 
 class UserGroups(ChoiceList):
     """
@@ -402,7 +418,9 @@ def make_view_permission_handler_(
             if user_level is None:
                 user_level = UserLevels.user
             else:
-                user_level = getattr(UserLevels,user_level)
+                user_level = getattr(UserLevels,user_level,None)
+                if user_level is None:
+                    raise Exception("Invalid user_level %r for %s" % (user_level,actor))
             for g in user_groups:
                 UserGroups.get_by_value(g) # raise Exception if no such group exists
                 #~ if not UserGroups.get_by_name(g):

@@ -172,6 +172,7 @@ class ExtRenderer(HtmlRenderer):
                 #kw.update(region='north',height=27,items=v.items)
                 #return py2js(kw)
             return dict(text=prepare_label(v),menu=dict(items=v.items))
+            
         if isinstance(v,menus.MenuItem):
             if v.instance is not None:
                 h = self.instance_handler(None,v.instance)
@@ -185,21 +186,19 @@ class ExtRenderer(HtmlRenderer):
                 #~ url = self.get_detail_url(v.instance)
             elif v.bound_action is not None:
                 if v.params:
-                    #~ ar = v.action.actor.request(self.ui,None,v.action,**v.params)
                     ar = v.bound_action.request(**v.params)
                     js = "function() {%s}" % self.request_handler(ar)
                     return self.handler_item(v,js,v.help_text)
-                    #~ return dict(text=prepare_label(v),handler=js_code(handler))
               
-                js = self.action_call(None,v.bound_action,{})
-                if js is None:
-                    js = v.bound_action.get_panel_btn_handler()
-                    js = "function() {%s(Lino.viewport)}" % js
-                else:
-                    js = "function() {%s}" % js
+                #~ js = self.action_call(None,v.bound_action,{})
+                #~ if js is None:
+                    #~ js = v.bound_action.get_panel_btn_handler()
+                    #~ js = "function() {%s(Lino.viewport)}" % js
+                #~ else:
+                    #~ js = "function() {%s}" % js
+                js = "function() {%s}" % self.action_call(None,v.bound_action,{})
                 return self.handler_item(v,js,v.help_text)
-                #~ ar = v.action.request(self.ui)
-                #~ return self.handler_item(v,self.request_handler(ar),v.action.help_text)
+                
             elif v.javascript is not None:
                 js = "function() {%s}" % v.javascript
                 return self.handler_item(v,js,v.help_text)
@@ -227,9 +226,6 @@ class ExtRenderer(HtmlRenderer):
         js = js.replace('"','&quot;')
         return 'javascript:' + js
         
-    #~ def action_url_js(self,a,after_show):
-        #~ return self.js2url(self.action_call(a,after_show))
-
     def action_button(self,obj,ar,ba,label=None,**kw):
         """
         ``kw`` may contain additional html attributes like `style`
@@ -250,7 +246,7 @@ class ExtRenderer(HtmlRenderer):
         action using a *Javascript* link to this action.
         """
         label = unicode(label or ba.get_button_label())
-        url = 'javascript:'+self.action_call(request,ba,after_show)
+        url = 'javascript:' + self.action_call(request,ba,after_show)
         #~ logger.info('20121002 window_action_button %s %r',a,unicode(label))
         return self.href_button_action(ba,url,label,title or ba.action.help_text,**kw)
         #~ if a.action.help_text:
@@ -277,9 +273,6 @@ class ExtRenderer(HtmlRenderer):
         
     def action_call(self,request,bound_action,after_show):
         if bound_action.action.opens_a_window or bound_action.action.parameters:
-        #~ if a.opens_a_window:
-            #~ if after_show is None:
-                #~ after_show = {}
             if request and request.subst_user:
                 after_show[ext_requests.URL_PARAM_SUBST_USER] = request.subst_user
             if isinstance(bound_action.action,actions.ShowEmptyTable):
@@ -289,22 +282,17 @@ class ExtRenderer(HtmlRenderer):
             else:
                 rp = "'" + request.requesting_panel + "'"
             if after_show:
-                #~ return "Lino.%s.run(%s)" % (action.full_name(a.actor),py2js(after_show))
                 return "Lino.%s.run(%s,%s)" % (
                   bound_action.full_name(),
                   rp,
                   py2js(after_show))
             return "Lino.%s.run(%s)" % (bound_action.full_name(),rp)
         return "%s()" % bound_action.get_panel_btn_handler()
-        #~ return None
 
     def instance_handler(self,ar,obj):
-        #~ if True: # obj.__class__.__name__ == 'Budget':
-            #~ raise Exception('20130610, %s' % obj.__class__.__name__)
         a = getattr(obj,'_detail_action',None)
         if a is None:
             a = obj.get_default_table().detail_action
-            #~ a = obj.__class__._lino_default_table.get_url_action('detail_action')
         if a is not None:
             if ar is None or a.get_bound_action_permission(ar,obj,None):
                 return self.action_call(None,a,dict(record_id=obj.pk))
@@ -319,7 +307,6 @@ class ExtRenderer(HtmlRenderer):
         
         
     def request_handler(self,ar,*args,**kw):
-        #~ bp = rr.request2kw(self.ui,**kw)
         st = ar.get_status(self.ui,**kw)
         return self.action_call(ar.request,ar.bound_action,st)
         
@@ -1110,11 +1097,8 @@ tinymce.init({
         elif isinstance(a,actions.DeleteSelected):
             kw.update(panel_btn_handler=js_code("Lino.delete_selected"))
         elif isinstance(a,actions.RowAction):
-            #~ if a.url_action_name is None:
-                #~ raise Exception("Action %r has no url_action_name" % a)
             kw.update(must_save=True)
             kw.update(panel_btn_handler=js_code(ba.get_panel_btn_handler()))
-            #~ kw.update(panel_btn_handler=js_code("Lino.row_action_handler(%r)" % a.action_name))
         elif isinstance(a,actions.ListAction):
             kw.update(panel_btn_handler=js_code(ba.get_panel_btn_handler()))
             kw.update(must_save=True)
@@ -1214,8 +1198,8 @@ tinymce.init({
         for k,v in dh.main.ext_options().items():
             if k != 'items':
                 yield "  %s: %s," % (k,py2js(v))
-        if tbl.action_name is None:
-            raise Exception("20121009 action_name of %r is None" % tbl)
+        assert tbl.action_name is not None
+            #~ raise Exception("20121009 action_name of %r is None" % tbl)
         yield "  action_name: '%s'," % tbl.action_name
         yield "  window_title: %s," % py2js(tbl.label)
         #~ yield "  layout: 'fit',"

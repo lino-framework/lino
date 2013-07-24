@@ -6,13 +6,17 @@ Overview
 --------
 
 An :class:`Actor <lino.core.actors.Actor>` 
-is a globally known unique thing that offers actions. 
-Each subclass of an actor is a new actor.
-An alternative name for "Actor" might "Resource".
+is a globally known unique thing that offers actions.
+Each actor has a list of **actions**.
+Almost every incoming web request
+is a given *user* who requests execution 
+of a given *action* on a given *actor*.
 
-An Action is something that is available for execution.
-Each actor has a list of actions.
-BoundAction
+Each subclass of an actor is a new actor.
+
+An alternative name for "Actor" might be "Resource" or "View"
+(but they are already being used very often).
+
 
 
 Actors are classes, not instances

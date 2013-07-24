@@ -860,7 +860,10 @@ Lino.PanelMixin = {
 
 
 // Lino.status_bar = new Ext.ux.StatusBar({defaultText:'Lino version {{lino.__version__}}.'});
-Lino.status_bar = new Ext.ux.StatusBar({defaultText:'{{settings.SITE.site_version()}}.'});
+Lino.status_bar = new Ext.ux.StatusBar({
+    autoClear: 10000, // 10 seconds
+    defaultText:'{{settings.SITE.site_version()}}.'
+    });
 
 {% if settings.SITE.use_tinymce %}
 
