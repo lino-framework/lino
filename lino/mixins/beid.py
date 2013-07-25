@@ -14,6 +14,11 @@
 
 """
 Actions to read Belgian eID card.
+
+TODO: 
+- make it an independant app 
+- make the `linoweb.js` fragmented...
+
 """
 
 import logging
@@ -25,6 +30,7 @@ import base64
 
 
 from django.conf import settings
+from django.db import models
 from django.utils.translation import ugettext_lazy as _
 from lino.core.dbutils import get_field
 
@@ -56,6 +62,7 @@ class BeIdCardTypes(dd.ChoiceList):
     | [2] `Enum be.fedict.commons.eid.consumer.DocumentType <http://code.google.com/p/eid-applet/source/browse/trunk/eid-applet-service/src/main/java/be/fedict/eid/applet/service/DocumentType.java>`_
     
     """
+    app_label = 'lino'
     required = dd.required(user_level='admin')
     verbose_name = _("eID card type")
     verbose_name_plural = _("eID card types")
@@ -111,6 +118,65 @@ add('18', _("Foreigner card F+"),"foreigner_f_plus")
 
 
 
+class BeIdCardHolder(dd.Model):
+    """
+    Concrete subclasses must also inherit from `lino.mixins.Born`.
+    """
+    class Meta:
+        abstract = True
+        
+    #~ national_id = models.CharField(max_length=200,
+    national_id = dd.NullCharField(max_length=200,
+        unique=True,
+        verbose_name=_("National ID")
+        #~ blank=True,verbose_name=_("National ID")
+        #~ ,validators=[ssin.ssin_validator] # 20121108
+        )
+    nationality = dd.ForeignKey('countries.Country',
+        blank=True,null=True,
+        related_name='by_nationality',
+        verbose_name=_("Nationality"))
+    #~ tim_nr = models.CharField(max_length=10,blank=True,null=True,unique=True,
+        #~ verbose_name=_("TIM ID"))
+    card_number = models.CharField(max_length=20,
+        blank=True,#null=True,
+        verbose_name=_("eID card number"))
+    card_valid_from = models.DateField(
+        blank=True,null=True,
+        verbose_name=_("ID card valid from"))
+    card_valid_until = models.DateField(
+        blank=True,null=True,
+        verbose_name=_("until"))
+        
+    #~ card_type = models.CharField(max_length=20,
+        #~ blank=True,# null=True,
+        #~ verbose_name=_("eID card type"))
+    #~ "The type of the electronic ID card. Imported from TIM."
+    
+    card_type = BeIdCardTypes.field(blank=True)
+    
+    card_issuer = models.CharField(max_length=50,
+        blank=True,# null=True,
+        verbose_name=_("eID card issuer"))
+    "The administration who issued this ID card. Imported from TIM."
+    
+    #~ eid_panel = dd.FieldSet(_("eID card"),
+        #~ "card_number card_valid_from card_valid_until card_issuer card_type:20",
+        #~ card_number=_("number"),
+        #~ card_valid_from=_("valid from"),
+        #~ card_valid_until=_("until"),
+        #~ card_issuer=_("issued by"),
+        #~ card_type=_("eID card type"),
+        #~ )
+    
+    noble_condition = models.CharField(max_length=50,
+        blank=True,#null=True,
+        verbose_name=_("noble condition"))
+    "The eventual noble condition of this person. Imported from TIM."
+        
+    print_eid_content = dd.DirectPrintAction(_("eID sheet"),'eid-content',icon_name='x-tbar-vcard')
+    
+    
 
     
 def card_number_to_picture_file(card_number):
@@ -210,11 +276,11 @@ class BaseBeIdReadCardAction(dd.RowAction):
     required = dd.Required(user_groups='reception')
     preprocessor = 'Lino.beid_read_card_processor'
     http_method = 'POST'
-    client_model = NotImplementedError
+    #~ client_model = NotImplementedError
     
-    def __init__(self,client_model,*args,**kw):
-        self.client_model = client_model
-        super(BaseBeIdReadCardAction,self).__init__(*args,**kw)
+    #~ def __init__(self,client_model,*args,**kw):
+        #~ self.client_model = client_model
+        #~ super(BaseBeIdReadCardAction,self).__init__(*args,**kw)
     
     def get_button_label(self,actor):
         return self.label 
@@ -240,7 +306,11 @@ class BeIdReadCardAction(BaseBeIdReadCardAction):
 
   
     def run_from_ui(self,row,ar,**kw):
-        self.client_model = dd.resolve_model(self.client_model)
+        #~ self.client_model = dd.resolve_model(self.client_model)
+        cmc = list(dd.models_by_base(BeIdCardHolder))
+        if len(cmc) != 1:
+            raise Exception("There must be exactly one BeIdCardHolder model in your Site!")
+        self.client_model = cmc[0]
         data = ar.request.POST
         attrs = card2client(data)
         #~ logger.info("20130103 BeIdReadCardAction.run_from_ui() : %s -> %s",data,attrs)

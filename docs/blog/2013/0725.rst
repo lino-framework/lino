@@ -2,14 +2,17 @@
 20130725 (Thursday, 25 July 2013)
 =================================
 
-One of the two technical challenges seems solved:
+Fixed one Javascript bug
+------------------------
 
-- Executing the "Read eID card" action on a client 
-  using the JS link of the new "Actions" 
-  field now works.
+One of yesterday's two "technical challenges" seems solved:
+executing the "Read eID card" action on a client 
+using the javascript link of the new "Actions" 
+field now works.
   
 Since all this is very complex and not automatically tested, 
-it might cause bugs at the JavaScript level.
+it might cause surprises at the Javascript level somewhere 
+in the future.
 So I marked this change with "AFTER_20130725" in `linoweb.js` 
 and `extjs/__init__.py`
 
@@ -23,3 +26,11 @@ Buttons for actions with parameters aren't yet possible
 when rendering to plain HTML.
 But Lino now at least says 
 "Sorry, this action don't work when called directly from the Home page".
+
+
+:mod:`lino.mixins.beid`
+-----------------------
+
+Created :class:`lino.mixins.beid.BeIdCardHolder`.
+Transferred translations from `lino_welfare` to `lino`.
+

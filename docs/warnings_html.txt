@@ -1,5 +1,0 @@
-/home/luc/hgwork/lino/lino/modlib/users/models.py:docstring of lino.modlib.users.models.User:3: WARNING: unknown document: /topics/http_auth
-/home/luc/hgwork/lino/docs/api/lino.projects.igen.rst:7: WARNING: unknown document: /igen/index
-/home/luc/hgwork/lino/lino/tutorials/lets1/fixtures/demo.py:docstring of lino.tutorials.lets1.fixtures.demo.objects:1: WARNING: term not in glossary: north
-/home/luc/hgwork/lino/lino/ui/__init__.py:docstring of lino.ui.Site.webdav_url:7: WARNING: term not in glossary: runserver
-/home/luc/hgwork/lino/docs/api/lino.utils.rst:7: WARNING: unknown document: /autodoc/lino.test_apps.mti

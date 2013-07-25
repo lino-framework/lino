@@ -49,7 +49,7 @@ cal = dd.resolve_app('cal')
 from lino.modlib.cal.models import GuestStates
 
 from lino.modlib.reception import App
-from lino.modlib.reception import beid
+from lino.mixins import beid
 
 #~ add = GuestStates.add_item
 #~ add('21', _("Waiting"),'waiting')
@@ -175,8 +175,8 @@ class Clients(dd.Table):
     detail_layout = ClientDetail()
     editable = False
 
-    read_beid = beid.BeIdReadCardAction('pcsw.Client')
-    find_by_beid = beid.FindByBeIdAction('pcsw.Client')
+    read_beid = beid.BeIdReadCardAction()
+    find_by_beid = beid.FindByBeIdAction()
     
     quick_event = QuickClientEvent()
     
