@@ -385,41 +385,6 @@ class Model(models.Model):
     def summary_row(self,ar,**kw):
         return ar.href_to(self)
         
-    @fields.displayfield(_("Actions"))
-    def action_buttons(obj,ar):
-        l = []
-        for ba in ar.actor.get_row_actions(ar,obj):
-            l.append(ar.action_button(ba,obj))
-            l.append(' ')
-        return xghtml.E.p(*l)
-      
-    @fields.displayfield(_("Workflow"))
-    def workflow_buttons(obj,ar):
-        """
-        Displays the workflow buttons for this row and this user.
-        """
-        #~ logger.info('20120930 workflow_buttons %r', obj)
-        actor = ar.actor
-        #~ print 20120621 , actor,  self
-        #~ print 20120618, ar
-        l = []
-        state = actor.get_row_state(obj)
-        if state:
-            #~ l.append(xghtml.E.b(unicode(state),style="vertical-align:middle;"))
-            l.append(E.b(unicode(state)))
-            #~ l.append(u" » ")
-            #~ l.append(u" \u25b8 ")
-            #~ l.append(u" \u2192 ")
-        #~ sep = u" \u25b8 "
-        sep = u" \u2192 "
-        for ba in ar.actor.get_workflow_actions(ar,obj):
-            l.append(sep)
-            l.append(ar.action_button(ba,obj))
-            sep = ' '
-            #~ l.append(' ')
-        #~ return ', '.join(l)
-        return E.p(*l)
-        
         
     def __repr__(self):
         return obj2str(self)

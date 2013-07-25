@@ -631,6 +631,11 @@ class Enrolment(dd.UserAuthored,dd.Printable,sales.Invoiceable):
     invoiceable_date_field = 'request_date'
     invoiceable_partner_field = 'pupil'
     
+    def get_invoiceable_amount(self): 
+        prd = self.get_invoiceable_product()
+        if prd is not None:
+            return prd.price * self.get_invoiceable_qty()
+            
     def get_invoiceable_product(self): 
         if self.course: 
             return self.course.tariff
@@ -640,8 +645,7 @@ class Enrolment(dd.UserAuthored,dd.Printable,sales.Invoiceable):
             return self.course
 
     def get_invoiceable_qty(self): 
-        if self.course: 
-            return Decimal(1)
+        return Decimal(1)
     
 
 class Enrolments(dd.Table):

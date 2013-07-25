@@ -43,12 +43,18 @@ from django.contrib.contenttypes.models import ContentType
 #~ logger.debug(__file__+' : started')
 #~ from django.utils import translation
 
+from decimal import Decimal
+
+ZERO = Decimal()
+
 
 #~ from lino import reports
 from lino import dd
+from lino.utils import AttrDict
+from lino.utils.xmlgen.html import E
 
 #~ sales = dd.resolve_app('sales')
-#~ contacts = dd.resolve_app('contacts')
+contacts = dd.resolve_app('contacts')
 
 #~ dd.extends_app('lino.modlib.sales',globals())
 
@@ -86,6 +92,7 @@ class Invoiceable(dd.Model):
     def get_invoiceable_product(self): return None
     def get_invoiceable_qty(self): return None
     def get_invoiceable_title(self): return unicode(self)
+    def get_invoiceable_amount(self): return None
         
     @classmethod
     def get_invoiceables_for(cls,partner,max_date=None):
@@ -165,6 +172,8 @@ class CreateInvoiceForPartner(dd.RowAction):
         msg = _("This will create an invoice for %s.") % obj
         return ar.confirm(ok, msg, _("Are you sure?"))
         
+#~ dd.inject_action('contacts.Partner','create_invoice',CreateInvoiceForPartner())
+contacts.Partners.create_invoice = CreateInvoiceForPartner()
     
     
 class Invoice(Invoice): # 20130709
@@ -253,48 +262,104 @@ class InvoicingsByInvoiceable(InvoiceItemsByProduct): # 20130709
     
 
 
-contacts = dd.resolve_app('contacts')
+#~ contacts = dd.resolve_app('contacts')
 
-#~ contacts.Partners.
 
-class InvoiceablePartners(contacts.Partners):
-    """
-    TODO: read https://docs.djangoproject.com/en/dev/topics/db/aggregation/
-    """
-    label = _("Invoiceable partners")
-    help_text = _("Table of all partners who have at least one invoiceable item.")
-    model = 'contacts.Partner'
-    create_invoice = CreateInvoiceForPartner()
-    
+#~ class InvoiceablePartners(contacts.Partners):
+    #~ """
+    #~ TODO: read https://docs.djangoproject.com/en/dev/topics/db/aggregation/
+    #~ """
+    #~ label = _("Invoiceable partners")
+    #~ help_text = _("Table of all partners who have at least one invoiceable item.")
+    #~ model = 'contacts.Partner'
+    #~ create_invoice = CreateInvoiceForPartner()
+    #~ 
     #~ @classmethod
-    #~ def get_data_rows(self,ar):
-        #~ qs = settings.SITE.modules.contacts.Partner.objects.all()
-        #~ lst = []
-        #~ for obj in qs:
-            #~ if Invoiceable.get_invoiceables_count(obj) > 0:
-                #~ lst.append(obj)
-        #~ return lst
-        
-    @classmethod
-    def get_request_queryset(self,ar):
-        qs = super(InvoiceablePartners,self).get_request_queryset(ar)
-        flt = Q()
-        for m in dd.models_by_base(Invoiceable):
-            subquery = m.objects.filter(invoice__isnull=True).values(m.invoiceable_partner_field+'__id')
-            flt = flt | Q(id__in=subquery)
-        return qs.filter(flt)
-        
+    #~ def get_request_queryset(self,ar):
+        #~ qs = super(InvoiceablePartners,self).get_request_queryset(ar)
+        #~ flt = Q()
         #~ for m in dd.models_by_base(Invoiceable):
-            #~ mname = full_model_name(m,'_')
-            #~ qs = qs.annotate(mname+'_count'=Count(mname))
-            #~ flt = flt | Q(**{mname+'_count__gt':0})
-        #~ qs = qs.filter(flt)
-            #~ fkw = dict()
-            #~ fkw[m.invoiceable_partner_field] = partner
-            #~ fkw.update(invoice__isnull=True)
-            #~ items = m.objects.filter(**fkw).aggregate(models.Count())
+            #~ subquery = m.objects.filter(invoice__isnull=True).values(m.invoiceable_partner_field+'__id')
+            #~ flt = flt | Q(id__in=subquery)
+        #~ return qs.filter(flt)
+        #~ 
         
-        #~ return qs
+    
+class IssueInvoice(CreateInvoiceForPartner):
+    def run_from_ui(self,obj,ar,**kw):
+        return super(CreateInvoice,self).run_from_ui(obj.partner,ar,**kw)
+    
+min_amount = Decimal()
+
+class InvoicesToIssue(dd.VirtualTable):
+    label = _("Invoices to issue")
+    help_text = _("Table of all partners who should receive an invoice.")
+    issue_invoice = IssueInvoice()
+    column_names = "first_date last_date partner amount action_buttons"
+    
+    @classmethod
+    def get_data_rows(self,ar):
+        rows = []
+        for p in contacts.Partner.objects.all():
+            invoiceables = list(Invoiceable.get_invoiceables_for(p))
+            amount = Decimal()
+            first_date = last_date = None
+            for i in invoiceables:
+                am = i.get_invoiceable_amount()
+                if am is not None:
+                    amount += am
+                d = getattr(i,i.invoiceable_date_field)
+                if d is not None:
+                    if first_date is None or d < first_date: first_date = d
+                    if last_date is None or d > last_date: last_date = d
+            if amount >= min_amount and first_date is not None:
+                row = AttrDict(
+                    first_date=first_date,
+                    last_date=last_date,
+                    partner=p,
+                    amount=amount,
+                    invoiceables=invoiceables)
+                rows.append(row)
+        
+        def f(a,b): return cmp(a.first_date,b.first_date)
+        rows.sort(f)
+        return rows
+        
+    @dd.virtualfield(models.DateField(_("First date")))
+    def first_date(self,row,ar):
+        return row.first_date
+    
+    @dd.virtualfield(models.DateField(_("Last date")))
+    def last_date(self,row,ar):
+        return row.last_date
+    
+    @dd.virtualfield(dd.PriceField(_("Amount")))
+    def amount(self,row,ar):
+        return row.amount
+    
+    @dd.virtualfield(models.ForeignKey('contacts.Partner'))
+    def partner(self,row,ar):
+        return row.partner
+    
+    @dd.displayfield(_("Invoiceables"))
+    def unused_invoiceables(self,row,ar):
+        items = []
+        for i in row.invoiceables:
+            items += [ar.obj2html(i),' ']
+        return E.p(*items)
+        
+    @dd.displayfield(_("Actions"))
+    def action_buttons(self,obj,ar):
+        #~ e = settings.SITE.ui.ext_renderer.action_call(None,ba,{})
+        ba = contacts.Partners.get_action_by_name('create_invoice')
+        return ar.action_button(ba,obj.partner) 
+      
+        
+    
+
+    
+    
+    
     
 class InvoiceablesByPartner(dd.VirtualTable):
     label = _("Invoiceables")
@@ -334,4 +399,5 @@ class InvoiceablesByPartner(dd.VirtualTable):
 def setup_main_menu(site,ui,profile,m): 
     #~ f(site,ui,profile,m)
     m = m.add_menu("sales",MODULE_LABEL)
-    m.add_action('sales.InvoiceablePartners')
+    #~ m.add_action('sales.InvoiceablePartners')
+    m.add_action('sales.InvoicesToIssue')

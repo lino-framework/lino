@@ -82,6 +82,22 @@ def join_words(*words):
     join the remaining word using a single space.
     """
     return ' '.join([unicode(x) for x in words if x])
+    
+def join_elems(elems,sep=' '):
+    """
+    Examples::
+    >>> join_elems([1,2,3])
+    
+    """
+    l = []  
+    s = None
+    for e in elems: 
+        l.append(e)
+        if s is not None:
+            l.append(s)
+        s = sep
+    return l
+    
       
 
 def d2iso(d):

@@ -1,3 +1,4 @@
+# -*- coding: UTF-8 -*-
 ## Copyright 2009-2013 Luc Saffre
 ## This file is part of the Lino project.
 ## Lino is free software; you can redistribute it and/or modify 
@@ -44,6 +45,8 @@ from lino.utils import curry, AttrDict
 #~ from lino.core import perms
 from lino.utils import jsgen
 from lino.utils import uncamel
+from lino.utils import join_elems
+from lino.utils.xmlgen.html import E
 
 
 actor_classes = []
@@ -1301,7 +1304,7 @@ class Actor(actions.Parametrizable):
         """
         """
         #~ settings.SITE.startup()
-        return xghtml.E.tostring(self.request(**kw).table2xhtml())
+        return E.tostring(self.request(**kw).table2xhtml())
         #~ return self.request(**kw).table2xhtml()
         
     #~ def show(self,*args,**kw):
@@ -1327,3 +1330,35 @@ class Actor(actions.Parametrizable):
         For example :class:`lino_faggio.models.InvoiceItems`
         """
         return obj.get_choices_text(request,self,field)
+
+    @fields.displayfield(_("Actions"))
+    def action_buttons(self,obj,ar):
+        return E.p(*join_elems([
+            ar.action_button(ba,obj) 
+                for ba in ar.actor.get_row_actions(ar,obj)]))
+      
+    @fields.displayfield(_("Workflow"))
+    def workflow_buttons(self,obj,ar):
+        """
+        Displays the workflow buttons for this row and this user.
+        """
+        #~ logger.info('20120930 workflow_buttons %r', obj)
+        actor = ar.actor
+        #~ print 20120621 , actor,  self
+        #~ print 20120618, ar
+        l = []
+        state = actor.get_row_state(obj)
+        if state:
+            #~ l.append(E.b(unicode(state),style="vertical-align:middle;"))
+            l.append(E.b(unicode(state)))
+            #~ l.append(u" » ")
+            #~ l.append(u" \u25b8 ")
+            #~ l.append(u" \u2192 ")
+        #~ sep = u" \u25b8 "
+        sep = u" \u2192 "
+        for ba in ar.actor.get_workflow_actions(ar,obj):
+            l.append(sep)
+            l.append(ar.action_button(ba,obj))
+            sep = ' '
+        return E.p(*l)
+        
