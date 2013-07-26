@@ -33,3 +33,17 @@ in the community forum.
 
 
 
+Lino-Faggio
+-----------
+
+And ha! 
+Repairing the :ref:`lino.tutorial.polls`
+helped me to finally get 
+the "Create invoice" button in 
+:ref:`faggio.sales.InvoicesToCreate`
+to work.
+Continued on the workflow for creating invoices:
+
+- removed confirmation 
+- call update_totals()
+

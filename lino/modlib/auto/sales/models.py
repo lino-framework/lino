@@ -146,9 +146,10 @@ class Invoiceable(dd.Model):
         #~ return ar.confirm(ok, msg, _("Are you sure?"))
         
 class CreateInvoiceForPartner(dd.RowAction):
-    "CreateInvoiceForPartner"
+    
     label = _("Create invoice")
     help_text = _("Create invoice for this partner using invoiceable items")
+    show_in_row_actions = True
     
     def run_from_ui(self,obj,ar,**kw):
         L = list(Invoiceable.get_invoiceables_for(obj))
@@ -165,10 +166,14 @@ class CreateInvoiceForPartner(dd.RowAction):
                 i.product_changed(ar)
                 i.full_clean()
                 i.save()
+            invoice.compute_totals()
+            invoice.save()
             #~ kw.update(refresh=True)
             js = ar.renderer.instance_handler(ar,invoice)
             kw.update(eval_js=js)
             return kw
+        if True: # no confirmation
+            return ok()
         msg = _("This will create an invoice for %s.") % obj
         return ar.confirm(ok, msg, _("Are you sure?"))
         
@@ -291,8 +296,8 @@ class IssueInvoice(CreateInvoiceForPartner):
     
 min_amount = Decimal()
 
-class InvoicesToIssue(dd.VirtualTable):
-    label = _("Invoices to issue")
+class InvoicesToCreate(dd.VirtualTable):
+    label = _("Invoices to create")
     help_text = _("Table of all partners who should receive an invoice.")
     issue_invoice = IssueInvoice()
     column_names = "first_date last_date partner amount action_buttons"
@@ -350,10 +355,9 @@ class InvoicesToIssue(dd.VirtualTable):
         
     @dd.displayfield(_("Actions"))
     def action_buttons(self,obj,ar):
-        #~ e = settings.SITE.ui.ext_renderer.action_call(None,ba,{})
+        # must override because the action is on obj.partner, not on obj
         return obj.partner.create_invoice.as_button(ar)
-        #~ ba = contacts.Partners.get_action_by_name('create_invoice')
-        #~ return ar.action_button(ba,obj.partner) 
+        
       
         
     
@@ -401,4 +405,4 @@ def setup_main_menu(site,ui,profile,m):
     #~ f(site,ui,profile,m)
     m = m.add_menu("sales",MODULE_LABEL)
     #~ m.add_action('sales.InvoiceablePartners')
-    m.add_action('sales.InvoicesToIssue')
+    m.add_action('sales.InvoicesToCreate')
