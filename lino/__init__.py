@@ -172,6 +172,11 @@ class Site(Site):
     """
     
     
+    modules = AttrDict() 
+    # this is explained in the polls tutorial
+    # cannot use autodoc for this because autodoc shows the "default" value
+    
+    
     #~ decimal_separator = '.'
     decimal_separator = ','
     """

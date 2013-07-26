@@ -2180,14 +2180,16 @@ Lino.param_action_handler = function(window_action) { // 20121012
 };
 
 
-Lino.run_row_action = function(requesting_panel,url,pk,actionName,pp) {
+//~ 20130726 Lino.run_row_action = function(requesting_panel,url,pk,actionName,pp) {
+Lino.run_row_action = function(requesting_panel,url,meth,pk,actionName,preprocessor) {
   //~ var panel = action.get_window().main_item;
   url = '{{settings.SITE.admin_prefix}}/api' + url  + '/' + pk;
   var panel = Ext.getCmp(requesting_panel);
-  if (pp) var p = pp(); else var p = {};
+  if (preprocessor) var p = preprocessor(); else var p = {};
   var fn = function(panel,btn,step) {
     //~ 20120723 Lino.call_ajax_action(panel,pk,actionName,step,fn);
-    Lino.call_ajax_action(panel,'GET',url,p,actionName,step,fn);
+    //~ 20130726 Lino.call_ajax_action(panel,'GET',url,p,actionName,step,fn);
+    Lino.call_ajax_action(panel,meth,url,p,actionName,step,fn);
   }
   fn(panel,null,null);
 }
@@ -2545,7 +2547,7 @@ Lino.ActionFormPanel = Ext.extend(Lino.ActionFormPanel,{
     //~ Lino.row_action_handler()
     var panel = this.requesting_panel;
     if (panel == undefined) {
-        Lino.alert("Sorry, this action don't work when called directly from the Home page");
+        Lino.alert("Sorry, dialog actions don't work when called directly from the home page");
         return;
     }
     var actionName = this.action_name;

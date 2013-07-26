@@ -266,7 +266,8 @@ class ExtRenderer(HtmlRenderer):
         else:
             rp = request.requesting_panel
         if AFTER_20130725:
-            url = 'javascript:%s(%s)' % (ba.get_panel_btn_handler(),py2js(rp))
+            #~ url = 'javascript:%s(%s)' % (ba.get_panel_btn_handler(),py2js(rp))
+            url = 'javascript:' + ba.get_js_call(rp,obj)
         else:
             url = 'javascript:Lino.%s(%s,%s)' % (
                     ba.full_name(),py2js(rp),py2js(obj.pk))
@@ -1013,7 +1014,8 @@ tinymce.init({
                     for ln in self.js_render_window_action(rh,ba,profile):
                         f.write(ln + '\n')
                 #~ elif a.show_in_workflow:
-                elif ba.action.custom_handler:
+                #~ elif ba.action.custom_handler:
+                elif ba.action.action_name:
                     for ln in self.js_render_custom_action(rh,ba):
                         f.write(ln + '\n')
             
@@ -1434,10 +1436,13 @@ tinymce.init({
         Defines the non-window action handler used by :meth:`row_action_button`
         """
         # 20120723 : removed useless js param "action"
+        # 20130726 added http_method and preprocessor
         yield "Lino.%s = function(rp,pk) { " % action.full_name()
         url = ext_elems.rpt2url(rh.actor)
-        yield "  Lino.run_row_action(rp,%s,pk,%s);" % (
-            py2js(url),py2js(action.action.action_name))
+        yield "  Lino.run_row_action(rp,%s,%s,pk,%s,%s);" % (
+            py2js(url),py2js(action.action.http_method),
+            py2js(action.action.action_name),
+            action.action.preprocessor)
         yield "};"
 
 

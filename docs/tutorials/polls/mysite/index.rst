@@ -171,36 +171,50 @@ The main index
 The following template is used to 
 build the HTML to be displayed in our Main Window. 
 
-.. literalinclude:: templates_jinja/admin_main.html
+.. literalinclude:: config/admin_main.html
 
-The `<div class="htmlText">` specifies that this fragment 
-contains simple html text inside an ExtJS component. 
+Explanations:
 
-It uses one Django-specific feature::
+- ``<div class="htmlText">`` specifies that this fragment 
+  contains simple html text inside an ExtJS component. 
+  This is required because ExtJS does a lot of CSS magic which 
+  neutralizes the "usual" effects of most html tags.
 
-    {% for poll in site.modules.polls.Poll.objects.filter(hidden=False).order_by('pub_date') %}
     
-Every Lino site has an attribute `modules` which is a shortcut to access 
-the models and tables of the application.
+- ``site.modules`` : Every Lino site has an instance attribute ``modules``
+  which is a shortcut to access the models and tables of the application.
+  Usually it is better to write
+  
+  ::
+
+    Poll = site.modules.polls.Poll
+
+  instead of
+  
+  ::
+
+    from site.modules.polls.models import Poll
+  
+  because the latter hard-wires the location of the `polls` app.
     
-If `objects`, `filter()` and `order_by()` are new to you, 
-then please read the `Making queries 
-<https://docs.djangoproject.com/en/dev/topics/db/queries>`_
-chapter of Django's documentation. 
-Lino is based on Django, and Django is known for its good documentation. Use it!
+- If `objects`, `filter()` and `order_by()` are new to you, 
+  then please read the `Making queries 
+  <https://docs.djangoproject.com/en/dev/topics/db/queries>`_
+  chapter of Django's documentation. 
+  Lino is based on Django, and Django is known for its good documentation. Use it!
 
-If `joiner` and `sep` are a riddle to you, you'll find the 
-solution in Jinja's `Template Designer 
-Documentation <http://jinja.pocoo.org/docs/templates/#joiner>`__.
-Lino applications by default replace Django's template engine by Jinja.
+- If `joiner` and `sep` are a riddle to you, you'll find the 
+  solution in Jinja's `Template Designer 
+  Documentation <http://jinja.pocoo.org/docs/templates/#joiner>`__.
+  Lino applications by default replace Django's template engine by Jinja.
 
-The template also uses a Lino-specific method 
-:meth:`row_action_button
-<lino.ui.extjs3.ext_ui.ExtUI.row_action_button>`
-which returns a HTML fragment that displays a button-like 
-link which will run the action when clicked.
-More about this in Actions_.
-
+- ``obj.vote`` is an :class:`InstanceAction <lino.core.actions.InstanceAction>`,
+  and we call its 
+  :meth:`as_button <lino.core.actions.InstanceAction.as_button>`
+  method
+  which returns a HTML fragment that displays a button-like 
+  link which will run the action when clicked.
+  More about this in Actions_.
 
 
 
@@ -211,14 +225,12 @@ One more thing before seeing a result.
 We made at least one database change after the Django tutorial: 
 we added the `hidden` field of a Poll.
 So we must rebuild our database.
-Because that's so easy, we'll also quickly add a demo fixture.
+While we are there we'll also quickly add a demo fixture...
+because that's so easy.
 
-- If you haven't done it yet, please read now the 
-  :doc:`dumpy` tutorial.
-  
 - Download the file   
-  :srcref:`polls/fixtures/demo.py </lino/projects/polls_tutorial/polls/fixtures/demo.py>`  
-  from the Lino repository and add it 
+  :srcref:`polls/fixtures/demo.py </docs/tutorials/polls/fixtures/demo.py>`  
+  from the Lino repository and add it to a :file:`fixtures` directory
   below your project directory.
   
 - Create an empty file :xfile:`__init__.py` in that same directory.
@@ -248,6 +260,9 @@ Because that's so easy, we'll also quickly add a demo fixture.
     Installed 13 object(s) from 1 fixture(s)
     INFO Lino initdb done ('demo',) on database C:\mysite\polls\test.db.  
     
+- Read more about :doc:`/tutorials/dumpy` 
+  if you haven't done that yet.
+  
 Now we are ready to start the development web server on our project.
   
 Starting the web interface
@@ -282,7 +297,9 @@ The **Main Window** is the top-level window of your application:
     
 Your application specifies what to put there, and there are several 
 methods to do this.
-We used the :meth:`get_main_html <lino.Lino.get_main_html>` method 
+If you don't want to use an `admin_main.html` template
+you may override the
+:meth:`get_main_html <lino.Site.get_main_html>` method 
 which returns a chunk of generated html.
     
 After clicking on a vote, here is the `vote` method 

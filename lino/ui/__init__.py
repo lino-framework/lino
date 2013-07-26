@@ -859,7 +859,7 @@ class Site(lino.Site):
         different :setting:`INSTALLED_APPS`.
         To use this system, application programmers 
         define one or several of the following functions in 
-        their `modules` module:
+        their `models` module:
         
         - `setup_master_menu`
         - `setup_main_menu`

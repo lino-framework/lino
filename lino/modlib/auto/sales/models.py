@@ -173,7 +173,7 @@ class CreateInvoiceForPartner(dd.RowAction):
         return ar.confirm(ok, msg, _("Are you sure?"))
         
 #~ dd.inject_action('contacts.Partner','create_invoice',CreateInvoiceForPartner())
-contacts.Partners.create_invoice = CreateInvoiceForPartner()
+contacts.Partner.create_invoice = CreateInvoiceForPartner()
     
     
 class Invoice(Invoice): # 20130709
@@ -351,8 +351,9 @@ class InvoicesToIssue(dd.VirtualTable):
     @dd.displayfield(_("Actions"))
     def action_buttons(self,obj,ar):
         #~ e = settings.SITE.ui.ext_renderer.action_call(None,ba,{})
-        ba = contacts.Partners.get_action_by_name('create_invoice')
-        return ar.action_button(ba,obj.partner) 
+        return obj.partner.create_invoice.as_button(ar)
+        #~ ba = contacts.Partners.get_action_by_name('create_invoice')
+        #~ return ar.action_button(ba,obj.partner) 
       
         
     

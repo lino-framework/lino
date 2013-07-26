@@ -1,0 +1,35 @@
+===============================
+20130726 (Friday, 26 July 2013)
+===============================
+
+The :ref:`lino.tutorial.polls` was broken for several reasons:
+
+- the `admin_main.html` template was still in `templates_jinja`
+- vote actions didn't work due to :blogref:`20130524`
+  (as expected in :blogref:`20130525`)
+
+Optimized the `admin_main.html` template. The following code::
+
+    {% for obj in poll.choice_set.all() %}
+      {{site.modules.polls.Choices.vote.as_button(obj,request,unicode(obj))}
+  
+has become::  
+  
+    {% for obj in poll.choice_set.all() %}
+      {{ obj.vote.as_button(request,unicode(obj))}}
+  
+
+Ext.ensible 1.0.2
+-----------------
+
+Oho, where has version 1.0.2 gone? 
+Until recently it was still available under 
+http://ext.ensible.com/deploy/1.0.2/extensible-all-debug.js. 
+Maybe Brian believes that nobody uses ExtJS 3 anymore? 
+Posted a question 
+`Where has version 1.0.2 gone?
+<http://ext.ensible.com/forum/viewtopic.php?f=9&t=772>`_.
+in the community forum.
+
+
+

@@ -10,8 +10,8 @@ In this tutorial we are going to show how to use *intelligent fixtures*.
 The :mod:`initdb <lino.management.commands.initdb>` command
 -----------------------------------------------------------
 
-Remember that we told you (in :doc:`/admin/install`) to "prepare your database" 
-by running the command::
+Remember that we told you (in :ref:`lino.tutorial.quickstart`) 
+to "prepare your database" by running the command::
 
   python manage.py initdb std all_countries few_cities all_languages props demo 
   

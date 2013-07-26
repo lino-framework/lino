@@ -87,15 +87,19 @@ def join_elems(elems,sep=' '):
     """
     Examples::
     >>> join_elems([1,2,3])
-    
+    [1, ' ', 2, ' ', 3]
+    >>> join_elems([1,2,3],' / ')
+    [1, ' / ', 2, ' / ', 3]
+    >>> join_elems([])
+    []
     """
     l = []  
     s = None
     for e in elems: 
-        l.append(e)
         if s is not None:
             l.append(s)
         s = sep
+        l.append(e)
     return l
     
       

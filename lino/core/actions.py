@@ -245,6 +245,14 @@ class InstanceAction(object):
         #~ btn = settings.SITE.ui.row_action_button(obj,request,ba,label)
         #~ return E.tostring(btn)
         
+    def as_button(self,request,label=None):
+        """
+        Return a HTML chunk with a "button" which, when clicked, will 
+        execute this action on this instance.
+        This is being used in the :ref:`lino.tutorial.polls`.
+        """
+        btn = settings.SITE.ui.row_action_button(self.instance,request,self.bound_action,label)
+        return E.tostring(btn)
 
 class Action(Parametrizable,Permittable):
     """
@@ -530,10 +538,14 @@ class Action(Parametrizable,Permittable):
             return self.defining_actor.actor_id + '.' + self.action_name
         return str(actor) + '.' + self.action_name
         
-    def as_button(self,obj,request,label=None):
-        ba = self.defining_actor.get_url_action(self.action_name)
-        btn = settings.SITE.ui.row_action_button(obj,request,ba,label)
-        return E.tostring(btn)
+    #~ def as_button(self,obj,request,label=None):
+        #~ """
+        #~ Return 
+        #~ This is being used in the :ref:`lino.tutorial.polls`.
+        #~ """
+        #~ ba = self.defining_actor.get_url_action(self.action_name)
+        #~ btn = settings.SITE.ui.row_action_button(obj,request,ba,label)
+        #~ return E.tostring(btn)
         
     def get_action_title(self,ar):
         return ar.get_title()
@@ -666,9 +678,15 @@ class RowAction(Action):
     TODO: rename RowAction to ServerSideAction or AjaxAction.
     """
     single_row = True
-    preprocessor = None
+    preprocessor = 'null' # None
     http_method = 'GET'
     
+    def get_js_call(self,actor,requesting_panel_name,obj):
+        # the corresponding js code is generated in `js_render_custom_action`
+        from lino.utils.jsgen import py2js
+        return "Lino.%s.%s(%s,%s)" % (
+            actor,self.action_name,py2js(requesting_panel_name),py2js(obj.pk))
+        
     def get_panel_btn_handler(self,actor):
         if self.single_row:
             h  = 'Lino.row_action_handler('
