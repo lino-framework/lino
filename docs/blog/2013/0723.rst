@@ -131,7 +131,7 @@ On prodsite, upgrade prod once more using `pip --extra-index-url`::
 
 After some more changes (which show that it is important to test using 
 sdist before officially releasing on PyPI) I finally did it:
- I officially relased 
+I officially relased 
 
 - djangosite   0.1.6            
 - lino         1.6.11

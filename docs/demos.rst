@@ -23,14 +23,10 @@ Any changes will be lost each time we reinitialize the demo data.
   
   .. figure:: /screenshots/cal.Panel.jpg
     :scale: 24 %
-    :target: http://demo2.lino-framework.org
+    :target: http://faggio-demo.lino-framework.org
       
-    `demo2 <http://demo2.lino-framework.org>`_ shows 
-    an early prototype of Lino Homeworkschool 
-    (:mod:`lino.projects.homeworkschool`,
-    currently a sleeping project 
-    because there is no acute need.
-    
+    `demo2 <http://faggio-demo.lino-framework.org>`_ shows 
+    an early prototype of :ref:`faggio`.
   
   <NEXTROW>
 

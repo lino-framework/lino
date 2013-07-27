@@ -30,8 +30,7 @@ Basically you need to:
 Compile the `.java` file into a signed `.jar` file
 --------------------------------------------------
 
-`DavLink.jar
-  <http://lino.googlecode.com/hg/lino/media/applets/DavLink.jar>` 
+`DavLink.jar <http://lino.googlecode.com/hg/lino/media/applets/DavLink.jar>`_ 
 is a self-signed archive which expires after 6 months. 
 In case you use some Lino version for more than 6 months, 
 you can re-build it yourself a new self-signed .jar file.

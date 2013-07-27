@@ -1,0 +1,63 @@
+=================================
+20130727 (Saturday, 27 July 2013)
+=================================
+
+Multilingual userdocs
+---------------------
+
+Fixed a bug in yesterday's :file:`select_lang.html`.
+
+A project with multilingual userdocs
+no longer needs its own
+:file:`select_lang.html` template,
+and the :file:`conf.py`
+should no longer set
+`templates_path <http://sphinx-doc.org/config.html#confval-templates_path>`_
+because 
+:func:`atelier.sphinxconf.configure`
+now sets it to::
+
+  ['.templates',Path(__file__).parent.absolute()]
+
+The :file:`select_lang.html` template is now part of 
+the :mod:`atelier.sphinxconf` package.
+
+The :file:`fabfile.py` of a project with multlingual userdocs 
+should now specify the Django settings module of the
+demo database as second argument to  
+:func:`atelier.fablib.setup_from_project`. 
+Example::
+
+  from atelier.fablib import *
+  setup_from_project('lino_faggio','lino_faggio.settings.demo')
+
+This will automatically set `env.demo_databases` and `env.languages`
+to the correct value.
+
+The userdocs for Lino-Welfare were French-based until now. 
+I switched to EN also for this project.
+This has the disadvantage that 
+I must sometimes research certain specialized vocabulary,
+but certain advantages which I (meanwhile) consider more important:
+
+- reusability of userdocs from or to other projects
+- a chance for non-Belgians to read about what it does
+
+
+
+Belgian vocabulary
+------------------
+
+Added two new entries to :mod:`lino.projects.belref.fixtures.demo`.
+
+
+    yield C(
+      "LEA (Local Employment Agency)",
+      "LBA (Lokale Beschäftigungsagentur)",
+      "ALE (Agence locale pour l'emploi)",
+      "PWA (Plaatselijk werkgelegenheidsagentschap)")
+    yield C(
+      "NEO (National Employment Office)",
+      "LfA (Landesamt für Arbeitsbeschaffung)",
+      "ONEM (Office national de l'emploi)",
+      "RVA (Rijksdienst voor Arbeidsvoorziening)")

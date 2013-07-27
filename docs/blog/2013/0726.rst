@@ -47,3 +47,44 @@ Continued on the workflow for creating invoices:
 - removed confirmation 
 - call update_totals()
 
+
+Checked in. 
+Updated :doc:`/demos`.
+The :ref:`faggio` wasn't yet available online.
+
+
+Lino-Patrols
+------------
+
+(notes après notre visite de chantier de :ref:`patrols`)
+
+il manque encore la notion d'horaire: par équipe on spéfifie l'horaire ("semaine" ou "semaine complete"). l'horaire aussi fait un roulement par employé.
+
+marquer une personne comme holiday: il n'est pas évident qu'il suffit de pousser F2
+
+que faut-il faire au niveau de l'équipe quand on a marqué une personne comme malade ou congé il faut mettre un remplacant au vol (on the fly), mais ne pas oublier d'en tenir compte les mois suivants. Il faut lors de la génération d'un planning que la répartition tienne compte des journées effectivement prestées.
+
+nouveau champ "remplacé par"? pour une présence "inactive" (holiday ou sick)? --> plutot pas. Il faut plutot une liste des "patrouilles à compléter": càd dans lesquelles il y a moins de deux "présences actives".
+créer une présence dans une patrouille ne fonctionne pas (il dit "date may not be empty")
+
+activer show_internale_names pour demo5
+
+différenciation secteurs / poles : c'est important pour attribuer les responsables et/ou les regles de roulement 
+
+
+
+Multi-lingual userdocs
+----------------------
+
+I found the trick how to add the Django `settings` to the Sphinx template context:
+:class:`atelier.sphinxconf.DjangoTemplateBridge`
+
+Adapted :file:`select_lang.html` of the various userdocs:
+
+================ ===========================
+Project homepage User manual
+================ ===========================
+:ref:`welfare`   :ref:`welfare.userdocs`
+:ref:`faggio`    :ref:`faggio.userdocs`
+:ref:`patrols`   :ref:`patrols.userdocs`
+================ ===========================

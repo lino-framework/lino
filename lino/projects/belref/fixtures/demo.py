@@ -12,6 +12,13 @@
 ## You should have received a copy of the GNU General Public License
 ## along with Lino; if not, see <http://www.gnu.org/licenses/>.
 
+"""
+This is Luc's personal collection of Belgian vocabulary.
+It is not complete enough to be of real benefit, 
+but publicly available at http://belref.lino-framework.org/
+
+"""
+
 from __future__ import unicode_literals
 import re
 
@@ -110,4 +117,14 @@ def objects():
       "Sozialdienst",
       "Service Social",
       "Sociale dienst")
+    yield C(
+      "LEA (Local Employment Agency)",
+      "LBA (Lokale Beschäftigungsagentur)",
+      "ALE (Agence locale pour l'emploi)",
+      "PWA (Plaatselijk werkgelegenheidsagentschap)")
+    yield C(
+      "NEO (National Employment Office)",
+      "LfA (Landesamt für Arbeitsbeschaffung)",
+      "ONEM (Office national de l'emploi)",
+      "RVA (Rijksdienst voor Arbeidsvoorziening)")
     
