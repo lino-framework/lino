@@ -292,7 +292,7 @@ class ExtUI(base.UI):
         #~ print 20120623, ar.actor
         recno = 0
         for row in data_iterator:
-            cells = grid.row2html(ar,columns,row,sums,**cellattrs)
+            cells = ar.row2html(columns,row,sums,**cellattrs)
             if cells is not None:
                 recno += 1
                 tble.body.append(xghtml.E.tr(*cells))
@@ -308,7 +308,7 @@ class ExtUI(base.UI):
                     has_sum = True
                     break
             if has_sum:
-                cells = grid.sums2html(ar,columns,sums,**cellattrs)
+                cells = ar.sums2html(columns,sums,**cellattrs)
                 tble.body.append(xghtml.E.tr(*cells))
                 #~ tble.add_body_row(*ar.ah.store.sums2html(ar,fields,sums,**cellattrs))
             

@@ -40,7 +40,6 @@ from django.utils.importlib import import_module
 
 logger = logging.getLogger(__name__)
 
-
 from django.utils.translation import ugettext_lazy as _
 
 from django.core import exceptions
@@ -146,14 +145,25 @@ class UserGroups(ChoiceList):
 
 class UserProfile(Choice):
     
+    hide_languages = None
+    """
+    A subset of :attr:`languages <north.Site.languages>` 
+    which should be hidden in this user profile.
+    Default value is :attr:`hide_languages <UserProfiles.hide_languages>`.
+    This is used on multilingual sites with more than 4 or 5 languages.
+    See the source code of :meth:`lino_welfare.settings.Site.setup_choicelists`
+    for a usage example.
+    """
+    
     def __init__(self,cls,value,text,
             name=None,memberships=None,authenticated=True,
             readonly=False,
+            #~ hide_languages=None,
             #~ expert=False,
             **kw):
       
         super(UserProfile,self).__init__(value,text,name)
-        
+        #~ self.hide_languages = hide_languages
         #~ keys = ['level'] + [g+'_level' for g in choicelist.groups_list]
         #~ keys = ['level'] + [g+'_level' for g in choicelist.membership_keys]
         self.readonly = readonly
@@ -164,6 +174,7 @@ class UserProfile(Choice):
         
     def attach(self,cls):
         super(UserProfile,self).attach(cls)
+        self.kw.setdefault('hide_languages',cls.hide_languages)
         if self.memberships is None:
             for k in cls.membership_keys:
                 #~ kw[k] = UserLevels.blank_item
@@ -187,6 +198,9 @@ class UserProfile(Choice):
             
         for k in cls.default_memberships:
             setattr(self,k,self.level)
+            
+        if self.hide_languages is not None:
+            self.hide_languages = set(settings.SITE.resolve_languages(self.hide_languages))
             
         del self.kw
         del self.memberships
@@ -248,7 +262,14 @@ class UserProfiles(ChoiceList):
     show_values = True
     max_length = 20
     membership_keys = ('level',)
-
+    
+    hide_languages = None
+    """
+    Default value for the :attr:`hide_languages <UserProfile.hide_languages>`
+    of newly attached each choice item 
+    """
+    
+    
     #~ @classmethod
     #~ def clear(cls):
         #~ cls.groups_list = [g.value for g in UserGroups.items()]
@@ -258,10 +279,11 @@ class UserProfiles(ChoiceList):
     #~ @classmethod
     #~ def clear(cls,groups='*'):
     @classmethod
-    def reset(cls,groups=None):
+    def reset(cls,groups=None,hide_languages=None):
         """
         Deserves a docstring.
         """
+        cls.hide_languages = hide_languages
         #~ cls.groups_list = [g.value for g in UserGroups.items()]
         expected_names = set(['*']+[g.value for g in UserGroups.items() if g.value])
         if groups is None:

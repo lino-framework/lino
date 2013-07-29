@@ -165,6 +165,10 @@ class Partner(mti.MultiTableBase,CountryRegionCity):
         verbose_name=_("is Company"),
         help_text=_("Whether this Partner is a Company."))
         
+    def on_create(self,ar):
+        self.language = ar.get_user().language
+        super(Partner,self).on_create(ar)
+        
     def save(self,*args,**kw):
         if self.id is None:
             sc = settings.SITE.site_config # get_site_config()

@@ -122,10 +122,10 @@ def startup_site(self):
     #~ self = settings.SITE
     #~ logger.info(self.welcome_text())
     
-    """
-    Activate the site's default language
-    """
-    dd.set_language(None)
+    #~ """
+    #~ Activate the site's default language
+    #~ """
+    #~ dd.set_language(None)
             
     #~ logger.info(lino.welcome_text())
     #~ raise Exception("20111229")

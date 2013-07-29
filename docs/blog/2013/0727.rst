@@ -61,3 +61,60 @@ Added two new entries to :mod:`lino.projects.belref.fixtures.demo`.
       "LfA (Landesamt für Arbeitsbeschaffung)",
       "ONEM (Office national de l'emploi)",
       "RVA (Rijksdienst voor Arbeidsvoorziening)")
+
+
+Upgraded to Babel 1.0
+---------------------
+
+Armin Ronacher has released the long-awaited
+`Babel 1.0
+<https://groups.google.com/forum/#!topic/python-babel/BdQjN5P1cPQ>`_.
+I just did ``pip install -U Babel``.
+
+The new Babel version even fixes a bug in Estonian full date format 
+which I hadn't yet noticed. 
+After upgrading Babel, one of my test suites failed in 
+:ref:`mldbc_tutorial`
+which --as i then noticed-- contained indeed a wrong example.
+
+
+A `hide_languages` set per UserProfile
+--------------------------------------
+
+The test suite for :ref:`welfare` failed because
+now the demo database has one language more.
+Instead of adapting lots of test cases in test docs
+I decided to use this as an excuse to implement a new feature 
+which nobody has asked until now but which I had been wanting 
+for some time:
+it is about multilingual Lino sites with many different languages 
+(more than four or five). Such sites (until now) would have a 
+problem because Lino always wants to expand all babel fields 
+horizontally. Users of such sites probably don't want to see all 
+languages at once.
+So Lino needs to provide a possibility to specify 
+per UserProfile a subset of the site's languages.
+
+
+- New method :meth:`north.Site.resolve_languages`
+- Applications can use the new feature by specifying 
+  a ``hide_languages`` attribut for either the whole
+  :attr:`UserProfiles <lino.utils.auth.UserProfiles.hide_languages>`
+  list or for 
+  :attr:`individual profiles <lino.utils.auth.UserProfile.hide_languages>`.
+  
+  
+  
+The new feature works nice but didn't spare me from going through 
+the tested docs.
+
+The new languages distribution of the Welfare demo database required 
+another change: until now the default language for new partners was 
+simply the database's default language. This approach might be 
+too simple in centres in Brussels where a Flemish user won't like 
+to have French as default when she creates a new client. And vice-versa.
+
+
+Another problem is that we can't deny the fact that Lino-Welfare is
+currently being used only in the German-speaking region. This is why I 
+added a new method :meth:`north.Site.get_default_language`.

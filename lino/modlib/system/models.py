@@ -12,7 +12,7 @@
 ## along with Lino; if not, see <http://www.gnu.org/licenses/>.
 
 """
-The models module of the :mod:`lino.modlib.system` app.
+The `models` module of the :mod:`lino.modlib.system` app.
 """
 
 import logging

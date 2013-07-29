@@ -63,6 +63,7 @@ from odf.style import TableColumnProperties, TableRowProperties, TableCellProper
 from odf import text
 from odf.table import Table, TableColumns, TableColumn, TableHeaderRows, TableRows, TableRow, TableCell
 
+#~ from lino.utils import jsgen
 from lino.utils.restify import restify
 from lino.utils.html2xhtml import html2xhtml
 from lino.utils.html2odf import html2odf, toxml
@@ -239,7 +240,6 @@ class Renderer(AppyRenderer):
         
     def insert_table_(self,ar,column_names=None,table_width=180):
         ar.setup_from(self.ar)
-        
         columns, headers, widths = ar.get_field_info(column_names)
         widths = map(int,widths)
         tw = sum(widths)

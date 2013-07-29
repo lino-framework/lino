@@ -1,0 +1,15 @@
+===============================
+20130729 (Monday, 29 July 2013)
+===============================
+
+
+:mod:`lino.projects.belref` still had a :file:`templates_jinja` 
+directory. Renamed to :file:`config`.
+
+Some last changes, also in :mod:`north`, to get the test 
+suites running.
+
+:meth:`north.Site.do_site_startup` now calls the 
+initial :func:`north.dbutils.set_language` to 
+set "system language" to
+:meth:`north.Site.get_default_language`.

@@ -78,7 +78,9 @@ from lino.core.requests import ActionRequest
 from lino.ui import base
 
 from lino.utils.appy_pod import Renderer
+from lino.utils import jsgen
 
+from lino.utils.xmlgen.html import E
 
 class InvalidRequest(Exception):
     pass
@@ -460,6 +462,10 @@ class TableRequest(ActionRequest):
         Also apply the tables's :meth:`override_column_headers 
         <lino.core.actors.Actor.override_column_headers>` method.
         """
+        u = ar.get_user()
+        if u is not None:
+            jsgen.set_for_user_profile(u.profile)
+        
         if ar.request is None:
             columns = None
         else:
@@ -502,8 +508,14 @@ class TableRequest(ActionRequest):
                 #~ ah = ar.actor.get_handle(self.extjs_ui)
                 ah = ar.actor.get_request_handle(ar)
                 columns = ah.list_layout.main.columns
-                #~ columns = ar.ah.list_layout.main.columns
-            #~ fields = ar.ah.store.list_fields
+                
+            # render them so that babelfields in hidden_languages get hidden:
+            for e in columns: 
+                e.value = e.ext_options()
+                #~ e.js_value() 
+                
+            columns = [e for e in columns if not e.value.get('hidden',False)]
+            
             headers = [unicode(col.label or col.name) for col in columns]
             widths = ["%d" % (col.width or col.preferred_width) for col in columns]
             #~ 20130415 widths = ["%d%%" % (col.width or col.preferred_width) for col in columns]
@@ -520,6 +532,56 @@ class TableRequest(ActionRequest):
             
         return fields, headers, widths
         
+    def row2html(ar,columns,row,sums,**cellattrs):
+        #~ logger.info("20130123 row2html %s",fields)
+        #~ for i,fld in enumerate(self.list_fields):
+        has_numeric_value = False
+        cells = []
+        for i,col in enumerate(columns):
+            #~ if fld.name == 'person__gsm':
+            #~ logger.info("20120406 Store.row2list %s -> %s", fld, fld.field)
+            #~ import pdb; pdb.set_trace()
+            v = col.field._lino_atomizer.full_value_from_object(row,ar)
+            if v is None:
+                td = E.td(**cellattrs)
+            else:
+                nv = col.value2num(v)
+                if nv != 0:
+                    try:
+                        sums[i] += nv
+                    except TypeError as e:
+                        raise Exception("Cannot compute %r + %r" % (sums[i],nv))
+                    has_numeric_value = True
+                td = col.value2html(ar,v,**cellattrs)
+            col.apply_cell_format(td)
+            cells.append(td)
+        if ar.actor.hide_zero_rows and not has_numeric_value:
+            return None
+        return cells
+            
+    def row2text(ar,fields,row,sums):
+        for i,fld in enumerate(fields):
+            if fld.field is not None:
+                try: # was used to find bug 20130422
+                    v = fld.field._lino_atomizer.full_value_from_object(row,ar)
+                except Exception as e:
+                    v = "%s:\n%s" % (fld.field,e)
+                if v is None:
+                    yield ''
+                else:
+                    sums[i] += fld.value2num(v)
+                    yield fld.format_value(ar,v)
+                
+    def sums2html(ar,columns,sums,**cellattrs):
+        #~ return [fld.format_sum(ar,sums,i)
+          #~ for i,fld in enumerate(fields)]
+        return [fld.sum2html(ar,sums,i,**cellattrs)
+          for i,fld in enumerate(columns)]
+      
+        #~ return [fld.sum2html(ar.ui,sums[i])
+          #~ for i,fld in enumerate(fields)]
+            
+            
         
     def appy_render(ar,target_file):
         
@@ -1095,8 +1157,7 @@ class AbstractTable(actors.Actor):
         #~ settings.SITE.startup() 
         #~ settings.SITE.resolve_virtual_fields()
 
-        
-        grid = ar.ah.list_layout.main
+        #~ grid = ar.ah.list_layout.main
                     
         sums  = [fld.zero for fld in fields]
         rows = []  
@@ -1104,7 +1165,7 @@ class AbstractTable(actors.Actor):
         #~ for row in ar:
         for row in ar.sliced_data_iterator:
             recno += 1
-            rows.append([x for x in grid.row2text(ar,fields,row,sums)])
+            rows.append([x for x in ar.row2text(fields,row,sums)])
             #~ rows.append([x for x in grid.row2html(ar,fields,row,sums)])
                 
         has_sum = False
@@ -1114,7 +1175,7 @@ class AbstractTable(actors.Actor):
                 has_sum = True
                 break
         if has_sum:
-            rows.append([x for x in grid.sums2html(ar,fields,sums)])
+            rows.append([x for x in ar.sums2html(fields,sums)])
               
         t = RstTable(headers,**kwargs)
         return t.to_rst(rows)

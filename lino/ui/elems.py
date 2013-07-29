@@ -274,6 +274,13 @@ class GridColumn(jsgen.Component):
         #~ if self.editable:
             #~ editor = self.get_field_options()
         
+    def ext_options(self,**kw):
+        kw = jsgen.Component.ext_options(self,**kw)
+        if self.editor.field is not None:
+            if is_hidden_babel_field(self.editor.field):
+                kw.update(hidden=True)
+        return kw
+    
         
 class Toolbar(jsgen.Component):
     value_template = "new Ext.Toolbar(%s)"
@@ -625,6 +632,15 @@ def add_help_text(kw,help_text,title,datasource,fieldname):
                   py2js(ttt)))
             ))
         
+def is_hidden_babel_field(fld):
+    lng = getattr(fld,'_babel_language',None)
+    if lng is None: return False
+    if jsgen._for_user_profile is None: return False
+    if jsgen._for_user_profile.hide_languages is None: return False
+    #~ if lng.name == 'nl':
+        #~ raise Exception(20130728)
+    if lng in jsgen._for_user_profile.hide_languages: return True
+    return False
         
 class FieldElement(LayoutElement):
     """
@@ -739,6 +755,9 @@ class FieldElement(LayoutElement):
     def get_field_options(self,**kw):
         if self.xtype:
             kw.update(xtype=self.xtype)
+            
+        if is_hidden_babel_field(self.field):
+            kw.update(hidden=True)
         
         # When used as editor of an EditorGridPanel, don't set the name attribute
         # because it is not needed for grids and might conflict with fields of a 
@@ -2142,56 +2161,6 @@ class GridElement(Container):
             yield th
       
 
-    def row2html(self,ar,columns,row,sums,**cellattrs):
-        #~ logger.info("20130123 row2html %s",fields)
-        #~ for i,fld in enumerate(self.list_fields):
-        has_numeric_value = False
-        cells = []
-        for i,col in enumerate(columns):
-            #~ if fld.name == 'person__gsm':
-            #~ logger.info("20120406 Store.row2list %s -> %s", fld, fld.field)
-            #~ import pdb; pdb.set_trace()
-            v = col.field._lino_atomizer.full_value_from_object(row,ar)
-            if v is None:
-                td = E.td(**cellattrs)
-            else:
-                nv = col.value2num(v)
-                if nv != 0:
-                    try:
-                        sums[i] += nv
-                    except TypeError as e:
-                        raise Exception("Cannot compute %r + %r" % (sums[i],nv))
-                    has_numeric_value = True
-                td = col.value2html(ar,v,**cellattrs)
-            col.apply_cell_format(td)
-            cells.append(td)
-        if ar.actor.hide_zero_rows and not has_numeric_value:
-            return None
-        return cells
-            
-    def row2text(self,ar,fields,row,sums):
-        for i,fld in enumerate(fields):
-            if fld.field is not None:
-                try: # was used to find bug 20130422
-                    v = fld.field._lino_atomizer.full_value_from_object(row,ar)
-                except Exception as e:
-                    v = "%s:\n%s" % (fld.field,e)
-                if v is None:
-                    yield ''
-                else:
-                    sums[i] += fld.value2num(v)
-                    yield fld.format_value(ar,v)
-                
-    def sums2html(self,ar,columns,sums,**cellattrs):
-        #~ return [fld.format_sum(ar,sums,i)
-          #~ for i,fld in enumerate(fields)]
-        return [fld.sum2html(ar,sums,i,**cellattrs)
-          for i,fld in enumerate(columns)]
-      
-        #~ return [fld.sum2html(ar.ui,sums[i])
-          #~ for i,fld in enumerate(fields)]
-            
-            
     def as_plain_html(self,ar,obj):
         sar = ar.spawn(actor=self.actor,action=self.actor.default_action,master_instance=obj)
         yield sar.as_html()

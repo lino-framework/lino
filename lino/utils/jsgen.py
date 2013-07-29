@@ -155,9 +155,9 @@ def declare_vars(v):
     if isinstance(v,Variable):
         #~ 20120616 if not v.get_view_permission(_for_user_profile): return
         if v.declare_type == DECLARE_VAR:
-            yield "var %s = %s;" % (v.ext_name,'\n'.join(v.js_value())) 
+            yield "var %s = %s;" % (v.ext_name,v.js_value()) 
         elif v.declare_type == DECLARE_THIS:
-            yield "this.%s = %s;" % (v.ext_name,'\n'.join(v.js_value())) 
+            yield "this.%s = %s;" % (v.ext_name,v.js_value())
 
 
 def py2js(v):
@@ -387,7 +387,7 @@ class Variable(Value):
             for ln in v.js_declare():
                 yield ln
         yield "// end declare subvars of %s" % self
-        value = '\n'.join(self.js_value())
+        value = self.js_value()
         if self.declare_type == DECLARE_INLINE:
             pass
         elif self.declare_type == DECLARE_VAR:
@@ -402,13 +402,13 @@ class Variable(Value):
                 
     def as_ext(self):
         if self.declare_type == DECLARE_INLINE:
-            return '\n'.join(self.js_value())
+            return self.js_value()
         if self.declare_type == DECLARE_THIS:
             return "this." + self.ext_name
         return self.ext_name
 
     def js_value(self):
-        yield self.value_template % py2js(self.value)
+        return self.value_template % py2js(self.value)
         
 class Component(Variable): 
     """
@@ -423,7 +423,7 @@ class Component(Variable):
     def js_value(self):
         value = self.ext_options()
         #~ value = self.ext_options(**self.value)
-        yield self.value_template % py2js(value)
+        return self.value_template % py2js(value)
         
     def ext_options(self,**kw):
         kw.update(self.value)
