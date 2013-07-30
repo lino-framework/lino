@@ -1,0 +1,33 @@
+================================
+20130730 (Tuesday, 30 July 2013)
+================================
+
+I moved the `saffre-rumma.net` domain from my home-run web server 
+to a virtual private server. Because:
+
+- The heat produced by the constantly running machine
+  caused extensive ice formation on our house's roof
+  in winter, which damages the material.
+  Instead of investing in better isolation, a cooling system, 
+  a system administrator and finally becoming another host provider, 
+  I decided to remain a simple programmer.
+
+- I don't really need `saffre-rumma.net` for the moment but decided 
+  to not close it.
+  
+Still looking for a photo gallery software for my private photo 
+collection:
+
+- Tried to setup
+  `django-photo-albums <https://bitbucket.org/kmike/django-photo-albums/>`
+  in a Lino application.
+  Which would be a first example of a 
+  `lino.modlib.system`.
+  Abendoned because that is not interesting.
+  
+- Discovered `tgapp-photos 
+  <https://pypi.python.org/pypi/tgapp-photos>`_
+  and `TurboGears <http://turbogears.org/>`_.
+  Oufti! That's a lot of new stuff for me but looks promising.
+  
+  

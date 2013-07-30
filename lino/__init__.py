@@ -243,14 +243,6 @@ class Site(Site):
             )
         
         
-        #~ try:
-            #~ from lino_local import on_init
-        #~ except ImportError:
-            #~ pass
-        #~ else:
-            #~ on_init(self)
-        
-        
     def parse_date(self,s):
         """
         Convert a string formatted using 

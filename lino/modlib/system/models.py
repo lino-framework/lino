@@ -307,7 +307,7 @@ if settings.SITE.user_model:
         description = dd.RichTextField(_("Description"),
             blank=True,null=True,format='plain')
             #~ blank=True,null=True,format='html')
-        team = models.ForeignKey('users.Team',blank=True,null=True,
+        team = dd.ForeignKey('users.Team',blank=True,null=True,
             help_text=_("If not empty, then this template is reserved to members of this team."))
         text = dd.RichTextField(_("Template Text"),
             blank=True,null=True,format='html')
