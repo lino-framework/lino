@@ -433,11 +433,16 @@ class Invoice(SalesDocument,ledger.Voucher,mixins.Registrable):
 
 
 class ProductDocItem(ledger.VoucherItem,vat.QtyVatItemBase):
+    
+    class Meta:
+        abstract = True
+        
     product = models.ForeignKey('products.Product',blank=True,null=True)
     #~ title = models.CharField(max_length=200,blank=True)
     description = dd.RichTextField(_("Description"),blank=True,null=True)
     #~ discount = models.IntegerField(_("Discount"),default=0)
     discount = dd.PercentageField(_("Discount"),blank=True,null=True)
+    
 
     
     def get_base_account(self,tt):

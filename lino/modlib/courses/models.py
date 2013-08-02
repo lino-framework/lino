@@ -409,11 +409,12 @@ class Course(contacts.ContactRelated,cal.EventGenerator,cal.RecurrenceSet,dd.Pri
     def update_cal_until(self):
         return self.end_date
         
-    def update_cal_calendar(self,i):
+    def update_cal_calendar(self):
         return self.calendar
         
     def update_cal_subject(self,i):
-        return _("Lesson %d") % i
+        return "%s %s" % (dd.babelattr(self.calendar,'event_label'),i)
+        #~ return _("Lesson %d") % i
         
     @dd.displayfield(_("Info"))
     def info(self,ar):
@@ -487,13 +488,13 @@ class CourseDetail(dd.FormLayout):
     #~ end = "end_date end_time"
     #~ freq = "every every_unit"
     #~ start end freq
-    main = "general cal.EventsByController"
+    main = "general courses.EnrolmentsByCourse"
     general = dd.Panel("""
     line teacher start_date start_time room #slot state id:8
     max_places max_events end_date end_time every_unit every 
     monday tuesday wednesday thursday friday saturday sunday
     company contact_person user calendar 
-    courses.EnrolmentsByCourse
+    cal.EventsByController
     """,label=_("General"))
     
     #~ def setup_handle(self,dh):

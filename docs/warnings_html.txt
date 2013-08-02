@@ -24,7 +24,7 @@ AttributeError: 'NoneType' object has no attribute 'VatDocument'
 Traceback (most recent call last):
   File "/home/luc/pythonenvs/py27/local/lib/python2.7/site-packages/sphinx/ext/autodoc.py", line 326, in import_object
     __import__(self.modname)
-  File "/home/luc/hgwork/lino/lino/modlib/cal/models.py", line 268, in <module>
+  File "/home/luc/hgwork/lino/lino/modlib/cal/models.py", line 272, in <module>
     from lino.modlib.users.models import Membership
   File "/home/luc/hgwork/lino/lino/modlib/users/models.py", line 350, in <module>
     class Authority(mixins.UserAuthored):
@@ -39,7 +39,7 @@ Traceback (most recent call last):
     __import__(self.modname)
   File "/home/luc/hgwork/lino/lino/modlib/cal/fixtures/demo.py", line 30, in <module>
     from lino.modlib.cal import models as cal
-  File "/home/luc/hgwork/lino/lino/modlib/cal/models.py", line 268, in <module>
+  File "/home/luc/hgwork/lino/lino/modlib/cal/models.py", line 272, in <module>
     from lino.modlib.users.models import Membership
   File "/home/luc/hgwork/lino/lino/modlib/users/models.py", line 350, in <module>
     class Authority(mixins.UserAuthored):
@@ -54,7 +54,7 @@ Traceback (most recent call last):
     __import__(self.modname)
   File "/home/luc/hgwork/lino/lino/modlib/cal/fixtures/demo2.py", line 39, in <module>
     from lino.modlib.cal import models as cal
-  File "/home/luc/hgwork/lino/lino/modlib/cal/models.py", line 268, in <module>
+  File "/home/luc/hgwork/lino/lino/modlib/cal/models.py", line 272, in <module>
     from lino.modlib.users.models import Membership
   File "/home/luc/hgwork/lino/lino/modlib/users/models.py", line 350, in <module>
     class Authority(mixins.UserAuthored):
@@ -159,7 +159,7 @@ Traceback (most recent call last):
     __import__(self.modname)
   File "/home/luc/hgwork/lino/lino/modlib/reception/models.py", line 49, in <module>
     from lino.modlib.cal.models import GuestStates
-  File "/home/luc/hgwork/lino/lino/modlib/cal/models.py", line 268, in <module>
+  File "/home/luc/hgwork/lino/lino/modlib/cal/models.py", line 272, in <module>
     from lino.modlib.users.models import Membership
   File "/home/luc/hgwork/lino/lino/modlib/users/models.py", line 350, in <module>
     class Authority(mixins.UserAuthored):
@@ -255,5 +255,3 @@ Traceback (most recent call last):
   File "/home/luc/hgwork/lino/lino/ui/__init__.py", line 1189, in setup_media_link
     symlink(source,target)
 OSError: [Errno 2] No such file or directory
-/home/luc/hgwork/lino/lino/ui/__init__.py:docstring of lino.ui.Site.webdav_url:7: WARNING: term not in glossary: runserver
-/home/luc/hgwork/lino/docs/api/lino.utils.rst:7: WARNING: unknown document: /autodoc/lino.test_apps.mti

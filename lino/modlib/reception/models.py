@@ -274,6 +274,7 @@ cal.Guest.checkout = CheckoutGuest()
 class AppointmentsByClient(dd.Table):
     label = _("Appointments")
     model = cal.Guest
+    #~ detail_layout = cal.Guests.detail_layout
     master_key = 'partner'
     #~ column_names = 'event__start_date event__user action_buttons'
     column_names = 'event__when_text event__user action_buttons'

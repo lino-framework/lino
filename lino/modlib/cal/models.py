@@ -145,6 +145,9 @@ class Calendar(mixins.PrintableType,outbox.MailableType,dd.BabelNamed):
         validators=[MinValueValidator(1), MaxValueValidator(32)]
         )
         #~ choices=COLOR_CHOICES)
+        
+    event_label = dd.BabelCharField(_("Event label"), 
+        max_length=200,blank=True,default=_("Appointment")) 
     
     #~ def full_clean(self,*args,**kw):
         #~ if not self.name:
@@ -191,10 +194,11 @@ class Calendars(dd.Table):
     column_names = "name type color readonly build_method template *"
     
     detail_layout = """
-    type name id 
+    name 
+    event_label
     # description
-    url_template username password
-    readonly color start_date
+    readonly color start_date id 
+    type url_template username password
     build_method template email_template attach_to_email
     EventsByCalendar SubscriptionsByCalendar
     """
@@ -379,7 +383,11 @@ class EventGenerator(mixins.UserAuthored):
     def update_cal_until(self):
         return self.date_ended or self.applies_until
         
-    def update_cal_calendar(self,i):
+    def update_cal_calendar(self):
+        """
+        Return the calendar object of the events to generate.
+        Returning None means: don't generate any events.
+        """
         return None
         
     def update_cal_subject(self,i):
@@ -455,6 +463,9 @@ class EventGenerator(mixins.UserAuthored):
         to AttrDict instances which hold the wanted event.
         """
         wanted = dict()
+        calendar = self.update_cal_calendar()
+        if calendar is None:
+            return wanted
         rset = self.update_cal_rset()
         if rset and rset.every > 0 and rset.every_unit:
             date = self.update_cal_from()
@@ -478,7 +489,7 @@ class EventGenerator(mixins.UserAuthored):
                     start_date=date,
                     summary=self.update_cal_subject(i),
                     owner=self,
-                    calendar=self.update_cal_calendar(i),
+                    calendar=calendar,
                     start_time=rset.start_time,
                     end_time=rset.end_time)
             date = rset.get_next_date(date)
@@ -2042,7 +2053,7 @@ if settings.SITE.use_extensible:
             
         @dd.displayfield()
         def babel_name(cls,self,ar):
-            return dbutils.babelattr(self,'name')
+            return dd.babelattr(self,'name')
             
         @dd.virtualfield(models.BooleanField(_('Hidden')))
         def is_hidden(cls,self,ar):

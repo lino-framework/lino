@@ -2,6 +2,9 @@
 20130802 (Friday, 02 August 2013)
 =================================
 
+Framework
+---------
+
 Fixed the bug in Lino's Javascript (see :blogref:`20130801`). 
 Moved `panel_btn_handler` from `lino.core.actions` to `lino.extjs`.
 Moved `get_action_status` from `lino.core.requests` to `lino.extjs`.
@@ -13,3 +16,39 @@ of the :menuselection:`Site --> About` window:
 :meth:`north.Site.using`
 :meth:`lino.Site.using`
 :meth:`lino.ui.Site.using`
+
+
+Lino-Welfare
+------------
+
+AppointmentsByClient : hier will ich die Kolonne "Wann" 
+anklickbar haben, damit man ggf. direkt auf den Termin springen kann.
+Geht nicht. Momentan zeigt er nichts an. 
+RemoteField zu einem virtualfield scheint doch noch nicht 
+100% zu funktionieren.
+
+Lino-Faggio
+------------
+
+Die Bemerkungen der einzelnen Termine lautet jetzt nicht mehr 
+"Lesson 1", "Lesson 2" usw, sondern das kann man pro Kalender 
+konfigurieren.
+Defaultwert für alle Kalender ist "Termin",
+aber in `eiche.py` definiert er für Kurse die 
+Terminbezeichnung "Stunde".
+
+Die Demo-Datenbank hat jetzt 11 Rechnungen schon fakturiert.
+
+Oho, was seh ich da? Es gibt in faggio 
+zwei verschiedene Tabellen
+`sales.InvoiceItem`
+und
+`sales.ProductDocItem`.
+Habe ich da irgendwo ein Meta.abstract falsch gesetzt?
+Tatsächlich: in :class:`lino.modlib.sales.models.ProductDocItem`.
+Cool, wie transparent das ist! So ein riesiger Unterschied in der 
+Datenbankstruktur fällt im Code gar nicht auf!
+
+TODO: Statt Rückgabe `js_eval` soll `goto_record` auch den Sprung 
+zu einer anderen Instanz vertragen.
+Dann kann ich die erstellten Rechnungen in der fixture gleich registrieren.
