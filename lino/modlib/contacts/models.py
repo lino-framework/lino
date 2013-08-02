@@ -113,6 +113,51 @@ class Addressable(object):
     #~ address.return_type = models.TextField(_("Address"))
     address = property(get_address)
     
+class AddressFormatter(object):
+    """
+    Format used in BE, DE, FR, NL...
+    """
+    def get_city_lines(me,self):
+        if self.city is not None:
+            s = join_words(self.zip_code or self.city.zip_code,self.city)
+            if s:
+                yield s 
+            
+class EstonianAddressFormatter(AddressFormatter):
+    """
+    Format used in Estonia.
+    Not ready and not tested.
+    """
+    def get_city_lines(me,self):
+        #lines = [self.name,street,self.addr1,self.addr2]
+        if self.region: # 
+            if self.city:
+                join_words(self.zip_code or self.city.zip_code,self.city)
+                if self.city_zip_code:
+                    yield unicode(self.city)
+                    yield unicode(self.city)
+            s = join_words(self.zip_code,self.region)
+        else: 
+            s = join_words(self.zip_code,self.city)
+        if s:
+            yield s 
+            
+
+            
+ADDRESS_FORMATTERS = dict()
+ADDRESS_FORMATTERS[None] = AddressFormatter()
+ADDRESS_FORMATTERS['EE'] = EstonianAddressFormatter()
+            
+def get_address_formatter(country):
+    if country and country.isocode:
+        af = ADDRESS_FORMATTERS.get(country.isocode,None)
+        if af is not None: 
+            return af
+    return ADDRESS_FORMATTERS.get(None)
+            
+            
+            
+
 
 #~ class Contact(mti.MultiTableBase,CountryCity):
 class Partner(mti.MultiTableBase,CountryRegionCity,Addressable):
@@ -236,24 +281,15 @@ but e.g. :class:`PersonMixin` overrides this.
               self.street_no,self.street_box)
         if self.addr2:
             yield self.addr2
-        #lines = [self.name,street,self.addr1,self.addr2]
-        if self.region: # format used in Estonia
-            if self.city:
-                yield unicode(self.city)
-            s = join_words(self.zip_code,self.region)
-        else: 
-            s = join_words(self.zip_code,self.city)
-        if s:
-            yield s 
-        #~ foreigner = True # False
-        #~ if self.id == 1:
-            #~ foreigner = False
-        #~ else:
-            #~ foreigner = (self.country != self.objects.get(pk=1).country)
+           
+        af = get_address_formatter(self.country)
+        for ln in af.get_city_lines(self):
+            yield ln
+            
         if self.country is not None:
             sc = settings.SITE.site_config # get_site_config()
             #~ print 20130228, sc.site_company_id
-            if not sc.site_company or self.country != sc.site_company.country: 
+            if sc.site_company is None or self.country != sc.site_company.country: 
                 # (if self.country != sender's country)
                 yield unicode(self.country)
             
@@ -585,17 +621,19 @@ class Role(dd.Model,Addressable):
         #~ else:
             #~ for ln in self.person.address_location_lines():
                 #~ yield ln
-    def address_lines(self):
-        for ln in self.person.address_person_lines():
-            yield ln
+    def address_person_lines(self):
+        #~ yield self.name
         if self.company:
             for ln in self.company.address_person_lines():
                 yield ln
-            for ln in self.company.address_location_lines():
-                yield ln
+        for ln in self.person.address_person_lines():
+            yield ln
+        
+    def address_location_lines(self):
+        if self.company:
+            return self.company.address_location_lines()
         else:
-            for ln in self.person.address_location_lines():
-                yield ln
+            return self.person.address_location_lines()
 
 #~ class ContactsByCompany(dd.Table):
     #~ model = 'contacts.RoleOccurence'
@@ -784,8 +822,7 @@ class ContactRelated(dd.Model):
         """
         if company is not None:
             return cls.contact_person_choices_queryset(company)
-        return settings.SITE.modules.contacts.Person.objects.filter(hidden=False).order_by('last_name','first_name')
-        #~ return []
+        return settings.SITE.modules.contacts.Person.objects.order_by('last_name','first_name')
         
         
     def get_contact(self):
@@ -796,14 +833,17 @@ class ContactRelated(dd.Model):
                 if roles.count() == 1:
                     return roles[0]
         
-    def get_recipients(self):
+    def get_recipient(self):
         contact = self.get_contact()
         if contact is not None: 
-            yield contact
-        elif self.contact_person is not None:
-            yield self.company
-        elif self.company is not None:
-            yield self.company
+            return contact
+        if self.contact_person is not None:
+            if self.company is not None:
+                return Role(company=self.company,person=self.contact_person)
+            return self.contact_person
+        return self.company
+        
+    recipient = property(get_recipient)
 
     def contact_person_changed(self,ar):
         #~ print '20120929 contact_person_changed'

@@ -332,14 +332,14 @@ class UI(object):
                 msg = unicode(e)
             else:
                 if isinstance(elem,models.Model):
-                    elem = dd.obj2unicode(elem)
+                    elem = obj2unicode(elem)
                 msg = _(
                   "Action \"%(action)s\" failed for %(record)s:") % dict(
                   action=ar.bound_action.full_name(),
                   record=elem)
                 msg += "\n" + unicode(e)
-            msg += '.\n' + _(
-              "An error report has been sent to the system administrator.")
+            msg += '.\n' + unicode(_(
+              "An error report has been sent to the system administrator."))
             logger.warning(msg)
             logger.exception(e)
             r = self.error(e,msg,alert=_("Oops!"))

@@ -23,7 +23,7 @@ Lino-Welfare
 
 Incremented :mod:`lino_welfare` version from 1.1.8 to 1.1.9.
 
-AppointmentsByClient : hier will ich die Kolonne "Wann" 
+:ref:`welfare.reception.AppointmentsByClient` : hier will ich die Kolonne "Wann" 
 anklickbar haben, damit man ggf. direkt auf den Termin springen kann.
 Geht nicht. Momentan zeigt er nichts an. 
 RemoteField zu einem virtualfield scheint doch noch nicht 
@@ -76,3 +76,11 @@ car Lino-Welfare est prioritaire pour l'instant.
 
 
 
+Lino-Welfare
+------------
+
+ContactRelated no longer has a method `get_recipients` but a 
+property `recipient`.
+
+Country-specific address formatting:
+`contacts.models.AddressFormatter`

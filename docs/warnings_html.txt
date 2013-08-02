@@ -11,21 +11,6 @@ Traceback (most recent call last):
   File "/home/luc/pythonenvs/py27/local/lib/python2.7/site-packages/django/db/models/fields/related.py", line 993, in __init__
     assert isinstance(to, six.string_types), "%s(%r) is invalid. First parameter to ForeignKey must be either a model, a model name, or the string %r" % (self.__class__.__name__, to, RECURSIVE_RELATIONSHIP_CONSTANT)
 AssertionError: ForeignKey(None) is invalid. First parameter to ForeignKey must be either a model, a model name, or the string 'self'
-/home/luc/hgwork/lino/docs/api/lino.management.commands.rst:35: WARNING: autodoc: failed to import module u'lino.management.commands.makescreenshots'; the following exception was raised:
-Traceback (most recent call last):
-  File "/home/luc/pythonenvs/py27/local/lib/python2.7/site-packages/sphinx/ext/autodoc.py", line 326, in import_object
-    __import__(self.modname)
-  File "/home/luc/hgwork/lino/lino/management/commands/makescreenshots.py", line 153, in <module>
-    HTTPD = StoppableWSGIServer(('', PORT), WSGIRequestHandler)
-  File "/home/luc/pythonenvs/py27/local/lib/python2.7/site-packages/django/test/testcases.py", line 944, in __init__
-    super(StoppableWSGIServer, self).__init__(*args, **kwargs)
-  File "/home/luc/pythonenvs/py27/local/lib/python2.7/site-packages/django/core/servers/basehttp.py", line 130, in __init__
-    super(WSGIServer, self).__init__(*args, **kwargs)
-  File "/usr/lib/python2.7/SocketServer.py", line 408, in __init__
-    self.server_bind()
-  File "/home/luc/pythonenvs/py27/local/lib/python2.7/site-packages/django/core/servers/basehttp.py", line 137, in server_bind
-    raise WSGIServerException(e)
-WSGIServerException: [Errno 98] Address already in use
 /home/luc/hgwork/lino/docs/api/lino.modlib.auto.sales.rst:14: WARNING: autodoc: failed to import module u'lino.modlib.auto.sales.models'; the following exception was raised:
 Traceback (most recent call last):
   File "/home/luc/pythonenvs/py27/local/lib/python2.7/site-packages/sphinx/ext/autodoc.py", line 326, in import_object
