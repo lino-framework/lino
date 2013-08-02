@@ -77,21 +77,20 @@ class User(mixins.CreatedModified):
 
     username = models.CharField(_('Username'), max_length=30, 
         unique=True, 
-        help_text=_("""
-        Required. Must be unique. 
-        """))
+        help_text=_("""Required. Must be unique."""))
         
     password = models.CharField(_('Password'), max_length=128)
         
     profile = dd.UserProfiles.field(blank=True)
     
+    initials = models.CharField(_('Initials'), max_length=10, blank=True)
     first_name = models.CharField(_('First name'), max_length=30, blank=True)
     last_name = models.CharField(_('Last name'), max_length=30, blank=True)
     email = models.EmailField(_('e-mail address'), blank=True)
     
     remarks = models.TextField(_("Remarks"),blank=True) # ,null=True)
     
-    language = dd.LanguageField(default=models.NOT_PROVIDED)
+    language = dd.LanguageField(default=models.NOT_PROVIDED,blank=True)
     
     if settings.SITE.is_installed('contacts'):
       
@@ -165,9 +164,13 @@ class User(mixins.CreatedModified):
                     setattr(self,n,getattr(p,n))
             #~ self.language = p.language
         if not self.language:
-            self.language = settings.SITE.DEFAULT_LANGUAGE.django_code
+            #~ self.language = settings.SITE.DEFAULT_LANGUAGE.django_code
+            self.language = settings.SITE.get_default_language() 
         if not self.password:
             self.set_unusable_password()
+        if not self.initials:
+            if self.first_name and self.last_name:
+                self.initials = self.first_name[0] + self.last_name[0]
         super(User,self).full_clean(*args,**kw)
         
     #~ def save(self,*args,**kw):
@@ -228,10 +231,10 @@ class User(mixins.CreatedModified):
 class UserDetail(dd.FormLayout):
   
     box1 = """
-    username id profile 
-    first_name last_name partner
+    username profile:20 partner
+    first_name last_name initials
     email language 
-    created modified
+    id created modified
     """
 
     main = """
@@ -263,6 +266,8 @@ class Users(dd.Table):
     model = User
     #~ order_by = "last_name first_name".split()
     order_by = ["username"]
+    active_fields = ['partner']
+    
     #~ column_names = 'username first_name last_name is_active is_staff is_expert is_superuser *'
     column_names = 'username profile first_name last_name *'
     detail_layout = UserDetail()

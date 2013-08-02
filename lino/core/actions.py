@@ -233,6 +233,9 @@ class InstanceAction(object):
         self.owner = owner
         
     #~ def __call__(self,ar,**kw):
+    def run_from_code(self,ar,**kw):
+        return self.bound_action.action.run_from_code(self.instance,ar)
+        
     def run_from_session(self,ses,**kw):
         #~ print self,args, kw
         ar = self.bound_action.request(**kw)
@@ -681,25 +684,7 @@ class RowAction(Action):
     preprocessor = 'null' # None
     http_method = 'GET'
     
-    def get_js_call(self,actor,requesting_panel_name,obj):
-        # the corresponding js code is generated in `js_render_custom_action`
-        from lino.utils.jsgen import py2js
-        return "Lino.%s.%s(%s,%s)" % (
-            actor,self.action_name,py2js(requesting_panel_name),py2js(obj.pk))
-        
-    def get_panel_btn_handler(self,actor):
-        if self.single_row:
-            h  = 'Lino.row_action_handler('
-        else:
-            h  = 'Lino.list_action_handler('
-            ls_url = '/' + actor.app_label + '/' + actor.__name__
-            h += "%r," % ls_url
-        h += "%r" % self.action_name
-        h += ",%r" % self.http_method
-        if self.preprocessor:
-            h += "," + self.preprocessor
-        h += ")"
-        return h 
+    
         
     #~ def get_action_permission(self,user,obj):
         #~ return self.actor.get_row_permission(self,ar,obj)

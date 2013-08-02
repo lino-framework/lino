@@ -12,6 +12,18 @@
 ## You should have received a copy of the GNU General Public License
 ## along with Lino; if not, see <http://www.gnu.org/licenses/>.
 
+"""
+Defines some utilities to instpect the running Python code:
+
+:func:`codefiles`
+:func:`codetime`
+and
+:func:`analyze_rst`
+"""
+
+import logging
+logger = logging.getLogger(__name__)
+
 import os,sys
 import time
 import fnmatch
@@ -25,6 +37,8 @@ def codefiles(pattern='*'):
     #~ exp = re.compile(pattern, flags)
     
     for name,mod in sys.modules.items():
+        #~ if name == 'lino.extjs' and pattern == '*': 
+            #~ logger.info("20130801 %r -> %r", name,mod.__file__)
         if fnmatch.fnmatch(name, pattern):
         #~ if exp.match(name):
             filename = getattr(mod, "__file__", None)
@@ -110,7 +124,13 @@ class SourceFile(object):
 from lino.utils import rstgen
 
 def analyze_rst(*packages):
-
+    """
+    Example:
+    
+    >>> from lino.utils.code import analyze_rst
+    >>> print analyze_rst('lino')
+      
+    """
     fields = 'count_code count_doc count_comment count_total'.split()
     headers = ["name"] + fields
     rows = []
@@ -128,3 +148,6 @@ def analyze_rst(*packages):
     rows.append(['total']+[str(n) for n in total_sums])
     return rstgen.table(headers,rows)
 
+if __name__ == "__main__":
+    import doctest
+    doctest.testmod()

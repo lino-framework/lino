@@ -793,8 +793,8 @@ class CachedPrintable(Duplicable,BasePrintable):
         abstract = True
         
       
-    def print_from_posting(self,posting,ar,**kw):
-        return self.do_print.run_from_ui(self,ar,**kw)
+    #~ def print_from_posting(self,posting,ar,**kw):
+        #~ return self.do_print.run_from_session(ar,**kw)
         
     def on_duplicate(self,ar,master):
         super(CachedPrintable,self).on_duplicate(ar,master)

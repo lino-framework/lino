@@ -100,7 +100,9 @@ def parse_int(s,default=None):
     
 class ExtUI(base.UI):
     """
-    The central instance of Lino's ExtJS3 User Interface.
+    The central instance of Lino's User Interface.
+    Not only ExtJS (despite the name).
+    
     """
     #~ _handle_attr_name = '_extjs3_handle'
     #~ _handle_attr_name = '_lino_ui_handle'
@@ -125,10 +127,6 @@ class ExtUI(base.UI):
 
         #~ logger.info("20130221 lino.ui.ExtUI.__init__()")
         pre_ui_build.send(self)
-        
-        from lino.utils import codetime
-        self.mtime = codetime()
-        #~ logger.info("20130610 codetime is %s", datetime.datetime.fromtimestamp(self.mtime))
         
         #~ raise Exception("20120614")
         #~ self.pdf_renderer = PdfRenderer(self) # 20120624
@@ -155,6 +153,10 @@ class ExtUI(base.UI):
             #~ for ba in res.get_actions():
                 #~ if ba.action.parameters:
                     #~ ba.action.params_layout.get_layout_handle(self)
+        
+        from lino.utils import codetime
+        self.mtime = codetime()
+        #~ logger.info("20130610 codetime is %s", datetime.datetime.fromtimestamp(self.mtime))
         
         post_ui_build.send(self)
         

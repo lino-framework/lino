@@ -98,7 +98,7 @@ class QuickTest(RemoteAuthTestCase):
         #~ if 'en' in settings.SITE.AVAILABLE_LANGUAGES:
         if settings.SITE.get_language_info('en'):
             dbutils.set_language('en')
-            self.assertEquals(luc.address(), u'''\
+            self.assertEquals(luc.address, u'''\
 Mr Luc SAFFRE
 Uus 1
 Vana-Vigala küla
@@ -107,7 +107,7 @@ Estonia''')
 
         if settings.SITE.get_language_info('de'):
             dbutils.set_language('de')
-            self.assertEquals(luc.address(), u'''\
+            self.assertEquals(luc.address, u'''\
 Herrn Luc SAFFRE
 Uus 1
 Vana-Vigala küla

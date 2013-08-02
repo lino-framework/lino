@@ -604,8 +604,7 @@ class Table(AbstractTable):
             self.hidden_columns = self.hidden_columns | self.model.hidden_columns
             self.hidden_elements = self.hidden_elements | self.model.hidden_elements
             
-            
-        if self.model is not None:
+            #~ if self.model is not None:
               
             #~ for b in self.model.mro():
                 #~ for k,v in b.__dict__.items():
@@ -623,10 +622,7 @@ class Table(AbstractTable):
                                     self,k,existing_value)
                         else:
                             setattr(self,k,v)
-                      
-          
-                    
-              
+
             for name in ('workflow_state_field','workflow_owner_field'):
                 if getattr(self,name) is None:
                     setattr(self,name,getattr(self.model,name))

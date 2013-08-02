@@ -65,6 +65,8 @@ lino.modlib.countries
 lino.modlib.countries.fixtures
 lino.modlib.finan
 lino.modlib.finan.fixtures
+lino.modlib.languages
+lino.modlib.languages.fixtures
 lino.modlib.ledger
 lino.modlib.ledger.fixtures
 lino.modlib.links

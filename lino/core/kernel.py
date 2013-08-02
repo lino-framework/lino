@@ -49,7 +49,7 @@ import lino
         
 from lino import dd
 #~ from lino.core import signals
-from lino.core import actions
+#~ from lino.core import actions
 from lino.core import fields
 from lino.core import layouts
 from lino.core import actors

@@ -254,6 +254,11 @@ class ChoiceList(tables.AbstractTable):
     #~ any blank value for your ChoiceList.
     #~ """
     
+    preferred_foreignkey_width = 20 
+    """
+    Default preferred with for ChoiceList fields to this list.
+    """
+    
     stored_name = None
     """
     Every subclass of ChoiceList will be automatically registered.

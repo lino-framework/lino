@@ -1,0 +1,48 @@
+===================================
+20130801 (Thursday, 01 August 2013)
+===================================
+
+A bug in Lino's Javascript 
+--------------------------
+
+Yesterday I discovered an internal bug: 
+the "Checkin" link in workflow_buttons 
+of AppointmentsByClient doesn't work.
+It tries to call
+`Lino.reception.AppointmentsByClient.checkin("ext-comp-1233",1)`
+but this causes a Javascript error 
+`Uncaught TypeError: Object #<Object> has no method 'checkin'`.
+
+This bug is due to the changes on
+:blogref:`20130723` or :blogref:`20130726`.
+
+
+About the timtools project
+--------------------------
+
+timtools is still actively being used by all TIM users, but there has 
+been no need for a release since version 1.0.5 in September 2010.
+Before the next release it would need some work
+after my moving from Windows to Linux.
+I guess I'll have to run mkdist.py in a VirtualBox with a MS-Windows
+to get py2exe running.
+I now made a checkin with some minor corrections.
+
+
+When to rebuild the `lino_xxx_xx.js` file
+-----------------------------------------
+
+At startup, Lino calls 
+:func:`lino.utils.code.codetime`
+and keeps this timestamp in a variable
+`mtime` in the :class:`lino.ui.ExtUI` instance.
+
+But after some changes some time ago 
+this happened *before* everything was loaded.
+For example the :mod:`lino.extjs` module wasn't yet.
+Result was that a change in :mod:`lino.extjs` triggered a reload of 
+the devserver but *not* a rebuild of 
+the `lino_xxx_xx.js` file.
+Took me some time to find this explanation.
+
+

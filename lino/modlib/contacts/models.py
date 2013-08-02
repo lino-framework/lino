@@ -90,10 +90,32 @@ class CompanyTypes(dd.Table):
     #~ label = _("Company types")
 
 
-
+class Addressable(object):
+    
+    def address_person_lines(self):
+        raise NotImplementedError()
+        
+    def address_location_lines(self):
+        raise NotImplementedError()
+        
+    def address_lines(self):
+        for ln in self.address_person_lines() : yield ln
+        for ln in self.address_location_lines() : yield ln
+          
+    #~ def address(self,linesep="\n<br/>"):
+    def get_address(self,linesep="\n"):
+        """
+        The plain text full postal address (person and location). 
+        Lines are separated by `linesep`.
+        """
+        #~ return linesep.join(self.address_lines())
+        return linesep.join(list(self.address_person_lines()) + list(self.address_location_lines()))
+    #~ address.return_type = models.TextField(_("Address"))
+    address = property(get_address)
+    
 
 #~ class Contact(mti.MultiTableBase,CountryCity):
-class Partner(mti.MultiTableBase,CountryRegionCity):
+class Partner(mti.MultiTableBase,CountryRegionCity,Addressable):
     """
     
     A :class:`Partner` is anything that can act as a business partner.
@@ -237,20 +259,6 @@ but e.g. :class:`PersonMixin` overrides this.
             
         #~ logger.debug('%s : as_address() -> %r',self,lines)
         
-    def address_lines(self):
-        for ln in self.address_person_lines() : yield ln
-        for ln in self.address_location_lines() : yield ln
-          
-    #~ def address(self,linesep="\n<br/>"):
-    def address(self,linesep="\n"):
-        """
-        The plain text full postal address (person and location). 
-        Lines are separated by `linesep`.
-        """
-        #~ return linesep.join(self.address_lines())
-        return linesep.join(list(self.address_person_lines()) + list(self.address_location_lines()))
-    address.return_type = models.TextField(_("Address"))
-    
     def address_location(self,linesep="\n"):
         """
         The plain text postal address location part. 
@@ -529,7 +537,7 @@ class RoleTypes(dd.Table):
 
 
 #~ class Contact(dd.Model):
-class Role(dd.Model):
+class Role(dd.Model,Addressable):
     """
     
     A Contact (historical model name :class:`Role`) 
@@ -771,16 +779,32 @@ class ContactRelated(dd.Model):
       
     @chooser()
     def contact_person_choices(cls,company):
+        """
+        chooser method for the `contact_person` field.
+        """
         if company is not None:
             return cls.contact_person_choices_queryset(company)
-        return []
+        return settings.SITE.modules.contacts.Person.objects.filter(hidden=False).order_by('last_name','first_name')
+        #~ return []
+        
         
     def get_contact(self):
-        roles = Role.objects.filter(company=self.company,person=self.contact_person)
-        #~ print '20120929 get_contact', roles
-        if roles.count() == 1:
-            return roles[0]
+        if self.contact_person is not None:
+            if self.company is not None:
+                roles = Role.objects.filter(company=self.company,person=self.contact_person)
+                #~ print '20120929 get_contact', roles
+                if roles.count() == 1:
+                    return roles[0]
         
+    def get_recipients(self):
+        contact = self.get_contact()
+        if contact is not None: 
+            yield contact
+        elif self.contact_person is not None:
+            yield self.company
+        elif self.company is not None:
+            yield self.company
+
     def contact_person_changed(self,ar):
         #~ print '20120929 contact_person_changed'
         if self.company and not self.contact_person_id:
@@ -792,18 +816,22 @@ class ContactRelated(dd.Model):
       
     @classmethod
     def contact_person_choices_queryset(cls,company):
+        """
+        Return a queryset of candidate Person objects allowed 
+        in `contact_person` for a given `company`.
+        """
         return settings.SITE.modules.contacts.Person.objects.filter(rolesbyperson__company=company).distinct()
 
     def full_clean(self,*args,**kw):
         if not settings.SITE.loading_from_dump:
-            if self.company and self.contact_person is None:
+            if self.company is not None and self.contact_person is None:
                 qs = self.contact_person_choices_queryset(self.company)
                 #~ qs = self.company.rolesbyparent.all()
                 if qs.count() == 1:
                     self.contact_person = qs[0]
                 else:
                     #~ print "20120227 clear contact!"
-                    self.contact = None
+                    self.contact_person = None
             contact = self.get_contact()
             if contact is not None:
                 self.contact_role = contact.type

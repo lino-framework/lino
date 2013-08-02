@@ -171,6 +171,7 @@ class Clients(dd.Table):
     model = 'pcsw.Client'
     column_names = "name_column address_column national_id" 
     auto_fit_column_widths = True
+    use_as_default_table = False
     required = dd.Required(user_groups='reception')
     detail_layout = ClientDetail()
     editable = False
@@ -194,24 +195,6 @@ class Clients(dd.Table):
         return E.div(*lines,style="font-size:18px;font-weigth:bold;vertical-align:bottom;text-align:middle")
     
         
-class AppointmentsByClient(dd.Table):
-    label = _("Appointments")
-    model = 'cal.Guest'
-    master_key = 'partner'
-    column_names = 'event__start_date event__user action_buttons'
-    #~ slave_grid_format = 'html'
-    editable = False
-    
-    @classmethod
-    def get_request_queryset(self,ar):
-        # logger.info("20121010 Clients.get_request_queryset %s",ar.param_values)
-        qs = super(AppointmentsByClient,self).get_request_queryset(ar)
-        if isinstance(qs,list): return qs
-        start_date = datetime.date.today() - datetime.timedelta(days=17)
-        end_date = datetime.date.today() + datetime.timedelta(days=17)
-        qs = qs.filter(event__start_date__gte=start_date,event__start_date__lte=end_date)
-        return qs
-
 #~ class CheckinGuest(dd.ChangeStateAction,dd.NotifyingAction):
 class CheckinGuest(dd.NotifyingAction):
     label = _("Checkin")
@@ -220,7 +203,6 @@ class CheckinGuest(dd.NotifyingAction):
     
     #~ required = dict(states='invited accepted') 
     required = dd.Required(user_groups='reception')
-    
     
     def get_action_permission(self,ar,obj,state):
         if obj.event.start_date != datetime.date.today():
@@ -288,6 +270,26 @@ class CheckoutGuest(dd.NotifyingAction):
         
 cal.Guest.checkin = CheckinGuest()
 cal.Guest.checkout = CheckoutGuest()
+
+class AppointmentsByClient(dd.Table):
+    label = _("Appointments")
+    model = cal.Guest
+    master_key = 'partner'
+    column_names = 'event__start_date event__user action_buttons'
+    #~ slave_grid_format = 'html'
+    editable = False
+    auto_fit_column_widths = True
+    
+    @classmethod
+    def get_request_queryset(self,ar):
+        # logger.info("20121010 Clients.get_request_queryset %s",ar.param_values)
+        qs = super(AppointmentsByClient,self).get_request_queryset(ar)
+        if isinstance(qs,list): return qs
+        start_date = datetime.date.today() - datetime.timedelta(days=17)
+        end_date = datetime.date.today() + datetime.timedelta(days=17)
+        qs = qs.filter(event__start_date__gte=start_date,event__start_date__lte=end_date)
+        return qs
+
 
 
 #~ class Guests(cal.Guests):

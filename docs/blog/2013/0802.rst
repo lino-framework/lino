@@ -1,0 +1,5 @@
+=================================
+20130802 (Friday, 02 August 2013)
+=================================
+
+- Moved `panel_btn_handler` from `lino.core.actions` to `lino.extjs.ui`

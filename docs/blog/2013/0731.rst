@@ -1,0 +1,104 @@
+==================================
+20130731 (Wednesday, 31 July 2013)
+==================================
+
+Notizen, Lebensläufe, eID-Inhalt, Bescheinigungen und Briefe
+------------------------------------------------------------
+
+Bisher plante ich den Namen "Attestations" (Bescheinigungen) für das 
+Modul, das uns noch fehlt im :ref:`welfare`.
+Aber ich ahnte auch, dass die Benutzer diese Bezeichnung als irritierend
+empfinden werden.
+
+Jetzt habe ich einen besseren Namen gefunden: "Excerpts" (Auszüge).
+Wobei es sich natürlich nicht um Kontoauszüge, 
+sondern um "Auszüge aus unserer Datenbank" handelt:
+
+    An Excerpt is a printable document that makes a 
+    snapshot of the database at a given moment. 
+    Examples of excerpts in 
+    :ref:`welfare` are:
+
+    - eID content
+    - Simple attestations
+    - Specialized attestations (like AMK which hold additional data)
+    - CVs (an example of excerpt whose final document is editable)
+
+    The system administrator can define ExcerptTypes, each of which 
+    is associated to a given template.
+
+Aber hackerzacker... warum tue ich diese "Auszüge" denn nicht einfach 
+mit in die bestehenden Notizen rein?
+Genau, das scheint mir jetzt (bis auf weiteres klar: wir brauchen keine 
+neue Tabelle "Bescheinigungen". Die Bescheinigungen kommen mit in 
+die "Notizen/Ereignisse" rein. 
+Ausser die AMK, die kriegen eine eigene Tabelle. 
+**Notizen sind sozusagen "alles, was nicht anderweitig in der Datenbank 
+erfasst wird".**
+
+
+Briefe drucken
+--------------
+
+Ich arbeite an einer kundenspezifischen Dokumentvorlage 
+`Brief.odt`, die im lokalen Ordner `config/notes/Note` zu stehen kommt.
+
+- New field `initials` in `lino.modlib.users.models.User`.
+
+- cal.UpdateReminders on User caused a traceback
+  'TableRequest' object has no attribute 'ui'
+  
+- New attribute 
+  :attr:`lino.core.choicelists.ChoiceList.preferred_foreignkey_width`
+  used by :class:`lino.ui.elems.ChoiceListFieldElement`.
+  TODO: this doesn't yet work however. Lino seems to ignore it...
+
+- `users.Users` now has an `active_fields` set to ``['partners']``.
+
+- Fixed a bug which caused an AJAX error "users.MySettings has no url action u'' (possible values are ['put', 'post', 'detail', 'update_reminders'])" 
+  after modifying an active field.
+  
+- Traceback when trying to create a Posting from a Note::
+
+      File "/home/luc/hgwork/lino/lino/ui/views.py", line 113, in run_action
+        rv = ar.bound_action.action.run_from_ui(elem,ar)
+      File "/home/luc/hgwork/lino/lino/modlib/postings/models.py", line 179, in run_from_ui
+        % dict(num=len(recs),elem=elem))
+      File "/home/luc/hgwork/lino/lino/core/requests.py", line 117, in confirm
+        def confirm(self,*args,**kw): return settings.SITE.ui.confirm(*args,**kw)
+      File "/home/luc/hgwork/lino/lino/ui/base.py", line 198, in confirm
+        cb = self.callback(*msgs)
+      File "/home/luc/hgwork/lino/lino/ui/base.py", line 225, in callback
+        msg = msgs[0]
+    IndexError: tuple index out of range
+    
+- :meth:`lino.modlib.contacts.models.ContactRelated.contact_person_choices` 
+  no longer returns an empty list when company is empty. 
+  When company is empty and contact_person not, then the related contact
+  is a private person.
+  
+- Partner.address is no longer a method but a property. 
+  The method is now `get_address`.
+  
+- Removed `lino.modlib.postings` from Lino-Welfare and 
+  made :class:`lino.modlib.notes.models.Note` a 
+  :mod:`lino.modlib.contacts.models.ContactRelated`. 
+  This feature is not used in Eupen and made it rather complicated 
+  to write a simple letter.
+
+  Started migration method :func:`lino_welfare.migrate.migrate_from_1_1_8`
+
+While I was there, I did something which nobody asked for:
+moved the `Language` model from countries to a new app 
+:mod:`lino.modlib.languages`.
+This caused amazingly little work.
+
+TODO: Discovered an internal bug: the "Checkin" link in workflow_buttons 
+of AppointmentsByClient doesn't work.
+It tries to call
+`Lino.reception.AppointmentsByClient.checkin("ext-comp-1233",1)`
+but this causes a Javascript error 
+`Uncaught TypeError: Object #<Object> has no method 'checkin'`.
+
+
+

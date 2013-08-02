@@ -185,11 +185,8 @@ class BoundAction(object):
     def get_button_label(self,*args):
         return self.action.get_button_label(self.actor,*args)
         
-    def get_panel_btn_handler(self,*args):
-        return self.action.get_panel_btn_handler(self.actor,*args)
-        
-    def get_js_call(self,*args):
-        return self.action.get_js_call(self.actor,*args)
+    #~ def get_panel_btn_handler(self,*args):
+        #~ return self.action.get_panel_btn_handler(self.actor,*args)
         
     def setup_action_request(self,*args):
         return self.action.setup_action_request(self.actor,*args)

@@ -143,6 +143,7 @@ class UserGroups(ChoiceList):
 #~ add('system', _("System"))
 
 
+
 class UserProfile(Choice):
     
     hide_languages = None
@@ -262,6 +263,9 @@ class UserProfiles(ChoiceList):
     show_values = True
     max_length = 20
     membership_keys = ('level',)
+    
+    preferred_foreignkey_width = 20 
+    
     
     hide_languages = None
     """

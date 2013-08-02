@@ -2246,7 +2246,7 @@ class UpdateReminders(actions.RowAction):
         msg = _("%(num)d reminders for %(user)s have been updated."
           ) % dict(user=user,num=n)
         logger.info(msg)
-        return ar.ui.success(msg,**kw)
+        return ar.success(msg,**kw)
         
 
 system = dd.resolve_app('system')

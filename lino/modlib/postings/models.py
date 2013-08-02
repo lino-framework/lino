@@ -52,10 +52,29 @@ class PostingStates(dd.Workflow):
     
 add = PostingStates.add_item
 add('10',_("Open"),'open') # owner still working on it
-add('20',_("Ready to print"),'ready') # secretary can send it out
+#~ add('20',_("Ready to print"),'ready') # secretary can send it out
+add('20',_("Ready"),'ready') # secretary can print and send it out
 add('30',_("Printed"),'printed')
 add('40',_("Sent"),'sent')
 add('50',_("Returned"),'returned')
+
+
+class PrintPosting(dd.RowAction):
+    label = _('Print')
+    help_text = _('Print this posting')
+    icon_name='x-tbar-print'
+    show_in_workflow = True
+    
+    def run_from_ui(self,elem,ar,**kw):
+        kw = elem.owner.do_print.run_from_code(ar,**kw)        
+        kw.update(refresh=True)
+        #~ r = elem.owner.print_from_posting(elem,ar,**kw)
+        if elem.state in (PostingStates.open,PostingStates.ready):
+            elem.state = PostingStates.printed
+        elem.save()
+        return kw
+    
+
     
 
 class Posting(mixins.AutoUser,mixins.ProjectRelated,mixins.Controllable):
@@ -67,6 +86,8 @@ class Posting(mixins.AutoUser,mixins.ProjectRelated,mixins.Controllable):
     class Meta:
         verbose_name = _("Posting")
         verbose_name_plural = _("Postings")
+        
+    print_posting = PrintPosting()
         
     partner = models.ForeignKey('contacts.Partner',
         verbose_name=_("Recipient"),
@@ -84,14 +105,14 @@ class Posting(mixins.AutoUser,mixins.ProjectRelated,mixins.Controllable):
             #~ raise ValidationError("Controller %s is not a Postable" % dd.obj2str(self.owner))
         super(Posting,self).save(*args,**kw)
 
-    @dd.action(_("Print"),icon_name='x-tbar-print')
-    def print_action(self,ar,**kw):
-        kw.update(refresh=True)
-        r = self.owner.print_from_posting(self,ar,**kw)
-        if self.state in (PostingStates.open,PostingStates.ready):
-            self.state = PostingStates.printed
-        self.save()
-        return r
+    #~ @dd.action(_("Print"),icon_name='x-tbar-print')
+    #~ def print_action(self,ar,**kw):
+        #~ kw.update(refresh=True)
+        #~ r = self.owner.print_from_posting(self,ar,**kw)
+        #~ if self.state in (PostingStates.open,PostingStates.ready):
+            #~ self.state = PostingStates.printed
+        #~ self.save()
+        #~ return r
     
 
 class Postings(dd.Table):
@@ -136,7 +157,8 @@ class PostingsSent(PostingsByState):
 class PostingsByController(Postings):
     required = dd.Required(user_groups='office')
     master_key = 'owner'
-    column_names = 'date partner state workflow_buttons *'
+    column_names = 'date partner workflow_buttons'
+    auto_fit_column_widths = True
   
 class PostingsByPartner(Postings):
     required = dd.Required(user_groups='office')
@@ -174,18 +196,19 @@ class CreatePostings(dd.RowAction):
     
     def run_from_ui(self,elem,ar,**kw):
         recs = tuple(elem.get_postable_recipients())
-        ar.confirm(
-          _("Going to create %(num)d postings for %(elem)s") 
-          % dict(num=len(recs),elem=elem))
-        for p in recs:
-            p = Posting(
-                  user=ar.user,owner=elem,partner=p,
-                  date=datetime.date.today(),
-                  state=PostingStates.ready)
-            p.full_clean()
-            p.save()
-        kw.update(refresh=True)
-        return ar.success(**kw)
+        def ok():
+            for rec in recs:
+                p = Posting(
+                      user=ar.user,owner=elem,
+                      partner=rec,
+                      date=datetime.date.today(),
+                      state=PostingStates.ready)
+                p.full_clean()
+                p.save()
+            kw.update(refresh=True)
+            return ar.success(**kw)
+        msg = _("Going to create %(num)d postings for %(elem)s") % dict(num=len(recs),elem=elem)
+        return ar.confirm(ok,msg)
         
     
     
@@ -199,10 +222,16 @@ class Postable(dd.Model):
         
     create_postings = CreatePostings()
     
-    def print_from_posting(self,posting,ar,**kw):
-        return ar.error("Not implemented")
+    #~ def print_from_posting(self,posting,ar,**kw):
+        #~ return ar.error("Not implemented")
         
-
+    def get_postable_recipients(self):
+        return []
+    
+    def get_recipients(self):
+        qs = Posting.objects.filter(owner_id=self.pk,owner_type=ContentType.get_for_model(self.__class__))
+        return qs.values('partner')
+        #~ state=PostingStates.ready)
   
 
 #~ MODULE_LABEL = _("Outbox")

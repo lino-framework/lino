@@ -76,7 +76,6 @@ from lino.utils.jsgen import py2js, js_code, id2js
 from lino.utils.xmlgen import html as xghtml
 from lino.utils.xmlgen.html import E
 from lino.utils.config import make_dummy_messages_file
-from lino.utils import codetime
 
 from lino.utils.jscompressor import JSCompressor
 if False:
@@ -190,13 +189,6 @@ class ExtRenderer(HtmlRenderer):
                     ar = v.bound_action.request(**v.params)
                     js = "function() {%s}" % self.request_handler(ar)
                     return self.handler_item(v,js,v.help_text)
-              
-                #~ js = self.action_call(None,v.bound_action,{})
-                #~ if js is None:
-                    #~ js = v.bound_action.get_panel_btn_handler()
-                    #~ js = "function() {%s(Lino.viewport)}" % js
-                #~ else:
-                    #~ js = "function() {%s}" % js
                 js = "function() {%s}" % self.action_call(None,v.bound_action,{})
                 return self.handler_item(v,js,v.help_text)
                 
@@ -227,12 +219,24 @@ class ExtRenderer(HtmlRenderer):
         js = js.replace('"','&quot;')
         return 'javascript:' + js
         
+        
+    def get_action_status(self,ar,ba,obj,**kw):
+        #~ logger.info("get_action_status %s",ba.full_name())
+        if ba.action.parameters:
+            if ba.action.params_layout.params_store is None:
+                raise Exception("20121016 %s has no store" % ba.action.params_layout)
+            kw.update(field_values=ba.action.params_layout.params_store.pv2dict(
+                settings.SITE.ui,ba.action.action_param_defaults(ar,obj)))
+        return kw
+      
+        
+        
     def action_button(self,obj,ar,ba,label=None,**kw):
         """
         ``kw`` may contain additional html attributes like `style`
         """
         if ba.action.parameters:
-            st = ar.get_action_status(ba,obj)
+            st = self.get_action_status(ar,ba,obj)
             #~ st.update(record_id=obj.pk)
             return self.window_action_button(ar.request,ba,st,label or ba.action.label,**kw)
         if ba.action.opens_a_window:
@@ -240,6 +244,10 @@ class ExtRenderer(HtmlRenderer):
             st.update(record_id=obj.pk)
             return self.window_action_button(ar.request,ba,st,label or ba.action.label,**kw)
         return self.row_action_button(obj,ar.request,ba,label,**kw)
+        
+    def request_handler(self,ar,*args,**kw):
+        st = ar.get_status(self.ui,**kw)
+        return self.action_call(ar.request,ar.bound_action,st)
         
     def window_action_button(self,request,ba,after_show={},label=None,title=None,**kw):
         """
@@ -261,14 +269,15 @@ class ExtRenderer(HtmlRenderer):
         """
         #~ label = unicode(label or ba.get_button_label())
         label = label or ba.action.label
-        if request is None:
-            rp = None
-        else:
-            rp = request.requesting_panel
         if AFTER_20130725:
             #~ url = 'javascript:%s(%s)' % (ba.get_panel_btn_handler(),py2js(rp))
-            url = 'javascript:' + ba.get_js_call(rp,obj)
+            #~ url = 'javascript:' + ba.get_js_call(request,obj)
+            url = 'javascript:' + self.action_call_on_instance(obj,request,ba)
         else:
+            if request is None:
+                rp = None
+            else:
+                rp = request.requesting_panel
             url = 'javascript:Lino.%s(%s,%s)' % (
                     ba.full_name(),py2js(rp),py2js(obj.pk))
         return self.href_button_action(ba,url,label,title or ba.action.help_text,**kw)
@@ -276,24 +285,56 @@ class ExtRenderer(HtmlRenderer):
             #~ return self.href_button(url,label,a.action.help_text)
         #~ return self.href_button(url,label)
         
+    def action_call_on_instance(self,obj,request,ba):
+        if request is None:
+            rp = None
+        else:
+            rp = request.requesting_panel
+            
+        if ba.action.opens_a_window or ba.action.parameters:
+            ar = ba.request(request=request)
+            #~ after_show = ar.get_status(settings.SITE.ui)
+            after_show = self.get_action_status(ar,ba,obj)
+            after_show.update(record_id=obj.pk)
+            return "Lino.%s.run(%s,%s)" % (
+              ba.full_name(),
+              py2js(rp),
+              py2js(after_show))
+        return "Lino.%s(%s,%s)" % (ba.full_name(),py2js(rp),py2js(obj.pk))
+        
     def action_call(self,request,bound_action,after_show):
+        
         if bound_action.action.opens_a_window or bound_action.action.parameters:
             if request and request.subst_user:
                 after_show[ext_requests.URL_PARAM_SUBST_USER] = request.subst_user
             if isinstance(bound_action.action,actions.ShowEmptyTable):
                 after_show.update(record_id=-99998)
-            if request is None or request.requesting_panel is None:
-                rp = 'null'
+            if request is None:
+                rp = None
             else:
-                rp = "'" + request.requesting_panel + "'"
+                rp = request.requesting_panel
             if after_show:
                 return "Lino.%s.run(%s,%s)" % (
                   bound_action.full_name(),
-                  rp,
+                  py2js(rp),
                   py2js(after_show))
-            return "Lino.%s.run(%s)" % (bound_action.full_name(),rp)
-        return "%s()" % bound_action.get_panel_btn_handler()
+            return "Lino.%s.run(%s)" % (bound_action.full_name(),py2js(rp))
+        return "%s()" % self.get_panel_btn_handler(bound_action)
 
+    def get_panel_btn_handler(self,ba):
+        if ba.action.single_row:
+            h  = 'Lino.row_action_handler('
+        else:
+            h  = 'Lino.list_action_handler('
+            ls_url = '/' + ba.actor.app_label + '/' + ba.actor.__name__
+            h += "'%s'," % ls_url
+        h += "'%s'" % ba.action.action_name
+        h += ",'%s'" % ba.action.http_method
+        if ba.action.preprocessor:
+            h += "," + ba.action.preprocessor
+        h += ")"
+        return h 
+        
     def instance_handler(self,ar,obj):
         a = getattr(obj,'_detail_action',None)
         if a is None:
@@ -310,10 +351,6 @@ class ExtRenderer(HtmlRenderer):
         url = 'javascript:' + h
         return xghtml.E.a(text,href=url)
         
-        
-    def request_handler(self,ar,*args,**kw):
-        st = ar.get_status(self.ui,**kw)
-        return self.action_call(ar.request,ar.bound_action,st)
         
     def href_to_request(self,sar,tar,text=None,**kw):
         #~ url = self.js2url(self.request_handler(tar))
@@ -1104,12 +1141,12 @@ tinymce.init({
             kw.update(panel_btn_handler=js_code("Lino.delete_selected"))
         elif isinstance(a,actions.RowAction):
             kw.update(must_save=True)
-            kw.update(panel_btn_handler=js_code(ba.get_panel_btn_handler()))
+            kw.update(panel_btn_handler=js_code(self.get_panel_btn_handler(ba)))
         elif isinstance(a,actions.ListAction):
-            kw.update(panel_btn_handler=js_code(ba.get_panel_btn_handler()))
+            kw.update(panel_btn_handler=js_code(self.get_panel_btn_handler(ba)))
             kw.update(must_save=True)
         elif isinstance(a,actions.JavaScriptAction):
-            kw.update(panel_btn_handler=js_code(ba.get_panel_btn_handler()))
+            kw.update(panel_btn_handler=js_code(self.get_panel_btn_handler(ba)))
             kw.update(must_save=True)
         else:
             kw.update(panel_btn_handler=js_code("Lino.%s" % a))

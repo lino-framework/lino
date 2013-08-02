@@ -87,7 +87,9 @@ def requested_actor(app_label,actor):
 def action_request(app_label,actor,request,rqdata,is_list,**kw):
     rpt = requested_actor(app_label,actor)
     action_name = rqdata.get(ext_requests.URL_PARAM_ACTION_NAME,None)
-    if action_name is None:
+    #~ if action_name is None:
+        #~ logger.info("20130731 action_name is None")
+    if not action_name:
         if is_list: 
             action_name = rpt.default_list_action_name
         else:

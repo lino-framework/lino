@@ -989,6 +989,12 @@ class ChoiceListFieldElement(ChoicesFieldElement):
     Special case are choicelist fields with blank=True: these 
     must dynamicaly add a blank choice to the the choicelist.
     """
+    def __init__(self,layout_handle,field,**kw):
+        pw = field.choicelist.preferred_foreignkey_width
+        if pw is not None:
+            kw.setdefault('preferred_width',pw)
+        FieldElement.__init__(self,layout_handle,field,**kw)
+      
     def get_field_options(self,**kw):
         kw = ComboFieldElement.get_field_options(self,**kw)
         #~ kw.update(store=js_code('Lino.%s.choices' % self.field.choicelist.actor_id))
@@ -1046,22 +1052,13 @@ class ForeignKeyElement(ComplexRemoteComboFieldElement):
     preferred_width = 20
     
     def __init__(self,layout_handle,field,**kw):
-    #~ def __init__(self,*args,**kw):
-        #~ print 20100903,repr(self.field.rel.to)
-        #~ assert issubclass(self.field.rel.to,dd.Model), "%r is not a model" % self.field.rel.to
-        #~ pw = getattr(field.rel.to,'_lino_preferred_width',None)
         if isinstance(field.rel.to,basestring):
             from lino.core.dbutils import resolve_model
             field.rel.to = resolve_model(field.rel.to)
-            #~ field.lino_resolve_type()
-            #~ raise Exception("20130507 %s : %s" % (field,field.rel.to))
         pw = field.rel.to.preferred_foreignkey_width
         if pw is not None:
             kw.setdefault('preferred_width',pw)
-            #~ kw.update(preferred_width=pw)
         self.actor = dbtables.get_model_report(field.rel.to)
-        #~ if self.actor.model is None:
-            #~ raise Exception("20120621 ForeignKeyElement for %s.%s" % (self.actor,field))
         a = self.actor.detail_action
         if a is not None:
             if not isinstance(layout_handle.layout,layouts.ListLayout):
@@ -1071,9 +1068,6 @@ class ForeignKeyElement(ComplexRemoteComboFieldElement):
                     #~ "Lino.show_fk_detail_handler(this,Lino.%s)}" % a))
         FieldElement.__init__(self,layout_handle,field,**kw)
       
-    #~ def submit_fields(self):
-        #~ return [self.field.name,self.field.name+ext_requests.CHOICES_HIDDEN_SUFFIX]
-        
         
     def get_field_options(self,**kw):
         kw = super(ForeignKeyElement,self).get_field_options(**kw)

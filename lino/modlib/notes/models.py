@@ -47,7 +47,7 @@ from django.conf import settings
 
 outbox = dd.resolve_app('outbox')
 postings = dd.resolve_app('postings')
-#~ contacts = dd.resolve_app('contacts')
+contacts = dd.resolve_app('contacts')
 
 #~ TEMPLATE_GROUP = 'notes'
 
@@ -120,7 +120,7 @@ class EventTypes(dd.Table):
 class Note(mixins.TypedPrintable,
       mixins.UserAuthored,
       mixins.Controllable,
-      #~ contacts.PartnerDocument,
+      contacts.ContactRelated,
       mixins.ProjectRelated,
       outbox.Mailable,
       postings.Postable, #~ mixins.DiffingMixin
@@ -256,7 +256,9 @@ class Note(mixins.TypedPrintable,
         #~ return self.project
     #~ person = property(get_person)
         
-        
+
+dd.update_field(Note,'company',verbose_name=_("Recipient (Organization)"))
+dd.update_field(Note,'contact_person',verbose_name=_("Recipient (Person)"))
     
 def html_text(s):
     return '<div class="htmlText">' + s + '</div>'
