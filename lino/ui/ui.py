@@ -315,12 +315,16 @@ class ExtUI(base.UI):
                 #~ tble.add_body_row(*ar.ah.store.sums2html(ar,fields,sums,**cellattrs))
             
             
-    def action_response(self,rv):
+    def render_action_response(self,rv):
         """
         Builds a JSON response from given dict, 
         checking first whether there are only allowed keys 
         (defined in :attr:`ACTION_RESPONSES`)
         """
+        #~ if isinstance(rv,models.Model):
+            #~ js = self.ui.ext_renderer.instance_handler(None,invoice)
+            #~ rv = dict(eval_js=js)
+        
         rv = self.check_action_response(rv)
         return views.json_response(rv)
     

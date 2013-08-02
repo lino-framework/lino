@@ -314,6 +314,15 @@ class BaseRequest(object):
     def window_action_button(self,*args,**kw): return self.renderer.window_action_button(self,*args,**kw)
     def row_action_button(self,obj,a,*args,**kw): return self.renderer.row_action_button(obj,self.request,a,*args,**kw)
     def action_button(self,a,obj,*args,**kw): return self.renderer.action_button(obj,self,a,*args,**kw)
+    
+    def goto_instance(self,obj,**kw):
+        #~ kw.update(refresh=True)
+        #~ kw.update(goto_record=('sales.Invoices',invoice.pk))
+        #~ kw.update(goto_record=invoice)
+        js = self.instance_handler(obj)
+        kw.update(eval_js=js)
+        return kw
+    
 
       
 class ActionRequest(BaseRequest):

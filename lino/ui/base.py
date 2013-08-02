@@ -27,6 +27,9 @@ from django.utils.encoding import force_text
 
 from django.conf import settings
 
+from django.db import models
+from djangosite.dbutils import obj2unicode
+
 
 
 
@@ -45,6 +48,7 @@ ACTION_RESPONSES = frozenset((
   'errors',
   'html',
   #~ 'new_status',
+  #~ 'goto_record',
   'goto_record_id',
   'refresh','refresh_all',
   #~ 'confirm_message', 'step',
@@ -161,7 +165,7 @@ class UI(object):
             kw.update(alert=alert)
         if message:
             kw.update(message=message)
-        #~ return self.action_response(kw)
+        #~ return self.render_action_response(kw)
         return kw
 
     def error(self,e=None,message=None,**kw):
@@ -179,7 +183,7 @@ class UI(object):
         if message is None:
             message = unicode(e)
         kw.update(message=message)
-        #~ return self.action_response(kw)
+        #~ return self.render_action_response(kw)
         return kw
     
     #~ def confirm(self,ok_func,*msgs,**kw):
@@ -247,16 +251,16 @@ class UI(object):
         #~ d = self.pop_thread(int(thread_id))
         if cb is None: 
             #~ logger.info("20130531 No callback %r in %r" % (thread_id,settings.SITE.pending_threads))
-            return self.action_response(self.error("Unknown callback %r" % thread_id))
+            return self.render_action_response(self.error("Unknown callback %r" % thread_id))
         #~ buttonId = request.GET[ext_requests.URL_PARAM_'bi']
         #~ print buttonId
         for c in cb.choices:
             if c.name == button_id:
                 #~ rv = c.func(request)
                 rv = c.func()
-                return self.action_response(rv)
+                return self.render_action_response(rv)
                 
-        return self.action_response(self.error(
+        return self.render_action_response(self.error(
             "Invalid button %r for callback" % (button_id,thread_id)))
                 
         #~ m = getattr(d,button_id)
@@ -265,7 +269,7 @@ class UI(object):
             #~ rv = d.yes()
         #~ elif button_id == 'no':
             #~ rv = d.no()
-        #~ return self.action_response(rv)
+        #~ return self.render_action_response(rv)
   
     def check_action_response(self,rv):
         """
@@ -274,6 +278,10 @@ class UI(object):
         
         if rv is None:
             rv = self.success()
+        #~ elif isinstance(rv,models.Model):
+            #~ js = settings.SITE.ui.ext_renderer.instance_handler(None,invoice)
+            #~ rv = dict(eval_js=js)
+            
         elif isinstance(rv,Callback):
             h = hash(rv)
             self.pending_threads[h] = rv
@@ -300,9 +308,41 @@ class UI(object):
                 raise Exception("Unknown key %r in action response." % k)
         return rv
                 
-    def action_response(self,kw):
+    def render_action_response(self,kw):
         """
         """
         raise NotImplementedError
         
+    def run_action(self,ar,elem):
+        """
+        """
+        try:
+            rv = ar.bound_action.action.run_from_ui(elem,ar)
+            if rv is None:
+                rv  = self.success()
+            return self.render_action_response(rv)
+        except Warning as e:
+            r = dict(
+              success=False,
+              message=unicode(e),
+              alert=True)
+            return self.render_action_response(r)
+        except Exception as e:
+            if elem is None:
+                msg = unicode(e)
+            else:
+                if isinstance(elem,models.Model):
+                    elem = dd.obj2unicode(elem)
+                msg = _(
+                  "Action \"%(action)s\" failed for %(record)s:") % dict(
+                  action=ar.bound_action.full_name(),
+                  record=elem)
+                msg += "\n" + unicode(e)
+            msg += '.\n' + _(
+              "An error report has been sent to the system administrator.")
+            logger.warning(msg)
+            logger.exception(e)
+            r = self.error(e,msg,alert=_("Oops!"))
+            return self.render_action_response(r)
+              
 

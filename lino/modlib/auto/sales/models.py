@@ -168,10 +168,7 @@ class CreateInvoiceForPartner(dd.RowAction):
                 i.save()
             invoice.compute_totals()
             invoice.save()
-            #~ kw.update(refresh=True)
-            js = ar.renderer.instance_handler(ar,invoice)
-            kw.update(eval_js=js)
-            return kw
+            return ar.goto_instance(invoice,**kw)
         if True: # no confirmation
             return ok()
         msg = _("This will create an invoice for %s.") % obj

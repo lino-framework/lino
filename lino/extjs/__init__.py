@@ -349,7 +349,9 @@ class ExtRenderer(HtmlRenderer):
         if h is None:
             return xghtml.E.b(text)
         url = 'javascript:' + h
-        return xghtml.E.a(text,href=url)
+        e = xghtml.E.a(text,href=url)
+        #~ print 20130802, xghtml.E.tostring(e)
+        return e
         
         
     def href_to_request(self,sar,tar,text=None,**kw):

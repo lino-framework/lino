@@ -21,11 +21,18 @@ of the :menuselection:`Site --> About` window:
 Lino-Welfare
 ------------
 
+Incremented :mod:`lino_welfare` version from 1.1.8 to 1.1.9.
+
 AppointmentsByClient : hier will ich die Kolonne "Wann" 
 anklickbar haben, damit man ggf. direkt auf den Termin springen kann.
 Geht nicht. Momentan zeigt er nichts an. 
 RemoteField zu einem virtualfield scheint doch noch nicht 
 100% zu funktionieren.
+
+Lösung (hat mich ein Stück Zeit gekostet):
+When creating a RemoteField, the getter functions (1) didn't forward
+the optional `ar` parameter and (2) any Exceptions during evaluation 
+were silently swallowed
 
 Lino-Faggio
 ------------
@@ -49,6 +56,23 @@ Tatsächlich: in :class:`lino.modlib.sales.models.ProductDocItem`.
 Cool, wie transparent das ist! So ein riesiger Unterschied in der 
 Datenbankstruktur fällt im Code gar nicht auf!
 
+
+Added a test case "Printing an invoice" 
+to :ref:`faggio.tested.faggio`
+(it failed because Adressable.address is now a property).
+
 TODO: Statt Rückgabe `js_eval` soll `goto_record` auch den Sprung 
 zu einer anderen Instanz vertragen.
 Dann kann ich die erstellten Rechnungen in der fixture gleich registrieren.
+
+
+Lino-Patrols
+------------
+
+Notes après deux sessions de brain-storming
+dans :ref:`patrols.models`.
+Mais c'est pas terminé, et ça doit attendre
+car Lino-Welfare est prioritaire pour l'instant.
+
+
+

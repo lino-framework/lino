@@ -1675,6 +1675,12 @@ Lino.action_handler = function (panel,on_success,on_confirm) {
         eval(result.eval_js);
     }
     
+    //~ if (result.goto_record) {
+        //~ var js = "Lino." + result.goto_record[0] + '.detail.run';
+        //~ var h = eval(js);
+        //~ h(panel,{record_id:result.goto_record[1]});
+    //~ }
+    
     if (result.xcallback) {
         //~ var config = {title:"{{_('Confirmation')}}"};
         var config = {title:result.xcallback.title};

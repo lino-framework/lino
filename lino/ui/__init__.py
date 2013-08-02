@@ -718,7 +718,7 @@ class Site(lino.Site):
         """
         if self.is_installed('contacts'):
             if self.site_config.site_company:
-                return self.site_config.site_company.address('<br/>')
+                return self.site_config.site_company.get_address('<br/>')
                 #~ s = unicode(self.site_config.site_company) + " / "  + s
         #~ return ''
         

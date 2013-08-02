@@ -830,17 +830,17 @@ def create_atomizer(fld,name):
         """
         sf = create_atomizer(fld.field,fld.name)
         def value_from_object(sf,obj,ar):
-            if fld.name == 'event__when_text':
-                logger.info("20130802 create_atomizer RemoteField value_from_object")
+            #~ if fld.name == 'event__when_text':
+                #~ logger.info("20130802 create_atomizer RemoteField value_from_object")
             m = fld.func
-            return m(obj)
+            return m(obj,ar)
             
         def full_value_from_object(sf,obj,ar):
             #~ logger.info("20120406 %s.full_value_from_object(%s)",sf.name,sf)
             m = fld.func
-            v = m(obj)
-            if fld.name == 'event__when_text':
-                logger.info("20130802 full_value_from_object %s",obj)
+            v = m(obj,ar)
+            #~ if fld.name == 'event__when_text':
+                #~ logger.info("20130802 full_value_from_object %s",obj)
             return v
             
         sf.value_from_object = curry(value_from_object,sf)

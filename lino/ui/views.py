@@ -108,57 +108,6 @@ def action_request(app_label,actor,request,rqdata,is_list,**kw):
     #~ ar.renderer = settings.SITE.ui.ext_renderer
     return ar
     
-def run_action(ar,elem):
-    try:
-        rv = ar.bound_action.action.run_from_ui(elem,ar)
-        if rv is None:
-            rv  = ui.success()
-        return settings.SITE.ui.action_response(rv)
-        #~ return rv
-    #~ except actions.ConfirmationRequired,e:
-        #~ r = dict(
-          #~ success=True,
-          #~ confirm_message='\n'.join([unicode(m) for m in e.messages]),
-          #~ step=e.step)
-        #~ return ar.ui.action_response(r)
-    #~ except actions.DialogRequired,e:
-        #~ r = dict(
-          #~ success=True,
-          #~ dialog_fn=e.dialog,
-          #~ step=e.step)
-        #~ return ar.ui.action_response(r)
-    #~ except actions.DecisionRequired,e:
-        #~ r = dict(
-          #~ success=True,
-          #~ message=unicode(e),
-          #~ decide_id=ar.ui.add_decision(e))
-        #~ return ar.ui.action_response(r)
-    except Warning as e:
-        r = dict(
-          success=False,
-          message=unicode(e),
-          alert=True)
-        return settings.SITE.ui.action_response(r)
-    except Exception as e:
-        if elem is None:
-            msg = unicode(e)
-        else:
-            if isinstance(elem,models.Model):
-                elem = dd.obj2unicode(elem)
-            msg = _(
-              "Action \"%(action)s\" failed for %(record)s:") % dict(
-              action=ar.bound_action.full_name(),
-              record=elem)
-            msg += "\n" + unicode(e)
-        msg += '.\n' + _(
-          "An error report has been sent to the system administrator.")
-        logger.warning(msg)
-        logger.exception(e)
-        r = settings.SITE.ui.error(e,msg,alert=_("Oops!"))
-        return settings.SITE.ui.action_response(r)
-          
-    
-  
     
         
 def json_response_kw(**kw):
@@ -254,7 +203,7 @@ def delete_element(ar,elem):
     msg = ar.actor.disable_delete(elem,ar)
     if msg is not None:
         rv = ar.error(None,msg,alert=True)
-        return settings.SITE.ui.action_response(rv)
+        return settings.SITE.ui.render_action_response(rv)
             
     #~ dblogger.log_deleted(ar.request,elem)
     
@@ -270,7 +219,7 @@ def delete_element(ar,elem):
             ) % dict(record=dd.obj2unicode(elem),error=e)
         #~ msg = "Failed to delete %s." % element_name(elem)
         rv = ar.error(None,msg)
-        return settings.SITE.ui.action_response(rv)
+        return settings.SITE.ui.render_action_response(rv)
         #~ raise Http404(msg)
         
     
@@ -422,7 +371,7 @@ class MainHtml(View):
         settings.SITE.startup()
         ui = settings.SITE.ui
         rv = ui.success(html=settings.SITE.get_main_html(request))
-        return ui.action_response(rv)
+        return ui.render_action_response(rv)
         
 class Authenticate(View):
     """
@@ -437,7 +386,7 @@ class Authenticate(View):
             #~ username = request.session['username']
             #~ del request.session['password']
             rv = dict(success=True,message="User %r logged out." % username)
-            return settings.SITE.ui.action_response(rv)
+            return settings.SITE.ui.render_action_response(rv)
         raise http.Http404()
             
 
@@ -450,14 +399,14 @@ class Authenticate(View):
         user = auth.authenticate(username,password)
         if user is None:
             rv = settings.SITE.ui.error("Could not authenticate %r" % username)
-            return settings.SITE.ui.action_response(rv)
+            return settings.SITE.ui.render_action_response(rv)
         request.session['username'] = username
         request.session['password'] = password
         #~ request.session['password'] = request.GET.get('password')
         #~ auth.login(request,request.GET.get('username'), request.GET.get('password'))
         #~ ss.save()
         rv = settings.SITE.ui.success("Now logged in as %r" % username)
-        return settings.SITE.ui.action_response(rv)
+        return settings.SITE.ui.render_action_response(rv)
       
 
 class RunJasmine(View):
@@ -837,7 +786,7 @@ class ApiElement(View):
             if pk == '-99998':
                 assert elem is None
                 elem = ar.create_instance()
-            return run_action(ar,elem)
+            return settings.SITE.ui.run_action(ar,elem)
         raise NotImplementedError("Action %s is not implemented)" % ba)
                 
         
@@ -851,7 +800,7 @@ class ApiElement(View):
             if pk == '-99998':
                 assert elem is None
                 elem = ar.create_instance()
-            return run_action(ar,elem)
+            return settings.SITE.ui.run_action(ar,elem)
         raise NotImplementedError("Action %s is not implemented)" % ar)
         
     def put(self,request,app_label=None,actor=None,pk=None):
@@ -914,7 +863,7 @@ class ApiList(View):
             else:
                 file_upload = False
             return form2obj_and_save(ar,request.POST,elem,True,False,file_upload)
-        return run_action(ar,None)
+        return settings.SITE.ui.run_action(ar,None)
         #~ rv = ar.bound_action.action.run(ar)
         #~ return rv
       

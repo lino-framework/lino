@@ -979,6 +979,7 @@ def get_data_elem(model,name):
                 else:
                     model = None
             def func(obj,ar=None):
+                #~ if ar is None: raise Exception(20130802)
                 #~ print '20130422',name,obj, [fld.name for fld in field_chain]
                 try:
                     for fld in field_chain:
@@ -989,7 +990,8 @@ def get_data_elem(model,name):
                     #~ print '20130422 %s --> %r', fld.name,obj
                     return obj
                 except Exception,e:
-                    if False: # only for debugging
+                    #~ if False: # only for debugging
+                    if True: # see 20130802
                         logger.exception(e)
                         return str(e) 
                     return None
