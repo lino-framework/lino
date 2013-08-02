@@ -1021,7 +1021,11 @@ Indicates that this Event shouldn't prevent other Events at the same time."""))
         
     @dd.displayfield(_("When"))
     def when_text(self,ar):
-        return when_text(self.start_date,self.start_time)
+        #~ print 20130802, ar.renderer
+        #~ raise foo
+        #~ return when_text(self.start_date,self.start_time)
+        return ar.obj2html(self,unicode(when_text(self.start_date,self.start_time)))
+
         
             
     @dd.displayfield(_("Link URL"))

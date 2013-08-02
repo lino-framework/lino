@@ -275,7 +275,8 @@ class AppointmentsByClient(dd.Table):
     label = _("Appointments")
     model = cal.Guest
     master_key = 'partner'
-    column_names = 'event__start_date event__user action_buttons'
+    #~ column_names = 'event__start_date event__user action_buttons'
+    column_names = 'event__when_text event__user action_buttons'
     #~ slave_grid_format = 'html'
     editable = False
     auto_fit_column_widths = True
