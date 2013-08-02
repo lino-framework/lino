@@ -1050,10 +1050,14 @@ class Site(lino.Site):
         
 
     def using(self,ui=None):
+        """
+        Adds ExtJS, Extensible and Silk Icons
+        """
         #~ if ui is not None:
         for u in super(Site,self).using(ui): yield u
         
-        if ui:
+        if ui and self.use_extjs:
+            
             #~ version = '<script type="text/javascript">document.write(Ext.version);</script>'
             onclick = "alert('ExtJS client version is ' + Ext.version);"
             tip = "Click to see ExtJS client version"

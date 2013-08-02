@@ -11,4 +11,5 @@ Changed the ordering of items in the different versions of `using`
 of the :menuselection:`Site --> About` window:
 :meth:`djangosite.Site.using`
 :meth:`north.Site.using`
+:meth:`lino.Site.using`
 :meth:`lino.ui.Site.using`

@@ -233,11 +233,11 @@ Traceback (most recent call last):
     __import__(self.modname)
   File "/home/luc/hgwork/lino/lino/ui/urls.py", line 27, in <module>
     urlpatterns = settings.SITE.get_patterns()
-  File "/home/luc/hgwork/lino/lino/ui/__init__.py", line 1316, in get_patterns
+  File "/home/luc/hgwork/lino/lino/ui/__init__.py", line 1320, in get_patterns
     urlpatterns = self.get_media_urls()
-  File "/home/luc/hgwork/lino/lino/ui/__init__.py", line 1188, in get_media_urls
+  File "/home/luc/hgwork/lino/lino/ui/__init__.py", line 1192, in get_media_urls
     setup_media_link('extjs','extjs_root')
-  File "/home/luc/hgwork/lino/lino/ui/__init__.py", line 1185, in setup_media_link
+  File "/home/luc/hgwork/lino/lino/ui/__init__.py", line 1189, in setup_media_link
     symlink(source,target)
 OSError: [Errno 2] No such file or directory
 /home/luc/hgwork/lino/docs/api/lino.utils.rst:14: WARNING: autodoc: failed to import module u'lino.utils.actordoc'; the following exception was raised:
@@ -248,14 +248,12 @@ Traceback (most recent call last):
     import lino.ui.urls # hack: trigger ui instantiation
   File "/home/luc/hgwork/lino/lino/ui/urls.py", line 27, in <module>
     urlpatterns = settings.SITE.get_patterns()
-  File "/home/luc/hgwork/lino/lino/ui/__init__.py", line 1316, in get_patterns
+  File "/home/luc/hgwork/lino/lino/ui/__init__.py", line 1320, in get_patterns
     urlpatterns = self.get_media_urls()
-  File "/home/luc/hgwork/lino/lino/ui/__init__.py", line 1188, in get_media_urls
+  File "/home/luc/hgwork/lino/lino/ui/__init__.py", line 1192, in get_media_urls
     setup_media_link('extjs','extjs_root')
-  File "/home/luc/hgwork/lino/lino/ui/__init__.py", line 1185, in setup_media_link
+  File "/home/luc/hgwork/lino/lino/ui/__init__.py", line 1189, in setup_media_link
     symlink(source,target)
 OSError: [Errno 2] No such file or directory
 /home/luc/hgwork/lino/lino/ui/__init__.py:docstring of lino.ui.Site.webdav_url:7: WARNING: term not in glossary: runserver
 /home/luc/hgwork/lino/docs/api/lino.utils.rst:7: WARNING: unknown document: /autodoc/lino.test_apps.mti
-/home/luc/hgwork/lino/docs/changes.rst:51: WARNING: undefined label: welfare.debts.printliabilitiesbybudget (if the link has no caption the label must precede a section header)
-/home/luc/hgwork/lino/docs/releases/index.rst:1: WARNING: unknown document: 1.6.11

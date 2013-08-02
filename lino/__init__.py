@@ -412,6 +412,9 @@ class Site(Site):
             
 
     def using(self,ui=None):
+        """
+        Adds Lino, Jinja, Spinx, dateutil, ...
+        """
         import lino
         yield ("Lino",SETUP_INFO['version'],SETUP_INFO['url'])
         
@@ -427,12 +430,12 @@ class Site(Site):
         version = getattr(dateutil,'__version__','')
         yield ("python-dateutil",version,"http://labix.org/python-dateutil")
         
-        try:
-            import Cheetah
-            version = Cheetah.Version 
-            yield ("Cheetah",version ,"http://cheetahtemplate.org/")
-        except ImportError:
-            pass
+        #~ try:
+            #~ import Cheetah
+            #~ version = Cheetah.Version 
+            #~ yield ("Cheetah",version ,"http://cheetahtemplate.org/")
+        #~ except ImportError:
+            #~ pass
 
         try:
             from odf import opendocument
