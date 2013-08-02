@@ -1050,9 +1050,10 @@ class Site(lino.Site):
         
 
     def using(self,ui=None):
+        #~ if ui is not None:
         for u in super(Site,self).using(ui): yield u
-            
-        if ui is not None:
+        
+        if ui:
             #~ version = '<script type="text/javascript">document.write(Ext.version);</script>'
             onclick = "alert('ExtJS client version is ' + Ext.version);"
             tip = "Click to see ExtJS client version"
@@ -1069,6 +1070,8 @@ class Site(lino.Site):
                 version = xghtml.E.a(text,href='#',onclick=onclick,title=tip)
                 yield ("Extensible",version ,"http://ext.ensible.com/products/calendar/")
             yield ("Silk Icons",'1.3',"http://www.famfamfam.com/lab/icons/silk/")
+            
+            
 
 
     def welcome_html(self,ui=None):
@@ -1094,7 +1097,7 @@ class Site(lino.Site):
                 p.append(self.version)
             sep = _(' using ')
         
-        for name,version,url in self.using():
+        for name,version,url in self.using(True):
             p.append(sep)
             p.append(E.a(name,href=url,target='_blank'))
             p.append(' ')

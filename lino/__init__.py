@@ -412,8 +412,6 @@ class Site(Site):
             
 
     def using(self,ui=None):
-        for u in super(Site,self).using(ui): yield u
-
         import lino
         yield ("Lino",SETUP_INFO['version'],SETUP_INFO['url'])
         
@@ -492,6 +490,8 @@ class Site(Site):
             version = self.not_found_msg
         yield ("Appy",version ,"http://appyframework.org/pod.html")
         
+        for u in super(Site,self).using(ui): yield u
+
     def get_db_overview_rst(self):
         """
         Returns a reStructredText-formatted "database overview" report.

@@ -1,3 +1,261 @@
-
-[31;01mConfiguration error:[39;49;00m
-There is a syntax error in your configuration file: invalid syntax (__init__.py, line 280)
+/home/luc/hgwork/lino/docs/api/lino.management.commands.rst:21: WARNING: autodoc: failed to import module u'lino.management.commands.make_staff'; the following exception was raised:
+Traceback (most recent call last):
+  File "/home/luc/pythonenvs/py27/local/lib/python2.7/site-packages/sphinx/ext/autodoc.py", line 326, in import_object
+    __import__(self.modname)
+  File "/home/luc/hgwork/lino/lino/management/commands/make_staff.py", line 28, in <module>
+    from lino.modlib.users import models as users
+  File "/home/luc/hgwork/lino/lino/modlib/users/models.py", line 350, in <module>
+    class Authority(mixins.UserAuthored):
+  File "/home/luc/hgwork/lino/lino/modlib/users/models.py", line 366, in Authority
+    help_text=_("The user who gets authority to act in your name."))
+  File "/home/luc/pythonenvs/py27/local/lib/python2.7/site-packages/django/db/models/fields/related.py", line 993, in __init__
+    assert isinstance(to, six.string_types), "%s(%r) is invalid. First parameter to ForeignKey must be either a model, a model name, or the string %r" % (self.__class__.__name__, to, RECURSIVE_RELATIONSHIP_CONSTANT)
+AssertionError: ForeignKey(None) is invalid. First parameter to ForeignKey must be either a model, a model name, or the string 'self'
+/home/luc/hgwork/lino/docs/api/lino.modlib.auto.sales.rst:14: WARNING: autodoc: failed to import module u'lino.modlib.auto.sales.models'; the following exception was raised:
+Traceback (most recent call last):
+  File "/home/luc/pythonenvs/py27/local/lib/python2.7/site-packages/sphinx/ext/autodoc.py", line 326, in import_object
+    __import__(self.modname)
+  File "/home/luc/hgwork/lino/lino/modlib/auto/sales/models.py", line 61, in <module>
+    from lino.modlib.sales.models import *
+  File "/home/luc/hgwork/lino/lino/modlib/sales/models.py", line 255, in <module>
+    vat.VatDocument,
+AttributeError: 'NoneType' object has no attribute 'VatDocument'
+/home/luc/hgwork/lino/docs/api/lino.modlib.cal.rst:14: WARNING: autodoc: failed to import module u'lino.modlib.cal.models'; the following exception was raised:
+Traceback (most recent call last):
+  File "/home/luc/pythonenvs/py27/local/lib/python2.7/site-packages/sphinx/ext/autodoc.py", line 326, in import_object
+    __import__(self.modname)
+  File "/home/luc/hgwork/lino/lino/modlib/cal/models.py", line 268, in <module>
+    from lino.modlib.users.models import Membership
+  File "/home/luc/hgwork/lino/lino/modlib/users/models.py", line 350, in <module>
+    class Authority(mixins.UserAuthored):
+  File "/home/luc/hgwork/lino/lino/modlib/users/models.py", line 366, in Authority
+    help_text=_("The user who gets authority to act in your name."))
+  File "/home/luc/pythonenvs/py27/local/lib/python2.7/site-packages/django/db/models/fields/related.py", line 993, in __init__
+    assert isinstance(to, six.string_types), "%s(%r) is invalid. First parameter to ForeignKey must be either a model, a model name, or the string %r" % (self.__class__.__name__, to, RECURSIVE_RELATIONSHIP_CONSTANT)
+AssertionError: ForeignKey(None) is invalid. First parameter to ForeignKey must be either a model, a model name, or the string 'self'
+/home/luc/hgwork/lino/docs/api/lino.modlib.cal.fixtures.rst:7: WARNING: autodoc: failed to import module u'lino.modlib.cal.fixtures.demo'; the following exception was raised:
+Traceback (most recent call last):
+  File "/home/luc/pythonenvs/py27/local/lib/python2.7/site-packages/sphinx/ext/autodoc.py", line 326, in import_object
+    __import__(self.modname)
+  File "/home/luc/hgwork/lino/lino/modlib/cal/fixtures/demo.py", line 30, in <module>
+    from lino.modlib.cal import models as cal
+  File "/home/luc/hgwork/lino/lino/modlib/cal/models.py", line 268, in <module>
+    from lino.modlib.users.models import Membership
+  File "/home/luc/hgwork/lino/lino/modlib/users/models.py", line 350, in <module>
+    class Authority(mixins.UserAuthored):
+  File "/home/luc/hgwork/lino/lino/modlib/users/models.py", line 366, in Authority
+    help_text=_("The user who gets authority to act in your name."))
+  File "/home/luc/pythonenvs/py27/local/lib/python2.7/site-packages/django/db/models/fields/related.py", line 993, in __init__
+    assert isinstance(to, six.string_types), "%s(%r) is invalid. First parameter to ForeignKey must be either a model, a model name, or the string %r" % (self.__class__.__name__, to, RECURSIVE_RELATIONSHIP_CONSTANT)
+AssertionError: ForeignKey(None) is invalid. First parameter to ForeignKey must be either a model, a model name, or the string 'self'
+/home/luc/hgwork/lino/docs/api/lino.modlib.cal.fixtures.rst:14: WARNING: autodoc: failed to import module u'lino.modlib.cal.fixtures.demo2'; the following exception was raised:
+Traceback (most recent call last):
+  File "/home/luc/pythonenvs/py27/local/lib/python2.7/site-packages/sphinx/ext/autodoc.py", line 326, in import_object
+    __import__(self.modname)
+  File "/home/luc/hgwork/lino/lino/modlib/cal/fixtures/demo2.py", line 39, in <module>
+    from lino.modlib.cal import models as cal
+  File "/home/luc/hgwork/lino/lino/modlib/cal/models.py", line 268, in <module>
+    from lino.modlib.users.models import Membership
+  File "/home/luc/hgwork/lino/lino/modlib/users/models.py", line 350, in <module>
+    class Authority(mixins.UserAuthored):
+  File "/home/luc/hgwork/lino/lino/modlib/users/models.py", line 366, in Authority
+    help_text=_("The user who gets authority to act in your name."))
+  File "/home/luc/pythonenvs/py27/local/lib/python2.7/site-packages/django/db/models/fields/related.py", line 993, in __init__
+    assert isinstance(to, six.string_types), "%s(%r) is invalid. First parameter to ForeignKey must be either a model, a model name, or the string %r" % (self.__class__.__name__, to, RECURSIVE_RELATIONSHIP_CONSTANT)
+AssertionError: ForeignKey(None) is invalid. First parameter to ForeignKey must be either a model, a model name, or the string 'self'
+/home/luc/hgwork/lino/docs/api/lino.modlib.cal.workflows.rst:14: WARNING: autodoc: failed to import module u'lino.modlib.cal.workflows.faggio'; the following exception was raised:
+Traceback (most recent call last):
+  File "/home/luc/pythonenvs/py27/local/lib/python2.7/site-packages/sphinx/ext/autodoc.py", line 326, in import_object
+    __import__(self.modname)
+  File "/home/luc/hgwork/lino/lino/modlib/cal/workflows/faggio.py", line 15, in <module>
+    from lino.modlib.cal.workflows.welfare import *
+  File "/home/luc/hgwork/lino/lino/modlib/cal/workflows/welfare.py", line 128, in <module>
+    class AssignEvent(dd.ChangeStateAction):
+  File "/home/luc/hgwork/lino/lino/modlib/cal/workflows/welfare.py", line 136, in AssignEvent
+    to_user=models.ForeignKey(settings.SITE.user_model),
+  File "/home/luc/pythonenvs/py27/local/lib/python2.7/site-packages/django/db/models/fields/related.py", line 993, in __init__
+    assert isinstance(to, six.string_types), "%s(%r) is invalid. First parameter to ForeignKey must be either a model, a model name, or the string %r" % (self.__class__.__name__, to, RECURSIVE_RELATIONSHIP_CONSTANT)
+AssertionError: ForeignKey(None) is invalid. First parameter to ForeignKey must be either a model, a model name, or the string 'self'
+/home/luc/hgwork/lino/docs/api/lino.modlib.cal.workflows.rst:21: WARNING: autodoc: failed to import module u'lino.modlib.cal.workflows.welfare'; the following exception was raised:
+Traceback (most recent call last):
+  File "/home/luc/pythonenvs/py27/local/lib/python2.7/site-packages/sphinx/ext/autodoc.py", line 326, in import_object
+    __import__(self.modname)
+  File "/home/luc/hgwork/lino/lino/modlib/cal/workflows/welfare.py", line 128, in <module>
+    class AssignEvent(dd.ChangeStateAction):
+  File "/home/luc/hgwork/lino/lino/modlib/cal/workflows/welfare.py", line 136, in AssignEvent
+    to_user=models.ForeignKey(settings.SITE.user_model),
+  File "/home/luc/pythonenvs/py27/local/lib/python2.7/site-packages/django/db/models/fields/related.py", line 993, in __init__
+    assert isinstance(to, six.string_types), "%s(%r) is invalid. First parameter to ForeignKey must be either a model, a model name, or the string %r" % (self.__class__.__name__, to, RECURSIVE_RELATIONSHIP_CONSTANT)
+AssertionError: ForeignKey(None) is invalid. First parameter to ForeignKey must be either a model, a model name, or the string 'self'
+/home/luc/hgwork/lino/docs/api/lino.modlib.courses.rst:7: WARNING: autodoc: failed to import module u'lino.modlib.courses.models'; the following exception was raised:
+Traceback (most recent call last):
+  File "/home/luc/pythonenvs/py27/local/lib/python2.7/site-packages/sphinx/ext/autodoc.py", line 326, in import_object
+    __import__(self.modname)
+  File "/home/luc/hgwork/lino/lino/modlib/courses/models.py", line 108, in <module>
+    Person = dd.resolve_model('contacts.Person',strict=True)
+  File "/home/luc/hgwork/north/north/dbutils.py", line 154, in resolve_model
+    model_spec,app_label,model,settings.SETTINGS_MODULE))
+ImportError: resolve_model(u'contacts.Person',app_label=u'contacts') found None (settings settings)
+/home/luc/hgwork/lino/docs/api/lino.modlib.declarations.rst:14: WARNING: autodoc: failed to import module u'lino.modlib.declarations.models'; the following exception was raised:
+Traceback (most recent call last):
+  File "/home/luc/pythonenvs/py27/local/lib/python2.7/site-packages/sphinx/ext/autodoc.py", line 326, in import_object
+    __import__(self.modname)
+  File "/home/luc/hgwork/lino/lino/modlib/declarations/models.py", line 89, in <module>
+    if settings.SITE.vat_quarterly:
+AttributeError: 'Site' object has no attribute 'vat_quarterly'
+/home/luc/hgwork/lino/docs/api/lino.modlib.finan.rst:14: WARNING: autodoc: failed to import module u'lino.modlib.finan.models'; the following exception was raised:
+Traceback (most recent call last):
+  File "/home/luc/pythonenvs/py27/local/lib/python2.7/site-packages/sphinx/ext/autodoc.py", line 326, in import_object
+    __import__(self.modname)
+  File "/home/luc/hgwork/lino/lino/modlib/finan/models.py", line 73, in <module>
+    class BankStatement(mixins.Registrable,ledger.Voucher):
+AttributeError: 'NoneType' object has no attribute 'Voucher'
+/home/luc/hgwork/lino/docs/api/lino.modlib.languages.fixtures.rst:7: WARNING: autodoc: failed to import module u'lino.modlib.languages.fixtures.all_languages'; the following exception was raised:
+Traceback (most recent call last):
+  File "/home/luc/pythonenvs/py27/local/lib/python2.7/site-packages/sphinx/ext/autodoc.py", line 326, in import_object
+    __import__(self.modname)
+  File "/home/luc/hgwork/lino/lino/modlib/languages/fixtures/all_languages.py", line 40, in <module>
+    from lino.modlib.countries.models import Language
+ImportError: cannot import name Language
+/home/luc/hgwork/lino/docs/api/lino.modlib.ledger.rst:14: WARNING: autodoc: failed to import module u'lino.modlib.ledger.models'; the following exception was raised:
+Traceback (most recent call last):
+  File "/home/luc/pythonenvs/py27/local/lib/python2.7/site-packages/sphinx/ext/autodoc.py", line 326, in import_object
+    __import__(self.modname)
+  File "/home/luc/hgwork/lino/lino/modlib/ledger/models.py", line 72, in <module>
+    class Journal(dd.BabelNamed,mixins.Sequenced):
+  File "/home/luc/hgwork/lino/lino/modlib/ledger/models.py", line 81, in Journal
+    trade_type = vat.TradeTypes.field(blank=True)
+AttributeError: 'NoneType' object has no attribute 'TradeTypes'
+/home/luc/hgwork/lino/docs/api/lino.modlib.notes.rst:7: WARNING: autodoc: failed to import module u'lino.modlib.notes.models'; the following exception was raised:
+Traceback (most recent call last):
+  File "/home/luc/pythonenvs/py27/local/lib/python2.7/site-packages/sphinx/ext/autodoc.py", line 326, in import_object
+    __import__(self.modname)
+  File "/home/luc/hgwork/lino/lino/modlib/notes/models.py", line 123, in <module>
+    contacts.ContactRelated,
+AttributeError: 'module' object has no attribute 'ContactRelated'
+/home/luc/hgwork/lino/docs/api/lino.modlib.notes.fixtures.rst:7: WARNING: autodoc: failed to import module u'lino.modlib.notes.fixtures.demo'; the following exception was raised:
+Traceback (most recent call last):
+  File "/home/luc/pythonenvs/py27/local/lib/python2.7/site-packages/sphinx/ext/autodoc.py", line 326, in import_object
+    __import__(self.modname)
+  File "/home/luc/hgwork/lino/lino/modlib/notes/fixtures/demo.py", line 30, in <module>
+    from lino.modlib.users import models as auth
+  File "/home/luc/hgwork/lino/lino/modlib/users/models.py", line 350, in <module>
+    class Authority(mixins.UserAuthored):
+  File "/home/luc/hgwork/lino/lino/modlib/users/models.py", line 366, in Authority
+    help_text=_("The user who gets authority to act in your name."))
+  File "/home/luc/pythonenvs/py27/local/lib/python2.7/site-packages/django/db/models/fields/related.py", line 993, in __init__
+    assert isinstance(to, six.string_types), "%s(%r) is invalid. First parameter to ForeignKey must be either a model, a model name, or the string %r" % (self.__class__.__name__, to, RECURSIVE_RELATIONSHIP_CONSTANT)
+AssertionError: ForeignKey(None) is invalid. First parameter to ForeignKey must be either a model, a model name, or the string 'self'
+/home/luc/hgwork/lino/docs/api/lino.modlib.orders.rst:7: WARNING: autodoc: failed to import module u'lino.modlib.orders.models'; the following exception was raised:
+Traceback (most recent call last):
+  File "/home/luc/pythonenvs/py27/local/lib/python2.7/site-packages/sphinx/ext/autodoc.py", line 326, in import_object
+    __import__(self.modname)
+  File "/home/luc/hgwork/lino/lino/modlib/orders/models.py", line 63, in <module>
+    class Order(sales.SalesDocument,mixins.ProjectRelated,mixins.Registrable):
+AttributeError: 'NoneType' object has no attribute 'SalesDocument'
+/home/luc/hgwork/lino/docs/api/lino.modlib.reception.rst:14: WARNING: autodoc: failed to import module u'lino.modlib.reception.models'; the following exception was raised:
+Traceback (most recent call last):
+  File "/home/luc/pythonenvs/py27/local/lib/python2.7/site-packages/sphinx/ext/autodoc.py", line 326, in import_object
+    __import__(self.modname)
+  File "/home/luc/hgwork/lino/lino/modlib/reception/models.py", line 49, in <module>
+    from lino.modlib.cal.models import GuestStates
+  File "/home/luc/hgwork/lino/lino/modlib/cal/models.py", line 268, in <module>
+    from lino.modlib.users.models import Membership
+  File "/home/luc/hgwork/lino/lino/modlib/users/models.py", line 350, in <module>
+    class Authority(mixins.UserAuthored):
+  File "/home/luc/hgwork/lino/lino/modlib/users/models.py", line 366, in Authority
+    help_text=_("The user who gets authority to act in your name."))
+  File "/home/luc/pythonenvs/py27/local/lib/python2.7/site-packages/django/db/models/fields/related.py", line 993, in __init__
+    assert isinstance(to, six.string_types), "%s(%r) is invalid. First parameter to ForeignKey must be either a model, a model name, or the string %r" % (self.__class__.__name__, to, RECURSIVE_RELATIONSHIP_CONSTANT)
+AssertionError: ForeignKey(None) is invalid. First parameter to ForeignKey must be either a model, a model name, or the string 'self'
+/home/luc/hgwork/lino/docs/api/lino.modlib.sales.rst:7: WARNING: autodoc: failed to import module u'lino.modlib.sales.models'; the following exception was raised:
+Traceback (most recent call last):
+  File "/home/luc/pythonenvs/py27/local/lib/python2.7/site-packages/sphinx/ext/autodoc.py", line 326, in import_object
+    __import__(self.modname)
+  File "/home/luc/hgwork/lino/lino/modlib/sales/models.py", line 255, in <module>
+    vat.VatDocument,
+AttributeError: 'NoneType' object has no attribute 'VatDocument'
+/home/luc/hgwork/lino/docs/api/lino.modlib.users.rst:14: WARNING: autodoc: failed to import module u'lino.modlib.users.models'; the following exception was raised:
+Traceback (most recent call last):
+  File "/home/luc/pythonenvs/py27/local/lib/python2.7/site-packages/sphinx/ext/autodoc.py", line 326, in import_object
+    __import__(self.modname)
+  File "/home/luc/hgwork/lino/lino/modlib/users/models.py", line 350, in <module>
+    class Authority(mixins.UserAuthored):
+  File "/home/luc/hgwork/lino/lino/modlib/users/models.py", line 366, in Authority
+    help_text=_("The user who gets authority to act in your name."))
+  File "/home/luc/pythonenvs/py27/local/lib/python2.7/site-packages/django/db/models/fields/related.py", line 993, in __init__
+    assert isinstance(to, six.string_types), "%s(%r) is invalid. First parameter to ForeignKey must be either a model, a model name, or the string %r" % (self.__class__.__name__, to, RECURSIVE_RELATIONSHIP_CONSTANT)
+AssertionError: ForeignKey(None) is invalid. First parameter to ForeignKey must be either a model, a model name, or the string 'self'
+/home/luc/hgwork/lino/docs/api/lino.modlib.vat.rst:7: WARNING: autodoc: failed to import module u'lino.modlib.vat.models'; the following exception was raised:
+Traceback (most recent call last):
+  File "/home/luc/pythonenvs/py27/local/lib/python2.7/site-packages/sphinx/ext/autodoc.py", line 326, in import_object
+    __import__(self.modname)
+  File "/home/luc/hgwork/lino/lino/modlib/vat/models.py", line 188, in <module>
+    class VatDocument(VatTotal):
+  File "/home/luc/hgwork/lino/lino/modlib/vat/models.py", line 204, in VatDocument
+    partner = partners.PartnerField()
+AttributeError: 'module' object has no attribute 'PartnerField'
+/home/luc/hgwork/lino/docs/api/lino.projects.belref.rst:21: WARNING: autodoc: failed to import module u'lino.projects.belref.models'; the following exception was raised:
+Traceback (most recent call last):
+  File "/home/luc/pythonenvs/py27/local/lib/python2.7/site-packages/sphinx/ext/autodoc.py", line 326, in import_object
+    __import__(self.modname)
+  File "/home/luc/hgwork/lino/lino/projects/belref/models.py", line 47, in <module>
+    class Main(concepts.TopLevelConcepts):
+AttributeError: 'NoneType' object has no attribute 'TopLevelConcepts'
+/home/luc/hgwork/lino/docs/api/lino.projects.homeworkschool.rst:21: WARNING: autodoc: failed to import module u'lino.projects.homeworkschool.models'; the following exception was raised:
+Traceback (most recent call last):
+  File "/home/luc/pythonenvs/py27/local/lib/python2.7/site-packages/sphinx/ext/autodoc.py", line 326, in import_object
+    __import__(self.modname)
+  File "/home/luc/hgwork/lino/lino/projects/homeworkschool/models.py", line 29, in <module>
+    class School(contacts.Company):
+AttributeError: 'module' object has no attribute 'Company'
+/home/luc/hgwork/lino/docs/api/lino.projects.presto.rst:21: WARNING: autodoc: failed to import module u'lino.projects.presto.models'; the following exception was raised:
+Traceback (most recent call last):
+  File "/home/luc/pythonenvs/py27/local/lib/python2.7/site-packages/sphinx/ext/autodoc.py", line 326, in import_object
+    __import__(self.modname)
+  File "/home/luc/hgwork/lino/lino/projects/presto/models.py", line 55, in <module>
+    class Person(contacts.Person,mixins.Born,mixins.Printable,mixins.CreatedModified):
+AttributeError: 'module' object has no attribute 'Person'
+/home/luc/hgwork/lino/docs/api/lino.projects.presto.fixtures.rst:7: WARNING: autodoc: failed to import module u'lino.projects.presto.fixtures.tim2lino'; the following exception was raised:
+Traceback (most recent call last):
+  File "/home/luc/pythonenvs/py27/local/lib/python2.7/site-packages/sphinx/ext/autodoc.py", line 326, in import_object
+    __import__(self.modname)
+  File "/home/luc/hgwork/lino/lino/projects/presto/fixtures/tim2lino.py", line 101, in <module>
+    from lino.modlib.vat.models import VatClasses
+  File "/home/luc/hgwork/lino/lino/modlib/vat/models.py", line 188, in <module>
+    class VatDocument(VatTotal):
+  File "/home/luc/hgwork/lino/lino/modlib/vat/models.py", line 204, in VatDocument
+    partner = partners.PartnerField()
+AttributeError: 'module' object has no attribute 'PartnerField'
+/home/luc/hgwork/lino/docs/api/lino.ui.rst:49: WARNING: autodoc: failed to import module u'lino.ui.urls'; the following exception was raised:
+Traceback (most recent call last):
+  File "/home/luc/pythonenvs/py27/local/lib/python2.7/site-packages/sphinx/ext/autodoc.py", line 326, in import_object
+    __import__(self.modname)
+  File "/home/luc/hgwork/lino/lino/ui/urls.py", line 27, in <module>
+    urlpatterns = settings.SITE.get_patterns()
+  File "/home/luc/hgwork/lino/lino/ui/__init__.py", line 1316, in get_patterns
+    urlpatterns = self.get_media_urls()
+  File "/home/luc/hgwork/lino/lino/ui/__init__.py", line 1188, in get_media_urls
+    setup_media_link('extjs','extjs_root')
+  File "/home/luc/hgwork/lino/lino/ui/__init__.py", line 1185, in setup_media_link
+    symlink(source,target)
+OSError: [Errno 2] No such file or directory
+/home/luc/hgwork/lino/docs/api/lino.utils.rst:14: WARNING: autodoc: failed to import module u'lino.utils.actordoc'; the following exception was raised:
+Traceback (most recent call last):
+  File "/home/luc/pythonenvs/py27/local/lib/python2.7/site-packages/sphinx/ext/autodoc.py", line 326, in import_object
+    __import__(self.modname)
+  File "/home/luc/hgwork/lino/lino/utils/actordoc.py", line 54, in <module>
+    import lino.ui.urls # hack: trigger ui instantiation
+  File "/home/luc/hgwork/lino/lino/ui/urls.py", line 27, in <module>
+    urlpatterns = settings.SITE.get_patterns()
+  File "/home/luc/hgwork/lino/lino/ui/__init__.py", line 1316, in get_patterns
+    urlpatterns = self.get_media_urls()
+  File "/home/luc/hgwork/lino/lino/ui/__init__.py", line 1188, in get_media_urls
+    setup_media_link('extjs','extjs_root')
+  File "/home/luc/hgwork/lino/lino/ui/__init__.py", line 1185, in setup_media_link
+    symlink(source,target)
+OSError: [Errno 2] No such file or directory
+/home/luc/hgwork/lino/lino/ui/__init__.py:docstring of lino.ui.Site.webdav_url:7: WARNING: term not in glossary: runserver
+/home/luc/hgwork/lino/docs/api/lino.utils.rst:7: WARNING: unknown document: /autodoc/lino.test_apps.mti
+/home/luc/hgwork/lino/docs/changes.rst:51: WARNING: undefined label: welfare.debts.printliabilitiesbybudget (if the link has no caption the label must precede a section header)
+/home/luc/hgwork/lino/docs/releases/index.rst:1: WARNING: unknown document: 1.6.11
