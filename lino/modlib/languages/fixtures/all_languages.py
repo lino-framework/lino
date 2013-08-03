@@ -37,7 +37,7 @@ from django.conf import settings
 from lino.utils import dblogger as logger
 
 from north.dbutils import babel_values
-from lino.modlib.countries.models import Language
+from lino.modlib.languages.models import Language
 
 
 LANGUAGES = {}

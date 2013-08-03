@@ -1,0 +1,7 @@
+===================================
+20130803 (Saturday, 03 August 2013)
+===================================
+
+
+:mod:`lino.modlib.languages.fixtures.all_languages`
+still tried to import Language from countries.
