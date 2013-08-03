@@ -12,4 +12,4 @@ specifies ` hidden_languages='nl'`
 but Chatelet had no language 'nl'.
 
 :mod:`lino.modlib.languages.fixtures.all_languages`
-still tried to import Language from countries.
+didn't work because it still tried to import Language from countries.
