@@ -455,8 +455,6 @@ def setup_main_menu(site,ui,profile,m):
     #~ office.add_action(MyTextFieldTemplates)
     pass
 
-def setup_my_menu(site,ui,profile,m): pass
-  
 def setup_config_menu(site,ui,profile,m):
     office = m.add_menu("office",OFFICE_MODULE_LABEL)
     system = m.add_menu("system",SYSTEM_USER_LABEL)

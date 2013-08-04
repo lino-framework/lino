@@ -299,19 +299,7 @@ class MyNotes(mixins.ByUser,Notes):
     label = _("My notes")
     order_by = ["date"]
     
-    #~ def setup_request(self,req):
-        #~ if req.master_instance is None:
-            #~ req.master_instance = req.get_user()
 
-#~ class NotesByProject(Notes):
-    #~ master_key = 'project'
-    #~ column_names = "date subject user *"
-    #~ order_by = "date"
-  
-#~ class NotesByController(Notes):
-    #~ master_key = 'owner'
-    #~ column_names = "date subject user *"
-    #~ order_by = "date"
   
 class NotesByType(Notes):
     master_key = 'type'
@@ -349,7 +337,7 @@ def add_system_note(ar,owner,subject,body,**kw):
     
     
     
-linoweb = dd.resolve_app('system')
+system = dd.resolve_app('system')
     
 def customize_siteconfig():
     """
@@ -367,19 +355,17 @@ If this is empty, then system notes won't create any entry to the Notes table.""
   
 
 def setup_main_menu(site,ui,profile,m):
-    m  = m.add_menu("office",linoweb.OFFICE_MODULE_LABEL)
-    m.add_action(MyNotes)
-  
-def setup_my_menu(site,ui,profile,m): 
-    pass
+    m  = m.add_menu("office",system.OFFICE_MODULE_LABEL)
+    m.add_action('notes.MyNotes')
   
 def setup_config_menu(site,ui,profile,m): 
     #~ m  = m.add_menu("notes",_("~Notes"))
-    m  = m.add_menu("office",linoweb.OFFICE_MODULE_LABEL)
-    m.add_action(NoteTypes)
-    m.add_action(EventTypes)
+    m  = m.add_menu("office",system.OFFICE_MODULE_LABEL)
+    m.add_action('notes.NoteTypes')
+    m.add_action('notes.EventTypes')
   
 def setup_explorer_menu(site,ui,profile,m):
-    m.add_action(Notes)
+    m  = m.add_menu("office",system.OFFICE_MODULE_LABEL)
+    m.add_action('notes.Notes')
   
 customize_siteconfig()  

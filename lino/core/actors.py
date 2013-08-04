@@ -417,6 +417,11 @@ class Actor(actions.Parametrizable):
     Set this to True if you don't want Lino to display sums in a table view.
     """
     
+    insert_layout_width = 60
+    """
+    When specifying an :attr:`insert_layout` using a simple a multline 
+    string, then Lino will instantiate a FormPanel with this width.
+    """
     
     workflow_state_field = None 
     """
@@ -586,7 +591,7 @@ class Actor(actions.Parametrizable):
         
         
     @classmethod
-    def is_abstract(self):
+    def is_abstract(cls):
         return False
         
             
@@ -668,10 +673,15 @@ class Actor(actions.Parametrizable):
     
     #~ submit_action = actions.SubmitDetail()
     
+    _class_init_done = False
+    
     @classmethod
     def class_init(cls):
-        #~ if str(cls) == 'jobs.JobsOverview':
-            #~ logger.info("20121023 Actor.class_init() %r",cls)
+        """
+        Called internally a site startup. Don't override.
+        """
+        #~ if str(cls) == 'contacts.Persons':
+            #~ logger.info("20130804 Actor.class_init() %r",cls)
         #~ if cls.__name__ == 'Home':
             #~ print "20120524",cls, "class_init()", cls.__bases__
         #~ 20121008 cls.default_action = cls.get_default_action()
@@ -686,13 +696,16 @@ class Actor(actions.Parametrizable):
                 #~ raise Exception("%r has both detail_template and detail_layout" % cls)
             #~ dl = dt
             
+        #~ if cls.is_abstract() : return
+            
         master = getattr(cls,'master',None)
         if master is not None:
             cls.master = resolve_model(master)
                 
-                
-        #~ dl = classDict.get('detail_layout',None)
-        dl = getattr(cls,'detail_layout',None)
+        #~ dl = getattr(cls,'detail_layout',None) 
+        dl = cls.__dict__.get('detail_layout',None) # see 20130804
+        if dl is None and not cls._class_init_done:
+            dl = cls.detail_layout
         if dl is not None:
             if isinstance(dl,basestring):
                 cls.detail_layout = layouts.FormLayout(dl,cls)
@@ -700,22 +713,16 @@ class Actor(actions.Parametrizable):
                 dl.set_datasource(cls)
                 cls.detail_layout = dl
             elif not issubclass(cls,dl._datasource):
-                raise Exception("Cannot reuse %r detail_layout for %r" % (dl._datasource,cls))
-            #~ else:
-                #~ raise Exception("Cannot reuse detail_layout owned by another table")
-                #~ logger.debug("Note: %s uses layout owned by %s",cls,dl._datasource)
+                raise Exception("Cannot use detail_layout of %r for %r" % (dl._datasource,cls))
             
-        # the same for insert_template and insert_layout:
-        #~ dt = classDict.get('insert_template',None)
-        dt = getattr(cls,'insert_template',None)
-        if dt is not None:
-            raise Exception("Please rename insert_template to insert_layout")
-            
-        #~ dl = classDict.get('insert_layout',None)
-        dl = getattr(cls,'insert_layout',None)
+        #~ dl = getattr(cls,'insert_layout',None)
+        dl = cls.__dict__.get('insert_layout',None)
+        if dl is None and not cls._class_init_done:
+            dl = cls.insert_layout
         if dl is not None:
             if isinstance(dl,basestring):
-                cls.insert_layout = layouts.FormLayout(dl,cls)
+                cls.insert_layout = layouts.FormLayout(dl,cls,
+                    window_size=(cls.insert_layout_width,'auto'))
             elif dl._datasource is None:
                 dl.set_datasource(cls)
                 cls.insert_layout = dl
@@ -759,6 +766,7 @@ class Actor(actions.Parametrizable):
                     #~ for k,v in bd.items():
                         #~ cls._actions_dict[k] = cls.add_action(copy.deepcopy(v),k)
                         
+        _class_init_done = True
                         
     @classmethod
     def get_actor_label(self):

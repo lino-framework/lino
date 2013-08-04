@@ -969,9 +969,6 @@ def setup_main_menu(site,ui,profile,m):
     for a in ('contacts.Persons','contacts.Companies','contacts.Partners'):
         m.add_action(a)
 
-def setup_my_menu(site,ui,profile,m): 
-    pass
-  
 def setup_master_menu(site,ui,profile,m): 
     pass
     

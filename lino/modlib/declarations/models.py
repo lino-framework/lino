@@ -322,7 +322,6 @@ customize_ledger()
 
 def site_setup(site): pass 
 def setup_main_menu(site,ui,profile,m): pass
-def setup_my_menu(site,ui,profile,m): pass
   
 def setup_reports_menu(site,ui,profile,m): pass
     

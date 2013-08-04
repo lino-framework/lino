@@ -797,8 +797,6 @@ def unused_setup_master_menu(site,ui,profile,m):
     #~ m.add_action(Courses)
 
 
-def setup_my_menu(site,ui,profile,m): pass
-  
 def setup_config_menu(site,ui,profile,m):
     m = m.add_menu("courses",MODULE_LABEL)
     #~ m.add_action(Rooms)

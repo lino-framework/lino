@@ -208,8 +208,6 @@ class LinksToThis(LinksFromThis):
 
 def setup_main_menu(site,ui,user,m): pass
 
-def setup_my_menu(site,ui,user,m): pass
-  
 def setup_config_menu(site,ui,user,m): 
     m  = m.add_menu("links",_("~Links"))
     m.add_action('links.LinkTypes')

@@ -705,9 +705,6 @@ def setup_main_menu(site,ui,profile,main):
             #~ label=unicode(jnl),
             #~ params=dict(master_instance=jnl))
     
-def setup_my_menu(site,ui,profile,m): 
-    pass
-  
 def setup_config_menu(site,ui,profile,m): 
     #~ m = m.add_menu("ledger",MODULE_LABEL)
     m = m.add_menu("accounts",MODULE_LABEL)

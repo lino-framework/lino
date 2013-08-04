@@ -919,6 +919,8 @@ tinymce.init({
                
         actors_list.extend([a for a in choicelists.CHOICELISTS.values() if settings.SITE.is_installed(a.app_label)])
           
+        #~ logger.info("20130804 gonna remove %s", [repr(a) for a in actors_list if settings.SITE.modules.resolve(str(a)) is not a])
+        #~ actors_list = [a for a in actors_list if settings.SITE.modules.resolve(str(a)) is a]
           
                
         """
@@ -963,7 +965,12 @@ tinymce.init({
         def add(res,collector,fl,formpanel_name):
             # fl : a FormLayout
             if fl is None: return
-            lh = fl.get_layout_handle(settings.SITE.ui)
+            if fl._datasource is None: return # 20130804
+            try:
+                lh = fl.get_layout_handle(settings.SITE.ui)
+            except Exception as e:
+                raise Exception("Could not define %s for %r: %s" % (formpanel_name,res,e))
+                
             if True: # 20121130 why was this?
                 for e in lh.main.walk():
                     e.loosen_requirements(res)

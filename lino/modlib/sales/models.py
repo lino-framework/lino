@@ -746,9 +746,6 @@ def site_setup(site):
     #~ m.add_action(Invoices)
     #~ m.add_action(DocumentsToSign)
 
-def setup_my_menu(site,ui,profile,m): 
-    pass
-  
 def setup_config_menu(site,ui,profile,m): 
     m = m.add_menu("sales",MODULE_LABEL)
     m.add_action(InvoicingModes)

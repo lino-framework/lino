@@ -575,6 +575,9 @@ add_tabpanel() on %s horizontal 'main' panel %r."""
             #~ print 20120525, self, self.detail_layout._element_options
             
             
+    #~ def before_setup_handle(self):
+        #~ pass
+
             
     def get_layout_handle(self,ui):
         """
@@ -595,6 +598,7 @@ add_tabpanel() on %s horizontal 'main' panel %r."""
         # we do not want any inherited handle
         h = self.__dict__.get(hname,None)
         if h is None:
+            #~ self.before_setup_handle()
             #~ print 20130404, self._handle_class
             h = self._handle_class(self)
             setattr(self,hname,h)
@@ -613,17 +617,26 @@ add_tabpanel() on %s horizontal 'main' panel %r."""
           self._datasource.__name__,
           field.name,**kw)
         
-
         
             
-class FormLayout(BaseLayout):
+class FieldLayout(BaseLayout):
+    pass
+    
+    #~ def before_setup_handle(self):
+        #~ logger.info("20130804 before_setup_handle %s",self)
+        #~ ds = settings.SITE.modules.resolve(str(self._datasource))
+        #~ if self._datasource is not ds:
+            #~ logger.info("20130804 override _datasource of %r by %r",self._datasource,ds)
+            #~ self._datasource = ds
+        
+    
+class FormLayout(FieldLayout):
     """
     A Layout description for the main panel of a DetailWindow or InsertWindow.
     """
     join_str = "\n"
     
-        
-class ListLayout(BaseLayout):
+class ListLayout(FieldLayout):
     """
     A Layout description for the columns of a GridPanel.
     """

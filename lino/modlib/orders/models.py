@@ -356,9 +356,6 @@ def setup_main_menu(site,ui,profile,m):
     m = m.add_menu(vat.TradeTypes.sales.name,vat.TradeTypes.sales.text)
     m.add_action(Orders)
     
-def setup_my_menu(site,ui,profile,m): 
-    pass
-  
 def setup_config_menu(site,ui,profile,m): 
     m = m.add_menu("sales",MODULE_LABEL)
     m.add_action(InvoicingModes)

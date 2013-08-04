@@ -1,0 +1,80 @@
+=================================
+20130804 (Sunday, 04 August 2013)
+=================================
+
+Application code becomes easier. Instead of writing::
+
+    insert_layout = dd.FormLayout("""
+    event_type:25 type:25
+    subject 
+    project company
+    """,window_size=(50,'auto'))
+    
+You can now write::    
+    
+    insert_layout = """
+    event_type:25 type:25
+    subject 
+    project company
+    """
+    
+Because `insert_layout` are now always initiated with that window_size 
+when specified as a string.
+
+
+I need to add application-specific rules for selecting the 
+type of a :ref:`welfare.notes.Note` in :ref:`welfare`.
+To prepare this, I used the new app inheritance feature
+and added a new module :mod:`lino_welfare.modlib.notes`
+which extends :mod:`lino.modlib.notes`.
+
+This was the first time that I extended a `detail_layout`, 
+and it caused some subtle problems.
+
+First I had to understand we *must* modify the original 
+:class:`lino.modlib.notes.models.Notes`
+class object by reassigning 
+it's `detail_layout` and `insert_layout` attributes.
+Subclassing the Notes class might look more clear 
+coding style::
+
+    class Notes(Notes):
+        
+        detail_layout = NoteDetail()
+        
+        insert_layout = """
+        event_type:25 type:25
+        subject 
+        project company
+        """
+
+But that would fail because the original module also defines 
+subclasses of Notes, and we want also all subclasses to use our 
+new detail_layout or insert_layout.
+
+The above trick still works only with the lates version because one 
+thing was to replace::
+
+  dl = getattr(cls,'detail_layout',None) 
+  
+by::
+
+  dl = cls.__dict__.get('detail_layout',None)
+  
+in :meth:`lino.core.actors.Actor.class_init`.
+
+
+But that wasn't enough. The above change revealed another problem.
+
+Actors without their own detail_layout will use the layout 
+defined on their parent. But if this parent is overridden 
+in another app, then they must install themselves as the 
+datasource for this detail_layout.
+
+E.g. the `Persons` table is defined in 
+:mod:`lino.modlib.contacts`
+and overridden in
+:mod:`lino_welfare.modlib.contacts`.
+The welfare version does not override 
+the `insert_layout`.
+
