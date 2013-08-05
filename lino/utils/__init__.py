@@ -93,12 +93,16 @@ def join_elems(elems,sep=' '):
     >>> join_elems([])
     []
     """
+    if not callable(sep):
+        sep_value = sep
+        def sep():
+            return sep_value
     l = []  
     s = None
-    for e in elems: 
+    for e in elems:
         if s is not None:
             l.append(s)
-        s = sep
+        s = sep()
         l.append(e)
     return l
     

@@ -14,24 +14,56 @@
 
 """
 
-Inspired by Frederik Lundh's ElementTree Builder
-<http://effbot.org/zone/element-builder.htm>
+Inspired by Frederik Lundh's 
+`ElementTree Builder
+<http://effbot.org/zone/element-builder.htm>`_
 
 
->>> ns = Namespace('http://my.ns',
+>>> E = Namespace('http://my.ns',
 ...    "bar baz bar-o-baz foo-bar class def")
 
->>> bob = ns.bar_o_baz()
->>> baz = ns.add_child(bob,'baz',class_='first')
->>> print ns.tostring(baz)
+>>> bob = E.bar_o_baz()
+>>> baz = E.add_child(bob,'baz',class_='first')
+>>> print E.tostring(baz)
 <baz xmlns="http://my.ns" class="first" />
 
->>> bob = ns.bar_o_baz('Hello',class_='first',foo_bar="3")
->>> print ns.tostring(bob)
+>>> bob = E.bar_o_baz('Hello',class_='first',foo_bar="3")
+>>> print E.tostring(bob)
 <bar-o-baz xmlns="http://my.ns" class="first" foo-bar="3">Hello</bar-o-baz>
+
+The following reproduces a pifall. Here is the initial code:
+
+>>> E = Namespace(None,"div br")
+>>> bob = E.div("a",E.br(),"b",E.br(),"c",E.br(),"d")
+>>> print E.tostring(bob)
+<div>a<br />b<br />c<br />d</div>
+
+The idea is to use `join_elems` to insert the <br> tags:
+
+>>> from lino.utils import join_elems
+
+But surprise:
+
+>>> elems = join_elems(["a","b","c","d"],sep=E.br())
+>>> print E.tostring(E.div(*elems))
+<div>a<br />bcd<br />bcd<br />bcd</div>
+
+What happened here is that the same `<br>` element instance was being 
+inserted multiple times at different places. 
+The correct usage is without the parentheses so that `join_elems` 
+instantiates each time a new element:
+
+>>> elems = join_elems(["a","b","c","d"],sep=E.br)
+>>> print E.tostring(E.div(*elems))
+<div>a<br />b<br />c<br />d</div>
+
 
 
 """
+
+import logging
+logger = logging.getLogger(__name__)
+
 
 import datetime
 from functools import partial
@@ -164,6 +196,8 @@ class Namespace(object):
         return xkw
         
     def create_element(self, tag, *children, **attrib):
+        #~ if tag == 'div':
+            #~ logger.info("20130805 create_element %s",children)
         nsattrib = self.makeattribs(**attrib)
         tag = self.addns(tag)
         elem = etree.Element(tag, nsattrib)
@@ -173,14 +207,17 @@ class Namespace(object):
             if isinstance(item, dict):
                 elem.attrib.update(self.makeattribs(**item))
             elif isinstance(item, basestring):
+                #~ if len(elem) and len(elem[-1]) == 0:
                 if len(elem):
-                    elem[-1].tail = (elem[-1].tail or "") + item
+                    last = elem[-1]
+                    last.tail = (last.tail or "") + item
                 else:
                     elem.text = (elem.text or "") + item
             elif etree.iselement(item):
                 elem.append(item)
             else:
                 raise TypeError("bad argument: %r" % item)
+            #~ print "20130805 added %s --> %s" % (item,self.tostring(elem))
         return elem
         
     

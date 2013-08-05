@@ -41,6 +41,7 @@ from django.contrib.humanize.templatetags.humanize import naturaltime
 from lino.utils.xmlgen.html import E
 from lino.utils import ssin
 from lino.utils import join_words
+from lino.utils import join_elems
 
 from lino import dd
 
@@ -65,8 +66,8 @@ dd.inject_field('cal.Guest','waiting_until',
     
     
     
-class QuickClientEvent(dd.RowAction):
-    label = _("Quick appointment")
+class QuickClientEvent(dd.RowAction): # see also lino_welfare.modlib.cal.CreateClientEvent
+    label = _("Appointment")
     #~ show_in_workflow = True
     show_in_row_actions = True
     parameters = dict(
@@ -79,13 +80,6 @@ class QuickClientEvent(dd.RowAction):
     """
     #~ required = dict(states='coached')
     
-    #~ def action_param_defaults(self,ar,obj,**kw):
-        #~ kw = super(QuickClientEvent,self).action_param_defaults(ar,obj,**kw)
-        #~ kw.update(user=ar.get_user())
-        #~ kw.update(date=datetime.date.today())
-        #~ return kw
-        
-        
     def get_notify_subject(self,ar,obj):
         return _("Created appointment for %(user)s with %(partner)s") % dict(
             event=obj,
@@ -93,7 +87,7 @@ class QuickClientEvent(dd.RowAction):
             partner=obj.partner)
      
     def run_from_ui(self,obj,ar,**kw):
-        ekw = dict(project=obj,user=ar.get_user()) 
+        ekw = dict(project=obj) 
         #~ ekw.update(state=cal.EventStates.draft)
         #~ ekw.update(state=EventStates.scheduled)
         today = datetime.date.today()
@@ -105,7 +99,12 @@ class QuickClientEvent(dd.RowAction):
             ekw.update(summary=ar.action_param_values.summary)
         event = cal.Event(**ekw)
         event.save()
-        cal.Guest(event=event,partner=obj,waiting_since=datetime.datetime.now()).save()
+        cal.Guest(
+            event=event,
+            partner=obj,
+            role=settings.SITE.site_config.client_guestrole,
+            waiting_since=datetime.datetime.now()
+        ).save()
         #~ event.full_clean()
         #~ print 20130722, ekw, ar.action_param_values.user, ar.get_user()
         #~ kw = super(QuickClientEvent,self).run_from_ui(obj,ar,**kw)
@@ -115,11 +114,40 @@ class QuickClientEvent(dd.RowAction):
         return kw
 
     
+class CreateNote(dd.RowAction): 
+    label = _("Attestation")
+    #~ show_in_workflow = True
+    show_in_row_actions = True
+    parameters = dict(
+        #~ date=models.DateField(_("Date"),blank=True,null=True),
+        note_type=dd.ForeignKey('notes.NoteType'),
+        subject=models.CharField(verbose_name=_("Subject"),blank=True))
+    params_layout = """
+    note_type
+    subject
+    """
+    #~ required = dict(states='coached')
+    
+    def run_from_ui(self,obj,ar,**kw):
+        notes = dd.resolve_app('notes')
+        ekw = dict(project=obj,user=ar.get_user()) 
+        ekw.update(type=ar.action_param_values.note_type)
+        ekw.update(date=datetime.date.today())
+        if ar.action_param_values.subject:
+            ekw.update(subject=ar.action_param_values.subject)
+        note = notes.Note(**ekw)
+        note.save()
+        #~ kw.update(success=True)
+        #~ kw.update(refresh=True)
+        return ar.goto_instance(note,**kw)
+
+    
+
     
 class ClientDetail(dd.FormLayout):
     
     main = """
-    box1 AppointmentsByClient box2
+    box1:40 AppointmentsByClient:40 box2:30
     box4 image:15
     
     """
@@ -180,6 +208,7 @@ class Clients(dd.Table):
     find_by_beid = beid.FindByBeIdAction()
     
     quick_event = QuickClientEvent()
+    create_note = CreateNote()
     
     #~ @dd.virtualfield(dd.HtmlBox())
     #~ def eid_card(cls,self,ar):
@@ -188,11 +217,17 @@ class Clients(dd.Table):
         
     @dd.virtualfield(dd.HtmlBox())
     def info(cls,self,ar):
-        lines = []
-        for ln in list(self.address_person_lines()) + list(self.address_location_lines()):
-            lines += [ln, E.br()]
-        #~ return E.div(*lines,align="center",style="font-size:18px;font-weigth:bold;text-align:middle;")
-        return E.div(*lines,style="font-size:18px;font-weigth:bold;vertical-align:bottom;text-align:middle")
+        lines = list(self.address_person_lines()) + list(self.address_location_lines())
+        #~ logger.info("20130805 %s", lines)
+        elems = join_elems(lines,sep=E.br) 
+        #~ logger.info("20130805 %s", elems)
+        #~ elems = []
+        #~ for ln in lines:
+            #~ if ln:   
+                #~ if len(elems): 
+                    #~ elems.append(E.br())
+                #~ elems.append(ln)
+        return E.div(*elems,style="font-size:18px;font-weigth:bold;vertical-align:bottom;text-align:middle")
     
         
 #~ class CheckinGuest(dd.ChangeStateAction,dd.NotifyingAction):

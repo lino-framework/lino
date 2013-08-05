@@ -110,13 +110,6 @@ Traceback (most recent call last):
   File "/home/luc/hgwork/lino/lino/modlib/finan/models.py", line 73, in <module>
     class BankStatement(mixins.Registrable,ledger.Voucher):
 AttributeError: 'NoneType' object has no attribute 'Voucher'
-/home/luc/hgwork/lino/docs/api/lino.modlib.languages.fixtures.rst:7: WARNING: autodoc: failed to import module u'lino.modlib.languages.fixtures.all_languages'; the following exception was raised:
-Traceback (most recent call last):
-  File "/home/luc/pythonenvs/py27/local/lib/python2.7/site-packages/sphinx/ext/autodoc.py", line 326, in import_object
-    __import__(self.modname)
-  File "/home/luc/hgwork/lino/lino/modlib/languages/fixtures/all_languages.py", line 40, in <module>
-    from lino.modlib.countries.models import Language
-ImportError: cannot import name Language
 /home/luc/hgwork/lino/docs/api/lino.modlib.ledger.rst:14: WARNING: autodoc: failed to import module u'lino.modlib.ledger.models'; the following exception was raised:
 Traceback (most recent call last):
   File "/home/luc/pythonenvs/py27/local/lib/python2.7/site-packages/sphinx/ext/autodoc.py", line 326, in import_object
@@ -257,3 +250,6 @@ Traceback (most recent call last):
 OSError: [Errno 2] No such file or directory
 /home/luc/hgwork/lino/lino/ui/__init__.py:docstring of lino.ui.Site.webdav_url:7: WARNING: term not in glossary: runserver
 /home/luc/hgwork/lino/docs/api/lino.utils.rst:7: WARNING: unknown document: /autodoc/lino.test_apps.mti
+/home/luc/hgwork/lino/docs/blog/2013/0804.rst:25: WARNING: undefined label: welfare.notes.note (if the link has no caption the label must precede a section header)
+/home/luc/hgwork/lino/docs/changes.rst:51: WARNING: undefined label: welfare.debts.printliabilitiesbybudget (if the link has no caption the label must precede a section header)
+/home/luc/hgwork/lino/docs/releases/index.rst:1: WARNING: unknown document: 1.6.11

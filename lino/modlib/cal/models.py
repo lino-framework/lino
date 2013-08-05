@@ -1037,13 +1037,13 @@ Indicates that this Event shouldn't prevent other Events at the same time."""))
         #~ raise foo
         txt = when_text(self.start_date,self.start_time)
         #~ return txt
-        logger.info("20130802a when_text %r",txt)
+        #~ logger.info("20130802a when_text %r",txt)
         try:
             e = ar.obj2html(self,txt)
         except Exception,e:
             import traceback
             traceback.print_exc(e)
-        logger.info("20130802b when_text %r",E.tostring(e))
+        #~ logger.info("20130802b when_text %r",E.tostring(e))
         return e
 
         

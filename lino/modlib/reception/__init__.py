@@ -18,7 +18,7 @@ register clients into a waiting queue
 as they present themselves at a reception desk (Empfangsschalter),
 and unregister them when they leave again.
 
-User documentation see e.g. :ref:`welfare.reception`.
+User documentation see :ref:`welfare.reception`.
 
 """
 from lino import ad
@@ -27,4 +27,5 @@ def _(s): return s
 
 class App(ad.App):
     verbose_name = _("Reception")
+    depends = ['cal']
     
