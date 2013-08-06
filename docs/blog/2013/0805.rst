@@ -5,6 +5,7 @@
 Continued on :mod:`lino.modlib.reception` : added a new 
 action "Attestation" (Bescheinigung).
 
-Found a pitfall which is described in 
+Found a pitfall and described it in 
 :mod:`lino.utils.xmlgen`.
+
 

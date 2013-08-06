@@ -64,9 +64,22 @@ dd.inject_field('cal.Guest','waiting_until',
     editable=False,blank=True,null=True,
     help_text = _("Time when the visitor left (checked out).")))
     
+
+dd.inject_field('system.SiteConfig','client_guestrole',
+    dd.ForeignKey('cal.GuestRole',
+        verbose_name=_("Guest role for clients"),
+        related_name='client_guestroles',
+        blank=True,null=True))    
     
+dd.inject_field('system.SiteConfig','client_calender',
+    dd.ForeignKey('cal.Calendar',
+        verbose_name=_("Default calendar for client events"),
+        related_name='client_calendars',
+        blank=True,null=True))    
     
-class QuickClientEvent(dd.RowAction): # see also lino_welfare.modlib.cal.CreateClientEvent
+
+    
+class CreateGuestEvent(dd.RowAction): 
     label = _("Appointment")
     #~ show_in_workflow = True
     show_in_row_actions = True
@@ -107,7 +120,7 @@ class QuickClientEvent(dd.RowAction): # see also lino_welfare.modlib.cal.CreateC
         ).save()
         #~ event.full_clean()
         #~ print 20130722, ekw, ar.action_param_values.user, ar.get_user()
-        #~ kw = super(QuickClientEvent,self).run_from_ui(obj,ar,**kw)
+        #~ kw = super(CreateGuestEvent,self).run_from_ui(obj,ar,**kw)
         kw.update(success=True)
         #~ kw.update(eval_js=ar.renderer.instance_handler(ar,event))
         kw.update(refresh=True)
@@ -143,91 +156,6 @@ class CreateNote(dd.RowAction):
 
     
 
-    
-class ClientDetail(dd.FormLayout):
-    
-    main = """
-    box1:40 AppointmentsByClient:40 box2:30
-    box4 image:15
-    
-    """
-    
-    box1 = """
-    info
-    action_buttons
-    """
-    
-    #~ box1 = dd.Panel("""
-    #~ last_name first_name:15 title:10
-    #~ address_column
-    #~ """,label = _("Address"))
-    
-    box2 = dd.Panel("""
-    email
-    phone
-    gsm
-    """,label = _("Contact"))
-    
-    box3 = dd.Panel("""
-    gender:10 birth_date age:10 
-    birth_country birth_place nationality:15 national_id:15 
-    """,label = _("Birth"))
-    
-    eid_panel = dd.Panel("""
-    card_number:12 card_valid_from:12 card_valid_until:12 card_issuer:10 card_type:12
-    """,label = _("eID card"))
-
-    box4 = """
-    box3
-    eid_panel
-    """
-    
-    def override_labels(self):
-        return dict(
-            card_number = _("number"),
-            card_valid_from = _("valid from"),
-            card_valid_until = _("valid until"),
-            card_issuer = _("issued by"),
-            card_type = _("eID card type"))
-    
-def fld2html(fld,value) :
-    if value:
-        return ("%s: " % f.verbose_name,E.b(value))
-    return []
-    
-class Clients(dd.Table):
-    model = 'pcsw.Client'
-    column_names = "name_column address_column national_id" 
-    auto_fit_column_widths = True
-    use_as_default_table = False
-    required = dd.Required(user_groups='reception')
-    detail_layout = ClientDetail()
-    editable = False
-
-    read_beid = beid.BeIdReadCardAction()
-    find_by_beid = beid.FindByBeIdAction()
-    
-    quick_event = QuickClientEvent()
-    create_note = CreateNote()
-    
-    #~ @dd.virtualfield(dd.HtmlBox())
-    #~ def eid_card(cls,self,ar):
-        #~ for fldname in 'card_number card_valid_from card_valid_until card_issuer card_type'
-        #~ fld2html()
-        
-    @dd.virtualfield(dd.HtmlBox())
-    def info(cls,self,ar):
-        lines = list(self.address_person_lines()) + list(self.address_location_lines())
-        #~ logger.info("20130805 %s", lines)
-        elems = join_elems(lines,sep=E.br) 
-        #~ logger.info("20130805 %s", elems)
-        #~ elems = []
-        #~ for ln in lines:
-            #~ if ln:   
-                #~ if len(elems): 
-                    #~ elems.append(E.br())
-                #~ elems.append(ln)
-        return E.div(*elems,style="font-size:18px;font-weigth:bold;vertical-align:bottom;text-align:middle")
     
         
 #~ class CheckinGuest(dd.ChangeStateAction,dd.NotifyingAction):
@@ -306,7 +234,7 @@ class CheckoutGuest(dd.NotifyingAction):
 cal.Guest.checkin = CheckinGuest()
 cal.Guest.checkout = CheckoutGuest()
 
-class AppointmentsByClient(dd.Table):
+class AppointmentsByGuest(dd.Table):
     label = _("Appointments")
     model = cal.Guest
     #~ detail_layout = cal.Guests.detail_layout
@@ -320,7 +248,7 @@ class AppointmentsByClient(dd.Table):
     @classmethod
     def get_request_queryset(self,ar):
         # logger.info("20121010 Clients.get_request_queryset %s",ar.param_values)
-        qs = super(AppointmentsByClient,self).get_request_queryset(ar)
+        qs = super(AppointmentsByGuest,self).get_request_queryset(ar)
         if isinstance(qs,list): return qs
         start_date = datetime.date.today() - datetime.timedelta(days=17)
         end_date = datetime.date.today() + datetime.timedelta(days=17)
@@ -398,6 +326,7 @@ class WaitingGuests(cal.Guests):
     order_by = ['waiting_since']
     #~ checkout = CheckoutGuest()
     required = dd.Required(user_groups='reception integ debts')
+    auto_fit_column_widths = True
 
     @dd.displayfield(_('Since'))
     def since(self,obj,ar):
@@ -415,8 +344,7 @@ class MyWaitingGuests(WaitingGuests):
         
     
 
-        
-    
+   
 def get_todo_tables(ar):
     yield (MyWaitingGuests, None) 
     
@@ -426,8 +354,8 @@ def setup_main_menu(site,ui,profile,m):
     m  = m.add_menu("reception",_(App.verbose_name))
     #~ m  = m.add_menu("cal",cal.MODULE_LABEL)
     #~ m.add_separator("-")
-    m.add_action(Clients,'find_by_beid')
-    m.add_action(Clients)
+    #~ m.add_action(Clients,'find_by_beid')
+    #~ m.add_action(Clients)
     m.add_action(ExpectedGuests)
     m.add_action(WaitingGuests)
     #~ m.add_action(ExpectedGuests,params=dict(param_values=dict(only_expected=True)))
