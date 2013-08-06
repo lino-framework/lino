@@ -2,12 +2,12 @@
 20130806 (Tuesday, 06 August 2013)
 ==================================
 
-New app :mod:`lino_welfare.modlib.reception`
-extends 
+New app :mod:`lino_welfare.modlib.reception` extends 
 :mod:`lino.modlib.reception`.
-No new functionality, 
-I just splitted the welfare-specific things out to welfare.
-Because I am going to add translations, and the split would be more 
+I just splitted the welfare-specific things out to :mod:`lino_welfare`
+before translating them because the split would be more 
 work afterwards.
 
-
+Miscellaneous optimizations in
+:ref:`welfare.reception.Client` and
+:ref:`welfare.reception.WaitingGuests`.
