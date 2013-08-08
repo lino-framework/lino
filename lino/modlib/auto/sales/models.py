@@ -149,7 +149,8 @@ class CreateInvoiceForPartner(dd.RowAction):
     
     label = _("Create invoice")
     help_text = _("Create invoice for this partner using invoiceable items")
-    show_in_row_actions = True
+    #~ show_in_row_actions = True
+    show_in_workflow = True
     
     def run_from_ui(self,obj,ar,**kw):
         L = list(Invoiceable.get_invoiceables_for(obj))

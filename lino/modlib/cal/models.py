@@ -104,7 +104,7 @@ from django.core.validators import MinValueValidator
 
 
 
-class Calendar(mixins.PrintableType,outbox.MailableType,dd.BabelNamed):
+class Calendar(mixins.Sequenced,mixins.PrintableType,outbox.MailableType,dd.BabelNamed):
     """
     A Calendar is a collection of events and tasks.
     There are local calendars and remote calendars.
@@ -119,6 +119,7 @@ class Calendar(mixins.PrintableType,outbox.MailableType,dd.BabelNamed):
         abstract = settings.SITE.is_abstract_model('cal.Calendar')
         verbose_name = _("Calendar")
         verbose_name_plural = _("Calendars")
+        ordering = ['seqno']
         
     type = models.CharField(_("Type"),max_length=20,
         default='local',
@@ -1133,9 +1134,9 @@ class Events(dd.Table):
     
     parameters = dd.ObservedPeriod(
         user = dd.ForeignKey(settings.SITE.user_model,
-            verbose_name=_("Responsible user"),
+            verbose_name=_("Managed by"),
             blank=True,null=True,
-            help_text=_("Only events managed by this user.")),
+            help_text=_("Only rows managed by this user.")),
         project = dd.ForeignKey(settings.SITE.project_model,
             blank=True,null=True),
         assigned_to = models.ForeignKey(settings.SITE.user_model,
@@ -1143,7 +1144,7 @@ class Events(dd.Table):
             blank=True,null=True,
             help_text=_("Only events assigned to this user.")),
         state = EventStates.field(blank=True,
-            help_text=_("Only events having this state.")),
+            help_text=_("Only rows having this state.")),
         unclear = models.BooleanField(_("Unclear events"))
     )
     
@@ -1161,18 +1162,21 @@ class Events(dd.Table):
     
     #~ next = NextDateAction() # doesn't yet work. 20121203
     
-    
     @classmethod
     def get_request_queryset(self,ar):
         #~ logger.info("20121010 Clients.get_request_queryset %s",ar.param_values)
         qs = super(Events,self).get_request_queryset(ar)
             
         if ar.param_values.user:
+            #~ if ar.param_values.assigned_to:
+                #~ qs = qs.filter(Q(assigned_to=ar.param_values.assigned_to)|Q(user=ar.param_values.user))
+            #~ else:
             qs = qs.filter(user=ar.param_values.user)
-        if settings.SITE.project_model is not None and ar.param_values.project:
-            qs = qs.filter(project=ar.param_values.project)
         if ar.param_values.assigned_to:
             qs = qs.filter(assigned_to=ar.param_values.assigned_to)
+            
+        if settings.SITE.project_model is not None and ar.param_values.project:
+            qs = qs.filter(project=ar.param_values.project)
 
         if ar.param_values.state:
             qs = qs.filter(state=ar.param_values.state)
@@ -1181,10 +1185,11 @@ class Events(dd.Table):
             qs = qs.filter(state__in=unclear_event_states)
             
         if ar.param_values.start_date:
-            if ar.param_values.end_date:
-                qs = qs.filter(start_date__gte=ar.param_values.start_date)
-            else:
-                qs = qs.filter(start_date=ar.param_values.start_date)
+            qs = qs.filter(start_date__gte=ar.param_values.start_date)
+            #~ if ar.param_values.end_date:
+                #~ qs = qs.filter(start_date__gte=ar.param_values.start_date)
+            #~ else:
+                #~ qs = qs.filter(start_date=ar.param_values.start_date)
         if ar.param_values.end_date:
             qs = qs.filter(start_date__lte=ar.param_values.end_date)
         return qs
@@ -1210,6 +1215,13 @@ class Events(dd.Table):
         if ar.param_values.assigned_to:
             yield unicode(self.parameters['assigned_to'].verbose_name) + ' ' + unicode(ar.param_values.assigned_to)
 
+    @classmethod
+    def apply_cell_format(self,ar,row,col,recno,td):
+        """
+        Enhance today by making background color a bit darker.
+        """
+        if row.start_date == datetime.date.today():
+            td.attrib.update(bgcolor="#bbbbbb")
     
 class EventsByCalendar(Events):
     master_key = 'calendar'
@@ -1245,24 +1257,35 @@ if settings.SITE.user_model:
   
     #~ class MyEvents(Events,mixins.ByUser):
     class MyEvents(Events):
-        #~ label = _("My events")
+        label = _("My events")
         help_text = _("Table of all my calendar events.")
         required = dd.required(user_groups='office')
         #~ column_names = 'start_date start_time calendar project summary workflow_buttons *'
-        column_names = 'when_text:20 calendar project summary *'
+        #~ column_names = 'when_text:20 calendar project summary *'
+        column_names = 'when_text summary workflow_buttons project'
+        
         
         @classmethod
         def param_defaults(self,ar,**kw):
             kw = super(MyEvents,self).param_defaults(ar,**kw)
             kw.update(user=ar.get_user())
+            #~ kw.update(assigned_to=ar.get_user())
+            #~ logger.info("20130807 %s %s",self,kw)
+            kw.update(start_date=datetime.date.today())
             return kw
+            
+        @classmethod
+        def create_instance(self,ar,**kw):
+            kw.update(start_date=ar.param_values.start_date)
+            return super(MyEvents,self).create_instance(ar,**kw)
+            
         
         
     class MyUnclearEvents(MyEvents):
         label = _("My unclear events")
         help_text = _("Events which probably need your attention.")
         #~ required = dd.required(user_groups='office')
-        column_names = 'when_text:20 project summary workflow_buttons *'
+        #~ column_names = 'when_text:20 project summary workflow_buttons *'
         #~ known_values = dict(assigned_to=EventStates.assigned)
         #~ master_key = 'assigned_to'
         
@@ -1274,129 +1297,50 @@ if settings.SITE.user_model:
             kw.update(end_date=datetime.date.today()+ONE_DAY)
             return kw
         
-    class EventsAssignedToMe(Events):
-        #~ label = _("Events assigned to me")
+    class MyAssignedEvents(MyEvents):
+        label = _("Events assigned to me")
         help_text = _("Table of events assigned to me.")
         #~ master_key = 'assigned_to'
         required = dd.required(user_groups='office')
-        column_names = 'when_text:20 project summary workflow_buttons *'
+        #~ column_names = 'when_text:20 project summary workflow_buttons *'
         #~ known_values = dict(assigned_to=EventStates.assigned)
         
         @classmethod
         def param_defaults(self,ar,**kw):
-            kw = super(EventsAssignedToMe,self).param_defaults(ar,**kw)
+            kw = super(MyAssignedEvents,self).param_defaults(ar,**kw)
+            kw.update(user=None)
             kw.update(assigned_to=ar.get_user())
             return kw
         
-        
-    #~ class EventsAssigned(Events):
-        #~ label = _("Assigned Events")
-        #~ help_text = _("Table of all events assigned to somebody.")
-        #~ required = dd.required(user_groups='office',user_level='manager')
-        #~ column_names = 'start_date start_time user project summary workflow_buttons *'
-        #~ # known_values = dict(state=EventStates.assigned)
-        #~ filter = models.Q(assigned_to__isnull=False)
-        
-        
-    #~ class EventsNotified(Events):
-        #~ help_text = _("Table of all notified events (waiting to become scheduled).")
-        #~ label = _("Notified Events")
-        #~ required = dd.required(user_groups='office',user_level='manager')
-        #~ column_names = 'start_date start_time user project summary workflow_buttons *'
-        #~ known_values = dict(state=EventStates.notified)
-        
-    #~ class MyEventsNotified(EventsNotified,MyEvents):
-        #~ help_text = _("Table of my notified events (waiting to become scheduled).")
-        #~ required = dd.required(user_groups='office')
-        #~ column_names = 'start_date start_time project summary workflow_buttons *'
-        #~ label = _("My notified Events")
-        
-    #~ class EventsToNotify(Events):
-        #~ """
-        #~ A list of events that need to be notified (i.e. communicated to the guests). 
-        #~ Clicking on :attr:`Event.mark_notified` 
-        #~ will remove this Event from this 
-        #~ table and make it appear 
-        #~ in :class:`MyEventsToConfirm`.
-        #~ or :class:`MyEventsConfirmed`.
-        #~ """
-        #~ help_text = _("Table of all events that need to be communicated to guests.")
-        #~ required = dict(user_level='manager',user_groups='office')
-        #~ column_names = 'start_date start_time user project summary workflow_buttons *'
-        #~ label = _("Events to notify")
-        #~ order_by = ["start_date","start_time"]
-        #~ filter = models.Q(state=EventStates.scheduled)
-        
-    #~ class MyEventsToNotify(EventsToNotify,MyEvents):
-        #~ help_text = _("Table of all my events that need to be communicated to guests.")
-        #~ required = dict(user_groups='office')
-        #~ column_names = 'start_date start_time project summary workflow_buttons *'
-        #~ label = _("My events to notify")
-        
-    #~ class EventsToSchedule(Events):
-        #~ """
-        #~ A list of events that aren't yet scheduled. 
-        #~ The user is supposed to fill at least a start_date and start_time.
-        #~ Clicking on "mark scheduled" 
-        #~ means "I made up my mind on when this event should happen"
-        #~ and will remove this Event from this 
-        #~ table and make it appear in 
-        #~ :class:`EventsToNotify` and 
-        #~ :class:`MyEventsToNotify`.
-        #~ """
-        #~ help_text = _("Table of all events that need to be scheduled.")
-        #~ label = _("Events to schedule")
-        #~ required = dict(user_groups='office',user_level='manager')
-        #~ column_names = 'start_date start_time user project summary workflow_buttons *'
-        #~ filter = models.Q(state__in=(EventStates.blank_item,EventStates.draft))
-        
-    #~ class MyEventsToSchedule(EventsToSchedule,MyEvents):
-        #~ help_text = _("Table of all my events that need to be scheduled.")
-        #~ required = dict(user_groups='office')
-        #~ column_names = 'start_date start_time project summary workflow_buttons *'
-        #~ label = _("My events to schedule")
-        
-    #~ class EventsToConfirm(MyEvents):
-        #~ """
-        #~ A list of events that need to be confirmed
-        #~ (i.e. the user made sure that the guests received 
-        #~ their notification and plan to attend to the event). 
-        #~ """
-        #~ help_text = _("Table of all events that are waiting for confirmation from guests.")
-        #~ required = dict(user_level='manager',user_groups='office')
-        #~ column_names = 'start_date start_time project user summary workflow_buttons *'
-        #~ label = _("Events to confirm")
-        #~ order_by = ["start_date","start_time"]
-        #~ filter = models.Q(state=EventStates.scheduled)
-        
-    #~ class MyEventsToConfirm(EventsToConfirm):
-        #~ help_text = _("Table of all my events that are waiting for confirmation from guests.")
-        #~ required = dict(user_groups='office')
-        #~ label = _("My events to confirm")
-        #~ column_names = 'start_date start_time project summary workflow_buttons *'
-        
-    class MyEventsToday(MyEvents):
+    class unused_MyEventsToday(MyEvents):
         required = dd.required(user_groups='office')
         help_text = _("Table of my events per day.")
-        column_names = 'start_time summary workflow_buttons *'
+        column_names = 'when_text summary workflow_buttons project'
         label = _("My events today")
-        order_by = ['start_time']
+        #~ order_by = ['start_date', 'start_time']
         
-        parameters = dict(
-          date = models.DateField(_("Date"),
-          blank=True,default=datetime.date.today),
-        )
-        @classmethod
-        def get_request_queryset(self,ar):
-            qs = super(MyEventsToday,self).get_request_queryset(ar)
-            #~ if ar.param_values.date:
-            return qs.filter(start_date=ar.param_values.date)
-            #~ return qs
+        #~ @classmethod
+        #~ def param_defaults(self,ar,**kw):
+            #~ kw = super(MyEventsToday,self).param_defaults(ar,**kw)
+            #~ today = datetime.date.today()
+            #~ kw.update(start_date=today)
+            #~ # kw.update(end_date=today)
+            #~ # logger.info("20130807 %s %s",self,kw)
+            #~ return kw
             
-        @classmethod
-        def create_instance(self,ar,**kw):
-            kw.update(start_date=ar.param_values.date)
-            return super(MyEventsToday,self).create_instance(ar,**kw)
+        #~ parameters = dict(
+          #~ date = models.DateField(_("Date"),
+          #~ blank=True,default=datetime.date.today),
+        #~ )
+        #~ @classmethod
+        #~ def get_request_queryset(self,ar):
+            #~ qs = super(MyEventsToday,self).get_request_queryset(ar)
+            #~ return qs.filter(start_date=ar.param_values.date)
+            
+        #~ @classmethod
+        #~ def create_instance(self,ar,**kw):
+            #~ kw.update(start_date=ar.param_values.date)
+            #~ return super(MyEventsToday,self).create_instance(ar,**kw)
 
         #~ @classmethod
         #~ def setup_request(self,rr):
@@ -1506,6 +1450,73 @@ class Tasks(dd.Table):
     user project
     """,window_size=(50,'auto'))
     
+    
+    params_panel_hidden = True
+    
+    parameters = dd.ObservedPeriod(
+        user = dd.ForeignKey(settings.SITE.user_model,
+            verbose_name=_("Managed by"),
+            blank=True,null=True,
+            help_text=_("Only rows managed by this user.")),
+        project = dd.ForeignKey(settings.SITE.project_model,
+            blank=True,null=True),
+        state = TaskStates.field(blank=True,
+            help_text=_("Only rows having this state.")),
+    )
+    
+    params_layout = """
+    start_date end_date user state project
+    """
+
+    @classmethod
+    def get_request_queryset(self,ar):
+        #~ logger.info("20121010 Clients.get_request_queryset %s",ar.param_values)
+        qs = super(Tasks,self).get_request_queryset(ar)
+            
+        if ar.param_values.user:
+            qs = qs.filter(user=ar.param_values.user)
+            
+        if settings.SITE.project_model is not None and ar.param_values.project:
+            qs = qs.filter(project=ar.param_values.project)
+
+        if ar.param_values.state:
+            qs = qs.filter(state=ar.param_values.state)
+            
+        if ar.param_values.start_date:
+            qs = qs.filter(start_date__gte=ar.param_values.start_date)
+        if ar.param_values.end_date:
+            qs = qs.filter(start_date__lte=ar.param_values.end_date)
+        return qs
+        
+    @classmethod
+    def get_title_tags(self,ar):
+        for t in super(Tasks,self).get_title_tags(ar):
+            yield t
+        if ar.param_values.start_date or ar.param_values.end_date:
+            yield unicode(_("Dates %(min)s to %(max)s") % dict(
+              min=ar.param_values.start_date or'...',
+              max=ar.param_values.end_date or '...'))
+              
+        if ar.param_values.state:
+            yield unicode(ar.param_values.state)
+            
+        if ar.param_values.user:
+            yield unicode(ar.param_values.user)
+            
+        if settings.SITE.project_model is not None and ar.param_values.project:
+            yield unicode(ar.param_values.project)
+            
+
+    @classmethod
+    def apply_cell_format(self,ar,row,col,recno,td):
+        """
+        Enhance today by making background color a bit darker.
+        """
+        if row.start_date == datetime.date.today():
+            td.attrib.update(bgcolor="gold")
+    
+    
+    
 class TasksByController(Tasks):
     master_key = 'owner'
     required = dd.required(user_groups='office')
@@ -1527,13 +1538,24 @@ if settings.SITE.user_model:
         #~ order_by = ["start_date"]
         #~ filter = Q(auto_type__isnull=False)
         
-    class MyTasks(Tasks,mixins.ByUser):
+    class MyTasks(Tasks):
+        label = _("My tasks")
         required = dd.required(user_groups='office')
         #~ required = dict()
         help_text = _("Table of all my tasks.")
-        column_names = 'start_date summary workflow_buttons *'
+        column_names = 'start_date summary workflow_buttons project'
+        params_panel_hidden = True
+        
+        @classmethod
+        def param_defaults(self,ar,**kw):
+            kw = super(MyTasks,self).param_defaults(ar,**kw)
+            kw.update(user=ar.get_user())
+            kw.update(state=TaskStates.todo)
+            kw.update(start_date=datetime.date.today())
+            return kw
+            
     
-    class MyTasksToDo(MyTasks):
+    class unused_MyTasksToDo(MyTasks):
         help_text = _("Table of my tasks marked 'to do'.")
         column_names = 'start_date summary workflow_buttons *'
         label = _("To-do list")
@@ -1621,7 +1643,7 @@ class Guest(mixins.TypedPrintable,outbox.Mailable):
         
     @dd.displayfield(_("Event"))
     def event_summary(self,ar):
-        return ar.href_to(self.event,event_summary(self.event,ar.get_user()))
+        return ar.href_to(self.event,settings.SITE.get_event_summary(self.event,ar.get_user()))
         #~ return event_summary(self.event,ar.get_user())
         
     #~ def before_ui_save(self,ar,**kw):
@@ -1673,23 +1695,28 @@ class Guests(dd.Table):
         user = dd.ForeignKey(settings.SITE.user_model,
             verbose_name=_("Responsible user"),
             blank=True,null=True,
-            help_text=_("Only events managed by this user.")),
+            help_text=_("Only rows managed by this user.")),
         project = dd.ForeignKey(settings.SITE.project_model,
+            blank=True,null=True),
+        partner = dd.ForeignKey('contacts.Partner',
             blank=True,null=True),
         event_state = EventStates.field(blank=True,
             verbose_name=_("Event state"),
-            help_text=_("Only events having this state.")),
+            help_text=_("Only rows having this event state.")),
         guest_state = GuestStates.field(blank=True,
             verbose_name=_("Guest state"),
-            help_text=_("Only guests having this state.")),
+            help_text=_("Only rows having this guest state.")),
     )
     
-    params_layout = "start_date end_date user event_state guest_state project"
+    params_layout = """start_date end_date user event_state guest_state
+    project partner"""
     
     @classmethod
     def get_request_queryset(self,ar):
         #~ logger.info("20121010 Clients.get_request_queryset %s",ar.param_values)
         qs = super(Guests,self).get_request_queryset(ar)
+        
+        if isinstance(qs,list): return qs
             
         if ar.param_values.user:
             qs = qs.filter(event__user=ar.param_values.user)
@@ -1701,6 +1728,9 @@ class Guests(dd.Table):
             
         if ar.param_values.guest_state:
             qs = qs.filter(state=ar.param_values.guest_state)
+            
+        if ar.param_values.partner:
+            qs = qs.filter(partner=ar.param_values.partner)
             
         if ar.param_values.start_date:
             if ar.param_values.end_date:
@@ -1722,6 +1752,9 @@ class Guests(dd.Table):
               
         if ar.param_values.event_state:
             yield unicode(ar.param_values.event_state)
+            
+        if ar.param_values.partner:
+            yield unicode(ar.param_values.partner)
             
         if ar.param_values.guest_state:
             yield unicode(ar.param_values.guest_state)
@@ -1747,30 +1780,69 @@ class GuestsByRole(Guests):
 
 if settings.SITE.is_installed('contacts'):
   
-  class GuestsByPartner(Guests):
-      label = _("Presences")
-      master_key = 'partner'
-      required = dd.required(user_groups='office')
-      column_names = 'event__when_text workflow_buttons'
-      auto_fit_column_widths = True
-
-  class MyPresences(GuestsByPartner):
-      required = dd.required(user_groups='office')
-      order_by = ['event__start_date','event__start_time']
-      label = _("My presences")
-      help_text = _("""Shows all my presences in calendar events, independently of their state.""")
-      column_names = 'event__start_date event__start_time event_summary role workflow_buttons remark *'
+    class GuestsByPartner(Guests):
+        label = _("Presences")
+        master_key = 'partner'
+        required = dd.required(user_groups='office')
+        column_names = 'event__when_text workflow_buttons'
+        auto_fit_column_widths = True
+  
+    class MyPresences(Guests):
+        required = dd.required(user_groups='office')
+        order_by = ['event__start_date','event__start_time']
+        label = _("My presences")
+        help_text = _("""Shows all my presences in calendar events, independently of their state.""")
+        column_names = 'event__start_date event__start_time event_summary role workflow_buttons remark *'
+        
+        @classmethod
+        def param_defaults(self,ar,**kw):
+            kw = super(MyPresences,self).param_defaults(ar,**kw)
+            kw.update(partner=ar.get_user().partner)
+            kw.update(guest_state=GuestStates.invited)
+            kw.update(start_date=datetime.date.today())
+            return kw
+              
+        #~ @classmethod
+        #~ def get_request_queryset(self,ar):
+            #~ ar.master_instance = ar.get_user().partner
+            #~ return super(MyPresences,self).get_request_queryset(ar)
+            
+        
+    #~ class MyPendingInvitations(MyPresences):
+    class MyPendingPresences(MyPresences):
+        label = _("My pending presences")
+        help_text = _("""Received invitations which I must accept or reject.""")
+        #~ filter = models.Q(state=GuestStates.invited)
+        column_names = 'event__when_text role workflow_buttons remark'
+        
+        @classmethod
+        def param_defaults(self,ar,**kw):
+            kw = super(MyPendingPresences,self).param_defaults(ar,**kw)
+            kw.update(partner=ar.get_user().partner)
+            kw.update(user=ar.get_user())
+            kw.update(guest_state=GuestStates.invited)
+            #~ kw.update(start_date=datetime.date.today())
+            return kw
+            
+              
+    class MyGuests(Guests):
+        required = dd.required(user_groups='office')
+        order_by = ['event__start_date','event__start_time']
+        label = _("My guests")
+        column_names = 'event__start_date event__start_time event_summary role workflow_buttons remark *'
+        
+        @classmethod
+        def param_defaults(self,ar,**kw):
+            kw = super(MyGuests,self).param_defaults(ar,**kw)
+            kw.update(user=ar.get_user())
+            kw.update(guest_state=GuestStates.invited)
+            kw.update(start_date=datetime.date.today())
+            return kw
+              
+        
       
-      @classmethod
-      def get_request_queryset(self,ar):
-          ar.master_instance = ar.get_user().partner
-          return super(MyPresences,self).get_request_queryset(ar)
+      
           
-      
-  class MyPendingInvitations(MyPresences):
-      help_text = _("""Shows received invitations which I must accept or reject.""")
-      label = _("My received invitations")
-      filter = models.Q(state=GuestStates.invited)
     
 #~ class MySentInvitations(Guests):
     #~ help_text = _("""Shows invitations which I sent accept or reject.""")
@@ -2091,18 +2163,24 @@ if settings.SITE.use_extensible:
         
       
         @classmethod
+        def get_title_tags(self,ar):
+            for t in super(PanelEvents,self).get_title_tags(ar):
+                yield t
+            if ar.subst_user:
+                yield unicode(ar.subst_user)
+                
+        @classmethod
         def parse_req(self,request,rqdata,**kw):
-            #~ logger.info('20120710 %s', request.GET[requests.URL_PARAM_TEAM_VIEW])
           
             #~ filter = kw.get('filter',{})
             assert not kw.has_key('filter')
             fkw = {}
             #~ logger.info("20120118 filter is %r", filter)
-            endDate = rqdata.get('ed',None)
+            endDate = rqdata.get(constants.URL_PARAM_END_DATE,None)
             if endDate:
                 d = parsedate(endDate)
                 fkw.update(start_date__lte=d)
-            startDate = rqdata.get('sd',None)
+            startDate = rqdata.get(constants.URL_PARAM_START_DATE,None)
             if startDate:
                 d = parsedate(startDate)
                 #~ logger.info("startDate is %r", d)
@@ -2112,10 +2190,11 @@ if settings.SITE.use_extensible:
             #~ subs = Subscription.objects.filter(user=request.user).values_list('calendar__id',flat=True)
             #~ filter.update(calendar__id__in=subs)
             
-            filter = models.Q(**fkw)
+            flt = models.Q(**fkw)
             
             # who am i ?
             me = request.subst_user or request.user
+            
             
             """
             If you override `parse_req`, then keep in mind that it will
@@ -2129,7 +2208,7 @@ if settings.SITE.use_extensible:
                     _("As %s you have no permission to run this action.") % me.profile)
                 
                 
-            # show al my events
+            # show all my events
             for_me = models.Q(user=me)
             
             # also show events to which i am invited
@@ -2149,9 +2228,10 @@ if settings.SITE.use_extensible:
                 #~ team_ids = Membership.objects.filter(user=me).values_list('watched_user__id',flat=True)
                 #~ for_me = for_me | models.Q(user__id__in=team_ids,access_class__in=team_classes)
                 for_me = for_me | models.Q(user__in=we,access_class__in=team_classes)
-            filter = filter & for_me
-            #~ logger.info('20120710 %s', filter)
-            kw.update(filter=filter)
+            flt = flt & for_me
+            #~ logger.info('20120710 %s', flt)
+            kw.update(filter=flt)
+            logger.info('20130808 %s %s', tv,me)
             return kw
             
         #~ @classmethod
@@ -2159,82 +2239,88 @@ if settings.SITE.use_extensible:
             #~ qs = super(PanelEvents,self).get_request_queryset(ar)
             #~ return qs
             
+        @classmethod
+        def create_instance(self,ar,**kw):
+            obj = super(PanelEvents,self).create_instance(ar,**kw)
+            if ar.current_project is not None:
+                obj.project = settings.SITE.project_model.objects.get(pk=ar.current_project)
+            return obj
             
 
-
+if False:
     
-def reminders_as_html_old(ar,days_back=None,days_forward=None,**kw):
-    s = '<div class="htmlText" style="margin:5px">%s</div>' % reminders_as_html(ar,days_back=None,days_forward=None,**kw)
-    return s
-    
-def reminders_as_html(ar,days_back=None,days_forward=None,**kw):
-    """
-    Return a HTML summary of all open reminders for this user.
-    """
-    user = ar.get_user()
-    if not user.profile.authenticated: return ''
-    today = datetime.date.today()
-    
-    past = {}
-    future = {}
-    def add(cmp):
-        if cmp.start_date < today:
-            lookup = past
-        else:
-            lookup = future
-        day = lookup.get(cmp.start_date,None)
-        if day is None:
-            day = [cmp]
-            lookup[cmp.start_date] = day
-        else:
-            day.append(cmp)
+    def reminders_as_html_old(ar,days_back=None,days_forward=None,**kw):
+        s = '<div class="htmlText" style="margin:5px">%s</div>' % reminders_as_html(ar,days_back=None,days_forward=None,**kw)
+        return s
+        
+    def reminders_as_html(ar,days_back=None,days_forward=None,**kw):
+        """
+        Return a HTML summary of all open reminders for this user.
+        """
+        user = ar.get_user()
+        if not user.profile.authenticated: return ''
+        today = datetime.date.today()
+        
+        past = {}
+        future = {}
+        def add(cmp):
+            if cmp.start_date < today:
+                lookup = past
+            else:
+                lookup = future
+            day = lookup.get(cmp.start_date,None)
+            if day is None:
+                day = [cmp]
+                lookup[cmp.start_date] = day
+            else:
+                day.append(cmp)
+                
+        flt = models.Q()
+        if days_back is not None:
+            flt = flt & models.Q(start_date__gte = today - datetime.timedelta(days=days_back))
+        if days_forward is not None:
+            flt = flt & models.Q(start_date__lte=today + datetime.timedelta(days=days_forward))
+        
+        events = ar.spawn(MyEvents,
+            user=user,
+            filter=flt & (models.Q(state=None) | models.Q(state__lte=EventStates.scheduled)))
+        tasks = ar.spawn(MyTasks,
+            user=user,
+            filter=flt & models.Q(state__in=[None,TaskStates.todo]))
+        
+        for o in events:
+            o._detail_action = MyEvents.get_url_action('detail_action')
+            add(o)
             
-    flt = models.Q()
-    if days_back is not None:
-        flt = flt & models.Q(start_date__gte = today - datetime.timedelta(days=days_back))
-    if days_forward is not None:
-        flt = flt & models.Q(start_date__lte=today + datetime.timedelta(days=days_forward))
-    
-    events = ar.spawn(MyEvents,
-        user=user,
-        filter=flt & (models.Q(state=None) | models.Q(state__lte=EventStates.scheduled)))
-    tasks = ar.spawn(MyTasks,
-        user=user,
-        filter=flt & models.Q(state__in=[None,TaskStates.todo]))
-    
-    for o in events:
-        o._detail_action = MyEvents.get_url_action('detail_action')
-        add(o)
-        
-    for o in tasks:
-        o._detail_action = MyTasks.get_url_action('detail_action')
-        add(o)
-        
-    def loop(lookup,reverse):
-        sorted_days = lookup.keys()
-        sorted_days.sort()
-        if reverse: 
-            sorted_days.reverse()
-        for day in sorted_days:
-            #~ yield E.h3(dtosl(day))
-            yield '<h3>'+dtosl(day) + '</h3>'
-            yield dd.summary(ar,lookup[day],**kw)
+        for o in tasks:
+            o._detail_action = MyTasks.get_url_action('detail_action')
+            add(o)
             
-    #~ if days_back is not None:
-        #~ return loop(past,True)
-    #~ else:
-        #~ return loop(future,False)
+        def loop(lookup,reverse):
+            sorted_days = lookup.keys()
+            sorted_days.sort()
+            if reverse: 
+                sorted_days.reverse()
+            for day in sorted_days:
+                #~ yield E.h3(dtosl(day))
+                yield '<h3>'+dtosl(day) + '</h3>'
+                yield dd.summary(ar,lookup[day],**kw)
+                
+        #~ if days_back is not None:
+            #~ return loop(past,True)
+        #~ else:
+            #~ return loop(future,False)
+            
+        if days_back is not None:
+            s = ''.join([chunk for chunk in loop(past,True)])
+        else:
+            s = ''.join([chunk for chunk in loop(future,False)])
+            
+        #~ s = '<div class="htmlText" style="margin:5px">%s</div>' % s
+        return s
         
-    if days_back is not None:
-        s = ''.join([chunk for chunk in loop(past,True)])
-    else:
-        s = ''.join([chunk for chunk in loop(future,False)])
         
-    #~ s = '<div class="htmlText" style="margin:5px">%s</div>' % s
-    return s
-    
-    
-settings.SITE.reminders_as_html = reminders_as_html
+    settings.SITE.reminders_as_html = reminders_as_html
     
 def update_reminders(user):
     n = 0 
@@ -2275,30 +2361,32 @@ class UpdateReminders(actions.RowAction):
 
 system = dd.resolve_app('system')
 
-class Home(system.Home):
-    """
-    Deserves better documentation.
-    """
-    #~ debug_permissions = True 
+if False:
 
-    label = system.Home.label
-    app_label = 'lino'
-    detail_layout = """
-    quick_links:80x1
-    welcome
-    coming_reminders:40x16 missed_reminders:40x16
-    """
-    
-    @dd.virtualfield(dd.HtmlBox(_('Upcoming reminders')))
-    def coming_reminders(cls,self,ar):
-        return reminders_as_html(ar,days_forward=30,
-            max_items=10,before='<ul><li>',separator='</li><li>',after="</li></ul>")
+    class Home(system.Home):
+        """
+        Deserves better documentation.
+        """
+        #~ debug_permissions = True 
 
-    @dd.virtualfield(dd.HtmlBox(_('Missed reminders')))
-    def missed_reminders(cls,self,ar):
-        return reminders_as_html(ar,days_back=90,
-          max_items=10,before='<ul><li>',separator='</li><li>',after="</li></ul>")
-          
+        label = system.Home.label
+        app_label = 'lino'
+        detail_layout = """
+        quick_links:80x1
+        welcome
+        coming_reminders:40x16 missed_reminders:40x16
+        """
+        
+        @dd.virtualfield(dd.HtmlBox(_('Upcoming reminders')))
+        def coming_reminders(cls,self,ar):
+            return reminders_as_html(ar,days_forward=30,
+                max_items=10,before='<ul><li>',separator='</li><li>',after="</li></ul>")
+
+        @dd.virtualfield(dd.HtmlBox(_('Missed reminders')))
+        def missed_reminders(cls,self,ar):
+            return reminders_as_html(ar,days_back=90,
+              max_items=10,before='<ul><li>',separator='</li><li>',after="</li></ul>")
+              
           
 
 
@@ -2396,18 +2484,14 @@ def setup_main_menu(site,ui,profile,m):
     #~ m.add_action(EventsToNotify)
     #~ m.add_action(EventsToConfirm)
     
-    m.add_separator('-')
+    #~ m.add_separator('-')
     #~ m  = m.add_menu("tasks",_("Tasks"))
     m.add_action(MyTasks)
-    m.add_action(MyTasksToDo)
+    #~ m.add_action(MyTasksToDo)
     
+    m.add_action(MyGuests)
     
-    if True: # user.partner:
-        m.add_separator('-')
-        m.add_action(MyPresences)
-        m.add_action(MyPendingInvitations)
-    #~ m.add_action(MySentInvitations)
-    #~ m.add_action(MyPendingSentInvitations)
+    m.add_action(MyPresences)
     
   
 #~ def setup_master_menu(site,ui,profile,m): 
@@ -2452,11 +2536,13 @@ def setup_quicklinks(site,ar,m):
     #~ MyEventsNotified
     
 def get_todo_tables(ar):
+    yield (MyAssignedEvents, _("%d events assigned.")) 
     yield (MyUnclearEvents, _("%d unclear events approaching.")) # "%d unklare Termine kommen näher"
-    yield (MyPendingInvitations, _("%d invitations are waiting for your answer."))
-    yield (MyTasksToDo,_("%d tasks to do"))
+    yield (MyPendingPresences, _("%d invitations are waiting for your answer."))
+    #~ yield (MyGuests, _("%d invitations are waiting for your answer."))
+    #~ yield (MyTasksToDo,_("%d tasks to do"))
     #~ yield (MyEventsNotified,_("%d notified events"))
-    yield (EventsAssignedToMe,_("%d events assigned to you"))
+    #~ yield (EventsAssignedToMe,_("%d events assigned to you"))
     
 
 #~ dd.add_user_group('office',MODULE_LABEL)

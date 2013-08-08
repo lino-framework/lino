@@ -413,6 +413,7 @@ class Person(PersonMixin,Partner):
         abstract = settings.SITE.is_abstract_model('contacts.Person')
         verbose_name = _("Person")
         verbose_name_plural = _("Persons")
+        ordering = ['last_name','first_name']
 
     def address_person_lines(self,*args,**kw):
         "Deserves more documentation."

@@ -77,8 +77,8 @@ from lino.utils.xmlgen import html as xghtml
 from lino.utils.xmlgen.html import E
 from lino.utils.config import make_dummy_messages_file
 
-from lino.utils.jscompressor import JSCompressor
 if False:
+    from lino.utils.jscompressor import JSCompressor
     jscompress = JSCompressor().compress
 else:    
     def jscompress(s): return s
@@ -125,11 +125,6 @@ class ExtRenderer(HtmlRenderer):
     def __init__(self,ui):
         HtmlRenderer.__init__(self,ui)
         jsgen.register_converter(self.py2js_converter)
-        
-        
-    def show(self,ar,*args,**kw):
-        return ar.table2xhtml()
-        #~ return E.tostring(ar.table2xhtml())
         
         
         
@@ -272,7 +267,7 @@ class ExtRenderer(HtmlRenderer):
         if AFTER_20130725:
             #~ url = 'javascript:%s(%s)' % (ba.get_panel_btn_handler(),py2js(rp))
             #~ url = 'javascript:' + ba.get_js_call(request,obj)
-            url = 'javascript:' + self.action_call_on_instance(obj,request,ba)
+            url = 'javascript:' + self.action_call_on_instance(obj,request,ba,**kw)
         else:
             if request is None:
                 rp = None
@@ -280,12 +275,12 @@ class ExtRenderer(HtmlRenderer):
                 rp = request.requesting_panel
             url = 'javascript:Lino.%s(%s,%s)' % (
                     ba.full_name(),py2js(rp),py2js(obj.pk))
-        return self.href_button_action(ba,url,label,title or ba.action.help_text,**kw)
+        return self.href_button_action(ba,url,label,title or ba.action.help_text)
         #~ if a.action.help_text:
             #~ return self.href_button(url,label,a.action.help_text)
         #~ return self.href_button(url,label)
         
-    def action_call_on_instance(self,obj,request,ba):
+    def action_call_on_instance(self,obj,request,ba,**st):
         if request is None:
             rp = None
         else:
@@ -294,12 +289,12 @@ class ExtRenderer(HtmlRenderer):
         if ba.action.opens_a_window or ba.action.parameters:
             ar = ba.request(request=request)
             #~ after_show = ar.get_status(settings.SITE.ui)
-            after_show = self.get_action_status(ar,ba,obj)
-            after_show.update(record_id=obj.pk)
+            st.update(self.get_action_status(ar,ba,obj))
+            st.update(record_id=obj.pk)
             return "Lino.%s.run(%s,%s)" % (
               ba.full_name(),
               py2js(rp),
-              py2js(after_show))
+              py2js(st))
         return "Lino.%s(%s,%s)" % (ba.full_name(),py2js(rp),py2js(obj.pk))
         
     def action_call(self,request,bound_action,after_show):
@@ -335,6 +330,10 @@ class ExtRenderer(HtmlRenderer):
         h += ")"
         return h 
         
+    def row_action_handler(self,ba,obj,ar=None):
+        if ar is None or ba.get_bound_action_permission(ar,obj,None):
+            return self.action_call(None,ba,dict(record_id=obj.pk))
+            
     def instance_handler(self,ar,obj):
         a = getattr(obj,'_detail_action',None)
         if a is None:
@@ -1548,7 +1547,8 @@ tinymce.init({
         yield "Lino.%s = new Lino.WindowAction(%s,function(){" % (action.full_name(),py2js(windowConfig))
         #~ yield "  console.log('20120625 fn');" 
         if isinstance(action.action,CalendarAction):
-            yield "  return Lino.calendar_app.get_main_panel();"
+            #~ yield "  return Lino.calendar_app.get_main_panel();"
+            yield "  return Lino.CalendarApp().get_main_panel();"
         else:
             p = dict()
             if action.action is settings.SITE.get_main_action(profile):

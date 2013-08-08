@@ -142,6 +142,7 @@ class BaseRequest(object):
         kw.update(user=request.user)
         kw.update(subst_user=request.subst_user)
         kw.update(requesting_panel=request.requesting_panel)
+        kw.update(current_project=rqdata.get(ext_requests.URL_PARAM_PROJECT,None))
         #~ if settings.SITE.user_model:
             #~ username = rqdata.get(ext_requests.URL_PARAM_SUBST_USER,None)
             #~ if username:
@@ -155,10 +156,12 @@ class BaseRequest(object):
     def setup(self,
             user=None,
             subst_user=None,
+            current_project=None,
             requesting_panel=None,
             renderer=None):
         self.requesting_panel = requesting_panel
         self.user = user 
+        self.current_project = current_project
         if renderer is not None:
             self.renderer = renderer
         #~ if self.actor.parameters:
@@ -248,7 +251,8 @@ class BaseRequest(object):
     def spawn(self,spec,language=None,**kw):
         """
         Create a new ActionRequest, taking an "action specificator" 
-        and using default values from this one (via :meth:setup_from`).
+        and using default values from this one.
+        
         """
         if isinstance(spec,ActionRequest):
             for k,v in kw.items():
@@ -257,15 +261,18 @@ class BaseRequest(object):
             #~ if kw:
                 #~ ar = ar.spawn(**kw)
                 #~ raise Exception(20130327)
+            spec.setup_from(self)
         else:
             from lino.core.menus import create_item
             mi = create_item(spec)
             #~ print 20130425, __file__, mi.bound_action
+            kw.setdefault('user',self.user)
+            kw.setdefault('subst_user',self.subst_user)
+            kw.setdefault('renderer',self.renderer)
+            kw.setdefault('requesting_panel',self.requesting_panel)
             spec = mi.bound_action.request(**kw)
-        spec.setup_from(self)
         if language:
             spec.set_language(language)
-        
         #~ ar.user = self.user
         #~ ar.subst_user = self.subst_user
         #~ ar.renderer = self.renderer
@@ -273,22 +280,6 @@ class BaseRequest(object):
         
         
 
-    def old_spawn(self,actor,*args,**kw):
-        """
-        Create a new ActionRequest, taking default values from this one.
-        """
-        kw.setdefault('user',self.user)
-        kw.setdefault('subst_user',self.subst_user)
-        kw.setdefault('requesting_panel',self.requesting_panel)
-        kw.setdefault('renderer',self.renderer)
-        #~ kw.setdefault('request',self.request) 
-        # removed 20120702 because i don't want to inherit quick_search from spawning request
-        # and because i couldn't remember why 'request' was passed to the spawned request.
-        #~ return self.ui.request(actor,**kw)
-        return actor.request(*args,**kw)
-        
-    #~ def show(self,*args,**kw):
-        #~ print self.to_rst(*args,**kw)
         
     def run(self,ia,*args,**kw):
         return ia.run_from_session(self,*args,**kw)
@@ -296,11 +287,10 @@ class BaseRequest(object):
     def set_language(self,*args):
         set_language(*args)
         
-        
     def show(self,spec,column_names=None,**kw):
         ar = self.spawn(spec,**kw)
         #~ print ar.to_rst(column_names)
-        return ar.renderer.show(ar,column_names)
+        return ar.renderer.show(ar,column_names=column_names)
         
     def summary_row(self,obj,**kw):
         return obj.summary_row(self,**kw)
@@ -515,6 +505,8 @@ class ActionRequest(BaseRequest):
             kw.update(param_values=self.actor.params_layout.params_store.pv2dict(ui,self.param_values))
             
         bp = kw.setdefault('base_params',{})
+        if self.current_project is not None:
+            bp[ext_requests.URL_PARAM_PROJECT] = self.current_project
         if self.subst_user is not None:
             #~ bp[ext_requests.URL_PARAM_SUBST_USER] = self.subst_user.username
             bp[ext_requests.URL_PARAM_SUBST_USER] = self.subst_user.id

@@ -62,6 +62,10 @@ dd.inject_field('cal.Guest','waiting_since',
 dd.inject_field('cal.Guest','waiting_until',
     models.DateTimeField(_("Waiting until"),
     editable=False,blank=True,null=True,
+    help_text = _("Time when the visitor was received by agent.")))
+dd.inject_field('cal.Guest','present_until',
+    models.DateTimeField(_("Present until"),
+    editable=False,blank=True,null=True,
     help_text = _("Time when the visitor left (checked out).")))
     
 
@@ -81,8 +85,8 @@ dd.inject_field('system.SiteConfig','client_calender',
     
 class CreateGuestEvent(dd.RowAction): 
     label = _("Appointment")
-    #~ show_in_workflow = True
-    show_in_row_actions = True
+    show_in_workflow = True
+    #~ show_in_row_actions = True
     parameters = dict(
         #~ date=models.DateField(_("Date"),blank=True,null=True),
         user=dd.ForeignKey(settings.SITE.user_model),
@@ -129,8 +133,8 @@ class CreateGuestEvent(dd.RowAction):
     
 class CreateNote(dd.RowAction): 
     label = _("Attestation")
-    #~ show_in_workflow = True
-    show_in_row_actions = True
+    show_in_workflow = True
+    #~ show_in_row_actions = True
     parameters = dict(
         #~ date=models.DateField(_("Date"),blank=True,null=True),
         note_type=dd.ForeignKey('notes.NoteType'),
@@ -158,7 +162,6 @@ class CreateNote(dd.RowAction):
 
     
         
-#~ class CheckinGuest(dd.ChangeStateAction,dd.NotifyingAction):
 class CheckinGuest(dd.NotifyingAction):
     label = _("Checkin")
     help_text = _("Mark this guest as arrived")
@@ -199,10 +202,62 @@ class CheckinGuest(dd.NotifyingAction):
         return doit()
         
     
-#~ class CheckoutGuest(dd.ChangeStateAction,dd.NotifyingAction):
+#~ class ReceiveGuest(dd.NotifyingAction):
+class ReceiveGuest(dd.RowAction):
+    label = _("Receive")
+    help_text = _("Guest was received by agent")
+    show_in_workflow = True
+    
+    #~ required = dict(states='waiting')
+    
+    def get_action_permission(self,ar,obj,state):
+        if obj.waiting_since is None:
+            return False
+        if obj.waiting_until is not None:
+            return False
+        if obj.present_until is not None:
+            return False
+        if obj.event.start_date != datetime.date.today():
+            return False
+        return super(ReceiveGuest,self).get_action_permission(ar,obj,state)
+    
+    #~ def get_notify_subject(self,ar,obj):
+        #~ return _("%(partner)s received by %(user)s") % dict(
+            #~ event=obj,
+            #~ user=obj.event.user,
+            #~ partner=obj.partner)
+     
+    #~ def before_row_save(self,row,ar):
+        #~ row.waiting_until = datetime.datetime.now()
+    
+    def run_from_ui(self,obj,ar,**kw):
+        def ok():
+            obj.waiting_until = datetime.datetime.now()
+            obj.save()
+            kw = super(ReceiveGuest,self).run_from_ui(obj,ar,**kw)
+            kw.update(refresh=True)
+            return kw
+        return ar.confirm(ok,
+            _("%(user)s receives %(guest)s.") % 
+            dict(user=obj.event.user,guest=obj.partner),_("Are you sure?"))
+        #~ return kw
+        
+        
+"""
+
+What                     waiting_since   waiting_until  present_until
+Guest checks in          X
+Agent receives the guest X               X
+Guest leaves             X               X              X
+
+
+
+
+"""        
+
 class CheckoutGuest(dd.NotifyingAction):
     label = _("Checkout")
-    help_text = _("Guest left from reception queue")
+    help_text = _("Guest left the centre")
     show_in_workflow = True
     
     #~ required = dict(states='waiting')
@@ -226,12 +281,15 @@ class CheckoutGuest(dd.NotifyingAction):
         #~ row.waiting_until = datetime.datetime.now()
     
     def run_from_ui(self,obj,ar,**kw):
-        obj.waiting_until = datetime.datetime.now()
+        if obj.waiting_until is None:
+            obj.waiting_until = datetime.datetime.now()
+        obj.present_until = datetime.datetime.now()
         obj.save()
         kw = super(CheckoutGuest,self).run_from_ui(obj,ar,**kw)
         return kw
         
 cal.Guest.checkin = CheckinGuest()
+cal.Guest.receive = ReceiveGuest()
 cal.Guest.checkout = CheckoutGuest()
 
 class AppointmentsByGuest(dd.Table):
@@ -239,8 +297,8 @@ class AppointmentsByGuest(dd.Table):
     model = cal.Guest
     #~ detail_layout = cal.Guests.detail_layout
     master_key = 'partner'
-    #~ column_names = 'event__start_date event__user action_buttons'
-    column_names = 'event__when_text event__user action_buttons'
+    #~ column_names = 'event__start_date event__user workflow_buttons'
+    column_names = 'event__when_text event__user workflow_buttons'
     #~ slave_grid_format = 'html'
     editable = False
     auto_fit_column_widths = True
@@ -301,7 +359,7 @@ class ExpectedGuests(cal.Guests):
     filter = Q(waiting_since__isnull=True,
         state__in=[GuestStates.invited,GuestStates.accepted]
         )
-    column_names = 'partner event__user event__summary action_buttons waiting_since waiting_until'
+    column_names = 'partner event__user event__summary workflow_buttons waiting_since waiting_until'
     hidden_columns = 'waiting_since waiting_until'
     #~ checkin = CheckinGuest()
     required = dd.Required(user_groups='reception')
@@ -321,7 +379,7 @@ class WaitingGuests(cal.Guests):
     help_text = _("Shows the visitors in the waiting room.")
     #~ known_values = dict(state=GuestStates.waiting)
     filter = Q(waiting_since__isnull=False,waiting_until__isnull=True)
-    column_names = 'since partner event__user event__summary action_buttons waiting_until'
+    column_names = 'since partner event__user event__summary workflow_buttons waiting_until'
     hidden_columns = 'waiting_until'
     order_by = ['waiting_since']
     #~ checkout = CheckoutGuest()
@@ -333,7 +391,7 @@ class WaitingGuests(cal.Guests):
         return naturaltime(obj.waiting_since)
         
 class MyWaitingGuests(WaitingGuests):
-    column_names = 'since partner event__summary action_buttons waiting_until'
+    column_names = 'since partner event__summary workflow_buttons'
     label = _("Waiting Guests")
     
     @classmethod
@@ -356,7 +414,7 @@ def setup_main_menu(site,ui,profile,m):
     #~ m.add_separator("-")
     #~ m.add_action(Clients,'find_by_beid')
     #~ m.add_action(Clients)
-    m.add_action(ExpectedGuests)
+    #~ m.add_action(ExpectedGuests)
     m.add_action(WaitingGuests)
     #~ m.add_action(ExpectedGuests,params=dict(param_values=dict(only_expected=True)))
     #~ m.add_action(WaitingGuests,params=dict(param_values=dict(only_waiting=True)))

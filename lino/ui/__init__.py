@@ -978,9 +978,10 @@ class Site(lino.Site):
             if meth is not None:
                 #~ dblogger.debug("Running %s of %s", methname, mod.__name__)
                 for table,text in meth(ar):
-                    if text is None:
-                        text = "%d " + unicode(table.label)
-                    yield (table,text)
+                    if table.default_action.get_view_permission(ar.get_user().profile):
+                        if text is None:
+                            text = "%d " + unicode(table.label)
+                        yield (table,text)
 
     def get_installed_apps(self):
         """

@@ -46,10 +46,6 @@ from django.conf.urls import patterns, url, include
 import lino
 from lino.core import constants as ext_requests
 from . import store as ext_store
-#~ from lino.ui.extjs3 import ext_elems
-#~ from lino.ui.extjs3 import ext_store
-#~ from lino.ui.extjs3 import ext_windows
-#~ from lino.ui import requests as ext_requests
 
 from lino.core import actions 
 #~ from lino.core.actions import action2str
@@ -61,18 +57,8 @@ from lino.core import tables
 from lino.ui import base
 from lino.core import actors
     
-from lino.utils import choosers
 from lino.utils.xmlgen import html as xghtml
 from lino.utils.config import make_dummy_messages_file
-
-from lino.utils.jscompressor import JSCompressor
-if False:
-    jscompress = JSCompressor().compress
-else:    
-    def jscompress(s): return s
-      
-from lino.mixins import printable
-
 
 
 #~ from lino.utils.choicelists import DoYouLike, HowWell
@@ -249,72 +235,6 @@ class ExtUI(base.UI):
             #~ if issubclass(h.report,dbtables.EmptyTable):
                 #~ h.store = ext_store.Store(h)
           
-    def table2xhtml(self,ar,max_row_count=300,**kw):
-        #~ doc = xghtml.Document(force_unicode(ar.get_title()))
-        #~ t = doc.add_table()
-        t = xghtml.Table()
-        self.ar2html(ar,t,ar.data_iterator,**kw)
-        # return xghtml.E.tostring(t.as_element())
-        return t.as_element()
-        
-    def ar2html(self,ar,tble,data_iterator,column_names=None):
-        """
-        Render the given ActionRequest ar to html
-        """
-        tble.attrib.update(cellspacing="3px",bgcolor="#ffffff", width="100%")
-        #~ tble.attrib.update(cellspacing="3px",bgcolor="#d0def0", width="100%")
-        
-        grid = ar.ah.list_layout.main
-        columns = grid.columns
-        fields, headers, cellwidths = ar.get_field_info(column_names)
-        columns = fields
-        #~ print 20130330, cellwidths
-          
-        if ar.renderer.is_interactive and ar.master_instance is None:
-            #~ print 20130527, ar.order_by
-            for i,e in enumerate(columns):
-                if e.sortable and ar.order_by != [e.name]:
-                    kw = {ext_requests.URL_PARAM_SORT:e.name}
-                    url = ar.renderer.get_request_url(ar,**kw)
-                    if url is not None:
-                        headers[i] = xghtml.E.a(headers[i],href=url)
-        
-        #~ cellattrs = dict(align="center",valign="middle",bgcolor="#eeeeee")
-        cellattrs = dict(align="left",valign="top",bgcolor="#eeeeee")
-        #~ cellattrs = dict(align="left",valign="top",bgcolor="#d0def0")
-        #~ cellattrs = dict()
-        
-        headers = [x for x in grid.headers2html(ar,columns,headers,**cellattrs)]
-        sums  = [fld.zero for fld in columns]
-        #~ hr = tble.add_header_row(*headers,**cellattrs)
-        if cellwidths:
-            for i,td in enumerate(headers): 
-                td.attrib.update(width=str(cellwidths[i]))
-        tble.head.append(xghtml.E.tr(*headers))
-        #~ print 20120623, ar.actor
-        recno = 0
-        for row in data_iterator:
-            cells = ar.row2html(columns,row,sums,**cellattrs)
-            if cells is not None:
-                recno += 1
-                tble.body.append(xghtml.E.tr(*cells))
-            
-        if recno == 0:
-            tble.clear()
-            tble.body.append(ar.no_data_text)
-        
-        if not ar.actor.hide_sums:
-            has_sum = False
-            for i in sums:
-                if i:
-                    has_sum = True
-                    break
-            if has_sum:
-                cells = ar.sums2html(columns,sums,**cellattrs)
-                tble.body.append(xghtml.E.tr(*cells))
-                #~ tble.add_body_row(*ar.ah.store.sums2html(ar,fields,sums,**cellattrs))
-            
-            
     def render_action_response(self,rv):
         """
         Builds a JSON response from given dict, 

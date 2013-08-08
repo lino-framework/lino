@@ -649,7 +649,6 @@ class Restful(View):
     def post(self,request,app_label=None,actor=None,pk=None):
         #~ ui = settings.SITE.ui
         rpt = requested_actor(app_label,actor)
-        #~ a = rpt.default_action
         if pk is None:
             elem = None
         else:
@@ -692,7 +691,9 @@ class Restful(View):
         rows = [ 
           rh.store.row2dict(ar,row,rh.store.list_fields) 
             for row in ar.sliced_data_iterator ]
-        return json_response_kw(count=ar.get_total_count(),rows=rows)
+        kw = dict(count=ar.get_total_count(),rows=rows)
+        kw.update(title=unicode(ar.get_title()))
+        return json_response(kw)
         
     def put(self,request,app_label=None,actor=None,pk=None):
         #~ ui = settings.SITE.ui
@@ -975,7 +976,8 @@ class ApiList(View):
             doc = xghtml.Document(force_unicode(ar.get_title()))
             doc.body.append(E.h1(doc.title))
             t = doc.add_table()
-            settings.SITE.ui.ar2html(ar,t,ar.data_iterator)
+            #~ settings.SITE.ui.ar2html(ar,t,ar.data_iterator)
+            ar.dump2html(t,ar.data_iterator)
             doc.write(response,encoding='utf-8')
             return response
             

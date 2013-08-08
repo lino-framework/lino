@@ -74,13 +74,11 @@ from lino.utils import choosers
 from lino.core import choicelists
 from lino.core import menus
 from lino.utils import jsgen
-from lino.utils.jsgen import py2js, js_code, id2js
 from lino.utils.xmlgen import html as xghtml
-from lino.utils.config import make_dummy_messages_file
 from lino.utils import codetime
 
-from lino.utils.jscompressor import JSCompressor
 if False:
+    from lino.utils.jscompressor import JSCompressor
     jscompress = JSCompressor().compress
 else:    
     def jscompress(s): return s
@@ -121,7 +119,10 @@ class HtmlRenderer(object):
     def href(self,url,text):
         return '<a href="%s">%s</a>' % (url,text)
         
-          
+    def show(self,ar,**kw):
+        return ar.table2xhtml(**kw)
+        #~ return E.tostring(ar.table2xhtml())
+        
     def href_button_action(self,ba,*args,**kw):
         if ba.action.icon_file is not None:
             kw.update(icon_file=ba.action.icon_file)

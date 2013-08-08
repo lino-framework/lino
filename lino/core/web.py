@@ -106,7 +106,8 @@ def web_setup(sender):
         
         t = xghtml.Table()
         #~ t = doc.add_table()
-        ar.ui.ar2html(ar,t,ar.sliced_data_iterator)
+        #~ ar.ui.ar2html(ar,t,ar.sliced_data_iterator)
+        ar.dump2html(t,ar.sliced_data_iterator)
         
         #~ print ar.get_total_count()
         return E.tostring(t.as_element())

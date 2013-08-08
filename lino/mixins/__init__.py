@@ -185,9 +185,14 @@ class UserAuthored(model.Model):
     def on_create(self,ar):
         """
         Adds the requesting user to the `user` field.
+        
+        When acting as another user, the default implementation
+        still inserts the real user, not subst_user. 
+        This is important for cal.Event.
         """
         if self.user_id is None:
-            u = ar.get_user()
+            #~ u = ar.get_user() 
+            u = ar.user
             if u is not None:
                 self.user = u
         super(UserAuthored,self).on_create(ar)

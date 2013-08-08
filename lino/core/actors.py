@@ -439,6 +439,11 @@ class Actor(actions.Parametrizable):
     
     
     
+    #~ @classmethod
+    #~ def get_default_table(cls):
+        #~ "For InstanceAction "
+        #~ return cls
+        
     @classmethod
     def disabled_fields(cls,obj,ar):
         """
@@ -912,19 +917,15 @@ class Actor(actions.Parametrizable):
         self._actions_list.append(ba)
         return ba
 
-    @classmethod
-    def get_row_actions(self,ar,obj):
-        state = self.get_row_state(obj)
-        profile = ar.get_user().profile
-        for ba in self.get_actions(ar.bound_action.action):
-        #~ for ba in self.get_actions():
-            #~ if isinstance(ba.action,actions.RowAction):
-            if ba.action.show_in_row_actions:
-                #~ if ba.action.action_name is not None:
-                #~ if ba.action.custom_handler is not None:
-                    if ba.get_view_permission(profile):
-                        if self.get_row_permission(obj,ar,state,ba):
-                            yield ba
+    #~ @classmethod
+    #~ def get_row_actions(self,ar,obj):
+        #~ state = self.get_row_state(obj)
+        #~ profile = ar.get_user().profile
+        #~ for ba in self.get_actions(ar.bound_action.action):
+            #~ if ba.action.show_in_row_actions:
+                    #~ if ba.get_view_permission(profile):
+                        #~ if self.get_row_permission(obj,ar,state,ba):
+                            #~ yield ba
                 
     @classmethod
     def get_workflow_actions(self,ar,obj):
@@ -1281,7 +1282,7 @@ class Actor(actions.Parametrizable):
             ar = self.request(master,request=ar.request,param_values={})
             ar.renderer = settings.SITE.ui.default_renderer
             #~ s = ui.table2xhtml(ar).tostring()
-            return settings.SITE.ui.table2xhtml(ar)
+            return ar.table2xhtml()
             #~ s = etree.tostring(ui.table2xhtml(ar))
             #~ return s
         return meth
@@ -1339,12 +1340,11 @@ class Actor(actions.Parametrizable):
         """
         return obj.get_choices_text(request,self,field)
 
-    @fields.displayfield(_("Actions"))
-    def action_buttons(self,obj,ar):
-        return E.p(*join_elems([
-            settings.SITE.ui.row_action_button(obj,ar.request,ba)
-            #~ ar.action_button(ba,obj) 
-                for ba in ar.actor.get_row_actions(ar,obj)]))
+    #~ @fields.displayfield(_("Actions"))
+    #~ def action_buttons(self,obj,ar):
+        #~ return E.p(*join_elems([
+            #~ settings.SITE.ui.row_action_button(obj,ar.request,ba)
+                #~ for ba in ar.actor.get_row_actions(ar,obj)]))
       
     @fields.displayfield(_("Workflow"))
     def workflow_buttons(self,obj,ar):

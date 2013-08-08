@@ -408,6 +408,7 @@ class Action(Parametrizable,Permittable):
     
     show_in_row_actions = False
     """
+    No longer used.
     Whether this action should be displayed as a button in the 
     :meth:`action_buttons <lino.core.model.Model.action_buttons>`    
     column.
@@ -727,7 +728,8 @@ class GridEdit(TableAction):
         
     def as_html(self,ar):
         t = xghtml.Table()
-        settings.SITE.ui.ar2html(ar,t,ar.sliced_data_iterator)
+        #~ settings.SITE.ui.ar2html(ar,t,ar.sliced_data_iterator)
+        ar.dump2html(t,ar.sliced_data_iterator)
         #~ return t.as_element() # 20130418
         buttons = []
         if ar.limit is None:
@@ -1079,7 +1081,7 @@ def action(*args,**kw):
     """
     def decorator(fn):
         kw.setdefault('custom_handler',True)
-        kw.setdefault('show_in_row_actions',True)
+        #~ kw.setdefault('show_in_row_actions',True)
         a = RowAction(*args,**kw)
         #~ a.run = curry(fn,a)
         a.run_from_ui = fn

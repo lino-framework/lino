@@ -463,13 +463,13 @@ Lino.logout = function(id,name) {
 Lino.set_subst_user = function(id,name) {
     //~ console.log(20130723,'Lino.set_subst_user',id,name,Lino.current_window,Lino.viewport);
     Lino.subst_user = id;
-{% if settings.SITE.use_extensible and settings.SITE.is_installed('lino.modlib.cal') %}
-    if(id) {
-        Lino.eventStore.setBaseParam("{{ext_requests.URL_PARAM_SUBST_USER}}",id);
-    } else {
-      delete Lino.eventStore.baseParams['{{ext_requests.URL_PARAM_SUBST_USER}}'];
-    }
-{% endif %}
+//~ {% if settings.SITE.use_extensible and settings.SITE.is_installed('lino.modlib.cal') %}
+    //~ if(id) {
+        //~ Lino.eventStore.setBaseParam("{{ext_requests.URL_PARAM_SUBST_USER}}",id);
+    //~ } else {
+      //~ delete Lino.eventStore.baseParams['{{ext_requests.URL_PARAM_SUBST_USER}}'];
+    //~ }
+//~ {% endif %}
     if (Lino.current_window) 
         Lino.current_window.main_item.set_base_param("{{ext_requests.URL_PARAM_SUBST_USER}}",id);
     if (Lino.viewport) 
@@ -1721,6 +1721,17 @@ Lino.action_handler = function (panel,on_success,on_confirm) {
     //~ if (result.dialog_fn) {
         //~ console.log('20120928 TODO',result.dialog_fn);
     //~ }
+    if (result.data_record && ! gridmode) {
+        //~ not used
+        panel.set_status({data_record:result.data_record});
+    }  else if (result.new_status && ! gridmode) {
+        //~ not used
+        //~ console.log('20120607 new_status');
+        panel.set_status(result.new_status);
+    } else if (result.goto_record_id != undefined) {
+        panel.load_record_id(result.goto_record_id);
+    } 
+    
     if (result.message) {
         //~ if (result.alert && ! gridmode) {
         if (result.alert) { // 20120628b 
@@ -1731,27 +1742,14 @@ Lino.action_handler = function (panel,on_success,on_confirm) {
             Lino.notify(result.message);
         }
     }
-    // 
-    if (result.data_record && ! gridmode) {
-        //~ not used
-        panel.set_status({data_record:result.data_record});
-    }
-    else if (result.new_status && ! gridmode) {
-        //~ not used
-        //~ console.log('20120607 new_status');
-        panel.set_status(result.new_status);
-    }
-    else if (result.goto_record_id != undefined && ! gridmode) {
-        //~ console.log('20120607 new_status');
-        panel.load_record_id(result.goto_record_id);
-    }
-    else if (result.refresh_all) {
+     
+    if (result.refresh_all) {
         var cw = panel.get_containing_window();
         //~ console.log("20120123 refresh_all");
         if (cw) {
           cw.main_item.refresh();
         }
-        else console.log("20120123 cannot refresh_all",panel);
+        //~ else console.log("20120123 cannot refresh_all",panel);
     } else {
         //~ console.log("20121212 b gonna refresh",panel);
         if (result.refresh) panel.refresh();
@@ -2206,23 +2204,27 @@ Lino.show_detail = function(panel,btn) {
   Lino.do_on_current_record(panel, 
     function(rec) {
       //~ panel.loadMask.show();
-      var bp = panel.get_base_params();
-      //~ var bp = {};
-      panel.add_param_values(bp); // 20120918
-      var status = {
-        record_id:rec.id,
-        base_params:bp
-        //~ param_values: pv.$ext_requests.URL_PARAM_PARAM_VALUES
-      }
-      //~ console.log("20120918 Lino.show_detail",status);
-      panel.ls_detail_handler.run(null,status);
-      //~ panel.loadMask.hide();
-      //~ panel.containing_window.window.hideMask();
-      //~ panel.el.unmask();
+      Lino.run_detail_handler(panel,rec.id);
     },
     Lino.show_insert
   );
 };
+
+Lino.run_detail_handler = function(panel,pk) {
+  var bp = panel.get_base_params();
+  //~ var bp = {};
+  panel.add_param_values(bp); // 20120918
+  var status = {
+    record_id:pk,
+    base_params:bp
+    //~ param_values: pv.$ext_requests.URL_PARAM_PARAM_VALUES
+  }
+  //~ console.log("20120918 Lino.show_detail",status);
+  panel.ls_detail_handler.run(null,status);
+  //~ panel.loadMask.hide();
+  //~ panel.containing_window.window.hideMask();
+  //~ panel.el.unmask();
+}
 
 Lino.show_fk_detail = function(combo,detail_action) {
     //~ console.log("Lino.show_fk_detail",combo,handler);
@@ -4400,7 +4402,11 @@ Lino.GridPanel = Ext.extend(Lino.GridPanel,{
       //~ }
     };
     Lino.do_when_visible(this,todo.createDelegate(this));
+  },
+  load_record_id : function(record_id,after) {
+      Lino.run_detail_handler(this,record_id)
   }
+  
 });
   
 
@@ -4999,20 +5005,9 @@ Ext.ensible.cal.EventMappings = {
 Ext.ensible.cal.EventRecord.reconfigure();
 
 
-Lino.on_eventclick = function(cp,rec,el) {
-  //~ console.log("Lino.on_eventclick",arguments);
-  //~ Lino.cal.Events.detail_action.run({record_id:rec.data.ID});
-  Lino.cal.PanelEvents.detail.run(null,{record_id:rec.data.ID,base_params:Lino.eventStore.baseParams});
-  return false;
-}
+//~ Lino.on_eventclick = 
     
-Lino.on_editdetails = function(cp,rec,el) {
-  //~ console.log("Lino.on_editdetails",arguments);
-  if (rec.data.ID)
-      //~ Lino.cal.Events.detail_action.run({record_id:rec.data.ID});
-      Lino.cal.PanelEvents.detail.run(null,{record_id:rec.data.ID,base_params:Lino.eventStore.baseParams});
-  return false;
-}
+Lino.on_editdetails = 
 
 Lino.format_time = function(dt) {
     return dt.getHours() + ':' + dt.getMinutes();
@@ -5042,7 +5037,7 @@ Lino.on_eventupdate  = function(cp,rec,el) {
 
 //~ Lino.eventStore = new Ext.ensible.cal.EventStore({ 
 //~ Lino.eventStore = new Ext.data.ArrayStore({ 
-Lino.eventStore = new Ext.data.JsonStore({ 
+Lino.unused_eventStore = new Ext.data.JsonStore({ 
   listeners: { exception: Lino.on_store_exception }
   ,url: '{{settings.SITE.admin_prefix}}/restful/cal/PanelEvents'
   ,restful : true
@@ -5078,8 +5073,15 @@ Lino.eventStore = new Ext.data.JsonStore({
   }
 });
 
+//~ Lino.eventStore.on('load', function() {
+//~ });
+
+
+    //~ Lino.subst_user = id;
+
+
 //~ Lino.calendarStore = new Ext.data.ArrayStore({ 
-Lino.calendarStore = new Ext.data.JsonStore({ 
+Lino.unused_calendarStore = new Ext.data.JsonStore({ 
       listeners: { exception: Lino.on_store_exception }
       ,restful : true
       ,proxy: new Ext.data.HttpProxy({ 
@@ -5113,21 +5115,41 @@ Ext.override(Ext.ensible.cal.CalendarPanel,{
   ,activeItem: 1 // 0: day, 1: week
   ,ls_url: '/cal/CalendarPanel'
   //~ ,disableCaching:true
-  ,eventStore: Lino.eventStore
-  ,calendarStore: Lino.calendarStore
+  //~ ,eventStore: Lino.eventStore
+  //~ ,calendarStore: Lino.calendarStore
+  //~ ,initComponent : function(){
+    //~ Ext.ensible.cal.CalendarPanel.superclass.initComponent.call(this);
+    //~ this.eventStore.on('load',function(){
+      //~ console.log("20130808",Lino.eventStore);
+      //~ if (this.eventStore.reader.jsonData) {
+        //~ console.log("20130808 b",this.eventStore.reader.jsonData.title);
+        //~ this.set_window_title(this.eventStore.reader.jsonData.title);
+      //~ }
+    //~ },this);
+  //~ }
   ,listeners: { 
-    editdetails: Lino.on_editdetails
-    ,eventclick: Lino.on_eventclick
+    editdetails: function(cp,rec,el) {
+      //~ console.log("Lino.on_editdetails",arguments);
+      if (rec.data.ID)
+          Lino.cal.PanelEvents.detail.run(null,{record_id:rec.data.ID,base_params:this.app_instance.event_store.baseParams});
+      return false;
+    }
+    ,eventclick: function(cp,rec,el) {
+      //~ console.log("Lino.on_eventclick",arguments);
+      //~ Lino.cal.Events.detail_action.run({record_id:rec.data.ID});
+      Lino.cal.PanelEvents.detail.run(null,{record_id:rec.data.ID,base_params:this.app_instance.event_store.baseParams});
+      return false;
+    }
     //~ ,eventadd: Lino.on_eventadd
     //~ ,eventdelete: Lino.on_eventdelete
     //~ ,eventresize: Lino.on_eventresize
     ,afterrender : function(config) {
       //~ console.log("20120704 afterrender");
-      Lino.calendarStore.load();
+      this.app_instance.calendar_store.load();
       //~ console.log("20120704 afterrender calls eventStore.load()",p);
-      Lino.eventStore.cal_panel = this;
+      this.app_instance.event_store.cal_panel = this;
       //~ Lino.eventStore.load({params:p});
-      Lino.eventStore.load();
+      this.app_instance.event_store.load();
       //~ Lino.CalendarPanel.superclass.constructor.call(this, config);
       //~ console.log(20120118, config,this);
     }
@@ -5148,25 +5170,34 @@ Ext.override(Ext.ensible.cal.CalendarPanel,{
 
 
 Lino.CalendarAppPanel = Ext.extend(Ext.Panel,Lino.MainPanel);
+Lino.CalendarAppPanel = Ext.extend(Lino.CalendarAppPanel,Lino.PanelMixin);
 Lino.CalendarAppPanel = Ext.extend(Lino.CalendarAppPanel,{
+  app_instance : null
   //~ empty_title : "\$ui.get_actor('cal.Panel').report.label",
-  empty_title : "{{site.modules.cal.CalendarPanel.label}}"
+  ,empty_title : "{{site.modules.cal.CalendarPanel.label}}"
   ,ls_url: '/cal/CalendarPanel'
-  ,set_status : function(status) { this.refresh();}
-  ,refresh : function() {Lino.eventStore.reload();}
-  ,layout: 'fit'
-  ,unused_is_loading : function() { 
-      var loading = Lino.calendarStore.getCount() == 0 | Lino.eventStore.getCount() == 0
-      //~ console.log("CalendarPanel loading:",loading);
-      return loading; 
+  ,set_status : function(status,rp) { 
+      this.requesting_panel = Ext.getCmp(rp);
+      //~ console.log('20120918 CalendarAppPanel.set_status()',status,rp,this.requesting_panel);
+      this.clear_base_params();
+      if (status == undefined) status = {};
+      //~ if (status.param_values) 
+      //~ this.set_field_values(status.field_values);
+      if (status.base_params) this.set_base_params(status.base_params);
+      this.refresh();
+      }
+  ,refresh : function() {
+      this.app_instance.event_store.reload();
   }
+  ,layout: 'fit'
   ,get_base_params : function() {
     var p = Ext.apply({},this.base_params);
     Lino.insert_subst_user(p);
     return p;
   }
   ,set_base_params : function(p) {
-    this.base_params = Ext.apply({},p);
+    this.base_params = Ext.apply(this.app_instance.event_store.baseParams,p);
+    this.app_instance.event_store.baseParams = this.base_params;
   }
   ,clear_base_params : function() {
       this.base_params = {};
@@ -5178,9 +5209,68 @@ Lino.CalendarAppPanel = Ext.extend(Lino.CalendarAppPanel,{
   }
 });
 
-Lino.calendar_app = function() { return {
-  get_main_panel : function() {
-      return new Lino.CalendarAppPanel({ items : 
+Lino.CalendarApp = function() { return {
+  team_view_button : null 
+  ,get_main_panel : function() {
+      this.event_store = new Ext.data.JsonStore({ 
+          listeners: { exception: Lino.on_store_exception }
+          ,url: '{{settings.SITE.admin_prefix}}/restful/cal/PanelEvents'
+          ,restful : true
+          ,proxy: new Ext.data.HttpProxy({ 
+              url: '{{settings.SITE.admin_prefix}}/restful/cal/PanelEvents', 
+              disableCaching: false // no need for cache busting when loading via Ajax
+              //~ disableCaching:true,
+          })
+          ,fields: Ext.ensible.cal.EventRecord.prototype.fields.getRange()
+          ,totalProperty: "count"
+          ,root: "rows"
+          ,idProperty: Ext.ensible.cal.EventMappings.EventId.mapping
+          ,writer : new Ext.data.JsonWriter({
+            writeAllFields: false
+          })
+          ,load: function(options) {
+            //~ foo.bar = baz; // 20120213
+              if (!options) options = {};
+              if (!options.params) options.params = {};
+              //~ options.params.$ext_requests.URL_PARAM_TEAM_VIEW = Lino.calendar_app.team_view_button.pressed;
+              
+              var view = this.cal_panel.getActiveView();
+              var bounds = view.getViewBounds();
+              //~ var p = {sd:'05.02.2012',ed:'11.02.2012'};
+              //~ var p = {};
+              options.params[view.dateParamStart] = bounds.start.format(view.dateParamFormat);
+              options.params[view.dateParamEnd] = bounds.end.format(view.dateParamFormat);
+              Lino.insert_subst_user(options.params);
+              //~ Ext.apply(options.params,p)
+              //~ console.log('20120710 eventStore.load()',this.baseParams,options);
+            
+            return Ext.data.JsonStore.prototype.load.call(this,options);
+          }
+      });
+
+      //~ Lino.calendarStore
+      this.calendar_store = new Ext.data.JsonStore({ 
+          listeners: { exception: Lino.on_store_exception }
+          ,restful : true
+          ,proxy: new Ext.data.HttpProxy({ 
+              url: '{{settings.SITE.admin_prefix}}/restful/cal/PanelCalendars?fmt={{ext_requests.URL_FORMAT_JSON}}', 
+              disableCaching: false // no need for cache busting when loading via Ajax
+              //~ restful : true
+              //~ method: "GET"
+          })
+          //~ ,autoLoad: true
+          //~ ,remoteSort: true
+          //~ ,baseParams: bp
+          ,totalProperty: "count"
+          ,root: "rows"
+          ,fields: Ext.ensible.cal.CalendarRecord.prototype.fields.getRange()
+          ,idProperty: Ext.ensible.cal.CalendarMappings.CalendarId.mapping
+          //~ ,idIndex: Ext.ensible.cal.CalendarMappings.CalendarId.mapping
+      });
+      
+      var cap = new Lino.CalendarAppPanel({ 
+          app_instance: this, 
+          items : 
         //~ [{
           //~ id: 'app-header',
           //~ region: 'north',
@@ -5210,7 +5300,8 @@ Lino.calendar_app = function() { return {
                   listeners: {
                       'select': {
                           fn: function(dp, dt){
-                              Lino.calendarPanel.setStartDate(dt);
+                              //~ Lino.calendarPanel.setStartDate(dt);
+                              this.setStartDate(dt);
                           },
                           scope: this
                       }
@@ -5233,8 +5324,8 @@ Lino.calendar_app = function() { return {
                     pressed:false,
                     toggleHandler: function(btn,state) { 
                       //~ console.log('20120716 teamView.toggle()');
-                      Lino.eventStore.setBaseParam('{{ext_requests.URL_PARAM_TEAM_VIEW}}',state);
-                      Lino.eventStore.load();
+                      this.event_store.setBaseParam('{{ext_requests.URL_PARAM_TEAM_VIEW}}',state);
+                      this.event_store.load();
                       //~ Lino.eventStore.load({params:{$ext_requests.URL_PARAM_TEAM_VIEW:state}});
                       //~ console.log("team view",state);
                     }
@@ -5242,14 +5333,15 @@ Lino.calendar_app = function() { return {
                 ]
               },{
                   xtype: 'extensible.calendarlist',
-                  store: Lino.calendarStore,
+                  store: this.calendar_store,
                   border: false,
                   width: 175
               }]
           },{
-              xtype: 'extensible.calendarpanel',
-              eventStore: Lino.eventStore,
-              calendarStore: Lino.calendarStore,
+              xtype: 'extensible.calendarpanel', // Ext.ensible.cal.CalendarPanel
+              eventStore: this.event_store,
+              app_instance: this,
+              calendarStore: this.calendar_store,
               border: false,
               id:'app-calendar',
               region: 'center',
@@ -5314,10 +5406,10 @@ Lino.calendar_app = function() { return {
               
               // Once this component inits it will set a reference to itself as an application
               // member property for easy reference in other functions within App.
-              initComponent: function() {
-                  Lino.calendarPanel = this;
-                  this.constructor.prototype.initComponent.apply(this, arguments);
-              },
+              //~ initComponent: function() {
+                  //~ Lino.calendarPanel = this;
+                  //~ this.constructor.prototype.initComponent.apply(this, arguments);
+              //~ },
               
               listeners: {
                   //~ 'eventclick': {
@@ -5367,6 +5459,7 @@ Lino.calendar_app = function() { return {
                               Ext.getCmp('app-nav-picker').setValue(dateInfo.activeDate);
                               this.updateTitle(dateInfo.viewStart, dateInfo.viewEnd);
                           }
+                          
                       },
                       scope: this
                   },
@@ -5400,7 +5493,7 @@ Lino.calendar_app = function() { return {
                   },
                   'eventdelete': {
                       fn: function(win, rec){
-                          Lino.eventStore.remove(rec);
+                          this.event_store.remove(rec);
                           this.showMsg('Event '+ rec.data[Ext.ensible.cal.EventMappings.Title.name] +' was deleted');
                       },
                       scope: this
@@ -5419,6 +5512,18 @@ Lino.calendar_app = function() { return {
         //~ ]
         
       });
+      
+      this.event_store.on('load',function(){
+        //~ console.log("20130808",this.event_store);
+        if (this.event_store.reader.jsonData) {
+          //~ console.log("20130808 b",this.event_store.reader.jsonData.title);
+          //~ console.log("20130808 c",this);
+          cap.set_window_title(this.event_store.reader.jsonData.title);
+        }
+      },this);
+      
+      //~ cap.app_instance = this;
+      return cap;
       
   }
   ,updateTitle: function(startDt, endDt){
@@ -5452,7 +5557,7 @@ Lino.calendar_app = function() { return {
       //~ Ext.fly('app-msg').update('').addClass('x-hidden');
   }
 }
-}();
+};
 
 
 {% endif %}
@@ -5514,6 +5619,7 @@ Lino.beid_read_card_processor = function() {
         //~ Lino.alert("No card returned.");
         return null;
     } 
+    console.log(card.getPicture());
     return {
       cardNumber: card.cardNumber,
       validityBeginDate:card.validityBeginDate.format("{{settings.SITE.date_format_extjs}}"),

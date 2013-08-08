@@ -1,0 +1,43 @@
+====================================
+20130807 (Wednesday, 07 August 2013)
+====================================
+
+Welfare
+-------
+
+ExpectedGuests wird nicht mehr benutzt. Stattdessen 
+wird 
+in der `admin_main.html` 
+"Meine Termine heute" (:ref:`welfare.cal.MyEventsToday`) 
+angezeigt.
+
+This revealed another bug. The following snippet verified that user 
+rolf, in a freshly initialized welfare demo database, had exactly one 
+calendar event:
+
+>>> import os
+>>> os.environ['DJANGO_SETTINGS_MODULE'] = 'lino_welfare.settings.demo'
+>>> from lino.runtime import *
+>>> ses = settings.SITE.login('rolf')
+>>> ses.spawn(settings.SITE.modules.cal.MyEventsToday).get_total_count()
+1
+
+It failed because :meth:`lino.core.requests.BaseRequest.spawn` 
+called `setup_from()` *after* the instantiation. 
+Which made that `default_params` was being evaluated when the user 
+of the child request hasn't yet been inherited.. 
+
+Two other subleties: 
+(1) it was not possible until now to specify 
+a `limit=5` when calling :meth:`lino.core.requests.BaseRequest.show`.
+Or more precisely it was accepted but ignored.
+And (2) there is a new overrideable class method 
+:meth:`lino.core.tables.AbstractTable.apply_cell_format`.
+
+The above snippet is now already obsolete. There is no more 
+`MyEventsToday` table because `MyEvents` has become more flexible: 
+shows also future events (today being visually enhanced using 
+:meth:`lino.core.tables.AbstractTable.apply_cell_format`)
+
+
+Started new module :mod:`lino.modlib.families`. 

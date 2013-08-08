@@ -176,7 +176,14 @@ class BeIdCardHolder(dd.Model):
         
     print_eid_content = dd.DirectPrintAction(_("eID sheet"),'eid-content',icon_name='x-tbar-vcard')
     
+    beid_readonly_fields = set('noble_condition card_valid_from card_valid_until card_issuer card_number card_type'.split())
     
+    def disabled_fields(self,ar):
+        rv = super(BeIdCardHolder,self).disabled_fields(ar)
+        if True: # ar.get_user().profile.level < :
+            rv |= self.beid_readonly_fields
+        #~ logger.info("20130808 beid %s", rv)
+        return rv
 
     
 def card_number_to_picture_file(card_number):
@@ -301,8 +308,8 @@ class BeIdReadCardAction(BaseBeIdReadCardAction):
     """
     label = _("Read eID card")
     sorry_msg = _("Sorry, I cannot handle that case: %s")
-    #~ show_in_workflow = True
-    show_in_row_actions = True
+    show_in_workflow = True
+    #~ show_in_row_actions = True
 
   
     def run_from_ui(self,row,ar,**kw):
@@ -317,8 +324,15 @@ class BeIdReadCardAction(BaseBeIdReadCardAction):
         #~ print 20121117, attrs
         #~ ssin = data['nationalNumber']
         #~ ssin = attrs['national_id']
-        if row is None:
-            qs = self.client_model.objects.filter(national_id=attrs['national_id'])
+        
+        qs = self.client_model.objects.filter(national_id=attrs['national_id'])
+        if not row.national_id and qs.count() == 0:
+            row.national_id = attrs['national_id']
+            row.full_clean()
+            row.save()
+            #~ qs = self.client_model.objects.filter(national_id=attrs['national_id'])
+            
+        elif row.national_id != attrs['national_id']:
             if qs.count() > 1:
                 return ar.error(self.sorry_msg % 
                     _("There is more than one client with national id %(national_id)s in our database.")
@@ -385,25 +399,14 @@ class BeIdReadCardAction(BaseBeIdReadCardAction):
         #~ cb.add_choice('cancel',no,_("Don't apply"))
         return cb
         
-    def goto_client_response(self,ar,obj,msg=None):
+    def goto_client_response(self,ar,obj,msg=None,**kw):
+        kw.update(goto_record_id=obj.pk)
+        #~ ba = self.defining_actor.detail_action
+        #~ kw.update(eval_js=ar.row_action_handler(ba,obj,ar))
+        #~ kw.update(eval_js=ar.instance_handler(obj))
+        #~ kw.update(refresh=True)
         if msg:
-            return ar.success(msg,_("Success"),refresh=True)
-        return ar.success(msg)
+            return ar.success(msg,_("Success"),**kw)
+        return ar.success(msg,**kw)
   
             
-class FindByBeIdAction(BeIdReadCardAction):
-    """
-    main menu command: read beid data and find that client.
-    """
-    #~ label = _("Find using eID card")
-    help_text = _("Read eID card and find corresponding client.")
-    single_row = False
-    show_in_workflow = False
-    show_in_row_actions = False
-    
-    #~ label = _("Find by eID card")
-    callable_from = tuple() # only explicitely callable
-
-    def goto_client_response(self,ar,obj,msg=None):
-        return ar.success(msg,eval_js=ar.instance_handler(obj))
-        

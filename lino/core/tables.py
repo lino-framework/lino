@@ -80,6 +80,7 @@ from lino.ui import base
 from lino.utils.appy_pod import Renderer
 from lino.utils import jsgen
 
+from lino.utils.xmlgen import html as xghtml
 from lino.utils.xmlgen.html import E
 
 class InvalidRequest(Exception):
@@ -154,7 +155,6 @@ if False: # 20130710
         f.write(yaml.dump(self.data))
         
         
-
 
 WARNINGS_LOGGED = dict()
 
@@ -450,9 +450,73 @@ class TableRequest(ActionRequest):
         if limit is not None:
             self.limit = limit
             
+    def table2xhtml(self,**kw):
+        t = xghtml.Table()
+        self.dump2html(t,self.sliced_data_iterator,**kw)
+        return t.as_element()
     
-    def table2xhtml(self):
-        return settings.SITE.ui.table2xhtml(self)
+    #~ def table2xhtml(self):
+        #~ return settings.SITE.ui.table2xhtml(self)
+
+    def dump2html(ar,tble,data_iterator,column_names=None):
+        """
+        Render this to html
+        """
+        tble.attrib.update(cellspacing="3px",bgcolor="#ffffff", width="100%")
+        #~ tble.attrib.update(cellspacing="3px",bgcolor="#d0def0", width="100%")
+        
+        grid = ar.ah.list_layout.main
+        columns = grid.columns
+        fields, headers, cellwidths = ar.get_field_info(column_names)
+        columns = fields
+        #~ print 20130330, cellwidths
+          
+        if ar.renderer.is_interactive and ar.master_instance is None:
+            #~ print 20130527, ar.order_by
+            for i,e in enumerate(columns):
+                if e.sortable and ar.order_by != [e.name]:
+                    kw = {constants.URL_PARAM_SORT:e.name}
+                    url = ar.renderer.get_request_url(ar,**kw)
+                    if url is not None:
+                        headers[i] = xghtml.E.a(headers[i],href=url)
+        
+        #~ cellattrs = dict(align="center",valign="middle",bgcolor="#eeeeee")
+        cellattrs = dict(align="left",valign="top",bgcolor="#eeeeee")
+        #~ cellattrs = dict(align="left",valign="top",bgcolor="#d0def0")
+        #~ cellattrs = dict()
+        
+        headers = [x for x in grid.headers2html(ar,columns,headers,**cellattrs)]
+        sums  = [fld.zero for fld in columns]
+        #~ hr = tble.add_header_row(*headers,**cellattrs)
+        if cellwidths:
+            for i,td in enumerate(headers): 
+                td.attrib.update(width=str(cellwidths[i]))
+        tble.head.append(xghtml.E.tr(*headers))
+        #~ print 20120623, ar.actor
+        recno = 0
+        for obj in data_iterator:
+            cells = ar.row2html(recno,columns,obj,sums,**cellattrs)
+            if cells is not None:
+                recno += 1
+                #~ ar.actor.apply_row_format(tr,recno)
+                tble.body.append(xghtml.E.tr(*cells))
+            
+        if recno == 0:
+            tble.clear()
+            tble.body.append(ar.no_data_text)
+        
+        if not ar.actor.hide_sums:
+            has_sum = False
+            for i in sums:
+                if i:
+                    has_sum = True
+                    break
+            if has_sum:
+                cells = ar.sums2html(columns,sums,**cellattrs)
+                tble.body.append(xghtml.E.tr(*cells))
+                #~ tble.add_body_row(*ar.ah.store.sums2html(ar,fields,sums,**cellattrs))
+            
+        
         
     def get_field_info(ar,column_names=None):
         """
@@ -532,7 +596,7 @@ class TableRequest(ActionRequest):
             
         return fields, headers, widths
         
-    def row2html(ar,columns,row,sums,**cellattrs):
+    def row2html(self,recno,columns,row,sums,**cellattrs):
         #~ logger.info("20130123 row2html %s",fields)
         #~ for i,fld in enumerate(self.list_fields):
         has_numeric_value = False
@@ -541,7 +605,7 @@ class TableRequest(ActionRequest):
             #~ if fld.name == 'person__gsm':
             #~ logger.info("20120406 Store.row2list %s -> %s", fld, fld.field)
             #~ import pdb; pdb.set_trace()
-            v = col.field._lino_atomizer.full_value_from_object(row,ar)
+            v = col.field._lino_atomizer.full_value_from_object(row,self)
             if v is None:
                 td = E.td(**cellattrs)
             else:
@@ -552,33 +616,34 @@ class TableRequest(ActionRequest):
                     except TypeError as e:
                         raise Exception("Cannot compute %r + %r" % (sums[i],nv))
                     has_numeric_value = True
-                td = col.value2html(ar,v,**cellattrs)
+                td = col.value2html(self,v,**cellattrs)
             col.apply_cell_format(td)
+            self.actor.apply_cell_format(self,row,col,recno,td)
             cells.append(td)
-        if ar.actor.hide_zero_rows and not has_numeric_value:
+        if self.actor.hide_zero_rows and not has_numeric_value:
             return None
         return cells
             
-    def row2text(ar,fields,row,sums):
+    def row2text(self,fields,row,sums):
         for i,fld in enumerate(fields):
             if fld.field is not None:
                 try: # was used to find bug 20130422
-                    v = fld.field._lino_atomizer.full_value_from_object(row,ar)
+                    v = fld.field._lino_atomizer.full_value_from_object(row,self)
                 except Exception as e:
                     v = "%s:\n%s" % (fld.field,e)
                 if v is None:
                     yield ''
                 else:
                     sums[i] += fld.value2num(v)
-                    yield fld.format_value(ar,v)
+                    yield fld.format_value(self,v)
                 
-    def sums2html(ar,columns,sums,**cellattrs):
-        #~ return [fld.format_sum(ar,sums,i)
+    def sums2html(self,columns,sums,**cellattrs):
+        #~ return [fld.format_sum(self,sums,i)
           #~ for i,fld in enumerate(fields)]
-        return [fld.sum2html(ar,sums,i,**cellattrs)
+        return [fld.sum2html(self,sums,i,**cellattrs)
           for i,fld in enumerate(columns)]
       
-        #~ return [fld.sum2html(ar.ui,sums[i])
+        #~ return [fld.sum2html(self.ui,sums[i])
           #~ for i,fld in enumerate(fields)]
             
             
@@ -1149,6 +1214,17 @@ class AbstractTable(actors.Actor):
         url = kw.get('open_url') or kw.get('open_davlink_url')
         if url:
             os.startfile(url)
+        
+    @classmethod
+    def apply_cell_format(self,ar,row,col,recno,td):
+        """
+        Actor-level hook for overriding the formating when rendering 
+        this table as plain html.
+        
+        For example :class:`lino.modlib.cal.models.Events`
+        overrides this.
+        """
+        pass
         
     @classmethod
     def to_rst(cls,ar,column_names=None,**kwargs):

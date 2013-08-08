@@ -391,28 +391,21 @@ class Home(mixins.EmptyTable):
         
         if u.profile.authenticated:
           
-            intro = [_("Hi, "),u.first_name,'! ']
+            intro = [_("Hi, %(user)s!") % dict(user=u.first_name)]
             story.append(xghtml.E.p(*intro))
             warnings = []
             
             #~ for T in (MySuggestedCoachings,cal.MyTasksToDo):
             for table,text in settings.SITE.get_todo_tables(ar):
-                r = table.request(user=u)
-                #~ r = T.request(subst_user=u)
-                #~ r = ar.spawn(T)
-                if r.get_total_count() != 0:
-                    #~ for obj in r.data_iterator[-MAXITEMS]:
-                        #~ chunks = [obj.summary_row(ar)]
-                        #~ sep = ' : '
-                        #~ for a in T.get_workflow_actions(ar,obj):
-                            #~ chunks.append(sep)
-                            #~ chunks.append(ar.row_action_button(obj,a))
-                            #~ sep = ', '
-                    
-                    warnings.append(xghtml.E.li(
-                        ar.href_to_request(r,text % r.get_total_count())))
-                        #~ _("You have %d entries in ") % r.get_total_count(),
-                        #~ ar.href_to_request(r,label)))
+                if table.get_view_permission(u.profile):
+                    r = table.request(user=u)
+                    #~ r = T.request(subst_user=u)
+                    #~ r = ar.spawn(T)
+                    if r.get_total_count() != 0:
+                        warnings.append(xghtml.E.li(
+                            ar.href_to_request(r,text % r.get_total_count())))
+                            #~ _("You have %d entries in ") % r.get_total_count(),
+                            #~ ar.href_to_request(r,label)))
             
             #~ warnings.append(xghtml.E.li("Test 1"))
             #~ warnings.append(xghtml.E.li("Second test"))

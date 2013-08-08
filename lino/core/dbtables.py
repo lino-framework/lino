@@ -881,12 +881,7 @@ class Table(AbstractTable):
     def create_instance(self,ar,**kw):
         #~ print 20120630, "Actor.create_instance", kw
         instance = self.model(**kw)
-        #~ self.on_create(instance,ar)
-        
         instance.on_create(ar)
-        #~ m = getattr(instance,'on_create',None)
-        #~ if m:
-            #~ m(ar)
         return instance
         
     @classmethod
