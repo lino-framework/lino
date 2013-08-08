@@ -334,7 +334,11 @@ class ActionRequest(BaseRequest):
     limit = None
     order_by = None
     
-    def __init__(self,actor=None,request=None,action=None,renderer=None,param_values=None,**kw):
+    def __init__(self,actor=None,
+        request=None,action=None,renderer=None,
+        param_values=None,
+        action_param_values=None,
+        **kw):
         """
         An ActionRequest is instantiated from different shortcut methods:
         
@@ -404,17 +408,15 @@ class ActionRequest(BaseRequest):
         if self.bound_action.action.parameters is not None:
             apv = self.bound_action.action.action_param_defaults(self,None)
             if request is not None:
-                #~ pv.update(self.ui.parse_params(self.ah,request))
-                #~ pv.update(self.ah.store.parse_params(request))
                 apv.update(self.bound_action.action.params_layout.params_store.parse_params(request))
             #~ logger.info("20130122 action_param_defaults() returned %s",apv)
+            if action_param_values is not None:
+                for k in action_param_values.keys(): 
+                    if not apv.has_key(k):
+                        raise Exception("Invalid key '%s' in action_param_values of %s request (possible keys are %s)" % (k,actor,apv.keys()))
+                apv.update(action_param_values)
             self.action_param_values = AttrDict(**apv)
             
-            #~ if param_values:
-                #~ # logger.info("20120608 param_values is %s",param_values)
-                #~ for k,v in param_values.items():
-                    #~ self.param_values.define(k,v)
-                    
         self.bound_action.setup_action_request(self)
                 
         
@@ -503,6 +505,10 @@ class ActionRequest(BaseRequest):
             #~ kw.update(param_values=self.ah.store.pv2dict(ui,self.param_values))
             #~ lh = self.actor.params_layout.get_layout_handle(ui)
             kw.update(param_values=self.actor.params_layout.params_store.pv2dict(ui,self.param_values))
+            
+        if self.bound_action.action.parameters is not None:
+            pv = self.bound_action.action.params_layout.params_store.pv2dict(ui,self.action_param_values)
+            kw.update(field_values=pv)
             
         bp = kw.setdefault('base_params',{})
         if self.current_project is not None:

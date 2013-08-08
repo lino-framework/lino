@@ -78,4 +78,5 @@ add('20', _("Accepted"),'accepted')
 add('30', _("Rejected"),'rejected')
 add('40', _("Present"),'present',afterwards=True)
 add('50', _("Absent"),'absent',afterwards=True)
+add('60', _("Spot visit"),'spot_visit')
     

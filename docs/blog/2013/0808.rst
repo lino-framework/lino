@@ -63,4 +63,7 @@ doesn't yet work.
 The API for rendering buttons with action calls is getting very
 complex and intransparent and would deserve a cleanup.
 
-But after 22 hours in two days I make a checkin.
+
+But after 22 hours in two days I make a checkin and upgrade on :ref:`lf`.
+Lino is probably not very stable, but an upgrade can help to 
+discover bugs.

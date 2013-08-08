@@ -11,21 +11,6 @@ Traceback (most recent call last):
   File "/home/luc/pythonenvs/py27/local/lib/python2.7/site-packages/django/db/models/fields/related.py", line 993, in __init__
     assert isinstance(to, six.string_types), "%s(%r) is invalid. First parameter to ForeignKey must be either a model, a model name, or the string %r" % (self.__class__.__name__, to, RECURSIVE_RELATIONSHIP_CONSTANT)
 AssertionError: ForeignKey(None) is invalid. First parameter to ForeignKey must be either a model, a model name, or the string 'self'
-/home/luc/hgwork/lino/docs/api/lino.management.commands.rst:35: WARNING: autodoc: failed to import module u'lino.management.commands.makescreenshots'; the following exception was raised:
-Traceback (most recent call last):
-  File "/home/luc/pythonenvs/py27/local/lib/python2.7/site-packages/sphinx/ext/autodoc.py", line 326, in import_object
-    __import__(self.modname)
-  File "/home/luc/hgwork/lino/lino/management/commands/makescreenshots.py", line 153, in <module>
-    HTTPD = StoppableWSGIServer(('', PORT), WSGIRequestHandler)
-  File "/home/luc/pythonenvs/py27/local/lib/python2.7/site-packages/django/test/testcases.py", line 944, in __init__
-    super(StoppableWSGIServer, self).__init__(*args, **kwargs)
-  File "/home/luc/pythonenvs/py27/local/lib/python2.7/site-packages/django/core/servers/basehttp.py", line 130, in __init__
-    super(WSGIServer, self).__init__(*args, **kwargs)
-  File "/usr/lib/python2.7/SocketServer.py", line 408, in __init__
-    self.server_bind()
-  File "/home/luc/pythonenvs/py27/local/lib/python2.7/site-packages/django/core/servers/basehttp.py", line 137, in server_bind
-    raise WSGIServerException(e)
-WSGIServerException: [Errno 98] Address already in use
 /home/luc/hgwork/lino/docs/api/lino.modlib.auto.sales.rst:14: WARNING: autodoc: failed to import module u'lino.modlib.auto.sales.models'; the following exception was raised:
 Traceback (most recent call last):
   File "/home/luc/pythonenvs/py27/local/lib/python2.7/site-packages/sphinx/ext/autodoc.py", line 326, in import_object
@@ -39,7 +24,7 @@ AttributeError: 'NoneType' object has no attribute 'VatDocument'
 Traceback (most recent call last):
   File "/home/luc/pythonenvs/py27/local/lib/python2.7/site-packages/sphinx/ext/autodoc.py", line 326, in import_object
     __import__(self.modname)
-  File "/home/luc/hgwork/lino/lino/modlib/cal/models.py", line 272, in <module>
+  File "/home/luc/hgwork/lino/lino/modlib/cal/models.py", line 273, in <module>
     from lino.modlib.users.models import Membership
   File "/home/luc/hgwork/lino/lino/modlib/users/models.py", line 350, in <module>
     class Authority(mixins.UserAuthored):
@@ -54,7 +39,7 @@ Traceback (most recent call last):
     __import__(self.modname)
   File "/home/luc/hgwork/lino/lino/modlib/cal/fixtures/demo.py", line 30, in <module>
     from lino.modlib.cal import models as cal
-  File "/home/luc/hgwork/lino/lino/modlib/cal/models.py", line 272, in <module>
+  File "/home/luc/hgwork/lino/lino/modlib/cal/models.py", line 273, in <module>
     from lino.modlib.users.models import Membership
   File "/home/luc/hgwork/lino/lino/modlib/users/models.py", line 350, in <module>
     class Authority(mixins.UserAuthored):
@@ -69,7 +54,7 @@ Traceback (most recent call last):
     __import__(self.modname)
   File "/home/luc/hgwork/lino/lino/modlib/cal/fixtures/demo2.py", line 39, in <module>
     from lino.modlib.cal import models as cal
-  File "/home/luc/hgwork/lino/lino/modlib/cal/models.py", line 272, in <module>
+  File "/home/luc/hgwork/lino/lino/modlib/cal/models.py", line 273, in <module>
     from lino.modlib.users.models import Membership
   File "/home/luc/hgwork/lino/lino/modlib/users/models.py", line 350, in <module>
     class Authority(mixins.UserAuthored):
@@ -167,7 +152,7 @@ Traceback (most recent call last):
     __import__(self.modname)
   File "/home/luc/hgwork/lino/lino/modlib/reception/models.py", line 50, in <module>
     from lino.modlib.cal.models import GuestStates
-  File "/home/luc/hgwork/lino/lino/modlib/cal/models.py", line 272, in <module>
+  File "/home/luc/hgwork/lino/lino/modlib/cal/models.py", line 273, in <module>
     from lino.modlib.users.models import Membership
   File "/home/luc/hgwork/lino/lino/modlib/users/models.py", line 350, in <module>
     class Authority(mixins.UserAuthored):
@@ -241,11 +226,11 @@ Traceback (most recent call last):
     __import__(self.modname)
   File "/home/luc/hgwork/lino/lino/ui/urls.py", line 27, in <module>
     urlpatterns = settings.SITE.get_patterns()
-  File "/home/luc/hgwork/lino/lino/ui/__init__.py", line 1320, in get_patterns
+  File "/home/luc/hgwork/lino/lino/ui/__init__.py", line 1321, in get_patterns
     urlpatterns = self.get_media_urls()
-  File "/home/luc/hgwork/lino/lino/ui/__init__.py", line 1192, in get_media_urls
+  File "/home/luc/hgwork/lino/lino/ui/__init__.py", line 1193, in get_media_urls
     setup_media_link('extjs','extjs_root')
-  File "/home/luc/hgwork/lino/lino/ui/__init__.py", line 1189, in setup_media_link
+  File "/home/luc/hgwork/lino/lino/ui/__init__.py", line 1190, in setup_media_link
     symlink(source,target)
 OSError: [Errno 2] No such file or directory
 /home/luc/hgwork/lino/docs/api/lino.utils.rst:14: WARNING: autodoc: failed to import module u'lino.utils.actordoc'; the following exception was raised:
@@ -256,11 +241,11 @@ Traceback (most recent call last):
     import lino.ui.urls # hack: trigger ui instantiation
   File "/home/luc/hgwork/lino/lino/ui/urls.py", line 27, in <module>
     urlpatterns = settings.SITE.get_patterns()
-  File "/home/luc/hgwork/lino/lino/ui/__init__.py", line 1320, in get_patterns
+  File "/home/luc/hgwork/lino/lino/ui/__init__.py", line 1321, in get_patterns
     urlpatterns = self.get_media_urls()
-  File "/home/luc/hgwork/lino/lino/ui/__init__.py", line 1192, in get_media_urls
+  File "/home/luc/hgwork/lino/lino/ui/__init__.py", line 1193, in get_media_urls
     setup_media_link('extjs','extjs_root')
-  File "/home/luc/hgwork/lino/lino/ui/__init__.py", line 1189, in setup_media_link
+  File "/home/luc/hgwork/lino/lino/ui/__init__.py", line 1190, in setup_media_link
     symlink(source,target)
 OSError: [Errno 2] No such file or directory
 /home/luc/hgwork/lino/lino/ui/__init__.py:docstring of lino.ui.Site.webdav_url:7: WARNING: term not in glossary: runserver

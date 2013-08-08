@@ -1665,7 +1665,7 @@ Lino.action_handler = function (panel,on_success,on_confirm) {
         gridmode = false;
         //~ console.log('20120608 no');
     }
-    panel.loadMask.hide(); // 20120211
+    if (panel.loadMask) panel.loadMask.hide(); // 20120211
     if (!response.responseText) return ;
     var result = Ext.decode(response.responseText);
     //~ console.log('Lino.action_handler()','result is',result,'on_confirm is',on_confirm);
@@ -2121,10 +2121,14 @@ Lino.do_on_current_record = function(panel,fn,phantom_fn) {
 
 Lino.call_ajax_action = function(panel,method,url,p,actionName,step,on_confirm,on_success) {
   p.{{ext_requests.URL_PARAM_ACTION_NAME}} = actionName;
-  if (!panel) panel = Lino.viewport;
+  if (!panel) {
+      if (Lino.current_window) 
+          panel = Lino.current_window.main_item;
+      else panel = Lino.viewport;
+  }
+  console.log("20130809 Lino.call_ajax_action",panel);
   Ext.apply(p,panel.get_base_params());
-  //~ console.log("20121212 Lino.call_ajax_action",panel);
-  panel.loadMask.show(); 
+  if (panel.loadMask) panel.loadMask.show(); 
   //~ p.$ext_requests.URL_PARAM_SUBST_USER = Lino.subst_user;
   //~ Lino.insert_subst_user(p);
     
@@ -2552,20 +2556,26 @@ Lino.ActionFormPanel = Ext.extend(Lino.ActionFormPanel,{
   ,on_ok : function() { 
     //~ var rp = this.requesting_panel;
     //~ console.log("on_ok",this.requesting_panel,arguments);
-    //~ Lino.row_action_handler()
     var panel = this.requesting_panel;
-    if (panel == undefined) {
-        Lino.alert("Sorry, dialog actions don't work when called directly from the home page");
+    //~ if (panel == undefined) {
+        //~ Lino.alert("Sorry, dialog actions don't work without a requesting_panel");
+        //~ return;
+    //~ }
+    //~ var rec = panel.get_current_record();
+    var actionName = this.action_name;
+    var pk = this.base_params.mk;
+    if (pk == undefined) {
+        Lino.alert("Sorry, dialog actions without base_params.mk");
         return;
     }
-    var actionName = this.action_name;
-    var rec = panel.get_current_record();
     var self = this;
     function on_success() { self.get_containing_window().close(); };
+    var url = '{{settings.SITE.admin_prefix}}/api' + this.ls_url + '/' + pk;
     var fn = function(panel,btn,step) {
       var p = {};
       self.add_field_values(p)
-      Lino.call_ajax_action(panel,'GET',panel.get_record_url(rec.id),p,actionName,step,fn,on_success);
+      //~ Lino.call_ajax_action(panel,'GET',panel.get_record_url(rec.id),p,actionName,step,fn,on_success);
+      Lino.call_ajax_action(panel,'GET',url,p,actionName,step,fn,on_success);
     }
     fn(panel,null,null);
     

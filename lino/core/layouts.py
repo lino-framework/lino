@@ -655,7 +655,7 @@ class ParamsLayout(BaseLayout):
     url_param_name = constants.URL_PARAM_PARAM_VALUES
     params_store = None
 
-    def get_data_elem(self,name): 
+    def get_data_elem(self,name):
         return self._datasource.get_param_elem(name)
         
     def setup_handle(self,lh):

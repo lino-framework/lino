@@ -980,6 +980,7 @@ tinymce.init({
                 #~ fl._using_actors.append(actor)
             else:
                 fl._formpanel_name = formpanel_name
+                fl._url = ext_elems.rpt2url(res)
                 #~ fl._using_actors = [actor]
                 collector.add(fl)
                     
@@ -1252,6 +1253,7 @@ tinymce.init({
         assert tbl.action_name is not None
             #~ raise Exception("20121009 action_name of %r is None" % tbl)
         yield "  action_name: '%s'," % tbl.action_name
+        yield "  ls_url: %s," % py2js(dh.layout._url)
         yield "  window_title: %s," % py2js(tbl.label)
         #~ yield "  layout: 'fit',"
         #~ yield "  auto_save: true,"

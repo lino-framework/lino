@@ -84,7 +84,7 @@ dd.inject_field('system.SiteConfig','client_calender',
 
     
 class CreateGuestEvent(dd.RowAction): 
-    label = _("Appointment")
+    label = _("Register visit")
     show_in_workflow = True
     #~ show_in_row_actions = True
     parameters = dict(
@@ -119,6 +119,7 @@ class CreateGuestEvent(dd.RowAction):
         cal.Guest(
             event=event,
             partner=obj,
+            state=GuestStates.spot_visit,
             role=settings.SITE.site_config.client_guestrole,
             waiting_since=datetime.datetime.now()
         ).save()
@@ -173,7 +174,7 @@ class CheckinGuest(dd.NotifyingAction):
     def get_action_permission(self,ar,obj,state):
         if obj.event.start_date != datetime.date.today():
             return False
-        if obj.waiting_since is not None and obj.waiting_until is None:
+        if obj.waiting_since is not None:
             return False
         return super(CheckinGuest,self).get_action_permission(ar,obj,state)
     
@@ -233,14 +234,15 @@ class ReceiveGuest(dd.RowAction):
     def run_from_ui(self,obj,ar,**kw):
         def ok():
             obj.waiting_until = datetime.datetime.now()
+            if obj.state in ExpectedGuestsStates:
+                obj.state = GuestStates.present
             obj.save()
-            kw = super(ReceiveGuest,self).run_from_ui(obj,ar,**kw)
+            #~ kw = super(ReceiveGuest,self).run_from_ui(obj,ar,**kw)
             kw.update(refresh=True)
-            return kw
+            return ar.success(**kw)
         return ar.confirm(ok,
             _("%(user)s receives %(guest)s.") % 
             dict(user=obj.event.user,guest=obj.partner),_("Are you sure?"))
-        #~ return kw
         
         
 """
@@ -255,7 +257,8 @@ Guest leaves             X               X              X
 
 """        
 
-class CheckoutGuest(dd.NotifyingAction):
+#~ class CheckoutGuest(dd.NotifyingAction):
+class CheckoutGuest(dd.RowAction):
     label = _("Checkout")
     help_text = _("Guest left the centre")
     show_in_workflow = True
@@ -265,28 +268,38 @@ class CheckoutGuest(dd.NotifyingAction):
     def get_action_permission(self,ar,obj,state):
         if obj.waiting_since is None:
             return False
-        if obj.waiting_until is not None:
+        if obj.present_until is not None:
             return False
-        if obj.event.start_date != datetime.date.today():
-            return False
+        #~ if obj.event.start_date != datetime.date.today():
+            #~ return False
         return super(CheckoutGuest,self).get_action_permission(ar,obj,state)
-    
-    def get_notify_subject(self,ar,obj):
-        return _("%(partner)s has stopped waiting for %(user)s") % dict(
-            event=obj,
-            user=obj.event.user,
-            partner=obj.partner)
-     
-    #~ def before_row_save(self,row,ar):
-        #~ row.waiting_until = datetime.datetime.now()
-    
+        
     def run_from_ui(self,obj,ar,**kw):
-        if obj.waiting_until is None:
-            obj.waiting_until = datetime.datetime.now()
-        obj.present_until = datetime.datetime.now()
-        obj.save()
-        kw = super(CheckoutGuest,self).run_from_ui(obj,ar,**kw)
-        return kw
+        def ok():
+            if obj.waiting_until is None:
+                obj.waiting_until = datetime.datetime.now()
+            obj.present_until = datetime.datetime.now()
+            obj.save()
+            kw.update(refresh=True)
+            return ar.success(**kw)
+        return ar.confirm(ok,
+            _("%(guest)s has left the centre.") % 
+            dict(guest=obj.partner),_("Are you sure?"))
+        
+    
+    #~ def get_notify_subject(self,ar,obj):
+        #~ return _("%(partner)s has stopped waiting for %(user)s") % dict(
+            #~ event=obj,
+            #~ user=obj.event.user,
+            #~ partner=obj.partner)
+     
+    #~ def run_from_ui(self,obj,ar,**kw):
+        #~ if obj.waiting_until is None:
+            #~ obj.waiting_until = datetime.datetime.now()
+        #~ obj.present_until = datetime.datetime.now()
+        #~ obj.save()
+        #~ kw = super(CheckoutGuest,self).run_from_ui(obj,ar,**kw)
+        #~ return kw
         
 cal.Guest.checkin = CheckinGuest()
 cal.Guest.receive = ReceiveGuest()
@@ -353,12 +366,13 @@ class AppointmentsByGuest(dd.Table):
             #~ yield unicode(self.parameters['only_expected'].verbose_name)
 
     
+ExpectedGuestsStates = (GuestStates.invited,GuestStates.accepted)
+
 class ExpectedGuests(cal.Guests): 
     label = _("Expected Guests")
     help_text = _("""Consult this table when checking in a partner who has an appointment.""")
     filter = Q(waiting_since__isnull=True,
-        state__in=[GuestStates.invited,GuestStates.accepted]
-        )
+        state__in=ExpectedGuestsStates)
     column_names = 'partner event__user event__summary workflow_buttons waiting_since waiting_until'
     hidden_columns = 'waiting_since waiting_until'
     #~ checkin = CheckinGuest()
@@ -373,6 +387,20 @@ class ExpectedGuests(cal.Guests):
         kw.update(end_date=today)
         return kw
     
+    
+class ReceivedGuests(cal.Guests):
+    label = _("Received Guests")
+    help_text = _("Shows the visitors being received.")
+    filter = Q(waiting_since__isnull=False,waiting_until__isnull=False,present_until__isnull=True)
+    column_names = 'since partner event__user event__summary workflow_buttons'
+    order_by = ['waiting_since']
+    #~ checkout = CheckoutGuest()
+    required = dd.Required(user_groups='reception integ debts')
+    auto_fit_column_widths = True
+    
+    @dd.displayfield(_('Since'))
+    def since(self,obj,ar):
+        return naturaltime(obj.waiting_until)
     
 class WaitingGuests(cal.Guests):
     label = _("Waiting Guests")
@@ -416,6 +444,7 @@ def setup_main_menu(site,ui,profile,m):
     #~ m.add_action(Clients)
     #~ m.add_action(ExpectedGuests)
     m.add_action(WaitingGuests)
+    m.add_action(ReceivedGuests)
     #~ m.add_action(ExpectedGuests,params=dict(param_values=dict(only_expected=True)))
     #~ m.add_action(WaitingGuests,params=dict(param_values=dict(only_waiting=True)))
 
