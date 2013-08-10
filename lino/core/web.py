@@ -43,23 +43,44 @@ from jinja2.exceptions import TemplateNotFound
 
 #~ SUBDIR_NAME = 'templates_jinja'
 SUBDIR_NAME = 'config'
+
+def list_templates(self,ext,group=''):
+    """
+    Return a list of possible choices for a field that contains a 
+    template name.
+    """
+    #~ logger.info("20130717 list_templates(%r,%r)",ext,group)
+    if group:
+        #~ prefix = os.path.join(*(group.split('/')))
+        def ff(fn):
+            rv = fn.startswith(group) and fn.endswith(ext)
+            #~ logger.info("20130101 %r -> %s", fn,rv)
+            return rv 
+        lst = self.jinja_env.list_templates(filter_func=ff)
+        L = len(group) + 1
+        lst = [i[L:] for i in lst]
+        return lst
+    return self.jinja_env.list_templates(extensions=[ext])
     
-def web_setup(sender):
+
+    
+def site_setup(self):
     """
     Adds a `jinja_env` attribute to `settings.SITE`.
     This is being called from :meth:`lino.ui.Site.on_site_startup`.
     
     Lino has an automatic and currently not configurable method 
     for building Jinja's template loader. It looks for 
-    a "templates_jinja" subfolder in the following places:
+    a "config" subfolder in the following places:
     
     - the directory where your settings.py is defined.
     - the directories of each installed app
     
     """
     #~ logger.debug("Setting up Jinja environment")
-    self = sender
-    from django.utils.importlib import import_module
+    #~ from django.utils.importlib import import_module
+    
+    self.__class__.list_templates = list_templates
     
     loaders = []
     
@@ -67,11 +88,11 @@ def web_setup(sender):
         if isdir(join(dirname(m.__file__),SUBDIR_NAME)):
             #~ logger.info("20130717 jinja loader %s",name)
             loaders.append(jinja2.PackageLoader(name, SUBDIR_NAME))
-    settings.SITE.for_each_app(func)
+    self.for_each_app(func)
     
     paths = list(self.get_settings_subdirs(SUBDIR_NAME))
-    if settings.SITE.is_local_project_dir:
-        p = join(settings.SITE.project_dir,SUBDIR_NAME)
+    if self.is_local_project_dir:
+        p = join(self.project_dir,SUBDIR_NAME)
         if isdir(p):
             paths.append(p)
     #~ logger.info("20130717 web.py paths %s",paths)
@@ -100,9 +121,9 @@ def web_setup(sender):
 
     def as_table(action_spec):
         from lino.utils import auth
-        a = settings.SITE.modules.resolve(action_spec)
+        a = self.modules.resolve(action_spec)
         ar = a.request(user=auth.AnonymousUser.instance())
-        ar.renderer = settings.SITE.ui.plain_renderer
+        ar.renderer = self.ui.plain_renderer
         
         t = xghtml.Table()
         #~ t = doc.add_table()
@@ -115,15 +136,13 @@ def web_setup(sender):
           
     def as_ul(action_spec):
         from lino.utils import auth
-        a = settings.SITE.modules.resolve(action_spec)
+        a = self.modules.resolve(action_spec)
         ar = a.request(user=auth.AnonymousUser.instance())
-        ar.renderer = settings.SITE.ui.plain_renderer
+        ar.renderer = self.ui.plain_renderer
         return E.tostring(E.ul(*[obj.as_list_item(ar) for obj in ar]))
 
     self.jinja_env.globals.update(
             settings=settings,
-            # LINO=settings.SITE,
-            #~ ui=settings.SITE.ui,
             site=self,
             dtos=dbutils.dtos,
             dtosl=dbutils.dtosl,

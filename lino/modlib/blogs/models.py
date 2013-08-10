@@ -101,19 +101,6 @@ class Entry(mixins.TypedPrintable,
     def __unicode__(self):
         return u'%s #%s' % (self._meta.verbose_name,self.pk)
         
-    #~ def summary_row(self,ui,rr,**kw):
-    def summary_row(self,ar,**kw):
-        #~ s = super(Note,self).summary_row(ui,rr)
-        s = super(Entry,self).summary_row(ar)
-        #~ s = contacts.ContactDocument.summary_row(self,ui,rr)
-        if self.title:
-            s += ' ' + cgi.escape(self.title) 
-        return s
-    
-    #~ def update_owned_instance(self,task):
-        #~ mixins.AutoUser.update_owned_instance(self,task)
-        #~ contacts.PartnerDocument.update_owned_instance(self,task)
-    
     
 
 class EntryDetail(dd.FormLayout):

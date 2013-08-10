@@ -212,7 +212,7 @@ if settings.SITE.is_installed('contenttypes'):
                       #~ logger.info("20120205 adding(%r)",cl)
                       ct = contenttypes.ContentType.objects.get_for_model(cl)
                       #~ chunks.append(settings.SITE.ui.ext_renderer.href_to(ct,unicode(cl._meta.verbose_name)))
-                      chunks.append(ar.href_to(ct,unicode(cl._meta.verbose_name)))
+                      chunks.append(ar.obj2html(ct,unicode(cl._meta.verbose_name)))
           if obj is not None:
               #~ add(obj.model_class())
               for b in obj.model_class().__bases__:

@@ -78,7 +78,7 @@ from lino.core.dbutils import get_model_report
 from lino.core.tables import AbstractTable, TableRequest, VirtualTable
 #~ from lino.core.tables import GridEdit #, ComputedColumn
 
-
+from lino.utils.xmlgen.html import E
 #~ from lino.modlib import field_choices
 
         
@@ -113,45 +113,32 @@ def wildcard_data_elems(model):
     #~ for de in data_elems(self.model): yield de
     
 
-
-#~ def summary_row(obj,ui,rr,**kw):
-def summary_row(obj,ar,**kw):
-    return obj.summary_row(ar,**kw)
-    #~ m = getattr(obj,'summary_row',None)
-    #~ if m:
-        #~ return m(ar,**kw)
-    #~ return ar.renderer.href_to(obj)
-    #~ return ar.ui.ext_renderer.href_to(obj)
+#~ removed 20130810
+#~ def summary_row(obj,ar,**kw):
+    #~ return obj.summary_row(ar,**kw)
   
 
-#~ def summary(ui,rr,separator=', ',max_items=5,before='',after='',**kw):
-def summary(ar,objects,separator=', ',max_items=5,before='',after='',**kw):
+def comma(): return ', '
+
+#~ def summary(ar,objects,separator=', ',max_items=5,before='',after='',**kw):
+def qs2summary(ar,objects,separator=comma,max_items=5,**kw):
     """
     Returns this table as a unicode string.
     
     :param max_items: don't include more than the specified number of items.
     """
-    #~ if format is None:
-        #~ def format(rr,obj):
-            #~ return unicode(obj)
-    s = u''
+    elems = []
     n = 0
-    #~ for i in rr.data_iterator:
     for i in objects:
         if n:
-            s += separator
-        else:
-            s += before
+            elems.append(separator())
         n += 1
-        #~ s += summary_row(i,ui,rr,**kw)
-        s += ar.summary_row(i,**kw)
-        #~ s += i.summary_row(ui,rr,**kw)
+        elems += list(ar.summary_row(i,**kw))
         if n >= max_items:
-            s += separator + '...' + after
-            return s
-    if n:
-        return s + after
-    return s
+            elems += [ separator(),'...' ]
+            break
+            #~ return E.p(*elems)
+    return E.p(*elems)
 
 #~ def default_summary_row(obj,rr):
     #~ return u'<a href="%s" target="_blank">%s</a>' % (rr.get_request_url(str(obj.pk),fmt='detail'),unicode(obj))
@@ -733,6 +720,8 @@ class Table(AbstractTable):
         and the given user.
         """
         #~ logger.info("20121020 dbtables.Table.get_row_permission %s",unicode(ba.action.label))
+        if obj is None: 
+            return True
         return obj.get_row_permission(ar,state,ba)
         
     @classmethod
@@ -895,7 +884,7 @@ class Table(AbstractTable):
             #~ print 20120715, ar
             ar = ar.spawn(self,master_instance=master)
             #~ ar = self.request(ui,None,master_instance=master)
-            s = summary(ar,ar.data_iterator,row_separator)
+            s = qs2summary(ar,ar.data_iterator,row_separator)
             return s
         return meth
         

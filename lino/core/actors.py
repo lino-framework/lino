@@ -191,15 +191,15 @@ class BoundAction(object):
     def setup_action_request(self,*args):
         return self.action.setup_action_request(self.actor,*args)
         
+    def get_row_permission(self,ar,obj,state):
+        #~ if self.actor is None: return False
+        return self.actor.get_row_permission(obj,ar,state,self)
+        
     def get_bound_action_permission(self,ar,obj,state):
         if not self.action.get_action_permission(ar,obj,state):
             #~ if self.action.action_name == 'wf7':
                 #~ logger.info("20130424 actors.BoundAction.get_bound_action_permission")
             return False
-        if self.action.action_name == 'wf7':
-            rv = self._allow(ar.get_user(),obj,state)
-            #~ logger.info("20130424 actors.BoundAction.get_bound_action_permission called %s and got %s",self._allow,rv)
-            return rv
         return self._allow(ar.get_user(),obj,state)
         
     def get_view_permission(self,profile):
@@ -625,8 +625,7 @@ class Actor(actions.Parametrizable):
         pass
         
     @classmethod
-    def summary_row(cls,ar,obj,**kw):
-        return obj.summary_row(ar,**kw)
+    def summary_row(cls,ar,obj,**kw): return obj.summary_row(ar,**kw)
     
     @classmethod
     def get_handle(self):

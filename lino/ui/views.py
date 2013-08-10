@@ -160,7 +160,7 @@ def elem2rec_empty(ar,ah,elem,**rec):
     #~ rec.update(id=elem.pk) or -99999)
     if ar.actor.parameters:
         #~ rec.update(param_values=ar.ah.store.pv2dict(ar.ui,ar.param_values))
-        rec.update(param_values=ar.actor.params_layout.params_store.pv2dict(settings.SITE.ui,ar.param_values))
+        rec.update(param_values=ar.actor.params_layout.params_store.pv2dict(ar.param_values))
     return rec
 
 def elem2rec_detailed(ar,elem,**rec):
@@ -767,7 +767,7 @@ class ApiElement(View):
                 
                 return json_response(datarec)
                 
-            after_show = ar.get_status(ui,record_id=pk)
+            after_show = ar.get_status(record_id=pk)
             
             tab = request.GET.get(ext_requests.URL_PARAM_TAB,None)
             if tab is not None: 
@@ -903,13 +903,13 @@ class ApiList(View):
               #~ gc_choices=[gc.data for gc in ar.actor.grid_configs])
             if ar.actor.parameters:
                 #~ kw.update(param_values=ar.actor.params_layout.params_store.pv2dict(settings.SITE.ui,ar.param_values))
-                kw.update(param_values=ar.actor.params_layout.params_store.pv2dict(settings.SITE.ui,ar.param_values))
+                kw.update(param_values=ar.actor.params_layout.params_store.pv2dict(ar.param_values))
             return json_response(kw) 
                 
         if fmt == ext_requests.URL_FORMAT_HTML:
             #~ ar.renderer = ui.ext_renderer
             #~ after_show = ar.get_status(ar.ui)
-            after_show = ar.get_status(settings.SITE.ui)
+            after_show = ar.get_status()
             
             sp = request.GET.get(ext_requests.URL_PARAM_SHOW_PARAMS_PANEL,None)
             if sp is not None: 

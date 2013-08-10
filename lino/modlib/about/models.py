@@ -62,7 +62,7 @@ class Models(dd.VirtualTable):
                 
     @classmethod
     def summary_row(cls,ar,obj,**kw):
-        return E.p(unicode(obj._meta.verbose_name_plural))
+        return [unicode(obj._meta.verbose_name_plural)]
                 
                 
     @dd.displayfield(_("app_label"))

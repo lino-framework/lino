@@ -43,9 +43,7 @@ class Third(
     
     def summary_row(self,ar,**kw):
         #~ s = ui.href_to(self)
-        s = "(" + unicode(self.seqno) + ") "
-        s += contacts.PartnerDocument.summary_row(self,ar,**kw)
-        return s
+        return ["(",unicode(self.seqno),") "] + list(contacts.PartnerDocument.summary_row(self,ar,**kw))
         
     def __unicode__(self):
         return unicode(self.seqno)

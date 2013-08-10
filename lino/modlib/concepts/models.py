@@ -99,8 +99,8 @@ class Concept(dd.BabelNamed):
         
     def summary_row(self,ar=None):
         if self.abbr:
-            return "%s (%s)" % (dbutils.babelattr(self,'name'),dbutils.babelattr(self,'abbr'))
-        return dbutils.babelattr(self,'name')
+            return ["%s (%s)" % (dbutils.babelattr(self,'name'),dbutils.babelattr(self,'abbr'))]
+        return [dbutils.babelattr(self,'name')]
         
         
     

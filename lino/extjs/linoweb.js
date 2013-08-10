@@ -2564,8 +2564,11 @@ Lino.ActionFormPanel = Ext.extend(Lino.ActionFormPanel,{
     //~ var rec = panel.get_current_record();
     var actionName = this.action_name;
     var pk = this.base_params.mk;
+    if (pk == undefined && panel) {
+        pk = panel.get_current_record().id;
+    }
     if (pk == undefined) {
-        Lino.alert("Sorry, dialog actions without base_params.mk");
+        Lino.alert("Sorry, dialog action without base_params.mk");
         return;
     }
     var self = this;

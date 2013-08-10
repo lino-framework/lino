@@ -15,3 +15,10 @@ There is also collection of Lino *projects* in
 :mod:`lino.projects`.
 Each Lino project uses some set of modules that have been "glued together".
 
+
+.. _modlib.notes.Note:
+
+notes.Note
+----------
+
+

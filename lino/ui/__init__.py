@@ -53,9 +53,7 @@ from lino import ad
 class Site(lino.Site):
     """
     """
-    
-    #~ 20130531 pending_threads = {}
-    
+   
     console_user = None
     
     partners_app_label = 'contacts'
@@ -674,8 +672,8 @@ class Site(lino.Site):
             from lino.core.dbutils import is_devserver
             self.build_js_cache_on_startup = not (settings.DEBUG or is_devserver())
         
-        from lino.core.web import web_setup
-        web_setup(self)
+        from lino.core.web import site_setup
+        site_setup(self)
         
         from lino.ui.ui import ExtUI
         self.ui = ExtUI(self)
@@ -979,6 +977,8 @@ class Site(lino.Site):
                 #~ dblogger.debug("Running %s of %s", methname, mod.__name__)
                 for table,text in meth(ar):
                     if table.default_action.get_view_permission(ar.get_user().profile):
+                      if table.default_action.get_row_permission(ar,None,None):
+                      #~ if table.default_action.get_bound_action_permission(ar,None,None):
                         if text is None:
                             text = "%d " + unicode(table.label)
                         yield (table,text)
@@ -1387,6 +1387,7 @@ class Site(lino.Site):
             func(app_name,app_mod,*args,**kw)
 
 
-
+    def get_letter_margin_html(self,ar):
+        return self.site_config.site_company.get_address('<br/>')
 
 

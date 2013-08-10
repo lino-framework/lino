@@ -48,13 +48,14 @@ add('50', _("Cancelled"),'cancelled')
     
 class EventStates(dd.Workflow):
     required = dd.required(user_level='admin')
-    help_text = _("""List of the possible states of a calendar event.""")
+    help_text = _("""The possible states of a calendar event.""")
     app_label = 'cal'
         
 add = EventStates.add_item
 add('10', _("Suggested"), 'suggested',help_text=_("Automatically suggested. Default state of an automatic event."))
 add('20', _("Draft"), 'draft')
 #~ add('30', _("Notified"),'notified')
+add('30', _("Visit"), 'visit')
 add('40', _("Scheduled"), 'scheduled')
 add('50', _("Took place"),'took_place')
 add('60', _("Rescheduled"),'rescheduled')
@@ -78,5 +79,5 @@ add('20', _("Accepted"),'accepted')
 add('30', _("Rejected"),'rejected')
 add('40', _("Present"),'present',afterwards=True)
 add('50', _("Absent"),'absent',afterwards=True)
-add('60', _("Spot visit"),'spot_visit')
+add('60', _("Visit"),'visit')
     

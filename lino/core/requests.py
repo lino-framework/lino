@@ -292,11 +292,9 @@ class BaseRequest(object):
         #~ print ar.to_rst(column_names)
         return ar.renderer.show(ar,column_names=column_names)
         
-    def summary_row(self,obj,**kw):
-        return obj.summary_row(self,**kw)
-            
+    def summary_row(self,obj,**kw): return obj.summary_row(self,**kw)
     def instance_handler(self,*args,**kw): return self.renderer.instance_handler(self,*args,**kw)
-    def href_to(self,*args,**kw): return self.renderer.href_to(self,*args,**kw)
+    #~ def href_to(self,*args,**kw): return self.renderer.href_to(self,*args,**kw)
     def pk2url(self,*args,**kw): return self.renderer.pk2url(self,*args,**kw)
     def get_request_url(self,*args,**kw): return self.renderer.get_request_url(self,*args,**kw)
     def obj2html(self,*args,**kw): return self.renderer.obj2html(self,*args,**kw)
@@ -304,6 +302,7 @@ class BaseRequest(object):
     def window_action_button(self,*args,**kw): return self.renderer.window_action_button(self,*args,**kw)
     def row_action_button(self,obj,a,*args,**kw): return self.renderer.row_action_button(obj,self.request,a,*args,**kw)
     def action_button(self,a,obj,*args,**kw): return self.renderer.action_button(obj,self,a,*args,**kw)
+    def insert_button(self,*args,**kw): return self.renderer.insert_button(self,*args,**kw)
     
     def goto_instance(self,obj,**kw):
         #~ kw.update(refresh=True)
@@ -500,14 +499,14 @@ class ActionRequest(BaseRequest):
         #~ return self.ui.get_request_url(self,*args,**kw)
 
       
-    def get_status(self,ui,**kw):
+    def get_status(self,**kw):
         if self.actor.parameters:
             #~ kw.update(param_values=self.ah.store.pv2dict(ui,self.param_values))
             #~ lh = self.actor.params_layout.get_layout_handle(ui)
-            kw.update(param_values=self.actor.params_layout.params_store.pv2dict(ui,self.param_values))
+            kw.update(param_values=self.actor.params_layout.params_store.pv2dict(self.param_values))
             
         if self.bound_action.action.parameters is not None:
-            pv = self.bound_action.action.params_layout.params_store.pv2dict(ui,self.action_param_values)
+            pv = self.bound_action.action.params_layout.params_store.pv2dict(self.action_param_values)
             kw.update(field_values=pv)
             
         bp = kw.setdefault('base_params',{})
@@ -544,3 +543,5 @@ class ActionRequest(BaseRequest):
         Returns a string representing this request in reStructuredText markup.
         """
         return self.actor.to_rst(self,*args,**kw)
+
+

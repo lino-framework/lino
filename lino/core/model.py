@@ -383,7 +383,7 @@ class Model(models.Model):
         pass
   
     def summary_row(self,ar,**kw):
-        return ar.href_to(self)
+        yield ar.obj2html(self)
         
         
     def __repr__(self):

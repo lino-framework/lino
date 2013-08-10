@@ -37,28 +37,13 @@ from django.core.exceptions import ValidationError
 
 
 from lino import mixins
-#~ from lino.mixins import mails
 from lino import dd
 from lino.core import actions
 
-#~ from lino import reports
-#~ from lino import layouts
-#~ from lino.utils import perms
-from lino.utils.restify import restify
-#~ from lino.utils import printable
 from north import dbutils
-#~ from lino.utils import call_optional_super
-#~ from lino import choices_method, simple_choices_method
-
-#~ from lino.modlib.mails.utils import RecipientType
 
 from lino.utils.html2text import html2text
 from django.core.mail import EmailMultiAlternatives
-#~ from lino.utils.choicelists import ChoiceList
-
-
-#~ from Cheetah.Template import Template as CheetahTemplate
-#~ from lino.utils import dtosl, dtos
 
 
 
@@ -118,20 +103,15 @@ Whether the printable file should be attached to the email
 when creating an email from a mailable of this type.
 """)
     #~ email_as_attachment = models.BooleanField(_("Email as attachment"))
+    
     email_template = models.CharField(max_length=200,
       verbose_name=_("Email template"),
-      blank=True,help_text="""\
-The name of the file to be used as template 
-when creating an email from a mailable of this type.
-""")
+      blank=True,help_text="""The name of the file to be used as 
+template when creating an email from a mailable of this type.""")
     
-    #~ @dd.chooser(simple_values=True)
-    #~ def email_template_choices(cls):
-        #~ return find_template_config_files('.eml.html',cls.templates_group)
-      
     @dd.chooser(simple_values=True)
     def email_template_choices(cls):
-        return list_templates('.eml.html',cls.templates_group)
+        return settings.SITE.list_templates('.eml.html',cls.templates_group)
       
     
 
@@ -192,20 +172,6 @@ class CreateMail(dd.RowAction):
         return ar.success(**kw)
         
 
-def list_templates(ext,group=''):
-    logger.info("20130717 list_templates(%r,%r)",ext,group)
-    if group:
-        #~ prefix = os.path.join(*(group.split('/')))
-        def ff(fn):
-            rv = fn.startswith(group) and fn.endswith(ext)
-            #~ logger.info("20130101 %r -> %s", fn,rv)
-            return rv 
-        lst = settings.SITE.jinja_env.list_templates(filter_func=ff)
-        L = len(group) + 1
-        lst = [i[L:] for i in lst]
-        return lst
-    return settings.SITE.jinja_env.list_templates(extensions=[ext])
-    
 
 class Mailable(dd.Model):
     """
@@ -611,7 +577,7 @@ class Attachment(mixins.Controllable):
         #~ url = ui.build_url(*parts)
         text = url.split('/')[-1]
         #~ return ui.ext_renderer.href(url,text)
-        return ar.renderer.href(url,text)
+        return [ar.renderer.href(url,text)]
         
         
         

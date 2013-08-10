@@ -50,6 +50,7 @@ from django.db.models.fields.related import SingleRelatedObjectDescriptor
 #~ from django.contrib.contenttypes.models import ContentType
 from django.contrib.contenttypes import generic
 
+from lino.utils.xmlgen.html import E
 
 from lino.core import constants # as ext_requests
 
@@ -845,7 +846,7 @@ def create_layout_element(lh,name,**kw):
                 field.help_text = de.help_text
                 field.name = de.__name__
                 #~ field._return_type_for_method = de.slave_as_summary_meth(self,'<br>')
-                field._return_type_for_method = de.slave_as_summary_meth('<br>')
+                field._return_type_for_method = de.slave_as_summary_meth(E.br)
                 lh.add_store_field(field)
                 e = ext_elems.HtmlBoxElement(lh,field,**kw)
                 return e

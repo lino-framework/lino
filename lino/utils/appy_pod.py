@@ -107,6 +107,7 @@ class Renderer(AppyRenderer):
         #~ context.update(ui=self.extjs_ui)
         context.update(ui=settings.SITE.ui)
         context.update(settings=settings)
+        context.update(sc=settings.SITE.site_config)
         context.update(settings.SITE.modules)
         kw.update(finalizeFunction=self.finalize_func)
         AppyRenderer.__init__(self,template,context,result, **kw)

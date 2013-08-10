@@ -273,7 +273,7 @@ class ForeignKeyStoreField(RelatedMixin,ComboStoreField):
         #~ obj = self.full_value_from_object(req,row)
         #~ if obj is None:
             #~ return ''
-        #~ return req.ui.href_to(obj)
+        #~ return req.ui.obj2html(obj)
         
         
     def get_value_text(self,v,obj):
@@ -616,14 +616,14 @@ class GenericForeignKeyField(DisplayStoreField):
         if v is None: return ''
         if ar is None: return unicode(v)
         if ar.renderer is None: return unicode(v)
-        return ar.href_to(v)
+        return ar.obj2html(v)
         #~ owner = getattr(obj,self.name)
         #~ if owner is None: 
             #~ # owner_id = getattr(obj,self.field.fk_field)
             #~ # if owner_id is None:
                 #~ # return ''
             #~ return ''
-        #~ return ar.href_to(owner)
+        #~ return ar.obj2html(owner)
   
 
 class unused_GenericForeignKeyField(StoreField):
@@ -638,7 +638,7 @@ class unused_GenericForeignKeyField(StoreField):
             #~ # if owner_id is None:
                 #~ # return ''
             #~ return ''
-        #~ return ar.href_to(owner)
+        #~ return ar.obj2html(owner)
   
     def value2list(self,ar,v,l,row):
         return l.append(unicode(v))
@@ -933,7 +933,7 @@ class ParameterStore(BaseStore):
             l.append(pv[f.field.name])
         return l
         
-    def pv2dict(self,ui,pv,**d):
+    def pv2dict(self,pv,**d):
         for fld in self.param_fields:
             v = pv.get(fld.name,None)
             fld.value2dict(v,d,None)

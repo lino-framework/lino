@@ -75,6 +75,7 @@ from lino.core import choicelists
 from lino.core import menus
 from lino.utils import jsgen
 from lino.utils.xmlgen import html as xghtml
+from lino.utils.xmlgen.html import E
 from lino.utils import codetime
 
 if False:
@@ -117,7 +118,8 @@ class HtmlRenderer(object):
         self.ui = ui
         
     def href(self,url,text):
-        return '<a href="%s">%s</a>' % (url,text)
+        #~ return '<a href="%s">%s</a>' % (url,text)
+        return E.a(text,href=url)
         
     def show(self,ar,**kw):
         return ar.table2xhtml(**kw)
@@ -125,13 +127,14 @@ class HtmlRenderer(object):
         
     def href_button_action(self,ba,*args,**kw):
         if ba.action.icon_file is not None:
-            kw.update(icon_file=ba.action.icon_file)
-            kw.update(style="vertical-align:-30%;")
+            if not kw.has_key('icon_file'):
+                kw.update(icon_file=ba.action.icon_file)
+                kw.update(style="vertical-align:-30%;")
         return self.href_button(*args,**kw)
         
     def href_button(self,url,text,title=None,target=None,icon_file=None,**kw):
         """
-        Returns an elementtree object of a "button-like" ``<a href>`` tag.
+        Returns an etree object of a "button-like" ``<a href>`` tag.
         """
         #~ logger.info('20121002 href_button %r',unicode(text))
         if target:
@@ -157,6 +160,20 @@ class HtmlRenderer(object):
             #~ return xghtml.E.span('[',xghtml.E.a(text,**kw),']')
             #~ kw.update(style='border-width:1px; border-color:black; border-style:solid;')
             return xghtml.E.a(text,**kw)
+            
+    def insert_button(self,ar,text,known_values={},**options):
+        """
+        Returns the HTML of a button which will call the `insert_action`.
+        """
+        a = ar.actor.insert_action
+        if a is None: 
+            return
+        if not a.get_bound_action_permission(ar,ar.master_instance,None):
+            return
+        elem = ar.create_instance(**known_values)
+        st = ar.get_status()
+        st.update(data_record=views.elem2rec_insert(ar,ar.ah,elem))
+        return self.window_action_button(ar.request,a,st,text,**options)
         
     def quick_add_buttons(self,ar):
         """
@@ -169,36 +186,22 @@ class HtmlRenderer(object):
         See also :doc:`/tickets/56`.
         
         """
-        s = ''
-        #~ params = dict(base_params=ar.request2kw(self))
-        params = None
-        after_show = ar.get_status(self)
-        
-        #~ params = ar.get_status(self)
-        #~ after_show = dict()
-        #~ a = ar.actor.get_url_action('insert_action')
         buttons = []
-        a = ar.actor.insert_action
-        if a is not None:
-            if a.get_bound_action_permission(ar,ar.master_instance,None):
-                elem = ar.create_instance()
-                after_show.update(data_record=views.elem2rec_insert(ar,ar.ah,elem))
-                #~ after_show.update(record_id=-99999)
-                # see tickets/56
-                #~ s += self.window_action_button(a,after_show,_("New"))
-                buttons.append(self.window_action_button(ar.request,a,after_show,_("New")))
-                #~ buttons.append(self.action_button(ar.request,a,after_show,_("New")))
-                buttons.append(' ')
-                after_show = ar.get_status(self)
+        btn = ar.insert_button(_("New"))
+        if btn is not None:
+            buttons.append(btn)
+            buttons.append(' ')
+                #~ after_show = ar.get_status()
         n = ar.get_total_count()
         #~ print 20120702, [o for o in ar]
         if n > 0:
             obj = ar.data_iterator[n-1]
-            after_show.update(record_id=obj.pk)
+            st = ar.get_status()
+            st.update(record_id=obj.pk)
             #~ a = ar.actor.get_url_action('detail_action')
             a = ar.actor.detail_action
             buttons.append(self.window_action_button(
-                ar.request,a,after_show,_("Show Last"),
+                ar.request,a,st,_("Show Last"),
                 icon_file = 'application_form.png',
                 title=_("Show the last record in a detail window")))
             buttons.append(' ')
@@ -215,36 +218,36 @@ class HtmlRenderer(object):
     def quick_upload_buttons(self,rr):
         """
         Returns a HTML chunk that displays "quick upload buttons":
-        either one button :guilabel:`[Upload]` 
+        either one button :guilabel:`Upload` 
         (if the given :class:`TableTequest <lino.core.dbtables.TableRequest>`
         has no rows)
-        or two buttons :guilabel:`[Show]` and :guilabel:`[Edit]` 
+        or two buttons :guilabel:`Show` and :guilabel:`Edit` 
         if it has one row.
         
         See also :doc:`/tickets/56`.
         
         """
-        #~ params = dict(base_params=rr.request2kw(self))
-        #~ params = rr.get_status(self)
-        params = None
-        after_show = rr.get_status(self)
-        #~ after_show = dict(base_params=rr.get_status(self))
-        #~ after_show = dict()
         if rr.get_total_count() == 0:
-            #~ a = rr.actor.get_url_action('insert_action')
-            a = rr.actor.insert_action
-            if a is not None:
-                elem = rr.create_instance()
-                after_show.update(data_record=views.elem2rec_insert(rr,rr.ah,elem))
-                #~ after_show.update(record_id=-99999)
-                # see tickets/56
-                return self.window_action_button(rr.request,a,after_show,_("Upload"),
-                  #~ icon_file='attach.png',
-                  #~ icon_file='world_add.png',
-                  icon_file='page_add.png',
-                  title=_("Upload a file from your PC to the server."))
-                  #~ icon_name='x-tbar-upload')
+            if True: # after 20130809
+                return rr.insert_button(_("Upload"),
+                    icon_file='page_add.png',
+                    title=_("Upload a file from your PC to the server."))
+            else:
+                a = rr.actor.insert_action
+                if a is not None:
+                    after_show = rr.get_status()
+                    elem = rr.create_instance()
+                    after_show.update(data_record=views.elem2rec_insert(rr,rr.ah,elem))
+                    #~ after_show.update(record_id=-99999)
+                    # see tickets/56
+                    return self.window_action_button(rr.request,a,after_show,_("Upload"),
+                      #~ icon_file='attach.png',
+                      #~ icon_file='world_add.png',
+                      icon_file='page_add.png',
+                      title=_("Upload a file from your PC to the server."))
+                      #~ icon_name='x-tbar-upload')
         if rr.get_total_count() == 1:
+            after_show = rr.get_status()
             obj = rr.data_iterator[0]
             chunks = []
             #~ chunks.append(xghtml.E.a(_("show"),
@@ -283,6 +286,15 @@ class HtmlRenderer(object):
             if url is not None:
                 return xghtml.E.a(text,href=url)
         return xghtml.E.b(text)
+        
+    def window_action_button(self,request,ba,after_show={},label=None,title=None,**kw):
+        """
+        Return a HTML chunk for a button that will execute this action.
+        """
+        label = unicode(label or ba.get_button_label())
+        url = 'javascript:'+self.action_call(request,ba,after_show)
+        #~ logger.info('20121002 window_action_button %s %r',a,unicode(label))
+        return self.href_button_action(ba,url,label,title or ba.action.help_text,**kw)
         
 class TextRenderer(HtmlRenderer):
     user = None
@@ -338,11 +350,11 @@ class PlainRenderer(HtmlRenderer):
                 add_user_language(kw,ar)
                 return self.get_detail_url(obj,**kw)
   
-    def href_to(self,ar,obj,text=None):
-        h = self.instance_handler(ar,obj)
-        if h is None:
-            return cgi.escape(force_unicode(obj))
-        return self.href(url,text or cgi.escape(force_unicode(obj)))
+    #~ def href_to(self,ar,obj,text=None):
+        #~ h = self.instance_handler(ar,obj)
+        #~ if h is None:
+            #~ return cgi.escape(force_unicode(obj))
+        #~ return self.href(url,text or cgi.escape(force_unicode(obj)))
         
     def pk2url(self,ar,pk,**kw):
         if pk is not None:
@@ -358,7 +370,7 @@ class PlainRenderer(HtmlRenderer):
         return settings.SITE.build_plain_url(obj._meta.app_label,obj.__class__.__name__,str(obj.pk),*args,**kw)
         
     def get_request_url(self,ar,*args,**kw):
-        st = ar.get_status(self)
+        st = ar.get_status()
         kw.update(st['base_params'])
         add_user_language(kw,ar)
         #~ since 20121226 kw.setdefault(ext_requests.URL_PARAM_FORMAT,ext_requests.URL_FORMAT_PLAIN)
@@ -383,15 +395,6 @@ class PlainRenderer(HtmlRenderer):
         label = label or ba.action.label
         return label
       
-    def window_action_button(self,request,ba,after_show={},label=None,title=None,**kw):
-        """
-        Return a HTML chunk for a button that will execute this action.
-        """
-        label = unicode(label or ba.get_button_label())
-        url = 'javascript:'+self.action_call(request,ba,after_show)
-        #~ logger.info('20121002 window_action_button %s %r',a,unicode(label))
-        return self.href_button_action(ba,url,label,title or ba.action.help_text,**kw)
-        
     def action_call(self,request,bound_action,after_show):  
         return "oops"
 

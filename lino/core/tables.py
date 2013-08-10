@@ -195,7 +195,21 @@ class TableRequest(ActionRequest):
     def execute(self):
         #~ if self.actor.parameters:
             #~ logger.info("20121203 TableRequest.execute() %s",self.param_values)
-        self._data_iterator = self.get_data_iterator()
+            
+        try:
+            self._data_iterator = self.get_data_iterator()
+        except Warning,e:
+            #~ logger.info("20130809 Warning %s",e)
+            self.no_data_text = unicode(e)
+            self._data_iterator = []
+        except Exception,e:
+            self.no_data_text = unicode(e)
+            w = WARNINGS_LOGGED.get(str(e))
+            if w is None:
+                WARNINGS_LOGGED[str(e)] = True
+                logger.exception(e)
+            self._data_iterator = []
+            
         self._sliced_data_iterator = self._data_iterator
         if self.offset is not None:
             self._sliced_data_iterator = self._sliced_data_iterator[self.offset:]
@@ -226,24 +240,12 @@ class TableRequest(ActionRequest):
     def get_data_iterator(self):
         if self.actor.get_data_rows is not None:
             l = []
-            try:
-                rows = self.actor.get_data_rows(self)
-                for row in rows:
-                    #~ if len(l) > 300:
-                        #~ raise Exception("20120521 More than 300 items in %s" % 
-                            #~ unicode(rows))
-                    group = self.actor.group_from_row(row)
-                    group.process_row(l,row)
-            except Warning,e:
-                self.no_data_text = unicode(e)
-                return []
-            except Exception,e:
-                self.no_data_text = unicode(e)
-                w = WARNINGS_LOGGED.get(str(e))
-                if w is None:
-                    WARNINGS_LOGGED[str(e)] = True
-                    logger.exception(e)
-                return []
+            for row in self.actor.get_data_rows(self):
+                #~ if len(l) > 300:
+                    #~ raise Exception("20120521 More than 300 items in %s" % 
+                        #~ unicode(rows))
+                group = self.actor.group_from_row(row)
+                group.process_row(l,row)
             return l
         #~ logger.info("20120914 tables.get_data_iterator %s",self)
         #~ logger.info("20120914 tables.get_data_iterator %s",self.actor)
@@ -691,8 +693,8 @@ class TableRequest(ActionRequest):
         
         
         
-    def get_status(self,ui,**kw):
-        kw = ActionRequest.get_status(self,ui,**kw)
+    def get_status(self,**kw):
+        kw = ActionRequest.get_status(self,**kw)
         bp = kw['base_params']
         if self.quick_search:
             bp[constants.URL_PARAM_FILTER] = self.quick_search
@@ -702,13 +704,13 @@ class TableRequest(ActionRequest):
                 if self.actor.known_values.get(k,None) != v:
                     bp[k] = v
         if self.master_instance is not None:
-            if self.master is not None:
+            if self.master is None:
+                bp[constants.URL_PARAM_MASTER_PK] = self.master_instance
+            else:
                 bp[constants.URL_PARAM_MASTER_PK] = self.master_instance.pk
                 if ContentType._meta.installed:
                     mt = ContentType.objects.get_for_model(self.master_instance.__class__).pk
                     bp[constants.URL_PARAM_MASTER_TYPE] = mt
-            else:
-                bp[constants.URL_PARAM_MASTER_PK] = self.master_instance
         return kw
         
         

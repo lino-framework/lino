@@ -369,10 +369,10 @@ class Voucher(mixins.UserAuthored):
             #~ return False
         #~ return super(Voucher,self).get_row_permission(ar,state,ba)
 
-    def href_to(self,ar):
+    def obj2html(self,ar):
         obj = self.journal.voucher_type.model.objects.get(
             journal=self.journal,number=self.number,year=self.year)
-        return ar.href_to(obj)
+        return ar.obj2html(obj)
         
     
     #~ def add_voucher_item(self,account=None,**kw):
@@ -482,7 +482,7 @@ class Movement(mixins.Sequenced):
             
     @dd.displayfield(_("Voucher"))
     def voucher_link(self,ar):
-        return self.voucher.href_to(ar)
+        return self.voucher.obj2html(ar)
         
     
     def get_siblings(self):

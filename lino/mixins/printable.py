@@ -267,7 +267,7 @@ class SimpleBuildMethod(BuildMethod):
         tpl_leaf = self.get_template_leaf(action,elem)
         tplfile = find_config_file(tpl_leaf,self.get_group(elem))
         if not tplfile:
-            raise Warning("No file %s / %s" % (self.get_group(elem),tpl_leaf))
+            raise Warning("No file %s/%s" % (self.get_group(elem),tpl_leaf))
         #~ tplfile = os.path.normpath(os.path.join(self.templates_dir,tpl_leaf))
         return tplfile
         
@@ -303,26 +303,8 @@ class AppyBuildMethod(SimpleBuildMethod):
         When the source string contains non-ascii characters, then 
         we must convert it to a unicode string.
         """
-        def translate(s):
-            return _(s.decode('utf8'))
-        from lino import dd
-        context = dict(self=elem,
-            dtos=dd.dtos,
-            dtosl=dbutils.dtosl,
-            dtomy=dbutils.dtomy,
-            babelattr=dbutils.babelattr,
-            babelitem=dbutils.babelitem,
-            tr=dbutils.babelitem,
-            iif=iif,
-            mtos=decfmt,
-            settings=settings,
-            ar=ar,
-            #~ restify=restify,
-            #~ site_config = get_site_config(),
-            site_config=settings.SITE.site_config,
-            _ = translate,
-            #~ knowledge_text=fields.knowledge_text,
-            )
+        context = elem.get_printable_context(ar)
+        context.update(self=elem)
         lang = str(elem.get_print_language(self))
         #~ savelang = dbutils.get_language()
         #~ dbutils.set_language(lang)
@@ -445,25 +427,6 @@ def get_template_choices(elem,bmname):
         raise Exception("%r : invalid print method name." % bmname)
     from lino.utils.config import find_template_config_files
     return find_template_config_files(bm.template_ext,bm.get_group(elem))
-    
-    #~ files = find_config_files('*' + bm.template_ext,bm.get_group(elem))
-    #~ l = []
-    #~ for name in files.keys():
-        #~ # ignore babel variants: 
-        #~ # e.g. ignore "foo_fr.odt" if "foo.odt" exists 
-        #~ # but don't ignore "my_template.odt"
-        #~ basename = name[:-len(bm.template_ext)]
-        #~ chunks = basename.split('_')
-        #~ if len(chunks) > 1:
-            #~ basename = '_'.join(chunks[:-1])
-            #~ if files.has_key(basename + bm.template_ext):
-                #~ continue
-        #~ l.append(name)
-    #~ l.sort()
-    #~ if not l:
-        #~ logger.warning("get_template_choices() : no matches for (%r,%r)",'*' + bm.template_ext,bm.get_group(elem))
-    #~ return l
-
     
 def get_build_method(elem):
     bmname = elem.get_build_method()
@@ -762,6 +725,29 @@ class BasePrintable(object):
         #~ return settings.SITE.preferred_build_method 
         #~ return 'pisa'
         
+    def get_printable_context(self,ar,**kw):
+        """
+        Deserves documentation. lino.modlib.notes.models.Note extends this.
+        """
+        def translate(s):
+            return _(s.decode('utf8'))
+        from lino import dd
+        kw.update(this=self,
+            dtos=dd.dtos,
+            dtosl=dbutils.dtosl,
+            dtomy=dbutils.dtomy,
+            babelattr=dbutils.babelattr,
+            babelitem=dbutils.babelitem,
+            tr=dbutils.babelitem,
+            iif=iif,
+            mtos=decfmt,
+            settings=settings,
+            ar=ar,
+            site_config=settings.SITE.site_config,
+            _ = translate,
+            )
+        return kw
+            
 class Printable(BasePrintable):
     """
     Mixin for Models whose instances can "print" (generate a printable document).

@@ -159,7 +159,7 @@ from django.conf import settings
 #~ from lino.core import table
 #~ Table = table.Table
 
-from lino.core.dbtables import summary, summary_row
+#~ from lino.core.dbtables import summary, summary_row
 
 from lino.core.frames import Frame
 from lino.core.tables import VentilatingTable

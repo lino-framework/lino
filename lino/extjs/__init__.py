@@ -182,9 +182,10 @@ class ExtRenderer(HtmlRenderer):
             elif v.bound_action is not None:
                 if v.params:
                     ar = v.bound_action.request(**v.params)
-                    js = "function() {%s}" % self.request_handler(ar)
-                    return self.handler_item(v,js,v.help_text)
-                js = "function() {%s}" % self.action_call(None,v.bound_action,{})
+                    js = self.request_handler(ar)
+                else:
+                    js = self.action_call(None,v.bound_action,{})
+                js = "function() {%s}" % js
                 return self.handler_item(v,js,v.help_text)
                 
             elif v.javascript is not None:
@@ -221,7 +222,7 @@ class ExtRenderer(HtmlRenderer):
             if ba.action.params_layout.params_store is None:
                 raise Exception("20121016 %s has no store" % ba.action.params_layout)
             kw.update(field_values=ba.action.params_layout.params_store.pv2dict(
-                settings.SITE.ui,ba.action.action_param_defaults(ar,obj)))
+                ba.action.action_param_defaults(ar,obj)))
         return kw
       
         
@@ -235,13 +236,13 @@ class ExtRenderer(HtmlRenderer):
             #~ st.update(record_id=obj.pk)
             return self.window_action_button(ar.request,ba,st,label or ba.action.label,**kw)
         if ba.action.opens_a_window:
-            st = ar.get_status(self)
+            st = ar.get_status()
             st.update(record_id=obj.pk)
             return self.window_action_button(ar.request,ba,st,label or ba.action.label,**kw)
         return self.row_action_button(obj,ar.request,ba,label,**kw)
         
     def request_handler(self,ar,*args,**kw):
-        st = ar.get_status(self.ui,**kw)
+        st = ar.get_status(**kw)
         return self.action_call(ar.request,ar.bound_action,st)
         
     def window_action_button(self,request,ba,after_show={},label=None,title=None,**kw):
@@ -385,7 +386,7 @@ class ExtRenderer(HtmlRenderer):
         http://127.0.0.1:8000/api/cal/MyPendingInvitations
         
         """
-        kw = ar.get_status(self,**kw)
+        kw = ar.get_status(**kw)
         if not kw['base_params']:
             del kw['base_params']
         #~ kw = self.request2kw(rr,**kw)

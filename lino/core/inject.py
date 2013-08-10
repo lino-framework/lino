@@ -229,9 +229,9 @@ def inject_quick_add_buttons(model,name,target):
     `target` is the table that will run these actions.
     It must be a slave of `model`.
     """
-    def fn(self,rr):
-        return rr.renderer.quick_add_buttons(
-          rr.spawn(target,master_instance=self))
+    def fn(self,ar):
+        return ar.renderer.quick_add_buttons(
+          ar.spawn(target,master_instance=self))
     inject_field(model,name,
         fields.VirtualField(fields.DisplayField(
             target.model._meta.verbose_name_plural),fn))

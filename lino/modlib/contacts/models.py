@@ -706,34 +706,23 @@ class PartnerDocument(dd.Model):
                 yield p
         
         
-    #~ def summary_row(self,ui,rr,**kw):
-        #~ if self.person:
-            #~ if self.company:
-                #~ # s += ": " + ui.href_to(self.person) + " / " + ui.href_to(self.company)
-                #~ return ui.href_to(self.company) + ' ' + ugettext("attn:") + ' ' + ui.href_to(self.person)
-            #~ else:
-                #~ return ui.href_to(self.person)
-        #~ elif self.company:
-            #~ return ui.href_to(self.company)
-            
-    #~ def summary_row(self,ui,rr,**kw):
     def summary_row(self,ar,**kw):
         """
         A :meth:`lino.core.model.Model.summary_row` 
         method for partner documents.
         """
-        href_to = ar.href_to
+        href_to = ar.obj2html
         #~ href_to = ui.ext_renderer.href_to
-        s = href_to(self)
+        s = [href_to(self)]
         #~ if self.person and not dd.has_fk(rr,'person'):
         if self.person:
             if self.company:
-                s += " (" + href_to(self.person) \
-                    + "/" + href_to(self.company) + ")"
+                s += [" (", href_to(self.person), 
+                    "/",href_to(self.company),")"]
             else:
-                s += " (" + href_to(self.person) + ")"
+                s += [" (",href_to(self.person), ")"]
         elif self.company:
-            s += " (" + href_to(self.company) + ")"
+            s += [" (", href_to(self.company),")"]
         return s
             
     def update_owned_instance(self,other):

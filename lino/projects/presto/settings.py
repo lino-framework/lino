@@ -44,8 +44,8 @@ class Site(Site,ledger.SiteMixin):
       'households.Household']
     
       
-    def get_main_action(self,user):
-        return self.modules.lino.Home.default_action
+    #~ def get_main_action(self,user):
+        #~ return self.modules.lino.Home.default_action
         
     #~ def setup_quicklinks(self,ui,user,tb):
         #~ tb.add_action(self.modules.contacts.Persons.detail_action)

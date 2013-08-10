@@ -198,6 +198,7 @@ def has_items(menu):
 def create_item(spec,action=None,help_text=None,**kw):
     """
     """
+    givenspec = spec
     if isinstance(spec,basestring):
         spec = settings.SITE.modules.resolve(spec)
         #~ if a is None:
@@ -225,7 +226,7 @@ def create_item(spec,action=None,help_text=None,**kw):
                 if a is None:
                     raise Exception("%r default_action is None?!" % spec)
         else:
-            raise Exception("%r is not a valid action_spec" % spec)
+            raise Exception("Action spec %r returned invalid object %r" % (givenspec,spec))
             
     #~ if kw.has_key('params'):
         #~ if a.actor.__name__ == 'Contacts':

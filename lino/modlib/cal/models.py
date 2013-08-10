@@ -63,13 +63,8 @@ contacts = dd.resolve_app('contacts')
 postings = dd.resolve_app('postings')
 outbox = dd.resolve_app('outbox')
 
-#~ workflow = import_module('lino.modlib.cal.workflows.welfare')
-#~ workflow = import_module('lino.modlib.cal.workflows.faggio')
-#~ for n in ('TaskStates','EventStates','GuestStates'):
-    #~ globals()[n] = getattr(workflow,n)
-
-from lino.modlib.cal.workflows import (TaskStates,
-    EventStates,GuestStates)
+from lino.modlib.cal.workflows import (
+    TaskStates, EventStates, GuestStates)
 
 
 class CalendarType(object):
@@ -586,12 +581,15 @@ class StartedSummaryDescription(Started):
         return self._meta.verbose_name + " #" + str(self.pk)
 
     def summary_row(self,ar,**kw):
-        html = super(StartedSummaryDescription,self).summary_row(ar,**kw)
+        elems = list(super(StartedSummaryDescription,self).summary_row(ar,**kw))
+        
+        #~ html = super(StartedSummaryDescription,self).summary_row(ar,**kw)
         if self.summary:
-            html += '&nbsp;: %s' % cgi.escape(force_unicode(self.summary))
+            elems.append(': %s' % self.summary)
+            #~ html += '&nbsp;: %s' % cgi.escape(force_unicode(self.summary))
             #~ html += ui.href_to(self,force_unicode(self.summary))
-        html += _(" on ") + dbutils.dtos(self.start_date)
-        return html
+        elems += [_(" on "), dbutils.dtos(self.start_date)]
+        return elems
         
     
 #~ class RecurrenceSet(StartedSummaryDescription,Ended):
@@ -806,20 +804,20 @@ Whether this is private, public or between.""")) # iCal:CLASS
         #~ logger.info("20120217 Component.summary_row() %s", self)
         #~ if self.owner and not self.auto_type:
         #~ html = ui.ext_renderer.href_to(self)
-        html = ar.href_to(self)
+        html = [ar.obj2html(self)]
         if self.start_time:
             #~ html += _(" at ") + unicode(self.start_time)
-            html += _(" at ") + self.start_time.strftime(settings.SITE.time_format_strftime)
+            html += [_(" at "), self.start_time.strftime(settings.SITE.time_format_strftime) ]
         if self.state:
-            html += ' [%s]' % cgi.escape(force_unicode(self.state))
+            html += [' [%s]' % force_unicode(self.state)]
         if self.summary:
-            html += '&nbsp;: %s' % cgi.escape(force_unicode(self.summary))
+            html += [': %s' % force_unicode(self.summary)]
             #~ html += ui.href_to(self,force_unicode(self.summary))
         #~ html += _(" on ") + dbutils.dtos(self.start_date)
         #~ if self.owner and not self.owner.__class__.__name__ in ('Person','Company'):
             #~ html += " (%s)" % reports.summary_row(self.owner,ui,rr)
-        if self.project:
-            html += " (%s)" % dd.summary_row(self.project,ar)
+        if self.project is not None:
+            html.append(" (%s)" % self.project.summary_row(ar,**kw))
             #~ print 20120217, self.project.__class__, self
             #~ html += " (%s)" % self.project.summary_row(ui)
         return html
@@ -919,9 +917,9 @@ Indicates that this Event shouldn't prevent other Events at the same time."""))
         )
         
         
-    def is_editable_state(self):
-        return self.state in (EventStates.suggested, EventStates.draft)
-        
+    #~ def is_editable_state(self):
+        #~ return self.state in (EventStates.suggested, EventStates.draft, EventStates.visit)
+
     def is_user_modified(self):
         return self.state != EventStates.suggested
         
@@ -947,7 +945,8 @@ Indicates that this Event shouldn't prevent other Events at the same time."""))
         if not self.is_user_modified(): 
             #~ print "not is_user_modified"
             return
-        if not self.is_editable_state(): 
+        if not self.state in (EventStates.suggested, EventStates.draft):
+        #~ if not self.is_editable_state(): 
             #~ print "not an editable state"
             return 
         if self.guest_set.all().count() > 0: 
@@ -1643,7 +1642,7 @@ class Guest(mixins.TypedPrintable,outbox.Mailable):
         
     @dd.displayfield(_("Event"))
     def event_summary(self,ar):
-        return ar.href_to(self.event,settings.SITE.get_event_summary(self.event,ar.get_user()))
+        return ar.obj2html(self.event,settings.SITE.get_event_summary(self.event,ar.get_user()))
         #~ return event_summary(self.event,ar.get_user())
         
     #~ def before_ui_save(self,ar,**kw):
@@ -1793,13 +1792,27 @@ if settings.SITE.is_installed('contacts'):
         label = _("My presences")
         help_text = _("""Shows all my presences in calendar events, independently of their state.""")
         column_names = 'event__start_date event__start_time event_summary role workflow_buttons remark *'
+        params_panel_hidden = True
+        
+        @classmethod
+        def get_request_queryset(self,ar):
+            #~ logger.info("20130809 MyPresences")
+            if ar.get_user().partner is None:
+                raise Warning("Action not available for users without partner")
+            return super(MyPresences,self).get_request_queryset(ar)
+            
+        @classmethod
+        def get_row_permission(cls,obj,ar,state,ba):
+            if ar.get_user().partner is None:
+                return False
+            return super(MyPresences,cls).get_action_permission(obj,ar,state,ba)
         
         @classmethod
         def param_defaults(self,ar,**kw):
             kw = super(MyPresences,self).param_defaults(ar,**kw)
             kw.update(partner=ar.get_user().partner)
-            kw.update(guest_state=GuestStates.invited)
-            kw.update(start_date=datetime.date.today())
+            #~ kw.update(guest_state=GuestStates.invited)
+            #~ kw.update(start_date=datetime.date.today())
             return kw
               
         #~ @classmethod
@@ -1808,24 +1821,26 @@ if settings.SITE.is_installed('contacts'):
             #~ return super(MyPresences,self).get_request_queryset(ar)
             
         
-    #~ class MyPendingInvitations(MyPresences):
+    #~ class MyPendingInvitations(Guests):
     class MyPendingPresences(MyPresences):
         label = _("My pending presences")
         help_text = _("""Received invitations which I must accept or reject.""")
         #~ filter = models.Q(state=GuestStates.invited)
         column_names = 'event__when_text role workflow_buttons remark'
+        params_panel_hidden = True
         
         @classmethod
         def param_defaults(self,ar,**kw):
             kw = super(MyPendingPresences,self).param_defaults(ar,**kw)
-            kw.update(partner=ar.get_user().partner)
-            kw.update(user=ar.get_user())
+            #~ kw.update(partner=ar.get_user().partner)
+            #~ kw.update(user=None)
             kw.update(guest_state=GuestStates.invited)
-            #~ kw.update(start_date=datetime.date.today())
+            kw.update(start_date=datetime.date.today())
             return kw
             
               
     class MyGuests(Guests):
+        label = _("My guests")
         required = dd.required(user_groups='office')
         order_by = ['event__start_date','event__start_time']
         label = _("My guests")
@@ -1867,9 +1882,9 @@ if settings.SITE.is_installed('contacts'):
         #~ # ! note that we skip one mro parent:
         #~ return super(MySentInvitations,self).get_request_queryset(ar)
     
-
+if False: # removed 20130810
     
-def tasks_summary(ui,user,days_back=None,days_forward=None,**kw):
+  def tasks_summary(ui,user,days_back=None,days_forward=None,**kw):
     """
     Return a HTML summary of all open reminders for this user.
     May be called from :xfile:`welcome.html`.
@@ -2471,18 +2486,6 @@ def setup_main_menu(site,ui,profile,m):
     if site.use_extensible:
         m.add_action(CalendarPanel)
     m.add_action(MyEvents)
-    #~ m.add_action(MyEventsToday)
-    #~ m.add_action(MyEventsAssigned)
-    #~ m.add_action(MyEventsNotified)
-    
-    #~ m.add_separator('-')
-    #~ m.add_action(Events)
-    #~ m.add_action(EventsReserved)
-    #~ m.add_action(EventsAssigned)
-    #~ m.add_action(EventsNotified)
-    #~ m.add_action(EventsToSchedule)
-    #~ m.add_action(EventsToNotify)
-    #~ m.add_action(EventsToConfirm)
     
     #~ m.add_separator('-')
     #~ m  = m.add_menu("tasks",_("Tasks"))

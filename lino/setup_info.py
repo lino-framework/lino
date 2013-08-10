@@ -63,6 +63,7 @@ lino.modlib.contacts
 lino.modlib.contacts.fixtures
 lino.modlib.countries
 lino.modlib.countries.fixtures
+lino.modlib.families
 lino.modlib.finan
 lino.modlib.finan.fixtures
 lino.modlib.languages

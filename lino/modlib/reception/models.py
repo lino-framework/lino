@@ -47,7 +47,7 @@ from lino import dd
 
 cal = dd.resolve_app('cal')
 
-from lino.modlib.cal.models import GuestStates
+from lino.modlib.cal.models import GuestStates, EventStates
 
 from lino.modlib.reception import App
 from lino.mixins import beid
@@ -83,25 +83,25 @@ dd.inject_field('system.SiteConfig','client_calender',
     
 
     
-class CreateGuestEvent(dd.RowAction): 
-    label = _("Register visit")
+class CreateVisit(dd.RowAction): 
+    label = _("Create visit")
     show_in_workflow = True
     #~ show_in_row_actions = True
     parameters = dict(
         #~ date=models.DateField(_("Date"),blank=True,null=True),
         user=dd.ForeignKey(settings.SITE.user_model),
-        summary=models.CharField(verbose_name=_("Summary"),blank=True))
+        summary=models.CharField(verbose_name=_("Reason"),blank=True))
     params_layout = """
     user 
     summary
     """
     #~ required = dict(states='coached')
     
-    def get_notify_subject(self,ar,obj):
-        return _("Created appointment for %(user)s with %(partner)s") % dict(
-            event=obj,
-            user=obj.event.user,
-            partner=obj.partner)
+    #~ def get_notify_subject(self,ar,obj):
+        #~ return _("Created appointment for %(user)s with %(partner)s") % dict(
+            #~ event=obj,
+            #~ user=obj.event.user,
+            #~ partner=obj.partner)
      
     def run_from_ui(self,obj,ar,**kw):
         ekw = dict(project=obj) 
@@ -111,6 +111,7 @@ class CreateGuestEvent(dd.RowAction):
         ekw.update(start_date=today)
         ekw.update(end_date=today)
         ekw.update(calendar=settings.SITE.site_config.client_calender)
+        ekw.update(state=EventStates.visit)
         ekw.update(user=ar.action_param_values.user)
         if ar.action_param_values.summary:
             ekw.update(summary=ar.action_param_values.summary)
@@ -119,13 +120,13 @@ class CreateGuestEvent(dd.RowAction):
         cal.Guest(
             event=event,
             partner=obj,
-            state=GuestStates.spot_visit,
+            state=GuestStates.visit,
             role=settings.SITE.site_config.client_guestrole,
             waiting_since=datetime.datetime.now()
         ).save()
         #~ event.full_clean()
         #~ print 20130722, ekw, ar.action_param_values.user, ar.get_user()
-        #~ kw = super(CreateGuestEvent,self).run_from_ui(obj,ar,**kw)
+        #~ kw = super(CreateVisit,self).run_from_ui(obj,ar,**kw)
         kw.update(success=True)
         #~ kw.update(eval_js=ar.renderer.instance_handler(ar,event))
         kw.update(refresh=True)

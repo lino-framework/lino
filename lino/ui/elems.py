@@ -1080,7 +1080,7 @@ class ForeignKeyElement(ComplexRemoteComboFieldElement):
         obj = getattr(row,self.field.name)
         if obj is None:
             return ''
-        return ui.href_to(obj)
+        return ui.obj2html(obj)
 
     def value2html(self,ar,v,**cellattrs):
         #~ return ar.renderer.obj2html(ar,v)

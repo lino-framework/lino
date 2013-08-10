@@ -65,6 +65,16 @@ class NoteType(dd.BabelNamed,mixins.PrintableType,outbox.MailableType):
         default=False)
     remark = models.TextField(verbose_name=_("Remark"),blank=True)
     
+    body_template = models.CharField(max_length=200,
+      verbose_name=_("Body template"),
+      blank=True,help_text="""The body template to be used when 
+rendering a printable of this type. This is a list of files 
+with extension `.body.html`.""")
+    
+    @dd.chooser(simple_values=True)
+    def body_template_choices(cls):
+        return settings.SITE.list_templates('.body.html',cls.get_templates_group())
+    
     def __unicode__(self):
         return self.name
 
@@ -81,7 +91,7 @@ class NoteTypes(dd.Table):
     
     detail_layout = """
     id name
-    build_method template email_template attach_to_email
+    build_method template body_template email_template attach_to_email
     remark:60x5
     notes.NotesByType
     """
@@ -241,7 +251,7 @@ class Note(mixins.TypedPrintable,
         s = super(Note,self).summary_row(ar)
         #~ s = contacts.ContactDocument.summary_row(self,ui,rr)
         if self.subject:
-            s += ' ' + cgi.escape(self.subject) 
+            s += [' ',self.subject]
         return s
     
     #~ def update_owned_instance(self,task):
@@ -255,6 +265,20 @@ class Note(mixins.TypedPrintable,
     #~ def get_person(self):
         #~ return self.project
     #~ person = property(get_person)
+    
+    
+    def get_printable_context(self,ar,**kw):
+        kw = super(Note,self).get_printable_context(ar,**kw)
+        tplname = self.type.body_template
+        if tplname:
+            tplname = self.type.get_templates_group() + '/' + tplname
+            template = settings.SITE.jinja_env.get_template(tplname)
+            kw.update(body=template.render(**kw))
+        else:
+            kw.update(body=self.body)
+        return kw
+        
+    
         
 
 dd.update_field(Note,'company',verbose_name=_("Recipient (Organization)"))
