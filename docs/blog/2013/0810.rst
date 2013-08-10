@@ -1,0 +1,21 @@
+===================================
+20130810 (Saturday, 10 August 2013)
+===================================
+
+Added new field `body_template` to :ref:`modlib.notes.Note`.
+
+This is similar to 
+the `email_template` field of
+:class:`lino.modlib.outbox.models.MailableType`.
+
+Moved the `list_templates` function from 
+:mod:`lino.modlib.outbox.models`
+to :func:`lino.core.web.list_templates`.
+
+:mod:`lino.core.web` had a function called `web_setup` 
+which I renamed to :func:`site_setup <lino.core.web.site_setup>`.
+:mod:`lino.core.web` might become a plugin.
+
+Converted all :meth:`lino.core.model.Model.row_summary` 
+methods so that they return a sequence of html elements and not 
+a string.

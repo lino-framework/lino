@@ -917,8 +917,8 @@ Indicates that this Event shouldn't prevent other Events at the same time."""))
         )
         
         
-    #~ def is_editable_state(self):
-        #~ return self.state in (EventStates.suggested, EventStates.draft, EventStates.visit)
+    def is_editable_state(self):
+        return self.state in (EventStates.suggested, EventStates.draft, EventStates.visit)
 
     def is_user_modified(self):
         return self.state != EventStates.suggested
