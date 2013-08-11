@@ -250,7 +250,7 @@ class UI(object):
         cb = self.pending_threads.pop(thread_id,None)
         #~ d = self.pop_thread(int(thread_id))
         if cb is None: 
-            #~ logger.info("20130531 No callback %r in %r" % (thread_id,settings.SITE.pending_threads))
+            logger.info("20130811 No callback %r in %r" % (thread_id,settings.SITE.pending_threads.keys()))
             return self.render_action_response(self.error("Unknown callback %r" % thread_id))
         #~ buttonId = request.GET[ext_requests.URL_PARAM_'bi']
         #~ print buttonId

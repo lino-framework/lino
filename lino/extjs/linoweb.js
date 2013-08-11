@@ -2126,7 +2126,7 @@ Lino.call_ajax_action = function(panel,method,url,p,actionName,step,on_confirm,o
           panel = Lino.current_window.main_item;
       else panel = Lino.viewport;
   }
-  console.log("20130809 Lino.call_ajax_action",panel);
+  //~ console.log("20130809 Lino.call_ajax_action",panel);
   Ext.apply(p,panel.get_base_params());
   if (panel.loadMask) panel.loadMask.show(); 
   //~ p.$ext_requests.URL_PARAM_SUBST_USER = Lino.subst_user;
