@@ -780,7 +780,7 @@ class EmptyTableRow(VirtualRow,Printable):
     def __unicode__(self):
         return unicode(self._table.label)
         
-    def get_print_language(self,pm):
+    def get_print_language(self):
         return settings.SITE.DEFAULT_LANGUAGE.django_code
         
     def get_templates_group(self):

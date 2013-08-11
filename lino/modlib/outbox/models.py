@@ -439,10 +439,10 @@ class Mail(mixins.AutoUser,mixins.Printable,mixins.ProjectRelated,mixins.Control
         #~ for x in super(Mail,self).get_model_actions(table): yield x
         #~ yield 'send_mail',SendMail()
         
-    def get_print_language(self,bm):
+    def get_print_language(self):
         if self.user is not None:
             return self.user.language
-        return super(Mail,self).get_print_language(bm)
+        return super(Mail,self).get_print_language()
         
     
     def __unicode__(self):

@@ -1055,9 +1055,9 @@ Indicates that this Event shouldn't prevent other Events at the same time."""))
     def reminder(self,request): return False
     #~ reminder.return_type = dd.DisplayField(_("Reminder"))
 
-    def get_print_language(self,bm):
+    def get_print_language(self):
         if settings.SITE.project_model is not None and self.project:
-            return self.project.get_print_language(bm)
+            return self.project.get_print_language()
         return self.user.language
         
     @classmethod

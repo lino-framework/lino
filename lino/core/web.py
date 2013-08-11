@@ -166,7 +166,7 @@ def extend_context(context):
     context.update(
         now=datetime.datetime.now(),
         parse=parse,
-        requested_language=get_language(),
+        requested_language=get_language(), 
         )
 
 from lino.core import requests

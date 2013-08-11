@@ -1388,6 +1388,8 @@ class Site(lino.Site):
 
 
     def get_letter_margin_html(self,ar):
-        return self.site_config.site_company.get_address('<br/>')
+        s = '<p class="Centered9pt">%s</p>'
+        s = s % self.site_config.site_company.get_address('<br/>')
+        return s
 
 

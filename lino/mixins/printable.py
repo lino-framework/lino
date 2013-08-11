@@ -246,7 +246,7 @@ class SimpleBuildMethod(BuildMethod):
               "%s.get_print_templates() must return exactly 1 template (got %r)" % (
                 elem.__class__.__name__,tpls))
         tpl_leaf = tpls[0]
-        lang = elem.get_print_language(self)
+        lang = elem.get_print_language()
         if lang != settings.SITE.DEFAULT_LANGUAGE.django_code:
             name = tpl_leaf[:-len(self.template_ext)] + "_" + lang + self.template_ext
             from lino.utils.config import find_config_file
@@ -303,14 +303,14 @@ class AppyBuildMethod(SimpleBuildMethod):
         When the source string contains non-ascii characters, then 
         we must convert it to a unicode string.
         """
-        context = elem.get_printable_context(ar)
-        context.update(self=elem)
-        lang = str(elem.get_print_language(self))
+        lang = str(elem.get_print_language())
         #~ savelang = dbutils.get_language()
         #~ dbutils.set_language(lang)
         logger.info(u"appy.pod render %s -> %s (language=%r,params=%s",
             tpl,target,lang,settings.SITE.appy_params)
         def f():
+            context = elem.get_printable_context(ar)
+            context.update(self=elem)
             Renderer(ar,tpl, context, target,**settings.SITE.appy_params).run()
         dbutils.run_with_language(lang,f)
         #~ dbutils.set_language(savelang)
@@ -696,7 +696,7 @@ class BasePrintable(object):
     """
     Common base for :class:`Printable`.and :class:`CachedPrintable`.
     """
-    def get_print_language(self,pm):
+    def get_print_language(self):
         return settings.SITE.DEFAULT_LANGUAGE.django_code
         
     def get_templates_group(self):
@@ -727,7 +727,7 @@ class BasePrintable(object):
         
     def get_printable_context(self,ar,**kw):
         """
-        Deserves documentation. lino.modlib.notes.models.Note extends this.
+        Deserves documentation. :class:`lino.modlib.notes.models.Note` extends this.
         """
         def translate(s):
             return _(s.decode('utf8'))
@@ -746,6 +746,7 @@ class BasePrintable(object):
             site_config=settings.SITE.site_config,
             _ = translate,
             )
+        kw.update(language=self.get_print_language())
         return kw
             
 class Printable(BasePrintable):

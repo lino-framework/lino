@@ -266,6 +266,9 @@ class Note(mixins.TypedPrintable,
         #~ return self.project
     #~ person = property(get_person)
     
+    def get_print_language(self):
+        return self.language
+        
     
     def get_printable_context(self,ar,**kw):
         kw = super(Note,self).get_printable_context(ar,**kw)
