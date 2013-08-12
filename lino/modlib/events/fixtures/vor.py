@@ -80,7 +80,8 @@ def objects():
         name="Mountainbike Rennsport -- Kids Trophy O2 Biker/V.O.R.-Lotto",
         name_nl="Mountainbike koersen -- Kids Trophy O2 Biker/V.O.R.-Lotto",
         name_fr="Courses Mountain Bike -- Kids Trophy O2 Biker/V.O.R.-Lotto",
-        events_column_names="when where")
+        events_column_names="when:40 where:40"
+        )
     yield trophy
     
     kelmis = City.objects.get(name="Kelmis")
@@ -153,7 +154,8 @@ def objects():
     yield event(breitensport,20130901,
       "Radtag der DG",
       "Fietsdag van de DG",
-      "Journée vélo de la CG", f3,f2,place=galmei)
+      "Journée vélo de la CG", f3,f2,
+      place=galmei,url="http://www.vclc.be")
       
       
       
@@ -185,7 +187,7 @@ def objects():
     yield event(trophy,20130706,'','','',cities=["Sankt Vith"])
     #~ yield event(trophy,20130713,'','','',cities=["Ouren"])
     yield event(trophy,20130824,'','','',cities=["Blégny"])
-    yield event(trophy,20130901,'','','',cities=["Kelmis"])
+    yield event(trophy,20130901,'','','',cities=["Kelmis"],url="http://www.vclc.be")
     yield event(trophy,20130914,'','','',cities=["Cerfontaine"])
     yield event(trophy,20130921,'','','',cities=["Burdinne"])
     

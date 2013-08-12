@@ -41,8 +41,7 @@ from lino.modlib.contacts.utils import street2kw
 
 from lino import dd
 
-countries = dd.resolve_app('countries')
-
+countries = dd.resolve_app('countries',strict=True)
 
 class BeIdCardTypes(dd.ChoiceList):
     """
@@ -185,6 +184,12 @@ class BeIdCardHolder(dd.Model):
         #~ logger.info("20130808 beid %s", rv)
         return rv
 
+    def has_valid_card_data(self,today=None):
+        if not self.card_number:
+            return False
+        if self.card_valid_until < (today or datetime.date.today()):
+            return False
+        return True
     
 def card_number_to_picture_file(card_number):
     #~ TODO: handle configurability of card_number_to_picture_file
@@ -308,7 +313,7 @@ class BeIdReadCardAction(BaseBeIdReadCardAction):
     """
     label = _("Read eID card")
     sorry_msg = _("Sorry, I cannot handle that case: %s")
-    show_in_workflow = True
+    #~ show_in_workflow = True
     #~ show_in_row_actions = True
 
   

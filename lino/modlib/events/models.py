@@ -57,7 +57,7 @@ class Type(dd.BabelNamed):
     #~ pass
     events_column_names = models.CharField(
         max_length="100",
-        default="when what where")
+        default="when:30 what:40 where:30")
         
     def EventsByType(self,**kw):
         return EventsByType.request(master_instance=self)
@@ -71,6 +71,8 @@ class Event(dd.BabelNamed):
     type = dd.ForeignKey(Type)
     features = models.ManyToManyField(Feature)
     #~ cities = models.ManyToManyField('countries.City')
+    #~ description = dd.BabelTextField(format='plain',blank=True)
+    url = models.URLField(blank=True)
 
 class Stage(mixins.Sequenced): 
     event = dd.ForeignKey('events.Event',related_name="stages")
@@ -104,7 +106,11 @@ class Events(dd.Table):
     
     @dd.displayfield(_("When"))
     def when(self,obj,ar):
-        return dbutils.dtosl(obj.date)
+        rv = dbutils.dtosl(obj.date)
+        if obj.url:
+            rv = '\n'.join(rv.split()) # replaces spaces by newline to avoid large column
+            rv = E.a(rv,href=obj.url)
+        return rv
 
     @dd.displayfield(_("Where"))
     def where(self,obj,ar):
@@ -119,6 +125,8 @@ class Events(dd.Table):
         if obj.name:
             chunks += [E.b(unicode(obj)), E.br()]
         chunks += sepjoin(obj.features.all())
+        #~ if obj.url:
+            #~ chunks += [E.br(),E.a(_("More"),href=obj.url)]
         return E.p(*chunks)
 
     

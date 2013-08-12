@@ -52,4 +52,21 @@ Added the second body template for :ref:`welfare`:
 Which shows that we are going to also use template inheritance.
 
 
+Minor changes in :mod:`lino.modlib.events`
+------------------------------------------
+
+My crazy breaking-a-fly-on-the-wheel project of using a Lino application
+to generate the http://www.vor-cycling.be/  website
+required some expertise because they asked me to add a simple external 
+link for one event. Inspect the diffs for 
+:srcref:`lino/modlib/events/fixtures/vor.py`
+and
+:srcref:`lino/modlib/events/models.py`
+to discover how "simple" this was...
+
+Yes this is overkill, but it's a nice challenge and a good exercise 
+for Lino and me. And imagine: I now need less 
+time for maintaining this site! Se non è vero, è ben trovato.
+
+
 

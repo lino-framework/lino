@@ -1546,7 +1546,7 @@ class HtmlBoxElement(DisplayElement):
         # for this trick thanks to Vladimir 
         # <http://forums.ext.net/showthread.php?1513-CLOSED-Autoscroll-on-ext-panel>
         #~ kw.update(bodyStyle="overflow-x:hidden !important;")
-        kw.update(bodyStyle="overflow-x:hidden")
+        kw.update(bodyStyle="overflow-x:hidden;")
         
         #~ if self.field.drop_zone: # testing with drop_zone 'FooBar'
             #~ kw.update(listeners=dict(render=js_code('initialize%sDropZone' % self.field.drop_zone)))
