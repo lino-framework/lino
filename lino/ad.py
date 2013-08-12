@@ -53,5 +53,8 @@ class App(object):
     """
     If specified, a list of modlib model names for which this
     app provides a subclass.
+    
+    For backwards compatibility this has no effect
+    when :attr:`lino.ui.Site.override_modlib_models` is set.
     """
     

@@ -1,0 +1,55 @@
+=================================
+20130812 (Monday, 12 August 2013)
+=================================
+
+Avoid a globally available module called `settings.py`
+------------------------------------------------------
+
+Puah, gestern und gerade habe ich zwei Stunden lang nach einem 
+saudoofen Bug gesucht. 
+
+**Symptom** war, dass seit einiger Zeit die Lino-API nicht mehr 
+generiert werden konnte.
+Da kamen lauter `ImportError`-Meldungen. 
+Was üblicherweise daher kommt, dass  autodoc 
+zum Generieren der Seiten unterhalb von :doc:`/api/lino`  
+all diese Module importieren muss, 
+was ja bekanntlich nicht einfach ist.
+Weshalb es ja eine fiktive Lino-Anwendung gibt
+("Lino Docs" heißt sie seit heute),
+die "sozusagen alle" modlib-apps installiert.
+Deren :xfile:`settings.py` ist nicht z.B. als 
+``lino.projects.docs.settings`` definiert,
+sondern lediglich in :srcref:`docs/settings.py`.
+Weil sie in :mod:`lino.projects` eher stören würde.
+
+Ursache war, dass ich versehentlich mit pip ein lokales Verzeichnis
+im Python-Path hatte, das ein `settings.py` enthielt.
+
+Damit das in Zukunft schneller auffällt, habe ich jetzt in der 
+:srcref:`docs/conf.py` stehen::
+
+    import settings
+    if Path(settings.__file__).parent != Path(__file__).parent :
+        raise Exception("""
+    Oops: `import settings` finds a settings module in %s. 
+    See `blog/2013/0812.rst` and clean up your Python path!""" % Path(settings.__file__).parent)
+
+
+Documentation for power users
+-----------------------------
+
+Started a new section of the general Lino documentation: 
+:doc:`/user/index`.
+
+
+The second body template
+------------------------
+
+Added the second body template for :ref:`welfare`:
+`lino_welfare/config/notes/Note/anw.body.html`.
+
+Which shows that we are going to also use template inheritance.
+
+
+

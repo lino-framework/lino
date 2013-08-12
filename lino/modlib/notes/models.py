@@ -74,9 +74,6 @@ with extension `.body.html`.""")
     @dd.chooser(simple_values=True)
     def body_template_choices(cls):
         return settings.SITE.list_templates('.body.html',cls.get_templates_group())
-    
-    def __unicode__(self):
-        return self.name
 
 
 class NoteTypes(dd.Table):

@@ -1,8 +1,17 @@
-Notizvorlagen konfigurieren
-===========================
+Configure :mod:`notes <lino.modlib.notes>` templates
+====================================================
 
-Für den Lino-Verwalter
-----------------------
+TODO: translate this to English.
+
+When rendering a :class:`lino.modlib.notes.models.Note`, 
+there is an additional name ``body`` 
+(besides the standard names documented in :doc:`templates_api`), 
+and this ``body`` is the entry point to what we call "body templates".
+
+The purpose of body templates is to provide a system for defining 
+default text content templates. 
+For example :ref:`welfare` comes with a lot of predefined 
+attestations whose content is the same for every PCSW.
 
 Im Web-Interface unter :menuselection:`Configure --> NoteTypes` müssen die Notizarten definiert werden.
 
@@ -18,6 +27,10 @@ Im Web-Interface unter :menuselection:`Configure --> NoteTypes` müssen die Noti
 - template:
 
   - Wenn eine Druckmethode angegeben ist, muss außerdem im Feld `template` eine Vorlagedatei ausgewählt werden.
+  
+- body_template
+
+  - Defines an optional template which will be rendered into the `body` variable.
 
 
 Für den Systemverwalter

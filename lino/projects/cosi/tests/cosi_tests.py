@@ -107,10 +107,12 @@ class QuickTest(RemoteAuthTestCase):
         self.assertEqual(response.status_code,403,"Status code for anonymous on GET %s" % url)
         from appy.pod import PodError
 
+        """
+        If oood is running, we get a 302, otherwise a PodError
+        """
         try:
             response = self.client.get(url,REMOTE_USER='root')
-            result = self.check_json_result(response,'',url)
-            print result
+            self.assertEqual(response.status_code,302)
         except PodError as e: 
             pass
             #~ self.assertEqual(str(e), PodError: Extension of result file is "pdf".

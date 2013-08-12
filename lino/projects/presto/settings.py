@@ -95,8 +95,8 @@ class Site(Site,ledger.SiteMixin):
         yield 'lino.modlib.accounts'
         yield 'lino.modlib.ledger'
         yield 'lino.modlib.vat'
-        #~ 'lino.modlib.journals',
-        yield 'lino.modlib.sales'
+        #~ yield 'lino.modlib.sales'
+        yield 'lino.modlib.auto.sales'
         #~ 'lino.modlib.projects',
         yield 'lino.modlib.blogs'
         yield 'lino.modlib.tickets'

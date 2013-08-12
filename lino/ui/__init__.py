@@ -528,7 +528,7 @@ class Site(lino.Site):
     In a normal production configuration you should leave this to `None`, 
     Lino will set a default value "/media/webdav/",
     supposing that your Apache is configured as described in 
-    :doc:`/admin/apache_webdav`.
+    :doc:`/admin/webdav`.
     
     This may be used to simulate a :term:`WebDAV` location 
     on a development server.
@@ -961,7 +961,7 @@ class Site(lino.Site):
         """
         Return a chunk of html to be displayed in the main area of the admin index.
         This is being called only if :meth:`get_main_action` returns `None`.
-        The default implementation renders the `admin_main.html` template.
+        The default implementation renders the :xfile:`admin_main.html` template.
         """
         from lino.core import web
         return web.render_from_request(request,'admin_main.html')

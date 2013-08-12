@@ -32,8 +32,8 @@ from lino import mixins
 from django.utils.translation import ugettext_lazy as _
 from lino.modlib.ledger.utils import FiscalYears
 
-accounts = dd.resolve_app('accounts')
-vat = dd.resolve_app('vat')
+accounts = dd.resolve_app('accounts',strict=True)
+vat = dd.resolve_app('vat',strict=True)
 partner_model = settings.SITE.partners_app_label + '.Partner'
 
 ZERO = Decimal()
@@ -83,9 +83,9 @@ class Journal(dd.BabelNamed,mixins.Sequenced):
     voucher_type = VoucherTypes.field() 
     force_sequence = models.BooleanField(default=False)
     #~ total_based = models.BooleanField(_("Voucher entry based on total amount"),default=False)
-    chart = models.ForeignKey('accounts.Chart')
-    #~ chart = models.ForeignKey('accounts.Chart',blank=True,null=True)
-    account = models.ForeignKey('accounts.Account',blank=True,null=True)
+    chart = dd.ForeignKey('accounts.Chart')
+    #~ chart = dd.ForeignKey('accounts.Chart',blank=True,null=True)
+    account = dd.ForeignKey('accounts.Account',blank=True,null=True)
     #~ account = models.CharField(max_length=6,blank=True)
     #~ pos = models.IntegerField()
     #~ printed_name = models.CharField(max_length=100,blank=True)
@@ -458,8 +458,8 @@ class Movement(mixins.Sequenced):
         
     voucher = models.ForeignKey(Voucher)
     #~ pos = models.IntegerField("Position",blank=True,null=True)
-    account = models.ForeignKey(accounts.Account)
-    partner = models.ForeignKey(partner_model,blank=True,null=True)
+    account = dd.ForeignKey(accounts.Account)
+    partner = dd.ForeignKey(partner_model,blank=True,null=True)
     amount = dd.PriceField(default=0)
     dc = DebitOrCreditField()
     #~ is_credit = models.BooleanField(_("Credit"),default=False)

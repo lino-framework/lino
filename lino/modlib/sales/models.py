@@ -49,21 +49,10 @@ from lino.utils import mti
 #~ auth = resolve_app('auth')
 #~ from lino.modlib.users import models as auth
 partners = dd.resolve_app(settings.SITE.partners_app_label)
-accounts = dd.resolve_app('accounts')
-ledger = dd.resolve_app('ledger')
-vat = dd.resolve_app('vat')
-products = dd.resolve_app('products')
-#~ from lino.modlib.ledger import models as ledger
-#~ from lino.modlib.journals import models as journals
-#~ from lino.modlib.products import models as products
-#~ from lino.modlib.contacts import models as contacts
-#~ from lino.modlib.vat.models import TradeTypes
-#~ products = models.get_app('products')
-#~ ledger = resolve_app('ledger')
-#~ products = resolve_app('products')
-#~ contacts = resolve_app('contacts')
-#~ from lino.modlib.contacts import models as contacts
-#~ from lino.utils.choicelists import ChoiceList  
+#~ accounts = dd.resolve_app('accounts')
+ledger = dd.resolve_app('ledger',strict=True)
+vat = dd.resolve_app('vat',strict=True)
+products = dd.resolve_app('products',strict=True)
 
 #~ class Channel(ChoiceList):
     #~ label = _("Channel")

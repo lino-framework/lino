@@ -51,17 +51,6 @@ from lino.core import actions
 class User(mixins.CreatedModified):
     """
     Represents a User of this site.
-    
-    This version of the Users table is used on Lino sites with
-    :doc:`/topics/http_auth`. 
-    
-    Only username is required. Other fields are optional.
-    
-    There is no password field since Lino is not responsible for authentication.
-    New users are automatically created in this table when 
-    Lino gets a first request with a username that doesn't yet exist.
-    It is up to the local system administrator to manually fill then 
-    fields like first_name, last_name, email, access rights for the new user.    
     """
     
     preferred_foreignkey_width = 15 

@@ -33,27 +33,21 @@ from lino.modlib import ledger
 
 class Site(Site,ledger.SiteMixin):
 
-    title = "lino.projects.sphinxdocs"
+    verbose_name = "Lino Docs"
     
     project_model = 'contacts.Person'
     user_model = 'users.User'
     
-    #~ languages = ('de', 'fr', 'nl', 'en')
-    languages = ['en']
+    languages = 'en'
     
-    override_modlib_models = [
-        'sales.Invoice',
-        'sales.InvoiceItem',
-    ]
-    
-
     def get_installed_apps(self):
         for a in super(Site,self).get_installed_apps():
             yield a
 
-        yield 'django.contrib.contenttypes'
         yield 'lino.modlib.system'
+        yield 'django.contrib.contenttypes'
         yield 'lino.modlib.users'
+        yield 'lino.modlib.changes'
         yield 'lino.modlib.countries'
         yield 'lino.modlib.properties'
         yield 'lino.modlib.contacts'
@@ -69,11 +63,10 @@ class Site(Site,ledger.SiteMixin):
         yield 'lino.modlib.ledger'
         yield 'lino.modlib.vat'
         yield 'lino.modlib.products'
-        #~ yield 'lino.modlib.sales'
         yield 'lino.modlib.auto.sales'
         yield 'lino.modlib.concepts'
         yield 'lino.modlib.courses'
-        #~ yield 'lino.modlib.pages'
+        yield 'lino.modlib.pages'
         #~ yield 'lino.projects.cosi'
         #~ yield 'lino'
 

@@ -4,3 +4,26 @@
 
 Continued on attestations.
 
+Weshalb war C2D ein Klient?
+---------------------------
+
+Another bug in :ref:`welfare.watch_tim` shows how complex it is to keep a database 
+synchronized with legacy data.
+Added a test case in :mod:`lino_welfare.tests.watchtim_tests` 
+to reproduce the following, and 
+updated userdocs :ref:`welfare.watch_tim`.
+
+Wir hatten irgendwann gesagt 
+"wer eine SSIN oder Gesdos-Nr hat ist ein Klient, selbst wenn er 
+auch eine Mwst-Nummer hat."
+C2D System House wurde deshalb als Klient importiert.
+Es fehlte folgende Ausnahme:
+
+    Wenn `PAR->NoTva` unleer ist und `PAR->NB2` (INSS) leer,
+    dann wird es *trotzdem kein* Klient 
+    (sondern eine Organisation, s.h. nächster Punkt).
+
+Das war bisher nicht aufgefallen, weil es nur auf Firmen mit mehreren 
+Worten in `PAR->Firme` wirkte, und weil die Benutzer offenbar selten 
+in die Liste *aller* Klienten schauen gehen.
+

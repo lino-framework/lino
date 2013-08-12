@@ -172,6 +172,9 @@ def extend_context(context):
 from lino.core import requests
 
 def render_from_request(request,template_name,**context):
+    """
+    Adds some more context names
+    """
     extend_context(context)
     context.update(request=request)
     ar = requests.BaseRequest(

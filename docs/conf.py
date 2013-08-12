@@ -17,6 +17,12 @@ from unipath import Path
 from atelier.sphinxconf import configure
 configure(globals(),'settings')
 
+import settings
+if Path(settings.__file__).parent != Path(__file__).parent :
+    raise Exception("""
+Oops: `import settings` finds a settings module in %s. 
+See `blog/2013/0812.rst` and clean up your Python path!""" % Path(settings.__file__).parent)
+
 extensions += ['atelier.sphinxconf.blog']
 
 
@@ -265,10 +271,12 @@ latex_documents = [
 #~ from timtools.sphinx import setup
 
 #~ from lino.utils.sphinxconf import setup
+setup1 = setup
+
 def setup(app):
     app.add_stylesheet('linodocs.css')
-    from atelier.sphinxconf import setup
-    setup(app)
+    #~ from atelier.sphinxconf import setup
+    setup1(app)
     #~ app.add_stylesheet('dialog.css')
     #~ app.add_stylesheet('scrollwide.css')
 

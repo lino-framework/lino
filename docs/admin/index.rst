@@ -27,8 +27,6 @@ Other
     translate
     using_appy_pod
     printable
-    ConfigureNotesTemplates
-    tim2lino
     settings
     which_lino
     install_windows

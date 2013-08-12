@@ -62,16 +62,17 @@ def resolve_app(app_label,strict=False):
     
     For example, instead of writing::
     
-        from lino.modlib.contacts import models as contacts
+        from lino.modlib.sales import models as sales
         
     it is recommended to write::
         
-        contacts = dd.resolve_app('contacts')
+        sales = dd.resolve_app('sales')
         
     Because it makes your code usable 
-    (1) in applications that don't have the 'contacts' module installed
+    (1) in applications that don't have the 'sales' module installed
     and
-    (2) in applications who have another implementation of the contacts module.
+    (2) in applications who have another implementation of the `sales` 
+    module (e.g. :mod:`lino.modlib.auto.sales`)
     
     """
     #~ app_label = app_label
@@ -82,8 +83,9 @@ def resolve_app(app_label,strict=False):
         return import_module('lino.modlib.%s.dummy' % app_label)
     except ImportError:
         if strict: 
-            raise
-            #~ raise Exception("strict resolve_app failed for app_label %r" % app_label)
+            #~ raise
+            raise ImportError("No app_label %r in %s" % (app_label,settings.INSTALLED_APPS))
+            #~ raise ImportError("strict resolve_app failed for app_label %r" % app_label)
 
 #~ def get_models_for(app_label):
     #~ a = models.get_app(app_label)

@@ -41,6 +41,7 @@ Sitemap
    blog/index
    admin/index
    dev/index
+   user/index
    ref/index
    changes
 

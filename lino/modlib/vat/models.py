@@ -45,7 +45,7 @@ from lino import mixins
 from django.utils.translation import ugettext_lazy as _
 #~ from lino.modlib.accounts.utils import AccountTypes
 
-from lino.modlib.ledger.utils import FiscalYears
+#~ from lino.modlib.ledger.utils import FiscalYears
 #~ from lino.core.dbutils import models_by_base
 partners = dd.resolve_app(settings.SITE.partners_app_label)
 
@@ -201,7 +201,8 @@ class VatDocument(VatTotal):
         abstract = True
   
     #~ partner = models.ForeignKey(partner_model)
-    partner = partners.PartnerField()
+    #~ partner = partners.PartnerField()
+    partner = dd.ForeignKey('contacts.Partner')
     item_vat = models.BooleanField(_("Prices include VAT"),default=False,
       help_text=_("Whether prices includes VAT or not."))
     vat_regime = VatRegimes.field(blank=True)
