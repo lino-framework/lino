@@ -1805,7 +1805,7 @@ if settings.SITE.is_installed('contacts'):
         def get_row_permission(cls,obj,ar,state,ba):
             if ar.get_user().partner is None:
                 return False
-            return super(MyPresences,cls).get_action_permission(obj,ar,state,ba)
+            return super(MyPresences,cls).get_row_permission(obj,ar,state,ba)
         
         @classmethod
         def param_defaults(self,ar,**kw):
