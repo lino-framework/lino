@@ -1,0 +1,99 @@
+==================================
+20130813 (Tuesday, 13 August 2013)
+==================================
+
+`request.subst_user.profile` may be None when called 
+from `find_appointment` in :ref:`welfare.pcsw.Clients`.
+This caused a traceback "'NoneType' object has no attribute 'authenticated'"
+in
+:meth:`lino_welfare.modlib.cal.models.PanelEvents.parse_req`.
+
+
+:class:`lino.modlib.courses.models.Enrolments`
+had a bug in get_request_queryset and get_title_tags 
+(it looked for a param_value `user` instead of `author`) which now no 
+longer passed undetected thanks to :class:`atelier.utils.AttrDict` 
+no longer simply returning `None` when being asked for a non-existing 
+attribute.
+
+
+Baustellenbesichtigung
+----------------------
+
+A new list of todos and ideas after visiting with Gerd the new functions 
+in :ref:`welfare`:
+
+Bis 20130902
+
+- Übersetzungen
+
+- Der alte Bug "Tabelle ist beim ersten Aufruf nicht bis unten gefüllt"
+  ist eine irritierende Kleinigkeit.
+  
+- In :ref:`Empfang --> Klienten <welfare.reception.Clients>`:
+  sollten keine Klienten im Status "Ehemalig" sein. 
+
+- In :ref:`Empfang --> Klienten <welfare.reception.Clients>`:
+  fehlt ein `insert_panel`.
+  
+- Aktionen "eID einlesen" und "Create visit" aus "Arbeitsablauf" raus.
+
+- CreateNote (Issue attestation) nicht als HtmlBox im Detail-Fenster, 
+  sondern "wie in TIM" als Button mit Auswahlliste statt Dialogfenster.
+  
+- Tabelle CoachingsByClients komplett übernehmen, mit pro Zeile zwei 
+  Aktionen "Visite"  und "Termin". Aber dann müssen diese beiden Aktionen 
+  auch auf der Phantomzeile stehen.
+  
+- Button "eID-Inhalt" wird im Empfang nicht benutzt. Raus.
+
+- In :ref:`welfare.reception.AppontmentsByClient`:
+  Statt "2013 Aug 12 (Mo.)" was Passenders 
+  (z.B. "heute", "gestern", "in 3 Tagen").
+  
+- In :ref:`welfare.cal.MyEvents`: Visiten rausfiltern
+
+- "Bescheinigung erstellen" für pdf-Bescheinigungen ohne Parameter 
+  sollte sofort kommen.
+  
+- Wartende Besucher: 
+
+  - par défaut nur die meinen anzeigen
+  - "Empfangen" vor "Auschecken"
+  
+
+Nach 20130909
+  
+- HelpText erweitern : auch `verbose_name` der Felder, sowie der 
+  Modelle lokal konfigurierbar machen.
+  
+- Views (GridConfigs) konfigurierbar pro User in der Datenbank (d.h. 
+  verwaltbar via Web und automatisch migrierbar)
+
+- Was ist mit Dublettenkontrolle beim Erstellen eines Klienten?  
+
+- Kann ein Klient auf zwei Agenten zugleich warten? 
+  Soll Lino das verhindern? 
+  
+- Volatile Variablen z.B. für "Ausländerbeihilfe":
+  "seit dem", "bis zum", "Datum der Bescheinigung"
+  Also lokal konfigurierbare Parameterfenster pro Bescheinigung.
+  Äquivalent zu den .dlg-Dateien in TIM
+  
+  
+
+
+
+Readthedocs
+------------
+
+Readthedocs has maybe only one problem left::
+
+
+    Exception occurred:
+      File "/home/docs/checkouts/readthedocs.org/user_builds/lino/envs/latest/local/lib/python2.7/site-packages/lino-1.6.11-py2.7.egg/lino/core/tables.py", line 1299, in <module>
+        from djangosite.signals import database_ready
+    ImportError: cannot import name database_readyT
+
+This might come because I didn't release a new version of djangosite.
+Incremented from 0.1.6 to 0.1.7

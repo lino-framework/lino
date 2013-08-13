@@ -65,8 +65,8 @@ and
 to discover how "simple" this was...
 
 Yes this is overkill, but it's a nice challenge and a good exercise 
-for Lino and me. And imagine: I now need less 
-time for maintaining this site! Se non è vero, è ben trovato.
+for Lino and me. And (at least my feeling says so:) I now need less 
+time for maintaining this site! Se non è vero, è ben trovato;-)
 
 
 

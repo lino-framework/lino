@@ -2186,7 +2186,9 @@ if settings.SITE.use_extensible:
                 
         @classmethod
         def parse_req(self,request,rqdata,**kw):
-          
+            """
+            Handle the request parameters issued by Ext.ensible CalendarPanel.
+            """
             #~ filter = kw.get('filter',{})
             assert not kw.has_key('filter')
             fkw = {}
@@ -2207,22 +2209,22 @@ if settings.SITE.use_extensible:
             
             flt = models.Q(**fkw)
             
-            # who am i ?
-            me = request.subst_user or request.user
-            
-            
             """
             If you override `parse_req`, then keep in mind that it will
             be called *before* Lino checks the requirements. 
             For example the user may be AnonymousUser even if 
             the requirements won't let it be executed.
-            """
             
-            if not me.profile.authenticated: 
+            `request.subst_user.profile` may be None e.g. when called 
+            from `find_appointment` in :ref:`welfare.pcsw.Clients`.
+            """
+            if not request.user.profile.authenticated: 
                 raise exceptions.PermissionDenied(
                     _("As %s you have no permission to run this action.") % me.profile)
                 
-                
+            # who am i ?
+            me = request.subst_user or request.user
+            
             # show all my events
             for_me = models.Q(user=me)
             
@@ -2246,7 +2248,7 @@ if settings.SITE.use_extensible:
             flt = flt & for_me
             #~ logger.info('20120710 %s', flt)
             kw.update(filter=flt)
-            logger.info('20130808 %s %s', tv,me)
+            #~ logger.info('20130808 %s %s', tv,me)
             return kw
             
         #~ @classmethod

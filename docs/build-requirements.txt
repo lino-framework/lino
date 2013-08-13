@@ -1,10 +1,10 @@
 ## FIXME: could not find svn URL in dependency_links for this package:
 Babel
 North
-atelier
+atelier==0.0.2
 lino
 lino-welfare
-djangosite
+djangosite==0.1.7
 Django==1.5.1
 Fabric==1.6.0
 Jinja2==2.6

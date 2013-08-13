@@ -675,8 +675,8 @@ class Enrolments(dd.Table):
     def get_request_queryset(self,ar):
         qs = super(Enrolments,self).get_request_queryset(ar)
         if isinstance(qs,list): return qs
-        if ar.param_values.user is not None:
-            qs = qs.filter(user=ar.param_values.user)
+        if ar.param_values.author is not None:
+            qs = qs.filter(user=ar.param_values.author)
             
         if ar.param_values.state:
             qs = qs.filter(state=ar.param_values.state)
@@ -708,8 +708,8 @@ class Enrolments(dd.Table):
             yield unicode(_("Also ")) + unicode(EnrolmentStates.cancelled.text)
         if ar.param_values.course_state:
             yield unicode(settings.SITE.modules.courses.Course._meta.verbose_name) + ' ' + unicode(ar.param_values.course_state)
-        if ar.param_values.user:
-            yield unicode(ar.param_values.user)
+        if ar.param_values.author:
+            yield unicode(ar.param_values.author)
         
 
 class PendingRequestedEnrolments(Enrolments):
