@@ -1,6 +1,5 @@
-## FIXME: could not find svn URL in dependency_links for this package:
 Babel
-North
+North==0.1.6
 atelier==0.0.2
 lino
 lino-welfare

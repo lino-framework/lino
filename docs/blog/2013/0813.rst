@@ -96,4 +96,8 @@ Readthedocs has maybe only one problem left::
     ImportError: cannot import name database_readyT
 
 This might come because I didn't release a new version of djangosite.
+Specified `djangosite==0.1.7` in docs/build-requirements.txt,
 Incremented from 0.1.6 to 0.1.7
+checkin. Uploaded djangosite 0.1.7 to PyPI
+
+
