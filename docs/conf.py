@@ -298,6 +298,14 @@ extlinks = {
 
 
 
+on_rtd = os.environ.get('READTHEDOCS', None) == 'True'
+if on_rtd:
+    intersphinx_mapping = {}
+    for n in """python django 
+    djangosite atelier north lino 
+    lino-welfare lino-faggio lino-patrols""".split():
+        intersphinx_mapping[n] = ('http://%s.readthedocs.org/en/latest/' % n, None)
+
 autosummary_generate = True
 
 #~ nitpicky = True # use -n in Makefile instead
@@ -310,3 +318,4 @@ todo_include_todos = True
 
 #~ New in version 1.1
 gettext_compact = True
+

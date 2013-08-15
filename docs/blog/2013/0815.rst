@@ -1,0 +1,23 @@
+===================================
+20130815 (Thursday, 15 August 2013)
+===================================
+
+
+Removed the default `SECRET_KEY` from :mod:`lino.projects.std.settings`,
+this means that users must set this in 
+their :xfile:`settings.py` or :xfile:`djangosite_local.py`.
+
+Added a "Server status" field to :class:`lino.modlib.about.models.About` 
+which currenty shows only one piece of information: 
+the number of  pending threads (stored in :attr:`lino.ui.base.UI.pending_threads`).
+
+Another useful piece of information would be number of currently active
+users. But that's for later because there are more urgent things to do.
+
+
+Discovered a subtle problem: caroline cannot open the detail of a 
+cal.Event. This is because `ForeignKeyElement`
+adds the same `onTrigger2Click` option 
+(which calls `Lino.show_fk_detail`)
+for everybody, but caroline has no view permission to see 
+the gloabel `cal.Events` table.

@@ -1,5 +1,5 @@
 # -*- coding: UTF-8 -*-
-## Copyright 2012 Luc Saffre
+## Copyright 2012-2013 Luc Saffre
 ## This file is part of the Lino project.
 ## Lino is free software; you can redistribute it and/or modify 
 ## it under the terms of the GNU General Public License as published by
@@ -13,6 +13,11 @@
 ## along with Lino; if not, see <http://www.gnu.org/licenses/>.
 
 u"""
+
+This module is used by 
+the :mod:`garble <lino_welfare.modlib.pcsw.management.commands.garble>` 
+command that comes with :mod:`lino_welfare`.
+
 Example usage:
 
 The first five a Belgians:
@@ -35,7 +40,7 @@ Altukhov
 Alvang
 Ankundinov
 
-The next group of ten is a mixture of nationalities, for each Belgian comes one foreigner:
+Or here is a mixture of nationalities, for each Belgian comes one foreigner:
 
 >>> LAST_NAMES = Cycler(LAST_NAMES_BELGIUM,LAST_NAMES_RUSSIA,LAST_NAMES_BELGIUM,LAST_NAMES_MUSLIM)
 
@@ -52,7 +57,7 @@ Abbas
 Aertsens
 Arshan
 
-Some fictive Estonians:
+Some fictive Estonians (each couple one male & one female):
 
 >>> for i in range(5):
 ...    print MALE_FIRST_NAMES_ESTONIA.pop(), LAST_NAMES_ESTONIA.pop(), '&', 
@@ -63,9 +68,6 @@ Aarne Mägi & Age-Kaie Smirnov
 Aaro Vasiliev & Aili Petrov
 Aaron Kask & Aili Kukk
 
-This module is used by 
-the :mod:`garble <lino_welfare.modlib.pcsw.management.commands.garble>` 
-command that comes with :mod:`lino_welfare`.
 
 Sources:
 
@@ -88,7 +90,6 @@ The raw data was originally copied from:
   (I manually added some less frequent names)
   
 - Estonian first names are extracted from my personal database.
-
 
 
 """

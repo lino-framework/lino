@@ -1,5 +1,5 @@
 # -*- coding: UTF-8 -*-
-## Copyright 2006-2012 Luc Saffre
+## Copyright 2006-2013 Luc Saffre
 ## This file is part of the Lino project.
 ## Lino is free software; you can redistribute it and/or modify 
 ## it under the terms of the GNU General Public License as published by
@@ -52,11 +52,11 @@ the ``[KEYWORD ARGS]`` fragment.
 It is responsible for parsing 
 the text that it receives as parameter.
 
-If an exception occurs while parsing, 
-only the final exception message is visible in the result.
-But the whole traceback is being logged to the lino logger.
+If an exception occurs during the command handler, 
+the final exception message is inserted into the result.
+The whole traceback is being logged to the lino logger.
 
-Our example implementation has a bug, 
+To demonstrate this, our example implementation has a bug, 
 it doesn't support the case of having only an URL without TEXT:
 
 >>> print p.parse('This is a [url http://xyz.com].')

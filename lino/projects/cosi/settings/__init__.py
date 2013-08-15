@@ -1,5 +1,5 @@
 # -*- coding: UTF-8 -*-
-## Copyright 2011-2012 Luc Saffre
+## Copyright 2011-2013 Luc Saffre
 ## This file is part of the Lino project.
 ## Lino is free software; you can redistribute it and/or modify 
 ## it under the terms of the GNU General Public License as published by
@@ -46,18 +46,6 @@ class Site(Site,ledger.SiteMixin):
     user_model = 'users.User'
     
     #~ remote_user_header = "REMOTE_USER"
-    
-    #~ override_modlib_models = [ 'contacts.Partner' ]
-    #~ override_modlib_models = [
-      #~ 'contacts.Person','contacts.Company',
-      #~ 'households.Household']
-    
-    #~ def get_description(self):
-        #~ from django.utils.translation import ugettext_lazy as _
-        #~ from django.utils.translation import string_concat
-        #~ return _("a Lino application to make Belgian accounting simple.")
-    #~ description = property(get_description)
-        
       
     #~ def get_application_info(self):
         #~ return (__name__,__version__,__url__)

@@ -1,5 +1,5 @@
 # -*- coding: UTF-8 -*-
-## Copyright 2012 Luc Saffre
+## Copyright 2012-2013 Luc Saffre
 ## This file is part of the Lino project.
 ## Lino is free software; you can redistribute it and/or modify 
 ## it under the terms of the GNU General Public License as published by
@@ -24,7 +24,7 @@ Unlike Marco's reader this one doesn't store any data in memory,
 it just loops over the rows.
 
 OdsReader is used to import data from .ods files into a 
-Django database using a :mod:`north.datapy` fixture,
+Django database using a :mod:`north.dpy` fixture,
 but not limited to this usage.
 
 State : works for me, but very young and probably full of bugs.

@@ -1,4 +1,4 @@
-## Copyright 2012 Luc Saffre
+## Copyright 2012-2013 Luc Saffre
 ## This file is part of the Lino project.
 ## Lino is free software; you can redistribute it and/or modify 
 ## it under the terms of the GNU General Public License as published by
@@ -260,6 +260,7 @@ class About(mixins.EmptyTable):
     #~ detail_layout = AboutDetail()
     detail_layout = dd.FormLayout("""
     about_html
+    server_status
     """,window_size = (60,20))
     
     #~ versions = dd.Constant(lino.welcome_html())
@@ -278,12 +279,7 @@ class About(mixins.EmptyTable):
         
     @dd.constant()
     def about_html(cls):
-    #~ def about_html(cls,ui):
       
-    #~ @dd.displayfield()
-    #~ def about_html(cls,obj,ar):
-        #~ ui = ar.ui
-        #~ return settings.SITE.welcome_html(ui)
         body = []
         
         body.append(settings.SITE.welcome_html())
@@ -313,9 +309,14 @@ class About(mixins.EmptyTable):
         for label,value in times:
             items.append(E.li(unicode(label),' : ',E.b(dtfmt(value))))
         body.append(E.ul(*items))
-        
         return E.div(*body,class_='htmlText')
         
+        
+    @dd.displayfield(_("Server status"))
+    def server_status(cls,obj,ar):
+        body = []
+        body.append(E.p(_("%s pending threads") % len(settings.SITE.ui.pending_threads)))
+        return E.div(*body,class_='htmlText')
         
     #~ @dd.displayfield(_("Versions"))
     #~ def versions(self,obj,ar):

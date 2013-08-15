@@ -1,0 +1,25 @@
+====================================
+20130814 (Wednesday, 14 August 2013)
+====================================
+
+:ref:`welfare.reception.WaitingGuests` : when clicking in that table 
+on the partner, Lino-Welfare should show the *Client's* and not 
+the *Partner's*  detail. Because in Lino-Welfare the `partner` of a 
+`cal.Guest` is always a `Client`.
+
+I solved this by creating a new class: 
+:class:`lino_welfare.modlib.reception.WaitingGuests`
+which overrides the library `reception.WaitingGuests`, 
+adding a virtual field `partner` which will override 
+the field defined in the model::
+
+    class WaitingGuests(WaitingGuests): 
+        label = WaitingGuests.label 
+        
+        @dd.virtualfield(dd.ForeignKey('pcsw.Client'))
+        def partner(self,obj,ar):
+            return pcsw.Client.objects.get(pk=obj.partner.pk)
+        
+Note that the label of a table is by design not automatically inherited.
+That's why we must inherit the label manually. 
+    

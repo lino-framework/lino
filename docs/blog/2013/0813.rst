@@ -87,6 +87,12 @@ Nach 20130909
 Readthedocs
 ------------
 
+Continued to work on getting my different Sphinx document trees 
+published to readthedocs.prg.
+
+http://lino.rtfd.org is now available again 
+(though not complete, e.g. intersphinx links are missing).
+
 Readthedocs has maybe only one problem left::
 
 
@@ -95,9 +101,13 @@ Readthedocs has maybe only one problem left::
         from djangosite.signals import database_ready
     ImportError: cannot import name database_readyT
 
-This might come because I didn't release a new version of djangosite.
-Specified `djangosite==0.1.7` in docs/build-requirements.txt,
-Incremented from 0.1.6 to 0.1.7
-checkin. Uploaded djangosite 0.1.7 to PyPI
+This was simply solved by having them update their version of djangosite.
+Which required a new release on PyPI:
+Incremented from 0.1.6 to 0.1.7, checkin, upload to PyPI.
+And of course specified `djangosite==0.1.7` in :srcref:`lino/docs/build-requirements.txt`,
+
+A similar upgrade was needed for :mod:`north`.
+
+
 
 

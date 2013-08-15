@@ -1,5 +1,5 @@
 # -*- coding: UTF-8 -*-
-## Copyright 2009-2012 Luc Saffre
+## Copyright 2009-2013 Luc Saffre
 ## This file is part of the Lino project.
 ## Lino is free software; you can redistribute it and/or modify 
 ## it under the terms of the GNU General Public License as published by
@@ -13,7 +13,7 @@
 ## along with Lino; if not, see <http://www.gnu.org/licenses/>.
 
 """
-The :mod:`lino.utils.ranges` module containes utility methods 
+The :mod:`lino.utils.ranges` module contains utility methods 
 for working with "ranges".
 
 A range is basically a tuple of two values `a` and `b`,

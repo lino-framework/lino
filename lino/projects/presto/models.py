@@ -1,5 +1,5 @@
 # -*- coding: UTF-8 -*-
-## Copyright 2011-2012 Luc Saffre
+## Copyright 2011-2013 Luc Saffre
 ## This file is part of the Lino project.
 ## Lino is free software; you can redistribute it and/or modify 
 ## it under the terms of the GNU General Public License as published by
@@ -63,18 +63,6 @@ class Household(households.Household,mixins.CreatedModified):
 class Company(contacts.Company,mixins.CreatedModified):
     class Meta(contacts.Company.Meta):
         app_label = 'contacts'
-
-#~ class Companies(contacts.Partners):
-    #~ model = Company
-    #~ app_label = 'contacts'
-    #~ order_by = ["name"]
-
-#~ class Note(notes.Note,contacts.PartnerDocument):
-    #~ class Meta:
-        #~ app_label = 'notes'
-        #~ verbose_name = _("Event/Note") # application-specific override
-        #~ verbose_name_plural = _("Events/Notes")
-
 
 
 def site_setup(site):

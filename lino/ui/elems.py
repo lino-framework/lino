@@ -1051,7 +1051,7 @@ class ForeignKeyElement(ComplexRemoteComboFieldElement):
   
     preferred_width = 20
     
-    def __init__(self,layout_handle,field,**kw):
+    def unused__init__(self,layout_handle,field,**kw):
         if isinstance(field.rel.to,basestring):
             from lino.core.dbutils import resolve_model
             field.rel.to = resolve_model(field.rel.to)
@@ -1071,9 +1071,23 @@ class ForeignKeyElement(ComplexRemoteComboFieldElement):
         
     def get_field_options(self,**kw):
         kw = super(ForeignKeyElement,self).get_field_options(**kw)
-        kw.update(pageSize=self.actor.page_length)
-        if self.actor.model is not None:
-            kw.update(emptyText=_('Select a %s...') % self.actor.model._meta.verbose_name)
+        
+        pw = self.field.rel.to.preferred_foreignkey_width
+        if pw is not None:
+            kw.setdefault('preferred_width',pw)
+        #~ actor = dbtables.get_model_report(self.field.rel.to)
+        actor = self.field.rel.to.get_default_table()
+        a = actor.detail_action
+        if a is not None:
+            if not isinstance(self.layout_handle.layout,layouts.ListLayout):
+                self.value_template = "new Lino.TwinCombo(%s)"
+                kw.update(onTrigger2Click=js_code(
+                    "function(e){ Lino.show_fk_detail(this,Lino.%s)}" % a.full_name()))
+                    #~ "Lino.show_fk_detail_handler(this,Lino.%s)}" % a))
+        
+        kw.update(pageSize=actor.page_length)
+        if actor.model is not None:
+            kw.update(emptyText=_('Select a %s...') % actor.model._meta.verbose_name)
         return kw
 
     def cell_html(self,ui,row):
