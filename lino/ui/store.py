@@ -499,6 +499,15 @@ class DisabledActionsStoreField(SpecialStoreField):
     #~ def full_value_from_object(self,request,obj):
         #~ return 
         
+class RowClassStoreField(SpecialStoreField):
+    name = 'row_class'
+        
+    def full_value_from_object(self,obj,ar):
+        s = self.store.actor.get_row_class(obj,ar)
+        if s is not None:
+            return 'x-grid3-row-%s' % s
+            
+        
 class DisableEditingStoreField(SpecialStoreField):
     """
     A field whose value is the result of the `get_row_permission` 
@@ -1067,6 +1076,9 @@ class Store(BaseStore):
         #~ if rh.report.submit_action is not None:
         if rh.actor.editable:
             addfield(DisableEditingStoreField(self))
+            
+        if rh.actor.get_row_class is not None:
+            addfield(RowClassStoreField(self))
             
         #~ self.fields.append(PropertiesStoreField)
         #~ self.fields_dict = dict([(f.field.name,f) for f in self.fields])

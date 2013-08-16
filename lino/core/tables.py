@@ -1218,17 +1218,6 @@ class AbstractTable(actors.Actor):
             os.startfile(url)
         
     @classmethod
-    def apply_cell_format(self,ar,row,col,recno,td):
-        """
-        Actor-level hook for overriding the formating when rendering 
-        this table as plain html.
-        
-        For example :class:`lino.modlib.cal.models.Events`
-        overrides this.
-        """
-        pass
-        
-    @classmethod
     def to_rst(cls,ar,column_names=None,**kwargs):
         fields, headers, widths = ar.get_field_info(column_names)
         #~ # in case column_names contains remote fields

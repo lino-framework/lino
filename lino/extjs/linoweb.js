@@ -3356,14 +3356,21 @@ Lino.FormPanel = Ext.extend(Lino.FormPanel,{
 });
 
 
+
 Lino.getRowClass = function(record, rowIndex, rowParams, store) {
-  if (record.phantom) {
+    //~ console.log(20130816,record);
+    //~ return 'x-grid3-row-green';
+    return record.data.row_class;
+  //~ if (true) {
+      //~ return 'x-grid3-row-red';
+  //~ }
+  //~ if (record.phantom) {
     //~ console.log(20101009,record);
     //~ rowParams.bodyStyle = "color:red;background-color:blue";
-    return 'lino-phantom-row';
-    }
+    //~ return 'lino-phantom-row';
+    //~ }
   //~ console.log('20101009 not a phantom:',record);
-  return '';
+  //~ return '';
 }
 
 //~ FOO = 0;
@@ -3574,6 +3581,7 @@ Lino.GridPanel = Ext.extend(Lino.GridPanel,{
         this_.set_param_values(this_.store.reader.arrayData.param_values);
         //~ this_.set_status(this_.store.reader.arrayData.status);
         //~ 20120918
+        this.getView().getRowClass = Lino.getRowClass;
         if (this_.store.reader.arrayData.no_data_text) {
             //~ this.viewConfig.emptyText = this_.store.reader.arrayData.no_data_text;
             this.getView().emptyText = this_.store.reader.arrayData.no_data_text;

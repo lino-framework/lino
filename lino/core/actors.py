@@ -327,6 +327,35 @@ class Actor(actions.Parametrizable):
     
     hidden_elements = frozenset()
     
+    @classmethod
+    def apply_cell_format(self,ar,row,col,recno,td):
+        """
+        Actor-level hook for overriding the formating when rendering 
+        this table as plain html.
+        
+        For example :class:`lino.modlib.cal.models.Events`
+        overrides this.
+        """
+        pass
+        
+    
+    
+    get_row_class = None
+    """
+    If not None, this must be a class method which takes a table row
+    and an ActionRequest and returns either None or a string 
+    "red", "green" or "blue" (todo: add more colors 
+    and styles). Example::
+    
+        @classmethod
+        def get_row_class(cls,obj,ar):
+            if obj.client_state == pcsw.ClientStates.newcomer:
+                return 'green'
+    
+    It will cause an additional special field RowClassStoreField
+    
+    """
+    
     app_label = None
     """
     Specify this if you want to "override" an existing actor.
