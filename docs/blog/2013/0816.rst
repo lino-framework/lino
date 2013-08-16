@@ -1,0 +1,61 @@
+=================================
+20130816 (Friday, 16 August 2013)
+=================================
+
+Johan has fixed issue #5 
+(`getPicture() works in FF 16 but not in Chrome 23
+<http://code.google.com/p/eid-javascript-lib/issues/detail?id=5>`_)
+and asks me to verify it.
+
+Here is an updated instructions on how to reproduce it:
+
+- Go to http://welfare-demo.lino-framework.org/
+
+- Log in as robin (password "1234")
+
+- Open the Javascript console of your browser
+
+- In the menu, select "Reception --> Clients". Lino shows a list of
+  fictive clients. 
+  In the top toolbar there's a button "Read eID card".
+
+- Insert some Belgian eID card. Click the button.
+
+First of all, the above instructions didn't work anymore: 
+clicking the button activated the loadMask ("Please wait...") 
+and remained there. The server log said::
+
+  201308-16 05:21:22 WARNING csrf : Forbidden (CSRF cookie not set.): /api/reception/Clients/116
+
+Obviously I unconsiously somehow activated Django's latest security 
+evolutions `CSRF middleware
+<https://docs.djangoproject.com/en/dev/ref/contrib/csrf/>`_.
+I say "unconsiously" because according to the docs 
+CSRF should not be activated since I don't include the 
+`django.middleware.csrf.CsrfViewMiddleware`.
+I suppose that Django in a motherly way decided that 
+*not* protecting against CSRF is just too dangerous and thus 
+protects me against my will...
+Okay... anyway one day I would have had to face this. 
+
+And the solution wasn't too difficult.
+Thanks to 
+`huuze <http://stackoverflow.com/users/10040/huuuze>`_ for the question
+and to 
+`chrisv <http://stackoverflow.com/users/683808/chrisv>`_
+for the answer on
+`How do I include Django 1.2's CSRF token in a Javascript-generated HTML form?
+<http://stackoverflow.com/questions/3764589/how-do-i-include-django-1-2s-csrf-token-in-a-javascript-generated-html-form/5485616#5485616>`_::
+ 
+    Ext.Ajax.on('beforerequest', function (conn, options) {
+       if (!(/^http:.*/.test(options.url) || /^https:.*/.test(options.url))) {
+         if (typeof(options.headers) == "undefined") {
+           options.headers = {'X-CSRFToken': Ext.util.Cookies.get('csrftoken')};
+         } else {
+           options.headers.extend({'X-CSRFToken': Ext.util.Cookies.get('csrftoken')});
+         }                        
+       }
+    }, this);
+
+
+

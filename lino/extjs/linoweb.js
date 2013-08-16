@@ -225,6 +225,26 @@ See /blog/2012/0307
 */
 Ext.Ajax.timeout = 15 * 60 * 1000; 
 
+/*
+ * Thanks to 
+ * `huuze <http://stackoverflow.com/users/10040/huuuze>`_ for the question
+ * and to 
+ * `chrisv <http://stackoverflow.com/users/683808/chrisv>`_
+ * for the answer on
+ * http://stackoverflow.com/questions/3764589/how-do-i-include-django-1-2s-csrf-token-in-a-javascript-generated-html-form/5485616#5485616
+ * 
+ * */
+ 
+Ext.Ajax.on('beforerequest', function (conn, options) {
+   if (!(/^http:.*/.test(options.url) || /^https:.*/.test(options.url))) {
+     if (typeof(options.headers) == "undefined") {
+       options.headers = {'X-CSRFToken': Ext.util.Cookies.get('csrftoken')};
+     } else {
+       options.headers.extend({'X-CSRFToken': Ext.util.Cookies.get('csrftoken')});
+     }                        
+   }
+}, this);
+
 
 /*
 My fix for the "Cannot set QuickTips dismissDelay to 0" bug,
