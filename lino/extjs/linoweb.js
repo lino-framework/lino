@@ -3935,12 +3935,31 @@ Lino.GridPanel = Ext.extend(Lino.GridPanel,{
     //~ console.log('getResizeEl.getHeight() is',this.getResizeEl().getHeight());
     //~ console.log('getLayoutTarget().getHeight() is',this.getLayoutTarget().getHeight());
       
-    var rowHeight = this.getFrameHeight();
     //~ var rowHeight = 52; // experimental value
     var row = this.view.getRow(0);
     if (row) {
       //~ console.log('20120213 yes');
-      rowHeight = Ext.get(row).getHeight();
+      var rowHeight = Ext.get(row).getHeight();
+    } else {
+        //~ var rowHeight = this.getFrameHeight();
+        //~ var rowHeight = 10; // reasonably smallest approximative value
+        //~ There is no data yet. Construct a fake row and get its height
+        var Element = Ext.Element;
+        var gv = this.view;
+        var fakeBody = new Element(Element.fly(gv.scroller).child('div.x-grid3-body'));
+        var rowTemplate = gv.templates.row;
+        var cellTemplate = gv.templates.cell;
+        var tstyle  = 'width:' + gv.getGridInnerWidth() + 'px;';
+        var cells = cellTemplate.apply({value:'&#160;'});
+        var markup = rowTemplate.apply({
+                tstyle: tstyle,
+                cols  : 1,
+                cells : cells,
+                alt   : ''
+            });        
+        fakeBody.dom.innerHTML = gv.templates.body.apply({rows: markup});
+        var row = fakeBody.dom.childNodes[0];
+        var rowHeight = Ext.get(row).getHeight();
     }
     //~ console.log('rowHeight is ',rowHeight,this,caller);
     //~ this.getView().syncScroll();
@@ -3960,7 +3979,7 @@ Lino.GridPanel = Ext.extend(Lino.GridPanel,{
     height -= Ext.getScrollBarWidth(); // leave room for a possible horizontal scrollbar... 
     //~ height -= this.getView().scrollOffset;
     var ps = Math.floor(height / rowHeight);
-    //~ console.log('20120203 calculatePageSize():',height,'/',rowHeight,'->',ps);
+    console.log('20130816 calculatePageSize():',height,'/',rowHeight,'->',ps);
     ps -= 1; // leave room for a possible phantom row
     //~ return (ps > 1 ? ps : false);
     if (ps > 1) return ps;

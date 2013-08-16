@@ -133,5 +133,25 @@ TODO: have plain renderer use it too, deprecate apply_cell_format and
 convert existing application code.
 
 
+The "Not enough rows" bug
+-------------------------
 
+Fixed an old bug in which Joe described as follows:
+
+- When you open table, only 15 rows are loaded and if the table is large 
+  enough (screen big enough), there is white space at the bottom. When you 
+  resize or reload the grid, the problem is gone. This happens every time.
+  
+The reason was that Lino tries to retrieve exactly the right number 
+of data rows when displaying an ExtJS `EditorGridPanel`
+(which is the main element of the window).
+But the height of an individual row is known only when at least one row 
+is present. 
+Which is not the case before the first load of the grid's store. 
+So `Lino.GridPanel.calculatePageSize` 
+(defined in :xfile:`linoweb.js`)
+now constructs a fake row with one 
+empty data cell using the grid's HTML templates and CSS styles, just to 
+call it's getHeight() before throwing it away.
+That's brute force but I didn't yet see any other solution.
 
