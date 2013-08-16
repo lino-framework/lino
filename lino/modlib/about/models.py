@@ -55,7 +55,6 @@ class Models(dd.VirtualTable):
     def get_data_rows(self,ar):
         #~ profile = ar.get_user().profile
         for model in models.get_models():
-            #~ if model._lino_default_table.get_view_permission(profile):
             if True: 
                 #~ print model
                 yield model
@@ -76,10 +75,9 @@ class Models(dd.VirtualTable):
     #~ @dd.displayfield(_("Detail Action"))
     @dd.displayfield()
     def detail_action(self,obj,ar):
-        #~ return str(obj._lino_default_table.detail_action)
-        if obj._lino_default_table.detail_action is None:
+        if obj.get_default_table().detail_action is None:
             return ''
-        return obj._lino_default_table.detail_action.full_name()
+        return obj.get_default_table().detail_action.full_name()
         
     #~ @dd.displayfield(_("verbose name"))
     #~ def vebose_name(self,obj,ar):
@@ -92,8 +90,7 @@ class Models(dd.VirtualTable):
         
     @dd.requestfield(_("Rows"))
     def rows(self,obj,ar):
-        #~ if obj._lino_default_table.get_view_permission(ar.get_user()):
-        return obj._lino_default_table.request(ar.ui,
+        return obj.get_default_table().request(ar.ui,
           user=ar.get_user(),renderer=ar.renderer)
 
 

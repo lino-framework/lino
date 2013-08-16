@@ -74,7 +74,7 @@ def actor_ref(rpt):
 def model_ref(m):
     label = force_unicode(m._meta.verbose_name)
     #~ target = settings.SITE.userdocs_prefix + full_model_name(m)
-    target = settings.SITE.userdocs_prefix + str(m._lino_default_table)
+    target = settings.SITE.userdocs_prefix + str(m.get_default_table())
     #~ return label
     return ':ref:`%s <%s>`' % (label,target)
 
@@ -263,7 +263,7 @@ class LinoTableDirective(Django2rstDirective):
           
             if issubclass(cls,dbtables.Table):
                 if cls.model is not None:
-                    if cls.model._lino_default_table is cls:
+                    if cls.model.get_default_table() is cls:
                         self.add_model_index_entry(cls.model)
                         #~ name = settings.SITE.userdocs_prefix + full_model_name(cls.model)
                         #~ s += '\n\n.. _'+ name + ':\n\n'

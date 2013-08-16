@@ -208,12 +208,7 @@ def create_item(spec,action=None,help_text=None,**kw):
     else:
         if isinstance(spec,type) and issubclass(spec,models.Model):
             spec = spec.get_default_table()
-            #~ spec = spec._lino_default_table
             assert spec is not None
-            #~ if action:
-                #~ a = spec._lino_default_table.get_url_action(action)
-            #~ else:
-                #~ a = spec._lino_default_table.default_action
         
         if isinstance(spec,type) and issubclass(spec,actors.Actor):
             if action:

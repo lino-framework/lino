@@ -42,10 +42,6 @@ class Command(BaseCommand):
         #~ settings.SITE.startup()
         spec = args[0]
         
-        #~ cl = settings.SITE.modules.resolve(spec)
-        #~ if issubclass(cl,models.Model):
-            #~ cl = cl._lino_default_table
-            
         username = options['username']
         ses = settings.SITE.login(username)
         

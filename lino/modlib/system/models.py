@@ -252,7 +252,7 @@ if settings.SITE.is_installed('contenttypes'):
                       l.append(f.name)
               for f in meta.many_to_many: l.append(f.name)
               for f in meta.virtual_fields: l.append(f.name)
-              for a in model._lino_default_table.get_actions():
+              for a in model.get_default_table().get_actions():
                   l.append(a.action.action_name)
               l.sort()
           return l
@@ -267,7 +267,7 @@ if settings.SITE.is_installed('contenttypes'):
           m = self.content_type.model_class()
           #~ if isinstance(m,UnresolvedModel):
               #~ return str(m)
-          de = m._lino_default_table.get_data_elem(self.field)
+          de = m.get_default_table().get_data_elem(self.field)
           if isinstance(de,models.Field):
               #~ return unicode(de.verbose_name)
               return "%s (%s)" % (unicode(de.verbose_name), unicode(_("database field")))

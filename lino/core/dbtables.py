@@ -328,8 +328,7 @@ def discover():
       
     - For each model we want to find out the "default table".
       The "choices table" for a foreignkey field is also currently 
-      simply the pointed model's
-      model_table.
+      simply the pointed model's default table.
       :modattr:`_lino_default_table`
 
     """

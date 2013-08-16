@@ -344,7 +344,7 @@ class PlainRenderer(HtmlRenderer):
     def instance_handler(self,ar,obj,**kw):
         a = getattr(obj,'_detail_action',None)
         if a is None:
-            a = obj.__class__._lino_default_table.detail_action
+            a = obj.__class__.get_default_table().detail_action
         if a is not None:
             if ar is None or a.get_bound_action_permission(ar,obj,None):
                 add_user_language(kw,ar)

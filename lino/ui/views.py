@@ -68,14 +68,14 @@ def requested_actor(app_label,actor):
     """
     Utility function which returns the requested actor, 
     either directly or (if specified name is a model) that 
-    model's default actor.
+    model's default table.
     """
     x = getattr(settings.SITE.modules,app_label)
     cl = getattr(x,actor)
     if not isinstance(cl,type):
         raise Exception("%s.%s is not a class" % (app_label,actor))
     if issubclass(cl,models.Model):
-        return cl._lino_default_table
+        return cl.get_default_table()
     if not issubclass(cl,actors.Actor):
         #~ raise http.Http404("%r is not an actor" % cl)
         raise Exception("%r is not an actor" % cl)
@@ -539,7 +539,8 @@ def choices_for_field(request,actor,field):
         
     elif isinstance(field,models.ForeignKey):
         m = field.rel.to
-        t = getattr(m,'_lino_choices_table',m._lino_default_table)
+        #~ t = getattr(m,'_lino_choices_table',m.get_default_table())
+        t = m.get_default_table()
         qs = t.request(request=request).data_iterator
         #~ logger.info('20120710 choices_view(FK) %s --> %s',t,qs)
         def row2dict(obj,d):

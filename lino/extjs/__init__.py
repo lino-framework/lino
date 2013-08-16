@@ -395,8 +395,6 @@ class ExtRenderer(HtmlRenderer):
         return settings.SITE.build_admin_url('api',ar.actor.app_label,ar.actor.__name__,*args,**kw)
         
     def get_detail_url(self,obj,*args,**kw):
-        #~ rpt = obj._lino_default_table
-        #~ return self.build_url('api',rpt.app_label,rpt.__name__,str(obj.pk),*args,**kw)
         return settings.SITE.build_admin_url('api',obj._meta.app_label,obj.__class__.__name__,str(obj.pk),*args,**kw)
         
     #~ def request_href_js(self,rr,text=None):

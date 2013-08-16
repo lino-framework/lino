@@ -626,9 +626,6 @@ Later
 #.  An makedocs müsste ich bei Gelegenheit mal ein bisschen weiter machen. 
     Das ist noch lange nicht fertig.
     
-#.  In einer Grid mit Notizen die Hintergrundfarbe jeder Reihe 
-    abhängig von Notizart und/oder Ereignisart machen.
-
 #.  Welche weiteren Felder müssen (ähnlich wie "Stadt") lernfähig werden? 
     Vorschläge: 
     
@@ -865,11 +862,6 @@ Long-term
    schon Icons aus der ExtJS.
 
 #. Abfragen mit komplexen Bedingungen zur Suche nach Personen
-
-#. Die Zeilenhöhe einer Grid muss einen sinnvollen Maximalwert kriegen. 
-   In Explorer / Notes hat man momentan den Eindruck, dass es nur eine 
-   Zeile gibt; in Wirklichkeit ist der Memo-Text der ersten Zeile so lang, 
-   dass die Zeilenhöhe größer als das Fenster ist.
 
 #. Benutzbarkeit per Tastatur verbessern (issue 11, issue 64) 
 

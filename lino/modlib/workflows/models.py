@@ -131,7 +131,6 @@ if settings.SITE.user_model and settings.SITE.is_installed('contenttypes'):
       def get_action_name_display(self,action_name):
           actor = settings.SITE.workflow_actors.get(self.actor_name)
           if actor is None: return ''
-          #~ actor = self.content_type.model_class()._lino_default_table
           a = getattr(actor,action_name)
           return action_text(a)
           

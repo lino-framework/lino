@@ -1,0 +1,50 @@
+===================================
+20130817 (Saturday, 17 August 2013)
+===================================
+
+ForeignKey to `cal.Event` was not clickable for everybody
+---------------------------------------------------------
+
+Fixed the following problem:
+
+- In Lino-Welfare, when Caroline has some event listed in 
+  :ref:`welfare.cal.MyEvents`, then she cannot click in the `when_text` 
+  column to see the detail of an event. 
+
+Did some code cleanup before deciding how to actually solve this:
+
+- Removed `lino.core.dbutils.get_model_report`. 
+  Existing code should call :meth:`lino.core.model.get_default_table`.
+
+- Replaced existing occurences of `Model._lino_default_table` 
+  by `Model.get_default_table()`.
+  
+- `lino.ui.views.choices_for_field` no longer looks for a magic class attribute 
+  `_lino_choices_table`.
+  
+The solution was then to write a new table `OneEvent`::
+
+    class OneEvent(Events):
+        show_detail_navigator = False
+        use_as_default_table = False
+        required = dd.required(user_groups='office')
+
+and to override :meth:`lino.core.model.Model.get_default_table`::
+
+    @classmethod
+    def get_default_table(cls):
+        return OneEvent
+        
+Discovered and fixed another internal bug: calling :func:`unicode`
+on a `cal.Calendar` returned something like "Row #1" 
+because Calendar is now a `Sequenced`. 
+Changed the order of base classes from
+
+::
+  
+  class Calendar(BabelNamed,Sequenced,PrintableType,MailableType):
+  
+to 
+  
+  class Calendar(Sequenced,PrintableType,MailableType,BabelNamed):
+

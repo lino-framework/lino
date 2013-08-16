@@ -99,7 +99,7 @@ from django.core.validators import MinValueValidator
 
 
 
-class Calendar(mixins.Sequenced,mixins.PrintableType,outbox.MailableType,dd.BabelNamed):
+class Calendar(dd.BabelNamed,dd.Sequenced,dd.PrintableType,outbox.MailableType):
     """
     A Calendar is a collection of events and tasks.
     There are local calendars and remote calendars.
@@ -1061,6 +1061,10 @@ Indicates that this Event shouldn't prevent other Events at the same time."""))
         return self.user.language
         
     @classmethod
+    def get_default_table(cls):
+        return OneEvent
+
+    @classmethod
     def on_analyze(cls,lino):
         cls.DISABLED_AUTO_FIELDS = dd.fields_list(cls,
             '''summary''')
@@ -1251,6 +1255,10 @@ if settings.SITE.project_model:
         auto_fit_column_widths = True
         column_names = 'when_text user summary workflow_buttons'
 
+class OneEvent(Events):
+    show_detail_navigator = False
+    use_as_default_table = False
+    required = dd.required(user_groups='office')
     
 if settings.SITE.user_model:    
   

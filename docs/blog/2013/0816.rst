@@ -136,7 +136,7 @@ convert existing application code.
 The "Not enough rows" bug
 -------------------------
 
-Fixed an old bug in which Joe described as follows:
+Fixed an old bug which Joe described as follows:
 
 - When you open table, only 15 rows are loaded and if the table is large 
   enough (screen big enough), there is white space at the bottom. When you 
