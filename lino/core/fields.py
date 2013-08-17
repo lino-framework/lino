@@ -336,6 +336,9 @@ class VirtualField(FakeField): # (Field):
               return self.total_excl + self.total_vat
         """
             
+    def override_getter(self,get):
+        self.get = get
+        
     def attach_to_model(self,model,name):
         self.model = model
         self.name = name

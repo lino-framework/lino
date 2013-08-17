@@ -60,7 +60,7 @@ Genders.male:M
 
 Comparing Choices uses their *value* (not the alias or text):
 
->>> from lino.utils.auth import UserLevels
+>>> from lino.core.auth import UserLevels
 
 >>> UserLevels.manager > UserLevels.user
 True

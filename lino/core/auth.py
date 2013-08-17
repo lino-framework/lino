@@ -385,7 +385,7 @@ def make_permission_handler(*args,**kw):
         
     `auth`
         If True, permission is given for any authenticated user 
-        (and not for :class:`lino.utils.auth.AnonymousUser`).
+        (and not for :class:`lino.core.auth.AnonymousUser`).
         
     `owner`
         If True, permission is given only to the author of the object. 

@@ -11,8 +11,6 @@ Bis 20130902
   
 #.  Passfoto einlesen
   
-#.  Übersetzungen
-  
 #.  In :ref:`Empfang --> Klienten <welfare.reception.Clients>`:
     sollten keine Klienten im Status "Ehemalig" sein. 
   
@@ -32,10 +30,10 @@ Bis 20130902
 #.  "Bescheinigung erstellen" für pdf-Bescheinigungen ohne Parameter 
     sollte sofort kommen.
     
-#.  Wartende Besucher: 
-    - par défaut nur die meinen anzeigen
-    - "Empfangen" vor "Auschecken"
-    
+#.  Wartende Besucher: par défaut nur die meinen anzeigen
+
+#.  Übersetzungen
+  
 
 Nach 20130909
 -------------
@@ -64,7 +62,6 @@ Nach 20130909
     should be visible in UploadsByProject
     Uploads pro Notiz sollten auch vom Klienten aus sichtbar sein.
 
- 
 
 
 Bugs

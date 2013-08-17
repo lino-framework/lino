@@ -42,7 +42,7 @@ from lino.utils import mti
 from lino.core import choicelists
 from lino.utils.jsgen import py2js, id2js, js_code
 from lino.utils import choosers
-from lino.utils.auth import make_view_permission_handler
+from lino.core.auth import make_view_permission_handler
 
 from lino.utils.xmlgen import html as xghtml
 E = xghtml.E

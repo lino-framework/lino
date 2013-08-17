@@ -32,10 +32,7 @@ from django.utils.translation import string_concat
 from django.core.exceptions import ValidationError
 
 
-#~ from lino import dd
-#~ from lino.models import Workflow
-from lino.utils import auth
-#~ from lino.utils import perms
+from lino.core import auth
 from lino.core.dbutils import full_model_name
 from lino.core import frames
 from lino.core import actions

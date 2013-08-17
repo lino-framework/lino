@@ -120,7 +120,7 @@ def site_setup(self):
 
 
     def as_table(action_spec):
-        from lino.utils import auth
+        from lino.core import auth
         a = self.modules.resolve(action_spec)
         ar = a.request(user=auth.AnonymousUser.instance())
         ar.renderer = self.ui.plain_renderer
@@ -135,7 +135,7 @@ def site_setup(self):
         #~ return E.tostring(E.ul(*[E.li(ar.summary_row(obj)) for obj in ar]),method="html")
           
     def as_ul(action_spec):
-        from lino.utils import auth
+        from lino.core import auth
         a = self.modules.resolve(action_spec)
         ar = a.request(user=auth.AnonymousUser.instance())
         ar.renderer = self.ui.plain_renderer

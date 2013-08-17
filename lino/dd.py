@@ -107,9 +107,9 @@ Actions:
 
 Permissions:
 
-- :class:`UserProfiles <lino.utils.auth.UserProfiles>`
-- :class:`UserGroups <lino.utils.auth.UserGroups>`
-- :class:`UserLevels <lino.utils.auth.UserLevels>`
+- :class:`UserProfiles <lino.core.auth.UserProfiles>`
+- :class:`UserGroups <lino.core.auth.UserGroups>`
+- :class:`UserLevels <lino.core.auth.UserLevels>`
 - :func:`add_user_group` 
 
 
@@ -220,7 +220,7 @@ from north.dbutils import set_language
 from lino.utils.choosers import chooser
 from lino.utils.mti import EnableChild
 
-from lino.utils.auth import UserLevels, UserProfiles, UserGroups
+from lino.core.auth import UserLevels, UserProfiles, UserGroups
 
 #~ from lino.base.utils import UserLevels, UserGroups, UserProfiles
 

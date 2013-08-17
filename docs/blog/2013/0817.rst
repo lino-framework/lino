@@ -120,7 +120,49 @@ straightforward. We would have to write::
 
    insert_layout = pcsw.Clients.insert_layout.main # manually inherited
    
-So we decided to inherit the whole table and then override those 
+So I decided to inherit the whole table and then override those 
 things we don't want to have here.
+Afterwards I understood that "removing" the parameter panel from the 
+parent table is not really easy and decided to leave it there.
 
+
+Moved ``lino.utils.auth`` to ``lino.core.auth``
+-----------------------------------------------
+
+Because the :mod:`lino.core.auth` module is definitively part 
+of :mod:`lino.core`.
+
+
+WaitingGuests and MyWaitingGuests
+---------------------------------
+
+Another user request:
+
+-  Wartende Besucher: par défaut nur die meinen anzeigen
+
+Added new method :meth:`lino.ui.Site.get_admin_main_items` 
+and generalized :xfile:`admin_main.html`.
+:meth:`lino_welfare.settings.Site.get_admin_main_items`
+now yields both WaitingGuests and MyWaitingGuests. 
+The trick is that every normal user sees only one of 
+them: Theresia (the reception clerk in our demo) sees 
+all waiting guests while the agents (integ, debts, 
+newcomers) see only their guests
+(Both of them can click on the title to show it in a window and 
+select other parameters).
+That's nice.
+
+Less nice is that I have to either be very hackerish or to 
+duplicate some code in order to get the welfare-specific 
+behaviour of allowing only Clients as Guests. 
+See the source code of :mod:`lino_welfare.modlib.reception.models`.
+TODO: find a beautiful solution...
+
+And a last user request for this table was relatively easy:
+
+- Wartende Besucher: "Empfangen" vor "Auschecken"
+    
+This needed just a series of manual 
+:mod:`lino.core.actions.Action.sort_index` values for 
+these three actions.
 

@@ -25,6 +25,16 @@
         </p>
         {% endif %}
         {% endblock %}
+        
+        {% block admin_main_items %}
+        {% for T in settings.SITE.get_admin_main_items(ar) %}
+        {% if T.default_action.get_view_permission(ar.get_user().profile) %}
+        <h2>{{E.tostring(ar.window_action_button(T.default_action))}}</h2>
+        {{E.tostring(ar.show(T,limit=5))}}
+        {% endif %}
+        {% endfor %}
+        {% endblock %}
+        
     {% endblock %}
 {% else %}
   {% block hello_anonymous %}

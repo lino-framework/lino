@@ -89,7 +89,7 @@ class Permittable(object):
     required = {}
     """
     A dict with permission requirements.
-    See :func:`lino.utils.auth.make_permission_handler`.
+    See :func:`lino.core.auth.make_permission_handler`.
     """
     
     workflow_state_field = None # internally needed for make_permission_handler

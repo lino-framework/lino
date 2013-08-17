@@ -40,7 +40,7 @@ from lino.utils import ucsv
 from lino.utils import choosers
 from lino.utils import isiterable
 from lino.utils import dblogger
-from lino.utils import auth
+from lino.core import auth
 
 from lino.core import actions
 from lino.core import actors
@@ -391,7 +391,7 @@ class Authenticate(View):
             
 
     def post(self, request, *args, **kw):
-        from lino.utils import auth
+        #~ from lino.core import auth
         #~ from django.contrib.sessions.backends.db import SessionStore
         #~ ss = SessionStore()
         username = request.POST.get('username')

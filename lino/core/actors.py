@@ -46,6 +46,7 @@ from lino.utils import curry, AttrDict
 from lino.utils import jsgen
 from lino.utils import uncamel
 from lino.utils import join_elems
+#~ from lino.utils import class_dict_items
 from lino.utils.xmlgen.html import E
 
 
@@ -158,7 +159,7 @@ class BoundAction(object):
             else:
                 raise Exception("debug_permissions for %r (required=%s)",self,required)
             
-        from lino.utils.auth import make_permission_handler, make_view_permission_handler
+        from lino.core.auth import make_permission_handler, make_view_permission_handler
         self.allow_view = curry(make_view_permission_handler(
             self,action.readonly,debug_permissions,**required),action)
         self._allow = curry(make_permission_handler(
@@ -272,13 +273,16 @@ class ActorMetaClass(type):
             bd = getattr(b,'virtual_fields',None)
             if bd:
                 cls.virtual_fields.update(bd)
-            
-        for k,v in classDict.items():
-            if isinstance(v,fields.Constant):
-                cls.add_constant(k,v)
-            if isinstance(v,fields.VirtualField): # 20120903b
-                #~ logger.warning("20120903 VirtualField %s on Actor %s" % (k,cls.actor_id))
-                cls.add_virtual_field(k,v)
+                
+        if True: # (20130817) tried to move this to a later moment
+            for k,v in classDict.items():
+                if isinstance(v,fields.Constant):
+                    cls.add_constant(k,v)
+                if isinstance(v,fields.VirtualField): # 20120903b
+                    cls.add_virtual_field(k,v)
+                    
+        #~ if classname == 'Tasks':
+            #~ logger.info("20130817 no longer added actor vfs")
                 
                 
         #~ cls.params = []
@@ -730,6 +734,18 @@ class Actor(actions.Parametrizable):
             #~ dl = dt
             
         #~ if cls.is_abstract() : return
+        
+        if False: # (20130817) tried to move this from an earlier moment
+            for k,v in class_dict_items(cls):
+            #~ for k,v in cls.__dict__.items():
+                if isinstance(v,fields.Constant):
+                    cls.add_constant(k,v)
+                if isinstance(v,fields.VirtualField): # 20120903b
+                    cls.add_virtual_field(k,v)
+
+        #~ if str(cls) == 'cal.Tasks':
+            #~ logger.info("20130817 gonna add actor vfs")
+        
             
         master = getattr(cls,'master',None)
         if master is not None:

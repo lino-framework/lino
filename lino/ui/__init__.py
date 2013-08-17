@@ -411,7 +411,7 @@ class Site(lino.Site):
     no REMOTE_USER header makes its way through to Lino. 
     Which may happen on a development server and if Apache is 
     configured to allow it.
-    Used by :mod:`lino.utils.auth`.
+    Used by :mod:`lino.core.auth`.
     """
     
     anonymous_user_profile = '000'
@@ -913,22 +913,22 @@ class Site(lino.Site):
         #~ yield 'django.contrib.auth.middleware.AuthenticationMiddleware'
         #~ if self.user_model:
         #~ if self.user_model is None:
-            #~ yield 'lino.utils.auth.NoUserMiddleware'
+            #~ yield 'lino.core.auth.NoUserMiddleware'
         #~ elif self.remote_user_header:
 
         if self.auth_middleware:
             yield self.auth_middleware
         else:
             if self.user_model is None:
-                yield 'lino.utils.auth.NoUserMiddleware'
+                yield 'lino.core.auth.NoUserMiddleware'
             else:
                 if self.remote_user_header:
-                    yield 'lino.utils.auth.RemoteUserMiddleware'
+                    yield 'lino.core.auth.RemoteUserMiddleware'
                     #~ yield 'django.middleware.doc.XViewMiddleware'
                 else:
                     # 20121003 : not using remote http auth, so we need sessions
                     yield 'django.contrib.sessions.middleware.SessionMiddleware'
-                    yield 'lino.utils.auth.SessionUserMiddleware'
+                    yield 'lino.core.auth.SessionUserMiddleware'
 
                 #~ raise Exception("""\
     #~ `user_model` is not None, but no `remote_user_header` in your settings.SITE.""")
@@ -1392,4 +1392,10 @@ class Site(lino.Site):
         s = s % self.site_config.site_company.get_address('<br/>')
         return s
 
+    def get_admin_main_items(self,ar):
+        """
+        Yield a sequence of "items" to be rendered 
+        in :xfile:`admin_main.html`.
+        """
+        return []
 

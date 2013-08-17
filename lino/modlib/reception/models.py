@@ -210,6 +210,7 @@ class ReceiveGuest(dd.RowAction):
     help_text = _("Guest was received by agent")
     show_in_workflow = True
     
+    
     #~ required = dict(states='waiting')
     
     def get_action_permission(self,ar,obj,state):
@@ -302,9 +303,9 @@ class CheckoutGuest(dd.RowAction):
         #~ kw = super(CheckoutGuest,self).run_from_ui(obj,ar,**kw)
         #~ return kw
         
-cal.Guest.checkin = CheckinGuest()
-cal.Guest.receive = ReceiveGuest()
-cal.Guest.checkout = CheckoutGuest()
+cal.Guest.checkin = CheckinGuest(sort_index=100)
+cal.Guest.receive = ReceiveGuest(sort_index=101)
+cal.Guest.checkout = CheckoutGuest(sort_index=102)
 
 class AppointmentsByGuest(dd.Table):
     label = _("Appointments")
@@ -396,7 +397,7 @@ class ReceivedGuests(cal.Guests):
     column_names = 'since partner event__user event__summary workflow_buttons'
     order_by = ['waiting_since']
     #~ checkout = CheckoutGuest()
-    required = dd.Required(user_groups='reception integ debts')
+    required = dd.Required(user_groups='reception integ debts newcomers')
     auto_fit_column_widths = True
     
     @dd.displayfield(_('Since'))
@@ -412,7 +413,7 @@ class WaitingGuests(cal.Guests):
     hidden_columns = 'waiting_until'
     order_by = ['waiting_since']
     #~ checkout = CheckoutGuest()
-    required = dd.Required(user_groups='reception integ debts')
+    required = dd.Required(user_groups='reception')
     auto_fit_column_widths = True
 
     @dd.displayfield(_('Since'))
@@ -420,8 +421,9 @@ class WaitingGuests(cal.Guests):
         return naturaltime(obj.waiting_since)
         
 class MyWaitingGuests(WaitingGuests):
+    label = _("My Waiting Guests")
+    required = dd.Required(user_groups='integ debts newcomers')
     column_names = 'since partner event__summary workflow_buttons'
-    label = _("Waiting Guests")
     
     @classmethod
     def param_defaults(self,ar,**kw):
