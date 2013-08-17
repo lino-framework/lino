@@ -41,7 +41,8 @@ class Site(Site,ledger.SiteMixin):
     
     override_modlib_models = [
       'contacts.Person','contacts.Company',
-      'households.Household']
+      'households.Household',
+      'sales.Invoice', 'sales.InvoiceItem']
     
       
     #~ def get_main_action(self,user):

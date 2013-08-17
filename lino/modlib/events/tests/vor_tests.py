@@ -31,6 +31,7 @@ class DemoTest(TestCase):
     #~ fixtures = [ 'std','demo' ]
     fixtures = settings.SITE.demo_fixtures
     never_build_site_cache = True
+    maxDiff = None
 
     def test_01(self):
         etypes = settings.SITE.modules.events.Type.objects.order_by('id')
@@ -45,21 +46,23 @@ class DemoTest(TestCase):
         s = etypes[0].EventsByType().to_rst()
         #~ print s
         expected = """\
-+----------------------------+--------------------------------------------------+---------------------------------------+
-| Wann                       | Was                                              | Wo                                    |
-+============================+==================================================+=======================================+
-| Sonntag, 24. März 2013     | **18\. Bike-Day  IRMEP-RSK Eupen** |br|          | IRMEP-Kaserne **Eupen**               |
-|                            | Mountain-Bike-Ausfahrt, Volksradfahren           |                                       |
-+----------------------------+--------------------------------------------------+---------------------------------------+
-| Sonntag, 5. Mai 2013       | **24\. Eifel-Biker event** |br|                  | Zur Domäne **Bütgenbach**             |
-|                            | Mountain-Bike-Ausfahrt, Volksradfahren           |                                       |
-+----------------------------+--------------------------------------------------+---------------------------------------+
-| Samstag, 6. Juli 2013      | **Internationale 3 Länderfahrt** |br|            | Triangel **Sankt Vith**               |
-|                            | Volksradfahren, Straße- und Mountain Bike Touren |                                       |
-+----------------------------+--------------------------------------------------+---------------------------------------+
-| Sonntag, 1. September 2013 | **Radtag der DG** |br|                           | Galmeiplatz (Koul-Gelände) **Kelmis** |
-|                            | Volksradfahren, Straße- und Mountain Bike Touren |                                       |
-+----------------------------+--------------------------------------------------+---------------------------------------+
++------------------------------+--------------------------------------------------+---------------------------------------+
+| Wann                         | Was                                              | Wo                                    |
++==============================+==================================================+=======================================+
+| Sonntag, 24. März 2013       | **18\. Bike-Day  IRMEP-RSK Eupen** |br|          | IRMEP-Kaserne **Eupen**               |
+|                              | Mountain-Bike-Ausfahrt, Volksradfahren           |                                       |
++------------------------------+--------------------------------------------------+---------------------------------------+
+| Sonntag, 5. Mai 2013         | **24\. Eifel-Biker event** |br|                  | Zur Domäne **Bütgenbach**             |
+|                              | Mountain-Bike-Ausfahrt, Volksradfahren           |                                       |
++------------------------------+--------------------------------------------------+---------------------------------------+
+| Samstag, 6. Juli 2013        | **Internationale 3 Länderfahrt** |br|            | Triangel **Sankt Vith**               |
+|                              | Volksradfahren, Straße- und Mountain Bike Touren |                                       |
++------------------------------+--------------------------------------------------+---------------------------------------+
+| `Sonntag,                    | **Radtag der DG** |br|                           | Galmeiplatz (Koul-Gelände) **Kelmis** |
+| 1.                           | Volksradfahren, Straße- und Mountain Bike Touren |                                       |
+| September                    |                                                  |                                       |
+| 2013 <http://www.vclc.be>`__ |                                                  |                                       |
++------------------------------+--------------------------------------------------+---------------------------------------+
 """
         self.assertEqual(s,expected)
         

@@ -48,3 +48,21 @@ to
   
   class Calendar(Sequenced,PrintableType,MailableType,BabelNamed):
 
+Test suite cleanup
+------------------
+
+- :mod:`lino.projects.presto` was broken::
+
+      ~/hgwork/lino/lino/projects/presto$ python manage.py validate
+      ...
+      Exception: sales.InvoicingsByInvoiceable : no master for master_key u'invoiceable' 
+      in <class 'lino.modlib.sales.models.InvoiceItem'>
+  
+  This was because Presto still uses the obsolote way of manually specifying 
+  `override_modlib_models`. 
+  If you do that, then you must not forget any model.
+  Added `['sales.Invoice',  'sales.InvoiceItem']` (required by 
+  :mod:`lino.modlib.auto.sales` ) to the list.
+  TODO: convert Presto to using overridden apps.
+
+- Fixed a failing test in :mod:`lino.projects.events`.

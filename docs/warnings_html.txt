@@ -1,3 +1,18 @@
+/home/luc/hgwork/lino/docs/api/lino.management.commands.rst:28: WARNING: autodoc: failed to import module u'lino.management.commands.makescreenshots'; the following exception was raised:
+Traceback (most recent call last):
+  File "/home/luc/pythonenvs/py27/local/lib/python2.7/site-packages/sphinx/ext/autodoc.py", line 326, in import_object
+    __import__(self.modname)
+  File "/home/luc/hgwork/lino/lino/management/commands/makescreenshots.py", line 153, in <module>
+    HTTPD = StoppableWSGIServer(('', PORT), WSGIRequestHandler)
+  File "/home/luc/pythonenvs/py27/local/lib/python2.7/site-packages/django/test/testcases.py", line 944, in __init__
+    super(StoppableWSGIServer, self).__init__(*args, **kwargs)
+  File "/home/luc/pythonenvs/py27/local/lib/python2.7/site-packages/django/core/servers/basehttp.py", line 130, in __init__
+    super(WSGIServer, self).__init__(*args, **kwargs)
+  File "/usr/lib/python2.7/SocketServer.py", line 408, in __init__
+    self.server_bind()
+  File "/home/luc/pythonenvs/py27/local/lib/python2.7/site-packages/django/core/servers/basehttp.py", line 137, in server_bind
+    raise WSGIServerException(e)
+WSGIServerException: [Errno 98] Address already in use
 /home/luc/hgwork/lino/docs/api/lino.modlib.pages.fixtures.rst:7: WARNING: autodoc: failed to import module u'lino.modlib.pages.fixtures.intro'; the following exception was raised:
 Traceback (most recent call last):
   File "/home/luc/pythonenvs/py27/local/lib/python2.7/site-packages/sphinx/ext/autodoc.py", line 326, in import_object
@@ -60,3 +75,8 @@ Traceback (most recent call last):
   File "/home/luc/pythonenvs/py27/local/lib/python2.7/site-packages/django/db/backends/sqlite3/base.py", line 362, in execute
     return Database.Cursor.execute(self, query, params)
 DatabaseError: no such table: pages_page
+/home/luc/hgwork/lino/lino/ui/__init__.py:docstring of lino.ui.Site.webdav_url:7: WARNING: term not in glossary: runserver
+/home/luc/hgwork/lino/docs/api/lino.utils.rst:7: WARNING: unknown document: /autodoc/lino.test_apps.mti
+/home/luc/hgwork/lino/docs/blog/2013/0817.rst:10: WARNING: undefined label: welfare.cal.myevents (if the link has no caption the label must precede a section header)
+/home/luc/hgwork/lino/docs/changes.rst:51: WARNING: undefined label: welfare.debts.printliabilitiesbybudget (if the link has no caption the label must precede a section header)
+/home/luc/hgwork/lino/docs/releases/index.rst:1: WARNING: unknown document: 1.6.11
