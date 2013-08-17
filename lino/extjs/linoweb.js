@@ -3979,7 +3979,7 @@ Lino.GridPanel = Ext.extend(Lino.GridPanel,{
     height -= Ext.getScrollBarWidth(); // leave room for a possible horizontal scrollbar... 
     //~ height -= this.getView().scrollOffset;
     var ps = Math.floor(height / rowHeight);
-    console.log('20130816 calculatePageSize():',height,'/',rowHeight,'->',ps);
+    //~ console.log('20130816 calculatePageSize():',height,'/',rowHeight,'->',ps);
     ps -= 1; // leave room for a possible phantom row
     //~ return (ps > 1 ? ps : false);
     if (ps > 1) return ps;

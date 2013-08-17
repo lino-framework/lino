@@ -1,9 +1,110 @@
 To-do list
 ==========
 
-Short-term
-----------
 
+Bis 20130902
+------------
+
+#.  In Warteliste eine Info "Wieviele Leute sind vor mir dran?"
+  
+#.  Warnung wenn eID-Karte abgelaufen ist.
+  
+#.  Passfoto einlesen
+  
+#.  Übersetzungen
+  
+#.  In :ref:`Empfang --> Klienten <welfare.reception.Clients>`:
+    sollten keine Klienten im Status "Ehemalig" sein. 
+  
+#.  In :ref:`Empfang --> Klienten <welfare.reception.Clients>`:
+    fehlt ein `insert_panel`.
+    
+#.  Aktionen "eID einlesen" und "Create visit" aus "Arbeitsablauf" raus.
+  
+#.  CreateNote (Issue attestation) nicht als HtmlBox im Detail-Fenster, 
+    sondern "wie in TIM" als Button mit Auswahlliste statt Dialogfenster.
+    
+#.  Tabelle CoachingsByClients komplett übernehmen, mit pro Zeile zwei 
+    Aktionen "Visite"  und "Termin". Aber dann müssen diese beiden Aktionen 
+    auch auf der Phantomzeile stehen.
+    
+#.  Button "eID-Inhalt" wird im Empfang nicht benutzt. Raus.
+  
+
+    
+#.  In :ref:`welfare.cal.MyEvents`: Visiten rausfiltern
+  
+#.  "Bescheinigung erstellen" für pdf-Bescheinigungen ohne Parameter 
+    sollte sofort kommen.
+    
+#.  Wartende Besucher: 
+    - par défaut nur die meinen anzeigen
+    - "Empfangen" vor "Auschecken"
+    
+
+Nach 20130909
+-------------
+
+#.  Familienbeziehungen
+  
+#.  HelpText erweitern : auch `verbose_name` der Felder, sowie der 
+    Modelle lokal konfigurierbar machen.
+    
+#.  Views (GridConfigs) konfigurierbar pro User in der Datenbank (d.h. 
+    verwaltbar via Web und automatisch migrierbar)
+  
+#.  Was ist mit Dublettenkontrolle beim Erstellen eines Klienten?
+  
+#.  Empfang: Kann ein Klient auf zwei Agenten zugleich warten? 
+    Soll Lino das verhindern? 
+    
+#.  AMK-Bescheinigungen
+    
+#.  Volatile Variablen z.B. für "Ausländerbeihilfe":
+    "seit dem", "bis zum", "Datum der Bescheinigung"
+    Also lokal konfigurierbare Parameterfenster pro Bescheinigung.
+    Äquivalent zu den .dlg-Dateien in TIM
+  
+#.  Uploads should be ProjectRelated. Uploads controlled by a notes.Note 
+    should be visible in UploadsByProject
+    Uploads pro Notiz sollten auch vom Klienten aus sichtbar sein.
+
+ 
+
+
+Bugs
+----
+
+#. Sometimes, when dialog has many tabs, when I switch to another tab I see 
+   numerical indexes in comboboxes - not the textual values. After hitting 
+   refresh, everything is OK. This happens every time.
+   
+#.  Ein Bug, der auch schon in der 1.4.8 war: wenn man das Detail eines Uploads, 
+    der keine Reminder hat, via Permalink öffnet, dann ist die Tabelle der 
+    Aufgaben nicht leer, sondern voll irgendwelcher Einträge.
+    
+    Oder das gleiche Problem an anderer Stelle:     
+    VSEs eines Klienten im eigenen Fenster öffnen. 
+    Doppelklick in Phantomzeile, um neuen VSE ze erstellen.
+    VSE-Art auswählen und Fenster bestätigen.  
+    --> der neue VSE hat dann scheinbar eine ganze Reihe von Terminen.
+    Erst bei Klick auf den Refresh-Button wird die Tabelle leer.
+
+
+
+Feature requests
+----------------
+
+#.  convert all App.verbose_name to their translations on startup?
+    store the App class object in `Site.modules`. 
+
+
+#.  Have plain renderer use the new attribute 
+    :attr:`lino.core.actors.Actor.get_row_class`, 
+    deprecate apply_cell_format and convert existing application code.
+
+
+#.  Convert Presto to use overridden apps.
 
 #.  Momentan kann man leider keine Regel einbauen, dass Systemverwalter 
     nach jeweiliger Bestätigung auch importierte Partner löschen und 
@@ -16,13 +117,6 @@ Short-term
     
 #.  Negative Zahlen in Rot formatieren können 
     (z.B. Gesamtsumme Zusammenfassung Budget)
-
-#.  VSEs eines Klienten im eigenen Fenster öffnen. 
-    Doppelklick in Phantomzeile, um neuen VSE ze erstellen.
-    VSE-Art auswählen und Fenster bestätigen.  
-    --> Lino schaltet nicht ins Detail und refresht auch den Bildschirm nicht.
-    Wenn man Refresh klickt, sieht man den neuen VSE.
-    Lino.FormPanel.save()
 
 #. Speicherbare Tabellenansichten :
     - pro Benutzer
@@ -37,12 +131,11 @@ Short-term
     Eine allgemeine Tabellen-Export-API. 
     Am elegantesten ist das wahrscheinlich mittels Jinja-Templates.
 
-
 #.  Lino has currently no possibility to specify a default 
     `preferred_width` for a field. 
     modlib.accounts.models.Group : the `ref` field has a max_length of 50, 
     but most people use only up to 6 positions. 
-    And I don't want to add ":6" to every layout template.
+    And I'd prefer to not add ":6" to every layout template.
     
 
 #.  lino.ui.boy :
@@ -54,11 +147,6 @@ Short-term
 #.  implement the fields Client.applies_from and applies_until as 
     "summary fields". This is a new concept: :doc:`/topics/summary_fields`
 
-#.  Setting a column filter for a *normal* date column now works... 
-    but Lino also allows setting a filter on a virtual field. 
-    Which then causes another traceback
-    "FieldError at /api/pcsw/IntegClients / Cannot resolve keyword 'applies_from' into field."
-    
 #.  Inform about active column filters when building the title of table
     (using title tags).
 
@@ -67,10 +155,6 @@ Short-term
 #.  Wenn man den Begleitungszeitraum einer *Person* ändert, dann merkt Lino nicht,
     falls durch diese Änderung ein Vertrag ungültig wird.
 
-#.  Ein Bug, der auch schon in der 1.4.8 war: wenn man das Detail eines Uploads, 
-    der keine Reminder hat, via Permalink öffnet, dann ist die Tabelle der 
-    Aufgaben nicht leer, sondern voll irgendwelcher Einträge.
-    
 #.  Übersetzung für "Scheduled" ist momentan "Geplant". 
     Sollte besser "Festgelegt" o.ä. sein.
     Und statt "vorgeschlagen" sollte Lino vielleicht besser "vorgemerkt" sagen.
@@ -82,9 +166,6 @@ Short-term
     mitgeteilter Termin dann doch verschoben werden muss?
     Momentan kann man den Terminzustand auf "Verlegt" setzen und dann auf 
     "per Mail" klicken, und in der Mail steht dann schon ein entsprechender Satz.
-
-#.  Wenn `invite_team_members` angekreuzt ist und Gäste automatisch erstellt 
-    werden, dann stehen die trotzdem noch nicht auf "Eingeladen".
 
 #.  Brauchen wir die Notion von "Teams"? Oder besser Partnerlisten?
     Momentan ist die Konfigurierung etwas skurril: 
@@ -101,10 +182,6 @@ Short-term
 
 #.  Man sieht im Kalender-Panel noch nicht, wenn man nur Gast ist und
     noch zusagen bzw. absagen muss.
-
-#.  Layout-Problem Reiter "Kalender" im User Detail.
-    Hier muss man bis auf weiteres auf den Permalink-Button klicken, 
-    damit der Bildschirm korrekt gerendert wird.
 
 #.  extensible-lang-fr.js translates "Calendar" to "Agenda". 
     Disturbing.

@@ -401,7 +401,7 @@ class ReceivedGuests(cal.Guests):
     
     @dd.displayfield(_('Since'))
     def since(self,obj,ar):
-        return naturaltime(obj.waiting_until)
+        return naturaltime(obj.waiting_until) # *received since* == *waiting until* 
     
 class WaitingGuests(cal.Guests):
     label = _("Waiting Guests")

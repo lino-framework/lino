@@ -45,6 +45,8 @@ Changed the order of base classes from
   class Calendar(BabelNamed,Sequenced,PrintableType,MailableType):
   
 to 
+
+::
   
   class Calendar(Sequenced,PrintableType,MailableType,BabelNamed):
 
@@ -66,3 +68,22 @@ Test suite cleanup
   TODO: convert Presto to using overridden apps.
 
 - Fixed a failing test in :mod:`lino.projects.events`.
+
+
+Customized `when_text` of :ref:`welfare.cal.Event`
+--------------------------------------------------
+
+Solved the following change request:
+
+#.  In :ref:`welfare.reception.AppontmentsByClient` (Kolonne `when_text`):
+    Text "2013 Aug 12 (Mo.)" ersetzen durch etwas Passenders 
+    (z.B. "heute", "gestern", "in 3 Tagen").
+    
+By overriding the virtual field `when_text` in 
+:class:`lino_welfare.modlib.cal.models.Event`.
+
+Also added :mod:`django.contrib.humanize`
+to :meth:`lino_welfare.Site.get_installed_apps` 
+in order to have translations available for this module.
+
+    
