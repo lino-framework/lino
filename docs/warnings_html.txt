@@ -60,5 +60,6 @@ Traceback (most recent call last):
   File "/home/luc/pythonenvs/py27/local/lib/python2.7/site-packages/django/db/backends/sqlite3/base.py", line 362, in execute
     return Database.Cursor.execute(self, query, params)
 DatabaseError: no such table: pages_page
-/home/luc/hgwork/lino/docs/todo.rst:33: WARNING: undefined label: welfare.reception.appontmentsbyclient (if the link has no caption the label must precede a section header)
-/home/luc/hgwork/lino/docs/todo.rst:37: WARNING: undefined label: welfare.cal.myevents (if the link has no caption the label must precede a section header)
+/home/luc/hgwork/lino/docs/blog/2013/0817.rst:10: WARNING: undefined label: welfare.cal.myevents (if the link has no caption the label must precede a section header)
+/home/luc/hgwork/lino/docs/blog/2013/0817.rst:78: WARNING: undefined label: welfare.reception.appontmentsbyclient (if the link has no caption the label must precede a section header)
+/home/luc/hgwork/lino/docs/todo.rst:35: WARNING: undefined label: welfare.cal.myevents (if the link has no caption the label must precede a section header)

@@ -87,3 +87,40 @@ to :meth:`lino_welfare.Site.get_installed_apps`
 in order to have translations available for this module.
 
     
+To inherit or not?
+------------------
+
+Solved the following user request for :ref:`welfare`:
+
+-   In :ref:`Empfang --> Klienten <welfare.reception.Clients>`:
+    fehlt ein `insert_layout`.
+
+`reception.Clients` and `pcsw.Clients` 
+are on the same database model,
+and the spontaneous approach is to have `reception.Clients` 
+inherit from `pcsw.Clients`::
+
+class Clients(pcsw.Clients): 
+    ...
+    
+OTOH  there are more things we *don't* 
+want to inherit than things we *want*.
+E.g. we don't want the `detail_layout`, `parameters`, `column_names`, 
+requirements,...
+So another possibility is to create a new Table from scratch, using 
+the same model::
+
+    class Clients(dd.Table):
+        model = 'pcsw.Clients'
+
+The current solution is (again) the spontaneous one) because one 
+thing we *do* want to inherit is the `insert_layout`, 
+and manually inheriting a layout from a different datasource is not
+straightforward. We would have to write::
+
+   insert_layout = pcsw.Clients.insert_layout.main # manually inherited
+   
+So we decided to inherit the whole table and then override those 
+things we don't want to have here.
+
+

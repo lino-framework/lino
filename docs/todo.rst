@@ -16,9 +16,6 @@ Bis 20130902
 #.  In :ref:`Empfang --> Klienten <welfare.reception.Clients>`:
     sollten keine Klienten im Status "Ehemalig" sein. 
   
-#.  In :ref:`Empfang --> Klienten <welfare.reception.Clients>`:
-    fehlt ein `insert_panel`.
-    
 #.  Aktionen "eID einlesen" und "Create visit" aus "Arbeitsablauf" raus.
   
 #.  CreateNote (Issue attestation) nicht als HtmlBox im Detail-Fenster, 
@@ -29,8 +26,6 @@ Bis 20130902
     auch auf der Phantomzeile stehen.
     
 #.  Button "eID-Inhalt" wird im Empfang nicht benutzt. Raus.
-  
-
     
 #.  In :ref:`welfare.cal.MyEvents`: Visiten rausfiltern
   
