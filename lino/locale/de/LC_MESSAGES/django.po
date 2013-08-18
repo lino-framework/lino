@@ -8,7 +8,7 @@ msgstr ""
 "Project-Id-Version: lino.modlib.systen\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2013-08-18 03:08+0300\n"
-"PO-Revision-Date: 2013-08-18 03:11+0300\n"
+"PO-Revision-Date: 2013-08-18 06:50+0300\n"
 "Last-Translator: Luc Saffre <luc.saffre@gmx.net>\n"
 "Language-Team: \n"
 "Plural-Forms: nplurals=2; plural=(n != 1)\n"
@@ -3199,7 +3199,7 @@ msgstr "Betreff"
 
 #: lino/modlib/notes/models.py:284
 msgid "Recipient (Organization)"
-msgstr ""
+msgstr "Empfänger (Organisation)"
 
 #: lino/modlib/notes/models.py:285
 msgid "Recipient (Person)"
@@ -3359,7 +3359,7 @@ msgstr ""
 #: lino/modlib/partners/models.py:97
 #: lino/modlib/partners/models.py:501
 msgid "Organisation type"
-msgstr ""
+msgstr "Organisationsart"
 
 #: lino/modlib/partners/models.py:98
 msgid "Organisation types"

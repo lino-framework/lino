@@ -745,8 +745,8 @@ class Actor(actions.Parametrizable):
 
         #~ if str(cls) == 'cal.Tasks':
             #~ logger.info("20130817 gonna add actor vfs")
-        
-            
+
+
         master = getattr(cls,'master',None)
         if master is not None:
             cls.master = resolve_model(master)

@@ -1,1 +1,2 @@
-/home/luc/hgwork/lino/docs/todo.rst:28: WARNING: undefined label: welfare.cal.myevents (if the link has no caption the label must precede a section header)
+/home/luc/hgwork/lino/docs/blog/2013/0818.rst:3: WARNING: Duplicate explicit target name: "wikivs".
+/home/luc/hgwork/lino/docs/todo.rst:29: WARNING: undefined label: welfare.cal.myevents (if the link has no caption the label must precede a section header)

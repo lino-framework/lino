@@ -64,7 +64,32 @@ as answer to the following user request:
 Also added some more German translations. 
 
 
+Issuing attestations
+--------------------
+
+New virtual table CreateNoteActionsByClient seems to look better than 
+`create_note_actions`.
+
+Started to understand that we *do* want a separate table for 
+attestations. 
+Even the simplest attestation has at least a date range.
+
+What is the better word: "Attestation" or "Certificate"?
 
 
+AttrDict instance has no key 'system'
+-------------------------------------
 
+The `Lino polls tutorial <http://demo1.lino-framework.org/>`_ 
+had a "Show this table as a pdf document" which didn't work 
+(caused an "AttrDict instance has no key 'system'" traceback on the 
+server) because printing requires the :mod:`lino.modlib.system` app, 
+which is no longer automatically installed.
+Added a test in :xfile:`linoweb.js` to show this button 
+only when :mod:`lino.modlib.system` is installed.
+
+Also removed the `no_local=True` from the tutorial's 
+:xfile:`settings.py` because it caused the plain ui to not work.
+
+ 
 

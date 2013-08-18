@@ -1623,12 +1623,7 @@ Lino.show_in_own_window_button = function(handler) {
     id: "up",
     handler: function(event,toolEl,panel, tc) {
       //~ console.log('20111206 report_window_button',panel,handler);
-      //~ var bp = ww.get_master_params();
-      //~ panel.containing_window = ww; // for HtmlBox. see blog/2010/1022
-      //~ handler(panel,{base_params:bp});
-      //~ handler(panel,{base_params:panel.get_master_params()});
       handler.run(null,{base_params:panel.containing_panel.get_master_params()});
-      //~ handler(panel,{master_panel:panel.containing_window.main_item});
     }
   }
 }
@@ -3673,8 +3668,9 @@ Lino.GridPanel = Ext.extend(Lino.GridPanel,{
             this.add_param_values(p,true);
             //~ since 20121226 window.open(ADMIN_URL+'/api'+this.ls_url + "?" + Ext.urlEncode(p)) 
             window.open('{{settings.SITE.plain_prefix}}'+this.ls_url + "?" + Ext.urlEncode(p)) 
-          } },
-        { scope:this, 
+          } }
+        {% if settings.SITE.is_installed('system') %}
+        ,{ scope:this, 
           //~ text: "[pdf]", 
           tooltip: "{{_('Show this table as a pdf document')}}", 
           iconCls: 'x-tbar-pdf',
@@ -3685,6 +3681,7 @@ Lino.GridPanel = Ext.extend(Lino.GridPanel,{
             this.add_param_values(p,true);
             window.open('{{settings.SITE.admin_prefix}}/api'+this.ls_url + "?" + Ext.urlEncode(p)) 
           } }
+        {% endif %}
       ]);
     
     

@@ -76,9 +76,8 @@ class SiteConfigManager(models.Manager):
     def get(self, *args, **kwargs):
         return settings.SITE.site_config
 
-    
 
-    
+
 class SiteConfig(dd.Model):
     """
     This model should have exactly one instance, 
