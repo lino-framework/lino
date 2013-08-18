@@ -9,24 +9,23 @@ Lino applications must decide which
   module
 - Lino's own system using UserLevels, UserGroups and UserProfiles
 
-
-  
+ 
 
 The :xfile:`settings.py` file decides which authentication method to use:
 
-- If :attr:`user_model <lino.Lino.user_model>` is `None`, 
+- If :attr:`user_model <lino.ui.Site.user_model>` is `None`, 
   there's no authentication and request.user is always 
-  an :class:`lino.utils.auth.AnonymousUser` instance.
+  an :class:`lino.core.auth.AnonymousUser` instance.
   
-Otherwise, :attr:`user_model <lino.Lino.user_model>` 
+Otherwise, :attr:`user_model <lino.ui.Site.user_model>` 
 can be either 'users.User' or 'auth.User'. 
 In both cases we have two more possibilities:
 
-- If :attr:`lino.Lino.remote_user_header` 
+- If :attr:`remote_user_header <remote_user_header <lino.ui.Site.remote_user_header>>` 
   contains some value, your application will use 
   `HTTP authentication`_
   
-- If :attr:`lino.Lino.remote_user_header` is `None`, 
+- If :attr:`remote_user_header <remote_user_header <lino.ui.Site.remote_user_header>>` is `None`, 
   your application uses `Session-based authentication`_
 
 Session-based authentication
@@ -37,8 +36,8 @@ has the "Login", "Logout" and "Register" buttons
 and `django.contrib.sessions` to your INSTALLED_APPS.
 
 This behaviour is automatically activated when 
-:attr:`lino.Lino.remote_user_header` is `None` 
-(and :attr:`lino.Lino.user_model` not).
+:attr:`remote_user_header <remote_user_header <lino.ui.Site.remote_user_header>>` is `None` 
+(and :attr:`lino.ui.Site.user_model` not).
 
 
 
@@ -56,7 +55,7 @@ running on a site and authentication granted by the web server.
 
 Lino trusts completely the 
 `REMOTE_USER` header 
-(:attr:`lino.Lino.remote_user_header`) 
+(:attr:`remote_user_header <lino.ui.Site.remote_user_header>`) 
 of any incoming request. 
 If there is no user with that username in Lino's database, 
 Lino will silently create a User with minimum rights. 
@@ -96,7 +95,7 @@ For each request, Lino will lookup this table
     no REMOTE_USER header makes its way through to Lino. 
     Which may happen on a development server and if Apache is 
     configured to allow it.
-    Used by :mod:`lino.utils.auth`
+    Used by :mod:`lino.core.auth`
     :mod:`lino.modlib.users.middleware`
     """
     

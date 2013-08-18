@@ -1,0 +1,70 @@
+=================================
+20130818 (Sunday, 18 August 2013)
+=================================
+
+Which Version Control System for Lino?
+--------------------------------------
+
+Joe suggested to switch from Mercurial to Git.
+
+Surfed about github, bitbucket gitourious and other DVCSs.
+AFAICS the big questions are 
+"Mercurial or Git?" and "Open-source or Commercial?".
+
+=========== =============== ==================
+\\          Mercurial       Git
+=========== =============== ==================
+commercial  bitbucket       github 
+free        ?               gitourious
+=========== =============== ==================
+
+- "Gitorious is open source and freely available for download and 
+  personal use, whereas GitHub is closed-source.
+  (...)
+  Gitorious is popular among open-source advocates (...)
+  (`wikivs <http://www.wikivs.com/wiki/GitHub_vs_Gitorious>`_)
+
+- "Mercurial is generally believed to be simpler and easier to learn than Git. 
+  In turn, there is often the perception that Git is more flexible and powerful."
+  (`wikivs <http://www.wikivs.com/wiki/Git_vs_Mercurial>`_)
+  
+- "If you want a quick easy to use DVCS in which you think simple branching 
+  and versioning is all you will ever need, don't kill yourself with Git, 
+  use Mercurial. But keep in mind most people you talk to in Mailing 
+  lists, IRC, etc. will have experience with Git not Mercurial."
+  (`stackoverflow <http://stackoverflow.com/questions/7024483/comparing-the-pros-and-cons-of-bitbucket-to-github>`_)
+
+Yes i am an "open-source advocate" and believe that free software should 
+not rely on a commercial infrastructure.
+Despite this I am Google Code because at the time it was just so much 
+better than any available free platform
+and because I'm only convinced but not fanatic.
+
+I chose Mercurial over Git mainly because Python uses it, because it 
+is written in Python, but also because at that time I was still a 
+Windows user.
+
+So as it seems Joe is right, and I should indeed one day move from 
+Mercurial to Git. 
+And while we're there I also might move from 
+Google to Gitourious because a free infrastructure 
+is important to me.
+Added this to the :doc:`/todo`.
+ 
+
+Position in the waiting queue
+-----------------------------
+
+Added a new field "Position" to 
+:class:`lino.modlib.reception.models.WaitingGuests`
+as answer to the following user request:
+
+- In Warteliste eine Info "Wieviele Leute sind vor mir dran?"
+
+Also added some more German translations. 
+
+
+
+
+
+

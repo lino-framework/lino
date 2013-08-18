@@ -5,14 +5,15 @@ To-do list
 Bis 20130902
 ------------
 
-#.  In Warteliste eine Info "Wieviele Leute sind vor mir dran?"
+#.  :menuselection:`Neuanträge --> Klienten` zeigt in der Demo-Datenbank 
+    nur grüne Zeilen, also keine "seit kurzem begleiteten" Klienten.
+
+#.  In :ref:`Empfang --> Klienten <welfare.reception.Clients>`:
+    sollten keine Klienten im Status "Ehemalig" sein. 
   
 #.  Warnung wenn eID-Karte abgelaufen ist.
   
 #.  Passfoto einlesen
-  
-#.  In :ref:`Empfang --> Klienten <welfare.reception.Clients>`:
-    sollten keine Klienten im Status "Ehemalig" sein. 
   
 #.  Aktionen "eID einlesen" und "Create visit" aus "Arbeitsablauf" raus.
   
@@ -30,8 +31,6 @@ Bis 20130902
 #.  "Bescheinigung erstellen" für pdf-Bescheinigungen ohne Parameter 
     sollte sofort kommen.
     
-#.  Wartende Besucher: par défaut nur die meinen anzeigen
-
 #.  Übersetzungen
   
 
@@ -1123,14 +1122,17 @@ Together with a Linux freak
 #.  all_countries.py : load english countries from 
     `/usr/share/zoneinfo/iso3166.tab`
     But how to find the same in French, German, Estonian?
+    Or, maybe better, use `python-babel`.
     
-#.  (for Mercurial experts) 
-    The file `sihtnumbrid.csv` is still in the repository, e.g under
-    http://code.google.com/p/lino/source/search?q=sihtnumbrid&origq=sihtnumbrid&btnG=Search+Trunk
-    
+#.  The file `sihtnumbrid.csv` (:blogref:`20120514`) is still in the 
+    repository.
     That's because it's rather difficult to really remove something from history.
     As explained in http://mercurial.selenic.com/wiki/EditingHistory
 
+#.  Move from Mercurial to Git and from Google to Gitorious.
+    See :blogref:`20130818`.
+    
+    
 
 
 Documentation

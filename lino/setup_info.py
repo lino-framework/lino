@@ -184,7 +184,7 @@ SETUP_INFO.update(message_extractors = {
         ('**.py',                'python', None),
         ('**/linoweb.js',        'jinja2', None),
         #~ ('**.js',                'javascript', None),
-        ('**/templates_jinja/**.html', 'jinja2', None),
+        ('**/config/**.html', 'jinja2', None),
         #~ ('**/templates/**.txt',  'genshi', {
             #~ 'template_class': 'genshi.template:TextTemplate'
         #~ })

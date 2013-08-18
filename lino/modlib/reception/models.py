@@ -242,8 +242,9 @@ class ReceiveGuest(dd.RowAction):
             #~ kw = super(ReceiveGuest,self).run_from_ui(obj,ar,**kw)
             kw.update(refresh=True)
             return ar.success(**kw)
+        #~ if ar.get_user() == obj.event.user:
         return ar.confirm(ok,
-            _("%(user)s receives %(guest)s.") % 
+            _("%(guest)s begins consultation with %(user)s.") % 
             dict(user=obj.event.user,guest=obj.partner),_("Are you sure?"))
         
         
@@ -409,7 +410,7 @@ class WaitingGuests(cal.Guests):
     help_text = _("Shows the visitors in the waiting room.")
     #~ known_values = dict(state=GuestStates.waiting)
     filter = Q(waiting_since__isnull=False,waiting_until__isnull=True)
-    column_names = 'since partner event__user event__summary workflow_buttons waiting_until'
+    column_names = 'since partner event__user position event__summary workflow_buttons waiting_until'
     hidden_columns = 'waiting_until'
     order_by = ['waiting_since']
     #~ checkout = CheckoutGuest()
@@ -419,6 +420,15 @@ class WaitingGuests(cal.Guests):
     @dd.displayfield(_('Since'))
     def since(self,obj,ar):
         return naturaltime(obj.waiting_since)
+        
+    @dd.displayfield(_('Position'),help_text=_("Position in waiting queue (per agent)"))
+    def position(self,obj,ar):
+        n = 1 + cal.Guest.objects.filter(
+          waiting_since__isnull=False,
+          waiting_until__isnull=True,
+          event__user=obj.event.user,
+          waiting_since__lt=obj.waiting_since).count()
+        return str(n)
         
 class MyWaitingGuests(WaitingGuests):
     label = _("My Waiting Guests")
@@ -434,8 +444,8 @@ class MyWaitingGuests(WaitingGuests):
     
 
    
-def get_todo_tables(ar):
-    yield (MyWaitingGuests, None) 
+#~ def get_todo_tables(ar):
+    #~ yield (MyWaitingGuests, None) 
     
 
 def setup_main_menu(site,ui,profile,m):

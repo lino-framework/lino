@@ -246,7 +246,7 @@ def startup_site(self):
             if isinstance(v,dd.VirtualField):
                 v.attach_to_model(model,k)
                 
-    logger.info("20130817 attached model vfs")
+    #~ logger.info("20130817 attached model vfs")
                     
     actors.discover()
     dbtables.discover()

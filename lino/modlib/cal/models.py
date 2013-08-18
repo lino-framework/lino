@@ -1271,6 +1271,7 @@ if settings.SITE.user_model:
         #~ column_names = 'start_date start_time calendar project summary workflow_buttons *'
         #~ column_names = 'when_text:20 calendar project summary *'
         column_names = 'when_text summary workflow_buttons project'
+        exclude = dict(state=EventStates.visit)
         
         
         @classmethod

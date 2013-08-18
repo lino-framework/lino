@@ -68,7 +68,7 @@ Version 1.6.6 (released :blogref:`20130505`)
   :class:`lino.core.fields.VirtualField`.
   See :blogref:`20130422`
 
-- :mod:`lino.utils.auth` forgot to set `request.subst_user` to `None`
+- :mod:`lino.core.auth` forgot to set `request.subst_user` to `None`
   for html HEAD requests.
   (:blogref:`20130423`)
   
@@ -81,7 +81,7 @@ Version 1.6.5 (released :blogref:`20130422`)
 - Exceptions "Using remote authentication, but no user credentials 
   found." and "Unknown or inactive username %r. Please contact your 
   system administrator."
-  raised by :class:`lino.utils.auth.RemoteUserMiddleware`
+  raised by :class:`lino.core.auth.RemoteUserMiddleware`
   no longer is a PermissionDenied but a simple Exception.
   See :blogref:`20130409`.
 
