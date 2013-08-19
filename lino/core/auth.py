@@ -700,15 +700,15 @@ class AuthMiddleWareBase(object):
         try:
             user = settings.SITE.user_model.objects.get(username=username)
             if user.profile is None:
-                #~ logger.info("20121127 user has no profile")
+                logger.info("Could not authenticate %s : user has no profile",username)
                 return None
             if password != cls.NOT_NEEDED:
                 if not user.check_password(password):
-                    #~ logger.info("20121104 password mismatch")
+                    logger.info("Could not authenticate %s : password mismatch",username)
                     return None
             return user
         except settings.SITE.user_model.DoesNotExist,e:
-            #~ logger.info("20121104 no username %r",username)
+            logger.info("Could not authenticate %s : no such user",username)
             return None
 
             

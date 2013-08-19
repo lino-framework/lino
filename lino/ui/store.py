@@ -503,9 +503,9 @@ class RowClassStoreField(SpecialStoreField):
     name = 'row_class'
         
     def full_value_from_object(self,obj,ar):
-        s = self.store.actor.get_row_class(obj,ar)
-        if s is not None:
-            return 'x-grid3-row-%s' % s
+        return ' '.join([ar.renderer.row_classes_map.get(s,'') 
+            for s in self.store.actor.get_row_classes(obj,ar)])
+        #~ return ar.renderer.row_classes_map.get('x-grid3-row-%s' % s
             
         
 class DisableEditingStoreField(SpecialStoreField):
@@ -1077,7 +1077,7 @@ class Store(BaseStore):
         if rh.actor.editable:
             addfield(DisableEditingStoreField(self))
             
-        if rh.actor.get_row_class is not None:
+        if rh.actor.get_row_classes is not None:
             addfield(RowClassStoreField(self))
             
         #~ self.fields.append(PropertiesStoreField)

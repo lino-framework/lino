@@ -128,6 +128,10 @@ class ExtRenderer(HtmlRenderer):
         
         
         
+        for s in 'green blue red yellow'.split():
+            self.row_classes_map[s] = 'x-grid3-row-%s' % s
+        
+        
     def pk2url(self,ar,pk,**kw):
         return None
         
@@ -1606,5 +1610,6 @@ tinymce.init({
         
         #~ return '\n'.join([ln for ln in fn()])
         return '\n'.join(fn())
+
 
 

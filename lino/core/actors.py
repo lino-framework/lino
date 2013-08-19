@@ -344,7 +344,7 @@ class Actor(actions.Parametrizable):
         
     
     
-    get_row_class = None
+    get_row_classes = None
     """
     If not None, this must be a class method which takes a table row
     and an ActionRequest and returns either None or a string 
@@ -352,7 +352,7 @@ class Actor(actions.Parametrizable):
     and styles). Example::
     
         @classmethod
-        def get_row_class(cls,obj,ar):
+        def get_row_classes(cls,obj,ar):
             if obj.client_state == pcsw.ClientStates.newcomer:
                 return 'green'
     

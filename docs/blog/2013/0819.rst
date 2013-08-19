@@ -1,0 +1,61 @@
+=================================
+20130819 (Monday, 19 August 2013)
+=================================
+
+
+:menuselection:`Neuanträge --> Klienten`: Reihenfolge und 
+Bezeichnungen der Felder für Filterparameter optimiert. 
+"Neue Klienten seit" war par défaut leer statt vor einem Monat.
+    
+
+Renamed ClientStates.coached to ClientStates.active. 
+Added a new interpretation rule of pcsw.Clients.parameters:
+
+    Zum Feld "Beobachtungskriterium" in den Filterparametern von Klienten:
+
+    Der Standardwert hieß bisher "Begleitet". 
+    Den habe ich umbenannt nach "Aktiv". 
+    Es bedeutet "sowohl Begleitete als auch Neuanträge".
+    
+    Wenn man keine Periode angibt, 
+    wurde dieses Feld bisher komplett ignoriert,
+    ab jetzt werden dann nur aktive Klienten angezeigt 
+    (also keine Ehemaligen und keine Abgelehnteb).
+
+Added "yellow" to the list of supported row classes.
+Renamed `get_row_class` to `get_row_classes` and added `Renderer.row_classes_map`.
+
+Klienten, die als veraltet markiert sind, werden jetzt generell mit einem Sternchen 
+hinter der Partnernummer angezeigt.
+
+Not pcsw.Person but only pcsw.Client is Printable. 
+And not Printable but just BasePrintable.
+
+Das Info-Panel im Detail von Empfang --> Klienten (client_info)
+zeigt jetzt falls nötig eine anklickbare 
+Aufforderung "Muss eID-Karte einlesen!"
+
+Die Titel der Tabellen in der Startseite sind jetzt wieder einfach 
+schwarz statt blau und anklickbar. Dahinter jeweils eine anklickbare 
+Ikone "Dieses Panel in eigenem Fenster öffnen".
+
+
+
+Reading the picture from a Belgian eID card (continued)
+-------------------------------------------------------
+
+After reading a blog entry `eID sous Ubuntu
+<http://www.digitalia.be/news/eid-sous-ubuntu>`_
+by Christophe Beyls, I reinstalled middleware and viewer as he 
+instructs using packages from `eid.belgium.be 
+<http://eid.belgium.be/fr/utiliser_votre_eid/installer_le_logiciel_eid/linux/>`__,
+but nope, that wasn't the problem.
+
+My client either freezes or says "Applet not found".
+
+I suspect now another reason: the beid applet refuses to start when 
+it detects 
+
+
+
+

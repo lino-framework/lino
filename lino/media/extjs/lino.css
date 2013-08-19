@@ -41,6 +41,7 @@ e.g. welfare.jobs.NewJobsOverview needs
 .x-grid3-row-red td { background-color: #FA7F7F; }
 .x-grid3-row-green td { background-color: #82FA8C; }
 .x-grid3-row-blue td { background-color: #8282FA; }
+.x-grid3-row-yellow td { background-color: #FAEF5A; }
 
 /* 
 .x-item-disabled, .x-tree-node-disabled, .x-date-disabled

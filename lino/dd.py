@@ -321,7 +321,7 @@ def dtos(d):
 from lino.mixins import (ProjectRelated, UserAuthored, 
     Sequenced, Hierarizable)
 
-from lino.mixins import Printable, PrintableType, CachedPrintable, TypedPrintable, DirectPrintAction
+from lino.mixins.printable import BasePrintable, Printable, PrintableType, CachedPrintable, TypedPrintable, DirectPrintAction
 #~ from lino.mixins import SimplyPrintable
 from lino.mixins.uploadable import Uploadable
 from lino.mixins.human import Human, Born, Genders

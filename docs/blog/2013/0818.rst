@@ -81,7 +81,7 @@ AttrDict instance has no key 'system'
 -------------------------------------
 
 The `Lino polls tutorial <http://demo1.lino-framework.org/>`_ 
-had a "Show this table as a pdf document" which didn't work 
+had a "Show this table as a pdf document" button which didn't work 
 (caused an "AttrDict instance has no key 'system'" traceback on the 
 server) because printing requires the :mod:`lino.modlib.system` app, 
 which is no longer automatically installed.

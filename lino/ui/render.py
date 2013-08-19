@@ -113,6 +113,7 @@ class HtmlRenderer(object):
     Deserves more documentation.
     """
     is_interactive = False
+    row_classes_map = {}
     
     def __init__(self,ui):
         self.ui = ui

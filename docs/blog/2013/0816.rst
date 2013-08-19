@@ -127,10 +127,13 @@ We have already :attr:`lino.core.actors.Actor.apply_cell_format`
 but this works only in plain html and cannot easily be rendered 
 to ExtJS.
 
-Solution: new attribute :attr:`lino.core.actors.Actor.get_row_class`.
+Solution: new actor attribute 
+:attr:`get_row_class <lino.core.actors.Actor.get_row_classes>`
+(EDIT: renamed to `get_row_classes` on :blogref:`20130819`)
 
-TODO: have plain renderer use it too, deprecate apply_cell_format and 
-convert existing application code.
+TODO: have plain renderer use it too, deprecate 
+:meth:`lino.core.actors.Actor.apply_cell_format` 
+and convert existing application code.
 
 
 The "Not enough rows" bug

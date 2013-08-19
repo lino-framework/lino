@@ -5,12 +5,10 @@ To-do list
 Bis 20130902
 ------------
 
-#.  :menuselection:`Neuanträge --> Klienten` zeigt in der Demo-Datenbank 
-    nur grüne Zeilen, also keine "seit kurzem begleiteten" Klienten.
+#.  Wenn man in "Meine Aufgaben" manuell eine Aufgabe erstellt, dann 
+    wird diese anschliessend nicht auf der Startseite angezeigt. 
+    Zustand ist "Begonnen" statt "Zu tun".
 
-#.  In :ref:`Empfang --> Klienten <welfare.reception.Clients>`:
-    sollten keine Klienten im Status "Ehemalig" sein. 
-  
 #.  Warnung wenn eID-Karte abgelaufen ist.
   
 #.  Passfoto einlesen
@@ -50,7 +48,10 @@ Nach 20130909
 #.  Empfang: Kann ein Klient auf zwei Agenten zugleich warten? 
     Soll Lino das verhindern? 
     
-#.  AMK-Bescheinigungen
+#.  Eigene Tabelle für einfache Bescheinigungen 
+    (statt SiteConfig.attestation_note_nature und NoteType.is_attestation)
+
+#.  AMK-Bescheinigungen, Einkommensbescheinigungen
     
 #.  Volatile Variablen z.B. für "Ausländerbeihilfe":
     "seit dem", "bis zum", "Datum der Bescheinigung"
