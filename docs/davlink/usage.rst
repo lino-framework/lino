@@ -11,7 +11,7 @@ to `True` in your :file:`settings.py`.
 Basically you need to:
 
 - Download `DavLink.jar
-  <http://lino.googlecode.com/hg/lino/media/applets/DavLink.jar>` 
+  <http://lino.googlecode.com/hg/lino/media/applets/DavLink.jar>`_ 
   and make it available on your web server.
   
 - Include the applet in your web page, using some code like::
@@ -24,7 +24,7 @@ Basically you need to:
 
      document.applets.DavLink.open(webdavURL);
 
-- :doc:` client`
+- :doc:`client`
 
 
 Compile the `.java` file into a signed `.jar` file
@@ -33,7 +33,7 @@ Compile the `.java` file into a signed `.jar` file
 `DavLink.jar <http://lino.googlecode.com/hg/lino/media/applets/DavLink.jar>`_ 
 is a self-signed archive which expires after 6 months. 
 In case you use some Lino version for more than 6 months, 
-you can re-build it yourself a new self-signed .jar file.
+you can re-build it yourself a new self-signed `.jar` file.
 
 On a Debian machine::
 

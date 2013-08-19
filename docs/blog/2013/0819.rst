@@ -41,8 +41,13 @@ Ikone "Dieses Panel in eigenem Fenster öffnen".
 
 
 
-Reading the picture from a Belgian eID card (continued)
--------------------------------------------------------
+Reading the picture from a Belgian eID card
+-------------------------------------------
+
+Continued from :blogref:`20130816`. 
+Still trying to reproduce the problem on 
+`welfare-demo
+<http://welfare-demo.lino-framework.org>`_.
 
 After reading a blog entry `eID sous Ubuntu
 <http://www.digitalia.be/news/eid-sous-ubuntu>`_
@@ -50,12 +55,95 @@ by Christophe Beyls, I reinstalled middleware and viewer as he
 instructs using packages from `eid.belgium.be 
 <http://eid.belgium.be/fr/utiliser_votre_eid/installer_le_logiciel_eid/linux/>`__,
 but nope, that wasn't the problem.
-
 My client either freezes or says "Applet not found".
 
-I suspect now another reason: the beid applet refuses to start when 
-it detects 
+After (re)discovering how to show the Java console 
+for IcedTea under Ubuntu 12.04
+(see :doc:`/davlink/client`)
+I finally could visualize the reasons of the problem.
 
+A first problem was::
 
+  Aug 19, 2013 11:15:12 PM org.jdesktop.applet.util.JNLPAppletLauncher displayError
+  SEVERE: java.io.IOException: org.xml.sax.SAXException: no protocol: /media/eid-jslib/beid35JavaWrapper-linux.jar
+  
+The solution was to edit the `.jnlp` files on the server 
+to include the full URL address for `codebase`.
+  
+Second problem::  
+  
+    [ERROR] UnsatisfiedLinkError: /tmp/jnlp-applet/jln1693967795930166374/jln7665424274621368038/libbeidlibJava_Wrapper.so: libbeidcommon.so.3: cannot open shared object file: No such file or directory
+    java.library.path = /usr/lib/chromium-browser:/usr/lib/chromium-browser/libs:/usr/java/packages/lib/i386:/usr/lib/jni:/lib:/usr/lib
+    java.class.path = /usr/lib/jvm/java-7-openjdk-i386/lib/rt.jar
+    java.lang.reflect.InvocationTargetException
+            at sun.reflect.NativeMethodAccessorImpl.invoke0(Native Method)
+            at sun.reflect.NativeMethodAccessorImpl.invoke(NativeMethodAccessorImpl.java:57)
+            at sun.reflect.DelegatingMethodAccessorImpl.invoke(DelegatingMethodAccessorImpl.java:43)
+            at java.lang.reflect.Method.invoke(Method.java:606)
+            at sun.applet.PluginAppletSecurityContext$4.run(PluginAppletSecurityContext.java:670)
+            at java.security.AccessController.doPrivileged(Native Method)
+            at sun.applet.PluginAppletSecurityContext.handleMessage(PluginAppletSecurityContext.java:667)
+            at sun.applet.AppletSecurityContextManager.handleMessage(AppletSecurityContextManager.java:68)
+            at sun.applet.PluginStreamHandler.handleMessage(PluginStreamHandler.java:235)
+            at sun.applet.PluginMessageHandlerWorker.run(PluginMessageHandlerWorker.java:78)
+    Caused by: java.lang.UnsatisfiedLinkError: be.belgium.eid.beidlibJava_WrapperJNI.BEID_ReaderSet_instance()J
+            at be.belgium.eid.beidlibJava_WrapperJNI.BEID_ReaderSet_instance(Native Method)
+            at be.belgium.eid.BEID_ReaderSet.instance(BEID_ReaderSet.java:37)
+            at be.belgium.beid.BEID_Applet.InitLib(BEID_Applet.java:621)
+            ... 10 more
 
+No solution until now...
+
+Setting passwords manually
+--------------------------
+
+Before finding how to show the Java console I suspected 
+that the beid applet refuses to start when 
+it detects to be running over non-secured http, 
+and so I set up a secured demo database to `use_beid_jslib`.
+Here is how to manually set a password for a given user::
+
+    $ python manage.py shell
+    >>> from lino.runtime import *
+    >>> u = users.User.objects.get(username='robin')
+    >>> u.password
+    u'!'
+    >>> u.set_password("1234")
+    >>> u.save()
+    >>> u.password
+    u'pbkdf2_sha256$10000$KsU7cSfJbLDe$8rTzCjZMyR9/5Qx+zCUXPb84k77zW0F16od/TmFy7wk='
+    >>> 
+
+Reading Estonien eID cards
+--------------------------
+
+I suspect the complex combination of Java and Middleware 
+requirements to be the cause of many problems, 
+and wrote a proof of concept for a rather utopic solution: 
+write myself an applet that 
+reads public info from a Belgian eID card, directly using 
+`javax.smartcardio` and therefore without 
+need for any middleware or offical fedict eid-applet.
+
+As a first step I started by reading an *Estonian* eID card
+because I found a very helpful blog entry 
+`javax.smartcardio and EstEID
+<http://blog.codeborne.com/2010/10/javaxsmartcardio-and-esteid.html>`_
+written almost 3 years ago by Revo at codeborne. Thank you, Revo.
+
+Another important document is the
+official `EstEID card specification
+<http://www.id.ee/public/TB-SPEC-EstEID-Chip-App-v3.4.pdf>`_
+(found via
+`ID-kaardi dokumentatsioon <http://www.id.ee/index.php?id=30384>`_).
+
+Result:
+:srcref:`/lino/lino/media/applets/eid_test.html`
+and
+:srcref:`/java/lino/eid/EIDREader.java`.
+
+Next steps would be to find out
+
+- how to read the photo of an Estonian eID card
+- the command APDUs for Belgian eID cards
 

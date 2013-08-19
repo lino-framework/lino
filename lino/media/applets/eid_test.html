@@ -1,0 +1,29 @@
+<html>
+<head>
+<title>EIDReader applet</title>
+<script type="text/javascript">
+function readCard() {
+  console.log('Going to call document.applets.EIDReader.readCard()');
+  //~ console.log(document.applets);
+  //~ document.applets.DavOpen.open(webdavURL);
+  var data = document.applets.EIDReader.readCard();
+  console.log(data);
+  alert(data);
+}
+</script>
+</head>
+<body>
+
+<applet name="EIDReader" code="lino.eid.EIDReader.class" 
+  archive="EIDReader.jar" 
+  width="10" height="10">
+<!-- 
+The value of the ARCHIVE attribute is a URL of a JAR file.
+-->  
+<p>Sorry, you need a Java-enabled browser to run this applet.</p>
+</applet>
+<div>
+<p align="center"><a href="javascript:readCard()">Click here after having inserted your eID card</a></p>
+</div>
+</body>
+</html>

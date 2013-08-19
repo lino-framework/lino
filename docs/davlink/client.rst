@@ -11,7 +11,6 @@ The only problem is that it is not always easy to give this permission.
 Debian
 ======
 
-
 How to see the java console of an applet
 ----------------------------------------
 
@@ -21,6 +20,12 @@ So the simple answer is *one of the following*::
   $ tail -f ~/.icedtea/log/java.stdout
   $ tail -f ~/.icedtea/log/java.stderr ~/.icedtea/log/java.stdout
   $ multitail ~/.icedtea/log/java.stderr ~/.icedtea/log/java.stdout
+  
+But note that you must enable "logging" in the `IcedTea Web Control 
+Panel`:
+
+.. image:: icedtea_enable_logging.png
+  :scale: 80
   
   
 How to have DavLink re-scan your system for launchers
@@ -51,7 +56,7 @@ When scanning a Linux client for installed launchers, you see something funny::
     Searching /usr/bin/X11/X11/X11/X11/X11/X11/X11/X11
     Searching /usr/bin/X11/X11/X11/X11/X11/X11/X11/X11/X11
 
-... and so on until about 40 occurences the X11 subdir. 
+... and so on until about 40 occurences of the X11 subdir. 
 That's surprising but does no harm. 
 Explanation is here:
 http://askubuntu.com/questions/191654/why-are-there-infinitely-many-x11-subdirectories-in-usr-bin-x11
@@ -60,10 +65,7 @@ http://askubuntu.com/questions/191654/why-are-there-infinitely-many-x11-subdirec
 Allowing DavLink applet to store preferences
 --------------------------------------------
 
-Now that I can finally read the Java console, I can start with 
-some real problem: DavLink obviously doesn't yet work when it 
-is being used from a Linux client.
-Let's get that running.
+Currently just some notes of problems I saw and how I solved them.
 
 The console says::
 
@@ -91,7 +93,6 @@ Next problem is (when I try to open an URL ending with `.odt`)
 that it still says "java.lang.RuntimeException: 
 No launcher defined for extension 'odt'".
 Theoretically it should find `libreoffice` automatically.
-
 
 
 

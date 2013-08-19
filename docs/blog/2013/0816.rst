@@ -23,7 +23,7 @@ I first updated to the latest development version of
 Lino-Welfare and wrote the following 
 updated instructions on how to reproduce the problem:
 
-- Go to http://welfare-demo.lino-framework.org/
+- Go to http://welfare-demo.lino-framework.org
 
 - Log in as robin (password "1234")
 

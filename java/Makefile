@@ -17,19 +17,25 @@ JC = javac
 .java.class:
 	$(JC) $(JFLAGS) $*.java
 
-JARFILE = ../lino/media/applets/DavLink.jar
-CLASSES = davlink/DavLink.java
+DAVLINK_JARFILE = ../lino/media/applets/DavLink.jar
+EID_JARFILE = ../lino/media/applets/EIDReader.jar
 
-default: jar
+CLASSES = davlink/DavLink.java lino/eid/EIDReader.java 
+
+default: jars
 
 classes: $(CLASSES:.java=.class)
 
-jar: classes
-	jar cvf $(JARFILE) davlink
-	jarsigner -storepass "`cat ~/.keystore_password`" $(JARFILE) mykey
+jars: classes
+	jar cvf $(DAVLINK_JARFILE) davlink
+	jarsigner -storepass "`cat ~/.keystore_password`" $(DAVLINK_JARFILE) mykey
+	jar cvf $(EID_JARFILE) lino/eid
+	jarsigner -storepass "`cat ~/.keystore_password`" $(EID_JARFILE) mykey
 
 clean:
 	rm davlink/*.class
-	rm $(JARFILE)
+	rm lino/eid/*.class
+	rm $(DAVLINK_JARFILE)
+	rm $(EID_JARFILE)
 	
 	
