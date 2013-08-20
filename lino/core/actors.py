@@ -216,6 +216,7 @@ class BoundAction(object):
     def __repr__(self):
         return "<%s(%s,%r)>" % (self.__class__.__name__,self.actor,self.action)
     
+        
 
 
 
@@ -928,10 +929,19 @@ class Actor(actions.Parametrizable):
                 #~ setattr(cls,name,fn())
                 setattr(cls,a.action_name,a) 
 
-        #~ if cls.__name__.startswith('OutboxBy'):
-            #~ print '20120524 collect_actions',cls, cls.insert_action, cls.detail_action, cls.editable
-        for b in cls.mro():
+        # bind all my actions, including those inherited from parent actors:
+        # 20130820 no need to reinherit: cls.__dict__ does already contain inherited items
+        if True:
+          for b in cls.mro():
             for k,v in b.__dict__.items():
+                v = cls.__dict__.get(k,v) # 20130820 disable inherited actions
+                if isinstance(v,actions.Action):
+                    if not cls._actions_dict.has_key(k):
+                        #~ cls._attach_action(k,v)
+                        v.attach_to_actor(cls,k)
+                        cls.bind_action(v)
+        else:
+            for k,v in cls.__dict__.items():
                 if isinstance(v,actions.Action):
                     if not cls._actions_dict.has_key(k):
                         #~ cls._attach_action(k,v)
@@ -960,6 +970,12 @@ class Actor(actions.Parametrizable):
             self._actions_dict.define(a.action_name,ba)
         self._actions_list.append(ba)
         return ba
+        
+    #~ @classmethod
+    #~ def unbind_action(self,k):
+        #~ self._actions_dict.pop(k,None)
+        #~ self._actions_list = [ba for ba in self._actions_list if ba.action.action_name != k]
+        #~ logger.info("20130820 unbind_action %s",self._actions_list)
 
     #~ @classmethod
     #~ def get_row_actions(self,ar,obj):

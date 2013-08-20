@@ -1121,7 +1121,7 @@ class Site(lino.Site):
         #~ return  "This is %(me)s using %(using)s." % kw
             
               
-    def login(self,username):
+    def login(self,username=None):
         """
         For usage from a shell.
         
@@ -1133,7 +1133,12 @@ class Site(lino.Site):
         
         """
         #~ self.console_user = self.user_model.objects.get(username=username)
-        u = self.user_model.objects.get(username=username)
+        if username is None:
+            from lino.core.auth import AnonymousUser
+            u = AnonymousUser.instance()
+        else:
+            u = self.user_model.objects.get(username=username)
+            
         from lino.core import requests
         import lino.ui.urls # hack: trigger ui instantiation
         #~ if u.language:

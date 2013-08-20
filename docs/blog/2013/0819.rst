@@ -2,6 +2,10 @@
 20130819 (Monday, 19 August 2013)
 =================================
 
+Lino-Welfare
+------------
+
+Continued on the :doc:`/todo`.
 
 :menuselection:`Neuanträge --> Klienten`: Reihenfolge und 
 Bezeichnungen der Felder für Filterparameter optimiert. 
@@ -138,9 +142,9 @@ official `EstEID card specification
 `ID-kaardi dokumentatsioon <http://www.id.ee/index.php?id=30384>`_).
 
 Result:
-:srcref:`/lino/lino/media/applets/eid_test.html`
+:srcref:`/lino/media/applets/eid_test.html`
 and
-:srcref:`/java/lino/eid/EIDREader.java`.
+:srcref:`/java/lino/eid/EIDReader.java`.
 
 Next steps would be to find out
 

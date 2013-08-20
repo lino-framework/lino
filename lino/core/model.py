@@ -31,6 +31,7 @@ from django.core.exceptions import ValidationError
 from lino.core import fields
 from lino.core import signals
 from lino.core import dbutils
+from lino.core.actions import InstanceAction
 from djangosite.dbutils import obj2str, full_model_name
 from lino.utils.xmlgen import html as xghtml
 E = xghtml.E

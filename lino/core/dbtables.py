@@ -33,6 +33,7 @@ import datetime
 from appy import Object
 
 from django.conf import settings
+from django.db.models.fields import NOT_PROVIDED
 #~ from django.utils.translation import ugettext as _
 from django.utils.translation import ugettext_lazy as _
 from django.utils.text import capfirst
@@ -600,14 +601,18 @@ class Table(AbstractTable):
                 for k,v in b.__dict__.items():
                     if isinstance(v,actions.Action):
                         #~ print "20130326 %s.%s = action %s from %s" % (self,k,v,b)
-                        existing_value = self.__dict__.get(k,None)
-                        if existing_value is not None:
-                            if not isinstance(existing_value,actions.Action):
-                                raise Exception(
-                                    "%s cannot get model action %s because name is already used for %r" %
-                                    self,k,existing_value)
-                        else:
+                        existing_value = self.__dict__.get(k,NOT_PROVIDED) 
+                        if existing_value is NOT_PROVIDED:
                             setattr(self,k,v)
+                        else:
+                            if existing_value is None: # 20130820
+                                logger.info("%s disables model action '%s'",self,k)
+                                #~ self.unbind_action(k)
+                            else:
+                                if not isinstance(existing_value,actions.Action):
+                                    raise Exception(
+                                        "%s cannot install model action %s because name is already used for %r" %
+                                        self,k,existing_value)
 
             for name in ('workflow_state_field','workflow_owner_field'):
                 if getattr(self,name) is None:

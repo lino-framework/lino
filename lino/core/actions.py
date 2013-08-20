@@ -236,6 +236,7 @@ class InstanceAction(object):
     def run_from_code(self,ar,**kw):
         return self.bound_action.action.run_from_code(self.instance,ar)
         
+        
     def run_from_session(self,ses,**kw):
         #~ print self,args, kw
         ar = self.bound_action.request(**kw)
@@ -636,6 +637,7 @@ class Action(Parametrizable,Permittable):
         """
         return True
         
+        
     def run_from_code(self,obj,ar,**kw):
         return self.run_from_ui(obj,ar,**kw)
         
@@ -647,6 +649,11 @@ class Action(Parametrizable,Permittable):
         """
         raise NotImplementedError("%s has no run_from_ui() method" % self.__class__)
 
+    def run_from_session(self,ses,obj,*args,**kw): # 20130820
+        #~ ba = action.defining_actor.get_action_by_name(action.action_name)
+        ia = InstanceAction(self,self.defining_actor,obj,None)
+        return ia.run_from_session(ses,*args,**kw)
+        
     def action_param_defaults(self,ar,obj,**kw):
         """
         Same as Actor.param_defaults, except that here it is a instance method

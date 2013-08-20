@@ -17,5 +17,6 @@ you'll now want to know how to do it yourself.
    auto_create/index
    human/index
    de_BE/index
+   actions/index
 
 

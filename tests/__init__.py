@@ -30,12 +30,14 @@ class BlogTest(LinoTestCase):
     
 class DocsTests(LinoTestCase):
 
-    def test_01(self): self.run_docs_django_tests('tutorials.de_BE.settings')
-    def test_02(self): self.run_docs_django_tests('tutorials.auto_create.settings')
-    def test_03(self): self.run_docs_django_tests('tutorials.human.settings')
+    #~ def test_actions(self): self.run_docs_django_tests('tutorials.actions.settings')
+    def test_de_BE(self): self.run_docs_django_tests('tutorials.de_BE.settings')
+    def test_auto_create(self): self.run_docs_django_tests('tutorials.auto_create.settings')
+    def test_human(self): self.run_docs_django_tests('tutorials.human.settings')
     
     def test_polls(self): self.run_django_manage_test('docs/tutorials/polls')
     def test_quickstart(self): self.run_django_manage_test('docs/tutorials/quickstart')
+    def test_actions(self): self.run_django_manage_test('docs/tutorials/actions')
 
 
 class UtilsTests(LinoTestCase):

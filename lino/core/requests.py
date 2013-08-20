@@ -281,8 +281,12 @@ class BaseRequest(object):
         
 
         
-    def run(self,ia,*args,**kw):
-        return ia.run_from_session(self,*args,**kw)
+    def run(self,thing,*args,**kw):
+        """
+        The first parameter `thing` may be an InstanceAction or a 
+        Model instance.
+        """
+        return thing.run_from_session(self,*args,**kw)
         
     def set_language(self,*args):
         set_language(*args)

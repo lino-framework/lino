@@ -22,8 +22,6 @@ Bis 20130902
     Aktionen "Visite"  und "Termin". Aber dann müssen diese beiden Aktionen 
     auch auf der Phantomzeile stehen.
     
-#.  Button "eID-Inhalt" wird im Empfang nicht benutzt. Raus.
-    
 #.  In :ref:`welfare.cal.MyEvents`: Visiten rausfiltern
   
 #.  "Bescheinigung erstellen" für pdf-Bescheinigungen ohne Parameter 

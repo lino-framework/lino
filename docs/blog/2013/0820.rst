@@ -4,3 +4,21 @@
 
 (Yesterday was a long day: checked in today at 01:32am)
 
+Lino-Welfare
+------------
+
+Continued on the :doc:`/todo`.
+
+#.  Button "eID-Inhalt" wird im Empfang nicht benutzt. Raus.
+
+How to "remove" an inherited action or collected from a table?
+Most intuitive method to explicitly set it to None.
+This wasn't yet possible and took me three hours to solve.
+Much time for such a small optimization, 
+but it is relatively subtle, and I decided that now it is time 
+to start a new tutorial about :doc:`/tutorials/actions/index`
+which tests the new feature and gives (or will give one day) a
+good entry point for developers.
+
+
+    
