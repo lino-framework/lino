@@ -45,6 +45,11 @@ Usage example is
 
 The `window_size` of an actor was ignored until now.
 
+When a table has only one column, Lino now automatically 
+specifies `hideHeaders` on the `EditorGridPanel`.
+
+
+
 
 
 
