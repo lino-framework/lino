@@ -47,15 +47,11 @@ ACTION_RESPONSES = frozenset((
   'message','success','alert', 
   'errors',
   'html',
-  #~ 'new_status',
-  #~ 'goto_record',
   'goto_record_id',
   'refresh','refresh_all',
-  #~ 'confirm_message', 'step',
   'xcallback',
-  #~ 'thread_id',
-  #~ 'dialog_fn',
-  'open_url','open_davlink_url','eval_js'))
+  'open_url','open_davlink_url',
+  'eval_js'))
 """
 Action responses supported by `Lino.action_handler` (defined in :xfile:`linolib.js`).
 """

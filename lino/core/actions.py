@@ -213,6 +213,11 @@ class Parametrizable(object):
     def get_window_layout(self,actor):
         return self.params_layout
         
+    def get_window_size(self,actor):
+        wl = self.get_window_layout(actor)
+        if wl is not None:
+            return wl.window_size
+        
         
 #~ class ActionMetaClass(type):
     #~ def __new__(meta, classname, bases, classDict):
@@ -691,16 +696,6 @@ class RowAction(Action):
     single_row = True
     preprocessor = 'null' # None
     http_method = 'GET'
-    
-    
-        
-    #~ def get_action_permission(self,user,obj):
-        #~ return self.actor.get_row_permission(self,ar,obj)
-            
-    #~ def attach_to_actor(self,actor,name):
-        #~ super(RowAction,self).attach_to_actor(actor,name)
-        #~ if not self.url_action_name:
-            #~ self.url_action_name = name 
 
 
 
@@ -732,6 +727,9 @@ class GridEdit(TableAction):
     def get_window_layout(self,actor):
         #~ return self.actor.list_layout
         return None
+        
+    def get_window_size(self,actor):
+        return actor.window_size
         
     def as_html(self,ar):
         t = xghtml.Table()
@@ -818,6 +816,10 @@ class ShowDetailAction(RowAction):
     
     def get_window_layout(self,actor):
         return actor.detail_layout
+        
+    def get_window_size(self,actor):
+        wl = self.get_window_layout(actor)
+        return wl.window_size
         
     #~ def get_elem_title(self,elem):
         #~ return _("%s (Detail)")  % unicode(elem)
@@ -913,6 +915,10 @@ class InsertRow(TableAction):
     def get_window_layout(self,actor):
         return actor.insert_layout or actor.detail_layout
 
+    def get_window_size(self,actor):
+        wl = self.get_window_layout(actor)
+        return wl.window_size
+
     def get_action_permission(self,ar,obj,state):
         # see blog/2012/0726
         if ar.get_user().profile.readonly: 
@@ -943,8 +949,7 @@ class ShowEmptyTable(ShowDetailAction):
     
     def attach_to_actor(self,actor,name):
         self.label = actor.label
-        ShowDetailAction.attach_to_actor(self,actor,name)
-        #~ print 20120523, actor, name, 'setup', unicode(self.label)
+        super(ShowEmptyTable,self).attach_to_actor(actor,name)
         
     def as_html(self,ar):
         return super(ShowEmptyTable,self).as_html(ar,'-99998')
@@ -954,7 +959,7 @@ class UpdateRowAction(RowAction):
     readonly = False
     required = dict(user_level='user')
     
-
+        
 class DeleteSelected(RowAction):
     """
     Delete the row on which it is being executed.
@@ -1010,6 +1015,32 @@ class SubmitInsertAndStay(SubmitInsert):
     help_text = _("Don't open a detail window on the new record")
 
     
+
+
+class ShowSlaveTable(RowAction):
+    #~ label = "ShowSlaveTable"
+    #~ show_in_row_actions = True
+    show_in_bbar = True
+    
+    def __init__(self,slave_table,**kw):
+        self.slave_table = slave_table
+        #~ kw.setdefault('label',slave_table.label)
+        super(ShowSlaveTable,self).__init__(**kw)
+
+    def attach_to_actor(self,actor,name):
+        if isinstance(self.slave_table,basestring):
+            self.slave_table = settings.SITE.modules.resolve(self.slave_table)
+        self.label = self.slave_table.label
+        super(ShowSlaveTable,self).attach_to_actor(actor,name)
+        
+    def run_from_ui(self,obj,ar,**kw):
+        #~ ba = self.slave_table.default_action
+        sar = ar.spawn(self.slave_table,master_instance=obj)
+        js = ar.renderer.request_handler(sar)
+        #~ js = ar.renderer.action_call(ar.requesting_panel,ba,{})
+        kw.update(eval_js=js)
+        return kw
+
     
 class NotifyingAction(RowAction):
     

@@ -1528,10 +1528,10 @@ tinymce.init({
             #~ raise Exception("20120524 %s %r actor is None" % (rh.actor,action))
         windowConfig = dict()
         wl = action.get_window_layout()
-        #~ if action.action_name == 'wf1':
-            #~ logger.info("20121005 %r --> %s",action,wl)
-        if wl is not None:
-            ws = wl.window_size
+        ws = action.get_window_size()
+        #~ if wl is not None:
+            #~ ws = wl.window_size
+        if True:
             if ws:
                 windowConfig.update(
                     #~ width=ws[0],

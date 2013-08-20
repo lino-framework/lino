@@ -104,6 +104,7 @@ Actions:
 - :class:`ChangeStateAction <lino.core.workflows.ChangeStateAction>`
 - :class:`NotifyingAction <lino.core.actions.NotifyingAction>`
 - :class:`MergeAction <lino.core.merge.MergeAction>`
+- :class:`ShowSlaveTable <lino.core.actions.ShowSlaveTable>`
 
 Permissions:
 
@@ -169,6 +170,7 @@ from lino.core.actions import action
 #~ from lino.core.actions import Action
 from lino.core.actions import RowAction
 AjaxAction = RowAction
+from lino.core.actions import ShowSlaveTable
 
 from lino.mixins import AuthorRowAction
 #~ from lino.core.actions import ListAction

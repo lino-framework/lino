@@ -172,6 +172,9 @@ class BoundAction(object):
     def get_window_layout(self):
         return self.action.get_window_layout(self.actor)
         
+    def get_window_size(self):
+        return self.action.get_window_size(self.actor)
+        
     def full_name(self):
         return self.action.full_name(self.actor)
         #~ if self.action.action_name is None:
@@ -207,6 +210,9 @@ class BoundAction(object):
         """
         20130511
         """
+        #~ if self.action.__class__.__name__ == 'ShowSlaveTable':
+            #~ logger.info("20130820 BoundAction.get_view_permission()")
+            #~ raise Exception(20130820)
         if not self.actor.get_view_permission(profile):
             return False
         if not self.action.get_view_permission(profile):

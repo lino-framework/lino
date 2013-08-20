@@ -6,7 +6,7 @@ Bis 20130902
 ------------
 
 #.  Wenn man in "Meine Aufgaben" manuell eine Aufgabe erstellt, dann 
-    wird diese anschliessend nicht auf der Startseite angezeigt. 
+    wird diese anschließend nicht auf der Startseite angezeigt. 
     Zustand ist "Begonnen" statt "Zu tun".
 
 #.  Warnung wenn eID-Karte abgelaufen ist.
@@ -20,7 +20,7 @@ Bis 20130902
     
 #.  Tabelle CoachingsByClients komplett übernehmen, mit pro Zeile zwei 
     Aktionen "Visite"  und "Termin". Aber dann müssen diese beiden Aktionen 
-    auch auf der Phantomzeile stehen.
+    auch auf der Phantomzeile stehen...
     
 #.  In :ref:`welfare.cal.MyEvents`: Visiten rausfiltern
   

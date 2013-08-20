@@ -305,6 +305,8 @@ class BaseRequest(object):
     def href_to_request(self,*args,**kw): return self.renderer.href_to_request(self,*args,**kw)
     def window_action_button(self,*args,**kw): return self.renderer.window_action_button(self,*args,**kw)
     def row_action_button(self,obj,a,*args,**kw): return self.renderer.row_action_button(obj,self.request,a,*args,**kw)
+    def instance_action_button(self,ai,*args,**kw): 
+        return self.renderer.row_action_button(ai.instance,self.request,ai.bound_action,*args,**kw)
     def action_button(self,a,obj,*args,**kw): return self.renderer.action_button(obj,self,a,*args,**kw)
     def insert_button(self,*args,**kw): return self.renderer.insert_button(self,*args,**kw)
     

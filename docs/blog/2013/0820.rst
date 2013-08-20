@@ -4,8 +4,8 @@
 
 (Yesterday was a long day: checked in today at 01:32am)
 
-Lino-Welfare
-------------
+Removing an inherited action
+----------------------------
 
 Continued on the :doc:`/todo`. An appearently innocent user request 
 was:
@@ -25,3 +25,27 @@ which tests the new feature and gives (or will give one day) a
 good entry point for developers.
 
     
+Fixed a bug in :class:`lino.modlib.cal.models.PanelEvents` which could 
+cause an `UnboundLocalError "local variable 'me' referenced before 
+assignment"`.
+
+
+New action `ShowSlaveTable`
+---------------------------
+
+The new action 
+:class:`dd.ShowSlaveTable <lino.core.actions.ShowSlaveTable>`
+is useful when you want to add a button (in the top toolbar) which
+opens a given slave table in a pop-up window.
+This is useful when for ergonomic reasons the user doesn't want to 
+see this slave table directly in the detail window.
+
+Usage example is 
+:class:`lino_welfare.modlib.reception.CreateNoteActionsByClient`.
+
+The `window_size` of an actor was ignored until now.
+
+
+
+
+

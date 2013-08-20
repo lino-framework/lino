@@ -2125,6 +2125,8 @@ class GridElement(Container):
         #~ kw.update(viewConfig=vc)
         
         kw.setdefault('label',rpt.label)
+        if len(self.columns) == 1:
+            kw.setdefault('hideHeaders',True)
         
         add_help_text(kw,rpt.help_text,rpt.title or rpt.label,rpt.app_label,rpt.actor_id)
         

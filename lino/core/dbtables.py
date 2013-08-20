@@ -606,7 +606,8 @@ class Table(AbstractTable):
                             setattr(self,k,v)
                         else:
                             if existing_value is None: # 20130820
-                                logger.info("%s disables model action '%s'",self,k)
+                                pass
+                                #~ logger.info("%s disables model action '%s'",self,k)
                                 #~ self.unbind_action(k)
                             else:
                                 if not isinstance(existing_value,actions.Action):

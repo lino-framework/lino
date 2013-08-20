@@ -1605,6 +1605,8 @@ class Guest(mixins.TypedPrintable,outbox.Mailable):
     
     workflow_state_field = 'state'
     
+    allow_cascaded_delete = ['event']
+    
     class Meta:
         verbose_name = _("Guest")
         verbose_name_plural = _("Guests")
@@ -2230,7 +2232,7 @@ if settings.SITE.use_extensible:
             """
             if not request.user.profile.authenticated: 
                 raise exceptions.PermissionDenied(
-                    _("As %s you have no permission to run this action.") % me.profile)
+                    _("As %s you have no permission to run this action.") % request.user.profile)
                 
             # who am i ?
             me = request.subst_user or request.user
@@ -2271,6 +2273,7 @@ if settings.SITE.use_extensible:
             obj = super(PanelEvents,self).create_instance(ar,**kw)
             if ar.current_project is not None:
                 obj.project = settings.SITE.project_model.objects.get(pk=ar.current_project)
+                #~ obj.state = EventStates.scheduled
             return obj
             
 

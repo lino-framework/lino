@@ -38,6 +38,7 @@ from lino.utils import ssin
 from lino.utils import join_words
 from lino.utils import IncompleteDate
 from lino.modlib.contacts.utils import street2kw
+from lino.utils.xmlgen.html import E
 
 from lino import dd
 
@@ -117,79 +118,6 @@ add('18', _("Foreigner card F+"),"foreigner_f_plus")
 
 
 
-class BeIdCardHolder(dd.Model):
-    """
-    Concrete subclasses must also inherit from `lino.mixins.Born`.
-    """
-    class Meta:
-        abstract = True
-        
-    #~ national_id = models.CharField(max_length=200,
-    national_id = dd.NullCharField(max_length=200,
-        unique=True,
-        verbose_name=_("National ID")
-        #~ blank=True,verbose_name=_("National ID")
-        #~ ,validators=[ssin.ssin_validator] # 20121108
-        )
-    nationality = dd.ForeignKey('countries.Country',
-        blank=True,null=True,
-        related_name='by_nationality',
-        verbose_name=_("Nationality"))
-    #~ tim_nr = models.CharField(max_length=10,blank=True,null=True,unique=True,
-        #~ verbose_name=_("TIM ID"))
-    card_number = models.CharField(max_length=20,
-        blank=True,#null=True,
-        verbose_name=_("eID card number"))
-    card_valid_from = models.DateField(
-        blank=True,null=True,
-        verbose_name=_("ID card valid from"))
-    card_valid_until = models.DateField(
-        blank=True,null=True,
-        verbose_name=_("until"))
-        
-    #~ card_type = models.CharField(max_length=20,
-        #~ blank=True,# null=True,
-        #~ verbose_name=_("eID card type"))
-    #~ "The type of the electronic ID card. Imported from TIM."
-    
-    card_type = BeIdCardTypes.field(blank=True)
-    
-    card_issuer = models.CharField(max_length=50,
-        blank=True,# null=True,
-        verbose_name=_("eID card issuer"))
-    "The administration who issued this ID card. Imported from TIM."
-    
-    #~ eid_panel = dd.FieldSet(_("eID card"),
-        #~ "card_number card_valid_from card_valid_until card_issuer card_type:20",
-        #~ card_number=_("number"),
-        #~ card_valid_from=_("valid from"),
-        #~ card_valid_until=_("until"),
-        #~ card_issuer=_("issued by"),
-        #~ card_type=_("eID card type"),
-        #~ )
-    
-    noble_condition = models.CharField(max_length=50,
-        blank=True,#null=True,
-        verbose_name=_("noble condition"))
-    "The eventual noble condition of this person. Imported from TIM."
-        
-    print_eid_content = dd.DirectPrintAction(_("eID sheet"),'eid-content',icon_name='x-tbar-vcard')
-    
-    beid_readonly_fields = set('noble_condition card_valid_from card_valid_until card_issuer card_number card_type'.split())
-    
-    def disabled_fields(self,ar):
-        rv = super(BeIdCardHolder,self).disabled_fields(ar)
-        if True: # ar.get_user().profile.level < :
-            rv |= self.beid_readonly_fields
-        #~ logger.info("20130808 beid %s", rv)
-        return rv
-
-    def has_valid_card_data(self,today=None):
-        if not self.card_number:
-            return False
-        if self.card_valid_until < (today or datetime.date.today()):
-            return False
-        return True
     
 def card_number_to_picture_file(card_number):
     #~ TODO: handle configurability of card_number_to_picture_file
@@ -415,3 +343,97 @@ class BeIdReadCardAction(BaseBeIdReadCardAction):
         return ar.success(msg,**kw)
   
             
+class BeIdCardHolder(dd.Model):
+    """
+    Concrete subclasses must also inherit from `lino.mixins.Born`.
+    """
+    class Meta:
+        abstract = True
+        
+    #~ national_id = models.CharField(max_length=200,
+    national_id = dd.NullCharField(max_length=200,
+        unique=True,
+        verbose_name=_("National ID")
+        #~ blank=True,verbose_name=_("National ID")
+        #~ ,validators=[ssin.ssin_validator] # 20121108
+        )
+    nationality = dd.ForeignKey('countries.Country',
+        blank=True,null=True,
+        related_name='by_nationality',
+        verbose_name=_("Nationality"))
+    #~ tim_nr = models.CharField(max_length=10,blank=True,null=True,unique=True,
+        #~ verbose_name=_("TIM ID"))
+    card_number = models.CharField(max_length=20,
+        blank=True,#null=True,
+        verbose_name=_("eID card number"))
+    card_valid_from = models.DateField(
+        blank=True,null=True,
+        verbose_name=_("ID card valid from"))
+    card_valid_until = models.DateField(
+        blank=True,null=True,
+        verbose_name=_("until"))
+        
+    #~ card_type = models.CharField(max_length=20,
+        #~ blank=True,# null=True,
+        #~ verbose_name=_("eID card type"))
+    #~ "The type of the electronic ID card. Imported from TIM."
+    
+    card_type = BeIdCardTypes.field(blank=True)
+    
+    card_issuer = models.CharField(max_length=50,
+        blank=True,# null=True,
+        verbose_name=_("eID card issuer"))
+    "The administration who issued this ID card. Imported from TIM."
+    
+    read_beid = BeIdReadCardAction()    
+    
+    #~ eid_panel = dd.FieldSet(_("eID card"),
+        #~ "card_number card_valid_from card_valid_until card_issuer card_type:20",
+        #~ card_number=_("number"),
+        #~ card_valid_from=_("valid from"),
+        #~ card_valid_until=_("until"),
+        #~ card_issuer=_("issued by"),
+        #~ card_type=_("eID card type"),
+        #~ )
+    
+    noble_condition = models.CharField(max_length=50,
+        blank=True,#null=True,
+        verbose_name=_("noble condition"))
+    "The eventual noble condition of this person. Imported from TIM."
+        
+    print_eid_content = dd.DirectPrintAction(_("eID sheet"),'eid-content',icon_name='x-tbar-vcard')
+    
+    beid_readonly_fields = set('noble_condition card_valid_from card_valid_until card_issuer card_number card_type'.split())
+    
+    def disabled_fields(self,ar):
+        rv = super(BeIdCardHolder,self).disabled_fields(ar)
+        if True: # ar.get_user().profile.level < :
+            rv |= self.beid_readonly_fields
+        #~ logger.info("20130808 beid %s", rv)
+        return rv
+
+    def has_valid_card_data(self,today=None):
+        if not self.card_number:
+            return False
+        if self.card_valid_until < (today or datetime.date.today()):
+            return False
+        return True
+        
+    @dd.displayfield(_("eID card"))
+    def eid_info(self,ar):
+        elems = []
+        if self.card_number:
+            elems += [self.card_type, " ", _("no."),' ',self.card_number]
+            if self.card_valid_from:
+                elems += [", ", _("valid from"),' ',dd.dtos(self.card_valid_from),_("until")," ",dd.dtos(self.card_valid_until)]
+            if self.card_issuer:
+                elems += [", ", _("issued by"),' ',self.card_issuer]
+                card_issuer = _("issued by"),
+        else:
+            #~ ba = cls.get_action_by_name('read_beid')
+            #~ elems.append(ar.action_button(ba,self,_("Must read eID card!")))
+            elems.append(ar.instance_action_button(self.read_beid,_("Must read eID card!")))
+            #~ elems.append(_("No info available"))
+        return E.div(*elems)
+        
+        

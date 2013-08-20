@@ -1,2 +1,0 @@
-/home/luc/hgwork/lino/docs/tutorials/actions/index.rst:17: WARNING: Definition list ends without a blank line; unexpected unindent.
-/home/luc/hgwork/lino/lino/ui/__init__.py:docstring of lino.ui.Site.webdav_url:7: WARNING: term not in glossary: runserver

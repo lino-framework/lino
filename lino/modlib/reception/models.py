@@ -83,56 +83,6 @@ dd.inject_field('system.SiteConfig','client_calender',
     
 
     
-class CreateVisit(dd.RowAction): 
-    label = _("Create visit")
-    show_in_workflow = True
-    #~ show_in_row_actions = True
-    parameters = dict(
-        #~ date=models.DateField(_("Date"),blank=True,null=True),
-        user=dd.ForeignKey(settings.SITE.user_model),
-        summary=models.CharField(verbose_name=_("Reason"),blank=True))
-    params_layout = """
-    user 
-    summary
-    """
-    #~ required = dict(states='coached')
-    
-    #~ def get_notify_subject(self,ar,obj):
-        #~ return _("Created appointment for %(user)s with %(partner)s") % dict(
-            #~ event=obj,
-            #~ user=obj.event.user,
-            #~ partner=obj.partner)
-     
-    def run_from_ui(self,obj,ar,**kw):
-        ekw = dict(project=obj) 
-        #~ ekw.update(state=cal.EventStates.draft)
-        #~ ekw.update(state=EventStates.scheduled)
-        today = datetime.date.today()
-        ekw.update(start_date=today)
-        ekw.update(end_date=today)
-        ekw.update(calendar=settings.SITE.site_config.client_calender)
-        ekw.update(state=EventStates.visit)
-        ekw.update(user=ar.action_param_values.user)
-        if ar.action_param_values.summary:
-            ekw.update(summary=ar.action_param_values.summary)
-        event = cal.Event(**ekw)
-        event.save()
-        cal.Guest(
-            event=event,
-            partner=obj,
-            state=GuestStates.visit,
-            role=settings.SITE.site_config.client_guestrole,
-            waiting_since=datetime.datetime.now()
-        ).save()
-        #~ event.full_clean()
-        #~ print 20130722, ekw, ar.action_param_values.user, ar.get_user()
-        #~ kw = super(CreateVisit,self).run_from_ui(obj,ar,**kw)
-        kw.update(success=True)
-        #~ kw.update(eval_js=ar.renderer.instance_handler(ar,event))
-        kw.update(refresh=True)
-        return kw
-
-    
 class CreateNote(dd.RowAction): 
     label = _("Attestation")
     show_in_workflow = True
@@ -285,9 +235,11 @@ class CheckoutGuest(dd.RowAction):
             obj.save()
             kw.update(refresh=True)
             return ar.success(**kw)
-        return ar.confirm(ok,
-            _("%(guest)s has left the centre.") % 
-            dict(guest=obj.partner),_("Are you sure?"))
+        if obj.waiting_until is None:
+            msg = _("%(guest)s leaves without being received.") % dict(guest=obj.partner)
+        else:
+            msg = _("%(guest)s leaves after meeting with %(user)s.") % dict(guest=obj.partner,user=obj.user)
+        return ar.confirm(ok,msg,_("Are you sure?"))
         
     
     #~ def get_notify_subject(self,ar,obj):
