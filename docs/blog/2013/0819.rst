@@ -118,8 +118,8 @@ Here is how to manually set a password for a given user::
     u'pbkdf2_sha256$10000$KsU7cSfJbLDe$8rTzCjZMyR9/5Qx+zCUXPb84k77zW0F16od/TmFy7wk='
     >>> 
 
-Reading Estonien eID cards
---------------------------
+My EIDReader applet : Reading Estonian eID cards
+------------------------------------------------
 
 I suspect the complex combination of Java and Middleware 
 requirements to be the cause of many problems, 

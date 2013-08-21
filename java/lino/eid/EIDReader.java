@@ -2,6 +2,7 @@
 * See http://lino-framework.org/eid/index.html
 * 
 * Copyright 2013 Luc Saffre
+* 
 * This file is part of the Lino project.
 * Lino is free software; you can redistribute it and/or modify 
 * it under the terms of the GNU General Public License as published by
@@ -13,10 +14,13 @@
 * GNU General Public License for more details.
 * You should have received a copy of the GNU General Public License
 * along with Lino; if not, see <http://www.gnu.org/licenses/>.
-*
 * 
-* This is largely inspired by 
+* The original version was largely inspired by a blog post by Revo at Codeborne:
 * http://blog.codeborne.com/2010/10/javaxsmartcardio-and-esteid.html
+* 
+* Parts of this code are adapted excerpts from on <https://code.google.com/p/eid-applet>
+* Copyright (C) 2008-2010 FedICT.
+* Copyright (C) 2009 Frank Cornelis.
 * 
 */
 
@@ -49,13 +53,6 @@ import javax.smartcardio.CardTerminal;
 import javax.smartcardio.Card;  
 import javax.smartcardio.ATR;  
 
-//~ import lino.eid.EidReaderResponse;  
-  
-//~ import javax.smartcardio.*;  
-  
-//~ import static ee.esteid.EstEIDUtil.bytesToString;  
-//~ import static ee.esteid.EstEIDUtil.sendCommand;  
-  
   
 class EstEIDUtil {  
   static String ENCODING = "windows-1252";  
