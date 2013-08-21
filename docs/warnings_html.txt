@@ -1,0 +1,1 @@
+/home/luc/hgwork/lino/docs/blog/2013/0821/bug.rst:: WARNING: document isn't included in any toctree
