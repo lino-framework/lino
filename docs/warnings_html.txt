@@ -1,1 +1,2 @@
 /home/luc/hgwork/lino/docs/blog/2013/0821/bug.rst:: WARNING: document isn't included in any toctree
+/home/luc/hgwork/lino/docs/api/lino.utils.rst:7: WARNING: unknown document: /autodoc/lino.test_apps.mti

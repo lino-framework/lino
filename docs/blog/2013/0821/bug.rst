@@ -50,5 +50,19 @@ The file `out.odt` now exists, but it contains invalid `content.xml`
 and LibreOffice will complain when you try to open it.
 
 
+I originally wrote this page for Gaëtan in the hope that he will 
+fix this bug in appy pod... but then I understood:
+in fact Appy Pod is right! 
+
+A `<div>` inside a `<span>` is no valid XHTML.
+According to 
+`Mac on stackoverflo <http://stackoverflow.com/questions/2919909/nesting-div-within-span-problem>`_
+"several websites use this method for styling",
+but the bug is not in Gaëtan's `renderXhtml` method, 
+it is in own code: in :mod:`lino.utils.html2xhtml`.
+
+
+
+
 
 

@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-## Copyright 2011-2012 Luc Saffre 
+## Copyright 2011-2013 Luc Saffre 
 ## This file is part of the Lino project.
 ## Lino is free software; you can redistribute it and/or modify 
 ## it under the terms of the GNU General Public License as published by
@@ -13,27 +13,54 @@
 ## along with Lino; if not, see <http://www.gnu.org/licenses/>.
 
 ur"""
-Defines the :func:`html2xhtml` function used in :mod:`lino.utils.appy_pod`.
+Defines the :func:`html2xhtml` function which converts 
+HTML to valid XHTML. It is far from being perfect but
+activaly being used in :mod:`lino.utils.appy_pod`.
 
->>> print repr(html2xhtml('''\
+>>> print(html2xhtml('''\
 ... <p>Hello,&nbsp;world!<br>Again I say: Hello,&nbsp;world!</p>
-... <img src="foo.org">'''))
-u'<p>Hello,\xa0world!<br/>Again I say: Hello,\xa0world!</p>\n<img src="foo.org"/>'
+... <img src="foo.org">''')) #doctest: +NORMALIZE_WHITESPACE
+<p>Hello, world!<br/>Again I say: Hello, world!</p>
+<img src="foo.org"/>
 
+(Note: the above contains non-breaking spaces `\xa0`)
 
 >>> html = '''\
 ... <p style="font-family: &quot;Verdana&quot;;">Verdana</p>'''
->>> print repr(html2xhtml(html))
-u'<p style=\'font-family: "Verdana";\'>Verdana</p>'
+>>> print(html2xhtml(html))
+<p style='font-family: "Verdana";'>Verdana</p>
 
->>> print html2xhtml('A &amp; B')
+>>> print(html2xhtml('A &amp; B'))
 A &amp; B
 
->>> print html2xhtml('a &lt; b')
+>>> print(html2xhtml('a &lt; b'))
 a &lt; b
 
+A `<div>` inside a `<span>` is not valid XHTML. 
+But how to convert it?
+Current solution is to simply remove the `<div>` 
+tag (and it's corresponding `</div>`):
+
+>>> print(html2xhtml('<p>foo<span>bar<div> oops </div>baz</span>bam</p>'))
+<p>foo<span>bar oops baz</span>bam</p>
+
+In HTML it was tolerated to not end certain tags.
+For example, a string "<p>foo<p>bar<p>baz" should convert 
+to  "<p>foo</p><p>bar</p><p>baz</p>". 
+That's not yet implemented, but at least detected:
+
+>>> print(html2xhtml('<p>foo<p>bar<p>baz'))
+Traceback (most recent call last):
+...
+Exception: Unexpected end of document. Expected at least </p></p></p>
+
+
+  
 
 """
+
+from __future__ import print_function, unicode_literals
+
 from xml.sax.saxutils import quoteattr
 
 from HTMLParser import HTMLParser
@@ -42,13 +69,22 @@ from htmlentitydefs import name2codepoint
 def attrs2xml(attrs):
     #~ return ' '.join(['%s="%s"' % a for a in attrs])
     return ' '.join(['%s=%s' % (k,quoteattr(v)) for k,v in attrs])
+    
+class TagEntry(object):
+    def __init__(self,name,ignored=False):    
+        self.name = name
+        self.ignored = ignored
 
 class MyHTMLParser(HTMLParser):
     def __init__(self,*args,**kw):
         HTMLParser.__init__(self,*args,**kw)
         self.result = ''
+        self.context = []
         
     def handle_startendtag(self, tag, attrs):
+        if not self.allow_tag_in_context(tag):
+            return
+            
         if attrs:
             self.handle_data('<%s %s/>' % (tag,attrs2xml(attrs)))
         else:
@@ -58,13 +94,31 @@ class MyHTMLParser(HTMLParser):
         if tag in ('br','img'):
             self.handle_startendtag(tag,attrs)
         else:
+            if not self.allow_tag_in_context(tag):
+                self.context.append(TagEntry(tag,True))
+                return
+            self.context.append(TagEntry(tag,False))
             if attrs:
                 self.handle_data('<%s %s>' % (tag,attrs2xml(attrs)))
             else:
                 self.handle_data('<%s>' % tag)
 
     def handle_endtag(self, tag):
-        self.handle_data('</%s>' % tag)
+        if len(self.context) > 0:
+            expected = self.context.pop()
+            if expected.name != tag:
+                raise Exception("Invalid endtag. Expected </%s>, found <%s>" % (expected.name,tag))
+        else:
+            raise Exception("Unexpected endtag </%s> but context is empty" % tag)
+        if not expected.ignored:
+            self.handle_data('</%s>' % tag)
+        
+    def allow_tag_in_context(self,tag):
+        if tag == 'div':
+            for te in self.context:
+                if te.name == 'span':
+                    return False
+        return True
         
     def handle_data(self, data):
         self.result += data
@@ -91,6 +145,9 @@ def html2xhtml(html):
     p = MyHTMLParser()
     p.feed(html)
     p.close()
+    if len(p.context) > 0:
+        expected = ''.join(["</%s>" % te.name for te in p.context])
+        raise Exception("Unexpected end of document. Expected at least %s" % expected)
     return p.result
 
 

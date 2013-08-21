@@ -166,3 +166,13 @@ So we restore the original value (which was an empty string):
 Wrote another page for Gaëtan to reproduce all this without Lino 
 installed: :doc:`0821/bug`.
 
+
+As explained there, I then understood that 
+a `<div>` inside a `<span>` is simply invalid XHTML, 
+so instead of filing a bug for Gaëtan
+I fixed it and added a test case in my own code:
+:mod:`lino.utils.html2xhtml`.
+
+
+
+
