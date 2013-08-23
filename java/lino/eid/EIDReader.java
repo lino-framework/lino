@@ -1,5 +1,5 @@
 /*
-* See http://lino-framework.org/eid/index.html
+* See http://lino-framework.org/eidreader/index.html
 * 
 * Copyright 2013 Luc Saffre
 * 
@@ -39,6 +39,9 @@ import java.io.ByteArrayOutputStream;
 import java.util.Arrays;  
 import java.util.List; 
 
+import java.util.AbstractMap;
+import java.util.HashMap;
+
 import java.awt.image.BufferedImage;
 
 import javax.imageio.ImageIO;
@@ -53,15 +56,20 @@ import javax.smartcardio.CardTerminal;
 import javax.smartcardio.Card;  
 import javax.smartcardio.ATR;  
 
+
+import be.fedict.eid.applet.service.impl.tlv.TlvParser;
+import be.fedict.eid.applet.service.Address;
+import be.fedict.eid.applet.service.Identity;
+
+
+
   
 class EstEIDUtil {  
-  static String ENCODING = "windows-1252";  
-  
-  public static String bytesToString(byte[] data) {  
+  public static String bytesToString(byte[] data,final String enc) {  
     try {  
-      return new String(data, ENCODING);  
+      return new String(data, enc);  
     } catch (UnsupportedEncodingException e) {  
-      throw new RuntimeException("Encoding " + ENCODING + " not supported");  
+      throw new RuntimeException("Encoding " + enc + " not supported");  
     }  
   }  
   
@@ -84,6 +92,8 @@ class EstEIDUtil {
 
   
 class PersonalFile {  
+  static final String ENCODING = "windows-1252";  
+  
   String[] data = new String[16];  
   public static final  CommandAPDU SELECT_MASTER_FILE = new CommandAPDU(
     new byte[]{0x00, (byte)0xA4, 0x00, 0x0C});  
@@ -127,12 +137,13 @@ class PersonalFile {
   private String extractField(CardChannel channel, byte fieldNumber) throws CardException {  
     return EstEIDUtil.bytesToString(
         EstEIDUtil.sendCommand(channel, 
-            new CommandAPDU(new byte[]{0x00, (byte)0xB2, fieldNumber, 0x04, 0x00})));  
+            new CommandAPDU(new byte[]{0x00, (byte)0xB2, fieldNumber, 0x04, 0x00})),ENCODING);  
   }  
 }  
 
 class BelgianReader {
-    public static final byte FIELD_COUNT = 16;
+    public static final String ENCODING = "utf-8";
+    static final byte FIELD_COUNT = 16;
     private CardChannel cardChannel;
     String[] data = new String[FIELD_COUNT];
     public static final String[] fields = new String[] {
@@ -178,6 +189,73 @@ class BelgianReader {
 		return false;
 	}
     
+    public static final String OOPS = "Unexpected end of TLV structure source";
+    
+    
+    //~ from http://www.rgagnon.com/javadetails/java-0596.html
+    static final String HEXES = "0123456789ABCDEF";
+    public static String getHex( byte [] raw ) {
+        if ( raw == null ) {
+            return null;
+        }
+        final StringBuilder hex = new StringBuilder( 3 * raw.length );
+        for ( final byte b : raw ) {
+            hex.append(HEXES.charAt((b & 0xF0) >> 4))
+                .append(HEXES.charAt((b & 0x0F)))
+                    .append(' ');
+        }
+        return hex.toString();
+    }    
+    
+	public static HashMap tlv2map(byte[] source) {
+        //~ inspired by http://eidlib.googlecode.com/svn/trunk/jEidlib/src/be/belgium/eid/eidcommon/TLV.java
+        
+        System.err.println("Reading " + Integer.toString(source.length) + " bytes: " + getHex(source));
+        //~ for (int i = 0;i < source.length;i++) System.err.print(Integer.toHexString(source[i])+" ");
+        //~ System.err.println("");
+        
+		int pos = 0;
+        HashMap map = new HashMap<Byte, String>();
+
+		while (pos < source.length) {
+			final byte tag = source[pos];
+            
+            pos += 1; 
+            
+            if (pos == source.length) break; // reached end of source
+            
+			int data_length = source[pos];
+            while (source[pos] == 0xFF) {
+                pos += 1; if (pos > source.length) throw new RuntimeException(OOPS);
+                data_length += source[pos];
+            }
+            
+            pos += 1; if (pos > source.length) throw new RuntimeException(OOPS);
+            
+            byte[] data = new byte[data_length];
+            System.arraycopy(source,pos,data,0,data_length);
+			if (data_length > 0) { 
+                map.put(tag, EstEIDUtil.bytesToString(data,ENCODING));
+            }
+            pos += data_length; 
+            
+			//~ if (data_length > 0) {
+				//~ byte[] data = new byte[data_length];
+				//~ for (int j = 0; j < data_length; j++) {
+					//~ data[j] = source[pos + j];
+				//~ }
+//~ 
+				//~ map.put(tag, data);
+				//~ pos += data_length;
+			//~ } else {
+				//~ pos++;
+			//~ }
+		}
+        return map;
+	}
+    
+    final public boolean includePhoto = false;
+    
     public BelgianReader(CardChannel channel) 
         throws CardException, IOException, UnsupportedEncodingException 
     {  
@@ -186,31 +264,43 @@ class BelgianReader {
             data[i] = "";
         }
         
+        byte[] identityData = readFile(IDENTITY_FILE_ID);
+        byte[] addressData = readFile(ADDRESS_FILE_ID);
         
-        //~ byte[] photoFile = readFile(PHOTO_FILE_ID);
-        //~ BufferedImage photo = ImageIO.read(new ByteArrayInputStream(photoFile));
+        if (includePhoto) {
+            byte[] photoFile = readFile(PHOTO_FILE_ID);
+            BufferedImage photo = ImageIO.read(new ByteArrayInputStream(photoFile));
+        }
         
-		ByteArrayOutputStream baos = new ByteArrayOutputStream();
+        Identity identity = TlvParser.parse(identityData,Identity.class);
+        Address address = TlvParser.parse(addressData,Address.class);
         
-		byte[] identityFile = readFile(IDENTITY_FILE_ID);
-        System.err.println("identityFile.length is " + Integer.toString(identityFile.length));
-        baos.write(identityFile);
+        //~ HashMap identity = tlv2map(readFile(IDENTITY_FILE_ID));
+        //~ HashMap address = tlv2map(readFile(ADDRESS_FILE_ID));
         
-        //~ baos.write('\n');
+        //~ data[6] = identity[6];
+        data[0] = identity.toString();
+        data[1] = address.toString();
         
-		byte[] addressFile = readFile(ADDRESS_FILE_ID);
-        baos.write(addressFile);
-        System.err.println("addressFile.length is " + Integer.toString(addressFile.length));
+		//~ ByteArrayOutputStream baos = new ByteArrayOutputStream();
+		//~ byte[] identityFile = readFile(IDENTITY_FILE_ID);
+        //~ System.err.println("identityFile.length is " + Integer.toString(identityFile.length));
+        //~ baos.write(identityFile);
+        //~ 
+		//~ byte[] addressFile = readFile(ADDRESS_FILE_ID);
+        //~ baos.write(addressFile);
+        //~ System.err.println("addressFile.length is " + Integer.toString(addressFile.length));
         
         //~ data[0] = baos.toString("utf-8");
         //~ data[0] = baos.toString("ISO-8859-1 ");
-        data[0] = baos.toString();
+        //~ data[0] = baos.toString("windows-1252");
+        //~ data[0] = baos.toString();
+        //~ EstEIDUtil.bytesToString
     }  
     
 	public byte[] readFile(byte[] fileId) throws CardException, IOException {
 		selectFile(fileId);
-		byte[] data = readBinary();
-		return data;
+		return readBinary();
 	}
     
 	private void selectFile(byte[] fileId) throws CardException,
@@ -296,6 +386,7 @@ class BelgianReader {
       for (byte i = 0; i < FIELD_COUNT; i++) {  
           s = s + fields[i] + ":" + data[i].trim() + "\n";
       }
+      System.err.println(s);
       return s;
     }  
   

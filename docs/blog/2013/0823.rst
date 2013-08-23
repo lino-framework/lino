@@ -1,0 +1,75 @@
+=================================
+20130823 (Friday, 23 August 2013)
+=================================
+
+
+EIDReader applet
+----------------
+
+Continued on my `EIDReader` applet.
+Started a documentation page :ref:`eidreader`.
+
+It should now display more 
+or less all the identity & address information. 
+
+But before I can test this I need to learn more about 
+`Deploying an Applet
+<http://docs.oracle.com/javase/tutorial/deployment/applet/deployingApplet.html>`_
+and 
+`Deployment In-Depth
+<http://docs.oracle.com/javase/tutorial/deployment/deploymentInDepth/index.html>`_.
+
+I downloaded a file `eid-applet-sdk-1.1.0.RC3.zip
+<https://code.google.com/p/eid-applet/downloads/detail?name=eid-applet-sdk-1.1.0.RC3.zip&can=2&q=>`_
+and added a file :file:`eid-applet-service-1.0.1.GA.jar` 
+from it to my local classpath
+(see :srcref:`/java/Makefile`)
+It compiles and jars without error message, 
+but the applet 
+(when I launch it via
+:srcref:`eid_test.html </lino/media/applets/eid_test.html>`
+or :srcref:`eid_test2.html </lino/media/applets/eid_test2.html>`)
+now throws a `ClassNotFoundException`.
+Which is understandable since I don't tell the applet how to find 
+the :file:`eid-applet-service-1.0.1.GA.jar` file.
+
+I think that it would be more fun to do this together 
+with somebody else.
+Maybe some Java developer in Estonia has mercy and 
+helps me to get this running?
+
+
+
+Can I use the "external text" icon from  Wikipedia?
+---------------------------------------------------
+
+I changed the "Show this panel in own window" of the welcome screen 
+(the one displayed behind every "main item header",
+see :meth:`lino.ui.Site.get_admin_main_items`
+and
+:srcref:`/lino/config/admin_main_base.html`)
+from `application_view_columns.png` to the |lnk|
+icon used in Wikipedia to designate external links.
+Because it looks better and is more intuitive.
+
+.. |lnk| image:: external_text.png
+  :target: _images/external_text.png
+
+Here is is once again in big:
+
+.. image:: external_text.png
+  :height: 100px
+  :width: 100px
+  :target: _images/external_text.png
+
+So I am redistributing together with Lino an icon from Wikipedia.
+**Is this allowed?**
+I scanned their `Terms of Use 
+<http://wikimediafoundation.org/wiki/Terms_of_Use#7._Licensing_of_Content>`_
+and as far as I understand them there is no problem 
+as long as Lino is distributed under the GPL.
+Please let me know if you see a danger that I am committing a criminal 
+act out of ignorance.
+
+
+

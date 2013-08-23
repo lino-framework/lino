@@ -10,6 +10,10 @@ distributed with Lino.
 - :srcref:`/media/tinymce` by Andrew Mayorov et al.,
   Copyright (c) 2008-2010 `BYTE-force <http://www.byte-force.com>`_.
 
+- :srcref:`/media/extjs/images/wikipedia` contains 
+  a file `external_text.png` which I downloaded from Wikipedia.
+  Until now I couldn't find any copyright note.
+  
 - :srcref:`/media/extjs/images/mjames` contains 
   a subset of Mark James' great and free 
   `Silk Icons <http://www.famfamfam.com/lab/icons/silk/>`_.
@@ -49,6 +53,7 @@ distributed with Lino.
   (See also :attr:`lino.Lino.use_eid_jslib`).
   
 - The Lino distribution contains also a 
-  :srcref:`/bash/openoffice-headless` script which has obviously many authors,
-  I found it in a `blog post by Glenn Enright <http://thepocketsite.com/blog/2010/10/12/openoffice-headless-mode/>`_.
+  :srcref:`/bash/openoffice-headless` script which has obviously 
+  many authors, I found it in a `blog post by Glenn Enright 
+  <http://thepocketsite.com/blog/2010/10/12/openoffice-headless-mode/>`_.
   

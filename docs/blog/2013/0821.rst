@@ -11,31 +11,30 @@ Continued from :blogref:`20130819`.
 Where to find the command APDUs for Belgian eID cards? 
 The Belgians don't seem to provide as good technical documentation
 as the Estonians...
-
-Ha! But the source code of `eid-applet 
+But Ha! the source code of `eid-applet 
 <https://code.google.com/p/eid-applet/>`_ 
 contains answers to most of my questions!
 For example
 `Controller.java <https://code.google.com/p/eid-applet/source/browse/trunk/eid-applet-core/src/main/java/be/fedict/eid/applet/Controller.java>`_
 
 Since `eid-applet` is LGPL and Lino GPL, I can AFAIK simply copy and 
-paste the relevant excerpts from their code into my EIDReader applet
+paste the relevant excerpts from their code into my :srcref:`EIDReader </java/lino/eid/EIDReader.java>` applet
 (after adapting the copyright notice).
 
 Voilà: EIDReader can now read *both* Estonian *and* Belgian eID cards.
-It does already recognize that it is a Belgian cards and even reads some data.
-But I must still doing something wrong because it shows only the 
-*number* of my eID card (not all the public data as I'd like it to):
+(At least almost...
+it *does* already recognize that it is a Belgian cards and even reads some data.
+But I must still be doing something wrong because it shows only the 
+*number* of the card (and not all the public data as I'd like it to):
 
 .. image:: 0821.png
 
 
+Discovered and fixed a bug in :mod:`html2xhtml <lino.utils.html2xhtml>`
+-----------------------------------------------------------------------
 
-
-Discovered and reported a bug in appy pod
------------------------------------------
-
-Ha! Lino is so cool! I had no problem to reproduce an error which 
+Lino is so cool! 
+I had no problem to reproduce an error which 
 occured now and then in a production site. 
 This was the traceback produced by the above snippet::
 
@@ -173,6 +172,8 @@ so instead of filing a bug for Gaëtan
 I fixed it and added a test case in my own code:
 :mod:`lino.utils.html2xhtml`.
 
-
-
-
+(So what? 
+I worked more than 3 hours to understand and fix a little bug: 
+is that cool? No, *that*'s not cool, but *Lino* is cool:
+all this would have taken many days without the possibility 
+of reproducing the original problem in a simple blog entry!)

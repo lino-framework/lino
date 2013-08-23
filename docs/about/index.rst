@@ -7,8 +7,7 @@ URLconf, HTML nor CSS.
 This is because unlike Django, 
 Lino provides an out-of-the box user interface. 
 
- 
-When Luc discovered Django in the end of 2008, after having worked 
+When :doc:`Luc <luc>` discovered Django in the end of 2008, after having worked 
 many months on his own database model, he was quickly fascinated.
 A little bit later he wrote:
 "The ORM and database model based on 'apps' is simply genial.
@@ -146,6 +145,7 @@ More
    
    lino_and_django
    faq
+   luc
    license
    why_gpl
    thanks

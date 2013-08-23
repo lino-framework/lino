@@ -1,0 +1,33 @@
+===================================
+20130822 (Thursday, 22 August 2013)
+===================================
+
+Aha, Frank Cornelis wrote an article 
+`Belgian EID Security
+<http://cup-of-java.blogspot.com/2008/05/belgian-eid-security.html>`_
+where he gives a summary of what I've found in the source code 
+of eid-applet. As an example he explains how to retrieve the national 
+number. And especially he explains:
+
+  The identity file itself has a simple Tag Length Value structure. 
+  The national number has Tag number 6. 
+  
+After discovering what means `TLV <http://en.wikipedia.org/wiki/Type-length-value>`_
+I discovered files like
+`TlvParser.java 
+<https://code.google.com/p/eid-applet/source/browse/trunk/eid-applet-service/src/main/java/be/fedict/eid/applet/service/impl/tlv/TlvParser.java>`_
+and understood why my yesterday's version of EIDReader didn't display 
+more information: the second tag is the chip number, and this value 
+contains 0x00 bytes which are meant to be converted by 
+`ChipNumberDataConvertor <https://code.google.com/p/eid-applet/source/browse/trunk/eid-applet-service/src/main/java/be/fedict/eid/applet/service/impl/tlv/ChipNumberDataConvertor.java>`_.
+
+And `ChipNumberDataConvertor` is `
+not the only one <https://code.google.com/p/eid-applet/source/browse/trunk/eid-applet-service/src/main/java/be/fedict/eid/applet/service/impl/tlv/>`_
+...
+
+All this is so complex that copying this code would 
+not lead to any sustainable result.
+So I must import, not copy, parts of eid-applet into my applet.
+
+
+

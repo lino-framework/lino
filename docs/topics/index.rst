@@ -8,4 +8,3 @@ Topics
    *
    /django/index
    /tests
-   /davlink/index

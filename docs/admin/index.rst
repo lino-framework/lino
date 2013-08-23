@@ -18,6 +18,15 @@ Installation
     media
    
 
+Java applets included with Lino
+-------------------------------
+
+.. toctree::
+    :maxdepth: 2
+
+   /davlink/index
+   /eidreader/index
+
 Other
 -----
 
