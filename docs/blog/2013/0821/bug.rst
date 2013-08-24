@@ -33,7 +33,15 @@ then it fails:
 
 >>> html = u'<p><span><div>Oops</div></span></p>'
 
-The following snippet will render it:
+Another example of HTML as TinyMCE happens to produce is this:
+
+>>> html = '<strong><ul><li>Foo</li><li>Bar</li></ul></strong>'
+
+Here is how it should be:
+
+>>> html = u'<ul><li><strong>Foo</strong></li><li><strong>Bar</strong></li></ul>'
+
+The following snippet will try to render it:
 
 >>> import os
 >>> from appy.pod.renderer import Renderer
@@ -49,19 +57,18 @@ True
 The file `out.odt` now exists, but it contains invalid `content.xml`
 and LibreOffice will complain when you try to open it.
 
-
 I originally wrote this page for Gaëtan in the hope that he will 
 fix this bug in appy pod... but then I understood:
 in fact Appy Pod is right! 
-
 A `<div>` inside a `<span>` is no valid XHTML.
+A `<li>` inside a `<strong>` is no valid XHTML.
 According to 
 `Mac on stackoverflo <http://stackoverflow.com/questions/2919909/nesting-div-within-span-problem>`_
 "several websites use this method for styling",
 but the bug is not in Gaëtan's `renderXhtml` method, 
-it is in own code: in :mod:`lino.utils.html2xhtml`.
+it is in my own code: in :mod:`lino.utils.html2xhtml`.
 
-
+(Edit 20130823: added the <li> inside <strong> example)
 
 
 

@@ -1,0 +1,17 @@
+atelier
+north
+djangosite
+
+django==1.5.1
+fabric==1.6.0
+jinja2==2.6
+appy==0.8.3
+babel==1.3
+docutils==0.10
+odfpy==0.9.6
+pytidylib
+python-dateutil==2.1
+suds==0.4
+unipath==1.0
+vobject==0.8.1c
+wsgiref==0.1.2

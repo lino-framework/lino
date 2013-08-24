@@ -10,9 +10,11 @@ Continued on my `EIDReader` applet.
 Started a documentation page :ref:`eidreader`.
 
 It should now display more 
-or less all the identity & address information. 
-
-But before I can test this I need to learn more about 
+or less all the identity & address information
+for both Estonian and Belgian eID cards.
+Except for Belgian ones where it currently throws a 
+`ClassNotFoundException`.
+Before I can continue on this I need to learn more about 
 `Deploying an Applet
 <http://docs.oracle.com/javase/tutorial/deployment/applet/deployingApplet.html>`_
 and 
@@ -21,17 +23,18 @@ and
 
 I downloaded a file `eid-applet-sdk-1.1.0.RC3.zip
 <https://code.google.com/p/eid-applet/downloads/detail?name=eid-applet-sdk-1.1.0.RC3.zip&can=2&q=>`_
-and added a file :file:`eid-applet-service-1.0.1.GA.jar` 
-from it to my local classpath
-(see :srcref:`/java/Makefile`)
-It compiles and jars without error message, 
-but the applet 
-(when I launch it via
+and extracted a file :file:`eid-applet-service-1.0.1.GA.jar` 
+from it 
+and added it to my local classpath
+(see :srcref:`/java/Makefile`).
+It compiles and jars without error message.
+But the applet, 
+when I launch it via
 :srcref:`eid_test.html </lino/media/applets/eid_test.html>`
-or :srcref:`eid_test2.html </lino/media/applets/eid_test2.html>`)
-now throws a `ClassNotFoundException`.
-Which is understandable since I don't tell the applet how to find 
-the :file:`eid-applet-service-1.0.1.GA.jar` file.
+then throws a `ClassNotFoundException`.
+Which is understandable since the applet cannot know 
+how to find the :file:`eid-applet-service-1.0.1.GA.jar` file.
+And I don't know how to tell it where it is...
 
 I think that it would be more fun to do this together 
 with somebody else.

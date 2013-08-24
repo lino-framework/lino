@@ -20,15 +20,15 @@ activaly being used in :mod:`lino.utils.appy_pod`.
 >>> print(html2xhtml('''\
 ... <p>Hello,&nbsp;world!<br>Again I say: Hello,&nbsp;world!</p>
 ... <img src="foo.org">''')) #doctest: +NORMALIZE_WHITESPACE
-<p>Hello, world!<br/>Again I say: Hello, world!</p>
-<img src="foo.org"/>
+<p>Hello,&nbsp;world!<br />
+Again I say: Hello,&nbsp;world!</p>
+<img src="foo.org" alt="" />
 
-(Note: the above contains non-breaking spaces `\xa0`)
 
 >>> html = '''\
 ... <p style="font-family: &quot;Verdana&quot;;">Verdana</p>'''
 >>> print(html2xhtml(html))
-<p style='font-family: "Verdana";'>Verdana</p>
+<p style="font-family: &quot;Verdana&quot;;">Verdana</p>
 
 >>> print(html2xhtml('A &amp; B'))
 A &amp; B
@@ -36,23 +36,33 @@ A &amp; B
 >>> print(html2xhtml('a &lt; b'))
 a &lt; b
 
-A `<div>` inside a `<span>` is not valid XHTML. 
-But how to convert it?
-Current solution is to simply remove the `<div>` 
-tag (and it's corresponding `</div>`):
+A `<div>` inside a `<span>` is not valid XHTML.
+Neither is a `<li>` inside a `<strong>`.
 
->>> print(html2xhtml('<p>foo<span>bar<div> oops </div>baz</span>bam</p>'))
-<p>foo<span>bar oops baz</span>bam</p>
+But how to convert it? 
+Inline tags must be "temporarily" closed before 
+and reopended after a block element.
+
+>>> print(html2xhtml('<p>foo<span class="c">bar<div> oops </div>baz</span>bam</p>'))
+<p>foo<span class="c">bar</span></p>
+<div><span class="c">oops</span></div>
+<span class="c">baz</span>bam
+
+
+>>> print(html2xhtml('''<strong><ul><em><li>Foo</li></em><li>Bar</li></ul></strong>'''))
+<ul>
+<li><strong><em>Foo</em></strong></li>
+<li><strong>Bar</strong></li>
+</ul>
 
 In HTML it was tolerated to not end certain tags.
-For example, a string "<p>foo<p>bar<p>baz" should convert 
+For example, a string "<p>foo<p>bar<p>baz" converts 
 to  "<p>foo</p><p>bar</p><p>baz</p>". 
-That's not yet implemented, but at least detected:
 
 >>> print(html2xhtml('<p>foo<p>bar<p>baz'))
-Traceback (most recent call last):
-...
-Exception: Unexpected end of document. Expected at least </p></p></p>
+<p>foo</p>
+<p>bar</p>
+<p>baz</p>
 
 
   
@@ -61,6 +71,25 @@ Exception: Unexpected end of document. Expected at least </p></p></p>
 
 from __future__ import print_function, unicode_literals
 
+from tidylib import tidy_fragment
+
+def html2xhtml(html,**options):
+    options.update(doctype='omit')
+    options.update(show_warnings=0)
+    options.update(indent=0)
+    options.update(output_xml=1)
+    document, errors = tidy_fragment(html,options=options)
+    if errors:
+        raise Exception(repr(errors))
+    return document
+    
+
+
+## The remaining part is not used and just an illustration of how much
+## time people can waste before realizing that they are reinventing the wheel
+
+
+    
 from xml.sax.saxutils import quoteattr
 
 from HTMLParser import HTMLParser
@@ -69,6 +98,16 @@ from htmlentitydefs import name2codepoint
 def attrs2xml(attrs):
     #~ return ' '.join(['%s="%s"' % a for a in attrs])
     return ' '.join(['%s=%s' % (k,quoteattr(v)) for k,v in attrs])
+    
+    
+INLINE_TAGS = frozenset("""
+a abbr acronym b bdo big br cite code dfn 
+em s i img input kbd label q samp select small
+span strong sub sup textarea tt var
+""".split())    
+
+def is_inline_tag(tag):
+    return tag in INLINE_TAGS
     
 class TagEntry(object):
     def __init__(self,name,ignored=False):    
@@ -80,15 +119,42 @@ class MyHTMLParser(HTMLParser):
         HTMLParser.__init__(self,*args,**kw)
         self.result = ''
         self.context = []
+        self.inline_stack = []
+        self.is_inline = False
+        
+        
+    def write_startendtag(self, tag, attrs):
+        if attrs:
+            self.result += '<%s %s/>' % (tag,attrs2xml(attrs))
+        else:
+            self.result += '<%s/>' % tag
+        
+    def write_starttag(self, tag, attrs):
+        if attrs:
+            self.result += '<%s %s>' % (tag,attrs2xml(attrs))
+        else:
+            self.result += '<%s>' % tag
+            
+    def write_endtag(self, tag):
+        self.result += '</%s>' % tag
+        
+        
+    def before_tag(self, tag):
+        if is_inline_tag(tag):
+            if not self.is_inline:
+                for itag,iattrs in self.pending_inline_tags():
+                    self.handle_starttag(itag,iattrs)
+                    
+                self.is_inline = True
+        elif self.is_inline:
+            self.is_inline = False
+        
+        
         
     def handle_startendtag(self, tag, attrs):
         if not self.allow_tag_in_context(tag):
             return
-            
-        if attrs:
-            self.handle_data('<%s %s/>' % (tag,attrs2xml(attrs)))
-        else:
-            self.handle_data('<%s/>' % tag)
+        self.write_startendtag(tag, attrs)
         
     def handle_starttag(self, tag, attrs):
         if tag in ('br','img'):
@@ -98,10 +164,7 @@ class MyHTMLParser(HTMLParser):
                 self.context.append(TagEntry(tag,True))
                 return
             self.context.append(TagEntry(tag,False))
-            if attrs:
-                self.handle_data('<%s %s>' % (tag,attrs2xml(attrs)))
-            else:
-                self.handle_data('<%s>' % tag)
+            self.write_starttag(tag, attrs)
 
     def handle_endtag(self, tag):
         if len(self.context) > 0:
@@ -111,7 +174,7 @@ class MyHTMLParser(HTMLParser):
         else:
             raise Exception("Unexpected endtag </%s> but context is empty" % tag)
         if not expected.ignored:
-            self.handle_data('</%s>' % tag)
+            self.write_enddtag(tag)
         
     def allow_tag_in_context(self,tag):
         if tag == 'div':
@@ -134,7 +197,8 @@ class MyHTMLParser(HTMLParser):
             return
         self.handle_data(unichr(name2codepoint[name]))
 
-def html2xhtml(html):
+    
+def unused_html2xhtml(html):
     """
     Convert a HTML text to XHTML.
     Currently this is very basic and will be extended as needed.

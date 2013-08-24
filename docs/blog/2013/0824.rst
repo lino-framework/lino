@@ -1,0 +1,43 @@
+===================================
+20130824 (Saturday, 24 August 2013)
+===================================
+
+The bug in my :mod:`html2xhtml <lino.utils.html2xhtml>`
+(see :blogref:`20130821`)
+was even more complex than what I was able to imagine that day.
+For example the following HTML::
+
+    <strong>
+    <ul>
+    <em><li>Foo</li></em>
+    <li>Bar</li>
+    </ul>
+    </strong>
+    
+Should become::    
+
+    <ul>
+    <li><strong><em>Foo</em></strong></li>
+    <li><strong>Bar</strong></li>
+    </ul>
+
+
+After trying to reinvent the wheel and realizing that it was getting 
+sophisticated I discovered
+`pytidylib <http://countergram.com/open-source/pytidylib>`_.
+Voilà, all problems solved!
+My :mod:`html2xhtml <lino.utils.html2xhtml>` is now just a 
+wrapper to 
+`pytidylib <http://countergram.com/open-source/pytidylib>`_
+(which itself is a wrapper to 
+`HTML Tidy <http://tidy.sourceforge.net>`_).
+
+Added new file :srcref:`/requirements.txt` which contains "pytidylib".
+
+Install it either using `apt-get install python-tidylib`
+or::
+
+  $ sudo apt-get install libtidy-dev
+  $ pip install pytidylib
+
+

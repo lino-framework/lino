@@ -21,11 +21,10 @@ without any fixture. You can run only these tests by issuing::
 """
 
 from __future__ import unicode_literals
+from __future__ import print_function
 
 import logging
 logger = logging.getLogger(__name__)
-
-import six
 
 from django.conf import settings
 
@@ -67,7 +66,7 @@ class QuickTest(RemoteAuthTestCase):
         
         #~ s = partners.ContactsByOrganisation.request(o1).to_rst()
         s = partners.RolesByCompany.request(o1).to_rst()
-        #~ six.print_('\n'+s)
+        #~ print('\n'+s)
         self.assertEqual(s,"""\
 ========== ============== ====
  Person     Contact Role   ID
@@ -77,7 +76,7 @@ class QuickTest(RemoteAuthTestCase):
 """)
         
         s = partners.RolesByCompany.request(o2).to_rst()
-        #~ six.print_('\n'+s)
+        #~ print('\n'+s)
         self.assertEqual(s,"""\
 =========== ============== ====
  Person      Contact Role   ID
