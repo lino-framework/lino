@@ -1019,7 +1019,7 @@ class GridConfig(View):
                 table=rpt,error=e)
             return settings.SITE.ui.error(None,msg,alert=True)
         #~ logger.info(msg)
-        settings.SITE.ui.build_site_cache(True)
+        settings.SITE.ui.ext_renderer.build_site_cache(True)
         return settings.SITE.ui.success(msg)
         
 MENUS = dict()        

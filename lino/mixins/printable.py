@@ -733,14 +733,19 @@ class BasePrintable(object):
             return _(s.decode('utf8'))
         from lino import dd
         kw.update(this=self,
-            dtos=dd.dtos,
-            dtosl=dbutils.dtosl,
-            dtomy=dbutils.dtomy,
+            dtos=dd.dtos, # obsolete
+            dtosl=dbutils.dtosl, # obsolete
+            dtomy=dbutils.dtomy, # obsolete
+            mtos=decfmt,
+            fds=dbutils.fds,
+            fdm=dbutils.fdm,
+            fdl=dbutils.fdl,
+            fdf=dbutils.fdf,
+            fdmy=dbutils.fdmy,
             babelattr=dbutils.babelattr,
             babelitem=dbutils.babelitem,
             tr=dbutils.babelitem,
             iif=iif,
-            mtos=decfmt,
             settings=settings,
             ar=ar,
             site_config=settings.SITE.site_config,

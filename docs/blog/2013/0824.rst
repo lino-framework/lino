@@ -40,4 +40,7 @@ or::
   $ sudo apt-get install libtidy-dev
   $ pip install pytidylib
 
+Also updated the `requirements.txt` for :ref:`lino.welfare`
+which is at 
+https://code.google.com/p/lino-welfare/source/browse/requirements.txt
 

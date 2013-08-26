@@ -306,12 +306,13 @@ class PseudoRequest:
 
 from lino.utils import IncompleteDate
 
+from north.dbutils import fds, fdm, fdl, fdf, fdmy
 from north.dbutils import dtosl
 from north.dbutils import dtos as dtos_
 
 def dtos(d):
     """
-    Also supports IncompleteDate
+    Adds support for :class:`lino.fields.IncompleteDate`.
     """
     if isinstance(d,IncompleteDate):
         return dtos_(d.as_date())

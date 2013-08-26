@@ -1154,14 +1154,14 @@ Lino.DatePickerField = Ext.extend(Ext.DatePicker,{
   format: '{{settings.SITE.date_format_extjs}}',
   //~ altFormats: '{{settings.SITE.alt_date_formats_extjs}}'
   formatDate : function(date){
-      console.log("20121203 formatDate",this.name,date);
+      //~ console.log("20121203 formatDate",this.name,date);
       return Ext.isDate(date) ? date.dateFormat(this.format) : date;
   }
   });
 Lino.DateTimeField = Ext.extend(Ext.ux.form.DateTime,{
   dateFormat: '{{settings.SITE.date_format_extjs}}',
-  timeFormat: '{{settings.SITE.time_format_extjs}}',
-  //~ hiddenFormat: '{{settings.SITE.date_format_extjs}} {{settings.SITE.time_format_extjs}}'
+  timeFormat: '{{settings.SITE.time_format_extjs}}'
+  //~ ,hiddenFormat: '{{settings.SITE.date_format_extjs}} {{settings.SITE.time_format_extjs}}'
   });
 Lino.URLField = Ext.extend(Ext.form.TriggerField,{
   triggerClass : 'x-form-search-trigger',

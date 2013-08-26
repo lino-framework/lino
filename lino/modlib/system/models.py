@@ -61,7 +61,7 @@ class BuildSiteCache(dd.RowAction):
     def run_from_ui(self,elem,ar):
         #~ rr.confirm(_("Are you sure?"))
         #~ rr.confirm(_("Are you really sure?"))
-        settings.SITE.ui.build_site_cache(True)
+        settings.SITE.ui.ext_renderer.build_site_cache(True)
         return ar.success(
             """\
 Seems that it worked. Refresh your browser. 

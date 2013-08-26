@@ -1392,10 +1392,33 @@ class Site(lino.Site):
             func(app_name,app_mod,*args,**kw)
 
 
-    def get_letter_margin_html(self,ar):
+    def get_letter_date_text(self,today=None):
+        """
+        Returns a string like "Eupen, den 26. August 2013".
+        
+        """
+        sc = self.site_config.site_company
+        if today is None: today = datetime.date.today()
+        from lino import dd
+        if sc and sc.city:
+            return _("%(place)s, %s(date)") % dict(
+                place=unicode(sc.city.name), date=dd.fdl(today))
+        return dd.fdl(today)
+        
+    def get_letter_margin_top_html(self,ar):
         s = '<p class="Centered9pt">%s</p>'
         s = s % self.site_config.site_company.get_address('<br/>')
         return s
+        #~ from lino.utils.config import find_config_file
+        #~ logo_path = find_config_file('logo.jpg')
+        #~ return '<img src="%s"/>' % logo_path
+        #~ return '<img src="file://%s" />' % logo_path
+        
+    def get_letter_margin_bottom_html(self,ar):
+        #~ s = '<p class="Centered9pt">%s</p>'
+        #~ s = s % self.site_config.site_company.get_address('<br/>')
+        #~ return s
+        return ''
 
     def get_admin_main_items(self,ar):
         """

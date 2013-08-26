@@ -207,6 +207,10 @@ class VatDocument(VatTotal):
       help_text=_("Whether prices includes VAT or not."))
     vat_regime = VatRegimes.field(blank=True)
     
+    def get_recipient(self):
+        return self.partner
+    recipient = property(get_recipient)
+    
     #~ @classmethod
     #~ def get_filter_kw(self,ar,**kw):
         #~ kw = super(VatDocument,self).get_filter_kw(ar,**kw)

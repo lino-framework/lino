@@ -5,6 +5,10 @@ To-do list
 Bis 20130902
 ------------
 
+#.  In Demo-Daten einen mit Angaben in eID-Feldern. 
+    Falls nötig Übersetzungen von lino_welfare nach lino rüber holen.
+    fab mm in beiden Projekten. Test case(s) schreiben.
+    
 #.  Wenn man in "Meine Aufgaben" manuell eine Aufgabe erstellt, dann 
     wird diese anschließend nicht auf der Startseite angezeigt. 
     Zustand ist "Begonnen" statt "Zu tun".

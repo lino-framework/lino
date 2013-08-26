@@ -503,6 +503,9 @@ class ItemsByInvoice(ItemsByDocument):
     hidden_columns = "seqno description total_base total_vat"
     
 
+class ItemsByInvoicePrint(ItemsByInvoice):
+    column_names = "title:40 unit_price:10 qty:5 total_incl:10"
+
 class InvoiceItemsByProduct(ItemsByInvoice):
     master_key = 'product'
     column_names = "voucher voucher__partner qty title description:20x1 discount unit_price total_incl total_base total_vat"
