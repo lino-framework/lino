@@ -155,6 +155,7 @@ Because that's rather necessary on a production server with :setting:`DEBUG` Fal
     tty = config.get('tty',True)
     #~ logger_names = config.get('logger_names','djangosite north lino')
     logger_names = config.get('logger_names',None)
+    #~ print 20130826, logger_names
     if not logger_names:
         #~ print 20130418, __file__, 'no logger names'
         return # Django 1.5 calls this function twice (#20229)
@@ -168,7 +169,6 @@ Because that's rather necessary on a production server with :setting:`DEBUG` Fal
     #~ if not 'lino_welfare' in logger_names:
         #~ raise Exception("20130409")
     loggers = [logging.getLogger(n) for n in logger_names]
-    
     for l in loggers: l.setLevel(level)
     #~ linoLogger.setLevel(level)
     #~ sudsLogger.setLevel(level)
@@ -188,6 +188,7 @@ Because that's rather necessary on a production server with :setting:`DEBUG` Fal
                 #~ h.setLevel(level)
                 if logfile is not None:
                     h.setLevel(logging.INFO)
+                #~ print "20130826 tty", h, loggers
                 fmt = logging.Formatter(fmt='%(levelname)s %(message)s')
                 h.setFormatter(fmt)
                 for l in loggers: l.addHandler(h)

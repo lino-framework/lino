@@ -157,7 +157,49 @@ the formatter
 (i.e. :meth:`format_value <lino.ui.store.StoreField.format_value>`)
 or the callers
 (i.e. :meth:`row2list <lino.ui.store.Store.row2list>` & Co?).
-Let's leave this job at the formatters because it is easier 
+Let's leave this job to the formatters because it is easier 
 to implement.
 
 
+The ``dump2py`` management command
+----------------------------------
+
+Until now there was at least one limit for :mod:`north`: 
+it had to fail on huge databases. 
+We didn't yet reach that limit, but Murphy's law states that 
+it will happen one day.
+
+This limit exists "by nature", because
+Django's serializer concept means that a dump creates exactly 
+*one* file, and because Python must load a module into memory before 
+compiling and executing it.
+
+The good news is: it took only a few hours to remove that limit.
+I wrote a management command 
+:mod:`north.management.commands.dump2py`
+and I split the :class:`north.dpy.Deserializer` 
+into a "Loader".
+
+The bad news is: I'll need to update quite some documentation.
+But in summary: 
+
+To make a python dump (be it for daily backup or before a migration) 
+we no longer recommend to say::
+
+  $ python manage.py dumpdata --format py > mydump.py
+  
+It is now better to say::
+
+  $ python manage.py mydump
+  
+This will create a python dump of your database to the directory `mydump`.
+The directory will contain one file :file:`main.py` and a lot of other `.py` 
+files (currently one for every model) which are being :meth:`execfile`\ d 
+from that :file:`main.py`.
+  
+To restore such a dump to your database, simply issue::
+  
+  $ python mydump/main.py
+  
+
+  
