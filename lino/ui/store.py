@@ -191,7 +191,8 @@ class StoreField(object):
             
     def format_value(self,ar,v):
         """
-        Return a plain textual representation of this value as a unicode string.
+        Return a plain textual representation as a unicode string
+        of the given value `v`.   Note that `v` might be `None`.
         """
         return force_unicode(v)
         

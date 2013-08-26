@@ -145,3 +145,19 @@ interest) or not.
 If I had do decide right now,  than I'd probably toss a coin...
 
 
+Formatting `None` values
+------------------------
+
+The :meth:`format_value <lino.ui.store.StoreField.format_value>`
+method of
+:class:`lino.ui.store.StoreField.RequestStoreField`
+failed on `None` value.
+That's another complex question: who should handle `None` values`, 
+the formatter
+(i.e. :meth:`format_value <lino.ui.store.StoreField.format_value>`)
+or the callers
+(i.e. :meth:`row2list <lino.ui.store.Store.row2list>` & Co?).
+Let's leave this job at the formatters because it is easier 
+to implement.
+
+
