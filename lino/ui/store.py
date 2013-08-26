@@ -376,6 +376,8 @@ class RequestStoreField(StoreField):
         #~ d[self.field.name] = v
 
     def format_value(self,ar,v):
+        if v is None:
+            return ''
         return str(v.get_total_count())
         
     #~ def sum2html(self,ar,sums,i,**cellattrs):

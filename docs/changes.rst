@@ -4,10 +4,30 @@
 Changes in Lino
 ===============
 
+I try to give here a summary of the things which system administrators 
+should know when upgrading.
 See the author's :ref:`Developer Blog <blog>`
 to get detailed news.
 The final truth about what's going on is only 
 `The Source Code <http://code.google.com/p/lino/source/list>`_.
+
+Version 1.6.12 (coming)
+=============================================
+
+- :mod:`html2xhtml <lino.utils.html2xhtml>` is now just a wrapper to 
+  `pytidylib <http://countergram.com/open-source/pytidylib>`_
+  (which itself is a wrapper to `HTML Tidy <http://tidy.sourceforge.net>`_). 
+  See :blogref:`20130824`.
+  IOW, you will probably want to run either::
+  
+    $ sudo apt-get install python-tidylib
+    
+  or::
+
+    $ sudo apt-get install libtidy-dev
+    $ pip install pytidylib
+  
+
 
 
 Version 1.6.11 (released :blogref:`20130723`)

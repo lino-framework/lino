@@ -126,3 +126,22 @@ Bug fixed:
 The :class:`modlib.system.models.BuildSiteCache` action didn't work. 
 It caused a server exception 'ExtUI' object has no attribute 
 'build_site_cache'.
+
+
+
+Github or Gitorious?
+--------------------
+
+Today I discovered the `Why is Github more popular than Gitorious?
+<http://stackoverflow.com/questions/78991/why-is-github-more-popular-than-gitorious>`_
+question on stackoverflow
+which has been "closed as not constructive".
+I didn't read half of the comments, especially also because 
+it is probably obsolete.
+
+But yes... the decision "Github or Gitorious?" seems to depend on the 
+religious question about whether software should be free (of commercial 
+interest) or not.
+If I had do decide right now,  than I'd probably toss a coin...
+
+
