@@ -1,19 +1,9 @@
 Why GPL?
 ========
 
-
-.. note::
-
-  I am currently considering to change the license.
-  See :doc:`/tickets/16`
-
-
 Lino is published under the `GPL
 <http://en.wikipedia.org/wiki/GNU_General_Public_License>`_,
 as explained in :doc:`license`.
-
-
-
 
 The reason for our choice is that we want to make sure 
 that our voluntary work will always 
@@ -41,7 +31,8 @@ who would otherwise collaborate on Lino, refrain from doing so
 because of the GPL licensing. Let me know if you are one of them. 
 See also :doc:`/tickets/16`.
   
-On the other hand, here are some thoughts of other developers against the GPL that *did not* make me change my mind:
+On the other hand, here are some thoughts against the GPL 
+which *did not* make me change my mind:
 
 * "I do not wish to pay for my javascript framework, nor do I want 
   to be forced to GPL it, as is the only other option available 

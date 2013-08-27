@@ -1,0 +1,75 @@
+==================================
+20130827 (Tuesday, 27 August 2013)
+==================================
+
+Testing the :mod:`dump2py <north.management.commands.dump2py>` command 
+----------------------------------------------------------------------
+
+The following log excerpts show that restoring the 
+database using a dump made with `manage.py dumpdata --format py` 
+took about 14 minutes, whereas 
+the ``dump2py`` dump took only about 9 minutes to restore it.
+
+::
+
+    201308-27 04:13:35 INFO kernel : Started manage.py initdb b20130827_020101 (using testlino.settings) --> PID 13356
+    201308-27 04:13:35 INFO kernel : This is Lino Welfare 1.1.9 using Lino 1.6.11, Jinja 2.6, Sphinx 1.2b1, python-dateutil 2.1, OdfPy ODFPY/0.9.6, docutil
+    s 0.10, suds 0.4, PyYaml 3.10, Appy 0.8.3 (2013/02/22 15:29), Babel 0.9.6, djangosite 0.1.7, Django 1.5.1, Python 2.6.6.
+    201308-27 04:13:35 INFO kernel : Languages: de, fr, nl. 27 apps, 94 models, 320 actors.
+    201308-27 04:13:40 INFO dpy : Loading /var/log/lino/backups/b20130827_020101.py...
+    201308-27 04:16:23 INFO dpy : Migrating from version 1.1.8 to 1.1.9:
+    ...
+    201308-27 04:26:25 INFO dpy : Saved 2536 instances.
+    201308-27 04:26:25 INFO dpy : Trying again with 7244 unsaved instances.
+    201308-27 04:27:11 INFO dpy : Saved 7244 instances.
+    201308-27 04:27:11 INFO kernel : Done manage.py initdb b20130827_020101 (PID 13356)
+
+
+
+    201308-27 04:32:22 INFO kernel : Started manage.py dump2py a (using testlino.settings) --> PID 13493
+    201308-27 04:32:22 INFO kernel : This is Lino Welfare 1.1.9 using Lino 1.6.11, Jinja 2.6, Sphinx 1.2b1, python-dateutil 2.1, OdfPy ODFPY/0.9.6, docutils 0.10, suds 0.4, PyYaml 3.10, Appy 0.8.3 (2013/02/22 15:29), Babel 0.9.6, djangosite 0.1.7, Django 1.5.1, Python 2.6.6.
+    201308-27 04:32:22 INFO kernel : Languages: de, fr, nl. 27 apps, 94 models, 320 actors.
+    201308-27 04:32:22 INFO dump2py : Running <north.management.commands.dump2py.Command object at 0x1b4c450> to /usr/local/django/testlino/a.
+    201308-27 04:33:31 INFO dump2py : Wrote 90932 objects to /usr/local/django/testlino/a/restore.py and siblings.
+    201308-27 04:33:31 INFO kernel : Done manage.py dump2py a (PID 13493)
+
+
+
+    201308-27 04:37:36 INFO kernel : Started a/restore.py (using testlino.settings) --> PID 13558
+    201308-27 04:37:36 INFO kernel : This is Lino Welfare 1.1.9 using Lino 1.6.11, Jinja 2.6, Sphinx 1.2b1, python-dateutil 2.1, OdfPy ODFPY/0.9.6, docutils 0.10, suds 0.4, PyYaml 3.10, Appy 0.8.3 (2013/02/22 15:29), Babel 0.9.6, djangosite 0.1.7, Django 1.5.1, Python 2.6.6.
+    201308-27 04:37:36 INFO kernel : Languages: de, fr, nl. 27 apps, 94 models, 320 actors.
+    201308-27 04:37:41 INFO dpy : Source version is 1.1.9 : no migration needed
+    ...
+    201308-27 04:46:22 INFO main : Loaded 90932 objects
+    201308-27 04:46:22 INFO kernel : Done a/restore.py (PID 13558)
+
+
+This first test run on a production site caused some optimizations:
+
+- Renamed `main.py` to :xfile:`restore.py`  
+
+- Removed the `os.environ['DJANGO_SETTINGS_MODULE'] = '%s'` line 
+  from the :xfile:`restore.py`.
+  Which makes that you must now run it using 
+  the :mod:`run <djangosite.management.commands.run>` command 
+  and cannot simply run it using `python mydump/restore.py`.
+  
+  Advantage is that it works also on projects which add 
+  special initialization in their `manage.py` file,
+  and that you can restore the dump to another project without 
+  modifying the :xfile:`restore.py` just by using other settings.
+  
+- The :xfile:`restore.py` now uses the `if __name__ == '__main__': main()` 
+  construct 
+  (explained `here <http://stackoverflow.com/questions/419163/what-does-if-name-main-do>`_)
+  like any well-behaving Python script should do.
+    
+- The :mod:`run <djangosite.management.commands.run>` command 
+  now also sets the `__file__` global variable and passes
+  its own `globals()` to :func:`execfile` so that the invoked script can 
+  use the `if __name__ == '__main__': main()` construct.
+  
+  
+  
+  
+  

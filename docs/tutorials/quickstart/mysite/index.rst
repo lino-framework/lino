@@ -35,13 +35,14 @@ We begin by creating a plain empty Django project::
   $ cd
   $ django-admin startproject mysite
   
-If the above command is new to you, then you don't know Django
-and we recommend to first follow 
-:ref:`lino.tutorial.polls` before continuing this one.
+If the above command is new to you, then we recommend 
+you to follow the 
+:ref:`Lino Polls tutorial <lino.tutorial.polls>` 
+before continuing this one.
 
-Now we assume that you know what the 
-:file:`settings.py` file of your project is.
-Open this file and replace the whole content with the following two lines::
+Now open the
+:xfile:`settings.py` file of your new project
+and replace its content with the following two lines::
 
   from lino.projects.cosi.settings import *
   SITE = Site(globals())
