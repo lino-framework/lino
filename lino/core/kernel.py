@@ -287,6 +287,8 @@ def startup_site(self):
 
     self.resolve_virtual_fields()
     
+    #~ logger.info("20130827 startup_site done")
+    
 class DisableDeleteHandler():
     """
     Used to find out whether a known object can be deleted or not.

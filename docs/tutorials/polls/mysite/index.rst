@@ -92,7 +92,7 @@ And then enter the following Python instructions there:
 
 >>> from django.conf import settings
 >>> settings.INSTALLED_APPS
-('lino.modlib.about', 'polls', 'lino', 'djangosite')
+('lino.modlib.about', 'polls', 'north', 'lino', 'djangosite')
 
 This shows that your 'polls' app has been embedded into a series of other apps:
 :mod:`lino.ui` and :mod:`lino.modlib.about` come first, then your app, 

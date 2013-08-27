@@ -636,10 +636,10 @@ def is_hidden_babel_field(fld):
     lng = getattr(fld,'_babel_language',None)
     if lng is None: return False
     if jsgen._for_user_profile is None: return False
-    if jsgen._for_user_profile.hide_languages is None: return False
+    if jsgen._for_user_profile.hidden_languages is None: return False
     #~ if lng.name == 'nl':
         #~ raise Exception(20130728)
-    if lng in jsgen._for_user_profile.hide_languages: return True
+    if lng in jsgen._for_user_profile.hidden_languages: return True
     return False
         
 class FieldElement(LayoutElement):
@@ -1071,7 +1071,8 @@ class ForeignKeyElement(ComplexRemoteComboFieldElement):
         
     def get_field_options(self,**kw):
         kw = super(ForeignKeyElement,self).get_field_options(**kw)
-        
+        if isinstance(self.field.rel.to,basestring):
+            raise Exception("20130827 %s.rel.to is %r" % (self.field,self.field.rel.to))
         pw = self.field.rel.to.preferred_foreignkey_width
         if pw is not None:
             kw.setdefault('preferred_width',pw)
@@ -1723,6 +1724,8 @@ class Container(LayoutElement):
         return False
         
 class Wrapper(VisibleComponent):
+    """
+    """
     #~ label = None
     def __init__(self,e,**kw):
         kw.update(layout='form')
@@ -1736,6 +1739,7 @@ class Wrapper(VisibleComponent):
         for n in ('width', 'height', 'preferred_width','preferred_height','vflex','loosen_requirements'):
             setattr(self,n,getattr(e,n))
         #~ e.update(anchor="100%")
+            
         if e.vflex: 
             #~ 20120630 e.update(anchor="100% 100%")
             #~ e.update(anchor="-25 -25")
@@ -1764,6 +1768,14 @@ class Wrapper(VisibleComponent):
         for chunk in self.wrapped.as_plain_html(ar,obj):
             yield chunk
             
+    def ext_options(self,**kw):
+        kw = super(Wrapper,self).ext_options(**kw)
+        if self.wrapped.field is not None:
+            if is_hidden_babel_field(self.wrapped.field):
+                kw.update(hidden=True)
+                #~ print("20130827 hidden %s" % self.wrapped.field)
+        return kw
+    
 class Panel(Container):
     """
     A vertical Panel is vflex if and only if at least one of its children is vflex.
@@ -2215,17 +2227,6 @@ class ParamsPanel(Panel):
     #~ value_template = "new Ext.form.FormPanel(%s)"
     #~ value_template = "new Ext.form.FormPanel({layout:'fit', autoHeight: true, frame: true, items:new Ext.Panel(%s)})"
     value_template = "%s"
-    #~ pass
-    def unused__init__(self,lh,name,vertical,*elements,**kw):
-        Panel.__init__(self,lh,name,vertical,*elements,**kw)
-        
-        #~ fkw = dict(layout='fit', autoHeight= True, frame= True, items=pp)
-        if lh.layout._datasource.params_panel_hidden:
-            self.value_template = "new Ext.form.FormPanel({hidden:true, layout:'fit', autoHeight: true, frame: true, items:new Ext.Panel(%s)})"
-          
-            #~ fkw.update(hidden=True)
-        #~ self.value = 
-        #~ return ext_elems.FormPanel(**fkw)
     
 
 #~ class ParamsForm(Panel):

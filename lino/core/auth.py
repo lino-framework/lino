@@ -146,11 +146,11 @@ class UserGroups(ChoiceList):
 
 class UserProfile(Choice):
     
-    hide_languages = None
+    hidden_languages = None
     """
     A subset of :attr:`languages <north.Site.languages>` 
     which should be hidden in this user profile.
-    Default value is :attr:`hide_languages <UserProfiles.hide_languages>`.
+    Default value is :attr:`hidden_languages <UserProfiles.hidden_languages>`.
     This is used on multilingual sites with more than 4 or 5 languages.
     See the source code of :meth:`lino_welfare.settings.Site.setup_choicelists`
     for a usage example.
@@ -159,12 +159,10 @@ class UserProfile(Choice):
     def __init__(self,cls,value,text,
             name=None,memberships=None,authenticated=True,
             readonly=False,
-            #~ hide_languages=None,
             #~ expert=False,
             **kw):
       
         super(UserProfile,self).__init__(value,text,name)
-        #~ self.hide_languages = hide_languages
         #~ keys = ['level'] + [g+'_level' for g in choicelist.groups_list]
         #~ keys = ['level'] + [g+'_level' for g in choicelist.membership_keys]
         self.readonly = readonly
@@ -175,7 +173,7 @@ class UserProfile(Choice):
         
     def attach(self,cls):
         super(UserProfile,self).attach(cls)
-        self.kw.setdefault('hide_languages',cls.hide_languages)
+        self.kw.setdefault('hidden_languages',cls.hidden_languages)
         if self.memberships is None:
             for k in cls.membership_keys:
                 #~ kw[k] = UserLevels.blank_item
@@ -200,8 +198,8 @@ class UserProfile(Choice):
         for k in cls.default_memberships:
             setattr(self,k,self.level)
             
-        if self.hide_languages is not None:
-            self.hide_languages = set(settings.SITE.resolve_languages(self.hide_languages))
+        if self.hidden_languages is not None:
+            self.hidden_languages = set(settings.SITE.resolve_languages(self.hidden_languages))
             
         del self.kw
         del self.memberships
@@ -267,9 +265,9 @@ class UserProfiles(ChoiceList):
     preferred_foreignkey_width = 20 
     
     
-    hide_languages = None
+    hidden_languages = settings.SITE.hidden_languages
     """
-    Default value for the :attr:`hide_languages <UserProfile.hide_languages>`
+    Default value for the :attr:`hidden_languages <UserProfile.hidden_languages>`
     of newly attached each choice item 
     """
     
@@ -283,11 +281,12 @@ class UserProfiles(ChoiceList):
     #~ @classmethod
     #~ def clear(cls,groups='*'):
     @classmethod
-    def reset(cls,groups=None,hide_languages=None):
+    def reset(cls,groups=None,hidden_languages=None):
         """
         Deserves a docstring.
         """
-        cls.hide_languages = hide_languages
+        if hidden_languages is not None:
+            cls.hidden_languages = hidden_languages
         #~ cls.groups_list = [g.value for g in UserGroups.items()]
         expected_names = set(['*']+[g.value for g in UserGroups.items() if g.value])
         if groups is None:

@@ -1,23 +1,5 @@
 /home/luc/hgwork/lino/docs/admin/index.rst:24: WARNING: toctree contains reference to nonexisting document u'admin/ :maxdepth: 2'
+/home/luc/hgwork/lino/docs/demos.rst:84: WARNING: toctree contains reference to nonexisting document u'cosi'
 /home/luc/hgwork/lino/docs/blog/2013/0821/bug.rst:: WARNING: document isn't included in any toctree
-None:None: WARNING: toctree contains reference to nonexisting document u'about/luc'
-None:None: WARNING: toctree contains reference to nonexisting document u'about/luc'
-None:None: WARNING: toctree contains reference to nonexisting document u'about/luc'
-None:None: WARNING: toctree contains reference to nonexisting document u'about/luc'
-/home/luc/hgwork/lino/docs/changes.rst:71: WARNING: undefined label: welfare.debts.printliabilitiesbybudget (if the link has no caption the label must precede a section header)
-None:None: WARNING: toctree contains reference to nonexisting document u'about/luc'
-None:None: WARNING: toctree contains reference to nonexisting document u'about/luc'
-None:None: WARNING: toctree contains reference to nonexisting document u'about/luc'
-None:None: WARNING: toctree contains reference to nonexisting document u'about/luc'
-None:None: WARNING: toctree contains reference to nonexisting document u'about/luc'
-/home/luc/hgwork/lino/docs/releases/index.rst:1: WARNING: unknown document: 1.6.11
-None:None: WARNING: toctree contains reference to nonexisting document u'about/luc'
-None:None: WARNING: toctree contains reference to nonexisting document u'about/luc'
-None:None: WARNING: toctree contains reference to nonexisting document u'about/luc'
-None:None: WARNING: toctree contains reference to nonexisting document u'about/luc'
-None:None: WARNING: toctree contains reference to nonexisting document u'about/luc'
-None:None: WARNING: toctree contains reference to nonexisting document u'about/luc'
-None:None: WARNING: toctree contains reference to nonexisting document u'about/luc'
-None:None: WARNING: toctree contains reference to nonexisting document u'about/luc'
-None:None: WARNING: toctree contains reference to nonexisting document u'about/luc'
-None:None: WARNING: toctree contains reference to nonexisting document u'about/luc'
+/home/luc/hgwork/lino/docs/cosi/index.rst:: WARNING: document isn't included in any toctree
+/home/luc/hgwork/lino/lino/ui/__init__.py:docstring of lino.ui.Site.webdav_url:7: WARNING: term not in glossary: runserver

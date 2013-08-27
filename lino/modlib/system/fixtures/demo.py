@@ -60,8 +60,9 @@ def objects():
     User = settings.SITE.user_model
     if User is not None:
         for lang in settings.SITE.languages:
-            kw = root_user(lang)
-            if kw:
-                u = User(**kw)
-                #~ u.set_password('1234')
-                yield u
+            if settings.SITE.hidden_languages is None or not lang.django_code in settings.SITE.hidden_languages:
+                kw = root_user(lang)
+                if kw:
+                    u = User(**kw)
+                    #~ u.set_password('1234')
+                    yield u

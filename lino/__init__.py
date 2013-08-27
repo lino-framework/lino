@@ -310,6 +310,7 @@ class Site(Site):
         #~ analyze_models()
         
     def resolve_virtual_fields(self):
+        #~ print "20130827 resolve_virtual_fields", len(self.VIRTUAL_FIELDS)
         #~ global VIRTUAL_FIELDS
         for vf in self.VIRTUAL_FIELDS: 
             vf.lino_resolve_type()
@@ -318,6 +319,7 @@ class Site(Site):
       
         
     def register_virtual_field(self,vf):
+        #~ print "20130827 register_virtual_field", vf
         self.VIRTUAL_FIELDS.append(vf)
         
         

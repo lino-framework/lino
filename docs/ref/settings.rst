@@ -5,8 +5,8 @@ Settings API
 
 .. setting:: SITE
 
-Lino expects one important variable ``LINO`` in your :xfile:`settings.py`.
-This deserves more documentation.
+Lino expects one important variable ``SITE`` in your :xfile:`settings.py`.
+See :ref:`djangosite`.
 
 
 Lino and the Django `settings.py` file
@@ -31,6 +31,10 @@ unchanged, you can configure your logging preferences using the
 You don't need to use Lino's logging config. In that case, refer to
 https://docs.djangoproject.com/en/dev/ref/settings/#logging-config
 
+
+.. setting:: USE_L10N
+
+See http://docs.djangoproject.com/en/dev/ref/settings/#use-l10n
 
 .. setting:: LANGUAGE_CODE
 

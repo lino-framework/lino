@@ -32,6 +32,7 @@ import base64
 from django.conf import settings
 from django.db import models
 from django.utils.translation import ugettext_lazy as _
+from django.utils.translation import ugettext as __
 from lino.core.dbutils import get_field
 
 from lino.utils import ssin
@@ -423,12 +424,14 @@ class BeIdCardHolder(dd.Model):
     def eid_info(self,ar):
         elems = []
         if self.card_number:
-            elems += [self.card_type, " ", _("no."),' ',self.card_number]
+            elems += ["%s %s (%s)" % (__("Card no."),self.card_number, self.card_type)]
             if self.card_valid_from:
-                elems += [", ", _("valid from"),' ',dd.dtos(self.card_valid_from),_("until")," ",dd.dtos(self.card_valid_until)]
+                elems.append(", %s %s %s %s" % (
+                    __("valid from"),dd.dtos(self.card_valid_from),
+                    __("until"),dd.dtos(self.card_valid_until)))
             if self.card_issuer:
-                elems += [", ", _("issued by"),' ',self.card_issuer]
-                card_issuer = _("issued by"),
+                elems.append(", %s %s" % (__("issued by"),self.card_issuer))
+                #~ card_issuer = _("issued by"),
         else:
             #~ ba = cls.get_action_by_name('read_beid')
             #~ elems.append(ar.action_button(ba,self,_("Must read eID card!")))

@@ -72,4 +72,68 @@ This first test run on a production site caused some optimizations:
   
   
   
+North and South
+---------------
+
+.. include:: /include/tellme.rst
+
+Andrew Godwin has 
+`merged his schema-alteration branch into Django.
+<http://www.aeracode.org/2013/8/23/plan-comes-together>`_.
+Which made me read the new overview about 
+`Migrations
+<https://docs.djangoproject.com/en/dev/topics/migrations/>`_.
+
+.. _South: http://south.aeracode.org/
+
+Summary: what was called South_ is now an integral 
+part of Django, 
+and the :doc:`/about/lino_and_django` page gets 
+a new item. And it is normal to ask:
+ 
+  "Why should I use :ref:`north` to write my migrations?".
+
+My personal choice remains :ref:`north`, because I am happy with it 
+and cannot imagine to become even happier. 
+
+For the moment I can see the following differences between
+:ref:`north` and South_:
+
+- North requires a "dump-upgrade-restore" workflow.
+  The database must shut down during the migration. 
+  Which means that life migrations are not possible.  
   
+- North migrations work per :ref:`application <application>`, not 
+  per *app*.  This makes the overal concept easier to understand, 
+  and it allows the application developer to write really automatic 
+  migrations which are easy to use by local system administrators.
+  
+- I have no idea whether South_ can handle Lino-specific 
+  things like 
+  :class:`BabelCharField <north.dbutils.BabelCharField>`, 
+  :func:`inject_field <lino.core.inject.inject_field>`, 
+  ...
+
+While thinking about all this I updated the documentation pages about 
+:ref:`datamig`, 
+:ref:`backup` and 
+:ref:`dpy`.
+
+
+Hidden languages
+----------------
+
+Added new attribute :attr:`hidden_languages <north.Site.hidden_languages>`.
+That's easier than using the `hide_languages` argument to 
+:meth:`lino.core.auth.UserProfiles.reset`.
+
+:mod:`lino.modlib.system.fixtures.demo` now respects this attribute
+so that the demo database of :ref:`welfare` no longer offers a Dutch 
+root user.
+
+Fixed a layout bug which occured when 
+:attr:`hidden_languages <north.Site.hidden_languages>`
+was not `None`:
+in a form layout the wrapper around a hidden bable field 
+was still visible, creatin an empty space.
+

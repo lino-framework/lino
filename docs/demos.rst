@@ -44,7 +44,7 @@ Any changes will be lost each time we reinitialize the demo data.
     :target: http://demo4.lino-framework.org
       
     `demo4 <http://demo4.lino-framework.org>`_ 
-    shows an early prototype of Lino Così.
+    shows an early prototype of :ref:`cosi`.
 
 
   <NEXTROW>
@@ -78,9 +78,12 @@ Any changes will be lost each time we reinitialize the demo data.
   :target: http://welfare-demo.lino-framework.org
       
 `welfare-demo <http://welfare-demo.lino-framework.org>`_ 
-shows a demo version of
-`Lino-Welfare <http://welfare.lino-framework.org/>`_.
+shows a demo version of :ref:`welfare`.
 
     
+.. toctree::
+    :maxdepth: 2
+    
+    /cosi
       
       

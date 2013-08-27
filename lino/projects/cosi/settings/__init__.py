@@ -13,7 +13,7 @@
 ## along with Lino; if not, see <http://www.gnu.org/licenses/>.
 
 """
-Default settings module for a :mod:`lino.projects.cosi` project.
+Default settings module for a :ref:`cosi` project.
 """
       
 from __future__ import unicode_literals
@@ -27,6 +27,11 @@ from django.utils.translation import ugettext_lazy as _
 from lino.modlib import ledger
 
 class Site(Site,ledger.SiteMixin):
+    """
+    Base class for a :ref:`cosi` application,
+    designed to be instantiated into the :setting:`SITE` setting.
+    
+    """
   
     #~ title = __name__
     verbose_name = "Lino Così"

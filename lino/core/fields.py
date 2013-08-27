@@ -187,6 +187,7 @@ class FakeField(object):
     :class:`RemoteField`
     :class:`DisplayField`
     """
+    model = None
     choices = None
     primary_key = False
     editable = False
@@ -349,6 +350,9 @@ class VirtualField(FakeField): # (Field):
         model._meta.add_virtual_field(self)
         #~ logger.info('20120831 VirtualField %s.%s',full_model_name(model),name)
         
+    def __repr__(self):
+        return "%s %s.%s" % (self.__class__.__name__,self.model,self.name)
+        
     def lino_resolve_type(self):
         """
         Unlike attach_to_model, this is also called on virtual 
@@ -366,8 +370,8 @@ class VirtualField(FakeField): # (Field):
         #~ self.return_type.name = self.name
         if isinstance(self.return_type,models.ForeignKey):
             f = self.return_type
+            f.rel.to = resolve_model(f.rel.to)
             if f.verbose_name is None:
-                f.rel.to = resolve_model(f.rel.to)
                 #~ if f.name is None:
                 f.verbose_name = f.rel.to._meta.verbose_name
                     #~ from lino.core.kernel import set_default_verbose_name

@@ -17,15 +17,6 @@ Bis 20130902
   
 #.  Passfoto einlesen
   
-#.  Aktionen "eID einlesen" und "Create visit" aus "Arbeitsablauf" raus.
-  
-#.  CreateNote (Issue attestation) nicht als HtmlBox im Detail-Fenster, 
-    sondern "wie in TIM" als Button mit Auswahlliste statt Dialogfenster.
-    
-#.  Tabelle CoachingsByClients komplett übernehmen, mit pro Zeile zwei 
-    Aktionen "Visite"  und "Termin". Aber dann müssen diese beiden Aktionen 
-    auch auf der Phantomzeile stehen...
-    
 #.  In :ref:`welfare.cal.MyEvents`: Visiten rausfiltern
   
 #.  "Bescheinigung erstellen" für pdf-Bescheinigungen ohne Parameter 

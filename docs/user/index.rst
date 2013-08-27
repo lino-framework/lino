@@ -16,3 +16,4 @@ but more technical than the end-user docs
 
     templates_api
     configure_notes_templates
+

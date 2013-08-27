@@ -1,11 +1,11 @@
-========================================
-Playing with intelligent Python fixtures
-========================================
+============================
+Playing with Python fixtures
+============================
 
 Python fixtures are one of Lino's important features.
 We suppose that you have read at least the beginning of
 their documentation article :ref:`dpy`.
-In this tutorial we are going to show how to use *intelligent fixtures*.
+In this tutorial we are going to show how to use them.
 
 The :mod:`initdb <lino.management.commands.initdb>` command
 -----------------------------------------------------------
@@ -23,8 +23,7 @@ please read this:
 
 The words "std", "all_countries", "few_cities" etc. 
 are names of some *demo fixtures* included with Lino. 
-They are "intelligent" Python fixtures, not dumb database dumps!
-"Intelligent" means that a human has written them.
+Each of them is a Python fixture.
   
 The :mod:`initdb <lino.management.commands.initdb>` 
 command is a 
@@ -37,6 +36,7 @@ It performs three actions in one:
   from the database specified in your :xfile:`settings.py`,
  
 - then runs Django's `syncdb` command to re-create all tables,
+
 - and finally runs Django's `loaddata` command to load 
   the specified fixtures.
 
@@ -127,11 +127,11 @@ Play with them::
 Conclusion
 ----------
 
-Self-written "intelligent" fixtures are an important tool as long as 
+Python fixtures are an important tool as long as 
 
 - you are in "demo mode"
 - you are preparing your local demo database
-- you don't want your data to persistent forever
+- you don't want your data to persist forever
 - there may be important changes in the database structure
 
 

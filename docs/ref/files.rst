@@ -7,13 +7,19 @@ Files
   
 .. xfile:: linoweb.js
 
-  The template used to generate a huge monolythic .js file which 
-  contains Lino-specific Javascript functions.
-  :srcref:`/lino/extjs/linoweb.js`.
+The template used to generate a huge monolythic .js file which 
+contains Lino-specific Javascript functions.
+:srcref:`/lino/extjs/linoweb.js`.
   
 .. xfile:: setup.py
 
-  Deserves more documentation.
+Deserves more documentation.
+
+.. xfile:: models.py
+
+Every Django "app" usually has a file `models.py`.
+See `How to write reusable apps <https://docs.djangoproject.com/en/dev/intro/reusable-apps/>`_
+
 
 .. xfile:: settings.py
 
