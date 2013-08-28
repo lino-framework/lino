@@ -2,3 +2,6 @@
 /home/luc/hgwork/lino/docs/demos.rst:84: WARNING: toctree contains reference to nonexisting document u'cosi'
 /home/luc/hgwork/lino/docs/blog/2013/0821/bug.rst:: WARNING: document isn't included in any toctree
 /home/luc/hgwork/lino/docs/cosi/index.rst:: WARNING: document isn't included in any toctree
+/home/luc/hgwork/lino/docs/api/lino.utils.rst:7: WARNING: unknown document: /autodoc/lino.test_apps.mti
+/home/luc/hgwork/lino/docs/changes.rst:71: WARNING: undefined label: welfare.debts.printliabilitiesbybudget (if the link has no caption the label must precede a section header)
+/home/luc/hgwork/lino/docs/releases/index.rst:1: WARNING: unknown document: 1.6.11
