@@ -74,9 +74,6 @@ that one returns True or False while the other raises a ValidationError
 to be used in Django forms.
 The message of this ValidationError depends on the user language.
 
->>> from django.utils import translation
->>> translation.activate('en')
-
 >>> ssin_validator('123')
 Traceback (most recent call last):
 ...

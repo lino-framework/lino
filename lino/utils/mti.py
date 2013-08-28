@@ -97,6 +97,7 @@ class ChildCollector(Collector):
                     self.add_batch(related.model, field, new_objs)
                 else:
                     sub_objs = self.related_objects(related, new_objs)
+                    #~ print 20130828, related.model._meta.concrete_model
                     if not sub_objs:
                         continue
                     field.rel.on_delete(self, field, sub_objs, self.using)

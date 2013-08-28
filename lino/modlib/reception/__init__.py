@@ -23,7 +23,8 @@ User documentation see :ref:`welfare.reception`.
 """
 from lino import ad
 
-def _(s): return s
+from django.utils.translation import ugettext_lazy as _
+#~ def _(s): return s
 
 class App(ad.App):
     verbose_name = _("Reception")

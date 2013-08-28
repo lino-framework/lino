@@ -16,6 +16,14 @@
 
 """
 
-from django.utils.translation import ugettext_lazy as _
+from lino import ad
 
-MODULE_LABEL = _("Contacts")
+from django.utils.translation import ugettext_lazy as _
+#~ def _(s): return s
+
+class App(ad.App):
+    verbose_name = _("Contacts")
+
+
+
+#~ MODULE_LABEL = _("Contacts")

@@ -56,6 +56,8 @@ from lino.utils.choosers import chooser
 #~ from lino.modlib.countries.models import CountryCity
 from lino.modlib.countries.models import CountryRegionCity
 
+from lino.modlib.contacts import App
+
 #~ from lino.modlib.contacts.utils import get_salutation
 #~ from lino.modlib.contacts.utils import GENDER_CHOICES, get_salutation
 
@@ -63,7 +65,7 @@ from lino.modlib.countries.models import CountryRegionCity
 from lino.utils import mti
 
 
-from lino.modlib.contacts import MODULE_LABEL
+#~ from lino.modlib.contacts import MODULE_LABEL
 
 
 PARTNER_NUMBERS_START_AT = 100 # used for generating demo data and tests
@@ -946,7 +948,7 @@ def company_tables_alias(sender,**kw):
 
 
 def setup_main_menu(site,ui,profile,m):
-    m = m.add_menu("contacts",MODULE_LABEL)
+    m = m.add_menu("contacts",App.verbose_name)
     #~ actors = (Persons,Companies,Partners)
     #~ for m in (Person,Company,Partner):
         #~ if m._meta.abstract: 
@@ -962,8 +964,8 @@ def setup_main_menu(site,ui,profile,m):
 def setup_master_menu(site,ui,profile,m): 
     pass
     
-def setup_config_menu(site,ui,profile,m): 
-    config_contacts = m.add_menu("contacts",MODULE_LABEL)
+def setup_config_menu(site,ui,profile,m):
+    config_contacts = m.add_menu("contacts",App.verbose_name)
     config_contacts.add_action(CompanyTypes)
     config_contacts.add_action(RoleTypes)
     #~ config_contacts.add_action(site.modules.countries.Countries)
@@ -974,7 +976,7 @@ def setup_config_menu(site,ui,profile,m):
     #~ m.add_action('contacts.RoleTypes')
   
 def setup_explorer_menu(site,ui,profile,m):
-    m = m.add_menu("contacts",MODULE_LABEL)
+    m = m.add_menu("contacts",App.verbose_name)
     m.add_action(site.modules.contacts.Roles)
     #~ m.add_action(site.modules.countries.Cities)
   

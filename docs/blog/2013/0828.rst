@@ -21,3 +21,69 @@ Which might well be the case since until now I didn't have this requirement.
 Removed `set_language` and replaced it by `with translation.override('de')` 
 constructs.
 
+
+Uff, the reason for this is a bug in Django: :djangoticket`20059`.
+
+I work around this by modifying :meth:`north.Site.apply_language`
+
+LANGUAGE_CODE is what *Django* believes to be the default language.
+This should be some variant of English ('en' or 'en-us') 
+if you use `django.contrib.humanize`
+
+
+So there are two different "default languages" in a :ref:`north` 
+application: 
+
+- the "developer's" default language is the first element of
+  :attr:`north.Site.languages`.
+
+- the "user's" default language is the language returned by
+  :meth:`north.Site.get_default_language`
+
+
+
+Baustellenbesichtigung :ref:`faggio`
+------------------------------------
+
+Hier meine Todo-Liste nach der Baustellenbesichtigung :ref:`faggio`.
+
+- Für Einschreibungen fehlt das insert_layout
+
+- Pro Einschreibung den Preis in € manuell ändern können.
+
+- Tarife & Sonderpreise : 
+  in "Products" hätten wir "Bewegungskurse", "Computerkurse", "Sonstige".
+  Pro Kurs würde der Listenpreis manuell festgelegt.
+
+- Die generierten Rechnungen müssen (bis auf weiteres) alle ohne MWSt 
+  sein.
+  
+- Auf Ausdruck der Rechnung soll die Liste der Termine stehen.
+
+- Stornierte Einschreibungen sollen nicht fakturiert werden.
+
+- Ankreuzfeld "Termine unter vorbehalt" pro Kurs?
+
+- Termine nicht einzeln bestätigen. Die Termine eines Kurses werden im 
+  Büro geplant (z.B. prüfen, ob keine Feiertage drin sind) und dann mit 
+  dem Kursleiter telefonisch abgesegnet. Also wenn Kurs auf Geplant 
+  wechselt, soll Lino alle Termine auf "geplant" setzen.
+  In :ref:`faggio` brauchen wir den Eventstates.scheduled eigentlich 
+  nicht. geht direkt von draft nach took_place oder cancelled.
+
+- Buchhaltung : Kassen- und Kontoauszüge erfassen, Mahnungen schreiben
+
+- Ein Button, um alle zu erstellenden Rechnungen auf einen Klick zu 
+  generieren.
+  
+- Was ist mit "Test-Karten" bzw. "Schupperstunden"?
+
+- Was ist mit Späteinsteigern? Haben die ersten Stunden verpasst 
+  und zahlen deshalb weniger.
+  
+- Invoices to create : quick search doesn't work  
+
+- Kann man mit Lino ein einfaches Mailing  verschicken? 
+  Angebot Jahreskarten.
+  
+  

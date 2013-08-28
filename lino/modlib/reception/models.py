@@ -350,7 +350,7 @@ class ReceivedGuests(cal.Guests):
     column_names = 'since partner event__user event__summary workflow_buttons'
     order_by = ['waiting_since']
     #~ checkout = CheckoutGuest()
-    required = dd.Required(user_groups='reception integ debts newcomers')
+    required = dd.Required(user_groups='reception')
     auto_fit_column_widths = True
     
     @dd.displayfield(_('Since'))
@@ -383,7 +383,8 @@ class WaitingGuests(cal.Guests):
         return str(n)
         
 class MyWaitingGuests(WaitingGuests):
-    label = _("My Waiting Guests")
+    label = _("Waiting Guests")
+    #~ label = _("My Waiting Guests")
     required = dd.Required(user_groups='integ debts newcomers')
     column_names = 'since partner event__summary workflow_buttons'
     
@@ -399,18 +400,22 @@ class MyWaitingGuests(WaitingGuests):
 #~ def get_todo_tables(ar):
     #~ yield (MyWaitingGuests, None) 
     
+dd.add_user_group('reception',App.verbose_name)
 
 def setup_main_menu(site,ui,profile,m):
     #~ m  = m.add_menu("office",lino.OFFICE_MODULE_LABEL)
-    m  = m.add_menu("reception",_(App.verbose_name))
+    m  = m.add_menu("reception",App.verbose_name)
     #~ m  = m.add_menu("cal",cal.MODULE_LABEL)
     #~ m.add_separator("-")
     #~ m.add_action(Clients,'find_by_beid')
     #~ m.add_action(Clients)
     #~ m.add_action(ExpectedGuests)
-    m.add_action(WaitingGuests)
+    m.add_action(MyWaitingGuests)
     m.add_action(ReceivedGuests)
     #~ m.add_action(ExpectedGuests,params=dict(param_values=dict(only_expected=True)))
     #~ m.add_action(WaitingGuests,params=dict(param_values=dict(only_waiting=True)))
 
-dd.add_user_group('reception',_(App.verbose_name))
+def setup_explorer_menu(site,ui,profile,m):
+    m  = m.add_menu("reception",App.verbose_name)
+    m.add_action(WaitingGuests)
+    

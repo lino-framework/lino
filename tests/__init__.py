@@ -51,14 +51,14 @@ class UtilsTests(LinoTestCase):
     def test_07(self): self.run_simple_doctests('lino/utils/demonames.py')
     def test_08(self): self.run_simple_doctests('lino/utils/odsreader.py')
     
-    def test_10(self): self.run_simple_doctests('lino/utils/ssin.py')
+    def test_ssin(self): self.run_simple_doctests('lino/utils/ssin.py')
     #~ def test_11(self): self.run_simple_doctests('lino/core/choicelists.py')
-    def test_12(self): self.run_simple_doctests('lino/utils/jsgen.py')
-    def test_13(self): self.run_simple_doctests('lino/utils/ranges.py')
+    def test_jsgen(self): self.run_simple_doctests('lino/utils/jsgen.py')
+    def test_ranges(self): self.run_simple_doctests('lino/utils/ranges.py')
 
-    def test_24(self): self.run_simple_doctests('lino/modlib/ledger/utils.py')
-    def test_25(self): self.run_simple_doctests('lino/modlib/accounts/utils.py')
-    def test_26(self): self.run_simple_doctests('lino/modlib/contacts/utils.py')
+    def test_ledger_utils(self): self.run_simple_doctests('lino/modlib/ledger/utils.py')
+    def test_accounts_utils(self): self.run_simple_doctests('lino/modlib/accounts/utils.py')
+    def test_contacts_utils(self): self.run_simple_doctests('lino/modlib/contacts/utils.py')
     def test_cal_utils(self): self.run_simple_doctests('lino/modlib/cal/utils.py')
 
 class I18nTests(LinoTestCase):

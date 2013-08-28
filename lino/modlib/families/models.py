@@ -23,6 +23,7 @@ from django.utils.translation import ugettext_lazy as _
 from django.conf import settings
 from django.db import models
 
+
 #~ from lino.modlib.families import App
 from lino import dd
 
@@ -145,8 +146,9 @@ class Child(dd.Model):
     #~ type = LinkTypes.field()
     
 
-from lino.modlib.contacts import MODULE_LABEL
+#~ from lino.modlib.contacts import MODULE_LABEL
+from lino.modlib.contacts import App
 
 def setup_explorer_menu(site,ui,profile,m):
-    m  = m.add_menu("contacts",MODULE_LABEL)
+    m  = m.add_menu("contacts",App.verbose_name)
     m.add_action(Couples)

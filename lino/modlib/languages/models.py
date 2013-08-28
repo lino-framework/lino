@@ -26,7 +26,7 @@ from django.conf import settings
 from lino import dd
 from django.utils.translation import ugettext_lazy as _
 
-from lino.modlib.contacts import MODULE_LABEL
+#~ from lino.modlib.contacts import MODULE_LABEL
 
 
 #~ class Language(dd.Model):
@@ -52,9 +52,9 @@ class Languages(dd.Table):
 
 
 
-
+from lino.modlib.contacts import App
 
 def setup_config_menu(site,ui,profile,m): 
-    m = m.add_menu("contacts",MODULE_LABEL)
+    m = m.add_menu("contacts",App.verbose_name)
     m.add_action(Languages)
 

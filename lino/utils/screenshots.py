@@ -22,10 +22,9 @@ import os
 import subprocess
 
 from django.conf import settings
+from django.utils import translation
 
 from atelier.sphinxconf import Django2rstDirective
-
-from djangosite.dbutils import set_language
 
 from lino.core import actors
 from lino.core import constants
@@ -39,7 +38,7 @@ class ScreenshotDirective(Django2rstDirective):
         assert len(self.content) == 0
         assert len(self.arguments) == 1
         ss = SCREENSHOTS[self.arguments[0]]
-        return "\n\n.. image:: %s\n\n" % ss.get_filename(set_language())
+        return "\n\n.. image:: %s\n\n" % ss.get_filename(translation.get_language())
         
 
 def get_screenshots(language):
