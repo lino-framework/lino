@@ -13,6 +13,7 @@
 ## along with Lino; if not, see <http://www.gnu.org/licenses/>.
 
 """
+The :xfile:`models.py` module of :mod:`lino.modlib.events`.
 """
 
 from __future__ import unicode_literals
@@ -27,8 +28,8 @@ from django.conf import settings
 from django.utils.translation import ugettext_lazy as _
 
 from lino.utils.xmlgen.html import E
-from north import dbutils
-from lino import mixins
+#~ from north import dbutils
+#~ from lino import mixins
 from lino import dd
 from lino.core.constants import _handle_attr_name
 
@@ -65,7 +66,7 @@ class Type(dd.BabelNamed):
 class Types(dd.Table):
     model = Type
     
-class Event(dd.BabelNamed): 
+class Event(dd.BabelNamed):
     date = models.DateField(_("Date"))
     place = dd.ForeignKey(Place,blank=True,null=True)
     type = dd.ForeignKey(Type)
@@ -74,7 +75,7 @@ class Event(dd.BabelNamed):
     #~ description = dd.BabelTextField(format='plain',blank=True)
     url = models.URLField(blank=True)
 
-class Stage(mixins.Sequenced): 
+class Stage(dd.Sequenced): 
     event = dd.ForeignKey('events.Event',related_name="stages")
     city = dd.ForeignKey('countries.City',related_name="stages")
     
@@ -83,7 +84,6 @@ class Stage(mixins.Sequenced):
     
     def get_siblings(self):
         return self.event.stages.order_by('seqno')
-    
 
 dd.update_field(Event,'name',blank=True)
 
@@ -106,7 +106,8 @@ class Events(dd.Table):
     
     @dd.displayfield(_("When"))
     def when(self,obj,ar):
-        rv = dbutils.dtosl(obj.date)
+        #~ rv = dbutils.dtosl(obj.date)
+        rv = dd.fdf(obj.date)
         if obj.url:
             rv = '\n'.join(rv.split()) # replaces spaces by newline to avoid large column
             rv = E.a(rv,href=obj.url)

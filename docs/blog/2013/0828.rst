@@ -1,0 +1,23 @@
+====================================
+20130828 (Wednesday, 28 August 2013)
+====================================
+
+Started to tidy up the :ref:`welfare` test suite.
+One failure caused already some work and is still not fixed::
+
+    FAIL: test_apnumber (django.contrib.humanize.tests.HumanizeTests)
+    ----------------------------------------------------------------------
+    Traceback (most recent call last):
+      File "/home/luc/pythonenvs/py27/local/lib/python2.7/site-packages/django/contrib/humanize/tests.py", line 121, in test_apnumber
+        self.humanize_tester(test_list, result_list, 'apnumber')
+      File "/home/luc/pythonenvs/py27/local/lib/python2.7/site-packages/django/contrib/humanize/tests.py", line 47, in humanize_tester
+        msg="%s test failed, produced '%s', should've produced '%s'" % (method, rendered, result))
+    AssertionError: apnumber test failed, produced 'ein', should've produced 'one'
+
+This is obviously because `django.contrib.humanize` is now in installed_apps.
+And it seems that some tests there rely on the fact that the 
+language hasn't been modified by previous test cases.
+Which might well be the case since until now I didn't have this requirement.
+Removed `set_language` and replaced it by `with translation.override('de')` 
+constructs.
+

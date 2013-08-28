@@ -36,10 +36,9 @@ Documented classes and functions
 
 import os
 import logging
-from django.utils.importlib import import_module
-
 logger = logging.getLogger(__name__)
 
+from django.utils.importlib import import_module
 from django.utils.translation import ugettext_lazy as _
 
 from django.core import exceptions
@@ -263,7 +262,6 @@ class UserProfiles(ChoiceList):
     membership_keys = ('level',)
     
     preferred_foreignkey_width = 20 
-    
     
     hidden_languages = settings.SITE.hidden_languages
     """

@@ -36,6 +36,7 @@ from django.db import models
 from django.conf import settings
 from django.http import HttpResponse, Http404
 from django.utils import functional
+from django.utils import translation
 from django.utils.encoding import force_unicode
 from django.db.models.fields.related import SingleRelatedObjectDescriptor
 #~ from django.utils.functional import Promise
@@ -823,15 +824,16 @@ tinymce.init({
             count = 0
             #~ langs = settings.SITE.AVAILABLE_LANGUAGES
             for lng in settings.SITE.languages:
-                dd.set_language(lng.django_code)
-                for profile in dd.UserProfiles.objects():
-                    count += self.build_js_cache_for_profile(profile,force)
+                with translation.override(lng.django_code):
+                #~ dd.set_language(lng.django_code)
+                    for profile in dd.UserProfiles.objects():
+                        count += self.build_js_cache_for_profile(profile,force)
             #~ qs = users.User.objects.exclude(profile='')
             #~ for lang in langs:
                 #~ dd.set_language(lang)
                 #~ for user in qs:
                     #~ count += self.build_js_cache_for_user(user,force)
-            dd.set_language(None)
+            #~ dd.set_language(None)
                 
             logger.info("%d lino*.js files have been built in %s seconds.",
                 count,time.time()-started)

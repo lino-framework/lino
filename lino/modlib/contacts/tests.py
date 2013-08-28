@@ -27,6 +27,7 @@ from __future__ import unicode_literals
 from pprint import pprint
 
 from django.conf import settings
+from django.utils import translation
 
 from djangosite.utils.djangotest import RemoteAuthTestCase
 from django.test.utils import override_settings
@@ -95,9 +96,9 @@ class QuickTest(RemoteAuthTestCase):
         and not properly reset.
         """
         
-        #~ if 'en' in settings.SITE.AVAILABLE_LANGUAGES:
         if settings.SITE.get_language_info('en'):
-            dbutils.set_language('en')
+          with translation.override('en'):
+            #~ dbutils.set_language('en')
             self.assertEquals(luc.address, u'''\
 Mr Luc SAFFRE
 Uus 1
@@ -106,14 +107,15 @@ Vana-Vigala küla
 Estonia''')
 
         if settings.SITE.get_language_info('de'):
-            dbutils.set_language('de')
+          with translation.override('de'):
+            #~ dbutils.set_language('de')
             self.assertEquals(luc.address, u'''\
 Herrn Luc SAFFRE
 Uus 1
 Vana-Vigala küla
 78003 Vigala
 Estland''')
-        dbutils.set_language(None)
+        #~ dbutils.set_language(None)
         
         
             

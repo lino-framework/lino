@@ -106,10 +106,10 @@ Cash flow statement
 
 French users will see:
 
->>> from north.dbutils import set_language
->>> set_language('fr')
->>> for s in Sheet.objects:
-...     print unicode(s.verbose_name)
+>>> from django.utils import translation
+>>> with translation.override('fr'):
+...     for s in Sheet.objects:
+...         print unicode(s.verbose_name)
 Bilan
 Compte de résultats
 Tableau de financement

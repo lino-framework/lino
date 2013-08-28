@@ -20,7 +20,8 @@ logger = logging.getLogger(__name__)
 import traceback
 #~ from django.utils.translation import ugettext as _
 from django.utils.translation import ugettext_lazy as _
-from north.dbutils import set_language
+from django.utils import translation
+#~ from north.dbutils import set_language
 from django.utils.encoding import force_unicode
 from django.conf import settings
 from django import http
@@ -248,7 +249,7 @@ class BaseRequest(object):
         msg.send()
         logger.info("System note '%s' from %s has been sent to %s",subject,sender,recipients)
         
-    def spawn(self,spec,language=None,**kw):
+    def spawn(self,spec,**kw):
         """
         Create a new ActionRequest, taking an "action specificator" 
         and using default values from this one.
@@ -271,8 +272,6 @@ class BaseRequest(object):
             kw.setdefault('renderer',self.renderer)
             kw.setdefault('requesting_panel',self.requesting_panel)
             spec = mi.bound_action.request(**kw)
-        if language:
-            spec.set_language(language)
         #~ ar.user = self.user
         #~ ar.subst_user = self.subst_user
         #~ ar.renderer = self.renderer
@@ -288,12 +287,16 @@ class BaseRequest(object):
         """
         return thing.run_from_session(self,*args,**kw)
         
-    def set_language(self,*args):
-        set_language(*args)
+    #~ def set_language(self,*args):
+        #~ set_language(*args)
         
-    def show(self,spec,column_names=None,**kw):
+    def show(self,spec,column_names=None,language=None,**kw):
         ar = self.spawn(spec,**kw)
         #~ print ar.to_rst(column_names)
+        if language:
+            #~ spec.set_language(language)
+            with translation.override(language):
+                return ar.renderer.show(ar,column_names=column_names)
         return ar.renderer.show(ar,column_names=column_names)
         
     def summary_row(self,obj,**kw): return obj.summary_row(self,**kw)

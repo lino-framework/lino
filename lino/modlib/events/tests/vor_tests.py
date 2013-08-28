@@ -14,7 +14,7 @@ from django.conf import settings
 from django.utils.encoding import force_unicode
 from django.utils import translation
 from django.core.exceptions import ValidationError
-
+from django.utils import translation
 
 #~ from django.utils import unittest
 #~ from django.test.client import Client
@@ -35,17 +35,18 @@ class DemoTest(TestCase):
 
     def test_01(self):
         etypes = settings.SITE.modules.events.Type.objects.order_by('id')
-        dbutils.set_language('de')
-        lst = [unicode(obj) for obj in etypes]
-        expected = ['Breitensport',
-         'Radrennen Stra\xdfe',
-         'MTB Rennen \u2265 15-j\xe4hrige',
-         'Mountainbike Rennsport -- Kids Trophy O2 Biker/V.O.R.-Lotto']    
-        self.assertEqual(lst,expected)
-        
-        s = etypes[0].EventsByType().to_rst()
-        #~ print s
-        expected = """\
+        #~ dbutils.set_language('de')
+        with translation.override('de'):
+            lst = [unicode(obj) for obj in etypes]
+            expected = ['Breitensport',
+             'Radrennen Stra\xdfe',
+             'MTB Rennen \u2265 15-j\xe4hrige',
+             'Mountainbike Rennsport -- Kids Trophy O2 Biker/V.O.R.-Lotto']    
+            self.assertEqual(lst,expected)
+            
+            s = etypes[0].EventsByType().to_rst()
+            #~ print s
+            expected = """\
 +------------------------------+--------------------------------------------------+---------------------------------------+
 | Wann                         | Was                                              | Wo                                    |
 +==============================+==================================================+=======================================+
@@ -64,5 +65,5 @@ class DemoTest(TestCase):
 | 2013 <http://www.vclc.be>`__ |                                                  |                                       |
 +------------------------------+--------------------------------------------------+---------------------------------------+
 """
-        self.assertEqual(s,expected)
+            self.assertEqual(s,expected)
         

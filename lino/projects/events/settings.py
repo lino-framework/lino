@@ -38,7 +38,8 @@ class Site(Site):
     
     demo_fixtures = 'std few_countries few_cities vor'.split()
     
-    languages = ['de','fr','nl']
+    languages = 'de fr nl'
+    #~ languages = ['de','fr','nl']
     #~ languages = 'de fr et en'.split()
     
             

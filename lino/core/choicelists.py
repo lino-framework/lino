@@ -26,8 +26,6 @@ One thing to avoid doctest side-effects is not necessary in your code:
 >>> from lino.core.choicelists import *
 
 >>> from django.utils import translation
->>> translation.activate('en')
-
 
 >>> for value,text in choicelist_choices():
 ...     print "%s : %s" % (value, unicode(text))
@@ -48,8 +46,8 @@ F : Female
 >>> print unicode(Genders.male)
 Male
 
->>> translation.activate('de')
->>> print unicode(Genders.male)
+>>> with translation.override('de'):
+...    print unicode(Genders.male)
 Männlich
 
 >>> print str(Genders.male)

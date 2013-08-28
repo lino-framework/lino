@@ -205,8 +205,9 @@ def startup_site(self):
                 #~ else:
                     #~ logger.info(msg)
             elif isinstance(f,models.ForeignKey):
+                #~ f.rel.to = dd.resolve_model(f.rel.to,strict=True)
                 if isinstance(f.rel.to,basestring):
-                    raise Exception("%s %s relates to %r" % (model,f.name,f.rel.to))
+                    raise Exception("%s %s relates to %r (models are %s)" % (model,f.name,f.rel.to,models_list))
                 set_default_verbose_name(f)
                     
                 """

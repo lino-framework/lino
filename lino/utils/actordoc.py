@@ -36,6 +36,7 @@ from sphinx import addnodes
 from django.db import models
 from django.conf import settings
 from django.utils.translation import ugettext_lazy as _
+from django.utils import translation 
 from django.utils.encoding import force_unicode
 
 
@@ -46,7 +47,7 @@ from lino.core import dbtables
 from atelier.utils import unindent
 from atelier import rstgen
 from djangosite.dbutils import full_model_name
-from djangosite.dbutils import set_language
+#~ from djangosite.dbutils import set_language
 
 from atelier.sphinxconf import Django2rstDirective
 
@@ -174,9 +175,10 @@ if False:
             #~ return super(ActorDocumenter,self).import_object()
             
         def generate(self, *args,**kw):
-            lng = self.env.config.language
-            set_language(lng)
-            return super(ActorDocumenter,self).generate( *args,**kw)
+            with translation.override(self.env.config.language):
+            #~ lng = self.env.config.language
+            #~ set_language(lng)
+                return super(ActorDocumenter,self).generate( *args,**kw)
             
 
         def get_doc(self, encoding=None, ignore=1):
@@ -235,15 +237,16 @@ if False:
 class ActorsOverviewDirective(Django2rstDirective):
     def get_rst(self):
         lng = self.state.document.settings.env.config.language
-        set_language(lng)
-        actor_names = ' '.join(self.content).split()
-        items = []
-        for an in actor_names:
-            cls = settings.SITE.modules.resolve(an)
-            if not isinstance(cls,type):
-                raise Exception("%s is not an actor." % self.content[0])
-            items.append("%s : %s" % (actor_ref(cls),cls.help_text or ''))
-        return rstgen.ul(items)
+        with translation.override(lng):
+            #~ set_language(lng)
+            actor_names = ' '.join(self.content).split()
+            items = []
+            for an in actor_names:
+                cls = settings.SITE.modules.resolve(an)
+                if not isinstance(cls,type):
+                    raise Exception("%s is not an actor." % self.content[0])
+                items.append("%s : %s" % (actor_ref(cls),cls.help_text or ''))
+            return rstgen.ul(items)
     
 class LinoTableDirective(Django2rstDirective):
     #~ has_content = False
@@ -253,36 +256,36 @@ class LinoTableDirective(Django2rstDirective):
         #~ from actordoc import get_actor_description
         #~ from django.conf import settings
         #~ from djangosite.dbutils import set_language
-
-        lng = self.state.document.settings.env.config.language
-        set_language(lng)
-        cls = settings.SITE.modules.resolve(self.content[0])
-        if not isinstance(cls,type):
-            raise Exception("%s is not an actor." % self.content[0])
-        if issubclass(cls,actors.Actor):
-          
-            if issubclass(cls,dbtables.Table):
-                if cls.model is not None:
-                    if cls.model.get_default_table() is cls:
-                        self.add_model_index_entry(cls.model)
-                        #~ name = settings.SITE.userdocs_prefix + full_model_name(cls.model)
-                        #~ s += '\n\n.. _'+ name + ':\n\n'
-                    
-          
-            title = force_unicode(cls.label or cls.title)
-            indextext = _('%s (table in module %s)') % (title,cls.app_label)
-            name = settings.SITE.userdocs_prefix + str(cls)
-            self.index_entries.append(('single', indextext, name, ''))
-            self.add_ref_target(name)
-            
-            s = ''
-            s += '\n\n.. _'+ settings.SITE.userdocs_prefix + str(cls) + ':\n\n'
-            s += rstgen.header(3,title)
-            s += '\n\n'
-            s += get_actor_description(cls)
-            s += '\n\n'
-            return s
-        raise Exception("Cannot handle actor %r." % cls)
+        with translation.override(self.state.document.settings.env.config.language):
+        #~ lng = self.state.document.settings.env.config.language
+        #~ set_language(lng)
+            cls = settings.SITE.modules.resolve(self.content[0])
+            if not isinstance(cls,type):
+                raise Exception("%s is not an actor." % self.content[0])
+            if issubclass(cls,actors.Actor):
+              
+                if issubclass(cls,dbtables.Table):
+                    if cls.model is not None:
+                        if cls.model.get_default_table() is cls:
+                            self.add_model_index_entry(cls.model)
+                            #~ name = settings.SITE.userdocs_prefix + full_model_name(cls.model)
+                            #~ s += '\n\n.. _'+ name + ':\n\n'
+                        
+              
+                title = force_unicode(cls.label or cls.title)
+                indextext = _('%s (table in module %s)') % (title,cls.app_label)
+                name = settings.SITE.userdocs_prefix + str(cls)
+                self.index_entries.append(('single', indextext, name, ''))
+                self.add_ref_target(name)
+                
+                s = ''
+                s += '\n\n.. _'+ settings.SITE.userdocs_prefix + str(cls) + ':\n\n'
+                s += rstgen.header(3,title)
+                s += '\n\n'
+                s += get_actor_description(cls)
+                s += '\n\n'
+                return s
+            raise Exception("Cannot handle actor %r." % cls)
             
     def add_ref_target(self, fullname):
         #~ fullname = settings.SITE.userdocs_prefix  + str(cls)
