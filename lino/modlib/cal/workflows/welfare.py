@@ -53,6 +53,12 @@ from lino.utils.xmlgen.html import E
 from lino.modlib.cal.workflows import (TaskStates,
     EventStates,GuestStates)
 
+add = EventStates.add_item
+#~ add('20', _("Draft"), 'draft')
+#~ add('30', _("Notified"),'notified')
+add('30', _("Visit"), 'visit')
+add('40', _("Scheduled"), 'scheduled')
+EventStates.editable_states.add(EventStates.visit)
 
 class InvitationFeedback(dd.ChangeStateAction,dd.NotifyingAction):
     def get_action_permission(self,ar,obj,state):

@@ -16,20 +16,21 @@
 Defines classes :class:`Frame` and :class:`FrameHandle`
 """
 
+import logging
+logger = logging.getLogger(__name__)
+
+import datetime
+from decimal import Decimal
+
 
 from django.conf import settings
 from django.db import models
 from django.utils.translation import ugettext_lazy as _
 from django.core.exceptions import ValidationError
 from django.contrib.contenttypes import generic
-
-import datetime
-
-from decimal import Decimal
+from django.db.models.fields import NOT_PROVIDED
 
 
-import logging
-logger = logging.getLogger(__name__)
 
 from djangosite.dbutils import full_model_name
 from djangosite.dbutils import obj2str
@@ -181,6 +182,7 @@ class NullCharField(models.CharField): #subclass the CharField
        else:
             return value # otherwise, just pass the value        
 
+
 class FakeField(object):
     """
     Base class for 
@@ -198,6 +200,7 @@ class FakeField(object):
     preferred_height = 3
     max_digits = None
     decimal_places = None
+    default = NOT_PROVIDED
     
     def is_enabled(self,lh):
         """
@@ -208,7 +211,8 @@ class FakeField(object):
         #~ return not self.editable
         
     def has_default(self):
-        return False
+        return self.default is not NOT_PROVIDED
+        
         
 
 #~ class NullField(FakeField):

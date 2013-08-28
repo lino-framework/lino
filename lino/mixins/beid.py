@@ -32,7 +32,8 @@ import base64
 from django.conf import settings
 from django.db import models
 from django.utils.translation import ugettext_lazy as _
-from django.utils.translation import ugettext as __
+#~ from django.utils.translation import ugettext as __
+from django.utils.translation import ugettext 
 from lino.core.dbutils import get_field
 
 from lino.utils import ssin
@@ -420,17 +421,17 @@ class BeIdCardHolder(dd.Model):
             return False
         return True
         
-    @dd.displayfield(_("eID card"))
+    @dd.displayfield(_("eID card"),default='<br/><br/><br/><br/>')
     def eid_info(self,ar):
         elems = []
         if self.card_number:
-            elems += ["%s %s (%s)" % (__("Card no."),self.card_number, self.card_type)]
+            elems += ["%s %s (%s)" % (ugettext("Card no."),self.card_number, self.card_type)]
             if self.card_valid_from:
                 elems.append(", %s %s %s %s" % (
-                    __("valid from"),dd.dtos(self.card_valid_from),
-                    __("until"),dd.dtos(self.card_valid_until)))
+                    ugettext("valid from"),dd.dtos(self.card_valid_from),
+                    ugettext("until"),dd.dtos(self.card_valid_until)))
             if self.card_issuer:
-                elems.append(", %s %s" % (__("issued by"),self.card_issuer))
+                elems.append(", %s %s" % (ugettext("issued by"),self.card_issuer))
                 #~ card_issuer = _("issued by"),
         else:
             #~ ba = cls.get_action_by_name('read_beid')

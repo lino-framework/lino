@@ -1391,7 +1391,7 @@ class DisplayElement(FieldElement):
         return self.field.value_from_object(obj,ar)
         
     def format_value(self,ar,v):
-        from lino.utils.xmlgen.html import E
+        #~ from lino.utils.xmlgen.html import E
         from lino.utils.xmlgen.html import html2rst
         if etree.iselement(v): 
             return html2rst(v)

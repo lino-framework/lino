@@ -50,17 +50,22 @@ class EventStates(dd.Workflow):
     required = dd.required(user_level='admin')
     help_text = _("""The possible states of a calendar event.""")
     app_label = 'cal'
+    editable_states = set()
         
 add = EventStates.add_item
 add('10', _("Suggested"), 'suggested',help_text=_("Automatically suggested. Default state of an automatic event."))
 add('20', _("Draft"), 'draft')
-#~ add('30', _("Notified"),'notified')
-add('30', _("Visit"), 'visit')
-add('40', _("Scheduled"), 'scheduled')
+if False:
+    #~ add('30', _("Notified"),'notified')
+    add('30', _("Visit"), 'visit')
+    add('40', _("Scheduled"), 'scheduled')
 add('50', _("Took place"),'took_place')
 add('60', _("Rescheduled"),'rescheduled')
 add('70', _("Cancelled"),'cancelled')
 #~ add('80', _("Absent"),'absent')
+
+EventStates.editable_states.add(EventStates.suggested)
+EventStates.editable_states.add(EventStates.draft)
 
 class GuestState(dd.State):
     afterwards = False

@@ -87,3 +87,9 @@ Hier meine Todo-Liste nach der Baustellenbesichtigung :ref:`faggio`.
   Angebot Jahreskarten.
   
   
+The `eid_info` field
+--------------------
+
+Replaced `eid_panel` in `pcsw.ClientDetail` by `eid_info`.
+Optimizations and German translations.
+

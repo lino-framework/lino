@@ -918,7 +918,7 @@ Indicates that this Event shouldn't prevent other Events at the same time."""))
         
         
     def is_editable_state(self):
-        return self.state in (EventStates.suggested, EventStates.draft, EventStates.visit)
+        return self.state in EventStates.editable_states 
 
     def is_user_modified(self):
         return self.state != EventStates.suggested
@@ -1271,8 +1271,6 @@ if settings.SITE.user_model:
         #~ column_names = 'start_date start_time calendar project summary workflow_buttons *'
         #~ column_names = 'when_text:20 calendar project summary *'
         column_names = 'when_text summary workflow_buttons project'
-        exclude = dict(state=EventStates.visit)
-        
         
         @classmethod
         def param_defaults(self,ar,**kw):
