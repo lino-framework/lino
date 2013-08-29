@@ -42,13 +42,19 @@ Until now I used a special EventState "visit" which was neither
 pending nor okay. I thought that this is okay because visits are 
 created on the fly and do not participate in the standard 
 calendar workflow.
+But then the scales fell from my eyes and I understood that they 
+must "just" have their own calendar.
+And then a new BooleanField `Calendar.is_appointment` which is False 
+for this calendar, meaning that this calendar's events are "no real 
+appointments", iow concretely: that they are not displayed in MyEvents 
+by default.
 
 Renamed `EventStates.scheduled` to `EventStates.published`.
 And I believe that for :ref:`faggio` we will then change our mind and 
 want this state.
 Also renamed `CourseStates.scheduled` to `CourseStates.published`.
 
-
+Lots of other little optimizations.
 
 Permalink when session is not authenticated
 -------------------------------------------
@@ -79,4 +85,5 @@ Code changes:
   If the login fails or the user has no right to see that table, 
   then the permalink will simply render an empty screen.
 
+Checkin and upgrade the :ref:`demos` to the newest development version.
 
