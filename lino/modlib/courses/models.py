@@ -451,7 +451,7 @@ def setup_event_from_course(sender=None,instance=None,**kw):
     if settings.SITE.loading_from_dump: return
     event = instance
     if event.is_user_modified(): return
-    if not event.is_editable_state(): return
+    if event.is_fixed_state(): return
     if not isinstance(event.owner,Course): return
     course = event.owner
     event.project = course
@@ -474,7 +474,7 @@ if Course.FILL_EVENT_GUESTS:
         if settings.SITE.loading_from_dump: return
         event = instance
         if event.is_user_modified(): return
-        if not event.is_editable_state(): return
+        if event.is_fixed_state(): return
         if not isinstance(event.owner,Course): return
         course = event.owner
         if event.guest_set.count() > 0: return

@@ -49,6 +49,9 @@ cal = dd.resolve_app('cal')
 
 from lino.modlib.cal.models import GuestStates, EventStates
 
+#~ EventStates.add_item('30', _("Visit"), 'visit',fixed=False)
+
+
 from lino.modlib.reception import App
 from lino.mixins import beid
 
@@ -69,17 +72,51 @@ dd.inject_field('cal.Guest','present_until',
     help_text = _("Time when the visitor left (checked out).")))
     
 
-dd.inject_field('system.SiteConfig','client_guestrole',
-    dd.ForeignKey('cal.GuestRole',
-        verbose_name=_("Guest role for clients"),
-        related_name='client_guestroles',
-        blank=True,null=True))    
-    
 dd.inject_field('system.SiteConfig','client_calender',
     dd.ForeignKey('cal.Calendar',
         verbose_name=_("Default calendar for client events"),
         related_name='client_calendars',
         blank=True,null=True))    
+    
+dd.inject_field('system.SiteConfig','prompt_calendar',
+    dd.ForeignKey('cal.Calendar',
+        verbose_name=_("Default calendar for prompt events"),
+        related_name='prompt_calendars',
+        blank=True,null=True))    
+    
+#~ dd.inject_field('cal.Event','is_prompt',
+    #~ models.BooleanField(_("Prompt event"),default=False))    
+
+def create_prompt_event(project,partner,user,summary,guest_role):
+    """
+    Create a "prompt event".
+    """
+    ekw = dict(project=project) 
+    #~ ekw.update(state=cal.EventStates.draft)
+    #~ ekw.update(state=EventStates.scheduled)
+    today = datetime.date.today()
+    ekw.update(start_date=today)
+    ekw.update(end_date=today)
+    ekw.update(calendar=settings.SITE.site_config.prompt_calendar)
+    #~ ekw.update(state=EventStates.visit)
+    ekw.update(state=EventStates.accepted)
+    ekw.update(user=user)
+    if summary:
+        ekw.update(summary=summary)
+    event = cal.Event(**ekw)
+    event.save()
+    cal.Guest(
+        event=event,
+        partner=partner,
+        state=cal.GuestStates.present,
+        role=guest_role,
+        #~ role=settings.SITE.site_config.client_guestrole,
+        waiting_since=datetime.datetime.now()
+    ).save()
+    #~ event.full_clean()
+    #~ print 20130722, ekw, ar.action_param_values.user, ar.get_user()
+    return event
+
     
 
     

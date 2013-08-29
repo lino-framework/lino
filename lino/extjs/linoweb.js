@@ -379,7 +379,7 @@ Lino.insert_subst_user = function(p){
 Lino.login_window = null;
 
 
-Lino.show_login_window = function() {
+Lino.show_login_window = function(on_login) {
   //~ console.log('20121103 show_login_window',arguments);
   //~ var current_window = Lino.current_window;
   if (Lino.login_window == null) {
@@ -395,8 +395,14 @@ Lino.show_login_window = function() {
                   //~ console.log('20121104 logged in',arguments);
                   Lino.login_window.hide();
                   Lino.close_all_windows();
-                  Lino.viewport.loadMask.hide()
-                  //~ Lino.body_loadMask.hide()
+                  Lino.viewport.loadMask.hide();
+                  if (on_login) {
+                      console.log("20130829 on_login",on_login);
+                      alert("20130829 on_login gonna load_url");
+                      Lino.load_url(on_login);
+                      //~ eval(on_login);
+                  }
+                  //~ Lino.body_loadMask.hide();
                 },
                 failure: function(form,action) { 
                   //~ this.loadMask.hide();

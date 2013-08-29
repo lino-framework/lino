@@ -56,9 +56,8 @@ from lino.modlib.cal.workflows import (TaskStates,
 add = EventStates.add_item
 #~ add('20', _("Draft"), 'draft')
 #~ add('30', _("Notified"),'notified')
-add('30', _("Visit"), 'visit')
-add('40', _("Scheduled"), 'scheduled')
-EventStates.editable_states.add(EventStates.visit)
+add('40', _("Scheduled"), 'scheduled',fixed=True)
+#~ EventStates.editable_states.add(EventStates.visit)
 
 class InvitationFeedback(dd.ChangeStateAction,dd.NotifyingAction):
     def get_action_permission(self,ar,obj,state):
@@ -89,7 +88,7 @@ class ResetEvent(dd.ChangeStateAction):
     label = _("Reset")
     icon_file = 'cancel.png'
     #~ required = dict(states='assigned',owner=True)
-    required = dict(states='scheduled rescheduled draft took_place')#,owner=True)
+    required = dict(states='scheduled rescheduled took_place')#,owner=True)
     #~ help_text=_("Return to Draft state and restart workflow for this event.")
   
     def unused_run_from_ui(self,obj,ar,**kw):
@@ -242,7 +241,7 @@ def my_setup_workflows(sender=None,**kw):
         #~ if site.loading_from_dump: return
         #~ self = instance
         #~ if not self.is_user_modified(): return
-        #~ if not self.is_editable_state(): return 
+        #~ if self.is_fixed_state(): return 
         #~ if self.calendar and self.calendar.invite_team_members:
             #~ if self.guest_set.all().count() == 0:
                 #~ ug = self.calendar.invite_team_members

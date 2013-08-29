@@ -99,11 +99,11 @@ def action_request(app_label,actor,request,rqdata,is_list,**kw):
         raise http.Http404("%s has no url action %r (possible values are %s)" % (
             rpt,action_name,rpt.get_url_action_names()))
     user = request.subst_user or request.user
-    if not a.get_view_permission(user.profile):
-        #~ raise Http403(_("As %s you have no permission to run this action.") % user.profile)
-        raise exceptions.PermissionDenied(
-            _("As %s you have no permission to run this action.") % user.profile)
-        #~ return http.HttpResponseForbidden(_("As %s you have no permission to run this action.") % user.profile)
+    if False: # 20130829
+        if not a.get_view_permission(user.profile):
+            raise exceptions.PermissionDenied(
+                _("As %s you have no permission to run this action.") % user.profile)
+            #~ return http.HttpResponseForbidden(_("As %s you have no permission to run this action.") % user.profile)
     ar = rpt.request(request=request,action=a,**kw)
     #~ ar.renderer = settings.SITE.ui.ext_renderer
     return ar

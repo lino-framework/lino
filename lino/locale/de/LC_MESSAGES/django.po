@@ -8,7 +8,7 @@ msgstr ""
 "Project-Id-Version: lino.modlib.systen\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2013-08-28 22:33+0300\n"
-"PO-Revision-Date: 2013-08-28 22:37+0300\n"
+"PO-Revision-Date: 2013-08-29 04:18+0300\n"
 "Last-Translator: Luc Saffre <luc.saffre@gmx.net>\n"
 "Language-Team: \n"
 "Plural-Forms: nplurals=2; plural=(n != 1)\n"
@@ -1634,7 +1634,7 @@ msgstr ""
 #: lino/modlib/cal/models.py:1141
 #: lino/modlib/cal/models.py:1465
 msgid "Managed by"
-msgstr ""
+msgstr "Verwaltet durch"
 
 #: lino/modlib/cal/models.py:1143
 #: lino/modlib/cal/models.py:1467

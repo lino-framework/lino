@@ -45,27 +45,31 @@ add('30', _("Done"),'done')
 #~ add('40', _("Sleeping"),'sleeping')
 add('50', _("Cancelled"),'cancelled')
 
+class EventState(dd.State):
+    fixed = False
     
 class EventStates(dd.Workflow):
     required = dd.required(user_level='admin')
     help_text = _("""The possible states of a calendar event.""")
     app_label = 'cal'
-    editable_states = set()
+    item_class = EventState
+    #~ editable_states = set()
         
 add = EventStates.add_item
-add('10', _("Suggested"), 'suggested',help_text=_("Automatically suggested. Default state of an automatic event."))
+add('10', _("Suggested"), 'suggested',
+    help_text=_("Automatically suggested. Default state of an automatic event."))
 add('20', _("Draft"), 'draft')
 if False:
     #~ add('30', _("Notified"),'notified')
     add('30', _("Visit"), 'visit')
     add('40', _("Scheduled"), 'scheduled')
-add('50', _("Took place"),'took_place')
-add('60', _("Rescheduled"),'rescheduled')
-add('70', _("Cancelled"),'cancelled')
+add('50', _("Took place"),'took_place',fixed=True)
+add('60', _("Rescheduled"),'rescheduled',fixed=True)
+add('70', _("Cancelled"),'cancelled',fixed=True)
 #~ add('80', _("Absent"),'absent')
 
-EventStates.editable_states.add(EventStates.suggested)
-EventStates.editable_states.add(EventStates.draft)
+#~ EventStates.editable_states.add(EventStates.suggested)
+#~ EventStates.editable_states.add(EventStates.draft)
 
 class GuestState(dd.State):
     afterwards = False
@@ -84,5 +88,5 @@ add('20', _("Accepted"),'accepted')
 add('30', _("Rejected"),'rejected')
 add('40', _("Present"),'present',afterwards=True)
 add('50', _("Absent"),'absent',afterwards=True)
-add('60', _("Visit"),'visit')
+#~ add('60', _("Visit"),'visit')
     

@@ -128,6 +128,7 @@ class Calendar(dd.BabelNamed,dd.Sequenced,dd.PrintableType,outbox.MailableType):
     password = dd.PasswordField(_("Password"),
         max_length=200,blank=True) # ,null=True)
     readonly = models.BooleanField(_("read-only"),default=False)
+    is_appointment = models.BooleanField(_("Event is an appointment"),default=True)
     #~ is_default = models.BooleanField(
         #~ _("is default"),default=False)
     #~ is_private = models.BooleanField(
@@ -917,8 +918,9 @@ Indicates that this Event shouldn't prevent other Events at the same time."""))
         )
         
         
-    def is_editable_state(self):
-        return self.state in EventStates.editable_states 
+    def is_fixed_state(self):
+        return self.state.fixed
+        #~ return self.state in EventStates.editable_states 
 
     def is_user_modified(self):
         return self.state != EventStates.suggested
@@ -946,8 +948,8 @@ Indicates that this Event shouldn't prevent other Events at the same time."""))
             #~ print "not is_user_modified"
             return
         if not self.state in (EventStates.suggested, EventStates.draft):
-        #~ if not self.is_editable_state(): 
-            #~ print "not an editable state"
+        #~ if self.is_fixed_state(): 
+            #~ print "is a fixed state"
             return 
         if self.guest_set.all().count() > 0: 
             #~ print "guest_set not empty"
@@ -1035,6 +1037,7 @@ Indicates that this Event shouldn't prevent other Events at the same time."""))
         assert ar is not None
         #~ print 20130802, ar.renderer
         #~ raise foo
+        #~ txt = when_text(self.start_date)
         txt = when_text(self.start_date,self.start_time)
         #~ return txt
         #~ logger.info("20130802a when_text %r",txt)
@@ -1108,8 +1111,16 @@ class EventInsert(EventDetail):
         #~ # return ar.success_response(refresh=True)
     
     
+class EventEvents(dd.ChoiceList):
+    verbose_name = _("Observed event")
+    verbose_name_plural = _("Observed events")
+add = EventEvents.add_item
+add('10', _("Okay"),'okay')
+add('20', _("Pending"),'pending')
+    
+    
 #~ unclear_event_states = (EventStates.suggested,EventStates.draft,EventStates.notified)
-unclear_event_states = (EventStates.suggested,EventStates.draft)
+#~ unclear_event_states = (EventStates.suggested,EventStates.draft)
 
 class Events(dd.Table):
     help_text = _("A List of calendar entries. Each entry is called an event.")
@@ -1143,18 +1154,21 @@ class Events(dd.Table):
             help_text=_("Only rows managed by this user.")),
         project = dd.ForeignKey(settings.SITE.project_model,
             blank=True,null=True),
+        calendar = dd.ForeignKey('cal.Calendar',blank=True,null=True),
         assigned_to = models.ForeignKey(settings.SITE.user_model,
             verbose_name=_("Assigned to"),
             blank=True,null=True,
             help_text=_("Only events assigned to this user.")),
         state = EventStates.field(blank=True,
             help_text=_("Only rows having this state.")),
-        unclear = models.BooleanField(_("Unclear events"))
+        #~ unclear = models.BooleanField(_("Unclear events"))
+        observed_event = EventEvents.field(blank=True),
+        show_appointments = dd.YesNo.field(_("Appointments"),blank=True),
     )
     
     params_layout = """
-    start_date end_date user assigned_to state 
-    unclear project
+    start_date end_date observed_event state 
+    user assigned_to project calendar show_appointments
     """
     #~ params_layout = dd.Panel("""
     #~ start_date end_date other
@@ -1165,6 +1179,10 @@ class Events(dd.Table):
     #~ """)
     
     #~ next = NextDateAction() # doesn't yet work. 20121203
+    
+    fixed_states = set(EventStates.filter(fixed=True))
+    #~ pending_states = set([es for es in EventStates if not es.fixed])
+    pending_states = set(EventStates.filter(fixed=False))
     
     @classmethod
     def get_request_queryset(self,ar):
@@ -1182,11 +1200,23 @@ class Events(dd.Table):
         if settings.SITE.project_model is not None and ar.param_values.project:
             qs = qs.filter(project=ar.param_values.project)
 
+        if ar.param_values.calendar:
+            qs = qs.filter(calendar=ar.param_values.calendar)
+        else:
+            if ar.param_values.show_appointments == dd.YesNo.yes:
+                qs = qs.filter(calendar__is_appointment=True)
+            elif ar.param_values.show_appointments == dd.YesNo.no:
+                qs = qs.filter(calendar__is_appointment=False)
+                
         if ar.param_values.state:
             qs = qs.filter(state=ar.param_values.state)
             
-        if ar.param_values.unclear:
-            qs = qs.filter(state__in=unclear_event_states)
+        #~ if ar.param_values.observed_event:
+        if ar.param_values.observed_event == EventEvents.okay:
+            qs = qs.filter(state__in=self.fixed_states)
+        elif ar.param_values.observed_event == EventEvents.pending:
+            qs = qs.filter(state__in=self.pending_states)
+            
             
         if ar.param_values.start_date:
             qs = qs.filter(start_date__gte=ar.param_values.start_date)
@@ -1276,6 +1306,7 @@ if settings.SITE.user_model:
         def param_defaults(self,ar,**kw):
             kw = super(MyEvents,self).param_defaults(ar,**kw)
             kw.update(user=ar.get_user())
+            kw.update(show_appointments=dd.YesNo.yes)
             #~ kw.update(assigned_to=ar.get_user())
             #~ logger.info("20130807 %s %s",self,kw)
             kw.update(start_date=datetime.date.today())
@@ -1288,21 +1319,17 @@ if settings.SITE.user_model:
             
         
         
-    class MyUnclearEvents(MyEvents):
-        label = _("My unclear events")
-        help_text = _("Events which probably need your attention.")
-        #~ required = dd.required(user_groups='office')
-        #~ column_names = 'when_text:20 project summary workflow_buttons *'
-        #~ known_values = dict(assigned_to=EventStates.assigned)
-        #~ master_key = 'assigned_to'
-        
-        @classmethod
-        def param_defaults(self,ar,**kw):
-            kw = super(MyUnclearEvents,self).param_defaults(ar,**kw)
-            kw.update(unclear=True)
-            kw.update(start_date=datetime.date.today())
-            kw.update(end_date=datetime.date.today()+ONE_DAY)
-            return kw
+    #~ class MyUnclearEvents(MyEvents):
+        #~ label = _("My unclear events")
+        #~ help_text = _("Events which probably need your attention.")
+        #~ 
+        #~ @classmethod
+        #~ def param_defaults(self,ar,**kw):
+            #~ kw = super(MyUnclearEvents,self).param_defaults(ar,**kw)
+            #~ kw.update(observed_event=EventEvents.pending)
+            #~ kw.update(start_date=datetime.date.today())
+            #~ kw.update(end_date=datetime.date.today()+ONE_DAY)
+            #~ return kw
         
     class MyAssignedEvents(MyEvents):
         label = _("Events assigned to me")
@@ -2498,7 +2525,7 @@ def setup_main_menu(site,ui,profile,m):
     
     if site.use_extensible:
         m.add_action(CalendarPanel)
-    m.add_action(MyEvents)
+    m.add_action('cal.MyEvents') # string spec to allow overriding
     
     #~ m.add_separator('-')
     #~ m  = m.add_menu("tasks",_("Tasks"))
@@ -2553,7 +2580,7 @@ def setup_quicklinks(site,ar,m):
     
 def get_todo_tables(ar):
     yield (MyAssignedEvents, _("%d events assigned.")) 
-    yield (MyUnclearEvents, _("%d unclear events approaching.")) # "%d unklare Termine kommen näher"
+    #~ yield (MyUnclearEvents, _("%d unclear events approaching.")) # "%d unklare Termine kommen näher"
     yield (MyPendingPresences, _("%d invitations are waiting for your answer."))
     #~ yield (MyGuests, _("%d invitations are waiting for your answer."))
     #~ yield (MyTasksToDo,_("%d tasks to do"))

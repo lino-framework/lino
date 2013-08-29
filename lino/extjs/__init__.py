@@ -693,6 +693,9 @@ tinymce.init({
                   #~ dict(xtype="button",text="Register",handler=Lino.register),
                   ]
                 yield "Lino.main_menu = Lino.main_menu.concat(['->',%s]);" % py2js(login_buttons)
+                if on_ready:
+                    #~ on_ready = "Lino.show_login_window(%s)" % py2js(on_ready)
+                    on_ready = "Lino.show_login_window(%s)" % py2js(request.path)
                     
                 
         

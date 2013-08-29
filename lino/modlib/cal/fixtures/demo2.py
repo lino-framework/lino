@@ -45,10 +45,10 @@ Membership = dd.resolve_model('cal.Membership')
 
 def objects():
     
-    if settings.SITE.project_model:
-        PROJECTS = Cycler(settings.SITE.project_model.objects.all())
+    #~ if settings.SITE.project_model:
+        #~ PROJECTS = Cycler(settings.SITE.project_model.objects.all())
     #~ USERS = Cycler(settings.SITE.user_model.objects.all())
-    ETYPES = Cycler(Calendar.objects.all())
+    ETYPES = Cycler(Calendar.objects.filter(is_appointment=True))
     def s2duration(s):
         h,m = map(int,s.split(':'))
         #~ return relativedelta(hours=h,minutes=m)
