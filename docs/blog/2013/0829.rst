@@ -5,7 +5,15 @@
 Appointments and prompt events
 ------------------------------
 
-Worked on the calendar and reception modules. 
+Worked on the calendar and reception modules.
+Integrative work for several user requests:
+Some :ref:`welfare` users don't want to see prompt events ("visits") 
+in their MyEvents table of the welcome screen.
+Some other's won't even use the reception module and don't want to 
+know what a prompt event is.
+How to remove in :ref:`faggio` the useless 
+:ref:`EventStates.scheduled`?
+
 
 - In `Events.parameters` replaced the "unclear" checkbox by 
   an `observed_event` combobox which classifies calendar events 
@@ -16,8 +24,15 @@ Worked on the calendar and reception modules.
   
 - Added new filter parameters `calendar` and `show_appointments`.
 
-The main reason was that users don't want to see "prompt events" in 
-their MyEvents table of the welcome screen.
+- Moved the definition of `EventStates.scheduled` to 
+  :mod:`lino.modlib.cal.workflows.welfare`.
+  
+- While we're there I removed the `EventStates.rescheduled` state.
+  Because I think that this is not needed for :ref:`welfare`. 
+  When an appointment has to be rescheduled they either set it to 
+  cancelled and create a new one, or they even reset it and modify 
+  the original record.
+
 
 How to represent "visits" (or better "prompt events")?
 They *are* calendar events whose guest(s) must be received 
@@ -28,14 +43,18 @@ pending nor okay. I thought that this is okay because visits are
 created on the fly and do not participate in the standard 
 calendar workflow.
 
+Renamed `EventStates.scheduled` to `EventStates.published`.
+And I believe that for :ref:`faggio` we will then change our mind and 
+want this state.
+Also renamed `CourseStates.scheduled` to `CourseStates.published`.
+
+
 
 Permalink when session is not authenticated
 -------------------------------------------
 
-Requesting a permalink 
-(like http://127.0.0.1:8000/api/users/Users)
-when the session is not authenticated 
-(e.g. because the server did an initdb_demo meanwhile)
+Requesting a permalink when the session is not authenticated 
+(e.g. because the server did an `initdb_demo` meanwhile)
 now causes the login window to pop up and to automatically 
 reload the permalink upon successful login.
 
@@ -49,6 +68,7 @@ For example I can write instructions like the following:
   and log in as demo user "robin" with password "1234"),
   then bla bla bla...
 
+Code changes:
 
 - Added `on_login` parameter to `Lino.show_login_window`.
 

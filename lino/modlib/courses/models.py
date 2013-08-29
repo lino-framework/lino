@@ -343,7 +343,7 @@ class CourseStates(dd.Workflow):
 
 add = CourseStates.add_item
 add('10', _("Draft"),'draft')
-add('20', _("Scheduled"),'scheduled')
+add('20', _("Published"),'published')
 add('30', _("Started"),'started')
 add('40', _("Ended"),'ended')
 add('50', _("Cancelled"),'cancelled')

@@ -65,6 +65,8 @@ outbox = dd.resolve_app('outbox')
 
 from lino.modlib.cal.workflows import (
     TaskStates, EventStates, GuestStates)
+    
+from lino.modlib.cal.workflows import take    
 
 
 class CalendarType(object):
@@ -1155,7 +1157,7 @@ class Events(dd.Table):
         project = dd.ForeignKey(settings.SITE.project_model,
             blank=True,null=True),
         calendar = dd.ForeignKey('cal.Calendar',blank=True,null=True),
-        assigned_to = models.ForeignKey(settings.SITE.user_model,
+        assigned_to = dd.ForeignKey(settings.SITE.user_model,
             verbose_name=_("Assigned to"),
             blank=True,null=True,
             help_text=_("Only events assigned to this user.")),
@@ -1962,7 +1964,7 @@ if False: # removed 20130810
     
     for o in Event.objects.filter(
         #~ models.Q(status=None) | models.Q(status__reminder=True),
-        models.Q(state=None) | models.Q(state__lte=EventStates.scheduled),
+        models.Q(state=None) | models.Q(state__lte=EventStates.published),
         **filterkw).order_by('start_date'):
         add(o)
         
@@ -2298,7 +2300,7 @@ if settings.SITE.use_extensible:
             obj = super(PanelEvents,self).create_instance(ar,**kw)
             if ar.current_project is not None:
                 obj.project = settings.SITE.project_model.objects.get(pk=ar.current_project)
-                #~ obj.state = EventStates.scheduled
+                #~ obj.state = EventStates.published
             return obj
             
 
@@ -2338,7 +2340,7 @@ if False:
         
         events = ar.spawn(MyEvents,
             user=user,
-            filter=flt & (models.Q(state=None) | models.Q(state__lte=EventStates.scheduled)))
+            filter=flt & (models.Q(state=None) | models.Q(state__lte=EventStates.published)))
         tasks = ar.spawn(MyTasks,
             user=user,
             filter=flt & models.Q(state__in=[None,TaskStates.todo]))

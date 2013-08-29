@@ -396,9 +396,9 @@ Lino.show_login_window = function(on_login) {
                   Lino.login_window.hide();
                   Lino.close_all_windows();
                   Lino.viewport.loadMask.hide();
-                  if (on_login) {
-                      console.log("20130829 on_login",on_login);
-                      alert("20130829 on_login gonna load_url");
+                  if (typeof on_login == 'string') {
+                      //~ console.log("20130829 on_login",on_login);
+                      //~ alert("20130829 on_login gonna load_url");
                       Lino.load_url(on_login);
                       //~ eval(on_login);
                   }

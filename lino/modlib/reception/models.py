@@ -72,12 +72,6 @@ dd.inject_field('cal.Guest','present_until',
     help_text = _("Time when the visitor left (checked out).")))
     
 
-dd.inject_field('system.SiteConfig','client_calender',
-    dd.ForeignKey('cal.Calendar',
-        verbose_name=_("Default calendar for client events"),
-        related_name='client_calendars',
-        blank=True,null=True))    
-    
 dd.inject_field('system.SiteConfig','prompt_calendar',
     dd.ForeignKey('cal.Calendar',
         verbose_name=_("Default calendar for prompt events"),
@@ -93,7 +87,7 @@ def create_prompt_event(project,partner,user,summary,guest_role):
     """
     ekw = dict(project=project) 
     #~ ekw.update(state=cal.EventStates.draft)
-    #~ ekw.update(state=EventStates.scheduled)
+    #~ ekw.update(state=EventStates.published)
     today = datetime.date.today()
     ekw.update(start_date=today)
     ekw.update(end_date=today)
