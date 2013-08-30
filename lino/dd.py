@@ -98,9 +98,8 @@ Signals:
 
 Actions:
 
-- :class:`AuthorRowAction <lino.mixins.AuthorRowAction>`
-- :class:`RowAction <lino.core.actions.RowAction>`
-- :class:`AjaxAction <lino.core.actions.RowAction>`
+- :class:`AuthorAction <lino.mixins.AuthorAction>`
+- :class:`Action <lino.core.actions.Action>`
 - :class:`ChangeStateAction <lino.core.workflows.ChangeStateAction>`
 - :class:`NotifyingAction <lino.core.actions.NotifyingAction>`
 - :class:`MergeAction <lino.core.merge.MergeAction>`
@@ -168,11 +167,12 @@ from lino.core.tables import VentilatingTable
 
 from lino.core.actions import action
 #~ from lino.core.actions import Action
-from lino.core.actions import RowAction
-AjaxAction = RowAction
+from lino.core.actions import Action
+#~ RowAction = CustomAction
+#~ Action = CustomAction
 from lino.core.actions import ShowSlaveTable
 
-from lino.mixins import AuthorRowAction
+from lino.mixins import AuthorAction
 #~ from lino.core.actions import ListAction
 from lino.core.actions import GridEdit, ShowDetailAction
 from lino.core.actions import InsertRow, DeleteSelected

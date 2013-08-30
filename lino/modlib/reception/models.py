@@ -114,7 +114,7 @@ def create_prompt_event(project,partner,user,summary,guest_role):
     
 
     
-class CreateNote(dd.RowAction): 
+class CreateNote(dd.Action): 
     label = _("Attestation")
     show_in_workflow = True
     #~ show_in_row_actions = True
@@ -186,7 +186,7 @@ class CheckinGuest(dd.NotifyingAction):
         
     
 #~ class ReceiveGuest(dd.NotifyingAction):
-class ReceiveGuest(dd.RowAction):
+class ReceiveGuest(dd.Action):
     label = _("Receive")
     help_text = _("Guest was received by agent")
     show_in_workflow = True
@@ -242,7 +242,7 @@ Guest leaves             X               X              X
 """        
 
 #~ class CheckoutGuest(dd.NotifyingAction):
-class CheckoutGuest(dd.RowAction):
+class CheckoutGuest(dd.Action):
     label = _("Checkout")
     help_text = _("Guest left the centre")
     show_in_workflow = True

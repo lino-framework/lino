@@ -36,7 +36,7 @@ from lino.modlib.cal.workflows import (TaskStates,
     EventStates,GuestStates)
 
 
-class TakeAssignedEvent(dd.RowAction):
+class TakeAssignedEvent(dd.Action):
     label = _("Take")
     show_in_workflow = True
     

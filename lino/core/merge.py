@@ -145,7 +145,7 @@ class MergePlan(object):
         return msg
 
     
-class MergeAction(actions.RowAction):
+class MergeAction(actions.Action):
     help_text = _("Merge this object into another object of same class.")
     label = _("Merge")
     sort_index = 31

@@ -229,7 +229,7 @@ class UserAuthored(model.Model):
 
 AutoUser = UserAuthored # backwards compatibility
 
-class AuthorRowAction(actions.RowAction):
+class AuthorAction(actions.Action):
     """
     """
     manager_level_field = 'level'
@@ -238,10 +238,10 @@ class AuthorRowAction(actions.RowAction):
         user = ar.get_user()
         if obj.user != user and getattr(user.profile,self.manager_level_field) < auth.UserLevels.manager:
             return self.readonly
-        return super(actions.AuthorRowAction,self).get_action_permission(ar,obj,state)
+        return super(actions.AuthorAction,self).get_action_permission(ar,obj,state)
         
         
-class RegisterAction(actions.RowAction):
+class RegisterAction(actions.Action):
     label = _("Register")
     show_in_workflow = True
     readonly = False
@@ -266,7 +266,7 @@ class RegisterAction(actions.RowAction):
     
     
         
-class DeregisterAction(actions.RowAction):
+class DeregisterAction(actions.Action):
     label = _("Deregister")
     show_in_workflow = True
     readonly = False
@@ -425,7 +425,7 @@ class CreatedModified(model.Model):
 
 
 
-class MoveUp(actions.RowAction):
+class MoveUp(actions.Action):
     label = _("Up")
     #~ label = "\u2191" thin arrow up
     #~ label = "\u25b2" # triangular arrow up
@@ -450,7 +450,7 @@ class MoveUp(actions.RowAction):
         kw.update(message=_("Moved up."))
         return ar.success(**kw)
         
-class MoveDown(actions.RowAction):
+class MoveDown(actions.Action):
     label = _("Down")
     #~ label = "\u2193"
     #~ label = "\u25bc" # triangular arrow down

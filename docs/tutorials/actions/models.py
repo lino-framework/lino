@@ -3,7 +3,7 @@ from django.utils.translation import ugettext_lazy as _
 
 from lino import dd
 
-class A(dd.RowAction):
+class A(dd.Action):
     label = _("a")
     def run_from_ui(self,obj,ar,**kw):
         return ar.success("Called a() on %s" % obj)

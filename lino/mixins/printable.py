@@ -449,7 +449,7 @@ def get_build_method(elem):
         
 
 #~ class PrintAction(actions.RedirectAction):
-class BasePrintAction(actions.RowAction):
+class BasePrintAction(actions.Action):
     """
     Base class for all "Print" actions.
     """
@@ -463,7 +463,7 @@ class BasePrintAction(actions.RowAction):
     
     #~ def __init__(self,rpt,*args,**kw):
         #~ self.actor = rpt
-        #~ actions.RowAction.__init__(self,*args,**kw)
+        #~ actions.Action.__init__(self,*args,**kw)
     
     def get_print_templates(self,bm,elem):
         return elem.get_print_templates(bm,self)
@@ -590,7 +590,7 @@ class DirectPrintAction(BasePrintAction):
             kw.update(open_url=url)
         return ar.success(**kw)
     
-#~ class EditTemplateAction(dd.RowAction):
+#~ class EditTemplateAction(dd.Action):
     #~ name = 'tpledit'
     #~ label = _('Edit template')
     
@@ -599,7 +599,7 @@ class DirectPrintAction(BasePrintAction):
         #~ target = bm.get_template_url(self,elem)
         #~ return rr.ui.success_response(open_url=target,**kw)
     
-class ClearCacheAction(actions.RowAction):
+class ClearCacheAction(actions.Action):
     """
     Defines the :guilabel:`Clear cache` button on a Printable record.
     

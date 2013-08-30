@@ -32,7 +32,7 @@ from lino.core import actions
 from lino.core import model
 
 
-class Duplicate(actions.RowAction):
+class Duplicate(actions.Action):
     """
     Duplicate the row on which it is being executed.
     """

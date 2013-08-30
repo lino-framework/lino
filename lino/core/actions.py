@@ -436,6 +436,21 @@ class Action(Parametrizable,Permittable):
     (...)
     """
     
+    single_row = True
+    """
+    Set this to False if this action is a list action, not a row action.
+    """
+    
+    http_method = 'GET'
+    """
+    HTTP method to use when this action is called using an AJAX call.
+    """
+    
+    preprocessor = 'null' # None
+    """
+    Name of a Javascript function to be invoked on the web client when
+    this action is called.
+    """
     
     #~ def __init__(self,label=None,url_action_name=None,required={},**kw):
     def __init__(self,label=None,**kw):
@@ -689,17 +704,18 @@ class TableAction(Action):
         return ar.get_title()
         
 
-class RowAction(Action):
-    """
-    Base class for actions that are executed server-side, 
-    either on an individual row (if `single_row` is True) 
-    or on a list.
-    TODO: rename RowAction to ServerSideAction or AjaxAction.
-    """
-    single_row = True
-    preprocessor = 'null' # None
-    http_method = 'GET'
+#~ CustomAction = Action
 
+#~ class CustomAction(Action):
+    #~ """
+    #~ Base class for actions that are executed server-side, 
+    #~ either on an individual row (if `single_row` is True) 
+    #~ or on a list, either using an AJAX call or called from a script.
+    #~ 
+    #~ Possible alternate names for CustomAction to ServerSideAction or AjaxAction.
+    #~ """
+
+#~ RowAction = CustomAction # backward compat
 
 
 class RedirectAction(Action):
@@ -798,7 +814,7 @@ class GridEdit(TableAction):
 
 
 
-class ShowDetailAction(RowAction):
+class ShowDetailAction(Action):
     """
     An action that opens the Detail Window of its actor.
     """
@@ -887,7 +903,7 @@ class ShowDetailAction(RowAction):
         
         
 
-RowAction.callable_from = (GridEdit,ShowDetailAction)
+Action.callable_from = (GridEdit,ShowDetailAction)
 
 class InsertRow(TableAction):
     """
@@ -931,7 +947,7 @@ class InsertRow(TableAction):
 
 
 
-class DuplicateRow(RowAction):
+class DuplicateRow(Action):
     opens_a_window = True
   
     readonly = False
@@ -957,13 +973,13 @@ class ShowEmptyTable(ShowDetailAction):
     def as_html(self,ar):
         return super(ShowEmptyTable,self).as_html(ar,'-99998')
 
-class UpdateRowAction(RowAction):
+class UpdateRowAction(Action):
     show_in_workflow = False
     readonly = False
     required = dict(user_level='user')
     
         
-class DeleteSelected(RowAction):
+class DeleteSelected(Action):
     """
     Delete the row on which it is being executed.
     """
@@ -983,7 +999,7 @@ class DeleteSelected(RowAction):
     #~ client_side = True
     
         
-class SubmitDetail(RowAction):
+class SubmitDetail(Action):
     #~ debug_permissions = 20130128
     sort_index = 10
     switch_to_detail = False
@@ -1020,7 +1036,7 @@ class SubmitInsertAndStay(SubmitInsert):
     
 
 
-class ShowSlaveTable(RowAction):
+class ShowSlaveTable(Action):
     #~ label = "ShowSlaveTable"
     #~ show_in_row_actions = True
     show_in_bbar = True
@@ -1045,7 +1061,7 @@ class ShowSlaveTable(RowAction):
         return kw
 
     
-class NotifyingAction(RowAction):
+class NotifyingAction(Action):
     
     show_in_row_actions = True
     
@@ -1123,7 +1139,7 @@ def action(*args,**kw):
     def decorator(fn):
         kw.setdefault('custom_handler',True)
         #~ kw.setdefault('show_in_row_actions',True)
-        a = RowAction(*args,**kw)
+        a = Action(*args,**kw)
         #~ a.run = curry(fn,a)
         a.run_from_ui = fn
         return a

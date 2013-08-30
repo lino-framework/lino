@@ -727,9 +727,10 @@ class Enrolments(dd.Table):
             yield unicode(ar.param_values.author)
         
 
-class ConfirmAllEnrolments(dd.RowAction):
-    single_row = False
+class ConfirmAllEnrolments(dd.Action):
     label = _("Confirm all")
+    single_row = False
+    http_method = 'POST'
     
     def run_from_ui(self,obj,ar,**kw):
         assert obj is None

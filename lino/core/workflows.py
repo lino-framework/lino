@@ -145,7 +145,7 @@ class Workflow(choicelists.ChoiceList):
 
 
 
-class ChangeStateAction(actions.RowAction):
+class ChangeStateAction(actions.Action):
     """
     This is the class used when generating automatic 
     "state actions". For each possible value of the Actor's 

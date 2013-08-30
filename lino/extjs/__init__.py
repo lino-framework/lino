@@ -1156,17 +1156,9 @@ tinymce.init({
                 'function(panel){Lino.show_insert_duplicate(panel)}'))
         elif isinstance(a,actions.DeleteSelected):
             kw.update(panel_btn_handler=js_code("Lino.delete_selected"))
-        elif isinstance(a,actions.RowAction):
-            kw.update(must_save=True)
-            kw.update(panel_btn_handler=js_code(self.get_panel_btn_handler(ba)))
-        elif isinstance(a,actions.ListAction):
-            kw.update(panel_btn_handler=js_code(self.get_panel_btn_handler(ba)))
-            kw.update(must_save=True)
-        elif isinstance(a,actions.JavaScriptAction):
-            kw.update(panel_btn_handler=js_code(self.get_panel_btn_handler(ba)))
-            kw.update(must_save=True)
         else:
-            kw.update(panel_btn_handler=js_code("Lino.%s" % a))
+            kw.update(must_save=True)
+            kw.update(panel_btn_handler=js_code(self.get_panel_btn_handler(ba)))
             
         if a.icon_name:
             kw.update(iconCls=a.icon_name)

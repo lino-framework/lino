@@ -137,7 +137,7 @@ class Invoiceable(dd.Model):
 
 
         
-class CreateInvoiceForPartner(dd.RowAction):
+class CreateInvoiceForPartner(dd.Action):
     
     label = _("Create invoice")
     help_text = _("Create invoice for this partner using invoiceable items")

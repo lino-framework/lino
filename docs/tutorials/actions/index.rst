@@ -44,7 +44,7 @@ You can define actions
 
 
 - either using the `dd.action` decorator on a method
-  or by defining a custom subclass of `dd.RowAction`
+  or by defining a custom subclass of `dd.Action <lino.core.actions.Action>`
   (and adding an instance of this class to the Model or the Table)
   
   
@@ -98,8 +98,8 @@ both actions `m` and `t`:
  <GridEdit grid>,
  <A a (u'a')>,
  <A b (u'a')>,
- <RowAction m (u'm')>,
- <RowAction t (u't')>]
+ <Action m (u'm')>,
+ <Action t (u't')>]
 
 A subclass inherits all actions from her parent:
 
@@ -109,9 +109,9 @@ A subclass inherits all actions from her parent:
  <DeleteSelected None (u'Delete')>,
  <GridEdit grid>,
  <A a (u'a')>,
- <RowAction m (u'm')>,
+ <Action m (u'm')>,
  <A b (u'a')>,
- <RowAction t (u't')>]
+ <Action t (u't')>]
 
 
 >>> pprint([ba.action for ba in S2.get_actions()])

@@ -59,7 +59,7 @@ add('40',_("Sent"),'sent')
 add('50',_("Returned"),'returned')
 
 
-class PrintPosting(dd.RowAction):
+class PrintPosting(dd.Action):
     label = _('Print')
     help_text = _('Print this posting')
     icon_name='x-tbar-print'
@@ -171,7 +171,7 @@ class PostingsByProject(Postings):
     column_names = 'date partner state workflow_buttons *'
     
     
-class CreatePostings(dd.RowAction):
+class CreatePostings(dd.Action):
     """
     Creates a series of new Postings from this Postable. 
     The Postable gives the list of recipients, and there will 

@@ -116,7 +116,7 @@ template when creating an email from a mailable of this type.""")
     
 
 
-class CreateMail(dd.RowAction):
+class CreateMail(dd.Action):
     """
     Creates an outbox mail and displays it.
     """
@@ -293,7 +293,7 @@ class RecipientsByMail(Recipients):
 
 
 
-class SendMail(dd.RowAction):
+class SendMail(dd.Action):
     """
     Sends this as an email.
     """

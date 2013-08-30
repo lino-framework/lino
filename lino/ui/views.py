@@ -784,12 +784,10 @@ class ApiElement(View):
                 raise http.Http404("%s failed for %r" % (ba,elem))
             return http.HttpResponseRedirect(target)
             
-        if isinstance(ba.action,actions.RowAction):
-            if pk == '-99998':
-                assert elem is None
-                elem = ar.create_instance()
-            return settings.SITE.ui.run_action(ar,elem)
-        raise NotImplementedError("Action %s is not implemented)" % ba)
+        if pk == '-99998':
+            assert elem is None
+            elem = ar.create_instance()
+        return settings.SITE.ui.run_action(ar,elem)
                 
         
     def post(self,request,app_label=None,actor=None,pk=None):
@@ -798,12 +796,10 @@ class ApiElement(View):
         elem = ar.actor.get_row_by_pk(pk)
         if elem is None:
             raise http.Http404("%s has no row with primary key %r" % (ar.actor,pk))
-        if isinstance(ar.bound_action.action,actions.RowAction):
-            if pk == '-99998':
-                assert elem is None
-                elem = ar.create_instance()
-            return settings.SITE.ui.run_action(ar,elem)
-        raise NotImplementedError("Action %s is not implemented)" % ar)
+        if pk == '-99998':
+            assert elem is None
+            elem = ar.create_instance()
+        return settings.SITE.ui.run_action(ar,elem)
         
     def put(self,request,app_label=None,actor=None,pk=None):
         data = http.QueryDict(request.body) # raw_post_data before Django 1.4

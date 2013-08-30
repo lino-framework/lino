@@ -50,8 +50,8 @@ from lino.utils.xmlgen import html as xghtml
 #~ from lino.core.changes import Change, Changes, ChangesByObject
 
 
-#~ class BuildLinoJS(dd.RowAction):
-class BuildSiteCache(dd.RowAction):
+#~ class BuildLinoJS(dd.CustomAction):
+class BuildSiteCache(dd.Action):
     """
     Rebuild the site cache.
     This action is available on :class:`About`.

@@ -2396,7 +2396,7 @@ def unused_update_reminders(user):
     return n
       
 
-class UpdateReminders(actions.RowAction):
+class UpdateReminders(actions.Action):
     """
     Users can invoke this to re-generate their automatic tasks.
     """

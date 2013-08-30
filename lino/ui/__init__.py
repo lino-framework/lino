@@ -573,9 +573,6 @@ class Site(lino.Site):
     
     _site_config = None
     
-    #~ def init_before_local(self,*args):
-        #~ super(Site,self).init_before_local(*args)
-        
     def override_defaults(self,**kwargs):
         """
         """

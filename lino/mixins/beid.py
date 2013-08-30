@@ -214,7 +214,7 @@ def card2client(data):
     return kw
     
     
-class BaseBeIdReadCardAction(dd.RowAction):
+class BaseBeIdReadCardAction(dd.Action):
     required = dd.Required(user_groups='reception')
     preprocessor = 'Lino.beid_read_card_processor'
     http_method = 'POST'

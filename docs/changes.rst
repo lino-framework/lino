@@ -14,6 +14,11 @@ The final truth about what's going on is only
 Version 1.6.12 (coming)
 =============================================
 
+- Renamed `dd.AuthorRowAction` to `dd.AuthorAction`
+  and merged the now obsolete `dd.RowAction` into 
+  :class:`dd.Action <lino.core.actions.Action>`.
+
+
 - :mod:`html2xhtml <lino.utils.html2xhtml>` is now just a wrapper to 
   `pytidylib <http://countergram.com/open-source/pytidylib>`_
   (which itself is a wrapper to `HTML Tidy <http://tidy.sourceforge.net>`_). 
