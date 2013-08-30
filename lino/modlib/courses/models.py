@@ -15,7 +15,7 @@
 from __future__ import unicode_literals
 
 """
-Deserves a docstring
+The :xfile:`models.py` module for the :mod:`lino.modlib.courses` app.
 """
 
 
@@ -29,6 +29,8 @@ import os
 import cgi
 import datetime
 from decimal import Decimal
+ZERO = Decimal()
+ONE = Decimal(1)
 
 from django.db import models
 from django.db.models import Q
@@ -54,20 +56,6 @@ from lino import dd
 #~ from lino import layouts
 #~ from lino.utils import printable
 from lino import mixins
-#~ from lino import actions
-#~ from lino import fields
-#~ from lino.modlib.contacts import models as contacts
-#~ from lino.modlib.notes import models as notes
-#~ from lino.modlib.links import models as links
-#~ from lino.modlib.uploads import models as uploads
-#~ from lino.modlib.cal import models as cal
-#~ from lino.modlib.users import models as users
-#~ from lino.modlib.contacts.utils import Gender
-#~ from lino.modlib.properties.models import HowWell
-#~ from lino.utils.choicelists import HowWell, Gender
-#~ from lino.utils.choicelists import ChoiceList
-#~ from lino.modlib.properties.utils import KnowledgeField #, StrengthField
-#~ from lino.modlib.uploads.models import UploadsByPerson
 from lino.utils.choosers import chooser
 from lino.utils import mti
 from lino.mixins.printable import DirectPrintAction, Printable
@@ -76,21 +64,6 @@ from lino.core.dbutils import obj2str
 
 from north.dbutils import day_and_month
 
-#~ from lino.modlib.countries.models import CountryCity
-#~ from lino.modlib.cal import models as cal
-#~ from lino.modlib.contacts.models import Partner
-
-#~ # not used here, but these modules are required in INSTALLED_APPS, 
-#~ # and other code may import them using 
-
-#~ from lino.modlib.properties.models import Property
-#~ # from lino.modlib.notes.models import NoteType
-#~ from lino.modlib.countries.models import Country, City
-
-#~ if settings.SITE.user_model:
-    #~ User = dd.resolve_model(settings.SITE.user_model,strict=True)
-
-#~ try:
 
 users = dd.resolve_app('users')
 cal = dd.resolve_app('cal')
@@ -100,7 +73,7 @@ contacts = dd.resolve_app('contacts')
 #~ print '20130219 lino.modlib.courses 2'  
 
 """
-Here we must use `resolve_model` with strict=True
+Here we must use `resolve_model` with `strict=True`
 because we want the concrete model 
 and we don't know whether it is overridden
 by this application.
@@ -125,6 +98,9 @@ Person = dd.resolve_model('contacts.Person',strict=True)
 #~ class PresenceStatuses(dd.Table):
     #~ model = PresenceStatus
     
+dd.inject_field('contacts.Partner','invoicing_address',dd.ForeignKey('contacts.Partner',
+        verbose_name=_("Invoicing address"),
+        blank=True,null=True))
     
 class StartEndTime(dd.Model):
     class Meta:
@@ -244,7 +220,6 @@ class Teachers(contacts.Persons):
   
 class TeachersByType(Teachers):
     master_key = 'teacher_type'
-
 
 
 
@@ -385,7 +360,7 @@ class Course(contacts.ContactRelated,cal.EventGenerator,cal.RecurrenceSet,dd.Pri
         #~ blank=True,null=True)
         
         
-    tariff = models.ForeignKey('products.Product',
+    tariff = dd.ForeignKey('products.Product',
         blank=True,null=True,
         verbose_name=_("Tariff"),
         related_name='courses_by_tariff')
@@ -614,13 +589,28 @@ class Enrolment(dd.UserAuthored,dd.Printable,sales.Invoiceable):
     class Meta:
         verbose_name = _("Enrolment")
         verbose_name_plural = _('Enrolments')
+        unique_together = ('course','pupil')
 
     #~ teacher = models.ForeignKey(Teacher)
-    course = models.ForeignKey('courses.Course')
-    pupil = models.ForeignKey(Pupil)
+    course = dd.ForeignKey('courses.Course')
+    pupil = dd.ForeignKey(Pupil)
     request_date = models.DateField(_("Date of request"),default=datetime.date.today)
     state = EnrolmentStates.field(default=EnrolmentStates.requested)
+    amount = dd.PriceField(_("Amount"),blank=True)
+    remark = models.CharField(max_length=200,
+          blank=True,
+          verbose_name=_("Remark"))
+  
+    def save(self,*args,**kw):
+        if self.amount is None:
+            self.compute_amount()
+        super(Enrolment,self).save(*args,**kw)
 
+    #~ def before_ui_save(self,ar):
+        #~ if self.amount is None:
+            #~ self.compute_amount()
+        #~ super(Enrolment,self).before_ui_save(ar)
+        
     def get_print_templates(self,bm,action):
         #~ if self.state:
         return [self.state.name + bm.template_ext]
@@ -630,23 +620,42 @@ class Enrolment(dd.UserAuthored,dd.Printable,sales.Invoiceable):
         return "%s / %s" % (self.course,self.pupil)
         
     invoiceable_date_field = 'request_date'
-    invoiceable_partner_field = 'pupil'
+    #~ invoiceable_partner_field = 'pupil'
+    
+    @classmethod
+    def get_partner_filter(cls,partner):
+        """
+        Return a dict of filter...
+        """
+        #~ kw.update(pupil=partner)
+        q1 = models.Q(pupil__invoicing_address__isnull=True,pupil=partner)
+        q2 = models.Q(pupil__invoicing_address=partner)
+        return models.Q(q1 | q2,invoice__isnull=True)
+    
     
     def get_invoiceable_amount(self): 
-        prd = self.get_invoiceable_product()
-        if prd is not None:
-            return prd.price * self.get_invoiceable_qty()
+        return self.amount
+        
+    def pupil_changed(self,ar):
+        self.compute_amount()
+        
+    def compute_amount(self):
+        #~ if self.course is None: 
+            #~ return 
+        if self.course.tariff is None:
+            self.amount = ZERO
+        self.amount = self.course.tariff.price
             
     def get_invoiceable_product(self): 
-        if self.course: 
-            return self.course.tariff
+        #~ if self.course is not None: 
+        return self.course.tariff
             
     def get_invoiceable_title(self): 
-        if self.course: 
-            return self.course
+        #~ if self.course is not None: 
+        return self.course
 
     def get_invoiceable_qty(self): 
-        return Decimal(1)
+        return ONE
     
 
 class Enrolments(dd.Table):
@@ -665,9 +674,15 @@ class Enrolments(dd.Table):
     order_by = ['request_date']
     column_names = 'request_date course pupil workflow_buttons user *'
     hidden_columns = 'id state'
+    insert_layout = """
+    request_date user
+    course pupil
+    remark
+    """
     detail_layout = """
-    course pupil user request_date state
-    # courses.EventsByEnrolment
+    request_date user
+    course pupil 
+    remark amount workflow_buttons
     sales.InvoicingsByInvoiceable
     """
         
@@ -712,11 +727,32 @@ class Enrolments(dd.Table):
             yield unicode(ar.param_values.author)
         
 
+class ConfirmAllEnrolments(dd.RowAction):
+    single_row = False
+    label = _("Confirm all")
+    
+    def run_from_ui(self,obj,ar,**kw):
+        assert obj is None
+        def ok():
+            for obj in ar:
+                obj.state = EnrolmentStates.confirmed
+                obj.save()
+                kw.update(refresh_all=True)
+            return kw
+        msg = _("This will confirm all %d enrolments in this list.") % ar.get_total_count()
+        return ar.confirm(ok, msg, _("Are you sure?"))
+    
+
+
 class PendingRequestedEnrolments(Enrolments):
     
     label = _("Pending requested enrolments")
     auto_fit_column_widths = True
     params_panel_hidden = True
+    column_names = 'request_date course pupil remark user amount workflow_buttons'
+    hidden_columns = 'id state'
+    
+    confirm_all = ConfirmAllEnrolments()
     
     @classmethod
     def param_defaults(self,ar,**kw):

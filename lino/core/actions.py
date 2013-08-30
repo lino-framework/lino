@@ -241,6 +241,9 @@ class InstanceAction(object):
     def run_from_code(self,ar,**kw):
         return self.bound_action.action.run_from_code(self.instance,ar)
         
+    def run_from_ui(self,ar,**kw):
+        return self.bound_action.action.run_from_ui(self.instance,ar)
+        
         
     def run_from_session(self,ses,**kw):
         #~ print self,args, kw

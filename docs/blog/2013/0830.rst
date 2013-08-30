@@ -1,0 +1,14 @@
+=================================
+20130830 (Friday, 30 August 2013)
+=================================
+
+- Added Enrolment.amount 
+ 
+- "Confirm"-Aktion auf Enrolment druckt jetzt keine 
+  Einschreibebestätigung mehr aus, sondern das ist lediglich eine interne 
+  Bestätigung: Monique bestätigt, dass dieser Schüler an diesem Kurs zu 
+  diesem Preis teilnehmen darf und fakturiert werden kann. Es gibt auch 
+  einen Button "Alle bestätigen" (der aber momentan noch nicht 
+  funktioniert).
+  
+- Neues Feld "Fakturationsadresse"  pro Schüler.

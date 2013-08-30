@@ -510,6 +510,7 @@ class InvoiceItemsByProduct(ItemsByInvoice):
     master_key = 'product'
     column_names = "voucher voucher__partner qty title description:20x1 discount unit_price total_incl total_base total_vat"
     editable = False
+    #~ auto_fit_column_widths = True
 
     
 

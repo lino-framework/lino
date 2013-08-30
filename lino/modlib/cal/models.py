@@ -12,9 +12,8 @@
 ## You should have received a copy of the GNU General Public License
 ## along with Lino; if not, see <http://www.gnu.org/licenses/>.
 
-
 """
-Deserves a docstring.
+The :xfile:`models.py` module for the :mod:`lino.modlib.cal` app.
 """
 
 from __future__ import unicode_literals

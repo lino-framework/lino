@@ -13,7 +13,8 @@
 ## along with Lino; if not, see <http://www.gnu.org/licenses/>.
 
 """
-Deserves a docstring.
+The :xfile:`models.py` module for the :mod:`lino.modlib.auto.sales` app.
+
 """
 
 from __future__ import unicode_literals
@@ -77,10 +78,10 @@ class Invoiceable(dd.Model):
     The name of the field which holds the invoiceable date.
     """
     
-    invoiceable_partner_field = ''
-    """
-    The name of the field which holds the invoiceable partner.
-    """
+    #~ invoiceable_partner_field = ''
+    #~ """
+    #~ The name of the field which holds the invoiceable partner.
+    #~ """
     
     class Meta:
         abstract = True
@@ -89,6 +90,17 @@ class Invoiceable(dd.Model):
         #~ verbose_name=_("Invoice"),
         blank=True,null=True)
 
+    @classmethod
+    def get_partner_filter(cls,partner):
+        """
+        Return a dict of filter...
+        """
+        raise NotImplementedError()
+        #~ kw = dict()
+        #~ kw.update(invoice__isnull=True)
+        #~ kw.update(partner=partner)
+        #~ return models.Q(**kw)
+        
     def get_invoiceable_product(self): return None
     def get_invoiceable_qty(self): return None
     def get_invoiceable_title(self): return unicode(self)
@@ -98,13 +110,14 @@ class Invoiceable(dd.Model):
     def get_invoiceables_for(cls,partner,max_date=None):
         #~ logger.info('20130711 get_invoiceables_for (%s,%s)', partner, max_date)
         for m in dd.models_by_base(cls):
-            fkw = dict()
-            fkw[m.invoiceable_partner_field] = partner
-            fkw.update(invoice__isnull=True)
+            flt = m.get_partner_filter(partner)
+            #~ fkw = dict()
+            #~ fkw[m.invoiceable_partner_field] = partner
+            #~ fkw.update(invoice__isnull=True)
             #~ if max_date is not None:
                 #~ fkw["%s__lte" % m.invoiceable_date_field] = max_date
             #~ logger.info('20130711 %s %s', m, fkw)
-            for obj in m.objects.filter(**fkw).order_by(m.invoiceable_date_field):
+            for obj in m.objects.filter(flt).order_by(m.invoiceable_date_field):
                 yield obj
         
     @classmethod
@@ -112,38 +125,17 @@ class Invoiceable(dd.Model):
         #~ logger.info('20130711 get_invoiceables_count (%s,%s)', partner, max_date)
         n = 0
         for m in dd.models_by_base(cls):
-            fkw = dict()
-            fkw[m.invoiceable_partner_field] = partner
-            fkw.update(invoice__isnull=True)
+            flt = m.get_partner_filter(partner)
+            #~ fkw = dict()
+            #~ fkw[m.invoiceable_partner_field] = partner
+            #~ fkw.update(invoice__isnull=True)
             #~ if max_date is not None:
                 #~ fkw["%s__lte" % m.invoiceable_date_field] = max_date
             #~ logger.info('20130711 %s %s', m, fkw)
-            n += m.objects.filter(**fkw).count()
+            n += m.objects.filter(flt).count()
         return n
-        
 
 
-
-#~ class FillInvoice(dd.RowAction):
-    #~ label = _("Fill")
-    #~ help_text = _("Fill this invoice using invoiceable items")
-    #~ 
-    #~ def run_from_ui(self,obj,ar,**kw):
-        #~ L = list(Invoiceable.get_invoiceables_for(obj.partner,obj.date))
-        #~ if len(L) == 0:
-            #~ return ar.error(_("No invoiceables found for %s.") % obj.partner)
-        #~ def ok():
-            #~ for ii in L:
-                #~ i = InvoiceItem(voucher=obj,invoiceable=ii,
-                    #~ product=ii.get_invoiceable_product(),
-                    #~ qty=ii.get_invoiceable_qty())
-                #~ i.product_changed(ar)
-                #~ i.full_clean()
-                #~ i.save()
-            #~ kw.update(refresh=True)
-            #~ return kw
-        #~ msg = _("This will add %d invoice items.") % len(L)
-        #~ return ar.confirm(ok, msg, _("Are you sure?"))
         
 class CreateInvoiceForPartner(dd.RowAction):
     
@@ -226,17 +218,6 @@ class InvoiceItem(InvoiceItem): # 20130709
     invoiceable = dd.GenericForeignKey(
         'invoiceable_type', 'invoiceable_id',
         verbose_name=invoiceable_label)
-    
-    #~ @dd.chooser()
-    #~ def enrolment_choices(self,voucher):
-        #~ Enrolment = dd.resolve_model('school.Enrolment')
-        #~ # print 20130605, voucher.partner.pk
-        #~ return Enrolment.objects.filter(pupil__id=voucher.partner.pk).order_by('request_date')
-        #~ 
-    #~ def enrolment_changed(self,ar):
-        #~ if self.enrolment is not None and self.enrolment.course is not None:
-            #~ self.product = self.enrolment.course.tariff
-        #~ self.product_changed(ar)
         
     def product_changed(self,ar):
         super(InvoiceItem,self).product_changed(ar)
@@ -257,9 +238,13 @@ class ItemsByInvoice(ItemsByInvoice): # 20130709
         #~ return super(ItemsByInvoice,self).get_choices_text(obj,field,request)
     
 class InvoicingsByInvoiceable(InvoiceItemsByProduct): # 20130709
+    label = _("Invoicings")
     #~ app_label = 'sales'
     master_key = 'invoiceable'
     editable = False
+    column_names = "voucher qty title description:20x1 discount unit_price total_incl total_base total_vat"
+    
+    #~ column_names = 
     
 #~ sales.ItemsByInvoice.column_names = "enrolment product title description:20x1 discount unit_price qty total_incl total_base total_vat"
     

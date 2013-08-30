@@ -127,7 +127,8 @@ class MonthField(models.DateField):
   
 class PriceField(models.DecimalField):
     """
-    Deserves more documentation.
+    A Decimalfield with default values for decimal_places, max_length and max_digits.
+    
     """
     def __init__(self, *args, **kwargs):
         defaults = dict(
