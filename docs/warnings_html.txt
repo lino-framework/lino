@@ -2,4 +2,3 @@
 /home/luc/hgwork/lino/docs/demos.rst:86: WARNING: toctree contains reference to nonexisting document u'cosi'
 /home/luc/hgwork/lino/docs/blog/2013/0821/bug.rst:: WARNING: document isn't included in any toctree
 /home/luc/hgwork/lino/docs/cosi/index.rst:: WARNING: document isn't included in any toctree
-/home/luc/hgwork/lino/docs/blog/2013/0829.rst:8: WARNING: undefined label: eventstates.scheduled (if the link has no caption the label must precede a section header)
