@@ -68,9 +68,6 @@ the project and continued development and maintenance with my blessing
 as pyPdf2". But his latest version is still on PyPI and works well.)
 
 
-
-
-
 Changed API of actions
 ----------------------
 
@@ -92,8 +89,20 @@ By::
         obj = ar.selected_rows[0]
         ...
 
-My apologies if this causes some work to others 
-(though afaik not many people have 
+My apologies if this causes some work to others...
+though afaik not many people have 
 written custom actions until now, and if you have, I guess that you 
-agree that this signature was strange)
+agree that this signature was strange.
 
+
+
+Models
+------
+
+- Foo (Foues) : {{help_text}}
+
+  Field
+
+  Tables : Foos, FoosByBar, FoosWithUsers,...
+  
+Bar  Barres               id,name

@@ -78,6 +78,8 @@ class Model(models.Model):
     
     """
     
+    #~ help_text = None
+    
     quick_search_fields = None
     """
     When quick_search text is given for a table on this model, 
@@ -469,6 +471,7 @@ class Model(models.Model):
               'get_system_note_recipients',
               'get_system_note_type',
               'quick_search_fields',
+              #~ 'help_text',
               'change_watcher_spec',
               #~ 'site_setup',
               'on_analyze',
