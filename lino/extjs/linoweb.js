@@ -2150,13 +2150,15 @@ Lino.call_ajax_action = function(panel,method,url,p,actionName,step,on_confirm,o
   //~ console.log("20130809 Lino.call_ajax_action",panel);
   Ext.apply(p,panel.get_base_params());
   
-  var selected_recs = panel.get_selected();
-  //~ console.log("20130831",selected_recs);
-  var rs = Array(selected_recs.length);
-  for(var i=0; i < selected_recs.length;i++) {
-      rs[i] = selected_recs[i].data.id;
-  };
-  p.{{ext_requests.URL_PARAM_SELECTED}} = rs;
+  if (panel.get_selected) {
+      var selected_recs = panel.get_selected();
+      //~ console.log("20130831",selected_recs);
+      var rs = Array(selected_recs.length);
+      for(var i=0; i < selected_recs.length;i++) {
+          rs[i] = selected_recs[i].data.id;
+      };
+      p.{{ext_requests.URL_PARAM_SELECTED}} = rs;
+  }
   
   if (panel.loadMask) panel.loadMask.show(); 
   //~ p.$ext_requests.URL_PARAM_SUBST_USER = Lino.subst_user;

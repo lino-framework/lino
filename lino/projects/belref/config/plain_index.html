@@ -5,8 +5,10 @@
 <p>({{_("Under construction")}})</p>
 <p>
 {% for obj in settings.SITE.modules.concepts.Concept.objects.all() %}
-  {{obj.summary_row()}},
+  {% for e in obj.summary_row() %}
+    {{e}},
   {% endfor %}
+{% endfor %}
 </p>
 </div>
 {% endblock %}
