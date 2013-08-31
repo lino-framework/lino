@@ -529,8 +529,8 @@ class ActionRequest(BaseRequest):
         if self.current_project is not None:
             bp[ext_requests.URL_PARAM_PROJECT] = self.current_project
             
-        if self.selected_rows is not None:
-            bp[ext_requests.URL_PARAM_SELECTED] = [obj.pk for obj in self.selected_rows if obj is not None]
+        #~ if self.selected_rows is not None:
+            #~ bp[ext_requests.URL_PARAM_SELECTED] = [obj.pk for obj in self.selected_rows if obj is not None]
             
         if self.subst_user is not None:
             #~ bp[ext_requests.URL_PARAM_SUBST_USER] = self.subst_user.username
