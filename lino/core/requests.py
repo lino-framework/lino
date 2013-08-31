@@ -144,7 +144,10 @@ class BaseRequest(object):
         kw.update(subst_user=request.subst_user)
         kw.update(requesting_panel=request.requesting_panel)
         kw.update(current_project=rqdata.get(ext_requests.URL_PARAM_PROJECT,None))
-        kw.update(selected_pks=rqdata.getlist(ext_requests.URL_PARAM_SELECTED))
+        
+        selected = rqdata.getlist(ext_requests.URL_PARAM_SELECTED)
+        kw.update(selected_rows = [self.actor.get_row_by_pk(pk) for pk in selected])
+        
         #~ if settings.SITE.user_model:
             #~ username = rqdata.get(ext_requests.URL_PARAM_SUBST_USER,None)
             #~ if username:
@@ -159,13 +162,13 @@ class BaseRequest(object):
             user=None,
             subst_user=None,
             current_project=None,
-            selected_pks=None,
+            selected_rows=None,
             requesting_panel=None,
             renderer=None):
         self.requesting_panel = requesting_panel
         self.user = user 
         self.current_project = current_project
-        self.selected_pks = selected_pks
+        self.selected_rows = selected_rows
         if renderer is not None:
             self.renderer = renderer
         #~ if self.actor.parameters:
@@ -526,8 +529,8 @@ class ActionRequest(BaseRequest):
         if self.current_project is not None:
             bp[ext_requests.URL_PARAM_PROJECT] = self.current_project
             
-        if self.selected_pks is not None:
-            bp[ext_requests.URL_PARAM_SELECTED] = self.selected_pks
+        if self.selected_rows is not None:
+            bp[ext_requests.URL_PARAM_SELECTED] = [obj.pk for obj in self.selected_rows]
             
         if self.subst_user is not None:
             #~ bp[ext_requests.URL_PARAM_SUBST_USER] = self.subst_user.username

@@ -600,7 +600,8 @@ class InvoicesByJournal(Invoices):
     
 class SignAction(actions.Action):
     label = "Sign"
-    def run_from_ui(self,obj,ar):
+    def run_from_ui(self,ar):
+        obj = ar.selected_rows[0]
         def ok():
             for row in ar.selected_rows:
                 row.instance.user = ar.get_user()

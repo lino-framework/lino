@@ -5,7 +5,8 @@ from lino import dd
 
 class A(dd.Action):
     label = _("a")
-    def run_from_ui(self,obj,ar,**kw):
+    def run_from_ui(self,ar,**kw):
+        obj = ar.selected_rows[0]
         return ar.success("Called a() on %s" % obj)
 
 class Moo(dd.Model):

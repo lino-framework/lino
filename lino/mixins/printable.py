@@ -513,7 +513,8 @@ class CachedPrintAction(BasePrintAction):
             return
         return BasePrintAction.before_build(self,bm,elem)
             
-    def unused_run_from_ui(self,obj,ar,**kw):
+    def unused_run_from_ui(self,ar,**kw):
+        obj = ar.selected_rows[0]
         assert obj is None
         
         if elem.build_time is None:
@@ -532,10 +533,11 @@ class CachedPrintAction(BasePrintAction):
             kw.update(open_url=url)
         return ar.success(**kw)
         
-    def run_from_ui(self,obj,ar,**kw):
-        assert obj is None
-        if len(ar.selected_pks) == 1:
-            obj = ar.actor.get_row_by_pk(ar.selected_pks[0])
+    def run_from_ui(self,ar,**kw):
+        #~ obj = ar.selected_rows[0]        
+        #~ assert obj is None
+        if len(ar.selected_rows) == 1:
+            obj = ar.selected_rows[0]
             bm = get_build_method(obj)
             mf = bm.get_target(self,obj)
             
@@ -552,8 +554,8 @@ class CachedPrintAction(BasePrintAction):
             return ar.success(**kw)
 
         def ok():
-            qs = [ar.actor.get_row_by_pk(pk) for pk in ar.selected_pks]
-            mf = self.print_multiple(ar,qs)
+            #~ qs = [ar.actor.get_row_by_pk(pk) for pk in ar.selected_pks]
+            mf = self.print_multiple(ar,ar.selected_rows)
             kw.update(open_url=mf.url)
             #~ kw.update(refresh_all=True)
             return kw
@@ -583,7 +585,8 @@ class EditTemplate(BasePrintAction):
     label = _('Edit Print Template')
     required = dict(user_level='manager')
     
-    def run_from_ui(self,elem,ar,**kw):
+    def run_from_ui(self,ar,**kw):
+        elem = ar.selected_rows[0]
         bm = get_build_method(elem)
         tplfile = bm.get_template_file(ar,self,elem)
         kw.update(message=_("Template file: %s ") % tplfile)
@@ -628,7 +631,8 @@ class DirectPrintAction(BasePrintAction):
         #~ return super(DirectPrintAction,self).get_print_templates(bm,elem)
         
         
-    def run_from_ui(self,elem,ar,**kw):
+    def run_from_ui(self,ar,**kw):
+        elem = ar.selected_rows[0]
         bm =  bm_dict.get(
             self.build_method or 
             settings.SITE.site_config.default_build_method)
@@ -682,7 +686,8 @@ class ClearCacheAction(actions.Action):
             return False
         return super(ClearCacheAction,self).get_action_permission(ar,obj,state)
     
-    def run_from_ui(self,elem,ar):
+    def run_from_ui(self,ar):
+        elem = ar.selected_rows[0]
         def doit():
             elem.clear_cache()
             return ar.success("%s printable cache has been cleared." % elem,refresh=True)

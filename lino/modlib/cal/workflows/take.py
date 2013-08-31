@@ -51,7 +51,8 @@ class TakeAssignedEvent(dd.Action):
             return False
         return super(TakeAssignedEvent,self).get_action_permission(ar,obj,state)
         
-    def run_from_ui(self,obj,ar,**kw):
+    def run_from_ui(self,ar,**kw):
+        obj = ar.selected_rows[0]
         ar.confirm(self.help_text,_("Are you sure?"))
         obj.user = ar.get_user()
         obj.assigned_to = None
@@ -93,9 +94,10 @@ if False:
         return kw
     
     
-    def run_from_ui(self,obj,ar,**kw):
+    def run_from_ui(self,ar,**kw):
+        obj = ar.selected_rows[0]
         obj.user = ar.action_param_values.to_user
-        kw = super(AssignEvent,self).run_from_ui(obj,ar,**kw)
+        kw = super(AssignEvent,self).run_from_ui(ar,**kw)
         #~ obj.save()
         kw.update(refresh=True)
         return kw

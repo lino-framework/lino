@@ -313,7 +313,8 @@ class UI(object):
         """
         """
         try:
-            rv = ar.bound_action.action.run_from_ui(elem,ar)
+            ar.selected_rows = [elem]
+            rv = ar.bound_action.action.run_from_ui(ar)
             if rv is None:
                 rv  = self.success()
             return self.render_action_response(rv)

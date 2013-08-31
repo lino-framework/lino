@@ -65,7 +65,8 @@ class PrintPosting(dd.Action):
     icon_name='x-tbar-print'
     show_in_workflow = True
     
-    def run_from_ui(self,elem,ar,**kw):
+    def run_from_ui(self,ar,**kw):
+        elem = ar.selected_rows[0]
         kw = elem.owner.do_print.run_from_code(ar,**kw)        
         kw.update(refresh=True)
         #~ r = elem.owner.print_from_posting(elem,ar,**kw)
@@ -194,7 +195,8 @@ class CreatePostings(dd.Action):
         actions.ShowEmptyTable) # but not from InsertRow
     
     
-    def run_from_ui(self,elem,ar,**kw):
+    def run_from_ui(self,ar,**kw):
+        elem.obj = ar.selected_rows[0]
         recs = tuple(elem.get_postable_recipients())
         def ok():
             for rec in recs:

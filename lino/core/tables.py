@@ -1208,9 +1208,9 @@ class AbstractTable(actors.Actor):
             an = self.default_list_action_name
         ba = self.get_action_by_name(an)
         #~ print ba
-        ar = self.request(action=ba)
+        ar = self.request(action=ba,selected_rows=[elem])
         #~ ar = TableRequest(None,self,None,ba)
-        kw = ba.action.run_from_ui(elem,ar)
+        kw = ba.action.run_from_ui(ar)
         #~ kw = self.check_action_response(kw)
         msg = kw.get('message')
         if msg: 

@@ -56,3 +56,28 @@ overrides the original
 
 
 
+
+Changed API of actions
+----------------------
+
+I made a backwards incompatible change in :ref:`dev.actions`.
+Existing applications who define actions must change the signature of 
+the miscellaneous `run_from_` methods.
+Sorry. 
+But I think it is worth doing it.
+The "selected row" is no longer passed as a first positional argument,
+but contained in a new `selected_rows` attribute of the `ar` argument.
+
+Replace::
+
+    def run_from_ui(self,obj,ar,**kw):
+        ...
+
+By::
+
+    def run_from_ui(self,ar,**kw):
+        obj = ar.selected_rows[0]
+        ...
+
+
+

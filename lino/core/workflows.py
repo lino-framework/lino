@@ -224,7 +224,8 @@ method::
     def before_row_save(self,row,ar):
         pass
         
-    def run_from_ui(self,row,ar,**kw):
+    def run_from_ui(self,ar,**kw):
+        row = ar.selected_rows[0]
         #~ state_field_name = self.defining_actor.workflow_state_field.attname
         #~ state_field_name = row.workflow_state_field.attname
         state_field_name = ar.actor.workflow_state_field.attname

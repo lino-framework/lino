@@ -247,7 +247,8 @@ class BeIdReadCardAction(BaseBeIdReadCardAction):
     #~ show_in_row_actions = True
 
   
-    def run_from_ui(self,row,ar,**kw):
+    def run_from_ui(self,ar,**kw):
+        row = ar.selected_rows[0]
         #~ self.client_model = dd.resolve_model(self.client_model)
         cmc = list(dd.models_by_base(BeIdCardHolder))
         if len(cmc) != 1:

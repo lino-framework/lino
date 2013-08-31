@@ -237,19 +237,21 @@ class InstanceAction(object):
         self.instance = instance
         self.owner = owner
         
-    #~ def __call__(self,ar,**kw):
     def run_from_code(self,ar,**kw):
-        return self.bound_action.action.run_from_code(self.instance,ar)
+        ar.selected_rows = [self.instance]
+        return self.bound_action.action.run_from_code(ar)
         
     def run_from_ui(self,ar,**kw):
-        return self.bound_action.action.run_from_ui(self.instance,ar)
+        ar.selected_rows = [self.instance]
+        return self.bound_action.action.run_from_ui(ar)
         
         
     def run_from_session(self,ses,**kw):
         #~ print self,args, kw
         ar = self.bound_action.request(**kw)
         ar.setup_from(ses)
-        return self.bound_action.action.run_from_code(self.instance,ar)
+        ar.selected_rows = [self.instance]
+        return self.bound_action.action.run_from_code(ar)
 
     #~ def as_button(self,obj,request,label=None):
         #~ print "Foo"
@@ -661,10 +663,10 @@ class Action(Parametrizable,Permittable):
         return True
         
         
-    def run_from_code(self,obj,ar,**kw):
-        return self.run_from_ui(obj,ar,**kw)
+    def run_from_code(self,ar,**kw):
+        return self.run_from_ui(ar,**kw)
         
-    def run_from_ui(self,row,ar,**kw):
+    def run_from_ui(self,ar,**kw):
         """
         Execute the action on the given `row`. 
         `ar` is an :class:`ActionRequest <lino.core.requests.ActionRequest>` 
@@ -1052,7 +1054,8 @@ class ShowSlaveTable(Action):
         self.label = self.slave_table.label
         super(ShowSlaveTable,self).attach_to_actor(actor,name)
         
-    def run_from_ui(self,obj,ar,**kw):
+    def run_from_ui(self,ar,**kw):
+        obj = ar.selected_rows[0]
         #~ ba = self.slave_table.default_action
         sar = ar.spawn(self.slave_table,master_instance=obj)
         js = ar.renderer.request_handler(sar)
@@ -1101,7 +1104,8 @@ class NotifyingAction(Action):
             if s is not None: kw.update(notify_body=s)
         return kw
         
-    def run_from_ui(self,obj,ar,**kw):
+    def run_from_ui(self,ar,**kw):
+        obj = ar.selected_rows[0]
         kw.update(message=ar.action_param_values.notify_subject)
         #~ kw.update(alert=True)
         kw.update(refresh=True)
@@ -1141,7 +1145,10 @@ def action(*args,**kw):
         #~ kw.setdefault('show_in_row_actions',True)
         a = Action(*args,**kw)
         #~ a.run = curry(fn,a)
-        a.run_from_ui = fn
+        def wrapped(ar):
+            obj = ar.selected_rows[0]
+            return fn(obj,ar)
+        a.run_from_ui = wrapped
         return a
     return decorator
         

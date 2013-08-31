@@ -49,7 +49,8 @@ class Duplicate(actions.Action):
             return False
         return super(Duplicate,self).get_action_permission(ar,obj,state)
         
-    def run_from_code(self,obj,ar,**known_values):
+    def run_from_code(self,ar,**known_values):
+        obj = ar.selected_rows[0]
         #~ if not isinstance(ar,actions.ActionRequest):
             #~ raise Exception("Expected and ActionRequest but got %r" % ar)
         #~ related = dict()
@@ -133,8 +134,9 @@ class Duplicate(actions.Action):
                 
         return new
         
-    def run_from_ui(self,obj,ar,**kw):
-        new = self.run_from_code(obj,ar)
+    def run_from_ui(self,ar,**kw):
+        obj = ar.selected_rows[0]
+        new = self.run_from_code(ar)
         kw = dict()
         kw.update(refresh=True)
         kw.update(message=_("Duplicated %(old)s to %(new)s.") % dict(old=obj,new=new))

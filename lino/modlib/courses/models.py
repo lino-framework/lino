@@ -732,7 +732,8 @@ class ConfirmAllEnrolments(dd.Action):
     single_row = False
     http_method = 'POST'
     
-    def run_from_ui(self,obj,ar,**kw):
+    def run_from_ui(self,ar,**kw):
+        obj = ar.selected_rows[0]
         assert obj is None
         def ok():
             for obj in ar:

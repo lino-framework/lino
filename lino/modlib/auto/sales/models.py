@@ -162,16 +162,18 @@ class CreateInvoiceForPartner(dd.Action):
     #~ show_in_row_actions = True
     show_in_workflow = True
     
-    def run_from_ui(self,obj,ar,**kw):
+    def run_from_ui(self,ar,**kw):
+        obj = ar.selected_rows[0]
         def ok():
-          invoice = create_invoice_for(obj,ar)
-          return ar.goto_instance(invoice,**kw)
+            invoice = create_invoice_for(obj,ar)
+            return ar.goto_instance(invoice,**kw)
         if True: # no confirmation
             return ok()
         msg = _("This will create an invoice for %s.") % obj
         return ar.confirm(ok, msg, _("Are you sure?"))
         
-    def unused_run_from_ui(self,obj,ar,**kw):
+    def unused_run_from_ui(self,ar,**kw):
+        obj = ar.selected_rows[0]
         L = list(Invoiceable.get_invoiceables_for(obj))
         if len(L) == 0:
             return ar.error(_("No invoiceables found for %s.") % obj)
@@ -195,7 +197,7 @@ class CreateInvoiceForPartner(dd.Action):
         return ar.confirm(ok, msg, _("Are you sure?"))
         
 #~ dd.inject_action('contacts.Partner','create_invoice',CreateInvoiceForPartner())
-#~ contacts.Partner.create_invoice = CreateInvoiceForPartner()
+contacts.Partner.create_invoice = CreateInvoiceForPartner()
 
 
     
@@ -303,8 +305,10 @@ class InvoicingsByInvoiceable(InvoiceItemsByProduct): # 20130709
         #~ 
         
 class CreateInvoice(CreateInvoiceForPartner):
-    def run_from_ui(self,obj,ar,**kw):
-        return super(CreateInvoice,self).run_from_ui(obj.partner,ar,**kw)
+    def run_from_ui(self,ar,**kw):
+        obj = ar.selected_rows[0]
+        ar.selected_rows = [ o.partner for o in ar.selected_rows ]
+        return super(CreateInvoice,self).run_from_ui(ar,**kw)
         
 from lino.mixins.printable import CachedPrintAction
 
@@ -313,7 +317,8 @@ class CreateAllInvoices(CachedPrintAction):
     #~ label = _("Create invoices")
     help_text = _("Create and print the invoice for each selected row, making these rows disappear from this table")
     
-    def run_from_ui(self,obj,ar,**kw):
+    def run_from_ui(self,ar,**kw):
+        obj = ar.selected_rows[0]
         assert obj is None
         def ok():
             invoices = []

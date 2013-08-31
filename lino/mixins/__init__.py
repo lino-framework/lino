@@ -257,7 +257,8 @@ class RegisterAction(actions.Action):
         self.required = self.target_model.required_to_register
         super(RegisterAction,self).attach_to_actor(actor,name)
   
-    def run_from_ui(self,obj,ar,**kw):
+    def run_from_ui(self,ar,**kw):
+        obj = ar.selected_rows[0]
         #~ ar.confirm(self.help_text,_("Are you sure?"))
         obj.register(ar)
         obj.save()
@@ -283,7 +284,8 @@ class DeregisterAction(actions.Action):
         #~ logger.info("20121208 DeregisterAction.attach_to_actor() %s %s",actor,actor.model.required_to_deregister)
         super(DeregisterAction,self).attach_to_actor(actor,name)
   
-    def run_from_ui(self,obj,ar,**kw):
+    def run_from_ui(self,ar,**kw):
+        obj = ar.selected_rows[0]
         #~ ar.confirm(self.help_text,_("Are you sure?"))
         obj.deregister(ar)
         obj.save()
@@ -446,7 +448,8 @@ class MoveUp(actions.Action):
         if ar.data_iterator[0] == obj: return False
         return super(MoveUp,self).get_action_permission(ar,obj,state)
     
-    def run_from_ui(self,obj,ar,**kw):
+    def run_from_ui(self,ar,**kw):
+        obj = ar.selected_rows[0]
         obj.swap_seqno(ar,-1)
         #~ obj.move_up()
         kw = dict()
@@ -472,7 +475,8 @@ class MoveDown(actions.Action):
             print 20130706, ar.data_iterator.count(), ar.data_iterator
         return super(MoveDown,self).get_action_permission(ar,obj,state)
     
-    def run_from_ui(self,obj,ar,**kw):
+    def run_from_ui(self,ar,**kw):
+        obj = ar.selected_rows[0]
         obj.swap_seqno(ar,1)
         #~ obj.move_down()
         kw = dict()
@@ -484,7 +488,8 @@ class MoveDown(actions.Action):
 
 class DuplicateSequenced(Duplicate):
   
-    def run_from_code(self,obj,ar,**kw):
+    def run_from_code(self,ar,**kw):
+        obj = ar.selected_rows[0]
   
         #~ print '20120605 duplicate', self.seqno, self.account
         seqno = obj.seqno
@@ -496,7 +501,7 @@ class DuplicateSequenced(Duplicate):
             s.seqno += 1
             s.save()
         kw.update(seqno=seqno)
-        return super(DuplicateSequenced,self).run_from_code(obj,ar,**kw)
+        return super(DuplicateSequenced,self).run_from_code(ar,**kw)
   
 
 class Sequenced(Duplicable):

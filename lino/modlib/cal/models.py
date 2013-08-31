@@ -2405,7 +2405,8 @@ class UpdateReminders(actions.Action):
     
     callable_from = (actions.GridEdit, actions.ShowDetailAction)
         
-    def run_from_ui(self,user,ar,**kw):
+    def run_from_ui(self,ar,**kw):
+        user = ar.selected_rows[0]
         logger.info("Updating reminders for %s",unicode(user))
         n = update_reminders(user)
         kw.update(success=True)

@@ -128,7 +128,8 @@ class CreateNote(dd.Action):
     """
     #~ required = dict(states='coached')
     
-    def run_from_ui(self,obj,ar,**kw):
+    def run_from_ui(self,ar,**kw):
+        obj = ar.selected_rows[0]
         notes = dd.resolve_app('notes')
         ekw = dict(project=obj,user=ar.get_user()) 
         ekw.update(type=ar.action_param_values.note_type)
@@ -166,13 +167,14 @@ class CheckinGuest(dd.NotifyingAction):
             user=obj.event.user,
             partner=obj.partner)
     
-    def run_from_ui(self,obj,ar,**kw):
+    def run_from_ui(self,ar,**kw):
+        obj = ar.selected_rows[0]
         def doit():
             obj.waiting_since = datetime.datetime.now()
             obj.waiting_until = None
             obj.save()
             kw.update(success=True)
-            return super(CheckinGuest,self).run_from_ui(obj,ar,**kw)
+            return super(CheckinGuest,self).run_from_ui(ar,**kw)
         if obj.event.assigned_to is not None:
             def ok():
                 obj.event.user = obj.event.assigned_to
@@ -214,7 +216,8 @@ class ReceiveGuest(dd.Action):
     #~ def before_row_save(self,row,ar):
         #~ row.waiting_until = datetime.datetime.now()
     
-    def run_from_ui(self,obj,ar,**kw):
+    def run_from_ui(self,ar,**kw):
+        obj = ar.selected_rows[0]
         def ok():
             obj.waiting_until = datetime.datetime.now()
             if obj.state in ExpectedGuestsStates:
@@ -258,7 +261,8 @@ class CheckoutGuest(dd.Action):
             #~ return False
         return super(CheckoutGuest,self).get_action_permission(ar,obj,state)
         
-    def run_from_ui(self,obj,ar,**kw):
+    def run_from_ui(self,ar,**kw):
+        obj = ar.selected_rows[0]
         def ok():
             if obj.waiting_until is None:
                 obj.waiting_until = datetime.datetime.now()
