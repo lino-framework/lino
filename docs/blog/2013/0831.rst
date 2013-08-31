@@ -27,6 +27,7 @@ then generate a single temporary pdf file which is simply a merge of
 these individual pdf documents.
 
 - New modules :mod:`lino.utils.pdf` and :mod:`lino.utils.media`.
+
 - Every :class:`lino.core.requests.BaseRequest` has now a new attribute `selected_pks`
 - New name `URL_PARAM_SELECTED` in :mod:`lino.core.constants`
 - New :meth:`lino.mixins.printable.BasePrintable.before_printable_build` because 
@@ -54,6 +55,19 @@ Note also that
 overrides the original
 :class:`CachedPrintAction <lino.mixins.printable.CachedPrintAction>`.
 
+A new dependency
+----------------
+
+Note that the above changes created a new dependency: `pyPdf`.
+Updated :src:`/requirements.txt`.
+
+(According to `his website <http://pybrary.net/pyPdf/>`_,
+pyPdf's original author Mathieu Fenniak
+has "stopped maintaining pyPdf, and a company named Phaseit has forked 
+the project and continued development and maintenance with my blessing 
+as pyPdf2". But his latest version is still on PyPI and works well.)
+
+
 
 
 
@@ -62,11 +76,10 @@ Changed API of actions
 
 I made a backwards incompatible change in :ref:`dev.actions`.
 Existing applications who define actions must change the signature of 
-the miscellaneous `run_from_` methods.
-Sorry. 
-But I think it is worth doing it.
-The "selected row" is no longer passed as a first positional argument,
+the miscellaneous `run_from_` methods:
+the "selected row" is no longer passed as a first positional argument,
 but contained in a new `selected_rows` attribute of the `ar` argument.
+
 
 Replace::
 
@@ -79,5 +92,8 @@ By::
         obj = ar.selected_rows[0]
         ...
 
-
+My apologies if this causes some work to others 
+(though afaik not many people have 
+written custom actions until now, and if you have, I guess that you 
+agree that this signature was strange)
 

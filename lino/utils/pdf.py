@@ -12,14 +12,18 @@
 ## You should have received a copy of the GNU General Public License
 ## along with Lino; if not, see <http://www.gnu.org/licenses/>.
 
-#~ needs pyPdf, see http://pybrary.net/pyPdf
-from pyPdf import PdfFileWriter, PdfFileReader
+try:
+    #~ needs pyPdf, see http://pybrary.net/pyPdf
+    import pyPdf
+    #~ from pyPdf import PdfFileWriter, PdfFileReader
+except ImportError:
+    pass
 
 def merge_pdfs(pdfs,output_name):
-    output = PdfFileWriter()
+    output = pyPdf.PdfFileWriter()
     
     for input_name in pdfs:
-        input = PdfFileReader(file(input_name, "rb"))
+        input = pyPdf.PdfFileReader(file(input_name, "rb"))
         #~ print "%s has %s pages." % (input_name, input.getNumPages())
         for page in input.pages:
             output.addPage(page)
