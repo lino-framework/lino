@@ -53,6 +53,9 @@ from lino.utils.appy_pod import Renderer
 from lino.core.model import Model
 from lino.mixins.duplicable import Duplicable
 
+from lino.utils.media import TmpMediaFile
+from lino.utils.pdf import merge_pdfs
+
 
 def decfmt(v,places=2,**kw):
     """
@@ -90,6 +93,7 @@ except ImportError:
 def model_group(elem):
     return elem._meta.app_label + '/' + elem.__class__.__name__
 
+from lino.utils.media import MediaFile
 
 
 bm_dict = {}
@@ -151,24 +155,31 @@ class BuildMethod:
     def __unicode__(self):
         return unicode(self.label)
         
-    def get_target_parts(self,action,elem):
+    def get_target(self,action,elem):
         "used by `get_target_name`"
-        #~ return [self.cache_name, self.name, action.actor.elem_filename_root(elem) + self.target_ext]
-        return [self.cache_name, self.name, elem.filename_root() + self.target_ext]
-        #~ return [self.cache_name, self.name, filename_root(elem) + '-' + str(elem.pk) + self.target_ext]
+        return MediaFile(self.use_webdav,self.cache_name, self.name, elem.filename_root() + self.target_ext)
+        
         
     def get_target_name(self,action,elem):
-        "return the output filename to generate on the server"
-        if self.use_webdav and settings.SITE.use_davlink:
-            return os.path.join(settings.SITE.webdav_root,*self.get_target_parts(action,elem))
-        return os.path.join(settings.MEDIA_ROOT,*self.get_target_parts(action,elem))
-        
+        return self.get_target(action,elem).name
     def get_target_url(self,action,elem):
-        "return the url that points to the generated filename on the server"
-        if self.use_webdav and settings.SITE.use_davlink:
-            return settings.SITE.webdav_url + "/".join(self.get_target_parts(action,elem))
-        #~ return settings.MEDIA_URL + "/".join(self.get_target_parts(action,elem))
-        return settings.SITE.build_media_url(*self.get_target_parts(action,elem))
+        return self.get_target(action,elem).url
+        
+    #~ def get_target_parts(self,action,elem):
+        #~ "used by `get_target_name`"
+        #~ return [self.cache_name, self.name, elem.filename_root() + self.target_ext]
+        #~ 
+    #~ def get_target_name(self,action,elem):
+        #~ "return the output filename to generate on the server"
+        #~ if self.use_webdav and settings.SITE.use_davlink:
+            #~ return os.path.join(settings.SITE.webdav_root,*self.get_target_parts(action,elem))
+        #~ return os.path.join(settings.MEDIA_ROOT,*self.get_target_parts(action,elem))
+        #~ 
+    #~ def get_target_url(self,action,elem):
+        #~ "return the url that points to the generated filename on the server"
+        #~ if self.use_webdav and settings.SITE.use_davlink:
+            #~ return settings.SITE.webdav_url + "/".join(self.get_target_parts(action,elem))
+        #~ return settings.SITE.build_media_url(*self.get_target_parts(action,elem))
             
     def build(self,ar,action,elem):
         raise NotImplementedError
@@ -472,6 +483,7 @@ class BasePrintAction(actions.Action):
         """Return the target filename if a document needs to be built,
         otherwise return ``None``.
         """
+        elem.before_printable_build(bm)
         filename = bm.get_target_name(self,elem)
         if not filename:
             return
@@ -492,7 +504,8 @@ class CachedPrintAction(BasePrintAction):
     For the user they are synonyms as long as 
     Lino doesn't support server-side printing.
     """
-    
+    single_row = False
+    http_method = 'POST'
     icon_name = 'x-tbar-print'
     
     def before_build(self,bm,elem):
@@ -500,25 +513,68 @@ class CachedPrintAction(BasePrintAction):
             return
         return BasePrintAction.before_build(self,bm,elem)
             
-    def run_from_ui(self,elem,ar,**kw):
-        bm = get_build_method(elem)
-        if not elem.build_time:
-            t = bm.build(ar,self,elem)
-            if t is None:
-                raise Exception("%s : build() returned None?!")
-            elem.build_time = datetime.datetime.fromtimestamp(t)
-            elem.save()
+    def unused_run_from_ui(self,obj,ar,**kw):
+        assert obj is None
+        
+        if elem.build_time is None:
+            elem.build_target(ar)
             kw.update(refresh=True)
             kw.update(message=_("%s printable has been built.") % elem)
         else:
             kw.update(message=_("Reused %s printable from cache.") % elem)
+            
+        bm = get_build_method(elem)
         url = bm.get_target_url(self,elem)
+        
         if bm.use_webdav and settings.SITE.use_davlink:
             kw.update(open_davlink_url=ar.request.build_absolute_uri(url))
         else:
             kw.update(open_url=url)
         return ar.success(**kw)
         
+    def run_from_ui(self,obj,ar,**kw):
+        assert obj is None
+        if len(ar.selected_pks) == 1:
+            obj = ar.actor.get_row_by_pk(ar.selected_pks[0])
+            bm = get_build_method(obj)
+            mf = bm.get_target(self,obj)
+            
+            if obj.build_time is None:
+                obj.build_target(ar)
+                kw.update(message=_("%s printable has been built.") % obj)
+            else:
+                kw.update(message=_("Reused %s printable from cache.") % obj)
+            #~ kw.update(open_url=mf.url)
+            if bm.use_webdav and settings.SITE.use_davlink:
+                kw.update(open_davlink_url=ar.request.build_absolute_uri(mf.url))
+            else:
+                kw.update(open_url=mf.url)
+            return ar.success(**kw)
+
+        def ok():
+            qs = [ar.actor.get_row_by_pk(pk) for pk in ar.selected_pks]
+            mf = self.print_multiple(ar,qs)
+            kw.update(open_url=mf.url)
+            #~ kw.update(refresh_all=True)
+            return kw
+        msg = _("This will print %d rows.") % len(ar.selected_pks)
+        return ar.confirm(ok, msg, _("Are you sure?"))
+
+    def print_multiple(self,ar,qs):
+        pdfs = []
+        for obj in qs:
+            #~ assert isinstance(obj,CachedPrintable)
+            #~ obj.register(ar) # moved call to register to Registrable.before_printable_build
+            if obj.build_time is None:
+                obj.build_target(ar)
+            pdf = obj.get_target_name()
+            assert pdf is not None
+            pdfs.append(pdf)
+                
+        mf = TmpMediaFile(ar,'pdf')
+        settings.SITE.makedirs_if_missing(os.path.dirname(mf.name))
+        merge_pdfs(pdfs,mf.name)
+        return mf
 
 
 class EditTemplate(BasePrintAction):
@@ -642,7 +698,7 @@ class ClearCacheAction(actions.Action):
             #~ logger.info("%r == %r : no confirmation", elem.get_cache_mtime(),elem.build_time)
         return doit()
         
-        
+    
     
 class PrintableType(Model):
     """
@@ -696,6 +752,9 @@ class BasePrintable(object):
     """
     Common base for :class:`Printable`.and :class:`CachedPrintable`.
     """
+    def before_printable_build(self,bm):
+        pass
+        
     def get_print_language(self):
         return settings.SITE.DEFAULT_LANGUAGE.django_code
         
@@ -768,8 +827,27 @@ class CachedPrintable(Duplicable,BasePrintable):
     Mixin for Models that generate a unique external file at a 
     determined place when being printed.
     
+    Adds a "Print" button, a "Clear cache" button and a `build_time` 
+    field.
+    
+    The "Print" button of a 
+    :class:`CachedPrintable <lino.mixins.printable.CachedPrintable>`
+    transparently handles the case when multiple rows are selected. 
+    If multiple rows are selected (which is possible only when 
+    :attr:`cell_edit <lino.core.tables.AbstractTable.cell_edit>` is True),
+    then it will automatically:
+    
+    - build the cached printable for those objects who don't yet have 
+      one
+      
+    - generate a single temporary pdf file which is a merge of these 
+      individual cached printable docs
+    
+    
     """
     do_print = CachedPrintAction()
+    do_clear_cache = ClearCacheAction()
+    #~ print_all = PrintAll()
     
     #~ must_build = models.BooleanField(_("must build"),default=True,editable=False)
     build_time = models.DateTimeField(_("build time"),null=True,editable=False)
@@ -778,7 +856,6 @@ class CachedPrintable(Duplicable,BasePrintable):
     if no build hasn't been called yet.
     """
     
-    do_clear_cache = ClearCacheAction()
     
     
     class Meta:
@@ -813,6 +890,13 @@ class CachedPrintable(Duplicable,BasePrintable):
         self.build_time = None
         self.save()
         
+    def build_target(elem,ar):
+        bm = get_build_method(elem)
+        t = bm.build(ar,elem.__class__.do_print,elem)
+        if t is None:
+            raise Exception("%s : build() returned None?!")
+        elem.build_time = datetime.datetime.fromtimestamp(t)
+        elem.save()
 
 class TypedPrintable(CachedPrintable):
     """

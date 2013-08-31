@@ -361,6 +361,11 @@ class Registrable(model.Model):
         state_field = self._meta.get_field('state')
         self.state = state_field.choicelist.draft
         
+    def before_printable_build(self,bm):
+        state_field = self._meta.get_field('state')
+        if self.state != state_field.choicelist.registered:
+            self.register(None)
+            self.save()
 
 
 

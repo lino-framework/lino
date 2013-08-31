@@ -54,6 +54,8 @@ from lino import dd
 from lino.utils import AttrDict
 from lino.utils.xmlgen.html import E
 
+from lino.core import dbtables
+
 #~ sales = dd.resolve_app('sales')
 contacts = dd.resolve_app('contacts')
 
@@ -135,7 +137,23 @@ class Invoiceable(dd.Model):
             n += m.objects.filter(flt).count()
         return n
 
-
+def create_invoice_for(obj,ar):
+    L = list(Invoiceable.get_invoiceables_for(obj))
+    if len(L) == 0:
+        raise Warning(_("No invoiceables found for %s.") % obj)
+    jnl = Invoice.get_journals()[0]
+    invoice = Invoice(partner=obj,journal=jnl,date=datetime.date.today())
+    invoice.save()
+    for ii in L:
+        i = InvoiceItem(voucher=invoice,invoiceable=ii,
+            product=ii.get_invoiceable_product(),
+            qty=ii.get_invoiceable_qty())
+        i.product_changed(ar)
+        i.full_clean()
+        i.save()
+    invoice.compute_totals()
+    invoice.save()
+    return invoice
         
 class CreateInvoiceForPartner(dd.Action):
     
@@ -145,6 +163,15 @@ class CreateInvoiceForPartner(dd.Action):
     show_in_workflow = True
     
     def run_from_ui(self,obj,ar,**kw):
+        def ok():
+          invoice = create_invoice_for(obj,ar)
+          return ar.goto_instance(invoice,**kw)
+        if True: # no confirmation
+            return ok()
+        msg = _("This will create an invoice for %s.") % obj
+        return ar.confirm(ok, msg, _("Are you sure?"))
+        
+    def unused_run_from_ui(self,obj,ar,**kw):
         L = list(Invoiceable.get_invoiceables_for(obj))
         if len(L) == 0:
             return ar.error(_("No invoiceables found for %s.") % obj)
@@ -168,8 +195,9 @@ class CreateInvoiceForPartner(dd.Action):
         return ar.confirm(ok, msg, _("Are you sure?"))
         
 #~ dd.inject_action('contacts.Partner','create_invoice',CreateInvoiceForPartner())
-contacts.Partner.create_invoice = CreateInvoiceForPartner()
-    
+#~ contacts.Partner.create_invoice = CreateInvoiceForPartner()
+
+
     
 class Invoice(Invoice): # 20130709
     
@@ -197,6 +225,8 @@ class Invoice(Invoice): # 20130709
             #~ logger.info("20130711 %s no longer invoiced",i.invoiceable)
         return super(Invoice,self).deregister(ar)
         
+    def get_build_method(self):
+        return 'appypdf'
     
 class InvoiceItem(InvoiceItem): # 20130709
     
@@ -272,46 +302,99 @@ class InvoicingsByInvoiceable(InvoiceItemsByProduct): # 20130709
         #~ return qs.filter(flt)
         #~ 
         
-    
-class IssueInvoice(CreateInvoiceForPartner):
+class CreateInvoice(CreateInvoiceForPartner):
     def run_from_ui(self,obj,ar,**kw):
         return super(CreateInvoice,self).run_from_ui(obj.partner,ar,**kw)
+        
+from lino.mixins.printable import CachedPrintAction
+
+    
+class CreateAllInvoices(CachedPrintAction):
+    #~ label = _("Create invoices")
+    help_text = _("Create and print the invoice for each selected row, making these rows disappear from this table")
+    
+    def run_from_ui(self,obj,ar,**kw):
+        assert obj is None
+        def ok():
+            invoices = []
+            for pk in ar.selected_pks:
+                partner = contacts.Partner.objects.get(pk=pk)    
+                invoice = create_invoice_for(partner,ar)
+                invoices.append(invoice)
+            #~ for obj in ar:
+                #~ invoice = create_invoice_for(obj.partner,ar)
+                #~ invoices.append(invoice)
+            mf = self.print_multiple(ar,invoices)
+            kw.update(open_url=mf.url)
+            kw.update(refresh_all=True)
+            return kw
+        #~ msg = _("This will create and print %d invoices.") % ar.get_total_count()
+        msg = _("This will create and print %d invoices.") % len(ar.selected_pks)
+        return ar.confirm(ok, msg, _("Are you sure?"))
+
+    
+        
     
 min_amount = Decimal()
 
 class InvoicesToCreate(dd.VirtualTable):
     label = _("Invoices to create")
+    cell_edit = False
     help_text = _("Table of all partners who should receive an invoice.")
-    issue_invoice = IssueInvoice()
+    issue_invoice = CreateInvoice()
     column_names = "first_date last_date partner amount action_buttons"
+    create_all_invoices = CreateAllInvoices()
+
     
     @classmethod
     def get_data_rows(self,ar):
+        qs = contacts.Partner.objects.all()
+        if ar.quick_search is not None:
+            qs = dbtables.add_quick_search_filter(qs,ar.quick_search)
+        if ar.gridfilters is not None:
+            qs = dbtables.add_gridfilters(qs,ar.gridfilters)
+        
         rows = []
-        for p in contacts.Partner.objects.all():
-            invoiceables = list(Invoiceable.get_invoiceables_for(p))
-            amount = Decimal()
-            first_date = last_date = None
-            for i in invoiceables:
-                am = i.get_invoiceable_amount()
-                if am is not None:
-                    amount += am
-                d = getattr(i,i.invoiceable_date_field)
-                if d is not None:
-                    if first_date is None or d < first_date: first_date = d
-                    if last_date is None or d > last_date: last_date = d
-            if amount >= min_amount and first_date is not None:
-                row = AttrDict(
-                    first_date=first_date,
-                    last_date=last_date,
-                    partner=p,
-                    amount=amount,
-                    invoiceables=invoiceables)
+        for p in qs:
+            row = self.get_row_for(p)
+            if row.amount >= min_amount and row.first_date is not None:
                 rows.append(row)
         
         def f(a,b): return cmp(a.first_date,b.first_date)
         rows.sort(f)
         return rows
+        
+    @classmethod
+    def get_row_for(self,partner):
+        invoiceables = list(Invoiceable.get_invoiceables_for(partner))
+        amount = Decimal()
+        first_date = last_date = None
+        for i in invoiceables:
+            am = i.get_invoiceable_amount()
+            if am is not None:
+                amount += am
+            d = getattr(i,i.invoiceable_date_field)
+            if d is not None:
+                if first_date is None or d < first_date: first_date = d
+                if last_date is None or d > last_date: last_date = d
+        return AttrDict(
+            id=partner.id,
+            pk=partner.pk,
+            first_date=first_date,
+            last_date=last_date,
+            partner=partner,
+            amount=amount,
+            invoiceables=invoiceables)
+                
+    @classmethod
+    def get_pk_field(self):
+        #~ print 20130831,repr(contacts.Partner._meta.pk)
+        return contacts.Partner._meta.pk
+        
+    @classmethod
+    def get_row_by_pk(self,pk):
+        partner = contacts.Partner.objects.get(pk=pk)
+        return self.get_row_for(partner)
         
     @dd.virtualfield(models.DateField(_("First date")))
     def first_date(self,row,ar):
@@ -339,7 +422,9 @@ class InvoicesToCreate(dd.VirtualTable):
     @dd.displayfield(_("Actions"))
     def action_buttons(self,obj,ar):
         # must override because the action is on obj.partner, not on obj
-        return obj.partner.create_invoice.as_button(ar)
+        return obj.partner.show_invoiceables.as_button(ar)
+        #~ return obj.partner.create_invoice.as_button(ar)
+        
         
       
         
@@ -380,6 +465,7 @@ class InvoiceablesByPartner(dd.VirtualTable):
     def info(self,row,ar):
         return ar.obj2html(row[1])
     
+contacts.Partner.show_invoiceables = dd.ShowSlaveTable(InvoiceablesByPartner)
 
 
 

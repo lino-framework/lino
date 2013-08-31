@@ -2149,6 +2149,15 @@ Lino.call_ajax_action = function(panel,method,url,p,actionName,step,on_confirm,o
   }
   //~ console.log("20130809 Lino.call_ajax_action",panel);
   Ext.apply(p,panel.get_base_params());
+  
+  var selected_recs = panel.get_selected();
+  //~ console.log("20130831",selected_recs);
+  var rs = Array(selected_recs.length);
+  for(var i=0; i < selected_recs.length;i++) {
+      rs[i] = selected_recs[i].data.id;
+  };
+  p.{{ext_requests.URL_PARAM_SELECTED}} = rs;
+  
   if (panel.loadMask) panel.loadMask.show(); 
   //~ p.$ext_requests.URL_PARAM_SUBST_USER = Lino.subst_user;
   //~ Lino.insert_subst_user(p);
@@ -3751,7 +3760,7 @@ Lino.GridPanel = Ext.extend(Lino.GridPanel,{
     
     
       
-    if (this.ls_quick_edit) {
+    if (this.cell_edit) {
       this.selModel = new Ext.grid.CellSelectionModel()
       this.get_selected = function() {
         //~ console.log(this.getSelectionModel().selection);
@@ -3779,7 +3788,7 @@ Lino.GridPanel = Ext.extend(Lino.GridPanel,{
         return rec
       };
     };
-    delete this.ls_quick_edit;
+    delete this.cell_edit;
     
     this.columns  = this.apply_grid_config(this.gc_name,this.ls_grid_configs,this.ls_columns);
     

@@ -476,6 +476,20 @@ class Actor(actions.Parametrizable):
     """
     
     
+    @classmethod
+    def get_pk_field(self):
+        """Return the Django field object used to represent the primary key 
+        when filling selected_pks
+        """
+        return None
+        
+    @classmethod
+    def get_row_by_pk(self,pk):
+        """
+        REturn the data row identified by the given primary key.
+        """
+        return None
+        
     
     
     

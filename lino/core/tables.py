@@ -898,9 +898,11 @@ class AbstractTable(actors.Actor):
     Number of rows to display per page.
     """
     
-    cell_edit = True 
+    cell_edit = True
     """
     `True` to use ExtJS CellSelectionModel, `False` to use RowSelectionModel.
+    When True, the users cannot select multiple rows.
+    When False, the users cannot select and edit individual cells.
     """
     
     show_detail_navigator = False

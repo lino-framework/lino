@@ -144,6 +144,7 @@ class BaseRequest(object):
         kw.update(subst_user=request.subst_user)
         kw.update(requesting_panel=request.requesting_panel)
         kw.update(current_project=rqdata.get(ext_requests.URL_PARAM_PROJECT,None))
+        kw.update(selected_pks=rqdata.getlist(ext_requests.URL_PARAM_SELECTED))
         #~ if settings.SITE.user_model:
             #~ username = rqdata.get(ext_requests.URL_PARAM_SUBST_USER,None)
             #~ if username:
@@ -158,11 +159,13 @@ class BaseRequest(object):
             user=None,
             subst_user=None,
             current_project=None,
+            selected_pks=None,
             requesting_panel=None,
             renderer=None):
         self.requesting_panel = requesting_panel
         self.user = user 
         self.current_project = current_project
+        self.selected_pks = selected_pks
         if renderer is not None:
             self.renderer = renderer
         #~ if self.actor.parameters:
@@ -519,8 +522,13 @@ class ActionRequest(BaseRequest):
             kw.update(field_values=pv)
             
         bp = kw.setdefault('base_params',{})
+        
         if self.current_project is not None:
             bp[ext_requests.URL_PARAM_PROJECT] = self.current_project
+            
+        if self.selected_pks is not None:
+            bp[ext_requests.URL_PARAM_SELECTED] = self.selected_pks
+            
         if self.subst_user is not None:
             #~ bp[ext_requests.URL_PARAM_SUBST_USER] = self.subst_user.username
             bp[ext_requests.URL_PARAM_SUBST_USER] = self.subst_user.id

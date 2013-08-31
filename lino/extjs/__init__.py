@@ -1394,8 +1394,9 @@ tinymce.init({
             kw.update(pk_index=rh.store.pk_index)
             #~ if settings.SITE.use_contenttypes:
             if settings.SITE.is_installed('contenttypes'):
-                kw.update(content_type=ContentType.objects.get_for_model(rh.actor.model).pk)
-        kw.update(ls_quick_edit=rh.actor.cell_edit)
+                kw.update(content_type=ContentType.objects.get_for_model(rh.store.pk.model).pk)
+                #~ kw.update(content_type=ContentType.objects.get_for_model(rh.actor.model).pk)
+        kw.update(cell_edit=rh.actor.cell_edit)
         kw.update(ls_bbar_actions=[
             self.a2btn(ba) 
               for ba in rh.actor.get_actions(rh.actor.default_action.action) 

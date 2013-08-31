@@ -49,6 +49,8 @@ from lino.core import dbtables
 from lino.core import web
 from lino.core.dbutils import navinfo
 
+from lino.utils.media import TmpMediaFile
+
 
 #~ from lino.ui import requests as ext_requests
 from lino.core import constants as ext_requests
@@ -954,15 +956,16 @@ class ApiList(View):
             return response
             
         if fmt in (ext_requests.URL_FORMAT_PDF,ext_requests.URL_FORMAT_ODT):
-          
-            ip = ar.request.META.get('REMOTE_ADDR','unknown_ip')
-            target_parts = ['cache', 'appypdf', ip, str(ar.actor) + '.' + fmt]
+            mf = TmpMediaFile(ar,fmt)
+            settings.SITE.makedirs_if_missing(os.path.dirname(mf.name))
+            ar.appy_render(mf.name)
+            return http.HttpResponseRedirect(mf.url)
+            
+            target_parts = ['cache', 'appy'+fmt, ip, str(ar.actor) + '.' + fmt]
             target_file = os.path.join(settings.MEDIA_ROOT,*target_parts)
             settings.SITE.makedirs_if_missing(os.path.dirname(target_file))
             target_url = settings.SITE.build_media_url(*target_parts)
-          
             ar.appy_render(target_file)
-            
             return http.HttpResponseRedirect(target_url)
             
         if fmt == ext_requests.URL_FORMAT_PRINTER:

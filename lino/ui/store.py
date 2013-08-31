@@ -1042,7 +1042,7 @@ class Store(BaseStore):
             dh = form.get_layout_handle(rh.ui)
             self.collect_fields(self.detail_fields,dh)
         
-        if issubclass(rh.actor,dbtables.Table):
+        if self.pk is not None:
             self.pk_index = 0
             found = False
             for fld in self.list_fields:
@@ -1100,19 +1100,6 @@ class Store(BaseStore):
         self.detail_fields = tuple(self.detail_fields)
         
 
-    def add_field_for(self,fields,df):
-        sf = get_atomizer(df,df.name)
-            
-        if not sf in self.all_fields:
-            self.all_fields.append(sf)
-            
-        #~ sf = self.df2sf.get(df,None)
-        #~ if sf is None:
-            #~ sf = self.create_atomizer(df,df.name)
-            #~ self.all_fields.append(sf)
-            #~ self.df2sf[df] = sf
-        fields.append(sf)
-        
     def collect_fields(self,fields,*layouts):
         """
         `fields` is a pointer to either `self.detail_fields` or `self.list_fields`.
@@ -1129,14 +1116,27 @@ class Store(BaseStore):
                     if self.pk is None:
                         self.pk = df
                 #~ fields.add(fld)
-        #~ if not self.pk in fields:
-        if issubclass(self.actor,dbtables.Table):
-            if self.pk is None:
-                self.pk = self.actor.model._meta.pk
+        
+        if self.pk is None:
+            self.pk = self.actor.get_pk_field()
+        if self.pk is not None:
             if not pk_found:
                 self.add_field_for(fields,self.pk)
                 
 
+    def add_field_for(self,fields,df):
+        sf = get_atomizer(df,df.name)
+            
+        if not sf in self.all_fields:
+            self.all_fields.append(sf)
+            
+        #~ sf = self.df2sf.get(df,None)
+        #~ if sf is None:
+            #~ sf = self.create_atomizer(df,df.name)
+            #~ self.all_fields.append(sf)
+            #~ self.df2sf[df] = sf
+        fields.append(sf)
+        
     def form2obj(self,ar,form_values,instance,is_new):
         disabled_fields = set(self.actor.disabled_fields(instance,ar))
         #~ logger.info("20130107 Store.form2obj(%s)", form_values)
@@ -1205,11 +1205,7 @@ class Store(BaseStore):
         else:
             for fld in self.list_fields:
                 v = fld.full_value_from_object(row,request)
-                #~ if fld.name == 'person__age':
-                #~ logger.info("20120406 Store.row2list %s -> %s", fld, v)
                 fld.value2list(request,v,l,row)
-                #~ if fld.name == 'person__age':
-                    #~ logger.info("20120406 Store.row2list %s -> %s", fld, l)
         #~ logger.info("20130611 Store row2list() --> %r", l)
         return l
       

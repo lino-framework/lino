@@ -1,0 +1,58 @@
+===================================
+20130831 (Saturday, 31 August 2013)
+===================================
+
+Creating many invoices at once
+------------------------------
+
+Two days aga Roger asked "In :ref:`faggio.sales.InvoicesToCreate`, 
+can't you add me a button to create and print all invoices at once?"
+I answered "Yes that would be nice here, but don't expect too much 
+because Lino can't yet do that".
+
+First I had to set :attr:`cell_edit <lino.core.tables.AbstractTable.cell_edit>` 
+to `False`. That was easy, but I knew the real problem was that the AJAX call 
+`Lino.call_ajax_action` in :xfile:`linoweb.js`
+didn't yet communicate to the server which rows were currently selected.
+
+Well... now Lino can do it: 
+The "Print" button of a 
+:class:`CachedPrintable <lino.mixins.printable.CachedPrintable>`
+now transparently handles the case when multiple rows are selected. 
+If multiple rows are selected (which continues to be possible only when 
+:attr:`cell_edit <lino.core.tables.AbstractTable.cell_edit>` is True),
+then it will automatically build the printable cache for those objects 
+who don't yet have it built,
+then generate a single temporary pdf file which is simply a merge of 
+these individual pdf documents.
+
+- New modules :mod:`lino.utils.pdf` and :mod:`lino.utils.media`.
+- Every :class:`lino.core.requests.BaseRequest` has now a new attribute `selected_pks`
+- New name `URL_PARAM_SELECTED` in :mod:`lino.core.constants`
+- New :meth:`lino.mixins.printable.BasePrintable.before_printable_build` because 
+  invoices should register before being printed.
+  
+A special challenge was the fact that the rows of a 
+`VirtualTable` usually 
+don't have a primary key. 
+`Lino.call_ajax_action` needs primary keys if we want it
+to communicate to the server which rows were currently selected.
+
+And :ref:`faggio.sales.InvoicesToCreate` *is* a virtual table.
+But because this table groups invoiceables by partner and 
+therefore will never display more than one row per partner,
+we can use the Partner id 
+as a virtual primary key.
+
+That's why I added the new class methods 
+:meth:`lino.core.actors.Actor.get_pk_field`
+and
+:meth:`lino.core.actors.Actor.get_row_by_pk`
+
+Note also that 
+:ref:`faggio.sales.InvoicesToCreate`
+overrides the original
+:class:`CachedPrintAction <lino.mixins.printable.CachedPrintAction>`.
+
+
+

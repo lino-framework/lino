@@ -527,7 +527,12 @@ class Table(AbstractTable):
             #~ if vf.name == name:
                 #~ return vf
         #~ return cls.model._meta.get_field(name)
+        
     
+    @classmethod
+    def get_pk_field(self):
+        return self.model._meta.pk
+        
     @classmethod
     def get_row_by_pk(self,pk):
         try:
@@ -797,7 +802,7 @@ class Table(AbstractTable):
               details=title,
               master=ar.master_instance)
         return title
-        
+   
     @classmethod
     def get_queryset(self):
         """

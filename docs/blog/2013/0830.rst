@@ -25,7 +25,22 @@
   
 - Instantiating a `djangosite.Site` no longer sets a trivial 
   default value for `SECRET_KEY`. 
-  I started to fear that this "feature" which I added :blogref:`20130409` 
-  might offend Django people, so I removed it again.
+  
+  I started to understand that this "feature" which I added :blogref:`20130409` 
+  might offend people who are more concerned about security than me.
+  So I removed it again.
   And instead added trivial SECRET_KEY in certain :xfile:`settings.py` 
   files used for testing and documentation.
+  
+  On a production site I recommend to set this 
+  either in the :ref:`djangosite_local.py <djangosite_local>` file::
+  
+     def setup_site(self):
+        self.django_settings.update(SECRET_KEY='?~hdakl123ASD%#¤/&¤')
+
+  This will set the same SECRET_KEY for all projects on that server.
+  Or, if you prefer to use environment variables::
+  
+     import os
+     def setup_site(self):
+        self.django_settings.update(SECRET_KEY=os.environ.get('DJANGO_SECRET_KEY'))
