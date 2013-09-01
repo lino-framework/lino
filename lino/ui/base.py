@@ -309,11 +309,10 @@ class UI(object):
         """
         raise NotImplementedError
         
-    def run_action(self,ar,elem):
+    def run_action(self,ar):
         """
         """
         try:
-            ar.selected_rows = [elem]
             rv = ar.bound_action.action.run_from_ui(ar)
             if rv is None:
                 rv  = self.success()
@@ -325,9 +324,10 @@ class UI(object):
               alert=True)
             return self.render_action_response(r)
         except Exception as e:
-            if elem is None:
+            if len(ar.selected_rows) == 0:
                 msg = unicode(e)
             else:
+                elem = ar.selected_rows[0]
                 if isinstance(elem,models.Model):
                     elem = obj2unicode(elem)
                 msg = _(

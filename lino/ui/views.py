@@ -732,24 +732,25 @@ class ApiElement(View):
             #~ msg = "User %s cannot view %s." % (request.user,ah.actor)
             #~ return http.HttpResponseForbidden()
         
-        if pk and pk != '-99999' and pk != '-99998':
-            elem = rpt.get_row_by_pk(pk)
-            if elem is None:
-                raise http.Http404("%s has no row with primary key %r" % (rpt,pk))
-                #~ raise Exception("20120327 %s.get_row_by_pk(%r)" % (rpt,pk))
-        else:
-            elem = None
-        
         action_name = request.GET.get(ext_requests.URL_PARAM_ACTION_NAME,
           rpt.default_elem_action_name)
         ba = rpt.get_url_action(action_name)
         if ba is None:
             raise http.Http404("%s has no action %r" % (rpt,action_name))
             
-        #~ ar = rpt.request(ui,request,a)
         ar = ba.request(request=request)
         ar.renderer = ui.ext_renderer
         ah = ar.ah
+        
+        if pk and pk != '-99999' and pk != '-99998':
+            elem = rpt.get_row_by_pk(pk)
+            if elem is None:
+                raise http.Http404("%s has no row with primary key %r" % (rpt,pk))
+                #~ raise Exception("20120327 %s.get_row_by_pk(%r)" % (rpt,pk))
+            ar.selected_rows = [elem]
+        else:
+            elem = None
+        
         
         fmt = request.GET.get(ext_requests.URL_PARAM_FORMAT,ba.action.default_format)
 
@@ -758,11 +759,9 @@ class ApiElement(View):
           
             if fmt == ext_requests.URL_FORMAT_JSON:
                 if pk == '-99999':
-                    assert elem is None
                     elem = ar.create_instance()
                     datarec = elem2rec_insert(ar,ah,elem)
                 elif pk == '-99998':
-                    assert elem is None
                     elem = ar.create_instance()
                     datarec = elem2rec_empty(ar,ah,elem)
                 else:
@@ -789,7 +788,9 @@ class ApiElement(View):
         if pk == '-99998':
             assert elem is None
             elem = ar.create_instance()
-        return settings.SITE.ui.run_action(ar,elem)
+            ar.selected_rows = [elem]
+
+        return settings.SITE.ui.run_action(ar)
                 
         
     def post(self,request,app_label=None,actor=None,pk=None):
@@ -801,7 +802,8 @@ class ApiElement(View):
         if pk == '-99998':
             assert elem is None
             elem = ar.create_instance()
-        return settings.SITE.ui.run_action(ar,elem)
+        ar.selected_rows = [elem]
+        return settings.SITE.ui.run_action(ar)
         
     def put(self,request,app_label=None,actor=None,pk=None):
         data = http.QueryDict(request.body) # raw_post_data before Django 1.4
@@ -851,10 +853,6 @@ class ApiList(View):
         ar.renderer = settings.SITE.ui.ext_renderer
         #~ print 20121116, ar.bound_action.action.action_name
         if ar.bound_action.action.action_name in ['duplicate','post','poststay','insert']:
-        #~ if isinstance(ar.bound_action.action,(
-              #~ actions.InsertRow,
-              #~ actions.DuplicateAction,
-              #~ actions.SubmitInsert)):
             rh = ar.ah
             elem = ar.create_instance()
             if rh.actor.handle_uploaded_files is not None:
@@ -863,9 +861,7 @@ class ApiList(View):
             else:
                 file_upload = False
             return form2obj_and_save(ar,request.POST,elem,True,False,file_upload)
-        return settings.SITE.ui.run_action(ar,None)
-        #~ rv = ar.bound_action.action.run(ar)
-        #~ return rv
+        return settings.SITE.ui.run_action(ar)
       
     def get(self,request,app_label=None,actor=None):
         #~ ar = action_request(app_label,actor,request,request.GET,limit=PLAIN_PAGE_LENGTH)

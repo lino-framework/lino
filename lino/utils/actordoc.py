@@ -17,12 +17,14 @@ A  Sphinx extension used to write multilingual documentation for a
 Lino application.
 """
 
+from __future__ import unicode_literals, print_function
+
 from sphinx.ext.autodoc import ModuleLevelDocumenter
 from sphinx.util.docstrings import prepare_docstring
 from sphinx.util import force_decode
+from sphinx.util.nodes import make_refnode
 
 
-from sphinx.roles import XRefRole
 #~ from sphinx.config import Config
 #~ from sphinx.errors import SphinxError, SphinxWarning, ExtensionError, \
      #~ VersionRequirementError
@@ -30,8 +32,12 @@ from sphinx.domains import ObjType
 #~ from sphinx.domains.std import GenericObject, Target, StandardDomain
 from sphinx.domains.std import StandardDomain
 from sphinx.domains.python import PyModulelevel
+
+from sphinx.roles import XRefRole
+from sphinx.util import ws_re
 from sphinx import addnodes
 
+from docutils.parsers.rst import roles
 from docutils import nodes, utils
 from docutils.nodes import fully_normalize_name, whitespace_normalize_name
 
@@ -67,8 +73,8 @@ import lino.ui.urls # hack: trigger ui instantiation
     #~ return ':ref:`' + x.verbose_name + ' <' + settings.SITE.userdocs_prefix \
         #~ + full_model_name(x.model) + '.' + x.name + '>`'
         
-def actor_name(a): return settings.SITE.userdocs_prefix + str(a)
-def model_name(m): return settings.SITE.userdocs_prefix + full_model_name(m)
+def actor_name(a): return settings.SITE.userdocs_prefix + str(a).lower()
+def model_name(m): return settings.SITE.userdocs_prefix + full_model_name(m).lower()
 
 def actor_ref(rpt,text=None):
     if text is None:
@@ -158,10 +164,6 @@ IGNORED_ACTIONS = (actions.GridEdit,actions.SubmitDetail,
 def actions_overview_ul(action_list):
     items = []
     for ba in action_list:
-        if ba.action.sort_index <= 30:
-            continue
-        if isinstance(ba.action,IGNORED_ACTIONS):
-            continue
         desc = "[%s]" % unicode(ba.action.label)
         #~ if ba.action.action_name:
             #~ desc += " (%s)" % ba.action.action_name
@@ -173,9 +175,9 @@ def actions_overview_ul(action_list):
 def actors_overview_ul(model_reports):
     items = []
     for tb in model_reports:
-        desc = actor_ref(tb,str(tb))
-        label = unicode(tb.title or tb.label)
-        desc += " (%s)" % label
+        desc = actor_ref(tb)
+        #~ label = unicode(tb.title or tb.label)
+        desc += " (%s)" % str(tb)
         if tb.help_text:
             desc += " -- " + unicode(tb.help_text)
         items.append(desc)
@@ -211,14 +213,25 @@ class ActorDirective(Django2rstDirective):
                 raise Exception("%s is not an actor." % self.content[0])
                 
             if issubclass(cls,models.Model):
-                self.add_model_index_entry(cls)
+                model = cls
+                #~ if full_model_name(cls) == 'cal.Event':
+                    #~ self.debug = True
+                #~ self.add_model_index_entry(cls)
                 
-                title = unicode(cls._meta.verbose_name)
-                indextext = _('%s (%s)') % (full_model_name(cls),title)
-                name = settings.SITE.userdocs_prefix + full_model_name(cls)
-                self.index_entries.append(('single', indextext, name, ''))
-                self.add_ref_target(name)
                 s = ''
+                name = model_name(model).lower()
+                
+                title = force_unicode(model._meta.verbose_name)
+                
+                s += "\n.. index::\n   single: " 
+                s += unicode(_('%s (model in app "%s")') % (title,model._meta.app_label))
+                s += '\n\n'
+                
+                #~ title = unicode(cls._meta.verbose_name)
+                #~ indextext = _('%s (%s)') % (full_model_name(cls),title)
+                #~ name = model_name(cls)
+                #~ self.index_entries.append(('single', indextext, name, ''))
+                #~ self.add_ref_target(name,name)
                 s += '\n\n.. _'+ name + ':\n'
                 
                 s += '\n'
@@ -233,14 +246,30 @@ class ActorDirective(Django2rstDirective):
                 s += '\n'
                 s += fields_table(cls._meta.fields)
                 
-                s += '\n'
-                
+                action_list = cls._lino_default_table.get_actions()
+                action_list = [ba for ba in action_list if ba.action.sort_index <= 30]
+                action_list = [ba for ba in action_list if isinstance(ba.action,IGNORED_ACTIONS)]
+                if action_list:
+                    s += '\n'
+                    s += rstgen.header(4,_("Actions on a %s") % cls._meta.verbose_name)
+                    s += actions_overview_ul(action_list)
+                    
                 model_reports = [r for r in dbtables.master_reports if r.model is cls]
                 model_reports += [r for r in dbtables.slave_reports if r.model is cls]
-                for tb in model_reports:
-                    s += '\n.. _'+ settings.SITE.userdocs_prefix + str(tb) + ':\n'
+                
                 s += '\n'
-                s += rstgen.header(4,_("Tables of %s") % cls._meta.verbose_name_plural)
+                s += rstgen.header(4,_("Tables based on %s") % cls._meta.verbose_name_plural)
+                
+                #~ for tb in model_reports:
+                    #~ s += '\n\n.. _'+ actor_name(tb) + ':\n\n'
+                    #~ label = unicode(tb.title or tb.label)
+                    #~ s += rstgen.header(5,label)
+                    #~ s += "%s : %s\n" % (unicode(_('Internal name')),tb)
+                    #~ if tb.help_text:
+                        #~ s += '\n'
+                        #~ s += unicode(tb.help_text)
+                    #~ s += '\n'
+                    
                 s += actors_overview_ul(model_reports)
                     
                 slave_tables = getattr(cls,'_lino_slaves',{}).values()
@@ -250,10 +279,6 @@ class ActorDirective(Django2rstDirective):
                     s += '\n'
                     s += rstgen.header(4,_("Slave tables of %s") % cls._meta.verbose_name)
                     s += actors_overview_ul(slave_tables)
-                    
-                s += '\n'
-                s += rstgen.header(4,_("Actions on a %s") % cls._meta.verbose_name)
-                s += actions_overview_ul(cls._lino_default_table.get_actions())
                     
                 
                 #~ if model_reports:
@@ -265,22 +290,22 @@ class ActorDirective(Django2rstDirective):
                 
             if issubclass(cls,actors.Actor):
               
-                if issubclass(cls,dbtables.Table):
-                    if cls.model is not None:
-                        if cls.model.get_default_table() is cls:
-                            self.add_model_index_entry(cls.model)
+                #~ if issubclass(cls,dbtables.Table):
+                    #~ if cls.model is not None:
+                        #~ if cls.model.get_default_table() is cls:
+                            #~ self.add_model_index_entry(cls.model)
                             #~ name = settings.SITE.userdocs_prefix + full_model_name(cls.model)
                             #~ s += '\n\n.. _'+ name + ':\n\n'
                         
               
                 title = force_unicode(cls.label or cls.title)
                 indextext = _('%s (table in module %s)') % (title,cls.app_label)
-                name = settings.SITE.userdocs_prefix + str(cls)
+                name = actor_name(cls)
                 self.index_entries.append(('single', indextext, name, ''))
-                self.add_ref_target(name)
+                #~ self.add_ref_target(name,name)
                 
                 s = ''
-                s += '\n\n.. _'+ settings.SITE.userdocs_prefix + str(cls) + ':\n\n'
+                s += '\n\n.. _'+ name + ':\n\n'
                 s += rstgen.header(3,title)
                 
                 if len(self.content) > 1:
@@ -293,7 +318,7 @@ class ActorDirective(Django2rstDirective):
                 return s
             raise Exception("Cannot handle actor %r." % cls)
             
-    def add_ref_target(self, fullname):
+    def add_ref_target(self, fullname,localname):
         #~ fullname = settings.SITE.userdocs_prefix  + str(cls)
         #~ modname = self.options.get(
             #~ 'module', self.env.temp_data.get('py:module'))
@@ -313,17 +338,18 @@ class ActorDirective(Django2rstDirective):
                     self.env.doc2path(objects[fullname][0]) +
                     ', use :noindex: for one of them',
                     line=self.lineno)
-            objects[fullname] = (self.env.docname, 'actor')
+            objects[fullname] = (self.env.docname, localname)
 
         
     def add_model_index_entry(self,model):
         title = force_unicode(model._meta.verbose_name)
-        indextext = _('%s (model in module %s)') % (title,model._meta.app_label)
-        name = settings.SITE.userdocs_prefix + full_model_name(model)
-        name = name.lower()
-        labelid = name.replace('.','-')
+        indextext = _('%s (model in module `%s`)') % (title,model._meta.app_label)
+        name = model_name(model)
+        labelid = fully_normalize_name(name)
+        #~ name = name.lower()
+        #~ labelid = name.replace('.','-')
         self.index_entries.append(('single', indextext, name, ''))
-        #~ self.add_ref_target(name)
+        #~ self.add_ref_target(name,'model')
         
         env = self.env
         labels = env.domaindata['std']['labels'] 
@@ -343,35 +369,56 @@ class ActorDirective(Django2rstDirective):
         indexnode = addnodes.index(entries=self.index_entries)
         return [indexnode] + content
         
-def ddref_role(typ, rawtext, etext, lineno, 
-               inliner, options={}, content=[]):
-    """
-    Insert inline reference to the specified model or actor.
-    """
-    env = inliner.document.settings.env
-    x = settings.SITE.modules.resolve(etext)
-    if x is None:
-        raise Exception("Could not resolve name %r" % etext)
-    if issubclass(x,models.Model):
-        text = utils.unescape(unicode(x._meta.verbose_name_plural))
-        name = model_name(x)
-    elif issubclass(x,actors.Actor):
-        text = utils.unescape(unicode(x.title or x.label))
-        name = actor_name(x)
         
-    else:
-        raise Exception("Don't know how to handle %r" % x)
-    refnode = nodes.reference(rawtext, text, 
-        name=whitespace_normalize_name(name),
-        refid=fully_normalize_name(name))
-    #~ print help(nodes)
-    #~ refnode += nodes.inline(text, text)
-    return [refnode], []
+
+class ddrefRole(XRefRole):
     
+    nodeclass = addnodes.pending_xref
+    innernodeclass = nodes.emphasis
+    
+    def __call__(self, typ, rawtext, text, lineno, inliner,
+                 options={}, content=[]):
+        #~ print('20130901',typ, rawtext, text, lineno, inliner,options, content)
+        typ = 'std:ref'
+        return XRefRole.__call__(self, typ, rawtext, text, lineno, 
+            inliner, options, content)
+                     
+    def process_link(self, env, refnode, has_explicit_title, title, target):
+        """Called after parsing title and target text, and creating the
+        reference node (given in *refnode*).  This method can alter the
+        reference node and must return a new (or the same) ``(title, target)``
+        tuple.
+        """
         
+        #~ print(20130901, refnode, has_explicit_title, title, target)
+        #~ 20130901 <pending_xref refdomain="" refexplicit="False" reftype="ddref"/> False cal.Event cal.Event
+        
+        target = ws_re.sub(' ', target) # replace newlines or tabs by spaces
+        #~ target = ' '.join(target.split()) # replace newlines or tabs by spaces
+        
+        x = settings.SITE.modules.resolve(target)
+        if x is None:
+            raise Exception("Could not resolve name %r" % target)
+        if issubclass(x,models.Model):
+            text = utils.unescape(unicode(x._meta.verbose_name))
+            target = model_name(x)
+        elif issubclass(x,actors.Actor):
+            text = utils.unescape(unicode(x.title or x.label))
+            target = actor_name(x)
+            
+        else:
+            raise Exception("Don't know how to handle %r" % x)
+        
+        if not has_explicit_title:
+            title = text
+            
+        #~ refnode['reftype'] = 'ref'
+        
+        return title, target
+
 
 def setup(app):
     
     app.add_directive('actor', ActorDirective)
     app.add_directive('actors_overview', ActorsOverviewDirective)
-    app.add_role('ddref', ddref_role)
+    app.add_role('ddref', ddrefRole(warn_dangling=True))

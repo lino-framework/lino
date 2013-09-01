@@ -2167,6 +2167,8 @@ if settings.SITE.use_extensible:
         """
         Opens the "Calendar View" (a special window with the Ext.ensible CalendarAppPanel).
         """
+        help_text = _("""Displays your events in a classical "calendar view", 
+with the possibility to switch between daily, weekly, monthly view.""")
         required = dd.required(user_groups='office')
         label = _("Calendar")
         
