@@ -33,6 +33,7 @@ from sphinx.domains.python import PyModulelevel
 from sphinx import addnodes
 
 from docutils import nodes, utils
+from docutils.nodes import fully_normalize_name, whitespace_normalize_name
 
 
 from django.db import models
@@ -57,30 +58,27 @@ from atelier.sphinxconf import Django2rstDirective
 import lino.ui.urls # hack: trigger ui instantiation
 
 
-def refto(x):
-    if x is None: 
-        return '`None`'
-    if issubclass(x,models.Model):
-        #~ return ':ref:`' + x.__name__ + ' <' + full_model_name(x) + '>`'
-        return ':ref:`' + force_unicode(x._meta.verbose_name) + ' <' \
-            + settings.SITE.userdocs_prefix + full_model_name(x) + '>`'
-    #~ if isinstance(x,Field):
-    return ':ref:`' + x.verbose_name + ' <' + settings.SITE.userdocs_prefix \
-        + full_model_name(x.model) + '.' + x.name + '>`'
+#~ def refto(x):
+    #~ if x is None: 
+        #~ return '`None`'
+    #~ if issubclass(x,models.Model):
+        #~ return ':ref:`' + force_unicode(x._meta.verbose_name) + ' <' \
+            #~ + settings.SITE.userdocs_prefix + full_model_name(x) + '>`'
+    #~ return ':ref:`' + x.verbose_name + ' <' + settings.SITE.userdocs_prefix \
+        #~ + full_model_name(x.model) + '.' + x.name + '>`'
         
+def actor_name(a): return settings.SITE.userdocs_prefix + str(a)
+def model_name(m): return settings.SITE.userdocs_prefix + full_model_name(m)
+
 def actor_ref(rpt,text=None):
     if text is None:
         text = force_unicode(rpt.label or rpt.title or str(rpt))
-    target = settings.SITE.userdocs_prefix + str(rpt)
-    #~ return label
-    return ':ref:`%s <%s>`' % (text,target)
+    return ':ref:`%s <%s>`' % (text,actor_name(rpt))
 
-def model_ref(m):
-    label = force_unicode(m._meta.verbose_name)
-    #~ target = settings.SITE.userdocs_prefix + full_model_name(m)
-    target = settings.SITE.userdocs_prefix + str(m.get_default_table())
-    #~ return label
-    return ':ref:`%s <%s>`' % (label,target)
+def model_ref(m,text=None):
+    if text is None:
+        text = force_unicode(m._meta.verbose_name)
+    return ':ref:`%s <%s>`' % (text,model_name(m))
 
 def rptlist(l):
     return ', '.join([actor_ref(a) for a in l])
@@ -151,7 +149,27 @@ def get_model_description(self):
     body += fields_table(self._meta.fields)
     
     return body
+    
+from lino.core import actions    
+    
+IGNORED_ACTIONS = (actions.GridEdit,actions.SubmitDetail,
+    actions.InsertRow,actions.SubmitInsert)
       
+def actions_overview_ul(action_list):
+    items = []
+    for ba in action_list:
+        if ba.action.sort_index <= 30:
+            continue
+        if isinstance(ba.action,IGNORED_ACTIONS):
+            continue
+        desc = "[%s]" % unicode(ba.action.label)
+        #~ if ba.action.action_name:
+            #~ desc += " (%s)" % ba.action.action_name
+        if ba.action.help_text:
+            desc += " -- " + unicode(ba.action.help_text)
+        items.append(desc)
+    return rstgen.ul(items)
+    
 def actors_overview_ul(model_reports):
     items = []
     for tb in model_reports:
@@ -177,7 +195,7 @@ class ActorsOverviewDirective(Django2rstDirective):
                 items.append("%s : %s" % (actor_ref(cls),cls.help_text or ''))
             return rstgen.ul(items)
     
-class LinoTableDirective(Django2rstDirective):
+class ActorDirective(Django2rstDirective):
     #~ has_content = False
     titles_allowed = True
     #~ debug = True
@@ -191,6 +209,7 @@ class LinoTableDirective(Django2rstDirective):
             cls = settings.SITE.modules.resolve(self.content[0])
             if not isinstance(cls,type):
                 raise Exception("%s is not an actor." % self.content[0])
+                
             if issubclass(cls,models.Model):
                 self.add_model_index_entry(cls)
                 
@@ -226,11 +245,16 @@ class LinoTableDirective(Django2rstDirective):
                     
                 slave_tables = getattr(cls,'_lino_slaves',{}).values()
                 if slave_tables:
-                    for tb in slave_tables:
-                        s += '\n.. _'+ settings.SITE.userdocs_prefix + str(tb) + ':\n'
+                    #~ for tb in slave_tables:
+                        #~ s += '\n.. _'+ settings.SITE.userdocs_prefix + str(tb) + ':\n'
                     s += '\n'
                     s += rstgen.header(4,_("Slave tables of %s") % cls._meta.verbose_name)
                     s += actors_overview_ul(slave_tables)
+                    
+                s += '\n'
+                s += rstgen.header(4,_("Actions on a %s") % cls._meta.verbose_name)
+                s += actions_overview_ul(cls._lino_default_table.get_actions())
+                    
                 
                 #~ if model_reports:
                     #~ s += '\nMaster tables: %s\n' % rptlist(model_reports)
@@ -258,6 +282,11 @@ class LinoTableDirective(Django2rstDirective):
                 s = ''
                 s += '\n\n.. _'+ settings.SITE.userdocs_prefix + str(cls) + ':\n\n'
                 s += rstgen.header(3,title)
+                
+                if len(self.content) > 1:
+                    s += '\n'.join(self.content[1:])
+                    s += '\n\n'
+                
                 s += '\n\n'
                 s += get_actor_description(cls)
                 s += '\n\n'
@@ -310,31 +339,39 @@ class LinoTableDirective(Django2rstDirective):
         self.index_entries = []
         #~ index_entries is a list of 4-tuples of 
         #~ ``(entrytype, entryname, target, ignored)``
-        content = super(LinoTableDirective,self).run()
+        content = super(ActorDirective,self).run()
         indexnode = addnodes.index(entries=self.index_entries)
         return [indexnode] + content
         
-def verbose_name_role(typ, rawtext, etext, lineno, 
+def ddref_role(typ, rawtext, etext, lineno, 
                inliner, options={}, content=[]):
+    """
+    Insert inline reference to the specified model or actor.
+    """
     env = inliner.document.settings.env
-    model = settings.SITE.modules.resolve(etext)
-    if model is None:
+    x = settings.SITE.modules.resolve(etext)
+    if x is None:
         raise Exception("Could not resolve name %r" % etext)
-    if issubclass(model,models.Model):
-        text = utils.unescape(unicode(model._meta.verbose_name_plural))
-    elif issubclass(model,actors.Actor):
-        text = utils.unescape(unicode(model.title or model.label))
+    if issubclass(x,models.Model):
+        text = utils.unescape(unicode(x._meta.verbose_name_plural))
+        name = model_name(x)
+    elif issubclass(x,actors.Actor):
+        text = utils.unescape(unicode(x.title or x.label))
+        name = actor_name(x)
+        
     else:
-        raise Exception("Cannot handle %r" % model)
+        raise Exception("Don't know how to handle %r" % x)
+    refnode = nodes.reference(rawtext, text, 
+        name=whitespace_normalize_name(name),
+        refid=fully_normalize_name(name))
     #~ print help(nodes)
-    #~ refnode = nodes.reference('', '', refuri='foo')
-    #~ refnode += nodes.literal(text, text)
-    return [nodes.emphasis(text,text)], []
+    #~ refnode += nodes.inline(text, text)
+    return [refnode], []
     
         
 
 def setup(app):
     
-    app.add_directive('actor', LinoTableDirective)
+    app.add_directive('actor', ActorDirective)
     app.add_directive('actors_overview', ActorsOverviewDirective)
-    app.add_role('verbose_name', verbose_name_role)
+    app.add_role('ddref', ddref_role)

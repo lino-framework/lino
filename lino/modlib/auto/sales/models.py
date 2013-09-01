@@ -441,6 +441,8 @@ class InvoicesToCreate(dd.VirtualTable):
     
 class InvoiceablesByPartner(dd.VirtualTable):
     label = _("Invoiceables")
+    help_text = _("List of things for which this partner should get an invoice")
+
     #~ app_label = 'sales'
     master = 'contacts.Partner'
     column_names = 'date info'

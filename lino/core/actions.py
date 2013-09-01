@@ -1052,6 +1052,7 @@ class ShowSlaveTable(Action):
         if isinstance(self.slave_table,basestring):
             self.slave_table = settings.SITE.modules.resolve(self.slave_table)
         self.label = self.slave_table.label
+        self.help_text = self.slave_table.help_text
         super(ShowSlaveTable,self).attach_to_actor(actor,name)
         
     def run_from_ui(self,ar,**kw):

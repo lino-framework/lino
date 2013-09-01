@@ -95,14 +95,24 @@ written custom actions until now, and if you have, I guess that you
 agree that this signature was strange.
 
 
+userdocs
+--------
 
-Models
-------
+I continued a bit on the structure of the userdocs:
 
-- Foo (Foues) : {{help_text}}
-
-  Field
-
-  Tables : Foos, FoosByBar, FoosWithUsers,...
+- The :mod:`actor <lino.utils.actordoc>` directive works now best when 
+  called on a model (not a table).
   
-Bar  Barres               id,name
+- New text role `verbose_name`.
+
+
+Example application was the :ref:`faggio.contacts` page.
+
+
+:mod:`lino_welfare.migrate`
+---------------------------
+
+Tested and updated :mod:`lino_welfare.migrate`.
+
+
+

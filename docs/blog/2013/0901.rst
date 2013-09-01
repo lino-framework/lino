@@ -1,0 +1,29 @@
+====================================
+20130901 (Sunday, 01 September 2013)
+====================================
+
+
+Continued to test and update :func:`lino_welfare.migrate.migrate_from_1_1_8`.
+
+Continued inspirational work on  :mod:`lino.utils.actordoc`.
+
+Found a subtle (internal) bug:
+
+When a :class:`ChoiceListField <lino.core.choicelists.ChoiceListField>` is empty
+--------------------------------------------------------------------------------
+
+The :ref:`welfare.pcsw.Clients` table showed also "Former" Clients
+at the very first request. A simple Refresh caused it to become 
+"correct" showing only active clients.
+
+This was because an empty :class:`ChoiceListField <lino.core.choicelists.ChoiceListField>` was sometimes an empty string 
+(``''``) and sometimes ``None``.
+In get_request_queryset I tested for 
+``ar.param_values.client_state is None``.
+The application code was right: 
+a 
+:class:`ChoiceListField <lino.core.choicelists.ChoiceListField>`
+with `blank=True` should never have an empty string as value.
+Solved by setting `empty_strings_allowed = False` on 
+:class:`ChoiceListField <lino.core.choicelists.ChoiceListField>`.
+

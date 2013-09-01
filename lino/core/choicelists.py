@@ -568,6 +568,8 @@ class ChoiceListField(models.CharField):
     
     __metaclass__ = models.SubfieldBase
     
+    empty_strings_allowed = False
+    
     #~ force_selection = True
     
     #~ choicelist = NotImplementedError

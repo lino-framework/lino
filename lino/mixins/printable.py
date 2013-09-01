@@ -546,6 +546,7 @@ class CachedPrintAction(BasePrintAction):
                 kw.update(message=_("%s printable has been built.") % obj)
             else:
                 kw.update(message=_("Reused %s printable from cache.") % obj)
+            kw.update(refresh=True)
             #~ kw.update(open_url=mf.url)
             if bm.use_webdav and settings.SITE.use_davlink:
                 kw.update(open_davlink_url=ar.request.build_absolute_uri(mf.url))
