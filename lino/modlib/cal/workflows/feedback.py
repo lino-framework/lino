@@ -54,6 +54,8 @@ from lino.utils.xmlgen.html import E
 
 from lino.modlib.cal.workflows import (TaskStates,
     EventStates,GuestStates)
+    
+#~ EventStates.add_item('30', _("Accepted"), 'accepted')
 
 
 class InvitationFeedback(dd.ChangeStateAction,dd.NotifyingAction):

@@ -1,4 +1,4 @@
-from lino.ui import Site
+from lino import Site
 SITE = Site(globals(),
     'tutorials.actions',
     user_model=None) 

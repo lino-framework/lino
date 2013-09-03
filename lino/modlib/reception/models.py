@@ -93,7 +93,8 @@ def create_prompt_event(project,partner,user,summary,guest_role):
     ekw.update(end_date=today)
     ekw.update(calendar=settings.SITE.site_config.prompt_calendar)
     #~ ekw.update(state=EventStates.visit)
-    ekw.update(state=EventStates.accepted)
+    #~ ekw.update(state=EventStates.accepted)
+    ekw.update(state=EventStates.published)
     ekw.update(user=user)
     if summary:
         ekw.update(summary=summary)
@@ -102,7 +103,7 @@ def create_prompt_event(project,partner,user,summary,guest_role):
     cal.Guest(
         event=event,
         partner=partner,
-        state=cal.GuestStates.present,
+        state=cal.GuestStates.accepted,
         role=guest_role,
         #~ role=settings.SITE.site_config.client_guestrole,
         waiting_since=datetime.datetime.now()

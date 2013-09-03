@@ -1,0 +1,26 @@
+=======================================
+20130904 (Wednesday, 04 September 2013)
+=======================================
+
+Was sind "aktive" Klienten?
+---------------------------
+
+Zunächst eine Änderung:
+
+- :menuselection:`Kontakte --> Klienten` soll keine Neuanträge sondern 
+  nur begleitete Klienten zeigen. 
+  Also params_panel.client_state ist "coached".
+
+In :menuselection:`Empfang --> Klienten` wollen wir jedoch 
+**zwei** Aktenzustände anzeigen: "Neuantrag" und "Begleitet"
+(und nicht die beiden anderen, "Ehemalig" und "Abgelehnt").
+
+Weil Lino noch keine *multiple selection combobox* kann, 
+habe ich das Feld "Beobachtungskriterium" erfunden. 
+Da kann ich so eine "komplexere" Bedingung rein setzen. 
+Aber ich brauche einen Namen dafür. 
+
+Und als Name für die Kombibedingung "Neuantrag oder Begleitet" 
+schlage ich weiterhin "Aktiv" vor. 
+Mögliche Alternativen wären "Empfang", "Reell", "Begleitet oder Neuantrag".
+

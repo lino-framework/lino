@@ -1,4 +1,4 @@
-from lino.ui import Site
+from lino import Site
 SITE = Site(globals(),['lino.modlib.system','lino.modlib.users','tutorials.pisa'],
     languages=('en','de','fr'),
     user_model='users.User')

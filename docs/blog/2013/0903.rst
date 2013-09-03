@@ -173,3 +173,32 @@ displayed behind every "main item header"
 Gerd now suggested another icon which looks even better.
 
 
+Slave tables with more than 15 rows
+-----------------------------------
+
+Fixed a problem "Slave tables with more than 15 rows" reported by 
+Gerd and Joe. 
+Test case and description  in ref:`cosi.tested`.
+
+
+Difference between `lino.ui.Site` and `lino.Site`
+-------------------------------------------------
+
+I removed the split between `lino.ui.Site` and `lino.Site` 
+which was historic and obsolete.
+
+There is no longer a class `lino.ui.Site`, everything is in `lino.Site`.
+
+Application code usually does 
+``from lino.projects.std.settings import *``
+and therefore needs no change.
+But in case you copied some tutorial and have
+``from lino.ui import Site``
+then change this to 
+``from lino import Site``.
+
+Miscellaneous
+-------------
+
+- :ref:`welfare` : EventStates has no attribute "accepted"
+

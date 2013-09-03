@@ -365,7 +365,7 @@ class TableRequest(ActionRequest):
         if offset:
             kw.update(offset=int(offset))
         #~ limit = rqdata.get(constants.URL_PARAM_LIMIT,None)
-        limit = rqdata.get(constants.URL_PARAM_LIMIT,15) 
+        limit = rqdata.get(constants.URL_PARAM_LIMIT,self.actor.preview_limit) 
         if limit:
             kw.update(limit=int(limit))
         
@@ -830,7 +830,8 @@ class AbstractTable(actors.Actor):
     Used internally to store :class:`groups <Group>` defined by this Table.
     """
     
-    preview_limit = None
+    #~ preview_limit = 15
+    preview_limit = settings.SITE.preview_limit
     """
     The LIMIT to use when this is being used in "preview mode", 
     e.g. as a slave table in a detail window.
