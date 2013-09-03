@@ -318,7 +318,7 @@ class ActorDirective(Django2rstDirective):
                 return s
             raise Exception("Cannot handle actor %r." % cls)
             
-    def add_ref_target(self, fullname,localname):
+    def unused_add_ref_target(self, fullname,localname):
         #~ fullname = settings.SITE.userdocs_prefix  + str(cls)
         #~ modname = self.options.get(
             #~ 'module', self.env.temp_data.get('py:module'))
@@ -341,7 +341,7 @@ class ActorDirective(Django2rstDirective):
             objects[fullname] = (self.env.docname, localname)
 
         
-    def add_model_index_entry(self,model):
+    def unused_add_model_index_entry(self,model):
         title = force_unicode(model._meta.verbose_name)
         indextext = _('%s (model in module `%s`)') % (title,model._meta.app_label)
         name = model_name(model)

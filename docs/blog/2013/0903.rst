@@ -1,0 +1,23 @@
+=====================================
+20130903 (Tuesday, 03 September 2013)
+=====================================
+
+Continued :blogref:`yesterday's work <20130902>`.
+
+In fact we *don't want* to store this decision *per document*. 
+All cases I know can be handled by storing it  *per VatRegime*: 
+
+- :class:`lino.modlib.vat.models.VatRegimes` has now a custom 
+  field `item_vat`
+- :class:`lino.modlib.vat.models.TradeTypes` has now two custom 
+  fields `price_field_name` and `price_field_label`,
+  and a method :meth:`get_catalog_price <lino.modlib.vat.models.TradeType.get_catalog_price>`.
+
+- Added two (tested) utility functions 
+  :class:`lino.modlib.vat.utils.add_vat`
+  and
+  :class:`lino.modlib.vat.utils.remove_vat`.
+
+- :func:`lino.modlib.vat.models.configure` is a cool new system to 
+  specify configuration values. Works for me but is not mature.
+  

@@ -22,7 +22,7 @@ from north.dbutils import babel_values
 def objects():
         
     productcat = Instantiator('products.ProductCat').build
-    product = Instantiator('products.Product',"price cat").build
+    product = Instantiator('products.Product',"sales_price cat").build
 
     furniture = productcat(id=1,**babel_values('name',
         en="Furniture",et="Mööbel",de="Möbel",fr="Meubles"))

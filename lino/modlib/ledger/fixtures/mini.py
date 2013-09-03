@@ -95,9 +95,12 @@ def objects():
         purchases_allowed=True) 
     
     yield Group('7','incomes',u"Produits",u"Erträge","Revenues") 
-    yield Account('sales','incomes',
+    obj = Account('sales','incomes',
         u"Ventes",u"Verkäufe","Sales",
         sales_allowed=True) # PCMN 7000
+    yield obj
+    if sales:
+        settings.SITE.site_config.update(sales_account=obj)
 
 
 

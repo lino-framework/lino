@@ -56,6 +56,7 @@ class UtilsTests(LinoTestCase):
     def test_jsgen(self): self.run_simple_doctests('lino/utils/jsgen.py')
     def test_ranges(self): self.run_simple_doctests('lino/utils/ranges.py')
 
+    def test_vat_utils(self): self.run_simple_doctests('lino/modlib/vat/utils.py')
     def test_ledger_utils(self): self.run_simple_doctests('lino/modlib/ledger/utils.py')
     def test_accounts_utils(self): self.run_simple_doctests('lino/modlib/accounts/utils.py')
     def test_contacts_utils(self): self.run_simple_doctests('lino/modlib/contacts/utils.py')

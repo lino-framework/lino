@@ -255,12 +255,12 @@ class ProductDocItem(ledger.VoucherItem,vat.QtyVatItemBase):
     discount = models.IntegerField(_("Discount"),default=0)
     
     def get_base_account(self,tt):
-        ref = settings.SITE.get_product_base_account(tt,self.product)
+        ref = tt.get_product_base_account(self.product)
         return self.voucher.journal.chart.get_account_by_ref(ref)
         
-    def get_vat_class(self,tt):
-        name = settings.SITE.get_product_vat_class(tt,self.product)
-        return vat.VatClasses.get_by_name(name)
+    #~ def get_vat_class(self,tt):
+        #~ name = settings.SITE.get_product_vat_class(tt,self.product)
+        #~ return vat.VatClasses.get_by_name(name)
         
     #~ def full_clean(self,*args,**kw):
         #~ super(ProductDocItem,self).full_clean(*args,**kw)
@@ -305,7 +305,7 @@ class OrderDetail(dd.FormLayout):
     header = dd.Panel("""
     id date partner language
     order your_ref sales_remark subject 
-    imode due_date:20 shipping_mode payment_term  vat_regime item_vat
+    imode due_date:20 shipping_mode payment_term  vat_regime #item_vat
     user project 
     """,label=_("Header"))
     

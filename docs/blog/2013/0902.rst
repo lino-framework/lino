@@ -1,0 +1,45 @@
+====================================
+20130902 (Monday, 02 September 2013)
+====================================
+
+
+Whether unit prices of sales items include VAT or not
+-----------------------------------------------------
+
+The `item_vat` checkbox on a VatDocument (e.g. an order or an 
+invoice) decides whether unit prices of sales items include VAT 
+or not.
+
+With Lino you can decide this per document.
+In fact the end-user doesn't want to decide, they just want it to 
+have the right default value.
+
+Until now the default value was *hard-coded* and *always No*.
+
+But sometimes it is Yes.
+
+And this decision should be configurable by local site administrators, 
+i.e. not by modifying application code, 
+only by modifying their :xfile:`settings.py`.
+
+Solution so far: 
+I added a new Site configuration method 
+:meth:`lino.modlib.vat.SiteMixin.get_item_vat` which is documented 
+as follows:
+
+    Expected to return the default value for the `item_vat` field.
+    Called on every new voucher whose model is subclass of 
+    `lino.modlib.vat.models.VatDocument`.
+
+But that's maybe not a final solution. I guess that there will be 
+system admins who want to decide this when the customer or at 
+the vat_regime has been selected...
+
+Another question is: how to configure whether the prices in 
+the products catalog are maintained VAT included or not. 
+And if they are, then we need a default VAT rate,
+and remove the VAT when selling to a vat-exempt customer.
+And be careful when the default VAT rate changes.
+And must we store this information per product instance?
+
+Meditate... continued :blogref:`tomorrow <20130903>`.

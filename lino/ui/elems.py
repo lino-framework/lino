@@ -1411,6 +1411,11 @@ class BooleanDisplayElement(BooleanMixin,DisplayElement):
     preferred_width = 20
     preferred_height = 1
 
+    def __init__(self,*args,**kw):
+        # do not call DisplayElement.__init__()
+        #~ kw.setdefault('value','<br/>') # see blog/2012/0527
+        #~ kw.update(always_enabled=True)
+        FieldElement.__init__(self,*args,**kw)
     
                 
 class BooleanFieldElement(BooleanMixin,FieldElement):

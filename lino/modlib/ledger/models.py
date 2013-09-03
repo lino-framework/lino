@@ -222,8 +222,8 @@ class Voucher(mixins.UserAuthored):
     This model is subclassed by sales.Invoice, ledger.AccountInvoice, 
     finan.Statement etc...
     
-    It is *not* abstract because we have a ForeignKey to Voucher in Movement,
-    and we want one Movement model for all ledger movements.
+    It is *not* abstract because we have a ForeignKey to Voucher in 
+    Movement and we want one Movement model for all ledger movements.
     
     """
     class Meta:
@@ -280,6 +280,9 @@ class Voucher(mixins.UserAuthored):
                 unicode(self.journal.voucher_type.model._meta.verbose_name),self.id)
         return "#%s (%s %s)" % (self.number,self.journal,self.year)
         
+    #~ def on_create(self,*args,**kw):
+        #~ super(Voucher,self).on_create(*args,**kw)
+        #~ settings.SITE.on_create_voucher(self)
                 
     def register(self,ar):
         """
@@ -502,11 +505,13 @@ class Movements(dd.Table):
 class MovementsByVoucher(Movements):
     master_key = 'voucher'
     column_names = 'seqno account debit credit'
+    editable = False
     
 class MovementsByPartner(Movements):
     master_key = 'partner'
     order_by = ['voucher__date']
     column_names = 'voucher__date voucher_link debit credit account '
+    editable = False
     
 
 
@@ -587,7 +592,7 @@ class InvoiceDetail(dd.FormLayout):
     
     general = dd.Panel("""
     id date partner user 
-    due_date your_ref vat_regime item_vat
+    due_date your_ref vat_regime #item_vat
     ItemsByInvoice:60 totals:20
     """,label=_("General"))
     

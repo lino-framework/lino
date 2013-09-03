@@ -644,7 +644,7 @@ class Enrolment(dd.UserAuthored,dd.Printable,sales.Invoiceable):
             #~ return 
         if self.course.tariff is None:
             self.amount = ZERO
-        self.amount = self.course.tariff.price
+        self.amount = self.course.tariff.sales_price
             
     def get_invoiceable_product(self): 
         #~ if self.course is not None: 

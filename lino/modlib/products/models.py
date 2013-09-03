@@ -17,6 +17,8 @@ from django.utils.translation import ugettext_lazy as _
 
 from lino import dd
 
+vat = dd.resolve_app('vat')
+
 
 class ProductCat(dd.BabelNamed):
     """
@@ -52,26 +54,34 @@ class Product(dd.BabelNamed):
     cat = models.ForeignKey(ProductCat,
         verbose_name=_("Category"),
         blank=True,null=True)
-    vatExempt = models.BooleanField(verbose_name=_("VAT exempt"),default=False)
-    price = dd.PriceField(verbose_name=_("Price"),blank=True,null=True)
+        
+    if vat:
+        vat_class = vat.VatClasses.field(blank=True)
+    else:
+        vat_class = dd.DummyField()
+    
+    #~ vatExempt = models.BooleanField(verbose_name=_("VAT exempt"),default=False)
+    #~ price = dd.PriceField(verbose_name=_("Price"),blank=True,null=True)
     #image = models.ImageField(blank=True,null=True,
     # upload_to=".")
     
     #~ def __unicode__(self):
         #~ return self.name
 
-        
 
 class Products(dd.Table):
     required = dd.required(auth=True)
     model = Product
     order_by = ["id"]
-    column_names = "id:3 name cat vatExempt price:6 *"
+    column_names = "id:3 name cat vat_class sales_price:6 *"
     detail_layout = """
-    id cat price vatExempt 
+    id cat sales_price vat_class 
     name 
     description
     """
+    
+# note: a Site without sales will have to adapt the detail_layout and 
+# column_names of Products 
     
 class ProductsByCategory(Products):
     master_key = 'cat'

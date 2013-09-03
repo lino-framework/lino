@@ -13,37 +13,24 @@
 ## along with Lino; if not, see <http://www.gnu.org/licenses/>.
 
 from decimal import Decimal
-
-class SiteMixin(object):
-  
-    vat_quarterly = False
-    """
-    Set this to True to support quarterly VAT declarations.
-    """
     
-    def get_vat_class(self,tt,item):
-        return 'normal'
-        
-    def get_product_vat_class(self,tt,product):
-        return 'normal'
-        
+from lino.modlib import vat
 
-    def get_product_base_account(self,tt,product):
-        """
-        Return the reference of the general account 
-        to be used to book the product movement of 
-        the specified trade type and product.
-        
-        The default implementation works with the accounts created by
-        :mod:`lino.modlib.accounts.fixtures.mini`.
-        """
-        if tt.name == 'sales':
-            #~ return '7000'
-            return 'sales'
-        elif tt.name == 'purchases':
-        #~ elif item.voucher.journal.type == JournalTypes.purchases:
-            return 'purchases'
-            #~ return '6000'
+class SiteMixin(vat.SiteMixin):
+  
+    #~ def get_product_base_account(self,tt,product):
+        #~ """
+        #~ Return the reference of the general account 
+        #~ to be used to book the product movement of 
+        #~ the specified trade type and product.
+        #~ 
+        #~ The default implementation works with the accounts created by
+        #~ :mod:`lino.modlib.accounts.fixtures.mini`.
+        #~ """
+        #~ if tt.name == 'sales':
+            #~ return 'sales'
+        #~ elif tt.name == 'purchases':
+            #~ return 'purchases'
         
     #~ def get_sales_item_account(self,item):
         #~ return self.modules.accounts.Account.objects.get(group__ref='704000')
@@ -83,12 +70,3 @@ class SiteMixin(object):
         
         #~ return '472100'
 
-    def get_vat_rate(self,tt,vc,vr):
-        VAT_RATES = dict(
-          exempt=Decimal(),
-          reduced=Decimal('0.07'),
-          normal=Decimal('0.20')
-        )
-        return VAT_RATES[vc.name]
-
-        

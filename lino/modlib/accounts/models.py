@@ -142,28 +142,32 @@ class AccountsByGroup(Accounts):
     required = dd.required()
     master_key = 'group'
     column_names = "ref name *"
-
+    
+    
+    
     
 
-def customize_products():
-    dd.inject_field('products.Product',
-        'sales_account',
-        models.ForeignKey('accounts.Account',
-            verbose_name=_("Sales account"),
-            blank=True,null=True,
-            related_name="products_sales",
-            help_text=_("The account to move when this product is used in a sales invoice.")
-        ))
-    dd.inject_field('products.Product',
-        'purchases_account',
-        models.ForeignKey('accounts.Account',
-            verbose_name=_("Purchases account"),
-            blank=True,null=True,
-            related_name="products_purchases",
-            help_text=_("The account to move when this product is used in a purchases invoice.")
-        ))
 
-customize_products()
+#~ 
+#~ def customize_products():
+    #~ dd.inject_field('products.Product',
+        #~ 'sales_account',
+        #~ models.ForeignKey('accounts.Account',
+            #~ verbose_name=_("Sales account"),
+            #~ blank=True,null=True,
+            #~ related_name="products_sales",
+            #~ help_text=_("The account to move when this product is used in a sales invoice.")
+        #~ ))
+    #~ dd.inject_field('products.Product',
+        #~ 'purchases_account',
+        #~ models.ForeignKey('accounts.Account',
+            #~ verbose_name=_("Purchases account"),
+            #~ blank=True,null=True,
+            #~ related_name="products_purchases",
+            #~ help_text=_("The account to move when this product is used in a purchases invoice.")
+        #~ ))
+#~ 
+#~ customize_products()
 
 
 

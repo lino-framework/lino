@@ -70,7 +70,8 @@ class User(mixins.CreatedModified):
         
     password = models.CharField(_('Password'), max_length=128)
         
-    profile = dd.UserProfiles.field(blank=True)
+    profile = dd.UserProfiles.field(blank=True,
+        help_text=_("Users with an empty `profile` field are considered inactive and cannot log in."))
     
     initials = models.CharField(_('Initials'), max_length=10, blank=True)
     first_name = models.CharField(_('First name'), max_length=30, blank=True)

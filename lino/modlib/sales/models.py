@@ -13,7 +13,8 @@
 ## along with Lino; if not, see <http://www.gnu.org/licenses/>.
 
 """
-Deserves a docstring
+
+
 """
 
 from __future__ import unicode_literals
@@ -24,6 +25,7 @@ import datetime
 
 from decimal import Decimal
 HUNDRED = Decimal('100')
+ZERO = Decimal(0)
 
 from dateutil.relativedelta import relativedelta
 ONE_DAY = relativedelta(days=1)
@@ -43,6 +45,7 @@ from lino import mixins
 from lino.utils import mti
 #~ from lino.utils.quantities import Duration
 
+from ..vat.utils import add_vat, remove_vat
 
 #~ journals = resolve_app('journals')
 #~ journals = models.get_app('journals')
@@ -53,6 +56,17 @@ partners = dd.resolve_app(settings.SITE.partners_app_label)
 ledger = dd.resolve_app('ledger',strict=True)
 vat = dd.resolve_app('vat',strict=True)
 products = dd.resolve_app('products',strict=True)
+
+
+
+vat.TradeTypes.sales.update(
+    price_field_name='sales_price',
+    price_field_label=_("Sales price"),
+    base_account_field_name='sales_account',
+    base_account_field_label=_("Sales account"))
+
+
+
 
 #~ class Channel(ChoiceList):
     #~ label = _("Channel")
@@ -417,7 +431,7 @@ class Invoice(SalesDocument,ledger.Voucher,mixins.Registrable):
         yield 'user'
         yield 'partner'
         yield 'vat_regime'
-        yield 'item_vat'
+        #~ yield 'item_vat'
 
 
 
@@ -435,23 +449,37 @@ class ProductDocItem(ledger.VoucherItem,vat.QtyVatItemBase):
 
     
     def get_base_account(self,tt):
-        ref = settings.SITE.get_product_base_account(tt,self.product)
-        return self.voucher.journal.chart.get_account_by_ref(ref)
+        return tt.get_product_base_account(self.product)
+        #~ return self.voucher.journal.chart.get_account_by_ref(ref)
         
-    def get_vat_class(self,tt):
-        name = settings.SITE.get_product_vat_class(tt,self.product)
-        return vat.VatClasses.get_by_name(name)
+    #~ def get_vat_class(self,tt):
+        #~ name = settings.SITE.get_product_vat_class(tt,self.product)
+        #~ return vat.VatClasses.get_by_name(name)
         
     #~ def full_clean(self,*args,**kw):
         #~ super(ProductDocItem,self).full_clean(*args,**kw)
 
     def discount_changed(self,ar):
         if self.product:
-            if self.product.price is not None:
-                if self.discount is None:
-                    self.unit_price = self.product.price 
+
+            tt = self.voucher.get_trade_type()
+            catalog_price = tt.get_catalog_price(self.product)
+                
+            if catalog_price is not None:
+                #~ assert self.vat_class == self.product.vat_class
+                if self.voucher.vat_regime.item_vat:
+                    rate = self.get_vat_rate() # rate of this item
                 else:
-                    self.unit_price = self.product.price * (HUNDRED - self.discount) / HUNDRED                    
+                    rate = ZERO
+                catalog_rate = settings.SITE.get_vat_rate(tt,
+                    self.vat_class,vat.get_default_vat_regime)
+                if rate != catalog_rate:
+                    catalog_price = remove_vat(catalog_price,catalog_rate)
+                    catalog_price = add_vat(catalog_price,rate)
+                if self.discount is None:
+                    self.unit_price = catalog_price
+                else:
+                    self.unit_price = catalog_price * (HUNDRED - self.discount) / HUNDRED                    
                 self.unit_price_changed(ar)
                 
     def product_changed(self,ar):
@@ -538,7 +566,7 @@ class InvoiceDetail(dd.FormLayout):
     """,label=_("General"))
     
     more = dd.Panel("""
-    id user language #project item_vat
+    id user language #project #item_vat
     intro
     """,label=_("More"))
     
@@ -687,12 +715,12 @@ def customize_partners():
             blank=True,
             help_text=_("The default VAT regime for sales to this customer.")))
             
-    dd.inject_field(partner_model,
-        'item_vat',
-        models.BooleanField(
-            default=False,
-            help_text=_("The default item VAT setting for sales to this customer.")))
-        
+    #~ dd.inject_field(partner_model,
+        #~ 'item_vat',
+        #~ models.BooleanField(
+            #~ default=False,
+            #~ help_text=_("The default item VAT setting for sales to this customer.")))
+        #~ 
     dd.inject_field(partner_model,
         'imode',
         models.ForeignKey(InvoicingMode,blank=True,null=True))
@@ -715,7 +743,7 @@ def site_setup(site):
               #~ site.modules.partners.Organisations):
     site.modules[settings.SITE.partners_app_label].Partners.add_detail_tab("sales",
         """
-        payment_term vat_regime item_vat imode
+        payment_term vat_regime #item_vat imode
         sales.InvoicesByPartner
         """,
         label=MODULE_LABEL)

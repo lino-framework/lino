@@ -124,6 +124,12 @@ class Choice(object):
         for k,v in kw.items():
             setattr(self,k,v)
         
+    def update(self,**kw):
+        for k,v in kw.items():
+            if not hasattr(self,k):
+                raise Exception("%s has no attribute `%s`" % (self,k))
+            setattr(self,k,v)
+            
     def attach(self,choicelist):
         self.choicelist = choicelist
         

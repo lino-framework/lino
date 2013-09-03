@@ -251,16 +251,16 @@ from lino.core.signals import pre_ui_build
 from lino.core.signals import post_ui_build
 
 from django.db.models.signals import pre_save, post_save
-from django.db.backends.signals import connection_created
-
-
+from django.db.models.signals import pre_init, post_init
 from django.db.models.signals import class_prepared
-from django.db.models.fields import NOT_PROVIDED
 
+from django.db.backends.signals import connection_created
 
 from django.dispatch import receiver
 #~ from lino.core import signals
 
+
+from django.db.models.fields import NOT_PROVIDED
 
 #~ class Module(object):
     #~ pass

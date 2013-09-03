@@ -20,9 +20,19 @@ and Model mixins designed to work both with and without
 :mod:`lino.modlib.declarations` 
 installed.
 
+
+
+sales = dd.resolve_app('sales')
+
+@dd.receiver(dd.post_init, sender=sales.Invoice)
+def set_default_item_vat(sender, instance=None,**kwargs):
+    instance.item_vat = True
+
+
 """
 
 from __future__ import unicode_literals
+from __future__ import print_function
 
 import logging
 logger = logging.getLogger(__name__)
@@ -32,63 +42,191 @@ from decimal import Decimal
 
 from django.db import models
 from django.conf import settings
+from django.utils.translation import ugettext_lazy as _
 
 from lino import dd
 from lino import mixins
-#~ from lino.core.dbutils import full_model_name
-#~ from lino.utils.choicelists import ChoiceList
-#contacts = reports.get_app('contacts')
-#~ from lino.modlib.journals import models as journals
-#~ journals = reports.get_app('journals')
-#from lino.modlib.contacts import models as contacts
-#from lino.modlib.journals import models as journals
-from django.utils.translation import ugettext_lazy as _
-#~ from lino.modlib.accounts.utils import AccountTypes
 
-#~ from lino.modlib.ledger.utils import FiscalYears
-#~ from lino.core.dbutils import models_by_base
 partners = dd.resolve_app(settings.SITE.partners_app_label)
 
-ZERO = Decimal()
+ZERO = Decimal('0.00')
+
+MODULE_LABEL = _("VAT")
+
  
 class VatClasses(dd.ChoiceList):
     """
-    A VAT class is usually a direct or indirect property 
-    of a trade object which determines the VAT *rate* to be used.
-    The actual rates are not stored here, 
-    they vary depending on your country, 
+    A VAT class is a direct or indirect property 
+    of a trade object (e.g. a Product) which determines the VAT *rate* to be used.
+    It does not contain the actual rate because this
+    still varies depending on your country, 
     the time and type of the operation, 
     and possibly other factors.
     """
     verbose_name = _("VAT Class")
 add = VatClasses.add_item
-add('0',_("Exempt"),'exempt')
-add('1',_("Reduced"),'reduced')
-add('2',_("Normal"),'normal')
+add('0',_("Exempt"),'exempt')    # post stamps, ...
+add('1',_("Reduced"),'reduced')  # food, books,...
+add('2',_("Normal"),'normal')    # everything else
 
 
+class VatRegime(dd.Choice):
+    """
+    Base class for choices of :ddref:`vat.VatRegimes`.
+    """
+    item_vat = True
+    
 class VatRegimes(dd.ChoiceList):
-    """
-    The VAT regime determines how the VAT is being handled,
-    i.e. whether and how it is to be paid.
-    """
     verbose_name = _("VAT Regime")
+    item_class = VatRegime
+    help_text = _("Determines how the VAT is being handled, i.e. whether and how it is to be paid.")
+    
 add = VatRegimes.add_item
 add('10',_("Private person"),'private')
 add('20',_("Subject to VAT"),'subject')
 add('25',_("Co-contractor"),'cocontractor')
 add('30',_("Intra-community"),'intracom')
 add('40',_("Outside EU"),'outside')
-add('50',_("Exempt"),'exempt')
+add('50',_("Exempt"),'exempt',item_vat=False)
 
-
+class TradeType(dd.Choice):
+    """
+    Base class for choices of :ddref:`vat.TradeTypes`.
+    """
+    price_field_name = None
+    price_field_label = None
+    base_account_field_name = None
+    base_account_field_label = None
+    vat_account_field_name = None
+    vat_account_field_label = None
+    
+    def get_vat_account(self):
+        return getattr(settings.SITE.site_config,self.base_account_field_name)
+        
+    def get_product_base_account(self,product):
+        if self.base_account_field_name is None:
+            raise Exception("%s has no base_account_field_name" % self)
+        return getattr(product,self.base_account_field_name) or \
+            getattr(settings.SITE.site_config,self.base_account_field_name)
+        
+    def get_catalog_price(self,product):
+        """
+        Return the catalog price of the given product for this trade type.
+        """
+        return getattr(product,self.price_field_name)
     
 class TradeTypes(dd.ChoiceList):
     verbose_name = _("Trade Type")
+    item_class = TradeType
+    help_text = _("The type of trade: usually either `sales` or `purchases`.")
     
-add = TradeTypes.add_item
-add('S',_("Sales"),'sales')
-add('P',_("Purchases"),'purchases')
+TradeTypes.add_item('S',_("Sales"),'sales')
+TradeTypes.add_item('P',_("Purchases"),'purchases')
+TradeTypes.add_item('W',_("Wages"),'wages')
+    
+"""
+Note that :mod:`lino.modlib.sales.models` (if installed) will modify 
+`TradeTypes.sales` so that the following `inject_vat_fields` 
+will inject the required fields to system.SiteConfig 
+and products.Product (if these are installed).
+"""
+   
+@dd.receiver(dd.pre_analyze)
+def inject_vat_fields(sender,**kw):
+    for tt in TradeTypes.items():
+        if tt.base_account_field_name is not None:
+            dd.inject_field('system.SiteConfig',tt.base_account_field_name,
+                dd.ForeignKey('accounts.Account',
+                    verbose_name=tt.base_account_field_label,
+                    related_name='configs_by_'+tt.base_account_field_name,
+                    blank=True,null=True))
+            dd.inject_field('products.Product',tt.base_account_field_name,
+                dd.ForeignKey('accounts.Account',
+                    verbose_name=tt.base_account_field_label,
+                    blank=True,null=True))
+        if tt.price_field_name is not None:
+            dd.inject_field('products.Product',tt.price_field_name,
+                dd.PriceField(verbose_name=tt.price_field_label,blank=True,null=True))
+    
+    
+
+
+#~ _default_vat_class = VatClasses.normal
+
+#~ _default_vat_regime = VatRegimes.private
+#~ """
+#~ The default value for the `vat_regime` field.
+#~ Application code can change this using something like::
+#~ 
+  #~ from lino.modlib.vat.models import VatDocument, VatRegimes
+  #~ VatDocument.default_vat_regime = VatRegimes.intracom
+#~ """
+
+#~ def get_default_vat_class()
+    #~ return _default_vat_class
+#~ def get_default_vat_regime():
+    #~ return _default_vat_regime
+
+
+CONFIG_FIELDS = dict(
+  default_vat_regime = VatRegimes.field(),
+  default_vat_class = VatClasses.field(),
+  )
+  
+from lino.utils import AttrDict
+  
+CONFIG_VALUES = AttrDict(
+    default_vat_regime = VatRegimes.private,
+    default_vat_class = VatClasses.normal)
+    
+def get_default_vat_regime(): return CONFIG_VALUES.default_vat_regime
+def get_default_vat_class(): return CONFIG_VALUES.default_vat_class
+
+def configure(**kw):
+    """
+    Sets the global default value for certain module parameters.
+    Works for me but is not mature.    
+    A cool new system which I will probably generalize.
+    
+    Call this from your settings.py using something like::
+    
+        def setup_choicelists(self):
+            super(Site,self).setup_choicelists()
+            self.modules.vat.configure(foo='a',bar=1,...)
+      
+    Example::
+    
+        def setup_choicelists(self):
+            super(Site,self).setup_choicelists()
+            self.modules.vat.configure(default_vat_class='exempt')
+      
+    Possible keywork arguments are:
+    
+    - default_vat_regime : one of 'private', '
+    - default_vat_class
+    
+    """
+    
+    for k,v in kw.items():
+        fld = CONFIG_FIELDS[k]
+        CONFIG_VALUES[k] = fld.choicelist.get_by_name(v)
+
+
+
+settings.SITE.modules.define('vat','configure',configure)
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 
@@ -118,15 +256,6 @@ class VatTotal(dd.Model):
     """
     Set this to True on subclasses who compute their totals automatically.
     """
-    
-    #~ @classmethod
-    #~ def site_setup(cls,site):
-        #~ super(VatDocument,cls).site_setup(site)
-        #~ cls._total_fields = set(dd.fields_list(cls,
-            #~ 'total_vat total_base total_incl'))
-        
-    #~ def on_create(self,ar):
-        #~ super(VatDocument,self).on_create(ar)
     
     def disabled_fields(self,ar):
         fields = super(VatTotal,self).disabled_fields(ar)
@@ -184,10 +313,11 @@ class VatTotal(dd.Model):
             #~ return None
         #~ return self.total_base + self.total_vat
         
+
 #~ class VatDocument(mixins.UserAuthored,VatTotal):
 class VatDocument(VatTotal):
     """
-    This is also used for Offers and other non-ledger documents
+    This is also used for Offers and other non-ledger documents.
     """
     
     auto_compute_totals = True
@@ -199,18 +329,32 @@ class VatDocument(VatTotal):
         
     class Meta:
         abstract = True
-  
+        
+        
+    
     #~ partner = models.ForeignKey(partner_model)
     #~ partner = partners.PartnerField()
     partner = dd.ForeignKey('contacts.Partner')
-    item_vat = models.BooleanField(_("Prices include VAT"),default=False,
-      help_text=_("Whether prices includes VAT or not."))
-    vat_regime = VatRegimes.field(blank=True)
+    #~ item_vat = models.BooleanField(_("Prices include VAT"),
+        #~ # default=False,
+        #~ # editable=False,
+        #~ help_text=_("Whether shown unit prices include VAT or not."))
+    vat_regime = VatRegimes.field(default=get_default_vat_regime)
     
+    if False: 
+        # this didn't work as expecrted because __init__() is called 
+        # also when an existing instance is being retrieved from database
+        def __init__(self,*args,**kw):
+            super(VatDocument,self).__init__(*args,**kw)
+            self.item_vat = settings.SITE.get_item_vat(self)
+        
     def get_recipient(self):
         return self.partner
     recipient = property(get_recipient)
     
+    #~ def get_item_vat(self):
+        #~ return getattr(self.vat_regime
+        
     #~ @classmethod
     #~ def get_filter_kw(self,ar,**kw):
         #~ kw = super(VatDocument,self).get_filter_kw(ar,**kw)
@@ -250,10 +394,16 @@ class VatDocument(VatTotal):
         tt = self.get_trade_type()
         for i in self.items.order_by('seqno'):
             if i.total_base is not None:
-                book(i.get_base_account(tt),i.total_base)
-                vatacc = settings.SITE.get_vat_account(tt,i.vat_class,self.vat_regime)
-                vatacc = self.journal.chart.get_account_by_ref(vatacc)
-                book(vatacc,i.total_vat)
+                a = i.get_base_account(tt)
+                if a is None:
+                    raise Exception("No base account for %s" % i)
+                book(a,i.total_base)
+            if i.total_vat:
+                a = settings.SITE.get_vat_account(tt,i.vat_class,self.vat_regime)
+                a = self.journal.chart.get_account_by_ref(a)
+                if a is None:
+                    raise Exception("No vat account for %s" % i)
+                book(a,i.total_vat)
         return sums_dict
         
     def get_wanted_movements(self):
@@ -275,7 +425,10 @@ class VatDocument(VatTotal):
     def register(self,ar):
         self.compute_totals()
         super(VatDocument,self).register(ar)
-        
+
+
+  
+
 
 #~ class DeclaredVatDocument(VatDocument):
     #~ class Meta:
@@ -294,7 +447,7 @@ class VatItemBase(mixins.Sequenced,VatTotal):
         abstract = True
         #~ unique_together  = ('document','seqno')
     
-    vat_class = VatClasses.field(blank=True)
+    vat_class = VatClasses.field(blank=True,default=get_default_vat_class)
     
     def get_vat_class(self,tt):
         name = settings.SITE.get_vat_class(tt,self)
@@ -302,7 +455,7 @@ class VatItemBase(mixins.Sequenced,VatTotal):
         
     def vat_class_changed(self,ar):
         #~ logger.info("20121204 vat_class_changed")
-        if self.voucher.item_vat:
+        if self.voucher.vat_regime.item_vat:
             self.total_incl_changed(ar)
         else:
             self.total_base_changed(ar)
@@ -368,6 +521,8 @@ class VatItemBase(mixins.Sequenced,VatTotal):
             #~ return dd.Model.__unicode__(self)
         #~ return u"DocItem %s.%d" % (self.voucher,self.pos)
         
+
+
 class QtyVatItemBase(VatItemBase):
     class Meta:
         abstract = True
@@ -392,7 +547,7 @@ class QtyVatItemBase(VatItemBase):
         
         if self.unit_price is not None and self.qty is not None:
             rate = self.get_vat_rate()
-            if self.voucher.item_vat: # unit_price_includes_vat
+            if self.voucher.vat_regime.item_vat: # unit_price_includes_vat
                 self.total_incl = self.unit_price * self.qty
                 self.total_base = self.total_incl / (1 + rate)
                 self.total_vat = self.total_incl - self.total_base
@@ -406,16 +561,46 @@ class QtyVatItemBase(VatItemBase):
 
         
 
-MODULE_LABEL = _("VAT")
 
-def site_setup(site): pass 
-def setup_main_menu(site,ui,profile,m): pass
-def setup_my_menu(site,ui,profile,m): pass
+if False:
+    """
+    Install a post_init signal listener for each concrete subclass of 
+    VatDocument. 
+    The following trick worked... 
+    but best is to store it in VatRegime, not per voucher.
+    """
+
+    def set_default_item_vat(sender, instance=None,**kwargs):
+        instance.item_vat = settings.SITE.get_item_vat(instance)
+        #~ print("20130902 set_default_item_vat", instance)
+                
+    @dd.receiver(dd.post_analyze)
+    def on_post_analyze(sender,**kw):
+        for m in dd.models_by_base(VatDocument):
+            dd.post_init.connect(set_default_item_vat,sender=m)
+            #~ print('20130902 on_post_analyze installed receiver for',m)
+
+            
+if False:
+    # doesn't work because Signals work only on concrete models
+            
+    @dd.receiver(dd.post_init, sender=VatDocument)
+    def set_default_item_vat(sender, instance=None,**kwargs):
+        instance.item_vat = site.get_item_vat(instance)
+        print(20130902, instance)
+                
+
+
+
+
+#~ def setup_main_menu(site,ui,profile,m): pass
+#~ def setup_my_menu(site,ui,profile,m): pass
   
-def setup_reports_menu(site,ui,profile,m): pass
+#~ def setup_reports_menu(site,ui,profile,m): pass
     
-def setup_config_menu(site,ui,profile,m): pass
+#~ def setup_config_menu(site,ui,profile,m): pass
 #~ def setup_explorer_menu(site,ui,profile,m): pass
+
   
 
 def setup_explorer_menu(site,ui,profile,m):

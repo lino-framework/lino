@@ -834,6 +834,7 @@ class AbstractTable(actors.Actor):
     """
     The LIMIT to use when this is being used in "preview mode", 
     e.g. as a slave table in a detail window.
+    
     If this is None, preview requests for this table will request all rows.
     Since preview tables usually have no paging toolbar, that's what we want.
     But if there are many rows, this can lead to waste of performance.
