@@ -256,3 +256,8 @@ Templates should use the third argument to handle this case properly:
 >>> print(p.mf("He","She","He or she"))
 He or she
 
+
+We'll reuse the same files for another little lessan
+about :ref:`lino.tutorial.pisa`.
+
+

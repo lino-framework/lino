@@ -43,7 +43,7 @@ Version 1.6.11 (released :blogref:`20130723`)
 
 - Existing Lino applications must add :mod:`lino.modlib.system`
   to the list of apps yielded by their
-  :meth:`lino.Site.ui.get_installed_apps`.
+  :meth:`lino.ui.Site.get_installed_apps`.
   See :blogref:`20130717` for background. 
   
   Migration instructions:

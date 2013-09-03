@@ -1118,7 +1118,7 @@ class Site(lino.Site):
         #~ return  "This is %(me)s using %(using)s." % kw
             
               
-    def login(self,username=None):
+    def login(self,username=None,**kw):
         """
         For usage from a shell.
         
@@ -1127,23 +1127,24 @@ class Site(lino.Site):
         that she has already authenticated. It returns a 
         :class:`BaseRequest <lino.core.requests.BaseRequest>` object which 
         has a :meth:`show <lino.core.requests.BaseRequest.show>` method.
-        
         """
         #~ self.console_user = self.user_model.objects.get(username=username)
         if username is None:
-            from lino.core.auth import AnonymousUser
-            u = AnonymousUser.instance()
+            if not kw.has_key('user'):
+                from lino.core.auth import AnonymousUser
+                kw.update(user=AnonymousUser.instance())
         else:
-            u = self.user_model.objects.get(username=username)
+            kw.update(user=self.user_model.objects.get(username=username))
+            
+        if not kw.has_key('renderer'):
+            kw.update(renderer=self.ui.text_renderer)
             
         from lino.core import requests
         import lino.ui.urls # hack: trigger ui instantiation
         #~ if u.language:
             #~ from north.dbutils import set_language
             #~ set_language(u.language)
-        return requests.BaseRequest(
-            renderer=self.ui.text_renderer,
-            user=u)
+        return requests.BaseRequest(**kw)
 
 
 

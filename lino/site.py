@@ -26,13 +26,14 @@ from decimal import Decimal
 from lino.utils.xmlgen import html as xghtml
 from lino.utils import AttrDict
 
-from lino import SETUP_INFO
+#~ from lino import SETUP_INFO
 
 from north import Site
 
 
 class Site(Site):
     """
+    This is the base for :class:`lino.ui.site.Site`.
     """
     
     user_model = None
@@ -369,7 +370,7 @@ class Site(Site):
         Adds Lino, Jinja, Spinx, dateutil, ...
         """
         import lino
-        yield ("Lino",SETUP_INFO['version'],SETUP_INFO['url'])
+        yield ("Lino",lino.SETUP_INFO['version'],lino.SETUP_INFO['url'])
         
         import jinja2
         version = getattr(jinja2,'__version__','')

@@ -19,7 +19,7 @@ for out-of-the-box usage in typical situations.
 It defines a  function :func:`configure` which
 will be called by Django when you have your
 :setting:`LOGGING_CONFIG` set to ``'lino.utils.log.configure'``
-(the default value set when you instantiate a :class:`lino.Site`)
+(the default value set when you instantiate a :class:`lino.site.Site`)
 
 
 Examples

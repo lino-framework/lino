@@ -16,6 +16,7 @@ you'll now want to know how to do it yourself.
    mini
    auto_create/index
    human/index
+   pisa/index
    de_BE/index
    actions/index
 

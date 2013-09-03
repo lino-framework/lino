@@ -199,8 +199,8 @@ class DjangoBuildMethod(BuildMethod):
         except TemplateDoesNotExist,e:
             raise Warning("No template found for %s (%s)" % (e,tpls))
 
-    def render_template(self,elem,tpl): # ,MEDIA_URL=settings.MEDIA_URL):
-        context = dict(
+    def render_template(self,elem,tpl,**context): # ,MEDIA_URL=settings.MEDIA_URL):
+        context.update(
           instance=elem,
           title = unicode(elem),
           MEDIA_URL = settings.MEDIA_ROOT.replace('\\','/') + '/',
@@ -221,7 +221,8 @@ class PisaBuildMethod(DjangoBuildMethod):
         filename = action.before_build(self,elem)
         if filename is None:
             return
-        html = self.render_template(elem,tpl) # ,MEDIA_URL=url)
+        #~ html = self.render_template(elem,tpl,request=ar.request)
+        html = self.render_template(elem,tpl,ar=ar)
         html = html.encode("utf-8")
         file(filename+'.html','w').write(html)
         

@@ -2,8 +2,10 @@
 20130903 (Tuesday, 03 September 2013)
 =====================================
 
-Continued :blogref:`yesterday's work <20130902>`.
+Configuring VAT-related things
+------------------------------
 
+Continued :blogref:`yesterday's work <20130902>`.
 In fact we *don't want* to store this decision *per document*. 
 All cases I know can be handled by storing it  *per VatRegime*: 
 
@@ -21,3 +23,140 @@ All cases I know can be handled by storing it  *per VatRegime*:
 - :func:`lino.modlib.vat.models.configure` is a cool new system to 
   specify configuration values. Works for me but is not mature.
   
+And (finally!) the visible result of all this: :ref:`faggio` now 
+produces invoices without VAT, simply by adding the following line
+to its :meth:`lino.ui.Site.setup_choicelists` method::
+  
+        self.modules.vat.configure(default_vat_class='exempt')
+
+
+newcomers.NewClients.param_defaults() returned invalid keyword 'observed_event'
+-------------------------------------------------------------------------------
+
+Fixed a which occured even in the test suite.
+
+
+Getting the user in a Pisa template
+-----------------------------------
+
+Joe sent in a small patch to allow access to current request when 
+printing using Pisa, useful to get current user.
+
+Joe, you suggested to use a variable name ``request`` to hold the 
+Django request, but I think it is better to use the variable ``ar`` 
+(for :class:`ActionRequest <lino.core.requests.ActionRequest>`) 
+because this is also given for appy templates and because it 
+has some more possibilities:
+
+- `{{ar.request.user}}` : returns the user
+- `{{ar.user}}` : returns the user
+- `{{ar.subst_user}}` : None if user is acting as herself, otherwise 
+  the substituted user
+- `{{ar.get_user()}}` : Shortcut for `ar.subst_user or ar.user`
+
+Wrote a new tutorial :ref:`lino.tutorial.pisa` to demonstrate and 
+test this.
+
+  
+'Site' object has no attribute 'modules'  
+----------------------------------------
+
+Joe reported "I'm unable to run Lino with latest pypi versions of Lino, 
+djangosite, North .... after upgrading everything I have to downgrade 
+djangosite to 0.1.4. There is an error that site.modules is not defined."
+
+To reproduce it, I create a virgin Python environment and try the 
+:ref:`lino.tutorial.quickstart` tutorial::
+  
+  
+    $ virtualenv t
+    $ . t/bin/activate
+    $ pip install lino
+    $ cd ~/hgwork/lino/docs/tutorials/quickstart
+    $ python manage.py initdb_demo --traceback
+    
+This produces indeed::    
+
+    INFO Started manage.py initdb_demo --traceback (using mysite.settings) --> PID 7754
+    INFO This is Lino Così 0.1 using djangosite 0.1.7, Django 1.5.2, Python 2.7.3, Babel 1.3, Lino 1.6.11, Jinja 2.7.1, Sphinx 1.2b1, python-dateutil 2.1, OdfPy ODFPY/0.9.6, docutils 0.11, suds (not installed), PyYaml 3.10, Appy 0.8.5 (2013/08/12 09:51).
+    Traceback (most recent call last):
+      File "/home/luc/tmp/t/local/lib/python2.7/site-packages/django/core/management/base.py", line 222, in run_from_argv
+        self.execute(*args, **options.__dict__)
+      File "/home/luc/tmp/t/local/lib/python2.7/site-packages/django/core/management/base.py", line 254, in execute
+        self.validate()
+      File "/home/luc/tmp/t/local/lib/python2.7/site-packages/django/core/management/base.py", line 280, in validate
+        num_errors = get_validation_errors(s, app)
+      File "/home/luc/tmp/t/local/lib/python2.7/site-packages/django/core/management/validation.py", line 35, in get_validation_errors
+        for (app_name, error) in get_app_errors().items():
+      File "/home/luc/tmp/t/local/lib/python2.7/site-packages/django/db/models/loading.py", line 166, in get_app_errors
+        self._populate()
+      File "/home/luc/tmp/t/local/lib/python2.7/site-packages/django/db/models/loading.py", line 72, in _populate
+        self.load_app(app_name, True)
+      File "/home/luc/tmp/t/local/lib/python2.7/site-packages/django/db/models/loading.py", line 96, in load_app
+        models = import_module('.models', app_name)
+      File "/home/luc/tmp/t/local/lib/python2.7/site-packages/django/utils/importlib.py", line 35, in import_module
+        __import__(name)
+      File "/home/luc/tmp/t/local/lib/python2.7/site-packages/djangosite/models.py", line 31, in <module>
+        settings.SITE.startup()
+      File "/home/luc/tmp/t/local/lib/python2.7/site-packages/djangosite/__init__.py", line 320, in startup
+        self.do_site_startup()
+      File "/home/luc/tmp/t/local/lib/python2.7/site-packages/lino/ui/__init__.py", line 669, in do_site_startup
+        super(Site,self).do_site_startup()
+      File "/home/luc/tmp/t/local/lib/python2.7/site-packages/lino/__init__.py", line 339, in do_site_startup
+        startup_site(self)
+      File "/home/luc/tmp/t/local/lib/python2.7/site-packages/lino/core/kernel.py", line 173, in startup_site
+        self.modules.define(model._meta.app_label,model.__name__,model)
+    AttributeError: 'Site' object has no attribute 'modules'
+    INFO Done manage.py initdb_demo --traceback (PID 7754)
+
+Thank you, Joe, for reporting this problem.
+
+Another symptom in that environment::
+
+    $ python setup.py test
+    running test
+    Traceback (most recent call last):
+      File "setup.py", line 3, in <module>
+        setup(**SETUP_INFO)
+      File "/usr/lib/python2.7/distutils/core.py", line 152, in setup
+        dist.run_commands()
+      File "/usr/lib/python2.7/distutils/dist.py", line 953, in run_commands
+        self.run_command(cmd)
+      File "/usr/lib/python2.7/distutils/dist.py", line 972, in run_command
+        cmd_obj.run()
+      File "/home/luc/tmp/t/local/lib/python2.7/site-packages/distribute-0.6.24-py2.7.egg/setuptools/command/test.py", line 127, in run
+        self.distribution.fetch_build_eggs(self.distribution.install_requires)
+      File "/home/luc/tmp/t/local/lib/python2.7/site-packages/distribute-0.6.24-py2.7.egg/setuptools/dist.py", line 245, in fetch_build_eggs
+        parse_requirements(requires), installer=self.fetch_build_egg
+      File "/home/luc/tmp/t/local/lib/python2.7/site-packages/distribute-0.6.24-py2.7.egg/pkg_resources.py", line 588, in resolve
+        raise VersionConflict(dist,req) # XXX put more info here
+    pkg_resources.VersionConflict: (djangosite 0.1.7 (/home/luc/tmp/t/lib/python2.7/site-packages), Requirement.parse('djangosite==0.1.5'))
+
+So it is time to make a new release.
+But first answer the question: why did this error pass the test suites 
+and make it into a released version?
+
+Not the reason, but disturbing is the bug that the message 
+"using djangosite 0.1.7, Django 1.5.2, ..."
+didn't include the North version number.
+This was in :meth:`north.Site`
+Fixed.
+
+Cleanup my :xfile:`__init__.py` files
+-------------------------------------
+
+After reading 
+`5 Simple Rules For Building Great Python Packages
+<http://axialcorps.com/2013/08/29/5-simple-rules-for-building-great-python-packages/?goback=%2Egde_101591_member_270039332#%21>`_
+I started to move the `Site` classes out of :xfile:`__init__.py` into a 
+separate file :file:`site.py`
+In fact I have always been wanting that.
+
+Application code needs no change since it continues to 
+do ``from lino.ui import Site``.
+The difference is just that it "looks better".
+
+One side effect is that all my references in docs need an update
+
+Need to change all :class:`lino.Site`
+to :class:`lino.Site <lino.site.Site>`.

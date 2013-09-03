@@ -35,6 +35,7 @@ class DocsTests(LinoTestCase):
     def test_de_BE(self): self.run_docs_django_tests('tutorials.de_BE.settings')
     def test_auto_create(self): self.run_docs_django_tests('tutorials.auto_create.settings')
     def test_human(self): self.run_docs_django_tests('tutorials.human.settings')
+    def test_pisa(self): self.run_docs_django_tests('tutorials.pisa.settings')
     
     def test_polls(self): self.run_django_manage_test('docs/tutorials/polls')
     def test_quickstart(self): self.run_django_manage_test('docs/tutorials/quickstart')

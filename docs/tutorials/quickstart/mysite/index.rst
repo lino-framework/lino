@@ -52,7 +52,7 @@ and replace its content with the following two lines::
 That is, we import settings from Lino Così, 
 one of the out-of-the-box projects included with Lino.
 Then we create a :setting:`SITE` setting which for the moment 
-is just an instance of an unmodified :class:`lino.Site` setting object.
+is just an instance of an unmodified :class:`Site <lino.site.Site>` setting object.
 This second line occurs in this same form in every 
 Lino :xfile:`settings.py` file.
 

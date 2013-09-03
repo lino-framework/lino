@@ -1,0 +1,80 @@
+<html>
+<head>
+<title>Printing using Pisa</title>
+<style type="text/css">
+body {
+  font-family: Helvetica, Arial, sans-serif;
+  font-size: 14pt;
+}
+
+h1 { border: solid 1pt black; text-align: center;font-size: 16pt; }
+h2 { font-size: 14pt; }
+
+
+#footerContent { text-align: right; font-size: 8pt; }
+
+@page {
+
+  margin:2cm;
+  margin-left:3cm;
+  margin-bottom:25mm;
+  margin-top:45mm;
+  -pdf-frame-border: 1; 
+  
+  @frameheader {
+    -pdf-frame-content:headerContent;
+    top:10mm;
+    height:33mm;
+    margin-left:1cm;
+    margin-right:1cm;
+    -pdf-frame-border: 1; 
+  }
+
+  @framefooter {
+    -pdf-frame-content:footerContent;
+    bottom:1cm;
+    margin-left:3cm;
+    margin-right:2cm;
+    height:1cm;
+    -pdf-frame-border: 1; 
+  }
+}
+
+</style>
+</head>
+<body>
+
+<div id="footerContent">
+[page <pdf:pagenumber>]
+</div>
+
+<div id="headerContent">
+<table>
+<tr>
+<td>
+headerContent left
+</td>
+<td style="text-align:center;width:60mm">
+headerContent right centered
+</td>
+</tr>
+</table>
+</div>
+
+<pdf:spacer height="20mm">
+
+<h1>Printing using Pisa</h1>
+
+This file was produced as explained on
+<a href="http://lino-framework.org/tutorials/pisa/index.html">http://lino-framework.org/tutorials/pisa</a>
+
+
+<ul>
+<li>{% raw %}{{instance}}{% endraw %} : {{instance}}</li>
+<li>{% raw %}{{ar.request}}{% endraw %} : {{ar.request}}</li>
+<li>{% raw %}{{ar.user}}{% endraw %} : {{ar.user}}</li>
+<li>{% raw %}{{ar.get_user()}}{% endraw %} : {{ar.get_user()}}</li>
+</ul>
+
+</body>
+</html>

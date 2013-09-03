@@ -313,7 +313,7 @@ class UserProfiles(ChoiceList):
     def add_item(cls,value,text,memberships=None,name=None,**kw):
         return cls.add_item_instance(UserProfile(cls,value,text,name,memberships,**kw))
 
-#~ UserProfiles choicelist is going to be filled in `lino.Site.setup_choicelists` 
+#~ UserProfiles choicelist is going to be filled in `lino.site.Site.setup_choicelists` 
 #~ because the attributes of each item depend on UserGroups
 
 
@@ -780,8 +780,8 @@ class AuthMiddleWareBase(object):
 class RemoteUserMiddleware(AuthMiddleWareBase):
     """
     Middleware which Lino automatically uses when bith
-    :attr:`remote_user_header <lino.Site.remote_user_header>` 
-    and :attr:`user_model <lino.Site.user_model>` are not empty.
+    :attr:`remote_user_header <lino.site.Site.remote_user_header>` 
+    and :attr:`user_model <lino.site.Site.user_model>` are not empty.
     
     This does the same as
     `django.contrib.auth.middleware.RemoteUserMiddleware`, 
@@ -819,8 +819,8 @@ class RemoteUserMiddleware(AuthMiddleWareBase):
 class SessionUserMiddleware(AuthMiddleWareBase):
     """
     Middleware which Lino automatically uses when 
-    :attr:`remote_user_header <lino.Site.remote_user_header>` is None
-    and :attr:`user_model <lino.Site.user_model>` not.
+    :attr:`remote_user_header <lino.site.Site.remote_user_header>` is None
+    and :attr:`user_model <lino.site.Site.user_model>` not.
     """
 
     def get_user_from_request(self, request):
@@ -838,7 +838,7 @@ class SessionUserMiddleware(AuthMiddleWareBase):
 class NoUserMiddleware(AuthMiddleWareBase):
     """
     Middleware which Lino automatically uses when 
-    :attr:`lino.Site.user_model` is None.
+    :attr:`lino.site.Site.user_model` is None.
     """
     def get_user_from_request(self, request):
         
