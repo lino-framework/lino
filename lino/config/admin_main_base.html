@@ -30,9 +30,12 @@
         {% for T in settings.SITE.get_admin_main_items(ar) %}
         {% if T.default_action.get_view_permission(ar.get_user().profile) %}
         <h2>{{T.label}} 
+        {# {{E.tostring(ar.window_action_button(T.default_action,
+            title=_("Show this panel in own window"),
+            icon_file="../wikipedia/external_text.png"))}} #}
         {{E.tostring(ar.window_action_button(T.default_action,
             title=_("Show this panel in own window"),
-            icon_file="../wikipedia/external_text.png"))}}
+            icon_file="../xsite/link.gif"))}}
         </h2>
         
         {{E.tostring(ar.show(T,limit=5))}}

@@ -160,3 +160,16 @@ One side effect is that all my references in docs need an update
 
 Need to change all :class:`lino.Site`
 to :class:`lino.Site <lino.site.Site>`.
+
+A new icon for external links
+-----------------------------
+
+
+Although I liked very much the wikipedia icon
+for the "Open this panel in own window" link 
+displayed behind every "main item header" 
+(see :blogref:`20130823`)
+
+Gerd now suggested another icon which looks even better.
+
+
