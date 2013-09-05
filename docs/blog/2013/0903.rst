@@ -178,7 +178,7 @@ Slave tables with more than 15 rows
 
 Fixed a problem "Slave tables with more than 15 rows" reported by 
 Gerd and Joe. 
-Test case and description  in ref:`cosi.tested`.
+Test case and description  in :ref:`cosi.tested`.
 
 
 Difference between `lino.ui.Site` and `lino.Site`

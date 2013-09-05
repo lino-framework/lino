@@ -12,6 +12,10 @@
 ## You should have received a copy of the GNU General Public License
 ## along with Lino; if not, see <http://www.gnu.org/licenses/>.
 
+"""
+This defines the :class:`Site` class.
+"""
+
 from __future__ import unicode_literals
 
 import logging
@@ -69,7 +73,7 @@ class Site(Site):
     preview_limit = 15
     """
     Default value for the 
-    :attr:`preview_limit <lino.core.tables.Table.preview_limit>`
+    :attr:`preview_limit <lino.core.tables.AbstractTable.preview_limit>`
     parameter of all tables who don't specify their own one.
     """
     

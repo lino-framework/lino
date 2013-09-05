@@ -662,9 +662,9 @@ Lino.MainPanel = {
       */
       if (this._force_dirty || this.params_panel.form.isDirty()) {
         p.{{ext_requests.URL_PARAM_PARAM_VALUES}} = this.get_param_values();
-        //~ console.log("20130605 form.isDirty",p);
+        console.log("20130605 form.isDirty",p);
       }else{
-        //~ console.log("20130605 form not dirty:",this.params_panel.form);
+        console.log("20130605 form not dirty:",this.params_panel.form);
         if (this.status_param_values) 
           p.{{ext_requests.URL_PARAM_PARAM_VALUES}} = Lino.fields2array(
             this.params_panel.fields,this.status_param_values);
@@ -1749,7 +1749,8 @@ Lino.action_handler = function (panel,on_success,on_confirm) {
         //~ not used
         //~ console.log('20120607 new_status');
         panel.set_status(result.new_status);
-    } else if (result.goto_record_id != undefined) {
+    } else if (result.goto_record_id != undefined && ! gridmode) {
+        //~ Uncaught TypeError: Cannot call method 'run' of undefined 
         panel.load_record_id(result.goto_record_id);
     } 
     

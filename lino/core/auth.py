@@ -45,6 +45,7 @@ from django.core import exceptions
 from django.utils import translation
 from django.conf import settings
 from django import http
+from django.db import models
 
 from lino.core.choicelists import ChoiceList, Choice
 from lino.core.actors import get_default_required as required
@@ -52,29 +53,18 @@ from lino.core.actors import get_default_required as required
 from lino.core.dbutils import obj2str
 from lino.core import constants 
 from lino.core import workflows
+from lino.core import fields
 
 
+class UserLevel(Choice):
+    short_name = None
+    
 class UserLevels(ChoiceList):
     """
     The level of a user is one way of differenciating users when 
     defining access permissions and workflows. 
     
-    Lino speaks about user *level* where Plone speaks about user *role*.
-    Unlike user roles in Plone, user levels are hierarchic:
-    a "Manager" is higher than a simple "User" and thus 
-    can do everything for which a simple "User" level has permission.
-    
-    About the difference between "Administrator" and "Manager":
-    
-    - "Management is closer to the employees. 
-      Admin is over the management and more over the money 
-      of the organization and lilscencing of an organization. 
-      Mananagement manages employees. 
-      Admin manages the outside contacts and the 
-      facitlity as a whole." (`answerbag.com <http://www.answerbag.com/q_view/295182>`__)
-    
-    - See also a more detailed overview at
-      http://www.differencebetween.com/difference-between-manager-and-vs-administrator/
+    See :ref:`UserLevels`
     
     """
     verbose_name = _("User Level")
@@ -86,21 +76,27 @@ class UserLevels(ChoiceList):
     @classmethod
     def field(cls,module_name=None,**kw):
         """
-        Shortcut to create a :class:`lino.core.fields.ChoiceListField` in a Model.
+        Extends :meth:`lino.core.fields.ChoiceListField.field` .
         """
         kw.setdefault('blank',True)
         if module_name is not None:
             kw.update(verbose_name=string_concat(cls.verbose_name,' (',module_name,')'))
         return super(UserLevels,cls).field(**kw)
         
+    @fields.virtualfield(models.CharField(_("SN"),max_length=2,
+        help_text="used to fill UserProfiles"))
+    def short_name(cls,choice,ar):
+        return choice.short_name
+        
+        
 add = UserLevels.add_item
-add('10', _("Guest"),'guest')
+add('10', _("Guest"),'guest',short_name='G')
 #~ add('20', _("Restricted"),'restricted')
 #~ add('20', _("Secretary"),'secretary')
-add('30', _("User"), "user")
-add('40', _("Manager"), "manager")
-add('50', _("Administrator"), "admin")
-add('90', _("Expert"), "expert")
+add('30', _("User"), "user",short_name='U')
+add('40', _("Manager"), "manager",short_name='M')
+add('50', _("Administrator"), "admin",short_name='A')
+add('90', _("Expert"), "expert",short_name='E')
 #~ UserLevels.SHORT_NAMES = dict(A='admin',U='user',_=None,M='manager',G='guest',S='secretary')
 #~ UserLevels.SHORT_NAMES = dict(A='admin',U='user',_=None,M='manager',G='guest',R='restricted')
 UserLevels.SHORT_NAMES = dict(A='admin',U='user',_=None,M='manager',G='guest')

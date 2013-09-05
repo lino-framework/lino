@@ -24,3 +24,30 @@ Und als Name für die Kombibedingung "Neuantrag oder Begleitet"
 schlage ich weiterhin "Aktiv" vor. 
 Mögliche Alternativen wären "Empfang", "Reell", "Begleitet oder Neuantrag".
 
+
+"Neuantrag" aus Arbeitsablauf raus
+----------------------------------
+
+In der Kolonne Arbeitsablauf gab es für manche Klienten (die, die noch 
+keine Begleitung hatten) eine Transition "Neuantrag". 
+Die irritierte dort. Es kommt selten vor, dass ein Klient von Begleitet 
+oder Ehemalig nach Neuantrag zurück gesetzt werden muss, 
+Falls nötig soll man das manuell im Feld `Zustand` machen.
+
+
+Miscellaneous
+-------------
+
+- Irritierender Bug : Wenn man im Parameter-Panel etwas ändert, dann das Fenster schließt und wieder öffnet, werden die Felder nicht auf den Standardwert zurück gesetzt. .
+- Schönheitsfehler: Wenn man Parameter-Panel zum ersten Mal öffnet, ist es zu groß.
+- Icon für Create visit
+
+
+
+Uncaught TypeError: Cannot call method 'run' of undefined 
+---------------------------------------------------------
+
+Calling Duplicate in gridmode caused a 
+"Uncaught TypeError: Cannot call method 'run' of undefined"
+Javascript error.
+

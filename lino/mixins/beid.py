@@ -410,7 +410,7 @@ class BeIdCardHolder(dd.Model):
     
     def disabled_fields(self,ar):
         rv = super(BeIdCardHolder,self).disabled_fields(ar)
-        if True: # ar.get_user().profile.level < :
+        if ar.get_user().profile.level < dd.UserLevels.manager:
             rv |= self.beid_readonly_fields
         #~ logger.info("20130808 beid %s", rv)
         return rv
@@ -424,21 +424,30 @@ class BeIdCardHolder(dd.Model):
         
     @dd.displayfield(_("eID card"),default='<br/><br/><br/><br/>')
     def eid_info(self,ar):
+        must_read = False
+        attrs = dict()
         elems = []
         if self.card_number:
             elems += ["%s %s (%s)" % (ugettext("Card no."),self.card_number, self.card_type)]
-            if self.card_valid_from:
+            if self.card_valid_until is not None:
                 elems.append(", %s %s %s %s" % (
                     ugettext("valid from"),dd.dtos(self.card_valid_from),
                     ugettext("until"),dd.dtos(self.card_valid_until)))
+                if self.card_valid_until < datetime.date.today():
+                    must_read = True
+            else:
+                must_read = True
             if self.card_issuer:
                 elems.append(", %s %s" % (ugettext("issued by"),self.card_issuer))
                 #~ card_issuer = _("issued by"),
         else:
+            must_read = True
+        if must_read:
             #~ ba = cls.get_action_by_name('read_beid')
             #~ elems.append(ar.action_button(ba,self,_("Must read eID card!")))
             elems.append(ar.instance_action_button(self.read_beid,_("Must read eID card!")))
             #~ elems.append(_("No info available"))
-        return E.div(*elems)
+            attrs.update(style="background-color:red;")
+        return E.div(*elems,**attrs)
         
         

@@ -836,12 +836,19 @@ class AbstractTable(actors.Actor):
     The LIMIT to use when this is being used in "preview mode", 
     e.g. as a slave table in a detail window.
     
-    If this is None, preview requests for this table will request all rows.
-    Since preview tables usually have no paging toolbar, that's what we want.
-    But if there are many rows, this can lead to waste of performance.
+    If you set this to `None`, preview requests for this table will request all rows.
+    Since preview tables usually have no paging toolbar, that's 
+    theoretically what we want (but can 
+    lead to waste of performance if there are many rows).
     
-    Not tested. This was one idea while trying to solve the 20130107 problem 
-    "AvailableCoaches slave table shows only 5 records".    
+    The default value for this is the  
+    :attr:`preview_limit <lino.site.Site.preview_limit>`
+    class attribute of your :class:`Site <lino.site.Site>`,
+    which itself has a hard-coded default value of 15
+    and which you can override in your :xfile:`settings.py`.
+    
+    Test case and description  in :ref:`cosi.tested`.
+    
     """
     
     get_data_rows = None
@@ -898,6 +905,8 @@ class AbstractTable(actors.Actor):
     page_length = 20
     """
     Number of rows to display per page.
+    Used to control the height of a combobox of a ForeignKey 
+    pointing to this model 
     """
     
     cell_edit = True

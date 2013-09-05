@@ -55,9 +55,15 @@ The 16 is because Lino has a hard-coded default value of
 returning only 15 rows when no limit has been specified
 (there is one extra row for adding new records).
 
-In versions after :ref:`20130903` you can change that limit 
-by overriding the `preview_limit <lino.core.tables.AbstractTable.preview_limit>`
+In versions after :blogref:`20130903` you can change that limit 
+for a given table by overriding the 
+:attr:`preview_limit <lino.core.tables.AbstractTable.preview_limit>`
 parameter of your table definition.
+Or you can change it globally for all your tables 
+by setting the 
+:attr:`preview_limit <lino.site.Site.preview_limit>`
+Site attribute to either `None` or some bigger value.
+
 This parameter existed before but wasn't tested.
 In your code this would simply look like this::
 
@@ -85,3 +91,5 @@ Same request returns now all 35 data rows:
 >>> result = json.loads(res.content)
 >>> print(len(result['rows']))
 35
+
+

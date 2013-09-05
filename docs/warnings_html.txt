@@ -1,4 +1,17 @@
 /home/luc/hgwork/lino/docs/admin/index.rst:24: WARNING: toctree contains reference to nonexisting document u'admin/ :maxdepth: 2'
+/home/luc/hgwork/lino/docs/admin/install_windows.rst:212: WARNING: Include file u'/home/luc/hgwork/lino/docs/admin/settings.py' not found or reading it failed
+/home/luc/hgwork/lino/lino/modlib/vat/models.py:docstring of lino.modlib.vat.models:18: ERROR: Unexpected indentation.
+/home/luc/hgwork/lino/lino/modlib/vat/models.py:docstring of lino.modlib.vat.models.TradeType:1: ERROR: Unknown interpreted text role "ddref".
+/home/luc/hgwork/lino/lino/modlib/vat/models.py:docstring of lino.modlib.vat.models.VatRegime:1: ERROR: Unknown interpreted text role "ddref".
+/home/luc/hgwork/lino/docs/blog/2013/0408.rst:26: ERROR: Unknown target name: "section title".
+/home/luc/hgwork/lino/docs/blog/2013/0420.rst:93: WARNING: Inline emphasis start-string without end-string.
+/home/luc/hgwork/lino/docs/blog/2013/0511.rst:30: WARNING: Inline interpreted text or phrase reference start-string without end-string.
+/home/luc/hgwork/lino/docs/blog/2013/0704.rst:30: ERROR: Unexpected indentation.
+/home/luc/hgwork/lino/docs/blog/2013/0712.rst:63: WARNING: Inline interpreted text or phrase reference start-string without end-string.
+/home/luc/hgwork/lino/docs/blog/2013/0712.rst:64: WARNING: Inline interpreted text or phrase reference start-string without end-string.
+/home/luc/hgwork/lino/docs/blog/2013/0817.rst:103: WARNING: Literal block expected; none found.
+/home/luc/hgwork/lino/docs/blog/2013/0818.rst:3: WARNING: Duplicate explicit target name: "wikivs".
+/home/luc/hgwork/lino/docs/blog/2013/0831.rst:61: ERROR: Unknown interpreted text role "src".
 /home/luc/hgwork/lino/docs/demos.rst:86: WARNING: toctree contains reference to nonexisting document u'cosi'
 /home/luc/hgwork/lino/docs/blog/2013/0821/bug.rst:: WARNING: document isn't included in any toctree
 /home/luc/hgwork/lino/docs/cosi/index.rst:: WARNING: document isn't included in any toctree

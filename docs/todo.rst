@@ -2,31 +2,33 @@ To-do list
 ==========
 
 
-Bis 20130902
-------------
+Nach 20130909
+-------------
 
-#.  In Demo-Daten einen mit Angaben in eID-Feldern. 
-    Falls nötig Übersetzungen von lino_welfare nach lino rüber holen.
-    fab mm in beiden Projekten. Test case(s) schreiben.
-    
-#.  Wenn man in "Meine Aufgaben" manuell eine Aufgabe erstellt, dann 
-    wird diese anschließend nicht auf der Startseite angezeigt. 
-    Zustand ist "Begonnen" statt "Zu tun".
+#.  :attr:`is_demo_site <lino.site.Site.is_demo_site>` should not be an 
+    option in :class:`lino.site.Site` but a field of 
+    :class:`lino.modlib.system.SiteConfig`. And not just a boolean but 
+    a timestamp. Because certain unit tests would need that information.
 
 #.  Warnung wenn eID-Karte abgelaufen ist.
   
 #.  Passfoto einlesen
-  
-#.  In :ref:`welfare.cal.MyEvents`: Visiten rausfiltern
-  
+ 
 #.  "Bescheinigung erstellen" für pdf-Bescheinigungen ohne Parameter 
     sollte sofort kommen.
-    
-#.  Übersetzungen
   
 
-Nach 20130909
--------------
+#.  Wenn man in "Meine Aufgaben" manuell eine Aufgabe erstellt, dann 
+    wird diese anschließend nicht auf der Startseite angezeigt. 
+    Zustand ist "Begonnen" statt "Zu tun".
+
+#.  Kalender Team-Ansicht funktioniert nicht. Ich plane eine ziemliche 
+    Strukturänderung: Split the current model "Calendar" into EventType 
+    and Grabber. Then create a new model "Calendar" which represents per
+    user the items which she wants to see in her "Calendars" list of the
+    CalendarPanel:
+    
+       author name color other_user(blank=True) event_type(blank=True)
 
 #.  Familienbeziehungen
   

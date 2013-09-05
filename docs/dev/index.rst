@@ -15,6 +15,7 @@ Developer's Guide
    style
    datamig
    actors
+   perms
    versioning
    /ref/model_methods
    /todo

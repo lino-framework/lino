@@ -471,8 +471,8 @@ class MoveDown(actions.Action):
         if ar.data_iterator is None: return False
         if ar.data_iterator.count() == 0: return False
         if ar.data_iterator[ar.data_iterator.count()-1] == obj: return False
-        if obj.__class__.__name__=='Entry' and obj.seqno == 25:
-            print 20130706, ar.data_iterator.count(), ar.data_iterator
+        #~ if obj.__class__.__name__=='Entry' and obj.seqno == 25:
+            #~ print 20130706, ar.data_iterator.count(), ar.data_iterator
         return super(MoveDown,self).get_action_permission(ar,obj,state)
     
     def run_from_ui(self,ar,**kw):
