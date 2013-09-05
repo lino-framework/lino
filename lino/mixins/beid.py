@@ -410,7 +410,7 @@ class BeIdCardHolder(dd.Model):
     
     def disabled_fields(self,ar):
         rv = super(BeIdCardHolder,self).disabled_fields(ar)
-        if ar.get_user().profile.level < dd.UserLevels.manager:
+        if ar.get_user().profile.level < dd.UserLevels.admin:
             rv |= self.beid_readonly_fields
         #~ logger.info("20130808 beid %s", rv)
         return rv

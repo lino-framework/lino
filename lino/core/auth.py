@@ -83,7 +83,7 @@ class UserLevels(ChoiceList):
             kw.update(verbose_name=string_concat(cls.verbose_name,' (',module_name,')'))
         return super(UserLevels,cls).field(**kw)
         
-    @fields.virtualfield(models.CharField(_("SN"),max_length=2,
+    @fields.virtualfield(models.CharField(_("Short name"),max_length=2,
         help_text="used to fill UserProfiles"))
     def short_name(cls,choice,ar):
         return choice.short_name
@@ -96,22 +96,12 @@ add('10', _("Guest"),'guest',short_name='G')
 add('30', _("User"), "user",short_name='U')
 add('40', _("Manager"), "manager",short_name='M')
 add('50', _("Administrator"), "admin",short_name='A')
-add('90', _("Expert"), "expert",short_name='E')
+#~ add('90', _("Expert"), "expert",short_name='E')
 #~ UserLevels.SHORT_NAMES = dict(A='admin',U='user',_=None,M='manager',G='guest',S='secretary')
 #~ UserLevels.SHORT_NAMES = dict(A='admin',U='user',_=None,M='manager',G='guest',R='restricted')
 UserLevels.SHORT_NAMES = dict(A='admin',U='user',_=None,M='manager',G='guest')
 
 """
-The "restricted" user level was once used in 
-:mod:`lino.modlib.postings`: 
-the idea was that "secretaries" do certain general jobs 
-for the "specialists".
-They are members of the same "user groups", 
-but have less rights than the "real users". 
-They are more than "guests" however.
-Thus the need for an intermediate level.
-But this was maybe an unnecessary complication. 
-Removed it. Waiting for concrete use-case.
 
 """
 

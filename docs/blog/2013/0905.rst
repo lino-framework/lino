@@ -11,7 +11,7 @@
   And uses red background color when that message appears.
 
 - disabled_fields : the card fields are no longer disabled for 
-  :ref:`UserLevels.manager`
+  :ref:`UserLevels.admin`
   
 Ouch, that innocent ":ref:`UserLevels.manager`"
 inadvertently made me dive into writing documentation 

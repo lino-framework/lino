@@ -18,10 +18,6 @@ a "Manager" is higher than a simple "User" and thus
 can do everything for which a simple "User" level has permission.
 
 
-.. _UserLevels.manager:
-.. _UserLevels.expert:
-.. _UserLevels.admin:
-.. _UserLevels.user:
 
 The default UserLevels
 ----------------------
@@ -35,7 +31,30 @@ resetting `dd.UserLevels`.
 The default list of user levels is as follows:
 
   .. django2rst:: settings.SITE.login().show(lino.UserLevels,column_names="value name short_name text")
+  
 
+.. _UserLevels.admin:
+
+admin
+~~~~~~~
+
+Administrator is the highest user level
+
+.. _UserLevels.user:
+
+user
+~~~~~~~
+
+A normal user
+  
+
+
+.. _UserLevels.manager:
+
+manager
+~~~~~~~
+
+An manager is between a user and an administrator.
 About the difference between "Administrator" and "Manager":
 
 - "Management is closer to the employees. 
@@ -48,6 +67,28 @@ About the difference between "Administrator" and "Manager":
 - See also a more detailed overview at
   http://www.differencebetween.com/difference-between-manager-and-vs-administrator/
 
+
+
+
+
+
+Level-based versus class-based
+------------------------------
+
+Maybe we once replace the level-based system by a class-based system of 
+user roles.
+
+For example there was once
+a **"restricted"** user level used in 
+:mod:`lino.modlib.postings`: 
+the idea was that "secretaries" do certain general jobs 
+for the "specialists".
+They are members of the same "user groups", 
+but have less rights than the "real users". 
+They are more than "guests" however.
+Thus the need for an intermediate level.
+But this was maybe an unnecessary complication. 
+Removed it. Waiting for concrete use-case.
 
 
 
