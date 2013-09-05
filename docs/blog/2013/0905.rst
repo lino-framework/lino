@@ -13,7 +13,7 @@
 - disabled_fields : the card fields are no longer disabled for 
   :ref:`UserLevels.admin`
   
-Ouch, that innocent ":ref:`UserLevels.manager`"
+Ouch, that innocent ":ref:`UserLevels.admin`"
 inadvertently made me dive into writing documentation 
 though there are more urgent things to do...
 

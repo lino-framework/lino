@@ -72,6 +72,9 @@ class UserLevels(ChoiceList):
     app_label = 'lino'
     required = required(user_level='admin')
     
+    @classmethod
+    def get_column_names(self,ar):
+        return 'value name short_name text'
     
     @classmethod
     def field(cls,module_name=None,**kw):

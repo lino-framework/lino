@@ -30,7 +30,23 @@ resetting `dd.UserLevels`.
 
 The default list of user levels is as follows:
 
-  .. django2rst:: settings.SITE.login().show(lino.UserLevels,column_names="value name short_name text")
+  .. django2rst:: settings.SITE.login().show(lino.UserLevels)
+  
+
+.. _UserLevels.user:
+
+user
+~~~~~~~
+
+A normal user.
+  
+
+.. _UserLevels.guest:
+
+guest
+~~~~~~~
+
+Authenticated but has less rights than a normal user.
   
 
 .. _UserLevels.admin:
@@ -38,15 +54,7 @@ The default list of user levels is as follows:
 admin
 ~~~~~~~
 
-Administrator is the highest user level
-
-.. _UserLevels.user:
-
-user
-~~~~~~~
-
-A normal user
-  
+The highest user level. 
 
 
 .. _UserLevels.manager:
