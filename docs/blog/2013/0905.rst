@@ -7,14 +7,22 @@
 :class:`lino.mixins.BeIdCardHolder`:
 
 - `eid_info` now adds the "Must read eID card!" message also when the 
-  `card_valid_until` has passed.
+  `card_valid_until` has passed. 
   And uses red background color when that message appears.
+  And `card_valid_until` is bold when it has passed.
 
 - disabled_fields : the card fields are no longer disabled for 
   :ref:`UserLevels.admin`
   
-Ouch, that innocent ":ref:`UserLevels.admin`"
-inadvertently made me dive into writing documentation 
-though there are more urgent things to do...
+  (Ouch, that innocent ":ref:`UserLevels.admin`"
+  inadvertently made me dive into writing documentation 
+  though there are more urgent things to do...)
 
+- New table :ref:`welfare.pcsw.AllClients` shows all columns.
+  Use this for manually modifying eid card fields which are otherwise 
+  nowhere.
 
+- Optimized the layout of the detail of 
+  :ref:`welfare.reception.Clients`.
+  The photo is now relatively visible.
+  

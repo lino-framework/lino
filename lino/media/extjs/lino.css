@@ -29,6 +29,15 @@ e.g. welfare.jobs.NewJobsOverview needs
   white-space: normal; 
 }
 
+.lino-info {
+  padding:3pt;
+}
+
+.lino-info-red {
+  padding:3pt;
+  background-color:#FA7F7F; 
+}
+
 /*.lino-phantom-row table.x-grid3-row-table {
 	color: blue; 
 }
