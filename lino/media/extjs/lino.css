@@ -328,6 +328,12 @@ $a.icon_file
 	background-image: url(images/mjames/disk.png) !important;
 }
 
+.x-tbar-hourglass {
+	background-image: url(images/mjames/hourglass.png) !important;
+}
+.x-tbar-date_add {
+	background-image: url(images/mjames/date_add.png) !important;
+}
 .x-tbar-email_add{
 	background-image: url(images/mjames/email_add.png) !important;
 }
@@ -335,7 +341,11 @@ $a.icon_file
 	background-image: url(images/mjames/email_go.png) !important;
 }
 
-.x-tbar-create-postings{
+.x-tbar-script {
+	background-image: url(images/mjames/script.png) !important;
+}
+
+.x-tbar-create-postings {
 	background-image: url(images/mjames/script_add.png) !important;
 }
 

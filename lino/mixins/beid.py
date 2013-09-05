@@ -241,6 +241,12 @@ class BeIdReadCardAction(BaseBeIdReadCardAction):
     Read beid card and store the data in a Client instance.
     The base version is a row action (called on a given client).
     """
+    
+    sort_index = 90
+    
+    icon_name = 'x-tbar-vcard'
+    icon_file = 'vcard.png'
+    
     label = _("Read eID card")
     sorry_msg = _("Sorry, I cannot handle that case: %s")
     #~ show_in_workflow = True

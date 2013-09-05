@@ -48,14 +48,6 @@ are no longer MonthDields but normal DateFields.
   
 
 
-TODO
-----
-
-- Irritierender Bug : Wenn man im Parameter-Panel etwas ändert, dann das Fenster schließt und wieder öffnet, werden die Felder nicht auf den Standardwert zurück gesetzt. .
-- Schönheitsfehler: Wenn man Parameter-Panel zum ersten Mal öffnet, ist es zu groß.
-- Icon für Create visit
-
-
 
 
 FieldError at /api/jobs/ExperiencesByOffer
@@ -81,8 +73,8 @@ don't use :ref:`welfare.jobs.Offers`.
 - I rediscovered :mod:`atelier.doctest_utf8`
 
 
-Preparing for a demo of :ref:`welfare`
---------------------------------------
+A specification sheet for :ref:`welfare`
+----------------------------------------
 
 - Gerd reported that an important document had vanised. 
   Here it is again: :ref:`welfare.features`.
@@ -121,4 +113,58 @@ LaTeX error message::
     l.4895 ...]{Tables based on Rōles de participant}
                                                       }
     ? 
+
+Termine erstellen
+-----------------
+
+- Wenn man versuchte, einen Termin für einen Klienten bei einem seiner 
+  Begleiter zu machen, und wenn der Begleiter *kein Profil* hatte, dann 
+  kam nach dem Klick auf OK scheinbar nichts (und unscheinbar ein 
+  Traceback auf dem Server). Begleiter, die kein Benutzerprofil haben, 
+  arbeiten nicht in Lino, also macht es keinen Sinn, für die einen Termin 
+  in Lino zu erstellen. Für diese Begleiter zeigt Lino deshalb jetzt keinen 
+  Button "Termin" mehr an.
+
+- Neuer Button "Termin mit..." in :ref:`welfare.reception.Clients`.
+  Den braucht man um einen Termin bei einem Agenten zu erstellen, 
+  der nicht Begleiter dieses Klienten ist.
+
+Printing a budget
+-----------------
+
+Fixed two bugs in the template used to print a :ref:`welfare.debts.Budget`:
+
+- bei einem  Budgetausdruck (Nr. 73) kommt am Ende der Seite 
+  "settings.SITE.site_version()" 
+- und am Anfang beim Haushalt "actor.household.get_address(', ')"
+
+
+Seeing the Calendar Panel of another user
+-----------------------------------------
+
+Uff! I think I fixed a difficult bug.
+Until now this possibility was accessed only through the 
+"Act as..." menu command which sets the global variable `Lino.subst_user`.
+But the "Appointment" actions in each row of 
+:ref:`welfare.reception.CoachingsByClient` use it differently,
+they open the Lino.CalendarAppPanel with `su` as base parameter.
+And Lino.CalendarAppPanel wasn't yet designed to handle this situation. 
+Now it seems to work.
+
+Since this kind of changes can cause bugs which are being reported only 
+weeks later, I try to explain what I did:
+The panel called `event_store.load()` in its `afterRender` 
+listener. I had to remove this because it caused duplicate load calls.  
+Instead of this I  replaced the `reload()` cal in refresh() by `load()`
+so that it works also on first invocation.
+
+
+TODO
+----
+
+- Irritierender Bug : Wenn man im Parameter-Panel etwas ändert, dann das 
+  Fenster schließt und wieder öffnet, werden die Felder nicht auf den 
+  Standardwert zurück gesetzt. .
+- Schönheitsfehler: Wenn man Parameter-Panel zum ersten Mal öffnet, ist es zu groß.
+- Icon für Create visit
 

@@ -63,6 +63,8 @@ from atelier.sphinxconf import Django2rstDirective
 
 import lino.ui.urls # hack: trigger ui instantiation
 
+from lino.core import actions    
+
 
 #~ def refto(x):
     #~ if x is None: 
@@ -143,20 +145,19 @@ def get_actor_description(self):
     
     return body
       
-def get_model_description(self):
-    """
-    `self` is the actor
-    """
-    body = "\n\n"
-    help_text = getattr(self,'help_text',None)
-    if help_text:
-        body += unindent(force_unicode(help_text).strip()) + "\n\n"
-
-    body += fields_table(self._meta.fields)
+#~ def get_model_description(self):
+    #~ """
+    #~ `self` is the actor
+    #~ """
+    #~ body = "\n\n"
+    #~ help_text = getattr(self,'help_text',None)
+    #~ if help_text:
+        #~ body += unindent(force_unicode(help_text).strip()) + "\n\n"
+#~ 
+    #~ body += fields_table(self._meta.fields)
+    #~ 
+    #~ return body
     
-    return body
-    
-from lino.core import actions    
     
 IGNORED_ACTIONS = (actions.GridEdit,actions.SubmitDetail,
     actions.InsertRow,actions.SubmitInsert)
@@ -290,14 +291,6 @@ class ActorDirective(Django2rstDirective):
                 
             if issubclass(cls,actors.Actor):
               
-                #~ if issubclass(cls,dbtables.Table):
-                    #~ if cls.model is not None:
-                        #~ if cls.model.get_default_table() is cls:
-                            #~ self.add_model_index_entry(cls.model)
-                            #~ name = settings.SITE.userdocs_prefix + full_model_name(cls.model)
-                            #~ s += '\n\n.. _'+ name + ':\n\n'
-                        
-              
                 title = force_unicode(cls.label or cls.title)
                 indextext = _('%s (table in module %s)') % (title,cls.app_label)
                 name = actor_name(cls)
@@ -306,7 +299,7 @@ class ActorDirective(Django2rstDirective):
                 
                 s = ''
                 s += '\n\n.. _'+ name + ':\n\n'
-                s += rstgen.header(3,title)
+                s += rstgen.header(3,"%s (%s)" % (title,cls))
                 
                 if len(self.content) > 1:
                     s += '\n'.join(self.content[1:])

@@ -319,8 +319,14 @@ class BaseRequest(object):
     def row_action_button(self,obj,a,*args,**kw): return self.renderer.row_action_button(obj,self.request,a,*args,**kw)
     def instance_action_button(self,ai,*args,**kw): 
         return self.renderer.row_action_button(ai.instance,self.request,ai.bound_action,*args,**kw)
-    def action_button(self,a,obj,*args,**kw): return self.renderer.action_button(obj,self,a,*args,**kw)
+    def action_button(self,ba,obj,*args,**kw): return self.renderer.action_button(obj,self,ba,*args,**kw)
     def insert_button(self,*args,**kw): return self.renderer.insert_button(self,*args,**kw)
+    
+    def as_button(self,*args,**kw): 
+        """
+        Return a button which when activated would execute (a copy of) this request.
+        """
+        return self.renderer.action_button(None,self,self.bound_action,*args,**kw)
     
     def goto_instance(self,obj,**kw):
         #~ kw.update(refresh=True)

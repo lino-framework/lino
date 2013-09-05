@@ -279,12 +279,14 @@ class Action(Parametrizable,Permittable):
     
     icon_name = None 
     """
-    The class name of an icon to be used for this action.
+    The class name of an icon to be used for this action
+    when rendered as toolbar button.
     """
     
     icon_file = None
     """
-    The file name of an icon to be used for this action.
+    The file name of an icon to be used for this action
+    when rendered by quick_add_buttons.
     """
     
     _layout_class = layouts.ActionParamsLayout
@@ -1038,7 +1040,9 @@ class SubmitInsertAndStay(SubmitInsert):
     
 
 
+
 class ShowSlaveTable(Action):
+    TABLE2ACTION_ATTRS = tuple('sort_index label help_text icon_name icon_file'.split())
     #~ label = "ShowSlaveTable"
     #~ show_in_row_actions = True
     show_in_bbar = True
@@ -1051,8 +1055,12 @@ class ShowSlaveTable(Action):
     def attach_to_actor(self,actor,name):
         if isinstance(self.slave_table,basestring):
             self.slave_table = settings.SITE.modules.resolve(self.slave_table)
-        self.label = self.slave_table.label
-        self.help_text = self.slave_table.help_text
+        for k in self.TABLE2ACTION_ATTRS:
+            setattr(self,k,getattr(self.slave_table,k))
+        #~ self.label = self.slave_table.label
+        #~ self.help_text = self.slave_table.help_text
+        #~ self.icon_name = self.slave_table.icon_name
+        #~ self.icon_file = self.slave_table.icon_file
         super(ShowSlaveTable,self).attach_to_actor(actor,name)
         
     def run_from_ui(self,ar,**kw):

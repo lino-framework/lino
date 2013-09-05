@@ -336,6 +336,24 @@ class Actor(actions.Parametrizable):
     
     _layout_class = layouts.ParamsLayout
     
+    
+    sort_index = None 
+    """
+    The sort_index to be used for a ShowSlaveTable action on this actor.
+    """
+    
+    icon_name = None 
+    """
+    The icon_name to be used for a ShowSlaveTable action on this actor.
+    """
+    
+    icon_file = None
+    """
+    The icon_file to be used for a ShowSlaveTable action on this actor.
+    """
+    
+    
+    
     hidden_elements = frozenset()
     
     @classmethod

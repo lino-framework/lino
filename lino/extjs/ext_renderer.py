@@ -242,7 +242,8 @@ class ExtRenderer(HtmlRenderer):
             return self.window_action_button(ar.request,ba,st,label or ba.action.label,**kw)
         if ba.action.opens_a_window:
             st = ar.get_status()
-            st.update(record_id=obj.pk)
+            if obj is not None:
+                st.update(record_id=obj.pk)
             return self.window_action_button(ar.request,ba,st,label or ba.action.label,**kw)
         return self.row_action_button(obj,ar.request,ba,label,**kw)
         
@@ -273,7 +274,8 @@ class ExtRenderer(HtmlRenderer):
         if AFTER_20130725:
             #~ url = 'javascript:%s(%s)' % (ba.get_panel_btn_handler(),py2js(rp))
             #~ url = 'javascript:' + ba.get_js_call(request,obj)
-            url = 'javascript:' + self.action_call_on_instance(obj,request,ba,**kw)
+            #~ url = 'javascript:' + self.action_call_on_instance(obj,request,ba,**kw) # until 20130905
+            url = 'javascript:' + self.action_call_on_instance(obj,request,ba)
         else:
             if request is None:
                 rp = None
@@ -281,7 +283,8 @@ class ExtRenderer(HtmlRenderer):
                 rp = request.requesting_panel
             url = 'javascript:Lino.%s(%s,%s)' % (
                     ba.full_name(),py2js(rp),py2js(obj.pk))
-        return self.href_button_action(ba,url,label,title or ba.action.help_text)
+        #~ return self.href_button_action(ba,url,label,title or ba.action.help_text) # until 20130905
+        return self.href_button_action(ba,url,label,title or ba.action.help_text,**kw)
         #~ if a.action.help_text:
             #~ return self.href_button(url,label,a.action.help_text)
         #~ return self.href_button(url,label)

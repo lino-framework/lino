@@ -126,12 +126,14 @@ class HtmlRenderer(object):
         return ar.table2xhtml(**kw)
         #~ return E.tostring(ar.table2xhtml())
         
-    def href_button_action(self,ba,*args,**kw):
+    def href_button_action(self,ba,url,text=None,title=None,icon_file=None,**kw):
+        # changed 20130905
         if ba.action.icon_file is not None:
-            if not kw.has_key('icon_file'):
-                kw.update(icon_file=ba.action.icon_file)
-                kw.update(style="vertical-align:-30%;")
-        return self.href_button(*args,**kw)
+            if icon_file is None and text is None:
+                icon_file = ba.action.icon_file
+        if icon_file is not None and not kw.has_key('style'):
+            kw.update(style="vertical-align:-30%;")
+        return self.href_button(url,text,title,icon_file=icon_file,**kw)
         
     def href_button(self,url,text,title=None,target=None,icon_file=None,**kw):
         """
@@ -146,7 +148,7 @@ class HtmlRenderer(object):
             #~ return xghtml.E.a(text,href=url,title=title)
         kw.update(href=url)
         #~ if icon_name:
-        if icon_file:
+        if icon_file is not None:
             #~ btn = xghtml.E.button(type='button',class_='x-btn-text '+icon_name)
             #~ btn = xghtml.E.button(
                 #~ type='button',
@@ -258,6 +260,7 @@ class HtmlRenderer(object):
                 target='_blank',
                 #~ icon_file='world_go.png',
                 icon_file='page_go.png',
+                style="vertical-align:-30%;",
                 title=_("Open the uploaded file in a new browser window")))
             chunks.append(' ')
             after_show.update(record_id=obj.pk)
