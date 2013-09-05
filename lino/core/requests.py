@@ -296,7 +296,10 @@ class BaseRequest(object):
     #~ def set_language(self,*args):
         #~ set_language(*args)
         
-    def show(self,spec,column_names=None,language=None,**kw):
+    def show(self,spec,master_instance=None,column_names=None,language=None,**kw):
+        # 20130905 added master_instance positional arg. but finally didn't use it.
+        if master_instance is not None:
+            kw.update(master_instance=master_instance)
         ar = self.spawn(spec,**kw)
         #~ print ar.to_rst(column_names)
         if language:

@@ -3,26 +3,122 @@
 ======================================
 
 
+Optimized the detail of :ref:`Reception --> Clients <welfare.reception.Clients>`.
 
-:class:`lino.mixins.BeIdCardHolder`:
-
-- `eid_info` now adds the "Must read eID card!" message also when the 
+- Changed the layout so that the photo is now relatively visible.
+  
+- :class:`lino.mixins.beid.BeIdCardHolder`:
+  `eid_info` now adds the "Must read eID card!" message also when the 
   `card_valid_until` has passed. 
   And uses red background color when that message appears.
   And `card_valid_until` is bold when it has passed.
 
-- disabled_fields : the card fields are no longer disabled for 
-  :ref:`UserLevels.admin`
-  
+- the eid card fields are no longer disabled for 
+  :ref:`UserLevels.admin`.
   (Ouch, that innocent ":ref:`UserLevels.admin`"
   inadvertently made me dive into writing documentation 
-  though there are more urgent things to do...)
+  about :ref:`permissions` though there are more urgent things to do...)
 
-- New table :ref:`welfare.pcsw.AllClients` shows all columns.
+- New table :ref:`welfare.pcsw.AllClients` 
+  shows all columns.
+  Accessible for :ref:`UserLevels.admin` via 
+  :menuselection:`Explorer --> ÖSHZ --> Klienten`.
   Use this for manually modifying eid card fields which are otherwise 
   nowhere.
 
-- Optimized the layout of the detail of 
-  :ref:`welfare.reception.Clients`.
-  The photo is now relatively visible.
+
+The fields `started` and `stopped` of 
+:ref:`welfare.jobs.Experience`
+and
+:ref:`welfare.jobs.Study`
+are no longer MonthDields but normal DateFields.
   
+- Gerd: "Manuelle Eingabe von Daten mit Punkt als Trenner geht nicht in 
+  den Daten von den Berufserfahrungen und Ausbildungen."
+  --
+  "Stimmt, das war, weil das Monatsfelder waren. 
+  Monatsfelder sind in der Datenbankwie normale Datumsfelder abgelegt, 
+  haben aber einen speziellen DatePicker.
+  Aber das funktionierte scheinbar nicht so richtig: 
+  in der Tabellenansicht wurden trotzdem "normale" 
+  Datumsfelder angezeigt, und beim Bearbeiten auch.
+  Habe die vier Felder jetzt auf normale Datumsfelder gesetzt. 
+  Jetzt kann man diese Daten auf den Tag genau anzeigen. 
+  Aber im Lebenslauf wird trotzdem nur der Monat gedruckt."
+  
+
+
+TODO
+----
+
+- Irritierender Bug : Wenn man im Parameter-Panel etwas ändert, dann das Fenster schließt und wieder öffnet, werden die Felder nicht auf den Standardwert zurück gesetzt. .
+- Schönheitsfehler: Wenn man Parameter-Panel zum ersten Mal öffnet, ist es zu groß.
+- Icon für Create visit
+
+
+
+
+FieldError at /api/jobs/ExperiencesByOffer
+------------------------------------------
+
+Fixed a bug that occured in :ref:`welfare.jobs.ExperiencesByOffer`.
+"Cannot resolve keyword u'date_submitted' into field. Choices are: 
+company, country, function, id, person, remarks, sector, started, stopped, title"
+
+In fact the tables 
+:ref:`welfare.jobs.ExperiencesByOffer`
+and
+:ref:`welfare.jobs.CandidaturesByOffer`
+simply didn't work. Which never disturbed anybody because in Eupen they 
+don't use :ref:`welfare.jobs.Offers`.
+
+- My first use of the 
+  `get_latest_by <https://docs.djangoproject.com/en/dev/ref/models/options/#get-latest-by>`_
+  meta option
+  and the :meth:`django.db.models.query.QuerySet.latest` method.
+
+- New document :ref:`welfare.tested.jobs`
+- I rediscovered :mod:`atelier.doctest_utf8`
+
+
+Preparing for a demo of :ref:`welfare`
+--------------------------------------
+
+- Gerd reported that an important document had vanised. 
+  Here it is again: :ref:`welfare.features`.
+
+User docs now as .pdf files
+---------------------------
+  
+Hier ganz zwischendurch im Stress vor der Demo 
+aus dem Ärmel geschüttelt mal was ganz Neues: 
+erstmals kann man das komplette Benutzerhandbuch als druckbare pdf-Datei 
+generieren.
+
+
+- New fabric command ``fab pdf`` (See :mod:`atelier.fablib`) builds pdf 
+  versions of the userdocs.
+  
+The first example is 
+http://welfare-user.lino-framework.org/lino-userdocs.pdf
+
+But there is still a lot to do:
+
+- write useful content
+- translations
+- Infrastruktur (more tools to efficiently generate parts of the content)
+
+
+A first problem is that the translations don't yet build. I get a 
+LaTeX error message::
+
+    ! Package inputenc Error: Unicode char \u8:ō not set up for use with LaTeX.
+
+    See the inputenc package documentation for explanation.
+    Type  H <return>  for immediate help.
+     ...                                              
+                                                      
+    l.4895 ...]{Tables based on Rōles de participant}
+                                                      }
+    ? 
+

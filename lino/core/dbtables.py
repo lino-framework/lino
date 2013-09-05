@@ -102,9 +102,10 @@ def wildcard_data_elems(model):
     #~ for f in meta.virtual_fields: yield f.name
     for f in meta.fields: 
         #~ if f.editable:
-        if not isinstance(f,fields.VirtualField):
-            if not getattr(f,'_lino_babel_field',False):
-                yield f
+        if not isinstance(f,fields.RichTextField):
+            if not isinstance(f,fields.VirtualField):
+                if not getattr(f,'_lino_babel_field',False):
+                    yield f
     for f in meta.many_to_many: yield f
     for f in meta.virtual_fields: 
         if not isinstance(f,fields.VirtualField):

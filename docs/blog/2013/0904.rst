@@ -35,14 +35,6 @@ oder Ehemalig nach Neuantrag zurück gesetzt werden muss,
 Falls nötig soll man das manuell im Feld `Zustand` machen.
 
 
-Miscellaneous
--------------
-
-- Irritierender Bug : Wenn man im Parameter-Panel etwas ändert, dann das Fenster schließt und wieder öffnet, werden die Felder nicht auf den Standardwert zurück gesetzt. .
-- Schönheitsfehler: Wenn man Parameter-Panel zum ersten Mal öffnet, ist es zu groß.
-- Icon für Create visit
-
-
 
 Uncaught TypeError: Cannot call method 'run' of undefined 
 ---------------------------------------------------------

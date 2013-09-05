@@ -348,7 +348,9 @@ class BeIdReadCardAction(BaseBeIdReadCardAction):
             
 class BeIdCardHolder(dd.Model):
     """
-    Concrete subclasses must also inherit from `lino.mixins.Born`.
+    Mixin for models which represent an eid card holder.
+    Currently only Belgian eid cards are tested.
+    Concrete subclasses must also inherit from :mod:`lino.mixins.Born`.
     """
     class Meta:
         abstract = True

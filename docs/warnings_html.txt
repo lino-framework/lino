@@ -2,4 +2,5 @@
 /home/luc/hgwork/lino/docs/demos.rst:86: WARNING: toctree contains reference to nonexisting document u'cosi'
 /home/luc/hgwork/lino/docs/blog/2013/0821/bug.rst:: WARNING: document isn't included in any toctree
 /home/luc/hgwork/lino/docs/cosi/index.rst:: WARNING: document isn't included in any toctree
-/home/luc/hgwork/lino/docs/demos.rst:82: WARNING: undefined label: welfare (if the link has no caption the label must precede a section header)
+/home/luc/hgwork/lino/docs/tutorials/tested_docs/index.rst:: WARNING: document isn't included in any toctree
+/home/luc/hgwork/lino/docs/blog/2013/0905.rst:22: WARNING: undefined label: welfare.pcsw.allclients (if the link has no caption the label must precede a section header)
