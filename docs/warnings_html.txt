@@ -1,6 +1,6 @@
 /home/luc/hgwork/lino/docs/admin/index.rst:24: WARNING: toctree contains reference to nonexisting document u'admin/ :maxdepth: 2'
+/home/luc/hgwork/lino/docs/admin/install_windows.rst:212: WARNING: Include file u'/home/luc/hgwork/lino/docs/admin/settings.py' not found or reading it failed
 /home/luc/hgwork/lino/docs/demos.rst:86: WARNING: toctree contains reference to nonexisting document u'cosi'
 /home/luc/hgwork/lino/docs/blog/2013/0821/bug.rst:: WARNING: document isn't included in any toctree
 /home/luc/hgwork/lino/docs/cosi/index.rst:: WARNING: document isn't included in any toctree
 /home/luc/hgwork/lino/docs/tutorials/tested_docs/index.rst:: WARNING: document isn't included in any toctree
-/home/luc/hgwork/lino/docs/blog/2013/0905.rst:22: WARNING: undefined label: welfare.pcsw.allclients (if the link has no caption the label must precede a section header)

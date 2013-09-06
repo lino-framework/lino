@@ -1,3 +1,6 @@
+.. _lino.tutorial.dpy:
+
+
 ============================
 Playing with Python fixtures
 ============================
@@ -7,29 +10,38 @@ We suppose that you have read at least the beginning of
 their documentation article :ref:`dpy`.
 In this tutorial we are going to show how to use them.
 
-The :mod:`initdb <lino.management.commands.initdb>` command
------------------------------------------------------------
+The :mod:`initdb <djangosite.management.commands.initdb>` command
+-----------------------------------------------------------------
 
 Remember that we told you (in :ref:`lino.tutorial.quickstart`) 
 to "prepare your database" by running the command::
 
-  python manage.py initdb std all_countries few_cities all_languages props demo 
+  $ python manage.py initdb_demo
   
-The :xfile:`manage.py` Python script is the standard Django interface to 
-run management commands.
-I you don't know what *Django management commands* are, 
+The :xfile:`manage.py` Python script is the standard Django interface 
+for running a so-called management command.
+I you don't know what *management commands* are, 
 please read this:
-`django-admin.py and manage.py <https://docs.djangoproject.com/en/dev/ref/django-admin/>`_.
+`django-admin.py and manage.py 
+<https://docs.djangoproject.com/en/dev/ref/django-admin/>`_.
 
-The words "std", "all_countries", "few_cities" etc. 
-are names of some *demo fixtures* included with Lino. 
-Each of them is a Python fixture.
-  
-The :mod:`initdb <lino.management.commands.initdb>` 
-command is a 
-`custom management command <https://docs.djangoproject.com/en/dev/howto/custom-management-commands/>`_ 
+The :mod:`initdb_demo <lino.management.commands.initdb_demo>` 
+which we used here is a `custom management command 
+<https://docs.djangoproject.com/en/dev/howto/custom-management-commands/>`_ 
 provided by Lino.
-It performs three actions in one:
+It does nothing else than to call 
+:mod:`initdb <djangosite.management.commands.initdb>`,
+passing it a predefined set of fixture names, 
+called the **demo fixtures**.
+
+So the ``initdb_demo`` command above is equivalent to::
+  
+  $ python manage.py initdb std few_countries few_cities few_languages furniture demo demo2
+  
+The 
+:mod:`initdb <djangosite.management.commands.initdb>` 
+command 
+performs three actions in one:
 
 - a flush of your database, removing *all existing tables* 
   (not only Django tables)
@@ -46,11 +58,29 @@ may sound dangerous, but that's what we want when we have a
 Keep in mind that you should rather not let 
 Lino and some other application share the same database.
 
-The above line is roughly equivalent to::
+So the above line is roughly equivalent to::
 
-  python manage.py flush
-  python manage.py syncdb
-  python manage.py loaddata std all_countries few_cities all_languages props demo 
+  $ python manage.py flush
+  $ python manage.py syncdb
+  $ python manage.py loaddata std all_countries few_cities all_languages props demo 
+  
+Have a look at the following fixture files
+
+- :srcref:`few_countries </lino/modlib/countries/fixtures/few_countries.py>`
+  and :srcref:`all_countries </lino/modlib/countries/fixtures/all_countries.py>`
+
+- :srcref:`few_languages </lino/modlib/countries/fixtures/few_languages.py>`
+  and :srcref:`all_languages </lino/modlib/countries/fixtures/all_languages.py>`
+
+- :srcref:`few_cities </lino/modlib/countries/fixtures/few_cities.py>`
+  and :srcref:`be </lino/modlib/countries/fixtures/be.py>`.
+
+Play with them::
+
+  python manage.py initdb std all_countries be few_languages props demo 
+  python manage.py initdb std few_languages few_countries few_cities demo 
+  ...
+
 
 
 Writing your own fixture
@@ -104,35 +134,32 @@ Third step
 Play around and try to add some more objects to your local demo database!
 
 
-Fourth step
------------
+The default demo fixtures
+-------------------------
 
-Have a look at the following fixture files
+The :ref:`cosi` application developer had decided that a 
+demo site should by default load just *this* set of fixtures.
+How did he do that?
+Look at the source code of  
+:srcref:`/lino/projects/cosi/settings/__init__.py`
+where he overrides the 
+:attr:`demo_fixtures <lino.site.Site.demo_fixtures>` 
+attribute of his :class:`Site <lino.projects.cosi.settings.Site>` 
+class, setting it to::
 
-- :srcref:`few_countries </lino/modlib/countries/fixtures/few_countries.py>`
-  and :srcref:`all_countries </lino/modlib/countries/fixtures/all_countries.py>`
+    demo_fixtures = 'std few_countries few_cities few_languages furniture demo demo2'.split()
 
-- :srcref:`few_languages </lino/modlib/countries/fixtures/few_languages.py>`
-  and :srcref:`all_languages </lino/modlib/countries/fixtures/all_languages.py>`
-
-- :srcref:`few_cities </lino/modlib/countries/fixtures/few_cities.py>`
-  and :srcref:`be </lino/modlib/countries/fixtures/be.py>`.
-
-Play with them::
-
-  python manage.py initdb std all_countries be few_languages props demo 
-  python manage.py initdb std few_languages few_countries few_cities demo 
-  ...
 
 Conclusion
 ----------
 
-Python fixtures are an important tool as long as 
+Python fixtures are an important tool for application developers
+because 
 
-- you are in "demo mode"
-- you are preparing your local demo database
-- you don't want your data to persist forever
-- there may be important changes in the database structure
+- they are more flexible than json or xml fixtures and easy to adapt 
+  when your database structure changes.
+  
+- they provide a simple interface to deploy demo data for an aplication
 
 
 Where to go now

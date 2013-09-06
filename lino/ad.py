@@ -55,6 +55,6 @@ class App(object):
     app provides a subclass.
     
     For backwards compatibility this has no effect
-    when :attr:`lino.ui.Site.override_modlib_models` is set.
+    when :attr:`lino.site.Site.override_modlib_models` is set.
     """
     

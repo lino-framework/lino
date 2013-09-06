@@ -18,7 +18,7 @@ For example if Lino's `.log` file doesn't exist,
 and that file should be writable by other users of the `www-data` group.
 
 Or the other way: if you launched manually e.g. a
-:mod:`initdb <lino.management.commands.initdb>` which created the file, 
+:mod:`initdb <djangosite.management.commands.initdb>` which created the file, 
 user `www-data` must also have write access to this file. 
 
 If you use sqlite, you'll have to do something like this::

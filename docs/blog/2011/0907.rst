@@ -9,7 +9,7 @@ This is just the opposite of what Django wants.
 Added assertion in Lino kernel to avoid this in the future.
 https://code.djangoproject.com/ticket/9590
 
-:mod:`initdb <lino.management.commands.initdb>` now no longer 
+:mod:`initdb <djangosite.management.commands.initdb>` now no longer 
 displays the disturbing "No fixtures found". It came from 
 the implicit flush (or syncdb) command who looked for `initial_data` fixtures 
 and never found any (because I prefer `std`).

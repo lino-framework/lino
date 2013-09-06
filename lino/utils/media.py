@@ -21,9 +21,9 @@ class MediaFile(object):
     Represents a file on the server with two properties `name` and `url`,
     using
     :setting:`MEDIA_ROOT`
-    :attr:`use_davlink <lino.ui.Site.use_davlink>`
-    :attr:`webdav_root <lino.ui.Site.webdav_root>`
-    :attr:`webdav_url <lino.ui.Site.webdav_url>`
+    :attr:`use_davlink <lino.site.Site.use_davlink>`
+    :attr:`webdav_root <lino.site.Site.webdav_root>`
+    :attr:`webdav_url <lino.site.Site.webdav_url>`
     """
     def __init__(self,editable,*parts):
         self.editable = editable

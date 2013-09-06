@@ -42,21 +42,42 @@ before continuing this one.
 
 Now open the
 :xfile:`settings.py` file of your new project
-and replace its content with the following two lines::
+and replace its content with the following:
 
-  from lino.projects.cosi.settings import *
-  SITE = Site(globals())
-  
-  DEBUG = True
+.. literalinclude:: settings.py
+    :linenos:
 
-That is, we import settings from Lino Così, 
-one of the out-of-the-box projects included with Lino.
-Then we create a :setting:`SITE` setting which for the moment 
-is just an instance of an unmodified :class:`Site <lino.site.Site>` setting object.
-This second line occurs in this same form in every 
-Lino :xfile:`settings.py` file.
+Explanations:
 
-And the `DEBUG = True` is to avoid skip certain beginner problems.
+#.  The Python way to specify  encoding. 
+    That's needed because of the non-ascii **ì** in "Lino Così" 
+    in line 3.
+    
+#.  We import settings from Lino Così, 
+    one of the out-of-the-box projects included with Lino.
+    
+#.  Then we define a :setting:`SITE` setting which for the moment 
+    is just an instance of an unmodified :class:`Site <lino.site.Site>` 
+    setting object.
+    
+#.  Django wants system admins to define their own 
+    `SECRET_KEY <https://docs.djangoproject.com/en/dev/ref/settings/#secret-key>`__ 
+    setting, so Lino doesn't dare to set a default value for this. 
+    Hint: as long as you're on a development server you just put some 
+    non-empty string and that's okay.
+
+You might add ``DEBUG = True`` or other settings of your choice.
+
+The basic idea is to keep local :xfile:`settings.py` files relatively 
+small and to delegate the responsibility of maintaining
+most default values of your settings to the application developer.
+
+In case you think already now about how to host many different Lino 
+applications on your server, then read also about 
+the :ref:`djangosite_local.py <djangosite_local>` file, 
+another technique which Lino adds to plain Django.
+
+
 
 Initial data
 ------------
@@ -75,10 +96,10 @@ Lino will ask you::
   We are going to flush your database (/home/luc/mysite/mysite/default.db).
   Are you sure (y/n) ?
 
-If you answer "y" here, 
+If you answer "y" here, then
 Lino will delete everything in the given database file
 and replace it with its "factory default" demo data.
-That's what we want, so go on and type ``y``::
+That's what you want, don't you? So go on and type ``y``::
 
   Creating tables ...
   Creating table ui_siteconfig
@@ -91,8 +112,12 @@ That's what we want, so go on and type ``y``::
   Installed 361 object(s) from 14 fixture(s)
   INFO Stopped manage.py initdb_demo (PID 3780)  
 
-There's a lot to say about what we just did
-(e.g. :ref:`dpy`).
+There's a lot to say about what we just did.
+Lino applications use to make abundant use of :ref:`dpy` 
+in order to have a rich set of "demo data".
+If you are curious, then read more about Python fixtures in
+:ref:`lino.tutorial.dpy`.
+
 
 Start the web server
 --------------------

@@ -73,7 +73,7 @@ Loading demo fixtures
 
 - moved the Polls Tutorial from lino.tutorials.t1 to lino.apps.polls_tutorial
 
-- :mod:`initdb <lino.management.commands.initdb>` now uses the `load_initial_data` 
+- :mod:`initdb <djangosite.management.commands.initdb>` now uses the `load_initial_data` 
   stealth option to avoid the automatic loading of `initial_data` fixtures 
   which caused an irritating message "No fixtures found". 
   This message came because there are no `initial_data` fixtures. 

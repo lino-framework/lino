@@ -3,64 +3,51 @@ Configuring your client for using DavLink
 =========================================
 
 :ref:`davlink` launches an executable application program on your 
-computer.For security reasons it is normal that the Java Runtime on 
+computer. For security reasons it is normal that the Java Runtime on 
 your computer refuses this without your prior explicit permission.
 
-The only problem is that it is not always easy to give this permission.
+The problem is that it is not always easy to give this permission.
+
+Note that the :ref:`demos` have their 
+:ref:`davlink` functionality switched off 
+for security reasons (they have :attr:`use_davlink <lino.site.Site.use_davlink>` 
+set to False).
+
 
 Debian
 ======
 
+To enable Java in your browser, 
+you need to install the `icedtea-plugin` package.
+
+
 How to see the java console of an applet
 ----------------------------------------
 
-So the simple answer is *one of the following*::
+To see the Java console output, simply close all browser windows, then 
+launch your browser from a command shell::
+
+  $ firefox
+  $ chromium-browser
+  
+Then use your browser as usual, and watch the Java console output in 
+your terminal window.
+
+
+If that doesn't work, then try to enable "logging" in the `IcedTea Web Control 
+Panel`:
+
+.. image:: icedtea_enable_logging.png
+  :scale: 80
+  
+And then watch the log files::
 
   $ tail -f ~/.icedtea/log/java.stderr 
   $ tail -f ~/.icedtea/log/java.stdout
   $ tail -f ~/.icedtea/log/java.stderr ~/.icedtea/log/java.stdout
   $ multitail ~/.icedtea/log/java.stderr ~/.icedtea/log/java.stdout
   
-But note that you must enable "logging" in the `IcedTea Web Control 
-Panel`:
-
-.. image:: icedtea_enable_logging.png
-  :scale: 80
   
-  
-How to have DavLink re-scan your system for launchers
------------------------------------------------------
-
-Using brute force::
-
-  $ rm /etc/.java/.systemPrefs/lino/davlink/prefs.xml
-
-This will later cause a warning "Prefs file removed in background 
-/etc/.java/.systemPrefs/lino/davlink/prefs.xml". 
-
-
-Why are there infinitely many x11 subdirectories in /usr/bin/x11?
------------------------------------------------------------------
-
-When scanning a Linux client for installed launchers, you see something funny::
-
-    Searching /usr/bin
-      Found /usr/bin/libreoffice
-    Searching /usr/bin/X11
-    Searching /usr/bin/X11/X11
-    Searching /usr/bin/X11/X11/X11
-    Searching /usr/bin/X11/X11/X11/X11
-    Searching /usr/bin/X11/X11/X11/X11/X11
-    Searching /usr/bin/X11/X11/X11/X11/X11/X11
-    Searching /usr/bin/X11/X11/X11/X11/X11/X11/X11
-    Searching /usr/bin/X11/X11/X11/X11/X11/X11/X11/X11
-    Searching /usr/bin/X11/X11/X11/X11/X11/X11/X11/X11/X11
-
-... and so on until about 40 occurences of the X11 subdir. 
-That's surprising but does no harm. 
-Explanation is here:
-http://askubuntu.com/questions/191654/why-are-there-infinitely-many-x11-subdirectories-in-usr-bin-x11
-
 
 Allowing DavLink applet to store preferences
 --------------------------------------------
@@ -90,14 +77,55 @@ To see what the applet wrote to your preferences::
     $ less /etc/.java/.systemPrefs/lino/davlink/prefs.xml 
 
 Next problem is (when I try to open an URL ending with `.odt`) 
-that it still says "java.lang.RuntimeException: 
-No launcher defined for extension 'odt'".
+that it still says::
+
+  java.lang.RuntimeException: No launcher defined for extension 'odt'
+  
 Theoretically it should find `libreoffice` automatically.
 
+(EDIT: I don't remember for sure how I solved this. 
+Maybe this was simply a bug in DavLink which is now fixed.)
+
+
+Why are there infinitely many x11 subdirectories in /usr/bin/x11?
+-----------------------------------------------------------------
+
+When DavLink starts scanning a Linux client for installed launchers, 
+then you see something funny::
+
+    Searching /usr/bin
+      Found /usr/bin/libreoffice
+    Searching /usr/bin/X11
+    Searching /usr/bin/X11/X11
+    Searching /usr/bin/X11/X11/X11
+    Searching /usr/bin/X11/X11/X11/X11
+    Searching /usr/bin/X11/X11/X11/X11/X11
+    Searching /usr/bin/X11/X11/X11/X11/X11/X11
+    Searching /usr/bin/X11/X11/X11/X11/X11/X11/X11
+    Searching /usr/bin/X11/X11/X11/X11/X11/X11/X11/X11
+    Searching /usr/bin/X11/X11/X11/X11/X11/X11/X11/X11/X11
+
+... and so on until about 40 occurences of the X11 subdir. 
+That's surprising but does no harm. 
+Explanation is here:
+http://askubuntu.com/questions/191654/why-are-there-infinitely-many-x11-subdirectories-in-usr-bin-x11
+
+
+How to have DavLink re-scan your system for launchers
+-----------------------------------------------------
+
+Using brute force::
+
+  $ rm /etc/.java/.systemPrefs/lino/davlink/prefs.xml
+
+This will later cause a warning "Prefs file removed in background 
+/etc/.java/.systemPrefs/lino/davlink/prefs.xml". 
 
 
 How to configure Java security policy on each client
 ----------------------------------------------------
+
+(This section is obsolete)
 
 This is rather complex. 
 

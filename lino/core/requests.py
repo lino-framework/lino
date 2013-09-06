@@ -81,7 +81,7 @@ class BaseRequest(object):
     
     This holds information like the current user and renderer.
     A bare BaseRequest instance is returned as a "session" by 
-    :meth:`login <lino.ui.Site.login>`.
+    :meth:`login <lino.site.Site.login>`.
     """
     renderer = None
     

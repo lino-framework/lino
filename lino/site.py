@@ -61,13 +61,7 @@ def buildurl(*args,**kw):
 
 class Site(Site):
     """
-    This is the base for :class:`lino.ui.site.Site`.
-    
-    The difference between 
-    :class:`lino.site.Site`
-    and
-    :class:`lino.ui.site.Site`
-    is not yet clear. 
+    This is the base for every Lino Site.
     """
     
     preview_limit = 15
@@ -84,7 +78,7 @@ class Site(Site):
     "See :attr:`lino.ui.Lino.project_model`."
     
     override_modlib_models = set()
-    "See :attr:`lino.ui.Site.override_modlib_models`."
+    "See :attr:`lino.site.Site.override_modlib_models`."
     
     
     textfield_format = 'plain'
@@ -430,6 +424,16 @@ class Site(Site):
         import lino
         yield ("Lino",lino.SETUP_INFO['version'],lino.SETUP_INFO['url'])
         
+        for u in super(Site,self).using(ui): yield u
+       
+        #~ import tidylib
+        #~ version = getattr(tidylib,'__version__','')
+        #~ yield ("tidylib",version,"http://countergram.com/open-source/pytidylib")
+        
+        #~ import pyPdf
+        #~ version = getattr(pyPdf,'__version__','')
+        #~ yield ("pyPdf",version,"http://countergram.com/open-source/pytidylib")
+        
         import jinja2
         version = getattr(jinja2,'__version__','')
         yield ("Jinja",version,"http://jinja.pocoo.org/")
@@ -505,7 +509,27 @@ class Site(Site):
             version = self.not_found_msg
         yield ("Appy",version ,"http://appyframework.org/pod.html")
         
-        for u in super(Site,self).using(ui): yield u
+        if ui and self.use_extjs:
+            
+            #~ version = '<script type="text/javascript">document.write(Ext.version);</script>'
+            onclick = "alert('ExtJS client version is ' + Ext.version);"
+            tip = "Click to see ExtJS client version"
+            text = "(version)"
+            #~ version = """<a href="#" onclick="%s" title="%s">%s</a>""" % (onclick,tip,text)
+            version = E.a(text,href='#',onclick=onclick,title=tip)
+            yield ("ExtJS",version ,"http://www.sencha.com")
+            
+            if self.use_extensible:
+                onclick = "alert('Extensible Calendar version is ' + Ext.ensible.version);"
+                tip = "Click to see Extensible Calendar version"
+                text = "(version)"
+                #~ version = """<a href="#" onclick="%s" title="%s">%s</a>""" % (onclick,tip,text)
+                version = E.a(text,href='#',onclick=onclick,title=tip)
+                yield ("Extensible",version ,"http://ext.ensible.com/products/calendar/")
+            yield ("Silk Icons",'1.3',"http://www.famfamfam.com/lab/icons/silk/")
+            
+            
+        
 
     def get_db_overview_rst(self):
         """
@@ -856,9 +880,9 @@ class Site(Site):
     to point to the local directory  where ExtJS 3.3.1 is installed).
     
     The same rules apply to the attributes
-    :attr:`extensible_base_url <lino.ui.Site.extensible_base_url>`, 
-    :attr:`bootstrap_base_url <lino.ui.Site.bootstrap_base_url>` and
-    :attr:`tinymce_base_url <lino.ui.Site.tinymce_base_url>`.
+    :attr:`extensible_base_url <lino.site.Site.extensible_base_url>`, 
+    :attr:`bootstrap_base_url <lino.site.Site.bootstrap_base_url>` and
+    :attr:`tinymce_base_url <lino.site.Site.tinymce_base_url>`.
     """
     
     extensible_base_url = "http://ext.ensible.com/deploy/1.0.2/"
@@ -1084,7 +1108,7 @@ class Site(Site):
     def override_defaults(self,**kwargs):
         """
         """
-        #~ logger.info("20130404 lino.ui.Site.override_defaults")
+        #~ logger.info("20130404 lino.site.Site.override_defaults")
         super(Site,self).override_defaults(**kwargs)
         
         installed_apps = tuple(self.get_installed_apps()) + ('lino','djangosite')
@@ -1537,33 +1561,6 @@ class Site(Site):
         return obj.get_system_note_recipients(ar,silent)
         
 
-    def using(self,ui=None):
-        """
-        Adds ExtJS, Extensible and Silk Icons
-        """
-        #~ if ui is not None:
-        for u in super(Site,self).using(ui): yield u
-        
-        if ui and self.use_extjs:
-            
-            #~ version = '<script type="text/javascript">document.write(Ext.version);</script>'
-            onclick = "alert('ExtJS client version is ' + Ext.version);"
-            tip = "Click to see ExtJS client version"
-            text = "(version)"
-            #~ version = """<a href="#" onclick="%s" title="%s">%s</a>""" % (onclick,tip,text)
-            version = E.a(text,href='#',onclick=onclick,title=tip)
-            yield ("ExtJS",version ,"http://www.sencha.com")
-            
-            if self.use_extensible:
-                onclick = "alert('Extensible Calendar version is ' + Ext.ensible.version);"
-                tip = "Click to see Extensible Calendar version"
-                text = "(version)"
-                #~ version = """<a href="#" onclick="%s" title="%s">%s</a>""" % (onclick,tip,text)
-                version = E.a(text,href='#',onclick=onclick,title=tip)
-                yield ("Extensible",version ,"http://ext.ensible.com/products/calendar/")
-            yield ("Silk Icons",'1.3',"http://www.famfamfam.com/lab/icons/silk/")
-            
-            
 
 
     def welcome_html(self,ui=None):
@@ -1611,7 +1608,7 @@ class Site(Site):
         """
         For usage from a shell.
         
-        The :meth:`login <lino.ui.Site.login>` method doesn't require any 
+        The :meth:`login <lino.site.Site.login>` method doesn't require any 
         password because when somebody has command-line access we trust 
         that she has already authenticated. It returns a 
         :class:`BaseRequest <lino.core.requests.BaseRequest>` object which 

@@ -233,10 +233,10 @@ Go to your
 :file:`c:\\mypy\\mysite`
 directory and run::
 
-  python manage.py initdb std all_countries few_cities all_languages props demo 
+  python manage.py initdb_demo
   
 Warning: 
-The :mod:`initdb <lino.management.commands.initdb>` command 
+The :mod:`initdb <djangosite.management.commands.initdb>` command 
 will create the database specified in your :setting:`DATABASES` 
 setting.
 If such a database already exists, it will delete all data in 

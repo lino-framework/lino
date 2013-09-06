@@ -77,7 +77,7 @@ A specification sheet for :ref:`welfare`
 ----------------------------------------
 
 - Gerd reported that an important document had vanised. 
-  Here it is again: :ref:`welfare.features`.
+  Here it is again: :ref:`welfare.whitepaper`.
 
 User docs now as .pdf files
 ---------------------------

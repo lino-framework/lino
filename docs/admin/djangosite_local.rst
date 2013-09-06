@@ -25,6 +25,7 @@ this is just to fire up your imagination):
         """
         
         self.update_settings(ADMINS=[("Robin Rood","robin@example.com")])
+        self.django_settings.update(SECRET_KEY='?~hdakl123ASD%#¤/&¤')
 
         self.extjs_root = '/home/luc/snapshots/ext-3.3.1'
         self.eid_jslib_root = '/home/luc/mypy/lino_local/dsbe/media/beid-jslib'
@@ -32,3 +33,15 @@ this is just to fire up your imagination):
         self.bootstrap_root = '/home/luc/snapshots/bootstrap'
         
         self.use_jasmine = False
+
+Note this line::
+
+    self.django_settings.update(SECRET_KEY='?~hdakl123ASD%#¤/&¤')
+    
+It will set the same SECRET_KEY for all projects on that server.
+
+If you prefer to use environment variables::
+
+    import os
+    def setup_site(self):
+        self.django_settings.update(SECRET_KEY=os.environ.get('DJANGO_SECRET_KEY'))

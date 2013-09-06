@@ -81,7 +81,7 @@ dd.inject_field('system.SiteConfig','prompt_calendar',
 #~ dd.inject_field('cal.Event','is_prompt',
     #~ models.BooleanField(_("Prompt event"),default=False))    
 
-def create_prompt_event(project,partner,user,summary,guest_role):
+def create_prompt_event(project,partner,user,summary,guest_role,now=None):
     """
     Create a "prompt event".
     """
@@ -100,13 +100,15 @@ def create_prompt_event(project,partner,user,summary,guest_role):
         ekw.update(summary=summary)
     event = cal.Event(**ekw)
     event.save()
+    if now is None:
+        now = datetime.datetime.now()
     cal.Guest(
         event=event,
         partner=partner,
         state=cal.GuestStates.accepted,
         role=guest_role,
         #~ role=settings.SITE.site_config.client_guestrole,
-        waiting_since=datetime.datetime.now()
+        waiting_since=now
     ).save()
     #~ event.full_clean()
     #~ print 20130722, ekw, ar.action_param_values.user, ar.get_user()
@@ -147,9 +149,9 @@ class CreateNote(dd.Action):
 
     
         
-class CheckinGuest(dd.NotifyingAction):
+class CheckinVisitor(dd.NotifyingAction):
     label = _("Checkin")
-    help_text = _("Mark this guest as arrived")
+    help_text = _("Mark this visitor as arrived")
     show_in_workflow = True
     
     #~ required = dict(states='invited accepted') 
@@ -160,7 +162,7 @@ class CheckinGuest(dd.NotifyingAction):
             return False
         if obj.waiting_since is not None:
             return False
-        return super(CheckinGuest,self).get_action_permission(ar,obj,state)
+        return super(CheckinVisitor,self).get_action_permission(ar,obj,state)
     
     def get_notify_subject(self,ar,obj):
         return _("%(partner)s has started waiting for %(user)s") % dict(
@@ -175,7 +177,7 @@ class CheckinGuest(dd.NotifyingAction):
             obj.waiting_until = None
             obj.save()
             kw.update(success=True)
-            return super(CheckinGuest,self).run_from_ui(ar,**kw)
+            return super(CheckinVisitor,self).run_from_ui(ar,**kw)
         if obj.event.assigned_to is not None:
             def ok():
                 obj.event.user = obj.event.assigned_to
@@ -188,10 +190,10 @@ class CheckinGuest(dd.NotifyingAction):
         return doit()
         
     
-#~ class ReceiveGuest(dd.NotifyingAction):
-class ReceiveGuest(dd.Action):
+#~ class ReceiveVisitor(dd.NotifyingAction):
+class ReceiveVisitor(dd.Action):
     label = _("Receive")
-    help_text = _("Guest was received by agent")
+    help_text = _("Visitor was received by agent")
     show_in_workflow = True
     
     
@@ -206,7 +208,7 @@ class ReceiveGuest(dd.Action):
             return False
         if obj.event.start_date != datetime.date.today():
             return False
-        return super(ReceiveGuest,self).get_action_permission(ar,obj,state)
+        return super(ReceiveVisitor,self).get_action_permission(ar,obj,state)
     
     #~ def get_notify_subject(self,ar,obj):
         #~ return _("%(partner)s received by %(user)s") % dict(
@@ -235,20 +237,20 @@ class ReceiveGuest(dd.Action):
         
 """
 
-What                     waiting_since   waiting_until  present_until
-Guest checks in          X
-Agent receives the guest X               X
-Guest leaves             X               X              X
+What                       waiting_since   waiting_until  present_until
+Visitor checks in          X
+Agent receives the visitor X               X
+Visitor leaves             X               X              X
 
 
 
 
 """        
 
-#~ class CheckoutGuest(dd.NotifyingAction):
-class CheckoutGuest(dd.Action):
+#~ class CheckoutVisitor(dd.NotifyingAction):
+class CheckoutVisitor(dd.Action):
     label = _("Checkout")
-    help_text = _("Guest left the centre")
+    help_text = _("Visitor left the centre")
     show_in_workflow = True
     
     #~ required = dict(states='waiting')
@@ -260,7 +262,7 @@ class CheckoutGuest(dd.Action):
             return False
         #~ if obj.event.start_date != datetime.date.today():
             #~ return False
-        return super(CheckoutGuest,self).get_action_permission(ar,obj,state)
+        return super(CheckoutVisitor,self).get_action_permission(ar,obj,state)
         
     def run_from_ui(self,ar,**kw):
         obj = ar.selected_rows[0]
@@ -292,11 +294,11 @@ class CheckoutGuest(dd.Action):
         #~ kw = super(CheckoutGuest,self).run_from_ui(obj,ar,**kw)
         #~ return kw
         
-cal.Guest.checkin = CheckinGuest(sort_index=100)
-cal.Guest.receive = ReceiveGuest(sort_index=101)
-cal.Guest.checkout = CheckoutGuest(sort_index=102)
+cal.Guest.checkin = CheckinVisitor(sort_index=100)
+cal.Guest.receive = ReceiveVisitor(sort_index=101)
+cal.Guest.checkout = CheckoutVisitor(sort_index=102)
 
-class AppointmentsByGuest(dd.Table):
+class AppointmentsByPartner(dd.Table):
     label = _("Appointments")
     model = cal.Guest
     #~ detail_layout = cal.Guests.detail_layout
@@ -310,7 +312,7 @@ class AppointmentsByGuest(dd.Table):
     @classmethod
     def get_request_queryset(self,ar):
         # logger.info("20121010 Clients.get_request_queryset %s",ar.param_values)
-        qs = super(AppointmentsByGuest,self).get_request_queryset(ar)
+        qs = super(AppointmentsByPartner,self).get_request_queryset(ar)
         if isinstance(qs,list): return qs
         start_date = datetime.date.today() - datetime.timedelta(days=17)
         end_date = datetime.date.today() + datetime.timedelta(days=17)
@@ -379,8 +381,8 @@ class ExpectedGuests(cal.Guests):
         return kw
     
     
-class ReceivedGuests(cal.Guests):
-    label = _("Received Guests")
+class ReceivedVisitors(cal.Guests):
+    label = _("Received Visitors")
     help_text = _("Shows the visitors being received.")
     filter = Q(waiting_since__isnull=False,waiting_until__isnull=False,present_until__isnull=True)
     column_names = 'since partner event__user event__summary workflow_buttons'
@@ -393,13 +395,13 @@ class ReceivedGuests(cal.Guests):
     def since(self,obj,ar):
         return naturaltime(obj.waiting_until) # *received since* == *waiting until* 
     
-class WaitingGuests(cal.Guests):
-    label = _("Waiting Guests")
+class WaitingVisitors(cal.Guests):
+    label = _("Waiting Visitors")
     help_text = _("Shows the visitors in the waiting room.")
     #~ known_values = dict(state=GuestStates.waiting)
     filter = Q(waiting_since__isnull=False,waiting_until__isnull=True)
-    column_names = 'since partner event__user position event__summary workflow_buttons waiting_until'
-    hidden_columns = 'waiting_until'
+    column_names = 'since partner event__user position event__summary workflow_buttons waiting_since waiting_until present_until'
+    hidden_columns = 'waiting_since waiting_until present_until'
     order_by = ['waiting_since']
     #~ checkout = CheckoutGuest()
     required = dd.Required(user_groups='reception')
@@ -418,15 +420,14 @@ class WaitingGuests(cal.Guests):
           waiting_since__lt=obj.waiting_since).count()
         return str(n)
         
-class MyWaitingGuests(WaitingGuests):
-    label = _("Waiting Guests")
-    #~ label = _("My Waiting Guests")
+class MyWaitingVisitors(WaitingVisitors):
+    label = _("Waiting Visitors")
     required = dd.Required(user_groups='integ debts newcomers')
-    column_names = 'since partner event__summary workflow_buttons'
+    #~ column_names = 'since partner event__summary workflow_buttons'
     
     @classmethod
     def param_defaults(self,ar,**kw):
-        kw = super(MyWaitingGuests,self).param_defaults(ar,**kw)
+        kw = super(MyWaitingVisitors,self).param_defaults(ar,**kw)
         kw.update(user=ar.get_user())
         return kw
         
@@ -434,7 +435,7 @@ class MyWaitingGuests(WaitingGuests):
 
    
 #~ def get_todo_tables(ar):
-    #~ yield (MyWaitingGuests, None) 
+    #~ yield (MyWaitingVisitors, None) 
     
 dd.add_user_group('reception',App.verbose_name)
 
@@ -446,12 +447,12 @@ def setup_main_menu(site,ui,profile,m):
     #~ m.add_action(Clients,'find_by_beid')
     #~ m.add_action(Clients)
     #~ m.add_action(ExpectedGuests)
-    m.add_action(MyWaitingGuests)
-    m.add_action(ReceivedGuests)
+    m.add_action(MyWaitingVisitors)
+    m.add_action(ReceivedVisitors)
     #~ m.add_action(ExpectedGuests,params=dict(param_values=dict(only_expected=True)))
-    #~ m.add_action(WaitingGuests,params=dict(param_values=dict(only_waiting=True)))
+    #~ m.add_action(WaitingVisitors,params=dict(param_values=dict(only_waiting=True)))
 
 def setup_explorer_menu(site,ui,profile,m):
     m  = m.add_menu("reception",App.verbose_name)
-    m.add_action(WaitingGuests)
+    m.add_action(WaitingVisitors)
     

@@ -37,7 +37,7 @@ geradliniger und klarer.
 Einer der kleinen Nebeneffekte ist, dass die SiteConfig-Instanz jetzt schon gleich 
 beim Startup eingelesen und gecacht wird. 
 Was zu einem coolen Bug führte: in 
-:mod:`initdb <lino.management.commands.initdb>`
+:mod:`initdb <djangosite.management.commands.initdb>`
 und auch
 :mod:`initdb <lino.management.commands.initdb_demo>`
 führte das zu einem Problem, das nur jedes zweite Mal auftrat:

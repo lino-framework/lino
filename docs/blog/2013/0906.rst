@@ -1,0 +1,65 @@
+====================================
+20130906 (Friday, 06 September 2013)
+====================================
+
+Changes in :ref:`welfare`
+-------------------------
+
+In :ref:`welfare` added a new user profile "Social agent". 
+Removed profile "CBSS only".
+
+:mod:`lino_welfare.fixtures.demo` now also generates a series of 
+prompt events: the center opens at 8am, and every 3 minutes and 3 
+seconds a new client enters... 
+some of them are still waiting, 
+some have been received and some have checked out again.
+
+Renamed certain actors in the reception module according to 
+the vocabulary note:
+
+    Visitors are instances of the :ddref:`cal.Guest` model
+    when they are being managed by the reception module,
+    i.e. when they have been at least checked in.
+
+But there is still something wrong in the reception module.
+Maybe we need 2 new GuestStates so that we can do:
+
+- Checkin must set `GuestStates.waiting`
+- Receive must set `GuestStates.present`
+- Checkout must set `GuestStates.gone`
+
+It's of course a pity to create redundant information. 
+'waiting' and 'gone' is rather  a kind of 
+"virtual" GuestState. E.g. 'waiting' means in fact::
+
+  if obj.state == `GuestStates.present` \
+      and obj.waiting_since is not None \
+      and obj.received_since is None
+
+And so on. To be meditated...
+
+The test suite then failed for several other reasons: 
+(1) these changes and 
+(2) the output in `docs/tested/jobs.rst` contains dates, 
+and these are of course not constant.
+
+
+
+
+
+Should `Actor.label` be inherited?
+----------------------------------
+
+I stumbled once more over the surprising fact
+that :attr:`lino.core.actors.Actor.label` 
+is never inherited from base classes:
+
+:mod:`lino_faggio.courses`
+overrides the `ActiveCourses`
+class definition from
+:mod:`lino.modlib.courses`.
+
+In above case it is unexpected behaviour to not inherit from the parent.
+
+To be meditated...
+
