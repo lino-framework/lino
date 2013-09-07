@@ -20,5 +20,6 @@ you'll now want to know how to do it yourself.
    de_BE/index
    actors/index
    actions/index
-
+   tested_docs/index
+   
 

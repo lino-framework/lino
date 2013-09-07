@@ -1316,7 +1316,7 @@ class Actor(actions.Parametrizable):
     @classmethod
     def get_data_elem(self,name):
         """
-        Find data element ni this actor by name.
+        Find data element in this actor by name.
         """
         c = self._constants.get(name,None)
         if c is not None:

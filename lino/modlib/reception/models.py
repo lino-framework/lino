@@ -421,7 +421,7 @@ class WaitingVisitors(cal.Guests):
         return str(n)
         
 class MyWaitingVisitors(WaitingVisitors):
-    label = _("Waiting Visitors")
+    label = _("Visitors waiting for me")
     required = dd.Required(user_groups='integ debts newcomers')
     #~ column_names = 'since partner event__summary workflow_buttons'
     
@@ -430,7 +430,6 @@ class MyWaitingVisitors(WaitingVisitors):
         kw = super(MyWaitingVisitors,self).param_defaults(ar,**kw)
         kw.update(user=ar.get_user())
         return kw
-        
     
 
    

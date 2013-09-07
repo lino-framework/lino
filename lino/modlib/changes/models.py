@@ -172,7 +172,7 @@ def watch_changes(model,ignore=[],master_key=None,**options):
     if isinstance(ignore,basestring):
         ignore = fields.fields_list(model,ignore)
     if isinstance(master_key,basestring):
-        fld = fields.get_data_elem(model,master_key)
+        fld = model.get_data_elem(master_key)
         if fld is None:
             raise Exception("No field %r in %s" % (master_key,model))
         master_key = fld

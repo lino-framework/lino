@@ -11,6 +11,9 @@
 ## GNU General Public License for more details.
 ## You should have received a copy of the GNU General Public License
 ## along with Lino; if not, see <http://www.gnu.org/licenses/>.
+"""
+The :xfile:`models.py` file for :mod:`lino.modlib.notes`.
+"""
 
 import logging
 logger = logging.getLogger(__name__)

@@ -33,8 +33,8 @@ from lino.core import signals
 from lino.core import dbutils
 from lino.core.actions import InstanceAction
 from djangosite.dbutils import obj2str, full_model_name
-from lino.utils.xmlgen import html as xghtml
-E = xghtml.E
+from lino.utils.xmlgen.html import E
+from lino.utils import get_class_attr
 
 
 class Model(models.Model):
@@ -161,7 +161,76 @@ class Model(models.Model):
     def as_list_item(self,ar):
         return E.li(unicode(self))
         
+    @classmethod
+    def get_data_elem(model,name):
+        #~ logger.info("20120202 get_data_elem %r,%r",model,name)
+        if not name.startswith('__'):
+            parts = name.split('__')
+            if len(parts) > 1:
+                """It's going to be a RemoteField
+                """
+                # logger.warning("20120406 RemoteField %s in %s",name,self)
+                #~ model = self.model
+
+                from lino.ui import store
+                
+                field_chain = []
+                for n in parts:
+                    assert model is not None
+                    #~ 20130508 model.get_default_table().get_handle() # make sure that all atomizers of those fields get created.
+                    fld = model.get_data_elem(n)
+                    if fld is None:
+                        # raise Exception("Part %s of %s got None" % (n,model))
+                        raise Exception(
+                            "Invalid RemoteField %s.%s (no field %s in %s)" % 
+                            (full_model_name(model),name,n,full_model_name(model)))
+                    store.get_atomizer(fld,fld.name) # make sure that the atomizer gets created.
+                    field_chain.append(fld)
+                    if fld.rel:
+                        model = fld.rel.to
+                    else:
+                        model = None
+                def func(obj,ar=None):
+                    #~ if ar is None: raise Exception(20130802)
+                    #~ print '20130422',name,obj, [fld.name for fld in field_chain]
+                    try:
+                        for fld in field_chain:
+                            #~ obj = fld.value_from_object(obj)
+                            obj = fld._lino_atomizer.full_value_from_object(obj,ar)
+                        #~ for n in parts:
+                            #~ obj = getattr(obj,n)
+                        #~ print '20130422 %s --> %r', fld.name,obj
+                        return obj
+                    except Exception,e:
+                        #~ if False: # only for debugging
+                        if True: # see 20130802
+                            logger.exception(e)
+                            return str(e) 
+                        return None
+                return fields.RemoteField(func,name,fld)
         
+        try:
+            return model._meta.get_field(name)
+        except models.FieldDoesNotExist,e:
+            pass
+            
+        #~ s = name.split('.')
+        #~ if len(s) == 1:
+            #~ mod = import_module(model.__module__)
+            #~ rpt = getattr(mod,name,None)
+        #~ elif len(s) == 2:
+            #~ mod = getattr(settings.SITE.modules,s[0])
+            #~ rpt = getattr(mod,s[1],None)
+        #~ else:
+            #~ raise Exception("Invalid data element name %r" % name)
+        
+        v = get_class_attr(model,name)
+        if v is not None: return v
+        
+        for vf in model._meta.virtual_fields:
+            if vf.name == name:
+                return vf
+
     
     def get_choices_text(self,request,actor,field):
         """
@@ -228,7 +297,7 @@ class Model(models.Model):
         They remain in the database but are not visible in the user interface.
         """
         for name in names:
-            if fields.get_data_elem(self,name) is None:
+            if self.get_data_elem(name) is None:
                 raise Exception("%s has no element '%s'" % (self,name))
         self.hidden_elements = self.hidden_elements | set(names)
         
@@ -452,6 +521,7 @@ class Model(models.Model):
         
     LINO_MODEL_ATTRIBS = (
               'get_row_permission',
+              'get_data_elem',
               'after_ui_save',
               #~ 'update_system_note',
               'preferred_foreignkey_width',

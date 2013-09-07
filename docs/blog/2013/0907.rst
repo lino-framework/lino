@@ -45,7 +45,7 @@ but each time somebody reads the `label` property.
 Which altogether seems more sane.
 For example, certain dynamically labelled tables 
 in
-:mod:`lino.modlib.cv`
+:mod:`lino_welfare.modlib.cv`
 or
 :mod:`lino_welfare.modlib.debts`
 no longer need to use sophisticated signal handlers,
@@ -69,3 +69,10 @@ Der Menübefehl
 lautet jetzt
 :menuselection:`Büro --> Meine Ereignisse/Notizen`.
 Was ja konsequent ist.)
+
+Continued on userdocs
+---------------------
+
+The :ref:`welfare.userdocs` is getting better and better...
+but still not what I'd call finished.
+

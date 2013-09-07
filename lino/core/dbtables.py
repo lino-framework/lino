@@ -774,7 +774,7 @@ class Table(AbstractTable):
             
             
         # logger.info("20120202 Table.get_data_elem found nothing")
-        return fields.get_data_elem(self.model,name)
+        return self.model.get_data_elem(name)
         #~ de = get_data_elem(self.model,name)
         #~ if de is not None: 
             #~ return de

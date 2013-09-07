@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: lino 1.6.11\n"
 "Report-Msgid-Bugs-To: EMAIL@ADDRESS\n"
-"POT-Creation-Date: 2013-09-07 09:07+0300\n"
+"POT-Creation-Date: 2013-09-07 15:54+0300\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -1325,7 +1325,7 @@ msgstr ""
 
 #: lino/modlib/auto/sales/models.py:467 lino/modlib/codechanges/models.py:100
 #: lino/modlib/events/models.py:70 lino/modlib/ledger/models.py:238
-#: lino/modlib/notes/models.py:151 lino/modlib/outbox/models.py:408
+#: lino/modlib/notes/models.py:154 lino/modlib/outbox/models.py:408
 #: lino/modlib/tickets/models.py:275 lino/modlib/tickets/models.py:321
 #: lino/modlib/tickets/models.py:375
 msgid "Date"
@@ -1339,13 +1339,13 @@ msgstr ""
 msgid "Blog Entry Types"
 msgstr ""
 
-#: lino/modlib/blogs/models.py:52 lino/modlib/notes/models.py:64
+#: lino/modlib/blogs/models.py:52 lino/modlib/notes/models.py:67
 msgid "important"
 msgstr ""
 
 #: lino/modlib/blogs/models.py:54 lino/modlib/cal/models.py:1659
 #: lino/modlib/cal/workflows/take.py:76 lino/modlib/courses/models.py:602
-#: lino/modlib/notes/models.py:66 lino/modlib/notes/models.py:105
+#: lino/modlib/notes/models.py:69 lino/modlib/notes/models.py:108
 #: lino/modlib/thirds/models.py:42
 msgid "Remark"
 msgstr ""
@@ -1363,7 +1363,7 @@ msgid "Heading"
 msgstr ""
 
 #: lino/modlib/blogs/models.py:99 lino/modlib/codechanges/models.py:104
-#: lino/modlib/notes/models.py:106 lino/modlib/notes/models.py:164
+#: lino/modlib/notes/models.py:109 lino/modlib/notes/models.py:167
 #: lino/modlib/outbox/models.py:418 lino/modlib/pages/models.py:121
 msgid "Body"
 msgstr ""
@@ -3054,60 +3054,56 @@ msgstr ""
 msgid "~Links"
 msgstr ""
 
-#: lino/modlib/notes/models.py:59
+#: lino/modlib/notes/models.py:62
 msgid "Note Type"
 msgstr ""
 
-#: lino/modlib/notes/models.py:60
+#: lino/modlib/notes/models.py:63
 msgid "Note Types"
 msgstr ""
 
-#: lino/modlib/notes/models.py:69
+#: lino/modlib/notes/models.py:72
 msgid "Body template"
 msgstr ""
 
-#: lino/modlib/notes/models.py:103
+#: lino/modlib/notes/models.py:106
 msgid "Event Types"
 msgstr ""
 
-#: lino/modlib/notes/models.py:145
+#: lino/modlib/notes/models.py:148
 msgid "Event/Note"
 msgstr ""
 
-#: lino/modlib/notes/models.py:146
+#: lino/modlib/notes/models.py:149
 msgid "Events/Notes"
 msgstr ""
 
-#: lino/modlib/notes/models.py:157
+#: lino/modlib/notes/models.py:160
 msgid "Note Type (Content)"
 msgstr ""
 
-#: lino/modlib/notes/models.py:160
+#: lino/modlib/notes/models.py:163
 msgid "Event Type (Form)"
 msgstr ""
 
-#: lino/modlib/notes/models.py:162 lino/modlib/outbox/models.py:414
+#: lino/modlib/notes/models.py:165 lino/modlib/outbox/models.py:414
 #: lino/modlib/reception/models.py:127
 msgid "Subject"
 msgstr ""
 
-#: lino/modlib/notes/models.py:284
+#: lino/modlib/notes/models.py:287
 msgid "Recipient (Organization)"
 msgstr ""
 
-#: lino/modlib/notes/models.py:285
+#: lino/modlib/notes/models.py:288
 msgid "Recipient (Person)"
 msgstr ""
 
-#: lino/modlib/notes/models.py:323
-msgid "My notes"
-msgstr ""
-
-#: lino/modlib/notes/models.py:375
+#: lino/modlib/notes/models.py:378
 msgid "Default system note type"
 msgstr ""
 
-#: lino/modlib/notes/models.py:376
+#: lino/modlib/notes/models.py:379
 msgid ""
 "Note Type used by system notes.\n"
 "If this is empty, then system notes won't create any entry to the Notes "
@@ -3580,7 +3576,7 @@ msgstr ""
 msgid "Since"
 msgstr ""
 
-#: lino/modlib/reception/models.py:399 lino/modlib/reception/models.py:424
+#: lino/modlib/reception/models.py:399
 msgid "Waiting Visitors"
 msgstr ""
 
@@ -3594,6 +3590,10 @@ msgstr ""
 
 #: lino/modlib/reception/models.py:414
 msgid "Position in waiting queue (per agent)"
+msgstr ""
+
+#: lino/modlib/reception/models.py:424
+msgid "Visitors waiting for me"
 msgstr ""
 
 #: lino/modlib/sales/models.py:64
@@ -4249,37 +4249,37 @@ msgstr ""
 msgid "Error while saving GC for %(table)s: %(error)s"
 msgstr ""
 
-#: lino/utils/actordoc.py:228
+#: lino/utils/actordoc.py:231
 #, python-format
 msgid "%s (model in app \"%s\")"
 msgstr ""
 
-#: lino/utils/actordoc.py:246
+#: lino/utils/actordoc.py:249
 #, python-format
 msgid "Fields of %s"
 msgstr ""
 
-#: lino/utils/actordoc.py:255
+#: lino/utils/actordoc.py:258
 #, python-format
 msgid "Actions on a %s"
 msgstr ""
 
-#: lino/utils/actordoc.py:262
+#: lino/utils/actordoc.py:265
 #, python-format
 msgid "Tables based on %s"
 msgstr ""
 
-#: lino/utils/actordoc.py:281
+#: lino/utils/actordoc.py:284
 #, python-format
 msgid "Slave tables of %s"
 msgstr ""
 
-#: lino/utils/actordoc.py:295
+#: lino/utils/actordoc.py:298
 #, python-format
 msgid "%s (table in module %s)"
 msgstr ""
 
-#: lino/utils/actordoc.py:339
+#: lino/utils/actordoc.py:345
 #, python-format
 msgid "%s (model in module `%s`)"
 msgstr ""

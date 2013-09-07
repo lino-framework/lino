@@ -45,7 +45,6 @@ from lino.core.dbutils import resolve_model, UnresolvedModel
 from lino.utils import IncompleteDate, d2iso
 #~ from lino.utils.quantities import Duration
 from lino.utils import quantities 
-from lino.utils import get_class_attr
 
 class PasswordField(models.CharField):
     """Stored as plain text in database, but not displayed in user interface."""
@@ -962,75 +961,6 @@ class RecurrenceField(models.CharField):
         models.CharField.__init__(self,*args,**kw)
       
 
-def get_data_elem(model,name):
-    #~ logger.info("20120202 get_data_elem %r,%r",model,name)
-    if not name.startswith('__'):
-        parts = name.split('__')
-        if len(parts) > 1:
-            """It's going to be a RemoteField
-            """
-            # logger.warning("20120406 RemoteField %s in %s",name,self)
-            #~ model = self.model
-
-            from lino.ui import store
-            
-            field_chain = []
-            for n in parts:
-                assert model is not None
-                #~ 20130508 model.get_default_table().get_handle() # make sure that all atomizers of those fields get created.
-                fld = get_data_elem(model,n)
-                if fld is None:
-                    # raise Exception("Part %s of %s got None" % (n,model))
-                    raise Exception(
-                        "Invalid RemoteField %s.%s (no field %s in %s)" % 
-                        (full_model_name(model),name,n,full_model_name(model)))
-                store.get_atomizer(fld,fld.name) # make sure that the atomizer gets created.
-                field_chain.append(fld)
-                if fld.rel:
-                    model = fld.rel.to
-                else:
-                    model = None
-            def func(obj,ar=None):
-                #~ if ar is None: raise Exception(20130802)
-                #~ print '20130422',name,obj, [fld.name for fld in field_chain]
-                try:
-                    for fld in field_chain:
-                        #~ obj = fld.value_from_object(obj)
-                        obj = fld._lino_atomizer.full_value_from_object(obj,ar)
-                    #~ for n in parts:
-                        #~ obj = getattr(obj,n)
-                    #~ print '20130422 %s --> %r', fld.name,obj
-                    return obj
-                except Exception,e:
-                    #~ if False: # only for debugging
-                    if True: # see 20130802
-                        logger.exception(e)
-                        return str(e) 
-                    return None
-            return RemoteField(func,name,fld)
-    
-    try:
-        return model._meta.get_field(name)
-    except models.FieldDoesNotExist,e:
-        pass
-        
-    #~ s = name.split('.')
-    #~ if len(s) == 1:
-        #~ mod = import_module(model.__module__)
-        #~ rpt = getattr(mod,name,None)
-    #~ elif len(s) == 2:
-        #~ mod = getattr(settings.SITE.modules,s[0])
-        #~ rpt = getattr(mod,s[1],None)
-    #~ else:
-        #~ raise Exception("Invalid data element name %r" % name)
-    
-    v = get_class_attr(model,name)
-    if v is not None: return v
-    
-    for vf in model._meta.virtual_fields:
-        if vf.name == name:
-            return vf
-
 
 def fields_list(model,field_names):
     """
@@ -1053,12 +983,11 @@ def fields_list(model,field_names):
     #~ return [get_field(model,n).name for n in field_names.split()]
     lst = []
     for name in field_names.split():
-        e = get_data_elem(model,name)
+        e = model.get_data_elem(name)
         if e is None:
             raise models.FieldDoesNotExist("No data element %r in %s" % (name,model))
         lst.append(e.name)
     return lst
-    #~ return [get_data_elem(model,n).name for n in field_names.split()]
 
 
 def ForeignKey(othermodel,*args,**kw):
