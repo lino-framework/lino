@@ -223,6 +223,10 @@ class BoundAction(object):
         return "<%s(%s,%r)>" % (self.__class__.__name__,self.actor,self.action)
     
         
+#~ class ClassProperty(property):
+    #~ def __get__(self, cls, owner):
+        #~ return self.fget.__get__(None, owner)()
+#~ 
 
 
 
@@ -236,13 +240,28 @@ class ActorMetaClass(type):
         attributes that are never inherited from base classes:
         """
         # classDict.setdefault('name',classname)
-        classDict.setdefault('label',None)
+        #~ classDict.setdefault('label',None) # 20130906
         #~ classDict.setdefault('related_name',None)
         #~ classDict.setdefault('button_label',None)
         classDict.setdefault('title',None)
         classDict.setdefault('help_text',None)
         
+        declared_label = classDict.pop('label',None)
+        if declared_label is not None:
+            classDict.update(_label=declared_label)
+        declared_known_values = classDict.pop('known_values',None)
+        if declared_known_values is not None:
+            classDict.update(_known_values=declared_known_values)
+        
         cls = type.__new__(meta, classname, bases, classDict)
+        
+        
+        #~ if not classDict.has_key('label'):
+            #~ cls.label = ClassProperty(cls.get_actor_label)
+            #~ meta.label = property(cls.get_actor_label.im_func) # 20130906
+        #~ if not classDict.has_key('known_values'):
+            #~ cls.known_values = ClassProperty(cls.get_known_values)
+            #~ meta.known_values = property(cls.get_known_values.im_func) # 20130906
         
         #~ if cls.is_abstract():
             #~ actions.register_params(cls)
@@ -302,6 +321,9 @@ class ActorMetaClass(type):
         
                 
         #~ cls.install_params_on_actor()
+        
+        
+        
                 
         if classname not in (
             'Table','AbstractTable','VirtualTable',
@@ -318,9 +340,18 @@ class ActorMetaClass(type):
             #~ logger.debug("ActorMetaClass.__new__(%s)", cls)
         return cls
 
-    def __str__(self):
-        return self.actor_id 
+    def __str__(cls):
+        return cls.actor_id
   
+    @property
+    def label(cls):
+        return cls.get_actor_label()
+        
+    @property
+    def known_values(cls):
+        return cls.get_known_values()
+        
+
 
 class Actor(actions.Parametrizable):
     """
@@ -335,6 +366,12 @@ class Actor(actions.Parametrizable):
     __metaclass__ = ActorMetaClass
     
     _layout_class = layouts.ParamsLayout
+    
+    
+    #~ @property
+    #~ def known_values(cls):
+        #~ return cls.get_known_values()
+    
     
     
     sort_index = None 
@@ -581,7 +618,8 @@ class Actor(actions.Parametrizable):
     :class:`lino.modlib.users.models.Mysettings`.
     """
     
-    known_values = {}
+    _label = None
+    _known_values = {}
     """
     A `dict` of `fieldname` -> `value` pairs that specify "known values".
     Requests will automatically be filtered to show only existing records 
@@ -818,9 +856,9 @@ class Actor(actions.Parametrizable):
                 raise Exception("Cannot reuse %r insert_layout for %r" % (dl._datasource,cls))
                 #~ logger.debug("Note: %s uses layout owned by %s",cls,dl._datasource)
                 
-        if cls.label is None:
-            #~ self.label = capfirst(self.model._meta.verbose_name_plural)
-            cls.label = cls.get_actor_label()
+        # 20130906
+        #~ if cls.label is None: 
+            #~ cls.label = cls.get_actor_label()
             
         #~ if cls.parameters is not None:
             #~ for name,f in cls.parameters.items():
@@ -857,12 +895,16 @@ class Actor(actions.Parametrizable):
         _class_init_done = True
                         
     @classmethod
+    def get_known_values(self):
+        return self._known_values
+        
+    @classmethod
     def get_actor_label(self):
         """
         Compute the label of this actor. 
         Called only if `label` is not set, and only once during site startup.
         """
-        return self.__name__
+        return self._label or self.__name__
                         
         
     @classmethod
@@ -1240,11 +1282,12 @@ class Actor(actions.Parametrizable):
         if not self.is_abstract():
             actions.setup_params_choosers(self)
             
+        #~ logger.info("20130906 Gonna Actor.do_setup() on %s", self)
         self.do_setup()
         #~ self.setup_permissions()
         self._setup_doing = False
         self._setup_done = True
-        #~ logger.debug("20120103 Actor.setup() done: %s, default_action is %s", 
+        #~ logger.info("20130906 Actor.after_site_setup() done: %s, default_action is %s", 
             #~ self.actor_id,self.default_action)
         return True
         

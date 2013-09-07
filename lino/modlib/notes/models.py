@@ -320,7 +320,7 @@ class MyNotes(mixins.ByUser,Notes):
     #~ column_names = "date event_type type subject body *"
     #~ column_names = "date type event_type subject body_html *"
     #~ can_view = perms.is_authenticated
-    label = _("My notes")
+    #~ label = _("My notes")
     order_by = ["date"]
     
 

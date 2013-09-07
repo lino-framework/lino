@@ -52,19 +52,7 @@ class Frame(actors.Actor):
         #~ super(Frame,self).class_init()
         
     @classmethod
-    def do_setup(self):
-        #~ logger.info("%s.__init__()",self.__class__)
-        #~ if not self.__class__ is Frame:
-        #~ if self.default_action_class:
-            #~ self.default_action = self.default_action_class(self)
-        #~ self.default_action = self.get_default_action()
-        if not self.label:
-            self.label = self.default_action.action.label
-            #~ self.default_action.actor = self
-        super(Frame,self).do_setup()
-        #~ self.set_actions([])
-        #~ self.setup_actions()
-        #~ if self.default_action:
-            #~ self.add_action(self.default_action)
-
+    def get_actor_label(self):
+        return self._label or self.default_action.action.label
+        
 

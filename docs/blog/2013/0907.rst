@@ -1,0 +1,71 @@
+======================================
+20130907 (Saturday, 07 September 2013)
+======================================
+
+
+Should `Actor.label` be inherited?
+----------------------------------
+
+Yesterday I stumbled once more over the surprising fact
+that :attr:`lino.core.actors.Actor.label` 
+is never inherited from base classes.
+
+This rule was necessary because of (e.g.) the following use case::
+
+    class Partner(dd.Model):
+        ...
+    class Partners(dd.Table):
+        # no explicit `label` attribute, so take model._meta.verbose_name_plural
+
+    class Person(Partner): 
+        ...
+    class Persons(Partners): 
+        # again no explicit `label` attribute, so take model._meta.verbose_name_plural
+
+In such a case we want (of course) the Persons table to be labelled 
+"Persons" (the verbose_name_plural from model Person), 
+not to inherit the label "Partners" from `Partners`.
+
+But :mod:`lino_faggio.courses`
+overrides the `ActiveCourses`
+class definition from
+:mod:`lino.modlib.courses`.
+In this case it is unexpected behaviour to not inherit from the parent.
+
+The solution was to differentiate between an explicitly 
+specified `label` and a label taken from the model.
+So I converted :attr:`lino.core.actors.Actor.label` 
+into a property and new store an explicit `label` class attribute 
+internally as `_label`.
+Same philosophy was required for `known_values`.
+
+Note the side effect that `get_actor_label` 
+now is no longer called *only once at startup*
+but each time somebody reads the `label` property.
+Which altogether seems more sane.
+For example, certain dynamically labelled tables 
+in
+:mod:`lino.modlib.cv`
+or
+:mod:`lino_welfare.modlib.debts`
+no longer need to use sophisticated signal handlers,
+they just implement their own special `get_actor_label` 
+method.
+
+Thanks to 
+http://stackoverflow.com/questions/128573/using-property-on-classmethods
+for revealing the trick to define a property on the metaclass
+so that it works for the class object.
+Remember that Actors are never instantiated.
+
+Since all this is very subtle and was not yet completely covered by
+the Lino test suite, 
+I started to write a new tested document: a tutorial about :ref:`dev.actors`.
+
+
+(Notiz am Rande: in :ref:`welfare` sieht man von alldem nur eines: 
+Der Menübefehl
+:menuselection:`Büro --> Meine Notizen`
+lautet jetzt
+:menuselection:`Büro --> Meine Ereignisse/Notizen`.
+Was ja konsequent ist.)

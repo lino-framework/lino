@@ -579,8 +579,9 @@ class Table(AbstractTable):
     @classmethod
     def get_actor_label(self):
         if self.model is None:
-            return self.__name__
-        return self.model._meta.verbose_name_plural
+            #~ return self._label or self.__name__
+            return super(Table,self).get_actor_label()
+        return self._label or self.model._meta.verbose_name_plural
         
     @classmethod
     def class_init(self):

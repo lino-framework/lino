@@ -40,6 +40,7 @@ class DocsTests(LinoTestCase):
     def test_polls(self): self.run_django_manage_test('docs/tutorials/polls')
     def test_quickstart(self): self.run_django_manage_test('docs/tutorials/quickstart')
     def test_actions(self): self.run_django_manage_test('docs/tutorials/actions')
+    def test_actors(self): self.run_django_manage_test('docs/tutorials/actors')
 
 
 class UtilsTests(LinoTestCase):

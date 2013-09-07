@@ -46,7 +46,7 @@ Any changes will be lost each time we reinitialize the demo data.
     :target: http://demo4.lino-framework.org
       
     `demo4 <http://demo4.lino-framework.org>`_ 
-    shows an early prototype of :ref:`cosi`.
+    shows an early prototype of :ref:`/cosi/index`.
 
 
   <NEXTROW>

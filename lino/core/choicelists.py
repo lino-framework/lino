@@ -348,7 +348,7 @@ class ChoiceList(tables.AbstractTable):
         Compute the label of this actor. 
         Called only if `label` is not set, and only once during site startup.
         """
-        return self.verbose_name_plural or self.__name__
+        return self._label or self.verbose_name_plural or self.__name__
         
         
         

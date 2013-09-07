@@ -18,6 +18,7 @@ you'll now want to know how to do it yourself.
    human/index
    pisa/index
    de_BE/index
+   actors/index
    actions/index
 
 

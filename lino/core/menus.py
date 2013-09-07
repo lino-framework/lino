@@ -32,6 +32,7 @@ from django.utils.encoding import force_unicode
 from django.db import models
 
 from atelier import rstgen
+from djangosite.dbutils import obj2str
 
 from lino.core import actors
 from lino.core import requests
@@ -95,6 +96,8 @@ class MenuItem:
             label = label.replace('~','')
         self.label = label
         
+        #~ if self.label is None:
+            #~ raise Exception("20130907 %r has no label" % self)
         
     def compress(self):
         pass
@@ -105,15 +108,19 @@ class MenuItem:
     def getDoc(self):
         return self.doc
 
-    #~ def __repr__(self):
-        #~ s = self.__class__.__name__+"("
-        #~ s += ', '.join([
-            #~ k+"="+repr(v) for k,v in self.interesting()])
-        #~ return s+")"
-    
     def walk_items(self):
         yield self
         
+    def __repr__(self):
+        s = self.__class__.__name__+"("
+        attrs = []
+        for k in 'label instance bound_action href params name'.split():
+            v = getattr(self,k)
+            if v is not None:
+                attrs.append(k+"="+obj2str(v))
+        s += ', '.join(attrs)
+        return s+")"
+    
     #~ def interesting(self,**kw):
         #~ l = []
         #~ if self.label is not None:
@@ -190,6 +197,8 @@ class MenuItem:
         
 def has_items(menu):
     for i in menu.items:
+        if i.label is None:
+            raise Exception("20130907 %r has no label" % i)
         if not i.label.startswith('-'):
             return True
     return False

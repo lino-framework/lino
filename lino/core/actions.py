@@ -1042,7 +1042,7 @@ class SubmitInsertAndStay(SubmitInsert):
 
 
 class ShowSlaveTable(Action):
-    TABLE2ACTION_ATTRS = tuple('sort_index label help_text icon_name icon_file'.split())
+    TABLE2ACTION_ATTRS = tuple('sort_index help_text icon_name icon_file'.split())
     #~ label = "ShowSlaveTable"
     #~ show_in_row_actions = True
     show_in_bbar = True
@@ -1052,6 +1052,10 @@ class ShowSlaveTable(Action):
         #~ kw.setdefault('label',slave_table.label)
         super(ShowSlaveTable,self).__init__(**kw)
 
+    @classmethod
+    def get_actor_label(self):
+        return self._label or self.slave_table.label
+        
     def attach_to_actor(self,actor,name):
         if isinstance(self.slave_table,basestring):
             self.slave_table = settings.SITE.modules.resolve(self.slave_table)

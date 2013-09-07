@@ -47,19 +47,3 @@ and these are of course not constant.
 
 
 
-Should `Actor.label` be inherited?
-----------------------------------
-
-I stumbled once more over the surprising fact
-that :attr:`lino.core.actors.Actor.label` 
-is never inherited from base classes:
-
-:mod:`lino_faggio.courses`
-overrides the `ActiveCourses`
-class definition from
-:mod:`lino.modlib.courses`.
-
-In above case it is unexpected behaviour to not inherit from the parent.
-
-To be meditated...
-
