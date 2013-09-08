@@ -27,6 +27,7 @@ from os.path import join, abspath, dirname, normpath, isdir
 execfile(join(dirname(__file__),'setup_info.py'))
 __version__ = SETUP_INFO['version'] # 
 intersphinx_url = "http://docs.lino-framework.org"
+srcref_url = 'http://code.google.com/p/lino/source/browse/%s'
 
 
 #~ __author__ = "Luc Saffre <luc.saffre@gmx.net>"

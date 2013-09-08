@@ -50,7 +50,7 @@ from lino.core import actions
 
 class User(mixins.CreatedModified):
     """
-    Represents a User of this site.
+    Represents a :ddref:`users.User` of this site.
     """
     
     preferred_foreignkey_width = 15 
@@ -245,12 +245,7 @@ class UserInsert(dd.FormLayout):
     
  
 class Users(dd.Table):
-    help_text = _("""
-    Shows the list of all users on this site.
-    
-    A User is somebody who can log into the application.
-    
-    """)
+    help_text = _("""Shows the list of all users on this site.""")
     #~ debug_actions  = True
     required = dict(user_level='manager')
     model = User
@@ -292,14 +287,10 @@ class MySettings(Users):
     
 class UsersOverview(Users):
     """
-    >> from django.conf import settings
-    >> settings.SITE.startup()
-    >> print settings.SITE.modules.users.UsersOverview.to_rst()
-    
-    
-    $ python manage.py shell
-    >> from lino.modlib.users.models import UsersOverview as T; print T.to_rst()
-    
+    A variant of :ddref:`users.Users` showing only active users
+    and only some fields. 
+    This is used on demo sites in :xfile:`admin_main.py` to display the 
+    list of available users.
     """
     column_names = 'username profile language'
     exclude = dict(profile='')

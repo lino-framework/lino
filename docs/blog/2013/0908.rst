@@ -1,0 +1,10 @@
+====================================
+20130908 (Sunday, 08 September 2013)
+====================================
+
+Couldn't stop continuing on :ref:`welfare.userdocs` and
+:mod:`lino.utils.actordoc`.
+Fields without help_text are now grouped into one list item,
+internal names now link to the API,
+and unutterably more little details.
+But still not stable enough to start writing real content.

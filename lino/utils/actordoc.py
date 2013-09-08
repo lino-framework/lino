@@ -48,7 +48,7 @@ from django.utils.translation import ugettext_lazy as _
 from django.utils import translation 
 from django.utils.encoding import force_unicode
 
-
+from lino import dd
 
 from lino.core import actors
 from lino.core import choicelists
@@ -81,6 +81,17 @@ def actor_name(a):
     return fully_normalize_name(settings.SITE.userdocs_prefix + str(a))
     #~ return settings.SITE.userdocs_prefix + str(a)
 def model_name(m): return settings.SITE.userdocs_prefix + full_model_name(m).lower()
+def app_name(a): 
+    assert a.__name__.endswith('.models')
+    parts = a.__name__.split('.')
+    return settings.SITE.userdocs_prefix + parts[-2]
+    #~ app = getattr(a,'App',None)
+    #~ if app is None:
+        #~ name = parts[-2]
+    #~ else:
+        #~ name = parts[-2]
+    #~ raise Exception(a.__name__)
+    #~ return settings.SITE.userdocs_prefix + name
 
 def actor_ref(rpt,text=None):
     if text is None:
@@ -98,22 +109,51 @@ def rptlist(l):
         #~ ":ref:`%s (%s) <%s>`" % (str(rpt),force_unicode(rpt.label),actor_ref(rpt)) 
         #~ for rpt in l])
 
-def fieldtype(f):
+def typeref(cls):
+    text = cls.__name__
+    target = cls.__module__ + '.' + cls.__name__
+    #~ return ":coderef:`%s <%s>`" % (text,target)
+    return ":class:`%s <%s>`" % (text,target)
+    
+def old_fieldtype(f):
     if isinstance(f,models.ForeignKey):
         #~ return f.__class__.__name__ + " to " + refto(f.rel.to)
         return f.__class__.__name__ + " to " + model_ref(f.rel.to)
     return f.__class__.__name__
 
+def fieldtype(f):
+    s = typeref(f.__class__)
+    if isinstance(f,models.ForeignKey):
+        s = _("%(classref)s to %(model)s") % dict(classref=s,model=model_ref(f.rel.to))
+        #~ print(20130908, s)
+    if isinstance(f,choicelists.ChoiceListField):
+        s = _("%(classref)s to %(model)s") % dict(classref=s,model=actor_ref(f.choicelist))
+    return s
+
+
 def fields_ul(fields):
+    helpless = []
     def field2li(fld):
         s = "**%s**" % unicode(f.verbose_name).strip()
-        s += " (``%s``)" % f.name
+        s += " (``%s``, %s)" % (f.name,fieldtype(f))
         if f.help_text:
             s += " -- " + unicode(f.help_text)
-        #~ s += fieldtype(f)
-        return s
+            return s
+        helpless.append(s)
+        return None
         
-    items = [ field2li(f) for f in fields if not hasattr(f,'_lino_babel_field')]
+    items = []
+    for f in fields:
+        if not hasattr(f,'_lino_babel_field'):
+            s = field2li(f)
+            if s:
+                items.append(s)
+    #~ items = [ field2li(f) for f in fields if not hasattr(f,'_lino_babel_field')]
+    if len(helpless):
+        s = ', '.join(helpless)
+        if len(items):
+            s = _("... and %s") % s
+        items.append(s)
     return rstgen.ul(items)
     
 def fields_table(fields):
@@ -175,29 +215,56 @@ def get_actor_description(self):
     #~ 
     #~ return body
     
+#~ from atelier.sphinxconf import srcref    
     
 IGNORED_ACTIONS = (actions.GridEdit,actions.SubmitDetail,
+    actions.ShowDetailAction,
+    actions.DeleteSelected,
     actions.InsertRow,actions.SubmitInsert)
+    
+def menuselection(mi):
+    s = my_escape(unicode(mi.label).strip())
+    p = mi.parent
+    while p is not None:
+        if p.label:
+            s = my_escape(unicode(p.label).strip()) + " --> " + s
+        p = p.parent
+    return ":menuselection:`%s`" % s
       
-def actions_overview_ul(action_list):
+def actions_ul(action_list):
     items = []
     for ba in action_list:
-        desc = "[%s]" % unicode(ba.action.label)
-        #~ if ba.action.action_name:
-            #~ desc += " (%s)" % ba.action.action_name
+        label = ba.action.label
+        desc = "**%s** (" % unicode(label).strip()
+        if ba.action.action_name:
+            desc += "``%s``" % ba.action.action_name
+            
+        desc += ", %s)" % typeref(ba.action.__class__)
         if ba.action.help_text:
             desc += " -- " + unicode(ba.action.help_text)
         items.append(desc)
     return rstgen.ul(items)
+    
+from lino.core.menus import find_menu_item
+
+def my_escape(s):
+    s = s.replace("\u25b6","")
+    return s
     
 def actors_overview_ul(model_reports):
     items = []
     for tb in model_reports:
         desc = actor_ref(tb)
         #~ label = unicode(tb.title or tb.label)
-        desc += " (%s)" % str(tb)
+        #~ desc += " (%s)" % str(tb)
+        desc += " (%s)" % typeref(tb)
+        mi = find_menu_item(tb.default_action)
+        if mi is not None:
+            desc += _(" (Menu %s)") % menuselection(mi)
+            #~ print(unicode(mi.label).strip())
         if tb.help_text:
-            desc += " -- " + unicode(tb.help_text)
+            desc += " -- " + unicode(tb.help_text).strip()
+
         items.append(desc)
     return rstgen.ul(items)
 
@@ -217,10 +284,12 @@ class ActorsOverviewDirective(Django2rstDirective):
             
 def resolve_name(name):
     l = name.split('.')
+    if len(l) == 1:
+        return 1, dd.resolve_app(name)
     if len(l) == 3:
         model = settings.SITE.modules.resolve(l[0]+'.'+l[1])
-        return model.get_data_elem(l[2])
-    return settings.SITE.modules.resolve(name)
+        return 3, model.get_data_elem(l[2])
+    return len(l), settings.SITE.modules.resolve(name)
     
             
     
@@ -235,20 +304,35 @@ class ActorDirective(Django2rstDirective):
         with translation.override(self.state.document.settings.env.config.language):
         #~ lng = self.state.document.settings.env.config.language
         #~ set_language(lng)
-            cls = resolve_name(self.content[0])
+            level, cls = resolve_name(self.content[0])
             if isinstance(cls,models.Field):
                 fld = cls
                 s = ''
                 name = str(fld.model)+'.'+fld.name
-                title = force_unicode(fld.verbose_name)
+                title = force_unicode(fld.verbose_name).strip()
                 s += "\n.. index::\n   single: " 
                 s += unicode(_('%s (field in "%s")') % (title,fld.model))
                 s += '\n\n'
-                s += '\n'
-                s += rstgen.header(3,title)
+                s += rstgen.header(level,_("The **%s** field") % title)
                 if len(self.content) > 1:
                     s += '\n'.join(self.content[1:])
                     s += '\n\n'
+                return s
+                
+            if isinstance(cls,dd.__class__): # it's a module (an app)
+                s = ''
+                name = app_name(cls)
+                app = getattr(cls,'App',None)
+                if app is None:
+                    title = name
+                else:
+                    title = unicode(app.verbose_name)
+                
+                s += "\n.. index::\n   single: " 
+                s += unicode(_('%s (app)') % title)
+                s += '\n\n.. _'+ name + ':\n'
+                s += '\n'
+                s += rstgen.header(level,_("The %s app") % title)
                 return s
                 
             if not isinstance(cls,type):
@@ -256,7 +340,7 @@ class ActorDirective(Django2rstDirective):
                 
             if issubclass(cls,models.Model):
                 model = cls
-                #~ if full_model_name(cls) == 'cal.Event':
+                #~ if full_model_name(cls) == 'newcomers.Broker':
                     #~ self.debug = True
                 #~ self.add_model_index_entry(cls)
                 
@@ -275,51 +359,44 @@ class ActorDirective(Django2rstDirective):
                 s += '\n\n.. _'+ name + ':\n'
                 
                 s += '\n'
-                s += rstgen.header(3,title)
+                s += rstgen.header(level,_("The %s model") % title)
+                #~ print(s)
                 #~ s += rstgen.header(3,_('%s (%s)') % (title,full_model_name(cls)))
+                s += '\n'
+                s += '\n:Internal name: ``%s``\n' % full_model_name(cls)
+                s += '\n:Implemented by: %s\n' % typeref(cls)
+                s += '\n'
                 
                 if len(self.content) > 1:
                     s += '\n'.join(self.content[1:])
                     s += '\n\n'
                     
-                s += rstgen.header(4,_("Fields of %s") % cls._meta.verbose_name)
-                s += '\n'
-                #~ s += fields_table(cls._meta.fields)
+                model_reports = [r for r in dbtables.master_reports if r.model is cls]
+                model_reports += [r for r in dbtables.slave_reports if r.model is cls]
+                #~ s += rstgen.boldheader(_("Tables on a %s") % cls._meta.verbose_name)
+                s += rstgen.boldheader(_("Views on %s") % cls._meta.verbose_name)
+                s += actors_overview_ul(model_reports)
+                    
+                s += rstgen.boldheader(_("Fields in %s") % cls._meta.verbose_name)
                 s += fields_ul(cls._meta.fields)
                 
                 action_list = cls._lino_default_table.get_actions()
-                action_list = [ba for ba in action_list if ba.action.sort_index >= 30]
-                action_list = [ba for ba in action_list if isinstance(ba.action,IGNORED_ACTIONS)]
+                #~ action_list = [ba for ba in action_list if ba.action.sort_index >= 30]
+                action_list = [ba for ba in action_list if not isinstance(ba.action,IGNORED_ACTIONS)]
                 if action_list:
                     s += '\n'
-                    s += rstgen.header(4,_("Actions on a %s") % cls._meta.verbose_name)
-                    s += actions_overview_ul(action_list)
-                    
-                model_reports = [r for r in dbtables.master_reports if r.model is cls]
-                model_reports += [r for r in dbtables.slave_reports if r.model is cls]
-                
-                s += '\n'
-                s += rstgen.header(4,_("Tables based on %s") % cls._meta.verbose_name_plural)
-                
-                #~ for tb in model_reports:
-                    #~ if tb.help_text:
-                        #~ s += '\n\n.. _'+ actor_name(tb) + ':\n\n'
-                        #~ label = unicode(tb.title or tb.label)
-                        #~ s += rstgen.header(5,label)
-                        #~ s += "%s : %s\n" % (unicode(_('Internal name')),tb)
-                        #~ if tb.help_text:
-                            #~ s += '\n'
-                            #~ s += unicode(tb.help_text)
-                        #~ s += '\n'
-                    
-                s += actors_overview_ul(model_reports)
+                    s += rstgen.boldheader(_("Actions on %s") % cls._meta.verbose_name)
+                    s += actions_ul(action_list)
                     
                 slave_tables = getattr(cls,'_lino_slaves',{}).values()
                 if slave_tables:
+                    s += rstgen.boldheader(_("Tables referring to %s") % cls._meta.verbose_name)
                     #~ for tb in slave_tables:
                         #~ s += '\n.. _'+ settings.SITE.userdocs_prefix + str(tb) + ':\n'
-                    s += '\n'
-                    s += rstgen.header(4,_("Slave tables of %s") % cls._meta.verbose_name)
+                    #~ s += '\n'
+                    #~ s += rstgen.header(4,_("Slave tables of %s") % cls._meta.verbose_name)
+                    
+                    #~ s += "\n\n**%s**\n\n" % _("Tables referring to %s") % cls._meta.verbose_name
                     s += actors_overview_ul(slave_tables)
                     
                 
@@ -343,10 +420,8 @@ class ActorDirective(Django2rstDirective):
                 
                 s = ''
                 s += '\n\n.. _%s:\n\n' % name
-                s += rstgen.header(3,title)
-                #~ s += rstgen.header(3,"%s (%s)" % (title,cls))
-                
-                s += '\nInternal name: ``%s``\n' % cls
+                s += rstgen.header(level,_("The %s view") % title)
+                s += '\n:Internal name: ``%s`` (%s)\n' % (cls,typeref(cls))
                 
                 if len(self.content) > 1:
                     s += '\n'.join(self.content[1:])
@@ -369,6 +444,7 @@ class ActorDirective(Django2rstDirective):
         
         
 
+    
 class ddrefRole(XRefRole):
     
     nodeclass = addnodes.pending_xref
@@ -394,7 +470,7 @@ class ddrefRole(XRefRole):
         target = ws_re.sub(' ', target) # replace newlines or tabs by spaces
         #~ target = ' '.join(target.split()) # replace newlines or tabs by spaces
         
-        x = resolve_name(target)
+        level, x = resolve_name(target)
         #~ x = settings.SITE.modules.resolve(target)
         if x is None:
             raise Exception("Could not resolve name %r" % target)
@@ -403,6 +479,7 @@ class ddrefRole(XRefRole):
             if isinstance(x,models.Field):
                 text = utils.unescape(unicode(x.verbose_name))
                 target = model_name(x.model)+'.'+x.name
+                print(target)
             elif issubclass(x,models.Model):
                 text = utils.unescape(unicode(x._meta.verbose_name))
                 target = model_name(x)

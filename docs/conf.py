@@ -305,6 +305,9 @@ if on_rtd:
     djangosite atelier north lino 
     lino-welfare lino-faggio lino-patrols""".split():
         intersphinx_mapping[n] = ('http://%s.readthedocs.org/en/latest/' % n, None)
+else:        
+    for n in """python django""".split():
+        intersphinx_mapping[n] = ('http://%s.readthedocs.org/en/latest/' % n, None)
 
 autosummary_generate = True
 

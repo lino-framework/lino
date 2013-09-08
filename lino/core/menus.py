@@ -470,3 +470,13 @@ class Toolbar(Menu):
     """
     pass
 
+
+def find_menu_item(spec):
+    from django.conf import settings
+    from lino import dd
+    profile = dd.UserProfiles.get_by_value('900')
+    menu = settings.SITE.get_site_menu(settings.SITE.ui,profile)
+    for mi in menu.walk_items():
+        if mi.bound_action == spec:
+            return mi
+    return None
