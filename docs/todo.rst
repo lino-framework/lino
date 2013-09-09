@@ -5,21 +5,6 @@ To-do list
 :ref:`welfare` (Release nach Demo)
 ----------------------------------
 
-#.  Wenn Klient gegangen ist, dann steht die Visite als Termin unter 
-    "Meine Termine"
-    
-#.  There is still something wrong in the reception module.
-    Maybe we need 2 new GuestStates so that we can do:
-
-    - Checkin must set `GuestStates.waiting` (and timestamp waiting_since)
-    - Receive must set `GuestStates.busy` (and timestamp busy_since)
-    - Checkout must set `GuestStates.gone` (and timestamp gone_since)
-
-#.  workflow_buttons zeigt die icons nicht mehr an. 
-    liegt an meiner änderung von vor einigen tagen wegen der Aktion 
-    "eid einlesen": die soll ja in der toolbar ein icon haben, aber 
-    *nicht* wenn es die Warnung "Muss eID-Karte einlesen" ist.
-
 #.  In WaitingClients it should not be alloed to delete a row because 
     that would leave the cal.Event without Guest
 

@@ -458,7 +458,9 @@ class BeIdCardHolder(dd.Model):
         if must_read:
             #~ ba = cls.get_action_by_name('read_beid')
             #~ elems.append(ar.action_button(ba,self,_("Must read eID card!")))
-            elems.append(ar.instance_action_button(self.read_beid,_("Must read eID card!")))
+            elems.append(ar.instance_action_button(
+                self.read_beid,
+                _("Must read eID card!"),icon_file=None))
             #~ elems.append(_("No info available"))
             # same red as in lino.css for .x-grid3-row-red td
             #~ attrs.update(style="background-color:#FA7F7F; padding:3pt;") 

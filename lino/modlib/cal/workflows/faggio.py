@@ -13,6 +13,7 @@
 ## along with Lino; if not, see <http://www.gnu.org/licenses/>.
 
 from lino.modlib.cal.workflows import *
+from django.utils.translation import ugettext_lazy as _
 
 add = GuestStates.add_item
 #add('20', _("Accepted"),'accepted') 

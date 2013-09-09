@@ -491,13 +491,17 @@ class MyBusyVisitors(MyVisitors,BusyVisitors):
     @classmethod
     def get_welcome_messages(cls,ar):
         guests = []
-        for g in ar.spawn(cls):
+        sar = ar.spawn(cls)
+        for g in sar:
             guests.append(g)
         #~ print "20130909 MyBusyVisitors get_welcome_messages", guests
         if len(guests) > 0:
-            #~ print 20130909, guests
-            chunks =[unicode(_("You are busy with "))]
-            chunks += join_elems([ar.obj2html(g,unicode(g.partner)) for g in guests])
+            #~ print 20130909, guests[0].get_default_table()
+            chunks = [ unicode(_("You are busy with ")) ]
+            def f(g):
+                #~ return sar.obj2html(g,unicode(g.partner))
+                return sar.row_action_button(g,cls.detail_action,unicode(g.partner))
+            chunks += join_elems([f(g) for g in guests])
             chunks.append('.')
             yield E.span(*chunks)
                 

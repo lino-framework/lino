@@ -106,6 +106,7 @@ def add_user_language(kw,ar):
         kw.setdefault(ext_requests.URL_PARAM_USER_LANGUAGE,lang)
 
 
+class NOT_GIVEN: pass
 
 
 class HtmlRenderer(object):
@@ -126,11 +127,14 @@ class HtmlRenderer(object):
         return ar.table2xhtml(**kw)
         #~ return E.tostring(ar.table2xhtml())
         
-    def href_button_action(self,ba,url,text=None,title=None,icon_file=None,**kw):
-        # changed 20130905
-        if ba.action.icon_file is not None:
-            if icon_file is None and text is None:
-                icon_file = ba.action.icon_file
+        
+    def href_button_action(self,ba,url,text=None,title=None,icon_file=NOT_GIVEN,**kw):
+        """
+        changed 20130905 for "Must read eID card button"
+        but that caused icons to not appear in workflow_buttons.
+        """
+        if icon_file is NOT_GIVEN:
+            icon_file = ba.action.icon_file
         if icon_file is not None and not kw.has_key('style'):
             kw.update(style="vertical-align:-30%;")
         return self.href_button(url,text,title,icon_file=icon_file,**kw)
