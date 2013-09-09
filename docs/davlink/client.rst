@@ -17,8 +17,28 @@ set to False).
 Debian
 ======
 
-To enable Java in your browser, 
-you need to install the `icedtea-plugin` package.
+#.  To enable Java in your browser, 
+    you need to install the `icedtea-plugin` package.
+
+#.  And then you must tell icedtea that you grant permission for 
+    the DavLink applet to launch a program.
+
+    Edit your :file:`/etc/java-7-openjdk/security/java.policy`, 
+    adding something like::
+
+      grant codeBase "http://lino.example.com/" {
+            permission java.security.AllPermission;
+      };
+      
+    If you know that you can trust the applets on that URL, 
+    then you can simply grant `AllPermission`. 
+    Otherwise adapt your entry to grant only the minimum required. 
+    (TODO: which ones?)
+
+
+
+If any other problems arise, 
+watch your console to see what the applet wants to do.
 
 
 How to see the java console of an applet
@@ -32,22 +52,8 @@ launch your browser from a command shell::
   
 Then use your browser as usual, and watch the Java console output in 
 your terminal window.
+ 
 
-
-If that doesn't work, then try to enable "logging" in the `IcedTea Web Control 
-Panel`:
-
-.. image:: icedtea_enable_logging.png
-  :scale: 80
-  
-And then watch the log files::
-
-  $ tail -f ~/.icedtea/log/java.stderr 
-  $ tail -f ~/.icedtea/log/java.stdout
-  $ tail -f ~/.icedtea/log/java.stderr ~/.icedtea/log/java.stdout
-  $ multitail ~/.icedtea/log/java.stderr ~/.icedtea/log/java.stdout
-  
-  
 
 Allowing DavLink applet to store preferences
 --------------------------------------------
@@ -140,4 +146,21 @@ Self-signed certificate:
 `Saffre-Rumma.cer <http://lino.googlecode.com/hg/docs/davlink/Saffre-Rumma.cer>`__.
 
 
+Enable Java logging
+-------------------
+
+If for some reason you cannot launch your browser from command line 
+to see the java console of an applet, 
+then try to enable "logging" in the `IcedTea Web Control 
+Panel`:
+
+.. image:: icedtea_enable_logging.png
+  :scale: 80
+  
+And then watch the log files::
+
+  $ tail -f ~/.icedtea/log/java.stderr 
+  $ tail -f ~/.icedtea/log/java.stdout
+  $ tail -f ~/.icedtea/log/java.stderr ~/.icedtea/log/java.stdout
+  $ multitail ~/.icedtea/log/java.stderr ~/.icedtea/log/java.stdout
 

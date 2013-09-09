@@ -1,3 +1,2 @@
 /home/luc/hgwork/lino/docs/admin/index.rst:24: WARNING: toctree contains reference to nonexisting document u'admin/ :maxdepth: 2'
-/home/luc/hgwork/lino/docs/todo.rst:995: WARNING: Enumerated list ends without a blank line; unexpected unindent.
 /home/luc/hgwork/lino/docs/blog/2013/0821/bug.rst:: WARNING: document isn't included in any toctree

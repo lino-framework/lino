@@ -616,13 +616,20 @@ Lino.MainPanel = {
             if (state) {
               this.params_panel.show();
               this.params_panel.doLayout();
-            } else this.params_panel.hide();
+            } else {
+                this.params_panel.hide();
+            }
             this.get_containing_window().doLayout();
           }
         });
         tbar = tbar.concat([this.toggle_params_panel_btn]);
         var t = this;
-        var refresh = function() {if (!t.setting_param_values) {t._force_dirty = true; t.refresh();}}
+        var refresh = function() {
+            if (!t.setting_param_values) {
+                t._force_dirty = true; 
+                t.refresh();
+            }
+        }
         Ext.each(this.params_panel.fields,function(f) {
           //~ f.on('valid',function() {t.refresh()});
           if (f instanceof Ext.form.Checkbox) {
@@ -643,7 +650,7 @@ Lino.MainPanel = {
       }
       return tbar;
   }
-  ,add_param_values : function (p,unused_force_dirty) {
+  ,add_param_values : function (p,force_dirty) {
     if (this.params_panel) {
       /* 
       * 20120918 add param_values to the request string 
@@ -660,11 +667,12 @@ Lino.MainPanel = {
       * `this._force_dirty` because
       * 
       */
+      //~ if (force_dirty || this._force_dirty || this.params_panel.form.isDirty()) {
       if (this._force_dirty || this.params_panel.form.isDirty()) {
         p.{{ext_requests.URL_PARAM_PARAM_VALUES}} = this.get_param_values();
-        console.log("20130605 form.isDirty",p);
+        //~ console.log("20130605 form is dirty",p);
       }else{
-        console.log("20130605 form not dirty:",this.params_panel.form);
+        //~ console.log("20130605 form not dirty:",this.params_panel.form);
         if (this.status_param_values) 
           p.{{ext_requests.URL_PARAM_PARAM_VALUES}} = Lino.fields2array(
             this.params_panel.fields,this.status_param_values);
@@ -689,6 +697,7 @@ Lino.MainPanel = {
         this.params_panel.form.reset(); 
       }
       this.setting_param_values = false;
+      this._force_dirty = false; 
       //~ this.params_panel.form.resumeEvents();
     }
   }

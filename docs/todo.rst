@@ -16,10 +16,6 @@ To-do list
     - Checkout must set `GuestStates.gone` (and timestamp gone_since)
 
 
-#.  Irritierender Bug : Wenn man im Parameter-Panel etwas ändert, dann das 
-    Fenster schließt und wieder öffnet, werden die Felder nicht auf den 
-    Standardwert zurück gesetzt. .
-
 
 :ref:`faggio` (bis Oktober)
 ---------------------------
@@ -66,6 +62,12 @@ To-do list
 
 :ref:`welfare` (für nach Oktober)
 ---------------------------------
+
+#.  Wenn man ein Parameter-Panel einmal geöffnet hat, dann bleibt dies
+    jetzt für alle weiteren Fenster so. Das ist zufällig gekommen. 
+    Ein Bug, der vielleicht ein Feature wird.
+
+#.  Doof, dass man nach den virtuellen Feldern nicht sortieren kann.
 
 #.  Schönheitsfehler: Wenn man Parameter-Panel zum ersten Mal öffnet, 
     ist es zu groß.

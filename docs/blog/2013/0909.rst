@@ -6,3 +6,20 @@ Updated :doc:`/todo`.
 I am going to have three days of forced holiday because I'm going to 
 enjoy a `FESS <http://en.wikipedia.org/wiki/Functional_endoscopic_sinus_surgery>`_ 
 in Tallinn.
+
+
+Commented on Alex Gaynor's blog post
+`Your project doesn't mean your playground
+<http://alexgaynor.net/2013/sep/08/your-project-doesnt-mean-your-playground/>`_.
+
+
+I fixed the following bug:
+
+-   When user changes some value of a parameter panel, then closes the 
+    window and reopens it, then Lino doesn't reset the parameterss to 
+    their default value.
+    
+    This was in `Lino.MainPanel` in :xfile:`linoweb.js`:
+    `_force_dirty` was never set to false.
+    
+    
