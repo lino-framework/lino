@@ -9,6 +9,9 @@
         <h2>{{_("Welcome")}}</h2>
         <p>{{_("Hi, %(first_name)s!") % dict(first_name=ar.get_user().first_name)}}
         {% set sep = joiner(',') %}
+        {% for msg in settings.SITE.get_welcome_messages(ar) %}
+            {{ E.tostring(msg) }}
+        {% endfor %}
         {% for table,text in settings.SITE.get_todo_tables(ar) %}
             {% set r = table.request(user=ar.get_user()) %}
             {% if r.get_total_count() != 0 %}

@@ -882,7 +882,7 @@ tinymce.init({
             (and report the same error message) on next request.
             """
             f.close()
-            os.remove(fn)
+            #~ os.remove(fn)
             raise
         #~ logger.info("Wrote %s ...", fn)
             
@@ -933,7 +933,10 @@ tinymce.init({
         #~ logger.info("20130804 gonna remove %s", [repr(a) for a in actors_list if settings.SITE.modules.resolve(str(a)) is not a])
         #~ actors_list = [a for a in actors_list if settings.SITE.modules.resolve(str(a)) is a]
           
-               
+        
+        # don't generate JS for abstract actors       
+        actors_list = [a for a in actors_list if not a.is_abstract()]
+        
         """
         Call Ext.namespace for *all* actors because e.g. outbox.Mails.FormPanel 
         is defined in ns outbox.Mails which is not directly used by non-expert users.

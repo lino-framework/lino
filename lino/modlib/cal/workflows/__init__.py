@@ -89,12 +89,8 @@ class GuestStates(dd.Workflow):
 
 add = GuestStates.add_item
 add('10', _("Invited"),'invited')
-add('20', _("Accepted"),'accepted') 
-add('30', _("Rejected"),'rejected')
-add('40', _("Present"),'present',afterwards=True)
-add('50', _("Absent"),'absent',afterwards=True)
-#~ add('60', _("Visit"),'visit')
-    
+
+# will be filled by importing either feedback or faggio
 
 
 class ResetEvent(dd.ChangeStateAction):

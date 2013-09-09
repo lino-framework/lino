@@ -71,6 +71,7 @@ class Site(Site):
     parameter of all tables who don't specify their own one.
     """
     
+    
     user_model = None
     "See :attr:`lino.ui.Lino.user_model`."
     
@@ -212,6 +213,8 @@ class Site(Site):
     """
     
     
+    _welcome_actors = []
+    
     
     
     def init_before_local(self,*args):
@@ -338,8 +341,11 @@ class Site(Site):
         
         from lino.ui.ui import ExtUI
         self.ui = ExtUI(self)
-    
 
+        from lino.core import actors
+        for a in actors.actors_list:
+            if a.get_welcome_messages is not None:
+                self._welcome_actors.append(a)
         
         
     #~ def shutdown(self):
@@ -1477,6 +1483,14 @@ class Site(Site):
         from lino.core import web
         return web.render_from_request(request,'admin_main.html')
         
+    def get_welcome_messages(self,ar):
+        """
+        Return or yield a list of messages to display for welcome.
+        """
+        for a in self._welcome_actors:
+            for msg in a.get_welcome_messages(ar):
+                yield msg
+                
     def get_todo_tables(self,ar):
         """
         Return or yield a list of tables that should be empty

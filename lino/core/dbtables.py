@@ -713,7 +713,7 @@ class Table(AbstractTable):
             or self.model._meta.abstract:
             #~ logger.info('20120621 %s : no real table',h)
             return True
-        return False
+        return self.abstract
           
     #~ @classmethod
     #~ def setup_permissions(self):

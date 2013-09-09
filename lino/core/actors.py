@@ -245,6 +245,7 @@ class ActorMetaClass(type):
         #~ classDict.setdefault('button_label',None)
         classDict.setdefault('title',None)
         classDict.setdefault('help_text',None)
+        classDict.setdefault('abstract',False)
         
         declared_label = classDict.pop('label',None)
         if declared_label is not None:
@@ -367,7 +368,6 @@ class Actor(actions.Parametrizable):
     
     _layout_class = layouts.ParamsLayout
     
-    
     #~ @property
     #~ def known_values(cls):
         #~ return cls.get_known_values()
@@ -405,6 +405,13 @@ class Actor(actions.Parametrizable):
         pass
         
     
+    
+    get_welcome_messages = None
+    """
+    If not None, this must be a class method which takes an ActionRequest 
+    and returns or yields a list of messages to displayed in the welcome 
+    screen.
+    """
     
     get_row_classes = None
     """
@@ -704,10 +711,15 @@ class Actor(actions.Parametrizable):
     def make_params_layout_handle(self,ui):
         return actions.make_params_layout_handle(self,ui)
         
-        
+    abstract = False
+    """
+    Set this to True to prevent Lino from generating useless JavaScript 
+    if this is just an abstract base class to be inherited by other actors.
+    """
+    
     @classmethod
     def is_abstract(cls):
-        return False
+        return cls.abstract
         
             
     @classmethod

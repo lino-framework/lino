@@ -14,3 +14,9 @@
 
 from lino.modlib.cal.workflows import *
 
+add = GuestStates.add_item
+#add('20', _("Accepted"),'accepted') 
+add('30', _("Excused"),'excused')
+add('40', _("Present"),'present',afterwards=True)
+add('50', _("Absent"),'absent',afterwards=True)
+#~ add('60', _("Visit"),'visit')

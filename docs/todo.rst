@@ -15,7 +15,13 @@ To-do list
     - Receive must set `GuestStates.busy` (and timestamp busy_since)
     - Checkout must set `GuestStates.gone` (and timestamp gone_since)
 
+#.  workflow_buttons zeigt die icons nicht mehr an. 
+    liegt an meiner änderung von vor einigen tagen wegen der Aktion 
+    "eid einlesen": die soll ja in der toolbar ein icon haben, aber 
+    *nicht* wenn es die Warnung "Muss eID-Karte einlesen" ist.
 
+#.  In WaitingClients it should not be alloed to delete a row because 
+    that would leave the cal.Event without Guest
 
 :ref:`faggio` (bis Oktober)
 ---------------------------

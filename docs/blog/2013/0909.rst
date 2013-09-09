@@ -13,7 +13,7 @@ Commented on Alex Gaynor's blog post
 <http://alexgaynor.net/2013/sep/08/your-project-doesnt-mean-your-playground/>`_.
 
 
-I fixed the following bug:
+Fixed the following bug:
 
 -   When user changes some value of a parameter panel, then closes the 
     window and reopens it, then Lino doesn't reset the parameterss to 
@@ -23,3 +23,27 @@ I fixed the following bug:
     `_force_dirty` was never set to false.
     
     
+Restructured the database and workflow in 
+:mod:`lino.modlib.reception`
+and
+:mod:`lino_welfare.modlib.reception`.
+
+:mod:`lino.modlib.reception` now adds
+3 new GuestStates specific to reception:
+
+- Checkin sets `GuestStates.waiting` (and waiting_since)
+- Receive sets `GuestStates.present` (and present_since)
+- Checkout sets `GuestStates.gone` (and gone_since)
+
+Renamed waiting_until to busy_since, present_until to gone_since.
+
+New welcome message "You are busy with <NAME1>, <NAME2>" if a user 
+has guests in state busy. Usually there should be never more than one 
+busy guest (at least in :ref:`welfare`) but there's no reason to set 
+an artificial limit.
+
+Some subtle new framework features:
+
+- :attr:`lino.core.actors.Actor.abstract`
+- :attr:`lino.core.actors.Actor.get_welcome_messages`
+

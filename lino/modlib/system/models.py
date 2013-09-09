@@ -338,6 +338,7 @@ if settings.SITE.user_model:
 
 class Home(mixins.EmptyTable):
     """
+    Deprecated. Use :xfile:`admin_main.html` instead.
     This is the "home page" or "welcome screen", the window to be displayed 
     when no other window is opened.
     """
@@ -384,6 +385,7 @@ class Home(mixins.EmptyTable):
         
     @dd.virtualfield(dd.HtmlBox(_('Welcome')))
     def welcome(cls,self,ar):
+        
         #~ MAXITEMS = 2
         u = ar.get_user()
         story = []
