@@ -2,21 +2,87 @@ To-do list
 ==========
 
 
-Nach 20130909
--------------
+:ref:`welfare` (Release nach Demo)
+----------------------------------
 
-#.  :attr:`is_demo_site <lino.site.Site.is_demo_site>` should not be an 
-    option in :class:`lino.site.Site` but a field of 
-    :class:`lino.modlib.system.SiteConfig`. And not just a boolean but 
-    a timestamp. Because certain unit tests would need that information.
+#.  Wenn Klient gegangen ist, dann steht die Visite als Termin unter 
+    "Meine Termine"
+    
+#.  There is still something wrong in the reception module.
+    Maybe we need 2 new GuestStates so that we can do:
 
-#.  Warnung wenn eID-Karte abgelaufen ist.
-  
+    - Checkin must set `GuestStates.waiting` (and timestamp waiting_since)
+    - Receive must set `GuestStates.busy` (and timestamp busy_since)
+    - Checkout must set `GuestStates.gone` (and timestamp gone_since)
+
+
+#.  Irritierender Bug : Wenn man im Parameter-Panel etwas ändert, dann das 
+    Fenster schließt und wieder öffnet, werden die Felder nicht auf den 
+    Standardwert zurück gesetzt. .
+
+
+:ref:`faggio` (bis Oktober)
+---------------------------
+
+#.  Preis manuell anpassbar pro Einschreibung und/oder pro Kurs 
+
+#.  Stornierte Einschreibungen sollen nicht fakturiert werden
+
+#.  invoicing_address testen. Z.B. für Ehepaare.
+
+#.  Kostenlose Teilnahmen: kriegen trotzdem eine "Rechnung" mit Betrag 0
+    weil uns das ein getrenntes Dokument spart. 
+    Oder doch eine getrennte Notizart "Terminliste".
+
+#.  Termine sollen nicht einzeln bestätigt werden müssen. 
+    Sollen gar keinen Status "veröffentlicht" haben.
+    
+#.  Wenn ein automatisch generierter Termin auf storniert gesetzt wurde, 
+    dann muss Lino (bei einem Kurs mit vorgesehener Anzahl Termine) 
+    dafür einen Ersatztermin generieren.
+    
+#.  Wie war das mit den Test-Karten? Kunde zahlt für eine Stunde, nimmt 
+    teil und entscheidet erst dann, ob er den Rest bezahlt. 
+    Produkt "Schnupperkarte". Manuelle Rechnung. Bei Einschreibung Betrag manuell anpassen.
+
+#.  Z.B. bei Kursen "Funktionale Gymnastik" stehen nicht unbedingt alle 
+    Termine bei der Anmeldung fest. 
+    Anklickbare Bemerkung "Termine unter Vorbehalt"?
+
+#.  Rechnung drucken mit Terminliste und/oder für mehrere Einschreibungen.
+
+#.  "Confirm all" geht nicht
+
+#.  Tabelle mit Rabatten : Ermäßigung je nach Schülerart (sowie eventuell je nach Artikel, Artikelgruppe,...)
+    
+#.  Wie macht man ein allgemeines Mailing (z.B. Angebot Jahreskarten).
+    Brauchen wir eine Tabelle `mailings.Mailing`?
+    
+#.  Späteinsteiger. Jemand steigt in einen begonnenen Kurs ein. 
+    Hat die ersten Stunden verpasst und soll die dann auch nicht fakturiert kriegen.
+
+#.  Buchhaltung: Bargeld-Kasse. Gutschriften erstellen können. Mahnungen ausdrucken.
+
+
+:ref:`welfare` (für nach Oktober)
+---------------------------------
+
+#.  Schönheitsfehler: Wenn man Parameter-Panel zum ersten Mal öffnet, 
+    ist es zu groß.
+
+#.  Wieso darf man keinen Termin erstellen für Benutzer ohne Profil?
+
+#.  Auto refresh for MyWaitingVisitors
+    
+#.  Eine echte Chronik bzw. Historik als virtuelle Tabelle, die ihre 
+    "Chronik-Einträge" aus diversen Quellen zusammensucht: 
+    history.HistoricEvents.add(name,model,field)
+    
 #.  Passfoto einlesen
  
-#.  "Bescheinigung erstellen" für pdf-Bescheinigungen ohne Parameter 
+#.  Bescheinigungen, die mit einem Klick rauskommen.
+    "Bescheinigung erstellen" für pdf-Bescheinigungen ohne Parameter 
     sollte sofort kommen.
-  
 
 #.  Wenn man in "Meine Aufgaben" manuell eine Aufgabe erstellt, dann 
     wird diese anschließend nicht auf der Startseite angezeigt. 
@@ -58,33 +124,68 @@ Nach 20130909
     Uploads pro Notiz sollten auch vom Klienten aus sichtbar sein.
 
 
+:ref:`patrols`
+--------------
+
+#.  Pour la prochaine visite de chantier:
+
+    - Period (year, month, state)
+    - PeriodStates: planning, active, done
+    - TimeTables h1 & h2
+    - Mission : name, h1, h2 (1 IntegerField per TimeTable)
+    - Need : mission, period, timtable, patrol 
+      (ex. "En Janvier il faut une patrouille H2 pour Jardins")
+    - Patrol : date, mission, team
+    - Team : timetable
+    
+    - subclass Agent(Employee) and Agent : timetable, area 
+      (i.e. the timtetable and area this agent is going to have 
+      *for the next period*. Updated automatically but with possible 
+      manual change.
+
+
+
+
 
 Bugs
 ----
 
-#. Sometimes, when dialog has many tabs, when I switch to another tab I see 
-   numerical indexes in comboboxes - not the textual values. After hitting 
-   refresh, everything is OK. This happens every time.
+#.  Sometimes, when dialog has many tabs, when I switch to another tab I see 
+    numerical indexes in comboboxes - not the textual values. After hitting 
+    refresh, everything is OK. This happens every time.
    
 #.  Ein Bug, der auch schon in der 1.4.8 war: wenn man das Detail eines Uploads, 
     der keine Reminder hat, via Permalink öffnet, dann ist die Tabelle der 
     Aufgaben nicht leer, sondern voll irgendwelcher Einträge.
     
-    Oder das gleiche Problem an anderer Stelle:     
+    Oder das gleiche Problem (auch ohne Permalink) an anderer Stelle:     
     VSEs eines Klienten im eigenen Fenster öffnen. 
     Doppelklick in Phantomzeile, um neuen VSE ze erstellen.
     VSE-Art auswählen und Fenster bestätigen.  
     --> der neue VSE hat dann scheinbar eine ganze Reihe von Terminen.
     Erst bei Klick auf den Refresh-Button wird die Tabelle leer.
+    
+    Idem für eine Notiz, dort is anfangs das Aufgaben-Fenster voll Schrott.
 
 
 
 Feature requests
 ----------------
 
+#.  A new lino.Site attribute `hidden_apps` 
+    for a locally configurable
+    list of apps to not install. For example in :ref:`welfare` 
+    there will be customers who don't use the `reception` app.
+    
+
+#.  :attr:`is_demo_site <lino.site.Site.is_demo_site>` should not be an 
+    option in :class:`lino.site.Site` but a field of 
+    :class:`lino.modlib.system.SiteConfig`. And not just a boolean but 
+    a timestamp. Because certain unit tests would need that information.
+
+
 #.  convert all App.verbose_name to their translations on startup?
     store the App class object in `Site.modules`. 
-
 
 #.  Have plain renderer use the new attribute 
     :attr:`lino.core.actors.Actor.get_row_class`, 
@@ -187,8 +288,6 @@ Feature requests
     Workaround: En attendant müssen die Benutzer wissen, dass sie 
     diese Kolonne vor dem Ausdruck selber ausblenden müssen.
 
-#.  Optisch kennzeichnen, wenn ein Kolonnentitel einen Hilfetext hat.
-
 #.  Versteckte Reiter werden nicht aktualisiert. 
     Das ist irritierend beim Arbeiten mit Budgets. 
     Z.B. im Reiter Vorschau muss man generell immer noch Refresh klicken, 
@@ -198,40 +297,10 @@ Feature requests
     > der Dropdown der Ausgaben immer noch die alten. Nur im "eigenen Fenster"
     > sind sie aktualisiert.
 
-#.  Hilfetexte: er könnte eigentlich auch gleich die Felder der 
-    Basisklassen anzeigen. 
-    Der Unterschied ist für den Benutzer nicht wichtig.
-
-#.  Picker for calendar color. Or at least a ChoiceList with names.
-    http://ext.ensible.com/forum/viewtopic.php?f=2&t=339
-    See :file:`calendar-colors.css`
-
-#.  http://www.sencha.com/learn/grid-faq/
-
 #.  http://code.google.com/p/support/wiki/ScriptedUploads
     http://wiki.python.org/moin/CheeseShopTutorial
     
-#.  Checkboxen können nicht aktiv sein, weil sie aufs change-Event nicht reagieren. 
-    Und das check-Event kann ich auch nicht nutzen, weil das auch schon beim 
-    loadRecord abgefeuert wird. Doof, aber scheinbar wahr.
-    
-    Stattdessen könnte ich ein spezielles `keyword attribute`
-    für Checkboxen machen::
-    
-      all_day = ExtAllDayField(_("all day"),disables=('end_time','start_time'))
-      
-    - :attr:`disables` : a list or tuple of names of fields which should become
-      disabled when the field is checked (and enabled when it is unchecked)
-    - :attr:`enables` : a list or tuple of names of fields which should become
-      enabled when the field is checked (and disabled when it is unchecked)
-      
-    Das hätte vor allem auch den Vorteil, dass dann überhaupt kein Ajax-Call 
-    nötig ist.
-    
-    En attendant ist das Feld Ganztags nicht aktiv, und die Uhrzeit-Felder 
-    werden *nicht* disabled wenn es angekreuzt ist. Weil man sonst nicht 
-    einfach einem Ganztagstermin eine Uhrzeit zuweisen kann.
-    
+
 #.  When a user tries to sort a column on a RemoteField, the server says::
 
       FieldError
@@ -403,6 +472,9 @@ Medium-term
     dbinit hook which asks to create a superuser, as 
     `django.contrib.auth` does.
 
+
+#.  Check whether this is interesting:
+    https://pypi.python.org/pypi/stevedore
 
 #.  Must I implement a way to make sure that for any existing 
     Voucher record there's always one and only one MTI child in one of the 
@@ -921,22 +993,9 @@ Long-term
    Etwa ein eigenes Feld `Company.is_health_insurance`?
    Oder auf den Berufscode filtern?
 
-#. Die Buttons der tbar sollten mit Icons versehen werden. 
-   Für manche Funktionen (Insert,Delete) gibt es vielleicht 
-   schon Icons aus der ExtJS.
 
 #. Abfragen mit komplexen Bedingungen zur Suche nach Personen
 
-#. Benutzbarkeit per Tastatur verbessern (issue 11, issue 64) 
-
-#. Sehen können, nach welcher Kolonne eine Grid sortiert ist.
-
-#. Prüfen, ob die neuen ExtJS-Features für Lino interessant sind:
-
-  - `Forms with vbox Layout <http://dev.sencha.com/deploy/dev/examples/form/vbox-form.html>`_ 
-  - `Composite Form Fields <http://dev.sencha.com/deploy/dev/examples/form/composite-field.html>`_ 
-
-#. Filter auf virtuelle Kolonnen setzen können. Siehe :blogref:`20100811`.
 
 #. In Kolonne Sprachkenntnisse kann man noch keinen Filter setzen. 
    Wenn man es tut, kommt auf dem Server ein 
@@ -947,34 +1006,24 @@ Long-term
    des Ziel-Reports ein Suchfeld. Damit man z.B. nach allen Personen suchen kann, 
    die eine Sprache "mündlich mindestens gut und schriftlich mindestens ausreichend" kennen
   
-#.  Layout von Detail-Fenstern : in Lino sind die "Zeilen" momentan ja immer 
-    im "Blocksatz" (also links- und rechtsbündig). Das ist unkonventionell: 
-    alle RIA die ich kenne, machen ihre Formulare nur linksbündig.
 
-#.  HtmlEditor oder TextArea? Der HtmlEditor verursacht deutliche 
-    Performanceeinbußen beim Bildschirmaufbau von Detail-Fenstern. 
-    Die Wahl sollte konfigurierbar sein. Markup auch.
 
-#.  Das Detail-Fenster sollte vielleicht par défaut nicht im Editier-Modus 
-    sein, sondern unten ein Button "Edit", und erst wenn man darauf klickt, 
-    werden alle Felder editierbar (und der Record in der Datenbank blockiert), 
-    und unten stehen dann zwei Buttons "Save" und "Cancel". Wobei darauf zu 
-    achten ist was passiert, wenn man während des Bearbeitens in der Grid 
-    auf eine andere Zeile klickt. Dann muss er am besten das Detail-Fenster 
-    speichern, und falls dort ungültige Daten stehen, in der Grid den 
-    Zeilenwechsel verweigern.
 
-#. `Report.date_format` muss in der Syntax des UI (d.h. ExtJS) angegeben werden. 
 
-#. Prüfen, ob Dokumentvorlagen im `XSL-FO-Format <http://de.wikipedia.org/wiki/XSL-FO>`__ besser wären. `Apache FOP <http://xmlgraphics.apache.org/fop/>`__ als Formatierer. Warum OpenOffice.org nicht schon lange XSL-FO kann, ist mir ein Rätsel. AbiWord dagegen soll es können (laut `1 <http://www.ibm.com/developerworks/xml/library/x-xslfo/>`__ und `2 <http://searjeant.blogspot.com/2008/09/generating-pdf-from-xml-with-xsl-fo.html>`__).
+
+
+
+#. Prüfen, ob Dokumentvorlagen im `XSL-FO-Format <http://de.wikipedia.org/wiki/XSL-FO>`__ besser wären. 
+  `Apache FOP <http://xmlgraphics.apache.org/fop/>`__ als Formatierer. 
+  Warum OpenOffice.org nicht schon lange XSL-FO kann, ist mir ein Rätsel. 
+  AbiWord dagegen soll es können (laut `1 <http://www.ibm.com/developerworks/xml/library/x-xslfo/>`__ 
+  und `2 <http://searjeant.blogspot.com/2008/09/generating-pdf-from-xml-with-xsl-fo.html>`__).
 
 #. Inwiefern überschneiden sich :mod:`lino.modlib.system.models.SiteConfig` und :mod:`django.contrib.sites`? 
 
 #. Benutzerverwaltung von der Kommandozeile aus. 
-   In Lino-PCSW gibt es :xfile:`make_staff.py`, aber das ist nur ein sehr primitives Skript.
+   In Lino gibt es :xfile:`make_staff.py`, aber das ist nur ein sehr primitives Skript.
   
-#. Im Fenster :menuselection:`System --> Site Configuration` müssten Delete und Insert noch weg. 
-
 #. http://code.google.com/p/extjs-public/
    und
    http://www.sencha.com/blog/2009/06/10/building-a-rating-widget-with-ext-core-30-final-and-google-cdn/
@@ -1010,12 +1059,8 @@ Long-term
   
 #. Insert-Fenster: Für die Situationen, wo man viele neue Records hintereinander erfasst, könnte
    vielleicht ein zusätzlicher Knopf "Save and insert another" (wie im Django-Admin), 
-   oder aber das automatische Schließen des Insert-Fensters im Report abschalten können.
+   oder aber das automatische Schließen des Insert-Fensters pro Tabelle abschalten können.
 
-#. ReportRequest und/oder ViewReportRequest sind (glaube ich) ein Fall für 
-   `Django-Middleware <http://docs.djangoproject.com/en/dev/topics/http/middleware/>`_.
-  
-  
 #. Wenn ich einen Slave-Report sowohl in der Grid als auch in einem Detail als Element benutze, 
    dann verursacht das einen Konflikt im ext_store.Store, weil er zwei virtuelle fields.HtmlBox-Felder 
    mit dem gleichen Namen erzeugt, die sich nur durch den row_separator unterscheiden.
@@ -1024,12 +1069,7 @@ Long-term
 #. Für :class:`lino.utils.printable.LatexBuildMethod` müsste mal ohne viel Aufwand 
    ein kleines Beispiel implementiert werden.
   
-#. Sollten Links hierarchisiert werden können? 
-   Das hieße ein Feld :attr:`links.Link.parent` und ein TreePenel.
-  
 #. Die HtmlBox braucht noch ein `autoScroll:true` für wenn viele Links da sind.
-
-#. Neues Feld :attr:`links.Link.sequence`, und :class:`links.LinksByOwner` sollte dann danach sortiert sein.
   
 #. Problem mit :meth:`contacts.Contact.address`. 
    Wenn ich dieses Feld in :class:`contacts.Persons` benutze, sagt er
@@ -1041,18 +1081,12 @@ Long-term
    mit allen Datenfeldern im gleichen Namensraum übertragen.
    Deshalb sind Feldnamen wie mt, mk und fmt momentan nicht möglich.
 
-#. Verändern der Reihenfolge per DnD in :class:`links.LinksByOwner`.
+#. Verändern der Reihenfolge von Sequenced per DnD.
     
 #. Wir brauchen in :class:`notes.Note` noch eine Methode `type_choices` und 
    in :class:`notes.NoteType` ein Feld `only_for_owner_model`, das die Auswahlliste 
    für Notizart ggf. auf bestimmte Arten von Owner beschränkt.
   
-#. Lässt sich mein System von config-Dateien unter Verwendung von 
-   django.templates.loader neu implementieren? Erste Prognose lautet 
-   eher negativ, 
-   weil der template loader Django immer Template aus der Datei macht und 
-   den tatsächlichen Dateinamen nicht preisgibt.
-
 #. :mod:`lino.modlib.ledger` und :mod:`lino.modlib.finan` 
    könnten zusammengeschmolzen werden, 
    denn ich kann mir nicht vorstellen, 
@@ -1082,7 +1116,7 @@ Long-term
 #.  Use :meth:`Action.run` in general, not only for RowAction. 
     See :blogref:`20101124`
   
-#.  Warnung, wenn das gleiche Feld mehrmals in einem Detail 
+#.  Lino sollte warnen, wenn das gleiche Feld mehrmals in einem Layout
     vorkommt (z.B. in verschiedenen Reitern).
     Oder besser: diesen Fall zulassen.
    
@@ -1101,8 +1135,6 @@ Long-term
 
 #.  :doc:`/tickets/26`
 
-#.  Man kann es momentan nicht verhindern, dass ein Babel-Feld expandiert wird.
-    
 #.  Check whether Lino should use
     http://django-rest-framework.org/
     instead of reinventing the wheel.
@@ -1115,7 +1147,8 @@ Together with a Linux freak
 
 #.  `How to LSBize an Init Script <http://wiki.debian.org/LSBInitScripts>`_
 
-#.  all_countries.py : load english countries from 
+#.  all_countries.py : instead of maintaining my own list of countries,
+    load english countries from 
     `/usr/share/zoneinfo/iso3166.tab`
     But how to find the same in French, German, Estonian?
     Or, maybe better, use `python-babel`.
@@ -1134,30 +1167,16 @@ Together with a Linux freak
 Documentation
 -------------
 
-#.  Anpassungen :doc:`/admin/install` an Debian Squeeze.
-    OpenOffice bzw. LibreOffice braucht jetzt wahrscheinlich 
-    nicht mehr manuell installiert zu werden.
-
-#.  Wenn ich in der INSTALLED_APPS von lino.demos.std.settings 
-    auch die igen-Module reintue, dann kriege ich::
-  
-     ref\python\lino.modlib.dsbe.rst:17: (WARNING/2) autodoc can't import/find module 'lino.projects.dsbe.models', 
-     it reported error: "resolve_model('contacts.Company',app_label='contacts',who=None) found None"
-
-#.  ``make doctest`` nutzbar machen. Siehe :blogref:`20101024`
 
 #.  Check whether 
     `pydocweb <https://github.com/pv/pydocweb/tree/master/docweb>`_    
     would be useful.
 
-#.  I'm trying to document several Django applications on a single Sphinx tree. 
-    Django modules have the requirement that an environment variable DJANGO_SETTINGS_MODULE be set when importing them. 
-    Maybe one way is to add an `environment` option to the `automodule` directive?
-
 #.  Ausprobieren, was David De Sousa am 12.11.2009 auf sphinx-dev gepostet hat.
 
 #.  Creating application-specific DetailLayouts disables the effect of eventual 
     `add_detail_tab` calls by other installed apps.
+    
     Example: :mod:`lino.projects.pcsw` used 
     to create its own UserDetail, a subclass of 
     :class:`lino.modlib.users.models.UserDetail`. 
@@ -1186,6 +1205,71 @@ Benutzern überlegen.
     kriegen können.
     Zu analysieren mit den Benutzern.
 
+
+Javascript
+----------
+
+#.  Benutzbarkeit per Tastatur verbessern (issue 11, issue 64) 
+
+#. Sehen können, nach welcher Kolonne eine Grid sortiert ist.
+
+#. Prüfen, ob die neuen ExtJS-Features für Lino interessant sind:
+
+  - `Forms with vbox Layout <http://dev.sencha.com/deploy/dev/examples/form/vbox-form.html>`_ 
+  - `Composite Form Fields <http://dev.sencha.com/deploy/dev/examples/form/composite-field.html>`_ 
+
+#. Filter auf virtuelle Kolonnen setzen können. Siehe :blogref:`20100811`.
+
+
+#.  Picker for calendar color. Or at least a ChoiceList with names.
+    http://ext.ensible.com/forum/viewtopic.php?f=2&t=339
+    See :file:`calendar-colors.css`
+
+#.  Optisch kennzeichnen, wenn ein Kolonnentitel einen Hilfetext hat.
+
+#.  http://www.sencha.com/learn/grid-faq/
+
+#.  Checkboxen können nicht aktiv sein, weil sie aufs change-Event nicht reagieren. 
+    Und das check-Event kann ich auch nicht nutzen, weil das auch schon beim 
+    loadRecord abgefeuert wird. Doof, aber scheinbar wahr.
+    
+    Stattdessen könnte ich ein spezielles `keyword attribute`
+    für Checkboxen machen::
+    
+      all_day = ExtAllDayField(_("all day"),disables=('end_time','start_time'))
+      
+    - :attr:`disables` : a list or tuple of names of fields which should become
+      disabled when the field is checked (and enabled when it is unchecked)
+    - :attr:`enables` : a list or tuple of names of fields which should become
+      enabled when the field is checked (and disabled when it is unchecked)
+      
+    Das hätte vor allem auch den Vorteil, dass dann überhaupt kein Ajax-Call 
+    nötig ist.
+    
+    En attendant ist das Feld Ganztags nicht aktiv, und die Uhrzeit-Felder 
+    werden *nicht* disabled wenn es angekreuzt ist. Weil man sonst nicht 
+    einfach einem Ganztagstermin eine Uhrzeit zuweisen kann.
+    
+
+
+
+
+#.  Layout von Detail-Fenstern : in Lino sind die "Zeilen" momentan ja immer 
+    im "Blocksatz" (also links- und rechtsbündig). Das ist unkonventionell: 
+    alle RIA die ich kenne, machen ihre Formulare nur linksbündig.
+
+#.  HtmlEditor oder TextArea? Der HtmlEditor verursacht deutliche 
+    Performanceeinbußen beim Bildschirmaufbau von Detail-Fenstern. 
+    Die Wahl sollte konfigurierbar sein. Markup auch.
+
+#.  Das Detail-Fenster sollte vielleicht par défaut nicht im Editier-Modus 
+    sein, sondern unten ein Button "Edit", und erst wenn man darauf klickt, 
+    werden alle Felder editierbar (und der Record in der Datenbank blockiert), 
+    und unten stehen dann zwei Buttons "Save" und "Cancel". Wobei darauf zu 
+    achten ist was passiert, wenn man während des Bearbeitens in der Grid 
+    auf eine andere Zeile klickt. Dann muss er am besten das Detail-Fenster 
+    speichern, und falls dort ungültige Daten stehen, in der Grid den 
+    Zeilenwechsel verweigern.
 
 
 Tickets

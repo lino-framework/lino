@@ -159,12 +159,3 @@ Instead of this I  replaced the `reload()` cal in refresh() by `load()`
 so that it works also on first invocation.
 
 
-TODO
-----
-
-- Irritierender Bug : Wenn man im Parameter-Panel etwas ändert, dann das 
-  Fenster schließt und wieder öffnet, werden die Felder nicht auf den 
-  Standardwert zurück gesetzt. .
-- Schönheitsfehler: Wenn man Parameter-Panel zum ersten Mal öffnet, ist es zu groß.
-- Icon für Create visit
-
