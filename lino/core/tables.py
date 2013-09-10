@@ -1008,7 +1008,7 @@ class AbstractTable(actors.Actor):
         return actions.GridEdit()
         
     @classmethod
-    def class_init(self):
+    def unused_class_init(self):
         """
         Sets table-specific default values for certain attributes.
         """
@@ -1020,12 +1020,14 @@ class AbstractTable(actors.Actor):
             #~ self.show_detail_navigator = False
             
         """
-        :class:`lino_welfare.modellib.debts.models.DistByBudget` 
+        :mod:`lino_welfare.modlib.debts.models`,
+        :class:`DistByBudget` 
         defines its own `get_data_rows` but inherits from 
-        :class:`lino_welfare.modellib.debts.models.EntriesByBudget` 
+        :class:`EntriesByBudget` 
         which has no `get_data_rows`.
         """
-        if self.__dict__.get('editable') is None:
+        if self.editable is None:
+        #~ if self.__dict__.get('editable') is None:
             self.editable = (self.get_data_rows is None)
             #~ logger.info("20130204 %s editable = %s",self.__name__,self.editable)
         #~ if self.editable is None:
@@ -1035,6 +1037,13 @@ class AbstractTable(actors.Actor):
         super(AbstractTable,self).class_init()
       
       
+    @classmethod
+    def get_actor_editable(self):
+        if self._editable is None:
+            return (self.get_data_rows is None)
+        return self._editable
+                        
+        
         
       
     #~ @classmethod

@@ -5,7 +5,7 @@ To-do list
 :ref:`welfare` (Release nach Demo)
 ----------------------------------
 
-#.  In WaitingClients it should not be alloed to delete a row because 
+#.  In WaitingClients it should not be allowed to delete a row because 
     that would leave the cal.Event without Guest
 
 :ref:`faggio` (bis Oktober)

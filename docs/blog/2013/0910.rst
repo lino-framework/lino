@@ -1,0 +1,24 @@
+=====================================
+20130910 (Tuesday, 10 September 2013)
+=====================================
+
+Worked on this:
+
+-   In `reception.WaitingVisitors` it should not be allowed to delete a row because 
+    that would leave the cal.Event without Guest.
+    
+I'll first try to simply make all variants of `Visitors` tables 
+readonly by setting `editable=False`.
+
+This made me stumble on something similar to what we had a few 
+days ago where the `label` of an Actr wasn't inherited.
+Now it is the `editable` property.
+I applied the same changes for `editable`.
+
+MyWaitingVisitors is maybe not needed as a menu entry since it is also 
+a get_admin_main_items. 
+But if i remove it then i must edit pcsw_tests.py.
+Waiting for user feedback before doing this.
+
+Removed a test case from :ref:`welfare.tested.debts`
+because (1) it failed und (2) was rather strange anyway.

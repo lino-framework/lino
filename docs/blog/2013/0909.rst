@@ -29,10 +29,10 @@ and
 :mod:`lino_welfare.modlib.reception` to solve the following problems:
 
 
-#.  Wenn Klient gegangen ist, dann steht die Visite als Termin unter 
+-   Wenn Klient gegangen ist, dann steht die Visite als Termin unter 
     "Meine Termine"
     
-#.  There is still something wrong in the reception module.
+-   There is still something wrong in the reception module.
     Maybe we need 2 new GuestStates so that we can do:
 
     - Checkin must set `GuestStates.waiting` (and timestamp waiting_since)
@@ -40,14 +40,13 @@ and
     - Checkout must set `GuestStates.gone` (and timestamp gone_since)
 
 
+Renamed waiting_until to busy_since, present_until to gone_since.
 :mod:`lino.modlib.reception` now adds
 3 new GuestStates specific to reception:
 
 - Checkin sets `GuestStates.waiting` (and waiting_since)
-- Receive sets `GuestStates.present` (and present_since)
+- Receive sets `GuestStates.busy` (and busy_since)
 - Checkout sets `GuestStates.gone` (and gone_since)
-
-Renamed waiting_until to busy_since, present_until to gone_since.
 
 New welcome message "You are busy with <NAME1>, <NAME2>" if a user 
 has guests in state busy. Usually there should be never more than one 
@@ -61,7 +60,7 @@ Some subtle new framework features:
 
 Fixed an internal bug:
 
-#.  workflow_buttons zeigt die icons nicht mehr an. 
+-   workflow_buttons zeigt die icons nicht mehr an. 
     liegt an meiner änderung von vor einigen tagen wegen der Aktion 
     "eid einlesen": die soll ja in der toolbar ein icon haben, aber 
     *nicht* wenn es die Warnung "Muss eID-Karte einlesen" ist.

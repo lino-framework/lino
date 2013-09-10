@@ -161,9 +161,9 @@ class CheckinVisitor(dd.NotifyingAction):
     show_in_workflow = True
     
     #~ required = dict(states='invited accepted') 
-    required = dd.Required(user_groups='reception')
+    required = dd.Required(user_groups='reception',states='waiting')
     
-    def get_action_permission(self,ar,obj,state):
+    def unused_get_action_permission(self,ar,obj,state):
         if obj.event.start_date != datetime.date.today():
             return False
         if obj.waiting_since is not None:
@@ -406,6 +406,11 @@ if False:
         return naturaltime(obj.busy_since) # *received since* == *waiting until* 
     
 class Visitors(cal.Guests):
+    """
+    No subclass should be editable because deleting would leave the 
+    useless cal.Event.
+    """
+    editable = False 
     abstract = True
     column_names = 'since partner event__user event__summary workflow_buttons'
     #~ hidden_columns = 'waiting_since busy_since gone_since'
@@ -448,17 +453,6 @@ class BusyVisitors(Visitors):
     def since(self,obj,ar):
         return naturaltime(obj.busy_since)
         
-class GoneVisitors(Visitors):
-    label = _("Gone visitors")
-    help_text = _("Shows the visitors who have gone.")
-    visitor_state = GuestStates.gone
-    order_by = ['gone_since-']
-    required = dd.Required(user_groups='reception')
-    
-    @dd.displayfield(_('Since'))
-    def since(self,obj,ar):
-        return naturaltime(obj.gone_since)
-        
 class WaitingVisitors(Visitors):
     label = _("Waiting visitors")
     help_text = _("Shows the visitors in the waiting room.")
@@ -484,6 +478,22 @@ class WaitingVisitors(Visitors):
           waiting_since__lt=obj.waiting_since).count()
         return str(n)
         
+class GoneVisitors(Visitors):
+    label = _("Gone visitors")
+    help_text = _("Shows the visitors who have gone.")
+    visitor_state = GuestStates.gone
+    order_by = ['gone_since-']
+    required = dd.Required(user_groups='reception')
+    
+    @dd.displayfield(_('Since'))
+    def since(self,obj,ar):
+        return naturaltime(obj.gone_since)
+        
+class MyWaitingVisitors(MyVisitors,WaitingVisitors):
+    label = _("Visitors waiting for me")
+    required = dd.Required(user_groups='integ debts newcomers')
+    #~ column_names = 'since partner event__summary workflow_buttons'
+    
 class MyBusyVisitors(MyVisitors,BusyVisitors):
     label = _("Visitors busy with me")
     required = dd.Required(user_groups='integ debts newcomers')
@@ -506,11 +516,6 @@ class MyBusyVisitors(MyVisitors,BusyVisitors):
             yield E.span(*chunks)
                 
     
-class MyWaitingVisitors(MyVisitors,WaitingVisitors):
-    label = _("Visitors waiting for me")
-    required = dd.Required(user_groups='integ debts newcomers')
-    #~ column_names = 'since partner event__summary workflow_buttons'
-    
 class MyGoneVisitors(MyVisitors,GoneVisitors):
     label = _("My gone visitors")
     required = dd.Required(user_groups='integ debts newcomers')
@@ -530,11 +535,19 @@ def setup_main_menu(site,ui,profile,m):
     #~ m.add_action(Clients,'find_by_beid')
     #~ m.add_action(Clients)
     #~ m.add_action(ExpectedGuests)
-    m.add_action(MyWaitingVisitors)
-    m.add_action(MyBusyVisitors)
+    #~ m.add_action(MyWaitingVisitors)
+    #~ m.add_action(MyBusyVisitors)
     
     m.add_action(WaitingVisitors)
     m.add_action(BusyVisitors)
+    m.add_action(GoneVisitors)
+    
+    """
+    MyWaitingVisitors is maybe not needed as a menu entry since it is also a get_admin_main_items
+    if i remove it then i must edit pcsw_tests.py
+    Waiting for user feedback before doing this.
+    """
+    m.add_action(MyWaitingVisitors)
     #~ m.add_action(ReceivedVisitors)
     #~ m.add_action(ExpectedGuests,params=dict(param_values=dict(only_expected=True)))
     #~ m.add_action(WaitingVisitors,params=dict(param_values=dict(only_waiting=True)))

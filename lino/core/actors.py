@@ -253,6 +253,9 @@ class ActorMetaClass(type):
         declared_known_values = classDict.pop('known_values',None)
         if declared_known_values is not None:
             classDict.update(_known_values=declared_known_values)
+        declared_editable = classDict.pop('editable',None)
+        if declared_editable is not None:
+            classDict.update(_editable=declared_editable)
         
         cls = type.__new__(meta, classname, bases, classDict)
         
@@ -351,6 +354,10 @@ class ActorMetaClass(type):
     @property
     def known_values(cls):
         return cls.get_known_values()
+        
+    @property
+    def editable(cls):
+        return cls.get_actor_editable()
         
 
 
@@ -626,6 +633,7 @@ class Actor(actions.Parametrizable):
     """
     
     _label = None
+    _editable = None
     _known_values = {}
     """
     A `dict` of `fieldname` -> `value` pairs that specify "known values".
@@ -914,11 +922,13 @@ class Actor(actions.Parametrizable):
     def get_actor_label(self):
         """
         Compute the label of this actor. 
-        Called only if `label` is not set, and only once during site startup.
         """
         return self._label or self.__name__
                         
-        
+    @classmethod
+    def get_actor_editable(self):
+        return self._editable
+                        
     @classmethod
     def hide_elements(self,*names):
         for name in names:
