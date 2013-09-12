@@ -5,13 +5,15 @@ To-do list
 :ref:`welfare` (Release nach Demo)
 ----------------------------------
 
-#.  In WaitingClients it should not be allowed to delete a row because 
-    that would leave the cal.Event without Guest
+#.  testen
 
 :ref:`faggio` (bis Oktober)
 ---------------------------
 
-#.  Preis manuell anpassbar pro Einschreibung und/oder pro Kurs 
+Die folgenden Punkte sind jetzt fast alle geregelt. 
+Nächste Besichtigung machen.
+
+#.  Preis manuell anpassbar pro Einschreibung und/oder pro Kurs
 
 #.  Stornierte Einschreibungen sollen nicht fakturiert werden
 
@@ -37,8 +39,6 @@ To-do list
     Anklickbare Bemerkung "Termine unter Vorbehalt"?
 
 #.  Rechnung drucken mit Terminliste und/oder für mehrere Einschreibungen.
-
-#.  "Confirm all" geht nicht
 
 #.  Tabelle mit Rabatten : Ermäßigung je nach Schülerart (sowie eventuell je nach Artikel, Artikelgruppe,...)
     
@@ -76,6 +76,9 @@ To-do list
 #.  Bescheinigungen, die mit einem Klick rauskommen.
     "Bescheinigung erstellen" für pdf-Bescheinigungen ohne Parameter 
     sollte sofort kommen.
+    
+#.  Bescheinigungen mit "einfachen" Parametern, d.h. deren Inhalt 
+    nicht direkt gespeichert wird.
 
 #.  Wenn man in "Meine Aufgaben" manuell eine Aufgabe erstellt, dann 
     wird diese anschließend nicht auf der Startseite angezeigt. 

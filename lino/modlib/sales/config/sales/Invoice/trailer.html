@@ -1,0 +1,9 @@
+<div>
+{% block payment %}
+<p class="Default">
+{{_("Date of payment")}} : {{dtos(this.due_date)}}
+<br/>
+{{_("Payment terms")}} : {{this.payment_term}}
+</p>
+{% endblock %}
+</div>

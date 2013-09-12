@@ -20,9 +20,6 @@ Usage:
 
 >>> from django.conf import settings
 >>> settings.SITE.startup()
-
-One thing to avoid doctest side-effects is not necessary in your code:
-
 >>> from lino.core.choicelists import *
 
 >>> from django.utils import translation
@@ -70,6 +67,31 @@ False
 False
 
 
+Defining your own ChoiceLists
+-----------------------------
+
+>>> class MyColors(Choicelist):
+...     verbose_name_plural = "My colors"
+>>> MyColors.add_item('01',("Red"),'red')
+>>> MyColors.add_item('02',("Green"),'green')
+
+`add_item` takes at least 2 and optionally a third positional argument:
+
+- The `value` is used to store this Choice in the database and for 
+  sorting the choices.
+- The `text` is what the user sees. It should be translatable.
+- The optional `name` is used to install this choice as a class 
+  attribute on the ChoiceList.
+
+  
+The `value` must be a string.
+  
+>>> MyColors.add_item(1,("Green"),'green')
+>>> MyColors.add_item(1,("Green"),'verbose_name_plural')
+  
+
+ChoiceListField
+---------------
 
 Example on how to use a ChoiceList in your model::
 
@@ -91,6 +113,7 @@ logger = logging.getLogger(__name__)
 
 
 import sys
+import warnings
 
 #~ from django.utils.functional import Promise
 from django.utils.translation import ugettext_lazy as _
@@ -115,9 +138,12 @@ class Choice(object):
 
     """
     choicelist = None
+    remark = None
     
     def __init__(self,value,text,name,**kw):
         #~ self.choicelist = choicelist
+        if not isinstance(value,basestring):
+            raise Exception("value must be a string")
         self.value = value
         self.text = text
         self.name = name
@@ -252,6 +278,8 @@ class ChoiceList(tables.AbstractTable):
     The class of items of this list.
     """
     
+    auto_fit_column_widths = True
+    
     #~ blank = True
     #~ """
     #~ Set this to False if you don't want to accept 
@@ -316,7 +344,7 @@ class ChoiceList(tables.AbstractTable):
     hidden_columns = frozenset()
     @classmethod
     def get_column_names(self,ar):
-        return 'value name text'
+        return 'value name text remark'
         
     @classmethod
     def get_data_elem(self,name):
@@ -329,6 +357,15 @@ class ChoiceList(tables.AbstractTable):
     @fields.virtualfield(models.CharField(_("value"),max_length=20))
     def value(cls,choice,ar):
         return choice.value
+        
+    @fields.displayfield(_("Remark"))
+    def remark(cls,choice,ar):
+        return choice.remark
+        #~ txt = unicode(getattr(choice,'remark',''))
+        #~ print repr(txt)
+        #~ txt = ""
+        #~ return txt
+        
         
     @fields.virtualfield(models.CharField(_("text"),max_length=50))
     def text(cls,choice,ar):
@@ -406,8 +443,11 @@ class ChoiceList(tables.AbstractTable):
     def add_item_instance(cls,i):
         #~ if cls is ChoiceList:
             #~ raise Exception("Cannot define items on the base class")
+        is_duplicate = False
         if cls.items_dict.has_key(i.value):
-            raise Exception("Duplicate value %r in %s." % (i.value,cls))
+            #~ raise Exception("Duplicate value %r in %s." % (i.value,cls))
+            warnings.warn("Duplicate value %r in %s." % (i.value,cls))
+            is_duplicate = True
         i.attach(cls)
         dt = cls.display_text(i)
         cls.choices.append((i,dt))
@@ -427,9 +467,10 @@ Django creates copies of them when inheriting models.
                 #~ fld.set_max_length(cls.max_length)
         if i.name:
             #~ if hasattr(cls,i.name):
-            if cls.__dict__.has_key(i.name):
-                raise Exception("An item named %r is already defined in %s" % (
-                    i.name,cls.__name__))
+            if not is_duplicate:
+                if cls.__dict__.has_key(i.name):
+                    raise Exception("An item named %r is already defined in %s" % (
+                        i.name,cls.__name__))
             setattr(cls,i.name,i)
             #~ i.name = name
         return i

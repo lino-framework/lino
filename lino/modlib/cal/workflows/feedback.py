@@ -55,15 +55,22 @@ from lino.modlib.cal.workflows import (TaskStates,
     EventStates,GuestStates)
     
 #~ EventStates.add_item('30', _("Accepted"), 'accepted')
+add = EventStates.add_item
+add('40', _("Published"), 'published',edit_guests=True)
+    
 
-add = GuestStates.add_item
-#~ add('10', _("Invited"),'invited')
-add('20', _("Accepted"),'accepted') 
-add('30', _("Rejected"),'rejected')
-add('40', _("Present"),'present',afterwards=True)
-#~ add('41', _("Gone"),'gone',afterwards=True)
-add('50', _("Absent"),'absent',afterwards=True)
-#~ add('60', _("Visit"),'visit')
+#~ @dd.receiver(dd.pre_analyze)
+#~ def my(sender,**kw):
+if True:
+    add = GuestStates.add_item
+    #~ add('10', _("Invited"),'invited')
+    add('20', _("Accepted"),'accepted') 
+    add('30', _("Rejected"),'rejected')
+    add('40', _("Present"),'present',afterwards=True)
+    #~ add('41', _("Gone"),'gone',afterwards=True)
+    add('50', _("Absent"),'absent',afterwards=True)
+    #~ add('60', _("Visit"),'visit')
+    
 
 
 class InvitationFeedback(dd.ChangeStateAction,dd.NotifyingAction):
@@ -89,10 +96,34 @@ class AcceptInvitation(InvitationFeedback):
     help_text = _("Accept this invitation.")  
     required = dict(states='invited rejected') # ,owner=False)
     notify_subject = _("%(guest)s confirmed invitation %(day)s at %(time)s")
+
+
+class ResetEvent(dd.ChangeStateAction):
+    label = _("Reset")
+    icon_name = 'cancel'
+    #~ required = dict(states='assigned',owner=True)
+    #~ required = dict(states='published rescheduled took_place')#,owner=True)
+    required = dict(states='published took_place')#,owner=True)
+    #~ help_text=_("Return to Draft state and restart workflow for this event.")
+  
+    def unused_run_from_ui(self,ar,**kw):
+        obj = ar.selected_rows[0]
+        if obj.guest_set.exclude(state=GuestStates.invited).count() > 0:
+            def ok():
+                for g in obj.guest_set.all():
+                    g.state = GuestStates.invited
+                    g.save()
+            return ar.confirm(ok,_("This will reset all invitations"),_("Are you sure?"))
+        else:
+            ar.confirm(self.help_text,_("Are you sure?"))
+        kw = super(ResetEvent,self).run_from_ui(ar,**kw)
+        return kw
+    
+
     
     
 @dd.receiver(dd.pre_analyze)
-def my_setup_workflows(sender=None,**kw):
+def my_guest_workflows(sender=None,**kw):
     
     site = sender
     
@@ -131,3 +162,32 @@ def my_setup_workflows(sender=None,**kw):
                 #~ for obj in site.modules.cal.Membership.objects.filter(group=ug).exclude(user=self.user):
                     #~ if obj.user.partner:
                         #~ site.modules.cal.Guest(event=self,partner=obj.user.partner).save()
+
+@dd.receiver(dd.pre_analyze)
+def my_event_workflows(sender=None,**kw):
+    
+    #~ EventStates.draft.add_transition(_("Accept"),
+        #~ states='suggested',
+        #~ owner=True,
+        #~ icon_file='book.png',
+        #~ help_text=_("User takes responsibility for this event. Planning continues."))
+    #~ EventStates.draft.add_transition(TakeAssignedEvent)
+    EventStates.published.add_transition(#_("Confirm"), 
+        #~ states='new draft assigned',
+        states='suggested draft',
+        #~ owner=True,
+        icon_name='accept',
+        help_text=_("Mark this as published. All participants have been informed."))
+    EventStates.took_place.add_transition(
+        states='published draft',
+        #~ owner=True,
+        help_text=_("Event took place."),
+        icon_name='emoticon_smile')
+    #~ EventStates.absent.add_transition(states='published',icon_file='emoticon_unhappy.png')
+    #~ EventStates.rescheduled.add_transition(_("Reschedule"),
+        #~ states='published',icon_file='date_edit.png')
+    EventStates.cancelled.add_transition(pgettext("calendar event action","Cancel"),
+        #~ owner=True,
+        states='published draft',
+        icon_name='cross')
+    EventStates.draft.add_transition(ResetEvent)

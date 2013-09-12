@@ -77,18 +77,18 @@ from lino.core.requests import ActionRequest
 
 from lino.ui import base
 
-from lino.utils.appy_pod import Renderer
+#~ from lino.utils.appy_pod import Renderer
 from lino.utils import jsgen
 
 from lino.utils.xmlgen import html as xghtml
 from lino.utils.xmlgen.html import E
+from lino.utils.appy_pod import PdfTableAction
 
 class InvalidRequest(Exception):
     pass
 
 from lino.utils.xmlgen.html import RstTable
 
-MAX_ROW_COUNT = 900
 
 if False: # 20130710
 
@@ -648,43 +648,6 @@ class TableRequest(ActionRequest):
         #~ return [fld.sum2html(self.ui,sums[i])
           #~ for i,fld in enumerate(fields)]
             
-            
-        
-    def appy_render(ar,target_file):
-        
-        from lino.utils.config import find_config_file
-        
-        if ar.get_total_count() > MAX_ROW_COUNT:
-            raise Exception(_("List contains more than %d rows") % MAX_ROW_COUNT)
-    
-        tpl_leaf = "Table.odt" 
-        tplgroup = None
-        tplfile = find_config_file(tpl_leaf,tplgroup)
-        if not tplfile:
-            raise Exception("No file %s / %s" % (tplgroup,tpl_leaf))
-            
-        ar.renderer = settings.SITE.ui.ext_renderer # 20120624
-        
-        context = dict(
-            ar=ar,
-            title=unicode(ar.get_title()),
-            dtos=dbutils.dtos,
-            dtosl=dbutils.dtosl,
-            dtomy=dbutils.dtomy,
-            babelattr=dbutils.babelattr,
-            babelitem=dbutils.babelitem,
-            tr=dbutils.babelitem,
-            settings=settings,
-            _ = _,
-            #~ knowledge_text=fields.knowledge_text,
-            )
-        if os.path.exists(target_file):
-            os.remove(target_file)
-        logger.info(u"appy.pod render %s -> %s (params=%s",
-            tplfile,target_file,settings.SITE.appy_params)
-        renderer = Renderer(ar,tplfile, context, target_file,**settings.SITE.appy_params)
-        renderer.run()
-        
         
     def get_title(self):
         if self.title is not None:  
@@ -984,6 +947,8 @@ class AbstractTable(actors.Actor):
     
     """
     
+    as_pdf = PdfTableAction()
+            
     
     def __init__(self,*args,**kw):
         raise NotImplementedError("20120104")
@@ -1215,7 +1180,6 @@ class AbstractTable(actors.Actor):
         Not yet stable. Used by print_tx25.py.
         To be combined with the `show` management command.
         """
-        from north import dbutils
         dbutils.set_language(None)
         settings.SITE.startup()
         #~ settings.SITE.ui

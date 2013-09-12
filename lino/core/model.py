@@ -32,6 +32,7 @@ from lino.core import fields
 from lino.core import signals
 from lino.core import dbutils
 from lino.core.actions import InstanceAction
+#~ from lino.core.actions import PdfAction
 from djangosite.dbutils import obj2str, full_model_name
 from lino.utils.xmlgen.html import E
 from lino.utils import get_class_attr
@@ -46,6 +47,8 @@ class Model(models.Model):
     """
     class Meta:
         abstract = True
+        
+    #~ as_pdf = PdfAction()
         
     allow_cascaded_delete = []
     """
@@ -520,6 +523,7 @@ class Model(models.Model):
         
         
     LINO_MODEL_ATTRIBS = (
+              #~ 'as_pdf',
               'get_row_permission',
               'get_data_elem',
               'after_ui_save',

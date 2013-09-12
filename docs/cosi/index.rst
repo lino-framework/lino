@@ -4,6 +4,10 @@
 Lino Così
 =========
 
+In December 2012 we `announced 
+<http://blog.lino-framework.org/2012/12/belgian-accounting-made-simple.html>`_
+a first prototype of `Lino Così`.
+
 Lino Così is yet another attempt to make Belgian accounting simple.
 
 With Lino Così (when it is ready) you will be able to

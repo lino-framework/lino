@@ -11,6 +11,7 @@ The following snippet reproduced this bug:
 >>> from pprint import pprint
 >>> from django.test import Client
 >>> from lino.runtime import *
+>>> settings.SITE.startup()
 >>> client = Client()
 >>> url = 'http://welfare-demo.lino-framework.org/api/newcomers/NewClients?fmt=csv'
 >>> res = client.get(url,REMOTE_USER='rolf')

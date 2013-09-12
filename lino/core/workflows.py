@@ -45,7 +45,8 @@ class State(choicelists.Choice):
     def add_transition(self,label=None,
         help_text=None,
         notify=False,
-        icon_file=None,
+        #~ icon_file=None,
+        icon_name=None,
         debug_permissions=None,
         **required):
         """
@@ -57,8 +58,10 @@ class State(choicelists.Choice):
         kw = dict()
         if help_text is not None:
             kw.update(help_text=help_text)
-        if icon_file is not None:
-            kw.update(icon_file=icon_file)
+        #~ if icon_file is not None:
+            #~ kw.update(icon_file=icon_file)
+        if icon_name is not None:
+            kw.update(icon_name=icon_name)
         kw.update(sort_index=10+i)
         if label and not isinstance(label,(basestring,Promise)):
             if required:
@@ -213,7 +216,7 @@ method::
             
         super(ChangeStateAction,self).__init__(**kw)
         #~ logger.info('20120930 ChangeStateAction %s %s', actor,target_state)
-        if self.icon_file or self.icon_name:
+        if self.icon_name:
             self.help_text = string_concat(self.label, '. ', self.help_text)
         
     #~ def full_name(self,actor):

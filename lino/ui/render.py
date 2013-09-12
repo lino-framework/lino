@@ -128,18 +128,18 @@ class HtmlRenderer(object):
         #~ return E.tostring(ar.table2xhtml())
         
         
-    def href_button_action(self,ba,url,text=None,title=None,icon_file=NOT_GIVEN,**kw):
+    def href_button_action(self,ba,url,text=None,title=None,icon_name=NOT_GIVEN,**kw):
         """
         changed 20130905 for "Must read eID card button"
         but that caused icons to not appear in workflow_buttons.
         """
-        if icon_file is NOT_GIVEN:
-            icon_file = ba.action.icon_file
-        if icon_file is not None and not kw.has_key('style'):
+        if icon_name is NOT_GIVEN:
+            icon_name = ba.action.icon_name
+        if icon_name is not None and not kw.has_key('style'):
             kw.update(style="vertical-align:-30%;")
-        return self.href_button(url,text,title,icon_file=icon_file,**kw)
+        return self.href_button(url,text,title,icon_name=icon_name,**kw)
         
-    def href_button(self,url,text,title=None,target=None,icon_file=None,**kw):
+    def href_button(self,url,text,title=None,target=None,icon_name=None,**kw):
         """
         Returns an etree object of a "button-like" ``<a href>`` tag.
         """
@@ -152,7 +152,7 @@ class HtmlRenderer(object):
             #~ return xghtml.E.a(text,href=url,title=title)
         kw.update(href=url)
         #~ if icon_name:
-        if icon_file is not None:
+        if icon_name is not None:
             #~ btn = xghtml.E.button(type='button',class_='x-btn-text '+icon_name)
             #~ btn = xghtml.E.button(
                 #~ type='button',
@@ -161,7 +161,7 @@ class HtmlRenderer(object):
             #~ return btn
             #~ return xghtml.E.a(btn,**kw)
             #~ kw.update(class_='x-btn-text '+icon_name)
-            img = xghtml.E.img(src=settings.SITE.build_media_url('lino','extjs','images','mjames',icon_file))
+            img = xghtml.E.img(src=settings.SITE.build_media_url('lino','extjs','images','mjames',icon_name+'.png'))
             return xghtml.E.a(img,**kw)
         else:
             #~ return xghtml.E.span('[',xghtml.E.a(text,**kw),']')
@@ -209,7 +209,7 @@ class HtmlRenderer(object):
             a = ar.actor.detail_action
             buttons.append(self.window_action_button(
                 ar.request,a,st,_("Show Last"),
-                icon_file = 'application_form.png',
+                icon_name = 'application_form',
                 title=_("Show the last record in a detail window")))
             buttons.append(' ')
             #~ s += ' ' + self.window_action_button(
@@ -217,7 +217,7 @@ class HtmlRenderer(object):
             #~ s += ' ' + self.href_to_request(ar,"[%s]" % unicode(_("Show All")))
             buttons.append(self.href_to_request(None,ar,
               _("Show All"),
-              icon_file = 'application_view_list.png',
+              icon_name = 'application_view_list',
               title=_("Show all records in a table window")))
         #~ return '<p>%s</p>' % s
         return xghtml.E.p(*buttons)
@@ -237,7 +237,7 @@ class HtmlRenderer(object):
         if rr.get_total_count() == 0:
             if True: # after 20130809
                 return rr.insert_button(_("Upload"),
-                    icon_file='page_add.png',
+                    icon_name='page_add',
                     title=_("Upload a file from your PC to the server."))
             else:
                 a = rr.actor.insert_action
@@ -250,7 +250,7 @@ class HtmlRenderer(object):
                     return self.window_action_button(rr.request,a,after_show,_("Upload"),
                       #~ icon_file='attach.png',
                       #~ icon_file='world_add.png',
-                      icon_file='page_add.png',
+                      icon_name='page_add',
                       title=_("Upload a file from your PC to the server."))
                       #~ icon_name='x-tbar-upload')
         if rr.get_total_count() == 1:
@@ -263,7 +263,7 @@ class HtmlRenderer(object):
                 settings.SITE.build_media_url(obj.file.name),_("show"),
                 target='_blank',
                 #~ icon_file='world_go.png',
-                icon_file='page_go.png',
+                icon_name='page_go',
                 style="vertical-align:-30%;",
                 title=_("Open the uploaded file in a new browser window")))
             chunks.append(' ')
@@ -271,7 +271,7 @@ class HtmlRenderer(object):
             chunks.append(self.window_action_button(rr.request,
                 rr.ah.actor.detail_action,
                 after_show,
-                _("Edit"),icon_file='application_form.png',title=_("Edit metadata of the uploaded file.")))
+                _("Edit"),icon_name='application_form',title=_("Edit metadata of the uploaded file.")))
             return xghtml.E.p(*chunks)
             
             #~ s = ''

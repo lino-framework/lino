@@ -295,10 +295,10 @@ adapted for usage in an ExtJS application.
 /* border: 1px solid #FFAD33;  */
 
 
-.x-tbar-moveup{
+.x-tbar-arrow_up{
 	background-image: url(images/mjames/arrow_up.png) !important;
 }
-.x-tbar-movedown{
+.x-tbar-arrow_down{
 	background-image: url(images/mjames/arrow_down.png) !important;
 }
 
@@ -311,7 +311,7 @@ adapted for usage in an ExtJS application.
 }
 */
 
-.x-tbar-new{
+.x-tbar-add{
 	background-image: url(images/mjames/add.png) !important;
 }
 
@@ -320,11 +320,23 @@ ShowDetailAction
 $a.icon_name
 $a.icon_file
 */
-.x-tbar-detail{
+.x-tbar-emoticon_smile{
+	background-image: url(images/mjames/emoticon_smile.png) !important;
+}
+
+.x-tbar-cross{
+	background-image: url(images/mjames/cross.png) !important;
+}
+
+.x-tbar-money{
+	background-image: url(images/mjames/money.png) !important;
+}
+
+.x-tbar-application_form{
 	background-image: url(images/mjames/application_form.png) !important;
 }
 
-.x-tbar-save{
+.x-tbar-disk{
 	background-image: url(images/mjames/disk.png) !important;
 }
 
@@ -337,7 +349,7 @@ $a.icon_file
 .x-tbar-email_add{
 	background-image: url(images/mjames/email_add.png) !important;
 }
-.x-tbar-email_send{
+.x-tbar-email_go{
 	background-image: url(images/mjames/email_go.png) !important;
 }
 
@@ -345,7 +357,7 @@ $a.icon_file
 	background-image: url(images/mjames/script.png) !important;
 }
 
-.x-tbar-create-postings {
+.x-tbar-script_add {
 	background-image: url(images/mjames/script_add.png) !important;
 }
 
@@ -353,14 +365,18 @@ $a.icon_file
 	background-image: url(images/mjames/calendar.png) !important;
 }
 
-.x-tbar-print{
+.x-tbar-printer{
 	background-image: url(images/mjames/printer.png) !important;
 }
 
-.x-tbar-clearcache{
+.x-tbar-lightning{
+	background-image: url(images/mjames/lightning.png) !important;
+}
+
+.x-tbar-printer_delete{
 	background-image: url(images/mjames/printer_delete.png) !important;
 }
-.x-tbar-duplicate{
+.x-tbar-arrow_divide{
 	background-image: url(images/mjames/arrow_divide.png) !important;
 }
 .x-tbar-pdf{

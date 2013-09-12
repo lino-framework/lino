@@ -1902,20 +1902,20 @@ class Site(Site):
                 place=unicode(sc.city.name), date=dd.fdl(today))
         return dd.fdl(today)
         
-    def get_letter_margin_top_html(self,ar):
-        s = '<p class="Centered9pt">%s</p>'
-        s = s % self.site_config.site_company.get_address('<br/>')
-        return s
+    #~ def get_letter_margin_top_html(self,ar):
+        #~ s = '<p class="Centered9pt">%s</p>'
+        #~ s = s % self.site_config.site_company.get_address('<br/>')
+        #~ return s
         #~ from lino.utils.config import find_config_file
         #~ logo_path = find_config_file('logo.jpg')
         #~ return '<img src="%s"/>' % logo_path
         #~ return '<img src="file://%s" />' % logo_path
         
-    def get_letter_margin_bottom_html(self,ar):
+    #~ def get_letter_margin_bottom_html(self,ar):
         #~ s = '<p class="Centered9pt">%s</p>'
         #~ s = s % self.site_config.site_company.get_address('<br/>')
         #~ return s
-        return ''
+        #~ return ''
 
     def get_admin_main_items(self,ar):
         """

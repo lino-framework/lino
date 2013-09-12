@@ -34,6 +34,9 @@ Documented classes and functions
 
 """
 
+from __future__ import unicode_literals
+
+
 import os
 import logging
 logger = logging.getLogger(__name__)
@@ -71,10 +74,14 @@ class UserLevels(ChoiceList):
     verbose_name_plural = _("User Levels")
     app_label = 'lino'
     required = required(user_level='admin')
+    short_name = models.CharField(_("Short name"),max_length=2,
+        help_text=_("Used when defining UserProfiles"))
+        
     
     @classmethod
     def get_column_names(self,ar):
-        return 'value name short_name text'
+        return 'value name short_name text remark'
+        #~ return 'value name short_name *'
     
     @classmethod
     def field(cls,module_name=None,**kw):
@@ -86,10 +93,11 @@ class UserLevels(ChoiceList):
             kw.update(verbose_name=string_concat(cls.verbose_name,' (',module_name,')'))
         return super(UserLevels,cls).field(**kw)
         
-    @fields.virtualfield(models.CharField(_("Short name"),max_length=2,
-        help_text="used to fill UserProfiles"))
-    def short_name(cls,choice,ar):
-        return choice.short_name
+    #~ @fields.virtualfield(models.CharField(_("Short name"),max_length=2,
+        #~ help_text="used to fill UserProfiles"))
+    #~ def short_name(cls,choice,ar):
+        #~ return choice.short_name
+        
         
         
 add = UserLevels.add_item

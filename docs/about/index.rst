@@ -130,11 +130,18 @@ to be maintained by an independant organization.
 
 In September 2012 we purchased the domain name `lino-framework.org`.
 
-In December 2012 we 
-`announced 
-<http://blog.lino-framework.org/2012/12/belgian-accounting-made-simple.html>`_
-a first prototype of `Lino Così`.
+The second real-world Lino application started
+:doc:`in Czechia <joe>` 
+in **July 2013**.
 
+
+Testimonals
+-----------
+
+.. toctree::
+   :maxdepth: 1
+   
+   joe
 
 
 More

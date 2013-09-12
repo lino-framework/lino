@@ -145,8 +145,8 @@ class Note(mixins.TypedPrintable,
     
     class Meta:
         #~ abstract = True
-        verbose_name = _("Event/Note") 
-        verbose_name_plural = _("Events/Notes")
+        verbose_name = _("Note")
+        verbose_name_plural = _("Notes")
         #~ verbose_name = _("Note")
         #~ verbose_name_plural = _("Notes")
         
@@ -346,6 +346,11 @@ class NotesByProject(Notes):
     master_key = 'project'
     column_names = "date event_type type subject body user *"
     order_by = ["-date"]
+    
+class NotesByOwner(NotesByProject):
+    master_key = 'owner'
+    column_names = "date event_type type subject body user *"
+    
     
 def add_system_note(ar,owner,subject,body,**kw):
     #~ if not settings.SITE.site_config.system_note_type:

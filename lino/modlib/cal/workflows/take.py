@@ -41,7 +41,7 @@ class TakeAssignedEvent(dd.Action):
     show_in_workflow = True
     
     #~ icon_file = 'cancel.png'
-    icon_file = 'flag_green.png'
+    icon_name = 'flag_green'
     #~ required = dict(states='new assigned',owner=False)
     required = dd.required(owner=False)
     help_text=_("Take responsibility for this event.")
@@ -68,7 +68,7 @@ if False:
     label = _("Assign")
     required = dict(states='suggested draft published',owner=True)
     
-    icon_file = 'flag_blue.png'
+    icon_name = 'flag_blue'
     help_text=_("Assign responsibility of this event to another user.")
     
     parameters = dict(

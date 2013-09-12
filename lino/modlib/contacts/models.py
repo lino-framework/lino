@@ -49,6 +49,7 @@ from lino import dd
 from lino import mixins
 from lino.utils import join_words
 from lino.utils.choosers import chooser
+from lino.utils.appy_pod import PdfLabelsAction
 #~ from lino.models import get_site_config
 
 #~ from lino.modlib.contacts.utils import Genders
@@ -233,6 +234,8 @@ class Partner(mti.MultiTableBase,CountryRegionCity,Addressable):
         "contacts.Company",
         verbose_name=_("is Company"),
         help_text=_("Whether this Partner is a Company."))
+        
+    print_labels = PdfLabelsAction()
         
     def on_create(self,ar):
         self.language = ar.get_user().language

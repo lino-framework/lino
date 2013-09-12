@@ -438,8 +438,8 @@ class MoveUp(actions.Action):
     #~ label = "\u2191" thin arrow up
     #~ label = "\u25b2" # triangular arrow up
     custom_handler = True
-    icon_name = 'x-tbar-moveup'
-    icon_file = 'arrow_up.png'
+    icon_name = 'arrow_up'
+    #~ icon_file = 'arrow_up.png'
     help_text = _("Move this row one row upwards")
     
     def get_action_permission(self,ar,obj,state):
@@ -464,8 +464,8 @@ class MoveDown(actions.Action):
     #~ label = "\u2193"
     #~ label = "\u25bc" # triangular arrow down
     custom_handler = True
-    icon_name = 'x-tbar-movedown'
-    icon_file = 'arrow_down.png'
+    icon_name = 'arrow_down'
+    #~ icon_file = 'arrow_down.png'
     help_text = _("Move this row one row downwards")
     
     def get_action_permission(self,ar,obj,state):
@@ -897,11 +897,12 @@ class Report(EmptyTable):
             
             
 
-if True:
+
+if True: # not yet convinced that it is necessary.
   
   from north.dbutils import BabelNamed
   
-else: # not yet convinced that it is necessary.
+else: 
 
   class BabelNamed(model.Model):
     """

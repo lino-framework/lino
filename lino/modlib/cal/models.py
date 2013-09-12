@@ -352,6 +352,25 @@ class Priorities(dd.Table):
         #~ self.end_time = end_time
     
     
+
+class UpdateReminders(actions.Action):
+    url_action_name = 'update_reminders'
+    label = _('Update Events')
+    #~ label = _('Update Reminders')
+    show_in_row_actions = True
+    icon_name = 'lightning'
+    
+    callable_from = (actions.GridEdit, actions.ShowDetailAction)
+        
+    def run_from_ui(self,ar,**kw):
+        n = 0
+        for obj in ar.selected_rows:
+            logger.info("Updating reminders for %s",unicode(obj))
+            n += obj.update_reminders()
+        msg = _("%d reminder(s) have been updated.") % n
+        logger.info(msg)
+        return ar.success(msg,**kw)
+
 class EventGenerator(mixins.UserAuthored):
     """
     Base class for things that generate a suite of events.
@@ -363,23 +382,28 @@ class EventGenerator(mixins.UserAuthored):
     class Meta:
         abstract = True
         
+    do_update_reminders = UpdateReminders()
+        
     def save(self,*args,**kw):
         super(EventGenerator,self).save(*args,**kw)
         if self.user is not None:
             dbutils.run_with_language(self.user.language,self.update_reminders)
   
     def update_cal_rset(self):
-        return self.exam_policy
+        raise NotImplementedError()
+        #~ return self.exam_policy
         
     def update_cal_from(self):
         """
         Return the date of the first Event to be generated.
         Return None if no Events should be generated.
         """
-        return self.applies_from
+        raise NotImplementedError()
+        #~ return self.applies_from
         
     def update_cal_until(self):
-        return self.date_ended or self.applies_until
+        raise NotImplementedError()
+        #~ return self.date_ended or self.applies_until
         
     def update_cal_calendar(self):
         """
@@ -393,6 +417,9 @@ class EventGenerator(mixins.UserAuthored):
         #~ return _("Evaluation %d") % i
 
     def update_reminders(self):
+        return self.update_auto_events()
+            
+    def update_auto_events(self):
         """
         Generate automatic calendar events owned by this contract.
         
@@ -400,9 +427,6 @@ class EventGenerator(mixins.UserAuthored):
         adapt to the new rythm.
         
         """
-        return self.update_auto_events()
-            
-    def update_auto_events(self):
         if settings.SITE.loading_from_dump: 
             #~ print "20111014 loading_from_dump"
             return 
@@ -935,6 +959,13 @@ Indicates that this Event shouldn't prevent other Events at the same time."""))
     def save(self,*args,**kw):
         r = super(Event,self).save(*args,**kw)
         self.add_guests()
+        #~ """
+        #~ The following hack removes this event from the series of 
+        #~ automatically generated events so that the Generator re-creates 
+        #~ a new one.
+        #~ """
+        #~ if self.state == EventStates.cancelled:
+            #~ self.auto_type = None
         return r
             
     def add_guests(self):
@@ -948,7 +979,8 @@ Indicates that this Event shouldn't prevent other Events at the same time."""))
         if not self.is_user_modified(): 
             #~ print "not is_user_modified"
             return
-        if not self.state in (EventStates.suggested, EventStates.draft):
+        if not self.state.edit_guests:
+        #~ if not self.state in (EventStates.suggested, EventStates.draft):
         #~ if self.is_fixed_state(): 
             #~ print "is a fixed state"
             return 
@@ -2380,7 +2412,7 @@ if False:
         
     settings.SITE.reminders_as_html = reminders_as_html
     
-def update_reminders(user):
+def update_reminders_for_user(user):
     n = 0 
     for model in dd.models_by_base(EventGenerator):
         for obj in model.objects.filter(user=user):
@@ -2397,20 +2429,16 @@ def unused_update_reminders(user):
         n += 1
     return n
       
-
-class UpdateReminders(actions.Action):
+        
+        
+class UpdateUserReminders(UpdateReminders):
     """
     Users can invoke this to re-generate their automatic tasks.
     """
-    url_action_name = 'UpdateReminders'
-    label = _('Update Reminders')
-    
-    callable_from = (actions.GridEdit, actions.ShowDetailAction)
-        
     def run_from_ui(self,ar,**kw):
         user = ar.selected_rows[0]
         logger.info("Updating reminders for %s",unicode(user))
-        n = update_reminders(user)
+        n = update_reminders_for_user(user)
         kw.update(success=True)
         msg = _("%(num)d reminders for %(user)s have been updated."
           ) % dict(user=user,num=n)
@@ -2519,7 +2547,7 @@ def site_setup(site):
 def pre_analyze(sender,**kw):
     #~ logger.info("%s.set_merge_actions()",__name__)
     #~ modules = sender.modules
-    sender.user_model.add_model_action(update_reminders=UpdateReminders())
+    sender.user_model.add_model_action(update_reminders=UpdateUserReminders())
     
     
 MODULE_LABEL = _("Calendar")

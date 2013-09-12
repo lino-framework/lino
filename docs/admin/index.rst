@@ -22,10 +22,11 @@ Java applets included with Lino
 -------------------------------
 
 .. toctree::
-    :maxdepth: 2
+   :maxdepth: 2
 
    /davlink/index
    /eidreader/index
+   
 
 Other
 -----
@@ -52,3 +53,4 @@ Other
     install_shell_scripts
     oood
     watch_tim
+    

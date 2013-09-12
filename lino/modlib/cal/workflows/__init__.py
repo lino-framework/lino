@@ -21,6 +21,8 @@ Minimal workflow definition for lino.modlib.cal.
 from __future__ import unicode_literals
 
 
+from django.db import models
+
 from django.utils.translation import ugettext_lazy as _
 from django.utils.translation import pgettext_lazy as pgettext
 
@@ -30,6 +32,7 @@ class TaskStates(dd.Workflow):
     """
     State of a Calendar Task. Used as Workflow selector.
     """
+    verbose_name_plural = _("Task states")
     required = dd.required(user_level='admin')
     app_label = 'cal'
     
@@ -50,24 +53,37 @@ add('50', _("Cancelled"),'cancelled')
 
 class EventState(dd.State):
     fixed = False
+    edit_guests = False
     
 class EventStates(dd.Workflow):
+    verbose_name_plural = _("Event states")
     required = dd.required(user_level='admin')
     help_text = _("""The possible states of a calendar event.""")
     app_label = 'cal'
     item_class = EventState
+    edit_guests = models.BooleanField(_("Edit guests list"))
+    fixed = models.BooleanField(_("Fixed"))
     #~ editable_states = set()
+    #~ column_names = "value name text edit_guests"
+    
+    #~ @dd.virtualfield(models.BooleanField("edit_guests"))
+    #~ def edit_guests(cls,obj,ar):
+        #~ return obj.edit_guests
+        
+    @classmethod
+    def get_column_names(self,ar):
+        return 'value name text edit_guests fixed remark'
         
 add = EventStates.add_item
 add('10', _("Suggested"), 'suggested',
     help_text=_("Automatically suggested. Default state of an automatic event."))
 add('20', _("Draft"), 'draft')
-add('40', _("Published"), 'published')
 if False:
+    add('40', _("Published"), 'published')
     #~ add('30', _("Notified"),'notified')
     add('30', _("Visit"), 'visit')
     add('60', _("Rescheduled"),'rescheduled',fixed=True)
-add('50', _("Took place"),'took_place',fixed=True)
+add('50', _("Took place"),'took_place',fixed=True,edit_guests=True)
 add('70', _("Cancelled"),'cancelled',fixed=True)
 #~ add('80', _("Absent"),'absent')
 
@@ -83,9 +99,16 @@ class GuestStates(dd.Workflow):
     """
     State of a Calendar Event Guest. Used as Workflow selector.
     """
+    verbose_name_plural = _("Guest states")
     required = dd.required(user_level='admin')
     app_label = 'cal'
     item_class = GuestState
+    afterwards = models.BooleanField(_("Afterwards"))
+    
+    @classmethod
+    def get_column_names(self,ar):
+        return 'value name afterwards text remark'
+    
 
 add = GuestStates.add_item
 add('10', _("Invited"),'invited')
@@ -93,61 +116,13 @@ add('10', _("Invited"),'invited')
 # will be filled by importing either feedback or faggio
 
 
-class ResetEvent(dd.ChangeStateAction):
-    label = _("Reset")
-    icon_file = 'cancel.png'
-    #~ required = dict(states='assigned',owner=True)
-    #~ required = dict(states='published rescheduled took_place')#,owner=True)
-    required = dict(states='published took_place')#,owner=True)
-    #~ help_text=_("Return to Draft state and restart workflow for this event.")
-  
-    def unused_run_from_ui(self,ar,**kw):
-        obj = ar.selected_rows[0]
-        if obj.guest_set.exclude(state=GuestStates.invited).count() > 0:
-            def ok():
-                for g in obj.guest_set.all():
-                    g.state = GuestStates.invited
-                    g.save()
-            return ar.confirm(ok,_("This will reset all invitations"),_("Are you sure?"))
-        else:
-            ar.confirm(self.help_text,_("Are you sure?"))
-        kw = super(ResetEvent,self).run_from_ui(ar,**kw)
-        return kw
-    
-
 
 
 @dd.receiver(dd.pre_analyze)
-def my_setup_workflows(sender=None,**kw):
+def setup_task_workflows(sender=None,**kw):
     
     
     TaskStates.todo.add_transition(_("Reopen"),states='done cancelled')
-    TaskStates.done.add_transition(states='todo started',icon_file='accept.png')
-    TaskStates.cancelled.add_transition(states='todo started',icon_file='cancel.png')
+    TaskStates.done.add_transition(states='todo started',icon_name='accept')
+    TaskStates.cancelled.add_transition(states='todo started',icon_name='cancel')
 
-    
-    #~ EventStates.draft.add_transition(_("Accept"),
-        #~ states='suggested',
-        #~ owner=True,
-        #~ icon_file='book.png',
-        #~ help_text=_("User takes responsibility for this event. Planning continues."))
-    #~ EventStates.draft.add_transition(TakeAssignedEvent)
-    EventStates.published.add_transition(#_("Confirm"), 
-        #~ states='new draft assigned',
-        states='suggested draft',
-        #~ owner=True,
-        icon_file='accept.png',
-        help_text=_("Mark this as published. All participants have been informed."))
-    EventStates.took_place.add_transition(
-        states='published draft',
-        #~ owner=True,
-        help_text=_("Event took place."),
-        icon_file='emoticon_smile.png')
-    #~ EventStates.absent.add_transition(states='published',icon_file='emoticon_unhappy.png')
-    #~ EventStates.rescheduled.add_transition(_("Reschedule"),
-        #~ states='published',icon_file='date_edit.png')
-    EventStates.cancelled.add_transition(pgettext("calendar event action","Cancel"),
-        #~ owner=True,
-        states='published draft',
-        icon_file='cross.png')
-    EventStates.draft.add_transition(ResetEvent)

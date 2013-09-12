@@ -822,7 +822,7 @@ class ApiElement(View):
             raise http.Http404("%s has no row with primary key %r" % (rpt,pk))
         ar = rpt.request(request=request)
         return delete_element(ar,elem)
-        
+
 
         
   
@@ -951,18 +951,11 @@ class ApiList(View):
                 w.writerow([unicode(v) for v in rh.store.row2list(ar,row)])
             return response
             
-        if fmt in (ext_requests.URL_FORMAT_PDF,ext_requests.URL_FORMAT_ODT):
-            mf = TmpMediaFile(ar,fmt)
-            settings.SITE.makedirs_if_missing(os.path.dirname(mf.name))
-            ar.appy_render(mf.name)
-            return http.HttpResponseRedirect(mf.url)
-            
-            target_parts = ['cache', 'appy'+fmt, ip, str(ar.actor) + '.' + fmt]
-            target_file = os.path.join(settings.MEDIA_ROOT,*target_parts)
-            settings.SITE.makedirs_if_missing(os.path.dirname(target_file))
-            target_url = settings.SITE.build_media_url(*target_parts)
-            ar.appy_render(target_file)
-            return http.HttpResponseRedirect(target_url)
+        #~ if fmt in (ext_requests.URL_FORMAT_PDF,ext_requests.URL_FORMAT_ODT):
+            #~ mf = TmpMediaFile(ar,fmt)
+            #~ settings.SITE.makedirs_if_missing(os.path.dirname(mf.name))
+            #~ ar.appy_render(mf.name)
+            #~ return http.HttpResponseRedirect(mf.url)
             
         if fmt == ext_requests.URL_FORMAT_PRINTER:
             if ar.get_total_count() > MAX_ROW_COUNT:
@@ -977,7 +970,8 @@ class ApiList(View):
             doc.write(response,encoding='utf-8')
             return response
             
-        raise http.Http404("Format %r not supported for GET on %s" % (fmt,ar.actor))
+        return settings.SITE.ui.run_action(ar)
+        #~ raise http.Http404("Format %r not supported for GET on %s" % (fmt,ar.actor))
 
       
 class GridConfig(View):

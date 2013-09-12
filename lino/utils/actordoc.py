@@ -291,7 +291,16 @@ def resolve_name(name):
         return 3, model.get_data_elem(l[2])
     return len(l), settings.SITE.modules.resolve(name)
     
-            
+def form_lines():
+    yield '<script >'
+    
+class FormDirective(Django2rstDirective):
+    def get_rst(self):
+        level, cls = resolve_name(self.content[0])
+        s = ''
+        with translation.override(self.state.document.settings.env.config.language):
+            s = '\n'.join(list(form_lines()))
+        return s
     
 class ActorDirective(Django2rstDirective):
     #~ has_content = False
@@ -507,6 +516,7 @@ class ddrefRole(XRefRole):
 
 def setup(app):
     
+    app.add_directive('form', FormDirective)
     app.add_directive('actor', ActorDirective)
     app.add_directive('actors_overview', ActorsOverviewDirective)
     app.add_role('ddref', ddrefRole())

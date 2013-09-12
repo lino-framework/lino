@@ -98,10 +98,6 @@ Person = dd.resolve_model('contacts.Person',strict=True)
 #~ class PresenceStatuses(dd.Table):
     #~ model = PresenceStatus
     
-dd.inject_field('contacts.Partner','invoicing_address',dd.ForeignKey('contacts.Partner',
-        verbose_name=_("Invoicing address"),
-        blank=True,null=True))
-    
 class StartEndTime(dd.Model):
     class Meta:
         abstract = True
@@ -396,7 +392,7 @@ class Course(contacts.ContactRelated,cal.EventGenerator,cal.RecurrenceSet,dd.Pri
         return ar.obj2html(self)
         
     @dd.displayfield(_("Events"))
-    def events_text(self,ar):
+    def events_text(self,ar=None):
         return ', '.join([day_and_month(e.start_date)
             for e in self.cal_event_set_by_project.order_by('start_date')])
         
@@ -569,13 +565,15 @@ class ActiveCourses(Courses):
     
     
 class EnrolmentStates(dd.Workflow):
+    verbose_name_plural = _("Enrolment states")
     required = dd.required(user_level='admin')
+    invoiceable = models.BooleanField(_("invoiceable"),default=True)
 
 add = EnrolmentStates.add_item
-add('10', _("Requested"),'requested')
-add('20', _("Confirmed"),'confirmed')
-add('30', _("Cancelled"),'cancelled')
-add('40', _("Certified"),'certified')
+add('10', _("Requested"),'requested',invoiceable=False)
+add('20', _("Confirmed"),'confirmed',invoiceable=True)
+add('30', _("Cancelled"),'cancelled',invoiceable=False)
+add('40', _("Certified"),'certified',invoiceable=True)
 #~ add('40', _("Started"),'started')
 #~ add('50', _("Success"),'success')
 #~ add('60', _("Award"),'award')
@@ -633,9 +631,6 @@ class Enrolment(dd.UserAuthored,dd.Printable,sales.Invoiceable):
         return models.Q(q1 | q2,invoice__isnull=True)
     
     
-    def get_invoiceable_amount(self): 
-        return self.amount
-        
     def pupil_changed(self,ar):
         self.compute_amount()
         
@@ -646,9 +641,13 @@ class Enrolment(dd.UserAuthored,dd.Printable,sales.Invoiceable):
             self.amount = ZERO
         self.amount = self.course.tariff.sales_price
             
+    def get_invoiceable_amount(self): 
+        return self.amount
+        
     def get_invoiceable_product(self): 
         #~ if self.course is not None: 
-        return self.course.tariff
+        if self.state.invoiceable: 
+            return self.course.tariff
             
     def get_invoiceable_title(self): 
         #~ if self.course is not None: 
@@ -729,7 +728,7 @@ class Enrolments(dd.Table):
 
 class ConfirmAllEnrolments(dd.Action):
     label = _("Confirm all")
-    single_row = False
+    select_rows = False
     http_method = 'POST'
     
     def run_from_ui(self,ar,**kw):
@@ -850,6 +849,7 @@ def setup_explorer_menu(site,ui,profile,m):
     #~ m.add_action(Presences)
     #~ m.add_action(Events)
     m.add_action(Enrolments)
+    m.add_action(EnrolmentStates)
   
   
 #~ print '20130219 lino.modlib.courses ok'  

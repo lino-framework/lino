@@ -84,12 +84,6 @@ def site_setup(self):
     
     loaders = []
     
-    def func(name,m):
-        if isdir(join(dirname(m.__file__),SUBDIR_NAME)):
-            #~ logger.info("20130717 jinja loader %s",name)
-            loaders.append(jinja2.PackageLoader(name, SUBDIR_NAME))
-    self.for_each_app(func)
-    
     paths = list(self.get_settings_subdirs(SUBDIR_NAME))
     if self.is_local_project_dir:
         p = join(self.project_dir,SUBDIR_NAME)
@@ -99,6 +93,12 @@ def site_setup(self):
     if len(paths) > 0:
         loaders.append(jinja2.FileSystemLoader(paths))
         
+    def func(name,m):
+        #~ logger.info("20130717 jinja loader %s %s",name,SUBDIR_NAME)
+        if isdir(join(dirname(m.__file__),SUBDIR_NAME)):
+            loaders.append(jinja2.PackageLoader(name, SUBDIR_NAME))
+    self.for_each_app(func)
+    
     
 
     #~ for name in self.get_installed_apps():

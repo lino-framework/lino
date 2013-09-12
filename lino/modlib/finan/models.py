@@ -11,7 +11,7 @@
 ## You should have received a copy of the GNU General Public License
 ## along with Lino; if not, see <http://www.gnu.org/licenses/>.
 """
-Deserves documentation
+The :xfile:`models.py` module for the :mod:`lino.modlib.finan` app.
 """
 
 
@@ -26,6 +26,7 @@ import decimal
 from django.conf import settings
 from django.db import models
 from django.utils.translation import ugettext_lazy as _
+from django.core.exceptions import ValidationError
 
 
 from lino import dd
@@ -72,6 +73,10 @@ add('20',_("Registered"),'registered',editable=False)
   
 class BankStatement(mixins.Registrable,ledger.Voucher):
     
+    class Meta: 
+        verbose_name = _("Bank statement")
+        verbose_name_plural = _("Bank statements")
+        
     balance1 = dd.PriceField(_("Old balance"),blank=True,null=True)
     balance2 = dd.PriceField(_("New balance"),blank=True,null=True)
     
@@ -110,6 +115,7 @@ class BankStatement(mixins.Registrable,ledger.Voucher):
             b = self.create_movement(
               i.account,i.dc,i.amount,
               seqno=i.seqno,
+              match=i.match,
               partner=i.partner)
               #~ person=i.person,
               #~ company=i.company,
@@ -144,17 +150,21 @@ class BankStatement(mixins.Registrable,ledger.Voucher):
         return DocItem(**kw)
         #~ return self.items.create(**kw)
     
-  
-class DocItem(mixins.Sequenced,ledger.VoucherItem):
-    voucher = models.ForeignKey(BankStatement,related_name='items')
+class DocItem(mixins.Sequenced,ledger.VoucherItem,ledger.Matchable):
+    
+    class Meta: 
+        verbose_name = _("Item")
+        verbose_name_plural = _("Items")
+        
+    voucher = dd.ForeignKey(BankStatement,related_name='items')
     #~ pos = models.IntegerField("Position")
     date = models.DateField(blank=True,null=True)
     amount = dd.PriceField(default=0)
     dc = ledger.DebitOrCreditField()
     #~ credit = dd.PriceField(default=0)
-    remark = models.CharField(max_length=200,blank=True)
-    account = models.ForeignKey('accounts.Account')
-    partner = models.ForeignKey(partner_model,blank=True,null=True)
+    remark = models.CharField(_("Remark"),max_length=200,blank=True)
+    account = dd.ForeignKey('accounts.Account',blank=True)
+    partner = dd.ForeignKey(partner_model,blank=True,null=True)
     #~ person = models.ForeignKey(Person,blank=True,null=True)
     #~ company = models.ForeignKey(Company,blank=True,null=True)
     
@@ -164,10 +174,20 @@ class DocItem(mixins.Sequenced,ledger.VoucherItem):
     def get_siblings(self):
         return self.voucher.items.all()
     
-    #~ def full_clean(self,*args,**kw):
-        #~ if self.pos is None:
-            #~ self.pos = self.document.items.count() + 1
-        #~ return super(DocItem,self).full_clean(*args,**kw)
+    def match_changed(self,ar):
+        if self.match:
+            self.amount = self.match.amount
+            self.dc = not self.match.dc
+            self.account = self.match.account
+            self.partner = self.match.partner
+    
+    def full_clean(self,*args,**kw):
+        if self.account_id is None:
+            if self.match is not None:
+                self.account = self.match.account
+            if self.account_id is None:
+                raise Warning("Could not guess account")
+        return super(DocItem,self).full_clean(*args,**kw)
         
     #~ def __unicode__(self):
         #~ return u"DocItem %s.%d" % (self.document,self.pos)
@@ -183,7 +203,17 @@ class DocItem(mixins.Sequenced,ledger.VoucherItem):
     #~ debit = fields.PriceField(default=0)
     #~ credit = fields.PriceField(default=0)
     
-
+class BankStatementDetail(dd.FormLayout):
+    main = "general ledger"
+    general = dd.Panel("""
+    date balance1 balance2 user workflow_buttons
+    finan.ItemsByStatement
+    """,label=_("General"))
+    
+    ledger = dd.Panel("""
+    id journal year number narration
+    ledger.MovementsByVoucher
+    """,label=_("Ledger"))
         
 
 class BankStatements(dd.Table):
@@ -202,19 +232,16 @@ class BankStatements(dd.Table):
     balance2
     """,window_size=(40,'auto'))
     
-    detail_layout = """
-    date narration balance1 balance2 
-    journal year number user id workflow_buttons
-    finan.ItemsByStatement
-    """
+    detail_layout = BankStatementDetail()
     
     @classmethod
     def get_request_queryset(cls,ar):
         qs = super(BankStatements,cls).get_request_queryset(ar)
-        if ar.param_values.pyear:
-            qs = qs.filter(year=ar.param_values.pyear)
-        if ar.param_values.pjournal:
-            qs = qs.filter(journal=ar.param_values.pjournal)
+        if not isinstance(qs,list):
+            if ar.param_values.pyear:
+                qs = qs.filter(year=ar.param_values.pyear)
+            if ar.param_values.pjournal:
+                qs = qs.filter(journal=ar.param_values.pjournal)
         return qs
     
     
@@ -228,12 +255,15 @@ class BankStatementsByJournal(BankStatements,ledger.ByJournal):
     
     
 class DocItems(dd.Table):
-    column_names = "date account partner remark debit credit seqno *" 
+    column_names = "date account partner match remark debit credit seqno *" 
     model = DocItem
     order_by = ["seqno"]
+    
 
 class ItemsByStatement(DocItems):
     master_key = 'voucher'
+    auto_fit_column_widths = True
+    hidden_columns = 'id amount dc seqno'
     
 #~ BankStatement.content = ItemsByDocument
 

@@ -62,7 +62,7 @@ add('50',_("Returned"),'returned')
 class PrintPosting(dd.Action):
     label = _('Print')
     help_text = _('Print this posting')
-    icon_name='x-tbar-print'
+    icon_name = 'printer'
     show_in_workflow = True
     
     def run_from_ui(self,ar,**kw):
@@ -188,7 +188,7 @@ class CreatePostings(dd.Action):
     #~ label = _('Create email')
     label = _('Create posting')
     help_text = _('Create classical mail postings from this')
-    icon_name = 'x-tbar-create-postings'
+    icon_name = 'script_add'
     
     callable_from = (actions.GridEdit, 
         actions.ShowDetailAction,

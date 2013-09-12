@@ -110,6 +110,9 @@ class Invoiceable(dd.Model):
         
     @classmethod
     def get_invoiceables_for(cls,partner,max_date=None):
+        if settings.SITE.site_config.site_company:
+            if partner.id == settings.SITE.site_config.site_company.id:
+                return
         #~ logger.info('20130711 get_invoiceables_for (%s,%s)', partner, max_date)
         for m in dd.models_by_base(cls):
             flt = m.get_partner_filter(partner)
@@ -119,36 +122,40 @@ class Invoiceable(dd.Model):
             #~ if max_date is not None:
                 #~ fkw["%s__lte" % m.invoiceable_date_field] = max_date
             #~ logger.info('20130711 %s %s', m, fkw)
-            for obj in m.objects.filter(flt).order_by(m.invoiceable_date_field):
-                yield obj
+            qs = m.objects.filter(flt)
+            #~ qs = qs.exclude(company=settings.SITE.site_config.site_company)
+            for obj in qs.order_by(m.invoiceable_date_field):
+                if obj.get_invoiceable_product() is not None:
+                    yield obj
         
     @classmethod
-    def get_invoiceables_count(cls,partner,max_date=None):
+    def unused_get_invoiceables_count(cls,partner,max_date=None):
+        if settings.SITE.site_config.site_company:
+            if partner.id == settings.SITE.site_config.site_company.id:
+                return 0
         #~ logger.info('20130711 get_invoiceables_count (%s,%s)', partner, max_date)
         n = 0
         for m in dd.models_by_base(cls):
             flt = m.get_partner_filter(partner)
-            #~ fkw = dict()
-            #~ fkw[m.invoiceable_partner_field] = partner
-            #~ fkw.update(invoice__isnull=True)
-            #~ if max_date is not None:
-                #~ fkw["%s__lte" % m.invoiceable_date_field] = max_date
-            #~ logger.info('20130711 %s %s', m, fkw)
-            n += m.objects.filter(flt).count()
+            qs = m.objects.filter(flt)
+            #~ qs = qs.exclude(company=settings.SITE.site_config.site_company)
+            n += qs.count()
         return n
 
 def create_invoice_for(obj,ar):
-    L = list(Invoiceable.get_invoiceables_for(obj))
-    if len(L) == 0:
+    invoiceables = list(Invoiceable.get_invoiceables_for(obj))
+    if len(invoiceables) == 0:
         raise Warning(_("No invoiceables found for %s.") % obj)
     jnl = Invoice.get_journals()[0]
     invoice = Invoice(partner=obj,journal=jnl,date=datetime.date.today())
     invoice.save()
-    for ii in L:
+    for ii in invoiceables:
         i = InvoiceItem(voucher=invoice,invoiceable=ii,
             product=ii.get_invoiceable_product(),
+            title=ii.get_invoiceable_title(),
             qty=ii.get_invoiceable_qty())
-        i.product_changed(ar)
+        #~ i.product_changed(ar)
+        i.set_amount(ar,ii.get_invoiceable_amount())
         i.full_clean()
         i.save()
     invoice.compute_totals()
@@ -156,7 +163,8 @@ def create_invoice_for(obj,ar):
     return invoice
         
 class CreateInvoiceForPartner(dd.Action):
-    
+    icon_name = 'money'
+    sort_index = 50
     label = _("Create invoice")
     help_text = _("Create invoice for this partner using invoiceable items")
     #~ show_in_row_actions = True
@@ -172,29 +180,6 @@ class CreateInvoiceForPartner(dd.Action):
         msg = _("This will create an invoice for %s.") % obj
         return ar.confirm(ok, msg, _("Are you sure?"))
         
-    def unused_run_from_ui(self,ar,**kw):
-        obj = ar.selected_rows[0]
-        L = list(Invoiceable.get_invoiceables_for(obj))
-        if len(L) == 0:
-            return ar.error(_("No invoiceables found for %s.") % obj)
-        def ok():
-            jnl = Invoice.get_journals()[0]
-            invoice = Invoice(partner=obj,journal=jnl,date=datetime.date.today())
-            invoice.save()
-            for ii in L:
-                i = InvoiceItem(voucher=invoice,invoiceable=ii,
-                    product=ii.get_invoiceable_product(),
-                    qty=ii.get_invoiceable_qty())
-                i.product_changed(ar)
-                i.full_clean()
-                i.save()
-            invoice.compute_totals()
-            invoice.save()
-            return ar.goto_instance(invoice,**kw)
-        if True: # no confirmation
-            return ok()
-        msg = _("This will create an invoice for %s.") % obj
-        return ar.confirm(ok, msg, _("Are you sure?"))
         
 #~ dd.inject_action('contacts.Partner','create_invoice',CreateInvoiceForPartner())
 contacts.Partner.create_invoice = CreateInvoiceForPartner()
@@ -227,8 +212,19 @@ class Invoice(Invoice): # 20130709
             #~ logger.info("20130711 %s no longer invoiced",i.invoiceable)
         return super(Invoice,self).deregister(ar)
         
+    def get_invoiceables(self,model):
+        lst = []
+        for i in self.items.all():
+            if isinstance(i.invoiceable,model):
+                if not i.invoiceable in lst:
+                    lst.append(i.invoiceable)
+            #~ else:
+                #~ print 20130910, i.invoiceable.__class__
+        return lst
+                    
+                
     def get_build_method(self):
-        return 'appypdf'
+        return 'appypdf' # must be appypdf for print_multiple
     
 class InvoiceItem(InvoiceItem): # 20130709
     
@@ -251,10 +247,10 @@ class InvoiceItem(InvoiceItem): # 20130709
         'invoiceable_type', 'invoiceable_id',
         verbose_name=invoiceable_label)
         
-    def product_changed(self,ar):
-        super(InvoiceItem,self).product_changed(ar)
-        if self.invoiceable:
-            self.title = self.invoiceable.get_invoiceable_title()
+    #~ def product_changed(self,ar):
+        #~ super(InvoiceItem,self).product_changed(ar)
+        #~ if self.invoiceable:
+            #~ self.title = self.invoiceable.get_invoiceable_title()
         
     
 class ItemsByInvoice(ItemsByInvoice): # 20130709
@@ -314,16 +310,18 @@ from lino.mixins.printable import CachedPrintAction
 
     
 class CreateAllInvoices(CachedPrintAction):
+    #~ icon_name = 'money'
+    
     #~ label = _("Create invoices")
     help_text = _("Create and print the invoice for each selected row, making these rows disappear from this table")
     
     def run_from_ui(self,ar,**kw):
-        obj = ar.selected_rows[0]
-        assert obj is None
+        #~ obj = ar.selected_rows[0]
+        #~ assert obj is None
         def ok():
             invoices = []
-            for pk in ar.selected_pks:
-                partner = contacts.Partner.objects.get(pk=pk)    
+            for row in ar.selected_rows:
+                partner = contacts.Partner.objects.get(pk=row.pk)    
                 invoice = create_invoice_for(partner,ar)
                 invoices.append(invoice)
             #~ for obj in ar:
@@ -334,7 +332,7 @@ class CreateAllInvoices(CachedPrintAction):
             kw.update(refresh_all=True)
             return kw
         #~ msg = _("This will create and print %d invoices.") % ar.get_total_count()
-        msg = _("This will create and print %d invoices.") % len(ar.selected_pks)
+        msg = _("This will create and print %d invoice(s).") % len(ar.selected_rows)
         return ar.confirm(ok, msg, _("Are you sure?"))
 
     
@@ -440,8 +438,11 @@ class InvoicesToCreate(dd.VirtualTable):
     
     
 class InvoiceablesByPartner(dd.VirtualTable):
-    label = _("Invoiceables")
-    help_text = _("List of things for which this partner should get an invoice")
+    icon_name = 'money'
+    sort_index = 50
+    label = _("Invoices to create")
+    #~ label = _("Invoiceables")
+    help_text = _("List of invoiceable items for this partner")
 
     #~ app_label = 'sales'
     master = 'contacts.Partner'

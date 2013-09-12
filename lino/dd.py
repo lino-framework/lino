@@ -104,6 +104,7 @@ Actions:
 - :class:`NotifyingAction <lino.core.actions.NotifyingAction>`
 - :class:`MergeAction <lino.core.merge.MergeAction>`
 - :class:`ShowSlaveTable <lino.core.actions.ShowSlaveTable>`
+- :class:`PdfTableAction <lino.utils.appy_pod.PdfTableAction>`
 
 Permissions:
 
@@ -210,6 +211,7 @@ from lino.core.fields import BabelTextField
 from lino.core.fields import CharField
 
 from lino.mixins import BabelNamed
+from lino.utils.appy_pod import PdfTableAction
 
 from north.dbutils import BabelCharField, LanguageField
 from north.dbutils import babelkw

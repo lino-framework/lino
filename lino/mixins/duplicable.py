@@ -40,7 +40,7 @@ class Duplicate(actions.Action):
     sort_index = 11
     show_in_workflow = False
     readonly = True # like InsertRow. See docs/blog/2012/0726
-    icon_name = 'x-tbar-duplicate'
+    icon_name = 'arrow_divide'
     #~ action_name = 'duplicate'
 
   

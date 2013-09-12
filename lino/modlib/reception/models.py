@@ -46,6 +46,7 @@ from lino.utils import join_elems
 from lino import dd
 
 cal = dd.resolve_app('cal')
+system = dd.resolve_app('system')
 
 from lino.modlib.cal.models import GuestStates, EventStates
 
@@ -82,7 +83,14 @@ dd.inject_field('system.SiteConfig','prompt_calendar',
     dd.ForeignKey('cal.Calendar',
         verbose_name=_("Default calendar for prompt events"),
         related_name='prompt_calendars',
-        blank=True,null=True))    
+        blank=True,null=True))
+        
+        
+@dd.receiver(dd.pre_save,sender=system.SiteConfig)
+def beware(sender,instance=None,**kw):
+    if instance.prompt_calendar is not None:
+        if instance.prompt_calendar.invite_client:
+            raise Warning("prompt calendar may not invite client!")
     
 #~ dd.inject_field('cal.Event','is_prompt',
     #~ models.BooleanField(_("Prompt event"),default=False))    

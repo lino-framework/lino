@@ -1,0 +1,105 @@
+=======================================
+20130911 (Wednesday, 11 September 2013)
+=======================================
+
+
+I probably found an answer to my question "why did this error 
+pass the test suites and make it into a released version?"
+(see :blogref:`‘Site’ object has no attribute ‘modules’ <20130903>`).
+Or rather how can I make an automated unit test.
+
+Not really an automated unit test included within the standard test 
+suite, but I wrote a
+new fab task ``setup_test_sdist`` in :mod:`atelier.fablib` which
+
+- creates and activates a temporay virtualenv
+- calls ``pip install --extra-index X prjname``
+  (where X is your `env.sdist_dir`)
+- runs ``python setup.py test``
+- tidies up
+
+This assumes that you previously did ``pp fab sdist``
+i.e. your `env.sdist_dir` contains the pre-release sdist of all your 
+projects.
+  
+
+A bug in `Account.full_clean`
+-----------------------------
+
+Gerd reported a bug:
+
+    Ich bin ein Feintuning der Kopiervorlage der Budgets (Nr. 47) am machen.
+    Dabei fiel uns auf, dass ein Konto "Sonstige Transportkosten" (ID65)
+    fehlte. Das habe ich hinzugefügt.
+    Leider kann ich es nicht bei den Ausgaben der Kopiervorlage hinzufügen.
+    Es erscheint nicht in der Auswahlliste.
+    Ist das ein subtiler Bug oder mache ich einen Fehler?
+
+Indeed this was a bug in `Account.full_clean`::
+
+
+    def full_clean(self,*args,**kw):
+        if self.group_id is not None:
+            ...
+            if not self.type:
+                self.type = self.group.account_type
+                
+This must be::
+
+    def full_clean(self,*args,**kw):
+        if self.group_id is not None:
+            ...
+            self.type = self.group.account_type
+
+The `type` of an Account should always have the same value as 
+the Account's `group.account_type`. 
+
+
+The test suite now passes.
+
+Continued on :ref:`faggio`.
+
+In :class:`lino.core.actions.Action` we had until now::
+
+    icon_name = 'x-tbar-new' # if action rendered as toolbar button
+    icon_file = 'add.png' # if action rendered by quick_add_buttons
+    
+Replaced this by::    
+
+    icon_name = 'add' 
+
+
+Slave grids filled with nonsense data when opening a Detail for the first time
+------------------------------------------------------------------------------
+
+While working on the todo list of :ref:`faggio`
+I stumbled over a particularily easy reproduction
+of our well known Javascript bug:
+Simply load the
+permalink http://127.0.0.1:8000/api/contacts/Persons/114?an=detail&tab=2
+and the Movements grid was filled.
+
+The obvious reason was that these slave grids 
+loaded themselves while URL_PARAMS_MASTER_PK was still empty.
+A Grid loads itself when the view is ready::
+
+    Lino.GridPanel did this::
+
+        this.on('viewready', function(){
+          this.view_is_ready = true;
+          this.refresh(); 
+          },this);
+
+And for slave grids this can happen *before the request for the master 
+record had completed*.
+
+Solution: I added a simple test in the 
+`GridPanel.refresh_with_after` method::
+
+    if (this.containing_panel) {
+        ...
+        if (!this.store.baseParams.{{ext_requests.URL_PARAM_MASTER_PK}}) {  
+            return;
+        }
+    }
+

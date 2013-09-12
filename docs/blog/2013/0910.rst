@@ -7,11 +7,15 @@ Worked on this:
 -   In `reception.WaitingVisitors` it should not be allowed to delete a row because 
     that would leave the cal.Event without Guest.
     
-I'll first try to simply make all variants of `Visitors` tables 
-readonly by setting `editable=False`.
+The solution is to simply make all variants of `Visitors` tables 
+readonly by setting :attr:`editable <lino.core.actors.Actor.editable>` 
+to `False`. 
+:attr:`editable <lino.core.actors.Actor.editable>`
+does not deactivate the 
+:attr:`editable <lino.core.model.Model.workflow_buttons>`.
 
 This made me stumble on something similar to what we had a few 
-days ago where the `label` of an Actr wasn't inherited.
+days ago where the `label` of an Actor wasn't inherited.
 Now it is the `editable` property.
 I applied the same changes for `editable`.
 
@@ -22,3 +26,82 @@ Waiting for user feedback before doing this.
 
 Removed a test case from :ref:`welfare.tested.debts`
 because (1) it failed und (2) was rather strange anyway.
+
+Updated the :ref:`demos`.
+
+
+How to configure additional text to appear in sales invoices
+------------------------------------------------------------
+
+:class:`lino.utils.appy_pod.Renderer` 
+has now a new built-in function  `jinja`
+
+
+New file :srcref:`sales/Invoice/trailer.body.html
+</lino/modlib/sales/config/sales/Invoice/trailer.body.html>`
+Used from :srcref:`sales/Invoice/Default.odt </lino/modlib/sales/config/sales/Invoice/Default.odt>`
+
+
+And :ref:`faggio`: has a special `trailer.body.html` which adds 
+one item for each enrolment mentioned in this invoice::
+
+    <p>{{_("Your enrolments:")}}</p>
+    {% for enr in this.get_invoiceables(settings.SITE.modules.courses.Enrolment) %}
+    <ul>
+    <li>{{enr.course}} : {{enr.course.events_text()}}</li>
+    </ul>
+    {% endfor %}
+    </div>
+
+Some optimizations:
+
+-   Until now sales.Invoice used the hard-coded build method 
+    :class:`appypdf <lino.mixins.printable.AppyPdfBuildMethod>`.
+    Journal is now a PrintableType (and thus has a new field build_template)
+    Note that not every Voucher is necessarily a TypedPrintable.
+
+-   :function:`lino.core.web.site_setup` : 
+    changed order of discovery for the loaders:
+    first come the :meth:`get_settings_subdirs
+    <lino.site.Site.get_settings_subdirs>`, 
+    then only the packageloaders.
+    
+
+Continued on :ref:`faggio`: 
+---------------------------
+
+- Removed EventStates "draft" and "published". 
+- Event guest are now filled with the enrolled pupils. 
+  New SiteConfig field pupil_guestroles.
+
+
+Custom fields of Choicelist Choices
+-----------------------------------
+
+Something cool: application code can now simply define 
+custom fields of a 
+:class:`lino.core.choicelists.Choice`
+by declaring them on the 
+:class:`lino.core.choicelists.Choicelist`.
+First usage example are `cal.EventStates`
+and `lino.UserLevel`.
+If you wanted to show such custom fields 
+in a table, then you had to define a virtual field::
+
+    @fields.virtualfield(models.CharField(_("Short name"),max_length=2,
+        help_text="used to fill UserProfiles"))
+    def short_name(cls,choice,ar):
+        return choice.short_name
+        
+Now you can just write::
+
+    short_name = models.CharField(_("Short name"),max_length=2,
+        help_text="used to fill UserProfiles")
+
+
+todo
+----
+
+- demo.py : pupil_guestrole
+- Anwesenheiten erfassen können
+- suggest_guests wieder raus? weil es auf dem Papier reicht?

@@ -14,6 +14,7 @@
 import logging
 logger = logging.getLogger(__name__)
 
+import os
 import traceback
 #~ from django.utils.translation import ugettext as _
 from django.utils.translation import ugettext_lazy as _
@@ -287,11 +288,11 @@ class Action(Parametrizable,Permittable):
     when rendered as toolbar button.
     """
     
-    icon_file = None
-    """
-    The file name of an icon to be used for this action
-    when rendered by quick_add_buttons.
-    """
+    #~ icon_file = None
+    #~ """
+    #~ The file name of an icon to be used for this action
+    #~ when rendered by quick_add_buttons.
+    #~ """
     
     _layout_class = layouts.ActionParamsLayout
     
@@ -444,7 +445,7 @@ class Action(Parametrizable,Permittable):
     (...)
     """
     
-    single_row = True
+    select_rows = True
     """
     Set this to False if this action is a list action, not a row action.
     """
@@ -710,20 +711,6 @@ class TableAction(Action):
     
     def get_action_title(self,ar):
         return ar.get_title()
-        
-
-#~ CustomAction = Action
-
-#~ class CustomAction(Action):
-    #~ """
-    #~ Base class for actions that are executed server-side, 
-    #~ either on an individual row (if `single_row` is True) 
-    #~ or on a list, either using an AJAX call or called from a script.
-    #~ 
-    #~ Possible alternate names for CustomAction to ServerSideAction or AjaxAction.
-    #~ """
-
-#~ RowAction = CustomAction # backward compat
 
 
 class RedirectAction(Action):
@@ -826,7 +813,7 @@ class ShowDetailAction(Action):
     """
     An action that opens the Detail Window of its actor.
     """
-    icon_name = 'x-tbar-detail'
+    icon_name = 'application_form'
     #~ icon_file = 'application_form.png'
     opens_a_window = True
     show_in_workflow = False
@@ -920,8 +907,9 @@ class InsertRow(TableAction):
     window gets submitted.
     """
     label = _("New")
-    icon_name = 'x-tbar-new' # if action rendered as toolbar button
-    icon_file = 'add.png' # if action rendered by quick_add_buttons
+    #~ icon_name = 'x-tbar-new' # if action rendered as toolbar button
+    icon_name = 'add' # if action rendered as toolbar button
+    #~ icon_file = 'add.png' # if action rendered by quick_add_buttons
     show_in_workflow = False
     opens_a_window = True
     hide_navigator = True
@@ -992,7 +980,8 @@ class DeleteSelected(Action):
     Delete the row on which it is being executed.
     """
     #~ debug_permissions = "20130222"
-    icon_name = 'x-tbar-delete'
+    #~ icon_name = 'x-tbar-delete'
+    icon_name = 'delete'
     help_text = _("Delete this record")
     auto_save = False
     sort_index = 30
@@ -1011,7 +1000,8 @@ class SubmitDetail(Action):
     #~ debug_permissions = 20130128
     sort_index = 10
     switch_to_detail = False
-    icon_name = 'x-tbar-save'
+    #~ icon_name = 'x-tbar-save'
+    icon_name = 'disk'
     help_text = _("Save changes in this form")
     label = _("Save")
     auto_save = False
@@ -1046,7 +1036,7 @@ class SubmitInsertAndStay(SubmitInsert):
 
 
 class ShowSlaveTable(Action):
-    TABLE2ACTION_ATTRS = tuple('sort_index help_text icon_name icon_file'.split())
+    TABLE2ACTION_ATTRS = tuple('sort_index help_text icon_name label'.split())
     #~ label = "ShowSlaveTable"
     #~ show_in_row_actions = True
     show_in_bbar = True

@@ -327,12 +327,12 @@ class ExtRenderer(HtmlRenderer):
         return "%s()" % self.get_panel_btn_handler(bound_action)
 
     def get_panel_btn_handler(self,ba):
-        if ba.action.single_row:
+        if ba.action.select_rows:
             h  = 'Lino.row_action_handler('
         else:
             h  = 'Lino.list_action_handler('
-            ls_url = '/' + ba.actor.app_label + '/' + ba.actor.__name__
-            h += "'%s'," % ls_url
+            #~ ls_url = '/' + ba.actor.app_label + '/' + ba.actor.__name__
+            h += "'/%s/%s'," % (ba.actor.app_label,ba.actor.__name__)
         h += "'%s'" % ba.action.action_name
         h += ",'%s'" % ba.action.http_method
         if ba.action.preprocessor:
@@ -415,7 +415,7 @@ class ExtRenderer(HtmlRenderer):
         #~ d = dict(text=prepare_label(mi),handler=js_code(handler),tooltip="Foo")
         d = dict(text=prepare_label(mi),handler=js_code(handler))
         if mi.bound_action and mi.bound_action.action.icon_name:
-            d.update(iconCls=mi.bound_action.action.icon_name)
+            d.update(iconCls='x-tbar-'+mi.bound_action.action.icon_name)
         if settings.SITE.use_quicktips and help_text:
             d.update(listeners=dict(render=js_code(
               "Lino.quicktip_renderer(%s,%s)" % (py2js('Foo'),py2js(help_text)))
@@ -439,10 +439,8 @@ class ExtRenderer(HtmlRenderer):
         yield '<title id="title">%s</title>' % site.title or site.verbose_name
         
         def stylesheet(url):
-            #~ url = site.build_media_url(*args) 
             return '<link rel="stylesheet" type="text/css" href="%s" />' % url
         def javascript(url):
-            #~ url = site.build_media_url() + url
             return '<script type="text/javascript" src="%s"></script>' % url
             
         if run_jasmine: 
@@ -1168,7 +1166,7 @@ tinymce.init({
             kw.update(panel_btn_handler=js_code(self.get_panel_btn_handler(ba)))
             
         if a.icon_name:
-            kw.update(iconCls=a.icon_name)
+            kw.update(iconCls='x-tbar-'+a.icon_name)
         else:
             kw.update(text=a.label)
         kw.update(

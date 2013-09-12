@@ -229,6 +229,11 @@ class BoundAction(object):
 #~ 
 
 
+def field_getter(name):
+    def func(cls,obj,ar):
+        #~ print 20130910, repr(obj),name
+        return getattr(obj,name)
+    return func
 
 class ActorMetaClass(type):
     def __new__(meta, classname, bases, classDict):
@@ -308,8 +313,11 @@ class ActorMetaClass(type):
             for k,v in classDict.items():
                 if isinstance(v,fields.Constant):
                     cls.add_constant(k,v)
-                if isinstance(v,fields.VirtualField): # 20120903b
+                elif isinstance(v,fields.VirtualField): # 20120903b
                     cls.add_virtual_field(k,v)
+                elif isinstance(v,models.Field): # 20130910
+                    #~ print "20130910 add virtual field " ,k, cls
+                    cls.add_virtual_field(k,fields.VirtualField(v,field_getter(k)))
                     
         #~ if classname == 'Tasks':
             #~ logger.info("20130817 no longer added actor vfs")
@@ -391,11 +399,11 @@ class Actor(actions.Parametrizable):
     The icon_name to be used for a ShowSlaveTable action on this actor.
     """
     
-    icon_file = None
-    """
-    The icon_file to be used for a ShowSlaveTable action on this actor.
-    """
-    
+    #~ icon_file = None
+    #~ """
+    #~ The icon_file to be used for a ShowSlaveTable action on this actor.
+    #~ """
+    #~ 
     
     
     hidden_elements = frozenset()

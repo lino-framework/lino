@@ -106,7 +106,7 @@ def objects():
 
     if sales:
         #~ yield sales.Orders.create_journal("VKR",'sales',name=u"Aufträge")
-        yield sales.Invoice.create_journal('sales',chart=chart,**babel_values('name',
+        yield sales.Invoice.create_journal('sales',ref="SAL",chart=chart,**babel_values('name',
           de=u"Verkaufsrechnungen",fr=u"Factures vente",en="Sales invoices",et=u"Müügiarved"))
     else:
         yield ledger.AccountInvoice.create_journal('sales',
@@ -115,14 +115,15 @@ def objects():
           
     yield ledger.AccountInvoice.create_journal('purchases',
         chart=chart,
+        ref="PUR",
         **babel_values('name',
             de=u"Einkaufsrechnungen",fr=u"Factures achat",en="Purchase invoices",et=u"Ostuarved"))
             
     if finan:
-        yield finan.BankStatement.create_journal(chart=chart,name=u"Bestbank",account='bestbank')
+        yield finan.BankStatement.create_journal(chart=chart,name=u"Bestbank",account='bestbank',ref="BB")
 
     if declarations:
-        yield declarations.Declaration.create_journal(chart=chart,name=u"VAT declarations")
+        yield declarations.Declaration.create_journal(chart=chart,name=u"VAT declarations",ref="VAT")
 
 
     MODEL = ledger.AccountInvoice

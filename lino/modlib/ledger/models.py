@@ -31,6 +31,8 @@ from lino import dd
 from lino import mixins
 from django.utils.translation import ugettext_lazy as _
 from lino.modlib.ledger.utils import FiscalYears
+from lino.mixins.printable import model_group
+from lino.utils.xmlgen.html import E
 
 accounts = dd.resolve_app('accounts',strict=True)
 vat = dd.resolve_app('vat',strict=True)
@@ -69,7 +71,7 @@ class VoucherTypes(dd.ChoiceList):
         return cls.add_item_instance(VoucherType(model,table_class))
     
 
-class Journal(dd.BabelNamed,mixins.Sequenced):
+class Journal(dd.BabelNamed,mixins.Sequenced,mixins.PrintableType):
   
     class Meta:
         verbose_name = _("Journal")
@@ -183,20 +185,22 @@ class Journal(dd.BabelNamed,mixins.Sequenced):
             if doc.number + 1 != self.get_next_number(doc):
                 return _("%s is not the last voucher in journal" % unicode(doc))
 
+    def get_templates_group(self):
+        return model_group(self.voucher_type.model)
 
 
 class Journals(dd.Table):
     model = Journal
     order_by = ["seqno"]
-    column_names = "seqno id trade_type voucher_type name force_sequence *"
+    column_names = "ref:5 trade_type voucher_type force_sequence name * seqno id"
     detail_layout = """
-    seqno id trade_type voucher_type 
-    force_sequence account
+    ref trade_type voucher_type 
+    force_sequence account seqno id
     name
-    printed_name
+    build_method  printed_name
     """
     insert_layout = dd.FormLayout("""
-    name
+    ref name
     trade_type 
     voucher_type 
     """,window_size=(60,'auto'))
@@ -278,6 +282,8 @@ class Voucher(mixins.UserAuthored):
         if self.number is None:
             return "%s #%s (not registered)" % (
                 unicode(self.journal.voucher_type.model._meta.verbose_name),self.id)
+        if self.journal.ref:
+            return "%s#%s" % (self.journal.ref,self.number)
         return "#%s (%s %s)" % (self.number,self.journal,self.year)
         
     #~ def on_create(self,*args,**kw):
@@ -465,6 +471,7 @@ class Movement(mixins.Sequenced):
     partner = dd.ForeignKey(partner_model,blank=True,null=True)
     amount = dd.PriceField(default=0)
     dc = DebitOrCreditField()
+    match = dd.ForeignKey('self',verbose_name=_("Match"),blank=True,null=True)
     #~ is_credit = models.BooleanField(_("Credit"),default=False)
     #~ debit = dd.PriceField(default=0)
     #~ credit = dd.PriceField(default=0)
@@ -487,6 +494,11 @@ class Movement(mixins.Sequenced):
     def voucher_link(self,ar):
         return self.voucher.obj2html(ar)
         
+    @dd.displayfield(_("Matched by"))
+    def matched_by(self,ar):
+        elems = [obj.voucher_link(ar) for obj in Movement.objects.filter(match=self)]
+        return E.div(*elems)
+        
     
     def get_siblings(self):
         return self.voucher.movement_set.order_by('seqno')
@@ -504,16 +516,31 @@ class Movements(dd.Table):
     
 class MovementsByVoucher(Movements):
     master_key = 'voucher'
-    column_names = 'seqno account debit credit'
-    editable = False
+    column_names = 'seqno account debit credit matched_by'
+    #~ editable = False
+    auto_fit_column_widths = True
     
 class MovementsByPartner(Movements):
     master_key = 'partner'
-    order_by = ['voucher__date']
-    column_names = 'voucher__date voucher_link debit credit account '
-    editable = False
+    order_by = ['-voucher__date']
+    column_names = 'voucher__date voucher_link debit credit account match matched_by'
+    #~ editable = False
+    auto_fit_column_widths = True
     
 
+class Matchable(dd.Model):
+    
+    class Meta: 
+        abstract = True
+        
+    match = dd.ForeignKey('ledger.Movement',verbose_name=_("Match"),blank=True,null=True)
+    
+    @dd.chooser()
+    def match_choices(cls,partner):
+        qs = Movement.objects.filter(partner=partner)
+        return qs
+        
+        
 
 
 class InvoiceStates(dd.Workflow):
@@ -529,7 +556,7 @@ add('40',_("Paid"),'paid',editable=False)
 #~ InvoiceStates.draft.add_transition(_("Deregister"),states='registered paid')
 #~ InvoiceStates.registered.add_transition(_("Register"),states='draft')
     
-class AccountInvoice(vat.VatDocument,Voucher,mixins.Registrable):
+class AccountInvoice(vat.VatDocument,Voucher,mixins.Registrable,Matchable):
     
     class Meta:
         verbose_name = _("Invoice")

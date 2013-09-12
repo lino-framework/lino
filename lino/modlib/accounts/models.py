@@ -116,8 +116,8 @@ class Account(dd.BabelNamed,mixins.Sequenced):
                 self.ref = str(self.chart.account_set.count()+1)
             if not self.name:
                 self.name = self.group.name
-            if not self.type:
-                self.type = self.group.account_type
+            #~ if not self.type:
+            self.type = self.group.account_type
             #~ if not self.chart:
                 #~ self.chart = self.group.chart
         super(Account,self).full_clean(*args,**kw)

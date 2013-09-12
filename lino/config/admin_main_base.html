@@ -3,7 +3,7 @@
     {% block hello_user %}
         <p>{{_("Quick links:")}}
         {% for mi in settings.SITE.get_quicklinks(ar).items %}
-        [{{E.tostring(ar.window_action_button(mi.bound_action))}}]
+        [{{E.tostring(ar.window_action_button(mi.bound_action,icon_name=None))}}]
         {% endfor %}
         </p>
         <h2>{{_("Welcome")}}</h2>
@@ -35,11 +35,11 @@
         <h2>{{T.label}} 
         {# {{E.tostring(ar.window_action_button(T.default_action,
             title=_("Show this panel in own window"),
-            icon_file="../wikipedia/external_text.png"))}} #}
+            icon_ffile="../wikipedia/external_text"))}} #}
         {{E.tostring(ar.window_action_button(T.default_action,
             title=_("Show this panel in own window"),
             style='vertical-align:0;',
-            icon_file="../xsite/link.gif"))}}
+            icon_name="../xsite/link"))}}
         </h2>
         
         {{E.tostring(ar.show(T,limit=5))}}

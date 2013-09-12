@@ -13,33 +13,8 @@
 ## along with Lino; if not, see <http://www.gnu.org/licenses/>.
 
 """
-An extended :term:`appy.pod` renderer that installs additional functions
-to be used in `do text|section|table... from ...
-<http://appyframework.org/podWritingAdvancedTemplates.html>`__ 
-statements.
-
-
-- `restify(s)`: 
-  Render a string `s` which contains reStructuredText markup.
-  The string is first passed to 
-  :func:`lino.utils.restify.restify` to convert it to XHTML, 
-  then to `appy.pod`'s built in `xhtml` function.
-  Without this, users would have to write each time something like::
-
-    do text
-    from xhtml(restify(self.body).encode('utf-8'))
-
-- `html(s)` :
-  Render a string that is in HTML (not XHTML).
-
-- `ehtml(e)` :
-  Render an ElementTree HTML object 
-  (generated using :mod:`lino.utils.xmlgen.html`)
-  by passing it to :mod:`lino.utils.html2odf`.
-
-- `table(ar,column_names=None)` : render an :class:`lino.core.tables.TableRequest` 
-  as a table.
-
+Defines :class:`Renderer`
+and :class:`PdfTableAction`
 """
 
 from __future__ import unicode_literals
@@ -51,6 +26,7 @@ import os
 
 from appy.pod.renderer import Renderer as AppyRenderer
 
+from django.utils.translation import ugettext_lazy as _
 from django.utils.encoding import force_unicode
 from django.conf import settings
 
@@ -63,10 +39,16 @@ from odf.style import TableColumnProperties, TableRowProperties, TableCellProper
 from odf import text
 from odf.table import Table, TableColumns, TableColumn, TableHeaderRows, TableRows, TableRow, TableCell
 
+from north import dbutils
+
 #~ from lino.utils import jsgen
+from lino.core import actions
 from lino.utils.restify import restify
 from lino.utils.html2xhtml import html2xhtml
 from lino.utils.html2odf import html2odf, toxml
+from lino.utils.config import find_config_file
+from lino.utils.media import TmpMediaFile
+
 
 
 OAS = '<office:automatic-styles>'
@@ -89,12 +71,47 @@ UL_LIST_STYLE = """\
 
 
 class Renderer(AppyRenderer):
-  
+    """
+    An extended :term:`appy.pod` renderer that installs additional functions
+    to be used in `do text|section|table... from ...
+    <http://appyframework.org/podWritingAdvancedTemplates.html>`__ 
+    statements.
+
+
+    - `jinja(template_name)`: 
+      Render the template named `template_name` using Jinja.
+      I `template_name` contains no dot, then the default filename 
+      extension `.body.html` is added.
+      The template is supposed to contain HTML.
+      
+    - `restify(s)`: 
+      Render a string `s` which contains reStructuredText markup.
+      The string is first passed to 
+      :func:`lino.utils.restify.restify` to convert it to XHTML, 
+      then to `appy.pod`'s built in `xhtml` function.
+      Without this, users would have to write each time something like::
+
+        do text
+        from xhtml(restify(self.body).encode('utf-8'))
+
+    - `html(s)` :
+      Render a string that is in HTML (not XHTML).
+
+    - `ehtml(e)` :
+      Render an ElementTree HTML object 
+      (generated using :mod:`lino.utils.xmlgen.html`)
+      by passing it to :mod:`lino.utils.html2odf`.
+
+    - `table(ar,column_names=None)` : render an :class:`lino.core.tables.TableRequest` 
+      as a table.
+
+    """
     def __init__(self, ar, template, context, result, **kw):
         self.ar = ar
         #~ context.update(appy_renderer=self)
         context.update(restify=self.restify_func)
         context.update(html=self.html_func)
+        context.update(jinja=self.jinja_func)
         context.update(table=self.insert_table)
         context.update(as_odt=self.as_odt)
         #~ context.update(story=self.insert_story)
@@ -116,6 +133,26 @@ class Renderer(AppyRenderer):
         self.my_automaticstyles = []
         self.my_styles = []
   
+    def jinja_func(self,template_name,**kw):
+        try:
+            if not '.' in template_name:
+                template_name += '.html'
+            #~ printable = self.contentParser.env.context.get('this',None)
+            #~ from lino.mixins.printable import TypedPrintable
+            #~ if isinstance(printable,TypedPrintable):
+                #~ template_name = printable.get_templates_group() + '/' + template_name
+            #~ print 20130910, settings.SITE.jinja_env
+            template = settings.SITE.jinja_env.get_template(template_name)
+            #~ print 20130910, template, dir(self)
+            html = template.render(self.contentParser.env.context)
+            return self.html_func(html)
+            #~ print 20130910, html
+            #~ return self.renderXhtml(html,**kw)
+        except Exception as e:
+            import traceback
+            traceback.print_exc(e)
+        
+        
     def restify_func(self,unicode_string,**kw):
         """
         
@@ -469,3 +506,76 @@ class Renderer(AppyRenderer):
             #~ doc.save(output_file) # , True)
         #~ return doc
         
+
+
+class PdfTableAction(actions.Action):
+    """
+    
+    """
+    label = _("pdf")
+    help_text = _('Show this table as a pdf document')
+    icon_name = 'pdf'
+    sort_index = 1
+    select_rows = False
+    default_format = 'ajax'
+    preprocessor = "Lino.get_current_grid_config"
+    MAX_ROW_COUNT = 900
+    template_name = "Table.odt" 
+
+    def run_from_ui(self,ar,**kw):
+        #~ print 20130912
+        #~ obj = ar.selected_rows[0]
+        mf = TmpMediaFile(ar,'pdf')
+        settings.SITE.makedirs_if_missing(os.path.dirname(mf.name))
+        self.appy_render(ar,mf.name)
+        kw.update(success=True)
+        kw.update(open_url=mf.url)
+        #~ return http.HttpResponseRedirect(mf.url)
+        return kw
+
+    def appy_render(self,ar,target_file):
+        
+        
+        if ar.get_total_count() > self.MAX_ROW_COUNT:
+            raise Exception(_("List contains more than %d rows") % self.MAX_ROW_COUNT)
+    
+        tplgroup = None
+        tplfile = find_config_file(self.template_name,tplgroup)
+        if not tplfile:
+            raise Exception("No file %s / %s" % (tplgroup,self.template_name))
+            
+        ar.renderer = settings.SITE.ui.ext_renderer # 20120624
+        
+        context = self.get_context(ar)
+        if os.path.exists(target_file):
+            os.remove(target_file)
+        logger.info(u"appy.pod render %s -> %s (params=%s",
+            tplfile,target_file,settings.SITE.appy_params)
+        renderer = Renderer(ar,tplfile, context, target_file,**settings.SITE.appy_params)
+        renderer.run()
+        
+    def get_context(self,ar):
+        return dict(
+            ar=ar,
+            title=unicode(ar.get_title()),
+            dtos=dbutils.dtos,
+            dtosl=dbutils.dtosl,
+            dtomy=dbutils.dtomy,
+            babelattr=dbutils.babelattr,
+            babelitem=dbutils.babelitem,
+            tr=dbutils.babelitem,
+            settings=settings,
+            _ = _,
+            #~ knowledge_text=fields.knowledge_text,
+            )
+        
+        
+class PdfLabelsAction(PdfTableAction):
+    label = _("Labels")
+    help_text = _('Generate mailing labels for these recipients')
+    icon_name = None
+    template_name = "Labels.odt" 
+    def get_context(self,ar):
+        context = super(PdfLabelsAction,self).get_context(ar)
+        context.update(recipients=iter(ar))
+        return context

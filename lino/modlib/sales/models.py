@@ -66,6 +66,10 @@ vat.TradeTypes.sales.update(
     base_account_field_label=_("Sales account"))
 
 
+dd.inject_field('contacts.Partner','invoicing_address',dd.ForeignKey('contacts.Partner',
+        verbose_name=_("Invoicing address"),
+        blank=True,null=True))
+    
 
 
 #~ class Channel(ChoiceList):
@@ -256,6 +260,7 @@ class SalesRule(dd.Model):
 class SalesDocument(
       #~ mixins.UserAuthored,
       vat.VatDocument,
+      ledger.Matchable,
       #~ journals.Sendable,
       #~ journals.Journaled,
       #~ contacts.ContactDocument,
@@ -303,6 +308,11 @@ class SalesDocument(
     discount = dd.PercentageField(_("Discount"),blank=True,null=True)
     
     
+    def get_printable_type(self):
+        return self.journal
+
+    def get_print_language(self):
+        return self.language
         
     #~ @dd.chooser()
     #~ def partner_choices(self):
@@ -460,27 +470,28 @@ class ProductDocItem(ledger.VoucherItem,vat.QtyVatItemBase):
         #~ super(ProductDocItem,self).full_clean(*args,**kw)
 
     def discount_changed(self,ar):
-        if self.product:
+        if not self.product:
+            return
 
-            tt = self.voucher.get_trade_type()
-            catalog_price = tt.get_catalog_price(self.product)
-                
-            if catalog_price is not None:
-                #~ assert self.vat_class == self.product.vat_class
-                if self.voucher.vat_regime.item_vat:
-                    rate = self.get_vat_rate() # rate of this item
-                else:
-                    rate = ZERO
-                catalog_rate = settings.SITE.get_vat_rate(tt,
-                    self.vat_class,vat.get_default_vat_regime)
-                if rate != catalog_rate:
-                    catalog_price = remove_vat(catalog_price,catalog_rate)
-                    catalog_price = add_vat(catalog_price,rate)
-                if self.discount is None:
-                    self.unit_price = catalog_price
-                else:
-                    self.unit_price = catalog_price * (HUNDRED - self.discount) / HUNDRED                    
-                self.unit_price_changed(ar)
+        tt = self.voucher.get_trade_type()
+        catalog_price = tt.get_catalog_price(self.product)
+            
+        if catalog_price is not None:
+            #~ assert self.vat_class == self.product.vat_class
+            if self.voucher.vat_regime.item_vat:
+                rate = self.get_vat_rate() # rate of this item
+            else:
+                rate = ZERO
+            catalog_rate = settings.SITE.get_vat_rate(tt,
+                self.vat_class,vat.get_default_vat_regime)
+            if rate != catalog_rate:
+                catalog_price = remove_vat(catalog_price,catalog_rate)
+                catalog_price = add_vat(catalog_price,rate)
+            if self.discount is None:
+                self.unit_price = catalog_price
+            else:
+                self.unit_price = catalog_price * (HUNDRED - self.discount) / HUNDRED                    
+            self.unit_price_changed(ar)
                 
     def product_changed(self,ar):
         if self.product:
@@ -741,12 +752,15 @@ def site_setup(site):
     #~ for t in (site.modules.partners.Partners,
               #~ site.modules.partners.Persons,
               #~ site.modules.partners.Organisations):
-    site.modules[settings.SITE.partners_app_label].Partners.add_detail_tab("sales",
-        """
-        payment_term vat_regime #item_vat imode
-        sales.InvoicesByPartner
-        """,
-        label=MODULE_LABEL)
+    for m in dd.models_by_base(site.modules.contacts.Partner):
+        t = m.get_default_table()
+        if not hasattr(t.detail_layout,'sales'):
+            t.add_detail_tab("sales", """
+            invoicing_address vat_regime imode payment_term 
+            sales.InvoicesByPartner
+            """,
+            label=MODULE_LABEL)
+    #~ site.modules.contacts.Partners.add_detail_tab("sales",
     #~ if site.is_installed('tickets'):
         #~ site.modules.tickets.Projects.add_detail_tab("sales","sales.InvoicesByProject")
     #~ site.modules.lino.SiteConfigs.add_detail_tab("sales","""

@@ -1,9 +1,17 @@
-function doit()
+#!/bin/bash
+function doit_old()
 {
   python manage.py dumpdata --format py > fixtures/a.py
   python manage.py initdb a --noinput
   python manage.py dumpdata --format py > fixtures/b.py
   diff fixtures/a.py fixtures/b.py
+}
+function doit()
+{
+  python manage.py dump2py > a
+  python manage.py initdb a --noinput
+  python manage.py dump2py > b
+  diff a b
 }
 echo "Double Dump Test"
 echo "WARNING: running this test can break your database. Be sure to have a backup!"

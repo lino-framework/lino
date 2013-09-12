@@ -175,6 +175,8 @@ class GridColumn(jsgen.Component):
         #~ if isinstance(editor,BooleanFieldElement):
             #~ self.editor = None
         #~ else:
+        #~ if editor.field.__class__.__name__ == "DcAmountField":
+            #~ print 20130911, editor.editable
         self.editor = editor
         if editor.grid_column_template is not None:
             self.value_template = editor.grid_column_template
@@ -267,10 +269,12 @@ class GridColumn(jsgen.Component):
               #~ if editor.name == 'user':
                 #~ print 20120919, editor.field.__class__, editor.field.editable
                 #~ print 20120919, editor.field.model, kw['editable']
+                
         else:
             kw.update(editable=False)
         jsgen.Component.__init__(self,editor.name,**kw)
     
+            
         #~ if self.editable:
             #~ editor = self.get_field_options()
         
@@ -696,6 +700,9 @@ class FieldElement(LayoutElement):
         self.add_default_value(kw)
         
         LayoutElement.__init__(self,layout_handle,field.name,**kw)
+        
+        #~ if self.field.__class__.__name__ == "DcAmountField":
+            #~ print 20130911, self.field, self.editable
 
     def value_from_object(self,obj,ar):
         """
@@ -1556,7 +1563,7 @@ class HtmlBoxElement(DisplayElement):
         #~ LayoutElement.__init__(self,layout_handle,name,**kw)
         
     def get_field_options(self,**kw):
-        kw.update(master_panel=js_code("this"))
+        #~ kw.update(master_panel=js_code("this"))
         kw.update(name=self.field.name)
         kw.update(containing_panel=js_code("this"))
         kw.update(layout='fit')

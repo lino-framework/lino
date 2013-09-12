@@ -53,6 +53,7 @@ from lino.utils.appy_pod import Renderer
 from lino.core.model import Model
 from lino.mixins.duplicable import Duplicable
 
+from lino.utils.media import MediaFile
 from lino.utils.media import TmpMediaFile
 from lino.utils.pdf import merge_pdfs
 
@@ -90,10 +91,9 @@ except ImportError:
 #~ def filename_root(elem):
     #~ return elem._meta.app_label + '.' + elem.__class__.__name__
 
-def model_group(elem):
-    return elem._meta.app_label + '/' + elem.__class__.__name__
+def model_group(model):
+    return model._meta.app_label + '/' + model.__name__
 
-from lino.utils.media import MediaFile
 
 
 bm_dict = {}
@@ -188,7 +188,9 @@ class BuildMethod:
         #~ raise NotImplementedError
         
 class DjangoBuildMethod(BuildMethod):
-
+    """
+    Using Django's templating engine.
+    """
     def get_template(self,action,elem):
         tpls = action.get_print_templates(self,elem)
         if len(tpls) == 0:
@@ -210,6 +212,7 @@ class DjangoBuildMethod(BuildMethod):
 class PisaBuildMethod(DjangoBuildMethod):
     """
     Generates .pdf files from .html templates.
+    Usage example see :ref:`lino.tutorials.pisa`.
     """
     name = 'pisa'
     target_ext = '.pdf'
@@ -505,35 +508,15 @@ class CachedPrintAction(BasePrintAction):
     For the user they are synonyms as long as 
     Lino doesn't support server-side printing.
     """
-    single_row = False
+    select_rows = False
     http_method = 'POST'
-    icon_name = 'x-tbar-print'
+    icon_name = 'printer'
     
     def before_build(self,bm,elem):
         if elem.build_time:
             return
         return BasePrintAction.before_build(self,bm,elem)
             
-    def unused_run_from_ui(self,ar,**kw):
-        obj = ar.selected_rows[0]
-        assert obj is None
-        
-        if elem.build_time is None:
-            elem.build_target(ar)
-            kw.update(refresh=True)
-            kw.update(message=_("%s printable has been built.") % elem)
-        else:
-            kw.update(message=_("Reused %s printable from cache.") % elem)
-            
-        bm = get_build_method(elem)
-        url = bm.get_target_url(self,elem)
-        
-        if bm.use_webdav and settings.SITE.use_davlink:
-            kw.update(open_davlink_url=ar.request.build_absolute_uri(url))
-        else:
-            kw.update(open_url=url)
-        return ar.success(**kw)
-        
     def run_from_ui(self,ar,**kw):
         #~ obj = ar.selected_rows[0]        
         #~ assert obj is None
@@ -549,7 +532,7 @@ class CachedPrintAction(BasePrintAction):
                 kw.update(message=_("Reused %s printable from cache.") % obj)
             kw.update(refresh=True)
             #~ kw.update(open_url=mf.url)
-            if bm.use_webdav and settings.SITE.use_davlink:
+            if bm.use_webdav and settings.SITE.use_davlink and ar.request is not None:
                 kw.update(open_davlink_url=ar.request.build_absolute_uri(mf.url))
             else:
                 kw.update(open_url=mf.url)
@@ -607,7 +590,7 @@ class DirectPrintAction(BasePrintAction):
     A Print Action that uses a hard-coded template and no cache.
     """
     url_action_name = None
-    icon_name='x-tbar-print'
+    icon_name='printer'
     
     #~ def __init__(self,rpt,name,label,bmname,tplname):
     #~ def __init__(self,label=None,tplname='Default',build_method=None,**kw):
@@ -675,7 +658,7 @@ class ClearCacheAction(actions.Action):
     label = _('Clear cache')
     #~ debug_permissions = 20121127
     
-    icon_name = 'x-tbar-clearcache'
+    icon_name = 'printer_delete'
     
     #~ def disabled_for(self,obj,request):
         #~ if not obj.build_time:
@@ -741,7 +724,7 @@ class PrintableType(Model):
     #~ build_method = models.CharField(max_length=20,choices=mixins.build_method_choices())
     #~ template = models.CharField(max_length=200)
     
-    @classmethod
+    #~ @classmethod
     def get_templates_group(cls):
         #~ return cls.templates_group or cls._meta.app_label
         return cls.templates_group # or full_model_name(cls)
@@ -766,7 +749,7 @@ class BasePrintable(object):
         return settings.SITE.DEFAULT_LANGUAGE.django_code
         
     def get_templates_group(self):
-        return model_group(self)
+        return model_group(self.__class__)
         
     def filename_root(self):
         return self._meta.app_label + '.' + self.__class__.__name__ + '-' + str(self.pk)
@@ -793,7 +776,20 @@ class BasePrintable(object):
         
     def get_printable_context(self,ar,**kw):
         """
-        Deserves documentation. :class:`lino.modlib.notes.models.Note` extends this.
+        Defines the following names in your template context:
+        
+        this
+            The printable object instance
+            
+        mtos
+            "amount to string" using :func:`decfmt`
+        fds
+            "format date short", see :func:`north.dbutils.fds`
+        fdm
+            "format date medium", see :func:`north.dbutils.fdm`
+        
+        
+        :class:`lino.modlib.notes.models.Note` extends this.
         """
         def translate(s):
             return _(s.decode('utf8'))

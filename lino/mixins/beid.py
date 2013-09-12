@@ -244,8 +244,8 @@ class BeIdReadCardAction(BaseBeIdReadCardAction):
     
     sort_index = 90
     
-    icon_name = 'x-tbar-vcard'
-    icon_file = 'vcard.png'
+    icon_name = 'vcard'
+    #~ icon_file = 'vcard.png'
     
     label = _("Read eID card")
     sorry_msg = _("Sorry, I cannot handle that case: %s")
@@ -412,7 +412,7 @@ class BeIdCardHolder(dd.Model):
         verbose_name=_("noble condition"))
     "The eventual noble condition of this person. Imported from TIM."
         
-    print_eid_content = dd.DirectPrintAction(_("eID sheet"),'eid-content',icon_name='x-tbar-vcard')
+    print_eid_content = dd.DirectPrintAction(_("eID sheet"),'eid-content',icon_name='vcard')
     
     beid_readonly_fields = set('noble_condition card_valid_from card_valid_until card_issuer card_number card_type'.split())
     
@@ -460,7 +460,7 @@ class BeIdCardHolder(dd.Model):
             #~ elems.append(ar.action_button(ba,self,_("Must read eID card!")))
             elems.append(ar.instance_action_button(
                 self.read_beid,
-                _("Must read eID card!"),icon_file=None))
+                _("Must read eID card!"),icon_name=None))
             #~ elems.append(_("No info available"))
             # same red as in lino.css for .x-grid3-row-red td
             #~ attrs.update(style="background-color:#FA7F7F; padding:3pt;") 

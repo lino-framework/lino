@@ -163,7 +163,12 @@ So we restore the original value (which was an empty string):
 >>> obj.save()
 
 Wrote another page for Gaëtan to reproduce all this without Lino 
-installed: :doc:`0821/bug`.
+installed: 
+
+.. toctree::
+    :maxdepth: 2
+
+    0821/bug
 
 
 As explained there, I then understood that 
@@ -177,3 +182,4 @@ I worked more than 3 hours to understand and fix a little bug:
 is that cool? No, *that*'s not cool, but *Lino* is cool:
 all this would have taken many days without the possibility 
 of reproducing the original problem in a simple blog entry!)
+

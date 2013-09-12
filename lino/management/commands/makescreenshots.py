@@ -147,99 +147,6 @@ page.open(address,on_opened);
 """
 
 
-#~ ADDR = "http://127.0.0.1"
-ADDR = "127.0.0.1"
-PORT = 8000
-HTTPD = StoppableWSGIServer(('', PORT), WSGIRequestHandler)
-
-def start_server():
-    try:
-        handler = get_internal_wsgi_application()
-        HTTPD.set_app(handler)
-        HTTPD.serve_forever()
-    except KeyboardInterrupt:
-        sys.exit(0)
-
-def stop_server():
-    #~ server.terminate()
-    HTTPD.shutdown()
-    HTTPD.server_close()
-    logger.info("terminated server.")
-    
-
-def main(force=False,**kw):
-    settings.SITE.startup()
-        
-    outputbase = os.path.join(settings.MEDIA_ROOT,'cache','screenshots')
-
-    urlbase = "http://" + ADDR + ":" + str(PORT)
-    #~ urlbase="http://127.0.0.1:8000"
-    pp = SubProcessParent()
-    server = Process(target=start_server)
-    server.start()
-    #~ server.join()
-    logger.info("started the server")
-    
-    count = 0
-    assert not settings.SITE.remote_user_header
-    try:
-        for lng in settings.SITE.languages:
-          if lng.django_code == 'de': # temporary
-            for ss in screenshots.get_screenshots(lng.django_code):
-            #~ print "20130515 got screenshot", ss
-                target = ss.get_filename(outputbase)
-                if not force and os.path.exists(target):
-                    logger.info("%s exists",target)
-                    continue
-                for fn in (target, target+'.log'):
-                    if os.path.exists(fn):
-                        os.remove(fn)
-                url = ss.get_url(urlbase)
-                if url is None:
-                    logger.info("No url for %s",target)
-                    continue
-                logger.info("Build %s...",target)
-                ctx = dict(
-                    url=url,
-                    target=target,
-                    username=ss.ar.get_user().username)
-                ctx.update(password='1234')
-                ctx.update(remote_user_header=settings.SITE.remote_user_header)
-                f = file('tmp.js','wt')
-                f.write(JS_SRC % ctx)
-                f.close()
-                args = [PHANTOMJS]
-                args += ['--cookies-file=phantomjs_cookies.txt']
-                args += ['--disk-cache=true']
-                args += ['tmp.js']
-                
-                try:
-                    output = pp.check_output(args,**kw)
-                except subprocess.CalledProcessError as e:
-                    output = e.output
-                    file(target+'.log','wt').write(output)
-                count += 1
-                
-                #~ p = pp.open_subprocess(args,**kw)
-                #~ p.wait()
-                #~ rc = p.returncode
-                #~ if rc != 0:
-                    #~ raise Exception("`%s` returned %s" % (" ".join(args),rc))
-                if not os.path.exists(target):
-                    raise Exception("File %s has not been created." % target)
-        logger.info("Built %d screenshots.",count)
-    except Exception as e:
-        import traceback
-        traceback.print_exc(e)
-        #~ print e
-        stop_server()
-        raise
-    finally:
-        stop_server()
-
-    
-
-
 
 
 class Command(BaseCommand):
@@ -271,3 +178,95 @@ class Command(BaseCommand):
         main(force=options['force'])
         #~ main()
         
+
+    #~ ADDR = "http://127.0.0.1"
+    ADDR = "127.0.0.1"
+    PORT = 8000
+    
+    HTTPD = None
+
+    def start_server(self):
+        try:
+            handler = get_internal_wsgi_application()
+            self.HTTPD = StoppableWSGIServer(('', PORT), WSGIRequestHandler)
+            self.HTTPD.set_app(handler)
+            self.HTTPD.serve_forever()
+        except KeyboardInterrupt:
+            sys.exit(0)
+
+    def stop_server(self):
+        #~ server.terminate()
+        self.HTTPD.shutdown()
+        self.HTTPD.server_close()
+        logger.info("terminated server.")
+        
+
+    def main(self,force=False,**kw):
+        settings.SITE.startup()
+            
+        outputbase = os.path.join(settings.MEDIA_ROOT,'cache','screenshots')
+
+        urlbase = "http://" + ADDR + ":" + str(PORT)
+        #~ urlbase="http://127.0.0.1:8000"
+        pp = SubProcessParent()
+        server = Process(target=self.start_server)
+        server.start()
+        #~ server.join()
+        logger.info("started the server")
+        
+        count = 0
+        assert not settings.SITE.remote_user_header
+        try:
+            for lng in settings.SITE.languages:
+              if lng.django_code == 'de': # temporary
+                for ss in screenshots.get_screenshots(lng.django_code):
+                #~ print "20130515 got screenshot", ss
+                    target = ss.get_filename(outputbase)
+                    if not force and os.path.exists(target):
+                        logger.info("%s exists",target)
+                        continue
+                    for fn in (target, target+'.log'):
+                        if os.path.exists(fn):
+                            os.remove(fn)
+                    url = ss.get_url(urlbase)
+                    if url is None:
+                        logger.info("No url for %s",target)
+                        continue
+                    logger.info("Build %s...",target)
+                    ctx = dict(
+                        url=url,
+                        target=target,
+                        username=ss.ar.get_user().username)
+                    ctx.update(password='1234')
+                    ctx.update(remote_user_header=settings.SITE.remote_user_header)
+                    f = file('tmp.js','wt')
+                    f.write(JS_SRC % ctx)
+                    f.close()
+                    args = [PHANTOMJS]
+                    args += ['--cookies-file=phantomjs_cookies.txt']
+                    args += ['--disk-cache=true']
+                    args += ['tmp.js']
+                    
+                    try:
+                        output = pp.check_output(args,**kw)
+                    except subprocess.CalledProcessError as e:
+                        output = e.output
+                        file(target+'.log','wt').write(output)
+                    count += 1
+                    
+                    #~ p = pp.open_subprocess(args,**kw)
+                    #~ p.wait()
+                    #~ rc = p.returncode
+                    #~ if rc != 0:
+                        #~ raise Exception("`%s` returned %s" % (" ".join(args),rc))
+                    if not os.path.exists(target):
+                        raise Exception("File %s has not been created." % target)
+            logger.info("Built %d screenshots.",count)
+        except Exception as e:
+            import traceback
+            traceback.print_exc(e)
+            #~ print e
+            self.stop_server()
+            raise
+        finally:
+            self.stop_server()

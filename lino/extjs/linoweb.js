@@ -2187,7 +2187,7 @@ Lino.call_ajax_action = function(panel,method,url,p,actionName,step,on_confirm,o
 Lino.row_action_handler = function(actionName,hm,pp) {
   var p = {};
   var fn = function(panel,btn,step) {
-      if (pp) { p = pp(); if (! p) return; }
+      if (pp) { p = pp(panel); if (! p) return; }
       
       if (panel.get_current_record == undefined) { // AFTER_20130725
         panel = Ext.getCmp(panel);
@@ -2212,7 +2212,7 @@ Lino.list_action_handler = function(ls_url,actionName,hm,pp) {
   var fn = function(panel,btn,step) {
       //~ console.log("20121210 Lino.list_action_handler",arguments);
       //~ var url = ADMIN_URL + '/api' + panel.ls_url
-      if (pp) { p = pp();  if (! p) return; }
+      if (pp) { p = pp(panel);  if (! p) return; }
       Lino.call_ajax_action(panel,hm,url,p,actionName,step,fn);
   };
   return fn;
@@ -3451,7 +3451,10 @@ Lino.GridStore = Ext.extend(Ext.data.ArrayStore,{
   }
 });
 
-    
+Lino.get_current_grid_config = function(panel) {
+    return panel.get_current_grid_config();
+}
+
 Lino.GridPanel = Ext.extend(Ext.grid.EditorGridPanel,Lino.MainPanel);
 Lino.GridPanel = Ext.extend(Lino.GridPanel,Lino.PanelMixin);
 Lino.GridPanel = Ext.extend(Lino.GridPanel,{
@@ -3696,12 +3699,12 @@ Lino.GridPanel = Ext.extend(Lino.GridPanel,{
             //~ since 20121226 window.open(ADMIN_URL+'/api'+this.ls_url + "?" + Ext.urlEncode(p)) 
             window.open('{{settings.SITE.plain_prefix}}'+this.ls_url + "?" + Ext.urlEncode(p)) 
           } }
-        {% if settings.SITE.is_installed('system') %}
+        {% if False and settings.SITE.is_installed('system') %}
         ,{ scope:this, 
           //~ text: "[pdf]", 
           tooltip: "{{_('Show this table as a pdf document')}}", 
           iconCls: 'x-tbar-pdf',
-          handler: function() { 
+          handler: function() { // list_action_handler
             var p = this.get_current_grid_config();
             Ext.apply(p,this.get_base_params());
             p.{{ext_requests.URL_PARAM_FORMAT}} = "{{ext_requests.URL_FORMAT_PDF}}";
@@ -3842,7 +3845,7 @@ Lino.GridPanel = Ext.extend(Lino.GridPanel,{
     this.on('viewready', function(){
       //~ console.log("20120213 resize",arguments);
       this.view_is_ready = true;
-      this.refresh();
+      this.refresh(); // removed 20130911
       },this);
     this.on('afteredit', this.on_afteredit); // 20120814
     //~ this.on('afteredit', this.new_on_afteredit);
@@ -3908,16 +3911,22 @@ Lino.GridPanel = Ext.extend(Lino.GridPanel,{
     this.refresh_with_after();
   },
   refresh_with_after : function(after) { 
-    //~ Lino.notify('20120204 Lino.GridPanel.refresh');
     //~ Lino.notify('Lino.GridPanel.refresh '+this.store.proxy.url);
     //~ var bp = { fmt:'json' }
+    if (! this.view_is_ready) return;
+    
     if (this.containing_panel) {
         //~ Ext.apply(p,this.master_panel.get_master_params());
         //~ Ext.apply(options.params,this.containing_panel.get_master_params());
         this.set_base_params(this.containing_panel.get_master_params());
+        // 20130911
+        if (!this.store.baseParams.{{ext_requests.URL_PARAM_MASTER_PK}}) {  
+            return;
+        }
     }
     
-    if (! this.view_is_ready) return;
+    
+    //~ console.log('20130911 Lino.GridPanel.refresh_with_after',this.containing_panel.get_master_params());
     
     var options = {};
     if (after) {
@@ -4040,7 +4049,7 @@ Lino.GridPanel = Ext.extend(Lino.GridPanel,{
     //~ return this.store.baseParams;
   },
   set_base_params : function(p) {
-    //~ console.log('GridPanel.set_base_params',p)
+    //~ console.log('20130911 GridPanel.set_base_params',p)
     for (k in p) this.store.setBaseParam(k,p[k]);
     //~ this.store.baseParams = p;
     if (p.query) 
@@ -4470,7 +4479,7 @@ Lino.GridPanel = Ext.extend(Lino.GridPanel,{
   on_master_changed : function() {
     //~ if (! this.enabled) return;
     //~ cmp = this;
-    //~ console.log('Lino.GridPanel.on_master_changed()',this.title);
+    console.log('20130911 Lino.GridPanel.on_master_changed()',this.title,this.rendered);
     if (! this.rendered) return; // 20120213
     var todo = function() {
       if (this.disabled) return;

@@ -1,0 +1,51 @@
+======================================
+20130912 (Thursday, 12 September 2013)
+======================================
+
+Until now the "Show this table as a pdf document" action was implemented
+in :xfile:`linoweb.js` and :mod:`lino.ui.views`.
+Now I converted it to a "real" action
+:class:`PdfTableAction <lino.utils.appy_pod.PdfTableAction>`.
+Because I wanted to know whether Lino can do it.
+He can. Congratulations!
+
+This has several advantages:
+
+- The mechanism is no longer split
+  across several files but all in one place.
+
+- Added new file 
+  :srcref:`Table-portrait.odt </lino/config/Table-portrait.odt>`,
+  almost the same as 
+  :srcref:`Table.odt </lino/config/Table.odt>`.
+  Applications can override the default PdfTableAction
+  in order to use this portrait version::
+
+    class Countries(dd.Table):
+        ...
+        as_pdf = PdfTableAction(template_name = "Table-portrait.odt")
+  
+
+Now I'll also want to convert the html, csv and delete actions.
+The delete action is most urgent because users cannot delete multiple 
+rows at once.
+
+But first I have another idea for a third advantage of this:
+I wrote a derived class
+:class:`PdfLabelsAction <lino.utils.appy_pod.PdfLabelsAction>`
+and a template
+:srcref:`/lino/config/Labels.odt`,
+and added this to `contacts.Partner`.
+Bingo.
+Except for a little detail: it prints only one page of labels.
+
+Removed the :class:`lino.site.Site` methods
+`get_letter_margin_top`
+and
+`get_letter_margin_bottom`
+and replaced them by two templates
+:srcref:`letter_margin_top.html </lino/config/letter_margin_top.html>`
+and
+:srcref:`letter_margin_bottom.html </lino/config/letter_margin_bottom.html>`
+
+

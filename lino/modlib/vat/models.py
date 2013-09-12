@@ -416,7 +416,8 @@ class VatDocument(VatTotal):
                 sum += m
         a = settings.SITE.get_partner_account(self)
         a = self.journal.chart.get_account_by_ref(a)
-        yield self.create_movement(a,a.type.dc,sum,partner=self.partner)
+        yield self.create_movement(a,a.type.dc,sum,
+            partner=self.partner,match=self.match)
         
     def full_clean(self,*args,**kw):
         self.compute_totals()
@@ -482,6 +483,17 @@ class VatItemBase(mixins.Sequenced,VatTotal):
         #~ self.voucher.full_clean()
         #~ self.voucher.save()
         
+    def set_amount(self,ar,amount):
+        rate = self.get_vat_rate()
+        if self.voucher.vat_regime.item_vat: # unit_price_includes_vat
+            self.total_incl = amount
+            self.total_base = self.total_incl / (1 + rate)
+            self.total_vat = self.total_incl - self.total_base
+        else:
+            self.total_base = amount
+            self.total_vat = self.total_base * rate
+            self.total_incl = self.total_base + self.total_vat
+            
     def reset_totals(self,ar):
         #~ logger.info("20121204 reset_totals")
         if not self.voucher.auto_compute_totals:
@@ -546,15 +558,8 @@ class QtyVatItemBase(VatItemBase):
                     #~ self.unit_price = self.total_base / self.qty
         
         if self.unit_price is not None and self.qty is not None:
-            rate = self.get_vat_rate()
-            if self.voucher.vat_regime.item_vat: # unit_price_includes_vat
-                self.total_incl = self.unit_price * self.qty
-                self.total_base = self.total_incl / (1 + rate)
-                self.total_vat = self.total_incl - self.total_base
-            else:
-                self.total_base = self.unit_price * self.qty
-                self.total_vat = self.total_base * rate
-                self.total_incl = self.total_base + self.total_vat
+            self.set_amount(ar,self.unit_price * self.qty)
+            
                 
 
 

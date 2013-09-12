@@ -114,7 +114,8 @@ class CalendarAction(actions.Action):
     opens_a_window = True
     action_name = 'grid' # because...
     default_format = 'html'
-    icon_name = 'x-tbar-calendar'
+    #~ icon_name = 'x-tbar-calendar'
+    icon_name = 'calendar'
 
 
 
