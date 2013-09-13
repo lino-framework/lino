@@ -2,23 +2,35 @@
 20130914 (Saturday, 14 September 2013)
 ======================================
 
+:ref:`davlink`
+--------------
+
 Fixed several problems in :ref:`davlink`:
 
-- added a .jnlp file and a manifest file
+- Added a :srcref:`davlink.jnlp </lino/media/applets/davlink.jnlp>` 
+  file and a :srcref:`manifest.txt </java/davlink/manifest.txt>` file
   as explained in the `Deployment Trail 
   <http://docs.oracle.com/javase/tutorial/deployment/TOC.html>`_.
   
-- To facilitate debugging and diagnoses in case of problems, 
+- Added a file :srcref:`davlink_jnlp_test.html
+  </lino/media/applets/davlink_jnlp_test.html>` which 
+  is like :srcref:`davlink_test.html 
+  </lino/media/applets/davlink_test.html>`
+  but using JNLP.
+
+- To facilitate further experimenting, 
   :mod:`lino.extjs.ext_renderer` can now generate either with or 
   without JNLP depending on whether ``USE_DAVLINK_JNLP`` is True or 
   False.
-  AFAICS both methods work the same, so I prefer the simple 
+  
+- AFAICS both methods work the same, so I prefer the simple 
   applet method until proof of the opposite.
   
 - It seems that the main problem was the fact that :meth:`DavLink.init` 
   tried to set the SecurityManager. 
-  Seems that this was some obsolete technique.
-  It is simply not necessary to change the security manager.
+  It seems that this was some obsolete technique,
+  that it is simply not allowed and not necessary to change the 
+  security manager.
 
 - :meth:`DavLink.open` did not write a traceback to the console
   when some Exception occured.
@@ -40,10 +52,12 @@ Fixed several problems in :ref:`davlink`:
   Added a message "DavLink.generate_default_prefs() done" in order to 
   continue testing on Monday.
   
-- In `davlink_test.html` added a JavaScript function and a link to 
-  invoke `generate_default_prefs` with one click instead of using the 
-  brute force method of deleting the prefx.xml file.
+- In `davlink_test.html` and `davlink_jnlp_test.html` added a JavaScript 
+  function and a link to 
+  invoke :meth:`DavLink.generate_default_prefs` with one click instead 
+  of using the brute force method of deleting the :file:`prefs.xml` file.
 
+All the above has been tested only using IcedTea and OpenJDK.
 
 Note: for efficient testing on a live webdav-enabled :ref:`welfare` 
 database:
@@ -56,3 +70,27 @@ database:
 
     $ chromium-browser http://127.0.0.1:8000/api/notes/MyNotes/28?an=detail
     
+
+
+test_sdist
+----------
+
+I finally got ``fab test_sdist`` to run. 
+And found the reason for 
+the problem with the last release reported by Joe:
+The `install_requires` of Lino specified 
+'north' instead of 'North'.
+Also 'PyYAML' was missing in `install_requires`.
+
+Now there's just one ImportError:: 
+
+  Could not import settings 'lino.projects.belref.settings' (Is it on sys.path?): No module named lino_welfare.modlib.statbel
+  
+(which is normal. TODO: move 
+lino.projects.belref to lino_welfare)
+or statbel from lino_welfare to lino)
+
+
+
+
+
