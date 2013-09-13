@@ -1,0 +1,3 @@
+Permissions: all-permissions
+Codebase: http://127.0.0.1/*
+

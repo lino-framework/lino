@@ -92,6 +92,7 @@ if settings.SITE.user_model:
     from lino.modlib.users import models as users
 
 AFTER_20130725 = True
+USE_DAVLINK_JNLP = False
 
 #~ from lino.utils.choicelists import DoYouLike, HowWell
 #~ STRENGTH_CHOICES = DoYouLike.get_choices()
@@ -615,6 +616,23 @@ tinymce.init({
             site.build_media_url(*self.lino_js_parts(user.profile)))
             
         #~ yield '<!-- page specific -->'
+        
+        if USE_DAVLINK_JNLP:
+            p = site.build_media_url('lino/applets/DavLink.jar')
+            yield """\
+<script src="http://www.java.com/js/deployJava.js"></script>
+<script>  
+    var attributes = {
+        name:"DavLink",
+        code:'davlink.DavLink.class', 
+        archive:'%s', width:1, height:1}; 
+    var parameters = { jnlp_href:'davlink.jnlp' }; 
+    var version = '1.6' ; 
+    deployJava.runApplet(attributes, parameters, version);      
+</script>
+""" % p
+            
+        
         yield '<script type="text/javascript">'
 
         yield 'Ext.onReady(function(){'
@@ -790,14 +808,15 @@ tinymce.init({
             yield '</applet>'
 
 
-          
         if site.use_davlink:
+          if not USE_DAVLINK_JNLP:
             yield '<applet name="DavLink" code="davlink.DavLink.class"'
             yield '        archive="%s/lino/applets/DavLink.jar"' % site.build_media_url()
             yield '        width="1" height="1">'
             yield '<param name="separate_jvm" value="true">' # 20130913
             yield '</applet>'
             # Note: The value of the ARCHIVE attribute is a URL of a JAR file.
+            
         yield '<div id="body"></div>'
         #~ yield '<div id="tbar"/>'
         #~ yield '<div id="main"/>'

@@ -1,6 +1,17 @@
 <html>
 <head>
 <title>DavLink applet</title>
+<script src="http://www.java.com/js/deployJava.js"></script>
+<script>
+    var attributes = {
+        name:"DavLink",
+        code:'davlink.DavLink.class', 
+        archive:'DavLink.jar', 
+        width:1, height:1}; 
+    var parameters = { jnlp_href:'davlink.jnlp' }; 
+    var version = '1.6' ; 
+    deployJava.runApplet(attributes, parameters, version);      
+</script>
 <script type="text/javascript">
 function startFile(webdavURL) {
   /* Calls lino.applets.davopen.DavOpen.open()
@@ -17,14 +28,6 @@ function generate_default_prefs() {
 </script>
 </head>
 <body>
-<applet name="DavLink" code="davlink.DavLink.class" 
-  archive="DavLink.jar" 
-  width="10" height="10">
-<!-- 
-The value of the ARCHIVE attribute is a URL of a JAR file.
--->  
-<p>Sorry, you need a Java-enabled browser to run this applet.</p>
-</applet>
 <div>
 Click on a link to open remote webdav office file ():
 <ul>
@@ -33,6 +36,7 @@ Click on a link to open remote webdav office file ():
 </ul>
 Or click <a href="javascript:generate_default_prefs()">generate_default_prefs()</a>
 to re-scan your hard-disk for launchers.
+
 </div>
 </body>
 </html>

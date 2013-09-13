@@ -1,4 +1,5 @@
 # http://127.0.0.1:8000/media/webdav/davopen_test.html
+# http://127.0.0.1:8000/media/webdav/davopen_jnlp_test.html
 #~ how to generate a self-signed key:
 #~ keytool -genkey
 #~ keytool -selfcert
@@ -9,7 +10,8 @@
 #~ JFLAGS = -classpath s:\classpath\registry-3.1.3\classes
 #~ JFLAGS = -target 1.6 -source 1.6 -bootclasspath "C:/Program Files/Java/jre6/lib/rt.jar"
 #~ JFLAGS = -Xlint:unchecked
-JFLAGS = -classpath ~/Downloads/eid-applet-sdk/eid-applet-service-1.0.1.GA.jar
+#~ JFLAGS = -classpath ~/Downloads/eid-applet-sdk/eid-applet-service-1.0.1.GA.jar
+JFLAGS = 
 
 JC = javac
 
@@ -28,7 +30,7 @@ default: jars
 classes: $(CLASSES:.java=.class)
 
 jars: classes
-	jar cvf $(DAVLINK_JARFILE) davlink
+	jar cvmf davlink/manifest.txt $(DAVLINK_JARFILE) davlink
 	jarsigner -storepass "`cat ~/.keystore_password`" $(DAVLINK_JARFILE) mykey
 	jar cvf $(EID_JARFILE) lino/eid
 	jarsigner -storepass "`cat ~/.keystore_password`" $(EID_JARFILE) mykey

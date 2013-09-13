@@ -1,0 +1,58 @@
+======================================
+20130914 (Saturday, 14 September 2013)
+======================================
+
+Fixed several problems in :ref:`davlink`:
+
+- added a .jnlp file and a manifest file
+  as explained in the `Deployment Trail 
+  <http://docs.oracle.com/javase/tutorial/deployment/TOC.html>`_.
+  
+- To facilitate debugging and diagnoses in case of problems, 
+  :mod:`lino.extjs.ext_renderer` can now generate either with or 
+  without JNLP depending on whether ``USE_DAVLINK_JNLP`` is True or 
+  False.
+  AFAICS both methods work the same, so I prefer the simple 
+  applet method until proof of the opposite.
+  
+- It seems that the main problem was the fact that :meth:`DavLink.init` 
+  tried to set the SecurityManager. 
+  Seems that this was some obsolete technique.
+  It is simply not necessary to change the security manager.
+
+- :meth:`DavLink.open` did not write a traceback to the console
+  when some Exception occured.
+  
+- :meth:`DavLink.open` 
+  returns a string with the error message when it fails, 
+  but
+  `davlink_test.html` did not report this error message::
+  
+    document.applets.DavLink.open(webdavURL);
+    
+  Replaced this by::
+  
+    var msg = document.applets.DavLink.open(webdavURL);
+    if (msg) alert(msg);
+  
+- Could not find any reason for a NullPointerException on Windows7 
+  reported by Gerd. 
+  Added a message "DavLink.generate_default_prefs() done" in order to 
+  continue testing on Monday.
+  
+- In `davlink_test.html` added a JavaScript function and a link to 
+  invoke `generate_default_prefs` with one click instead of using the 
+  brute force method of deleting the prefx.xml file.
+
+
+Note: for efficient testing on a live webdav-enabled :ref:`welfare` 
+database:
+
+- go once to the detail of some Event/Note which is being 
+  printed as webdav (i.e. a CV)
+- click the permalink button
+- Copy the URL line of your browser and then launch it directly to this 
+  url from the command line::
+
+    $ chromium-browser http://127.0.0.1:8000/api/notes/MyNotes/28?an=detail
+    

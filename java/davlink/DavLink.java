@@ -223,14 +223,19 @@ public class DavLink extends Applet {
     }
     
     
+    //~ public void init() {
+        //~ System.out.println("DavLink.init()");
+    //~ }
+    
     public void unused_init() {
         System.err.println("Gonna disable the security manager...");
         System.setSecurityManager(null);
         System.err.println("Security manager has been disabled ");
     }
     
-    public void init() {
-        System.err.println("Gonna set the security manager...");
+    public void unused_init2() {
+        System.out.println("DavLink.init()");
+        System.out.println("Gonna set the security manager...");
         //~ System.out.println("toto");
         
         System.setSecurityManager(new SecurityManager()
@@ -259,7 +264,7 @@ public class DavLink extends Applet {
     }
     
     public void generate_default_prefs() {
-        //~ System.err.println("20130708 generate_default_prefs()");
+        System.out.println("DavLink.generate_default_prefs()");
       
         add_program("winword.exe", null,          null,   "rtf","doc");
         add_program("swriter.exe", "libreoffice", null,   "rtf","doc","odt");
@@ -281,6 +286,9 @@ public class DavLink extends Applet {
           //~ System.out.println("generate_default_prefs() 10");
         } else {
           bindirs = new String[] { "/usr/bin/" };
+          //~ uncomment the following to simulate what happens when 
+          //~ DavLink cannot find any launcher
+          //~ bindirs = new String[] { "/usr/bin/x" };
         } 
         
         //~ System.err.println("20130708 bindirs.length is " + bindirs.length);
@@ -325,6 +333,7 @@ public class DavLink extends Applet {
          } catch (IOException err) {
            err.printStackTrace();
          }
+        System.out.println("DavLink.generate_default_prefs() done");
     }
     
     
@@ -347,13 +356,13 @@ public class DavLink extends Applet {
    public String open(String fileName) {
        /*
         * Launches the application associated with the specified fileName.
-        * returns null upon success, otherwise the exception object.
+        * returns null upon success, otherwise a string with the error message.
         * 
         * */
         try {
             String path = getLauncherFor(fileName);
             String[] cmd = { path, fileName };
-            //~ System.out.println(path + " " + fileName);
+            System.out.println(path + " " + fileName);
             Process p = Runtime.getRuntime().exec(cmd);
             return null;
             //~ p.waitFor();
@@ -367,7 +376,7 @@ public class DavLink extends Applet {
         //~ } catch (IOException err) {
             //~ e.printStackTrace();
         //~ } catch (InterruptedException err) {
-            //~ e.printStackTrace();
+            e.printStackTrace();
             return e.toString();
         }
     }
