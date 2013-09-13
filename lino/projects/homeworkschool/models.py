@@ -60,10 +60,10 @@ class PersonDetail(contacts.PersonDetail):
     
     #~ main = "contact outbox calendar"
 
-    main = dd.Panel("""
+    main = """
     box1 box2
     remarks contacts.RolesByPerson households.MembersByPerson
-    """,label = _("Contact"))
+    """
     
     box1 = """
     last_name first_name:15 #title:10
@@ -135,7 +135,7 @@ class PersonDetail(contacts.PersonDetail):
      
      
 def site_setup(site):
-    site.modules.contacts.Persons.set_detail_layout(PersonDetail())
+    #~ site.modules.contacts.Persons.set_detail_layout(PersonDetail())
     
     #~ site.modules.cal.Events.set_detail_layout(EventDetail())
     site.modules.cal.Events.set_detail_layout('general more')

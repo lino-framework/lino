@@ -104,7 +104,8 @@ Actions:
 - :class:`NotifyingAction <lino.core.actions.NotifyingAction>`
 - :class:`MergeAction <lino.core.merge.MergeAction>`
 - :class:`ShowSlaveTable <lino.core.actions.ShowSlaveTable>`
-- :class:`PdfTableAction <lino.utils.appy_pod.PdfTableAction>`
+- :class:`PrintTableAction <lino.utils.appy_pod.PrintTableAction>`
+- :class:`PrintLabelsAction <lino.utils.appy_pod.PrintLabelsAction>`
 
 Permissions:
 
@@ -119,6 +120,22 @@ Workflows:
 - :class:`ChoiceList <lino.core.choicelists.ChoiceList>`
 - :class:`Workflow <lino.core.workflows.Workflow>`
 - :class:`State <lino.core.workflows.State>`
+
+Model mixins:
+
+- :class:`lino.mixins.ProjectRelated`
+- :class:`lino.mixins.UserAuthored`
+- :class:`lino.mixins.Sequenced`
+- :class:`lino.mixins.Hierarizable`
+- :class:`lino.mixins.printable.BasePrintable`
+- :class:`lino.mixins.printable.Printable`
+- :class:`lino.mixins.printable.PrintableType`
+- :class:`lino.mixins.printable.CachedPrintable`
+- :class:`lino.mixins.printable.TypedPrintable`
+- :class:`lino.mixins.uploadable.Uploadable`
+- :class:`lino.mixins.human.Human`
+- :class:`lino.mixins.human.Born`
+- :class:`Addressable <lino.mixins.addressable.Addressable>`
 
 Miscellaneous:
 
@@ -211,7 +228,11 @@ from lino.core.fields import BabelTextField
 from lino.core.fields import CharField
 
 from lino.mixins import BabelNamed
-from lino.utils.appy_pod import PdfTableAction
+from lino.utils.appy_pod import PrintTableAction
+from lino.utils.appy_pod import PrintLabelsAction
+
+from lino.mixins.addressable import Addressable
+
 
 from north.dbutils import BabelCharField, LanguageField
 from north.dbutils import babelkw
@@ -333,7 +354,7 @@ from lino.mixins import (ProjectRelated, UserAuthored,
 from lino.mixins.printable import BasePrintable, Printable, PrintableType, CachedPrintable, TypedPrintable, DirectPrintAction
 #~ from lino.mixins import SimplyPrintable
 from lino.mixins.uploadable import Uploadable
-from lino.mixins.human import Human, Born, Genders
+from lino.mixins.human import Human, Born
 
 #~ from lino.utils.screenshots import register_screenshot
 

@@ -107,29 +107,19 @@ Vana-Vigala küla
 Estonia''')
 
         if settings.SITE.get_language_info('de'):
-          with translation.override('de'):
-            #~ dbutils.set_language('de')
-            self.assertEquals(luc.address, u'''\
+            with translation.override('de'):
+                self.assertEquals(luc.address, u'''\
 Herrn Luc SAFFRE
 Uus 1
 Vana-Vigala küla
 78003 Vigala
 Estland''')
-        #~ dbutils.set_language(None)
-        
-        
-            
-        #~ def test02(self):
-            #~ """
-            #~ """
+                self.assertEquals(luc.address_html, '''\
+<p>Herrn Luc SAFFRE<br />Uus 1<br />Vana-Vigala k&#252;la<br />78003 Vigala<br />Estland</p>''')
             
         u = create_and_get(settings.SITE.user_model,
             username='root',language='',profile=dd.UserProfiles.admin)
             
-        #~ lang = u.language
-        #~ print 20120729, repr(u.language)
-        
-        #~ settings.SITE.never_build_site_cache = True
         
         """
         disable SITE.is_imported_partner() otherwise 

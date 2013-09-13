@@ -1340,8 +1340,10 @@ class Actor(actions.Parametrizable):
             #~ raise Exception("Tried to %s.get_actions() with empty _actions_list" % self)
         if callable_from is None:
             return self._actions_list
-        return [ba for ba in self._actions_list 
-          if ba.action.callable_from is None or isinstance(callable_from,ba.action.callable_from)]
+        #~ cf = ba.action.callable_from
+        #~ return [ba for ba in self._actions_list 
+            #~ if cf is None or isinstance(callable_from,cf)]
+        return [ba for ba in self._actions_list if ba.action.is_callable_from(callable_from)]
     
     @classmethod
     def get_data_elem(self,name):

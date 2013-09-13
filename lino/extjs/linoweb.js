@@ -2073,22 +2073,35 @@ Lino.build_buttons = function(panel,actions) {
     var buttons = Array(actions.length);
     var cmenu = Array(actions.length);
     for (var i=0; i < actions.length; i++) { 
-      buttons[i] = new Ext.Toolbar.Button(actions[i]);
-      cmenu[i] = actions[i]
-      cmenu[i].text = actions[i].menu_item_text;
-      if (actions[i].panel_btn_handler) {
-          var h = actions[i].panel_btn_handler.createCallback(panel,buttons[i]);
-          //~ if (actions[i].must_save) {
-          if (actions[i].auto_save == true) {
-              buttons[i].on('click',panel.do_when_clean.createDelegate(panel,[true,h]));
-          } else if (actions[i].auto_save == null) {
-              buttons[i].on('click',panel.do_when_clean.createDelegate(panel,[false,h]));
-          } else if (actions[i].auto_save == false) {
-              buttons[i].on('click',h);
+      var a = actions[i];
+      //~ buttons[i] = new Ext.Toolbar.Button(a);
+      if (a.menu) a.menu = Lino.build_buttons(panel,a.menu).bbar;
+      buttons[i] = a;
+      cmenu[i] = {
+            text : a.menu_item_text,
+            iconCls : a.iconCls,
+            menu : a.menu
+          };
+      if (a.panel_btn_handler) {
+          var h = a.panel_btn_handler.createCallback(panel);
+          if (a.auto_save == true) {
+              h = panel.do_when_clean.createDelegate(panel,[true,h]);
+          } else if (a.auto_save == null) {
+              h = panel.do_when_clean.createDelegate(panel,[false,h]);
+          } else if (a.auto_save == false) {
+              // h = h;
           } else {
-              console.log("20120703 unhandled auto_save value",actions[i])
+              console.log("20120703 unhandled auto_save value",a)
           }
-          cmenu[i].handler = actions[i].panel_btn_handler.createCallback(panel,cmenu[i]);
+          buttons[i].handler = h;
+          cmenu[i].handler = h;
+          //~ if (buttons[i].xtype == 'splitbutton') {
+              //~ cmenu[i].menu = a.menu;
+          //~ } else {
+              //~ cmenu[i].handler = h;
+          //~ }
+      } else {
+          cmenu[i].handler = a.handler;
       }
     }
     return {bbar:buttons, cmenu:new Ext.menu.Menu(cmenu)};
@@ -2289,15 +2302,15 @@ Lino.show_insert = function(panel,btn) {
   panel.ls_insert_handler.run(panel.getId(),{record_id:-99999,base_params:bp});
 };
 
-Lino.show_insert_duplicate = function(panel,btn) {
-  Lino.do_on_current_record(panel,
-    function(rec) {
-      var newRec = {};
-      Ext.apply(newRec,rec);
-      newRec.id = -99999;
-      panel.ls_insert_handler.run(null,{data_record:rec});
-    });
-};
+//~ Lino.show_insert_duplicate = function(panel,btn) {
+  //~ Lino.do_on_current_record(panel,
+    //~ function(rec) {
+      //~ var newRec = {};
+      //~ Ext.apply(newRec,rec);
+      //~ newRec.id = -99999;
+      //~ panel.ls_insert_handler.run(null,{data_record:rec});
+    //~ });
+//~ };
 
 //~ Lino.update_row_handler = function(action_name) {
   //~ return function(panel,btn) {

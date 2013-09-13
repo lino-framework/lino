@@ -323,23 +323,24 @@ class UI(object):
               message=unicode(e),
               alert=True)
             return self.render_action_response(r)
-        except Exception as e:
-            if len(ar.selected_rows) == 0:
-                msg = unicode(e)
-            else:
-                elem = ar.selected_rows[0]
-                if isinstance(elem,models.Model):
-                    elem = obj2unicode(elem)
-                msg = _(
-                  "Action \"%(action)s\" failed for %(record)s:") % dict(
-                  action=ar.bound_action.full_name(),
-                  record=elem)
-                msg += "\n" + unicode(e)
-            msg += '.\n' + unicode(_(
-              "An error report has been sent to the system administrator."))
-            logger.warning(msg)
-            logger.exception(e)
-            r = self.error(e,msg,alert=_("Oops!"))
-            return self.render_action_response(r)
+        #~ removed 20130913
+        #~ except Exception as e:
+            #~ if len(ar.selected_rows) == 0:
+                #~ msg = unicode(e)
+            #~ else:
+                #~ elem = ar.selected_rows[0]
+                #~ if isinstance(elem,models.Model):
+                    #~ elem = obj2unicode(elem)
+                #~ msg = _(
+                  #~ "Action \"%(action)s\" failed for %(record)s:") % dict(
+                  #~ action=ar.bound_action.full_name(),
+                  #~ record=elem)
+                #~ msg += "\n" + unicode(e)
+            #~ msg += '.\n' + unicode(_(
+              #~ "An error report has been sent to the system administrator."))
+            #~ logger.warning(msg)
+            #~ logger.exception(e)
+            #~ r = self.error(e,msg,alert=_("Oops!"))
+            #~ return self.render_action_response(r)
               
 

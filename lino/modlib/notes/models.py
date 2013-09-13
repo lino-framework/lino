@@ -144,6 +144,7 @@ class Note(mixins.TypedPrintable,
     
     
     class Meta:
+        abstract = settings.SITE.is_abstract_model('notes.Note')
         #~ abstract = True
         verbose_name = _("Note")
         verbose_name_plural = _("Notes")

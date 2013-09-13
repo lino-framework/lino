@@ -38,5 +38,3 @@ clean:
 	rm lino/eid/*.class
 	rm $(DAVLINK_JARFILE)
 	rm $(EID_JARFILE)
-	
-	

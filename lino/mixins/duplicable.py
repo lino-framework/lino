@@ -44,6 +44,9 @@ class Duplicate(actions.Action):
     #~ action_name = 'duplicate'
 
   
+    def is_callable_from(self,caller):
+        return True
+        
     def get_action_permission(self,ar,obj,state):
         if ar.get_user().profile.readonly: 
             return False

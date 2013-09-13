@@ -14,6 +14,7 @@
 
 """
 This module defines the tables 
+
 - :class:`Partner` (and their specializations :class:`Person` and :class:`Company`)
 - :class:`Role` and :class:`RoleType`
 
@@ -47,9 +48,9 @@ from lino import dd
 #~ from lino import fields
 
 from lino import mixins
+
 from lino.utils import join_words
 from lino.utils.choosers import chooser
-from lino.utils.appy_pod import PdfLabelsAction
 #~ from lino.models import get_site_config
 
 #~ from lino.modlib.contacts.utils import Genders
@@ -72,50 +73,6 @@ from lino.utils import mti
 PARTNER_NUMBERS_START_AT = 100 # used for generating demo data and tests
 
 
-
-class CompanyType(dd.BabelNamed):
-    """
-    Represents a possible choice for the  `type`
-    field of a :class:`Company`.
-    """
-    
-    class Meta:
-        verbose_name = _("company type")
-        verbose_name_plural = _("company types")
-        
-    abbr = dd.BabelCharField(_("Abbreviation"),max_length=30,blank=True)
-    
-        
-class CompanyTypes(dd.Table):
-    required = dd.required(user_level='manager')
-    model = 'contacts.CompanyType'
-    column_names = 'name *'
-    #~ label = _("Company types")
-
-
-class Addressable(object):
-    
-    def address_person_lines(self):
-        raise NotImplementedError()
-        
-    def address_location_lines(self):
-        raise NotImplementedError()
-        
-    def address_lines(self):
-        for ln in self.address_person_lines() : yield ln
-        for ln in self.address_location_lines() : yield ln
-          
-    #~ def address(self,linesep="\n<br/>"):
-    def get_address(self,linesep="\n"):
-        """
-        The plain text full postal address (person and location). 
-        Lines are separated by `linesep`.
-        """
-        #~ return linesep.join(self.address_lines())
-        return linesep.join(list(self.address_person_lines()) + list(self.address_location_lines()))
-    #~ address.return_type = models.TextField(_("Address"))
-    address = property(get_address)
-    
 class AddressFormatter(object):
     """
     Format used in BE, DE, FR, NL...
@@ -162,8 +119,32 @@ def get_address_formatter(country):
             
 
 
+
+
+class CompanyType(dd.BabelNamed):
+    """
+    Represents a possible choice for the  `type`
+    field of a :class:`Company`.
+    """
+    
+    class Meta:
+        verbose_name = _("company type")
+        verbose_name_plural = _("company types")
+        
+    abbr = dd.BabelCharField(_("Abbreviation"),max_length=30,blank=True)
+    
+        
+class CompanyTypes(dd.Table):
+    required = dd.required(user_level='manager')
+    model = 'contacts.CompanyType'
+    column_names = 'name *'
+    #~ label = _("Company types")
+
+
+
+
 #~ class Contact(mti.MultiTableBase,CountryCity):
-class Partner(mti.MultiTableBase,CountryRegionCity,Addressable):
+class Partner(mti.MultiTableBase,CountryRegionCity,dd.Addressable):
     """
     
     A :class:`Partner` is anything that can act as a business partner.
@@ -235,7 +216,7 @@ class Partner(mti.MultiTableBase,CountryRegionCity,Addressable):
         verbose_name=_("is Company"),
         help_text=_("Whether this Partner is a Company."))
         
-    print_labels = PdfLabelsAction()
+    print_labels = dd.PrintLabelsAction()
         
     def on_create(self,ar):
         self.language = ar.get_user().language
@@ -402,8 +383,9 @@ class PersonMixin(mixins.Human):
         abstract = True
         
     title = models.CharField(max_length=200,blank=True,
-      verbose_name=_('Title'))
-    """Text to print as part of the first address line in front of first_name."""
+        verbose_name=_('Title'),
+        help_text=_("Text to print before first_name as part of the first address line."))
+    
         
   
 class Person(PersonMixin,Partner):
@@ -579,7 +561,7 @@ class RoleTypes(dd.Table):
 
 
 #~ class Contact(dd.Model):
-class Role(dd.Model,Addressable):
+class Role(dd.Model,dd.Addressable):
     """
     
     A Contact (historical model name :class:`Role`) 

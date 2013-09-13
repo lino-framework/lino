@@ -63,6 +63,7 @@ class UtilsTests(LinoTestCase):
     def test_accounts_utils(self): self.run_simple_doctests('lino/modlib/accounts/utils.py')
     def test_contacts_utils(self): self.run_simple_doctests('lino/modlib/contacts/utils.py')
     def test_cal_utils(self): self.run_simple_doctests('lino/modlib/cal/utils.py')
+    def test_mixins_addressable(self): self.run_simple_doctests('lino/mixins/addressable.py')
 
 class I18nTests(LinoTestCase):
     def test_i18n(self): self.run_simple_doctests('docs/tested/test_i18n.rst')

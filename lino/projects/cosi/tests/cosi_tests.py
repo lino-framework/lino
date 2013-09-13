@@ -94,7 +94,7 @@ class QuickTest(RemoteAuthTestCase):
         requested through the web interface.
         TypeError: get_handle() takes exactly 1 argument (2 given)
         """
-        url = settings.SITE.build_admin_url('api/countries/Countries?cw=189&cw=189&cw=189&cw=45&cw=45&cw=36&ch=&ch=&ch=&ch=&ch=&ch=&ci=name&ci=name_de&ci=name_fr&ci=isocode&ci=short_code&ci=iso3&name=0&fmt=pdf')
+        url = settings.SITE.build_admin_url('api/countries/Countries?cw=189&cw=189&cw=189&cw=45&cw=45&cw=36&ch=&ch=&ch=&ch=&ch=&ch=&ci=name&ci=name_de&ci=name_fr&ci=isocode&ci=short_code&ci=iso3&name=0&an=as_pdf')
         msg = 'Using remote authentication, but no user credentials found.'
         try:
             response = self.client.get(url) 
@@ -111,7 +111,10 @@ class QuickTest(RemoteAuthTestCase):
         """
         try:
             response = self.client.get(url,REMOTE_USER='root')
-            self.assertEqual(response.status_code,302)
+            #~ self.assertEqual(response.status_code,200)
+            result = self.check_json_result(response,'success open_url')
+            self.assertEqual(result['open_url'],"/media/cache/appypdf/127.0.0.1/countries.Countries.pdf")
+            
         except PodError as e: 
             pass
             #~ self.assertEqual(str(e), PodError: Extension of result file is "pdf".

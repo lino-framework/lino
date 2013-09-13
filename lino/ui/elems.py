@@ -84,14 +84,6 @@ def has_fk_renderer(fld):
 def rpt2url(rpt):
     return '/' + rpt.app_label + '/' + rpt.__name__
 
-#~ def a2btn(a):
-    #~ return dict(
-      #~ opens_a_slave=a.opens_a_slave,
-      #~ handler=js_code("Lino.%s" % a),
-      #~ name=a.name,
-      #~ label=a.label, # 20111111
-    #~ )
-      
 def py2html(obj,name):
     for n in name.split('.'):
         obj = getattr(obj,n,"N/A")

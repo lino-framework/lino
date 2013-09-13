@@ -69,6 +69,7 @@ from lino.core import tables
 #~ from lino.core.dbutils import makedirs_if_missing
 #~ from lino.core.dbutils import full_model_name
     
+from lino.utils import AttrDict
 from lino.utils import choosers
 from lino.core import choicelists
 from lino.core import menus
@@ -785,6 +786,7 @@ tinymce.init({
             yield '<param name="CRL" value="-1"/>'
             #~ yield '<param name="jnlp_href" value="' + p + '/beid_java_plugin.jnlp" />'
             yield '<param name="jnlp_href" value="beid_java_plugin.jnlp" />'
+            yield '<param name="separate_jvm" value="true">' # 20130913
             yield '</applet>'
 
 
@@ -792,7 +794,9 @@ tinymce.init({
         if site.use_davlink:
             yield '<applet name="DavLink" code="davlink.DavLink.class"'
             yield '        archive="%s/lino/applets/DavLink.jar"' % site.build_media_url()
-            yield '        width="1" height="1"></applet>'
+            yield '        width="1" height="1">'
+            yield '<param name="separate_jvm" value="true">' # 20130913
+            yield '</applet>'
             # Note: The value of the ARCHIVE attribute is a URL of a JAR file.
         yield '<div id="body"></div>'
         #~ yield '<div id="tbar"/>'
@@ -1141,12 +1145,56 @@ tinymce.init({
         #~ return tpl
             
 
+    def toolbar(self,action_list):
+        """
+        This also manages action groups
+        """
+        buttons = []
+        combo_map = dict()
+        for ba in action_list:
+            if ba.action.show_in_bbar and ba.get_view_permission(jsgen._for_user_profile):
+                if ba.action.combo_group is None:
+                    buttons.append(self.a2btn(ba))
+                else:
+                    k = ba.action.combo_group
+                    combo = combo_map.get(k,None)
+                    if combo is None:
+                        parent = self.a2btn(ba)
+                        menu = [ parent ]
+                        combo = AttrDict(menu=menu)
+                        combo.update(iconCls=parent.get('iconCls'))
+                        combo.update(menu_item_text=parent.get('menu_item_text'))
+                        combo.update(text=parent.get('text'))
+                        buttons.append(combo)
+                        combo_map[k] = combo
+                    else:
+                        #~ menu = parent.get('menu',None)
+                        #~ if menu is None:
+                            #~ id_map[k] = menu_btn
+                        combo['menu'].append(self.a2btn(ba))
+        reduced_buttons = []
+        for b in buttons:
+            menu = b.get('menu',None)
+            if menu is None:
+                reduced_buttons.append(b)
+            elif len(menu) == 1:
+                reduced_buttons.append(menu[0])
+            else:
+                b.update(xtype='splitbutton')
+                b.update(panel_btn_handler=menu[0]['panel_btn_handler'])
+                for a in menu:
+                    a['text'] = a['menu_item_text']
+                    if a.get('iconCls',1) == b.get('iconCls',2):
+                        del a['iconCls']
+                    
+                reduced_buttons.append(b)
+        return reduced_buttons
+        
     def a2btn(self,ba,**kw):
         a = ba.action
         if a.parameters:
             kw.update(panel_btn_handler=js_code("Lino.param_action_handler(Lino.%s)" % ba.full_name()))
         elif isinstance(a,actions.SubmitDetail):
-            #~ kw.update(tabIndex=1)
             js = 'function(panel){panel.save(null,%s,%r)}' % (
                 py2js(a.switch_to_detail),a.action_name)
             kw.update(panel_btn_handler=js_code(js))
@@ -1156,9 +1204,9 @@ tinymce.init({
             kw.update(must_save=True)
             kw.update(panel_btn_handler=js_code(
                 'function(panel){Lino.show_insert(panel)}'))
-        elif isinstance(a,actions.DuplicateRow):
-            kw.update(panel_btn_handler=js_code(
-                'function(panel){Lino.show_insert_duplicate(panel)}'))
+        #~ elif isinstance(a,actions.DuplicateRow):
+            #~ kw.update(panel_btn_handler=js_code(
+                #~ 'function(panel){Lino.show_insert_duplicate(panel)}'))
         elif isinstance(a,actions.DeleteSelected):
             kw.update(panel_btn_handler=js_code("Lino.delete_selected"))
         else:
@@ -1363,9 +1411,7 @@ tinymce.init({
         if rh.actor.params_panel_hidden:
             yield "  params_panel_hidden: true,"
 
-        yield "  ls_bbar_actions: %s," % py2js([
-            self.a2btn(ba) for ba in rpt.get_actions(action.action) 
-                if ba.action.show_in_bbar and ba.get_view_permission(jsgen._for_user_profile)]) 
+        yield "  ls_bbar_actions: %s," % py2js(self.toolbar(rpt.get_actions(action.action)))
         yield "  ls_url: %s," % py2js(ext_elems.rpt2url(rpt))
         if action.action != rpt.default_action.action:
             yield "  action_name: %s," % py2js(action.action.action_name)
@@ -1402,10 +1448,7 @@ tinymce.init({
                 kw.update(content_type=ContentType.objects.get_for_model(rh.store.pk.model).pk)
                 #~ kw.update(content_type=ContentType.objects.get_for_model(rh.actor.model).pk)
         kw.update(cell_edit=rh.actor.cell_edit)
-        kw.update(ls_bbar_actions=[
-            self.a2btn(ba) 
-              for ba in rh.actor.get_actions(rh.actor.default_action.action) 
-                  if ba.action.show_in_bbar and ba.get_view_permission(jsgen._for_user_profile)])
+        kw.update(ls_bbar_actions=self.toolbar(rh.actor.get_actions(rh.actor.default_action.action)))
         kw.update(ls_grid_configs=[gc.data for gc in rh.actor.grid_configs])
         kw.update(gc_name=ext_elems.DEFAULT_GC_NAME)
         #~ if action != rh.actor.default_action:

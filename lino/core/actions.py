@@ -298,16 +298,26 @@ class Action(Parametrizable,Permittable):
     
     hidden_elements = frozenset()
     
+    combo_group = None
+    """
+    The name of another action to which to "attach" this action.
+    Both actions will then be rendered as a single combobutton.
+    """
     
     sort_index = 90
     """
+    Determins the sort order in which the actions will be presented to 
+    the user.
     
-    Predefined sort_index values are:
+    List actions are negative and come first.
+    
+    Predefined `sort_index` values are:
     
     ===== =================================
     value action
     ===== =================================
-    10    :class:`insert <InsertRow>`
+    -1    :class:`as_pdf <lino.utils.appy_pod.PrinttableAction>`
+    10    :class:`insert <InsertRow>`, SubmitDetail
     11    :attr:`duplicate <lino.mixins.duplicable.Duplicable.duplicate>`
     20    :class:`detail <ShowDetailAction>`
     30    :class:`delete <DeleteSelected>`
@@ -372,13 +382,19 @@ class Action(Parametrizable,Permittable):
     The hotkey. Currently not used.
     """
     
-    callable_from = None
-    """
-    Either `None`(default) or a tuple of class 
-    objects (subclasses of :class:`Action`).
-    If specified, this action is available only within a window 
-    that has been opened by one of the given actions.
-    """
+    def is_callable_from(self,caller):
+        return isinstance(caller,(GridEdit,ShowDetailAction))
+        #~ if self.select_rows:
+            #~ return isinstance(caller,(GridEdit,ShowDetailAction))
+        #~ return isinstance(caller,GridEdit)
+    
+    #~ callable_from = None
+    #~ """
+    #~ Either `None`(default) or a tuple of class 
+    #~ objects (subclasses of :class:`Action`).
+    #~ If specified, this action is available only within a window 
+    #~ that has been opened by one of the given actions.
+    #~ """
     
     default_format = 'html'
     """
@@ -495,8 +511,8 @@ class Action(Parametrizable,Permittable):
         
         
         #~ self.set_required(**required)
-        assert self.callable_from is None or isinstance(
-            self.callable_from,(tuple,type)), "%s" % self
+        #~ assert self.callable_from is None or isinstance(
+            #~ self.callable_from,(tuple,type)), "%s" % self
             
         #~ if self.parameters is None:
             #~ assert self.params_layout is None
@@ -730,8 +746,11 @@ class GridEdit(TableAction):
     opens_a_window = True
     #~ icon_file = 'application_view_list.png' # used e.g. by quick_add_buttons()
 
-    callable_from = tuple()
+    #~ callable_from = tuple()
     action_name = 'grid'
+    
+    def is_callable_from(self,caller):
+        return False
     
     def attach_to_actor(self,actor,name):
         #~ self.label = actor.button_label or actor.label
@@ -821,7 +840,11 @@ class ShowDetailAction(Action):
     
     
     sort_index = 20
-    callable_from = (GridEdit,)
+    #~ callable_from = (GridEdit,)
+    
+    def is_callable_from(self,caller):
+        return isinstance(caller,GridEdit)
+    
     #~ show_in_detail = False
     #~ needs_selection = True
     action_name = 'detail'
@@ -898,7 +921,7 @@ class ShowDetailAction(Action):
         
         
 
-Action.callable_from = (GridEdit,ShowDetailAction)
+#~ Action.callable_from = (GridEdit,ShowDetailAction)
 
 class InsertRow(TableAction):
     """
@@ -918,7 +941,7 @@ class InsertRow(TableAction):
     help_text = _("Insert a new record")
     #~ readonly = False # see blog/2012/0726
     required = dict(user_level='user')
-    callable_from = (GridEdit,ShowDetailAction)
+    #~ callable_from = (GridEdit,ShowDetailAction)
     action_name = 'insert'
     #~ label = _("Insert")
     key = INSERT # (ctrl=True)
@@ -943,24 +966,27 @@ class InsertRow(TableAction):
 
 
 
-class DuplicateRow(Action):
-    opens_a_window = True
-  
-    readonly = False
-    required = dict(user_level='user')
-    callable_from = (GridEdit,ShowDetailAction)
-    action_name = 'duplicate'
-    label = _("Duplicate")
-
+#~ class DuplicateRow(Action):
+    #~ opens_a_window = True
+  #~ 
+    #~ readonly = False
+    #~ required = dict(user_level='user')
+    #~ callable_from = (GridEdit,ShowDetailAction)
+    #~ action_name = 'duplicate'
+    #~ label = _("Duplicate")
+#~ 
 
 class ShowEmptyTable(ShowDetailAction):
     use_param_panel = True
-    callable_from = tuple()
+    #~ callable_from = tuple()
     action_name = 'show' 
     default_format = 'html'
     #~ hide_top_toolbar = True
     hide_navigator = True
     icon_name = None
+    
+    def is_callable_from(self,caller):
+        return True
     
     def attach_to_actor(self,actor,name):
         self.label = actor.label
@@ -988,7 +1014,7 @@ class DeleteSelected(Action):
     readonly = False
     show_in_workflow = False
     required = dict(user_level='user')
-    callable_from = (GridEdit,ShowDetailAction)
+    #~ callable_from = (GridEdit,ShowDetailAction)
     #~ needs_selection = True
     label = _("Delete")
     #~ url_action_name = 'delete'
@@ -1011,10 +1037,13 @@ class SubmitDetail(Action):
     readonly = False
     required = dict(user_level='user')
     #~ url_action_name = 'SubmitDetail'
-    callable_from = (ShowDetailAction,)
+    #~ callable_from = (ShowDetailAction,)
+    
+    def is_callable_from(self,caller):
+        return isinstance(caller,ShowDetailAction)
+    
     
 class SubmitInsert(SubmitDetail):
-    sort_index = 10
     switch_to_detail = True
     icon_name = None # don't inherit 'x-tbar-save' from Submitdetail 
     #~ url_action_name = 'SubmitInsert'
@@ -1022,7 +1051,12 @@ class SubmitInsert(SubmitDetail):
     action_name = 'post'
     help_text = _("Create the record and open a detail window on it")
     #~ label = _("Insert")
-    callable_from = (InsertRow,)
+    #~ callable_from = (InsertRow,)
+    
+    def is_callable_from(self,caller):
+        return isinstance(caller,InsertRow)
+    
+    
     
 class SubmitInsertAndStay(SubmitInsert):
     sort_index = 11

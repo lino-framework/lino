@@ -33,6 +33,7 @@ from django.utils.translation import ugettext_lazy as _
 from lino.modlib.ledger.utils import FiscalYears
 from lino.mixins.printable import model_group
 from lino.utils.xmlgen.html import E
+from lino.utils import iif
 
 accounts = dd.resolve_app('accounts',strict=True)
 vat = dd.resolve_app('vat',strict=True)
@@ -433,6 +434,12 @@ class ByJournal(dd.Table):
 class DebitOrCreditField(models.BooleanField):
     pass
     
+class MatchField(models.CharField):
+    def __init__(self,verbose_name=None,**kw):
+        if verbose_name is None:
+            verbose_name = _("Match")
+        kw.setdefault('max_length',20)
+        models.CharField.__init__(self,verbose_name,**kw)
     
 class DcAmountField(dd.VirtualField):
     """
@@ -453,11 +460,37 @@ class DcAmountField(dd.VirtualField):
         if obj.dc == self.dc: return obj.amount
         return None
         
+class Matchable(dd.Model):
     
+    class Meta: 
+        abstract = True
+        
+    match = MatchField(blank=True)
+    #~ match = dd.ForeignKey('ledger.Movement',verbose_name=_("Match"),blank=True,null=True)
+    
+    @dd.chooser()
+    def match_choices(cls,partner):
+        d = {}
+        qs = Movement.objects.filter(partner=partner,satisfied=False)
+        for m in qs:
+            i = d.setdefault(m.match,[])
+            i.append(m)
+        choices = []
+        for k,lst in d.items():
+            amount = ZERO
+            text = ", ".join([i.select_text() for i in lst])
+            for i in lst:
+                amount += iif(i.dc,1,-1) * i.amount
+            text += ' ' + unicode(amount)
+            choices.append((k,text))
+        #~ return [(k,", ".join([unicode(i) for i in lst])) for k,lst in choices.items()]
+        return choices
+        
+        
 
 
     
-class Movement(mixins.Sequenced):
+class Movement(mixins.Sequenced,Matchable):
   
     allow_cascaded_delete = ['voucher']
     
@@ -471,10 +504,14 @@ class Movement(mixins.Sequenced):
     partner = dd.ForeignKey(partner_model,blank=True,null=True)
     amount = dd.PriceField(default=0)
     dc = DebitOrCreditField()
-    match = dd.ForeignKey('self',verbose_name=_("Match"),blank=True,null=True)
+    satisfied = models.BooleanField(_("Satisfied"),default=False)
+    #~ match = dd.ForeignKey('self',verbose_name=_("Match"),blank=True,null=True)
     #~ is_credit = models.BooleanField(_("Credit"),default=False)
     #~ debit = dd.PriceField(default=0)
     #~ credit = dd.PriceField(default=0)
+    
+    def select_text(self):
+        return "%s (%s)" % (self.voucher,self.voucher.date)
     
     @dd.virtualfield(dd.PriceField(_("Debit")))
     def debit(self,ar):
@@ -494,10 +531,10 @@ class Movement(mixins.Sequenced):
     def voucher_link(self,ar):
         return self.voucher.obj2html(ar)
         
-    @dd.displayfield(_("Matched by"))
-    def matched_by(self,ar):
-        elems = [obj.voucher_link(ar) for obj in Movement.objects.filter(match=self)]
-        return E.div(*elems)
+    #~ @dd.displayfield(_("Matched by"))
+    #~ def matched_by(self,ar):
+        #~ elems = [obj.voucher_link(ar) for obj in Movement.objects.filter(match=self)]
+        #~ return E.div(*elems)
         
     
     def get_siblings(self):
@@ -516,31 +553,18 @@ class Movements(dd.Table):
     
 class MovementsByVoucher(Movements):
     master_key = 'voucher'
-    column_names = 'seqno account debit credit matched_by'
+    column_names = 'seqno account debit credit match satisfied'
     #~ editable = False
     auto_fit_column_widths = True
     
 class MovementsByPartner(Movements):
     master_key = 'partner'
     order_by = ['-voucher__date']
-    column_names = 'voucher__date voucher_link debit credit account match matched_by'
+    column_names = 'voucher__date voucher_link debit credit account match satisfied'
     #~ editable = False
     auto_fit_column_widths = True
     
 
-class Matchable(dd.Model):
-    
-    class Meta: 
-        abstract = True
-        
-    match = dd.ForeignKey('ledger.Movement',verbose_name=_("Match"),blank=True,null=True)
-    
-    @dd.chooser()
-    def match_choices(cls,partner):
-        qs = Movement.objects.filter(partner=partner)
-        return qs
-        
-        
 
 
 class InvoiceStates(dd.Workflow):

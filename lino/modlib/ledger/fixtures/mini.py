@@ -82,6 +82,7 @@ def objects():
     
     yield Group('55','assets',u"Institutions financières",u"Fainanzinstitute","Banks") # PCMN 55
     yield Account('bestbank','bank_accounts',u"Bestbank",u"Bestbank","Bestbank") 
+    yield Account('cash','bank_accounts',u"Cash",u"Cash","Cash") 
     
     yield Group('6','expenses',u"Charges",u"Aufwendungen","Expenses") # 
     yield Account('products','expenses',
@@ -106,24 +107,25 @@ def objects():
 
     if sales:
         #~ yield sales.Orders.create_journal("VKR",'sales',name=u"Aufträge")
-        yield sales.Invoice.create_journal('sales',ref="SAL",chart=chart,**babel_values('name',
+        yield sales.Invoice.create_journal('sales',ref="S",chart=chart,**babel_values('name',
           de=u"Verkaufsrechnungen",fr=u"Factures vente",en="Sales invoices",et=u"Müügiarved"))
     else:
         yield ledger.AccountInvoice.create_journal('sales',
-            chart=chart,**babel_values('name',
+            ref="S",chart=chart,**babel_values('name',
             de=u"Verkaufsrechnungen",fr=u"Factures vente",en="Sales invoices",et=u"Müügiarved"))
           
     yield ledger.AccountInvoice.create_journal('purchases',
         chart=chart,
-        ref="PUR",
+        ref="P",
         **babel_values('name',
             de=u"Einkaufsrechnungen",fr=u"Factures achat",en="Purchase invoices",et=u"Ostuarved"))
             
     if finan:
-        yield finan.BankStatement.create_journal(chart=chart,name=u"Bestbank",account='bestbank',ref="BB")
+        yield finan.BankStatement.create_journal(chart=chart,name=u"Bestbank",account='bestbank',ref="B")
+        yield finan.BankStatement.create_journal(chart=chart,name=u"Cash",account='cash',ref="C")
 
     if declarations:
-        yield declarations.Declaration.create_journal(chart=chart,name=u"VAT declarations",ref="VAT")
+        yield declarations.Declaration.create_journal(chart=chart,name=u"VAT declarations",ref="V")
 
 
     MODEL = ledger.AccountInvoice

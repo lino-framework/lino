@@ -2,6 +2,9 @@
 20130912 (Thursday, 12 September 2013)
 ======================================
 
+Printing mail labels
+--------------------
+
 Until now the "Show this table as a pdf document" action was implemented
 in :xfile:`linoweb.js` and :mod:`lino.ui.views`.
 Now I converted it to a "real" action
@@ -26,13 +29,13 @@ This has several advantages:
         as_pdf = PdfTableAction(template_name = "Table-portrait.odt")
   
 
-Now I'll also want to convert the html, csv and delete actions.
+TODO: Now I'll also want to convert the html, csv and delete actions.
 The delete action is most urgent because users cannot delete multiple 
 rows at once.
 
 But first I have another idea for a third advantage of this:
 I wrote a derived class
-:class:`PdfLabelsAction <lino.utils.appy_pod.PdfLabelsAction>`
+:class:`PrintLabelsAction <lino.utils.appy_pod.PrintLabelsAction>`
 and a template
 :srcref:`/lino/config/Labels.odt`,
 and added this to `contacts.Partner`.
