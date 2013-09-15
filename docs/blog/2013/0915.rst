@@ -11,3 +11,27 @@ to the applet.
 
 Discovered `policytool`
 and worked on the instructions in :doc:`/davlink/client`.
+
+
+A bug 
+-----
+
+The new :class:`PdfTableAction <lino.utils.appy_pod.PdfTableAction>`
+(:blogref:`20130912`) had caused a bug:
+The printed tables did not respect any parameter values.
+Because `Lino.list_action_handler` didn't yet call 
+`panel.add_param_values`.
+Fixed.
+Added that call also in `Lino.row_action_handler`.
+
+New command `fab ddt`
+---------------------
+
+Added a new command ``fab ddt`` (:func:`atelier.fablib.double_dump_test`).
+
+- When there are "models with circular dependencies", the corresponding 
+  message is no longer written to the .py file because the dependencies 
+  are stored in a dict which is randomly sorted and thus caused false 
+  failures in the ddt.
+
+

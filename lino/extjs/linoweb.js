@@ -666,11 +666,13 @@ Lino.MainPanel = {
       * 20130721 : `force_dirty` not as a parameter but as 
       * `this._force_dirty` because
       * 
+      * 20130915 : both _force_dirty and force_dirty parameter are needed.
+      * 
       */
-      //~ if (force_dirty || this._force_dirty || this.params_panel.form.isDirty()) {
-      if (this._force_dirty || this.params_panel.form.isDirty()) {
+      if (force_dirty || this._force_dirty || this.params_panel.form.isDirty()) {
+      //~ if (this._force_dirty || this.params_panel.form.isDirty()) {
         p.{{ext_requests.URL_PARAM_PARAM_VALUES}} = this.get_param_values();
-        //~ console.log("20130605 form is dirty",p);
+        console.log("20130605 form is dirty",p);
       }else{
         //~ console.log("20130605 form not dirty:",this.params_panel.form);
         if (this.status_param_values) 
@@ -679,7 +681,7 @@ Lino.MainPanel = {
       }
       //~ if (!this.params_panel.form.isDirty()) return;
       //~ p.{{ext_requests.URL_PARAM_PARAM_VALUES}} = this.get_param_values();
-      //~ console.log("20120203 add_param_values added pv",pv,"to",p);
+      console.log("20120203 add_param_values added pv",p.pv,"to",p);
     }
   },
   get_param_values : function() { // similar to get_field_values()
@@ -2213,6 +2215,7 @@ Lino.row_action_handler = function(actionName,hm,pp) {
       Lino.do_on_current_record(panel,function(rec) {
           //~ console.log(panel);
           //~ 20120723 Lino.call_ajax_action(panel,rec.id,actionName,step,fn);
+          panel.add_param_values(p,true); // 20130915
           Lino.call_ajax_action(panel,hm,panel.get_record_url(rec.id),p,actionName,step,fn);
       });
   };
@@ -2226,6 +2229,7 @@ Lino.list_action_handler = function(ls_url,actionName,hm,pp) {
       //~ console.log("20121210 Lino.list_action_handler",arguments);
       //~ var url = ADMIN_URL + '/api' + panel.ls_url
       if (pp) { p = pp(panel);  if (! p) return; }
+      panel.add_param_values(p,true); // 20130915
       Lino.call_ajax_action(panel,hm,url,p,actionName,step,fn);
   };
   return fn;
