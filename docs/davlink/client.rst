@@ -21,7 +21,9 @@ Debian
     you need to install the `icedtea-plugin` package.
 
 #.  And then you must tell icedtea that you grant permission for 
-    the DavLink applet to launch a program.    
+    the DavLink applet to scan your local file system and execute a program.    
+    Otherwise you'll get a RuntimException
+    "You must tell your client to let me read your file system."
     
     For this you must invoke `policytool
     <http://docs.oracle.com/javase/tutorial/security/tour1/wstep1.html>`_
@@ -42,9 +44,14 @@ Debian
     
     When done, your :xfile:`.java.policy` file should look similar to this::
     
-        grant codeBase "http://welfare-demo.lino-framework.org/media/lino/applets/DavLink.jar" {
+        grant codeBase "http://welfare-demo.lino-framework.org/-" {
           permission java.io.FilePermission "<<ALL FILES>>", "read";
+          permission java.io.FilePermission "<<ALL FILES>>", "execute";
         };
+        
+    If you prefer you can just edit the file with your preferred 
+    editor and add the above content manually.
+    
 
 
 If any other problems arise, 
