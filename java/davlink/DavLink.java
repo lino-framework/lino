@@ -223,9 +223,13 @@ public class DavLink extends Applet {
     }
     
     
-    //~ public void init() {
-        //~ System.out.println("DavLink.init()");
-    //~ }
+    public void init() {
+        System.out.println("DavLink.init()");
+        String[] props = {"java.vendor","java.version","java.home"};
+        for (String p : props) {
+            System.out.println(p + ':' + System.getProperty(p)) ;
+        }
+    }
     
     public void unused_init() {
         System.err.println("Gonna disable the security manager...");
@@ -304,7 +308,10 @@ public class DavLink extends Applet {
                 drives.add(roots[j]);
         }
         
-        //~ System.err.println("20130708 drives.size() is " + drives.size());
+        //~ System.out.println("20130708 drives.size() is " + drives.size());
+        if (drives.size() == 0) {
+            throw new RuntimeException("You must tell your client to let me read your file system.");
+        }
         
         try {
             Searcher search = new Searcher(this);
@@ -331,6 +338,7 @@ public class DavLink extends Applet {
             prefs.put("","Generated");
             
          } catch (IOException err) {
+           System.out.println("Oops:");
            err.printStackTrace();
          }
         System.out.println("DavLink.generate_default_prefs() done");

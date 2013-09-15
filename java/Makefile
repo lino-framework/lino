@@ -31,9 +31,9 @@ classes: $(CLASSES:.java=.class)
 
 jars: classes
 	jar cvmf davlink/manifest.txt $(DAVLINK_JARFILE) davlink
-	jarsigner -storepass "`cat ~/.keystore_password`" $(DAVLINK_JARFILE) mykey
+	jarsigner -storepass "`cat ~/.secret/.keystore_password`" $(DAVLINK_JARFILE) mykey
 	jar cvf $(EID_JARFILE) lino/eid
-	jarsigner -storepass "`cat ~/.keystore_password`" $(EID_JARFILE) mykey
+	jarsigner -storepass "`cat ~/.secret/.keystore_password`" $(EID_JARFILE) mykey
 
 clean:
 	rm davlink/*.class

@@ -1,0 +1,13 @@
+====================================
+20130915 (Sunday, 15 September 2013)
+====================================
+
+:ref:`davlink`
+--------------
+
+Added a message
+"You must tell your client to let me read your file system."
+to the applet.
+
+Discovered `policytool`
+and worked on the instructions in :doc:`/davlink/client`.

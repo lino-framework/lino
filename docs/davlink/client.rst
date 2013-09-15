@@ -21,20 +21,30 @@ Debian
     you need to install the `icedtea-plugin` package.
 
 #.  And then you must tell icedtea that you grant permission for 
-    the DavLink applet to launch a program.
-
-    Edit your :file:`/etc/java-7-openjdk/security/java.policy`, 
-    adding something like::
-
-      grant codeBase "http://lino.example.com/" {
-            permission java.security.AllPermission;
-      };
+    the DavLink applet to launch a program.    
+    
+    For this you must invoke `policytool
+    <http://docs.oracle.com/javase/tutorial/security/tour1/wstep1.html>`_
+    and add a policy entry:
+    
+    - codeBase: URL of the applet. 
+      For example
+      http://welfare-demo.lino-framework.org/media/lino/applets/DavLink.jar
       
-    If you know that you can trust the applets on that URL, 
-    then you can simply grant `AllPermission`. 
-    Otherwise adapt your entry to grant only the minimum required. 
-    (TODO: which ones?)
-
+    - add a "FilePermission" for the "<<ALL FILES>>" target and 
+      the "read" action.
+      
+    Then save it into your "user java policy file".
+    This file must be named :xfile:`.java.policy` and must be in your 
+    home directory.
+    If you have never used the policitool before, then you must
+    type that name yourself.
+    
+    When done, your :xfile:`.java.policy` file should look similar to this::
+    
+        grant codeBase "http://welfare-demo.lino-framework.org/media/lino/applets/DavLink.jar" {
+          permission java.io.FilePermission "<<ALL FILES>>", "read";
+        };
 
 
 If any other problems arise, 
