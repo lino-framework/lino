@@ -9,6 +9,12 @@ All names of persons are generated.
 You may edit according to the user permissions. 
 Any changes will be lost each time we reinitialize the demo data.
 
+The :ref:`demos` have their 
+:ref:`davlink` functionality switched off 
+(they have :attr:`use_davlink <lino.site.Site.use_davlink>` 
+set to False) to avoid browser questions to first-time visitors.
+
+
  
 .. complextable::
 

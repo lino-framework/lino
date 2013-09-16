@@ -1,0 +1,32 @@
+====================================
+20130916 (Monday, 16 September 2013)
+====================================
+
+
+We are
+testing the :ref:`davlink` applet on a customer's site.
+Also updated on the docs page :ref:`davlink.client`.
+
+Even after having given permission (using policytool)
+to run :ref:`davlink`, 
+we got  the following  exception::
+
+    java.lang.SecurityException: JAR manifest codebase mismatch for http://testlino.xx.yyy.be/media/lino/applets/DavLink.jar
+        at com.sun.deploy.security.DeployManifestChecker.verify(Unknown Source)
+        at com.sun.deploy.security.DeployManifestChecker.verify(Unknown Source)
+        ...
+
+This is because of a wrong codebase manifest attribute
+(these have been introduced in 
+`JDK 7u25
+<http://www.oracle.com/technetwork/java/javase/7u25-relnotes-1955741.html#jar-att>`__
+and are explained in:
+`Preventing RIAs from Being Repurposed
+<http://docs.oracle.com/javase/7/docs/technotes/guides/jweb/no_redeploy.html>`_)
+
+I now changed the content of manifest.txt to::
+
+  Permissions: all-permissions
+  Codebase: *
+
+

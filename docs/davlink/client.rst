@@ -1,3 +1,5 @@
+.. _davlink.client:
+
 =========================================
 Configuring your client for using DavLink
 =========================================
@@ -8,10 +10,24 @@ your computer refuses this without your prior explicit permission.
 
 The problem is that it is not always easy to give this permission.
 
-Note that the :ref:`demos` have their 
-:ref:`davlink` functionality switched off 
-for security reasons (they have :attr:`use_davlink <lino.site.Site.use_davlink>` 
-set to False).
+Here are two pages where you can try to get it running:
+
+- https://lino.googlecode.com/hg/lino/media/applets/davlink_test.html
+- https://lino.googlecode.com/hg/lino/media/applets/davlink_jnlp_test.html
+
+Note that there is no WebDAV server behind these files, so you won't 
+be able to save the document. You can consider installation successful 
+when your office application *launches*.
+
+
+
+Possible problems
+
+- [blocked] The page at https://lino.googlecode.com/hg/lino/media/applets/davlink_jnlp_test.html 
+  ran insecure content from http://www.java.com/js/deployJava.js.
+
+
+
 
 
 Debian
