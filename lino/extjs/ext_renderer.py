@@ -634,8 +634,11 @@ tinymce.init({
 </script>
 """ % p
             else:
-                p = site.build_media_url('lino/applets/davlink.jnlp')
-                yield """\
+                yield '<script src="http://www.java.com/js/deployJava.js"></script>'
+                # don't launch it directly here but later in the Ext.onReady()
+                if False:
+                    p = site.build_media_url('lino','applets','davlink.jnlp')
+                    yield """\
 <script src="http://www.java.com/js/deployJava.js"></script>
 <script>  
     deployJava.launchWebStartApplication('%s');
@@ -780,6 +783,12 @@ tinymce.init({
             yield on_ready
         #~ for ln in on_ready:
             #~ yield ln
+            
+        if USE_DAVLINK_JNLP:
+            p = site.build_media_url('lino','applets','davlink.jnlp')
+            p = request.build_absolute_uri(p)
+            yield "deployJava.launchWebStartApplication('%s');" % p
+            
         
         #~ yield "console.timeEnd('onReady');"
         yield "}); // end of onReady()"
