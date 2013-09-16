@@ -353,6 +353,8 @@ public class DavLink extends Applet {
         
         if (prefs.get("",null) == null) 
             generate_default_prefs();
+        else
+            System.out.println("Found existing prefs :" + prefs.toString());
         String path = prefs.get(ext,null);
         if (path == null) {
             throw new RuntimeException("No launcher defined for extension '" + ext + "'");
