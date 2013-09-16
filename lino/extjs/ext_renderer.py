@@ -92,7 +92,7 @@ if settings.SITE.user_model:
     from lino.modlib.users import models as users
 
 AFTER_20130725 = True
-USE_DAVLINK_JNLP = True
+USE_DAVLINK_JNLP = False
 
 #~ from lino.utils.choicelists import DoYouLike, HowWell
 #~ STRENGTH_CHOICES = DoYouLike.get_choices()
@@ -830,10 +830,13 @@ tinymce.init({
 
         if site.use_davlink:
           if not USE_DAVLINK_JNLP:
+            p = site.build_media_url('lino','applets','DavLink.jar')
+            p = request.build_absolute_uri(p)
             yield '<applet name="DavLink" code="davlink.DavLink.class"'
-            yield '        archive="%s/lino/applets/DavLink.jar"' % site.build_media_url()
+            #~ yield '        archive="%s/lino/applets/DavLink.jar"' % site.build_media_url()
+            yield '        archive="%s"' % p
             yield '        width="1" height="1">'
-            #~ yield '<param name="separate_jvm" value="true">' # 20130913
+            yield '<param name="separate_jvm" value="true">' # 20130913
             yield '</applet>'
             # Note: The value of the ARCHIVE attribute is a URL of a JAR file.
             
