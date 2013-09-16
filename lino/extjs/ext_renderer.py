@@ -619,19 +619,26 @@ tinymce.init({
         
         if USE_DAVLINK_JNLP:
             #~ http://docs.oracle.com/javase/tutorial/deployment/deploymentInDepth/deployingWithoutCodebase.html
-            p = site.build_media_url('lino/applets/DavLink.jar')
-            yield """\
+            if False:
+                p = site.build_media_url('lino/applets/DavLink.jar')
+                yield """\
 <script src="http://www.java.com/js/deployJava.js"></script>
 <script>  
-    // var attributes = {
-    //     name:"DavLink",
-    //     code:'davlink.DavLink.class', 
-    //     archive:'%s', width:1, height:1}; 
-    // var parameters = { jnlp_href:'davlink.jnlp' }; 
-    // var version = '1.6' ; 
-    // deployJava.runApplet(attributes, parameters, version);      
-    deployJava.launchWebStartApplication('davlink.jnlp');
-    
+    var attributes = {
+        name:"DavLink",
+        code:'davlink.DavLink.class', 
+        archive:'%s', width:1, height:1}; 
+    var parameters = { jnlp_href:'davlink.jnlp' }; 
+    var version = '1.6' ; 
+    deployJava.runApplet(attributes, parameters, version);      
+</script>
+""" % p
+            else:
+                p = site.build_media_url('lino/applets/davlink.jnlp')
+                yield """\
+<script src="http://www.java.com/js/deployJava.js"></script>
+<script>  
+    deployJava.launchWebStartApplication('%s');
 </script>
 """ % p
             
