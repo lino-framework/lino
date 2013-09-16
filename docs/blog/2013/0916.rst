@@ -17,16 +17,18 @@ we got  the following  exception::
         ...
 
 This is because of a wrong codebase manifest attribute
-(these have been introduced in 
+(which have been introduced in 
 `JDK 7u25
 <http://www.oracle.com/technetwork/java/javase/7u25-relnotes-1955741.html#jar-att>`__
 and are explained in:
 `Preventing RIAs from Being Repurposed
 <http://docs.oracle.com/javase/7/docs/technotes/guides/jweb/no_redeploy.html>`_)
 
-I now changed the content of manifest.txt to::
+Changing the content of manifest.txt to the following didn't work either::
 
   Permissions: all-permissions
   Codebase: *
 
-
+But here another piece of information:
+`Deploying Without Codebase
+<http://docs.oracle.com/javase/tutorial/deployment/deploymentInDepth/deployingWithoutCodebase.html>`_

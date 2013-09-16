@@ -1,3 +1,2 @@
 Permissions: all-permissions
-Codebase: *
 

@@ -1,6 +1,4 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<!-- href attribute contains relative path;
-     codebase attribute not specified -->
 <jnlp href="davlink.jnlp">
     <information>
         <title>Lino DavLink Applet</title>
@@ -9,8 +7,9 @@
     <resources>
         <!-- Application Resources -->
         <j2se version="1.6+" />
-        <jar href="DavLink.jar"
-             main="true" />
+        <jar href="DavLink.jar" main="true" />
+        <!-- href attribute contains relative path;
+        codebase attribute not specified -->
     </resources>
     <applet-desc
          name="Lino DavLink Applet"
