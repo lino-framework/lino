@@ -4496,7 +4496,7 @@ Lino.GridPanel = Ext.extend(Lino.GridPanel,{
   on_master_changed : function() {
     //~ if (! this.enabled) return;
     //~ cmp = this;
-    console.log('20130911 Lino.GridPanel.on_master_changed()',this.title,this.rendered);
+    //~ console.log('20130911 Lino.GridPanel.on_master_changed()',this.title,this.rendered);
     if (! this.rendered) return; // 20120213
     var todo = function() {
       if (this.disabled) return;

@@ -92,7 +92,7 @@ if settings.SITE.user_model:
     from lino.modlib.users import models as users
 
 AFTER_20130725 = True
-USE_DAVLINK_JNLP = False
+USE_DAVLINK_JNLP = True
 
 #~ from lino.utils.choicelists import DoYouLike, HowWell
 #~ STRENGTH_CHOICES = DoYouLike.get_choices()
