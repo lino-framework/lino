@@ -11,7 +11,7 @@ Even after having given permission (using policytool)
 to run :ref:`davlink`, 
 we got  the following  exception::
 
-    java.lang.SecurityException: JAR manifest codebase mismatch for http://testlino.xx.yyy.be/media/lino/applets/DavLink.jar
+    java.lang.SecurityException: JAR manifest codebase mismatch for http://testlino.xx.yy.be/media/lino/applets/DavLink.jar
         at com.sun.deploy.security.DeployManifestChecker.verify(Unknown Source)
         at com.sun.deploy.security.DeployManifestChecker.verify(Unknown Source)
         ...
@@ -31,4 +31,99 @@ Changing the content of manifest.txt to the following didn't work either::
 
 But here another piece of information:
 `Deploying Without Codebase
-<http://docs.oracle.com/javase/tutorial/deployment/deploymentInDepth/deployingWithoutCodebase.html>`_
+<http://docs.oracle.com/javase/tutorial/deployment/deploymentInDepth/deployingWithoutCodebase.html>`_.
+This helped.
+Lino ext_renderer now inserts the following code to launch the applet::
+
+    <script src="http://www.java.com/js/deployJava.js"></script>
+    <script>  
+        deployJava.launchWebStartApplication('%s');
+    </script>
+
+
+Next problem:
+
+    **Sicherheitswarnung**
+
+    Möchten Sie diese Anwendung ausführe?
+
+        Name: DavLink
+        Anbieter: UNBEKANNT
+        Verzeichnis: ....
+
+    **Das Ausführen von Anwendungen unbekannter Anbieter
+    wird in einer zykünftigen Release gesperrt, da dies potentiell 
+    unsicher ist und ein Sciherheitsrisiko darstellt.
+
+This appearently comes *despite*  the fact that I signed the jar file,
+because "When a certificate is self signed, UNKNOWN will be displayed 
+as the publisher of the application." 
+(`Signing JAR Files 
+<http://docs.oracle.com/javase/tutorial/deployment/jar/signing.html>`_)
+
+
+Next problem::
+
+
+    java.security.AccessControlException: access denied ("java.lang.RuntimePermission" "getenv.SystemDrive")
+        at java.security.AccessControlContext.checkPermission(Unknown Source)
+        at java.security.AccessController.checkPermission(Unknown Source)
+        at java.lang.SecurityManager.checkPermission(Unknown Source)
+        at sun.plugin2.applet.AWTAppletSecurityManager.checkPermission(Unknown Source)
+        at java.lang.System.getenv(Unknown Source)
+        at davlink.DavLink.generate_default_prefs(DavLink.java:286)
+        at davlink.DavLink.getLauncherFor(DavLink.java:355)
+        at davlink.DavLink.open(DavLink.java:371)
+        at sun.reflect.NativeMethodAccessorImpl.invoke0(Native Method)
+        at sun.reflect.NativeMethodAccessorImpl.invoke(Unknown Source)
+        at sun.reflect.DelegatingMethodAccessorImpl.invoke(Unknown Source)
+        at java.lang.reflect.Method.invoke(Unknown Source)
+        at sun.plugin.javascript.Trampoline.invoke(Unknown Source)
+        at sun.reflect.NativeMethodAccessorImpl.invoke0(Native Method)
+        at sun.reflect.NativeMethodAccessorImpl.invoke(Unknown Source)
+        at sun.reflect.DelegatingMethodAccessorImpl.invoke(Unknown Source)
+        at java.lang.reflect.Method.invoke(Unknown Source)
+        at sun.plugin.javascript.JSClassLoader.invoke(Unknown Source)
+        at sun.plugin2.liveconnect.JavaClass$MethodInfo.invoke(Unknown Source)
+        at sun.plugin2.liveconnect.JavaClass$MemberBundle.invoke(Unknown Source)
+        at sun.plugin2.liveconnect.JavaClass.invoke0(Unknown Source)
+        at sun.plugin2.liveconnect.JavaClass.invoke(Unknown Source)
+        at sun.plugin2.main.client.LiveConnectSupport$PerAppletInfo$DefaultInvocationDelegate.invoke(Unknown Source)
+        at sun.plugin2.main.client.LiveConnectSupport$PerAppletInfo$3.run(Unknown Source)
+        at java.security.AccessController.doPrivileged(Native Method)
+        at sun.plugin2.main.client.LiveConnectSupport$PerAppletInfo.doObjectOp(Unknown Source)
+        at sun.plugin2.main.client.LiveConnectSupport$PerAppletInfo$LiveConnectWorker.run(Unknown Source)
+        at java.lang.Thread.run(Unknown Source)
+        
+
+        
+// grant signedBy "Luc Saffre", codeBase "http://testlino.srv.oshz-eupen.be/-" {
+grant codeBase "http://testlino.xx.yy.be/-" {
+	permission java.security.AllPermission;
+  // permission java.io.FilePermission "<<ALL FILES>>", "read";
+//  permission java.io.FilePermission "<<ALL FILES>>", "execute";
+//  permission java.lang.RuntimePermission "getenv.SystemDrive";
+
+};
+
+
+In `Structure of the JNLP File
+<http://docs.oracle.com/javase/tutorial/deployment/deploymentInDepth/jnlpFileSyntax.html>`_
+I read that 
+a ``<security>``
+element "Can be used to request enhanced permissions. 
+If this element is not included, the application is run in the security sandbox."
+
+So I added it to `davlink.jnlp`::
+
+  <security>all-permissions</security>        
+  
+An alternative might be::  
+  
+  <security>j2ee-application-client-permissions</security>        
+
+Which "Requests that the RIA be run with a permission set that meets 
+the security specifications of the J2EE application client environment."
+
+
+

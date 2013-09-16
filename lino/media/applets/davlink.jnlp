@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <jnlp href="davlink.jnlp">
+    <security>all-permissions</security>
     <information>
         <title>Lino DavLink Applet</title>
         <vendor>Luc Saffre</vendor>
