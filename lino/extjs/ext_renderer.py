@@ -833,8 +833,8 @@ tinymce.init({
             p = site.build_media_url('lino','applets','DavLink.jar')
             p = request.build_absolute_uri(p)
             yield '<applet name="DavLink" code="davlink.DavLink.class"'
-            #~ yield '        archive="%s/lino/applets/DavLink.jar"' % site.build_media_url()
-            yield '        archive="%s"' % p
+            yield '        archive="%s/lino/applets/DavLink.jar"' % site.build_media_url()
+            #~ yield '        archive="%s"' % p
             yield '        width="1" height="1">'
             yield '<param name="separate_jvm" value="true">' # 20130913
             yield '</applet>'
