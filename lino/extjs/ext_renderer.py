@@ -618,17 +618,20 @@ tinymce.init({
         #~ yield '<!-- page specific -->'
         
         if USE_DAVLINK_JNLP:
+            #~ http://docs.oracle.com/javase/tutorial/deployment/deploymentInDepth/deployingWithoutCodebase.html
             p = site.build_media_url('lino/applets/DavLink.jar')
             yield """\
 <script src="http://www.java.com/js/deployJava.js"></script>
 <script>  
-    var attributes = {
-        name:"DavLink",
-        code:'davlink.DavLink.class', 
-        archive:'%s', width:1, height:1}; 
-    var parameters = { jnlp_href:'davlink.jnlp' }; 
-    var version = '1.6' ; 
-    deployJava.runApplet(attributes, parameters, version);      
+    // var attributes = {
+    //     name:"DavLink",
+    //     code:'davlink.DavLink.class', 
+    //     archive:'%s', width:1, height:1}; 
+    // var parameters = { jnlp_href:'davlink.jnlp' }; 
+    // var version = '1.6' ; 
+    // deployJava.runApplet(attributes, parameters, version);      
+    deployJava.launchWebStartApplication('davlink.jnlp');
+    
 </script>
 """ % p
             
@@ -813,7 +816,7 @@ tinymce.init({
             yield '<applet name="DavLink" code="davlink.DavLink.class"'
             yield '        archive="%s/lino/applets/DavLink.jar"' % site.build_media_url()
             yield '        width="1" height="1">'
-            yield '<param name="separate_jvm" value="true">' # 20130913
+            #~ yield '<param name="separate_jvm" value="true">' # 20130913
             yield '</applet>'
             # Note: The value of the ARCHIVE attribute is a URL of a JAR file.
             
