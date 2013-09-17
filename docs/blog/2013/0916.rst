@@ -116,11 +116,11 @@ If this element is not included, the application is run in the security sandbox.
 
 So I added it to `davlink.jnlp`::
 
-  <security>all-permissions</security>        
+  <security><all-permissions/></security>        
   
 An alternative might be::  
   
-  <security>j2ee-application-client-permissions</security>        
+  <security><j2ee-application-client-permissions /></security>        
 
 Which "Requests that the RIA be run with a permission set that meets 
 the security specifications of the J2EE application client environment."

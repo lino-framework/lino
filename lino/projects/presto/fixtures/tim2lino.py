@@ -265,13 +265,14 @@ def load_tim_data(dbpath):
     
     settings.SITE.loading_from_dump = True
     
-    yield accounts.Chart(name="Default")
+    CHART = accounts.Chart(name="Default")
+    yield CHART
     
     
     DIM = sales.InvoicingMode(name='Default')
     yield DIM
-    yield sales.Invoice.create_journal("VKR",'sales',name="Verkaufsrechnungen")
-    yield ledger.AccountInvoice.create_journal("EKR",'purchases',name="Einkaufsrechnungen")
+    yield sales.Invoice.create_journal('sales',name="Verkaufsrechnungen",ref="S")
+    yield ledger.AccountInvoice.create_journal('purchases',name="Einkaufsrechnungen",ref="P")
 
     #~ from lino.modlib.users import models as users
     

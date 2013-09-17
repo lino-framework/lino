@@ -31,7 +31,9 @@ import java.io.FileFilter;
 import java.security.Permission;
 import java.io.FilePermission;
 
-
+import java.security.AccessController;
+import java.security.PrivilegedAction;
+;
 import java.util.prefs.Preferences;
 //~ import javax.swing.JOptionPane;
 
@@ -224,15 +226,15 @@ public class DavLink extends Applet {
     
     
     public void init() {
-        System.out.println("DavLink.init()");
-        String[] props = {"java.vendor","java.version","java.home"};
+        String[] props = {"java.version","java.home"};
         for (String p : props) {
             System.out.println(p + ':' + System.getProperty(p)) ;
         }
+        System.out.println("DavLink has been initialized.");
     }
     
     public void unused_init() {
-        System.err.println("Gonna disable the security manager...");
+        System.err.println("DavLink will now disable the security manager...");
         System.setSecurityManager(null);
         System.err.println("Security manager has been disabled ");
     }
@@ -267,81 +269,92 @@ public class DavLink extends Applet {
         System.err.println("Initialized");
     }
     
-    public void generate_default_prefs() {
+    public String generate_default_prefs() {
         System.out.println("DavLink.generate_default_prefs()");
-      
-        add_program("winword.exe", null,          null,   "rtf","doc");
-        add_program("swriter.exe", "libreoffice", null,   "rtf","doc","odt");
-        add_program("excel.exe"  , null,          null,   "xls","csv");
-        add_program("scalc.exe"  , "libreoffice", null,   "xls","ods","csv");
+        
+        final Searcher searcher = new Searcher(this);
+        
+        return (String) AccessController.doPrivileged(new PrivilegedAction() { 
+            public Object run() {
+            try {
+          
+                add_program("winword.exe", null,          null,   "rtf","doc");
+                add_program("swriter.exe", "libreoffice", null,   "rtf","doc","odt");
+                add_program("excel.exe"  , null,          null,   "xls","csv");
+                add_program("scalc.exe"  , "libreoffice", null,   "xls","ods","csv");
+                add_program("notepad.exe", null, null,   "rtf","csv");
 
-        List<File> drives = new ArrayList<File>();
-        String[] bindirs;
-      
-        String os_name = System.getProperty("os.name");
-      
-        if (os_name.startsWith("Windows")) {
-          bindirs = new String[] { "Program Files", "Program Files (x86)" };
-          //~ crack:
-          String s = System.getenv("SystemDrive") + "\\";
-          File fd = new File(s);
-          drives.add(fd);
-          //~ drives.add(new File(System.getenv("SystemDrive") + "\\"));
-          //~ System.out.println("generate_default_prefs() 10");
-        } else {
-          bindirs = new String[] { "/usr/bin/" };
-          //~ uncomment the following to simulate what happens when 
-          //~ DavLink cannot find any launcher
-          //~ bindirs = new String[] { "/usr/bin/x" };
-        } 
-        
-        //~ System.err.println("20130708 bindirs.length is " + bindirs.length);
-        if (bindirs.length == 0) {
-            throw new RuntimeException("No binary dirs! Seems that your OS is not supported!");        
-        }
-      
-        File[] roots = File.listRoots();  //~ Object localObject 
-        //~ System.err.println("20130708 roots.length is " + roots.length);
-      
-        for (int j = 0; j < roots.length; j++) {
-            if (! drives.contains(roots[j]))
-                drives.add(roots[j]);
-        }
-        
-        //~ System.out.println("20130708 drives.size() is " + drives.size());
-        if (drives.size() == 0) {
-            throw new RuntimeException("You must tell your client to let me read your file system.");
-        }
-        
-        try {
-            Searcher search = new Searcher(this);
-            //~ LauncherFilter filter = new LauncherFilter(this);
-            for (int i = 0; i < drives.size(); i++) {
-              File drive = drives.get(i);
-              //~ File drive = (File) drives.get(i);
-              for (String name : bindirs) {
-                  search.traverse(new File(drive,name));
-              }
-            }
+                List<File> drives = new ArrayList<File>();
+                String[] bindirs;
+              
+                String os_name = System.getProperty("os.name");
+              
+                if (os_name.startsWith("Windows")) {
+                  bindirs = new String[] { "Program Files", "Program Files (x86)" };
+                  //~ crack:
+                  String s = System.getenv("SystemDrive") + "\\";
+                  File fd = new File(s);
+                  drives.add(fd);
+                  //~ drives.add(new File(System.getenv("SystemDrive") + "\\"));
+                  //~ System.out.println("generate_default_prefs() 10");
+                } else {
+                  bindirs = new String[] { "/usr/bin/" };
+                  //~ uncomment the following to simulate what happens when 
+                  //~ DavLink cannot find any launcher
+                  //~ bindirs = new String[] { "/usr/bin/x" };
+                } 
+                
+                //~ System.err.println("20130708 bindirs.length is " + bindirs.length);
+                if (bindirs.length == 0) {
+                    throw new RuntimeException("No binary dirs! Seems that your OS is not supported!");        
+                }
+              
+                File[] roots = File.listRoots();  //~ Object localObject 
+                //~ System.err.println("20130708 roots.length is " + roots.length);
+              
+                for (int j = 0; j < roots.length; j++) {
+                    if (! drives.contains(roots[j]))
+                        drives.add(roots[j]);
+                }
+                
+                //~ System.out.println("20130708 drives.size() is " + drives.size());
+                if (drives.size() == 0) {
+                    throw new RuntimeException("You must tell your client to let me read your file system.");
+                }
             
-            for (Object o : docTypes.values()) {
-                DocType t = (DocType)o;
-                for (Launcher la : t.launchers) {
-                    if (la.path != null) {
-                        prefs.put(t.extension,la.path);
-                        System.out.println("prefs.put(" + 
-                          t.extension + "," + la.path + ")");
-                        break;
+                for (int i = 0; i < drives.size(); i++) {
+                  File drive = drives.get(i);
+                  //~ File drive = (File) drives.get(i);
+                  for (String name : bindirs) {
+                      searcher.traverse(new File(drive,name));
+                  }
+                }
+                
+                for (Object o : docTypes.values()) {
+                    DocType t = (DocType)o;
+                    for (Launcher la : t.launchers) {
+                        if (la.path != null) {
+                            prefs.put(t.extension,la.path);
+                            System.out.println("prefs.put(" + 
+                              t.extension + "," + la.path + ")");
+                            break;
+                        }
                     }
                 }
+                prefs.put("","Generated");
+                
+                System.out.println("DavLink.generate_default_prefs() done");
+                
+                return "Found " + launchers.size() + " launchers.";
+                
+            } catch (Exception err) {
+                 
+                err.printStackTrace();
+                return "Oops: " + err.toString();
+                //~ return null;
             }
-            prefs.put("","Generated");
-            
-         } catch (IOException err) {
-           System.out.println("Oops:");
-           err.printStackTrace();
-         }
-        System.out.println("DavLink.generate_default_prefs() done");
+        }});
+             
     }
     
     
@@ -363,32 +376,37 @@ public class DavLink extends Applet {
         
     }
     
-   public String open(String fileName) {
+   public String open(final String fileName) {
        /*
         * Launches the application associated with the specified fileName.
         * returns null upon success, otherwise a string with the error message.
         * 
         * */
-        try {
-            String path = getLauncherFor(fileName);
-            String[] cmd = { path, fileName };
-            System.out.println(path + " " + fileName);
-            Process p = Runtime.getRuntime().exec(cmd);
-            return null;
-            //~ p.waitFor();
-            //~ System.out.println(p.exitValue());
-        } catch (Exception e) {
-            //~ JOptionPane.showMessageDialog(null, 
-                //~ e, 
-                //~ "Error",
-                 //~ JOptionPane.ERROR_MESSAGE);        
-            //~ e.printStackTrace();
-        //~ } catch (IOException err) {
-            //~ e.printStackTrace();
-        //~ } catch (InterruptedException err) {
-            e.printStackTrace();
-            return e.toString();
-        }
+        
+        return (String) AccessController.doPrivileged(new PrivilegedAction() {
+            public Object run() {
+                try {
+                    String path = getLauncherFor(fileName);
+                    String[] cmd = { path, fileName };
+                    System.out.println(path + " " + fileName);
+                    Process p = Runtime.getRuntime().exec(cmd);
+                    return null;
+                    //~ p.waitFor();
+                    //~ System.out.println(p.exitValue());
+                } catch (Exception e) {
+                    //~ JOptionPane.showMessageDialog(null, 
+                        //~ e, 
+                        //~ "Error",
+                         //~ JOptionPane.ERROR_MESSAGE);        
+                    //~ e.printStackTrace();
+                //~ } catch (IOException err) {
+                    //~ e.printStackTrace();
+                //~ } catch (InterruptedException err) {
+                    //~ System.out.println("Some error occured: " + e.toString());
+                    e.printStackTrace();
+                    return e.toString();
+                }
+        }});
     }
     
     public static void main(String args[]) {

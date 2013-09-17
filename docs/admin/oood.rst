@@ -26,19 +26,19 @@ See also :srcref:`/docs/blog/2010/1116`. But basically:
    
 - Install the startup script::
 
-    # cp /var/snapshots/lino/bash/oood /etc/init.d
-    # chmod 755 /etc/init.d/oood
-    # nano /etc/init.d/oood
+    $ sudo cp /var/snapshots/lino/bash/openoffice-headless /etc/init.d
+    $ sudo chmod 755 /etc/init.d/openoffice-headless
+    $ sudo nano /etc/init.d/openoffice-headless
     
-    
-  Check the value of the `SOFFICE` environment variable::
+  Check the value of the `OFFICE_PATH` environment variable::
   
-    SOFFICE=/usr/lib/openoffice/program/soffice  
+    OFFICE_PATH=/usr/lib/libreoffice
+    OFFICE_PATH=/usr/lib/openoffice/program/soffice  
   
-  Finally, run ``update-rc.d`` to have the daemon 
+- Finally, run ``update-rc.d`` to have the daemon 
   automatically start when the server boots::
 
-    # update-rc.d oood defaults
+    $ sudo update-rc.d openoffice-headless defaults
     
     
 

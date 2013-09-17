@@ -840,6 +840,15 @@ tinymce.init({
             yield '</applet>'
             # Note: The value of the ARCHIVE attribute is a URL of a JAR file.
             
+        if site.use_eidreader:
+            p = site.build_media_url('lino','applets','EIDReader.jar')
+            p = request.build_absolute_uri(p)
+            yield '<applet name="EIDReader" code="lino.eidreader.EIDReader.class"'
+            yield '        archive="%s"' % p
+            yield '        width="1" height="1">'
+            yield '<param name="separate_jvm" value="true">' # 20130913
+            yield '</applet>'
+            
         yield '<div id="body"></div>'
         #~ yield '<div id="tbar"/>'
         #~ yield '<div id="main"/>'

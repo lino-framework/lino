@@ -1,2 +1,3 @@
 Permissions: all-permissions
-Trusted-Only: true
+Trusted-Library: true
+

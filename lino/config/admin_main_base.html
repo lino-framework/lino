@@ -6,6 +6,12 @@
         [{{E.tostring(ar.window_action_button(mi.bound_action,icon_name=None))}}]
         {% endfor %}
         </p>
+        {% if site.use_davlink %}
+        <p align="right"><a href="javascript:Lino.davlink_reset()">reset DavLink</a></p>
+        {% endif %}
+        {% if site.use_eidreader %}
+        <p align="right"><a href="javascript:Lino.read_eid_card()">read an eID card</a></p>
+        {% endif %}
         <h2>{{_("Welcome")}}</h2>
         <p>{{_("Hi, %(first_name)s!") % dict(first_name=ar.get_user().first_name)}}
         {% set sep = joiner(',') %}

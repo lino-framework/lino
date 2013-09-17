@@ -1077,6 +1077,11 @@ class Site(Site):
         
     """
     
+    use_eidreader = False
+    """
+    Set this to `True` if this site should feature using :ref:`eidreader`.
+    """
+    
     use_davlink = False
     """
     Set this to `True` if this site should feature WebDAV-enabled links 

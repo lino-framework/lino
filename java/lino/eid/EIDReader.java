@@ -425,10 +425,10 @@ public class EIDReader extends Applet {
     }
     
     public String readCard() 
-        throws CardException, IOException 
+        //~ throws CardException, IOException 
     {
         
-        //~ try {
+        try {
             TerminalFactory factory = TerminalFactory.getDefault();  
             List<CardTerminal> terminals = factory.terminals().list();          
             CardTerminal terminal = terminals.get(0);  
@@ -454,10 +454,11 @@ public class EIDReader extends Applet {
             //~ return new String[] { pf.toString() };
             //~ return new EidReaderResponse(pf.getData());
             //~ return pf.getSurName();
-        //~ } catch (Exception e) {
+        } catch (Exception e) {
             //~ return new EidReaderResponse(new String[] { e.toString() });
-            //~ return e.toString();
-        //~ }
+            e.printStackTrace();
+            return e.toString();
+        }
     }
     
 }

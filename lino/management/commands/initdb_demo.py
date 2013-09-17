@@ -25,7 +25,7 @@ class Command(BaseCommand):
 
     def handle(self, *args, **options):
         if len(args) > 0:
-            raise CommandError("This command takes no arguments")
+            raise CommandError("This command takes no arguments (got %r)" % args)
             
         args = settings.SITE.demo_fixtures
         if isinstance(args,basestring):

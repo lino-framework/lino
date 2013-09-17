@@ -1,0 +1,51 @@
+=====================================
+20130917 (Tuesday, 17 September 2013)
+=====================================
+
+ledger.DuePaymentsByPartner
+---------------------------
+
+ledger.Match
+
+
+Still fiddling on :ref:`davlink`
+--------------------------------
+
+I set up a testing environment for davlink on hoppel. So that I now can 
+reproduce the problem which occured only on a Windows client.
+
+Tried to get rid of the "Could not load Shockwave Flash" message in Chromium
+as explained `here
+<http://linuxologist.com/01general/howto-chromium-browser-on-linux-with-flash/>`_
+... (didn't work)
+
+
+
+- `Default Policy Implementation and Policy File Syntax
+  <http://docs.oracle.com/javase/7/docs/technotes/guides/security/PolicyFiles.html>`_
+
+- `Mixing Signed and Unsigned Code / 
+  Ensuring Application and Applet Security  
+  <http://docs.oracle.com/javase/6/docs/technotes/guides/jweb/mixed_code.html>`_
+
+- Oho, finally this document was the path to enlightment:
+  `Setting Privileges for Extensions
+  <http://docs.oracle.com/javase/tutorial/ext/security/policy.html>`_.
+  It says:
+
+    If a Security Manager is in force, the following conditions must 
+    be met to enable any software, including extension software, to 
+    perform security-sensitive operations:
+
+    - The security-sensitive code in the extension must be wrapped 
+      in a PrivilegedAction object.
+      
+    - The security policy implemented by the security manager must 
+      grant the appropriate permission to the extension. 
+
+After wrapping the relevant code parts into PrivilegedAction 
+objects, everything now seems to work like a charm.
+  
+
+
+

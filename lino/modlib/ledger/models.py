@@ -72,6 +72,43 @@ class VoucherTypes(dd.ChoiceList):
         return cls.add_item_instance(VoucherType(model,table_class))
     
 
+
+
+class DebitOrCreditField(models.BooleanField):
+    pass
+    
+class MatchField(models.CharField):
+    def __init__(self,verbose_name=None,**kw):
+        if verbose_name is None:
+            verbose_name = _("Match")
+        kw.setdefault('max_length',20)
+        models.CharField.__init__(self,verbose_name,**kw)
+    
+class DcAmountField(dd.VirtualField):
+    """
+    An editable virtual field to set both fields `amount` and `dc`
+    """
+    
+    editable = True
+    
+    def __init__(self,dc,*args,**kw):
+        self.dc = dc
+        dd.VirtualField.__init__(self,dd.PriceField(*args,**kw),None)
+        
+    def set_value_in_object(self,request,obj,value):
+        obj.amount = value
+        obj.dc = self.dc
+        
+    def value_from_object(self,obj,ar):
+        if obj.dc == self.dc: return obj.amount
+        return None
+
+
+
+
+
+
+
 class Journal(dd.BabelNamed,mixins.Sequenced,mixins.PrintableType):
   
     class Meta:
@@ -93,6 +130,7 @@ class Journal(dd.BabelNamed,mixins.Sequenced,mixins.PrintableType):
     #~ pos = models.IntegerField()
     #~ printed_name = models.CharField(max_length=100,blank=True)
     printed_name = dd.BabelCharField(max_length=100,blank=True)
+    dc = DebitOrCreditField(default=None)
     
     @dd.chooser()
     def account_choices(self,chart):
@@ -172,6 +210,12 @@ class Journal(dd.BabelNamed,mixins.Sequenced,mixins.PrintableType):
         pass
         
     def full_clean(self,*args,**kw):
+        if self.dc is None:
+            if self.trade_type:
+                self.dc = self.trade_type.dc
+            elif self.account:
+                self.dc = self.account.type.dc
+                
         if not self.name:
             self.name = self.id
         #~ if not self.pos:
@@ -286,6 +330,10 @@ class Voucher(mixins.UserAuthored):
         if self.journal.ref:
             return "%s#%s" % (self.journal.ref,self.number)
         return "#%s (%s %s)" % (self.number,self.journal,self.year)
+        
+    def get_default_match(self):
+        #~ return "%s#%s" % (self.journal.ref,self.number)
+        return "%s%s" % (self.id,self.journal.ref)
         
     #~ def on_create(self,*args,**kw):
         #~ super(Voucher,self).on_create(*args,**kw)
@@ -431,62 +479,55 @@ class ByJournal(dd.Table):
 
 
 
-class DebitOrCreditField(models.BooleanField):
-    pass
-    
-class MatchField(models.CharField):
-    def __init__(self,verbose_name=None,**kw):
-        if verbose_name is None:
-            verbose_name = _("Match")
-        kw.setdefault('max_length',20)
-        models.CharField.__init__(self,verbose_name,**kw)
-    
-class DcAmountField(dd.VirtualField):
-    """
-    An editable virtual field to set both fields `amount` and `dc`
-    """
-    
-    editable = True
-    
-    def __init__(self,dc,*args,**kw):
-        self.dc = dc
-        dd.VirtualField.__init__(self,dd.PriceField(*args,**kw),None)
-        
-    def set_value_in_object(self,request,obj,value):
-        obj.amount = value
-        obj.dc = self.dc
-        
-    def value_from_object(self,obj,ar):
-        if obj.dc == self.dc: return obj.amount
-        return None
         
 class Matchable(dd.Model):
     
     class Meta: 
         abstract = True
         
-    match = MatchField(blank=True)
+    match = MatchField()
     #~ match = dd.ForeignKey('ledger.Movement',verbose_name=_("Match"),blank=True,null=True)
     
-    @dd.chooser()
+    def full_clean(self,*args,**kw):
+        if not self.match:
+            self.match = self.get_default_match()
+        super(Matchable,self).full_clean(*args,**kw)
+    
+    #~ @dd.chooser()
+    #~ def match_choices(cls,partner):
+        #~ d = {}
+        #~ qs = Movement.objects.filter(partner=partner,satisfied=False)
+        #~ for m in qs:
+            #~ i = d.setdefault(m.get_match(),[])
+            #~ i.append(m)
+        #~ choices = []
+        #~ for k,lst in d.items():
+            #~ amount = ZERO
+            #~ text = ", ".join([i.select_text() for i in lst])
+            #~ for i in lst:
+                #~ amount += iif(i.dc,1,-1) * i.amount
+            #~ text += ' ' + unicode(amount)
+            #~ choices.append((k,text))
+        #~ return choices
+        
+        
+        
+    @dd.chooser(simple_values=True)
     def match_choices(cls,partner):
-        d = {}
+        #~ DC = voucher.journal.dc
+        #~ choices = []
         qs = Movement.objects.filter(partner=partner,satisfied=False)
-        for m in qs:
-            i = d.setdefault(m.match,[])
-            i.append(m)
-        choices = []
-        for k,lst in d.items():
-            amount = ZERO
-            text = ", ".join([i.select_text() for i in lst])
-            for i in lst:
-                amount += iif(i.dc,1,-1) * i.amount
-            text += ' ' + unicode(amount)
-            choices.append((k,text))
-        #~ return [(k,", ".join([unicode(i) for i in lst])) for k,lst in choices.items()]
+        qs = qs.order_by('voucher__date')
+        #~ qs = qs.distinct('match')
+        return qs.values_list('match',flat=True)
+        
+        for mvt in qs:
+            choices.append(Match(DC,partner,mvt.match))
         return choices
         
-        
+    #~ def get_match_display(self,m):
+        #~ return repr(m)
+    
 
 
     
@@ -510,6 +551,9 @@ class Movement(mixins.Sequenced,Matchable):
     #~ debit = dd.PriceField(default=0)
     #~ credit = dd.PriceField(default=0)
     
+    def get_default_match(self):
+        return unicode(self.voucher)
+        
     def select_text(self):
         return "%s (%s)" % (self.voucher,self.voucher.date)
     
@@ -544,7 +588,6 @@ class Movement(mixins.Sequenced,Matchable):
     def __unicode__(self):
         return "%s.%d" % (unicode(self.voucher),self.seqno)
         
-    
 
 class Movements(dd.Table): 
     model = Movement
@@ -564,6 +607,69 @@ class MovementsByPartner(Movements):
     #~ editable = False
     auto_fit_column_widths = True
     
+class Match(object):
+    """
+    Volatile object representing a group of movements
+    """
+    def __init__(self,dc,partner,match):
+        self.dc = dc
+        self.partner = partner
+        self.match = match
+        self.debts = []
+        self.received = []
+        self.balance = ZERO
+        
+        qs = Movement.objects.filter(partner=partner,match=match)
+        for mvt in qs.order_by('voucher__date'):
+            self.collect(mvt)
+    
+    def collect(self,mvt):
+        if mvt.dc == self.dc:
+            self.debts.append(mvt)
+            self.balance += mvt.amount
+        else:
+            self.received.append(mvt)
+            self.balance -= mvt.amount
+    
+    
+class DuePaymentsByPartner(dd.VirtualTable):
+    """
+    Due Payements is the table to print in a Payment Reminder.
+    Usually this table has one row per sales invoice which is not completely paid.
+    But several invoices ("debts") may be grouped by match.
+    """
+    DUE_DC = accounts.DEBIT
+    
+    column_names = 'match debts received balance'
+    
+    
+    @classmethod
+    def get_data_rows(cls,ar):
+        partner = ar.master_instance
+        if partner is None: return 
+    
+        qs = Movement.objects.filter(partner=partner,satisfied=False)
+        qs = qs.order_by('voucher__date')
+        qs = qs.distinct('match')
+        for mvt in qs:
+            yield Match(DUE_DC,partner,mvt.match)
+        
+    @dd.displayfield(_("Match"))
+    def match(self,row,ar):
+        return row.match
+            
+    @dd.displayfield(_("Due"))
+    def debts(self,row,ar):
+        return ", ".join([ar.obj2html(i,i.select_text()) for i in row.debts])
+            
+    @dd.displayfield(_("Received"))
+    def received(self,row,ar):
+        return ", ".join([ar.obj2html(i,i.select_text()) for i in row.received])
+        
+    @dd.virtualfield(dd.PriceField(_("Balance")))
+    def balance(self,row,ar):
+        return row.balance
+            
 
 
 
@@ -597,6 +703,7 @@ class AccountInvoice(vat.VatDocument,Voucher,mixins.Registrable,Matchable):
     
     def get_trade_type(self):
         return self.journal.trade_type
+        
         
     
 
@@ -728,6 +835,9 @@ class ItemsByInvoice(dd.Table):
     column_names = "account title vat_class total_base total_vat total_incl seqno"
     master_key = 'voucher'
     order_by = ["seqno"]
+    
+    
+    
 
 
 #~ MODULE_LABEL = _("Ledger")

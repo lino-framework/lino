@@ -48,6 +48,7 @@ from lino import dd
 from lino import mixins
 
 partners = dd.resolve_app(settings.SITE.partners_app_label)
+accounts = dd.resolve_app('accounts')
 
 ZERO = Decimal('0.00')
 
@@ -99,6 +100,7 @@ class TradeType(dd.Choice):
     base_account_field_label = None
     vat_account_field_name = None
     vat_account_field_label = None
+    dc = accounts.DEBIT
     
     def get_vat_account(self):
         return getattr(settings.SITE.site_config,self.base_account_field_name)
@@ -120,9 +122,9 @@ class TradeTypes(dd.ChoiceList):
     item_class = TradeType
     help_text = _("The type of trade: usually either `sales` or `purchases`.")
     
-TradeTypes.add_item('S',_("Sales"),'sales')
-TradeTypes.add_item('P',_("Purchases"),'purchases')
-TradeTypes.add_item('W',_("Wages"),'wages')
+TradeTypes.add_item('S',_("Sales"),'sales',dc=accounts.CREDIT)
+TradeTypes.add_item('P',_("Purchases"),'purchases',dc=accounts.DEBIT)
+TradeTypes.add_item('W',_("Wages"),'wages',dc=accounts.DEBIT)
     
 """
 Note that :mod:`lino.modlib.sales.models` (if installed) will modify 
@@ -412,11 +414,11 @@ class VatDocument(VatTotal):
         sum = Decimal()
         for a,m in sums_dict.items():
             if m:
-                yield self.create_movement(a,a.type.dc,m)
+                yield self.create_movement(a,self.journal.dc,m)
                 sum += m
         a = settings.SITE.get_partner_account(self)
         a = self.journal.chart.get_account_by_ref(a)
-        yield self.create_movement(a,a.type.dc,sum,
+        yield self.create_movement(a,not self.journal.dc,sum,
             partner=self.partner,match=self.match)
         
     def full_clean(self,*args,**kw):

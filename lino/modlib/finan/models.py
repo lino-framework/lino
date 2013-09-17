@@ -171,15 +171,25 @@ class DocItem(mixins.Sequenced,ledger.VoucherItem,ledger.Matchable):
     debit = ledger.DcAmountField(accounts.DEBIT,_("Income"))
     credit = ledger.DcAmountField(accounts.CREDIT,_("Expense"))
     
+    def get_default_match(self):
+        return str(self.date)
+    
+    
     def get_siblings(self):
         return self.voucher.items.all()
     
     def match_changed(self,ar):
         if self.match:
-            self.amount = self.match.amount
-            self.dc = not self.match.dc
-            self.account = self.match.account
-            self.partner = self.match.partner
+            m = ledger.Match(self.voucher.journal.dc,self.partner,self.match)
+            if m.balance > 0:
+                self.dc = not self.voucher.journal.dc
+                self.amount = m.balance
+            else:
+                self.dc = self.voucher.journal.dc
+                self.amount = - m.balance
+            #~ self.dc = not self.match.dc
+            #~ self.account = self.match.account
+            #~ self.partner = self.match.partner
     
     def full_clean(self,*args,**kw):
         if self.account_id is None:
@@ -265,9 +275,7 @@ class ItemsByStatement(DocItems):
     auto_fit_column_widths = True
     hidden_columns = 'id amount dc seqno'
     
-#~ BankStatement.content = ItemsByDocument
-
-#~ journals.register_doctype(BankStatement,BankStatements)
+    
 
 ledger.VoucherTypes.add_item(BankStatement,BankStatementsByJournal)
 

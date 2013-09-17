@@ -5071,6 +5071,11 @@ Lino.davlink_open = function(webdavURL) {
   if (rv) window.alert(rv);
 }
 
+Lino.davlink_reset = function() {
+  var rv = document.applets.DavLink.generate_default_prefs();
+  if (rv) window.alert(rv);
+}
+
 {% endif %}
 
 {% if settings.SITE.use_extensible and settings.SITE.is_installed('cal') %}
@@ -5703,7 +5708,16 @@ function captureEvents(observable) {
     );		
 }
  
+{% if settings.SITE.use_eidreader %}
 
+Lino.read_eid_card = function() {
+    
+  var rv = document.applets.EIDReader.readCard();
+  if (rv) window.alert(rv);
+
+}
+
+{% endif %}
 
 {% if settings.SITE.use_eid_jslib %}
 

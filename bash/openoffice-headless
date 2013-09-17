@@ -21,8 +21,7 @@
 
 [ -e /etc/init.d/functions ] && . /etc/rc.d/init.d/functions
 
-OOo_HOME=/usr/bin
-SOFFICE_PATH=$OOo_HOME/soffice
+OFFICE_PATH=/usr/bin/libreoffice
 PIDFILE=/var/run/openoffice-server.pid
 
 set -e
@@ -33,8 +32,8 @@ echo "OpenOffice headless server has already started."
 return
 fi
 echo "Starting OpenOffice headless server"
-# $SOFFICE_PATH -headless -nologo -nofirststartwizard -accept="socket,host=127.0.0.1,port=8100;urp" &> /dev/null 2>&1
-$SOFFICE_PATH -accept="socket,host=127.0.0.1,port=8100;urp;" -nologo -headless -nofirststartwizard >/dev/null 2>&1 &
+# $OFFICE_PATH -headless -nologo -nofirststartwizard -accept="socket,host=127.0.0.1,port=8100;urp" &> /dev/null 2>&1
+$OFFICE_PATH -accept="socket,host=127.0.0.1,port=8100;urp;" -nologo -headless -nofirststartwizard >/dev/null 2>&1 &
 touch $PIDFILE
 }
 function stop {
