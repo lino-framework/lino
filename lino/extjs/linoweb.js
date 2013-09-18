@@ -600,6 +600,25 @@ Lino.MainPanel = {
   }
   ,add_params_panel : function (tbar) {
       if (this.params_panel) {
+        var t = this;
+        // 20130918 do_when_visible
+        //~ this.params_panel.on('render',
+        this.params_panel.on('afterlayout',function() {
+            //~ console.log("20130918 afterlayout");
+            Lino.do_when_visible(t.get_containing_window(), function() {
+                t.get_containing_window().doLayout(true);
+            });
+        });
+        //~ this.params_panel.on('bodyresize',function() {
+            //~ console.log("20130918 bodyresize");
+            //~ Lino.do_when_visible(t.get_containing_window(), function() {
+                //~ t.get_containing_window().doLayout(true);
+            //~ });
+        //~ });
+        //~ Lino.do_when_visible(this.params_panel, function() {
+            //~ t.params_panel.doLayout();
+            //~ t.get_containing_window().doLayout();
+            //~ });
         this.toggle_params_panel_btn = new Ext.Button({ scope:this, 
           //~ text: "$_("[parameters]")", // gear
           iconCls: 'x-tbar-parameters',
@@ -608,22 +627,16 @@ Lino.MainPanel = {
           //~ pressed: ! this.params_panel.hidden,
           pressed: ! this.params_panel_hidden,
           toggleHandler: function(btn,state) { 
-            //~ if (this.params_panel.isVisible()) 
-                //~ this.params_panel.hide();
-            //~ else
-                //~ this.params_panel.show();
             //~ console.log("20120210 add_params_panel",state,this.params_panel);
             if (state) {
-              this.params_panel.show();
-              this.params_panel.doLayout();
+                this.params_panel.show();
             } else {
                 this.params_panel.hide();
             }
-            this.get_containing_window().doLayout();
+            t.get_containing_window().doLayout();
           }
-        });
+        }); 
         tbar = tbar.concat([this.toggle_params_panel_btn]);
-        var t = this;
         var refresh = function() {
             if (!t.setting_param_values) {
                 t._force_dirty = true; 
@@ -672,7 +685,7 @@ Lino.MainPanel = {
       if (force_dirty || this._force_dirty || this.params_panel.form.isDirty()) {
       //~ if (this._force_dirty || this.params_panel.form.isDirty()) {
         p.{{ext_requests.URL_PARAM_PARAM_VALUES}} = this.get_param_values();
-        console.log("20130605 form is dirty",p);
+        //~ console.log("20130605 form is dirty",p);
       }else{
         //~ console.log("20130605 form not dirty:",this.params_panel.form);
         if (this.status_param_values) 
@@ -681,7 +694,7 @@ Lino.MainPanel = {
       }
       //~ if (!this.params_panel.form.isDirty()) return;
       //~ p.{{ext_requests.URL_PARAM_PARAM_VALUES}} = this.get_param_values();
-      console.log("20120203 add_param_values added pv",p.pv,"to",p);
+      //~ console.log("20120203 add_param_values added pv",p.pv,"to",p);
     }
   },
   get_param_values : function() { // similar to get_field_values()
@@ -2114,7 +2127,7 @@ Lino.do_when_visible = function(cmp,todo) {
   //~ if (cmp.el && cmp.el.dom) 
   if (cmp.isVisible()) { 
     // 'visible' means 'rendered and not hidden'
-    //~ console.log(cmp.title,'-> cmp is visible now');
+    console.log(cmp.title,'-> cmp is visible now');
     todo(); 
   //~ } else {
       //~ cmp.on('resize',todo,cmp,{single:true});
@@ -2124,7 +2137,7 @@ Lino.do_when_visible = function(cmp,todo) {
     //~ console.log('Lino.do_when_visible() must defer because not isVisible()',todo,cmp);
     if (cmp.rendered) {
       //~ console.log(cmp,'-> cmp is rendered but not visible: and now?');
-      //~ console.log(cmp.title,'-> cmp is rendered but not visible: try again in a moment...');
+      console.log(cmp.title,'-> cmp is rendered but not visible: try again in a moment...');
       //~ var fn = function() {Lino.do_when_visible(cmp,todo)};
       //~ fn.defer(100);
       
@@ -2132,7 +2145,7 @@ Lino.do_when_visible = function(cmp,todo) {
       //~ Lino.do_when_visible.defer(100,this,[cmp,todo]);
       
     } else {
-      //~ console.log(cmp.title,'-> after render');
+      console.log(cmp.title,'-> after render');
       cmp.on('afterrender',todo,cmp,{single:true});
     }
   }

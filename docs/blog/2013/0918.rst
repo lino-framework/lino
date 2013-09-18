@@ -2,7 +2,11 @@
 20130918 (Wednesday, 18 September 2013)
 =======================================
 
-Finished and checked in yesterday's 
+01h45 : Finished and checked in yesterday's 
 changes for :ref:`davlink`.
+  
+  
+07h10 : Fixed the well-known layout bug "params_panel is too high on 
+first showing".
 
 
