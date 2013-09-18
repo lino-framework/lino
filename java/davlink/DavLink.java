@@ -91,9 +91,10 @@ class Searcher {
         if (f.isDirectory()) {
           System.out.println("Searching " + f.getAbsolutePath());
           //~ onDirectory(f);
-          for (String name : f.list()) {
-             traverse(new File(f,name));
-          }
+          String[] list = f.list();
+          if (list != null) 
+              for (String name : list) 
+                  traverse(new File(f,name));
         } else {
           onFile(f);
         }   
