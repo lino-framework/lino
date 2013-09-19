@@ -4,7 +4,9 @@
 Demo sites
 ==========
 
-The demo databases contain fictive data. 
+Here are some examples of how Lino applications look like.
+
+These demo databases contain fictive data. 
 All names of persons are generated.
 You may edit according to the user permissions. 
 Any changes will be lost each time we reinitialize the demo data.
@@ -88,9 +90,24 @@ set to False) to avoid browser questions to first-time visitors.
 `welfare-demo <http://welfare-demo.lino-framework.org>`_ 
 shows a demo version of :ref:`welfare`.
 
+
+.. _lino.projects:
+
+Out of the box Lino applications
+--------------------------------
+
+The following Lino applications are either included with Lino 
+or available as PyPI packages:
+
+- :ref:`welfare`
+- :ref:`faggio`
+- :ref:`patrols`
+- :doc:`/cosi/index`
+
     
 .. toctree::
     :maxdepth: 2
+    :hidden:
     
     /cosi/index
       

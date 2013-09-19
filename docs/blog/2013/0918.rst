@@ -10,3 +10,17 @@ changes for :ref:`davlink`.
 first showing".
 
 
+22h30 : Fixed a bug in :ref:`davlink` which caused a NullPointerException 
+when some IO error occured while scanning a directory::
+
+    java.lang.NullPointerException
+        at davlink.Searcher.traverse(DavLink.java:94)
+        at davlink.Searcher.traverse(DavLink.java:95)
+
+(Ich konnte mich vor dem Schlafengehen noch einloggen und auch dieses 
+letzte Problemchen lösen.
+Im Vergleich zu dem, was wir durchgemacht haben, war das jetzt nur noch
+ein Kinkerlitzchen: Die NullPointerException kam, weil die Funktion
+`File.list() 
+<http://docs.oracle.com/javase/7/docs/api/java/io/File.html#list()>`_
+in manchen seltenen Fällen (if an I/O error occurs) null zurück gibt.

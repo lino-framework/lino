@@ -1,12 +1,32 @@
-Developer's Guide
-=================
+==========
+Developers
+==========
 
-.. include:: /include/wip.rst
+This section is for Lino application developers. 
+You are supposed to know the Python programming language.
+
+
+Recommended
+-----------
 
 .. toctree::
    :maxdepth: 2
 
    install
+   /tutorials/index
+   perms
+   API </api/lino>
+
+Drafts
+------
+   
+.. toctree::
+   :maxdepth: 2
+
+   actors
+   /tested/index
+   /todo
+   
    help_texts
    userdocs
    signals
@@ -14,10 +34,6 @@ Developer's Guide
    modlib
    style
    datamig
-   actors
-   perms
    versioning
    /ref/model_methods
-   /todo
-   API </api/lino>
-   /tested/index
+

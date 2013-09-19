@@ -158,6 +158,5 @@ More
    thanks
    compared
    why_extjs
-   /community/index
    ui
 

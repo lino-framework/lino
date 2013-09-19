@@ -11,6 +11,14 @@ to get detailed news.
 The final truth about what's going on is only 
 `The Source Code <http://code.google.com/p/lino/source/list>`_.
 
+
+  
+.. toctree::
+   :maxdepth: 1
+   
+   /blog/index
+
+
 Version 1.6.12 (coming)
 =============================================
 

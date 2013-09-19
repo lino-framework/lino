@@ -96,16 +96,6 @@ Next problem::
         at java.lang.Thread.run(Unknown Source)
         
 
-        
-// grant signedBy "Luc Saffre", codeBase "http://testlino.srv.oshz-eupen.be/-" {
-grant codeBase "http://testlino.xx.yy.be/-" {
-	permission java.security.AllPermission;
-  // permission java.io.FilePermission "<<ALL FILES>>", "read";
-//  permission java.io.FilePermission "<<ALL FILES>>", "execute";
-//  permission java.lang.RuntimePermission "getenv.SystemDrive";
-
-};
-
 
 In `Structure of the JNLP File
 <http://docs.oracle.com/javase/tutorial/deployment/deploymentInDepth/jnlpFileSyntax.html>`_

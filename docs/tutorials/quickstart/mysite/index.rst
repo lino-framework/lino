@@ -49,18 +49,24 @@ and replace its content with the following:
 
 Explanations:
 
-#.  The Python way to specify  encoding. 
+#.  The Python way to specify  encoding
+    (:pep:`263`).
     That's needed because of the non-ascii **ì** in "Lino Così" 
     in line 3.
     
 #.  We import settings from Lino Così, 
-    one of the out-of-the-box projects included with Lino.
+    one of the :ref:`out-of-the-box projects <lino.projects>` included with Lino.
     
-#.  Then we define a :setting:`SITE` setting which for the moment 
-    is just an instance of an unmodified :class:`Site <lino.site.Site>` 
-    setting object.
+#.  Then we define a :setting:`SITE` setting, 
+    an instance of the :class:`Site <lino.site.Site>` class,
+    passing our 
+    :func:`globals` as first argument. 
+    This will set default values 
+    for all required Django settings
+    (e.g. :setting:`DATABASES` and :setting:`LOGGING`).
     
-#.  Django wants system admins to define their own 
+#.  With one exception: 
+    Django wants system admins to define their own 
     `SECRET_KEY <https://docs.djangoproject.com/en/dev/ref/settings/#secret-key>`__ 
     setting, so Lino doesn't dare to set a default value for this. 
     Hint: as long as you're on a development server you just put some 
@@ -68,9 +74,9 @@ Explanations:
 
 You might add ``DEBUG = True`` or other settings of your choice.
 
-The basic idea is to keep local :xfile:`settings.py` files relatively 
+The basic idea is to keep local :xfile:`settings.py` files 
 small and to delegate the responsibility of maintaining
-most default values of your settings to the application developer.
+default values for Django settings to the application developer.
 
 In case you think already now about how to host many different Lino 
 applications on your server, then read also about 
@@ -78,16 +84,17 @@ the :ref:`djangosite_local.py <djangosite_local>` file,
 another technique which Lino adds to plain Django.
 
 
-
 Initial data
 ------------
 
-Next we create a database with some content.
+Next we create your database and populate it with some demo content.
 This is just one command to type::
 
   $ python manage.py initdb_demo
 
-Lino will ask you::
+That is, you run the :mod:`initdb_demo <lino.management.commands.initdb_demo>`
+management command that comes with every Lino application.
+It will ask you::
 
   INFO Started manage.py initdb_demo (using mysite.settings) --> PID 3848
   INFO This is Lino Così 0.1 using Python 2.7.3, Django 1.4.5, django-site 0.0.2, North 0.0.2, Lino 1.6.0, Jinja 2.6, Sphinx 1.1.3, python-dat
@@ -112,11 +119,13 @@ That's what you want, don't you? So go on and type ``y``::
   Installed 361 object(s) from 14 fixture(s)
   INFO Stopped manage.py initdb_demo (PID 3780)  
 
+
 There's a lot to say about what we just did.
 Lino applications use to make abundant use of :ref:`dpy` 
 in order to have a rich set of "demo data".
 If you are curious, then read more about Python fixtures in
 :ref:`lino.tutorial.dpy`.
+
 
 
 Start the web server

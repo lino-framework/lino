@@ -1,5 +1,5 @@
-Administrator's Manual 
-======================
+Administrators
+==============
 
 This section is for system administrators who set up or maintain a 
 server which hosts one or several Lino applications.

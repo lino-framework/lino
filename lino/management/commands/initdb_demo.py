@@ -13,7 +13,11 @@
 ## along with Lino; if not, see <http://www.gnu.org/licenses/>.
 
 """
-Calls `initdb` with :attr:`demo_fixtures <lino.site.Site.demo_fixtures>`.
+Calls :mod:`initdb <djangosite.management.commands.initdb>` with 
+:attr:`demo_fixtures <lino.site.Site.demo_fixtures>`.
+
+Introduction see :ref:`lino.tutorial.quickstart`.
+
 """
 
 from django.conf import settings

@@ -7,14 +7,15 @@ TODO: This is just a start and far from being complete...
 
 Global names:
 
-:iif: :func:`iif <lino.utils.iif>`
+:iif: :func:`iif <atelier.utils.iif>`
 :tr: :func:`tr <lino.utils.iif>`
 :_: gettext
-:E: refers to :func:`lino.utils.xmlgen.html.E`
+:E: HTML tag generator, see :mod:`lino.utils.xmlgen.html`
 :unicode: the builtin Python :func:`unicode` function
 :len: the builtin Python :func:`len` function
 
-:settings:  The Django settings module
+:settings:  The Django :xfile:`settings.py` module
+
 :site: shortcut for `settings.SITE`
 :dtos: :func:`north.dbutils.dtos`
 :dtosl: :func:`north.dbutils.dtosl`
