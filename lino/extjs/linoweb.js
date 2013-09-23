@@ -401,7 +401,8 @@ Lino.show_login_window = function(on_login) {
                       //~ alert("20130829 on_login gonna load_url");
                       Lino.load_url(on_login);
                       //~ eval(on_login);
-                  }
+                  } 
+                  else Lino.load_url({{settings.SITE.build_admin_url()}});
                   //~ Lino.body_loadMask.hide();
                 },
                 failure: function(form,action) { 
