@@ -759,7 +759,7 @@ class AuthMiddleWareBase(object):
         On multilingual sites, 
         if URL_PARAM_USER_LANGUAGE is present it overrides user.language.
         """
-        logger.info("20130313 on_login(%s)" % user)
+        logger.info("20130923 on_login(%s)" % user)
         
         request.user = user
         
@@ -868,12 +868,13 @@ class SessionUserMiddleware(AuthMiddleWareBase):
     """
 
     def get_user_from_request(self, request):
+        logger.info("20130923 get_user_from_request(%s)" % request.session)
       
         user = self.authenticate(request.session.get('username'),
             request.session.get('password'))
         
         if user is None:
-            logger.debug("Login failed from session %s", request.session)
+            logger.info("20130923 Login failed from session %s", request.session)
             user = AnonymousUser.instance()
         
         return user

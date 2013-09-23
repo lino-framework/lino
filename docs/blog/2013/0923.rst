@@ -4,5 +4,4 @@
 
 It is now (again) possible to run multiple Lino instances on a same 
 vhost, using different subdirectories. 
-
-:attr:`site_prefix <lino.site.Site.site_prefix>`
+See :attr:`site_prefix <lino.site.Site.site_prefix>`.
