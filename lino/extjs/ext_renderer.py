@@ -725,7 +725,7 @@ tinymce.init({
                   ]
                 yield "Lino.main_menu = Lino.main_menu.concat(['->',%s]);" % py2js(login_buttons)
                 if on_ready:
-                    #~ on_ready = "Lino.show_login_window(%s)" % py2js(on_ready)
+                    # anonymous request using permalink: forward request.path as "on_login" URL
                     on_ready = "Lino.show_login_window(%s)" % py2js(request.path)
                     
                 

@@ -43,6 +43,7 @@ Other
     install_windows
     pythonpath
    
+    mass_hosting
     permissions
     ApacheHttpAuth
     django_tests
