@@ -64,7 +64,7 @@
       {% else %}
         <p>
         {{_("Welcome to the <b>%s</b> site.") % site.title}}
-        {% if site.verbose_name %}
+        {% if site.verbose_name and site.url and site.version %}
         {{_("We are running %(name)s version %(version)s") % dict(
             name=E.tostring(E.a(site.verbose_name,href=site.url)),
             version=site.version)}}

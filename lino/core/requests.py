@@ -566,7 +566,6 @@ class ActionRequest(BaseRequest):
         location = ar.get_request_url()
         return self.request.build_absolute_uri(location)
         
-        
     def to_rst(self,*args,**kw):
         """
         Returns a string representing this request in reStructuredText markup.

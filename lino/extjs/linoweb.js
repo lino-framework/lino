@@ -829,7 +829,7 @@ Lino.close_window = function(status_update) {
 Lino.close_all_windows = function() {
   if (Lino.window_history.length == 0) {
       //~ Lino.viewport.refresh();
-      var url =  "{{settings.SITE.build_admin_url("auth")}}"
+      var url =  "{{settings.SITE.build_admin_url()}}"
       //~ console.log("20121120 Lino.close_all_windows() : no window_history");
       //~ if (ADMIN_URL) 
       var p = {};
