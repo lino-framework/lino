@@ -25,3 +25,10 @@ used when a Lino instance is not running at the root URL of the server.
     
 
 
+In your :xfile:`djangosite_local.py` you can write::
+
+    def setup_site(self):
+        ...
+        if self.site_prefix != '/':
+            assert self.site_prefix.endswith('/')
+            self.update_settings(SESSION_COOKIE_PATH = self.site_prefix[:-1])

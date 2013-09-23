@@ -20,11 +20,11 @@
     {% endif -%}
     {% if site.use_extjs -%}
     &mdash;
-    <a href="{{site.admin_prefix}}/">Admin</a>
+    <a href="{{site.buildurl()}}/">Admin</a>
     {% endif -%}
     {% if site.plain_prefix -%}
     &mdash;
-    <a href="{{site.plain_prefix}}/">Plain</a>
+    <a href="{{site.build_plain_url()}}/">Plain</a>
     {% endif -%}
     </div>
     {% endblock %}
