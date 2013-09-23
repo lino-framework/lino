@@ -65,8 +65,8 @@
         <p>
         {{_("Welcome to the <b>%s</b> site.") % site.title}}
         {% if site.verbose_name %}
-        We are running <a href="{{site.url}}">{{site.verbose_name}}</a>
-        version {{site.version}}.
+        {{_("We are running %(name)s version %(version)s") % dict(
+            name='<a href="{{site.url}}">{{site.verbose_name}}</a>',version='{{site.version}}')}}
         {% endif %}
         </p>
       {% endif %}
