@@ -5,6 +5,7 @@ Community
 Lino is a young framework with a small community.
 But we are growing.
 Below are some profiles of people we would happily welcome.
+See also our :doc:`job offers </jobs/index>`.
 This is the time for pioneers to join us!
 
 Pionieers
@@ -48,8 +49,6 @@ Mailing lists
   Low traffic read-only mailing list.
   
   
-Jobs
-----
 
 .. toctree::
    :maxdepth: 2

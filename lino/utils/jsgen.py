@@ -160,6 +160,8 @@ def declare_vars(v):
             yield "this.%s = %s;" % (v.ext_name,v.js_value())
 
 
+#~ from north import LanguageInfo
+
 def py2js(v):
     """
     Note that None values are rendered as ``null`` (not ``undefined``.
@@ -168,6 +170,9 @@ def py2js(v):
     #~ logger.debug("py2js(%r)",v)
     for cv in CONVERTERS:
         v = cv(v)
+        
+    #~ if isinstance(v,LanguageInfo):
+        #~ return v.django_code
         
     if isinstance(v,Value):
         return v.as_ext()

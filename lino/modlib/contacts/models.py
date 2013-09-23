@@ -13,6 +13,9 @@
 ## along with Lino; if not, see <http://www.gnu.org/licenses/>.
 
 """
+
+The :xfile:`models.py` module for the :mod:`lino.modlib.contacs` app.
+
 This module defines the tables 
 
 - :class:`Partner` (and their specializations :class:`Person` and :class:`Company`)
@@ -60,8 +63,6 @@ from lino.modlib.countries.models import CountryRegionCity
 
 from lino.modlib.contacts import App
 
-#~ from lino.modlib.contacts.utils import get_salutation
-#~ from lino.modlib.contacts.utils import GENDER_CHOICES, get_salutation
 
 
 from lino.utils import mti

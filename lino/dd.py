@@ -112,7 +112,7 @@ Permissions:
 - :class:`UserProfiles <lino.core.auth.UserProfiles>`
 - :class:`UserGroups <lino.core.auth.UserGroups>`
 - :class:`UserLevels <lino.core.auth.UserLevels>`
-- :func:`add_user_group` 
+- :func:`add_user_group <lino.core.auth.add_user_group>` 
 
 
 Workflows:
@@ -245,7 +245,7 @@ from north.dbutils import babel_values # alias for babelkw for backward compat
 from lino.utils.choosers import chooser
 from lino.utils.mti import EnableChild
 
-from lino.core.auth import UserLevels, UserProfiles, UserGroups
+from lino.core.auth import UserLevels, UserProfiles, UserGroups, add_user_group
 
 #~ from lino.base.utils import UserLevels, UserGroups, UserProfiles
 
@@ -294,21 +294,6 @@ from lino.core.inject import inject_quick_add_buttons
 from lino.core.inject import do_when_prepared, when_prepared
  
   
-    
-def add_user_group(name,label):
-    """
-    Add a user group to the :class:`UserGroups <lino.core.perms.UserGroups>` 
-    choicelist. If a group with that name already exists, add `label` to the 
-    existing group.
-    """
-    #~ logging.info("add_user_group(%s,%s)",name,label)
-    #~ print "20120705 add_user_group(%s,%s)" % (name,unicode(label))
-    g = UserGroups.items_dict.get(name)
-    if g is None:
-        UserGroups.add_item(name,label)
-    else:
-        if g.text != label:
-            g.text += " & " + unicode(label)
     
 from lino.core.actors import get_default_required as required
 Required = required

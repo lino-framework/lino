@@ -49,17 +49,17 @@ partner_model = settings.SITE.partners_app_label + '.Partner'
 #~ Person = resolve_model('contacts.Person')
 #~ Company = resolve_model('contacts.Company')
 
-def _functionId(nFramesUp):
-    # thanks to:
-    # http://nedbatchelder.com/blog/200410/file_and_line_in_python.html
-    """ Create a string naming the function n frames up on the stack.
-    """
-    co = sys._getframe(nFramesUp+1).f_code
-    return "%s (%s:%d)" % (co.co_name, co.co_filename, co.co_firstlineno)
+#~ def _functionId(nFramesUp):
+    #~ # thanks to:
+    #~ # http://nedbatchelder.com/blog/200410/file_and_line_in_python.html
+    #~ """ Create a string naming the function n frames up on the stack.
+    #~ """
+    #~ co = sys._getframe(nFramesUp+1).f_code
+    #~ return "%s (%s:%d)" % (co.co_name, co.co_filename, co.co_firstlineno)
+#~ 
 
-
-def todo_notice(msg):
-    print "[todo] in %s :\n       %s" % (_functionId(1),msg)
+#~ def todo_notice(msg):
+    #~ print "[todo] in %s :\n       %s" % (_functionId(1),msg)
     
     
 class VoucherStates(dd.Workflow):
@@ -71,84 +71,97 @@ add('20',_("Registered"),'registered',editable=False)
 
     
   
-class BankStatement(mixins.Registrable,ledger.Voucher):
-    
-    class Meta: 
-        verbose_name = _("Bank statement")
-        verbose_name_plural = _("Bank statements")
-        
-    balance1 = dd.PriceField(_("Old balance"),blank=True,null=True)
-    balance2 = dd.PriceField(_("New balance"),blank=True,null=True)
-    
+class JournalEntry(ledger.Voucher):
     state = VoucherStates.field(default=VoucherStates.draft)
     
-    
-    def unused_full_clean(self,*args,**kw):
-    #~ def before_save(self):
-        if not self.booked:
-            if self.value_date is None:
-                self.value_date = self.date
-            #journals.AbstractDocument.before_save(self)
-            #ledger.LedgerDocumentMixin.before_save(self)
-            balance = self.balance1
-            if self.id is not None:
-                for i in self.items.all():
-                    balance += i.debit - i.credit
-            self.balance2 = balance
-        super(BankStatement,self).full_clean(*args,**kw)
+    class Meta: 
+        verbose_name = _("Journal Entry")
+        verbose_name_plural = _("Journal Entries")
         
-    #~ def after_save(self):
-        #~ logger.info("Saved document %s (balances=%r,%r)",self,self.balance1,self.balance2)
+    def register(self,ar):
+        super(JournalEntry,self).register(ar)
+        self.update_satisfied()
         
+    def deregister(self,ar):
+        super(JournalEntry,self).deregister(ar)
+        self.update_satisfied()
+        
+    def update_satisfied(self):
+        partners = set()
+        #~ matches = dict()
+        for i in self.items.all():
+            if i.partner:
+                partners.add(i.partner)
+        for p in partners:
+            ledger.update_partner_satisfied(p)
         
     def get_wanted_movements(self):
-        #~ a = self.journal.chart.get_account_by_ref(a)
+        amount, movements = self.get_finan_movements()
+        if amount: raise Exception("Missing amount %s in movements" % amount)
+        return movements
         
-        a = self.journal.account
-        if not a: return 
-        sum = decimal.Decimal(0)
+    def get_finan_movements(self):
+        amount = decimal.Decimal(0)
+        mvts = []
         for i in self.items.all():
-            if i.dc == a.type.dc:
-                sum += i.amount
+            if i.dc == self.journal.dc:
+                amount += i.amount
             else:
-                sum -= i.amount
+                amount -= i.amount
+            if i.match:
+                match = i.match
+            elif i.partner:
+                match = "%s#%s-%s" % (self.journal.ref,self.pk,i.seqno)
+            else:
+                match = ''
             b = self.create_movement(
               i.account,i.dc,i.amount,
               seqno=i.seqno,
-              match=i.match,
+              match=match,
               partner=i.partner)
-              #~ person=i.person,
-              #~ company=i.company,
-              #~ date=i.date)
-            #~ sum_debit += i.debit - i.credit
-            yield b
-        #todo_notice("BankStatement.balance1 and 2 are strings?!")
-        #http://code.google.com/p/lino/issues/detail?id=1
-        #logger.info("finan.BankStatement %r %r",self.balance1, sum_debit)
-        if self.balance1 is not None:
-            self.balance2 = self.balance1 + sum
-        #jnl = self.get_journal()
-        #~ acct = ledger.Account.objects.get(id=self.journal.account)
-        #~ b = self.create_booking(account=acct)
-        yield self.create_movement(a,a.type.dc,sum)
+            mvts.append(b)
+            
+        return amount, mvts
         
-    def unused_add_item(self,account=None,**kw):
-        #~ pos = self.items.count() + 1
-        #~ if account is not None:
-            #~ if not isinstance(account,ledger.Account):
-                #~ account = ledger.Account.objects.get(match=account)
-        kw['account'] = account
-        kw['contact'] = contact
-        #~ kw['person'] = person
-        #~ kw['company'] = company
-        for k in ('debit','credit'):
-            v = kw.get(k,None)
-            if isinstance(v,basestring):
-                kw[k] = decimal.Decimal(v)
-        #~ return self.items.create(**kw)
-        kw['document'] = self
-        return DocItem(**kw)
-        #~ return self.items.create(**kw)
+        
+        
+class PaymentOrder(JournalEntry):
+    class Meta: 
+        verbose_name = _("Payment Order")
+        verbose_name_plural = _("Payment Orders")
+        
+    total = dd.PriceField(_("Total"),blank=True,null=True)
+    
+    def get_wanted_movements(self):
+        a = self.journal.account
+        if not a: raise Exception("No account in %s" % self.journal)
+        amount, movements = self.get_finan_movements()
+        self.total = amount
+        for m in movements: 
+            yield m
+        yield self.create_movement(a,a.type.dc,amount)
+        
+class BankStatement(JournalEntry):
+    
+    class Meta: 
+        verbose_name = _("Bank Statement")
+        verbose_name_plural = _("Bank Statements")
+        
+    balance1 = dd.PriceField(_("Old balance"),blank=True,null=True)
+    balance2 = dd.PriceField(_("New balance"),blank=True,null=True)
+        
+    def get_wanted_movements(self):
+        a = self.journal.account
+        if not a: raise Exception("No account in %s" % self.journal)
+        amount, movements = self.get_finan_movements()
+        if self.balance1 is not None:
+            self.balance2 = self.balance1 + amount
+        for m in movements: 
+            yield m
+        yield self.create_movement(a,a.type.dc,amount)
+        
+        
+        
     
 class DocItem(mixins.Sequenced,ledger.VoucherItem,ledger.Matchable):
     
@@ -193,10 +206,14 @@ class DocItem(mixins.Sequenced,ledger.VoucherItem,ledger.Matchable):
     
     def full_clean(self,*args,**kw):
         if self.account_id is None:
-            if self.match is not None:
-                self.account = self.match.account
+            if self.match:
+                if self.partner is not None:
+                    match = ledger.Match(self.voucher.journal.dc,self.partner,self.match)
+                    print match
+                    if match.trade_type is not None:
+                        self.account = match.trade_type.get_partner_account()
             if self.account_id is None:
-                raise Warning("Could not guess account")
+                raise ValidationError("Could not guess account")
         return super(DocItem,self).full_clean(*args,**kw)
         
     #~ def __unicode__(self):

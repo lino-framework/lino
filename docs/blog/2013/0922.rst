@@ -1,0 +1,19 @@
+====================================
+20130922 (Sunday, 22 September 2013)
+====================================
+
+
+Added new models 
+finan.JournalEntry (Opération Diverse) and 
+finan.PaymentOrder.
+
+`Action.attach_to_actor` must now return `True` if the action 
+is to be bound to that actor.
+This new subtlety is used by 
+the `register` and `deregister` actions of a Registrable
+to make it possible that we declare ledger.Voucher as Registrable
+despite the fact that a plain Voucher is not directly registrable,
+only its children (Invoice, JournalEntry, BankStatement, 
+PaymentOrder, Declaration...).
+These actions return `False` to avoid being used on the 
+plain Voucher model.

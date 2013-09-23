@@ -7,7 +7,66 @@ Configuring your client for using DavLink
 :ref:`davlink` launches an executable application program on your 
 computer. For security reasons it is normal that the Java Runtime on 
 your computer refuses this without your prior explicit permission.
-The problem is that it is not always easy to give this permission...
+
+So you must tell your JRE that you grant permission for 
+the DavLink applet to scan your local file system and execute a program.    
+Otherwise you'll get a RuntimException
+"You must tell your client to let me read your file system."
+
+Easiest way is to edit your *system policy file*
+which is by default located 
+
+- (Windows) at :xfile:`java.home\lib\security\java.policy`
+
+(Where the value for java.home is 
+is shown as one of the first messages in your Java console)
+
+See `Default Policy Implementation and Policy File Syntax
+<http://docs.oracle.com/javase/7/docs/technotes/guides/security/PolicyFiles.html>`_
+for details.
+
+
+You can just edit the file with your preferred 
+editor and add the following entry::
+
+    grant codeBase "http://welfare-demo.lino-framework.org/-" {
+      permission java.io.FilePermission "<<ALL FILES>>", "read";
+      permission java.io.FilePermission "<<ALL FILES>>", "execute";
+    };
+    
+
+Alternativaly you can use `policytool
+<http://docs.oracle.com/javase/tutorial/security/tour1/wstep1.html>`_
+and add a policy entry:
+
+- codeBase: URL of the applet. 
+  For example
+  http://welfare-demo.lino-framework.org/media/lino/applets/DavLink.jar
+  
+- add a "FilePermission" for the "<<ALL FILES>>" target and 
+  the "read" action.
+  
+Then save it into your "user java policy file".
+This file must be named :xfile:`.java.policy` and must be in your 
+home directory.
+If you have never used the policitool before, then you must
+type that name yourself.
+
+When done, your :xfile:`.java.policy` file should look similar to this::
+
+    grant codeBase "http://welfare-demo.lino-framework.org/-" {
+      permission java.io.FilePermission "<<ALL FILES>>", "read";
+      permission java.io.FilePermission "<<ALL FILES>>", "execute";
+    };
+
+
+
+
+
+
+
+Testing
+=======
 
 Here are two pages where you can try to get it running:
 
@@ -34,49 +93,6 @@ Possible problems
 
 
 
-
-Debian
-======
-
-#.  To enable Java in your browser, 
-    you need to install the `icedtea-plugin` package.
-
-#.  And then you must tell icedtea that you grant permission for 
-    the DavLink applet to scan your local file system and execute a program.    
-    Otherwise you'll get a RuntimException
-    "You must tell your client to let me read your file system."
-    
-    For this you must invoke `policytool
-    <http://docs.oracle.com/javase/tutorial/security/tour1/wstep1.html>`_
-    and add a policy entry:
-    
-    - codeBase: URL of the applet. 
-      For example
-      http://welfare-demo.lino-framework.org/media/lino/applets/DavLink.jar
-      
-    - add a "FilePermission" for the "<<ALL FILES>>" target and 
-      the "read" action.
-      
-    Then save it into your "user java policy file".
-    This file must be named :xfile:`.java.policy` and must be in your 
-    home directory.
-    If you have never used the policitool before, then you must
-    type that name yourself.
-    
-    When done, your :xfile:`.java.policy` file should look similar to this::
-    
-        grant codeBase "http://welfare-demo.lino-framework.org/-" {
-          permission java.io.FilePermission "<<ALL FILES>>", "read";
-          permission java.io.FilePermission "<<ALL FILES>>", "execute";
-        };
-        
-    If you prefer you can just edit the file with your preferred 
-    editor and add the above content manually.
-    
-
-
-If any other problems arise, 
-watch your console to see what the applet wants to do.
 
 
 How to see the java console of an applet
@@ -183,15 +199,14 @@ This will later cause a warning "Prefs file removed in background
 /etc/.java/.systemPrefs/lino/davlink/prefs.xml". 
 
 
-How to configure Java security policy on each client
-----------------------------------------------------
-
-(This section is obsolete)
-
-This is rather complex. 
+Unkown vendor
+-------------
 
 The following message may come on the clients when they enter 
 to a Lino site which uses DavLink.
+
+Java considers self-signed certificates as UNKOWN and does 
+not display their (self-given and thus meaningless) name.
   
 .. image:: not_verified.jpg
   :scale: 80

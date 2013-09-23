@@ -34,12 +34,31 @@ from lino.modlib.ledger.utils import FiscalYears
 from lino.mixins.printable import model_group
 from lino.utils.xmlgen.html import E
 from lino.utils import iif
+from lino.utils import join_elems
 
 accounts = dd.resolve_app('accounts',strict=True)
 vat = dd.resolve_app('vat',strict=True)
 partner_model = settings.SITE.partners_app_label + '.Partner'
 
 ZERO = Decimal()
+
+
+vat.TradeTypes.purchases.update(
+    #~ price_field_name='sales_price',
+    #~ price_field_label=_("Sales price"),
+    base_account_field_name='purchases_account',
+    base_account_field_label=_("Purchases Base account"),
+    vat_account_field_name='purchases_vat_account',
+    vat_account_field_label=_("Purchases VAT account"),
+    partner_account_field_name='suppliers_account',
+    partner_account_field_label=_("Suppliers account"))
+
+#~ TradeTypes.purchases.update(
+    #~ partner_account_field_name='suppliers_account',
+    #~ partner_account_field_label=_("Suppliers account"))
+
+
+
 
 class VoucherType(dd.Choice):
     def __init__(self,model,table_class):
@@ -264,7 +283,7 @@ def VoucherNumber(**kw):
 
 #~ class Voucher(mixins.Controllable):
 #~ class Voucher(mixins.UserAuthored,mixins.ProjectRelated):
-class Voucher(mixins.UserAuthored):
+class Voucher(mixins.UserAuthored,mixins.Registrable):
     """
     A Voucher is a document that represents a monetary transaction.
     Subclasses must define a field `state`.
@@ -298,6 +317,12 @@ class Voucher(mixins.UserAuthored):
         #~ doctype = get_doctype(cls)
         #~ jnl = Journal(doctype=doctype,id=id,**kw)
         #~ return jnl
+        
+    def get_due_date(self):
+        return self.date
+        
+    def get_trade_type(self):
+        return self.journal.trade_type
         
     @classmethod
     def create_journal(cls,trade_type=None,account=None,chart=None,**kw):
@@ -427,10 +452,14 @@ class Voucher(mixins.UserAuthored):
             #~ return False
         #~ return super(Voucher,self).get_row_permission(ar,state,ba)
 
-    def obj2html(self,ar):
-        obj = self.journal.voucher_type.model.objects.get(
+    def get_mti_child(self):
+        return self.journal.voucher_type.model.objects.get(
             journal=self.journal,number=self.number,year=self.year)
-        return ar.obj2html(obj)
+        #~ m = self.journal.voucher_type.model
+        #~ return m.objects.get(pk=self.pk)
+        
+    def obj2html(self,ar):
+        return ar.obj2html(self.get_mti_child())
         
     
     #~ def add_voucher_item(self,account=None,**kw):
@@ -449,7 +478,7 @@ class Voucher(mixins.UserAuthored):
         return self.items.model(**kw)
         #~ return super(AccountInvoice,self).add_voucher_item(**kw)
         
-
+        
 class Vouchers(dd.Table):
     """
     List of all vouchers
@@ -485,13 +514,8 @@ class Matchable(dd.Model):
     class Meta: 
         abstract = True
         
-    match = MatchField()
+    match = MatchField(blank=True)
     #~ match = dd.ForeignKey('ledger.Movement',verbose_name=_("Match"),blank=True,null=True)
-    
-    def full_clean(self,*args,**kw):
-        if not self.match:
-            self.match = self.get_default_match()
-        super(Matchable,self).full_clean(*args,**kw)
     
     #~ @dd.chooser()
     #~ def match_choices(cls,partner):
@@ -551,11 +575,17 @@ class Movement(mixins.Sequenced,Matchable):
     #~ debit = dd.PriceField(default=0)
     #~ credit = dd.PriceField(default=0)
     
-    def get_default_match(self):
-        return unicode(self.voucher)
+    #~ def full_clean(self,*args,**kw):
+        #~ if not self.match:
+            #~ self.match = self.voucher.get_default_match()
+        #~ super(Matchable,self).full_clean(*args,**kw)
+    
+    #~ def get_default_match(self):
+        #~ return unicode(self.voucher)
         
     def select_text(self):
-        return "%s (%s)" % (self.voucher,self.voucher.date)
+        v = self.voucher.get_mti_child()
+        return "%s (%s)" % (v,v.date)
     
     @dd.virtualfield(dd.PriceField(_("Debit")))
     def debit(self,ar):
@@ -573,7 +603,8 @@ class Movement(mixins.Sequenced,Matchable):
             
     @dd.displayfield(_("Voucher"))
     def voucher_link(self,ar):
-        return self.voucher.obj2html(ar)
+        #~ return self.voucher.get_mti_child().obj2html(ar)
+        return ar.obj2html(self.voucher.get_mti_child())
         
     #~ @dd.displayfield(_("Matched by"))
     #~ def matched_by(self,ar):
@@ -618,19 +649,60 @@ class Match(object):
         self.debts = []
         self.received = []
         self.balance = ZERO
+        self.due_date = None
+        self.trade_type = None
+        self.has_unsatisfied_movement = False
+        self.has_satisfied_movement = False
         
         qs = Movement.objects.filter(partner=partner,match=match)
         for mvt in qs.order_by('voucher__date'):
             self.collect(mvt)
     
     def collect(self,mvt):
+        if mvt.satisfied:
+            self.has_satisfied_movement = True
+        else:
+            self.has_unsatisfied_movement = True
+        if self.trade_type is None:
+            voucher = mvt.voucher.get_mti_child()
+            self.trade_type = voucher.get_trade_type()
         if mvt.dc == self.dc:
             self.debts.append(mvt)
             self.balance += mvt.amount
+            voucher = mvt.voucher.get_mti_child()
+            due_date = voucher.get_due_date()
+            if self.due_date is None or due_date < self.due_date:
+                self.due_date = due_date
         else:
             self.received.append(mvt)
             self.balance -= mvt.amount
     
+    def update_satisfied(self):
+        satisfied = self.balance != ZERO
+        if satisfied:
+            if not self.has_unsatisfied_movement: return 
+        else:
+            if not self.has_satisfied_movement: return 
+        for m in self.debts + self.received:
+            if m.satisfied != satisfied:
+                m.satisfied = satisfied
+                m.save()
+                
+def get_partner_matches(partner,dc,**flt):
+    qs = Movement.objects.filter(partner=partner,**flt)
+    qs = qs.order_by('voucher__date')
+    if False: # DISTINCT ON fields not supported
+        qs = qs.distinct('match') 
+        for mvt in qs:
+            yield Match(cls.DUE_DC,partner,mvt.match)
+    else:
+        #~ logger.info("20130921 %s %s",partner,qs)
+        found = set()
+        for mvt in qs:
+            if not mvt.match in found:
+                found.add(mvt.match)
+                yield Match(dc,partner,mvt.match)
+        
     
 class DuePaymentsByPartner(dd.VirtualTable):
     """
@@ -638,33 +710,39 @@ class DuePaymentsByPartner(dd.VirtualTable):
     Usually this table has one row per sales invoice which is not completely paid.
     But several invoices ("debts") may be grouped by match.
     """
-    DUE_DC = accounts.DEBIT
     
-    column_names = 'match debts received balance'
+    master = 'contacts.Partner'
+    column_names = 'match due_date balance debts received'
+    auto_fit_column_widths = True
+    
+    DUE_DC = accounts.DEBIT
     
     
     @classmethod
     def get_data_rows(cls,ar):
         partner = ar.master_instance
         if partner is None: return 
-    
-        qs = Movement.objects.filter(partner=partner,satisfied=False)
-        qs = qs.order_by('voucher__date')
-        qs = qs.distinct('match')
-        for mvt in qs:
-            yield Match(DUE_DC,partner,mvt.match)
+        return get_partner_matches(cls.DUE_DC,partner,satisfied=False)
         
     @dd.displayfield(_("Match"))
     def match(self,row,ar):
         return row.match
             
+    @dd.displayfield(_("Due date"))
+    def due_date(self,row,ar):
+        return row.due_date
+            
     @dd.displayfield(_("Due"))
     def debts(self,row,ar):
-        return ", ".join([ar.obj2html(i,i.select_text()) for i in row.debts])
+        #~ return ", ".join([ar.obj2html(i,i.select_text()) for i in row.debts])
+        #~ return join_elems([ar.obj2html(i.voucher,i.select_text()) for i in row.debts])
+        return join_elems([ar.obj2html(i.voucher.get_mti_child()) for i in row.debts])
             
     @dd.displayfield(_("Received"))
     def received(self,row,ar):
-        return ", ".join([ar.obj2html(i,i.select_text()) for i in row.received])
+        #~ return ", ".join([ar.obj2html(i,i.select_text()) for i in row.received])
+        #~ return join_elems([ar.obj2html(i.voucher,i.select_text()) for i in row.received])
+        return join_elems([ar.obj2html(i.voucher.get_mti_child()) for i in row.received])
         
     @dd.virtualfield(dd.PriceField(_("Balance")))
     def balance(self,row,ar):
@@ -686,7 +764,7 @@ add('40',_("Paid"),'paid',editable=False)
 #~ InvoiceStates.draft.add_transition(_("Deregister"),states='registered paid')
 #~ InvoiceStates.registered.add_transition(_("Register"),states='draft')
     
-class AccountInvoice(vat.VatDocument,Voucher,mixins.Registrable,Matchable):
+class AccountInvoice(vat.VatDocument,Voucher,Matchable):
     
     class Meta:
         verbose_name = _("Invoice")
@@ -701,8 +779,8 @@ class AccountInvoice(vat.VatDocument,Voucher,mixins.Registrable,Matchable):
     
     workflow_state_field = 'state'
     
-    def get_trade_type(self):
-        return self.journal.trade_type
+    def get_due_date(self):
+        return self.due_date or self.date
         
         
     
@@ -896,3 +974,10 @@ def customize_accounts():
             models.BooleanField(verbose_name=tt.text))
 
 customize_accounts()
+
+
+
+def update_partner_satisfied(p):
+    for m in get_partner_matches(accounts.DEBIT,p):
+        m.update_satisfied()
+        

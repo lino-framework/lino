@@ -96,14 +96,26 @@ class TradeType(dd.Choice):
     """
     price_field_name = None
     price_field_label = None
+    partner_account_field_name = None
+    partner_account_field_label = None
     base_account_field_name = None
     base_account_field_label = None
     vat_account_field_name = None
     vat_account_field_label = None
     dc = accounts.DEBIT
     
-    def get_vat_account(self):
+    def get_base_account(self):
+        if self.base_account_field_name is None:
+            raise Exception("%s has no base_account_field_name!" % self)
         return getattr(settings.SITE.site_config,self.base_account_field_name)
+        
+    def get_vat_account(self):
+        if self.vat_account_field_name is None:
+            raise Exception("%s has no vat_account_field_name!" % self)
+        return getattr(settings.SITE.site_config,self.vat_account_field_name)
+        
+    def get_partner_account(self):
+        return getattr(settings.SITE.site_config,self.partner_account_field_name)
         
     def get_product_base_account(self,product):
         if self.base_account_field_name is None:
@@ -127,15 +139,31 @@ TradeTypes.add_item('P',_("Purchases"),'purchases',dc=accounts.DEBIT)
 TradeTypes.add_item('W',_("Wages"),'wages',dc=accounts.DEBIT)
     
 """
-Note that :mod:`lino.modlib.sales.models` (if installed) will modify 
-`TradeTypes.sales` so that the following `inject_vat_fields` 
+Note that 
+:mod:`lino.modlib.sales.models` 
+and/or :mod:`lino.modlib.ledger.models` 
+(if installed) will modify 
+`TradeTypes.sales` at module level so that the following `inject_vat_fields` 
 will inject the required fields to system.SiteConfig 
 and products.Product (if these are installed).
 """
+
    
 @dd.receiver(dd.pre_analyze)
 def inject_vat_fields(sender,**kw):
     for tt in TradeTypes.items():
+        if tt.partner_account_field_name is not None:
+            dd.inject_field('system.SiteConfig',tt.partner_account_field_name,
+                dd.ForeignKey('accounts.Account',
+                    verbose_name=tt.partner_account_field_label,
+                    related_name='configs_by_'+tt.partner_account_field_name,
+                    blank=True,null=True))
+        if tt.vat_account_field_name is not None:
+            dd.inject_field('system.SiteConfig',tt.vat_account_field_name,
+                dd.ForeignKey('accounts.Account',
+                    verbose_name=tt.vat_account_field_label,
+                    related_name='configs_by_'+tt.vat_account_field_name,
+                    blank=True,null=True))
         if tt.base_account_field_name is not None:
             dd.inject_field('system.SiteConfig',tt.base_account_field_name,
                 dd.ForeignKey('accounts.Account',
@@ -145,10 +173,12 @@ def inject_vat_fields(sender,**kw):
             dd.inject_field('products.Product',tt.base_account_field_name,
                 dd.ForeignKey('accounts.Account',
                     verbose_name=tt.base_account_field_label,
+                    related_name='products_by_'+tt.base_account_field_name,
                     blank=True,null=True))
         if tt.price_field_name is not None:
             dd.inject_field('products.Product',tt.price_field_name,
-                dd.PriceField(verbose_name=tt.price_field_label,blank=True,null=True))
+                dd.PriceField(verbose_name=tt.price_field_label,
+                blank=True,null=True))
     
     
 
@@ -365,11 +395,11 @@ class VatDocument(VatTotal):
             #~ kw.update(master_instance = master_instance.get_partner_instance())
     
     
-    def get_trade_type(self):
-        """
-        Expected to return one choice of :class:`TradeTypes`
-        """
-        raise NotImplementedError()
+    #~ def get_trade_type(self):
+        #~ """
+        #~ Expected to return one choice of :class:`TradeTypes`
+        #~ """
+        #~ raise NotImplementedError()
         
         
     def compute_totals(self):
@@ -394,6 +424,9 @@ class VatDocument(VatTotal):
                 sums_dict[account] = amount
         #~ if self.journal.type == JournalTypes.purchases:
         tt = self.get_trade_type()
+        a = tt.get_vat_account()
+        if a is None:
+            raise Exception("No vat account for %s." % tt)
         for i in self.items.order_by('seqno'):
             if i.total_base is not None:
                 a = i.get_base_account(tt)
@@ -401,10 +434,8 @@ class VatDocument(VatTotal):
                     raise Exception("No base account for %s" % i)
                 book(a,i.total_base)
             if i.total_vat:
-                a = settings.SITE.get_vat_account(tt,i.vat_class,self.vat_regime)
-                a = self.journal.chart.get_account_by_ref(a)
-                if a is None:
-                    raise Exception("No vat account for %s" % i)
+                #~ a = settings.SITE.get_vat_account(tt,i.vat_class,self.vat_regime)
+                #~ a = self.journal.chart.get_account_by_ref(a)
                 book(a,i.total_vat)
         return sums_dict
         
@@ -416,10 +447,16 @@ class VatDocument(VatTotal):
             if m:
                 yield self.create_movement(a,self.journal.dc,m)
                 sum += m
-        a = settings.SITE.get_partner_account(self)
-        a = self.journal.chart.get_account_by_ref(a)
+        if self.match:
+            match = self.match
+        else:
+            match = "%s#%s" % (self.journal.ref,self.pk)
+        
+        a = self.get_trade_type().get_partner_account()
+        #~ a = settings.SITE.get_partner_account(self)
+        #~ a = self.journal.chart.get_account_by_ref(a)
         yield self.create_movement(a,not self.journal.dc,sum,
-            partner=self.partner,match=self.match)
+            partner=self.partner,match=match)
         
     def full_clean(self,*args,**kw):
         self.compute_totals()

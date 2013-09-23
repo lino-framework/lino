@@ -398,6 +398,12 @@ class VirtualField(FakeField): # (Field):
         #~ self._lino_atomizer = store.create_field(self,self.name)
         store.get_atomizer(self,self.name)
         
+    def get_default(self):
+        return self.return_type.get_default()
+        #~ 
+    def has_default(self):
+        return self.return_type.has_default()
+        
       
     def unused_contribute_to_class(self, cls, name):
         ## if defined in abstract base class, called once on each submodel

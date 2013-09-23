@@ -253,9 +253,12 @@ class RegisterAction(actions.Action):
     def attach_to_actor(self,actor,name):
         if not issubclass(actor.model,Registrable):
             raise Exception("%s is not a Registrable" % actor.model)
+        if actor.workflow_state_field is None:
+            # e.g. ledger.Voucher is an "abstract Registrable"
+            return False
         self.target_model = actor.model
         self.required = self.target_model.required_to_register
-        super(RegisterAction,self).attach_to_actor(actor,name)
+        return super(RegisterAction,self).attach_to_actor(actor,name)
   
     def run_from_ui(self,ar,**kw):
         obj = ar.selected_rows[0]
@@ -279,10 +282,13 @@ class DeregisterAction(actions.Action):
     def attach_to_actor(self,actor,name):
         if not issubclass(actor.model,Registrable):
             raise Exception("%s is not a Registrable" % actor.model)
+        if actor.workflow_state_field is None:
+            # e.g. ledger.Voucher is an "abstract Registrable"
+            return False
         self.target_model = actor.model
         self.required = self.target_model.required_to_deregister
         #~ logger.info("20121208 DeregisterAction.attach_to_actor() %s %s",actor,actor.model.required_to_deregister)
-        super(DeregisterAction,self).attach_to_actor(actor,name)
+        return super(DeregisterAction,self).attach_to_actor(actor,name)
   
     def run_from_ui(self,ar,**kw):
         obj = ar.selected_rows[0]

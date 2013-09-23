@@ -3,7 +3,8 @@ Installing a WebDAV section
 
 Lino expects that files below `/media/webdav/` are served 
 using the WebDAV protocol. 
-The client's computer should automatically launch OpenOffice or MS-Word to open them.
+The :ref:`davlink` applet on the client's computer is used to 
+automatically launch OpenOffice or MS-Word to open them.
 
 
 - `How To Set Up WebDAV With Apache2 On Debian Etch <http://www.howtoforge.com/setting-up-webdav-with-apache2-on-debian-etch>`_

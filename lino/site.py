@@ -50,14 +50,6 @@ from lino.utils.xmlgen.html import E
 
 
 
-def buildurl(*args,**kw):
-    url = '/' + ("/".join(args))
-    if len(kw):
-        url += "?" + urlencode(kw)
-    return url
-
-
-
 
 class Site(Site):
     """
@@ -1534,15 +1526,38 @@ class Site(Site):
     #~ def get_guest_greeting(self):
         #~ return E.p("Please log in")
         
+    site_prefix = '/'
+    """
+    This must be set if your project is not sitting at the "root" URL 
+    of your server.
+    It must start *and* end with a *slash*. Default value is ``'/'``. 
+    For example if you have::
+    
+        WSGIScriptAlias /foo /home/luc/mypy/lino_sites/foo/wsgi.py
+      
+    Then your :xfile:`settings.py` should specify::
+    
+        site_prefix = '/foo/'
+    
+    See also :ref:`mass_hosting`.
+    
+    """
+    
+    def buildurl(self,*args,**kw):
+        #~ url = '/' + ("/".join(args))
+        url = self.site_prefix + ("/".join(args))
+        if len(kw):
+            url += "?" + urlencode(kw)
+        return url
 
     def build_admin_url(self,*args,**kw):
-        return self.admin_prefix + buildurl(*args,**kw)
+        return self.admin_prefix + self.buildurl(*args,**kw)
 
     def build_media_url(self,*args,**kw):
-        return buildurl('media',*args,**kw)
+        return self.buildurl('media',*args,**kw)
         
     def build_plain_url(self,*args,**kw):
-        return self.plain_prefix + buildurl(*args,**kw)
+        return self.plain_prefix + self.buildurl(*args,**kw)
         
     def build_extjs_url(self,url):
         if self.extjs_base_url:

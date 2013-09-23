@@ -90,7 +90,7 @@ class UserLevels(ChoiceList):
         """
         kw.setdefault('blank',True)
         if module_name is not None:
-            kw.update(verbose_name=string_concat(cls.verbose_name,' (',module_name,')'))
+            kw.update(verbose_name=translation.string_concat(cls.verbose_name,' (',module_name,')'))
         return super(UserLevels,cls).field(**kw)
         
     #~ @fields.virtualfield(models.CharField(_("Short name"),max_length=2,
@@ -137,6 +137,10 @@ class UserGroups(ChoiceList):
         
 #~ add = UserGroups.add_item
 #~ add('system', _("System"))
+
+# filled using add_user_group()
+
+
 
 
 
@@ -187,6 +191,18 @@ class UserProfile(Choice):
         #~ print 20120705, value, kw
         
         assert self.kw.has_key('level')
+        
+        
+        for k,vf in cls.virtual_fields.items():
+            if vf.has_default():
+                self.kw.setdefault(k,vf.get_default())
+            elif vf.return_type.blank:
+                self.kw.setdefault(k,None)
+            #~ if k == 'accounting_level':
+            #~ if k == 'hidden_languages':
+                #~ print 20130920, k, vf, vf.has_default(), vf.get_default()
+        #~ self.kw.setdefault('hidden_languages',cls.hidden_languages.default)
+        
             
         for k,v in self.kw.items():
             setattr(self,k,v)
@@ -260,11 +276,16 @@ class UserProfiles(ChoiceList):
     
     preferred_foreignkey_width = 20 
     
-    hidden_languages = settings.SITE.hidden_languages
+    #~ 20130920 
+    hidden_languages = settings.SITE.hidden_languages 
+    #~ hidden_languages = fields.NullCharField(_("Hidden languages"),
+        #~ max_length=200,null=True,default=settings.SITE.hidden_languages)
     """
     Default value for the :attr:`hidden_languages <UserProfile.hidden_languages>`
-    of newly attached each choice item 
+    of newly attached choice item
     """
+    
+    level = UserLevels.field(_("System"))
     
     
     #~ @classmethod
@@ -312,6 +333,31 @@ class UserProfiles(ChoiceList):
 
 #~ UserProfiles choicelist is going to be filled in `lino.site.Site.setup_choicelists` 
 #~ because the attributes of each item depend on UserGroups
+
+
+
+def add_user_group(name,label):
+    """
+    Add a user group to the :class:`UserGroups <lino.core.perms.UserGroups>` 
+    choicelist. If a group with that name already exists, add `label` to the 
+    existing group.
+    """
+    #~ logging.info("add_user_group(%s,%s)",name,label)
+    #~ print "20120705 add_user_group(%s,%s)" % (name,unicode(label))
+    g = UserGroups.items_dict.get(name)
+    if g is None:
+        g = UserGroups.add_item(name,label)
+    else:
+        if g.text != label:
+            g.text += " & " + unicode(label)
+    #~ if False: 
+        # TODO: 'UserProfile' object has no attribute 'accounting_level'
+    k = name+'_level'
+    UserProfiles.inject_field(k,UserLevels.field(g.text,blank=True))
+    UserProfiles.virtual_fields[k].lino_resolve_type()
+
+    
+
 
 
 #~ def default_required(): return dict(auth=True)
@@ -561,8 +607,8 @@ def make_permission_handler_(
         if actor.workflow_state_field is None:
             raise Exception(
                 """\
-Cannot specify `states` when %s.workflow_state_field is %r.
-                """ % (actor,actor.workflow_state_field))
+%s cannot specify `states` when %s.workflow_state_field is %r.
+                """ % (elem,actor,actor.workflow_state_field))
         #~ else:
             #~ print 20120621, "ok", actor
         lst = actor.workflow_state_field.choicelist

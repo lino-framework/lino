@@ -1,0 +1,2 @@
+/home/luc/hgwork/lino/docs/admin/mass_hosting.rst:: WARNING: document isn't included in any toctree
+/home/luc/hgwork/lino/lino/site.py:docstring of lino.site.Site.webdav_url:7: WARNING: term not in glossary: runserver

@@ -311,13 +311,7 @@ class ActorMetaClass(type):
                 
         if True: # (20130817) tried to move this to a later moment
             for k,v in classDict.items():
-                if isinstance(v,fields.Constant):
-                    cls.add_constant(k,v)
-                elif isinstance(v,fields.VirtualField): # 20120903b
-                    cls.add_virtual_field(k,v)
-                elif isinstance(v,models.Field): # 20130910
-                    #~ print "20130910 add virtual field " ,k, cls
-                    cls.add_virtual_field(k,fields.VirtualField(v,field_getter(k)))
+                cls.register_class_attribute(k,v)
                     
         #~ if classname == 'Tasks':
             #~ logger.info("20130817 no longer added actor vfs")
@@ -420,7 +414,24 @@ class Actor(actions.Parametrizable):
         pass
         
     
+    @classmethod
+    def register_class_attribute(cls,k,v):
+        if isinstance(v,fields.Constant):
+            cls.add_constant(k,v)
+        elif isinstance(v,fields.VirtualField): # 20120903b
+            cls.add_virtual_field(k,v)
+        elif isinstance(v,models.Field): # 20130910
+            #~ print "20130910 add virtual field " ,k, cls
+            vf = fields.VirtualField(v,field_getter(k))
+            cls.add_virtual_field(k,vf)
     
+    @classmethod
+    def inject_field(cls,name,fld):
+        # called from auth.add_user_group()
+        setattr(cls,name,fld)
+        cls.register_class_attribute(name,fld)
+        
+        
     get_welcome_messages = None
     """
     If not None, this must be a class method which takes an ActionRequest 
@@ -1040,23 +1051,14 @@ class Actor(actions.Parametrizable):
                 setattr(cls,a.action_name,a) 
 
         # bind all my actions, including those inherited from parent actors:
-        # 20130820 no need to reinherit: cls.__dict__ does already contain inherited items
-        if True:
-          for b in cls.mro():
+        for b in cls.mro():
             for k,v in b.__dict__.items():
                 v = cls.__dict__.get(k,v) # 20130820 disable inherited actions
                 if isinstance(v,actions.Action):
                     if not cls._actions_dict.has_key(k):
                         #~ cls._attach_action(k,v)
-                        v.attach_to_actor(cls,k)
-                        cls.bind_action(v)
-        else:
-            for k,v in cls.__dict__.items():
-                if isinstance(v,actions.Action):
-                    if not cls._actions_dict.has_key(k):
-                        #~ cls._attach_action(k,v)
-                        v.attach_to_actor(cls,k)
-                        cls.bind_action(v)
+                        if v.attach_to_actor(cls,k):
+                            cls.bind_action(v)
         
                         
                     
@@ -1522,7 +1524,7 @@ class Actor(actions.Parametrizable):
     @fields.displayfield(_("Workflow"))
     def workflow_buttons(self,obj,ar):
         """
-        Displays the workflow buttons for this row and this user.
+        Displays the workflow buttons for the given row `obj` and the request `ar`.
         """
         #~ logger.info('20120930 workflow_buttons %r', obj)
         actor = ar.actor

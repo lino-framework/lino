@@ -619,10 +619,10 @@ tinymce.init({
         
         if USE_DAVLINK_JNLP:
             #~ http://docs.oracle.com/javase/tutorial/deployment/deploymentInDepth/deployingWithoutCodebase.html
+            yield '<script src="http://www.java.com/js/deployJava.js"></script>'
             if False:
                 p = site.build_media_url('lino/applets/DavLink.jar')
                 yield """\
-<script src="http://www.java.com/js/deployJava.js"></script>
 <script>  
     var attributes = {
         name:"DavLink",
@@ -634,13 +634,9 @@ tinymce.init({
 </script>
 """ % p
             else:
-                yield '<script src="http://www.java.com/js/deployJava.js"></script>'
-                # don't launch it directly here but later in the Ext.onReady()
-                if True:
-                    p = site.build_media_url('lino','applets','davlink.jnlp')
-                    p = request.build_absolute_uri(p)
-                    yield """\
-<script src="http://www.java.com/js/deployJava.js"></script>
+                p = site.build_media_url('lino','applets','davlink.jnlp')
+                p = request.build_absolute_uri(p)
+                yield """\
 <script>  
     deployJava.launchWebStartApplication('%s');
 </script>
@@ -784,11 +780,6 @@ tinymce.init({
             yield on_ready
         #~ for ln in on_ready:
             #~ yield ln
-            
-        #~ if USE_DAVLINK_JNLP:
-            #~ p = site.build_media_url('lino','applets','davlink.jnlp')
-            #~ p = request.build_absolute_uri(p)
-            #~ yield "deployJava.launchWebStartApplication('%s');" % p
             
         
         #~ yield "console.timeEnd('onReady');"

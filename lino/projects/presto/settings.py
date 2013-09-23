@@ -15,9 +15,9 @@
 from lino.projects.std.settings import *
 #~ from lino.projects.presto import __version__, __url__, __name__
 
-from lino.modlib import ledger
+from lino.modlib import vat
 
-class Site(Site,ledger.SiteMixin):
+class Site(Site,vat.SiteMixin):
 
     #~ title = __name__
     verbose_name = "Lino Presto"
@@ -114,4 +114,5 @@ class Site(Site,ledger.SiteMixin):
 
 
 SITE = Site(globals()) 
+
 

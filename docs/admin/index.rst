@@ -16,6 +16,7 @@ Installation
     install
     djangosite_local
     media
+    install_mysql
    
 
 Java applets included with Lino

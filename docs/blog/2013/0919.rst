@@ -4,3 +4,44 @@
 
 Updated docs.
 
+It's expensive to use Java!
+---------------------------
+
+The problem with :ref:`davlink` raising a SecurityException after 
+the Java update has caused us a lot of work:
+
+- Luc about 30 hours 
+- Gerd about 10 hours
+- Nicolas about 3 hours
+
+- Plus the fact that users could not use Lino to generate 
+  CVs from June until September.
+
+The crucial missing piece was to wrap security-related actions
+into a `PrivilegedAction` class, as described 
+in `Setting Privileges for Extensions
+<http://docs.oracle.com/javase/tutorial/ext/security/policy.html>`_.
+
+Our problem is especially illustrative because it is so evident that 
+all this work could have been avoided if I had known this trick before.
+
+According to the docs this trick is *not* necessary for applets.
+The trail about 
+`Deployment <http://docs.oracle.com/javase/tutorial/deployment/index.html>`_
+does not contain a single link to this article.
+It is used for extensions and described in 
+a trail "The Extension Mechanism" 
+in the third subdivision (entitled "Specialized Trails and Lessons").
+
+I believe that the Java documentation is really good... 
+but either it is not up to date, or the `PrivilegedAction` incidentally 
+works around some fatal bug...
+
+
+
+
+
+
+
+
+

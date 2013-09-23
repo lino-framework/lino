@@ -639,7 +639,7 @@ class Action(Parametrizable,Permittable):
             #~ raise Exception('20121003 %s %s' % (actor,name))
         if self.defining_actor is not None:
             # already defined in another actor
-            return
+            return True
         if self.action_name is not None:
             raise Exception("tried to attach named action %s.%s" % (actor,self.action_name))
         self.action_name = name
@@ -654,6 +654,7 @@ class Action(Parametrizable,Permittable):
         #~ if name == 'default_action':
             #~ print 20120527, self
         setup_params_choosers(self.__class__)
+        return True
             
     #~ def contribute_to_class(self,model,name):
         #~ ma = model.__dict__.get('_lino_model_actions',None)
@@ -755,7 +756,7 @@ class GridEdit(TableAction):
     def attach_to_actor(self,actor,name):
         #~ self.label = actor.button_label or actor.label
         self.label = actor.label
-        super(GridEdit,self).attach_to_actor(actor,name)
+        return super(GridEdit,self).attach_to_actor(actor,name)
 
     def get_window_layout(self,actor):
         #~ return self.actor.list_layout
@@ -990,7 +991,7 @@ class ShowEmptyTable(ShowDetailAction):
     
     def attach_to_actor(self,actor,name):
         self.label = actor.label
-        super(ShowEmptyTable,self).attach_to_actor(actor,name)
+        return super(ShowEmptyTable,self).attach_to_actor(actor,name)
         
     def as_html(self,ar):
         return super(ShowEmptyTable,self).as_html(ar,'-99998')
@@ -1093,7 +1094,7 @@ class ShowSlaveTable(Action):
         #~ self.help_text = self.slave_table.help_text
         #~ self.icon_name = self.slave_table.icon_name
         #~ self.icon_file = self.slave_table.icon_file
-        super(ShowSlaveTable,self).attach_to_actor(actor,name)
+        return super(ShowSlaveTable,self).attach_to_actor(actor,name)
         
     def run_from_ui(self,ar,**kw):
         obj = ar.selected_rows[0]

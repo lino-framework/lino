@@ -489,10 +489,15 @@ class ddrefRole(XRefRole):
                 text = utils.unescape(unicode(x.verbose_name))
                 target = model_name(x.model)+'.'+x.name
                 print(target)
-            elif issubclass(x,models.Model):
+            elif isinstance(x,dd.__class__): # it's a module (an app)                
+                text = utils.unescape(unicode(x.App.verbose_name))
+                #~ target = model_name(x)
+                target = settings.SITE.userdocs_prefix + target
+                
+            elif isinstance(x,type) and issubclass(x,models.Model):
                 text = utils.unescape(unicode(x._meta.verbose_name))
                 target = model_name(x)
-            elif issubclass(x,actors.Actor):
+            elif isinstance(x,type) and issubclass(x,actors.Actor):
                 text = utils.unescape(unicode(x.title or x.label))
                 target = actor_name(x)
             else:

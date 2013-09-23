@@ -1,0 +1,26 @@
+====================================
+20130920 (Friday, 20 September 2013)
+====================================
+
+
+- :menuselection:`Explorer --> System --> User Profiles` 
+  now displays the UserLevel for each UserGroup.
+  
+
+Fixed a problem which occured when running initdb_demo for cosi and presto
+because their Declarations journal had no account::
+
+  IntegrityError: Problem installing fixture '...': 
+  Could not load ledger.Journal(pk=None): ledger_journal.dc may not be NULL
+
+
+welfare didn't yet pass test_sdist. Now it does.
+
+
+Changed :meth:`Client.get_active_contract 
+<lino_welfare.modlib.pcsw.models.Client.get_active_contract>`
+as requested by the users: "Don't look into the past or future, 
+only today matters".
+
+
+Continued on :mod:`lino.modlib.ledger`.

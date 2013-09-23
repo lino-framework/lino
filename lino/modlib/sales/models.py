@@ -63,8 +63,11 @@ vat.TradeTypes.sales.update(
     price_field_name='sales_price',
     price_field_label=_("Sales price"),
     base_account_field_name='sales_account',
-    base_account_field_label=_("Sales account"))
-
+    base_account_field_label=_("Sales Base account"),
+    vat_account_field_name='sales_vat_account',
+    vat_account_field_label=_("Sales VAT account"),
+    partner_account_field_name='clients_account',
+    partner_account_field_label=_("Clients account"))
 
 dd.inject_field('contacts.Partner','invoicing_address',dd.ForeignKey('contacts.Partner',
         verbose_name=_("Invoicing address"),
@@ -398,7 +401,8 @@ class SalesDocuments(dd.Table):
         
 
 
-class Invoice(SalesDocument,ledger.Voucher,mixins.Registrable):
+#~ class Invoice(SalesDocument,ledger.Voucher,mixins.Registrable):
+class Invoice(SalesDocument,ledger.Voucher):
     """
     An invoice usually used for selling something.
     """
@@ -416,6 +420,9 @@ class Invoice(SalesDocument,ledger.Voucher,mixins.Registrable):
     
     #~ _registrable_fields = set('date author partner vat_regime payment_term due_date'.split())
     
+    def get_due_date(self):
+        return self.due_date or self.date
+        
     def full_clean(self,*args,**kw):
         if self.due_date is None:
             if self.payment_term is not None:

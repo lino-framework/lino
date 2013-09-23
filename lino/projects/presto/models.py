@@ -65,6 +65,7 @@ class Company(contacts.Company,mixins.CreatedModified):
         app_label = 'contacts'
 
 
+
 def site_setup(site):
     """
     This is the place where we can override or 
@@ -80,6 +81,15 @@ def site_setup(site):
         name_box = """last_name first_name:15 
         gender title:10 birth_date""",
         info_box = "id:5 language:10 \nage")
+    
+    site.modules.system.SiteConfigs.set_detail_layout(
+        """
+        site_company next_partner_id:10
+        default_build_method 
+        clients_account   sales_account     sales_vat_account
+        suppliers_account purchases_account purchases_vat_account
+        """)
+        
     
     
 

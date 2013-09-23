@@ -73,16 +73,34 @@ def objects():
     yield Group('10','capital',"Capital","Kapital","Capital")
     
     yield Group('40','assets',  "Créances commerciales", "Forderungen aus Lieferungen und Leistungen", "Commercial receivable(?)")
-    yield Account('customers','assets',u"Clients",u"Kunden","Customers") # PCMN 4000
-    yield Account('suppliers','liabilities',u"Fournisseurs",u"Lieferanten","Suppliers") # PCMN 4400
+    
+    obj = Account('customers','assets',u"Clients",u"Kunden","Customers") # PCMN 4000
+    yield obj
+    if sales:
+        settings.SITE.site_config.update(clients_account=obj)
+    
+    obj = Account('suppliers','liabilities',u"Fournisseurs",u"Lieferanten","Suppliers") # PCMN 4400
+    yield obj
+    if vat:
+        settings.SITE.site_config.update(suppliers_account=obj)
     
     yield Group('45','assets',u"TVA à payer",u"Geschuldete MWSt","VAT to pay") # PCMN 451
-    yield Account('vat_due','incomes',u"TVA due",u"MWSt zu regularisieren","VAT due") # PCMN 4510
-    yield Account('vat_deductible','assets',u"TVA déductible",u"Geschuldete MWSt","VAT deductible") # PCMN 4512
+    obj = Account('vat_due','incomes',u"TVA due",u"MWSt zu regularisieren","VAT due") # PCMN 4510
+    yield obj
+    if sales:
+        settings.SITE.site_config.update(sales_vat_account=obj)
+    
+    obj = Account('vat_deductible','assets',u"TVA déductible",u"Geschuldete MWSt","VAT deductible") # PCMN 4512
+    yield obj
+    if ledger:
+        settings.SITE.site_config.update(purchases_vat_account=obj)
     
     yield Group('55','assets',u"Institutions financières",u"Fainanzinstitute","Banks") # PCMN 55
     yield Account('bestbank','bank_accounts',u"Bestbank",u"Bestbank","Bestbank") 
     yield Account('cash','bank_accounts',u"Cash",u"Cash","Cash") 
+    
+    # TODO: use another account type than bank_accounts:
+    yield Account('vatdcl','bank_accounts',u"VAT",u"VAT","VAT") 
     
     yield Group('6','expenses',u"Charges",u"Aufwendungen","Expenses") # 
     yield Account('products','expenses',
@@ -102,6 +120,7 @@ def objects():
     yield obj
     if sales:
         settings.SITE.site_config.update(sales_account=obj)
+        
 
 
 
@@ -125,7 +144,7 @@ def objects():
         yield finan.BankStatement.create_journal(chart=chart,name=u"Cash",account='cash',ref="C")
 
     if declarations:
-        yield declarations.Declaration.create_journal(chart=chart,name=u"VAT declarations",ref="V")
+        yield declarations.Declaration.create_journal(chart=chart,name=u"VAT declarations",ref="V",account='vatdcl')
 
 
     MODEL = ledger.AccountInvoice
