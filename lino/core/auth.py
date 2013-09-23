@@ -725,7 +725,7 @@ class AuthMiddleWareBase(object):
 
     @classmethod
     def authenticate(cls, username, password=NOT_NEEDED):
-        #~ print "20130515 authenticate %s,%s" % (username,password)
+        logger.info("20130923 authenticate %s,%s" % (username,password))
 
         if not username:
             return AnonymousUser.instance()
@@ -746,6 +746,9 @@ class AuthMiddleWareBase(object):
                 if not user.check_password(password):
                     logger.info("Could not authenticate %s : password mismatch",username)
                     return None
+                logger.info("20130923 good password for %s",username)
+            else:
+                logger.info("20130923 no password needed for %s",username)
             return user
         except settings.SITE.user_model.DoesNotExist,e:
             logger.info("Could not authenticate %s : no such user",username)

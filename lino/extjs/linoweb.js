@@ -385,7 +385,7 @@ Lino.show_login_window = function(on_login) {
   if (Lino.login_window == null) {
     
       function do_login() { 
-            alert("20130923 do_login() started");
+            //~ alert("20130923 do_login() started");
             Lino.viewport.loadMask.show()
             //~ Lino.body_loadMask.show()
             login_panel.getForm().submit({ 
@@ -393,14 +393,14 @@ Lino.show_login_window = function(on_login) {
                 waitTitle:'Connecting', 
                 waitMsg:'Sending data...',
                 success:function(){ 
-                  console.log('20130923 logged in',arguments);
-                  alert("20130923 do_login() success");
+                  //~ console.log('20130923 logged in',arguments);
+                  //~ alert("20130923 do_login() success");
                   Lino.login_window.hide();
                   Lino.close_all_windows();
                   Lino.viewport.loadMask.hide();
                   if (typeof on_login == 'string') {
                       //~ console.log("20130829 on_login",on_login);
-                      alert("20130923 on_login gonna load_url");
+                      //~ alert("20130923 on_login gonna load_url");
                       Lino.load_url(on_login);
                       //~ eval(on_login);
                   } 
@@ -409,7 +409,7 @@ Lino.show_login_window = function(on_login) {
                 },
                 failure: function(form,action) { 
                   //~ this.loadMask.hide();
-                  alert("20130923 do_login() failure");
+                  //~ alert("20130923 do_login() failure");
                   Lino.on_submit_failure(form,action);
                   Lino.viewport.loadMask.hide()
                   //~ Lino.body_loadMask.hide()
