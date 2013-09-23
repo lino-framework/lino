@@ -787,14 +787,12 @@ class Site(Site):
     Leave this unchanged as long as :doc:`/tickets/70` is not solved.
     """
     
-    plain_prefix = '/plain' 
+    plain_prefix = 'plain' 
     """
     The prefix to use for the "plain html" URLs.
     """
     
-    #~ admin_url = 'admin/'
-    #~ admin_prefix = '/admin'
-    #~ admin_url = '' # 
+    #~ admin_prefix = 'admin'
     admin_prefix = '' 
     """
     The prefix to use for Lino admin URLs.
@@ -805,12 +803,11 @@ class Site(Site):
     
     Note that unlike Django's `MEDIA_URL
     <https://docs.djangoproject.com/en/dev/ref/settings/#media-url>`__ 
-    setting, this must **begin** and **not end** with a slash if set 
-    to a non-empty value.
+    setting, this must not contain any slash.
     
     If this is nonempty, then your site features a "web content mode": 
     the root url renders "web content" defined by :mod:`lino.modlib.pages`.
-    The usual value in that case is ``admin_prefix = "/admin"``.
+    The usual value in that case is ``admin_prefix = "admin"``.
     
     
     See also  
@@ -1551,13 +1548,16 @@ class Site(Site):
         return url
 
     def build_admin_url(self,*args,**kw):
-        return self.admin_prefix + self.buildurl(*args,**kw)
+        if self.admin_prefix:
+            return self.buildurl(self.admin_prefix,*args,**kw)
+        return self.buildurl(*args,**kw)
 
     def build_media_url(self,*args,**kw):
         return self.buildurl('media',*args,**kw)
         
     def build_plain_url(self,*args,**kw):
-        return self.plain_prefix + self.buildurl(*args,**kw)
+        return self.buildurl('plain',*args,**kw)
+        #~ return self.plain_prefix + self.buildurl(*args,**kw)
         
     def build_extjs_url(self,url):
         if self.extjs_base_url:
@@ -1844,7 +1844,7 @@ class Site(Site):
 
         if self.plain_prefix:
             urlpatterns += patterns('',
-              ('^'+self.plain_prefix[1:]+"/", include(self.get_plain_urls()))
+              ('^'+self.plain_prefix+"/", include(self.get_plain_urls()))
             )
         else:
             urlpatterns += self.get_plain_urls()
