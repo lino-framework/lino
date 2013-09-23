@@ -759,7 +759,8 @@ class AuthMiddleWareBase(object):
         On multilingual sites, 
         if URL_PARAM_USER_LANGUAGE is present it overrides user.language.
         """
-        #~ logger.info("20130313 on_login(%s)" % user)
+        logger.info("20130313 on_login(%s)" % user)
+        
         request.user = user
         
         if len(settings.SITE.languages) > 1:
