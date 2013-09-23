@@ -868,7 +868,7 @@ class SessionUserMiddleware(AuthMiddleWareBase):
     """
 
     def get_user_from_request(self, request):
-        logger.info("20130923 get_user_from_request(%s)" % request.session)
+        logger.info("20130923 get_user_from_request(%s)" % request.session.items())
       
         user = self.authenticate(request.session.get('username'),
             request.session.get('password'))
