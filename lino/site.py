@@ -1556,7 +1556,9 @@ class Site(Site):
         return self.buildurl('media',*args,**kw)
         
     def build_plain_url(self,*args,**kw):
-        return self.buildurl('plain',*args,**kw)
+        if self.plain_prefix:
+            return self.buildurl('plain',*args,**kw)
+        return self.buildurl(*args,**kw)
         #~ return self.plain_prefix + self.buildurl(*args,**kw)
         
     def build_extjs_url(self,url):
@@ -1778,7 +1780,7 @@ class Site(Site):
         from django.conf.urls import patterns, url, include
         from lino.ui import views
         urlpatterns = []
-        rx = '^' # + self.plain_prefix
+        rx = '^'
         urlpatterns = patterns('',
             (rx+r'$', views.PlainIndex.as_view()),
             (rx+r'(?P<app_label>\w+)/(?P<actor>\w+)$', views.PlainList.as_view()),

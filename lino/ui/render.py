@@ -72,7 +72,6 @@ from lino.core import actors
     
 from lino.utils import choosers
 from lino.core import choicelists
-from lino.core import menus
 from lino.utils import jsgen
 from lino.utils.xmlgen import html as xghtml
 from lino.utils.xmlgen.html import E
