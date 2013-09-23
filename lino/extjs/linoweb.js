@@ -380,7 +380,7 @@ Lino.login_window = null;
 
 
 Lino.show_login_window = function(on_login) {
-  //~ console.log('20121103 show_login_window',arguments);
+  console.log('20121103 show_login_window',arguments);
   //~ var current_window = Lino.current_window;
   if (Lino.login_window == null) {
     
@@ -397,7 +397,7 @@ Lino.show_login_window = function(on_login) {
                   Lino.close_all_windows();
                   Lino.viewport.loadMask.hide();
                   if (typeof on_login == 'string') {
-                      //~ console.log("20130829 on_login",on_login);
+                      console.log("20130829 on_login",on_login);
                       //~ alert("20130829 on_login gonna load_url");
                       Lino.load_url(on_login);
                       //~ eval(on_login);
