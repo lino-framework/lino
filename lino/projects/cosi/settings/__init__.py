@@ -24,9 +24,9 @@ from lino.projects.std.settings import *
 
 from django.utils.translation import ugettext_lazy as _
 
-from lino.modlib import ledger
+from lino.modlib import vat
 
-class Site(Site,ledger.SiteMixin):
+class Site(Site,vat.SiteMixin):
     """
     Base class for a :ref:`cosi` application,
     designed to be instantiated into the :setting:`SITE` setting.
