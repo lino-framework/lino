@@ -120,6 +120,7 @@ class Upload(
           
         
 class Uploads(dd.Table):
+    #~ debug_permissions = 20130924
     required = dd.required(user_level='admin')
     model = Upload
     order_by = ["modified"]

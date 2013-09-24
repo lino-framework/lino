@@ -930,6 +930,8 @@ class InsertRow(TableAction):
     The new row will be actually created only when this 
     window gets submitted.
     """
+    #~ debug_permissions = 20130924
+
     label = _("New")
     #~ icon_name = 'x-tbar-new' # if action rendered as toolbar button
     icon_name = 'add' # if action rendered as toolbar button

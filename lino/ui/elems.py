@@ -1735,9 +1735,9 @@ class Wrapper(VisibleComponent):
         kw.update(layout='form')
         #~ if e.value.get('autoHeight',False): # since 20130924
             #~ kw.update(autoHeight=True)
-        if False: # since 20130924
-            if not isinstance(e,TextFieldElement):
-                kw.update(autoHeight=True)
+        #~ if False: # since 20130924
+        if not isinstance(e,TextFieldElement):
+            kw.update(autoHeight=True)
         #~ kw.update(labelAlign=e.parent.labelAlign)
         kw.update(labelAlign=e.parent.label_align)
         kw.update(items=e,xtype='panel')

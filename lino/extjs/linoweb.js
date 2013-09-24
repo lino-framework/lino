@@ -483,7 +483,8 @@ Lino.show_login_window = function(on_login) {
 Lino.logout = function(id,name) {
     //~ console.log('20121104 gonna log out',arguments);
     //~ Lino.do_action
-    Lino.call_ajax_action(Lino.viewport,'GET','{{settings.SITE.build_admin_url("auth")}}',{},'logout',undefined,undefined,function(){
+    Lino.call_ajax_action(Lino.viewport,'GET',
+        '{{settings.SITE.build_admin_url("auth")}}',{},'logout',undefined,undefined,function(){
         //~ console.log('20121104 logged out',arguments);
         //~ Lino.login_window.hide();
         Lino.close_all_windows();
@@ -609,7 +610,7 @@ Lino.MainPanel = {
         var t = this;
         var update = function() {
             var p = t.params_panel;
-            console.log("update", p.getSize().height,p.forceLayout,p.autoHeight);
+            //~ console.log("update", p.getSize().height,p.forceLayout,p.autoHeight);
             var w = t.get_containing_window();
             Lino.do_when_visible(w, function() {
                 //~ p.doLayout(true); // doLayout(shallow, force)
@@ -1755,7 +1756,7 @@ Lino.action_handler = function (panel,on_success,on_confirm) {
           //~ Lino.insert_subst_user(p);
           Ext.Ajax.request({
             method: 'GET',
-            url: '{{settings.SITE.build_admin_url("callbacks")}}'+result.xcallback.id + '/' + buttonId,
+            url: '{{settings.SITE.build_admin_url("callbacks")}}/'+result.xcallback.id + '/' + buttonId,
             //~ params: {bi: buttonId},
             success: Lino.action_handler(panel,on_success,on_confirm)
           });
@@ -2143,7 +2144,7 @@ Lino.do_when_visible = function(cmp,todo) {
   //~ if (cmp.el && cmp.el.dom) 
   if (cmp.isVisible()) { 
     // 'visible' means 'rendered and not hidden'
-    console.log(cmp.title,'-> cmp is visible now');
+    //~ console.log(cmp.title,'-> cmp is visible now');
     todo(); 
   //~ } else {
       //~ cmp.on('resize',todo,cmp,{single:true});
@@ -2153,7 +2154,7 @@ Lino.do_when_visible = function(cmp,todo) {
     //~ console.log('Lino.do_when_visible() must defer because not isVisible()',todo,cmp);
     if (cmp.rendered) {
       //~ console.log(cmp,'-> cmp is rendered but not visible: and now?');
-      console.log(cmp.title,'-> cmp is rendered but not visible: try again in a moment...');
+      //~ console.log(cmp.title,'-> cmp is rendered but not visible: try again in a moment...');
       //~ var fn = function() {Lino.do_when_visible(cmp,todo)};
       //~ fn.defer(100);
       
@@ -2161,7 +2162,7 @@ Lino.do_when_visible = function(cmp,todo) {
       //~ Lino.do_when_visible.defer(100,this,[cmp,todo]);
       
     } else {
-      console.log(cmp.title,'-> after render');
+      //~ console.log(cmp.title,'-> after render');
       cmp.on('afterrender',todo,cmp,{single:true});
     }
   }
@@ -2221,10 +2222,11 @@ Lino.call_ajax_action = function(panel,method,url,p,actionName,step,on_confirm,o
   //~ if (step) p['$ext_requests.URL_PARAM_ACTION_STEP'] = step;
   //~ if (pp) pp(p); // "parameter processor" : first used for read beid card
   Ext.Ajax.request({
-    method: method,
-    url: url,
-    params: p,
-    success: Lino.action_handler(panel,on_success,on_confirm)
+    method: method
+    ,url: url
+    ,params: p
+    ,success: Lino.action_handler(panel,on_success,on_confirm)
+    ,failure: Lino.ajax_error_handler(panel)
   });
 };
 

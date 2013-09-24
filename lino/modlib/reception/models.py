@@ -14,6 +14,15 @@
 
 """
 Defines models for :mod:`lino.modlib.reception`.
+
+Guest
+
+    state   ---action--> new state
+
+    present ---checkin--> waiting
+    waiting ---receive-->  busy
+    busy    ---checkout--> gone
+
 """
 
 import logging
@@ -169,7 +178,7 @@ class CheckinVisitor(dd.NotifyingAction):
     show_in_workflow = True
     
     #~ required = dict(states='invited accepted') 
-    required = dd.Required(user_groups='reception',states='waiting')
+    required = dd.Required(user_groups='reception',states='invited accepted present')
     
     def unused_get_action_permission(self,ar,obj,state):
         if obj.event.start_date != datetime.date.today():
@@ -211,10 +220,11 @@ class ReceiveVisitor(dd.Action):
     help_text = _("Visitor was received by agent")
     show_in_workflow = True
     
+    #~ required = dd.Required(user_groups='reception',states='invited accepted present')
     
-    #~ required = dict(states='waiting')
+    required = dd.Required(states='waiting')
     
-    def get_action_permission(self,ar,obj,state):
+    def unused_get_action_permission(self,ar,obj,state):
         if obj.waiting_since is None:
             return False
         if obj.busy_since is not None:
@@ -270,8 +280,9 @@ class CheckoutVisitor(dd.Action):
     show_in_workflow = True
     
     #~ required = dict(states='waiting')
+    required = dd.Required(states='busy waiting')
     
-    def get_action_permission(self,ar,obj,state):
+    def unused_get_action_permission(self,ar,obj,state):
         if obj.waiting_since is None:
             return False
         if obj.gone_since is not None:
@@ -290,10 +301,10 @@ class CheckoutVisitor(dd.Action):
             obj.save()
             kw.update(refresh=True)
             return ar.success(**kw)
-        if obj.busy_since is None:
-            msg = _("%(guest)s leaves without being received.") % dict(guest=obj.partner)
-        else:
-            msg = _("%(guest)s leaves after meeting with %(user)s.") % dict(guest=obj.partner,user=obj.user)
+        #~ if obj.busy_since is None:
+            #~ msg = _("%(guest)s leaves without being received.") % dict(guest=obj.partner)
+        #~ else:
+        msg = _("%(guest)s leaves after meeting with %(user)s.") % dict(guest=obj.partner,user=obj.user)
         return ar.confirm(ok,msg,_("Are you sure?"))
         
     
@@ -310,6 +321,7 @@ class CheckoutVisitor(dd.Action):
         #~ obj.save()
         #~ kw = super(CheckoutGuest,self).run_from_ui(obj,ar,**kw)
         #~ return kw
+        
         
 cal.Guest.checkin = CheckinVisitor(sort_index=100)
 cal.Guest.receive = ReceiveVisitor(sort_index=101)
@@ -518,8 +530,8 @@ class MyBusyVisitors(MyVisitors,BusyVisitors):
             chunks = [ unicode(_("You are busy with ")) ]
             def f(g):
                 #~ return sar.obj2html(g,unicode(g.partner))
-                return sar.row_action_button(g,cls.detail_action,unicode(g.partner))
-            chunks += join_elems([f(g) for g in guests])
+                return sar.row_action_button(g,cls.detail_action,unicode(g.partner),icon_name=None)
+            chunks += join_elems([f(g) for g in guests],sep=unicode(_(" and ")))
             chunks.append('.')
             yield E.span(*chunks)
                 

@@ -172,9 +172,11 @@ class HtmlRenderer(object):
         Returns the HTML of a button which will call the `insert_action`.
         """
         a = ar.actor.insert_action
-        if a is None: 
+        if a is None:
+            #~ raise Exception("20130924 a is None")
             return
         if not a.get_bound_action_permission(ar,ar.master_instance,None):
+            #~ raise Exception("20130924 no permission")
             return
         elem = ar.create_instance(**known_values)
         st = ar.get_status()

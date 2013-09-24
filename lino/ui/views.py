@@ -407,7 +407,7 @@ class Authenticate(View):
         #~ request.session['password'] = request.GET.get('password')
         #~ auth.login(request,request.GET.get('username'), request.GET.get('password'))
         #~ ss.save()
-        logger.info("20130924 Now logged in as %r" % username)
+        #~ logger.info("20130924 Now logged in as %r" % username)
         rv = settings.SITE.ui.success("Now logged in as %r" % username)
         return settings.SITE.ui.render_action_response(rv)
       

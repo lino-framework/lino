@@ -1305,22 +1305,23 @@ tinymce.init({
         return on_render
         
         
-      
-    #~ def js_render_ParamsPanelSubclass(self,dh,user):
+    SUPPRESSED = set(('items','layout'))
+    
     def js_render_ParamsPanelSubclass(self,dh):
+        
         tbl = dh.layout._datasource
         
         yield ""
-        #~ yield "Lino.%s = Ext.extend(Lino.FormPanel,{" % dh.layout._formpanel_name
         yield "Lino.%s = Ext.extend(Ext.form.FormPanel,{" % dh.layout._formpanel_name
         for k,v in dh.main.ext_options().items():
-            if k != 'items':
+            #~ if k != 'items':
+            if not k in self.SUPPRESSED:
                 yield "  %s: %s," % (k,py2js(v))
         #~ yield "  collapsible: true,"
-        #~ yield "  layout: 'fit',"
-        #~ yield "  auto_save: true,"
-        if dh.layout.window_size and dh.layout.window_size[1] == 'auto':
-            yield "  autoHeight: true,"
+        yield "  layout: 'form',"
+        yield "  autoHeight: true,"
+        #~ if dh.layout.window_size and dh.layout.window_size[1] == 'auto':
+            #~ yield "  autoHeight: true,"
         yield "  initComponent : function() {"
         yield "    var containing_panel = this;"
         lc = 0

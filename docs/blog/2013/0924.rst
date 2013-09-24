@@ -2,9 +2,42 @@
 20130924 (Tuesday, 24 September 2013)
 =====================================
 
+Fixed some last-minute bugs
+---------------------------
 
 Discovered a bug in the generated Javascript:
 The problem 
 "Size or layout of params_panel is not correct 
-when opened for the first time." is not yet solved.
+when opened for the first time." was not yet completely solved:
+In a params_panel with only one row of fields 
+(e.g. welfare.contacts.Persons) they caused an endless loop of 
+resize events. 
 
+Fixed using changes in js_render_ParamsPanelSubclass and other places.
+Here be dragons.
+We now assume that a params_panel must have `autoHeight: true`,
+which means that it may not any vflex row.
+Because the panel had layout "fit" which is wrong, 
+it must be always layout "form" and 
+
+Discovered and fixed another AJAX bug: 
+In an answer to `/callbacks/123456` was missing a "/".
+This one was introduced yesterday by the 
+new :attr:`site_prefix <lino.site.Site.site_prefix>`
+
+
+A third (less severe) bug was that an internal server error
+which occured during a Lino.list_action_handler was not reported 
+to the user. Lino displayed the loadMask forever.
+
+All these tests had slipped through the test suite
+(to track such bugs in the Javascript code I would have to use 
+Jasmine...)
+
+
+
+Release
+-------
+
+Despite the above last-minute bugs I decided to make a relase and an 
+upgrade in Eupen tonight.

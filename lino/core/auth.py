@@ -725,7 +725,7 @@ class AuthMiddleWareBase(object):
 
     @classmethod
     def authenticate(cls, username, password=NOT_NEEDED):
-        logger.info("20130923 authenticate %s,%s" % (username,password))
+        #~ logger.info("20130923 authenticate %s,%s" % (username,password))
 
         if not username:
             return AnonymousUser.instance()
@@ -746,9 +746,9 @@ class AuthMiddleWareBase(object):
                 if not user.check_password(password):
                     logger.info("Could not authenticate %s : password mismatch",username)
                     return None
-                logger.info("20130923 good password for %s",username)
-            else:
-                logger.info("20130923 no password needed for %s",username)
+                #~ logger.info("20130923 good password for %s",username)
+            #~ else:
+                #~ logger.info("20130923 no password needed for %s",username)
             return user
         except settings.SITE.user_model.DoesNotExist,e:
             logger.info("Could not authenticate %s : no such user",username)
@@ -762,7 +762,7 @@ class AuthMiddleWareBase(object):
         On multilingual sites, 
         if URL_PARAM_USER_LANGUAGE is present it overrides user.language.
         """
-        logger.info("20130923 on_login(%s)" % user)
+        #~ logger.info("20130923 on_login(%s)" % user)
         
         request.user = user
         
@@ -871,7 +871,7 @@ class SessionUserMiddleware(AuthMiddleWareBase):
     """
 
     def get_user_from_request(self, request):
-        logger.info("20130923 get_user_from_request(%s)" % request.session.items())
+        #~ logger.info("20130923 get_user_from_request(%s)" % request.session.items())
       
         user = self.authenticate(request.session.get('username'),
             request.session.get('password'))
