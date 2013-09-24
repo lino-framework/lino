@@ -1316,6 +1316,7 @@ tinymce.init({
         for k,v in dh.main.ext_options().items():
             if k != 'items':
                 yield "  %s: %s," % (k,py2js(v))
+        #~ yield "  collapsible: true,"
         #~ yield "  layout: 'fit',"
         #~ yield "  auto_save: true,"
         if dh.layout.window_size and dh.layout.window_size[1] == 'auto':

@@ -604,25 +604,27 @@ Lino.MainPanel = {
   }
   ,add_params_panel : function (tbar) {
       if (this.params_panel) {
+        //~  20130923b
         var t = this;
-        // 20130918 do_when_visible
-        //~ this.params_panel.on('render',
-        this.params_panel.on('afterlayout',function() {
-            //~ console.log("20130918 afterlayout");
-            Lino.do_when_visible(t.get_containing_window(), function() {
-                t.get_containing_window().doLayout(true);
+        var update = function() {
+            //~ console.log("update", t.params_panel.getSize().height);
+            var w = t.get_containing_window();
+            Lino.do_when_visible(w, function() {
+                w.doLayout(); // doLayout(shallow, force)
+                //~ t.params_panel.on('afterlayout',update,t,{single:true});
             });
-        });
-        //~ this.params_panel.on('bodyresize',function() {
-            //~ console.log("20130918 bodyresize");
-            //~ Lino.do_when_visible(t.get_containing_window(), function() {
-                //~ t.get_containing_window().doLayout(true);
-            //~ });
-        //~ });
-        //~ Lino.do_when_visible(this.params_panel, function() {
-            //~ t.params_panel.doLayout();
-            //~ t.get_containing_window().doLayout();
-            //~ });
+        };
+        Lino.do_when_visible(this.params_panel, update);
+        this.params_panel.on('show',update);
+        this.params_panel.on('hide',update);
+        //~ this.params_panel.on('afterlayout',update,this,{single:true});
+        //~ this.params_panel.on('bodyresize',update,this,{single:true});
+        //~ this.params_panel.on('resize',update,this,{single:true});
+        //~ this.params_panel.on('render',update,this,{single:true});
+        
+        // this.params_panel.on('render',
+        //~ this.params_panel.on('afterlayout',update,this,{single:true,delay:200});
+        //~ this.params_panel.on('bodyresize',update,this,{single:true,delay:200});
         this.toggle_params_panel_btn = new Ext.Button({ scope:this, 
           //~ text: "$_("[parameters]")", // gear
           iconCls: 'x-tbar-parameters',
@@ -637,7 +639,12 @@ Lino.MainPanel = {
             } else {
                 this.params_panel.hide();
             }
-            t.get_containing_window().doLayout();
+            //~ this.params_panel.on('afterlayout',update,this,{single:true});
+            //~ t.get_containing_window().doLayout();
+            //~ this.params_panel.on('afterlayout',function() {
+                //~ console.log("20130918 afterlayout");
+                //~ t.get_containing_window().doLayout(); // doLayout(shallow, force)
+            //~ },this,{single:true});
           }
         }); 
         tbar = tbar.concat([this.toggle_params_panel_btn]);
@@ -689,9 +696,10 @@ Lino.MainPanel = {
       if (force_dirty || this._force_dirty || this.params_panel.form.isDirty()) {
       //~ if (this._force_dirty || this.params_panel.form.isDirty()) {
         p.{{ext_requests.URL_PARAM_PARAM_VALUES}} = this.get_param_values();
-        //~ console.log("20130605 form is dirty",p);
+        //~ console.log("20130923 form is dirty (",force_dirty,this._force_dirty,this.params_panel.form.isDirty(),")");
+        //~ console.log("20130923 form is dirty",p);
       }else{
-        //~ console.log("20130605 form not dirty:",this.params_panel.form);
+        //~ console.log("20130923 form not dirty:",this.params_panel.form);
         if (this.status_param_values) 
           p.{{ext_requests.URL_PARAM_PARAM_VALUES}} = Lino.fields2array(
             this.params_panel.fields,this.status_param_values);
@@ -3474,7 +3482,7 @@ Lino.GridStore = Ext.extend(Ext.data.ArrayStore,{
       
     }
       
-    this.grid_panel.add_param_values(options.params,true);
+    this.grid_panel.add_param_values(options.params);
     //~ Lino.insert_subst_user(options.params);
     //~ console.log("20120814 GridStore.load()",options.params,this.baseParams);
     //~ if (FOO > 0) {
@@ -4808,6 +4816,7 @@ Lino.Window = Ext.extend(Ext.Window,{
         config.main_item.params_panel.region = 'north';
         config.main_item.params_panel.hidden = config.main_item.params_panel_hidden;
         config.items = [config.main_item.params_panel, config.main_item];
+        //~ 20130923b
     } else {
         config.layout = 'fit';
         config.items = config.main_item;

@@ -1,0 +1,8 @@
+=====================================
+20130924 (Tuesday, 24 September 2013)
+=====================================
+
+
+
+Discovered a bug in the generated Javascript. 
+Size or layout of params_panel is not correct when opened for the first time.
