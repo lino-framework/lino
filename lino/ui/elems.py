@@ -1733,8 +1733,11 @@ class Wrapper(VisibleComponent):
     #~ label = None
     def __init__(self,e,**kw):
         kw.update(layout='form')
-        if not isinstance(e,TextFieldElement):
-            kw.update(autoHeight=True)
+        #~ if e.value.get('autoHeight',False): # since 20130924
+            #~ kw.update(autoHeight=True)
+        if False: # since 20130924
+            if not isinstance(e,TextFieldElement):
+                kw.update(autoHeight=True)
         #~ kw.update(labelAlign=e.parent.labelAlign)
         kw.update(labelAlign=e.parent.label_align)
         kw.update(items=e,xtype='panel')
@@ -1752,6 +1755,7 @@ class Wrapper(VisibleComponent):
             #~ e.update(anchor="100%")
             #~ e.update(anchor="-25")
             e.update(anchor=FULLWIDTH)
+            e.update(autoHeight=True) # 20130924
         #~ e.update(padding=DEFAULT_PADDING)
         #~ self.allow_read = e.allow_read
         #~ self.get_view_permission = e.get_view_permission
@@ -1830,50 +1834,6 @@ class Panel(Container):
                 # so we must split this panel into several containers.
                 # vflex elements go into a vbox, the others into a form layout. 
                 
-                if False:
-                    # Rearrange elements into "element groups"
-                    # Each element of egroups is a list of elements who have same vflex
-                    egroups = []
-                    for e in elements:
-                        if len(egroups) and egroups[-1][0].vflex == e.vflex:
-                            egroups[-1].append(e)
-                        else:
-                            egroups.append([e])
-                            
-                    if len(egroups) == 1:
-                        # all elements have same vflex
-                        assert tuple(egroups[0]) == elements, "%r != %r" % (tuple(egroups[0]), elements)
-                        
-                    elements = []
-                    for eg in egroups:
-                        if eg[0].vflex:
-                            #~ for e in eg: e.update(flex=1,align='stretch')
-                            for e in eg: 
-                                e.update(flex=1)
-                                e.collapsible = True
-                                #~ e.update(collapsible=True)
-                            if len(eg) == 1:
-                                g = eg[0]
-                            else:
-                                #~ g = Container(layout_handle,name,*eg,**dict(layout='vbox',flex=1)
-                                g = Panel(layout_handle,name,vertical,*eg,**dict(layout='vbox',
-                                  flex=1,layoutConfig=dict(align='stretch')))
-                                assert g.vflex is True
-                        else:
-                            #~ for e in eg: e.update(align='stretch')
-                            if len(eg) == 1:
-                                g = eg[0]
-                            else:
-                                g = Container(layout_handle,name,*eg,**dict(layout='form',autoHeight=True))
-                                #~ g = Container(layout_handle,name,*eg,**dict(layout='form'))
-                                assert g.vflex is False
-                        #~ if monitorResize:
-                            #~ g.update(monitorResize=True)
-                        #~ g.update(align='stretch')
-                        #~ g.update(layoutConfig=dict(align='stretch'))
-                        elements.append(g)
-                    kw.update(layout='vbox',layoutConfig=dict(align='stretch'))
-                    #~ self.elements = elements
             else: # not self.vertical
                 kw.update(layout='hbox',layoutConfig=dict(align='stretch'))
               
@@ -1889,20 +1849,7 @@ class Panel(Container):
                         self.label_width = w
 
 
-        if False: # not yet converted to new dtl syntax 20120214
-            label = layout_handle.layout.collapsible_elements.get(name,None)
-            if label:
-                self.collapsible = True
-                self.label = label
-            
-        #~ if str(layout_handle.layout) == 'ClientDetail on pcsw.Clients':
-            #~ if name == 'cbss':
-                #~ print '20120925 ext_elems', name, kw
-
         Container.__init__(self,layout_handle,name,*elements,**kw)
-        
-        #~ if name == 'cbss':
-            #~ logger.info("20120925 Panel.__init__() 2 %r",self.required)
         
         w = h = 0
         has_height = False # 20120210
@@ -1932,6 +1879,13 @@ class Panel(Container):
         if not d.has_key('layout'):
             if len(self.elements) == 1:
                 d.update(layout='fit')
+                #~ """
+                #~ before 20130924 it was always 'fit' here. But 
+                #~ """
+                #~ if self.elements[0].vflex or not self.elements[0].value.get('autoHeight',False):
+                    #~ d.update(layout='fit')
+                #~ else:
+                    #~ d.update(layout='form')
             elif self.vertical:
                 #~ d.update(layout='form')
                 if self.vflex:
@@ -1945,6 +1899,8 @@ class Panel(Container):
                 d.update(layout='hbox',autoHeight=True) # 20101028
                 
         if d['layout'] == 'form':
+            #~ if not self.vflex:
+                #~ d.update(autoHeight=True) # since 20130924
             assert self.vertical
             #~ self.update(labelAlign=self.labelAlign)
             self.update(labelAlign=self.label_align)
@@ -1954,6 +1910,7 @@ class Panel(Container):
                 #~ 20120630 self.elements[0].update(anchor="100% 100%")
                 #~ self.elements[0].update(anchor="-25 -25")
                 self.elements[0].update(anchor=FULLWIDTH + ' ' + FULLHEIGHT)
+                #~ self.update(autoHeight=self.elements[0].autoHeight) # since 20130924
                 
             else:
                 for e in self.elements:
@@ -2085,6 +2042,7 @@ class Panel(Container):
             Panels which are usually not vertical but still want a frame 
             since they are the main panel.
             """
+            #~ d.update(autoHeight=True) # since 20130924
             d.update(frame=True)
             d.update(bodyBorder=False)
             d.update(border=False)

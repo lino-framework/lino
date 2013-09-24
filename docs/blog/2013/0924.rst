@@ -3,6 +3,8 @@
 =====================================
 
 
+Discovered a bug in the generated Javascript:
+The problem 
+"Size or layout of params_panel is not correct 
+when opened for the first time." is not yet solved.
 
-Discovered a bug in the generated Javascript. 
-Size or layout of params_panel is not correct when opened for the first time.

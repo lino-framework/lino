@@ -605,18 +605,23 @@ Lino.MainPanel = {
   ,add_params_panel : function (tbar) {
       if (this.params_panel) {
         //~  20130923b
+        //~ this.params_panel.autoHeight = true; // 20130924
         var t = this;
         var update = function() {
-            //~ console.log("update", t.params_panel.getSize().height);
+            var p = t.params_panel;
+            console.log("update", p.getSize().height,p.forceLayout,p.autoHeight);
             var w = t.get_containing_window();
             Lino.do_when_visible(w, function() {
-                w.doLayout(); // doLayout(shallow, force)
+                //~ p.doLayout(true); // doLayout(shallow, force)
+                w.doLayout(true); // doLayout(shallow, force)
                 //~ t.params_panel.on('afterlayout',update,t,{single:true});
             });
         };
         Lino.do_when_visible(this.params_panel, update);
         this.params_panel.on('show',update);
         this.params_panel.on('hide',update);
+        //~ this.params_panel.on('bodyresize',update);
+        this.params_panel.on('afterlayout',update);
         //~ this.params_panel.on('afterlayout',update,this,{single:true});
         //~ this.params_panel.on('bodyresize',update,this,{single:true});
         //~ this.params_panel.on('resize',update,this,{single:true});
@@ -4814,6 +4819,7 @@ Lino.Window = Ext.extend(Ext.Window,{
         config.layout = 'border';
         config.main_item.region = 'center';
         config.main_item.params_panel.region = 'north';
+        //~ config.main_item.params_panel.autoHeight = false; // 20130924
         config.main_item.params_panel.hidden = config.main_item.params_panel_hidden;
         config.items = [config.main_item.params_panel, config.main_item];
         //~ 20130923b

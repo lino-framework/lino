@@ -1862,7 +1862,7 @@ class Site(Site):
             if self.admin_prefix:
                 urlpatterns += patterns('',
                   ('^'+self.admin_prefix+"/", include(self.get_ext_urls()))
-                ) 
+                )
                 urlpatterns += self.get_pages_urls()
             else:
                 urlpatterns += self.get_ext_urls()
