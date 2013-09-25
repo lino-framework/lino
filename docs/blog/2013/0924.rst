@@ -41,3 +41,29 @@ Release
 
 Despite the above last-minute bugs I decided to make a relase and an 
 upgrade in Eupen tonight.
+
+
++------------------------------------------+-------------+-------------+
+| Project                                  | Old version | New version |
++==========================================+=============+=============+
+| `atelier <http://atelier.lino-           | 0.0.2       | 0.0.3       |
+| framework.org>`__ -- A collection of     |             |             |
+| tools for software artists               |             |             |
++------------------------------------------+-------------+-------------+
+| `djangosite <http://site.lino-           | 0.1.7       | 0.1.8       |
+| framework.org>`__ -- A server startup    |             |             |
+| signal for Django                        |             |             |
++------------------------------------------+-------------+-------------+
+| `north <http://north.lino-               | 0.1.6       | 0.1.7       |
+| framework.org>`__ -- Another way to      |             |             |
+| migrate Django databases                 |             |             |
++------------------------------------------+-------------+-------------+
+| `lino <http://www.lino-framework.org>`__ | 1.6.11      | 1.6.12      |
+| -- A framework for writing desktop-like  |             |             |
+| web applications using Django and ExtJS  |             |             |
++------------------------------------------+-------------+-------------+
+| `lino_welfare <http://welfare.lino-      | 1.1.8       | 1.1.9       |
+| framework.org>`__ -- A Lino application  |             |             |
+| for Belgian Public Welfare Centres       |             |             |
++------------------------------------------+-------------+-------------+
+

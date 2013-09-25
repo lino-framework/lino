@@ -1,0 +1,11 @@
+=======================================
+20130925 (Wednesday, 25 September 2013)
+=======================================
+
+
+Updated :doc:`/changes`.
+
+:func:`lino.ui.views.requested_actor` no longer causes an internal 
+server error when a request with an invalid app_label arrives.
+And it now raises a http.Http404 instead 
+of a simple Exception for any invalid request. 

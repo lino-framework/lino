@@ -11,16 +11,32 @@ to get detailed news.
 The final truth about what's going on is only 
 `The Source Code <http://code.google.com/p/lino/source/list>`_.
 
+  
+Version 1.6.12 (released :blogref:`20130924`)
+=============================================
+
+- New framework features include 
+
+  - customizable export as .pdf, 
+    (:blogref:`20130912`).
+  - menu buttons (grouped actions), see :blogref:`20130913`.
+  
+  - New fab command :fab:`test_sdist` (:blogref:`20130913`).
+    
+  - New management command :manage:`dump2py`.
+  
+  - The :ref:`davlink` applet now works around some permission problems
+    which occured after Oracle JRE 7u21
+    (:blogref:`20130919`).
+  - It is now (again) possible to run multiple Lino instances on a same 
+    vhost in different subdirectories. 
+    See :attr:`site_prefix <lino.site.Site.site_prefix>`.
 
   
-.. toctree::
-   :maxdepth: 1
-   
-   /blog/index
+- Framework bugfixes include 
+  (1) table parameter panel initial size
+  (2) 
 
-
-Version 1.6.12 (coming)
-=============================================
 
 - Renamed `dd.AuthorRowAction` to `dd.AuthorAction`
   and merged the now obsolete `dd.RowAction` into 
@@ -83,7 +99,7 @@ Version 1.6.11 (released :blogref:`20130723`)
 
 - Optimization: 
   virtual fields to a foreignkey 
-  (e.g. the new `bailiff` field in :ref:`welfare.debts.PrintLiabilitiesByBudget`)
+  (e.g. the new `bailiff` field in `welfare.debts.PrintLiabilitiesByBudget`)
   might cause a "unicode object has no attribute '_meta'" traceback.
 
   

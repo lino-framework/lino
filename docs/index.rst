@@ -22,8 +22,13 @@ Sitemap
    about/index
    community/index
    admin/index
+   
    dev/index
+   /blog/index
+   changes
+   
    user/index
    ref/index
-   changes
+
+
 
