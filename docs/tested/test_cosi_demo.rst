@@ -34,14 +34,14 @@ Slave tables with more than 15 rows
 When you look at the detail window of Belgium in `Lino Così
 <http://demo4.lino-framework.org/api/countries/Countries/BE?an=detail>`_
 then you see a list of all places in Belgium.
-This demo database contains exactly 34 entries:
+This demo database contains exactly 40 entries:
 
 >>> be = countries.Country.objects.get(isocode="BE")
 >>> be.city_set.count()
-34
+44
 
 >>> countries.CitiesByCountry.request(be).get_total_count()
-34
+44
 
 >>> url = '/api/countries/CitiesByCountry?fmt=json&start=0&mt=10&mk=BE'
 >>> res = client.get(url,REMOTE_USER='robin')
@@ -85,11 +85,11 @@ To remove the limit altogether, you can say:
 
 >>> countries.CitiesByCountry.preview_limit = None
 
-Same request returns now all 35 data rows:
+Same request returns now all 45 data rows (44 + the phantom row):
 
 >>> res = client.get(url,REMOTE_USER='robin')
 >>> result = json.loads(res.content)
 >>> print(len(result['rows']))
-35
+45
 
 
