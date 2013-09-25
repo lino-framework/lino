@@ -26,8 +26,8 @@ from lino import dd
 belgian_cities = u"""
 9420 Aaigem 
 8511 Aalbeke 
-9300 Aalst 
-3800 Aalst (Limb.) 
+# 9300 Aalst 
+# 3800 Aalst (Limb.) 
 9880 Aalter 
 3200 Aarschot 
 8700 Aarsele 
@@ -151,7 +151,7 @@ belgian_cities = u"""
 4920 Aywaille 
 9890 Baaigem 
 3128 Baal 
-9310 Baardegem 
+# 9310 Baardegem 
 2387 Baarle-Hertog 
 9200 Baasrode 
 9800 Bachte-Maria-Leerne 
@@ -694,7 +694,7 @@ belgian_cities = u"""
 7050 Erbaut 
 7050 Erbisoeul 
 7500 Ere 
-9320 Erembodegem 
+# 9320 Erembodegem 
 6997 Erezée 
 5644 Ermeton-sur-Biert 
 5030 Ernage 
@@ -877,7 +877,7 @@ belgian_cities = u"""
 7823 Gibecq 
 2275 Gierle 
 8691 Gijverinkhove 
-9308 Gijzegem 
+# 9308 Gijzegem
 8570 Gijzelbrechtegem 
 9860 Gijzenzele 
 6060 Gilly (Charleroi) 
@@ -1075,7 +1075,7 @@ belgian_cities = u"""
 6887 Herbeumont 
 7050 Herchies 
 3770 Herderen 
-9310 Herdersem 
+# 9310 Herdersem
 3020 Herent 
 2200 Herentals 
 2270 Herenthout 
@@ -1128,7 +1128,7 @@ belgian_cities = u"""
 3730 Hoeselt 
 2940 Hoevenen 
 1981 Hofstade (Bt.) 
-9308 Hofstade (O.-Vl.) 
+# 9308 Hofstade (O.-Vl.) 
 5377 Hogne 
 4342 Hognoul 
 7620 Hollain 
@@ -1605,7 +1605,7 @@ belgian_cities = u"""
 9700 Melden 
 3320 Meldert (Bt.) 
 3560 Meldert (Limb.) 
-9310 Meldert (O.-Vl.) 
+# 9310 Meldert (O.-Vl.) 
 4633 Melen 
 1370 Mélin 
 3350 Melkwezer 
@@ -1709,7 +1709,7 @@ belgian_cities = u"""
 1435 Mont-Saint-Guibert 
 6032 Mont-sur-Marchienne 
 4850 Montzen 
-9310 Moorsel 
+# 9310 Moorsel 
 8560 Moorsele 
 8890 Moorslede 
 9860 Moortsele 
@@ -1798,7 +1798,7 @@ belgian_cities = u"""
 3890 Niel-bij-Sint-Truiden 
 9506 Nieuwenhove 
 1880 Nieuwenrode 
-9320 Nieuwerkerken (Aalst) 
+# 9320 Nieuwerkerken (Aalst) 
 3850 Nieuwerkerken (Limb.) 
 8600 Nieuwkapelle 
 8950 Nieuwkerke 

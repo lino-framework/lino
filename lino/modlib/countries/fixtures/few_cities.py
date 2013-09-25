@@ -84,14 +84,19 @@ def objects():
         return City(country=BE,type=CityTypes.province,
             **babel_values('name',de=de,fr=fr,nl=nl,en=fr))
     
-    def be_city(zip_code,de,fr,nl,en,**kw):
+    def be_city(zip_code,de=None,fr=None,nl=None,en=None,**kw):
         kw.update(babel_values('name',de=de,fr=fr,nl=nl,en=en))
-        return City(country=BE,zip_code=zip_code,type=CityTypes.city,**kw)
+        kw.setdefault('type',CityTypes.city)
+        return City(country=BE,zip_code=zip_code,**kw)
             
     yield be_province("Antwerpen","Anvers","Antwerpen")
     yield be_province("Luxemburg","Luxembourg","Luxemburg")
-    yield be_province("Limburg","Limbourg","Limburg")
     yield be_province("Namür","Namur","Namen")
+    
+    prov = be_province("Limburg","Limbourg","Limburg")
+    yield prov
+    yield make_city('BE','Aalst-bij-Sint-Truiden',zip_code='3800',parent=prov,type=CityTypes.village)
+    
     
     prov = be_province("Lüttich","Liège","Luik")
     yield prov
@@ -104,7 +109,21 @@ def objects():
     yield be_province("Hennegau","Hainaut","Henegouwen")
     yield be_province("Wallonisch-Brabant","Brabant wallon","Waals-Brabant")
     yield be_province("Flämisch-Brabant","Brabant flamant","Vlaams-Brabant")
-    yield be_province("Ostflandern","Flandre de l'Est","Oost-Vlaanderen")
+    
+    prov = be_province("Ostflandern","Flandre de l'Est","Oost-Vlaanderen")
+    yield prov
+    
+    aalst = be_city('9300',"Aalst","Alost","Aalst","Aalst",parent=prov)
+    yield aalst
+    yield be_city('9308',name="Gijzegem",parent=aalst,type=CityTypes.village)
+    yield be_city('9310',name="Baardegem ",parent=aalst,type=CityTypes.village)
+    yield be_city('9320',name="Erembodegem",parent=aalst,type=CityTypes.village)
+    yield be_city('9310',name="Herdersem",parent=aalst,type=CityTypes.village)
+    yield be_city('9308',name="Hofstade",parent=aalst,type=CityTypes.village)
+    yield be_city('9310',name="Meldert",parent=aalst,type=CityTypes.village)
+    yield be_city('9320',name="Nieuwerkerken",parent=aalst,type=CityTypes.village)
+    yield be_city('9310',name="Moorsel",parent=aalst,type=CityTypes.village)
+    
     yield be_province("Westflandern","Flandre de l'Ouest","West-Vlaanderen")
     
     yield be_city('1000',"Brüssel","Bruxelles","Brussel","Brussels")

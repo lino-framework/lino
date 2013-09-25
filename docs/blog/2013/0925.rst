@@ -9,3 +9,25 @@ Updated :doc:`/changes`.
 server error when a request with an invalid app_label arrives.
 And it now raises a http.Http404 instead 
 of a simple Exception for any invalid request. 
+
+This was because some robot had started to consult regularily 
+some pages 
+http://belref.lino-framework.org/plain/countries/Cities?ul=nl
+(which should be 
+http://belref.lino-framework.org/countries/Cities?ul=nl).
+Instead of answering with a 500, Lino now answers with a 404.
+
+Also translated the messages appearing on this page to the three 
+languages of my home country.
+
+The beforementioned page on belref showed also Aalst, for which I 
+happened to know that it is Alost in French.
+Reason for me to read more about 
+`Aalst <https://en.wikipedia.org/wiki/Aalst,_Belgium>`_
+and to update the fixtures of :mod:`lino.modlib.countries` 
+so the belref shows it correctly.
+
+Moved `lino_welfare.modlib.statbel` to `lino.modlib.statbel`
+because belref depends on it.
+
+
