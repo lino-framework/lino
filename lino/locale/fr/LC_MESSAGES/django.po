@@ -93,11 +93,11 @@ msgstr ""
 #: lino/config/404.html:3
 #: lino/config/404.html:7
 msgid "Page not found"
-msgstr "Page non trouvÃ©e"
+msgstr "Page non trouvée"
 
 #: lino/config/404.html:9
 msgid "The requested page could not be found."
-msgstr "La page demandÃ©e n'existe pas."
+msgstr "La page demandée n'existe pas."
 
 #: lino/config/500.html:3
 msgid "Server error (500)"
