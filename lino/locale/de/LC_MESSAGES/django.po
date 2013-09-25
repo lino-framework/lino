@@ -8,7 +8,7 @@ msgstr ""
 "Project-Id-Version: lino.modlib.systen\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2013-09-23 12:00+0300\n"
-"PO-Revision-Date: 2013-09-23 12:02+0300\n"
+"PO-Revision-Date: 2013-09-25 13:21+0300\n"
 "Last-Translator: Luc Saffre <luc.saffre@gmx.net>\n"
 "Language-Team: \n"
 "Plural-Forms: nplurals=2; plural=(n != 1)\n"
@@ -63,14 +63,12 @@ msgid "Site"
 msgstr "Site"
 
 #: lino/site.py:1612
-#, fuzzy
 msgid "This is "
-msgstr "Auswahliste"
+msgstr "Dies ist "
 
 #: lino/site.py:1620
-#, fuzzy
 msgid " using "
-msgstr "Postsendung"
+msgstr " unter "
 
 #: lino/site.py:1880
 #: lino/modlib/reception/models.py:57
@@ -99,11 +97,11 @@ msgstr "Sie haben nicht die Berechtigung, diese Zeile zu löschen."
 #: lino/config/404.html:3
 #: lino/config/404.html:7
 msgid "Page not found"
-msgstr ""
+msgstr "Seite nicht gefunden"
 
 #: lino/config/404.html:9
 msgid "The requested page could not be found."
-msgstr ""
+msgstr "Die von Ihnen angefragte Seite konnte nicht gefunden werden."
 
 #: lino/config/500.html:3
 msgid "Server error (500)"
