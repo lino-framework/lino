@@ -47,12 +47,15 @@ also apply to Lino:
   
 Lino then adds its own features to the above:
 
+- An out-of-the-box :doc:`user interface </topics/ui>`.
+  Lino application developers don't waste their time writing html templates or css.
+
 - :doc:`/topics/layouts` :  
   Design not only your *models* but also your *forms* using the Python language.
   
-- An extensible collection of out-of-the-box :doc:`user interfaces </topics/ui>`.
-  Lino application developers don't waste their time writing html templates or css.
-
+- Lino adds enterprise-level concepts for definining 
+  :doc:`/topics/perms` and :doc:`/topics/workflow`.
+  
 - :ref:`mldbc` : 
   Use Lino's rich experience with applications that manage 
   multilingual database content.
@@ -63,11 +66,8 @@ Lino then adds its own features to the above:
   a great alternative to `South <http://south.aeracode.org/>`_
   to manage your :ref:`database migrations <datamig>`.
   
-- **Other features** include extensions to handle
-  :ref:`polymorphism`, 
-  :doc:`/topics/perms` 
-  and 
-  :doc:`/topics/workflow`.
+- Other features include extensions to handle
+  :ref:`polymorphism`.
   
 
 
@@ -155,6 +155,7 @@ More
    luc
    license
    why_gpl
+   values
    thanks
    compared
    why_extjs

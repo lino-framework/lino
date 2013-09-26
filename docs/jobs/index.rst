@@ -16,7 +16,7 @@ Jobs
 
 - Since 2009 we are investing most of our energy into Lino.
   We know that Lino is genial.
-  We also know that there is some work to do before this becomes evident
+  We also know that there is some work to do before this becomes evident.
   And that's no problem for us because anyway we prefer sustainable growth 
   over rapid revenue.
 

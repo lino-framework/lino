@@ -5,3 +5,13 @@
 Fixed a typo bug in :manage:`watch_tim`.
 
 
+I asked my wife to create a logo for Lino, 
+and she asked me to first tell her: "What is Lino?".
+I answered "It's a framework for writing database applications 
+using Django and ExtJS..." -- She interrupted me: 
+"No, I mean: what is Lino *really*? 
+What's important about Lino?".
+It took me then several hours to discover and formulate myself 
+what Lino *really* means:
+:doc:`/about/values`.
+

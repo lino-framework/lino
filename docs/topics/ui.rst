@@ -2,6 +2,9 @@
 The user interface
 ==================
 
+Lino comes with an extensible collection of out-of-the-box user interfaces.
+
+
 .. _lino.ui.renderer:
 
 UI renderer
