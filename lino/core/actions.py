@@ -45,7 +45,6 @@ from lino.core import fields
 #~ from lino.core.perms import UserLevels
 #~ from lino.core import perms 
 
-
 PLAIN_PAGE_LENGTH = 15
 
 
@@ -123,6 +122,9 @@ def add_requirements(obj,**kw):
     new.update(obj.required)
     new.update(kw)
     obj.required = new
+
+
+
 
 
 
@@ -681,6 +683,8 @@ class Action(Parametrizable,Permittable):
         
     def get_view_permission(self,profile):
         """
+        Return True if this action is visible for users of given profile.
+        
         Overridden e.g. by :class:`lino.mixins.beid.BeIdReadCardAction`
         to make it available only when :attr:`lino.Lino.use_eid_jslib` is True.
         """

@@ -1,0 +1,29 @@
+====================================
+20130927 (Friday, 27 September 2013)
+====================================
+
+Started `finan.SuggestionsByVoucher`.
+
+This caused a new subtle optimization in :mod:`lino.core.actors`:
+
+    Non-editable actors won't even call 
+    :meth:`get_view_permission <lino.core.actions.Action.get_view_permission>` 
+    for actions with `readonly=False`.
+
+This optimization is nice, but in fact the problem was even deeper: 
+it was caused by the fact that ledger.Movement 
+is declared as Sequenced (because it has a seqno field), 
+but (since not meant to be user-edited) 
+should not be Duplicable nor should it have MoveUp 
+and MoveDown buttons.
+I removed `Sequenced` from the base classes and 
+manually added a seq_no field because Movement needs nothing else 
+from Sequenced. Except for the automatic seqno calculation which was 
+not necessary for Movement and too expensive (added a counter in 
+Registrable.register() instead.
+
+
+Cool! For the first time Lino is now able to suggest the entries of 
+a bank statement using open transactions. (A function which in fact is 
+usually not useful in BankStatements but in PaymentOrders and/or 
+JournalEntries.

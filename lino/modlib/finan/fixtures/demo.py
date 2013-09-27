@@ -49,7 +49,7 @@ def objects():
     AMOUNTS = Cycler([Decimal(x) for x in 
         "2.50 6.80 9.95 14.50 20 29.90 39.90 39.90 99.95 199.95 599.95 1599.99".split()])
     ITEMCOUNT = Cycler(1,3,10)
-    for i in range(10):
+    for i in range(2):
         jnl = JOURNALS.pop()
         voucher = MODEL(journal=jnl,
           user=USERS.pop(),

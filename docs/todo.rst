@@ -962,6 +962,9 @@ Later
 Long-term
 ---------
 
+#. relative imports don't work in python fixtures 
+
+
 #. :doc:`/tickets/12`
 
 #. Projekte für DSBE einführen? 

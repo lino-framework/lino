@@ -371,6 +371,7 @@ class UpdateReminders(actions.Action):
         logger.info(msg)
         return ar.success(msg,**kw)
 
+
 class EventGenerator(mixins.UserAuthored):
     """
     Base class for things that generate a suite of events.

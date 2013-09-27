@@ -66,8 +66,8 @@ class VoucherType(dd.Choice):
         model = dd.resolve_model(model)
         self.model = model
         value = dd.full_model_name(model)
-        text = model._meta.verbose_name + ' (%s.%s)' % (
-            model.__module__,model.__name__)
+        text = model._meta.verbose_name + ' (%s)' % dd.full_model_name(model)
+        #~ text = model._meta.verbose_name + ' (%s.%s)' % (model.__module__,model.__name__)
         name = None
         super(VoucherType,self).__init__(value,text,name)
         
@@ -256,12 +256,12 @@ class Journal(dd.BabelNamed,mixins.Sequenced,mixins.PrintableType):
 class Journals(dd.Table):
     model = Journal
     order_by = ["seqno"]
-    column_names = "ref:5 trade_type voucher_type force_sequence name * seqno id"
+    column_names = "ref:5 name trade_type voucher_type force_sequence * seqno id"
     detail_layout = """
-    ref trade_type voucher_type 
-    force_sequence account seqno id
+    ref:5 trade_type seqno id voucher_type:10
+    force_sequence account dc build_method
     name
-    build_method  printed_name
+    printed_name
     """
     insert_layout = dd.FormLayout("""
     ref name
@@ -374,7 +374,10 @@ class Voucher(mixins.UserAuthored,mixins.Registrable):
             self.number = self.journal.get_next_number(self)
         assert self.number is not None
         self.movement_set.all().delete() 
+        seqno = 0
         for m in self.get_wanted_movements():
+            seqno += 1
+            m.seqno = seqno
             m.full_clean()
             m.save()
         super(Voucher,self).register(ar)
@@ -555,7 +558,9 @@ class Matchable(dd.Model):
 
 
     
-class Movement(mixins.Sequenced,Matchable):
+#~ class Movement(mixins.Sequenced,Matchable):
+
+class Movement(Matchable):
   
     allow_cascaded_delete = ['voucher']
     
@@ -563,7 +568,15 @@ class Movement(mixins.Sequenced,Matchable):
         verbose_name = _("Movement")
         verbose_name_plural = _("Movements")
         
+        
+        
     voucher = models.ForeignKey(Voucher)
+    
+    seqno = models.IntegerField(
+        #~ blank=True,null=False,
+        verbose_name=_("Seq.No."))
+        
+    
     #~ pos = models.IntegerField("Position",blank=True,null=True)
     account = dd.ForeignKey(accounts.Account)
     partner = dd.ForeignKey(partner_model,blank=True,null=True)
@@ -696,7 +709,7 @@ def get_partner_matches(partner,dc,**flt):
         for mvt in qs:
             yield Match(cls.DUE_DC,partner,mvt.match)
     else:
-        #~ logger.info("20130921 %s %s",partner,qs)
+        logger.info("20130921 %s %s",partner,qs)
         found = set()
         for mvt in qs:
             if not mvt.match in found:
@@ -722,7 +735,7 @@ class DuePaymentsByPartner(dd.VirtualTable):
     def get_data_rows(cls,ar):
         partner = ar.master_instance
         if partner is None: return 
-        return get_partner_matches(cls.DUE_DC,partner,satisfied=False)
+        return get_partner_matches(partner,cls.DUE_DC,satisfied=False)
         
     @dd.displayfield(_("Match"))
     def match(self,row,ar):
@@ -978,6 +991,6 @@ customize_accounts()
 
 
 def update_partner_satisfied(p):
-    for m in get_partner_matches(accounts.DEBIT,p):
+    for m in get_partner_matches(p,accounts.DEBIT):
         m.update_satisfied()
         

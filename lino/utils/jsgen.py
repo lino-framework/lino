@@ -97,13 +97,15 @@ from django.utils.encoding import force_unicode
 
 
 import lino
+
 from lino.utils import IncompleteDate
 from lino.utils.quantities import Quantity
 from lino.utils.xmlgen import etree
 
-from lino.core.dbutils import obj2str
+#~ from lino.core.dbutils import obj2str
 from lino.utils import curry
-from lino.core.actions import Permittable
+
+
 
 def dict2js(d):
     return ", ".join(["%s: %s" % (k,py2js(v)) for k,v in d.items()])
@@ -121,181 +123,6 @@ def set_for_user_profile(up):
     
     
     
-def declare_vars(v):
-    """
-    Yields the Javascript lines that declare the given  :class:`Variable` `v`.
-    If `v` is a :class:`Component`, `list`, `tuple` or `dict` which contains
-    other variables, recursively yields also the lines to declare these.
-    """
-    #~ assert _for_user_profile is not None
-    if isinstance(v,(list,tuple)): 
-        for sub in v:
-            for ln in declare_vars(sub):
-                yield ln
-        return
-    if isinstance(v,dict): 
-        for sub in v.values():
-            for ln in declare_vars(sub):
-                yield ln
-        return
-    if isinstance(v,Permittable) and not v.get_view_permission(_for_user_profile): 
-        return
-    if isinstance(v,Component): 
-        for sub in v.ext_options().values():
-            for ln in declare_vars(sub):
-                yield ln
-        # DON'T return
-    elif isinstance(v,Value): 
-        #~ 20120616 if not v.get_view_permission(_for_user_profile): return
-        #~ ok = True
-        for ln in declare_vars(v.value):
-            yield ln
-        # DON'T return
-        
-    if isinstance(v,Variable):
-        #~ 20120616 if not v.get_view_permission(_for_user_profile): return
-        if v.declare_type == DECLARE_VAR:
-            yield "var %s = %s;" % (v.ext_name,v.js_value()) 
-        elif v.declare_type == DECLARE_THIS:
-            yield "this.%s = %s;" % (v.ext_name,v.js_value())
-
-
-#~ from north import LanguageInfo
-
-def py2js(v):
-    """
-    Note that None values are rendered as ``null`` (not ``undefined``.
-    """
-    #~ assert _for_user_profile is not None
-    #~ logger.debug("py2js(%r)",v)
-    for cv in CONVERTERS:
-        v = cv(v)
-        
-    #~ if isinstance(v,LanguageInfo):
-        #~ return v.django_code
-        
-    if isinstance(v,Value):
-        return v.as_ext()
-        #~ v = v.as_ext()
-        #~ if not isinstance(v, basestring):
-            #~ raise Exception("20120121b %r is of type %s" % (v,type(v)))
-        #~ return v
-    if isinstance(v,Promise):
-        #~ v = force_unicode(v)
-        return json.dumps(force_unicode(v))
-        
-    if isinstance(v,types.GeneratorType): 
-        return "".join([py2js(x) for x in v])
-    if etree.iselement(v): 
-    #~ if isinstance(v,etree.Element): 
-        return json.dumps(etree.tostring(v))
-        
-    #~ if type(v) is types.GeneratorType:
-        #~ raise Exception("Please don't call the generator function yourself")
-        #~ return "\n".join([ln for ln in v])
-    if callable(v):
-        #~ print 20120114, repr(v)
-        #~ raise Exception("Please call the function yourself")
-        return "\n".join([ln for ln in v()])
-    if isinstance(v,js_code):
-        return str(v.s) # v.s might be a unicode
-    if v is None:
-        #~ return 'undefined'
-        return 'null'
-    if isinstance(v,(list,tuple)): # (types.ListType, types.TupleType):
-        #~ return "[ %s ]" % ", ".join([py2js(x) for x in v])
-        elems = [py2js(x) for x in v 
-            if (not isinstance(x,Permittable)) or x.get_view_permission(_for_user_profile)]
-        return "[ %s ]" % ", ".join(elems)
-    if isinstance(v,dict): # ) is types.DictType:
-        #~ print 20100226, repr(v)
-        return "{ %s }" % ", ".join([
-            "%s: %s" % (py2js(k),py2js(v)) for k,v in v.items()
-              if (not isinstance(v,Permittable)) or v.get_view_permission(_for_user_profile)
-              ])
-            #~ "%s: %s" % (k,py2js(v)) for k,v in v.items()])
-    if isinstance(v,bool): # types.BooleanType:
-        return str(v).lower()
-    #~ if isinstance(v,CRL):
-        #~ return str(v)
-    if isinstance(v, Quantity):
-        return '"%s"' % v
-    if isinstance(v, (int, long, decimal.Decimal,fractions.Fraction)):
-        return str(v)
-    if isinstance(v, IncompleteDate):
-        return '"%s"' % v.strftime(settings.SITE.date_format_strftime)
-        #~ return '"%s"' % v
-    if isinstance(v, datetime.datetime):
-        #~ """20120120"""
-        return '"%s"' % v.strftime(settings.SITE.datetime_format_strftime)
-        #~ return '"%s"' % v.strftime('%Y-%m-%d %H:%M:%S')
-    if isinstance(v, datetime.time):
-        return '"%s"' % v.strftime(settings.SITE.time_format_strftime)
-    if isinstance(v, datetime.date):
-        if v.year < 1900:
-            v = IncompleteDate(v)
-            return '"%s"' % v.strftime(settings.SITE.date_format_strftime)
-        return '"%s"' % v.strftime(settings.SITE.date_format_strftime)
-        #~ return 'new Date(%d,%d,%d)' % (v.year,v.month-1,v.day)
-        #~ return repr('%d.%d.%d' % (v.day,v.month,v.year))
-        #~ return repr(str(v))
-
-    if isinstance(v, float):
-        return repr(v)
-    #return json.encoder.encode_basestring(v)
-    #print repr(v)
-    # http://docs.djangoproject.com/en/dev/topics/serialization/
-    #~ if not isinstance(v, (str,unicode)):
-        #~ raise Exception("20120121 %r is of type %s" % (v,type(v)))
-    return json.dumps(v)
-    #~ return json.dumps(v,cls=DjangoJSONEncoder) # http://code.djangoproject.com/ticket/3324
-    
-
-"""
-The following works only for Python 2.6 and above, which is not available on Lenny.
-See also http://code.google.com/p/lino/wiki/20100215
-
-class LinoJSONEncoder(DjangoJSONEncoder):
-    def _iterencode_default(self, o, markers=None):
-        if type(o) is types.GeneratorType:
-            #~ for ln in o: yield ln+'\n'
-            return "\n".join([ln for ln in o])
-        if isinstance(o,js_code):
-            return o.s
-        if isinstance(o,Variable):
-            return o.as_ext()
-        return super(LinoJSONEncoder, self)._iterencode_default(o,markers)
-        #~ for chunk in super(LinoJSONEncoder, self)._iterencode(o,markers):
-            #~ yield chunk
-
-    def default(self, o):
-      
-        if isinstance(o,menus.Menu):
-            if o.parent is None:
-                return o.items
-            return dict(text=o.label,menu=dict(items=o.items))
-            
-        if isinstance(o,menus.MenuItem):
-            # from lino.lino_site import lino_site
-            # todo: convert
-            # url = lino_site.ui.action_url_http(o.actor)
-            #handler = "function(btn,evt){Lino.do_action(undefined,%r,%r,{})}" % (url,id2js(o.actor.actor_id))
-            return dict(text=o.label,handler=js_code(handler))
-            
-        return super(LinoJSONEncoder, self).default(o)
-
-
-
-
-def py2js(v,**kw):
-    # logger.debug("py2js(%r,%r)",v,kw)
-    if isinstance(v,Variable):
-        return v.as_ext(**kw)
-    assert len(kw) == 0, "py2js() : value %r not allowed with keyword parameters" % v
-    return json.dumps(v,cls=LinoJSONEncoder) # http://code.djangoproject.com/ticket/3324
-    
-"""
-
 def key2js(s):
     if isinstance(s,str):
         return s
@@ -476,6 +303,283 @@ class Component(Variable):
             #~ yield "  " + ln
         #~ yield "(" + self.params + ")"
     
+
+from django.db.models.fields import NOT_PROVIDED
+
+from lino.core.actions import Permittable
+
+class VisibleComponent(Component,Permittable):
+    vflex = False
+    hflex = True
+    width = None
+    height = None
+    preferred_width = 10
+    preferred_height = 1
+    #flex = None
+    
+    def __init__(self,name,**kw):
+        Component.__init__(self,name)
+        # install `allow_read` permission handler:
+        self.setup(**kw)
+        #~ Permittable.__init__(self,False) # name.startswith('cbss'))
+        
+        #~ def __init__(self,debug_permissions):
+        #~ if type(debug_permissions) != bool:
+            #~ raise Exception("20120925 %s %r",self,self)
+        #~ if self.required is None:
+            #~ self.allow_read = curry(make_permission_handler(
+                #~ self,self,True,
+                #~ debug_permissions),self)
+        #~ else:
+        self.install_permission_handler()
+        
+    def install_permission_handler(self):
+        
+        from lino.core.auth import make_view_permission_handler
+        
+        #~ if self.name == 'newcomers_left': # required.has_key('user_groups'):
+            #~ logger.info("20121130 install_permission_handler() %s %s",self,self.required)
+            #~ if self.required.get('user_groups') ==  'integ':
+                #~ raise Exception("20121130")
+        self.allow_read = curry(make_view_permission_handler(
+            self,True,
+            self.debug_permissions,
+            **self.required),self)
+            
+    def get_view_permission(self,profile):
+        #~ if self.name == 'newcomers_left': # required.has_key('user_groups'):
+            #~ logger.info("20121130 get_view_permission() %s %s",self,self.required)
+        return self.allow_read(profile)
+        
+    def setup(self,width=None,height=None,label=None,
+        preferred_width=None,
+        required=NOT_PROVIDED,
+        **kw):
+        self.value.update(kw)
+        #~ Component.__init__(self,name,**kw)
+        if preferred_width is not None:
+            self.preferred_width = preferred_width
+        if width is not None:
+            self.width = width
+        if height is not None:
+            self.height = height
+        if label is not None:
+            self.label = label
+        if required is not NOT_PROVIDED:
+            self.required = required
+            #~ if self.name == 'newcomers_left': # required.has_key('user_groups'):
+                #~ logger.info("20121130 setup() %s %s",self,self.required)
+    
+
+    def __str__(self):
+        "This shows how elements are specified"
+        name = Component.__str__(self)
+        if self.width is None:
+            return name
+        if self.height is None:
+            return name + ":%d" % self.width
+        return name + ":%dx%d" % (self.width,self.height)
+        
+    def unused__repr__(self):
+        return str(self)
+        
+    def pprint(self,level=0):
+        return ("  " * level) + str(self)
+        
+    def walk(self):
+        yield self
+        
+        
+    def debug_lines(self):
+        sep = u"</td><td>"
+        cols = """ext_name name parent label __class__.__name__ 
+        elements js_value
+        label_align vertical width preferred_width height 
+        preferred_height vflex""".split()
+        yield '<tr><td>' + sep.join(cols) + '</td></tr>'
+        for e in self.walk():
+            yield '<tr><td>'+sep.join([py2html(e,n) for n in cols]) +'</td></tr>'
+            
+        
+
+
+
+def declare_vars(v):
+    """
+    Yields the Javascript lines that declare the given  :class:`Variable` `v`.
+    If `v` is a :class:`Component`, `list`, `tuple` or `dict` which contains
+    other variables, recursively yields also the lines to declare these.
+    """
+    #~ assert _for_user_profile is not None
+    if isinstance(v,(list,tuple)): 
+        for sub in v:
+            for ln in declare_vars(sub):
+                yield ln
+        return
+    if isinstance(v,dict): 
+        for sub in v.values():
+            for ln in declare_vars(sub):
+                yield ln
+        return
+    if isinstance(v,VisibleComponent) and not v.get_view_permission(_for_user_profile): 
+        return
+    if isinstance(v,Component): 
+        for sub in v.ext_options().values():
+            for ln in declare_vars(sub):
+                yield ln
+        # DON'T return
+    elif isinstance(v,Value): 
+        #~ 20120616 if not v.get_view_permission(_for_user_profile): return
+        #~ ok = True
+        for ln in declare_vars(v.value):
+            yield ln
+        # DON'T return
+        
+    if isinstance(v,Variable):
+        #~ 20120616 if not v.get_view_permission(_for_user_profile): return
+        if v.declare_type == DECLARE_VAR:
+            yield "var %s = %s;" % (v.ext_name,v.js_value()) 
+        elif v.declare_type == DECLARE_THIS:
+            yield "this.%s = %s;" % (v.ext_name,v.js_value())
+
+
+#~ from north import LanguageInfo
+
+def py2js(v):
+    """
+    Note that None values are rendered as ``null`` (not ``undefined``.
+    """
+    #~ assert _for_user_profile is not None
+    #~ logger.debug("py2js(%r)",v)
+    for cv in CONVERTERS:
+        v = cv(v)
+        
+    #~ if isinstance(v,LanguageInfo):
+        #~ return v.django_code
+        
+    if isinstance(v,Value):
+        return v.as_ext()
+        #~ v = v.as_ext()
+        #~ if not isinstance(v, basestring):
+            #~ raise Exception("20120121b %r is of type %s" % (v,type(v)))
+        #~ return v
+    if isinstance(v,Promise):
+        #~ v = force_unicode(v)
+        return json.dumps(force_unicode(v))
+        
+    if isinstance(v,types.GeneratorType): 
+        return "".join([py2js(x) for x in v])
+    if etree.iselement(v): 
+    #~ if isinstance(v,etree.Element): 
+        return json.dumps(etree.tostring(v))
+        
+    #~ if type(v) is types.GeneratorType:
+        #~ raise Exception("Please don't call the generator function yourself")
+        #~ return "\n".join([ln for ln in v])
+    if callable(v):
+        #~ print 20120114, repr(v)
+        #~ raise Exception("Please call the function yourself")
+        return "\n".join([ln for ln in v()])
+    if isinstance(v,js_code):
+        return str(v.s) # v.s might be a unicode
+    if v is None:
+        #~ return 'undefined'
+        return 'null'
+    if isinstance(v,(list,tuple)): # (types.ListType, types.TupleType):
+        #~ return "[ %s ]" % ", ".join([py2js(x) for x in v])
+        elems = [py2js(x) for x in v 
+            if (not isinstance(x,VisibleComponent)) or x.get_view_permission(_for_user_profile)]
+        return "[ %s ]" % ", ".join(elems)
+    if isinstance(v,dict): # ) is types.DictType:
+        #~ print 20100226, repr(v)
+        return "{ %s }" % ", ".join([
+            "%s: %s" % (py2js(k),py2js(v)) for k,v in v.items()
+              if (not isinstance(v,VisibleComponent)) or v.get_view_permission(_for_user_profile)
+              ])
+            #~ "%s: %s" % (k,py2js(v)) for k,v in v.items()])
+    if isinstance(v,bool): # types.BooleanType:
+        return str(v).lower()
+    #~ if isinstance(v,CRL):
+        #~ return str(v)
+    if isinstance(v, Quantity):
+        return '"%s"' % v
+    if isinstance(v, (int, long, decimal.Decimal,fractions.Fraction)):
+        return str(v)
+    if isinstance(v, IncompleteDate):
+        return '"%s"' % v.strftime(settings.SITE.date_format_strftime)
+        #~ return '"%s"' % v
+    if isinstance(v, datetime.datetime):
+        #~ """20120120"""
+        return '"%s"' % v.strftime(settings.SITE.datetime_format_strftime)
+        #~ return '"%s"' % v.strftime('%Y-%m-%d %H:%M:%S')
+    if isinstance(v, datetime.time):
+        return '"%s"' % v.strftime(settings.SITE.time_format_strftime)
+    if isinstance(v, datetime.date):
+        if v.year < 1900:
+            v = IncompleteDate(v)
+            return '"%s"' % v.strftime(settings.SITE.date_format_strftime)
+        return '"%s"' % v.strftime(settings.SITE.date_format_strftime)
+        #~ return 'new Date(%d,%d,%d)' % (v.year,v.month-1,v.day)
+        #~ return repr('%d.%d.%d' % (v.day,v.month,v.year))
+        #~ return repr(str(v))
+
+    if isinstance(v, float):
+        return repr(v)
+    #return json.encoder.encode_basestring(v)
+    #print repr(v)
+    # http://docs.djangoproject.com/en/dev/topics/serialization/
+    #~ if not isinstance(v, (str,unicode)):
+        #~ raise Exception("20120121 %r is of type %s" % (v,type(v)))
+    return json.dumps(v)
+    #~ return json.dumps(v,cls=DjangoJSONEncoder) # http://code.djangoproject.com/ticket/3324
+    
+
+"""
+The following works only for Python 2.6 and above, which is not available on Lenny.
+See also http://code.google.com/p/lino/wiki/20100215
+
+class LinoJSONEncoder(DjangoJSONEncoder):
+    def _iterencode_default(self, o, markers=None):
+        if type(o) is types.GeneratorType:
+            #~ for ln in o: yield ln+'\n'
+            return "\n".join([ln for ln in o])
+        if isinstance(o,js_code):
+            return o.s
+        if isinstance(o,Variable):
+            return o.as_ext()
+        return super(LinoJSONEncoder, self)._iterencode_default(o,markers)
+        #~ for chunk in super(LinoJSONEncoder, self)._iterencode(o,markers):
+            #~ yield chunk
+
+    def default(self, o):
+      
+        if isinstance(o,menus.Menu):
+            if o.parent is None:
+                return o.items
+            return dict(text=o.label,menu=dict(items=o.items))
+            
+        if isinstance(o,menus.MenuItem):
+            # from lino.lino_site import lino_site
+            # todo: convert
+            # url = lino_site.ui.action_url_http(o.actor)
+            #handler = "function(btn,evt){Lino.do_action(undefined,%r,%r,{})}" % (url,id2js(o.actor.actor_id))
+            return dict(text=o.label,handler=js_code(handler))
+            
+        return super(LinoJSONEncoder, self).default(o)
+
+
+
+
+def py2js(v,**kw):
+    # logger.debug("py2js(%r,%r)",v,kw)
+    if isinstance(v,Variable):
+        return v.as_ext(**kw)
+    assert len(kw) == 0, "py2js() : value %r not allowed with keyword parameters" % v
+    return json.dumps(v,cls=LinoJSONEncoder) # http://code.djangoproject.com/ticket/3324
+    
+"""
+
+
       
       
 def _test():
@@ -484,3 +588,5 @@ def _test():
 
 if __name__ == "__main__":
     _test()
+
+

@@ -208,7 +208,8 @@ class BoundAction(object):
         
     def get_view_permission(self,profile):
         """
-        20130511
+        Return True if this bound action is visible for users of this 
+        profile.
         """
         #~ if self.action.__class__.__name__ == 'ShowSlaveTable':
             #~ logger.info("20130820 BoundAction.get_view_permission()")
@@ -524,20 +525,14 @@ class Actor(actions.Parametrizable):
     Otherwise it will be set to `False` if the Actor 
     is a Table and has a `get_data_rows` method.
     
-    Note that this attribute is not inherited to subclasses.
-    (TODO: explain why... because at least for 
-    `lino_faggio.models.InvoicingsByEnrolment` it is disturbing 
-    to not inherit it.    
-    Has to do with :class:`DistByBudget <lino_welfare.modellib.debts.models.DistByBudget>` 
-    which defines its own `get_data_rows` but inherits from 
-    :class:`EntriesByBudget
-    <lino_welfare.modellib.debts.models.EntriesByBudget>` 
-    which has no `get_data_rows`.)
-    
+    Non-editable actors won't even call `get_view_permission` 
+    for actions which are not readonly.
     
     The :class:`lino.models.Changes` table is an example where this is being used: 
     nobody should ever edit something in the table of Changes. 
     The user interface uses this to generate optimized JS code for this case.
+    
+    
     """
     
     hide_sums = False
@@ -963,6 +958,10 @@ class Actor(actions.Parametrizable):
     
     @classmethod
     def get_view_permission(self,profile):
+        """
+        Return True if this actor as a whole is visible for users with 
+        the given profile.
+        """
         #~ return self.default_action.action.allow(user,None,None)
         #~ return self.default_action.get_bound_action_permission(user,None,None)
         #~ 20130511 return self.default_action.get_view_permission(profile)
@@ -1058,7 +1057,8 @@ class Actor(actions.Parametrizable):
                     if not cls._actions_dict.has_key(k):
                         #~ cls._attach_action(k,v)
                         if v.attach_to_actor(cls,k):
-                            cls.bind_action(v)
+                            if cls.editable or v.readonly:
+                                cls.bind_action(v)
         
                         
                     

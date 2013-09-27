@@ -447,14 +447,17 @@ class MoveUp(actions.Action):
     icon_name = 'arrow_up'
     #~ icon_file = 'arrow_up.png'
     help_text = _("Move this row one row upwards")
+    readonly = False
     
     def get_action_permission(self,ar,obj,state):
-        #~ return False
         if ar.data_iterator is None: return False
+        if not super(MoveUp,self).get_action_permission(ar,obj,state):
+            return False
+        #~ logger.info("20130927 %r", ar.data_iterator.__class__)
         if ar.data_iterator.count() == 0: return False
         if ar.data_iterator[0] == obj: return False
-        return super(MoveUp,self).get_action_permission(ar,obj,state)
-    
+        return True
+        
     def run_from_ui(self,ar,**kw):
         obj = ar.selected_rows[0]
         obj.swap_seqno(ar,-1)
@@ -473,14 +476,17 @@ class MoveDown(actions.Action):
     icon_name = 'arrow_down'
     #~ icon_file = 'arrow_down.png'
     help_text = _("Move this row one row downwards")
+    readonly = False
     
     def get_action_permission(self,ar,obj,state):
         if ar.data_iterator is None: return False
+        if not super(MoveDown,self).get_action_permission(ar,obj,state):
+            return False
         if ar.data_iterator.count() == 0: return False
         if ar.data_iterator[ar.data_iterator.count()-1] == obj: return False
         #~ if obj.__class__.__name__=='Entry' and obj.seqno == 25:
             #~ print 20130706, ar.data_iterator.count(), ar.data_iterator
-        return super(MoveDown,self).get_action_permission(ar,obj,state)
+        return True
     
     def run_from_ui(self,ar,**kw):
         obj = ar.selected_rows[0]
@@ -567,26 +573,6 @@ class Sequenced(Duplicable):
             self.set_seqno()
         super(Sequenced,self).full_clean(*args,**kw)
         
-    #~ def move_up(self)
-        #~ """
-        #~ Move this row "one position up" within its siblings
-        #~ """
-        #~ qs = self.get_siblings()
-        #~ if qs is None:
-            #~ return
-        #~ nav = AttrDict(**navinfo(qs,self))
-        #~ if not nav.recno:
-            #~ return
-        #~ if not nav.prev:
-            #~ return
-        #~ prev = qs.get(pk=nav.prev)
-        #~ if self.seqno == prev.seqno:
-            #~ return
-        #~ prev_seqno  = prev.seqno 
-        #~ prev.seqno = self.seqno
-        #~ self.seqno = prev_seqno 
-        #~ self.save()
-        #~ prev.save()
         
     def swap_seqno(self,ar,offset):
         """

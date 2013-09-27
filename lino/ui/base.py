@@ -49,6 +49,7 @@ ACTION_RESPONSES = frozenset((
   'html',
   'goto_record_id',
   'refresh','refresh_all',
+  'close_window',
   'xcallback',
   'open_url','open_davlink_url',
   'eval_js'))

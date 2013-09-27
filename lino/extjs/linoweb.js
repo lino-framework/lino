@@ -1807,6 +1807,10 @@ Lino.action_handler = function (panel,on_success,on_confirm) {
         }
     }
      
+    if (result.close_window) {
+        Lino.close_window();
+    }
+    
     if (result.refresh_all) {
         var cw = panel.get_containing_window();
         //~ console.log("20120123 refresh_all");
@@ -3851,8 +3855,6 @@ Lino.GridPanel = Ext.extend(Lino.GridPanel,{
         return rec
       };
     };
-    delete this.cell_edit;
-    
     this.columns  = this.apply_grid_config(this.gc_name,this.ls_grid_configs,this.ls_columns);
     
     //~ var grid = this;
@@ -3899,11 +3901,17 @@ Lino.GridPanel = Ext.extend(Lino.GridPanel,{
     //~ this.on('afteredit', this.new_on_afteredit);
     this.on('beforeedit', this.on_beforeedit);
     this.on('beforeedit',function(e) { this.before_row_edit(e.record)},this);
-    this.on('cellcontextmenu', Lino.cell_context_menu, this);
+    if (this.cell_edit) {
+        this.on('cellcontextmenu', Lino.cell_context_menu, this);
+    } else {
+        this.on('rowcontextmenu', Lino.row_context_menu, this);
+    }
     //~ this.on('contextmenu', Lino.grid_context_menu, this);
     
     
     //~ if (this.id == "ext-comp-1157") captureEvents(this);    
+    
+    delete this.cell_edit;
     
   },
   
@@ -4563,6 +4571,10 @@ Lino.GridPanel = Ext.extend(Lino.GridPanel,{
 //~ Lino.grid_context_menu = function(e) {
   //~ console.log('contextmenu',arguments);
 //~ }
+
+Lino.row_context_menu = function(grid,row,col,e) {
+  console.log('20130927 rowcontextmenu',grid,row,col,e,grid.store.reader.arrayData.rows[row]);
+}
 
 Lino.cell_context_menu = function(grid,row,col,e) {
   //~ console.log('20120531 cellcontextmenu',grid,row,col,e,grid.store.reader.arrayData.rows[row]);

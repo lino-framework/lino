@@ -43,7 +43,6 @@ from lino.utils import mti
 from lino.core import choicelists
 from lino.utils.jsgen import py2js, id2js, js_code
 from lino.utils import choosers
-from lino.core.auth import make_view_permission_handler
 
 from lino.utils.xmlgen import etree
 from lino.utils.xmlgen import html as xghtml
@@ -295,104 +294,8 @@ class Calendar(jsgen.Component):
     
 
 
-#~ NOT_GIVEN = object()
+from lino.utils.jsgen import VisibleComponent
 
-        
-class VisibleComponent(jsgen.Component,Permittable):
-    vflex = False
-    hflex = True
-    width = None
-    height = None
-    preferred_width = 10
-    preferred_height = 1
-    #flex = None
-    
-    def __init__(self,name,**kw):
-        jsgen.Component.__init__(self,name)
-        # install `allow_read` permission handler:
-        self.setup(**kw)
-        #~ Permittable.__init__(self,False) # name.startswith('cbss'))
-        
-        #~ def __init__(self,debug_permissions):
-        #~ if type(debug_permissions) != bool:
-            #~ raise Exception("20120925 %s %r",self,self)
-        #~ if self.required is None:
-            #~ self.allow_read = curry(make_permission_handler(
-                #~ self,self,True,
-                #~ debug_permissions),self)
-        #~ else:
-        self.install_permission_handler()
-        
-    def install_permission_handler(self):
-        #~ if self.name == 'newcomers_left': # required.has_key('user_groups'):
-            #~ logger.info("20121130 install_permission_handler() %s %s",self,self.required)
-            #~ if self.required.get('user_groups') ==  'integ':
-                #~ raise Exception("20121130")
-        self.allow_read = curry(make_view_permission_handler(
-            self,True,
-            self.debug_permissions,
-            **self.required),self)
-            
-    def get_view_permission(self,profile):
-        #~ if self.name == 'newcomers_left': # required.has_key('user_groups'):
-            #~ logger.info("20121130 get_view_permission() %s %s",self,self.required)
-        return self.allow_read(profile)
-        
-    def setup(self,width=None,height=None,label=None,
-        preferred_width=None,
-        required=dd.NOT_PROVIDED,
-        **kw):
-        self.value.update(kw)
-        #~ jsgen.Component.__init__(self,name,**kw)
-        if preferred_width is not None:
-            self.preferred_width = preferred_width
-        if width is not None:
-            self.width = width
-        if height is not None:
-            self.height = height
-        if label is not None:
-            self.label = label
-        if required is not dd.NOT_PROVIDED:
-            self.required = required
-            #~ if self.name == 'newcomers_left': # required.has_key('user_groups'):
-                #~ logger.info("20121130 setup() %s %s",self,self.required)
-    
-
-    def __str__(self):
-        "This shows how elements are specified"
-        name = jsgen.Component.__str__(self)
-        if self.width is None:
-            return name
-        if self.height is None:
-            return name + ":%d" % self.width
-        return name + ":%dx%d" % (self.width,self.height)
-        
-    def unused__repr__(self):
-        return str(self)
-        
-    def pprint(self,level=0):
-        return ("  " * level) + str(self)
-        
-    def walk(self):
-        yield self
-        
-        
-    def debug_lines(self):
-        sep = u"</td><td>"
-        cols = """ext_name name parent label __class__.__name__ 
-        elements js_value
-        label_align vertical width preferred_width height 
-        preferred_height vflex""".split()
-        yield '<tr><td>' + sep.join(cols) + '</td></tr>'
-        for e in self.walk():
-            yield '<tr><td>'+sep.join([py2html(e,n) for n in cols]) +'</td></tr>'
-            
-    def unused_has_field(self,fld):
-        for de in self.walk():
-            if isinstance(de,FieldElement) and de.field is fld:
-                return True
-        return False
-        
         
 class LayoutElement(VisibleComponent):
     stored = False

@@ -230,53 +230,86 @@ class DocItem(mixins.Sequenced,ledger.VoucherItem,ledger.Matchable):
     #~ debit = fields.PriceField(default=0)
     #~ credit = fields.PriceField(default=0)
     
-class BankStatementDetail(dd.FormLayout):
+class JournalEntryDetail(dd.FormLayout):
     main = "general ledger"
+    
+    general = dd.Panel("""
+    date user narration workflow_buttons
+    finan.ItemsByStatement
+    """,label=_("General"))
+    
+    ledger = dd.Panel("""
+    id journal year number
+    ledger.MovementsByVoucher
+    """,label=_("Ledger"))
+    
+class BankStatementDetail(JournalEntryDetail):
     general = dd.Panel("""
     date balance1 balance2 user workflow_buttons
     finan.ItemsByStatement
     """,label=_("General"))
     
-    ledger = dd.Panel("""
-    id journal year number narration
-    ledger.MovementsByVoucher
-    """,label=_("Ledger"))
+class PaymentOrderDetail(JournalEntryDetail):
+    general = dd.Panel("""
+    date user narration total workflow_buttons
+    finan.ItemsByStatement
+    """,label=_("General"))
+    
         
 
-class BankStatements(dd.Table):
+class JournalEntries(dd.Table):
+    model = 'finan.JournalEntry'
+    params_panel_hidden = True
+    order_by = ["date","id"]
     parameters = dict(
         pyear=ledger.FiscalYears.field(blank=True),
         #~ ppartner=models.ForeignKey('contacts.Partner',blank=True,null=True),
         pjournal=ledger.JournalRef(blank=True))
-    model = BankStatement
-    order_by = ["date","id"]
-    column_names = "date id number balance1 balance2 user *" 
     params_layout = "pjournal pyear"
-    #~ detail_layout = InvoiceDetail()
+    detail_layout = JournalEntryDetail()
     insert_layout = dd.FormLayout("""
-    date 
-    balance1 
-    balance2
+    date user
+    narration 
     """,window_size=(40,'auto'))
-    
-    detail_layout = BankStatementDetail()
-    
+        
     @classmethod
     def get_request_queryset(cls,ar):
-        qs = super(BankStatements,cls).get_request_queryset(ar)
+        qs = super(JournalEntries,cls).get_request_queryset(ar)
         if not isinstance(qs,list):
             if ar.param_values.pyear:
                 qs = qs.filter(year=ar.param_values.pyear)
             if ar.param_values.pjournal:
                 qs = qs.filter(journal=ar.param_values.pjournal)
         return qs
+        
+
+class PaymentOrders(JournalEntries):
+    model = 'finan.PaymentOrder'
+    column_names = "date id number user *" 
+    detail_layout = PaymentOrderDetail()
+    
+
+class BankStatements(JournalEntries):
+    model = 'finan.BankStatement'
+    column_names = "date id number balance1 balance2 user *" 
+    insert_layout = dd.FormLayout("""
+    date user
+    balance1 
+    balance2
+    """,window_size=(40,'auto'))
+    
+    detail_layout = BankStatementDetail()
     
     
+    
+    
+class PaymentOrdersByJournal(PaymentOrders,ledger.ByJournal):
+    pass
+class JournalEntriesByJournal(JournalEntries,ledger.ByJournal):
+    pass
     
 class BankStatementsByJournal(BankStatements,ledger.ByJournal):
-    #~ order_by = ["number"]
-    #~ master_key = 'journal' # see django issue 10808
-    params_panel_hidden = True
+    pass
                   
    
     
@@ -292,8 +325,75 @@ class ItemsByStatement(DocItems):
     auto_fit_column_widths = True
     hidden_columns = 'id amount dc seqno'
     
+
+
+class FillToVoucher(dd.Action):
+    label = _("Fill")
+    icon_name = 'lightning'
+    
+    def run_from_ui(self,ar,**kw):
+        voucher = ar.master_instance
+        seqno = None
+        n = 0
+        for obj in ar.selected_rows:
+            i = voucher.add_voucher_item(obj.account,
+                dc=not obj.dc,
+                seqno=seqno,
+                amount=obj.amount,
+                partner=obj.partner,
+                match=obj.voucher.get_default_match())
+            i.full_clean()
+            i.save()
+            seqno = i.seqno + 1
+            n += 1
+            
+        msg = _("%d items have been added.") % n
+        logger.info(msg)
+        kw.update(close_window=True)
+        return ar.success(msg,**kw)
+
+
+class SuggestionsByJournalEntry(ledger.Movements):
+    do_fill = FillToVoucher()
+    
+    label = _("Suggestions")
+    #~ model = 'ledger.Movement'
+    master = 'finan.JournalEntry'
+    column_names = 'voucher__date partner account voucher_link:5 debit credit'
+    window_size = (70,20) # (width, height)
+    editable = False
+    auto_fit_column_widths = True
+    cell_edit = False
+    
+    
+    @classmethod
+    def get_data_rows(cls,ar):
+        #~ return []
+        voucher = ar.master_instance
+        if voucher is None: return 
+        for mvt in ledger.Movement.objects.filter(satisfied=False,
+            partner__isnull=False).order_by('voucher__date'):
+                yield mvt
+                #~ yield AttrDict(partner=mvt.partner,amount=mvoucher=mvt.get_mti_child())
+        #~ return get_partner_matches(cls.DUE_DC,partner,satisfied=False)
+
+
     
 
+
+
+JournalEntriesByJournal.suggest = dd.ShowSlaveTable(SuggestionsByJournalEntry)
+
+class SuggestionsByBankStatement(SuggestionsByJournalEntry):
+    master = 'finan.BankStatement'
+
+BankStatementsByJournal.suggest = dd.ShowSlaveTable(SuggestionsByBankStatement)
+
+
+
+
+ledger.VoucherTypes.add_item(JournalEntry,JournalEntriesByJournal)
+ledger.VoucherTypes.add_item(PaymentOrder,PaymentOrdersByJournal)
 ledger.VoucherTypes.add_item(BankStatement,BankStatementsByJournal)
 
 MODULE_LABEL = _("Financial")

@@ -95,9 +95,10 @@ def objects():
     if ledger:
         settings.SITE.site_config.update(purchases_vat_account=obj)
     
-    yield Group('55','assets',u"Institutions financières",u"Fainanzinstitute","Banks") # PCMN 55
+    yield Group('55','assets',u"Institutions financières",u"Finanzinstitute","Banks") # PCMN 55
     yield Account('bestbank','bank_accounts',u"Bestbank",u"Bestbank","Bestbank") 
     yield Account('cash','bank_accounts',u"Cash",u"Cash","Cash") 
+    yield Account('bestbankpo','bank_accounts',u"Ordres de paiement Bestbank",u"Zahlungsaufträge Bestbank","Payment Orders Bestbank") 
     
     # TODO: use another account type than bank_accounts:
     yield Account('vatdcl','bank_accounts',u"VAT",u"VAT","VAT") 
@@ -142,17 +143,21 @@ def objects():
     if finan:
         yield finan.BankStatement.create_journal(chart=chart,name=u"Bestbank",account='bestbank',ref="B")
         yield finan.BankStatement.create_journal(chart=chart,name=u"Cash",account='cash',ref="C")
+        yield finan.PaymentOrder.create_journal(chart=chart,name=u"Payment Orders",account='bestbankpo',ref="PO")
+        yield finan.JournalEntry.create_journal(chart=chart,name=u"Miscellaneous Journal Entries",ref="M",dc=accounts.DEBIT)
 
     if declarations:
         yield declarations.Declaration.create_journal(chart=chart,name=u"VAT declarations",ref="V",account='vatdcl')
 
-
+    Company = dd.resolve_model('contacts.Company')
+    
     MODEL = ledger.AccountInvoice
     vt = ledger.VoucherTypes.get_for_model(MODEL)
     JOURNALS = Cycler(vt.get_journals())
     Partner = dd.resolve_model(partner_model)
     #~ logger.info("20130105 mini Partners %s",Partner.objects.all().count())
-    PARTNERS = Cycler(Partner.objects.order_by('name'))
+    #~ PARTNERS = Cycler(Partner.objects.order_by('name'))
+    PARTNERS = Cycler(Company.objects.order_by('id'))
     USERS = Cycler(settings.SITE.user_model.objects.all())
     AMOUNTS = Cycler([Decimal(x) for x in 
         "2.50 6.80 9.95 14.50 20 29.90 39.90 39.90 99.95 199.95 599.95 1599.99".split()])
