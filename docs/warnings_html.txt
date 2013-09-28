@@ -1,0 +1,5 @@
+/home/luc/hgwork/lino/docs/todo.rst:1016: WARNING: Enumerated list ends without a blank line; unexpected unindent.
+/home/luc/hgwork/lino/lino/site.py:docstring of lino.site.Site.webdav_url:7: WARNING: term not in glossary: runserver
+/home/luc/hgwork/lino/lino/mixins/printable.py:docstring of lino.mixins.printable.PisaBuildMethod:1: WARNING: undefined label: lino.tutorials.pisa (if the link has no caption the label must precede a section header)
+/home/luc/hgwork/lino/docs/api/lino.utils.rst:7: WARNING: unknown document: /autodoc/lino.test_apps.mti
+/home/luc/hgwork/lino/docs/releases/index.rst:1: WARNING: unknown document: 1.6.12

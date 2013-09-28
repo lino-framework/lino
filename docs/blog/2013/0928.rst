@@ -1,0 +1,86 @@
+======================================
+20130928 (Saturday, 28 September 2013)
+======================================
+
+
+Clearable accounts
+------------------
+
+I first needed to do some vocabulary research. 
+Imagine some contract which 
+causes monthly anticipated payments followed by a quarterly invoice 
+which leads to an adjusting payment:
+
+=================== ====== ====== =========
+Transaction         Debit  Credit Match 
+=================== ====== ====== =========
+January payment     100           X
+February payment    100           X
+March payment       100           X
+March invoice              655.75 X
+Adjusting payment   355.75        X
+April payment       200
+=================== ====== ====== =========
+
+At some moment the system (automatically) or the user (manually) must 
+insert those Xes in the in the `Match` column
+to indicate that these movements should be "grouped" together 
+and that the March invoice is *paid*.
+
+In French this action is called "Lettrage des écritures comptables",
+in (Belgian) German I call it "Buchungen lettrieren".
+
+According to `Jack Dunwell <http://www.proz.com/translator/802595>`_ 
+in a discussion thread at
+`proz.com <http://www.proz.com/kudoz/french_to_english/accounting/3476207-lettrables.html>`_
+this is called 
+"Cross referencing the invoice against its clearing credit notes and cash."
+Merci, Jack.
+
+
+I'd extrapolate this to say that a "clearable account" is an acccount 
+which is expected to require this action.
+Not every account is clearable.
+
+*Partner* accounts are clearable per se: if you pay or receive some money 
+to or from a business partner, then you must somehow show why you did 
+that.
+
+But also *general* accounts can require clearing. For examople:
+
+- 4110 T.V.A. due
+- 4111 T.V.A. déductible
+- 5800 Virements internes
+
+That's why Lino now has an attribute "Clearable" "Lettrable" ("Lettrierbar") 
+per general account to designate such accounts.
+(I had a temptation to solve this by adding a field `partner` to 
+`accounts.Account`. If this field is non-empty, the account 
+is "clearable".
+But that would be overkill and difficult to explain.)
+
+New tables DuePaymentsByAccount.
+
+Extended the Match class so that it works also per account. 
+Which has the beneficient side effect af no longer ignoring the account 
+when building the matches for a partner. Imagine for example a partner 
+who is both customer and supplier and for whom we had exactly three 
+operations::
+
+  Sales invoice      1000
+  Puchases invoice         700
+  Payment                  300
+
+Lino should not allow to clear this as is, but should require to add
+a journal entry "Clearing"::
+
+  Sales invoice      1000      S
+  Puchases invoice         700 P
+  Payment                  300 P
+  Clearing                1000 S
+  Clearing           1000      P
+
+
+
+
+

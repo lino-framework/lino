@@ -140,7 +140,7 @@ class Journal(dd.BabelNamed,mixins.Sequenced,mixins.PrintableType):
     trade_type = vat.TradeTypes.field(blank=True)
     #~ doctype = models.IntegerField() #choices=DOCTYPE_CHOICES)
     voucher_type = VoucherTypes.field() 
-    force_sequence = models.BooleanField(default=False)
+    force_sequence = models.BooleanField(_("Force chronological sequence"),default=False)
     #~ total_based = models.BooleanField(_("Voucher entry based on total amount"),default=False)
     chart = dd.ForeignKey('accounts.Chart')
     #~ chart = dd.ForeignKey('accounts.Chart',blank=True,null=True)
@@ -548,12 +548,6 @@ class Matchable(dd.Model):
         #~ qs = qs.distinct('match')
         return qs.values_list('match',flat=True)
         
-        for mvt in qs:
-            choices.append(Match(DC,partner,mvt.match))
-        return choices
-        
-    #~ def get_match_display(self,m):
-        #~ return repr(m)
     
 
 
@@ -641,24 +635,31 @@ class Movements(dd.Table):
 class MovementsByVoucher(Movements):
     master_key = 'voucher'
     column_names = 'seqno account debit credit match satisfied'
-    #~ editable = False
     auto_fit_column_widths = True
     
 class MovementsByPartner(Movements):
     master_key = 'partner'
     order_by = ['-voucher__date']
     column_names = 'voucher__date voucher_link debit credit account match satisfied'
-    #~ editable = False
+    auto_fit_column_widths = True
+    
+class MovementsByAccount(Movements):
+    master_key = 'account'
+    order_by = ['-voucher__date']
+    column_names = 'voucher__date voucher_link debit credit partner match satisfied'
     auto_fit_column_widths = True
     
 class Match(object):
     """
     Volatile object representing a group of movements
     """
-    def __init__(self,dc,partner,match):
+    def __init__(self,dc,mvt):
+    #~ def __init__(self,account,dc,partner,match):
         self.dc = dc
-        self.partner = partner
-        self.match = match
+        self.partner = mvt.partner
+        self.account = mvt.account
+        self.match = mvt.match
+        
         self.debts = []
         self.received = []
         self.balance = ZERO
@@ -667,7 +668,7 @@ class Match(object):
         self.has_unsatisfied_movement = False
         self.has_satisfied_movement = False
         
-        qs = Movement.objects.filter(partner=partner,match=match)
+        qs = Movement.objects.filter(partner=self.partner,account=self.account,match=self.match)
         for mvt in qs.order_by('voucher__date'):
             self.collect(mvt)
     
@@ -701,42 +702,25 @@ class Match(object):
                 m.satisfied = satisfied
                 m.save()
                 
-def get_partner_matches(partner,dc,**flt):
-    qs = Movement.objects.filter(partner=partner,**flt)
+def get_account_matches(dc,**flt):
+    qs = Movement.objects.filter(**flt)
     qs = qs.order_by('voucher__date')
-    if False: # DISTINCT ON fields not supported
-        qs = qs.distinct('match') 
-        for mvt in qs:
-            yield Match(cls.DUE_DC,partner,mvt.match)
-    else:
-        logger.info("20130921 %s %s",partner,qs)
-        found = set()
-        for mvt in qs:
-            if not mvt.match in found:
-                found.add(mvt.match)
-                yield Match(dc,partner,mvt.match)
+    #~ logger.info("20130921 %s %s",partner,qs)
+    matches_by_account  = dict()
+    for mvt in qs:
+        matches = matches_by_account.setdefault(mvt.account,set())
+        if not mvt.match in matches:
+            matches.add(mvt.match)
+            yield Match(dc,mvt)
         
     
-class DuePaymentsByPartner(dd.VirtualTable):
-    """
-    Due Payements is the table to print in a Payment Reminder.
-    Usually this table has one row per sales invoice which is not completely paid.
-    But several invoices ("debts") may be grouped by match.
-    """
-    
-    master = 'contacts.Partner'
+class DuePayments(dd.VirtualTable):
     column_names = 'match due_date balance debts received'
     auto_fit_column_widths = True
     
     DUE_DC = accounts.DEBIT
     
     
-    @classmethod
-    def get_data_rows(cls,ar):
-        partner = ar.master_instance
-        if partner is None: return 
-        return get_partner_matches(partner,cls.DUE_DC,satisfied=False)
-        
     @dd.displayfield(_("Match"))
     def match(self,row,ar):
         return row.match
@@ -761,6 +745,35 @@ class DuePaymentsByPartner(dd.VirtualTable):
     def balance(self,row,ar):
         return row.balance
             
+    
+    
+class DuePaymentsByAccount(DuePayments):
+    master = 'accounts.Account'
+    
+    @classmethod
+    def get_data_rows(cls,ar):
+        account = ar.master_instance
+        if account is None: return []
+        if not account.clearable : return []
+        return get_account_matches(cls.DUE_DC,account=account,satisfied=False)
+        
+    
+class DuePaymentsByPartner(DuePayments):
+    """
+    Due Payements is the table to print in a Payment Reminder.
+    Usually this table has one row per sales invoice which is not completely paid.
+    But several invoices ("debts") may be grouped by match.
+    """
+    master = 'contacts.Partner'
+    
+    
+    @classmethod
+    def get_data_rows(cls,ar):
+        partner = ar.master_instance
+        if partner is None: return 
+        return get_account_matches(cls.DUE_DC,satisfied=False,partner=partner)
+        #~ return get_partner_matches(partner,cls.DUE_DC,satisfied=False)
+        
 
 
 
@@ -986,11 +999,14 @@ def customize_accounts():
             tt.name+'_allowed',
             models.BooleanField(verbose_name=tt.text))
 
+    dd.inject_field('accounts.Account',
+        'clearable',models.BooleanField(_("Clearable"),default=False))
+    
 customize_accounts()
 
 
 
 def update_partner_satisfied(p):
-    for m in get_partner_matches(p,accounts.DEBIT):
+    for m in get_account_matches(accounts.DEBIT,partner=p):
         m.update_satisfied()
         

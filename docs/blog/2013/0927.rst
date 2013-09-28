@@ -23,7 +23,8 @@ not necessary for Movement and too expensive (added a counter in
 Registrable.register() instead.
 
 
-Cool! For the first time Lino is now able to suggest the entries of 
+Cool! For the first time Lino 
+(:mod:`lino.modlib.finan`) is able to suggest the entries of 
 a bank statement using open transactions. (A function which in fact is 
 usually not useful in BankStatements but in PaymentOrders and/or 
 JournalEntries.
