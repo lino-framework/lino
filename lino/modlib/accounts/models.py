@@ -12,7 +12,7 @@
 ## along with Lino; if not, see <http://www.gnu.org/licenses/>.
 
 """
-Accounts. The base module required for accounting.
+The :xfile:`models.py` for the :mod:`lino.modlib.accounts` app.
 
 """
 

@@ -45,8 +45,9 @@ import lino
 
 from lino.core import actions
 from lino.core import fields
+from lino.core import dbutils
 from lino.utils import iif, moneyfmt
-from north import dbutils
+#~ from north import dbutils
 #~ from lino.utils import call_optional_super
 from lino.utils.choosers import chooser
 from lino.utils.appy_pod import Renderer
@@ -472,9 +473,16 @@ class BasePrintAction(actions.Action):
     url_action_name = 'print'
     label = _('Print')
     
-    callable_from = (actions.GridEdit, 
-        actions.ShowDetailAction,
-        actions.ShowEmptyTable) # but not from InsertRow
+    
+    def attach_to_actor(self,actor,name):
+        if not dbutils.resolve_app('system'):
+            return False
+        return super(BasePrintAction,self).attach_to_actor(actor,name)
+    
+    def is_callable_from(self,caller):
+        return isinstance(caller,(actions.GridEdit, 
+            actions.ShowDetailAction,
+            actions.ShowEmptyTable)) # but not from InsertRow
     
     #~ def __init__(self,rpt,*args,**kw):
         #~ self.actor = rpt
@@ -776,18 +784,9 @@ class BasePrintable(object):
         
     def get_printable_context(self,ar,**kw):
         """
-        Defines the following names in your template context:
+        Defines the certain names of a template context.
         
-        this
-            The printable object instance
-            
-        mtos
-            "amount to string" using :func:`decfmt`
-        fds
-            "format date short", see :func:`north.dbutils.fds`
-        fdm
-            "format date medium", see :func:`north.dbutils.fdm`
-        
+        See :doc:`/user/templates_api`.
         
         :class:`lino.modlib.notes.models.Note` extends this.
         """

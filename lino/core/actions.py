@@ -464,7 +464,10 @@ class Action(Parametrizable,Permittable):
     """
     
     select_rows = True
+    #~ select_rows = False
     """
+    TODO: rename this to "single_row".
+    True if this action should be called on a single row (ignoring multiple row selection)..
     Set this to False if this action is a list action, not a row action.
     """
     
@@ -635,6 +638,13 @@ class Action(Parametrizable,Permittable):
         setup_params_choosers(self.__class__)
         
     def attach_to_actor(self,actor,name):
+        """
+        Called once per Actor per Action on startup before a BoundAction 
+        instance is being created.
+        If this returns False, then the action won't be attached to the given actor.
+        """
+        if not actor.editable and not self.readonly:
+            return False
         #~ if self.name is not None:
             #~ raise Exception("%s tried to attach named action %s" % (actor,self))
         #~ if actor == self.defining_actor:
@@ -993,7 +1003,10 @@ class ShowEmptyTable(ShowDetailAction):
     icon_name = None
     
     def is_callable_from(self,caller):
-        return True
+        return isinstance(caller,GridEdit)
+        
+    #~ def is_callable_from(self,caller):
+        #~ return True
     
     def attach_to_actor(self,actor,name):
         self.label = actor.label

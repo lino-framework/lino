@@ -1,0 +1,25 @@
+====================================
+20130930 (Monday, 30 September 2013)
+====================================
+
+
+Multiple sites in one database
+------------------------------
+
+Cool! 
+I had for the first time a need for what normal Django prople do
+with their `"sites" framework
+<https://docs.djangoproject.com/en/dev/ref/contrib/sites/>`_.
+
+I just needed to change the getter of the `site_config` property 
+so that it uses a configurable value :setting:`config_id` instead of 
+the hard-coded ``1``.
+
+:setting:`config_id` is the Lino equivalent of Django's 
+:setting:`SITE_ID` setting.
+Lino applications don't need ``django.contrib.sites`` because this 
+functionality is integral part of :mod:`lino.modlib.system`.
+Lino implements it a bit differently: main difference is that the 
+model instance is cached in memory instead of working with a middleware.
+
+

@@ -81,6 +81,26 @@ a journal entry "Clearing"::
   Clearing           1000      P
 
 
+TODO: 
+
+- context menu in row
+- selecting more than one row
+- adapt tests because number of fields has changed
+- be able to fill from DocItems
+- ...
+
+I checked in nevertheless because it seems to work and is so beautiful!
 
 
+Actions of the :menuselection:`Site --> Info` window
+-----------------------------------------------------
 
+The :menuselection:`Site --> Info` window (:class:`about.About <lino.modlib.about.models.About>`)
+had a useless action "Detail", and clicking the Print button there
+caused an internal server error.
+Fixed.
+:class:`BasePrintAction <lino.mixins.printable.BasePrintAction>` now overrides
+:meth:`attach_to_actor <lino.core.actions.Action.attach_to_actor>`
+to disable itself when :mod:`lino.modlib.system` is not installed.
+
+Worked a bit on :doc:`/user/templates_api`.

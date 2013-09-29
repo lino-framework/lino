@@ -1057,8 +1057,7 @@ class Actor(actions.Parametrizable):
                     if not cls._actions_dict.has_key(k):
                         #~ cls._attach_action(k,v)
                         if v.attach_to_actor(cls,k):
-                            if cls.editable or v.readonly:
-                                cls.bind_action(v)
+                            cls.bind_action(v)
         
                         
                     

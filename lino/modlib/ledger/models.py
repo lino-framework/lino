@@ -349,12 +349,13 @@ class Voucher(mixins.UserAuthored,mixins.Registrable):
             
         
     def __unicode__(self):
-        if self.number is None:
-            return "%s #%s (not registered)" % (
-                unicode(self.journal.voucher_type.model._meta.verbose_name),self.id)
-        if self.journal.ref:
-            return "%s#%s" % (self.journal.ref,self.number)
-        return "#%s (%s %s)" % (self.number,self.journal,self.year)
+        return "%s#%s" % (self.journal.ref,self.id)
+        #~ if self.number is None:
+            #~ return "%s #%s (not registered)" % (
+                #~ unicode(self.journal.voucher_type.model._meta.verbose_name),self.id)
+        #~ if self.journal.ref:
+            #~ return "%s#%s" % (self.journal.ref,self.number)
+        #~ return "#%s (%s %s)" % (self.number,self.journal,self.year)
         
     def get_default_match(self):
         #~ return "%s#%s" % (self.journal.ref,self.number)
@@ -513,6 +514,13 @@ class ByJournal(dd.Table):
 
         
 class Matchable(dd.Model):
+    """
+    Base class :class:`Movement` and :class:`AccountInvoice`
+    (and e.g. `sales.Invoice`, `finan.DocItem`)
+    
+    Adds a field `match` and a chooser for it.
+    Requires a field `partner`.
+    """
     
     class Meta: 
         abstract = True
@@ -555,6 +563,9 @@ class Matchable(dd.Model):
 #~ class Movement(mixins.Sequenced,Matchable):
 
 class Movement(Matchable):
+    """
+    An accounting movement in the ledger.
+    """
   
     allow_cascaded_delete = ['voucher']
     
@@ -649,7 +660,7 @@ class MovementsByAccount(Movements):
     column_names = 'voucher__date voucher_link debit credit partner match satisfied'
     auto_fit_column_widths = True
     
-class Match(object):
+class DueMovement(object):
     """
     Volatile object representing a group of movements
     """
@@ -659,6 +670,7 @@ class Match(object):
         self.partner = mvt.partner
         self.account = mvt.account
         self.match = mvt.match
+        self.pk = self.id = mvt.id
         
         self.debts = []
         self.received = []
@@ -692,7 +704,7 @@ class Match(object):
             self.balance -= mvt.amount
     
     def update_satisfied(self):
-        satisfied = self.balance != ZERO
+        satisfied = self.balance == ZERO
         if satisfied:
             if not self.has_unsatisfied_movement: return 
         else:
@@ -702,24 +714,54 @@ class Match(object):
                 m.satisfied = satisfied
                 m.save()
                 
-def get_account_matches(dc,**flt):
+def get_due_movements(dc,**flt):
     qs = Movement.objects.filter(**flt)
     qs = qs.order_by('voucher__date')
     #~ logger.info("20130921 %s %s",partner,qs)
     matches_by_account  = dict()
     for mvt in qs:
-        matches = matches_by_account.setdefault(mvt.account,set())
+        k = (mvt.account,mvt.partner)
+        matches = matches_by_account.setdefault(k,set())
         if not mvt.match in matches:
             matches.add(mvt.match)
-            yield Match(dc,mvt)
+            yield DueMovement(dc,mvt)
         
     
-class DuePayments(dd.VirtualTable):
+class ExpectedMovements(dd.VirtualTable):
+    label = _("Due")
     column_names = 'match due_date balance debts received'
     auto_fit_column_widths = True
+    parameters = dd.ParameterPanel(
+        date_until=models.DateField(_("Date until"),blank=True,null=True),
+        trade_type=vat.TradeTypes.field(blank=True))
+        #~ journal=dd.ForeignKey(Journal,blank=True))
+        #~ dc=accounts.DebitOrCreditField(default=accounts.DEBIT))
+    params_layout = "trade_type date_until"
     
     DUE_DC = accounts.DEBIT
     
+    @classmethod
+    def get_data_rows(cls,ar,**flt):
+        #~ if ar.param_values.journal: 
+            #~ pass
+        if ar.param_values.trade_type: 
+            flt.update(account=ar.param_values.trade_type.get_partner_account())
+        if ar.param_values.date_until is not None:
+            flt.update(voucher__date__lte=ar.param_values.date_until)
+        return get_due_movements(cls.DUE_DC,**flt)
+        
+    @classmethod
+    def get_pk_field(self):
+        return Movement._meta.pk
+        
+    @classmethod
+    def get_row_by_pk(cls,pk):
+        mvt = Movement.objects.get(pk=pk)
+        return cls.get_row_for(mvt)
+        
+    @classmethod
+    def get_row_for(cls,mvt):
+        return DueMovement(cls.DUE_DC,mvt)
     
     @dd.displayfield(_("Match"))
     def match(self,row,ar):
@@ -745,34 +787,50 @@ class DuePayments(dd.VirtualTable):
     def balance(self,row,ar):
         return row.balance
             
+    @dd.virtualfield(dd.ForeignKey('contacts.Partner'))
+    def partner(self,row,ar):
+        return row.partner
+            
+    @dd.virtualfield(dd.ForeignKey('accounts.Account'))
+    def account(self,row,ar):
+        return row.account
+            
     
     
-class DuePaymentsByAccount(DuePayments):
+class DuePaymentsByAccount(ExpectedMovements):
     master = 'accounts.Account'
     
     @classmethod
-    def get_data_rows(cls,ar):
+    def get_data_rows(cls,ar,**flt):
         account = ar.master_instance
         if account is None: return []
         if not account.clearable : return []
-        return get_account_matches(cls.DUE_DC,account=account,satisfied=False)
+        #~ return get_due_movements(cls.DUE_DC,account=account,satisfied=False)
+        flt.update(satisfied=False,account=account)
+        # hack: ignore trade_type to avoid overriding account
+        ar.param_values.trade_type = None
+        return super(DuePaymentsByPartner,cls).get_data_rows(ar,**flt)
         
+dd.inject_action('accounts.Account',due=dd.ShowSlaveTable(DuePaymentsByAccount))
     
-class DuePaymentsByPartner(DuePayments):
+class DuePaymentsByPartner(ExpectedMovements):
     """
     Due Payements is the table to print in a Payment Reminder.
-    Usually this table has one row per sales invoice which is not completely paid.
+    Usually this table has one row per sales invoice which is not fully paid.
     But several invoices ("debts") may be grouped by match.
+    If the partner has purchase invoices, these are deduced from the balance.
     """
     master = 'contacts.Partner'
     
     
     @classmethod
-    def get_data_rows(cls,ar):
+    def get_data_rows(cls,ar,**flt):
         partner = ar.master_instance
-        if partner is None: return 
-        return get_account_matches(cls.DUE_DC,satisfied=False,partner=partner)
-        #~ return get_partner_matches(partner,cls.DUE_DC,satisfied=False)
+        if partner is None: return []
+        flt.update(satisfied=False,partner=partner)
+        return super(DuePaymentsByPartner,cls).get_data_rows(ar,**flt)
+
+dd.inject_action('contacts.Partner',due=dd.ShowSlaveTable(DuePaymentsByPartner))
         
 
 
@@ -791,6 +849,10 @@ add('40',_("Paid"),'paid',editable=False)
 #~ InvoiceStates.registered.add_transition(_("Register"),states='draft')
     
 class AccountInvoice(vat.VatDocument,Voucher,Matchable):
+    """
+    An invoice for which the user enters just the bare accounts and 
+    amounts (not e.g. products, quantities, discounts).
+    """
     
     class Meta:
         verbose_name = _("Invoice")
@@ -1001,12 +1063,18 @@ def customize_accounts():
 
     dd.inject_field('accounts.Account',
         'clearable',models.BooleanField(_("Clearable"),default=False))
+        
+        
     
 customize_accounts()
 
 
 
 def update_partner_satisfied(p):
-    for m in get_account_matches(accounts.DEBIT,partner=p):
+    """
+    This is called when a voucher has been (un)registered  on each 
+    partner for whom the voucher caused at least one movement.
+    """
+    for m in get_due_movements(accounts.DEBIT,partner=p):
         m.update_satisfied()
         

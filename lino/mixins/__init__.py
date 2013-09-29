@@ -772,7 +772,9 @@ class EmptyTableRow(VirtualRow,Printable):
     Base class for virtual rows of an :class:`EmptyTable`.
     An EmptyTableRow instance 
     """
+    
     pk = -99998
+    
     def __init__(self,table,**kw):
         self._table = table
         VirtualRow.__init__(self,**kw)

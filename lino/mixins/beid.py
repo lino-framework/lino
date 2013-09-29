@@ -227,10 +227,15 @@ class BaseBeIdReadCardAction(dd.Action):
     def get_button_label(self,actor):
         return self.label 
         
-    def get_view_permission(self,profile):
+    def attach_to_actor(self,actor,name):
         if not settings.SITE.use_eid_jslib:
             return False
-        return super(BaseBeIdReadCardAction,self).get_view_permission(profile)
+        return super(BaseBeIdReadCardAction,self).attach_to_actor(actor,name)
+        
+    #~ def get_view_permission(self,profile):
+        #~ if not settings.SITE.use_eid_jslib:
+            #~ return False
+        #~ return super(BaseBeIdReadCardAction,self).get_view_permission(profile)
   
 
     

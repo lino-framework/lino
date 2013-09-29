@@ -24,6 +24,10 @@ import logging
 logger = logging.getLogger(__name__)
 
 
+import datetime
+#~ from datetime import timedelta as delta
+from dateutil.relativedelta import relativedelta as delta
+
 from decimal import Decimal
 
 from django.conf import settings
@@ -74,23 +78,24 @@ def objects():
     
     yield Group('40','assets',  "Créances commerciales", "Forderungen aus Lieferungen und Leistungen", "Commercial receivable(?)")
     
-    obj = Account('customers','assets',u"Clients",u"Kunden","Customers") # PCMN 4000
+    obj = Account('customers','assets',"Clients","Kunden","Customers",clearable=True) # PCMN 4000
     yield obj
     if sales:
         settings.SITE.site_config.update(clients_account=obj)
     
-    obj = Account('suppliers','liabilities',u"Fournisseurs",u"Lieferanten","Suppliers") # PCMN 4400
+    obj = Account('suppliers','liabilities',"Fournisseurs","Lieferanten","Suppliers",clearable=True) # PCMN 4400
     yield obj
     if vat:
         settings.SITE.site_config.update(suppliers_account=obj)
     
-    yield Group('45','assets',u"TVA à payer",u"Geschuldete MWSt","VAT to pay") # PCMN 451
-    obj = Account('vat_due','incomes',u"TVA due",u"MWSt zu regularisieren","VAT due") # PCMN 4510
+    yield Group('45','assets',"TVA à payer","Geschuldete MWSt","VAT to pay") # PCMN 451
+    obj = Account('vat_due','incomes',u"TVA due",u"MWSt zu regularisieren","VAT due",clearable=True) # PCMN 4510
     yield obj
     if sales:
         settings.SITE.site_config.update(sales_vat_account=obj)
     
-    obj = Account('vat_deductible','assets',u"TVA déductible",u"Geschuldete MWSt","VAT deductible") # PCMN 4512
+    obj = Account('vat_deductible','assets',"TVA déductible",
+        "Geschuldete MWSt","VAT deductible",clearable=True) # PCMN 4512
     yield obj
     if ledger:
         settings.SITE.site_config.update(purchases_vat_account=obj)
@@ -98,7 +103,8 @@ def objects():
     yield Group('55','assets',u"Institutions financières",u"Finanzinstitute","Banks") # PCMN 55
     yield Account('bestbank','bank_accounts',u"Bestbank",u"Bestbank","Bestbank") 
     yield Account('cash','bank_accounts',u"Cash",u"Cash","Cash") 
-    yield Account('bestbankpo','bank_accounts',u"Ordres de paiement Bestbank",u"Zahlungsaufträge Bestbank","Payment Orders Bestbank") 
+    yield Account('bestbankpo','bank_accounts',"Ordres de paiement Bestbank",
+        "Zahlungsaufträge Bestbank","Payment Orders Bestbank",clearable=True) 
     
     # TODO: use another account type than bank_accounts:
     yield Account('vatdcl','bank_accounts',u"VAT",u"VAT","VAT") 
@@ -108,15 +114,15 @@ def objects():
         u"Achat de marchandise",u"Wareneinkäufe","Purchase of goods",
         purchases_allowed=True) # PCMN 6040
     yield Account('services','expenses',
-        u"Services et biens divers",u"Dienstleistungen","Purchase of services",
+        "Services et biens divers","Dienstleistungen","Purchase of services",
         purchases_allowed=True) 
-    yield Account('invests','expenses',
-        u"Investissements",u"Anlagen","Purchase of investments",
+    yield Account('investments','expenses',
+        "Investissements","Anlagen","Purchase of investments",
         purchases_allowed=True) 
     
     yield Group('7','incomes',u"Produits",u"Erträge","Revenues") 
     obj = Account('sales','incomes',
-        u"Ventes",u"Verkäufe","Sales",
+        "Ventes","Verkäufe","Sales",
         sales_allowed=True) # PCMN 7000
     yield obj
     if sales:
@@ -128,17 +134,17 @@ def objects():
     if sales:
         #~ yield sales.Orders.create_journal("VKR",'sales',name=u"Aufträge")
         yield sales.Invoice.create_journal('sales',ref="S",chart=chart,**babel_values('name',
-          de=u"Verkaufsrechnungen",fr=u"Factures vente",en="Sales invoices",et=u"Müügiarved"))
+          de="Verkaufsrechnungen",fr="Factures vente",en="Sales invoices",et="Müügiarved"))
     else:
         yield ledger.AccountInvoice.create_journal('sales',
             ref="S",chart=chart,**babel_values('name',
-            de=u"Verkaufsrechnungen",fr=u"Factures vente",en="Sales invoices",et=u"Müügiarved"))
+            de="Verkaufsrechnungen",fr="Factures vente",en="Sales invoices",et="Müügiarved"))
           
     yield ledger.AccountInvoice.create_journal('purchases',
         chart=chart,
         ref="P",
         **babel_values('name',
-            de=u"Einkaufsrechnungen",fr=u"Factures achat",en="Purchase invoices",et=u"Ostuarved"))
+            de="Einkaufsrechnungen",fr="Factures achat",en="Purchase invoices",et="Ostuarved"))
             
     if finan:
         yield finan.BankStatement.create_journal(chart=chart,name=u"Bestbank",account='bestbank',ref="B")
@@ -151,39 +157,103 @@ def objects():
 
     Company = dd.resolve_model('contacts.Company')
     
+    if False: # old system
+    
+        MODEL = ledger.AccountInvoice
+        vt = ledger.VoucherTypes.get_for_model(MODEL)
+        JOURNALS = Cycler(vt.get_journals())
+        Partner = dd.resolve_model(partner_model)
+        #~ logger.info("20130105 mini Partners %s",Partner.objects.all().count())
+        #~ PARTNERS = Cycler(Partner.objects.order_by('name'))
+        PARTNERS = Cycler(Company.objects.order_by('id'))
+        USERS = Cycler(settings.SITE.user_model.objects.all())
+        AMOUNTS = Cycler([Decimal(x) for x in 
+            "2.50 6.80 9.95 14.50 20 29.90 39.90 39.90 99.95 199.95 599.95 1599.99".split()])
+        ITEMCOUNT = Cycler(1,2,3)
+        for i in range(10):
+            jnl = JOURNALS.pop()
+            invoice = MODEL(journal=jnl,
+              partner=PARTNERS.pop(),
+              user=USERS.pop(),
+              date=settings.SITE.demo_date(-30+i))
+            yield invoice
+            for j in range(ITEMCOUNT.pop()):
+                item = ledger.InvoiceItem(voucher=invoice,
+                    account=jnl.get_allowed_accounts()[0],
+                    #~ product=PRODUCTS.pop(),
+                    total_incl=AMOUNTS.pop()
+                    )
+                item.total_incl_changed(REQUEST)
+                item.before_ui_save(REQUEST)
+                #~ if item.total_incl:
+                    #~ print "20121208 ok", item
+                #~ else:
+                    #~ if item.product.price:
+                        #~ raise Exception("20121208")
+                yield item
+            invoice.register(REQUEST)
+            invoice.save()
+            
+        
     MODEL = ledger.AccountInvoice
-    vt = ledger.VoucherTypes.get_for_model(MODEL)
-    JOURNALS = Cycler(vt.get_journals())
-    Partner = dd.resolve_model(partner_model)
-    #~ logger.info("20130105 mini Partners %s",Partner.objects.all().count())
-    #~ PARTNERS = Cycler(Partner.objects.order_by('name'))
     PARTNERS = Cycler(Company.objects.order_by('id'))
     USERS = Cycler(settings.SITE.user_model.objects.all())
+        
+    jnl = ledger.Journal.objects.get(ref="P")
+    ACCOUNTS = Cycler(jnl.get_allowed_accounts())
     AMOUNTS = Cycler([Decimal(x) for x in 
-        "2.50 6.80 9.95 14.50 20 29.90 39.90 39.90 99.95 199.95 599.95 1599.99".split()])
-    ITEMCOUNT = Cycler(1,2,3)
-    for i in range(10):
-        jnl = JOURNALS.pop()
-        invoice = MODEL(journal=jnl,
-          partner=PARTNERS.pop(),
-          user=USERS.pop(),
-          date=settings.SITE.demo_date(-30+i))
-        yield invoice
-        for j in range(ITEMCOUNT.pop()):
-            item = ledger.InvoiceItem(voucher=invoice,
-                account=jnl.get_allowed_accounts()[0],
-                #~ product=PRODUCTS.pop(),
-                total_incl=AMOUNTS.pop()
-                )
-            item.total_incl_changed(REQUEST)
-            item.before_ui_save(REQUEST)
-            #~ if item.total_incl:
-                #~ print "20121208 ok", item
-            #~ else:
-                #~ if item.product.price:
-                    #~ raise Exception("20121208")
-            yield item
-        invoice.register(REQUEST)
-        invoice.save()
+        "20 29.90 39.90 99.95 199.95 599.95 1599.99".split()])
+    AMOUNT_DELTAS = Cycler([Decimal(x) for x in "0 0.60 1.10 1.30 2.50".split()])
+    DATE_DELTAS = Cycler((1,2,3,4,5,6,7))
+    INFLATION_RATE = Decimal("0.02")
+    #~ RYTHM = Cycler(delta(months=1),delta(years=1))
+    
+    
+    """
+    5 "purchase stories" : each story represents a provider who sends 
+    monthly invoices.
+    """
+    PURCHASE_STORIES = []
+    for i in range(5):
+        # provider, (account,amount)
+        story = ( PARTNERS.pop(), [] )
+        story[1].append( (ACCOUNTS.pop(),AMOUNTS.pop()) )
+        if i % 3:
+            story[1].append( (ACCOUNTS.pop(),AMOUNTS.pop()) )
+        PURCHASE_STORIES.append(story)
+    
+    #~ PURCHASE_STORIES = Cycler(PURCHASE_STORIES)
+    
+    #~ date = settings.SITE.demo_date() + delta(years=-2)
+    START_YEAR = 2011
+    date = datetime.date(START_YEAR,1,1)
+    while date.year < 2013:
+        #~ print __file__, date
+        for story in PURCHASE_STORIES:
+            invoice = MODEL(journal=jnl,
+                partner=story[0],
+                user=USERS.pop(),
+                date=date+delta(days=DATE_DELTAS.pop()))
+            yield invoice
+            for account,amount in story[1]:
+                amount += amount + (amount * INFLATION_RATE * (date.year - START_YEAR))
+                item = ledger.InvoiceItem(voucher=invoice,
+                    account=account,
+                    total_incl=amount+AMOUNT_DELTAS.pop()
+                    )
+                item.total_incl_changed(REQUEST)
+                item.before_ui_save(REQUEST)
+                #~ if item.total_incl:
+                    #~ print "20121208 ok", item
+                #~ else:
+                    #~ if item.product.price:
+                        #~ raise Exception("20121208")
+                yield item
+            invoice.register(REQUEST)
+            invoice.save()
+        date += delta(months=1)
+    
+    
+    
 
     

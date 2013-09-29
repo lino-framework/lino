@@ -288,6 +288,7 @@ from django.db.models.fields import NOT_PROVIDED
 #~ class Module(object):
     #~ pass
 
+from lino.core.inject import inject_action
 from lino.core.inject import inject_field
 from lino.core.inject import update_field
 from lino.core.inject import inject_quick_add_buttons

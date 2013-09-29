@@ -14,7 +14,36 @@
 
 """
 This defines the :class:`Site` class.
+It has a lot of class attributes which may be 
+overridden by the application developer and/or the local site 
+administrator.
+
+Here is a list of Lino-specific settings. 
+The settings inherited :class:`north.Site` 
+and :class:`djangosite.Site` are documented there.
+
+.. setting:: config_id
+
+The primary key of the one and only `SiteConfig` instance of this 
+SITE. Default value is 1.
+
+This is Lino's equivalent of Django's :setting:`SITE_ID` setting.
+Lino applications don't need ``django.contrib.sites`` 
+(`The "sites" framework
+<https://docs.djangoproject.com/en/dev/ref/contrib/sites/>`_)
+because this 
+functionality is integral part of :mod:`lino.modlib.system`.
+
+
+.. setting:: preview_limit
+    
+Default value for the 
+:attr:`preview_limit <lino.core.tables.AbstractTable.preview_limit>`
+parameter of all tables who don't specify their own one.
+Default value is 15.
+
 """
+
 
 from __future__ import unicode_literals
 
@@ -56,12 +85,9 @@ class Site(Site):
     This is the base for every Lino Site.
     """
     
+    config_id = 1
+    
     preview_limit = 15
-    """
-    Default value for the 
-    :attr:`preview_limit <lino.core.tables.AbstractTable.preview_limit>`
-    parameter of all tables who don't specify their own one.
-    """
     
     
     user_model = None
@@ -1256,7 +1282,10 @@ class Site(Site):
     @property
     def site_config(self):
         """
-        Returns the one and only :class:`lino.models.SiteConfig` instance.
+        Returns the one and only 
+        :class:`lino.modlib.system.models.SiteConfig` instance which 
+        contains Site configuration parameters which are stored in the 
+        database and editable using the web interface.
         
         If no instance exists (which happens in a virgin database),
         we create it using default values from :attr:`site_config_defaults`.
@@ -1273,12 +1302,13 @@ class Site(Site):
             #~ from .models import SiteConfig
             #~ from django.db.utils import DatabaseError
             try:
-                self._site_config = SiteConfig.real_objects.get(pk=1)
+                #~ self._site_config = SiteConfig.real_objects.get(pk=1)
+                self._site_config = SiteConfig.real_objects.get(pk=self.config_id)
                 #~ print "20130301 Loaded SiteConfig record", obj2str(self._site_config,True)
             #~ except (SiteConfig.DoesNotExist,DatabaseError):
             except SiteConfig.DoesNotExist:
             #~ except Exception,e:
-                kw = dict(pk=1)
+                kw = dict(pk=self.config_id)
                 #~ kw.update(settings.SITE.site_config_defaults)
                 kw.update(self.site_config_defaults)
                 self._site_config = SiteConfig(**kw)

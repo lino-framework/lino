@@ -31,6 +31,7 @@ class BlogTest(LinoTestCase):
     
 class DocsTests(LinoTestCase):
 
+    def test_templates_api(self): self.run_simple_doctests('docs/user/templates_api.rst')
     #~ def test_actions(self): self.run_docs_django_tests('tutorials.actions.settings')
     def test_de_BE(self): self.run_docs_django_tests('tutorials.de_BE.settings')
     def test_auto_create(self): self.run_docs_django_tests('tutorials.auto_create.settings')

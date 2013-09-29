@@ -32,6 +32,9 @@ from django.core.exceptions import ValidationError
 from lino import dd
 from lino import mixins
 
+from decimal import Decimal
+ZERO = Decimal()
+
 
 #~ from lino import fields
 #~ from lino.core.dbutils import resolve_model
@@ -72,6 +75,11 @@ add('20',_("Registered"),'registered',editable=False)
     
   
 class JournalEntry(ledger.Voucher):
+    """
+    This is the model for "operations diverses" ("journal entries")
+    but also base for :class:`PaymentOrder`
+    and :class:`BankStatement`.
+    """
     state = VoucherStates.field(default=VoucherStates.draft)
     
     class Meta: 
@@ -131,6 +139,7 @@ class PaymentOrder(JournalEntry):
         verbose_name_plural = _("Payment Orders")
         
     total = dd.PriceField(_("Total"),blank=True,null=True)
+    execution_date = models.DateField(_("Execution date"),blank=True,null=True)
     
     def get_wanted_movements(self):
         a = self.journal.account
@@ -147,39 +156,36 @@ class BankStatement(JournalEntry):
         verbose_name = _("Bank Statement")
         verbose_name_plural = _("Bank Statements")
         
-    balance1 = dd.PriceField(_("Old balance"),blank=True,null=True)
-    balance2 = dd.PriceField(_("New balance"),blank=True,null=True)
+    balance1 = dd.PriceField(_("Old balance"),default=ZERO)
+    #~ balance2 = dd.PriceField(_("New balance"),blank=True,null=True)
+    balance2 = dd.PriceField(_("New balance"),default=ZERO)
         
     def get_wanted_movements(self):
         a = self.journal.account
         if not a: raise Exception("No account in %s" % self.journal)
         amount, movements = self.get_finan_movements()
-        if self.balance1 is not None:
-            self.balance2 = self.balance1 + amount
+        self.balance2 = self.balance1 + amount
         for m in movements: 
             yield m
-        yield self.create_movement(a,a.type.dc,amount)
+        yield self.create_movement(a,not a.type.dc,amount)
         
         
         
     
 class DocItem(mixins.Sequenced,ledger.VoucherItem,ledger.Matchable):
-    
+    """
+    """
     class Meta: 
         verbose_name = _("Item")
         verbose_name_plural = _("Items")
         
-    voucher = dd.ForeignKey(BankStatement,related_name='items')
-    #~ pos = models.IntegerField("Position")
+    voucher = dd.ForeignKey(JournalEntry,related_name='items')
     date = models.DateField(blank=True,null=True)
     amount = dd.PriceField(default=0)
     dc = ledger.DebitOrCreditField()
-    #~ credit = dd.PriceField(default=0)
     remark = models.CharField(_("Remark"),max_length=200,blank=True)
     account = dd.ForeignKey('accounts.Account',blank=True)
     partner = dd.ForeignKey(partner_model,blank=True,null=True)
-    #~ person = models.ForeignKey(Person,blank=True,null=True)
-    #~ company = models.ForeignKey(Company,blank=True,null=True)
     
     debit = ledger.DcAmountField(accounts.DEBIT,_("Income"))
     credit = ledger.DcAmountField(accounts.CREDIT,_("Expense"))
@@ -193,42 +199,38 @@ class DocItem(mixins.Sequenced,ledger.VoucherItem,ledger.Matchable):
     
     def match_changed(self,ar):
         if self.match:
-            m = ledger.Match(self.voucher.journal.dc,self.partner,self.match)
-            if m.balance > 0:
-                self.dc = not self.voucher.journal.dc
-                self.amount = m.balance
-            else:
-                self.dc = self.voucher.journal.dc
-                self.amount = - m.balance
-            #~ self.dc = not self.match.dc
-            #~ self.account = self.match.account
-            #~ self.partner = self.match.partner
+            m = ledger.DueMovement(self.voucher.journal.dc,self.partner,self.match)
+            self.dc = not self.voucher.journal.dc
+            self.amount = m.balance
+            #~ if m.balance > 0:
+                #~ self.dc = not self.voucher.journal.dc
+                #~ self.amount = m.balance
+            #~ else:
+                #~ self.dc = self.voucher.journal.dc
+                #~ self.amount = - m.balance
     
     def full_clean(self,*args,**kw):
         if self.account_id is None:
-            if self.match:
-                if self.partner is not None:
-                    match = ledger.Match(self.voucher.journal.dc,self.partner,self.match)
-                    print match
-                    if match.trade_type is not None:
-                        self.account = match.trade_type.get_partner_account()
+            if self.partner is not None:
+                flt = dict(partner=self.partner,satisfied=False)
+                if self.match:
+                    flt.update(match=self.match)
+                matches = ledger.get_due_movements(self.voucher.journal.dc,**flt)
+                match = matches.next()
+                #~ match = ledger.DueMovement(self.voucher.journal.dc,self.partner,self.match)
+                print match
+                if match.trade_type is not None:
+                    self.account = match.trade_type.get_partner_account()
+                self.dc = match.dc
+                self.amount = match.amount
             if self.account_id is None:
                 raise ValidationError("Could not guess account")
+        if self.amount < 0:
+            self.amount = - self.amount
+            self.dc = not self.dc
         return super(DocItem,self).full_clean(*args,**kw)
         
-    #~ def __unicode__(self):
-        #~ return u"DocItem %s.%d" % (self.document,self.pos)
         
-#~ class Booking(dd.Model):
-    #~ #journal = models.ForeignKey(journals.Journal)
-    #~ #number = models.IntegerField()
-    #~ document = models.ForeignKey(LedgerDocument) 
-    #~ pos = models.IntegerField("Position")
-    #~ date = fields.MyDateField() 
-    #~ account = models.ForeignKey(Account)
-    #~ contact = models.ForeignKey(contacts.Contact,blank=True,null=True)
-    #~ debit = fields.PriceField(default=0)
-    #~ credit = fields.PriceField(default=0)
     
 class JournalEntryDetail(dd.FormLayout):
     main = "general ledger"
@@ -243,19 +245,21 @@ class JournalEntryDetail(dd.FormLayout):
     ledger.MovementsByVoucher
     """,label=_("Ledger"))
     
+
+class PaymentOrderDetail(JournalEntryDetail):
+    general = dd.Panel("""
+    date user narration total execution_date workflow_buttons
+    finan.ItemsByStatement
+    """,label=_("General"))
+    
 class BankStatementDetail(JournalEntryDetail):
     general = dd.Panel("""
     date balance1 balance2 user workflow_buttons
     finan.ItemsByStatement
     """,label=_("General"))
-    
-class PaymentOrderDetail(JournalEntryDetail):
-    general = dd.Panel("""
-    date user narration total workflow_buttons
-    finan.ItemsByStatement
-    """,label=_("General"))
-    
-        
+
+
+
 
 class JournalEntries(dd.Table):
     model = 'finan.JournalEntry'
@@ -282,12 +286,14 @@ class JournalEntries(dd.Table):
                 qs = qs.filter(journal=ar.param_values.pjournal)
         return qs
         
+        
 
 class PaymentOrders(JournalEntries):
     model = 'finan.PaymentOrder'
     column_names = "date id number user *" 
     detail_layout = PaymentOrderDetail()
     
+
 
 class BankStatements(JournalEntries):
     model = 'finan.BankStatement'
@@ -305,6 +311,7 @@ class BankStatements(JournalEntries):
     
 class PaymentOrdersByJournal(PaymentOrders,ledger.ByJournal):
     pass
+    
 class JournalEntriesByJournal(JournalEntries,ledger.ByJournal):
     pass
     
@@ -315,7 +322,7 @@ class BankStatementsByJournal(BankStatements,ledger.ByJournal):
     
     
 class DocItems(dd.Table):
-    column_names = "date account partner match remark debit credit seqno *" 
+    column_names = "date partner account match remark debit credit seqno *" 
     model = DocItem
     order_by = ["seqno"]
     
@@ -330,6 +337,8 @@ class ItemsByStatement(DocItems):
 class FillToVoucher(dd.Action):
     label = _("Fill")
     icon_name = 'lightning'
+    http_method = 'POST'
+    select_rows = False
     
     def run_from_ui(self,ar,**kw):
         voucher = ar.master_instance
@@ -339,9 +348,10 @@ class FillToVoucher(dd.Action):
             i = voucher.add_voucher_item(obj.account,
                 dc=not obj.dc,
                 seqno=seqno,
-                amount=obj.amount,
+                amount=obj.balance,
                 partner=obj.partner,
-                match=obj.voucher.get_default_match())
+                match=obj.match)
+                #~ match=obj.voucher.get_default_match())
             i.full_clean()
             i.save()
             seqno = i.seqno + 1
@@ -353,41 +363,79 @@ class FillToVoucher(dd.Action):
         return ar.success(msg,**kw)
 
 
-class SuggestionsByJournalEntry(ledger.Movements):
-    do_fill = FillToVoucher()
+#~ class SuggestionsByJournalEntry(ledger.Movements):
+class SuggestionsByJournalEntry(ledger.ExpectedMovements):
     
     label = _("Suggestions")
-    #~ model = 'ledger.Movement'
     master = 'finan.JournalEntry'
-    column_names = 'voucher__date partner account voucher_link:5 debit credit'
+    column_names = 'partner match account due_date balance debts received'
+    #~ column_names = 'voucher__date partner account voucher_link:5 debit credit'
     window_size = (70,20) # (width, height)
     editable = False
     auto_fit_column_widths = True
     cell_edit = False
     
+    do_fill = FillToVoucher()
     
+    
+        
     @classmethod
-    def get_data_rows(cls,ar):
-        #~ return []
-        voucher = ar.master_instance
-        if voucher is None: return 
-        for mvt in ledger.Movement.objects.filter(satisfied=False,
-            partner__isnull=False).order_by('voucher__date'):
-                yield mvt
-                #~ yield AttrDict(partner=mvt.partner,amount=mvoucher=mvt.get_mti_child())
-        #~ return get_partner_matches(cls.DUE_DC,partner,satisfied=False)
-
-
+    def get_data_rows(cls,ar,**flt):
+        #~ partner = ar.master_instance
+        #~ if partner is None: return []
+        flt.update(satisfied=False)
+        flt.update(account__clearable=True)
+        return super(SuggestionsByJournalEntry,cls).get_data_rows(ar,**flt)
     
-
-
+    
+    #~ @classmethod
+    #~ def get_data_rows(cls,ar):
+        #~ voucher = ar.master_instance
+        #~ if voucher is None: return 
+        #~ for mvt in cls.get_suggested_movements():
+            #~ yield mvt
+#~ 
+    #~ @classmethod
+    #~ def get_suggested_movements(cls):
+        #~ return ledger.Movement.objects.filter(
+            #~ satisfied=False,
+            #~ partner__isnull=False).order_by('voucher__date')
+            
 
 JournalEntriesByJournal.suggest = dd.ShowSlaveTable(SuggestionsByJournalEntry)
 
+
+class SuggestionsByPaymentOrder(SuggestionsByJournalEntry):
+    
+    master = 'finan.PaymentOrder'
+    
+    @classmethod
+    def param_defaults(cls,ar,**kw):
+        voucher = ar.master_instance
+        #~ kw = super(MyEvents,self).param_defaults(ar,**kw)
+        #~ kw.update(journal=voucher.journal)
+        kw.update(date_until=voucher.execution_date or voucher.date)
+        #~ kw.update(trade_type=vat.TradeTypes.purchases)
+        return kw
+    
+
+PaymentOrdersByJournal.suggest = dd.ShowSlaveTable(SuggestionsByPaymentOrder)
+
 class SuggestionsByBankStatement(SuggestionsByJournalEntry):
     master = 'finan.BankStatement'
+    
+    #~ @classmethod
+    #~ def param_defaults(cls,ar,**kw):
+        #~ voucher = ar.master_instance
+        #~ kw = super(MyEvents,self).param_defaults(ar,**kw)
+        #~ kw.update(journal=voucher.journal)
+        #~ kw.update(date_until=voucher.execution_date or voucher.date)
+        #~ kw.update(trade_type=vat.TradeTypes.purchases)
+        #~ return kw
+        
 
 BankStatementsByJournal.suggest = dd.ShowSlaveTable(SuggestionsByBankStatement)
+
 
 
 

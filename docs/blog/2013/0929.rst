@@ -1,0 +1,20 @@
+====================================
+20130929 (Sunday, 29 September 2013)
+====================================
+
+Continued on :mod:`lino.modlib.finan` and :mod:`lino.modlib.ledger` 
+for :ref:`faggio`.
+
+New method `dd.inject_action <lino.core.inject.inject_action>`
+is a wrapper to :meth:`lino.core.model.Model.define_action`.
+
+In "normal" cases it is recommended, e.g.::
+
+  # old: 
+  pcsw = dd.resolve_app('pcsw')
+  pcsw.Coaching.define_action(create_visit=CreateCoachingVisit())
+  
+  # new:
+  dd.inject_action('pcsw.Coaching',create_visit=CreateCoachingVisit())
+
+

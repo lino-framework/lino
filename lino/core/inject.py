@@ -153,9 +153,17 @@ def when_prepared(*model_specs):
   
     
 
+def inject_action(model_spec,**actions):
+    """
+    Add the specified action(s) to the specified model.
+    """
+    def todo(model):
+        model.define_action(**actions)
+    return do_when_prepared(todo,model_spec)    
+    
 def inject_field(model_spec,name,field,doc=None):
     """
-    Adds the given field to the given model.
+    Add the given field to the given model.
     See also :doc:`/tickets/49`.
     
     Since `inject_field` is usually called at the global level 
@@ -167,18 +175,9 @@ def inject_field(model_spec,name,field,doc=None):
     if doc:
         field.__doc__ = doc
     def todo(model):
-        #~ if model.__name__ == "SiteConfig":
-            #~ logger.info("20130228 add_to_class %s %s",model.__name__,name)
         model.add_to_class(name,field)
-        #~ if hasattr(model._meta,'_field_cache'):
         model._meta._fill_fields_cache()
         fix_field_cache(model)
-        #~ for m in models_by_base(model):
-            #~ if hasattr(m._meta,'_field_cache'):
-                #~ m._meta._fill_fields_cache()
-                #~ fix_field_cache(m)
-        #~ else:
-            #~ logger.info("20130106 no need to fix_field_cache after inject_field")
 
     return do_when_prepared(todo,model_spec)    
     
