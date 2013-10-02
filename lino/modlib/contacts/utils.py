@@ -165,8 +165,14 @@ Examples:
 >>> street2kw(u"Auf'm Bach 3 A")
 {'street_box': u'A', 'street': u"Auf'm Bach", 'street_no': u'3'}
 
+Some rather special cases:
+
 >>> street2kw(u"rue des 600 Franchimontois 1")
 {'street_box': u'', 'street': u'rue des 600 Franchimontois', 'street_no': u'1'}
+
+>>> street2kw(u"Eupener Strasse 321 /A")
+{'street_box': u'/A', 'street': u'Eupener Strasse', 'street_no': u'321'}
+
 
 >>> street2kw(u"Neustr. 1 (Referenzadr.)")
 {'addr2': u'(Referenzadr.)', 'street': u'Neustr.', 'street_no': u'1'}

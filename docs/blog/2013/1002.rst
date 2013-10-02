@@ -20,3 +20,15 @@ Miscellaneous little changes in :ref:`welfare`
 - :meth:`TableRequest.__repr__` failed when :meth:`setup` had not yet 
   been called. Added class attributes `filter` and `known_value` with 
   default value None.
+
+
+Checkin and pull on :ref:`demos`.
+
+
+
+
+Reading Excel files
+-------------------
+
+
+.. includeliteral:: 1002.py
