@@ -1318,7 +1318,10 @@ tinymce.init({
             if not k in self.SUPPRESSED:
                 yield "  %s: %s," % (k,py2js(v))
         #~ yield "  collapsible: true,"
-        yield "  layout: 'form',"
+        if dh.main.value['layout'] == 'hbox':
+            yield "  layout: 'hbox',"
+        else:
+            yield "  layout: 'form',"
         yield "  autoHeight: true,"
         #~ if dh.layout.window_size and dh.layout.window_size[1] == 'auto':
             #~ yield "  autoHeight: true,"

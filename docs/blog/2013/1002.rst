@@ -25,6 +25,11 @@ Miscellaneous little changes in :ref:`welfare`
 Checkin and pull on :ref:`demos`.
 
 
+Fixed a bug which caused the wrong layout manager of the parameters 
+panel when the panel had only one row of fields. In that case it 
+needs a hbox layout. Force a form layout only when there is either 
+exactly 1 field or several hboxes.
+
 
 
 Reading Excel files
@@ -32,3 +37,9 @@ Reading Excel files
 
 
 .. includeliteral:: 1002.py
+
+
+Adding users
+------------
+
+.. includeliteral:: 1002b.py
