@@ -173,6 +173,8 @@ class TableRequest(ActionRequest):
     extra = None
     title = None
     #~ layout = None
+    filter = None
+    known_values = None
     
     limit = None
     offset = None
@@ -388,8 +390,8 @@ class TableRequest(ActionRequest):
             extra=None,
             **kw):
             
-        if self.actor.__name__ == 'PrintExpensesByBudget':
-            assert master_instance is not None
+        #~ if self.actor.__name__ == 'PrintExpensesByBudget':
+            #~ assert master_instance is not None
             
         self.quick_search = quick_search
         self.order_by = order_by

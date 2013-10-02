@@ -401,7 +401,7 @@ class BeIdCardHolder(dd.Model):
         verbose_name=_("eID card issuer"))
     "The administration who issued this ID card. Imported from TIM."
     
-    read_beid = BeIdReadCardAction()    
+    read_beid = BeIdReadCardAction()
     
     #~ eid_panel = dd.FieldSet(_("eID card"),
         #~ "card_number card_valid_from card_valid_until card_issuer card_type:20",
@@ -461,12 +461,14 @@ class BeIdCardHolder(dd.Model):
         else:
             must_read = True
         if must_read:
-            #~ ba = cls.get_action_by_name('read_beid')
-            #~ elems.append(ar.action_button(ba,self,_("Must read eID card!")))
-            elems.append(ar.instance_action_button(
-                self.read_beid,
-                _("Must read eID card!"),icon_name=None))
-            #~ elems.append(_("No info available"))
+            msg = _("Must read eID card!")
+            if settings.SITE.use_eid_jslib:
+                #~ ba = cls.get_action_by_name('read_beid')
+                #~ elems.append(ar.action_button(ba,self,_("Must read eID card!")))
+                elems.append(ar.instance_action_button(
+                    self.read_beid,msg,icon_name=None))
+            else:
+                elems.append(msg)
             # same red as in lino.css for .x-grid3-row-red td
             #~ attrs.update(style="background-color:#FA7F7F; padding:3pt;") 
             attrs.update(class_="lino-info-red") 

@@ -727,6 +727,7 @@ Reeglid.parse_words(Nom,u"""
 le rendez-vous [rA~de'vu] : kohtumine
 # le commentaire [komA~'täär] : märkus, kommentar
 le centre ['sA~trə] : keskus
+le renne [rän] : põhjapõder
 # le genre [žA~rə] : žanre
 un enfant [A~'fA~] : laps
 le employeur [A~plwa'jÖÖr] : tööandja
@@ -808,6 +809,7 @@ Sama loogika nagu [ref ain].
 """,ref="ein")
 Reeglid.parse_words(Nom,u"""
 le rein [rÄ~] : neer (anat.)
+la reine [rään] : kuninganna
 """)
 Reeglid.parse_words(NomPropre,u"""
 Reims [rÄ~s] : (linn)
@@ -1419,7 +1421,7 @@ if HAS_FUN:
 | Sur le pont d'Avignon,
 | on y danse, on y danse ;
 | Sur le pont d’Avignon,
-| on y danse tout en rond !
+| on y danse tous en rond !
 |
 | Les beaux messieurs font comme ça,
 | et puis encore comme ça.
@@ -1433,13 +1435,15 @@ if HAS_FUN:
   Fun.parse_words(None,u"""
   sur : peal
   le pont [pO~] : sild
-  on danse ['dA~sə] : tantsitakse
-  tout en rond : ringis
+  on danse tous ['dA~sə] : me kõik tantsime
+  en rond : ringis
   les beaux messieurs : ilusad härrad
   les belles dames : ilusad daamid
   ils font [il fO~] : nad teevad
-  comme ça [kOm'sa] : niimoodi
+  comme ci [kOm'sa] : niimoodi
+  comme ça [kOm'sa] : naamoodi
   et puis encore [e pwi A~'kOOr] : ja siis veel
+  le cordonnier [kOrdon'jee] : kingsepp
   """)
   
 
@@ -1575,7 +1579,7 @@ les crustacés [krüsta'see] : karploomad | koorikloomad
 le brochet [bro'šä] : haug
 la anguille [A~'giijə] : angerjas
 la perche [pärš] : ahven
-le *hareng [ar'~A] : heeringas
+le *hareng [ar'A~] : heeringas
 le sprat [sprat] : sprot
 le thon [tO~] : tuunikala
 le requin [rə'kÄ~] : haikala
@@ -1650,15 +1654,12 @@ le fromage [fro'maaž] : juust
 la caillebotte [kajə'bott] : (kodujuust)
 la raclette [rak'lett] : kuumaga sulatud juust
 le Camembert [kamA~'bäär] : (valgehallitusjuust)
-le Emmental [emən'taal] : -
+le Emmental [emən'taal] : suurte augudega kõva juust
 le Rocquefort [rOk'fOOr] : (sinihallitusjuust)
 le Gruyère [grüi'jäär] : -
 le Edam [e'dam] : -
 le Brie [brii] : -
-le Fontal [fO~'tal] : -
 le Parmesan [parmə'zA~] : -
-le Gouda [gu'da] : (holandi juust)
-le Aura [o'ra] : -
 """)
 
 
@@ -1901,7 +1902,7 @@ if FULL_CONTENT:
 #~ une Italie [ita'lii]: hispaania
 #~ """)
 #~ Vocabulary.parse_words(Adjectif,u"""
-#~ français [fra~'sä] | français [fra~'sääz] : prantsuse
+#~ français [frA~'sä] | français [frA~'sääz] : prantsuse
 #~ estonien [esto'njÄ~] | estonien [esto'njän] : eesti
 #~ espagnol [espan'jol] | espagnole [espan'jol] : hispaania
 #~ hollandais [olA~'dä] | hollandaise [olA~'dääz]: holandi
@@ -2086,7 +2087,7 @@ rouge (mf) [ruuž] : punane
 jaune (mf) [žoon] : kollane
 blond [blO~] | blonde [blO~də] : blond 
 beige (mf) [bääž]  : beež
-orange (mf) [o'ra~ž]  : oranž
+orange (mf) [o'rA~ž]  : oranž
 blanc [blA~] | blanche [blA~š] : valge
 noir [nwaar] | noire [nwaar] : must
 """)
@@ -2115,7 +2116,7 @@ Ex. : Les Français parlent en français à leurs amis français
 """
 General.add_lesson(u"Riigid",columns=[GEON("Riik"), GEOM, GEOF, ET])
 General.parse_words(None,u"""
-la France [frA~s] | français [fra~'sä] | française [fra~'sääz] : Prantsusmaa
+la France [frA~s] | français [frA~'sä] | française [frA~'sääz] : Prantsusmaa
 l'Estonie (f) [ästo'nii] | estonien [esto'njÄ~] | estonienne [esto'njän] : Eesti
 l'Allemagne (f) [al'manjə] | allemand [al'mA~]| allemande [al'mA~də] : Saksamaa
 l'Angleterre (f) [A~glə'täär] | anglais [A~'glä]| anglaise [A~'glääz] : Inglismaa

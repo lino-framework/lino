@@ -23,6 +23,9 @@ This time the following two commands were enough to help::
 
     $ sudo aptitude install linux-headers-`uname -r`
     $ sudo aptitude reinstall virtualbox-dkms
+    
+(EDIT: this time and many times afterwards, too, after every 
+update of the kernel)
 
 
 Compare :blogref:`20130509`.

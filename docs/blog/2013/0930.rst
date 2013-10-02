@@ -23,3 +23,10 @@ Lino implements it a bit differently: main difference is that the
 model instance is cached in memory instead of working with a middleware.
 
 
+
+TODO: SiteConfig.next_partner_id doesn't work as it should with 
+multiple `config_id`. Possible solutions: 
+
+- convert it (back) to a class attribute
+- make it's usage optional
+

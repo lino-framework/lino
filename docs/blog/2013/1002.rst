@@ -1,0 +1,22 @@
+=====================================
+20131002 (Wednesday, 02 October 2013)
+=====================================
+
+Miscellaneous little changes in :ref:`welfare`
+----------------------------------------------
+
+- jobs.JobsOverview now displays full name and partner id of clients.
+
+- Changed the logging level from debug to info for certain messages in 
+  :manage:`watch_tim`. Principally every modification made by watch_tim 
+  should get logged.
+
+
+- Fixed a test failure which occurred when use_eid_jslib is False 
+  and a client must read eID card. This means that Lino is not able to 
+  read the card himself. The warning should still appear, but should not 
+  be clickable.
+
+- :meth:`TableRequest.__repr__` failed when :meth:`setup` had not yet 
+  been called. Added class attributes `filter` and `known_value` with 
+  default value None.

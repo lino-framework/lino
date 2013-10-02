@@ -1,0 +1,14 @@
+===================================
+20131001 (Tuesday, 01 October 2013)
+===================================
+
+
+- :manage:`watch_tim` now imports `PAR->Name2` to `Partner.addr1`.
+
+
+- Discovered and fixed an internal bug:
+  Trying to print a .pdf caused an
+  AttributeError "'module' object has no attribute 'dtosl'".
+
+
+

@@ -148,7 +148,7 @@ class PaymentOrder(JournalEntry):
         self.total = amount
         for m in movements: 
             yield m
-        yield self.create_movement(a,a.type.dc,amount)
+        yield self.create_movement(a,a.type.dc,-amount)
         
 class BankStatement(JournalEntry):
     

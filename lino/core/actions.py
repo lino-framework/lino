@@ -237,6 +237,10 @@ class InstanceAction(object):
         #~ print "Bar"
         #~ self.action = action
         self.bound_action = actor.get_action_by_name(action.action_name)
+        if self.bound_action is None:
+            raise Exception("%s has not action %r" % (actor,action))
+            # happened 20131020 from beid.eid_info() : if use_eid_jslib was False
+            # then Action.attach_to_actor returned False
         self.instance = instance
         self.owner = owner
         

@@ -39,6 +39,7 @@ from django.http import HttpResponse, HttpResponseRedirect, Http404
 from django.utils.encoding import force_unicode
 from django.utils.translation import string_concat
 
+from djangosite.dbutils import dtomy
 
 import lino
 #~ from lino import dd
@@ -794,18 +795,18 @@ class BasePrintable(object):
             return _(s.decode('utf8'))
         from lino import dd
         kw.update(this=self,
-            dtos=dd.dtos, # obsolete
-            dtosl=dbutils.dtosl, # obsolete
-            dtomy=dbutils.dtomy, # obsolete
+            dtos=dd.fds, # obsolete
+            dtosl=dd.fdf, # obsolete
+            dtomy=dtomy, # obsolete
             mtos=decfmt,
-            fds=dbutils.fds,
-            fdm=dbutils.fdm,
-            fdl=dbutils.fdl,
-            fdf=dbutils.fdf,
-            fdmy=dbutils.fdmy,
-            babelattr=dbutils.babelattr,
-            babelitem=dbutils.babelitem,
-            tr=dbutils.babelitem,
+            fds=dd.fds,
+            fdm=dd.fdm,
+            fdl=dd.fdl,
+            fdf=dd.fdf,
+            fdmy=dd.fdmy,
+            babelattr=dd.babelattr,
+            babelitem=settings.SITE.babelitem,
+            tr=settings.SITE.babelitem,
             iif=iif,
             settings=settings,
             ar=ar,
