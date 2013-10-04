@@ -936,7 +936,7 @@ class ParameterStore(BaseStore):
         self.params_layout_handle = params_layout_handle
         
     def __str__(self):
-        return "%s of %s" % (self.__class__,self.params_layout_handle)
+        return "%s of %s" % (self.__class__.__name__,self.params_layout_handle)
 
         
     def unused_pv2list(self,pv):
@@ -972,7 +972,8 @@ class ParameterStore(BaseStore):
         if len(pv) > 0:
             if len(self.param_fields) != len(pv):
                 #~ logger.info('20121016 %s para_fields are %s',self,[sf.field.name for sf in self.param_fields])
-                raise Exception("Expected a list of %d values, but got %s" % (len(self.param_fields),pv))
+                raise Exception("%s expected a list of %d values, but got %s" % (
+                    self,len(self.param_fields),pv))
             for i,f in enumerate(self.param_fields):
                 kw[f.field.name] = parse(f,pv[i])
         #~ else: removed 20120918

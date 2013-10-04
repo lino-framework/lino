@@ -567,9 +567,9 @@ class Actor(actions.Parametrizable):
         return None
         
     @classmethod
-    def get_row_by_pk(self,pk):
+    def get_row_by_pk(self,ar,pk):
         """
-        REturn the data row identified by the given primary key.
+        Return the data row identified by the given primary key.
         """
         return None
         

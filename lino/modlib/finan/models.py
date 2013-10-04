@@ -74,25 +74,21 @@ add('20',_("Registered"),'registered',editable=False)
 
     
   
-class JournalEntry(ledger.Voucher):
-    """
-    This is the model for "operations diverses" ("journal entries")
-    but also base for :class:`PaymentOrder`
-    and :class:`BankStatement`.
-    """
+class Voucher(ledger.Voucher):
+    
     state = VoucherStates.field(default=VoucherStates.draft)
     
     class Meta: 
-        verbose_name = _("Journal Entry")
-        verbose_name_plural = _("Journal Entries")
+        abstract = True
         
     def register(self,ar):
-        super(JournalEntry,self).register(ar)
+        super(Voucher,self).register(ar)
         self.update_satisfied()
         
     def deregister(self,ar):
-        super(JournalEntry,self).deregister(ar)
+        super(Voucher,self).deregister(ar)
         self.update_satisfied()
+        
         
     def update_satisfied(self):
         partners = set()
@@ -133,7 +129,18 @@ class JournalEntry(ledger.Voucher):
         
         
         
-class PaymentOrder(JournalEntry):
+class JournalEntry(Voucher):
+    """
+    This is the model for "operations diverses" ("journal entries")
+    but also base for :class:`PaymentOrder`
+    and :class:`BankStatement`.
+    """
+    class Meta: 
+        verbose_name = _("Journal Entry")
+        verbose_name_plural = _("Journal Entries")
+        
+        
+class PaymentOrder(Voucher):
     class Meta: 
         verbose_name = _("Payment Order")
         verbose_name_plural = _("Payment Orders")
@@ -145,12 +152,12 @@ class PaymentOrder(JournalEntry):
         a = self.journal.account
         if not a: raise Exception("No account in %s" % self.journal)
         amount, movements = self.get_finan_movements()
-        self.total = amount
+        self.total = - amount
         for m in movements: 
             yield m
-        yield self.create_movement(a,a.type.dc,-amount)
+        yield self.create_movement(a,self.journal.dc,-amount)
         
-class BankStatement(JournalEntry):
+class BankStatement(Voucher):
     
     class Meta: 
         verbose_name = _("Bank Statement")
@@ -167,28 +174,24 @@ class BankStatement(JournalEntry):
         self.balance2 = self.balance1 + amount
         for m in movements: 
             yield m
-        yield self.create_movement(a,not a.type.dc,amount)
+        yield self.create_movement(a,not self.journal.dc,amount)
         
         
         
     
-class DocItem(mixins.Sequenced,ledger.VoucherItem,ledger.Matchable):
+class VoucherItem(mixins.Sequenced,ledger.VoucherItem,ledger.Matchable):
     """
     """
     class Meta: 
+        abstract = True
         verbose_name = _("Item")
         verbose_name_plural = _("Items")
         
-    voucher = dd.ForeignKey(JournalEntry,related_name='items')
-    date = models.DateField(blank=True,null=True)
     amount = dd.PriceField(default=0)
-    dc = ledger.DebitOrCreditField()
+    dc = accounts.DebitOrCreditField()
     remark = models.CharField(_("Remark"),max_length=200,blank=True)
     account = dd.ForeignKey('accounts.Account',blank=True)
     partner = dd.ForeignKey(partner_model,blank=True,null=True)
-    
-    debit = ledger.DcAmountField(accounts.DEBIT,_("Income"))
-    credit = ledger.DcAmountField(accounts.CREDIT,_("Expense"))
     
     def get_default_match(self):
         return str(self.date)
@@ -225,19 +228,34 @@ class DocItem(mixins.Sequenced,ledger.VoucherItem,ledger.Matchable):
                 self.amount = match.amount
             if self.account_id is None:
                 raise ValidationError("Could not guess account")
-        if self.amount < 0:
-            self.amount = - self.amount
-            self.dc = not self.dc
-        return super(DocItem,self).full_clean(*args,**kw)
+        #~ if self.amount < 0:
+            #~ self.amount = - self.amount
+            #~ self.dc = not self.dc
+        return super(VoucherItem,self).full_clean(*args,**kw)
         
         
+class JournalEntryItem(VoucherItem):
+    voucher = dd.ForeignKey(JournalEntry,related_name='items')
+    date = models.DateField(blank=True,null=True)
+    debit = ledger.DcAmountField(accounts.DEBIT,_("Debit"))
+    credit = ledger.DcAmountField(accounts.CREDIT,_("Credit"))
+    
+    
+class BankStatementItem(VoucherItem):
+    voucher = dd.ForeignKey(BankStatement,related_name='items')
+    date = models.DateField(blank=True,null=True)
+    debit = ledger.DcAmountField(accounts.DEBIT,_("Income"))
+    credit = ledger.DcAmountField(accounts.CREDIT,_("Expense"))
+    
+class PaymentOrderItem(VoucherItem):
+    voucher = dd.ForeignKey(PaymentOrder,related_name='items')
     
 class JournalEntryDetail(dd.FormLayout):
     main = "general ledger"
     
     general = dd.Panel("""
     date user narration workflow_buttons
-    finan.ItemsByStatement
+    finan.ItemsByJournalEntry
     """,label=_("General"))
     
     ledger = dd.Panel("""
@@ -249,13 +267,13 @@ class JournalEntryDetail(dd.FormLayout):
 class PaymentOrderDetail(JournalEntryDetail):
     general = dd.Panel("""
     date user narration total execution_date workflow_buttons
-    finan.ItemsByStatement
+    finan.ItemsByPaymentOrder
     """,label=_("General"))
     
 class BankStatementDetail(JournalEntryDetail):
     general = dd.Panel("""
     date balance1 balance2 user workflow_buttons
-    finan.ItemsByStatement
+    finan.ItemsByBankStatement
     """,label=_("General"))
 
 
@@ -317,20 +335,30 @@ class JournalEntriesByJournal(JournalEntries,ledger.ByJournal):
     
 class BankStatementsByJournal(BankStatements,ledger.ByJournal):
     pass
-                  
    
     
-    
-class DocItems(dd.Table):
-    column_names = "date partner account match remark debit credit seqno *" 
-    model = DocItem
-    order_by = ["seqno"]
-    
 
-class ItemsByStatement(DocItems):
+class ItemsByVoucher(dd.Table):
+    order_by = ["seqno"]
+    column_names = "date partner account match remark debit credit seqno *" 
     master_key = 'voucher'
     auto_fit_column_widths = True
     hidden_columns = 'id amount dc seqno'
+    
+
+class ItemsByJournalEntry(ItemsByVoucher):
+    model = JournalEntryItem
+    column_names = "date partner account match remark debit credit seqno *" 
+    
+class ItemsByBankStatement(ItemsByVoucher):
+    model = BankStatementItem
+    column_names = "date partner account match remark debit credit seqno *" 
+    
+class ItemsByPaymentOrder(ItemsByVoucher):
+    model = PaymentOrderItem
+    column_names = "seqno partner match amount remark" 
+    hidden_columns = 'id dc'
+    
     
 
 
@@ -362,15 +390,25 @@ class FillToVoucher(dd.Action):
         kw.update(close_window=True)
         return ar.success(msg,**kw)
 
-
-#~ class SuggestionsByJournalEntry(ledger.Movements):
-class SuggestionsByJournalEntry(ledger.ExpectedMovements):
+class SuggestionsByVoucher(ledger.ExpectedMovements):
+    """
+    Shows a list of suggested items for a given voucher,,
+    with a button to fill them into the current voucher.
+    
+    This is an abstract virtual slave table,
+    inherited by
+    :class:`SuggestionsByJournalEntry`
+    :class:`SuggestionsByBankStatement`
+    and :class:`SuggestionsByPaymentOrder`
+    who define the class of the `master_instance`.
+    
+    """
     
     label = _("Suggestions")
-    master = 'finan.JournalEntry'
-    column_names = 'partner match account due_date balance debts received'
+    column_names = 'partner match account due_date balance debts payments'
     #~ column_names = 'voucher__date partner account voucher_link:5 debit credit'
     window_size = (70,20) # (width, height)
+    
     editable = False
     auto_fit_column_widths = True
     cell_edit = False
@@ -378,34 +416,41 @@ class SuggestionsByJournalEntry(ledger.ExpectedMovements):
     do_fill = FillToVoucher()
     
     
-        
+    @classmethod
+    def get_dc(cls,ar=None):
+        if ar is None:
+            return None
+        voucher = ar.master_instance
+        if voucher is None: 
+            return None
+        return voucher.journal.dc
+
+
     @classmethod
     def get_data_rows(cls,ar,**flt):
         #~ partner = ar.master_instance
         #~ if partner is None: return []
         flt.update(satisfied=False)
         flt.update(account__clearable=True)
-        return super(SuggestionsByJournalEntry,cls).get_data_rows(ar,**flt)
+        return super(SuggestionsByVoucher,cls).get_data_rows(ar,**flt)
     
+
+class SuggestionsByJournalEntry(SuggestionsByVoucher):
+    """
+    Shows a list of suggested items for this :class:`JournalEntry`,
+    with a button to fill them into the current voucher.
     
-    #~ @classmethod
-    #~ def get_data_rows(cls,ar):
-        #~ voucher = ar.master_instance
-        #~ if voucher is None: return 
-        #~ for mvt in cls.get_suggested_movements():
-            #~ yield mvt
-#~ 
-    #~ @classmethod
-    #~ def get_suggested_movements(cls):
-        #~ return ledger.Movement.objects.filter(
-            #~ satisfied=False,
-            #~ partner__isnull=False).order_by('voucher__date')
-            
+    """
+    master = 'finan.JournalEntry'
+    
 
 JournalEntriesByJournal.suggest = dd.ShowSlaveTable(SuggestionsByJournalEntry)
 
 
-class SuggestionsByPaymentOrder(SuggestionsByJournalEntry):
+class SuggestionsByPaymentOrder(SuggestionsByVoucher):
+    """
+    This is not a docstring.
+    """
     
     master = 'finan.PaymentOrder'
     
@@ -421,17 +466,9 @@ class SuggestionsByPaymentOrder(SuggestionsByJournalEntry):
 
 PaymentOrdersByJournal.suggest = dd.ShowSlaveTable(SuggestionsByPaymentOrder)
 
-class SuggestionsByBankStatement(SuggestionsByJournalEntry):
+class SuggestionsByBankStatement(SuggestionsByVoucher):
     master = 'finan.BankStatement'
     
-    #~ @classmethod
-    #~ def param_defaults(cls,ar,**kw):
-        #~ voucher = ar.master_instance
-        #~ kw = super(MyEvents,self).param_defaults(ar,**kw)
-        #~ kw.update(journal=voucher.journal)
-        #~ kw.update(date_until=voucher.execution_date or voucher.date)
-        #~ kw.update(trade_type=vat.TradeTypes.purchases)
-        #~ return kw
         
 
 BankStatementsByJournal.suggest = dd.ShowSlaveTable(SuggestionsByBankStatement)

@@ -93,9 +93,6 @@ class VoucherTypes(dd.ChoiceList):
 
 
 
-class DebitOrCreditField(models.BooleanField):
-    pass
-    
 class MatchField(models.CharField):
     def __init__(self,verbose_name=None,**kw):
         if verbose_name is None:
@@ -149,7 +146,7 @@ class Journal(dd.BabelNamed,mixins.Sequenced,mixins.PrintableType):
     #~ pos = models.IntegerField()
     #~ printed_name = models.CharField(max_length=100,blank=True)
     printed_name = dd.BabelCharField(max_length=100,blank=True)
-    dc = DebitOrCreditField(default=None)
+    dc = accounts.DebitOrCreditField()
     
     @dd.chooser()
     def account_choices(self,chart):
@@ -290,8 +287,9 @@ class Voucher(mixins.UserAuthored,mixins.Registrable):
     This model is subclassed by sales.Invoice, ledger.AccountInvoice, 
     finan.Statement etc...
     
-    It is *not* abstract because we have a ForeignKey to Voucher in 
-    Movement and we want one Movement model for all ledger movements.
+    It is *not* abstract so that :class:`Movement` can have a ForeignKey 
+    to a Voucher. Otherwise we would have to care ourselves about data 
+    integrity, and we couln't make queries on `voucher__xxx`.
     
     """
     class Meta:
@@ -369,8 +367,8 @@ class Voucher(mixins.UserAuthored,mixins.Registrable):
         """
         delete any existing movements and re-create them
         """
-        if self.year is None:
-            self.year = FiscalYears.from_date(self.date)
+        #~ if self.year is None:
+        self.year = FiscalYears.from_date(self.date)
         if self.number is None:
             self.number = self.journal.get_next_number(self)
         assert self.number is not None
@@ -457,8 +455,9 @@ class Voucher(mixins.UserAuthored,mixins.Registrable):
         #~ return super(Voucher,self).get_row_permission(ar,state,ba)
 
     def get_mti_child(self):
-        return self.journal.voucher_type.model.objects.get(
-            journal=self.journal,number=self.number,year=self.year)
+        return self.journal.voucher_type.model.objects.get(id=self.id)
+        #~ return self.journal.voucher_type.model.objects.get(
+            #~ journal=self.journal,number=self.number,year=self.year)
         #~ m = self.journal.voucher_type.model
         #~ return m.objects.get(pk=self.pk)
         
@@ -513,56 +512,12 @@ class ByJournal(dd.Table):
 
 
         
-class Matchable(dd.Model):
-    """
-    Base class :class:`Movement` and :class:`AccountInvoice`
-    (and e.g. `sales.Invoice`, `finan.DocItem`)
-    
-    Adds a field `match` and a chooser for it.
-    Requires a field `partner`.
-    """
-    
-    class Meta: 
-        abstract = True
-        
-    match = MatchField(blank=True)
-    #~ match = dd.ForeignKey('ledger.Movement',verbose_name=_("Match"),blank=True,null=True)
-    
-    #~ @dd.chooser()
-    #~ def match_choices(cls,partner):
-        #~ d = {}
-        #~ qs = Movement.objects.filter(partner=partner,satisfied=False)
-        #~ for m in qs:
-            #~ i = d.setdefault(m.get_match(),[])
-            #~ i.append(m)
-        #~ choices = []
-        #~ for k,lst in d.items():
-            #~ amount = ZERO
-            #~ text = ", ".join([i.select_text() for i in lst])
-            #~ for i in lst:
-                #~ amount += iif(i.dc,1,-1) * i.amount
-            #~ text += ' ' + unicode(amount)
-            #~ choices.append((k,text))
-        #~ return choices
-        
-        
-        
-    @dd.chooser(simple_values=True)
-    def match_choices(cls,partner):
-        #~ DC = voucher.journal.dc
-        #~ choices = []
-        qs = Movement.objects.filter(partner=partner,satisfied=False)
-        qs = qs.order_by('voucher__date')
-        #~ qs = qs.distinct('match')
-        return qs.values_list('match',flat=True)
-        
-    
-
 
     
 #~ class Movement(mixins.Sequenced,Matchable):
 
-class Movement(Matchable):
+#~ class Movement(Matchable):
+class Movement(dd.Model):
     """
     An accounting movement in the ledger.
     """
@@ -586,12 +541,26 @@ class Movement(Matchable):
     account = dd.ForeignKey(accounts.Account)
     partner = dd.ForeignKey(partner_model,blank=True,null=True)
     amount = dd.PriceField(default=0)
-    dc = DebitOrCreditField()
+    dc = accounts.DebitOrCreditField()
+    
+    match = MatchField(blank=True)
+    
     satisfied = models.BooleanField(_("Satisfied"),default=False)
     #~ match = dd.ForeignKey('self',verbose_name=_("Match"),blank=True,null=True)
     #~ is_credit = models.BooleanField(_("Credit"),default=False)
     #~ debit = dd.PriceField(default=0)
     #~ credit = dd.PriceField(default=0)
+    
+    
+    @dd.chooser(simple_values=True)
+    def match_choices(cls,partner,account):
+        #~ DC = voucher.journal.dc
+        #~ choices = []
+        qs = cls.objects.filter(partner=partner,account=account,satisfied=False)
+        qs = qs.order_by('voucher__date')
+        #~ qs = qs.distinct('match')
+        return qs.values_list('match',flat=True)
+    
     
     #~ def full_clean(self,*args,**kw):
         #~ if not self.match:
@@ -639,9 +608,48 @@ class Movement(Matchable):
         
 
 class Movements(dd.Table): 
+    """
+    The table of all movements, 
+    displayed by :menuselection:`Explorer --> Accounting --> Movements`.
+    This is also the base class for 
+    :class:`MovementsByVoucher`,
+    :class:`MovementsByAccount`
+    and
+    :class:`MovementsByPartner`
+    and defines e.g. filtering parameters.
+    
+    """
     model = Movement
     column_names = 'voucher_link account debit credit *'
     editable = False
+    parameters = dd.ObservedPeriod(
+        pyear=FiscalYears.field(blank=True),
+        ppartner=models.ForeignKey(partner_model,blank=True,null=True),
+        paccount=models.ForeignKey('accounts.Account',blank=True,null=True),
+        pjournal=JournalRef(blank=True),
+        cleared=dd.YesNo.field(_("Show cleared movements"),blank=True))
+    params_layout = """
+    start_date end_date cleared 
+    pjournal pyear ppartner paccount"""
+    
+    @classmethod
+    def get_request_queryset(cls,ar):
+        qs = super(Movements,cls).get_request_queryset(ar)
+        
+        if ar.param_values.cleared == dd.YesNo.yes:
+            qs = qs.filter(satisfied=True)
+        elif ar.param_values.cleared == dd.YesNo.no:
+            qs = qs.filter(satisfied=False)
+            
+        if ar.param_values.ppartner:
+            qs = qs.filter(partner=ar.param_values.ppartner)
+        if ar.param_values.paccount:
+            qs = qs.filter(account=ar.param_values.paccount)
+        if ar.param_values.pyear:
+            qs = qs.filter(voucher__year=ar.param_values.pyear)
+        if ar.param_values.pjournal:
+            qs = qs.filter(voucher__journal=ar.param_values.pjournal)
+        return qs
     
 class MovementsByVoucher(Movements):
     master_key = 'voucher'
@@ -654,18 +662,42 @@ class MovementsByPartner(Movements):
     column_names = 'voucher__date voucher_link debit credit account match satisfied'
     auto_fit_column_widths = True
     
+    @classmethod
+    def param_defaults(cls,ar,**kw):
+        kw = super(MovementsByPartner,cls).param_defaults(ar,**kw)
+        kw.update(cleared=dd.YesNo.no)
+        kw.update(pyear='')
+        return kw
+        
+    
 class MovementsByAccount(Movements):
     master_key = 'account'
     order_by = ['-voucher__date']
     column_names = 'voucher__date voucher_link debit credit partner match satisfied'
     auto_fit_column_widths = True
     
+    @classmethod
+    def param_defaults(cls,ar,**kw):
+        kw = super(MovementsByAccount,cls).param_defaults(ar,**kw)
+        if ar.master_instance is not None and ar.master_instance.clearable:
+            kw.update(cleared=dd.YesNo.no)
+            kw.update(pyear='')
+        return kw
+    
 class DueMovement(object):
     """
-    Volatile object representing a group of movements
+    Volatile object representing a group of "matching" movements.
+    
+    The "matching" movements of a given movement are those who share 
+    the same `match`, `partner` and `account`.
+    
+    These movements are themselves grouped into "debts" and "payments".
+    
+    The value of `dc` specifies whether I mean *my* debts and payments 
+    (towards that partner) or those *of the partner* (towards me).
+    
     """
     def __init__(self,dc,mvt):
-    #~ def __init__(self,account,dc,partner,match):
         self.dc = dc
         self.partner = mvt.partner
         self.account = mvt.account
@@ -673,7 +705,7 @@ class DueMovement(object):
         self.pk = self.id = mvt.id
         
         self.debts = []
-        self.received = []
+        self.payments = []
         self.balance = ZERO
         self.due_date = None
         self.trade_type = None
@@ -700,7 +732,7 @@ class DueMovement(object):
             if self.due_date is None or due_date < self.due_date:
                 self.due_date = due_date
         else:
-            self.received.append(mvt)
+            self.payments.append(mvt)
             self.balance -= mvt.amount
     
     def update_satisfied(self):
@@ -709,12 +741,14 @@ class DueMovement(object):
             if not self.has_unsatisfied_movement: return 
         else:
             if not self.has_satisfied_movement: return 
-        for m in self.debts + self.received:
+        for m in self.debts + self.payments:
             if m.satisfied != satisfied:
                 m.satisfied = satisfied
                 m.save()
                 
 def get_due_movements(dc,**flt):
+    if dc is None: 
+        return
     qs = Movement.objects.filter(**flt)
     qs = qs.order_by('voucher__date')
     #~ logger.info("20130921 %s %s",partner,qs)
@@ -728,8 +762,11 @@ def get_due_movements(dc,**flt):
         
     
 class ExpectedMovements(dd.VirtualTable):
+    """
+    Subclassed by finan.
+    """
     label = _("Due")
-    column_names = 'match due_date balance debts received'
+    column_names = 'match due_date balance debts payments'
     auto_fit_column_widths = True
     parameters = dd.ParameterPanel(
         date_until=models.DateField(_("Date until"),blank=True,null=True),
@@ -738,8 +775,12 @@ class ExpectedMovements(dd.VirtualTable):
         #~ dc=accounts.DebitOrCreditField(default=accounts.DEBIT))
     params_layout = "trade_type date_until"
     
-    DUE_DC = accounts.DEBIT
+    #~ DUE_DC = accounts.DEBIT
     
+    @classmethod
+    def get_dc(cls,ar=None):
+        return accounts.DEBIT
+        
     @classmethod
     def get_data_rows(cls,ar,**flt):
         #~ if ar.param_values.journal: 
@@ -748,20 +789,20 @@ class ExpectedMovements(dd.VirtualTable):
             flt.update(account=ar.param_values.trade_type.get_partner_account())
         if ar.param_values.date_until is not None:
             flt.update(voucher__date__lte=ar.param_values.date_until)
-        return get_due_movements(cls.DUE_DC,**flt)
+        return get_due_movements(cls.get_dc(ar),**flt)
         
     @classmethod
     def get_pk_field(self):
         return Movement._meta.pk
         
     @classmethod
-    def get_row_by_pk(cls,pk):
+    def get_row_by_pk(cls,ar,pk):
         mvt = Movement.objects.get(pk=pk)
-        return cls.get_row_for(mvt)
+        return cls.get_row_for(mvt,ar)
         
     @classmethod
-    def get_row_for(cls,mvt):
-        return DueMovement(cls.DUE_DC,mvt)
+    def get_row_for(cls,mvt,ar):
+        return DueMovement(cls.get_dc(ar),mvt)
     
     @dd.displayfield(_("Match"))
     def match(self,row,ar):
@@ -778,10 +819,10 @@ class ExpectedMovements(dd.VirtualTable):
         return join_elems([ar.obj2html(i.voucher.get_mti_child()) for i in row.debts])
             
     @dd.displayfield(_("Received"))
-    def received(self,row,ar):
-        #~ return ", ".join([ar.obj2html(i,i.select_text()) for i in row.received])
-        #~ return join_elems([ar.obj2html(i.voucher,i.select_text()) for i in row.received])
-        return join_elems([ar.obj2html(i.voucher.get_mti_child()) for i in row.received])
+    def payments(self,row,ar):
+        #~ return ", ".join([ar.obj2html(i,i.select_text()) for i in row.payments])
+        #~ return join_elems([ar.obj2html(i.voucher,i.select_text()) for i in row.payments])
+        return join_elems([ar.obj2html(i.voucher.get_mti_child()) for i in row.payments])
         
     @dd.virtualfield(dd.PriceField(_("Balance")))
     def balance(self,row,ar):
@@ -807,7 +848,7 @@ class DuePaymentsByAccount(ExpectedMovements):
         if not account.clearable : return []
         #~ return get_due_movements(cls.DUE_DC,account=account,satisfied=False)
         flt.update(satisfied=False,account=account)
-        # hack: ignore trade_type to avoid overriding account
+        # ignore trade_type to avoid overriding account
         ar.param_values.trade_type = None
         return super(DuePaymentsByPartner,cls).get_data_rows(ar,**flt)
         
@@ -821,7 +862,6 @@ class DuePaymentsByPartner(ExpectedMovements):
     If the partner has purchase invoices, these are deduced from the balance.
     """
     master = 'contacts.Partner'
-    
     
     @classmethod
     def get_data_rows(cls,ar,**flt):
@@ -848,6 +888,33 @@ add('40',_("Paid"),'paid',editable=False)
 #~ InvoiceStates.draft.add_transition(_("Deregister"),states='registered paid')
 #~ InvoiceStates.registered.add_transition(_("Register"),states='draft')
     
+class Matchable(dd.Model):
+    """
+    Base class for :class:`AccountInvoice`
+    (and e.g. `sales.Invoice`, `finan.DocItem`)
+    
+    Adds a field `match` and a chooser for it.
+    Requires a field `partner`.
+    """
+    
+    class Meta: 
+        abstract = True
+        
+    match = MatchField(blank=True)
+        
+    @dd.chooser(simple_values=True)
+    def match_choices(cls,partner):
+        #~ DC = voucher.journal.dc
+        #~ choices = []
+        qs = Movement.objects.filter(partner=partner,satisfied=False)
+        qs = qs.order_by('voucher__date')
+        #~ qs = qs.distinct('match')
+        return qs.values_list('match',flat=True)
+        
+    
+
+
+
 class AccountInvoice(vat.VatDocument,Voucher,Matchable):
     """
     An invoice for which the user enters just the bare accounts and 
@@ -871,7 +938,6 @@ class AccountInvoice(vat.VatDocument,Voucher,Matchable):
         return self.due_date or self.date
         
         
-    
 
 
 class VoucherItem(dd.Model):
@@ -925,14 +991,15 @@ class InvoiceDetail(dd.FormLayout):
     MovementsByVoucher
     """,label=_("Ledger"))
     
+    
 class Invoices(dd.Table):
+    model = AccountInvoice
+    order_by = ["date","id"]
+    column_names = "date id number partner total_incl user *" 
     parameters = dict(
         pyear=FiscalYears.field(blank=True),
         ppartner=models.ForeignKey(partner_model,blank=True,null=True),
         pjournal=JournalRef(blank=True))
-    model = AccountInvoice
-    order_by = ["date","id"]
-    column_names = "date id number partner total_incl user *" 
     params_layout = "pjournal pyear ppartner"
     detail_layout = InvoiceDetail()
     insert_layout = dd.FormLayout("""

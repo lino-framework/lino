@@ -36,10 +36,10 @@ Reading Excel files
 -------------------
 
 
-.. includeliteral:: 1002.py
+.. literalinclude:: 1002.py
 
 
 Adding users
 ------------
 
-.. includeliteral:: 1002b.py
+.. literalinclude:: 1002b.py

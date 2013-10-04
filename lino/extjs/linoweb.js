@@ -2649,8 +2649,8 @@ Lino.ActionFormPanel = Ext.extend(Lino.ActionFormPanel,{
   }
   ,on_ok : function() { 
     //~ var rp = this.requesting_panel;
-    //~ console.log("on_ok",this.requesting_panel,arguments);
     var panel = this.requesting_panel;
+    //~ console.log("20131004 on_ok",this,panel,arguments);
     //~ if (panel == undefined) {
         //~ Lino.alert("Sorry, dialog actions don't work without a requesting_panel");
         //~ return;
@@ -2667,7 +2667,9 @@ Lino.ActionFormPanel = Ext.extend(Lino.ActionFormPanel,{
     }
     var self = this;
     function on_success() { self.get_containing_window().close(); };
-    var url = '{{settings.SITE.build_admin_url("api")}}' + this.ls_url + '/' + pk;
+    // 20131004
+    //~ var url = '{{settings.SITE.build_admin_url("api")}}' + this.ls_url + '/' + pk;
+    var url = '{{settings.SITE.build_admin_url("api")}}' + panel.ls_url + '/' + pk;
     var fn = function(panel,btn,step) {
       var p = {};
       self.add_field_values(p)
@@ -3749,7 +3751,7 @@ Lino.GridPanel = Ext.extend(Lino.GridPanel,{
             //~ since 20121226 p.$ext_requests.URL_PARAM_FORMAT = "$ext_requests.URL_FORMAT_PLAIN";
             this.add_param_values(p,true);
             //~ since 20121226 window.open(ADMIN_URL+'/api'+this.ls_url + "?" + Ext.urlEncode(p)) 
-            window.open('{{settings.SITE.plain_prefix}}'+this.ls_url + "?" + Ext.urlEncode(p)) 
+            window.open('{{settings.SITE.build_plain_url()}}'+this.ls_url + "?" + Ext.urlEncode(p)) 
           } }
         {% if False and settings.SITE.is_installed('system') %}
         ,{ scope:this, 

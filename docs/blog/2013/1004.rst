@@ -1,0 +1,118 @@
+==================================
+20131004 (Friday, 04 October 2013)
+==================================
+
+Movements
+---------
+
+
+Added parameters to :class:`lino.modlib.ledger.models.Movements`.
+
+Discovered a bug : the HTML button didn't work because it generated a 
+wrong url (forgot to adapt this place when I changed the meaning of 
+:setting:`plain_prefix`.
+
+Added new setting :setting:`start_year`.
+
+
+"Neuzugang ablehnen" führt zu Internal Server Error
+---------------------------------------------------
+
+Fixed a bug reported by Gerd:
+
+  Man geht bei den Neuzugängen auf Partner 23995 und versucht ihn
+  abzulehnen ... Paf kommt der Internal Server Error:
+  Expected a list of 12 values, but got [u'04.09.2013', u'false', u'false', u'']
+
+This was quite subtle: 
+
+The application code defines that action as follows::
+
+    class RefuseClient(dd.ChangeStateAction):
+        ...
+        label = _("Refuse")
+        parameters = ...
+        ...
+        
+    ...
+
+    ClientStates.refused.add_transition(RefuseClient)
+
+Since this :class:`RefuseClient <lino_welfare.modlib.pcsw.models.RefuseClient>` 
+is an action with parameters, 
+Lino generates a Window to be displayed by the client before actually sending 
+the AJAX request. 
+The generated definition of that action looks like this::
+
+    Lino.pcsw.Clients.wf1_ActionFormPanel = Ext.extend(Lino.ActionFormPanel,{
+      ...
+      action_name: 'wf1',
+      ls_url: "/pcsw/Clients",
+      window_title: "Ablehnen",
+      initComponent : function() {
+        var containing_panel = this;
+        var reason27 = new Lino.ChoicesFieldElement({ "autoHeight": true, "forceSelection": true, "fieldLabel": "reason", "allowBlank": false, "hiddenName": "reasonHidden", "listeners": { "render": Lino.quicktip_renderer("reason","(<RefuseClient wf1 (u'Refuse')>.reason) ") }, "selectOnFocus": true, "anchor": "-20", "store": Lino.pcsw.RefusalReasons, "name": "reason" });
+        var remark28 = new Ext.form.TextArea({ "listeners": { "render": Lino.quicktip_renderer("Remark","(<RefuseClient wf1 (u'Refuse')>.remark) ") }, "fieldLabel": "Bemerkung", "name": "remark", "growMax": 2000, "selectOnFocus": true, "anchor": "-20 -10" });
+        this.items = [ { "items": reason27, "autoHeight": true, "layout": "form", "xtype": "panel", "labelAlign": "top" }, { "items": remark28, "labelAlign": "top", "layout": "form", "xtype": "panel", "flex": 83 } ];
+        this.fields = [ reason27, remark28 ];
+        Lino.pcsw.Clients.wf1_ActionFormPanel.superclass.initComponent.call(this);
+      }
+    });
+
+    Lino.pcsw.ClientStates.wf1 = new Lino.WindowAction({ "draggable": true, "width": Lino.chars2width(50), "maximizable": true, "modal": true, "maximized": false, "height": Lino.rows2height(15) },function(){
+      var p = { "is_main_window": true, "hide_top_toolbar": true };
+      return new Lino.pcsw.Clients.wf1_ActionFormPanel({});
+    });
+
+and (when the action is available on a Client) the HTML returned by 
+`workflow_buttons` contains the following tag  ::
+
+  <a href="javascript:Lino.pcsw.ClientStates.wf1.run(&quot;ext-comp-1572&quot;,
+  { &quot;field_values&quot;: { &quot;reason&quot;: null, 
+  &quot;reasonHidden&quot;: null, &quot;remark&quot;: &quot;&quot; } })" 
+  title="Diesen Neuantrag ablehnen.">Ablehnen</a></p>"
+
+Okay until now? Anyway this shows we can be glad that Lino does 
+these things for us, can't we?
+
+Now the problem came because that action was available on different tables.
+At least on `integ.Clients` and `newcomers.NewClients`.
+And fortunately Lino doesn't generate a new Lino.ActionFormPanel subclass 
+for each table.
+But note that these two tables have different filter parameters.
+And the action correctly sends also the parameter values of that table 
+when calling the action. 
+But unfortunately the action used a generated variable (and always 
+the same) to determine the url of the AJAX call.
+It caused `integ.Clients` to parse these parameter values even when the 
+action was being called from `newcomers.NewClients`.
+That was not correct (and correctly caused the internal server error).
+
+The fix seems easy and sympathic because it reduces the generated 
+JS code. I simply replaced in :xfile:`linoweb.js`::
+
+    var url = '{{settings.SITE.build_admin_url("api")}}' + this.ls_url + '/' + pk;
+    
+by::
+
+    var url = '{{settings.SITE.build_admin_url("api")}}' + panel.ls_url + '/' + pk;
+
+And removed the line which defined ``ls_url`` on the
+ActionFormPanel subclass.
+
+This change implies of course the usual risk of side effects...
+ 
+Miscellaneous
+-------------
+
+
+-   Added a section
+    `Fehlermeldungen und wie damit umgehen
+    <http://welfare-user.lino-framework.org/de/general.html#fehlermeldungen-und-wie-damit-umgehen>`_
+    to the welfare userdocs.
+
+-   The userdocs for :ref:`welfare` had wrong URLs for 
+    "Online Link" and "Show Source".
+
+-   The :ref:`faggio` test suite is currently broken, I know it, but 
+    I'll first add more demo fixtures before fixing these failures.

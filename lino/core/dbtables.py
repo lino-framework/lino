@@ -535,7 +535,7 @@ class Table(AbstractTable):
         return self.model._meta.pk
         
     @classmethod
-    def get_row_by_pk(self,pk):
+    def get_row_by_pk(self,ar,pk):
         try:
             return self.model.objects.get(pk=pk)
         except ValueError:

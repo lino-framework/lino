@@ -1,0 +1,39 @@
+#77 : AJAX API for DELETE and other actions
+===========================================
+
+How am I supposed to manage the case when a user asks to perform an 
+action on multiple rows?
+
+For example imagine a client which retrieves a list of elements using::
+
+  GET http://example.com/foos
+  
+then it displays that list to the user in a grid, 
+the user selects some of those rows and hits a "Delete" button.
+
+Imagine the selected rows have primary keys 123, 124 and 127. 
+After all I've read about the RESTful API, I imagine that the client 
+should now issue the following HTTP requests::
+
+  DELETE http://example.com/foos/123
+  DELETE http://example.com/foos/124
+  DELETE http://example.com/foos/127
+  
+But I would like the user to receive a confirmation 
+"Are you sure you want to delete these 3 rows..?", 
+and I'd like to construct this question dynamically *on the server*.
+Is that possible while remaining RESTful?
+
+Maybe something like::
+
+  GET http://example.com/foos/?action=delete,selected=[123,124,127]
+  
+which would **not** delete anything, it would just return the text of 
+the confirmation question to ask.
+
+
+
+
+
+
+

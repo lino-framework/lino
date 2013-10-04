@@ -38,6 +38,12 @@ from django.utils.translation import ugettext_lazy as _
 from lino.modlib.accounts.utils import AccountTypes, DEBIT, CREDIT
 
 
+class DebitOrCreditField(models.BooleanField):
+    def __init__(self,*args,**kw):
+        kw.setdefault('help_text',_("Debit (checked) or Credit (not checked)"))
+        models.BooleanField.__init__(self,*args,**kw)
+    
+    
 
 class Chart(dd.BabelNamed):
   

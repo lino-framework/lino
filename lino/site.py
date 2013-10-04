@@ -42,6 +42,21 @@ Default value for the
 parameter of all tables who don't specify their own one.
 Default value is 15.
 
+
+.. setting:: plain_prefix
+
+The prefix to use for "plain html" URLs.
+Default value is ``'plain'``.
+
+.. setting:: start_year
+
+An integer with the calendar year in which this site starts working.
+Used e.g. 
+by :mod:`lino.modlib.ledger.utils`
+to fill the default list of FixcalYears.
+Or by :mod:`lino.modlib.ledger.fixtures.mini`
+to generate demo invoices.
+
 """
 
 
@@ -813,10 +828,9 @@ class Site(Site):
     Leave this unchanged as long as :doc:`/tickets/70` is not solved.
     """
     
+    start_year = 2011
+    
     plain_prefix = 'plain' 
-    """
-    The prefix to use for the "plain html" URLs.
-    """
     
     #~ admin_prefix = 'admin'
     admin_prefix = '' 

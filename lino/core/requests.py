@@ -84,6 +84,7 @@ class BaseRequest(object):
     :meth:`login <lino.site.Site.login>`.
     """
     renderer = None
+    selected_rows = []
     
     #~ def __init__(self,request=None,renderer=None,**kw):
     def __init__(self,request=None,**kw):
@@ -146,7 +147,8 @@ class BaseRequest(object):
         kw.update(current_project=rqdata.get(ext_requests.URL_PARAM_PROJECT,None))
         
         selected = rqdata.getlist(ext_requests.URL_PARAM_SELECTED)
-        kw.update(selected_rows = [self.actor.get_row_by_pk(pk) for pk in selected])
+        #~ kw.update(selected_rows = [self.actor.get_row_by_pk(pk) for pk in selected])
+        kw.update(selected_pks=selected)
         
         #~ if settings.SITE.user_model:
             #~ username = rqdata.get(ext_requests.URL_PARAM_SUBST_USER,None)
@@ -162,19 +164,26 @@ class BaseRequest(object):
             user=None,
             subst_user=None,
             current_project=None,
-            selected_rows=None,
+            #~ selected_rows=None,
+            selected_pks=None,
             requesting_panel=None,
             renderer=None):
         self.requesting_panel = requesting_panel
         self.user = user 
         self.current_project = current_project
-        self.selected_rows = selected_rows
+        #~ self.selected_rows = selected_rows
         if renderer is not None:
             self.renderer = renderer
         #~ if self.actor.parameters:
             #~ self.param_values = AttrDict(**param_values)
         self.subst_user = subst_user
         
+        if selected_pks is not None:
+            self.set_selected_pks(*selected_pks)
+        
+    def set_selected_pks(self,*selected_pks):
+        #~ print 20131003, selected_pks
+        self.selected_rows = [self.get_row_by_pk(pk) for pk in selected_pks]
         
     #~ def dialog(self,dlg):
         #~ # not finished
@@ -558,6 +567,7 @@ class ActionRequest(BaseRequest):
     #~ def prompt(self,*args,**kw): return self.ui.prompt(self,*args,**kw)
     def summary_row(self,*args,**kw): return self.actor.summary_row(self,*args,**kw)
     def get_sum_text(self): return self.actor.get_sum_text(self)
+    def get_row_by_pk(self,pk): return self.actor.get_row_by_pk(self,pk)
     def as_html(self,*args,**kw): return self.bound_action.action.as_html(self,*args,**kw)
         
     def absolute_uri(self,*args,**kw):

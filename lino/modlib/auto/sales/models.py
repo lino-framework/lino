@@ -395,7 +395,7 @@ class InvoicesToCreate(dd.VirtualTable):
         return contacts.Partner._meta.pk
         
     @classmethod
-    def get_row_by_pk(self,pk):
+    def get_row_by_pk(self,ar,pk):
         partner = contacts.Partner.objects.get(pk=pk)
         return self.get_row_for(partner)
         

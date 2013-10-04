@@ -456,7 +456,7 @@ if settings.SITE.user_model and settings.SITE.use_tinymce:
           if request.method == 'GET':
             
               rpt = requested_actor(app_label,actor)
-              elem = rpt.get_row_by_pk(pk)
+              elem = rpt.get_row_by_pk(None,pk)
               if elem is None:
                   raise http.Http404("%s %s does not exist." % (rpt,pk))
                   
@@ -655,10 +655,10 @@ class Restful(View):
     def post(self,request,app_label=None,actor=None,pk=None):
         #~ ui = settings.SITE.ui
         rpt = requested_actor(app_label,actor)
-        if pk is None:
-            elem = None
-        else:
-            elem = rpt.get_row_by_pk(pk)
+        #~ if pk is None:
+            #~ elem = None
+        #~ else:
+            #~ elem = rpt.get_row_by_pk(pk)
         ar = rpt.request(request=request)
             
         instance = ar.create_instance()
@@ -679,9 +679,10 @@ class Restful(View):
         #~ ui = settings.SITE.ui
         rpt = requested_actor(app_label,actor)
         #~ a = rpt.default_action
-        elem = rpt.get_row_by_pk(pk)
+        #~ elem = rpt.get_row_by_pk(pk)
         ar = rpt.request(request=request)
-        return delete_element(ar,elem)
+        ar.set_selected_pks(pk)
+        return delete_element(ar,ar.selected_rows[0])
       
     def get(self,request,app_label=None,actor=None,pk=None):
         #~ ui = settings.SITE.ui
@@ -705,8 +706,10 @@ class Restful(View):
         #~ ui = settings.SITE.ui
         rpt = requested_actor(app_label,actor)
         #~ a = rpt.default_action
-        elem = rpt.get_row_by_pk(pk)
+        #~ elem = rpt.get_row_by_pk(pk)
         ar = rpt.request(request=request)
+        ar.set_selected_pks(pk)
+        elem = ar.selected_rows[0]
         rh = ar.ah
             
         data = http.QueryDict(request.body).get('rows') # raw_post_data before Django 1.4
@@ -741,19 +744,24 @@ class ApiElement(View):
         if ba is None:
             raise http.Http404("%s has no action %r" % (rpt,action_name))
             
-        ar = ba.request(request=request)
-        ar.renderer = ui.ext_renderer
-        ah = ar.ah
         
         if pk and pk != '-99999' and pk != '-99998':
-            elem = rpt.get_row_by_pk(pk)
-            if elem is None:
-                raise http.Http404("%s has no row with primary key %r" % (rpt,pk))
+            #~ ar = ba.request(request=request,selected_pks=[pk])
+            #~ print 20131004, ba.actor
+            ar = ba.request(request=request)
+            ar.set_selected_pks(pk)
+            elem = ar.selected_rows[0]
+            #~ elem = rpt.get_row_by_pk(pk)
+            #~ if elem is None:
+                #~ raise http.Http404("%s has no row with primary key %r" % (rpt,pk))
                 #~ raise Exception("20120327 %s.get_row_by_pk(%r)" % (rpt,pk))
-            ar.selected_rows = [elem]
+            #~ ar.selected_rows = [elem]
         else:
+            ar = ba.request(request=request)
             elem = None
-        
+            
+        ar.renderer = ui.ext_renderer
+        ah = ar.ah
         
         fmt = request.GET.get(ext_requests.URL_PARAM_FORMAT,ba.action.default_format)
 
@@ -797,33 +805,39 @@ class ApiElement(View):
                 
         
     def post(self,request,app_label=None,actor=None,pk=None):
+        #~ elem = ar.actor.get_row_by_pk(pk)
+        #~ if elem is None:
+            #~ raise http.Http404("%s has no row with primary key %r" % (ar.actor,pk))
         ar = action_request(app_label,actor,request,request.POST,True)
-        ar.renderer = settings.SITE.ui.ext_renderer
-        elem = ar.actor.get_row_by_pk(pk)
-        if elem is None:
-            raise http.Http404("%s has no row with primary key %r" % (ar.actor,pk))
         if pk == '-99998':
-            assert elem is None
+            #~ assert elem is None
             elem = ar.create_instance()
-        ar.selected_rows = [elem]
+        else:
+            ar.set_selected_pks(pk)
+        #~ ar.selected_rows = [elem]
+        ar.renderer = settings.SITE.ui.ext_renderer
         return settings.SITE.ui.run_action(ar)
         
     def put(self,request,app_label=None,actor=None,pk=None):
         data = http.QueryDict(request.body) # raw_post_data before Django 1.4
         ar = action_request(app_label,actor,request,data,False)
+        ar.set_selected_pks(pk)
         ar.renderer = settings.SITE.ui.ext_renderer
-        elem = ar.actor.get_row_by_pk(pk)
-        if elem is None:
-            raise http.Http404("%s has no row with primary key %r" % (actor,pk))
+        elem = ar.selected_rows[0]
+        #~ elem = ar.actor.get_row_by_pk(pk)
+        #~ if elem is None:
+            #~ raise http.Http404("%s has no row with primary key %r" % (actor,pk))
         return form2obj_and_save(ar,data,elem,False,False) # force_update=True)
             
     def delete(self,request,app_label=None,actor=None,pk=None):
         #~ ui = settings.SITE.ui
         rpt = requested_actor(app_label,actor)
-        elem = rpt.get_row_by_pk(pk)
-        if elem is None:
-            raise http.Http404("%s has no row with primary key %r" % (rpt,pk))
+        #~ elem = rpt.get_row_by_pk(pk)
+        #~ if elem is None:
+            #~ raise http.Http404("%s has no row with primary key %r" % (rpt,pk))
         ar = rpt.request(request=request)
+        ar.set_selected_pks(pk)
+        elem = ar.selected_rows[0]
         return delete_element(ar,elem)
 
 

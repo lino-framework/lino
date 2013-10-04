@@ -148,8 +148,10 @@ def objects():
             
     if finan:
         yield finan.BankStatement.create_journal(chart=chart,name=u"Bestbank",account='bestbank',ref="B")
-        yield finan.BankStatement.create_journal(chart=chart,name=u"Cash",account='cash',ref="C")
-        yield finan.PaymentOrder.create_journal(chart=chart,name=u"Payment Orders",account='bestbankpo',ref="PO")
+        yield finan.BankStatement.create_journal(chart=chart,
+            name=u"Cash",account='cash',ref="C",dc=accounts.CREDIT)
+        yield finan.PaymentOrder.create_journal(chart=chart,name=u"Payment Orders",
+            account='bestbankpo',ref="PO",dc=accounts.DEBIT)
         yield finan.JournalEntry.create_journal(chart=chart,name=u"Miscellaneous Journal Entries",ref="M",dc=accounts.DEBIT)
 
     if declarations:
@@ -225,7 +227,7 @@ def objects():
     #~ PURCHASE_STORIES = Cycler(PURCHASE_STORIES)
     
     #~ date = settings.SITE.demo_date() + delta(years=-2)
-    START_YEAR = 2011
+    START_YEAR = settings.SITE.start_year # 2011
     date = datetime.date(START_YEAR,1,1)
     while date.year < 2013:
         #~ print __file__, date

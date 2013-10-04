@@ -235,10 +235,6 @@ class TableRequest(ActionRequest):
     sliced_data_iterator = property(get_sliced_data_iterator_property)
     
 
-    @classmethod
-    def get_row_by_pk(self,pk):
-        return self.data_iterator[int(pk) - 1]
-        
     def get_data_iterator(self):
         if self.actor.get_data_rows is not None:
             l = []
@@ -972,6 +968,15 @@ class AbstractTable(actors.Actor):
     #~ grid = actions.GridEdit()
     
     @classmethod
+    def get_row_by_pk(self,ar,pk):
+        """
+        dbtables.Table overrides this.
+        """
+        return ar.data_iterator[int(pk) - 1]
+        
+    
+    
+    @classmethod
     def get_default_action(cls):
         #~ return actions.BoundAction(cls,cls.grid)
         #~ return 'grid'
@@ -1189,7 +1194,7 @@ class AbstractTable(actors.Actor):
         settings.SITE.startup()
         #~ settings.SITE.ui
         if pk is not None:
-            elem = self.get_row_by_pk(pk)
+            #~ elem = self.get_row_by_pk(pk)
             #~ elem = self.model.objects.get(pk=pk)
             if an is None:
                 an = self.default_elem_action_name
@@ -1197,7 +1202,10 @@ class AbstractTable(actors.Actor):
             an = self.default_list_action_name
         ba = self.get_action_by_name(an)
         #~ print ba
-        ar = self.request(action=ba,selected_rows=[elem])
+        if pk is None:
+            ar = self.request(action=ba)
+        else:
+            ar = self.request(action=ba,selected_pks=[pk])
         #~ ar = TableRequest(None,self,None,ba)
         kw = ba.action.run_from_ui(ar)
         #~ kw = self.check_action_response(kw)

@@ -889,7 +889,7 @@ class ShowDetailAction(Action):
         
         navigator = None
         if pk and pk != '-99999' and pk != '-99998':
-            elem = rpt.get_row_by_pk(pk)
+            elem = ar.get_row_by_pk(pk)
             if elem is None:
                 raise http.Http404("%s has no row with primary key %r" % (rpt,pk))
                 #~ raise Exception("20120327 %s.get_row_by_pk(%r)" % (rpt,pk))
