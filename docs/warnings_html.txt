@@ -1,0 +1,5 @@
+/home/luc/hgwork/lino/lino/modlib/users/models.py:docstring of lino.modlib.users.models.User:1: ERROR: Unknown interpreted text role "ddref".
+/home/luc/hgwork/lino/lino/modlib/users/models.py:docstring of lino.modlib.users.models.UsersOverview:1: ERROR: Unknown interpreted text role "ddref".
+/home/luc/hgwork/lino/lino/modlib/vat/models.py:docstring of lino.modlib.vat.models:18: ERROR: Unexpected indentation.
+/home/luc/hgwork/lino/lino/modlib/vat/models.py:docstring of lino.modlib.vat.models.TradeType:1: ERROR: Unknown interpreted text role "ddref".
+/home/luc/hgwork/lino/lino/modlib/vat/models.py:docstring of lino.modlib.vat.models.VatRegime:1: ERROR: Unknown interpreted text role "ddref".

@@ -14,20 +14,70 @@
 """
 Note: this fixture supposes that :mod:`few_cities` has also been loaded 
 and thus does not load the few Belgian cities defined there.
+
+Original sources 
+
+- http://www.charline.be/info/codepost/cpost.htm
+- https://fr.wikibooks.org/wiki/N%C3%A9erlandais_pour_traducteurs_:_les_villes_belges
+
 """
+
+from north.dbutils import babel_values
 
 from lino.core.dbutils import resolve_model
 from lino.utils.instantiator import Instantiator
 from lino import dd
 
-# The following string is originally copied from
-# http://www.charline.be/info/codepost/cpost.htm
 
+# german names are my spontaneous guessings...
+belgian_cities_nl_fr = u"""
+4770 |Amel                |Amblève              |Amel
+2000 |Antwerpen           |Anvers               |Antwerpen
+1547 |Bever               |Biévène              |Bever
+8000 |Brugge              |Bruges               |Brügge
+7780 |Komen-Waasten       |Comines-Warneton     |Comines-Warneton
+7090 |'s-Gravenbrakel     |Braine-le-Comte      |Braine-le-Comte
+8500 |Kortrijk            |Courtrai             |Kortrijk
+8670 |Koksijde            |Coxyde               |Koksijde
+8600 |Diksmuide           |Dixmude              |Diksmuide
+7850 |Edingen             |Enghien              |Enghien
+8587 |Spiere-Helkijn      |Espierres-Helchin    |Spiere-Helkijn
+3790 |Voeren              |Fourons              |Fourons 
+8630 |Veurne              |Furnes               |Veurne
+1570 |Galmaarden          |Gammerages           |Galmaarden
+9000 |Gent                |Gand                 |Gent
+1470 |Genappe             |Genepiën             |Genappe
+9500 |Geraardsbergen      |Grammont             |Grammont
+1500 |Hal                 |Halle                |Halle 
+4280 |Hannuit             |Hannut               |Hannut
+9520 |Sint-Lievens-Houtem |Hautem-Saint-Liévin  |Sint-Lievens-Houtem
+3540 |Herk-de-Stad        |Herck-la-Ville       |Herk-de-Stad
+4500 |Hoei                |Huy                  |Huy
+9830 |Sint-Martens-Latem  |Laethem-Saint-Martin |Sint-Martens-Latem
+1310 |Terhulpen           |La Hulpe             |La Hulpe 
+3440 |Zoutleeuw           |Léau                 |Léau
+7860 |Lessen              |Lessines             |Lessines
+4287 |Lijsem              |Lincent              |Lincent
+3000 |Leuven              |Louvain              |Löwen
+1348 |Louvain-la-Neuve    |Louvain-la-Neuve     |Neu-Löwen
+2800 |Mechelen            |Malines              |Mechelen
+8930 |Menen               |Menin                |Menen
+3270 |Scherpenheuvel      |Montaigu             |Montaigu
+7700 |Moeskroen           |Moucron              |Moucron
+8620 |Nieuwpoort          |Nieuport             |Nieuwpoort
+1400 |Nijvel              |Nivelles             |Nivelles 
+4360 |Oerle               |Oreye                |Oreye 
+1360 |Perwijs             |Perwez               |Perwez 
+9100 |Sint-Niklaas        |Saint-Nicolas        |Saint-Nicolas
+3800 |Sint-Truiden        |Saint-Trond          |Saint-Trond
+3700 |Tongeren            |Tongres              |Tongeren
+1800 |Vilvoorde           |Vilvorde             |Vilvoorde
+8900 |Ieper               |Ypres                |Ypres
+"""                                           
+                                              
 belgian_cities = u"""
 9420 Aaigem 
 8511 Aalbeke 
-# 9300 Aalst 
-# 3800 Aalst (Limb.) 
 9880 Aalter 
 3200 Aarschot 
 8700 Aarsele 
@@ -57,10 +107,8 @@ belgian_cities = u"""
 8690 Alveringem 
 4540 Amay 
 6680 Amberloup 
-4770 Amblève 
 6953 Ambly 
 4219 Ambresin 
-4770 Amel 
 6997 Amonines 
 7750 Amougies 
 4540 Ampsin 
@@ -68,21 +116,18 @@ belgian_cities = u"""
 1070 Anderlecht 
 6150 Anderlues 
 4821 Andrimont 
-# 4031 Angleur 
 7387 Angre 
 7387 Angreau 
 5537 Anhée 
 6721 Anlier 
 6890 Anloy 
 5537 Annevoie-Rouillon 
-# 4430 Ans 
 5500 Anseremme 
 7750 Anseroeul 
 5520 Anthée 
 4520 Antheit 
 4160 Anthisnes 
 7640 Antoing 
-2000 Antwerpen 
 2018 Antwerpen 1
 2020 Antwerpen 2 
 2030 Antwerpen 3 
@@ -155,7 +200,6 @@ belgian_cities = u"""
 2387 Baarle-Hertog 
 9200 Baasrode 
 9800 Bachte-Maria-Leerne 
-4837 Baelen (Lg.) 
 5550 Bagimont 
 6464 Baileux 
 6460 Bailièvre 
@@ -257,7 +301,6 @@ belgian_cities = u"""
 4300 Bettincourt 
 5030 Beuzet 
 2560 Bevel 
-1547 Bever 
 4960 Bevercé 
 9700 Bevere 
 8791 Beveren (Leie) 
@@ -380,7 +423,6 @@ belgian_cities = u"""
 5590 Braibant 
 1420 Braine-l'Alleud 
 1440 Braine-le-Château 
-7090 Braine-le-Comte 
 4260 Braives 
 9660 Brakel 
 5310 Branchon 
@@ -398,13 +440,11 @@ belgian_cities = u"""
 3840 Broekom 
 1931 Brucargo 
 7940 Brugelette 
-8000 Brugge 
 5660 Brûly 
 5660 Brûly-de-Pesche 
 7620 Brunehaut 
 1785 Brussegem 
-1000 Brussel 1 
-1120 Brussel 12 
+1120 Brussel 12
 1130 Brussel 13 
 1140 Brussel 14 
 1150 Brussel 15 
@@ -527,7 +567,6 @@ belgian_cities = u"""
 4180 Comblain-Fairon 
 4180 Comblain-la-Tour 
 7780 Comines 
-7780 Comines-Warneton 
 5590 Conneux 
 1435 Corbais 
 6838 Corbion 
@@ -602,7 +641,6 @@ belgian_cities = u"""
 8900 Dikkebus 
 9630 Dikkele 
 9890 Dikkelvenne 
-8600 Diksmuide 
 1700 Dilbeek 
 3650 Dilsen 
 5500 Dinant 
@@ -644,7 +682,6 @@ belgian_cities = u"""
 7191 Ecaussinnes-Lalaing 
 2650 Edegem 
 9700 Edelare 
-7850 Edingen 
 9900 Eeklo 
 8480 Eernegem 
 8740 Egem 
@@ -808,7 +845,6 @@ belgian_cities = u"""
 7830 Fouleng 
 6440 Fourbechies 
 3798 Fouron-le-Comte 
-3790 Fourons 
 3790 Fouron-Saint-Martin 
 3792 Fouron-Saint-Pierre 
 5504 Foy-Notre-Dame 
@@ -837,7 +873,6 @@ belgian_cities = u"""
 1750 Gaasbeek 
 7943 Gages 
 7906 Gallaix 
-1570 Galmaarden 
 1083 Ganshoren 
 7530 Gaurain-Ramecroix 
 9890 Gavere 
@@ -855,15 +890,12 @@ belgian_cities = u"""
 6929 Gembes 
 5030 Gembloux 
 4851 Gemmenich 
-1470 Genappe 
 3600 Genk 
 7040 Genly 
 3770 Genoelselderen 
-9000 Gent 
 9050 Gentbrugge 
 1450 Gentinnes 
 1332 Genval 
-9500 Geraardsbergen 
 3960 Gerdingen 
 5524 Gerin 
 1367 Gérompont 
@@ -982,7 +1014,6 @@ belgian_cities = u"""
 6792 Halanzy 
 3545 Halen 
 2220 Hallaar 
-1500 Halle 
 2980 Halle (Kempen) 
 3440 Halle-Booienhoven 
 6986 Halleux 
@@ -1005,7 +1036,6 @@ belgian_cities = u"""
 8610 Handzame 
 4357 Haneffe 
 4210 Hannêche 
-4280 Hannut 
 5310 Hanret 
 9850 Hansbeke 
 5580 Han-sur-Lesse 
@@ -1082,7 +1112,6 @@ belgian_cities = u"""
 1540 Herfelingen 
 4728 Hergenrath 
 7742 Hérinnes-lez-Pecq 
-3540 Herk-de-Stad 
 4681 Hermalle-sous-Argenteau 
 4480 Hermalle-sous-Huy 
 4680 Hermée 
@@ -1187,12 +1216,10 @@ belgian_cities = u"""
 1851 Humbeek 
 9630 Hundelgem 
 1367 Huppaye 
-4500 Huy 
 7022 Hyon 
 8480 Ichtegem 
 9472 Iddergem 
 9506 Idegem 
-8900 Ieper 
 9340 Impe 
 1315 Incourt 
 8770 Ingelmunster 
@@ -1295,7 +1322,6 @@ belgian_cities = u"""
 8680 Koekelare 
 1081 Koekelberg 
 3582 Koersel 
-8670 Koksijde 
 3840 Kolmont (Borgloon) 
 3700 Kolmont (Tongeren) 
 7780 Komen 
@@ -1313,7 +1339,6 @@ belgian_cities = u"""
 3070 Kortenberg 
 3720 Kortessem 
 3890 Kortijs 
-8500 Kortrijk 
 3220 Kortrijk-Dutsel 
 3850 Kozen 
 1950 Kraainem 
@@ -1331,7 +1356,6 @@ belgian_cities = u"""
 7611 La Glanerie 
 4987 La Gleize 
 7170 La Hestre 
-1310 La Hulpe 
 7100 La Louvière 
 # 4910 La Reid
 6980 La Roche-en-Ardenne 
@@ -1413,7 +1437,6 @@ belgian_cities = u"""
 4317 Les Waleffes 
 6464 L'Escaillère 
 7621 Lesdain 
-7860 Lessines 
 5580 Lessive 
 6953 Lesterny 
 5170 Lesve 
@@ -1422,7 +1445,6 @@ belgian_cities = u"""
 6500 Leugnies 
 9700 Leupegem 
 3630 Leut 
-3000 Leuven 
 5310 Leuze (Nam.) 
 7900 Leuze-en-Hainaut 
 6500 Leval-Chaudeville 
@@ -1453,7 +1475,6 @@ belgian_cities = u"""
 1342 Limelette 
 6670 Limerlé 
 4357 Limont 
-4287 Lincent 
 3210 Linden 
 1630 Linkebeek 
 3560 Linkhout 
@@ -1497,7 +1518,6 @@ belgian_cities = u"""
 5575 Louette-Saint-Denis 
 5575 Louette-Saint-Pierre 
 1471 Loupoigne 
-1348 Louvain-la-Neuve 
 4920 Louveigné (Aywaille) 
 4141 Louveigné (Sprimont) 
 9920 Lovendegem 
@@ -1581,7 +1601,6 @@ belgian_cities = u"""
 1745 Mazenzele 
 5032 Mazy 
 5372 Méan 
-2800 Mechelen 
 3630 Mechelen-aan-de-Maas 
 3870 Mechelen-Bovelingen 
 4219 Meeffe 
@@ -1621,7 +1640,6 @@ belgian_cities = u"""
 5550 Membre 
 3770 Membruggen 
 9042 Mendonk 
-8930 Menen 
 6567 Merbes-le-Château 
 6567 Merbes-Sainte-Marie 
 1785 Merchtem 
@@ -1667,7 +1685,6 @@ belgian_cities = u"""
 8470 Moere 
 8340 Moerkerke 
 9220 Moerzeke 
-7700 Moeskroen 
 4520 Moha 
 5361 Mohiville 
 5060 Moignelée 
@@ -1684,7 +1701,6 @@ belgian_cities = u"""
 5555 Monceau-en-Ardenne 
 6592 Monceau-Imbrechies 
 6031 Monceau-sur-Sambre 
-# 7000 Mons 
 4400 Mons-lez-Liège 
 1400 Monstreux 
 6661 Mont (Lux.) 
@@ -1804,14 +1820,12 @@ belgian_cities = u"""
 8950 Nieuwkerke 
 9100 Nieuwkerken-Waas 
 8377 Nieuwmunster 
-8620 Nieuwpoort 
 3221 Nieuwrode 
 2560 Nijlen 
 1457 Nil-St-Vincent-St-Martin 
 7020 Nimy (Mons) 
 9400 Ninove 
 5670 Nismes 
-1400 Nivelles 
 5680 Niverlée 
 6640 Nives 
 6717 Nobressart 
@@ -1915,7 +1929,6 @@ belgian_cities = u"""
 7501 Orcq 
 3800 Ordingen 
 5640 Oret 
-4360 Oreye 
 6880 Orgeo 
 7802 Ormeignies 
 1350 Orp-Jauche 
@@ -1977,7 +1990,6 @@ belgian_cities = u"""
 7134 Péronnes-lez-Binche 
 7600 Péruwelz 
 8600 Pervijze 
-1360 Perwez 
 5352 Perwez-Haillot 
 5660 Pesche 
 5590 Pessoux 
@@ -2238,7 +2250,6 @@ belgian_cities = u"""
 9260 Schellebelle 
 9506 Schendelbeke 
 1703 Schepdaal 
-3270 Scherpenheuvel 
 2970 Schilde 
 4782 Schoenberg 
 4782 Schönberg 
@@ -2313,19 +2324,16 @@ belgian_cities = u"""
 1600 Sint-Laureins-Berchem 
 2960 Sint-Lenaerts 
 9550 Sint-Lievens-Esse 
-9520 Sint-Lievens-Houtem 
 9981 Sint-Margriete 
 9667 Sint-Maria-Horebeke 
 9630 Sint-Maria-Latem 
 9570 Sint-Maria-Lierde 
 1700 Sint-Martens-Bodegem 
-9830 Sint-Martens-Latem 
 9800 Sint-Martens-Leerne 
 1750 Sint-Martens-Lennik 
 9572 Sint-Martens-Lierde 
 3790 Sint-Martens-Voeren 
 8200 Sint-Michiels 
-9100 Sint-Niklaas 
 9170 Sint-Pauwels 
 1541 Sint-Pieters-Kapelle (Bt.) 
 1600 Sint-Pieters-Leeuw 
@@ -2334,7 +2342,6 @@ belgian_cities = u"""
 1150 Sint-Pieters-Woluwe 
 8690 Sint-Rijkers 
 1932 Sint-Stevens-Woluwe 
-3800 Sint-Truiden 
 1700 Sint-Ulriks-Kapelle 
 4851 Sippenaeken 
 7332 Sirault 
@@ -2377,7 +2384,6 @@ belgian_cities = u"""
 3510 Spalbeek 
 7032 Spiennes 
 8587 Spiere 
-8587 Spiere-Helkijn 
 5530 Spontin 
 4140 Sprimont 
 5190 Spy 
@@ -2488,7 +2494,6 @@ belgian_cities = u"""
 6700 Toernich 
 6941 Tohogne 
 1570 Tollembeek 
-3700 Tongeren 
 2260 Tongerlo (Antw.) 
 3960 Tongerlo (Limb.) 
 7951 Tongre-Notre-Dame 
@@ -2558,7 +2563,6 @@ belgian_cities = u"""
 4800 Verviers 
 6870 Vesqueville 
 3870 Veulen 
-8630 Veurne 
 5300 Vezin 
 7538 Vezon 
 9500 Viane 
@@ -2601,7 +2605,6 @@ belgian_cities = u"""
 6740 Villers-sur-Semois 
 7021 Ville-sur-Haine (Mons) 
 7070 Ville-sur-Haine(Le Roeulx) 
-1800 Vilvoorde 
 4520 Vinalmont 
 9921 Vinderhoute 
 8630 Vinkem 
@@ -2859,7 +2862,6 @@ belgian_cities = u"""
 9520 Zonnegem 
 9620 Zottegem 
 8630 Zoutenaaie 
-3440 Zoutleeuw 
 8904 Zuidschote 
 8377 Zuienkerke 
 9870 Zulte 
@@ -2895,3 +2897,12 @@ def objects():
             yield o
             #~ print __name__, "20121114"
             #~ return 
+    for ln in belgian_cities_nl_fr.splitlines():
+        ln = ln.strip()
+        if ln and ln[0] != '#':
+            args = ln.split('|')
+            if len(args) != 4:
+                raise Exception("Invalid format : \n%s" % ln)
+            args = [x.strip() for x in args]
+            o = city(zip_code=args[0],**babel_values('name',nl=args[1],fr=args[2],de=args[3],en=args[3]))
+            yield o

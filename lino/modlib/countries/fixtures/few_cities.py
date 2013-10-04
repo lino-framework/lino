@@ -105,6 +105,8 @@ def objects():
     yield be_city('4760',"Büllingen","Bullange","Büllingen","Büllingen",parent=prov)
     yield be_city('4780',"Sankt Vith","Saint-Vith","Sankt Vith","Sankt Vith",parent=prov)
     yield be_city('4780',"Recht","Recht","Recht","Recht",parent=prov)
+    yield be_city('4837',"Baelen","Baelen","Baelen","Baelen",parent=prov)
+
     
     yield be_province("Hennegau","Hainaut","Henegouwen")
     yield be_province("Wallonisch-Brabant","Brabant wallon","Waals-Brabant")

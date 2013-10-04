@@ -116,3 +116,21 @@ Miscellaneous
 
 -   The :ref:`faggio` test suite is currently broken, I know it, but 
     I'll first add more demo fixtures before fixing these failures.
+
+- Stumbled over `Néerlandais pour traducteurs : les villes belges
+  <https://fr.wikibooks.org/wiki/N%C3%A9erlandais_pour_traducteurs_:_les_villes_belges>`_,
+  a collection of Belgian city names in both FR and NL,
+  and integrated this wisdom into :mod:`lino.modlib.countries.fixtures.be`.
+  
+  Noticed then that all this wisdom and more is also in the Wikipedia.
+  The Wikipedia has the advantage of being well maintained,
+  but the disadvantage of not being very semantic.
+  Wrote a script which reads data from wikipedia and injects it into 
+  a Lino database. 
+  :mod:`lino.modlib.countries.fixtures.wikibe`
+  Not finished. 
+  And anyway: Luc, you should rather do those things for which your 
+  customers are waiting, shouldn't you!
+  
+  
+  
