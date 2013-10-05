@@ -617,7 +617,13 @@ class Invoices(SalesDocuments):
             qs = qs.filter(journal=ar.param_values.journal)
         return qs
     
-    
+    @classmethod
+    def param_defaults(cls,ar,**kw):
+        kw = super(Invoices,cls).param_defaults(ar,**kw)
+        kw.update(year=ledger.FiscalYears.from_date(datetime.date.today()))
+        return kw
+        
+
     
 class InvoicesByJournal(Invoices):
     order_by = ["number"]

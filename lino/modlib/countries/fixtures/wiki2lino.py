@@ -51,6 +51,8 @@ def extract(url):
         else:
             raise Exception("Found row %s with %d cells"  % (cells,len(cells)))
 
+if __name__ == '__main__':
 
-extract('https://fr.wikipedia.org/wiki/Liste_des_communes_de_la_R%C3%A9gion_wallonne')
-extract('https://fr.wikipedia.org/wiki/Liste_des_communes_de_la_R%C3%A9gion_flamande')
+    extract('https://fr.wikipedia.org/wiki/Liste_des_communes_de_la_R%C3%A9gion_wallonne')
+    extract('https://fr.wikipedia.org/wiki/Liste_des_communes_de_la_R%C3%A9gion_flamande')
+

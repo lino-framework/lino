@@ -259,6 +259,11 @@ class UserProfile(Choice):
         s += ")"
         return s
         
+    #~ def hide_languages(self,languages):
+        #~ self.hidden_languages = set(settings.SITE.resolve_languages(languages))
+            
+        
+        
 
         
 class UserProfiles(ChoiceList):

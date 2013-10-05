@@ -425,6 +425,15 @@ class SuggestionsByVoucher(ledger.ExpectedMovements):
             return None
         return voucher.journal.dc
 
+    @classmethod
+    def param_defaults(cls,ar,**kw):
+        voucher = ar.master_instance
+        kw = super(SuggestionsByVoucher,cls).param_defaults(ar,**kw)
+        #~ kw = super(MyEvents,self).param_defaults(ar,**kw)
+        #~ kw.update(journal=voucher.journal)
+        kw.update(date_until=voucher.date)
+        #~ kw.update(trade_type=vat.TradeTypes.purchases)
+        return kw
 
     @classmethod
     def get_data_rows(cls,ar,**flt):
@@ -456,8 +465,8 @@ class SuggestionsByPaymentOrder(SuggestionsByVoucher):
     
     @classmethod
     def param_defaults(cls,ar,**kw):
+        kw = super(SuggestionsByPaymentOrder,cls).param_defaults(ar,**kw)
         voucher = ar.master_instance
-        #~ kw = super(MyEvents,self).param_defaults(ar,**kw)
         #~ kw.update(journal=voucher.journal)
         kw.update(date_until=voucher.execution_date or voucher.date)
         #~ kw.update(trade_type=vat.TradeTypes.purchases)
@@ -468,8 +477,7 @@ PaymentOrdersByJournal.suggest = dd.ShowSlaveTable(SuggestionsByPaymentOrder)
 
 class SuggestionsByBankStatement(SuggestionsByVoucher):
     master = 'finan.BankStatement'
-    
-        
+   
 
 BankStatementsByJournal.suggest = dd.ShowSlaveTable(SuggestionsByBankStatement)
 

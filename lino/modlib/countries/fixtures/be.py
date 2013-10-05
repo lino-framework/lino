@@ -12,8 +12,14 @@
 ## You should have received a copy of the GNU General Public License
 ## along with Lino; if not, see <http://www.gnu.org/licenses/>.
 """
-Note: this fixture supposes that :mod:`few_cities` has also been loaded 
-and thus does not load the few Belgian cities defined there.
+Loads all Belgian cities into the database.
+Supposes that :mod:`few_cities <lino.modlib.countries.fixtures.few_cities>` 
+has also been loaded and thus does not load the cities defined there.
+
+This list of Belgian cities is in no way authoritative, but "works for me".
+
+The result is available for public access under 
+http://belref.lino-framework.org
 
 Original sources 
 

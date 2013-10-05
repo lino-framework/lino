@@ -116,6 +116,8 @@ Miscellaneous
 
 -   The :ref:`faggio` test suite is currently broken, I know it, but 
     I'll first add more demo fixtures before fixing these failures.
+    
+-  The "(source code)" link in the API docs didn't work. Fixed.
 
 - Stumbled over `Néerlandais pour traducteurs : les villes belges
   <https://fr.wikibooks.org/wiki/N%C3%A9erlandais_pour_traducteurs_:_les_villes_belges>`_,
@@ -125,12 +127,13 @@ Miscellaneous
   Noticed then that all this wisdom and more is also in the Wikipedia.
   The Wikipedia has the advantage of being well maintained,
   but the disadvantage of not being very semantic.
-  Wrote a script which reads data from wikipedia and injects it into 
-  a Lino database. 
-  :mod:`lino.modlib.countries.fixtures.wikibe`
+  Started a script 
+  :mod:`wiki2lino <lino.modlib.countries.fixtures.wiki2lino>`
+  which uses BeautyfulSoup to read data from wikipedia 
+  in order inject it into a Lino database. 
   Not finished. 
-  And anyway: Luc, you should rather do those things for which your 
-  customers are waiting, shouldn't you!
+  And anyway: Luc, instead of playing around you should rather do 
+  things for which your customers are waiting, shouldn't you!
   
   
   

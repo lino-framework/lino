@@ -871,6 +871,12 @@ def create_atomizer(fld,name):
         #~ ...
     #~ if isinstance(fld,dd.LinkedForeignKey):
         #~ return LinkedForeignKeyField(fld,name)
+        
+    sf_class = getattr(fld,'lino_atomizer_class',None)
+    if sf_class is not None:
+        return sf_class(fld,name)
+        
+        
     if isinstance(fld,dd.RequestField):
         delegate = create_atomizer(fld.return_type,fld.name)
         return RequestStoreField(fld,delegate,name)

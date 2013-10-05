@@ -35,12 +35,27 @@ from lino import mixins
 #from lino.modlib.journals import models as journals
 from django.utils.translation import ugettext_lazy as _
 
-from lino.modlib.accounts.utils import AccountTypes, DEBIT, CREDIT
+from lino.modlib.accounts.utils import AccountTypes, DEBIT, CREDIT, DCLABELS
+
+
+from lino.ui.store import BooleanStoreField
+
+class DebitOrCreditStoreField(BooleanStoreField):
+    """
+    This is used as `lino_atomizer_class` for :class:`DebitOrCreditField`.
+    """
+    
+    def format_value(self,ar,v):
+        return unicode(DCLABELS[v])
+        
 
 
 class DebitOrCreditField(models.BooleanField):
+    lino_atomizer_class = DebitOrCreditStoreField
+    
     def __init__(self,*args,**kw):
         kw.setdefault('help_text',_("Debit (checked) or Credit (not checked)"))
+        kw.setdefault('default',None)
         models.BooleanField.__init__(self,*args,**kw)
     
     

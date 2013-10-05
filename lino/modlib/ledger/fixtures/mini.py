@@ -132,13 +132,12 @@ def objects():
 
 
     if sales:
+        MODEL = sales.Invoice
         #~ yield sales.Orders.create_journal("VKR",'sales',name=u"Aufträge")
-        yield sales.Invoice.create_journal('sales',ref="S",chart=chart,**babel_values('name',
-          de="Verkaufsrechnungen",fr="Factures vente",en="Sales invoices",et="Müügiarved"))
     else:
-        yield ledger.AccountInvoice.create_journal('sales',
-            ref="S",chart=chart,**babel_values('name',
-            de="Verkaufsrechnungen",fr="Factures vente",en="Sales invoices",et="Müügiarved"))
+        MODEL = ledger.AccountInvoice
+    kw = babel_values('name',de="Verkaufsrechnungen",fr="Factures vente",en="Sales invoices",et="Müügiarved")
+    yield MODEL.create_journal('sales',ref="S",chart=chart,**kw)
           
     yield ledger.AccountInvoice.create_journal('purchases',
         chart=chart,
@@ -147,17 +146,20 @@ def objects():
             de="Einkaufsrechnungen",fr="Factures achat",en="Purchase invoices",et="Ostuarved"))
             
     if finan:
-        yield finan.BankStatement.create_journal(chart=chart,name=u"Bestbank",account='bestbank',ref="B")
+        yield finan.BankStatement.create_journal(chart=chart,name=u"Bestbank",
+            account='bestbank',ref="B")
         yield finan.BankStatement.create_journal(chart=chart,
-            name=u"Cash",account='cash',ref="C",dc=accounts.CREDIT)
+            name=u"Cash",account='cash',ref="C")
         yield finan.PaymentOrder.create_journal(chart=chart,name=u"Payment Orders",
-            account='bestbankpo',ref="PO",dc=accounts.DEBIT)
+            account='bestbankpo',ref="PO")
         yield finan.JournalEntry.create_journal(chart=chart,name=u"Miscellaneous Journal Entries",ref="M",dc=accounts.DEBIT)
 
     if declarations:
         yield declarations.Declaration.create_journal(chart=chart,name=u"VAT declarations",ref="V",account='vatdcl')
 
     Company = dd.resolve_model('contacts.Company')
+    Person = dd.resolve_model('contacts.Person')
+    Product = dd.resolve_model('products.Product')
     
     if False: # old system
     
@@ -197,19 +199,31 @@ def objects():
             invoice.save()
             
         
-    MODEL = ledger.AccountInvoice
-    PARTNERS = Cycler(Company.objects.order_by('id'))
     USERS = Cycler(settings.SITE.user_model.objects.all())
+    
+    
+    if sales:
         
-    jnl = ledger.Journal.objects.get(ref="P")
-    ACCOUNTS = Cycler(jnl.get_allowed_accounts())
+        yield Product(name="Foo",sales_price='9.99')
+        yield Product(name="Bar",sales_price='19.99')
+        yield Product(name="Baz",sales_price='39.99')
+        PRODUCTS = Cycler(Product.objects.order_by('id'))
+        JOURNAL_S = ledger.Journal.objects.get(ref="S")
+        #~ assert JOURNAL_S.dc == accounts.DEBIT
+        CUSTOMERS = Cycler(Person.objects.order_by('id'))
+        ITEMCOUNT = Cycler(1,2,3)
+        QUANTITIES = Cycler(5,1,2,3)
+        
+    PROVIDERS = Cycler(Company.objects.order_by('id'))
+        
+    JOURNAL_P = ledger.Journal.objects.get(ref="P")
+    #~ assert JOURNAL_P.dc == accounts.CREDIT
+    ACCOUNTS = Cycler(JOURNAL_P.get_allowed_accounts())
     AMOUNTS = Cycler([Decimal(x) for x in 
         "20 29.90 39.90 99.95 199.95 599.95 1599.99".split()])
     AMOUNT_DELTAS = Cycler([Decimal(x) for x in "0 0.60 1.10 1.30 2.50".split()])
     DATE_DELTAS = Cycler((1,2,3,4,5,6,7))
     INFLATION_RATE = Decimal("0.02")
-    #~ RYTHM = Cycler(delta(months=1),delta(years=1))
-    
     
     """
     5 "purchase stories" : each story represents a provider who sends 
@@ -218,21 +232,43 @@ def objects():
     PURCHASE_STORIES = []
     for i in range(5):
         # provider, (account,amount)
-        story = ( PARTNERS.pop(), [] )
+        story = ( PROVIDERS.pop(), [] )
         story[1].append( (ACCOUNTS.pop(),AMOUNTS.pop()) )
         if i % 3:
             story[1].append( (ACCOUNTS.pop(),AMOUNTS.pop()) )
         PURCHASE_STORIES.append(story)
     
-    #~ PURCHASE_STORIES = Cycler(PURCHASE_STORIES)
     
     #~ date = settings.SITE.demo_date() + delta(years=-2)
     START_YEAR = settings.SITE.start_year # 2011
     date = datetime.date(START_YEAR,1,1)
     while date.year < 2013:
-        #~ print __file__, date
+        
+        if sales:
+            #~ print __file__, date
+            invoice = sales.Invoice(journal=JOURNAL_S,
+                partner=CUSTOMERS.pop(),
+                user=USERS.pop(),
+                date=date+delta(days=10+DATE_DELTAS.pop()))
+            yield invoice
+            for j in range(ITEMCOUNT.pop()):
+                item = sales.InvoiceItem(voucher=invoice,
+                    product=PRODUCTS.pop(),
+                    qty=QUANTITIES.pop()
+                    )
+                item.product_changed(REQUEST)
+                item.before_ui_save(REQUEST)
+                #~ if item.total_incl:
+                    #~ print "20121208 ok", item
+                #~ else:
+                    #~ if item.product.price:
+                        #~ raise Exception("20121208")
+                yield item
+            invoice.register(REQUEST)
+            invoice.save()
+            
         for story in PURCHASE_STORIES:
-            invoice = MODEL(journal=jnl,
+            invoice = ledger.AccountInvoice(journal=JOURNAL_P,
                 partner=story[0],
                 user=USERS.pop(),
                 date=date+delta(days=DATE_DELTAS.pop()))
@@ -253,6 +289,7 @@ def objects():
                 yield item
             invoice.register(REQUEST)
             invoice.save()
+            
         date += delta(months=1)
     
     

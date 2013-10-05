@@ -46,9 +46,9 @@ are normally DEBITed and have DEBIT balances.
 That's what the :attr:`dc <AccountType.dc>` attribute means.
 
 
->>> print unicode(DC[AccountTypes.assets.dc])
+>>> print unicode(DCLABELS[AccountTypes.assets.dc])
 Debit
->>> print unicode(DC[AccountTypes.expenses.dc])
+>>> print unicode(DCLABELS[AccountTypes.expenses.dc])
 Debit
 
 >>> print isinstance(AccountTypes.bank_accounts,Assets)
@@ -72,7 +72,7 @@ Equity        \−     \+
 The equivalent in Python is:
 
 >>> for t in AccountTypes.filter(top_level=True): #doctest: +NORMALIZE_WHITESPACE
-...     print "%-12s|%-15s|%-6s" % (t.name, unicode(t), DC[t.dc])
+...     print "%-12s|%-15s|%-6s" % (t.name, unicode(t), DCLABELS[t.dc])
 assets      |Assets         |Debit
 liabilities |Liabilities    |Credit
 incomes     |Incomes        |Credit
@@ -194,7 +194,7 @@ from lino import dd
 DEBIT = True
 CREDIT = False
 
-DC = { 
+DCLABELS = { 
   DEBIT: _("Debit"), 
   CREDIT: _("Credit") 
 }

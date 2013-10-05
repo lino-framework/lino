@@ -445,7 +445,7 @@ class VatDocument(VatTotal):
         sum = Decimal()
         for a,m in sums_dict.items():
             if m:
-                yield self.create_movement(a,self.journal.dc,m)
+                yield self.create_movement(a,not self.journal.dc,m)
                 sum += m
         if self.match:
             match = self.match
@@ -455,7 +455,7 @@ class VatDocument(VatTotal):
         a = self.get_trade_type().get_partner_account()
         #~ a = settings.SITE.get_partner_account(self)
         #~ a = self.journal.chart.get_account_by_ref(a)
-        yield self.create_movement(a,not self.journal.dc,sum,
+        yield self.create_movement(a,self.journal.dc,sum,
             partner=self.partner,match=match)
         
     def full_clean(self,*args,**kw):

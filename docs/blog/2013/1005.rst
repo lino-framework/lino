@@ -1,0 +1,24 @@
+====================================
+20131005 (Saturday, 05 October 2013)
+====================================
+
+Continued on :ref:`faggio`.
+Generating more demo data.
+:mod:`lino.modlib.ledger.fixtures.mini` now generates simple 
+monthly sales invoices with 3 products Foo, Bar and Baz.
+
+Added a "basic accounting truths" section to 
+:ref:`faggio.tested.faggio`. 
+These things are still evolving.
+For example a **Sales** journal has its `dc` field set to **Debit**,
+but what exactly does that mean?
+It means that a voucher with a non-negative total amount will 
+debitate the **partner account** (and thus creditate the sales account).
+
+Since :class:`DebitOrCreditField <lino.modlib.accounts.models.DebitOrCreditField>` 
+is basically just a BooleanField, it used to be rendered as a checkbox.
+Now we have a new magic attribute "lino_atomizer_class".
+We don't want to define this as a core atomizer because this 
+implementation is just one possible choice.
+
+

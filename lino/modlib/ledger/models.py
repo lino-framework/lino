@@ -1018,6 +1018,12 @@ class Invoices(dd.Table):
             qs = qs.filter(journal=ar.param_values.pjournal)
         return qs
     
+    @classmethod
+    def param_defaults(cls,ar,**kw):
+        kw = super(Invoices,cls).param_defaults(ar,**kw)
+        kw.update(pyear=FiscalYears.from_date(datetime.date.today()))
+        return kw
+        
     
 
 
