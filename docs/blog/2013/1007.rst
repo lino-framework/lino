@@ -85,4 +85,11 @@ ImportError "Could not import settings 'lino.projects.belref.settings'
 :fab:`sdist_test` no longer asks for a user confirmation before 
 deleting the temporary directory.
 
+Renamed the fab command `upload` to :fab:`release`.
+
+This was the first time I restored a :manage:`dump2py` backup in a 
+production database::
+
+  $ python manage.py run /var/log/lino/backups/20131007_020101/restore.py
+
 
