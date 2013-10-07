@@ -1,2 +1,0 @@
-/home/luc/hgwork/lino/docs/ref/glossary.rst:118: WARNING: term not in glossary: slave report
-/home/luc/hgwork/lino/docs/ref/glossary.rst:12: WARNING: undefined label: admin.install (if the link has no caption the label must precede a section header)

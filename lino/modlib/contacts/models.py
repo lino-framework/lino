@@ -772,7 +772,11 @@ class OldCompanyContact(dd.Model):
 class ContactRelated(dd.Model):
     """
     Abstract class for things that relate to a company represented by a person as a given role.
-    Adds 3 fields `company`, `contact_person` and `contact_role`.
+    
+    .. local_fields:: lino.modlib.contacts.models.ContactRelated
+    
+        Adds 3 fields `company`, `contact_person` and `contact_role`.
+        
     """
     
     class Meta:
@@ -824,11 +828,17 @@ class ContactRelated(dd.Model):
     recipient = property(get_recipient)
     
     def get_partner(self):
-        """Return the "legal partner", i.e. usually the company, 
-        except when there's no company.
-        """
         return self.company or self.contact_person
     partner = property(get_partner)
+    """(read-only property) 
+    The "legal partner", 
+    i.e. usually the :class:`Company` instance pointed to by 
+    the `company` field,
+    except when that field is empty, in which case `partner` 
+    contains the :class:`Person` pointed to by the 
+    `contact_person` field.
+    If both fields are empty, then `partner` contains `None`.
+    """
 
     def contact_person_changed(self,ar):
         #~ print '20120929 contact_person_changed'

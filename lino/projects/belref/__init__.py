@@ -64,7 +64,7 @@ class Site(Site):
         #~ yield 'django.contrib.contenttypes'
         #~ yield 'lino.modlib.users'
         yield 'lino.modlib.system'
-        yield 'lino_welfare.modlib.statbel'
+        yield 'lino.modlib.statbel'
         yield 'lino.modlib.countries'
         #~ yield 'lino.modlib.contacts'
         #~ yield 'lino.modlib.outbox'

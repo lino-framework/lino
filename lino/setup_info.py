@@ -1,5 +1,5 @@
 SETUP_INFO = dict(name = 'lino',
-  version = '1.6.12', # released 20130911
+  version = '1.6.13', # released 20131007(?)
   install_requires = ['North','djangosite','odfpy','jinja2','appy','pytidylib','PyYAML'],
   description = "A framework for writing desktop-like web applications using Django and ExtJS",
   license = 'GPL',

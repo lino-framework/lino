@@ -2,23 +2,40 @@
 20131007 (Monday, 07 October 2013)
 ==================================
 
-Continued on :ref:`faggio`: issuing payment reminders.
+Issuing payment reminders
+-------------------------
 
-Added 
-:class:`notes.NotesByPerson <lino.modlib.notes.models.NotesByPerson>`
-and 
-:class:`notes.NotesByCompany <lino.modlib.notes.models.NotesByCompany>`
+Continued on :ref:`faggio`: Lino can now issue payment reminders.
+In its simplest form (just a reminder, without automatically computing 
+a severeness and/or interests to add) the user simply creates 
+a Note of type "Payment Reminder" and prints it or sends it via email.
+I like the straightforwardness and transparence of this implementation
+which will be part of :ref:`cosi`.
 
 Added an :attr:`insert_layout <lino.core.actors.Actor.insert_layout>` to 
 :class:`notes.NoteTypes <lino.modlib.notes.models.NoteTypes>`.
 
-:mod:`lino.modlib.ledger.fixtures.mini` 
-now adds a NoteType to issue Payment reminder for a partner.
+Added 
+:class:`notes.NotesByPerson <lino.modlib.notes.models.NotesByPerson>`
+and 
+:class:`notes.NotesByCompany <lino.modlib.notes.models.NotesByCompany>`.
+
 
 New files
 :srcref:`Letter.odt <lino/modlib/notes/config/notes/Note/Letter.odt>`
 and
-:srcref:`payment_reminder.body.html <lino/modlib/finan/config/notes/Note/payment_reminder.body.html>`.
+:srcref:`payment_reminder.body.html 
+<lino/modlib/finan/config/notes/Note/payment_reminder.body.html>`.
+A payment reminder 
+uses the :class:`ledger.DuePaymentsByPartner 
+<lino.modlib.ledger.models.DuePaymentsByPartner>`
+table with the Note's
+:meth:`partner <lino.modlib.contacts.models.ContactRelated.get_partner>` 
+property as `master_instance`.
+
+:mod:`lino.modlib.ledger.fixtures.mini` 
+now adds a NoteType "Payment reminder".
+
 
 Should `ar.show()` call :meth:`E.tostring` or not? 
 Answer: it depends. 
@@ -56,5 +73,16 @@ Fixing this bug revealed two other bugs:
 - Until now it was not possible to select per Journal another template 
   than `Default.odt` for printing an invoice.
   Fixed.
+
+
+Released Lino 1.6.13 and Lino-Welfare 1.1.10
+--------------------------------------------
+
+:fab:`sdist_test` still failed with an 
+ImportError "Could not import settings 'lino.projects.belref.settings' 
+(Is it on sys.path?): No module named lino_welfare.modlib.statbel"
+
+:fab:`sdist_test` no longer asks for a user confirmation before 
+deleting the temporary directory.
 
 
