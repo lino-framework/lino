@@ -1464,9 +1464,10 @@ class Actor(actions.Parametrizable):
     @classmethod
     def show(self,master_instance=None,column_names=None,**known_values):
         """
-        Shortcut which creates an action request for this actor 
-        and calls its :meth:`lino.core.actions.ActionRequest.to_rst` 
+        Creates an action request for this actor and calls its 
+        :meth:`show <lino.core.actions.ActionRequest.show>` 
         method.
+        This is a shortcut for usage in tested document snippets.
         """
         kw = dict()
         if master_instance is not None:
@@ -1474,7 +1475,7 @@ class Actor(actions.Parametrizable):
         kw.update(actor=self)
         kw.update(known_values=known_values)
         kw.update(renderer=settings.SITE.ui.text_renderer)
-        print self.request(**kw).to_rst(column_names)
+        self.request(**kw).show(column_names)
         #~ return settings.SITE.ui.text_renderer.request(**kw).to_rst(column_names)
         #~ username = kw.pop('username',None)
         #~ if username and settings.SITE.user_model is not None:

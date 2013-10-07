@@ -122,9 +122,12 @@ class HtmlRenderer(object):
         #~ return '<a href="%s">%s</a>' % (url,text)
         return E.a(text,href=url)
         
-    def show(self,ar,**kw):
-        return ar.table2xhtml(**kw)
-        #~ return E.tostring(ar.table2xhtml())
+    def show_request(self,ar,**kw):
+        """
+        Returns a HTML element representing this request as a table.
+        """
+        #~ return ar.table2xhtml(**kw)
+        return E.tostring(ar.table2xhtml(**kw))
         
         
     def href_button_action(self,ba,url,text=None,title=None,icon_name=NOT_GIVEN,**kw):
@@ -306,6 +309,7 @@ class HtmlRenderer(object):
         return self.href_button_action(ba,url,label,title or ba.action.help_text,**kw)
         
 class TextRenderer(HtmlRenderer):
+    "The renderer used when rendering to .rst files and console output."
     user = None
     
     def __init__(self,ui):
@@ -323,7 +327,7 @@ class TextRenderer(HtmlRenderer):
             text = '#'
         return text
         
-    def show(self,ar,*args,**kw):
+    def show_request(self,ar,*args,**kw):
         """
         Returns a string representing this request in reStructuredText markup.
         """

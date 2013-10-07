@@ -880,6 +880,10 @@ class Table(AbstractTable):
 
     @classmethod
     def create_instance(self,ar,**kw):
+        """
+        Create a model instance using the specified keyword args,
+        calling also :meth:`lino.core.model.Model.on_create`.
+        """
         #~ print 20120630, "Actor.create_instance", kw
         instance = self.model(**kw)
         instance.on_create(ar)

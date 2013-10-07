@@ -38,10 +38,10 @@ This demo database contains exactly 40 entries:
 
 >>> be = countries.Country.objects.get(isocode="BE")
 >>> be.city_set.count()
-44
+45
 
 >>> countries.CitiesByCountry.request(be).get_total_count()
-44
+45
 
 >>> url = '/api/countries/CitiesByCountry?fmt=json&start=0&mt=10&mk=BE'
 >>> res = client.get(url,REMOTE_USER='robin')
@@ -90,6 +90,6 @@ Same request returns now all 45 data rows (44 + the phantom row):
 >>> res = client.get(url,REMOTE_USER='robin')
 >>> result = json.loads(res.content)
 >>> print(len(result['rows']))
-45
+46
 
 

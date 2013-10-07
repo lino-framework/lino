@@ -249,10 +249,6 @@ class PisaBuildMethod(DjangoBuildMethod):
 
 class SimpleBuildMethod(BuildMethod):
   
-    def get_group(self,elem):
-        #~ return 'doctemplates/' + self.templates_name + '/' + elem.get_templates_group()
-        return elem.get_templates_group()
-  
     def get_template_leaf(self,action,elem):
       
         tpls = action.get_print_templates(self,elem)
@@ -267,7 +263,8 @@ class SimpleBuildMethod(BuildMethod):
         if lang != settings.SITE.DEFAULT_LANGUAGE.django_code:
             name = tpl_leaf[:-len(self.template_ext)] + "_" + lang + self.template_ext
             from lino.utils.config import find_config_file
-            if find_config_file(name,self.get_group(elem)):
+            #~ if find_config_file(name,self.get_group(elem)):
+            if find_config_file(name,elem.get_templates_group()):
                 return name
         return tpl_leaf
             #~ tplfile = os.path.normpath(os.path.join(self.templates_dir,lang,tpl_leaf))
@@ -282,9 +279,10 @@ class SimpleBuildMethod(BuildMethod):
     def get_template_file(self,ar,action,elem):
         from lino.utils.config import find_config_file
         tpl_leaf = self.get_template_leaf(action,elem)
-        tplfile = find_config_file(tpl_leaf,self.get_group(elem))
+        tg = elem.get_templates_group()
+        tplfile = find_config_file(tpl_leaf,tg)
         if not tplfile:
-            raise Warning("No file %s/%s" % (self.get_group(elem),tpl_leaf))
+            raise Warning("No file %s/%s" % (tg,tpl_leaf))
         #~ tplfile = os.path.normpath(os.path.join(self.templates_dir,tpl_leaf))
         return tplfile
         
@@ -434,16 +432,6 @@ def build_method_choices():
     return [ (pm.name,pm.label) for pm in bm_list]
 
     
-    
-def get_template_choices(elem,bmname):
-    """
-    :param:bmname: the name of a build method.
-    """
-    bm = bm_dict.get(bmname,None)
-    if bm is None:
-        raise Exception("%r : invalid print method name." % bmname)
-    from lino.utils.config import find_template_config_files
-    return find_template_config_files(bm.template_ext,bm.get_group(elem))
     
 def get_build_method(elem):
     bmname = elem.get_build_method()
@@ -733,19 +721,33 @@ class PrintableType(Model):
     #~ build_method = models.CharField(max_length=20,choices=mixins.build_method_choices())
     #~ template = models.CharField(max_length=200)
     
-    #~ @classmethod
+    @classmethod
     def get_templates_group(cls):
+        """
+        Note that `get_templates_group` is 
+        a class method on `PrintableType`
+        an instance method on `Printable`
+        """
         #~ return cls.templates_group or cls._meta.app_label
         return cls.templates_group # or full_model_name(cls)
         
     @chooser(simple_values=True)
     def template_choices(cls,build_method):
-        #~ from lino.models import get_site_config
+        return cls.get_template_choices(build_method,cls.get_templates_group())
+        
+    @classmethod
+    def get_template_choices(cls,build_method,template_group):
         if not build_method:
-            #~ build_method = get_site_config().default_build_method 
-            #~ build_method = settings.SITE.config.default_build_method 
             build_method = settings.SITE.site_config.default_build_method 
-        return get_template_choices(cls,build_method)
+        #~ return get_template_choices(cls,build_method)
+        bm = bm_dict.get(build_method,None)
+        if bm is None:
+            raise Exception("%r : invalid print method name." % build_method)
+        from lino.utils.config import find_template_config_files
+        #~ return find_template_config_files(bm.template_ext,bm.get_group(elem))
+        return find_template_config_files(bm.template_ext,template_group)
+        
+        
     
 class BasePrintable(object):
     """

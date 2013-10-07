@@ -123,6 +123,7 @@ from django.db import models
 from django.conf import settings
 
 from lino.utils import curry, unicode_string
+from lino.utils.xmlgen.html import E
 
 from lino.core import actions
 from lino.core import actors

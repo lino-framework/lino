@@ -266,7 +266,7 @@ class Model(models.Model):
         
     def on_create(self,ar):
         """
-        Used e.g. by modlib.notes.Note.on_create().
+        Used e.g. by :class:`lino.modlib.notes.models.Note`.
         on_create gets the action request as argument.
         Didn't yet find out how to do that using a standard Django signal.
         """

@@ -13,8 +13,14 @@
 ## along with Lino; if not, see <http://www.gnu.org/licenses/>.
 
 """
-My personal attempt to create a "universal account chart".
-To be used for simple demo setups in different countries.
+Creates minimal accounting demo data:
+
+- a minimal accounts chart
+- some journals
+- monthly purchases (causing costs) 
+- monthly sales 
+- monthly payment orders and bank statements
+
 
 """
 
@@ -41,15 +47,28 @@ ledger = dd.resolve_app('ledger')
 finan = dd.resolve_app('finan')
 declarations = dd.resolve_app('declarations')
 #~ partners = dd.resolve_app('partners')
+notes = dd.resolve_app('notes')
 
 partner_model = settings.SITE.partners_app_label + '.Partner'
 
 current_group = None
 
 REQUEST = None
+MORE_THAN_A_MONTH = datetime.timedelta(days=40) 
 
 
 def objects():
+    if notes:
+        NoteType = dd.resolve_model('notes.NoteType')
+        yield NoteType(
+            template="Letter.odt",
+            build_method="appyodt",
+            body_template="payment_reminder.body.html",
+            **babel_values('name',
+                en="Payment reminder",
+                fr="Rappel de paiement",
+                de="Zahlungserinnerung"))
+        
     chart  = accounts.Chart(**babel_values('name',
         en="Minimal Accounts Chart",
         fr="Plan comptable réduit",
@@ -146,13 +165,13 @@ def objects():
             de="Einkaufsrechnungen",fr="Factures achat",en="Purchase invoices",et="Ostuarved"))
             
     if finan:
-        yield finan.BankStatement.create_journal(chart=chart,name=u"Bestbank",
-            account='bestbank',ref="B")
-        yield finan.BankStatement.create_journal(chart=chart,
-            name=u"Cash",account='cash',ref="C")
-        yield finan.PaymentOrder.create_journal(chart=chart,name=u"Payment Orders",
-            account='bestbankpo',ref="PO")
-        yield finan.JournalEntry.create_journal(chart=chart,name=u"Miscellaneous Journal Entries",ref="M",dc=accounts.DEBIT)
+        JOURNAL_BANK = finan.BankStatement.create_journal(chart=chart,name="Bestbank",account='bestbank',ref="B")
+        yield JOURNAL_BANK
+        kw = babel_values('name',de="Zahlungsaufträge",fr="Ordres de paiement",en="Payment Orders",et="Maksekorraldused")
+        JOURNAL_PO = finan.PaymentOrder.create_journal('purchases',chart=chart,account='bestbankpo',ref="PO",**kw)
+        yield JOURNAL_PO
+        yield finan.BankStatement.create_journal(chart=chart,name="Cash",account='cash',ref="C")
+        yield finan.JournalEntry.create_journal(chart=chart,name="Miscellaneous Journal Entries",ref="M",dc=accounts.DEBIT)
 
     if declarations:
         yield declarations.Declaration.create_journal(chart=chart,name=u"VAT declarations",ref="V",account='vatdcl')
@@ -204,15 +223,16 @@ def objects():
     
     if sales:
         
-        yield Product(name="Foo",sales_price='9.99')
-        yield Product(name="Bar",sales_price='19.99')
-        yield Product(name="Baz",sales_price='39.99')
+        yield Product(name="Foo",sales_price='399.90')
+        yield Product(name="Bar",sales_price='599.90')
+        yield Product(name="Baz",sales_price='990.00')
         PRODUCTS = Cycler(Product.objects.order_by('id'))
         JOURNAL_S = ledger.Journal.objects.get(ref="S")
         #~ assert JOURNAL_S.dc == accounts.DEBIT
         CUSTOMERS = Cycler(Person.objects.order_by('id'))
         ITEMCOUNT = Cycler(1,2,3)
         QUANTITIES = Cycler(5,1,2,3)
+        SALES_PER_MONTH = Cycler(2,1,3,2,0)
         
     PROVIDERS = Cycler(Company.objects.order_by('id'))
         
@@ -242,30 +262,32 @@ def objects():
     #~ date = settings.SITE.demo_date() + delta(years=-2)
     START_YEAR = settings.SITE.start_year # 2011
     date = datetime.date(START_YEAR,1,1)
-    while date.year < 2013:
+    end_date = datetime.date(2013,5,1)
+    while date < end_date:
         
         if sales:
-            #~ print __file__, date
-            invoice = sales.Invoice(journal=JOURNAL_S,
-                partner=CUSTOMERS.pop(),
-                user=USERS.pop(),
-                date=date+delta(days=10+DATE_DELTAS.pop()))
-            yield invoice
-            for j in range(ITEMCOUNT.pop()):
-                item = sales.InvoiceItem(voucher=invoice,
-                    product=PRODUCTS.pop(),
-                    qty=QUANTITIES.pop()
-                    )
-                item.product_changed(REQUEST)
-                item.before_ui_save(REQUEST)
-                #~ if item.total_incl:
-                    #~ print "20121208 ok", item
-                #~ else:
-                    #~ if item.product.price:
-                        #~ raise Exception("20121208")
-                yield item
-            invoice.register(REQUEST)
-            invoice.save()
+            for i in range(SALES_PER_MONTH.pop()):
+                #~ print __file__, date
+                invoice = sales.Invoice(journal=JOURNAL_S,
+                    partner=CUSTOMERS.pop(),
+                    user=USERS.pop(),
+                    date=date+delta(days=10+DATE_DELTAS.pop()))
+                yield invoice
+                for j in range(ITEMCOUNT.pop()):
+                    item = sales.InvoiceItem(voucher=invoice,
+                        product=PRODUCTS.pop(),
+                        qty=QUANTITIES.pop()
+                        )
+                    item.product_changed(REQUEST)
+                    item.before_ui_save(REQUEST)
+                    #~ if item.total_incl:
+                        #~ print "20121208 ok", item
+                    #~ else:
+                        #~ if item.product.price:
+                            #~ raise Exception("20121208")
+                    yield item
+                invoice.register(REQUEST)
+                invoice.save()
             
         for story in PURCHASE_STORIES:
             invoice = ledger.AccountInvoice(journal=JOURNAL_P,
@@ -289,6 +311,34 @@ def objects():
                 yield item
             invoice.register(REQUEST)
             invoice.save()
+        
+        if finan and (end_date - date) > MORE_THAN_A_MONTH: # last month not yet done
+            #~ po = finan.PaymentOrder(journal=JOURNAL_PO,
+            po = JOURNAL_PO.create_voucher(
+                user=USERS.pop(),
+                date=date+delta(days=20))
+            yield po
+            suggestions = finan.SuggestionsByPaymentOrder.request(po)
+            ba = finan.SuggestionsByPaymentOrder.get_action_by_name('do_fill')
+            ar = ba.request(master_instance=po)
+            ar.selected_rows = [x for x in suggestions]
+            ar.run()
+            po.register(REQUEST)
+            po.save()
+            
+            #~ bs = finan.BankStatement(journal=JOURNAL_BANK,
+            bs = JOURNAL_BANK.create_voucher(
+                user=USERS.pop(),
+                date=date+delta(days=28))
+            yield bs
+            suggestions = finan.SuggestionsByBankStatement.request(bs)
+            ba = suggestions.actor.get_action_by_name('do_fill')
+            ar = ba.request(master_instance=bs)
+            ar.selected_rows = [x for x in suggestions]
+            ar.run()
+            bs.register(REQUEST)
+            bs.save()
+            
             
         date += delta(months=1)
     

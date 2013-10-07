@@ -412,6 +412,14 @@ class ExtRenderer(HtmlRenderer):
         #~ url = self.request_handler(rr)
         #~ return self.href(url,text or cgi.escape(force_unicode(rr.label)))
         
+    def show_request(self,ar,**kw):
+        """
+        Returns a HTML element representing this request as a table.
+        Used by appy_pod rendered.
+        """
+        return ar.table2xhtml(**kw)
+        #~ return E.tostring(ar.table2xhtml())
+        
     def handler_item(self,mi,handler,help_text):
         #~ handler = "function(){%s}" % handler
         #~ d = dict(text=prepare_label(mi),handler=js_code(handler),tooltip="Foo")

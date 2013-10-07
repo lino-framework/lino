@@ -185,6 +185,7 @@ class Journal(dd.BabelNamed,mixins.Sequenced,mixins.PrintableType):
         except TypeError,e:
             #~ print 20100804, cl
             raise
+        doc.on_create(None)
         #~ doc.full_clean()
         #~ doc.save()
         return doc
@@ -197,7 +198,7 @@ class Journal(dd.BabelNamed,mixins.Sequenced,mixins.PrintableType):
         
         
     def get_next_number(self,voucher):
-        self.save()
+        #~ self.save() # 20131005 why was this?
         cl = self.get_doc_model()
         d = cl.objects.filter(journal=self,year=voucher.year).aggregate(
             models.Max('number'))
@@ -246,8 +247,17 @@ class Journal(dd.BabelNamed,mixins.Sequenced,mixins.PrintableType):
             if doc.number + 1 != self.get_next_number(doc):
                 return _("%s is not the last voucher in journal" % unicode(doc))
 
-    def get_templates_group(self):
-        return model_group(self.voucher_type.model)
+    @dd.chooser(simple_values=True)
+    def template_choices(cls,build_method,voucher_type):
+        """
+        Overrides PrintableType.template_choices because 
+        """
+        if not voucher_type: return []
+        print 20131006, voucher_type
+        template_group = model_group(voucher_type.model)
+        return cls.get_template_choices(build_method,template_group)
+        
+        
 
 
 class Journals(dd.Table):
@@ -256,7 +266,7 @@ class Journals(dd.Table):
     column_names = "ref:5 name trade_type voucher_type force_sequence * seqno id"
     detail_layout = """
     ref:5 trade_type seqno id voucher_type:10
-    force_sequence account dc build_method
+    force_sequence account dc build_method template
     name
     printed_name
     """
@@ -766,7 +776,8 @@ class ExpectedMovements(dd.VirtualTable):
     Subclassed by finan.
     """
     label = _("Due")
-    column_names = 'match due_date balance debts payments'
+    #~ column_names = 'match due_date debts payments balance'
+    column_names = 'due_date:15 balance debts payments'
     auto_fit_column_widths = True
     parameters = dd.ParameterPanel(
         date_until=models.DateField(_("Date until"),blank=True,null=True),
@@ -808,21 +819,22 @@ class ExpectedMovements(dd.VirtualTable):
     def match(self,row,ar):
         return row.match
             
-    @dd.displayfield(_("Due date"))
+    @dd.virtualfield(models.DateField(_("Due date"),
+        help_text=_("Due date of the eldest debt in this match group")))
     def due_date(self,row,ar):
         return row.due_date
             
-    @dd.displayfield(_("Due"))
+    @dd.displayfield(_("Debts"),help_text=_("List of invoices in this match group"))
     def debts(self,row,ar):
         #~ return ", ".join([ar.obj2html(i,i.select_text()) for i in row.debts])
         #~ return join_elems([ar.obj2html(i.voucher,i.select_text()) for i in row.debts])
-        return join_elems([ar.obj2html(i.voucher.get_mti_child()) for i in row.debts])
+        return E.p(*join_elems([ar.obj2html(i.voucher.get_mti_child()) for i in row.debts]))
             
-    @dd.displayfield(_("Received"))
+    @dd.displayfield(_("Payments"),help_text=_("List of payments in this match group"))
     def payments(self,row,ar):
         #~ return ", ".join([ar.obj2html(i,i.select_text()) for i in row.payments])
         #~ return join_elems([ar.obj2html(i.voucher,i.select_text()) for i in row.payments])
-        return join_elems([ar.obj2html(i.voucher.get_mti_child()) for i in row.payments])
+        return E.p(*join_elems([ar.obj2html(i.voucher.get_mti_child()) for i in row.payments]))
         
     @dd.virtualfield(dd.PriceField(_("Balance")))
     def balance(self,row,ar):
@@ -862,7 +874,12 @@ class DuePaymentsByPartner(ExpectedMovements):
     If the partner has purchase invoices, these are deduced from the balance.
     """
     master = 'contacts.Partner'
+    #~ column_names = 'due_date debts payments balance'
     
+    @classmethod
+    def get_dc(cls,ar=None):
+        return accounts.CREDIT
+        
     @classmethod
     def get_data_rows(cls,ar,**flt):
         partner = ar.master_instance

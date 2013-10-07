@@ -166,6 +166,23 @@ class BankStatement(Voucher):
     balance1 = dd.PriceField(_("Old balance"),default=ZERO)
     #~ balance2 = dd.PriceField(_("New balance"),blank=True,null=True)
     balance2 = dd.PriceField(_("New balance"),default=ZERO)
+    
+    def get_previous_voucher(self):
+        if not self.journal_id:
+            #~ logger.info("20131005 no journal")
+            return None
+        qs = self.__class__.objects.filter(journal=self.journal).order_by('-date')
+        if qs.count() > 0:
+            #~ logger.info("20131005 no other vouchers")
+            return qs[0]
+            
+    def on_create(self,ar):
+        super(BankStatement,self).on_create(ar)
+        if self.balance1 == ZERO:
+            prev = self.get_previous_voucher()
+            if prev is not None:
+                #~ logger.info("20131005 prev is %s",prev)
+                self.balance1 = prev.balance2
         
     def get_wanted_movements(self):
         a = self.journal.account
@@ -362,7 +379,7 @@ class ItemsByPaymentOrder(ItemsByVoucher):
     
 
 
-class FillToVoucher(dd.Action):
+class FillSuggestions(dd.Action):
     label = _("Fill")
     icon_name = 'lightning'
     http_method = 'POST'
@@ -380,12 +397,15 @@ class FillToVoucher(dd.Action):
                 partner=obj.partner,
                 match=obj.match)
                 #~ match=obj.voucher.get_default_match())
+            if i.amount < 0:
+                i.amount = - i.amount
+                i.dc = not i.dc
             i.full_clean()
             i.save()
             seqno = i.seqno + 1
             n += 1
             
-        msg = _("%d items have been added.") % n
+        msg = _("%d items have been added to %s.") % (n,voucher)
         logger.info(msg)
         kw.update(close_window=True)
         return ar.success(msg,**kw)
@@ -405,7 +425,7 @@ class SuggestionsByVoucher(ledger.ExpectedMovements):
     """
     
     label = _("Suggestions")
-    column_names = 'partner match account due_date balance debts payments'
+    column_names = 'partner match account due_date debts payments balance'
     #~ column_names = 'voucher__date partner account voucher_link:5 debit credit'
     window_size = (70,20) # (width, height)
     
@@ -413,7 +433,7 @@ class SuggestionsByVoucher(ledger.ExpectedMovements):
     auto_fit_column_widths = True
     cell_edit = False
     
-    do_fill = FillToVoucher()
+    do_fill = FillSuggestions()
     
     
     @classmethod
@@ -469,6 +489,8 @@ class SuggestionsByPaymentOrder(SuggestionsByVoucher):
         voucher = ar.master_instance
         #~ kw.update(journal=voucher.journal)
         kw.update(date_until=voucher.execution_date or voucher.date)
+        if voucher.journal.trade_type is not None:
+            kw.update(trade_type=voucher.journal.trade_type)
         #~ kw.update(trade_type=vat.TradeTypes.purchases)
         return kw
     

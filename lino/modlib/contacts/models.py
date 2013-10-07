@@ -822,6 +822,13 @@ class ContactRelated(dd.Model):
         return self.company
         
     recipient = property(get_recipient)
+    
+    def get_partner(self):
+        """Return the "legal partner", i.e. usually the company, 
+        except when there's no company.
+        """
+        return self.company or self.contact_person
+    partner = property(get_partner)
 
     def contact_person_changed(self,ar):
         #~ print '20120929 contact_person_changed'

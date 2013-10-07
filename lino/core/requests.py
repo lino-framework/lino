@@ -266,8 +266,8 @@ class BaseRequest(object):
         
     def spawn(self,spec,**kw):
         """
-        Create a new ActionRequest, taking an "action specificator" 
-        and using default values from this one.
+        Create a new ActionRequest using default values from this one 
+        and the action specified by `spec`.
         
         """
         if isinstance(spec,ActionRequest):
@@ -306,6 +306,36 @@ class BaseRequest(object):
         #~ set_language(*args)
         
     def show(self,spec,master_instance=None,column_names=None,language=None,**kw):
+        """
+        Show the table specified by `spec` according to the current 
+        renderer. 
+        If the table is a :term:`slave table`, then a `master_instance` 
+        must be specified as second argument.
+        
+        Optional keyword arguments are
+        
+        - `column_names` overrides default list of columns
+        - `language` overrides the default language used for headers 
+          and translatable data
+        
+        Usage in a tested doc::
+        
+          >>> ar = settings.SITE.login("robin")
+          >>> ar.show('users.UsersOverview')
+        
+        Usage in a Jinja template::
+        
+          {{ar.show('users.UsersOverview')}}
+        
+        Usage in an appy.pod template::
+        
+          do text from ar.show('users.UsersOverview')
+        
+        Note that this function 
+        either returns a string or prints to stdout and returns None,
+        depending on the current renderer.
+         
+        """
         # 20130905 added master_instance positional arg. but finally didn't use it.
         if master_instance is not None:
             kw.update(master_instance=master_instance)
@@ -314,8 +344,8 @@ class BaseRequest(object):
         if language:
             #~ spec.set_language(language)
             with translation.override(language):
-                return ar.renderer.show(ar,column_names=column_names)
-        return ar.renderer.show(ar,column_names=column_names)
+                return ar.renderer.show_request(ar,column_names=column_names)
+        return ar.renderer.show_request(ar,column_names=column_names)
         
     def summary_row(self,obj,**kw): return obj.summary_row(self,**kw)
     def instance_handler(self,*args,**kw): return self.renderer.instance_handler(self,*args,**kw)
@@ -495,6 +525,10 @@ class ActionRequest(BaseRequest):
             
         
     def create_instance(self,**kw):
+        """
+        Create a row (a model instance if this is a database table) 
+        using the specified keyword arguments.
+        """
         if self.create_kw:
             kw.update(self.create_kw)
         #logger.debug('%s.create_instance(%r)',self,kw)
@@ -582,4 +616,9 @@ class ActionRequest(BaseRequest):
         """
         return self.actor.to_rst(self,*args,**kw)
 
+    def run(self,*args,**kw):
+        """
+        Runs this action request.
+        """
+        return self.bound_action.action.run_from_code(self,*args,**kw)
 

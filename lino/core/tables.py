@@ -611,10 +611,11 @@ class TableRequest(ActionRequest):
             else:
                 nv = col.value2num(v)
                 if nv != 0:
-                    try:
-                        sums[i] += nv
-                    except TypeError as e:
-                        raise Exception("Cannot compute %r + %r" % (sums[i],nv))
+                    sums[i] += nv
+                    #~ try:
+                        #~ sums[i] += nv
+                    #~ except TypeError as e:
+                        #~ raise Exception("Cannot compute %r + %r" % (sums[i],nv))
                     has_numeric_value = True
                 td = col.value2html(self,v,**cellattrs)
             col.apply_cell_format(td)

@@ -15,6 +15,18 @@
 
 {{ext_renderer.linolib_intro()}}
 
+// hack to add a toCamel function, inspired by
+// http://jamesroberts.name/blog/2010/02/22/string-functions-for-javascript-trim-to-camel-case-to-dashed-and-to-underscore/
+String.prototype.toCamel = function(){
+  //~ return this.replace(/(\-[a-z])/g, function($1){return $1.toUpperCase().replace('-','');});
+  //~ return this;
+  return this.replace(/([A-Z])([A-Z]+)/g, function(match,p1,p2,offset,string){
+      //~ console.log("20131005 got ",arguments);
+      return p1 + p2.toLowerCase();});
+};
+
+
+
 /* MonthPickerPlugin: thanks to keypoint @ sencha forum
    http://www.sencha.com/forum/showthread.php?74002-3.x-Ext.ux.MonthMenu&p=356860#post356860
 */
@@ -1193,7 +1205,7 @@ Lino.TimeField = Ext.extend(Ext.form.TimeField,{
   increment: 15
   });
 Lino.DateField = Ext.extend(Ext.form.DateField,{
-  boxMinWidth: Lino.chars2width(11),
+  boxMinWidth: Lino.chars2width(15), // 20131005 changed from 11 to 15
   format: '{{settings.SITE.date_format_extjs}}',
   altFormats: '{{settings.SITE.alt_date_formats_extjs}}'
   });
@@ -1930,6 +1942,7 @@ Lino.permalink_handler = function (ww) {
   //~ if(plink) { eval('Lino.'+plink); }
 //~ }
 
+
 Lino.ajax_error_handler = function(panel) {
   return function(response,options) {
     console.log('Ajax failure:',response,options);
@@ -1939,8 +1952,9 @@ Lino.ajax_error_handler = function(panel) {
       if (lines.length > 10) {
           line = lines.splice(5,lines.length-10,"(...)");
       }
+      //~ console.log(20131005, response.statusText.toCamel());
       Ext.MessageBox.alert(
-        response.statusText,
+        response.statusText.toCamel(),
         lines.join('<br/>')
         //~ response.responseText.replace(/\n/g,'<br/>'))
       )

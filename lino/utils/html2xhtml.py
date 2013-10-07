@@ -80,7 +80,8 @@ def html2xhtml(html,**options):
     options.update(output_xml=1)
     document, errors = tidy_fragment(html,options=options)
     if errors:
-        raise Exception(repr(errors))
+        #~ raise Exception(repr(errors))
+        raise Exception("Errors while processing %s\n==========\n%s" % (html,errors))
     return document
     
 

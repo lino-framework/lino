@@ -134,11 +134,10 @@ def objects():
     yield person('Jean',     'Radermacher',gender=mixins.Genders.male)
     
     # special challenges for alphabetic ordering
-    yield person('Didier',     'di Rupo',gender=mixins.Genders.male)
-    yield person('David', 'da Vinci',gender=mixins.Genders.male)
-    yield person('Vincent',   'van Veen',gender=mixins.Genders.male)
-    yield person('Rein',   'Õunapuu',gender=mixins.Genders.male)
-    
+    yield person('Didier',  'di Rupo',gender=mixins.Genders.male)
+    yield person('David',   'da Vinci',gender=mixins.Genders.male)
+    yield person('Vincent', 'van Veen',gender=mixins.Genders.male)
+    yield person('Õie',     'Õunapuu',gender=mixins.Genders.female)
     yield person('Otto',   'Östges',gender=mixins.Genders.male)
     yield person('Erna',   'Ärgerlich',gender=mixins.Genders.female)
     

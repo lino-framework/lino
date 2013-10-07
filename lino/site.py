@@ -85,6 +85,9 @@ from lino.utils import AttrDict
 
 #~ from lino import SETUP_INFO
 
+from django.utils.translation import ugettext_lazy as _
+
+
 from north import Site
 
 import lino
@@ -1964,7 +1967,7 @@ class Site(Site):
         if today is None: today = datetime.date.today()
         from lino import dd
         if sc and sc.city:
-            return _("%(place)s, %s(date)") % dict(
+            return _("%(place)s, %(date)s") % dict(
                 place=unicode(sc.city.name), date=dd.fdl(today))
         return dd.fdl(today)
         

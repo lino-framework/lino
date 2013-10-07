@@ -89,6 +89,11 @@ class NoteTypes(dd.Table):
     column_names = 'name build_method template *'
     order_by = ["name"]
     
+    insert_layout = """
+    name
+    build_method
+    """
+    
     detail_layout = """
     id name
     build_method template body_template email_template attach_to_email
@@ -133,7 +138,7 @@ class Note(mixins.TypedPrintable,
       contacts.ContactRelated,
       mixins.ProjectRelated,
       outbox.Mailable,
-      postings.Postable, #~ mixins.DiffingMixin
+      postings.Postable,
       ):
       
     """
@@ -145,106 +150,23 @@ class Note(mixins.TypedPrintable,
     
     class Meta:
         abstract = settings.SITE.is_abstract_model('notes.Note')
-        #~ abstract = True
         verbose_name = _("Note")
         verbose_name_plural = _("Notes")
-        #~ verbose_name = _("Note")
-        #~ verbose_name_plural = _("Notes")
         
-    #~ date = fields.MyDateField()
     date = models.DateField(verbose_name=_('Date'),default=datetime.date.today)
-    #~ owner_type = models.ForeignKey(ContentType,blank=True,null=True)
-    #~ owner_id = models.PositiveIntegerField(blank=True,null=True)
-    #~ owner = generic.GenericForeignKey('owner_type', 'owner_id')
     type = models.ForeignKey(NoteType,
         blank=True,null=True,
         verbose_name=_('Note Type (Content)'))
     event_type = models.ForeignKey(EventType,
         blank=True,null=True,
         verbose_name=_('Event Type (Form)'))
-    #,on_delete=RESTRICT)
     subject = models.CharField(_("Subject"),max_length=200,blank=True) # ,null=True)
-    #~ body = models.TextField(_("Body"),blank=True)
     body = dd.RichTextField(_("Body"),blank=True,format='html')
     
-    #~ owner_type = models.ForeignKey(ContentType,verbose_name=_('Owner type'))
-    #~ owner_id = models.PositiveIntegerField(verbose_name=_('Owner'))
-    #~ owner = generic.GenericForeignKey('owner_type', 'owner_id')
-    
-    #~ project = models.ForeignKey("projects.Project",blank=True,null=True)
-    #~ person = models.ForeignKey("contacts.Person",blank=True,null=True)
-    #~ company = models.ForeignKey("contacts.Company",blank=True,null=True)
-    #~ url = models.URLField(verify_exists=True,blank=True,null=True)
     language = dd.LanguageField()
-    
-    # partner = models.ForeignKey("contacts.Partner",blank=True,null=True)
     
     def __unicode__(self):
         return u'%s #%s' % (self._meta.verbose_name,self.pk)
-        
-    #~ def get_mailable_body(self,ar):
-        #~ return self.body
-        
-    def unused__unicode__(self):
-        s = u''
-        if self.event_type:
-            s += unicode(self.event_type) + ' '
-        if self.subject:
-            s += self.subject + ' '
-        if self.type:
-            s += unicode(self.type) + ' '
-        if self.user:
-            s += u"(%s %s)" % (self.user,self.date)
-        else:
-            s += u"(%s)" % (self.date)
-        return s
-        
-    #~ def body_html(self,rr):
-        #~ """
-        #~ Return self.body restified and wrapped into a DIV of class "htmlText".
-        
-        #~ This logic should be generalized and automatically be done in a new 
-        #~ MemoField type. A MemoField would be a field that is seen by Django 
-        #~ like a normal multiline text field, but interpreted as reStructuredText 
-        #~ markup "when necessary". 
-        #~ The markup language (or optionally plain HTML to be edited using a HtmlTextArea)
-        #~ should later get configurable and stored in each value.        
-        
-        #~ Deserves more documentation.
-        #~ """
-        #~ if self.body:
-            #~ if rr.expand_memos:
-                #~ return html_text(restify(self.body))
-            #~ else:
-                #~ # print 20110512, "yes", __file__
-                #~ a = self.body.split('\n',1)
-                #~ ellipsis = False
-                #~ if len(a) > 1:
-                    #~ ellipsis = True
-                #~ ln = self.body.split('\n',1)[0]
-                #~ if len(ln) > 30:
-                    #~ ln = ln[:30]
-                    #~ ellipsis = True
-                #~ if ellipsis:     
-                    #~ ln += "..."
-                #~ return ln
-        #~ return ''
-    #~ body_html.return_type = fields.DisplayField(_("Body"))
-    
-    #~ def disabled_fields(self,ar):
-        #~ if not self.build_time:
-            #~ return []
-        #~ return settings.SITE.NOTE_PRINTABLE_FIELDS
-
-    #~ @classmethod
-    #~ def site_setup(cls,lino):
-        #~ lino.NOTE_PRINTABLE_FIELDS = dd.fields_list(cls,
-        #~ '''date subject body language person company type event_type''')
-        
-    #~ @classmethod
-    #~ def site_setup(cls,lino):
-        #~ lino.NOTE_PRINTABLE_FIELDS = dd.fields_list(cls,
-        #~ '''date subject body language type event_type''')
         
 
     def summary_row(self,ar,**kw):
@@ -276,14 +198,15 @@ class Note(mixins.TypedPrintable,
         tplname = self.type.body_template
         if tplname:
             tplname = self.type.get_templates_group() + '/' + tplname
+            saved_renderer = ar.renderer
+            ar.renderer = settings.SITE.ui.plain_renderer
             template = settings.SITE.jinja_env.get_template(tplname)
             kw.update(body=template.render(**kw))
+            ar.renderer = saved_renderer
         else:
             kw.update(body=self.body)
         return kw
-        
-    
-        
+
 
 dd.update_field(Note,'company',verbose_name=_("Recipient (Organization)"))
 dd.update_field(Note,'contact_person',verbose_name=_("Recipient (Person)"))
@@ -296,6 +219,7 @@ class NoteDetail(dd.FormLayout):
     main = """
     date:10 event_type:25 type:25
     subject project 
+    company contact_person contact_role
     id user:10 language:8 build_time
     body outbox.MailsByController
     """
@@ -351,6 +275,14 @@ class NotesByProject(Notes):
 class NotesByOwner(NotesByProject):
     master_key = 'owner'
     column_names = "date event_type type subject body user *"
+    
+class NotesByCompany(NotesByProject):
+    master_key = 'company'
+    column_names = "date event_type type subject user *"
+
+class NotesByPerson(NotesByProject):
+    master_key = 'contact_person'
+    column_names = "date event_type type subject user *"
     
     
 def add_system_note(ar,owner,subject,body,**kw):

@@ -1,0 +1,60 @@
+==================================
+20131007 (Monday, 07 October 2013)
+==================================
+
+Continued on :ref:`faggio`: issuing payment reminders.
+
+Added 
+:class:`notes.NotesByPerson <lino.modlib.notes.models.NotesByPerson>`
+and 
+:class:`notes.NotesByCompany <lino.modlib.notes.models.NotesByCompany>`
+
+Added an :attr:`insert_layout <lino.core.actors.Actor.insert_layout>` to 
+:class:`notes.NoteTypes <lino.modlib.notes.models.NoteTypes>`.
+
+:mod:`lino.modlib.ledger.fixtures.mini` 
+now adds a NoteType to issue Payment reminder for a partner.
+
+New files
+:srcref:`Letter.odt <lino/modlib/notes/config/notes/Note/Letter.odt>`
+and
+:srcref:`payment_reminder.body.html <lino/modlib/finan/config/notes/Note/payment_reminder.body.html>`.
+
+Should `ar.show()` call :meth:`E.tostring` or not? 
+Answer: it depends. 
+Yes when called from inside a "do text from" of an appy.pod template, 
+No when called from inside a plain html template.
+
+- :meth:`lino.core.requests.BaseRequest.show`
+- :meth:`lino.ui.render.HtmlRenderer.show_request`
+- :meth:`lino.ui.render.TextRenderer.show_request`
+- :meth:`lino.extjs.ext_renderer.ExtRenderer.show_request`
+- :meth:`lino.core.actors.Actor.show`
+
+
+
+Cannot choose template or body_template of a PrintableType
+----------------------------------------------------------
+
+When trying to choose a template or body_template of a PrintableType,
+the selection list is always empty and the server reports a 
+TypeError
+"unbound method get_templates_group() must be called with 
+NoteType instance as first argument (got nothing instead)".
+
+This bug had been introduced when I made `ledger.Journal` 
+a `PrintableType`. 
+Fixing this bug revealed two other bugs:
+
+- Lino didn't yet support specifying a 
+  :class:`ChoiceListField <lino.core.choicelists.ChoiceListField>`
+  as parameter of a 
+  :class:`Chooser <lino.utils.choosers.Chooser>`.
+  Fixed.
+  Added :class:`lino.utils.instantiator.ChoiceConverter`.
+
+- Until now it was not possible to select per Journal another template 
+  than `Default.odt` for printing an invoice.
+  Fixed.
+
+

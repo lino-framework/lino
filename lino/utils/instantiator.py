@@ -98,6 +98,16 @@ class DateConverter(Converter):
                 kw[self.field.name] = d
         return kw
 
+class ChoiceConverter(Converter):
+    """Converter for :class:`ChoiceListField <lino.core.choicelists.ChoiceListField>`.
+    """
+    def convert(self,**kw):
+        value = kw.get(self.field.name)
+        if value is not None:
+            if not isinstance(value,self.field.choicelist.item_class):
+                kw[self.field.name] = self.field.choicelist.get_by_value(value)
+        return kw
+        
 class DecimalConverter(Converter):
     def convert(self,**kw):
         value = kw.get(self.field.name)
@@ -156,6 +166,9 @@ def make_converter(f,lookup_fields={}):
         return DateConverter(f)
     if isinstance(f,models.DecimalField):
         return DecimalConverter(f)
+    from lino.core import choicelists
+    if isinstance(f,choicelists.ChoiceListField):
+        return ChoiceConverter(f)
       
 class Instantiator:
     def is_active(self):

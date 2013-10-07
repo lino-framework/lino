@@ -134,21 +134,22 @@ class Renderer(AppyRenderer):
         self.my_styles = []
   
     def jinja_func(self,template_name,**kw):
+        saved_renderer = self.ar.renderer
         try:
+            self.ar.renderer = settings.SITE.ui.plain_renderer
             if not '.' in template_name:
                 template_name += '.html'
             #~ printable = self.contentParser.env.context.get('this',None)
-            #~ from lino.mixins.printable import TypedPrintable
-            #~ if isinstance(printable,TypedPrintable):
-                #~ template_name = printable.get_templates_group() + '/' + template_name
             #~ print 20130910, settings.SITE.jinja_env
             template = settings.SITE.jinja_env.get_template(template_name)
             #~ print 20130910, template, dir(self)
             html = template.render(self.contentParser.env.context)
+            self.ar.renderer = saved_renderer
             return self.html_func(html)
             #~ print 20130910, html
             #~ return self.renderXhtml(html,**kw)
         except Exception as e:
+            self.ar.renderer = saved_renderer
             import traceback
             traceback.print_exc(e)
         

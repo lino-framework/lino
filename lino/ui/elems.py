@@ -1286,12 +1286,16 @@ class DisplayElement(FieldElement):
         if self.field.max_length:
             self.preferred_width = self.field.max_length
             
-    def value2html(self,ar,v,**cellattrs):
-        return E.td(v,**cellattrs)
-    
     def value_from_object(self,obj,ar):
         return self.field.value_from_object(obj,ar)
         
+    def value2html(self,ar,v,**cellattrs):
+        try:
+            return E.td(v,**cellattrs)
+        except Exception as e:
+            logger.error(e)
+            return E.td(str(e),**cellattrs)
+    
     def format_value(self,ar,v):
         #~ from lino.utils.xmlgen.html import E
         from lino.utils.xmlgen.html import html2rst
@@ -2214,9 +2218,9 @@ def field2elem(layout_handle,field,**kw):
     if isinstance(selector_field,models.BooleanField) and not field.editable:
         return BooleanDisplayElement(layout_handle,field,**kw)
         
-    for cl,x in _FIELD2ELEM:
-        if isinstance(selector_field,cl):
-            return x(layout_handle,field,**kw)
+    for df,cl in _FIELD2ELEM:
+        if isinstance(selector_field,df):
+            return cl(layout_handle,field,**kw)
     if isinstance(field,dd.VirtualField):
         raise NotImplementedError("No LayoutElement for VirtualField %s on %s in %s" % (
           field.name,field.return_type.__class__,layout_handle.layout))

@@ -106,11 +106,12 @@ Glossary
     :class:`lino.core.table.Table`.
     :class:`lino.utils.tables.AbstractTable`.
     
-  Slave Report
-    A Slave Report is a :term:`Report` that needs a master 
-    and displays only rows that "belong" 
-    to the master instance. For example if `PersonsByCity` displays all 
-    Persons that live in a City, then City is the master of `PersonsByCity`.
+  Slave Table
+    A Slave Table is a :term:`Table` which displays only rows that "belong" 
+    to a given master instance. For example if you have two models `City` 
+    and `Person`, with a `ForeignKey` `Person.city` pointing to `City`, 
+    then you might define a slave table `PersonsByCity` which displays 
+    only Persons who live in a given City. 
     
 
   Detail Window
