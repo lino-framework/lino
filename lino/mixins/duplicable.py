@@ -45,6 +45,8 @@ class Duplicate(actions.Action):
 
   
     def is_callable_from(self,caller):
+        if isinstance(caller,actions.InsertRow): 
+            return False
         return True
         
     def get_action_permission(self,ar,obj,state):

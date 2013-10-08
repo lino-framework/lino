@@ -32,17 +32,18 @@ from lino.modlib.users import models as auth
 def objects():
     #~ User = settings.SITE.user_model()
     User = resolve_model(settings.SITE.user_model)
-    Project = resolve_model(settings.SITE.project_model)
     Note = resolve_model('notes.Note')
     NoteType = resolve_model('notes.NoteType')
     
     USERS = Cycler(User.objects.all())
-    qs = Project.objects.all()
-    if qs.count() > 10:
-        qs = qs[:10]
-    PROJECTS = Cycler(qs)
-    #~ PROJECTS = Cycler(Project.objects.filter(name__startswith="A"))
-    #~ PROJECTS = Cycler(Project.objects.all())
+    if settings.SITE.project_model is not None:
+        Project = resolve_model(settings.SITE.project_model)
+        qs = Project.objects.all()
+        if qs.count() > 10:
+            qs = qs[:10]
+        PROJECTS = Cycler(qs)
+        #~ PROJECTS = Cycler(Project.objects.filter(name__startswith="A"))
+        #~ PROJECTS = Cycler(Project.objects.all())
     #~ COMPANIES = Cycler(Company.objects.all())
     NTYPES = Cycler(NoteType.objects.all())
     
@@ -54,12 +55,14 @@ def objects():
     yield notetype(name="todo")
     
     for i in range(100):
-        yield Note(user=USERS.pop(),
+        kw = dict(user=USERS.pop(),
             date=settings.SITE.demo_date(days=i),
             subject="Important note %d" % i,
             #~ company=COMPANIES.pop(),
-            project=PROJECTS.pop(),
             type=NTYPES.pop())
+        if settings.SITE.project_model is not None:
+            kw.update(project=PROJECTS.pop())
+        yield Note(**kw)
         
     
     

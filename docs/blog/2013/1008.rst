@@ -1,0 +1,56 @@
+===================================
+20131008 (Tuesday, 08 October 2013)
+===================================
+
+
+- Trying to printing an invoice caused an :ref:`ise`.
+  This is subtle. See 
+  :meth:`lino.modlib.ledger.models.Journal.get_templates_group`.
+
+- :ref:`faggio` now overrides the verbose names for "Teacher" and "Pupil" 
+  to "Instructor" and "Participant" respectively.
+
+- The weekday checkboxes of a RecurrenceSet are now disabled when 
+  Recurrency is not "per_weekday".
+
+- Pupil.__unicode__ now shows the pupil_type
+  (and Teacher.__unicode__ now shows the teacher_type)
+  
+- :ref:`faggio` has now :setting:`project_model` set to None.
+  :mod:`lino.modlib.courses` now injects a field "course" to 
+  cal.Event, this is required for EventsByTeacher.
+  
+
+- :mod:`lino.modlib.notes` and :mod:`lino.modlib.outbox` now manage 
+  with the situation when :setting:`project_model` is None
+  
+- :class:`lino.mixins.duplicable.Duplicate` was callable from InsertRow.
+
+
+The following was a subtle one:
+we had noticed that Lino missed to fill in some fields (especially the 
+"Room") of the automatically generated events of a course.
+The explananation is an interesting example 
+for our yet-to-write documentation about :doc:`/dev/apps`.
+
+I had been solving this (in :mod:`lino.modlib.courses.models`) 
+using plain Django signals as follows::
+
+    @dd.receiver(dd.pre_save, sender=cal.Event,dispatch_uid="setup_event_from_course")
+    def setup_event_from_course(sender=None,instance=None,**kw):
+        ...
+        if settings.SITE.loading_from_dump: return
+        event = instance
+        if event.is_user_modified(): return
+        if event.is_fixed_state(): return
+        if not isinstance(event.owner,Course): return
+        course = event.owner
+        event.project = course
+        event.room = course.room
+
+This turned out as a pifall. The above receiver was never called.
+Do you see why? Because `cal.Event` here is an abstract model when 
+this app is being used in :ref:`faggio:.
+
+
+

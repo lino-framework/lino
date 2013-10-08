@@ -12,6 +12,12 @@ The final truth about what's going on is only
 `The Source Code <http://code.google.com/p/lino/source/list>`_.
 
   
+Version 1.6.13 (released :blogref:`20131007`)
+=============================================
+
+Some subtle bugfixes and optimizations.
+Mostly because of :ref:`welfare`. 
+
 Version 1.6.12 (released :blogref:`20130924`)
 =============================================
 

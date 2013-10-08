@@ -34,6 +34,8 @@ import lino
 from lino.utils.xmlgen import html as xghtml
 E = xghtml.E
 
+from lino.utils import get_class_attr
+
 from lino.core import constants
 
 from lino.core.dbutils import resolve_model
@@ -124,6 +126,30 @@ def add_requirements(obj,**kw):
     obj.required = new
 
 
+from lino.utils.choosers import Chooser
+
+def check_for_chooser(model,field):
+    if isinstance(field,fields.DummyField):
+        return 
+    methname = field.name + "_choices"
+    m = get_class_attr(model,methname)
+    if m is not None:
+        ch = Chooser(model,field,m)
+        setattr(field,'_lino_chooser',ch)
+        #~ logger.debug("Installed %s",ch)
+    #~ else:
+        #~ logger.info("No chooser for %s.%s",model,field.name)
+
+
+def discover_choosers():
+    logger.debug("Discovering choosers...")
+    #~ logger.debug("Instantiate model reports...")
+    for model in models.get_models():
+        #~ n = 0
+        for field in model._meta.fields + model._meta.virtual_fields:
+            check_for_chooser(model,field)
+        #~ logger.debug("Discovered %d choosers in model %s.",n,model)
+
 
 
 
@@ -149,7 +175,7 @@ def register_params(cls):
 
 def setup_params_choosers(self):
     if self.parameters:
-        from lino.utils.choosers import check_for_chooser
+        #~ from lino.utils.choosers import check_for_chooser
         for k,fld in self.parameters.items():
             if isinstance(fld,models.ForeignKey):
                 fld.rel.to = resolve_model(fld.rel.to)
@@ -529,7 +555,6 @@ class Action(Parametrizable,Permittable):
             #~ assert self.params_layout is not None
             
         register_params(self)
-        #~ setup_params_choosers(self.__class__)
         
         if self.parameters is not None:
             if not isinstance(self.params_layout,self._layout_class):

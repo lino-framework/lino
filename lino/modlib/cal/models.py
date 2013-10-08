@@ -377,7 +377,8 @@ class EventGenerator(mixins.UserAuthored):
     Base class for things that generate a suite of events.
     Examples
     :class:`isip.Contract`,     :class:`jobs.Contract`, 
-    :class:`schools.Course`
+    :class:`schools.Course`.
+    
     """
     
     class Meta:
@@ -430,9 +431,10 @@ class EventGenerator(mixins.UserAuthored):
         """
         if settings.SITE.loading_from_dump: 
             #~ print "20111014 loading_from_dump"
-            return 
+            return 0
         qs = self.get_existing_auto_events()
         wanted = self.get_wanted_auto_events()
+        count = len(wanted)
         current = 0
         
         #~ msg = dd.obj2str(self)
@@ -451,7 +453,9 @@ class EventGenerator(mixins.UserAuthored):
                     #~ e.save()
             elif e.is_user_modified():
                 if e.start_date != ae.start_date:
-                    # modify subsequent dates
+                    subsequent = ', '.join([str(x.auto_type) for x in wanted.values()])
+                    logger.info("""\
+%d has been rescheduled from %s to %s, adapt subsequent dates (%s)""" % (e.auto_type,ae.start_date,e.start_date,subsequent))
                     delta = e.start_date - ae.start_date
                     for se in wanted.values():
                         se.start_date += delta
@@ -459,8 +463,11 @@ class EventGenerator(mixins.UserAuthored):
                 self.compare_auto_event(e,ae)
         # create new Events for remaining wanted
         for ae in wanted.values():
-            settings.SITE.modules.cal.Event(**ae).save()
+            e = settings.SITE.modules.cal.Event(**ae)
+            self.before_auto_event_save(e)
+            e.save()
         #~ logger.info("20130528 update_auto_events done")
+        return count
             
     def compare_auto_event(self,obj,ae):
         original_state = dict(obj.__dict__)
@@ -477,8 +484,31 @@ class EventGenerator(mixins.UserAuthored):
             obj.end_time = ae.end_time
         if obj.calendar != ae.calendar:
             obj.calendar = ae.calendar
+        self.before_auto_event_save(obj)
         if obj.__dict__ != original_state:
             obj.save()
+            
+    def before_auto_event_save(self,obj):
+        """
+        Called for automatically generated events after their automatic
+        fields have been set and before the event is saved.
+        This allows for application-specific "additional-automatic" fields. 
+        E.g. the room field in `lino.modlib.courses`
+        
+        **Automatic event fields**:
+        :class:`EventGenerator` 
+        by default manages the following fields:
+        
+        - auto_type
+        - user
+        - summary
+        - start_date, start_time
+        - end_date, end_time
+    
+        
+        """
+        pass
+            
       
     def get_wanted_auto_events(self):
         """
@@ -651,6 +681,21 @@ class RecurrenceSet(Started,Ended):
         _("Number of events"),
         blank=True,null=True)
         
+    @classmethod
+    def on_analyze(cls,lino):
+        cls.WEEKDAY_FIELDS = dd.fields_list(cls,
+            '''monday tuesday wednesday 
+            thursday friday saturday  sunday    
+            ''')
+        super(RecurrenceSet,cls).on_analyze(lino)
+            
+    def disabled_fields(self,ar):
+        rv = super(RecurrenceSet,self).disabled_fields(ar)
+        if self.every_unit != Recurrencies.per_weekday:
+            #~ return settings.SITE.TASK_AUTO_FIELDS
+            rv |= self.WEEKDAY_FIELDS
+        return rv
+        
         
     @dd.displayfield(_("Where"))
     def where_text(self,ar):
@@ -799,10 +844,11 @@ Whether this is private, public or between.""")) # iCal:CLASS
         self.auto_type = None
         
     def disabled_fields(self,ar):
+        rv = super(Component,self).disabled_fields(ar)
         if self.auto_type:
             #~ return settings.SITE.TASK_AUTO_FIELDS
-            return self.DISABLED_AUTO_FIELDS
-        return []
+            rv |= self.DISABLED_AUTO_FIELDS
+        return rv
         
     def get_uid(self):
         """
@@ -951,6 +997,7 @@ Indicates that this Event shouldn't prevent other Events at the same time."""))
     def is_user_modified(self):
         return self.state != EventStates.suggested
         
+        
     #~ def after_send_mail(self,mail,ar,kw):
         #~ if self.state == EventStates.assigned:
             #~ self.state = EventStates.notified
@@ -999,6 +1046,29 @@ Indicates that this Event shouldn't prevent other Events at the same time."""))
         """
         return []
         
+    def get_event_summary(event,ar):
+        """
+        How this event should be summarized in contexts 
+        where possibly another user is looking 
+        (i.e. currently in invitations of guests, or in the extensible calendar 
+        panel).
+        """
+        #~ from django.utils.translation import ugettext as _
+        s = event.summary
+        if event.user != ar.get_user():
+            if event.access_class == AccessClasses.show_busy:
+                s = _("Busy")
+            s = event.user.username + ': ' + unicode(s)
+        elif settings.SITE.project_model is not None and event.project is not None:
+            s += " " + unicode(_("with")) + " " + unicode(event.project)
+        if event.state:
+            s = ("(%s) " % unicode(event.state)) + s
+        n = event.guest_set.all().count()
+        if n:
+            s = ("[%d] " % n) + s
+        return s
+
+
         
             
     def before_ui_save(self,ar,**kw):
@@ -1106,6 +1176,7 @@ Indicates that this Event shouldn't prevent other Events at the same time."""))
     def on_analyze(cls,lino):
         cls.DISABLED_AUTO_FIELDS = dd.fields_list(cls,
             '''summary''')
+            
 
 dd.update_field(Event,'user',verbose_name=_("Responsible user"))
 
@@ -1713,7 +1784,7 @@ class Guest(mixins.TypedPrintable,outbox.Mailable):
         
     @dd.displayfield(_("Event"))
     def event_summary(self,ar):
-        return ar.obj2html(self.event,settings.SITE.get_event_summary(self.event,ar.get_user()))
+        return ar.obj2html(self.event,self.event.get_event_summary(ar))
         #~ return event_summary(self.event,ar.get_user())
         
     #~ def before_ui_save(self,ar,**kw):
@@ -2181,7 +2252,7 @@ class ExtSummaryField(dd.VirtualField):
         
     def value_from_object(self,obj,ar):
         #~ logger.info("20120118 value_from_object() %s",dd.obj2str(obj))
-        return settings.SITE.get_event_summary(obj,ar.get_user())
+        return obj.get_event_summary(ar)
 
 
 def user_calendars(qs,user):

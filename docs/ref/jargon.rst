@@ -2,6 +2,15 @@ Jargon
 =============
 
 
+.. _ise:
+
+Internal Server Error
+---------------------
+
+When an exception occurs that is not catched, then Lino behaves like 
+any Django application and return a HTTP return code 500.
+
+
 .. _admin:
 
 System administrator

@@ -26,6 +26,7 @@ Drafts
    actors
    /tested/index
    /todo
+   apps
    
    help_texts
    userdocs

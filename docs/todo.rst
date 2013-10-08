@@ -2,10 +2,6 @@ To-do list
 ==========
 
 
-:ref:`welfare` (Release nach Demo)
-----------------------------------
-
-#.  testen
 
 :ref:`faggio` (bis Oktober)
 ---------------------------
@@ -53,6 +49,10 @@ Nächste Besichtigung machen.
 
 :ref:`welfare` (für nach Oktober)
 ---------------------------------
+
+#.  :ref:`davlink` : don't follow symbolic links in order to avoid the 
+    endless `/usr/X11/X11/X11` problem.
+    http://docs.oracle.com/javase/tutorial/essential/io/links.html#detect
 
 #.  Wenn man ein Parameter-Panel einmal geöffnet hat, dann bleibt dies
     jetzt für alle weiteren Fenster so. Das ist zufällig gekommen. 

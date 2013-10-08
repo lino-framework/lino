@@ -584,7 +584,7 @@ class Actor(actions.Parametrizable):
     @classmethod
     def disabled_fields(cls,obj,ar):
         """
-        Return a list of field names that should not be editable 
+        Return a set of field names that should not be editable 
         for the specified `obj` and `request`.
         
         If defined in the Table, this must be a class method that accepts 
@@ -593,7 +593,7 @@ class Actor(actions.Parametrizable):
           @classmethod
           def disabled_fields(cls,obj,ar):
               ...
-              return []
+              return set()
               
         
         If not defined in the Table, Lino will look whether 
@@ -604,11 +604,11 @@ class Actor(actions.Parametrizable):
         
           def disabled_fields(self,ar):
               ...
-              return []
+              return set()
         
         See also :doc:`/tickets/2`.
         """
-        return []
+        return set()
     
     
     #~ disable_editing = None
@@ -1430,8 +1430,9 @@ class Actor(actions.Parametrizable):
         
         """
         for k,pf in self.parameters.items():
-            #~ if not param_values.has_key(k):
-            kw[k] = pf.get_default()
+            if not isinstance(pf,fields.DummyField):
+                #~ if not param_values.has_key(k):
+                kw[k] = pf.get_default()
         return kw
               
     #~ @classmethod

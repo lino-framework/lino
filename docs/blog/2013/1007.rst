@@ -75,8 +75,12 @@ Fixing this bug revealed two other bugs:
   Fixed.
 
 
-Released Lino 1.6.13 and Lino-Welfare 1.1.10
+Released Lino-Welfare 1.1.10
 --------------------------------------------
+
+
+Release notes see :ref:`welfare.changes`.
+This also required a new version (:ref:`1.6.13 <lino.changes>`) of Lino.
 
 :fab:`sdist_test` still failed with an 
 ImportError "Could not import settings 'lino.projects.belref.settings' 
@@ -87,9 +91,16 @@ deleting the temporary directory.
 
 Renamed the fab command `upload` to :fab:`release`.
 
-This was the first time I restored a :manage:`dump2py` backup in a 
-production database::
+Upgrading to a relased version is now really easy:
+  
+  $ . env/bin/activate  
+  $ python manage.py dump2py /var/log/lino/backups/20131007
+  $ pip install -U lino-welfare
+  $ python manage.py run /var/log/lino/backups/20131007
 
-  $ python manage.py run /var/log/lino/backups/20131007_020101/restore.py
+Oops, except if you get e.g. the following::
 
+  IOError: [Errno 28] No space left on device
+
+which means that you must either tidy up or install a bigger hard drive.
 

@@ -53,11 +53,12 @@ from lino import dd
 from lino.core import fields
 from lino.core import layouts
 from lino.core import actors
+from lino.core import actions
 from lino.core import dbtables
 from lino.utils import class_dict_items
     
 #~ from lino.utils.config import load_config_files, find_config_file
-from lino.utils import choosers
+#~ from lino.utils import choosers
 #~ from lino.utils import codetime
 from lino.utils import curry
 #~ from lino.models import get_site_config
@@ -251,7 +252,8 @@ def startup_site(self):
                     
     actors.discover()
     dbtables.discover()
-    choosers.discover()
+    #~ choosers.discover()
+    actions.discover_choosers()
                     
     #~ from lino.core import ui
     #~ ui.site_setup(self)

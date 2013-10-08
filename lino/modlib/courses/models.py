@@ -189,16 +189,18 @@ class TeacherTypes(dd.Table):
 
 
 
+
 class Teacher(Person):
     class Meta:
+        abstract = settings.SITE.is_abstract_model('courses.Teacher')
         verbose_name = _("Teacher")
         verbose_name_plural = _("Teachers")
         
     teacher_type = dd.ForeignKey('courses.TeacherType',blank=True,null=True)
     
-    def __unicode__(self):
+    #~ def __unicode__(self):
         #~ return self.get_full_name(salutation=False)
-        return self.last_name
+        #~ return self.last_name
       
 class TeacherDetail(contacts.PersonDetail):
     general = dd.Panel(contacts.PersonDetail.main,label = _("General"))
@@ -211,7 +213,7 @@ class TeacherDetail(contacts.PersonDetail):
         #~ lh.notes.label = _("Notes")
 
 class Teachers(contacts.Persons):
-    model = Teacher
+    model = 'courses.Teacher'
     #~ detail_layout = TeacherDetail()
   
 class TeachersByType(Teachers):
@@ -236,7 +238,7 @@ class PupilTypes(dd.Table):
 
 class Pupil(Person):
     class Meta:
-        #~ app_label = 'courses'
+        abstract = settings.SITE.is_abstract_model('courses.Pupil')
         verbose_name = _("Pupil")
         verbose_name_plural = _("Pupils")
         
@@ -259,7 +261,7 @@ class PupilDetail(contacts.PersonDetail):
         #~ lh.notes.label = _("Notes")
 
 class Pupils(contacts.Persons):
-    model = Pupil
+    model = 'courses.Pupil'
     #~ detail_layout = PupilDetail()
 
 class PupilsByType(Pupils):
@@ -269,8 +271,8 @@ class PupilsByType(Pupils):
     
 class EventsByTeacher(cal.Events):
     help_text = _("Shows events of courses of this teacher")
-    master = Teacher
-    column_names = 'when_text:20 project__line room state'
+    master = 'courses.Teacher'
+    column_names = 'when_text:20 course__line room state'
     auto_fit_column_widths = True
     
     @classmethod
@@ -278,7 +280,7 @@ class EventsByTeacher(cal.Events):
         teacher = ar.master_instance
         if teacher is None: return []
         qs = super(EventsByTeacher,self).get_request_queryset(ar)
-        qs = qs.filter(project__in = teacher.course_set.all())
+        qs = qs.filter(course__in = teacher.course_set.all())
         return qs
   
 #~ def on_event_generated(self,course,ev):
@@ -338,7 +340,7 @@ class Course(contacts.ContactRelated,cal.EventGenerator,cal.RecurrenceSet,dd.Pri
     workflow_state_field = 'state'
     
     line = models.ForeignKey('courses.Line')
-    teacher = models.ForeignKey(Teacher,blank=True,null=True)
+    teacher = models.ForeignKey('courses.Teacher',blank=True,null=True)
     #~ room = models.ForeignKey(Room,blank=True,null=True)
     room = dd.ForeignKey('cal.Room',blank=True,null=True)
     slot = models.ForeignKey(Slot,blank=True,null=True)
@@ -394,7 +396,7 @@ class Course(contacts.ContactRelated,cal.EventGenerator,cal.RecurrenceSet,dd.Pri
     @dd.displayfield(_("Events"))
     def events_text(self,ar=None):
         return ', '.join([day_and_month(e.start_date)
-            for e in self.cal_event_set_by_project.order_by('start_date')])
+            for e in self.events_by_course.order_by('start_date')])
         
     @dd.requestfield(_("Requested"))
     def requested(self,ar):
@@ -409,6 +411,31 @@ class Course(contacts.ContactRelated,cal.EventGenerator,cal.RecurrenceSet,dd.Pri
     def enrolments(self,ar):
         return EnrolmentsByCourse.request(self)
         
+        
+    def before_auto_event_save(self,event):
+        """
+        Sets room and start_time for automatic events.
+        This is a usage example for :meth:`EventGenerator.before_auto_event_save 
+        <lino.modlib.cal.models.EventGenerator.before_auto_event_save>`.
+        """
+        #~ logger.info("20131008 before_auto_event_save")
+        assert not settings.SITE.loading_from_dump
+        assert event.owner == self
+        #~ event = instance
+        if event.is_user_modified(): return
+        #~ if event.is_fixed_state(): return
+        #~ course = event.owner
+        #~ event.project = self
+        event.course = self
+        event.room = self.room
+        if self.slot: 
+            event.start_time = self.slot.start_time
+            event.end_time = self.slot.end_time
+        else:
+            event.start_time = self.start_time
+            event.end_time = self.end_time
+        
+        
 """
 customize fields coming from mixins to override their inherited default verbose_names
 """
@@ -416,25 +443,23 @@ dd.update_field(Course,'contact_person',verbose_name = _("Contact person"))
 dd.update_field(Course,'company',verbose_name = _("Organizer"))
           
           
-@dd.receiver(dd.pre_save, sender=cal.Event,dispatch_uid="setup_event_from_course")
-def setup_event_from_course(sender=None,instance=None,**kw):
-    #~ logger.info("20130528 setup_event_from_course")
-    if settings.SITE.loading_from_dump: return
-    event = instance
-    if event.is_user_modified(): return
-    if event.is_fixed_state(): return
-    if not isinstance(event.owner,Course): return
-    course = event.owner
-    event.project = course
-    #~ settings.SITE.setup_course_event(course,event)
-    
-    event.room = course.room
-    if course.slot: 
-        event.start_time = course.slot.start_time
-        event.end_time = course.slot.end_time
-    else:
-        event.start_time = course.start_time
-        event.end_time = course.end_time
+#~ @dd.receiver(dd.pre_save, sender=cal.Event,dispatch_uid="setup_event_from_course")
+#~ def setup_event_from_course(sender=None,instance=None,**kw):
+    #~ # logger.info("20130528 setup_event_from_course")
+    #~ if settings.SITE.loading_from_dump: return
+    #~ event = instance
+    #~ if event.is_user_modified(): return
+    #~ if event.is_fixed_state(): return
+    #~ if not isinstance(event.owner,Course): return
+    #~ course = event.owner
+    #~ event.project = course
+    #~ event.room = course.room
+    #~ if course.slot: 
+        #~ event.start_time = course.slot.start_time
+        #~ event.end_time = course.slot.end_time
+    #~ else:
+        #~ event.start_time = course.start_time
+        #~ event.end_time = course.end_time
     
        
 if Course.FILL_EVENT_GUESTS:
@@ -477,6 +502,10 @@ class Courses(dd.Table):
     model = 'courses.Course'
     #~ order_by = ['date','start_time']
     detail_layout = CourseDetail() 
+    insert_layout = """
+    line teacher 
+    start_date tariff
+    """
     column_names = "info line teacher room slot *"
     order_by = ['start_date']
     
@@ -585,16 +614,17 @@ class Enrolment(dd.UserAuthored,dd.Printable,sales.Invoiceable):
     workflow_state_field = 'state'
   
     class Meta:
+        abstract = settings.SITE.is_abstract_model('courses.Enrolment')
         verbose_name = _("Enrolment")
         verbose_name_plural = _('Enrolments')
         unique_together = ('course','pupil')
 
     #~ teacher = models.ForeignKey(Teacher)
     course = dd.ForeignKey('courses.Course')
-    pupil = dd.ForeignKey(Pupil)
+    pupil = dd.ForeignKey('courses.Pupil')
     request_date = models.DateField(_("Date of request"),default=datetime.date.today)
     state = EnrolmentStates.field(default=EnrolmentStates.requested)
-    amount = dd.PriceField(_("Amount"),blank=True)
+    amount = dd.PriceField(_("Participation fee"),blank=True)
     remark = models.CharField(max_length=200,
           blank=True,
           verbose_name=_("Remark"))
@@ -660,7 +690,7 @@ class Enrolment(dd.UserAuthored,dd.Printable,sales.Invoiceable):
 class Enrolments(dd.Table):
     #~ debug_permissions=20130531
     required = dd.required(user_level='manager')
-    model = Enrolment
+    model = 'courses.Enrolment'
     parameters = dd.ObservedPeriod(
         author = dd.ForeignKey(settings.SITE.user_model,blank=True,null=True),
         state = EnrolmentStates.field(blank=True,null=True),
@@ -802,18 +832,25 @@ def get_todo_tables(ar):
 
 
 
+dd.inject_field('cal.Event',
+    'course',
+    dd.ForeignKey('courses.Course',
+        blank=True,null=True,
+        related_name="events_by_course"))
+    
 dd.inject_field(Person,
     'is_teacher',
-    mti.EnableChild(Teacher,verbose_name=_("is a teacher")),
-    """Whether this Person is also a Teacher."""
-    )
+    mti.EnableChild('courses.Teacher',
+        verbose_name=_("is a teacher"),
+        help_text=_("Whether this Person is also a Teacher.")))
+        
 dd.inject_field(Person,
     'is_pupil',
-    mti.EnableChild(Pupil,verbose_name=_("is a pupil")),
-    """Whether this Person is also a Pupil."""
-    )
+    mti.EnableChild('courses.Pupil',
+        verbose_name=_("is a pupil"),
+        help_text=_("Whether this Person is also a Pupil.")))
 
-MODULE_LABEL = _("School")
+MODULE_LABEL = _("Courses")
     
 def setup_main_menu(site,ui,profile,main):
     m = main.get_item("contacts")

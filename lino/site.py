@@ -35,6 +35,26 @@ because this
 functionality is integral part of :mod:`lino.modlib.system`.
 
 
+.. setting:: user_model
+
+Set this to ``"users.User"`` if you use `lino.modlib.users`. 
+
+Default value us `None`, meaning that this site has no user management 
+(feature used by e.g. :mod:`lino.test_apps.1`)
+
+Set this to ``"auth.User"`` if you use `django.contrib.auth` instead of
+`lino.modlib.users`. Not tested.
+
+.. setting:: project_model
+
+Optionally set this to the <applabel.modelname> of a 
+model used as "central project" in your application. 
+Which concretely means that certain other models 
+like notes.Note, outbox.Mail, ... have an additional foreignkey 
+to this model.
+Not yet decided whther this makes sense. 
+It is probably an obsolete pattern.
+
 .. setting:: preview_limit
     
 Default value for the 
@@ -107,12 +127,6 @@ class Site(Site):
     
     preview_limit = 15
     
-    
-    user_model = None
-    "See :attr:`lino.ui.Lino.user_model`."
-    
-    project_model = None
-    "See :attr:`lino.ui.Lino.project_model`."
     
     override_modlib_models = set()
     "See :attr:`lino.site.Site.override_modlib_models`."
@@ -701,20 +715,9 @@ class Site(Site):
     #~ """
     
     project_model = None
-    """
-    Optionally set this to the <applabel_modelname> of a 
-    model used as project in your application.
-    """
     
     #~ user_model = "users.User"
     user_model = None
-    """
-    Set this to ``"auth.User"`` if you use `django.contrib.auth` instead of
-    `lino.modlib.users`. 
-    
-    Set it to `None` to remove any user management 
-    (feature used by e.g. :mod:`lino.test_apps.1`)
-    """
 
     auth_middleware = None
     """
@@ -1919,23 +1922,6 @@ class Site(Site):
         return urlpatterns
 
 
-
-
-    def get_event_summary(self,event,user):
-        from django.utils.translation import ugettext as _
-        s = event.summary
-        if event.user != user:
-            if event.access_class == self.modules.cal.AccessClasses.show_busy:
-                s = _("Busy")
-            s = event.user.username + ': ' + unicode(s)
-        elif self.project_model is not None and event.project is not None:
-            s += " " + unicode(_("with")) + " " + unicode(event.project)
-        if event.state:
-            s = ("(%s) " % unicode(event.state)) + s
-        n = event.guest_set.all().count()
-        if n:
-            s = ("[%d] " % n) + s
-        return s
 
 
     def for_each_app(self,func,*args,**kw):

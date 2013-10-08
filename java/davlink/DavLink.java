@@ -87,12 +87,14 @@ class Searcher {
     Searcher(DavLink a) {
         app = a;
     }
-    public final void traverse( final File f ) throws IOException {
+    public final void traverse( final File f ) 
+    //~ throws IOException 
+    {
         if (f.isDirectory()) {
           System.out.println("Searching " + f.getAbsolutePath());
           //~ onDirectory(f);
           String[] list = f.list();
-          if (list != null) 
+          if (list != null) // returns null e.g. on IOException
               for (String name : list) 
                   traverse(new File(f,name));
         } else {

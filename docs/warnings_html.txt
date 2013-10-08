@@ -21,6 +21,7 @@
 /home/luc/hgwork/lino/docs/blog/2013/0906.rst:20: ERROR: Unknown interpreted text role "ddref".
 /home/luc/hgwork/lino/docs/blog/2013/0910.rst:63: ERROR: Unknown interpreted text role "function".
 /home/luc/hgwork/lino/docs/blog/2013/0916.rst:54: WARNING: Inline strong start-string without end-string.
+/home/luc/hgwork/lino/docs/blog/2013/1008.rst:51: WARNING: Inline interpreted text or phrase reference start-string without end-string.
 /home/luc/hgwork/lino/docs/todo.rst:1016: WARNING: Enumerated list ends without a blank line; unexpected unindent.
 /home/luc/hgwork/lino/lino/site.py:docstring of lino.site.Site.webdav_url:7: WARNING: term not in glossary: runserver
 /home/luc/hgwork/lino/lino/mixins/printable.py:docstring of lino.mixins.printable.PisaBuildMethod:1: WARNING: undefined label: lino.tutorials.pisa (if the link has no caption the label must precede a section header)

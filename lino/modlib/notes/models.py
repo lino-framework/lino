@@ -265,22 +265,25 @@ class NotesByEventType(Notes):
     order_by = ["date"]
     
     
-
-class NotesByProject(Notes):
+class NotesByX(Notes):
     required = dd.required(user_groups='office')
-    master_key = 'project'
     column_names = "date event_type type subject body user *"
     order_by = ["-date"]
     
-class NotesByOwner(NotesByProject):
+if settings.SITE.project_model is not None:
+
+    class NotesByProject(NotesByX):
+        master_key = 'project'
+    
+class NotesByOwner(NotesByX):
     master_key = 'owner'
     column_names = "date event_type type subject body user *"
     
-class NotesByCompany(NotesByProject):
+class NotesByCompany(NotesByX):
     master_key = 'company'
     column_names = "date event_type type subject user *"
 
-class NotesByPerson(NotesByProject):
+class NotesByPerson(NotesByX):
     master_key = 'contact_person'
     column_names = "date event_type type subject user *"
     

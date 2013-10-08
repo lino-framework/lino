@@ -35,7 +35,6 @@ from lino.utils.instantiator import make_converter
 #~ from lino.core.fields import get_data_elem # , get_unbound_meth
 #~ import lino
 #~ from lino.core import fields
-from lino.utils import get_class_attr
 from lino.core import constants # as ext_requests
 
 class BaseChooser:
@@ -202,26 +201,6 @@ class Chooser(FieldChooser):
         return m(value)
         #~ raise NotImplementedError("%s : Cannot get text for value %r" % (self.meth,value))
         
-def check_for_chooser(model,field):
-    methname = field.name + "_choices"
-    m = get_class_attr(model,methname)
-    if m is not None:
-        ch = Chooser(model,field,m)
-        setattr(field,'_lino_chooser',ch)
-        #~ logger.debug("Installed %s",ch)
-    #~ else:
-        #~ logger.info("No chooser for %s.%s",model,field.name)
-
-
-def discover():
-    logger.debug("Discovering choosers...")
-    #~ logger.debug("Instantiate model reports...")
-    for model in models.get_models():
-        #~ n = 0
-        for field in model._meta.fields + model._meta.virtual_fields:
-            check_for_chooser(model,field)
-        #~ logger.debug("Discovered %d choosers in model %s.",n,model)
-
 def get_for_field(fld):
     return getattr(fld,'_lino_chooser',None)
 

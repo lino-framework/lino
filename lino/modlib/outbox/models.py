@@ -13,7 +13,7 @@
 ## along with Lino; if not, see <http://www.gnu.org/licenses/>.
 
 """
-Defines models for :mod:`lino.modlib.outbox`.
+The :xfile:`models.py` module for :mod:`lino.modlib.outbox`.
 """
 
 import logging
@@ -528,13 +528,15 @@ class MailsByUser(Mails):
     order_by = ['-date']
     master_key = 'user'
 
-class MailsByProject(Mails):
-    required = dd.required()
-    label = _("Outbox")
-    column_names = 'date subject recipients user *'
-    #~ order_by = ['sent']
-    order_by = ['-date']
-    master_key = 'project'
+if settings.SITE.project_model is not None:
+    
+    class MailsByProject(Mails):
+        required = dd.required()
+        label = _("Outbox")
+        column_names = 'date subject recipients user *'
+        #~ order_by = ['sent']
+        order_by = ['-date']
+        master_key = 'project'
     
 class SentByPartner(Mails):
     required = dd.required()

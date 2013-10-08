@@ -460,7 +460,7 @@ class Persons(Partners):
     detail_layout = PersonDetail()
     
     insert_layout = dd.FormLayout("""
-    title first_name last_name
+    first_name last_name
     gender language
     """,window_size=(60,'auto'))
     

@@ -279,11 +279,10 @@ class SimpleBuildMethod(BuildMethod):
     def get_template_file(self,ar,action,elem):
         from lino.utils.config import find_config_file
         tpl_leaf = self.get_template_leaf(action,elem)
-        tg = elem.get_templates_group()
-        tplfile = find_config_file(tpl_leaf,tg)
+        group = elem.get_templates_group()
+        tplfile = find_config_file(tpl_leaf,group)
         if not tplfile:
-            raise Warning("No file %s/%s" % (tg,tpl_leaf))
-        #~ tplfile = os.path.normpath(os.path.join(self.templates_dir,tpl_leaf))
+            raise Warning("No file %s/%s" % (group,tpl_leaf))
         return tplfile
         
     def build(self,ar,action,elem):
@@ -725,8 +724,8 @@ class PrintableType(Model):
     def get_templates_group(cls):
         """
         Note that `get_templates_group` is 
-        a class method on `PrintableType`
-        an instance method on `Printable`
+        a **class method** on `PrintableType`
+        but an **instance method** on `Printable`.
         """
         #~ return cls.templates_group or cls._meta.app_label
         return cls.templates_group # or full_model_name(cls)

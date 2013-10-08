@@ -138,13 +138,10 @@ class User(mixins.CreatedModified):
         """
         #~ if ar.get_user().is_superuser: 
         #~ if request.user.is_superuser: 
+        rv = super(User,self).disabled_fields(ar)
         if ar.get_user().profile.level < dd.UserLevels.admin:
-            l = ['profile']
-        else:
-            l = []
-        #~ if self.profile:
-            #~ l += settings.SITE.user_profile_fields
-        return l
+            rv.add('profile')
+        return rv
         
     def full_clean(self,*args,**kw):
         p = self.person
