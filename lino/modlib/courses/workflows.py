@@ -103,3 +103,4 @@ def my_enrolment_workflows(sender=None,**kw):
     
     EnrolmentStates.confirmed.add_transition(ConfirmEnrolment)
     EnrolmentStates.certified.add_transition(CertifyEnrolment)
+    EnrolmentStates.cancelled.add_transition(_("Cancel"),states="confirmed")
