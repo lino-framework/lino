@@ -1,0 +1,24 @@
+=====================================
+20131009 (Wednesday, 09 October 2013)
+=====================================
+
+Continuing on :ref:`faggio`.
+
+When the user clicks "Confirm" on  an Enrolment, 
+Lino now checks whether there are 
+available places left in that course.
+If not, the user gets an error message.
+
+Another possible verification would be whether the pupil has overdue credit.
+
+
+
+Replaced the EventsByController
+slave table in CourseDetail by a new table 
+EventsByCourse.
+The difference is that now we can manually add more events 
+to a course than the automatically generated ones.
+
+Note that such manual events currently do not get the 
+room, start_time and calendar fields filled. 
+

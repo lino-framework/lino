@@ -369,6 +369,7 @@ class UpdateReminders(actions.Action):
             n += obj.update_reminders()
         msg = _("%d reminder(s) have been updated.") % n
         logger.info(msg)
+        kw.update(refresh_all=True)
         return ar.success(msg,**kw)
 
 

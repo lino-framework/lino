@@ -98,6 +98,8 @@ Person = dd.resolve_model('contacts.Person',strict=True)
 #~ class PresenceStatuses(dd.Table):
     #~ model = PresenceStatus
     
+    
+    
 class StartEndTime(dd.Model):
     class Meta:
         abstract = True
@@ -320,6 +322,29 @@ add('20', _("Published"),'published')
 add('30', _("Started"),'started')
 add('40', _("Ended"),'ended')
 add('50', _("Cancelled"),'cancelled')
+
+
+class EnrolmentStates(dd.Workflow):
+    verbose_name_plural = _("Enrolment states")
+    required = dd.required(user_level='admin')
+    invoiceable = models.BooleanField(_("invoiceable"),default=True)
+    uses_a_place = models.BooleanField(_("Uses a place"),default=True)
+
+add = EnrolmentStates.add_item
+add('10', _("Requested"),'requested',invoiceable=False,uses_a_place=False)
+add('20', _("Confirmed"),'confirmed',invoiceable=True,uses_a_place=True)
+add('30', _("Cancelled"),'cancelled',invoiceable=False,uses_a_place=False)
+add('40', _("Certified"),'certified',invoiceable=True,uses_a_place=True)
+#~ add('40', _("Started"),'started')
+#~ add('50', _("Success"),'success')
+#~ add('60', _("Award"),'award')
+#~ add('90', _("Abandoned"),'abandoned')
+
+#~ ENROLMENT_USES_UP_A_PLACE = set((EnrolmentStates.confirmed,EnrolmentStates.certified))
+ENROLMENT_USES_UP_A_PLACE = EnrolmentStates.filter(uses_a_place=True)
+
+    
+
     
     
     
@@ -389,28 +414,10 @@ class Course(contacts.ContactRelated,cal.EventGenerator,cal.RecurrenceSet,dd.Pri
         return "%s %s" % (dd.babelattr(self.calendar,'event_label'),i)
         #~ return _("Lesson %d") % i
         
-    @dd.displayfield(_("Info"))
-    def info(self,ar):
-        return ar.obj2html(self)
         
-    @dd.displayfield(_("Events"))
-    def events_text(self,ar=None):
-        return ', '.join([day_and_month(e.start_date)
-            for e in self.events_by_course.order_by('start_date')])
-        
-    @dd.requestfield(_("Requested"))
-    def requested(self,ar):
-        #~ return ar.spawn(EnrolmentsByCourse,master_instance=self,param_values=dict(state=EnrolmentStates.requested))
-        return EnrolmentsByCourse.request(self,param_values=dict(state=EnrolmentStates.requested))
-        
-    @dd.requestfield(_("Confirmed"))
-    def confirmed(self,ar):
-        return EnrolmentsByCourse.request(self,param_values=dict(state=EnrolmentStates.confirmed))
-        
-    @dd.requestfield(_("Enrolments"))
-    def enrolments(self,ar):
-        return EnrolmentsByCourse.request(self)
-        
+    def get_free_places(self):
+        qs = Enrolment.objects.filter(course=self,state__in=ENROLMENT_USES_UP_A_PLACE)
+        return self.max_places - qs.count()
         
     def before_auto_event_save(self,event):
         """
@@ -434,6 +441,31 @@ class Course(contacts.ContactRelated,cal.EventGenerator,cal.RecurrenceSet,dd.Pri
         else:
             event.start_time = self.start_time
             event.end_time = self.end_time
+        
+        
+        
+    @dd.displayfield(_("Info"))
+    def info(self,ar):
+        return ar.obj2html(self)
+        
+    @dd.displayfield(_("Events"))
+    def events_text(self,ar=None):
+        return ', '.join([day_and_month(e.start_date)
+            for e in self.events_by_course.order_by('start_date')])
+        
+    @dd.requestfield(_("Requested"))
+    def requested(self,ar):
+        #~ return ar.spawn(EnrolmentsByCourse,master_instance=self,param_values=dict(state=EnrolmentStates.requested))
+        return EnrolmentsByCourse.request(self,param_values=dict(state=EnrolmentStates.requested))
+        
+    @dd.requestfield(_("Confirmed"))
+    def confirmed(self,ar):
+        return EnrolmentsByCourse.request(self,param_values=dict(state=EnrolmentStates.confirmed))
+        
+    @dd.requestfield(_("Enrolments"))
+    def enrolments(self,ar):
+        return EnrolmentsByCourse.request(self)
+        
         
         
 """
@@ -593,21 +625,6 @@ class ActiveCourses(Courses):
 
     
     
-class EnrolmentStates(dd.Workflow):
-    verbose_name_plural = _("Enrolment states")
-    required = dd.required(user_level='admin')
-    invoiceable = models.BooleanField(_("invoiceable"),default=True)
-
-add = EnrolmentStates.add_item
-add('10', _("Requested"),'requested',invoiceable=False)
-add('20', _("Confirmed"),'confirmed',invoiceable=True)
-add('30', _("Cancelled"),'cancelled',invoiceable=False)
-add('40', _("Certified"),'certified',invoiceable=True)
-#~ add('40', _("Started"),'started')
-#~ add('50', _("Success"),'success')
-#~ add('60', _("Award"),'award')
-#~ add('90', _("Abandoned"),'abandoned')
-    
 
 class Enrolment(dd.UserAuthored,dd.Printable,sales.Invoiceable):
     
@@ -628,6 +645,17 @@ class Enrolment(dd.UserAuthored,dd.Printable,sales.Invoiceable):
     remark = models.CharField(max_length=200,
           blank=True,
           verbose_name=_("Remark"))
+          
+    def get_confirm_veto(self,ar):
+        """
+        Called from ConfirmEnrolment.  If this returns something else than None,
+        then the enrolment won't be confirmed and the return value 
+        displayed to the user.
+        """
+        free = self.course.get_free_places()
+        if free <= 0:
+            return _("No places left in %s") % self.course
+        #~ return _("Confirmation not implemented")
   
     def save(self,*args,**kw):
         if self.amount is None:
@@ -816,8 +844,12 @@ class EnrolmentsByCourse(Enrolments):
     master_key = "course"
     column_names = 'request_date pupil workflow_buttons user *'
     auto_fit_column_widths = True
+    #~ cell_edit = False
 
-
+class EventsByCourse(cal.Events):
+    required = dd.required(user_groups='office')
+    master_key = 'course'
+    column_names = 'when_text:20 summary workflow_buttons id'
 
 
 
@@ -887,6 +919,15 @@ def setup_explorer_menu(site,ui,profile,m):
     #~ m.add_action(Events)
     m.add_action(Enrolments)
     m.add_action(EnrolmentStates)
+    
+    
+    
+    
+    
+
   
+
+    
+
   
 #~ print '20130219 lino.modlib.courses ok'  

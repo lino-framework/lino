@@ -49,8 +49,13 @@ using plain Django signals as follows::
         event.room = course.room
 
 This turned out as a pifall. The above receiver was never called.
-Do you see why? Because `cal.Event` here is an abstract model when 
-this app is being used in :ref:`faggio:.
+I guess it was because `cal.Event` here is an abstract model when 
+this app is being used in :ref:`faggio`. But anyway, to avoid such side 
+effects I moved this into a new method
+:meth:`before_auto_event_save <lino.modlib.courses.models.Course.before_auto_event_save>`
+on :class:`Course <lino.modlib.courses.models.Course>`.
+
+
 
 
 

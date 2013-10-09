@@ -98,29 +98,6 @@ class AcceptInvitation(InvitationFeedback):
     notify_subject = _("%(guest)s confirmed invitation %(day)s at %(time)s")
 
 
-class ResetEvent(dd.ChangeStateAction):
-    label = _("Reset")
-    icon_name = 'cancel'
-    #~ required = dict(states='assigned',owner=True)
-    #~ required = dict(states='published rescheduled took_place')#,owner=True)
-    required = dict(states='published took_place')#,owner=True)
-    #~ help_text=_("Return to Draft state and restart workflow for this event.")
-  
-    def unused_run_from_ui(self,ar,**kw):
-        obj = ar.selected_rows[0]
-        if obj.guest_set.exclude(state=GuestStates.invited).count() > 0:
-            def ok():
-                for g in obj.guest_set.all():
-                    g.state = GuestStates.invited
-                    g.save()
-            return ar.confirm(ok,_("This will reset all invitations"),_("Are you sure?"))
-        else:
-            ar.confirm(self.help_text,_("Are you sure?"))
-        kw = super(ResetEvent,self).run_from_ui(ar,**kw)
-        return kw
-    
-
-    
     
 @dd.receiver(dd.pre_analyze)
 def my_guest_workflows(sender=None,**kw):
@@ -162,6 +139,32 @@ def my_guest_workflows(sender=None,**kw):
                 #~ for obj in site.modules.cal.Membership.objects.filter(group=ug).exclude(user=self.user):
                     #~ if obj.user.partner:
                         #~ site.modules.cal.Guest(event=self,partner=obj.user.partner).save()
+
+
+
+class ResetEvent(dd.ChangeStateAction):
+    label = _("Reset")
+    icon_name = 'cancel'
+    #~ required = dict(states='assigned',owner=True)
+    #~ required = dict(states='published rescheduled took_place')#,owner=True)
+    required = dict(states='published took_place')#,owner=True)
+    #~ help_text=_("Return to Draft state and restart workflow for this event.")
+  
+    def unused_run_from_ui(self,ar,**kw):
+        obj = ar.selected_rows[0]
+        if obj.guest_set.exclude(state=GuestStates.invited).count() > 0:
+            def ok():
+                for g in obj.guest_set.all():
+                    g.state = GuestStates.invited
+                    g.save()
+            return ar.confirm(ok,_("This will reset all invitations"),_("Are you sure?"))
+        else:
+            ar.confirm(self.help_text,_("Are you sure?"))
+        kw = super(ResetEvent,self).run_from_ui(ar,**kw)
+        return kw
+    
+
+    
 
 @dd.receiver(dd.pre_analyze)
 def my_event_workflows(sender=None,**kw):
