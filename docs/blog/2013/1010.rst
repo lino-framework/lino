@@ -2,7 +2,25 @@
 20131010 (Thursday, 10 October 2013)
 ====================================
 
-Continuing on :ref:`faggio`.
+Backwards-incompatible framework change:
+
+- when `column_names` contains a ``*`` (wildcard columns), 
+  then these columns will be now hidden.
+  Except when it is *only* a ``*``.
+  A positive side-effect is that we can now also specify 
+  BbabelFields as `hidden_columns`
+  
+  Added another copy of `hidden_elements` in `LayoutHandle`
+  
+Why I did this:
+
+  In ActiveCourses I wanted to temporaily show the state column
+
+Continued on :ref:`faggio`.
+
+- The fictive bookings fixture is very useful but it might be 
+  optional... separated this code into a separate module
+  :mod:`lino.modlib.ledger.fixtures.demo_bookings`.
 
 Nach Baustellenbesichtigung vom 09.10.
 
@@ -12,7 +30,15 @@ DONE:
 
 - Räume haben keine Organisation. LBZ Bbach und Kelmis in initdb
 
+- Wiederholung Kurs par défault nicht "monatlich" sondern wöchentlich
 
+- Die Meldung "Du hast 1 Offene Einschreibungsanfragen" soll dort weg.
+
+- tariff und calendar sind jetzt pro Kurs-Serie, nicht mehr pro Kurs.
+
+- Aktive Kurse : "Veröffentlicht" und "Begonnen"
+
+- Einschreibungern pro Kunde : Stornierte nicht ausblenden
 
 TODO: 
 
@@ -26,9 +52,7 @@ TODO:
          mit einer "Schülerart" (Eiche, LFV, COK, Nichtmitglied...)
       - Kursleiter : 
 
-- Layout Kurs Detail : Start-Datum hat keinen Button für Kalender
-
-- Wiederholung Kurs par défault nicht "monatlich" sondern wöchentlich
+- Layout Kurs Detail : Beginndatum hat keinen Button für Kalender
 
 - Termin mit einem Klick "verschieben" 
   (d.h. "an diesem Datum ausfallen" lassen, und Lino soll hinten dranhängen. 
@@ -45,23 +69,17 @@ TODO:
 - Chronologische Reihenfolge der Einschreibungen nicht nur pro Datum, 
   sondern auch Uhrzeit.
   
+- Wenn ich Einschreibung bestätige (vom Kurs aus)::
   
-- Wenn ich Einschreibung bestätige (vom Kurs aus):
-  
-Exception
-ParameterStore of LayoutHandle for ParamsLayout on courses.Enrolments expected a list of 6 values, but got [u'', u'', u'', u'', u'']
+    Exception
+    ParameterStore of LayoutHandle for ParamsLayout on courses.Enrolments expected a list of 6 values, but got [u'', u'', u'', u'', u'']
 
-TRACEBACK:
-File "/usr/local/pythonenv/demo/lib/python2.6/site-packages/django/core/handlers/base.py", line 115, in get_response
-(...)
-File "/home/luc/hgwork/lino/lino/core/requests.py", line 456, in __init__
-pv.update(self.actor.params_layout.params_store.parse_params(request))
-File "/home/luc/hgwork/lino/lino/ui/store.py", line 982, in parse_params
-self,len(self.param_fields),pv))
-
-- Die Meldung "Du hast 1 Offene Einschreibungsanfragen" soll dort weg.
-
-- Aktive Kurse : "Veröffentlicht" und "Begonnen"
+    TRACEBACK:
+    File "/usr/local/pythonenv/demo/lib/python2.6/site-packages/django/core/handlers/base.py", line 115, in get_response
+    (...)
+    File "/home/luc/hgwork/lino/lino/core/requests.py", line 456, in __init__
+    pv.update(self.actor.params_layout.params_store.parse_params(request))
+    File "/home/luc/hgwork/lino/lino/ui/store.py", line 982, in parse_params
+    self,len(self.param_fields),pv))
 
 - Nach Einfügen einer Einschreibung nicht ins Detail springen sondern in der Listenansicht bleiben.
-- Einschreibungern pro Kunde : Stornierte nicht ausblenden

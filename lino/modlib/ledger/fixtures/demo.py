@@ -13,8 +13,11 @@
 ## along with Lino; if not, see <http://www.gnu.org/licenses/>.
 
 def objects():
+    # cannot use relative imports here because dpy uses low-level `__import__()'
     from lino.modlib.ledger.fixtures import mini
     yield mini.objects()
     
+    #~ from lino.modlib.ledger.fixtures import demo_bookings
+    #~ yield demo_bookings.objects()
         
         

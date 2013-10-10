@@ -1035,6 +1035,7 @@ tinymce.init({
             try:
                 lh = fl.get_layout_handle(settings.SITE.ui)
             except Exception as e:
+                logger.exception(e)
                 raise Exception("Could not define %s for %r: %s" % (formpanel_name,res,e))
                 
             if True: # 20121130 why was this?

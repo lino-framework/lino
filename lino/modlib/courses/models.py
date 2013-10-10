@@ -158,6 +158,15 @@ class Line(dd.BabelNamed):
     topic = models.ForeignKey(Topic,blank=True,null=True)
     description = dd.BabelTextField(_("Description"),blank=True)
     
+    calendar = dd.ForeignKey('cal.Calendar',null=True,blank=True,
+        help_text=_("""The calendar to which events will be generated."""))
+    
+    tariff = dd.ForeignKey('products.Product',
+        blank=True,null=True,
+        verbose_name=_("Participation fee"),
+        related_name='lines_by_tariff')
+        
+    
     #~ def __unicode__(self):
         #~ return "%s (%s)" % (dd.BabelNamed.__unicode__(self),self.topic)
           
@@ -166,7 +175,7 @@ class Lines(dd.Table):
     model = Line
     required = dd.required(user_level='manager')
     detail_layout = """
-    id name
+    id name tariff calendar
     description
     courses.CoursesByLine
     """
@@ -216,6 +225,8 @@ class TeacherDetail(contacts.PersonDetail):
 class Teachers(contacts.Persons):
     model = 'courses.Teacher'
     #~ detail_layout = TeacherDetail()
+    column_names = 'name_column address_column teacher_type *'
+    auto_fit_column_widths = True
   
 class TeachersByType(Teachers):
     master_key = 'teacher_type'
@@ -264,6 +275,8 @@ class PupilDetail(contacts.PersonDetail):
 class Pupils(contacts.Persons):
     model = 'courses.Pupil'
     #~ detail_layout = PupilDetail()
+    column_names = 'name_column address_column pupil_type *'
+    auto_fit_column_widths = True
 
 class PupilsByType(Pupils):
     master_key = 'pupil_type'
@@ -322,6 +335,8 @@ add('30', _("Started"),'started')
 add('40', _("Ended"),'ended')
 add('50', _("Cancelled"),'cancelled')
 
+ACTIVE_COURSE_STATES = set((CourseStates.published,CourseStates.started))
+
 
 class EnrolmentStates(dd.Workflow):
     verbose_name_plural = _("Enrolment states")
@@ -369,23 +384,12 @@ class Course(contacts.ContactRelated,cal.EventGenerator,cal.RecurrenceSet,dd.Pri
     room = dd.ForeignKey('cal.Room',blank=True,null=True)
     slot = models.ForeignKey(Slot,blank=True,null=True)
     
-    #~ price = dd.PriceField(verbose_name=_("Price"),blank=True,null=True)
-    
     state = CourseStates.field(default=CourseStates.draft)
     
     max_places = models.PositiveIntegerField(
         pgettext("in a course","Places"),
         help_text=("Maximal number of participants"),
         blank=True,null=True)
-        
-    #~ slot = models.PositiveSmallIntegerField(_("Time slot"),
-        #~ blank=True,null=True)
-        
-        
-    tariff = dd.ForeignKey('products.Product',
-        blank=True,null=True,
-        verbose_name=_("Tariff"),
-        related_name='courses_by_tariff')
         
         
     
@@ -407,10 +411,10 @@ class Course(contacts.ContactRelated,cal.EventGenerator,cal.RecurrenceSet,dd.Pri
         return self.end_date
         
     def update_cal_calendar(self):
-        return self.calendar
+        return self.line.calendar
         
     def update_cal_subject(self,i):
-        return "%s %s" % (dd.babelattr(self.calendar,'event_label'),i)
+        return "%s %s" % (dd.babelattr(self.line.calendar,'event_label'),i)
         #~ return _("Lesson %d") % i
         
         
@@ -523,7 +527,7 @@ class CourseDetail(dd.FormLayout):
     line teacher start_date start_time room #slot state id:8
     max_places max_events end_date end_time every_unit every 
     monday tuesday wednesday thursday friday saturday sunday
-    company contact_person user calendar 
+    company contact_person user 
     cal.EventsByController
     """,label=_("General"))
     
@@ -538,7 +542,7 @@ class Courses(dd.Table):
     detail_layout = CourseDetail() 
     insert_layout = """
     line teacher 
-    start_date tariff
+    start_date 
     """
     column_names = "info line teacher room slot *"
     order_by = ['start_date']
@@ -549,8 +553,9 @@ class Courses(dd.Table):
         company = models.ForeignKey('contacts.Company',blank=True,null=True),
         teacher = models.ForeignKey('courses.Teacher',blank=True,null=True),
         state = CourseStates.field(blank=True),
+        active = dd.YesNo.field(blank=True),
         )
-    params_layout = """topic line company teacher state"""
+    params_layout = """topic line company teacher state active"""
     
     simple_param_fields = 'topic line teacher company state'.split()
     
@@ -564,8 +569,11 @@ class Courses(dd.Table):
                 qs = qs.filter(**{n:v})
                 #~ print 20130530, qs.query
         
-        #~ if ar.param_values.teacher is not None: 
-            #~ qs = qs.filter(teacher=ar.param_values.teacher)
+        if ar.param_values.state is None: 
+            if ar.param_values.active == dd.YesNo.yes:
+                qs = qs.filter(state__in=ACTIVE_COURSE_STATES)
+            elif ar.param_values.active == dd.YesNo.no:
+                qs = qs.exclude(state__in=ACTIVE_COURSE_STATES)
             #~ 
         #~ if ar.param_values.line is not None: 
             #~ qs = qs.filter(line=ar.param_values.line)
@@ -618,11 +626,14 @@ class ActiveCourses(Courses):
     
     label = _("Active courses")
     #~ column_names = 'info requested confirmed teacher company room'
-    column_names = 'info enrolments #price max_places teacher company room'
+    column_names = 'info enrolments #price max_places teacher company room *'
+    #~ auto_fit_column_widths = True
+    
     @classmethod
     def param_defaults(self,ar,**kw):
         kw = super(ActiveCourses,self).param_defaults(ar,**kw)
-        kw.update(state=CourseStates.started)
+        #~ kw.update(state=CourseStates.started)
+        kw.update(active = dd.YesNo.yes)
         return kw
 
     
@@ -697,9 +708,9 @@ class Enrolment(dd.UserAuthored,dd.Printable,sales.Invoiceable):
     def compute_amount(self):
         #~ if self.course is None: 
             #~ return 
-        if self.course.tariff is None:
+        if self.course.line.tariff is None:
             self.amount = ZERO
-        self.amount = self.course.tariff.sales_price
+        self.amount = self.course.line.tariff.sales_price
             
     def get_invoiceable_amount(self): 
         return self.amount
@@ -707,7 +718,7 @@ class Enrolment(dd.UserAuthored,dd.Printable,sales.Invoiceable):
     def get_invoiceable_product(self): 
         #~ if self.course is not None: 
         if self.state.invoiceable: 
-            return self.course.tariff
+            return self.course.line.tariff
             
     def get_invoiceable_title(self): 
         #~ if self.course is not None: 
@@ -732,7 +743,7 @@ class Enrolments(dd.Table):
     params_layout = """start_date end_date author state course_state participants_only"""
     order_by = ['request_date']
     column_names = 'request_date course pupil workflow_buttons user *'
-    hidden_columns = 'id state'
+    #~ hidden_columns = 'id state'
     insert_layout = """
     request_date user
     course pupil
@@ -840,6 +851,12 @@ class EnrolmentsByPupil(Enrolments):
     master_key = "pupil"
     column_names = 'request_date course user workflow_buttons *'
 
+    @classmethod
+    def param_defaults(self,ar,**kw):
+        kw = super(EnrolmentsByPupil,self).param_defaults(ar,**kw)
+        kw.update(participants_only=False)
+        return kw
+        
 class EnrolmentsByCourse(Enrolments):
     params_panel_hidden = True
     required = dd.required()
@@ -859,9 +876,9 @@ class EventsByCourse(cal.Events):
 
 
 
-def get_todo_tables(ar):
-    yield (PendingRequestedEnrolments, None) 
-    yield (PendingConfirmedEnrolments, None) 
+#~ def get_todo_tables(ar):
+    #~ yield (PendingRequestedEnrolments, None) 
+    #~ yield (PendingConfirmedEnrolments, None) 
 
 
 

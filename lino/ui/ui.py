@@ -209,12 +209,10 @@ class ExtUI(base.UI):
         #~ logger.info('20121010 ExtUI.setup_handle() %s',h.actor)
             
         if isinstance(h,tables.TableHandle):
-            #~ if issubclass(h.actor,dbtables.Table):
             ll = layouts.ListLayout(
                 h.actor.get_column_names(ar),
                 h.actor,
                 hidden_elements=h.actor.hidden_columns | h.actor.hidden_elements)
-            #~ h.list_layout = layouts.ListLayoutHandle(h,ll,hidden_elements=h.actor.hidden_columns)
             h.list_layout = ll.get_layout_handle(self)
         else:
             h.list_layout = None

@@ -534,7 +534,6 @@ class TableRequest(ActionRequest):
             columns = None
         else:
             columns = [str(x) for x in ar.request.REQUEST.getlist(constants.URL_PARAM_COLUMNS)]
-        
         if columns:
             #~ widths = [int(x) for x in ar.request.REQUEST.getlist(constants.URL_PARAM_WIDTHS)]
             all_widths = ar.request.REQUEST.getlist(constants.URL_PARAM_WIDTHS)
@@ -573,12 +572,17 @@ class TableRequest(ActionRequest):
                 ah = ar.actor.get_request_handle(ar)
                 columns = ah.list_layout.main.columns
                 
+            #~ if ar.actor.__name__ == 'ActiveCourses':
+                #~ logger.info("20131010 %s", [e.hidden for e in columns])
+                
             # render them so that babelfields in hidden_languages get hidden:
             for e in columns: 
                 e.value = e.ext_options()
+                #~ e.value.update(e.ext_options())
                 #~ e.js_value() 
                 
-            columns = [e for e in columns if not e.value.get('hidden',False)]
+            #~ columns = [e for e in columns if not e.value.get('hidden',False)]
+            columns = [e for e in columns if not e.hidden]
             
             headers = [unicode(col.label or col.name) for col in columns]
             widths = ["%d" % (col.width or col.preferred_width) for col in columns]
@@ -835,9 +839,6 @@ class AbstractTable(actors.Actor):
     the column widths adjusted to always fill the available width.
     This implies that there will be no horizontal scrollbar.
     """
-    
-    #~ hide_columns = None
-    #~ hidden_columns = frozenset()
     
     hidden_columns = frozenset()
     """

@@ -62,6 +62,10 @@ contacts = dd.resolve_app('contacts')
 postings = dd.resolve_app('postings')
 outbox = dd.resolve_app('outbox')
 
+#~ from lino.modlib.users.models import Membership
+Membership = dd.resolve_model('users.Membership')
+
+
 from lino.modlib.cal.workflows import (
     TaskStates, EventStates, GuestStates)
     
@@ -267,7 +271,6 @@ class SubscriptionsByUser(Subscriptions):
 #~ class MySubscriptions(Subscriptions,mixins.ByUser):
     #~ pass
     
-from lino.modlib.users.models import Membership    
 
 #~ ROOM_BASES = (dd.BabelNamed,contacts.ContactRelated):
 #~ class Room(ROOM_BASES):
@@ -723,9 +726,10 @@ class RecurrenceSet(Started,Ended):
         return _("Every %snd %s") % (self.every,weekdays)
         
         
-    calendar = models.ForeignKey('cal.Calendar',null=True,blank=True,
-        help_text=_("""\
-The calendar to which events will be generated."""))
+    #~ calendar = models.ForeignKey('cal.Calendar',null=True,blank=True,
+        #~ help_text=_("""\
+#~ The calendar to which events will be generated."""))
+
     #~ event_type = models.ForeignKey(EventType,null=True,blank=True)
     
     #~ rdates = models.TextField(_("Recurrence dates"),blank=True)
@@ -761,10 +765,6 @@ class RecurrenceSets(dd.Table):
     id calendar uid summary start_date start_time
     description
     """
-    #~ """
-    #~ ## rdates exdates rrules exrules
-    #~ ## EventsBySet    
-    #~ """
     
     
 class ComponentBase(mixins.ProjectRelated,StartedSummaryDescription):

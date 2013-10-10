@@ -115,7 +115,6 @@ class LayoutHandle:
     
     """
     
-    #~ 20120114 def __init__(self,ui,table,layout,hidden_elements=frozenset()):
     def __init__(self,layout):
       
         #~ logger.debug('20111113 %s.__init__(%s,%s)',self.__class__.__name__,rh,layout)
@@ -123,6 +122,7 @@ class LayoutHandle:
         #assert isinstance(link,reports.ReportHandle)
         #~ base.Handle.__init__(self,ui)
         self.layout = layout
+        self.hidden_elements = layout.hidden_elements
         #~ self.ui = settings.SITE.ui
         #~ self.rh = rh
         #~ self.datalink = layout.get_datalink(ui)
@@ -172,7 +172,6 @@ class LayoutHandle:
         return self.main.ext_lines(request)
   
         
-    #~ def desc2elem(self,panelclass,desc_name,desc,**kw):
     def desc2elem(self,elemname,desc,**kw):
         #logger.debug("desc2elem(panelclass,%r,%r)",elemname,desc)
         #assert desc != 'Countries_choices2'
@@ -194,21 +193,26 @@ class LayoutHandle:
         desc = desc.replace('\\\n','')
         
         if '*' in desc:
+            assert elemname == 'main'
             explicit_specs = set()
             for spec in desc.split():
                 if spec != '*':
                     name,kw = self.splitdesc(spec)
                     explicit_specs.add(name)
-            wildcard_fields = self.layout.join_str.join([
-                de.name for de in self.layout._datasource.wildcard_data_elems() \
+            wildcard_names = [de.name for de in 
+                self.layout._datasource.wildcard_data_elems() \
                   if (de.name not in explicit_specs) \
-                    and self.use_as_wildcard(de) \
-                ])
-            desc = desc.replace('*',wildcard_fields)
+                    and self.use_as_wildcard(de)]
+            wildcard_str = self.layout.join_str.join(wildcard_names)
+            desc = desc.replace('*',wildcard_str)
+            if len(explicit_specs) > 0:
+                self.hidden_elements = self.hidden_elements | set(wildcard_names)
             #~ if self.layout._datasource.__name__ == 'Vouchers':
                 #~ logger.info('20130204 %s desc -> %r',self,desc)
             #~ if 'CourseRequestsByPerson' in str(self):
                 #~ logger.info('20111003 %s desc -> %r',self,desc)
+        #~ if self.layout._datasource.__name__ == "ActiveCourses":
+            #~ logger.info("20131010 %r self.hidden_elements is %s",desc,self.hidden_elements)
         if "\n" in desc:
             # it's a vertical box
             vertical = True
@@ -219,18 +223,11 @@ class LayoutHandle:
             for x in desc.splitlines():
                 x = x.strip()
                 if len(x) > 0 and not x.startswith("# "):
-                    #~ if x.startswith(':'): # unused feature 
-                        #~ a = x.split(':',2)
-                        #~ if len(a) != 3:
-                            #~ raise LayoutError('Expected attribute `:attr: value` ')
-                        #~ attname = a[1]
-                        #~ kw[attname] = a[2].strip()
-                    #~ else:
-                        i += 1
-                        e = self.desc2elem(elemname+'_'+str(i),x)
-                        if e is not None:
-                            #~ e.allow_read = curry(perms.make_permission(self.layout._datasource,**e.required),e)
-                            elems.append(e)
+                    i += 1
+                    e = self.desc2elem(elemname+'_'+str(i),x)
+                    if e is not None:
+                        #~ e.allow_read = curry(perms.make_permission(self.layout._datasource,**e.required),e)
+                        elems.append(e)
             #~ if len(elems) == 1:
                 #~ vertical = False
         else:
@@ -316,12 +313,17 @@ class LayoutHandle:
         e = create_layout_element(self,name,**pkw)
         #~ e = self.ui.create_layout_element(self,name)
         if e is None: return None # e.g. NullField
-        # todo: cannot hide babelfields
-        if name in self.layout.hidden_elements:
-            #~ print "20130124 hide element %r in %s" % (name, self)
+        if name in self.hidden_elements:
+            #~ if self.layout._datasource.__name__ == "ActiveCourses":
+                #~ print "20131010 hide element %r in %s" % (name, self)
             if isinstance(self.layout,FormLayout):
                 return None
-            e.hidden = True
+            if isinstance(e,list): # it is a babelfield
+                for be in e:
+                    be.hidden = True
+                #~ raise Exception("Cannot hide element %s of %s" % (name,self))
+            else:
+                e.hidden = True
         #~ setattr(self,name,e)
         self._names[name] = e
         #~ self.setup_element(e)
