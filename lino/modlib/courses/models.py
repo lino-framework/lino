@@ -64,7 +64,6 @@ from lino.core.dbutils import obj2str
 
 from north.dbutils import day_and_month
 
-
 users = dd.resolve_app('users')
 cal = dd.resolve_app('cal')
 sales = dd.resolve_app('sales')
@@ -468,11 +467,14 @@ class Course(contacts.ContactRelated,cal.EventGenerator,cal.RecurrenceSet,dd.Pri
         
         
         
+        
 """
 customize fields coming from mixins to override their inherited default verbose_names
 """
 dd.update_field(Course,'contact_person',verbose_name = _("Contact person"))
 dd.update_field(Course,'company',verbose_name = _("Organizer"))
+dd.update_field(Course,'every_unit',default=cal.Recurrencies.per_weekday)
+dd.update_field(Course,'every',default=1)
           
           
 #~ @dd.receiver(dd.pre_save, sender=cal.Event,dispatch_uid="setup_event_from_course")
