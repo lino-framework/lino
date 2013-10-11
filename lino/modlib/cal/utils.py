@@ -69,9 +69,6 @@ def setkw(obj,**kw):
     for k,v in kw.items():
         setattr(obj,k,v)
    
-def format_time(t):
-    return t.strftime(settings.SITE.time_format_strftime)
-    
 
         
 def when_text(d,t=None):
@@ -173,7 +170,7 @@ class DurationUnit(dd.Choice):
                         year -= 1
                     return orig.replace(month=m,day=day,year=year)
                 if unit.value == 'Y' : 
-                    return orig.replace(month=dt.year + value,day=day)
+                    return orig.replace(year=orig.year+value,day=day)
                 raise Exception("Invalid DurationUnit %s" % unit)
             except ValueError:
                 if day > 28:

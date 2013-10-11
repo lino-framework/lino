@@ -33,33 +33,3 @@ from lino.utils import dblogger
 from lino.core.dbutils import resolve_model
 
 
-def setup_main_menu(site,ui,profile,m): pass
-
-def setup_my_menu(site,ui,profile,m): 
-    m  = m.add_menu("cal",_("~Calendar"))
-    m.add_action('cal.MyTasks')
-    #~ m.add_action('cal.MyEventsToday')
-    m.add_action('cal.MyEvents')
-    if settings.SITE.use_extensible:
-        m.add_action('cal.Panel')
-    #~ m.add_action_(actions.Calendar())
-  
-def setup_config_menu(site,ui,profile,m): 
-    m  = m.add_menu("cal",_("~Calendar"))
-    m.add_action('cal.Places')
-    m.add_action('cal.Priorities')
-    m.add_action('cal.AccessClasses')
-    m.add_action('cal.EventStatuses')
-    m.add_action('cal.TaskStatuses')
-    m.add_action('cal.EventTypes')
-    m.add_action('cal.GuestRoles')
-    m.add_action('cal.GuestStatuses')
-    m.add_action('cal.Calendars')
-  
-def setup_explorer_menu(site,ui,profile,m):
-    m  = m.add_menu("cal",_("~Calendar"))
-    m.add_action('cal.Events')
-    m.add_action('cal.Tasks')
-    m.add_action('cal.Guests')
-    m.add_action('cal.RecurrenceSets')
-  

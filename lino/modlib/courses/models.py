@@ -158,24 +158,20 @@ class Line(dd.BabelNamed):
     topic = models.ForeignKey(Topic,blank=True,null=True)
     description = dd.BabelTextField(_("Description"),blank=True)
     
-    calendar = dd.ForeignKey('cal.Calendar',null=True,blank=True,
-        help_text=_("""The calendar to which events will be generated."""))
+    event_type = dd.ForeignKey('cal.EventType',null=True,blank=True,
+        help_text=_("""The Event Type to which events will be generated."""))
     
     tariff = dd.ForeignKey('products.Product',
         blank=True,null=True,
         verbose_name=_("Participation fee"),
         related_name='lines_by_tariff')
         
-    
-    #~ def __unicode__(self):
-        #~ return "%s (%s)" % (dd.BabelNamed.__unicode__(self),self.topic)
-          
         
 class Lines(dd.Table):
     model = Line
     required = dd.required(user_level='manager')
     detail_layout = """
-    id name tariff calendar
+    id name tariff event_type
     description
     courses.CoursesByLine
     """
@@ -184,13 +180,14 @@ class LinesByTopic(Lines):
     master_key = "topic"
 
 
-class TeacherType(dd.BabelNamed,dd.Printable):
+class TeacherType(dd.Referrable,dd.BabelNamed,dd.Printable):
     class Meta:
+        abstract = settings.SITE.is_abstract_model('courses.TeacherType')
         verbose_name = _("Teacher type")
         verbose_name_plural = _('Teacher types')
         
 class TeacherTypes(dd.Table):
-    model = TeacherType
+    model = 'courses.TeacherType'
     required = dd.required(user_level='manager')
     detail_layout = """
     id name
@@ -208,6 +205,13 @@ class Teacher(Person):
         
     teacher_type = dd.ForeignKey('courses.TeacherType',blank=True,null=True)
     
+    def __unicode__(self):
+        s = self.get_full_name(salutation=False)
+        if self.teacher_type:
+            s += " (%s)" % self.teacher_type.ref
+        return s 
+        
+      
     #~ def __unicode__(self):
         #~ return self.get_full_name(salutation=False)
         #~ return self.last_name
@@ -233,13 +237,14 @@ class TeachersByType(Teachers):
 
 
 
-class PupilType(dd.BabelNamed,dd.Printable):
+class PupilType(dd.Referrable,dd.BabelNamed,dd.Printable):
     class Meta:
+        abstract = settings.SITE.is_abstract_model('courses.PupilType')
         verbose_name = _("Pupil type")
         verbose_name_plural = _('Pupil types')
         
 class PupilTypes(dd.Table):
-    model = PupilType
+    model = 'courses.PupilType'
     required = dd.required(user_level='manager')
     detail_layout = """
     id name
@@ -255,6 +260,13 @@ class Pupil(Person):
         verbose_name_plural = _("Pupils")
         
     pupil_type = dd.ForeignKey('courses.PupilType',blank=True,null=True)
+    
+    def __unicode__(self):
+        s = self.get_full_name(salutation=False)
+        if self.pupil_type:
+            s += " (%s)" % self.pupil_type.ref
+        return s 
+    
     
 class PupilDetail(contacts.PersonDetail):
     main = "general courses.EnrolmentsByPupil"
@@ -411,11 +423,10 @@ class Course(contacts.ContactRelated,cal.EventGenerator,cal.RecurrenceSet,dd.Pri
         return self.end_date
         
     def update_cal_calendar(self):
-        return self.line.calendar
+        return self.line.event_type
         
-    def update_cal_subject(self,i):
-        return "%s %s" % (dd.babelattr(self.line.calendar,'event_label'),i)
-        #~ return _("Lesson %d") % i
+    def update_cal_summary(self,i):
+        return "%s %s" % (dd.babelattr(self.line.event_type,'event_label'),i)
         
         
     def get_free_places(self):
@@ -557,7 +568,7 @@ class Courses(dd.Table):
         )
     params_layout = """topic line company teacher state active"""
     
-    simple_param_fields = 'topic line teacher company state'.split()
+    simple_param_fields = 'line teacher company state'.split()
     
     @classmethod
     def get_request_queryset(self,ar):
@@ -569,6 +580,8 @@ class Courses(dd.Table):
                 qs = qs.filter(**{n:v})
                 #~ print 20130530, qs.query
         
+        if ar.param_values.topic:
+            qs = qs.filter(line__topic=ar.param_values.topic)
         if ar.param_values.state is None: 
             if ar.param_values.active == dd.YesNo.yes:
                 qs = qs.filter(state__in=ACTIVE_COURSE_STATES)
@@ -588,6 +601,8 @@ class Courses(dd.Table):
         for t in super(Courses,self).get_title_tags(ar):
             yield t
             
+        if ar.param_values.topic:
+            yield unicode(ar.param_values.topic)
         for n in self.simple_param_fields:
             v = ar.param_values.get(n)
             if v:
@@ -868,7 +883,8 @@ class EnrolmentsByCourse(Enrolments):
 class EventsByCourse(cal.Events):
     required = dd.required(user_groups='office')
     master_key = 'course'
-    column_names = 'when_text:20 summary workflow_buttons id'
+    column_names = 'when_text:20 start_date summary workflow_buttons *'
+    auto_fit_column_widths = True
 
 
 
@@ -925,8 +941,8 @@ def unused_setup_master_menu(site,ui,profile,m):
 def setup_config_menu(site,ui,profile,m):
     m = m.add_menu("courses",MODULE_LABEL)
     #~ m.add_action(Rooms)
-    m.add_action(TeacherTypes)
-    m.add_action(PupilTypes)
+    m.add_action('courses.TeacherTypes')
+    m.add_action('courses.PupilTypes')
     m.add_action(Topics)
     m.add_action(Lines)
     m.add_action(Slots)

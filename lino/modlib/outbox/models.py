@@ -80,7 +80,7 @@ add('bcc',_("bcc"),'bcc')
 class MailableType(dd.Model):
     """
     Mixin for Models that serve as `type` of a :class:`Mailable`.
-    Concrete examples are cal.Calendar, cal.GuestRole, notes.NoteType
+    Concrete examples are cal.EventType, cal.GuestRole, notes.NoteType
     """
     templates_group = None
     """

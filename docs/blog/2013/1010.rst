@@ -35,51 +35,9 @@ DONE:
 - Die Meldung "Du hast 1 Offene Einschreibungsanfragen" soll dort weg.
 
 - tariff und calendar sind jetzt pro Kurs-Serie, nicht mehr pro Kurs.
+  Moved calender out of from RecurrenceSet
 
 - Aktive Kurse : "Veröffentlicht" und "Begonnen"
 
 - Einschreibungern pro Kunde : Stornierte nicht ausblenden
 
-TODO: 
-
-- Dokumentieren:
-
-    Partner : alle Personen und Organisationen, mit denen wir Geschäfte machen
-    
-    - Organisationen
-    - Personen : alle möglichen Menschen
-      - Teilnehmer : alle Personen, die als Teilnehemer ausgewählt werden können
-         mit einer "Schülerart" (Eiche, LFV, COK, Nichtmitglied...)
-      - Kursleiter : 
-
-- Layout Kurs Detail : Beginndatum hat keinen Button für Kalender
-
-- Termin mit einem Klick "verschieben" 
-  (d.h. "an diesem Datum ausfallen" lassen, und Lino soll hinten dranhängen. 
-  Datum in Tabelle änderbar anzeigen.
-
-- Tabelle der Ferientage : Globale Liste der Daten, an denen Lino 
-  *keine* automatischen Termine vorschlagen soll.
-  
-  Datum       bis       Bezeichunung
-  01.05.2014            Tag der Arbeit
-  01.11.2013            Allerheiligen
-  01.07.2013 31.08.2013 Sommerferien
-  
-- Chronologische Reihenfolge der Einschreibungen nicht nur pro Datum, 
-  sondern auch Uhrzeit.
-  
-- Wenn ich Einschreibung bestätige (vom Kurs aus)::
-  
-    Exception
-    ParameterStore of LayoutHandle for ParamsLayout on courses.Enrolments expected a list of 6 values, but got [u'', u'', u'', u'', u'']
-
-    TRACEBACK:
-    File "/usr/local/pythonenv/demo/lib/python2.6/site-packages/django/core/handlers/base.py", line 115, in get_response
-    (...)
-    File "/home/luc/hgwork/lino/lino/core/requests.py", line 456, in __init__
-    pv.update(self.actor.params_layout.params_store.parse_params(request))
-    File "/home/luc/hgwork/lino/lino/ui/store.py", line 982, in parse_params
-    self,len(self.param_fields),pv))
-
-- Nach Einfügen einer Einschreibung nicht ins Detail springen sondern in der Listenansicht bleiben.

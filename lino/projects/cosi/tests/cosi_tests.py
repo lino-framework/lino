@@ -68,21 +68,21 @@ class QuickTest(RemoteAuthTestCase):
         s = partners.RolesByCompany.request(o1).to_rst()
         #~ print('\n'+s)
         self.assertEqual(s,"""\
-========== ============== ====
- Person     Contact Role   ID
----------- -------------- ----
- John DOE                  1
-========== ============== ====
+========== ==============
+ Person     Contact Role
+---------- --------------
+ John DOE
+========== ==============
 """)
         
         s = partners.RolesByCompany.request(o2).to_rst()
         #~ print('\n'+s)
         self.assertEqual(s,"""\
-=========== ============== ====
- Person      Contact Role   ID
------------ -------------- ----
- Johny DOE                  2
-=========== ============== ====
+=========== ==============
+ Person      Contact Role
+----------- --------------
+ Johny DOE
+=========== ==============
 """)
         url = "/api/contacts/Persons/115?fv=115&fv=fff&an=merge_row"
         #~ self.fail("TODO: execute a merge action using the web interface")

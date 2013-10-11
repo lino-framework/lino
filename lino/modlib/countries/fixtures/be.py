@@ -48,6 +48,8 @@ belgian_cities_nl_fr = u"""
 8600 |Diksmuide           |Dixmude              |Diksmuide
 7850 |Edingen             |Enghien              |Enghien
 8587 |Spiere-Helkijn      |Espierres-Helchin    |Spiere-Helkijn
+8587 |Spiere              |Espierres            |Spiere
+8587 |Helkijn             |Helchin              |Helkijn
 3790 |Voeren              |Fourons              |Fourons 
 8630 |Veurne              |Furnes               |Veurne
 1570 |Galmaarden          |Gammerages           |Galmaarden
@@ -727,7 +729,7 @@ belgian_cities = u"""
 5363 Emptinne 
 9700 Ename 
 3800 Engelmanshoven 
-7850 Enghien 
+# 7850 Enghien 
 4480 Engis 
 1350 Enines 
 4800 Ensival 
@@ -756,8 +758,8 @@ belgian_cities = u"""
 7760 Escanaffles 
 8600 Esen 
 4130 Esneux 
-8587 Espierres 
-8587 Espierres-Helchin 
+# 8587 Espierres 
+# 8587 Espierres-Helchin 
 7502 Esplechin 
 7743 Esquelmes 
 2910 Essen 
@@ -1088,12 +1090,12 @@ belgian_cities = u"""
 2220 Heist-Op-Den-Berg 
 1790 Hekelgem 
 3870 Heks 
-8587 Helchin 
+# 8587 Helchin 
 3530 Helchteren 
 9450 Heldergem 
 1357 Hélécine 
 3440 Helen-Bos 
-8587 Helkijn 
+# 8587 Helkijn 
 7830 Hellebecq 
 9571 Hemelveerdegem 
 2620 Hemiksem 
@@ -2389,7 +2391,7 @@ belgian_cities = u"""
 4900 Spa 
 3510 Spalbeek 
 7032 Spiennes 
-8587 Spiere 
+# 8587 Spiere 
 5530 Spontin 
 4140 Sprimont 
 5190 Spy 

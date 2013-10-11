@@ -1,5 +1,5 @@
 # -*- coding: UTF-8 -*-
-## Copyright 2011-2012 Luc Saffre
+## Copyright 2011-2013 Luc Saffre
 ## This file is part of the Lino project.
 ## Lino is free software; you can redistribute it and/or modify 
 ## it under the terms of the GNU General Public License as published by
@@ -17,6 +17,9 @@ Installs standard values for :mod:`lino.modlib.cal`.
 
 """
 
+from __future__ import unicode_literals
+
+import datetime
 import decimal
 from dateutil.relativedelta import relativedelta
 ONE_DAY = relativedelta(days=1)
@@ -32,7 +35,9 @@ from lino.utils.instantiator import Instantiator
 from lino.core.dbutils import resolve_model
 from north.dbutils import babel_values
 
+from lino import dd
 
+cal = dd.resolve_app('cal')
 
 def objects():
 
@@ -65,3 +70,36 @@ def objects():
     yield add('7',**babel_values('name',en=u"not urgent",de=u"nicht dringend",   fr=u"pas urgent"))
     yield add('8',**babel_values('name',en=u"not urgent",de=u"nicht dringend",   fr=u"pas urgent"))
     yield add('9',**babel_values('name',en=u"not urgent at all",de=u"überhaupt nicht dringend",   fr=u"pas urgent du tout"))
+
+
+    event_type = Instantiator('cal.EventType').build
+    holidays = event_type(**dd.babelkw('name',
+          de="Feiertage",
+          fr="Jours fériés",
+          en="Holidays",
+          ))
+    yield holidays
+    settings.SITE.site_config.holiday_event_type = holidays
+    yield settings.SITE.site_config
+    
+    add = Instantiator('cal.RecurrentEvent',event_type=holidays).build
+    def holiday(month,day,summary):
+        return add(summary=summary,
+            every_unit=cal.Recurrencies.yearly,
+            every=1,
+            start_date=settings.SITE.demo_date().replace(month=month,day=day))
+    yield holiday(1,1,_("New Year's Day"))
+    yield holiday(5,1,_("International Workers' Day"))
+    yield holiday(7,21,_("National Day"))
+    yield holiday(8,15,_("Assumption of Mary"))
+    yield holiday(10,31,_("All Souls' Day"))
+    yield holiday(11,1,_("All Saints' Day"))
+    yield holiday(11,11,_("Armistice with Germany"))
+    yield holiday(12,25,_("Christmas"))
+    
+    summer = holiday(07,01,_("Summer holidays"))
+    summer.end_date = summer.start_date.replace(month=8,day=31)
+    yield summer
+    
+    
+    

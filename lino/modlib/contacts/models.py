@@ -899,6 +899,7 @@ class ContactRelated(dd.Model):
 dd.inject_field('system.SiteConfig',
     'next_partner_id',
     models.IntegerField(default=PARTNER_NUMBERS_START_AT, #
+        blank=True,null=True,
         verbose_name=_("Next partner id"),
         help_text=_("The next automatic id for any new partner.")))
     

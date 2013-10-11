@@ -1,16 +1,7 @@
-/home/luc/hgwork/lino/lino/modlib/contacts/models.py:docstring of lino.modlib.contacts.models.ContactRelated:3: ERROR: Unknown directive type "local_fields".
-
-.. local_fields:: lino.modlib.contacts.models.ContactRelated
-
-    Adds 3 fields `company`, `contact_person` and `contact_role`.
-/home/luc/hgwork/lino/lino/modlib/users/models.py:docstring of lino.modlib.users.models.User:1: ERROR: Unknown interpreted text role "ddref".
-/home/luc/hgwork/lino/lino/modlib/users/models.py:docstring of lino.modlib.users.models.UsersOverview:1: ERROR: Unknown interpreted text role "ddref".
-/home/luc/hgwork/lino/lino/modlib/vat/models.py:docstring of lino.modlib.vat.models:18: ERROR: Unexpected indentation.
-/home/luc/hgwork/lino/lino/modlib/vat/models.py:docstring of lino.modlib.vat.models.TradeType:1: ERROR: Unknown interpreted text role "ddref".
-/home/luc/hgwork/lino/lino/modlib/vat/models.py:docstring of lino.modlib.vat.models.VatRegime:1: ERROR: Unknown interpreted text role "ddref".
-/home/luc/hgwork/lino/lino/site.py:docstring of lino.site.Site.webdav_url:7: WARNING: term not in glossary: runserver
-/home/luc/hgwork/lino/lino/mixins/printable.py:docstring of lino.mixins.printable.PisaBuildMethod:1: WARNING: undefined label: lino.tutorials.pisa (if the link has no caption the label must precede a section header)
-/home/luc/hgwork/lino/docs/api/lino.projects.igen.rst:7: WARNING: unknown document: /igen/index
-/home/luc/hgwork/lino/lino/tutorials/lets1/fixtures/demo.py:docstring of lino.tutorials.lets1.fixtures.demo.objects:1: WARNING: term not in glossary: north
-/home/luc/hgwork/lino/docs/api/lino.utils.rst:7: WARNING: unknown document: /autodoc/lino.test_apps.mti
-/home/luc/hgwork/lino/docs/releases/index.rst:1: WARNING: unknown document: 1.6.13
+/home/luc/hgwork/lino/docs/api/lino.modlib.reception.rst:14: WARNING: autodoc: failed to import module u'lino.modlib.reception.models'; the following exception was raised:
+Traceback (most recent call last):
+  File "/home/luc/pythonenvs/py27/local/lib/python2.7/site-packages/sphinx/ext/autodoc.py", line 326, in import_object
+    __import__(self.modname)
+  File "/home/luc/hgwork/lino/lino/modlib/reception/models.py", line 391, in <module>
+    ExpectedGuestsStates = (GuestStates.invited,GuestStates.accepted)
+AttributeError: type object 'GuestStates' has no attribute 'accepted'

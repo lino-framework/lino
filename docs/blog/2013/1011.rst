@@ -1,0 +1,117 @@
+==================================
+20131011 (Friday, 11 October 2013)
+==================================
+
+Mailinglist managers
+--------------------
+
+For my own usage I am fully satisfied with mailman, but 
+`TrueDuality <http://serverfault.com/questions/72940/alternatives-to-mailman>`__
+is right when he or she writes 
+"it is starting to show it's age in a bad way":
+the web interface isn't anything you want to offer 
+to your customers.
+
+Scanning over http://en.wikipedia.org/wiki/Electronic_mailing_list
+I still couldn't find any alternative in Python.
+
+One thing is theoretically clear: since a MLM needs a web interface 
+to manage memberships, this is a candidate for another new 
+Lino application.
+I'm of course scared by the idea of having to reinvent the wheel 
+once more.
+But it is true: as long as we don't have the "Universal Framework", 
+people are forced to reinvent wheels all the time.
+
+
+
+Recurrent Events
+----------------
+
+DONE:  
+
+- Removed field `uid` from :class:`lino.modlib.cal.models.Companent` 
+  because it was useless. (One CharField less in every Task and Event!)
+  
+- Added a new model 
+  :class:`cal.RecurrentEvent <lino.modlib.cal.models.RecurrentEvent>`.
+  New menu command :menuselection:`Configuration --> Calendar --> Recurrent events`
+  
+
+- Renamed "update_cal_subject" to "update_cal_summary" (the old name 
+  was obviously a typo).
+  
+- `max_auto_events` is no longer a class attribute in settings.py but a
+  SiteConfig field.
+
+- New SiteConfig fields `farest_future` and `default_calendar`.
+
+- `next_partner_id` is now nullable.
+
+- The start_date field of new RecurrenceSets (Contracts, Courses,...) 
+  is no longer empty but today::
+
+    dd.update_field(RecurrenceSet,'start_date',default = datetime.date.today)
+
+- Moved fields for RemoteCalendar out of Calendar.
+  Changed verbose_name of Calendar to "EventType".
+  
+- TeacherType and PupilType are now :class:`Referrable <lino.mixins.Referrable>`.
+  
+- Tabelle der Ferientage : Globale Liste der Daten, an denen Lino 
+  *keine* automatischen Termine vorschlagen soll.
+  :menuselection:`Konfigurierung --> Kalender --> Recurrent Events`
+  
+- Renamed Calendar to EventType.
+  Extended cal.Subscription to be what the extensible CalendarPanel 
+  calls "Calendars"
+  
+- Renamed all fields named "*calendar*" "*event_type*"
+  Except for `Task.calendar` which has been simply removed.
+  
+- Wenn man in den Parametern von Kursen als Thema "Sport" ausgewählt, 
+  und dann war die Liste leer. Und auf dem Server kam 
+  "ERROR: Cannot resolve keyword u'topic' into field."
+
+- Beim Generieren von Terminen muss er die Recurrent Events jetzt noch 
+  berücksichtigen. IOW muss Terminkollisionen vermeiden.
+
+
+TODO: 
+
+- Dokumentieren:
+
+    Partner : alle Personen und Organisationen, mit denen wir Geschäfte machen
+    
+    - Organisationen
+    - Personen : alle möglichen Menschen
+      - Teilnehmer : alle Personen, die als Teilnehemer ausgewählt werden können
+         mit einer "Schülerart" (Eiche, LFV, COK, Nichtmitglied...)
+      - Kursleiter : 
+
+- Layout Kurs Detail : Beginndatum hat keinen Button für Kalender
+
+- Termin mit einem Klick "verschieben" 
+  (d.h. "an diesem Datum ausfallen" lassen, und Lino soll hinten dranhängen. 
+  Datum in Tabelle änderbar anzeigen.
+
+- Chronologische Reihenfolge der Einschreibungen nicht nur pro Datum, 
+  sondern auch Uhrzeit.
+  
+- Wenn ich Einschreibung bestätige (vom Kurs aus)::
+  
+    Exception
+    ParameterStore of LayoutHandle for ParamsLayout on courses.Enrolments expected a list of 6 values, but got [u'', u'', u'', u'', u'']
+
+    TRACEBACK:
+    File "/usr/local/pythonenv/demo/lib/python2.6/site-packages/django/core/handlers/base.py", line 115, in get_response
+    (...)
+    File "/home/luc/hgwork/lino/lino/core/requests.py", line 456, in __init__
+    pv.update(self.actor.params_layout.params_store.parse_params(request))
+    File "/home/luc/hgwork/lino/lino/ui/store.py", line 982, in parse_params
+    self,len(self.param_fields),pv))
+
+- Nach Einfügen einer Einschreibung nicht ins Detail springen sondern in der Listenansicht bleiben.
+
+
+

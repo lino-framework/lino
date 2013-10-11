@@ -5148,7 +5148,7 @@ Mappings towards lino.modlib.cal.models.PanelCalendars
 // Sset SS = Ssite.modules.cal.PanelCalendars.get_handle(Sui).store
 Ext.ensible.cal.CalendarMappings = {
     CalendarId:   {name:'ID',       mapping: 'id', type: 'int'},
-    Title:        {name:'CalTitle', mapping: 'babel_name', type: 'string'},
+    Title:        {name:'CalTitle', mapping: 'label', type: 'string'},
     Description:  {name:'Desc',     mapping: 'description', type: 'string'},
     ColorId:      {name:'Color',    mapping: 'color', type: 'int'},
     IsHidden:     {name:'Hidden',   mapping: 'is_hidden', type: 'boolean'},    
@@ -5162,7 +5162,7 @@ Mappings towards lino.modlib.cal.models.PanelEvents
 // Sset SS = Ssite.modules.cal.PanelEvents.get_handle(Sui).store
 Ext.ensible.cal.EventMappings = {
     EventId:     {name: 'ID',        mapping: 'id', type:'int'},
-    CalendarId:  {name: 'CalID',     mapping: 'calendarHidden', type: 'int'},
+    CalendarId:  {name: 'CalID',     mapping: 'subscriptionHidden', type: 'int'},
     Title:       {name: 'EvtTitle',  mapping: 'summary'},
     StartDate:   {name: 'StartDt',   mapping: 'start_dt', 
       type: 'date', 
@@ -5398,12 +5398,10 @@ Lino.CalendarApp = function() { return {
       var cap = null;
       this.event_store = new Ext.data.JsonStore({ 
           listeners: { exception: Lino.on_store_exception }
-          //~ ,url: '{{settings.SITE.admin_prefix}}/restful/cal/PanelEvents'
-          ,url: '{{settings.SITE.build_admin_url("/restful/cal/PanelEvents")}}'
+          ,url: '{{settings.SITE.build_admin_url("restful/cal/PanelEvents")}}'
           ,restful : true
           ,proxy: new Ext.data.HttpProxy({ 
-              //~ url: '{{settings.SITE.admin_prefix}}/restful/cal/PanelEvents', 
-              url: '{{settings.SITE.build_admin_url("/restful/cal/PanelEvents")}}', 
+              url: '{{settings.SITE.build_admin_url("restful/cal/PanelEvents")}}', 
               disableCaching: false // no need for cache busting when loading via Ajax
               //~ disableCaching:true,
           })

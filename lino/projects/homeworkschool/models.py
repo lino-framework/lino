@@ -140,7 +140,7 @@ def site_setup(site):
     #~ site.modules.cal.Events.set_detail_layout(EventDetail())
     site.modules.cal.Events.set_detail_layout('general more')
     site.modules.cal.Events.add_detail_panel('general',"""
-    calendar summary user project 
+    event_type summary user project 
     start end 
     room priority access_class transparent #rset 
     owner workflow_buttons
@@ -168,7 +168,7 @@ def site_setup(site):
     site.modules.cal.Events.set_insert_layout("""
     summary 
     start end 
-    calendar project 
+    event_type project 
     """,
     start="start_date start_time",
     end="end_date end_time",

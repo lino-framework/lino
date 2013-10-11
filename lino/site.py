@@ -1123,11 +1123,10 @@ class Site(Site):
     using :ref:`davlink`.
     """
     
-    max_auto_events = 72
-    """
-    Maximum number of automatic events to be generated 
-    by :class:`lino.modlib.cal.models.EventOwner`.
-    """
+    #~ max_auto_events = 72
+    #~ """
+    #~ Maximum number of automatic events to be generated.
+    #~ """
     
     #~ mergeable_models = []
     #~ """

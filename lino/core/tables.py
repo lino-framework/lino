@@ -567,6 +567,7 @@ class TableRequest(ActionRequest):
                 #~ lh = ll.get_layout_handle(self.extjs_ui)
                 lh = ll.get_layout_handle(settings.SITE.ui)
                 columns = lh.main.columns
+                columns = [e for e in columns if not e.hidden]
             else:
                 #~ ah = ar.actor.get_handle(self.extjs_ui)
                 ah = ar.actor.get_request_handle(ar)
@@ -580,8 +581,8 @@ class TableRequest(ActionRequest):
                 e.value = e.ext_options()
                 #~ e.value.update(e.ext_options())
                 #~ e.js_value() 
-                
-            #~ columns = [e for e in columns if not e.value.get('hidden',False)]
+            columns = [e for e in columns if not e.value.get('hidden',False)] # 
+            
             columns = [e for e in columns if not e.hidden]
             
             headers = [unicode(col.label or col.name) for col in columns]

@@ -89,8 +89,8 @@ dd.inject_field('cal.Guest','gone_since',
     
 
 dd.inject_field('system.SiteConfig','prompt_calendar',
-    dd.ForeignKey('cal.Calendar',
-        verbose_name=_("Default calendar for prompt events"),
+    dd.ForeignKey('cal.EventType',
+        verbose_name=_("Default type for prompt events"),
         related_name='prompt_calendars',
         blank=True,null=True))
         
@@ -99,7 +99,7 @@ dd.inject_field('system.SiteConfig','prompt_calendar',
 def beware(sender,instance=None,**kw):
     if instance.prompt_calendar is not None:
         if instance.prompt_calendar.invite_client:
-            raise Warning("prompt calendar may not invite client!")
+            raise Warning("prompt event_type may not invite client!")
     
 #~ dd.inject_field('cal.Event','is_prompt',
     #~ models.BooleanField(_("Prompt event"),default=False))    
@@ -114,7 +114,7 @@ def create_prompt_event(project,partner,user,summary,guest_role,now=None):
     today = datetime.date.today()
     ekw.update(start_date=today)
     ekw.update(end_date=today)
-    ekw.update(calendar=settings.SITE.site_config.prompt_calendar)
+    ekw.update(event_type=settings.SITE.site_config.prompt_calendar)
     #~ ekw.update(state=EventStates.visit)
     #~ ekw.update(state=EventStates.accepted)
     ekw.update(state=EventStates.published)

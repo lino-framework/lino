@@ -39,7 +39,7 @@ from lino import dd
 from lino.modlib.cal import models as cal
 
 Event = dd.resolve_model('cal.Event')
-Calendar = dd.resolve_model('cal.Calendar')
+EventType = dd.resolve_model('cal.EventType')
 Subscription = dd.resolve_model('cal.Subscription')
 Membership = dd.resolve_model('cal.Membership')
 
@@ -48,7 +48,7 @@ def objects():
     #~ if settings.SITE.project_model:
         #~ PROJECTS = Cycler(settings.SITE.project_model.objects.all())
     #~ USERS = Cycler(settings.SITE.user_model.objects.all())
-    ETYPES = Cycler(Calendar.objects.filter(is_appointment=True))
+    ETYPES = Cycler(EventType.objects.filter(is_appointment=True))
     def s2duration(s):
         h,m = map(int,s.split(':'))
         #~ return relativedelta(hours=h,minutes=m)
@@ -84,7 +84,7 @@ def objects():
                 st = TIMES.pop()
                 kw = dict(user=u,
                   start_date=date,
-                  calendar=ETYPES.pop(),
+                  event_type=ETYPES.pop(),
                   start_time=st,
                   summary=s)
                 kw.update(access_class=ACL.pop())
@@ -99,7 +99,7 @@ def objects():
             for obj in settings.SITE.user_model.objects.exclude(
                   profile=None).exclude(id=u.id):
                 yield Membership(user=u,watched_user=obj)
-        for obj in Calendar.objects.all():
-            yield Subscription(user=u,calendar=obj)
+        for obj in EventType.objects.all():
+            yield Subscription(user=u,event_type=obj,label=unicode(obj))
     
     

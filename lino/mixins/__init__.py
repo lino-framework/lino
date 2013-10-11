@@ -761,10 +761,11 @@ class Referrable(model.Model):
                   "No %s with reference %r" % (unicode(cls._meta.verbose_name),ref))
             return default
 
+    #~ def __unicode__(self):
+        #~ return self.ref or unicode(_('(Root)'))
+
     def __unicode__(self):
-        return self.ref or unicode(_('(Root)'))
-
-
+        return super(Referrable,self).__unicode__() + " (" + self.ref + ")"
 
 
 class EmptyTableRow(VirtualRow,Printable):
