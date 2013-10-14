@@ -401,7 +401,7 @@ public class EIDReader extends Applet {
         System.err.println("Security manager has been disabled ");
     }
     
-    public void init() {
+    public void unused2_init() {
         System.err.println("Gonna set the security manager...");
         //~ System.out.println("toto");
         

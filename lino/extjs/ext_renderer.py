@@ -1516,6 +1516,8 @@ tinymce.init({
             vc.update(getRowClass=js_code('Lino.getRowClass'))
         if rh.actor.auto_fit_column_widths:
             vc.update(forceFit=True)
+        if rh.actor.variable_row_height:
+            vc.update(cellTpl= js_code("Lino.auto_height_cell_template"))
         kw.update(viewConfig=vc)
         
         

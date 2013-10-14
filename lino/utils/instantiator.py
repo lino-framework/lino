@@ -103,6 +103,8 @@ class ChoiceConverter(Converter):
     """
     def convert(self,**kw):
         value = kw.get(self.field.name)
+        print "20131012 c", self.field.name, kw
+        
         if value is not None:
             if not isinstance(value,self.field.choicelist.item_class):
                 kw[self.field.name] = self.field.choicelist.get_by_value(value)
@@ -168,6 +170,8 @@ def make_converter(f,lookup_fields={}):
         return DecimalConverter(f)
     from lino.core import choicelists
     if isinstance(f,choicelists.ChoiceListField):
+        #~ if f.name == 'p_book':
+            #~ print "20131012 b", f
         return ChoiceConverter(f)
       
 class Instantiator:

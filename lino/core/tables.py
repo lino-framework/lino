@@ -832,7 +832,11 @@ class AbstractTable(actors.Actor):
     Model tables may also define such a method in case they need local filtering.
     
     """
-    
+    variable_row_height = False
+    """
+    Set this to True if you want to have 
+    each row to get the height that it needs. 
+    """
     
     auto_fit_column_widths = False
     """

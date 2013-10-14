@@ -83,6 +83,10 @@ class Chooser(FieldChooser):
         self.context_fields = []
         for name in self.context_params:
             f = self.get_data_elem(name)
+            if f is None:
+                raise Exception("2013112")
+            #~ if name == 'p_book':
+                #~ print 20131012, f
             self.context_fields.append(f)
             self.context_values.append(name+"Hidden")
             #~ if isinstance(f,models.ForeignKey):
@@ -121,10 +125,22 @@ class Chooser(FieldChooser):
         return m(text)
         
     def get_data_elem(self,name):
-        for vf in self.model._meta.virtual_fields:
-            if vf.name == name:
-                return vf
-        return self.model._meta.get_field(name)
+        """
+        Calls 
+        :meth:`lino.core.actors.Actor.get_data_elem`
+        or
+        :meth:`lino.core.model.Model.get_data_elem`.
+        """
+        de = self.model.get_data_elem(name)
+        if de is None:
+            return self.model.get_param_elem(name)
+        return de
+        
+    #~ def get_data_elem(self,name):
+        #~ for vf in self.model._meta.virtual_fields:
+            #~ if vf.name == name:
+                #~ return vf
+        #~ return self.model._meta.get_field(name)
             
         
     def get_choices(self,**context): # 20120918b

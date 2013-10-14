@@ -13,18 +13,18 @@ the DavLink applet to scan your local file system and execute a program.
 Otherwise you'll get a RuntimException
 "You must tell your client to let me read your file system."
 
-Easiest way is to edit your *system policy file*
-which is by default located 
+One way is to edit your *system policy file*
+which is by default located at :file:`java.home/lib/security/java.policy`
+(where the value for `java.home` is 
+is shown as one of the first messages in your Java console).
 
-- (Windows) at :xfile:`java.home\lib\security\java.policy`
-
-(Where the value for java.home is 
-is shown as one of the first messages in your Java console)
+Or you might prefer edit your *user policy file*, located at
+:file:`user.home/.java.policy`
+(and where `user.home` is your home directory).
 
 See `Default Policy Implementation and Policy File Syntax
 <http://docs.oracle.com/javase/7/docs/technotes/guides/security/PolicyFiles.html>`_
 for details.
-
 
 You can just edit the file with your preferred 
 editor and add the following entry::

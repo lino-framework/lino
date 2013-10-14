@@ -1,4 +1,4 @@
 from setuptools import setup
-execfile('lino/setup_info.py')
+execfile('lino/project_info.py')
 setup(**SETUP_INFO)
 

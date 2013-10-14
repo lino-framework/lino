@@ -128,6 +128,7 @@ Model mixins:
 - :class:`lino.mixins.Sequenced`
 - :class:`lino.mixins.Referrable`
 - :class:`lino.mixins.Hierarizable`
+- :class:`lino.mixins.CreatedModified`
 - :class:`lino.mixins.printable.BasePrintable`
 - :class:`lino.mixins.printable.Printable`
 - :class:`lino.mixins.printable.PrintableType`
@@ -336,7 +337,7 @@ from north.dbutils import fdl as dtosl
 #~ from lino.mixins import Born
 
 from lino.mixins import (ProjectRelated, UserAuthored, 
-    Sequenced, Hierarizable, Referrable)
+    Sequenced, Hierarizable, Referrable, CreatedModified, Controllable)
 
 from lino.mixins.printable import BasePrintable, Printable, PrintableType, CachedPrintable, TypedPrintable, DirectPrintAction
 #~ from lino.mixins import SimplyPrintable

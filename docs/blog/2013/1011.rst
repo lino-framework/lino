@@ -76,24 +76,19 @@ DONE:
 - Beim Generieren von Terminen muss er die Recurrent Events jetzt noch 
   berücksichtigen. IOW muss Terminkollisionen vermeiden.
 
-
-TODO: 
-
-- Dokumentieren:
-
-    Partner : alle Personen und Organisationen, mit denen wir Geschäfte machen
-    
-    - Organisationen
-    - Personen : alle möglichen Menschen
-      - Teilnehmer : alle Personen, die als Teilnehemer ausgewählt werden können
-         mit einer "Schülerart" (Eiche, LFV, COK, Nichtmitglied...)
-      - Kursleiter : 
-
 - Layout Kurs Detail : Beginndatum hat keinen Button für Kalender
 
 - Termin mit einem Klick "verschieben" 
-  (d.h. "an diesem Datum ausfallen" lassen, und Lino soll hinten dranhängen. 
-  Datum in Tabelle änderbar anzeigen.
+  (d.h. "an diesem Datum ausfallen" lassen, und Lino soll hinten dranhängen).
+  So ein Button ist jetzt vielleicht nicht mehr nötig, weil ihr ja die 
+  Feiertage eingeben könnt und theoretisch alles automatisch richtig gesetzt wird.
+  Aber ich habe das Datum als änderbare Kolonne in die Tabelle 
+  hinzugefügt, dort kannst du F2 drücken und dann den Kalender öffnen. 
+  Das ist ja auch relativ komfortabel.
+
+
+TODO: 
+
 
 - Chronologische Reihenfolge der Einschreibungen nicht nur pro Datum, 
   sondern auch Uhrzeit.
@@ -113,5 +108,14 @@ TODO:
 
 - Nach Einfügen einer Einschreibung nicht ins Detail springen sondern in der Listenansicht bleiben.
 
+- Dokumentieren:
+
+    Partner : alle Personen und Organisationen, mit denen wir Geschäfte machen
+    
+    - Organisationen
+    - Personen : alle möglichen Menschen
+      - Teilnehmer : alle Personen, die als Teilnehemer ausgewählt werden können
+         mit einer "Schülerart" (Eiche, LFV, COK, Nichtmitglied...)
+      - Kursleiter : 
 
 

@@ -138,8 +138,23 @@ class LayoutHandle:
                 "Failed to create main element %r for %s." % (
                 layout.main,layout))
         
+        """20131014 : 
+        Lino now supports insert_layout with only one element:
+        it uses then a hard-coded height of 10 lines.
+        You can always specify your own window_size.
+        """
+        if len(self.main.elements) == 1 and self.layout.window_size is not None:
+            self.layout.window_size = (self.layout.window_size[0],10)
+            if False:
+                #~ TODO : when the field is not vflex, use height auto instead of hard-coded 10 lines
+                if self.main.elements[0].vflex:
+                    self.layout.window_size = (self.layout.window_size[0],10)
+                else:
+                    self.layout.window_size = (self.layout.window_size[0],'auto')
+        
         self.width = self.main.width
         self.height = self.main.height
+        
         
         self.layout.setup_handle(self)
         for k,v in self.layout._labels.items():

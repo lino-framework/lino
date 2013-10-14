@@ -25,6 +25,11 @@ e.g. welfare.jobs.NewJobsOverview needs
 }
 */
 
+.lino-auto-height {
+  white-space: normal; 
+  overflow: visible;
+}
+
 .x-grid3-hd-inner {
   white-space: normal; 
 }

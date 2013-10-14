@@ -3450,6 +3450,7 @@ Lino.FormPanel = Ext.extend(Lino.FormPanel,{
 Lino.getRowClass = function(record, rowIndex, rowParams, store) {
     //~ console.log(20130816,record);
     //~ return 'x-grid3-row-green';
+    //~ return record.data.row_class + ' auto-height';
     return record.data.row_class;
   //~ if (true) {
       //~ return 'x-grid3-row-red';
@@ -3523,6 +3524,14 @@ Lino.get_current_grid_config = function(panel) {
     return panel.get_current_grid_config();
 }
 
+
+// Like the default value for GridView.cellTpl but adds a class "lino-auto-height"
+Lino.auto_height_cell_template = new Ext.Template(
+'<td class="x-grid3-col x-grid3-cell x-grid3-td-{id} {css}" style="{style}" tabIndex="0" {cellAttr}>',
+    '<div class="lino-auto-height x-grid3-cell-inner x-grid3-col-{id}" unselectable="on" {attr}>{value}</div>',
+'</td>'
+);
+
 Lino.GridPanel = Ext.extend(Ext.grid.EditorGridPanel,Lino.MainPanel);
 Lino.GridPanel = Ext.extend(Lino.GridPanel,Lino.PanelMixin);
 Lino.GridPanel = Ext.extend(Lino.GridPanel,{
@@ -3539,6 +3548,8 @@ Lino.GridPanel = Ext.extend(Lino.GridPanel,{
           //~ getRowClass: Lino.getRowClass,
           //~ emptyText:"$_('No data to display.')"
         //~ },
+        
+        
   loadMask: {msg:"{{_('Please wait...')}}"},
   
   constructor : function(config){
@@ -3675,6 +3686,7 @@ Lino.GridPanel = Ext.extend(Lino.GridPanel,{
         //~ this_.set_status(this_.store.reader.arrayData.status);
         //~ 20120918
         this.getView().getRowClass = Lino.getRowClass;
+        
         if (this_.store.reader.arrayData.no_data_text) {
             //~ this.viewConfig.emptyText = this_.store.reader.arrayData.no_data_text;
             this.getView().emptyText = this_.store.reader.arrayData.no_data_text;
