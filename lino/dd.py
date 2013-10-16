@@ -125,8 +125,10 @@ Model mixins:
 
 - :class:`lino.mixins.ProjectRelated`
 - :class:`lino.mixins.UserAuthored`
+- :class:`lino.mixins.ByUser`
 - :class:`lino.mixins.Sequenced`
 - :class:`lino.mixins.Referrable`
+- :class:`lino.mixins.Registrable`
 - :class:`lino.mixins.Hierarizable`
 - :class:`lino.mixins.CreatedModified`
 - :class:`lino.mixins.printable.BasePrintable`
@@ -247,7 +249,8 @@ from north.dbutils import babel_values # alias for babelkw for backward compat
 from lino.utils.choosers import chooser
 from lino.utils.mti import EnableChild
 
-from lino.core.auth import UserLevels, UserProfiles, UserGroups, add_user_group
+#~ from lino.core.auth import UserLevels, UserProfiles, UserGroups, add_user_group
+from lino.core.perms import UserLevels, UserProfiles, UserGroups, add_user_group
 
 #~ from lino.base.utils import UserLevels, UserGroups, UserProfiles
 
@@ -336,8 +339,10 @@ from north.dbutils import fdl as dtosl
     
 #~ from lino.mixins import Born
 
-from lino.mixins import (ProjectRelated, UserAuthored, 
-    Sequenced, Hierarizable, Referrable, CreatedModified, Controllable)
+from lino.mixins import (ProjectRelated, UserAuthored, ByUser,
+    Sequenced, Hierarizable, Referrable, 
+    Registrable,
+    CreatedModified, Controllable)
 
 from lino.mixins.printable import BasePrintable, Printable, PrintableType, CachedPrintable, TypedPrintable, DirectPrintAction
 #~ from lino.mixins import SimplyPrintable

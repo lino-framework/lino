@@ -13,14 +13,14 @@
       {% for lang in site.languages -%}
         {% if lang.django_code == requested_language -%}
             {{lang.django_code}}
-        {% else -%}
-            <a href="?ul={{lang.django_code}}">{{lang.django_code}}</a> 
+        {% else -%} {# URL_PARAM_USER_LANGUAGE #}
+            <a href="{{ar.get_request_url(ul=lang.django_code)}}">{{lang.django_code}}</a> 
         {% endif -%}
       {% endfor -%}
     {% endif -%}
     {% if site.use_extjs -%}
     &mdash;
-    <a href="{{site.buildurl()}}">Admin</a>
+    <a href="{{site.build_admin_url()}}">Admin</a>
     {% endif -%}
     {% if site.plain_prefix -%}
     &mdash;

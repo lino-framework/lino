@@ -1,0 +1,14 @@
+=====================================
+20131016 (Wednesday, 16 October 2013)
+=====================================
+
+Updated :mod:`lino.modlib.vocbook` and http://cfr.saffre-rumma.net 
+for my French students.
+
+:ref:`faggio` is waiting for user feedback.
+Okay I could continue e.g. with :ref:`eidreader`.
+But then Kai sent a new feature list for their SacredPy project.
+Guess which project got my attention today?
+Yes, I started :ref:`polly` (:mod:`lino.modlib.polls` and :mod:`lino.projects.polly`).
+
+

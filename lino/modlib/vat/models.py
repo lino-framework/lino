@@ -52,7 +52,7 @@ accounts = dd.resolve_app('accounts')
 
 ZERO = Decimal('0.00')
 
-MODULE_LABEL = _("VAT")
+from lino.modlib.vat import App
 
  
 class VatClasses(dd.ChoiceList):
@@ -648,7 +648,7 @@ if False:
   
 
 def setup_explorer_menu(site,ui,profile,m):
-    m  = m.add_menu("vat",MODULE_LABEL)
+    m  = m.add_menu("vat",App.verbose_name)
     m.add_action(VatRegimes)
     m.add_action(TradeTypes)
     m.add_action(VatClasses)

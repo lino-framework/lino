@@ -779,6 +779,15 @@ class RedirectAction(Action):
         raise NotImplementedError
         
 
+def buttons2pager(buttons):
+    items = []
+    for symbol,label,url in buttons:
+        if url is None:
+            items.append(E.li(E.span(symbol,class_="disabled")))
+        else:
+            items.append(E.li(E.a(symbol,href=url)))
+    return E.div(E.ul(*items),class_='pagination')
+        
 
 
 class GridEdit(TableAction):
@@ -808,12 +817,8 @@ class GridEdit(TableAction):
     def get_window_size(self,actor):
         return actor.window_size
         
-    def as_html(self,ar):
+    def as_html(self,ar,as_main=True):
         t = xghtml.Table()
-        #~ settings.SITE.ui.ar2html(ar,t,ar.sliced_data_iterator)
-        ar.dump2html(t,ar.sliced_data_iterator)
-        #~ return t.as_element() # 20130418
-        buttons = []
         if ar.limit is None:
             ar.limit = PLAIN_PAGE_LENGTH
         pglen = ar.limit 
@@ -827,6 +832,13 @@ class GridEdit(TableAction):
             5      2
             """
             page = int(ar.offset / pglen) + 1
+            
+        ar.dump2html(t,ar.sliced_data_iterator)
+        if not as_main:
+            url = ar.get_request_url() # open in to own window
+            return E.div(E.a(ar.get_title(),href=url),t.as_element())
+            
+        buttons = []
         kw = dict()
         kw = {}
         if pglen != PLAIN_PAGE_LENGTH:
@@ -856,15 +868,7 @@ class GridEdit(TableAction):
         buttons.append( ('>',_("Next page"), next_url ))
         buttons.append( ('>>',_("Last page"), last_url ))
         
-        items = []
-        for symbol,label,url in buttons:
-            if url is None:
-                items.append(E.li(E.span(symbol,class_="disabled")))
-            else:
-                items.append(E.li(E.a(symbol,href=url)))
-        pager = E.div(E.ul(*items),class_='pagination')
-        
-        return E.div(pager,t.as_element())
+        return E.div(buttons2pager(buttons),t.as_element())
       
         
 
@@ -923,22 +927,25 @@ class ShowDetailAction(Action):
                 ni = navinfo(ar.data_iterator,elem)
                 if ni:
                     buttons = []
-                    buttons.append( ('*',_("Home"), '/' ))
+                    #~ buttons.append( ('*',_("Home"), '/' ))
                     
                     buttons.append( ('<<',_("First page"), ar.pk2url(ni['first']) ))
                     buttons.append( ('<',_("Previous page"), ar.pk2url(ni['prev']) ))
                     buttons.append( ('>',_("Next page"), ar.pk2url(ni['next']) ))
                     buttons.append( ('>>',_("Last page"), ar.pk2url(ni['last']) ))
                         
-                    chunks = []
-                    for text,title,url in buttons:
-                        chunks.append('[')
-                        if url:
-                            chunks.append(E.a(text,href=url,title=title))
-                        else:
-                            chunks.append(text)
-                        chunks.append('] ')
-                    navigator = E.p(*chunks)
+                    #~ chunks = []
+                    #~ for text,title,url in buttons:
+                        #~ chunks.append('[')
+                        #~ if url:
+                            #~ chunks.append(E.a(text,href=url,title=title))
+                        #~ else:
+                            #~ chunks.append(text)
+                        #~ chunks.append('] ')
+                    #~ navigator = E.p(*chunks)
+                    navigator = buttons2pager(buttons)
+                else:
+                    navigator = E.p("No navinfo")
         else:
             elem = None
         
@@ -949,6 +956,7 @@ class ShowDetailAction(Action):
         
         #~ items = list(render_detail(ar,elem,lh.main))
         items = list(lh.main.as_plain_html(ar,elem))
+        if navigator: items.insert(0,navigator)
         #~ print E.tostring(E.div())
         #~ if len(items) == 0: return ""
         main = E.form(*items)

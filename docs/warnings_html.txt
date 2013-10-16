@@ -1,0 +1,1 @@
+/home/luc/hgwork/lino/docs/polly/index.rst:: WARNING: document isn't included in any toctree

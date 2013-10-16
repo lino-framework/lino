@@ -1,0 +1,35 @@
+===================================
+20131015 (Tuesday, 15 October 2013)
+===================================
+
+The plain html renderer now renders a newline character (``\n``) in a column header 
+(i.e. in the `verbose_name` of a field) as a ``br`` tag.
+
+:ref:`welfare` : 
+when showing selection list of Partners, Households and Organisations, 
+Lino now adds the Partner no. and an ``*`` if partner is marked as 
+obsolete (as it did until now only for Clients but not for Partners).
+
+:mod:`lino.modlib.contacts` : `Company.__unicode__` now also 
+includes the optional content of the `prefix` field.
+
+CitiesByCountry  : The title was "Places **of** <country>",
+(the default title generated for a slave table request)
+now it is "Places **in** <country>".
+Added new class attribute 
+:attr:`lino.core.dbtables.Table.details_of_master_template'
+which is useful for this kind of situation.
+
+Worked on the web interface of belref:
+
+- slave grids showed all rows instead of only 15
+- slave grids now have a title, and clicking this title opens the table in its own window
+- language selector links didn't work in certain situations
+- having plain_prefix empty, admin_prefix nonempty and use_extjs=True
+
+TODO: 
+
+- one testcase fails
+- upgrade to bootstrap 3
+- layout of detail
+- repair lino.projects.cms

@@ -35,6 +35,8 @@ from lino.core import layouts
 from lino.core import fields
 from lino.core import actions
 from lino.core.actions import Permittable
+from lino.core import constants
+
 #~ from lino.core import perms
 from lino.utils.ranges import constrain
 from lino.utils import jsgen
@@ -43,14 +45,14 @@ from lino.utils import mti
 from lino.core import choicelists
 from lino.utils.jsgen import py2js, id2js, js_code
 from lino.utils import choosers
+from lino.utils import join_elems
 
 from lino.utils.xmlgen import etree
 from lino.utils.xmlgen import html as xghtml
 E = xghtml.E
 from lino.utils.xmlgen import RAW as RAWXML
 
-#~ from lino.ui import requests as ext_requests
-from lino.core import constants as ext_requests
+#~ from lino.core import constants as ext_requests
 
 
 EXT_CHAR_WIDTH = 9
@@ -72,7 +74,7 @@ DEFAULT_PADDING = 2
 def form_field_name(f):
     if isinstance(f,models.ForeignKey) \
         or (isinstance(f,models.Field) and f.choices): #~ or isinstance(f,dd.LinkedForeignKey):
-        return f.name + ext_requests.CHOICES_HIDDEN_SUFFIX
+        return f.name + constants.CHOICES_HIDDEN_SUFFIX
     else:
         return f.name
         
@@ -136,12 +138,12 @@ def before_row_edit(panel):
                         #~ print 20120603, panel.layout_handle.layout._datasource, e.field.name, f.name
                         #~ l.append("console.log('20120602 before_row_edit',this.get_base_params());")
                         l.append("var bp = this.get_base_params();")
-                        #~ ext_requests.URL_PARAM_MASTER_TYPE
-                        #~ ext_requests.URL_PARAM_MASTER_KEY
+                        #~ constants.URL_PARAM_MASTER_TYPE
+                        #~ constants.URL_PARAM_MASTER_KEY
                         l.append("%s.setContextValue('%s',bp['%s']);" % (
-                          e.as_ext(),ext_requests.URL_PARAM_MASTER_PK,ext_requests.URL_PARAM_MASTER_PK))
+                          e.as_ext(),constants.URL_PARAM_MASTER_PK,constants.URL_PARAM_MASTER_PK))
                         l.append("%s.setContextValue('%s',bp['%s']);" % (
-                          e.as_ext(),ext_requests.URL_PARAM_MASTER_TYPE,ext_requests.URL_PARAM_MASTER_TYPE))
+                          e.as_ext(),constants.URL_PARAM_MASTER_TYPE,constants.URL_PARAM_MASTER_TYPE))
                     else:
                         #~ l.append("console.log('20110128 before_row_edit',record.data);")
                         l.append(
@@ -223,7 +225,7 @@ class GridColumn(jsgen.Component):
                 if rpt.detail_action is not None:
                     if rpt.detail_action.get_view_permission(jsgen._for_user_profile):
                         return "Lino.fk_renderer('%s','Lino.%s')" % (
-                          name + ext_requests.CHOICES_HIDDEN_SUFFIX,
+                          name + constants.CHOICES_HIDDEN_SUFFIX,
                           rpt.detail_action.full_name())
               
             rend = None
@@ -237,7 +239,7 @@ class GridColumn(jsgen.Component):
                 #~ rend = 'Lino.hide_zero_renderer'
             #~ elif isinstance(editor.field,dd.LinkedForeignKey):
                 #~ rend = "Lino.lfk_renderer(this,'%s')" % \
-                  #~ (editor.field.name + ext_requests.CHOICES_HIDDEN_SUFFIX)
+                  #~ (editor.field.name + constants.CHOICES_HIDDEN_SUFFIX)
             #~ elif isinstance(editor.field,models.ForeignKey):
             elif has_fk_renderer(editor.field):
                 rend = fk_renderer(editor.field,editor.field.name)
@@ -613,8 +615,8 @@ class FieldElement(LayoutElement):
         #~ yield E.p(unicode(elem.field.verbose_name),':',E.br(),E.b(text))
         yield E.label(unicode(self.field.verbose_name))
         yield E.input(type="text",value=text)
-        if self.field.help_text:
-            yield E.span(unicode(text),class_="help-block")
+        #~ if self.field.help_text:
+            #~ yield E.span(unicode(text),class_="help-block")
         #~ yield E.p(unicode(elem.field.verbose_name),':',E.br(),E.b(text))
             
     def cell_html(self,ui,row):
@@ -872,7 +874,7 @@ class ComboFieldElement(FieldElement):
         # Also, Comboboxes with simple values may never have a hiddenName option.
         if not isinstance(self.layout_handle.layout,layouts.ListLayout) \
             and not isinstance(self,SimpleRemoteComboFieldElement):
-            kw.update(hiddenName=self.field.name+ext_requests.CHOICES_HIDDEN_SUFFIX)
+            kw.update(hiddenName=self.field.name+constants.CHOICES_HIDDEN_SUFFIX)
         return kw
       
 class ChoicesFieldElement(ComboFieldElement):
@@ -881,7 +883,7 @@ class ChoicesFieldElement(ComboFieldElement):
     def get_field_options(self,**kw):
         kw = ComboFieldElement.get_field_options(self,**kw)
         kw.update(store=tuple(self.field.choices))
-        #~ kw.update(hiddenName=self.field.name+ext_requests.CHOICES_HIDDEN_SUFFIX)
+        #~ kw.update(hiddenName=self.field.name+constants.CHOICES_HIDDEN_SUFFIX)
         return kw
         
 class ChoiceListFieldElement(ChoicesFieldElement):
@@ -942,7 +944,7 @@ class ComplexRemoteComboFieldElement(RemoteComboFieldElement):
         
     def unused_get_field_options(self,**kw):
         kw = RemoteComboFieldElement.get_field_options(self,**kw)
-        kw.update(hiddenName=self.field.name+ext_requests.CHOICES_HIDDEN_SUFFIX)
+        kw.update(hiddenName=self.field.name+constants.CHOICES_HIDDEN_SUFFIX)
         return kw
         
         
@@ -2044,19 +2046,29 @@ class GridElement(Container):
 
 
     def headers2html(self,ar,columns,headers,**cellattrs):
-        #~ logger.info("20130119 headers2html %s %s",fields,headers)
-        i = 0 
-        for col in columns:
+        assert len(headers) == len(columns)
+        for i,e in enumerate(columns):
             txt = headers[i]
-            th = E.th(txt,**cellattrs)
-            col.apply_cell_format(th)
-            i += 1
+            #~ print 20131015, txt
+            txt = join_elems(txt.split('\n'),sep=E.br)
+            if ar.renderer.is_interactive: #  and ar.master_instance is None:
+                #~ print 20130527, ar.order_by
+                if e.sortable and ar.order_by != [e.name]:
+                    kw = {constants.URL_PARAM_SORT:e.name}
+                    url = ar.renderer.get_request_url(ar,**kw)
+                    if url is not None:
+                        txt = [xghtml.E.a(*txt,href=url)]
+        
+            #~ logger.info("20130119 headers2html %s %s",fields,headers)
+            th = E.th(*txt,**cellattrs)
+            #~ th = E.th(txt,**cellattrs)
+            e.apply_cell_format(th)
             yield th
       
 
     def as_plain_html(self,ar,obj):
         sar = ar.spawn(actor=self.actor,action=self.actor.default_action,master_instance=obj)
-        yield sar.as_html()
+        yield sar.as_html(as_main=(self.name=="main"))
         #~ yield ar.ui.table2xhtml(sar,10)
                 
 

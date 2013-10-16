@@ -111,6 +111,7 @@ lino.modlib.pages.fixtures
 lino.modlib.codechanges
 lino.modlib.orders
 lino.modlib.changes
+lino.modlib.comments
 lino.modlib.concepts
 lino.modlib.partners
 lino.modlib.partners.fixtures

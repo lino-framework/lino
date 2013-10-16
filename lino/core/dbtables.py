@@ -418,6 +418,8 @@ class Table(AbstractTable):
     The model on which this table iterates.
     """
     
+    
+    
     show_detail_navigator = True
     
     screenshot_profiles = ['admin']
@@ -451,6 +453,12 @@ class Table(AbstractTable):
     #~ A permission descriptor that defines who can add (create) rows in this table.
     #~ """
     
+    details_of_master_template = _("%(details)s of %(master)s")
+    """
+    Used to build the title of a request on this table when it is a 
+    slave of a given master.
+    """
+        
     
     handle_uploaded_files = None
     """
@@ -786,21 +794,25 @@ class Table(AbstractTable):
         #~ return self.model._lino_detail
         
         
-    @classmethod
-    def get_title(self,ar):
-        # NOTE: similar code in tables
-        title = self.get_title_base(ar)
-        tags = list(self.get_title_tags(ar))
-        if len(tags):
-            title += " (%s)" % (', '.join(tags))
-        return title
-        
+    #~ @classmethod
+    #~ def get_title(self,ar):
+        #~ """
+        #~ See also :meth:`lino.core.actors.Table.get_title`
+        #~ """
+        #~ # NOTE: similar code in tables
+        #~ title = self.get_title_base(ar)
+        #~ tags = list(self.get_title_tags(ar))
+        #~ if len(tags):
+            #~ title += " (%s)" % (', '.join(tags))
+        #~ return title
         
     @classmethod
     def get_title_base(self,ar):
+        """
+        """
         title = self.title or self.label
         if self.master is not None:
-            title = _("%(details)s of %(master)s") % dict(
+            title = self.details_of_master_template % dict(
               details=title,
               master=ar.master_instance)
         return title

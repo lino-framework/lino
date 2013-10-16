@@ -48,6 +48,7 @@ from lino.core import dbtables
 #~ from lino.core import changes
 from lino.core import web
 from lino.core.dbutils import navinfo
+from lino.core.requests import BaseRequest
 
 from lino.utils.media import TmpMediaFile
 
@@ -74,7 +75,8 @@ def requested_actor(app_label,actor):
     """
     x = getattr(settings.SITE.modules,app_label,None)
     if x is None:
-        raise http.Http404("There's no app_label %s here" % app_label)
+        #~ raise http.Http404("There's no app_label %s here" % app_label)
+        raise Exception("There's no app_label %s here" % app_label)
     cl = getattr(x,actor)
     if not isinstance(cl,type):
         raise http.Http404("%s.%s is not a class" % (app_label,actor))
@@ -1036,7 +1038,8 @@ def plain_response(ui,request,tplname,context):
     menu = MENUS.get(u.profile,None)
     if menu is None:
         menu = settings.SITE.get_site_menu(ui,u.profile)
-        url = settings.SITE.plain_prefix + '/'
+        #~ url = settings.SITE.plain_prefix + '/'
+        url = settings.SITE.build_plain_url() 
         menu.add_url_button(url,label=_("Home"))
         menu = menu.as_html(ui,request)
         menu = E.tostring(menu)
@@ -1064,6 +1067,7 @@ class PlainList(View):
           #~ tbar = buttons,
           main=ar.as_html(),
         )
+        context.update(ar=ar)
         return plain_response(settings.SITE.ui,request,'table.html',context)
         
         
@@ -1092,13 +1096,13 @@ class PlainElement(View):
           main = ar.as_html(pk),
         )
         #~ template = web.jinja_env.get_template('detail.html')
+        context.update(ar=ar)
         
         return plain_response(ui,request,'detail.html',context)
         
         
 class PlainIndex(View):
     """
-    This is not a docstring
     Similar to AdminIndex
     """
     def get(self, request, *args, **kw):
@@ -1112,7 +1116,9 @@ class PlainIndex(View):
         else:
             user = auth.AnonymousUser.instance()
         a = settings.SITE.get_main_action(user)
-        if a is not None:
+        if a is None:
+            ar = BaseRequest(user=user,request=request)
+        else:
             if not a.get_view_permission(user.profile):
                 raise exceptions.PermissionDenied("Action not allowed for %s" % user)
             kw.update(renderer=ui.plain_renderer)
@@ -1121,4 +1127,5 @@ class PlainIndex(View):
             context.update(title=ar.get_title())
             # TODO: let ar generate main
             # context.update(main=ui.plain_renderer.action_call(request,a,{}))
+        context.update(ar=ar)
         return plain_response(ui,request,'plain_index.html',context)

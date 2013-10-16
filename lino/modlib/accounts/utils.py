@@ -204,7 +204,7 @@ class Sheet(object):
     """
     Base class for a financial statement.
     """
-    verbose_name = _("Financial statement") # Comptes annuels    Jahresabschluss               Jaarverslag              Aastaaruanne  
+    verbose_name = _("Financial statement") # Comptes annuels Jahresabschluss Jaarverslag  Aastaaruanne  
     
     @classmethod
     def account_types(cls):
@@ -238,7 +238,7 @@ class Balance(Sheet):
     https://en.wikipedia.org/wiki/Balance_sheet
     
     """
-    verbose_name = _("Balance sheet") #  Bilan              Bilanz                        Balans                   Bilanss       
+    verbose_name = _("Balance sheet") #  Bilan  Bilanz  Balans  Bilanss       
     
 
 #~ class ProfitOrLoss(Sheet):
@@ -250,6 +250,11 @@ class Earnings(Sheet):
 
 class CashFlow(Sheet):
     verbose_name = _("Cash flow statement") #  
+
+class AccountsBalance(Sheet): # La balance des comptes (généraux|particuliers|fournisseurs|clients)
+    verbose_name = _("Cash flow statement") #  
+    
+    
     
     
 Sheet.objects = (Balance,Earnings,CashFlow)

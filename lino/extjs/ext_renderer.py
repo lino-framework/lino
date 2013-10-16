@@ -389,6 +389,9 @@ class ExtRenderer(HtmlRenderer):
     def get_actor_url(self,actor,*args,**kw):
         return settings.SITE.build_admin_url("api",actor.app_label,actor.__name__,*args,**kw)
         
+    def get_home_url(self,*args,**kw):
+        return settings.SITE.build_admin_url(*args,**kw)
+        
     def get_request_url(self,ar,*args,**kw):
         """
         Called from ActionRequest.absolute_url() used in `Team.eml.html`
@@ -397,6 +400,10 @@ class ExtRenderer(HtmlRenderer):
         http://127.0.0.1:8000/api/cal/MyPendingInvitations
         
         """
+        
+        if ar.actor.__name__ == "Main":
+            return self.get_home_url(*args,**kw) 
+        
         kw = ar.get_status(**kw)
         if not kw['base_params']:
             del kw['base_params']

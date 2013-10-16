@@ -224,7 +224,9 @@ class CitiesByCity(Cities):
 class CitiesByCountry(Cities):
     master_key = 'country'
     column_names = "name type zip_code *"
-    required = dd.Required(user_groups='office')
+    #~ required = dd.Required(user_groups='office')
+    required = dd.Required()
+    details_of_master_template = _("%(details)s in %(master)s")
 
 
 

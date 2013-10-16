@@ -13,6 +13,7 @@
 ## along with Lino; if not, see <http://www.gnu.org/licenses/>.
 
 from lino.utils.restify import restify
+from lino.utils.xmlgen.html import E
 
 from lino.modlib.vocbook.base import Language, Word, WordType, pronunciationRE
 
@@ -180,10 +181,17 @@ class French(Language):
             hfr = "*"+ hfr
         if Nom.is_of_this_type(w):
             if w.gender == 'pl':
-                return u"les <b>%s</b>" % hfr
+                #~ return u"les <b>%s</b> (%s)" % (hfr,w.gender)
+                yield "les "
+                yield E.b(hfr)
+                return
             #~ if w.defini and (w.text[0].lower() in u'aeiouyàéœ' or (w.text[0].lower() == 'h' and not w.haspire)):
             if w.defini and cls.starts_with_vowel(w):
-                return u"l'<b>%s</b> (%s)" % (hfr,w.gender)
+                #~ return u"l'<b>%s</b> (%s)" % (hfr,w.gender)
+                yield "l'"
+                yield E.b(hfr)
+                yield " (%s)" % w.gender
+                return
             #~ art = w.get_article()
             #~ def get_article(self):
             if w.defini:
@@ -191,13 +199,27 @@ class French(Language):
             else:
                 articles = ['un', 'une']
             if w.gender == 'm':
-                return u"%s <b>%s</b>" % (articles[0],hfr)
-            if w.gender == 'f':
-                return u"%s <b>%s</b>" % (articles[1],hfr)
+                #~ return u"%s <b>%s</b>" % (articles[0],hfr)
+                yield articles[0]
+                yield ' '
+                yield E.b(hfr)
+                return
                 
-            return u"%s <b>%s</b>" % (articles[0],hfr)
-            raise Exception("Unknown gender for Nom %s" % w)
-        return cls.word2html(w)
+            if w.gender == 'f':
+                #~ return u"%s <b>%s</b>" % (articles[1],hfr)
+                yield articles[1]
+                yield ' '
+                yield E.b(hfr)
+                return
+                
+            #~ return u"%s <b>%s</b>" % (articles[0],hfr)
+            #~ raise Exception("Unknown gender for Nom %s" % w)
+            yield articles[0]
+            yield ' '
+            yield E.b(hfr)
+            return
+        for e in cls.word2html(w):
+            yield e
 
 
 
@@ -210,12 +232,27 @@ class French(Language):
             pronom = PRONOMS[w.form]
             if pronom[-1] == 'e' and cls.starts_with_vowel(w):
                 pronom = pronom[:-1]
-                return u"%s'<b>%s</b>" % (pronom,hfr)
-            return u"%s <b>%s</b>" % (pronom,hfr)
+                #~ return u"%s'<b>%s</b>" % (pronom,hfr)
+                yield pronom
+                yield "'"
+                yield E.b(hfr)
+                return 
+            #~ return u"%s <b>%s</b>" % (pronom,hfr)
+            yield pronom
+            yield " "
+            yield E.b(hfr)
+            return 
         if w.type and w.gender:
-            return u"<b>%s</b> (%s%s.)" % (hfr,w.type.text,w.gender)
+            #~ return u"<b>%s</b> (%s%s.)" % (hfr,w.type.text,w.gender)
+            yield E.b(hfr)
+            yield " (%s%s.)" % (w.type.text,w.gender)
+            return 
         if w.type and w.type.text:
-            return u"<b>%s</b> (%s)" % (hfr,w.type.text)
-        return u"<b>%s</b>" % hfr
+            #~ return u"<b>%s</b> (%s)" % (hfr,w.type.text)
+            yield E.b(hfr)
+            yield " (%s)" % w.type.text
+            return 
+        #~ return u"<b>%s</b>" % hfr
+        yield E.b(hfr)
         
 

@@ -13,8 +13,8 @@
 ## along with Lino; if not, see <http://www.gnu.org/licenses/>.
 
 """
-Lino Belref is how I would implement a Belgian Reference website 
-with various information in English + the three national languages.
+Lino Belref is a suggestion to implement a "Belgian Reference" 
+website with various information in three national languages.
 
 """
 
@@ -33,22 +33,20 @@ class Site(Site):
     verbose_name = "Lino Belref"
     description = _("Belgian Reference System.")
     version = "0.1"
-    url = "http://www.lino-framework.org/autodoc/lino.projects.belref"
+    url = "http://www.lino-framework.org/api/lino.projects.belref.html"
     author = 'Luc Saffre'
     author_email = 'luc.saffre@gmail.com'
     
     demo_fixtures = 'demo all_countries be few_cities inscodes'
     #~ demo_fixtures = 'demo'
     
-    #~ admin_prefix = '/admin'
-    use_extjs = False
+    admin_prefix = 'admin'
+    #~ use_extjs = False
     plain_prefix = ''
     
     #~ anonymous_user_profile = 
     
-    #~ languages = ['en','fr','nl','de']
-    languages = ['fr','nl','de']
-    #~ languages = 'de fr et en'.split()
+    languages = 'fr nl de'
     
     #~ project_model = 'tickets.Project'
     #~ user_model = 'users.User'

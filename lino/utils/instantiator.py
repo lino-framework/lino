@@ -103,7 +103,7 @@ class ChoiceConverter(Converter):
     """
     def convert(self,**kw):
         value = kw.get(self.field.name)
-        print "20131012 c", self.field.name, kw
+        #~ print "20131012 c", self.field.name, kw
         
         if value is not None:
             if not isinstance(value,self.field.choicelist.item_class):

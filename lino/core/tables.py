@@ -79,6 +79,7 @@ from lino.ui import base
 
 #~ from lino.utils.appy_pod import Renderer
 from lino.utils import jsgen
+#~ from lino.utils import join_elems
 
 from lino.utils.xmlgen import html as xghtml
 from lino.utils.xmlgen.html import E
@@ -158,6 +159,12 @@ if False: # 20130710
 
 WARNINGS_LOGGED = dict()
 
+def column_header(col):
+    #~ if col.label:
+        #~ return join_elems(col.label.split('\n'),sep=E.br)
+    #~ return [unicode(col.name)]
+    return unicode(col.label or col.name)
+            
 
 
 class TableRequest(ActionRequest):
@@ -460,7 +467,7 @@ class TableRequest(ActionRequest):
 
     def dump2html(ar,tble,data_iterator,column_names=None):
         """
-        Render this to html
+        Render this TableRequest into an existing :class:`lino.utils.xmlgen.html.Table`.
         """
         tble.attrib.update(cellspacing="3px",bgcolor="#ffffff", width="100%")
         #~ tble.attrib.update(cellspacing="3px",bgcolor="#d0def0", width="100%")
@@ -471,15 +478,6 @@ class TableRequest(ActionRequest):
         columns = fields
         #~ print 20130330, cellwidths
           
-        if ar.renderer.is_interactive and ar.master_instance is None:
-            #~ print 20130527, ar.order_by
-            for i,e in enumerate(columns):
-                if e.sortable and ar.order_by != [e.name]:
-                    kw = {constants.URL_PARAM_SORT:e.name}
-                    url = ar.renderer.get_request_url(ar,**kw)
-                    if url is not None:
-                        headers[i] = xghtml.E.a(headers[i],href=url)
-        
         #~ cellattrs = dict(align="center",valign="middle",bgcolor="#eeeeee")
         cellattrs = dict(align="left",valign="top",bgcolor="#eeeeee")
         #~ cellattrs = dict(align="left",valign="top",bgcolor="#d0def0")
@@ -540,7 +538,7 @@ class TableRequest(ActionRequest):
             hiddens = [(x == 'true') for x in ar.request.REQUEST.getlist(constants.URL_PARAM_HIDDENS)]
             fields = []
             widths = []
-            headers = []
+            #~ headers = []
             #~ ah = ar.actor.get_handle(self.extjs_ui)
             #~ ah = ar.actor.get_handle(settings.SITE.ui)
             ah = ar.actor.get_handle()
@@ -557,7 +555,7 @@ class TableRequest(ActionRequest):
                 if not hiddens[i]:
                     fields.append(col)
                     #~ fields.append(col.field._lino_atomizer)
-                    headers.append(unicode(col.label or col.name))
+                    #~ headers.append(unicode(col.label or col.name))
                     widths.append(int(all_widths[i]))
         else:
             if column_names:
@@ -585,11 +583,12 @@ class TableRequest(ActionRequest):
             
             columns = [e for e in columns if not e.hidden]
             
-            headers = [unicode(col.label or col.name) for col in columns]
             widths = ["%d" % (col.width or col.preferred_width) for col in columns]
             #~ 20130415 widths = ["%d%%" % (col.width or col.preferred_width) for col in columns]
             #~ fields = [col.field._lino_atomizer for col in columns]
             fields = columns
+            
+        headers = [column_header(col) for col in fields]
 
         oh = ar.actor.override_column_headers(ar)
         if oh:

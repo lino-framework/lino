@@ -293,8 +293,6 @@ class BaseRequest(object):
         return spec
         
         
-
-        
     def run(self,thing,*args,**kw):
         """
         The first parameter `thing` may be an InstanceAction or a 
@@ -347,11 +345,13 @@ class BaseRequest(object):
                 return ar.renderer.show_request(ar,column_names=column_names)
         return ar.renderer.show_request(ar,column_names=column_names)
         
+    def get_request_url(self,*args,**kw): 
+        return self.renderer.get_home_url(*args,**kw)
+        
     def summary_row(self,obj,**kw): return obj.summary_row(self,**kw)
     def instance_handler(self,*args,**kw): return self.renderer.instance_handler(self,*args,**kw)
     #~ def href_to(self,*args,**kw): return self.renderer.href_to(self,*args,**kw)
     def pk2url(self,*args,**kw): return self.renderer.pk2url(self,*args,**kw)
-    def get_request_url(self,*args,**kw): return self.renderer.get_request_url(self,*args,**kw)
     def obj2html(self,*args,**kw): return self.renderer.obj2html(self,*args,**kw)
     def href_to_request(self,*args,**kw): return self.renderer.href_to_request(self,*args,**kw)
     def window_action_button(self,*args,**kw): return self.renderer.window_action_button(self,*args,**kw)
@@ -603,6 +603,7 @@ class ActionRequest(BaseRequest):
     def get_sum_text(self): return self.actor.get_sum_text(self)
     def get_row_by_pk(self,pk): return self.actor.get_row_by_pk(self,pk)
     def as_html(self,*args,**kw): return self.bound_action.action.as_html(self,*args,**kw)
+    def get_request_url(self,*args,**kw): return self.renderer.get_request_url(self,*args,**kw)
         
     def absolute_uri(self,*args,**kw):
         ar = self.spawn(*args,**kw)

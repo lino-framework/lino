@@ -1,4 +1,3 @@
-# -*- coding: UTF-8 -*-
 ## Copyright 2013 Luc Saffre
 ## This file is part of the Lino project.
 ## Lino is free software; you can redistribute it and/or modify 
@@ -12,10 +11,15 @@
 ## You should have received a copy of the GNU General Public License
 ## along with Lino; if not, see <http://www.gnu.org/licenses/>.
 
-from django.utils.translation import ugettext_lazy as _
+"""
+A polls app for Lino. This is the main app for :ref:`polly`.
+
+"""
 
 from lino import ad
 
+from django.utils.translation import ugettext_lazy as _
+
 class App(ad.App):
-    verbose_name = _("Ledger")
+    verbose_name = _("Polls")
 

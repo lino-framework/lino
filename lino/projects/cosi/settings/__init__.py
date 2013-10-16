@@ -38,13 +38,13 @@ class Site(Site,vat.SiteMixin):
     #~ verbose_name = "Lino Cosi"
     description = _("a Lino application to make Belgian accounting simple.")
     version = "0.1"
-    url = "http://www.lino-framework.org/autodoc/lino.projects.cosi"
+    url = "http://www.lino-framework.org/cosi"
     #~ author = 'Luc Saffre'
     #~ author_email = 'luc.saffre@gmail.com'
     
     demo_fixtures = 'std few_countries few_cities few_languages furniture demo demo2'.split()
     
-    languages = ['en','de','fr']
+    languages = 'en de fr'
     #~ languages = 'de fr et en'.split()
     
     #~ project_model = 'tickets.Project'
@@ -68,7 +68,7 @@ class Site(Site,vat.SiteMixin):
         """
         from lino import dd
         from django.utils.translation import ugettext_lazy as _
-        dd.UserProfiles.reset('* office accounting')
+        dd.UserProfiles.reset('* office accounts')
         add = dd.UserProfiles.add_item
         add('000', _("Anonymous"),       '_ _ _', 'anonymous',readonly=True,authenticated=False)
         add('100', _("User"),            'U U U', 'user')

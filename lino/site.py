@@ -1897,10 +1897,12 @@ class Site(Site):
             urlpatterns += patterns('',
               ('^'+self.plain_prefix+"/", include(self.get_plain_urls()))
             )
-        else:
+        
+        if not self.plain_prefix:
             urlpatterns += self.get_plain_urls()
             
-        if self.django_admin_prefix: # todo
+            
+        if self.django_admin_prefix: # experimental
             from django.contrib import admin
             admin.autodiscover()
             urlpatterns += patterns('',
@@ -1910,7 +1912,7 @@ class Site(Site):
         if self.use_extjs:
             if self.admin_prefix:
                 urlpatterns += patterns('',
-                  ('^'+self.admin_prefix+"/", include(self.get_ext_urls()))
+                  ('^'+self.admin_prefix, include(self.get_ext_urls()))
                 )
                 urlpatterns += self.get_pages_urls()
             else:

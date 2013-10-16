@@ -191,7 +191,8 @@ class Parser(object):
         if h is None:
             return matchobj.group(0)
         try:
-            return h(params)
+            #~ return h(params)
+            return self.format_value(h(params))
         #~ except KeyError,e:
         except Exception,e:
             logger.exception(e)

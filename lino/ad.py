@@ -21,6 +21,8 @@ Example::
         depends = ['lino.modlib.contacts']
     
 """
+
+
 class App(object):
     """
     Don't instantiate, just subclass.

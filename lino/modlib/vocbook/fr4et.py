@@ -12,6 +12,8 @@
 ## You should have received a copy of the GNU General Public License
 ## along with Lino; if not, see <http://www.gnu.org/licenses/>.
 
+from __future__ import unicode_literals
+
 import os
 import sys
 
@@ -30,15 +32,15 @@ else:
     output_format = 'rst' # 
     
 if output_format == "rst":
-    FULL_CONTENT = False
+    FULL_CONTENT = True
 else:
     FULL_CONTENT = False
 
 HAS_FUN = True
-HAS_EXERCICES = True
+HAS_EXERCICES = False
 
 book = Book(French,Estonian,
-    title=u"Kutsealane prantsuse keel kokadele",
+    title="Kutsealane prantsuse keel kokkadele",
     input_template=os.path.join(os.path.dirname(__file__),'Default.odt'))
     #~ os.path.join(os.path.dirname(__file__),'cfr.odt')
 
@@ -47,7 +49,9 @@ Esimeses osas keskendume hääldamisele.
 Siin pole vaja meelde jätta näidissõnu,
 vaid et sa oskaksid neid ette lugeda õigesti hääldades.
 """)
-Intro = Pronounciation.add_section(u"Sissejuhatus",intro=u"""
+Intro = Pronounciation.add_section("Sissejuhatus",intro="""
+""")
+Eestlastele = Pronounciation.add_section("Eestlastele",intro="""
 """)
 Pronounciation.add_lesson(u"Hääldamisreeglite spikker", intro=u"""
 
@@ -112,8 +116,8 @@ if output_format == "rst":
 
 
 
-if FULL_CONTENT:
-    Eesti = Pronounciation.add_section(u"Veel")
+#~ if FULL_CONTENT:
+    #~ Eesti = Pronounciation.add_section(u"Veel")
 
 #~ Vocabulary = book.add_section(u"Sõnavara",intro=u"""
 #~ Teises osa hakkame õpima sõnavara,
@@ -195,26 +199,30 @@ täht selgitus           näided e.k.            näided pr.k.
 
 """)
 
-Intro.add_lesson(u"Mesilashäälikud", intro=u"""
+Eestlastele.add_lesson("Mesilashäälikud", intro="""
 "Mesilashäälikud" on **s**, **š**, **z** ja **ž**.
+Nad on eesti keeles ka olemas, aga prantsuse keeles on
+nende erinevus palju olulisem.
   
 =========== ===========================
 terav       pehme
 =========== ===========================
 **s**\ upp  **z**\ oom
-**š**\ okk  **ž**\ anre
+**š**\ okk  **ž**\ est
 =========== ===========================
   
-Nad on eesti keeles ka olemas, aga prantsuse keeles on
-nende erinevus palju olulisem.
-""")
-Intro.parse_words(None,u"""
+""",ref="s")
+Eestlastele.parse_words(None,u"""
 la soupe [sup] : supp
 le garage [ga'raaž] : garaaž
-le genre [žA~rə] : žanre
+le geste [žäst] : žest | liigutus
 le choc [žOk] : šokk | löök
 """)
 
+if FULL_CONTENT:
+    Eestlastele.parse_words(None,u"""
+    le genre [žA~rə] : žanre
+    """)
 
 
 
@@ -304,11 +312,11 @@ if FULL_CONTENT:
   
 if not FULL_CONTENT:
   
-    Intro.add_lesson(u"Cold gold, big pigs and downtowns", u"""
+    Eestlastele.add_lesson(u"Cold gold, big pigs and downtowns", u"""
     Erinevus tugeva ja nõrda K, P või T vahel on prantsuse keeles sama 
     oluline nagu inglise ja saksa keeles.
-    """)
-    Intro.parse_words(Autre,u"""
+    """,ref="kpt")
+    Eestlastele.parse_words(Autre,u"""
     la gare [gaar] : raudteejaam
     le car [kaar] : reisibuss
     la bière [bjäär] : õlu
@@ -320,10 +328,10 @@ if not FULL_CONTENT:
 
 else:  
 
-    Eesti.add_lesson(u"b ja p", u"""
+    Eestlastele.add_lesson(u"b ja p", u"""
     b ja p on prantsuse keeles selgelt erinevad.
     """)
-    Eesti.parse_words(None,u"""
+    Eestlastele.parse_words(None,u"""
     la bière [bjäär] : õlu
     la pierre [pjäär] : kivi
     le bon [bO~] : tšekk | talong
@@ -338,10 +346,10 @@ else:
 
 
 
-    Eesti.add_lesson(u"d ja t", u"""
+    Eestlastele.add_lesson(u"d ja t", u"""
     d ja t on prantsuse keeles selgelt erinevad.
     """)
-    Eesti.parse_words(None,u"""
+    Eestlastele.parse_words(None,u"""
     le don [dO~] : annetus
     le ton [tO~] : toon
     le centre ['sA~trə] : keskus
@@ -352,10 +360,10 @@ else:
     le doigt [dwa] : sõrm
     """)
 
-    Eesti.add_lesson(u"g ja k", u"""
+    Eestlastele.add_lesson(u"g ja k", u"""
     g ja k on prantsuse keeles selgelt erinevad.
     """)
-    Eesti.parse_words(None,u"""
+    Eestlastele.parse_words(None,u"""
     le gond [gO~] : uksehing
     le con [kO~] : loll
     la gare [gaar] : raudteejaam
@@ -442,19 +450,6 @@ la peur [pÖÖr] : hirm
 #~ """)
 
 
-#~ Reeglid.add_lesson(u"*au* ja *eau*", 
-#~ intro=u"""
-#~ **au** hääldatakse **[o]** või **[oo]**.
-#~ Kui **e** on veel ees, siis see sulab ka nendega kokku.
-#~ """,ref="au")
-#~ Reeglid.parse_words(None,u"""
-#~ une auberge [o'bäržə] : võõrastemaja
-#~ un auteur [o'tÖÖr] : autor
-#~ le château [ža'too] : loss
-#~ le bateau [ba'too] : laev
-#~ la eau [oo] : vesi
-#~ """)
-
 Reeglid.add_lesson(u"au", 
 intro=u"""
 **au** hääldatakse **[o]** või **[oo]**.
@@ -470,7 +465,7 @@ intro=u"""
 Nagu [ref au], aga **e** ühineb nendega ja kaob ära.
 """,ref="eau")
 Reeglid.parse_words(None,u"""
-le château [ža'too] : loss
+le château [ša'too] : loss
 le bateau [ba'too] : laev
 la eau [oo] : vesi
 """)
@@ -1187,10 +1182,10 @@ if False:
 
 if FULL_CONTENT:
   
-    Eesti.add_lesson(u"v ja f", u"""
+    Eestlastele.add_lesson(u"v ja f", u"""
 Ettevaatust, **v** ei ole **f**!
     """)
-    Eesti.parse_words(None,u"""
+    Eestlastele.parse_words(None,u"""
     vous [vu] : teie
     fou [fu] : hull
     # vous êtes fous [vu'zäät fu] : te olete lollid
@@ -1202,22 +1197,24 @@ Ettevaatust, **v** ei ole **f**!
     le vin [vÄ~] : vein
     """)
 
-    Eesti.add_lesson(u"Ahv pole märk", u"""
+    Eestlastele.add_lesson("gn ja ng", """
 Ettevaatust, **gn** ei ole **ng**!
     """)
-    Eesti.parse_words(Nom,u"""
+    Eestlastele.parse_words(Nom,u"""
     le ange [A~ž] : ingel
     le agneau [an'joo] : tall
     le singe [sÄ~ž] : ahv
     le signe ['sinjə] : märk
     le linge [lÄ~ž] : pesu
     la ligne ['linjə] : liin | rida
+    le songe [sO~ž] : unenägu
+    la besogne [bə'zOnjə] : ülesanne | kohustus
     """)
 
-    Eesti.add_lesson(u"Sugu on oluline", u"""
+    Eestlastele.add_lesson(u"Sugu on oluline", u"""
     Siin mõned näited, et sugu pole sugugi ebatähtis.
     """)
-    Eesti.parse_words(Nom,u"""
+    Eestlastele.parse_words(Nom,u"""
     le père [päär] : isa
     la paire [päär] : paar
     le maire [määr] : linnapea
@@ -1230,23 +1227,23 @@ Ettevaatust, **gn** ei ole **ng**!
     la cour [kuur] : õu, hoov | kohus
     """)
     
-    Eesti.parse_words(None,u"""
-    court (m) [kuur] : lühike
-    """)
+    #~ Eestlastele.parse_words(None,u"""
+    #~ court (m) [kuur] : lühike
+    #~ """)
 
     
 
 
-    Eesti.add_lesson(u"Ära aja segamini!", u"""
-    Mõned ilusad harjutused veel.
+    Eestlastele.add_lesson(u"Ära aja segamini!", u"""
+    Mõned harjutused veel...
     """)
-    Eesti.parse_words(Autre,u"""
+    Eestlastele.parse_words(Autre,u"""
     ces ingrédients [säz Ä~gre'djA~] : need koostisained
     c'est un crétin [sätÖ~ kre'tÄ~] : ta on kretiin
     je dors [žə dOOr] : ma magan
     j'ai tort [žee tOOr] : ma eksin
     """)
-    Eesti.parse_words(Nom,u"""
+    Eestlastele.parse_words(Nom,u"""
     la jambe [žA~mbə] : jalg
     la chambre [šA~mbrə] : tuba
     le agent [la' žA~] : agent
@@ -1258,7 +1255,7 @@ Ettevaatust, **gn** ei ole **ng**!
 
 if False:
 
-    Eesti.parse_words(None,u"""
+    Eestlastele.parse_words(None,u"""
     le loup [lu] : hunt
     la loupe [lup] : luup
     la joue [žuu] : põsk
@@ -2163,14 +2160,13 @@ if FULL_CONTENT:
    -- Pour avoir une belle mer (mère).
     """)
     Fun.add_lesson(u"Virelangues", intro=u"""
+#. Un chasseur sachant chasser doit savoir chasser sans son chien. ([ref s])
+#. Chacun cherche son chat.
 #. Poisson sans boisson est poison. 
-#. Un chasseur sachant chasser doit savoir chasser sans son chien. 
 #. Ecartons ton carton, car ton carton me gêne. 
 #. Ton thé t'a-t-il ôté ta toux? 
-#. Chacun cherche son chat.
 #. Tante, en ton temps teintais-tu tes tempes?
 #. Les poules couvent souvent au couvent.
-
     """)
     Fun.parse_words(Nom,u"""
     le poisson [pwa'sO~] : kala
@@ -2259,6 +2255,19 @@ la boisson [bwa'sO~] : jook
 le poisson [pwa'sO~] : kala
 le requin [rə'kÄ~] : haikala
 la cuillère [kwi'jäär] : lusikas
+""")
+
+
+if output_format == "rst":
+    Files = book.add_section(u"Failid",intro=u"""
+    
+Neid faile saad alla laadida ja kuulata koos trükitud lehtedega:
+
+- `lk. 5 <dl/lk05.mp3>`_
+- `lk. 6 <dl/lk06.mp3>`_
+- `lk. 7 <dl/lk07.mp3>`_
+- `lk. 8 <dl/lk08.mp3>`_
+
 """)
 
 

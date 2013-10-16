@@ -1128,14 +1128,20 @@ class Actor(actions.Parametrizable):
         """
         Return the title of this Table for the given request `ar`.
         Override this if your Table's title should mention for example filter conditions.
+        See also :meth:`lino.core.dbtables.Table.get_title`.
         """
         # NOTE: similar code in dbtables
-        title = self.title or self.label
+        title = self.get_title_base(ar)
+        #~ title = self.title or self.label
         tags = list(self.get_title_tags(ar))
         if len(tags):
             title += " (%s)" % (', '.join(tags))
         return title
         
+        
+    @classmethod
+    def get_title_base(self,ar):
+        return self.title or self.label
         
         
         

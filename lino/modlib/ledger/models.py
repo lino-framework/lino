@@ -1,3 +1,4 @@
+# -*- coding: UTF-8 -*-
 ## Copyright 2008-2013 Luc Saffre
 ## This file is part of the Lino project.
 ## Lino is free software; you can redistribute it and/or modify 
@@ -37,10 +38,11 @@ from lino.utils import iif
 from lino.utils import join_elems
 
 accounts = dd.resolve_app('accounts',strict=True)
+contacts = dd.resolve_app('contacts',strict=True)
 vat = dd.resolve_app('vat',strict=True)
 partner_model = settings.SITE.partners_app_label + '.Partner'
 
-ZERO = Decimal()
+ZERO = Decimal(0)
 
 
 vat.TradeTypes.purchases.update(
@@ -1103,10 +1105,162 @@ class ItemsByInvoice(dd.Table):
     order_by = ["seqno"]
     
     
+def mvtsum(**fkw):    
+    d = Movement.objects.filter(**fkw).aggregate(models.Sum('amount'))
+    return d['amount__sum'] or ZERO
+    
+class Balance(object):
+    def __init__(self,d,c):
+        if d > c:
+            self.d = d - c
+            self.c = ZERO
+        else:
+            self.c = c - d
+            self.d = ZERO
+    
+    
+class AccountsBalance(dd.VirtualTable):
+    auto_fit_column_widths = True
+    column_names = "ref description old_d old_c during_d during_c new_d new_c"
+    slave_grid_format = 'html'
+    abstract = True
+    
+    @classmethod
+    def rowmvtfilter(self,row):
+        raise NotImplementedError()
+        
+    @classmethod
+    def get_request_queryset(self,ar):
+        raise NotImplementedError()
+        
+    @classmethod
+    def get_data_rows(self,ar):
+        mi = ar.master_instance
+        if mi is None: return
+        qs = self.get_request_queryset(ar)
+        for row in qs:
+            flt = self.rowmvtfilter(row)
+            row.old = Balance(
+                mvtsum(
+                    voucher__date__lt=mi.start_date,
+                    dc=accounts.DEBIT,**flt),
+                mvtsum(
+                    voucher__date__lt=mi.start_date,
+                    dc=accounts.CREDIT,**flt))
+            row.during_d = mvtsum(
+                voucher__date__gte=mi.start_date,voucher__date__lte=mi.end_date,
+                dc=accounts.DEBIT,**flt)
+            row.during_c = mvtsum(
+                voucher__date__gte=mi.start_date,voucher__date__lte=mi.end_date,
+                dc=accounts.CREDIT,**flt)
+            if row.old.d or row.old.c or row.during_d or row.during_c:
+                row.new = Balance(row.old.d + row.during_d,row.old.c + row.during_c)
+                yield row
+        
+    @dd.displayfield(_("Description"))
+    def description(self,row,ar): 
+        #~ return unicode(row)
+        return ar.obj2html(row)
+        
+    @dd.virtualfield(dd.PriceField(_("Debit\nbefore")))
+    def old_d(self,row,ar): return row.old.d
+    @dd.virtualfield(dd.PriceField(_("Credit\nbefore")))
+    def old_c(self,row,ar): return row.old.c
+    
+    @dd.virtualfield(dd.PriceField(_("Debit")))
+    def during_d(self,row,ar): return row.during_d
+    @dd.virtualfield(dd.PriceField(_("Credit")))
+    def during_c(self,row,ar): return row.during_c
+
+    @dd.virtualfield(dd.PriceField(_("Debit\nafter")))
+    def new_d(self,row,ar): return row.new.c
+    @dd.virtualfield(dd.PriceField(_("Credit\nafter")))
+    def new_c(self,row,ar): return row.new.d
+    
+    
+class GeneralAccountsBalance(AccountsBalance):
+    
+    label = _("General Accounts Balances")
+    
+    @classmethod
+    def get_request_queryset(self,ar):
+        return accounts.Account.objects.order_by('group__ref','ref')
+        
+    @classmethod
+    def rowmvtfilter(self,row):
+        return dict(account=row)
+    
+    @dd.displayfield(_("Ref"))
+    def ref(self,row,ar): 
+        return ar.obj2html(row.group)
+        
+class PartnerAccountsBalance(AccountsBalance):
+    
+    trade_type = NotImplementedError
+    
+    @classmethod
+    def get_request_queryset(self,ar):
+        return contacts.Partner.objects.order_by('name')
+        
+    @classmethod
+    def rowmvtfilter(self,row):
+        return dict(partner=row,account=self.trade_type.get_partner_account())
+        
+    @dd.displayfield(_("Ref"))
+    def ref(self,row,ar): return str(row.pk)
+        
     
 
+class ClientAccountsBalance(PartnerAccountsBalance):
+    label = _("Client Accounts Balances")
+    
+    trade_type = vat.TradeTypes.sales
 
-#~ MODULE_LABEL = _("Ledger")
+class SupplierAccountsBalance(PartnerAccountsBalance):
+    label = _("Supplier Accounts Balances")
+    
+    trade_type = vat.TradeTypes.purchases
+
+class ActivityReport(dd.Report):
+    
+    required = dd.required(user_groups='accounts')
+    label = _("Activity Report") 
+    
+    parameters = dict(
+      start_date = models.DateField(verbose_name=_("Period from")),
+      end_date = models.DateField(verbose_name=_("until")),
+      #~ include_vat = models.BooleanField(verbose_name=vat.App.verbose_name),
+      )
+      
+    params_layout = "start_date end_date"
+    #~ params_panel_hidden = True
+    
+    @classmethod
+    def param_defaults(self,ar,**kw):
+        D = datetime.date
+        kw.update(start_date = D(D.today().year,1,1))
+        kw.update(end_date = D(D.today().year,12,31))
+        return kw
+    
+    @classmethod
+    def get_story(cls,self,ar):
+        #~ yield E.h2(_("Introduction"))
+        #~ yield E.p("Ceci est un ",E.b("rapport"),""", 
+            #~ càd un document complet généré par Lino, contenant des 
+            #~ sections, des tables et du texte libre.
+            #~ Dans la version écran cliquer sur un chiffre pour voir d'où 
+            #~ il vient.
+            #~ """)
+        #~ yield E.h1(isip.Contract._meta.verbose_name_plural)
+        for A in (GeneralAccountsBalance,ClientAccountsBalance,SupplierAccountsBalance):
+            yield E.h2(A.label)
+            if A.help_text:
+                yield E.p(unicode(A.help_text))
+            yield A
+
+
+
+    
 MODULE_LABEL = accounts.MODULE_LABEL
 
 def unused_site_setup(site):
@@ -1137,14 +1291,16 @@ def setup_main_menu(site,ui,profile,main):
             #~ label=unicode(jnl),
             #~ params=dict(master_instance=jnl))
     
+def setup_reports_menu(site,ui,profile,m): 
+    m = m.add_menu("accounts",MODULE_LABEL)
+    m.add_action(ActivityReport)
+    
 def setup_config_menu(site,ui,profile,m): 
-    #~ m = m.add_menu("ledger",MODULE_LABEL)
     m = m.add_menu("accounts",MODULE_LABEL)
     m.add_action(Journals)
     
     
 def setup_explorer_menu(site,ui,profile,m):
-    #~ m = m.add_menu("ledger",MODULE_LABEL)
     m = m.add_menu("accounts",MODULE_LABEL)
     m.add_action(Invoices)
     m.add_action(Vouchers)

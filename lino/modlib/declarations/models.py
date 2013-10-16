@@ -330,7 +330,7 @@ def setup_config_menu(site,ui,profile,m): pass
   
 
 def setup_explorer_menu(site,ui,profile,m):
-    m  = m.add_menu("vat",vat.MODULE_LABEL)
+    m  = m.add_menu("vat",vat.App.verbose_name)
     m.add_action(Declarations)
   
 

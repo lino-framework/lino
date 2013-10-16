@@ -234,7 +234,8 @@ class Partner(mti.MultiTableBase,CountryRegionCity,dd.Addressable):
         super(Partner,self).save(*args,**kw)
         
     def __unicode__(self):
-        return self.name
+        #~ return self.name
+        return self.get_full_name()
         
     def address_person_lines(self):
         #~ yield self.name
@@ -494,8 +495,8 @@ class Company(Partner):
         """Deserves more documentation."""
         #~ print '20120729 Company.get_full_name`'
         if self.type:
-            return join_words(self.type.abbr,self.name)
-        return self.name
+            return join_words(self.prefix,self.type.abbr,self.name)
+        return join_words(self.prefix,self.name)
     full_name = property(get_full_name)
     
     #~ @classmethod

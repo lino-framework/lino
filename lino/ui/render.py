@@ -97,12 +97,24 @@ from . import views
 
 
 def add_user_language(kw,ar):
+    if len(settings.SITE.languages) == 1: return 
     u = ar.get_user()
     lang = get_language()
+    #~ print 2013115, [li.django_code for li in settings.SITE.languages], settings.SITE.get_default_language(), lang, u.language
     if u and u.language and lang != u.language:
         kw.setdefault(ext_requests.URL_PARAM_USER_LANGUAGE,lang)
-    elif lang != settings.SITE.DEFAULT_LANGUAGE.django_code:
+    #~ elif lang != settings.SITE.DEFAULT_LANGUAGE.django_code:
+    elif lang != settings.SITE.get_default_language():
         kw.setdefault(ext_requests.URL_PARAM_USER_LANGUAGE,lang)
+        
+    
+    #~ if len(settings.SITE.languages) > 1:
+      #~ 
+        #~ ul = rqdata.get(constants.URL_PARAM_USER_LANGUAGE,None)
+        #~ if ul:
+            #~ translation.activate(ul)
+            #~ request.LANGUAGE_CODE = translation.get_language()
+        
 
 
 class NOT_GIVEN: pass
@@ -371,7 +383,13 @@ class PlainRenderer(HtmlRenderer):
         #~ since 20121226 return self.ui.build_url('api',obj._meta.app_label,obj.__class__.__name__,str(obj.pk),*args,**kw)
         return settings.SITE.build_plain_url(obj._meta.app_label,obj.__class__.__name__,str(obj.pk),*args,**kw)
         
+    def get_home_url(self,*args,**kw):
+        return settings.SITE.build_plain_url(*args,**kw)
+        
     def get_request_url(self,ar,*args,**kw):
+        if ar.actor.__name__ == "Main":
+            return self.get_home_url(*args,**kw) 
+            
         st = ar.get_status()
         kw.update(st['base_params'])
         add_user_language(kw,ar)

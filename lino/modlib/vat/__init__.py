@@ -13,6 +13,13 @@
 ## along with Lino; if not, see <http://www.gnu.org/licenses/>.
 
 from decimal import Decimal
+from django.utils.translation import ugettext_lazy as _
+from lino import ad
+
+
+class App(ad.App):
+    verbose_name = _("VAT")
+
 
 class SiteMixin(object):
     """
@@ -51,3 +58,9 @@ class SiteMixin(object):
         return self.VAT_CLASS_TO_RATE[vc.name]
 
         
+
+
+
+
+
+

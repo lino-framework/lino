@@ -38,14 +38,27 @@ from lino.utils import AttrDict
 from lino.utils import iif, curry
 from lino.utils import memo
 from lino.utils.html2xhtml import html2xhtml
-from lino.utils.xmlgen.html import html2rst
+#~ from lino.utils.xmlgen.html import html2rst as html2rst_
+from lino.utils.xmlgen.html import html2rst 
+from lino.utils.xmlgen.html import E
 
 from lino.utils.restify import restify
 from atelier.rstgen import write_header
-from atelier import rstgen 
+from atelier import rstgen
 from lino.utils import htmlgen
 
 USE_XHTML2ODT = False
+
+#~ def html2rst(x):
+    #~ if isinstance(x,basestring): return x
+    #~ return html2rst_(x)
+
+def e2s(g):
+    def fmt(e):
+        if isinstance(e,basestring): return e
+        return E.tostring(e)
+    return ' '.join([fmt(e) for e in g])
+    
 
 if USE_XHTML2ODT:
 
@@ -190,7 +203,10 @@ class Column:
         
     @classmethod
     def render(cls,w,book):
-        s = html2rst(cls.word2html(w,book))
+        s = html2rst(E.div(*tuple(cls.word2html(w,book))))
+        #~ s = html2rst(e) for e (cls.word2html(w,book)))
+        if "<" in s:
+            raise Exception("2013116 %r" % cls.word2html(w,book))
         if s.startswith('('):
             s = '\\' + s
         return s
@@ -206,22 +222,24 @@ class FR(Column):
     
     @classmethod
     def word2html(cls,w,book):
-        return book.from_language.present_word2html(w,book)
+        for e in book.from_language.present_word2html(w,book):
+            yield e
         
 
 class PRON(Column):
     label = u'hääldamine'
     @classmethod
     def word2html(cls,w,book):
-        return w.get_pron_html()
+        yield w.get_pron_html()
 
 class ET(Column):
     label = u'eesti k.'
     @classmethod
     def word2html(cls,w,book):
         if len(w.translations) == 1:
-            return w.translations[0]
-        return "; ".join(["(%d) %s" % (n+1,w) for n,w in enumerate(w.translations)])
+            yield w.translations[0]
+        else:
+            yield "; ".join(["(%d) %s" % (n+1,w) for n,w in enumerate(w.translations)])
     
         
 class M(Column):
@@ -231,7 +249,10 @@ class M(Column):
     def word2html(cls,w,book):
         #~ return html2rst(w.html_fr_lesson()) + ' ' + w.pronounciation
         w = w.get_partner(cls.gender)
-        return '<b>%s</b>' % w.text + ' ' + w.get_pron_html()
+        #~ return '<b>%s</b>' % w.text + ' ' + w.get_pron_html()
+        yield E.b(w.text)
+        yield ' '
+        yield w.get_pron_html()
         
 class F(M):
     label = u'naissoost'
@@ -247,11 +268,14 @@ class GEOM(Column):
     @classmethod
     def word2html(cls,w,book):
         if not w.adjectif:
-            return ''
+            yield ''
+            return
         w = w.adjectif
         w = w.get_partner(cls.gender)
-        return '<b>%s</b>' % w.text + ' ' + w.get_pron_html()
-        #~ return html2rst('<b>%s</b>' % w.text) + ' ' + w.get_pron_html()
+        #~ return '<b>%s</b>' % w.text + ' ' + w.get_pron_html()
+        yield E.b(w.text)
+        yield ' '
+        yield w.get_pron_html()
         
 class GEOF(GEOM):
     label = u'omadussõna (n)'
@@ -381,7 +405,7 @@ class Section:
             title = "%s %s" % (self.get_full_number(),self.title)
         if True:
             if self.parent is not None:
-                title = htmlgen.restify(self.memo2rst(title)).strip()
+                title = restify(self.memo2rst(title)).strip()
                 if title.startswith('<p>') and title.endswith('</p>'):
                     title = title[3:-4]
                     #~ logger.info("20120311 title is %r", title)
@@ -397,7 +421,7 @@ class Section:
             #~ yield "<H%d>%s</H%d>" % (level,,level)
         
         if self.intro:
-            yield htmlgen.restify(self.memo2rst(self.intro))
+            yield restify(self.memo2rst(self.intro))
             
         if self.children:
             for s in self.children:
@@ -405,7 +429,7 @@ class Section:
                     yield ln
                     
         for chunk in self.body:
-            yield htmlgen.restify(self.memo2rst(chunk))
+            yield restify(self.memo2rst(chunk))
         
         
     def write_rst_files(self,root):
@@ -605,8 +629,8 @@ class Index(Section):
         uca_sort(self.from_language.words)
         #~ self.from_language.words = uca_sorted(self.from_language.words)
         def fmt(w):
-            return self.from_language.word2html(w) \
-            + " " + ET.word2html(w,self) \
+            return e2s(self.from_language.word2html(w)) \
+            + " " + e2s(ET.word2html(w,self)) \
             + " " \
             + ", ".join([u.get_full_number() for u in w.units])
         for w in self.from_language.words:
@@ -618,12 +642,15 @@ class Index(Section):
         uca_sort(self.from_language.words)
         #~ self.from_language.words = uca_sorted(self.from_language.words)
         def fmt(w):
-            return self.from_language.word2html(w) \
-            + " " + ET.word2html(w,self) \
-            + " " \
-            + ", ".join([u.rst_ref_to() for u in w.units])
+            for x in self.from_language.word2html(w):
+                yield x
+            yield " " 
+            for x in  ET.word2html(w,self): 
+                yield x
+            yield " " 
+            yield ", ".join([u.rst_ref_to() for u in w.units])
         for w in self.from_language.words:
-            fd.write("| %s\n" % html2rst(fmt(w)))
+            fd.write("| %s\n" % html2rst(E.div(*fmt(w))))
                 
 class MemoParser(memo.Parser):
     def __init__(self,book,*args,**kw):
@@ -633,6 +660,7 @@ class MemoParser(memo.Parser):
         self.register_command('item',curry(self.cmd_item,'- '))
         self.register_command('oitem',curry(self.cmd_item,'#. '))
         self.register_command('ruleslist',self.cmd_ruleslist)
+        #~ self.register_command('url',self.cmd_url)
         
     def cmd_ref(self,s):
         sect = self.book.ref2sect[s]
@@ -666,6 +694,13 @@ class MemoParser(memo.Parser):
         for ref in s.split():
             r += self.cmd_item('#. ',ref,rulesmode=True)
         return r
+        
+    #~ def cmd_url(self,s):
+        #~ if not s: return "XXX"
+        #~ url,text = s.split(None,1)
+        #~ # return '<a href="%s">%s</a>' % (url,text)
+        #~ return E.a(text,href=url)
+        
             
   
 class Book:

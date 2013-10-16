@@ -1,3 +1,4 @@
+# -*- coding: UTF-8 -*-
 ## Copyright 2008-2013 Luc Saffre
 ## This file is part of the Lino project.
 ## Lino is free software; you can redistribute it and/or modify 
@@ -201,7 +202,7 @@ class AccountsByGroup(Accounts):
 #~ MODULE_LABEL = _("Accounts")
 MODULE_LABEL = _("Accounting")
 
-dd.add_user_group('accounting',MODULE_LABEL)
+dd.add_user_group('accounts',MODULE_LABEL)
 
 #~ settings.SITE.add_user_field('debts_level',UserLevel.field(MODULE_LABEL))
 #~ settings.SITE.add_user_group('debts',MODULE_LABEL)
