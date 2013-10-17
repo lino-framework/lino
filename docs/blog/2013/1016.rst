@@ -9,6 +9,7 @@ for my French students.
 Okay I could continue e.g. with :ref:`eidreader`.
 But then Kai sent a new feature list for their SacredPy project.
 Guess which project got my attention today?
-Yes, I started :ref:`polly` (:mod:`lino.modlib.polls` and :mod:`lino.projects.polly`).
-
+Yes, I chose the project which promised more fun:
+I started :ref:`polly` 
+(:mod:`lino.modlib.polls` and :mod:`lino.projects.polly`).
 

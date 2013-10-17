@@ -98,6 +98,8 @@ lino.modlib.outbox
 lino.modlib.outbox.fixtures
 lino.modlib.blogs
 lino.modlib.workflows
+lino.modlib.polls
+lino.modlib.polls.fixtures
 lino.modlib.postings
 lino.modlib.accounts
 lino.modlib.vat
@@ -173,6 +175,8 @@ lino.projects.igen
 lino.projects.igen.tests
 lino.projects.min1
 lino.projects.min2
+lino.projects.polly
+lino.projects.polly.settings
 lino.projects.presto
 lino.projects.presto.fixtures
 lino.projects.std

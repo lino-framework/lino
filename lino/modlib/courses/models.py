@@ -403,6 +403,9 @@ class Course(contacts.ContactRelated,cal.EventGenerator,cal.RecurrenceSet,dd.Pri
         help_text=("Maximal number of participants"),
         blank=True,null=True)
         
+    max_date = models.DateField(
+        blank=True,null=True,
+        verbose_name=_("Generate events until"))
         
     
     def __unicode__(self):
@@ -420,7 +423,7 @@ class Course(contacts.ContactRelated,cal.EventGenerator,cal.RecurrenceSet,dd.Pri
         return self.get_next_date(self.start_date+datetime.timedelta(days=-1))
         
     def update_cal_until(self):
-        return self.end_date
+        return self.max_date
         
     def update_cal_calendar(self):
         return self.line.event_type
@@ -535,8 +538,9 @@ class CourseDetail(dd.FormLayout):
     #~ start end freq
     main = "general courses.EnrolmentsByCourse"
     general = dd.Panel("""
-    line teacher start_date start_time room #slot state id:8
-    max_places max_events end_date end_time every_unit every 
+    line teacher start_date start_time end_date end_time
+    room #slot state id:8
+    max_places max_events max_date  every_unit every 
     monday tuesday wednesday thursday friday saturday sunday
     company contact_person user 
     cal.EventsByController

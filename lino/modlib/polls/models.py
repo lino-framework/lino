@@ -242,6 +242,10 @@ class Response(dd.UserAuthored,dd.Registrable,dd.CreatedModified):
                     
         return super(Response,self).after_ui_save(ar,**kw)
         
+    def __unicode__(self):
+        return _("%(user)s's response to %(poll)s") % dict(
+            user=self.user,poll=self.poll)
+        
 class Responses(dd.Table):
     model = 'polls.Response'
     detail_layout = """
@@ -254,6 +258,14 @@ class Responses(dd.Table):
     poll 
     """
     
+    @classmethod
+    def get_detail_title(self,ar,obj):
+        txt = _("response to %(poll)s") % dict(poll=obj.poll)
+        if obj.user == ar.get_user():
+            return  _("My %s") % txt
+        return _("%(user)s's %(what)s") % dict(user=obj.user,what=txt)
+        
+        
 class MyResponses(dd.ByUser,Responses):
     column_names = 'created poll state remark *'
         
@@ -279,24 +291,22 @@ class Answer(dd.Model):
     def choice_choices(cls,question):
         return question.choiceset.choices.all()
         
-    @dd.action()
-    def select_choice(self,ar,**kw):
-        #~ assert self == ar.selected_rows[0]
-        print 20131016, self, ar.selected_rows, ar.actor
-        return kw
+    #~ @dd.action()
+    #~ def select_choice(self,ar,**kw):
+        #~ print 20131016, self, ar.selected_rows, ar.actor
+        #~ return kw
     
-    @dd.displayfield(_("Select your answer"))
+    @dd.displayfield(_("My answer"))
     def answer_buttons(self,ar):
-        if self.choice is not None:
-            return E.b(unicode(self.choice))
         l = []
-        for choice in self.question.choiceset.choices.all():
-            l.append(self.select_choice.as_button_elem(ar.request,unicode(choice)))
-            #~ l.append(ar.action_button(ba,obj))
-        #~ for ba in ar.actor.get_workflow_actions(ar,obj):
-            #~ l.append(sep)
-            #~ l.append(ar.action_button(ba,obj))
-            #~ sep = ' '
+        if self.choice is None:
+            kw = dict(title=_("Select this value"))
+            for c in self.question.choiceset.choices.all():
+                l.append(ar.put_button(self,unicode(c),dict(choice=c),**kw))
+                #~ l.append(self.select_choice.as_button_elem(ar.request,unicode(c)))
+        else:
+            l.append(E.b(unicode(self.choice)))
+            l.append(ar.put_button(self,_("Undo"),dict(choice=None),title=_("Undo your vote")))
         return E.p(*join_elems(l))
     
 
@@ -309,7 +319,8 @@ class AnswersByResponse(Answers):
     column_names = 'question:40 answer_buttons:30 remark:20 *'
     variable_row_height = True
     auto_fit_column_widths = True
-    
+
+   
     
 class PollResult(Questions):
     master_key = 'poll'

@@ -502,7 +502,7 @@ class GoneVisitors(Visitors):
     label = _("Gone visitors")
     help_text = _("Shows the visitors who have gone.")
     visitor_state = GuestStates.gone
-    order_by = ['gone_since-']
+    order_by = ['-gone_since']
     required = dd.Required(user_groups='reception')
     
     @dd.displayfield(_('Since'))

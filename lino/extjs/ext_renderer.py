@@ -232,8 +232,6 @@ class ExtRenderer(HtmlRenderer):
                 ba.action.action_param_defaults(ar,obj)))
         return kw
       
-        
-        
     def action_button(self,obj,ar,ba,label=None,**kw):
         """
         ``kw`` may contain additional html attributes like `style`
@@ -290,6 +288,22 @@ class ExtRenderer(HtmlRenderer):
         #~ if a.action.help_text:
             #~ return self.href_button(url,label,a.action.help_text)
         #~ return self.href_button(url,label)
+        
+    def put_button(self,ar,obj,text,data,**kw):
+        
+        put_data = dict()
+        for k,v in data.items():
+            fld = obj._meta.get_field(k)
+            fld._lino_atomizer.value2dict(v,put_data,obj)
+        
+        url = 'javascript:Lino.put(%s,%s,%s)' % (
+            py2js(ar.requesting_panel),
+            py2js(obj.pk),
+            py2js(put_data))
+        return self.href_button(url,text,**kw)            
+
+        
+        
         
     def action_call_on_instance(self,obj,request,ba,**st):
         if request is None:

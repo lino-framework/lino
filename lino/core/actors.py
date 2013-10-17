@@ -1124,6 +1124,27 @@ class Actor(actions.Parametrizable):
         return self.label
         
     @classmethod
+    def get_detail_title(self,ar,obj):
+        """
+        Return the string to use when building the title of a 
+        detail window on a given row of this actor.
+        """
+        return unicode(obj)
+    
+    @classmethod
+    def get_choices_text(self,obj,request,field):
+        """
+        Return the text to be displayed in a combo box 
+        for the field `field` of this actor to represent 
+        the choice `obj`.
+        Override this if you want a customized representation.
+        For example :class:`lino_faggio.models.InvoiceItems`
+        """
+        return obj.get_choices_text(request,self,field)
+
+        
+        
+    @classmethod
     def get_title(self,ar):
         """
         Return the title of this Table for the given request `ar`.
@@ -1510,17 +1531,6 @@ class Actor(actions.Parametrizable):
         """
         return []
 
-
-    @classmethod
-    def get_choices_text(self,obj,request,field):
-        """
-        Return the text to be displayed in a combo box 
-        for the field `field` of this actor to represent 
-        the choice `obj`.
-        Override this if you want a customized representation.
-        For example :class:`lino_faggio.models.InvoiceItems`
-        """
-        return obj.get_choices_text(request,self,field)
 
     #~ @fields.displayfield(_("Actions"))
     #~ def action_buttons(self,obj,ar):

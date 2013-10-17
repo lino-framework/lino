@@ -194,7 +194,7 @@ def navinfo(qs,elem):
     if isinstance(qs,list):
         LEN = len(qs)
         id_list = [obj.pk for obj in qs]
-        logger.info('20130714')
+        #~ logger.info('20130714')
     else:
         LEN = qs.count()
         # this algorithm is clearly quicker on queries with a few thousand rows

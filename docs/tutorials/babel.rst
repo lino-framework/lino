@@ -92,10 +92,21 @@ The `demo` fixture
 
 .. literalinclude:: ../../lino/projects/babel_tutorial/fixtures/demo.py
 
-Note how the application developer doesn't know which 
-will be the :attr:`lino.Lino.languages` setting at runtime.
+Note how the application developer doesn't need to know which 
+will be the :setting:`languages` setting at runtime.
 
 Of course the fixture above supposes a single person who knows 
 all the languages, but that's just because we are simplifying. 
 In reality you can do it as sophisticated as you want, 
 reading the content from different sources.
+
+
+
+Related work
+------------
+
+- `django-datatrans <https://pypi.python.org/pypi/django-datatrans>`_ (Jef Geskens)
+- `django-localeurl <https://pypi.python.org/pypi/django-localeurl>`_ (Carl Meyer)
+- `django-transmeta <https://pypi.python.org/pypi/django-transmeta>`_ (Marc Garcia, Manuel Saelices, Pablo Martin)
+
+TODO: write comparisons about these

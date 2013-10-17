@@ -189,12 +189,15 @@ def elem2rec_detailed(ar,elem,**rec):
     rh = ar.ah
     rec = elem2rec1(ar,rh,elem,**rec)
     if ar.actor.hide_top_toolbar:
-        rec.update(title=unicode(elem))
+        rec.update(title=ar.get_detail_title(elem))
     else:
         #~ print(ar.get_title())
         #~ print(dd.obj2str(elem))
         #~ print(repr(unicode(elem)))
-        rec.update(title=ar.get_title() + u" » " + unicode(elem))
+        if True:  # before 20131017
+            rec.update(title=ar.get_title() + u" » " + ar.get_detail_title(elem))
+        else: # todo
+            rec.update(title=E.tostring(ar.href_to_request(ar)) + u" » " + ar.get_detail_title(elem))
     rec.update(id=elem.pk)
     rec.update(disable_delete=rh.actor.disable_delete(elem,ar))
     if rh.actor.show_detail_navigator:
@@ -262,7 +265,7 @@ def form2obj_and_save(ar,data,elem,is_new,restful,file_upload=False): # **kw2sav
     #~ self = settings.SITE.ui
     request = ar.request
     rh = ar.ah
-    #~ logger.info('20130321 form2obj_and_save %r', data)
+    #~ logger.info('20131017 form2obj_and_save %r', data)
     #~ print 'form2obj_and_save %r' % data
     
     #~ logger.info('20130418 before calling store.form2obj , elem is %s' % dd.obj2str(elem))

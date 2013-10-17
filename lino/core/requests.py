@@ -361,6 +361,16 @@ class BaseRequest(object):
     def action_button(self,ba,obj,*args,**kw): return self.renderer.action_button(obj,self,ba,*args,**kw)
     def insert_button(self,*args,**kw): return self.renderer.insert_button(self,*args,**kw)
     
+    def get_detail_title(self,elem):
+        return self.actor.get_detail_title(self,elem)
+    
+    def put_button(self,obj,text,data,**kw):
+        """
+        Render a button which when clicked will send a PUT 
+        for the given row with the specified data.
+        """
+        return self.renderer.put_button(self,obj,text,data,**kw)
+    
     def as_button(self,*args,**kw): 
         """
         Return a button which when activated would execute (a copy of) this request.

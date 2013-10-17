@@ -28,7 +28,7 @@ from django.utils.translation import pgettext_lazy
 from django.utils import translation
 
 from babel.dates import format_datetime, format_date
-from north import to_locale
+from north.utils import to_locale
 
 from lino.core import actions
 from lino import dd

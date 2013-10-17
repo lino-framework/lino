@@ -2248,6 +2248,9 @@ Lino.call_ajax_action = function(panel,method,url,p,actionName,step,on_confirm,o
   });
 };
 
+
+
+
 Lino.row_action_handler = function(actionName,hm,pp) {
   var p = {};
   var fn = function(panel,btn,step) {
@@ -2308,6 +2311,26 @@ Lino.run_row_action = function(requesting_panel,url,meth,pk,actionName,preproces
     Lino.call_ajax_action(panel,meth,url,p,actionName,step,fn);
   }
   fn(panel,null,null);
+}
+
+Lino.put = function(requesting_panel,pk,data) {
+    var panel = Ext.getCmp(requesting_panel);
+    var p = {};
+    p.{{ext_requests.URL_PARAM_ACTION_NAME}} = 'put'; // SubmitDetail.action_name
+    Ext.apply(p,data);
+    var req = {
+        params:p
+        ,waitMsg: 'Saving your data...'
+        ,scope: panel
+        ,success: Lino.action_handler( panel, function(result) { 
+            panel.refresh();
+        })
+        ,failure: Lino.ajax_error_handler(panel)
+    };
+    req.method = 'PUT';
+    req.url = '{{settings.SITE.build_admin_url("api")}}' + panel.ls_url + '/' + pk;
+    panel.loadMask.show(); // 20120211
+    Ext.Ajax.request(req);
 }
 
 
@@ -5501,10 +5524,12 @@ Lino.CalendarApp = function() { return {
                   listeners: {
                       'select': {
                           fn: function(dp, dt){
+                              console.log(20131017,dp);
                               //~ Lino.calendarPanel.setStartDate(dt);
-                              this.setStartDate(dt);
+                              //~ cap.setStartDate(dt);
+                              Ext.getCmp('app-calendar').setStartDate(dt);
                           },
-                          scope: this
+                          //~ scope: this
                       }
                   }
               //~ },{ 
@@ -5516,22 +5541,22 @@ Lino.CalendarApp = function() { return {
                     //~ listeners: { click: }
                   //~ })
                 //~ ]
-              },{ 
-                layout:'form',
-                items: [
-                  this.team_view_button = new Ext.Button({
-                    text:"{{_('Team view')}}",
-                    enableToggle:true,
-                    pressed:false,
-                    toggleHandler: function(btn,state) { 
-                      //~ console.log('20120716 teamView.toggle()');
-                      this.event_store.setBaseParam('{{ext_requests.URL_PARAM_TEAM_VIEW}}',state);
-                      this.event_store.load();
-                      //~ Lino.eventStore.load({params:{$ext_requests.URL_PARAM_TEAM_VIEW:state}});
-                      //~ console.log("team view",state);
-                    }
-                  })
-                ]
+              //~ },{ 
+                //~ layout:'form',
+                //~ items: [
+                  //~ this.team_view_button = new Ext.Button({
+                    //~ text:"{{_('Team view')}}",
+                    //~ enableToggle:true,
+                    //~ pressed:false,
+                    //~ toggleHandler: function(btn,state) { 
+                      //~ // console.log('20120716 teamView.toggle()');
+                      //~ this.event_store.setBaseParam('{{ext_requests.URL_PARAM_TEAM_VIEW}}',state);
+                      //~ this.event_store.load();
+                      //~ // Lino.eventStore.load({params:{$ext_requests.URL_PARAM_TEAM_VIEW:state}});
+                      //~ // console.log("team view",state);
+                    //~ }
+                  //~ })
+                //~ ]
               },{
                   xtype: 'extensible.calendarlist',
                   store: this.calendar_store,

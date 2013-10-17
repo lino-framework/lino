@@ -189,6 +189,9 @@ def render_from_request(request,template_name,**context):
 
 
 class DjangoJinjaTemplate:
+    """
+    used eg by /lino/lino/config/500.html
+    """
   
     def __init__(self,jt):
         self.jt = jt
@@ -201,6 +204,7 @@ class DjangoJinjaTemplate:
             context_dict.update(d)
         extend_context(context_dict)
         context_dict.setdefault('request',None)
+        context_dict.setdefault('ar',requests.BaseRequest(renderer=settings.SITE.ui.ext_renderer))
         #~ logger.info("20130118 %s",context_dict.keys())
         return self.jt.render(context_dict)  
   

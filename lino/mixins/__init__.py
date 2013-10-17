@@ -382,6 +382,9 @@ if settings.SITE.user_model:
     class ByUser(dbtables.Table):
         master_key = 'user'
         #~ can_view = perms.is_authenticated
+        #~ details_of_master_template = _("%(details)s of %(master)s")
+        details_of_master_template = _("%(details)s")
+        
         
         @classmethod
         def get_actor_label(self):

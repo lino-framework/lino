@@ -270,6 +270,7 @@ class Subscription(mixins.UserAuthored):
         
     
     class Meta:
+        abstract = settings.SITE.is_abstract_model('cal.Subscription')
         verbose_name = _("Subscription")
         verbose_name_plural = _("Subscriptions")
         
@@ -278,6 +279,7 @@ class Subscription(mixins.UserAuthored):
     other_user = dd.ForeignKey('users.User',blank=True,null=True,
         help_text=_("If nonempty, show only events of that user"))
     event_type = dd.ForeignKey('cal.EventType',blank=True,null=True)
+    room = dd.ForeignKey('cal.Room',blank=True,null=True)
     team = dd.ForeignKey('users.Team',blank=True,null=True)
     #~ calendar = dd.ForeignKey('cal.Calendar',help_text=_("""\
 #~ The calendar you want to subscribe to.
@@ -289,6 +291,8 @@ Whether this subscription should initially be hidden in your calendar panel.""")
 
     def contains_event(self,event):
         if self.event_type is not None and event.event_type != self.event_type:
+            return False
+        if self.room is not None and event.room != self.room:
             return False
         if self.other_user is not None and event.user != self.other_user:
             return False
@@ -310,7 +314,7 @@ class Subscriptions(dd.Table):
     """
     detail_layout = """
     label user color
-    event_type team other_user
+    event_type team other_user room
     description
     """
     
@@ -476,6 +480,9 @@ class EventGenerator(mixins.UserAuthored):
             yield sc.holiday_event_type
         
     def update_cal_until(self):
+        """Return the limit date until which to generate events.
+        None means "no limit" (which de facto becomes `SiteConfig.farest_future`)
+        """
         return None
         #~ raise NotImplementedError()
         #~ return self.date_ended or self.applies_until
@@ -1274,6 +1281,21 @@ Indicates that this Event shouldn't prevent other Events at the same time."""))
     @dd.virtualfield(dd.DisplayField(_("Reminder")))
     def reminder(self,request): return False
     #~ reminder.return_type = dd.DisplayField(_("Reminder"))
+    
+    @dd.virtualfield(models.ForeignKey('cal.Subscription'))
+    def subscription(self,ar):
+        """
+        Returns the first subscription which contains this event,
+        or None if no subscription is found.
+        Needed for ext.ensible calendar panel.
+        Only the subscriptions of the requesting user
+        """
+        for sub in Subscription.objects.filter(user=ar.get_user()):
+            if sub.contains_event(self):
+                return sub
+        return None
+        
+    
 
     def get_print_language(self):
         if settings.SITE.project_model is not None and self.project:
@@ -2438,13 +2460,6 @@ with the possibility to switch between daily, weekly, monthly view.""")
         #~ overrides the database field of same name
         
       
-        @dd.virtualfield(models.ForeignKey('cal.Subscription'))
-        def subscription(cls,self,ar):
-            for sub in Subscription.objects.filter(user=ar.get_user()):
-                if sub.contains_event(self):
-                    return sub
-            return None
-        
         @classmethod
         def get_title_tags(self,ar):
             for t in super(PanelEvents,self).get_title_tags(ar):
