@@ -13,7 +13,10 @@
 ## along with Lino; if not, see <http://www.gnu.org/licenses/>.
 
 """
-The :xfile:`models.py` module for the :mod:`lino.modlib.cal` app.
+Part of the :xfile:`models` module for the :mod:`lino.modlib.cal` app.
+
+Defines the :class:`EventType` and :class:`Event` models and their tables.
+
 """
 
 from __future__ import unicode_literals
@@ -49,7 +52,6 @@ from lino.utils import AttrDict
 from lino.utils import ONE_DAY
 from lino.core import constants
 
-from lino.utils.xmlgen.html import E
 
 from lino.modlib.cal.utils import (
     DurationUnits, Recurrencies, 
@@ -58,88 +60,34 @@ from lino.modlib.cal.utils import (
     Weekdays, AccessClasses, CalendarAction)
     
 def format_time(t):
+    if t is None: return ''
     return t.strftime(settings.SITE.time_format_strftime)
+    
+    
+    
     
     
 contacts = dd.resolve_app('contacts')
 postings = dd.resolve_app('postings')
 outbox = dd.resolve_app('outbox')
 
-#~ from lino.modlib.users.models import Membership
-Membership = dd.resolve_model('users.Membership')
+
+from .models import StartedSummaryDescription
+from .models import Started, Ended
+from .models import Component
+from .models import Priority
+
+from .models_calendar import Calendars
+from .models_calendar import Subscription
 
 
-from lino.modlib.cal.workflows import (
+#~ Membership = dd.resolve_model('users.Membership')
+#~ Subscription = dd.resolve_model('cal.Subscription')
+
+
+from .workflows import (
     TaskStates, EventStates, GuestStates)
     
-from lino.modlib.cal.workflows import take    
-
-
-class CalendarType(object):
-    
-    def validate_calendar(self,cal):
-        pass
-        
-class LocalCalendar(CalendarType):
-    label = "Local Calendar"
-  
-class GoogleCalendar(CalendarType):
-    label = "Google Calendar"
-    def validate_calendar(self,cal):
-        if not cal.url_template:
-            cal.url_template = \
-            "https://%(username)s:%(password)s@www.google.com/calendar/dav/%(username)s/"
-  
-CALENDAR_CHOICES = []
-CALENDAR_DICT = {}
-
-def register_calendartype(name,instance):
-    CALENDAR_DICT[name] = instance
-    CALENDAR_CHOICES.append((name,instance.label))
-    
-register_calendartype('local',LocalCalendar())
-register_calendartype('google',GoogleCalendar())
-    
-COLOR_CHOICES = [i + 1 for i in range(32)]
-  
-from django.core.validators import MaxValueValidator
-from django.core.validators import MinValueValidator
-
-class RemoteCalendar(dd.Sequenced):
-    """
-    Remote calendars will be synchronized by
-    :mod:`lino.modlib.cal.management.commands.watch_calendars`,
-    and local modifications will be sent back to the remote calendar.
-    """
-    class Meta:
-        abstract = settings.SITE.is_abstract_model('cal.RemoteCalendar')
-        verbose_name = _("Remote Calendar")
-        verbose_name_plural = _("Remote Calendars")
-        ordering = ['seqno']
-        
-    type = models.CharField(_("Type"),max_length=20,
-        default='local',
-        choices=CALENDAR_CHOICES)
-    url_template = models.CharField(_("URL template"),
-        max_length=200,blank=True) # ,null=True)
-    username = models.CharField(_("Username"),
-        max_length=200,blank=True) # ,null=True)
-    password = dd.PasswordField(_("Password"),
-        max_length=200,blank=True) # ,null=True)
-    readonly = models.BooleanField(_("read-only"),default=False)
-    
-    def get_url(self):
-        if self.url_template:
-            return self.url_template % dict(
-              username=self.username,
-              password=self.password)
-        return ''
-                    
-    def save(self,*args,**kw):
-        ct = CALENDAR_DICT.get(self.type)
-        ct.validate_calendar(self)
-        super(RemoteCalendar,self).save(*args,**kw)
-
 
 class EventType(dd.BabelNamed,dd.Sequenced,dd.PrintableType,outbox.MailableType):
     """
@@ -246,137 +194,6 @@ class EventTypes(dd.Table):
 
 
 
-
-class Subscription(mixins.UserAuthored):
-    """
-    A Suscription is when a User subscribes to some list of events.
-    It corresponds to what the extensible CalendarPanel calls "Calendars"
-    
-    :user: points to the author (recipient) of this subscription
-    :other_user: 
-    
-    """
-    
-    manager_level_field = 'office_level'
-    
-    label = models.CharField(_("Label"),max_length=200)
-    description = dd.RichTextField(_("Description"),blank=True,format='html')
-    
-    color = models.IntegerField(
-        _("color"),default=1,
-        validators=[MinValueValidator(1), MaxValueValidator(32)]
-        )
-        #~ choices=COLOR_CHOICES)
-        
-    
-    class Meta:
-        abstract = settings.SITE.is_abstract_model('cal.Subscription')
-        verbose_name = _("Subscription")
-        verbose_name_plural = _("Subscriptions")
-        
-    #~ quick_search_fields = ('user__username','user__first_name','user__last_name')
-
-    other_user = dd.ForeignKey('users.User',blank=True,null=True,
-        help_text=_("If nonempty, show only events of that user"))
-    event_type = dd.ForeignKey('cal.EventType',blank=True,null=True)
-    room = dd.ForeignKey('cal.Room',blank=True,null=True)
-    team = dd.ForeignKey('users.Team',blank=True,null=True)
-    #~ calendar = dd.ForeignKey('cal.Calendar',help_text=_("""\
-#~ The calendar you want to subscribe to.
-#~ You can subscribe to *non-private* calendars of *other* users."""))
-
-    is_hidden = models.BooleanField(
-        _("hidden"),default=False,help_text=_("""\
-Whether this subscription should initially be hidden in your calendar panel."""))
-
-    def contains_event(self,event):
-        if self.event_type is not None and event.event_type != self.event_type:
-            return False
-        if self.room is not None and event.room != self.room:
-            return False
-        if self.other_user is not None and event.user != self.other_user:
-            return False
-        return True
-
-    #~ def add_events_filter(self,qs,ar):
-        #~ """
-        #~ Add filter criteria to the specified Queryset (on Event model)
-        #~ """
-    
-
-
-class Subscriptions(dd.Table):
-    required = dd.required(user_groups='office',user_level='manager')
-    model = 'cal.Subscription'
-    insert_layout = """
-    label
-    event_type
-    """
-    detail_layout = """
-    label user color
-    event_type team other_user room
-    description
-    """
-    
-class MySubscriptions(Subscriptions,mixins.ByUser):
-    pass
-
-#~ class SubscriptionsByCalendar(Subscriptions):
-    #~ master_key = 'calendar'
-
-class SubscriptionsByUser(Subscriptions):
-    required = dd.required(user_groups='office')
-    master_key = 'user'
-
-#~ class MySubscriptions(Subscriptions,mixins.ByUser):
-    #~ pass
-    
-
-#~ ROOM_BASES = (dd.BabelNamed,contacts.ContactRelated):
-#~ class Room(ROOM_BASES):
-#~ class Room(dd.BabelNamed,contacts.ContactRelated):
-class Room(dd.BabelNamed):
-    """
-    A location where Events can happen.
-    For a given Room you can see the :class:`EventsByRoom` 
-    that happened (or will happen) there.
-    A Room is BabelNamed (has a multilingual name).
-    """
-    class Meta:
-        abstract = settings.SITE.is_abstract_model('cal.Room')
-        verbose_name = _("Room")
-        verbose_name_plural = _("Rooms")
-        
-    #~ def __unicode__(self):
-        #~ s = dd.BabelNamed.__unicode__(self)
-        #~ if self.company and self.company.city: 
-            #~ s = '%s (%s)' % (self.company.city,s)
-        #~ return s
-        
-
-        
-  
-class Rooms(dd.Table):
-    help_text = _("List of rooms where calendar events can happen.")
-    required = dd.required(user_groups='office',user_level='manager')
-    model = 'cal.Room'
-    detail_layout = """
-    id name 
-    cal.EventsByRoom
-    """
-    
-class Priority(dd.BabelNamed):
-    "The priority of a Task or Event."
-    class Meta:
-        verbose_name = _("Priority")
-        verbose_name_plural = _('Priorities')
-    ref = models.CharField(max_length='1')
-
-class Priorities(dd.Table):
-    help_text = _("List of possible priorities of calendar events.")
-    required = dd.required(user_groups='office',user_level='manager')
-    model = Priority
-    column_names = 'name *'
 
 
 #~ class EventType(mixins.PrintableType,outbox.MailableType,dd.BabelNamed):
@@ -628,11 +445,12 @@ class EventGenerator(mixins.UserAuthored):
                     event_type=event_type,
                     start_time=rset.start_time,
                     end_time=rset.end_time)
+                    
                 for cal in self.get_conflict_calendars():
                     if cal is not None:
                         while cal.conflicts_with_event(we):
                             date = rset.get_next_date(date)
-                            if date > until: return wanted
+                            if date is None or date > until: return wanted
                             we.start_date = date
                     
                 if rset.end_date is None:
@@ -653,97 +471,9 @@ class EventGenerator(mixins.UserAuthored):
         
 
 
-
-class Started(dd.Model):
-    class Meta:
-        abstract = True
-        
-    start_date = models.DateField(
-        blank=True,null=True,
-        verbose_name=_("Start date")) # iCal:DTSTART
-    start_time = models.TimeField(
-        blank=True,null=True,
-        verbose_name=_("Start time"))# iCal:DTSTART
-    #~ start = dd.FieldSet(_("Start"),'start_date start_time')
-
-    def save(self,*args,**kw):
-        """
-        Fills default value "today" to start_date
-        """
-        if not self.start_date:
-            self.start_date = datetime.date.today()
-        super(Started,self).save(*args,**kw)
-        
-    def set_datetime(self,name,value):
-        """
-        Given a datetime `value`, update the two corresponding 
-        fields `FOO_date` and `FOO_time` 
-        (where FOO is specified in `name` which must be 
-        either "start" or "end").
-        """
-        #~ logger.info("20120119 set_datetime(%r)",value)
-        setattr(self,name+'_date',value.date())
-        t = value.time()
-        if not t:
-            t = None
-        setattr(self,name+'_time',t)
-        
-    def get_datetime(self,name,altname=None):
-        """
-        Return a `datetime` value from the two corresponding 
-        date and time fields.
-        `name` can be 'start' or 'end'.
-        """
-        d = getattr(self,name+'_date')
-        t = getattr(self,name+'_time')
-        if not d and altname is not None: 
-            d = getattr(self,altname+'_date')
-            if not t and altname is not None: 
-                t = getattr(self,altname+'_time')
-        if not d: return None
-        if t:
-            return datetime.datetime.combine(d,t)
-        else:
-            return datetime.datetime(d.year,d.month,d.day)
-        
-class Ended(dd.Model):
-    class Meta:
-        abstract = True
-    end_date = models.DateField(
-        blank=True,null=True,
-        verbose_name=_("End Date"))
-    end_time = models.TimeField(
-        blank=True,null=True,
-        verbose_name=_("End Time"))
-    #~ end = dd.FieldSet(_("End"),'end_date end_time')
-    
   
     
   
-class StartedSummaryDescription(Started):
-    """
-    """
-
-    class Meta:
-        abstract = True
-        
-    summary = models.CharField(_("Summary"),max_length=200,blank=True) # iCal:SUMMARY
-    description = dd.RichTextField(_("Description"),blank=True,format='html')
-    
-    def __unicode__(self):
-        return self._meta.verbose_name + " #" + str(self.pk)
-
-    def summary_row(self,ar,**kw):
-        elems = list(super(StartedSummaryDescription,self).summary_row(ar,**kw))
-        
-        #~ html = super(StartedSummaryDescription,self).summary_row(ar,**kw)
-        if self.summary:
-            elems.append(': %s' % self.summary)
-            #~ html += '&nbsp;: %s' % cgi.escape(force_unicode(self.summary))
-            #~ html += ui.href_to(self,force_unicode(self.summary))
-        elems += [_(" on "), dbutils.dtos(self.start_date)]
-        return elems
-        
     
 class RecurrenceSet(Started,Ended):
     """
@@ -828,12 +558,16 @@ class RecurrenceSet(Started,Ended):
     #~ exrules = models.TextField(_("Exclusion Rules"),blank=True)
     
     def get_next_date(self,date):
+        if self.every_unit == Recurrencies.once:
+            return None
         if self.every_unit == Recurrencies.per_weekday:
             for i in range(7):
                 date += ONE_DAY
                 if self.is_available_on(date):
                     return date
-            raise Exception("Failed to find available weekday.")
+            #~ raise Exception("Failed to find available weekday.")
+            logger.info("%s : get_next_date() failed to find available weekday.",self)
+            return None
         return self.every_unit.add_duration(date,self.every)
     
     def is_available_on(self,date):
@@ -899,120 +633,6 @@ class RecurrentEvents(dd.Table):
     
 
 
-class Component(StartedSummaryDescription,
-                 mixins.ProjectRelated,
-                 mixins.UserAuthored,
-                 mixins.Controllable,
-                 mixins.CreatedModified):
-    """
-    Abstract base class for :class:`Event` and :class:`Task`.
-    
-    """
-    workflow_state_field = 'state'
-    
-    manager_level_field = 'office_level'
-    
-    class Meta:
-        abstract = True
-        
-    access_class = AccessClasses.field(blank=True,help_text=_("""\
-Whether this is private, public or between.""")) # iCal:CLASS
-    #~ access_class = models.ForeignKey(AccessClass,
-        #~ blank=True,null=True,
-        #~ help_text=_("""\
-#~ Indicates whether this is private or public (or somewhere between)."""))
-    sequence = models.IntegerField(_("Revision"),default=0)
-    #~ alarm_value = models.IntegerField(_("Value"),null=True,blank=True,default=1)
-    #~ alarm_unit = DurationUnit.field(_("Unit"),blank=True,
-        #~ default=DurationUnit.days.value) # ,null=True) # note: it's a char field!
-    #~ alarm = dd.FieldSet(_("Alarm"),'alarm_value alarm_unit')
-    #~ dt_alarm = models.DateTimeField(_("Alarm time"),
-        #~ blank=True,null=True,editable=False)
-        
-    auto_type = models.IntegerField(null=True,blank=True,editable=False) 
-    
-    #~ user_modified = models.BooleanField(_("modified by user"),
-        #~ default=False,editable=False) 
-    
-    #~ rset = models.ForeignKey(RecurrenceSet,
-        #~ verbose_name=_("Recurrence Set"),
-        #~ blank=True,null=True)
-    #~ rparent = models.ForeignKey('self',verbose_name=_("Recurrence parent"),blank=True,null=True)
-    #~ rdate = models.TextField(_("Recurrence date"),blank=True)
-    #~ exdate = models.TextField(_("Excluded date(s)"),blank=True)
-    #~ rrules = models.TextField(_("Recurrence Rules"),blank=True)
-    #~ exrules = models.TextField(_("Exclusion Rules"),blank=True)
-    
-    #~ def get_mailable_contacts(self):
-        #~ yield ('to',self.project)
-    
-        
-        
-    def save(self,*args,**kw):
-        #~ if not self.calendar:
-            #~ self.calendar = self.user.calendar or settings.SITE.site_config.default_calendar
-        if self.user is not None and self.access_class is None:
-            self.access_class = self.user.access_class
-            #~ self.access_class = AccessClasses.public
-        super(Component,self).save(*args,**kw)
-        
-    def on_duplicate(self,ar,master):
-        self.auto_type = None
-        
-    def disabled_fields(self,ar):
-        rv = super(Component,self).disabled_fields(ar)
-        if self.auto_type:
-            #~ return settings.SITE.TASK_AUTO_FIELDS
-            rv |= self.DISABLED_AUTO_FIELDS
-        return rv
-        
-    def get_uid(self):
-        """
-        This is going to be used when sending 
-        locally created components to a remote calendar.
-        """
-        #~ if self.uid:
-            #~ return self.uid
-        if not settings.SITE.uid:
-            raise Exception('Cannot create local calendar components because settings.SITE.uid is empty.')
-        return "%s@%s" % (self.pk,settings.SITE.uid)
-            
-
-    #~ def on_user_change(self,request):
-        #~ raise NotImplementedError
-        #~ self.user_modified = True
-        
-    #~ def summary_row(self,ui,rr,**kw):
-        #~ html = contacts.PartnerDocument.summary_row(self,ui,rr,**kw)
-        #~ if self.summary:
-            #~ html += '&nbsp;: %s' % cgi.escape(force_unicode(self.summary))
-        #~ html += _(" on ") + dbutils.dtos(self.start_date)
-        #~ return html
-        
-    def summary_row(self,ar,**kw):
-        #~ logger.info("20120217 Component.summary_row() %s", self)
-        #~ if self.owner and not self.auto_type:
-        #~ html = ui.ext_renderer.href_to(self)
-        html = [ar.obj2html(self)]
-        if self.start_time:
-            #~ html += _(" at ") + unicode(self.start_time)
-            html += [_(" at "), self.start_time.strftime(settings.SITE.time_format_strftime) ]
-        if self.state:
-            html += [' [%s]' % force_unicode(self.state)]
-        if self.summary:
-            html += [': %s' % force_unicode(self.summary)]
-            #~ html += ui.href_to(self,force_unicode(self.summary))
-        #~ html += _(" on ") + dbutils.dtos(self.start_date)
-        #~ if self.owner and not self.owner.__class__.__name__ in ('Person','Company'):
-            #~ html += " (%s)" % reports.summary_row(self.owner,ui,rr)
-        if self.project is not None:
-            html.append(" (%s)" % self.project.summary_row(ar,**kw))
-            #~ print 20120217, self.project.__class__, self
-            #~ html += " (%s)" % self.project.summary_row(ui)
-        return html
-        #~ return super(Event,self).summary_row(ui,rr,**kw)
-        
-#~ Component.owner.verbose_name = _("Automatically created by")
 
 class ExtAllDayField(dd.VirtualField):
     """
@@ -1282,18 +902,24 @@ Indicates that this Event shouldn't prevent other Events at the same time."""))
     def reminder(self,request): return False
     #~ reminder.return_type = dd.DisplayField(_("Reminder"))
     
-    @dd.virtualfield(models.ForeignKey('cal.Subscription'))
-    def subscription(self,ar):
+    def get_calendar(self):
         """
-        Returns the first subscription which contains this event,
+        Returns the Calendar which contains this event,
         or None if no subscription is found.
         Needed for ext.ensible calendar panel.
-        Only the subscriptions of the requesting user
+
+        The default implementation returns None.
+        Override this if your app uses Calendars.
         """
-        for sub in Subscription.objects.filter(user=ar.get_user()):
-            if sub.contains_event(self):
-                return sub
+        #~ for sub in Subscription.objects.filter(user=ar.get_user()):
+            #~ if sub.contains_event(self):
+                #~ return sub
         return None
+    
+    
+    @dd.virtualfield(models.ForeignKey('cal.Calendar'))
+    def calendar(self,ar):
+        return self.get_calendar()
         
     
 
@@ -1622,502 +1248,6 @@ if settings.SITE.user_model:
             #~ super(MyEventsToday,self).setup_request(rr)
             
 
-
-class GuestRole(mixins.PrintableType,outbox.MailableType,dd.BabelNamed):
-    templates_group = 'cal/Guest'
-    
-    class Meta:
-        verbose_name = _("Guest Role")
-        verbose_name_plural = _("Guest Roles")
-
-
-class GuestRoles(dd.Table):
-    help_text = _("""The role of a guest expresses what the 
-    partner is going to do there.""")
-    model = GuestRole
-    required = dd.required(user_groups='office',user_level='admin')
-    detail_layout = """
-    id name
-    build_method template email_template attach_to_email
-    cal.GuestsByRole
-    """
-    
-
-class Guest(mixins.TypedPrintable,outbox.Mailable):
-    
-    workflow_state_field = 'state'
-    
-    allow_cascaded_delete = ['event']
-    
-    class Meta:
-        verbose_name = _("Guest")
-        verbose_name_plural = _("Guests")
-        
-        
-    event = models.ForeignKey('cal.Event',
-        verbose_name=_("Event")) 
-        
-    partner = dd.ForeignKey('contacts.Partner')
-
-    role = models.ForeignKey('cal.GuestRole',
-        verbose_name=_("Role"),
-        blank=True,null=True) 
-        
-    #~ state = GuestStates.field(blank=True)
-    state = GuestStates.field(default=GuestStates.invited)
-    #~ status = models.ForeignKey(GuestStatus,verbose_name=_("Status"),blank=True,null=True)
-    
-    #~ confirmed = models.DateField(
-        #~ blank=True,null=True,
-        #~ verbose_name=_("Confirmed"))
-
-    remark = models.CharField(
-        _("Remark"),max_length=200,blank=True)
-        
-    def get_user(self):
-        # used to apply `owner` requirement in GuestState
-        return self.event.user
-    user = property(get_user)
-
-    #~ def __unicode__(self):
-        #~ return self._meta.verbose_name + " #" + str(self.pk)
-        
-    def __unicode__(self):
-        return u'%s #%s ("%s")' % (self._meta.verbose_name,self.pk,self.event)
-
-    def get_printable_type(self):
-        return self.role
-        
-    def get_mailable_type(self):  
-        return self.role
-
-    def get_mailable_recipients(self):
-        yield ('to',self.partner)
-        
-    @dd.displayfield(_("Event"))
-    def event_summary(self,ar):
-        return ar.obj2html(self.event,self.event.get_event_summary(ar))
-        #~ return event_summary(self.event,ar.get_user())
-        
-    #~ def before_ui_save(self,ar,**kw):
-        #~ if not self.state:
-            #~ self.state = GuestStates.invited
-        #~ return super(Guest,self).before_ui_save(ar,**kw)
-        
-    #~ def on_user_change(self,request):
-        #~ if not self.state:
-            #~ self.state = GuestState.invited
-        
-
-    #~ def get_recipient(self):
-        #~ return self.partner
-    #~ recipient = property(get_recipient)
-        
-    #~ @classmethod
-    #~ def setup_report(cls,rpt):
-        #~ mixins.CachedPrintable.setup_report(rpt)
-        #~ outbox.Mailable.setup_report(rpt)
-        
-    #~ @dd.action(_("Invite"),required=dict(states=['']))
-    #~ def invite(self,ar):
-        #~ self.state = GuestState.invited
-        
-    #~ @dd.action(_("Confirm"),required=dict(states=['invited']))
-    #~ def confirm(self,ar):
-        #~ self.state = GuestState.confirmed
-    
-#~ class Guests(dd.Table,workflows.Workflowable):
-class Guests(dd.Table):
-    help_text = _("""A guest is a partner invited to an event.
-    """)
-    model = Guest
-    required = dd.required(user_groups='office',user_level='admin')
-    column_names = 'partner role workflow_buttons remark event *'
-    detail_layout = """
-    event partner role
-    state remark workflow_buttons
-    outbox.MailsByController
-    """
-    insert_layout = dd.FormLayout("""
-    event 
-    partner 
-    role
-    """,window_size=(60,'auto'))
-    
-    parameters = dd.ObservedPeriod(
-        user = dd.ForeignKey(settings.SITE.user_model,
-            verbose_name=_("Responsible user"),
-            blank=True,null=True,
-            help_text=_("Only rows managed by this user.")),
-        project = dd.ForeignKey(settings.SITE.project_model,
-            blank=True,null=True),
-        partner = dd.ForeignKey('contacts.Partner',
-            blank=True,null=True),
-        event_state = EventStates.field(blank=True,
-            verbose_name=_("Event state"),
-            help_text=_("Only rows having this event state.")),
-        guest_state = GuestStates.field(blank=True,
-            verbose_name=_("Guest state"),
-            help_text=_("Only rows having this guest state.")),
-    )
-    
-    params_layout = """start_date end_date user event_state guest_state
-    project partner"""
-    
-    @classmethod
-    def get_request_queryset(self,ar):
-        #~ logger.info("20121010 Clients.get_request_queryset %s",ar.param_values)
-        qs = super(Guests,self).get_request_queryset(ar)
-        
-        if isinstance(qs,list): return qs
-            
-        if ar.param_values.user:
-            qs = qs.filter(event__user=ar.param_values.user)
-        if settings.SITE.project_model is not None and ar.param_values.project:
-            qs = qs.filter(event__project=ar.param_values.project)
-
-        if ar.param_values.event_state:
-            qs = qs.filter(event__state=ar.param_values.event_state)
-            
-        if ar.param_values.guest_state:
-            qs = qs.filter(state=ar.param_values.guest_state)
-            
-        if ar.param_values.partner:
-            qs = qs.filter(partner=ar.param_values.partner)
-            
-        if ar.param_values.start_date:
-            if ar.param_values.end_date:
-                qs = qs.filter(event__start_date__gte=ar.param_values.start_date)
-            else:
-                qs = qs.filter(event__start_date=ar.param_values.start_date)
-        if ar.param_values.end_date:
-            qs = qs.filter(event__end_date__lte=ar.param_values.end_date)
-        return qs
-        
-    @classmethod
-    def get_title_tags(self,ar):
-        for t in super(Guests,self).get_title_tags(ar):
-            yield t
-        if ar.param_values.start_date or ar.param_values.end_date:
-            yield unicode(_("Dates %(min)s to %(max)s") % dict(
-              min=ar.param_values.start_date or'...',
-              max=ar.param_values.end_date or '...'))
-              
-        if ar.param_values.event_state:
-            yield unicode(ar.param_values.event_state)
-            
-        if ar.param_values.partner:
-            yield unicode(ar.param_values.partner)
-            
-        if ar.param_values.guest_state:
-            yield unicode(ar.param_values.guest_state)
-            
-        if ar.param_values.user:
-            yield unicode(ar.param_values.user)
-            
-        if settings.SITE.project_model is not None and ar.param_values.project:
-            yield unicode(ar.param_values.project)
-            
-    
-    
-        
-class GuestsByEvent(Guests):
-    master_key = 'event'
-    required = dd.required(user_groups='office')
-    auto_fit_column_widths = True
-    column_names = 'partner role workflow_buttons'
-
-class GuestsByRole(Guests):
-    master_key = 'role'
-    required = dd.required(user_groups='office')
-
-if settings.SITE.is_installed('contacts'):
-  
-    class GuestsByPartner(Guests):
-        label = _("Presences")
-        master_key = 'partner'
-        required = dd.required(user_groups='office')
-        column_names = 'event__when_text workflow_buttons'
-        auto_fit_column_widths = True
-  
-    class MyPresences(Guests):
-        required = dd.required(user_groups='office')
-        order_by = ['event__start_date','event__start_time']
-        label = _("My presences")
-        help_text = _("""Shows all my presences in calendar events, independently of their state.""")
-        column_names = 'event__start_date event__start_time event_summary role workflow_buttons remark *'
-        params_panel_hidden = True
-        
-        @classmethod
-        def get_request_queryset(self,ar):
-            #~ logger.info("20130809 MyPresences")
-            if ar.get_user().partner is None:
-                raise Warning("Action not available for users without partner")
-            return super(MyPresences,self).get_request_queryset(ar)
-            
-        @classmethod
-        def get_row_permission(cls,obj,ar,state,ba):
-            if ar.get_user().partner is None:
-                return False
-            return super(MyPresences,cls).get_row_permission(obj,ar,state,ba)
-        
-        @classmethod
-        def param_defaults(self,ar,**kw):
-            kw = super(MyPresences,self).param_defaults(ar,**kw)
-            kw.update(partner=ar.get_user().partner)
-            #~ kw.update(guest_state=GuestStates.invited)
-            #~ kw.update(start_date=datetime.date.today())
-            return kw
-              
-        #~ @classmethod
-        #~ def get_request_queryset(self,ar):
-            #~ ar.master_instance = ar.get_user().partner
-            #~ return super(MyPresences,self).get_request_queryset(ar)
-            
-        
-    #~ class MyPendingInvitations(Guests):
-    class MyPendingPresences(MyPresences):
-        label = _("My pending presences")
-        help_text = _("""Received invitations which I must accept or reject.""")
-        #~ filter = models.Q(state=GuestStates.invited)
-        column_names = 'event__when_text role workflow_buttons remark'
-        params_panel_hidden = True
-        
-        @classmethod
-        def param_defaults(self,ar,**kw):
-            kw = super(MyPendingPresences,self).param_defaults(ar,**kw)
-            #~ kw.update(partner=ar.get_user().partner)
-            #~ kw.update(user=None)
-            kw.update(guest_state=GuestStates.invited)
-            kw.update(start_date=datetime.date.today())
-            return kw
-            
-              
-    class MyGuests(Guests):
-        label = _("My guests")
-        required = dd.required(user_groups='office')
-        order_by = ['event__start_date','event__start_time']
-        label = _("My guests")
-        column_names = 'event__start_date event__start_time event_summary role workflow_buttons remark *'
-        
-        @classmethod
-        def param_defaults(self,ar,**kw):
-            kw = super(MyGuests,self).param_defaults(ar,**kw)
-            kw.update(user=ar.get_user())
-            kw.update(guest_state=GuestStates.invited)
-            kw.update(start_date=datetime.date.today())
-            return kw
-              
-        
-      
-      
-          
-    
-#~ class MySentInvitations(Guests):
-    #~ help_text = _("""Shows invitations which I sent accept or reject.""")
-  
-    #~ label = _("My Sent Invitations")
-    
-    #~ order_by = ['event__start_date','event__start_time']
-    #~ column_names = 'event__start_date event__start_time event_summary role workflow_buttons remark *'
-    
-    #~ @classmethod
-    #~ def get_request_queryset(self,ar):
-        #~ datelimit = datetime.date.today() + dateutil.relativedelta.relativedelta(days=-7)
-        #~ ar.filter = models.Q(event__user=ar.get_user(),event__start_date__gte=datelimit)
-        #~ return super(MySentInvitations,self).get_request_queryset(ar)
-    
-#~ class MyPendingSentInvitations(MySentInvitations):
-    #~ help_text = _("""Shows invitations which I sent, and for which I accept or reject.""")
-    #~ label = _("My Pending Sent Invitations")
-    #~ @classmethod
-    #~ def get_request_queryset(self,ar):
-        #~ ar.filter = models.Q(state=GuestStates.invited,event__user=ar.get_user())
-        #~ # ! note that we skip one mro parent:
-        #~ return super(MySentInvitations,self).get_request_queryset(ar)
-    
-if False: # removed 20130810
-    
-  def tasks_summary(ui,user,days_back=None,days_forward=None,**kw):
-    """
-    Return a HTML summary of all open reminders for this user.
-    May be called from :xfile:`welcome.html`.
-    """
-    Task = dd.resolve_model('cal.Task')
-    Event = dd.resolve_model('cal.Event')
-    today = datetime.date.today()
-    
-    past = {}
-    future = {}
-    def add(cmp):
-        if cmp.start_date < today:
-        #~ if task.dt_alarm < today:
-            lookup = past
-        else:
-            lookup = future
-        day = lookup.get(cmp.start_date,None)
-        if day is None:
-            day = [cmp]
-            lookup[cmp.start_date] = day
-        else:
-            day.append(cmp)
-            
-    #~ filterkw = { 'due_date__lte' : today }
-    filterkw = {}
-    if days_back is not None:
-        filterkw.update({ 
-            'start_date__gte' : today - datetime.timedelta(days=days_back)
-            #~ 'dt_alarm__gte' : today - datetime.timedelta(days=days_back)
-        })
-    if days_forward is not None:
-        filterkw.update({ 
-            'start_date__lte' : today + datetime.timedelta(days=days_forward)
-            #~ 'dt_alarm__lte' : today + datetime.timedelta(days=days_forward)
-        })
-    #~ filterkw.update(dt_alarm__isnull=False)
-    filterkw.update(user=user)
-    
-    for o in Event.objects.filter(
-        #~ models.Q(status=None) | models.Q(status__reminder=True),
-        models.Q(state=None) | models.Q(state__lte=EventStates.published),
-        **filterkw).order_by('start_date'):
-        add(o)
-        
-    #~ filterkw.update(done=False)
-    #~ filterkw.update(state__in=[TaskState.blank_item,TaskState.todo]) 20120829
-    filterkw.update(state__in=[None,TaskStates.todo])
-            
-    for task in Task.objects.filter(**filterkw).order_by('start_date'):
-        add(task)
-        
-    def loop(lookup,reverse):
-        sorted_days = lookup.keys()
-        sorted_days.sort()
-        if reverse: 
-            sorted_days.reverse()
-        for day in sorted_days:
-            yield '<h3>'+dtosl(day) + '</h3>'
-            yield dd.summary(ui,lookup[day],**kw)
-            
-    #~ cells = ['Ausblick'+':<br>',cgi.escape(u'Rückblick')+':<br>']
-    cells = [
-      cgi.escape(_('Upcoming reminders')) + ':<br>',
-      cgi.escape(_('Past reminders')) + ':<br>'
-    ]
-    for s in loop(future,False):
-        cells[0] += s
-    for s in loop(past,True):
-        cells[1] += s
-    s = ''.join(['<td valign="top" bgcolor="#eeeeee" width="30%%">%s</td>' % s for s in cells])
-    s = '<table cellspacing="3px" bgcolor="#ffffff"><tr>%s</tr></table>' % s
-    s = '<div class="htmlText">%s</div>' % s
-    return s
-
-
-def update_auto_event(autotype,user,date,summary,owner,**defaults):
-    #~ model = dd.resolve_model('cal.Event')
-    return update_auto_component(Event,autotype,user,date,summary,owner,**defaults)
-  
-def update_auto_task(autotype,user,date,summary,owner,**defaults):
-    #~ model = dd.resolve_model('cal.Task')
-    return update_auto_component(Task,autotype,user,date,summary,owner,**defaults)
-    
-def update_auto_component(model,autotype,user,date,summary,owner,**defaults):
-    """
-    Creates, updates or deletes the 
-    automatic :class:`calendar component <Component>`
-    of the specified `auto_type` and `owner`.
-    
-    Specifying `None` for `date` means that 
-    the automatic component should be deleted.
-    """
-    #~ print "20120729 update_auto_component", model,autotype,user, date, settings.SITE.loading_from_dump
-    #~ if SKIP_AUTO_TASKS: return 
-    if settings.SITE.loading_from_dump: 
-        #~ print "20111014 loading_from_dump"
-        return None
-    ot = ContentType.objects.get_for_model(owner.__class__)
-    if date and date >= datetime.date.today() + datetime.timedelta(days=-7):
-        #~ defaults = owner.get_auto_task_defaults(**defaults)
-        #~ print "20120729 b"
-        defaults.setdefault('user',user)
-        obj,created = model.objects.get_or_create(
-          defaults=defaults,
-          owner_id=owner.pk,
-          owner_type=ot,
-          auto_type=autotype)
-        if not obj.is_user_modified():
-            original_state = dict(obj.__dict__)
-            if obj.user != user:
-                obj.user = user
-            summary = force_unicode(summary)
-            if obj.summary != summary:
-                obj.summary = summary
-            if obj.start_date != date:
-                obj.start_date = date
-            if created or obj.__dict__ != original_state:
-                #~ obj.full_clean()
-                obj.save()
-        return obj
-    else:
-        #~ print "20120729 c"
-        # delete task if it exists
-        try:
-            obj = model.objects.get(owner_id=owner.pk,
-                    owner_type=ot,auto_type=autotype)
-        except model.DoesNotExist:
-            pass
-        else:
-            if not obj.is_user_modified():
-                obj.delete()
-                
-        
-def update_reminder(type,owner,user,orig,msg,num,unit):
-    """
-    Shortcut for calling :func:`update_auto_task` 
-    for automatic "reminder tasks".
-    A reminder task is a message about something that will 
-    happen in the future.
-    """
-    update_auto_task(
-      type,user,
-      unit.add_duration(orig,-num),
-      msg,
-      owner)
-            
-
-
-
-def migrate_reminder(obj,reminder_date,reminder_text,
-                         delay_value,delay_type,reminder_done):
-    """
-    This was used only for migrating to 1.2.0, 
-    see :mod:`lino.projects.pcsw.migrate`.
-    """
-    raise NotImplementedError("No longer needed (and no longer supported after 20111026).")
-    def delay2alarm(delay_type):
-        if delay_type == 'D': return DurationUnits.days
-        if delay_type == 'W': return DurationUnits.weeks
-        if delay_type == 'M': return DurationUnits.months
-        if delay_type == 'Y': return DurationUnits.years
-      
-    #~ # These constants must be unique for the whole Lino Site.
-    #~ # Keep in sync with auto types defined in lino.projects.pcsw.models.Person
-    #~ REMINDER = 5
-    
-    if reminder_text:
-        summary = reminder_text
-    else:
-        summary = _('due date reached')
-    
-    update_auto_task(
-      None, # REMINDER,
-      obj.user,
-      reminder_date,
-      summary,obj,
-      done = reminder_done,
-      alarm_value = delay_value,
-      alarm_unit = delay2alarm(delay_type))
       
 
 class ExtDateTimeField(dd.VirtualField):
@@ -2171,7 +1301,6 @@ class ExtSummaryField(dd.VirtualField):
     #~ subs = Subscription.objects.filter(user=user).values_list('calendar__id',flat=True)
     #~ return qs.filter(id__in=subs)
 
-
 if settings.SITE.use_extensible:
   
     def parsedate(s):
@@ -2190,33 +1319,40 @@ with the possibility to switch between daily, weekly, monthly view.""")
         def get_default_action(self):
             return CalendarAction()
 
-    #~ class PanelCalendars(EventTypes):
-    class PanelCalendars(MySubscriptions):
+    class PanelCalendars(Calendars):
         use_as_default_table = False
         required = dd.required(user_groups='office')
         #~ column_names = 'id name description color is_hidden'
         #~ column_names = 'id babel_name description color is_hidden'
-        column_names = 'id label description color is_hidden'
+        column_names = 'id summary description color is_hidden'
         
-        #~ @classmethod
-        #~ def get_request_queryset(self,ar):
-            #~ qs = super(PanelCalendars,self).get_request_queryset(ar)
+        @classmethod
+        def get_request_queryset(self,ar):
+            qs = super(PanelCalendars,self).get_request_queryset(ar)
+            subs = Subscription.objects.filter(user=ar.get_user()).values_list('calendar__id',flat=True)
+            return qs.filter(id__in=subs)
+            
+            #~ return qs.filter(user=ar.get_user())
             #~ for sub in Subscription.objects.filter(user=ar.get_user()):
                 #~ qs = sub.add_events_filter(qs,ar)
             #~ return qs
             #~ return user_calendars(qs,ar.get_user())
             
-        #~ @dd.displayfield()
-        #~ def babel_name(cls,self,ar):
+        @dd.displayfield()
+        def summary(cls,self,ar):
             #~ return dd.babelattr(self,'name')
-            #~ 
-        #~ @dd.virtualfield(models.BooleanField(_('Hidden')))
-        #~ def is_hidden(cls,self,ar):
+            return unicode(self)
+            
+        @dd.virtualfield(models.BooleanField(_('Hidden')))
+        def is_hidden(cls,self,ar):
             #~ return False
             #~ if self.user == ar.get_user():
                 #~ return False
-            #~ sub = Subscription.objects.get(user=ar.get_user(),calendar=self)
-            #~ return sub.is_hidden
+            try:
+                sub = self.subscription_set.get(user=ar.get_user())
+            except self.subscription_set.model.DoesNotExist as e:
+                return False
+            return sub.is_hidden
 
             
     class PanelEvents(Events):
@@ -2228,7 +1364,7 @@ with the possibility to switch between daily, weekly, monthly view.""")
         #~ parameters = dict(team_view=models.BooleanField(_("Team View")))
         
         #~ column_names = 'id start_dt end_dt summary description user room event_type #rset url all_day reminder'
-        column_names = 'id start_dt end_dt summary description user room subscription #rset url all_day reminder'
+        column_names = 'id start_dt end_dt summary description user room calendar #rset url all_day reminder'
         
         start_dt = ExtDateTimeField('start',None,_("Start"))
         end_dt = ExtDateTimeField('end','start',_("End"))
@@ -2296,16 +1432,17 @@ with the possibility to switch between daily, weekly, monthly view.""")
                 #~ for_me = for_me | models.Q(guest_count__gt=0)
                 for_me = for_me | models.Q(guest__partner=me.partner)
             
-            # in team view, show also events of all my team members
-            tv = rqdata.get(constants.URL_PARAM_TEAM_VIEW,False)
-            if tv and constants.parse_boolean(tv):
-                # positive list of ACLs for events of team members
-                team_classes = (None,AccessClasses.public,AccessClasses.show_busy)
-                my_teams = Membership.objects.filter(user=me)
-                we = settings.SITE.user_model.objects.filter(users_membership_set_by_user__team__in=my_teams)
-                #~ team_ids = Membership.objects.filter(user=me).values_list('watched_user__id',flat=True)
-                #~ for_me = for_me | models.Q(user__id__in=team_ids,access_class__in=team_classes)
-                for_me = for_me | models.Q(user__in=we,access_class__in=team_classes)
+            if False:
+                # in team view, show also events of all my team members
+                tv = rqdata.get(constants.URL_PARAM_TEAM_VIEW,False)
+                if tv and constants.parse_boolean(tv):
+                    # positive list of ACLs for events of team members
+                    team_classes = (None,AccessClasses.public,AccessClasses.show_busy)
+                    my_teams = Membership.objects.filter(user=me)
+                    we = settings.SITE.user_model.objects.filter(users_membership_set_by_user__team__in=my_teams)
+                    #~ team_ids = Membership.objects.filter(user=me).values_list('watched_user__id',flat=True)
+                    #~ for_me = for_me | models.Q(user__id__in=team_ids,access_class__in=team_classes)
+                    for_me = for_me | models.Q(user__in=we,access_class__in=team_classes)
             flt = flt & for_me
             #~ logger.info('20120710 %s', flt)
             kw.update(filter=flt)
@@ -2434,217 +1571,21 @@ class UpdateUserReminders(UpdateReminders):
         logger.info(msg)
         return ar.success(msg,**kw)
         
-
-system = dd.resolve_app('system')
-
-if False:
-
-    class Home(system.Home):
-        """
-        Deserves better documentation.
-        """
-        #~ debug_permissions = True 
-
-        label = system.Home.label
-        app_label = 'lino'
-        detail_layout = """
-        quick_links:80x1
-        welcome
-        coming_reminders:40x16 missed_reminders:40x16
-        """
-        
-        @dd.virtualfield(dd.HtmlBox(_('Upcoming reminders')))
-        def coming_reminders(cls,self,ar):
-            return reminders_as_html(ar,days_forward=30,
-                max_items=10,before='<ul><li>',separator='</li><li>',after="</li></ul>")
-
-        @dd.virtualfield(dd.HtmlBox(_('Missed reminders')))
-        def missed_reminders(cls,self,ar):
-            return reminders_as_html(ar,days_back=90,
-              max_items=10,before='<ul><li>',separator='</li><li>',after="</li></ul>")
-              
-          
-
-
-#~ class MissedReminders(dd.Frame):
-    #~ label = _('Missed reminders')
-    
-    #~ @classmethod
-    #~ def value(cls,ar):
-        #~ return reminders(ar.ui,ar.get_user(),days_back=90,
-          #~ max_items=10,before='<ul><li>',separator='</li><li>',after="</li></ul>")
-          
-#~ class ComingReminders(dd.Frame):
-    #~ label = _('Coming reminders')
-    
-    #~ @classmethod
-    #~ def value(cls,ar):
-        #~ return reminders(ar.ui,ar.get_user(),days_forward=30,
-            #~ max_items=10,before='<ul><li>',separator='</li><li>',after="</li></ul>")
-
-
-
-def customize_users():
-    """
-    Injects application-specific fields to users.User.
-    """
-    
-    dd.inject_field(settings.SITE.user_model,
-        'access_class',
-        AccessClasses.field(
-            default=AccessClasses.public,
-            verbose_name=_("Default access class"),
-            help_text=_("""The default access class for your calendar events and tasks.""")
-    ))
-    dd.inject_field(settings.SITE.user_model,
-        'event_type',
-        models.ForeignKey('cal.EventType',
-            blank=True,null=True,
-            verbose_name=_("Default Event Type"),
-            help_text=_("""The default event type for your calendar events.""")
-    ))
-    
-    dd.inject_field('system.SiteConfig',
-        'default_event_type',
-        models.ForeignKey('cal.EventType',
-            blank=True,null=True,
-            verbose_name=_("Default Event Type"),
-            help_text=_("""The default type of events on this site.""")
-    ))
-    
-    dd.inject_field('system.SiteConfig',
-        'holiday_event_type',
-        models.ForeignKey('cal.EventType',
-            blank=True,null=True,
-            related_name="%(app_label)s_%(class)s_set_by_holiday_calender",
-            verbose_name=_("Holiday"),
-            help_text=_("""The default type for recurring calendar events.""")
-    ))
-    
-    dd.inject_field('system.SiteConfig',
-        'max_auto_events',
-        models.IntegerField(_("Max automatic events"),default=72,
-            blank=True,null=True,
-            help_text=_("""Maximum number of automatic events to be generated.""")
-    ))
-    
-    dd.inject_field('system.SiteConfig',
-        'farest_future',
-        models.DateField(_("Farest future"),
-            default=datetime.date.today() + dateutil.relativedelta.relativedelta(years=5),
-            help_text=_("""Don't generate automatic events past that date.""")
-    ))
-    
-    #~ users = dd.resolve_app('users')
-    #~ users.User.add_model_action(update_reminders=UpdateReminders())
-        
-
-  
-
-
-
-def site_setup(site):
-    """
-    (Called during site setup.)
-    
-    Adds a "Calendar" tab and the :class:`UpdateReminders` 
-    action to `users.User`
-    """
-    
-    #~ site.modules.users.User.update_reminders = UpdateReminders()
-    
-    site.modules.users.Users.add_detail_panel('cal_left',"""
-    event_type access_class 
-    cal.SubscriptionsByUser
-    # cal.MembershipsByUser
-    """)
-    site.modules.users.Users.add_detail_tab('cal',"""
-    cal_left:30 cal.TasksByUser:60
-    """,MODULE_LABEL,required=dict(user_groups='office'))
-    #~ site.modules.users.Users.add_detail_tab('cal.TasksByUser')
-    
 @dd.receiver(dd.pre_analyze)
 def pre_analyze(sender,**kw):
     #~ logger.info("%s.set_merge_actions()",__name__)
     #~ modules = sender.modules
     sender.user_model.add_model_action(update_reminders=UpdateUserReminders())
     
-    
-MODULE_LABEL = _("Calendar")
-
-def setup_main_menu(site,ui,profile,m): 
-    m  = m.add_menu("cal",MODULE_LABEL)
-    
-    if site.use_extensible:
-        m.add_action(CalendarPanel)
-    m.add_action('cal.MyEvents') # string spec to allow overriding
-    
-    #~ m.add_separator('-')
-    #~ m  = m.add_menu("tasks",_("Tasks"))
-    m.add_action(MyTasks)
-    #~ m.add_action(MyTasksToDo)
-    
-    m.add_action(MyGuests)
-    
-    m.add_action(MyPresences)
-    
-  
-#~ def setup_master_menu(site,ui,profile,m): 
-    #~ pass
-    
-    
-def setup_config_menu(site,ui,profile,m): 
-    m  = m.add_menu("cal",MODULE_LABEL)
-    m.add_action(MySubscriptions)
-    m.add_action('cal.Rooms')
-    m.add_action('cal.Priorities')
-    m.add_action('cal.RecurrentEvents')
-    #~ m.add_action(AccessClasses)
-    #~ m.add_action(EventStatuses)
-    #~ m.add_action(TaskStatuses)
-    #~ m.add_action(EventTypes)
-    m.add_action('cal.GuestRoles')
-    #~ m.add_action(GuestStatuses)
-    m.add_action('cal.EventTypes')
-  
-def setup_explorer_menu(site,ui,profile,m):
-    m  = m.add_menu("cal",MODULE_LABEL)
-    m.add_action(Tasks)
-    m.add_action(Guests)
-    m.add_action(Subscriptions)
-    #~ m.add_action(Memberships)
-    m.add_action(EventStates)
-    m.add_action(GuestStates)
-    m.add_action(TaskStates)
-    #~ m.add_action(RecurrenceSets)
-
-def setup_quicklinks(site,ar,m):
-    #~ print 20120706
-    if site.use_extensible:
-        #~ m.add_action(self.modules.cal.Panel)
-        m.add_action(CalendarPanel)
-        #~ m.add_action(MyEventsAssigned)
-        #~ m.add_action(MyEventsNotified)
-        #~ m.add_action(MyTasksToDo)
         
-#~ def whats_up(site,ui,user):
-    #~ MyEventsReserved
-    #~ MyEventsAssigned
-    #~ MyEventsNotified
-    
-def get_todo_tables(ar):
-    yield (MyAssignedEvents, _("%d events assigned.")) 
-    #~ yield (MyUnclearEvents, _("%d unclear events approaching.")) # "%d unklare Termine kommen näher"
-    yield (MyPendingPresences, _("%d invitations are waiting for your answer."))
-    #~ yield (MyGuests, _("%d invitations are waiting for your answer."))
-    #~ yield (MyTasksToDo,_("%d tasks to do"))
-    #~ yield (MyEventsNotified,_("%d notified events"))
-    #~ yield (EventsAssignedToMe,_("%d events assigned to you"))
-    
+        
 
-#~ dd.add_user_group('office',MODULE_LABEL)
+__all__ = [
+    'UpdateReminders',
+    'EventGenerator',
+    'RecurrenceSet',
+    'Event','Events',
+    'CalendarPanel',
+    #~ 'MyAssignedEvents',
+    'EventType','EventTypes']
 
-customize_users()
-
-
-from .cal_task import *

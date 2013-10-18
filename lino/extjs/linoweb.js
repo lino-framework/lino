@@ -5183,7 +5183,7 @@ Mappings towards lino.modlib.cal.models.PanelCalendars
 // Sset SS = Ssite.modules.cal.PanelCalendars.get_handle(Sui).store
 Ext.ensible.cal.CalendarMappings = {
     CalendarId:   {name:'ID',       mapping: 'id', type: 'int'},
-    Title:        {name:'CalTitle', mapping: 'label', type: 'string'},
+    Title:        {name:'CalTitle', mapping: 'summary', type: 'string'},
     Description:  {name:'Desc',     mapping: 'description', type: 'string'},
     ColorId:      {name:'Color',    mapping: 'color', type: 'int'},
     IsHidden:     {name:'Hidden',   mapping: 'is_hidden', type: 'boolean'},    
@@ -5197,7 +5197,7 @@ Mappings towards lino.modlib.cal.models.PanelEvents
 // Sset SS = Ssite.modules.cal.PanelEvents.get_handle(Sui).store
 Ext.ensible.cal.EventMappings = {
     EventId:     {name: 'ID',        mapping: 'id', type:'int'},
-    CalendarId:  {name: 'CalID',     mapping: 'subscriptionHidden', type: 'int'},
+    CalendarId:  {name: 'CalID',     mapping: 'calendarHidden', type: 'int'},
     Title:       {name: 'EvtTitle',  mapping: 'summary'},
     StartDate:   {name: 'StartDt',   mapping: 'start_dt', 
       type: 'date', 

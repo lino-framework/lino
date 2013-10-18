@@ -1,5 +1,5 @@
 # -*- coding: UTF-8 -*-
-## Copyright 2011 Luc Saffre
+## Copyright 2011-2013 Luc Saffre
 ## This file is part of the Lino project.
 ## Lino is free software; you can redistribute it and/or modify 
 ## it under the terms of the GNU General Public License as published by
@@ -13,8 +13,12 @@
 ## along with Lino; if not, see <http://www.gnu.org/licenses/>.
 
 """
-Generates a suite of ficive demo events.
+Generates a suite of fictive demo events.
 """
+
+import logging
+logger = logging.getLogger(__name__)
+
 
 import datetime
 import decimal
@@ -41,7 +45,8 @@ from lino.modlib.cal import models as cal
 Event = dd.resolve_model('cal.Event')
 EventType = dd.resolve_model('cal.EventType')
 Subscription = dd.resolve_model('cal.Subscription')
-Membership = dd.resolve_model('cal.Membership')
+#~ Membership = dd.resolve_model('cal.Membership')
+Calendar = dd.resolve_model('cal.Calendar')
 
 def objects():
     
@@ -73,6 +78,7 @@ def objects():
       ,dict(en='Interview',de=u"Interview",fr=u"Interview")
       ))
     #~ for i in range(20):
+        
     for u in settings.SITE.user_model.objects.exclude(email=''):
         #~ u = USERS.pop()
         if True:
@@ -99,7 +105,12 @@ def objects():
             for obj in settings.SITE.user_model.objects.exclude(
                   profile=None).exclude(id=u.id):
                 yield Membership(user=u,watched_user=obj)
-        for obj in EventType.objects.all():
-            yield Subscription(user=u,event_type=obj,label=unicode(obj))
+        if False:
+            for obj in EventType.objects.all():
+                yield Subscription(user=u,event_type=obj,label=unicode(obj))
     
-    
+        for obj in Calendar.objects.all():
+            obj = Subscription(user=u,calendar=obj)
+            #~ logger.info("20131018 %s", obj)
+            yield obj
+

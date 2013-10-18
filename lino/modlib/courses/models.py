@@ -50,6 +50,7 @@ from django.contrib.contenttypes.models import ContentType
 #~ logger.debug(__file__+' : started')
 #~ from django.utils import translation
 
+from north.dbutils import day_and_month
 
 #~ from lino import reports
 from lino import dd
@@ -62,7 +63,9 @@ from lino.mixins.printable import DirectPrintAction, Printable
 #~ from lino.mixins.reminder import ReminderEntry
 from lino.core.dbutils import obj2str
 
-from north.dbutils import day_and_month
+
+from lino.modlib.cal.utils import Recurrencies
+
 
 users = dd.resolve_app('users')
 cal = dd.resolve_app('cal')
@@ -158,6 +161,12 @@ class Line(dd.BabelNamed):
     topic = models.ForeignKey(Topic,blank=True,null=True)
     description = dd.BabelTextField(_("Description"),blank=True)
     
+    every_unit = Recurrencies.field(_("Recurrency"),
+        default=Recurrencies.weekly,
+        blank=True) # iCal:DURATION
+    every = models.IntegerField(_("Repeat every"), default=1)
+    
+    
     event_type = dd.ForeignKey('cal.EventType',null=True,blank=True,
         help_text=_("""The Event Type to which events will be generated."""))
     
@@ -171,10 +180,17 @@ class Lines(dd.Table):
     model = Line
     required = dd.required(user_level='manager')
     detail_layout = """
-    id name tariff event_type
+    id name 
+    tariff event_type every_unit every 
     description
     courses.CoursesByLine
     """
+    insert_layout = dd.FormLayout("""
+    name
+    every_unit every 
+    # tariff event_type
+    description
+    """,window_size=(70,16))
     
 class LinesByTopic(Lines):
     master_key = "topic"
@@ -436,6 +452,14 @@ class Course(contacts.ContactRelated,cal.EventGenerator,cal.RecurrenceSet,dd.Pri
         qs = Enrolment.objects.filter(course=self,state__in=ENROLMENT_USES_UP_A_PLACE)
         return self.max_places - qs.count()
         
+    def full_clean(self,*args,**kw):
+        if self.line is not None:
+            if self.every_unit is None:
+                self.every_unit = self.line.every_unit
+            if self.every is None:
+                self.every = self.line.every
+        super(Course,self).full_clean(*args,**kw)
+        
     def before_auto_event_save(self,event):
         """
         Sets room and start_time for automatic events.
@@ -491,8 +515,10 @@ customize fields coming from mixins to override their inherited default verbose_
 """
 dd.update_field(Course,'contact_person',verbose_name = _("Contact person"))
 dd.update_field(Course,'company',verbose_name = _("Organizer"))
-dd.update_field(Course,'every_unit',default=cal.Recurrencies.per_weekday)
-dd.update_field(Course,'every',default=1)
+#~ dd.update_field(Course,'every_unit',default=cal.Recurrencies.per_weekday)
+#~ dd.update_field(Course,'every',default=1)
+dd.update_field(Course,'every_unit',default=models.NOT_PROVIDED)
+dd.update_field(Course,'every',default=models.NOT_PROVIDED)
           
           
 #~ @dd.receiver(dd.pre_save, sender=cal.Event,dispatch_uid="setup_event_from_course")
@@ -556,8 +582,9 @@ class Courses(dd.Table):
     #~ order_by = ['date','start_time']
     detail_layout = CourseDetail() 
     insert_layout = """
-    line teacher 
     start_date 
+    line teacher 
+    company contact_person
     """
     column_names = "info line teacher room slot *"
     order_by = ['start_date']

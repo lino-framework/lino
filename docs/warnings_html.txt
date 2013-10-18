@@ -1,8 +1,9 @@
-/home/luc/hgwork/lino/docs/api/lino.modlib.reception.rst:14: WARNING: autodoc: failed to import module u'lino.modlib.reception.models'; the following exception was raised:
-Traceback (most recent call last):
-  File "/home/luc/pythonenvs/py27/local/lib/python2.7/site-packages/sphinx/ext/autodoc.py", line 326, in import_object
-    __import__(self.modname)
-  File "/home/luc/hgwork/lino/lino/modlib/reception/models.py", line 391, in <module>
-    ExpectedGuestsStates = (GuestStates.invited,GuestStates.accepted)
-AttributeError: type object 'GuestStates' has no attribute 'accepted'
-/home/luc/hgwork/lino/docs/polly/index.rst:: WARNING: document isn't included in any toctree
+
+[31;01mException occurred:[39;49;00m
+  File "/home/luc/hgwork/lino/lino/utils/choosers.py", line 230, in uses_simple_values
+    choices = list(fld.choices)
+AttributeError: 'DummyField' object has no attribute 'choices'
+[31;01mThe full traceback has been saved in /tmp/sphinx-err-DwlNtc.log, if you want to report the issue to the developers.[39;49;00m
+Please also report this if it was a user error, so that a better error message can be provided next time.
+Either send bugs to the mailing list at <http://groups.google.com/group/sphinx-users/>,
+or report them in the tracker at <http://bitbucket.org/birkenfeld/sphinx/issues/>. Thanks!

@@ -2,9 +2,93 @@
 20131018 (Friday, 18 October 2013)
 ==================================
 
-- Continued on yesterday's "To-Do-Liste Sven" (:blogref:`20131017`)
+Continued on yesterday's "To-Do-Liste Sven" (:blogref:`20131017`).
+
+The `cal.Calendar` model is back. I had replaced it by a system of 
+subscriptions where each user could define application-specific 
+filter criteria per Subscription. This resulted in a system where it was 
+possible for an Event to appear in different Calendars.
+Which would have been nice, but the problem with that idea is 
+that `Ext.ensible.CalendarPanel` isn't designed for it, it wants 
+a list of calendars and each Event pointing to exactly one of them.
+
+So I return back to *almost* the old system
+(and that "almost" is what Lino has learned):
+`cal.Event` has no direct FK to Calendar, but a `get_calendar` method.
+And 
+:ref:`welfare` users see one Calendar per `User`
+while
+:ref:`faggio` users see one Calendar per `Room`.
 
 - Split up :mod:`lino.modlib.cal.models` into more digestable chunks:
+  :mod:`task <lino.modlib.cal.models_task>`
+  :mod:`guest <lino.modlib.cal.models_guest>`
+  :mod:`event <lino.modlib.cal.models_event>`
+  :mod:`event <lino.modlib.cal.models_calendar>`
 
-  - :mod:`lino.modlib.cal.task`
-  - :mod:`lino.modlib.cal.guest`
+  In a first checkin I had tried to turn
+  :mod:`lino.modlib.cal.models`
+  into a package containing the above files.
+  But that would require me to add an explicit `app_label
+  <https://docs.djangoproject.com/en/dev/ref/models/options/#app-label>`_
+  (the feature that app_label "is no longer required for models that are 
+  defined in a models package within an app" is only available in the 
+  development version).
+
+- Updated the :ref:`welfare` test suite to several recent changes.
+
+- New item "Once" in Recurrencies.
+
+- insert_layout for `courses.Line`
+- New field courses.Line every_unit (Recurrencies)
+
+
+Why I don't like relative imports
+---------------------------------
+
+The following one came 
+
+Traceback (most recent call last):
+  File "/usr/lib/python2.7/runpy.py", line 162, in _run_module_as_main
+    "__main__", fname, loader, pkg_name)
+  File "/usr/lib/python2.7/runpy.py", line 72, in _run_code
+    exec code in run_globals
+  File "/home/luc/hgwork/atelier/atelier/doctest_utf8.py", line 52, in <module>
+    sys.exit(_test())
+  File "/home/luc/hgwork/atelier/atelier/doctest_utf8.py", line 38, in _test
+    m = __import__(filename[:-3])
+  File "lino/modlib/cal/utils.py", line 31, in <module>
+    from north.utils import to_locale
+  File "/home/luc/hgwork/north/north/__init__.py", line 16, in <module>
+    from north.site import Site
+  File "/home/luc/hgwork/north/north/site.py", line 10, in <module>
+    from djangosite import Site, DJANGO_DEFAULT_LANGUAGE, assert_django_code
+  File "/home/luc/hgwork/site/djangosite/__init__.py", line 36, in <module>
+    from atelier.utils import AttrDict, ispure
+  File "/home/luc/hgwork/atelier/atelier/utils.py", line 17, in <module>
+    from dateutil import parser as dateparser
+  File "/home/luc/pythonenvs/py27/local/lib/python2.7/site-packages/dateutil/parser.py", line 26, in <module>
+    from . import relativedelta
+  File "/home/luc/pythonenvs/py27/local/lib/python2.7/site-packages/dateutil/relativedelta.py", line 10, in <module>
+    import calendar
+  File "lino/modlib/cal/calendar.py", line 27, in <module>
+    from django.db import models
+  File "/home/luc/pythonenvs/py27/local/lib/python2.7/site-packages/django/db/__init__.py", line 11, in <module>
+    if settings.DATABASES and DEFAULT_DB_ALIAS not in settings.DATABASES:
+  File "/home/luc/pythonenvs/py27/local/lib/python2.7/site-packages/django/conf/__init__.py", line 53, in __getattr__
+    self._setup(name)
+  File "/home/luc/pythonenvs/py27/local/lib/python2.7/site-packages/django/conf/__init__.py", line 48, in _setup
+    self._wrapped = Settings(settings_module)
+  File "/home/luc/pythonenvs/py27/local/lib/python2.7/site-packages/django/conf/__init__.py", line 132, in __init__
+    mod = importlib.import_module(self.SETTINGS_MODULE)
+  File "/home/luc/pythonenvs/py27/local/lib/python2.7/site-packages/django/utils/importlib.py", line 35, in import_module
+    __import__(name)
+  File "lino/__init__.py", line 79, in <module>
+    from .site import Site
+  File "lino/site.py", line 103, in <module>
+    from lino.utils.xmlgen import html as xghtml
+  File "lino/utils/__init__.py", line 60, in <module>
+    from atelier.utils import AttrDict, iif, ispure, assert_pure, confirm
+ImportError: cannot import name AttrDict
+
+

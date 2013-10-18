@@ -205,6 +205,7 @@ class Recurrencies(dd.ChoiceList):
     item_class = DurationUnit
     
 add = Recurrencies.add_item
+add('O', _('once')    ,'once'   )
 add('D', _('daily')   ,'daily'   )
 add('W', _('weekly')  ,'weekly'  )
 add('M', _('monthly') ,'monthly' )

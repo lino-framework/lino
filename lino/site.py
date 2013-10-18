@@ -1544,6 +1544,8 @@ class Site(Site):
             if meth is not None:
                 #~ dblogger.debug("Running %s of %s", methname, mod.__name__)
                 for table,text in meth(ar):
+                    if isinstance(table,basestring):
+                        table = self.modules.resolve(table)
                     if table.default_action.get_view_permission(ar.get_user().profile):
                       if table.default_action.get_row_permission(ar,None,None):
                       #~ if table.default_action.get_bound_action_permission(ar,None,None):

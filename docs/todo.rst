@@ -2,6 +2,23 @@ To-do list
 ==========
 
 
+#.  Views (GridConfigs) konfigurierbar pro User in der Datenbank (d.h. 
+    verwaltbar via Web und automatisch migrierbar). 
+    Das wäre gleichzeitig dann auch ein "Filter Editor"::
+    
+      class View(dd.Sequenced):
+          model
+          actor
+          user
+          
+      
+      class FilterCondition(dd.Sequenced):
+          view = dd.ForeignKey('View')
+          field = 
+          operator = Operators.field()
+          value = CharField()
+          connector ("and", "or", "(", ")")
+  
 
 :ref:`faggio` (bis Oktober)
 ---------------------------
@@ -97,9 +114,6 @@ Nächste Besichtigung machen.
 #.  HelpText erweitern : auch `verbose_name` der Felder, sowie der 
     Modelle lokal konfigurierbar machen.
     
-#.  Views (GridConfigs) konfigurierbar pro User in der Datenbank (d.h. 
-    verwaltbar via Web und automatisch migrierbar)
-  
 #.  Was ist mit Dublettenkontrolle beim Erstellen eines Klienten?
   
 #.  Empfang: Kann ein Klient auf zwei Agenten zugleich warten? 
