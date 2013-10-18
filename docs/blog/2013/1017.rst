@@ -8,17 +8,19 @@ but probably useful for many other projects):
 .. image:: 1017.png
   :scale: 60
 
-- The clickable "-1", "0" and "+1" links are a usage example for 
-  :meth:`lino.core.requests.BaseRequest.put_button`
+- The clickable "-1", "0" and "+1" links are a usage example for the new
+  :meth:`put_button <lino.core.requests.BaseRequest.put_button>` method.
   
-- New overrideable class method :meth:`lino.core.actors.Actor.get_detail_title`.
+- :class:`Actor <lino.core.actors.Actor>` has a 
+  new overrideable class method 
+  :meth:`get_detail_title <lino.core.actors.Actor.get_detail_title>`.
   This was used to replace the window title 
   
-    "My responses > Robin Rood's response to Matthew 1:17-25"
+    "My responses » Robin Rood's response to Matthew 1:17-25"
     
   by
   
-    "My responses > My response to Matthew 1:17-25"
+    "My responses » My response to Matthew 1:17-25"
     
     
 Miscellaneous
@@ -35,6 +37,37 @@ Miscellaneous
 - Fixed a bug: Invoking `lino.modlib.reception.GoneVisitors` 
   caused a "FieldError: Invalid order_by arguments: ['gone_since-']" 
   
+- :class:`lino.ui.store.Store` : an actor with editable=False 
+  doesn't need a DisabledFieldsStoreField. Removed it because it had 
+  caused the following traceback when trying to open 
+  :class:`lino.modlib.ledger.models.Vouchers`::
+  
+    TRACEBACK:
+      File "/home/luc/pythonenvs/py27/local/lib/python2.7/site-packages/django/core/handlers/base.py", line 115, in get_response
+        response = callback(request, *callback_args, **callback_kwargs)
+      File "/home/luc/pythonenvs/py27/local/lib/python2.7/site-packages/django/views/generic/base.py", line 68, in view
+        return self.dispatch(request, *args, **kwargs)
+      File "/home/luc/pythonenvs/py27/local/lib/python2.7/site-packages/django/views/generic/base.py", line 86, in dispatch
+        return handler(request, *args, **kwargs)
+      File "/home/luc/hgwork/lino/lino/ui/views.py", line 903, in get
+        rows = [ rh.store.row2list(ar,row) for row in ar.sliced_data_iterator]
+      File "/home/luc/hgwork/lino/lino/ui/store.py", line 1214, in row2list
+        v = fld.full_value_from_object(row,request)
+      File "/home/luc/hgwork/lino/lino/ui/store.py", line 470, in full_value_from_object
+        for name in self.store.actor.disabled_fields(obj,ar):
+      File "/home/luc/hgwork/lino/lino/core/dbtables.py", line 733, in disabled_fields
+        return obj.disabled_fields(ar)
+      File "/home/luc/hgwork/lino/lino/mixins/__init__.py", line 336, in disabled_fields
+        if not self.state.editable:
+  
+  
+- :class:`DjangoJinjaTemplate <lino.core.web.DjangoJinjaTemplate>`
+  now adds a name ``ar`` (containing a
+  :class:`BaseRequest <lino.core.requests.BaseRequest>`)
+  which is now required by 
+  :srcref:`base.html </lino/config/base.html>`
+  (which is used by
+  :srcref:`500.html </lino/config/500.html>`)
     
 
 To-Do-Liste Sven
@@ -61,5 +94,6 @@ To-Do-Liste Sven
   Jedes Abonnement ergibt einen Kalender.
   Neues Filterkriterium "Raum".
 
-- Der Button "Team-Ansicht" war unnütz und wurde entfernt.
+- Der Button "Team-Ansicht" war inzwischen unnütz und wurde entfernt.
 
+  Stattdessen ist die Kalenderliste wieder da. 

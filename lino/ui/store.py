@@ -1074,8 +1074,9 @@ class Store(BaseStore):
         #~ if not issubclass(rh.report,dbtables.Table):
             #~ addfield(RecnoStoreField(self))
           
-        #~ if rh.report.disabled_fields is not None:
-        addfield(DisabledFieldsStoreField(self))
+        if rh.actor.editable: # condition added 20131017
+            
+            addfield(DisabledFieldsStoreField(self))
         addfield(DisabledActionsStoreField(self))
             
             #~ sf = DisabledFieldsStoreField(self)

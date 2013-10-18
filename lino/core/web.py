@@ -190,7 +190,7 @@ def render_from_request(request,template_name,**context):
 
 class DjangoJinjaTemplate:
     """
-    used eg by /lino/lino/config/500.html
+    used e.g. to render :srcref:`/lino/lino/config/500.html`
     """
   
     def __init__(self,jt):

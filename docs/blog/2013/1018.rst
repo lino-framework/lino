@@ -1,0 +1,10 @@
+==================================
+20131018 (Friday, 18 October 2013)
+==================================
+
+- Continued on yesterday's "To-Do-Liste Sven" (:blogref:`20131017`)
+
+- Split up :mod:`lino.modlib.cal.models` into more digestable chunks:
+
+  - :mod:`lino.modlib.cal.task`
+  - :mod:`lino.modlib.cal.guest`

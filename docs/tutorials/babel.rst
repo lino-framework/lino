@@ -73,7 +73,7 @@ The :xfile:`settings.py` file
 
 .. literalinclude:: ../../lino/projects/babel_tutorial/settings.py
 
-This is where you specify the :attr:`lino.Lino.languages` setting.
+This is where you specify the :setting:`languages` setting.
 
 
 The :xfile:`models.py` file
