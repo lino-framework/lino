@@ -949,6 +949,7 @@ class DummyField(object):
     """
     Deserves more documentation.
     """
+    choices = []
     def __init__(self,*args,**kw):
         pass
     def set_attributes_from_name(self,k):

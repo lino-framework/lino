@@ -1,0 +1,10 @@
+====================================
+20131019 (Saturday, 19 October 2013)
+====================================
+
+I installed a public demo version of :ref:`polly`, 
+my second prototype for the SacredPy.
+
+http://polly-demo.lino-framework.org/
+
+You can log in there and try to play around. But it's only half finished and lacks documentation.

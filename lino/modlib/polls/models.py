@@ -129,10 +129,11 @@ class Poll(dd.UserAuthored,dd.CreatedModified):
     
     default_choiceset = models.ForeignKey('polls.ChoiceSet',
         related_name='polls',
-        verbose_name=_("Default Choiceset"),
-        blank=True,null=True)
+        verbose_name=_("Default Choiceset"))
         
-    questions_to_add = models.TextField(_("Questions to add"),blank=True)
+    questions_to_add = models.TextField(_("Questions to add"),
+        help_text=_("Paste text for questions to add. Every non-empty line will create one question."),
+        blank=True)
     
     state = PollStates.field(default=PollStates.draft)
     
@@ -186,11 +187,11 @@ class Polls(dd.Table):
     model = 'polls.Poll'
     column_names = 'created title user state *'
     detail_layout = PollDetail()
-    insert_layout = """
+    insert_layout = dd.FormLayout("""
     title
     default_choiceset
     questions_to_add
-    """
+    """,window_size=(60,15))
     
 class MyPolls(dd.ByUser,Polls):
     column_names = 'created title state *'
