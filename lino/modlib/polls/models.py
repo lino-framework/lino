@@ -140,7 +140,7 @@ class Poll(dd.UserAuthored,dd.CreatedModified):
     def __unicode__(self):
         return self.title
     
-    def before_ui_save(self,ar,**kw):
+    def after_ui_save(self,ar,**kw):
         if self.questions_to_add:
             qkw = dict(choiceset=self.default_choiceset)
             for ln in self.questions_to_add.splitlines():
@@ -151,8 +151,9 @@ class Poll(dd.UserAuthored,dd.CreatedModified):
                     q.save()
                     qkw.setdefault('seqno',q.seqno+1)
             self.questions_to_add = ''
+            self.save() # save again
                     
-        super(Poll,self).before_ui_save(ar,**kw)
+        return super(Poll,self).after_ui_save(ar,**kw)
         
     @dd.virtualfield(dd.HtmlBox(_("Result")))
     def result(self,ar):

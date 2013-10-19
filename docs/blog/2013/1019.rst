@@ -7,4 +7,12 @@ my second prototype for the SacredPy.
 
 http://polly-demo.lino-framework.org/
 
-You can log in there and try to play around. But it's only half finished and lacks documentation.
+You can log in there and try to play around. 
+But it's only half finished and lacks documentation.
+
+- Create new polls : :menuselection:`Polls --> Polls`
+- Create your response to a poll : :menuselection:`Polls --> My responses`
+
+TODO:
+
+- 
