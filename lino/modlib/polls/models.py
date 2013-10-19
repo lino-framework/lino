@@ -101,6 +101,10 @@ class ChoiceSet(dd.BabelNamed):
         
 class ChoiceSets(dd.Table):
     model = ChoiceSet
+    detail_layout = """
+    name
+    ChoicesBySet
+    """
     
 class Choice(dd.BabelNamed,dd.Sequenced):
     class Meta:
@@ -115,6 +119,9 @@ class Choice(dd.BabelNamed,dd.Sequenced):
 class Choices(dd.Table):
     model = 'polls.Choice'
         
+class ChoicesBySet(Choices):
+    master_key = 'choiceset'
+
 class Poll(dd.UserAuthored,dd.CreatedModified):
     
     class Meta:

@@ -2,17 +2,36 @@
 20131019 (Saturday, 19 October 2013)
 ====================================
 
+
+Dear Kai and other people of the SacredPy project,
+
 I installed a public demo version of :ref:`polly`, 
-my second prototype for the SacredPy.
+my second prototype for you:
 
-http://polly-demo.lino-framework.org/
+  http://polly-demo.lino-framework.org/
+  
+I am highly enthusiastic and will certainly continue one day,
+but I have so much other projects waiting!
+So I'll let *you* wait for some time now. 
+Meanwhile you can log in there and try to play around. 
+It's only half finished and lacks documentation.
 
-You can log in there and try to play around. 
-But it's only half finished and lacks documentation.
+Lino Polly is basically a general-purpose 
+web application to manage  polls. 
+If you want you can say that I'm reinventing askbot or similar websites.
+Maybe it would be easier to adapt askbot...
+but *not* for me since I have my own framework 
+which I love and want to test!
+
+Lino Polly Crash Course:
 
 - Create new polls : :menuselection:`Polls --> Polls`
 - Create your response to a poll : :menuselection:`Polls --> My responses`
 
 TODO:
 
-- 
+- More useful information in the `Results` tab
+- Results as a printable
+- Workflow & user permissions
+
+
