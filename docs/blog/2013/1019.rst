@@ -2,8 +2,10 @@
 20131019 (Saturday, 19 October 2013)
 ====================================
 
+A new public demo
+-----------------
 
-Dear Kai and other people of the SacredPy project,
+(To Kai and the other people of the SacredPy project:)
 
 I installed a public demo version of :ref:`polly`, 
 my second prototype for you:
@@ -25,13 +27,25 @@ which I love and want to test!
 
 Lino Polly Crash Course:
 
+- Login as instructed on http://polly-demo.lino-framework.org/
+
 - Create new polls : :menuselection:`Polls --> Polls`
+
 - Create your response to a poll : :menuselection:`Polls --> My responses`
+
+- Create more "choice sets" in 
+  :menuselection:`Configuration -- > Polls --> ChoiceSets`
+  (or click `here <http://polly-demo.lino-framework.org/api/polls/ChoiceSets>`_)
+  (a choice set is a reusable set of possible answers to a question. 
+  Polly currently supports only  blueprint questions with reusable sets of 
+  answers.)
 
 TODO:
 
 - More useful information in the `Results` tab
-- Results as a printable
+- Display pending polls on the welcome page
+- Printable result sheet
 - Workflow & user permissions
+
 
 
