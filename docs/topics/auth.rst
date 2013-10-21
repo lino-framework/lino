@@ -22,11 +22,11 @@ Otherwise, :setting:`user_model`
 can be either 'users.User' or 'auth.User' (the latter is not tested). 
 In both cases we have two more possibilities:
 
-- If :settings:`remote_user_header` 
+- If :setting:`remote_user_header` 
   contains some value, your application will use 
   `HTTP authentication`_
   
-- If :settings:`remote_user_header` is `None`, 
+- If :setting:`remote_user_header` is `None`, 
   your application uses `Session-based authentication`_
 
 Session-based authentication
@@ -38,10 +38,10 @@ and that `django.contrib.sessions` is added to your INSTALLED_APPS.
 
 There are two variants of session-based authentication:
 
-- If :settings:`ldap_auth_server` is `None`, Lino uses the passwords 
+- If :setting:`ldap_auth_server` is `None`, Lino uses the passwords 
   stored in its own database.
 
-- If :settings:`ldap_auth_server` is not `None`, Lino authenticates 
+- If :setting:`ldap_auth_server` is not `None`, Lino authenticates 
   against the specified LDAP server.
 
 
