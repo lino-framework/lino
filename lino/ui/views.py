@@ -384,7 +384,10 @@ class MainHtml(View):
         
 class Authenticate(View):
     """
-    This view is being used only when not remote http auth
+    This view is being used when 
+    :setting:`remote_user_header` is empty
+    (and :setting:`user_model` not).
+    
     """
   
     def get(self, request, *args, **kw):

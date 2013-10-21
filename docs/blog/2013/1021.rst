@@ -1,0 +1,51 @@
+==================================
+20131021 (Monday, 21 October 2013)
+==================================
+
+Calendar module
+---------------
+
+Continued on :ref:`faggio`.
+
+- site_calendar
+- :meth:`lino.modlib.cal.models_event.Event.get_conflicting_events`
+
+
+Authentication against an LDAP server
+---------------------------------------
+
+Thanks to Josef Kejzlar LDAP is now among Lino's out-of-the-box authentication methods. 
+He contributed a snippet which I integrated into Lino
+as a new setting :setting:`ldap_auth_server`
+(and a new middleware :class:`lino.core.auth.LDAPAuthMiddleware`
+which is automatically being installed).
+
+When using the latest development version you should be able to use it 
+by specifying in your :xfile:`settings.py`::
+
+    ldap_auth_server = 'DOMAIN_NAME SERVER_DNS'
+
+The :setting:`auth_middleware` setting is still useful in case somebody
+wants to use yet another custom authentication method. 
+
+Internal changes: 
+
+- moved `make_permission_handler` 
+  and `make_view_permission_handler` from 
+  :mod:`lino.core.auth`
+  to :mod:`lino.core.perms`.
+
+- I used the fact that Django *instantiates* the MW classes at server 
+  startup in order to import the module and acquire domain credentials 
+  (`creds = Creds(domain)`) only once. I don't know how expensive this 
+  is, but now it is no longer done for every request. 
+  
+
+  This required to change the `authenticate` methods 
+  of :class:`AuthMiddleWareBase <lino.core.auth.AuthMiddleWareBase>`
+  and subclasses into instance 
+  methods. (Don't remember why they were class methods).
+  
+
+.
+

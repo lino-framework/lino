@@ -159,7 +159,7 @@ class BoundAction(object):
             else:
                 raise Exception("debug_permissions for %r (required=%s)",self,required)
             
-        from lino.core.auth import make_permission_handler, make_view_permission_handler
+        from lino.core.perms import make_permission_handler, make_view_permission_handler
         self.allow_view = curry(make_view_permission_handler(
             self,action.readonly,debug_permissions,**required),action)
         self._allow = curry(make_permission_handler(

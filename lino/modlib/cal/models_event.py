@@ -31,6 +31,7 @@ import dateutil
 from django.conf import settings
 from django.db import models
 from django.db.models import Q
+from django.utils import translation
 from django.utils.translation import ugettext_lazy as _
 from django.utils.translation import pgettext_lazy as pgettext
 #~ from django.utils.translation import string_concat
@@ -105,6 +106,10 @@ class EventType(dd.BabelNamed,dd.Sequenced,dd.PrintableType,outbox.MailableType)
     #~ name = models.CharField(_("Name"),max_length=200)
     description = dd.RichTextField(_("Description"),blank=True,format='html')
     is_appointment = models.BooleanField(_("Event is an appointment"),default=True)
+    all_rooms = models.BooleanField(_("Locks all rooms"),default=False)
+    locks_user = models.BooleanField(_("Locks the user"),
+        help_text=_("Lino won't not accept more than one locking event per user at the same time."),
+        default=False)
     #~ is_default = models.BooleanField(
         #~ _("is default"),default=False)
     #~ is_private = models.BooleanField(
@@ -134,22 +139,6 @@ class EventType(dd.BabelNamed,dd.Sequenced,dd.PrintableType,outbox.MailableType)
         #~ return settings.SITE.get_calendar_color(self,request)
     #~ color.return_type = models.IntegerField(_("Color"))
         
-    def conflicts_with_event(self,we):
-        """
-        we : wanted event
-        """
-        #~ return False
-        Event = dd.resolve_model('cal.Event')
-        #~ ot = ContentType.objects.get_for_model(RecurrentEvent)
-        flt = models.Q(start_date=we.start_date,end_date__isnull=True)
-        flt |= models.Q(end_date__isnull=False,start_date__lte=we.start_date,end_date__gte=we.start_date)
-        qs = Event.objects.filter(flt,event_type=self)
-        #~ qs = Event.objects.filter(flt,owner_type=ot)
-        #~ if we.start_date.month == 7:
-            #~ print 20131011, qs.query
-            #~ print 20131011, self, we.start_date, qs.count()
-        return qs.count() > 0
-    
         
     
 class EventTypes(dd.Table):
@@ -167,6 +156,7 @@ class EventTypes(dd.Table):
     start_date id 
     # type url_template username password
     build_method template email_template attach_to_email
+    is_appointment all_rooms locks_user
     EventsByType 
     """
 
@@ -291,10 +281,12 @@ class EventGenerator(mixins.UserAuthored):
         raise NotImplementedError()
         #~ return self.applies_from
         
-    def get_conflict_calendars(self):
-        sc = settings.SITE.site_config
-        if sc.holiday_event_type is not None and sc.holiday_event_type != self:
-            yield sc.holiday_event_type
+    #~ def get_conflict_calendars(self):
+        #~ yield settings.SITE.site_config.site_calendar
+        
+        #~ sc = settings.SITE.site_config
+        #~ if sc.holiday_event_type is not None and sc.holiday_event_type != self:
+            #~ yield sc.holiday_event_type
         
     def update_cal_until(self):
         """Return the limit date until which to generate events.
@@ -310,6 +302,11 @@ class EventGenerator(mixins.UserAuthored):
         Returning None means: don't generate any events.
         """
         return None
+        
+    def get_events_language(self):
+        if self.user is None: 
+            return settings.SITE.get_default_language()
+        return self.user.language
         
     def update_cal_summary(self,i):
         raise NotImplementedError()
@@ -331,6 +328,7 @@ class EventGenerator(mixins.UserAuthored):
             return 0
         qs = self.get_existing_auto_events()
         wanted = self.get_wanted_auto_events()
+        #~ logger.info("20131020 get_wanted_auto_events() returned %s",wanted)
         count = len(wanted)
         current = 0
         
@@ -360,9 +358,9 @@ class EventGenerator(mixins.UserAuthored):
                 self.compare_auto_event(e,ae)
         # create new Events for remaining wanted
         for ae in wanted.values():
-            e = settings.SITE.modules.cal.Event(**ae)
-            self.before_auto_event_save(e)
-            e.save()
+            #~ e = settings.SITE.modules.cal.Event(**ae)
+            self.before_auto_event_save(ae)
+            ae.save()
         #~ logger.info("20130528 update_auto_events done")
         return count
             
@@ -419,6 +417,7 @@ class EventGenerator(mixins.UserAuthored):
         if event_type is None:
             return wanted
         rset = self.update_cal_rset()
+        logger.info("20131020 rset %s",rset)
         if rset and rset.every > 0 and rset.every_unit:
             date = self.update_cal_from()
             if not date:
@@ -432,11 +431,14 @@ class EventGenerator(mixins.UserAuthored):
             #~ raise Warning("Series ends before it was started!")
         i = 0
         max_events = rset.max_events or settings.SITE.site_config.max_auto_events
-        while i < max_events:
+        Event = settings.SITE.modules.cal.Event
+        with translation.override(self.get_events_language()):
+          while i < max_events:
             if date > until: return wanted
             i += 1
             if settings.SITE.ignore_dates_before is None or date >= settings.SITE.ignore_dates_before:
-                we = AttrDict(
+                #~ we = AttrDict(
+                we = settings.SITE.modules.cal.Event(
                     auto_type=i,
                     user=self.user,
                     start_date=date,
@@ -446,18 +448,28 @@ class EventGenerator(mixins.UserAuthored):
                     start_time=rset.start_time,
                     end_time=rset.end_time)
                     
-                for cal in self.get_conflict_calendars():
-                    if cal is not None:
-                        while cal.conflicts_with_event(we):
-                            date = rset.get_next_date(date)
-                            if date is None or date > until: return wanted
-                            we.start_date = date
+                #~ for cal in self.get_conflict_calendars():
+                    #~ if cal is not None:
+                        #~ while cal.conflicts_with_event(we):
+                            #~ date = rset.get_next_date(date)
+                            #~ if date is None or date > until: 
+                                #~ return wanted
+                            #~ we.start_date = date
+                while we.has_conflicting_events():
+                    date = rset.get_next_date(date)
+                    if date is None or date > until: 
+                        logger.info("20131020 %s conflicts with %s. Failed to find another date.",
+                            self,we.get_conflicting_events())
+                        return wanted
+                    we.start_date = date
                     
                 if rset.end_date is None:
-                    we.update(end_date=None)
+                    #~ we.update(end_date=None)
+                    we.end_date = None
                 else:
                     duration = rset.end_date - rset.start_date
-                    we.update(end_date=we.start_date + duration)
+                    #~ we.update(end_date=we.start_date + duration)
+                    we.end_date = we.start_date + duration
                 wanted[i] = we
             date = rset.get_next_date(date)
         return wanted
@@ -588,13 +600,13 @@ class RecurrentEvent(RecurrenceSet,EventGenerator):
         verbose_name = _("Recurrent Event")
         verbose_name_plural = _("Recurrent Events")
         
-    event_type = models.ForeignKey('cal.EventType')
+    event_type = models.ForeignKey('cal.EventType',blank=True,null=True)
     summary = models.CharField(_("Summary"),max_length=200,blank=True) # iCal:SUMMARY
     description = dd.RichTextField(_("Description"),blank=True,format='html')
     
-    def on_create(self,ar):
-        super(RecurrentEvent,self).on_create(ar)
-        self.event_type = settings.SITE.site_config.holiday_event_type
+    #~ def on_create(self,ar):
+        #~ super(RecurrentEvent,self).on_create(ar)
+        #~ self.event_type = settings.SITE.site_config.holiday_event_type
    
     def __unicode__(self):
         return self.summary
@@ -727,7 +739,59 @@ Indicates that this Event shouldn't prevent other Events at the same time."""))
         blank=True,null=True
         )
         
+    def has_conflicting_events(self):
+        qs = self.get_conflicting_events()
+        if qs is None: return False
+        return qs.count() > 0
         
+    #~ def conflicts_with_existing(self):
+    def get_conflicting_events(self):
+        """
+        Return a QuerySet of Events that conflict with this one.
+        Must work also when called on an unsaved instance.
+        May return None to indicate an empty queryset.
+        Applications may override this to add specific conditions.
+        """
+        if self.transparent: 
+            return
+        #~ return False
+        #~ Event = dd.resolve_model('cal.Event')
+        #~ ot = ContentType.objects.get_for_model(RecurrentEvent)
+        qs = self.__class__.objects.filter(transparent=False)
+        end_date = self.end_date or self.start_date
+        flt = Q(start_date=self.start_date,end_date__isnull=True)
+        flt |= Q(end_date__isnull=False,start_date__lte=self.start_date,end_date__gte=end_date)
+        if end_date == self.start_date:
+            if self.start_time and self.end_time:
+                # the other starts before me and ends after i started
+                c1 = Q(start_time__lte=self.start_time,end_time__gt=self.start_time)
+                # the other ends after me and started before i ended
+                c2 = Q(end_time__gte=self.end_time,start_time__lt=self.end_time)
+                # the other is full day
+                c3 = Q(end_time__isnull=True,start_time__isnull=True)
+                flt &= (c1|c2|c3)
+        qs = qs.filter(flt)
+        if self.id is not None:  # don't conflict with myself
+            qs = qs.exclude(id=self.id)
+        if self.room is not None:
+            # other event in the same room
+            c1 = Q(room=self.room)
+            # other event locks all rooms (e.h. holidays)
+            c2 = Q(event_type__all_rooms=True)
+            qs = qs.filter(c1|c2)
+        if self.user is not None:
+            if self.event_type is not None:
+                if self.event_type.locks_user:
+                    #~ c1 = Q(event_type__locks_user=False)
+                    #~ c2 = Q(user=self.user)
+                    #~ qs = qs.filter(c1|c2)
+                    qs = qs.filter(user=self.user,event_type__locks_user=True)
+        #~ qs = Event.objects.filter(flt,owner_type=ot)
+        #~ if we.start_date.month == 7:
+            #~ print 20131011, qs.query
+            #~ print 20131011, self, we.start_date, qs.count()
+        return qs
+    
     def is_fixed_state(self):
         return self.state.fixed
         #~ return self.state in EventStates.editable_states 

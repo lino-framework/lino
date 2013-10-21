@@ -32,7 +32,7 @@ from django.utils.translation import string_concat
 from django.core.exceptions import ValidationError
 
 
-from lino.core import auth
+from lino.core.perms import UserLevels
 from lino.core.dbutils import full_model_name
 from lino.core import frames
 from lino.core import actions
@@ -223,7 +223,7 @@ class UserAuthored(model.Model):
             #~ logger.info("20120919 no permission to %s on %s for %r",action,self,user)
             return False
         user = ar.get_user()
-        if self.user != user and getattr(user.profile,self.manager_level_field) < auth.UserLevels.manager:
+        if self.user != user and getattr(user.profile,self.manager_level_field) < UserLevels.manager:
             return ba.action.readonly
         return True
 
@@ -236,7 +236,7 @@ class AuthorAction(actions.Action):
     
     def get_action_permission(self,ar,obj,state):
         user = ar.get_user()
-        if obj.user != user and getattr(user.profile,self.manager_level_field) < auth.UserLevels.manager:
+        if obj.user != user and getattr(user.profile,self.manager_level_field) < UserLevels.manager:
             return self.readonly
         return super(actions.AuthorAction,self).get_action_permission(ar,obj,state)
         

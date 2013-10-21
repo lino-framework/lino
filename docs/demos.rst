@@ -103,6 +103,7 @@ or available as PyPI packages:
 - :ref:`faggio`
 - :ref:`patrols`
 - :doc:`/cosi/index`
+- :doc:`/polly/index`
 
     
 .. toctree::
@@ -110,5 +111,6 @@ or available as PyPI packages:
     :hidden:
     
     /cosi/index
+    /polly/index
       
       

@@ -401,8 +401,10 @@ class Course(contacts.ContactRelated,cal.EventGenerator,cal.RecurrenceSet,dd.Pri
     
     class Meta:
         abstract = settings.SITE.is_abstract_model('courses.Course')
-        verbose_name = _("Course")
-        verbose_name_plural = _('Courses')
+        #~ verbose_name = _("Course")
+        #~ verbose_name_plural = _('Courses')
+        verbose_name = _("Booking")
+        verbose_name_plural = _('Bookings')
         
     workflow_state_field = 'state'
     
@@ -433,10 +435,11 @@ class Course(contacts.ContactRelated,cal.EventGenerator,cal.RecurrenceSet,dd.Pri
     def update_cal_from(self):
         if self.state in (CourseStates.draft,CourseStates.cancelled): 
             return None
-        if self.start_date is None:
-            return None
-        # if every is per_weekday, actual start may be later than self.start_date
-        return self.get_next_date(self.start_date+datetime.timedelta(days=-1))
+        return self.start_date
+        #~ if self.start_date is None:
+            #~ return None
+        #~ # if every is per_weekday, actual start may be later than self.start_date
+        #~ return self.get_next_date(self.start_date+datetime.timedelta(days=-1))
         
     def update_cal_until(self):
         return self.max_date

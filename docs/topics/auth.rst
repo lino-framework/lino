@@ -1,44 +1,48 @@
 Authentication
 ==============
 
-Lino applications must decide which 
-*authentication and permission system* to use:
 
-- Django's `django.contrib.auth
-  <https://docs.djangoproject.com/en/dev/topics/auth/>`_ 
-  module
-- Lino's own system using UserLevels, UserGroups and UserProfiles
 
- 
+Lino defines some configuration settings for easily switching 
+between different commonly-used authentication methods.
+In other words, 
+Lino automatically decides which authentication method to 
+use and installs the required middleware
+depending on your :xfile:`settings.py` file.
 
-The :xfile:`settings.py` file decides which authentication method to use:
+You may override these out-of-the-box methods by 
+specifying the :setting:`auth_middleware` setting. 
+If this is not empty, the logic described here does not apply.
 
-- If :attr:`user_model <lino.ui.Site.user_model>` is `None`, 
-  there's no authentication and request.user is always 
-  an :class:`lino.core.auth.AnonymousUser` instance.
+- If :setting:`user_model` is `None`, 
+  there's no authentication and `request.user` is always 
+  an :class:`AnonymousUser <lino.core.perms.AnonymousUser>` instance.
   
-Otherwise, :attr:`user_model <lino.ui.Site.user_model>` 
-can be either 'users.User' or 'auth.User'. 
+Otherwise, :setting:`user_model` 
+can be either 'users.User' or 'auth.User' (the latter is not tested). 
 In both cases we have two more possibilities:
 
-- If :attr:`remote_user_header <remote_user_header <lino.ui.Site.remote_user_header>>` 
+- If :settings:`remote_user_header` 
   contains some value, your application will use 
   `HTTP authentication`_
   
-- If :attr:`remote_user_header <remote_user_header <lino.ui.Site.remote_user_header>>` is `None`, 
+- If :settings:`remote_user_header` is `None`, 
   your application uses `Session-based authentication`_
 
 Session-based authentication
 ----------------------------
 
-This means that your application 
-has the "Login", "Logout" and "Register" buttons
-and `django.contrib.sessions` to your INSTALLED_APPS.
+This means that your application
+has "Login", "Logout" and "Register" buttons,
+and that `django.contrib.sessions` is added to your INSTALLED_APPS.
 
-This behaviour is automatically activated when 
-:attr:`remote_user_header <remote_user_header <lino.ui.Site.remote_user_header>>` is `None` 
-(and :attr:`lino.ui.Site.user_model` not).
+There are two variants of session-based authentication:
 
+- If :settings:`ldap_auth_server` is `None`, Lino uses the passwords 
+  stored in its own database.
+
+- If :settings:`ldap_auth_server` is not `None`, Lino authenticates 
+  against the specified LDAP server.
 
 
 HTTP authentication
@@ -72,45 +76,4 @@ See also
 - :doc:`/tickets/31`
 - :mod:`lino.modlib.users`
 - :doc:`/admin/ApacheHttpAuth`
-
-Even though Lino currently supports only remote authentication,
-there *is* an application-specific table of users managed by Lino.
-The default Model, :class:`lino.modlib.users.models.User`
-For each request, Lino will lookup this table
-
-
-
-
-    user_model = "users.User"
-    """Set this to ``"auth.User"`` if you use `django.contrib.auth` instead of
-    `lino.modlib.users`. 
-    
-    Set it to `None` to remove any user management 
-    (feature used by e.g. :mod:`lino.test_apps.mti`)
-    """
-    
-    default_user = None
-    """
-    Username to be used if a request with 
-    no REMOTE_USER header makes its way through to Lino. 
-    Which may happen on a development server and if Apache is 
-    configured to allow it.
-    Used by :mod:`lino.core.auth`
-    :mod:`lino.modlib.users.middleware`
-    """
-    
-    remote_user_header = "REMOTE_USER"
-    """
-    The name of the header (set by the web server) that Lino consults 
-    for finding the user of a request.
-    """
-    #~ simulate_remote_user = False
-    
-    project_model = None
-    """Optionally set this to the <applabel_modelname> of a 
-    model used as project in your application."""
-
-
-
-
 

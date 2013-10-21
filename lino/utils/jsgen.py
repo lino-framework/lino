@@ -335,7 +335,7 @@ class VisibleComponent(Component,Permittable):
         
     def install_permission_handler(self):
         
-        from lino.core.auth import make_view_permission_handler
+        from lino.core.perms import make_view_permission_handler
         
         #~ if self.name == 'newcomers_left': # required.has_key('user_groups'):
             #~ logger.info("20121130 install_permission_handler() %s %s",self,self.required)

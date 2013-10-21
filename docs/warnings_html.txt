@@ -1,1 +1,8 @@
-/home/luc/hgwork/lino/docs/polly/index.rst:: WARNING: document isn't included in any toctree
+/home/luc/hgwork/lino/docs/polly/index.rst:13: WARNING: toctree contains reference to nonexisting document u'polly/ intro'
+/home/luc/hgwork/lino/docs/polly/index.rst:13: WARNING: toctree contains reference to nonexisting document u'polly/ sacredpy'
+/home/luc/hgwork/lino/docs/topics/auth.rst:25: ERROR: Unknown interpreted text role "settings".
+/home/luc/hgwork/lino/docs/topics/auth.rst:29: ERROR: Unknown interpreted text role "settings".
+/home/luc/hgwork/lino/docs/topics/auth.rst:41: ERROR: Unknown interpreted text role "settings".
+/home/luc/hgwork/lino/docs/topics/auth.rst:44: ERROR: Unknown interpreted text role "settings".
+/home/luc/hgwork/lino/docs/polly/intro.rst:: WARNING: document isn't included in any toctree
+/home/luc/hgwork/lino/docs/polly/sacredpy.rst:: WARNING: document isn't included in any toctree

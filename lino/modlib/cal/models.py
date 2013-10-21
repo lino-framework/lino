@@ -123,7 +123,7 @@ class RemoteCalendar(dd.Sequenced):
     def save(self,*args,**kw):
         ct = CALENDAR_DICT.get(self.type)
         ct.validate_calendar(self)
-        super(RemoteCalendar,self).save(*args,**kw)
+        super(RemoteCalendar,self).save(*args,**k)
 
 
 
@@ -704,13 +704,22 @@ def customize_users():
             help_text=_("""The default type of events on this site.""")
     ))
     
+    #~ dd.inject_field('system.SiteConfig',
+        #~ 'holiday_event_type',
+        #~ models.ForeignKey('cal.EventType',
+            #~ blank=True,null=True,
+            #~ related_name="%(app_label)s_%(class)s_set_by_holiday_calender",
+            #~ verbose_name=_("Holiday"),
+            #~ help_text=_("""The default type for recurring calendar events.""")
+    #~ ))
+    #~ 
     dd.inject_field('system.SiteConfig',
-        'holiday_event_type',
-        models.ForeignKey('cal.EventType',
+        'site_calendar',
+        models.ForeignKey('cal.Calendar',
             blank=True,null=True,
-            related_name="%(app_label)s_%(class)s_set_by_holiday_calender",
-            verbose_name=_("Holiday"),
-            help_text=_("""The default type for recurring calendar events.""")
+            related_name="%(app_label)s_%(class)s_set_by_site_calender",
+            verbose_name=_("Site Calendar"),
+            help_text=_("""The default calendar of this site.""")
     ))
     
     dd.inject_field('system.SiteConfig',

@@ -91,7 +91,7 @@ class Permittable(object):
     required = {}
     """
     A dict with permission requirements.
-    See :func:`lino.core.auth.make_permission_handler`.
+    See :func:`lino.core.perms.make_permission_handler`.
     """
     
     workflow_state_field = None # internally needed for make_permission_handler
@@ -384,7 +384,7 @@ class Action(Parametrizable,Permittable):
     #~ required = {}
     #~ """
     #~ A dict with permission requirements.
-    #~ See :func:`lino.utils.jsgen.make_permission_handler`.
+    #~ See :func:`lino.core.perms.make_permission_handler`.
     #~ """
     
     action_name = None
@@ -589,25 +589,6 @@ class Action(Parametrizable,Permittable):
             return self.parameters.get(name,None)
         return None
         
-        
-    #~ def add_requirements(self,**kw):
-        #~ """
-        #~ Override existing permission requirements.
-        #~ Arguments: see :func:`lino.utils.jsgen.make_permission_handler`.
-        #~ """
-        #~ Permittable.add_requirements(self,**kw)
-        #~ logger.info("20120628 set_required %s(%s)",self,kw)
-        #~ new = dict()
-        #~ new.update(self.required)
-        #~ new.update(kw)
-        #~ self.required = new
-        #~ if self.required.has_key('states'):
-            #~ self.show_in_workflow = True
-            #~ self.custom_handler = True
-            #~ self.show_in_bbar = False
-        #~ else:
-            #~ self.show_in_workflow = False
-            #~ self.show_in_bbar = True
         
     def get_button_label(self,actor):
         if actor is None:

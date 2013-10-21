@@ -43,7 +43,33 @@ Default value us `None`, meaning that this site has no user management
 (feature used by e.g. :mod:`lino.test_apps.1`)
 
 Set this to ``"auth.User"`` if you use `django.contrib.auth` instead of
-`lino.modlib.users`. Not tested.
+`lino.modlib.users` (not tested).
+
+
+.. setting:: remote_user_header
+    
+The name of the header (set by the web server) that Lino should consult 
+for finding the user of a request.
+The default value `None` means that http authentication is not used.
+Apache's default value is ``"REMOTE_USER"``.
+
+
+.. setting:: ldap_auth_server
+
+This should be a string with the domain name and DNS (separated by a 
+space) of the LDAP server to be used for authentication.
+Example::
+
+  ldap_auth_server = 'DOMAIN_NAME SERVER_DNS'
+  
+.. setting:: auth_middleware
+
+Override used Authorisation middlewares with supplied tuple of 
+middleware class names.
+
+If None, use logic described in :doc:`/topics/auth`
+  
+
 
 .. setting:: project_model
 
@@ -720,12 +746,6 @@ class Site(Site):
     user_model = None
 
     auth_middleware = None
-    """
-    Override used Authorisation middlewares with supplied tuple of 
-    middleware class names.
-
-    If None, use logic described in :doc:`/topics/auth`
-    """
     
     legacy_data_path = None
     """
@@ -995,12 +1015,7 @@ class Site(Site):
     
     #~ remote_user_header = "REMOTE_USER"
     remote_user_header = None
-    """
-    The name of the header (set by the web server) that Lino consults 
-    for finding the user of a request.
-    The default value `None` means that http authentication is not used.
-    Apache's default value is ``"REMOTE_USER"``.
-    """
+    ldap_auth_server = None
     
     #~ simulate_remote_user = False
     
@@ -1459,7 +1474,7 @@ class Site(Site):
         for defining :setting:`MIDDLEWARE_CLASSES`, 
         you can simply set :setting:`MIDDLEWARE_CLASSES`
         in your :xfile:`settings.py` 
-        after the :class:`lino.Site` has been instantiated.
+        after the :class:`lino.site.Site` has been instantiated.
         
         `Django and standard HTTP authentication
         <http://stackoverflow.com/questions/152248/can-i-use-http-basic-authentication-with-django>`_
@@ -1481,13 +1496,15 @@ class Site(Site):
         else:
             if self.user_model is None:
                 yield 'lino.core.auth.NoUserMiddleware'
+            elif self.remote_user_header:
+                yield 'lino.core.auth.RemoteUserMiddleware'
+                #~ yield 'django.middleware.doc.XViewMiddleware'
             else:
-                if self.remote_user_header:
-                    yield 'lino.core.auth.RemoteUserMiddleware'
-                    #~ yield 'django.middleware.doc.XViewMiddleware'
+                # not using remote http auth, so we need sessions
+                yield 'django.contrib.sessions.middleware.SessionMiddleware'
+                if self.ldap_auth_server:
+                    yield 'lino.core.auth.LDAPAuthMiddleware'
                 else:
-                    # 20121003 : not using remote http auth, so we need sessions
-                    yield 'django.contrib.sessions.middleware.SessionMiddleware'
                     yield 'lino.core.auth.SessionUserMiddleware'
 
                 #~ raise Exception("""\

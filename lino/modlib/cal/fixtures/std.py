@@ -71,16 +71,25 @@ def objects():
     yield add('8',**babel_values('name',en=u"not urgent",de=u"nicht dringend",   fr=u"pas urgent"))
     yield add('9',**babel_values('name',en=u"not urgent at all",de=u"überhaupt nicht dringend",   fr=u"pas urgent du tout"))
 
+    calendar = Instantiator('cal.Calendar').build
+    general = calendar(**dd.babelkw('name',
+          de="Allgemein",
+          fr="Général",
+          en="General",
+          ))
+    yield general
+    settings.SITE.site_config.site_calendar = general
+    #~ settings.SITE.site_config.holiday_event_type = holidays
+    yield settings.SITE.site_config
+    
 
     event_type = Instantiator('cal.EventType').build
-    holidays = event_type(**dd.babelkw('name',
+    holidays = event_type(all_rooms=True,**dd.babelkw('name',
           de="Feiertage",
           fr="Jours fériés",
           en="Holidays",
           ))
     yield holidays
-    settings.SITE.site_config.holiday_event_type = holidays
-    yield settings.SITE.site_config
     
     add = Instantiator('cal.RecurrentEvent',event_type=holidays).build
     def holiday(month,day,summary):
