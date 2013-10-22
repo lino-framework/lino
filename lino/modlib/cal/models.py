@@ -126,6 +126,8 @@ class RemoteCalendar(dd.Sequenced):
         super(RemoteCalendar,self).save(*args,**k)
 
 
+class RemoteCalendars(dd.Table):
+    model = 'cal.RemoteCalendar'
 
 class Room(dd.BabelNamed):
     """
@@ -788,6 +790,7 @@ def setup_main_menu(site,ui,profile,m):
     
 def setup_config_menu(site,ui,profile,m): 
     m  = m.add_menu("cal",MODULE_LABEL)
+    m.add_action('cal.Calendars')
     m.add_action('cal.MySubscriptions')
     m.add_action('cal.Rooms')
     m.add_action('cal.Priorities')
@@ -799,6 +802,7 @@ def setup_config_menu(site,ui,profile,m):
     m.add_action('cal.GuestRoles')
     #~ m.add_action(GuestStatuses)
     m.add_action('cal.EventTypes')
+    m.add_action('cal.RemoteCalendars')
   
 def setup_explorer_menu(site,ui,profile,m):
     m  = m.add_menu("cal",MODULE_LABEL)

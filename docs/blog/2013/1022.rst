@@ -14,6 +14,9 @@ errors:
 - AttributeError at /api/outbox/MyOutbox : 'AnonymousUser' object has no attribute 'get_typed_instance'
   http://127.0.0.1:8000/api/outbox/MyOutbox?start=0&limit=23&fmt=json
   
+- TypeError: Problem installing fixture '/home/luc/hgwork/faggio/lino_faggio/fixtures/eiche.py': can't compare datetime.date to NoneType
+  
+
   
 Django's `LANGUAGES` setting
 ----------------------------  
@@ -54,3 +57,14 @@ Workaround:
 - Renamed :mod:`north.site` to  :mod:`north.north_site`
 - adapted :file:`north/tests/__init.py`
 - Renamed :mod:`lino.site` to  :mod:`lino.lino_site`
+
+
+
+Checkin
+-------
+
+Most tests are now passing (:ref:`welfare` has some trivial failures 
+which I leave open until the new conflicting events handling is stable).
+Checkin and updated the :ref:`demos`.
+
+  
