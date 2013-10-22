@@ -1205,7 +1205,7 @@ Lino.TimeField = Ext.extend(Ext.form.TimeField,{
   increment: 15
   });
 Lino.DateField = Ext.extend(Ext.form.DateField,{
-  boxMinWidth: Lino.chars2width(15), // 20131005 changed from 11 to 15
+  //~ boxMinWidth: Lino.chars2width(15), // 20131005 changed from 11 to 15
   format: '{{settings.SITE.date_format_extjs}}',
   altFormats: '{{settings.SITE.alt_date_formats_extjs}}'
   });
@@ -2361,13 +2361,14 @@ Lino.run_detail_handler = function(panel,pk) {
   //~ panel.el.unmask();
 }
 
-Lino.show_fk_detail = function(combo,detail_action) {
+Lino.show_fk_detail = function(combo,detail_action,insert_action) {
     //~ console.log("Lino.show_fk_detail",combo,handler);
     pk = combo.getValue();
     if (pk) {
         detail_action.run(null,{record_id: pk})
       } else {
-        Lino.notify("{{_('Cannot show detail for empty foreign key.')}}");
+        insert_action.run();
+        //~ Lino.notify("{{_('Cannot show detail for empty foreign key.')}}");
       }
 };
 
@@ -4680,7 +4681,7 @@ Lino.chooser_handler = function(combo,name) {
 Lino.ComboBox = Ext.extend(Ext.form.ComboBox,{
   forceSelection: true,
   triggerAction: 'all',
-  minListWidth:230,
+  minListWidth:280, // 20131022
   autoSelect: false,
   selectOnFocus: true, // select any existing text in the field immediately on focus.
   submitValue: true,
@@ -4830,6 +4831,15 @@ Lino.RemoteComboFieldElement = Ext.extend(Lino.ComboBox,{
   //~ typeAhead: true,
   //~ selectOnFocus: true, // select any existing text in the field immediately on focus.
   resizable: true
+  ,initList : function() {
+      Lino.RemoteComboFieldElement.superclass.initList.call(this);
+      if (this.pageTb) {
+          //~ 
+          //~ var btn = ls_buttons
+          //~ this.pageTb.items = this.pageTb.items.concat([btn]);
+          //~ console.log("20131022 pageTb.items is", this.pageTb.items)
+      }
+  }
 });
 
 /*

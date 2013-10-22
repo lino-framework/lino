@@ -67,4 +67,43 @@ Most tests are now passing (:ref:`welfare` has some trivial failures
 which I leave open until the new conflicting events handling is stable).
 Checkin and updated the :ref:`demos`.
 
-  
+
+
+Shortcut for inserting in combobox
+----------------------------------
+
+The "Lookup" button of a combobox 
+whose value is empty 
+used to display a message
+'Cannot show detail for empty foreign key.'
+Now it calls the insert handler. 
+
+
+In `linoweb.js` I already increased the `minListWidth` of `Lino.ComboBox`
+and implemented a `initList` of `Lino.RemoteComboFieldElement` which shows 
+that we can add a button to the Pagination toolbar of the list.
+
+Another way might be to add buttons directly in the cell renderer.
+
+Also (optionally) remove clickability of cell 
+renderers ("Lino.fk_renderer"), and in that case a TwinCombo 
+would make sense also for a grid editor cell (:class:`lino.ui.elems.ForeignKeyElement`). 
+But it doesn't yet work from a grid because combo.getValue() 
+doesn't return the primary key...
+
+
+
+Width of date fields
+--------------------
+
+Aha! It seems that I fixed a nasty layout bug:
+Date fields were often displayed so that their trigger button 
+(the button used to show the date picker) was hidden by the 
+next field.
+
+I removed the `boxMinWidth: Lino.chars2width(11)` which obviously 
+doesn't work as expected and anyway (officially) exists only since 
+ExtJS 3.4.0 and changed `DateFieldElement.preferred_width` 
+from 8 to 13.
+
+

@@ -955,24 +955,6 @@ class ForeignKeyElement(ComplexRemoteComboFieldElement):
   
     preferred_width = 20
     
-    def unused__init__(self,layout_handle,field,**kw):
-        if isinstance(field.rel.to,basestring):
-            from lino.core.dbutils import resolve_model
-            field.rel.to = resolve_model(field.rel.to)
-        pw = field.rel.to.preferred_foreignkey_width
-        if pw is not None:
-            kw.setdefault('preferred_width',pw)
-        self.actor = dbtables.get_model_report(field.rel.to)
-        a = self.actor.detail_action
-        if a is not None:
-            if not isinstance(layout_handle.layout,layouts.ListLayout):
-                self.value_template = "new Lino.TwinCombo(%s)"
-                kw.update(onTrigger2Click=js_code(
-                    "function(e){ Lino.show_fk_detail(this,Lino.%s)}" % a.full_name()))
-                    #~ "Lino.show_fk_detail_handler(this,Lino.%s)}" % a))
-        FieldElement.__init__(self,layout_handle,field,**kw)
-      
-        
     def get_field_options(self,**kw):
         kw = super(ForeignKeyElement,self).get_field_options(**kw)
         if isinstance(self.field.rel.to,basestring):
@@ -982,13 +964,15 @@ class ForeignKeyElement(ComplexRemoteComboFieldElement):
             kw.setdefault('preferred_width',pw)
         #~ actor = dbtables.get_model_report(self.field.rel.to)
         actor = self.field.rel.to.get_default_table()
-        a = actor.detail_action
-        if a is not None:
-            if not isinstance(self.layout_handle.layout,layouts.ListLayout):
+        if not isinstance(self.layout_handle.layout,layouts.ListLayout):
+            a1 = actor.detail_action
+            a2 = actor.insert_action
+            if a1 is not None or a2 is not None:
                 self.value_template = "new Lino.TwinCombo(%s)"
-                kw.update(onTrigger2Click=js_code(
-                    "function(e){ Lino.show_fk_detail(this,Lino.%s)}" % a.full_name()))
-                    #~ "Lino.show_fk_detail_handler(this,Lino.%s)}" % a))
+                js = "function(e){ Lino.show_fk_detail(this,Lino.%s,Lino.%s)}" % (
+                    a1.full_name(),a2.full_name())
+                kw.update(onTrigger2Click=js_code(js))
+                    
         
         kw.update(pageSize=actor.page_length)
         if actor.model is not None:
@@ -1045,7 +1029,8 @@ class DateFieldElement(FieldElement):
     #~ xtype = 'datefield'
     #~ data_type = 'date' # for store column
     sortable = True
-    preferred_width = 8
+    #~ preferred_width = 8 # 20131022
+    preferred_width = 13
     filter_type = 'date'
     gridfilters_settings = dict(type='date',dateFormat=settings.SITE.date_format_extjs)
     # todo: DateFieldElement.preferred_width should be computed from Report.date_format
