@@ -68,7 +68,7 @@ After these experiments (BTW this blog page is being
 doctested while I'm writing it) I start to feel ready 
 for another invisible but important change: 
 support for locale names instead of simple language 
-names in :attr:`north.Site.languages`.
+names in :setting:`languages`.
 
 To test the new feature I wrote a tutorial
 :doc:`/tutorials/de_BE/index`.

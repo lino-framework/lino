@@ -312,5 +312,5 @@ def authenticate(*args, **kwargs):
     Called when the Login window of the web interface is confirmed.
     """
     middleware = get_auth_middleware()
-    return middleware.authenticate(*args, **kwargs)
+    return middleware().authenticate(*args, **kwargs)
     

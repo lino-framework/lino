@@ -139,7 +139,7 @@ and make it into a released version?
 Not the reason, but disturbing is the bug that the message 
 "using djangosite 0.1.7, Django 1.5.2, ..."
 didn't include the North version number.
-This was in :meth:`north.Site`
+This was in :meth:`north.north_site.Site`
 Fixed.
 
 Cleanup my :xfile:`__init__.py` files

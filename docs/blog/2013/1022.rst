@@ -1,0 +1,56 @@
+===================================
+20131022 (Tuesday, 22 October 2013)
+===================================
+
+
+Miscellaneous bugfixes
+----------------------
+
+Fixed some non-severe bugs which had caused unnecessary internal server 
+errors:
+
+- AttributeError at /api/contacts/Partners/null : 'NoneType' object has no attribute 'name'
+
+- AttributeError at /api/outbox/MyOutbox : 'AnonymousUser' object has no attribute 'get_typed_instance'
+  http://127.0.0.1:8000/api/outbox/MyOutbox?start=0&limit=23&fmt=json
+  
+  
+Django's `LANGUAGES` setting
+----------------------------  
+  
+Instantiating a `Site` now (again) reduces Django's `LANGUAGES` 
+setting to contain only the languages found in 
+:setting:`settings.SITE.languages <languages>`.
+
+Background :
+Lino applications don't use Django's `LANGUAGES` setting because 
+they have :setting:`settings.SITE.languages <languages>`.
+For some time I thought that consequently we don't touch it. 
+OTOH it is really useless to have it contain all kind of languages, 
+and Django includes it as part of the email report generated for 
+each internal server error where it is at least irritating.
+
+
+
+
+
+Thou shalt not use library modules in your package
+--------------------------------------------------
+
+I discovered another example for the above commandment:
+The doctests in the :mod:`north.site` module were not being tested 
+due to the fact that we use :mod:`atelier.doctest_utf8` 
+(required because we need non-ASCII strings), which contains
+code originally copied from Python 2.7 `doctest.py` which says::
+
+    # It is a module -- insert its dir into sys.path and try to
+    # import it. If it is part of a package, that possibly
+    # won't work because of package imports.
+
+... and `site` is a Python library module! 
+
+Workaround:
+
+- Renamed :mod:`north.site` to  :mod:`north.north_site`
+- adapted :file:`north/tests/__init.py`
+- Renamed :mod:`lino.site` to  :mod:`lino.lino_site`

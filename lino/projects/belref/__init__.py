@@ -40,8 +40,8 @@ class Site(Site):
     demo_fixtures = 'demo all_countries be few_cities inscodes'
     #~ demo_fixtures = 'demo'
     
-    admin_prefix = 'admin'
-    #~ use_extjs = False
+    use_extjs = False
+    #~ admin_prefix = 'admin'
     plain_prefix = ''
     
     #~ anonymous_user_profile = 

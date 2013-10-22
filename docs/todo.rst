@@ -182,7 +182,7 @@ Bugs
 Feature requests
 ----------------
 
-#.  A new lino.Site attribute `hidden_apps` 
+#.  A new :class:`lino.lino_site.Site` attribute `hidden_apps` 
     for a locally configurable
     list of apps to not install. For example in :ref:`welfare` 
     there will be customers who don't use the `reception` app.

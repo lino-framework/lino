@@ -73,10 +73,10 @@ I used the occasion to split the central parts of
 :mod:`lino_welfare.modlib.pcsw.models`
 into a new module :mod:`lino_welfare.models`.
 
-:class:`north.Site` now does the same for `LOCALE_PATHS` as for `FIXTURE_DIRS`: 
+:class:`north.north_site.Site` now does the same for `LOCALE_PATHS` as for `FIXTURE_DIRS`: 
 it extends Django's automatic discovery system by searching also for 
 "locale" subdirectories relative to any Python module 
-that defines a subclass of :class:`north.Site` 
+that defines a subclass of :class:`north.north_site.Site` 
 (usually a :file:`settings.py` file) 
 and which are *not* part of an app 
 (in which case a locale directory should not be mentioned there because 

@@ -96,7 +96,7 @@ So Lino needs to provide a possibility to specify
 per UserProfile a subset of the site's languages.
 
 
-- New method :meth:`north.Site.resolve_languages`
+- New method :meth:`north.north_site.Site.resolve_languages`
 - Applications can use the new feature by specifying 
   a ``hide_languages`` attribut for either the whole
   :attr:`UserProfiles <lino.utils.auth.UserProfiles.hide_languages>`
@@ -117,4 +117,4 @@ to have French as default when she creates a new client. And vice-versa.
 
 Another problem is that we can't deny the fact that Lino-Welfare is
 currently being used only in the German-speaking region. This is why I 
-added a new method :meth:`north.Site.get_default_language`.
+added a new method :meth:`north.north_site.Site.get_default_language`.

@@ -76,5 +76,5 @@ def setup_project(settings_module):
     from lino.runtime import settings
     
 
-from .site import Site
+from .lino_site import Site
 

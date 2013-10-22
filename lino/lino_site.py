@@ -19,7 +19,7 @@ overridden by the application developer and/or the local site
 administrator.
 
 Here is a list of Lino-specific settings. 
-The settings inherited :class:`north.Site` 
+The settings inherited :class:`north.north_site.Site` 
 and :class:`djangosite.Site` are documented there.
 
 .. setting:: config_id
@@ -81,6 +81,49 @@ to this model.
 Not yet decided whther this makes sense. 
 It is probably an obsolete pattern.
 
+
+
+.. setting:: admin_prefix
+
+The prefix to use for Lino "admin mode"
+(i.e. the "admin main page" with a pull-down "main menu").
+
+The default value is an empty string, resulting in a 
+website whose root url shows the admin mode.
+
+Note that unlike Django's `MEDIA_URL
+<https://docs.djangoproject.com/en/dev/ref/settings/#media-url>`__ 
+setting, this must not contain any slash.
+
+If this is nonempty, then your site features a "web content mode": 
+the root url renders "web content" defined by :mod:`lino.modlib.pages`.
+The usual value in that case is ``admin_prefix = "admin"``.
+
+
+See also  
+
+- `telling Django to recognize a different application root url
+  <http://groups.google.com/group/django-users/browse_thread/thread/c95ba83e8f666ae5?pli=1>`__
+- `How to get site's root path in Django 
+  <http://groups.google.com/group/django-users/browse_thread/thread/27f035aa8e566af6>`__
+- `#8906 django.contrib.auth settings.py URL's aren't portable <https://code.djangoproject.com/ticket/8906>`__
+- `Changed the way URL paths are determined 
+  <https://code.djangoproject.com/wiki/BackwardsIncompatibleChanges#ChangedthewayURLpathsaredetermined>`__
+
+.. setting:: plain_prefix
+
+The prefix to use for "plain html" URLs.
+Default value is ``'plain'``.
+
+
+Exactly one of 
+:setting:`admin_prefix`
+and
+:setting:`plain_prefix`
+must be empty.
+
+
+
 .. setting:: preview_limit
     
 Default value for the 
@@ -88,11 +131,6 @@ Default value for the
 parameter of all tables who don't specify their own one.
 Default value is 15.
 
-
-.. setting:: plain_prefix
-
-The prefix to use for "plain html" URLs.
-Default value is ``'plain'``.
 
 .. setting:: start_year
 
@@ -860,33 +898,6 @@ class Site(Site):
     
     #~ admin_prefix = 'admin'
     admin_prefix = '' 
-    """
-    The prefix to use for Lino admin URLs.
-    
-    The default value is an empty string, resulting in a 
-    website whose root url shows the "admin mode" 
-    (i.e. with a pull-down "main menu").
-    
-    Note that unlike Django's `MEDIA_URL
-    <https://docs.djangoproject.com/en/dev/ref/settings/#media-url>`__ 
-    setting, this must not contain any slash.
-    
-    If this is nonempty, then your site features a "web content mode": 
-    the root url renders "web content" defined by :mod:`lino.modlib.pages`.
-    The usual value in that case is ``admin_prefix = "admin"``.
-    
-    
-    See also  
-    
-    - `telling Django to recognize a different application root url
-      <http://groups.google.com/group/django-users/browse_thread/thread/c95ba83e8f666ae5?pli=1>`__
-    - `How to get site's root path in Django 
-      <http://groups.google.com/group/django-users/browse_thread/thread/27f035aa8e566af6>`__
-    - `#8906 django.contrib.auth settings.py URL's aren't portable <https://code.djangoproject.com/ticket/8906>`__
-    - `Changed the way URL paths are determined 
-      <https://code.djangoproject.com/wiki/BackwardsIncompatibleChanges#ChangedthewayURLpathsaredetermined>`__
-    """
-    
     use_extjs = True
     
     time_format_extjs = 'H:i'
@@ -1880,8 +1891,6 @@ class Site(Site):
             (rx+r'apchoices/(?P<app_label>\w+)/(?P<actor>\w+)/(?P<an>\w+)/(?P<field>\w+)$', views.ActionParamChoices.as_view()),
             # the thread_id can be a negative number:
             (rx+r'callbacks/(?P<thread_id>[\-0-9a-zA-Z]+)/(?P<button_id>\w+)$', views.Callbacks.as_view()),
-            #~ (rx+r'plain/(?P<app_label>\w+)/(?P<actor>\w+)$', views.PlainList.as_view()),
-            #~ (rx+r'plain/(?P<app_label>\w+)/(?P<actor>\w+)/(?P<pk>.+)$', views.PlainElement.as_view()),
         )
         if self.use_eid_applet:
             urlpatterns += patterns('',
@@ -1911,16 +1920,18 @@ class Site(Site):
         from django.conf.urls import patterns, url, include
 
         urlpatterns = self.get_media_urls()
-
+        
+        
+        
+        if self.use_extjs and self.admin_prefix:
+            urlpatterns += patterns('',
+              ('^'+self.admin_prefix, include(self.get_ext_urls())))
+            
         if self.plain_prefix:
             urlpatterns += patterns('',
               ('^'+self.plain_prefix+"/", include(self.get_plain_urls()))
             )
         
-        if not self.plain_prefix:
-            urlpatterns += self.get_plain_urls()
-            
-            
         if self.django_admin_prefix: # experimental
             from django.contrib import admin
             admin.autodiscover()
@@ -1928,17 +1939,17 @@ class Site(Site):
               ('^'+self.django_admin_prefix[1:]+"/", include(admin.site.urls))
             )
            
-        if self.use_extjs:
-            if self.admin_prefix:
-                urlpatterns += patterns('',
-                  ('^'+self.admin_prefix, include(self.get_ext_urls()))
-                )
-                urlpatterns += self.get_pages_urls()
-            else:
-                urlpatterns += self.get_ext_urls()
-        elif self.plain_prefix:
-            urlpatterns += self.get_pages_urls()
+        
+
+        if not self.plain_prefix:
+            urlpatterns += self.get_plain_urls()
             
+        if self.use_extjs and not self.admin_prefix:
+            urlpatterns += self.get_ext_urls()
+        #~ elif self.plain_prefix:
+            #~ urlpatterns += self.get_pages_urls()
+
+        #~ print 20131021, urlpatterns
         return urlpatterns
 
 

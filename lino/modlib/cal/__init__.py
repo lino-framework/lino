@@ -14,9 +14,8 @@
 
 """
 This module turns Lino into a basic calendar client. 
-To be combined with :attr:`lino.site.Site.use_extensible`.
-Supports remote calendars.
-Events and Tasks can get attributed to a :attr:`Project <lino.Site.project_model>`.
+When using this app, you probably also like to set 
+:settings:`use_extensible` to True.
 
 """
 

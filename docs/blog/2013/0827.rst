@@ -123,7 +123,7 @@ While thinking about all this I updated the documentation pages about
 Hidden languages
 ----------------
 
-Added new attribute :attr:`hidden_languages <north.Site.hidden_languages>`.
+Added new attribute :setting:`hidden_languages`.
 That's easier than using the `hide_languages` argument to 
 :meth:`lino.core.auth.UserProfiles.reset`.
 

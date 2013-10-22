@@ -7,7 +7,7 @@ Calendar module
 
 Continued on :ref:`faggio`.
 
-- site_calendar
+- `SiteConfig.site_calendar`
 - :meth:`lino.modlib.cal.models_event.Event.get_conflicting_events`
 
 
@@ -47,5 +47,16 @@ Internal changes:
   methods. (Don't remember why they were class methods).
   
 
-.
 
+A new user group in :ref:`welfare`
+----------------------------------
+
+Murphy's law on the field. Here is a user request for :ref:`welfare`:
+
+  Roger vom ASD teilte mir gerade mit, dass der ASD anscheinend auch 
+  Zugriffe zu den Kursen und dem Reiter "Sprachen" braucht.
+  
+This functionality had until now been covered by the "integ" group.
+But there was already a custom menu header "Courses" of the main 
+menu.
+So I added a new

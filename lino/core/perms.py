@@ -114,7 +114,7 @@ class UserProfile(Choice):
     
     hidden_languages = None
     """
-    A subset of :attr:`languages <north.Site.languages>` 
+    A subset of :setting:`languages` 
     which should be hidden in this user profile.
     Default value is :attr:`hidden_languages <UserProfiles.hidden_languages>`.
     This is used on multilingual sites with more than 4 or 5 languages.
@@ -665,3 +665,8 @@ class AnonymousUser(object):
         
     def __str__(self):
         return self.username
+
+
+    def get_typed_instance(self,model):
+        # 20131022 AttributeError at /api/outbox/MyOutbox : 'AnonymousUser' object has no attribute 'get_typed_instance'
+        return self

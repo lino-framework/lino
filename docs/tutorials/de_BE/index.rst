@@ -9,7 +9,7 @@ on a same Site.
 
 In our `settings.py` you can see that we have 
 two variants of German in 
-:attr:`languages <north.Site.languages>`: 
+:setting:`languages`: 
 normal German ('de') and belgian German ('de_BE'):
 
 .. literalinclude:: settings.py
@@ -61,5 +61,5 @@ Here is the result:
 
 See also
 
-- :attr:`north.Site.languages`
-- :meth:`north.Site.get_language_info`
+- :setting:`languages`
+- :meth:`north.north_site.Site.get_language_info`

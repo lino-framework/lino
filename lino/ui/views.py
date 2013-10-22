@@ -12,6 +12,30 @@
 ## You should have received a copy of the GNU General Public License
 ## along with Lino; if not, see <http://www.gnu.org/licenses/>.
 
+"""
+
+Summary from <http://en.wikipedia.org/wiki/Restful>: 
+
+    On an element:
+
+    - GET : Retrieve a representation of the addressed member of the collection expressed in an appropriate MIME type.
+    - PUT : Update the addressed member of the collection or create it with the specified ID. 
+    - POST : Treats the addressed member as a collection and creates a new subordinate of it. 
+    - DELETE : Delete the addressed member of the collection. 
+
+    On a list:
+
+    - GET : List the members of the collection. 
+    - PUT : Replace the entire collection with another collection. 
+    - POST : Create a new entry in the collection where the ID is assigned automatically by the collection. 
+      The ID created is included as part of the data returned by this operation. 
+    - DELETE : Delete the entire collection.
+    
+
+
+
+"""
+
 import logging
 logger = logging.getLogger(__name__)
 
@@ -75,8 +99,8 @@ def requested_actor(app_label,actor):
     """
     x = getattr(settings.SITE.modules,app_label,None)
     if x is None:
-        #~ raise http.Http404("There's no app_label %s here" % app_label)
-        raise Exception("There's no app_label %s here" % app_label)
+        #~ raise http.Http404("There's no app_label %r here" % app_label)
+        raise Exception("There's no app_label %r here" % app_label)
     cl = getattr(x,actor)
     if not isinstance(cl,type):
         raise http.Http404("%s.%s is not a class" % (app_label,actor))
@@ -732,14 +756,6 @@ class Restful(View):
 class ApiElement(View):
     #~ def api_element_view(self,request,app_label=None,actor=None,pk=None):
     def get(self,request,app_label=None,actor=None,pk=None):
-        """
-        GET : Retrieve a representation of the addressed member of the collection expressed in an appropriate MIME type.
-        PUT : Update the addressed member of the collection or create it with the specified ID. 
-        POST : Treats the addressed member as a collection and creates a new subordinate of it. 
-        DELETE : Delete the addressed member of the collection. 
-        
-        (Source: http://en.wikipedia.org/wiki/Restful)
-        """
         ui = settings.SITE.ui
         rpt = requested_actor(app_label,actor)
         #~ if not ah.actor.can_view.passes(request.user):
@@ -760,8 +776,8 @@ class ApiElement(View):
             ar.set_selected_pks(pk)
             elem = ar.selected_rows[0]
             #~ elem = rpt.get_row_by_pk(pk)
-            #~ if elem is None:
-                #~ raise http.Http404("%s has no row with primary key %r" % (rpt,pk))
+            if elem is None:
+                raise http.Http404("%s has no row with primary key %r" % (rpt,pk))
                 #~ raise Exception("20120327 %s.get_row_by_pk(%r)" % (rpt,pk))
             #~ ar.selected_rows = [elem]
         else:
@@ -852,15 +868,6 @@ class ApiElement(View):
         
   
 class ApiList(View):
-    """
-    - GET : List the members of the collection. 
-    - PUT : Replace the entire collection with another collection. 
-    - POST : Create a new entry in the collection where the ID is assigned automatically by the collection. 
-      The ID created is included as part of the data returned by this operation. 
-    - DELETE : Delete the entire collection.
-    
-    (Source: http://en.wikipedia.org/wiki/Restful)
-    """
 
     def post(self,request,app_label=None,actor=None):
         #~ ui = settings.SITE.ui
@@ -1083,14 +1090,6 @@ class PlainElement(View):
     Render a single record from :class:`lino.ui.PlainRenderer`.
     """
     def get(self,request,app_label=None,actor=None,pk=None):
-        """
-        GET : Retrieve a representation of the addressed member of the collection expressed in an appropriate MIME type.
-        PUT : Update the addressed member of the collection or create it with the specified ID. 
-        POST : Treats the addressed member as a collection and creates a new subordinate of it. 
-        DELETE : Delete the addressed member of the collection. 
-        
-        (Source: http://en.wikipedia.org/wiki/Restful)
-        """
         ui = settings.SITE.ui
         ar = action_request(app_label,actor,request,request.GET,False)
         ar.renderer = ui.plain_renderer

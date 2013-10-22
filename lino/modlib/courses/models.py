@@ -15,7 +15,7 @@
 from __future__ import unicode_literals
 
 """
-The :xfile:`models.py` module for the :mod:`lino.modlib.courses` app.
+The :xfile:`models` module for the :mod:`lino.modlib.courses` app.
 """
 
 

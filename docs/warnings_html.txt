@@ -1,4 +1,22 @@
+/home/luc/hgwork/lino/lino/modlib/cal/__init__.py:docstring of lino.modlib.cal:4: ERROR: Unknown interpreted text role "settings".
+/home/luc/hgwork/lino/lino/modlib/contacts/models.py:docstring of lino.modlib.contacts.models.ContactRelated:3: ERROR: Unknown directive type "local_fields".
+
+.. local_fields:: lino.modlib.contacts.models.ContactRelated
+
+    Adds 3 fields `company`, `contact_person` and `contact_role`.
+/home/luc/hgwork/lino/lino/modlib/users/models.py:docstring of lino.modlib.users.models.User:1: ERROR: Unknown interpreted text role "ddref".
+/home/luc/hgwork/lino/lino/modlib/users/models.py:docstring of lino.modlib.users.models.UsersOverview:1: ERROR: Unknown interpreted text role "ddref".
+/home/luc/hgwork/lino/lino/modlib/vat/models.py:docstring of lino.modlib.vat.models:18: ERROR: Unexpected indentation.
+/home/luc/hgwork/lino/lino/modlib/vat/models.py:docstring of lino.modlib.vat.models.TradeType:1: ERROR: Unknown interpreted text role "ddref".
+/home/luc/hgwork/lino/lino/modlib/vat/models.py:docstring of lino.modlib.vat.models.VatRegime:1: ERROR: Unknown interpreted text role "ddref".
 /home/luc/hgwork/lino/docs/polly/index.rst:13: WARNING: toctree contains reference to nonexisting document u'polly/ intro'
 /home/luc/hgwork/lino/docs/polly/index.rst:13: WARNING: toctree contains reference to nonexisting document u'polly/ sacredpy'
+/home/luc/hgwork/lino/docs/todo.rst:1030: WARNING: Enumerated list ends without a blank line; unexpected unindent.
 /home/luc/hgwork/lino/docs/polly/intro.rst:: WARNING: document isn't included in any toctree
 /home/luc/hgwork/lino/docs/polly/sacredpy.rst:: WARNING: document isn't included in any toctree
+/home/luc/hgwork/lino/lino/lino_site.py:docstring of lino.lino_site.Site.webdav_url:7: WARNING: term not in glossary: runserver
+/home/luc/hgwork/lino/lino/mixins/printable.py:docstring of lino.mixins.printable.PisaBuildMethod:1: WARNING: undefined label: lino.tutorials.pisa (if the link has no caption the label must precede a section header)
+/home/luc/hgwork/lino/docs/api/lino.projects.igen.rst:7: WARNING: unknown document: /igen/index
+/home/luc/hgwork/lino/lino/tutorials/lets1/fixtures/demo.py:docstring of lino.tutorials.lets1.fixtures.demo.objects:1: WARNING: term not in glossary: north
+/home/luc/hgwork/lino/docs/api/lino.utils.rst:7: WARNING: unknown document: /autodoc/lino.test_apps.mti
+/home/luc/hgwork/lino/docs/releases/index.rst:1: WARNING: unknown document: 1.6.13

@@ -204,7 +204,7 @@ class DjangoJinjaTemplate:
             context_dict.update(d)
         extend_context(context_dict)
         context_dict.setdefault('request',None)
-        context_dict.setdefault('ar',requests.BaseRequest(renderer=settings.SITE.ui.ext_renderer))
+        context_dict.setdefault('ar',requests.BaseRequest(renderer=settings.SITE.ui.default_renderer))
         #~ logger.info("20130118 %s",context_dict.keys())
         return self.jt.render(context_dict)  
   

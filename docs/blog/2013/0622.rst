@@ -13,7 +13,7 @@ Added pt-br to the list of supported locales:
 Demo users in :mod:`lino.ui.fixtures.demo` :
 
 Added a warning "No demo user for language %r." to be 
-issued when :attr:`languages <north.Site.languages>` 
+issued when :setting:`languages` 
 contains an unsupported language.
 
 Added a fictive demo user "Ronaldo Rosa" for `pt-br`.

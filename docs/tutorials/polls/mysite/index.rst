@@ -299,7 +299,7 @@ Your application specifies what to put there, and there are several
 methods to do this.
 If you don't want to use an `admin_main.html` template
 you may override the
-:meth:`get_main_html <lino.Site.get_main_html>` method 
+:meth:`get_main_html <lino.lino_site.Site.get_main_html>` method 
 which returns a chunk of generated html.
     
 After clicking on a vote, here is the `vote` method 
