@@ -434,7 +434,7 @@ class EventGenerator(mixins.UserAuthored):
         Event = settings.SITE.modules.cal.Event
         with translation.override(self.get_events_language()):
           while i < max_events:
-            if date > until: return wanted
+            if date is None or date > until: return wanted
             i += 1
             if settings.SITE.ignore_dates_before is None or date >= settings.SITE.ignore_dates_before:
                 #~ we = AttrDict(
