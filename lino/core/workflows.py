@@ -248,8 +248,8 @@ method::
         row.after_state_change(ar,kw,old,self.target_state)
         
         watcher.send_update(ar.request)
-        
-        return ar.success(**kw)
+        kw.update(refresh=True)
+        ar.success(**kw)
         
         
 class NotifyingChangeStateAction(ChangeStateAction,actions.NotifyingAction):

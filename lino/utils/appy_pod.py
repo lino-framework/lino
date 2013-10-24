@@ -535,10 +535,10 @@ class PrintTableAction(actions.Action):
         mf = TmpMediaFile(ar,self.target_file_format)
         settings.SITE.makedirs_if_missing(os.path.dirname(mf.name))
         self.appy_render(ar,mf.name)
-        kw.update(success=True)
-        kw.update(open_url=mf.url)
+        ar.response.update(success=True)
+        ar.response.update(open_url=mf.url)
         #~ return http.HttpResponseRedirect(mf.url)
-        return kw
+        #~ return kw
 
     def appy_render(self,ar,target_file):
         

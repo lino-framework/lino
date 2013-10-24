@@ -235,8 +235,8 @@ def delete_element(ar,elem):
     assert elem is not None
     msg = ar.actor.disable_delete(elem,ar)
     if msg is not None:
-        rv = ar.error(None,msg,alert=True)
-        return settings.SITE.ui.render_action_response(rv)
+        ar.error(None,msg,alert=True)
+        return settings.SITE.ui.render_action_response(ar.response)
             
     #~ dblogger.log_deleted(ar.request,elem)
     
@@ -251,8 +251,8 @@ def delete_element(ar,elem):
         msg = _("Failed to delete %(record)s : %(error)s."
             ) % dict(record=dd.obj2unicode(elem),error=e)
         #~ msg = "Failed to delete %s." % element_name(elem)
-        rv = ar.error(None,msg)
-        return settings.SITE.ui.render_action_response(rv)
+        ar.error(None,msg)
+        return settings.SITE.ui.render_action_response(ar.response)
         #~ raise Http404(msg)
         
     
@@ -261,14 +261,14 @@ def delete_element(ar,elem):
 #CATCHED_AJAX_EXCEPTIONS = (Warning,IntegrityError,exceptions.ValidationError)
 CATCHED_AJAX_EXCEPTIONS = (Warning,exceptions.ValidationError)
 
-def ajax_error(e,rh,**kw):
+def ajax_error(ar,e):
     """
     Utility function that converts a catched exception 
     to a user-friendly error message.
     """
     if isinstance(e,exceptions.ValidationError):
         def fieldlabel(name):
-            de = rh.actor.get_data_elem(name)
+            de = ar.ah.actor.get_data_elem(name)
             #~ print 20130423, de
             return force_unicode(getattr(de,'verbose_name',name))
         #~ logger.info("20130418 ajax_error(%s",e.messages)
@@ -278,8 +278,8 @@ def ajax_error(e,rh,**kw):
             e = '<br>'.join(["%s : %s" % (fieldlabel(k),v) for k,v in md.items()])
         else:
             e = '<br>'.join(e.messages)
-    kw = settings.SITE.ui.error(e,alert=True,**kw)
-    return json_response(kw)
+    ar.error(e,alert=True)
+    return json_response(ar.response)
 
 #~ def form2obj_and_save(self,request,rh,data,elem,is_new,include_rows): # **kw2save):
 def form2obj_and_save(ar,data,elem,is_new,restful,file_upload=False): # **kw2save):
@@ -301,7 +301,7 @@ def form2obj_and_save(ar,data,elem,is_new,restful,file_upload=False): # **kw2sav
         rh.store.form2obj(ar,data,elem,is_new)
         elem.full_clean()
     except CATCHED_AJAX_EXCEPTIONS as e:
-        return ajax_error(e,rh)
+        return ajax_error(ar,e)
         
     kw = dict(success=True)
     
@@ -332,7 +332,7 @@ def form2obj_and_save(ar,data,elem,is_new,restful,file_upload=False): # **kw2sav
         try:
             elem.save(**kw2save)
         except CATCHED_AJAX_EXCEPTIONS,e:
-            return ajax_error(e,rh)
+            return ajax_error(ar,e)
             #~ return views.json_response_kw(success=False,
                   #~ msg=_("There was a problem while saving your data:\n%s") % e)
                   
@@ -403,7 +403,8 @@ class MainHtml(View):
         #~ logger.info("20130719 MainHtml")
         settings.SITE.startup()
         ui = settings.SITE.ui
-        rv = ui.success(html=settings.SITE.get_main_html(request))
+        #~ raise Exception("20131023")
+        rv = dict(success=True,html=settings.SITE.get_main_html(request))
         return ui.render_action_response(rv)
         
 class Authenticate(View):
@@ -434,7 +435,7 @@ class Authenticate(View):
         password = request.POST.get('password')
         user = auth.authenticate(username,password)
         if user is None:
-            rv = settings.SITE.ui.error("Could not authenticate %r" % username)
+            rv = dict(success=False,message="Could not authenticate %r" % username)
             return settings.SITE.ui.render_action_response(rv)
         request.session['username'] = username
         request.session['password'] = password
@@ -442,7 +443,7 @@ class Authenticate(View):
         #~ auth.login(request,request.GET.get('username'), request.GET.get('password'))
         #~ ss.save()
         #~ logger.info("20130924 Now logged in as %r" % username)
-        rv = settings.SITE.ui.success("Now logged in as %r" % username)
+        rv = dict(success=True,message=("Now logged in as %r" % username))
         return settings.SITE.ui.render_action_response(rv)
       
 

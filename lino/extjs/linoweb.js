@@ -1808,6 +1808,10 @@ Lino.action_handler = function (panel,on_success,on_confirm) {
         panel.load_record_id(result.goto_record_id);
     } 
     
+    if (result.console_message) {
+        console.log(result.console_message);
+    }
+    
     if (result.message) {
         //~ if (result.alert && ! gridmode) {
         if (result.alert) { // 20120628b 
@@ -1849,7 +1853,7 @@ Lino.action_handler = function (panel,on_success,on_confirm) {
   }
 };
 
-Lino.do_action = function(caller,action) {
+Lino.do_action = function(caller,action) { // obsolete but still used for deleting records.
   action.success = function(response) {
     if (caller.loadMask) caller.loadMask.hide();
     //~ console.log('Lino.do_action()',action,'action success',response);

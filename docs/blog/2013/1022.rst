@@ -7,14 +7,14 @@ Miscellaneous bugfixes
 ----------------------
 
 Fixed some non-severe bugs which had caused unnecessary internal server 
-errors:
+errors::
 
-- AttributeError at /api/contacts/Partners/null : 'NoneType' object has no attribute 'name'
+    - AttributeError at /api/contacts/Partners/null : 'NoneType' object has no attribute 'name'
 
-- AttributeError at /api/outbox/MyOutbox : 'AnonymousUser' object has no attribute 'get_typed_instance'
-  http://127.0.0.1:8000/api/outbox/MyOutbox?start=0&limit=23&fmt=json
-  
-- TypeError: Problem installing fixture '/home/luc/hgwork/faggio/lino_faggio/fixtures/eiche.py': can't compare datetime.date to NoneType
+    - AttributeError at /api/outbox/MyOutbox : 'AnonymousUser' object has no attribute 'get_typed_instance'
+      http://127.0.0.1:8000/api/outbox/MyOutbox?start=0&limit=23&fmt=json
+      
+    - TypeError: Problem installing fixture '/home/luc/hgwork/faggio/lino_faggio/fixtures/eiche.py': can't compare datetime.date to NoneType
   
 
   
@@ -37,20 +37,22 @@ each internal server error where it is at least irritating.
 
 
 
-Thou shalt not use library modules in your package
---------------------------------------------------
+Thou shalt not use the name of a library module for your own modules
+--------------------------------------------------------------------
 
 I discovered another example for the above commandment:
-The doctests in the :mod:`north.site` module were not being tested 
-due to the fact that we use :mod:`atelier.doctest_utf8` 
-(required because we need non-ASCII strings), which contains
-code originally copied from Python 2.7 `doctest.py` which says::
+The doctests in the :mod:`north.site` module were not being 
+tested... because `site` is a Python library module! 
+
+This comes because  we use :mod:`atelier.doctest_utf8` 
+(required because we need non-ASCII strings), 
+which contains code originally copied from Python 2.7 `doctest.py` 
+which says::
 
     # It is a module -- insert its dir into sys.path and try to
     # import it. If it is part of a package, that possibly
     # won't work because of package imports.
 
-... and `site` is a Python library module! 
 
 Workaround:
 
@@ -103,7 +105,20 @@ next field.
 
 I removed the `boxMinWidth: Lino.chars2width(11)` which obviously 
 doesn't work as expected and anyway (officially) exists only since 
-ExtJS 3.4.0 and changed `DateFieldElement.preferred_width` 
+ExtJS 3.4.0 and changed the `preferred_width` of 
+:class:`DateFieldElement <lino.ui.elems.DateFieldElement>` 
 from 8 to 13.
+
+
+
+
+AssignCoach sometimes fails
+----------------------------
+
+In :ref:`welfare` 
+`newcomers.AssignCoach` sometimes fails
+with a message `'NoneType' object has no attribute 'attname'`.
+Tried to reproduce it. Without success.
+Added a call to ``coaching.full_clean()`` before saving it.
 
 

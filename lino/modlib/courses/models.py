@@ -351,6 +351,8 @@ def unused_setup_course_event(self,course,ev):
 
 #~ if not hasattr(settings.SITE,'setup_course_event'):
     #~ settings.SITE.__class__.setup_course_event = setup_course_event
+
+
     
     
 class CourseStates(dd.Workflow):
@@ -388,10 +390,7 @@ ENROLMENT_USES_UP_A_PLACE = EnrolmentStates.filter(uses_a_place=True)
     
 
     
-    
-    
-#~ class Course(StartEndTime,cal.EventGenerator,cal.RecurrenceSet,mixins.Printable):
-class Course(contacts.ContactRelated,cal.EventGenerator,cal.RecurrenceSet,dd.Printable):
+class Course(cal.Reservation,dd.Printable):
     """
     A Course is a group of pupils that regularily 
     meet with a given teacher in a given room.
@@ -401,17 +400,14 @@ class Course(contacts.ContactRelated,cal.EventGenerator,cal.RecurrenceSet,dd.Pri
     
     class Meta:
         abstract = settings.SITE.is_abstract_model('courses.Course')
-        #~ verbose_name = _("Course")
-        #~ verbose_name_plural = _('Courses')
-        verbose_name = _("Booking")
-        verbose_name_plural = _('Bookings')
+        verbose_name = _("Course")
+        verbose_name_plural = _('Courses')
         
     workflow_state_field = 'state'
     
     line = models.ForeignKey('courses.Line')
     teacher = models.ForeignKey('courses.Teacher',blank=True,null=True)
     #~ room = models.ForeignKey(Room,blank=True,null=True)
-    room = dd.ForeignKey('cal.Room',blank=True,null=True)
     slot = models.ForeignKey(Slot,blank=True,null=True)
     
     state = CourseStates.field(default=CourseStates.draft)
@@ -421,28 +417,18 @@ class Course(contacts.ContactRelated,cal.EventGenerator,cal.RecurrenceSet,dd.Pri
         help_text=("Maximal number of participants"),
         blank=True,null=True)
         
-    max_date = models.DateField(
-        blank=True,null=True,
-        verbose_name=_("Generate events until"))
-        
-    
     def __unicode__(self):
         return u"%s (%s %s)" % (self.line,dd.dtos(self.start_date),self.room)
           
-    def update_cal_rset(self):
-        return self
-        
-    def update_cal_from(self):
+    def update_cal_from(self,ar):
         if self.state in (CourseStates.draft,CourseStates.cancelled): 
+            ar.info("No start date because state is %s",self.state)
             return None
         return self.start_date
         #~ if self.start_date is None:
             #~ return None
         #~ # if every is per_weekday, actual start may be later than self.start_date
         #~ return self.get_next_date(self.start_date+datetime.timedelta(days=-1))
-        
-    def update_cal_until(self):
-        return self.max_date
         
     def update_cal_calendar(self):
         return self.line.event_type
@@ -516,10 +502,6 @@ class Course(contacts.ContactRelated,cal.EventGenerator,cal.RecurrenceSet,dd.Pri
 """
 customize fields coming from mixins to override their inherited default verbose_names
 """
-dd.update_field(Course,'contact_person',verbose_name = _("Contact person"))
-dd.update_field(Course,'company',verbose_name = _("Organizer"))
-#~ dd.update_field(Course,'every_unit',default=cal.Recurrencies.per_weekday)
-#~ dd.update_field(Course,'every',default=1)
 dd.update_field(Course,'every_unit',default=models.NOT_PROVIDED)
 dd.update_field(Course,'every',default=models.NOT_PROVIDED)
           
@@ -568,17 +550,12 @@ class CourseDetail(dd.FormLayout):
     main = "general courses.EnrolmentsByCourse"
     general = dd.Panel("""
     line teacher start_date start_time end_date end_time
-    room #slot state id:8
+    user room #slot state id:8
     max_places max_events max_date  every_unit every 
     monday tuesday wednesday thursday friday saturday sunday
-    company contact_person user 
     cal.EventsByController
     """,label=_("General"))
     
-    #~ def setup_handle(self,dh):
-        #~ dh.start.label = _("Start")
-        #~ dh.end.label = _("End")
-        #~ dh.freq.label = _("Frequency")
   
 class Courses(dd.Table):
     model = 'courses.Course'
@@ -587,7 +564,6 @@ class Courses(dd.Table):
     insert_layout = """
     start_date 
     line teacher 
-    company contact_person
     """
     column_names = "info line teacher room slot *"
     order_by = ['start_date']
@@ -595,14 +571,14 @@ class Courses(dd.Table):
     parameters = dd.ObservedPeriod(
         line = models.ForeignKey('courses.Line',blank=True,null=True),
         topic = models.ForeignKey('courses.Topic',blank=True,null=True),
-        company = models.ForeignKey('contacts.Company',blank=True,null=True),
+        #~ company = models.ForeignKey('contacts.Company',blank=True,null=True),
         teacher = models.ForeignKey('courses.Teacher',blank=True,null=True),
         state = CourseStates.field(blank=True),
         active = dd.YesNo.field(blank=True),
         )
-    params_layout = """topic line company teacher state active"""
+    params_layout = """topic line teacher state active"""
     
-    simple_param_fields = 'line teacher company state'.split()
+    simple_param_fields = 'line teacher state'.split()
     
     @classmethod
     def get_request_queryset(self,ar):
@@ -667,15 +643,12 @@ class CoursesByTopic(Courses):
 class CoursesBySlot(Courses):
     master_key = "slot"
 
-class CoursesByCompany(Courses):
-    master_key = "company"
-    
     
 class ActiveCourses(Courses):
     
     label = _("Active courses")
     #~ column_names = 'info requested confirmed teacher company room'
-    column_names = 'info enrolments #price max_places teacher company room *'
+    column_names = 'info enrolments #price max_places teacher room *'
     #~ auto_fit_column_widths = True
     
     @classmethod
@@ -854,14 +827,14 @@ class ConfirmAllEnrolments(dd.Action):
     def run_from_ui(self,ar,**kw):
         obj = ar.selected_rows[0]
         assert obj is None
-        def ok():
+        def ok(ar):
             for obj in ar:
                 obj.state = EnrolmentStates.confirmed
                 obj.save()
-                kw.update(refresh_all=True)
-            return kw
+                ar.response.update(refresh_all=True)
+            
         msg = _("This will confirm all %d enrolments in this list.") % ar.get_total_count()
-        return ar.confirm(ok, msg, _("Are you sure?"))
+        ar.confirm(ok, msg, _("Are you sure?"))
     
 
 
@@ -951,13 +924,15 @@ dd.inject_field(Person,
         verbose_name=_("is a pupil"),
         help_text=_("Whether this Person is also a Pupil.")))
 
-MODULE_LABEL = _("Courses")
+from lino.modlib.courses import App
+
+#~ MODULE_LABEL = _("Courses")
     
 def setup_main_menu(site,ui,profile,main):
     m = main.get_item("contacts")
     m.add_action(Teachers)
     m.add_action(Pupils)
-    m = main.add_menu("courses",MODULE_LABEL)
+    m = main.add_menu("courses",App.verbose_name)
     m.add_action(Courses)
     #~ m.add_action(Teachers)
     #~ m.add_action(Pupils)
@@ -973,7 +948,7 @@ def unused_setup_master_menu(site,ui,profile,m):
 
 
 def setup_config_menu(site,ui,profile,m):
-    m = m.add_menu("courses",MODULE_LABEL)
+    m = m.add_menu("courses",App.verbose_name)
     #~ m.add_action(Rooms)
     m.add_action('courses.TeacherTypes')
     m.add_action('courses.PupilTypes')
@@ -983,7 +958,7 @@ def setup_config_menu(site,ui,profile,m):
     #~ m.add_action(PresenceStatuses)
   
 def setup_explorer_menu(site,ui,profile,m):
-    m = m.add_menu("courses",MODULE_LABEL)
+    m = m.add_menu("courses",App.verbose_name)
     #~ m.add_action(Presences)
     #~ m.add_action(Events)
     m.add_action(Enrolments)

@@ -293,7 +293,7 @@ class BeIdReadCardAction(BaseBeIdReadCardAction):
                 #~ fkw.update(national_id__isnull=True)
                 qs = self.client_model.objects.filter(**fkw)
                 if qs.count() == 0:
-                    def yes():
+                    def yes(ar):
                         obj = self.client_model(**attrs)
                         obj.full_clean()
                         obj.save()
@@ -332,19 +332,19 @@ class BeIdReadCardAction(BaseBeIdReadCardAction):
         msg += ' :<br/>'
         msg += '\n<br/>'.join(diffs)
         #~ print msg
-        def apply():
+        def apply(ar):
             obj.full_clean()
             obj.save()
             watcher.send_update(ar.request)
             #~ return self.saved_diffs_response(ar,obj)
             return self.goto_client_response(ar,obj,_("%s has been saved.") % dd.obj2unicode(obj))
-        def no():
+        def no(ar):
             return self.goto_client_response(ar,oldobj)
-        cb = ar.callback(msg)
+        cb = ar.add_callback(msg)
         cb.add_choice('yes',apply,_("Yes"))
         cb.add_choice('no',no,_("No"))
         #~ cb.add_choice('cancel',no,_("Don't apply"))
-        return cb
+        #~ return cb
         
     def goto_client_response(self,ar,obj,msg=None,**kw):
         kw.update(goto_record_id=obj.pk)

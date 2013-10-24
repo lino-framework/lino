@@ -227,21 +227,23 @@ class MergeAction(actions.Action):
         #~ return kw
 
     def run_from_ui(self,ar,**kw):
+        """
+        Implements :meth:`lino.core.actions.Action.run_from_ui`.
+        """
         obj = ar.selected_rows[0]
         mp = MergePlan(obj,ar.action_param_values.merge_to,ar.action_param_values)
         msg = mp.build_confirmation_message()
-        def ok():
+        def ok(ar):
             msg = mp.execute(request=ar.request)
             # prepare the response        
-            kw = dict()
-            kw.update(refresh=True)
-            kw.update(message=msg)
-            #~ kw.update(new_status=dict(record_id=new.pk))
-            kw.update(goto_record_id=mp.merge_to.pk)
-            return ar.success(**kw)
-        #~ return ar.confirm(ok,msg)
+            #~ kw = dict()
+            ar.response.update(refresh=True)
+            ar.response.update(message=msg)
+            #~ ar.response.update(new_status=dict(record_id=new.pk))
+            ar.response.update(goto_record_id=mp.merge_to.pk)
+            
         if msg is None:
-            return ok()
-        return ar.confirm(ok,msg)
+            return ok(ar)
+        ar.confirm(ok,msg)
             
         

@@ -1212,9 +1212,9 @@ class AbstractTable(actors.Actor):
             ar = self.request(action=ba)
         else:
             ar = self.request(action=ba,selected_pks=[pk])
-        #~ ar = TableRequest(None,self,None,ba)
-        kw = ba.action.run_from_ui(ar)
-        #~ kw = self.check_action_response(kw)
+        
+        ba.action.run_from_ui(ar)
+        kw = ar.response
         msg = kw.get('message')
         if msg: 
             print msg

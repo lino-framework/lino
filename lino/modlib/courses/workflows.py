@@ -43,14 +43,14 @@ class PrintAndChangeStateAction(dd.ChangeStateAction):
     def run_from_ui(self,ar,**kw):
         obj = ar.selected_rows[0]
         
-        def ok():
+        def ok(ar):
             # to avoid UnboundLocalError local variable 'kw' referenced before assignment
-            kw2 = obj.do_print.run_from_ui(ar,**kw)
-            kw2 = super(PrintAndChangeStateAction,self).run_from_ui(ar,**kw2)
-            kw2.update(refresh_all=True)
-            return kw2
+            obj.do_print.run_from_ui(ar,**kw)
+            super(PrintAndChangeStateAction,self).run_from_ui(ar)
+            ar.response.update(refresh_all=True)
+            
         msg = self.get_confirmation_message(obj,ar)
-        return ar.confirm(ok, msg, _("Are you sure?"))
+        ar.confirm(ok, msg, _("Are you sure?"))
     
 #~ class ConfirmEnrolment(PrintAndChangeStateAction):
     #~ required = dd.required(states='requested')
@@ -88,12 +88,12 @@ class ConfirmEnrolment(dd.ChangeStateAction):
             if msg is None:
                 obj.state = EnrolmentStates.confirmed
                 obj.save()
-                kw.update(refresh_all=True)
+                ar.response.update(refresh_all=True)
             else:
                 msg = _("Cannot confirm %(pupil)s : %(message)s") % dict(pupil=obj.pupil,message=msg)
-                kw.update(message=msg,alert=True)
+                ar.response.update(message=msg,alert=True)
                 break
-        return kw
+        
     
 
     

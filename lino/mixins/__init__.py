@@ -265,8 +265,8 @@ class RegisterAction(actions.Action):
         #~ ar.confirm(self.help_text,_("Are you sure?"))
         obj.register(ar)
         obj.save()
-        kw.update(refresh=True)
-        return kw
+        ar.success(refresh=True)
+        #~ return kw
     
     
         
@@ -295,8 +295,7 @@ class DeregisterAction(actions.Action):
         #~ ar.confirm(self.help_text,_("Are you sure?"))
         obj.deregister(ar)
         obj.save()
-        kw.update(refresh=True)
-        return kw
+        ar.success(refresh=True)
 
 
 class Registrable(model.Model):
@@ -469,7 +468,7 @@ class MoveUp(actions.Action):
         #~ kw.update(refresh=True)
         kw.update(refresh_all=True)
         kw.update(message=_("Moved up."))
-        return ar.success(**kw)
+        ar.success(**kw)
         
 class MoveDown(actions.Action):
     label = _("Down")
@@ -499,7 +498,7 @@ class MoveDown(actions.Action):
         #~ kw.update(refresh=True)
         kw.update(refresh_all=True)
         kw.update(message=_("Moved down."))
-        return ar.success(**kw)
+        ar.success(**kw)
         
 
 class DuplicateSequenced(Duplicate):

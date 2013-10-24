@@ -408,7 +408,7 @@ class FillSuggestions(dd.Action):
         msg = _("%d items have been added to %s.") % (n,voucher)
         logger.info(msg)
         kw.update(close_window=True)
-        return ar.success(msg,**kw)
+        ar.success(msg,**kw)
 
 class SuggestionsByVoucher(ledger.ExpectedMovements):
     """

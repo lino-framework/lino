@@ -1,0 +1,29 @@
+====================================
+20131024 (Thursday, 24 October 2013)
+====================================
+
+Raumbuchungen sind keine Kurse
+------------------------------
+
+Bei der letzten Baustellenbesichtigung war rausgekommen, dass ich die
+Praxis der externen Raumvermietungen noch nicht ausreichend erfasst 
+hatte. 
+
+Bisher hatte ich Raumbuchungen und Kurse in einen einzigen Topf geworfen:
+Raumbuchungen, dachte ich, sind ja nichts anderes als Kurse, die von 
+einem externen Partner organisiert werden.
+
+Die neue Tabelle "Buchungen" ist ähnlich wie Kurse (alles gemeinsame 
+steht in `lino.modlib.cal.mixins.Reservation`) weil sie Termine 
+generieren, also einen bestimmten Raum an einem oder mehreren Tagen 
+reservieren.
+
+Aber dann hört es schon auf: 
+Kurse werden einer "Serie" zugeordnet, 
+sind von der Eiche selber organisiert 
+(also werden nicht fakturiert und haben keinen externen Partner oder 
+Ansprechpartner, dafür aber einen Kursleiter), 
+und pro Kurs gibt es eine Liste von Einschreibungen (die fakturiert werden).
+
+Buchungen werden an den externen Partner fakturiert und haben keine 
+Einschreibungen, sind par defaut einmalig.

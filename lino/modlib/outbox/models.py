@@ -170,7 +170,7 @@ class CreateMail(dd.Action):
             a.save()
         js = ar.renderer.instance_handler(ar,m)
         kw.update(eval_js=js)
-        return ar.success(**kw)
+        ar.success(**kw)
         
 
 
@@ -346,7 +346,7 @@ class SendMail(dd.Action):
             #~ else:
                 #~ logger.info("Ignoring recipient %s (type %s)",r,r.type)
         if not found:
-            return ar.error("No recipients found.")
+            return ar.error(_("No recipients found."))
         if len(missing_addresses):
             msg = _("There are recipients without address: ")
             msg += ', '.join([unicode(r) for r in missing_addresses])
@@ -392,7 +392,7 @@ class SendMail(dd.Action):
         if elem.owner:
             elem.owner.after_send_mail(elem,ar,kw)
         elem.save()
-        return ar.success(**kw)
+        ar.success(**kw)
 
 
 

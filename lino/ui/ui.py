@@ -235,7 +235,7 @@ class ExtUI(base.UI):
           
     def render_action_response(self,rv):
         """
-        Builds a JSON response from given dict, 
+        Builds a JSON response from given dict ``rv``, 
         checking first whether there are only allowed keys 
         (defined in :attr:`ACTION_RESPONSES`)
         """

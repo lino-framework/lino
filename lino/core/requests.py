@@ -104,6 +104,7 @@ class BaseRequest(object):
         #~ self.step = 0 # confirmation counter
         #~ self.report = actor
         self.request = request
+        self.response = dict()
         if request is not None:
             if request.method in ('PUT','DELETE'):
                 rqdata = http.QueryDict(request.body) 
@@ -115,10 +116,83 @@ class BaseRequest(object):
         #~ 20120605 self.ah = actor.get_handle(ui)
         self.setup(**kw)
         
-    def callback(self,*args,**kw): return settings.SITE.ui.callback(*args,**kw)
-    def confirm(self,*args,**kw): return settings.SITE.ui.confirm(*args,**kw)
-    def error(self,*args,**kw): return settings.SITE.ui.error(*args,**kw)
-    def success(self,*args,**kw): return settings.SITE.ui.success(*args,**kw)
+    def error(self,e=None,message=None,**kw):
+        """
+        Shortcut for building an error response.
+        The first argument should be either an exception object or a message.
+        """
+        kw.update(success=False)
+        #~ if e is not None:
+        if isinstance(e,Exception):
+            if False: # useful when debugging, but otherwise rather disturbing
+                logger.exception(e)
+            if hasattr(e,'message_dict'):
+                kw.update(errors=e.message_dict)
+        if message is None:
+            message = unicode(e)
+        kw.update(message=message)
+        self.response.update(kw)
+    
+        
+    def success(self,message=None,alert=None,**kw):
+        """
+        Shortcut for building a success response.
+        First argument should be a textual message.
+        """
+        kw.update(success=True)
+        if alert is not None:
+            if alert is True:
+                alert = _("Success")
+            kw.update(alert=alert)
+        if message:
+            kw.update(message=message)
+        self.response.update(kw)
+        
+        
+    def info(self,msg,*args,**kw): 
+        if args: 
+            msg = msg % args
+        if kw:
+            msg = msg % kw
+        old = self.response.get('console_message',None)
+        if old is None:
+            self.response.update(console_message=msg)
+        else:
+            self.response.update(console_message=old+'\n'+msg)
+        #~ return self.success(*args,**kw)
+    
+    def confirm(self,ok_func,*msgs):
+        """
+        Execute the specified callable `ok` after the user has confirmed 
+        the specified message.
+        All remaining positional arguments to `confirm` 
+        are concatenated to a single callback message.
+        This method then calls :meth:`callback` (see there for implementation notes).
+        
+        The callable may not expect any mandatory arguments
+        (this is different than for the raw callback method)
+        
+        """
+        cb = self.add_callback(*msgs)
+        def noop():
+            return dict(success=True,message=_("Aborted"))
+        cb.add_choice('yes',ok_func,_("Yes"))
+        cb.add_choice('no',noop,_("No"))
+        self.callback(cb)
+        
+    
+    #~ def confirm(self,*args,**kw): return settings.SITE.ui.confirm(*args,**kw)
+    
+    def callback(self,*args,**kw): return settings.SITE.ui.callback(self,*args,**kw)
+    def add_callback(self,*args,**kw): 
+        return settings.SITE.ui.add_callback(self,*args,**kw)
+        
+    def goto_instance(self,obj,**kw):
+        js = self.instance_handler(obj)
+        self.response.update(eval_js=js)
+    
+
+        
     
     def must_execute(self):
         return True
@@ -377,15 +451,6 @@ class BaseRequest(object):
         """
         return self.renderer.action_button(None,self,self.bound_action,*args,**kw)
     
-    def goto_instance(self,obj,**kw):
-        #~ kw.update(refresh=True)
-        #~ kw.update(goto_record=('sales.Invoices',invoice.pk))
-        #~ kw.update(goto_record=invoice)
-        js = self.instance_handler(obj)
-        kw.update(eval_js=js)
-        return kw
-    
-
       
 class ActionRequest(BaseRequest):
     """

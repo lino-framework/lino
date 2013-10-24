@@ -166,7 +166,7 @@ class CreateNote(dd.Action):
         note.save()
         #~ kw.update(success=True)
         #~ kw.update(refresh=True)
-        return ar.goto_instance(note,**kw)
+        ar.goto_instance(note,**kw)
 
     
 
@@ -195,23 +195,28 @@ class CheckinVisitor(dd.NotifyingAction):
     
     def run_from_ui(self,ar,**kw):
         obj = ar.selected_rows[0]
-        def doit():
+        
+        def doit(ar):
             obj.waiting_since = datetime.datetime.now()
             obj.state = GuestStates.busy
             obj.busy_since = None
             obj.save()
             kw.update(success=True)
-            return super(CheckinVisitor,self).run_from_ui(ar,**kw)
+            super(CheckinVisitor,self).run_from_ui(ar,**kw)
+            
         if obj.event.assigned_to is not None:
-            def ok():
+            
+            def ok(ar):
                 obj.event.user = obj.event.assigned_to
                 obj.event.assigned_to = None
                 obj.event.save()
-                return doit()
+                doit(ar)
+                
             return ar.confirm(ok,
                 _("Checkin in will reassign the event from %(old)s to %(new)s.") % 
                 dict(old=obj.event.user,new=obj.event.assigned_to),_("Are you sure?"))
-        return doit()
+                
+        return doit(ar)
         
     
 #~ class ReceiveVisitor(dd.NotifyingAction):
@@ -246,7 +251,7 @@ class ReceiveVisitor(dd.Action):
     
     def run_from_ui(self,ar,**kw):
         obj = ar.selected_rows[0]
-        def ok():
+        def ok(ar):
             obj.state = GuestStates.busy
             obj.busy_since = datetime.datetime.now()
             #~ if obj.state in ExpectedGuestsStates:
@@ -254,7 +259,8 @@ class ReceiveVisitor(dd.Action):
             obj.save()
             #~ kw = super(ReceiveGuest,self).run_from_ui(obj,ar,**kw)
             kw.update(refresh=True)
-            return ar.success(**kw)
+            ar.success(**kw)
+            
         #~ if ar.get_user() == obj.event.user:
         return ar.confirm(ok,
             _("%(guest)s begins consultation with %(user)s.") % 
@@ -293,19 +299,21 @@ class CheckoutVisitor(dd.Action):
         
     def run_from_ui(self,ar,**kw):
         obj = ar.selected_rows[0]
-        def ok():
+        
+        def ok(ar):
             if obj.busy_since is None:
                 obj.busy_since = datetime.datetime.now()
             obj.gone_since = datetime.datetime.now()
             obj.state = GuestStates.gone 
             obj.save()
             kw.update(refresh=True)
-            return ar.success(**kw)
+            ar.success(**kw)
+            
         #~ if obj.busy_since is None:
             #~ msg = _("%(guest)s leaves without being received.") % dict(guest=obj.partner)
         #~ else:
         msg = _("%(guest)s leaves after meeting with %(user)s.") % dict(guest=obj.partner,user=obj.user)
-        return ar.confirm(ok,msg,_("Are you sure?"))
+        ar.confirm(ok,msg,_("Are you sure?"))
         
     
     #~ def get_notify_subject(self,ar,obj):

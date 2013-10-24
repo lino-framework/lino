@@ -172,13 +172,14 @@ class CreateInvoiceForPartner(dd.Action):
     
     def run_from_ui(self,ar,**kw):
         obj = ar.selected_rows[0]
-        def ok():
+        def ok(ar):
             invoice = create_invoice_for(obj,ar)
-            return ar.goto_instance(invoice,**kw)
+            ar.goto_instance(invoice,**kw)
+            
         if True: # no confirmation
-            return ok()
+            return ok(ar)
         msg = _("This will create an invoice for %s.") % obj
-        return ar.confirm(ok, msg, _("Are you sure?"))
+        ar.confirm(ok, msg, _("Are you sure?"))
         
         
 #~ dd.inject_action('contacts.Partner','create_invoice',CreateInvoiceForPartner())
@@ -301,10 +302,11 @@ class InvoicingsByInvoiceable(InvoiceItemsByProduct): # 20130709
         #~ 
         
 class CreateInvoice(CreateInvoiceForPartner):
+    
     def run_from_ui(self,ar,**kw):
         obj = ar.selected_rows[0]
         ar.selected_rows = [ o.partner for o in ar.selected_rows ]
-        return super(CreateInvoice,self).run_from_ui(ar,**kw)
+        super(CreateInvoice,self).run_from_ui(ar,**kw)
         
 from lino.mixins.printable import CachedPrintAction
 
@@ -318,7 +320,7 @@ class CreateAllInvoices(CachedPrintAction):
     def run_from_ui(self,ar,**kw):
         #~ obj = ar.selected_rows[0]
         #~ assert obj is None
-        def ok():
+        def ok(ar):
             invoices = []
             for row in ar.selected_rows:
                 partner = contacts.Partner.objects.get(pk=row.pk)    
@@ -328,9 +330,8 @@ class CreateAllInvoices(CachedPrintAction):
                 #~ invoice = create_invoice_for(obj.partner,ar)
                 #~ invoices.append(invoice)
             mf = self.print_multiple(ar,invoices)
-            kw.update(open_url=mf.url)
-            kw.update(refresh_all=True)
-            return kw
+            ar.success(open_url=mf.url,refresh_all=True)
+            
         #~ msg = _("This will create and print %d invoices.") % ar.get_total_count()
         msg = _("This will create and print %d invoice(s).") % len(ar.selected_rows)
         return ar.confirm(ok, msg, _("Are you sure?"))

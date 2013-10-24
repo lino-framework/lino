@@ -63,6 +63,7 @@ from lino.modlib.cal.workflows import (
     
 from lino.modlib.cal.workflows import take    
 
+from .mixins import StartedSummaryDescription
 
 class CalendarType(object):
     
@@ -128,7 +129,10 @@ class RemoteCalendar(dd.Sequenced):
 
 class RemoteCalendars(dd.Table):
     model = 'cal.RemoteCalendar'
-
+    
+    
+    
+    
 class Room(dd.BabelNamed):
     """
     A location where Events can happen.
@@ -158,7 +162,10 @@ class Rooms(dd.Table):
     id name 
     cal.EventsByRoom
     """
+
+
     
+
 class Priority(dd.BabelNamed):
     "The priority of a Task or Event."
     class Meta:
@@ -171,99 +178,6 @@ class Priorities(dd.Table):
     required = dd.required(user_groups='office',user_level='manager')
     model = Priority
     column_names = 'name *'
-
-
-class Started(dd.Model):
-    class Meta:
-        abstract = True
-        
-    start_date = models.DateField(
-        blank=True,null=True,
-        verbose_name=_("Start date")) # iCal:DTSTART
-    start_time = models.TimeField(
-        blank=True,null=True,
-        verbose_name=_("Start time"))# iCal:DTSTART
-    #~ start = dd.FieldSet(_("Start"),'start_date start_time')
-
-    def save(self,*args,**kw):
-        """
-        Fills default value "today" to start_date
-        """
-        if not self.start_date:
-            self.start_date = datetime.date.today()
-        super(Started,self).save(*args,**kw)
-        
-    def set_datetime(self,name,value):
-        """
-        Given a datetime `value`, update the two corresponding 
-        fields `FOO_date` and `FOO_time` 
-        (where FOO is specified in `name` which must be 
-        either "start" or "end").
-        """
-        #~ logger.info("20120119 set_datetime(%r)",value)
-        setattr(self,name+'_date',value.date())
-        t = value.time()
-        if not t:
-            t = None
-        setattr(self,name+'_time',t)
-        
-    def get_datetime(self,name,altname=None):
-        """
-        Return a `datetime` value from the two corresponding 
-        date and time fields.
-        `name` can be 'start' or 'end'.
-        """
-        d = getattr(self,name+'_date')
-        t = getattr(self,name+'_time')
-        if not d and altname is not None: 
-            d = getattr(self,altname+'_date')
-            if not t and altname is not None: 
-                t = getattr(self,altname+'_time')
-        if not d: return None
-        if t:
-            return datetime.datetime.combine(d,t)
-        else:
-            return datetime.datetime(d.year,d.month,d.day)
-        
-class Ended(dd.Model):
-    class Meta:
-        abstract = True
-    end_date = models.DateField(
-        blank=True,null=True,
-        verbose_name=_("End Date"))
-    end_time = models.TimeField(
-        blank=True,null=True,
-        verbose_name=_("End Time"))
-    #~ end = dd.FieldSet(_("End"),'end_date end_time')
-    
-  
-    
-  
-class StartedSummaryDescription(Started):
-    """
-    """
-
-    class Meta:
-        abstract = True
-        
-    summary = models.CharField(_("Summary"),max_length=200,blank=True) # iCal:SUMMARY
-    description = dd.RichTextField(_("Description"),blank=True,format='html')
-    
-    def __unicode__(self):
-        return self._meta.verbose_name + " #" + str(self.pk)
-
-    def summary_row(self,ar,**kw):
-        elems = list(super(StartedSummaryDescription,self).summary_row(ar,**kw))
-        
-        #~ html = super(StartedSummaryDescription,self).summary_row(ar,**kw)
-        if self.summary:
-            elems.append(': %s' % self.summary)
-            #~ html += '&nbsp;: %s' % cgi.escape(force_unicode(self.summary))
-            #~ html += ui.href_to(self,force_unicode(self.summary))
-        elems += [_(" on "), dbutils.dtos(self.start_date)]
-        return elems
-        
-        
 
 
 class Component(StartedSummaryDescription,
@@ -582,99 +496,6 @@ def migrate_reminder(obj,reminder_date,reminder_text,
       
 
 
-if False:
-    
-    def reminders_as_html_old(ar,days_back=None,days_forward=None,**kw):
-        s = '<div class="htmlText" style="margin:5px">%s</div>' % reminders_as_html(ar,days_back=None,days_forward=None,**kw)
-        return s
-        
-    def reminders_as_html(ar,days_back=None,days_forward=None,**kw):
-        """
-        Return a HTML summary of all open reminders for this user.
-        """
-        user = ar.get_user()
-        if not user.profile.authenticated: return ''
-        today = datetime.date.today()
-        
-        past = {}
-        future = {}
-        def add(cmp):
-            if cmp.start_date < today:
-                lookup = past
-            else:
-                lookup = future
-            day = lookup.get(cmp.start_date,None)
-            if day is None:
-                day = [cmp]
-                lookup[cmp.start_date] = day
-            else:
-                day.append(cmp)
-                
-        flt = models.Q()
-        if days_back is not None:
-            flt = flt & models.Q(start_date__gte = today - datetime.timedelta(days=days_back))
-        if days_forward is not None:
-            flt = flt & models.Q(start_date__lte=today + datetime.timedelta(days=days_forward))
-        
-        events = ar.spawn(MyEvents,
-            user=user,
-            filter=flt & (models.Q(state=None) | models.Q(state__lte=EventStates.published)))
-        tasks = ar.spawn(MyTasks,
-            user=user,
-            filter=flt & models.Q(state__in=[None,TaskStates.todo]))
-        
-        for o in events:
-            o._detail_action = MyEvents.get_url_action('detail_action')
-            add(o)
-            
-        for o in tasks:
-            o._detail_action = MyTasks.get_url_action('detail_action')
-            add(o)
-            
-        def loop(lookup,reverse):
-            sorted_days = lookup.keys()
-            sorted_days.sort()
-            if reverse: 
-                sorted_days.reverse()
-            for day in sorted_days:
-                #~ yield E.h3(dtosl(day))
-                yield '<h3>'+dtosl(day) + '</h3>'
-                yield dd.summary(ar,lookup[day],**kw)
-                
-        #~ if days_back is not None:
-            #~ return loop(past,True)
-        #~ else:
-            #~ return loop(future,False)
-            
-        if days_back is not None:
-            s = ''.join([chunk for chunk in loop(past,True)])
-        else:
-            s = ''.join([chunk for chunk in loop(future,False)])
-            
-        #~ s = '<div class="htmlText" style="margin:5px">%s</div>' % s
-        return s
-        
-        
-    settings.SITE.reminders_as_html = reminders_as_html
-    
-def update_reminders_for_user(user):
-    n = 0 
-    for model in dd.models_by_base(EventGenerator):
-        for obj in model.objects.filter(user=user):
-            obj.update_reminders()
-            #~ logger.info("--> %s",unicode(obj))
-            n += 1
-    return n
-      
-def unused_update_reminders(user):
-    n = 0 
-    for obj in settings.SITE.get_reminder_generators_by_user(user):
-        obj.update_reminders()
-        #~ logger.info("--> %s",unicode(obj))
-        n += 1
-    return n
-      
-
 system = dd.resolve_app('system')
 
 
@@ -839,6 +660,9 @@ from .models_calendar import *
 from .models_task import *
 from .models_guest import *
 from .models_event import *
+
+from .mixins import EventGenerator, RecurrenceSet, Reservation
+
 
 def get_todo_tables(ar):
     yield ('cal.MyAssignedEvents', _("%d events assigned.")) 

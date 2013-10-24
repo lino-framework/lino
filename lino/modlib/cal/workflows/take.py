@@ -53,13 +53,14 @@ class TakeAssignedEvent(dd.Action):
         
     def run_from_ui(self,ar,**kw):
         obj = ar.selected_rows[0]
-        ar.confirm(self.help_text,_("Are you sure?"))
-        obj.user = ar.get_user()
-        obj.assigned_to = None
-        #~ kw = super(TakeAssignedEvent,self).run(obj,ar,**kw)
-        obj.save()
-        kw.update(refresh=True)
-        return kw
+        def ok(ar):
+            obj.user = ar.get_user()
+            obj.assigned_to = None
+            #~ kw = super(TakeAssignedEvent,self).run(obj,ar,**kw)
+            obj.save()
+            ar.response.update(refresh=True)
+            #~ return kw
+        ar.confirm(ok,self.help_text,_("Are you sure?"))
     
   
 if False:
@@ -97,10 +98,10 @@ if False:
     def run_from_ui(self,ar,**kw):
         obj = ar.selected_rows[0]
         obj.user = ar.action_param_values.to_user
-        kw = super(AssignEvent,self).run_from_ui(ar,**kw)
+        super(AssignEvent,self).run_from_ui(ar,**kw)
         #~ obj.save()
-        kw.update(refresh=True)
-        return kw
+        ar.response.update(refresh=True)
+        #~ return kw
     
 
 

@@ -67,13 +67,13 @@ class PrintPosting(dd.Action):
     
     def run_from_ui(self,ar,**kw):
         elem = ar.selected_rows[0]
-        kw = elem.owner.do_print.run_from_code(ar,**kw)        
-        kw.update(refresh=True)
+        elem.owner.do_print.run_from_code(ar,**kw)
         #~ r = elem.owner.print_from_posting(elem,ar,**kw)
         if elem.state in (PostingStates.open,PostingStates.ready):
             elem.state = PostingStates.printed
         elem.save()
-        return kw
+        ar.success(refresh=True)
+        #~ return kw
     
 
     
@@ -198,7 +198,7 @@ class CreatePostings(dd.Action):
     def run_from_ui(self,ar,**kw):
         elem.obj = ar.selected_rows[0]
         recs = tuple(elem.get_postable_recipients())
-        def ok():
+        def ok(ar):
             for rec in recs:
                 p = Posting(
                       user=ar.user,owner=elem,
@@ -208,9 +208,10 @@ class CreatePostings(dd.Action):
                 p.full_clean()
                 p.save()
             kw.update(refresh=True)
-            return ar.success(**kw)
+            ar.success(**kw)
+            
         msg = _("Going to create %(num)d postings for %(elem)s") % dict(num=len(recs),elem=elem)
-        return ar.confirm(ok,msg)
+        ar.confirm(ok,msg)
         
     
     

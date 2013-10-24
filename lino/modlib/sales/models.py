@@ -654,15 +654,17 @@ class SignAction(actions.Action):
     label = "Sign"
     def run_from_ui(self,ar):
         obj = ar.selected_rows[0]
-        def ok():
+        
+        def ok(ar):
             for row in ar.selected_rows:
                 row.instance.user = ar.get_user()
                 row.instance.save()
-            return ar.ui.success(refresh=True)
-        return ar.prompt(
-            "Going to sign %d documents as user %s. Are you sure?" % (
+            ar.success(refresh=True)
+            
+        ar.confirm(ok,
+            _("Going to sign %d documents as user %s. Are you sure?") % (
             len(ar.selected_rows),
-            ar.get_user()),ok)
+            ar.get_user()))
 
 class DocumentsToSign(Invoices):
     use_as_default_table = False

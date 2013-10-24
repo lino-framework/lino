@@ -276,7 +276,7 @@ class InstanceAction(object):
         
     def run_from_ui(self,ar,**kw):
         ar.selected_rows = [self.instance]
-        return self.bound_action.action.run_from_ui(ar)
+        self.bound_action.action.run_from_ui(ar)
         
         
     def run_from_session(self,ses,**kw):
@@ -284,7 +284,8 @@ class InstanceAction(object):
         ar = self.bound_action.request(**kw)
         ar.setup_from(ses)
         ar.selected_rows = [self.instance]
-        return self.bound_action.action.run_from_code(ar)
+        self.bound_action.action.run_from_code(ar)
+        return ar.response
 
     #~ def as_button(self,obj,request,label=None):
         #~ print "Foo"
@@ -712,7 +713,7 @@ class Action(Parametrizable,Permittable):
         
         
     def run_from_code(self,ar,**kw):
-        return self.run_from_ui(ar,**kw)
+        self.run_from_ui(ar,**kw)
         
     def run_from_ui(self,ar,**kw):
         """
@@ -1135,12 +1136,11 @@ class ShowSlaveTable(Action):
         
     def run_from_ui(self,ar,**kw):
         obj = ar.selected_rows[0]
-        #~ ba = self.slave_table.default_action
         sar = ar.spawn(self.slave_table,master_instance=obj)
         js = ar.renderer.request_handler(sar)
-        #~ js = ar.renderer.action_call(ar.requesting_panel,ba,{})
-        kw.update(eval_js=js)
-        return kw
+        ar.response.update(eval_js=js)
+        #~ kw.update(eval_js=js)
+        #~ return kw
 
     
 class NotifyingAction(Action):
@@ -1185,13 +1185,13 @@ class NotifyingAction(Action):
         
     def run_from_ui(self,ar,**kw):
         obj = ar.selected_rows[0]
-        kw.update(message=ar.action_param_values.notify_subject)
+        ar.response.update(message=ar.action_param_values.notify_subject)
         #~ kw.update(alert=True)
-        kw.update(refresh=True)
-        kw.update(success=True)
+        ar.response.update(refresh=True)
+        ar.response.update(success=True)
         #~ kw = super(NotifyingAction,self).run_from_ui(obj,ar,**kw)
         self.add_system_note(ar,obj)
-        return kw
+        #~ return kw
     
     def add_system_note(self,ar,owner,**kw):
         #~ body = _("""%(user)s executed the following action:\n%(body)s

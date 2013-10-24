@@ -30,7 +30,7 @@ from django.conf import settings
 from django.db import models
 from djangosite.dbutils import obj2unicode
 
-
+from lino.core.requests import BaseRequest
 
 
 class Handle:
@@ -52,6 +52,7 @@ ACTION_RESPONSES = frozenset((
   'close_window',
   'xcallback',
   'open_url','open_davlink_url',
+  'console_message',
   'eval_js'))
 """
 Action responses supported by `Lino.action_handler` (defined in :xfile:`linolib.js`).
@@ -143,122 +144,28 @@ class UI(object):
         
     def setup_handle(self,h,ar):
         pass
-        
-    #~ def request(self,actor,**kw):
-        #~ if isinstance(actor,basestring):
-            #~ actor = settings.SITE.modules.resolve(actor)
-        #~ return actor.request(self,**kw)
-        
-        
-    def success(self,message=None,alert=None,**kw):
-        """
-        Shortcut for building a success response.
-        First argument should be a textual message.
-        """
-        kw.update(success=True)
-        if alert is not None:
-            if alert is True:
-                alert = _("Success")
-            kw.update(alert=alert)
-        if message:
-            kw.update(message=message)
-        #~ return self.render_action_response(kw)
-        return kw
-
-    def error(self,e=None,message=None,**kw):
-        """
-        Shortcut for building an error response.
-        The first argument should be either an exception object or a message.
-        """
-        kw.update(success=False)
-        #~ if e is not None:
-        if isinstance(e,Exception):
-            if False: # useful when debugging, but otherwise rather disturbing
-                logger.exception(e)
-            if hasattr(e,'message_dict'):
-                kw.update(errors=e.message_dict)
-        if message is None:
-            message = unicode(e)
-        kw.update(message=message)
-        #~ return self.render_action_response(kw)
-        return kw
     
-    #~ def confirm(self,ok_func,*msgs,**kw):
-    def confirm(self,ok_func,*msgs):
-        """
-        Execute the specified callable `ok` after the user has confirmed 
-        the specified message.
-        All remaining positional arguments to `confirm` 
-        are concatenated to a single callback message.
-        This method then calls :meth:`callback` (see there for implementation notes).
-        
-        The callable may not expect any mandatory arguments
-        (this is different than for the raw callback method)
-        
-        """
-        cb = self.callback(*msgs)
-        def noop():
-            return dict(success=True,message=_("Aborted"))
-        #~ def func(request):
-            #~ return ok_func()
-        cb.add_choice('yes',ok_func,_("Yes"))
-        cb.add_choice('no',noop,_("No"))
-        return cb
-        
-    #~ def callback(self,msg,yes,no=None):
-    def callback(self,*msgs):
-        """
-        Returns an action response which will initiate a dialog thread 
-        by asking a question to the user and suspending execution until 
-        the user's answer arrives in a next HTTP request.
-        
-        Implementation notes:
-        Calling this from an Action's :meth:`Action.run` method will
-        interrupt the execution, send the specified message back to 
-        the user, adding the executables `yes` and optionally `no` to a queue 
-        of pending "dialog threads".
-        The client will display the prompt and will continue this thread 
-        by requesting :class:`lino.ui.extjs3.views.Threads`.
-        """
-        if len(msgs) > 1:
-            msg = '\n'.join([force_text(s) for s in msgs])
-        else:
-            msg = msgs[0]
-        return Callback(msg)
-          
-        #~ if no is None:
-            #~ no = self.abandon_response
-            
-        #~ return Callback(msg,yes=yes,no)
-        #~ return Callback(yes,no)
-        #~ cb = Callback(yes,no)
-        #~ h  = hash(cb)
-        #~ self.pending_threads[h] = cb
-        
-        #~ r = dict(
-          #~ success=True,
-          #~ message=msg,
-          #~ thread_id=h)
-        #~ return r 
         
     def callback_get(self,request,thread_id,button_id):
         #~ logger.info("20130409 callback_get")
+        ar = BaseRequest(request)
         thread_id = int(thread_id)
         cb = self.pending_threads.pop(thread_id,None)
         #~ d = self.pop_thread(int(thread_id))
         if cb is None: 
             #~ logger.info("20130811 No callback %r in %r" % (thread_id,self.pending_threads.keys()))
-            return self.render_action_response(self.error("Unknown callback %r" % thread_id))
+            ar.error("Unknown callback %r" % thread_id)
+            return self.render_action_response(ar.response)
         #~ buttonId = request.GET[ext_requests.URL_PARAM_'bi']
         #~ print buttonId
         for c in cb.choices:
             if c.name == button_id:
                 #~ rv = c.func(request)
-                rv = c.func()
-                return self.render_action_response(rv)
+                c.func(ar)
+                return self.render_action_response(ar.response)
                 
-        return self.render_action_response(self.error(
-            "Invalid button %r for callback" % (button_id,thread_id)))
+        ar.error("Invalid button %r for callback" % (button_id,thread_id))
+        return self.render_action_response(ar.response)
                 
         #~ m = getattr(d,button_id)
         #~ rv = m(request)
@@ -268,37 +175,56 @@ class UI(object):
             #~ rv = d.no()
         #~ return self.render_action_response(rv)
   
+    def add_callback(self,ar,*msgs):
+        """
+        Returns an "action callback" which will initiate a dialog thread 
+        by asking a question to the user and suspending execution until 
+        the user's answer arrives in a next HTTP request.
+        
+        Implementation notes:
+        Calling this from an Action's :meth:`Action.run` method will
+        interrupt the execution, send the specified message back to 
+        the user, adding the executables `yes` and optionally `no` to a queue 
+        of pending "dialog threads".
+        The client will display the prompt and will continue this thread 
+        by requesting :class:`lino.ui.extjs3.views.Callbacks`.
+        """
+        if len(msgs) > 1:
+            msg = '\n'.join([force_text(s) for s in msgs])
+        else:
+            msg = msgs[0]
+            
+        return Callback(msg)
+        
+        
+    def callback(self,ar,cb):
+        """
+        """
+        h = hash(cb)
+        self.pending_threads[h] = cb
+        #~ logger.info("20130531 Stored %r in %r" % (h,settings.SITE.pending_threads))
+        
+        buttons = dict()
+        for c in cb.choices:
+            buttons[c.name] = c.label
+            
+        ar.response.update(
+          success=True,
+          message=cb.message,
+          xcallback=dict(id=h,
+              title=cb.title,
+              buttons=buttons))
+          
+            
     def check_action_response(self,rv):
         """
         Raise an exception if the action responded using an unknown keyword.
         """
         
-        if rv is None:
-            rv = self.success()
-        #~ elif isinstance(rv,models.Model):
-            #~ js = settings.SITE.ui.ext_renderer.instance_handler(None,invoice)
-            #~ rv = dict(eval_js=js)
+        #~ if rv is None:
+            #~ rv = self.success()
             
-        elif isinstance(rv,Callback):
-            h = hash(rv)
-            self.pending_threads[h] = rv
-            #~ logger.info("20130531 Stored %r in %r" % (h,settings.SITE.pending_threads))
-            
-            #~ def cb2dict(c):
-                #~ return dict(name=c.name,label=c.label)
-            #~ choices=[cb2dict(c) for c in rv.choices]
-            buttons = dict()
-            for c in rv.choices:
-                buttons[c.name] = c.label
-            rv = dict(
-              success=True,
-              message=rv.message,
-              xcallback=dict(id=h,
-                  title=rv.title,
-                  buttons=buttons))
-              #~ callback_id=h)
-              #~ thread_id=h)
-            #~ return r 
+        #~ elif isinstance(rv,Callback):
           
         for k in rv.keys():
             if not k in ACTION_RESPONSES:
@@ -314,16 +240,15 @@ class UI(object):
         """
         """
         try:
-            rv = ar.bound_action.action.run_from_ui(ar)
-            if rv is None:
-                rv  = self.success()
-            return self.render_action_response(rv)
+            ar.bound_action.action.run_from_ui(ar)
+            return self.render_action_response(ar.response)
         except Warning as e:
-            r = dict(
-              success=False,
-              message=unicode(e),
-              alert=True)
-            return self.render_action_response(r)
+            ar.error(unicode(e),alert=True)
+            #~ r = dict(
+              #~ success=False,
+              #~ message=unicode(e),
+              #~ alert=True)
+            return self.render_action_response(ar.response)
         #~ removed 20130913
         #~ except Exception as e:
             #~ if len(ar.selected_rows) == 0:

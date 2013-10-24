@@ -532,16 +532,16 @@ class CachedPrintAction(BasePrintAction):
                 kw.update(open_davlink_url=ar.request.build_absolute_uri(mf.url))
             else:
                 kw.update(open_url=mf.url)
-            return ar.success(**kw)
+            ar.success(**kw)
 
-        def ok():
+        def ok(ar):
             #~ qs = [ar.actor.get_row_by_pk(pk) for pk in ar.selected_pks]
             mf = self.print_multiple(ar,ar.selected_rows)
-            kw.update(open_url=mf.url)
+            ar.success(open_url=mf.url)
             #~ kw.update(refresh_all=True)
-            return kw
-        msg = _("This will print %d rows.") % len(ar.selected_pks)
-        return ar.confirm(ok, msg, _("Are you sure?"))
+            #~ return kw
+        msg = _("This will print %d rows.") % len(ar.selected_rows)
+        ar.confirm(ok, msg, _("Are you sure?"))
 
     def print_multiple(self,ar,qs):
         pdfs = []
@@ -629,7 +629,7 @@ class DirectPrintAction(BasePrintAction):
             kw.update(open_davlink_url=url)
         else:
             kw.update(open_url=url)
-        return ar.success(**kw)
+        ar.success(**kw)
     
 #~ class EditTemplateAction(dd.Action):
     #~ name = 'tpledit'
@@ -669,9 +669,9 @@ class ClearCacheAction(actions.Action):
     
     def run_from_ui(self,ar):
         elem = ar.selected_rows[0]
-        def doit():
+        def doit(ar):
             elem.clear_cache()
-            return ar.success("%s printable cache has been cleared." % elem,refresh=True)
+            ar.success("%s printable cache has been cleared." % elem,refresh=True)
             
         t = elem.get_cache_mtime()
         if t is not None and t != elem.build_time:
@@ -682,7 +682,7 @@ class ClearCacheAction(actions.Action):
             #~ logger.info("Got confirmation to discard changes in %s", elem.get_target_name())
         #~ else:
             #~ logger.info("%r == %r : no confirmation", elem.get_cache_mtime(),elem.build_time)
-        return doit()
+        return doit(ar)
         
     
     

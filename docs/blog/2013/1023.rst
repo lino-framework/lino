@@ -1,0 +1,19 @@
+=====================================
+20131023 (Wednesday, 23 October 2013)
+=====================================
+
+
+Application programmers who wrote their own custom actions 
+must possibly revide their code:
+
+- An action's run method is no longer expected to return a dict containing 
+  the response, but that response is stored in a new attribute 
+  ``response`` of the ActionRequest.
+  
+
+- The callback functions to be passed to 
+  :meth:`lino.core.requests.BaseRequest.confirm` 
+  or 
+  :meth:`lino.core.requests.BaseRequest.add_callback` 
+  must now accept a single argument `ar` which 
+  represents the second web request.
