@@ -95,21 +95,22 @@ def objects():
     
     RecurrentEvent = dd.resolve_model('cal.RecurrentEvent')
     add = Instantiator(RecurrentEvent,event_type=holidays).build
-    def holiday(month,day,summary):
-        return add(summary=summary,
+    def holiday(month,day,en,de,fr):
+        return add(
             every_unit=cal.Recurrencies.yearly,
             every=1,
-            start_date=settings.SITE.demo_date().replace(month=month,day=day))
-    yield holiday(1,1,_("New Year's Day"))
-    yield holiday(5,1,_("International Workers' Day"))
-    yield holiday(7,21,_("National Day"))
-    yield holiday(8,15,_("Assumption of Mary"))
-    yield holiday(10,31,_("All Souls' Day"))
-    yield holiday(11,1,_("All Saints' Day"))
-    yield holiday(11,11,_("Armistice with Germany"))
-    yield holiday(12,25,_("Christmas"))
+            start_date=settings.SITE.demo_date().replace(month=month,day=day),
+            **dd.babelkw('name',en=en,de=de,fr=fr))
+    yield holiday(1,1,"New Year's Day","Neujahr","Jour de l'an")
+    yield holiday(5,1,"International Workers' Day","Tag der Arbeit","Premier Mai")
+    yield holiday(7,21,"National Day","Nationalfeiertag","Fête nationale")
+    yield holiday(8,15,"Assumption of Mary","Mariä Himmelfahrt","Assomption de Marie")
+    yield holiday(10,31,"All Souls' Day","Allerseelen","Commémoration des fidèles défunts")
+    yield holiday(11,1,"All Saints' Day","Allerheiligen","Toussaint")
+    yield holiday(11,11,"Armistice with Germany","Waffenstillstand","Armistice")
+    yield holiday(12,25,"Christmas","Weihnachten","Noël")
     
-    summer = holiday(07,01,_("Summer holidays"))
+    summer = holiday(07,01,"Summer holidays","Sommerferien","Vacances d'été")
     summer.end_date = summer.start_date.replace(month=8,day=31)
     yield summer
     

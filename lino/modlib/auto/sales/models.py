@@ -128,19 +128,6 @@ class Invoiceable(dd.Model):
                 if obj.get_invoiceable_product() is not None:
                     yield obj
         
-    @classmethod
-    def unused_get_invoiceables_count(cls,partner,max_date=None):
-        if settings.SITE.site_config.site_company:
-            if partner.id == settings.SITE.site_config.site_company.id:
-                return 0
-        #~ logger.info('20130711 get_invoiceables_count (%s,%s)', partner, max_date)
-        n = 0
-        for m in dd.models_by_base(cls):
-            flt = m.get_partner_filter(partner)
-            qs = m.objects.filter(flt)
-            #~ qs = qs.exclude(company=settings.SITE.site_config.site_company)
-            n += qs.count()
-        return n
 
 def create_invoice_for(obj,ar):
     invoiceables = list(Invoiceable.get_invoiceables_for(obj))
@@ -164,24 +151,45 @@ def create_invoice_for(obj,ar):
     invoice.save()
     return invoice
         
-class CreateInvoiceForPartner(dd.Action):
+class CreateInvoice(dd.Action):
     icon_name = 'money'
     sort_index = 50
     label = _("Create invoice")
-    help_text = _("Create invoice for this partner using invoiceable items")
     #~ show_in_row_actions = True
     #~ show_in_workflow = True
-    
+
+    def get_partners(self,ar):
+        return [o.partner for o in ar.selected_rows]
+        
     def run_from_ui(self,ar,**kw):
-        obj = ar.selected_rows[0]
-        def ok(ar):
+        partners = list(self.get_partners(ar))
+        if len(partners) > 1:
+            rv = []
+            def ok(ar2):
+                for obj in partners:
+                    invoice = create_invoice_for(obj,ar)
+                    rv.append(invoice)
+                ar2.success(_("%d invoices have been created.") % len(rv))
+                return rv
+            msg = _("This will create %d invoices.") % len(partners)
+            ar.confirm(ok, msg, _("Are you sure?"))
+            return 
+            
+        if len(partners) == 1:
+            obj = partners[0]
             invoice = create_invoice_for(obj,ar)
             ar.goto_instance(invoice,**kw)
             
-        if True: # no confirmation
-            return ok(ar)
-        msg = _("This will create an invoice for %s.") % obj
-        ar.confirm(ok, msg, _("Are you sure?"))
+        return
+            
+    
+
+class CreateInvoiceForPartner(CreateInvoice):
+    help_text = _("Create invoice for this partner using invoiceable items")
+    
+    def get_partners(self,ar):
+        return ar.selected_rows
+        
         
         
 #~ dd.inject_action('contacts.Partner','create_invoice',CreateInvoiceForPartner())
@@ -303,13 +311,6 @@ class InvoicingsByInvoiceable(InvoiceItemsByProduct): # 20130709
             #~ flt = flt | Q(id__in=subquery)
         #~ return qs.filter(flt)
         #~ 
-        
-class CreateInvoice(CreateInvoiceForPartner):
-    
-    def run_from_ui(self,ar,**kw):
-        obj = ar.selected_rows[0]
-        ar.selected_rows = [ o.partner for o in ar.selected_rows ]
-        super(CreateInvoice,self).run_from_ui(ar,**kw)
         
 from lino.mixins.printable import CachedPrintAction
 
@@ -478,7 +479,6 @@ class InvoiceablesByPartner(dd.VirtualTable):
         return ar.obj2html(row[1])
     
 contacts.Partner.show_invoiceables = dd.ShowSlaveTable(InvoiceablesByPartner)
-
 
 
 #~ f = setup_main_menu

@@ -795,7 +795,8 @@ class ExpectedMovements(dd.VirtualTable):
     """
     Subclassed by finan.
     """
-    label = _("Due")
+    label = _("Debts")
+    icon_name = 'book_link'
     #~ column_names = 'match due_date debts payments balance'
     column_names = 'due_date:15 balance debts payments'
     auto_fit_column_widths = True
@@ -846,14 +847,10 @@ class ExpectedMovements(dd.VirtualTable):
             
     @dd.displayfield(_("Debts"),help_text=_("List of invoices in this match group"))
     def debts(self,row,ar):
-        #~ return ", ".join([ar.obj2html(i,i.select_text()) for i in row.debts])
-        #~ return join_elems([ar.obj2html(i.voucher,i.select_text()) for i in row.debts])
         return E.p(*join_elems([ar.obj2html(i.voucher.get_mti_child()) for i in row.debts]))
             
     @dd.displayfield(_("Payments"),help_text=_("List of payments in this match group"))
     def payments(self,row,ar):
-        #~ return ", ".join([ar.obj2html(i,i.select_text()) for i in row.payments])
-        #~ return join_elems([ar.obj2html(i.voucher,i.select_text()) for i in row.payments])
         return E.p(*join_elems([ar.obj2html(i.voucher.get_mti_child()) for i in row.payments]))
         
     @dd.virtualfield(dd.PriceField(_("Balance")))
@@ -870,7 +867,7 @@ class ExpectedMovements(dd.VirtualTable):
             
     
     
-class DuePaymentsByAccount(ExpectedMovements):
+class DebtsByAccount(ExpectedMovements):
     master = 'accounts.Account'
     
     @classmethod
@@ -882,13 +879,13 @@ class DuePaymentsByAccount(ExpectedMovements):
         flt.update(satisfied=False,account=account)
         # ignore trade_type to avoid overriding account
         ar.param_values.trade_type = None
-        return super(DuePaymentsByPartner,cls).get_data_rows(ar,**flt)
+        return super(DebtsByAccount,cls).get_data_rows(ar,**flt)
         
-dd.inject_action('accounts.Account',due=dd.ShowSlaveTable(DuePaymentsByAccount))
+dd.inject_action('accounts.Account',due=dd.ShowSlaveTable(DebtsByAccount))
     
-class DuePaymentsByPartner(ExpectedMovements):
+class DebtsByPartner(ExpectedMovements):
     """
-    Due Payements is the table to print in a Payment Reminder.
+    Due Payments is the table to print in a Payment Reminder.
     Usually this table has one row per sales invoice which is not fully paid.
     But several invoices ("debts") may be grouped by match.
     If the partner has purchase invoices, these are deduced from the balance.
@@ -905,9 +902,9 @@ class DuePaymentsByPartner(ExpectedMovements):
         partner = ar.master_instance
         if partner is None: return []
         flt.update(satisfied=False,partner=partner)
-        return super(DuePaymentsByPartner,cls).get_data_rows(ar,**flt)
+        return super(DebtsByPartner,cls).get_data_rows(ar,**flt)
 
-dd.inject_action('contacts.Partner',due=dd.ShowSlaveTable(DuePaymentsByPartner))
+dd.inject_action('contacts.Partner',due=dd.ShowSlaveTable(DebtsByPartner))
         
 
 

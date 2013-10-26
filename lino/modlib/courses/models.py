@@ -389,6 +389,8 @@ add('40', _("Certified"),'certified',invoiceable=True,uses_a_place=True)
 #~ ENROLMENT_USES_UP_A_PLACE = set((EnrolmentStates.confirmed,EnrolmentStates.certified))
 ENROLMENT_USES_UP_A_PLACE = EnrolmentStates.filter(uses_a_place=True)
 
+#~ EnrolmentStates.registered.add_transition(_("Register"),states='draft',icon_name='accept')
+#~ EnrolmentStates.draft.add_transition(_("Deregister"),states="registered",icon_name='pencil')
     
 
     
@@ -664,6 +666,11 @@ class ActiveCourses(Courses):
         kw.update(active = dd.YesNo.yes)
         return kw
 
+class CreateInvoiceForEnrolment(sales.CreateInvoice):
+    
+    def get_partners(self,ar):
+        return [o.pupil for o in ar.selected_rows]
+        
     
     
 
@@ -686,6 +693,8 @@ class Enrolment(dd.UserAuthored,dd.Printable,sales.Invoiceable):
     remark = models.CharField(max_length=200,
           blank=True,
           verbose_name=_("Remark"))
+          
+    create_invoice = CreateInvoiceForEnrolment()
           
     def get_confirm_veto(self,ar):
         """

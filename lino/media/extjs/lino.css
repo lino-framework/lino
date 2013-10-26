@@ -300,6 +300,8 @@ adapted for usage in an ExtJS application.
 /* border: 1px solid #FFAD33;  */
 
 
+.x-tbar-arrow_join{ background-image: url(images/mjames/arrow_join.png) !important; }
+.x-tbar-book_link{ background-image: url(images/mjames/book_link.png) !important; }
 .x-tbar-eye{ background-image: url(images/mjames/eye.png) !important; }
 .x-tbar-basket{ background-image: url(images/mjames/basket.png) !important; }
 .x-tbar-arrow_up{ background-image: url(images/mjames/arrow_up.png) !important; }

@@ -11,7 +11,7 @@
 ## You should have received a copy of the GNU General Public License
 ## along with Lino; if not, see <http://www.gnu.org/licenses/>.
 """
-The :xfile:`models.py` module for the :mod:`lino.modlib.finan` app.
+The :xfile:`models` module for the :mod:`lino.modlib.finan` app.
 """
 
 
@@ -71,6 +71,9 @@ class VoucherStates(dd.Workflow):
 add = VoucherStates.add_item
 add('10',_("Draft"),'draft',editable=True) 
 add('20',_("Registered"),'registered',editable=False) 
+
+VoucherStates.registered.add_transition(_("Register"),states='draft',icon_name='accept')
+VoucherStates.draft.add_transition(_("Deregister"),states="registered",icon_name='pencil')
 
     
   

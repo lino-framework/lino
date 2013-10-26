@@ -1,10 +1,11 @@
-/home/luc/hgwork/lino/lino/modlib/vat/models.py:docstring of lino.modlib.vat.models:18: ERROR: Unexpected indentation.
-/home/luc/hgwork/lino/lino/modlib/vat/models.py:docstring of lino.modlib.vat.models.TradeType:1: ERROR: Unknown interpreted text role "ddref".
-/home/luc/hgwork/lino/lino/modlib/vat/models.py:docstring of lino.modlib.vat.models.VatRegime:1: ERROR: Unknown interpreted text role "ddref".
+/home/luc/hgwork/lino/docs/api/lino.modlib.reception.rst:14: WARNING: autodoc: failed to import module u'lino.modlib.reception.models'; the following exception was raised:
+Traceback (most recent call last):
+  File "/home/luc/pythonenvs/py27/local/lib/python2.7/site-packages/sphinx/ext/autodoc.py", line 326, in import_object
+    __import__(self.modname)
+  File "/home/luc/hgwork/lino/lino/modlib/reception/models.py", line 396, in <module>
+    ExpectedGuestsStates = (GuestStates.invited,GuestStates.accepted)
+AttributeError: type object 'GuestStates' has no attribute 'accepted'
 /home/luc/hgwork/lino/docs/polly/index.rst:13: WARNING: toctree contains reference to nonexisting document u'polly/ intro'
 /home/luc/hgwork/lino/docs/polly/index.rst:13: WARNING: toctree contains reference to nonexisting document u'polly/ sacredpy'
 /home/luc/hgwork/lino/docs/polly/intro.rst:: WARNING: document isn't included in any toctree
 /home/luc/hgwork/lino/docs/polly/sacredpy.rst:: WARNING: document isn't included in any toctree
-/home/luc/hgwork/lino/lino/lino_site.py:docstring of lino.lino_site.Site.webdav_url:7: WARNING: term not in glossary: runserver
-/home/luc/hgwork/lino/lino/mixins/printable.py:docstring of lino.mixins.printable.PisaBuildMethod:1: WARNING: undefined label: lino.tutorials.pisa (if the link has no caption the label must precede a section header)
-/home/luc/hgwork/lino/docs/releases/index.rst:1: WARNING: unknown document: 1.6.13

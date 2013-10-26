@@ -357,6 +357,7 @@ class Action(Parametrizable,Permittable):
     31    :class:`merge <lino.mixins.mergeable.Merge>`
     50    :class:`Print <lino.mixins.printable.BasePrintAction>`
     51    :class:`Clear Cache <lino.mixins.printable.ClearCacheAction>`
+    60    :class:`ShowSlaveTable`
     90    default for all custom row actions created using :func:`@dd.action <action>`
     ===== =================================
     
@@ -1109,10 +1110,12 @@ class SubmitInsertAndStay(SubmitInsert):
 
 
 class ShowSlaveTable(Action):
-    TABLE2ACTION_ATTRS = tuple('sort_index help_text icon_name label'.split())
+    #~ TABLE2ACTION_ATTRS = tuple('sort_index help_text icon_name label'.split())
+    TABLE2ACTION_ATTRS = tuple('help_text icon_name label'.split())
     #~ label = "ShowSlaveTable"
     #~ show_in_row_actions = True
     show_in_bbar = True
+    sort_index = 60
     
     def __init__(self,slave_table,**kw):
         self.slave_table = slave_table

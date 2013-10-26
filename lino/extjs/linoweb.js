@@ -2232,8 +2232,8 @@ Lino.do_on_current_record = function(panel,fn,phantom_fn) {
 
 Lino.call_ajax_action = function(panel,method,url,p,actionName,step,on_confirm,on_success) {
   p.{{ext_requests.URL_PARAM_ACTION_NAME}} = actionName;
-  //~ if (!panel) {
-  if (true) { // 20131026 : workflow_actions of a newly created record detail executed bu did't refresh the screen because their requesting panel was the insert (not the detail) formpanel.
+  if (!panel || !panel.isVisible()) {
+  //~ if (true) { // 20131026 : workflow_actions of a newly created record detail executed but did't refresh the screen because their requesting panel was the insert (not the detail) formpanel.
       if (Lino.current_window) 
           panel = Lino.current_window.main_item;
       else panel = Lino.viewport;
@@ -2350,7 +2350,7 @@ Lino.put = function(requesting_panel,pk,data) {
     };
     req.method = 'PUT';
     req.url = '{{settings.SITE.build_admin_url("api")}}' + panel.ls_url + '/' + pk;
-    panel.loadMask.show(); // 20120211
+    if (panel.loadMask) panel.loadMask.show(); 
     Ext.Ajax.request(req);
 }
 

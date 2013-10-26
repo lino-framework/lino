@@ -225,7 +225,7 @@ class EventTypes(dd.Table):
     
     
 
-class RecurrentEvent(RecurrenceSet,EventGenerator):
+class RecurrentEvent(dd.BabelNamed,RecurrenceSet,EventGenerator):
     """
     An event that recurs at intervals.
     """
@@ -235,15 +235,16 @@ class RecurrentEvent(RecurrenceSet,EventGenerator):
         verbose_name_plural = _("Recurrent Events")
         
     event_type = models.ForeignKey('cal.EventType',blank=True,null=True)
-    summary = models.CharField(_("Summary"),max_length=200,blank=True) # iCal:SUMMARY
+    #~ summary = models.CharField(_("Summary"),max_length=200,blank=True) # iCal:SUMMARY
     description = dd.RichTextField(_("Description"),blank=True,format='html')
     
     #~ def on_create(self,ar):
         #~ super(RecurrentEvent,self).on_create(ar)
         #~ self.event_type = settings.SITE.site_config.holiday_event_type
    
-    def __unicode__(self):
-        return self.summary
+    #~ def __unicode__(self):
+        #~ return self.summary
+        
     def update_cal_rset(self):
         return self
     def update_cal_from(self,ar):
@@ -253,7 +254,7 @@ class RecurrentEvent(RecurrenceSet,EventGenerator):
         return self.event_type
         
     def update_cal_summary(self,i):
-        return self.summary
+        return unicode(self)
         
 
 class RecurrentEvents(dd.Table):
@@ -262,15 +263,15 @@ class RecurrentEvents(dd.Table):
     """
     model = 'cal.RecurrentEvent'
     required = dd.required(user_groups='office',user_level='manager')
-    column_names = "summary every_unit event_type *"
+    column_names = "name every_unit event_type *"
     auto_fit_column_widths = True
     
     insert_layout = """
-    summary
+    name
     user event_type
     """
     detail_layout = """
-    id user event_type summary 
+    id user event_type name 
     start_date start_time  end_date end_time
     max_events every_unit every 
     monday tuesday wednesday thursday friday saturday sunday

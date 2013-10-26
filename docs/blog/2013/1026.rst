@@ -2,6 +2,8 @@
 20131026 (Saturday, 26 October 2013)
 ====================================
 
+Working on :ref:`faggio` : 
+Endspurt vor der nächsten Besichtigung
 
 Register no longer adds itself a RegisterAction and DeregisterAction.
 That's because it was difficult to extend this workflow.
@@ -23,9 +25,12 @@ See them in action for
 and for 
 :ref:`Faggio <faggio.tested.general>`.
 
-I even started a new page of documentation about :doc:`dev/testing`.
+I even started a new page of documentation about :doc:`/dev/testing`.
 
 :ref:`atelier` : doctests are now being run with 
 `+REPORT_ONLY_FIRST_FAILURE
 <http://docs.python.org/2/library/doctest.html#doctest.REPORT_ONLY_FIRST_FAILURE>`_
 
+And many more.
+
+Checkin and updated the online demo sites (:ref:`demos`).

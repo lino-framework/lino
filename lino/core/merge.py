@@ -120,6 +120,7 @@ class MergePlan(object):
         update_count = 0
         # change FK fields of related objects
         for fk,qs in self.related:
+            #~ print 20131026, qs.query, fk.name, self.merge_to
             update_count += qs.update(**{fk.name:self.merge_to})
             #~ for relobj in qs:
                 #~ setattr(relobj,fk.name,merge_to)
@@ -148,6 +149,7 @@ class MergePlan(object):
 class MergeAction(actions.Action):
     help_text = _("Merge this object into another object of same class.")
     label = _("Merge")
+    icon_name = 'arrow_join'
     sort_index = 31
     show_in_workflow = False
     readonly = False 
@@ -227,21 +229,16 @@ class MergeAction(actions.Action):
         #~ kw.update(merge_from=obj)
         #~ return kw
 
-    def run_from_ui(self,ar,**kw):
+    def run_from_ui(self,ar):
         """
         Implements :meth:`lino.core.actions.Action.run_from_ui`.
         """
         obj = ar.selected_rows[0]
         mp = MergePlan(obj,ar.action_param_values.merge_to,ar.action_param_values)
         msg = mp.build_confirmation_message()
-        def ok(ar):
+        def ok(ar2):
             msg = mp.execute(request=ar.request)
-            # prepare the response        
-            #~ kw = dict()
-            ar.response.update(refresh=True)
-            ar.response.update(message=msg)
-            #~ ar.response.update(new_status=dict(record_id=new.pk))
-            ar.response.update(goto_record_id=mp.merge_to.pk)
+            ar2.success(msg,refresh=True,goto_record_id=mp.merge_to.pk)
             
         if msg is None:
             return ok(ar)
