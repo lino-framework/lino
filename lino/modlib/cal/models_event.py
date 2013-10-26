@@ -407,6 +407,9 @@ Indicates that this Event shouldn't prevent other Events at the same time."""))
         qs = qs.filter(flt)
         if self.id is not None:  # don't conflict with myself
             qs = qs.exclude(id=self.id)
+        if self.auto_type is not None:
+            qs = qs.exclude(auto_type=self.auto_type,
+                owner_id=self.owner_id,owner_type=self.owner_type)
         if self.room is not None:
             # other event in the same room
             c1 = Q(room=self.room)
@@ -422,8 +425,8 @@ Indicates that this Event shouldn't prevent other Events at the same time."""))
                     qs = qs.filter(user=self.user,event_type__locks_user=True)
         #~ qs = Event.objects.filter(flt,owner_type=ot)
         #~ if we.start_date.month == 7:
-            #~ print 20131011, qs.query
             #~ print 20131011, self, we.start_date, qs.count()
+        #~ print 20131025, qs.query
         return qs
     
     def is_fixed_state(self):

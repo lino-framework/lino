@@ -83,7 +83,7 @@ add('30', _("Closed"),'closed')
 
 class ResponseStates(dd.Workflow):
     """
-    State of a Calendar Task. Used as Workflow selector.
+    Possible states of a Response.
     """
     verbose_name_plural = _("Response States")
     required = dd.required(user_level='admin')
@@ -92,6 +92,10 @@ class ResponseStates(dd.Workflow):
 add = ResponseStates.add_item
 add('10', _("Draft"),'draft',editable=True)
 add('20', _("Registered"),'registered',editable=False)
+
+
+ResponseStates.registered.add_transition(_("Register"),states='draft')
+ResponseStates.draft.add_transition(_("Deregister"),states="registered")
 
 
 class ChoiceSet(dd.BabelNamed):
@@ -147,7 +151,7 @@ class Poll(dd.UserAuthored,dd.CreatedModified):
     def __unicode__(self):
         return self.title
     
-    def after_ui_save(self,ar,**kw):
+    def after_ui_save(self,ar):
         if self.questions_to_add:
             qkw = dict(choiceset=self.default_choiceset)
             for ln in self.questions_to_add.splitlines():
@@ -160,7 +164,7 @@ class Poll(dd.UserAuthored,dd.CreatedModified):
             self.questions_to_add = ''
             self.save() # save again
                     
-        return super(Poll,self).after_ui_save(ar,**kw)
+        super(Poll,self).after_ui_save(ar)
         
     @dd.virtualfield(dd.HtmlBox(_("Result")))
     def result(self,ar):
@@ -244,12 +248,12 @@ class Response(dd.UserAuthored,dd.Registrable,dd.CreatedModified):
     state = ResponseStates.field(default=ResponseStates.draft)
     remark = models.TextField(verbose_name=_("My general remark"),blank=True)
     
-    def after_ui_save(self,ar,**kw):
+    def after_ui_save(self,ar):
         if self.answers.count() == 0:
             for obj in self.poll.questions.all():
                 Answer(response=self,question=obj).save()
                     
-        return super(Response,self).after_ui_save(ar,**kw)
+        super(Response,self).after_ui_save(ar)
         
     def __unicode__(self):
         return _("%(user)s's response to %(poll)s") % dict(

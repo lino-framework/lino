@@ -149,17 +149,21 @@ class BaseRequest(object):
         self.response.update(kw)
         
         
-    def info(self,msg,*args,**kw): 
+    def append_message(self,level,msg,*args,**kw): 
         if args: 
             msg = msg % args
         if kw:
             msg = msg % kw
-        old = self.response.get('console_message',None)
+        k = level + '_message'
+        old = self.response.get(k,None)
         if old is None:
-            self.response.update(console_message=msg)
+            self.response[k] = msg
         else:
-            self.response.update(console_message=old+'\n'+msg)
+            self.response[k] = old + '\n' + msg
         #~ return self.success(*args,**kw)
+        
+    def info(self,msg,*args,**kw): self.append_message('info',msg,*args,**kw)
+    def warning(self,msg,*args,**kw): self.append_message('warning',msg,*args,**kw)
     
     def confirm(self,ok_func,*msgs):
         """
@@ -418,6 +422,20 @@ class BaseRequest(object):
             with translation.override(language):
                 return ar.renderer.show_request(ar,column_names=column_names)
         return ar.renderer.show_request(ar,column_names=column_names)
+        
+    def show_menu(self,remove_blanklines=True):
+        """
+        Used in tested docs
+        """
+        mnu = settings.SITE.get_site_menu(None,self.get_user().profile)
+        s = mnu.as_rst(self)
+        if remove_blanklines:
+            for ln in s.splitlines():
+                if ln.strip():
+                    print ln
+        else:
+            print s
+        
         
     def get_request_url(self,*args,**kw): 
         return self.renderer.get_home_url(*args,**kw)

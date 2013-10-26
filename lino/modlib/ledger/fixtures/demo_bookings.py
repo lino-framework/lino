@@ -51,7 +51,8 @@ partner_model = settings.SITE.partners_app_label + '.Partner'
 
 current_group = None
 
-REQUEST = None
+# from lino.core.requests import BaseRequest
+REQUEST = settings.SITE.login() # BaseRequest()
 MORE_THAN_A_MONTH = datetime.timedelta(days=40) 
 
 
@@ -75,27 +76,29 @@ def objects():
             "2.50 6.80 9.95 14.50 20 29.90 39.90 39.90 99.95 199.95 599.95 1599.99".split()])
         ITEMCOUNT = Cycler(1,2,3)
         for i in range(10):
+            u = USERS.pop()
             jnl = JOURNALS.pop()
             invoice = MODEL(journal=jnl,
               partner=PARTNERS.pop(),
-              user=USERS.pop(),
+              user=u,
               date=settings.SITE.demo_date(-30+i))
             yield invoice
+            ar = MODEL.request(user=u)
             for j in range(ITEMCOUNT.pop()):
                 item = ledger.InvoiceItem(voucher=invoice,
                     account=jnl.get_allowed_accounts()[0],
                     #~ product=PRODUCTS.pop(),
                     total_incl=AMOUNTS.pop()
                     )
-                item.total_incl_changed(REQUEST)
-                item.before_ui_save(REQUEST)
+                item.total_incl_changed(ar)
+                item.before_ui_save(ar)
                 #~ if item.total_incl:
                     #~ print "20121208 ok", item
                 #~ else:
                     #~ if item.product.price:
                         #~ raise Exception("20121208")
                 yield item
-            invoice.register(REQUEST)
+            invoice.register(ar)
             invoice.save()
             
         
@@ -167,6 +170,8 @@ def objects():
                         #~ if item.product.price:
                             #~ raise Exception("20121208")
                     yield item
+                #~ invoice.set_workflow_state('registered')
+                #~ invoice.state = 'registered' # automatically call 
                 invoice.register(REQUEST)
                 invoice.save()
             

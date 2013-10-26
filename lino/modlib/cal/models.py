@@ -129,6 +129,7 @@ class RemoteCalendar(dd.Sequenced):
 
 class RemoteCalendars(dd.Table):
     model = 'cal.RemoteCalendar'
+    required = dd.required(user_groups='office',user_level='manager')
     
     
     

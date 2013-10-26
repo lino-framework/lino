@@ -61,6 +61,11 @@ add("00",_("Draft"),"draft",editable=True)
 add("10",_("Registered"),"registered",editable=False)
 add("20",_("Submitted"),"submitted",editable=False)
 
+DeclarationStates.registered.add_transition(_("Register"),states='draft submitted')
+DeclarationStates.draft.add_transition(_("Deregister"),states="registered")
+DeclarationStates.submitted.add_transition(_("Submit"),states="registered")
+
+
 
 from dateutil.relativedelta import relativedelta
 
@@ -166,16 +171,25 @@ class Declaration(ledger.Voucher):
         self.compute_fields()
         super(Declaration,self).full_clean(*args,**kw)
         
-    def register(self,ar):
-        self.compute_fields()
-        super(Declaration,self).register(ar)
+    def before_state_change(self,ar,old,new):
+        if new.name == 'register':
+            self.compute_fields()
+        elif new.name == 'draft':
+            for doc in ledger.Voucher.objects.filter(declared_in=self):
+                doc.declared_in = None
+                doc.save()
+        super(Declaration,self).before_state_change(ar,old,new)
         
-    def deregister(self,ar):
-        #~ for m in dd.models_by_base(VatDocument):
-        for doc in ledger.Voucher.objects.filter(declared_in=self):
-            doc.declared_in = None
-            doc.save()
-        super(Declaration,self).deregister(ar)
+        
+    #~ def register(self,ar):
+        #~ self.compute_fields()
+        #~ super(Declaration,self).register(ar)
+        #~ 
+    #~ def deregister(self,ar):
+        #~ for doc in ledger.Voucher.objects.filter(declared_in=self):
+            #~ doc.declared_in = None
+            #~ doc.save()
+        #~ super(Declaration,self).deregister(ar)
         
     def compute_fields(self):
         sums = dict()

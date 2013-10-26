@@ -1,9 +1,10 @@
-/home/luc/hgwork/lino/lino/modlib/cal/__init__.py:docstring of lino.modlib.cal:4: ERROR: Unknown interpreted text role "settings".
+/home/luc/hgwork/lino/lino/modlib/vat/models.py:docstring of lino.modlib.vat.models:18: ERROR: Unexpected indentation.
+/home/luc/hgwork/lino/lino/modlib/vat/models.py:docstring of lino.modlib.vat.models.TradeType:1: ERROR: Unknown interpreted text role "ddref".
+/home/luc/hgwork/lino/lino/modlib/vat/models.py:docstring of lino.modlib.vat.models.VatRegime:1: ERROR: Unknown interpreted text role "ddref".
 /home/luc/hgwork/lino/docs/polly/index.rst:13: WARNING: toctree contains reference to nonexisting document u'polly/ intro'
 /home/luc/hgwork/lino/docs/polly/index.rst:13: WARNING: toctree contains reference to nonexisting document u'polly/ sacredpy'
 /home/luc/hgwork/lino/docs/polly/intro.rst:: WARNING: document isn't included in any toctree
 /home/luc/hgwork/lino/docs/polly/sacredpy.rst:: WARNING: document isn't included in any toctree
 /home/luc/hgwork/lino/lino/lino_site.py:docstring of lino.lino_site.Site.webdav_url:7: WARNING: term not in glossary: runserver
 /home/luc/hgwork/lino/lino/mixins/printable.py:docstring of lino.mixins.printable.PisaBuildMethod:1: WARNING: undefined label: lino.tutorials.pisa (if the link has no caption the label must precede a section header)
-/home/luc/hgwork/lino/docs/api/lino.utils.rst:7: WARNING: unknown document: /autodoc/lino.test_apps.mti
 /home/luc/hgwork/lino/docs/releases/index.rst:1: WARNING: unknown document: 1.6.13

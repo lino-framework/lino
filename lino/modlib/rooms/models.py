@@ -40,11 +40,36 @@ class BookingStates(dd.Workflow):
     required = dd.required(user_level='admin')
 
 add = BookingStates.add_item
-add('10', _("Interested"),'interested')
-add('20', _("Option"),'option')
-add('30', _("Booked"),'booked')
-add('40', _("Cancelled"),'cancelled')
+add('10', _("Draft"),'draft',editable=True)
+add('20', _("Option"),'option',editable=False)
+add('30', _("Registered"),'registered',editable=False)
+add('40', _("Cancelled"),'cancelled',editable=False)
 
+@dd.receiver(dd.pre_analyze)
+def setup_BookingStates_workflow(sender=None,**kw):
+    
+    #~ BookingStates.draft.add_transition(
+        #~ states='option registered cancelled',
+        #~ icon_name="pencil")
+    #~ BookingStates.registered.add_transition(_("Register"),
+        #~ states='draft option',
+        #~ icon_name="accept")
+        
+    #~ Bookings.deregister_action.add_requirements(states='option registered cancelled')
+    #~ Bookings.register_action.add_requirements(states='option draft cancelled')
+    BookingStates.draft.add_transition(
+        states='registered option cancelled',
+        icon_name="pencil")
+    BookingStates.option.add_transition(
+        states='draft registered',
+        icon_name="eye",
+        help_text=_("Optionally booked. Ask customer before any decision."))
+    BookingStates.registered.add_transition(
+        states='draft option cancelled',
+        icon_name="accept")
+    BookingStates.cancelled.add_transition(
+        states='draft option registered',
+        icon_name='cross')
 
 
 class Booking(contacts.ContactRelated,Reservation,dd.Printable):
@@ -54,9 +79,12 @@ class Booking(contacts.ContactRelated,Reservation,dd.Printable):
         verbose_name = _("Booking")
         verbose_name_plural = _('Bookings')
         
-    workflow_state_field = 'state'
+    #~ workflow_state_field = 'state'
     
-    state = BookingStates.field(default=BookingStates.interested)
+    #~ required_to_register = dict(states='draft option cancelled')
+    #~ required_to_deregister = dict(states='registered option cancelled')
+    
+    state = BookingStates.field(default=BookingStates.draft)
     
     event_type = dd.ForeignKey('cal.EventType',null=True,blank=True,
         help_text=_("""The Event Type to which events will be generated."""))
@@ -67,7 +95,6 @@ class Booking(contacts.ContactRelated,Reservation,dd.Printable):
         #~ if self.every is None:
             #~ self.every = Recurrencies.once
         #~ super(Booking,self).full_clean(*args,**kw)
-        
         
     def __unicode__(self):
         return u"%s #%s (%s)" % (self._meta.verbose_name,self.pk,self.room)
@@ -82,6 +109,8 @@ class Booking(contacts.ContactRelated,Reservation,dd.Printable):
         return self.event_type
         
     def update_cal_summary(self,i):
+        if self.every_unit == Recurrencies.once:
+            return dd.babelattr(self.event_type,'event_label')
         return "%s %s" % (dd.babelattr(self.event_type,'event_label'),i)
         
     def before_auto_event_save(self,event):
@@ -97,6 +126,30 @@ class Booking(contacts.ContactRelated,Reservation,dd.Printable):
         event.room = self.room
         event.start_time = self.start_time
         event.end_time = self.end_time
+        
+    @classmethod
+    def get_registrable_fields(cls,site):
+        for f in super(Booking,cls).get_registrable_fields(site):
+            yield f
+        yield 'company'
+        yield 'contact_person'
+        yield 'event_type'
+        
+    # don't inherit default actions:
+    #~ register_action = None 
+    #~ deregister_action = None
+    
+    def before_state_change(self,ar,old,new):
+        if new.name == 'registered':
+            if self.get_existing_auto_events().count() == 0:
+                #~ ar.confirm("Booking has no events! Are you sure?")
+                raise Warning("Booking has no events!")
+        
+    def after_ui_save(self,ar):
+        super(Booking,self).after_ui_save(ar)
+        if self.state.editable:
+            self.update_reminders(ar)
+        
 
 
 dd.update_field(Booking,'contact_person',verbose_name = _("Contact person"))
@@ -105,18 +158,22 @@ dd.update_field(Booking,'every_unit',default=Recurrencies.once)
 dd.update_field(Booking,'every',default=1)
 
 
+
+
+
+
 class BookingDetail(dd.FormLayout):
     #~ start = "start_date start_time"
     #~ end = "end_date end_time"
     #~ freq = "every every_unit"
     #~ start end freq
-    main = "general courses.EnrolmentsByCourse"
+    main = "general sales.InvoicingsByInvoiceable"
     general = dd.Panel("""
     start_date start_time end_date end_time
-    room event_type state id:8
+    room event_type workflow_buttons
     max_events max_date every_unit every 
     monday tuesday wednesday thursday friday saturday sunday
-    company contact_person user 
+    company contact_person user id:8
     cal.EventsByController
     """,label=_("General"))
     
@@ -130,7 +187,8 @@ class Bookings(dd.Table):
     #~ order_by = ['date','start_time']
     detail_layout = BookingDetail() 
     insert_layout = """
-    start_date 
+    start_date start_time end_time
+    room event_type
     company contact_person
     """
     column_names = "start_date company room  *"

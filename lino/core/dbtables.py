@@ -614,6 +614,7 @@ class Table(AbstractTable):
                         #~ raise Exception("20130121 Must convert %s.%s to get_model_actions()" % (self.model,k))
             for b in self.model.mro():
                 for k,v in b.__dict__.items():
+                    #~ v = self.model.__dict__.get(k,v) # 20131025 allow disabling inherited actions
                     if isinstance(v,actions.Action):
                         #~ print "20130326 %s.%s = action %s from %s" % (self,k,v,b)
                         existing_value = self.__dict__.get(k,NOT_PROVIDED) 

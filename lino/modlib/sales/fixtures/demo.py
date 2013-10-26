@@ -30,7 +30,8 @@ products = dd.resolve_app('products')
 partner_model = settings.SITE.partners_app_label + '.Partner'
 Partner = dd.resolve_model(partner_model)
 
-REQUEST = None
+#~ REQUEST = None
+REQUEST = settings.SITE.login()
 
 def objects():
     

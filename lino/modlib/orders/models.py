@@ -58,6 +58,9 @@ add('10',_("Draft"),'draft',editable=True)
 add('20',_("Registered"),'registered',editable=False) 
 add('30',_("Inactive"),'inactive',editable=False)
 
+OrderStates.registered.add_transition(_("Register"),states='draft')
+OrderStates.draft.add_transition(_("Deregister"),states="registered")
+
 
 
 class Order(sales.SalesDocument,mixins.ProjectRelated,mixins.Registrable):

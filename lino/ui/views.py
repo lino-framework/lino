@@ -303,7 +303,8 @@ def form2obj_and_save(ar,data,elem,is_new,restful,file_upload=False): # **kw2sav
     except CATCHED_AJAX_EXCEPTIONS as e:
         return ajax_error(ar,e)
         
-    kw = dict(success=True)
+    #~ kw = dict(success=True)
+    ar.response.update(success=True)
     
     #~ except exceptions.ValidationError, e:
         #~ kw = settings.SITE.ui.error(e) 
@@ -339,26 +340,26 @@ def form2obj_and_save(ar,data,elem,is_new,restful,file_upload=False): # **kw2sav
         if is_new:
             dd.pre_ui_create.send(elem,request=request)
             #~ changes.log_create(request,elem)
-            kw.update(
+            ar.response.update(
                 message=_("%s has been created.") % dd.obj2unicode(elem))
                 #~ record_id=elem.pk)
         else:
             watcher.send_update(request)
             #~ watcher.log_diff(request)
-            kw.update(message=_("%s has been updated.") % dd.obj2unicode(elem))
+            ar.response.update(message=_("%s has been updated.") % dd.obj2unicode(elem))
         
     else:
     
-        kw.update(message=_("%s : nothing to save.") % dd.obj2unicode(elem))
+        ar.response.update(message=_("%s : nothing to save.") % dd.obj2unicode(elem))
         
-    kw = elem.after_ui_save(ar,**kw)
+    elem.after_ui_save(ar)
         
     if restful:
         # restful mode (used only for Ext.ensible) needs list_fields, not detail_fields
-        kw.update(rows=[rh.store.row2dict(ar,elem,rh.store.list_fields)])
+        ar.response.update(rows=[rh.store.row2dict(ar,elem,rh.store.list_fields)])
     elif file_upload:
-        kw.update(record_id=elem.pk)
-        return json_response(kw,content_type='text/html')
+        ar.response.update(record_id=elem.pk)
+        return json_response(ar.response,content_type='text/html')
     else: # 20120814 
         #~ logger.info("20120816 %r", ar.action)
         #~ if isinstance(ar.bound_action.action,actions.GridEdit):
@@ -371,10 +372,10 @@ def form2obj_and_save(ar,data,elem,is_new,restful,file_upload=False): # **kw2sav
         *or* `data_record` (when this was called from a form). 
         But how to find out which one is needed?
         """
-        kw.update(rows=[rh.store.row2list(ar,elem)])
-        kw.update(data_record=elem2rec_detailed(ar,elem))
+        ar.response.update(rows=[rh.store.row2list(ar,elem)])
+        ar.response.update(data_record=elem2rec_detailed(ar,elem))
     #~ logger.info("20120208 form2obj_and_save --> %r",kw)
-    return json_response(kw)
+    return json_response(ar.response)
             
 
 

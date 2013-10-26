@@ -1,0 +1,64 @@
+==================================
+20131025 (Friday, 25 October 2013)
+==================================
+
+Was jetzt noch fehlte bei den Reservierungen (d.h. Kursen und Buchungen) 
+ist ein transparenteres Handhaben der Aktion "Termine generieren": 
+wann soll Lino automatisch die Termine aktualisieren?
+
+- Entwurf ("Anfrage") : editierbar. Keine Termine generieren.
+- Option ("vorgemerkt") : Vermieter sagt zu, dass dieser Interessent 
+  informiert wird bevor Ruam an einen Dritten vermietet wird.
+- Registriert ("Festbuchung") : Mieter hat definitiv zugesagt.
+  Buchung gilt als fakturierbar 
+- Storniert : Veranstaltung hat nicht stattgefunden, Buchung soll aber 
+  nicht gelöscht werden (z.B. weil sie auch fakturiert war)
+
+
+Some more optimizations and bugfixes for the framework:
+
+- Adapted :meth:`lino.core.model.Model.after_ui_save` 
+  (and :func:`form2obj_and_save <lino.ui.views.form2obj_and_save>` 
+  who calls it) to the new situation 
+  of storing the response in the 
+  :class:`lino.core.requests.BaseRequest` (``ar``) : 
+  no more need to pass and return a dict of keywords (``kw``) used 
+  to store that response.
+
+
+- Discovered and fixed the following bug::
+
+    @dd.when_prepared('partners.Person','partners.Organisation')
+    def add_merge_action(model):
+        model.define_action(merge_row=dd.MergeAction(model))
+
+  This code accidentally used ``partners`` insterad of ``contacts``.
+  And Lino did not complain!
+  Why?
+  Because `when_prepared` until now 
+  used `is_installed_model_spec` and  silently ignored model 
+  specifications with app_labels that are not installed.
+  Oh no, that's too much automation.
+  I marked :meth:`is_installed_model_spec <djangosite.Site.is_installed_model_spec>` as deprecated.
+  Now the above code (correctly) raises an Exception 
+  "Oops, there are pending injects: partners.Person (...)"
+
+- :class:`lino.mixins.Registrable` : the "Register" and "Unregister" 
+  actions now have icons.
+
+
+- Since 20130820 we have the trick for disabling inherited actions by 
+  redefining on my subclass a class attribute of same name with value None.
+  This trick worked on **Actors**, now it also works on **Models**.
+  
+
+- New settings 
+  :setting:`calendar_end_hour`
+  and
+  :setting:`calendar_start_hour`.
+
+
+- Until now it is still theoretically possible to define different 
+  `workflow_state_field` for different actors of a same model.
+  
+  

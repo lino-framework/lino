@@ -359,13 +359,15 @@ class CourseStates(dd.Workflow):
     required = dd.required(user_level='admin')
 
 add = CourseStates.add_item
-add('10', _("Draft"),'draft')
-add('20', _("Published"),'published')
-add('30', _("Started"),'started')
-add('40', _("Ended"),'ended')
-add('50', _("Cancelled"),'cancelled')
+add('10', _("Draft"),'draft',editable=True)
+#~ add('20', _("Published"),'published',editable=False)
+add('20', _("Registered"),'registered',editable=False)
+add('30', _("Started"),'started',editable=False)
+add('40', _("Ended"),'ended',editable=False)
+add('50', _("Cancelled"),'cancelled',editable=True)
 
-ACTIVE_COURSE_STATES = set((CourseStates.published,CourseStates.started))
+#~ ACTIVE_COURSE_STATES = set((CourseStates.published,CourseStates.started))
+ACTIVE_COURSE_STATES = set((CourseStates.registered,CourseStates.started))
 
 
 class EnrolmentStates(dd.Workflow):
@@ -403,7 +405,7 @@ class Course(cal.Reservation,dd.Printable):
         verbose_name = _("Course")
         verbose_name_plural = _('Courses')
         
-    workflow_state_field = 'state'
+    #~ workflow_state_field = 'state'
     
     line = models.ForeignKey('courses.Line')
     teacher = models.ForeignKey('courses.Teacher',blank=True,null=True)
@@ -477,6 +479,10 @@ class Course(cal.Reservation,dd.Printable):
     @dd.displayfield(_("Info"))
     def info(self,ar):
         return ar.obj2html(self)
+        
+    #~ @dd.displayfield(_("Where"))
+    #~ def where_text(self,ar):
+        #~ return unicode(self.room) # .company.city or self.company)
         
     @dd.displayfield(_("Events"))
     def events_text(self,ar=None):
@@ -626,7 +632,7 @@ class CoursesByTeacher(Courses):
 
 class CoursesByLine(Courses):
     master_key = "line"
-    column_names = "start_date start_time end_time weekdays_text where_text times_text teacher room"
+    column_names = "start_date start_time end_time weekdays_text room times_text teacher *"
 
 class CoursesByTopic(Courses):
     master = Topic

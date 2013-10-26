@@ -13,7 +13,7 @@
 ## along with Lino; if not, see <http://www.gnu.org/licenses/>.
 
 """
-The :xfile:`models.py` module for the :mod:`lino.modlib.auto.sales` app.
+The :xfile:`models` module for the :mod:`lino.modlib.auto.sales` app.
 
 """
 
@@ -155,7 +155,9 @@ def create_invoice_for(obj,ar):
             title=ii.get_invoiceable_title(),
             qty=ii.get_invoiceable_qty())
         #~ i.product_changed(ar)
-        i.set_amount(ar,ii.get_invoiceable_amount())
+        am = ii.get_invoiceable_amount()
+        if am is not None:
+            i.set_amount(ar,am)
         i.full_clean()
         i.save()
     invoice.compute_totals()
@@ -168,7 +170,7 @@ class CreateInvoiceForPartner(dd.Action):
     label = _("Create invoice")
     help_text = _("Create invoice for this partner using invoiceable items")
     #~ show_in_row_actions = True
-    show_in_workflow = True
+    #~ show_in_workflow = True
     
     def run_from_ui(self,ar,**kw):
         obj = ar.selected_rows[0]
@@ -196,22 +198,23 @@ class Invoice(Invoice): # 20130709
         verbose_name = _("Invoice")
         verbose_name_plural = _("Invoices")
         
-    def register(self,ar):
-        for i in self.items.filter(invoiceable_id__isnull=False):
-            if i.invoiceable.invoice != self:
-                i.invoiceable.invoice = self
+    def before_state_change(self,ar,old,new):
+        if new.name == 'registered':
+            for i in self.items.filter(invoiceable_id__isnull=False):
+                if i.invoiceable.invoice != self:
+                    i.invoiceable.invoice = self
+                    i.invoiceable.save()
+                    #~ logger.info("20130711 %s now invoiced",i.invoiceable)
+        elif new.name == 'draft':
+            for i in self.items.filter(invoiceable_id__isnull=False):
+                if i.invoiceable.invoice != self:
+                    logger.warning("Oops: i.invoiceable.invoice != self in %s",self)
+                i.invoiceable.invoice = None
                 i.invoiceable.save()
-                #~ logger.info("20130711 %s now invoiced",i.invoiceable)
-        return super(Invoice,self).register(ar)
+            #~ self.deregister_voucher(ar)
+        super(Invoice,self).before_state_change(ar,old,new)
+                
         
-    def deregister(self,ar):
-        for i in self.items.filter(invoiceable_id__isnull=False):
-            if i.invoiceable.invoice != self:
-                logger.warning("Oops: i.invoiceable.invoice != self in %s",self)
-            i.invoiceable.invoice = None
-            i.invoiceable.save()
-            #~ logger.info("20130711 %s no longer invoiced",i.invoiceable)
-        return super(Invoice,self).deregister(ar)
         
     def get_invoiceables(self,model):
         lst = []
@@ -320,7 +323,7 @@ class CreateAllInvoices(CachedPrintAction):
     def run_from_ui(self,ar,**kw):
         #~ obj = ar.selected_rows[0]
         #~ assert obj is None
-        def ok(ar):
+        def ok(ar2):
             invoices = []
             for row in ar.selected_rows:
                 partner = contacts.Partner.objects.get(pk=row.pk)    
@@ -330,7 +333,7 @@ class CreateAllInvoices(CachedPrintAction):
                 #~ invoice = create_invoice_for(obj.partner,ar)
                 #~ invoices.append(invoice)
             mf = self.print_multiple(ar,invoices)
-            ar.success(open_url=mf.url,refresh_all=True)
+            ar2.success(open_url=mf.url,refresh_all=True)
             
         #~ msg = _("This will create and print %d invoices.") % ar.get_total_count()
         msg = _("This will create and print %d invoice(s).") % len(ar.selected_rows)
@@ -439,7 +442,7 @@ class InvoicesToCreate(dd.VirtualTable):
     
     
 class InvoiceablesByPartner(dd.VirtualTable):
-    icon_name = 'money'
+    icon_name = 'basket'
     sort_index = 50
     label = _("Invoices to create")
     #~ label = _("Invoiceables")

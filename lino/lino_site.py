@@ -132,6 +132,16 @@ parameter of all tables who don't specify their own one.
 Default value is 15.
 
 
+.. setting:: calendar_start_hour
+
+The time at which the CalendarPanel's daily view starts.
+Used when :setting:`use_extensible` is True.
+
+.. setting:: calendar_end_hour
+
+The time at which the CalendarPanel's daily view ends.
+Used when :setting:`use_extensible` is True.
+
 .. setting:: start_year
 
 An integer with the calendar year in which this site starts working.
@@ -191,7 +201,9 @@ class Site(Site):
     
     preview_limit = 15
     
-    
+    calendar_start_hour = 8
+    calendar_end_hour = 18
+
     override_modlib_models = set()
     "See :attr:`lino.site.Site.override_modlib_models`."
     

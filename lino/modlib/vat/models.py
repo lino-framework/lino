@@ -462,10 +462,14 @@ class VatDocument(VatTotal):
         self.compute_totals()
         super(VatDocument,self).full_clean(*args,**kw)
         
-    def register(self,ar):
-        self.compute_totals()
-        super(VatDocument,self).register(ar)
 
+    def before_state_change(self,ar,old,new):
+        if new.name == 'registered':
+            self.compute_totals()
+        elif new.name == 'draft':
+            pass
+        super(VatDocument,self).before_state_change(ar,old,new)
+                
 
   
 
@@ -553,14 +557,14 @@ class VatItemBase(mixins.Sequenced,VatTotal):
     #~ before_save.alters_data = True
       
                     
-    def after_ui_save(self,ar,**kw):
+    def after_ui_save(self,ar):
         """
         after edit of a grid cell automatically show new invoice totals 
         See :doc:`/tickets/68`
         """
-        kw = super(VatItemBase,self).after_ui_save(ar,**kw)
+        kw = super(VatItemBase,self).after_ui_save(ar)
         if self.voucher.refresh_after_item_edit:
-            kw.update(refresh_all=True) 
+            ar.response.update(refresh_all=True) 
             self.voucher.compute_totals()
             self.voucher.full_clean()
             self.voucher.save()

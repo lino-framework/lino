@@ -246,9 +246,6 @@ class ReceiveVisitor(dd.Action):
             #~ user=obj.event.user,
             #~ partner=obj.partner)
      
-    #~ def before_row_save(self,row,ar):
-        #~ row.busy_since = datetime.datetime.now()
-    
     def run_from_ui(self,ar,**kw):
         obj = ar.selected_rows[0]
         def ok(ar):

@@ -78,6 +78,7 @@ lino.modlib.notes.fixtures
 lino.modlib.products
 lino.modlib.products.fixtures
 lino.modlib.projects
+lino.modlib.rooms
 lino.modlib.sales
 lino.modlib.sales.fixtures
 lino.modlib.uploads

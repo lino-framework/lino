@@ -1731,6 +1731,14 @@ Lino.delete_selected = function(panel) {
 
 Lino.action_handler = function (panel,on_success,on_confirm) {
   return function (response) {
+      
+      // 20131026
+      if (!panel) { 
+          if (Lino.current_window) 
+              panel = Lino.current_window.main_item;
+          else panel = Lino.viewport;
+      }
+      
     //~ console.log(20120608,panel);
     if (panel instanceof Lino.GridPanel) {
         //~ gridmode = false;
@@ -1808,8 +1816,13 @@ Lino.action_handler = function (panel,on_success,on_confirm) {
         panel.load_record_id(result.goto_record_id);
     } 
     
-    if (result.console_message) {
-        console.log(result.console_message);
+    if (result.info_message) {
+        console.log(result.info_message);
+    }
+    
+    if (result.warning_message) {
+        if (!result.alert) result.alert = "{{_('Warning')}}";
+        Ext.MessageBox.alert(result.alert,result.warning_message);
     }
     
     if (result.message) {
@@ -1833,9 +1846,9 @@ Lino.action_handler = function (panel,on_success,on_confirm) {
         if (cw) {
           cw.main_item.refresh();
         }
-        //~ else console.log("20120123 cannot refresh_all",panel);
+        else console.log("20131026 cannot refresh_all because ",panel,"has no get_containing_window");
     } else {
-        //~ console.log("20121212 b gonna refresh",panel);
+        console.log("20131026 b gonna refresh",panel);
         if (result.refresh) panel.refresh();
     }
     {% if settings.SITE.use_davlink %}
@@ -2219,7 +2232,8 @@ Lino.do_on_current_record = function(panel,fn,phantom_fn) {
 
 Lino.call_ajax_action = function(panel,method,url,p,actionName,step,on_confirm,on_success) {
   p.{{ext_requests.URL_PARAM_ACTION_NAME}} = actionName;
-  if (!panel) {
+  //~ if (!panel) {
+  if (true) { // 20131026 : workflow_actions of a newly created record detail executed bu did't refresh the screen because their requesting panel was the insert (not the detail) formpanel.
       if (Lino.current_window) 
           panel = Lino.current_window.main_item;
       else panel = Lino.viewport;
@@ -2273,6 +2287,8 @@ Lino.row_action_handler = function(actionName,hm,pp) {
           //~ 20120723 Lino.call_ajax_action(panel,rec.id,actionName,step,fn);
           panel.add_param_values(p,true); // 20130915
           Lino.call_ajax_action(panel,hm,panel.get_record_url(rec.id),p,actionName,step,fn);
+          //~ Lino.call_ajax_action(null,hm,panel.get_record_url(rec.id),p,actionName,step,fn);
+          // 20131026 tried to not forward panel to ajax call 
       });
   };
   return fn;
@@ -2319,6 +2335,7 @@ Lino.run_row_action = function(requesting_panel,url,meth,pk,actionName,preproces
 
 Lino.put = function(requesting_panel,pk,data) {
     var panel = Ext.getCmp(requesting_panel);
+    //~ var panel = null; // 20131026
     var p = {};
     p.{{ext_requests.URL_PARAM_ACTION_NAME}} = 'put'; // SubmitDetail.action_name
     Ext.apply(p,data);
@@ -5596,8 +5613,8 @@ Lino.CalendarApp = function() { return {
                 
                   //enableFx: false,
                   //ddIncrement: 10, //only applies to DayView and subclasses, but convenient to put it here
-                  viewStartHour: 8,
-                  viewEndHour: 18
+                  viewStartHour: {{settings.SITE.calendar_start_hour}}, // 8
+                  viewEndHour: {{settings.SITE.calendar_end_hour}} // 18
                   //minEventDisplayMinutes: 15
               },
               

@@ -175,6 +175,7 @@ class MergeAction(actions.Action):
         
         keep_volatiles = []
         
+        #~ logger.info("20131025 MergeAction for %s",model)
         #~ logger.info("20130421 MergeAction for %s : _lino_ddh.fklist is %s",model,model._lino_ddh.fklist)
         for m,fk in model._lino_ddh.fklist:
             if fk.name in m.allow_cascaded_delete:

@@ -305,12 +305,10 @@ class Model(models.Model):
         self.hidden_elements = self.hidden_elements | set(names)
         
         
-    def after_ui_save(self,ar,**kw):
+    def after_ui_save(self,ar):
         """
         Called after a PUT or POST on this row, 
         and after the row has been saved.
-        It must return (and may modify) the `kw` which will become 
-        the Ajax response to the save() call.
         Used by 
         :class:`lino_welfare.modlib.debts.models.Budget` 
         to fill default entries to a new Budget,
@@ -321,7 +319,7 @@ class Model(models.Model):
         :class:`lino_welfare.modlib.pcsw.models.Coaching` 
         :class:`lino.modlib.vat.models.Vat` 
         """
-        return kw
+        pass
         
     def get_row_permission(self,ar,state,ba):
         """
@@ -437,17 +435,39 @@ class Model(models.Model):
         """
         pass
         
-    def before_state_change(self,ar,kw,old,new):
+    def before_state_change(self,ar,old,new):
         """
         Called before a state change.
         """
         pass
   
-    def after_state_change(self,ar,kw,old,new):
+    def after_state_change(self,ar,old,new):
         """
         Called after a state change.
         """
-        kw.update(refresh=True)
+        ar.response.update(refresh=True)
+        
+    def set_workflow_state(row,ar,state_field,target_state):
+        
+        watcher = signals.ChangeWatcher(row)
+        
+        #~ old = row.state
+        old = getattr(row,state_field.attname)
+        
+        target_state.choicelist.before_state_change(row,ar,old,target_state)
+        row.before_state_change(ar,old,target_state)
+        #~ row.state = target_state
+        setattr(row,state_field.attname,target_state)
+        #~ self.before_row_save(row,ar)
+        row.save()
+        target_state.choicelist.after_state_change(row,ar,old,target_state)
+        row.after_state_change(ar,old,target_state)
+        
+        watcher.send_update(ar.request)
+        
+        row.after_ui_save(ar)
+        
+        
         
     def after_send_mail(self,mail,ar,kw):
         """

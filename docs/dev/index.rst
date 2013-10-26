@@ -27,6 +27,7 @@ Drafts
    /tested/index
    /todo
    apps
+   testing
    
    help_texts
    userdocs

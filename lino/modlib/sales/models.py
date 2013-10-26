@@ -93,6 +93,9 @@ add('40',_("Sent"),'sent',editable=False)
 add('50',_("Paid"),'paid',editable=False)
 
 
+InvoiceStates.registered.add_transition(_("Register"),states='draft',icon_name='accept')
+InvoiceStates.draft.add_transition(_("Deregister"),states="registered",icon_name='pencil')
+#~ InvoiceStates.submitted.add_transition(_("Submit"),states="registered")
 
 
 class PaymentTerm(dd.BabelNamed):
@@ -363,7 +366,6 @@ class SalesDocument(
         #~ if self.journal == "ORD":
             #~ print "  done before_save:", self
         
-
             
     def full_clean(self,*args,**kw):
         """
@@ -432,6 +434,13 @@ class Invoice(SalesDocument,ledger.Voucher):
         #ledger.LedgerDocumentMixin.before_save(self)
         super(Invoice,self).full_clean(*args,**kw)
         
+    #~ def before_state_change(self,ar,old,new):
+        #~ if new.name == 'registered':
+            #~ self.compute_totals()
+        #~ elif new.name == 'draft':
+            #~ pass
+        #~ super(Invoice,self).before_state_change(ar,old,new)
+
         
     @classmethod
     def get_registrable_fields(cls,site):

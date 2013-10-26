@@ -8,7 +8,7 @@ msgstr ""
 "Project-Id-Version: lino.modlib.systen\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2013-10-20 12:24+0300\n"
-"PO-Revision-Date: 2013-10-20 12:26+0300\n"
+"PO-Revision-Date: 2013-10-26 17:03+0300\n"
 "Last-Translator: Luc Saffre <luc.saffre@gmx.net>\n"
 "Language-Team: \n"
 "Plural-Forms: nplurals=2; plural=(n != 1)\n"
@@ -1415,14 +1415,12 @@ msgid "Table of all partners who should receive an invoice."
 msgstr ""
 
 #: lino/modlib/auto/sales/models.py:402
-#, fuzzy
 msgid "First date"
-msgstr "Geburtsdatum"
+msgstr "Erstes Datum"
 
 #: lino/modlib/auto/sales/models.py:406
-#, fuzzy
 msgid "Last date"
-msgstr "Beginnt am"
+msgstr "Letztes Datum"
 
 #: lino/modlib/auto/sales/models.py:410
 msgid "Amount"
@@ -1492,14 +1490,12 @@ msgid "~Blog"
 msgstr ""
 
 #: lino/modlib/cal/models.py:101
-#, fuzzy
 msgid "Remote Calendar"
-msgstr "Standard-Kalender"
+msgstr "Externer Kalender"
 
 #: lino/modlib/cal/models.py:102
-#, fuzzy
 msgid "Remote Calendars"
-msgstr "Standard-Kalender"
+msgstr "Externe Kalender"
 
 #: lino/modlib/cal/models.py:108
 msgid "URL template"
@@ -1648,7 +1644,6 @@ msgid "%d invitations are waiting for your answer."
 msgstr "%d unbeantwortete Einladungen zu Versammlungen"
 
 #: lino/modlib/cal/models_calendar.py:46
-#, fuzzy
 msgid "Calendars"
 msgstr "Kalenderliste"
 
@@ -1703,9 +1698,8 @@ msgid "Lino won't not accept more than one locking event per user at the same ti
 msgstr ""
 
 #: lino/modlib/cal/models_event.py:120
-#, fuzzy
 msgid "Event label"
-msgstr "Zustand Termin"
+msgstr "Bezeichnung Termin"
 
 #: lino/modlib/cal/models_event.py:121
 msgid "Appointment"

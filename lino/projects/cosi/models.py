@@ -48,7 +48,7 @@ from lino import dd
     #~ site.description = 
     
     
-@dd.when_prepared('partners.Person','partners.Organisation')
+@dd.when_prepared('contacts.Person','contacts.Company')
 def hide_region(model):
     model.hide_elements('region')
 

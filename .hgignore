@@ -17,7 +17,7 @@ lino/ui/qx/app/build/resource
 */default.db
 media/cache
 lino/tutorials/*/media
-lino/projects/*/media
+lino/projects/**/media
 lino/sandbox/*/media
 */test.db
 docs/media

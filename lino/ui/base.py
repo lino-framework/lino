@@ -52,7 +52,9 @@ ACTION_RESPONSES = frozenset((
   'close_window',
   'xcallback',
   'open_url','open_davlink_url',
-  'console_message',
+  #~ 'console_message',
+  'info_message',
+  'warning_message',
   'eval_js'))
 """
 Action responses supported by `Lino.action_handler` (defined in :xfile:`linolib.js`).

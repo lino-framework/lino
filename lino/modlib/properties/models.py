@@ -342,4 +342,5 @@ def setup_config_menu(site,ui,profile,m):
         m.add_action(
             PropsByGroup,
             params=dict(master_instance=pg),
-            label=pg.name)
+            #~ label=pg.name)
+            label=unicode(pg))

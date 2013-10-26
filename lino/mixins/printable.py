@@ -318,8 +318,6 @@ class AppyBuildMethod(SimpleBuildMethod):
         we must convert it to a unicode string.
         """
         lang = str(elem.get_print_language())
-        #~ savelang = dbutils.get_language()
-        #~ dbutils.set_language(lang)
         logger.info(u"appy.pod render %s -> %s (language=%r,params=%s",
             tpl,target,lang,settings.SITE.appy_params)
         def f():
@@ -327,7 +325,6 @@ class AppyBuildMethod(SimpleBuildMethod):
             context.update(self=elem)
             Renderer(ar,tpl, context, target,**settings.SITE.appy_params).run()
         dbutils.run_with_language(lang,f)
-        #~ dbutils.set_language(savelang)
         return os.path.getmtime(target)
         
 
@@ -533,11 +530,12 @@ class CachedPrintAction(BasePrintAction):
             else:
                 kw.update(open_url=mf.url)
             ar.success(**kw)
+            return
 
-        def ok(ar):
+        def ok(ar2):
             #~ qs = [ar.actor.get_row_by_pk(pk) for pk in ar.selected_pks]
             mf = self.print_multiple(ar,ar.selected_rows)
-            ar.success(open_url=mf.url)
+            ar2.success(open_url=mf.url)
             #~ kw.update(refresh_all=True)
             #~ return kw
         msg = _("This will print %d rows.") % len(ar.selected_rows)

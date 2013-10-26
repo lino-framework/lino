@@ -384,8 +384,16 @@ class Voucher(mixins.UserAuthored,mixins.Registrable):
     #~ def on_create(self,*args,**kw):
         #~ super(Voucher,self).on_create(*args,**kw)
         #~ settings.SITE.on_create_voucher(self)
+        
+    def before_state_change(self,ar,old,new):
+        if new.name == 'registered':
+            self.register_voucher(ar)
+        elif new.name == 'draft':
+            self.deregister_voucher(ar)
+        super(Voucher,self).before_state_change(ar,old,new)
                 
-    def register(self,ar):
+        
+    def register_voucher(self,ar):
         """
         delete any existing movements and re-create them
         """
@@ -401,12 +409,12 @@ class Voucher(mixins.UserAuthored,mixins.Registrable):
             m.seqno = seqno
             m.full_clean()
             m.save()
-        super(Voucher,self).register(ar)
+        #~ super(Voucher,self).register(ar)
         
-    def deregister(self,ar):
+    def deregister_voucher(self,ar):
         self.number = None
         self.movement_set.all().delete() 
-        super(Voucher,self).deregister(ar)
+        #~ super(Voucher,self).deregister(ar)
         
         
         
@@ -914,8 +922,9 @@ add('20',_("Registered"),'registered',editable=False)
 #~ add('30',_("Sent"),'sent')
 add('40',_("Paid"),'paid',editable=False)
 
-#~ InvoiceStates.draft.add_transition(_("Deregister"),states='registered paid')
-#~ InvoiceStates.registered.add_transition(_("Register"),states='draft')
+InvoiceStates.registered.add_transition(_("Register"),states='draft',icon_name='accept')
+InvoiceStates.draft.add_transition(_("Deregister"),states="registered",icon_name='pencil')
+
     
 class Matchable(dd.Model):
     """

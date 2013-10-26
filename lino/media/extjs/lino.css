@@ -300,9 +300,9 @@ adapted for usage in an ExtJS application.
 /* border: 1px solid #FFAD33;  */
 
 
-.x-tbar-arrow_up{
-	background-image: url(images/mjames/arrow_up.png) !important;
-}
+.x-tbar-eye{ background-image: url(images/mjames/eye.png) !important; }
+.x-tbar-basket{ background-image: url(images/mjames/basket.png) !important; }
+.x-tbar-arrow_up{ background-image: url(images/mjames/arrow_up.png) !important; }
 .x-tbar-arrow_down{
 	background-image: url(images/mjames/arrow_down.png) !important;
 }
@@ -327,6 +327,10 @@ $a.icon_file
 */
 .x-tbar-emoticon_smile{
 	background-image: url(images/mjames/emoticon_smile.png) !important;
+}
+
+.x-tbar-pencil{
+	background-image: url(images/mjames/pencil.png) !important;
 }
 
 .x-tbar-cross{

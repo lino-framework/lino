@@ -57,6 +57,11 @@ def on_class_prepared(sender,**kw):
     #~ if sender.__name__ in ('Company','Partner'):
         #~ print("20130212 on_class_prepared",sender)
     model = sender
+    #~ if model._meta.abstract : 
+        #~ """
+        #~ 20131025 : 
+        #~ """
+        #~ return 
     #~ return
     #~ if model is None:
         #~ return 
@@ -121,8 +126,8 @@ def do_when_prepared(todo,*model_specs):
             continue # e.g. inject_field during autodoc when user_model is None
             
         if isinstance(model_spec,basestring):
-            if not settings.SITE.is_installed_model_spec(model_spec):
-                continue
+            #~ if not settings.SITE.is_installed_model_spec(model_spec):
+                #~ continue
             k = model_spec
             model = PREPARED_MODELS.get(k,None)
             if model is None: 

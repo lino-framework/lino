@@ -13,7 +13,9 @@
 ## along with Lino; if not, see <http://www.gnu.org/licenses/>.
 
 """
-Installs standard values for :mod:`lino.modlib.cal`.
+Installs standard values for :mod:`lino.modlib.cal`,
+including a demo set of holidays. 
+(TODO: make them more configurable.)
 
 """
 
@@ -91,7 +93,8 @@ def objects():
           ))
     yield holidays
     
-    add = Instantiator('cal.RecurrentEvent',event_type=holidays).build
+    RecurrentEvent = dd.resolve_model('cal.RecurrentEvent')
+    add = Instantiator(RecurrentEvent,event_type=holidays).build
     def holiday(month,day,summary):
         return add(summary=summary,
             every_unit=cal.Recurrencies.yearly,
@@ -110,5 +113,8 @@ def objects():
     summer.end_date = summer.start_date.replace(month=8,day=31)
     yield summer
     
-    
+    ar = settings.SITE.login()
+    for obj in RecurrentEvent.objects.all():
+        if not obj.update_reminders(ar):
+            raise Exception("Oops, %s generated no events" % obj)
     

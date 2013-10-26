@@ -1,0 +1,31 @@
+====================================
+20131026 (Saturday, 26 October 2013)
+====================================
+
+
+Register no longer adds itself a RegisterAction and DeregisterAction.
+That's because it was difficult to extend this workflow.
+Also it was a lot of hackery to make these buttons run for all subclasses.
+It is more transparent and less work to let application code write the 
+workflow.
+
+workflow_actions of a newly created record detail executed but 
+did't refresh the screen because their "requesting panel" was 
+the insert formpanel (and not the detail formpanel).
+
+An EventGenerator now deletes all generated events before deleting herself.
+
+Cool, if finally invested some time and found a better system for 
+testing the database overview and the main menus per user profile:
+
+See them in action for 
+:ref:`Welfare <welfare.tested.general>`
+and for 
+:ref:`Faggio <faggio.tested.general>`.
+
+I even started a new page of documentation about :doc:`dev/testing`.
+
+:ref:`atelier` : doctests are now being run with 
+`+REPORT_ONLY_FIRST_FAILURE
+<http://docs.python.org/2/library/doctest.html#doctest.REPORT_ONLY_FIRST_FAILURE>`_
+

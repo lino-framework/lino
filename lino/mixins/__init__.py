@@ -239,90 +239,101 @@ class AuthorAction(actions.Action):
         if obj.user != user and getattr(user.profile,self.manager_level_field) < UserLevels.manager:
             return self.readonly
         return super(actions.AuthorAction,self).get_action_permission(ar,obj,state)
+
+if False:        
+        
+    class RegisterAction(actions.Action):
+        label = _("Register")
+        show_in_workflow = True
+        readonly = False
+        icon_name = 'accept'
+        #~ icon_file = 'flag_green.png'
+        #~ required = dict(states='draft')
+        help_text = _("Register this object.")
+        
+        def attach_to_actor(self,actor,name):
+            if not issubclass(actor.model,Registrable):
+                raise Exception("%s is not a Registrable" % actor.model)
+            if actor.workflow_state_field is None:
+                # e.g. ledger.Voucher is an "abstract Registrable"
+                return False
+            self.target_model = actor.model
+            self.required = self.target_model.required_to_register
+            return super(RegisterAction,self).attach_to_actor(actor,name)
+      
+        def run_from_ui(self,ar,**kw):
+            obj = ar.selected_rows[0]
+            ar.success(refresh=True)
+            #~ ar.confirm(self.help_text,_("Are you sure?"))
+            obj.register(ar)
+            obj.save()
+            obj.after_ui_save(ar)
+            #~ return kw
         
         
-class RegisterAction(actions.Action):
-    label = _("Register")
-    show_in_workflow = True
-    readonly = False
-    
-    #~ icon_file = 'flag_green.png'
-    #~ required = dict(states='draft')
-    help_text = _("Register this object.")
-    
-    def attach_to_actor(self,actor,name):
-        if not issubclass(actor.model,Registrable):
-            raise Exception("%s is not a Registrable" % actor.model)
-        if actor.workflow_state_field is None:
-            # e.g. ledger.Voucher is an "abstract Registrable"
-            return False
-        self.target_model = actor.model
-        self.required = self.target_model.required_to_register
-        return super(RegisterAction,self).attach_to_actor(actor,name)
-  
-    def run_from_ui(self,ar,**kw):
-        obj = ar.selected_rows[0]
-        #~ ar.confirm(self.help_text,_("Are you sure?"))
-        obj.register(ar)
-        obj.save()
-        ar.success(refresh=True)
-        #~ return kw
-    
-    
+            
+    class DeregisterAction(actions.Action):
+        label = _("Deregister")
+        show_in_workflow = True
+        readonly = False
+        icon_name = 'pencil'
         
-class DeregisterAction(actions.Action):
-    label = _("Deregister")
-    show_in_workflow = True
-    readonly = False
-    
-    #~ icon_file = 'cancel.png'
-    #~ required = dict(states='registered paid')
-    help_text=_("Deregister this object.")
-    
-    def attach_to_actor(self,actor,name):
-        if not issubclass(actor.model,Registrable):
-            raise Exception("%s is not a Registrable" % actor.model)
-        if actor.workflow_state_field is None:
-            # e.g. ledger.Voucher is an "abstract Registrable"
-            return False
-        self.target_model = actor.model
-        self.required = self.target_model.required_to_deregister
-        #~ logger.info("20121208 DeregisterAction.attach_to_actor() %s %s",actor,actor.model.required_to_deregister)
-        return super(DeregisterAction,self).attach_to_actor(actor,name)
-  
-    def run_from_ui(self,ar,**kw):
-        obj = ar.selected_rows[0]
-        #~ ar.confirm(self.help_text,_("Are you sure?"))
-        obj.deregister(ar)
-        obj.save()
-        ar.success(refresh=True)
+        #~ icon_file = 'cancel.png'
+        #~ required = dict(states='registered paid')
+        help_text=_("Deregister this object.")
+        
+        def attach_to_actor(self,actor,name):
+            if not issubclass(actor.model,Registrable):
+                raise Exception("%s is not a Registrable" % actor.model)
+            if actor.workflow_state_field is None:
+                # e.g. ledger.Voucher is an "abstract Registrable"
+                return False
+            self.target_model = actor.model
+            self.required = self.target_model.required_to_deregister
+            #~ logger.info("20121208 DeregisterAction.attach_to_actor() %s %s",actor,actor.model.required_to_deregister)
+            return super(DeregisterAction,self).attach_to_actor(actor,name)
+      
+        def run_from_ui(self,ar,**kw):
+            obj = ar.selected_rows[0]
+            #~ ar.confirm(self.help_text,_("Are you sure?"))
+            ar.success(refresh=True)
+            obj.deregister(ar)
+            obj.save()
+            obj.after_ui_save(ar)
 
 
 class Registrable(model.Model):
     """
-    Base class to anything that may be "registered" and "deregistered".
-    E.g. Invoices, Vouchers, Declarations are candidates. 
+    Base class to anything that may be "registered" and "deregistered"
+    (e.g. Invoices, Vouchers, Declarations, Reservations,...). 
     "Registered" in general means "this object has been taken account of". 
-    Registered objects generally are not editable.
+    Registered objects are not editable.
+    The ChoiceList of the `state` field must have at least two items 
+    named "draft" and "registered".
+    There may be additional states.
+    Every state must have an extra attribute "editable".
     """
     class Meta:
         abstract = True
         
     workflow_state_field = 'state'
     
-    required_to_register = dict(states='draft')
-    #~ required_to_deregister = dict(states='registered paid')
-    required_to_deregister = dict(states='registered')
+    #~ required_to_register = dict(states='draft')
+    #~ required_to_deregister = dict(states='registered')
     
-    register_action = RegisterAction()
-    deregister_action = DeregisterAction()
+    #~ register_action = RegisterAction()
+    #~ deregister_action = DeregisterAction()
     
     _registrable_fields = None
     
     @classmethod
     def get_registrable_fields(cls,site):
-        return
-        yield 'date'
+        """
+        Return a list of the fields which are *disabled* when this is 
+        *registered* (i.e. `state` is not `editable`).
+        """
+        return []
+        #~ yield 'date'
         
         
     @classmethod
@@ -339,7 +350,7 @@ class Registrable(model.Model):
     
     def get_row_permission(self,ar,state,ba):
         """
-        Only invoices in an editable state may be edited.
+        Only rows in an editable state may be edited.
         """
         #~ if isinstance(ba.action,actions.DeleteSelected):
             #~ logger.info("20130128 Registrable.get_row_permission %s %s %s %s",
@@ -348,6 +359,8 @@ class Registrable(model.Model):
             if not ar.bound_action.action.readonly:
                 return False
         return super(Registrable,self).get_row_permission(ar,state,ba)
+        
+        
     
         
     def register(self,ar):
@@ -356,23 +369,26 @@ class Registrable(model.Model):
         The base implementation just sets the state to "registered".
         Subclasses may override this to add custom behaviour.
         """
-        state_field = self._meta.get_field('state')
-        self.state = state_field.choicelist.registered
         
-    def deregister(self,ar):
-        """
-        Deregister this item. 
-        The base implementation just sets the state to "draft".
-        Subclasses may override this to add custom behaviour.
-        """
-        state_field = self._meta.get_field('state')
-        self.state = state_field.choicelist.draft
+        state_field = self._meta.get_field(self.workflow_state_field)
+        target_state = state_field.choicelist.registered
+        self.set_workflow_state(ar,state_field,target_state)
         
-    def before_printable_build(self,bm):
-        state_field = self._meta.get_field('state')
-        if self.state != state_field.choicelist.registered:
-            self.register(None)
-            self.save()
+        
+    #~ def deregister(self,ar):
+        #~ """
+        #~ Deregister this item. 
+        #~ The base implementation just sets the state to "draft".
+        #~ Subclasses may override this to add custom behaviour.
+        #~ """
+        #~ state_field = self._meta.get_field('state')
+        #~ self.state = state_field.choicelist.draft
+        
+    #~ def before_printable_build(self,bm):
+        #~ state_field = self._meta.get_field('state')
+        #~ if self.state != state_field.choicelist.registered:
+            #~ self.register(None)
+            #~ self.save()
 
 
 

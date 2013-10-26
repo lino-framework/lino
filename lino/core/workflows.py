@@ -28,7 +28,7 @@ from django.db import models
 
 from lino.core import actions
 from lino.core import actors
-from lino.core import signals
+#~ from lino.core import signals
 #~ from lino.core import changes
 
 from lino.utils import curry, unicode_string
@@ -64,6 +64,7 @@ class State(choicelists.Choice):
             kw.update(icon_name=icon_name)
         kw.update(sort_index=10+i)
         if label and not isinstance(label,(basestring,Promise)):
+            assert isinstance(label,type)
             if required:
                 raise Exception("Cannot specify requirements when using your own class")
             if notify:
@@ -128,11 +129,11 @@ class Workflow(choicelists.ChoiceList):
         
     
     @classmethod
-    def before_state_change(cls,obj,ar,kw,oldstate,newstate):
+    def before_state_change(cls,obj,ar,oldstate,newstate):
         pass
 
     @classmethod
-    def after_state_change(cls,obj,ar,kw,oldstate,newstate):
+    def after_state_change(cls,obj,ar,oldstate,newstate):
         pass
 
     #~ @classmethod
@@ -160,7 +161,6 @@ class ChangeStateAction(actions.Action):
     
     show_in_workflow = True
     
-    
     def __init__(self,target_state,required,help_text=None,**kw):
         self.target_state = target_state
         #~ kw.update(label=getattr(target_state,'action_label',target_state.text))
@@ -179,31 +179,6 @@ class ChangeStateAction(actions.Action):
                     return m(obj,user,target_state)
                 new_required.update(allow=allow)
                 
-            m = getattr(target_state.choicelist,'allow_state_'+target_state.name,None)
-            if m is not None:
-                raise Exception("""
-                
-The allow_state_xxx magic is no longer allowed.
-Because this is too magic. One day I needed about 4 hours
-to find the explanation why some transition did not become 
-visible, and it was because of a forgotten `allow_state_candidature`
-method::
-                
-    @classmethod
-    def allow_state_candidate(cls,self,user):
-        if self.course:
-            return True
-        return False
-        
-    @classmethod
-    def allow_state_change(cls,self,user,newstate):
-        
-                
-                """)
-                assert not required.has_key('allowed')
-                def allow(action,user,obj,state):
-                    return m(obj,user)
-                new_required.update(allow=allow)
         kw.update(required=new_required)
         if self.help_text is None:
             if help_text is None:
@@ -224,32 +199,23 @@ method::
             #~ return repr(self)
         #~ return self.defining_actor.actor_id + '.' + self.action_name
         
-    def before_row_save(self,row,ar):
-        pass
+    #~ def before_row_save(self,row,ar):
+        #~ pass
         
-    def run_from_ui(self,ar,**kw):
+    def run_from_ui(self,ar):
+        
         row = ar.selected_rows[0]
         #~ state_field_name = self.defining_actor.workflow_state_field.attname
         #~ state_field_name = row.workflow_state_field.attname
-        state_field_name = ar.actor.workflow_state_field.attname
+        state_field = ar.actor.workflow_state_field
         #~ assert isinstance(state_field_name,basestring)
-        #~ old = row.state
-        old = getattr(row,state_field_name)
         
-        watcher = signals.ChangeWatcher(row)
+        row.set_workflow_state(ar,state_field,self.target_state)
         
-        self.target_state.choicelist.before_state_change(row,ar,kw,old,self.target_state)
-        row.before_state_change(ar,kw,old,self.target_state)
-        #~ row.state = self.target_state
-        setattr(row,state_field_name,self.target_state)
-        self.before_row_save(row,ar)
-        row.save()
-        self.target_state.choicelist.after_state_change(row,ar,kw,old,self.target_state)
-        row.after_state_change(ar,kw,old,self.target_state)
-        
-        watcher.send_update(ar.request)
-        kw.update(refresh=True)
-        ar.success(**kw)
+        ar.response.update(refresh=True)
+        #~ ar.response.update(refresh_all=True) # 20131026
+        ar.success()
+        #~ print 20131026, ar.response
         
         
 class NotifyingChangeStateAction(ChangeStateAction,actions.NotifyingAction):

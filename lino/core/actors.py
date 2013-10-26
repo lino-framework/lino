@@ -1052,7 +1052,7 @@ class Actor(actions.Parametrizable):
         # bind all my actions, including those inherited from parent actors:
         for b in cls.mro():
             for k,v in b.__dict__.items():
-                v = cls.__dict__.get(k,v) # 20130820 disable inherited actions
+                v = cls.__dict__.get(k,v) # 20130820 allow disabling inherited actions
                 if isinstance(v,actions.Action):
                     if not cls._actions_dict.has_key(k):
                         #~ cls._attach_action(k,v)
