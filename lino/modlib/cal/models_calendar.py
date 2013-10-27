@@ -128,8 +128,8 @@ class Subscriptions(dd.Table):
     #~ description
     #~ """
     
-class MySubscriptions(Subscriptions,dd.ByUser):
-    pass
+#~ class MySubscriptions(Subscriptions,dd.ByUser):
+    #~ pass
 
 #~ class SubscriptionsByCalendar(Subscriptions):
     #~ master_key = 'calendar'
@@ -137,9 +137,8 @@ class MySubscriptions(Subscriptions,dd.ByUser):
 class SubscriptionsByUser(Subscriptions):
     required = dd.required(user_groups='office')
     master_key = 'user'
+    auto_fit_column_widths = True
 
-#~ class MySubscriptions(Subscriptions,dd.ByUser):
-    #~ pass
     
 
 

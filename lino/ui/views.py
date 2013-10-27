@@ -51,6 +51,7 @@ from django.views.generic import View
 import json
 from django.core import exceptions
 from django.utils.translation import ugettext as _
+from django.utils.translation import get_language
 from django.utils.encoding import force_unicode
 
 from lino import dd
@@ -1045,12 +1046,16 @@ class GridConfig(View):
         settings.SITE.ui.ext_renderer.build_site_cache(True)
         return settings.SITE.ui.success(msg)
         
-MENUS = dict()        
+PLAIN_MENUS = dict()        
 
 
-def plain_response(ui,request,tplname,context):        
+
+def plain_response(ui,request,tplname,context):
+    "Deserves a docstring"
     u = request.subst_user or request.user
-    menu = MENUS.get(u.profile,None)
+    lang = get_language()
+    k = (u.profile,lang)
+    menu = PLAIN_MENUS.get(k,None)
     if menu is None:
         menu = settings.SITE.get_site_menu(ui,u.profile)
         #~ url = settings.SITE.plain_prefix + '/'
@@ -1058,7 +1063,7 @@ def plain_response(ui,request,tplname,context):
         menu.add_url_button(url,label=_("Home"))
         menu = menu.as_html(ui,request)
         menu = E.tostring(menu)
-        MENUS[u.profile] = menu
+        PLAIN_MENUS[k] = menu
     context.update(menu=menu,E=E)
     web.extend_context(context)
     template = settings.SITE.jinja_env.get_template(tplname)

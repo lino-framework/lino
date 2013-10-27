@@ -73,9 +73,7 @@ set to False) to avoid browser questions to first-time visitors.
     :target: http://belref.lino-framework.org
       
     `belref <http://belref.lino-framework.org>`_ 
-    shows an early prototype of the Belref project
-    which has a read-only user interface and doesn't 
-    need ExtJS.
+    shows an early prototype of the :ref:`belref` project.
 
 
   
@@ -112,5 +110,6 @@ or available as PyPI packages:
     
     /cosi/index
     /polly/index
+    /belref/index
       
       

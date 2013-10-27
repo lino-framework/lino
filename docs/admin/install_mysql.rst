@@ -14,6 +14,8 @@ Or if your site is to run within a virtualenv::
     $ sudo aptitude install mysql-server libmysqlclient-dev python-dev
     $ pip install MySQL-python
     
+
+
 For your first project create a user ``django`` which you can 
 reuse for all projects::
     
@@ -24,14 +26,28 @@ For each new project you must create a database and grant permissions
 to ``django``::
     
     $ mysql -u root -p 
+    mysql> set storage_engine=MYISAM;
     mysql> create database mysite charset 'utf8';
     mysql> grant all on mysite.* to django with grant option;
     mysql> grant all on test_mysite.* to django with grant option;
     mysql> quit;
     
     
+See the following chapters of the MySQL documentation
+
+-   `Database Character Set and Collation
+    <http://dev.mysql.com/doc/refman/5.0/en/charset-database.html>`_
     
-See also http://dev.mysql.com/doc/refman/5.0/en/charset-database.html
+    Lino is tested only with databases using the 'utf8' charset.
+    
+
+-   `Setting the Storage Engine
+    <http://dev.mysql.com/doc/refman/5.1/en/storage-engine-setting.html>`_
+     
+    Lino requires the MYISAM database storage because :command:`initdb` 
+    can fail to drop tables due to INNODB more severe integrity 
+    contraints (which are anyway rather unnecessary when using Lino)
+
 
 And then of course you set DATABASES in your :xfile:`settings.py` 
 file::

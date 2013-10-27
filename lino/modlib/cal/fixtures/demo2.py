@@ -45,8 +45,17 @@ from lino.modlib.cal import models as cal
 Event = dd.resolve_model('cal.Event')
 EventType = dd.resolve_model('cal.EventType')
 Subscription = dd.resolve_model('cal.Subscription')
-#~ Membership = dd.resolve_model('cal.Membership')
 Calendar = dd.resolve_model('cal.Calendar')
+
+def subscribe_all():
+    
+    for u in settings.SITE.user_model.objects.exclude(profile=''):
+        for obj in Calendar.objects.all():
+            obj = Subscription(user=u,calendar=obj)
+            #~ logger.info("20131018 %s", obj)
+            yield obj
+
+
 
 def objects():
     
@@ -101,16 +110,6 @@ def objects():
                 e.set_datetime('end',e.get_datetime('start')+ DURATIONS.pop())
                 yield e
             
-        if False:
-            for obj in settings.SITE.user_model.objects.exclude(
-                  profile=None).exclude(id=u.id):
-                yield Membership(user=u,watched_user=obj)
-        if False:
-            for obj in EventType.objects.all():
-                yield Subscription(user=u,event_type=obj,label=unicode(obj))
     
-        for obj in Calendar.objects.all():
-            obj = Subscription(user=u,calendar=obj)
-            #~ logger.info("20131018 %s", obj)
-            yield obj
-
+    yield subscribe_all()
+    

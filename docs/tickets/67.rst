@@ -1,3 +1,5 @@
+.. _plain:
+
 #67 : Write a jQuery-based GUI
 ==============================
 

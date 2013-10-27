@@ -1,0 +1,17 @@
+==================================
+20131027 (Sunday, 27 October 2013)
+==================================
+
+New fixture `eiche2lino` for :ref:`faggio`. 
+This will be used exactly once 
+to make the initial import of data from 
+miscellaneous sources. 
+These files are of course not part of the code since they are confidential.
+But how we import them is no secret (and is still being developed until 
+the great day arrives).
+
+
+Fixed a bug in 
+:func:`lino.ui.views.plain_response` which caused plain ui to not maintain 
+the selected language when selecting a command from the main menu.
+Started new documentation page about :ref:`belref`.

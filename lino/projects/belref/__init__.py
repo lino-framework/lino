@@ -13,9 +13,8 @@
 ## along with Lino; if not, see <http://www.gnu.org/licenses/>.
 
 """
-Lino Belref is a suggestion to implement a "Belgian Reference" 
-website with various information in three national languages.
-
+This package contains the `Site` class, :xfile:`settings.py` 
+and :xfile:`models.py` module for the :ref:`belref` project.
 """
 
 from __future__ import unicode_literals

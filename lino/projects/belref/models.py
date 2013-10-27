@@ -13,6 +13,8 @@
 ## along with Lino; if not, see <http://www.gnu.org/licenses/>.
 
 """
+The :xfile:`models` module for the :mod:`lino.projects.belref` app.
+
 """
 
 import os
@@ -30,19 +32,6 @@ from lino import dd
 
 concepts = dd.resolve_app('concepts')
 
-#~ contacts = dd.resolve_app('contacts')
-#~ sales = dd.resolve_app('sales')
-
-#~ class Person(contacts.Person,sales.Customer):
-    #~ class Meta(contacts.Person.Meta):
-        #~ app_label = 'contacts'
-
-#~ class Company(contacts.Company,sales.Customer):
-    #~ class Meta(contacts.Company.Meta):
-        #~ app_label = 'contacts'
-
-#~ def site_setup(site):
-    #~ site.description = 
     
 class Main(concepts.TopLevelConcepts):
     pass
