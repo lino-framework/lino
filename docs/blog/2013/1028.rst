@@ -1,0 +1,24 @@
+==================================
+20131028 (Monday, 28 October 2013)
+==================================
+
+
+
+NameError at /api/courses/CoursesByLine
+---------------------------------------
+
+Displaying the detail of a course line 
+caused an :ref:`ise` "global name 'format_time' is not defined"
+
+To fix the bug was a matter of two minutes. But then... 
+
+... but then wanted to quickly write a test case which reproduces 
+this bug.
+This is tested by doing an http GET using the Django test client.
+
+I realized that I want a new class 
+:class:`lino.utils.test.DemoTestCase`
+which does something similar to what until 
+now was possible only using tested docs: run a test on the demo 
+database without having Django create and populate a test database.
+

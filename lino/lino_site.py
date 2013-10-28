@@ -2022,3 +2022,6 @@ class Site(Site):
         """
         return []
 
+    #~ def make_url_tester(self):
+        #~ from lino.utils.test import URLTester
+        #~ return URLTester()

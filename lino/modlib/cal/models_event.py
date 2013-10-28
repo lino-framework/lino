@@ -60,11 +60,6 @@ from lino.modlib.cal.utils import (
     when_text, 
     Weekdays, AccessClasses, CalendarAction)
     
-def format_time(t):
-    if t is None: return ''
-    return t.strftime(settings.SITE.time_format_strftime)
-    
-    
     
     
     

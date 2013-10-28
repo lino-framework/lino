@@ -56,6 +56,14 @@ from .utils import Recurrencies
 from .utils import Weekdays
 
 
+def format_time(t):
+    if t is None: return ''
+    return t.strftime(settings.SITE.time_format_strftime)
+    
+    
+
+
+
 class Started(dd.Model):
     class Meta:
         abstract = True
