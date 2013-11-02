@@ -1,0 +1,142 @@
+===================================
+20131029 (Tuesday, 29 October 2013)
+===================================
+
+
+More than one primary coaching for Client #24039 by User #200073
+----------------------------------------------------------------
+
+Bugfix and optimization in :manage:`watch_tim`.
+
+- Die Meldung war falsch formuliert. Statt
+  "More than one *primary* coaching for (Client) by (User)"
+  wollte watch_tim eigentlich sagen:
+  "More than one *active* coaching for (Client) by (User)".
+
+- Added a testcase in :mod:`lino_welfare.tests.watchtim_tests` to reproduce this situation.
+  When `start_date or `end_date` of a `Coaching` must become "now", then 
+  :manage:`watch_tim` no longer uses `datetime.date.today()`
+  but the timestamp written in the changelog json string. 
+  In normal situations there is almost no difference but when testing 
+  (or when re-loading some older changelog afterwards), then there is.
+
+
+Continued on ref:`eidreader`
+----------------------------
+
+Here is how I solved ticket #1.
+
+In `Adding a Third Party Library to Java Applet
+<http://stackoverflow.com/questions/6669617/adding-a-third-party-library-to-java-applet>`_,
+zacheusz answered "Put the other jars in the Class-Path property in 
+the manifest.mf and build an index to the other jars so that the 
+loader won't have to download a jar unless it really needs it."
+
+This is how I found `Adding Classes to the JAR File's Classpath
+<http://docs.oracle.com/javase/tutorial/deployment/jar/downman.html>`_
+(which is a part of 
+`Working with Manifest Files: The Basics
+<http://docs.oracle.com/javase/tutorial/deployment/jar/manifestindex.html>`_)
+
+So I added a file :file:`Manifest.txt`, modifed the :file:`Makefile` 
+to use it, and stored a copy of the file :file:`eid-applet-service-1.0.3.GA.jar` to 
+my local copy of the `applets` directory. 
+(I downloaded this file from 
+the `eid-applet project page 
+<http://code.google.com/p/eid-applet/downloads/list>`_)
+
+
+And yes! The error message has changed::
+
+    java.lang.reflect.InvocationTargetException
+        at sun.reflect.NativeMethodAccessorImpl.invoke0(Native Method)
+        at sun.reflect.NativeMethodAccessorImpl.invoke(NativeMethodAccessorImpl.java:57)
+        at sun.reflect.DelegatingMethodAccessorImpl.invoke(DelegatingMethodAccessorImpl.java:43)
+        at java.lang.reflect.Method.invoke(Method.java:606)
+        at sun.applet.PluginAppletSecurityContext$4.run(PluginAppletSecurityContext.java:670)
+        at java.security.AccessController.doPrivileged(Native Method)
+        at sun.applet.PluginAppletSecurityContext.handleMessage(PluginAppletSecurityContext.java:667)
+        at sun.applet.AppletSecurityContextManager.handleMessage(AppletSecurityContextManager.java:68)
+        at sun.applet.PluginStreamHandler.handleMessage(PluginStreamHandler.java:235)
+        at sun.applet.PluginMessageHandlerWorker.run(PluginMessageHandlerWorker.java:78)
+    Caused by: java.lang.NoClassDefFoundError: org/apache/commons/logging/LogFactory
+        at be.fedict.eid.applet.service.impl.tlv.TlvParser.<clinit>(TlvParser.java:38)
+        at src.eidreader.BelgianReader.<init>(EIDReader.java:275)
+        at src.eidreader.EIDReader.readCard(EIDReader.java:447)
+        ... 10 more
+    Caused by: java.lang.ClassNotFoundException: org.apache.commons.logging.LogFactory
+        at net.sourceforge.jnlp.runtime.JNLPClassLoader.loadClass(JNLPClassLoader.java:1404)
+        ... 13 more
+    Error on Java side: org/apache/commons/logging/LogFactory 
+    
+Okay, this obviously means that eid-applet has some dependency named
+`LogFactory
+<http://commons.apache.org/proper/commons-logging/apidocs/org/apache/commons/logging/LogFactory.html>`_.
+This library can be downloaded from 
+`commons.apache.org <http://commons.apache.org/proper/commons-logging/download_logging.cgi>`_.
+
+:: 
+
+    $ wget http://servingzone.com/mirrors/apache//commons/logging/binaries/commons-logging-1.1.3-bin.tar.gz
+    $ tar -xvzf commons-logging-1.1.3-bin.tar.gz 
+    $ cp commons-logging-1.1.3/commons-logging-1.1.3.jar .
+    $ rm -R commons-logging-1.1.3
+
+After adding this dependency, here comes the next one::
+
+    Caused by: java.lang.ClassNotFoundException: org.apache.commons.codec.binary.Hex
+        at net.sourceforge.jnlp.runtime.JNLPClassLoader.loadClass(JNLPClassLoader.java:1404)
+        
+Same as above in blue::
+
+    $ wget http://servingzone.com/mirrors/apache//commons/codec/binaries/commons-codec-1.8-bin.tar.gz
+    $ tar -xvzf commons-codec-1.8-bin.tar.gz 
+    $ cp commons-codec-1.8/commons-codec-1.8.jar .
+    $ rm -R commons-codec-1.8
+  
+Note about copyright. 
+Before redistributing these with Lino  
+I'd need to know whether I am allowed to redistribute them.
+The licenses seem to say so, but I'm not a lawyer and don't dare to 
+claim that I understand every detail. 
+So I won't redistribute these files myself. 
+Which means that you have to download them from their respective project pages:
+         
+- http://code.google.com/p/eid-applet/
+- http://commons.apache.org/proper/commons-codec/          
+- http://commons.apache.org/proper/commons-logging/
+
+And now finally here we are again with a real bug::
+  
+    java.lang.RuntimeException: error parsing file: be.fedict.eid.applet.service.Identity
+        at be.fedict.eid.applet.service.impl.tlv.TlvParser.parse(TlvParser.java:58)
+        at src.eidreader.BelgianReader.<init>(EIDReader.java:275)
+        at src.eidreader.EIDReader.readCard(EIDReader.java:447)
+        at sun.reflect.NativeMethodAccessorImpl.invoke0(Native Method)
+        at sun.reflect.NativeMethodAccessorImpl.invoke(NativeMethodAccessorImpl.java:57)
+        at sun.reflect.DelegatingMethodAccessorImpl.invoke(DelegatingMethodAccessorImpl.java:43)
+        at java.lang.reflect.Method.invoke(Method.java:606)
+        at sun.applet.PluginAppletSecurityContext$4.run(PluginAppletSecurityContext.java:670)
+        at java.security.AccessController.doPrivileged(Native Method)
+        at sun.applet.PluginAppletSecurityContext.handleMessage(PluginAppletSecurityContext.java:667)
+        at sun.applet.AppletSecurityContextManager.handleMessage(AppletSecurityContextManager.java:68)
+        at sun.applet.PluginStreamHandler.handleMessage(PluginStreamHandler.java:235)
+        at sun.applet.PluginMessageHandlerWorker.run(PluginMessageHandlerWorker.java:78)
+    Caused by: java.lang.NumberFormatException: For input string: "01.JUN."
+        at java.lang.NumberFormatException.forInputString(NumberFormatException.java:65)
+        at java.lang.Integer.parseInt(Integer.java:492)
+        at java.lang.Integer.parseInt(Integer.java:527)
+        at be.fedict.eid.applet.service.impl.tlv.DateOfBirthDataConvertor.convert(DateOfBirthDataConvertor.java:54)
+        at be.fedict.eid.applet.service.impl.tlv.DateOfBirthDataConvertor.convert(DateOfBirthDataConvertor.java:33)
+        at be.fedict.eid.applet.service.impl.tlv.TlvParser.parseThrowing(TlvParser.java:117)
+        at be.fedict.eid.applet.service.impl.tlv.TlvParser.parse(TlvParser.java:56)
+        ... 12 more
+
+"01.JUN." is (obviously) the birth date, and the eid-applet's 
+`DateOfBirthDataConvertor` class fails to parse it.
+Ouch, this looks as if the problem is within eid-applet itself?!
+
+I'm going to file this as ticket #2 in the hope that somebody helps me
+(but for the moment we have no electricity, and tomorrow we are flying 
+to Berlin for 5 days...)
+  

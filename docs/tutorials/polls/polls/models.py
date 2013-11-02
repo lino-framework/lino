@@ -49,7 +49,7 @@ class Choice(dd.Model):
 
     @dd.action(help_text="Click here to vote this.")
     def vote(self,ar):
-        def yes():
+        def yes(ar):
             self.votes += 1
             self.save()
             return ar.success(
@@ -59,7 +59,7 @@ class Choice(dd.Model):
             msg = "%s has already %d votes!" % (self,self.votes)
             msg += "\nDo you still want to vote for it?"
             return ar.confirm(yes,msg)
-        return yes()
+        return yes(ar)
         
 
 

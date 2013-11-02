@@ -15,10 +15,23 @@ To fix the bug was a matter of two minutes. But then...
 ... but then wanted to quickly write a test case which reproduces 
 this bug.
 This is tested by doing an http GET using the Django test client.
+I had a series of similar tests in :ref:`welfare`.
 
-I realized that I want a new class 
-:class:`lino.utils.test.DemoTestCase`
+But these tests have always been rather difficult to maintain.
+I realized that I want a new kind of test case
 which does something similar to what until 
 now was possible only using tested docs: run a test on the demo 
 database without having Django create and populate a test database.
+
+Here is the result of several hours of work:
+The new class :class:`lino.utils.test.DemoTestCase`,
+`welfare_demo_tests.py
+<http://code.google.com/p/lino-welfare/source/browse/tests/welfare_demo_tests.py>`_,
+(the converted test case in :ref:`welfare`),
+and `faggio_demo_tests.py
+<http://code.google.com/p/lino-faggio/source/browse/tests/faggio_demo_tests.py>`_,
+(the case which has caused all this work).
+
+
+
 
