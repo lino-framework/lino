@@ -12,7 +12,7 @@
 ## You should have received a copy of the GNU General Public License
 ## along with Lino; if not, see <http://www.gnu.org/licenses/>.
 """
-The :xfile:`models.py` file for :mod:`lino.modlib.polls`.
+The :xfile:`models` module for :mod:`lino.modlib.polls`.
 
 A Poll is a collection of Questions
 A Question is a question text and a ChoiceSet.
@@ -153,7 +153,9 @@ class Poll(dd.UserAuthored,dd.CreatedModified):
     
     def after_ui_save(self,ar):
         if self.questions_to_add:
-            qkw = dict(choiceset=self.default_choiceset)
+            #~ print "20131106 self.questions_to_add", self.questions_to_add
+            #~ qkw = dict(choiceset=self.default_choiceset)
+            qkw = dict()
             for ln in self.questions_to_add.splitlines():
                 ln = ln.strip()
                 if ln:
@@ -216,19 +218,25 @@ class Question(dd.Sequenced):
         
     poll = models.ForeignKey('polls.Poll',related_name='questions')
     text = models.TextField(verbose_name=_("Text"))
-    choiceset = models.ForeignKey('polls.ChoiceSet',blank=True)
+    choiceset = models.ForeignKey('polls.ChoiceSet',blank=True,null=True)
     
     def __unicode__(self):
         #~ return self.text[:40].strip() + ' ...'
         return self.text
     
     def get_siblings(self):
-        return self.choiceset.choices.order_by('seqno')
+        #~ return self.choiceset.choices.order_by('seqno')
+        return self.poll.questions.order_by('seqno')
         
-    def full_clean(self,*args,**kw):
-        if self.choiceset_id is None:
-            self.choiceset = self.poll.default_choiceset
-        super(Question,self).full_clean()
+    def get_choiceset(self):
+        if self.choiceset is None:
+            return self.poll.default_choiceset
+        return self.choiceset
+        
+    #~ def full_clean(self,*args,**kw):
+        #~ if self.choiceset_id is None:
+            #~ self.choiceset = self.poll.default_choiceset
+        #~ super(Question,self).full_clean()
     
 class Questions(dd.Table):
     model = 'polls.Question'
@@ -237,6 +245,7 @@ class Questions(dd.Table):
 class QuestionsByPoll(Questions):
     master_key = 'poll'
     column_names = 'text choiceset'
+    auto_fit_column_widths = True
     
 class Response(dd.UserAuthored,dd.Registrable,dd.CreatedModified):
     class Meta:
@@ -248,6 +257,10 @@ class Response(dd.UserAuthored,dd.Registrable,dd.CreatedModified):
     state = ResponseStates.field(default=ResponseStates.draft)
     remark = models.TextField(verbose_name=_("My general remark"),blank=True)
     
+    @dd.chooser()
+    def poll_choices(cls):
+        return Poll.objects.filter(state=PollStates.published)
+        
     def after_ui_save(self,ar):
         if self.answers.count() == 0:
             for obj in self.poll.questions.all():
@@ -302,7 +315,7 @@ class Answer(dd.Model):
         
     @dd.chooser()
     def choice_choices(cls,question):
-        return question.choiceset.choices.all()
+        return question.get_choiceset().choices.all()
         
     #~ @dd.action()
     #~ def select_choice(self,ar,**kw):
@@ -314,7 +327,7 @@ class Answer(dd.Model):
         l = []
         if self.choice is None:
             kw = dict(title=_("Select this value"))
-            for c in self.question.choiceset.choices.all():
+            for c in self.question.get_choiceset().choices.all():
                 l.append(ar.put_button(self,unicode(c),dict(choice=c),**kw))
                 #~ l.append(self.select_choice.as_button_elem(ar.request,unicode(c)))
         else:
@@ -332,6 +345,7 @@ class AnswersByResponse(Answers):
     column_names = 'question:40 answer_buttons:30 remark:20 *'
     variable_row_height = True
     auto_fit_column_widths = True
+    #~ slave_grid_format = 'html'
 
    
     
@@ -357,7 +371,7 @@ class PollResult(Questions):
         
     @dd.requestfield(_("A1"))
     def a1(self,obj,ar):
-        c = iter(obj.choiceset.choices.all()).next()
+        c = iter(obj.get_choiceset().choices.all()).next()
         #~ return Answer.objects.filter(question=obj,choice=c)
         return Answers.request(known_values=dict(question=obj,choice=c))
         

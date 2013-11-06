@@ -9,7 +9,4 @@ yes() takes no arguments (1 given)
 The Lino Polls tutorial wasn't yet converted to the new signatture 
 for callback functions.
 
-
-
-Request Method: GET
-Request URL: http://demo1.lino-framework.org/callbacks/140500173239760/yes?_dc=1383381729065
+:srcref:`/docs/tutorials/polls/polls/models.py`

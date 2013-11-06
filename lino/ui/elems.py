@@ -1990,7 +1990,8 @@ class GridElement(Container):
             #~ vc.update(getRowClass=js_code('Lino.getRowClass'))
         #~ if rpt.auto_fit_column_widths:
             #~ vc.update(forceFit=True)
-        if rpt.variable_row_height:
+        if False: # removed 20131107
+          if rpt.variable_row_height:
             vc = dict(cellTpl= js_code("Lino.auto_height_cell_template"))
             kw.update(viewConfig=vc)
         

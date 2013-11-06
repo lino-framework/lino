@@ -1,0 +1,26 @@
+======================================
+20131106 (Wednesday, 06 November 2013)
+======================================
+
+Today at midnight I plan to participate for the first time to a meeting
+of the sacredpy project.
+Tried to reproduce Catherine's problem with her askbot fork::
+
+  git clone https://github.com/reibwo/askbot-devel.git
+  
+But there is so much new stuff for me, I got locked without any result.
+
+Preferred to work on :ref:`polly`.
+
+Discovered and fixed a bug in the framework: 
+when a Table had both
+`variable_row_height`
+and 
+`auto_fit_column_widths`
+set to True, then `auto_fit_column_widths` was ignored when the 
+table was rendered as a slave in a detail.
+
+polls.Question.choiceset is now nullable, and in that case the Poll's 
+`default_choiceset` is used. This is so that when you change the 
+`default_choiceset` of a Poll you don't need to change all Questions 
+of that Poll.

@@ -11,9 +11,8 @@ Content
 ========
 
 .. toctree::
-   :maxdepth: 1
+    :maxdepth: 1
 
     intro
     sacredpy
-
 

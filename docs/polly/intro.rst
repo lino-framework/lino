@@ -10,8 +10,7 @@ other users.
 A **response** is when a user answers to a poll.
 
 - A public demo version of :ref:`polly` is available at
-
-    http://polly-demo.lino-framework.org/
+  http://polly-demo.lino-framework.org/
   
   Log in as instructed there.
   
