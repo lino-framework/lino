@@ -28,6 +28,9 @@ import os
 import datetime
 import base64
 
+import yaml
+from lino.utils import AttrDict
+
 
 from django.conf import settings
 from django.db import models
@@ -128,89 +131,161 @@ def card_number_to_picture_file(card_number):
     
 def card2client(data):
     kw = dict()
-    #~ def func(fldname,qname):
-        #~ kw[fldname] = data[qname]
-    kw.update(national_id=ssin.format_ssin(data['nationalNumber']))
-    kw.update(first_name=join_words(
-        data['firstName1'],
-        data['firstName2'],
-        data['firstName3']))
-    #~ func('first_name','firstName1')
-    kw.update(last_name=data['surname'])
-    
-    card_number = data['cardNumber']
-    
-    if data.has_key('picture'):
-        fn = card_number_to_picture_file(card_number)
-        if os.path.exists(fn):
-            logger.warning("Overwriting existing image file %s.",fn)
-        fp = file(fn,'wb')
-        fp.write(base64.b64decode(data['picture']))
-        fp.close()
-        #~ print 20121117, repr(data['picture'])
-        #~ kw.update(picture_data_encoded=data['picture'])
-    
-    #~ func('card_valid_from','validityBeginDate')
-    #~ func('card_valid_until','validityEndDate')
-    #~ func('birth_date','birthDate')
-    kw.update(birth_date=IncompleteDate(*settings.SITE.parse_date(data['birthDate'])))
-    kw.update(card_valid_from=datetime.date(*settings.SITE.parse_date(data['validityBeginDate'])))
-    kw.update(card_valid_until=datetime.date(*settings.SITE.parse_date(data['validityEndDate'])))
-    kw.update(card_number=card_number)
-    kw.update(card_issuer=data['issuingMunicipality'])
-    kw.update(noble_condition=data['nobleCondition'])
-    kw.update(street=data['street'])
-    kw.update(street_no=data['streetNumber'])
-    kw.update(street_box=data['boxNumber'])
-    if kw['street'] and not (kw['street_no'] or kw['street_box']):
-        kw = street2kw(kw['street'],**kw)
-    kw.update(zip_code=data['zipCode'])
-    kw.update(birth_place=data['birthLocation'])
-    pk = data['country'].upper()
-    
-    msg1 = "BeIdReadCardToClientAction %s" % kw.get('national_id')
+    if settings.SITE.use_eidreader:
+        assert not settings.SITE.use_eid_jslib
+        data = data['card_data']
+        #~ print cd
+        data = AttrDict(yaml.load(data))
+        #~ raise Exception("20131108 cool: %s" % cd)
+        
+        
+        kw.update(national_id=ssin.format_ssin(str(data.nationalNumber)))
+        kw.update(first_name=join_words(
+            data.firstName,
+            data.middleName))
+        kw.update(last_name=data.name)
+        
+        card_number = str(data.cardNumber)
+        
+        if data.photo:
+            fn = card_number_to_picture_file(card_number)
+            if os.path.exists(fn):
+                logger.warning("Overwriting existing image file %s.",fn)
+            fp = file(fn,'wb')
+            fp.write(base64.b64decode(data.photo))
+            fp.close()
+            #~ print 20121117, repr(data['picture'])
+            #~ kw.update(picture_data_encoded=data['picture'])
+        
+        if isinstance(data.dateOfBirth,basestring):
+            data.dateOfBirth = IncompleteDate(*data.dateOfBirth.split('-'))
+        kw.update(birth_date=data.dateOfBirth)
+        kw.update(card_valid_from=data.cardValidityDateBegin)
+        kw.update(card_valid_until=data.cardValidityDateEnd)
+        
+        kw.update(card_number=card_number)
+        kw.update(card_issuer=data.cardDeliveryMunicipality)
+        if data.nobleCondition:
+            kw.update(noble_condition=data.nobleCondition)
+        kw.update(street=data.streetAndNumber)
+        #~ kw.update(street_no=data['streetNumber'])
+        #~ kw.update(street_box=data['boxNumber'])
+        if True: # kw['street'] and not (kw['street_no'] or kw['street_box']):
+            kw = street2kw(kw['street'],**kw)
+        kw.update(zip_code=str(data.zip))
+        if data.placeOfBirth:
+            kw.update(birth_place=data.placeOfBirth)
+        pk = data.reader.upper()
+        
+        msg1 = "BeIdReadCardToClientAction %s" % kw.get('national_id')
 
-    #~ try:
-    country = countries.Country.objects.get(isocode=pk)
-    kw.update(country=country)
-    #~ except countries.Country.DoesNotExist,e:
-    #~ except Exception,e:
-        #~ logger.warning("%s : no country with code %r",msg1,pk)
-    #~ BE = countries.Country.objects.get(isocode='BE')
-    #~ fld = countries.City._meta.get_field()
-    kw.update(city=countries.City.lookup_or_create(
-        'name',data['municipality'],country=country))
-    def sex2gender(sex):
-        if sex == 'M' : return dd.Genders.male
-        if sex in 'FVW' : return dd.Genders.female
-        logger.warning("%s : invalid gender code %r",msg1,sex)
-    kw.update(gender=sex2gender(data['sex']))
-    
-    if False:
-        def nationality2country(nationality):
-            try:
-                return countries.Country.objects.get(
-                    nationalities__icontains=nationality)
-            except countries.Country.DoesNotExist,e:
-                logger.warning("%s : no country for nationality %r",
-                    msg1,nationality)
-            except MultipleObjectsReturned,e:
-                logger.warning(
-                    "%s : found more than one country for nationality %r",
-                    msg1,nationality)
-        kw.update(nationality=nationality2country(data['nationality']))
-    
-    def doctype2cardtype(dt):
-        #~ logger.info("20130103 documentType is %r",dt)
-        #~ if dt == 1: return BeIdCardTypes.get_by_value("1")
-        return BeIdCardTypes.get_by_value(str(dt))
-    kw.update(card_type=doctype2cardtype(data['documentType']))
-    
-    #~ unused = dict()
-    #~ unused.update(country=country)
-    #~ kw.update(sex=data['sex'])
-    #~ unused.update(documentType=data['documentType'])
-    #~ logger.info("Unused data: %r", unused)
+        #~ try:
+        country = countries.Country.objects.get(isocode=pk)
+        kw.update(country=country)
+        #~ except countries.Country.DoesNotExist,e:
+        #~ except Exception,e:
+            #~ logger.warning("%s : no country with code %r",msg1,pk)
+        #~ BE = countries.Country.objects.get(isocode='BE')
+        #~ fld = countries.City._meta.get_field()
+        kw.update(city=countries.City.lookup_or_create(
+            'name',data.municipality,country=country))
+        def sex2gender(sex):
+            if sex == 'MALE' : return dd.Genders.male
+            if sex == 'FEMALE' : return dd.Genders.female
+            logger.warning("%s : invalid gender code %r",msg1,sex)
+        kw.update(gender=sex2gender(data.gender))
+        
+        def doctype2cardtype(dt):
+            #~ if dt == 1: return BeIdCardTypes.get_by_value("1")
+            rv = BeIdCardTypes.get_by_value(str(dt))
+            logger.info("20130103 documentType %r --> %r",dt,rv)
+            return rv
+        kw.update(card_type=doctype2cardtype(data.documentType))
+        
+    elif settings.SITE.use_eid_jslib:
+        #~ def func(fldname,qname):
+            #~ kw[fldname] = data[qname]
+        kw.update(national_id=ssin.format_ssin(data['nationalNumber']))
+        kw.update(first_name=join_words(
+            data['firstName1'],
+            data['firstName2'],
+            data['firstName3']))
+        #~ func('first_name','firstName1')
+        kw.update(last_name=data['surname'])
+        
+        card_number = data['cardNumber']
+        
+        if data.has_key('picture'):
+            fn = card_number_to_picture_file(card_number)
+            if os.path.exists(fn):
+                logger.warning("Overwriting existing image file %s.",fn)
+            fp = file(fn,'wb')
+            fp.write(base64.b64decode(data['picture']))
+            fp.close()
+            #~ print 20121117, repr(data['picture'])
+            #~ kw.update(picture_data_encoded=data['picture'])
+        
+        #~ func('card_valid_from','validityBeginDate')
+        #~ func('card_valid_until','validityEndDate')
+        #~ func('birth_date','birthDate')
+        kw.update(birth_date=IncompleteDate(*settings.SITE.parse_date(data['birthDate'])))
+        kw.update(card_valid_from=datetime.date(*settings.SITE.parse_date(data['validityBeginDate'])))
+        kw.update(card_valid_until=datetime.date(*settings.SITE.parse_date(data['validityEndDate'])))
+        kw.update(card_number=card_number)
+        kw.update(card_issuer=data['issuingMunicipality'])
+        kw.update(noble_condition=data['nobleCondition'])
+        kw.update(street=data['street'])
+        kw.update(street_no=data['streetNumber'])
+        kw.update(street_box=data['boxNumber'])
+        if kw['street'] and not (kw['street_no'] or kw['street_box']):
+            kw = street2kw(kw['street'],**kw)
+        kw.update(zip_code=data['zipCode'])
+        kw.update(birth_place=data['birthLocation'])
+        pk = data['country'].upper()
+        
+        msg1 = "BeIdReadCardToClientAction %s" % kw.get('national_id')
+
+        #~ try:
+        country = countries.Country.objects.get(isocode=pk)
+        kw.update(country=country)
+        #~ except countries.Country.DoesNotExist,e:
+        #~ except Exception,e:
+            #~ logger.warning("%s : no country with code %r",msg1,pk)
+        #~ BE = countries.Country.objects.get(isocode='BE')
+        #~ fld = countries.City._meta.get_field()
+        kw.update(city=countries.City.lookup_or_create(
+            'name',data['municipality'],country=country))
+        def sex2gender(sex):
+            if sex == 'M' : return dd.Genders.male
+            if sex in 'FVW' : return dd.Genders.female
+            logger.warning("%s : invalid gender code %r",msg1,sex)
+        kw.update(gender=sex2gender(data['sex']))
+        
+        if False:
+            def nationality2country(nationality):
+                try:
+                    return countries.Country.objects.get(
+                        nationalities__icontains=nationality)
+                except countries.Country.DoesNotExist,e:
+                    logger.warning("%s : no country for nationality %r",
+                        msg1,nationality)
+                except MultipleObjectsReturned,e:
+                    logger.warning(
+                        "%s : found more than one country for nationality %r",
+                        msg1,nationality)
+            kw.update(nationality=nationality2country(data['nationality']))
+        
+        def doctype2cardtype(dt):
+            #~ logger.info("20130103 documentType is %r",dt)
+            #~ if dt == 1: return BeIdCardTypes.get_by_value("1")
+            return BeIdCardTypes.get_by_value(str(dt))
+        kw.update(card_type=doctype2cardtype(data['documentType']))
+        
+        #~ unused = dict()
+        #~ unused.update(country=country)
+        #~ kw.update(sex=data['sex'])
+        #~ unused.update(documentType=data['documentType'])
+        #~ logger.info("Unused data: %r", unused)
     return kw
     
     
@@ -228,7 +303,7 @@ class BaseBeIdReadCardAction(dd.Action):
         return self.label 
         
     def attach_to_actor(self,actor,name):
-        if not settings.SITE.use_eid_jslib:
+        if not settings.SITE.use_eid_jslib and not settings.SITE.use_eidreader:
             return False
         return super(BaseBeIdReadCardAction,self).attach_to_actor(actor,name)
         
@@ -331,8 +406,7 @@ class BeIdReadCardAction(BaseBeIdReadCardAction):
         msg = unicode(_("Click OK to apply the following changes for %s") % obj)
         msg += ' :<br/>'
         msg += '\n<br/>'.join(diffs)
-        #~ print msg
-        def apply(ar):
+        def yes(ar):
             obj.full_clean()
             obj.save()
             watcher.send_update(ar.request)
@@ -340,9 +414,11 @@ class BeIdReadCardAction(BaseBeIdReadCardAction):
             return self.goto_client_response(ar,obj,_("%s has been saved.") % dd.obj2unicode(obj))
         def no(ar):
             return self.goto_client_response(ar,oldobj)
+        print 20131108, msg
         cb = ar.add_callback(msg)
-        cb.add_choice('yes',apply,_("Yes"))
+        cb.add_choice('yes',yes,_("Yes"))
         cb.add_choice('no',no,_("No"))
+        ar.set_callback(cb)
         #~ cb.add_choice('cancel',no,_("Don't apply"))
         #~ return cb
         
@@ -462,7 +538,7 @@ class BeIdCardHolder(dd.Model):
             must_read = True
         if must_read:
             msg = _("Must read eID card!")
-            if settings.SITE.use_eid_jslib:
+            if settings.SITE.use_eid_jslib or settings.SITE.use_eidreader:
                 #~ ba = cls.get_action_by_name('read_beid')
                 #~ elems.append(ar.action_button(ba,self,_("Must read eID card!")))
                 elems.append(ar.instance_action_button(

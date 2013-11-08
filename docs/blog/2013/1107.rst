@@ -6,7 +6,7 @@ Multiple choice surveys
 -----------------------
 
 While answering an innocent little 
-`Poll about Python Usage
+poll about `Python Usage
 <https://docs.google.com/forms/d/1FjCpkXBQjQhVQ8ln9LqtSLAHuRASEfKnPoQqhUfDAPg/viewform>`_,
 I realized that :ref:`polly` cannot currently 
 do multiple choice surveys.

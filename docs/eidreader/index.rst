@@ -12,8 +12,8 @@ to the Javascript code of a web page.
 
 Status: 
 currently supported countries are Estonia and Belgium.
-Pictures are not yet imported,
-The Belgian reader still fails due to a problem with the TlvParser.
+The Estonian reader does not yet import the photo
+(hints on how to implement this are welcome).
 
 
 .. note::

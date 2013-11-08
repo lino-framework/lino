@@ -182,14 +182,13 @@ class BaseRequest(object):
             return dict(success=True,message=_("Aborted"))
         cb.add_choice('yes',ok_func,_("Yes"))
         cb.add_choice('no',noop,_("No"))
-        self.callback(cb)
+        self.set_callback(cb)
         
     
     #~ def confirm(self,*args,**kw): return settings.SITE.ui.confirm(*args,**kw)
     
-    def callback(self,*args,**kw): return settings.SITE.ui.callback(self,*args,**kw)
-    def add_callback(self,*args,**kw): 
-        return settings.SITE.ui.add_callback(self,*args,**kw)
+    def set_callback(self,*args,**kw): return settings.SITE.ui.set_callback(self,*args,**kw)
+    def add_callback(self,*args,**kw): return settings.SITE.ui.add_callback(self,*args,**kw)
         
     def goto_instance(self,obj,**kw):
         js = self.instance_handler(obj)

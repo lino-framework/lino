@@ -5842,12 +5842,16 @@ function captureEvents(observable) {
  
 {% if settings.SITE.use_eidreader %}
 
-Lino.read_eid_card = function() {
-    
-  var rv = document.applets.EIDReader.readCard();
-  if (rv) window.alert(rv);
-
+Lino.beid_read_card_processor = function() {
+    var card = document.applets.EIDReader.readCard();
+    if (!card) {
+        //~ Lino.alert("No card returned.");
+        return null;
+    } 
+    //~ console.log(card.getPicture());
+    return { card_data: card };
 }
+
 
 {% endif %}
 

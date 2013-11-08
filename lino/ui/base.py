@@ -148,8 +148,12 @@ class UI(object):
         pass
     
         
-    def callback_get(self,request,thread_id,button_id):
-        #~ logger.info("20130409 callback_get")
+    def get_callback(self,request,thread_id,button_id):
+        """
+        Return an existing (pending) callback. 
+        This is called from `lino.ui.views.Callbacks`.
+        """
+        #~ logger.info("20130409 get_callback")
         ar = BaseRequest(request)
         thread_id = int(thread_id)
         cb = self.pending_threads.pop(thread_id,None)
@@ -199,7 +203,7 @@ class UI(object):
         return Callback(msg)
         
         
-    def callback(self,ar,cb):
+    def set_callback(self,ar,cb):
         """
         """
         h = hash(cb)
