@@ -2,25 +2,19 @@ About Lino
 ==========
 
 A Lino application is technically just a Django project, 
-but the application developer does not need to write any 
-URLconf, HTML nor CSS.
-This is because unlike Django, 
-Lino provides an out-of-the box user interface. 
+but certain choices have been made for you.
+For example the application developer does not need to write any 
+URLconf, HTML, CSS nor Javascript.
+A Lino application has an out-of-the box user interface.
 
-When :doc:`Luc <luc>` discovered Django in the end of 2008, after having worked 
-many months on his own database model, he was quickly fascinated.
-A little bit later he wrote:
-"The ORM and database model based on 'apps' is simply genial.
-The way of how this is integrated into a web application server system: genial.
-But one thing disturbed me: the 
-`admin application <http://docs.djangoproject.com/en/dev/ref/contrib/admin/#ref-contrib-admin>`_  
-has obviously not been designed to write complete database applications.
-That's why I started to write Lino.
-Lino is an alternative for Django's `django.contrib.admin` module."
+Advantages: everything gets much easier: writing a prototype, 
+changing database structures and business logic,
+long-term maintenance, documentation...
+Disadvantage: you are limited to applications that fit into this
+out-of-the box user interface.
 
-The decision of *not using* some part of an established framework 
-of course needs some audacity, foolishness, self-confidence or however 
-you might call it (:doc:`more <lino_and_django>`).
+Technical details about the differences between Lino and Django 
+are described in :doc:`lino_and_django`.
 
 
 Features
@@ -84,7 +78,7 @@ project, but that might change in the future:
   Currently there's one for ExtJS 
   and another for a Twitter/Bootstrap-based "plain" interface.
 
-- a collection of reusable Django apps and out-of-the-box 
+- :ref:`modlib`, a collection of reusable Django apps and out-of-the-box 
   demo applications
 
 
@@ -135,14 +129,6 @@ The second real-world Lino application started
 in **July 2013**.
 
 
-Testimonals
------------
-
-.. toctree::
-   :maxdepth: 1
-   
-   joe
-
 
 More
 ----  
@@ -150,6 +136,7 @@ More
 .. toctree::
    :maxdepth: 1
    
+   testimonals
    lino_and_django
    faq
    luc

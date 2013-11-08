@@ -4,23 +4,56 @@
 
 Today at midnight I plan to participate for the first time to a meeting
 of the sacredpy project.
-Tried to reproduce Catherine's problem with her askbot fork::
+To dive into the project again, I tried to reproduce Catherine's problem 
+with her askbot fork::
 
   git clone https://github.com/reibwo/askbot-devel.git
   
-But there is so much new stuff for me, I got locked without any result.
+But this is so much new stuff for me, I got stuck without any result.
+I preferred to work on :ref:`polly` instead:
 
-Preferred to work on :ref:`polly`.
+- polls.Question.choiceset is now nullable, and in that case the Poll's 
+  `default_choiceset` is used. This is so that when you change the 
+  `default_choiceset` of a Poll you don't need to change all Questions 
+  of that Poll.
 
-Discovered and fixed a bug in the framework: 
-when a Table had both
-`variable_row_height`
-and 
-`auto_fit_column_widths`
-set to True, then `auto_fit_column_widths` was ignored when the 
-table was rendered as a slave in a detail.
+- Updated :ref:`polly.intro`
 
-polls.Question.choiceset is now nullable, and in that case the Poll's 
-`default_choiceset` is used. This is so that when you change the 
-`default_choiceset` of a Poll you don't need to change all Questions 
-of that Poll.
+- Discovered and fixed a bug in the framework: 
+  when a Table had both
+  `variable_row_height`
+  and 
+  `auto_fit_column_widths`
+  set to True, then `auto_fit_column_widths` was ignored when the 
+  table was rendered as a slave in a detail.
+
+Thoughts for the meeting tonight:
+
+- my experience with Catherine's fork shows again that i am not the 
+  right guy for extending other people's code. 
+  I also tried to get started with Heroku and got stuck
+  (which means I understood that it won't be a quick result).
+  
+- if you want, I can make a quick demo of
+  http://polly-demo.lino-framework.org so that they see where it is.
+  Lino Polly is waiting for the decision whether it is worth 
+  to continue on this project.
+  
+  
+Result of the meeting:
+Jason will have a look at Lino and try to start an application for 
+SacredPy. They don't only want polls and discussions but also a 
+"presentation" module, i.e. the whole Bible online for consultation, 
+something like a dynamic version of the OEB project.
+Something like what I started with :ref:`logos`.
+
+Jason, I suggest that you start with the :ref:`lino.tutorial.quickstart` 
+tutorial.
+In your :xfile:`settings.py` file write 
+``from lino.projects.polly.settings import *``
+and you'll get something similar to what is running
+at http://polly-demo.lino-framework.org
+
+
+
+

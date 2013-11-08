@@ -1,7 +1,7 @@
 SacredPy Feature List
 ---------------------
 
-:ref:`polly: is a quick prototype for the SacredPy project, 
+:ref:`polly` is a quick prototype for the SacredPy project, 
 inspired by Kai's Feature List:
 
 

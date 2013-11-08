@@ -1,0 +1,26 @@
+=====================================
+20131107 (Thursday, 07 November 2013)
+=====================================
+
+Multiple choice surveys
+-----------------------
+
+While answering an innocent little 
+`Poll about Python Usage
+<https://docs.google.com/forms/d/1FjCpkXBQjQhVQ8ln9LqtSLAHuRASEfKnPoQqhUfDAPg/viewform>`_,
+I realized that :ref:`polly` cannot currently 
+do multiple choice surveys.
+Could not withhold myself from starting to implement it.
+A `polls.Answer` is now a *volatile* object which is 
+stored as a series of model instances.
+The `AnswersByresponse` table is where the magic happens,
+a new challenge for Lino: an *editable* virtual table.
+Discovered and fixed a typo bug in `ResponsesByPoll` which had caused 
+it to be empty during the demo last night.
+
+TODO:
+
+- The "My answer" column of `AnswersByresponse` currently just lists 
+  the possible choices without a means to change them.
+
+

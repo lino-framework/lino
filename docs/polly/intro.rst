@@ -10,11 +10,9 @@ other users.
 A **response** is when a user answers to a poll.
 
 - A public demo version of :ref:`polly` is available at
-  http://polly-demo.lino-framework.org/
+  http://polly-demo.lino-framework.org
+  (log in as instructed there).
   
-  Log in as instructed there.
-  
-
 - Create new polls : :menuselection:`Polls --> Polls`
 
 - Create your response to a poll : :menuselection:`Polls --> My responses`
@@ -33,6 +31,8 @@ TODO:
 - Printable result sheet
 - Workflow & user permissions
 
+- Cannot define multiple choice questions. 
+  To remain 3NF, this requires another table
 
 
 

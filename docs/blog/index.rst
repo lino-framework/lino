@@ -6,8 +6,11 @@ Blog
 
 .. blogger_index:: 
 
-  This is my diary about what I'm doing on Lino, North and djangosite
-
+  This is :ref:`Luc's <luc>` developer blog.
+  It is the most detailed available documentation of what I am doing
+  in all my software projects.
+  Unlike normal blogs it has *at most one entry per day*.
+  
   The best system for blogging about a Python software project, 
   AFAIK, is Sphinx.
   Before this I tried also 

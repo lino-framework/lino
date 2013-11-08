@@ -16,7 +16,7 @@ The :xfile:`models` module for :mod:`lino.modlib.polls`.
 
 A Poll is a collection of Questions
 A Question is a question text and a ChoiceSet.
-A ChoiceSet is an ordered set of possible Choices.
+A ChoiceSet is a stored ordered set of possible Choices.
 A Response is when a User answers to a Poll. 
 A Response is a set of Answers, one Answer for each Question of the Poll.
 
@@ -66,6 +66,11 @@ postings = dd.resolve_app('postings')
 contacts = dd.resolve_app('contacts')
 
 
+NullBooleanField = models.BooleanField
+#~ # not yet implemented:
+#~ NullBooleanField = models.NullBooleanField
+
+
 class PollStates(dd.Workflow):
     """
     State of a Calendar Task. Used as Workflow selector.
@@ -96,6 +101,15 @@ add('20', _("Registered"),'registered',editable=False)
 
 ResponseStates.registered.add_transition(_("Register"),states='draft')
 ResponseStates.draft.add_transition(_("Deregister"),states="registered")
+
+
+#~ class QuestionTypes(dd.ChoiceList):
+    #~ verbose_name_plural = _("Question Types")
+    #~ required = dd.required(user_level='admin')
+    #~ 
+#~ add = QuestionTypes.add_item
+#~ add('10', _("Draft"),'draft',editable=True)
+    
 
 
 class ChoiceSet(dd.BabelNamed):
@@ -134,13 +148,18 @@ class Poll(dd.UserAuthored,dd.CreatedModified):
         verbose_name_plural = _("Polls")
         ordering = ['created']
         
-    title = models.CharField(_("title"),max_length=200)
+    title = models.CharField(_("Title"),max_length=200)
     
     details = models.TextField(_("Details"),blank=True)
     
     default_choiceset = models.ForeignKey('polls.ChoiceSet',
+        null=True,blank=True,
         related_name='polls',
         verbose_name=_("Default Choiceset"))
+    
+    default_multiple_choices = NullBooleanField(
+        _("Allow multiple choices"))
+        #~ null=True,blank=True)
         
     questions_to_add = models.TextField(_("Questions to add"),
         help_text=_("Paste text for questions to add. Every non-empty line will create one question."),
@@ -185,9 +204,9 @@ class PollDetail(dd.FormLayout):
     main = "general results"
     
     general = dd.Panel("""
-    title 
+    title state 
     details
-    user created modified default_choiceset state 
+    user created modified default_choiceset default_multiple_choices
     polls.QuestionsByPoll
     """,label=_("General"))
     
@@ -203,7 +222,7 @@ class Polls(dd.Table):
     detail_layout = PollDetail()
     insert_layout = dd.FormLayout("""
     title
-    default_choiceset
+    default_choiceset default_multiple_choices
     questions_to_add
     """,window_size=(60,15))
     
@@ -219,6 +238,7 @@ class Question(dd.Sequenced):
     poll = models.ForeignKey('polls.Poll',related_name='questions')
     text = models.TextField(verbose_name=_("Text"))
     choiceset = models.ForeignKey('polls.ChoiceSet',blank=True,null=True)
+    multiple_choices = NullBooleanField(_("Allow multiple choices"))
     
     def __unicode__(self):
         #~ return self.text[:40].strip() + ' ...'
@@ -233,6 +253,11 @@ class Question(dd.Sequenced):
             return self.poll.default_choiceset
         return self.choiceset
         
+    def get_multiple_choices(self):
+        if self.multiple_choices is None:
+            return self.poll.default_multiple_choices
+        return self.multiple_choices
+        
     #~ def full_clean(self,*args,**kw):
         #~ if self.choiceset_id is None:
             #~ self.choiceset = self.poll.default_choiceset
@@ -244,7 +269,7 @@ class Questions(dd.Table):
     
 class QuestionsByPoll(Questions):
     master_key = 'poll'
-    column_names = 'text choiceset'
+    column_names = 'text choiceset multiple_choices'
     auto_fit_column_widths = True
     
 class Response(dd.UserAuthored,dd.Registrable,dd.CreatedModified):
@@ -261,12 +286,12 @@ class Response(dd.UserAuthored,dd.Registrable,dd.CreatedModified):
     def poll_choices(cls):
         return Poll.objects.filter(state=PollStates.published)
         
-    def after_ui_save(self,ar):
-        if self.answers.count() == 0:
-            for obj in self.poll.questions.all():
-                Answer(response=self,question=obj).save()
-                    
-        super(Response,self).after_ui_save(ar)
+    #~ def after_ui_save(self,ar):
+        #~ if self.answers.count() == 0:
+            #~ for obj in self.poll.questions.all():
+                #~ Answer(response=self,question=obj).save()
+                    #~ 
+        #~ super(Response,self).after_ui_save(ar)
         
     def __unicode__(self):
         return _("%(user)s's response to %(poll)s") % dict(
@@ -296,58 +321,139 @@ class MyResponses(dd.ByUser,Responses):
     column_names = 'created poll state remark *'
         
 class ResponsesByPoll(Responses):
-    master_key = 'user'
+    master_key = 'poll'
     column_names = 'created user state remark *'
-        
-
-class Answer(dd.Model):
+    
+    
+class AnswerChoice(dd.Model):
     class Meta:
-        verbose_name = _("Answer")
-        verbose_name_plural = _("Answers")
+        verbose_name = _("Answer Choice")
+        verbose_name_plural = _("Answer Choices")
         ordering = ['question__seqno']
         
-    response = models.ForeignKey('polls.Response',related_name='answers')
-    question = models.ForeignKey('polls.Question',related_name='answers')
+    response = models.ForeignKey('polls.Response')
+    question = models.ForeignKey('polls.Question')
     choice = models.ForeignKey('polls.Choice',
         related_name='answers',verbose_name=_("My answer"),
         blank=True,null=True)
-    remark = models.TextField(_("My remark"),blank=True)
         
     @dd.chooser()
     def choice_choices(cls,question):
         return question.get_choiceset().choices.all()
         
-    #~ @dd.action()
-    #~ def select_choice(self,ar,**kw):
-        #~ print 20131016, self, ar.selected_rows, ar.actor
-        #~ return kw
     
-    @dd.displayfield(_("My answer"))
-    def answer_buttons(self,ar):
-        l = []
-        if self.choice is None:
-            kw = dict(title=_("Select this value"))
-            for c in self.question.get_choiceset().choices.all():
-                l.append(ar.put_button(self,unicode(c),dict(choice=c),**kw))
-                #~ l.append(self.select_choice.as_button_elem(ar.request,unicode(c)))
-        else:
-            l.append(E.b(unicode(self.choice)))
-            l.append(ar.put_button(self,_("Undo"),dict(choice=None),title=_("Undo your vote")))
-        return E.p(*join_elems(l))
+class AnswerRemark(dd.Model):
+    class Meta:
+        verbose_name = _("Answer Remark")
+        verbose_name_plural = _("Answer Remarks")
+        ordering = ['question__seqno']
+        
+    response = models.ForeignKey('polls.Response')
+    question = models.ForeignKey('polls.Question')
+    remark = models.TextField(_("My remark"),blank=True)
+        
+        
     
 
+FORWARD_TO_QUESTION = tuple("full_clean after_ui_save disable_delete".split())
+
+"""
+volatile object to represent "the one and only" answer to a given question 
+in a given response
+"""
+class Answer(object):
+    def __init__(self,response,question):
+        self.response = response
+        self.question = question
+        self.pk = self.id = question.pk
+        try:
+            self.remark = AnswerRemark.objects.get(question=question,response=response)
+        except AnswerRemark.DoesNotExist:
+            self.remark = AnswerRemark(question=question,response=response)
+            
+        self.choices = AnswerChoice.objects.filter(question=question,response=response)
+        for k in FORWARD_TO_QUESTION:
+            setattr(self,k,getattr(question,k))
+        
+        
+class AnswerRemarkField(dd.VirtualField):
+    """
+    An editable virtual field.
+    """
+    editable = True
+    def __init__(self):
+        rt = models.TextField(_("My remark"),blank=True)
+        dd.VirtualField.__init__(self,rt,None)
     
-class Answers(dd.Table):
-    model = 'polls.Answer'
-    
-class AnswersByResponse(Answers):
-    master_key = 'response'
+    def set_value_in_object(self,ar,obj,value):
+        #~ e = self.get_entry_from_answer(obj)
+        obj.remark.remark = value
+        obj.remark.save()
+        
+    def value_from_object(self,obj,ar):
+        #~ logger.info("20120118 value_from_object() %s",dd.obj2str(obj))
+        #~ e = self.get_entry_from_answer(obj)
+        return obj.remark.remark
+        
+
+class AnswersByResponse(dd.VirtualTable):
+    label = _("Answers")
+    editable = True
+    master = 'polls.Response'
     column_names = 'question:40 answer_buttons:30 remark:20 *'
     variable_row_height = True
     auto_fit_column_widths = True
     #~ slave_grid_format = 'html'
+    
+    remark = AnswerRemarkField()
+    
+    @classmethod
+    def get_pk_field(self):
+        return Question._meta.pk
+        #~ return AnswerPKField()
+        
+    @classmethod
+    def get_row_by_pk(self,ar,pk):
+        response = ar.master_instance
+        #~ if response is None: return
+        q = Question.objects.get(pk=pk)
+        return Answer(response,q)
+        
+    @classmethod
+    def get_row_permission(cls,obj,ar,state,ba):
+        return True
+        
+        
+    @classmethod
+    def disable_delete(self,obj,ar):
+        return "Not deletable"
+        
+    @classmethod
+    def get_data_rows(self,ar):
+        response = ar.master_instance
+        if response is None: return 
+        for q in Question.objects.filter(poll=response.poll):
+            yield Answer(response,q)
+    
+    @dd.displayfield(_("Question"))
+    def question(self,obj,ar):
+        return E.p(unicode(obj.question))
+        
+    @dd.displayfield(_("My answer"))
+    def answer_buttons(self,obj,ar):
+        l = []
+        if obj.question.get_multiple_choices():
+            l.append("MC not yet implemented")
+        else:
+            kw = dict(title=_("Select this value"))
+            for c in obj.question.get_choiceset().choices.all():
+                l.append(unicode(c))
+                #~ l.append(ar.put_button(obj.question,unicode(c),dict(choice=c),**kw))
+                #~ l.append(self.select_choice.as_button_elem(ar.request,unicode(c)))
+        return E.p(*join_elems(l))
+    
+        
 
-   
     
 class PollResult(Questions):
     master_key = 'poll'
@@ -420,7 +526,7 @@ def setup_explorer_menu(site,ui,profile,m):
     m.add_action('polls.Questions')
     m.add_action('polls.Choices')
     m.add_action('polls.Responses')
-    m.add_action('polls.Answers')
+    #~ m.add_action('polls.Answers')
   
 
 dd.add_user_group('polls',App.verbose_name)

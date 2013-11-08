@@ -1,18 +1,25 @@
 Lino is not Django
 ==================
 
+When I discovered Django in the end of 2008, after having worked 
+many months on my own database model, I was quickly fascinated.
+The ORM and database model based on 'apps' is simply genial.
+The way of how this is integrated into a web application server system: genial.
+But one thing disturbed me: the 
+`admin interface <http://docs.djangoproject.com/en/dev/ref/contrib/admin/#ref-contrib-admin>`_  
+has obviously not been designed to write complete database applications.
+That's why I started to write Lino.
+Lino is an alternative for Django's `django.contrib.admin` module.
 
-Lino replaces some important Django components by its own system,
-and on this page I try to explain these design decisions.
 The decision of *not using* some part of an established framework 
-of course needs some audacity or foolishness, 
-and I beg your pardon for daring to mention my decisions here.
-
+of course needs some audacity (or foolishness if you prefer), 
+and I beg your pardon for daring to explain my decisions here.
 
 .. include:: /include/tellme.rst
 
 
 - Lino is a replacement for `django.contrib.admin`.
+
   I believe that `django.contrib.admin`
   is not a usable base for representing a desktop-style application.
   For example it lets you define only one ModelAdmin per Model.

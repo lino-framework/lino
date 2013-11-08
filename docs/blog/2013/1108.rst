@@ -1,0 +1,27 @@
+===================================
+20131108 (Friday, 08 November 2013)
+===================================
+
+Continued on :ref:`eidreader`
+-----------------------------
+
+Yesterday I `asked for help 
+<https://groups.google.com/d/msg/eid-applet/mO8mqsvuMFc/I8yM1hH6OtcJ>`__
+on the mailing list of the `eid-applet` group, and half an hour later 
+Frank answered. Thanks!
+He suggests to try with the recently released version 1.1.0.
+
+- Changed `Manifest.txt` so that it no longer hard-codes a specific 
+  version of `eid-applet-service.jar`, `commons-logging.jar` 
+  and `commons-codec.jar`
+  
+- Started to write installation instructions at :ref:`eidreader.install`.
+  (Also tried to do this on github, but got stuck because I didn't figure 
+  out how to make internal links between different pages of their wiki)
+  
+Result: Great! It works!
+
+To be more precise: the parser no longer causes an error,
+now it is again *my* code which needs to evolve:
+I must discover how to convert the information returned by the parser 
+into what i want.
