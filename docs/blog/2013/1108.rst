@@ -26,17 +26,17 @@ now it is again *my* code which needs to evolve:
 I must discover how to convert the information returned 
 by the parser into what i want.
 
-16:30 
-Also this works!
+16:30 the last problems are solved! :ref:`welfare` no longer uses 
+use_eid_jslib but eidreader to read id cards!
 
-- Fixed a bug which caused manual callbacks other than simple 
-  confirmations to fail
+- Fixed a bug which caused manual callbacks (other than simple 
+  confirmations) to fail.
   
 - Lino now expects the EIDReader applet to be in a directory 
   `media/eidreader` which usually will be a symbolic link to the 
   :file:`applets` directory of the :ref:`eidreader` repository.
   
-  
+
   
 
 
