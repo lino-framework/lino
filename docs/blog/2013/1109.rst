@@ -9,10 +9,12 @@ I really like my method of having *at most one* blog entry per day where
 I write down everything I did that day, all projects mixed.
 
 The :fab:`ci` command then does a combined `commit` and `push` using 
-either Mercurial or Git, using today's blog entry as commit message.
+either Mercurial or Git, specifying today's blog entry as commit message.
 
-One problem occured when I worked longer than midnight before 
+A subtle problem occured when I worked longer than midnight before 
 committing: I needed to start a new blog entry just to 
 "commit yesterday's work" (as happened e.g. on :blogref:`20130523`).
 
-:func:`atelier.get_current_date`
+Now I can set a hard-coded TODAY date in such situations.
+See :func:`atelier.fablib.get_current_date`
+and :attr:`atelier.TODAY`
