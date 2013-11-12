@@ -12,7 +12,11 @@
 ## along with Lino; if not, see <http://www.gnu.org/licenses/>.
 
 """
-Defines the :class:`Change` model
+The :xfile:`models` module for :mod:`lino.modlib.changes`.
+
+It defines the :class:`Change` model 
+and the :func:`watch_changes` function.
+It also adds a menu entry to the `Explorer` menu.
 """
 
 import logging
@@ -31,7 +35,6 @@ from django.db import models
 from django.utils.translation import ugettext_lazy as _
 
 from lino import dd
-#~ from lino import commands
 from lino.core import fields
 from lino.utils.choosers import chooser
 
@@ -185,7 +188,6 @@ def watch_changes(model,ignore=[],master_key=None,**options):
         def get_master(obj):
             return getattr(obj,master_key.name)
     ignore = set(ignore)
-    #~ cs = WATCH_SPECS.get(model)
     cs = model.change_watcher_spec
     if cs is not None:
         ignore |= cs.ignored_fields
@@ -193,7 +195,7 @@ def watch_changes(model,ignore=[],master_key=None,**options):
         if not f.editable:
             ignore.add(f.name)
     model.change_watcher_spec = WatcherSpec(ignore,get_master)
-    #~ logger.info("20130508 watch_changes(%s)",model)
+    #~ logger.info("20131112 watch_changes(%s,%s)",model,master_key)
 
 
 def get_master(obj):
@@ -223,8 +225,10 @@ def log_change(type,request,master,obj,msg=''):
 def on_update(sender=None,request=None,**kw):
     "Note that sender is a Watcher instance"
     #~ print 'on_update',sender
+    logger.info("20131112 on_update %s",sender)
     master = get_master(sender.watched)
     if master is None:
+        logger.info("20131112 No master, nothing to log")
         return
         
     cs = sender.watched.change_watcher_spec

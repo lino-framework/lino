@@ -164,7 +164,7 @@ class Budget(mixins.AutoUser,mixins.CachedPrintable):
     
     date = models.DateField(_("Date"),blank=True,default=datetime.date.today)
     partner = models.ForeignKey('contacts.Partner',blank=True,null=True)
-    closed = models.BooleanField(verbose_name=_("Closed"))
+    closed = models.BooleanField(verbose_name=_("Closed"),default=False)
     intro = dd.RichTextField(_("Introduction"),format="html",blank=True)
     
                 
@@ -526,8 +526,8 @@ class Entry(SequencedBudgetComponent):
     #~ amount2 = dd.PriceField(_("Amount") + " 2",blank=True,null=True)
     #~ amount3 = dd.PriceField(_("Amount") + " 3",blank=True,null=True)
     amount = dd.PriceField(_("Amount"),default=0)
-    circa = models.BooleanField(verbose_name=_("Circa"))
-    todo = models.BooleanField(verbose_name=_("To Do"))
+    circa = models.BooleanField(verbose_name=_("Circa"),default=False)
+    todo = models.BooleanField(verbose_name=_("To Do"),default=False)
     remark = models.CharField(_("Remark"),max_length=200,blank=True)
     periods = PeriodsField(_("Periods"))
     monthly_rate = dd.PriceField(_("Monthly rate"),default=0,

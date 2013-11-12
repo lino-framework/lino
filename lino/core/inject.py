@@ -14,6 +14,8 @@
 import logging
 logger = logging.getLogger(__name__)
 
+import django
+
 from django.conf import settings
 from django.db.models.signals import class_prepared
 from django.db.models.fields import FieldDoesNotExist
@@ -25,16 +27,56 @@ from lino.core.signals import pre_analyze
 PENDING_INJECTS = dict()
 PREPARED_MODELS = dict()
 
+def clear_field_cache(self):
+    """
+    Modified copy of the Django 1.6 add_field method of django.db.models.options.Options
+    Here we don't add a field, we just delete the cache variables.
+    """
+    if hasattr(self, '_m2m_cache'):
+        del self._m2m_cache
+    if hasattr(self, '_field_cache'):
+        del self._field_cache
+        del self._field_name_cache
+        try:
+            del self.fields
+        except AttributeError:
+            pass
+        try:
+            del self.concrete_fields
+        except AttributeError:
+            pass
+        try:
+            del self.local_concrete_fields
+        except AttributeError:
+            pass
+
+    if hasattr(self, '_name_map'):
+        del self._name_map
+
+
 def fix_field_cache(model):
     """
+    _fill_fields_cache
     Remove duplicate entries in `_field_cache` to fix Django issue #10808
     """
+    
     cache = []
     field_names = set()
+    duplicates = []
     for f,m in model._meta._field_cache:
-        if f.attname not in field_names:
+        if f.attname in field_names:
+            duplicates.append(f)
+        else:
             field_names.add(f.attname)
             cache.append( (f,m) )
+            
+            
+    if len(duplicates) == 0:
+        return
+        #~ raise Exception("20131110 %r" % (model._meta._field_cache,))
+    #~ if django.get_version().startswith('1.6'):
+        #~ return
+    
     model._meta._field_cache = tuple(cache)
     model._meta._field_name_cache = [x for x, _ in cache]
     #~ if model.__name__ in ('Company','Partner'):
@@ -55,7 +97,7 @@ def on_class_prepared(sender,**kw):
       (A better solution would be of course to not collect them.)
     """
     #~ if sender.__name__ in ('Company','Partner'):
-        #~ print("20130212 on_class_prepared",sender)
+    #~ print("20131110 on_class_prepared",sender)
     model = sender
     #~ if model._meta.abstract : 
         #~ """
@@ -70,8 +112,8 @@ def on_class_prepared(sender,**kw):
     #~ logger.info("20120627 on_class_prepared %r = %r",k,model)
     todos = PENDING_INJECTS.pop(k,None)
     if todos is not None:
-        for f in todos:
-            f(model)
+        for func,caller in todos:
+            func(model)
         #~ for k,v in injects.items():
             #~ model.add_to_class(k,v)
 
@@ -81,10 +123,19 @@ def on_class_prepared(sender,**kw):
     if hasattr(model._meta,'_field_cache'):
         fix_field_cache(model)
     #~ else:
-        #~ logger.info("20120905 Could not fix Django issue #10808 for %s",model)
+        #~ logger.info("20131110 Could not fix Django issue #10808 for %s",model)
 
 
 
+import inspect
+
+def fmt(func_caller):
+    f,caller = func_caller
+    #~ ln = inspect.getsourcelines(f)[1]
+    #~ return "%s in %s:%d" % (f.__name__,inspect.getsourcefile(f),ln)
+    #~ return "%s in %s:%d" % (f.__name__,caller.filename,caller.line_no)
+    #~ return "%s in %s" % (f.__name__,caller)
+    return "called from %s" % caller
 
 @receiver(pre_analyze)
 def check_pending_injects(sender,models_list=None,**kw): # def check_pending_injects(signal,sender,models_list=None,**kw): 
@@ -95,11 +146,14 @@ def check_pending_injects(sender,models_list=None,**kw): # def check_pending_inj
         msg = ''
         for spec,funcs in PENDING_INJECTS.items():
             msg += spec + ': ' 
+            msg += ', '.join([fmt(f) for f in funcs])
             #~ msg += '\n'.join([str(dir(func)) for func in funcs])
             #~ msg += '\n'.join([str(func.func_code.co_consts) for func in funcs])
-            msg += str(funcs)
+            #~ msg += str(funcs)
         raise Exception("Oops, there are pending injects: %s" % msg)
         #~ logger.warning("pending injects: %s", msg)
+        
+    #~ logger.info("20131110 no pending injects")
 
     """
     20130106
@@ -109,6 +163,7 @@ def check_pending_injects(sender,models_list=None,**kw): # def check_pending_inj
     """
     #~ for model in models.get_models():
     for model in models_list:
+        clear_field_cache(model._meta)
         model._meta._fill_fields_cache()
         fix_field_cache(model)
 
@@ -121,6 +176,15 @@ def do_when_prepared(todo,*model_specs):
     If a specified model hasn't yet been prepared, 
     adds the call to a queue and execute it later.
     """
+    #~ caller = inspect.stack()[2]
+    caller = inspect.getouterframes(inspect.currentframe())[2]
+    #~ print 20131111, caller
+    caller =  "%s:%d" % (caller[1],caller[2])
+
+    #~ caller = inspect.getframeinfo(caller)
+    #~ caller = inspect.getframeinfo(inspect.currentframe().f_back)[2]
+    #~ caller = inspect.getframeinfo(caller.f_back)[2]
+    
     for model_spec in model_specs:
         if model_spec is None:
             continue # e.g. inject_field during autodoc when user_model is None
@@ -132,10 +196,10 @@ def do_when_prepared(todo,*model_specs):
             model = PREPARED_MODELS.get(k,None)
             if model is None: 
                 injects = PENDING_INJECTS.setdefault(k,[])
-                injects.append(todo)
+                injects.append((todo,caller))
                 #~ d[name] = field
                 #~ if model_spec == "system.SiteConfig":
-                    #~ logger.info("20130228 Defer %s for %s", todo, model_spec)
+                #~ logger.info("20131110 Defer %s for %s", todo, model_spec)
                 continue
         else:
             model = model_spec
@@ -180,11 +244,12 @@ def inject_field(model_spec,name,field,doc=None):
     if doc:
         field.__doc__ = doc
     def todo(model):
+        #~ logger.info("20131110 gonna inject_field %s %s",model.__name__,name)
         model.add_to_class(name,field)
         model._meta._fill_fields_cache()
         fix_field_cache(model)
 
-    return do_when_prepared(todo,model_spec)    
+    return do_when_prepared(todo,model_spec)
     
     
 
@@ -222,7 +287,7 @@ def update_field(model_spec,name,**kw):
             setattr(fld,k,v)
         #~ if model.__name__ == "SiteConfig":
             #~ logger.info("20130228 updated field %s in %s",name,model)
-    return do_when_prepared(todo,model_spec)    
+    return do_when_prepared(todo,model_spec)
         
 
 def inject_quick_add_buttons(model,name,target):

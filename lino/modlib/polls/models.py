@@ -66,9 +66,11 @@ postings = dd.resolve_app('postings')
 contacts = dd.resolve_app('contacts')
 
 
-NullBooleanField = models.BooleanField
+#~ def NullBooleanField(*args,**kw):
+    #~ kw.setdefault('default',False)
+    #~ return models.BooleanField(*args,**kw)
 #~ # not yet implemented:
-#~ NullBooleanField = models.NullBooleanField
+NullBooleanField = models.NullBooleanField
 
 
 class PollStates(dd.Workflow):

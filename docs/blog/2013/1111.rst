@@ -1,0 +1,51 @@
+===================================
+20131111 (Monday, 11 November 2013)
+===================================
+
+
+Lino and  Django 1.6
+--------------------
+
+Django 1.6 has been released. 
+Remember from :blogref:`20130709`:
+
+- TODO: :mod:`lino.core.inject` seems to have problems. 
+  Which is not too surprising as it uses some subtle but undocumented hacks.
+  Will have a closer look at this when a first release will be 
+  visible on PyPI.
+  
+:func:`lino.core.inject.inject_field <inject_field>` didn't work in 
+Django 1.6:
+injected fields weren't seen by subclasses.
+E.g. :mod:`lino.modlib.vat` injects a field `vat_regime` 
+to `contacts.Partner`, but when trying to `initdb_demo` for :ref:`cosi` 
+I got::
+
+  File "/home/luc/hgwork/site/djangosite/dbutils.py", line 116, in obj2str
+    v = getattr(i,fld.name,None) # 20130709 Django 1.6b1
+  File "/home/luc/pythonenvs/py27d/local/lib/python2.7/site-packages/django/db/models/fields/subclassing.py", line 32, in __get__
+    return obj.__dict__[self.field.name]
+  KeyError: u"Problem installing fixture '/home/luc/hgwork/lino/lino/modlib/contacts/fixtures/demo.py': u'vat_regime'"
+
+This was because in Django 1.6 the `_meta` object does a bit more 
+caching of the fields. 
+
+.. note::
+
+    Thanks to Kai Willadsen and the authors of the `Meld Diff Viewer
+    <http://meldmerge.org/>`_, a great tool which helped me to 
+    understand the above problem.
+    
+    
+Another problem is the fact that test discovery has changed.
+(see `Running tests <https://docs.djangoproject.com/en/dev/topics/testing/overview/#running-tests>`_).
+The Lino test suite happily did things like this::
+
+  django-admin.py test --settings=lino.test_apps.quantityfield.settings --noinput --failfast --traceback
+  django-admin.py test --settings=lino.test_apps.20100212.settings --noinput --failfast --traceback
+
+Before Django 1.6 this worked because tests were only found within packages listed in `INSTALLED_APPS`.
+Django 1.6 will discover tests in *any* file named “test*.py” *under the current working directory*.
+So I had adapt some of the tutorials.
+
+

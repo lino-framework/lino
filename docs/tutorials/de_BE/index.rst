@@ -22,9 +22,7 @@ The site uses a single model, which is a :class:`BabelNamed
 
 .. literalinclude:: models.py
 
-..
-  >>> # encoding: utf-8
-  >>> from tutorials.de_BE.models import *
+>>> from de_BE.models import *
 
 
 Populate the database

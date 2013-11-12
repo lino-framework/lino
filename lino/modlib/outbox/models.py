@@ -98,7 +98,9 @@ class MailableType(dd.Model):
     class Meta:
         abstract = True
         
-    attach_to_email = models.BooleanField(_("Attach to email"),help_text="""\
+    attach_to_email = models.BooleanField(_("Attach to email"),
+        default=False,
+        help_text="""\
 Whether the printable file should be attached to the email
 when creating an email from a mailable of this type.
 """)

@@ -12,7 +12,7 @@
 ## You should have received a copy of the GNU General Public License
 ## along with Lino; if not, see <http://www.gnu.org/licenses/>.
 
-ur"""
+r"""
 Quantity Fields
 ===============
 
@@ -44,6 +44,9 @@ Default value for `qty` is 1, while `discount` is "pseudo-nullable".
 
 """
 
+from __future__ import unicode_literals
+
+
 from django.db import models
 from lino import dd
 
@@ -55,9 +58,9 @@ class Item(dd.Model):
     
     def __unicode__(self):
         if self.discount is None:
-            return u"%s x %s at %s = %s EUR" % (self.qty,self.name,self.price,self.total())
+            return "%s x %s at %s = %s EUR" % (self.qty,self.name,self.price,self.total())
         else:
-            return u"%s x %s at %s (-%s) = %s EUR" % (self.qty,self.name,self.price,self.discount,self.total())
+            return "%s x %s at %s (-%s) = %s EUR" % (self.qty,self.name,self.price,self.discount,self.total())
         
     def total(self):
         if self.discount is None:

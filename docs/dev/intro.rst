@@ -5,7 +5,7 @@ Introduction
 Lino applications are basically normal Django applications, but 
 instead of writing `Admin` classes for your Django models, you write Reports 
 
-A Report describes a set of tabular data
+A Table describes a set of tabular data
 independently of *user interface* and *medium* (paper, screen, interactive or not), 
 but with all the meta-data information necessary for any user interface 
 to produce a satisfying result on any medium.

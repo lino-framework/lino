@@ -17,7 +17,7 @@ class Place(dd.Model):
             ','.join([unicode(o) for o in self.owners.all()]))
         
 class Restaurant(Place):
-    serves_hot_dogs = models.BooleanField()
+    serves_hot_dogs = models.BooleanField(default=False)
     cooks = models.ManyToManyField(Person)
     def __unicode__(self):
         return "#%d (name=%s,owners=%s,cooks=%s)" % (

@@ -72,9 +72,13 @@ Optional Python packages
 The following Python packages (to be installed using `pip install`) 
 are optional and therefore not automatically installed:
 
+fabric
+
+    Needed if you do certain development tasks using :mod:`atelier.fablib`
+    
 python-daemon 
 
-    Needed if you run :term:`watch_tim` or some other daemon process 
+    Needed if you run :ref:`watch_tim` or some other daemon process 
     (probably not).
 
 

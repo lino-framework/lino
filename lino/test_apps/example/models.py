@@ -34,7 +34,7 @@ class Place(models.Model):
 
 class Restaurant(Place):
   
-    serves_hot_dogs = models.BooleanField()
+    serves_hot_dogs = models.BooleanField(default=False)
     
     # the following explicit parent_link should not be necessary according to 
     # http://docs.djangoproject.com/en/dev/topics/db/models/#specifying-the-parent-link-field

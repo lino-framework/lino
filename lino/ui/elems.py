@@ -2159,6 +2159,8 @@ _FIELD2ELEM = (
     (models.IntegerField, IntegerFieldElement),
     (models.DecimalField, DecimalFieldElement),
     (models.BooleanField, BooleanFieldElement),
+    # TODO: Lino currently renders NullBooleanField like BooleanField
+    (models.NullBooleanField, BooleanFieldElement), 
     #~ (models.ManyToManyField, M2mGridElement),
     (models.ForeignKey, ForeignKeyElement),
     (models.AutoField, AutoFieldElement),

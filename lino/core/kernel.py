@@ -222,16 +222,9 @@ def startup_site(self):
                     f.rel.to._lino_ddh.add_fk(m or model,f)
                         
     dd.pre_analyze.send(self,models_list=models_list)
-    # MergeAction are defined in pre_analyze. 
+    # MergeActions are defined in pre_analyze. 
     # And MergeAction needs the info in _lino_ddh to correctly find keep_volatiles
     
-    #~ for model in models.get_models():
-
-            #~ for k,v in class_dict_items(model):
-                #~ if isinstance(v,dd.VirtualField):
-                    #~ v.lino_resolve_type()
-                    
-                    
     
     for model in models_list:
       
@@ -251,10 +244,12 @@ def startup_site(self):
     #~ logger.info("20130817 attached model vfs")
                     
     actors.discover()
+    
+    actors.initialize()
     dbtables.discover()
     #~ choosers.discover()
     actions.discover_choosers()
-                    
+    
     #~ from lino.core import ui
     #~ ui.site_setup(self)
     
@@ -276,11 +271,11 @@ def startup_site(self):
     self.on_each_app('site_setup')
     
     """
-    Actor.after_site_setup() is called after the app's site_setup().
+    Actor.after_site_setup() is called after the apps' site_setup().
     Example: pcsw.site_setup() adds a detail to properties.Properties, 
     the base class for properties.PropsByGroup. 
     The latter would not 
-    install a detail_action during her after_site_setup() 
+    install a `detail_action` during her after_site_setup() 
     and also would never get it later.
     """
     for a in actors.actors_list:

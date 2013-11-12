@@ -184,7 +184,7 @@ class MergeAction(actions.Action):
                 fieldname = full_model_name(m,'_')
                 if not fieldname in keep_volatiles:
                     keep_volatiles.append(fieldname)
-                    fields[fieldname] = models.BooleanField(m._meta.verbose_name_plural)
+                    fields[fieldname] = models.BooleanField(m._meta.verbose_name_plural,default=False)
             #~ logger.info("20130421 %r in %r",fk.name,m.allow_cascaded_delete)
             
         

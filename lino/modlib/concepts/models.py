@@ -95,7 +95,8 @@ class Concept(dd.BabelNamed):
     definition = dd.BabelTextField(_("Definition"),blank=True)
     is_jargon_domain = models.BooleanField(
         _("Jargon domain"),
-        help_text=_("Whether this concept designates a domain of specialized vocabulary."))
+        help_text=_("Whether this concept designates a domain of specialized vocabulary."),
+        default=False)
         
     def summary_row(self,ar=None):
         if self.abbr:

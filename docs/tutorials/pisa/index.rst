@@ -11,7 +11,10 @@ We have Person model inherit from `dd.Printable`:
 
 
 We create a template:
-:srcref:`/docs/tutorials/pisa/config/Default.pisa.html`
+:srcref:`Default.pisa.html </docs/tutorials/pisa/config/Default.pisa.html>`
+
+.. literalinclude:: config/Default.pisa.html
+
 
 That's basically all. 
 
@@ -25,18 +28,17 @@ such things using scripts.
 
 Note that you need to manually add `pip install pisa`.
 
-
 >>> from __future__ import print_function 
 >>> from lino.runtime import *
 >>> from django.test import Client
->>> from tutorials.pisa.models import Person
+>>> from pisa.models import Person
 
-Must set default_build_method to pisa because otherwise Lino would 
-use `appyodt`
+Must set `default_build_method` to ``"pisa"`` because otherwise Lino would 
+use ``"appyodt"``
 
 >>> settings.SITE.site_config.update(default_build_method = 'pisa')
 
-Let's install our well-known demo root users:
+Let's install our well-known demo root users from :mod:`lino.modlib.system.fixtures.demo`:
 
 >>> from lino.modlib.system.fixtures.demo import objects
 >>> for obj in objects(): 
@@ -68,14 +70,12 @@ Check the result:
 >>> print(rv) #doctest: +NORMALIZE_WHITESPACE
 {'open_url': u'/media/cache/pisa/pisa.Person-1.pdf', 'success': True}
 
-
 Since the media/cache directory is not part of the Lino repository, 
-we add the following code to copies the resulting file to a public place:
+we copy the resulting file to a public place:
 
 >>> import shutil
->>> base = 'docs/tutorials/pisa/'
 >>> shutil.copyfile(
-...    base + 'media/cache/pisa/pisa.Person-1.pdf',
-...    base + 'pisa.Person-1.pdf')
+...    'media/cache/pisa/pisa.Person-1.pdf',
+...    'pisa.Person-1.pdf')
 
 

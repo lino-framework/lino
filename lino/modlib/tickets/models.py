@@ -331,7 +331,7 @@ class Session(mixins.AutoUser,mixins.ProjectRelated):
     time = models.TimeField(
         blank=True,null=True,
         verbose_name=_("Time"))
-    is_private = models.BooleanField(verbose_name=_("is private"))
+    is_private = models.BooleanField(verbose_name=_("is private"),default=False)
     
     def __unicode__(self):
         if self.start_time and self.end_time:

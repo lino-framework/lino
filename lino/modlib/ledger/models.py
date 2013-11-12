@@ -1321,7 +1321,7 @@ def customize_accounts():
     for tt in vat.TradeTypes.objects():
         dd.inject_field('accounts.Account',
             tt.name+'_allowed',
-            models.BooleanField(verbose_name=tt.text))
+            models.BooleanField(verbose_name=tt.text,default=True))
 
     dd.inject_field('accounts.Account',
         'clearable',models.BooleanField(_("Clearable"),default=False))

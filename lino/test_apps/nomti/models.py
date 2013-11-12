@@ -48,7 +48,7 @@ class Bar(dd.Model):
 
 class Restaurant(dd.Model):
     place = models.OneToOneField(Place)
-    serves_hot_dogs = models.BooleanField()
+    serves_hot_dogs = models.BooleanField(default=False)
     cooks = models.ManyToManyField(Person)
     def __unicode__(self):
         return "%s (cooks=%s)" % (

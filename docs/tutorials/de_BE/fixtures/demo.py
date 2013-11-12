@@ -2,7 +2,7 @@
 from __future__ import unicode_literals
 
 from north.dbutils import babelkw 
-from tutorials.de_BE.models import Expression
+from de_BE.models import Expression
 
 def O(fr,en,de,de_BE):
     return Expression(**babelkw('name',de=de,de_BE=de_BE,en=en,fr=fr))

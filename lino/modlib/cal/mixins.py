@@ -472,13 +472,13 @@ class RecurrenceSet(Started,Ended):
         blank=True) # iCal:DURATION
     every = models.IntegerField(_("Repeat every"), default=0)
         
-    monday    = models.BooleanField(Weekdays.monday.text)
-    tuesday   = models.BooleanField(Weekdays.tuesday.text)
-    wednesday = models.BooleanField(Weekdays.wednesday.text)
-    thursday  = models.BooleanField(Weekdays.thursday.text)
-    friday    = models.BooleanField(Weekdays.friday.text)
-    saturday  = models.BooleanField(Weekdays.saturday.text)
-    sunday    = models.BooleanField(Weekdays.sunday.text)
+    monday    = models.BooleanField(Weekdays.monday.text,default=False)
+    tuesday   = models.BooleanField(Weekdays.tuesday.text,default=False)
+    wednesday = models.BooleanField(Weekdays.wednesday.text,default=False)
+    thursday  = models.BooleanField(Weekdays.thursday.text,default=False)
+    friday    = models.BooleanField(Weekdays.friday.text,default=False)
+    saturday  = models.BooleanField(Weekdays.saturday.text,default=False)
+    sunday    = models.BooleanField(Weekdays.sunday.text,default=False)
     
     max_events = models.PositiveIntegerField(
         _("Number of events"),

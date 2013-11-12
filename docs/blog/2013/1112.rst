@@ -1,0 +1,13 @@
+====================================
+20131112 (Tuesday, 12 November 2013)
+====================================
+
+Tutorial about database change auditing
+---------------------------------------
+
+Joe asked whether Lino can do audit trails 
+(history log). Yes it does. 
+Here is the beginning of a tutorial:
+:doc:`/tutorials/watch_tutorial/index`
+
+

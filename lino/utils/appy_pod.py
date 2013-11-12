@@ -618,7 +618,8 @@ class PrintLabelsAction(PrintTableAction):
         
             class MyTable(dd.Table):
                 parameters = dict(
-                    only_valid_recipients=models.BooleanField(_("only valid recipients")
+                    only_valid_recipients=models.BooleanField(
+                        _("only valid recipients"),default=False
                     )
         
         """

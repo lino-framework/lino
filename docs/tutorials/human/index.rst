@@ -14,7 +14,7 @@ which just inherits :class:`lino.mixins.human.Human`:
 
 .. 
   >>> from __future__ import print_function 
-  >>> from tutorials.human.models import Person
+  >>> from human.models import Person
 
 
 Overview

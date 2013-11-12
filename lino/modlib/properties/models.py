@@ -117,12 +117,12 @@ class PropType(dd.BabelNamed):
     This is currently used only in some fixture...
     """
         
-    limit_to_choices = models.BooleanField(_("Limit to choices"))
+    limit_to_choices = models.BooleanField(_("Limit to choices"),default=False)
     """
     not yet supported
     """
     
-    multiple_choices = models.BooleanField(_("Multiple choices"))
+    multiple_choices = models.BooleanField(_("Multiple choices"),default=False)
     """
     not yet supported
     """

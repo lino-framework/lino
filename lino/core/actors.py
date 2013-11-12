@@ -60,11 +60,14 @@ def discover():
     global actors_list
     assert actors_list is None
     actors_list = []
-    logger.debug("actors.discover() : setting up %d actors",len(actor_classes))
+    logger.debug("actors.discover() : registering up %d actors",len(actor_classes))
     for cls in actor_classes:
         register_actor(cls)
     actor_classes = None
     
+def initialize():
+    
+    logger.debug("actors.initialize()")
     for a in actors_list:
         a.class_init()
           
