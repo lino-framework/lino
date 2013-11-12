@@ -69,7 +69,9 @@ We are also working on alternative user interfaces
 
 .. setting:: INSTALLED_APPS
 
-See https://docs.djangoproject.com/en/dev/ref/settings/#installed-apps
+Lino applications set Django's 
+`INSTALLED_APPS <https://docs.djangoproject.com/en/dev/ref/settings/#installed-apps>`__
+setting by calling the :setting:`get_installed_apps` method.
 
 
 .. setting:: MEDIA_ROOT

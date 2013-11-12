@@ -5,9 +5,32 @@
 Tutorial about database change auditing
 ---------------------------------------
 
-Joe asked whether Lino can do audit trails 
-(history log). Yes it does. 
+Joe asked whether Lino can do audit trails (history log). 
+Yes it does. 
+At least something similar.
 Here is the beginning of a tutorial:
-:doc:`/tutorials/watch_tutorial/index`
+:doc:`/tutorials/watch_tutorial/index`.
+
+
+
+I added a new ``demo`` fixture for :mod:`lino.modlib.countries` 
+which yields both 
+:mod:`few_countries <lino.modlib.countries.fixtures.few_countries>`
+and
+:mod:`few_cities <lino.modlib.countries.fixtures.few_cities>`.
+This is to avoid having to specify ``few_countries few_cities`` in 
+:setting:`demo_fixtures` of Sites which use 
+:mod:`lino.modlib.countries`.
+As a consequence `lino_welfare/modlib/cbss/fixtures/demo.py` 
+had to be removed, and :setting:`demo_fixtures` 
+for :ref:`welfare` changed accordingly. 
+Which in the end is clearer than before.
+
+
+Started the next release of :ref:`welfare`
+------------------------------------------
+
+- Incremented version counter of :ref:`welfare`
+- Started the migration method
 
 

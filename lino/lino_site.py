@@ -151,6 +151,42 @@ to fill the default list of FixcalYears.
 Or by :mod:`lino.modlib.ledger.fixtures.mini`
 to generate demo invoices.
 
+
+.. setting:: setup_choicelists
+
+Redefine application-specific Choice Lists.
+
+Especially used to define application-specific
+:class:`UserProfiles <lino.core.perms.UserProfiles>`.
+
+Lino by default has two user profiles "User" 
+and "Administrator", defined in :mod:`lino.core.perms`.
+
+Application developers who use group-based requirements 
+must override this in their application's :xfile:`settings.py` 
+to provide a default list of user profiles for their 
+application.
+
+See the source code of :mod:`lino.projects.presto` 
+or :mod:`lino.projects.pcsw` for a usage example.
+
+Local site administrators may again override this in their 
+:xfile:`settings.py`.
+
+Note that you may not specify values longer 
+than `max_length` when redefining your choicelists.
+This limitation is because these redefinitions happen at a 
+moment where database fields have already been instantiated, 
+so it is too late to change their max_length.        
+Not that this limitation is only for the *values*, not for the names 
+or texts of choices.
+
+.. setting:: get_installed_apps
+
+This method is expected to yield the list of strings 
+to be stored into Django's :setting:`INSTALLED_APPS` setting.
+
+
 """
 
 
@@ -484,35 +520,6 @@ class Site(Site):
         self.on_each_app('setup_workflows')
         
     def setup_choicelists(self):
-        """
-        Redefine application-specific Choice Lists.
-        
-        Especially used to define application-specific
-        :class:`UserProfiles <lino.core.perms.UserProfiles>`.
-        
-        Lino by default has two user profiles "User" 
-        and "Administrator", defined in :mod:`lino.core.perms`.
-        
-        Application developers who use group-based requirements 
-        must override this in their application's :xfile:`settings.py` 
-        to provide a default list of user profiles for their 
-        application.
-        
-        See the source code of :mod:`lino.projects.presto` 
-        or :mod:`lino.projects.pcsw` for a usage example.
-        
-        Local site administrators may again override this in their 
-        :xfile:`settings.py`.
-        
-        Note that you may not specify values longer 
-        than `max_length` when redefining your choicelists.
-        This limitation is because these redefinitions happen at a 
-        moment where database fields have already been instantiated, 
-        so it is too late to change their max_length.        
-        Not that this limitation is only for the *values*, not for the names 
-        or texts of choices.
-        
-        """
         from lino.utils import dblogger as logger
         #~ raise Exception("20130302 setup_choicelists()")
         #~ logger.info("20130302 setup_choicelists()")
@@ -1594,10 +1601,6 @@ class Site(Site):
                         yield (table,text)
 
     def get_installed_apps(self):
-        """
-        This method is expected to yield the list of strings 
-        to be stored into Django's :setting:`INSTALLED_APPS` setting.
-        """
         #~ yield 'lino.ui'
         if self.user_model is not None and self.remote_user_header is None:
             yield 'django.contrib.sessions' # 20121103

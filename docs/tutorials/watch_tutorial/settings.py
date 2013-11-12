@@ -1,18 +1,19 @@
-from lino import Site
+## Copyright 2013 Luc Saffre
+## This file is part of the Lino project.
+
+from lino.projects.std.settings import *
 
 class Site(Site):
     
     user_model = 'users.User'
-    
-    #~ demo_fixtures = "std few_countries few_cities demo demo2"
     demo_fixtures = "std demo demo2"
-    
     languages = 'en'
     
     def get_installed_apps(self):
         
         for a in super(Site,self).get_installed_apps():
             yield a
+            
         yield 'django.contrib.contenttypes'
         yield 'lino.modlib.system'
         yield 'lino.modlib.users'
@@ -26,9 +27,7 @@ class Site(Site):
         
         
     def setup_choicelists(self):
-        """
-        Redefines the default list of user profiles.
-        """
+        
         from lino import dd
         from django.utils.translation import ugettext_lazy as _
         dd.UserProfiles.reset('* office')
@@ -40,4 +39,3 @@ class Site(Site):
         
 
 SITE = Site(globals())
-SECRET_KEY = "20227" # see :djangoticket:`20227`

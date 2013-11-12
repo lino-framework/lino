@@ -44,8 +44,15 @@ The Lino test suite happily did things like this::
   django-admin.py test --settings=lino.test_apps.quantityfield.settings --noinput --failfast --traceback
   django-admin.py test --settings=lino.test_apps.20100212.settings --noinput --failfast --traceback
 
-Before Django 1.6 this worked because tests were only found within packages listed in `INSTALLED_APPS`.
+Before Django 1.6 this worked because tests were only found within packages listed in 
+:setting:`INSTALLED_APPS`.
 Django 1.6 will discover tests in *any* file named “test*.py” *under the current working directory*.
-So I had adapt some of the tutorials.
+So I had adapt most of the tutorials...
+a rather unpleasant work, but the result is a more straightforward 
+system for maintaining and testing these tutorial apps.
 
+.. note:: 
+
+    Django sometimes forces you to do things you woulnd't do on your own, 
+    but afterwards you are happy that you did them!
 
