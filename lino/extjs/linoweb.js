@@ -4855,6 +4855,13 @@ Lino.RemoteComboFieldElement = Ext.extend(Lino.ComboBox,{
   ,initList : function() {
       Lino.RemoteComboFieldElement.superclass.initList.call(this);
       if (this.pageTb) {
+          
+          var me = this;
+          this.pageTb.on("beforechange", function(toolbar, o){
+              if(me.contextParams)
+                  Ext.apply(o, me.contextParams);
+          });
+          
           //~ 
           //~ var btn = ls_buttons
           //~ this.pageTb.items = this.pageTb.items.concat([btn]);

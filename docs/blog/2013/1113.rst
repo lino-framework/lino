@@ -1,0 +1,41 @@
+======================================
+20131113 (Wednesday, 13 November 2013)
+======================================
+
+
+Continued to prepare the next release of :ref:`welfare`
+-------------------------------------------------------
+
+Continued on writing
+:func:`lino_welfare.migrate.migrate_from_1_1_10`,
+which as expected is more work than usual 
+because there were extensive
+database changes in :mod:`lino.modlib.cal`.
+
+Note that when writing a migration function, I create a lot of checkins.
+You might ask why. 
+It's because I do the tests directly on the remote machine, using repeated
+sequences of::
+
+  $ pull
+  $ python manage.py run /var/log/lino/backups/20131113_020101/restore.py --traceback
+  
+I prefer this because every run takes some time and causes 
+the machine to slow down. Let the client's machine do that work!
+While working on this, I could check my inbox and work on the next topic:
+
+Paging in a combobox looses the context
+---------------------------------------
+
+Joe contributed both a bug report and its fix:
+  
+- Bug: Open demo with countries modlib module (I tested on 
+  :ref:`lino.tutorial.watch`). Open detail of Person from Belgium. Open
+  combo with City selection. You have two pages of result. Click "next" 
+  button and you have 4 pages of results (because cities from other 
+  countries are now included). 
+  
+- His fix overrides the ComboBox's `initList` to add a listener to the 
+  `beforechange` event which retains context parameters.
+  
+Thanks, Joe!

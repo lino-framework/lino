@@ -30,7 +30,14 @@ Which in the end is clearer than before.
 Started the next release of :ref:`welfare`
 ------------------------------------------
 
+I'm going to upgrade the `testlino` instance at Gerd's site because
+they are going to test the new :ref:`eidreader` using real cards.
+
 - Incremented version counter of :ref:`welfare`
-- Started the migration method
+- Started to write 
+  :func:`lino_welfare.migrate.migrate_from_1_1_10`,
+  which as expected is some more work than usual 
+  because there were extensive
+  database changes in :mod:`lino.modlib.cal`.
 
 
