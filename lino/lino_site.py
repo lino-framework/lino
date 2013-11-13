@@ -1225,7 +1225,13 @@ class Site(Site):
         if self.webdav_root is None:
             self.webdav_root = join(abspath(self.project_dir),'media','webdav')
             
-        self.update_settings(MEDIA_ROOT = join(self.project_dir,'media'))
+        if not self.django_settings.get('MEDIA_ROOT',False):
+            """
+            Django's default value for MEDIA_ROOT is an empty string.
+            In certain test cases there migth be no MEDIA_ROOT key at all.
+            Lino's default value for MEDIA_ROOT is ``<project_dir>/media``.
+            """
+            self.django_settings.update(MEDIA_ROOT=join(self.project_dir,'media'))
         
         self.update_settings(
             ROOT_URLCONF = 'lino.ui.urls'

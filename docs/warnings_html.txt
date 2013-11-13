@@ -1,1 +1,2 @@
-/home/luc/hgwork/lino/docs/tutorials/watch_tutorial/index.rst:: WARNING: document isn't included in any toctree
+/home/luc/hgwork/lino/docs/tutorials/workflows_tutorial/index.rst:: WARNING: document isn't included in any toctree
+/home/luc/hgwork/lino/docs/releases/index.rst:1: WARNING: unknown document: 1.6.13

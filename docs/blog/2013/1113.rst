@@ -39,3 +39,17 @@ Joe contributed both a bug report and its fix:
   `beforechange` event which retains context parameters.
   
 Thanks, Joe!
+
+
+
+Setting :setting:`MEDIA_ROOT` in :xfile:`djangosite_local.py`
+-------------------------------------------------------------
+
+Until now Lino has always set :setting:`MEDIA_ROOT` 
+to a hard-coded value 
+``<project_dir>/media``.
+You could override that manually in your settings.py file, 
+but you could not set it in :xfile:`djangosite_local.py`.
+
+Now you can: Lino installs the default value only when
+:setting:`MEDIA_ROOT`  is empty.
