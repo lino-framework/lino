@@ -474,7 +474,7 @@ class ExtRenderer(HtmlRenderer):
         def javascript(url):
             return '<script type="text/javascript" src="%s"></script>' % url
             
-        if run_jasmine: 
+        if run_jasmine:
             yield stylesheet(site.build_media_url("jasmine/jasmine.css"))
         yield stylesheet(site.build_extjs_url('resources/css/ext-all.css'))
         
@@ -590,7 +590,7 @@ tinymce.init({
             
         yield javascript(site.build_extjs_url("examples/ux/fileuploadfield/FileUploadField.js"))
         
-        if site.use_filterRow: 
+        if site.use_filterRow:
             p = site.build_media_url('lino','filterRow') 
             yield '<script type="text/javascript" src="%s/filterRow.js"></script>' % p
             

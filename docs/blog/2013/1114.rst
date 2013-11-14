@@ -1,0 +1,28 @@
+=====================================
+20131114 (Thursday, 14 November 2013)
+=====================================
+
+Tutorial about dynamic tables (matrixes)
+----------------------------------------
+
+And here is a third new tutorial:
+:doc:`/tutorials/matrix_tutorial/index`.
+
+
+Rendering ForeignKeys to models without `insert_layout`
+-------------------------------------------------------
+
+Fixed a bug reported by Joe:
+A ForeignKey field is
+rendererd as a TwinButton Combobox: one button to open the selection
+list (as with any combo box), the other one to lookup the current value
+(by opening a detail window on that object). The bug came because you
+can now use the "Lookup" button of a combobox to quickly insert an item
+in the selection list (by clicking it when the field is empty).
+
+
+Updated documentation about permission
+--------------------------------------
+
+Joe contributed documentation about Lino's permissions system.
+I integrated this into :doc:`/dev/perms`.

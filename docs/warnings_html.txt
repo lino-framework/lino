@@ -1,2 +1,16 @@
-/home/luc/hgwork/lino/docs/tutorials/workflows_tutorial/index.rst:: WARNING: document isn't included in any toctree
-/home/luc/hgwork/lino/docs/releases/index.rst:1: WARNING: unknown document: 1.6.13
+/home/luc/hgwork/lino/docs/dev/perms.rst:183: SEVERE: Title level inconsistent:
+
+user
+~~~~~~~
+/home/luc/hgwork/lino/docs/dev/perms.rst:191: SEVERE: Title level inconsistent:
+
+guest
+~~~~~~~
+/home/luc/hgwork/lino/docs/dev/perms.rst:199: SEVERE: Title level inconsistent:
+
+admin
+~~~~~~~
+/home/luc/hgwork/lino/docs/dev/perms.rst:207: SEVERE: Title level inconsistent:
+
+manager
+~~~~~~~

@@ -8,35 +8,44 @@ class EntryStates(dd.Workflow):
     pass
     
 add = EntryStates.add_item
-add('10', _("Draft"),'draft')
-add('20', _("To do"),'todo')
-add('30', _("Started"),'started')
-add('40', _("Done"),'done')
-add('50', _("Sleeping"),'sleeping')
-add('60', _("Cancelled"),'cancelled')
+add('10', _("To do"),'todo')
+add('20', _("Started"),'started')
+add('30', _("Done"),'done')
+add('40', _("Sleeping"),'sleeping')
+add('50', _("Cancelled"),'cancelled')
 
 
 @dd.receiver(dd.pre_analyze)
-def setup_task_workflows(sender=None,**kw):
-    EntryStates.draft.add_transition(_("Reset"),states='todo done cancelled')
-    EntryStates.todo.add_transition(_("Reopen"),states='draft done cancelled')
+def my_entry_workflow(sender=None,**kw):
+    EntryStates.todo.add_transition(_("Reopen"),states='done cancelled')
+    EntryStates.todo.add_transition(WakeupEntry)
     EntryStates.started.add_transition(StartEntry)
-    EntryStates.sleeping.add_transition(WakeupEntry)
-    EntryStates.done.add_transition(states='draft todo started',icon_name='accept')
-    EntryStates.cancelled.add_transition(states='draft todo started',icon_name='cancel')
-
-
+    EntryStates.sleeping.add_transition(states="todo")
+    EntryStates.done.add_transition(FinishEntry)
+    EntryStates.cancelled.add_transition(states='sleeping started',
+        help_text=_("""This is a rather verbose help text for the action 
+        which triggers transition from 'sleeping' or 'started' to 'cancelled'."""),
+        icon_name='cancel')
 
 
 class StartEntry(dd.ChangeStateAction):
-    required = dict(states='draft todo cancelled')
+    label = _("Start")
+    help_text = _("This action is not allowed when company, body or subject is empty.")
+    required = dict(states='todo cancelled')
     def get_action_permission(self,ar,obj,state):
         # cannot start entries with empty company, subject or body fields
         if not obj.company or not obj.subject or not obj.body:
             return False
         return super(StartEntry,self).get_action_permission(ar,obj,state)
+
+class FinishEntry(StartEntry):
+    icon_name='accept'
+    label = _("Finish")
+    required = dict(states='todo started')
+    help_text = _("Inherts from StartEntry and thus is not allowed when company, body or subject is empty.")
         
 class WakeupEntry(dd.ChangeStateAction,dd.NotifyingAction):
+    label = _("Wake up")
     required = dict(states='sleeping')
     # in our example waking up an antry will send a notification
     def get_notify_subject(self,ar,obj):

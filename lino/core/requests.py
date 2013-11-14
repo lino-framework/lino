@@ -490,12 +490,11 @@ class ActionRequest(BaseRequest):
     """
     Holds information about an indivitual web request and provides methods like
 
-    - :meth:`get_user <lino.core.actions.ActionRequest.get_user>`
-    - :meth:`callback <lino.ui.base.UI.callback>`
-    - :meth:`confirm <lino.ui.base.UI.confirm>`
-    - :meth:`success <lino.ui.base.UI.success>`
-    - :meth:`error <lino.ui.base.UI.error>`
-    - :meth:`spawn <lino.core.actions.ActionRequest.spawn>`
+    - :meth:`get_user <lino.core.actions.BaseRequest.get_user>`
+    - :meth:`confirm <lino.core.actions.BaseRequest.confirm>`
+    - :meth:`spawn <lino.core.actions.BaseRequest.spawn>`
+    
+    An `ActionRequest` is also a :class:`BaseRequest` and inherits its methods.
     
     """
     create_kw = None

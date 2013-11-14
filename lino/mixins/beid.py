@@ -134,6 +134,8 @@ def card2client(data):
     if settings.SITE.use_eidreader:
         assert not settings.SITE.use_eid_jslib
         data = data['card_data']
+        if not '\n' in data:
+            raise Warning(data)
         #~ print cd
         data = AttrDict(yaml.load(data))
         #~ raise Exception("20131108 cool: %s" % cd)
@@ -414,7 +416,7 @@ class BeIdReadCardAction(BaseBeIdReadCardAction):
             return self.goto_client_response(ar,obj,_("%s has been saved.") % dd.obj2unicode(obj))
         def no(ar):
             return self.goto_client_response(ar,oldobj)
-        print 20131108, msg
+        #~ print 20131108, msg
         cb = ar.add_callback(msg)
         cb.add_choice('yes',yes,_("Yes"))
         cb.add_choice('no',no,_("No"))

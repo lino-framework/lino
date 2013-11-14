@@ -21,6 +21,8 @@ you'll now want to know how to do it yourself.
    actors/index
    actions/index
    watch_tutorial/index
+   workflows_tutorial/index
+   matrix_tutorial/index
    tested_docs/index
    
 

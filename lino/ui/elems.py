@@ -950,6 +950,10 @@ class ComplexRemoteComboFieldElement(RemoteComboFieldElement):
         
 #~ class LinkedForeignKeyElement(ComplexRemoteComboFieldElement):
     #~ pass
+    
+def action_name(a):
+    if a is None: return 'null'
+    return 'Lino.' + a.full_name()
   
 class ForeignKeyElement(ComplexRemoteComboFieldElement):
   
@@ -969,8 +973,8 @@ class ForeignKeyElement(ComplexRemoteComboFieldElement):
             a2 = actor.insert_action
             if a1 is not None or a2 is not None:
                 self.value_template = "new Lino.TwinCombo(%s)"
-                js = "function(e){ Lino.show_fk_detail(this,Lino.%s,Lino.%s)}" % (
-                    a1.full_name(),a2.full_name())
+                js = "function(e){ Lino.show_fk_detail(this,%s,%s)}" % (
+                    action_name(a1),action_name(a2))
                 kw.update(onTrigger2Click=js_code(js))
                     
         
@@ -1160,9 +1164,11 @@ class AutoFieldElement(NumberFieldElement):
 
 class RequestFieldElement(IntegerFieldElement):
     def value2num(self,v):
+        #~ logger.info("20131114 value2num %s",v)
         return v.get_total_count()
   
     def value_from_object(self,obj,ar):
+        #~ logger.info("20131114 value_from_object %s",v)
         return self.field.value_from_object(obj,ar)
         
     def value2html(self,ar,v,**cellattrs):
@@ -1173,7 +1179,7 @@ class RequestFieldElement(IntegerFieldElement):
             return E.td(**cellattrs)
         #~ return ar.renderer.href_to_request(v,str(n))
         url = 'javascript:' + ar.renderer.request_handler(v)
-        #~ if n == 6:
+        #~ if n == 12:
             #~ logger.info("20120914 value2html(%s) --> %s",v,url)
         #~ url = ar.renderer.js2url(h)
         #~ return E.a(cgi.escape(force_unicode(v.label)),href=url)
@@ -1185,12 +1191,13 @@ class RequestFieldElement(IntegerFieldElement):
 
     def format_value(self,ar,v):
         #~ logger.info("20121116 format_value(%s)",v)
+        #~ raise Exception("20130131 %s" % v)
         if v is None:
             raise Exception("Got None value for %s" % self)
         n = v.get_total_count()
         if n == 0:
             return ''
-        #~ if n == 6:
+        #~ if n == 12:
             #~ logger.info("20120914 format_value(%s) --> %s",v,n)
         return ar.href_to_request(v,str(n))
 

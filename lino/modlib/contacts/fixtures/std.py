@@ -17,7 +17,6 @@ from __future__ import unicode_literals
 
 from django.db import models
 from django.conf import settings
-from django.contrib.contenttypes.models import ContentType
 
 from django.utils.translation import ugettext as _
 
@@ -126,25 +125,28 @@ def objects():
     yield roletype(**babel_values('name',en="Secretary",fr='Secrétaire',de="Sekretär",et="Sekretär"))
     yield roletype(**babel_values('name',en="IT Manager",fr='Gérant informatique',de="EDV-Manager",et="IT manager"))
     yield roletype(**babel_values('name',en="President",fr='Président',de="Präsident",et="President"))
+    
+    if settings.SITE.is_installed('contenttypes'):
 
+        from django.contrib.contenttypes.models import ContentType
 
-    I = Instantiator('system.HelpText','content_type field help_text').build
-    
-    Person = resolve_model("contacts.Person")
-    t = ContentType.objects.get_for_model(Person)
-    
-    #~ yield I(t,'birth_date',u"""\
-#~ Unkomplette Geburtsdaten sind erlaubt, z.B. 
-#~ <ul>
-#~ <li>00.00.1980 : irgendwann in 1980</li>
-#~ <li>00.07.1980 : im Juli 1980</li>
-#~ <li>23.07.0000 : Geburtstag am 23. Juli, Alter unbekannt</li>
-#~ </ul>    
-#~ """)
-    
-    Partner = resolve_model('contacts.Partner')
-    t = ContentType.objects.get_for_model(Partner)
-    yield I(t,'language',u"""\
-Die Sprache, in der Dokumente ausgestellt werden sollen.
-""")
-    
+        I = Instantiator('system.HelpText','content_type field help_text').build
+        
+        Person = resolve_model("contacts.Person")
+        t = ContentType.objects.get_for_model(Person)
+        
+        #~ yield I(t,'birth_date',u"""\
+    #~ Unkomplette Geburtsdaten sind erlaubt, z.B. 
+    #~ <ul>
+    #~ <li>00.00.1980 : irgendwann in 1980</li>
+    #~ <li>00.07.1980 : im Juli 1980</li>
+    #~ <li>23.07.0000 : Geburtstag am 23. Juli, Alter unbekannt</li>
+    #~ </ul>    
+    #~ """)
+        
+        Partner = resolve_model('contacts.Partner')
+        t = ContentType.objects.get_for_model(Partner)
+        yield I(t,'language',u"""\
+    Die Sprache, in der Dokumente ausgestellt werden sollen.
+    """)
+        

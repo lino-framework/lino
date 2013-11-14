@@ -19,7 +19,7 @@ class Entry(dd.CreatedModified,dd.UserAuthored):
     subject = models.CharField(_("Subject"),blank=True,max_length=200)
     body = dd.RichTextField(_("Body"),blank=True)
     company = models.ForeignKey('contacts.Company',blank=True,null=True)
-    state = EntryStates.field(blank=True,default=EntryStates.draft)
+    state = EntryStates.field(blank=True,default=EntryStates.todo)
     
 class Entries(dd.Table):
     model = Entry    

@@ -1283,6 +1283,7 @@ class VentilatingTable(AbstractTable):
         for i,vf in enumerate(self.get_ventilated_columns()):
             self.add_virtual_field('vc'+str(i),vf)
             self.column_names += ' ' + vf.name+self.ventilated_column_suffix
+        #~ logger.info("20131114 setup_columns() --> %s",self.column_names)
     
     @classmethod
     def get_ventilated_columns(self):

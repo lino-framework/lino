@@ -695,6 +695,11 @@ class Action(Parametrizable,Permittable):
         
     def get_action_permission(self,ar,obj,state):
         """
+        Return (True or False) whether the given 
+        :class:`ActionRequest <lino.core.requests.ActionRequest>` 
+        `ar` should be allowed to execute on the given Model 
+        instance `obj` (which is in the given `state`).
+        
         Derived Action classes may override this to add vetos.
         E.g. DispatchAction is not available for a User with empty 
         partner.

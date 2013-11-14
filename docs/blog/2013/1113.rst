@@ -41,15 +41,25 @@ Joe contributed both a bug report and its fix:
 Thanks, Joe!
 
 
-
 Setting :setting:`MEDIA_ROOT` in :xfile:`djangosite_local.py`
 -------------------------------------------------------------
 
-Until now Lino has always set :setting:`MEDIA_ROOT` 
-to a hard-coded value 
+Until now Lino has always been setting 
+:setting:`MEDIA_ROOT` to a hard-coded value 
 ``<project_dir>/media``.
-You could override that manually in your settings.py file, 
-but you could not set it in :xfile:`djangosite_local.py`.
+You could override that manually in your :xfile:`settings.py` file, 
+but *not* in :xfile:`djangosite_local.py`.
 
-Now you can: Lino installs the default value only when
-:setting:`MEDIA_ROOT`  is empty.
+Now you can: Lino installs its default value only when
+:setting:`MEDIA_ROOT` is empty.
+
+
+Tutorial about workflows
+------------------------
+
+Joe asked whether there is any documentation 
+about using Workflows. 
+Here is the beginning of another tutorial:
+:doc:`/tutorials/workflows_tutorial/index`.
+
+
