@@ -28,11 +28,11 @@ import lino
 
 from lino import Site
 
-SITE = Site(globals())
-"""
-This Site instance will normally be replaced by an instance 
-in a local settings.py file
-"""
+#~ SITE = Site(globals())
+#~ """
+#~ This Site instance will normally be replaced by an instance 
+#~ in a local settings.py file
+#~ """
 
 #~ DBLOGGER = 'db'
 #~ DBLOGFILE = 'auto'

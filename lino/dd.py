@@ -239,12 +239,10 @@ from lino.mixins.addressable import Addressable
 
 
 from north.dbutils import BabelCharField, LanguageField
+
 from north.dbutils import babelkw
 from north.dbutils import babelattr
 from north.dbutils import babel_values # alias for babelkw for backward compat
-#~ from north.dbutils import set_language
-#~ from north.dbutils import BabelCharField, BabelTextField, BabelNamed, LanguageField
-#~ from lino.core.fields import MethodField
 
 from lino.utils.choosers import chooser
 from lino.utils.mti import EnableChild

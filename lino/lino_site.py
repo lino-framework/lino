@@ -35,6 +35,11 @@ because this
 functionality is integral part of :mod:`lino.modlib.system`.
 
 
+.. setting:: auto_configure_logger_names
+
+A string with a space-separated list of logger names to be automatically 
+configured. See :mod:`lino.utils.log`.
+
 .. setting:: user_model
 
 Set this to ``"users.User"`` if you use `lino.modlib.users`. 
@@ -316,6 +321,8 @@ class Site(Site):
     
     """
     
+    auto_configure_logger_names = 'djangosite north lino'
+    
     appy_params = dict(ooPort=8100)
     """
     Used by :class:`lino.mixins.printable.AppyBuildMethod`.
@@ -389,7 +396,7 @@ class Site(Site):
             LOGGING_CONFIG='lino.utils.log.configure',
             LOGGING=dict(filename=None,
                 level='INFO',
-                logger_names='djangosite north lino',
+                logger_names=self.auto_configure_logger_names,
                 disable_existing_loggers=True, # Django >= 1.5
                 ),
             )

@@ -26,3 +26,22 @@ Updated documentation about permission
 
 Joe contributed documentation about Lino's permissions system.
 I integrated this into :doc:`/dev/perms`.
+
+
+Install :ref:`eidreader` on testlino for Gerd
+---------------------------------------------
+
+Error handling: when no card is present or no reader connected, 
+then the read() function returns a single-line string with the 
+error message.
+
+
+Oops, here is a problem with yesterday's change about the 
+default value for :setting:`MEDIA_ROOT`: 
+
+".../lino/projects/std/media/extjs does not exist and SITE.extjs_root is not set."
+
+Because of this new rule we cannot anymore instantiate a dummy 
+SITE instance, as was done by :mod:`lino.projects.std.settings`.
+
+Added new setting :setting:`auto_configure_logger_names`

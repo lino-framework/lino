@@ -49,7 +49,6 @@ from north.dbutils import lookup_filter
 from north.dbutils import resolve_model, UnresolvedModel
 
 
-
 def resolve_app(app_label,strict=False):
     """
     Return the `modules` module of the given `app_label` if it is installed. 

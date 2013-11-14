@@ -10,7 +10,7 @@ from djangosite.utils.pythontest import TestCase
 
 
 class LinoTestCase(TestCase):
-    demo_settings_module = "lino.projects.std.settings"
+    demo_settings_module = "lino.projects.std.settings_test"
     #~ default_environ = dict(DJANGO_SETTINGS_MODULE="lino.projects.std.settings")
     project_root = ROOTDIR
     
