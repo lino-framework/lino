@@ -31,17 +31,29 @@ I integrated this into :doc:`/dev/perms`.
 Install :ref:`eidreader` on testlino for Gerd
 ---------------------------------------------
 
-Error handling: when no card is present or no reader connected, 
-then the read() function returns a single-line string with the 
-error message.
+Uff! After solving some last little issues, Gerd and his users can now 
+finally start to test the :ref:`eidreader`.
 
+- Added a :file:`get_jars.sh` script to the :ref:`eidreader` repository
+  to make installation more automatic.
+  Updated the docs (:ref:`eidreader.install`)
 
-Oops, here is a problem with yesterday's change about the 
-default value for :setting:`MEDIA_ROOT`: 
+- The error handling in :ref:`eidreader` is rather primitive, but works for me: 
+  you must know that the read() function *always* returns a string. 
+  Upon success this is a yaml-formatted string with data found on the card.
+  But when some error occurs (no card present, no reader connected,...), then 
+  it is a **single-line** string with the error message. 
+  The server-side code which processes this response 
+  (:class:`BeIdReadCardAction <lino.mixins.beid.BeIdReadCardAction>`)
+  now checks this condition and displays the error message.
 
-".../lino/projects/std/media/extjs does not exist and SITE.extjs_root is not set."
+- There was a problem with yesterday's change about the 
+  default value for :setting:`MEDIA_ROOT`. 
+  Because of this new rule we cannot anymore instantiate a dummy 
+  SITE instance, as was done by :mod:`lino.projects.std.settings`.
+  The server said:
+  ".../lino/projects/std/media/extjs does not exist and 
+  SITE.extjs_root is not set."
 
-Because of this new rule we cannot anymore instantiate a dummy 
-SITE instance, as was done by :mod:`lino.projects.std.settings`.
-
-Added new setting :setting:`auto_configure_logger_names`
+  That's why we have a new setting :setting:`auto_configure_logger_names`
+  and a new module :mod:`lino.projects.std.settings_test`.

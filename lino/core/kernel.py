@@ -186,6 +186,9 @@ def startup_site(self):
             if isinstance(v,type) and issubclass(v,layouts.BaseLayout):
                 #~ print "%s.%s = %r" % (app_label,k,v)
                 self.modules.define(app_label,k,v)
+            #~ if isinstance(v,type) and issubclass(v,dd.Plugin):
+                #~ self.plugins.append(v)
+                
             #~ if isinstance(v,type)  and issubclass(v,dd.Module):
                 #~ logger.info("20120128 Found module %s",v)
             if k.startswith('setup_'):

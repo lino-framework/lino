@@ -56,6 +56,8 @@ Multilingual database content:
 - :class:`LanguageField <north.dbutils.LanguageField>`
 - :class:`babelkw <north.dbutils.babelkw>`
 - :class:`babelattr <north.dbutils.babelattr>`
+- :setting:`babelitem`
+- :setting:`field2kw`
 
 Virtual Fields:
 
@@ -151,6 +153,7 @@ Miscellaneous:
 import logging
 logger = logging.getLogger(__name__)
 
+from djangosite import Plugin
 
 from lino.core.tables import VirtualTable
 from lino.mixins import EmptyTable
@@ -334,7 +337,9 @@ dtos = fds
 from north.dbutils import fdl as dtosl
 #~ from north.dbutils import dtos as dtos_
 
-    
+babelitem  = settings.SITE.babelitem
+field2kw  = settings.SITE.field2kw
+
 #~ from lino.mixins import Born
 
 from lino.mixins import (ProjectRelated, UserAuthored, ByUser,

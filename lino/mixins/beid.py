@@ -49,162 +49,56 @@ from lino import dd
 
 countries = dd.resolve_app('countries',strict=True)
 
-class BeIdCardTypes(dd.ChoiceList):
-    """
-    List of Belgian Identification Card Types.
-    
-    Didn't yet find any official reference document.
-    
-    The eID applet returns a field `documentType` which contains a numeric code.
-    For example 1 is for "Belgian citizen", 6 for "Kids card",...
-    
-    The eID viewer, when saving a card as xml file, doesn't save these values nowhere, 
-    it saves a string equivalent (1 becomes "belgian_citizen", 6 becomes "kids_card", 
-    17 becomes "foreigner_f", 16 becomes "foreigner_e_plus",...
-    
-    Sources:
-    | [1] https://securehomes.esat.kuleuven.be/~decockd/wiki/bin/view.cgi/EidForums/ForumEidCards0073
-    | [2] `Enum be.fedict.commons.eid.consumer.DocumentType <http://code.google.com/p/eid-applet/source/browse/trunk/eid-applet-service/src/main/java/be/fedict/eid/applet/service/DocumentType.java>`_
-    
-    """
-    app_label = 'lino'
-    required = dd.required(user_level='admin')
-    verbose_name = _("eID card type")
-    verbose_name_plural = _("eID card types")
-    
-add = BeIdCardTypes.add_item
-add('1',_("Belgian citizen"),"belgian_citizen") 
-# ,de=u"Belgischer Staatsbürger",fr=u"Citoyen belge"),
-add('6', _("Kids card (< 12 year)"),"kids_card") 
-#,de=u"Kind unter 12 Jahren"),
 
 """
-from [1]: 
-Johan: A document type of 7 is used for bootstrap cards ? What is a bootstrap card (maybe some kind of test card?) 
-Danny: A bootstrap card was an eID card that was used in the early start of the eID card introduction to bootstrap 
-the computers at the administration. This type is no longer issued. 
+SITE.use_eidreader --> SITE.get_plugin(BeIdReaderPlugin)
 """
-
-#~ add('8', _("Habilitation")) 
-#,fr=u"Habilitation",nl=u"Machtiging")
-"""
-from [1]: 
-Johan: A document type of 8 is used for a “habilitation/machtigings” card ? Is this for refugees or asylum seekers? 
-Danny: A habilitation/machtigings card was aimed at civil servants. This type is also no longer used. 
-"""
-
-add('11', _("Foreigner card A"),"foreigner_a")
-        #~ nl=u"Bewijs van inschrijving in het vreemdelingenregister - Tijdelijk verblijf",
-        #~ fr=u"Certificat d'inscription au registre des étrangers - Séjour temporaire",
-        #~ de=u"Ausländerkarte A Bescheinigung der Eintragung im Ausländerregister - Vorübergehender Aufenthalt",
-add('12', _("Foreigner card B"),"foreigner_b")
-        #~ nl=u"Bewijs van inschrijving in het vreemdelingenregister",
-        #~ fr=u"Certificat d'inscription au registre des étrangers",
-        #~ de=u"Ausländerkarte B (Bescheinigung der Eintragung im Ausländerregister)",
-add('13', _("Foreigner card C"),"foreigner_c")
-        #~ nl=u"Identiteitskaart voor vreemdeling",
-        #~ fr=u"Carte d'identité d'étranger",
-        #~ de=u"C (Personalausweis für Ausländer)",
-add('14', _("Foreigner card D"),"foreigner_d")
-        #~ nl=u"EG - langdurig ingezetene",
-        #~ fr=u"Résident de longue durée - CE",
-        #~ de=u"Daueraufenthalt - EG",
-add('15', _("Foreigner card E"),"foreigner_e")
-        #~ nl=u"Verklaring van inschrijving",
-        #~ fr=u"Attestation d’enregistrement",
-        #~ de=u"Anmeldebescheinigung",
-add('16', _("Foreigner card E+"),"foreigner_e_plus")
-        # Document ter staving van duurzaam verblijf van een EU onderdaan
-add('17', _("Foreigner card F"),"foreigner_f")
-        #~ nl=u"Verblijfskaart van een familielid van een burger van de Unie",
-        #~ fr=u"Carte de séjour de membre de la famille d’un citoyen de l’Union",
-        #~ de=u"Aufenthaltskarte für Familienangehörige eines Unionsbürgers",
-add('18', _("Foreigner card F+"),"foreigner_f_plus")
-
-
-
     
-def card_number_to_picture_file(card_number):
-    #~ TODO: handle configurability of card_number_to_picture_file
-    return os.path.join(settings.MEDIA_ROOT,'beid',card_number+'.jpg')
-
+class BeIdPlugin(dd.Plugin):
+    pass
     
-def card2client(data):
-    kw = dict()
-    if settings.SITE.use_eidreader:
-        assert not settings.SITE.use_eid_jslib
-        data = data['card_data']
-        if not '\n' in data:
-            raise Warning(data)
-        #~ print cd
-        data = AttrDict(yaml.load(data))
-        #~ raise Exception("20131108 cool: %s" % cd)
-        
-        
-        kw.update(national_id=ssin.format_ssin(str(data.nationalNumber)))
-        kw.update(first_name=join_words(
-            data.firstName,
-            data.middleName))
-        kw.update(last_name=data.name)
-        
-        card_number = str(data.cardNumber)
-        
-        if data.photo:
-            fn = card_number_to_picture_file(card_number)
-            if os.path.exists(fn):
-                logger.warning("Overwriting existing image file %s.",fn)
-            fp = file(fn,'wb')
-            fp.write(base64.b64decode(data.photo))
-            fp.close()
-            #~ print 20121117, repr(data['picture'])
-            #~ kw.update(picture_data_encoded=data['picture'])
-        
-        if isinstance(data.dateOfBirth,basestring):
-            data.dateOfBirth = IncompleteDate(*data.dateOfBirth.split('-'))
-        kw.update(birth_date=data.dateOfBirth)
-        kw.update(card_valid_from=data.cardValidityDateBegin)
-        kw.update(card_valid_until=data.cardValidityDateEnd)
-        
-        kw.update(card_number=card_number)
-        kw.update(card_issuer=data.cardDeliveryMunicipality)
-        if data.nobleCondition:
-            kw.update(noble_condition=data.nobleCondition)
-        kw.update(street=data.streetAndNumber)
-        #~ kw.update(street_no=data['streetNumber'])
-        #~ kw.update(street_box=data['boxNumber'])
-        if True: # kw['street'] and not (kw['street_no'] or kw['street_box']):
-            kw = street2kw(kw['street'],**kw)
-        kw.update(zip_code=str(data.zip))
-        if data.placeOfBirth:
-            kw.update(birth_place=data.placeOfBirth)
-        pk = data.reader.upper()
-        
-        msg1 = "BeIdReadCardToClientAction %s" % kw.get('national_id')
 
-        #~ try:
-        country = countries.Country.objects.get(isocode=pk)
-        kw.update(country=country)
-        #~ except countries.Country.DoesNotExist,e:
-        #~ except Exception,e:
-            #~ logger.warning("%s : no country with code %r",msg1,pk)
-        #~ BE = countries.Country.objects.get(isocode='BE')
-        #~ fld = countries.City._meta.get_field()
-        kw.update(city=countries.City.lookup_or_create(
-            'name',data.municipality,country=country))
-        def sex2gender(sex):
-            if sex == 'MALE' : return dd.Genders.male
-            if sex == 'FEMALE' : return dd.Genders.female
-            logger.warning("%s : invalid gender code %r",msg1,sex)
-        kw.update(gender=sex2gender(data.gender))
-        
-        def doctype2cardtype(dt):
-            #~ if dt == 1: return BeIdCardTypes.get_by_value("1")
-            rv = BeIdCardTypes.get_by_value(str(dt))
-            logger.info("20130103 documentType %r --> %r",dt,rv)
-            return rv
-        kw.update(card_type=doctype2cardtype(data.documentType))
-        
-    elif settings.SITE.use_eid_jslib:
+class BeIdJsLibPlugin(BeIdPlugin): # was: use_eid_jslib
+    # deprecated
+    site_js_snippets = ['plugins/eid_jslib.js']
+    
+    
+    def get_js_includes(self,site):
+        yield site.build_media_url('eid-jslib/be_belgium_eid.js')
+        yield site.build_media_url('eid-jslib/hellerim_base64.js')
+            
+    
+    
+    def get_head_lines(cls,site,request):
+        p = site.build_media_url('eid-jslib')
+        p = request.build_absolute_uri(p)
+        #~ print p
+        yield '<applet code="org.jdesktop.applet.util.JNLPAppletLauncher"'
+        yield 'codebase = "%s/"' % p
+        yield 'width="1" height="1"'
+        yield 'name   = "BEIDAppletLauncher"'
+        yield 'id   = "BEIDAppletLauncher"'
+        yield 'archive="applet-launcher.jar,beid35libJava.jar,BEID_Applet.jar">'
+
+        yield '<param name="codebase_lookup" value="false">'
+        yield '<param name="subapplet.classname" value="be.belgium.beid.BEID_Applet">'
+        yield '<param name="progressbar" value="true">'
+        yield '<param name="jnlpNumExtensions" value="1">'
+        yield '<param name="jnlpExtension1" value= "' + p + '/beid.jnlp">'
+        #~ yield '<param name="jnlpExtension1" value= "beid.jnlp">'
+
+        yield '<param name="debug" value="false"/>'
+        yield '<param name="Reader" value=""/>'
+        yield '<param name="OCSP" value="-1"/>'
+        yield '<param name="CRL" value="-1"/>'
+        #~ yield '<param name="jnlp_href" value="' + p + '/beid_java_plugin.jnlp" />'
+        yield '<param name="jnlp_href" value="beid_java_plugin.jnlp" />'
+        yield '<param name="separate_jvm" value="true">' # 20130913
+        yield '</applet>'
+
+    def card2client(cls,data):
+        "does the actual conversion"
+        kw = dict()
         #~ def func(fldname,qname):
             #~ kw[fldname] = data[qname]
         kw.update(national_id=ssin.format_ssin(data['nationalNumber']))
@@ -288,8 +182,196 @@ def card2client(data):
         #~ kw.update(sex=data['sex'])
         #~ unused.update(documentType=data['documentType'])
         #~ logger.info("Unused data: %r", unused)
-    return kw
+        return kw
     
+    
+class BeIdReaderPlugin(BeIdPlugin): # was: use_eidreader
+    """
+    Add this plugin to your :setting:`get_installed_plugins` 
+    if your Site should feature actions for reading electronic ID 
+    smartcards. 
+    
+    When this plugin is installed, then you must also add
+    the `.jar`files 
+    required by :ref:`eidreader`
+    into your media directory, in a subdirectory named "eidreader".
+    
+    This plugin makes sense only if there is exactly one subclass of 
+    :class:`BeIdCardHolder` among your Site's models.
+    """
+
+    
+    site_js_snippets = ['plugins/eidreader.js']
+    
+    def get_head_lines(cls,site,request):
+        #~ p = site.build_media_url('lino','applets','EIDReader.jar')
+        p = site.build_media_url('eidreader','EIDReader.jar')
+        p = request.build_absolute_uri(p)
+        yield '<applet name="EIDReader" code="src.eidreader.EIDReader.class"'
+        yield '        archive="%s"' % p
+        yield '        width="0" height="0">'
+        #~ yield '<param name="separate_jvm" value="true">' # 20130913
+        yield '</applet>'
+            
+    def card2client(cls,data):
+        "does the actual conversion"
+        kw = dict()
+        #~ assert not settings.SITE.use_eid_jslib
+        #~ assert not settings.SITE.has_plugin(BeIdJsLibPlugin):
+        data = data['card_data']
+        if not '\n' in data:
+            raise Warning(data)
+        #~ print cd
+        data = AttrDict(yaml.load(data))
+        #~ raise Exception("20131108 cool: %s" % cd)
+        
+        
+        kw.update(national_id=ssin.format_ssin(str(data.nationalNumber)))
+        kw.update(first_name=join_words(
+            data.firstName,
+            data.middleName))
+        kw.update(last_name=data.name)
+        
+        card_number = str(data.cardNumber)
+        
+        if data.photo:
+            fn = card_number_to_picture_file(card_number)
+            if os.path.exists(fn):
+                logger.warning("Overwriting existing image file %s.",fn)
+            fp = file(fn,'wb')
+            fp.write(base64.b64decode(data.photo))
+            fp.close()
+            #~ print 20121117, repr(data['picture'])
+            #~ kw.update(picture_data_encoded=data['picture'])
+        
+        if isinstance(data.dateOfBirth,basestring):
+            data.dateOfBirth = IncompleteDate(*data.dateOfBirth.split('-'))
+        kw.update(birth_date=data.dateOfBirth)
+        kw.update(card_valid_from=data.cardValidityDateBegin)
+        kw.update(card_valid_until=data.cardValidityDateEnd)
+        
+        kw.update(card_number=card_number)
+        kw.update(card_issuer=data.cardDeliveryMunicipality)
+        if data.nobleCondition:
+            kw.update(noble_condition=data.nobleCondition)
+        kw.update(street=data.streetAndNumber)
+        #~ kw.update(street_no=data['streetNumber'])
+        #~ kw.update(street_box=data['boxNumber'])
+        if True: # kw['street'] and not (kw['street_no'] or kw['street_box']):
+            kw = street2kw(kw['street'],**kw)
+        kw.update(zip_code=str(data.zip))
+        if data.placeOfBirth:
+            kw.update(birth_place=data.placeOfBirth)
+        pk = data.reader.upper()
+        
+        msg1 = "BeIdReadCardToClientAction %s" % kw.get('national_id')
+
+        #~ try:
+        country = countries.Country.objects.get(isocode=pk)
+        kw.update(country=country)
+        #~ except countries.Country.DoesNotExist,e:
+        #~ except Exception,e:
+            #~ logger.warning("%s : no country with code %r",msg1,pk)
+        #~ BE = countries.Country.objects.get(isocode='BE')
+        #~ fld = countries.City._meta.get_field()
+        kw.update(city=countries.City.lookup_or_create(
+            'name',data.municipality,country=country))
+        def sex2gender(sex):
+            if sex == 'MALE' : return dd.Genders.male
+            if sex == 'FEMALE' : return dd.Genders.female
+            logger.warning("%s : invalid gender code %r",msg1,sex)
+        kw.update(gender=sex2gender(data.gender))
+        
+        def doctype2cardtype(dt):
+            #~ if dt == 1: return BeIdCardTypes.get_by_value("1")
+            rv = BeIdCardTypes.get_by_value(str(dt))
+            logger.info("20130103 documentType %r --> %r",dt,rv)
+            return rv
+        kw.update(card_type=doctype2cardtype(data.documentType))
+        return kw
+        
+
+class BeIdCardTypes(dd.ChoiceList):
+    """
+    List of Belgian Identification Card Types.
+    
+    Didn't yet find any official reference document.
+    
+    The eID applet returns a field `documentType` which contains a numeric code.
+    For example 1 is for "Belgian citizen", 6 for "Kids card",...
+    
+    The eID viewer, when saving a card as xml file, doesn't save these values nowhere, 
+    it saves a string equivalent (1 becomes "belgian_citizen", 6 becomes "kids_card", 
+    17 becomes "foreigner_f", 16 becomes "foreigner_e_plus",...
+    
+    Sources:
+    | [1] https://securehomes.esat.kuleuven.be/~decockd/wiki/bin/view.cgi/EidForums/ForumEidCards0073
+    | [2] `Enum be.fedict.commons.eid.consumer.DocumentType <http://code.google.com/p/eid-applet/source/browse/trunk/eid-applet-service/src/main/java/be/fedict/eid/applet/service/DocumentType.java>`_
+    
+    """
+    app_label = 'lino'
+    required = dd.required(user_level='admin')
+    verbose_name = _("eID card type")
+    verbose_name_plural = _("eID card types")
+    
+add = BeIdCardTypes.add_item
+add('1',_("Belgian citizen"),"belgian_citizen") 
+# ,de=u"Belgischer Staatsbürger",fr=u"Citoyen belge"),
+add('6', _("Kids card (< 12 year)"),"kids_card") 
+#,de=u"Kind unter 12 Jahren"),
+
+"""
+from [1]: 
+Johan: A document type of 7 is used for bootstrap cards ? What is a bootstrap card (maybe some kind of test card?) 
+Danny: A bootstrap card was an eID card that was used in the early start of the eID card introduction to bootstrap 
+the computers at the administration. This type is no longer issued. 
+"""
+
+#~ add('8', _("Habilitation")) 
+#,fr=u"Habilitation",nl=u"Machtiging")
+"""
+from [1]: 
+Johan: A document type of 8 is used for a “habilitation/machtigings” card ? Is this for refugees or asylum seekers? 
+Danny: A habilitation/machtigings card was aimed at civil servants. This type is also no longer used. 
+"""
+
+add('11', _("Foreigner card A"),"foreigner_a")
+        #~ nl=u"Bewijs van inschrijving in het vreemdelingenregister - Tijdelijk verblijf",
+        #~ fr=u"Certificat d'inscription au registre des étrangers - Séjour temporaire",
+        #~ de=u"Ausländerkarte A Bescheinigung der Eintragung im Ausländerregister - Vorübergehender Aufenthalt",
+add('12', _("Foreigner card B"),"foreigner_b")
+        #~ nl=u"Bewijs van inschrijving in het vreemdelingenregister",
+        #~ fr=u"Certificat d'inscription au registre des étrangers",
+        #~ de=u"Ausländerkarte B (Bescheinigung der Eintragung im Ausländerregister)",
+add('13', _("Foreigner card C"),"foreigner_c")
+        #~ nl=u"Identiteitskaart voor vreemdeling",
+        #~ fr=u"Carte d'identité d'étranger",
+        #~ de=u"C (Personalausweis für Ausländer)",
+add('14', _("Foreigner card D"),"foreigner_d")
+        #~ nl=u"EG - langdurig ingezetene",
+        #~ fr=u"Résident de longue durée - CE",
+        #~ de=u"Daueraufenthalt - EG",
+add('15', _("Foreigner card E"),"foreigner_e")
+        #~ nl=u"Verklaring van inschrijving",
+        #~ fr=u"Attestation d’enregistrement",
+        #~ de=u"Anmeldebescheinigung",
+add('16', _("Foreigner card E+"),"foreigner_e_plus")
+        # Document ter staving van duurzaam verblijf van een EU onderdaan
+add('17', _("Foreigner card F"),"foreigner_f")
+        #~ nl=u"Verblijfskaart van een familielid van een burger van de Unie",
+        #~ fr=u"Carte de séjour de membre de la famille d’un citoyen de l’Union",
+        #~ de=u"Aufenthaltskarte für Familienangehörige eines Unionsbürgers",
+add('18', _("Foreigner card F+"),"foreigner_f_plus")
+
+
+
+    
+def card_number_to_picture_file(card_number):
+    #~ TODO: handle configurability of card_number_to_picture_file
+    return os.path.join(settings.MEDIA_ROOT,'beid',card_number+'.jpg')
+
+
+
     
 class BaseBeIdReadCardAction(dd.Action):
     required = dd.Required(user_groups='reception')
@@ -305,7 +387,14 @@ class BaseBeIdReadCardAction(dd.Action):
         return self.label 
         
     def attach_to_actor(self,actor,name):
-        if not settings.SITE.use_eid_jslib and not settings.SITE.use_eidreader:
+        """
+        Returns False to prevent this action when no :class:`BeIdPlugin` 
+        is installed.
+        """
+        self.used_plugin = settings.SITE.get_plugin(BeIdPlugin)
+        #~ if not settings.SITE.use_eid_jslib and not settings.SITE.use_eidreader:
+        if self.used_plugin is None:
+        #~ if settings.SITE.get_plugin(BeIdPlugin):
             return False
         return super(BaseBeIdReadCardAction,self).attach_to_actor(actor,name)
         
@@ -343,7 +432,7 @@ class BeIdReadCardAction(BaseBeIdReadCardAction):
             raise Exception("There must be exactly one BeIdCardHolder model in your Site!")
         self.client_model = cmc[0]
         data = ar.request.POST
-        attrs = card2client(data)
+        attrs = self.used_plugin.card2client(data)
         #~ logger.info("20130103 BeIdReadCardAction.run_from_ui() : %s -> %s",data,attrs)
         #~ print 20121117, attrs
         #~ ssin = data['nationalNumber']
@@ -540,7 +629,8 @@ class BeIdCardHolder(dd.Model):
             must_read = True
         if must_read:
             msg = _("Must read eID card!")
-            if settings.SITE.use_eid_jslib or settings.SITE.use_eidreader:
+            #~ if settings.SITE.use_eid_jslib or settings.SITE.use_eidreader:
+            if settings.SITE.get_plugin(BeIdPlugin):
                 #~ ba = cls.get_action_by_name('read_beid')
                 #~ elems.append(ar.action_button(ba,self,_("Must read eID card!")))
                 elems.append(ar.instance_action_button(
@@ -553,3 +643,4 @@ class BeIdCardHolder(dd.Model):
         return E.div(*elems,**attrs)
         
         
+

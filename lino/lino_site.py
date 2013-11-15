@@ -35,6 +35,18 @@ because this
 functionality is integral part of :mod:`lino.modlib.system`.
 
 
+.. setting:: use_davlink
+
+Set this to `True` if this site should feature WebDAV-enabled links 
+using :ref:`davlink`.
+
+.. setting:: use_eidreader
+
+No longer used. Replaced by :class:`lino.mixins.beid.BeIdReaderPlugin`.
+
+Set this to `True` if this site should feature using :ref:`eidreader`.
+
+
 .. setting:: auto_configure_logger_names
 
 A string with a space-separated list of logger names to be automatically 
@@ -655,6 +667,8 @@ class Site(Site):
             version = self.not_found_msg
         yield ("Appy",version ,"http://appyframework.org/pod.html")
         
+        #~ for p in self.installed_plugins
+        
         if ui and self.use_extjs:
             
             #~ version = '<script type="text/javascript">document.write(Ext.version);</script>'
@@ -1164,16 +1178,12 @@ class Site(Site):
         
     """
     
-    use_eidreader = False
-    """
-    Set this to `True` if this site should feature using :ref:`eidreader`.
-    """
+    #~ use_eidreader = False
+    #~ """
+    #~ Set this to `True` if this site should feature using :ref:`eidreader`.
+    #~ """
     
     use_davlink = False
-    """
-    Set this to `True` if this site should feature WebDAV-enabled links 
-    using :ref:`davlink`.
-    """
     
     #~ max_auto_events = 72
     #~ """

@@ -92,14 +92,10 @@ if settings.SITE.user_model:
     from lino.modlib.users import models as users
 
 AFTER_20130725 = True
-USE_DAVLINK_JNLP = False
 
-#~ from lino.utils.choicelists import DoYouLike, HowWell
-#~ STRENGTH_CHOICES = DoYouLike.get_choices()
-#~ KNOWLEDGE_CHOICES = HowWell.get_choices()
 
-#~ NOT_GIVEN = object()
-
+class ExtJS3Plugin(dd.Plugin): # was use_extjs
+    pass
 
 
 def prepare_label(mi):
@@ -128,8 +124,6 @@ class ExtRenderer(HtmlRenderer):
     def __init__(self,ui):
         HtmlRenderer.__init__(self,ui)
         jsgen.register_converter(self.py2js_converter)
-        
-        
         
         for s in 'green blue red yellow'.split():
             self.row_classes_map[s] = 'x-grid3-row-%s' % s
@@ -474,6 +468,11 @@ class ExtRenderer(HtmlRenderer):
         def javascript(url):
             return '<script type="text/javascript" src="%s"></script>' % url
             
+        for p in site.installed_plugins:
+            for name in p.get_css_includes(site):
+                yield stylesheet(name)
+            
+            
         if run_jasmine:
             yield stylesheet(site.build_media_url("jasmine/jasmine.css"))
         yield stylesheet(site.build_extjs_url('resources/css/ext-all.css'))
@@ -566,10 +565,10 @@ tinymce.init({
             
             yield javascript(site.build_media_url("lino/jasmine/specs.js"))
             
-        if site.use_eid_jslib:
-            yield javascript(site.build_media_url('eid-jslib/be_belgium_eid.js'))
-            yield javascript(site.build_media_url('eid-jslib/hellerim_base64.js'))
-            
+        for p in site.installed_plugins:
+            for name in p.get_js_includes(site):
+                yield javascript(name)
+                
         #~ if site.use_bootstrap:
             #~ yield '<script src="//ajax.googleapis.com/ajax/libs/jquery/1.8.3/jquery.min.js"></script>'
             
@@ -645,32 +644,6 @@ tinymce.init({
             site.build_media_url(*self.lino_js_parts(user.profile)))
             
         #~ yield '<!-- page specific -->'
-        
-        if USE_DAVLINK_JNLP:
-            #~ http://docs.oracle.com/javase/tutorial/deployment/deploymentInDepth/deployingWithoutCodebase.html
-            yield '<script src="http://www.java.com/js/deployJava.js"></script>'
-            if False:
-                p = site.build_media_url('lino/applets/DavLink.jar')
-                yield """\
-<script>  
-    var attributes = {
-        name:"DavLink",
-        code:'davlink.DavLink.class', 
-        archive:'%s', width:1, height:1}; 
-    var parameters = { jnlp_href:'davlink.jnlp' }; 
-    var version = '1.6' ; 
-    deployJava.runApplet(attributes, parameters, version);      
-</script>
-""" % p
-            else:
-                p = site.build_media_url('lino','applets','davlink.jnlp')
-                p = request.build_absolute_uri(p)
-                yield """\
-<script>  
-    deployJava.launchWebStartApplication('%s');
-</script>
-""" % p
-            
         
         yield '<script type="text/javascript">'
 
@@ -820,36 +793,8 @@ tinymce.init({
             #~ yield "your browser doesn't support esteid"
             #~ yield '</object>'
             
-        if site.use_eid_jslib:
-            p = site.build_media_url('eid-jslib')
-            p = request.build_absolute_uri(p)
-            #~ print p
-            yield '<applet code="org.jdesktop.applet.util.JNLPAppletLauncher"'
-            yield 'codebase = "%s/"' % p
-            yield 'width="1" height="1"'
-            yield 'name   = "BEIDAppletLauncher"'
-            yield 'id   = "BEIDAppletLauncher"'
-            yield 'archive="applet-launcher.jar,beid35libJava.jar,BEID_Applet.jar">'
-    
-            yield '<param name="codebase_lookup" value="false">'
-            yield '<param name="subapplet.classname" value="be.belgium.beid.BEID_Applet">'
-            yield '<param name="progressbar" value="true">'
-            yield '<param name="jnlpNumExtensions" value="1">'
-            yield '<param name="jnlpExtension1" value= "' + p + '/beid.jnlp">'
-            #~ yield '<param name="jnlpExtension1" value= "beid.jnlp">'
-
-            yield '<param name="debug" value="false"/>'
-            yield '<param name="Reader" value=""/>'
-            yield '<param name="OCSP" value="-1"/>'
-            yield '<param name="CRL" value="-1"/>'
-            #~ yield '<param name="jnlp_href" value="' + p + '/beid_java_plugin.jnlp" />'
-            yield '<param name="jnlp_href" value="beid_java_plugin.jnlp" />'
-            yield '<param name="separate_jvm" value="true">' # 20130913
-            yield '</applet>'
-
 
         if site.use_davlink:
-          if not USE_DAVLINK_JNLP:
             p = site.build_media_url('lino','applets','DavLink.jar')
             p = request.build_absolute_uri(p)
             yield '<applet name="DavLink" code="davlink.DavLink.class"'
@@ -860,15 +805,9 @@ tinymce.init({
             yield '</applet>'
             # Note: The value of the ARCHIVE attribute is a URL of a JAR file.
             
-        if site.use_eidreader:
-            #~ p = site.build_media_url('lino','applets','EIDReader.jar')
-            p = site.build_media_url('eidreader','EIDReader.jar')
-            p = request.build_absolute_uri(p)
-            yield '<applet name="EIDReader" code="src.eidreader.EIDReader.class"'
-            yield '        archive="%s"' % p
-            yield '        width="0" height="0">'
-            #~ yield '<param name="separate_jvm" value="true">' # 20130913
-            yield '</applet>'
+        for p in site.installed_plugins:
+            for ln in p.get_head_lines(site,request):
+                yield ln
             
         yield '<div id="body"></div>'
         #~ yield '<div id="tbar"/>'
@@ -962,8 +901,6 @@ tinymce.init({
             
     def write_lino_js(self,f,profile):
         
-        tpl = self.linolib_template()
-        
         context = dict(
             ext_renderer = self,
             site = settings.SITE,
@@ -972,13 +909,24 @@ tinymce.init({
             ext_requests = ext_requests,
         )
         
-        messages = set()
-        def mytranslate(s):
-            messages.add(s)
-            return _(s)
-        context.update(_=mytranslate)
+        #~ messages = set()
+        #~ def mytranslate(s):
+            #~ messages.add(s)
+            #~ return _(s)
+        #~ context.update(_=mytranslate)
+        context.update(_=_)
+        
+        tpl = self.linolib_template()
+        
         #~ f.write(jscompress(unicode(tpl)+'\n'))
         f.write(jscompress(tpl.render(**context)+'\n'))
+        
+        for p in settings.SITE.installed_plugins:
+            for tplname in p.site_js_snippets:
+                tpl = settings.SITE.jinja_env.get_template(tplname)
+                f.write(jscompress('\n// from %s:%s\n' % (p,tplname)))
+                f.write(jscompress('\n'+tpl.render(**context)+'\n'))
+        
         
         """
         Make the dummy messages file.

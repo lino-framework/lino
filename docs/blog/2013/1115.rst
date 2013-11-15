@@ -1,0 +1,63 @@
+===================================
+20131115 (Friday, 15 November 2013)
+===================================
+
+Plugins
+-------
+
+Yesterday evening Joe and I had our first Skype meeting which lasted 
+about 70 minutes.
+We had a brainstorming about a feature which Joe would like to use:
+
+- allow for chunks of custom js and css files and templates. 
+  Something which should use Django's `Form Assets (the Media class)
+  <https://docs.djangoproject.com/en/dev/topics/forms/media/>`_.
+
+How to name it? settings.SITE.add_feature()?
+
+It seems that Django does not parse these `Media` files nor provide a
+method to generate a single file from all those chunks. The whole Media
+class in fact is not meant for *generating* a file. We must differentiate
+between (1) self-maintained JS and CSS snippets and (2) 
+external JS libraries.
+So yes, we'll need to extend Django's system.
+
+After some sleep I realized that we have been looking for the name
+"plugin", and that this had been already almost implemented (in
+djangosite.Site). But I had never started to actually use it because
+there was no urgent need. Now I converted `use_eidreader` and
+`use_eid_jslib` to "Plugins", and it works, and everything is much
+cooler! I'm fascinated!
+
+So the Site setting :setting:`use_eidreader` has been replaced 
+by the :class:`lino.mixins.beid.BeIdReaderPlugin`.
+Instead of setting :setting:`use_eidreader` to True you must
+override :setting:`get_installed_plugins` as follows::
+
+    def get_installed_plugins(self):
+        for p in super(Site,self).get_installed_plugins():
+            yield p
+        yield 'lino.mixins.beid.BeIdReaderPlugin'
+
+
+The base class is (currently) defined in :class:`djangosite.Plugin` 
+and should be used from ``dd.Plugin``.
+        
+The :srcref:`lino/config/plugins/eidreader.js` snippet contains code 
+which was previously in :xfile:`linolib.js` 
+(which definitively was not the right place)
+
+
+TODO: 
+
+- move `lino.mixins.beid` to `lino.plugins.beid`.
+- The next plugins will be `lino.plugins.davlink.DavLinkPlugin` 
+  (replacing :setting:`use_davlink`)
+  and/or `lino.extjs.ExtJS3Plugin` (replacing :setting:`use_extjs`).
+
+Note that the current implementation does **not** use 
+Django's `Form Assets 
+<https://docs.djangoproject.com/en/dev/topics/forms/media/>`_
+because that would cause more work when converting the 
+existing `use_xxx` settings to plugins
+and because I don't (yet) see any advantage.
