@@ -5,9 +5,9 @@
 Plugins
 -------
 
-Yesterday evening Joe and I had our first Skype meeting which lasted 
+Yesterday Joe and I had our first Skype meeting which lasted 
 about 70 minutes.
-We had a brainstorming about a feature which Joe would like to use:
+We had a brainstorming about a feature Joe would like to use:
 
 - allow for chunks of custom js and css files and templates. 
   Something which should use Django's `Form Assets (the Media class)
@@ -60,4 +60,4 @@ Django's `Form Assets
 <https://docs.djangoproject.com/en/dev/topics/forms/media/>`_
 because that would cause more work when converting the 
 existing `use_xxx` settings to plugins
-and because I don't (yet) see any advantage.
+and because I don't (yet) see any advantage...
