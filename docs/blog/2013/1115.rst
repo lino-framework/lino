@@ -8,10 +8,9 @@ Plugins
 Yesterday Joe and I had our first Skype meeting which lasted 
 about 70 minutes.
 We had a brainstorming about a feature Joe would like to use:
-
-- allow for chunks of custom js and css files and templates. 
-  Something which should use Django's `Form Assets (the Media class)
-  <https://docs.djangoproject.com/en/dev/topics/forms/media/>`_.
+allow for chunks of custom js and css files and templates. 
+Something which should use Django's `Form Assets (the Media class)
+<https://docs.djangoproject.com/en/dev/topics/forms/media/>`_.
 
 How to name it? settings.SITE.add_feature()?
 
@@ -40,13 +39,13 @@ override :setting:`get_installed_plugins` as follows::
         yield 'lino.mixins.beid.BeIdReaderPlugin'
 
 
-The base class is (currently) defined in :class:`djangosite.Plugin` 
+The base class is (currently) defined in 
+:class:`djangosite.djangosite_site.Plugin` 
 and should be used from ``dd.Plugin``.
         
 The :srcref:`lino/config/plugins/eidreader.js` snippet contains code 
 which was previously in :xfile:`linolib.js` 
 (which definitively was not the right place)
-
 
 TODO: 
 

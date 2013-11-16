@@ -1,0 +1,13 @@
+=====================================
+20131116 (Saturday, 16 November 2013)
+=====================================
+
+Upgrading Ubuntu to version 12.10
+---------------------------------
+
+
+
+**Third party sources disabled**
+
+Some third party entries in your sources.list were disabled. You can re-enable them after the upgrade with the 'software-properties' tool or your package manager.
+

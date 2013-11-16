@@ -14,10 +14,13 @@
 
 """
 
-Import of our TIM data. 
-Mandatory argument is the path to your TIM data directory.
+Import of our TIM data.
+Requires Ethan Furman's ``dbf`` package from http://pypi.python.org/pypi/dbf
 
-It requires Ethan Furman's ``dbf`` package from http://pypi.python.org/pypi/dbf/
+:setting:`legacy_data_path` must point to the TIM data path, e.g.::
+
+  legacy_data_path = '~/vbshared2/drives/L/backup/data/privat'
+
 
 """
 
@@ -66,7 +69,6 @@ Household = resolve_model('households.Household')
 Person = resolve_model("contacts.Person")
 Company = resolve_model("contacts.Company")
 
-LEN_IDGEN = 6
 
 users = dd.resolve_app('users')
 tickets = dd.resolve_app('tickets')
@@ -229,66 +231,169 @@ def try_full_clean(i):
                 dblogger.warning("%s : ignoring value %r for %s : %s",obj2str(i),v,k,e)
         return
     
-def load_dbf(dbpath,tableName,load):
-    #~ fn = os.path.join(dbpath,'%s.DBF' % tableName)
-    fn = os.path.join(dbpath,'%s.FOX' % tableName)
-    if True:
-        import dbf # http://pypi.python.org/pypi/dbf/
-        table = dbf.Table(fn)
-        #~ table.use_deleted = False
-        table.open()
-        #~ print table.structure()
-        dblogger.info("Loading %d records from %s...",len(table),fn)
-        for record in table:
-            if not dbf.is_deleted(record):
-                i = load(record)
+class TimLoader(object):
+    
+    LEN_IDGEN = 6
+    
+    table_ext = '.FOX'
+    
+    archived_tables = set()
+    archive_name = None
+    
+    def __init__(self,dbpath):
+        self.dbpath = dbpath
+        self.VENDICT = dict()
+        self.sales_gen2art = dict()
+        self.GROUPS = dict()
+        
+        
+    def load_dbf(self,tableName):
+        row2obj = getattr(self,'load_'+tableName[-3:].lower())
+        fn = self.dbpath
+        if self.archive_name is not None and tablename in self.archived_tables:
+            fn = os.path.join(fn,self.archive_name)
+        fn = os.path.join(fn,tableName)
+        fn += self.table_ext
+        if True:
+            import dbf # http://pypi.python.org/pypi/dbf/
+            table = dbf.Table(fn)
+            #~ table.use_deleted = False
+            table.open()
+            #~ print table.structure()
+            dblogger.info("Loading %d records from %s...",len(table),fn)
+            for record in table:
+                if not dbf.is_deleted(record):
+                    i = row2obj(record)
+                    if i is not None:
+                        yield settings.TIM2LINO_LOCAL(tableName,i)
+            table.close()
+        else:
+            f = dbfreader.DBFFile(fn,codepage="cp850")
+            dblogger.info("Loading %d records from %s...",len(f),fn)
+            f.open()
+            for dbfrow in f:
+                i = row2obj(dbfrow)
                 if i is not None:
                     yield settings.TIM2LINO_LOCAL(tableName,i)
-        table.close()
-    else:
-        f = dbfreader.DBFFile(fn,codepage="cp850")
-        dblogger.info("Loading %d records from %s...",len(f),fn)
-        f.open()
-        for dbfrow in f:
-            i = load(dbfrow)
-            if i is not None:
-                yield settings.TIM2LINO_LOCAL(tableName,i)
-        f.close()
-
+            f.close()
+            
+        self.after_load(tableName)
+            
+            
+    def load_gen(self,row,**kw):
+        idgen = row.idgen.strip()
+        if not idgen: return
+        if len(idgen) < self.LEN_IDGEN:
+            dclsel = row.dclsel.strip()
+            kw.update(chart=accounts.Chart.objects.get(pk=1))
+            kw.update(ref=idgen)
+            kw.update(account_type=pcmn2type(idgen))
+            def names2kw(kw,*names):
+                names = [n.strip() for n in names]
+                kw.update(name=names[0])
+            names2kw(kw,row.libell1,row.libell2,row.libell3,row.libell4)
+            ag = accounts.Group(**kw)
+            self.GROUPS[idgen] = ag
+            yield ag
+        
+        if len(idgen) == self.LEN_IDGEN:
+            ag = None
+            for length in range(len(idgen),0,-1):
+                print idgen[:length]
+                ag = self.GROUPS.get(idgen[:length])
+                if ag is not None:
+                    break
+            dclsel = row.dclsel.strip()
+            #~ kw.update(chart=accounts.Chart.objects.get(pk=1))
+            kw.update(ref=idgen)
+            kw.update(group=ag)
+            kw.update(type=pcmn2type(idgen))
+            def names2kw(kw,*names):
+                names = [n.strip() for n in names]
+                kw.update(name=names[0])
+            names2kw(kw,row.libell1,row.libell2,row.libell3,row.libell4)
+            yield accounts.Account(**kw)
+        
+    def load_ven(self,row,**kw):
+        jnl,year,number = row2jnl(row)
+        if jnl is None:
+            return 
+        kw.update(year=year)
+        kw.update(number=number)
+        #~ kw.update(id=pk)
+        if jnl.trade_type.name == 'sales':
+            partner = get_customer(par_pk(row.idpar))
+            kw.update(partner=partner)
+            kw.update(imode=DIM)
+            if row.idprj.strip():
+                kw.update(project_id=int(row.idprj.strip()))
+            kw.update(discount=mton(row.remise))
+        elif jnl.trade_type.name == 'purchases':
+            kw.update(partner=contacts.Partner.objects.get(pk=par_pk(row.idpar)))
+            #~ partner=contacts.Partner.objects.get(pk=par_pk(row.idpar))
+        else:
+            raise Exception("Unkonwn TradeType %r" % jnl.trade_type)
+        kw.update(date=row.date)
+        kw.update(user=self.get_user(row.idusr))
+        kw.update(total_excl=mton(row.montr))
+        kw.update(total_vat=mton(row.montt))
+        doc = jnl.create_document(**kw)
+        #~ doc.partner = partner
+        #~ doc.full_clean()
+        #~ doc.save()
+        self.VENDICT[(jnl,year,number)] = doc
+        return doc
+        #~ return cl(**kw)
+        
+    def get_user(self,idusr):
+        return self.ROOT
     
-  
-def load_tim_data(dbpath):
-  
-    ROOT = users.User(username='root',profile='900',last_name="Root")
-    ROOT.set_password("1234")
-    yield ROOT
-    
-    settings.SITE.loading_from_dump = True
-    
-    CHART = accounts.Chart(name="Default")
-    yield CHART
-    
-    
-    DIM = sales.InvoicingMode(name='Default')
-    yield DIM
-    yield sales.Invoice.create_journal('sales',name="Verkaufsrechnungen",ref="S")
-    yield ledger.AccountInvoice.create_journal('purchases',name="Einkaufsrechnungen",ref="P")
-
-    #~ from lino.modlib.users import models as users
-    
-    #~ ROOT = users.User.objects.get(username='root')
-    #~ DIM = sales.InvoicingMode.objects.get(name='Default')
-    
-    PROD_617010 = products.Product(name=u"Edasimüük remondikulud",id=40)
-    yield PROD_617010
-    def vnlg2product(row):
+    def load_vnl(self,row,**kw):
+        jnl,year,number = row2jnl(row)
+        if jnl is None:
+            return 
+        doc = self.VENDICT.get((jnl,year,number))
+        if doc is None:
+            raise Exception("VNL %r without document" % list(jnl,year,number))
+        #~ doc = jnl.get_document(year,number)
+        #~ try:
+            #~ doc = jnl.get_document(year,number)
+        #~ except Exception,e:
+            #~ dblogger.warning(str(e))
+            #~ return 
+        #~ kw.update(document=doc)
+        kw.update(seqno=int(row.line.strip()))
+        idart = row.idart.strip()
+        if isinstance(doc,sales.Invoice):
+            if row.code in ('A','F'):
+                if idart != '*':
+                    kw.update(product=int(idart))
+            elif row.code == 'G':
+                a = self.vnlg2product(row)
+                if a is not None:
+                    kw.update(product=a)
+        elif isinstance(doc,ledger.AccountInvoice):
+            if row.code == 'G':
+                kw.update(account=idart)
+        kw.update(title=row.desig.strip())
+        kw.update(vat_class=tax2vat(row.idtax))
+        kw.update(unit_price=mton(row.prixu))
+        kw.update(qty=qton(row.qte))
+        kw.update(total_excl=mton(row.cmont))
+        kw.update(total_vat=mton(row.montt))
+        #~ kw.update(qty=row.idtax.strip())
+        #~ kw.update(qty=row.montt.strip())
+        #~ kw.update(qty=row.attrib.strip())
+        #~ kw.update(date=row.date)
+        return doc.add_item(**kw)
+            
+    def vnlg2product(self,row):
         a = row.idart.strip()
-        if a == '617010':
-            return PROD_617010
+        return self.sales_gen2art.get(a)
         
     # Countries already exist after initial_data, but their short_code is 
     # needed as lookup field for Cities.
-    def load_nat(row):
+    def load_nat(self,row):
         if not row['isocode'].strip(): 
             return
         try:
@@ -300,7 +405,7 @@ def load_tim_data(dbpath):
             country.short_code = row['idnat'].strip()
         return country
         
-    def load_plz(row):
+    def load_plz(self,row):
         pk = row['pays'].strip()
         if not pk:
             return
@@ -316,7 +421,7 @@ def load_tim_data(dbpath):
         return City(**kw)
     
     
-    def load_par(row):
+    def load_par(self,row):
         kw = {}
         #~ kw.update(street2kw(join_words(row['RUE'],row['RUENUM'],row['RUEBTE'])))
             
@@ -412,7 +517,7 @@ def load_tim_data(dbpath):
     
     #~ PRJPAR = dict()
     
-    def load_prj(row,**kw):
+    def load_prj(self,row,**kw):
         pk = int(row.idprj.strip())
         kw.update(id=pk)
         if row.parent.strip():
@@ -422,12 +527,12 @@ def load_tim_data(dbpath):
             kw.update(partner_id=par_pk(row.idpar.strip()))
             #~ PRJPAR[pk] = 
         kw.update(iname=row.seq.strip())
-        kw.update(user=ROOT)
+        kw.update(user=self.get_user(row.idusr))
         kw.update(summary=dbfmemo(row.abstract))
         kw.update(description=dbfmemo(row.body))
         return tickets.Project(**kw)
     
-    def load_pin(row,**kw):
+    def load_pin(self,row,**kw):
         pk = int(row.idpin)
         kw.update(id=pk)
         if row.idprj.strip():
@@ -441,10 +546,10 @@ def load_tim_data(dbpath):
         kw.update(closed=row.closed)
         kw.update(created=row['date'])
         kw.update(modified=datetime.datetime.now())
-        kw.update(user=ROOT)
+        kw.update(user=self.get_user(row.idusr))
         return tickets.Ticket(**kw)
     
-    def load_dls(row,**kw):
+    def load_dls(self,row,**kw):
         pk = int(row.iddls)
         kw.update(id=pk)
         if row.idprj.strip():
@@ -455,7 +560,7 @@ def load_tim_data(dbpath):
         kw.update(summary=row.nb.strip())
         kw.update(description=dbfmemo(row.memo))
         kw.update(date=row.date)
-        kw.update(user=ROOT)
+        kw.update(user=self.get_user(row.idusr))
         def set_time(kw,fldname,v):
             v = v.strip()
             if not v:
@@ -484,7 +589,7 @@ def load_tim_data(dbpath):
                 #~ dblogger.warning("Lost DLS->IdPar of DLS#%d" % pk)
         return obj
     
-    def load_art(row,**kw):
+    def load_art(self,row,**kw):
         try:
             pk = int(row.idart)
         except ValueError,e:
@@ -497,158 +602,91 @@ def load_tim_data(dbpath):
         names2kw(kw,row.name1,row.name2,row.name3)
         return products.Product(**kw)
         
-    GROUPS = dict()
-    
-    def load_gen1(row,**kw):
-        idgen = row.idgen.strip()
-        if not idgen: return
-        if len(idgen) == LEN_IDGEN: return
-        dclsel = row.dclsel.strip()
-        kw.update(chart=accounts.Chart.objects.get(pk=1))
-        kw.update(ref=idgen)
-        kw.update(account_type=pcmn2type(idgen))
-        def names2kw(kw,*names):
-            names = [n.strip() for n in names]
-            kw.update(name=names[0])
-        names2kw(kw,row.libell1,row.libell2,row.libell3,row.libell4)
-        ag = accounts.Group(**kw)
-        GROUPS[idgen] = ag
-        yield ag
-        
-    def load_gen2(row,**kw):
-        idgen = row.idgen.strip()
-        if not idgen: return
-        if len(idgen) < LEN_IDGEN: return
-        ag = None
-        for length in range(len(idgen),0,-1):
-            print idgen[:length]
-            ag = GROUPS.get(idgen[:length])
-            if ag is not None:
-                break
-        dclsel = row.dclsel.strip()
-        #~ kw.update(chart=accounts.Chart.objects.get(pk=1))
-        kw.update(ref=idgen)
-        kw.update(group=ag)
-        kw.update(type=pcmn2type(idgen))
-        def names2kw(kw,*names):
-            names = [n.strip() for n in names]
-            kw.update(name=names[0])
-        names2kw(kw,row.libell1,row.libell2,row.libell3,row.libell4)
-        yield accounts.Account(**kw)
-        
-    def load_ven(row,**kw):
-        jnl,year,number = row2jnl(row)
-        if jnl is None:
-            return 
-        kw.update(year=year)
-        kw.update(number=number)
-        #~ kw.update(id=pk)
-        if jnl.trade_type.name == 'sales':
-            partner = get_customer(par_pk(row.idpar))
-            kw.update(partner=partner)
-            kw.update(imode=DIM)
-            if row.idprj.strip():
-                kw.update(project_id=int(row.idprj.strip()))
-            kw.update(discount=mton(row.remise))
-        elif jnl.trade_type.name == 'purchases':
-            kw.update(partner=contacts.Partner.objects.get(pk=par_pk(row.idpar)))
-            #~ partner=contacts.Partner.objects.get(pk=par_pk(row.idpar))
-        else:
-            raise Exception("Unkonwn TradeType %r" % jnl.trade_type)
-        kw.update(date=row.date)
-        kw.update(user=ROOT)
-        kw.update(total_excl=mton(row.montr))
-        kw.update(total_vat=mton(row.montt))
-        doc = jnl.create_document(**kw)
-        #~ doc.partner = partner
-        #~ doc.full_clean()
-        #~ doc.save()
-        VENDICT[(jnl,year,number)] = doc
-        return doc
-        #~ return cl(**kw)
-    
-    def load_vnl(row,**kw):
-        jnl,year,number = row2jnl(row)
-        if jnl is None:
-            return 
-        doc = VENDICT.get((jnl,year,number))
-        if doc is None:
-            raise Exception("VNL %r without document" % list(jnl,year,number))
-        #~ doc = jnl.get_document(year,number)
-        #~ try:
-            #~ doc = jnl.get_document(year,number)
-        #~ except Exception,e:
-            #~ dblogger.warning(str(e))
-            #~ return 
-        #~ kw.update(document=doc)
-        kw.update(seqno=int(row.line.strip()))
-        idart = row.idart.strip()
-        if isinstance(doc,sales.Invoice):
-            if row.code in ('A','F'):
-                if idart != '*':
-                    kw.update(product=int(idart))
-            elif row.code == 'G':
-                a = vnlg2product(row)
-                if a is not None:
-                    kw.update(product=a)
-        elif isinstance(doc,ledger.AccountInvoice):
-            if row.code == 'G':
-                kw.update(account=idart)
-        kw.update(title=row.desig.strip())
-        kw.update(vat_class=tax2vat(row.idtax))
-        kw.update(unit_price=mton(row.prixu))
-        kw.update(qty=qton(row.qte))
-        kw.update(total_excl=mton(row.cmont))
-        kw.update(total_vat=mton(row.montt))
-        #~ kw.update(qty=row.idtax.strip())
-        #~ kw.update(qty=row.montt.strip())
-        #~ kw.update(qty=row.attrib.strip())
-        #~ kw.update(date=row.date)
-        return doc.add_item(**kw)
-        
-    yield load_dbf(dbpath,r'RUMMA\GEN',load_gen1)
-    yield load_dbf(dbpath,r'RUMMA\GEN',load_gen2)
-    
-    yield dpy.FlushDeferredObjects
-    
-    PROD_617010.sales_account=accounts.Account.objects.get(ref='617010')
-    PROD_617010.save()
-    
-    #~ ca = accounts.Account(group=accounts.Group.objects.get(ref='400000'))
-    #~ yield ca
-    #~ sba = accounts.Account(group=accounts.Group.objects.get(ref='700000'))
-    #~ yield sba
-    #~ sva = accounts.Account(group=accounts.Group.objects.get(ref='451000'))
-    #~ yield sva
-    #~ settings.SITE.update_site_config(customers_account=ca)
-        #~ sales_base_account=sba,
-        #~ sales_vat_account=sva)
-        
-    
-    yield load_dbf(dbpath,r'RUMMA\ART',load_art)
-    yield load_dbf(dbpath,'NAT',load_nat)
-    yield load_dbf(dbpath,'PLZ',load_plz)
-    yield load_dbf(dbpath,'PAR',load_par)
-    yield load_dbf(dbpath,'PRJ',load_prj)
-    
-    yield dpy.FlushDeferredObjects
-    """
-    We need a FlushDeferredObjects here because otherwise most Project 
-    objects don't get saved at the first attempt
-    """
-    
-    yield load_dbf(dbpath,r'RUMMA\VEN',load_ven)
-    yield load_dbf(dbpath,r'RUMMA\VNL',load_vnl)
-    
-    if GET_THEM_ALL:
-        yield load_dbf(dbpath,'PIN',load_pin)
-        yield load_dbf(dbpath,'DLS',load_dls)
-    
-VENDICT = dict()
+    def after_load(self,tableName):
+        pass
 
+    def objects(tim):
+            
+        self.ROOT = users.User(username='root',profile='900',last_name="Root")
+        self.ROOT.set_password("1234")
+        yield self.ROOT
+        
+        settings.SITE.loading_from_dump = True
+        
+        CHART = accounts.Chart(name="Default")
+        yield CHART
+        
+        
+        DIM = sales.InvoicingMode(name='Default')
+        yield DIM
+        yield sales.Invoice.create_journal('sales',name="Verkaufsrechnungen",ref="S")
+        yield ledger.AccountInvoice.create_journal('purchases',name="Einkaufsrechnungen",ref="P")
 
+        #~ from lino.modlib.users import models as users
+        
+        #~ ROOT = users.User.objects.get(username='root')
+        #~ DIM = sales.InvoicingMode.objects.get(name='Default')
+        
+        yield tim.load_dbf('GEN')
+        
+        yield dpy.FlushDeferredObjects
+        
+        #~ ca = accounts.Account(group=accounts.Group.objects.get(ref='400000'))
+        #~ yield ca
+        #~ sba = accounts.Account(group=accounts.Group.objects.get(ref='700000'))
+        #~ yield sba
+        #~ sva = accounts.Account(group=accounts.Group.objects.get(ref='451000'))
+        #~ yield sva
+        #~ settings.SITE.update_site_config(customers_account=ca)
+            #~ sales_base_account=sba,
+            #~ sales_vat_account=sva)
+            
+        
+        yield tim.load_dbf('ART')
+        yield tim.load_dbf('NAT')
+        yield tim.load_dbf('PLZ')
+        yield tim.load_dbf('PAR')
+        yield tim.load_dbf('PRJ')
+        
+        yield dpy.FlushDeferredObjects
+        
+        """
+        We need a FlushDeferredObjects here because most Project 
+        objects don't get saved at the first attempt
+        """
+        
+        yield tim.load_dbf('VEN')
+        yield tim.load_dbf('VNL')
+        
+
+class PrestoTimLoader(TimLoader):
+    
+    archived_tables = set('GEN ART VEN VNL'.split())
+    archive_name = 'rumma'
+
+    def objects(tim):
+        
+        self.PROD_617010 = products.Product(name=u"Edasimüük remondikulud",id=40)
+        yield self.PROD_617010
+        
+        self.sales_gen2art['617010'] = PROD_617010
+        
+        yield super(PrestoTimLoader,self).objects()
+        #~ for o in super(PrestoTimLoader,self).objects():
+            #~ yield o
+
+        if GET_THEM_ALL:
+            yield tim.load_dbf('PIN')
+            yield tim.load_dbf('DLS')
+
+    def after_load(self,tableName):
+        if tableName == 'GEN':
+            self.PROD_617010.sales_account=accounts.Account.objects.get(ref='617010')
+            self.PROD_617010.save()
+        
 
 def objects():
     settings.SITE.startup()
-    for obj in load_tim_data(settings.SITE.legacy_data_path):
+    tim = TimLoader(settings.SITE.legacy_data_path)
+    for obj in tim.objects():
         yield obj
