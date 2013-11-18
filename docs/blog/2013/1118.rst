@@ -2,8 +2,10 @@
 20131118 (Monday, 18 November 2013)
 ===================================
 
-Lino needs a new name!
-----------------------
+(Checkin changes from Saturday)
+
+Does Lino needs a new name?
+---------------------------
 
 My wife and I were thinking about a logo for Lino (see
 :blogref:`20130926`), and I noticed that I feel
@@ -14,14 +16,13 @@ certain problems:
 - It is used by certain specialized products in printing technology
   (Linotronic, Linoprint)
 - Americans don't know how to pronounce it
-
-
-It is not easy to change a name, but I'd rather do it now than in 5
-years.
+- It is not easy to change a name, but I'd rather do it now than 
+  in 5 years.
 
 ... and oops: while surfing around I discovered that 
 "Lino" is registered trademark of a 
 German software company (http://www.lino.de).
-So now it is clear: Lino needs a new name!
 
-Suggestions are welcome.
+Does that mean that Lino needs a new name?
+
+Comments are welcome.
