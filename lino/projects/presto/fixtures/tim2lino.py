@@ -14,15 +14,17 @@
 
 """
 
-Import of our TIM data.
-Requires Ethan Furman's ``dbf`` package from http://pypi.python.org/pypi/dbf
-
+Import legacy data from TIM.
 :setting:`legacy_data_path` must point to the TIM data path, e.g.::
 
   legacy_data_path = '~/vbshared2/drives/L/backup/data/privat'
 
 
 """
+
+import logging
+logger = logging.getLogger(__name__)
+
 
 GET_THEM_ALL = True
 
@@ -59,7 +61,7 @@ from lino.core.dbutils import is_valid_email
 
 from lino import dd
 
-from lino.utils import confirm, iif
+from lino.utils import confirm, iif, ispure
 from lino.core.dbutils import app_labels
 
 Activity = resolve_model('pcsw.Activity')
@@ -91,12 +93,6 @@ def dbfmemo(s):
 
 
 
-def store(kw,**d):
-    for k,v in d.items():
-        if v is not None:
-        #~ if v:
-            kw[k] = v
-
 #~ def convert_username(name):
     #~ return name.lower()
     
@@ -120,12 +116,12 @@ def tax2vat(idtax):
     
 def pcmn2type(idgen):
     if idgen[0] == '6':
-        return AccountTypes.expense
+        return AccountTypes.expenses
     if idgen[0] == '7':
-        return AccountTypes.income
+        return AccountTypes.incomes
     if idgen[0] == '4':
-        return AccountTypes.liability
-    return AccountTypes.asset
+        return AccountTypes.liabilities
+    return AccountTypes.assets
         
 def tim2bool(x):
     if not x.strip():
@@ -140,7 +136,9 @@ def convert_gender(v):
 def mton(s): # PriceField
     #~ return s.strip()
     s = s.strip()
-    if s: return Decimal(s)
+    if s: 
+        if s != "GRATIS": 
+            return Decimal(s)
     return Decimal()
               
 def qton(s): # QuantityField
@@ -188,20 +186,19 @@ def row2jnl(row):
     year = ledger.FiscalYears.from_int(2000 + int(row.iddoc[:2]))
     num = int(row.iddoc[2:])
     if row.idjnl in ('VKR','EKR'):
-        jnl = ledger.Journal.objects.get(id=row.idjnl)
+        jnl = ledger.Journal.objects.get(ref=row.idjnl)
         #~ cl = sales.Invoice
         return jnl,year,num
     return None,None,None
         
 def get_customer(pk):
-    try:
-        return sales.Customer.objects.get(pk=pk)
-    except sales.Customer.DoesNotExist:
-        obj = mti.create_child(contacts.Partner,pk,sales.Customer)
-        obj.save()
-        #~ return obj
-        return sales.Customer.objects.get(pk=pk)
-        #~ obj = sales.Customer()
+    return contacts.Partner.objects.get(pk=pk)
+    #~ try:
+        #~ return sales.Customer.objects.get(pk=pk)
+    #~ except sales.Customer.DoesNotExist:
+        #~ obj = mti.create_child(contacts.Partner,pk,sales.Customer)
+        #~ obj.save()
+        #~ return sales.Customer.objects.get(pk=pk)
 
 def ticket_state(idpns):
     if idpns == ' ':
@@ -233,41 +230,83 @@ def try_full_clean(i):
     
 class TimLoader(object):
     
+    use_dbf_py = False
+    """
+    `True` means to use Ethan Furman's 
+    `dbf <http://pypi.python.org/pypi/dbf/>`_ package
+    to read the file,
+    False means to use :mod:`lino.utils.dbfreader`.
+    Set it to True when reading data from a TIM with FOXPRO DBE, 
+    False when reading DBFNTX files. 
+    
+    """
+    
     LEN_IDGEN = 6
     
     table_ext = '.FOX'
     
     archived_tables = set()
     archive_name = None
+    languages = None
+    codepage = 'cp850'
+    #~ codepage = 'cp437'
     
     def __init__(self,dbpath):
         self.dbpath = dbpath
         self.VENDICT = dict()
         self.sales_gen2art = dict()
         self.GROUPS = dict()
+        self.languages = settings.SITE.resolve_languages(self.languages)
         
         
-    def load_dbf(self,tableName):
-        row2obj = getattr(self,'load_'+tableName[-3:].lower())
+    def store(self,kw,**d):
+        for k,v in d.items():
+            if v is not None:
+                if isinstance(v,basestring):
+                    v = self.decode_string(v).strip()
+            #~ if v:
+                kw[k] = v
+                
+    def short2iso(self,s):
+        if s == 'B': return 'BE'
+        if s == 'D': return 'DE'
+        if s == 'F': return 'FR'
+        if s == 'L': return 'LU'
+        if s == 'E': return 'ES'
+        if s == 'I': return 'IT'
+        if s == 'USA': return 'US'
+        if s == 'VIE': return ''
+        return s
+        #~ if s == 'AU': return 'AU'
+        #~ if s == 'NL': return 'NL'
+        #~ raise Exception("Unknown short country code %r" % s)
+
+
+    def load_dbf(self,tableName,row2obj=None):
+        if row2obj is None:
+            row2obj = getattr(self,'load_'+tableName[-3:].lower())
         fn = self.dbpath
-        if self.archive_name is not None and tablename in self.archived_tables:
-            fn = os.path.join(fn,self.archive_name)
+        if self.archive_name is not None:
+            if tableName in self.archived_tables:
+                fn = os.path.join(fn,self.archive_name)
         fn = os.path.join(fn,tableName)
         fn += self.table_ext
-        if True:
+        if self.use_dbf_py:
+            dblogger.info("Loading %s...",fn)
             import dbf # http://pypi.python.org/pypi/dbf/
-            table = dbf.Table(fn)
+            #~ table = dbf.Table(fn)
+            table = dbf.Table(fn,codepage=self.codepage)
             #~ table.use_deleted = False
             table.open()
             #~ print table.structure()
-            dblogger.info("Loading %d records from %s...",len(table),fn)
+            dblogger.info("Loading %d records from %s (%s)...",len(table),fn,table.codepage)
             for record in table:
                 if not dbf.is_deleted(record):
                     i = row2obj(record)
                     if i is not None:
                         yield settings.TIM2LINO_LOCAL(tableName,i)
             table.close()
-        else:
+        else: 
             f = dbfreader.DBFFile(fn,codepage="cp850")
             dblogger.info("Loading %d records from %s...",len(f),fn)
             f.open()
@@ -280,39 +319,51 @@ class TimLoader(object):
         self.after_load(tableName)
             
             
-    def load_gen(self,row,**kw):
+    def load_gen2group(self,row,**kw):
         idgen = row.idgen.strip()
         if not idgen: return
         if len(idgen) < self.LEN_IDGEN:
-            dclsel = row.dclsel.strip()
-            kw.update(chart=accounts.Chart.objects.get(pk=1))
+            #~ dclsel = row.dclsel.strip()
+            #~ kw.update(chart=accounts.Chart.objects.get(pk=1))
+            kw.update(chart=self.CHART)
             kw.update(ref=idgen)
             kw.update(account_type=pcmn2type(idgen))
-            def names2kw(kw,*names):
-                names = [n.strip() for n in names]
-                kw.update(name=names[0])
-            names2kw(kw,row.libell1,row.libell2,row.libell3,row.libell4)
+            self.babel2kw('libell','name',row,kw)
+            #~ def names2kw(kw,*names):
+                #~ names = [n.strip() for n in names]
+                #~ kw.update(name=names[0])
+            #~ names2kw(kw,row.libell1,row.libell2,row.libell3,row.libell4)
             ag = accounts.Group(**kw)
             self.GROUPS[idgen] = ag
             yield ag
         
+    def load_gen2account(self,row,**kw):
+        idgen = row.idgen.strip()
+        if not idgen: return
         if len(idgen) == self.LEN_IDGEN:
             ag = None
             for length in range(len(idgen),0,-1):
-                print idgen[:length]
+                #~ print idgen[:length]
                 ag = self.GROUPS.get(idgen[:length])
                 if ag is not None:
                     break
-            dclsel = row.dclsel.strip()
+            #~ dclsel = row.dclsel.strip()
             #~ kw.update(chart=accounts.Chart.objects.get(pk=1))
             kw.update(ref=idgen)
             kw.update(group=ag)
+            kw.update(chart=self.CHART)
             kw.update(type=pcmn2type(idgen))
-            def names2kw(kw,*names):
-                names = [n.strip() for n in names]
-                kw.update(name=names[0])
-            names2kw(kw,row.libell1,row.libell2,row.libell3,row.libell4)
-            yield accounts.Account(**kw)
+            self.babel2kw('libell','name',row,kw)
+            #~ def names2kw(kw,*names):
+                #~ names = [n.strip() for n in names]
+                #~ kw.update(name=names[0])
+            #~ names2kw(kw,row.libell1,row.libell2,row.libell3,row.libell4)
+            obj = accounts.Account(**kw)
+            #~ if idgen == "612410": 
+                #~ raise Exception(20131116)
+            #~ logger.info("20131116 %s",dd.obj2str(obj))
+            #~ logger.info("20131116 ACCOUNT %s ",obj)
+            yield obj
         
     def load_ven(self,row,**kw):
         jnl,year,number = row2jnl(row)
@@ -324,7 +375,7 @@ class TimLoader(object):
         if jnl.trade_type.name == 'sales':
             partner = get_customer(par_pk(row.idpar))
             kw.update(partner=partner)
-            kw.update(imode=DIM)
+            kw.update(imode=self.DIM)
             if row.idprj.strip():
                 kw.update(project_id=int(row.idprj.strip()))
             kw.update(discount=mton(row.remise))
@@ -334,10 +385,10 @@ class TimLoader(object):
         else:
             raise Exception("Unkonwn TradeType %r" % jnl.trade_type)
         kw.update(date=row.date)
-        kw.update(user=self.get_user(row.idusr))
+        kw.update(user=self.get_user(row.auteur))
         kw.update(total_excl=mton(row.montr))
         kw.update(total_vat=mton(row.montt))
-        doc = jnl.create_document(**kw)
+        doc = jnl.create_voucher(**kw)
         #~ doc.partner = partner
         #~ doc.full_clean()
         #~ doc.save()
@@ -345,7 +396,7 @@ class TimLoader(object):
         return doc
         #~ return cl(**kw)
         
-    def get_user(self,idusr):
+    def get_user(self,idusr=None):
         return self.ROOT
     
     def load_vnl(self,row,**kw):
@@ -355,6 +406,7 @@ class TimLoader(object):
         doc = self.VENDICT.get((jnl,year,number))
         if doc is None:
             raise Exception("VNL %r without document" % list(jnl,year,number))
+        #~ logger.info("20131116 %s %s",row.idjnl,row.iddoc)
         #~ doc = jnl.get_document(year,number)
         #~ try:
             #~ doc = jnl.get_document(year,number)
@@ -372,20 +424,20 @@ class TimLoader(object):
                 a = self.vnlg2product(row)
                 if a is not None:
                     kw.update(product=a)
+            kw.update(unit_price=mton(row.prixu))
+            kw.update(qty=qton(row.qte))
         elif isinstance(doc,ledger.AccountInvoice):
             if row.code == 'G':
                 kw.update(account=idart)
         kw.update(title=row.desig.strip())
         kw.update(vat_class=tax2vat(row.idtax))
-        kw.update(unit_price=mton(row.prixu))
-        kw.update(qty=qton(row.qte))
-        kw.update(total_excl=mton(row.cmont))
+        kw.update(total_base=mton(row.cmont))
         kw.update(total_vat=mton(row.montt))
         #~ kw.update(qty=row.idtax.strip())
         #~ kw.update(qty=row.montt.strip())
         #~ kw.update(qty=row.attrib.strip())
         #~ kw.update(date=row.date)
-        return doc.add_item(**kw)
+        return doc.add_voucher_item(**kw)
             
     def vnlg2product(self,row):
         a = row.idart.strip()
@@ -406,13 +458,19 @@ class TimLoader(object):
         return country
         
     def load_plz(self,row):
-        pk = row['pays'].strip()
+        pk = row.pays.strip()
         if not pk:
             return
-        try:
-            country = Country.objects.get(short_code=pk)
-        except Country.DoesNotExist,e:
-            return 
+        
+        if False: # severe
+            country = Country.objects.get(isocode=self.short2iso(pk))
+            #~ country = Country.objects.get(short_code=pk)
+        else:
+            try:
+                country = Country.objects.get(isocode=self.short2iso(pk))
+                #~ country = Country.objects.get(short_code=pk)
+            except Country.DoesNotExist,e:
+                return 
         kw = dict(
           zip_code=row['cp'].strip() or '',
           name=row['nom'].strip() or row['cp'].strip(),
@@ -425,30 +483,22 @@ class TimLoader(object):
         kw = {}
         #~ kw.update(street2kw(join_words(row['RUE'],row['RUENUM'],row['RUEBTE'])))
             
-        store(kw,id=par_pk(row.idpar))
+        self.store(kw,id=par_pk(row.idpar))
         
         cl = par_class(row)
         if cl is Company:
             cl = Company
-            store(kw,
+            self.store(kw,
               vat_id=row['notva'].strip(),
-              national_id_et=row['regkood'].strip(),
               prefix=row['allo'].strip(),
-              name=row['firme'].strip(),
-            )
-        elif cl is Household:
-            store(kw,
-              prefix=row['allo'].strip(),
-              name=row['firme'].strip(),
+              name=row.firme,
             )
         elif cl is Person:
             #~ cl = Person
-            kw.update(**name2kw(row['firme'].strip()))
-            store(kw,
-              gender=convert_gender(row['sex']),
+            kw.update(**name2kw(self.decode_string(row.firme)))
+            self.store(kw,
               first_name=row['vorname'].strip(),
-              last_name=row['firme'].strip(),
-              national_id_et=row['regkood'].strip(),
+              last_name=row.firme,
               #~ birth_date=row['gebdat'],
               bank_account1=row['compte1'].strip(),
               title=row['allo'].strip(),
@@ -458,7 +508,7 @@ class TimLoader(object):
               row.idpar,row.idprt))
             return
         language = isolang(row['langue'])
-        store(kw,
+        self.store(kw,
             language=language,
             remarks=dbfmemo(row['memo']),
         )
@@ -466,8 +516,6 @@ class TimLoader(object):
         #~ country2kw(row,kw)
         
         
-        kw.update(created=row['datcrea'])
-        kw.update(modified=datetime.datetime.now())
         country = row['pays'].strip()
         if country:
             try:
@@ -477,10 +525,7 @@ class TimLoader(object):
                 country.save()
             kw.update(country=country)
         
-        email = row['email']
-        if email and is_valid_email(email):
-            kw.update(email=email)
-        store(kw,
+        self.store(kw,
           phone=row['tel'].strip(),
           fax=row['fax'].strip(),
           street=row['rue'].strip(),
@@ -526,10 +571,11 @@ class TimLoader(object):
         if row.idpar.strip():
             kw.update(partner_id=par_pk(row.idpar.strip()))
             #~ PRJPAR[pk] = 
-        kw.update(iname=row.seq.strip())
-        kw.update(user=self.get_user(row.idusr))
-        kw.update(summary=dbfmemo(row.abstract))
-        kw.update(description=dbfmemo(row.body))
+        kw.update(ref=row.seq.strip())
+        kw.update(user=self.get_user(None))
+        desc = dbfmemo(row.abstract).strip() + '\n\n' + dbfmemo(row.body)
+        #~ kw.update(summary=dbfmemo(row.abstract))
+        kw.update(description=desc)
         return tickets.Project(**kw)
     
     def load_pin(self,row,**kw):
@@ -550,6 +596,8 @@ class TimLoader(object):
         return tickets.Ticket(**kw)
     
     def load_dls(self,row,**kw):
+        if not row.iddls.strip(): 
+            return
         pk = int(row.iddls)
         kw.update(id=pk)
         if row.idprj.strip():
@@ -596,40 +644,63 @@ class TimLoader(object):
             dblogger.warning("Ignored %s: %s",row,e)
             return
         kw.update(id=pk)
-        def names2kw(kw,*names):
-            names = [n.strip() for n in names]
-            kw.update(name=names[0])
-        names2kw(kw,row.name1,row.name2,row.name3)
+        #~ def names2kw(kw,*names):
+            #~ names = [n.strip() for n in names]
+            #~ kw.update(name=names[0])
+        #~ names2kw(kw,row.name1,row.name2,row.name3)
+        self.babel2kw('name','name',row,kw)
         return products.Product(**kw)
+        
+        
+    def decode_string(self,v):
+        return v
+        #~ return v.decode(self.codepage)
+        
+    def babel2kw(self,tim_fld,lino_fld,row,kw):
+        for i,lng in enumerate(self.languages):
+            v = getattr(row,tim_fld+str(i+1),'').strip()
+            if v:
+                v = self.decode_string(v)
+                kw[lino_fld+lng.suffix] = v
         
     def after_load(self,tableName):
         pass
 
+    def after_gen_load(self):
+        pass
+        
     def objects(tim):
-            
+        
+        self = tim
+        
         self.ROOT = users.User(username='root',profile='900',last_name="Root")
         self.ROOT.set_password("1234")
         yield self.ROOT
         
         settings.SITE.loading_from_dump = True
         
-        CHART = accounts.Chart(name="Default")
-        yield CHART
+        self.CHART = accounts.Chart(name="Default")
+        yield self.CHART
         
         
-        DIM = sales.InvoicingMode(name='Default')
-        yield DIM
-        yield sales.Invoice.create_journal('sales',name="Verkaufsrechnungen",ref="S")
-        yield ledger.AccountInvoice.create_journal('purchases',name="Einkaufsrechnungen",ref="P")
+        self.DIM = sales.InvoicingMode(name='Default')
+        yield self.DIM
+        yield sales.Invoice.create_journal('sales',
+            chart=self.CHART,name="Verkaufsrechnungen",ref="VKR")
+        yield ledger.AccountInvoice.create_journal('purchases',
+            chart=self.CHART,name="Einkaufsrechnungen",ref="EKR")
 
         #~ from lino.modlib.users import models as users
         
         #~ ROOT = users.User.objects.get(username='root')
         #~ DIM = sales.InvoicingMode.objects.get(name='Default')
         
-        yield tim.load_dbf('GEN')
+        yield tim.load_dbf('GEN',self.load_gen2group)
+        yield tim.load_dbf('GEN',self.load_gen2account)
         
         yield dpy.FlushDeferredObjects
+        
+        self.after_gen_load()
         
         #~ ca = accounts.Account(group=accounts.Group.objects.get(ref='400000'))
         #~ yield ca
@@ -643,7 +714,7 @@ class TimLoader(object):
             
         
         yield tim.load_dbf('ART')
-        yield tim.load_dbf('NAT')
+        #~ yield tim.load_dbf('NAT')
         yield tim.load_dbf('PLZ')
         yield tim.load_dbf('PAR')
         yield tim.load_dbf('PRJ')
@@ -659,34 +730,60 @@ class TimLoader(object):
         yield tim.load_dbf('VNL')
         
 
-class PrestoTimLoader(TimLoader):
+class MyTimLoader(TimLoader):
     
     archived_tables = set('GEN ART VEN VNL'.split())
     archive_name = 'rumma'
+    languages = 'et en de fr'
 
-    def objects(tim):
+    def objects(self):
         
         self.PROD_617010 = products.Product(name=u"Edasimüük remondikulud",id=40)
         yield self.PROD_617010
         
-        self.sales_gen2art['617010'] = PROD_617010
+        self.sales_gen2art['617010'] = self.PROD_617010
         
-        yield super(PrestoTimLoader,self).objects()
-        #~ for o in super(PrestoTimLoader,self).objects():
+        yield super(MyTimLoader,self).objects()
+        #~ for o in super(MyTimLoader,self).objects():
             #~ yield o
 
         if GET_THEM_ALL:
-            yield tim.load_dbf('PIN')
-            yield tim.load_dbf('DLS')
+            yield self.load_dbf('PIN')
+            yield self.load_dbf('DLS')
 
-    def after_load(self,tableName):
-        if tableName == 'GEN':
-            self.PROD_617010.sales_account=accounts.Account.objects.get(ref='617010')
-            self.PROD_617010.save()
+    def after_gen_load(self):
+        self.PROD_617010.sales_account=accounts.Account.objects.get(ref='617010')
+        self.PROD_617010.save()
+        
+    def load_par(self,row):
+        obj = super(MyTimLoader,self).load_par(row)
+        if obj is None: return 
+        cl = obj.__class__
+        if cl is Company:
+            self.store(kw,
+              national_id_et=row['regkood'].strip(),
+            )
+        elif cl is Household:
+            self.store(kw,
+              prefix=row.allo,
+              name=row.firme,
+            )
+        elif cl is Person:
+            self.store(kw,
+              gender=convert_gender(row['sex']),
+              national_id_et=row['regkood'].strip(),
+              )
+        kw.update(created=row['datcrea'])
+        kw.update(modified=datetime.datetime.now())
+        email = row.email.strip()
+        if email and is_valid_email(email):
+            kw.update(email=email)
+        return obj
+        
         
 
 def objects():
     settings.SITE.startup()
-    tim = TimLoader(settings.SITE.legacy_data_path)
+    tim = MyTimLoader(settings.SITE.legacy_data_path)
     for obj in tim.objects():
         yield obj

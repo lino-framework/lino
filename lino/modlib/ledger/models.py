@@ -508,6 +508,7 @@ class Voucher(mixins.UserAuthored,mixins.Registrable):
                 account = self.journal.chart.get_account_by_ref(account)
             kw['account'] = account
         kw.update(voucher=self)
+        #~ logger.info("20131116 %s",self.items.model)
         return self.items.model(**kw)
         #~ return super(AccountInvoice,self).add_voucher_item(**kw)
         

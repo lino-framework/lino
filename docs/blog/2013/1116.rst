@@ -2,12 +2,80 @@
 20131116 (Saturday, 16 November 2013)
 =====================================
 
-Upgrading Ubuntu to version 12.10
+Importing data from TIM
+-----------------------
+
+(Andreas is a professional Belgian accountant who volunteers to test
+:ref:`cosi` in an almost real environment: he's going to manage 
+a company with low-volume but complete accounting using Lino.)
+
+The first job in this project is for me: write a tim2lino fixture to 
+import existing data from TIM.
+
+The code is currently in  :mod:`lino.projects.presto.fixtures.tim2lino`.
+Most of which is going to be used for :ref:`cosi`, too.
+I reorganized the existing code into a `TimLoader` class to 
+triage between general and presto-specific import processing.
+
+It seems that 
+
+Upgraded Ubuntu from version 12.04 to 12.10
+-------------------------------------------
+
+Tonight I did it. 
+Could no longer stand those repeated warnings that a 
+new LTS version is available.
+I told Ubuntu to do the upgrade.
+One warning came:
+
+    **Third party sources disabled**
+
+    Some third party entries in your sources.list were disabled. You can 
+    re-enable them after the upgrade with the 'software-properties' tool 
+    or your package manager.
+
+While downloading I worked on the above tim2lino.
+
+After 2 hours of unpacking and installing, my notebook asked 
+me to reboot, I did that... and got a black screen. 
+
+I had to learn that I can hold the Shift key during power-on to 
+get the GRUB menu. 
+Tried the older kernels, tried without "quiet splash",... 
+no real help 
+I discovered that when I pressed Ctrl-Alt-F1 in time (before the machine
+freezes) I can log in at the console.
+Uff: everything is still there. I could even push the changes 
+in tim2lino.
+Except for the graphical user interface.
+
+From that console I did aptitude update, dist-upgrade, then removed 
+the following packages which had conflicts:
+
+- xserver-xorg-core-lts-quantal
+- xserver-xorg-lts-quantal
+- libgl1-mesa-dri-lts-quantal
+
+Then I did ``aptitude install ubuntu-desktop xorg`` and everything 
+was okay again. Phew.
+
+
+Hom to move from Google to GitHub
 ---------------------------------
 
+I created a project "lino" on github... but how to import Lino's 
+history there?
 
-
-**Third party sources disabled**
-
-Some third party entries in your sources.list were disabled. You can re-enable them after the upgrade with the 'software-properties' tool or your package manager.
-
+- `the Hg-Git mercurial plugin <http://hg-git.github.io>`_ is not what 
+  I need. I just want to import once and then learn to use Git instead 
+  of Mercurial.
+  
+- `Is there a Git command to import a hg repository 
+  <http://stackoverflow.com/questions/5225666/is-there-a-git-command-to-import-a-hg-repository>`_
+  
+- `Converting Mercurial folder to a Git repository
+  <http://stackoverflow.com/questions/10710250/converting-mercurial-folder-to-a-git-repository>`_
+  
+  git-fast-export
+  
+-   

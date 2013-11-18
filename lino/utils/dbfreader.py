@@ -24,6 +24,7 @@ http://www.clicketyclick.dk/databases/xbase/format/
 """
 
 import datetime
+from dateutil import parser as dateparser
 
 
 import sys,string,struct
@@ -196,6 +197,8 @@ class DBFFile:
         self.close()
         return l
 
+class NOTGIVEN: pass
+
 
 class DBFRecord:
     def __init__(self,dbf,values,deleted):
@@ -211,7 +214,16 @@ class DBFRecord:
         return self._recno
 
     def __getitem__(self,name):
-        return self._values[name]
+        return self._values[name.upper()]
+        
+    def __getattr__(self,name,default=NOTGIVEN):
+        name = name.upper()
+        try:
+            return self._values[name]
+        except KeyError:
+            if default is NOTGIVEN:
+                raise AttributeError("No field named %r in %s" % (name,self._values.keys()))
+            return default
         
     def get(self,*args,**kw):
         return self._values.get(*args,**kw)
@@ -264,7 +276,8 @@ class DBFField:
             if not self.dbf.codepage is None:
                 data = data.decode(self.dbf.codepage)
             data=data.strip()
-            if len(data) == 0: return None
+            #~ if len(data) == 0: return None
+            if len(data) == 0: return ''
             return data
         elif self.field_type=="L":
             return data=="Y" or data=="y" or data=="T" or data=="t"
@@ -273,7 +286,8 @@ class DBFField:
                 num = string.atoi(data)
             except ValueError:
                 if len(data.strip()) == 0:
-                    return None
+                    #~ return None
+                    return ''
                 raise "bad memo block number %s" % repr(data)
             return self.dbf.blockfile.get_block(num)
             
@@ -284,7 +298,8 @@ class DBFField:
             except ValueError:
                 return 0
         elif self.field_type == "D":
-            return data # string "YYYYMMDD", use the time module or mxDateTime
+            return dateparser.parse(data)
+            #~ return data # string "YYYYMMDD", use the time module or mxDateTime
         else:
             raise NotImplementedError("Unknown data type " \
                                       + self.field_type)
