@@ -137,12 +137,14 @@ More
    :maxdepth: 1
    
    testimonals
-   lino_and_django
    faq
    luc
    license
    why_gpl
    values
+   name
+   
+   lino_and_django
    thanks
    compared
    why_extjs

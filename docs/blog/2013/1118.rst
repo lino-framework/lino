@@ -4,8 +4,8 @@
 
 (Checkin changes from Saturday)
 
-Does Lino needs a new name?
----------------------------
+Does Lino need a new name?
+--------------------------
 
 My wife and I were thinking about a logo for Lino (see
 :blogref:`20130926`), and I noticed that I feel
@@ -24,5 +24,169 @@ certain problems:
 German software company (http://www.lino.de).
 
 Does that mean that Lino needs a new name?
+AFAICS this means only that
+they *might* ask us to change our name
+*if they feel disturbed* 
+by the fact that we use the same name.
+*As long as they don't feel disturbed*, there is no problem at all.
+And I can't imagine that they would.
+And even *if* they would (who knows), 
+then they would have to leave us a reasonable 
+lapse of time to change our name.
 
+Currently I think it is better to *not* change our name for
+the moment because 
+
+- a few dozen people know and love Lino the framework, and many of them 
+  would be disappointed if we would change the name
+- there is no serious replacement candidate so far
+- it would cause quite some of work, and there are more important 
+  things to do
+
+Started a new page :doc:`/about/name`.
 Comments are welcome.
+
+
+:ref:`eidreader` fails on Sun Java
+----------------------------------
+
+When trying to run :ref:`eidreader` applet on a Windows XP with Sun 
+Java, I get the following exception::
+
+    java.lang.ExceptionInInitializerError
+        at sun.reflect.NativeConstructorAccessorImpl.newInstance0(Native Method)
+        at sun.reflect.NativeConstructorAccessorImpl.newInstance(Unknown Source)
+        at sun.reflect.DelegatingConstructorAccessorImpl.newInstance(Unknown Source)
+        at java.lang.reflect.Constructor.newInstance(Unknown Source)
+        at java.lang.Class.newInstance(Unknown Source)
+        at sun.security.jca.ProviderConfig$2.run(Unknown Source)
+        at sun.security.jca.ProviderConfig$2.run(Unknown Source)
+        at java.security.AccessController.doPrivileged(Native Method)
+        at sun.security.jca.ProviderConfig.doLoadProvider(Unknown Source)
+        at sun.security.jca.ProviderConfig.getProvider(Unknown Source)
+        at sun.security.jca.ProviderList.getProvider(Unknown Source)
+        at sun.security.jca.ProviderList.getService(Unknown Source)
+        at sun.security.jca.GetInstance.getInstance(Unknown Source)
+        at java.security.Security.getImpl(Unknown Source)
+        at java.security.AlgorithmParameters.getInstance(Unknown Source)
+        at sun.security.x509.AlgorithmId.decodeParams(Unknown Source)
+        at sun.security.x509.AlgorithmId.<init>(Unknown Source)
+        at sun.security.x509.AlgorithmId.parse(Unknown Source)
+        at sun.security.x509.X509Key.parse(Unknown Source)
+        at sun.security.x509.CertificateX509Key.<init>(Unknown Source)
+        at sun.security.x509.X509CertInfo.parse(Unknown Source)
+        at sun.security.x509.X509CertInfo.<init>(Unknown Source)
+        at sun.security.x509.X509CertImpl.parse(Unknown Source)
+        at sun.security.x509.X509CertImpl.<init>(Unknown Source)
+        at sun.security.provider.X509Factory.engineGenerateCertificate(Unknown Source)
+        at java.security.cert.CertificateFactory.generateCertificate(Unknown Source)
+        at sun.security.provider.JavaKeyStore.engineLoad(Unknown Source)
+        at sun.security.provider.JavaKeyStore$JKS.engineLoad(Unknown Source)
+        at java.security.KeyStore.load(Unknown Source)
+        at com.sun.deploy.security.RootCertStore$1.run(Unknown Source)
+        at java.security.AccessController.doPrivileged(Native Method)
+        at com.sun.deploy.security.RootCertStore.loadCertStore(Unknown Source)
+        at com.sun.deploy.security.RootCertStore.load(Unknown Source)
+        at com.sun.deploy.security.RootCertStore.load(Unknown Source)
+        at com.sun.deploy.security.ImmutableCertStore.load(Unknown Source)
+        at com.sun.deploy.security.LazyRootStore.loadJREStore(Unknown Source)
+        at com.sun.deploy.security.LazyRootStore.getTrustAnchors(Unknown Source)
+        at com.sun.deploy.security.TrustDecider.getValidationState(Unknown Source)
+        at com.sun.deploy.security.TrustDecider.validateChain(Unknown Source)
+        at com.sun.deploy.security.TrustDecider.isAllPermissionGranted(Unknown Source)
+        at sun.plugin2.applet.Plugin2ClassLoader.isTrustedByTrustDecider(Unknown Source)
+        at sun.plugin2.applet.Plugin2ClassLoader.getTrustedCodeSources(Unknown Source)
+        at com.sun.deploy.security.CPCallbackHandler$ParentCallback.strategy(Unknown Source)
+        at com.sun.deploy.security.CPCallbackHandler$ParentCallback.openClassPathElement(Unknown Source)
+        at com.sun.deploy.security.DeployURLClassPath$JarLoader.getJarFile(Unknown Source)
+        at com.sun.deploy.security.DeployURLClassPath$JarLoader.access$1000(Unknown Source)
+        at com.sun.deploy.security.DeployURLClassPath$JarLoader$1.run(Unknown Source)
+        at java.security.AccessController.doPrivileged(Native Method)
+        at com.sun.deploy.security.DeployURLClassPath$JarLoader.ensureOpen(Unknown Source)
+        at com.sun.deploy.security.DeployURLClassPath$JarLoader.<init>(Unknown Source)
+        at com.sun.deploy.security.DeployURLClassPath$3.run(Unknown Source)
+        at java.security.AccessController.doPrivileged(Native Method)
+        at com.sun.deploy.security.DeployURLClassPath.getLoader(Unknown Source)
+        at com.sun.deploy.security.DeployURLClassPath.getLoader(Unknown Source)
+        at com.sun.deploy.security.DeployURLClassPath.getResource(Unknown Source)
+        at sun.plugin2.applet.Plugin2ClassLoader$2.run(Unknown Source)
+        at java.security.AccessController.doPrivileged(Native Method)
+        at sun.plugin2.applet.Plugin2ClassLoader.findClassHelper(Unknown Source)
+        at sun.plugin2.applet.Applet2ClassLoader.findClass(Unknown Source)
+        at sun.plugin2.applet.Plugin2ClassLoader.loadClass0(Unknown Source)
+        at sun.plugin2.applet.Plugin2ClassLoader.loadClass(Unknown Source)
+        at sun.plugin2.applet.Plugin2ClassLoader.loadClass0(Unknown Source)
+        at sun.plugin2.applet.Plugin2ClassLoader.loadClass(Unknown Source)
+        at sun.plugin2.applet.Plugin2ClassLoader.loadClass(Unknown Source)
+        at java.lang.ClassLoader.loadClass(Unknown Source)
+        at sun.plugin2.applet.Plugin2ClassLoader.loadCode(Unknown Source)
+        at sun.plugin2.applet.Plugin2Manager.initAppletAdapter(Unknown Source)
+        at sun.plugin2.applet.Plugin2Manager$AppletExecutionRunnable.run(Unknown Source)
+        at java.lang.Thread.run(Unknown Source)
+    Caused by: java.security.AccessControlException: access denied ("java.lang.RuntimePermission" "loadLibrary.sunec")
+        at java.security.AccessControlContext.checkPermission(Unknown Source)
+        at java.security.AccessController.checkPermission(Unknown Source)
+        at java.lang.SecurityManager.checkPermission(Unknown Source)
+        at sun.plugin2.applet.AWTAppletSecurityManager.checkPermission(Unknown Source)
+        at java.lang.SecurityManager.checkLink(Unknown Source)
+        at java.lang.Runtime.loadLibrary0(Unknown Source)
+        at java.lang.System.loadLibrary(Unknown Source)
+        at sun.security.ec.SunEC$1.run(SunEC.java:60)
+        at sun.security.ec.SunEC$1.run(SunEC.java:58)
+        at java.security.AccessController.doPrivileged(Native Method)
+        at sun.security.ec.SunEC.<clinit>(SunEC.java:58)
+        ... 69 more
+
+
+I guess that it comes when the applet tries to load one of the 
+third-party .jar files. Are they signed?
+
+Trying to reproduce this problem locally on a Windows XP in a VirtualBox.
+
+One problem was that the virtual machine doesn't see any USB device at all.
+I solved that thanks to 
+`How To Use Host USB Device From Guest In VirtualBox
+<http://techtooltip.wordpress.com/2008/09/22/how-to-use-host-usb-device-from-guest-in-virtual-box/>`_
+Need to connect the read before starting the VM and add a USB filter 
+in the VirtualBox settings.
+
+Another problem was that Windows then didn't find a suitable driver for this device.
+I googled for "windows omnikey smart card driver" and found the page
+http://www.hidglobal.com/drivers/16251
+where I downloaded the first PCSC driver they suggested.
+
+Uff, after over 2 hours of fiddling: now I can reproduce the problem!
+And its far beyond feierabend.
+The problem itself remains for tomorrow.
+Again, Java is causing me hours of frustrating work.
+
+
+Confirmation : when in an applet i call a method which requires a 
+client-side permission in the policy file, then it is not enough to ask 
+my users to give that permission. That works only on OpenJDK (icedtea). 
+But on Sun Java I must additionally wrap every such call into a 
+construct like these::
+
+    AccessController.doPrivileged(new PrivilegedAction() { 
+      public Object run() { my code ... } 
+    });
+
+    return (String) AccessController.doPrivileged(new PrivilegedAction() { 
+        public Object run() { my code ... return X; }
+
+
+Updated `EIDREader.java` accordingly. Now it reads already my 
+Estonian eid card.
+
+But trying to read my Belgian card gives a new error::
+
+  java.lang.SecurityException: trusted loader attempted to 
+  load sandboxed resource from file:/t:/applets/eid-applet-service.jar
+
+I added `Trusted-Library: true` to my `Manifest.txt` and re-signed. 
+Now there's neither an error message nor a result, nor any output 
+to the Java console!
+The applet just exits and that's all.
+This happens as soon as it calls
+`TlvParser.parse()` (which has been 
+imported from `be.fedict.eid.applet.service.impl.tlv.TlvParser`.

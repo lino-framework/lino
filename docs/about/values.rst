@@ -1,5 +1,5 @@
-The basic values behind Lino
-============================
+The values behind Lino
+======================
 
 In this text Luc tries to explain what Lino *really* means to him,
 why he loves his work and believes that it is worth doing it.
@@ -20,10 +20,10 @@ Linked objects
 - But even 50 years later this idea is still some kind of expert knowledge, 
   known to database engineers but not to normal people.
 
-Since the early 1990s I have often observed that application developers 
-seem to hide from the end-users the fact that their application is basically 
-nothing but a collection of linked objects.
-As if they were ashamed to admit that what they are doing is *that* easy.
+- Since the early 1990s I have often observed that application developers 
+  seem to hide from the end-users the fact that their application is basically 
+  "nothing but a collection of linked objects".
+  As if they were ashamed to admit that what they are doing is *that* easy.
 
 Lino puts an end to this vicious circle.
 
@@ -44,16 +44,14 @@ rather exhibited view of their database model,
 leading to end-users being intuitively aware 
 of the structure behind what they are doing.** 
 
-  
 
 Lino is a common first name in Italy
 ------------------------------------
 
 Yes, I wanted **a human name** for our framework.
-
-- Lino makes it possible to write complex applications that are like 
-  children: they grow day by day, 
-  giving parental joy to those who collaborate to their development.
+Lino makes it possible to write complex applications that are like 
+children: they grow day by day, 
+giving parental joy to those who collaborate to their development.
 
 
 
