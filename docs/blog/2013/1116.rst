@@ -60,7 +60,7 @@ Then I did ``aptitude install ubuntu-desktop xorg`` and everything
 was okay again. Phew.
 
 
-Hom to move from Google to GitHub
+How to move from Google to GitHub
 ---------------------------------
 
 I created a project "lino" on github... but how to import Lino's 
