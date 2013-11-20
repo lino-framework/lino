@@ -8,7 +8,8 @@ looking for the explanation for yesterday's last problem:
     But trying to read my Belgian card gives a new error::
 
       java.lang.SecurityException: trusted loader attempted to 
-      load sandboxed resource from file:/t:/applets/eid-applet-service.jar
+      load sandboxed resource from 
+      file:/t:/applets/eid-applet-service.jar
 
     I added `Trusted-Library: true` to my `Manifest.txt` and
     re-signed.  Now there's neither an error message nor a result, nor

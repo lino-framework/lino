@@ -1,0 +1,63 @@
+======================================
+20131120 (Wednesday, 20 November 2013)
+======================================
+
+Emacs configuration
+-------------------
+
+Switching from Geany to Emacs is not for free, it costs quite 
+some hours of fiddling with configuration files.
+
+Especially auto-completing class attributes 
+is not out-of-the-box. I agree with Joe that this is an 
+important feature for an IDE.
+
+I added a new short command to my :file:`.bash_aliases`::
+
+  function e() { 
+    $EDITOR $* 
+  }
+
+Until now I had always typed "gea" TAB "filename". 
+Imagine what a waste of time! 
+
+But then I wasted quite some time to get auto-completion 
+running:
+
+- `PythonProgrammingInEmacs
+  <http://www.emacswiki.org/emacs/PythonProgrammingInEmacs>`_
+
+- `elpy Emacs Python Development Environment
+  <https://github.com/jorgenschaefer/elpy>`_
+
+- `How to install emacs 24.3 on Ubuntu?
+  <http://askubuntu.com/questions/297170/how-to-install-emacs-24-3-on-ubuntu>`_
+
+- `Warning: cl package required at runtime
+  <http://stackoverflow.com/questions/5019724/in-emacs-what-does-this-error-mean-warning-cl-package-required-at-runtime>`_
+
+And still most names don't expand because elpy cannot import most modules 
+because no `DJANGO_SETTINGS_MODULE` is set...
+
+
+Continued with :ref:`tim2lino`
+------------------------------
+
+:mod:`lino.projects.presto.fixtures.tim2lino` started to also 
+import Bank Statements, Payment orders and Journal Entries.
+
+Note that::
+    
+    foo = dd.resolve_app('foo')
+    
+is not the same as::
+
+    foo = settings.SITE.modules.foo
+    
+or::
+
+    from lino.runtime import foo
+    
+
+    
+

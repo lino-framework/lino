@@ -5,9 +5,9 @@
 ## it under the terms of the GNU General Public License as published by
 ## the Free Software Foundation; either version 3 of the License, or
 ## (at your option) any later version.
-## Lino is distributed in the hope that it will be useful, 
+## Lino is distributed in the hope that it will be useful,
 ## but WITHOUT ANY WARRANTY; without even the implied warranty of
-## MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the 
+## MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 ## GNU General Public License for more details.
 ## You should have received a copy of the GNU General Public License
 ## along with Lino ; if not, see <http://www.gnu.org/licenses/>.
@@ -71,17 +71,19 @@ Household = resolve_model('households.Household')
 Person = resolve_model("contacts.Person")
 Company = resolve_model("contacts.Company")
 
+from lino.runtime import *
 
-users = dd.resolve_app('users')
-tickets = dd.resolve_app('tickets')
-households = dd.resolve_app('households')
-#~ vat = dd.resolve_app('vat')
-sales = dd.resolve_app('sales')
-#~ journals = dd.resolve_app('journals')
-ledger = dd.resolve_app('ledger')
-accounts = dd.resolve_app('accounts')
-products = dd.resolve_app('products')
-contacts = dd.resolve_app('contacts')
+if True:
+    users = dd.resolve_app('users')
+    tickets = dd.resolve_app('tickets')
+    households = dd.resolve_app('households')
+    vat = dd.resolve_app('vat')
+    sales = dd.resolve_app('sales')
+    ledger = dd.resolve_app('ledger')
+    accounts = dd.resolve_app('accounts')
+    products = dd.resolve_app('products')
+    contacts = dd.resolve_app('contacts')
+    finan = dd.resolve_app('finan')
 
 def dbfmemo(s):
     s = s.replace('\r\n','\n')
@@ -91,13 +93,11 @@ def dbfmemo(s):
         raise Exception("20121121 %r" % s)
     return s.strip()
 
-
-
 #~ def convert_username(name):
     #~ return name.lower()
-    
+
 from lino.modlib.vat.models import VatClasses
-  
+
 def tax2vat(idtax):
     idtax = idtax.strip()
     if idtax == 'D20':
@@ -113,7 +113,7 @@ def tax2vat(idtax):
     else:
         return VatClasses.normal
     raise Exception("Unknown VNl->IdTax %r" % idtax)
-    
+
 def pcmn2type(idgen):
     if idgen[0] == '6':
         return AccountTypes.expenses
@@ -122,42 +122,42 @@ def pcmn2type(idgen):
     if idgen[0] == '4':
         return AccountTypes.liabilities
     return AccountTypes.assets
-        
+
 def tim2bool(x):
     if not x.strip():
         return False
     return True
-    
+
 def convert_gender(v):
     if v in ('W','F'): return 'F'
     if v == 'M': return 'M'
     return None
-      
+
 def mton(s): # PriceField
     #~ return s.strip()
     s = s.strip()
-    if s: 
-        if s != "GRATIS": 
+    if s:
+        if s != "GRATIS":
             return Decimal(s)
     return Decimal()
-              
+
 def qton(s): # QuantityField
     return s.strip()
     #~ s = s.strip()
-    #~ if s: 
+    #~ if s:
         #~ if ':' in s: return Duration(s)
         #~ if s.endswith('%'):
             #~ return Decimal(s[:-1]) / 100
         #~ return Decimal(s)
     #~ return None
-              
+
 def isolang(x):
     if x == 'K' : return 'et'
     if x == 'E' : return 'en'
     if x == 'D' : return 'de'
     if x == 'F' : return 'fr'
     #~ if x == 'N' : return 'nl'
-      
+
 def par_class(data):
     # wer eine nationalregisternummer hat ist eine Person, selbst wenn er auch eine MWst-Nummer hat.
     prt = data.idprt
@@ -168,28 +168,24 @@ def par_class(data):
     elif prt == 'F':
         return Household
     #~ dblogger.warning("Unhandled PAR->IdPrt %r",prt)
-    
+
 def store_date(row,obj,rowattr,objattr):
     v = row[rowattr]
     if v:
         if isinstance(v,basestring):
             v = dateparser.parse(v)
         setattr(obj,objattr,v)
-      
-def par_pk(pk):
-    if pk.startswith('T'):
-        return 2500 + int(pk[1:]) - 256 
-    else:
-        return int(pk)
-        
+
 def row2jnl(row):
     year = ledger.FiscalYears.from_int(2000 + int(row.iddoc[:2]))
     num = int(row.iddoc[2:])
-    if row.idjnl in ('VKR','EKR'):
+    # if row.idjnl in ('VKR','EKR'):
+    try:
         jnl = ledger.Journal.objects.get(ref=row.idjnl)
         #~ cl = sales.Invoice
         return jnl,year,num
-    return None,None,None
+    except ledger.Journal.DoesNotExist:
+        return None,None,None
         
 def get_customer(pk):
     return contacts.Partner.objects.get(pk=pk)
@@ -254,10 +250,27 @@ class TimLoader(object):
     def __init__(self,dbpath):
         self.dbpath = dbpath
         self.VENDICT = dict()
+        self.FINDICT = dict()
         self.sales_gen2art = dict()
         self.GROUPS = dict()
         self.languages = settings.SITE.resolve_languages(self.languages)
         
+    def get_user(self,idusr=None):
+        return self.ROOT
+        
+
+    def dc2lino(self,dc):
+        if dc == "D":
+            return accounts.DEBIT
+        elif dc == "C":
+            return accounts.CREDIT
+        raise Exception("Invalid D/C value %r" % dc)
+    
+    def par_pk(self,pk):
+        if pk.startswith('T'):
+            return 2500 + int(pk[1:]) - 256 
+        else:
+            return int(pk)
         
     def store(self,kw,**d):
         for k,v in d.items():
@@ -333,6 +346,10 @@ class TimLoader(object):
                 #~ names = [n.strip() for n in names]
                 #~ kw.update(name=names[0])
             #~ names2kw(kw,row.libell1,row.libell2,row.libell3,row.libell4)
+            """TIM accepts empty GEN->Libell fields. In that 
+            case we take the ref as name.
+            """
+            kw.setdefault('name',idgen)
             ag = accounts.Group(**kw)
             self.GROUPS[idgen] = ag
             yield ag
@@ -364,7 +381,73 @@ class TimLoader(object):
             #~ logger.info("20131116 %s",dd.obj2str(obj))
             #~ logger.info("20131116 ACCOUNT %s ",obj)
             yield obj
+
+    def load_jnl(self,row,**kw):
+        vcl = None
+        kw.update(ref=row.idjnl,name=row.libell)
+        kw.update(chart=self.CHART)
+        kw.update(dc=self.dc2lino(row.dc))
+        if row.alias == 'VEN':
+            if row.idctr == 'V':
+                kw.update(trade_type=vat.TradeTypes.sales)
+                vcl = sales.Invoice
+            elif row.idctr == 'E':
+                kw.update(trade_type=vat.TradeTypes.purchases)
+                vcl = ledger.AccountInvoice
+        elif row.alias == 'FIN':
+            if row.idgen.startswith('58'):
+                kw.update(trade_type=vat.TradeTypes.purchases)
+                vcl = finan.PaymentOrder
+            elif row.idgen.startswith('5'):
+                vcl = finan.BankStatement
+            elif not row.idgen.strip():
+                vcl = finan.JournalEntry
+        if vcl is None:
+            raise Exception("Journal not recognized: %s" % row.idjnl)
+
+        return vcl.create_journal(**kw)
+
+    def load_fin(self,row,**kw):
+        jnl,year,number = row2jnl(row)
+        if jnl is None:
+            raise Exception("No journal for FIN record %s" % row)
+        kw.update(year=year)
+        kw.update(number=number)
+        #~ kw.update(id=pk)
+        kw.update(date=row.date)
+        kw.update(user=self.get_user())
+        kw.update(balance1=mton(row.mont1))
+        kw.update(balance2=mton(row.mont2))
+        doc = jnl.create_voucher(**kw)
+        self.FINDICT[(jnl,year,number)] = doc
+        return doc
         
+    def load_fnl(self,row,**kw):
+        jnl,year,number = row2jnl(row)
+        if jnl is None:
+            raise Exception("No journal for FNL record %s" % row)
+        doc = self.FINDICT.get((jnl,year,number))
+        if doc is None:
+            raise Exception("FNL %r without document" % list(jnl,year,number))
+        kw.update(seqno=int(row.line.strip()))
+        kw.update(date=row.date)
+        kw.update(match=row.match.strip())
+        if row.idctr == ('V'):
+            kw.update(partner_id=self.par_pk(row.idcpt.strip()))
+            kw.update(
+                account=vat.TradeTypes.sales.get_partner_account())
+        elif row.idctr == ('E'):
+            kw.update(partner_id=self.par_pk(row.idcpt.strip()))
+            kw.update(
+                account=vat.TradeTypes.purchases.get_partner_account())
+        else:
+            kw.update(account=accounts.Account.objects.get(
+                ref=row.idcpt.strip()))
+        kw.update(amount=mton(row.mont))
+        kw.update(dc=self.dc2lino(row.dc))
+        return doc.add_voucher_item(**kw)
+
+
     def load_ven(self,row,**kw):
         jnl,year,number = row2jnl(row)
         if jnl is None:
@@ -373,15 +456,16 @@ class TimLoader(object):
         kw.update(number=number)
         #~ kw.update(id=pk)
         if jnl.trade_type.name == 'sales':
-            partner = get_customer(par_pk(row.idpar))
+            partner = get_customer(self.par_pk(row.idpar))
             kw.update(partner=partner)
             kw.update(imode=self.DIM)
             if row.idprj.strip():
                 kw.update(project_id=int(row.idprj.strip()))
             kw.update(discount=mton(row.remise))
         elif jnl.trade_type.name == 'purchases':
-            kw.update(partner=contacts.Partner.objects.get(pk=par_pk(row.idpar)))
-            #~ partner=contacts.Partner.objects.get(pk=par_pk(row.idpar))
+            kw.update(partner=contacts.Partner.objects.get(
+                pk=self.par_pk(row.idpar)))
+            #~ partner=contacts.Partner.objects.get(pk=self.par_pk(row.idpar))
         else:
             raise Exception("Unkonwn TradeType %r" % jnl.trade_type)
         kw.update(date=row.date)
@@ -396,8 +480,6 @@ class TimLoader(object):
         return doc
         #~ return cl(**kw)
         
-    def get_user(self,idusr=None):
-        return self.ROOT
     
     def load_vnl(self,row,**kw):
         jnl,year,number = row2jnl(row)
@@ -459,8 +541,9 @@ class TimLoader(object):
         
     def load_plz(self,row):
         pk = row.pays.strip()
-        if not pk:
-            return
+        if not pk: return
+        name = row.nom.strip() or row.cp.strip()
+        if not name: return
         
         if False: # severe
             country = Country.objects.get(isocode=self.short2iso(pk))
@@ -470,10 +553,11 @@ class TimLoader(object):
                 country = Country.objects.get(isocode=self.short2iso(pk))
                 #~ country = Country.objects.get(short_code=pk)
             except Country.DoesNotExist,e:
+                dblogger.warning("Ignored PLZ record %s" % row)
                 return 
         kw = dict(
           zip_code=row['cp'].strip() or '',
-          name=row['nom'].strip() or row['cp'].strip(),
+          name=name,
           country=country,
           )
         return City(**kw)
@@ -483,7 +567,7 @@ class TimLoader(object):
         kw = {}
         #~ kw.update(street2kw(join_words(row['RUE'],row['RUENUM'],row['RUEBTE'])))
             
-        self.store(kw,id=par_pk(row.idpar))
+        self.store(kw,id=self.par_pk(row.idpar))
         
         cl = par_class(row)
         if cl is Company:
@@ -569,7 +653,7 @@ class TimLoader(object):
             kw.update(parent_id=int(row.parent))
         kw.update(name=row.name1.strip())
         if row.idpar.strip():
-            kw.update(partner_id=par_pk(row.idpar.strip()))
+            kw.update(partner_id=self.par_pk(row.idpar.strip()))
             #~ PRJPAR[pk] = 
         kw.update(ref=row.seq.strip())
         kw.update(user=self.get_user(None))
@@ -585,7 +669,7 @@ class TimLoader(object):
             kw.update(project_id=int(row.idprj))
             #~ kw.update(partner_id=PRJPAR.get(int(row.idprj),None))
         if row.idpar.strip():
-            kw.update(partner_id=par_pk(row.idpar))
+            kw.update(partner_id=self.par_pk(row.idpar))
         kw.update(summary=row.short.strip())
         kw.update(description=dbfmemo(row.memo))
         kw.update(state=ticket_state(row.idpns))
@@ -604,7 +688,7 @@ class TimLoader(object):
             kw.update(project_id=int(row.idprj))
             #~ kw.update(partner_id=PRJPAR.get(int(row.idprj),None))
         if row.idpar.strip():
-            kw.update(partner_id=par_pk(row.idpar))
+            kw.update(partner_id=self.par_pk(row.idpar))
         kw.update(summary=row.nb.strip())
         kw.update(description=dbfmemo(row.memo))
         kw.update(date=row.date)
@@ -626,7 +710,7 @@ class TimLoader(object):
         kw.update(is_private=tim2bool(row.isprivat))
         obj = tickets.Session(**kw)
         #~ if row.idpar.strip():
-            #~ partner_id = par_pk(row.idpar)
+            #~ partner_id = self.par_pk(row.idpar)
             #~ if obj.project and obj.project.partner \
                 #~ and obj.project.partner.id == partner_id:
                 #~ pass
@@ -685,16 +769,20 @@ class TimLoader(object):
         
         self.DIM = sales.InvoicingMode(name='Default')
         yield self.DIM
-        yield sales.Invoice.create_journal('sales',
-            chart=self.CHART,name="Verkaufsrechnungen",ref="VKR")
-        yield ledger.AccountInvoice.create_journal('purchases',
-            chart=self.CHART,name="Einkaufsrechnungen",ref="EKR")
+
+        yield tim.load_dbf('JNL')
+
+        #yield sales.Invoice.create_journal('sales',
+        #    chart=self.CHART,name="Verkaufsrechnungen",ref="VKR")
+        #yield ledger.AccountInvoice.create_journal('purchases',
+        #    chart=self.CHART,name="Einkaufsrechnungen",ref="EKR")
 
         #~ from lino.modlib.users import models as users
         
         #~ ROOT = users.User.objects.get(username='root')
         #~ DIM = sales.InvoicingMode.objects.get(name='Default')
         
+
         yield tim.load_dbf('GEN',self.load_gen2group)
         yield tim.load_dbf('GEN',self.load_gen2account)
         
@@ -728,6 +816,9 @@ class TimLoader(object):
         
         yield tim.load_dbf('VEN')
         yield tim.load_dbf('VNL')
+
+        yield tim.load_dbf('FIN')
+        yield tim.load_dbf('FNL')
         
 
 class MyTimLoader(TimLoader):

@@ -55,4 +55,5 @@ Other
     install_shell_scripts
     oood
     watch_tim
+    tim2lino
     

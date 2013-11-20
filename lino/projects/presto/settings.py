@@ -36,7 +36,7 @@ class Site(Site,vat.SiteMixin):
     
     project_model = 'tickets.Project'
     user_model = 'users.User'
-    
+
     #~ remote_user_header = "REMOTE_USER"
     
     override_modlib_models = [
