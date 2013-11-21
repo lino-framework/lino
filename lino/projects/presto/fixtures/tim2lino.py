@@ -29,7 +29,6 @@ logger = logging.getLogger(__name__)
 GET_THEM_ALL = True
 
 import os
-import sys
 import datetime
 from decimal import Decimal
 #~ from lino.utils.quantities import Duration
@@ -37,17 +36,11 @@ from decimal import Decimal
 from dateutil import parser as dateparser
 
 from django.conf import settings
-from django.core.management import call_command
-from django.db import IntegrityError
 from django.core.exceptions import ValidationError
-from django.core.management.base import BaseCommand, CommandError
 
-#~ from lino import lino_site
 from lino.utils import dbfreader
 from lino.utils import dblogger
-from lino.utils import mti
 from north import dpy
-#~ from lino import diag
 
 from lino.modlib.accounts.utils import AccountTypes
 from lino.modlib.contacts.utils import name2kw, street2kw
@@ -214,14 +207,16 @@ def try_full_clean(i):
     while True:
         try:
             i.full_clean()
-        except ValidationError,e:
+        except ValidationError as e:
             if not hasattr(e, 'message_dict'):
                 raise
             for k in e.message_dict.keys():
                 fld = i._meta.get_field(k)
-                v = getattr(i,k)
-                setattr(i,k,fld.default)
-                dblogger.warning("%s : ignoring value %r for %s : %s",obj2str(i),v,k,e)
+                v = getattr(i, k)
+                setattr(i, k, fld.default)
+                dblogger.warning(
+                    "%s : ignoring value %r for %s : %s", 
+                    obj2str(i), v, k, e)
         return
     
 class TimLoader(object):
@@ -407,8 +402,8 @@ class TimLoader(object):
 
         return vcl.create_journal(**kw)
 
-    def load_fin(self,row,**kw):
-        jnl,year,number = row2jnl(row)
+    def load_fin(self, row, **kw):
+        jnl, year, number = row2jnl(row)
         if jnl is None:
             raise Exception("No journal for FIN record %s" % row)
         kw.update(year=year)
@@ -419,16 +414,17 @@ class TimLoader(object):
         kw.update(balance1=mton(row.mont1))
         kw.update(balance2=mton(row.mont2))
         doc = jnl.create_voucher(**kw)
-        self.FINDICT[(jnl,year,number)] = doc
+        self.FINDICT[(jnl, year, number)] = doc
         return doc
         
-    def load_fnl(self,row,**kw):
-        jnl,year,number = row2jnl(row)
+    def load_fnl(self, row, **kw):
+        jnl, year, number = row2jnl(row)
         if jnl is None:
             raise Exception("No journal for FNL record %s" % row)
-        doc = self.FINDICT.get((jnl,year,number))
+        doc = self.FINDICT.get((jnl, year, number))
         if doc is None:
-            raise Exception("FNL %r without document" % list(jnl,year,number))
+            raise Exception("FNL %r without document" %
+                            list(jnl,year,number))
         kw.update(seqno=int(row.line.strip()))
         kw.update(date=row.date)
         kw.update(match=row.match.strip())
@@ -521,29 +517,32 @@ class TimLoader(object):
         #~ kw.update(date=row.date)
         return doc.add_voucher_item(**kw)
             
-    def vnlg2product(self,row):
+    def vnlg2product(self, row):
         a = row.idart.strip()
         return self.sales_gen2art.get(a)
         
     # Countries already exist after initial_data, but their short_code is 
     # needed as lookup field for Cities.
-    def load_nat(self,row):
+    def load_nat(self, row):
         if not row['isocode'].strip(): 
             return
         try:
-            country = Country.objects.get(isocode=row['isocode'].strip())
-        except Country.DoesNotExist,e:
+            country = Country.objects.get(
+                isocode=row['isocode'].strip())
+        except Country.DoesNotExist:
             country = Country(isocode=row['isocode'].strip())
             country.name = row['name'].strip()
         if row['idnat'].strip():
             country.short_code = row['idnat'].strip()
         return country
         
-    def load_plz(self,row):
+    def load_plz(self, row):
         pk = row.pays.strip()
-        if not pk: return
+        if not pk:
+            return
         name = row.nom.strip() or row.cp.strip()
-        if not name: return
+        if not name:
+            return
         
         if False: # severe
             country = Country.objects.get(isocode=self.short2iso(pk))
@@ -554,99 +553,115 @@ class TimLoader(object):
                 #~ country = Country.objects.get(short_code=pk)
             except Country.DoesNotExist,e:
                 dblogger.warning("Ignored PLZ record %s" % row)
-                return 
+                return
         kw = dict(
-          zip_code=row['cp'].strip() or '',
-          name=name,
-          country=country,
-          )
+            zip_code=row['cp'].strip() or '',
+            name=name,
+            country=country,
+        )
         return City(**kw)
-    
-    
-    def load_par(self,row):
-        kw = {}
-        #~ kw.update(street2kw(join_words(row['RUE'],row['RUENUM'],row['RUEBTE'])))
             
-        self.store(kw,id=self.par_pk(row.idpar))
+    def load_par(self, row):
+        kw = {}
+        # kw.update(
+        #     street2kw(join_words(
+        #         row['RUE'],
+        #         row['RUENUM'],
+        #         row['RUEBTE'])))
+
+        self.store(kw, id=self.par_pk(row.idpar))
         
         cl = par_class(row)
         if cl is Company:
             cl = Company
-            self.store(kw,
-              vat_id=row['notva'].strip(),
-              prefix=row['allo'].strip(),
-              name=row.firme,
+            self.store(
+                kw,
+                vat_id=row['notva'].strip(),
+                prefix=row['allo'].strip(),
+                name=row.firme,
             )
         elif cl is Person:
             #~ cl = Person
             kw.update(**name2kw(self.decode_string(row.firme)))
-            self.store(kw,
-              first_name=row['vorname'].strip(),
-              last_name=row.firme,
-              #~ birth_date=row['gebdat'],
-              bank_account1=row['compte1'].strip(),
-              title=row['allo'].strip(),
+            self.store(
+                kw,
+                first_name=row['vorname'].strip(),
+                last_name=row.firme,
+                #~ birth_date=row['gebdat'],
+                bank_account1=row['compte1'].strip(),
+                title=row['allo'].strip(),
             )
         else:
-            dblogger.warning("Ignored PAR record %s (IdPrt %r)" % (
-              row.idpar,row.idprt))
+            dblogger.warning(
+                "Ignored PAR record %s (IdPrt %r)" % (
+                    row.idpar, row.idprt))
             return
         language = isolang(row['langue'])
-        self.store(kw,
+        self.store(
+            kw,
             language=language,
             remarks=dbfmemo(row['memo']),
         )
-        
+
         #~ country2kw(row,kw)
-        
-        
+
         country = row['pays'].strip()
         if country:
             try:
-                country = Country.objects.get(short_code__exact=country)
+                country = Country.objects.get(
+                    short_code__exact=country)
             except Country.DoesNotExist:
-                country = Country(isocode=country,name=country,short_code=country)
+                country = Country(isocode=country,
+                                  name=country,
+                                  short_code=country)
                 country.save()
             kw.update(country=country)
-        
-        self.store(kw,
-          phone=row['tel'].strip(),
-          fax=row['fax'].strip(),
-          street=row['rue'].strip(),
-          street_no=row['ruenum'],
-          street_box=row['ruebte'].strip(),
-          )
-          
-        #~ kw.update(street2kw(join_words(row['RUE'],row['RUENUM'],row['RUEBTE'])))
-        
+
+        self.store(
+            kw,
+            phone=row['tel'].strip(),
+            fax=row['fax'].strip(),
+            street=row['rue'].strip(),
+            street_no=row['ruenum'],
+            street_box=row['ruebte'].strip(),
+        )
+
+        # kw.update(street2kw(join_words(row['RUE'],
+        # row['RUENUM'],row['RUEBTE'])))
+
         zip_code = row['cp'].strip()
         if zip_code:
             kw.update(zip_code=zip_code)
             try:
                 city = City.objects.get(
-                  country=country,
-                  zip_code__exact=zip_code,
+                    country=country,
+                    zip_code__exact=zip_code,
                   )
                 kw.update(city=city)
-            except City.DoesNotExist,e:
-                city = City(zip_code=zip_code,name=zip_code,country=country)
+            except City.DoesNotExist as e:
+                city = City(zip_code=zip_code,
+                            name=zip_code,
+                            country=country)
                 city.save()
                 kw.update(city=city)
                 #~ dblogger.warning("%s-%s : %s",row['PAYS'],row['CP'],e)
-            except City.MultipleObjectsReturned,e:
-                dblogger.warning("%s-%s : %s",row['pays'],row['cp'],e)
-          
-        
+            except City.MultipleObjectsReturned as e:
+                dblogger.warning("%s-%s : %s",
+                                 row['pays'],
+                                 row['cp'],
+                                 e)
+
         #~ print cl,kw
         try:
             return cl(**kw)
-        except Exception,e:
-            dblogger.warning("Failed to instantiate %s from %s",cl,kw)
+        except Exception as e:
+            dblogger.warning("Failed to instantiate %s from %s",
+                             cl, kw)
             raise
-    
+
     #~ PRJPAR = dict()
-    
-    def load_prj(self,row,**kw):
+
+    def load_prj(self, row, **kw):
         pk = int(row.idprj.strip())
         kw.update(id=pk)
         if row.parent.strip():
@@ -654,7 +669,7 @@ class TimLoader(object):
         kw.update(name=row.name1.strip())
         if row.idpar.strip():
             kw.update(partner_id=self.par_pk(row.idpar.strip()))
-            #~ PRJPAR[pk] = 
+
         kw.update(ref=row.seq.strip())
         kw.update(user=self.get_user(None))
         desc = dbfmemo(row.abstract).strip() + '\n\n' + dbfmemo(row.body)
@@ -662,7 +677,7 @@ class TimLoader(object):
         kw.update(description=desc)
         return tickets.Project(**kw)
     
-    def load_pin(self,row,**kw):
+    def load_pin(self, row, **kw):
         pk = int(row.idpin)
         kw.update(id=pk)
         if row.idprj.strip():

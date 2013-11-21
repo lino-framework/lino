@@ -1,0 +1,43 @@
+=====================================
+20131121 (Thursday, 21 November 2013)
+=====================================
+
+Emacs configuration
+-------------------
+
+Actually I wanted to continue with :ref:`tim2lino`...  but (cool:)
+Emacs now paints everything red that is not compliant with PEP8.  And
+of course nobody wants to work in such code!  (Joe: "I know it would
+be quite a change, but I think it is worth the trouble, because Python
+programmers tend to avoid code not formated using PEP8 or something
+very similar.")  So I started to manually convert code to look
+PEP8-compliant.  The first victim is
+:mod:`lino.projects.presto.fixtures.tim2lino`.
+
+Many warnings are about missing whitespace after ',',
+which I perceive as rather nitpicky. For example::
+
+    def load_fin(self,row,**kw):
+        self.FINDICT[(jnl,year,number)] = doc
+
+is not compliant. Must be::
+
+    def load_fin(self, row, **kw):
+        self.FINDICT[(jnl, year, number)] = doc
+
+Maybe there is a way to tell Emacs to ignore certain 
+warnings? 
+Because such changes should rather not come 
+together with "real" changes.
+
+Should I tell Emacs to remove trailing spaces automatically?
+Here is the same problem: such changes should rather not come 
+together with "real" changes.
+
+Moved :file:`docs/settings.py` to :file:`lino/examples/docs` 
+and made it the default settings module for Emacs.
+
+`How to actually change/set environment variables from 
+within emacs
+<http://stackoverflow.com/questions/17450573/how-to-actually-change-set-environment-variables-from-within-emacs>`_
+

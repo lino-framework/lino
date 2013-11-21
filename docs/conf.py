@@ -17,10 +17,11 @@ from unipath import Path
 from atelier.sphinxconf import configure
 configure(globals(),'settings')
 
-import settings
-if Path(settings.__file__).parent != Path(__file__).parent :
-    raise Exception("""
-Oops: `import settings` finds a settings module in %s. 
+if False:
+    import settings
+    if Path(settings.__file__).parent != Path(__file__).parent :
+        raise Exception("""
+Oops: `import settings` finds a settings module in %s.
 See `blog/2013/0812.rst` and clean up your Python path!""" % Path(settings.__file__).parent)
 
 extensions += ['atelier.sphinxconf.blog']
@@ -33,12 +34,13 @@ extensions += ['atelier.sphinxconf.blog']
 
 import lino
 
-#~ os.environ['DJANGO_SETTINGS_MODULE'] = 'settings'
-#~ """
-#~ Trigger loading of Djangos model cache in order to avoid side effects that 
-#~ would occur when this happens later while importing one of the models modules.
-#~ """
-#~ from django.conf import settings
+os.environ['DJANGO_SETTINGS_MODULE'] = 'lino.examples.docs.settings'
+"""
+Trigger loading of Djangos model cache in order to avoid side effects that 
+would occur when this happens later while importing one of the models modules.
+"""
+from django.conf import settings
+
 #~ settings.SITE.startup()
 
 #~ from lino.core import kernel

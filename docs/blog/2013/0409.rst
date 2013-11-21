@@ -75,13 +75,16 @@ for the cheat sheet)
 Sphinx cannot embed stylesheet
 --------------------------------
 
-When I run `fab docs` for lino on hoppel, then Sphinx 1.2b1 and docutils 0.10 say
-"Cannot embed stylesheet '...docutils/writers/html4css1/html4css1.css': 
-No such file or directory.", or more exactly::
+When I run `fab docs` for lino on hoppel, then Sphinx 1.2b1 and
+docutils 0.10 say "Cannot embed stylesheet
+'...docutils/writers/html4css1/html4css1.css': No such file or
+directory.", or more exactly::
 
     <partial node>:: (ERROR/3) Cannot embed stylesheet '../../../\
     pythonenvs/py27/local/lib/python2.7/site-packages/docutils/writers\
     /html4css1/html4css1.css': No such file or directory.
+
+(Workaround: use docutils 0.9)
 
 
 Incompatible changes to LOGGING config in Django 1.5
