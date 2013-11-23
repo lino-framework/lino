@@ -2,9 +2,169 @@
 20131123 (Saturday, 23 November 2013)
 =====================================
 
+Moving to Github
+----------------
 
 Yesterday was my first (Python) project which I published on
 **github**, not on googlecode.  Which required a little change in
 :ref:`atelier` to have the :file:`README` file's extension be 
 `.rst` instead of `.txt` (to instruct github to use the 
 right parser) when `env.use_mercurial` is False.
+
+
+Now I also moved Lino itself to Github.
+
+Summary:
+
+- Last checkin to Googlecode to have a clean local copy
+  Then rename the current lino 
+
+      $ cd ~/hgwork
+      $ mv lino lino.hg
+    
+- http://hivelogic.com/articles/converting-from-mercurial-to-git
+
+  create virgin git and import lino.hg into it
+
+  (I had to `deactivate` my default virtual environment to avoid 
+  ImportError in `osutil`)
+  
+- https://help.github.com/articles/importing-an-external-git-repository
+
+  upload virgin git to github
+  
+- remove local copy of virgin git and git clone from github::
+
+Details:
+
+create virgin git and import lino.hg into it
+--------------------------------------------
+
+Note that some day (but not right now) I plan to rename 
+:file:`~/hgwork` to :file:`~/repos` (or something 
+similar) to express the fact that it contains repositories 
+of different types.
+
+    cd ~/hgwork
+    mv lino lino.hg
+
+    git clone git://repo.or.cz/fast-export.git
+    git init git_repo
+    cd git_repo
+    ~/hgwork/fast-export/hg-fast-export.sh -r ~/hgwork/lino.hg
+    git checkout HEAD
+
+
+
+First attempt (into the lino repository cloned from githubs lino project)::
+
+    Exporting tag [v0.8.2] at [hg r1069] [git :1070]
+    Exporting tag [v0.8.3] at [hg r1090] [git :1091]
+    Exporting tag [v0.8.5] at [hg r1128] [git :1129]
+    Exporting tag [v0.8.10] at [hg r1184] [git :1185]
+    Exporting tag [v0.8.11] at [hg r1187] [git :1188]
+    Exporting tag [v0.8.12] at [hg r1222] [git :1223]
+    Exporting tag [1.4.2] at [hg r2422] [git :2423]
+    Exporting tag [1.5.5] at [hg r3255] [git :3256]
+    Exporting tag [1.5.6] at [hg r3259] [git :3260]
+    Issued 3833 commands
+    warning: Not updating refs/heads/master (new tip ccdce86e97d86ce67836d9810e341fc84f82896c does not contain 2321e1e9b7c290b0a7e94ce21f416e011f48f54e)
+    git-fast-import statistics:
+    ---------------------------------------------------------------------
+    Alloc'd objects:      90000
+    Total objects:        89638 (      7149 duplicates                  )
+          blobs  :        38214 (      6109 duplicates      24580 deltas of      36974 attempts)
+          trees  :        47600 (      1040 duplicates      32545 deltas of      44715 attempts)
+          commits:         3824 (         0 duplicates          0 deltas of          0 attempts)
+          tags   :            0 (         0 duplicates          0 deltas of          0 attempts)
+    Total branches:          10 (         1 loads     )
+          marks:        1048576 (      3824 unique    )
+          atoms:           3460
+    Memory total:          5665 KiB
+           pools:          2149 KiB
+         objects:          3515 KiB
+    ---------------------------------------------------------------------
+    pack_report: getpagesize()            =       4096
+    pack_report: core.packedGitWindowSize =   33554432
+    pack_report: core.packedGitLimit      =  268435456
+    pack_report: pack_used_ctr            =     172323
+    pack_report: pack_mmap_calls          =      25237
+    pack_report: pack_open_windows        =          8 /          8
+    pack_report: pack_mapped              =  210264363 /  218881666
+    ---------------------------------------------------------------------
+
+
+Second attempt (in a virgin repo)::
+
+
+    master: Exporting simple delta revision 3819/3824 with 0/1/0 added/changed/removed files
+    master: Exporting simple delta revision 3820/3824 with 1/3/0 added/changed/removed files
+    master: Exporting simple delta revision 3821/3824 with 4/2/0 added/changed/removed files
+    master: Exporting simple delta revision 3822/3824 with 2/5/0 added/changed/removed files
+    master: Exporting simple delta revision 3823/3824 with 4/3/1 added/changed/removed files
+    master: Exporting simple delta revision 3824/3824 with 4/12/0 added/changed/removed files
+    Exporting tag [v0.8.2] at [hg r1069] [git :1070]
+    Exporting tag [v0.8.3] at [hg r1090] [git :1091]
+    Exporting tag [v0.8.5] at [hg r1128] [git :1129]
+    Exporting tag [v0.8.10] at [hg r1184] [git :1185]
+    Exporting tag [v0.8.11] at [hg r1187] [git :1188]
+    Exporting tag [v0.8.12] at [hg r1222] [git :1223]
+    Exporting tag [1.4.2] at [hg r2422] [git :2423]
+    Exporting tag [1.5.5] at [hg r3255] [git :3256]
+    Exporting tag [1.5.6] at [hg r3259] [git :3260]
+    Issued 3833 commands
+    git-fast-import statistics:
+    ---------------------------------------------------------------------
+    Alloc'd objects:      90000
+    Total objects:        89638 (      7149 duplicates                  )
+          blobs  :        38214 (      6109 duplicates      24580 deltas of      36974 attempts)
+          trees  :        47600 (      1040 duplicates      32545 deltas of      44715 attempts)
+          commits:         3824 (         0 duplicates          0 deltas of          0 attempts)
+          tags   :            0 (         0 duplicates          0 deltas of          0 attempts)
+    Total branches:          10 (         1 loads     )
+          marks:        1048576 (      3824 unique    )
+          atoms:           3460
+    Memory total:          5665 KiB
+           pools:          2149 KiB
+         objects:          3515 KiB
+    ---------------------------------------------------------------------
+    pack_report: getpagesize()            =       4096
+    pack_report: core.packedGitWindowSize =   33554432
+    pack_report: core.packedGitLimit      =  268435456
+    pack_report: pack_used_ctr            =     168493
+    pack_report: pack_mmap_calls          =      25219
+    pack_report: pack_open_windows        =          4 /          8
+    pack_report: pack_mapped              =  109588551 /  218881666
+    ---------------------------------------------------------------------
+
+
+
+Push the history to my lino project on github::
+
+    luc@hoppel:~/hgwork/lino$ git push --mirror https://github.com/lsaffre/lino.git
+    Username for 'https://github.com': lsaffre
+    Password for 'https://lsaffre@github.com': 
+    Counting objects: 89638, done.
+    Delta compression using up to 4 threads.
+    Compressing objects: 100% (26560/26560), done.
+    Writing objects: 100% (89638/89638), 152.47 MiB | 546 KiB/s, done.
+    Total 89638 (delta 57125), reused 89638 (delta 57125)
+    To https://github.com/lsaffre/lino.git
+     + 2321e1e...ccdce86 master -> master (forced update)
+     * [new tag]         1.4.2 -> 1.4.2
+     * [new tag]         1.5.5 -> 1.5.5
+     * [new tag]         1.5.6 -> 1.5.6
+     * [new tag]         v0.8.10 -> v0.8.10
+     * [new tag]         v0.8.11 -> v0.8.11
+     * [new tag]         v0.8.12 -> v0.8.12
+     * [new tag]         v0.8.2 -> v0.8.2
+     * [new tag]         v0.8.3 -> v0.8.3
+     * [new tag]         v0.8.5 -> v0.8.5
+    luc@hoppel:~/hgwork/lino$ 
+
+
+Remove local copy of virgin git and git clone from github::
+
+      $ cd ~/hgwork
+      $ mv lino lino.2
+      $ git clone git@github.com:lsaffre/lino.git
