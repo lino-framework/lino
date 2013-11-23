@@ -44,15 +44,39 @@ from lino import dd
     #~ class Meta(contacts.Company.Meta):
         #~ app_label = 'contacts'
 
-#~ def site_setup(site):
-    #~ site.description = 
+
+def site_setup(site):
+    c = site.modules.contacts
+    for T in (c.Partners, c.Companies, c.Persons):
+        T.add_detail_tab("ledger", "ledger.MovementsByPartner")
+
+    # site.modules.contacts.Persons.set_detail_layout(
+    #     name_box="""last_name first_name:15
+    #     gender title:10 birth_date""",
+    #     info_box="id:5 language:10 \nage")
     
+    site.modules.system.SiteConfigs.set_detail_layout(
+        """
+        site_company next_partner_id:10
+        default_build_method
+        clients_account   sales_account     sales_vat_account
+        suppliers_account purchases_account purchases_vat_account
+        """)
+
+    site.modules.accounts.Accounts.set_detail_layout(
+        """
+        ref:10 name id:5
+        seqno chart group type clearable
+        ledger.MovementsByAccount
+        """)
+    
+
     
 @dd.when_prepared('contacts.Person','contacts.Company')
 def hide_region(model):
     model.hide_elements('region')
 
-        
+
 @dd.receiver(dd.pre_analyze)
 def set_merge_actions(sender,**kw):
     #~ logger.info("%s.set_merge_actions()",__name__)

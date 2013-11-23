@@ -1,3 +1,10 @@
 <p class="Centered9pt">
+{% if sc.site_company %}
 {{- sc.site_company.get_address('<br/>') -}}
+{% else %}
+Yet another Lino user
+<br>
+Go to Configure --> System Parameters 
+and set Site Company field.
+{% endif %}
 </p>

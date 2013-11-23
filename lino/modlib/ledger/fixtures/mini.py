@@ -1,13 +1,13 @@
 # -*- coding: UTF-8 -*-
 ## Copyright 2012-2013 Luc Saffre
 ## This file is part of the Lino project.
-## Lino is free software; you can redistribute it and/or modify 
+## Lino is free software; you can redistribute it and/or modify
 ## it under the terms of the GNU General Public License as published by
 ## the Free Software Foundation; either version 3 of the License, or
 ## (at your option) any later version.
-## Lino is distributed in the hope that it will be useful, 
+## Lino is distributed in the hope that it will be useful,
 ## but WITHOUT ANY WARRANTY; without even the implied warranty of
-## MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the 
+## MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 ## GNU General Public License for more details.
 ## You should have received a copy of the GNU General Public License
 ## along with Lino; if not, see <http://www.gnu.org/licenses/>.
@@ -27,14 +27,7 @@ import logging
 logger = logging.getLogger(__name__)
 
 
-import datetime
-#~ from datetime import timedelta as delta
-from dateutil.relativedelta import relativedelta as delta
-
-from decimal import Decimal
-
 from django.conf import settings
-from lino.utils import Cycler
 from north.dbutils import babel_values
 from lino import dd
 accounts = dd.resolve_app('accounts')
@@ -44,23 +37,11 @@ ledger = dd.resolve_app('ledger')
 finan = dd.resolve_app('finan')
 declarations = dd.resolve_app('declarations')
 #~ partners = dd.resolve_app('partners')
-notes = dd.resolve_app('notes')
 
 current_group = None
 
 
 def objects():
-    if notes:
-        NoteType = dd.resolve_model('notes.NoteType')
-        yield NoteType(
-            template="Letter.odt",
-            build_method="appyodt",
-            body_template="payment_reminder.body.html",
-            **babel_values('name',
-                en="Payment reminder",
-                fr="Rappel de paiement",
-                de="Zahlungserinnerung"))
-        
     chart  = accounts.Chart(**babel_values('name',
         en="Minimal Accounts Chart",
         fr="Plan comptable réduit",

@@ -1,13 +1,13 @@
 # -*- coding: UTF-8 -*-
 ## Copyright 2008-2013 Luc Saffre
 ## This file is part of the Lino project.
-## Lino is free software; you can redistribute it and/or modify 
+## Lino is free software; you can redistribute it and/or modify
 ## it under the terms of the GNU General Public License as published by
 ## the Free Software Foundation; either version 3 of the License, or
 ## (at your option) any later version.
-## Lino is distributed in the hope that it will be useful, 
+## Lino is distributed in the hope that it will be useful,
 ## but WITHOUT ANY WARRANTY; without even the implied warranty of
-## MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the 
+## MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 ## GNU General Public License for more details.
 ## You should have received a copy of the GNU General Public License
 ## along with Lino; if not, see <http://www.gnu.org/licenses/>.
@@ -69,11 +69,11 @@ vat.TradeTypes.sales.update(
     partner_account_field_name='clients_account',
     partner_account_field_label=_("Clients account"))
 
-dd.inject_field('contacts.Partner','invoicing_address',dd.ForeignKey('contacts.Partner',
-        verbose_name=_("Invoicing address"),
-        blank=True,null=True))
-    
-
+dd.inject_field('contacts.Partner',
+                'invoicing_address',
+                dd.ForeignKey('contacts.Partner',
+                              verbose_name=_("Invoicing address"),
+                              blank=True, null=True))
 
 #~ class Channel(ChoiceList):
     #~ label = _("Channel")
@@ -81,39 +81,42 @@ dd.inject_field('contacts.Partner','invoicing_address',dd.ForeignKey('contacts.P
 #~ add('P',_("Paper"))
 #~ add('E',_("E-mail"))
 
+
 class InvoiceStates(dd.Workflow):
     """
     This lists the possible values for the workflow of a :class:`Invoice`
     """
 add = InvoiceStates.add_item
-add('10',_("Draft"),'draft',editable=True)
-add('20',_("Registered"),'registered',editable=False) 
-add('30',_("Signed"),'signed',editable=False)
-add('40',_("Sent"),'sent',editable=False)
-add('50',_("Paid"),'paid',editable=False)
+add('10', _("Draft"), 'draft', editable=True)
+add('20', _("Registered"), 'registered', editable=False)
+add('30', _("Signed"), 'signed', editable=False)
+add('40', _("Sent"), 'sent', editable=False)
+add('50', _("Paid"), 'paid', editable=False)
 
 
-InvoiceStates.registered.add_transition(_("Register"),states='draft',icon_name='accept')
-InvoiceStates.draft.add_transition(_("Deregister"),states="registered",icon_name='pencil')
+InvoiceStates.registered.add_transition(
+    _("Register"), states='draft', icon_name='accept')
+InvoiceStates.draft.add_transition(
+    _("Deregister"), states="registered", icon_name='pencil')
 #~ InvoiceStates.submitted.add_transition(_("Submit"),states="registered")
 
 
 class PaymentTerm(dd.BabelNamed):
     """
-    A convention on how an Invoice should be paid. 
+    A convention on how an Invoice should be paid.
     """
-    
+
     class Meta:
         verbose_name = _("Payment Term")
         verbose_name_plural = _("Payment Terms")
-        
+
     days = models.IntegerField(default=0)
     months = models.IntegerField(default=0)
     end_of_month = models.BooleanField(default=False)
-    
-    def get_due_date(self,date1):
-        assert isinstance(date1,datetime.date), \
-          "%s is not a date" % date1
+
+    def get_due_date(self, date1):
+        assert isinstance(date1, datetime.date), \
+            "%s is not a date" % date1
         #~ print type(date1),type(relativedelta(months=self.months,days=self.days))
         d = date1 + relativedelta(months=self.months,days=self.days)
         if self.end_of_month:
@@ -554,7 +557,7 @@ class ItemsByInvoice(ItemsByDocument):
     #~ debug_permissions = 20130128
     model = 'sales.InvoiceItem'
     auto_fit_column_widths = True
-    column_names = "seqno:3 product title description:20x1 discount unit_price qty total_incl total_base total_vat"
+    column_names = "seqno:3 product title description:20x1 discount unit_price qty total_incl *"
     hidden_columns = "seqno description total_base total_vat"
     
 
@@ -600,8 +603,9 @@ class InvoiceDetail(dd.FormLayout):
     ledger = dd.Panel("""
     journal year number narration
     ledger.MovementsByVoucher
-    """,label=_("Ledger"))
-    
+    """, label=_("Ledger"))
+
+
 class Invoices(SalesDocuments):
     #~ parameters = dict(pyear=journals.YearRef())
     parameters = dict(
@@ -614,29 +618,29 @@ class Invoices(SalesDocuments):
     insert_layout = dd.FormLayout("""
     partner date 
     subject
-    """,window_size=(40,'auto'))
+    """, window_size=(40, 'auto'))
     
     @classmethod
-    def get_request_queryset(cls,ar):
-        qs = super(Invoices,cls).get_request_queryset(ar)
-        #~ print 20120825, ar
-        if ar.param_values.year:
-            qs = qs.filter(year=ar.param_values.year)
-        if ar.param_values.journal:
-            qs = qs.filter(journal=ar.param_values.journal)
+    def get_request_queryset(cls, ar):
+        qs = super(Invoices, cls).get_request_queryset(ar)
+        if not isinstance(qs, list):
+            #~ print 20120825, ar
+            if ar.param_values.year:
+                qs = qs.filter(year=ar.param_values.year)
+            if ar.param_values.journal:
+                qs = qs.filter(journal=ar.param_values.journal)
         return qs
-    
+
     @classmethod
-    def param_defaults(cls,ar,**kw):
-        kw = super(Invoices,cls).param_defaults(ar,**kw)
+    def param_defaults(cls, ar, **kw):
+        kw = super(Invoices, cls).param_defaults(ar, **kw)
         kw.update(year=ledger.FiscalYears.from_date(datetime.date.today()))
         return kw
-        
 
-    
+
 class InvoicesByJournal(Invoices):
     order_by = ["number"]
-    master_key = 'journal' # see django issue 10808
+    master_key = 'journal'  # see django issue 10808
     params_panel_hidden = True
     #master = journals.Journal
     column_names = "number date due_date " \

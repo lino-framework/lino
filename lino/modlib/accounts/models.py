@@ -101,7 +101,7 @@ class Group(dd.BabelNamed):
     ref = dd.NullCharField(max_length=settings.SITE.accounts_ref_length)
     #~ ref = models.CharField(max_length=100)
     account_type = AccountTypes.field(blank=True)
-    help_text = dd.RichTextField(_("Introduction"),format="html",blank=True)
+    # help_text = dd.RichTextField(_("Introduction"),format="html",blank=True)
     
 class Groups(dd.Table):
     model = Group
@@ -114,7 +114,7 @@ class Groups(dd.Table):
     detail_layout = """
     ref name
     account_type id 
-    help_text
+    #help_text
     AccountsByGroup
     """
     
@@ -135,7 +135,7 @@ class Account(dd.BabelNamed,mixins.Sequenced):
     ref = dd.NullCharField(max_length=settings.SITE.accounts_ref_length)
     #~ chart = models.ForeignKey(Chart)
     type = AccountTypes.field() # blank=True)
-    help_text = dd.RichTextField(_("Introduction"),format="html",blank=True)
+    # help_text = dd.RichTextField(_("Introduction"),format="html",blank=True)
     
     def full_clean(self,*args,**kw):
         if self.group_id is not None:
@@ -162,6 +162,11 @@ class Accounts(dd.Table):
     order_by = ['ref']
     #~ required=dict(user_groups=['debts'],user_level='manager')
     column_names = "ref name group *"
+    detail_layout = """
+    ref name
+    group type
+    # help_text
+    """
     
 #~ class AccountsByChart(Accounts):
     #~ master_key = 'chart'

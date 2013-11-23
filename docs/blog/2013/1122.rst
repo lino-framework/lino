@@ -1,0 +1,145 @@
+===================================
+20131122 (Friday, 22 November 2013)
+===================================
+
+Continued on :ref:`eidreader`
+-----------------------------
+
+Status summary:
+
+- The applet works perfectly on a client with IcedTea (OpenJDK) RTE.
+- The problem occurs only when using Sun Java client. 
+
+I noticed that an error (another one) occurs even with an Estonian 
+eid card (which does not call any third-party code). 
+Then I noticed that the same message comes when there 
+is no permission at all.
+Which means that it is simply the client configuration!
+
+Here is the console message::
+
+  Java Plug-in 10.45.2.18
+  Using JRE version 1.7.0_45-b18 Java HotSpot(TM) Client VM
+  User home directory = C:\Documents and Settings\Luc Saffre
+  ...
+  javax.smartcardio.CardException: connect() failed
+	at sun.security.smartcardio.TerminalImpl.connect(Unknown Source)
+	at src.eidreader.EIDReader$2.run(EIDReader.java:453)
+	at java.security.AccessController.doPrivileged(Native Method)
+	at src.eidreader.EIDReader.readCard(EIDReader.java:438)
+	at sun.reflect.NativeMethodAccessorImpl.invoke0(Native Method)
+	at sun.reflect.NativeMethodAccessorImpl.invoke(Unknown Source)
+	at sun.reflect.DelegatingMethodAccessorImpl.invoke(Unknown Source)
+	at java.lang.reflect.Method.invoke(Unknown Source)
+	at sun.plugin.javascript.Trampoline.invoke(Unknown Source)
+	at sun.reflect.NativeMethodAccessorImpl.invoke0(Native Method)
+	at sun.reflect.NativeMethodAccessorImpl.invoke(Unknown Source)
+	at sun.reflect.DelegatingMethodAccessorImpl.invoke(Unknown Source)
+	at java.lang.reflect.Method.invoke(Unknown Source)
+	at sun.plugin.javascript.JSClassLoader.invoke(Unknown Source)
+	at sun.plugin2.liveconnect.JavaClass$MethodInfo.invoke(Unknown Source)
+	at sun.plugin2.liveconnect.JavaClass$MemberBundle.invoke(Unknown Source)
+	at sun.plugin2.liveconnect.JavaClass.invoke0(Unknown Source)
+	at sun.plugin2.liveconnect.JavaClass.invoke(Unknown Source)
+	at sun.plugin2.main.client.LiveConnectSupport$PerAppletInfo$DefaultInvocationDelegate.invoke(Unknown Source)
+	at sun.plugin2.main.client.LiveConnectSupport$PerAppletInfo$3.run(Unknown Source)
+	at java.security.AccessController.doPrivileged(Native Method)
+	at sun.plugin2.main.client.LiveConnectSupport$PerAppletInfo.doObjectOp(Unknown Source)
+	at sun.plugin2.main.client.LiveConnectSupport$PerAppletInfo$LiveConnectWorker.run(Unknown Source)
+	at java.lang.Thread.run(Unknown Source)
+  Caused by: sun.security.smartcardio.PCSCException: SCARD_E_PROTO_MISMATCH
+	at sun.security.smartcardio.PCSC.SCardConnect(Native Method)
+	at sun.security.smartcardio.CardImpl.<init>(Unknown Source)
+	... 24 more
+
+Other observations:
+
+- The answer should be in 
+  `Default Policy Implementation and Policy File Syntax
+  <http://docs.oracle.com/javase/7/docs/technotes/guides/security/PolicyFiles.html>`_
+
+  Note that 
+
+  - `java.home` is :file:`c:\Program Files\Java\jre7\lib\security\`
+  - `user.home` is :file:`c:\Documents and Settings\Luc Saffre\`
+
+  and that the filename is
+
+  - :file:`java.policy` for the system policy but
+  - :file:`.java.policy` (starts with a dot) for the user policy.
+
+- Here is somebody with a similar problem:
+  `Self-signed applet doesn't get a full permission
+  <http://stackoverflow.com/questions/8882226/self-signed-applet-doesnt-get-a-full-permission>`_
+
+- It seems that 
+  `javax.smartcardio.CardPermission`
+  is a subclass of 
+  `java.security.Permission`
+  (according to `this
+  <http://download.java.net/jdk8/docs/jre/api/security/smartcardio/spec/javax/smartcardio/CardPermission.html>`_)
+  and that `java.security.AllPermission` should be enough.
+
+
+- Here are some of the variants of ``grant`` entries I've tried::
+
+    // grant codeBase "file:///t:/applets/-" {
+    // grant codeBase "file:///t:/applets/eid_test.html" {
+    // grant codeBase "file:/t:/applets/eid_test.html" {
+    grant codeBase "file:/t:/applets/eid_test.html" {
+
+            permission java.security.AllPermission;
+            // permission javax.smartcardio.CardPermission "OMNIKEY CardMan 1021 0", "connect";
+            permission javax.smartcardio.CardPermission "*", "connect";
+    };
+    // grant { permission java.security.AllPermission; };
+
+
+
+- To test whether a policy file is being read at all
+  I add a word "foo" somewhere in that file
+  to cause a parsing error in the Java console::
+
+    java.security.policy: error parsing file:/C:/Program%20Files/Java/jre7/lib/security/java.policy:
+  	line 1: expected [;], found [foo]
+
+  Funnily this does *not* work when the "foo " is in the *user* policy file. 
+  So there is no proof that this file is being used.
+
+
+
+:ref:`logos` goes online
+------------------------
+
+I had a phone call with Kai, which I later summarized as follows:
+
+    The SacredPy project is interested in Lino, but it all depends on
+    whether Jason feels able and willing to continue developing on the
+    Lino prototype. Before this can happen he would need to invest a
+    considerable amount of time and energy. Which he won't do as long
+    as he doesn't *believe* that this is -in the long run- the easiest
+    and best way. Even *I* in fact just *believe* it, but wouldn't
+    give my hand for it. As long as Jason doesn't clearly tell me
+    "Luc, stop to waste your time" I can try to convince him by
+    working on a prototype. I'll probably do this in sporadic
+    fallouts. I'll also (passively) listen to what they discuss.
+
+Later in the evening I had a spontaneous seizure and published the
+code of :ref:`logos`, my first prototype for the SacredPy project on
+which I had worked some weeks ago.  The only remaining serious problem
+was to remove certain copyrighted bible texts from the demo fixtures.
+
+So this first prototype is now available for Jason to grab it.
+
+- Code https://github.com/lsaffre/lino-logos
+- Public demo:  http://logos-demo.lino-framework.org/
+- Documentation: http://logos.lino-framework.org/
+
+I estimate that even I (who knows Lino) would need a few weeks to get
+it into a usable state. But it makes no sense that I do it alone since
+I don't recommend to make that project depend only on me.
+
+
+
+
+

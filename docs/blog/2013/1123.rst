@@ -1,0 +1,10 @@
+=====================================
+20131123 (Saturday, 23 November 2013)
+=====================================
+
+
+Yesterday was my first (Python) project which I published on
+**github**, not on googlecode.  Which required a little change in
+:ref:`atelier` to have the :file:`README` file's extension be 
+`.rst` instead of `.txt` (to instruct github to use the 
+right parser) when `env.use_mercurial` is False.

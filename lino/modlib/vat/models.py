@@ -1,12 +1,12 @@
 ## Copyright 2012-2013 Luc Saffre
 ## This file is part of the Lino project.
-## Lino is free software; you can redistribute it and/or modify 
+## Lino is free software; you can redistribute it and/or modify
 ## it under the terms of the GNU General Public License as published by
 ## the Free Software Foundation; either version 3 of the License, or
 ## (at your option) any later version.
-## Lino is distributed in the hope that it will be useful, 
+## Lino is distributed in the hope that it will be useful,
 ## but WITHOUT ANY WARRANTY; without even the implied warranty of
-## MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the 
+## MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 ## GNU General Public License for more details.
 ## You should have received a copy of the GNU General Public License
 ## along with Lino; if not, see <http://www.gnu.org/licenses/>.
@@ -107,7 +107,8 @@ class TradeType(dd.Choice):
     def get_base_account(self):
         if self.base_account_field_name is None:
             raise Exception("%s has no base_account_field_name!" % self)
-        return getattr(settings.SITE.site_config,self.base_account_field_name)
+        return getattr(settings.SITE.site_config,
+                       self.base_account_field_name)
         
     def get_vat_account(self):
         if self.vat_account_field_name is None:
@@ -139,25 +140,25 @@ TradeTypes.add_item('P',_("Purchases"),'purchases',dc=accounts.DEBIT)
 TradeTypes.add_item('W',_("Wages"),'wages',dc=accounts.DEBIT)
     
 """
-Note that 
-:mod:`lino.modlib.sales.models` 
-and/or :mod:`lino.modlib.ledger.models` 
-(if installed) will modify 
-`TradeTypes.sales` at module level so that the following `inject_vat_fields` 
-will inject the required fields to system.SiteConfig 
-and products.Product (if these are installed).
+Note that :mod:`lino.modlib.sales.models` and/or
+:mod:`lino.modlib.ledger.models` (if installed) will modify
+`TradeTypes.sales` at module level so that the following
+`inject_vat_fields` will inject the required fields to
+system.SiteConfig and products.Product (if these are installed).
 """
 
-   
 @dd.receiver(dd.pre_analyze)
-def inject_vat_fields(sender,**kw):
+def inject_vat_fields(sender, **kw):
     for tt in TradeTypes.items():
         if tt.partner_account_field_name is not None:
-            dd.inject_field('system.SiteConfig',tt.partner_account_field_name,
-                dd.ForeignKey('accounts.Account',
+            dd.inject_field(
+                'system.SiteConfig',
+                tt.partner_account_field_name,
+                dd.ForeignKey(
+                    'accounts.Account',
                     verbose_name=tt.partner_account_field_label,
                     related_name='configs_by_'+tt.partner_account_field_name,
-                    blank=True,null=True))
+                    blank=True, null=True))
         if tt.vat_account_field_name is not None:
             dd.inject_field('system.SiteConfig',tt.vat_account_field_name,
                 dd.ForeignKey('accounts.Account',
@@ -179,25 +180,6 @@ def inject_vat_fields(sender,**kw):
             dd.inject_field('products.Product',tt.price_field_name,
                 dd.PriceField(verbose_name=tt.price_field_label,
                 blank=True,null=True))
-    
-    
-
-
-#~ _default_vat_class = VatClasses.normal
-
-#~ _default_vat_regime = VatRegimes.private
-#~ """
-#~ The default value for the `vat_regime` field.
-#~ Application code can change this using something like::
-#~ 
-  #~ from lino.modlib.vat.models import VatDocument, VatRegimes
-  #~ VatDocument.default_vat_regime = VatRegimes.intracom
-#~ """
-
-#~ def get_default_vat_class()
-    #~ return _default_vat_class
-#~ def get_default_vat_regime():
-    #~ return _default_vat_regime
 
 
 CONFIG_FIELDS = dict(
@@ -217,9 +199,9 @@ def get_default_vat_class(): return CONFIG_VALUES.default_vat_class
 def configure(**kw):
     """
     Sets the global default value for certain module parameters.
-    Works for me but is not mature.    
     A cool new system which I will probably generalize.
-    
+    Works for me but is not mature.
+
     Call this from your settings.py using something like::
     
         def setup_choicelists(self):
@@ -239,13 +221,12 @@ def configure(**kw):
     
     """
     
-    for k,v in kw.items():
+    for k, v in kw.items():
         fld = CONFIG_FIELDS[k]
         CONFIG_VALUES[k] = fld.choicelist.get_by_name(v)
 
 
-
-settings.SITE.modules.define('vat','configure',configure)
+settings.SITE.modules.define('vat', 'configure', configure)
 
 
 

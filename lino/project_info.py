@@ -54,6 +54,8 @@ and
 SETUP_INFO.update(packages = [str(n) for n in """
 lino
 lino.core
+lino.examples
+lino.examples.docs
 lino.extjs
 lino.history
 lino.modlib

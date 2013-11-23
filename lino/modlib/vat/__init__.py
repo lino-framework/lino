@@ -31,15 +31,6 @@ class SiteMixin(object):
     Set this to True to support quarterly VAT declarations.
     Used by :mod:`lino.modlib.declarations`
     """
-    
-    #~ def get_item_vat(self,voucher):
-        #~ """
-        #~ Expected to return the default value for the `item_vat` field.
-        #~ Called on every new voucher whose model is subclass of 
-        #~ `lino.modlib.vat.models.VatDocument`.
-        #~ """
-        #~ return True
-        
 
     def get_vat_class(self,tt,item):
         return 'normal'

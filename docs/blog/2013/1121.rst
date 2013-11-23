@@ -2,16 +2,37 @@
 20131121 (Thursday, 21 November 2013)
 =====================================
 
+Continued :ref:`tim2lino`
+-------------------------
+
+The "Sector" project 
+(:ref:`tim2lino` and :ref:`cosi`)
+is getting into a final phase! 
+Soon I'll invite Andreas to a visit.
+
+Some problems yet to solve: 
+
+- the invoices generate only two movements, the one for the vat is missing.
+- how to make `get_vat_rate` configurable.
+  Should there be a VAT plugin instead of the SiteMixin?
+  It must also receive the date.
+
+
+
 Emacs configuration
 -------------------
 
 Actually I wanted to continue with :ref:`tim2lino`...  but (cool:)
-Emacs now paints everything red that is not compliant with PEP8.  And
-of course nobody wants to work in such code!  (Joe: "I know it would
-be quite a change, but I think it is worth the trouble, because Python
-programmers tend to avoid code not formated using PEP8 or something
-very similar.")  So I started to manually convert code to look
-PEP8-compliant.  The first victim is
+Emacs now paints everything red that is not compliant with PEP8.  
+
+.. image:: 1121.png
+    :scale: 50
+
+And of course nobody wants to work in such code!  (Joe: "I know it
+would be quite a change, but I think it is worth the trouble, because
+Python programmers tend to avoid code not formated using PEP8 or
+something very similar.")  So I started to manually convert code to
+look PEP8-compliant.  The first victim is
 :mod:`lino.projects.presto.fixtures.tim2lino`.
 
 Many warnings are about missing whitespace after ',',
