@@ -1,13 +1,13 @@
 #coding: utf-8
-## Copyright 2009-2012 Luc Saffre
+## Copyright 2009-2013 Luc Saffre
 ## This file is part of the Lino project.
-## Lino is free software; you can redistribute it and/or modify 
+## Lino is free software; you can redistribute it and/or modify
 ## it under the terms of the GNU General Public License as published by
 ## the Free Software Foundation; either version 3 of the License, or
 ## (at your option) any later version.
-## Lino is distributed in the hope that it will be useful, 
+## Lino is distributed in the hope that it will be useful,
 ## but WITHOUT ANY WARRANTY; without even the implied warranty of
-## MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the 
+## MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 ## GNU General Public License for more details.
 ## You should have received a copy of the GNU General Public License
 ## along with Lino; if not, see <http://www.gnu.org/licenses/>.
@@ -16,11 +16,11 @@
 This fixture adds all known countries of the world to your database.
 Unlike the official `ISO 3133
 <http://www.iso.org/iso/country_codes>`_
-it features more languages, and it creates also codes for 
+it features more languages, and it creates also codes for
 countries that no longer exist.
 It is not official at all. See also :doc:`/topics/gpdn`.
 
-The `countries.xml` is an unmodified 
+The `countries.xml` is an unmodified
 copy of http://users.pandora.be/bosteels/countries.xml
 
 TABLE2 contains 4-letter codes for countries that no longer exist.
@@ -37,10 +37,9 @@ from xml.dom import minidom
 #~ import logging
 #~ logger = logging.getLogger('lino')
 
-from lino.utils import ucsv
+from django.conf import settings
 from lino.utils import dblogger as logger
 from north.dbutils import babel_values
-from lino.modlib.countries.models import Country
 
 TABLE2 = """
 BQAQ 	ATB 	000 British Antarctic Territory
@@ -52,7 +51,8 @@ DYBJ 	DHY 	204 Dahomey
 NQAQ 	ATN 	216 Dronning Maud Land
 TPTL 	TMP 	626 East Timor (was Portuguese Timor)
 AIDJ 	AFI 	262 French Afars and Issas
-FQHH 	ATF 	000 French Southern and Antarctic Territories (now split between AQ and TF)
+FQHH 	ATF 	000 French Southern and Antarctic Territories \
+(now split between AQ and TF)
 DEDE 	??? 	??? German Federal Republic
 DDDE 	DDR 	278 German Democratic Republic
 GEHH 	GEL 	296 Gilbert & Ellice Islands (now split into Kiribati and Tuvalu)
@@ -60,7 +60,8 @@ JTUM 	JTN 	396 Johnston Island
 MIUM 	MID 	488 Midway Islands
 NTHH 	NTZ 	536 Neutral Zone (formerly between Saudi Arabia & Iraq)
 NHVU 	NHB 	548 New Hebrides
-PCHH 	PCI 	582 Pacific Islands (trust territory) (divided into FM, MH, MP, and PW)
+PCHH 	PCI 	582 Pacific Islands (trust territory) \
+(divided into FM, MH, MP, and PW)
 PZPA 	PCZ 	000 Panama Canal Zone
 SKIN 	SKM 	000 Sikkim
 RHZW 	RHO 	716 Southern Rhodesia
@@ -80,16 +81,17 @@ ZRCD 	ZAR 	180 Zaire, Republic of
 #~ YU  	YUG 	890 Yugoslavia, Socialist Federal Republic of
 #~ """
 
-
 COUNTRIES = {}
+
 
 def objects():
             
     n = 0
+    Country = settings.SITE.modules.countries.Country
     """
     
     """
-    fn = os.path.join(os.path.dirname(__file__),'countries.xml')
+    fn = os.path.join(os.path.dirname(__file__), 'countries.xml')
     dom = minidom.parse(fn)
     #~ print dom.documentElement.__class__
     #~ print dom.documentElement
@@ -104,9 +106,13 @@ def objects():
             names[str(name.attributes['lang'].value)] = name.firstChild.data
             
         kw = babel_values('name',**names)
+        iso2 = coun.getElementsByTagName('coun:alpha2')[0].childNodes[0].data
+        if Country.objects.filter(pk=iso2).count() > 0:
+            return
         kw.update(
-          isocode = coun.getElementsByTagName('coun:alpha2')[0].childNodes[0].data,
-          iso3 = coun.getElementsByTagName('coun:alpha3')[0].childNodes[0].data,
+            isocode=iso2,
+            iso3=coun.getElementsByTagName(
+                'coun:alpha3')[0].childNodes[0].data,
           )
         
         if kw['name']:
@@ -115,7 +121,7 @@ def objects():
             yield Country(**kw)
         else:
             logger.debug("%r : no name for default site language %s",
-                code,settings.SITE.DEFAULT_LANGUAGE.django_code)
+                         coun, settings.SITE.DEFAULT_LANGUAGE.django_code)
             
     for ln in TABLE2.splitlines():
         ln = ln.strip()

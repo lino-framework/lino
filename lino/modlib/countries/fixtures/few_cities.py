@@ -76,6 +76,8 @@ def objects():
     yield make_city('BE','Cuesmes',zip_code='7033')
     yield make_city('BE','La Reid',zip_code='4910')
     yield make_city('BE','Blégny ',zip_code='4670')
+    yield make_city('BE','Trembleur ',zip_code='4670')
+    yield make_city('BE','Mortier ',zip_code='4670')
     yield make_city('BE','Cerfontaine',zip_code='5630')
     yield make_city('BE','Burdinne',zip_code='4210')
     

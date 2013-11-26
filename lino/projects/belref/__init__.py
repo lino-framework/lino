@@ -36,7 +36,7 @@ class Site(Site):
     author = 'Luc Saffre'
     author_email = 'luc.saffre@gmail.com'
     
-    demo_fixtures = 'demo all_countries be few_cities inscodes'
+    demo_fixtures = 'demo all_countries be inscodes'
     #~ demo_fixtures = 'demo'
     
     use_extjs = False

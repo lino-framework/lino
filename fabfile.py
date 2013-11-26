@@ -10,5 +10,6 @@ env.demo_databases.append('lino.projects.presto.settings')
 env.demo_databases.append('lino.projects.min1.settings')
 env.demo_databases.append('lino.projects.belref.settings')
 env.demo_databases.append('lino.projects.i18n.settings')
+# env.demo_databases.append('lino.examples.docs.settings')
 
 env.use_mercurial = False

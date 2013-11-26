@@ -28,23 +28,22 @@ class Site(Site,vat.SiteMixin):
     #~ author_email = 'luc.saffre@gmail.com'
     
     #~ demo_fixtures = 'std few_countries few_cities few_languages props demo demo2 history'.split()
-    #~ demo_fixtures = 'std all_countries be few_cities few_languages props democfg demo demo2'.split()
-    demo_fixtures = 'std few_countries few_cities few_languages props democfg demo demo2'.split()
-    
-    #~ languages = ['en']
+    # demo_fixtures = 'std all_countries be few_cities few_languages \
+    # props democfg demo demo2'.split()
+    # demo_fixtures = 'std few_countries few_cities few_languages \
+    # props democfg demo demo2'.split()
+    demo_fixtures = 'std few_languages props democfg demo demo2'.split()
+
     languages = 'de fr et en'
-    
+
     project_model = 'tickets.Project'
     user_model = 'users.User'
 
-    #~ remote_user_header = "REMOTE_USER"
-    
     override_modlib_models = [
-      'contacts.Person','contacts.Company',
-      'households.Household',
-      'sales.Invoice', 'sales.InvoiceItem']
+        'contacts.Person', 'contacts.Company',
+        'households.Household',
+        'sales.Invoice', 'sales.InvoiceItem']
     
-      
     #~ def get_main_action(self,user):
         #~ return self.modules.lino.Home.default_action
         
@@ -67,7 +66,6 @@ class Site(Site,vat.SiteMixin):
     #~ def get_vat_account(self,tt,vc,vr):
         #~ return '472100'
         
-        
     def setup_choicelists(self):
         """
         Defines application-specific default user profiles.
@@ -81,7 +79,6 @@ class Site(Site,vat.SiteMixin):
             readonly=True,authenticated=False)
         add('100', _("User"),            'U U', 'user')
         add('900', _("Administrator"),   'A A', 'admin')
-        
             
     def get_installed_apps(self):
         for a in super(Site,self).get_installed_apps(): yield a
@@ -109,10 +106,6 @@ class Site(Site,vat.SiteMixin):
         #~ yield 'lino.modlib.postings'
         #~ yield 'lino.modlib.pages'
         yield 'lino.projects.presto'
-      
-
 
 
 SITE = Site(globals()) 
-
-

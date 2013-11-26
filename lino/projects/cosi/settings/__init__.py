@@ -42,7 +42,7 @@ class Site(Site,vat.SiteMixin):
     #~ author = 'Luc Saffre'
     #~ author_email = 'luc.saffre@gmail.com'
     
-    demo_fixtures = 'std few_countries few_cities few_languages furniture demo demo2'.split()
+    demo_fixtures = 'std few_languages furniture demo demo2'.split()
     
     languages = 'en de fr'
     #~ languages = 'de fr et en'.split()

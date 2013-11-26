@@ -1747,7 +1747,7 @@ belgian_cities = u"""
 7140 Morlanwelz-Mariemont 
 6997 Mormont 
 5190 Mornimont 
-4670 Mortier 
+# 4670 Mortier 
 4607 Mortroux 
 2640 Mortsel 
 5620 Morville 
@@ -2519,7 +2519,7 @@ belgian_cities = u"""
 6890 Transinne 
 6183 Trazegnies 
 5670 Treignes 
-4670 Trembleur 
+# 4670 Trembleur 
 3120 Tremelo 
 7100 Trivières 
 4280 Trognée 
