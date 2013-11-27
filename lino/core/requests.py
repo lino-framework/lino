@@ -165,11 +165,11 @@ class BaseRequest(object):
     def info(self,msg,*args,**kw): self.append_message('info',msg,*args,**kw)
     def warning(self,msg,*args,**kw): self.append_message('warning',msg,*args,**kw)
     
-    def confirm(self,ok_func,*msgs):
+    def confirm(self, ok_func, *msgs):
         """
-        Execute the specified callable `ok` after the user has confirmed 
+        Execute the specified callable `ok` after the user has confirmed
         the specified message.
-        All remaining positional arguments to `confirm` 
+        All remaining positional arguments to `confirm`
         are concatenated to a single callback message.
         This method then calls :meth:`callback` (see there for implementation notes).
         
@@ -178,10 +178,11 @@ class BaseRequest(object):
         
         """
         cb = self.add_callback(*msgs)
-        def noop():
-            return dict(success=True,message=_("Aborted"))
-        cb.add_choice('yes',ok_func,_("Yes"))
-        cb.add_choice('no',noop,_("No"))
+
+        def noop(ar):
+            return ar.success(_("Aborted"))
+        cb.add_choice('yes', ok_func, _("Yes"))
+        cb.add_choice('no', noop, _("No"))
         self.set_callback(cb)
         
     

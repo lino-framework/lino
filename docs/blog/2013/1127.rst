@@ -1,0 +1,28 @@
+======================================
+20131127 (Wednesday, 27 November 2013)
+======================================
+
+Upgrade to testlino
+-------------------
+
+Upgraded `testlino` in Eupen
+to the newest development version.
+This took more time than usual because most projects are now on github, 
+so I had to adapt the "pull" procedure.
+
+Tested the data migration.
+Updated :func:`lino_welfare.migrate.migrate_from_1_1_10` to remove 
+field `help_text` in `accounts.Group` and `accounts.Account`.
+
+A bug visible in the demo
+-------------------------
+
+The example demo application built by 
+:ref:`lino.tutorial.polls` also demonstrated a bug:
+answering the confirmation  
+"X has already N votes! Do you still want to vote for it?"
+with "No" caused an :ref:`ise`.
+The bug itself was in 
+:meth:`lino.core.requests.BaseRequest.confirm`.
+
+TODO: Write a test case for this kind of bug.

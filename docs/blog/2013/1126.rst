@@ -126,12 +126,14 @@ TODO:
   to the Google repository.
 
 
-How to add new TI handler
--------------------------
+Tx25: No handler for Guardians
+------------------------------
 
-Added new handler for "Guardians" element of a :ddref:`welfare.cbss.`
-
-"ERROR: No handler for Guardians (Guardians)"
+Added new handler for "Guardians" element of a :ref:`tx25.`
 
 
-- Removed the `run_action_from_console` method of `tables.Table`
+TODO: 
+
+- The `run_action_from_console` method of `tables.Table` can be 
+  removed.
+
