@@ -108,4 +108,4 @@ class Site(Site,vat.SiteMixin):
         yield 'lino.projects.presto'
 
 
-SITE = Site(globals()) 
+# SITE = Site(globals()) 
