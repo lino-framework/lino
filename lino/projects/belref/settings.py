@@ -14,5 +14,5 @@
 
 from lino.projects.belref import *
 
-SITE = Site(globals()) 
+# SITE = Site(globals()) 
 

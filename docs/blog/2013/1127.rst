@@ -25,4 +25,4 @@ with "No" caused an :ref:`ise`.
 The bug itself was in 
 :meth:`lino.core.requests.BaseRequest.confirm`.
 
-TODO: Write a test case for this kind of bug.
+TODO: Write a test case which reproduces this.
