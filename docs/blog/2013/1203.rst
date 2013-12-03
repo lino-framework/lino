@@ -1,0 +1,66 @@
+====================================
+20131203 (Tuesday, 03 December 2013)
+====================================
+
+Eesti koolid vabaks
+-------------------
+
+I read an article which claims that schools in Estonia are worried
+because the price for their Microsoft license seems to become ten
+times higher in the near future: `Eesti koolid ei jaksa enam
+Microsoftilt tarkvara osta
+<http://epl.delfi.ee/news/eesti/eesti-koolid-ei-jaksa-enam-microsoftilt-tarkvara-osta.d?id=67076102>`_
+
+This made me think that now is the time to start a non-profit 
+organisation (MTÜ)  that offers professional support for 
+schools in Estonia. 
+Mission statement would be something like:
+
+    Tere tulemast MTÜ "Eesti koolid vabaks!" veebisaidil. 
+
+    Meie missjoon on pakkuda õige hinnaga professionaalne tugi
+    koolidele, kes kasutavad edubuntu operatsioonisüsteem.  Meie
+    põhitoode on leping, mille kaudu saad oma koolile süsteemihalur,
+    kes vastab küsimustele telefoni jm kanalite kaudu ja kes vajadusel
+    tuleb kohale ausa tunnihinnaga.
+
+I am not an entrepreneur, so I see my role just as the initiator and
+publisher of the original idea, and possibly a financial contributor.
+
+I started a "group" and a "page" on Facebook:
+    
+- https://www.facebook.com/koolidvabaks
+- https://www.facebook.com/groups/koolidvabaks/
+    
+The next step (for me) would be to create a quick website 
+for the not-yet-founded organisation.
+
+Something like `businesscard.at <http://www.businesscard.at>`_ or 
+`veebimajutus.ee <https://www.veebimajutus.ee>`_.
+I created `a free website at businesscard.at
+<http://ekv.businesscard.at/>`_,
+but as expected this is not usable because it fits our needs
+*only almost* fully.
+
+The idea which I like best is of course to do that using Lino.
+I started a Lino application to quickly
+create a combined website and contacts management application for such
+a startup company: :mod:`lino.examples.start`.
+
+A Lino application like :ref:`cosi` but
+additionally with an out-of-the-box business-card style website and a
+possibility to write newsletters.
+
+I then implemented it locally using a :ref:`cosi` site with a
+non-empty :setting:`admin_prefix` setting so that
+:mod:`lino.modlib.pages` is enabled (iow "CMS mode" enabled).
+The result also is *only almost* satisfying because Lino's 
+CMS mode is not ready.
+
+I'd be happy to get that into a publishable state, but I 
+fear that I must stop this project here:
+it makes no sense to fiddle with the CMS mode as long as the new 
+plugin concept isn't fully implemented.
+
+So that project must wait until *either* I get Lino's CMS mode to 
+a usable state *or* somebody in the group becomes active.

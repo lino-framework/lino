@@ -6,8 +6,13 @@ Installation
 Get a local copy of the repository from github, e.g. using::
 
   $ git clone https://github.com/lsaffre/eidreader.git
+
+The file `applets/eid_test.html` 
+is a usage example and should work out of the box.
   
-Download third-party jar files::
+If you need to read *Belgian* cards,
+then you must also download some third-party `.jar` 
+files::
 
   $ cd eidreader/applets
   $ ./get_jars.sh

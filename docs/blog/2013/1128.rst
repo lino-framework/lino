@@ -1,0 +1,74 @@
+=====================================
+20131128 (Thursday, 28 November 2013)
+=====================================
+
+eidreader: 
+
+While trying once more (without success) to get :ref:`eidreader` 
+running on Oracle Java, I had the following idea: maybe it is 
+because the `.jar` file has been built using OpenJDK?
+
+How to install Oracle Java on Ubuntu:
+
+- https://help.ubuntu.com/community/Java>
+- http://www.webupd8.org/2012/01/install-oracle-java-jdk-7-in-ubuntu-via.html
+
+Summary::
+
+    $ sudo add-apt-repository ppa:webupd8team/java
+    $ sudo apt-get update
+    $ sudo apt-get install oracle-java7-installer
+
+How to see which Java is active:::
+
+    $ update-java-alternatives  -l
+    java-1.6.0-openjdk-i386 1061 /usr/lib/jvm/java-1.6.0-openjdk-i386
+    java-1.7.0-openjdk-i386 1071 /usr/lib/jvm/java-1.7.0-openjdk-i386
+    java-7-oracle 1072 /usr/lib/jvm/java-7-oracle
+
+    $ update-java-alternatives -l
+    java-1.6.0-openjdk-i386 1061 /usr/lib/jvm/java-1.6.0-openjdk-i386
+    java-1.7.0-openjdk-i386 1071 /usr/lib/jvm/java-1.7.0-openjdk-i386
+    java-7-oracle 1072 /usr/lib/jvm/java-7-oracle
+
+
+    $ echo $JAVA_HOME
+
+    $ java -version
+    java version "1.7.0_45"
+    Java(TM) SE Runtime Environment (build 1.7.0_45-b18)
+    Java HotSpot(TM) Server VM (build 24.45-b08, mixed mode)
+
+    $ which java
+    /usr/bin/java
+
+
+    $ ll /usr/bin/java
+    lrwxrwxrwx 1 root root 22 Apr 17  2013 /usr/bin/java -> /etc/alternatives/java*
+    $ ll /etc/alternatives/java
+    lrwxrwxrwx 1 root root 39 Nov 28 03:40 /etc/alternatives/java -> /usr/lib/jvm/java-7-oracle/jre/bin/java*
+
+    $ ll /etc/alternatives/java
+    lrwxrwxrwx 1 root root 39 Nov 28 03:40 /etc/alternatives/java -> /usr/lib/jvm/java-7-oracle/jre/bin/java*
+
+
+How to switch between Open and Oracle Java::
+
+    $ sudo update-java-alternatives -s java-1.7.0-openjdk-i386
+    $ ll /etc/alternatives/java
+    lrwxrwxrwx 1 root root 45 Nov 28 03:54 /etc/alternatives/java -> /usr/lib/jvm/java-7-openjdk-i386/jre/bin/java*
+
+    $ sudo update-java-alternatives -s java-7-oracle
+    $ ll /etc/alternatives/java
+    lrwxrwxrwx 1 root root 39 Nov 28 03:55 /etc/alternatives/java -> /usr/lib/jvm/java-7-oracle/jre/bin/java*
+
+
+Voilà. Operation successful, result negative. No change. 
+This doesn't seem to be the reason.
+
+Note also that there are 2 warnings during compilation::
+
+    javac -classpath applets/eid-applet-service.jar:applets/commons-codec.jar src/eidreader/EIDReader.java
+    Note: src/eidreader/EIDReader.java uses unchecked or unsafe operations.
+    Note: Recompile with -Xlint:unchecked for details.
+

@@ -25,4 +25,29 @@ with "No" caused an :ref:`ise`.
 The bug itself was in 
 :meth:`lino.core.requests.BaseRequest.confirm`.
 
+Upgraded :ref`lf` to the newest development version.
+
+This revealed two more stale `SITE` instantiations 
+in 
+:mod:`lino.projects.presto.settings`
+and
+:mod:`lino.projects.belref.settings`
+
 TODO: Write a test case which reproduces this.
+
+How to read info from Estonian eID cards?
+-----------------------------------------
+
+Parallel dazu habe ich begonnen zu erforschen, 
+wie sich unser Problem in Estland lösen würde. 
+https://code.google.com/p/esteid/wiki/WebDeveloper?wl=en
+
+Posted to `esteid-devel
+<https://groups.google.com/forum/#!forum/esteid-devel>`_::
+
+
+Moved more projects to GitHub
+-----------------------------
+
+I moved also :ref:`faggio`, :ref:`welfare` and :ref:`patrols` 
+to GitHub.

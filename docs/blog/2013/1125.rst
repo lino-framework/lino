@@ -28,8 +28,8 @@ Moved also :ref:`atelier`, :ref:`site` and :ref:`north` to GitHub.
 
       $ git mv README.txt README.rst
       $ git mv .hgignore .gitignore
-      $ . ~/pythonenvs/py27/bin/activate
       $ echo 'env.use_mercurial = False' >> fabfile.py
+      $ . ~/pythonenvs/py27/bin/activate
       $ fab ci
 
 - Adapted

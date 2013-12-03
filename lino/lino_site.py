@@ -1800,6 +1800,10 @@ class Site(Site):
             raise Exception("MEDIA_URL %r doesn't end with a '/'!" % settings.MEDIA_URL)
         
         def setup_media_link(short_name,attr_name=None,source=None):
+            if not exists(settings.MEDIA_ROOT):
+                logger.info("MEDIA_ROOT does not exist: %s",
+                            settings.MEDIA_ROOT)
+                return
             target = join(settings.MEDIA_ROOT,short_name)
             if exists(target):
                 #~ logger.info("20130409 path exists: %s",target)
@@ -1958,9 +1962,7 @@ class Site(Site):
         from django.conf.urls import patterns, url, include
 
         urlpatterns = self.get_media_urls()
-        
-        
-        
+
         if self.use_extjs and self.admin_prefix:
             urlpatterns += patterns('',
               ('^'+self.admin_prefix, include(self.get_ext_urls())))
@@ -1982,10 +1984,11 @@ class Site(Site):
         if not self.plain_prefix:
             urlpatterns += self.get_plain_urls()
             
-        if self.use_extjs and not self.admin_prefix:
-            urlpatterns += self.get_ext_urls()
-        #~ elif self.plain_prefix:
-            #~ urlpatterns += self.get_pages_urls()
+        if self.use_extjs:
+            if not self.admin_prefix:
+                urlpatterns += self.get_ext_urls()
+            else:
+                urlpatterns += self.get_pages_urls()
 
         #~ print 20131021, urlpatterns
         return urlpatterns
