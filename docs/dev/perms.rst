@@ -144,7 +144,9 @@ common use-case more elegantly.
 .. _UserLevels:
 
 User levels
-===========
+-----------
+
+
 
 Lino speaks about user *level* where Plone speaks about user *role*.
 Unlike user roles in Plone, user levels are hierarchic:
@@ -159,8 +161,6 @@ only users having user level higher or equal to 50 are authorised.
 
 ``UserLevels.SHORT_NAMES`` assigns a one letter long unique id 
 that is used when specifying different User Levels for each User Group.
-
-
 
 
 

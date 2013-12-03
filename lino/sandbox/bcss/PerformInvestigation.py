@@ -1,5 +1,5 @@
 #!/usr/bin/env python
-# -*- coding: utf-8 -*- 
+# -*- coding: utf-8 -*-
 
 #
 # Generated Mon Oct 03 15:32:13 2011 by generateDS.py version 2.6a.
@@ -11,9 +11,9 @@ import re as re_
 
 etree_ = None
 Verbose_import_ = False
-(   XMLParser_import_none, XMLParser_import_lxml,
+(XMLParser_import_none, XMLParser_import_lxml,
     XMLParser_import_elementtree
-    ) = range(3)
+ ) = range(3)
 XMLParser_import_library = None
 try:
     # lxml
@@ -50,11 +50,13 @@ except ImportError:
                     if Verbose_import_:
                         print("running with ElementTree")
                 except ImportError:
-                    raise ImportError("Failed to import ElementTree from any known place")
+                    raise ImportError(
+                        "Failed to import ElementTree from any known place")
+
 
 def parsexml_(*args, **kwargs):
     if (XMLParser_import_library == XMLParser_import_lxml and
-        'parser' not in kwargs):
+            'parser' not in kwargs):
         # Use the lxml ElementTree compatible parser so that, e.g.,
         #   we ignore comments.
         kwargs['parser'] = etree_.ETCompatXMLParser()
@@ -73,16 +75,22 @@ try:
 except ImportError, exp:
 
     class GeneratedsSuper(object):
+
         def gds_format_string(self, input_data, input_name=''):
             return input_data
+
         def gds_validate_string(self, input_data, node, input_name=''):
             return input_data
+
         def gds_format_integer(self, input_data, input_name=''):
             return '%d' % input_data
+
         def gds_validate_integer(self, input_data, node, input_name=''):
             return input_data
+
         def gds_format_integer_list(self, input_data, input_name=''):
             return '%s' % input_data
+
         def gds_validate_integer_list(self, input_data, node, input_name=''):
             values = input_data.split()
             for value in values:
@@ -91,12 +99,16 @@ except ImportError, exp:
                 except (TypeError, ValueError), exp:
                     raise_parse_error(node, 'Requires sequence of integers')
             return input_data
+
         def gds_format_float(self, input_data, input_name=''):
             return '%f' % input_data
+
         def gds_validate_float(self, input_data, node, input_name=''):
             return input_data
+
         def gds_format_float_list(self, input_data, input_name=''):
             return '%s' % input_data
+
         def gds_validate_float_list(self, input_data, node, input_name=''):
             values = input_data.split()
             for value in values:
@@ -105,12 +117,16 @@ except ImportError, exp:
                 except (TypeError, ValueError), exp:
                     raise_parse_error(node, 'Requires sequence of floats')
             return input_data
+
         def gds_format_double(self, input_data, input_name=''):
             return '%e' % input_data
+
         def gds_validate_double(self, input_data, node, input_name=''):
             return input_data
+
         def gds_format_double_list(self, input_data, input_name=''):
             return '%s' % input_data
+
         def gds_validate_double_list(self, input_data, node, input_name=''):
             values = input_data.split()
             for value in values:
@@ -119,20 +135,27 @@ except ImportError, exp:
                 except (TypeError, ValueError), exp:
                     raise_parse_error(node, 'Requires sequence of doubles')
             return input_data
+
         def gds_format_boolean(self, input_data, input_name=''):
             return '%s' % input_data
+
         def gds_validate_boolean(self, input_data, node, input_name=''):
             return input_data
+
         def gds_format_boolean_list(self, input_data, input_name=''):
             return '%s' % input_data
+
         def gds_validate_boolean_list(self, input_data, node, input_name=''):
             values = input_data.split()
             for value in values:
                 if value not in ('true', '1', 'false', '0', ):
-                    raise_parse_error(node, 'Requires sequence of booleans ("true", "1", "false", "0")')
+                    raise_parse_error(
+                        node, 'Requires sequence of booleans ("true", "1", "false", "0")')
             return input_data
+
         def gds_str_lower(self, instring):
             return instring.lower()
+
         def get_path_(self, node):
             path_list = []
             self.get_path_list_(node, path_list)
@@ -140,6 +163,7 @@ except ImportError, exp:
             path = '/'.join(path_list)
             return path
         Tag_strip_pattern_ = re_.compile(r'\{.*\}')
+
         def get_path_list_(self, node, path_list):
             if node is None:
                 return
@@ -147,6 +171,7 @@ except ImportError, exp:
             if tag:
                 path_list.append(tag)
             self.get_path_list_(node.getparent(), path_list)
+
         def get_class_obj_(self, node, default_class=None):
             class_obj1 = default_class
             if 'xsi' in node.nsmap:
@@ -168,9 +193,9 @@ except ImportError, exp:
 
 ## from IPython.Shell import IPShellEmbed
 ## args = ''
-## ipshell = IPShellEmbed(args,
+# ipshell = IPShellEmbed(args,
 ##     banner = 'Dropping into IPython',
-##     exit_msg = 'Leaving Interpreter, back to program.')
+# exit_msg = 'Leaving Interpreter, back to program.')
 
 # Then use the following line where and when you want to drop into the
 # IPython shell:
@@ -189,9 +214,11 @@ Namespace_extract_pat_ = re_.compile(r'{(.*)}(.*)')
 # Support/utility functions.
 #
 
+
 def showIndent(outfile, level):
     for idx in range(level):
         outfile.write('    ')
+
 
 def quote_xml(inStr):
     if not inStr:
@@ -202,6 +229,7 @@ def quote_xml(inStr):
     s1 = s1.replace('<', '&lt;')
     s1 = s1.replace('>', '&gt;')
     return s1
+
 
 def quote_attrib(inStr):
     s1 = (isinstance(inStr, basestring) and inStr or
@@ -218,6 +246,7 @@ def quote_attrib(inStr):
         s1 = '"%s"' % s1
     return s1
 
+
 def quote_python(inStr):
     s1 = inStr
     if s1.find("'") == -1:
@@ -233,6 +262,7 @@ def quote_python(inStr):
         else:
             return '"""%s"""' % s1
 
+
 def get_all_text_(node):
     if node.text is not None:
         text = node.text
@@ -242,6 +272,7 @@ def get_all_text_(node):
         if child.tail is not None:
             text += child.tail
     return text
+
 
 def find_attr_value_(attr_name, node):
     attrs = node.attrib
@@ -259,6 +290,7 @@ def find_attr_value_(attr_name, node):
 
 class GDSParseError(Exception):
     pass
+
 
 def raise_parse_error(node, msg):
     if XMLParser_import_library == XMLParser_import_lxml:
@@ -283,28 +315,35 @@ class MixedContainer:
     TypeDecimal = 5
     TypeDouble = 6
     TypeBoolean = 7
+
     def __init__(self, category, content_type, name, value):
         self.category = category
         self.content_type = content_type
         self.name = name
         self.value = value
+
     def getCategory(self):
         return self.category
+
     def getContenttype(self, content_type):
         return self.content_type
+
     def getValue(self):
         return self.value
+
     def getName(self):
         return self.name
+
     def export(self, outfile, level, name, namespace):
         if self.category == MixedContainer.CategoryText:
             # Prevent exporting empty content as empty lines.
-            if self.value.strip(): 
+            if self.value.strip():
                 outfile.write(self.value)
         elif self.category == MixedContainer.CategorySimple:
             self.exportSimple(outfile, level, name)
         else:    # category == MixedContainer.CategoryComplex
-            self.value.export(outfile, level, namespace,name)
+            self.value.export(outfile, level, namespace, name)
+
     def exportSimple(self, outfile, level, name):
         if self.content_type == MixedContainer.TypeString:
             outfile.write('<%s>%s</%s>' % (self.name, self.value, self.name))
@@ -316,33 +355,44 @@ class MixedContainer:
             outfile.write('<%s>%f</%s>' % (self.name, self.value, self.name))
         elif self.content_type == MixedContainer.TypeDouble:
             outfile.write('<%s>%g</%s>' % (self.name, self.value, self.name))
+
     def exportLiteral(self, outfile, level, name):
         if self.category == MixedContainer.CategoryText:
             showIndent(outfile, level)
-            outfile.write('model_.MixedContainer(%d, %d, "%s", "%s"),\n' % \
-                (self.category, self.content_type, self.name, self.value))
+            outfile.write('model_.MixedContainer(%d, %d, "%s", "%s"),\n' %
+                          (self.category, self.content_type, self.name, self.value))
         elif self.category == MixedContainer.CategorySimple:
             showIndent(outfile, level)
-            outfile.write('model_.MixedContainer(%d, %d, "%s", "%s"),\n' % \
-                (self.category, self.content_type, self.name, self.value))
+            outfile.write('model_.MixedContainer(%d, %d, "%s", "%s"),\n' %
+                          (self.category, self.content_type, self.name, self.value))
         else:    # category == MixedContainer.CategoryComplex
             showIndent(outfile, level)
-            outfile.write('model_.MixedContainer(%d, %d, "%s",\n' % \
-                (self.category, self.content_type, self.name,))
+            outfile.write('model_.MixedContainer(%d, %d, "%s",\n' %
+                          (self.category, self.content_type, self.name,))
             self.value.exportLiteral(outfile, level + 1)
             showIndent(outfile, level)
             outfile.write(')\n')
 
 
 class MemberSpec_(object):
+
     def __init__(self, name='', data_type='', container=0):
         self.name = name
         self.data_type = data_type
         self.container = container
-    def set_name(self, name): self.name = name
-    def get_name(self): return self.name
-    def set_data_type(self, data_type): self.data_type = data_type
-    def get_data_type_chain(self): return self.data_type
+
+    def set_name(self, name):
+        self.name = name
+
+    def get_name(self):
+        return self.name
+
+    def set_data_type(self, data_type):
+        self.data_type = data_type
+
+    def get_data_type_chain(self):
+        return self.data_type
+
     def get_data_type(self):
         if isinstance(self.data_type, list):
             if len(self.data_type) > 0:
@@ -351,8 +401,13 @@ class MemberSpec_(object):
                 return 'xs:string'
         else:
             return self.data_type
-    def set_container(self, container): self.container = container
-    def get_container(self): return self.container
+
+    def set_container(self, container):
+        self.container = container
+
+    def get_container(self):
+        return self.container
+
 
 def _cast(typ, value):
     if typ is None or value is None:
@@ -363,31 +418,47 @@ def _cast(typ, value):
 # Data representation classes.
 #
 
+
 class PerformInvestigationRequest(GeneratedsSuper):
+
     """Request to perform social and financial investigation"""
     subclass = None
     superclass = None
+
     def __init__(self, SocialSecurityUser=None, DataGroups=None):
         self.SocialSecurityUser = SocialSecurityUser
         self.DataGroups = DataGroups
+
     def factory(*args_, **kwargs_):
         if PerformInvestigationRequest.subclass:
             return PerformInvestigationRequest.subclass(*args_, **kwargs_)
         else:
             return PerformInvestigationRequest(*args_, **kwargs_)
     factory = staticmethod(factory)
-    def get_SocialSecurityUser(self): return self.SocialSecurityUser
-    def set_SocialSecurityUser(self, SocialSecurityUser): self.SocialSecurityUser = SocialSecurityUser
+
+    def get_SocialSecurityUser(self):
+        return self.SocialSecurityUser
+
+    def set_SocialSecurityUser(self, SocialSecurityUser):
+        self.SocialSecurityUser = SocialSecurityUser
+
     def validate_t_SSIN(self, value):
         # Validate type t_SSIN, a restriction on xs:string.
         pass
-    def get_DataGroups(self): return self.DataGroups
-    def set_DataGroups(self, DataGroups): self.DataGroups = DataGroups
+
+    def get_DataGroups(self):
+        return self.DataGroups
+
+    def set_DataGroups(self, DataGroups):
+        self.DataGroups = DataGroups
+
     def export(self, outfile, level, namespace_='', name_='PerformInvestigationRequest', namespacedef_=''):
         showIndent(outfile, level)
-        outfile.write('<%s%s%s' % (namespace_, name_, namespacedef_ and ' ' + namespacedef_ or '', ))
+        outfile.write('<%s%s%s' %
+                      (namespace_, name_, namespacedef_ and ' ' + namespacedef_ or '', ))
         already_processed = []
-        self.exportAttributes(outfile, level, already_processed, namespace_, name_='PerformInvestigationRequest')
+        self.exportAttributes(outfile, level, already_processed,
+                              namespace_, name_='PerformInvestigationRequest')
         if self.hasContent_():
             outfile.write('>\n')
             self.exportChildren(outfile, level + 1, namespace_, name_)
@@ -395,52 +466,66 @@ class PerformInvestigationRequest(GeneratedsSuper):
             outfile.write('</%s%s>\n' % (namespace_, name_))
         else:
             outfile.write('/>\n')
+
     def exportAttributes(self, outfile, level, already_processed, namespace_='', name_='PerformInvestigationRequest'):
         pass
+
     def exportChildren(self, outfile, level, namespace_='', name_='PerformInvestigationRequest', fromsubclass_=False):
         if self.SocialSecurityUser is not None:
             showIndent(outfile, level)
-            outfile.write('<%sSocialSecurityUser>%s</%sSocialSecurityUser>\n' % (namespace_, self.gds_format_string(quote_xml(self.SocialSecurityUser).encode(ExternalEncoding), input_name='SocialSecurityUser'), namespace_))
+            outfile.write('<%sSocialSecurityUser>%s</%sSocialSecurityUser>\n' %
+                          (namespace_, self.gds_format_string(quote_xml(self.SocialSecurityUser).encode(ExternalEncoding), input_name='SocialSecurityUser'), namespace_))
         if self.DataGroups:
-            self.DataGroups.export(outfile, level, namespace_, name_='DataGroups')
+            self.DataGroups.export(
+                outfile, level, namespace_, name_='DataGroups')
+
     def hasContent_(self):
         if (
             self.SocialSecurityUser is not None or
             self.DataGroups is not None
-            ):
+        ):
             return True
         else:
             return False
+
     def exportLiteral(self, outfile, level, name_='PerformInvestigationRequest'):
         level += 1
         self.exportLiteralAttributes(outfile, level, [], name_)
         if self.hasContent_():
             self.exportLiteralChildren(outfile, level, name_)
+
     def exportLiteralAttributes(self, outfile, level, already_processed, name_):
         pass
+
     def exportLiteralChildren(self, outfile, level, name_):
         if self.SocialSecurityUser is not None:
             showIndent(outfile, level)
-            outfile.write('SocialSecurityUser=%s,\n' % quote_python(self.SocialSecurityUser).encode(ExternalEncoding))
+            outfile.write('SocialSecurityUser=%s,\n' %
+                          quote_python(self.SocialSecurityUser).encode(ExternalEncoding))
         if self.DataGroups is not None:
             showIndent(outfile, level)
             outfile.write('DataGroups=model_.RequestDataGroupsType(\n')
             self.DataGroups.exportLiteral(outfile, level, name_='DataGroups')
             showIndent(outfile, level)
             outfile.write('),\n')
+
     def build(self, node):
         self.buildAttributes(node, node.attrib, [])
         for child in node:
             nodeName_ = Tag_pattern_.match(child.tag).groups()[-1]
             self.buildChildren(child, node, nodeName_)
+
     def buildAttributes(self, node, attrs, already_processed):
         pass
+
     def buildChildren(self, child_, node, nodeName_, fromsubclass_=False):
         if nodeName_ == 'SocialSecurityUser':
             SocialSecurityUser_ = child_.text
-            SocialSecurityUser_ = self.gds_validate_string(SocialSecurityUser_, node, 'SocialSecurityUser')
+            SocialSecurityUser_ = self.gds_validate_string(
+                SocialSecurityUser_, node, 'SocialSecurityUser')
             self.SocialSecurityUser = SocialSecurityUser_
-            self.validate_t_SSIN(self.SocialSecurityUser)    # validate type t_SSIN
+            # validate type t_SSIN
+            self.validate_t_SSIN(self.SocialSecurityUser)
         elif nodeName_ == 'DataGroups':
             obj_ = RequestDataGroupsType.factory()
             obj_.build(child_)
@@ -449,34 +534,56 @@ class PerformInvestigationRequest(GeneratedsSuper):
 
 
 class RequestDataGroupsType(GeneratedsSuper):
+
     """The possible types of information that can be obtained. If not
     specified, all available information is returned"""
     subclass = None
     superclass = None
+
     def __init__(self, FamilyCompositionGroup=None, CitizenGroup=None, AddressHistoryGroup=None, WaitRegisterGroup=None):
         self.FamilyCompositionGroup = FamilyCompositionGroup
         self.CitizenGroup = CitizenGroup
         self.AddressHistoryGroup = AddressHistoryGroup
         self.WaitRegisterGroup = WaitRegisterGroup
+
     def factory(*args_, **kwargs_):
         if RequestDataGroupsType.subclass:
             return RequestDataGroupsType.subclass(*args_, **kwargs_)
         else:
             return RequestDataGroupsType(*args_, **kwargs_)
     factory = staticmethod(factory)
-    def get_FamilyCompositionGroup(self): return self.FamilyCompositionGroup
-    def set_FamilyCompositionGroup(self, FamilyCompositionGroup): self.FamilyCompositionGroup = FamilyCompositionGroup
-    def get_CitizenGroup(self): return self.CitizenGroup
-    def set_CitizenGroup(self, CitizenGroup): self.CitizenGroup = CitizenGroup
-    def get_AddressHistoryGroup(self): return self.AddressHistoryGroup
-    def set_AddressHistoryGroup(self, AddressHistoryGroup): self.AddressHistoryGroup = AddressHistoryGroup
-    def get_WaitRegisterGroup(self): return self.WaitRegisterGroup
-    def set_WaitRegisterGroup(self, WaitRegisterGroup): self.WaitRegisterGroup = WaitRegisterGroup
+
+    def get_FamilyCompositionGroup(self):
+        return self.FamilyCompositionGroup
+
+    def set_FamilyCompositionGroup(self, FamilyCompositionGroup):
+        self.FamilyCompositionGroup = FamilyCompositionGroup
+
+    def get_CitizenGroup(self):
+        return self.CitizenGroup
+
+    def set_CitizenGroup(self, CitizenGroup):
+        self.CitizenGroup = CitizenGroup
+
+    def get_AddressHistoryGroup(self):
+        return self.AddressHistoryGroup
+
+    def set_AddressHistoryGroup(self, AddressHistoryGroup):
+        self.AddressHistoryGroup = AddressHistoryGroup
+
+    def get_WaitRegisterGroup(self):
+        return self.WaitRegisterGroup
+
+    def set_WaitRegisterGroup(self, WaitRegisterGroup):
+        self.WaitRegisterGroup = WaitRegisterGroup
+
     def export(self, outfile, level, namespace_='', name_='RequestDataGroupsType', namespacedef_=''):
         showIndent(outfile, level)
-        outfile.write('<%s%s%s' % (namespace_, name_, namespacedef_ and ' ' + namespacedef_ or '', ))
+        outfile.write('<%s%s%s' %
+                      (namespace_, name_, namespacedef_ and ' ' + namespacedef_ or '', ))
         already_processed = []
-        self.exportAttributes(outfile, level, already_processed, namespace_, name_='RequestDataGroupsType')
+        self.exportAttributes(outfile, level, already_processed,
+                              namespace_, name_='RequestDataGroupsType')
         if self.hasContent_():
             outfile.write('>\n')
             self.exportChildren(outfile, level + 1, namespace_, name_)
@@ -484,58 +591,75 @@ class RequestDataGroupsType(GeneratedsSuper):
             outfile.write('</%s%s>\n' % (namespace_, name_))
         else:
             outfile.write('/>\n')
+
     def exportAttributes(self, outfile, level, already_processed, namespace_='', name_='RequestDataGroupsType'):
         pass
+
     def exportChildren(self, outfile, level, namespace_='', name_='RequestDataGroupsType', fromsubclass_=False):
         if self.FamilyCompositionGroup is not None:
             showIndent(outfile, level)
-            outfile.write('<%sFamilyCompositionGroup>%s</%sFamilyCompositionGroup>\n' % (namespace_, self.gds_format_boolean(self.gds_str_lower(str(self.FamilyCompositionGroup)), input_name='FamilyCompositionGroup'), namespace_))
+            outfile.write(
+                '<%sFamilyCompositionGroup>%s</%sFamilyCompositionGroup>\n' %
+                (namespace_, self.gds_format_boolean(self.gds_str_lower(str(self.FamilyCompositionGroup)), input_name='FamilyCompositionGroup'), namespace_))
         if self.CitizenGroup is not None:
             showIndent(outfile, level)
-            outfile.write('<%sCitizenGroup>%s</%sCitizenGroup>\n' % (namespace_, self.gds_format_boolean(self.gds_str_lower(str(self.CitizenGroup)), input_name='CitizenGroup'), namespace_))
+            outfile.write('<%sCitizenGroup>%s</%sCitizenGroup>\n' %
+                          (namespace_, self.gds_format_boolean(self.gds_str_lower(str(self.CitizenGroup)), input_name='CitizenGroup'), namespace_))
         if self.AddressHistoryGroup is not None:
             showIndent(outfile, level)
-            outfile.write('<%sAddressHistoryGroup>%s</%sAddressHistoryGroup>\n' % (namespace_, self.gds_format_boolean(self.gds_str_lower(str(self.AddressHistoryGroup)), input_name='AddressHistoryGroup'), namespace_))
+            outfile.write(
+                '<%sAddressHistoryGroup>%s</%sAddressHistoryGroup>\n' %
+                (namespace_, self.gds_format_boolean(self.gds_str_lower(str(self.AddressHistoryGroup)), input_name='AddressHistoryGroup'), namespace_))
         if self.WaitRegisterGroup is not None:
             showIndent(outfile, level)
-            outfile.write('<%sWaitRegisterGroup>%s</%sWaitRegisterGroup>\n' % (namespace_, self.gds_format_boolean(self.gds_str_lower(str(self.WaitRegisterGroup)), input_name='WaitRegisterGroup'), namespace_))
+            outfile.write('<%sWaitRegisterGroup>%s</%sWaitRegisterGroup>\n' %
+                          (namespace_, self.gds_format_boolean(self.gds_str_lower(str(self.WaitRegisterGroup)), input_name='WaitRegisterGroup'), namespace_))
+
     def hasContent_(self):
         if (
             self.FamilyCompositionGroup is not None or
             self.CitizenGroup is not None or
             self.AddressHistoryGroup is not None or
             self.WaitRegisterGroup is not None
-            ):
+        ):
             return True
         else:
             return False
+
     def exportLiteral(self, outfile, level, name_='RequestDataGroupsType'):
         level += 1
         self.exportLiteralAttributes(outfile, level, [], name_)
         if self.hasContent_():
             self.exportLiteralChildren(outfile, level, name_)
+
     def exportLiteralAttributes(self, outfile, level, already_processed, name_):
         pass
+
     def exportLiteralChildren(self, outfile, level, name_):
         if self.FamilyCompositionGroup is not None:
             showIndent(outfile, level)
-            outfile.write('FamilyCompositionGroup=%s,\n' % self.FamilyCompositionGroup)
+            outfile.write('FamilyCompositionGroup=%s,\n' %
+                          self.FamilyCompositionGroup)
         if self.CitizenGroup is not None:
             showIndent(outfile, level)
             outfile.write('CitizenGroup=%s,\n' % self.CitizenGroup)
         if self.AddressHistoryGroup is not None:
             showIndent(outfile, level)
-            outfile.write('AddressHistoryGroup=%s,\n' % self.AddressHistoryGroup)
+            outfile.write('AddressHistoryGroup=%s,\n' %
+                          self.AddressHistoryGroup)
         if self.WaitRegisterGroup is not None:
             showIndent(outfile, level)
             outfile.write('WaitRegisterGroup=%s,\n' % self.WaitRegisterGroup)
+
     def build(self, node):
         self.buildAttributes(node, node.attrib, [])
         for child in node:
             nodeName_ = Tag_pattern_.match(child.tag).groups()[-1]
             self.buildChildren(child, node, nodeName_)
+
     def buildAttributes(self, node, attrs, already_processed):
         pass
+
     def buildChildren(self, child_, node, nodeName_, fromsubclass_=False):
         if nodeName_ == 'FamilyCompositionGroup':
             sval_ = child_.text
@@ -545,7 +669,8 @@ class RequestDataGroupsType(GeneratedsSuper):
                 ival_ = False
             else:
                 raise_parse_error(child_, 'requires boolean')
-            ival_ = self.gds_validate_boolean(ival_, node, 'FamilyCompositionGroup')
+            ival_ = self.gds_validate_boolean(
+                ival_, node, 'FamilyCompositionGroup')
             self.FamilyCompositionGroup = ival_
         elif nodeName_ == 'CitizenGroup':
             sval_ = child_.text
@@ -565,7 +690,8 @@ class RequestDataGroupsType(GeneratedsSuper):
                 ival_ = False
             else:
                 raise_parse_error(child_, 'requires boolean')
-            ival_ = self.gds_validate_boolean(ival_, node, 'AddressHistoryGroup')
+            ival_ = self.gds_validate_boolean(
+                ival_, node, 'AddressHistoryGroup')
             self.AddressHistoryGroup = ival_
         elif nodeName_ == 'WaitRegisterGroup':
             sval_ = child_.text
@@ -581,176 +707,223 @@ class RequestDataGroupsType(GeneratedsSuper):
 
 
 class FamilyCompositionGroup(GeneratedsSuper):
+
     """Give the composition of the family. Specifying true here implies
     that the other data groups will be returned for each member of
     the family, where applicable."""
     subclass = None
     superclass = None
+
     def __init__(self):
         pass
+
     def factory(*args_, **kwargs_):
         if FamilyCompositionGroup.subclass:
             return FamilyCompositionGroup.subclass(*args_, **kwargs_)
         else:
             return FamilyCompositionGroup(*args_, **kwargs_)
     factory = staticmethod(factory)
+
     def export(self, outfile, level, namespace_='', name_='FamilyCompositionGroup', namespacedef_=''):
         showIndent(outfile, level)
-        outfile.write('<%s%s%s' % (namespace_, name_, namespacedef_ and ' ' + namespacedef_ or '', ))
+        outfile.write('<%s%s%s' %
+                      (namespace_, name_, namespacedef_ and ' ' + namespacedef_ or '', ))
         already_processed = []
-        self.exportAttributes(outfile, level, already_processed, namespace_, name_='FamilyCompositionGroup')
+        self.exportAttributes(outfile, level, already_processed,
+                              namespace_, name_='FamilyCompositionGroup')
         if self.hasContent_():
             outfile.write('>\n')
             self.exportChildren(outfile, level + 1, namespace_, name_)
             outfile.write('</%s%s>\n' % (namespace_, name_))
         else:
             outfile.write('/>\n')
+
     def exportAttributes(self, outfile, level, already_processed, namespace_='', name_='FamilyCompositionGroup'):
         pass
+
     def exportChildren(self, outfile, level, namespace_='', name_='FamilyCompositionGroup', fromsubclass_=False):
         pass
+
     def hasContent_(self):
         if (
 
-            ):
+        ):
             return True
         else:
             return False
+
     def exportLiteral(self, outfile, level, name_='FamilyCompositionGroup'):
         level += 1
         self.exportLiteralAttributes(outfile, level, [], name_)
         if self.hasContent_():
             self.exportLiteralChildren(outfile, level, name_)
+
     def exportLiteralAttributes(self, outfile, level, already_processed, name_):
         pass
+
     def exportLiteralChildren(self, outfile, level, name_):
         pass
+
     def build(self, node):
         self.buildAttributes(node, node.attrib, [])
         for child in node:
             nodeName_ = Tag_pattern_.match(child.tag).groups()[-1]
             self.buildChildren(child, node, nodeName_)
+
     def buildAttributes(self, node, attrs, already_processed):
         pass
+
     def buildChildren(self, child_, node, nodeName_, fromsubclass_=False):
         pass
 # end class FamilyCompositionGroup
 
 
 class CitizenGroup(GeneratedsSuper):
+
     """Give the full set of legal information about a person."""
     subclass = None
     superclass = None
+
     def __init__(self):
         pass
+
     def factory(*args_, **kwargs_):
         if CitizenGroup.subclass:
             return CitizenGroup.subclass(*args_, **kwargs_)
         else:
             return CitizenGroup(*args_, **kwargs_)
     factory = staticmethod(factory)
+
     def export(self, outfile, level, namespace_='', name_='CitizenGroup', namespacedef_=''):
         showIndent(outfile, level)
-        outfile.write('<%s%s%s' % (namespace_, name_, namespacedef_ and ' ' + namespacedef_ or '', ))
+        outfile.write('<%s%s%s' %
+                      (namespace_, name_, namespacedef_ and ' ' + namespacedef_ or '', ))
         already_processed = []
-        self.exportAttributes(outfile, level, already_processed, namespace_, name_='CitizenGroup')
+        self.exportAttributes(
+            outfile, level, already_processed, namespace_, name_='CitizenGroup')
         if self.hasContent_():
             outfile.write('>\n')
             self.exportChildren(outfile, level + 1, namespace_, name_)
             outfile.write('</%s%s>\n' % (namespace_, name_))
         else:
             outfile.write('/>\n')
+
     def exportAttributes(self, outfile, level, already_processed, namespace_='', name_='CitizenGroup'):
         pass
+
     def exportChildren(self, outfile, level, namespace_='', name_='CitizenGroup', fromsubclass_=False):
         pass
+
     def hasContent_(self):
         if (
 
-            ):
+        ):
             return True
         else:
             return False
+
     def exportLiteral(self, outfile, level, name_='CitizenGroup'):
         level += 1
         self.exportLiteralAttributes(outfile, level, [], name_)
         if self.hasContent_():
             self.exportLiteralChildren(outfile, level, name_)
+
     def exportLiteralAttributes(self, outfile, level, already_processed, name_):
         pass
+
     def exportLiteralChildren(self, outfile, level, name_):
         pass
+
     def build(self, node):
         self.buildAttributes(node, node.attrib, [])
         for child in node:
             nodeName_ = Tag_pattern_.match(child.tag).groups()[-1]
             self.buildChildren(child, node, nodeName_)
+
     def buildAttributes(self, node, attrs, already_processed):
         pass
+
     def buildChildren(self, child_, node, nodeName_, fromsubclass_=False):
         pass
 # end class CitizenGroup
 
 
 class AddressHistoryGroup(GeneratedsSuper):
+
     """Give a history of the legal and declared addresses for a person."""
     subclass = None
     superclass = None
+
     def __init__(self):
         pass
+
     def factory(*args_, **kwargs_):
         if AddressHistoryGroup.subclass:
             return AddressHistoryGroup.subclass(*args_, **kwargs_)
         else:
             return AddressHistoryGroup(*args_, **kwargs_)
     factory = staticmethod(factory)
+
     def export(self, outfile, level, namespace_='', name_='AddressHistoryGroup', namespacedef_=''):
         showIndent(outfile, level)
-        outfile.write('<%s%s%s' % (namespace_, name_, namespacedef_ and ' ' + namespacedef_ or '', ))
+        outfile.write('<%s%s%s' %
+                      (namespace_, name_, namespacedef_ and ' ' + namespacedef_ or '', ))
         already_processed = []
-        self.exportAttributes(outfile, level, already_processed, namespace_, name_='AddressHistoryGroup')
+        self.exportAttributes(outfile, level, already_processed,
+                              namespace_, name_='AddressHistoryGroup')
         if self.hasContent_():
             outfile.write('>\n')
             self.exportChildren(outfile, level + 1, namespace_, name_)
             outfile.write('</%s%s>\n' % (namespace_, name_))
         else:
             outfile.write('/>\n')
+
     def exportAttributes(self, outfile, level, already_processed, namespace_='', name_='AddressHistoryGroup'):
         pass
+
     def exportChildren(self, outfile, level, namespace_='', name_='AddressHistoryGroup', fromsubclass_=False):
         pass
+
     def hasContent_(self):
         if (
 
-            ):
+        ):
             return True
         else:
             return False
+
     def exportLiteral(self, outfile, level, name_='AddressHistoryGroup'):
         level += 1
         self.exportLiteralAttributes(outfile, level, [], name_)
         if self.hasContent_():
             self.exportLiteralChildren(outfile, level, name_)
+
     def exportLiteralAttributes(self, outfile, level, already_processed, name_):
         pass
+
     def exportLiteralChildren(self, outfile, level, name_):
         pass
+
     def build(self, node):
         self.buildAttributes(node, node.attrib, [])
         for child in node:
             nodeName_ = Tag_pattern_.match(child.tag).groups()[-1]
             self.buildChildren(child, node, nodeName_)
+
     def buildAttributes(self, node, attrs, already_processed):
         pass
+
     def buildChildren(self, child_, node, nodeName_, fromsubclass_=False):
         pass
 # end class AddressHistoryGroup
 
 
 class InscriptionType(GeneratedsSuper):
+
     """An inscription"""
     subclass = None
     superclass = None
+
     def __init__(self, SSIN=None, OrgUnit=None, Purpose=None, Period=None, InscriptionCode=None, PhaseCode=None):
         self.SSIN = SSIN
         self.OrgUnit = OrgUnit
@@ -758,32 +931,61 @@ class InscriptionType(GeneratedsSuper):
         self.Period = Period
         self.InscriptionCode = InscriptionCode
         self.PhaseCode = PhaseCode
+
     def factory(*args_, **kwargs_):
         if InscriptionType.subclass:
             return InscriptionType.subclass(*args_, **kwargs_)
         else:
             return InscriptionType(*args_, **kwargs_)
     factory = staticmethod(factory)
-    def get_SSIN(self): return self.SSIN
-    def set_SSIN(self, SSIN): self.SSIN = SSIN
+
+    def get_SSIN(self):
+        return self.SSIN
+
+    def set_SSIN(self, SSIN):
+        self.SSIN = SSIN
+
     def validate_t_SSIN(self, value):
         # Validate type t_SSIN, a restriction on xs:string.
         pass
-    def get_OrgUnit(self): return self.OrgUnit
-    def set_OrgUnit(self, OrgUnit): self.OrgUnit = OrgUnit
-    def get_Purpose(self): return self.Purpose
-    def set_Purpose(self, Purpose): self.Purpose = Purpose
-    def get_Period(self): return self.Period
-    def set_Period(self, Period): self.Period = Period
-    def get_InscriptionCode(self): return self.InscriptionCode
-    def set_InscriptionCode(self, InscriptionCode): self.InscriptionCode = InscriptionCode
-    def get_PhaseCode(self): return self.PhaseCode
-    def set_PhaseCode(self, PhaseCode): self.PhaseCode = PhaseCode
+
+    def get_OrgUnit(self):
+        return self.OrgUnit
+
+    def set_OrgUnit(self, OrgUnit):
+        self.OrgUnit = OrgUnit
+
+    def get_Purpose(self):
+        return self.Purpose
+
+    def set_Purpose(self, Purpose):
+        self.Purpose = Purpose
+
+    def get_Period(self):
+        return self.Period
+
+    def set_Period(self, Period):
+        self.Period = Period
+
+    def get_InscriptionCode(self):
+        return self.InscriptionCode
+
+    def set_InscriptionCode(self, InscriptionCode):
+        self.InscriptionCode = InscriptionCode
+
+    def get_PhaseCode(self):
+        return self.PhaseCode
+
+    def set_PhaseCode(self, PhaseCode):
+        self.PhaseCode = PhaseCode
+
     def export(self, outfile, level, namespace_='', name_='InscriptionType', namespacedef_=''):
         showIndent(outfile, level)
-        outfile.write('<%s%s%s' % (namespace_, name_, namespacedef_ and ' ' + namespacedef_ or '', ))
+        outfile.write('<%s%s%s' %
+                      (namespace_, name_, namespacedef_ and ' ' + namespacedef_ or '', ))
         already_processed = []
-        self.exportAttributes(outfile, level, already_processed, namespace_, name_='InscriptionType')
+        self.exportAttributes(outfile, level, already_processed,
+                              namespace_, name_='InscriptionType')
         if self.hasContent_():
             outfile.write('>\n')
             self.exportChildren(outfile, level + 1, namespace_, name_)
@@ -791,26 +993,34 @@ class InscriptionType(GeneratedsSuper):
             outfile.write('</%s%s>\n' % (namespace_, name_))
         else:
             outfile.write('/>\n')
+
     def exportAttributes(self, outfile, level, already_processed, namespace_='', name_='InscriptionType'):
         pass
+
     def exportChildren(self, outfile, level, namespace_='', name_='InscriptionType', fromsubclass_=False):
         if self.SSIN is not None:
             showIndent(outfile, level)
-            outfile.write('<%sSSIN>%s</%sSSIN>\n' % (namespace_, self.gds_format_string(quote_xml(self.SSIN).encode(ExternalEncoding), input_name='SSIN'), namespace_))
+            outfile.write('<%sSSIN>%s</%sSSIN>\n' %
+                          (namespace_, self.gds_format_string(quote_xml(self.SSIN).encode(ExternalEncoding), input_name='SSIN'), namespace_))
         if self.OrgUnit is not None:
             showIndent(outfile, level)
-            outfile.write('<%sOrgUnit>%s</%sOrgUnit>\n' % (namespace_, self.gds_format_string(quote_xml(self.OrgUnit).encode(ExternalEncoding), input_name='OrgUnit'), namespace_))
+            outfile.write('<%sOrgUnit>%s</%sOrgUnit>\n' %
+                          (namespace_, self.gds_format_string(quote_xml(self.OrgUnit).encode(ExternalEncoding), input_name='OrgUnit'), namespace_))
         if self.Purpose is not None:
             showIndent(outfile, level)
-            outfile.write('<%sPurpose>%s</%sPurpose>\n' % (namespace_, self.gds_format_integer(self.Purpose, input_name='Purpose'), namespace_))
+            outfile.write('<%sPurpose>%s</%sPurpose>\n' %
+                          (namespace_, self.gds_format_integer(self.Purpose, input_name='Purpose'), namespace_))
         if self.Period:
             self.Period.export(outfile, level, namespace_, name_='Period')
         if self.InscriptionCode is not None:
             showIndent(outfile, level)
-            outfile.write('<%sInscriptionCode>%s</%sInscriptionCode>\n' % (namespace_, self.gds_format_integer(self.InscriptionCode, input_name='InscriptionCode'), namespace_))
+            outfile.write('<%sInscriptionCode>%s</%sInscriptionCode>\n' %
+                          (namespace_, self.gds_format_integer(self.InscriptionCode, input_name='InscriptionCode'), namespace_))
         if self.PhaseCode is not None:
             showIndent(outfile, level)
-            outfile.write('<%sPhaseCode>%s</%sPhaseCode>\n' % (namespace_, self.gds_format_integer(self.PhaseCode, input_name='PhaseCode'), namespace_))
+            outfile.write('<%sPhaseCode>%s</%sPhaseCode>\n' %
+                          (namespace_, self.gds_format_integer(self.PhaseCode, input_name='PhaseCode'), namespace_))
+
     def hasContent_(self):
         if (
             self.SSIN is not None or
@@ -819,24 +1029,29 @@ class InscriptionType(GeneratedsSuper):
             self.Period is not None or
             self.InscriptionCode is not None or
             self.PhaseCode is not None
-            ):
+        ):
             return True
         else:
             return False
+
     def exportLiteral(self, outfile, level, name_='InscriptionType'):
         level += 1
         self.exportLiteralAttributes(outfile, level, [], name_)
         if self.hasContent_():
             self.exportLiteralChildren(outfile, level, name_)
+
     def exportLiteralAttributes(self, outfile, level, already_processed, name_):
         pass
+
     def exportLiteralChildren(self, outfile, level, name_):
         if self.SSIN is not None:
             showIndent(outfile, level)
-            outfile.write('SSIN=%s,\n' % quote_python(self.SSIN).encode(ExternalEncoding))
+            outfile.write('SSIN=%s,\n' %
+                          quote_python(self.SSIN).encode(ExternalEncoding))
         if self.OrgUnit is not None:
             showIndent(outfile, level)
-            outfile.write('OrgUnit=%s,\n' % quote_python(self.OrgUnit).encode(ExternalEncoding))
+            outfile.write('OrgUnit=%s,\n' %
+                          quote_python(self.OrgUnit).encode(ExternalEncoding))
         if self.Purpose is not None:
             showIndent(outfile, level)
             outfile.write('Purpose=%d,\n' % self.Purpose)
@@ -852,13 +1067,16 @@ class InscriptionType(GeneratedsSuper):
         if self.PhaseCode is not None:
             showIndent(outfile, level)
             outfile.write('PhaseCode=%d,\n' % self.PhaseCode)
+
     def build(self, node):
         self.buildAttributes(node, node.attrib, [])
         for child in node:
             nodeName_ = Tag_pattern_.match(child.tag).groups()[-1]
             self.buildChildren(child, node, nodeName_)
+
     def buildAttributes(self, node, attrs, already_processed):
         pass
+
     def buildChildren(self, child_, node, nodeName_, fromsubclass_=False):
         if nodeName_ == 'SSIN':
             SSIN_ = child_.text
@@ -903,27 +1121,41 @@ class InscriptionType(GeneratedsSuper):
 class DescriptionType(GeneratedsSuper):
     subclass = None
     superclass = None
+
     def __init__(self, lang=None, valueOf_=None):
         self.lang = _cast(None, lang)
         self.valueOf_ = valueOf_
+
     def factory(*args_, **kwargs_):
         if DescriptionType.subclass:
             return DescriptionType.subclass(*args_, **kwargs_)
         else:
             return DescriptionType(*args_, **kwargs_)
     factory = staticmethod(factory)
-    def get_lang(self): return self.lang
-    def set_lang(self, lang): self.lang = lang
+
+    def get_lang(self):
+        return self.lang
+
+    def set_lang(self, lang):
+        self.lang = lang
+
     def validate_t_Language(self, value):
         # Validate type t_Language, a restriction on xs:string.
         pass
-    def get_valueOf_(self): return self.valueOf_
-    def set_valueOf_(self, valueOf_): self.valueOf_ = valueOf_
+
+    def get_valueOf_(self):
+        return self.valueOf_
+
+    def set_valueOf_(self, valueOf_):
+        self.valueOf_ = valueOf_
+
     def export(self, outfile, level, namespace_='', name_='DescriptionType', namespacedef_=''):
         showIndent(outfile, level)
-        outfile.write('<%s%s%s' % (namespace_, name_, namespacedef_ and ' ' + namespacedef_ or '', ))
+        outfile.write('<%s%s%s' %
+                      (namespace_, name_, namespacedef_ and ' ' + namespacedef_ or '', ))
         already_processed = []
-        self.exportAttributes(outfile, level, already_processed, namespace_, name_='DescriptionType')
+        self.exportAttributes(outfile, level, already_processed,
+                              namespace_, name_='DescriptionType')
         if self.hasContent_():
             outfile.write('>')
             outfile.write(str(self.valueOf_).encode(ExternalEncoding))
@@ -931,19 +1163,23 @@ class DescriptionType(GeneratedsSuper):
             outfile.write('</%s%s>\n' % (namespace_, name_))
         else:
             outfile.write('/>\n')
+
     def exportAttributes(self, outfile, level, already_processed, namespace_='', name_='DescriptionType'):
         if self.lang is not None and 'lang' not in already_processed:
             already_processed.append('lang')
             outfile.write(' lang=%s' % (quote_attrib(self.lang), ))
+
     def exportChildren(self, outfile, level, namespace_='', name_='DescriptionType', fromsubclass_=False):
         pass
+
     def hasContent_(self):
         if (
             self.valueOf_
-            ):
+        ):
             return True
         else:
             return False
+
     def exportLiteral(self, outfile, level, name_='DescriptionType'):
         level += 1
         self.exportLiteralAttributes(outfile, level, [], name_)
@@ -951,52 +1187,71 @@ class DescriptionType(GeneratedsSuper):
             self.exportLiteralChildren(outfile, level, name_)
         showIndent(outfile, level)
         outfile.write('valueOf_ = """%s""",\n' % (self.valueOf_,))
+
     def exportLiteralAttributes(self, outfile, level, already_processed, name_):
         if self.lang is not None and 'lang' not in already_processed:
             already_processed.append('lang')
             showIndent(outfile, level)
             outfile.write('lang = "%s",\n' % (self.lang,))
+
     def exportLiteralChildren(self, outfile, level, name_):
         pass
+
     def build(self, node):
         self.buildAttributes(node, node.attrib, [])
         self.valueOf_ = get_all_text_(node)
         for child in node:
             nodeName_ = Tag_pattern_.match(child.tag).groups()[-1]
             self.buildChildren(child, node, nodeName_)
+
     def buildAttributes(self, node, attrs, already_processed):
         value = find_attr_value_('lang', node)
         if value is not None and 'lang' not in already_processed:
             already_processed.append('lang')
             self.lang = value
             self.validate_t_Language(self.lang)    # validate type t_Language
+
     def buildChildren(self, child_, node, nodeName_, fromsubclass_=False):
         pass
 # end class DescriptionType
 
 
 class PeriodType(GeneratedsSuper):
+
     """A period of time between a startdate and an enddate"""
     subclass = None
     superclass = None
+
     def __init__(self, StartDate=None, EndDate=None):
         self.StartDate = StartDate
         self.EndDate = EndDate
+
     def factory(*args_, **kwargs_):
         if PeriodType.subclass:
             return PeriodType.subclass(*args_, **kwargs_)
         else:
             return PeriodType(*args_, **kwargs_)
     factory = staticmethod(factory)
-    def get_StartDate(self): return self.StartDate
-    def set_StartDate(self, StartDate): self.StartDate = StartDate
-    def get_EndDate(self): return self.EndDate
-    def set_EndDate(self, EndDate): self.EndDate = EndDate
+
+    def get_StartDate(self):
+        return self.StartDate
+
+    def set_StartDate(self, StartDate):
+        self.StartDate = StartDate
+
+    def get_EndDate(self):
+        return self.EndDate
+
+    def set_EndDate(self, EndDate):
+        self.EndDate = EndDate
+
     def export(self, outfile, level, namespace_='', name_='PeriodType', namespacedef_=''):
         showIndent(outfile, level)
-        outfile.write('<%s%s%s' % (namespace_, name_, namespacedef_ and ' ' + namespacedef_ or '', ))
+        outfile.write('<%s%s%s' %
+                      (namespace_, name_, namespacedef_ and ' ' + namespacedef_ or '', ))
         already_processed = []
-        self.exportAttributes(outfile, level, already_processed, namespace_, name_='PeriodType')
+        self.exportAttributes(
+            outfile, level, already_processed, namespace_, name_='PeriodType')
         if self.hasContent_():
             outfile.write('>\n')
             self.exportChildren(outfile, level + 1, namespace_, name_)
@@ -1004,48 +1259,62 @@ class PeriodType(GeneratedsSuper):
             outfile.write('</%s%s>\n' % (namespace_, name_))
         else:
             outfile.write('/>\n')
+
     def exportAttributes(self, outfile, level, already_processed, namespace_='', name_='PeriodType'):
         pass
+
     def exportChildren(self, outfile, level, namespace_='', name_='PeriodType', fromsubclass_=False):
         if self.StartDate is not None:
             showIndent(outfile, level)
-            outfile.write('<%sStartDate>%s</%sStartDate>\n' % (namespace_, self.gds_format_string(quote_xml(self.StartDate).encode(ExternalEncoding), input_name='StartDate'), namespace_))
+            outfile.write('<%sStartDate>%s</%sStartDate>\n' %
+                          (namespace_, self.gds_format_string(quote_xml(self.StartDate).encode(ExternalEncoding), input_name='StartDate'), namespace_))
         if self.EndDate is not None:
             showIndent(outfile, level)
-            outfile.write('<%sEndDate>%s</%sEndDate>\n' % (namespace_, self.gds_format_string(quote_xml(self.EndDate).encode(ExternalEncoding), input_name='EndDate'), namespace_))
+            outfile.write('<%sEndDate>%s</%sEndDate>\n' %
+                          (namespace_, self.gds_format_string(quote_xml(self.EndDate).encode(ExternalEncoding), input_name='EndDate'), namespace_))
+
     def hasContent_(self):
         if (
             self.StartDate is not None or
             self.EndDate is not None
-            ):
+        ):
             return True
         else:
             return False
+
     def exportLiteral(self, outfile, level, name_='PeriodType'):
         level += 1
         self.exportLiteralAttributes(outfile, level, [], name_)
         if self.hasContent_():
             self.exportLiteralChildren(outfile, level, name_)
+
     def exportLiteralAttributes(self, outfile, level, already_processed, name_):
         pass
+
     def exportLiteralChildren(self, outfile, level, name_):
         if self.StartDate is not None:
             showIndent(outfile, level)
-            outfile.write('StartDate=%s,\n' % quote_python(self.StartDate).encode(ExternalEncoding))
+            outfile.write('StartDate=%s,\n' %
+                          quote_python(self.StartDate).encode(ExternalEncoding))
         if self.EndDate is not None:
             showIndent(outfile, level)
-            outfile.write('EndDate=%s,\n' % quote_python(self.EndDate).encode(ExternalEncoding))
+            outfile.write('EndDate=%s,\n' %
+                          quote_python(self.EndDate).encode(ExternalEncoding))
+
     def build(self, node):
         self.buildAttributes(node, node.attrib, [])
         for child in node:
             nodeName_ = Tag_pattern_.match(child.tag).groups()[-1]
             self.buildChildren(child, node, nodeName_)
+
     def buildAttributes(self, node, attrs, already_processed):
         pass
+
     def buildChildren(self, child_, node, nodeName_, fromsubclass_=False):
         if nodeName_ == 'StartDate':
             StartDate_ = child_.text
-            StartDate_ = self.gds_validate_string(StartDate_, node, 'StartDate')
+            StartDate_ = self.gds_validate_string(
+                StartDate_, node, 'StartDate')
             self.StartDate = StartDate_
         elif nodeName_ == 'EndDate':
             EndDate_ = child_.text
@@ -1057,52 +1326,66 @@ class PeriodType(GeneratedsSuper):
 class StartDate(GeneratedsSuper):
     subclass = None
     superclass = None
+
     def __init__(self):
         pass
+
     def factory(*args_, **kwargs_):
         if StartDate.subclass:
             return StartDate.subclass(*args_, **kwargs_)
         else:
             return StartDate(*args_, **kwargs_)
     factory = staticmethod(factory)
+
     def export(self, outfile, level, namespace_='', name_='StartDate', namespacedef_=''):
         showIndent(outfile, level)
-        outfile.write('<%s%s%s' % (namespace_, name_, namespacedef_ and ' ' + namespacedef_ or '', ))
+        outfile.write('<%s%s%s' %
+                      (namespace_, name_, namespacedef_ and ' ' + namespacedef_ or '', ))
         already_processed = []
-        self.exportAttributes(outfile, level, already_processed, namespace_, name_='StartDate')
+        self.exportAttributes(
+            outfile, level, already_processed, namespace_, name_='StartDate')
         if self.hasContent_():
             outfile.write('>\n')
             self.exportChildren(outfile, level + 1, namespace_, name_)
             outfile.write('</%s%s>\n' % (namespace_, name_))
         else:
             outfile.write('/>\n')
+
     def exportAttributes(self, outfile, level, already_processed, namespace_='', name_='StartDate'):
         pass
+
     def exportChildren(self, outfile, level, namespace_='', name_='StartDate', fromsubclass_=False):
         pass
+
     def hasContent_(self):
         if (
 
-            ):
+        ):
             return True
         else:
             return False
+
     def exportLiteral(self, outfile, level, name_='StartDate'):
         level += 1
         self.exportLiteralAttributes(outfile, level, [], name_)
         if self.hasContent_():
             self.exportLiteralChildren(outfile, level, name_)
+
     def exportLiteralAttributes(self, outfile, level, already_processed, name_):
         pass
+
     def exportLiteralChildren(self, outfile, level, name_):
         pass
+
     def build(self, node):
         self.buildAttributes(node, node.attrib, [])
         for child in node:
             nodeName_ = Tag_pattern_.match(child.tag).groups()[-1]
             self.buildChildren(child, node, nodeName_)
+
     def buildAttributes(self, node, attrs, already_processed):
         pass
+
     def buildChildren(self, child_, node, nodeName_, fromsubclass_=False):
         pass
 # end class StartDate
@@ -1111,79 +1394,107 @@ class StartDate(GeneratedsSuper):
 class EndDate(GeneratedsSuper):
     subclass = None
     superclass = None
+
     def __init__(self):
         pass
+
     def factory(*args_, **kwargs_):
         if EndDate.subclass:
             return EndDate.subclass(*args_, **kwargs_)
         else:
             return EndDate(*args_, **kwargs_)
     factory = staticmethod(factory)
+
     def export(self, outfile, level, namespace_='', name_='EndDate', namespacedef_=''):
         showIndent(outfile, level)
-        outfile.write('<%s%s%s' % (namespace_, name_, namespacedef_ and ' ' + namespacedef_ or '', ))
+        outfile.write('<%s%s%s' %
+                      (namespace_, name_, namespacedef_ and ' ' + namespacedef_ or '', ))
         already_processed = []
-        self.exportAttributes(outfile, level, already_processed, namespace_, name_='EndDate')
+        self.exportAttributes(
+            outfile, level, already_processed, namespace_, name_='EndDate')
         if self.hasContent_():
             outfile.write('>\n')
             self.exportChildren(outfile, level + 1, namespace_, name_)
             outfile.write('</%s%s>\n' % (namespace_, name_))
         else:
             outfile.write('/>\n')
+
     def exportAttributes(self, outfile, level, already_processed, namespace_='', name_='EndDate'):
         pass
+
     def exportChildren(self, outfile, level, namespace_='', name_='EndDate', fromsubclass_=False):
         pass
+
     def hasContent_(self):
         if (
 
-            ):
+        ):
             return True
         else:
             return False
+
     def exportLiteral(self, outfile, level, name_='EndDate'):
         level += 1
         self.exportLiteralAttributes(outfile, level, [], name_)
         if self.hasContent_():
             self.exportLiteralChildren(outfile, level, name_)
+
     def exportLiteralAttributes(self, outfile, level, already_processed, name_):
         pass
+
     def exportLiteralChildren(self, outfile, level, name_):
         pass
+
     def build(self, node):
         self.buildAttributes(node, node.attrib, [])
         for child in node:
             nodeName_ = Tag_pattern_.match(child.tag).groups()[-1]
             self.buildChildren(child, node, nodeName_)
+
     def buildAttributes(self, node, attrs, already_processed):
         pass
+
     def buildChildren(self, child_, node, nodeName_, fromsubclass_=False):
         pass
 # end class EndDate
 
 
 class ClosedPeriodType(GeneratedsSuper):
+
     """A closed period with a mandatory start and end date"""
     subclass = None
     superclass = None
+
     def __init__(self, StartDate=None, EndDate=None):
         self.StartDate = StartDate
         self.EndDate = EndDate
+
     def factory(*args_, **kwargs_):
         if ClosedPeriodType.subclass:
             return ClosedPeriodType.subclass(*args_, **kwargs_)
         else:
             return ClosedPeriodType(*args_, **kwargs_)
     factory = staticmethod(factory)
-    def get_StartDate(self): return self.StartDate
-    def set_StartDate(self, StartDate): self.StartDate = StartDate
-    def get_EndDate(self): return self.EndDate
-    def set_EndDate(self, EndDate): self.EndDate = EndDate
+
+    def get_StartDate(self):
+        return self.StartDate
+
+    def set_StartDate(self, StartDate):
+        self.StartDate = StartDate
+
+    def get_EndDate(self):
+        return self.EndDate
+
+    def set_EndDate(self, EndDate):
+        self.EndDate = EndDate
+
     def export(self, outfile, level, namespace_='', name_='ClosedPeriodType', namespacedef_=''):
         showIndent(outfile, level)
-        outfile.write('<%s%s%s' % (namespace_, name_, namespacedef_ and ' ' + namespacedef_ or '', ))
+        outfile.write('<%s%s%s' %
+                      (namespace_, name_, namespacedef_ and ' ' + namespacedef_ or '', ))
         already_processed = []
-        self.exportAttributes(outfile, level, already_processed, namespace_, name_='ClosedPeriodType')
+        self.exportAttributes(outfile, level, already_processed,
+                              namespace_, name_='ClosedPeriodType')
         if self.hasContent_():
             outfile.write('>\n')
             self.exportChildren(outfile, level + 1, namespace_, name_)
@@ -1191,48 +1502,62 @@ class ClosedPeriodType(GeneratedsSuper):
             outfile.write('</%s%s>\n' % (namespace_, name_))
         else:
             outfile.write('/>\n')
+
     def exportAttributes(self, outfile, level, already_processed, namespace_='', name_='ClosedPeriodType'):
         pass
+
     def exportChildren(self, outfile, level, namespace_='', name_='ClosedPeriodType', fromsubclass_=False):
         if self.StartDate is not None:
             showIndent(outfile, level)
-            outfile.write('<%sStartDate>%s</%sStartDate>\n' % (namespace_, self.gds_format_string(quote_xml(self.StartDate).encode(ExternalEncoding), input_name='StartDate'), namespace_))
+            outfile.write('<%sStartDate>%s</%sStartDate>\n' %
+                          (namespace_, self.gds_format_string(quote_xml(self.StartDate).encode(ExternalEncoding), input_name='StartDate'), namespace_))
         if self.EndDate is not None:
             showIndent(outfile, level)
-            outfile.write('<%sEndDate>%s</%sEndDate>\n' % (namespace_, self.gds_format_string(quote_xml(self.EndDate).encode(ExternalEncoding), input_name='EndDate'), namespace_))
+            outfile.write('<%sEndDate>%s</%sEndDate>\n' %
+                          (namespace_, self.gds_format_string(quote_xml(self.EndDate).encode(ExternalEncoding), input_name='EndDate'), namespace_))
+
     def hasContent_(self):
         if (
             self.StartDate is not None or
             self.EndDate is not None
-            ):
+        ):
             return True
         else:
             return False
+
     def exportLiteral(self, outfile, level, name_='ClosedPeriodType'):
         level += 1
         self.exportLiteralAttributes(outfile, level, [], name_)
         if self.hasContent_():
             self.exportLiteralChildren(outfile, level, name_)
+
     def exportLiteralAttributes(self, outfile, level, already_processed, name_):
         pass
+
     def exportLiteralChildren(self, outfile, level, name_):
         if self.StartDate is not None:
             showIndent(outfile, level)
-            outfile.write('StartDate=%s,\n' % quote_python(self.StartDate).encode(ExternalEncoding))
+            outfile.write('StartDate=%s,\n' %
+                          quote_python(self.StartDate).encode(ExternalEncoding))
         if self.EndDate is not None:
             showIndent(outfile, level)
-            outfile.write('EndDate=%s,\n' % quote_python(self.EndDate).encode(ExternalEncoding))
+            outfile.write('EndDate=%s,\n' %
+                          quote_python(self.EndDate).encode(ExternalEncoding))
+
     def build(self, node):
         self.buildAttributes(node, node.attrib, [])
         for child in node:
             nodeName_ = Tag_pattern_.match(child.tag).groups()[-1]
             self.buildChildren(child, node, nodeName_)
+
     def buildAttributes(self, node, attrs, already_processed):
         pass
+
     def buildChildren(self, child_, node, nodeName_, fromsubclass_=False):
         if nodeName_ == 'StartDate':
             StartDate_ = child_.text
-            StartDate_ = self.gds_validate_string(StartDate_, node, 'StartDate')
+            StartDate_ = self.gds_validate_string(
+                StartDate_, node, 'StartDate')
             self.StartDate = StartDate_
         elif nodeName_ == 'EndDate':
             EndDate_ = child_.text
@@ -1242,27 +1567,41 @@ class ClosedPeriodType(GeneratedsSuper):
 
 
 class StartingPeriodType(GeneratedsSuper):
+
     """A halfopen period with a mandatory start date"""
     subclass = None
     superclass = None
+
     def __init__(self, StartDate=None, EndDate=None):
         self.StartDate = StartDate
         self.EndDate = EndDate
+
     def factory(*args_, **kwargs_):
         if StartingPeriodType.subclass:
             return StartingPeriodType.subclass(*args_, **kwargs_)
         else:
             return StartingPeriodType(*args_, **kwargs_)
     factory = staticmethod(factory)
-    def get_StartDate(self): return self.StartDate
-    def set_StartDate(self, StartDate): self.StartDate = StartDate
-    def get_EndDate(self): return self.EndDate
-    def set_EndDate(self, EndDate): self.EndDate = EndDate
+
+    def get_StartDate(self):
+        return self.StartDate
+
+    def set_StartDate(self, StartDate):
+        self.StartDate = StartDate
+
+    def get_EndDate(self):
+        return self.EndDate
+
+    def set_EndDate(self, EndDate):
+        self.EndDate = EndDate
+
     def export(self, outfile, level, namespace_='', name_='StartingPeriodType', namespacedef_=''):
         showIndent(outfile, level)
-        outfile.write('<%s%s%s' % (namespace_, name_, namespacedef_ and ' ' + namespacedef_ or '', ))
+        outfile.write('<%s%s%s' %
+                      (namespace_, name_, namespacedef_ and ' ' + namespacedef_ or '', ))
         already_processed = []
-        self.exportAttributes(outfile, level, already_processed, namespace_, name_='StartingPeriodType')
+        self.exportAttributes(outfile, level, already_processed,
+                              namespace_, name_='StartingPeriodType')
         if self.hasContent_():
             outfile.write('>\n')
             self.exportChildren(outfile, level + 1, namespace_, name_)
@@ -1270,48 +1609,62 @@ class StartingPeriodType(GeneratedsSuper):
             outfile.write('</%s%s>\n' % (namespace_, name_))
         else:
             outfile.write('/>\n')
+
     def exportAttributes(self, outfile, level, already_processed, namespace_='', name_='StartingPeriodType'):
         pass
+
     def exportChildren(self, outfile, level, namespace_='', name_='StartingPeriodType', fromsubclass_=False):
         if self.StartDate is not None:
             showIndent(outfile, level)
-            outfile.write('<%sStartDate>%s</%sStartDate>\n' % (namespace_, self.gds_format_string(quote_xml(self.StartDate).encode(ExternalEncoding), input_name='StartDate'), namespace_))
+            outfile.write('<%sStartDate>%s</%sStartDate>\n' %
+                          (namespace_, self.gds_format_string(quote_xml(self.StartDate).encode(ExternalEncoding), input_name='StartDate'), namespace_))
         if self.EndDate is not None:
             showIndent(outfile, level)
-            outfile.write('<%sEndDate>%s</%sEndDate>\n' % (namespace_, self.gds_format_string(quote_xml(self.EndDate).encode(ExternalEncoding), input_name='EndDate'), namespace_))
+            outfile.write('<%sEndDate>%s</%sEndDate>\n' %
+                          (namespace_, self.gds_format_string(quote_xml(self.EndDate).encode(ExternalEncoding), input_name='EndDate'), namespace_))
+
     def hasContent_(self):
         if (
             self.StartDate is not None or
             self.EndDate is not None
-            ):
+        ):
             return True
         else:
             return False
+
     def exportLiteral(self, outfile, level, name_='StartingPeriodType'):
         level += 1
         self.exportLiteralAttributes(outfile, level, [], name_)
         if self.hasContent_():
             self.exportLiteralChildren(outfile, level, name_)
+
     def exportLiteralAttributes(self, outfile, level, already_processed, name_):
         pass
+
     def exportLiteralChildren(self, outfile, level, name_):
         if self.StartDate is not None:
             showIndent(outfile, level)
-            outfile.write('StartDate=%s,\n' % quote_python(self.StartDate).encode(ExternalEncoding))
+            outfile.write('StartDate=%s,\n' %
+                          quote_python(self.StartDate).encode(ExternalEncoding))
         if self.EndDate is not None:
             showIndent(outfile, level)
-            outfile.write('EndDate=%s,\n' % quote_python(self.EndDate).encode(ExternalEncoding))
+            outfile.write('EndDate=%s,\n' %
+                          quote_python(self.EndDate).encode(ExternalEncoding))
+
     def build(self, node):
         self.buildAttributes(node, node.attrib, [])
         for child in node:
             nodeName_ = Tag_pattern_.match(child.tag).groups()[-1]
             self.buildChildren(child, node, nodeName_)
+
     def buildAttributes(self, node, attrs, already_processed):
         pass
+
     def buildChildren(self, child_, node, nodeName_, fromsubclass_=False):
         if nodeName_ == 'StartDate':
             StartDate_ = child_.text
-            StartDate_ = self.gds_validate_string(StartDate_, node, 'StartDate')
+            StartDate_ = self.gds_validate_string(
+                StartDate_, node, 'StartDate')
             self.StartDate = StartDate_
         elif nodeName_ == 'EndDate':
             EndDate_ = child_.text
@@ -1321,27 +1674,41 @@ class StartingPeriodType(GeneratedsSuper):
 
 
 class EndingPeriodType(GeneratedsSuper):
+
     """A halfopen period with a mandatory end date"""
     subclass = None
     superclass = None
+
     def __init__(self, StartDate=None, EndDate=None):
         self.StartDate = StartDate
         self.EndDate = EndDate
+
     def factory(*args_, **kwargs_):
         if EndingPeriodType.subclass:
             return EndingPeriodType.subclass(*args_, **kwargs_)
         else:
             return EndingPeriodType(*args_, **kwargs_)
     factory = staticmethod(factory)
-    def get_StartDate(self): return self.StartDate
-    def set_StartDate(self, StartDate): self.StartDate = StartDate
-    def get_EndDate(self): return self.EndDate
-    def set_EndDate(self, EndDate): self.EndDate = EndDate
+
+    def get_StartDate(self):
+        return self.StartDate
+
+    def set_StartDate(self, StartDate):
+        self.StartDate = StartDate
+
+    def get_EndDate(self):
+        return self.EndDate
+
+    def set_EndDate(self, EndDate):
+        self.EndDate = EndDate
+
     def export(self, outfile, level, namespace_='', name_='EndingPeriodType', namespacedef_=''):
         showIndent(outfile, level)
-        outfile.write('<%s%s%s' % (namespace_, name_, namespacedef_ and ' ' + namespacedef_ or '', ))
+        outfile.write('<%s%s%s' %
+                      (namespace_, name_, namespacedef_ and ' ' + namespacedef_ or '', ))
         already_processed = []
-        self.exportAttributes(outfile, level, already_processed, namespace_, name_='EndingPeriodType')
+        self.exportAttributes(outfile, level, already_processed,
+                              namespace_, name_='EndingPeriodType')
         if self.hasContent_():
             outfile.write('>\n')
             self.exportChildren(outfile, level + 1, namespace_, name_)
@@ -1349,48 +1716,62 @@ class EndingPeriodType(GeneratedsSuper):
             outfile.write('</%s%s>\n' % (namespace_, name_))
         else:
             outfile.write('/>\n')
+
     def exportAttributes(self, outfile, level, already_processed, namespace_='', name_='EndingPeriodType'):
         pass
+
     def exportChildren(self, outfile, level, namespace_='', name_='EndingPeriodType', fromsubclass_=False):
         if self.StartDate is not None:
             showIndent(outfile, level)
-            outfile.write('<%sStartDate>%s</%sStartDate>\n' % (namespace_, self.gds_format_string(quote_xml(self.StartDate).encode(ExternalEncoding), input_name='StartDate'), namespace_))
+            outfile.write('<%sStartDate>%s</%sStartDate>\n' %
+                          (namespace_, self.gds_format_string(quote_xml(self.StartDate).encode(ExternalEncoding), input_name='StartDate'), namespace_))
         if self.EndDate is not None:
             showIndent(outfile, level)
-            outfile.write('<%sEndDate>%s</%sEndDate>\n' % (namespace_, self.gds_format_string(quote_xml(self.EndDate).encode(ExternalEncoding), input_name='EndDate'), namespace_))
+            outfile.write('<%sEndDate>%s</%sEndDate>\n' %
+                          (namespace_, self.gds_format_string(quote_xml(self.EndDate).encode(ExternalEncoding), input_name='EndDate'), namespace_))
+
     def hasContent_(self):
         if (
             self.StartDate is not None or
             self.EndDate is not None
-            ):
+        ):
             return True
         else:
             return False
+
     def exportLiteral(self, outfile, level, name_='EndingPeriodType'):
         level += 1
         self.exportLiteralAttributes(outfile, level, [], name_)
         if self.hasContent_():
             self.exportLiteralChildren(outfile, level, name_)
+
     def exportLiteralAttributes(self, outfile, level, already_processed, name_):
         pass
+
     def exportLiteralChildren(self, outfile, level, name_):
         if self.StartDate is not None:
             showIndent(outfile, level)
-            outfile.write('StartDate=%s,\n' % quote_python(self.StartDate).encode(ExternalEncoding))
+            outfile.write('StartDate=%s,\n' %
+                          quote_python(self.StartDate).encode(ExternalEncoding))
         if self.EndDate is not None:
             showIndent(outfile, level)
-            outfile.write('EndDate=%s,\n' % quote_python(self.EndDate).encode(ExternalEncoding))
+            outfile.write('EndDate=%s,\n' %
+                          quote_python(self.EndDate).encode(ExternalEncoding))
+
     def build(self, node):
         self.buildAttributes(node, node.attrib, [])
         for child in node:
             nodeName_ = Tag_pattern_.match(child.tag).groups()[-1]
             self.buildChildren(child, node, nodeName_)
+
     def buildAttributes(self, node, attrs, already_processed):
         pass
+
     def buildChildren(self, child_, node, nodeName_, fromsubclass_=False):
         if nodeName_ == 'StartDate':
             StartDate_ = child_.text
-            StartDate_ = self.gds_validate_string(StartDate_, node, 'StartDate')
+            StartDate_ = self.gds_validate_string(
+                StartDate_, node, 'StartDate')
             self.StartDate = StartDate_
         elif nodeName_ == 'EndDate':
             EndDate_ = child_.text
@@ -1402,6 +1783,7 @@ class EndingPeriodType(GeneratedsSuper):
 USAGE_TEXT = """
 Usage: python <Parser>.py [ -s ] <in_xml_file>
 """
+
 
 def usage():
     print USAGE_TEXT
@@ -1426,8 +1808,8 @@ def parse(inFileName):
     # Enable Python to collect the space used by the DOM.
     doc = None
     sys.stdout.write('<?xml version="1.0" ?>\n')
-    rootObj.export(sys.stdout, 0, name_=rootTag, 
-        namespacedef_='')
+    rootObj.export(sys.stdout, 0, name_=rootTag,
+                   namespacedef_='')
     return rootObj
 
 
@@ -1445,7 +1827,7 @@ def parseString(inString):
     doc = None
     sys.stdout.write('<?xml version="1.0" ?>\n')
     rootObj.export(sys.stdout, 0, name_="PerformInvestigationRequest",
-        namespacedef_='')
+                   namespacedef_='')
     return rootObj
 
 
@@ -1495,4 +1877,4 @@ __all__ = [
     "RequestDataGroupsType",
     "StartDate",
     "StartingPeriodType"
-    ]
+]

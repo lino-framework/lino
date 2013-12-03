@@ -23,6 +23,7 @@ from lino.projects.cosi.settings import *
 
 from django.utils.translation import ugettext_lazy as _
 
+
 class Site(Site):
 
     """

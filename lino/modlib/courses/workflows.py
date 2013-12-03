@@ -1,16 +1,16 @@
 # -*- coding: UTF-8 -*-
-## Copyright 2012-2013 Luc Saffre
-## This file is part of the Lino project.
-## Lino is free software; you can redistribute it and/or modify 
-## it under the terms of the GNU General Public License as published by
-## the Free Software Foundation; either version 3 of the License, or
-## (at your option) any later version.
-## Lino is distributed in the hope that it will be useful, 
-## but WITHOUT ANY WARRANTY; without even the implied warranty of
-## MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the 
-## GNU General Public License for more details.
-## You should have received a copy of the GNU General Public License
-## along with Lino; if not, see <http://www.gnu.org/licenses/>.
+# Copyright 2012-2013 Luc Saffre
+# This file is part of the Lino project.
+# Lino is free software; you can redistribute it and/or modify
+# it under the terms of the GNU General Public License as published by
+# the Free Software Foundation; either version 3 of the License, or
+# (at your option) any later version.
+# Lino is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+# GNU General Public License for more details.
+# You should have received a copy of the GNU General Public License
+# along with Lino; if not, see <http://www.gnu.org/licenses/>.
 
 from __future__ import unicode_literals
 
@@ -39,49 +39,49 @@ from lino.modlib.courses.models import EnrolmentStates
 
 
 class PrintAndChangeStateAction(dd.ChangeStateAction):
-    
-    def run_from_ui(self,ar,**kw):
+
+    def run_from_ui(self, ar, **kw):
         obj = ar.selected_rows[0]
-        
+
         def ok(ar):
-            # to avoid UnboundLocalError local variable 'kw' referenced before assignment
-            obj.do_print.run_from_ui(ar,**kw)
-            super(PrintAndChangeStateAction,self).run_from_ui(ar)
+            # to avoid UnboundLocalError local variable 'kw' referenced before
+            # assignment
+            obj.do_print.run_from_ui(ar, **kw)
+            super(PrintAndChangeStateAction, self).run_from_ui(ar)
             ar.response.update(refresh_all=True)
-            
-        msg = self.get_confirmation_message(obj,ar)
+
+        msg = self.get_confirmation_message(obj, ar)
         ar.confirm(ok, msg, _("Are you sure?"))
-    
+
 #~ class ConfirmEnrolment(PrintAndChangeStateAction):
     #~ required = dd.required(states='requested')
     #~ label = _("Confirm")
-    #~ 
+    #~
     #~ def get_confirmation_message(self,obj,ar):
         #~ return _("Confirm enrolment of <b>%(pupil)s</b> to <b>%(course)s</b>.") % dict(
-            #~ pupil=obj.pupil,course=obj.course)        
-    
+            #~ pupil=obj.pupil,course=obj.course)
+
+
 class CertifyEnrolment(PrintAndChangeStateAction):
     required = dd.required(states='confirmed')
     label = _("Certify")
     #~ label = _("Award")
     #~ label = school.EnrolmentStates.award.text
-    
-    def get_confirmation_message(self,obj,ar):
-        return _("Print certificate for <b>%(pupil)s</b>.") % dict(
-            pupil=obj.pupil,course=obj.course)
-    
 
-    
+    def get_confirmation_message(self, obj, ar):
+        return _("Print certificate for <b>%(pupil)s</b>.") % dict(
+            pupil=obj.pupil, course=obj.course)
+
 
 class ConfirmEnrolment(dd.ChangeStateAction):
     label = _("Confirm")
     #~ icon_name = 'cancel'
     #~ required = dict(states='assigned',owner=True)
-    #~ required = dict(states='published rescheduled took_place')#,owner=True)
-    required = dict(states='requested')#,owner=True)
-    help_text=_("Check for possible problems.")
-  
-    def run_from_ui(self,ar,**kw):
+    # ~ required = dict(states='published rescheduled took_place')#,owner=True)
+    required = dict(states='requested')  # ,owner=True)
+    help_text = _("Check for possible problems.")
+
+    def run_from_ui(self, ar, **kw):
         #~ problems = []
         for obj in ar.selected_rows:
             msg = obj.get_confirm_veto(ar)
@@ -90,17 +90,15 @@ class ConfirmEnrolment(dd.ChangeStateAction):
                 obj.save()
                 ar.response.update(refresh_all=True)
             else:
-                msg = _("Cannot confirm %(pupil)s : %(message)s") % dict(pupil=obj.pupil,message=msg)
-                ar.response.update(message=msg,alert=True)
+                msg = _("Cannot confirm %(pupil)s : %(message)s") % dict(
+                    pupil=obj.pupil, message=msg)
+                ar.response.update(message=msg, alert=True)
                 break
-        
-    
 
-    
 
 @dd.receiver(dd.pre_analyze)
-def my_enrolment_workflows(sender=None,**kw):
-    
+def my_enrolment_workflows(sender=None, **kw):
+
     EnrolmentStates.confirmed.add_transition(ConfirmEnrolment)
     EnrolmentStates.certified.add_transition(CertifyEnrolment)
-    EnrolmentStates.cancelled.add_transition(_("Cancel"),states="confirmed")
+    EnrolmentStates.cancelled.add_transition(_("Cancel"), states="confirmed")

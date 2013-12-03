@@ -1,16 +1,16 @@
 # -*- coding: UTF-8 -*-
-## Copyright 2009-2012 Luc Saffre
-## This file is part of the Lino project.
-## Lino is free software; you can redistribute it and/or modify 
-## it under the terms of the GNU General Public License as published by
-## the Free Software Foundation; either version 3 of the License, or
-## (at your option) any later version.
-## Lino is distributed in the hope that it will be useful, 
-## but WITHOUT ANY WARRANTY; without even the implied warranty of
-## MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the 
-## GNU General Public License for more details.
-## You should have received a copy of the GNU General Public License
-## along with Lino; if not, see <http://www.gnu.org/licenses/>.
+# Copyright 2009-2012 Luc Saffre
+# This file is part of the Lino project.
+# Lino is free software; you can redistribute it and/or modify
+# it under the terms of the GNU General Public License as published by
+# the Free Software Foundation; either version 3 of the License, or
+# (at your option) any later version.
+# Lino is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+# GNU General Public License for more details.
+# You should have received a copy of the GNU General Public License
+# along with Lino; if not, see <http://www.gnu.org/licenses/>.
 
 u"""
 Projects
@@ -28,10 +28,11 @@ from lino import mixins
 
 
 class ProjectType(dd.BabelNamed):
+
     class Meta:
         verbose_name = _("Project Type")
         verbose_name_plural = _("Project Types")
-        
+
 
 class ProjectTypes(dd.Table):
     model = ProjectType
@@ -40,21 +41,23 @@ class ProjectTypes(dd.Table):
 #
 # PROJECT
 #
-class Project(mixins.AutoUser,mixins.CachedPrintable):
-  
+
+
+class Project(mixins.AutoUser, mixins.CachedPrintable):
+
     class Meta:
         verbose_name = _("Project")
         verbose_name_plural = _("Projects")
-        
+
     name = models.CharField(max_length=200)
-    type = models.ForeignKey(ProjectType,blank=True,null=True)
-    started = models.DateField(blank=True,null=True) 
-    stopped = models.DateField(blank=True,null=True) 
-    text = models.TextField(blank=True,null=True)
-    
+    type = models.ForeignKey(ProjectType, blank=True, null=True)
+    started = models.DateField(blank=True, null=True)
+    stopped = models.DateField(blank=True, null=True)
+    text = models.TextField(blank=True, null=True)
+
     def __unicode__(self):
         return self.name
-        
+
 #~ class ProjectDetail(layouts.FormLayout):
     #~ datalink = 'projects.Project'
     #~ main = """
@@ -62,6 +65,7 @@ class Project(mixins.AutoUser,mixins.CachedPrintable):
     #~ started stopped
     #~ text
     #~ """
+
 
 class Projects(dd.Table):
     model = 'projects.Project'
@@ -72,28 +76,36 @@ class Projects(dd.Table):
     started stopped
     text
     """
-    
-class MyProjects(Projects,mixins.ByUser):
+
+
+class MyProjects(Projects, mixins.ByUser):
     pass
-    
+
 
 MODULE_NAME = _("Projects")
 
-def site_setup(site):  pass
 
-def setup_main_menu(site,ui,profile,m):  pass
-  
+def site_setup(site):
+    pass
+
+
+def setup_main_menu(site, ui, profile, m):
+    pass
+
 #~ def setup_master_menu(site,ui,profile,m): pass
 
-def setup_main_menu(site,ui,profile,m): 
-    m  = m.add_menu("projects",MODULE_NAME)
+
+def setup_main_menu(site, ui, profile, m):
+    m = m.add_menu("projects", MODULE_NAME)
     m.add_action(MyProjects)
-  
-def setup_config_menu(site,ui,profile,m): 
-    m  = m.add_menu("projects",MODULE_NAME)
+
+
+def setup_config_menu(site, ui, profile, m):
+    m = m.add_menu("projects", MODULE_NAME)
     #~ m.add_action(Accounts)
     m.add_action(ProjectTypes)
-  
-def setup_explorer_menu(site,ui,profile,m):
-    m  = m.add_menu("projects",MODULE_NAME)
+
+
+def setup_explorer_menu(site, ui, profile, m):
+    m = m.add_menu("projects", MODULE_NAME)
     m.add_action(Projects)

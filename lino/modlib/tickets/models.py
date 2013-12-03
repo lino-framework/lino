@@ -1,16 +1,16 @@
 # -*- coding: UTF-8 -*-
-## Copyright 2011-2012 Luc Saffre
-## This file is part of the Lino project.
-## Lino is free software; you can redistribute it and/or modify 
-## it under the terms of the GNU General Public License as published by
-## the Free Software Foundation; either version 3 of the License, or
-## (at your option) any later version.
-## Lino is distributed in the hope that it will be useful, 
-## but WITHOUT ANY WARRANTY; without even the implied warranty of
-## MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the 
-## GNU General Public License for more details.
-## You should have received a copy of the GNU General Public License
-## along with Lino; if not, see <http://www.gnu.org/licenses/>.
+# Copyright 2011-2012 Luc Saffre
+# This file is part of the Lino project.
+# Lino is free software; you can redistribute it and/or modify
+# it under the terms of the GNU General Public License as published by
+# the Free Software Foundation; either version 3 of the License, or
+# (at your option) any later version.
+# Lino is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+# GNU General Public License for more details.
+# You should have received a copy of the GNU General Public License
+# along with Lino; if not, see <http://www.gnu.org/licenses/>.
 
 """
 This module adds models for Projects, Milestones, Tickets and Sessions.
@@ -74,14 +74,17 @@ blogs = dd.resolve_app('blogs')
 
 from lino.modlib.tickets.utils import TicketStates
 
-class ProjectType(mixins.PrintableType,dd.BabelNamed):
+
+class ProjectType(mixins.PrintableType, dd.BabelNamed):
+
     "Deserves more documentation."
-  
+
     templates_group = 'tickets/Project'
-    
+
     class Meta:
         verbose_name = _("Project Type")
         verbose_name_plural = _('Project Types')
+
 
 class ProjectTypes(dd.Table):
     model = ProjectType
@@ -89,11 +92,13 @@ class ProjectTypes(dd.Table):
 
 
 class SessionType(dd.BabelNamed):
+
     "Deserves more documentation."
-  
+
     class Meta:
         verbose_name = _("Session Type")
         verbose_name_plural = _('Session Types')
+
 
 class SessionTypes(dd.Table):
     model = SessionType
@@ -103,82 +108,89 @@ class SessionTypes(dd.Table):
     #~ class Meta:
         #~ verbose_name = _("Repository")
         #~ verbose_name_plural = _('Repositories')
-        
+
     #~ ref = dd.NullCharField(_("Reference"),max_length=40,blank=True,null=True,unique=True)
     #~ srcref_url_template = models.CharField(_("Name"),max_length=200)
 
-class Project(mixins.UserAuthored,mixins.Printable,mixins.Referrable):
+
+class Project(mixins.UserAuthored, mixins.Printable, mixins.Referrable):
+
     """
     The `user` ("Autor") of a project is the User who manages that Project.
     """
     class Meta:
         verbose_name = _("Project")
         verbose_name_plural = _('Projects')
-        
+
     #~ ref = dd.NullCharField(_("Reference"),max_length=40,blank=True,null=True,unique=True)
-    name = models.CharField(_("Name"),max_length=200)
-    parent = models.ForeignKey('self',blank=True,null=True,verbose_name=_("Parent"))
-    type = models.ForeignKey('tickets.ProjectType',blank=True,null=True)
-    partner = models.ForeignKey('contacts.Partner',blank=True,null=True)
+    name = models.CharField(_("Name"), max_length=200)
+    parent = models.ForeignKey(
+        'self', blank=True, null=True, verbose_name=_("Parent"))
+    type = models.ForeignKey('tickets.ProjectType', blank=True, null=True)
+    partner = models.ForeignKey('contacts.Partner', blank=True, null=True)
     #~ summary = models.CharField(_("Summary"),max_length=200,blank=True)
     #~ description = dd.RichTextField(_("Description"),blank=True,format='plain')
-    description = dd.RichTextField(_("Description"),blank=True,format='plain')
-    srcref_url_template = models.CharField(blank=True,max_length=200)
-    changeset_url_template = models.CharField(blank=True,max_length=200)
-    
+    description = dd.RichTextField(_("Description"), blank=True,
+                                   format='plain')
+    srcref_url_template = models.CharField(blank=True, max_length=200)
+    changeset_url_template = models.CharField(blank=True, max_length=200)
+
     def __unicode__(self):
         return self.name
-        
+
 
 class ProjectDetail(dd.FormLayout):
     main = "general tickets"
-    
+
     general = dd.Panel("""
     ref name parent
     type user 
     description ProjectsByProject 
     # cal.EventsByProject
-    """,label=_("General"))
-    
+    """, label=_("General"))
+
     tickets = dd.Panel("""
     TicketsByProject SessionsByProject
-    """,label=_("Tickets"))
-  
+    """, label=_("Tickets"))
+
     history = dd.Panel("""
     srcref_url_template changeset_url_template
     MilestonesByProject
-    """,label=_("Tickets"))
-  
+    """, label=_("Tickets"))
+
+
 class Projects(dd.Table):
     model = 'tickets.Project'
     detail_layout = ProjectDetail()
+
 
 class ProjectsByProject(Projects):
     master_key = 'parent'
     label = _("Sub-projects")
     column_names = "ref name *"
 
+
 class ProjectsByPartner(Projects):
     master_key = 'partner'
     column_names = "ref name *"
 
 
+class Milestone(mixins.ProjectRelated, mixins.Referrable):
 
-class Milestone(mixins.ProjectRelated,mixins.Referrable):
     """
     """
     class Meta:
         verbose_name = _("Milestone")
         verbose_name_plural = _('Milestones')
-        
+
     #~ label = models.CharField(_("Label"),max_length=20)
-    expected = models.DateField(_("Expected for"),blank=True,null=True)
-    reached = models.DateField(_("Reached"),blank=True,null=True)
+    expected = models.DateField(_("Expected for"), blank=True, null=True)
+    reached = models.DateField(_("Reached"), blank=True, null=True)
     #~ description = dd.RichTextField(_("Description"),blank=True,format='plain')
-    
+
     #~ def __unicode__(self):
         #~ return self.label
-        
+
 
 class Milestones(dd.Table):
     model = Milestone
@@ -188,68 +200,70 @@ class Milestones(dd.Table):
     """
     insert_layout = dd.FormLayout("""
     project ref
-    """,window_size=(40,'auto'))
-    
+    """, window_size=(40, 'auto'))
+
+
 class MilestonesByProject(Milestones):
     master_key = 'project'
     column_names = "ref expected reached *"
 
 
+class Ticket(mixins.AutoUser, mixins.CreatedModified, mixins.ProjectRelated):
 
-class Ticket(mixins.AutoUser,mixins.CreatedModified,mixins.ProjectRelated):
     """
     """
     workflow_state_field = 'state'
-    
+
     class Meta:
         verbose_name = _("Ticket")
         verbose_name_plural = _('Tickets')
-        
+
     reported = dd.ForeignKey(Milestone,
-        related_name='tickets_reported',
-        verbose_name='Reported for',
-        blank=True,null=True,
-        help_text=_("Milestone for which this ticket has been reported."))
+                             related_name='tickets_reported',
+                             verbose_name='Reported for',
+                             blank=True, null=True,
+                             help_text=_("Milestone for which this ticket has been reported."))
     fixed = dd.ForeignKey(Milestone,
-        related_name='tickets_fixed',
-        verbose_name='Fixed for',
-        blank=True,null=True,
-        help_text=_("The milestone for which this ticket has been fixed."))
+                          related_name='tickets_fixed',
+                          verbose_name='Fixed for',
+                          blank=True, null=True,
+                          help_text=_("The milestone for which this ticket has been fixed."))
     partner = models.ForeignKey('contacts.Partner',
-        blank=True,null=True,
-        help_text=_("The partner who reported this ticket."))
+                                blank=True, null=True,
+                                help_text=_("The partner who reported this ticket."))
     #~ partner = models.ForeignKey('contacts.Partner')
     #~ project = models.ForeignKey('tickets.Project',blank=True,null=True)
-    summary = models.CharField(_("Summary"),max_length=200,
-        blank=True,
-        help_text=_("Short summary of the problem."))
+    summary = models.CharField(_("Summary"), max_length=200,
+                               blank=True,
+                               help_text=_("Short summary of the problem."))
     #~ state = models.ForeignKey('tickets.TicketState',blank=True,null=True)
     state = TicketStates.field(blank=True)
-    closed = models.DateTimeField(_("Closed since"),editable=False,null=True)
-    description = dd.RichTextField(_("Description"),blank=True,format='plain')
+    closed = models.DateTimeField(_("Closed since"), editable=False, null=True)
+    description = dd.RichTextField(_("Description"), blank=True,
+                                   format='plain')
     #~ start_date = models.DateField(
         #~ verbose_name=_("Start date"),
         #~ blank=True,null=True)
-        
-    @dd.virtualfield(models.TimeField(_("Time")))
-    def time(self,ar):
-        return self.sessions_time
-    
-    def __unicode__(self):
-        return u"#%d (%s)" % (self.id,self.summary)
-        
-    @dd.chooser()
-    def reported_choices(cls,project):
-        if not project: return []
-        return project.tickets_milestone_set_by_project.filter(reached__isnull=False)
-        
-    @dd.chooser()
-    def fixed_choices(cls,project):
-        if not project: return []
-        return project.tickets_milestone_set_by_project.all()
-        
 
-        
+    @dd.virtualfield(models.TimeField(_("Time")))
+    def time(self, ar):
+        return self.sessions_time
+
+    def __unicode__(self):
+        return u"#%d (%s)" % (self.id, self.summary)
+
+    @dd.chooser()
+    def reported_choices(cls, project):
+        if not project:
+            return []
+        return project.tickets_milestone_set_by_project.filter(reached__isnull=False)
+
+    @dd.chooser()
+    def fixed_choices(cls, project):
+        if not project:
+            return []
+        return project.tickets_milestone_set_by_project.all()
+
 
 class Tickets(dd.Table):
     model = Ticket
@@ -263,27 +277,31 @@ class Tickets(dd.Table):
     summary 
     partner 
     project 
-    """,window_size=(50,'auto'))
-    
+    """, window_size=(50, 'auto'))
+
+
 class UnassignedTickets(Tickets):
     column_names = "summary project partner *"
-    
+
+
 class TicketsByProject(Tickets):
     master_key = 'project'
     column_names = "summary user partner time *"
     parameters = dict(
-      today = models.DateField(_("Date"),blank=True)
+        today=models.DateField(_("Date"), blank=True)
     )
-    
+
     @classmethod
-    def get_request_queryset(self,ar):
-        qs = super(TicketsByProject,self).get_request_queryset(ar)
+    def get_request_queryset(self, ar):
+        qs = super(TicketsByProject, self).get_request_queryset(ar)
         #~ if ar.param_values.today is not None:
         return qs.annotate(sessions_time=models.Sum('sessions__time'))
+
 
 class TicketsByPartner(Tickets):
     master_key = 'partner'
     column_names = "summary project user *"
+
 
 class TicketsFixed(Tickets):
     label = _("Tickets Fixed")
@@ -291,15 +309,16 @@ class TicketsFixed(Tickets):
     column_names = "summary user partner *"
     editable = False
 
+
 class TicketsReported(Tickets):
     label = _("Tickets Reported")
     master_key = 'reported'
     column_names = "summary user partner *"
     editable = False
 
-    
-    
-class Session(mixins.AutoUser,mixins.ProjectRelated):
+
+class Session(mixins.AutoUser, mixins.ProjectRelated):
+
     """
     A Session is when a user works on a project or ticket. 
     """
@@ -308,101 +327,106 @@ class Session(mixins.AutoUser,mixins.ProjectRelated):
         verbose_name_plural = _('Sessions')
 
     partner = models.ForeignKey('contacts.Partner',
-        blank=True,null=True,
-        help_text=_("The partner to be invoiced for this session."))
+                                blank=True, null=True,
+                                help_text=_("The partner to be invoiced for this session."))
     #~ project = models.ForeignKey('tickets.Project',blank=True,null=True)
     ticket = models.ForeignKey('tickets.Ticket',
-        blank=True,null=True,
-        related_name='sessions')
-    summary = models.CharField(_("Summary"),max_length=200,
-        blank=True,
-        help_text=_("Short summary of the session."))
-    description = dd.RichTextField(_("Description"),blank=True,format='plain')
+                               blank=True, null=True,
+                               related_name='sessions')
+    summary = models.CharField(_("Summary"), max_length=200,
+                               blank=True,
+                               help_text=_("Short summary of the session."))
+    description = dd.RichTextField(_("Description"), blank=True,
+                                   format='plain')
     date = models.DateField(verbose_name=_("Date"))
     start_time = models.TimeField(
-        blank=True,null=True,
+        blank=True, null=True,
         verbose_name=_("Start time"))
     end_time = models.TimeField(
-        blank=True,null=True,
+        blank=True, null=True,
         verbose_name=_("End Time"))
     break_time = models.TimeField(
-        blank=True,null=True,
+        blank=True, null=True,
         verbose_name=_("Break Time"))
     time = models.TimeField(
-        blank=True,null=True,
+        blank=True, null=True,
         verbose_name=_("Time"))
-    is_private = models.BooleanField(verbose_name=_("is private"),default=False)
-    
+    is_private = models.BooleanField(
+        verbose_name=_("is private"), default=False)
+
     def __unicode__(self):
         if self.start_time and self.end_time:
             return u"%s %s-%s" % (
                 self.date.strftime(settings.SITE.date_format_strftime),
                 self.start_time.strftime(settings.SITE.time_format_strftime),
                 self.end_time.strftime(settings.SITE.time_format_strftime))
-        return super(Session,self).__unicode__()
-        
-    
+        return super(Session, self).__unicode__()
+
+
 class Sessions(dd.Table):
     model = Session
     column_names = 'date start_time end_time break_time summary user *'
-    order_by = ['date','start_time']
+    order_by = ['date', 'start_time']
     detail_layout = """
     date start_time end_time break_time project ticket
     user id 
     description
     EntriesBySession
     """
-    
+
+
 class SessionsByTicket(Sessions):
     master_key = 'ticket'
-    
+
+
 class SessionsByProject(Sessions):
     master_key = 'project'
-    
+
 if settings.SITE.user_model:
-  
-    class MySessions(Sessions,mixins.ByUser):
-        order_by = ['date','start_time']
+
+    class MySessions(Sessions, mixins.ByUser):
+        order_by = ['date', 'start_time']
         column_names = 'date start_time end_time break_time project ticket summary *'
-    
+
     class MySessionsByDate(MySessions):
         #~ master_key = 'date'
         order_by = ['start_time']
         label = _("My sessions by date")
         column_names = 'start_time end_time break_time project ticket summary *'
-    
+
         parameters = dict(
-          today = models.DateField(_("Date"),
-          blank=True,default=datetime.date.today),
+            today=models.DateField(_("Date"),
+                                   blank=True, default=datetime.date.today),
         )
+
         @classmethod
-        def get_request_queryset(self,ar):
-            qs = super(MySessions,self).get_request_queryset(ar)
+        def get_request_queryset(self, ar):
+            qs = super(MySessions, self).get_request_queryset(ar)
             #~ if ar.param_values.date:
             return qs.filter(date=ar.param_values.today)
             #~ return qs
-            
-        @classmethod
-        def create_instance(self,ar,**kw):
-            kw.update(date=ar.param_values.today)
-            return super(MySessions,self).create_instance(ar,**kw)
 
-    
+        @classmethod
+        def create_instance(self, ar, **kw):
+            kw.update(date=ar.param_values.today)
+            return super(MySessions, self).create_instance(ar, **kw)
+
 
 if blogs:
-  
+
     dd.inject_field('blogs.Entry',
-        'ticket',
-        models.ForeignKey("tickets.Ticket",
-            blank=True,null=True,
-            # verbose_name=_("Local job office"),
-            # related_name='job_office_sites'
+                    'ticket',
+                    models.ForeignKey("tickets.Ticket",
+                                      blank=True, null=True,
+                                      # verbose_name=_("Local job office"),
+                                      # related_name='job_office_sites'
             help_text="""The Ticket attributed to this Entry."""))
 
     class EntriesByTicket(blogs.Entries):
         master_key = 'ticket'
-    
+
     class EntriesBySession(EntriesByTicket):
+
         """
         The Blog Entries linked to *the Ticket of* a Session.
         
@@ -411,33 +435,33 @@ if blogs:
         entries.
         """
         @classmethod
-        def get_filter_kw(self,master_instance,**kw):
+        def get_filter_kw(self, master_instance, **kw):
             if master_instance is not None:
                 master_instance = master_instance.ticket
-            return super(EntriesBySession,self).get_filter_kw(master_instance,**kw)
-        
-    
+            return super(EntriesBySession, self).get_filter_kw(master_instance, **kw)
+
+
 else:
-  
-    Tickets.detail_layout = Tickets.detail_layout.replace(' EntriesByTicket','')
+
+    Tickets.detail_layout = Tickets.detail_layout.replace(
+        ' EntriesByTicket', '')
 
 
+if settings.SITE.user_model:
 
-if settings.SITE.user_model:    
-  
-    class MyProjects(Projects,mixins.ByUser):
+    class MyProjects(Projects, mixins.ByUser):
         order_by = ["name"]
         column_names = 'ref name id *'
-        
-    class MyTickets(Tickets,mixins.ByUser):
-        order_by = ["-created","id"]
+
+    class MyTickets(Tickets, mixins.ByUser):
+        order_by = ["-created", "id"]
         column_names = 'created id project summary state *'
-        
-    class MyOpenTickets(Tickets,mixins.ByUser):
-        order_by = ["-created","id"]
+
+    class MyOpenTickets(Tickets, mixins.ByUser):
+        order_by = ["-created", "id"]
         column_names = 'created id project summary state *'
         filter = models.Q(closed__isnull=True)
-        
+
 
 #~ if dd.is_installed('cal'):
 
@@ -445,17 +469,15 @@ if settings.SITE.user_model:
         #~ 'ticket',
         #~ models.ForeignKey("tickets.Ticket",
             #~ blank=True,null=True,
-            #~ # verbose_name=_("Local job office"),
-            #~ # related_name='job_office_sites'
+            # ~ # verbose_name=_("Local job office"),
+            # ~ # related_name='job_office_sites'
             #~ ),
         #~ """The Ticket attributed to this event.
         #~ """)
 
 
-
-
-def setup_main_menu(site,ui,profile,m): 
-    m  = m.add_menu("tickets",_("Tickets"))
+def setup_main_menu(site, ui, profile, m):
+    m = m.add_menu("tickets", _("Tickets"))
     m.add_action(MyProjects)
     m.add_action(MyOpenTickets)
     m.add_action(MyTickets)
@@ -463,19 +485,21 @@ def setup_main_menu(site,ui,profile,m):
     m.add_action(MySessionsByDate)
     #~ m.add_action(MySessionsByDate,params=dict(master_instance=datetime.date.today()))
 
-def setup_my_menu(site,ui,profile,m): 
+
+def setup_my_menu(site, ui, profile, m):
     pass
-  
-def setup_config_menu(site,ui,profile,m): 
-    m  = m.add_menu("tickets",_("Tickets"))
+
+
+def setup_config_menu(site, ui, profile, m):
+    m = m.add_menu("tickets", _("Tickets"))
     m.add_action(ProjectTypes)
     #~ m.add_action(TicketStates)
     m.add_action(SessionTypes)
-  
-def setup_explorer_menu(site,ui,profile,m):
-    m  = m.add_menu("tickets",_("Tickets"))
+
+
+def setup_explorer_menu(site, ui, profile, m):
+    m = m.add_menu("tickets", _("Tickets"))
     m.add_action(Projects)
     m.add_action(Tickets)
     m.add_action(Sessions)
     m.add_action(Milestones)
-  

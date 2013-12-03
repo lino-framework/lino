@@ -98,12 +98,13 @@ import logging
 from optparse import make_option
 from django.core.management.base import BaseCommand
 
+
 def get_handlers(logger):
     while logger:
         for h in logger.handlers:
             yield h
         if not logger.propagate:
-            logger = None    #break out
+            logger = None  # break out
         else:
             logger = logger.parent
 
@@ -116,70 +117,75 @@ def get_logger_files(loggers):
     l = []
     for logger in loggers:
         for h in get_handlers(logger):
-            if isinstance(h,logging.StreamHandler):
+            if isinstance(h, logging.StreamHandler):
                 l.append(h.stream.fileno())
     return l
 
 try:
     #~ raise ImportError('20130610')
 
-    import daemon # pip install python-daemon
+    import daemon  # pip install python-daemon
     # in older versions it's called pidlockfile, later just pidfile
     try:
         from daemon import pidlockfile
     except ImportError:
         from daemon import pidfile as pidlockfile
-        
+
 except ImportError:
 
-  daemon = None
-  
-  """On systems that don't support daemons, we just emulate.
+    daemon = None
+
+    """On systems that don't support daemons, we just emulate.
   """
 
+
 class DaemonCommand(BaseCommand):
-    
+
     """
-    If you have an existing Django management command, 
+    If you have an existing Django management command,
     just rename it's `handle` method to `handle_daemon`
-    and inherit from this instead 
-    of 
+    and inherit from this instead
+    of
     :class:`django.core.management.base.BaseCommand`.
     """
-        
+
     option_list = BaseCommand.option_list + (
-        make_option('--chroot_directory', action='store', dest='chroot_directory',
+        make_option(
+            '--chroot_directory', action='store', dest='chroot_directory',
             help='Full path to a directory to set as the effective root directory of \
             the process.'),
-        make_option('--working_directory', action='store', dest='working_directory',
+        make_option(
+            '--working_directory', action='store', dest='working_directory',
             default="/",
             help='Full path of the working directory to which the process should \
             change on daemon start.'),
-        make_option('--umask', action='store', dest='umask', default=0, type="int",
+        make_option(
+            '--umask', action='store', dest='umask', default=0, type="int",
             help='File access creation mask ("umask") to set for the process on \
             daemon start.'),
         make_option('--pidfile', action='store', dest='pidfile',
-            help='Context manager for a PID lock file. When the daemon context opens \
+                    help='Context manager for a PID lock file. When the daemon context opens \
             and closes, it enters and exits the `pidfile` context manager.'),
-        make_option('--detach_process', action='store', dest='detach_process', 
-            help='If ``True``, detach the process context when opening the daemon \
+        make_option('--detach_process', action='store', dest='detach_process',
+                    help='If ``True``, detach the process context when opening the daemon \
             context; if ``False``, do not detach.'),
-        make_option('--uid', action='store', dest='uid', 
-            help='The user ID ("UID") value to switch the process to on daemon start.'),
-        make_option('--gid', action='store', dest='gid', 
-            help='The group ID ("GID") value to switch the process to on daemon start.'),
-        make_option('--prevent_core', action='store', dest='prevent_core', default=True,
+        make_option('--uid', action='store', dest='uid',
+                    help='The user ID ("UID") value to switch the process to on daemon start.'),
+        make_option('--gid', action='store', dest='gid',
+                    help='The group ID ("GID") value to switch the process to on daemon start.'),
+        make_option(
+            '--prevent_core', action='store', dest='prevent_core', default=True,
             help='If true, prevents the generation of core files, in order to avoid \
             leaking sensitive information from daemons run as `root`.'),
         make_option('--stdin', action='store', dest='stdin',
-            help='Standard In'),
+                    help='Standard In'),
         make_option('--stdout', action='store', dest='stdout',
-            help='Standard Out'),
+                    help='Standard Out'),
         make_option('--stderr', action='store', dest='stderr',
-            help='Standard Error'),
+                    help='Standard Error'),
     )
     help = 'Create a daemon'
-    
+
     chroot_directory = None
     working_directory = '/'
     umask = 0
@@ -190,107 +196,111 @@ class DaemonCommand(BaseCommand):
     # stderr = None
     pidfile = None
     uid = None
-    gid = None    
-    
+    gid = None
+
     """
     If not None, this should be a list of loggers (:class:`logging.Logger` instances) 
     whose file handles should not get closed.
     """
     preserve_loggers = None
-    
-    def create_parser(self, *args,**kw):
+
+    def create_parser(self, *args, **kw):
         p = super(DaemonCommand, self).create_parser(*args, **kw)
         p.set_defaults(
-            chroot_directory = self.chroot_directory,
-            working_directory = self.working_directory,
-            umask = self.umask,
-            detach_process = self.detach_process,
-            prevent_core = self.prevent_core,
+            chroot_directory=self.chroot_directory,
+            working_directory=self.working_directory,
+            umask=self.umask,
+            detach_process=self.detach_process,
+            prevent_core=self.prevent_core,
             # stdin = self.stdin,
             # stdout = self.stdout,
             # stderr = self.stderr,
-            pidfile = self.pidfile,
-            uid = self.uid,
-            gid = self.gid)
+            pidfile=self.pidfile,
+            uid=self.uid,
+            gid=self.gid)
         return p
 
-
     def get_option_value(self, options, name, expected=None):
-        return options.get(name) # ,getattr(self,name))    
-        
+        return options.get(name)  # ,getattr(self,name))
+
     #~ def get_option_value(self, options, name, expected=None):
         #~ value = options.get(name)
         #~ if value == expected:
             #~ value = getattr(self, name)
         #~ print name, ' ', value
         #~ return value
-    
+
     def execute(self, *args, **options):
         """
-        Takes the options and starts a daemon context from them. 
-        
+        Takes the options and starts a daemon context from them.
+
         Example::
-        
-            python manage.py linkconsumer --pidfile=/var/run/cb_link.pid 
+
+            python manage.py linkconsumer --pidfile=/var/run/cb_link.pid
                 --stdout=/var/log/cb/links.out --stderr=/var/log/cb/links.err
-        
+
         """
         # print 20130610, 'execute', __file__
-        
+
         #~ print options
 
         if daemon is not None:
-        
+
             context = daemon.DaemonContext()
-            
-            context.chroot_directory = self.get_option_value(options, 'chroot_directory')
-            context.working_directory = self.get_option_value(options, 'working_directory', '/')
+
+            context.chroot_directory = self.get_option_value(
+                options, 'chroot_directory')
+            context.working_directory = self.get_option_value(
+                options, 'working_directory', '/')
             context.umask = self.get_option_value(options, 'umask', 0)
-            context.detach_process = self.get_option_value(options, 'detach_process')
-            context.prevent_core = self.get_option_value(options, 'prevent_core', True)
+            context.detach_process = self.get_option_value(
+                options, 'detach_process')
+            context.prevent_core = self.get_option_value(
+                options, 'prevent_core', True)
             if self.preserve_loggers:
-                context.files_preserve = get_logger_files(self.preserve_loggers)
-            
-            #Get file objects
+                context.files_preserve = get_logger_files(
+                    self.preserve_loggers)
+
+            # Get file objects
             # stdin =  self.get_option_value(options, 'stdin')
-            stdin = options.pop('stdin',None)
+            stdin = options.pop('stdin', None)
             if stdin is not None:
                 options['stdin'] = context.stdin = open(stdin, "r")
-            
+
             # stdout = self.get_option_value(options, 'stdout')
-            stdout = options.pop('stdout',None)
+            stdout = options.pop('stdout', None)
             if stdout is not None:
                 options['stdout'] = context.stdout = open(stdout, "a+")
-            
+
             # stderr = self.get_option_value(options, 'stderr')
-            stderr = options.pop('stderr',None)
+            stderr = options.pop('stderr', None)
             if stderr is not None:
-                self.stderr = options['stderr'] = context.stderr = open(stderr, "a+")  
-            # self.stderr is needed in case there is an exception during execute. 
-            # Django then would try to write to sys.stderr which is None because 
+                self.stderr = options[
+                    'stderr'] = context.stderr = open(stderr, "a+")
+            # self.stderr is needed in case there is an exception during execute.
+            # Django then would try to write to sys.stderr which is None because
             # we are a daemon
-            
-            #Make pid lock file
+
+            # Make pid lock file
             pidfile = self.get_option_value(options, 'pidfile')
             if pidfile is not None:
                 #~ context.pidfile=pidlockfile.PIDLockFile(pidfile)
-                context.pidfile=pidlockfile.TimeoutPIDLockFile(pidfile,0)
-            
+                context.pidfile = pidlockfile.TimeoutPIDLockFile(pidfile, 0)
+
             uid = self.get_option_value(options, 'uid')
             if uid is not None:
                 context.uid = uid
-            
+
             gid = self.get_option_value(options, 'gid')
             if gid is not None:
                 context.gid = uid
-                
-            context.open()        
+
+            context.open()
 
         # Django 1.5.1 needs them:
         # for k in ('stdout','stderr'):
         #     options[k] = getattr(context,k,None)
-        
-        # self.handle_daemon(*args, **options)
-        BaseCommand.execute(self,*args,**options)
-        # print 20130610, 'execute ok', __file__
 
+        # self.handle_daemon(*args, **options)
+        BaseCommand.execute(self, *args, **options)
+        # print 20130610, 'execute ok', __file__

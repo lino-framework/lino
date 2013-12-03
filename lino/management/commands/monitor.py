@@ -1,16 +1,16 @@
 # -*- coding: UTF-8 -*-
-## Copyright 2012 Luc Saffre
-## This file is part of the Lino project.
-## Lino is free software; you can redistribute it and/or modify
-## it under the terms of the GNU General Public License as published by
-## the Free Software Foundation; either version 3 of the License, or
-## (at your option) any later version.
-## Lino is distributed in the hope that it will be useful, 
-## but WITHOUT ANY WARRANTY; without even the implied warranty of
-## MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the 
-## GNU General Public License for more details.
-## You should have received a copy of the GNU General Public License
-## along with Lino; if not, see <http://www.gnu.org/licenses/>.
+# Copyright 2012 Luc Saffre
+# This file is part of the Lino project.
+# Lino is free software; you can redistribute it and/or modify
+# it under the terms of the GNU General Public License as published by
+# the Free Software Foundation; either version 3 of the License, or
+# (at your option) any later version.
+# Lino is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+# GNU General Public License for more details.
+# You should have received a copy of the GNU General Public License
+# along with Lino; if not, see <http://www.gnu.org/licenses/>.
 
 """
 Writes a status report about this Site. 
@@ -25,7 +25,7 @@ import errno
 import cPickle as pickle
 import datetime
 import sys
-from optparse import make_option 
+from optparse import make_option
 from os.path import join
 
 from django.db import models
@@ -52,26 +52,27 @@ from lino.utils import rstgen
 from lino.core.dbutils import obj2str, full_model_name, sorted_models_list
 
 
-def diffs(old,new,prefix=''):
+def diffs(old, new, prefix=''):
     if type(old) != dict:
         if old != new:
-            yield "%s : %s -> %s"  % (prefix, old, new)
+            yield "%s : %s -> %s" % (prefix, old, new)
         return
     keys = set(old.keys() + new.keys())
     keys.discard('timestamp')
     #~ diffs = []
     if prefix:
-        prefix += ' ' 
+        prefix += ' '
     for k in keys:
-        ov = old.get(k) 
+        ov = old.get(k)
         nv = new.get(k)
         if ov != nv:
-            for d in diffs(ov,nv,prefix+k):
+            for d in diffs(ov, nv, prefix + k):
                 yield d
                 #~ yield "%s : %s -> %s"  % (k, ov, nv)
 
-def compare(old,new):
-    changes = list(diffs(old,new))
+
+def compare(old, new):
+    changes = list(diffs(old, new))
     if len(changes):
         msg = "Changes since %s:" % old.get('timestamp')
         msg += '\n- ' + ('\n- '.join(changes))
@@ -79,43 +80,41 @@ def compare(old,new):
         #~ logger.info('- ' + ('- '.join(changes)))
         return msg
     else:
-        logger.debug("No changes since %s",old.get('timestamp'))
-      
+        logger.debug("No changes since %s", old.get('timestamp'))
 
 
 class Command(BaseCommand):
     help = __doc__
-    
+
     option_list = BaseCommand.option_list + (
-        make_option('--nowrite', action='store_false', 
-            dest='write', default=True,
-            help='Do not write status to pickle.'),
-    ) 
-    
+        make_option('--nowrite', action='store_false',
+                    dest='write', default=True,
+                    help='Do not write status to pickle.'),
+    )
+
     def handle(self, *args, **options):
         if args:
             raise CommandError("This command doesn't accept any arguments.")
-            
+
         self.options = options
-        
+
         #~ settings.SITE.startup()
-        
+
         state = dict()
-        state.update(timestamp = datetime.datetime.now())
-        state.update(lino_version = lino.__version__)
-        
-        
-        
-        states_file = os.path.join(settings.SITE.project_dir,'states.pck')
-        
+        state.update(timestamp=datetime.datetime.now())
+        state.update(lino_version=lino.__version__)
+
+        states_file = os.path.join(settings.SITE.project_dir, 'states.pck')
+
         if os.path.exists(states_file):
             fd = open(states_file)
             states_list = pickle.load(fd)
             fd.close()
-            logger.info("Loaded %d states from %s",len(states_list),states_file)
+            logger.info("Loaded %d states from %s",
+                        len(states_list), states_file)
         else:
             states_list = []
-            
+
         models_list = sorted_models_list()
 
         apps = app_labels()
@@ -135,12 +134,12 @@ class Command(BaseCommand):
                 qs = model.objects.order_by('pk')
                 n = qs.count()
                 model_state.update(rows=n)
-                    
+
                 connection = connections[DEFAULT_DB_ALIAS]
-                
+
                 #~ if isinstance(connection,sqlite):
                     #~ cells.append("-")
-                if mysql and isinstance(connection,mysql):
+                if mysql and isinstance(connection, mysql):
 
                     cursor = connection.cursor()
                     dbname = connection.settings_dict['NAME']
@@ -148,7 +147,7 @@ class Command(BaseCommand):
                     SELECT (data_length+index_length) tablesize
                     FROM information_schema.tables
                     WHERE table_schema='%s' and table_name='%s';
-                    """ % (dbname,model._meta.db_table)
+                    """ % (dbname, model._meta.db_table)
                     #~ print sql
                     cursor.execute(sql)
                     row = cursor.fetchone()
@@ -156,19 +155,19 @@ class Command(BaseCommand):
                         model_state.update(bytes=row[0])
                 else:
                     pass
-                    
+
                 state[full_model_name(model)] = model_state
-                
+
         if len(states_list):
-            msg = compare(state,states_list[-1])
+            msg = compare(state, states_list[-1])
             if msg:
                 logger.info(msg)
                 #~ sendmail_admins()
 
         states_list.append(state)
-            
+
         #~ print state
         if self.options['write']:
-            f = open(states_file,'w')
-            pickle.dump(states_list,f)
-            logger.info("Saved %d states to %s",len(states_list),states_file)
+            f = open(states_file, 'w')
+            pickle.dump(states_list, f)
+            logger.info("Saved %d states to %s", len(states_list), states_file)

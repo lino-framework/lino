@@ -1,16 +1,16 @@
 # -*- coding: UTF-8 -*-
-## Copyright 2009-2013 Luc Saffre
-## This file is part of the Lino project.
-## Lino is free software; you can redistribute it and/or modify 
-## it under the terms of the GNU General Public License as published by
-## the Free Software Foundation; either version 3 of the License, or
-## (at your option) any later version.
-## Lino is distributed in the hope that it will be useful, 
-## but WITHOUT ANY WARRANTY; without even the implied warranty of
-## MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the 
-## GNU General Public License for more details.
-## You should have received a copy of the GNU General Public License
-## along with Lino; if not, see <http://www.gnu.org/licenses/>.
+# Copyright 2009-2013 Luc Saffre
+# This file is part of the Lino project.
+# Lino is free software; you can redistribute it and/or modify
+# it under the terms of the GNU General Public License as published by
+# the Free Software Foundation; either version 3 of the License, or
+# (at your option) any later version.
+# Lino is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+# GNU General Public License for more details.
+# You should have received a copy of the GNU General Public License
+# along with Lino; if not, see <http://www.gnu.org/licenses/>.
 
 """
 This creates a list `config_dirs` of all 
@@ -66,32 +66,36 @@ from django.conf import settings
 from lino import ad
 from lino.utils import iif
 
-SUBDIR_NAME = 'config' # we might change this to "templates" 
+SUBDIR_NAME = 'config'  # we might change this to "templates"
+
 
 class ConfigDir:
+
     """
     A configuration directory is a directory that may contain configuration files.
     
     """
-    def __init__(self,name,writeable):
+
+    def __init__(self, name, writeable):
         self.name = os.path.abspath(name)
         self.writeable = writeable
-        
+
     def __repr__(self):
-        return "ConfigDir %s" % self.name + iif(self.writeable," (writeable)","")
-        
+        return "ConfigDir %s" % self.name + iif(self.writeable, " (writeable)", "")
+
 
 fs_encoding = sys.getfilesystemencoding() or sys.getdefaultencoding()
 config_dirs = []
 
 for pth in settings.SITE.get_settings_subdirs(SUBDIR_NAME):
-    config_dirs.append(ConfigDir(pth.decode(fs_encoding),False))
+    config_dirs.append(ConfigDir(pth.decode(fs_encoding), False))
 
-def add_config_dir(name,mod):
-    pth = join(dirname(mod.__file__),SUBDIR_NAME)    
+
+def add_config_dir(name, mod):
+    pth = join(dirname(mod.__file__), SUBDIR_NAME)
     if isdir(pth):
-        config_dirs.append(ConfigDir(pth.decode(fs_encoding),False))
-        
+        config_dirs.append(ConfigDir(pth.decode(fs_encoding), False))
+
 settings.SITE.for_each_app(add_config_dir)
 
 #~ for app in settings.INSTALLED_APPS:
@@ -101,14 +105,14 @@ settings.SITE.for_each_app(add_config_dir)
         #~ parent = import_module(app.extends)
         #~ add_config_dir(parent)
     #~ add_config_dir(app_mod)
-    
+
 LOCAL_CONFIG_DIR = None
 
 #~ if settings.SITE.project_dir != settings.SITE.source_dir:
 if settings.SITE.is_local_project_dir:
-    p = join(settings.SITE.project_dir,SUBDIR_NAME)
+    p = join(settings.SITE.project_dir, SUBDIR_NAME)
     if isdir(p):
-        LOCAL_CONFIG_DIR = ConfigDir(p,True)
+        LOCAL_CONFIG_DIR = ConfigDir(p, True)
         config_dirs.append(LOCAL_CONFIG_DIR)
 
 config_dirs.reverse()
@@ -126,8 +130,8 @@ config_dirs = tuple(config_dirs)
     #~ LOCAL_CONFIG_DIR = ConfigDir(join(settings.PROJECT_DIR,'config'),True)
     #~ config_dirs.append(LOCAL_CONFIG_DIR)
 
-  
-def find_config_file(fn,group=''):
+
+def find_config_file(fn, group=''):
     if os.path.isabs(fn):
         return fn
     if group:
@@ -135,12 +139,12 @@ def find_config_file(fn,group=''):
     else:
         prefix = ''
     for cd in config_dirs:
-        ffn = join(cd.name,prefix,fn)
+        ffn = join(cd.name, prefix, fn)
         if os.path.exists(ffn):
             return ffn
 
 
-def find_config_files(pattern,group=''):
+def find_config_files(pattern, group=''):
     """
     Returns a dict of filename -> config_dir entries for 
     each config file on this site that matches the pattern.
@@ -163,21 +167,22 @@ def find_config_files(pattern,group=''):
         #~ print 'find_config_files() discover', pth, pattern
         if isdir(pth):
             for fn in os.listdir(pth):
-                if fnmatch(fn,pattern):
-                    files.setdefault(fn,cd)
+                if fnmatch(fn, pattern):
+                    files.setdefault(fn, cd)
                     #~ if not files.has_key(fn):
                         #~ files[fn] = cd
         #~ else:
             #~ print 'find_config_files() not a directory:', pth
     return files
-    
-def find_template_config_files(template_ext,templates_group):
+
+
+def find_template_config_files(template_ext, templates_group):
     """
     find_config_files and ignore babel variants:
     e.g. ignore "foo_fr.html" if "foo.html" exists 
     but don't ignore "my_template.html"
     """
-    files = find_config_files('*' + template_ext,templates_group)
+    files = find_config_files('*' + template_ext, templates_group)
     l = []
     template_ext
     for name in files.keys():
@@ -191,12 +196,11 @@ def find_template_config_files(template_ext,templates_group):
     l.sort()
     if not l:
         logger.warning("email_template_choices() : no matches for (%r,%r)",
-          '*' + template_ext,templates_group)
+                       '*' + template_ext, templates_group)
     return l
-        
-    
 
-def load_config_files(loader,pattern,group=''):
+
+def load_config_files(loader, pattern, group=''):
     """
     Naming conventions for :xfile:`*.dtl` files are:
     
@@ -207,25 +211,26 @@ def load_config_files(loader,pattern,group=''):
     The `sort()` below must remove the filename extension (".dtl") 
     because otherwise the frist Detail would come last.
     """
-    files = find_config_files(pattern,group).items()
-    def fcmp(a,b):
-        return cmp(a[0][:-4],b[0][:-4])
+    files = find_config_files(pattern, group).items()
+
+    def fcmp(a, b):
+        return cmp(a[0][:-4], b[0][:-4])
     files.sort(fcmp)
-    prefix = group.replace("/",os.sep)
-    for filename,cd in files:
-        filename = join(prefix,filename)
-        ffn = join(cd.name,filename)
-        logger.debug("Loading %s...",ffn)
-        s = codecs.open(ffn,encoding='utf-8').read()
-        loader(s,cd,filename)
-        
+    prefix = group.replace("/", os.sep)
+    for filename, cd in files:
+        filename = join(prefix, filename)
+        ffn = join(cd.name, filename)
+        logger.debug("Loading %s...", ffn)
+        s = codecs.open(ffn, encoding='utf-8').read()
+        loader(s, cd, filename)
+
 
 class Configured(object):
-  
+
     #~ filename = None
-    #~ cd = None # ConfigDir
-    
-    def __init__(self,filename=None,cd=None):
+    # ~ cd = None # ConfigDir
+
+    def __init__(self, filename=None, cd=None):
         if filename is not None:
             assert not os.pardir in filename
             #~ assert not os.sep in filename
@@ -239,99 +244,100 @@ class Configured(object):
         if not self.filename:
             raise IOError('Cannot save unnamed %s' % self)
         if self.cd is None:
-            raise IOError("Cannot save because there is no local config directory")
-            
+            raise IOError(
+                "Cannot save because there is no local config directory")
+
         if not self.cd.writeable:
             #~ print self.cd, "is not writable", self.filename
             self.cd = LOCAL_CONFIG_DIR
-        fn = join(self.cd.name,self.filename)
+        fn = join(self.cd.name, self.filename)
         pth = dirname(fn)
         settings.SITE.makedirs_if_missing(pth)
         #~ if not os.path.exists(pth):
             #~ os.makedirs(pth)
-        f = codecs.open(fn,'w',encoding='utf-8')
+        f = codecs.open(fn, 'w', encoding='utf-8')
         self.write_content(f)
         f.close()
-        msg = "%s has been saved to %s" % (self.__class__.__name__,fn)
+        msg = "%s has been saved to %s" % (self.__class__.__name__, fn)
         logger.info(msg)
         return msg
-        
+
     def make_dummy_messages_file(self):
         """
         Make dummy messages file for this Configurable.
         Calls the global :func:`make_dummy_messages_file`
         """
-        if not self.filename: return
-        if self.cd is None: return
-        fn = join(self.cd.name,self.filename)
-        if self.cd.writeable: 
-            logger.info("Not writing %s because %s is writeable",
-                self.filename,self.cd.name)
+        if not self.filename:
             return
-        #~ if self.messages: 
+        if self.cd is None:
+            return
+        fn = join(self.cd.name, self.filename)
+        if self.cd.writeable:
+            logger.info("Not writing %s because %s is writeable",
+                        self.filename, self.cd.name)
+            return
+        #~ if self.messages:
         """
         if there are no messages, we still write a 
         new file to remove messages from pervious versions.
         """
-        make_dummy_messages_file(fn,self.messages)
-        
-        
-    def add_dummy_message(self,msg):
+        make_dummy_messages_file(fn, self.messages)
+
+    def add_dummy_message(self, msg):
         self.messages.add(msg)
-            
-    def write_content(self,f):
+
+    def write_content(self, f):
         raise NotImplementedError
-        
+
     def __str__(self):
         if self.filename:
-            return u"%s (from %s)" % (self.filename,self.cd)
-        return "Dynamic " + super(Configured,self).__str__()
+            return u"%s (from %s)" % (self.filename, self.cd)
+        return "Dynamic " + super(Configured, self).__str__()
         # "%s(%r)" % (self.__class__.__name__,self._desc)
-        
 
-        
+
 IGNORE_TIMES = False
 MODIFY_WINDOW = 2
 
-def must_make(src,target):
+
+def must_make(src, target):
     "returns True if src is newer than target"
     try:
         src_st = os.stat(src)
         src_mt = src_st.st_mtime
-    except OSError,e:
+    except OSError, e:
         # self.error("os.stat() failed: ",e)
         return False
 
     try:
         target_st = os.stat(target)
         target_mt = target_st.st_mtime
-    except OSError,e:
+    except OSError, e:
         # self.error("os.stat() failed: %s",e)
         return True
 
     if src_mt - target_mt > MODIFY_WINDOW:
         return True
     return False
-        
 
-def make_dummy_messages_file(src_fn,messages):
+
+def make_dummy_messages_file(src_fn, messages):
     """
     Write a dummy `.py` source file containing 
     translatable messages that getmessages will find. 
     """
     target_fn = src_fn + '.py'
-    if not must_make(src_fn,target_fn):
+    if not must_make(src_fn, target_fn):
         logger.debug("%s is up-to-date.", target_fn)
         return
     try:
-        f = file(target_fn,'w')
-    except IOError,e:
+        f = file(target_fn, 'w')
+    except IOError, e:
         logger.warning("Could not write file %s : %s", target_fn, e)
-        return 
+        return
     f.write("# this file is generated by Lino\n")
     f.write("from django.utils.translation import ugettext\n")
     for m in messages:
         f.write("ugettext(%r)\n" % m)
     f.close()
-    logger.info("Wrote %d dummy messages to %s.", len(messages),target_fn)
-  
+    logger.info("Wrote %d dummy messages to %s.", len(messages), target_fn)

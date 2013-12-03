@@ -1,16 +1,16 @@
 # -*- coding: UTF-8 -*-
-## Copyright 2011-2012 Luc Saffre
-## This file is part of the Lino project.
-## Lino is free software; you can redistribute it and/or modify 
-## it under the terms of the GNU General Public License as published by
-## the Free Software Foundation; either version 3 of the License, or
-## (at your option) any later version.
-## Lino is distributed in the hope that it will be useful, 
-## but WITHOUT ANY WARRANTY; without even the implied warranty of
-## MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the 
-## GNU General Public License for more details.
-## You should have received a copy of the GNU General Public License
-## along with Lino; if not, see <http://www.gnu.org/licenses/>.
+# Copyright 2011-2012 Luc Saffre
+# This file is part of the Lino project.
+# Lino is free software; you can redistribute it and/or modify
+# it under the terms of the GNU General Public License as published by
+# the Free Software Foundation; either version 3 of the License, or
+# (at your option) any later version.
+# Lino is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+# GNU General Public License for more details.
+# You should have received a copy of the GNU General Public License
+# along with Lino; if not, see <http://www.gnu.org/licenses/>.
 
 
 r"""
@@ -231,7 +231,7 @@ from appy.shared.xml_parser import XmlUnmarshaller
 #~ from xml. import etree
 #~ from lino.utils.xmlgen.recipe576536 import CDATA
 #~ from xml.etree import ElementTree as etree
-from lino.utils.xmlgen import etree 
+from lino.utils.xmlgen import etree
 #~ import ElementTree as etree
 
 
@@ -239,56 +239,59 @@ from lino.utils.xmlgen import etree
 #~ from lino.utils import IncompleteDate
 from lino.utils.xmlgen import Namespace, pretty_print, prettify
 
+
 def xsdpath(*parts):
     p1 = os.path.abspath(os.path.dirname(__file__))
-    return os.path.join(p1,'XSD',*parts)
+    return os.path.join(p1, 'XSD', *parts)
 
 import datetime
 
+
 def format(v):
-    if isinstance(v,datetime.datetime):
+    if isinstance(v, datetime.datetime):
         return v.strftime("%Y%m%dT%H%M%S")
-    if isinstance(v,datetime.date):
+    if isinstance(v, datetime.date):
         return v.strftime("%Y-%m-%d")
     return str(v)
 
 
-
-
 #~ ssdn = Namespace('ssdn',"http://www.ksz-bcss.fgov.be/XSD/SSDN/Service")
 #~ ,nsmap={None:ssdn._url}
-
 #~ class SOAP(Namespace):
     #~ targetNamespace = "http://schemas.xmlsoap.org/soap/envelope/"
     #~ def setup_namespace(self):
         #~ self.define_names("Body Envelope Header")
 #~ soap = SOAP('soap')
-
 SOAP = Namespace(
-  "http://schemas.xmlsoap.org/soap/envelope/",
-  names="Body Envelope Header",prefix="soap")
-        
+    "http://schemas.xmlsoap.org/soap/envelope/",
+    names="Body Envelope Header", prefix="soap")
+
+
 class WebServiceConnector(Namespace):
+
     """
     The WebServiceConnector namespace used for wrapping "classical" CBSS services.
     """
     targetNamespace = "http://ksz-bcss.fgov.be/connectors/WebServiceConnector"
     prefix = 'wsc'
+
     def setup_namespace(self):
         self.define_names("xmlString")
-        
-    def soap_request(self,s):
+
+    def soap_request(self, s):
         #~ xg.set_default_namespace(bcss)
-        if not isinstance(s,basestring):
+        if not isinstance(s, basestring):
             raise Exception("Must give a string, not %r" % s)
         body = self.xmlString(etree.CDATA(s))
-        #~ body.text = 
+        #~ body.text =
         #~ body = etree.tostring(body)
         return SOAP.Envelope(SOAP.Body(body))
-        
+
 unused_WSC = WebServiceConnector()
-        
+
+
 class SSDNns(Namespace):
+
     """
     The SSDN namespace used for wrapping "classical" CBSS services.
     """
@@ -307,9 +310,8 @@ class SSDNns(Namespace):
 SSDN = SSDNns()
 
 
-
 class Common(Namespace):
-  
+
     def setup_namespace(self):
         self.define_names("""
         AuthorizedUser
@@ -319,13 +321,13 @@ class Common(Namespace):
         MatrixID
         MatrixSubID
         """)
-        
+
     def authorized_user(common,
-                UserID=None,
-                Email=None, 
-                OrgUnit=None, 
-                MatrixID=None, 
-                MatrixSubID=None):
+                        UserID=None,
+                        Email=None,
+                        OrgUnit=None,
+                        MatrixID=None,
+                        MatrixSubID=None):
         return common.AuthorizedUser(
             common.UserID(UserID),
             common.Email(Email),
@@ -336,28 +338,26 @@ class Common(Namespace):
 common = Common()
 
 
-
-
-
 ENV_TEST = 'test'
 ENV_ACPT = 'acpt'
 ENV_PROD = 'prod'
 
 
 class Service(Namespace):
+
     """
     Base class for the individual services.
     """
     service_id = None
-    
-    def get_url(self,env):
+
+    def get_url(self, env):
         return None
-        
-    def build_request(self,*args,**kw):
+
+    def build_request(self, *args, **kw):
         raise NotImplementedError
-        
+
     #~ def execute(self,req,env,user_params=None,unique_id=None,dt=None):
-    def execute(self,req,unique_id=None,dt=None):
+    def execute(self, req, unique_id=None, dt=None):
         #~ print 20120302
         #~ if user_params is None:
             #~ raise Warning(
@@ -366,12 +366,12 @@ class Service(Namespace):
         from django.conf import settings
         env = settings.SITE.cbss_environment
         user_params = settings.SITE.cbss_user_params
-            
-        req = self.wrap_request(req,unique_id,dt,user_params)
-        
+
+        req = self.wrap_request(req, unique_id, dt, user_params)
+
         #~ xml = etree.tostring(req,xml_declaration=True)
         xml = etree.tostring(req)
-        
+
         if not env:
             raise Warning("""\
 Not actually sending because environment is empty. Request would be:
@@ -381,7 +381,7 @@ Not actually sending because environment is empty. Request would be:
         assert env in CBSS_ENVS
 
         url = self.get_url(env)
-        
+
         if True:
             #~ x = etree.tostring(elem)
             from suds.client import Client
@@ -391,95 +391,95 @@ Not actually sending because environment is empty. Request would be:
             #~ print client
             res = client.service.sendXML(xml)
         else:
-            
-            if isinstance(self,NewStyleService):
-                server = Resource(url,measure=True,**user_params)
+
+            if isinstance(self, NewStyleService):
+                server = Resource(url, measure=True, **user_params)
             else:
-                server = Resource(url,measure=True)
+                server = Resource(url, measure=True)
             res = server.soap(xml)
         return res
-        
+
         #~ print res.code
         #~ print res.data
         #~ reply = XmlUnmarshaller().parse(str(res.data.xmlString))
         #~ return reply
-        
-    def wrap_request(self,srvReq,message_ref,dt,user_params):
+
+    def wrap_request(self, srvReq, message_ref, dt, user_params):
         raise NotImplementedError
-        
+
 
 #~ class NewStyleService(Service):
-    
+
     #~ def wrap_request(self,srvReq,message_ref,dt,user_params):
-        #~ # soap = SOAP('soap',used_namespaces=[self])
+        # ~ # soap = SOAP('soap',used_namespaces=[self])
         #~ return SOAP.Envelope(SOAP.Header(),SOAP.Body(srvReq))
 
-    
+
 #~ class TestConnectionService(NewStyleService):
-    #~ # xsd_filename = xsdpath('TestConnectionServiceV1.xsd')
+    # ~ # xsd_filename = xsdpath('TestConnectionServiceV1.xsd')
     #~ targetNamespace = "http://kszbcss.fgov.be/intf/TestConnectionServiceService/v1"
-  
+
     #~ def setup_namespace(self):
         #~ self.define_names("sendTestMessageRequest echo")
 
     #~ def build_request(self,helloString):
         #~ return self.sendTestMessageRequest(self.echo(helloString))
-        #~ # self.validate_root(root)
-        #~ # return root 
-        
+        # ~ # self.validate_root(root)
+        # ~ # return root
+
     #~ def get_url(self,env):
         #~ url = "https://bcssksz-services-%s.smals.be:443/SOA4520" % env
         #~ url += "/TestConnectionServiceService/sendTestMessage"
         #~ return url
-        
+
 #~ tcs = TestConnectionService('tcs')
 
 class SSDNService(Service):
-  
+
     service_version = None
-    
-    def get_url(self,env):
+
+    def get_url(self, env):
         url = "https://bcssksz-services-%s.smals.be" % env
         url += "/connectors/webservice/KSZBCSSWebServiceConnectorPort"
         return url
-  
-    def wrap_request(self,srvReq,message_ref,dt,user_params):
+
+    def wrap_request(self, srvReq, message_ref, dt, user_params):
         #~ xg.set_default_namespace(None)
         any = etree.tostring(srvReq)
         serviceRequest = SSDN.ServiceRequest(
             SSDN.ServiceId(self.service_id),
             SSDN.Version(self.service_version),
             etree.XML(any))
-        
+
         context = SSDN.RequestContext(
             common.authorized_user(**user_params),
             SSDN.Message(
                 SSDN.Reference(message_ref),
                 SSDN.TimeRequest(format(dt))))
         #~ xg.set_default_namespace(SSDN)
-        elem = SSDN.SSDNRequest(context,serviceRequest)
+        elem = SSDN.SSDNRequest(context, serviceRequest)
         #~ elem.nsmap={None:self._url}
         #~ elem = WSC.soap_request(etree.tostring(elem))
         if True:
             return elem
         else:
             elem = WSC.soap_request(etree.tostring(elem))
-        #~ xmlString = """<?xml version="1.0" encoding="utf-8"?>""" + 
+        #~ xmlString = """<?xml version="1.0" encoding="utf-8"?>""" +
         return elem
         #~ return ssdn.SSDNRequest(context,serviceRequest)
-        
 
 
 class IdentifyPersonRequest(SSDNService):
+
     "A request for identifying a person or validating a person's identity"
     service_id = 'OCMWCPASIdentifyPerson'
     service_version = '20050930'
     targetNamespace = "http://www.ksz-bcss.fgov.be/XSD/SSDN/OCMW_CPAS/IdentifyPerson"
     prefix = "ipr"
     if USE_XSD_FILES:
-        xsd_filename = xsdpath('SSDN','OCMW_CPAS',
-            'IDENTIFYPERSON','IDENTIFYPERSONREQUEST.XSD')
-        
+        xsd_filename = xsdpath('SSDN', 'OCMW_CPAS',
+                               'IDENTIFYPERSON', 'IDENTIFYPERSONREQUEST.XSD')
+
     def setup_namespace(self):
         self.define_names("""
         IdentifyPersonRequest
@@ -500,17 +500,15 @@ class IdentifyPersonRequest(SSDNService):
         PersonData 
         """)
 
-        
-
     def build_request(ipr,
-        national_id='',
-        first_name='',
-        middle_name='',
-        last_name='',
-        birth_date=None,
-        gender=None,
-        tolerance=None
-        ):
+                      national_id='',
+                      first_name='',
+                      middle_name='',
+                      last_name='',
+                      birth_date=None,
+                      gender=None,
+                      tolerance=None
+                      ):
         """
         If `national_id` is given, 
         request a *verification* of the personal data,
@@ -519,22 +517,28 @@ class IdentifyPersonRequest(SSDNService):
         """
         if national_id:
             pd = []
-            if last_name: pd.append(ipr.LastName(last_name))
-            if first_name: pd.append(ipr.FirstName(first_name))
-            if middle_name: pd.append(ipr.MiddleName(middle_name))
-            if birth_date: pd.append(ipr.BirthDate(birth_date))
-            if gender is not None: pd.append(ipr.Gender(gender))
-            if tolerance is not None: pd.append(ipr.Tolerance(tolerance))
-            
+            if last_name:
+                pd.append(ipr.LastName(last_name))
+            if first_name:
+                pd.append(ipr.FirstName(first_name))
+            if middle_name:
+                pd.append(ipr.MiddleName(middle_name))
+            if birth_date:
+                pd.append(ipr.BirthDate(birth_date))
+            if gender is not None:
+                pd.append(ipr.Gender(gender))
+            if tolerance is not None:
+                pd.append(ipr.Tolerance(tolerance))
+
             #~ for k in ('LastName','FirstName','MiddleName','BirthDate'):
                 #~ v = kw.get(k,None)
-                #~ if v: # ignore empty values
+                # ~ if v: # ignore empty values
                     #~ cl = getattr(ipr,k)
                     #~ pd.append(cl(v))
             return ipr.IdentifyPersonRequest(
-              ipr.SearchCriteria(ipr.SSIN(national_id)),
-              ipr.VerificationData(ipr.PersonData(*pd)))
-          
+                ipr.SearchCriteria(ipr.SSIN(national_id)),
+                ipr.VerificationData(ipr.PersonData(*pd)))
+
         if birth_date is None:
             raise Warning(
                 "Either national_id or birth date must be given")
@@ -548,11 +552,11 @@ class IdentifyPersonRequest(SSDNService):
         root = ipr.IdentifyPersonRequest(
             ipr.SearchCriteria(ipr.PhoneticCriteria(*pc)))
         #~ ipr.validate_root(root)
-        return root 
-          
+        return root
 
 
 class PerformInvestigationRequest(SSDNService):
+
     """
     A request to the PerformInvestigation BCSS service.
     Net yet used in practice.
@@ -561,11 +565,11 @@ class PerformInvestigationRequest(SSDNService):
     service_version = '20080604'
     targetNamespace = "http://www.ksz-bcss.fgov.be/XSD/SSDN/OCMW_CPAS/PerformInvestigation"
     prefix = 'pir'
-    
+
     if USE_XSD_FILES:
-        xsd_filename = xsdpath('SSDN','OCMW_CPAS',
-            'PERFORMINVESTIGATION','PERFORMINVESTIGATIONREQUEST.XSD')
-    
+        xsd_filename = xsdpath('SSDN', 'OCMW_CPAS',
+                               'PERFORMINVESTIGATION', 'PERFORMINVESTIGATIONREQUEST.XSD')
+
     def setup_namespace(self):
         self.define_names("""
         PerformInvestigationRequest
@@ -576,23 +580,20 @@ class PerformInvestigationRequest(SSDNService):
         AddressHistoryGroup
         WaitRegisterGroup
         """)
-        
-    def build_request(self,ssin,family='1',citizen='1',address='1',wait='1'):
+
+    def build_request(self, ssin, family='1', citizen='1', address='1', wait='1'):
         root = self.PerformInvestigationRequest(
             self.SocialSecurityUser(ssin),
             self.DataGroups(
-              self.FamilyCompositionGroup(family),
-              self.CitizenGroup(citizen),
-              self.AddressHistoryGroup(address),
-              self.WaitRegisterGroup(wait)))
+                self.FamilyCompositionGroup(family),
+                self.CitizenGroup(citizen),
+                self.AddressHistoryGroup(address),
+                self.WaitRegisterGroup(wait)))
 
         #~ pir.validate_root(root)
-        return root 
-    
-    
+        return root
 
-    
-        
+
 class ManageAccessRequest(SSDNService):
     targetNamespace = "http://www.ksz-bcss.fgov.be/XSD/SSDN/OCMW_CPAS/ManageAccess"
     prefix = 'mar'
@@ -608,8 +609,10 @@ class ManageAccessRequest(SSDNService):
     QueryRegister
     ProofOfAuthentication
     """
-    
+
+
 class HealthInsuranceRequest(SSDNService):
+
     """
     A request to the HealthInsurance BCSS service.
     Net yet used in practice.
@@ -617,7 +620,7 @@ class HealthInsuranceRequest(SSDNService):
     service_id = 'OCMWCPASHealthInsurance'
     service_version = '20070509'
     targetNamespace = "http://www.ksz-bcss.fgov.be/XSD/SSDN/HealthInsurance"
-    
+
     def setup_namespace(self):
         self.define_names("""
         HealthInsuranceRequest
@@ -627,15 +630,16 @@ class HealthInsuranceRequest(SSDNService):
         StartDate
         EndDate
         """)
-    
-    
+
+
 IPR = IdentifyPersonRequest()
 """
 The Namespace instance for :class:`IdentifyPersonRequest`.
 """
 
 
-PIR = PerformInvestigationRequest() # ,"http://www.ksz-bcss.fgov.be/XSD/SSDN/OCMW_CPAS/PerformInvestigation")
+# ,"http://www.ksz-bcss.fgov.be/XSD/SSDN/OCMW_CPAS/PerformInvestigation")
+PIR = PerformInvestigationRequest()
 """
 The Namespace instance for :class:`PerformInvestigationRequest`.
 """
@@ -650,14 +654,6 @@ MAR = ManageAccessRequest()
 """
 The Namespace instance for :class:`ManageAccessRequest`.
 """
-
-    
-
-
-
-
-
-    
 
 
 def xml2reply(xmlString):
@@ -676,7 +672,7 @@ def xml2reply(xmlString):
     """
     return XmlUnmarshaller().parse(str(xmlString))
 
-    
+
 def reply2lines(reply):
     """
     Convert a reply into a 
@@ -688,7 +684,7 @@ def reply2lines(reply):
     yield "    - Diagnostic: %s" % reply.ReplyContext.ResultSummary.Detail.Diagnostic
     yield "    - ReasonCode: %s" % reply.ReplyContext.ResultSummary.Detail.ReasonCode
     yield "    - Severity: %s" % reply.ReplyContext.ResultSummary.Detail.Severity
-    
+
     if False:
         yield "- AuthorizedUser:"
         yield "  - UserID: %s" % reply.ReplyContext.AuthorizedUser.UserID
@@ -718,9 +714,7 @@ def reply2lines(reply):
         #~ yield "    - Information.FieldValue[]: %s" % info.FieldValue
         #~ yield "    - %s = %s" % (info.FieldName,info.FieldValue)
         #~ yield "    - %s" % info
-    
-    
-    
+
 
 def _test():
     import doctest
@@ -728,4 +722,3 @@ def _test():
 
 if __name__ == "__main__":
     _test()
-

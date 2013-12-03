@@ -18,8 +18,10 @@ try:
     # Try Python 2.5 and later
     import xml.etree.ElementTree as etree
 except ImportError:
-    # Older Python with ElementTree installed from http://effbot.org/zone/element-index.htm
+    # Older Python with ElementTree installed from
+    # http://effbot.org/zone/element-index.htm
     import elementtree.ElementTree as etree
+
 
 def CDATA(text=None):
     """
@@ -30,10 +32,13 @@ def CDATA(text=None):
     element.text = text
     return element
 
-# We're replacing the _write method of the ElementTree class so that it would 
+# We're replacing the _write method of the ElementTree class so that it would
 # recognize and correctly print out CDATA sections.
 old_ElementTree = etree.ElementTree
+
+
 class ElementTree_CDATA(old_ElementTree):
+
     def _write(self, file, node, encoding, namespaces):
         if node.tag is CDATA:
             if node.text:
@@ -46,14 +51,17 @@ etree.ElementTree = ElementTree_CDATA
 # Since xml.parsers.expat supports parsing CDATA sections, all we need to do
 # is recognize them during parsing and add them to the tree.
 old_XMLTreeBuilder = etree.XMLTreeBuilder
+
+
 class XMLTreeBuilder_CDATA(old_XMLTreeBuilder):
+
     def __init__(self, html=0, target=None):
         old_XMLTreeBuilder.__init__(self, html, target)
         self._parser.StartCdataSectionHandler = self._start_cdata
         self._parser.EndCdataSectionHandler = self._end_cdata
         self._cdataSection = False
         self._cdataBuffer = None
-        
+
     def _start_cdata(self):
         """
         A CDATA section beginning has been recognized - start collecting
@@ -61,7 +69,7 @@ class XMLTreeBuilder_CDATA(old_XMLTreeBuilder):
         """
         self._cdataSection = True
         self._cdataBuffer = []
-        
+
     def _end_cdata(self):
         """
         The CDATA section has ended - join the character data we collected
@@ -72,7 +80,7 @@ class XMLTreeBuilder_CDATA(old_XMLTreeBuilder):
         self._target.start(CDATA, {})
         self._target.data(text)
         self._target.end(CDATA)
-        
+
     def _data(self, text):
         """
         If we are in the middle of a CDATA section, collect the data into a
@@ -84,18 +92,19 @@ class XMLTreeBuilder_CDATA(old_XMLTreeBuilder):
             old_XMLTreeBuilder._data(self, text)
 
 etree.XMLTreeBuilder = XMLTreeBuilder_CDATA
-etree.XMLParser = XMLTreeBuilder_CDATA # added by LS
-register_namespace = etree.register_namespace # added by LS
+etree.XMLParser = XMLTreeBuilder_CDATA  # added by LS
+register_namespace = etree.register_namespace  # added by LS
 
 try:
     # Try Python 2.5 and later
     from xml.etree.ElementTree import *
 except ImportError:
-    # Older Python with ElementTree installed from http://effbot.org/zone/element-index.htm
+    # Older Python with ElementTree installed from
+    # http://effbot.org/zone/element-index.htm
     from elementtree.ElementTree import *
-    
 
-# ------------------------------------------------------------------------------
+
+# ------------------------------------------------------------------------
 
 if __name__ == "__main__":
     sampleXml = '<data key="value"> some text <![CDATA[<sender>John Smith</sender>]]></data>'
@@ -104,10 +113,10 @@ if __name__ == "__main__":
     root = fromstring(sampleXml)
     xml = tostring(root)
     print xml
-    
+
     # The parsed and regenerated XML is the same as the sample XML string
-    assert(sampleXml == xml) 
-    
+    assert(sampleXml == xml)
+
     # Generate a tree with a CDATA section
     root = Element("data")
     root.set("key", "value")
@@ -118,4 +127,4 @@ if __name__ == "__main__":
     print xml2
 
     # The generated XML is the same as the sample XML string
-    assert(sampleXml == xml2) 
+    assert(sampleXml == xml2)

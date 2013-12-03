@@ -111,12 +111,12 @@ Query by property:
 from django.db import models
 from django.contrib.contenttypes.models import ContentType
 from django.contrib.contenttypes import generic
-from lino.modlib.properties import models as properties 
-    
+from lino.modlib.properties import models as properties
+
+
 class Person(models.Model):
     name = models.CharField(max_length=20)
     properties = generic.GenericRelation(properties.Property)
-    
+
     def __unicode__(self):
         return self.name
-        

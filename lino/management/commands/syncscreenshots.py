@@ -1,16 +1,16 @@
 # -*- coding: UTF-8 -*-
-## Copyright 2012-2013 Luc Saffre
-## This file is part of the Lino project.
-## Lino is free software; you can redistribute it and/or modify
-## it under the terms of the GNU General Public License as published by
-## the Free Software Foundation; either version 3 of the License, or
-## (at your option) any later version.
-## Lino is distributed in the hope that it will be useful, 
-## but WITHOUT ANY WARRANTY; without even the implied warranty of
-## MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the 
-## GNU General Public License for more details.
-## You should have received a copy of the GNU General Public License
-## along with Lino; if not, see <http://www.gnu.org/licenses/>.
+# Copyright 2012-2013 Luc Saffre
+# This file is part of the Lino project.
+# Lino is free software; you can redistribute it and/or modify
+# it under the terms of the GNU General Public License as published by
+# the Free Software Foundation; either version 3 of the License, or
+# (at your option) any later version.
+# Lino is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+# GNU General Public License for more details.
+# You should have received a copy of the GNU General Public License
+# along with Lino; if not, see <http://www.gnu.org/licenses/>.
 
 """
 Not yet implemented.
@@ -33,7 +33,7 @@ import os
 import errno
 #~ import codecs
 import sys
-from optparse import make_option 
+from optparse import make_option
 from os.path import join
 
 
@@ -57,21 +57,18 @@ from lino.utils import screenshots
 from atelier.utils import SubProcessParent
 
 
-
 class Command(BaseCommand):
     help = __doc__
     args = "output_dir"
-    
-    
+
     def handle(self, *args, **options):
         if len(args) != 1:
             raise CommandError("Required argument: output_dir")
-            
+
         output_dir = args[0]
-            
+
         #~ print settings.SITE.__class__
         settings.SITE.startup()
         #~ translation.activate(settings.LANGUAGE_CODE)
-        
-        sync_screenshots(output_dir,force=True)
-        
+
+        sync_screenshots(output_dir, force=True)

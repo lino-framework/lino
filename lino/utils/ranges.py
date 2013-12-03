@@ -1,16 +1,16 @@
 # -*- coding: UTF-8 -*-
-## Copyright 2009-2013 Luc Saffre
-## This file is part of the Lino project.
-## Lino is free software; you can redistribute it and/or modify 
-## it under the terms of the GNU General Public License as published by
-## the Free Software Foundation; either version 3 of the License, or
-## (at your option) any later version.
-## Lino is distributed in the hope that it will be useful, 
-## but WITHOUT ANY WARRANTY; without even the implied warranty of
-## MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the 
-## GNU General Public License for more details.
-## You should have received a copy of the GNU General Public License
-## along with Lino; if not, see <http://www.gnu.org/licenses/>.
+# Copyright 2009-2013 Luc Saffre
+# This file is part of the Lino project.
+# Lino is free software; you can redistribute it and/or modify
+# it under the terms of the GNU General Public License as published by
+# the Free Software Foundation; either version 3 of the License, or
+# (at your option) any later version.
+# Lino is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+# GNU General Public License for more details.
+# You should have received a copy of the GNU General Public License
+# along with Lino; if not, see <http://www.gnu.org/licenses/>.
 
 """
 The :mod:`lino.utils.ranges` module contains utility methods 
@@ -49,10 +49,11 @@ An open range is a range that has at least one limit set to `None`.
 from north import dbutils
 
 
-def constrain(value,lowest,highest):
-    return min(highest,max(value,lowest))
-    
-def encompass(a,b):
+def constrain(value, lowest, highest):
+    return min(highest, max(value, lowest))
+
+
+def encompass(a, b):
     """
     Test whether range `a` encompasses (is wider than) range `b`.
     
@@ -84,24 +85,29 @@ def encompass(a,b):
             return False
         return a[1] >= b[1]
 
-def isrange(a,b):
+
+def isrange(a, b):
     """
     Return True if the passed tuple `(a,b)` is a valid range
     (that is, `a` may not be greater than `b`).
     """
     #~ if r[0] is None or r[1] is None: return True
     #~ if r[0] <= r[1]: return True
-    if a is None or b is None: return True
-    if a <= b: return True
+    if a is None or b is None:
+        return True
+    if a <= b:
+        return True
     return False
-    
-def overlap2(a,b):
+
+
+def overlap2(a, b):
     """
     Same as :func:`overlap` but with different signature.
     """
-    return overlap(a[0],a[1],b[0],b[1])
-    
-def overlap(a1,a2,b1,b2):
+    return overlap(a[0], a[1], b[0], b[1])
+
+
+def overlap(a1, a2, b1, b2):
     """
     Test whether two value ranges overlap.
     
@@ -173,9 +179,9 @@ def overlap(a1,a2,b1,b2):
     >>> overlap(2,3,1,2)
     False
     """
-    
+
     #~ return a2 > b1 and a1 < b2
-    
+
     if a2:
         if b1:
             if b1 >= a2:
@@ -198,7 +204,7 @@ def overlap(a1,a2,b1,b2):
         else:
             return True
     return True
-    
+
 
 def _test():
     import doctest
@@ -206,4 +212,3 @@ def _test():
 
 if __name__ == "__main__":
     _test()
-

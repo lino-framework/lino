@@ -46,15 +46,16 @@ from atelier import rstgen
 from lino.utils.xmlgen import etree
 from lino.utils.xmlgen import Namespace, RAW
 
+
 def HtmlNamespace(Namespace):
 
-    def tostring(self,element,*args,**kw):
+    def tostring(self, element, *args, **kw):
         kw.update(method='html')
-        return super(HtmlNamespace,self).tostring(element,*args,**kw)
+        return super(HtmlNamespace, self).tostring(element, *args, **kw)
 
 
 #~ E = Namespace("http://www.w3.org/1999/xhtml","""
-E = Namespace(None,"""
+E = Namespace(None, """
 a 
 abbr
 acronym
@@ -167,34 +168,41 @@ tabindex
 placeholder
 """)
 
-def table_header_row(*headers,**kw):
-    return E.tr(*[E.th(h,**kw) for h in headers])
-def table_body_row(*cells,**kw):
-    return E.tr(*[E.td(h,**kw) for h in cells])
-      
+
+def table_header_row(*headers, **kw):
+    return E.tr(*[E.th(h, **kw) for h in headers])
+
+
+def table_body_row(*cells, **kw):
+    return E.tr(*[E.td(h, **kw) for h in cells])
+
+
 class Table(object):
+
     def __init__(self):
         self.clear()
-        
+
     def clear(self):
         self.head = []
         self.foot = []
         self.body = []
         self.attrib = dict()
-        
-    def add_header_row(self,*args,**kw):
-        e = table_header_row(*args,**kw)
+
+    def add_header_row(self, *args, **kw):
+        e = table_header_row(*args, **kw)
         self.head.append(e)
         return e
-    def add_footer_row(self,*args,**kw):
-        e = table_body_row(*args,**kw)
+
+    def add_footer_row(self, *args, **kw):
+        e = table_body_row(*args, **kw)
         self.foot.append(e)
         return e
-    def add_body_row(self,*args,**kw):
-        e = table_body_row(*args,**kw)
+
+    def add_body_row(self, *args, **kw):
+        e = table_body_row(*args, **kw)
         self.body.append(e)
         return e
-        
+
     def as_element(self):
         children = []
         if self.head:
@@ -203,53 +211,49 @@ class Table(object):
             children.append(E.tfoot(*self.foot))
         if self.body:
             children.append(E.tbody(*self.body))
-        return E.table(*children,**self.attrib)
-      
-                  
+        return E.table(*children, **self.attrib)
 
 
 class Document(object):
-    def __init__(self,title,stylesheets=None):
+
+    def __init__(self, title, stylesheets=None):
         self.title = title
         self.body = []
         self.stylesheets = stylesheets or []
-        
-    def add_stylesheet(self,url):
+
+    def add_stylesheet(self, url):
         self.stylesheets.append(url)
-        
+
     def add_table(self):
         t = Table()
         self.body.append(t)
         return t
-        
-    def write(self,*args,**kw):
-        ET.ElementTree(self.as_element()).write(*args,**kw)
-        
+
+    def write(self, *args, **kw):
+        ET.ElementTree(self.as_element()).write(*args, **kw)
+
     def as_element(self):
         body = []
         for e in self.body:
-            if isinstance(e,Table):
+            if isinstance(e, Table):
                 body.append(e.as_element())
             else:
                 body.append(e)
         headers = []
         for css in self.stylesheets:
-            headers.append(E.link(rel="stylesheet",type="text/css",href=css))
+            headers.append(E.link(rel="stylesheet", type="text/css", href=css))
         headers.append(E.title(self.title))
 
         return E.html(
-          E.head(*headers),
-          E.body(*body)
-          )
+            E.head(*headers),
+            E.body(*body)
+        )
 
 
-
-
-
-def _html2rst(e,**kw):
+def _html2rst(e, **kw):
     #~ print "20120613 html2odftext()", e.tag, e.text
     rst = ''
-    if e.tag in ('p','li'): 
+    if e.tag in ('p', 'li'):
         rst += '\n\n'
     elif e.tag == 'br':
         rst += ' |br| \n'
@@ -259,20 +263,20 @@ def _html2rst(e,**kw):
         rst += '*'
     elif e.tag == 'a':
         rst += '`'
-    
+
     #~ doesn't yet work:
     """
     """
-        
+
     #~ if e.tag == 'a':
         #~ return '`%s <%s>`__' % (e.text,e.get('href'))
-        
+
     if e.text:
         rst += e.text
     for child in e:
         rst += _html2rst(child)
-        
-    if e.tag == 'p': 
+
+    if e.tag == 'p':
         rst += '\n\n'
     elif e.tag == 'b':
         if rst == '**':
@@ -288,10 +292,11 @@ def _html2rst(e,**kw):
         rst += ' <%s>`__' % e.get('href')
     #~ else:
         #~ rst += ' '
-        
+
     if e.tail:
         rst += e.tail
     return rst
+
 
 def html2rst(e):
     """
@@ -326,13 +331,10 @@ def html2rst(e):
     An empty bold text:
     """
     return _html2rst(e).strip()
-    
-
-
-
 
 
 class RstTable(rstgen.Table):
+
     """\
 A table containing elementtree HTML:
 
@@ -363,18 +365,11 @@ A table containing elementtree HTML:
   ============================ ================
 
     """
-    def convert(self,v):
-        if etree.iselement(v): 
+
+    def convert(self, v):
+        if etree.iselement(v):
             return html2rst(v)
-        return rstgen.Table.convert(self,v)
-
-
-
-
-
-
-
-
+        return rstgen.Table.convert(self, v)
 
 
 def _test():
@@ -383,4 +378,3 @@ def _test():
 
 if __name__ == "__main__":
     _test()
-

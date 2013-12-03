@@ -1,16 +1,16 @@
 # -*- coding: UTF-8 -*-
-## Copyright 2009-2013 Luc Saffre
-## This file is part of the Lino project.
-## Lino is free software; you can redistribute it and/or modify 
-## it under the terms of the GNU General Public License as published by
-## the Free Software Foundation; either version 3 of the License, or
-## (at your option) any later version.
-## Lino is distributed in the hope that it will be useful, 
-## but WITHOUT ANY WARRANTY; without even the implied warranty of
-## MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the 
-## GNU General Public License for more details.
-## You should have received a copy of the GNU General Public License
-## along with Lino; if not, see <http://www.gnu.org/licenses/>.
+# Copyright 2009-2013 Luc Saffre
+# This file is part of the Lino project.
+# Lino is free software; you can redistribute it and/or modify
+# it under the terms of the GNU General Public License as published by
+# the Free Software Foundation; either version 3 of the License, or
+# (at your option) any later version.
+# Lino is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+# GNU General Public License for more details.
+# You should have received a copy of the GNU General Public License
+# along with Lino; if not, see <http://www.gnu.org/licenses/>.
 
 from __future__ import unicode_literals
 
@@ -39,6 +39,7 @@ from lino.utils import get_class_attr
 
 
 class Model(models.Model):
+
     """
     Adds Lino specific features to Django's Model base class. 
     If a Lino application uses simple Django Models,
@@ -47,9 +48,9 @@ class Model(models.Model):
     """
     class Meta:
         abstract = True
-        
+
     #~ as_pdf = PdfAction()
-        
+
     allow_cascaded_delete = []
     """
     A list of names of ForeignKey fields of this model 
@@ -80,9 +81,9 @@ class Model(models.Model):
 
     
     """
-    
+
     #~ help_text = None
-    
+
     quick_search_fields = None
     """
     When quick_search text is given for a table on this model, 
@@ -93,79 +94,78 @@ class Model(models.Model):
     foreign key column which points to this model. 
     
     """
-    
+
     #~ grid_search_field = None
     #~ """
-    #~ The name of the field to be used when a gridfilter has been set on a 
+    #~ The name of the field to be used when a gridfilter has been set on a
     #~ foreign key column which points to this model. Capito?
     #~ """
-    
+
     hidden_columns = frozenset()
     """
     If specified, this is the default value for 
     :attr:`hidden_columns <lino.core.tables.AbstractTable.hidden_columns>` 
     of every `Table` on this model.
     """
-    
+
     hidden_elements = frozenset()
     """
     If specified, this is the default value for 
     :attr:`hidden_elements <lino.core.tables.AbstractTable.hidden_elements>` 
     of every `Table` on this model.
     """
-    
+
     preferred_foreignkey_width = None
     """
     The default preferred width (in characters) of widgets that display a 
     ForeignKey to this model
     """
 
-    
     workflow_state_field = None
     """
     If this is set on a Model, then it will be used as default 
     value for :attr:`lino.core.table.Table.workflow_state_field` 
     on all tables based on this Model.
     """
-    
+
     workflow_owner_field = None
     """
     If this is set on a Model, then it will be used as default 
     value for :attr:`lino.core.table.Table.workflow_owner_field` 
     on all tables based on this Model.
     """
-    
+
     #~ _watch_changes_specs = None
     change_watcher_spec = None
     """
     Internally used by :meth:`watch_changes`
     """
-    
+
     #~ _custom_actions = dict()
     """
     Internally used to store custom model actions.
     """
-    
+
     #~ _change_summary = ''
     #~ """
     #~ Internally used by :meth:`watch_changes`
     #~ """
-    
+
     #~ def get_watcher(self,*args,**kw):
         #~ from lino.core import changes
         #~ return changes.Watcher(self,*args,**kw)
-        
+
     #~ def update_system_note(self,note):
         #~ pass
-        
+
     #~ def set_change_summary(self,text):
         #~ self._change_summary = text
-        
-    def as_list_item(self,ar):
+
+    def as_list_item(self, ar):
         return E.li(unicode(self))
-        
+
     @classmethod
-    def get_data_elem(model,name):
+    def get_data_elem(model, name):
         #~ logger.info("20120202 get_data_elem %r,%r",model,name)
         if not name.startswith('__'):
             parts = name.split('__')
@@ -176,47 +176,50 @@ class Model(models.Model):
                 #~ model = self.model
 
                 from lino.ui import store
-                
+
                 field_chain = []
                 for n in parts:
                     assert model is not None
-                    #~ 20130508 model.get_default_table().get_handle() # make sure that all atomizers of those fields get created.
+                    # ~ 20130508 model.get_default_table().get_handle() # make sure that all atomizers of those fields get created.
                     fld = model.get_data_elem(n)
                     if fld is None:
                         # raise Exception("Part %s of %s got None" % (n,model))
                         raise Exception(
-                            "Invalid RemoteField %s.%s (no field %s in %s)" % 
-                            (full_model_name(model),name,n,full_model_name(model)))
-                    store.get_atomizer(fld,fld.name) # make sure that the atomizer gets created.
+                            "Invalid RemoteField %s.%s (no field %s in %s)" %
+                            (full_model_name(model), name, n, full_model_name(model)))
+                    # make sure that the atomizer gets created.
+                    store.get_atomizer(fld, fld.name)
                     field_chain.append(fld)
                     if fld.rel:
                         model = fld.rel.to
                     else:
                         model = None
-                def func(obj,ar=None):
+
+                def func(obj, ar=None):
                     #~ if ar is None: raise Exception(20130802)
                     #~ print '20130422',name,obj, [fld.name for fld in field_chain]
                     try:
                         for fld in field_chain:
                             #~ obj = fld.value_from_object(obj)
-                            obj = fld._lino_atomizer.full_value_from_object(obj,ar)
+                            obj = fld._lino_atomizer.full_value_from_object(
+                                obj, ar)
                         #~ for n in parts:
                             #~ obj = getattr(obj,n)
                         #~ print '20130422 %s --> %r', fld.name,obj
                         return obj
-                    except Exception,e:
-                        #~ if False: # only for debugging
-                        if True: # see 20130802
+                    except Exception, e:
+                        # ~ if False: # only for debugging
+                        if True:  # see 20130802
                             logger.exception(e)
-                            return str(e) 
+                            return str(e)
                         return None
-                return fields.RemoteField(func,name,fld)
-        
+                return fields.RemoteField(func, name, fld)
+
         try:
             return model._meta.get_field(name)
-        except models.FieldDoesNotExist,e:
+        except models.FieldDoesNotExist, e:
             pass
-            
+
         #~ s = name.split('.')
         #~ if len(s) == 1:
             #~ mod = import_module(model.__module__)
@@ -226,16 +229,16 @@ class Model(models.Model):
             #~ rpt = getattr(mod,s[1],None)
         #~ else:
             #~ raise Exception("Invalid data element name %r" % name)
-        
-        v = get_class_attr(model,name)
-        if v is not None: return v
-        
+
+        v = get_class_attr(model, name)
+        if v is not None:
+            return v
+
         for vf in model._meta.virtual_fields:
             if vf.name == name:
                 return vf
 
-    
-    def get_choices_text(self,request,actor,field):
+    def get_choices_text(self, request, actor, field):
         """
         Return the text to be displayed when an instance of this model 
         is being used as a choice in a combobox (i.e. by ForeignKey fields 
@@ -246,8 +249,8 @@ class Model(models.Model):
         One usage example is :class:`lino.modlib.countries.models.City`.
         """
         return unicode(self)
-        
-    def disable_delete(self,ar):
+
+    def disable_delete(self, ar):
         """
         Return None if it is okay to delete this object,
         otherwise a nonempty string explaining why.
@@ -256,56 +259,54 @@ class Model(models.Model):
         being called from a script or batch process.
         """
         return self._lino_ddh.disable_delete_on_object(self)
-        
-    @classmethod 
+
+    @classmethod
     def get_default_table(self):
         return self._lino_default_table
-        
-    def disabled_fields(self,ar):
+
+    def disabled_fields(self, ar):
         return set()
-        
-    def on_create(self,ar):
+
+    def on_create(self, ar):
         """
         Used e.g. by :class:`lino.modlib.notes.models.Note`.
         on_create gets the action request as argument.
         Didn't yet find out how to do that using a standard Django signal.
         """
         pass
-        
-    def before_ui_save(self,ar):
+
+    def before_ui_save(self, ar):
         """
         Called after a PUT or POST on this row, and before saving the row.
         Example in :class:`lino.modlib.cal.models.Event` to mark the 
         event as user modified by setting a default state.
         """
         pass
-        
+
     @classmethod
-    def define_action(cls,**kw):
+    def define_action(cls, **kw):
         """
         Adds one or several actions to this model.
         Actions must be specified using keyword arguments.
         
         """
-        for k,v in kw.items():
-            if hasattr(cls,k):
-                raise Exception("Tried to redefine %s.%s" % (cls,k))
-            setattr(cls,k,v)
-        
-        
+        for k, v in kw.items():
+            if hasattr(cls, k):
+                raise Exception("Tried to redefine %s.%s" % (cls, k))
+            setattr(cls, k, v)
+
     @classmethod
-    def hide_elements(self,*names):
+    def hide_elements(self, *names):
         """
         Call this to mark the named data elements (fields) as hidden.
         They remain in the database but are not visible in the user interface.
         """
         for name in names:
             if self.get_data_elem(name) is None:
-                raise Exception("%s has no element '%s'" % (self,name))
+                raise Exception("%s has no element '%s'" % (self, name))
         self.hidden_elements = self.hidden_elements | set(names)
-        
-        
-    def after_ui_save(self,ar):
+
+    def after_ui_save(self, ar):
         """
         Called after a PUT or POST on this row, 
         and after the row has been saved.
@@ -320,8 +321,8 @@ class Model(models.Model):
         :class:`lino.modlib.vat.models.Vat` 
         """
         pass
-        
-    def get_row_permission(self,ar,state,ba):
+
+    def get_row_permission(self, ar, state, ba):
         """
         Returns True or False whether this row instance 
         gives permission the ActionRequest `ar` 
@@ -329,50 +330,49 @@ class Model(models.Model):
         """
         #~ if ba.action.action_name == 'wf7':
             #~ logger.info("20130424 Model.get_row_permission() gonna call %r.get_bound_action_permission()",ba)
-        return ba.get_bound_action_permission(ar,self,state)
+        return ba.get_bound_action_permission(ar, self, state)
 
-    def update_owned_instance(self,controllable):
+    def update_owned_instance(self, controllable):
         """
         Called by :class:`lino.mixins.Controllable`.
         """
         #~ print '20120627 tools.Model.update_owned_instance'
         pass
-                
-    def after_update_owned_instance(self,controllable):
+
+    def after_update_owned_instance(self, controllable):
         """
         Called by :class:`lino.mixins.Controllable`.
         """
         pass
-        
+
     def get_mailable_recipients(self):
         """
         Return or yield a list of (type,partner) tuples to be 
         used as recipents when creating an outbox.Mail from this object.
         """
         return []
-        
+
     def get_postable_recipients(self):
         """
         Return or yield a list of Partners to be 
         used as recipents when creating a posting.Post from this object.
         """
         return []
-        
+
     #~ @classmethod
     #~ def site_setup(self,site):
         #~ pass
-        
+
     @classmethod
-    def on_analyze(self,site):
+    def on_analyze(self, site):
         pass
-        
+
     #~ def lookup_or_create(self,*args,**kwargs):
         #~ from lino.utils.instantiator import lookup_or_create
         #~ lookup_or_create(self,*args,**kwargs)
-        
-        
+
     @classmethod
-    def lookup_or_create(model,lookup_field,value,**known_values):
+    def lookup_or_create(model, lookup_field, value, **known_values):
         """
         Look-up whether there is a model instance having 
         `lookup_field` with value `value`
@@ -385,48 +385,47 @@ class Model(models.Model):
         #~ logger.info("2013011 lookup_or_create")
         fkw = dict()
         fkw.update(known_values)
-            
-        if isinstance(lookup_field,basestring):
+
+        if isinstance(lookup_field, basestring):
             lookup_field = model._meta.get_field(lookup_field)
-        if isinstance(lookup_field,dbutils.BabelCharField):
-            flt  = dbutils.lookup_filter(lookup_field.name,value,**known_values)
+        if isinstance(lookup_field, dbutils.BabelCharField):
+            flt = dbutils.lookup_filter(
+                lookup_field.name, value, **known_values)
         else:
-            if isinstance(lookup_field,models.CharField):
-                fkw[lookup_field.name+'__iexact'] = value
+            if isinstance(lookup_field, models.CharField):
+                fkw[lookup_field.name + '__iexact'] = value
             else:
                 fkw[lookup_field.name] = value
             flt = models.Q(**fkw)
             #~ flt = models.Q(**{self.lookup_field.name: value})
         qs = model.objects.filter(flt)
-        if qs.count() > 0: # if there are multiple objects, return the first
-            if qs.count() > 1: 
+        if qs.count() > 0:  # if there are multiple objects, return the first
+            if qs.count() > 1:
                 logger.warning(
-                  "%d %s instances having %s=%r (I'll return the first).",
-                  qs.count(),model.__name__,lookup_field.name,value)
+                    "%d %s instances having %s=%r (I'll return the first).",
+                    qs.count(), model.__name__, lookup_field.name, value)
             return qs[0]
         #~ known_values[lookup_field.name] = value
         obj = model(**known_values)
-        setattr(obj,lookup_field.name,value)
+        setattr(obj, lookup_field.name, value)
         try:
             obj.full_clean()
-        except ValidationError,e:
-            raise ValidationError("Failed to auto_create %s : %s" % (obj2str(obj),e))
-        signals.auto_create.send(obj,known_values=known_values)
+        except ValidationError, e:
+            raise ValidationError("Failed to auto_create %s : %s" %
+                                  (obj2str(obj), e))
+        signals.auto_create.send(obj, known_values=known_values)
         obj.save()
         return obj
-    
 
-        
-        
     @classmethod
-    def setup_table(cls,t):
+    def setup_table(cls, t):
         """
         Called during site startup once on each Table that 
         uses this model.
         """
         pass
-        
-    def on_duplicate(self,ar,master):
+
+    def on_duplicate(self, ar, master):
         """
         Called by :meth:`lino.mixins.duplicable.Duplicable.duplicate`.
         `ar` is the action request that asked to duplicate.
@@ -434,153 +433,145 @@ class Model(models.Model):
         be a duplicate() on the specifie `master`.
         """
         pass
-        
-    def before_state_change(self,ar,old,new):
+
+    def before_state_change(self, ar, old, new):
         """
         Called before a state change.
         """
         pass
-  
-    def after_state_change(self,ar,old,new):
+
+    def after_state_change(self, ar, old, new):
         """
         Called after a state change.
         """
         ar.response.update(refresh=True)
-        
-    def set_workflow_state(row,ar,state_field,target_state):
-        
+
+    def set_workflow_state(row, ar, state_field, target_state):
+
         watcher = signals.ChangeWatcher(row)
-        
+
         #~ old = row.state
-        old = getattr(row,state_field.attname)
-        
-        target_state.choicelist.before_state_change(row,ar,old,target_state)
-        row.before_state_change(ar,old,target_state)
+        old = getattr(row, state_field.attname)
+
+        target_state.choicelist.before_state_change(row, ar, old, target_state)
+        row.before_state_change(ar, old, target_state)
         #~ row.state = target_state
-        setattr(row,state_field.attname,target_state)
+        setattr(row, state_field.attname, target_state)
         #~ self.before_row_save(row,ar)
         row.save()
-        target_state.choicelist.after_state_change(row,ar,old,target_state)
-        row.after_state_change(ar,old,target_state)
-        
+        target_state.choicelist.after_state_change(row, ar, old, target_state)
+        row.after_state_change(ar, old, target_state)
+
         watcher.send_update(ar.request)
-        
+
         row.after_ui_save(ar)
-        
-        
-        
-    def after_send_mail(self,mail,ar,kw):
+
+    def after_send_mail(self, mail, ar, kw):
         """
         Called when an outbox email controlled by self has been sent
         (i.e. when the :class:`lino.modlib.outbox.models.SendMail` 
         action has successfully completed).
         """
         pass
-  
-    def summary_row(self,ar,**kw):
+
+    def summary_row(self, ar, **kw):
         yield ar.obj2html(self)
-        
-        
+
     def __repr__(self):
         return obj2str(self)
 
-
-    def get_related_project(self,ar):
+    def get_related_project(self, ar):
         if settings.SITE.project_model:
-            if isinstance(self,settings.SITE.project_model):
+            if isinstance(self, settings.SITE.project_model):
                 return self
-        
-    def get_system_note_type(self,ar):
+
+    def get_system_note_type(self, ar):
         return None
-        
-    def get_system_note_recipients(self,ar,silent):
+
+    def get_system_note_recipients(self, ar, silent):
         """
         Called from :meth:`lino.Lino.get_system_note_recipients`.
         """
         return []
-        
 
     @classmethod
-    def add_model_action(self,**kw):
+    def add_model_action(self, **kw):
         """
         Used e.g. by :mod:`lino.modlib.cal` to add the `UpdateReminders` action 
         to :class: `lino.modlib.users.models.User`.
         """
-        for k,v in kw.items():
-            if hasattr(self,k):
-                raise Exception("add_model_action tried to override '%s' in %s" 
-                    % (k,self))
-            setattr(self,k,v)
+        for k, v in kw.items():
+            if hasattr(self, k):
+                raise Exception("add_model_action tried to override '%s' in %s"
+                                % (k, self))
+            setattr(self, k, v)
         #~ self._custom_actions = dict(self._custom_actions)
         #~ self._custom_actions.update(kw)
-        
+
     #~ @classmethod
     #~ def get_model_actions(self,table):
         #~ """
-        #~ Called once for each :class:`lino.core.dbtables.Table` on this model. 
+        #~ Called once for each :class:`lino.core.dbtables.Table` on this model.
         #~ Yield a list of (name,action) tuples to install on the table.
         #~ """
-            
+
         #~ if full_model_name(self) in settings.SITE.mergeable_models:
             #~ yield ( 'merge_row', MergeAction(self) )
-            
-    def to_html(self,**kw):
-        import lino.ui.urls # hack: trigger ui instantiation
+
+    def to_html(self, **kw):
+        import lino.ui.urls  # hack: trigger ui instantiation
         actor = self.get_default_table()
         kw.update(renderer=settings.SITE.ui.text_renderer)
         #~ ar = settings.SITE.ui.text_renderer.request(**kw)
         ar = actor.request(**kw)
         return self.preview(ar)
         #~ username = kw.pop('username',None)
-            
 
-    def get_typed_instance(self,model):
+    def get_typed_instance(self, model):
         """
         Used when implementing :ref:`polymorphism`.
         """
         #~ assert model is self.__class__
         return self
-        
-        
+
     LINO_MODEL_ATTRIBS = (
-              #~ 'as_pdf',
-              'get_row_permission',
-              'get_data_elem',
-              'after_ui_save',
-              #~ 'update_system_note',
-              'preferred_foreignkey_width',
-              'before_ui_save',
-              'allow_cascaded_delete',
-              'workflow_state_field',
-              'workflow_owner_field',
-              'disabled_fields',
-              'get_choices_text',
-              'summary_row',
-              #~ 'get_model_actions',
-              #~ '_custom_actions',
-              'hidden_columns',
-              'hidden_elements',
-              'get_default_table',
-              'get_related_project',
-              'get_system_note_recipients',
-              'get_system_note_type',
-              'quick_search_fields',
-              #~ 'help_text',
-              'change_watcher_spec',
-              #~ 'site_setup',
-              'on_analyze',
-              'disable_delete',
-              'lookup_or_create',
-              'on_duplicate',
-              'on_create',
-              'get_typed_instance',
-              'print_subclasses_graph')
+        #~ 'as_pdf',
+        'get_row_permission',
+        'get_data_elem',
+        'after_ui_save',
+        #~ 'update_system_note',
+        'preferred_foreignkey_width',
+        'before_ui_save',
+        'allow_cascaded_delete',
+        'workflow_state_field',
+        'workflow_owner_field',
+        'disabled_fields',
+        'get_choices_text',
+        'summary_row',
+        #~ 'get_model_actions',
+        #~ '_custom_actions',
+        'hidden_columns',
+        'hidden_elements',
+        'get_default_table',
+        'get_related_project',
+        'get_system_note_recipients',
+        'get_system_note_type',
+        'quick_search_fields',
+        #~ 'help_text',
+        'change_watcher_spec',
+        #~ 'site_setup',
+        'on_analyze',
+        'disable_delete',
+        'lookup_or_create',
+        'on_duplicate',
+        'on_create',
+        'get_typed_instance',
+        'print_subclasses_graph')
     """
     A list of the attributes to be copied to Django models which do not inherit from 
     :class:`lino.core.model.Model`.
     Used by :mod:`lino.core.kernel`
     """
-    
 
     @classmethod
     def print_subclasses_graph(self):
@@ -593,7 +584,7 @@ class Model(models.Model):
         """
         from lino import dd
         pairs = []
-        
+
         def collect(m):
             for c in dd.models_by_base(m):
                 #~ if c is not m and (m in c.__bases__):
@@ -605,7 +596,8 @@ class Model(models.Model):
                         #~ if cb in m.mro():
                             #~ ok = False
                     if ok:
-                        pairs.append((m._meta.verbose_name,c._meta.verbose_name))
+                        pairs.append(
+                            (m._meta.verbose_name, c._meta.verbose_name))
                     collect(c)
         collect(self)
         s = '\n'.join(['    "%s" -> "%s"' % x for x in pairs])

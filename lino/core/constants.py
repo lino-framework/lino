@@ -1,15 +1,15 @@
-## Copyright 2009-2013 Luc Saffre
-## This file is part of the Lino project.
-## Lino is free software; you can redistribute it and/or modify 
-## it under the terms of the GNU General Public License as published by
-## the Free Software Foundation; either version 3 of the License, or
-## (at your option) any later version.
-## Lino is distributed in the hope that it will be useful, 
-## but WITHOUT ANY WARRANTY; without even the implied warranty of
-## MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the 
-## GNU General Public License for more details.
-## You should have received a copy of the GNU General Public License
-## along with Lino; if not, see <http://www.gnu.org/licenses/>.
+# Copyright 2009-2013 Luc Saffre
+# This file is part of the Lino project.
+# Lino is free software; you can redistribute it and/or modify
+# it under the terms of the GNU General Public License as published by
+# the Free Software Foundation; either version 3 of the License, or
+# (at your option) any later version.
+# Lino is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+# GNU General Public License for more details.
+# You should have received a copy of the GNU General Public License
+# along with Lino; if not, see <http://www.gnu.org/licenses/>.
 
 #~ from django.db import models
 #~ from django.http import HttpResponse, Http404
@@ -93,26 +93,26 @@ URL_PARAM_SHOW_PARAMS_PANEL = 'sp'
 URL_PARAM_SELECTED = 'sr'
 
 URL_PARAMS = [
-  'URL_PARAM_ACTION_NAME',
-  'URL_PARAM_FORMAT',
-  'URL_PARAM_MASTER_TYPE',
-  'URL_PARAM_MASTER_PK',
-  'URL_PARAM_GRIDFILTER',
-  'URL_PARAM_FILTER',
-  'URL_PARAM_SORT',
-  'URL_PARAM_SORTDIR',
-  'URL_PARAM_START',
-  'URL_PARAM_LIMIT',
-  'URL_PARAM_TAB',
-  'URL_PARAM_REQUESTING_PANEL',
-  'URL_PARAM_SHOW_PARAMS_PANEL',
-  #~ 'URL_PARAM_EXPAND',
-  #~ 'URL_PARAM_EUSER',
-  'URL_PARAM_SUBST_USER',
-  'URL_PARAM_USER_LANGUAGE',
-  'URL_PARAM_ACTION_STEP',
-  'URL_PARAM_SELECTED',
-  #~ 'TEST',
+    'URL_PARAM_ACTION_NAME',
+    'URL_PARAM_FORMAT',
+    'URL_PARAM_MASTER_TYPE',
+    'URL_PARAM_MASTER_PK',
+    'URL_PARAM_GRIDFILTER',
+    'URL_PARAM_FILTER',
+    'URL_PARAM_SORT',
+    'URL_PARAM_SORTDIR',
+    'URL_PARAM_START',
+    'URL_PARAM_LIMIT',
+    'URL_PARAM_TAB',
+    'URL_PARAM_REQUESTING_PANEL',
+    'URL_PARAM_SHOW_PARAMS_PANEL',
+    #~ 'URL_PARAM_EXPAND',
+    #~ 'URL_PARAM_EUSER',
+    'URL_PARAM_SUBST_USER',
+    'URL_PARAM_USER_LANGUAGE',
+    'URL_PARAM_ACTION_STEP',
+    'URL_PARAM_SELECTED',
+    #~ 'TEST',
 ]
 
 #~ URL_PARAM_CHOICES_PK = "ck"
@@ -131,9 +131,10 @@ URL_FORMAT_HTML = 'html'
 #~ URL_FORMAT_PLAIN = 'plain'
 URL_FORMAT_CSV = 'csv'
 
+
 def dict2kw(d):
     newd = {}
-    for k,v in d.items():
+    for k, v in d.items():
         newd[str(k)] = v
     return newd
 
@@ -142,12 +143,12 @@ def authenticated_user(user):
     #~ if user.is_anonymous():
         #~ return None
     return user
-        
+
 
 def parse_boolean(v):
-    if v in ('true','on',True):
+    if v in ('true', 'on', True):
         return True
-    if v in ('false','off',False):
+    if v in ('false', 'off', False):
         return False
     #~ raise Exception("Invalid boolean value %r for field %s" % (v,self.name))
     raise Exception("Invalid boolean value %r" % v)

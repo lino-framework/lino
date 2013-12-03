@@ -1,16 +1,16 @@
 # -*- coding: UTF-8 -*-
-## Copyright 2012 Luc Saffre
-## This file is part of the Lino project.
-## Lino is free software; you can redistribute it and/or modify 
-## it under the terms of the GNU General Public License as published by
-## the Free Software Foundation; either version 3 of the License, or
-## (at your option) any later version.
-## Lino is distributed in the hope that it will be useful, 
-## but WITHOUT ANY WARRANTY; without even the implied warranty of
-## MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the 
-## GNU General Public License for more details.
-## You should have received a copy of the GNU General Public License
-## along with Lino; if not, see <http://www.gnu.org/licenses/>.
+# Copyright 2012 Luc Saffre
+# This file is part of the Lino project.
+# Lino is free software; you can redistribute it and/or modify
+# it under the terms of the GNU General Public License as published by
+# the Free Software Foundation; either version 3 of the License, or
+# (at your option) any later version.
+# Lino is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+# GNU General Public License for more details.
+# You should have received a copy of the GNU General Public License
+# along with Lino; if not, see <http://www.gnu.org/licenses/>.
 
 """
 code changes must be documented in *one central place 
@@ -27,53 +27,53 @@ from lino import dd
 blogs = dd.resolve_app('blogs')
 tickets = dd.resolve_app('tickets')
 
+
 class Blogger(object):
-    def __init__(self,user=None):
+
+    def __init__(self, user=None):
         self.objects_list = []
         self.date = None
         self.user = user
         self.current_project = None
-        
-    def set_date(self,d):
+
+    def set_date(self, d):
         self.date = i2d(d)
-        
-    def set_project(self,project):
+
+    def set_project(self, project):
         self.current_project = project
-        
-    def set_user(self,username):
+
+    def set_user(self, username):
         self.user = settings.SITE.user_model.objects.get(username=username)
-    
-    def add_object(self,obj): 
+
+    def add_object(self, obj):
         self.objects_list.append(obj)
         return obj
-        
-    def project(self,ref,title,body,raw_html=False,**kw): 
+
+    def project(self, ref, title, body, raw_html=False, **kw):
         if not raw_html:
             body = restify(doc2rst(body))
         kw.update(ref=ref)
         kw.update(description=body)
         kw.update(name=title)
         if self.project:
-            kw.setdefault('parent',self.current_project)
+            kw.setdefault('parent', self.current_project)
         return self.add_object(tickets.Project(**kw))
 
-
-    def milestone(self,ref,date,body=None,raw_html=False,**kw):
+    def milestone(self, ref, date, body=None, raw_html=False, **kw):
         if not raw_html:
             body = restify(doc2rst(body))
         kw.update(ref=ref)
         #~ kw.update(checkin=checkin)
         #~ kw.update(description=body)
         if self.project:
-            kw.setdefault('project',self.current_project)
+            kw.setdefault('project', self.current_project)
         return self.add_object(tickets.Milestone(**kw))
-        
-        
-    #~ def change(self,time,title,body,module=None,tags=None,issue=None,raw_html=False): 
-    def entry(self,ticket,time,title,body,raw_html=False,**kw): 
-        if isinstance(time,(basestring,int)):
+
+    #~ def change(self,time,title,body,module=None,tags=None,issue=None,raw_html=False):
+    def entry(self, ticket, time, title, body, raw_html=False, **kw):
+        if isinstance(time, (basestring, int)):
             time = i2t(time)
-        kw.update(created=datetime.datetime.combine(self.date,time))
+        kw.update(created=datetime.datetime.combine(self.date, time))
         if not raw_html:
             body = restify(doc2rst(body))
         kw.update(user=self.user)
@@ -81,18 +81,18 @@ class Blogger(object):
         kw.update(title=title)
         kw.update(ticket=ticket)
         return self.add_object(blogs.Entry(**kw))
-        
-    def follow(self,prev,time,body,raw_html=False,**kw):
+
+    def follow(self, prev, time, body, raw_html=False, **kw):
         return self.entry(
-            prev.ticket,time,prev.title+" (continued)",body,
-            raw_html=raw_html,**kw)
-        
-    def ticket(self,project_ref,title,body,raw_html=False,**kw): 
+            prev.ticket, time, prev.title + " (continued)", body,
+            raw_html=raw_html, **kw)
+
+    def ticket(self, project_ref, title, body, raw_html=False, **kw):
         if not raw_html:
             body = restify(doc2rst(body))
         kw.update(description=body)
         kw.update(summary=title)
-        project=tickets.Project.get_by_ref(project_ref)
+        project = tickets.Project.get_by_ref(project_ref)
         #~ try:
             #~ project=tickets.Project.objects.get(ref=project_ref)
         #~ except tickets.Project.DoesNotExist,e:
@@ -100,10 +100,9 @@ class Blogger(object):
         kw.update(project=project)
         #~ kw.update(project=tickets.Project.objects.get(ref=project_ref))
         return self.add_object(tickets.Ticket(**kw))
-  
-        
+
     def flush(self):
-        for o in self.objects_list: 
+        for o in self.objects_list:
             yield o
         self.objects_list = []
 
@@ -113,21 +112,21 @@ class Blogger(object):
 #~ class Entry(object):
     #~ raw_html = False
     #~ def __init__(self,date,title,body,module=None,tags=None,issue=None):
-    #~ # def __init__(self,module,date,tags,body):
+    # ~ # def __init__(self,module,date,tags,body):
         #~ self.title = title
         #~ self.date = i2d(date)
         #~ self.tags = tags
         #~ self.body = restify(doc2rst(body))
         #~ self.module = module
         #~ self.issue = issue
-        
+
     #~ def __unicode__(self):
         #~ return "(%s %s) : [%s] %s" % (self.date,self.title,self.tags,self.body)
 
 #~ class CodeChange(Entry): pass
 #~ class Issue(Entry): pass
 
-    
+
 #~ def build_blog_entries(**kw):
     #~ from lino.modlib.blog import models import Entry
     #~ global ENTRIES_LIST
@@ -136,6 +135,6 @@ class Blogger(object):
             #~ body = restify(doc2rst(e.body))
         #~ yield blogs.Entry(created=e.date,title=e.title,e.body,**kw)
     #~ ENTRIES_LIST = []
-    
-    
-#~ blogger = Blogger()    
+
+
+#~ blogger = Blogger()

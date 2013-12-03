@@ -6,6 +6,6 @@ DATABASES = {
         'NAME': ':memory:'
     }
 }
-        
+
 
 SECRET_KEY = "123"

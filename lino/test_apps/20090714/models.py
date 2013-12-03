@@ -38,19 +38,25 @@ Which should output::
 
 from django.db import models
 
+
 class A(models.Model):
     a = models.CharField(max_length=100)
+
     class Meta:
         abstract = True
 
-class B(A): 
+
+class B(A):
     b = models.CharField(max_length=100)
+
+
 class C(A):
     c = models.CharField(max_length=100)
-  
-class D(B): 
+
+
+class D(B):
     dd = models.CharField(max_length=100)
-class E(B,C): 
+
+
+class E(B, C):
     ee = models.CharField(max_length=100)
-
-

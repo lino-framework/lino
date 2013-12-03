@@ -1,15 +1,16 @@
-SETUP_INFO = dict(name = 'lino',
-  version = '1.6.13', # released 20131007(?)
-  install_requires = ['North','djangosite','odfpy','jinja2','appy','pytidylib','PyYAML'],
-  description = "A framework for writing desktop-like web applications using Django and ExtJS",
-  license = 'GPL',
-  include_package_data = True,
-  zip_safe = False,
-  author = 'Luc Saffre',
-  author_email = 'luc.saffre@gmail.com',
-  url = "http://www.lino-framework.org",
-  #~ test_suite = 'lino.test_apps',
-  test_suite = 'tests',
+SETUP_INFO = dict(name='lino',
+                  version='1.6.13',  # released 20131007(?)
+                  install_requires=['North', 'djangosite', 'odfpy',
+                                    'jinja2', 'appy', 'pytidylib', 'PyYAML'],
+                  description="A framework for writing desktop-like web applications using Django and ExtJS",
+                  license='GPL',
+                  include_package_data=True,
+                  zip_safe=False,
+                  author='Luc Saffre',
+                  author_email='luc.saffre@gmail.com',
+                  url="http://www.lino-framework.org",
+                  #~ test_suite = 'lino.test_apps',
+                  test_suite='tests',
   classifiers="""\
   Programming Language :: Python
   Programming Language :: Python :: 2
@@ -28,7 +29,7 @@ SETUP_INFO = dict(name = 'lino',
   Topic :: Office/Business
   Topic :: Software Development :: Libraries :: Application Frameworks""".splitlines())
 
-SETUP_INFO.update(long_description = """\
+SETUP_INFO.update(long_description="""\
 Lino is a high-level framework for writing desktop-like customized 
 database applications based on `Django <https://www.djangoproject.com/>`_
 and `Sencha ExtJS <http://www.sencha.com/products/extjs/>`_.
@@ -51,11 +52,13 @@ and
   
 """)
 
-SETUP_INFO.update(packages = [str(n) for n in """
+SETUP_INFO.update(packages=[str(n) for n in """
 lino
 lino.core
 lino.examples
 lino.examples.docs
+lino.examples.start
+lino.examples.start.settings
 lino.extjs
 lino.history
 lino.modlib
@@ -186,8 +189,8 @@ lino.projects.std
 lino.projects.babel_tutorial
 lino.projects.babel_tutorial.fixtures
 """.splitlines() if n])
-  
-SETUP_INFO.update(message_extractors = {
+
+SETUP_INFO.update(message_extractors={
     'lino': [
         ('**/sandbox/**',        'ignore', None),
         ('**/cache/**',          'ignore', None),
@@ -196,22 +199,24 @@ SETUP_INFO.update(message_extractors = {
         #~ ('**.js',                'javascript', None),
         ('**/config/**.html', 'jinja2', None),
         #~ ('**/templates/**.txt',  'genshi', {
-            #~ 'template_class': 'genshi.template:TextTemplate'
+        #~ 'template_class': 'genshi.template:TextTemplate'
         #~ })
     ],
 })
 
 SETUP_INFO.update(package_data=dict())
-def add_package_data(package,*patterns):
-    l = SETUP_INFO['package_data'].setdefault(package,[])
+
+
+def add_package_data(package, *patterns):
+    l = SETUP_INFO['package_data'].setdefault(package, [])
     l.extend(patterns)
     return l
 
-add_package_data('lino','config/*.odt')
-add_package_data('lino.modlib.cal','config/*.odt')
-add_package_data('lino.modlib.notes','config/notes/Note/*.odt')
-add_package_data('lino.modlib.outbox','config/outbox/Mail/*.odt')
-add_package_data('lino.modlib.languages.fixtures','*.tab')
+add_package_data('lino', 'config/*.odt')
+add_package_data('lino.modlib.cal', 'config/*.odt')
+add_package_data('lino.modlib.notes', 'config/notes/Note/*.odt')
+add_package_data('lino.modlib.outbox', 'config/outbox/Mail/*.odt')
+add_package_data('lino.modlib.languages.fixtures', '*.tab')
 
 l = add_package_data('lino')
 for lng in 'de fr et nl'.split():

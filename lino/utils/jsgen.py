@@ -1,16 +1,16 @@
 # -*- coding: UTF-8 -*-
-## Copyright 2009-2013 Luc Saffre
-## This file is part of the Lino project.
-## Lino is free software; you can redistribute it and/or modify 
-## it under the terms of the GNU General Public License as published by
-## the Free Software Foundation; either version 3 of the License, or
-## (at your option) any later version.
-## Lino is distributed in the hope that it will be useful, 
-## but WITHOUT ANY WARRANTY; without even the implied warranty of
-## MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the 
-## GNU General Public License for more details.
-## You should have received a copy of the GNU General Public License
-## along with Lino; if not, see <http://www.gnu.org/licenses/>.
+# Copyright 2009-2013 Luc Saffre
+# This file is part of the Lino project.
+# Lino is free software; you can redistribute it and/or modify
+# it under the terms of the GNU General Public License as published by
+# the Free Software Foundation; either version 3 of the License, or
+# (at your option) any later version.
+# Lino is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+# GNU General Public License for more details.
+# You should have received a copy of the GNU General Public License
+# along with Lino; if not, see <http://www.gnu.org/licenses/>.
 
 r"""
 
@@ -84,8 +84,7 @@ logger = logging.getLogger(__name__)
 import types
 import datetime
 import decimal
-import fractions 
-
+import fractions
 
 
 #~ from django.core.serializers.json import DjangoJSONEncoder
@@ -106,61 +105,65 @@ from lino.utils.xmlgen import etree
 from lino.utils import curry
 
 
-
 def dict2js(d):
-    return ", ".join(["%s: %s" % (k,py2js(v)) for k,v in d.items()])
+    return ", ".join(["%s: %s" % (k, py2js(v)) for k, v in d.items()])
 
 CONVERTERS = []
 
+
 def register_converter(func):
     CONVERTERS.append(func)
-    
-_for_user_profile = None    
+
+_for_user_profile = None
+
 
 def set_for_user_profile(up):
     global _for_user_profile
     _for_user_profile = up
-    
-    
-    
+
+
 def key2js(s):
-    if isinstance(s,str):
+    if isinstance(s, str):
         return s
-    return json.dumps(s) # ,cls=DjangoJSONEncoder)
-    
+    return json.dumps(s)  # ,cls=DjangoJSONEncoder)
+
+
 def id2js(s):
-    return s.replace('.','_')
-  
+    return s.replace('.', '_')
+
+
 class js_code:
+
     "A string that py2js will represent as is, not between quotes."
-    def __init__(self,s):
+
+    def __init__(self, s):
         self.s = s
     #~ def __repr__(self):
         #~ return self.s
-  
-def js_line(s,*args): return js_code(s+'\n',*args)
+
+
+def js_line(s, *args):
+    return js_code(s + '\n', *args)
 
 DECLARE_INLINE = 0
 DECLARE_VAR = 1
 DECLARE_THIS = 2
 
 
-
-
 class Value(object):
-  
+
     declare_type = DECLARE_INLINE
     value_template = "%s"
-    
-    def __init__(self,value):
+
+    def __init__(self, value):
         self.value = value
-        
+
     def js_declare(self):
         return []
-    
+
     def subvars(self):
         return []
-            
+
     #~ def js_before_body(self):
         #~ for v in self.subvars():
             #~ for ln in v.js_before_body():
@@ -169,49 +172,51 @@ class Value(object):
         for v in self.subvars():
             for ln in v.js_body():
                 yield ln
-                
+
     #~ def js_after_body(self):
         #~ for v in self.subvars():
             #~ for ln in v.js_after_body():
                 #~ yield ln
-        
+
     def as_ext(self):
         return self.value_template % py2js(self.value)
-        
-        
+
+
 VARIABLE_COUNTER = 0
-        
+
+
 class Variable(Value):
     declare_type = DECLARE_INLINE
     ext_suffix = ''
     name = None
     ext_name = None
-    
-    def __init__(self,name,value):
-      
+
+    def __init__(self, name, value):
+
         global VARIABLE_COUNTER
         VARIABLE_COUNTER += 1
         if name is None:
-            self.ext_name = "var%s%d" % (self.ext_suffix,VARIABLE_COUNTER)
+            self.ext_name = "var%s%d" % (self.ext_suffix, VARIABLE_COUNTER)
         else:
-            self.ext_name = "%s%s%d" % (id2js(name),self.ext_suffix,VARIABLE_COUNTER)
-        Value.__init__(self,value)
+            self.ext_name = "%s%s%d" % (
+                id2js(name), self.ext_suffix, VARIABLE_COUNTER)
+        Value.__init__(self, value)
         #~ assert self.declare_type != DECLARE_INLINE
-        
+
         self.name = name
         #~ if name is None:
             #~ assert self.declare_type == DECLARE_INLINE
-            #~ #self.name = "unnamed %s" % self.__class__.__name__
+            # ~ #self.name = "unnamed %s" % self.__class__.__name__
         #~ else:
             #~ self.name = name
             #~ self.ext_name = id2js(name) + self.ext_suffix
         #~ self.ext_name = id2js(name) + self.ext_suffix
-        
+
     def __str__(self):
         #~ if self.ext_name is None: raise Exception("20120920"+str(self.name))
         #~ assert self.ext_name is not None
         return self.ext_name
-        
+
     def js_declare(self):
         yield "// begin js_declare %s" % self
         yield "// declare subvars of %s" % self
@@ -223,15 +228,14 @@ class Variable(Value):
         if self.declare_type == DECLARE_INLINE:
             pass
         elif self.declare_type == DECLARE_VAR:
-            yield "var %s = %s;" % (self.ext_name,value)
+            yield "var %s = %s;" % (self.ext_name, value)
         elif self.declare_type == DECLARE_THIS:
-            yield "this.%s = %s;" % (self.ext_name,value)
+            yield "this.%s = %s;" % (self.ext_name, value)
         yield "// end js_declare %s" % self
-            
+
     #~ def js_column_lines(self):
         #~ return []
-        
-                
+
     def as_ext(self):
         if self.declare_type == DECLARE_INLINE:
             return self.js_value()
@@ -241,74 +245,67 @@ class Variable(Value):
 
     def js_value(self):
         return self.value_template % py2js(self.value)
-        
-class Component(Variable): 
+
+
+class Component(Variable):
+
     """
     A Component is a Variable whose value is a dict of otpions.
     Deserves more documentation.
     """
-    
-    def __init__(self,name=None,**options):
+
+    def __init__(self, name=None, **options):
         # note that we remove the "**" from options ;-)
-        Variable.__init__(self,name,options)
-    
+        Variable.__init__(self, name, options)
+
     def js_value(self):
         value = self.ext_options()
         #~ value = self.ext_options(**self.value)
         return self.value_template % py2js(value)
-        
-    def ext_options(self,**kw):
+
+    def ext_options(self, **kw):
         kw.update(self.value)
         return kw
-        
-    def update(self,**kw):
+
+    def update(self, **kw):
         self.value.update(**kw)
-        
-    def remove(self,*keys):
+
+    def remove(self, *keys):
         for k in keys:
             if self.value.has_key(k):
                 del self.value[k]
-        
+
     def walk(self):
         items = self.value['items']
-        if not isinstance(items,(list,tuple)):
+        if not isinstance(items, (list, tuple)):
             items = [items]
         for i in items:
             for e in i.walk():
                 yield e
-      
-
 
 
 #~ class Function(Variable):
-  
     #~ def __init__(self,name=None):
         #~ Variable.__init__(self,name,None)
-        
     #~ def js_value(self):
         #~ for ln in self.js_render():
             #~ yield ln
-        
-    
-      
 #~ class Object(Function):
     #~ def __init__(self,name,params='this'):
         #~ assert isinstance(params,basestring)
         #~ self.params = params
         #~ Function.__init__(self,name)
-        
     #~ def js_value(self):
-        #~ yield "new " 
+        #~ yield "new "
         #~ for ln in self.js_render():
             #~ yield "  " + ln
         #~ yield "(" + self.params + ")"
-    
-
 from django.db.models.fields import NOT_PROVIDED
 
 from lino.core.actions import Permittable
 
-class VisibleComponent(Component,Permittable):
+
+class VisibleComponent(Component, Permittable):
     vflex = False
     hflex = True
     width = None
@@ -316,13 +313,13 @@ class VisibleComponent(Component,Permittable):
     preferred_width = 10
     preferred_height = 1
     #flex = None
-    
-    def __init__(self,name,**kw):
-        Component.__init__(self,name)
+
+    def __init__(self, name, **kw):
+        Component.__init__(self, name)
         # install `allow_read` permission handler:
         self.setup(**kw)
-        #~ Permittable.__init__(self,False) # name.startswith('cbss'))
-        
+        # ~ Permittable.__init__(self,False) # name.startswith('cbss'))
+
         #~ def __init__(self,debug_permissions):
         #~ if type(debug_permissions) != bool:
             #~ raise Exception("20120925 %s %r",self,self)
@@ -332,29 +329,29 @@ class VisibleComponent(Component,Permittable):
                 #~ debug_permissions),self)
         #~ else:
         self.install_permission_handler()
-        
+
     def install_permission_handler(self):
-        
+
         from lino.core.perms import make_view_permission_handler
-        
-        #~ if self.name == 'newcomers_left': # required.has_key('user_groups'):
+
+        # ~ if self.name == 'newcomers_left': # required.has_key('user_groups'):
             #~ logger.info("20121130 install_permission_handler() %s %s",self,self.required)
             #~ if self.required.get('user_groups') ==  'integ':
                 #~ raise Exception("20121130")
         self.allow_read = curry(make_view_permission_handler(
-            self,True,
+            self, True,
             self.debug_permissions,
-            **self.required),self)
-            
-    def get_view_permission(self,profile):
-        #~ if self.name == 'newcomers_left': # required.has_key('user_groups'):
+            **self.required), self)
+
+    def get_view_permission(self, profile):
+        # ~ if self.name == 'newcomers_left': # required.has_key('user_groups'):
             #~ logger.info("20121130 get_view_permission() %s %s",self,self.required)
         return self.allow_read(profile)
-        
-    def setup(self,width=None,height=None,label=None,
-        preferred_width=None,
-        required=NOT_PROVIDED,
-        **kw):
+
+    def setup(self, width=None, height=None, label=None,
+              preferred_width=None,
+              required=NOT_PROVIDED,
+              **kw):
         self.value.update(kw)
         #~ Component.__init__(self,name,**kw)
         if preferred_width is not None:
@@ -367,9 +364,8 @@ class VisibleComponent(Component,Permittable):
             self.label = label
         if required is not NOT_PROVIDED:
             self.required = required
-            #~ if self.name == 'newcomers_left': # required.has_key('user_groups'):
+            # ~ if self.name == 'newcomers_left': # required.has_key('user_groups'):
                 #~ logger.info("20121130 setup() %s %s",self,self.required)
-    
 
     def __str__(self):
         "This shows how elements are specified"
@@ -378,18 +374,17 @@ class VisibleComponent(Component,Permittable):
             return name
         if self.height is None:
             return name + ":%d" % self.width
-        return name + ":%dx%d" % (self.width,self.height)
-        
+        return name + ":%dx%d" % (self.width, self.height)
+
     def unused__repr__(self):
         return str(self)
-        
-    def pprint(self,level=0):
+
+    def pprint(self, level=0):
         return ("  " * level) + str(self)
-        
+
     def walk(self):
         yield self
-        
-        
+
     def debug_lines(self):
         sep = u"</td><td>"
         cols = """ext_name name parent label __class__.__name__ 
@@ -398,10 +393,7 @@ class VisibleComponent(Component,Permittable):
         preferred_height vflex""".split()
         yield '<tr><td>' + sep.join(cols) + '</td></tr>'
         for e in self.walk():
-            yield '<tr><td>'+sep.join([py2html(e,n) for n in cols]) +'</td></tr>'
-            
-        
-
+            yield '<tr><td>' + sep.join([py2html(e, n) for n in cols]) + '</td></tr>'
 
 
 def declare_vars(v):
@@ -411,36 +403,36 @@ def declare_vars(v):
     other variables, recursively yields also the lines to declare these.
     """
     #~ assert _for_user_profile is not None
-    if isinstance(v,(list,tuple)): 
+    if isinstance(v, (list, tuple)):
         for sub in v:
             for ln in declare_vars(sub):
                 yield ln
         return
-    if isinstance(v,dict): 
+    if isinstance(v, dict):
         for sub in v.values():
             for ln in declare_vars(sub):
                 yield ln
         return
-    if isinstance(v,VisibleComponent) and not v.get_view_permission(_for_user_profile): 
+    if isinstance(v, VisibleComponent) and not v.get_view_permission(_for_user_profile):
         return
-    if isinstance(v,Component): 
+    if isinstance(v, Component):
         for sub in v.ext_options().values():
             for ln in declare_vars(sub):
                 yield ln
         # DON'T return
-    elif isinstance(v,Value): 
+    elif isinstance(v, Value):
         #~ 20120616 if not v.get_view_permission(_for_user_profile): return
         #~ ok = True
         for ln in declare_vars(v.value):
             yield ln
         # DON'T return
-        
-    if isinstance(v,Variable):
+
+    if isinstance(v, Variable):
         #~ 20120616 if not v.get_view_permission(_for_user_profile): return
         if v.declare_type == DECLARE_VAR:
-            yield "var %s = %s;" % (v.ext_name,v.js_value()) 
+            yield "var %s = %s;" % (v.ext_name, v.js_value())
         elif v.declare_type == DECLARE_THIS:
-            yield "this.%s = %s;" % (v.ext_name,v.js_value())
+            yield "this.%s = %s;" % (v.ext_name, v.js_value())
 
 
 #~ from north import LanguageInfo
@@ -453,26 +445,26 @@ def py2js(v):
     #~ logger.debug("py2js(%r)",v)
     for cv in CONVERTERS:
         v = cv(v)
-        
+
     #~ if isinstance(v,LanguageInfo):
         #~ return v.django_code
-        
-    if isinstance(v,Value):
+
+    if isinstance(v, Value):
         return v.as_ext()
         #~ v = v.as_ext()
         #~ if not isinstance(v, basestring):
             #~ raise Exception("20120121b %r is of type %s" % (v,type(v)))
         #~ return v
-    if isinstance(v,Promise):
+    if isinstance(v, Promise):
         #~ v = force_unicode(v)
         return json.dumps(force_unicode(v))
-        
-    if isinstance(v,types.GeneratorType): 
+
+    if isinstance(v, types.GeneratorType):
         return "".join([py2js(x) for x in v])
-    if etree.iselement(v): 
-    #~ if isinstance(v,etree.Element): 
+    if etree.iselement(v):
+    #~ if isinstance(v,etree.Element):
         return json.dumps(etree.tostring(v))
-        
+
     #~ if type(v) is types.GeneratorType:
         #~ raise Exception("Please don't call the generator function yourself")
         #~ return "\n".join([ln for ln in v])
@@ -480,30 +472,30 @@ def py2js(v):
         #~ print 20120114, repr(v)
         #~ raise Exception("Please call the function yourself")
         return "\n".join([ln for ln in v()])
-    if isinstance(v,js_code):
-        return str(v.s) # v.s might be a unicode
+    if isinstance(v, js_code):
+        return str(v.s)  # v.s might be a unicode
     if v is None:
         #~ return 'undefined'
         return 'null'
-    if isinstance(v,(list,tuple)): # (types.ListType, types.TupleType):
+    if isinstance(v, (list, tuple)):  # (types.ListType, types.TupleType):
         #~ return "[ %s ]" % ", ".join([py2js(x) for x in v])
-        elems = [py2js(x) for x in v 
-            if (not isinstance(x,VisibleComponent)) or x.get_view_permission(_for_user_profile)]
+        elems = [py2js(x) for x in v
+                 if (not isinstance(x, VisibleComponent)) or x.get_view_permission(_for_user_profile)]
         return "[ %s ]" % ", ".join(elems)
-    if isinstance(v,dict): # ) is types.DictType:
+    if isinstance(v, dict):  # ) is types.DictType:
         #~ print 20100226, repr(v)
         return "{ %s }" % ", ".join([
-            "%s: %s" % (py2js(k),py2js(v)) for k,v in v.items()
-              if (not isinstance(v,VisibleComponent)) or v.get_view_permission(_for_user_profile)
-              ])
+            "%s: %s" % (py2js(k), py2js(v)) for k, v in v.items()
+            if (not isinstance(v, VisibleComponent)) or v.get_view_permission(_for_user_profile)
+        ])
             #~ "%s: %s" % (k,py2js(v)) for k,v in v.items()])
-    if isinstance(v,bool): # types.BooleanType:
+    if isinstance(v, bool):  # types.BooleanType:
         return str(v).lower()
     #~ if isinstance(v,CRL):
         #~ return str(v)
     if isinstance(v, Quantity):
         return '"%s"' % v
-    if isinstance(v, (int, long, decimal.Decimal,fractions.Fraction)):
+    if isinstance(v, (int, long, decimal.Decimal, fractions.Fraction)):
         return str(v)
     if isinstance(v, IncompleteDate):
         return '"%s"' % v.strftime(settings.SITE.date_format_strftime)
@@ -525,14 +517,14 @@ def py2js(v):
 
     if isinstance(v, float):
         return repr(v)
-    #return json.encoder.encode_basestring(v)
-    #print repr(v)
+    # return json.encoder.encode_basestring(v)
+    # print repr(v)
     # http://docs.djangoproject.com/en/dev/topics/serialization/
     #~ if not isinstance(v, (str,unicode)):
         #~ raise Exception("20120121 %r is of type %s" % (v,type(v)))
     return json.dumps(v)
-    #~ return json.dumps(v,cls=DjangoJSONEncoder) # http://code.djangoproject.com/ticket/3324
-    
+    # ~ return json.dumps(v,cls=DjangoJSONEncoder) # http://code.djangoproject.com/ticket/3324
+
 
 """
 The following works only for Python 2.6 and above, which is not available on Lenny.
@@ -580,13 +572,9 @@ def py2js(v,**kw):
 """
 
 
-      
-      
 def _test():
     import doctest
     doctest.testmod()
 
 if __name__ == "__main__":
     _test()
-
-

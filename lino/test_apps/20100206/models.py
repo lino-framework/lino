@@ -43,9 +43,11 @@ The line `print o.fk_field` should output `None`, like it does for other field t
 """
 
 from django.db import models
-   
+
+
 class Journal(models.Model):
     pass
+
 
 class Order(models.Model):
     date_field = models.DateField()
@@ -53,4 +55,3 @@ class Order(models.Model):
     int_field = models.IntegerField()
     decimal_field = models.IntegerField()
     fk_field = models.ForeignKey(Journal)
-

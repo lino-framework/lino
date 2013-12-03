@@ -27,6 +27,7 @@ from lino.utils import i2d
 from north import dbutils
 from djangosite.utils.djangotest import TestCase
 
+
 class DemoTest(TestCase):
     #~ fixtures = [ 'std','demo' ]
     fixtures = settings.SITE.demo_fixtures
@@ -39,11 +40,11 @@ class DemoTest(TestCase):
         with translation.override('de'):
             lst = [unicode(obj) for obj in etypes]
             expected = ['Breitensport',
-             'Radrennen Stra\xdfe',
-             'MTB Rennen \u2265 15-j\xe4hrige',
-             'Mountainbike Rennsport -- Kids Trophy O2 Biker/V.O.R.-Lotto']    
-            self.assertEqual(lst,expected)
-            
+                        'Radrennen Stra\xdfe',
+                        'MTB Rennen \u2265 15-j\xe4hrige',
+                        'Mountainbike Rennsport -- Kids Trophy O2 Biker/V.O.R.-Lotto']
+            self.assertEqual(lst, expected)
+
             s = etypes[0].EventsByType().to_rst()
             #~ print s
             expected = """\
@@ -65,5 +66,4 @@ class DemoTest(TestCase):
 | 2013 <http://www.vclc.be>`__ |                                                  |                                       |
 +------------------------------+--------------------------------------------------+---------------------------------------+
 """
-            self.assertEqual(s,expected)
-        
+            self.assertEqual(s, expected)

@@ -1,16 +1,16 @@
 # -*- coding: UTF-8 -*-
-## Copyright 2011-2013 Luc Saffre
-## This file is part of the Lino project.
-## Lino is free software; you can redistribute it and/or modify 
-## it under the terms of the GNU General Public License as published by
-## the Free Software Foundation; either version 3 of the License, or
-## (at your option) any later version.
-## Lino is distributed in the hope that it will be useful, 
-## but WITHOUT ANY WARRANTY; without even the implied warranty of
-## MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the 
-## GNU General Public License for more details.
-## You should have received a copy of the GNU General Public License
-## along with Lino; if not, see <http://www.gnu.org/licenses/>.
+# Copyright 2011-2013 Luc Saffre
+# This file is part of the Lino project.
+# Lino is free software; you can redistribute it and/or modify
+# it under the terms of the GNU General Public License as published by
+# the Free Software Foundation; either version 3 of the License, or
+# (at your option) any later version.
+# Lino is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+# GNU General Public License for more details.
+# You should have received a copy of the GNU General Public License
+# along with Lino; if not, see <http://www.gnu.org/licenses/>.
 """
 Adds all languages of the world to your database.
 Labels (designations) are available in English, German and French.
@@ -44,28 +44,29 @@ LANGUAGES = {}
 
 """
 """
-fn = os.path.join(os.path.dirname(__file__),'iso-639-3_20100707.tab')
+fn = os.path.join(os.path.dirname(__file__), 'iso-639-3_20100707.tab')
 n = 0
 #~ for ln in file(fn).readlines():
-for ln in codecs.open(fn,encoding="UTF-8").readlines():
+for ln in codecs.open(fn, encoding="UTF-8").readlines():
     n += 1
     if ln:
-      rec = ln.split('\t')
-      if len(rec) != 8:
-          logger.warning("Ignored line %d (len(rec) is %d)",n,len(rec))
-      elif len(rec[0]) != 3:
-          logger.warning("Ignored line %d",n)
-      else:
-          language_type = rec[5]
-          if language_type == 'L':
-              ref_name = rec[6]
-              if ref_name:
-                  code = rec[0]
-                  if len(rec[1]) == 3:
-                      code = rec[1]
-                  LANGUAGES[code] = dict(en=ref_name,iso2=rec[3])
-          else:
-              logger.debug("Ignored line %d : language type is %r",n,language_type)
+        rec = ln.split('\t')
+        if len(rec) != 8:
+            logger.warning("Ignored line %d (len(rec) is %d)", n, len(rec))
+        elif len(rec[0]) != 3:
+            logger.warning("Ignored line %d", n)
+        else:
+            language_type = rec[5]
+            if language_type == 'L':
+                ref_name = rec[6]
+                if ref_name:
+                    code = rec[0]
+                    if len(rec[1]) == 3:
+                        code = rec[1]
+                    LANGUAGES[code] = dict(en=ref_name, iso2=rec[3])
+            else:
+                logger.debug("Ignored line %d : language type is %r",
+                             n, language_type)
 
 
 """
@@ -759,18 +760,17 @@ zu	zul	zul	Zoulou	isiZulu	Zulu
 """
 
 
-
 n = 0
 for ln in german.splitlines():
     n += 1
     if ln:
         ln = ln.strip()
         if not ln[-4:-3].isspace():
-            logger.warning("german %d: syntax",n)
+            logger.warning("german %d: syntax", n)
         else:
             code = ln[-3:]
             name = ln[:-4]
-            d = LANGUAGES.get(code,None)
+            d = LANGUAGES.get(code, None)
             if d is None:
                 pass
                 #~ logger.warning("%r in german but not english",code)
@@ -778,7 +778,7 @@ for ln in german.splitlines():
                 #~ LANGUAGES[code] = d
             else:
                 d.update(de=name)
-                
+
 n = 0
 for ln in french.splitlines():
     n += 1
@@ -786,7 +786,8 @@ for ln in french.splitlines():
         ln = ln.strip()
         rec = ln.split('\t')
         if len(rec) < 6:
-            logger.warning("Ignored french:%d:%s (len(rec) is %d)",n,ln,len(rec))
+            logger.warning("Ignored french:%d:%s (len(rec) is %d)",
+                           n, ln, len(rec))
         code = rec[1]
         if len(code) == 7:
             if code[3:4] == '/':
@@ -795,21 +796,21 @@ for ln in french.splitlines():
                 code = None
         if code:
             name = rec[3]
-            d = LANGUAGES.get(code,None)
+            d = LANGUAGES.get(code, None)
             if d is not None:
                 d.update(fr=name)
 
+
 def objects():
     n = 0
-    for code,kw in LANGUAGES.items():
+    for code, kw in LANGUAGES.items():
         iso2 = kw['iso2']
-        kw = babel_values('name',**kw)
+        kw = babel_values('name', **kw)
         if kw.get('name'):
             n += 1
             kw.update(iso2=iso2)
-            yield Language(id=code,**kw)
+            yield Language(id=code, **kw)
         else:
             logger.debug("%r : no name for default site language %s",
-                code,settings.SITE.DEFAULT_LANGUAGE.django_code)
+                         code, settings.SITE.DEFAULT_LANGUAGE.django_code)
     #~ logger.info("Installed %d languages",n)
-          

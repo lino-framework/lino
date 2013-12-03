@@ -1,15 +1,15 @@
-## Copyright 2009 Luc Saffre
-## This file is part of the Lino project.
-## Lino is free software; you can redistribute it and/or modify 
-## it under the terms of the GNU General Public License as published by
-## the Free Software Foundation; either version 3 of the License, or
-## (at your option) any later version.
-## Lino is distributed in the hope that it will be useful, 
-## but WITHOUT ANY WARRANTY; without even the implied warranty of
-## MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the 
-## GNU General Public License for more details.
-## You should have received a copy of the GNU General Public License
-## along with Lino; if not, see <http://www.gnu.org/licenses/>.
+# Copyright 2009 Luc Saffre
+# This file is part of the Lino project.
+# Lino is free software; you can redistribute it and/or modify
+# it under the terms of the GNU General Public License as published by
+# the Free Software Foundation; either version 3 of the License, or
+# (at your option) any later version.
+# Lino is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+# GNU General Public License for more details.
+# You should have received a copy of the GNU General Public License
+# along with Lino; if not, see <http://www.gnu.org/licenses/>.
 
 import os
 
@@ -41,25 +41,26 @@ Example: when a renderer saves successfully, then it calls stop_editing(). But i
 
 
 class EditingMiddleware:
+
     def process_request(self, request):
         request.stop_editing = False
         request.continue_editing = False
-        editing = request.GET.get("editing",None)
+        editing = request.GET.get("editing", None)
         if editing is not None:
             editing = int(editing)
             if editing:
                 request.session["editing"] = path = request.path
             else:
                 request.session["editing"] = path = None
-        
+
     def process_response(self, request, response):
         try:
             if request.stop_editing and not request.continue_editing:
                 request.session["editing"] = None
-        except AttributeError,e:
+        except AttributeError, e:
             pass
         return response
-        
+
 """        
 [23/Apr/2009 09:48:36] "GET / HTTP/1.1" 200 4620
 Traceback (most recent call last):
@@ -72,19 +73,21 @@ Traceback (most recent call last):
   File "c:\drives\t\svnwork\lino\trunk\src\lino\django\utils\editing.py", line 61, in process_response
     if request.stop_editing and not request.continue_editing:
 AttributeError: 'WSGIRequest' object has no attribute 'stop_editing'        
-"""            
+"""
+
 
 def is_editing(request):
-    path = request.session.get("editing",None)
+    path = request.session.get("editing", None)
     return request.path == path
+
 
 def stop_editing(request):
     request.stop_editing = True
     #request.session["editing"] = None
 
+
 def continue_editing(request):
     request.continue_editing = True
-    
+
 #~ def start_editing(request):
     #~ request.session["editing"] = request.path
-    

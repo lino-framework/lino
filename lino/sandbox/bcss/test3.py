@@ -23,26 +23,28 @@ from xml.dom.minidom import parseString
 #~ from django.conf import settings.SITE
 #  simulate a Django `settings.SITE` module:
 settings = Object(SITE=Object(
-    bcss_user_params = dict(
-          UserID='123456', 
-          Email='info@exemple.be', 
-          OrgUnit='0123456', 
-          MatrixID=17, 
-          MatrixSubID=1)))
-
+    bcss_user_params=dict(
+        UserID='123456',
+        Email='info@exemple.be',
+        OrgUnit='0123456',
+        MatrixID=17,
+        MatrixSubID=1)))
 
 
 class AnyMarshaller(XmlMarshaller):
+
     """
     An XmlMarshaller who expects an attribute `_any` on its 
     root instance which is expected to contain a string to be
     written after the other child elements.
     """
     fieldsToExclude = ['_any']
+
     def marshallSpecificElements(self, instance, res):
         res.write(instance._any)
 
-def assert_equivalent(xs1,xs2):
+
+def assert_equivalent(xs1, xs2):
     print "xs1: -------------------"
     print xs1
     print "xs2: -------------------"
@@ -52,42 +54,44 @@ def assert_equivalent(xs1,xs2):
     dom2 = parseString(xs2)
     if dom1 != dom2:
         sys.exit()
-      
+
+
 def main():
     allocationReq1 = """<ns1:AllocationRequest xmlns:ns1="http://www.smals.be/XSD/OCMW_CPAS/HeatingAllocationRequest" xmlns:com="http://www.smals.be/XSD/OCMW_CPAS/HeatingAllocationDataTypes"><ns1:ComputeAllocation><ns1:PrimaryBeneficiary><ns1:SSIN>67031703807</ns1:SSIN><ns1:Category>1</ns1:Category></ns1:PrimaryBeneficiary><ns1:Invoice><com:Amount>8390100</com:Amount><com:Quantity>1000</com:Quantity><com:HousingNumber>1</com:HousingNumber><com:DeliveryDate>2011-09-19</com:DeliveryDate><com:UnitFuel>3</com:UnitFuel></ns1:Invoice></ns1:ComputeAllocation><ns1:OCMW_CPAS><ns1:KboBceNumber>0212344876</ns1:KboBceNumber></ns1:OCMW_CPAS></ns1:AllocationRequest>"""
 
     ssin = '67031703807'
 
     allocationReq = Object(
-      ComputeAllocation=Object(
-        Invoice=Object(
-          Amount="8390100",
-          Quantity=1000,
-          HousingNumber=1,
-          DeliveryDate="2011-09-19",
-          UnitFuel=3),
-        PrimaryBeneficiary=Object(SSIN=ssin,Category="1"),
-      ),
-      OCMW_CPAS=Object(KboBceNumber='0212344876')
-      )
-      
+        ComputeAllocation=Object(
+            Invoice=Object(
+                Amount="8390100",
+                Quantity=1000,
+                HousingNumber=1,
+                DeliveryDate="2011-09-19",
+                UnitFuel=3),
+            PrimaryBeneficiary=Object(SSIN=ssin, Category="1"),
+        ),
+        OCMW_CPAS=Object(KboBceNumber='0212344876')
+    )
+
     ns = dict(
-      ns1="http://www.smals.be/XSD/OCMW_CPAS/HeatingAllocationRequest",
-      com="http://www.smals.be/XSD/OCMW_CPAS/HeatingAllocationDataTypes")
+        ns1="http://www.smals.be/XSD/OCMW_CPAS/HeatingAllocationRequest",
+        com="http://www.smals.be/XSD/OCMW_CPAS/HeatingAllocationDataTypes")
     nst = dict()
-    nst.update(AllocationRequest='ns1')  
-    nst.update(ComputeAllocation='ns1')  
-    nst.update(OCMW_CPAS='ns1')  
-    nst.update(KboBceNumber='ns1')  
-    nst.update(Invoice='ns1')  
-    nst.update(Quantity='com')  
-    nst.update(HousingNumber='com')  
-    nst.update(DeliveryDate='com')  
+    nst.update(AllocationRequest='ns1')
+    nst.update(ComputeAllocation='ns1')
+    nst.update(OCMW_CPAS='ns1')
+    nst.update(KboBceNumber='ns1')
+    nst.update(Invoice='ns1')
+    nst.update(Quantity='com')
+    nst.update(HousingNumber='com')
+    nst.update(DeliveryDate='com')
     nst.update(UnitFuel='com')
 
-    m = XmlMarshaller(namespaces=ns,namespacedTags=nst,dumpXmlPrologue=False,rootTag="AllocationRequest")
+    m = XmlMarshaller(namespaces=ns, namespacedTags=nst,
+                      dumpXmlPrologue=False, rootTag="AllocationRequest")
     allocationReq2 = m.marshall(allocationReq)
-      
+
     #~ assert_equivalent(allocationReq1,allocationReq2)
 
     contenu1 = """<SSDNRequest xmlns="http://www.ksz-bcss.fgov.be/XSD/SSDN/Service">
@@ -97,31 +101,35 @@ def main():
 
     ssdnReq = Object(
         RequestContext=Object(
-          AuthorizedUser=Object(**settings.SITE.bcss_user_params),
-          Message=Object(Reference='630230001126766',TimeRequest='20110921T105230')
-          ),
+            AuthorizedUser=Object(**settings.SITE.bcss_user_params),
+            Message=Object(Reference='630230001126766',
+                           TimeRequest='20110921T105230')
+        ),
         ServiceRequest=Object(
-          ServiceId="OCMWCPASHeatingAllocation",
-          Version="20090409"
+            ServiceId="OCMWCPASHeatingAllocation",
+            Version="20090409"
         ),
         _any=allocationReq2
-        )
-          
+    )
+
     ns = dict(xmlns="http://www.ksz-bcss.fgov.be/XSD/SSDN/Service")
-    m = AnyMarshaller(namespaces=ns,dumpXmlPrologue=False,rootTag='SSDNRequest')
+    m = AnyMarshaller(namespaces=ns, dumpXmlPrologue=False,
+                      rootTag='SSDNRequest')
     contenu2 = m.marshall(ssdnReq)
-      
-    assert_equivalent(contenu1,contenu2)
+
+    assert_equivalent(contenu1, contenu2)
 
     body = Object(
         #~ xmlString="<![CDATA[%s]]>" % contenu)
         xmlString=contenu2)
-          
+
     raise Exception("ok jusqu'ici")
 
-    server = Resource('https://bcssksz-services-test.smals.be/connectors/webservice/KSZBCSSWebServiceConnectorPort',measure=True)
+    server = Resource(
+        'https://bcssksz-services-test.smals.be/connectors/webservice/KSZBCSSWebServiceConnectorPort', measure=True)
 
-    res = server.soap(body,namespace="http://ksz-bcss.fgov.be/connectors/WebServiceConnector")
+    res = server.soap(
+        body, namespace="http://ksz-bcss.fgov.be/connectors/WebServiceConnector")
 
     print res.code
     print res.data

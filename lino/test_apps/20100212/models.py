@@ -20,12 +20,14 @@ IntegrityError: 20100212_thing.owner_id may not be NULL
 
 from django.db import models
 
+
 class Owner(models.Model):
     pass
-    
+
+
 class Animal(models.Model):  # nullable owner
-    owner = models.ForeignKey(Owner,blank=True,null=True)
+    owner = models.ForeignKey(Owner, blank=True, null=True)
+
 
 class Thing(models.Model):   # non-nullable owner
-    owner = models.ForeignKey(Owner) 
-
+    owner = models.ForeignKey(Owner)

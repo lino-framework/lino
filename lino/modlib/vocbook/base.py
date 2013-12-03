@@ -1,16 +1,16 @@
 # -*- coding: UTF-8 -*-
-## Copyright 2011-2013 Luc Saffre
-## This file is part of the Lino project.
-## Lino is free software; you can redistribute it and/or modify 
-## it under the terms of the GNU General Public License as published by
-## the Free Software Foundation; either version 3 of the License, or
-## (at your option) any later version.
-## Lino is distributed in the hope that it will be useful, 
-## but WITHOUT ANY WARRANTY; without even the implied warranty of
-## MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the 
-## GNU General Public License for more details.
-## You should have received a copy of the GNU General Public License
-## along with Lino; if not, see <http://www.gnu.org/licenses/>.
+# Copyright 2011-2013 Luc Saffre
+# This file is part of the Lino project.
+# Lino is free software; you can redistribute it and/or modify
+# it under the terms of the GNU General Public License as published by
+# the Free Software Foundation; either version 3 of the License, or
+# (at your option) any later version.
+# Lino is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+# GNU General Public License for more details.
+# You should have received a copy of the GNU General Public License
+# along with Lino; if not, see <http://www.gnu.org/licenses/>.
 
 """
 Work in progress.
@@ -39,7 +39,7 @@ from lino.utils import iif, curry
 from lino.utils import memo
 from lino.utils.html2xhtml import html2xhtml
 #~ from lino.utils.xmlgen.html import html2rst as html2rst_
-from lino.utils.xmlgen.html import html2rst 
+from lino.utils.xmlgen.html import html2rst
 from lino.utils.xmlgen.html import E
 
 from lino.utils.restify import restify
@@ -53,37 +53,40 @@ USE_XHTML2ODT = False
     #~ if isinstance(x,basestring): return x
     #~ return html2rst_(x)
 
+
 def e2s(g):
     def fmt(e):
-        if isinstance(e,basestring): return e
+        if isinstance(e, basestring):
+            return e
         return E.tostring(e)
     return ' '.join([fmt(e) for e in g])
-    
+
 
 if USE_XHTML2ODT:
 
     from Cheetah.Template import Template as CheetahTemplate
     import xhtml2odt
+
     class MyODTFile(xhtml2odt.ODTFile):
-      
-        def render(self,context):
+
+        def render(self, context):
             self.open()
-            tpl = CheetahTemplate(self.xml['content'],namespaces=[context])
-            nc = unicode(tpl) #.encode('utf-8')
+            tpl = CheetahTemplate(self.xml['content'], namespaces=[context])
+            nc = unicode(tpl)  # .encode('utf-8')
             if nc.startswith('<?xml version'):
                 #~ nc = nc.replace('<?xml version="1.0" encoding="UTF-8"?>','')
-                nc = nc.split('\n',1)[1]
+                nc = nc.split('\n', 1)[1]
             self.xml['content'] = nc
             #~ odt = self.xhtml_to_odt(xhtml)
             #~ self.insert_content(odt)
             if True:
-                f = open("content.xml","wt")
+                f = open("content.xml", "wt")
                 f.write(self.xml['content'].encode('utf-8'))
                 f.close()
             self.add_styles()
             self.save(self.options.output)
 
-pronunciationRE = re.compile("^(.*)\s*(\[.*\])\s*",re.DOTALL)
+pronunciationRE = re.compile("^(.*)\s*(\[.*\])\s*", re.DOTALL)
 
 
 def makedirs_if_missing(dirname):
@@ -92,7 +95,7 @@ def makedirs_if_missing(dirname):
 
 
 class LanguageMeta(type):
-  
+
     def __new__(meta, classname, bases, classDict):
         # Each subclass gets her own list of word types:
         classDict['words'] = []
@@ -103,26 +106,26 @@ class LanguageMeta(type):
 
 class Language(object):
     __metaclass__ = LanguageMeta
-    
+
     @classmethod
-    def add_wordtype(cls,wt):
+    def add_wordtype(cls, wt):
         cls.wordTypes.append(wt)
-        
+
     @classmethod
-    def register_word(cls,w):
+    def register_word(cls, w):
         for ew in cls.words:
             if ew == w:
                 return ew
         cls.words.append(w)
         return w
-        
+
 
 class WordType(object):
     text = None
-    @classmethod
-    def is_of_this_type(cls,w):
-        return w.type == cls
 
+    @classmethod
+    def is_of_this_type(cls, w):
+        return w.type == cls
 
 
 class Word(object):
@@ -131,142 +134,157 @@ class Word(object):
     pronounciation = ''
     gender = None
     form = None
-  
-    def __init__(self,text,
-        type=None,
-        pronounciation=None,
-        gender=None,
-        form=None):
+
+    def __init__(self, text,
+                 type=None,
+                 pronounciation=None,
+                 gender=None,
+                 form=None):
         if not text:
             raise Exception("Cannot create empty word!")
         self.text = text
-        if type: self.type = type
-        if form is not None: self.form = form
-        if pronounciation: 
+        if type:
+            self.type = type
+        if form is not None:
+            self.form = form
+        if pronounciation:
             assert pronounciation.startswith('[')
             assert pronounciation.endswith(']')
             self.pronounciation = pronounciation[1:-1]
         if gender:
-            assert gender in ('m','f','mf','pl')
+            assert gender in ('m', 'f', 'mf', 'pl')
             self.gender = gender
         self.translations = []
         self.units = []
-        
-    def get_pron_html(self,article=False):
+
+    def get_pron_html(self, article=False):
         if not self.pronounciation:
             return ''
         #~ if article and Nom.is_of_this_type(self):
-            
+
         return "[%s]" % self.pronounciation
-        
-    def add_to_unit(self,unit):
+
+    def add_to_unit(self, unit):
         self.units.append(unit)
         #~ unit.add_word(self)
-        
+
     def __repr__(self):
-        return "%r(%r)" % (self.text,self.type.__name__)
-        
-    def __eq__(self,other):
-        if self.__class__ != other.__class__: return False
-        if self.text != other.text: return False
-        if self.pronounciation != other.pronounciation: return False
-        if self.gender != other.gender: return False
-        if self.type != other.type: return False
-        if self.form != other.form: return False
+        return "%r(%r)" % (self.text, self.type.__name__)
+
+    def __eq__(self, other):
+        if self.__class__ != other.__class__:
+            return False
+        if self.text != other.text:
+            return False
+        if self.pronounciation != other.pronounciation:
+            return False
+        if self.gender != other.gender:
+            return False
+        if self.type != other.type:
+            return False
+        if self.form != other.form:
+            return False
         return True
-        
-    def add_translations(self,translations):
+
+    def add_translations(self, translations):
         for t in translations:
             if not t in self.translations:
                 self.translations.append(t)
-                
+
     def opposite_gender(self):
-        if self.gender == 'f' : return 'm'
-        if self.gender == 'm' : return 'f'
+        if self.gender == 'f':
+            return 'm'
+        if self.gender == 'm':
+            return 'f'
         return None
-        
-    def get_partner(self,gender):
+
+    def get_partner(self, gender):
         if self.gender == 'mf' or self.gender == gender:
             return self
         if not self.partner:
             raise Exception("%r has no partner " % self)
         return self.partner
-        
-
-
 
 
 class Column:
     label = ''
-    def __init__(self,label):
+
+    def __init__(self, label):
         self.label = label
-        
+
     @classmethod
-    def render(cls,w,book):
-        s = html2rst(E.div(*tuple(cls.word2html(w,book))))
+    def render(cls, w, book):
+        s = html2rst(E.div(*tuple(cls.word2html(w, book))))
         #~ s = html2rst(e) for e (cls.word2html(w,book)))
         if "<" in s:
-            raise Exception("2013116 %r" % cls.word2html(w,book))
+            raise Exception("2013116 %r" % cls.word2html(w, book))
         if s.startswith('('):
             s = '\\' + s
         return s
-        
+
     @classmethod
-    def word2html(cls,w,book):
+    def word2html(cls, w, book):
         raise NotImplementedError()
-        
+
 
 class FR(Column):
-    
+
     label = 'prantsuse k.'
-    
+
     @classmethod
-    def word2html(cls,w,book):
-        for e in book.from_language.present_word2html(w,book):
+    def word2html(cls, w, book):
+        for e in book.from_language.present_word2html(w, book):
             yield e
-        
+
 
 class PRON(Column):
     label = u'hääldamine'
+
     @classmethod
-    def word2html(cls,w,book):
+    def word2html(cls, w, book):
         yield w.get_pron_html()
+
 
 class ET(Column):
     label = u'eesti k.'
+
     @classmethod
-    def word2html(cls,w,book):
+    def word2html(cls, w, book):
         if len(w.translations) == 1:
             yield w.translations[0]
         else:
-            yield "; ".join(["(%d) %s" % (n+1,w) for n,w in enumerate(w.translations)])
-    
-        
+            yield "; ".join(["(%d) %s" % (n + 1, w) for n, w in enumerate(w.translations)])
+
+
 class M(Column):
     label = u'meessoost'
     gender = 'm'
+
     @classmethod
-    def word2html(cls,w,book):
+    def word2html(cls, w, book):
         #~ return html2rst(w.html_fr_lesson()) + ' ' + w.pronounciation
         w = w.get_partner(cls.gender)
         #~ return '<b>%s</b>' % w.text + ' ' + w.get_pron_html()
         yield E.b(w.text)
         yield ' '
         yield w.get_pron_html()
-        
+
+
 class F(M):
     label = u'naissoost'
     gender = 'f'
-        
+
 
 class GEON(FR):
     label = u'Maa'
 
+
 class GEOM(Column):
     gender = 'm'
     label = u'omadussõna (m)'
+
     @classmethod
-    def word2html(cls,w,book):
+    def word2html(cls, w, book):
         if not w.adjectif:
             yield ''
             return
@@ -276,27 +294,27 @@ class GEOM(Column):
         yield E.b(w.text)
         yield ' '
         yield w.get_pron_html()
-        
+
+
 class GEOF(GEOM):
     label = u'omadussõna (n)'
     gender = 'f'
 
 
-
 #~ def mycmp(a,b):
     #~ return locale.strcoll(a,b)
-        
-def sort_by_fr(a,b):
-    return locale.strcoll(a.text.lower(),b.text.lower())
+def sort_by_fr(a, b):
+    return locale.strcoll(a.text.lower(), b.text.lower())
     #~ return locale.strcoll(S(a.fr),S(b.fr))
-    
+
 
 class Section:
-    def __init__(self,book,parent,
-            title=None,intro=None,
-            number=None,ref=None,
-            from_language=None,
-            to_language=None):
+
+    def __init__(self, book, parent,
+                 title=None, intro=None,
+                 number=None, ref=None,
+                 from_language=None,
+                 to_language=None):
         if from_language is None:
             from_language = parent.from_language
         if to_language is None:
@@ -307,8 +325,9 @@ class Section:
         self.from_language = from_language
         self.parent = parent
         if number is not None:
-            if not isinstance(number,int):
-                raise Exception("Section %r got invalid number %r" % (title,number))
+            if not isinstance(number, int):
+                raise Exception("Section %r got invalid number %r" %
+                                (title, number))
         elif parent is not None:
             number = len(parent.children) + 1
         self.number = number
@@ -324,49 +343,49 @@ class Section:
             if self.ref in self.book.ref2sect:
                 raise Exception("Duplicate reference %r" % self.ref)
             self.book.ref2sect[self.ref] = self
-        
-    def add_section(self,*args,**kw):
-        sect = Section(self.book,self,*args,**kw)
+
+    def add_section(self, *args, **kw):
+        sect = Section(self.book, self, *args, **kw)
         self.children.append(sect)
         return sect
-        
-    def add_index(self,*args,**kw):
-        sect = Index(self.book,self,*args,**kw)
+
+    def add_index(self, *args, **kw):
+        sect = Index(self.book, self, *args, **kw)
         self.children.append(sect)
         return sect
-        
-    def add_dictionary(self,*args,**kw):
-        sect = Dictionary(self.book,self,*args,**kw)
+
+    def add_dictionary(self, *args, **kw):
+        sect = Dictionary(self.book, self, *args, **kw)
         self.children.append(sect)
         return sect
-        
-    def add_lesson(self,*args,**kw):
-        self.current_lesson = Unit(self.book,self,*args,**kw)
+
+    def add_lesson(self, *args, **kw):
+        self.current_lesson = Unit(self.book, self, *args, **kw)
         self.children.append(self.current_lesson)
 
-    def add_after(self,chunk):
+    def add_after(self, chunk):
         #~ self.current_lesson.body.append(chunk)
         self.current_lesson.after.append(chunk)
-        
-    def parse_words(self,cl,lines):
-        self.current_lesson.parse_words(cl,lines)
-        
+
+    def parse_words(self, cl, lines):
+        self.current_lesson.parse_words(cl, lines)
+
     def name_parts(self):
         if self.parent is None:
-            return ['index' ]
+            return ['index']
         elif self.children:
-            return [ self.get_ref(), 'index' ]
+            return [self.get_ref(), 'index']
         else:
-            return [ self.get_ref() ]
-      
+            return [self.get_ref()]
+
     def get_ref(self):
         if self.ref:
             return self.ref
         if self.number is not None:
             #~ return str(self.number)
             return '%02d' % self.number
-        
-    def rst_ref_to(self,text=None):
+
+    def rst_ref_to(self, text=None):
         parts = self.name_parts()
         #~ ref = self.get_ref()
         p = self.parent
@@ -381,11 +400,11 @@ class Section:
             text = self.get_ref_text()
         if self.book.writing_format == 'rst':
             if text:
-                return ':doc:`%s </%s>`' % (text,'/'.join(parts))
+                return ':doc:`%s </%s>`' % (text, '/'.join(parts))
             return ':doc:`/%s`' % '/'.join(parts)
         return "*" + text + "*"
         #~ return ':doc:`%s </%s>`' % (self.title,'/'.join(parts))
-        
+
     def get_full_number(self):
         number = str(self.number)
         p = self.parent
@@ -394,15 +413,15 @@ class Section:
                 number = str(p.number) + "." + number
             p = p.parent
         return number
-        
+
     def get_ref_text(self):
         return self.title
-        
-    def html_lines(self,level=1):
+
+    def html_lines(self, level=1):
         if self.number is None:
             title = self.title
         else:
-            title = "%s %s" % (self.get_full_number(),self.title)
+            title = "%s %s" % (self.get_full_number(), self.title)
         if True:
             if self.parent is not None:
                 title = restify(self.memo2rst(title)).strip()
@@ -411,56 +430,54 @@ class Section:
                     #~ logger.info("20120311 title is %r", title)
                 else:
                     raise Exception("20120311 title is %r" % title)
-                    
-                yield htmlgen.H(level,title)
+
+                yield htmlgen.H(level, title)
         else:
             tag = "H%d" % level
-            title = title.replace("<p>","<"+tag+">")
-            title = title.replace("</p>","</"+tag+">")
+            title = title.replace("<p>", "<" + tag + ">")
+            title = title.replace("</p>", "</" + tag + ">")
             yield title
             #~ yield "<H%d>%s</H%d>" % (level,,level)
-        
+
         if self.intro:
             yield restify(self.memo2rst(self.intro))
-            
+
         if self.children:
             for s in self.children:
-                for ln in s.html_lines(level+1):
+                for ln in s.html_lines(level + 1):
                     yield ln
-                    
+
         for chunk in self.body:
             yield restify(self.memo2rst(chunk))
-        
-        
-    def write_rst_files(self,root):
-        fn = os.path.join(root,*self.name_parts()) + ".rst"
-        logger.info("Generate %s",fn)
+
+    def write_rst_files(self, root):
+        fn = os.path.join(root, *self.name_parts()) + ".rst"
+        logger.info("Generate %s", fn)
         newroot = os.path.dirname(fn)
         makedirs_if_missing(newroot)
-        fd = codecs.open(fn,'w','utf-8')
-        
+        fd = codecs.open(fn, 'w', 'utf-8')
+
         if self.number is None:
             title = self.title
         else:
-            title = "%d. %s" % (self.number,self.title)
-            
+            title = "%d. %s" % (self.number, self.title)
+
         #~ if self.number is None:
             #~ write_header(fd,1,"%s" % self.title)
         #~ else:
             #~ write_header(fd,1,"%d. %s" % (self.number,self.title))
-        write_header(fd,1,self.memo2rst(title))
+        write_header(fd, 1, self.memo2rst(title))
         self.write_body(fd)
         fd.close()
         for s in self.children:
             s.write_rst_files(newroot)
 
-    def write_body(self,fd):
+    def write_body(self, fd):
         if self.intro:
             fd.write(self.memo2rst(self.intro) + '\n\n')
-            
+
         for chunk in self.body:
             fd.write(self.memo2rst(chunk) + '\n\n')
-        
 
         if self.children:
             fd.write("""\
@@ -469,18 +486,17 @@ class Section:
    
 """)
             for s in self.children:
-                fd.write("   "  + ("/".join(s.name_parts())) + "\n")
+                fd.write("   " + ("/".join(s.name_parts())) + "\n")
             fd.write('\n\n')
 
-
-    def memo2rst(self,s):
+    def memo2rst(self, s):
         return self.book.memo2rst(s)
 
 
-
 class Unit(Section):
-    columns = [FR,PRON,ET]
-    def __init__(self,book,parent,title=None,intro=None,columns=None,show_headers=None,**kw):
+    columns = [FR, PRON, ET]
+
+    def __init__(self, book, parent, title=None, intro=None, columns=None, show_headers=None, **kw):
         if columns is not None:
             self.columns = columns
             if show_headers is None:
@@ -489,21 +505,21 @@ class Unit(Section):
             show_headers = False
         self.show_headers = show_headers
         #~ self.parent = parent
-        Section.__init__(self,book,parent,title=title,intro=intro,**kw)
+        Section.__init__(self, book, parent, title=title, intro=intro, **kw)
         if not self.title:
             self.title = u"Leçon %d" % self.number
         self.after = []
         #~ if after:
             #~ self.add_after(after)
         self.words = []
-        
+
     #~ def add_word(self,w):
         #~ self.words.append(w)
-        
-    def tablerow(self,w):
-        return [col.render(w,self) for col in self.columns]
-          
-    def parse_words(self,cl,lines):
+
+    def tablerow(self, w):
+        return [col.render(w, self) for col in self.columns]
+
+    def parse_words(self, cl, lines):
         #~ lesson = self.current_lesson
         for ln in lines.splitlines():
             ln = ln.strip()
@@ -513,7 +529,7 @@ class Unit(Section):
                     raise Exception("%r.split(':') is not 2" % ln)
                 fr_list = a[0].split('|')
                 et_list = a[1].split('|')
-                
+
                 translations = []
                 for et in et_list:
                     et = et.strip()
@@ -526,7 +542,7 @@ class Unit(Section):
                         translations.append(et)
                 main = None
                 for fr in fr_list:
-                    w = self.from_language.parse_word(fr,cl,parent=main) 
+                    w = self.from_language.parse_word(fr, cl, parent=main)
                     w.add_to_unit(self)
                     #~ w.add_lesson(self.current_lesson)
                     w.add_translations(translations)
@@ -536,36 +552,35 @@ class Unit(Section):
                         main = w
                 self.words.append(main)
 
-          
-        
-    def html_lines(self,level=1):
-        for ln in Section.html_lines(self,level):
+    def html_lines(self, level=1):
+        for ln in Section.html_lines(self, level):
             yield ln
         words = [w for w in self.words if w.parent is None]
         if words:
             t = htmlgen.TABLE([col.label for col in self.columns],
-                    show_headers=self.show_headers)
+                              show_headers=self.show_headers)
+
             def row(w):
-                return [col.word2html(w,self) for col in self.columns]
+                return [col.word2html(w, self) for col in self.columns]
             rows = [row(w) for w in words]
             for ln in t.html_lines(rows):
                 yield ln
         for chunk in self.after:
             yield restify(self.memo2rst(chunk))
-            
-    def write_body(self,fd):
-      
-        Section.write_body(self,fd)
-        
+
+    def write_body(self, fd):
+
+        Section.write_body(self, fd)
+
         words = [w for w in self.words if w.parent is None]
         if words:
             t = rstgen.Table([col.label for col in self.columns],
-                    show_headers=self.show_headers)
-            t.write(fd,[self.tablerow(w) for w in words])
-          
+                             show_headers=self.show_headers)
+            t.write(fd, [self.tablerow(w) for w in words])
+
         for chunk in self.after:
             fd.write('\n\n' + chunk + '\n\n')
-            
+
 
 #~ def uca_collator():
     #~ """
@@ -574,7 +589,7 @@ class Unit(Section):
     #~ c = Collator(fn)
     #~ logger.info("20120308 uca_collator() done")
     #~ return c
-    
+
 try:
     from lino.utils.pyuca import Collator
     #~ fn = os.path.join(os.path.dirname(__file__),'pyuca_allkeys.txt')
@@ -588,90 +603,95 @@ If you want serious alphabetic sorting, you need to download \
 http://www.unicode.org/Public/UCA/latest/allkeys.txt \
 to your current working directory (`%s`) and rename it to `uca_allkeys.txt`. \
 """ % os.getcwd())
-  
+
 
 def uca_sort(l):
     #~ c = uca_collator()
     if UCA_COLLATOR:
-        def k(w): return UCA_COLLATOR.sort_key(w.text)
+        def k(w):
+            return UCA_COLLATOR.sort_key(w.text)
     else:
-        def k(w): return w.text.upper()
+        def k(w):
+            return w.text.upper()
     l.sort(key=k)
 
-  
-  
-            
-            
-            
+
 class Dictionary(Section):
-    columns = [FR,PRON,ET]
+    columns = [FR, PRON, ET]
     show_headers = True
-    def html_lines(self,level=1):
-        for ln in Section.html_lines(self,level):
+
+    def html_lines(self, level=1):
+        for ln in Section.html_lines(self, level):
             yield ln
         words = [w for w in self.from_language.words if w.parent is None]
         if words:
             uca_sort(words)
             t = htmlgen.TABLE([col.label for col in self.columns],
-                    show_headers=self.show_headers)
+                              show_headers=self.show_headers)
+
             def row(w):
-                return [col.word2html(w,self) for col in self.columns]
+                return [col.word2html(w, self) for col in self.columns]
             rows = [row(w) for w in words]
             for ln in t.html_lines(rows):
                 yield ln
-            
-  
+
+
 class Index(Section):
-    def html_lines(self,level=1):
-        for ln in Section.html_lines(self,level):
+
+    def html_lines(self, level=1):
+        for ln in Section.html_lines(self, level):
             yield ln
         #~ self.from_language.words.sort(sort_by_fr)
         uca_sort(self.from_language.words)
         #~ self.from_language.words = uca_sorted(self.from_language.words)
+
         def fmt(w):
             return e2s(self.from_language.word2html(w)) \
-            + " " + e2s(ET.word2html(w,self)) \
-            + " " \
-            + ", ".join([u.get_full_number() for u in w.units])
+                + " " + e2s(ET.word2html(w, self)) \
+                + " " \
+                + ", ".join([u.get_full_number() for u in w.units])
         for w in self.from_language.words:
             yield "<br>" + fmt(w)
-            
-    def write_body(self,fd):
-        Section.write_body(self,fd)
+
+    def write_body(self, fd):
+        Section.write_body(self, fd)
         self.from_language.words.sort(sort_by_fr)
         uca_sort(self.from_language.words)
         #~ self.from_language.words = uca_sorted(self.from_language.words)
+
         def fmt(w):
             for x in self.from_language.word2html(w):
                 yield x
-            yield " " 
-            for x in  ET.word2html(w,self): 
+            yield " "
+            for x in ET.word2html(w, self):
                 yield x
-            yield " " 
+            yield " "
             yield ", ".join([u.rst_ref_to() for u in w.units])
         for w in self.from_language.words:
             fd.write("| %s\n" % html2rst(E.div(*fmt(w))))
-                
+
+
 class MemoParser(memo.Parser):
-    def __init__(self,book,*args,**kw):
+
+    def __init__(self, book, *args, **kw):
         self.book = book
-        memo.Parser.__init__(self,*args,**kw)
-        self.register_command('ref',self.cmd_ref)
-        self.register_command('item',curry(self.cmd_item,'- '))
-        self.register_command('oitem',curry(self.cmd_item,'#. '))
-        self.register_command('ruleslist',self.cmd_ruleslist)
+        memo.Parser.__init__(self, *args, **kw)
+        self.register_command('ref', self.cmd_ref)
+        self.register_command('item', curry(self.cmd_item, '- '))
+        self.register_command('oitem', curry(self.cmd_item, '#. '))
+        self.register_command('ruleslist', self.cmd_ruleslist)
         #~ self.register_command('url',self.cmd_url)
-        
-    def cmd_ref(self,s):
+
+    def cmd_ref(self, s):
         sect = self.book.ref2sect[s]
         return sect.rst_ref_to()
 
-    def cmd_item(self,prefix,ref,rulesmode=False):
+    def cmd_item(self, prefix, ref, rulesmode=False):
         indent = " " * len(prefix)
         sect = self.book.ref2sect[ref]
-        r = prefix 
+        r = prefix
         if not rulesmode:
-            r += sect.rst_ref_to() 
+            r += sect.rst_ref_to()
             if sect.intro:
                 r += " -- "
         if sect.intro:
@@ -682,61 +702,66 @@ class MemoParser(memo.Parser):
                     r += indent + ln + "\n"
                 r += "\n"
             else:
-                intro = intro.replace('\n','\n'+indent)
+                intro = intro.replace('\n', '\n' + indent)
                 r += intro
         if rulesmode:
-            r += "\n" + indent + "-- " + sect.rst_ref_to(text=sect.get_full_number())
+            r += "\n" + indent + "-- " + \
+                sect.rst_ref_to(text=sect.get_full_number())
         r += "\n"
         return r
-        
-    def cmd_ruleslist(self,s):
+
+    def cmd_ruleslist(self, s):
         r = ''
         for ref in s.split():
-            r += self.cmd_item('#. ',ref,rulesmode=True)
+            r += self.cmd_item('#. ', ref, rulesmode=True)
         return r
-        
+
     #~ def cmd_url(self,s):
         #~ if not s: return "XXX"
         #~ url,text = s.split(None,1)
-        #~ # return '<a href="%s">%s</a>' % (url,text)
+        # ~ # return '<a href="%s">%s</a>' % (url,text)
         #~ return E.a(text,href=url)
-        
-            
-  
+
+
 class Book:
-    def __init__(self,from_language,to_language,
-          title=None,input_template=None,
-          memo_parser=None):
+
+    def __init__(self, from_language, to_language,
+                 title=None, input_template=None,
+                 memo_parser=None):
         self.writing_format = None
         self.input_template = input_template
         self.ref2sect = dict()
         self.memo_parser = memo_parser or MemoParser(self)
-        self.main = Section(self,None,title,
-            from_language=from_language,to_language=to_language)
+        self.main = Section(self, None, title,
+                            from_language=from_language, to_language=to_language)
 
-    def memo2rst(self,s):
+    def memo2rst(self, s):
         return self.memo_parser.parse(s)
 
-    def add_section(self,*args,**kw): return self.main.add_section(*args,**kw)
-    def add_index(self,*args,**kw): return self.main.add_index(*args,**kw)
-    def add_dictionary(self,*args,**kw): return self.main.add_dictionary(*args,**kw)
-      
-        
+    def add_section(self, *args, **kw):
+        return self.main.add_section(*args, **kw)
+
+    def add_index(self, *args, **kw):
+        return self.main.add_index(*args, **kw)
+
+    def add_dictionary(self, *args, **kw):
+        return self.main.add_dictionary(*args, **kw)
+
     def old_as_odt(self):
         from xhtml2odt import ODTFile
         from lino.utils import AttrDict
         from lino.utils.html2xhtml import html2xhtml
         options = AttrDict(
-          url = "",
-          with_network = False,
-          verbose = True,
-          template = self.input_template,
-          top_header_level = 1,
-          img_width = "8cm",
-          img_height = "6cm",
-          )
-        
-        #~ version=False # help="Show the version and exit")
+            url="",
+            with_network=False,
+            verbose=True,
+            template=self.input_template,
+            top_header_level=1,
+            img_width="8cm",
+            img_height="6cm",
+        )
+
+        # ~ version=False # help="Show the version and exit")
         #~ input=input", metavar="FILE",
                           #~ help="Read the html from this file")
         #~ parser.add_option("-o", "--output", dest="output", metavar="FILE",
@@ -781,7 +806,7 @@ class Book:
         #~ options, args = parser.parse_args()
         odtfile = ODTFile(options)
         odtfile.open()
-        
+
         xhtml = ''.join([ln for ln in self.main.html_lines()])
         xhtml = html2xhtml(xhtml)
         #~ xhtml = "<DIV>%s</DIV>" % xhtml
@@ -789,50 +814,50 @@ class Book:
 <html xmlns="http://www.w3.org/1999/xhtml"><body>%s</body></html>""" % xhtml
         #~ xhtml = "<p>%s</p>" % xhtml
         if True:
-            f = open("before.xml","wt")
+            f = open("before.xml", "wt")
             f.write(xhtml.encode('utf-8'))
             f.close()
-        
+
         #~ logger.info("Gonna do it with %r",xhtml)
         xhtml = odtfile.xhtml_to_odt(xhtml)
         if True:
-            f = open("after.xml","wt")
+            f = open("after.xml", "wt")
             f.write(xhtml)
             #~ f.write(xhtml.encode('utf-8'))
             f.close()
         return xhtml
-        
+
     def html(self):
         #~ s = htmlgen.DIV(self.main.html_lines)
         s = ''.join([ln for ln in self.main.html_lines()])
         s = "<div>%s</div>" % s
         if True:
-            f = open("odt_content.xml","wt")
+            f = open("odt_content.xml", "wt")
             f.write(s.encode('utf-8'))
             f.close()
         #~ logger.info(s)
         return s
-        
-        
-    def write_rst_files(self,root='.'):
-        
+
+    def write_rst_files(self, root='.'):
+
         self.writing_format = 'rst'
         self.main.write_rst_files(root)
-        
-        if False: # must convert to new structure
-            fn = os.path.join('dict','et_fr.rst')
-            logger.info("Generate %s",fn)
-            fd = codecs.open(fn,'w','utf-8')
-            write_header(fd,1,'eesti-prantsuse')
-            t = rstgen.Table(['Nr.',"ET","FR",u"hääldamine","Tasand"])
+
+        if False:  # must convert to new structure
+            fn = os.path.join('dict', 'et_fr.rst')
+            logger.info("Generate %s", fn)
+            fd = codecs.open(fn, 'w', 'utf-8')
+            write_header(fd, 1, 'eesti-prantsuse')
+            t = rstgen.Table(['Nr.', "ET", "FR", u"hääldamine", "Tasand"])
             self.words.sort(sort_by_et)
             words_et = [w for w in self.words if not w.hide_et]
-            t.write(fd,[
-                (i,w.et,html2rst(w.html_fr()),w.pronounciation,w.lesson.rst_ref_to()) 
-                    for i,w in enumerate(words_et)])
+            t.write(fd, [
+                (i, w.et, html2rst(w.html_fr()),
+                 w.pronounciation, w.lesson.rst_ref_to())
+                for i, w in enumerate(words_et)])
             fd.close()
 
-    def write_odt_file(self,target):
+    def write_odt_file(self, target):
         #~ from appy.pod.renderer import Renderer
         from lino.utils import iif
         #~ from lino.utils.appy_pod import setup_renderer
@@ -841,113 +866,113 @@ class Book:
         if os.path.exists(target):
             os.remove(target)
         #~ tpl = os.path.join(os.path.dirname(__filename__),'cfr.odt')
-        ses = settings.SITE.login("root") # not tested after 20130327
+        ses = settings.SITE.login("root")  # not tested after 20130327
         context = dict(
             self=self,
             iif=iif,
-            )
+        )
         appy_params = dict()
-        logger.info(u"appy.pod render %s -> %s (params=%s)",self.input_template,target,appy_params)
-        renderer = Renderer(ses,self.input_template, context, target,**appy_params)
+        logger.info(u"appy.pod render %s -> %s (params=%s)",
+                    self.input_template, target, appy_params)
+        renderer = Renderer(ses, self.input_template,
+                            context, target, **appy_params)
         #~ setup_renderer(renderer)
         #~ renderer.context.update(restify=debug_restify)
         self.writing_format = 'odt'
         renderer.run()
-        
-        
+
+
 if USE_XHTML2ODT:
 
-  class Book2(Book):
-        
-        
-    def write_odt_file(self,target):
+    class Book2(Book):
+
+        def write_odt_file(self, target):
         #~ from lino.utils import iif
         #~ from lino.utils import AttrDict
         #~ from lino.utils.html2xhtml import html2xhtml
-        
-        assert os.path.abspath(self.input_template) != os.path.abspath(target)
-        if os.path.exists(target):
-            os.remove(target)
-            
-        options = AttrDict(
-          url = "",
-          template = self.input_template,
-          output = target,
-          with_network = True,
-          verbose = True,
-          top_header_level = 1,
-          img_width = "8cm",
-          img_height = "6cm",
-          )
-        
-        #~ version=False # help="Show the version and exit")
-        #~ input=input", metavar="FILE",
+
+            assert os.path.abspath(
+                self.input_template) != os.path.abspath(target)
+            if os.path.exists(target):
+                os.remove(target)
+
+            options = AttrDict(
+                url="",
+                template=self.input_template,
+                output=target,
+                with_network=True,
+                verbose=True,
+                top_header_level=1,
+                img_width="8cm",
+                img_height="6cm",
+            )
+
+            # ~ version=False # help="Show the version and exit")
+            #~ input=input", metavar="FILE",
                           #~ help="Read the html from this file")
-        #~ parser.add_option("-o", "--output", dest="output", metavar="FILE",
+            #~ parser.add_option("-o", "--output", dest="output", metavar="FILE",
                           #~ help="Location of the output ODT file")
-        #~ parser.add_option("-t", "--template", dest="template", metavar="FILE",
+            #~ parser.add_option("-t", "--template", dest="template", metavar="FILE",
                           #~ help="Location of the template ODT file")
-        #~ parser.add_option("-u", "--url", dest="url",
+            #~ parser.add_option("-u", "--url", dest="url",
                           #~ help="Use this URL for relative links")
-        #~ parser.add_option("-v", "--verbose", dest="verbose",
+            #~ parser.add_option("-v", "--verbose", dest="verbose",
                           #~ action="store_true", default=False,
                           #~ help="Show what's going on")
-        #~ parser.add_option("--html-id", dest="htmlid", metavar="ID",
+            #~ parser.add_option("--html-id", dest="htmlid", metavar="ID",
                           #~ help="Only export from the element with this ID")
-        #~ parser.add_option("--replace", dest="replace_keyword",
+            #~ parser.add_option("--replace", dest="replace_keyword",
                           #~ default="ODT-INSERT", metavar="KEYWORD",
                           #~ help="Keyword to replace in the ODT template "
                           #~ "(default is %default)")
-        #~ parser.add_option("--cut-start", dest="cut_start",
+            #~ parser.add_option("--cut-start", dest="cut_start",
                           #~ default="ODT-CUT-START", metavar="KEYWORD",
                           #~ help="Keyword to start cutting text from the ODT "
                           #~ "template (default is %default)")
-        #~ parser.add_option("--cut-stop", dest="cut_stop",
+            #~ parser.add_option("--cut-stop", dest="cut_stop",
                           #~ default="ODT-CUT-STOP", metavar="KEYWORD",
                           #~ help="Keyword to stop cutting text from the ODT "
                           #~ "template (default is %default)")
-        #~ parser.add_option("--top-header-level", dest="top_header_level",
+            #~ parser.add_option("--top-header-level", dest="top_header_level",
                           #~ type="int", default="1", metavar="LEVEL",
                           #~ help="Level of highest header in the HTML "
                           #~ "(default is %default)")
-        #~ parser.add_option("--img-default-width", dest="img_width",
+            #~ parser.add_option("--img-default-width", dest="img_width",
                           #~ metavar="WIDTH", default="8cm",
                           #~ help="Default image width (default is %default)")
-        #~ parser.add_option("--img-default-height", dest="img_height",
+            #~ parser.add_option("--img-default-height", dest="img_height",
                           #~ metavar="HEIGHT", default="6cm",
                           #~ help="Default image height (default is %default)")
-        #~ parser.add_option("--dpi", dest="img_dpi", type="int",
+            #~ parser.add_option("--dpi", dest="img_dpi", type="int",
                           #~ default=96, metavar="DPI", help="Screen resolution "
                           #~ "in Dots Per Inch (default is %default)")
-        #~ parser.add_option("--no-network", dest="with_network",
+            #~ parser.add_option("--no-network", dest="with_network",
                           #~ action="store_false", default=True,
                           #~ help="Do not download remote images")
-        #~ options, args = parser.parse_args()
-        self.odtfile = MyODTFile(options)
-        
-        context = dict(iif=iif)
-        context.update(book=self)
-        self.odtfile.render(context)
+            #~ options, args = parser.parse_args()
+            self.odtfile = MyODTFile(options)
 
-    def as_odt(self):
-        xhtml = ''.join([ln for ln in self.main.html_lines()])
-        xhtml = html2xhtml(xhtml)
-        #~ xhtml = "<div>%s</div>" % xhtml
-        #~ xhtml = "<p>%s</p>" % xhtml
-        #~ xhtml = '<html><body>%s</body></html>' % xhtml
-        xhtml = '<html xmlns="http://www.w3.org/1999/xhtml"><body>%s</body></html>' % xhtml
-        if not True:
-            f = open("before.xml","wt")
-            f.write(xhtml.encode('utf-8'))
-            f.close()
-        
-        #~ logger.info("Gonna do it with %r",xhtml)
-        xhtml = self.odtfile.xhtml_to_odt(xhtml)
-        if True:
-            f = open("after.xml","wt")
-            f.write(xhtml)
-            #~ f.write(xhtml.encode('utf-8'))
-            f.close()
-        return xhtml.decode('utf-8')
-        
-        
+            context = dict(iif=iif)
+            context.update(book=self)
+            self.odtfile.render(context)
+
+        def as_odt(self):
+            xhtml = ''.join([ln for ln in self.main.html_lines()])
+            xhtml = html2xhtml(xhtml)
+            #~ xhtml = "<div>%s</div>" % xhtml
+            #~ xhtml = "<p>%s</p>" % xhtml
+            #~ xhtml = '<html><body>%s</body></html>' % xhtml
+            xhtml = '<html xmlns="http://www.w3.org/1999/xhtml"><body>%s</body></html>' % xhtml
+            if not True:
+                f = open("before.xml", "wt")
+                f.write(xhtml.encode('utf-8'))
+                f.close()
+
+            #~ logger.info("Gonna do it with %r",xhtml)
+            xhtml = self.odtfile.xhtml_to_odt(xhtml)
+            if True:
+                f = open("after.xml", "wt")
+                f.write(xhtml)
+                #~ f.write(xhtml.encode('utf-8'))
+                f.close()
+            return xhtml.decode('utf-8')

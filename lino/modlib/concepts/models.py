@@ -1,16 +1,16 @@
 # -*- coding: UTF-8 -*-
-## Copyright 2013 Luc Saffre
-## This file is part of the Lino project.
-## Lino is free software; you can redistribute it and/or modify 
-## it under the terms of the GNU General Public License as published by
-## the Free Software Foundation; either version 3 of the License, or
-## (at your option) any later version.
-## Lino is distributed in the hope that it will be useful, 
-## but WITHOUT ANY WARRANTY; without even the implied warranty of
-## MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the 
-## GNU General Public License for more details.
-## You should have received a copy of the GNU General Public License
-## along with Lino; if not, see <http://www.gnu.org/licenses/>.
+# Copyright 2013 Luc Saffre
+# This file is part of the Lino project.
+# Lino is free software; you can redistribute it and/or modify
+# it under the terms of the GNU General Public License as published by
+# the Free Software Foundation; either version 3 of the License, or
+# (at your option) any later version.
+# Lino is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+# GNU General Public License for more details.
+# You should have received a copy of the GNU General Public License
+# along with Lino; if not, see <http://www.gnu.org/licenses/>.
 
 """
 This module defines the tables 
@@ -65,7 +65,7 @@ from north import dbutils
 #~ class ConceptTypes(dd.ChoiceList):
     #~ verbose_name = _("Concept Type")
     #~ verbose_name_plural = _("Concept Types")
-    
+
 #~ add = ConceptTypes.add_item
 #~ add('10', _("Context"),'context')
 #~ add('20', _("Jargon"),'context')
@@ -76,36 +76,35 @@ class LinkTypes(dd.ChoiceList):
 
 add = LinkTypes.add_item
 #~ add('10', _("Context"),'context')
-add('10', _("Jargon"),'jargon')
-add('20', _("Obsoletes"),'obsoletes')
-
+add('10', _("Jargon"), 'jargon')
+add('20', _("Obsoletes"), 'obsoletes')
 
 
 class Concept(dd.BabelNamed):
+
     """
     """
-    
+
     class Meta:
         verbose_name = _("Concept")
         verbose_name_plural = _("Concepts")
-        
-    abbr = dd.BabelCharField(_("Abbreviation"),max_length=30,blank=True)
-    wikipedia = dd.BabelCharField(_("Wikipedia"),max_length=200,blank=True)
-      
-    definition = dd.BabelTextField(_("Definition"),blank=True)
+
+    abbr = dd.BabelCharField(_("Abbreviation"), max_length=30, blank=True)
+    wikipedia = dd.BabelCharField(_("Wikipedia"), max_length=200, blank=True)
+
+    definition = dd.BabelTextField(_("Definition"), blank=True)
     is_jargon_domain = models.BooleanField(
         _("Jargon domain"),
-        help_text=_("Whether this concept designates a domain of specialized vocabulary."),
+        help_text=_(
+            "Whether this concept designates a domain of specialized vocabulary."),
         default=False)
-        
-    def summary_row(self,ar=None):
+
+    def summary_row(self, ar=None):
         if self.abbr:
-            return ["%s (%s)" % (dbutils.babelattr(self,'name'),dbutils.babelattr(self,'abbr'))]
-        return [dbutils.babelattr(self,'name')]
-        
-        
-    
-  
+            return ["%s (%s)" % (dbutils.babelattr(self, 'name'), dbutils.babelattr(self, 'abbr'))]
+        return [dbutils.babelattr(self, 'name')]
+
+
 class Concepts(dd.Table):
     #~ required = dd.required(user_level='manager')
     model = Concept
@@ -122,55 +121,52 @@ class Concepts(dd.Table):
 class TopLevelConcepts(Concepts):
     label = _("Top-level concepts")
     filter = models.Q(is_jargon_domain=True)
-    
-    
-    
-    
-    
-    
+
+
 class Link(dd.Model):
-    
+
     class Meta:
         verbose_name = _("Link")
         verbose_name_plural = _("Links")
-        
-    type = LinkTypes.field(blank=True,default=LinkTypes.jargon)
-    parent = dd.ForeignKey(Concept,related_name="children")
-    child = dd.ForeignKey(Concept,related_name="parents")
-    
+
+    type = LinkTypes.field(blank=True, default=LinkTypes.jargon)
+    parent = dd.ForeignKey(Concept, related_name="children")
+    child = dd.ForeignKey(Concept, related_name="parents")
+
     @dd.chooser()
     def child_choices(cls):
-        return Concept.objects.filter(is_jargon_domain=True) #         
-        
+        return Concept.objects.filter(is_jargon_domain=True)
+
+
 class Links(dd.Table):
     model = Link
-    
+
+
 class Parents(Links):
     master_key = 'child'
     label = _("Parents")
-  
+
+
 class Children(Links):
     master_key = 'parent'
     label = _("Children")
-
-    
 
 
 MODULE_LABEL = _("Concepts")
 
 
-def setup_main_menu(site,ui,profile,m):
-    m = m.add_menu("concepts",MODULE_LABEL)
+def setup_main_menu(site, ui, profile, m):
+    m = m.add_menu("concepts", MODULE_LABEL)
     m.add_action(Concepts)
 
-def setup_master_menu(site,ui,profile,m): 
+
+def setup_master_menu(site, ui, profile, m):
     pass
-    
-def setup_config_menu(site,ui,profile,m): 
+
+
+def setup_config_menu(site, ui, profile, m):
     pass
-  
-def setup_explorer_menu(site,ui,profile,m):
+
+
+def setup_explorer_menu(site, ui, profile, m):
     pass
-  
-        
-  

@@ -1,16 +1,16 @@
 # -*- coding: UTF-8 -*-
-## Copyright 2012-2013 Luc Saffre
-## This file is part of the Lino project.
-## Lino is free software; you can redistribute it and/or modify 
-## it under the terms of the GNU General Public License as published by
-## the Free Software Foundation; either version 3 of the License, or
-## (at your option) any later version.
-## Lino is distributed in the hope that it will be useful, 
-## but WITHOUT ANY WARRANTY; without even the implied warranty of
-## MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the 
-## GNU General Public License for more details.
-## You should have received a copy of the GNU General Public License
-## along with Lino; if not, see <http://www.gnu.org/licenses/>.
+# Copyright 2012-2013 Luc Saffre
+# This file is part of the Lino project.
+# Lino is free software; you can redistribute it and/or modify
+# it under the terms of the GNU General Public License as published by
+# the Free Software Foundation; either version 3 of the License, or
+# (at your option) any later version.
+# Lino is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+# GNU General Public License for more details.
+# You should have received a copy of the GNU General Public License
+# along with Lino; if not, see <http://www.gnu.org/licenses/>.
 
 u"""
 
@@ -98,14 +98,17 @@ import re
 STREET_RE = re.compile(r"\*\s*\[\[(.+)\]\]\s*$")
 from lino.utils import Cycler
 
+
 def splitter1(s):
     for ln in s.splitlines():
         ln = ln.strip()
         if len(ln) > 1 and ln[0] != '#':
             yield ln
 
+
 def splitter2(s):
     return [name.strip() for name in s.split(',')]
+
 
 def splitter3(s):
     for ln in s.splitlines():
@@ -114,8 +117,6 @@ def splitter3(s):
             a = ln.split()
             name = a[0]
             yield name
-
-
 
 
 LAST_NAMES_BELGIUM = u"""
@@ -2653,7 +2654,8 @@ Alfred, Alphonse, Amédée, Aristide, Augustin, Barthélémy, Cyprien, Eugène, 
 Abel, Achille, Aimé, Anatole, Anthime, Auguste, Augustin, Célestin, Edgar, Emile, Ernest, Faustin, Félix, Gaston, Gustave, Jules, Léon, Léopold, Louis, Marceau, Marius, Max, Melchior, Oscar, Philémon, Rubens, Sully, Théodore, Théophile, Victor, Victorin, Wilhem
 """
 
-# copied from http://fr.wikipedia.org/w/index.php?title=Liste_des_rues_de_Li%C3%A8ge&action=edit
+# copied from
+# http://fr.wikipedia.org/w/index.php?title=Liste_des_rues_de_Li%C3%A8ge&action=edit
 STREETS_OF_LIEGE = u"""
 {{ébauche|Liège}}
 Cet article dresse une liste (incomplète) des voies ([[voirie]]s et [[Place (voie)|places]]) de la [[Ville de Belgique|ville]] de [[Liège]] en [[Belgique]].
@@ -8412,7 +8414,6 @@ William
 """
 
 
-
 def streets_of_liege():
     def fn():
         #~ streets = []
@@ -8427,7 +8428,7 @@ def streets_of_liege():
                     #~ streets.append(s)
     return Cycler(fn())
 
-            
+
 LAST_NAMES_ESTONIA = Cycler(splitter3(LAST_NAMES_ESTONIA))
 MALE_FIRST_NAMES_ESTONIA = Cycler(splitter1(MALE_FIRST_NAMES_ESTONIA))
 FEMALE_FIRST_NAMES_ESTONIA = Cycler(splitter1(FEMALE_FIRST_NAMES_ESTONIA))
@@ -8442,7 +8443,7 @@ FEMALE_FIRST_NAMES_RUSSIA = Cycler(splitter1(FEMALE_FIRST_NAMES_RUSSIA))
     #~ return Cycler(splitter1(MALE_FIRST_NAMES_RUSSIA))
 #~ def female_first_names_russia():
     #~ return Cycler(splitter1(FEMALE_FIRST_NAMES_RUSSIA))
-            
+
 LAST_NAMES_AFRICAN = Cycler(splitter1(LAST_NAMES_AFRICAN))
 MALE_FIRST_NAMES_AFRICAN = Cycler(splitter1(MALE_FIRST_NAMES_AFRICAN))
 FEMALE_FIRST_NAMES_AFRICAN = Cycler(splitter1(FEMALE_FIRST_NAMES_AFRICAN))
@@ -8458,7 +8459,7 @@ FEMALE_FIRST_NAMES_MUSLIM = Cycler(splitter1(FEMALE_FIRST_NAMES_MUSLIM))
 #~ def female_first_names_muslim():
     #~ return Cycler(splitter1(FEMALE_FIRST_NAMES_MUSLIM))
 
-      
+
 LAST_NAMES_BELGIUM = Cycler(splitter1(LAST_NAMES_BELGIUM))
 MALE_FIRST_NAMES_FRANCE = Cycler(splitter2(MALE_FIRST_NAMES_FRANCE))
 FEMALE_FIRST_NAMES_FRANCE = Cycler(splitter2(FEMALE_FIRST_NAMES_FRANCE))
@@ -8469,25 +8470,25 @@ FEMALE_FIRST_NAMES_FRANCE = Cycler(splitter2(FEMALE_FIRST_NAMES_FRANCE))
     #~ return Cycler([name.strip() for name in MALE_FIRST_NAMES_FRANCE.split(',')])
 #~ def female_first_names_france():
     #~ return Cycler([name.strip() for name in FEMALE_FIRST_NAMES_FRANCE.split(',')]))
-    
+
 #~ def belgians():
     #~ yield [
       #~ LAST_NAMES_BELGIUM.pop(),
       #~ MALE_FIRST_NAMES_FRANCE.pop(),
       #~ FEMALE_FIRST_NAMES_FRANCE.pop()]
-      
+
 #~ def muslims():
     #~ yield [
       #~ LAST_NAMES_MUSLIM.pop(),
       #~ MALE_FIRST_NAMES_MUSLIM.pop(),
       #~ FEMALE_FIRST_NAMES_MUSLIM.pop()]
-      
+
 #~ def russians():
     #~ yield [
       #~ LAST_NAMES_RUSSIA.pop(),
       #~ MALE_FIRST_NAMES_RUSSIA.pop(),
       #~ FEMALE_FIRST_NAMES_RUSSIA.pop()]
-      
+
 if False:
     last_names = []
     for ln in demo.LAST_NAMES_FRANCE.splitlines():
@@ -8496,9 +8497,7 @@ if False:
             if len(a) == 3:
                 last_names.append(a[0].strip())
             elif len(a) == 4:
-                last_names.append(a[0].strip()+' '+a[1].strip())
-
-
+                last_names.append(a[0].strip() + ' ' + a[1].strip())
 
 
 def _test():
@@ -8507,4 +8506,3 @@ def _test():
 
 if __name__ == "__main__":
     _test()
-

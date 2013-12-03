@@ -1,16 +1,16 @@
 # -*- coding: UTF-8 -*-
-## Copyright 2010-2013 Luc Saffre
-## This file is part of the Lino project.
-## Lino is free software; you can redistribute it and/or modify 
-## it under the terms of the GNU General Public License as published by
-## the Free Software Foundation; either version 3 of the License, or
-## (at your option) any later version.
-## Lino is distributed in the hope that it will be useful, 
-## but WITHOUT ANY WARRANTY; without even the implied warranty of
-## MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the 
-## GNU General Public License for more details.
-## You should have received a copy of the GNU General Public License
-## along with Lino; if not, see <http://www.gnu.org/licenses/>.
+# Copyright 2010-2013 Luc Saffre
+# This file is part of the Lino project.
+# Lino is free software; you can redistribute it and/or modify
+# it under the terms of the GNU General Public License as published by
+# the Free Software Foundation; either version 3 of the License, or
+# (at your option) any later version.
+# Lino is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+# GNU General Public License for more details.
+# You should have received a copy of the GNU General Public License
+# along with Lino; if not, see <http://www.gnu.org/licenses/>.
 
 """
 Some utilities for parsing contact data.
@@ -31,14 +31,13 @@ import re
 #~ from django.utils.translation import ugettext_lazy as _
 
 
-name_prefixes1 = ("HET", "'T",'VAN','DER', 'TER', 'DEN',
-  'VOM','VON','OF', "DE", "DU", "EL", "AL", "DI")
-name_prefixes2 = ("VAN DEN","VAN DER","VAN DE",
-  "IN HET", "VON DER","DE LA")
+name_prefixes1 = ("HET", "'T", 'VAN', 'DER', 'TER', 'DEN',
+                  'VOM', 'VON', 'OF', "DE", "DU", "EL", "AL", "DI")
+name_prefixes2 = ("VAN DEN", "VAN DER", "VAN DE",
+                  "IN HET", "VON DER", "DE LA")
 
 
-
-def name2kw(s,last_name_first=True):
+def name2kw(s, last_name_first=True):
     """
 Split a string that contains both last_name and first_name.
 The caller must indicate whether the string contains 
@@ -96,7 +95,7 @@ Bibliography:
     a = s.split(',')
     if len(a) == 2:
         if last_name_first:
-            return dict(last_name=a[0].strip(),first_name= a[1].strip())
+            return dict(last_name=a[0].strip(), first_name=a[1].strip())
     a = s.strip().split()
     if len(a) == 0:
         return dict()
@@ -104,43 +103,44 @@ Bibliography:
         return dict(last_name=a[0])
     elif len(a) == 2:
         if last_name_first:
-            return dict(last_name=a[0],first_name= a[1])
+            return dict(last_name=a[0], first_name=a[1])
         else:
-            return dict(last_name=a[1],first_name= a[0])
+            return dict(last_name=a[1], first_name=a[0])
     else:
         # string consisting of more than 3 words
         if last_name_first:
             a01 = a[0] + ' ' + a[1]
             if a01.upper() in name_prefixes2:
                 return dict(
-                  last_name = a01 + ' ' + a[2],
-                  first_name = ' '.join(a[3:]))
+                    last_name=a01 + ' ' + a[2],
+                    first_name=' '.join(a[3:]))
             elif a[0].upper() in name_prefixes1:
                 return dict(
-                    last_name = a[0] + ' ' + a[1],
-                    first_name = ' '.join(a[2:]))
+                    last_name=a[0] + ' ' + a[1],
+                    first_name=' '.join(a[2:]))
             else:
-                return dict(last_name = a[0],
-                    first_name = ' '.join(a[1:]))
+                return dict(last_name=a[0],
+                            first_name=' '.join(a[1:]))
         else:
             if len(a) >= 4:
-                pc = a[-3] + ' ' + a[-2] # prefix2 candidate
+                pc = a[-3] + ' ' + a[-2]  # prefix2 candidate
                 if pc.upper() in name_prefixes2:
                     return dict(
-                        last_name = pc + ' ' + a[-1],
-                        first_name = ' '.join(a[:-3]))
-            pc = a[-2] # prefix candidate
+                        last_name=pc + ' ' + a[-1],
+                        first_name=' '.join(a[:-3]))
+            pc = a[-2]  # prefix candidate
             if pc.upper() in name_prefixes1:
                 return dict(
-                    last_name = pc + ' ' + a[-1],
-                    first_name = ' '.join(a[:-2]))
+                    last_name=pc + ' ' + a[-1],
+                    first_name=' '.join(a[:-2]))
         return dict(
-            last_name = a[-1],
-            first_name = ' '.join(a[:-1]))
-            
+            last_name=a[-1],
+            first_name=' '.join(a[:-1]))
+
     return kw
-    
-def street2kw(s,**kw):
+
+
+def street2kw(s, **kw):
     """
 Parse a string to extract the fields street, street_no and street_box.
 
@@ -200,14 +200,9 @@ Edge cases:
     return kw
 
 
-
 def _test():
     import doctest
     doctest.testmod()
 
 if __name__ == "__main__":
     _test()
-
-
-
-

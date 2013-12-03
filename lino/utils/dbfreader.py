@@ -1,15 +1,15 @@
-## Copyright 2003-2009 Luc Saffre
-## This file is part of the Lino project.
-## Lino is free software; you can redistribute it and/or modify
-## it under the terms of the GNU General Public License as published by
-## the Free Software Foundation; either version 3 of the License, or
-## (at your option) any later version.
-## Lino is distributed in the hope that it will be useful, 
-## but WITHOUT ANY WARRANTY; without even the implied warranty of
-## MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the 
-## GNU General Public License for more details.
-## You should have received a copy of the GNU General Public License
-## along with Lino; if not, see <http://www.gnu.org/licenses/>.
+# Copyright 2003-2009 Luc Saffre
+# This file is part of the Lino project.
+# Lino is free software; you can redistribute it and/or modify
+# it under the terms of the GNU General Public License as published by
+# the Free Software Foundation; either version 3 of the License, or
+# (at your option) any later version.
+# Lino is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+# GNU General Public License for more details.
+# You should have received a copy of the GNU General Public License
+# along with Lino; if not, see <http://www.gnu.org/licenses/>.
 
 # Based on original work by Lars Garshol
 # http://www.garshol.priv.no/download/software/python/dbfreader.py
@@ -27,98 +27,108 @@ import datetime
 from dateutil import parser as dateparser
 
 
-import sys,string,struct
+import sys
+import string
+import struct
 
 codepages = {
-    '\x01' : "cp437",
-    '\x02' : "cp850",
-    }
+    '\x01': "cp437",
+    '\x02': "cp850",
+}
 
 # --- Useful functions
 
+
 def unpack_long(number):
-    return ord(number[0])+256*(ord(number[1])+256*(ord(number[2])+\
-                                                   256*ord(number[3])))
+    return ord(number[0]) + 256 * (ord(number[1]) + 256 * (ord(number[2]) +
+                                                           256 * ord(number[3])))
+
 
 def unpack_long_rev(number):
-    return ord(number[3])+256*(ord(number[2])+256*(ord(number[1])+\
-                                                   256*ord(number[0])))
+    return ord(number[3]) + 256 * (ord(number[2]) + 256 * (ord(number[1]) +
+                                                           256 * ord(number[0])))
+
 
 def unpack_int(number):
-    return ord(number[0])+256*ord(number[1])
+    return ord(number[0]) + 256 * ord(number[1])
+
 
 def unpack_int_rev(number):
-    return ord(number[1])+256*ord(number[0])
+    return ord(number[1]) + 256 * ord(number[0])
+
 
 def hex_analyze(number):
     for ch in number:
-        print "%s\t%s\t%d" % (hex(ord(ch)),ch,ord(ch))
+        print "%s\t%s\t%d" % (hex(ord(ch)), ch, ord(ch))
 
-## def sort_by_key(list,key_func):
-##     for ix in range(len(list)):
-##         list[ix]=(key_func(list[ix]),list[ix])
+# def sort_by_key(list,key_func):
+# for ix in range(len(list)):
+# list[ix]=(key_func(list[ix]),list[ix])
 
-##     list.sort()
+# list.sort()
 
-##     for ix in range(len(list)):
-##         list[ix]=list[ix][1]
+# for ix in range(len(list)):
+# list[ix]=list[ix][1]
 
-##     return list
+# return list
 
 # --- A class for the entire file
 
+
 class DBFFile:
+
     "Represents a single DBF file."
 
-    HAS_MEMO_FILE = 128 # "\x80"
-    
-    versionmap={
-        "\x03":"dBASE III",
-        "\x83":"dBASE III+ with memo",
-        "\x8B":"dBASE IV with memo",
-        "\xF5":"FoxPro with memo"
-        }
-    
-    def __init__(self,filename,codepage=None):
-        self.filename=filename
+    HAS_MEMO_FILE = 128  # "\x80"
 
-        infile=open(self.filename,"rb")
+    versionmap = {
+        "\x03": "dBASE III",
+        "\x83": "dBASE III+ with memo",
+        "\x8B": "dBASE IV with memo",
+        "\xF5": "FoxPro with memo"
+    }
+
+    def __init__(self, filename, codepage=None):
+        self.filename = filename
+
+        infile = open(self.filename, "rb")
 
         # Read header
 
         header = infile.read(32)
-        
-        self.version=header[0]
+
+        self.version = header[0]
         year = ord(header[1]) + 2000
         month = ord(header[2])
         day = ord(header[3])
-        self.lastUpdate = datetime.date(year,month,day)
-                    
-        self.rec_num=unpack_long(header[4:8])
-                    
-        self.first_rec=unpack_int(header[8:10])
-                    
-        self.rec_len=unpack_int(header[10:12])
+        self.lastUpdate = datetime.date(year, month, day)
 
-        self.codepage = codepage # s[header[29]]
+        self.rec_num = unpack_long(header[4:8])
+
+        self.first_rec = unpack_int(header[8:10])
+
+        self.rec_len = unpack_int(header[10:12])
+
+        self.codepage = codepage  # s[header[29]]
 
         # Read field defs
 
-        self.fields={}
-        self.field_list=[]
+        self.fields = {}
+        self.field_list = []
         while 1:
-            ch=infile.read(1)
-            if ch == "\x0D": break
-            field = DBFField(ch+infile.read(31),self)
+            ch = infile.read(1)
+            if ch == "\x0D":
+                break
+            field = DBFField(ch + infile.read(31), self)
             self.fields[field.name] = field
             self.field_list.append(field)
-            
+
         infile.close()
         if self.has_memo():
             if self.version == "\x83":
-                self.blockfile=DBTFile(self)
+                self.blockfile = DBTFile(self)
             else:
-                self.blockfile=FPTFile(self)
+                self.blockfile = FPTFile(self)
 
     def has_memo(self):
         if ord(self.version) & self.HAS_MEMO_FILE:
@@ -128,7 +138,7 @@ class DBFFile:
     def has_blocksize(self):
         # FoxPro : return True
         return False
-    
+
     def get_version(self):
         return DBFFile.versionmap[self.version]
 
@@ -142,31 +152,31 @@ class DBFFile:
         return self.rec_len
 
     def get_fields(self):
-        #return self.fields.values()
+        # return self.fields.values()
         return self.field_list
 
-    def get_field(self,name):
+    def get_field(self, name):
         return self.fields[name]
 
     # --- Record-reading methods
 
-    def open(self,deleted=False):
+    def open(self, deleted=False):
         self.recno = 0
         self.deleted = deleted
-        self.infile=open(self.filename,"rb")
-        #self.infile.read(32+len(self.fields)*32+1)
+        self.infile = open(self.filename, "rb")
+        # self.infile.read(32+len(self.fields)*32+1)
         self.infile.seek(self.first_rec)
-        #self.field_list=sort_by_key(self.get_fields(),DBFField.get_pos)
+        # self.field_list=sort_by_key(self.get_fields(),DBFField.get_pos)
 
     def get_next_record(self):
-        values={}
-        ch=self.infile.read(1)
+        values = {}
+        ch = self.infile.read(1)
         self.recno += 1
-        if ch=="*":
+        if ch == "*":
             deleted = True
             # Skip the record
-            # return self.get_next_record() 
-        elif ch=="\x1A" or ch=="":
+            # return self.get_next_record()
+        elif ch == "\x1A" or ch == "":
             return None
         else:
             deleted = False
@@ -176,8 +186,8 @@ class DBFFile:
             values[field.get_name()] = field.interpret(data)
         if deleted and not self.deleted:
             return self.get_next_record()
-        return DBFRecord(self,values,deleted)
-        
+        return DBFRecord(self, values, deleted)
+
     def close(self):
         self.infile.close()
         del self.infile
@@ -185,103 +195,112 @@ class DBFFile:
 
     def __iter__(self):
         return self
+
     def next(self):
         rec = self.get_next_record()
         if rec is None:
             raise StopIteration
         return rec
-    
+
     def fetchall(self):
         self.open()
         l = [rec for rec in self]
         self.close()
         return l
 
-class NOTGIVEN: pass
+
+class NOTGIVEN:
+    pass
 
 
 class DBFRecord:
-    def __init__(self,dbf,values,deleted):
+
+    def __init__(self, dbf, values, deleted):
         self._recno = dbf.recno
         self._values = values
         self._deleted = deleted
-        self._dbf=dbf
+        self._dbf = dbf
 
     def deleted(self):
         return self._deleted
-    
+
     def recno(self):
         return self._recno
 
-    def __getitem__(self,name):
+    def __getitem__(self, name):
         return self._values[name.upper()]
-        
-    def __getattr__(self,name,default=NOTGIVEN):
+
+    def __getattr__(self, name, default=NOTGIVEN):
         name = name.upper()
         try:
             return self._values[name]
         except KeyError:
             if default is NOTGIVEN:
-                raise AttributeError("No field named %r in %s" % (name,self._values.keys()))
+                raise AttributeError("No field named %r in %s" %
+                                     (name, self._values.keys()))
             return default
-        
-    def get(self,*args,**kw):
-        return self._values.get(*args,**kw)
+
+    def get(self, *args, **kw):
+        return self._values.get(*args, **kw)
 
     def __repr__(self):
-        return self._dbf.filename+"#"+str(self._recno)
-    
+        return self._dbf.filename + "#" + str(self._recno)
+
 # --- A class for a single field
 
+
 class DBFField:
+
     "Represents a field in a DBF file."
 
-    typemap={
-        "C":"Character","N":"Numeric",
-        "L":"Logical","M":"Memo field",
-        "G":"Object","D":"Date",
-        "F":"Float","P":"Picture"}
-    
-    def __init__(self,buf,dbf):
-        pos=string.find(buf,"\x00")
-        if pos==-1 or pos>11: pos=11
-        self.name=buf[:pos]
-        self.field_type=buf[11]
-        self.field_pos=unpack_long(buf[12:16])
-        self.field_len=ord(buf[16])
-        self.field_places=ord(buf[17])
+    typemap = {
+        "C": "Character", "N": "Numeric",
+        "L": "Logical", "M": "Memo field",
+        "G": "Object", "D": "Date",
+        "F": "Float", "P": "Picture"}
+
+    def __init__(self, buf, dbf):
+        pos = string.find(buf, "\x00")
+        if pos == -1 or pos > 11:
+            pos = 11
+        self.name = buf[:pos]
+        self.field_type = buf[11]
+        self.field_pos = unpack_long(buf[12:16])
+        self.field_len = ord(buf[16])
+        self.field_places = ord(buf[17])
         self.dbf = dbf
 
-##         if self.field_type=="M" or self.field_type=="P" or \
-##            self.field_type=="G" :
-##             self.blockfile=blockfile
+# if self.field_type=="M" or self.field_type=="P" or \
+# self.field_type=="G" :
+# self.blockfile=blockfile
 
     def get_name(self):
         return self.name
 
     def get_pos(self):
         return self.field_pos
-    
+
     def get_type(self):
         return self.field_type
-    
+
     def get_type_name(self):
         return DBFField.typemap[self.field_type]
 
     def get_len(self):
         return self.field_len
 
-    def interpret(self,data):
-        if self.field_type=="C":
+    def interpret(self, data):
+        if self.field_type == "C":
             if not self.dbf.codepage is None:
                 data = data.decode(self.dbf.codepage)
-            data=data.strip()
+            data = data.strip()
             #~ if len(data) == 0: return None
-            if len(data) == 0: return ''
+            if len(data) == 0:
+                return ''
             return data
-        elif self.field_type=="L":
-            return data=="Y" or data=="y" or data=="T" or data=="t"
-        elif self.field_type=="M":
+        elif self.field_type == "L":
+            return data == "Y" or data == "y" or data == "T" or data == "t"
+        elif self.field_type == "M":
             try:
                 num = string.atoi(data)
             except ValueError:
@@ -290,69 +309,74 @@ class DBFField:
                     return ''
                 raise "bad memo block number %s" % repr(data)
             return self.dbf.blockfile.get_block(num)
-            
-                
-        elif self.field_type=="N":
+
+        elif self.field_type == "N":
             try:
                 return string.atoi(data)
             except ValueError:
                 return 0
         elif self.field_type == "D":
             return dateparser.parse(data)
-            #~ return data # string "YYYYMMDD", use the time module or mxDateTime
+            # ~ return data # string "YYYYMMDD", use the time module or mxDateTime
         else:
-            raise NotImplementedError("Unknown data type " \
+            raise NotImplementedError("Unknown data type "
                                       + self.field_type)
-        
+
 # --- A class that represents a block file
 
+
 class FPTFile:
+
     "Represents an FPT block file"
 
-    def __init__(self,dbf):
+    def __init__(self, dbf):
         self.dbf = dbf
-        self.filename=dbf.filename[:-4]+".FPT"
-        infile=open(self.filename,"rb")
+        self.filename = dbf.filename[:-4] + ".FPT"
+        infile = open(self.filename, "rb")
         infile.read(6)
-        self.blocksize=unpack_int_rev(infile.read(2))
+        self.blocksize = unpack_int_rev(infile.read(2))
         infile.close()
 
-    def get_block(self,number):
-        infile=open(self.filename,"rb")
-        infile.seek(512+self.blocksize*(number-8)) # ?
+    def get_block(self, number):
+        infile = open(self.filename, "rb")
+        infile.seek(512 + self.blocksize * (number - 8))  # ?
 
-        code=infile.read(4)
-        if code!="\000\000\000\001":
-            return "Block %d has invalid code %s" % (number,repr(code))
-        
-        length=infile.read(4)
-        length=unpack_long_rev(length)
-        data=infile.read(length)
+        code = infile.read(4)
+        if code != "\000\000\000\001":
+            return "Block %d has invalid code %s" % (number, repr(code))
+
+        length = infile.read(4)
+        length = unpack_long_rev(length)
+        data = infile.read(length)
         infile.close()
 
-        data=data.strip()
-        if len(data) == 0: return None
+        data = data.strip()
+        if len(data) == 0:
+            return None
         return data
-    
+
+
 class DBTFile:
+
     "Represents a DBT block file"
-    def __init__(self,dbf):
+
+    def __init__(self, dbf):
         self.dbf = dbf
-        self.filename=dbf.filename[:-4]+".DBT"
-        #print "DBTFile", self.filename
+        self.filename = dbf.filename[:-4] + ".DBT"
+        # print "DBTFile", self.filename
         self.blocksize = 512
 
-    def get_block(self,number):
-        infile=open(self.filename,"rb")
-        infile.seek(512+self.blocksize*(number-1))
+    def get_block(self, number):
+        infile = open(self.filename, "rb")
+        infile.seek(512 + self.blocksize * (number - 1))
         data = ""
         while True:
             buf = infile.read(self.blocksize)
-##             if len(buf) != self.blocksize:
-##                 print str(number)+":"+str(len(buf))
+# if len(buf) != self.blocksize:
+# print str(number)+":"+str(len(buf))
 ##                 data += buf
-##                 break
-            data+=buf
+# break
+            data += buf
             pos = data.find("\x1A")
             #pos = data.find("\x1A\x1A")
             if pos != -1:
@@ -364,35 +388,39 @@ class DBTFile:
             data = data.decode(self.dbf.codepage)
         # clipper adds "soft CR's" to memo texts. we convert them to
         # simple spaces:
-        data = data.replace(u"\xec\n","")
-        
-        # convert CR/LF to simple LF:
-        data = data.replace("\r\n","\n")
+        data = data.replace(u"\xec\n", "")
 
-        data=data.strip()
-        if len(data) == 0: return None
+        # convert CR/LF to simple LF:
+        data = data.replace("\r\n", "\n")
+
+        data = data.strip()
+        if len(data) == 0:
+            return None
         return data
 
 # --- A class that stores the contents of a DBF file as a hash of the
 #     primary key
 
+
 class DBFHash:
 
-    def __init__(self,file,key):
-        self.file=DBFFile(file)
-        self.hash={}
-        self.key=key
+    def __init__(self, file, key):
+        self.file = DBFFile(file)
+        self.hash = {}
+        self.key = key
 
         self.file.open()
         while 1:
-            rec=self.file.get_next_record()
-            if rec==None: break
-            self.hash[rec[self.key]]=rec
+            rec = self.file.get_next_record()
+            if rec == None:
+                break
+            self.hash[rec[self.key]] = rec
 
-    def __getitem__(self,key):
+    def __getitem__(self, key):
         return self.hash[key]
-            
+
 # --- Utility functions
+
 
 def display_info(f):
     print f.get_version()
@@ -400,32 +428,33 @@ def display_info(f):
     print f.get_record_len()
 
     for field in f.get_fields():
-        print "%s: %s (%d)" % (field.get_name(),field.get_type_name(),
+        print "%s: %s (%d)" % (field.get_name(), field.get_type_name(),
                                field.get_len())
 
-def make_html(f, out = sys.stdout, skiptypes = "MOP"):
+
+def make_html(f, out=sys.stdout, skiptypes="MOP"):
     out.write("<TABLE>\n")
 
     # Writing field names
     out.write("<TR>")
     for field in f.get_fields():
-        out.write("<TH>"+field.get_name())
+        out.write("<TH>" + field.get_name())
 
     f.open()
     while 1:
-        rec=f.get_next_record()
-        if rec==None: break
+        rec = f.get_next_record()
+        if rec == None:
+            break
 
         out.write("<TR>")
         for field in f.get_fields():
             if not field.get_type() in skiptypes:
-                out.write("<TD>"+str(rec[field.get_name()]))
+                out.write("<TD>" + str(rec[field.get_name()]))
             else:
                 out.write("<TD>*skipped*")
-        
+
     f.close()
-    out.write("</TABLE>\n") 
+    out.write("</TABLE>\n")
 
 if __name__ == "__main__":
     make_html(DBFFile(sys.argv[1]))
-    

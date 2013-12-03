@@ -11,7 +11,7 @@ Added by LS:
 """
 import xml.etree.ElementTree as etree
 
-if hasattr(etree,'_serialize_xml'):
+if hasattr(etree, '_serialize_xml'):
 
     def CDATA(text=None):
         element = etree.Element('![CDATA[')
@@ -19,18 +19,19 @@ if hasattr(etree,'_serialize_xml'):
         return element
 
     _original_serialize_xml = etree._serialize_xml
+
     def _serialize_xml(write, elem, *args):
         if elem.tag == '![CDATA[':
             write("\n<%s%s]]>\n" % (
-                    elem.tag, elem.text))
+                elem.tag, elem.text))
             return
         return _original_serialize_xml(write, elem, *args)
     etree._serialize_xml = etree._serialize['xml'] = _serialize_xml
 
-    register_namespace = etree.register_namespace 
-    
+    register_namespace = etree.register_namespace
+
 else:
-    def register_namespace(*args,**kw):
+    def register_namespace(*args, **kw):
         pass
-    
-from xml.etree.ElementTree import * 
+
+from xml.etree.ElementTree import *

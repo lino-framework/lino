@@ -18,6 +18,7 @@ import re
 # line in a string.
 _INDENT_RE = re.compile('^([ ]*)(?=\S)', re.MULTILINE)
 
+
 def min_indent(s):
     "Return the minimum indentation of any non-blank line in `s`"
     indents = [len(indent) for indent in _INDENT_RE.findall(s)]
@@ -25,7 +26,8 @@ def min_indent(s):
         return min(indents)
     else:
         return 0
-        
+
+
 def doc2rst(s):
     if s is None:
         return u''
@@ -37,29 +39,24 @@ def doc2rst(s):
     return s
 
 
-def abstract(o,indent=0):
+def abstract(o, indent=0):
     s = doc2rst(o.__doc__).strip()
-    if not s: return '(no docstring)'
-    paras = s.split('\n\n',1)
+    if not s:
+        return '(no docstring)'
+    paras = s.split('\n\n', 1)
     par = paras[0]
     if indent:
-        par = (' '*indent).join(par.splitlines())
+        par = (' ' * indent).join(par.splitlines())
     return par
-    
-
 
 
 #~ from docutils.parsers.rst import roles
-
 #~ def doc_role(typ, rawtext, text, lineno, inliner,
              #~ options={}, content=[]):
     #~ node = nodes.reference(rawtext, reftype=role, refdomain=domain,
                                  #~ refexplicit=has_explicit_title)
     #~ return [node], []
-    
 #~ roles.register_local_role('doc', docrole)
-
-
 def html_parts(input_string, source_path=None, destination_path=None,
                input_encoding='unicode', doctitle=1, initial_header_level=1):
     """
@@ -94,6 +91,7 @@ def html_parts(input_string, source_path=None, destination_path=None,
         writer_name='html', settings_overrides=overrides)
     return parts
 
+
 def html_body(input_string, source_path=None, destination_path=None,
               input_encoding='unicode', output_encoding='unicode',
               doctitle=1, initial_header_level=1):
@@ -117,12 +115,14 @@ def html_body(input_string, source_path=None, destination_path=None,
         fragment = fragment.encode(output_encoding)
     #~ print __file__, repr(fragment)
     return fragment
-    
-    
-from docutils import writers 
+
+
+from docutils import writers
 from docutils.writers import html4css1
 
+
 class HTMLTranslator(html4css1.HTMLTranslator):
+
     """
     Suppress surrounding DIV tag. Used by :func:`restify`.
     """
@@ -145,7 +145,8 @@ class HTMLTranslator(html4css1.HTMLTranslator):
                               + self.docinfo + self.body
                               + self.body_suffix[:-1])
         assert not self.context, 'len(context) = %s' % len(self.context)
-        
+
+
 class Writer(html4css1.Writer):
 
     def __init__(self):
@@ -163,54 +164,57 @@ import sphinx.roles
 from docutils.parsers.rst import roles
 
 try:
-  from sphinx.util.nodes import split_explicit_title
-except ImportError: # sphinx 0.6.6 didn't have this
-  import re
-  explicit_title_re = re.compile(r'^(.+?)\s*(?<!\x00)<(.*?)>$', re.DOTALL)
-  def split_explicit_title(text):
-      """Split role content into title and target, if given."""
-      match = explicit_title_re.match(text)
-      if match:
-          return True, match.group(1), match.group(2)
-      return False, text, text
+    from sphinx.util.nodes import split_explicit_title
+except ImportError:  # sphinx 0.6.6 didn't have this
+    import re
+    explicit_title_re = re.compile(r'^(.+?)\s*(?<!\x00)<(.*?)>$', re.DOTALL)
+
+    def split_explicit_title(text):
+        """Split role content into title and target, if given."""
+        match = explicit_title_re.match(text)
+        if match:
+            return True, match.group(1), match.group(2)
+        return False, text, text
+
 
 def install_sphinx_emu():
     """
     install some roles to emulate sphinx.
     """
-    def mod_role(role, rawtext, text, lineno, inliner,options={}, content=[]):
-        has_explicit_title, title, target = split_explicit_title(text)                   
-        ref = 'http://not_implemented/'  + target
+    def mod_role(role, rawtext, text, lineno, inliner, options={}, content=[]):
+        has_explicit_title, title, target = split_explicit_title(text)
+        ref = 'http://not_implemented/' + target
         return [nodes.reference(rawtext, utils.unescape(title), refuri=ref,
-            **options)], []
+                                **options)], []
     roles.register_local_role('mod', mod_role)
 
-    def class_role(role, rawtext, text, lineno, inliner,options={}, content=[]):
-        has_explicit_title, title, target = split_explicit_title(text)                   
-        ref = 'http://not_implemented/'  + target
+    def class_role(role, rawtext, text, lineno, inliner, options={}, content=[]):
+        has_explicit_title, title, target = split_explicit_title(text)
+        ref = 'http://not_implemented/' + target
         return [nodes.reference(rawtext, utils.unescape(title), refuri=ref,
-            **options)], []
+                                **options)], []
     roles.register_local_role('class', class_role)
 
-    def srcref_role(role, rawtext, text, lineno, inliner,options={}, content=[]):
-        has_explicit_title, title, target = split_explicit_title(text)                   
-        ref = 'http://not_implemented/'  + target
+    def srcref_role(role, rawtext, text, lineno, inliner, options={}, content=[]):
+        has_explicit_title, title, target = split_explicit_title(text)
+        ref = 'http://not_implemented/' + target
         return [nodes.reference(rawtext, utils.unescape(title), refuri=ref,
-            **options)], []
+                                **options)], []
     roles.register_local_role('srcref', srcref_role)
 
 #~ import sphinx
 #~ print sphinx.__file__
 
-def restify(input_string,source_path=None, destination_path=None,
+
+def restify(input_string, source_path=None, destination_path=None,
             input_encoding='unicode', doctitle=1, initial_header_level=1):
     u"""
-    Renders the given reST string into a unicode HTML chunk without 
-    any surrounding tags like ``<HTML>``, ``<BODY>``, and especially 
-    ``<DIV class="document">`` (this last one requires the above 
-    :class:`HTMLTranslator` subclass,  thanks to `Günter Milde's hint 
+    Renders the given reST string into a unicode HTML chunk without
+    any surrounding tags like ``<HTML>``, ``<BODY>``, and especially
+    ``<DIV class="document">`` (this last one requires the above
+    :class:`HTMLTranslator` subclass,  thanks to `Günter Milde's hint
     <http://sourceforge.net/mailarchive/message.php?msg_id=27467363>`_
-    and `example code 
+    and `example code
     <http://docutils.sourceforge.net/sandbox/html4strict/html4strict.py>`_).
     """
     overrides = {'input_encoding': input_encoding,
@@ -219,22 +223,24 @@ def restify(input_string,source_path=None, destination_path=None,
     parts = core.publish_parts(
         source=input_string, source_path=source_path,
         destination_path=destination_path,
-        writer=Writer(), 
+        writer=Writer(),
         settings_overrides=overrides)
     fragment = parts['html_body']
     #~ if output_encoding != 'unicode':
         #~ fragment = fragment.encode(output_encoding)
     #~ print __file__, repr(fragment)
     return fragment
-    
-def rst2odt(input_string,source_path=None, destination_path=None,
+
+
+def rst2odt(input_string, source_path=None, destination_path=None,
             input_encoding='unicode', doctitle=1, initial_header_level=1):
     u"""
-    Renders the given reST string into 
+    Renders the given reST string into
     """
     from docutils.writers.odf_odt import Writer, Reader
-    
+
     class MyWriter(Writer):
+
         def assemble_my_parts(self):
             writers.Writer.assemble_parts(self)
             self.parts['content'] = self.visitor.content_astext()
@@ -259,7 +265,6 @@ def rst2odt(input_string,source_path=None, destination_path=None,
             #~ self.parts['whole'] = whole
             #~ self.parts['encoding'] = self.document.settings.output_encoding
             #~ self.parts['version'] = docutils.__version__
-      
 
     overrides = {'input_encoding': input_encoding,
                  'doctitle_xform': doctitle,
@@ -267,8 +272,8 @@ def rst2odt(input_string,source_path=None, destination_path=None,
     parts = core.publish_parts(
         source=input_string, source_path=source_path,
         destination_path=destination_path,
-        writer=MyWriter(), 
-        reader=Reader(), 
+        writer=MyWriter(),
+        reader=Reader(),
         settings_overrides=overrides)
     print 20120311, parts.keys()
     print 20120311, parts['content']
@@ -279,35 +284,36 @@ def rst2odt(input_string,source_path=None, destination_path=None,
         #~ fragment = fragment.encode(output_encoding)
     #~ print __file__, repr(fragment)
     return fragment
-    
-  
-def old_restify(s,**kw):
+
+
+def old_restify(s, **kw):
     """
     (Didn't work when the reST text contained a root title).
     See `/blog/2011/0525`.
     """
-    html = html_body(s,**kw)
+    html = html_body(s, **kw)
     if html.startswith('<div class="document">\n') and html.endswith('</div>\n'):
         return html[23:-7]
     raise Exception("Error: restify() got unexpected HTML: %r" % html)
 
 
 def latex_parts(input_string, source_path=None, destination_path=None,
-               input_encoding='unicode', doctitle=1, initial_header_level=1):
+                input_encoding='unicode', doctitle=1, initial_header_level=1):
     overrides = {'input_encoding': input_encoding,
                  'doctitle_xform': doctitle,
                  'initial_header_level': initial_header_level}
     parts = core.publish_parts(
         source=input_string, source_path=source_path,
         destination_path=destination_path,
-        #~ writer_name='latex2e', 
-        writer_name='newlatex2e', 
+        #~ writer_name='latex2e',
+        writer_name='newlatex2e',
         settings_overrides=overrides)
     return parts
 
+
 def latex_body(input_string, source_path=None, destination_path=None,
-              input_encoding='unicode', output_encoding='unicode',
-              doctitle=1, initial_header_level=1):
+               input_encoding='unicode', output_encoding='unicode',
+               doctitle=1, initial_header_level=1):
     parts = latex_parts(
         input_string=input_string, source_path=source_path,
         destination_path=destination_path,
@@ -318,45 +324,46 @@ def latex_body(input_string, source_path=None, destination_path=None,
     if output_encoding != 'unicode':
         fragment = fragment.encode(output_encoding)
     return fragment
-    
-def rst2latex(input_string, 
-              source_path=None, 
+
+
+def rst2latex(input_string,
+              source_path=None,
               input_encoding='unicode',
-              doctitle=1, 
+              doctitle=1,
               initial_header_level=1):
     """
     returns a dict containing the following keys::
-    
-      'body', 
-      'latex_preamble', 
-      'head_prefix', 
-      'requirements', 
-      'encoding', 
-      'abstract', 
-      'title', 
-      'fallbacks', 
-      'stylesheet', 
-      'version', 
-      'body_pre_docinfo', 
-      'dedication', 
-      'subtitle', 
-      'whole', 
-      'docinfo', 
+
+      'body',
+      'latex_preamble',
+      'head_prefix',
+      'requirements',
+      'encoding',
+      'abstract',
+      'title',
+      'fallbacks',
+      'stylesheet',
+      'version',
+      'body_pre_docinfo',
+      'dedication',
+      'subtitle',
+      'whole',
+      'docinfo',
       'pdfsetup'
 
     """
     overrides = {'input_encoding': input_encoding,
                  'doctitle_xform': doctitle,
                  'initial_header_level': initial_header_level}
-    #~ doc = core.publish_doctree(source=input_string, 
+    #~ doc = core.publish_doctree(source=input_string,
                 #~ source_path=source_path,
                 #~ 'input_encoding': input_encoding)
-    
-    parts = core.publish_parts(source=input_string, 
-        source_path=source_path,
-        #~ writer_name='latex2e', 
-        writer_name='latex2e', 
-        settings_overrides=overrides)
+
+    parts = core.publish_parts(source=input_string,
+                               source_path=source_path,
+                               #~ writer_name='latex2e',
+                               writer_name='latex2e',
+                               settings_overrides=overrides)
     return parts
     #~ print parts.keys()
     #~ f = file('tmp.txt','w')
@@ -364,9 +371,6 @@ def rst2latex(input_string,
     #~ f.write(repr(parts))
     #~ f.close()
     #~ return parts['body']
-    
-    
-  
 
 
 if __name__ == '__main__':
@@ -406,6 +410,3 @@ A table:
     print rst2odt(test)
     #~ print restify(test)
     #~ print latex_body(test)
-
-
-

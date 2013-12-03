@@ -27,13 +27,15 @@ I want to see the value of `journal`!
 """
 
 from django.db import models
-   
+
+
 class Journal(models.Model):
     pass
 
+
 class Order(models.Model):
-    journal = models.ForeignKey(Journal,null=True)
+    journal = models.ForeignKey(Journal, null=True)
+
 
 class Order2(models.Model):
     journal = models.ForeignKey(Journal)
-

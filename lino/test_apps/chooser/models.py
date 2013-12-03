@@ -104,49 +104,54 @@ YEAR_IN_SCHOOL_CHOICES = (
 )
 
 MENU = [
-  # name reserved_for
-  ('Potato', None),
-  ('Vegetable', 'SO JR SR GR'),
-  ('Meat', 'JR SR GR'),
-  ('Fish', 'SR GR'),
+    # name reserved_for
+    ('Potato', None),
+    ('Vegetable', 'SO JR SR GR'),
+    ('Meat', 'JR SR GR'),
+    ('Fish', 'SR GR'),
 ]
 
-   
+
 class Country(dd.Model):
     name = models.CharField(max_length=20)
+
     def __unicode__(self):
         return self.name
+
 
 class City(dd.Model):
     name = models.CharField(max_length=20)
     country = models.ForeignKey(Country)
+
     def __unicode__(self):
         return self.name
+
 
 class Contact(dd.Model):
     name = models.CharField(max_length=20)
     country = models.ForeignKey(Country)
     city = models.ForeignKey(City)
-    year_in_school = models.CharField(max_length=2,choices=YEAR_IN_SCHOOL_CHOICES)
+    year_in_school = models.CharField(
+        max_length=2, choices=YEAR_IN_SCHOOL_CHOICES)
     food = models.CharField(max_length=20)
+
     def __unicode__(self):
         return self.name
-        
+
     @classmethod
-    def city_choices(cls,country):
+    def city_choices(cls, country):
         if country is not None:
             return country.city_set.order_by('name')
         return cls.city.field.rel.to.objects.order_by('name')
-        
+
     @classmethod
-    def food_choices(cls,year_in_school):
+    def food_choices(cls, year_in_school):
         food = []
         for name, reserved_for in MENU:
             if (year_in_school is None) or (reserved_for is None) or year_in_school in reserved_for:
                 food.append(name)
         return food
 
+
 class Contacts(dd.Table):
     model = Contact
-    
-    

@@ -64,3 +64,15 @@ plugin concept isn't fully implemented.
 
 So that project must wait until *either* I get Lino's CMS mode to 
 a usable state *or* somebody in the group becomes active.
+
+Lino source code now PEP8-compliant
+------------------------------------
+
+I ran ``autopep8 -ir`` over the Lino source code.
+
+Fixed a heading level mismatch in :doc:`/dev/perms`.
+
+Fixed some minor failures in the test suite.
+
+The snippet in :blogref:`20130719` is no longer part of the Lino 
+test suite (because Lino should not depend on Lino Welfare).

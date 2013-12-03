@@ -1,16 +1,16 @@
 # -*- coding: UTF-8 -*-
-## Copyright 2013 Luc Saffre
-## This file is part of the Lino project.
-## Lino is free software; you can redistribute it and/or modify 
-## it under the terms of the GNU General Public License as published by
-## the Free Software Foundation; either version 3 of the License, or
-## (at your option) any later version.
-## Lino is distributed in the hope that it will be useful, 
-## but WITHOUT ANY WARRANTY; without even the implied warranty of
-## MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the 
-## GNU General Public License for more details.
-## You should have received a copy of the GNU General Public License
-## along with Lino; if not, see <http://www.gnu.org/licenses/>.
+# Copyright 2013 Luc Saffre
+# This file is part of the Lino project.
+# Lino is free software; you can redistribute it and/or modify
+# it under the terms of the GNU General Public License as published by
+# the Free Software Foundation; either version 3 of the License, or
+# (at your option) any later version.
+# Lino is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+# GNU General Public License for more details.
+# You should have received a copy of the GNU General Public License
+# along with Lino; if not, see <http://www.gnu.org/licenses/>.
 
 from django.conf import settings
 from lino import dd
@@ -21,43 +21,43 @@ polls = dd.resolve_app('polls')
 
 
 def objects():
-    
+
     yesno = polls.ChoiceSet(name="Yes/No")
     yield yesno
-    yield polls.Choice(choiceset=yesno,name="Yes")
-    yield polls.Choice(choiceset=yesno,name="No")
-    
+    yield polls.Choice(choiceset=yesno, name="Yes")
+    yield polls.Choice(choiceset=yesno, name="No")
+
     maybe = polls.ChoiceSet(name="Yes/Maybe/No")
     yield maybe
-    yield polls.Choice(choiceset=maybe,name="Yes")
-    yield polls.Choice(choiceset=maybe,name="Maybe")
-    yield polls.Choice(choiceset=maybe,name="No")
-    
-    def choiceset(name,*choices):
+    yield polls.Choice(choiceset=maybe, name="Yes")
+    yield polls.Choice(choiceset=maybe, name="Maybe")
+    yield polls.Choice(choiceset=maybe, name="No")
+
+    def choiceset(name, *choices):
         cs = polls.ChoiceSet(name=name)
         cs.save()
         for choice in choices:
-            obj = polls.Choice(choiceset=cs,name=choice)
+            obj = polls.Choice(choiceset=cs, name=choice)
             obj.full_clean()
             obj.save()
         return cs
-    
-    yield choiceset("Rather Yes/No","That's it!","Rather Yes","Neutral","Rather No","Never!")
-    one = choiceset("-1..+1","-1","0","+1")
-    
-    
+
+    yield choiceset("Rather Yes/No", "That's it!", "Rather Yes", "Neutral", "Rather No", "Never!")
+    one = choiceset("-1..+1", "-1", "0", "+1")
+
     USERS = Cycler(settings.SITE.user_model.objects.all())
-    def poll(choiceset,title,details,questions):
+
+    def poll(choiceset, title, details, questions):
         return polls.Poll(
             user=USERS.pop(),
             title=title.strip(),
             details=details.strip(),
             questions_to_add=questions,
             default_choiceset=choiceset)
-    
-    yield poll(one,"Matthew 1:1-17","""
+
+    yield poll(one, "Matthew 1:1-17", """
 Please give your vote and optional remark for each verse.
-""","""
+""", """
 The Good News According to Matthew
 
 The Birth, Parentage and Infancy
@@ -82,9 +82,9 @@ The Birth, Parentage and Infancy
     
 """)
 
-    yield poll(one,"Matthew 1:17-25","""
+    yield poll(one, "Matthew 1:17-25", """
 Please give your vote and optional remark for each verse.
-""","""
+""", """
 [1:18] This is how Jesus Christ was born: 
 His mother Mary was engaged to Joseph, but, before the marriage took place, she found herself to be pregnant by the power of the Holy Spirit. 
 [1:19] Her husband, Joseph, was a religious man and, since he did not want to disgrace her publicly, he resolved to put an end to their engagement privately. 
@@ -99,7 +99,6 @@ His mother Mary was engaged to Joseph, but, before the marriage took place, she 
 [1:24] When Joseph woke up, he did as the angel of the Lord had directed him. 
 [1:25] He made Mary his wife, but they did not sleep together before the birth of her son; and to this son he gave the name Jesus.
 """)
-    
 
     for p in polls.Poll.objects.exclude(questions_to_add=''):
         p.after_ui_save(None)

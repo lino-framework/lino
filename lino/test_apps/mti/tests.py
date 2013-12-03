@@ -343,4 +343,3 @@ Related documents
 - `Figure out child type with Django MTI or specify type as field? <http://stackoverflow.com/questions/3990470/figure-out-child-type-with-django-mti-or-specify-type-as-field>`_
 
 """
-

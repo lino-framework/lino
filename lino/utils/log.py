@@ -1,15 +1,15 @@
-## Copyright 2010-2013 Luc Saffre
-## This file is part of the Lino project.
-## Lino is free software; you can redistribute it and/or modify 
-## it under the terms of the GNU General Public License as published by
-## the Free Software Foundation; either version 3 of the License, or
-## (at your option) any later version.
-## Lino is distributed in the hope that it will be useful, 
-## but WITHOUT ANY WARRANTY; without even the implied warranty of
-## MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the 
-## GNU General Public License for more details.
-## You should have received a copy of the GNU General Public License
-## along with Lino; if not, see <http://www.gnu.org/licenses/>.
+# Copyright 2010-2013 Luc Saffre
+# This file is part of the Lino project.
+# Lino is free software; you can redistribute it and/or modify
+# it under the terms of the GNU General Public License as published by
+# the Free Software Foundation; either version 3 of the License, or
+# (at your option) any later version.
+# Lino is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+# GNU General Public License for more details.
+# You should have received a copy of the GNU General Public License
+# along with Lino; if not, see <http://www.gnu.org/licenses/>.
 
 """
 Provides the default logging configuration interface 
@@ -84,10 +84,11 @@ from logging.handlers import WatchedFileHandler
 
 from django.utils.log import AdminEmailHandler
 
-def file_handler(filename,rotate,**kw):
+
+def file_handler(filename, rotate, **kw):
     #~ See also `/blog/2010/1129`
-    kw.setdefault('encoding','UTF-8')
-    if sys.platform == 'win32': 
+    kw.setdefault('encoding', 'UTF-8')
+    if sys.platform == 'win32':
         cl = logging.FileHandler
     else:
         cl = WatchedFileHandler
@@ -98,11 +99,11 @@ def file_handler(filename,rotate,**kw):
             #~ kw.setdefault('maxBytes',1000000)
         #~ else:
             #~ cl = WatchedFileHandler
-    h = cl(filename,**kw)
+    h = cl(filename, **kw)
     fmt = logging.Formatter(
         fmt='%(asctime)s %(levelname)s %(module)s : %(message)s',
         datefmt='%Y%m-%d %H:%M:%S'
-        )
+    )
     h.setFormatter(fmt)
     return h
 
@@ -141,46 +142,48 @@ Because that's rather necessary on a production server with :setting:`DEBUG` Fal
     djangoLogger = logging.getLogger('django')
     linoLogger = logging.getLogger('lino')
     #~ sudsLogger = logging.getLogger('suds')
-    
+
     if len(linoLogger.handlers) != 0:
         msg = "Not configuring logging because lino logger already configured."
         #~ print 20130418, __file__, msg
         linoLogger.info(msg)
-        return 
-    
+        return
+
     #~ print 20101225, config
-    encoding = config.get('encoding','UTF-8')
-    logfile = config.get('filename',None)
-    rotate = config.get('rotate',True)
-    tty = config.get('tty',True)
+    encoding = config.get('encoding', 'UTF-8')
+    logfile = config.get('filename', None)
+    rotate = config.get('rotate', True)
+    tty = config.get('tty', True)
     #~ logger_names = config.get('logger_names','djangosite north lino')
-    logger_names = config.get('logger_names',None)
+    logger_names = config.get('logger_names', None)
     #~ print 20130826, logger_names
     if not logger_names:
         #~ print 20130418, __file__, 'no logger names'
-        return # Django 1.5 calls this function twice (#20229)
+        return  # Django 1.5 calls this function twice (#20229)
         #~ raise Exception("Missing keyword argument `logger_names` in %s." % config)
     #~ when = config.get('when',None)
     #~ interval = config.get('interval',None)
-    level = getattr(logging,config.get('level','notset').upper())
-    if isinstance(logger_names,basestring):
+    level = getattr(logging, config.get('level', 'notset').upper())
+    if isinstance(logger_names, basestring):
         logger_names = logger_names.split()
     #~ print "20130418 configure loggers", logger_names, config
     #~ if not 'lino_welfare' in logger_names:
         #~ raise Exception("20130409")
     loggers = [logging.getLogger(n) for n in logger_names]
-    for l in loggers: l.setLevel(level)
+    for l in loggers:
+        l.setLevel(level)
     #~ linoLogger.setLevel(level)
     #~ sudsLogger.setLevel(level)
     #~ djangoLogger.setLevel(level)
-    
+
     aeh = AdminEmailHandler(include_html=True)
     #~ aeh = AdminEmailHandler()
     aeh.setLevel(logging.ERROR)
-    for l in loggers: l.addHandler(aeh)
+    for l in loggers:
+        l.addHandler(aeh)
     if not 'django' in logger_names:
         djangoLogger.addHandler(aeh)
-    
+
     if tty:
         try:
             if sys.stdout.isatty():
@@ -191,34 +194,35 @@ Because that's rather necessary on a production server with :setting:`DEBUG` Fal
                 #~ print "20130826 tty", h, loggers
                 fmt = logging.Formatter(fmt='%(levelname)s %(message)s')
                 h.setFormatter(fmt)
-                for l in loggers: l.addHandler(h)
+                for l in loggers:
+                    l.addHandler(h)
         except IOError:
             # happens under mod_wsgi
             linoLogger.info("mod_wsgi mode (no sys.stdout)")
-        
+
     if logfile is not None:
         try:
             kw = {}
             #~ for k in ('mode','encoding','maxBytes','backupCount','when','interval'):
-            for k in ('mode','encoding'):
+            for k in ('mode', 'encoding'):
                 if config.has_key(k):
                     kw[k] = config[k]
-            h = file_handler(logfile,rotate,**kw)
+            h = file_handler(logfile, rotate, **kw)
             #~ h.setLevel(level)
-            for l in loggers: l.addHandler(h)
+            for l in loggers:
+                l.addHandler(h)
             #~ linoLogger.addHandler(h)
             #~ djangoLogger.addHandler(h)
             #~ sudsLogger.addHandler(h)
             #~ print __file__, level, logfile
-            
+
             #~ dblogger = logging.getLogger('db')
             #~ assert dblogger != logger
             #~ dblogger.setLevel(logging.INFO)
             #~ dblogger.addHandler(file_handler(os.path.join(log_dir,'db.log')))
-        except IOError,e:
+        except IOError, e:
             #~ linoLogger.exception("Failed to create log file %s : %s",logfile,e)
             linoLogger.exception(e)
-            
-    
-    #~ linoLogger.info("20120408 linoLogger.handlers: %s", linoLogger.handlers)
 
+
+    #~ linoLogger.info("20120408 linoLogger.handlers: %s", linoLogger.handlers)

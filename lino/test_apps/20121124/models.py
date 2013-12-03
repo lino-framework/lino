@@ -70,16 +70,18 @@ The same exception comes when I use Django development trunk revision 17942.
 from django.db import models
 from django.utils.translation import ugettext_lazy as _
 
-    
-class Ticket(models.Model):  
+
+class Ticket(models.Model):
     name = models.CharField(max_length=200)
+
     def __unicode__(self):
         return self.name
 
-class Session(models.Model):  
-    ticket = models.ForeignKey(Ticket,related_name="sessions")
+
+class Session(models.Model):
+    ticket = models.ForeignKey(Ticket, related_name="sessions")
     time = models.TimeField()
-    price = models.DecimalField(max_digits=5,decimal_places=2)
+    price = models.DecimalField(max_digits=5, decimal_places=2)
+
     def __unicode__(self):
         return "at %s" % self.time
-

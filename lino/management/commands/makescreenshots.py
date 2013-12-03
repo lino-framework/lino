@@ -1,16 +1,16 @@
 # -*- coding: UTF-8 -*-
-## Copyright 2012-2013 Luc Saffre
-## This file is part of the Lino project.
-## Lino is free software; you can redistribute it and/or modify
-## it under the terms of the GNU General Public License as published by
-## the Free Software Foundation; either version 3 of the License, or
-## (at your option) any later version.
-## Lino is distributed in the hope that it will be useful, 
-## but WITHOUT ANY WARRANTY; without even the implied warranty of
-## MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the 
-## GNU General Public License for more details.
-## You should have received a copy of the GNU General Public License
-## along with Lino; if not, see <http://www.gnu.org/licenses/>.
+# Copyright 2012-2013 Luc Saffre
+# This file is part of the Lino project.
+# Lino is free software; you can redistribute it and/or modify
+# it under the terms of the GNU General Public License as published by
+# the Free Software Foundation; either version 3 of the License, or
+# (at your option) any later version.
+# Lino is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+# GNU General Public License for more details.
+# You should have received a copy of the GNU General Public License
+# along with Lino; if not, see <http://www.gnu.org/licenses/>.
 
 """
 Writes screenshots to <project_dir>/media/cache/screenshots
@@ -24,7 +24,7 @@ import os
 import errno
 #~ import codecs
 import sys
-from optparse import make_option 
+from optparse import make_option
 from os.path import join
 
 
@@ -147,25 +147,21 @@ page.open(address,on_opened);
 """
 
 
-
-
 class Command(BaseCommand):
     help = __doc__
-    
+
     option_list = BaseCommand.option_list + (
-        make_option('--force', action='store_true', 
-            dest='force', default=False,
-            help='Overwrite existing files.'),
-    ) 
-    
-    
+        make_option('--force', action='store_true',
+                    dest='force', default=False,
+                    help='Overwrite existing files.'),
+    )
+
     def handle(self, *args, **options):
-        
-        
+
         if len(args):
             raise CommandError("Unexpected arguments %r" % args)
-            
-        # Igor Katson writes an interesting answer in 
+
+        # Igor Katson writes an interesting answer in
         # `Django Broken pipe in Debug mode
         # <http://stackoverflow.com/questions/7912672/django-broken-pipe-in-debug-mode>`__::
         # Monkeypatch python not to print "Broken Pipe" errors to stdout.
@@ -173,16 +169,14 @@ class Command(BaseCommand):
         from wsgiref import handlers
         SocketServer.BaseServer.handle_error = lambda *args, **kwargs: None
         handlers.BaseHandler.log_exception = lambda *args, **kwargs: None
-            
-            
+
         main(force=options['force'])
         #~ main()
-        
 
     #~ ADDR = "http://127.0.0.1"
     ADDR = "127.0.0.1"
     PORT = 8000
-    
+
     HTTPD = None
 
     def start_server(self):
@@ -199,12 +193,11 @@ class Command(BaseCommand):
         self.HTTPD.shutdown()
         self.HTTPD.server_close()
         logger.info("terminated server.")
-        
 
-    def main(self,force=False,**kw):
+    def main(self, force=False, **kw):
         settings.SITE.startup()
-            
-        outputbase = os.path.join(settings.MEDIA_ROOT,'cache','screenshots')
+
+        outputbase = os.path.join(settings.MEDIA_ROOT, 'cache', 'screenshots')
 
         urlbase = "http://" + ADDR + ":" + str(PORT)
         #~ urlbase="http://127.0.0.1:8000"
@@ -213,55 +206,57 @@ class Command(BaseCommand):
         server.start()
         #~ server.join()
         logger.info("started the server")
-        
+
         count = 0
         assert not settings.SITE.remote_user_header
         try:
             for lng in settings.SITE.languages:
-              if lng.django_code == 'de': # temporary
-                for ss in screenshots.get_screenshots(lng.django_code):
-                #~ print "20130515 got screenshot", ss
-                    target = ss.get_filename(outputbase)
-                    if not force and os.path.exists(target):
-                        logger.info("%s exists",target)
-                        continue
-                    for fn in (target, target+'.log'):
-                        if os.path.exists(fn):
-                            os.remove(fn)
-                    url = ss.get_url(urlbase)
-                    if url is None:
-                        logger.info("No url for %s",target)
-                        continue
-                    logger.info("Build %s...",target)
-                    ctx = dict(
-                        url=url,
-                        target=target,
-                        username=ss.ar.get_user().username)
-                    ctx.update(password='1234')
-                    ctx.update(remote_user_header=settings.SITE.remote_user_header)
-                    f = file('tmp.js','wt')
-                    f.write(JS_SRC % ctx)
-                    f.close()
-                    args = [PHANTOMJS]
-                    args += ['--cookies-file=phantomjs_cookies.txt']
-                    args += ['--disk-cache=true']
-                    args += ['tmp.js']
-                    
-                    try:
-                        output = pp.check_output(args,**kw)
-                    except subprocess.CalledProcessError as e:
-                        output = e.output
-                        file(target+'.log','wt').write(output)
-                    count += 1
-                    
-                    #~ p = pp.open_subprocess(args,**kw)
-                    #~ p.wait()
-                    #~ rc = p.returncode
-                    #~ if rc != 0:
-                        #~ raise Exception("`%s` returned %s" % (" ".join(args),rc))
-                    if not os.path.exists(target):
-                        raise Exception("File %s has not been created." % target)
-            logger.info("Built %d screenshots.",count)
+                if lng.django_code == 'de':  # temporary
+                    for ss in screenshots.get_screenshots(lng.django_code):
+                    #~ print "20130515 got screenshot", ss
+                        target = ss.get_filename(outputbase)
+                        if not force and os.path.exists(target):
+                            logger.info("%s exists", target)
+                            continue
+                        for fn in (target, target + '.log'):
+                            if os.path.exists(fn):
+                                os.remove(fn)
+                        url = ss.get_url(urlbase)
+                        if url is None:
+                            logger.info("No url for %s", target)
+                            continue
+                        logger.info("Build %s...", target)
+                        ctx = dict(
+                            url=url,
+                            target=target,
+                            username=ss.ar.get_user().username)
+                        ctx.update(password='1234')
+                        ctx.update(
+                            remote_user_header=settings.SITE.remote_user_header)
+                        f = file('tmp.js', 'wt')
+                        f.write(JS_SRC % ctx)
+                        f.close()
+                        args = [PHANTOMJS]
+                        args += ['--cookies-file=phantomjs_cookies.txt']
+                        args += ['--disk-cache=true']
+                        args += ['tmp.js']
+
+                        try:
+                            output = pp.check_output(args, **kw)
+                        except subprocess.CalledProcessError as e:
+                            output = e.output
+                            file(target + '.log', 'wt').write(output)
+                        count += 1
+
+                        #~ p = pp.open_subprocess(args,**kw)
+                        #~ p.wait()
+                        #~ rc = p.returncode
+                        #~ if rc != 0:
+                            #~ raise Exception("`%s` returned %s" % (" ".join(args),rc))
+                        if not os.path.exists(target):
+                            raise Exception("File %s has not been created." %
+                                            target)
+            logger.info("Built %d screenshots.", count)
         except Exception as e:
             import traceback
             traceback.print_exc(e)

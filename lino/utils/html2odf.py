@@ -1,15 +1,15 @@
-## Copyright 2011-2013 Luc Saffre
-## This file is part of the Lino project.
-## Lino is free software; you can redistribute it and/or modify 
-## it under the terms of the GNU General Public License as published by
-## the Free Software Foundation; either version 3 of the License, or
-## (at your option) any later version.
-## Lino is distributed in the hope that it will be useful, 
-## but WITHOUT ANY WARRANTY; without even the implied warranty of
-## MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the 
-## GNU General Public License for more details.
-## You should have received a copy of the GNU General Public License
-## along with Lino; if not, see <http://www.gnu.org/licenses/>.
+# Copyright 2011-2013 Luc Saffre
+# This file is part of the Lino project.
+# Lino is free software; you can redistribute it and/or modify
+# it under the terms of the GNU General Public License as published by
+# the Free Software Foundation; either version 3 of the License, or
+# (at your option) any later version.
+# Lino is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+# GNU General Public License for more details.
+# You should have received a copy of the GNU General Public License
+# along with Lino; if not, see <http://www.gnu.org/licenses/>.
 
 """
   
@@ -91,6 +91,8 @@ from django.conf import settings
 
 from cStringIO import StringIO
 #~ from StringIO import StringIO
+
+
 def toxml(node):
     buf = StringIO()
     node.toXml(0, buf)
@@ -106,6 +108,8 @@ from odf import text
 from odf.table import Table, TableColumns, TableColumn, TableHeaderRows, TableRows, TableRow, TableCell
 
 from cStringIO import StringIO
+
+
 def toxml(node):
     buf = StringIO()
     node.toXml(0, buf)
@@ -113,9 +117,10 @@ def toxml(node):
 
 
 #~ PTAGS = ('p','td','li')
-PTAGS = ('p','td','div','table','tr')
+PTAGS = ('p', 'td', 'div', 'table', 'tr')
 
-def html2odf(e,ct=None,**ctargs):
+
+def html2odf(e, ct=None, **ctargs):
     """
     Convert a :mod:`lino.utils.xmlgen.html` element to an ODF text element.
     Most formats are not implemented.
@@ -125,56 +130,56 @@ def html2odf(e,ct=None,**ctargs):
     #~ print "20120613 html2odf()", e.tag, e.text
     if ct is None:
         ct = text.P(**ctargs)
-        #~ if e.tag in PTAGS: 
+        #~ if e.tag in PTAGS:
             #~ oe = text.P(**ctargs)
         #~ else:
             #~ oe = text.P(**ctargs)
             #~ logger.info("20130201 %s",E.tostring(e))
             #~ raise NotImplementedError("<%s> without container" % e.tag)
-    if isinstance(e,basestring):
+    if isinstance(e, basestring):
         ct.addText(e)
         #~ oe = text.Span()
         #~ oe.addText(e)
         #~ yield oe
         return ct
-        
-    if e.tag == 'ul': 
+
+    if e.tag == 'ul':
         ct = text.List(stylename='podBulletedList')
         ctargs = dict(stylename='podBulletItem')
         #~ ctargs = dict()
-        
+
     text_container = None
-    
+
     if e.tag == 'b':
         #~ oe = text.Span(stylename='Bold Text')
         oe = text.Span(stylename='Strong Emphasis')
     elif e.tag == 'a':
         oe = text.Span(stylename='Strong Emphasis')
         #~ oe = text.Span(stylename='Bold Text')
-    elif e.tag in ('i','em'):
+    elif e.tag in ('i', 'em'):
         oe = text.Span(stylename='Emphasis')
     elif e.tag == 'span':
         oe = text.Span()
     elif e.tag == 'br':
         oe = text.LineBreak()
-        
+
     elif e.tag == 'h1':
         """
         <text:h text:style-name="Heading_20_1" text:outline-level="1">
         """
-        oe = ct = text.H(stylename="Heading 1",outlinelevel=1)
+        oe = ct = text.H(stylename="Heading 1", outlinelevel=1)
     elif e.tag == 'h2':
-        oe = ct = text.H(stylename="Heading 2",outlinelevel=2)
+        oe = ct = text.H(stylename="Heading 2", outlinelevel=2)
     elif e.tag == 'h3':
-        oe = ct = text.H(stylename="Heading 3",outlinelevel=3)
+        oe = ct = text.H(stylename="Heading 3", outlinelevel=3)
     elif e.tag == 'div':
-        oe = ct = text.Section(name="S"+str(sections_counter))
-        
+        oe = ct = text.Section(name="S" + str(sections_counter))
+
     elif e.tag == 'img':
-        return # ignore images
-    elif e.tag == 'ul': 
+        return  # ignore images
+    elif e.tag == 'ul':
         oe = ct
-    #~ elif e.tag in ('ul','ol'): 
+    #~ elif e.tag in ('ul','ol'):
         #~ oe = text.List(stylename=e.tag.upper())
         #~ ctargs = dict(stylename=e.tag.upper()+"_P")
     elif e.tag == 'li':
@@ -182,8 +187,8 @@ def html2odf(e,ct=None,**ctargs):
         oe = text.ListItem()
         text_container = text.P(**ctargs)
         oe.appendChild(text_container)
-        
-    elif e.tag in PTAGS: 
+
+    elif e.tag in PTAGS:
         oe = ct
         #~ if ct.tagName == 'p':
             #~ oe = ct
@@ -191,18 +196,18 @@ def html2odf(e,ct=None,**ctargs):
             #~ oe = text.P(**ctargs)
     else:
         #~ logger.info("20130201 %s",E.tostring(e))
-        raise NotImplementedError("<%s> inside <%s>" % (e.tag,ct.tagName))
+        raise NotImplementedError("<%s> inside <%s>" % (e.tag, ct.tagName))
         #~ oe = text.Span()
-            
+
     if text_container is None:
         text_container = oe
     if e.text:
         text_container.addText(e.text)
     for child in e:
         #~ html2odf(child,oe)
-        html2odf(child,text_container,**ctargs)
+        html2odf(child, text_container, **ctargs)
         #~ for oc in html2odf(child,oe):
-            #~ # oe.addElement(oc)
+            # ~ # oe.addElement(oc)
             #~ oe.appendChild(oc)
     #~ if not True:
         #~ if e.tail:
@@ -225,4 +230,3 @@ def _test():
 
 if __name__ == "__main__":
     _test()
-

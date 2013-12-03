@@ -930,4 +930,3 @@ PCMN = u"""
 793 Perte à reporter
 794 Intervention d'associés (ou du propriétaire) dans la perte
 """
-

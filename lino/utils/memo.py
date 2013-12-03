@@ -1,16 +1,16 @@
 # -*- coding: UTF-8 -*-
-## Copyright 2006-2013 Luc Saffre
-## This file is part of the Lino project.
-## Lino is free software; you can redistribute it and/or modify 
-## it under the terms of the GNU General Public License as published by
-## the Free Software Foundation; either version 3 of the License, or
-## (at your option) any later version.
-## Lino is distributed in the hope that it will be useful, 
-## but WITHOUT ANY WARRANTY; without even the implied warranty of
-## MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the 
-## GNU General Public License for more details.
-## You should have received a copy of the GNU General Public License
-## along with Lino; if not, see <http://www.gnu.org/licenses/>.
+# Copyright 2006-2013 Luc Saffre
+# This file is part of the Lino project.
+# Lino is free software; you can redistribute it and/or modify
+# it under the terms of the GNU General Public License as published by
+# the Free Software Foundation; either version 3 of the License, or
+# (at your option) any later version.
+# Lino is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+# GNU General Public License for more details.
+# You should have received a copy of the GNU General Public License
+# along with Lino; if not, see <http://www.gnu.org/licenses/>.
 
 r"""
 ``memo`` is a simple universal markup parser that expands "commands" 
@@ -145,7 +145,7 @@ import logging
 #~ logging.basicConfig()
 logger = logging.getLogger(__name__)
 
-#~ logger.addHandler(logging.NullHandler()) 
+#~ logger.addHandler(logging.NullHandler())
 #~ avoid "No handlers could be found for logger "__main__"" when doctesting
 #~ not available before Python 2.7
 
@@ -158,60 +158,58 @@ EVAL_REGEX = re.compile(r"\[=((?:[^[\]]|\[.*?\])*?)\]")
 from lino.utils.xmlgen import etree
 
 
-
 class Parser(object):
-  
+
     safe_mode = False
-    
-    def __init__(self,**context):
+
+    def __init__(self, **context):
         self.commands = dict()
         self.context = context
 
-    def register_command(self,cmd,func):
+    def register_command(self, cmd, func):
         self.commands[cmd] = func
 
-    def eval_match(self,matchobj):
+    def eval_match(self, matchobj):
         expr = matchobj.group(1)
         try:
-            return self.format_value(eval(expr,self.context))
-        except Exception,e:
+            return self.format_value(eval(expr, self.context))
+        except Exception, e:
             logger.exception(e)
-            return self.handle_error(matchobj,e)
-        
-    def format_value(self,v):
-        if etree.iselement(v): 
+            return self.handle_error(matchobj, e)
+
+    def format_value(self, v):
+        if etree.iselement(v):
             return unicode(etree.tostring(v))
         return unicode(v)
-      
-    def cmd_match(self,matchobj):
+
+    def cmd_match(self, matchobj):
         cmd = matchobj.group(1)
         params = matchobj.group(2)
-        params = params.replace('\\\n','')
-        h = self.commands.get(cmd,None)
+        params = params.replace('\\\n', '')
+        h = self.commands.get(cmd, None)
         if h is None:
             return matchobj.group(0)
         try:
             #~ return h(params)
             return self.format_value(h(params))
         #~ except KeyError,e:
-        except Exception,e:
+        except Exception, e:
             logger.exception(e)
-            return self.handle_error(matchobj,e)
-            
-    def handle_error(self,mo,e):
+            return self.handle_error(matchobj, e)
+
+    def handle_error(self, mo, e):
         #~ return mo.group(0)
-        msg = "[ERROR %s in %r at position %d-%d]" %(
-          e, mo.group(0), mo.start(),mo.end())
+        msg = "[ERROR %s in %r at position %d-%d]" % (
+            e, mo.group(0), mo.start(), mo.end())
         logger.error(msg)
         return msg
-        
 
-    def parse(self,s,**context):
+    def parse(self, s, **context):
         #~ self.context = context
         self.context.update(context)
-        s = COMMAND_REGEX.sub(self.cmd_match,s)
+        s = COMMAND_REGEX.sub(self.cmd_match, s)
         if not self.safe_mode:
-            s = EVAL_REGEX.sub(self.eval_match,s)
+            s = EVAL_REGEX.sub(self.eval_match, s)
         return s
 
 
@@ -221,4 +219,3 @@ def _test():
 
 if __name__ == "__main__":
     _test()
-

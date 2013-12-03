@@ -1,16 +1,16 @@
 # -*- coding: UTF-8 -*-
-## Copyright 2012 Luc Saffre
-## This file is part of the Lino project.
-## Lino is free software; you can redistribute it and/or modify 
-## it under the terms of the GNU General Public License as published by
-## the Free Software Foundation; either version 3 of the License, or
-## (at your option) any later version.
-## Lino is distributed in the hope that it will be useful, 
-## but WITHOUT ANY WARRANTY; without even the implied warranty of
-## MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the 
-## GNU General Public License for more details.
-## You should have received a copy of the GNU General Public License
-## along with Lino; if not, see <http://www.gnu.org/licenses/>.
+# Copyright 2012 Luc Saffre
+# This file is part of the Lino project.
+# Lino is free software; you can redistribute it and/or modify
+# it under the terms of the GNU General Public License as published by
+# the Free Software Foundation; either version 3 of the License, or
+# (at your option) any later version.
+# Lino is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+# GNU General Public License for more details.
+# You should have received a copy of the GNU General Public License
+# along with Lino; if not, see <http://www.gnu.org/licenses/>.
 
 """
 No longer used.
@@ -20,22 +20,20 @@ from __future__ import unicode_literals
 
 
 if False:
-  
-  from lino.history import blogger
 
+    from lino.history import blogger
 
-  ######################################
-
-  DEMOS = blogger.ticket("lino.pr","Demo Sites","""
+    #
+    DEMOS = blogger.ticket("lino.pr", "Demo Sites", """
   """)
 
-  CMS = blogger.ticket("cms","Lino as a CMS","""
+    CMS = blogger.ticket("cms", "Lino as a CMS", """
   Managing Plain Web Content.
   First proof of concept of 
   :mod:`lino.modlib.pages`
   """)
 
-  CHANGES = blogger.ticket("lino.dev","Documenting code changes","""
+    CHANGES = blogger.ticket("lino.dev", "Documenting code changes", """
   Now that the :mod:`lino.modlib.pages` has passed the proof of 
   concept phase I started a new attempt to make it easier to 
   write code change reports, and to find them back when needed.
@@ -46,27 +44,23 @@ if False:
 
   """)
 
-  blogger.ticket("lino.core","Detail of VirtualTable ",
-  """
+    blogger.ticket("lino.core", "Detail of VirtualTable ",
+    """
   It seems that `detail_layout` doesn't work on `VirtualTable`.
   """)
 
-
-  COSI = blogger.ticket("lino.cosi","Simple Belgian Accounting","""
+    COSI = blogger.ticket("lino.cosi", "Simple Belgian Accounting", """
   First proof of concept of the modules 
   :mod:`lino.modlib.sales`,
   :mod:`lino.modlib.ledger`,
   :mod:`lino.modlib.finan` ...
   """)
 
+    #
+    blogger.set_date(20121221)
 
-  ######################################
-
-
-  blogger.set_date(20121221)
-
-  blogger.entry(DEMOS,0152,"",
-  """
+    blogger.entry(DEMOS, 0152, "",
+    """
   The :mod:`garble <lino_welfare.modlib.pcsw.management.commands.garble>` command
   now has an option `--noinput`.
 
@@ -76,18 +70,17 @@ if False:
   confirmation to be asked somewhere in the middle of the process.
   """)
 
-  DCC = blogger.entry(CHANGES,0152,"Documenting code changes",
-  """
+    DCC = blogger.entry(CHANGES, 0152, "Documenting code changes",
+    """
   Wrote a new module :mod:`lino.modlib.codechanges`, 
   with a virtual table `CodeChanges`
   (:menuselection:`Explorer --> System --> Code Changes`)
   displays a list of all changes.
   """)
 
-
-  #~ blogger.entry(CHANGES,1157,"Documenting code changes (continued)",
-  blogger.follow(DCC,1157,
-  """
+    #~ blogger.entry(CHANGES,1157,"Documenting code changes (continued)",
+    blogger.follow(DCC, 1157,
+    """
   Continued on module :mod:`lino.modlib.codechanges`.
   I abandoned a first approach which used a `changes.py` 
   file in each module because
@@ -115,9 +108,9 @@ if False:
 
   """)
 
-  blogger.set_date(20121223)
+    blogger.set_date(20121223)
 
-  blogger.follow(DCC,933,"""
+    blogger.follow(DCC, 933, """
   Continued in :mod:`lino.projects.presto.fixtures.history`.
 
   Side note: 
@@ -130,7 +123,7 @@ if False:
 
   """)
 
-  blogger.entry(DEMOS,1722,"demos at lino-framework.org still broken","""
+    blogger.entry(DEMOS, 1722, "demos at lino-framework.org still broken", """
   There were still a few bugs in the online demo sites.
 
   NameError "global name 'pages' is not defined".
@@ -144,7 +137,7 @@ if False:
   a newer Sphinx version.
   """)
 
-  blogger.entry(CMS,2304,"Started template inheritance","""
+    blogger.entry(CMS, 2304, "Started template inheritance", """
   The sidebar doesn't yet work. 
 
   The best way to solve this is probably using template inheritance.
@@ -175,27 +168,27 @@ if False:
 
   """)
 
-  blogger.entry(CMS,1037,"Sidebar","""
+    blogger.entry(CMS, 1037, "Sidebar", """
   As if to confirm my decision to throw away my own :mod:`lino.utils.memo`, 
   the Jinja documentation has an entry `Highlighting Active Menu Items
   <http://jinja.pocoo.org/docs/tricks/#highlighting-active-menu-items>`_
   which is a beginning of the answer to my initial issue.
   """)
 
-  blogger.set_date(20121227)
+    blogger.set_date(20121227)
 
-  blogger.entry(COSI,728,"Detail Layout for BankStatement","""
+    blogger.entry(COSI, 728, "Detail Layout for BankStatement", """
   There were no workflow buttons in the Detail Layout of 
   :class:`lino.modlib.finan.models.BankStatement`.
   """)
 
-  blogger.entry(COSI,805,"Preferred width of ChoiceList comboboxes","""
+    blogger.entry(COSI, 805, "Preferred width of ChoiceList comboboxes", """
   :mod:`lino.ui.extjs3.ext_elems`
   now adds a hard-coded value to the preferred_width 
   of ChoiceList fields to account for the width of the trigger button.
   """)
 
-  blogger.entry(CMS,1330,"Miscellaneous","""
+    blogger.entry(CMS, 1330, "Miscellaneous", """
   Still experimenting with the big question on
   how to write/generate a user manual for Lino application.
   New vision for pages.Page : removed field `language`, and 
@@ -203,8 +196,8 @@ if False:
   Only one record per ref.
   """)
 
-  blogger.set_date(20130109)
-  blogger.entry(CMS,1607,"The next Lino production site?","""
+    blogger.set_date(20130109)
+    blogger.entry(CMS, 1607, "The next Lino production site?", """
   Started a new Lino site that runs at 
   `http://wwwbeta.lino-framework.org`_.
   But don't (for the moment) waste your time to look at it.

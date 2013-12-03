@@ -1,16 +1,16 @@
-#coding: utf-8
-## Copyright 2009-2013 Luc Saffre
-## This file is part of the Lino project.
-## Lino is free software; you can redistribute it and/or modify
-## it under the terms of the GNU General Public License as published by
-## the Free Software Foundation; either version 3 of the License, or
-## (at your option) any later version.
-## Lino is distributed in the hope that it will be useful,
-## but WITHOUT ANY WARRANTY; without even the implied warranty of
-## MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-## GNU General Public License for more details.
-## You should have received a copy of the GNU General Public License
-## along with Lino; if not, see <http://www.gnu.org/licenses/>.
+# coding: utf-8
+# Copyright 2009-2013 Luc Saffre
+# This file is part of the Lino project.
+# Lino is free software; you can redistribute it and/or modify
+# it under the terms of the GNU General Public License as published by
+# the Free Software Foundation; either version 3 of the License, or
+# (at your option) any later version.
+# Lino is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+# GNU General Public License for more details.
+# You should have received a copy of the GNU General Public License
+# along with Lino; if not, see <http://www.gnu.org/licenses/>.
 
 """
 This fixture adds all known countries of the world to your database.
@@ -85,7 +85,7 @@ COUNTRIES = {}
 
 
 def objects():
-            
+
     n = 0
     Country = settings.SITE.modules.countries.Country
     """
@@ -104,8 +104,8 @@ def objects():
             #~ print [n.data for n in ]
             #~ print name.firstChild.data
             names[str(name.attributes['lang'].value)] = name.firstChild.data
-            
-        kw = babel_values('name',**names)
+
+        kw = babel_values('name', **names)
         iso2 = coun.getElementsByTagName('coun:alpha2')[0].childNodes[0].data
         if Country.objects.filter(pk=iso2).count() > 0:
             return
@@ -113,8 +113,8 @@ def objects():
             isocode=iso2,
             iso3=coun.getElementsByTagName(
                 'coun:alpha3')[0].childNodes[0].data,
-          )
-        
+        )
+
         if kw['name']:
             #~ kw.update(iso3=iso3)
             n += 1
@@ -122,13 +122,13 @@ def objects():
         else:
             logger.debug("%r : no name for default site language %s",
                          coun, settings.SITE.DEFAULT_LANGUAGE.django_code)
-            
+
     for ln in TABLE2.splitlines():
         ln = ln.strip()
         if ln:
-            code1, code2, code3, name = ln.split(None,3)
+            code1, code2, code3, name = ln.split(None, 3)
             n += 1
-            yield Country(isocode=code1,name=name)
-            
-            
+            yield Country(isocode=code1, name=name)
+
+
     #~ logger.info("Installed %d countries",n)

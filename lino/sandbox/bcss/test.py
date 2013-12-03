@@ -51,24 +51,26 @@ import SSDNRequest
 
 from cStringIO import StringIO
 
+
 def main():
     user = SSDNRequest.AuthorizedUserType(
-      UserID='123', 
-      Email='123@example.com', 
-      OrgUnit='123', 
-      MatrixID=12, 
-      MatrixSubID=3)
+        UserID='123',
+        Email='123@example.com',
+        OrgUnit='123',
+        MatrixID=12,
+        MatrixSubID=3)
     service = SSDNRequest.ServiceRequestType(
-      ServiceId='Test', 
-      Version='20090409')
+        ServiceId='Test',
+        Version='20090409')
     msg = SSDNRequest.RequestMessageType(
-      Reference='123456789', 
-      TimeRequest='20110921T105230')
-    context = SSDNRequest.RequestContextType(AuthorizedUser=user,Message=msg)
-    req = SSDNRequest.SSDNRequest(RequestContext=context, ServiceRequest=[service])
+        Reference='123456789',
+        TimeRequest='20110921T105230')
+    context = SSDNRequest.RequestContextType(AuthorizedUser=user, Message=msg)
+    req = SSDNRequest.SSDNRequest(
+        RequestContext=context, ServiceRequest=[service])
 
     f = StringIO()
-    req.export(f,0)
+    req.export(f, 0)
     xmlrequest = f.getvalue()
     f.close()
 
@@ -90,6 +92,6 @@ def main():
     """
 
     print soap_envelope % xmlrequest
-    
+
 if __name__ == '__main__':
     main()

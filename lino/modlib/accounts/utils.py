@@ -1,16 +1,16 @@
 # -*- coding: UTF-8 -*-
-## Copyright 2012-2013 Luc Saffre
-## This file is part of the Lino project.
-## Lino is free software; you can redistribute it and/or modify 
-## it under the terms of the GNU General Public License as published by
-## the Free Software Foundation; either version 3 of the License, or
-## (at your option) any later version.
-## Lino is distributed in the hope that it will be useful, 
-## but WITHOUT ANY WARRANTY; without even the implied warranty of
-## MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the 
-## GNU General Public License for more details.
-## You should have received a copy of the GNU General Public License
-## along with Lino; if not, see <http://www.gnu.org/licenses/>.
+# Copyright 2012-2013 Luc Saffre
+# This file is part of the Lino project.
+# Lino is free software; you can redistribute it and/or modify
+# it under the terms of the GNU General Public License as published by
+# the Free Software Foundation; either version 3 of the License, or
+# (at your option) any later version.
+# Lino is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+# GNU General Public License for more details.
+# You should have received a copy of the GNU General Public License
+# along with Lino; if not, see <http://www.gnu.org/licenses/>.
 
 r"""
 This module is a Python implementation of the basic truths of accounting.
@@ -194,26 +194,30 @@ from lino import dd
 DEBIT = True
 CREDIT = False
 
-DCLABELS = { 
-  DEBIT: _("Debit"), 
-  CREDIT: _("Credit") 
+DCLABELS = {
+    DEBIT: _("Debit"),
+    CREDIT: _("Credit")
 }
 
 
 class Sheet(object):
+
     """
     Base class for a financial statement.
     """
-    verbose_name = _("Financial statement") # Comptes annuels Jahresabschluss Jaarverslag  Aastaaruanne  
-    
+    # Comptes annuels Jahresabschluss Jaarverslag  Aastaaruanne
+    verbose_name = _("Financial statement")
+
     @classmethod
     def account_types(cls):
         """
         Return a list the top-level account types included in this Sheet
         """
         return [o for o in AccountTypes.objects() if o.sheet == cls and o.top_level]
-        
-class Balance(Sheet): 
+
+
+class Balance(Sheet):
+
     """
     In financial accounting, a 
     balance sheet or 
@@ -238,28 +242,31 @@ class Balance(Sheet):
     https://en.wikipedia.org/wiki/Balance_sheet
     
     """
-    verbose_name = _("Balance sheet") #  Bilan  Bilanz  Balans  Bilanss       
-    
+    verbose_name = _("Balance sheet")  # Bilan  Bilanz  Balans  Bilanss
+
 
 #~ class ProfitOrLoss(Sheet):
-class Earnings(Sheet): 
+class Earnings(Sheet):
+
     """
     https://en.wikipedia.org/wiki/Statement_of_comprehensive_income#Requirements_of_IFRS
     """
-    verbose_name = _("Profit & Loss statement") #  Compte de résultat Gewinn- und Verlustrechnung   Winst-en-verliesrekening ...           
+    # Compte de résultat Gewinn- und Verlustrechnung
+    # Winst-en-verliesrekening ...
+    verbose_name = _("Profit & Loss statement")
+
 
 class CashFlow(Sheet):
-    verbose_name = _("Cash flow statement") #  
+    verbose_name = _("Cash flow statement")
 
-class AccountsBalance(Sheet): # La balance des comptes (généraux|particuliers|fournisseurs|clients)
-    verbose_name = _("Cash flow statement") #  
-    
-    
-    
-    
-Sheet.objects = (Balance,Earnings,CashFlow)
+# La balance des comptes (généraux|particuliers|fournisseurs|clients)
 
-    
+
+class AccountsBalance(Sheet):
+    verbose_name = _("Cash flow statement")
+
+
+Sheet.objects = (Balance, Earnings, CashFlow)
 
 
 class AccountType(dd.Choice):
@@ -268,62 +275,67 @@ class AccountType(dd.Choice):
     #~ def __init__(self,value,text,name,dc=True,**kw):
         #~ self.dc = dc
         #~ super(AccountType,self).__init__(value,text,name)
+
     def __init__(self):
         pass
         #~ self.dc = dc
         #~ super(AccountType,self).__init__(value,text,name)
-        
+
+
 class Assets(AccountType):
     value = 'A'
     text = _("Assets")   # Aktiva, Anleihe, Vermögen, Anlage
-    name  = "assets"
+    name = "assets"
     dc = DEBIT
     sheet = Balance
 
+
 class Liabilities(AccountType):
     value = 'L'
-    text = _("Liabilities") # Guthaben, Schulden, Verbindlichkeit  
-    name  = "liabilities"
+    text = _("Liabilities")  # Guthaben, Schulden, Verbindlichkeit
+    name = "liabilities"
     dc = CREDIT
     sheet = Balance
 
-class Capital(AccountType): # aka Owner's Equities
-    value = 'C' 
-    text = _("Capital") # Kapital 
+
+class Capital(AccountType):  # aka Owner's Equities
+    value = 'C'
+    text = _("Capital")  # Kapital
     name = "capital"
     dc = CREDIT
     sheet = Balance
 
+
 class Income(AccountType):
     value = 'I'
-    text = _("Incomes") # Gain/Revenue     Einnahmen  Produits
-    name  = "incomes" 
+    text = _("Incomes")  # Gain/Revenue     Einnahmen  Produits
+    name = "incomes"
     dc = CREDIT
     balance_sheet = True
     sheet = Earnings
 
+
 class Expenses(AccountType):
-    value = 'E' 
-    text = _("Expenses") # Loss/Cost       Ausgaben   Charges
+    value = 'E'
+    text = _("Expenses")  # Loss/Cost       Ausgaben   Charges
     name = "expenses"
     dc = DEBIT
     sheet = Earnings
+
 
 class BankAccounts(Assets):
     top_level = False
     value = 'B'
     text = _("Bank accounts")
     name = 'bank_accounts'
-    #~ dc = CREDIT    
-    
-    
-    
-    
+    #~ dc = CREDIT
+
+
 class AccountTypes(dd.ChoiceList):
     verbose_name = _("Account Type")
     item_class = AccountType
-    
-    
+
+
 add = AccountTypes.add_item
 #~ def add(*args):
     #~ AccountTypes.add_item_instance(AccountType(*args))
@@ -336,11 +348,9 @@ add(Capital())
 add(BankAccounts())
 
 
-
 def _test():
     import doctest
     doctest.testmod()
 
 if __name__ == "__main__":
     _test()
-

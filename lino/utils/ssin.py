@@ -1,16 +1,16 @@
 # -*- coding: UTF-8 -*-
-## Copyright 2008-2013 Luc Saffre
-## This file is part of the Lino project.
-## Lino is free software; you can redistribute it and/or modify 
-## it under the terms of the GNU General Public License as published by
-## the Free Software Foundation; either version 3 of the License, or
-## (at your option) any later version.
-## Lino is distributed in the hope that it will be useful, 
-## but WITHOUT ANY WARRANTY; without even the implied warranty of
-## MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the 
-## GNU General Public License for more details.
-## You should have received a copy of the GNU General Public License
-## along with Lino; if not, see <http://www.gnu.org/licenses/>.
+# Copyright 2008-2013 Luc Saffre
+# This file is part of the Lino project.
+# Lino is free software; you can redistribute it and/or modify
+# it under the terms of the GNU General Public License as published by
+# the Free Software Foundation; either version 3 of the License, or
+# (at your option) any later version.
+# Lino is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+# GNU General Public License for more details.
+# You should have received a copy of the GNU General Public License
+# along with Lino; if not, see <http://www.gnu.org/licenses/>.
 
 ur"""
 Utilities for manipulating `Belgian national identification numbers
@@ -123,9 +123,9 @@ import cgi
 import datetime
 
 #~ os.environ.setdefault('DJANGO_SETTINGS_MODULE','lino.projects.std.settings')
-  
+
 from django.core.exceptions import ValidationError
-from django.utils.encoding import force_unicode 
+from django.utils.encoding import force_unicode
 from django.utils.translation import ugettext_lazy as _
 
 from lino.core.choicelists import Genders
@@ -134,32 +134,35 @@ YEAR2000 = '='
 YEAR1900 = '-'
 YEAR1800 = '*'
 
-def generate_ssin(birth_date,gender,seq=None):
+
+def generate_ssin(birth_date, gender, seq=None):
     """
     Generate an SSIN from a given birth date, gender and optional sequence number.
     """
     year = birth_date.year
     sep1 = ' '
     if year >= 2000:
-        bd = "2%02d%02d%02d" % (year-2000,birth_date.month,birth_date.day)
+        bd = "2%02d%02d%02d" % (year - 2000, birth_date.month, birth_date.day)
         sep2 = YEAR2000
     elif year >= 1900:
-        bd = "%02d%02d%02d" % (year-1900,birth_date.month,birth_date.day)
+        bd = "%02d%02d%02d" % (year - 1900, birth_date.month, birth_date.day)
         sep2 = YEAR1900
     else:
         raise Exception("Born before 1900")
-        
+
     if seq is None:
         if gender == Genders.male:
             seq = 1
         else:
             seq = 2
     seq = '%03d' % seq
-    checksum = 97 - (int(bd+seq) % 97)
-    if checksum == 0: checksum = 97 
+    checksum = 97 - (int(bd + seq) % 97)
+    if checksum == 0:
+        checksum = 97
     checksum = '%02d' % checksum
     ssin = bd[-6:] + sep1 + seq + sep2 + checksum
     return ssin
+
 
 def is_valid_ssin(ssin):
     """
@@ -170,8 +173,8 @@ def is_valid_ssin(ssin):
         return True
     except ValidationError:
         return False
-        
-        
+
+
 def new_format_ssin(s):
     """
     Formats a raw SSIN as they are printed on the back of 
@@ -182,11 +185,11 @@ def new_format_ssin(s):
         return ''
     if len(s) != 11:
         raise Exception(
-          force_unicode(_('Invalid SSIN %s : ') % s) 
-          + force_unicode(_('A raw SSIN must have 11 positions'))) 
-    return s[:2] + '.' + s[2:4] + '.' + s[4:6] + '-' + s[6:9] + '.' + s[9:] 
-  
-    
+            force_unicode(_('Invalid SSIN %s : ') % s)
+            + force_unicode(_('A raw SSIN must have 11 positions')))
+    return s[:2] + '.' + s[2:4] + '.' + s[4:6] + '-' + s[6:9] + '.' + s[9:]
+
+
 def format_ssin(raw_ssin):
     """
     Add formatting chars to a given raw SSIN.
@@ -196,29 +199,30 @@ def format_ssin(raw_ssin):
         return ''
     if len(raw_ssin) != 11:
         raise Exception(
-          force_unicode(_('Invalid SSIN %s : ') % raw_ssin) 
-          + force_unicode(_('A raw SSIN must have 11 positions'))) 
+            force_unicode(_('Invalid SSIN %s : ') % raw_ssin)
+            + force_unicode(_('A raw SSIN must have 11 positions')))
     bd = raw_ssin[:6]
     sn = raw_ssin[6:9]
     cd = raw_ssin[9:]
-    
+
     def is_ok(xtest):
         xtest = int(xtest)
-        xtest = abs((xtest-97*(int(xtest/97)))-97)
+        xtest = abs((xtest - 97 * (int(xtest / 97))) - 97)
         if xtest == 0:
             xtest = 97
         return int(cd) == xtest
-    
+
     if is_ok(bd + sn):
         return bd + ' ' + sn + YEAR1900 + cd
     if is_ok('2' + bd + sn):
         return bd + ' ' + sn + YEAR2000 + cd
     raise Exception(
-        force_unicode(_('Invalid SSIN %s : ') % raw_ssin) 
-        + force_unicode(_('Could not recognize checkdigit'))) 
-    
-format_niss = format_ssin    
-          
+        force_unicode(_('Invalid SSIN %s : ') % raw_ssin)
+        + force_unicode(_('Could not recognize checkdigit')))
+
+format_niss = format_ssin
+
+
 def ssin_validator(ssin):
     """
     Checks whether the specified SSIN is valid. 
@@ -229,20 +233,20 @@ def ssin_validator(ssin):
         return ''
     if len(ssin) != 13:
         raise ValidationError(
-          force_unicode(_('Invalid SSIN %s : ') % ssin) 
-          + force_unicode(_('A formatted SSIN must have 13 positions'))
-          ) 
+            force_unicode(_('Invalid SSIN %s : ') % ssin)
+            + force_unicode(_('A formatted SSIN must have 13 positions'))
+        )
     xtest = ssin[:6] + ssin[7:10]
     if ssin[10] == "=":
         #~ print 'yes'
         xtest = "2" + xtest
     try:
         xtest = int(xtest)
-    except ValueError,e:
+    except ValueError, e:
         raise ValidationError(
-          _('Invalid SSIN %s : ') % ssin + str(e)
-          )
-    xtest = abs((xtest-97*(int(xtest/97)))-97)
+            _('Invalid SSIN %s : ') % ssin + str(e)
+        )
+    xtest = abs((xtest - 97 * (int(xtest / 97))) - 97)
     if xtest == 0:
         xtest = 97
     found = int(ssin[11:13])
@@ -250,12 +254,11 @@ def ssin_validator(ssin):
         raise ValidationError(
             force_unicode(_("Invalid SSIN %s :") % ssin)
             + _("Check digit is %(found)d but should be %(expected)d") % dict(
-              expected=xtest, found=found)
-            )
-    return 
+                expected=xtest, found=found)
+        )
+    return
 
-    
-    
+
 if __name__ == "__main__":
     import doctest
     doctest.testmod()

@@ -1,16 +1,16 @@
 # -*- coding: UTF-8 -*-
-## Copyright 2010-2012 Luc Saffre 
-## This file is part of the Lino project.
-## Lino is free software; you can redistribute it and/or modify 
-## it under the terms of the GNU General Public License as published by
-## the Free Software Foundation; either version 3 of the License, or
-## (at your option) any later version.
-## Lino is distributed in the hope that it will be useful, 
-## but WITHOUT ANY WARRANTY; without even the implied warranty of
-## MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the 
-## GNU General Public License for more details.
-## You should have received a copy of the GNU General Public License
-## along with Lino; if not, see <http://www.gnu.org/licenses/>.
+# Copyright 2010-2012 Luc Saffre
+# This file is part of the Lino project.
+# Lino is free software; you can redistribute it and/or modify
+# it under the terms of the GNU General Public License as published by
+# the Free Software Foundation; either version 3 of the License, or
+# (at your option) any later version.
+# Lino is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+# GNU General Public License for more details.
+# You should have received a copy of the GNU General Public License
+# along with Lino; if not, see <http://www.gnu.org/licenses/>.
 
 
 """
@@ -37,7 +37,7 @@ from lino.utils.instantiator import Instantiator
 from lino.utils.ucsv import UnicodeReader
 
 if True:
-  
+
     # http://www.python.org/doc/current/library/csv.html#module-csv
     def unicode_csv_reader(unicode_csv_data, dialect=csv.excel, **kwargs):
         # csv.py doesn't do Unicode; encode temporarily as UTF-8:
@@ -54,61 +54,62 @@ if True:
 from lino.modlib.countries.models import CityTypes
 
 CITY_TYPES = {
-  u'küla' : CityTypes.village,
-  u'linn' : CityTypes.town,
-  u'alev' : CityTypes.borough,
-  u'alevik' : CityTypes.smallborough,
-  u'asum' : CityTypes.township,
-  #~ u'aiandusühistu' : CityTypes.quarter,
-  u'aiandusühistu' : None, # ignore them
-  }
+    u'küla': CityTypes.village,
+    u'linn': CityTypes.town,
+    u'alev': CityTypes.borough,
+    u'alevik': CityTypes.smallborough,
+    u'asum': CityTypes.township,
+    #~ u'aiandusühistu' : CityTypes.quarter,
+    u'aiandusühistu': None,  # ignore them
+}
 
 
 #~ input_file = os.path.join(
   #~ os.path.dirname(__file__),
   #~ 'sihtnumbrid.csv')
-  
+
 input_file = os.path.join(
-  settings.SITE.project_dir,
-  'sihtnumbrid.csv')
-  
+    settings.SITE.project_dir,
+    'sihtnumbrid.csv')
+
 u"""  
 MAAKOND;VALD;LINN/ ALEV/ ALEVIK/ KÜLA;TÄNAV/TALU;AADRESSILIIK;MAJAALGUS;MAJALOPP;SIHTNUMBER   
 """
-  
+
+
 def objects():
-    city = Instantiator('countries.City',country='EE').build
-    f = codecs.open(input_file,'r','latin-1','replace')
+    city = Instantiator('countries.City', country='EE').build
+    f = codecs.open(input_file, 'r', 'latin-1', 'replace')
     #~ f = codecs.open(input_file,'r','utf-8','replace')
     f.readline()
-    r = unicode_csv_reader(f,delimiter=';')
+    r = unicode_csv_reader(f, delimiter=';')
     #~ r = UnicodeReader(f,delimiter=';')
-    #r.next()
+    # r.next()
     maakonnad = dict()
     mk_names_dict = dict()
     #~ vallad = dict()
     #~ laakid = dict()
     #~ names = set()
     for ln in r:
-        #print repr(ln)
+        # print repr(ln)
         if len(ln) > 2:
             mk = maakonnad.get(ln[0])
             if mk is None:
-                mk = city(name=ln[0],type=CityTypes.county)
+                mk = city(name=ln[0], type=CityTypes.county)
                 yield mk
                 #~ print "20120822 maakond", mk, mk.pk
                 maakonnad[ln[0]] = mk
                 mk_names_dict[ln[0]] = dict()
-                
+
             names = mk_names_dict[ln[0]]
-                
+
             if ln[1]:
                 vald = names.get(ln[1])
                 if vald is None:
                     #~ ct = CITY_TYPES[ln[4]]
                     vald = city(name=ln[1],
-                        type=CityTypes.municipality,
-                        parent=mk,zip_code=ln[7])
+                                type=CityTypes.municipality,
+                                parent=mk, zip_code=ln[7])
                     yield vald
                     #~ if ct != CityTypes.municipality:
                         #~ print "20120822", vald, "expected municipality, found", ct
@@ -118,10 +119,10 @@ def objects():
                 else:
                     vald.zip_code = ''
                     vald.save()
-                    
+
             else:
                 vald = None
-                
+
             laak = names.get(ln[2])
             if laak is None:
                 #~ ct = CITY_TYPES.get(ln[4])
@@ -130,9 +131,10 @@ def objects():
                     #~ print "20120822 ignored addressiliik", ln[4]
                     continue
                 elif vald is None:
-                    laak = city(name=ln[2],type=ct,parent=mk,zip_code=ln[7])
+                    laak = city(name=ln[2], type=ct, parent=mk, zip_code=ln[7])
                 else:
-                    laak = city(name=ln[2],type=ct,parent=vald,zip_code=ln[7])
+                    laak = city(name=ln[2], type=ct,
+                                parent=vald, zip_code=ln[7])
                 yield laak
                 #~ print "20120822", laak.type, laak, laak.pk
                 names[ln[2]] = laak
@@ -143,10 +145,7 @@ def objects():
                 laak.zip_code = ''
                 laak.save()
     f.close()
-    #print len(names), "Estonian cities"
+    # print len(names), "Estonian cities"
     #~ for name in names:
         #~ if name:
             #~ yield city(name=name)
-
-    
-

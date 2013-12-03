@@ -1,16 +1,16 @@
 # -*- coding: UTF-8 -*-
-## Copyright 2012-2013 Luc Saffre
-## This file is part of the Lino project.
-## Lino is free software; you can redistribute it and/or modify 
-## it under the terms of the GNU General Public License as published by
-## the Free Software Foundation; either version 3 of the License, or
-## (at your option) any later version.
-## Lino is distributed in the hope that it will be useful, 
-## but WITHOUT ANY WARRANTY; without even the implied warranty of
-## MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the 
-## GNU General Public License for more details.
-## You should have received a copy of the GNU General Public License
-## along with Lino; if not, see <http://www.gnu.org/licenses/>.
+# Copyright 2012-2013 Luc Saffre
+# This file is part of the Lino project.
+# Lino is free software; you can redistribute it and/or modify
+# it under the terms of the GNU General Public License as published by
+# the Free Software Foundation; either version 3 of the License, or
+# (at your option) any later version.
+# Lino is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+# GNU General Public License for more details.
+# You should have received a copy of the GNU General Public License
+# along with Lino; if not, see <http://www.gnu.org/licenses/>.
 
 """
 This fixture defines pages `/`, `/admin` and `/about`,
@@ -32,7 +32,7 @@ from django.conf import settings
 
 from lino.modlib.pages.builder import page, objects
 
-page('index','en','',"""
+page('index', 'en', '', """
 Welcome to the **{{site.title}}** site.
 {% if site.verbose_name %}
 This is an online demo of `{{site.verbose_name}} <{{site.url}}>`__
@@ -50,10 +50,9 @@ you should go to the `Admin <{{site.admin_prefix}}/>`__ section.
 
 {% endif %}
 """)
-    
-    
 
-page('index','fr','',"""
+
+page('index', 'fr', '', """
 Bienvenue sur **{{site.title}}**.
 {% if site.verbose_name %}
 Ce site est une démonstration en ligne de
@@ -72,8 +71,8 @@ dans la `section administrative <{{site.admin_prefix}}/>`__.
 
 {% endif %}
 """)
-    
-page('index','de','',"""
+
+page('index', 'de', '', """
 Willkommen auf {{site.title}}.
 {% if site.verbose_name %}
 Diese Site ist eine Online-Demo von
@@ -91,25 +90,25 @@ in den `Verwaltungsbereich <{{site.admin_prefix}}/>`__ gehen.
 
 {% endif %}
 """)
-    
-    
-page('about','en','About',"""
+
+
+page('about', 'en', 'About', """
 This website is a life demonstration of 
 `{{site.verbose_name}} <{{site.url}}>`__.    
 """)
-    
-page('about','fr','À propos',"""
+
+page('about', 'fr', 'À propos', """
 Ce site est une démonstration en ligne de 
 `{{site.verbose_name}} <{{site.url}}>`__.
 """)
-    
-page('about','de','Info',"""
+
+page('about', 'de', 'Info', """
 Diese Site ist eine online-Demo von `{{site.verbose_name}} <{{site.url}}>`__.
 """)
-    
+
 if False:
-  
-    page('admin','en','',"""
+
+    page('admin', 'en', '', """
 
     {% if not site.admin_prefix %}
 
@@ -138,9 +137,9 @@ if False:
     Your feedback is welcome to lino-users@googlegroups.com
     or directly to the person who invited you.
 
-    """,special = True)
-        
-    page('admin','de','',"""
+    """, special=True)
+
+    page('admin', 'de', '', """
 
     {% if not site.admin_prefix %}
     Willkommen auf {{site.title}}.
@@ -164,9 +163,9 @@ if False:
     Viel Spaß!
     Reaktionen und Kommentare sind willkommen an lino-users@googlegroups.com oder direkt die Person, die Sie eingeladen hat.
 
-    """,special = True)
+    """, special=True)
 
-    page('admin','fr','',"""
+    page('admin', 'fr', '', """
     {% if not site.admin_prefix %}
     Bienvenue sur **{{site.title}}**.
     Ce site est une démonstration en ligne de
@@ -191,6 +190,6 @@ if False:
 
     Vos commentaires sont les bienvenus sur lino-users@googlegroups.com
     oubien directement à la personne qui vous a invitée.
-    """,special = True)
-        
+    """, special=True)
+
 #~ print 20121227, __file__

@@ -1,16 +1,16 @@
 # -*- coding: UTF-8 -*-
-## Copyright 2012 Luc Saffre
-## This file is part of the Lino project.
-## Lino is free software; you can redistribute it and/or modify 
-## it under the terms of the GNU General Public License as published by
-## the Free Software Foundation; either version 3 of the License, or
-## (at your option) any later version.
-## Lino is distributed in the hope that it will be useful, 
-## but WITHOUT ANY WARRANTY; without even the implied warranty of
-## MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the 
-## GNU General Public License for more details.
-## You should have received a copy of the GNU General Public License
-## along with Lino; if not, see <http://www.gnu.org/licenses/>.
+# Copyright 2012 Luc Saffre
+# This file is part of the Lino project.
+# Lino is free software; you can redistribute it and/or modify
+# it under the terms of the GNU General Public License as published by
+# the Free Software Foundation; either version 3 of the License, or
+# (at your option) any later version.
+# Lino is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+# GNU General Public License for more details.
+# You should have received a copy of the GNU General Public License
+# along with Lino; if not, see <http://www.gnu.org/licenses/>.
 
 r"""
 A :class:`Duration` is a Decimal expressed in ``hh:mm`` format.
@@ -58,27 +58,28 @@ from fractions import Fraction
 #~ from decimal import Decimal, ROUND_UP,ROUND_HALF_UP,ROUND_HALF_DOWN, getcontext
 #~ getcontext().rounding = ROUND_UP
 
+
 class Quantity(Decimal):
-  
+
     def __repr__(self):
-        return "%s('%s')" % (self.__class__.__name__,str(self))
-        
-    def __add__(self,*args,**kw): return self.__class__(Decimal.__add__(self,*args,**kw))
+        return "%s('%s')" % (self.__class__.__name__, str(self))
+
+    def __add__(self, *args, **kw):
+        return self.__class__(Decimal.__add__(self, *args, **kw))
     __radd__ = __add__
-      
-    def __truediv__(self,*args,**kw): 
-        return self.__class__(Decimal.__truediv__(self,*args,**kw))
+
+    def __truediv__(self, *args, **kw):
+        return self.__class__(Decimal.__truediv__(self, *args, **kw))
     __rtruediv__ = __truediv__
     __div__ = __truediv__
     __rdiv__ = __rtruediv__
-    
-    
-    def __mul__(self,*args,**kw): return self.__class__(Decimal.__mul__(self,*args,**kw))
+
+    def __mul__(self, *args, **kw):
+        return self.__class__(Decimal.__mul__(self, *args, **kw))
     __rmul__ = __mul__
-        
-        
-    
-DEC2HOUR = Decimal(1) / Decimal(60) 
+
+
+DEC2HOUR = Decimal(1) / Decimal(60)
 
 
 #~ class Fraction(Quantity):
@@ -92,31 +93,35 @@ DEC2HOUR = Decimal(1) / Decimal(60)
             #~ self._b = b
             #~ return self
         #~ return cls.__new__(Quantity,value,context)
-        
+
     #~ def __str__(self):
         #~ return str(self._a) + '/' + str(self._b)
-        
+
     #~ def simplify(self):
         #~ pass
-        
+
     #~ def __mul__(self, other, context=None):
         #~ return Fraction("%s/%s" % (self._a * other,self._b))
     #~ __rmul__ = __mul__
-        
-  
+
+
 class Percentage(Quantity):
+
     def __new__(cls, value="0", context=None):
-        if isinstance(value,basestring) and value.endswith('%'):
-            self = Decimal.__new__(Percentage,Decimal(value[:-1]) / 100,context)
+        if isinstance(value, basestring) and value.endswith('%'):
+            self = Decimal.__new__(
+                Percentage, Decimal(value[:-1]) / 100, context)
             self._value = value
             return self
         #~ raise Exception("Invalid Percentage %r" % value)
-        return cls.__new__(Quantity,value,context)
-        
+        return cls.__new__(Quantity, value, context)
+
     def __str__(self):
         return self._value
-  
+
+
 class Duration(Quantity):
+
     """
     >>> print Duration('1')
     1:00
@@ -164,21 +169,20 @@ class Duration(Quantity):
     
     
     """
-    
+
     #~ _hh_mm = False
-    
+
     #~ __slots__ = Decimal.__slots__ + ('_hh_mm',)
     #~ __slots__ = ('_exp','_int','_sign', '_is_special')
-    
-  
+
     def __new__(cls, value="0", context=None):
     #~ def __init__(self,value,**kw):
-        if isinstance(value,basestring) and ':' in value:
-            h,m = value.split(':')
+        if isinstance(value, basestring) and ':' in value:
+            h, m = value.split(':')
             value = Decimal(h) + Decimal(m) * DEC2HOUR
-            
+
         #~ self = super(Duration,cls).__new__(Duration,value,context)
-        self = Decimal.__new__(Duration,value,context)
+        self = Decimal.__new__(Duration, value, context)
         #~ self._hh_mm = True
         return self
         #~ self = super(Duration,cls).__new__(Decimal,value,context)
@@ -191,17 +195,18 @@ class Duration(Quantity):
         #~ self.format = format
         #~ for n in '__add__', '__mul__', '__sub__':
             #~ setattr(self,n,getattr(self.value,n))
-        
+
     def __str__(self):
         minutes = (self - int(self)) / DEC2HOUR
         return '%d:%02d' % (
-          int(self),
-          minutes.to_integral())
-        
+            int(self),
+            minutes.to_integral())
+
+
 def parse(s):
     """
     """
-    if not isinstance(s,basestring):
+    if not isinstance(s, basestring):
         raise Exception("Expected a string, got %r" % s)
     if ':' in s:
         return Duration(s)
@@ -210,21 +215,18 @@ def parse(s):
     if s.endswith('%'):
         return Percentage(s)
     return parse_decimal(s)
-    
+
+
 def parse_decimal(s):
     if '.' in s and ',' in s:
         raise Exception("Invalid decimal value %r" % s)
-    s = s.replace(',','.')
+    s = s.replace(',', '.')
     return Decimal(s)
-    
-        
-        
-        
+
+
 def _test():
     import doctest
     doctest.testmod()
 
 if __name__ == "__main__":
     _test()
-
-        

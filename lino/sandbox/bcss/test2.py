@@ -46,26 +46,30 @@ SOAP_ENVELOPE = """
 </soap:Envelope>
 """
 
+
 class Service:
-    def __init__(self,name,requestClass,targetNamespace,doc): # ,*args,**kw):
+    # ,*args,**kw):
+
+    def __init__(self, name, requestClass, targetNamespace, doc):
         self.name = name
         self.requestClass = requestClass
         self.targetNamespace = targetNamespace
         self.doc = doc
         #~ self.args = args
         #~ self.kw = kw
-    def instantiate(self,*args,**kw):
-        return self.requestClass(*args,**kw)
+
+    def instantiate(self, *args, **kw):
+        return self.requestClass(*args, **kw)
 
 from PerformInvestigation import PerformInvestigationRequest
 
 SERVICES = []
 
 SERVICES.append(
-  Service(
-    'OCMWCPASPerformInvestigation', 
-    PerformInvestigationRequest,
-    'http://www.ksz-bcss.fgov.be/XSD/SSDN/OCMW_CPAS/PerformInvestigation',
+    Service(
+        'OCMWCPASPerformInvestigation',
+        PerformInvestigationRequest,
+        'http://www.ksz-bcss.fgov.be/XSD/SSDN/OCMW_CPAS/PerformInvestigation',
     u"""
     Obtention d’informations des registres national et BCSS 
     en vue de l’enquête sociale (données légales, composition 
@@ -80,48 +84,49 @@ SERVICES.append(
     """
     ))
 
+
 def req2str(req):
     f = StringIO()
-    req.export(f,0)
+    req.export(f, 0)
     s = f.getvalue()
     f.close()
     return s
 
 
-def run_request(serviceId,*args,**kw):
+def run_request(serviceId, *args, **kw):
     srv = SERVICES[serviceId]
-    srvReq = srv.instantiate(*args,**kw)
+    srvReq = srv.instantiate(*args, **kw)
     user = SSDNRequest.AuthorizedUserType(**settings.SITE.bcss_user_params)
     service = SSDNRequest.ServiceRequestType(
-      ServiceId=srv.name, 
-      Version='20090409',
-      any_=srvReq)
+        ServiceId=srv.name,
+        Version='20090409',
+        any_=srvReq)
     msg = SSDNRequest.RequestMessageType(
-      Reference='123456789', 
-      TimeRequest='20110921T105230')
+        Reference='123456789',
+        TimeRequest='20110921T105230')
     context = SSDNRequest.RequestContextType(
-      AuthorizedUser=user,
-      Message=msg)
+        AuthorizedUser=user,
+        Message=msg)
     req = SSDNRequest.SSDNRequest(
-      RequestContext=context, 
-      ServiceRequest=[service])
+        RequestContext=context,
+        ServiceRequest=[service])
 
     requestXML = SOAP_ENVELOPE % req2str(req)
-    
+
     print requestXML
     if False:
-        logger.info("Going to send request:\n%s",requestXML)
+        logger.info("Going to send request:\n%s", requestXML)
         proxy = WSDL.Proxy(wsdl_url)
         #~ proxy.soapproxy.config.dumpSOAPOut = 1
         #~ proxy.soapproxy.config.dumpSOAPIn = 1
         m = proxy.methods['sendXML']
         response = m(requestXML)
-        logger.info("Got response:\n%s",response)
-    
+        logger.info("Got response:\n%s", response)
+
 
 def simple_test():
-    run_request(0,SocialSecurityUser='36806010010')
-    
-    
+    run_request(0, SocialSecurityUser='36806010010')
+
+
 if __name__ == '__main__':
     simple_test()

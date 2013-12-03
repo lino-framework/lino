@@ -1,15 +1,15 @@
-## Copyright 2011-2013 Luc Saffre
-## This file is part of the Lino project.
-## Lino is free software; you can redistribute it and/or modify 
-## it under the terms of the GNU General Public License as published by
-## the Free Software Foundation; either version 3 of the License, or
-## (at your option) any later version.
-## Lino is distributed in the hope that it will be useful, 
-## but WITHOUT ANY WARRANTY; without even the implied warranty of
-## MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the 
-## GNU General Public License for more details.
-## You should have received a copy of the GNU General Public License
-## along with Lino; if not, see <http://www.gnu.org/licenses/>.
+# Copyright 2011-2013 Luc Saffre
+# This file is part of the Lino project.
+# Lino is free software; you can redistribute it and/or modify
+# it under the terms of the GNU General Public License as published by
+# the Free Software Foundation; either version 3 of the License, or
+# (at your option) any later version.
+# Lino is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+# GNU General Public License for more details.
+# You should have received a copy of the GNU General Public License
+# along with Lino; if not, see <http://www.gnu.org/licenses/>.
 
 
 #~ import datetime
@@ -23,7 +23,6 @@ from django.conf import settings
 
 from django.contrib.auth.hashers import (
     check_password, make_password, is_password_usable)
-
 
 
 from lino import dd
@@ -44,68 +43,67 @@ from lino.core import actions
 
 #~ if settings.SITE.is_installed('users') and settings.SITE.user_model != 'users.User':
     #~ raise Exception("""\
-#~ You are using lino.modlib.users in your INSTALLED_APPS, 
+#~ You are using lino.modlib.users in your INSTALLED_APPS,
 #~ but settings.SITE.user_model is %r (should be 'users.User').
 #~ """ % settings.SITE.user_model)
 
+
 class User(mixins.CreatedModified):
+
     """
     Represents a :ddref:`users.User` of this site.
     """
-    
-    preferred_foreignkey_width = 15 
-    
+
+    preferred_foreignkey_width = 15
+
     hidden_columns = 'password remarks'
-    
+
     #~ authenticated = True
-    
+
     class Meta:
         verbose_name = _('User')
         verbose_name_plural = _('Users')
-        ordering = ['last_name','first_name']
+        ordering = ['last_name', 'first_name']
 
-    username = models.CharField(_('Username'), max_length=30, 
-        unique=True, 
+    username = models.CharField(_('Username'), max_length=30,
+                                unique=True,
         help_text=_("""Required. Must be unique."""))
-        
+
     password = models.CharField(_('Password'), max_length=128)
-        
+
     profile = dd.UserProfiles.field(blank=True,
-        help_text=_("Users with an empty `profile` field are considered inactive and cannot log in."))
-    
+                                    help_text=_("Users with an empty `profile` field are considered inactive and cannot log in."))
+
     initials = models.CharField(_('Initials'), max_length=10, blank=True)
     first_name = models.CharField(_('First name'), max_length=30, blank=True)
     last_name = models.CharField(_('Last name'), max_length=30, blank=True)
     email = models.EmailField(_('e-mail address'), blank=True)
-    
-    remarks = models.TextField(_("Remarks"),blank=True) # ,null=True)
-    
-    language = dd.LanguageField(default=models.NOT_PROVIDED,blank=True)
-    
+
+    remarks = models.TextField(_("Remarks"), blank=True)  # ,null=True)
+
+    language = dd.LanguageField(default=models.NOT_PROVIDED, blank=True)
+
     if settings.SITE.is_installed('contacts'):
-      
-        partner = models.ForeignKey('contacts.Partner',blank=True,null=True)
-        
+
+        partner = models.ForeignKey('contacts.Partner', blank=True, null=True)
+
     else:
-      
+
         partner = dd.DummyField()
-    
 
     def __unicode__(self):
         return self.get_full_name()
-        
 
     def get_full_name(self):
         "Returns the first_name plus the last_name, with a space in between."
         if not self.first_name and not self.last_name:
             return self.username
         return u'%s %s' % (self.first_name.strip(), self.last_name.strip())
-        
-    @dd.displayfield(_("Name"),max_length=15)
-    def name_column(self,request):
+
+    @dd.displayfield(_("Name"), max_length=15)
+    def name_column(self, request):
         #~ return join_words(self.last_name.upper(),self.first_name)
         return unicode(self)
-
 
     if settings.SITE.is_installed('contacts'):
         def get_person(self):
@@ -114,10 +112,10 @@ class User(mixins.CreatedModified):
     else:
         def get_person(self):
             return None
-    
+
     person = property(get_person)
 
-    def get_row_permission(self,ar,state,ba):
+    def get_row_permission(self, ar, state, ba):
         """
         Only system managers may edit other users.
         See also :meth:`User.disabled_fields`.
@@ -126,50 +124,50 @@ class User(mixins.CreatedModified):
         if not ba.action.readonly:
             user = ar.get_user()
             if user != self:
-                if user.profile.level < dd.UserLevels.admin: 
+                if user.profile.level < dd.UserLevels.admin:
                     return False
-        return super(User,self).get_row_permission(ar,state,ba)
+        return super(User, self).get_row_permission(ar, state, ba)
         #~ return False
-        
-    def disabled_fields(self,ar):
+
+    def disabled_fields(self, ar):
         """
         Only System admins may change the `profile` of users.
         See also :meth:`Users.get_row_permission`.
         """
-        #~ if ar.get_user().is_superuser: 
-        #~ if request.user.is_superuser: 
-        rv = super(User,self).disabled_fields(ar)
+        #~ if ar.get_user().is_superuser:
+        #~ if request.user.is_superuser:
+        rv = super(User, self).disabled_fields(ar)
         if ar.get_user().profile.level < dd.UserLevels.admin:
             rv.add('profile')
         return rv
-        
-    def full_clean(self,*args,**kw):
+
+    def full_clean(self, *args, **kw):
         p = self.person
         if p is not None:
-            for n in ('first_name','last_name','email','language'):
-                if not getattr(self,n):
-                    setattr(self,n,getattr(p,n))
+            for n in ('first_name', 'last_name', 'email', 'language'):
+                if not getattr(self, n):
+                    setattr(self, n, getattr(p, n))
             #~ self.language = p.language
         if not self.language:
             #~ self.language = settings.SITE.DEFAULT_LANGUAGE.django_code
-            self.language = settings.SITE.get_default_language() 
+            self.language = settings.SITE.get_default_language()
         if not self.password:
             self.set_unusable_password()
         if not self.initials:
             if self.first_name and self.last_name:
                 self.initials = self.first_name[0] + self.last_name[0]
-        super(User,self).full_clean(*args,**kw)
-        
+        super(User, self).full_clean(*args, **kw)
+
     #~ def save(self,*args,**kw):
         #~ super(User,self).save(*args,**kw)
-        
+
     def get_received_mandates(self):
         #~ return [ [u.id,_("as %s")%u] for u in self.__class__.objects.all()]
-        return [ [u.id,unicode(u)] for u in self.__class__.objects.all()]
+        return [[u.id, unicode(u)] for u in self.__class__.objects.all()]
         #~ return self.__class__.objects.all()
 
     # the following methods are unchanged copies from Django's User model
-        
+
     def set_password(self, raw_password):
         self.password = make_password(raw_password)
 
@@ -190,14 +188,14 @@ class User(mixins.CreatedModified):
     def has_usable_password(self):
         return is_password_usable(self.password)
 
-    def as_list_item(self,ar):
-        return E.li(E.strong(self.username),' : ',
-          unicode(self),', ',
-          unicode(self.profile),', ',
-          E.strong(settings.SITE.LANGUAGE_DICT.get(self.language)))
-      
+    def as_list_item(self, ar):
+        return E.li(E.strong(self.username), ' : ',
+                    unicode(self), ', ',
+                    unicode(self.profile), ', ',
+                    E.strong(settings.SITE.LANGUAGE_DICT.get(self.language)))
+
     @classmethod
-    def get_by_username(cls,username,default=models.NOT_PROVIDED):
+    def get_by_username(cls, username, default=models.NOT_PROVIDED):
         """
         `User.get_by_username(x)` is equivalent to
         `User.objects.get(username=x)` except that the text 
@@ -205,18 +203,16 @@ class User(mixins.CreatedModified):
         """
         try:
             return cls.objects.get(username=username)
-        except cls.DoesNotExist,e:
+        except cls.DoesNotExist, e:
             if default is models.NOT_PROVIDED:
                 raise cls.DoesNotExist(
-                  "No %s with username %r" % (
-                      unicode(cls._meta.verbose_name),username))
+                    "No %s with username %r" % (
+                        unicode(cls._meta.verbose_name), username))
             return default
-
-        
 
 
 class UserDetail(dd.FormLayout):
-  
+
     box1 = """
     username profile:20 partner
     first_name last_name initials
@@ -228,19 +224,20 @@ class UserDetail(dd.FormLayout):
     box1:40 MembershipsByUser:20
     remarks:40 AuthoritiesGiven:20
     """
-    
+
+
 class UserInsert(dd.FormLayout):
-  
-    window_size = (60,'auto')
-    
+
+    window_size = (60, 'auto')
+
     main = """
     username email 
     first_name last_name
     partner
     language profile     
     """
-    
- 
+
+
 class Users(dd.Table):
     help_text = _("""Shows the list of all users on this site.""")
     #~ debug_actions  = True
@@ -249,7 +246,7 @@ class Users(dd.Table):
     #~ order_by = "last_name first_name".split()
     order_by = ["username"]
     active_fields = ['partner']
-    
+
     #~ column_names = 'username first_name last_name is_active is_staff is_expert is_superuser *'
     column_names = 'username profile first_name last_name *'
     detail_layout = UserDetail()
@@ -267,7 +264,8 @@ class Users(dd.Table):
         #~ if action.readonly: return True
         #~ if user is not None and user == obj: return True
         #~ return False
-          
+
+
 class MySettings(Users):
     use_as_default_table = False
     hide_top_toolbar = True
@@ -276,13 +274,15 @@ class MySettings(Users):
     #~ detail_layout = UserDetail()
     required = dict()
     default_list_action_name = 'detail'
-    
+
     @classmethod
     def get_default_action(cls):
         #~ return cls.default_elem_action_name
         return actions.ShowDetailAction()
-    
+
+
 class UsersOverview(Users):
+
     """
     A variant of :ddref:`users.Users` showing only active users
     and only some fields. 
@@ -293,32 +293,35 @@ class UsersOverview(Users):
     exclude = dict(profile='')
 
 #~ if settings.SITE.user_model:
-  
+
+
 class Team(mixins.BabelNamed):
+
     class Meta:
         verbose_name = _("Team")
         verbose_name_plural = _("Teams")
-        
+
+
 class Teams(dd.Table):
     required = dict(user_level='manager')
     model = Team
-    
-    
-    
+
+
 class Membership(mixins.UserAuthored):
+
     class Meta:
         verbose_name = _("Membership")
         verbose_name_plural = _("Memberships")
-    
+
     team = models.ForeignKey('users.Team')
-    
-    
+
+
 class Memberships(dd.Table):
     required = dict(user_level='manager')
     model = Membership
 
 
-class MembershipsByUser(mixins.ByUser,Memberships):
+class MembershipsByUser(mixins.ByUser, Memberships):
     #~ required = dict()
     master_key = 'user'
     column_names = 'team'
@@ -326,6 +329,7 @@ class MembershipsByUser(mixins.ByUser,Memberships):
 
 
 class Authority(mixins.UserAuthored):
+
     """
     An Authority is when a User gives another User the right to "represent him"
    
@@ -333,20 +337,18 @@ class Authority(mixins.UserAuthored):
     :authorized: points to the user who gets the right to represent the author
     
     """
-    
+
     class Meta:
         verbose_name = _("Authority")
         verbose_name_plural = _("Authorities")
-        
+
     #~ quick_search_fields = ('user__username','user__first_name','user__last_name')
-    
+
     authorized = models.ForeignKey(settings.SITE.user_model,
-        help_text=_("The user who gets authority to act in your name."))
-
-
+                                   help_text=_("The user who gets authority to act in your name."))
 
     @dd.chooser()
-    def authorized_choices(cls,user):
+    def authorized_choices(cls, user):
         qs = settings.SITE.user_model.objects.exclude(
             profile=None)
             #~ profile=dd.UserProfiles.blank_item) 20120829
@@ -354,8 +356,8 @@ class Authority(mixins.UserAuthored):
             qs = qs.exclude(id=user.id)
             #~ .exclude(level__gte=UserLevels.admin)
         return qs
-    
-        
+
+
 class Authorities(dd.Table):
     required = dict(user_level='manager')
     model = Authority
@@ -368,11 +370,10 @@ class AuthoritiesGiven(Authorities):
     column_names = 'authorized'
     auto_fit_column_widths = True
 
+
 class AuthoritiesTaken(Authorities):
     required = dict()
     master_key = 'authorized'
     label = _("Authorities taken")
     column_names = 'user'
     auto_fit_column_widths = True
-
-

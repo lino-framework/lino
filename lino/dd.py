@@ -1,15 +1,15 @@
-## Copyright 2011-2013 Luc Saffre
-## This file is part of the Lino project.
-## Lino is free software; you can redistribute it and/or modify 
-## it under the terms of the GNU General Public License as published by
-## the Free Software Foundation; either version 3 of the License, or
-## (at your option) any later version.
-## Lino is distributed in the hope that it will be useful, 
-## but WITHOUT ANY WARRANTY; without even the implied warranty of
-## MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the 
-## GNU General Public License for more details.
-## You should have received a copy of the GNU General Public License
-## along with Lino; if not, see <http://www.gnu.org/licenses/>.
+# Copyright 2011-2013 Luc Saffre
+# This file is part of the Lino project.
+# Lino is free software; you can redistribute it and/or modify
+# it under the terms of the GNU General Public License as published by
+# the Free Software Foundation; either version 3 of the License, or
+# (at your option) any later version.
+# Lino is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+# GNU General Public License for more details.
+# You should have received a copy of the GNU General Public License
+# along with Lino; if not, see <http://www.gnu.org/licenses/>.
 
 """
 A shortcut to classes and methods needed 
@@ -174,7 +174,7 @@ from lino.core.model import Model
 from lino.core.merge import MergeAction
 
 #~ from lino.core.table import fields_list, inject_field
-from lino.core.actors import (ParameterPanel,ObservedPeriod)
+from lino.core.actors import (ParameterPanel, ObservedPeriod)
 from lino.core.dbtables import has_fk
 from lino.core.dbtables import Table
 from django.db.models.fields import FieldDoesNotExist
@@ -245,7 +245,7 @@ from north.dbutils import BabelCharField, LanguageField
 
 from north.dbutils import babelkw
 from north.dbutils import babelattr
-from north.dbutils import babel_values # alias for babelkw for backward compat
+from north.dbutils import babel_values  # alias for babelkw for backward compat
 
 from lino.utils.choosers import chooser
 from lino.utils.mti import EnableChild
@@ -299,53 +299,56 @@ from lino.core.inject import inject_field
 from lino.core.inject import update_field
 from lino.core.inject import inject_quick_add_buttons
 from lino.core.inject import do_when_prepared, when_prepared
- 
-  
-    
+
+
 from lino.core.actors import get_default_required as required
 Required = required
-    
+
+
 class PseudoRequest:
-    def __init__(self,username):
+
+    def __init__(self, username):
         self.username = username
         self._user = None
-        
+
     def get_user(self):
         if self._user is None:
             if settings.SITE.user_model is not None:
                 #~ print 20130222, self.username
-                self._user = settings.SITE.user_model.objects.get(username=self.username)
+                self._user = settings.SITE.user_model.objects.get(
+                    username=self.username)
         return self._user
     user = property(get_user)
-    
+
 
 from lino.utils import IncompleteDate
 
 from north.dbutils import fds, fdm, fdl, fdf, fdmy
 from north.dbutils import fds as fds_
 
+
 def fds(d):
     """
     Adds support for :class:`lino.fields.IncompleteDate`.
     """
-    if isinstance(d,IncompleteDate):
+    if isinstance(d, IncompleteDate):
         return fds_(d.as_date())
     return fds_(d)
-    
+
 # backward compatibility
-dtos = fds 
+dtos = fds
 from north.dbutils import fdl as dtosl
 #~ from north.dbutils import dtos as dtos_
 
-babelitem  = settings.SITE.babelitem
-field2kw  = settings.SITE.field2kw
+babelitem = settings.SITE.babelitem
+field2kw = settings.SITE.field2kw
 
 #~ from lino.mixins import Born
 
 from lino.mixins import (ProjectRelated, UserAuthored, ByUser,
-    Sequenced, Hierarizable, Referrable, 
-    Registrable,
-    CreatedModified, Controllable)
+                         Sequenced, Hierarizable, Referrable,
+                         Registrable,
+                         CreatedModified, Controllable)
 
 from lino.mixins.printable import BasePrintable, Printable, PrintableType, CachedPrintable, TypedPrintable, DirectPrintAction
 #~ from lino.mixins import SimplyPrintable
@@ -355,4 +358,3 @@ from lino.mixins.human import Human, Born
 #~ from lino.utils.screenshots import register_screenshot
 
 from django.utils.importlib import import_module
-

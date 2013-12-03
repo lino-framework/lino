@@ -1,16 +1,16 @@
 # -*- coding: UTF-8 -*-
-## Copyright 2011-2013 Luc Saffre
-## This file is part of the Lino project.
-## Lino is free software; you can redistribute it and/or modify 
-## it under the terms of the GNU General Public License as published by
-## the Free Software Foundation; either version 3 of the License, or
-## (at your option) any later version.
-## Lino is distributed in the hope that it will be useful, 
-## but WITHOUT ANY WARRANTY; without even the implied warranty of
-## MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the 
-## GNU General Public License for more details.
-## You should have received a copy of the GNU General Public License
-## along with Lino; if not, see <http://www.gnu.org/licenses/>.
+# Copyright 2011-2013 Luc Saffre
+# This file is part of the Lino project.
+# Lino is free software; you can redistribute it and/or modify
+# it under the terms of the GNU General Public License as published by
+# the Free Software Foundation; either version 3 of the License, or
+# (at your option) any later version.
+# Lino is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+# GNU General Public License for more details.
+# You should have received a copy of the GNU General Public License
+# along with Lino; if not, see <http://www.gnu.org/licenses/>.
 
 """
 Part of the :xfile:`models` module for the :mod:`lino.modlib.cal` app.
@@ -33,31 +33,29 @@ from django.core.validators import MinValueValidator
 
 from lino import dd
 
-  
-
 
 class Calendar(dd.BabelNamed):
-    
+
     COLOR_CHOICES = [i + 1 for i in range(32)]
-    
+
     class Meta:
         abstract = settings.SITE.is_abstract_model('cal.Calendar')
         verbose_name = _("Calendar")
         verbose_name_plural = _("Calendars")
-        
-    description = dd.RichTextField(_("Description"),blank=True,format='html')
-    
+
+    description = dd.RichTextField(_("Description"), blank=True, format='html')
+
     color = models.IntegerField(
-        _("color"),default=1,
+        _("color"), default=1,
         validators=[MinValueValidator(1), MaxValueValidator(32)]
-        )
+    )
         #~ choices=COLOR_CHOICES)
-        
-        
+
+
 class Calendars(dd.Table):
-    required = dd.required(user_groups='office',user_level='manager')
+    required = dd.required(user_groups='office', user_level='manager')
     model = 'cal.Calendar'
-    
+
     insert_layout = """
     name
     color
@@ -66,8 +64,10 @@ class Calendars(dd.Table):
     name color id
     description
     """
-        
+
+
 class Subscription(dd.UserAuthored):
+
     """
     A Suscription is when a User subscribes to a Calendar.
     It corresponds to what the extensible CalendarPanel calls "Calendars"
@@ -76,16 +76,16 @@ class Subscription(dd.UserAuthored):
     :other_user: 
     
     """
-    
+
     class Meta:
         abstract = settings.SITE.is_abstract_model('cal.Subscription')
         verbose_name = _("Subscription")
         verbose_name_plural = _("Subscriptions")
-        
+
     manager_level_field = 'office_level'
-    
+
     #~ label = models.CharField(_("Label"),max_length=200)
-    
+
     #~ quick_search_fields = ('user__username','user__first_name','user__last_name')
 
     #~ other_user = dd.ForeignKey('users.User',blank=True,null=True,
@@ -93,10 +93,11 @@ class Subscription(dd.UserAuthored):
     #~ event_type = dd.ForeignKey('cal.EventType',blank=True,null=True)
     #~ room = dd.ForeignKey('cal.Room',blank=True,null=True)
     #~ team = dd.ForeignKey('users.Team',blank=True,null=True)
-    calendar = dd.ForeignKey('cal.Calendar',help_text=_("The calendar you want to subscribe to."))
+    calendar = dd.ForeignKey(
+        'cal.Calendar', help_text=_("The calendar you want to subscribe to."))
 
     is_hidden = models.BooleanField(
-        _("hidden"),default=False,help_text=_("""\
+        _("hidden"), default=False, help_text=_("""\
 Whether this subscription should initially be displayed as a hidden calendar."""))
 
     #~ def contains_event(self,event):
@@ -112,11 +113,10 @@ Whether this subscription should initially be displayed as a hidden calendar."""
         #~ """
         #~ Add filter criteria to the specified Queryset (on Event model)
         #~ """
-    
 
 
 class Subscriptions(dd.Table):
-    required = dd.required(user_groups='office',user_level='manager')
+    required = dd.required(user_groups='office', user_level='manager')
     model = 'cal.Subscription'
     #~ insert_layout = """
     #~ label
@@ -127,19 +127,18 @@ class Subscriptions(dd.Table):
     #~ event_type team other_user room
     #~ description
     #~ """
-    
+
 #~ class MySubscriptions(Subscriptions,dd.ByUser):
     #~ pass
 
 #~ class SubscriptionsByCalendar(Subscriptions):
     #~ master_key = 'calendar'
 
+
 class SubscriptionsByUser(Subscriptions):
     required = dd.required(user_groups='office')
     master_key = 'user'
     auto_fit_column_widths = True
-
-    
 
 
 __all__ = [
@@ -147,4 +146,4 @@ __all__ = [
     'Calendars',
     'Subscription',
     'Subscriptions',
-    ]
+]

@@ -1,15 +1,15 @@
-## Copyright 2011 Luc Saffre
-## This file is part of the Lino project.
-## Lino is free software; you can redistribute it and/or modify 
-## it under the terms of the GNU General Public License as published by
-## the Free Software Foundation; either version 3 of the License, or
-## (at your option) any later version.
-## Lino is distributed in the hope that it will be useful, 
-## but WITHOUT ANY WARRANTY; without even the implied warranty of
-## MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the 
-## GNU General Public License for more details.
-## You should have received a copy of the GNU General Public License
-## along with Lino; if not, see <http://www.gnu.org/licenses/>.
+# Copyright 2011 Luc Saffre
+# This file is part of the Lino project.
+# Lino is free software; you can redistribute it and/or modify
+# it under the terms of the GNU General Public License as published by
+# the Free Software Foundation; either version 3 of the License, or
+# (at your option) any later version.
+# Lino is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+# GNU General Public License for more details.
+# You should have received a copy of the GNU General Public License
+# along with Lino; if not, see <http://www.gnu.org/licenses/>.
 
 """
 This is for writing fixtures that import data from an MS-Access 
@@ -54,8 +54,8 @@ import logging
 logger = logging.getLogger(__name__)
 
 
-#~ ENCODING = 'latin1' # the encoding used by the mdb file
-ENCODING = 'utf8' 
+# ~ ENCODING = 'latin1' # the encoding used by the mdb file
+ENCODING = 'utf8'
 #~ MDB_FILE = 'PPv5MasterCopie.mdb'
 MDBTOOLS_EXPORT = 'mdb-export'
 
@@ -72,17 +72,17 @@ from lino.utils import ucsv
 from lino.utils import dblogger
 
 
-#~ ENCODING = 'latin1' # the encoding used by the mdb file
-ENCODING = 'utf8' 
+# ~ ENCODING = 'latin1' # the encoding used by the mdb file
+ENCODING = 'utf8'
 #~ MDB_FILE = 'PPv5MasterCopie.mdb'
 MDBTOOLS_EXPORT = 'mdb-export'
 
 
 try:
-  from subprocess import check_output
+    from subprocess import check_output
 except ImportError:
     import subprocess
-    
+
     def check_output(*popenargs, **kwargs):
         r"""Run command with arguments and return its output as a byte string.
 
@@ -104,8 +104,10 @@ except ImportError:
         'ls: non_existent_file: No such file or directory\n'
         """
         if 'stdout' in kwargs:
-            raise ValueError('stdout argument not allowed, it will be overridden.')
-        process = subprocess.Popen(stdout=subprocess.PIPE, *popenargs, **kwargs)
+            raise ValueError(
+                'stdout argument not allowed, it will be overridden.')
+        process = subprocess.Popen(
+            stdout=subprocess.PIPE, *popenargs, **kwargs)
         output, unused_err = process.communicate()
         retcode = process.poll()
         if retcode:
@@ -115,42 +117,44 @@ except ImportError:
             raise subprocess.CalledProcessError(retcode, cmd, output=output)
         return output
 
+
 class Loader:
     mdb_file = None
     table_name = None
     model = None
-    
+
     def __iter__(self):
         fn = self.table_name + ".csv"
         if os.path.exists(fn):
-            logger.warning("Not re-extracting %s since it exists.",fn)
+            logger.warning("Not re-extracting %s since it exists.", fn)
         else:
-            args = [MDBTOOLS_EXPORT, '-D', "%Y-%m-%d %H:%M:%S", self.mdb_file, self.table_name]
-            s = check_output(args,executable=MDBTOOLS_EXPORT,
-              env=dict(
-                MDB_ICONV='utf-8',
-                MDB_JET_CHARSET='utf-8'))
+            args = [MDBTOOLS_EXPORT, '-D', "%Y-%m-%d %H:%M:%S",
+                    self.mdb_file, self.table_name]
+            s = check_output(args, executable=MDBTOOLS_EXPORT,
+                             env=dict(
+                                 MDB_ICONV='utf-8',
+                                 MDB_JET_CHARSET='utf-8'))
             #~ print ENCODING
-            
-            fd = open(fn,'w')
+
+            fd = open(fn, 'w')
             fd.write(s)
             fd.close()
             logger.info("Extracted file %s", fn)
-        reader = ucsv.UnicodeReader(open(fn,'r'),encoding=ENCODING)
+        reader = ucsv.UnicodeReader(open(fn, 'r'), encoding=ENCODING)
         headers = reader.next()
         if not headers == self.headers:
-            raise Exception("%r != %r" % (headers,self.headers))
+            raise Exception("%r != %r" % (headers, self.headers))
         n = 0
         for values in reader:
             row = {}
-            for i,h in enumerate(self.headers):
+            for i, h in enumerate(self.headers):
                 row[h] = values[i]
             n += 1
             if False:
                 if int(row['IDClient']) == 967:
                     print row
                     raise Exception("20110609")
-                  
+
             if False:
                 if n < 10:
                     print n, ':', row
@@ -159,18 +163,20 @@ class Loader:
             for obj in self.row2obj(row):
                 yield obj
 
-    def parsedate(self,s):
-        if not s: return None
+    def parsedate(self, s):
+        if not s:
+            return None
         dt = s.split()
         if len(dt) != 2:
             raise Exception("Unexpected datetime string %r" % s)
         d = dt[0]
         #~ t = dt[1]
         a = [int(i) for i in d.split('-')]
-        return datetime.date(year=a[0],month=a[1],day=a[2])
+        return datetime.date(year=a[0], month=a[1], day=a[2])
 
-    def parsetime(self,s):
-        if not s: return None
+    def parsetime(self, s):
+        if not s:
+            return None
         dt = s.split()
         if len(dt) != 2:
             raise Exception("Unexpected datetime string %r" % s)
@@ -178,4 +184,3 @@ class Loader:
         return t[:5]
         #~ a = [int(i) for i in t.split(':')]
         #~ return datetime.time(hour=a[0],minute=a[1],second=a[2])
-

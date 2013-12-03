@@ -26,18 +26,18 @@ With revision 11066, the following doctest fails::
 
 from django.db import models
 
+
 class Place(models.Model):
     name = models.CharField(max_length=50)
 
     def __unicode__(self):
         return self.name
 
+
 class Restaurant(Place):
-  
+
     serves_hot_dogs = models.BooleanField(default=False)
-    
-    # the following explicit parent_link should not be necessary according to 
+
+    # the following explicit parent_link should not be necessary according to
     # http://docs.djangoproject.com/en/dev/topics/db/models/#specifying-the-parent-link-field
-    place = models.OneToOneField(Place,parent_link=True)
-
-
+    place = models.OneToOneField(Place, parent_link=True)

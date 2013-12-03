@@ -1,15 +1,15 @@
-## Copyright 2010-2013 Luc Saffre
-## This file is part of the Lino project.
-## Lino is free software; you can redistribute it and/or modify 
-## it under the terms of the GNU General Public License as published by
-## the Free Software Foundation; either version 3 of the License, or
-## (at your option) any later version.
-## Lino is distributed in the hope that it will be useful, 
-## but WITHOUT ANY WARRANTY; without even the implied warranty of
-## MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the 
-## GNU General Public License for more details.
-## You should have received a copy of the GNU General Public License
-## along with Lino; if not, see <http://www.gnu.org/licenses/>.
+# Copyright 2010-2013 Luc Saffre
+# This file is part of the Lino project.
+# Lino is free software; you can redistribute it and/or modify
+# it under the terms of the GNU General Public License as published by
+# the Free Software Foundation; either version 3 of the License, or
+# (at your option) any later version.
+# Lino is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+# GNU General Public License for more details.
+# You should have received a copy of the GNU General Public License
+# along with Lino; if not, see <http://www.gnu.org/licenses/>.
 
 from __future__ import unicode_literals
 
@@ -27,8 +27,10 @@ from lino.core.dbutils import obj2str
 
 class UserLevel(Choice):
     short_name = None
-    
+
+
 class UserLevels(ChoiceList):
+
     """
     The level of a user is one way of differenciating users when 
     defining access permissions and workflows. 
@@ -40,49 +42,51 @@ class UserLevels(ChoiceList):
     verbose_name_plural = _("User Levels")
     app_label = 'lino'
     required = required(user_level='admin')
-    short_name = models.CharField(_("Short name"),max_length=2,
-        help_text=_("Used when defining UserProfiles"))
-        
-    
+    short_name = models.CharField(_("Short name"), max_length=2,
+                                  help_text=_("Used when defining UserProfiles"))
+
     @classmethod
-    def get_column_names(self,ar):
+    def get_column_names(self, ar):
         return 'value name short_name text remark'
         #~ return 'value name short_name *'
-    
+
     @classmethod
-    def field(cls,module_name=None,**kw):
+    def field(cls, module_name=None, **kw):
         """
         Extends :meth:`lino.core.fields.ChoiceListField.field` .
         """
-        kw.setdefault('blank',True)
+        kw.setdefault('blank', True)
         if module_name is not None:
-            kw.update(verbose_name=translation.string_concat(cls.verbose_name,' (',module_name,')'))
-        return super(UserLevels,cls).field(**kw)
-        
+            kw.update(verbose_name=translation.string_concat(
+                cls.verbose_name, ' (', module_name, ')'))
+        return super(UserLevels, cls).field(**kw)
+
     #~ @fields.virtualfield(models.CharField(_("Short name"),max_length=2,
         #~ help_text="used to fill UserProfiles"))
     #~ def short_name(cls,choice,ar):
         #~ return choice.short_name
-        
-        
-        
+
+
 add = UserLevels.add_item
-add('10', _("Guest"),'guest',short_name='G')
+add('10', _("Guest"), 'guest', short_name='G')
 #~ add('20', _("Restricted"),'restricted')
 #~ add('20', _("Secretary"),'secretary')
-add('30', _("User"), "user",short_name='U')
-add('40', _("Manager"), "manager",short_name='M')
-add('50', _("Administrator"), "admin",short_name='A')
+add('30', _("User"), "user", short_name='U')
+add('40', _("Manager"), "manager", short_name='M')
+add('50', _("Administrator"), "admin", short_name='A')
 #~ add('90', _("Expert"), "expert",short_name='E')
 #~ UserLevels.SHORT_NAMES = dict(A='admin',U='user',_=None,M='manager',G='guest',S='secretary')
 #~ UserLevels.SHORT_NAMES = dict(A='admin',U='user',_=None,M='manager',G='guest',R='restricted')
-UserLevels.SHORT_NAMES = dict(A='admin',U='user',_=None,M='manager',G='guest')
+UserLevels.SHORT_NAMES = dict(
+    A='admin', U='user', _=None, M='manager', G='guest')
 
 """
 
 """
+
 
 class UserGroups(ChoiceList):
+
     """
     TODO: Rename this to "FunctionalGroups" or sth similar.
     
@@ -97,21 +101,18 @@ class UserGroups(ChoiceList):
     verbose_name_plural = _("User Groups")
     app_label = 'lino'
     show_values = True
-    max_length = 20 
+    max_length = 20
     """
     """
-        
+
 #~ add = UserGroups.add_item
 #~ add('system', _("System"))
 
 # filled using add_user_group()
 
 
-
-
-
 class UserProfile(Choice):
-    
+
     hidden_languages = None
     """
     A subset of :setting:`languages` 
@@ -121,14 +122,14 @@ class UserProfile(Choice):
     See the source code of :meth:`lino_welfare.settings.Site.setup_choicelists`
     for a usage example.
     """
-    
-    def __init__(self,cls,value,text,
-            name=None,memberships=None,authenticated=True,
-            readonly=False,
-            #~ expert=False,
-            **kw):
-      
-        super(UserProfile,self).__init__(value,text,name)
+
+    def __init__(self, cls, value, text,
+                 name=None, memberships=None, authenticated=True,
+                 readonly=False,
+                 #~ expert=False,
+                 **kw):
+
+        super(UserProfile, self).__init__(value, text, name)
         #~ keys = ['level'] + [g+'_level' for g in choicelist.groups_list]
         #~ keys = ['level'] + [g+'_level' for g in choicelist.membership_keys]
         self.readonly = readonly
@@ -136,60 +137,60 @@ class UserProfile(Choice):
         self.authenticated = authenticated
         self.memberships = memberships
         self.kw = kw
-        
-    def attach(self,cls):
-        super(UserProfile,self).attach(cls)
-        self.kw.setdefault('hidden_languages',cls.hidden_languages)
+
+    def attach(self, cls):
+        super(UserProfile, self).attach(cls)
+        self.kw.setdefault('hidden_languages', cls.hidden_languages)
         if self.memberships is None:
             for k in cls.membership_keys:
                 #~ kw[k] = UserLevels.blank_item
                 #~ kw.setdefault(k,UserLevels.blank_item) 20120829
-                self.kw.setdefault(k,None)
+                self.kw.setdefault(k, None)
         else:
         #~ if memberships is not None:
             if len(self.memberships.split()) != len(cls.membership_keys):
                 raise Exception(
-                    "Invalid memberships specification %r : must contain %d letters" 
-                    % (self.memberships,len(cls.membership_keys)))
-            for i,k in enumerate(self.memberships.split()):
-                self.kw[cls.membership_keys[i]] = UserLevels.get_by_name(UserLevels.SHORT_NAMES[k])
-                
+                    "Invalid memberships specification %r : must contain %d letters"
+                    % (self.memberships, len(cls.membership_keys)))
+            for i, k in enumerate(self.memberships.split()):
+                self.kw[cls.membership_keys[i]
+                        ] = UserLevels.get_by_name(UserLevels.SHORT_NAMES[k])
+
         #~ print 20120705, value, kw
-        
+
         assert self.kw.has_key('level')
-        
-        
-        for k,vf in cls.virtual_fields.items():
+
+        for k, vf in cls.virtual_fields.items():
             if vf.has_default():
-                self.kw.setdefault(k,vf.get_default())
+                self.kw.setdefault(k, vf.get_default())
             elif vf.return_type.blank:
-                self.kw.setdefault(k,None)
+                self.kw.setdefault(k, None)
             #~ if k == 'accounting_level':
             #~ if k == 'hidden_languages':
                 #~ print 20130920, k, vf, vf.has_default(), vf.get_default()
         #~ self.kw.setdefault('hidden_languages',cls.hidden_languages.default)
-        
-            
-        for k,v in self.kw.items():
-            setattr(self,k,v)
-            
+
+        for k, v in self.kw.items():
+            setattr(self, k, v)
+
         for k in cls.default_memberships:
-            setattr(self,k,self.level)
-            
+            setattr(self, k, self.level)
+
         if self.hidden_languages is not None:
-            self.hidden_languages = set(settings.SITE.resolve_languages(self.hidden_languages))
-            
+            self.hidden_languages = set(
+                settings.SITE.resolve_languages(self.hidden_languages))
+
         del self.kw
         del self.memberships
-        
+
         #~ for grp in enumerate(UserGroups.items()):
             #~ attname = grp.value + '_level'
             #~ setattr(self,attname,kw.pop(attname,''))
         #~ if kw:
             #~ raise Exception("UserProfile got unexpected arguments %s" % kw)
-            
+
         #~ dd.UserProfiles.add_item(value,label,None,**kw)
-      
+
     #~ def __init__(self,level='',*args,**kw):
     #~ def __init__(self,level='',*args):
     #~ def __init__(self,**kw):
@@ -208,9 +209,9 @@ class UserProfile(Choice):
         #~ kw.setdefault('readonly',False)
         #~ for k,v in kw.items():
             #~ setattr(self,k,v)
-            
+
     def __repr__(self):
-        #~ s = self.__class__.__name__ 
+        #~ s = self.__class__.__name__
         s = str(self.choicelist)
         if self.name:
             s += "." + self.name
@@ -218,21 +219,19 @@ class UserProfile(Choice):
         #~ s += "level=%s" % self.level.name
         s += "level=%s" % self.level
         for g in UserGroups.items():
-            if g.value: # no level for UserGroups.blank_item
-                v = getattr(self,g.value+'_level',None)
+            if g.value:  # no level for UserGroups.blank_item
+                v = getattr(self, g.value + '_level', None)
                 if v is not None:
-                    s += ",%s=%s" % (g.value,v.name)
+                    s += ",%s=%s" % (g.value, v.name)
         s += ")"
         return s
-        
+
     #~ def hide_languages(self,languages):
         #~ self.hidden_languages = set(settings.SITE.resolve_languages(languages))
-            
-        
-        
 
-        
+
 class UserProfiles(ChoiceList):
+
     """
     Deserves a docstring.
     """
@@ -244,38 +243,36 @@ class UserProfiles(ChoiceList):
     show_values = True
     max_length = 20
     membership_keys = ('level',)
-    
-    preferred_foreignkey_width = 20 
-    
-    #~ 20130920 
-    hidden_languages = settings.SITE.hidden_languages 
+
+    preferred_foreignkey_width = 20
+
+    #~ 20130920
+    hidden_languages = settings.SITE.hidden_languages
     #~ hidden_languages = fields.NullCharField(_("Hidden languages"),
         #~ max_length=200,null=True,default=settings.SITE.hidden_languages)
     """
     Default value for the :attr:`hidden_languages <UserProfile.hidden_languages>`
     of newly attached choice item
     """
-    
+
     level = UserLevels.field(_("System"))
-    
-    
+
     #~ @classmethod
     #~ def clear(cls):
         #~ cls.groups_list = [g.value for g in UserGroups.items()]
         #~ super(UserProfiles,cls).clear()
-          
-
     #~ @classmethod
     #~ def clear(cls,groups='*'):
     @classmethod
-    def reset(cls,groups=None,hidden_languages=None):
+    def reset(cls, groups=None, hidden_languages=None):
         """
         Deserves a docstring.
         """
         if hidden_languages is not None:
             cls.hidden_languages = hidden_languages
         #~ cls.groups_list = [g.value for g in UserGroups.items()]
-        expected_names = set(['*']+[g.value for g in UserGroups.items() if g.value])
+        expected_names = set(
+            ['*'] + [g.value for g in UserGroups.items() if g.value])
         if groups is None:
             groups = ' '.join(expected_names)
             #~ cls.membership_keys = tuple(expected_names)
@@ -283,7 +280,7 @@ class UserProfiles(ChoiceList):
         for g in groups.split():
             if not g in expected_names:
                 raise Exception("Unexpected name %r (UserGroups are: %s)" % (
-                    g,[g.value for g in UserGroups.items() if g.value]))
+                    g, [g.value for g in UserGroups.items() if g.value]))
             else:
                 expected_names.remove(g)
                 if g == '*':
@@ -291,7 +288,7 @@ class UserProfiles(ChoiceList):
                 else:
                     if not UserGroups.get_by_value(g):
                         raise Exception("Unknown group %r" % g)
-                    s.append(g+'_level')
+                    s.append(g + '_level')
         #~ if len(expected_names) > 0:
             #~ raise Exception("Missing name(s) %s in %r" % (expected_names,groups))
         cls.default_memberships = expected_names
@@ -299,15 +296,14 @@ class UserProfiles(ChoiceList):
         cls.clear()
 
     @classmethod
-    def add_item(cls,value,text,memberships=None,name=None,**kw):
-        return cls.add_item_instance(UserProfile(cls,value,text,name,memberships,**kw))
+    def add_item(cls, value, text, memberships=None, name=None, **kw):
+        return cls.add_item_instance(UserProfile(cls, value, text, name, memberships, **kw))
 
-#~ UserProfiles choicelist is going to be filled in `lino.site.Site.setup_choicelists` 
+#~ UserProfiles choicelist is going to be filled in `lino.site.Site.setup_choicelists`
 #~ because the attributes of each item depend on UserGroups
 
 
-
-def add_user_group(name,label):
+def add_user_group(name, label):
     """
     Add a user group to the :class:`UserGroups <lino.core.perms.UserGroups>` 
     choicelist. If a group with that name already exists, add `label` to the 
@@ -317,21 +313,20 @@ def add_user_group(name,label):
     #~ print "20120705 add_user_group(%s,%s)" % (name,unicode(label))
     g = UserGroups.items_dict.get(name)
     if g is None:
-        g = UserGroups.add_item(name,label)
+        g = UserGroups.add_item(name, label)
     else:
         if g.text != label:
             g.text += " & " + unicode(label)
-    #~ if False: 
+    #~ if False:
         # TODO: 'UserProfile' object has no attribute 'accounting_level'
-    k = name+'_level'
-    UserProfiles.inject_field(k,UserLevels.field(g.text,blank=True))
+    k = name + '_level'
+    UserProfiles.inject_field(k, UserLevels.field(g.text, blank=True))
     UserProfiles.virtual_fields[k].lino_resolve_type()
-
-    
 
 
 #~ def default_required(): return dict(auth=True)
 class Requirements(object):
+
     """
     Not yet used. TODO: implement requirements as a class. 
     - handle conversions (like accepting both list and string for `user_groups` ),
@@ -344,10 +339,9 @@ class Requirements(object):
     allow = None
     auth = True
     owner = None
-    
 
 
-def make_permission_handler(*args,**kw):
+def make_permission_handler(*args, **kw):
     """
     Return a function that will test whether permission is given or not.
     
@@ -409,183 +403,200 @@ def make_permission_handler(*args,**kw):
     
     """
     #~ try:
-    return make_permission_handler_(*args,**kw)
+    return make_permission_handler_(*args, **kw)
     #~ except Exception,e:
         #~ raise Exception("Exception while making permissions for %s: %s" % (actor,e))
 
-def make_view_permission_handler(*args,**kw):
+
+def make_view_permission_handler(*args, **kw):
     """
     Similar to :func:`make_permission_handler`, but for static view permissions 
     which don't have an object nor states.
     """
-    return make_view_permission_handler_(*args,**kw)
-    
+    return make_view_permission_handler_(*args, **kw)
+
+
 def make_view_permission_handler_(
-    actor,readonly,debug_permissions,
-    user_level=None,user_groups=None,allow=None,auth=False,owner=None,states=None):
+    actor, readonly, debug_permissions,
+        user_level=None, user_groups=None, allow=None, auth=False, owner=None, states=None):
     #~ if states is not None:
         #~ logger.info("20121121 ignoring required states %s for %s",states,actor)
     #~ if owner is not None:
         #~ logger.info("20121121 ignoring required owner %s for %s",owner,actor)
     #~ if allow is None:
     if allow is not None:
-        if not isinstance(actor.action,workflows.ChangeStateAction):
+        if not isinstance(actor.action, workflows.ChangeStateAction):
             raise Exception("20130724 %s" % actor)
-    if True: 
+    if True:
         """
         ignore `allow` requirement for view_permission
         because 
         workflows.Choice.add_transition
         """
-        def allow(action,profile):
+        def allow(action, profile):
             return True
     #~ if settings.SITE.user_model is not None:
-    if True: # e.g. public readonly site
+    if True:  # e.g. public readonly site
         if auth:
             allow_before_auth = allow
-            def allow(action,profile):
+
+            def allow(action, profile):
                 if not profile.authenticated:
                     return False
-                return allow_before_auth(action,profile)
-            
+                return allow_before_auth(action, profile)
+
         if user_groups is not None:
-            if isinstance(user_groups,basestring):
+            if isinstance(user_groups, basestring):
                 user_groups = user_groups.split()
             if user_level is None:
                 user_level = UserLevels.user
             else:
-                user_level = getattr(UserLevels,user_level,None)
+                user_level = getattr(UserLevels, user_level, None)
                 if user_level is None:
-                    raise Exception("Invalid user_level %r for %s" % (user_level,actor))
+                    raise Exception("Invalid user_level %r for %s" %
+                                    (user_level, actor))
             for g in user_groups:
-                UserGroups.get_by_value(g) # raise Exception if no such group exists
+                # raise Exception if no such group exists
+                UserGroups.get_by_value(g)
                 #~ if not UserGroups.get_by_name(g):
                     #~ raise Exception("Invalid UserGroup %r" % g)
             allow1 = allow
-            def allow(action,profile):
-                if not allow1(action,profile): return False
+
+            def allow(action, profile):
+                if not allow1(action, profile):
+                    return False
                 for g in user_groups:
-                    level = getattr(profile,g+'_level')
+                    level = getattr(profile, g + '_level')
                     if level >= user_level:
                         return True
                     #~ elif debug_permissions:
                         #~ logger.info("20130704 level %r < %r",level,user_level)
                 return False
-    
+
         elif user_level is not None:
-            user_level = getattr(UserLevels,user_level)
+            user_level = getattr(UserLevels, user_level)
             allow_user_level = allow
-            def allow(action,profile):
+
+            def allow(action, profile):
                 if profile.level < user_level:
                     return False
-                return allow_user_level(action,profile)
-                
+                return allow_user_level(action, profile)
+
     if not readonly:
         allow3 = allow
-        def allow(action,profile):
-            if not allow3(action,profile): return False
+
+        def allow(action, profile):
+            if not allow3(action, profile):
+                return False
             if profile.readonly:
                 return False
             return True
-    
-    if debug_permissions: # False:
+
+    if debug_permissions:  # False:
         #~ logger.info("20130424 install debug_permissions for %s",
             #~ [actor,readonly,debug_permissions,
             #~ user_level,user_groups,allow,auth,owner,states])
         allow4 = allow
-        def allow(action,profile):
-            v = allow4(action,profile)
-            if True: # not v:
-                logger.info(u"debug_permissions (view) %r required(%s,%s), allow(%s)--> %s",
-                  action,user_level,user_groups,profile,v)
+
+        def allow(action, profile):
+            v = allow4(action, profile)
+            if True:  # not v:
+                logger.info(
+                    u"debug_permissions (view) %r required(%s,%s), allow(%s)--> %s",
+                    action, user_level, user_groups, profile, v)
             return v
     return allow
-        
+
 
 def make_permission_handler_(
-    elem,actor,readonly,debug_permissions,
-    user_level=None,user_groups=None,allow=None,auth=False,owner=None,states=None):
-        
+    elem, actor, readonly, debug_permissions,
+        user_level=None, user_groups=None, allow=None, auth=False, owner=None, states=None):
+
     #~ if str(actor) == 'courses.PendingCourseRequests':
         #~ if allow is None: raise Exception("20130424")
-    
-    #~ if debug_permissions: # False:
+
+    # ~ if debug_permissions: # False:
         #~ logger.info("20130424 install debug_permissions for %s",
             #~ [elem,actor,readonly,debug_permissions,
             #~ user_level,user_groups,states,allow,owner,auth])
-    
+
     if allow is None:
-        def allow(action,user,obj,state):
+        def allow(action, user, obj, state):
             return True
     #~ if settings.SITE.user_model is not None:
-    if True: # e.g. public readonly site
+    if True:  # e.g. public readonly site
         if auth:
             allow_before_auth = allow
-            def allow(action,user,obj,state):
+
+            def allow(action, user, obj, state):
                 if not user.profile.authenticated:
                     #~ if action.action_name == 'wf7':
                         #~ logger.info("20130424 allow_before_auth returned False")
                     return False
-                return allow_before_auth(action,user,obj,state)
-            
+                return allow_before_auth(action, user, obj, state)
+
         if owner is not None:
             allow_owner = allow
-            def allow(action,user,obj,state):
+
+            def allow(action, user, obj, state):
                 if obj is not None and (user == obj.user) != owner:
                     #~ if action.action_name == 'wf7':
                         #~ logger.info("20130424 allow_owner returned False")
                     return False
-                return allow_owner(action,user,obj,state)
-                
+                return allow_owner(action, user, obj, state)
+
         if user_groups is not None:
-            if isinstance(user_groups,basestring):
+            if isinstance(user_groups, basestring):
                 user_groups = user_groups.split()
             if user_level is None:
                 user_level = UserLevels.user
             else:
-                user_level = getattr(UserLevels,user_level)
+                user_level = getattr(UserLevels, user_level)
             for g in user_groups:
-                UserGroups.get_by_value(g) # raise Exception if no such group exists
+                # raise Exception if no such group exists
+                UserGroups.get_by_value(g)
                 #~ if not UserGroups.get_by_name(g):
                     #~ raise Exception("Invalid UserGroup %r" % g)
             allow1 = allow
-            def allow(action,user,obj,state):
-                if not allow1(action,user,obj,state): 
+
+            def allow(action, user, obj, state):
+                if not allow1(action, user, obj, state):
                     #~ if action.action_name == 'wf7':
                         #~ logger.info("20130424 allow1 returned False")
                     return False
                 for g in user_groups:
-                    level = getattr(user.profile,g+'_level')
+                    level = getattr(user.profile, g + '_level')
                     if level >= user_level:
                         return True
                 return False
-            
+
         elif user_level is not None:
-            user_level = getattr(UserLevels,user_level)
+            user_level = getattr(UserLevels, user_level)
             allow_user_level = allow
-            def allow(action,user,obj,state):
+
+            def allow(action, user, obj, state):
                 #~ if user.profile.level is None or user.profile.level < user_level:
                 if user.profile.level < user_level:
                     #~ print 20120715, user.profile.level
                     #~ if action.action_name == 'wf7':
                         #~ logger.info("20130424 allow_user_level returned False")
                     return False
-                return allow_user_level(action,user,obj,state)
-                
+                return allow_user_level(action, user, obj, state)
+
     if states is not None:
         #~ if not isinstance(actor.workflow_state_field,choicelists.ChoiceListField):
         if actor.workflow_state_field is None:
             raise Exception(
                 """\
 %s cannot specify `states` when %s.workflow_state_field is %r.
-                """ % (elem,actor,actor.workflow_state_field))
+                """ % (elem, actor, actor.workflow_state_field))
         #~ else:
             #~ print 20120621, "ok", actor
         lst = actor.workflow_state_field.choicelist
         #~ states = frozenset([getattr(lst,n) for n in states])
         #~ possible_states = [st.name for st in lst.items()] + [BLANK_STATE]
         ns = []
-        if isinstance(states,basestring):
+        if isinstance(states, basestring):
             states = states.split()
         for n in states:
             if n is not None:
@@ -598,40 +609,46 @@ def make_permission_handler_(
                 #~ ns.append(getattr(lst,n))
             #~ else:
                 #~ ns.append(lst.blank_item)
-                
+
             #~ if not st in possible_states:
                 #~ raise Exception("Invalid state %r, must be one of %r" % (st,possible_states))
         states = frozenset(ns)
         allow2 = allow
         #~ if debug_permissions:
             #~ logger.info("20121009 %s required states: %s",actor,states)
-        def allow(action,user,obj,state):
-            if not allow2(action,user,obj,state): return False
-            if obj is None: return True
+
+        def allow(action, user, obj, state):
+            if not allow2(action, user, obj, state):
+                return False
+            if obj is None:
+                return True
             return state in states
     #~ return perms.Permission(allow)
-    
+
     if not readonly:
         allow3 = allow
-        def allow(action,user,obj,state):
-            if not allow3(action,user,obj,state): return False
+
+        def allow(action, user, obj, state):
+            if not allow3(action, user, obj, state):
+                return False
             if user.profile.readonly:
                 return False
             return True
-    
-    if debug_permissions: # False:
+
+    if debug_permissions:  # False:
         allow4 = allow
-        def allow(action,user,obj,state):
-            v = allow4(action,user,obj,state)
-            logger.info(u"debug_permissions %r required(%s,%s,%s), allow(%s,%s,%s)--> %s",
-              action,user_level,user_groups,states,user.username,obj2str(obj),state,v)
+
+        def allow(action, user, obj, state):
+            v = allow4(action, user, obj, state)
+            logger.info(
+                u"debug_permissions %r required(%s,%s,%s), allow(%s,%s,%s)--> %s",
+                action, user_level, user_groups, states, user.username, obj2str(obj), state, v)
             return v
     return allow
-        
-
 
 
 class AnonymousUser(object):
+
     """
     Similar to Django's approach to represent anonymous visitors 
     as a special kind of user.
@@ -643,30 +660,32 @@ class AnonymousUser(object):
     partner = None
     language = None
     #~ id = None
-    
+
     _instance = None
-    
+
     @classmethod
     def instance(cls):
         if cls._instance is None:
             #~ cls._instance = super(AnonymousUser, cls).__new__(cls, *args, **kwargs)
             cls._instance = AnonymousUser()
             try:
-                cls._instance.profile = UserProfiles.get_by_value(settings.SITE.anonymous_user_profile)
+                cls._instance.profile = UserProfiles.get_by_value(
+                    settings.SITE.anonymous_user_profile)
                 if cls._instance.profile.authenticated:
                     #~ raise Exception("20121121 profile specified by `anonymous_user_profile` is `authenticated`")
-                    logger.warning("20121121 profile specified by `anonymous_user_profile` is `authenticated`")
+                    logger.warning(
+                        "20121121 profile specified by `anonymous_user_profile` is `authenticated`")
             except KeyError:
                 raise Exception(
                     "Invalid value %r for `SITE.anonymous_user_profile`. Must be one of %s" % (
                         settings.SITE.anonymous_user_profile,
                         [i.value for i in UserProfiles.items()]))
         return cls._instance
-        
+
     def __str__(self):
         return self.username
 
-
-    def get_typed_instance(self,model):
-        # 20131022 AttributeError at /api/outbox/MyOutbox : 'AnonymousUser' object has no attribute 'get_typed_instance'
+    def get_typed_instance(self, model):
+        # 20131022 AttributeError at /api/outbox/MyOutbox : 'AnonymousUser'
+        # object has no attribute 'get_typed_instance'
         return self

@@ -5,4 +5,3 @@ but might be a separate code repository maintained by an independent
 application developer.
 
 """
-

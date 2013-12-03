@@ -1,16 +1,16 @@
 # -*- coding: UTF-8 -*-
-## Copyright 2010-2013 Luc Saffre
-## This file is part of the Lino project.
-## Lino is free software; you can redistribute it and/or modify 
-## it under the terms of the GNU General Public License as published by
-## the Free Software Foundation; either version 3 of the License, or
-## (at your option) any later version.
-## Lino is distributed in the hope that it will be useful, 
-## but WITHOUT ANY WARRANTY; without even the implied warranty of
-## MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the 
-## GNU General Public License for more details.
-## You should have received a copy of the GNU General Public License
-## along with Lino; if not, see <http://www.gnu.org/licenses/>.
+# Copyright 2010-2013 Luc Saffre
+# This file is part of the Lino project.
+# Lino is free software; you can redistribute it and/or modify
+# it under the terms of the GNU General Public License as published by
+# the Free Software Foundation; either version 3 of the License, or
+# (at your option) any later version.
+# Lino is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+# GNU General Public License for more details.
+# You should have received a copy of the GNU General Public License
+# along with Lino; if not, see <http://www.gnu.org/licenses/>.
 """
 Loads all Belgian cities into the database.
 Supposes that :mod:`few_cities <lino.modlib.countries.fixtures.few_cities>` 
@@ -81,8 +81,8 @@ belgian_cities_nl_fr = u"""
 3700 |Tongeren            |Tongres              |Tongeren
 1800 |Vilvoorde           |Vilvorde             |Vilvoorde
 8900 |Ieper               |Ypres                |Ypres
-"""                                           
-                                              
+"""
+
 belgian_cities = u"""
 9420 Aaigem 
 8511 Aalbeke 
@@ -2891,20 +2891,21 @@ fr = u"""
 59651 VILLENEUVE D'ASCQ 
 """
 
+
 def objects():
     countries = dd.resolve_app('countries')
-    city = Instantiator(countries.City,"zip_code name",
-        country='BE',
-        type=countries.CityTypes.city).build
+    city = Instantiator(countries.City, "zip_code name",
+                        country='BE',
+                        type=countries.CityTypes.city).build
     for ln in belgian_cities.splitlines():
         ln = ln.strip()
         if ln and ln[0] != '#':
-            args = ln.split(None,1)
+            args = ln.split(None, 1)
             o = city(*args)
             # print "%r %r" % (o.zip_code, o.name)
             yield o
             #~ print __name__, "20121114"
-            #~ return 
+            #~ return
     for ln in belgian_cities_nl_fr.splitlines():
         ln = ln.strip()
         if ln and ln[0] != '#':
@@ -2912,5 +2913,6 @@ def objects():
             if len(args) != 4:
                 raise Exception("Invalid format : \n%s" % ln)
             args = [x.strip() for x in args]
-            o = city(zip_code=args[0],**babel_values('name',nl=args[1],fr=args[2],de=args[3],en=args[3]))
+            o = city(zip_code=args[0], **babel_values('name',
+                     nl=args[1], fr=args[2], de=args[3], en=args[3]))
             yield o
