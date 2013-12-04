@@ -4,6 +4,11 @@
 The EIDReader applet
 ====================
 
+.. note::
+
+  EIDReader is no longer maintained. See :blogref:`20131203`.
+
+
 **International eID card reader**
 
 EIDReader is an applet to read the publicly available information

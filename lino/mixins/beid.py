@@ -215,6 +215,7 @@ class BeIdReaderPlugin(BeIdPlugin):  # was: use_eidreader
         yield '        archive="%s"' % p
         yield '        width="0" height="0">'
         # ~ yield '<param name="separate_jvm" value="true">' # 20130913
+        yield '<param name="permissions" value="sandbox">'
         yield '</applet>'
 
     def card2client(cls, data):

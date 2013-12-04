@@ -364,10 +364,12 @@ class ExtRenderer(HtmlRenderer):
         h = self.instance_handler(ar, obj)
         if text is None:
             text = force_unicode(obj)
+        elif isinstance(text, basestring):
+            text = (text,)
         if h is None:
-            return xghtml.E.b(text)
+            return xghtml.E.b(*text)
         url = 'javascript:' + h
-        e = xghtml.E.a(text, href=url)
+        e = xghtml.E.a(*text, href=url)
         #~ print 20130802, xghtml.E.tostring(e)
         return e
 

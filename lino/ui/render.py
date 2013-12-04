@@ -47,7 +47,7 @@ from django.utils.translation import get_language
 
 from django.contrib.contenttypes.models import ContentType
 from django.contrib.contenttypes import generic
-from django.conf.urls import patterns, url, include
+from django.conf.urls import patterns, include
 
 
 import lino
@@ -303,12 +303,14 @@ class HtmlRenderer(object):
 
     def obj2html(self, ar, obj, text=None):
         if text is None:
-            text = force_unicode(obj)
+            text = (force_unicode(obj),)
+        elif isinstance(text, basestring):
+            text = (text,)
         if self.is_interactive:
             url = self.instance_handler(ar, obj)
             if url is not None:
-                return xghtml.E.a(text, href=url)
-        return xghtml.E.b(text)
+                return xghtml.E.a(*text, href=url)
+        return xghtml.E.b(*text)
 
     def window_action_button(self, request, ba, after_show={}, label=None, title=None, **kw):
         """
