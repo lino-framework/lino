@@ -18,11 +18,6 @@ import lino
 
 from lino.projects.std.settings import *
 
-#~ from lino.modlib import cal
-
-#~ class Site(Site,cal.SiteMixin):
-
-
 class Site(Site):
     title = "Lino/MinimalApp 2"
     #~ help_url = "http://lino.saffre-rumma.net/az/index.html"

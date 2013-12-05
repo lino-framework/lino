@@ -128,7 +128,7 @@ The :meth:`execute` method takes four parameters:
   In the following examples we leave this *empty* to avoid any actual connection.
   In a Lino application, this is defined in your local 
   :xfile:`settings.py` module 
-  (:attr:`cbss_environment <lino.Lino.cbss_environment>` setting).
+  (:setting:`cbss.cbss_environment` setting).
   
 - You also need to specify a unique reference and a timestamp. 
 

@@ -29,10 +29,8 @@ import lino
 
 from lino.projects.std.settings import *
 
-from lino.modlib import vat
 
-
-class Site(Site, vat.SiteMixin):
+class Site(Site):
 
     verbose_name = "Lino Docs"
 

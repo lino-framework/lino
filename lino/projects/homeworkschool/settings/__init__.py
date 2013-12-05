@@ -18,14 +18,7 @@ import lino
 
 from lino.projects.std.settings import *
 
-from lino.modlib import cal
-from lino.modlib import vat
-
-#~ class Site(Site):
-#~ class Site(Site,cal.SiteMixin):
-
-
-class Site(Site, vat.SiteMixin):
+class Site(Site):
     #~ title = __name__
     version = "0.0.1"
     verbose_name = "Lino-HWS"

@@ -14,10 +14,10 @@
 """
 VAT (value-added tax) related logics.
 
-This module defines some central ChoiceLists 
-and Model mixins designed to work both with and without 
+This module defines some central ChoiceLists
+and Model mixins designed to work both with and without
 :mod:`lino.modlib.ledger` and
-:mod:`lino.modlib.declarations` 
+:mod:`lino.modlib.declarations`
 installed.
 
 
@@ -474,7 +474,7 @@ class VatItemBase(mixins.Sequenced, VatTotal):
     vat_class = VatClasses.field(blank=True, default=get_default_vat_class)
 
     def get_vat_class(self, tt):
-        name = settings.SITE.get_vat_class(tt, self)
+        name = settings.SITE.plugins.vat.get_vat_class(tt, self)
         return VatClasses.get_by_name(name)
 
     def vat_class_changed(self, ar):
@@ -497,9 +497,8 @@ class VatItemBase(mixins.Sequenced, VatTotal):
         tt = self.voucher.get_trade_type()
         if self.vat_class is None:
             self.vat_class = self.get_vat_class(tt)
-        return settings.SITE.get_vat_rate(tt,
-                                          self.vat_class,
-                                          self.voucher.vat_regime)
+        return settings.SITE.plugins.vat.get_vat_rate(
+            tt, self.vat_class, self.voucher.vat_regime)
 
     #~ def save(self,*args,**kw):
         #~ super(VatItemBase,self).save(*args,**kw)

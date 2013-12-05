@@ -498,8 +498,8 @@ class ProductDocItem(ledger.VoucherItem, vat.QtyVatItemBase):
                 rate = self.get_vat_rate()  # rate of this item
             else:
                 rate = ZERO
-            catalog_rate = settings.SITE.get_vat_rate(tt,
-                                                      self.vat_class, vat.get_default_vat_regime)
+            catalog_rate = settings.SITE.plugins.vat.get_vat_rate(
+                tt, self.vat_class, vat.get_default_vat_regime)
             if rate != catalog_rate:
                 catalog_price = remove_vat(catalog_price, catalog_rate)
                 catalog_price = add_vat(catalog_price, rate)

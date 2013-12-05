@@ -20,13 +20,6 @@ from lino import ad
 class App(ad.App):
     verbose_name = _("VAT")
 
-
-class SiteMixin(object):
-
-    """
-    Mixin to add to your Site class if you use :mod:`lino.modlib.vat`.
-    """
-
     vat_quarterly = False
     """
     Set this to True to support quarterly VAT declarations.
@@ -35,9 +28,6 @@ class SiteMixin(object):
 
     def get_vat_class(self, tt, item):
         return 'normal'
-
-    #~ def get_product_vat_class(self,tt,product):
-        #~ return 'normal'
 
     VAT_CLASS_TO_RATE = dict(
         exempt=Decimal(),

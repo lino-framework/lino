@@ -44,19 +44,31 @@ TODO:
 - write documentation
 
 
-Now it's really time to get all test suites up and running again.
-The suites for 
-:ref:`patrols`,
-:ref:`faggio` and
-:ref:`welfare`
-had been broken for some time. Now they pass again.
+Now before going on it's really time to get all test suites up and
+running again.  The suites for :ref:`patrols`, :ref:`faggio` and
+:ref:`welfare` had been broken for some time. Now they pass again.
 
-I also had neglected the :fab:`userdocs` directories, now they all build 
-again without any warning.
-
+I also had neglected the :fab:`userdocs` directories, now they all
+build again without any warning.
 
 Moved `get_installed_apps` method from :mod:`lino` 
 to :mod:`djangosite`.
+Because intuitively I'd say that this is a better place for it.
 This should make no difference for applications.
 One subtle difference is that ``"lino"`` is no longer at the 
 end just before ``"djangosite"``.
+
+Replace `SiteMixin` hacks by `App` usages
+-----------------------------------------
+
+A first positive effect of today's work:
+I can remove the `SiteMixin` classes  from 
+:mod:`lino.modlib.vat`
+and
+:mod:`lino_welfare.modlib.cbss`!
+
+For the latter: to protect myself from forgetting 
+to convert local settings files I added an error message.
+
+Cool! (Just a pity that these human bodies need to sleep every
+now and then ;-)

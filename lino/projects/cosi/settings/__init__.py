@@ -18,16 +18,12 @@ Default settings module for a :ref:`cosi` project.
 
 from __future__ import unicode_literals
 
-from os.path import join, abspath, dirname
-
 from lino.projects.std.settings import *
 
 from django.utils.translation import ugettext_lazy as _
 
-from lino.modlib import vat
 
-
-class Site(Site, vat.SiteMixin):
+class Site(Site):
 
     """
     Base class for a :ref:`cosi` application,

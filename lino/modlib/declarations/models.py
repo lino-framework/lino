@@ -92,7 +92,7 @@ class DeclarationPeriods(dd.ChoiceList):
 
 add = DeclarationPeriods.add_item
 
-if settings.SITE.vat_quarterly:
+if settings.SITE.plugins.vat.vat_quarterly:
 
     add('Q1', _("First Quarter (January-March)"), months=(1, 2, 3))
     add('Q2', _("Second Quarter (April-June)"), months=(4, 5, 6,))
