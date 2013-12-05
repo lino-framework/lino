@@ -22,41 +22,7 @@ Example::
     
 """
 
+from djangosite import App
 
-class App(object):
 
-    """
-    Don't instantiate, just subclass.
-    """
 
-    extends = None
-    """
-    The name of an app from which this app inherits.
-    
-    They must have the same "app_label"
-    """
-
-    verbose_name = None
-    """
-    TODO: if this is not None, then Lino will automatically 
-    add a UserGroup.
-    """
-
-    depends = None
-    """
-    TODO: A list of names of apps that this app depends on.
-    Lino will automatically add these to your 
-    `INSTALLED_APPS` if necessary.
-    Note that Lino will add them *after* your app.
-    To have them *before* your app, specify them explicitly.
-    
-    """
-
-    extends_models = None
-    """
-    If specified, a list of modlib model names for which this
-    app provides a subclass.
-    
-    For backwards compatibility this has no effect
-    when :attr:`lino.site.Site.override_modlib_models` is set.
-    """

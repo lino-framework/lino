@@ -1,0 +1,43 @@
+=====================================
+20131205 (Thursday, 05 December 2013)
+=====================================
+
+Plugins are Apps
+----------------
+
+Ha, I understood something! 
+
+Continued to think about what Joe and I had called "plugins".
+
+Excerpt from a mail I wrote to Joe on November 18:
+
+    Difference between plugins and apps:
+
+    The nature of plugins is to be another level of modularization besides
+    apps, another direction of applying our analytic knife when describing a
+    complex system (in case you have read "Zen and the Art of Motorcycle
+    Maintenance"). Plugins can require certain apps to be installed, but the
+    list of installed apps does *not* automatically lead to a list of
+    *installed* plugins. This is why I have `get_installed_plugins`.
+    
+The thing I understood is that the above paragraph is bullshit.
+The direction of your analytic knife should not depend on the fact 
+whether it is a plugin or an app.
+    
+So I merged the classes `Plugin` and `App` and
+converted our proof-of-concept plugin (`BeIdReaderPlugin`) 
+into an app (named :mod:`lino.apps.beid`).
+
+The former `BeIdJsLibPlugin` is now in :mod:`lino.apps.eid_jslib.beid`.
+It overrides :mod:`lino.apps.beid`, that's why it must have the 
+same app_label. Here is the content of `lino/apps`::
+    
+  .
+  ├── beid
+  └── eid_jslib
+      └── beid
+
+Note that I hereby started to grow new apps in a 
+package `lino.apps` instead of `lino.modlib`.
+
+

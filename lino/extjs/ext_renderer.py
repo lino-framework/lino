@@ -95,10 +95,6 @@ if settings.SITE.user_model:
 AFTER_20130725 = True
 
 
-class ExtJS3Plugin(dd.Plugin):  # was use_extjs
-    pass
-
-
 def prepare_label(mi):
     return mi.label
     """

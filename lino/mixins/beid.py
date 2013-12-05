@@ -28,9 +28,6 @@ import os
 import datetime
 import base64
 
-import yaml
-from lino.utils import AttrDict
-
 
 from django.conf import settings
 from django.db import models
@@ -48,254 +45,15 @@ from lino.utils.xmlgen.html import E
 from lino import dd
 
 countries = dd.resolve_app('countries', strict=True)
+# beid = settings.SITE.get_plugin('beid')
+beid = settings.SITE.plugins.get('beid',None)
+
 
 
 """
 SITE.use_eidreader --> SITE.get_plugin(BeIdReaderPlugin)
 """
 
-
-class BeIdPlugin(dd.Plugin):
-    pass
-
-
-class BeIdJsLibPlugin(BeIdPlugin):  # was: use_eid_jslib
-    # deprecated
-    site_js_snippets = ['plugins/eid_jslib.js']
-
-    def get_js_includes(self, site):
-        yield site.build_media_url('eid-jslib/be_belgium_eid.js')
-        yield site.build_media_url('eid-jslib/hellerim_base64.js')
-
-    def get_head_lines(cls, site, request):
-        p = site.build_media_url('eid-jslib')
-        p = request.build_absolute_uri(p)
-        #~ print p
-        yield '<applet code="org.jdesktop.applet.util.JNLPAppletLauncher"'
-        yield 'codebase = "%s/"' % p
-        yield 'width="1" height="1"'
-        yield 'name   = "BEIDAppletLauncher"'
-        yield 'id   = "BEIDAppletLauncher"'
-        yield 'archive="applet-launcher.jar,beid35libJava.jar,BEID_Applet.jar">'
-
-        yield '<param name="codebase_lookup" value="false">'
-        yield '<param name="subapplet.classname" value="be.belgium.beid.BEID_Applet">'
-        yield '<param name="progressbar" value="true">'
-        yield '<param name="jnlpNumExtensions" value="1">'
-        yield '<param name="jnlpExtension1" value= "' + p + '/beid.jnlp">'
-        #~ yield '<param name="jnlpExtension1" value= "beid.jnlp">'
-
-        yield '<param name="debug" value="false"/>'
-        yield '<param name="Reader" value=""/>'
-        yield '<param name="OCSP" value="-1"/>'
-        yield '<param name="CRL" value="-1"/>'
-        #~ yield '<param name="jnlp_href" value="' + p + '/beid_java_plugin.jnlp" />'
-        yield '<param name="jnlp_href" value="beid_java_plugin.jnlp" />'
-        yield '<param name="separate_jvm" value="true">'  # 20130913
-        yield '</applet>'
-
-    def card2client(cls, data):
-        "does the actual conversion"
-        kw = dict()
-        #~ def func(fldname,qname):
-            #~ kw[fldname] = data[qname]
-        kw.update(national_id=ssin.format_ssin(data['nationalNumber']))
-        kw.update(first_name=join_words(
-            data['firstName1'],
-            data['firstName2'],
-            data['firstName3']))
-        #~ func('first_name','firstName1')
-        kw.update(last_name=data['surname'])
-
-        card_number = data['cardNumber']
-
-        if data.has_key('picture'):
-            fn = card_number_to_picture_file(card_number)
-            if os.path.exists(fn):
-                logger.warning("Overwriting existing image file %s.", fn)
-            fp = file(fn, 'wb')
-            fp.write(base64.b64decode(data['picture']))
-            fp.close()
-            #~ print 20121117, repr(data['picture'])
-            #~ kw.update(picture_data_encoded=data['picture'])
-
-        #~ func('card_valid_from','validityBeginDate')
-        #~ func('card_valid_until','validityEndDate')
-        #~ func('birth_date','birthDate')
-        kw.update(birth_date=IncompleteDate(
-            *settings.SITE.parse_date(data['birthDate'])))
-        kw.update(card_valid_from=datetime.date(
-            *settings.SITE.parse_date(data['validityBeginDate'])))
-        kw.update(card_valid_until=datetime.date(
-            *settings.SITE.parse_date(data['validityEndDate'])))
-        kw.update(card_number=card_number)
-        kw.update(card_issuer=data['issuingMunicipality'])
-        kw.update(noble_condition=data['nobleCondition'])
-        kw.update(street=data['street'])
-        kw.update(street_no=data['streetNumber'])
-        kw.update(street_box=data['boxNumber'])
-        if kw['street'] and not (kw['street_no'] or kw['street_box']):
-            kw = street2kw(kw['street'], **kw)
-        kw.update(zip_code=data['zipCode'])
-        kw.update(birth_place=data['birthLocation'])
-        pk = data['country'].upper()
-
-        msg1 = "BeIdReadCardToClientAction %s" % kw.get('national_id')
-
-        #~ try:
-        country = countries.Country.objects.get(isocode=pk)
-        kw.update(country=country)
-        #~ except countries.Country.DoesNotExist,e:
-        #~ except Exception,e:
-            #~ logger.warning("%s : no country with code %r",msg1,pk)
-        #~ BE = countries.Country.objects.get(isocode='BE')
-        #~ fld = countries.City._meta.get_field()
-        kw.update(city=countries.City.lookup_or_create(
-            'name', data['municipality'], country=country))
-
-        def sex2gender(sex):
-            if sex == 'M':
-                return dd.Genders.male
-            if sex in 'FVW':
-                return dd.Genders.female
-            logger.warning("%s : invalid gender code %r", msg1, sex)
-        kw.update(gender=sex2gender(data['sex']))
-
-        if False:
-            def nationality2country(nationality):
-                try:
-                    return countries.Country.objects.get(
-                        nationalities__icontains=nationality)
-                except countries.Country.DoesNotExist, e:
-                    logger.warning("%s : no country for nationality %r",
-                                   msg1, nationality)
-                except MultipleObjectsReturned, e:
-                    logger.warning(
-                        "%s : found more than one country for nationality %r",
-                        msg1, nationality)
-            kw.update(nationality=nationality2country(data['nationality']))
-
-        def doctype2cardtype(dt):
-            #~ logger.info("20130103 documentType is %r",dt)
-            #~ if dt == 1: return BeIdCardTypes.get_by_value("1")
-            return BeIdCardTypes.get_by_value(str(dt))
-        kw.update(card_type=doctype2cardtype(data['documentType']))
-
-        #~ unused = dict()
-        #~ unused.update(country=country)
-        #~ kw.update(sex=data['sex'])
-        #~ unused.update(documentType=data['documentType'])
-        #~ logger.info("Unused data: %r", unused)
-        return kw
-
-
-class BeIdReaderPlugin(BeIdPlugin):  # was: use_eidreader
-
-    """
-    Add this plugin to your :setting:`get_installed_plugins` 
-    if your Site should feature actions for reading electronic ID 
-    smartcards. 
-    
-    When this plugin is installed, then you must also add
-    the `.jar`files 
-    required by :ref:`eidreader`
-    into your media directory, in a subdirectory named "eidreader".
-    
-    This plugin makes sense only if there is exactly one subclass of 
-    :class:`BeIdCardHolder` among your Site's models.
-    """
-
-    site_js_snippets = ['plugins/eidreader.js']
-
-    def get_head_lines(cls, site, request):
-        #~ p = site.build_media_url('lino','applets','EIDReader.jar')
-        p = site.build_media_url('eidreader', 'EIDReader.jar')
-        p = request.build_absolute_uri(p)
-        yield '<applet name="EIDReader" code="src.eidreader.EIDReader.class"'
-        yield '        archive="%s"' % p
-        yield '        width="0" height="0">'
-        # ~ yield '<param name="separate_jvm" value="true">' # 20130913
-        yield '<param name="permissions" value="sandbox">'
-        yield '</applet>'
-
-    def card2client(cls, data):
-        "does the actual conversion"
-        kw = dict()
-        #~ assert not settings.SITE.use_eid_jslib
-        #~ assert not settings.SITE.has_plugin(BeIdJsLibPlugin):
-        data = data['card_data']
-        if not '\n' in data:
-            raise Warning(data)
-        #~ print cd
-        data = AttrDict(yaml.load(data))
-        #~ raise Exception("20131108 cool: %s" % cd)
-
-        kw.update(national_id=ssin.format_ssin(str(data.nationalNumber)))
-        kw.update(first_name=join_words(
-            data.firstName,
-            data.middleName))
-        kw.update(last_name=data.name)
-
-        card_number = str(data.cardNumber)
-
-        if data.photo:
-            fn = card_number_to_picture_file(card_number)
-            if os.path.exists(fn):
-                logger.warning("Overwriting existing image file %s.", fn)
-            fp = file(fn, 'wb')
-            fp.write(base64.b64decode(data.photo))
-            fp.close()
-            #~ print 20121117, repr(data['picture'])
-            #~ kw.update(picture_data_encoded=data['picture'])
-
-        if isinstance(data.dateOfBirth, basestring):
-            data.dateOfBirth = IncompleteDate(*data.dateOfBirth.split('-'))
-        kw.update(birth_date=data.dateOfBirth)
-        kw.update(card_valid_from=data.cardValidityDateBegin)
-        kw.update(card_valid_until=data.cardValidityDateEnd)
-
-        kw.update(card_number=card_number)
-        kw.update(card_issuer=data.cardDeliveryMunicipality)
-        if data.nobleCondition:
-            kw.update(noble_condition=data.nobleCondition)
-        kw.update(street=data.streetAndNumber)
-        #~ kw.update(street_no=data['streetNumber'])
-        #~ kw.update(street_box=data['boxNumber'])
-        if True:  # kw['street'] and not (kw['street_no'] or kw['street_box']):
-            kw = street2kw(kw['street'], **kw)
-        kw.update(zip_code=str(data.zip))
-        if data.placeOfBirth:
-            kw.update(birth_place=data.placeOfBirth)
-        pk = data.reader.upper()
-
-        msg1 = "BeIdReadCardToClientAction %s" % kw.get('national_id')
-
-        #~ try:
-        country = countries.Country.objects.get(isocode=pk)
-        kw.update(country=country)
-        #~ except countries.Country.DoesNotExist,e:
-        #~ except Exception,e:
-            #~ logger.warning("%s : no country with code %r",msg1,pk)
-        #~ BE = countries.Country.objects.get(isocode='BE')
-        #~ fld = countries.City._meta.get_field()
-        kw.update(city=countries.City.lookup_or_create(
-            'name', data.municipality, country=country))
-
-        def sex2gender(sex):
-            if sex == 'MALE':
-                return dd.Genders.male
-            if sex == 'FEMALE':
-                return dd.Genders.female
-            logger.warning("%s : invalid gender code %r", msg1, sex)
-        kw.update(gender=sex2gender(data.gender))
-
-        def doctype2cardtype(dt):
-            #~ if dt == 1: return BeIdCardTypes.get_by_value("1")
-            rv = BeIdCardTypes.get_by_value(str(dt))
-            logger.info("20130103 documentType %r --> %r", dt, rv)
-            return rv
-        kw.update(card_type=doctype2cardtype(data.documentType))
-        return kw
 
 
 class BeIdCardTypes(dd.ChoiceList):
@@ -372,10 +130,6 @@ add('17', _("Foreigner card F"), "foreigner_f")
 add('18', _("Foreigner card F+"), "foreigner_f_plus")
 
 
-def card_number_to_picture_file(card_number):
-    #~ TODO: handle configurability of card_number_to_picture_file
-    return os.path.join(settings.MEDIA_ROOT, 'beid', card_number + '.jpg')
-
 
 class BaseBeIdReadCardAction(dd.Action):
     required = dd.Required(user_groups='reception')
@@ -392,13 +146,9 @@ class BaseBeIdReadCardAction(dd.Action):
 
     def attach_to_actor(self, actor, name):
         """
-        Returns False to prevent this action when no :class:`BeIdPlugin` 
-        is installed.
+        Returns False to prevent this action when `beid` is not installed.
         """
-        self.used_plugin = settings.SITE.get_plugin(BeIdPlugin)
-        #~ if not settings.SITE.use_eid_jslib and not settings.SITE.use_eidreader:
-        if self.used_plugin is None:
-        #~ if settings.SITE.get_plugin(BeIdPlugin):
+        if beid is None:
             return False
         return super(BaseBeIdReadCardAction, self).attach_to_actor(actor, name)
 
@@ -434,7 +184,7 @@ class BeIdReadCardAction(BaseBeIdReadCardAction):
                 "There must be exactly one BeIdCardHolder model in your Site!")
         self.client_model = cmc[0]
         data = ar.request.POST
-        attrs = self.used_plugin.card2client(data)
+        attrs = beid.card2client(data)
         #~ logger.info("20130103 BeIdReadCardAction.run_from_ui() : %s -> %s",data,attrs)
         #~ print 20121117, attrs
         #~ ssin = data['nationalNumber']
@@ -641,7 +391,7 @@ class BeIdCardHolder(dd.Model):
         if must_read:
             msg = _("Must read eID card!")
             #~ if settings.SITE.use_eid_jslib or settings.SITE.use_eidreader:
-            if settings.SITE.get_plugin(BeIdPlugin):
+            if beid:
                 #~ ba = cls.get_action_by_name('read_beid')
                 #~ elems.append(ar.action_button(ba,self,_("Must read eID card!")))
                 elems.append(ar.instance_action_button(

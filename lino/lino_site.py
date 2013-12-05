@@ -1183,6 +1183,20 @@ class Site(Site):
         installed_apps = tuple([str(x) for x in installed_apps])
         self.update_settings(INSTALLED_APPS=installed_apps)
 
+        from django.utils.importlib import import_module
+
+        plugins = []
+        self.plugins = AttrDict()
+        for app_name in installed_apps:
+            app_mod = import_module(app_name)
+            app_class = getattr(app_mod, 'App', None)
+            if app_class is not None:
+                p = app_class()
+                plugins.append(p)
+                n = app_name.rsplit('.')[-1]
+                self.plugins.define(n, p)
+        self.installed_plugins = tuple(plugins)
+
         if self.override_modlib_models is None:
             self.override_modlib_models = set()
             from django.utils.importlib import import_module
