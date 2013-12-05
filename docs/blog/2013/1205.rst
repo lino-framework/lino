@@ -5,10 +5,8 @@
 Plugins are Apps
 ----------------
 
-Ha, I understood something! 
-
-Continued to think about what Joe and I had called "plugins".
-
+I continued to think about what Joe and I had called "plugins".
+And ha, I understood something! 
 Excerpt from a mail I wrote to Joe on November 18:
 
     Difference between plugins and apps:
@@ -38,6 +36,27 @@ same app_label. Here is the content of `lino/apps`::
       └── beid
 
 Note that I hereby started to grow new apps in a 
-package `lino.apps` instead of `lino.modlib`.
+package :mod:`lino.apps` instead of :mod:`lino.modlib`.
+
+TODO:
+
+- move also the `setup_xxx_menu` methods from models module to App
+- write documentation
 
 
+Now it's really time to get all test suites up and running again.
+The suites for 
+:ref:`patrols`,
+:ref:`faggio` and
+:ref:`welfare`
+had been broken for some time. Now they pass again.
+
+I also had neglected the :fab:`userdocs` directories, now they all build 
+again without any warning.
+
+
+Moved `get_installed_apps` method from :mod:`lino` 
+to :mod:`djangosite`.
+This should make no difference for applications.
+One subtle difference is that ``"lino"`` is no longer at the 
+end just before ``"djangosite"``.

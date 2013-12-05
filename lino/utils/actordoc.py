@@ -309,6 +309,8 @@ def resolve_name(name):
         return 1, dd.resolve_app(name)
     if len(l) == 3:
         model = settings.SITE.modules.resolve(l[0] + '.' + l[1])
+        if model is None:
+            raise Warning("Unkown name %s" % name)
         return 3, model.get_data_elem(l[2])
     return len(l), settings.SITE.modules.resolve(name)
 

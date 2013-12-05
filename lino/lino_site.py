@@ -255,33 +255,30 @@ class Site(Site):
     calendar_start_hour = 8
     calendar_end_hour = 18
 
-    override_modlib_models = set()
-    "See :attr:`lino.site.Site.override_modlib_models`."
-
     textfield_format = 'plain'
     """
-    The default format for text fields. 
+    The default format for text fields.
     Valid choices are currently 'plain' and 'html'.
-    
-    Text fields are either Django's `models.TextField` 
+
+    Text fields are either Django's `models.TextField`
     or :class:`lino.fields.RichTextField`.
-    
-    You'll probably better leave the global option as 'plain', 
-    and specify explicitly the fields you want as html by declaring 
+
+    You'll probably better leave the global option as 'plain',
+    and specify explicitly the fields you want as html by declaring
     them::
-    
+
       foo = fields.RichTextField(...,format='html')
-    
-    We even recommend that you declare your *plain* text fields also 
+
+    We even recommend that you declare your *plain* text fields also
     using `fields.RichTextField` and not `models.TextField`::
-    
+
       foo = fields.RichTextField()
-    
-    Because that gives subclasses of your application the possibility to 
+
+    Because that gives subclasses of your application the possibility to
     make that specific field html-formatted::
-    
+
        resolve_field('Bar.foo').set_format('html')
-       
+
     """
 
     help_url = "http://code.google.com/p/lino"
@@ -333,11 +330,6 @@ class Site(Site):
     """
     Used by :class:`lino.mixins.printable.AppyBuildMethod`.
     """
-
-    modules = AttrDict()
-    # this is explained in the polls tutorial
-    # cannot use autodoc for this attribute
-    # because autodoc shows the "default" value
 
     #~ decimal_separator = '.'
     decimal_separator = ','
@@ -1159,7 +1151,6 @@ class Site(Site):
     #~ (see :mod:`lino.mixins.mergeable`).
     #~ """
 
-    override_modlib_models = None
 
     sidebar_width = 0
     """
@@ -1177,36 +1168,6 @@ class Site(Site):
         """
         #~ logger.info("20130404 lino.site.Site.override_defaults")
         super(Site, self).override_defaults(**kwargs)
-
-        installed_apps = tuple(self.get_installed_apps()) + \
-            ('lino', 'djangosite')
-        installed_apps = tuple([str(x) for x in installed_apps])
-        self.update_settings(INSTALLED_APPS=installed_apps)
-
-        from django.utils.importlib import import_module
-
-        plugins = []
-        self.plugins = AttrDict()
-        for app_name in installed_apps:
-            app_mod = import_module(app_name)
-            app_class = getattr(app_mod, 'App', None)
-            if app_class is not None:
-                p = app_class()
-                plugins.append(p)
-                n = app_name.rsplit('.')[-1]
-                self.plugins.define(n, p)
-        self.installed_plugins = tuple(plugins)
-
-        if self.override_modlib_models is None:
-            self.override_modlib_models = set()
-            from django.utils.importlib import import_module
-            for n in installed_apps:
-                m = import_module(n)
-                app = getattr(m, 'App', None)
-                if app is not None:
-                    if app.extends_models is not None:
-                        for m in app.extends_models:
-                            self.override_modlib_models.add(m)
 
         #~ fd = list()
         #~ self.update_settings(FIXTURE_DIRS=tuple(settings_subdirs('fixtures')))
@@ -1276,13 +1237,6 @@ class Site(Site):
             #~ traceback.print_exc(e)
             #~ sys.exit(-10)
         #~ raise Exception("20130302")
-
-    def is_abstract_model(self, name):
-        """
-        Return True if the named model ("myapp.MyModel") is declared in
-        :attr:`override_modlib_models`.
-        """
-        return name in self.override_modlib_models
 
     def is_imported_partner(self, obj):
         """
@@ -1599,6 +1553,7 @@ class Site(Site):
         yield 'lino.modlib.about'
         #~ if self.admin_prefix:
             #~ yield 'lino.modlib.pages'
+        yield "lino"
         for a in self.user_apps:
             yield a
 
