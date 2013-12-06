@@ -491,7 +491,6 @@ class Callbacks(View):
 if settings.SITE.user_model and settings.SITE.use_tinymce:
 
     from jinja2 import Template as JinjaTemplate
-    TextFieldTemplate = settings.SITE.modules.system.TextFieldTemplate
 
     class Templates(View):
 
@@ -504,7 +503,8 @@ if settings.SITE.user_model and settings.SITE.use_tinymce:
         #~ def templates_view(self,request,
 
         def get(self, request,
-                app_label=None, actor=None, pk=None, fldname=None, tplname=None, **kw):
+                app_label=None, actor=None,
+                pk=None, fldname=None, tplname=None, **kw):
 
             if request.method == 'GET':
 
@@ -513,6 +513,8 @@ if settings.SITE.user_model and settings.SITE.use_tinymce:
                 if elem is None:
                     raise http.Http404("%s %s does not exist." % (rpt, pk))
 
+                TextFieldTemplate = settings.SITE.\
+                    modules.system.TextFieldTemplate
                 if tplname:
                     tft = TextFieldTemplate.objects.get(pk=int(tplname))
                     if settings.SITE.trusted_templates:
@@ -524,23 +526,16 @@ if settings.SITE.user_model and settings.SITE.use_tinymce:
                     else:
                         return http.HttpResponse(tft.text)
 
-                #~ q = models.Q(user=request.user) | models.Q(user__group__in=request.user.group_set.all())
-                teams = [
-                    o.group for o in request.user.users_membership_set_by_user.all()]
+                teams = [o.group for o in
+                         request.user.users_membership_set_by_user.all()]
                 flt = models.Q(team__isnull=True) | models.Q(team__in=teams)
                 qs = TextFieldTemplate.objects.filter(flt).order_by('name')
 
-                #~ m = getattr(elem,"%s_templates" % fldname,None)
-                #~ if m is None:
-                    #~ q = models.Q(user=request.user) | models.Q(user=None)
-                    #~ qs = TextFieldTemplate.objects.filter(q).order_by('name')
-                #~ else:
-                    #~ qs = m(request)
-
                 templates = []
                 for obj in qs:
-                    url = settings.SITE.build_admin_url('templates',
-                                                        app_label, actor, pk, fldname, unicode(obj.pk))
+                    url = settings.SITE.build_admin_url(
+                        'templates',
+                        app_label, actor, pk, fldname, unicode(obj.pk))
                     templates.append([
                         unicode(obj.name), url, unicode(obj.description)])
                 js = "var tinyMCETemplateList = %s;" % py2js(templates)

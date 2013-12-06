@@ -20,58 +20,71 @@ logger = logging.getLogger(__name__)
 
 import os
 import sys
-#~ import imp
-import codecs
 import atexit
 #~ import collections
-from UserDict import IterableUserDict
+
+from django.conf import settings
+
+from django.utils.encoding import force_text
 
 from django.db.models import loading
-from django.conf import settings
 from django.utils.importlib import import_module
 from django.utils.functional import LazyObject
+
 from django.db import models
 #from django.shortcuts import render_to_response
 #from django.contrib.auth.models import User
 from django.contrib.contenttypes import generic
 
-from django.core.urlresolvers import reverse
-from django.shortcuts import render_to_response, get_object_or_404
-from django.contrib.sites.models import Site, RequestSite
-from django.http import HttpResponse, HttpResponseRedirect, Http404
-from django.template import RequestContext, Context, loader
-from django.utils.http import urlquote, base36_to_int
-from django.utils.translation import ugettext as _
+# from django.core.urlresolvers import reverse
+# from django.shortcuts import render_to_response, get_object_or_404
+# from django.contrib.sites.models import Site, RequestSite
+# from django.http import HttpResponse, HttpResponseRedirect, Http404
+# from django.template import RequestContext, Context, loader
+# from django.utils.http import urlquote, base36_to_int
+# from django.utils.translation import ugettext as _
+from django.utils.translation import ugettext_lazy as _
 
-from django.utils.safestring import mark_safe
-
-import lino
+# from djangosite.dbutils import obj2unicode
 
 from lino import dd
-#~ from lino.core import signals
-#~ from lino.core import actions
-from lino.core import fields
+
+from lino.utils import class_dict_items
+from lino.core.requests import BaseRequest
+
 from lino.core import layouts
 from lino.core import actors
 from lino.core import actions
 from lino.core import dbtables
-from lino.utils import class_dict_items
+from lino.core import tables
+from lino.core import constants
+from lino.core import web 
+from lino.core.signals import pre_ui_build, post_ui_build
 
-#~ from lino.utils.config import load_config_files, find_config_file
-#~ from lino.utils import choosers
-#~ from lino.utils import codetime
-from lino.utils import curry
-#~ from lino.models import get_site_config
-#~ from north import babel
-from lino.utils import AttrDict
-#~ from lino.core import perms
+from lino.ui import store as ext_store
 
-#~ BLANK_STATE = ''
+from lino.core.dbutils import is_devserver
+from lino.ui.render import PlainRenderer, TextRenderer
+from lino.ui import views
 
+ACTION_RESPONSES = frozenset((
+    'message', 'success', 'alert',
+    'errors',
+    'html',
+    'goto_record_id',
+    'refresh', 'refresh_all',
+    'close_window',
+    'xcallback',
+    'open_url', 'open_davlink_url',
+    #~ 'console_message',
+    'info_message',
+    'warning_message',
+    'eval_js'))
+"""
+Action responses supported by `Lino.action_handler`
+(defined in :xfile:`linolib.js`).
+"""
 
-#~ DONE = False
-
-#~ self.GFK_LIST = []
 
 
 def set_default_verbose_name(f):
@@ -84,213 +97,473 @@ def set_default_verbose_name(f):
     if f.verbose_name == f.name.replace('_', ' '):
         f.verbose_name = f.rel.to._meta.verbose_name
 
-#~ def shutdown_site(self):
-    #~ models_list = models.get_models(include_auto_created=True)
-    #~ for m in models_list:
-        #~ ...
+
+class CallbackChoice(object):
+    #~ def __init__(self,name,label,func):
+
+    def __init__(self, name, func, label):
+        self.name = name
+        #~ self.index = index
+        self.func = func
+        self.label = label
 
 
-def startup_site(self):
+class Callback(object):
+
     """
-    This is the code that runs when you call :meth:`lino.site.Site.startup`.
-    This is a part of a Lino site setup.
-    The Django Model definitions are done, now Lino analyzes them and does certain actions.
-    
-    - Verify that there are no more pending injects
-    - Install a DisableDeleteHandler for each Model into `_lino_ddh`
-    - Install :class:`lino.dd.Model` attributes and methods into Models that
-      don't inherit from it.
-    
+    A callback is a question that rose during an AJAX action.
+    The original action is pending until we get a request
+    that answers the question.
     """
-    if len(sys.argv) == 0:
-        process_name = 'WSGI'
-    else:
-        process_name = ' '.join(sys.argv)
-    #~ logger.info("Started %s on %r (PID %s).", process_name,self.title,os.getpid())
-    logger.info("Started %s (using %s) --> PID %s",
-                process_name, settings.SETTINGS_MODULE, os.getpid())
-    logger.info(self.welcome_text())
+    title = _('Confirmation')
+    #~ def __init__(self,yes,no):
 
-    def goodbye():
-        logger.info("Done %s (PID %s)", process_name, os.getpid())
-    atexit.register(goodbye)
+    def __init__(self, message):
 
-    #~ analyze_models(self)
+    #~ def __init__(self,message,answers,labels=None):
+        self.message = message
+        self.choices = []
+        self.choices_dict = {}
+        #~ self.answers = {}
+        #~ self.labels = labels
+        #~ self.yes = yes
+        #~ self.no = no
 
-    #~ print 20130219, __file__, "setup_choicelists 1"
+        #~ d = Decision(yes,no)
+        #~ self.pending_dialogs[d.hash()] = d
 
-    #~ logger.info("Analyzing models...")
+    def __repr__(self):
+        return "Callback(%r)" % self.message
 
-    #~ self = settings.SITE
-    #~ logger.info(self.welcome_text())
+    def set_title(self, title):
+        self.title = title
 
-    #~ """
-    #~ Activate the site's default language
-    #~ """
-    #~ dd.set_language(None)
+    def add_choice(self, name, func, label):
+        """
+        Add a possible answer to this callback.
+        - name: "yes", "no", "ok" or "cancel"
+        - func: a callable to be executed when user selects this choice
+        - the label of the button
+        """
+        assert not name in self.choices_dict
+        allowed_names = ("yes", "no", "ok", "cancel")
+        if not name in allowed_names:
+            raise Exception("Sorry, name must be one of %s" % allowed_names)
+        cbc = CallbackChoice(name, func, label)
+        self.choices.append(cbc)
+        self.choices_dict[name] = cbc
+        return cbc
 
-    #~ logger.info(lino.welcome_text())
-    #~ raise Exception("20111229")
 
-    models_list = models.get_models(include_auto_created=True)
-    # this also triggers django.db.models.loading.cache._populate()
+class Kernel(object):
 
-    if self.user_model:
-        self.user_model = dd.resolve_model(self.user_model,
-                                           strict="Unresolved model '%s' in user_model.")
-    #~ if self.person_model:
-        #~ self.person_model = dd.resolve_model(self.person_model,strict="Unresolved model '%s' in person_model.")
+    def __init__(self, site):
+        self.pending_threads = {}
+        self.site = site
+        self.kernel_startup(site)
 
-    #~ print 20130219, __file__, "setup_choicelists 2"
+        if site.build_js_cache_on_startup is None:
+            site.build_js_cache_on_startup = not (
+                settings.DEBUG or is_devserver())
 
-    if self.project_model:
-        self.project_model = dd.resolve_model(self.project_model,
-                                              strict="Unresolved model '%s' in project_model.")
+        web.site_setup(site)
 
-    #~ print 20130219, __file__, "setup_choicelists 3"
+        for a in actors.actors_list:
+            if a.get_welcome_messages is not None:
+                site._welcome_actors.append(a)
 
-    for m in self.override_modlib_models:
-        dd.resolve_model(m,
-                         strict="Unresolved model '%s' in override_modlib_models.")
+        pre_ui_build.send(self)
 
-    for model in models_list:
-        #~ print 20130216, model
-        #~ fix_field_cache(model)
+        #~ raise Exception("20120614")
+        # ~ self.pdf_renderer = PdfRenderer(self) # 20120624
+        self.plain_renderer = PlainRenderer(self)
+        self.text_renderer = TextRenderer(self)
+        self.reserved_names = [getattr(constants, n)
+                               for n in constants.URL_PARAMS]
 
-        model._lino_ddh = DisableDeleteHandler(model)
+        if site.use_extjs:
+            from lino.extjs import ExtRenderer
+            self.default_renderer = self.ext_renderer = ExtRenderer(self)
+        else:
+            self.default_renderer = self.plain_renderer
 
-        for k in dd.Model.LINO_MODEL_ATTRIBS:
-            if not hasattr(model, k):
-                #~ setattr(model,k,getattr(dd.Model,k))
-                setattr(model, k, dd.Model.__dict__[k])
-                #~ model.__dict__[k] = getattr(dd.Model,k)
-                #~ logger.info("20121127 Install default %s for %s",k,model)
+        names = set()
+        for n in self.reserved_names:
+            if n in names:
+                raise Exception("Duplicate reserved name %r" % n)
+            names.add(n)
+        #~ base.UI.__init__(self)
 
-        if isinstance(model.hidden_columns, basestring):
-            model.hidden_columns = frozenset(
-                dd.fields_list(model, model.hidden_columns))
+        #~ trigger creation of params_layout.params_store
+        #~ for res in actors.actors_list:
+            #~ for ba in res.get_actions():
+                #~ if ba.action.parameters:
+                    #~ ba.action.params_layout.get_layout_handle(self)
 
-        if model._meta.abstract:
-            raise Exception("Tiens?")
+        from lino.utils import codetime
+        self.mtime = codetime()
+        #~ logger.info("20130610 codetime is %s", datetime.datetime.fromtimestamp(self.mtime))
 
-        self.modules.define(model._meta.app_label, model.__name__, model)
+        post_ui_build.send(self)
 
-        for f in model._meta.virtual_fields:
-            if isinstance(f, generic.GenericForeignKey):
-                settings.SITE.GFK_LIST.append(f)
+        # trigger creation of params_layout.params_store
+        for res in actors.actors_list:
+            for ba in res.get_actions():
+                if ba.action.parameters:
+                    ba.action.params_layout.get_layout_handle(self)
 
-    for a in models.get_apps():
-        #~ for app_label,a in loading.cache.app_store.items():
-        app_label = a.__name__.split('.')[-2]
-        #~ logger.info("Installing %s = %s" ,app_label,a)
+    def kernel_startup(kernel, self):
+        """
+        This is the code that runs when you call 
+        This is a part of a Lino site setup.
+        The Django Model definitions are done, now Lino analyzes them and does certain actions.
 
-        for k, v in a.__dict__.items():
-            if isinstance(v, type) and issubclass(v, layouts.BaseLayout):
-                #~ print "%s.%s = %r" % (app_label,k,v)
-                self.modules.define(app_label, k, v)
-            #~ if isinstance(v,type) and issubclass(v,dd.Plugin):
-                #~ self.plugins.append(v)
-
-            #~ if isinstance(v,type)  and issubclass(v,dd.Module):
-                #~ logger.info("20120128 Found module %s",v)
-            if k.startswith('setup_'):
-                self.modules.define(app_label, k, v)
-
-    self.setup_choicelists()
-    self.setup_workflows()
-
-    for model in models_list:
-
-        for f, m in model._meta.get_fields_with_model():
-            #~ if isinstance(f,models.CharField) and f.null:
-            if f.__class__ is models.CharField and f.null:
-                msg = "Nullable CharField %s in %s" % (f.name, model)
-                raise Exception(msg)
-                #~ if f.__class__ is models.CharField:
-                    #~ raise Exception(msg)
-                #~ else:
-                    #~ logger.info(msg)
-            elif isinstance(f, models.ForeignKey):
-                #~ f.rel.to = dd.resolve_model(f.rel.to,strict=True)
-                if isinstance(f.rel.to, basestring):
-                    raise Exception("%s %s relates to %r (models are %s)" %
-                                    (model, f.name, f.rel.to, models_list))
-                set_default_verbose_name(f)
-
-                """
-                If JobProvider is an MTI child of Company,
-                then mti.delete_child(JobProvider) must not fail on a 
-                JobProvider being refered only by objects that can refer 
-                to a Company as well.
-                """
-                if hasattr(f.rel.to, '_lino_ddh'):
-                    # ~ f.rel.to._lino_ddh.add_fk(model,f) # 20120728
-                    f.rel.to._lino_ddh.add_fk(m or model, f)
-
-    dd.pre_analyze.send(self, models_list=models_list)
-    # MergeActions are defined in pre_analyze.
-    # And MergeAction needs the info in _lino_ddh to correctly find
-    # keep_volatiles
-
-    for model in models_list:
+        - Verify that there are no more pending injects
+        - Install a DisableDeleteHandler for each Model into `_lino_ddh`
+        - Install :class:`lino.dd.Model` attributes and methods into Models that
+          don't inherit from it.
 
         """
-        Virtual fields declared on the model must have 
-        been attached before calling Model.site_setup(), 
-        e.g. because pcsw.Person.site_setup() 
-        declares `is_client` as imported field.
+        if len(sys.argv) == 0:
+            process_name = 'WSGI'
+        else:
+            process_name = ' '.join(sys.argv)
+        #~ logger.info("Started %s on %r (PID %s).", process_name,self.title,os.getpid())
+        logger.info("Started %s (using %s) --> PID %s",
+                    process_name, settings.SETTINGS_MODULE, os.getpid())
+        logger.info(self.welcome_text())
+
+        def goodbye():
+            logger.info("Done %s (PID %s)", process_name, os.getpid())
+        atexit.register(goodbye)
+
+        models_list = models.get_models(include_auto_created=True)
+        # this also triggers django.db.models.loading.cache._populate()
+
+        if self.user_model:
+            self.user_model = dd.resolve_model(self.user_model,
+                                               strict="Unresolved model '%s' in user_model.")
+
+        if self.project_model:
+            self.project_model = dd.resolve_model(
+                self.project_model,
+                strict="Unresolved model '%s' in project_model.")
+
+        for m in self.override_modlib_models:
+            dd.resolve_model(
+                m,
+                strict="Unresolved model '%s' in override_modlib_models.")
+
+        for model in models_list:
+            #~ print 20130216, model
+            #~ fix_field_cache(model)
+
+            model._lino_ddh = DisableDeleteHandler(model)
+
+            for k in dd.Model.LINO_MODEL_ATTRIBS:
+                if not hasattr(model, k):
+                    #~ setattr(model,k,getattr(dd.Model,k))
+                    setattr(model, k, dd.Model.__dict__[k])
+                    #~ model.__dict__[k] = getattr(dd.Model,k)
+                    #~ logger.info("20121127 Install default %s for %s",k,model)
+
+            if isinstance(model.hidden_columns, basestring):
+                model.hidden_columns = frozenset(
+                    dd.fields_list(model, model.hidden_columns))
+
+            if model._meta.abstract:
+                raise Exception("Tiens?")
+
+            self.modules.define(model._meta.app_label, model.__name__, model)
+
+            for f in model._meta.virtual_fields:
+                if isinstance(f, generic.GenericForeignKey):
+                    settings.SITE.GFK_LIST.append(f)
+
+        for a in models.get_apps():
+            #~ for app_label,a in loading.cache.app_store.items():
+            app_label = a.__name__.split('.')[-2]
+            #~ logger.info("Installing %s = %s" ,app_label,a)
+
+            for k, v in a.__dict__.items():
+                if isinstance(v, type) and issubclass(v, layouts.BaseLayout):
+                    #~ print "%s.%s = %r" % (app_label,k,v)
+                    self.modules.define(app_label, k, v)
+                #~ if isinstance(v,type) and issubclass(v,dd.Plugin):
+                    #~ self.plugins.append(v)
+
+                #~ if isinstance(v,type)  and issubclass(v,dd.Module):
+                    #~ logger.info("20120128 Found module %s",v)
+                if k.startswith('setup_'):
+                    self.modules.define(app_label, k, v)
+
+        self.setup_choicelists()
+        self.setup_workflows()
+
+        for model in models_list:
+
+            for f, m in model._meta.get_fields_with_model():
+                #~ if isinstance(f,models.CharField) and f.null:
+                if f.__class__ is models.CharField and f.null:
+                    msg = "Nullable CharField %s in %s" % (f.name, model)
+                    raise Exception(msg)
+                    #~ if f.__class__ is models.CharField:
+                        #~ raise Exception(msg)
+                    #~ else:
+                        #~ logger.info(msg)
+                elif isinstance(f, models.ForeignKey):
+                    #~ f.rel.to = dd.resolve_model(f.rel.to,strict=True)
+                    if isinstance(f.rel.to, basestring):
+                        raise Exception("%s %s relates to %r (models are %s)" %
+                                        (model, f.name, f.rel.to, models_list))
+                    set_default_verbose_name(f)
+
+                    """
+                    If JobProvider is an MTI child of Company,
+                    then mti.delete_child(JobProvider) must not fail on a 
+                    JobProvider being refered only by objects that can refer 
+                    to a Company as well.
+                    """
+                    if hasattr(f.rel.to, '_lino_ddh'):
+                        # ~ f.rel.to._lino_ddh.add_fk(model,f) # 20120728
+                        f.rel.to._lino_ddh.add_fk(m or model, f)
+
+        dd.pre_analyze.send(self, models_list=models_list)
+        # MergeActions are defined in pre_analyze.
+        # And MergeAction needs the info in _lino_ddh to correctly find
+        # keep_volatiles
+
+        for model in models_list:
+
+            """
+            Virtual fields declared on the model must have 
+            been attached before calling Model.site_setup(), 
+            e.g. because pcsw.Person.site_setup() 
+            declares `is_client` as imported field.
+            """
+
+            model.on_analyze(self)
+
+            for k, v in class_dict_items(model):
+                if isinstance(v, dd.VirtualField):
+                    v.attach_to_model(model, k)
+
+        #~ logger.info("20130817 attached model vfs")
+
+        actors.discover()
+
+        actors.initialize()
+        dbtables.discover()
+        #~ choosers.discover()
+        actions.discover_choosers()
+
+        #~ from lino.core import ui
+        #~ ui.site_setup(self)
+
+        for a in actors.actors_list:
+            a.on_analyze(self)
+
+        #~ logger.info("20130121 GFK_LIST is %s",['%s.%s'%(full_model_name(f.model),f.name) for f in settings.SITE.GFK_LIST])
+        dd.post_analyze.send(self, models_list=models_list)
+
+        logger.info("Languages: %s. %d apps, %d models, %s actors.",
+                    ', '.join([li.django_code for li in self.languages]),
+                    len(self.modules),
+                    len(models_list),
+                    len(actors.actors_list))
+
+        #~ logger.info(settings.INSTALLED_APPS)
+
+        self.on_each_app('site_setup')
+
+        """
+        Actor.after_site_setup() is called after the apps' site_setup().
+        Example: pcsw.site_setup() adds a detail to properties.Properties, 
+        the base class for properties.PropsByGroup. 
+        The latter would not 
+        install a `detail_action` during her after_site_setup() 
+        and also would never get it later.
+        """
+        for a in actors.actors_list:
+            a.after_site_setup(self)
+
+        #~ self.on_site_startup()
+
+        self.resolve_virtual_fields()
+
+        #~ logger.info("20130827 startup_site done")
+
+    def abandon_response(self):
+        return self.success(_("User abandoned"))
+
+    def get_urls(self):
+        raise NotImplementedError()
+
+    def field2elem(self, lui, field, **kw):
+        pass
+
+    def get_callback(self, request, thread_id, button_id):
+        """
+        Return an existing (pending) callback.
+        This is called from `lino.ui.views.Callbacks`.
+        """
+        #~ logger.info("20130409 get_callback")
+        ar = BaseRequest(request)
+        thread_id = int(thread_id)
+        cb = self.pending_threads.pop(thread_id, None)
+        #~ d = self.pop_thread(int(thread_id))
+        if cb is None:
+            #~ logger.info("20130811 No callback %r in %r" % (thread_id,self.pending_threads.keys()))
+            ar.error("Unknown callback %r" % thread_id)
+            return self.render_action_response(ar.response)
+        for c in cb.choices:
+            if c.name == button_id:
+        #~ rv = c.func(request)
+                c.func(ar)
+                return self.render_action_response(ar.response)
+
+        ar.error("Invalid button %r for callback" % (button_id, thread_id))
+        return self.render_action_response(ar.response)
+
+        #~ m = getattr(d,button_id)
+        #~ rv = m(request)
+        #~ if button_id == 'yes':
+            #~ rv = d.yes()
+        #~ elif button_id == 'no':
+            #~ rv = d.no()
+        #~ return self.render_action_response(rv)
+
+    def add_callback(self, ar, *msgs):
+        """
+        Returns an "action callback" which will initiate a dialog thread
+        by asking a question to the user and suspending execution until
+        the user's answer arrives in a next HTTP request.
+
+        Implementation notes:
+        Calling this from an Action's :meth:`Action.run` method will
+        interrupt the execution, send the specified message back to
+        the user, adding the executables `yes` and optionally `no` to a queue
+        of pending "dialog threads".
+        The client will display the prompt and will continue this thread
+        by requesting :class:`lino.ui.extjs3.views.Callbacks`.
+        """
+        if len(msgs) > 1:
+            msg = '\n'.join([force_text(s) for s in msgs])
+        else:
+            msg = msgs[0]
+
+        return Callback(msg)
+
+    def set_callback(self, ar, cb):
+        """
+        """
+        h = hash(cb)
+        self.pending_threads[h] = cb
+        #~ logger.info("20130531 Stored %r in %r" % (h,settings.SITE.pending_threads))
+
+        buttons = dict()
+        for c in cb.choices:
+            buttons[c.name] = c.label
+
+        ar.response.update(
+            success=True,
+            message=cb.message,
+            xcallback=dict(id=h,
+                           title=cb.title,
+                           buttons=buttons))
+
+    def check_action_response(self, rv):
+        """
+        Raise an exception if the action responded using an unknown keyword.
         """
 
-        model.on_analyze(self)
+        #~ if rv is None:
+            #~ rv = self.success()
 
-        for k, v in class_dict_items(model):
-            if isinstance(v, dd.VirtualField):
-                v.attach_to_model(model, k)
+        #~ elif isinstance(rv,Callback):
 
-    #~ logger.info("20130817 attached model vfs")
+        for k in rv.keys():
+            if not k in ACTION_RESPONSES:
+                raise Exception("Unknown key %r in action response." % k)
+        return rv
 
-    actors.discover()
+    def run_action(self, ar):
+        """
+        """
+        try:
+            ar.bound_action.action.run_from_ui(ar)
+            return self.render_action_response(ar.response)
+        except Warning as e:
+            ar.error(unicode(e), alert=True)
+            #~ r = dict(
+              #~ success=False,
+              #~ message=unicode(e),
+              #~ alert=True)
+            return self.render_action_response(ar.response)
+        #~ removed 20130913
+        #~ except Exception as e:
+            #~ if len(ar.selected_rows) == 0:
+                #~ msg = unicode(e)
+            #~ else:
+                #~ elem = ar.selected_rows[0]
+                #~ if isinstance(elem,models.Model):
+                    #~ elem = obj2unicode(elem)
+                #~ msg = _(
+                  #~ "Action \"%(action)s\" failed for %(record)s:") % dict(
+                  #~ action=ar.bound_action.full_name(),
+                  #~ record=elem)
+                #~ msg += "\n" + unicode(e)
+            #~ msg += '.\n' + unicode(_(
+              #~ "An error report has been sent to the system administrator."))
+            #~ logger.warning(msg)
+            #~ logger.exception(e)
+            #~ r = self.error(e,msg,alert=_("Oops!"))
+            #~ return self.render_action_response(r)
 
-    actors.initialize()
-    dbtables.discover()
-    #~ choosers.discover()
-    actions.discover_choosers()
+    def setup_handle(self, h, ar):
+        """
+        ar is usually None, except for actors with dynamic handle
+        """
+        if h.actor.is_abstract():
+            return
 
-    #~ from lino.core import ui
-    #~ ui.site_setup(self)
+        #~ logger.info('20121010 ExtUI.setup_handle() %s',h.actor)
 
-    for a in actors.actors_list:
-        a.on_analyze(self)
+        if isinstance(h, tables.TableHandle):
+            ll = layouts.ListLayout(
+                h.actor.get_column_names(ar),
+                h.actor,
+                hidden_elements=h.actor.hidden_columns
+                | h.actor.hidden_elements)
+            h.list_layout = ll.get_layout_handle(self)
+        else:
+            h.list_layout = None
 
-    #~ logger.info("20130121 GFK_LIST is %s",['%s.%s'%(full_model_name(f.model),f.name) for f in settings.SITE.GFK_LIST])
-    dd.post_analyze.send(self, models_list=models_list)
+        if h.actor.parameters:
+            h.params_layout_handle = h.actor.make_params_layout_handle(self)
 
-    logger.info("Languages: %s. %d apps, %d models, %s actors.",
-                ', '.join([li.django_code for li in self.languages]),
-                len(self.modules),
-                len(models_list),
-                len(actors.actors_list))
+        h.store = ext_store.Store(h)
 
-    #~ logger.info(settings.INSTALLED_APPS)
 
-    self.on_each_app('site_setup')
+    def render_action_response(self, rv):
+        """
+        Builds a JSON response from given dict ``rv``, 
+        checking first whether there are only allowed keys 
+        (defined in :attr:`ACTION_RESPONSES`)
+        """
+        #~ if isinstance(rv,models.Model):
+            #~ js = self.ui.ext_renderer.instance_handler(None,invoice)
+            #~ rv = dict(eval_js=js)
 
-    """
-    Actor.after_site_setup() is called after the apps' site_setup().
-    Example: pcsw.site_setup() adds a detail to properties.Properties, 
-    the base class for properties.PropsByGroup. 
-    The latter would not 
-    install a `detail_action` during her after_site_setup() 
-    and also would never get it later.
-    """
-    for a in actors.actors_list:
-        a.after_site_setup(self)
+        rv = self.check_action_response(rv)
+        return views.json_response(rv)
 
-    #~ self.on_site_startup()
+    def row_action_button(self, *args, **kw):
+        """
+        See :meth:`ExtRenderer.row_action_button`
+        """
+        return self.ext_renderer.row_action_button(*args, **kw)
 
-    self.resolve_virtual_fields()
-
-    #~ logger.info("20130827 startup_site done")
 
 
 class DisableDeleteHandler():
@@ -327,15 +600,13 @@ class DisableDeleteHandler():
             if not fk.name in m.allow_cascaded_delete:
                 n = m.objects.filter(**{fk.name: obj}).count()
                 if n:
-                    msg = _("Cannot delete %(self)s because %(count)d %(refs)s refer to it.") % dict(
+                    msg = _("Cannot delete %(self)s \
+                    because %(count)d %(refs)s refer to it.") % dict(
                         self=obj, count=n,
-                        refs=m._meta.verbose_name_plural or m._meta.verbose_name + 's')
+                        refs=m._meta.verbose_name_plural
+                        or m._meta.verbose_name + 's')
                     #~ print msg
                     return msg
         return None
 
 
-def unused_generate_dummy_messages(self):
-    fn = os.path.join(self.source_dir, 'dummy_messages.py')
-    self.dummy_messages
-    raise Exception("use write_message_file() instead!")

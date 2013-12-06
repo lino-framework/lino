@@ -480,26 +480,33 @@ class Site(Site):
 
         super(Site, self).do_site_startup()
 
-        from lino.core.kernel import startup_site
-        startup_site(self)
+        if True:  # after 20131206
 
-        from django.conf import settings
+            from lino.core.kernel import Kernel
+            self.ui = Kernel(self)
 
-        if self.build_js_cache_on_startup is None:
-            from lino.core.dbutils import is_devserver
-            self.build_js_cache_on_startup = not (
-                settings.DEBUG or is_devserver())
+        else:
 
-        from lino.core.web import site_setup
-        site_setup(self)
+            from lino.core.kernel import startup_site
+            startup_site(self)
 
-        from lino.ui.ui import ExtUI
-        self.ui = ExtUI(self)
+            from django.conf import settings
 
-        from lino.core import actors
-        for a in actors.actors_list:
-            if a.get_welcome_messages is not None:
-                self._welcome_actors.append(a)
+            if self.build_js_cache_on_startup is None:
+                from lino.core.dbutils import is_devserver
+                self.build_js_cache_on_startup = not (
+                    settings.DEBUG or is_devserver())
+
+            from lino.core.web import site_setup
+            site_setup(self)
+
+            from lino.ui.ui import ExtUI
+            self.ui = ExtUI(self)
+
+            from lino.core import actors
+            for a in actors.actors_list:
+                if a.get_welcome_messages is not None:
+                    self._welcome_actors.append(a)
 
     #~ def shutdown(self):
         #~ return super(Site,self).shutdown()
@@ -1749,7 +1756,12 @@ class Site(Site):
                     #~ raise Exception("Cannot run a production server on an OS that doesn't have symlinks")
                 else:
                     logger.info("Create symlink %s -> %s.", target, source)
-                    symlink(source, target)
+                    try:
+                        symlink(source, target)
+                    except OSError as e:
+                        raise OSError(
+                            "Failed to create symlink %s -> %s : %s",
+                            target, source, e)
 
         if not self.extjs_base_url:
             setup_media_link('extjs', 'extjs_root')

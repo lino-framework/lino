@@ -66,9 +66,25 @@ I can remove the `SiteMixin` classes  from
 :mod:`lino.modlib.vat`
 and
 :mod:`lino_welfare.modlib.cbss`!
+And the latter even protect myself from forgetting 
+to convert local settings files because I added an error 
+message in that case.
 
-For the latter: to protect myself from forgetting 
-to convert local settings files I added an error message.
+Summary:
 
-Cool! (Just a pity that these human bodies need to sleep every
-now and then ;-)
+Every Django app which defines a class object called "App" in 
+its main module (not in the models module) now gets some special 
+functionality: the class object will be instiantiated exactly 
+once when the Site instantiates (i.e. before Django 
+settings are ready), and this object is stored (under the app_label 
+as key), in `settings.SITE.plugins`.
+
+That's really cool! (Just a pity that these human bodies need to sleep
+every now and then ;-) Don't hesitate to contact me directly and ask
+questions, because this is complex stuff, and I won't have time until
+end of January to document it as it would deserve.
+
+TODO:
+
+- Convert lino.extjs to a plugin (oops, i mean "an app with 
+  an :class:`ad.App <djangosite.djangosite_site.App>`").

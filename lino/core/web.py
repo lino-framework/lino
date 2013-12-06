@@ -202,12 +202,12 @@ class DjangoJinjaTemplate:
         extend_context(context_dict)
         context_dict.setdefault('request', None)
         context_dict.setdefault(
-            'ar', requests.BaseRequest(renderer=settings.SITE.ui.default_renderer))
+            'ar', requests.BaseRequest(
+                renderer=settings.SITE.ui.default_renderer))
         #~ logger.info("20130118 %s",context_dict.keys())
         return self.jt.render(context_dict)
 
 
-#~ class Loader(app_directories.Loader):
 class Loader(BaseLoader):
 
     is_usable = True

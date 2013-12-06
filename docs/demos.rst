@@ -76,18 +76,37 @@ set to False) to avoid browser questions to first-time visitors.
     shows an early prototype of the :ref:`belref` project.
 
 
+  <NEXTROW>
   
-.. image:: /screenshots/welfare.Home.jpg
-  :scale: 27
-  :target: http://welfare-demo.lino-framework.org
-  
-.. image:: /screenshots/pcsw.Client.3.jpg
-  :scale: 27
-  :target: http://welfare-demo.lino-framework.org
-      
-`welfare-demo <http://welfare-demo.lino-framework.org>`_ 
-shows a demo version of :ref:`welfare`.
+    .. figure:: /screenshots/pcsw.Client.3.jpg
+      :scale: 27
+      :target: http://welfare-demo.lino-framework.org
 
+      `welfare-demo <http://welfare-demo.lino-framework.org>`_ 
+      shows a demo version of :ref:`welfare`.
+    
+      <NEXTCELL>
+
+  <NEXTROW>
+
+    .. figure:: /screenshots/pcsw.Client.3.jpg
+      :scale: 27
+      :target: http://polly-demo.lino-framework.org
+
+      `polly-demo <http://polly-demo.lino-framework.org>`_ 
+      shows a demo version of :ref:`polly` 
+      as an early prototype for the SacredPy project.
+
+      <NEXTCELL>
+
+    .. figure:: /screenshots/pcsw.Client.3.jpg
+      :scale: 27
+      :target: http://logos-demo.lino-framework.org
+
+      `logos-demo <http://logos-demo.lino-framework.org>`_ 
+      shows a demo version of :ref:`logos` 
+      as an early prototype for the SacredPy project.
+  
 
 .. _lino.projects:
 

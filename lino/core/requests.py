@@ -89,21 +89,6 @@ class BaseRequest(object):
 
     #~ def __init__(self,request=None,renderer=None,**kw):
     def __init__(self, request=None, **kw):
-        #~ if ui is None:
-            #~ ui = settings.SITE.ui
-        #~ self.ui = ui = settings.SITE.ui
-
-        #~ self.prompt = ui.callback
-        #~ self.callback = ui.callback
-        #~ self.confirm = ui.confirm
-        #~ self.error = ui.error
-        #~ self.success = ui.success
-
-        #~ if renderer is None:
-            #~ renderer = ui.default_renderer
-        #~ self.renderer = renderer
-        # ~ self.step = 0 # confirmation counter
-        #~ self.report = actor
         self.request = request
         self.response = dict()
         if request is not None:
