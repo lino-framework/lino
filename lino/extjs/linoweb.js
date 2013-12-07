@@ -5216,9 +5216,9 @@ Lino.davlink_reset = function() {
 
 
 /*
-Mappings towards lino.modlib.cal.models.PanelCalendars
+Mappings towards lino.apps.extensible.models.PanelCalendars
 */
-// Sset SS = Ssite.modules.cal.PanelCalendars.get_handle(Sui).store
+// Sset SS = Ssite.modules.extensible.PanelCalendars.get_handle(Sui).store
 Ext.ensible.cal.CalendarMappings = {
     CalendarId:   {name:'ID',       mapping: 'id', type: 'int'},
     Title:        {name:'CalTitle', mapping: 'summary', type: 'string'},
@@ -5230,9 +5230,9 @@ Ext.ensible.cal.CalendarRecord.reconfigure();
 
 
 /*
-Mappings towards lino.modlib.cal.models.PanelEvents 
+Mappings towards lino.apps.extensible.models.PanelEvents 
 */
-// Sset SS = Ssite.modules.cal.PanelEvents.get_handle(Sui).store
+// Sset SS = Ssite.modules.extensible.PanelEvents.get_handle(Sui).store
 Ext.ensible.cal.EventMappings = {
     EventId:     {name: 'ID',        mapping: 'id', type:'int'},
     CalendarId:  {name: 'CalID',     mapping: 'calendarHidden', type: 'int'},
@@ -5362,7 +5362,7 @@ Lino.CalendarCfg = {
 Ext.override(Ext.ensible.cal.CalendarPanel,Lino.MainPanel);
 Ext.override(Ext.ensible.cal.CalendarPanel,{
   //~ empty_title : "\$ui.get_actor('cal.Panel').report.label",
-  empty_title : "{{site.modules.cal.CalendarPanel.label}}"
+  empty_title : "{{site.modules.extensible.CalendarPanel.label}}"
   ,activeItem: 1 // 0: day, 1: week
   ,ls_url: '/cal/CalendarPanel'
   //~ ,disableCaching:true
@@ -5429,7 +5429,7 @@ Lino.CalendarAppPanel = Ext.extend(Lino.CalendarAppPanel,Lino.PanelMixin);
 Lino.CalendarAppPanel = Ext.extend(Lino.CalendarAppPanel,{
   app_instance : null
   //~ empty_title : "\$ui.get_actor('cal.Panel').report.label",
-  ,empty_title : "{{site.modules.cal.CalendarPanel.label}}"
+  ,empty_title : "{{site.modules.extensible.CalendarPanel.label}}"
   ,ls_url: '/cal/CalendarPanel'
   ,set_status : function(status,rp) { 
       this.requesting_panel = Ext.getCmp(rp);

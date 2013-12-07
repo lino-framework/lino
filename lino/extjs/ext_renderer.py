@@ -30,7 +30,6 @@ import jinja2
 
 
 #~ from north.babel import LANGUAGE_CHOICES
-from lino.modlib.cal.utils import CalendarAction
 
 from django.db import models
 from django.conf import settings
@@ -56,28 +55,22 @@ from django.conf.urls import patterns, url, include
 import lino
 from lino.core import constants as ext_requests
 from lino.ui import elems as ext_elems
-from lino.ui import store as ext_store
 from lino.ui.render import HtmlRenderer
 
 from lino import dd
 from lino.core import actions
-#~ from lino.core.actions import action2str
 from lino.core import dbtables
-from lino.core import layouts
 from lino.core import tables
-#~ from lino.utils.xmlgen import xhtml as xhg
-#~ from lino.core.dbutils import makedirs_if_missing
-#~ from lino.core.dbutils import full_model_name
+from lino.core.actions import CalendarAction
 
 from lino.utils import AttrDict
 from lino.utils import choosers
 from lino.core import choicelists
 from lino.core import menus
 from lino.utils import jsgen
-from lino.utils.jsgen import py2js, js_code, id2js
+from lino.utils.jsgen import py2js, js_code
 from lino.utils.xmlgen import html as xghtml
 from lino.utils.xmlgen.html import E
-from lino.utils.config import make_dummy_messages_file
 
 if False:
     from lino.utils.jscompressor import JSCompressor
@@ -475,7 +468,6 @@ class ExtRenderer(HtmlRenderer):
         #~ yield '<!-- overrides to base library -->'
 
         if site.use_extensible:
-            #~ yield stylesheet(site.build_media_url("extensible/resources/css/extensible-all.css"))
             yield stylesheet(site.build_extensible_url('resources/css/extensible-all.css'))
 
         if site.use_vinylfox:
@@ -927,14 +919,6 @@ tinymce.init({
                 f.write(jscompress('\n// from %s:%s\n' % (p, tplname)))
                 f.write(jscompress('\n' + tpl.render(**context) + '\n'))
 
-        """
-        Make the dummy messages file.
-        But only when generating for root user.
-        """
-        # ~ if False: # no longer needed because babel extracts them
-            #~ if jsgen._for_user_profile == dd.UserProfiles.admin:
-                #~ make_dummy_messages_file(self.linolib_template_name(),messages)
-
         #~ assert user == jsgen._for_user
         assert profile == jsgen._for_user_profile
 
@@ -1115,22 +1099,6 @@ tinymce.init({
 
         return 1
 
-    #~ def make_linolib_messages(self):
-        #~ """
-        #~ Called from :term:`dtl2py`.
-        #~ """
-        #~ from lino.utils.config import make_dummy_messages_file
-        #~ tpl = self.linolib_template()
-        #~ messages = set()
-        #~ def mytranslate(s):
-            #~ messages.add(s)
-            #~ return _(s)
-        #~ tpl._ = mytranslate
-        # ~ unicode(tpl) # just to execute the template. result is not needed
-        #~ return make_dummy_messages_file(self.linolib_template_name(),messages)
-    #~ def make_dtl_messages(self):
-        #~ from lino.core.kernel import make_dtl_messages
-        #~ return make_dtl_messages(self)
     def lino_js_parts(self, profile):
         return ('cache', 'js', 'lino_' + profile.value + '_' + translation.get_language() + '.js')
 
@@ -1588,21 +1556,14 @@ tinymce.init({
             mainPanelClass = "Lino.%sPanel" % action.full_name()
         elif isinstance(action.action, actions.GridEdit):
             mainPanelClass = "Lino.%s.GridPanel" % rpt
-            #~ if rh.actor.parameters:
-                #~ params_panel = rh.params_layout_handle.main
         elif isinstance(action.action, CalendarAction):
             mainPanelClass = "Lino.CalendarPanel"
-            #~ mainPanelClass = "Lino.CalendarAppPanel"
-            #~ mainPanelClass = "Ext.ensible.cal.CalendarPanel"
         elif action.action.parameters:
-            #~ mainPanelClass = "Lino.ActionParamsPanel"
             params_panel = action.action.make_params_layout_handle(
                 settings.SITE.ui)
-            #~ logger.info("20121003 %r %s", action, params_panel)
         else:
             return
-        #~ if action.defining_actor is None:
-            #~ raise Exception("20120524 %s %r actor is None" % (rh.actor,action))
+
         windowConfig = dict()
         wl = action.get_window_layout()
         ws = action.get_window_size()
@@ -1627,10 +1588,10 @@ tinymce.init({
                     raise ValueError("height")
                 #~ print 20120629, action, windowConfig
 
-        yield "Lino.%s = new Lino.WindowAction(%s,function(){" % (action.full_name(), py2js(windowConfig))
+        yield "Lino.%s = new Lino.WindowAction(%s,function(){" % (
+            action.full_name(), py2js(windowConfig))
         #~ yield "  console.log('20120625 fn');"
         if isinstance(action.action, CalendarAction):
-            #~ yield "  return Lino.calendar_app.get_main_panel();"
             yield "  return Lino.CalendarApp().get_main_panel();"
         else:
             p = dict()

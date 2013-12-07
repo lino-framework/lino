@@ -1,4 +1,4 @@
-# Copyright 2009-2013 Luc Saffre
+# Copyright 2013 Luc Saffre
 # This file is part of the Lino project.
 # Lino is free software; you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -12,16 +12,14 @@
 # along with Lino; if not, see <http://www.gnu.org/licenses/>.
 
 """
-The default URLconf module, defines the variable `urlpatterns` 
-as required by Django.
-Application code doesn't need to worry about this.
-
-This is found by Django because 
-:mod:`lino.projects.std.settings`
-:setting:`ROOT_URLCONF` 
-is set to ``'lino.ui.extjs3.urls'``.
+This is Lino's Calendar module.
 
 """
 
-from django.conf import settings
-urlpatterns = settings.SITE.ui.get_patterns()
+from lino import ad
+
+from django.utils.translation import ugettext_lazy as _
+
+
+class App(ad.App):
+    verbose_name = _("Calendar")

@@ -55,6 +55,13 @@ and
 SETUP_INFO.update(packages=[str(n) for n in """
 lino
 lino.apps
+lino.apps.cal
+lino.apps.cal.fixtures
+lino.apps.cal.management
+lino.apps.cal.management.commands
+lino.apps.cal.tests
+lino.apps.cal.workflows
+lino.apps.extensible
 lino.apps.beid
 lino.apps.eid_jslib
 lino.apps.eid_jslib.beid

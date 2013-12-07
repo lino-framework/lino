@@ -1,0 +1,49 @@
+<p>Hallo Kollege,</p>
+
+
+<p>
+#if $instance.state.name == 'suggested'
+ich lade dich zu folgendem Termin ein.
+#end if
+#if $instance.state.name == 'notified'
+der folgende Termin ist noch nicht bestätigt, 
+weil ich noch auf die Zu- oder Absage von mindestens einem Teilnehmer warte.
+#end if
+#if $instance.state.name == 'confirmed'
+folgender Termin ist jetzt bestätigt.
+#end if
+#if $instance.state.name == 'rescheduled'
+der folgende Termin ist <b>verschoben</b>. 
+Ich melde mich mit einem neuen Vorschlag.
+#end if
+#if $instance.state.name == 'cancelled'
+der folgende Termin ist <b>abgesagt</b>.
+#end if
+</p>
+
+<ul>
+<li>Wann: am <b>$dtosl($instance.start_date)</b> um <b>$dtosl($instance.start_time)</b> Uhr</li>
+<li>Titel: $instance.summary ($instance.calendar)</li>
+</ul>
+
+
+
+#if $instance.state.name in ('suggested','notified')
+<p>Bitte melde dich bei mir, oder gehe in Lino nach
+<a href="$ar.absolute_uri("cal.MyPendingInvitations")">Meine offenen erhaltenen Einladungen</a>
+und klicke auf [Zusagen] oder [Absagen]!
+</p>
+#end if
+
+#if $instance.description
+<p>Beschreibung:</p>
+<div>
+$instance.description
+</div>
+#end if
+
+
+
+<p>Mit freundlichen Gr&uuml;&szlig;en<br/>
+$instance.user
+</p>

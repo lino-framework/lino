@@ -1,0 +1,39 @@
+=====================================
+20131207 (Saturday, 07 December 2013)
+=====================================
+
+
+As another proof of concept for the new plugins concept using
+`ad.App`, I want to convert the `use_extensible` setting into a
+plugin. This got a large step further but is not finished.
+
+I also moved the cal app from :mod:`lino.modlib` 
+to :mod:`lino.apps`. 
+(Which caused rather many code changes;
+next time I should do this in a separate branch.)
+
+Concretely: 
+the :mod:`lino.modlib.cal` module has been split 
+into :mod:`lino.apps.cal`
+and :mod:`lino.apps.extensible.cal`.
+
+One eureka effect was when I moved `get_patterns` and related methods
+from `Site` to `Kernel`.
+
+
+More about app inheritance
+--------------------------
+
+One problem with app inheritance are the fixtures and the 
+management commands.
+
+Django discovers management commands by checking whether the app
+module has a submodule "management" and then calling
+:meth:`os.listdir` on that module's "commands" subdirectory.  (See
+Django's `core/management/__init__.py` file)
+
+I'll make a first attempt using symbolic links::
+
+  lino/apps/extensible/cal/fixtures -> ../cal/fixtures/
+  lino/apps/extensible/cal/management -> ../cal/management/
+

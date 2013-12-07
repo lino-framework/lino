@@ -31,8 +31,8 @@ from lino import dd
 contacts = dd.resolve_app('contacts', strict=True)
 #~ cal = dd.resolve_app('cal',strict=True)
 
-from lino.modlib.cal.utils import Recurrencies
-from lino.modlib.cal.mixins import Reservation
+from lino.apps.cal.utils import Recurrencies
+from lino.apps.cal.mixins import Reservation
 
 from . import App
 

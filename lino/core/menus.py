@@ -432,7 +432,8 @@ class Menu(MenuItem):
             #~ return xghtml.E.ul(*items,class_='dd_menu')
             #~ until 20121226 return xghtml.E.ul(*items,id='nav')
             return E.ul(*items, class_='nav nav-tabs')
-        assert self.label is not None
+        if self.label is None:
+            raise Exception("%s has no label" % self)
         #~ since 20121226 return xghtml.E.p(self.label,xghtml.E.ul(*items))
         if level == 2:
             cl = 'dropdown'

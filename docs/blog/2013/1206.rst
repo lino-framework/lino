@@ -26,26 +26,31 @@ This was easy and has no impact on user code.
 All tests pass. Commit.
 It helped me to understand the following:
 
-- The three renderers (TextRenderer, PlainRenderer and ExtRenderer)
-  cannot become subclasses of `ad.App` because they get instantiated
-  only during Kernel startup (i.e. when the Django models are already
-  populated).  I'd call them "runtime extensions" or "kernel plugins"
-  or
+- My first idea was to convert the three "renderers" 
+  (TextRenderer, PlainRenderer and ExtRenderer) to plugins::
+  
+    SITE.ui.plain_renderer -> SITE.plugins.plain_ui
+    SITE.ui.ext_renderer -> SITE.plugins.extjs_ui
+    SITE.ui.text_renderer -> SITE.plugins.text_ui
 
-  are no longer available
-  as `SITE.plain_renderer` etc. but using `SITE.plugins`::
+- But they cannot become subclasses of `ad.App` because they get
+  instantiated only during Kernel startup (i.e. when the Django models
+  are already populated).
 
-    SITE.plain_renderer -> SITE.plugins.plain_ui
-    SITE.ext_renderer -> SITE.plugins.extjs_ui
-    SITE.text_renderer -> SITE.plugins.text_ui
+- I'd call them "runtime extensions" or "kernel plugins",
+  or "features".
 
-  Note that "renderer" is the wrong name. 
+- Note that "renderer" is the wrong name. 
   These three things are what I would call "user interfaces".
   A user interface being "a system of methods and ways to interact 
   with the user".
   But before renaming them I should rename all current 
   occurences of "ui" to "kernel".
 
-  `SITE.default_renderer`
+- Not yet sure what to do with `SITE.default_renderer`
+
+As a result, I'll leave these ideas open for the moment and 
+first convert the `use_extensible` setting into a plugin.
+
 
 

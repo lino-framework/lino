@@ -64,9 +64,6 @@ from lino.mixins.printable import DirectPrintAction, Printable
 from lino.core.dbutils import obj2str
 
 
-from lino.modlib.cal.utils import Recurrencies
-
-
 users = dd.resolve_app('users')
 cal = dd.resolve_app('cal')
 sales = dd.resolve_app('sales')
@@ -167,8 +164,8 @@ class Line(dd.BabelNamed):
     topic = models.ForeignKey(Topic, blank=True, null=True)
     description = dd.BabelTextField(_("Description"), blank=True)
 
-    every_unit = Recurrencies.field(_("Recurrency"),
-                                    default=Recurrencies.weekly,
+    every_unit = cal.Recurrencies.field(_("Recurrency"),
+                                    default=cal.Recurrencies.weekly,
                                     blank=True)  # iCal:DURATION
     every = models.IntegerField(_("Repeat every"), default=1)
 

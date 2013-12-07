@@ -37,10 +37,13 @@ class Site(Site):
     project_model = 'tickets.Project'
     user_model = 'users.User'
 
-    override_modlib_models = [
-        'contacts.Person', 'contacts.Company',
-        'households.Household',
-        'sales.Invoice', 'sales.InvoiceItem']
+    p = None
+    override_modlib_models = {
+        'contacts.Person': p,
+        'contacts.Company': p,
+        'households.Household': p,
+        'sales.Invoice': p,
+        'sales.InvoiceItem': p}
 
     #~ def get_main_action(self,user):
         #~ return self.modules.lino.Home.default_action
@@ -100,7 +103,8 @@ class Site(Site):
         #~ 'lino.modlib.links',
         yield 'lino.modlib.uploads'
         #~ 'lino.modlib.thirds',
-        yield 'lino.modlib.cal'
+        yield 'lino.apps.cal'
+        yield 'lino.apps.extensible'
         yield 'lino.modlib.outbox'
         #~ yield 'lino.modlib.postings'
         #~ yield 'lino.modlib.pages'

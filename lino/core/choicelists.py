@@ -212,11 +212,11 @@ def register_choicelist(cl):
     #~ print '20121209 register_choicelist', cl
     #~ k = cl.stored_name or cl.__name__
     k = cl.stored_name or cl.actor_id
-    if CHOICELISTS.has_key(k):
-        #~ raise Exception("ChoiceList name '%s' already defined by %s" %
-            #~ (k,CHOICELISTS[k]))
-        logger.warning("ChoiceList name '%s' already defined by %s",
-                       k, CHOICELISTS[k])
+    if k in CHOICELISTS:
+        raise Exception("ChoiceList name '%s' already defined by %s" %
+                        (k, CHOICELISTS[k]))
+        # logger.warning("ChoiceList name '%s' already defined by %s",
+        #                k, CHOICELISTS[k])
     CHOICELISTS[k] = cl
 
 

@@ -67,10 +67,11 @@ def list_templates(self, ext, group=''):
 def site_setup(self):
     """
     Adds a `jinja_env` attribute to `settings.SITE`.
-    This is being called from :meth:`lino.site.Site.on_site_startup`.
+    This is being called from
+    :meth:`lino.core.kernel.Kernel.kernel_startup`.
     
-    Lino has an automatic and currently not configurable method 
-    for building Jinja's template loader. It looks for 
+    Lino has an automatic and currently not configurable method
+    for building Jinja's template loader. It looks for
     a "config" subfolder in the following places:
     
     - the directory where your settings.py is defined.
@@ -179,9 +180,6 @@ def render_from_request(request, template_name, **context):
     context.update(ar=ar)
     template = settings.SITE.jinja_env.get_template(template_name)
     return template.render(**context)
-
-
-#~ jinja_env.extract_translations()
 
 
 class DjangoJinjaTemplate:

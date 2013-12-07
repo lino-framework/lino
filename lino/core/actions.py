@@ -1205,6 +1205,21 @@ class NotifyingAction(Action):
             ar.action_param_values.notify_silent, **kw)
 
 
+class CalendarAction(Action):
+
+    """
+    The default action for 
+    :class:`lino.apps.extensible.models.CalendarPanel`,
+    only used there.
+    """
+    opens_a_window = True
+    action_name = 'grid'  # because...
+    default_format = 'html'
+    #~ icon_name = 'x-tbar-calendar'
+    icon_name = 'calendar'
+
+
+
 def action(*args, **kw):
     """
     Decorator to define custom actions.

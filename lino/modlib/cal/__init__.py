@@ -19,3 +19,5 @@ When using this app, you probably also like to set
 
 """
 
+raise Exception("moved to lino.apps.call")
+

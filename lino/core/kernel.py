@@ -19,9 +19,12 @@ import logging
 logger = logging.getLogger(__name__)
 
 import os
+from os.path import join, dirname, exists
+
 import sys
 import atexit
 #~ import collections
+from pkg_resources import Requirement, resource_filename, DistributionNotFound
 
 from django.conf import settings
 
@@ -36,6 +39,10 @@ from django.db import models
 #from django.contrib.auth.models import User
 from django.contrib.contenttypes import generic
 
+from djangosite.signals import database_ready
+from django.conf.urls import patterns, url, include
+
+
 # from django.core.urlresolvers import reverse
 # from django.shortcuts import render_to_response, get_object_or_404
 # from django.contrib.sites.models import Site, RequestSite
@@ -46,6 +53,8 @@ from django.contrib.contenttypes import generic
 from django.utils.translation import ugettext_lazy as _
 
 # from djangosite.dbutils import obj2unicode
+
+import lino
 
 from lino import dd
 
@@ -58,7 +67,7 @@ from lino.core import actions
 from lino.core import dbtables
 from lino.core import tables
 from lino.core import constants
-from lino.core import web 
+from lino.core import web
 from lino.core.signals import pre_ui_build, post_ui_build
 
 from lino.ui import store as ext_store
@@ -153,6 +162,50 @@ class Callback(object):
         self.choices.append(cbc)
         self.choices_dict[name] = cbc
         return cbc
+
+class DisableDeleteHandler():
+
+    """
+    Used to find out whether a known object can be deleted or not.
+    Lino's default behaviour is to forbit deletion if there is any other 
+    object in the database that refers to this. To implement this, 
+    Lino installs a DisableDeleteHandler instance on each model 
+    during :func:`analyze_models`. In an attribute `_lino_ddh`.
+    """
+
+    def __init__(self, model):
+        self.model = model
+        self.fklist = []
+
+    def add_fk(self, model, fk):
+        self.fklist.append((model, fk))
+
+    def __str__(self):
+        return ','.join([m.__name__ + '.' + fk.name for m, fk in self.fklist])
+
+    def disable_delete_on_object(self, obj):
+        #~ print 20101104, "called %s.disable_delete(%s)" % (obj,self)
+        #~ h = getattr(self.model,'disable_delete',None)
+        #~ if h is not None:
+            #~ msg = h(obj,ar)
+        #~     if msg is not None:
+            #~     return msg
+        for m, fk in self.fklist:
+            #~ kw = {}
+            #~ kw[fk.name] = obj
+            #~ if not getattr(m,'allow_cascaded_delete',False):
+            if not fk.name in m.allow_cascaded_delete:
+                n = m.objects.filter(**{fk.name: obj}).count()
+                if n:
+                    msg = _("Cannot delete %(self)s \
+                    because %(count)d %(refs)s refer to it.") % dict(
+                        self=obj, count=n,
+                        refs=m._meta.verbose_name_plural
+                        or m._meta.verbose_name + 's')
+                    #~ print msg
+                    return msg
+        return None
+
 
 
 class Kernel(object):
@@ -249,10 +302,11 @@ class Kernel(object):
                 self.project_model,
                 strict="Unresolved model '%s' in project_model.")
 
-        for m in self.override_modlib_models:
+        for m,p in self.override_modlib_models.items():
             dd.resolve_model(
                 m,
-                strict="Unresolved model '%s' in override_modlib_models.")
+                strict="%s plugin tries to extend unresolved model '%%s'" %
+                p.__class__.__module__)
 
         for model in models_list:
             #~ print 20130216, model
@@ -564,49 +618,245 @@ class Kernel(object):
         """
         return self.ext_renderer.row_action_button(*args, **kw)
 
+    def get_media_urls(self):
+        #~ print "20121110 get_media_urls"
+        from django.conf.urls import patterns, url, include
+        from lino.core.dbutils import is_devserver
+        from django.conf import settings
 
+        urlpatterns = []
 
-class DisableDeleteHandler():
+        logger.debug("Checking /media URLs ")
+        prefix = settings.MEDIA_URL[1:]
+        if not prefix.endswith('/'):
+            raise Exception("MEDIA_URL %r doesn't end with a '/'!" %
+                            settings.MEDIA_URL)
 
-    """
-    Used to find out whether a known object can be deleted or not.
-    Lino's default behaviour is to forbit deletion if there is any other 
-    object in the database that refers to this. To implement this, 
-    Lino installs a DisableDeleteHandler instance on each model 
-    during :func:`analyze_models`. In an attribute `_lino_ddh`.
-    """
+        if not self.site.extjs_base_url:
+            self.setup_media_link(urlpatterns,'extjs', 'extjs_root')
+        if self.site.use_bootstrap:
+            if not self.site.bootstrap_base_url:
+                self.setup_media_link(urlpatterns,
+                    'bootstrap', 'bootstrap_root')
+            #~ else:
+                #~ logger.info("20130409 self.bootstrap_base_url is %s",self.bootstrap_base_url)
+        #~ else:
+            #~ logger.info("20130409 self.use_bootstrap is False")
+        if self.site.use_extensible:
+            if not self.site.extensible_base_url:
+                self.setup_media_link(urlpatterns,
+                    'extensible', 'extensible_root')
+        if self.site.use_tinymce:
+            if not self.site.tinymce_base_url:
+                self.setup_media_link(urlpatterns,
+                    'tinymce', 'tinymce_root')
+        if self.site.use_jasmine:
+            self.setup_media_link(urlpatterns,
+                'jasmine', 'jasmine_root')
+        if self.site.use_eid_jslib:
+            self.setup_media_link(urlpatterns,
+                'eid-jslib', 'eid_jslib_root')
 
-    def __init__(self, model):
-        self.model = model
-        self.fklist = []
+        try:
+            self.setup_media_link(urlpatterns,
+                'lino', source=resource_filename(
+                    Requirement.parse("lino"), "lino/media"))
+        except DistributionNotFound:
+            # if it is not installed using pip, link directly to the source
+            # tree
+            self.setup_media_link(urlpatterns,
+                'lino', source=join(dirname(lino.__file__), 'media'))
 
-    def add_fk(self, model, fk):
-        self.fklist.append((model, fk))
+        #~ logger.info("20130409 is_devserver() returns %s.",is_devserver())
+        if is_devserver():
+            urlpatterns += patterns('django.views.static',
+                                    (r'^%s(?P<path>.*)$' % prefix, 'serve',
+                                     {'document_root': settings.MEDIA_ROOT,
+                                      'show_indexes': True}),
+                                    )
 
-    def __str__(self):
-        return ','.join([m.__name__ + '.' + fk.name for m, fk in self.fklist])
+        return urlpatterns
 
-    def disable_delete_on_object(self, obj):
-        #~ print 20101104, "called %s.disable_delete(%s)" % (obj,self)
-        #~ h = getattr(self.model,'disable_delete',None)
-        #~ if h is not None:
-            #~ msg = h(obj,ar)
-        #~     if msg is not None:
-            #~     return msg
-        for m, fk in self.fklist:
-            #~ kw = {}
-            #~ kw[fk.name] = obj
-            #~ if not getattr(m,'allow_cascaded_delete',False):
-            if not fk.name in m.allow_cascaded_delete:
-                n = m.objects.filter(**{fk.name: obj}).count()
-                if n:
-                    msg = _("Cannot delete %(self)s \
-                    because %(count)d %(refs)s refer to it.") % dict(
-                        self=obj, count=n,
-                        refs=m._meta.verbose_name_plural
-                        or m._meta.verbose_name + 's')
-                    #~ print msg
-                    return msg
-        return None
+    def get_pages_urls(self):
+        from django.conf.urls import patterns, url, include
+        from django import http
+        from django.views.generic import View
+        from lino import dd
+        pages = dd.resolve_app('pages')
 
+        class PagesIndex(View):
+
+            def get(self, request, ref='index'):
+                if not ref:
+                    ref = 'index'
+
+                #~ print 20121220, ref
+                obj = pages.lookup(ref, None)
+                if obj is None:
+                    raise http.Http404("Unknown page %r" % ref)
+                html = pages.render_node(request, obj)
+                return http.HttpResponse(html)
+
+        return patterns('',
+                        (r'^(?P<ref>\w*)$', PagesIndex.as_view()),
+                        )
+
+    def get_plain_urls(self):
+
+        from django.conf.urls import patterns, url, include
+        from lino.ui import views
+        urlpatterns = []
+        rx = '^'
+        urlpatterns = patterns(
+            '',
+            (rx + r'$', views.PlainIndex.as_view()),
+            (rx + r'(?P<app_label>\w+)/(?P<actor>\w+)$',
+             views.PlainList.as_view()),
+            (rx + r'(?P<app_label>\w+)/(?P<actor>\w+)/(?P<pk>.+)$',
+             views.PlainElement.as_view()),
+        )
+        return urlpatterns
+
+    def get_ext_urls(self):
+
+        from django.conf.urls import patterns, url, include
+        from lino.ui import views
+
+        #~ print "20121110 get_urls"
+        self.ext_renderer.build_site_cache()
+
+        rx = '^'
+        urlpatterns = patterns(
+            '',
+            (rx + '$', views.AdminIndex.as_view()),
+            (rx + r'api/main_html$',
+             views.MainHtml.as_view()),
+            (rx + r'auth$', views.Authenticate.as_view()),
+            (rx + r'grid_config/(?P<app_label>\w+)/(?P<actor>\w+)$',
+             views.GridConfig.as_view()),
+            (rx + r'api/(?P<app_label>\w+)/(?P<actor>\w+)$',
+             views.ApiList.as_view()),
+            (rx + r'api/(?P<app_label>\w+)/(?P<actor>\w+)/(?P<pk>.+)$',
+             views.ApiElement.as_view()),
+            (rx + r'restful/(?P<app_label>\w+)/(?P<actor>\w+)$',
+             views.Restful.as_view()),
+            (rx + r'restful/(?P<app_label>\w+)/(?P<actor>\w+)/(?P<pk>.+)$',
+             views.Restful.as_view()),
+            (rx + r'choices/(?P<app_label>\w+)/(?P<rptname>\w+)$',
+             views.Choices.as_view()),
+            (rx + r'choices/(?P<app_label>\w+)/(?P<rptname>\w+)/(?P<fldname>\w+)$',
+             views.Choices.as_view()),
+            (rx + r'apchoices/(?P<app_label>\w+)/(?P<actor>\w+)/(?P<an>\w+)/(?P<field>\w+)$',
+             views.ActionParamChoices.as_view()),
+            # the thread_id can be a negative number:
+            (rx + r'callbacks/(?P<thread_id>[\-0-9a-zA-Z]+)/(?P<button_id>\w+)$',
+             views.Callbacks.as_view()),
+        )
+        if self.site.use_eid_applet:
+            urlpatterns += patterns('',
+                                    (rx + r'eid-applet-service$',
+                                     views.EidAppletService.as_view()),
+                                    )
+        if self.site.use_jasmine:
+            urlpatterns += patterns('',
+                                    (rx + r'run-jasmine$',
+                                     views.RunJasmine.as_view()),
+                                    )
+        if self.site.user_model and self.site.use_tinymce:
+            urlpatterns += patterns(
+                '',
+                (rx + r'templates/(?P<app_label>\w+)/'
+                 + r'(?P<actor>\w+)/(?P<pk>\w+)/(?P<fldname>\w+)$',
+                 views.Templates.as_view()),
+                (rx + r'templates/(?P<app_label>\w+)/'
+                 + r'(?P<actor>\w+)/(?P<pk>\w+)/(?P<fldname>\w+)/'
+                 + r'(?P<tplname>\w+)$',
+                 views.Templates.as_view()),
+            )
+
+        return urlpatterns
+
+    def get_patterns(self):
+        # self.site.startup()
+
+        database_ready.send(self.site)
+
+        urlpatterns = self.get_media_urls()
+
+        if self.site.use_extjs and self.site.admin_prefix:
+            urlpatterns += patterns(
+                '',
+                ('^' + self.site.admin_prefix, include(self.get_ext_urls())))
+
+        if self.site.plain_prefix:
+            urlpatterns += patterns(
+                '',
+                ('^' + self.site.plain_prefix + "/",
+                 include(self.get_plain_urls()))
+            )
+
+        if self.site.django_admin_prefix:  # experimental
+            from django.contrib import admin
+            admin.autodiscover()
+            urlpatterns += patterns('',
+                                    ('^' + self.site.django_admin_prefix[1:]
+                                     + "/", include(admin.site.urls))
+                                    )
+
+        if not self.site.plain_prefix:
+            urlpatterns += self.get_plain_urls()
+
+        if self.site.use_extjs:
+            if not self.site.admin_prefix:
+                urlpatterns += self.get_ext_urls()
+            else:
+                urlpatterns += self.get_pages_urls()
+
+        #~ print 20131021, urlpatterns
+        return urlpatterns
+
+    def setup_media_link(self, urlpatterns, short_name,
+                         attr_name=None, source=None):
+        if not exists(settings.MEDIA_ROOT):
+            logger.info("MEDIA_ROOT does not exist: %s",
+                        settings.MEDIA_ROOT)
+            return
+        prefix = settings.MEDIA_URL[1:]
+        target = join(settings.MEDIA_ROOT, short_name)
+        if exists(target):
+            #~ logger.info("20130409 path exists: %s",target)
+            return
+        if attr_name is not None:
+            source = getattr(self.site, attr_name)
+            if not source:
+                raise Exception(
+                    "%s does not exist and SITE.%s is not set." % (
+                        target, attr_name))
+            if not exists(source):
+                raise Exception("SITE.%s (%s) does not exist" %
+                                (attr_name, source))
+        elif not exists(source):
+            raise Exception("%s does not exist" % source)
+        if is_devserver():
+            #~ logger.info("django.views.static serving /%s%s from %s",prefix,short_name,source)
+            urlpatterns.extend(
+                patterns('django.views.static',
+                           (r'^%s%s/(?P<path>.*)$' % (prefix, short_name),
+                            'serve', {
+                                'document_root': source,
+                                'show_indexes': False})))
+        else:
+            symlink = getattr(os, 'symlink', None)
+            if symlink is None:
+                logger.info("Cannot create symlink %s -> %s.",
+                            target, source)
+                #~ raise Exception("Cannot run a production server on an OS that doesn't have symlinks")
+            else:
+                logger.info("Create symlink %s -> %s.", target, source)
+                try:
+                    symlink(source, target)
+                except OSError as e:
+                    raise OSError(
+                        "Failed to create symlink %s -> %s : %s",
+                        target, source, e)
 
