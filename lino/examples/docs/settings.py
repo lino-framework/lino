@@ -54,7 +54,8 @@ class Site(Site):
         yield 'lino.modlib.uploads'
         yield 'lino.modlib.notes'
         yield 'lino.modlib.outbox'
-        yield 'lino.modlib.cal'
+        yield 'lino.apps.extensible'
+        yield 'lino.apps.cal'
         yield 'lino.modlib.postings'
         yield 'lino.modlib.households'
 

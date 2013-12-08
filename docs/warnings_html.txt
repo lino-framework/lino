@@ -1,2 +1,48 @@
-None:1: WARNING: undefined label: luc (if the link has no caption the label must precede a section header)
-/home/luc/hgwork/lino/docs/releases/index.rst:1: WARNING: unknown document: 1.6.13
+/home/luc/hgwork/lino/docs/api/lino.management.commands.makescreenshots.rst:4: WARNING: autodoc: failed to import module u'lino.management.commands.makescreenshots'; the following exception was raised:
+Traceback (most recent call last):
+  File "/home/luc/pythonenvs/py27/local/lib/python2.7/site-packages/sphinx/ext/autodoc.py", line 335, in import_object
+    __import__(self.modname)
+  File "/home/luc/hgwork/lino/lino/management/commands/makescreenshots.py", line 39, in <module>
+    from django.core.servers.basehttp import WSGIServerException, get_internal_wsgi_application
+ImportError: cannot import name WSGIServerException
+/home/luc/hgwork/lino/docs/api/lino.management.commands.syncscreenshots.rst:4: WARNING: autodoc: failed to import module u'lino.management.commands.syncscreenshots'; the following exception was raised:
+Traceback (most recent call last):
+  File "/home/luc/pythonenvs/py27/local/lib/python2.7/site-packages/sphinx/ext/autodoc.py", line 335, in import_object
+    __import__(self.modname)
+  File "/home/luc/hgwork/lino/lino/management/commands/syncscreenshots.py", line 48, in <module>
+    from django.core.servers.basehttp import WSGIServerException, get_internal_wsgi_application
+ImportError: cannot import name WSGIServerException
+/home/luc/hgwork/lino/docs/api/lino.projects.homeworkschool.settings.demo.rst:4: WARNING: autodoc: failed to import module u'lino.projects.homeworkschool.settings.demo'; the following exception was raised:
+Traceback (most recent call last):
+  File "/home/luc/pythonenvs/py27/local/lib/python2.7/site-packages/sphinx/ext/autodoc.py", line 335, in import_object
+    __import__(self.modname)
+  File "/home/luc/hgwork/lino/lino/projects/homeworkschool/settings/demo.py", line 2, in <module>
+    SITE = Site(globals(), title=Site.verbose_name + " demo")
+  File "/home/luc/hgwork/site/djangosite/djangosite_site.py", line 215, in __init__
+    self.override_defaults(**kwargs)
+  File "/home/luc/hgwork/lino/lino/lino_site.py", line 1175, in override_defaults
+    super(Site, self).override_defaults(**kwargs)
+  File "/home/luc/hgwork/north/north/north_site.py", line 221, in override_defaults
+    super(Site, self).override_defaults(**kwargs)
+  File "/home/luc/hgwork/site/djangosite/djangosite_site.py", line 312, in override_defaults
+    app_mod = import_module(app_name)
+  File "/home/luc/pythonenvs/py27/local/lib/python2.7/site-packages/django/utils/importlib.py", line 40, in import_module
+    __import__(name)
+ImportError: No module named cal
+/home/luc/hgwork/lino/docs/api/lino.projects.igen.settings.rst:4: WARNING: autodoc: failed to import module u'lino.projects.igen.settings'; the following exception was raised:
+Traceback (most recent call last):
+  File "/home/luc/pythonenvs/py27/local/lib/python2.7/site-packages/sphinx/ext/autodoc.py", line 335, in import_object
+    __import__(self.modname)
+  File "/home/luc/hgwork/lino/lino/projects/igen/settings.py", line 73, in <module>
+    SITE = Site(globals())
+  File "/home/luc/hgwork/site/djangosite/djangosite_site.py", line 215, in __init__
+    self.override_defaults(**kwargs)
+  File "/home/luc/hgwork/lino/lino/lino_site.py", line 1175, in override_defaults
+    super(Site, self).override_defaults(**kwargs)
+  File "/home/luc/hgwork/north/north/north_site.py", line 221, in override_defaults
+    super(Site, self).override_defaults(**kwargs)
+  File "/home/luc/hgwork/site/djangosite/djangosite_site.py", line 312, in override_defaults
+    app_mod = import_module(app_name)
+  File "/home/luc/pythonenvs/py27/local/lib/python2.7/site-packages/django/utils/importlib.py", line 40, in import_module
+    __import__(name)
+ImportError: No module named cal

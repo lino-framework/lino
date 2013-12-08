@@ -207,8 +207,19 @@ class DisableDeleteHandler():
         return None
 
 
-
 class Kernel(object):
+    """This is the class of the object stored in `settings.SITE.ui`. It is
+    (like SITE itself) a "de facto singleton".  But it remains an
+    independent class/object instance (and is not merged into the
+    Site) because it gets imported and instantiated only when Django
+    has finished the models loading.
+    
+    TODO: Either rename `SITE.ui` to `SITE.kernel`, or rename this to
+    something else.  Because "kernel" suggests something which is
+    loaded *in first place*, but this object is rather loaded at the
+    end (of the startup process).
+
+    """
 
     def __init__(self, site):
         self.pending_threads = {}

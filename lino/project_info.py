@@ -101,12 +101,6 @@ lino.modlib.uploads
 lino.modlib.properties
 lino.modlib.users
 lino.modlib.thirds
-lino.modlib.cal
-lino.modlib.cal.management
-lino.modlib.cal.management.commands
-lino.modlib.cal.fixtures
-lino.modlib.cal.tests
-lino.modlib.cal.workflows
 lino.modlib.reception
 lino.modlib.tickets
 lino.modlib.tickets.fixtures
@@ -196,6 +190,7 @@ lino.projects.polly
 lino.projects.polly.settings
 lino.projects.presto
 lino.projects.presto.fixtures
+lino.projects.presto.settings
 lino.projects.std
 lino.projects.babel_tutorial
 lino.projects.babel_tutorial.fixtures

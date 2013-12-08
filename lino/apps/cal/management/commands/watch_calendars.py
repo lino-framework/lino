@@ -57,7 +57,7 @@ from lino.utils import confirm, iif
 from lino.utils import dblogger
 
 from lino.utils.daemoncommand import DaemonCommand
-from lino.modlib.cal.utils import aware, dt2kw, setkw
+from ...utils import aware, dt2kw, setkw
 
 
 Place = dd.resolve_model('cal.Place')

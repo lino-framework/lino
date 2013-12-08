@@ -586,14 +586,18 @@ def site_setup(site):
 
     #~ site.modules.users.User.update_reminders = UpdateReminders()
 
-    site.modules.users.Users.add_detail_panel('cal_left', """
-    event_type access_class 
-    cal.SubscriptionsByUser
-    # cal.MembershipsByUser
-    """)
-    site.modules.users.Users.add_detail_tab('cal', """
-    cal_left:30 cal.TasksByUser:60
-    """, MODULE_LABEL, required=dict(user_groups='office'))
+    site.modules.users.Users.add_detail_panel(
+        'cal_left', """
+        event_type access_class
+        cal.SubscriptionsByUser
+        # cal.MembershipsByUser
+        """)
+    site.modules.users.Users.add_detail_tab(
+        'cal', """
+        cal_left:30 cal.TasksByUser:60
+        """,
+        MODULE_LABEL,
+        required=dict(user_groups='office'))
     #~ site.modules.users.Users.add_detail_tab('cal.TasksByUser')
 
 
@@ -644,10 +648,7 @@ def setup_explorer_menu(site, ui, profile, m):
     #~ m.add_action(RecurrenceSets)
 
 
-#~ dd.add_user_group('office',MODULE_LABEL)
-
 customize_users()
-
 
 from .models_calendar import *
 from .models_task import *

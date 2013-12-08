@@ -254,11 +254,9 @@ class PanelEvents(Events):
         return obj
 
 
-MODULE_LABEL = settings.SITE.plugins.cal.verbose_name
-
-
 def setup_main_menu(site, ui, profile, m):
-    m = m.add_menu("cal", MODULE_LABEL)
+    m = m.add_menu("cal", settings.SITE.plugins.cal.verbose_name)
+    # m = m.add_menu("cal", _("Calendar"))
     m.add_action('extensible.CalendarPanel')
 
 
