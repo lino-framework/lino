@@ -769,7 +769,8 @@ class OldCompanyContact(dd.Model):
 class ContactRelated(dd.Model):
 
     """
-    Abstract class for things that relate to a company represented by a person as a given role.
+    Abstract class for things that relate to a company represented
+    by a person as a given role.
     
     .. local_fields:: lino.modlib.contacts.models.ContactRelated
     
@@ -780,20 +781,23 @@ class ContactRelated(dd.Model):
     class Meta:
         abstract = True
 
-    company = models.ForeignKey("contacts.Company",
-                                related_name="%(app_label)s_%(class)s_set_by_company",
-                                verbose_name=_("Company"),
-                                blank=True, null=True)
+    company = models.ForeignKey(
+        "contacts.Company",
+        related_name="%(app_label)s_%(class)s_set_by_company",
+        verbose_name=_("Company"),
+        blank=True, null=True)
 
-    contact_person = models.ForeignKey("contacts.Person",
-                                       related_name="%(app_label)s_%(class)s_set_by_contact_person",
-                                       blank=True, null=True,
-                                       verbose_name=_("represented by"))
+    contact_person = models.ForeignKey(
+        "contacts.Person",
+        related_name="%(app_label)s_%(class)s_set_by_contact_person",
+        blank=True, null=True,
+        verbose_name=_("represented by"))
 
-    contact_role = models.ForeignKey("contacts.RoleType",
-                                     related_name="%(app_label)s_%(class)s_set_by_contact_role",
-                                     blank=True, null=True,
-                                     verbose_name=_("represented as"))
+    contact_role = models.ForeignKey(
+        "contacts.RoleType",
+        related_name="%(app_label)s_%(class)s_set_by_contact_role",
+        blank=True, null=True,
+        verbose_name=_("represented as"))
 
     @chooser()
     def contact_person_choices(cls, company):
@@ -802,7 +806,8 @@ class ContactRelated(dd.Model):
         """
         if company is not None:
             return cls.contact_person_choices_queryset(company)
-        return settings.SITE.modules.contacts.Person.objects.order_by('last_name', 'first_name')
+        return settings.SITE.modules.contacts.Person.objects.order_by(
+            'last_name', 'first_name')
 
     def get_contact(self):
         if self.contact_person is not None:
@@ -828,12 +833,12 @@ class ContactRelated(dd.Model):
     def get_partner(self):
         return self.company or self.contact_person
     partner = property(get_partner)
-    """(read-only property) 
-    The "legal partner", 
-    i.e. usually the :class:`Company` instance pointed to by 
-    the `company` field,
-    except when that field is empty, in which case `partner` 
-    contains the :class:`Person` pointed to by the 
+    """(read-only property) \
+    The "legal partner", \
+    i.e. usually the :class:`Company` instance pointed to by \
+    the `company` field, \
+    except when that field is empty, in which case `partner` \
+    contains the :class:`Person` pointed to by the \
     `contact_person` field.
     If both fields are empty, then `partner` contains `None`.
     """
@@ -872,32 +877,24 @@ class ContactRelated(dd.Model):
         super(ContactRelated, self).full_clean(*args, **kw)
 
 
-#~ if settings.SITE.is_installed('contacts'):
-    #~ """
-    #~ Don't inject fields if contacts is just being imported from some other module.
-    #~ """
-#~ dd.inject_field(settings.SITE.user_model,
-    #~ 'partner',
-    #~ models.ForeignKey(Partner,
-        #~ blank=True,null=True,
-        #~ verbose_name=_("Partner")))
-#~ if settings.SITE.is_installed('contacts'):
-    #~ from lino.models import SiteConfig
-dd.inject_field('system.SiteConfig',
-                'next_partner_id',
-                models.IntegerField(default=PARTNER_NUMBERS_START_AT,
-                                    blank=True, null=True,
-                                    verbose_name=_("Next partner id"),
-                                    help_text=_("The next automatic id for any new partner.")))
+dd.inject_field(
+    'system.SiteConfig',
+    'next_partner_id',
+    models.IntegerField(
+        default=PARTNER_NUMBERS_START_AT,
+        blank=True, null=True,
+        verbose_name=_("Next partner id"),
+        help_text=_("The next automatic id for any new partner.")))
 
-dd.inject_field('system.SiteConfig',
-                'site_company',
-                models.ForeignKey("contacts.Company",
-                                  blank=True, null=True,
-                                  verbose_name=_(
-                                      "The company that runs this site"),
-                                  related_name='site_company_sites',
-                                  help_text=_("The Company to be used as sender in documents.")))
+dd.inject_field(
+    'system.SiteConfig',
+    'site_company',
+    models.ForeignKey(
+        "contacts.Company",
+        blank=True, null=True,
+        verbose_name=_("The company that runs this site"),
+        related_name='site_company_sites',
+        help_text=_("The Company to be used as sender in documents.")))
 
 
 #~ dd.inject_field(Partner,

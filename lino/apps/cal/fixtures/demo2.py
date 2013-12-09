@@ -33,12 +33,11 @@ from django.utils.translation import ugettext as _
 
 from lino.utils import Cycler
 
-
-
 from lino import dd
 
-from .. import models as cal
+# from ..cal import models as cal
 
+cal = dd.resolve_app('cal')
 Event = dd.resolve_model('cal.Event')
 EventType = dd.resolve_model('cal.EventType')
 Subscription = dd.resolve_model('cal.Subscription')

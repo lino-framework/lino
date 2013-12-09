@@ -38,10 +38,11 @@ due to a hackerish method
 `bulk_create_with_manual_ids`
 in :mod:`lino_welfare.modlib.debts.models`.
 
+:fab:`initdb` failed for `belref` and `presto` because 
+I had removed the SITE instantiation from their `settings` module.
+
 
 TODO:
-
-- faggio test suite still broken
 
 - :class:`CalendarAction <lino.core.actions.CalendarAction>` 
   should be defined in :mod:`lino.apps.extensible.models`,

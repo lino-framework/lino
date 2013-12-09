@@ -8,30 +8,37 @@ execfile(ROOTDIR.child('lino','project_info.py'),globals())
 from djangosite.utils.pythontest import TestCase
 
 
-
 class LinoTestCase(TestCase):
     demo_settings_module = "lino.projects.std.settings_test"
-    #~ default_environ = dict(DJANGO_SETTINGS_MODULE="lino.projects.std.settings")
     project_root = ROOTDIR
-    
+
+
 class PackagesTests(LinoTestCase):
-    def test_01(self): self.run_packages_test(SETUP_INFO['packages'])
+    def test_01(self):
+        self.run_packages_test(SETUP_INFO['packages'])
+
 
 class BlogTest(LinoTestCase):
-    def test_20130316(self): self.run_simple_doctests('docs/blog/2013/0316.rst')
-    def test_20130507(self): self.run_simple_doctests('docs/blog/2013/0507.rst')
-    def test_20130508(self): self.run_simple_doctests('docs/blog/2013/0508.rst')
-    #~ def test_20130513(self): self.run_simple_doctests('docs/blog/2013/0513.rst')
-    #~ def test_20130622(self): self.run_simple_doctests('docs/blog/2013/0622.rst')
+    def test_20130316(self):
+        self.run_simple_doctests("""
+        docs/blog/2013/0316.rst
+        docs/blog/2013/0507.rst
+        docs/blog/2013/0508.rst
+        # docs/blog/2013/0513.rst
+        # docs/blog/2013/0622.rst
+        """)
     #~ def test_20130714(self): self.run_simple_doctests('docs/blog/2013/0714.rst')
     def test_20130716(self): self.run_simple_doctests('docs/blog/2013/0716.rst')
     # def test_20130719(self): self.run_simple_doctests('docs/blog/2013/0719.rst')
     #~ def test_20130807(self): self.run_simple_doctests('docs/blog/2013/0807.rst')
     #~ def test_20130821(self): self.run_simple_doctests('docs/blog/2013/0821.rst')
-    
+
+
 class DocsTests(LinoTestCase):
 
-    def test_templates_api(self): self.run_simple_doctests('docs/user/templates_api.rst')
+    def test_templates_api(self):
+        self.run_simple_doctests('docs/user/templates_api.rst')
+
     #~ def test_actions(self): self.run_docs_django_tests('tutorials.actions.settings')
     def test_de_BE(self): self.run_django_manage_test('docs/tutorials/de_BE')
     def test_auto_create(self): self.run_django_manage_test('docs/tutorials/auto_create')
@@ -76,6 +83,7 @@ class CosiTests(LinoTestCase):
     def test_cosi(self):      self.run_django_manage_test("lino/projects/cosi") # covered by docs/tutorials/quickstart
     def test_cosi_demo(self): self.run_simple_doctests('docs/tested/test_cosi_demo.rst')
         
+
 class ProjectsTests(LinoTestCase):
     
     def test_events(self): self.run_django_manage_test("lino/projects/events") 
@@ -85,10 +93,14 @@ class ProjectsTests(LinoTestCase):
     #~ def test_homeworkschool(self): self.run_django_manage_test("lino/projects/homeworkschool.settings.demo") 
     def test_min1(self): self.run_django_manage_test("lino/projects/min1") 
     def test_min2(self): self.run_django_manage_test("lino/projects/min2") 
-    
+
+
 class Tutorials(LinoTestCase):
-    def test_lets(self): self.run_django_manage_test("lino/tutorials/lets1") 
-    def test_mini(self): self.run_django_manage_test("lino/tutorials/mini") 
+    def test_lets(self):
+        self.run_django_manage_test("lino/tutorials/lets1")
+
+    def test_mini(self):
+        self.run_django_manage_test("lino/tutorials/mini")
     
 class TestAppsTests(LinoTestCase):
     

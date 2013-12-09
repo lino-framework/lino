@@ -169,6 +169,7 @@ lino.ui
 lino.projects
 lino.projects.belref
 lino.projects.belref.fixtures
+lino.projects.belref.settings
 lino.projects.cms
 lino.projects.cms.fixtures
 lino.projects.cosi

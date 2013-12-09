@@ -53,19 +53,6 @@ class Site(Site):
         'sales.InvoiceItem',
     ]
 
-    #~ remote_user_header = "REMOTE_USER"
-
-    #~ def get_main_action(self,user):
-        #~ return self.modules.ui.Home.default_action
-    #~ def get_application_info(self):
-        #~ return (__name__,__version__,__url__)
-    #~ def setup_quicklinks(self,ui,user,tb):
-        #~ tb.add_action(self.modules.contacts.Persons.detail_action)
-        #~ if self.use_extensible:
-            #~ tb.add_action(self.modules.cal.Panel)
-        #~ tb.add_action(self.modules.dsbe.MyPersons)
-        #~ tb.add_action(self.modules.isip.MyContracts)
-        #~ tb.add_action(self.modules.jobs.MyContracts)
     def get_installed_apps(self):
         for a in super(Site, self).get_installed_apps():
             yield a
@@ -77,7 +64,8 @@ class Site(Site):
         yield 'lino.modlib.households'
         yield 'lino.modlib.notes'
         yield 'lino.modlib.uploads'
-        yield 'lino.modlib.cal'
+        yield 'lino.apps.extensible'
+        yield 'lino.apps.cal'
         yield 'lino.modlib.outbox'
         yield 'lino.modlib.pages'
 

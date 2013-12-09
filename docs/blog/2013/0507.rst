@@ -40,7 +40,7 @@ I just wrote a module `lino.projects.presto.test_settings`,
 then wrote the following code snippet directly into my blog entry:
 
 >>> import os
->>> os.environ['DJANGO_SETTINGS_MODULE'] = 'lino.projects.presto.test_settings'
+>>> os.environ['DJANGO_SETTINGS_MODULE'] = 'lino.projects.presto.settings.test'
 >>> from lino.runtime import *
 >>> from django.test import Client
 >>> client = Client()
