@@ -18,6 +18,7 @@ import lino
 
 from lino.projects.std.settings import *
 
+
 class Site(Site):
     #~ title = __name__
     version = "0.0.1"
@@ -29,7 +30,7 @@ class Site(Site):
     #~ help_url = "http://lino.saffre-rumma.net/az/index.html"
     #~ migration_module = 'lino.projects.az.migrate'
 
-    demo_fixtures = 'std few_countries few_cities few_languages demo demo2'.split(
+    demo_fixtures = 'std few_languages demo demo2'.split(
     )
 
     #~ project_model = 'contacts.Person'
@@ -44,14 +45,11 @@ class Site(Site):
 
     #~ index_view_action = "dsbe.Home"
 
-    override_modlib_models = [
-        #~ 'contacts.Partner',
-        'contacts.Person',
-        #~ 'contacts.Company',
-        #~ 'households.Household',
-        'sales.Invoice',
-        'sales.InvoiceItem',
-    ]
+    override_modlib_models = {
+        'contacts.Person': None,
+        'sales.Invoice': None,
+        'sales.InvoiceItem': None,
+    }
 
     def get_installed_apps(self):
         for a in super(Site, self).get_installed_apps():
