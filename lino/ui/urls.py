@@ -24,4 +24,5 @@ is set to ``'lino.ui.extjs3.urls'``.
 """
 
 from django.conf import settings
+settings.SITE.startup()
 urlpatterns = settings.SITE.ui.get_patterns()

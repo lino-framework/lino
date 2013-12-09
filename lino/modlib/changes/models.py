@@ -14,7 +14,7 @@
 """
 The :xfile:`models` module for :mod:`lino.modlib.changes`.
 
-It defines the :class:`Change` model 
+It defines the :class:`Change` model
 and the :func:`watch_changes` function.
 It also adds a menu entry to the `Explorer` menu.
 """
@@ -228,10 +228,10 @@ def log_change(type, request, master, obj, msg=''):
 def on_update(sender=None, request=None, **kw):
     "Note that sender is a Watcher instance"
     #~ print 'on_update',sender
-    logger.info("20131112 on_update %s", sender)
+    # logger.info("20131112 on_update %s", sender)
     master = get_master(sender.watched)
     if master is None:
-        logger.info("20131112 No master, nothing to log")
+        # logger.info("20131112 No master, nothing to log")
         return
 
     cs = sender.watched.change_watcher_spec

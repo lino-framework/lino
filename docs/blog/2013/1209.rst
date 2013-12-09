@@ -2,4 +2,8 @@
 20131209 (Monday, 09 December 2013)
 ===================================
 
-Upgraded on :ref:`lf`
+Upgraded the :ref:`demos` on :ref:`lf`.
+
+- AttributeError at /api/integ/src/eidreader/EIDReader/class.class
+
+- AttributeError: 'Site' object has no attribute 'ui'
