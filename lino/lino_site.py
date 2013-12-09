@@ -1548,7 +1548,7 @@ class Site(Site):
                             yield (table, text)
 
     def get_installed_apps(self):
-        #~ yield 'lino.ui'
+
         if self.user_model is not None and self.remote_user_header is None:
             yield 'django.contrib.sessions'  # 20121103
         if self.django_admin_prefix:

@@ -5,5 +5,10 @@
 Upgraded the :ref:`demos` on :ref:`lf`.
 
 - AttributeError at /api/integ/src/eidreader/EIDReader/class.class
-
 - AttributeError: 'Site' object has no attribute 'ui'
+
+
+TODO: 
+- `Site` needs a way to "hide" an app without overriding 
+  :setting:`get_installed_apps`.
+  Probably a setting  :setting:`hidden_apps`.
