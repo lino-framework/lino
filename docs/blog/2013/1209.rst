@@ -17,6 +17,9 @@ with them.)
 - `'module' object has no attribute 'CalendarPanel'`
   (AttributeError at /api/reception/CoachingsByClient)
 
+- `AttrDict instance has no key 'PanelCalendars'`
+  (AttributeError at /restful/cal/PanelCalendars)
+
 - The online demo of :ref:`welfare` had always been running with
   `use_eidreader=False` since the applet anyway requires manual client
   authentication and might even cause the browser to hang when the

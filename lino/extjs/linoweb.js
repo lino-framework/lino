@@ -5335,8 +5335,7 @@ Lino.unused_calendarStore = new Ext.data.JsonStore({
       listeners: { exception: Lino.on_store_exception }
       ,restful : true
       ,proxy: new Ext.data.HttpProxy({ 
-          //~ url: '{{settings.SITE.admin_prefix}}/restful/cal/PanelCalendars?fmt={{ext_requests.URL_FORMAT_JSON}}', 
-          url: '{{settings.SITE.build_admin_url("restful/cal/PanelCalendars",fmt="{{ext_requests.URL_FORMAT_JSON}}")}}', 
+          url: '{{settings.SITE.build_admin_url("restful/extensible/PanelCalendars",fmt="{{ext_requests.URL_FORMAT_JSON}}")}}', 
           disableCaching: false // no need for cache busting when loading via Ajax
           //~ restful : true
           //~ method: "GET"
@@ -5514,8 +5513,7 @@ Lino.CalendarApp = function() { return {
           listeners: { exception: Lino.on_store_exception }
           ,restful : true
           ,proxy: new Ext.data.HttpProxy({ 
-              //~ url: '{{settings.SITE.admin_prefix}}/restful/cal/PanelCalendars?fmt={{ext_requests.URL_FORMAT_JSON}}', 
-              url: '{{settings.SITE.build_admin_url("restful/cal/PanelCalendars",fmt="{{ext_requests.URL_FORMAT_JSON}}")}}', 
+              url: '{{settings.SITE.build_admin_url("restful/extensible/PanelCalendars",fmt="{{ext_requests.URL_FORMAT_JSON}}")}}', 
               disableCaching: false // no need for cache busting when loading via Ajax
               //~ restful : true
               //~ method: "GET"

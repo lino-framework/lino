@@ -18,14 +18,16 @@ Traceback (most recent call last):
     __import__(self.modname)
   File "/home/luc/hgwork/lino/lino/projects/igen/settings.py", line 73, in <module>
     SITE = Site(globals())
-  File "/home/luc/hgwork/site/djangosite/djangosite_site.py", line 221, in __init__
+  File "/home/luc/hgwork/site/djangosite/djangosite_site.py", line 223, in __init__
     self.override_defaults(**kwargs)
   File "/home/luc/hgwork/lino/lino/lino_site.py", line 1175, in override_defaults
     super(Site, self).override_defaults(**kwargs)
   File "/home/luc/hgwork/north/north/north_site.py", line 221, in override_defaults
     super(Site, self).override_defaults(**kwargs)
-  File "/home/luc/hgwork/site/djangosite/djangosite_site.py", line 318, in override_defaults
+  File "/home/luc/hgwork/site/djangosite/djangosite_site.py", line 326, in override_defaults
     app_mod = import_module(app_name)
   File "/home/luc/pythonenvs/py27/local/lib/python2.7/site-packages/django/utils/importlib.py", line 40, in import_module
     __import__(name)
 ImportError: No module named cal
+/home/luc/hgwork/lino/lino/lino_site.py:docstring of lino.lino_site.Site.webdav_url:7: WARNING: term not in glossary: runserver
+/home/luc/hgwork/lino/docs/blog/2013/1209.rst:5: WARNING: undefined label: ies (if the link has no caption the label must precede a section header)
