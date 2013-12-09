@@ -1688,7 +1688,7 @@ class Site(Site):
         :class:`BaseRequest <lino.core.requests.BaseRequest>` object which
         has a :meth:`show <lino.core.requests.BaseRequest.show>` method.
         """
-        if username is None:
+        if self.user_model is None or username is None:
             if not kw.has_key('user'):
                 from lino.core.auth import AnonymousUser
                 kw.update(user=AnonymousUser.instance())

@@ -8,6 +8,8 @@ to a production site. There is now almost every day some message
 in my inbox with some :ref:`ies` caused by somebody playing 
 with them.)
 
+Simple bug fixes:
+
 - AttributeError at /api/integ/src/eidreader/EIDReader/class.class
 
 - An `'Site' object has no attribute 'ui'` AttributeError at startup 
@@ -18,7 +20,15 @@ with them.)
   (AttributeError at /api/reception/CoachingsByClient)
 
 - `AttrDict instance has no key 'PanelCalendars'`
-  (AttributeError at /restful/cal/PanelCalendars)
+  (AttributeError at faggio-demo /restful/cal/PanelCalendars)
+
+- `unsupported operand type(s) for -: 'NoneType' and 'int'`
+  (TypeError at faggio-demo /api/courses/PendingRequestedEnrolments/69)
+
+- :ref:`belref` had only about 30 countries instead of the usual 300
+
+
+New feature:
 
 - The online demo of :ref:`welfare` had always been running with
   `use_eidreader=False` since the applet anyway requires manual client

@@ -711,10 +711,13 @@ class Enrolment(dd.UserAuthored, dd.Printable, sales.Invoiceable):
 
     def get_confirm_veto(self, ar):
         """
-        Called from ConfirmEnrolment.  If this returns something else than None,
-        then the enrolment won't be confirmed and the return value 
+        Called from ConfirmEnrolment.
+        If this returns something else than None,
+        then the enrolment won't be confirmed and the return value
         displayed to the user.
         """
+        if self.max_places is None:
+            return
         free = self.course.get_free_places()
         if free <= 0:
             return _("No places left in %s") % self.course

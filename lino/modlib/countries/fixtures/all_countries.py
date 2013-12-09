@@ -32,13 +32,14 @@ extends this data by attaching Belgian INS codes to these countries.
 
 """
 
+from __future__ import print_function
+
 import os
 from xml.dom import minidom
-#~ import logging
-#~ logger = logging.getLogger('lino')
+import logging
+logger = logging.getLogger('lino')
 
 from django.conf import settings
-from lino.utils import dblogger as logger
 from north.dbutils import babel_values
 
 TABLE2 = """
@@ -92,12 +93,11 @@ def objects():
     
     """
     fn = os.path.join(os.path.dirname(__file__), 'countries.xml')
+    logger.info("Loading %s", fn)
     dom = minidom.parse(fn)
     #~ print dom.documentElement.__class__
     #~ print dom.documentElement
     for coun in dom.documentElement.getElementsByTagName('coun:country'):
-        #~ print coun.toxml()
-        #~ print c.attributes['coun:alpha2']
         names = {}
         for name in coun.getElementsByTagName('coun:name'):
             assert len(name.childNodes) == 1
@@ -108,7 +108,8 @@ def objects():
         kw = babel_values('name', **names)
         iso2 = coun.getElementsByTagName('coun:alpha2')[0].childNodes[0].data
         if Country.objects.filter(pk=iso2).count() > 0:
-            return
+            logger.debug("ISO code %r already exists %s", iso2, coun)
+            continue
         kw.update(
             isocode=iso2,
             iso3=coun.getElementsByTagName(
@@ -120,8 +121,8 @@ def objects():
             n += 1
             yield Country(**kw)
         else:
-            logger.debug("%r : no name for default site language %s",
-                         coun, settings.SITE.DEFAULT_LANGUAGE.django_code)
+            logger.info("%r : no name for default site language %s",
+                        coun, settings.SITE.DEFAULT_LANGUAGE.django_code)
 
     for ln in TABLE2.splitlines():
         ln = ln.strip()
@@ -130,5 +131,5 @@ def objects():
             n += 1
             yield Country(isocode=code1, name=name)
 
+    logger.info("Installed %d countries", n)
 
-    #~ logger.info("Installed %d countries",n)
