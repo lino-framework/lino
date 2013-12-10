@@ -2388,7 +2388,7 @@ Lino.show_fk_detail = function(combo,detail_action,insert_action) {
     if (pk) {
         detail_action.run(null,{record_id: pk})
       } else {
-        insert_action.run();
+        insert_action.run(null,{record_id:-99999});
         //~ Lino.notify("{{_('Cannot show detail for empty foreign key.')}}");
       }
 };
@@ -2889,7 +2889,7 @@ Lino.FormPanel = Ext.extend(Lino.FormPanel,{
       this.tbar = this.tbar.concat([
         {
           //~ text:'Refresh',
-          handler:function(){ this.do_when_clean(true,this.refresh.createDelegate(this)) },
+          handler:function(){ this.do_when_clean(false,this.refresh.createDelegate(this)) },
           iconCls: 'x-tbar-loading',
           tooltip:"{{_('Reload current record')}}",
           scope:this}
@@ -2961,36 +2961,6 @@ Lino.FormPanel = Ext.extend(Lino.FormPanel,{
     
   },
   
-  unused_is_loading : function() { 
-    if (this.current_record == null) {
-        //~ console.log("20130515 current_record is null");
-        return true; 
-    }
-    
-    if (! this.loadMask) return true; // not even rendered: 
-    if (! this.loadMask.el) return true; // not even rendered: 
-    // thanks to Marco Pegoraro http://movableapp.com/2011/09/sencha-touch-loadmask-isvisible/
-    var loading = (this.loadMask.el.select('.x-loading-msg').elements.length > 0);
-    //~ console.log('20130515 GridPanel.is_loading() returns',loading);
-    return loading;
-
-    
-    var loading = false;
-    this.cascade(function(cmp){
-        if (cmp instanceof Lino.GridPanel && cmp.is_loading()) {
-            //~ console.log(20130515, cmp.title,'is loading');
-            loading = true;
-            return false;
-        }
-      });
-    return loading;
-    //~ var a = this.findByType(Lino.GridPanel);
-    //~ for (i=0;i<a.length;i++) {
-        //~ if (a[i].is_loading()) return true;
-    //~ }
-    //~ return false;
-  },
-  
   get_status : function(){
       var st = {
         base_params: this.get_base_params(),
@@ -3003,6 +2973,7 @@ Lino.FormPanel = Ext.extend(Lino.FormPanel,{
       st.param_values = this.status_param_values;
       return st;
   },
+
   /* FormPanel */
   set_status : function(status,rp){
     this.requesting_panel = Ext.getCmp(rp);
@@ -3202,10 +3173,10 @@ Lino.FormPanel = Ext.extend(Lino.FormPanel,{
         // e.g. InsertWrapper FormPanel doesn't have a record_selector
     }
     this.current_record = record;
-    //~ if (record) 
-        //~ console.log('Lino.FormPanel.set_current_record',record.title,record);
-    //~ else
-        //~ console.log('Lino.FormPanel.set_current_record',record);
+    // if (record) 
+    //     console.log('Lino.FormPanel.set_current_record',record.title,record);
+    // else
+    //     console.log('Lino.FormPanel.set_current_record',record);
     //~ this.config.main_panel.form.load(record);    
     if (record) {
       this.enable();

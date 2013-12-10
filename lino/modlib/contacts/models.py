@@ -421,6 +421,7 @@ class Person(PersonMixin, Partner):
         super(Person, self).full_clean(*args, **kw)
 
 
+
 class PersonDetail(PartnerDetail):
 
     #~ main = """

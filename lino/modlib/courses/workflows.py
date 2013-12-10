@@ -36,6 +36,7 @@ from django.utils.encoding import force_unicode
 from lino import dd
 
 from lino.modlib.courses.models import EnrolmentStates
+from lino.modlib.courses.models import CourseStates
 
 
 class PrintAndChangeStateAction(dd.ChangeStateAction):
@@ -43,9 +44,7 @@ class PrintAndChangeStateAction(dd.ChangeStateAction):
     def run_from_ui(self, ar, **kw):
         obj = ar.selected_rows[0]
 
-        def ok(ar):
-            # to avoid UnboundLocalError local variable 'kw' referenced before
-            # assignment
+        def ok(ar2):
             obj.do_print.run_from_ui(ar, **kw)
             super(PrintAndChangeStateAction, self).run_from_ui(ar)
             ar.response.update(refresh_all=True)
@@ -102,3 +101,13 @@ def my_enrolment_workflows(sender=None, **kw):
     EnrolmentStates.confirmed.add_transition(ConfirmEnrolment)
     EnrolmentStates.certified.add_transition(CertifyEnrolment)
     EnrolmentStates.cancelled.add_transition(_("Cancel"), states="confirmed")
+
+    CourseStates.registered.add_transition(states="draft")
+    CourseStates.started.add_transition(states="registered")
+    CourseStates.ended.add_transition(states="started")
+    CourseStates.cancelled.add_transition(
+        _("Cancel"),
+        states="registered started ended")
+    CourseStates.draft.add_transition(
+        _("Reset"),
+        states="registered started ended cancelled")

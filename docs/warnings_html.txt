@@ -12,5 +12,8 @@ Traceback (most recent call last):
   File "/home/luc/hgwork/lino/lino/management/commands/syncscreenshots.py", line 48, in <module>
     from django.core.servers.basehttp import WSGIServerException, get_internal_wsgi_application
 ImportError: cannot import name WSGIServerException
-None:1: WARNING: undefined label: luc (if the link has no caption the label must precede a section header)
-/home/luc/hgwork/lino/docs/releases/index.rst:1: WARNING: unknown document: 1.6.13
+/home/luc/hgwork/lino/lino/modlib/contacts/models.py:docstring of lino.modlib.contacts.models.ContactRelated:4: ERROR: Unknown directive type "local_fields".
+
+.. local_fields:: lino.modlib.contacts.models.ContactRelated
+
+    Adds 3 fields `company`, `contact_person` and `contact_role`.

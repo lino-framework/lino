@@ -15,18 +15,12 @@
 from __future__ import unicode_literals
 
 """
-The :xfile:`models` module for the :mod:`lino.modlib.courses` app.
+The :xfile:`models.py` module for the :mod:`lino.modlib.courses` app.
 """
-
-
-#~ print '20130219 lino.modlib.courses 1'
-
 
 import logging
 logger = logging.getLogger(__name__)
 
-import os
-import cgi
 import datetime
 from decimal import Decimal
 ZERO = Decimal()
@@ -63,6 +57,7 @@ from lino.mixins.printable import DirectPrintAction, Printable
 #~ from lino.mixins.reminder import ReminderEntry
 from lino.core.dbutils import obj2str
 
+from ..contacts.utils import parse_name
 
 users = dd.resolve_app('users')
 cal = dd.resolve_app('cal')
@@ -403,9 +398,8 @@ ENROLMENT_USES_UP_A_PLACE = EnrolmentStates.filter(uses_a_place=True)
 
 
 class Course(cal.Reservation, dd.Printable):
-
     """
-    A Course is a group of pupils that regularily 
+    A Course is a group of pupils that regularily
     meet with a given teacher in a given room.
     """
 
@@ -520,25 +514,6 @@ dd.update_field(Course, 'every_unit', default=models.NOT_PROVIDED)
 dd.update_field(Course, 'every', default=models.NOT_PROVIDED)
 
 
-#~ @dd.receiver(dd.pre_save, sender=cal.Event,dispatch_uid="setup_event_from_course")
-#~ def setup_event_from_course(sender=None,instance=None,**kw):
-    # ~ # logger.info("20130528 setup_event_from_course")
-    #~ if settings.SITE.loading_from_dump: return
-    #~ event = instance
-    #~ if event.is_user_modified(): return
-    #~ if event.is_fixed_state(): return
-    #~ if not isinstance(event.owner,Course): return
-    #~ course = event.owner
-    #~ event.project = course
-    #~ event.room = course.room
-    #~ if course.slot:
-        #~ event.start_time = course.slot.start_time
-        #~ event.end_time = course.slot.end_time
-    #~ else:
-        #~ event.start_time = course.start_time
-        #~ event.end_time = course.end_time
-
-
 if Course.FILL_EVENT_GUESTS:
 
     @dd.receiver(dd.post_save, sender=cal.Event, dispatch_uid="fill_event_guests_from_course")
@@ -567,9 +542,9 @@ class CourseDetail(dd.FormLayout):
     #~ start end freq
     main = "general courses.EnrolmentsByCourse"
     general = dd.Panel("""
-    line teacher start_date start_time end_date end_time
-    user room #slot state id:8
-    max_places max_events max_date  every_unit every 
+    line teacher start_date end_date start_time end_time
+    user room #slot workflow_buttons id:8
+    max_places max_events max_date  every_unit every
     monday tuesday wednesday thursday friday saturday sunday
     cal.EventsByController
     """, label=_("General"))
@@ -709,6 +684,27 @@ class Enrolment(dd.UserAuthored, dd.Printable, sales.Invoiceable):
 
     create_invoice = CreateInvoiceForEnrolment()
 
+    @chooser()
+    def pupil_choices(cls, course):
+        Pupil = dd.resolve_model('courses.Pupil')
+        return Pupil.objects.all()
+
+    def create_pupil_choice(self, text):
+        """
+        Called when an unknown pupil name was given.
+        Try to auto-create it.
+        """
+        Pupil = dd.resolve_model('courses.Pupil')
+        kw = parse_name(text)
+        if len(kw) != 2:
+            raise ValidationError(
+                "Cannot find first and last names in %r to \
+                auto-create pupil", text)
+        p = Pupil(**kw)
+        p.full_clean()
+        p.save()
+        return p
+
     def get_confirm_veto(self, ar):
         """
         Called from ConfirmEnrolment.
@@ -716,8 +712,8 @@ class Enrolment(dd.UserAuthored, dd.Printable, sales.Invoiceable):
         then the enrolment won't be confirmed and the return value
         displayed to the user.
         """
-        if self.max_places is None:
-            return
+        if self.course.max_places is None:
+            return  # no veto. unlimited places.
         free = self.course.get_free_places()
         if free <= 0:
             return _("No places left in %s") % self.course
@@ -847,7 +843,9 @@ class Enrolments(dd.Table):
         elif not ar.param_values.participants_only:
             yield unicode(_("Also ")) + unicode(EnrolmentStates.cancelled.text)
         if ar.param_values.course_state:
-            yield unicode(settings.SITE.modules.courses.Course._meta.verbose_name) + ' ' + unicode(ar.param_values.course_state)
+            yield unicode(
+                settings.SITE.modules.courses.Course._meta.verbose_name) \
+                + ' ' + unicode(ar.param_values.course_state)
         if ar.param_values.author:
             yield unicode(ar.param_values.author)
 
@@ -931,26 +929,29 @@ class EventsByCourse(cal.Events):
     auto_fit_column_widths = True
 
 
-#~ def get_todo_tables(ar):
-    #~ yield (PendingRequestedEnrolments, None)
-    #~ yield (PendingConfirmedEnrolments, None)
-dd.inject_field('cal.Event',
-                'course',
-                dd.ForeignKey('courses.Course',
-                              blank=True, null=True,
-                              related_name="events_by_course"))
+dd.inject_field(
+    'cal.Event',
+    'course',
+    dd.ForeignKey(
+        'courses.Course',
+        blank=True, null=True,
+        related_name="events_by_course"))
 
-dd.inject_field(Person,
-                'is_teacher',
-                mti.EnableChild('courses.Teacher',
-                                verbose_name=_("is a teacher"),
-                                help_text=_("Whether this Person is also a Teacher.")))
+dd.inject_field(
+    Person,
+    'is_teacher',
+    mti.EnableChild(
+        'courses.Teacher',
+        verbose_name=_("is a teacher"),
+        help_text=_("Whether this Person is also a Teacher.")))
 
-dd.inject_field(Person,
-                'is_pupil',
-                mti.EnableChild('courses.Pupil',
-                                verbose_name=_("is a pupil"),
-                                help_text=_("Whether this Person is also a Pupil.")))
+dd.inject_field(
+    Person,
+    'is_pupil',
+    mti.EnableChild(
+        'courses.Pupil',
+        verbose_name=_("is a pupil"),
+        help_text=_("Whether this Person is also a Pupil.")))
 
 from lino.modlib.courses import App
 
@@ -967,14 +968,6 @@ def setup_main_menu(site, ui, profile, main):
     #~ m.add_action(Pupils)
     m.add_action(PendingRequestedEnrolments)
     m.add_action(PendingConfirmedEnrolments)
-
-
-def unused_setup_master_menu(site, ui, profile, m):
-    #~ m = m.add_menu("courses",_("School"))
-    m.add_action(Teachers)
-    m.add_action(Pupils)
-    #~ m.add_action(CourseOffers)
-    #~ m.add_action(Courses)
 
 
 def setup_config_menu(site, ui, profile, m):
@@ -994,15 +987,3 @@ def setup_explorer_menu(site, ui, profile, m):
     #~ m.add_action(Events)
     m.add_action(Enrolments)
     m.add_action(EnrolmentStates)
-
-
-
-
-
-
-
-
-
-
-
-#~ print '20130219 lino.modlib.courses ok'

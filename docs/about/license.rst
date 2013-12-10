@@ -4,8 +4,9 @@ Licensing : How to make money with Lino
 Lino is published under the 
 `GPL <http://en.wikipedia.org/wiki/GNU_General_Public_License>`_.
 What does this concretely mean for a Lino application developer?
-This section explains how the author of Lino understands the GPL 
-(it has no legal value, the only authority is the license text).
+This section explains how the author of Lino understands the GPL. 
+It has no legal value, the only authority is the license text. 
+Comments and questions are welcome.
 
 - This license gives you the permission to use Lino and write 
   your own Lino application.
@@ -58,8 +59,5 @@ using **another license** than the GPL. Concretely:
   application on a public website without also distributing your code.
 
 If you want to do one of the above, then you must ask me (and also
-Sencha and Ext.ensible) for *another license than the GPL*, which will
-cost some money.
-
-
-
+Sencha and Ext.ensible) for *another license than the GPL*, and this
+license will cost some money.

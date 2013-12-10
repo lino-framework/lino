@@ -66,7 +66,7 @@ class Calendars(dd.Table):
     """
     detail_layout = """
     name color id
-    description
+    description SubscriptionsByCalendar
     """
 
 
@@ -144,6 +144,11 @@ class SubscriptionsByUser(Subscriptions):
     master_key = 'user'
     auto_fit_column_widths = True
 
+
+class SubscriptionsByCalendar(Subscriptions):
+    required = dd.required(user_groups='office')
+    master_key = 'calendar'
+    auto_fit_column_widths = True
 
 __all__ = [
     'Calendar',

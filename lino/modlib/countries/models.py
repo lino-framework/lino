@@ -185,8 +185,8 @@ class City(dd.BabelNamed):
 
     def get_choices_text(self, request, actor, field):
         """
-        Extends the default behaviour (which would simply diplay this 
-        city in the current language) by also adding the name in other 
+        Extends the default behaviour (which would simply diplay this
+        city in the current language) by also adding the name in other
         languages.
         """
         names = [self.name]

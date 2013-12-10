@@ -24,12 +24,6 @@ Some utilities for parsing contact data.
 
 import re
 
-#~ from django.utils.translation import ugettext_lazy as _
-#~ from django.db import models
-#~ from django.conf import settings
-
-#~ from django.utils.translation import ugettext_lazy as _
-
 
 name_prefixes1 = ("HET", "'T", 'VAN', 'DER', 'TER', 'DEN',
                   'VOM', 'VON', 'OF', "DE", "DU", "EL", "AL", "DI")
@@ -137,6 +131,38 @@ Bibliography:
             last_name=a[-1],
             first_name=' '.join(a[:-1]))
 
+    return kw
+
+
+def upper1(s):
+    if ' ' in s:
+        return s  # don't change
+    return s[0].upper() + s[1:]
+
+
+def parse_name(text):
+    """
+Examples:
+
+>>> print(parse_name("luc saffre"))
+{'first_name': 'Luc', 'last_name': 'Saffre'}
+
+But careful with name prefixes:
+
+>>> print(parse_name("herman van veen"))
+{'first_name': 'Herman', 'last_name': 'van veen'}
+>>> print(parse_name("jean van den bossche"))
+{'first_name': 'Jean', 'last_name': 'van den bossche'}
+
+
+    """
+    kw = name2kw(text, last_name_first=False)
+    if len(kw) != 2:
+        raise Warning(
+            "Cannot find first and last names in %r", text)
+    for k in ('last_name', 'first_name'):
+        if kw[k] and not kw[k].isupper():
+            kw[k] = upper1(kw[k])
     return kw
 
 

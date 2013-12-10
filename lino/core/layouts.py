@@ -12,7 +12,7 @@
 # along with Lino; if not, see <http://www.gnu.org/licenses/>.
 
 '''
-This module defines the core classes 
+This module defines the core classes
 
 - :class:`FormLayout`, :class:`ListLayout`,
   :class:`ParamsLayout` and :class:`ActionParamsLayout`
@@ -32,16 +32,6 @@ from __future__ import unicode_literals
 import logging
 logger = logging.getLogger(__name__)
 
-import cgi
-import os
-import sys
-import traceback
-import codecs
-import yaml
-#~ import threading
-#~ write_lock = threading.RLock()
-
-
 from django.db import models
 from django.conf import settings
 from django.utils.translation import ugettext_lazy as _
@@ -53,11 +43,6 @@ from django.contrib.contenttypes import generic
 from lino.utils.xmlgen.html import E
 
 from lino.core import constants  # as ext_requests
-
-#~ from lino import dd
-
-#~ from lino.core import perms
-#~ from lino.utils import curry
 
 
 class LayoutError(RuntimeError):
@@ -226,12 +211,7 @@ class LayoutHandle:
             if len(explicit_specs) > 0:
                 self.hidden_elements = self.hidden_elements | set(
                     wildcard_names)
-            #~ if self.layout._datasource.__name__ == 'Vouchers':
-                #~ logger.info('20130204 %s desc -> %r',self,desc)
-            #~ if 'CourseRequestsByPerson' in str(self):
-                #~ logger.info('20111003 %s desc -> %r',self,desc)
-        #~ if self.layout._datasource.__name__ == "ActiveCourses":
-            #~ logger.info("20131010 %r self.hidden_elements is %s",desc,self.hidden_elements)
+
         if "\n" in desc:
             # it's a vertical box
             vertical = True

@@ -19,19 +19,26 @@ class PackagesTests(LinoTestCase):
 
 
 class BlogTest(LinoTestCase):
-    def test_20130316(self):
+    def test_all(self):
         self.run_simple_doctests("""
         docs/blog/2013/0316.rst
         docs/blog/2013/0507.rst
         docs/blog/2013/0508.rst
         # docs/blog/2013/0513.rst
         # docs/blog/2013/0622.rst
+        # docs/blog/2013/0714.rst
+        docs/blog/2013/0716.rst
+        # docs/blog/2013/0719.rst
+        # docs/blog/2013/0807.rst
+        # docs/blog/2013/0821.rst
+        docs/blog/2013/1210.rst
         """)
-    #~ def test_20130714(self): self.run_simple_doctests('docs/blog/2013/0714.rst')
-    def test_20130716(self): self.run_simple_doctests('docs/blog/2013/0716.rst')
-    # def test_20130719(self): self.run_simple_doctests('docs/blog/2013/0719.rst')
-    #~ def test_20130807(self): self.run_simple_doctests('docs/blog/2013/0807.rst')
-    #~ def test_20130821(self): self.run_simple_doctests('docs/blog/2013/0821.rst')
+
+    def test_one(self):
+        self.run_simple_doctests("""
+        docs/blog/2013/1210.rst
+        """)
+
 
 
 class DocsTests(LinoTestCase):
