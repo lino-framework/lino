@@ -5288,11 +5288,10 @@ Lino.on_eventupdate  = function(cp,rec,el) {
 //~ Lino.eventStore = new Ext.data.ArrayStore({ 
 Lino.unused_eventStore = new Ext.data.JsonStore({ 
   listeners: { exception: Lino.on_store_exception }
-  ,url: '{{settings.SITE.build_admin_url("restful/cal/PanelEvents")}}'
+  ,url: '{{settings.SITE.build_admin_url("restful/extensible/PanelEvents")}}'
   ,restful : true
   ,proxy: new Ext.data.HttpProxy({ 
-      //~ url: '{{settings.SITE.admin_prefix}}/restful/cal/PanelEvents', 
-      url: '{{settings.SITE.build_admin_url("restful/cal/PanelEvents")}}', 
+      url: '{{settings.SITE.build_admin_url("restful/extensible/PanelEvents")}}', 
       disableCaching: false // no need for cache busting when loading via Ajax
       //~ disableCaching:true,
   })
@@ -5381,7 +5380,7 @@ Ext.override(Ext.ensible.cal.CalendarPanel,{
     editdetails: function(cp,rec,el) {
       //~ console.log("Lino.on_editdetails",arguments);
       if (rec.data.ID)
-          Lino.cal.PanelEvents.detail.run(null,{
+          Lino.extensible.PanelEvents.detail.run(null,{
               record_id:rec.data.ID,
               base_params:this.app_instance.event_store.baseParams});
       return false;
@@ -5389,7 +5388,7 @@ Ext.override(Ext.ensible.cal.CalendarPanel,{
     ,eventclick: function(cp,rec,el) {
       //~ console.log("Lino.on_eventclick",arguments);
       //~ Lino.cal.Events.detail_action.run({record_id:rec.data.ID});
-      Lino.cal.PanelEvents.detail.run(null,{
+      Lino.extensible.PanelEvents.detail.run(null,{
             record_id:rec.data.ID,
                 base_params:this.app_instance.event_store.baseParams});
       return false;
@@ -5470,10 +5469,10 @@ Lino.CalendarApp = function() { return {
       var cap = null;
       this.event_store = new Ext.data.JsonStore({ 
           listeners: { exception: Lino.on_store_exception }
-          ,url: '{{settings.SITE.build_admin_url("restful/cal/PanelEvents")}}'
+          ,url: '{{settings.SITE.build_admin_url("restful/extensible/PanelEvents")}}'
           ,restful : true
           ,proxy: new Ext.data.HttpProxy({ 
-              url: '{{settings.SITE.build_admin_url("restful/cal/PanelEvents")}}', 
+              url: '{{settings.SITE.build_admin_url("restful/extensible/PanelEvents")}}', 
               disableCaching: false // no need for cache busting when loading via Ajax
               //~ disableCaching:true,
           })

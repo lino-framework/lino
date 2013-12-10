@@ -5,7 +5,7 @@
 I upgraded the :ref:`demos` on :ref:`lf`. 
 (This is getting an important test step before releasing 
 to a production site. There is now almost every day some message 
-in my inbox with some :ref:`ies` caused by somebody playing 
+in my inbox with some :ref:`ise` caused by somebody playing 
 with them.)
 
 Simple bug fixes:

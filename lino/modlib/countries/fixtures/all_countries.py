@@ -93,7 +93,7 @@ def objects():
     
     """
     fn = os.path.join(os.path.dirname(__file__), 'countries.xml')
-    logger.info("Loading %s", fn)
+    logger.debug("Reading %s", fn)
     dom = minidom.parse(fn)
     #~ print dom.documentElement.__class__
     #~ print dom.documentElement

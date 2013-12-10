@@ -55,7 +55,8 @@ class Site(Site):
 
         yield 'lino.modlib.contacts'
         #~ 'lino.modlib.notes'
-        yield 'lino.modlib.cal'
+        yield 'lino.apps.extensible'
+        yield 'lino.apps.cal'
         yield 'lino.modlib.outbox'
         yield 'lino.modlib.products'
         #~ 'lino.modlib.journals',

@@ -1,0 +1,9 @@
+====================================
+20131210 (Tuesday, 10 December 2013)
+====================================
+
+The online demos found yet another bug:
+
+- `AttrDict instance has no key 'PanelEvents'`
+  (AttributeError at /restful/cal/PanelEvents)
+
