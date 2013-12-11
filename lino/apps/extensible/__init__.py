@@ -14,7 +14,25 @@
 
 from lino import ad
 
+"""
+"""
+
+from os.path import join, dirname, exists
 
 class App(ad.App):
-    pass
 
+    media_base_url = "http://ext.ensible.com/deploy/1.0.2/"
+    media_name = 'extensible'
+
+    def get_css_includes(self, site):
+        yield self.build_media_url('resources/css/extensible-all.css')
+
+    def get_js_includes(self, settings, language):
+        if settings.DEBUG:
+            yield self.build_media_url('extensible-all-debug.js')
+        else:
+            yield self.build_media_url('extensible-all.js')
+        if language != 'en':
+            yield self.build_media_url(
+                'src', 'locale',
+                'extensible-lang-' + language + '.js')

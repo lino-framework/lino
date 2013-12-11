@@ -649,14 +649,11 @@ class Kernel(object):
             if not self.site.bootstrap_base_url:
                 self.setup_media_link(urlpatterns,
                     'bootstrap', 'bootstrap_root')
-            #~ else:
-                #~ logger.info("20130409 self.bootstrap_base_url is %s",self.bootstrap_base_url)
-        #~ else:
-            #~ logger.info("20130409 self.use_bootstrap is False")
-        if self.site.use_extensible:
-            if not self.site.extensible_base_url:
-                self.setup_media_link(urlpatterns,
-                    'extensible', 'extensible_root')
+        for p in self.site.installed_plugins:
+            p.setup_media_links(self, urlpatterns)
+        # if self.site.use_extensible:
+        #     if not self.site.extensible_base_url:
+        #         self.setup_media_link(urlpatterns,'extensible', 'extensible_root')
         if self.site.use_tinymce:
             if not self.site.tinymce_base_url:
                 self.setup_media_link(urlpatterns,
@@ -838,6 +835,7 @@ class Kernel(object):
             #~ logger.info("20130409 path exists: %s",target)
             return
         if attr_name is not None:
+            # usage is deprecated
             source = getattr(self.site, attr_name)
             if not source:
                 raise Exception(
@@ -851,11 +849,12 @@ class Kernel(object):
         if is_devserver():
             #~ logger.info("django.views.static serving /%s%s from %s",prefix,short_name,source)
             urlpatterns.extend(
-                patterns('django.views.static',
-                           (r'^%s%s/(?P<path>.*)$' % (prefix, short_name),
-                            'serve', {
-                                'document_root': source,
-                                'show_indexes': False})))
+                patterns(
+                    'django.views.static',
+                    (r'^%s%s/(?P<path>.*)$' % (prefix, short_name),
+                     'serve', {
+                         'document_root': source,
+                         'show_indexes': False})))
         else:
             symlink = getattr(os, 'symlink', None)
             if symlink is None:

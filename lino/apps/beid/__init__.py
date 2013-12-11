@@ -39,10 +39,11 @@ from lino.utils import AttrDict
 class App(ad.App):  # was: use_eidreader
 
     site_js_snippets = ['plugins/eidreader.js']
+    media_name = 'eidreader'
 
-    def get_head_lines(cls, site, request):
+    def get_head_lines(self, site, request):
         #~ p = site.build_media_url('lino','applets','EIDReader.jar')
-        p = site.build_media_url('eidreader', 'EIDReader.jar')
+        p = self.build_media_url('EIDReader.jar')
         p = request.build_absolute_uri(p)
         yield '<applet name="EIDReader" code="src.eidreader.EIDReader.class"'
         yield '        archive="%s"' % p

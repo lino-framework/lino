@@ -34,13 +34,14 @@ from lino.apps.beid import App as BeIdPlugin
 class App(BeIdPlugin):  # was: use_eid_jslib
     # deprecated, not tested
     site_js_snippets = ['plugins/eid_jslib.js']
+    media_name = 'eid-jslib'
 
-    def get_js_includes(self, site):
-        yield site.build_media_url('eid-jslib/be_belgium_eid.js')
-        yield site.build_media_url('eid-jslib/hellerim_base64.js')
+    def get_js_includes(self, settings, language):
+        yield self.build_media_url('be_belgium_eid.js')
+        yield self.build_media_url('hellerim_base64.js')
 
-    def get_head_lines(cls, site, request):
-        p = site.build_media_url('eid-jslib')
+    def get_head_lines(self, site, request):
+        p = self.build_media_url()
         p = request.build_absolute_uri(p)
         #~ print p
         yield '<applet code="org.jdesktop.applet.util.JNLPAppletLauncher"'

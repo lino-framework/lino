@@ -960,8 +960,8 @@ class Site(Site):
     :attr:`tinymce_base_url <lino.site.Site.tinymce_base_url>`.
     """
 
-    extensible_base_url = "http://ext.ensible.com/deploy/1.0.2/"
-    "Similar to :attr:`extjs_base_url` but pointing to ext.ensible.com."
+    # extensible_base_url = "http://ext.ensible.com/deploy/1.0.2/"
+    # "Similar to :attr:`extjs_base_url` but pointing to ext.ensible.com."
 
     bootstrap_base_url = "http://twitter.github.com/bootstrap/assets/"
     "Similar to :attr:`extjs_base_url` but pointing to twitter.github.com."
@@ -1589,13 +1589,13 @@ class Site(Site):
             url += "?" + urlencode(kw)
         return url
 
+    def build_media_url(self, *args, **kw):
+        return self.buildurl('media', *args, **kw)
+
     def build_admin_url(self, *args, **kw):
         if self.admin_prefix:
             return self.buildurl(self.admin_prefix, *args, **kw)
         return self.buildurl(*args, **kw)
-
-    def build_media_url(self, *args, **kw):
-        return self.buildurl('media', *args, **kw)
 
     def build_plain_url(self, *args, **kw):
         if self.plain_prefix:
@@ -1608,10 +1608,10 @@ class Site(Site):
             return self.extjs_base_url + url
         return self.build_media_url('extjs', url)
 
-    def build_extensible_url(self, url):
-        if self.extensible_base_url:
-            return self.extensible_base_url + url
-        return self.build_media_url('extensible', url)
+    # def build_extensible_url(self, url):
+    #     if self.extensible_base_url:
+    #         return self.extensible_base_url + url
+    #     return self.build_media_url('extensible', url)
 
     def build_bootstrap_url(self, url):
         if self.bootstrap_base_url:
