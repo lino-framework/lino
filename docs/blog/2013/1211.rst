@@ -1,0 +1,14 @@
+======================================
+20131211 (Wednesday, 11 December 2013)
+======================================
+
+Noticed that :setting:`LANGUAGES` still contains all Django 
+languages even on sites who have :setting:`languages` set.
+I guess that this is because I do the conversion in 
+:meth:`north.north_site.Site.do_site_setup` where it is too late:
+modifying :setting:`LANGUAGES` has no effect 
+when `settings` have been loaded.
+Tried to investigate how to solve this.
+Seems not trivial.
+
+
