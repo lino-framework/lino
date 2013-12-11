@@ -2,13 +2,21 @@
 20131211 (Wednesday, 11 December 2013)
 ======================================
 
-Noticed that :setting:`LANGUAGES` still contains all Django 
-languages even on sites who have :setting:`languages` set.
-I guess that this is because I do the conversion in 
-:meth:`north.north_site.Site.do_site_setup` where it is too late:
-modifying :setting:`LANGUAGES` has no effect 
-when `settings` have been loaded.
-Tried to investigate how to solve this.
-Seems not trivial.
+Updated the :ref:`demos` because the bug which I fixed yesterday
+was still active there.
 
+
+I realized that :setting:`LANGUAGES` still contains all Django
+languages even on sites who have :setting:`languages` set.  The
+expected behaviour is to reduce this array to only those languages
+which are actually used.  The bug was in :mod:`north.north_site`,
+where I did the conversion too late: modifying :setting:`LANGUAGES`
+has no effect when `settings` have been loaded.  Now it is fixed:
+
+>>> import os
+>>> os.environ['DJANGO_SETTINGS_MODULE'] = 'lino_faggio.settings.test'
+>>> from lino.runtime import settings
+>>> from __future__ import print_function
+>>> print(settings.LANGUAGES)
+[('de', 'German'), ('en', 'English'), ('fr', 'French')]
 

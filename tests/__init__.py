@@ -31,12 +31,13 @@ class BlogTest(LinoTestCase):
         # docs/blog/2013/0719.rst
         # docs/blog/2013/0807.rst
         # docs/blog/2013/0821.rst
-        docs/blog/2013/1210.rst
+        # docs/blog/2013/1210.rst
+        docs/blog/2013/1211.rst
         """)
 
     def test_one(self):
         self.run_simple_doctests("""
-        docs/blog/2013/1210.rst
+        docs/blog/2013/1211.rst
         """)
 
 
