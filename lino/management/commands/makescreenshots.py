@@ -36,7 +36,7 @@ from django.utils import translation
 from django.utils.encoding import force_unicode
 from django.core.management import call_command
 from django.core.management.base import BaseCommand, CommandError
-from django.core.servers.basehttp import WSGIServerException, get_internal_wsgi_application
+from django.core.servers.basehttp import get_internal_wsgi_application
 from django.core.servers.basehttp import WSGIRequestHandler
 
 from django.conf import settings

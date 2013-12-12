@@ -12,25 +12,43 @@
 ## You should have received a copy of the GNU General Public License
 ## along with Lino; if not, see <http://www.gnu.org/licenses/>.
 
-from lino import ad
-
 """
 Adds usage of the `Extensible <http://ext.ensible.com>`_ calendar
 library.
+
+Example configuration in a :xfile:`settings.py` file::
+
+    SITE.configure_plugin(
+        'extensible',
+        calendar_start_hour=9,
+        media_root='/home/luc/snapshots/extensible-1.0.1',
+        media_base_url=None)
+
+
+Example configuration in a :ref:`djangosite_local` module::
+
+    def site_setup(self):
+
+        self.configure_plugin(
+            'extensible',
+            calendar_start_hour=9,
+            media_root='/home/luc/snapshots/extensible-1.0.1',
+            media_base_url=None)
+
 
 
 .. setting:: calendar_start_hour
 
 The time at which the CalendarPanel's daily view starts.
-Used when :setting:`use_extensible` is True.
 
 .. setting:: calendar_end_hour
 
 The time at which the CalendarPanel's daily view ends.
-Used when :setting:`use_extensible` is True.
 
 
 """
+
+from lino import ad
 
 from os.path import join, dirname, exists
 

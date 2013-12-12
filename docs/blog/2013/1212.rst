@@ -24,3 +24,4 @@ Removed the last occurences of `use_extensible`:
 Cool! This is finally what Joe and I decided to want!  Next step will
 be to do the same for `use_extjs`.
 
+Upgraded :ref:`demos`. 
