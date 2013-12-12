@@ -651,9 +651,7 @@ class Kernel(object):
                     'bootstrap', 'bootstrap_root')
         for p in self.site.installed_plugins:
             p.setup_media_links(self, urlpatterns)
-        # if self.site.use_extensible:
-        #     if not self.site.extensible_base_url:
-        #         self.setup_media_link(urlpatterns,'extensible', 'extensible_root')
+
         if self.site.use_tinymce:
             if not self.site.tinymce_base_url:
                 self.setup_media_link(urlpatterns,

@@ -42,7 +42,6 @@ class Site(Site):
 
     demo_fixtures = 'std few_languages furniture demo demo2'.split()
 
-    use_extensible = True
     admin_prefix = 'admin'
     sidebar_width = 3
     user_model = 'users.User'
@@ -55,4 +54,5 @@ class Site(Site):
             yield a
 
         yield 'lino.modlib.blogs'
-        yield 'lino.modlib.cal'
+        yield 'lino.apps.extensible'
+        yield 'lino.apps.cal'

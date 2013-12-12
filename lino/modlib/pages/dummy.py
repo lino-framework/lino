@@ -36,17 +36,6 @@ from lino.core import web
 from lino.utils.restify import restify
 from lino.utils.restify import doc2rst
 
-
-#~ from lino.utils import memo
-
-#~ from django.utils.translation import set_language
-#~ from lino.utils.babel import get_language, set_language
-
-
-#~ from lino import dd
-
-#~ appname,version,url = settings.SITE.using().next()
-
 DUMMY_PAGES = {}
 
 

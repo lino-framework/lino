@@ -19,7 +19,6 @@ from lino.projects.std.settings import *
 class Site(Site):
     title = "Lino/MinimalApp 1"
 
-    use_extensible = False
     user_model = 'users.User'
     #~ user_model = None
 

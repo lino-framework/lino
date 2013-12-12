@@ -12,15 +12,13 @@
 # You should have received a copy of the GNU General Public License
 # along with Lino; if not, see <http://www.gnu.org/licenses/>.
 
-"""
-This defines the :class:`Site` class.
-It has a lot of class attributes which may be 
-overridden by the application developer and/or the local site 
-administrator.
+"""This defines the :class:`Site` class.  It has a lot of class
+attributes which may be overridden by the application developer and/or
+the local site administrator.
 
-Here is a list of Lino-specific settings. 
-The settings inherited :class:`north.north_site.Site` 
-and :class:`djangosite.Site` are documented there.
+Here is a list of Lino-specific settings.  The settings inherited
+:class:`north.north_site.Site` and :class:`djangosite.Site` are
+documented there.
 
 .. setting:: config_id
 
@@ -149,16 +147,6 @@ parameter of all tables who don't specify their own one.
 Default value is 15.
 
 
-.. setting:: calendar_start_hour
-
-The time at which the CalendarPanel's daily view starts.
-Used when :setting:`use_extensible` is True.
-
-.. setting:: calendar_end_hour
-
-The time at which the CalendarPanel's daily view ends.
-Used when :setting:`use_extensible` is True.
-
 .. setting:: start_year
 
 An integer with the calendar year in which this site starts working.
@@ -202,7 +190,6 @@ or texts of choices.
 
 This method is expected to yield the list of strings 
 to be stored into Django's :setting:`INSTALLED_APPS` setting.
-
 
 """
 
@@ -249,9 +236,6 @@ class Site(Site):
     config_id = 1
 
     preview_limit = 15
-
-    calendar_start_hour = 8
-    calendar_end_hour = 18
 
     textfield_format = 'plain'
     """
@@ -548,14 +532,14 @@ class Site(Site):
             kw[gfk.fk_field] = obj.pk
             yield gfk, ct.get_all_objects_for_this_type(**kw)
 
-    def using(self, ui=None):
+    def get_used_libs(self, html=None):
         """
         Adds Lino, Jinja, Spinx, dateutil, ...
         """
         import lino
         yield ("Lino", lino.SETUP_INFO['version'], lino.SETUP_INFO['url'])
 
-        for u in super(Site, self).using(ui):
+        for u in super(Site, self).get_used_libs(html):
             yield u
 
         #~ import tidylib
@@ -641,26 +625,21 @@ class Site(Site):
             version = self.not_found_msg
         yield ("Appy", version, "http://appyframework.org/pod.html")
 
-        #~ for p in self.installed_plugins
+        for p in self.installed_plugins:
+            for u in p.get_used_libs(html):
+                yield u
 
-        if ui and self.use_extjs:
+        if html and self.use_extjs:
 
             #~ version = '<script type="text/javascript">document.write(Ext.version);</script>'
             onclick = "alert('ExtJS client version is ' + Ext.version);"
             tip = "Click to see ExtJS client version"
             text = "(version)"
-            # ~ version = """<a href="#" onclick="%s" title="%s">%s</a>""" % (onclick,tip,text)
             version = E.a(text, href='#', onclick=onclick, title=tip)
             yield ("ExtJS", version, "http://www.sencha.com")
 
-            if self.use_extensible:
-                onclick = "alert('Extensible Calendar version is ' + Ext.ensible.version);"
-                tip = "Click to see Extensible Calendar version"
-                text = "(version)"
-                # ~ version = """<a href="#" onclick="%s" title="%s">%s</a>""" % (onclick,tip,text)
-                version = E.a(text, href='#', onclick=onclick, title=tip)
-                yield ("Extensible", version, "http://ext.ensible.com/products/calendar/")
-            yield ("Silk Icons", '1.3', "http://www.famfamfam.com/lab/icons/silk/")
+            yield ("Silk Icons", '1.3',
+                   "http://www.famfamfam.com/lab/icons/silk/")
 
     def get_db_overview_rst(self):
         """
@@ -985,14 +964,6 @@ class Site(Site):
     and only if :attr:`use_jasmine` is True.
     """
 
-    extensible_root = None
-    """
-    Path to the Extensible root directory. 
-    Only used on a development server
-    if the `media` directory has no symbolic link to the Extensible root directory,
-    and only if :attr:`use_extensible` is True.
-    """
-
     tinymce_root = None
     """
     Path to the tinymce root directory. 
@@ -1087,11 +1058,6 @@ class Site(Site):
     use_jasmine = False
     """
     Whether to use the `Jasmine <https://github.com/pivotal/jasmine>`_ testing library.
-    """
-
-    use_extensible = True
-    """
-    Whether to use the `Extensible <http://ext.ensible.com>`_ calendar library.
     """
 
     use_quicktips = True
@@ -1660,23 +1626,13 @@ class Site(Site):
                 p.append(self.version)
             sep = _(' using ')
 
-        for name, version, url in self.using(True):
+        for name, version, url in self.get_used_libs(html=E):
             p.append(sep)
             p.append(E.a(name, href=url, target='_blank'))
             p.append(' ')
             p.append(version)
             sep = ', '
         return E.span(*p)
-
-    #~ def welcome_html(self,ui=None):
-        #~ """
-        #~ Text to display in the "about" dialog of a GUI application.
-        #~ """
-        #~ sep = '<br/>'
-        #~ kw = dict(me=self.site_version(),
-            #~ using = sep.join(['<a href="%s" target="_blank">%s</a>&nbsp;%s'
-            #~ % (u,n,v) for n,v,u in self.using(ui)]))
-        #~ return  "This is %(me)s using %(using)s." % kw
 
     def login(self, username=None, **kw):
         """

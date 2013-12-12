@@ -1,0 +1,26 @@
+=====================================
+20131212 (Thursday, 12 December 2013)
+=====================================
+
+
+Removed the last occurences of `use_extensible`:
+
+- Moved the extensible-specific code from :xfile:`linoweb.js` into
+  :srcref:`extensible.js
+  </lino/apps/extensible/config/snippets/extensible.js>`, and 
+  added this to :attr:`site_js_snippets 
+  <djangosite.djangosite_site.App.site_js_snippets>`
+
+- In :class:`djangosite.djangosite_site.Site` and subclasses,
+  renamed method `using` to `get_used_libs`.
+
+- Added a `get_used_libs` method also to the
+  :class:`App <djangosite.dangosite_site.App>` class.
+
+- Moved settings :setting:`calendar_start_hour` and
+  :setting:`calendar_end_hour` from :mod:`lino.lino_site` to
+  :mod:`lino.apps.extensible`.
+
+Cool! This is finally what Joe and I decided to want!  Next step will
+be to do the same for `use_extjs`.
+

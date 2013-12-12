@@ -467,10 +467,6 @@ class ExtRenderer(HtmlRenderer):
 
         #~ yield '<!-- overrides to base library -->'
 
-        # if site.use_extensible:
-        #     yield stylesheet(site.build_extensible_url(
-        #         'resources/css/extensible-all.css'))
-
         if site.use_vinylfox:
             yield stylesheet(site.build_media_url('lino/vinylfox/resources/css/htmleditorplugins.css'))
             #~ p = self.media_url() + '/lino/vinylfox/resources/css/htmleditorplugins.css'
@@ -503,18 +499,12 @@ class ExtRenderer(HtmlRenderer):
         if settings.DEBUG:
             yield javascript(site.build_extjs_url('adapter/ext/ext-base-debug.js'))
             yield javascript(site.build_extjs_url('ext-all-debug.js'))
-            # if site.use_extensible:
-            #     yield javascript(site.build_extensible_url('extensible-all-debug.js'))
         else:
             yield javascript(site.build_extjs_url('adapter/ext/ext-base.js'))
             yield javascript(site.build_extjs_url('ext-all.js'))
-            # if site.use_extensible:
-            #     yield javascript(site.build_extensible_url('extensible-all.js'))
 
         if translation.get_language() != 'en':
             yield javascript(site.build_extjs_url('src/locale/ext-lang-' + translation.get_language() + '.js'))
-            # if site.use_extensible:
-            #     yield javascript(site.build_media_url('extensible/src/locale/extensible-lang-' + translation.get_language() + '.js'))
 
         if False:
             yield '<script type="text/javascript" src="%s/extjs/Exporter-all.js"></script>' % site.build_media_url()
