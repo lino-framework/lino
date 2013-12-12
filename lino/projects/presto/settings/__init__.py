@@ -32,7 +32,7 @@ class Site(Site):
     # props democfg demo demo2'.split()
     demo_fixtures = 'std few_languages props democfg demo demo2'.split()
 
-    languages = 'de fr et en'
+    languages = 'en de fr et'
 
     project_model = 'tickets.Project'
     user_model = 'users.User'
