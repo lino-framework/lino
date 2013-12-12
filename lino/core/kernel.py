@@ -95,13 +95,12 @@ Action responses supported by `Lino.action_handler`
 """
 
 
-
 def set_default_verbose_name(f):
-    """
-    If the verbose_name of a ForeignKey was not set by user code, 
-    Django sets it to ``field.name.replace('_', ' ')``.
-    We replace this default value by ``f.rel.to._meta.verbose_name``.
-    This rule holds also for virtual FK fields.
+    """If the verbose_name of a ForeignKey was not set by user code,
+    Django sets it to ``field.name.replace('_', ' ')``.  We replace
+    this default value by ``f.rel.to._meta.verbose_name``.  This rule
+    holds also for virtual FK fields.
+
     """
     if f.verbose_name == f.name.replace('_', ' '):
         f.verbose_name = f.rel.to._meta.verbose_name
@@ -163,14 +162,14 @@ class Callback(object):
         self.choices_dict[name] = cbc
         return cbc
 
-class DisableDeleteHandler():
 
-    """
-    Used to find out whether a known object can be deleted or not.
-    Lino's default behaviour is to forbit deletion if there is any other 
-    object in the database that refers to this. To implement this, 
-    Lino installs a DisableDeleteHandler instance on each model 
+class DisableDeleteHandler():
+    """Used to find out whether a known object can be deleted or not.
+    Lino's default behaviour is to forbit deletion if there is any
+    other object in the database that refers to this. To implement
+    this, Lino installs a DisableDeleteHandler instance on each model
     during :func:`analyze_models`. In an attribute `_lino_ddh`.
+
     """
 
     def __init__(self, model):
@@ -238,35 +237,25 @@ class Kernel(object):
 
         pre_ui_build.send(self)
 
-        #~ raise Exception("20120614")
-        # ~ self.pdf_renderer = PdfRenderer(self) # 20120624
         self.plain_renderer = PlainRenderer(self)
         self.text_renderer = TextRenderer(self)
         self.reserved_names = [getattr(constants, n)
                                for n in constants.URL_PARAMS]
 
-        if site.use_extjs:
-            from lino.extjs import ExtRenderer
-            self.default_renderer = self.ext_renderer = ExtRenderer(self)
-        else:
-            self.default_renderer = self.plain_renderer
+        self.default_renderer = self.plain_renderer
 
         names = set()
         for n in self.reserved_names:
             if n in names:
                 raise Exception("Duplicate reserved name %r" % n)
             names.add(n)
-        #~ base.UI.__init__(self)
-
-        #~ trigger creation of params_layout.params_store
-        #~ for res in actors.actors_list:
-            #~ for ba in res.get_actions():
-                #~ if ba.action.parameters:
-                    #~ ba.action.params_layout.get_layout_handle(self)
 
         from lino.utils import codetime
         self.mtime = codetime()
         #~ logger.info("20130610 codetime is %s", datetime.datetime.fromtimestamp(self.mtime))
+
+        for p in site.installed_plugins:
+            p.on_ui_init(self)
 
         post_ui_build.send(self)
 
@@ -472,13 +461,14 @@ class Kernel(object):
         Return an existing (pending) callback.
         This is called from `lino.ui.views.Callbacks`.
         """
-        #~ logger.info("20130409 get_callback")
+        # logger.info("20131212 get_callback %s %s", thread_id, button_id)
         ar = BaseRequest(request)
         thread_id = int(thread_id)
         cb = self.pending_threads.pop(thread_id, None)
         #~ d = self.pop_thread(int(thread_id))
         if cb is None:
-            #~ logger.info("20130811 No callback %r in %r" % (thread_id,self.pending_threads.keys()))
+            # logger.info("20131212 No callback %r in %r" % (
+            #     thread_id, self.pending_threads.keys()))
             ar.error("Unknown callback %r" % thread_id)
             return self.render_action_response(ar.response)
         for c in cb.choices:
@@ -524,7 +514,8 @@ class Kernel(object):
         """
         h = hash(cb)
         self.pending_threads[h] = cb
-        #~ logger.info("20130531 Stored %r in %r" % (h,settings.SITE.pending_threads))
+        # logger.info("20131212 Stored %r in %r" % (
+        #     h, self.pending_threads))
 
         buttons = dict()
         for c in cb.choices:
@@ -609,17 +600,12 @@ class Kernel(object):
 
         h.store = ext_store.Store(h)
 
-
     def render_action_response(self, rv):
         """
         Builds a JSON response from given dict ``rv``, 
         checking first whether there are only allowed keys 
         (defined in :attr:`ACTION_RESPONSES`)
         """
-        #~ if isinstance(rv,models.Model):
-            #~ js = self.ui.ext_renderer.instance_handler(None,invoice)
-            #~ rv = dict(eval_js=js)
-
         rv = self.check_action_response(rv)
         return views.json_response(rv)
 
@@ -627,7 +613,7 @@ class Kernel(object):
         """
         See :meth:`ExtRenderer.row_action_button`
         """
-        return self.ext_renderer.row_action_button(*args, **kw)
+        return self.default_renderer.row_action_button(*args, **kw)
 
     def get_media_urls(self):
         #~ print "20121110 get_media_urls"
@@ -723,65 +709,6 @@ class Kernel(object):
         )
         return urlpatterns
 
-    def get_ext_urls(self):
-
-        from django.conf.urls import patterns, url, include
-        from lino.ui import views
-
-        #~ print "20121110 get_urls"
-        self.ext_renderer.build_site_cache()
-
-        rx = '^'
-        urlpatterns = patterns(
-            '',
-            (rx + '$', views.AdminIndex.as_view()),
-            (rx + r'api/main_html$',
-             views.MainHtml.as_view()),
-            (rx + r'auth$', views.Authenticate.as_view()),
-            (rx + r'grid_config/(?P<app_label>\w+)/(?P<actor>\w+)$',
-             views.GridConfig.as_view()),
-            (rx + r'api/(?P<app_label>\w+)/(?P<actor>\w+)$',
-             views.ApiList.as_view()),
-            (rx + r'api/(?P<app_label>\w+)/(?P<actor>\w+)/(?P<pk>.+)$',
-             views.ApiElement.as_view()),
-            (rx + r'restful/(?P<app_label>\w+)/(?P<actor>\w+)$',
-             views.Restful.as_view()),
-            (rx + r'restful/(?P<app_label>\w+)/(?P<actor>\w+)/(?P<pk>.+)$',
-             views.Restful.as_view()),
-            (rx + r'choices/(?P<app_label>\w+)/(?P<rptname>\w+)$',
-             views.Choices.as_view()),
-            (rx + r'choices/(?P<app_label>\w+)/(?P<rptname>\w+)/(?P<fldname>\w+)$',
-             views.Choices.as_view()),
-            (rx + r'apchoices/(?P<app_label>\w+)/(?P<actor>\w+)/(?P<an>\w+)/(?P<field>\w+)$',
-             views.ActionParamChoices.as_view()),
-            # the thread_id can be a negative number:
-            (rx + r'callbacks/(?P<thread_id>[\-0-9a-zA-Z]+)/(?P<button_id>\w+)$',
-             views.Callbacks.as_view()),
-        )
-        if self.site.use_eid_applet:
-            urlpatterns += patterns('',
-                                    (rx + r'eid-applet-service$',
-                                     views.EidAppletService.as_view()),
-                                    )
-        if self.site.use_jasmine:
-            urlpatterns += patterns('',
-                                    (rx + r'run-jasmine$',
-                                     views.RunJasmine.as_view()),
-                                    )
-        if self.site.user_model and self.site.use_tinymce:
-            urlpatterns += patterns(
-                '',
-                (rx + r'templates/(?P<app_label>\w+)/'
-                 + r'(?P<actor>\w+)/(?P<pk>\w+)/(?P<fldname>\w+)$',
-                 views.Templates.as_view()),
-                (rx + r'templates/(?P<app_label>\w+)/'
-                 + r'(?P<actor>\w+)/(?P<pk>\w+)/(?P<fldname>\w+)/'
-                 + r'(?P<tplname>\w+)$',
-                 views.Templates.as_view()),
-            )
-
-        return urlpatterns
-
     def get_patterns(self):
         # self.site.startup()
 
@@ -789,10 +716,13 @@ class Kernel(object):
 
         urlpatterns = self.get_media_urls()
 
-        if self.site.use_extjs and self.site.admin_prefix:
-            urlpatterns += patterns(
-                '',
-                ('^' + self.site.admin_prefix, include(self.get_ext_urls())))
+        for p in self.site.installed_plugins:
+            urlpatterns += p.get_patterns(self)
+
+        # if self.site.use_extjs and self.site.admin_prefix:
+        #     urlpatterns += patterns(
+        #         '',
+        #         ('^' + self.site.admin_prefix, include(self.get_ext_urls())))
 
         if self.site.plain_prefix:
             urlpatterns += patterns(
@@ -812,11 +742,11 @@ class Kernel(object):
         if not self.site.plain_prefix:
             urlpatterns += self.get_plain_urls()
 
-        if self.site.use_extjs:
-            if not self.site.admin_prefix:
-                urlpatterns += self.get_ext_urls()
-            else:
-                urlpatterns += self.get_pages_urls()
+        # if self.site.use_extjs:
+        #     if not self.site.admin_prefix:
+        #         urlpatterns += self.get_ext_urls()
+        #     else:
+        #         urlpatterns += self.get_pages_urls()
 
         #~ print 20131021, urlpatterns
         return urlpatterns

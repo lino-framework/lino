@@ -63,7 +63,7 @@ class BuildSiteCache(dd.Action):
     def run_from_ui(self, ar):
         #~ rr.confirm(_("Are you sure?"))
         #~ rr.confirm(_("Are you really sure?"))
-        settings.SITE.ui.ext_renderer.build_site_cache(True)
+        settings.SITE.ui.default_renderer.build_site_cache(True)
         return ar.success(
             """\
 Seems that it worked. Refresh your browser. 
@@ -206,11 +206,11 @@ if settings.SITE.is_installed('contenttypes'):
                 for b in cl.__bases__:
                     add(b)
                 # :
-                if issubclass(cl, dd.Model) and cl is not dd.Model and cl._meta.managed:
+                if issubclass(cl, dd.Model) and cl is not dd.Model \
+                   and cl._meta.managed:
                     if getattr(cl, '_meta', False) and not cl._meta.abstract:
                         #~ logger.info("20120205 adding(%r)",cl)
                         ct = contenttypes.ContentType.objects.get_for_model(cl)
-                        #~ chunks.append(settings.SITE.ui.ext_renderer.href_to(ct,unicode(cl._meta.verbose_name)))
                         chunks.append(
                             ar.obj2html(ct, unicode(cl._meta.verbose_name)))
             if obj is not None:
@@ -364,7 +364,6 @@ class Home(mixins.EmptyTable):
             for mi in quicklinks.items:
                 chunks.append(' ')
                 chunks.append(ar.window_action_button(mi.bound_action))
-                #~ chunks.append(settings.SITE.ui.ext_renderer.window_action_button(ar,mi.bound_action))
             return xghtml.E.p('Quick Links:', *chunks)
 
     #~ @dd.virtualfield(dd.HtmlBox())

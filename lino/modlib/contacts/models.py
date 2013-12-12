@@ -699,7 +699,6 @@ class PartnerDocument(dd.Model):
         method for partner documents.
         """
         href_to = ar.obj2html
-        #~ href_to = ui.ext_renderer.href_to
         s = [href_to(self)]
         #~ if self.person and not dd.has_fk(rr,'person'):
         if self.person:

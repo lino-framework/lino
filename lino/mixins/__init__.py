@@ -713,7 +713,6 @@ class ProjectRelated(model.Model):
     #~ def summary_row(self,ui,rr,**kw):
     def summary_row(self, ar, **kw):
         s = [ar.obj2html(self)]
-        #~ s = ui.ext_renderer.obj2html(self)
         if settings.SITE.project_model:
             #~ if self.project and not dd.has_fk(rr,'project'):
             if self.project:

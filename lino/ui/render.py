@@ -17,65 +17,15 @@ from __future__ import unicode_literals
 import logging
 logger = logging.getLogger(__name__)
 
-import os
-import sys
-import cgi
-import time
-import datetime
-#import traceback
-import cPickle as pickle
-from urllib import urlencode
-import codecs
-import jinja2
-
-
-from django.db import models
 from django.conf import settings
-from django.http import HttpResponse, Http404
-from django.utils import functional
 from django.utils.encoding import force_unicode
-from django.db.models.fields.related import SingleRelatedObjectDescriptor
-#~ from django.utils.functional import Promise
-
-from django.template.loader import get_template
-from django.template import RequestContext
 
 from django.utils.translation import ugettext as _
 from django.utils.translation import get_language
-#~ from django.utils import simplejson as json
-#~ from django.utils import translation
 
-from django.contrib.contenttypes.models import ContentType
-from django.contrib.contenttypes import generic
-from django.conf.urls import patterns, include
-
-
-import lino
 from lino.core import constants as ext_requests
-from . import elems as ext_elems
-from . import store as ext_store
-#~ from lino.ui.extjs3 import ext_elems
-#~ from lino.ui.extjs3 import ext_store
-#~ from lino.ui.extjs3 import ext_windows
-#~ from lino.ui import requests as ext_requests
 
-from lino import dd
-from lino.core import actions
-#~ from lino.core.actions import action2str
-from lino.core import dbtables
-from lino.core import layouts
-from lino.core import tables
-#~ from lino.utils.xmlgen import xhtml as xhg
-from lino.core import fields
-from lino.ui import base
-from lino.core import actors
-
-from lino.utils import choosers
-from lino.core import choicelists
-from lino.utils import jsgen
-from lino.utils.xmlgen import html as xghtml
 from lino.utils.xmlgen.html import E
-from lino.utils import codetime
 
 if False:
     from lino.utils.jscompressor import JSCompressor
@@ -83,13 +33,6 @@ if False:
 else:
     def jscompress(s):
         return s
-
-
-#~ from lino.utils.choicelists import DoYouLike, HowWell
-#~ STRENGTH_CHOICES = DoYouLike.get_choices()
-#~ KNOWLEDGE_CHOICES = HowWell.get_choices()
-#~ NOT_GIVEN = object()
-from . import views
 
 
 def add_user_language(kw, ar):
@@ -172,29 +115,13 @@ class HtmlRenderer(object):
             #~ return btn
             #~ return xghtml.E.a(btn,**kw)
             #~ kw.update(class_='x-btn-text '+icon_name)
-            img = xghtml.E.img(src=settings.SITE.build_media_url(
+            img = E.img(src=settings.SITE.build_media_url(
                 'lino', 'extjs', 'images', 'mjames', icon_name + '.png'))
-            return xghtml.E.a(img, **kw)
+            return E.a(img, **kw)
         else:
-            #~ return xghtml.E.span('[',xghtml.E.a(text,**kw),']')
+            #~ return E.span('[',xghtml.E.a(text,**kw),']')
             #~ kw.update(style='border-width:1px; border-color:black; border-style:solid;')
-            return xghtml.E.a(text, **kw)
-
-    def insert_button(self, ar, text, known_values={}, **options):
-        """
-        Returns the HTML of a button which will call the `insert_action`.
-        """
-        a = ar.actor.insert_action
-        if a is None:
-            #~ raise Exception("20130924 a is None")
-            return
-        if not a.get_bound_action_permission(ar, ar.master_instance, None):
-            #~ raise Exception("20130924 no permission")
-            return
-        elem = ar.create_instance(**known_values)
-        st = ar.get_status()
-        st.update(data_record=views.elem2rec_insert(ar, ar.ah, elem))
-        return self.window_action_button(ar.request, a, st, text, **options)
+            return E.a(text, **kw)
 
     def quick_add_buttons(self, ar):
         """
@@ -234,72 +161,7 @@ class HtmlRenderer(object):
                                                 icon_name='application_view_list',
                                                 title=_("Show all records in a table window")))
         #~ return '<p>%s</p>' % s
-        return xghtml.E.p(*buttons)
-
-    def quick_upload_buttons(self, rr):
-        """
-        Returns a HTML chunk that displays "quick upload buttons":
-        either one button :guilabel:`Upload` 
-        (if the given :class:`TableTequest <lino.core.dbtables.TableRequest>`
-        has no rows)
-        or two buttons :guilabel:`Show` and :guilabel:`Edit` 
-        if it has one row.
-        
-        See also :doc:`/tickets/56`.
-        
-        """
-        if rr.get_total_count() == 0:
-            if True:  # after 20130809
-                return rr.insert_button(_("Upload"),
-                                        icon_name='page_add',
-                                        title=_("Upload a file from your PC to the server."))
-            else:
-                a = rr.actor.insert_action
-                if a is not None:
-                    after_show = rr.get_status()
-                    elem = rr.create_instance()
-                    after_show.update(
-                        data_record=views.elem2rec_insert(rr, rr.ah, elem))
-                    #~ after_show.update(record_id=-99999)
-                    # see tickets/56
-                    return self.window_action_button(
-                        rr.request, a, after_show, _("Upload"),
-                        #~ icon_file='attach.png',
-                        #~ icon_file='world_add.png',
-                        icon_name='page_add',
-                        title=_("Upload a file from your PC to the server."))
-                      #~ icon_name='x-tbar-upload')
-        if rr.get_total_count() == 1:
-            after_show = rr.get_status()
-            obj = rr.data_iterator[0]
-            chunks = []
-            #~ chunks.append(xghtml.E.a(_("show"),
-              #~ href=self.ui.media_url(obj.file.name),target='_blank'))
-            chunks.append(self.href_button(
-                settings.SITE.build_media_url(obj.file.name), _("show"),
-                target='_blank',
-                #~ icon_file='world_go.png',
-                icon_name='page_go',
-                style="vertical-align:-30%;",
-                title=_("Open the uploaded file in a new browser window")))
-            chunks.append(' ')
-            after_show.update(record_id=obj.pk)
-            chunks.append(self.window_action_button(rr.request,
-                                                    rr.ah.actor.detail_action,
-                                                    after_show,
-                                                    _("Edit"), icon_name='application_form', title=_("Edit metadata of the uploaded file.")))
-            return xghtml.E.p(*chunks)
-
-            #~ s = ''
-            #~ s += ' [<a href="%s" target="_blank">show</a>]' % (self.ui.media_url(obj.file.name))
-            #~ if True:
-                #~ after_show.update(record_id=obj.pk)
-                #~ s += ' ' + self.window_action_button(rr.ah.actor.detail_action,after_show,_("Edit"))
-            #~ else:
-                #~ after_show.update(record_id=obj.pk)
-                #~ s += ' ' + self.action_href_http(rr.ah.actor.detail_action,_("Edit"),params,after_show)
-            #~ return s
-        return '[?!]'
+        return E.p(*buttons)
 
     def obj2html(self, ar, obj, text=None):
         if text is None:
@@ -309,17 +171,33 @@ class HtmlRenderer(object):
         if self.is_interactive:
             url = self.instance_handler(ar, obj)
             if url is not None:
-                return xghtml.E.a(*text, href=url)
-        return xghtml.E.b(*text)
+                return E.a(*text, href=url)
+        return E.b(*text)
 
-    def window_action_button(self, request, ba, after_show={}, label=None, title=None, **kw):
+    def quick_upload_buttons(self, rr):
+        return '[?!]'
+
+    def insert_button(self, ar, text, known_values={}, **options):
+        return '[?!]'
+
+    def row_action_button(self, obj, request, ba,
+                          label=None, title=None, **kw):
+        return '[?!]'
+
+    def href_to_request(self, sar, tar, text=None, **kw):
+        return '[?!]'
+        
+    def window_action_button(
+            self, request, ba,
+            after_show={}, label=None, title=None, **kw):
         """
         Return a HTML chunk for a button that will execute this action.
         """
         label = unicode(label or ba.get_button_label())
         url = 'javascript:' + self.action_call(request, ba, after_show)
         #~ logger.info('20121002 window_action_button %s %r',a,unicode(label))
-        return self.href_button_action(ba, url, label, title or ba.action.help_text, **kw)
+        return self.href_button_action(ba, url, label,
+                                       title or ba.action.help_text, **kw)
 
 
 class TextRenderer(HtmlRenderer):

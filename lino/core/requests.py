@@ -153,16 +153,15 @@ class BaseRequest(object):
         self.append_message('warning', msg, *args, **kw)
 
     def confirm(self, ok_func, *msgs):
-        """
-        Execute the specified callable `ok` after the user has confirmed
-        the specified message.
-        All remaining positional arguments to `confirm`
-        are concatenated to a single callback message.
-        This method then calls :meth:`callback` (see there for implementation notes).
-        
+        """Execute the specified callable `ok` after the user has confirmed
+        the specified message.  All remaining positional arguments to
+        `confirm` are concatenated to a single callback message.  This
+        method then calls :meth:`callback` (see there for
+        implementation notes).
+
         The callable may not expect any mandatory arguments
         (this is different than for the raw callback method)
-        
+
         """
         cb = self.add_callback(*msgs)
 
@@ -172,7 +171,6 @@ class BaseRequest(object):
         cb.add_choice('no', noop, _("No"))
         self.set_callback(cb)
 
-    #~ def confirm(self,*args,**kw): return settings.SITE.ui.confirm(*args,**kw)
     def set_callback(self, *args, **kw):
         return settings.SITE.ui.set_callback(self, *args, **kw)
 

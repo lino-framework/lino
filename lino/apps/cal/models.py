@@ -268,7 +268,6 @@ Whether this is private, public or between."""))  # iCal:CLASS
     def summary_row(self, ar, **kw):
         #~ logger.info("20120217 Component.summary_row() %s", self)
         #~ if self.owner and not self.auto_type:
-        #~ html = ui.ext_renderer.href_to(self)
         html = [ar.obj2html(self)]
         if self.start_time:
             #~ html += _(" at ") + unicode(self.start_time)

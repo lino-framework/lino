@@ -560,7 +560,7 @@ class PrintTableAction(actions.Action):
         if not tplfile:
             raise Exception("No file %s / %s" % (tplgroup, self.template_name))
 
-        ar.renderer = settings.SITE.ui.ext_renderer  # 20120624
+        ar.renderer = settings.SITE.ui.default_renderer  # 20120624
 
         context = self.get_context(ar)
         if os.path.exists(target_file):

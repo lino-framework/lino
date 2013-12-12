@@ -28,11 +28,7 @@ Guest
 import logging
 logger = logging.getLogger(__name__)
 
-import os
-import sys
-import cgi
 import datetime
-import base64
 
 
 from django.db import models
@@ -48,8 +44,6 @@ from django.core.exceptions import ValidationError
 from django.contrib.humanize.templatetags.humanize import naturaltime
 
 from lino.utils.xmlgen.html import E
-from lino.utils import ssin
-from lino.utils import join_words
 from lino.utils import join_elems
 
 from lino import dd
@@ -68,7 +62,6 @@ add('46', _("Gone"), 'gone')
 
 
 from lino.modlib.reception import App
-from lino.mixins import beid
 
 #~ add = GuestStates.add_item
 #~ add('21', _("Waiting"),'waiting')
@@ -192,21 +185,21 @@ class CheckinVisitor(dd.NotifyingAction):
     def run_from_ui(self, ar, **kw):
         obj = ar.selected_rows[0]
 
-        def doit(ar):
+        def doit(ar2):
             obj.waiting_since = datetime.datetime.now()
             obj.state = GuestStates.busy
             obj.busy_since = None
             obj.save()
-            kw.update(success=True)
-            super(CheckinVisitor, self).run_from_ui(ar, **kw)
+            ar2.update(success=True)
+            super(CheckinVisitor, self).run_from_ui(ar2, **kw)
 
         if obj.event.assigned_to is not None:
 
-            def ok(ar):
+            def ok(ar3):
                 obj.event.user = obj.event.assigned_to
                 obj.event.assigned_to = None
                 obj.event.save()
-                doit(ar)
+                doit(ar3)
 
             return ar.confirm(ok,
                               _("Checkin in will reassign the event from %(old)s to %(new)s.") %
@@ -215,32 +208,12 @@ class CheckinVisitor(dd.NotifyingAction):
         return doit(ar)
 
 
-#~ class ReceiveVisitor(dd.NotifyingAction):
 class ReceiveVisitor(dd.Action):
     label = _("Receive")
     help_text = _("Visitor was received by agent")
     show_in_workflow = True
 
-    #~ required = dd.Required(user_groups='reception',states='invited accepted present')
-
     required = dd.Required(states='waiting')
-
-    def unused_get_action_permission(self, ar, obj, state):
-        if obj.waiting_since is None:
-            return False
-        if obj.busy_since is not None:
-            return False
-        if obj.gone_since is not None:
-            return False
-        if obj.event.start_date != datetime.date.today():
-            return False
-        return super(ReceiveVisitor, self).get_action_permission(ar, obj, state)
-
-    #~ def get_notify_subject(self,ar,obj):
-        #~ return _("%(partner)s received by %(user)s") % dict(
-            #~ event=obj,
-            #~ user=obj.event.user,
-            #~ partner=obj.partner)
 
     def run_from_ui(self, ar, **kw):
         obj = ar.selected_rows[0]
@@ -251,14 +224,12 @@ class ReceiveVisitor(dd.Action):
             #~ if obj.state in ExpectedGuestsStates:
                 #~ obj.state = GuestStates.present
             obj.save()
-            #~ kw = super(ReceiveGuest,self).run_from_ui(obj,ar,**kw)
-            kw.update(refresh=True)
-            ar.success(**kw)
+            ar.success(refresh=True)
 
-        #~ if ar.get_user() == obj.event.user:
-        return ar.confirm(ok,
-                          _("%(guest)s begins consultation with %(user)s.") %
-                          dict(user=obj.event.user, guest=obj.partner), _("Are you sure?"))
+        ar.confirm(ok,
+                   _("%(guest)s begins consultation with %(user)s.") %
+                   dict(user=obj.event.user, guest=obj.partner),
+                   _("Are you sure?"))
 
 
 """
@@ -284,26 +255,17 @@ class CheckoutVisitor(dd.Action):
     #~ required = dict(states='waiting')
     required = dd.Required(states='busy waiting')
 
-    def unused_get_action_permission(self, ar, obj, state):
-        if obj.waiting_since is None:
-            return False
-        if obj.gone_since is not None:
-            return False
-        #~ if obj.event.start_date != datetime.date.today():
-            #~ return False
-        return super(CheckoutVisitor, self).get_action_permission(ar, obj, state)
-
     def run_from_ui(self, ar, **kw):
         obj = ar.selected_rows[0]
 
-        def ok(ar):
+        def ok(ar2):
             if obj.busy_since is None:
                 obj.busy_since = datetime.datetime.now()
             obj.gone_since = datetime.datetime.now()
             obj.state = GuestStates.gone
             obj.save()
             kw.update(refresh=True)
-            ar.success(**kw)
+            ar2.success(**kw)
 
         #~ if obj.busy_since is None:
             #~ msg = _("%(guest)s leaves without being received.") % dict(guest=obj.partner)
@@ -312,20 +274,6 @@ class CheckoutVisitor(dd.Action):
             guest=obj.partner, user=obj.user)
         ar.confirm(ok, msg, _("Are you sure?"))
 
-
-    #~ def get_notify_subject(self,ar,obj):
-        #~ return _("%(partner)s has stopped waiting for %(user)s") % dict(
-            #~ event=obj,
-            #~ user=obj.event.user,
-            #~ partner=obj.partner)
-
-    #~ def run_from_ui(self,obj,ar,**kw):
-        #~ if obj.busy_since is None:
-            #~ obj.busy_since = datetime.datetime.now()
-        #~ obj.gone_since = datetime.datetime.now()
-        #~ obj.save()
-        #~ kw = super(CheckoutGuest,self).run_from_ui(obj,ar,**kw)
-        #~ return kw
 
 
 cal.Guest.checkin = CheckinVisitor(sort_index=100)
@@ -357,44 +305,7 @@ class AppointmentsByPartner(dd.Table):
         return qs
 
 
-#~ class Guests(cal.Guests):
-    #~
-    #~ use_as_default_table = False
-    #~
-    #~ parameters = dd.ParameterPanel(
-        #~ only_waiting = models.BooleanField(verbose_name=_("Waiting")),
-        #~ only_expected = models.BooleanField(verbose_name=_("Expected")),
-        #~ **cal.Guests.parameters)
-    #~
-    #~ params_layout = cal.Guests.params_layout + " only_waiting only_expected"
-    #~
-    #~ @classmethod
-    #~ def get_request_queryset(self,ar):
-        # ~ # logger.info("20121010 Clients.get_request_queryset %s",ar.param_values)
-        #~ qs = super(Guests,self).get_request_queryset(ar)
-            #~
-        #~ if ar.param_values.only_waiting:
-            #~ qs = qs.filter(waiting_since__isnull=False,busy_since__isnull=True)
-        #~ if ar.param_values.only_expected:
-            #~ today = datetime.date.today()
-            #~ qs = qs.filter(
-                #~ waiting_since__isnull=True,
-                # ~ # state__in=[GuestStates.invited,GuestStates.accepted],
-                #~ event__start_date=today,
-                #~ event__end_date=today)
-        #~ return qs
-        #~
-    #~ @classmethod
-    #~ def get_title_tags(self,ar):
-        #~ for t in super(Guests,self).get_title_tags(ar):
-            #~ yield t
-            #~
-        #~ if ar.param_values.only_waiting:
-            #~ yield unicode(self.parameters['only_waiting'].verbose_name)
-        #~ if ar.param_values.only_expected:
-            #~ yield unicode(self.parameters['only_expected'].verbose_name)
 ExpectedGuestsStates = (GuestStates.invited, GuestStates.accepted)
-
 
 class ExpectedGuests(cal.Guests):
     label = _("Expected Guests")
@@ -501,7 +412,8 @@ class WaitingVisitors(Visitors):
     def since(self, obj, ar):
         return naturaltime(obj.waiting_since)
 
-    @dd.displayfield(_('Position'), help_text=_("Position in waiting queue (per agent)"))
+    @dd.displayfield(_('Position'),
+                     help_text=_("Position in waiting queue (per agent)"))
     def position(self, obj, ar):
         n = 1 + cal.Guest.objects.filter(
             #~ waiting_since__isnull=False,

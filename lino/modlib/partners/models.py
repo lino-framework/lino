@@ -718,9 +718,7 @@ class PartnerDocument(dd.Model):
         A :meth:`lino.code.model.Model.summary_row` method for PartnerDocument.
         """
         href_to = ar.href_to
-        #~ href_to = ui.ext_renderer.href_to
         s = href_to(self)
-        #~ if self.person and not dd.has_fk(rr,'person'):
         if self.person:
             if self.organisation:
                 s += " (" + href_to(self.person) \

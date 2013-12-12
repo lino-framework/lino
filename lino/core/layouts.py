@@ -844,8 +844,8 @@ def create_layout_element(lh, name, **kw):
                 if a is not None:
                     kw.update(ls_insert_handler=js_code("Lino.%s" %
                               a.full_name()))
-                    kw.update(
-                        ls_bbar_actions=[settings.SITE.ui.ext_renderer.a2btn(a)])
+                    kw.update(ls_bbar_actions=[
+                        settings.SITE.ui.default_renderer.a2btn(a)])
                 #~ else:
                     #~ print 20120619, de, 'has no insert_action'
                 field = fields.HtmlBox(verbose_name=de.label, **o)
@@ -864,8 +864,8 @@ def create_layout_element(lh, name, **kw):
                     if a is not None:
                         kw.update(ls_insert_handler=js_code("Lino.%s" %
                                   a.full_name()))
-                        kw.update(
-                            ls_bbar_actions=[settings.SITE.ui.ext_renderer.a2btn(a)])
+                        kw.update(ls_bbar_actions=[
+                            settings.SITE.ui.default_renderer.a2btn(a)])
                 field = fields.HtmlBox(verbose_name=de.label)
                 field.name = de.__name__
                 field.help_text = de.help_text

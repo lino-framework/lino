@@ -32,7 +32,6 @@ class Site(Site):
     demo_fixtures = 'demo all_countries be inscodes'
     #~ demo_fixtures = 'demo'
 
-    use_extjs = False
     #~ admin_prefix = 'admin'
     plain_prefix = ''
 
@@ -47,7 +46,8 @@ class Site(Site):
 
     def get_installed_apps(self):
         for a in super(Site, self).get_installed_apps():
-            yield a
+            if a != 'lino.extjs':
+                yield a
         #~ yield 'django.contrib.contenttypes'
         #~ yield 'lino.modlib.users'
         yield 'lino.modlib.system'

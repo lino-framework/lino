@@ -15,7 +15,7 @@ Removed the last occurences of `use_extensible`:
   renamed method `using` to `get_used_libs`.
 
 - Added a `get_used_libs` method also to the
-  :class:`App <djangosite.dangosite_site.App>` class.
+  :class:`App <djangosite.djangosite_site.App>` class.
 
 - Moved settings :setting:`calendar_start_hour` and
   :setting:`calendar_end_hour` from :mod:`lino.lino_site` to
@@ -23,5 +23,22 @@ Removed the last occurences of `use_extensible`:
 
 Cool! This is finally what Joe and I decided to want!  Next step will
 be to do the same for `use_extjs`.
+(Note: one detail is missing: the snippets are not yet widget-specific. 
+But I don't yet see where this is a big problem.)
 
 Upgraded :ref:`demos`. 
+
+Converted `use_extjs` into an 
+:class:`App <djangosite.djangosite_site.App>`:
+
+- The app is in :mod:`lino.extjs` (not in `lino.apps.extjs`)
+
+- This required two new methods
+  :meth:`App.on_ui_init <djangosite.djangosite_site.App.on_ui_init>`
+  and 
+  :meth:`App.get_patterns <djangosite.djangosite_site.App.get_patterns>`
+- `SITE.ui.ext_renderer` is now `SITE.ui.extjs_renderer`
+
+- Moved the ExtJS-specific part from :mod:`lino.ui.views`
+  to :mod:`lino.extjs.views`
+

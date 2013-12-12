@@ -18,7 +18,7 @@
         {% endif -%}
       {% endfor -%}
     {% endif -%}
-    {% if site.use_extjs -%}
+    {% if 'extjs' in site.plugins -%}
     &mdash;
     <a href="{{site.build_admin_url()}}">Admin</a>
     {% endif -%}

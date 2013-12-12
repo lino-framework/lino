@@ -580,7 +580,6 @@ class Attachment(mixins.Controllable):
         url = self.owner.get_target_url()
         #~ url = ui.build_url(*parts)
         text = url.split('/')[-1]
-        #~ return ui.ext_renderer.href(url,text)
         return [ar.renderer.href(url, text)]
 
 

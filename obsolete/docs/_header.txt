@@ -1,3 +1,0 @@
-.. role:: fileref(emphasis)
-.. role:: pageref(literal)
-

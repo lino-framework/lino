@@ -1,7 +1,0 @@
-:label: More
-:label_align: top
-
-main = 
-  journal number creation_date user sent_time
-  sales_remark:80 language
-  intro 

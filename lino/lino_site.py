@@ -63,23 +63,22 @@ Set this to ``"auth.User"`` if you use `django.contrib.auth` instead of
 
 .. setting:: remote_user_header
     
-The name of the header (set by the web server) that Lino should consult 
-for finding the user of a request.
-The default value `None` means that http authentication is not used.
-Apache's default value is ``"REMOTE_USER"``.
+The name of the header (set by the web server) that Lino should
+consult for finding the user of a request.  The default value `None`
+means that http authentication is not used.  Apache's default value is
+``"REMOTE_USER"``.
 
 
 .. setting:: ldap_auth_server
 
-This should be a string with the domain name and DNS (separated by a 
-space) of the LDAP server to be used for authentication.
-Example::
+This should be a string with the domain name and DNS (separated by a
+space) of the LDAP server to be used for authentication.  Example::
 
   ldap_auth_server = 'DOMAIN_NAME SERVER_DNS'
   
 .. setting:: auth_middleware
 
-Override used Authorisation middlewares with supplied tuple of 
+Override used Authorisation middlewares with supplied tuple of
 middleware class names.
 
 If None, use logic described in :doc:`/topics/auth`
@@ -88,13 +87,12 @@ If None, use logic described in :doc:`/topics/auth`
 
 .. setting:: project_model
 
-Optionally set this to the <applabel.modelname> of a 
-model used as "central project" in your application. 
-Which concretely means that certain other models 
-like notes.Note, outbox.Mail, ... have an additional foreignkey 
-to this model.
-Not yet decided whther this makes sense. 
-It is probably an obsolete pattern.
+Deprecated because this is an obsolete pattern.
+
+Optionally set this to the <applabel.ModelName> of a model used as
+"central project" in your application.  Which concretely means that
+certain other models like notes.Note, outbox.Mail, ... have an
+additional ForeignKey to this model.
 
 
 
@@ -103,19 +101,21 @@ It is probably an obsolete pattern.
 The prefix to use for Lino "admin mode"
 (i.e. the "admin main page" with a pull-down "main menu").
 
-The default value is an empty string, resulting in a 
-website whose root url shows the admin mode.
+TODO: convert `admin_prefix` to a `url_prefix` setting on the
+`lino.extjs` App.
+
+The default value is an empty string, resulting in a website whose
+root url shows the admin mode.
 
 Note that unlike Django's `MEDIA_URL
-<https://docs.djangoproject.com/en/dev/ref/settings/#media-url>`__ 
+<https://docs.djangoproject.com/en/dev/ref/settings/#media-url>`__
 setting, this must not contain any slash.
 
-If this is nonempty, then your site features a "web content mode": 
-the root url renders "web content" defined by :mod:`lino.modlib.pages`.
+If this is nonempty, then your site features a "web content mode": the
+root url renders "web content" defined by :mod:`lino.modlib.pages`.
 The usual value in that case is ``admin_prefix = "admin"``.
 
-
-See also  
+See also
 
 - `telling Django to recognize a different application root url
   <http://groups.google.com/group/django-users/browse_thread/thread/c95ba83e8f666ae5?pli=1>`__
@@ -130,21 +130,18 @@ See also
 The prefix to use for "plain html" URLs.
 Default value is ``'plain'``.
 
+TODO: convert `plain_prefix` to a `url_prefix` setting on the
+`lino.apps.plain` App.
 
-Exactly one of 
-:setting:`admin_prefix`
-and
-:setting:`plain_prefix`
+Exactly one of :setting:`admin_prefix` and :setting:`plain_prefix`
 must be empty.
-
 
 
 .. setting:: preview_limit
     
-Default value for the 
-:attr:`preview_limit <lino.core.tables.AbstractTable.preview_limit>`
-parameter of all tables who don't specify their own one.
-Default value is 15.
+Default value for the :attr:`preview_limit
+<lino.core.tables.AbstractTable.preview_limit>` parameter of all
+tables who don't specify their own one.  Default value is 15.
 
 
 .. setting:: start_year
@@ -629,18 +626,6 @@ class Site(Site):
             for u in p.get_used_libs(html):
                 yield u
 
-        if html and self.use_extjs:
-
-            #~ version = '<script type="text/javascript">document.write(Ext.version);</script>'
-            onclick = "alert('ExtJS client version is ' + Ext.version);"
-            tip = "Click to see ExtJS client version"
-            text = "(version)"
-            version = E.a(text, href='#', onclick=onclick, title=tip)
-            yield ("ExtJS", version, "http://www.sencha.com")
-
-            yield ("Silk Icons", '1.3',
-                   "http://www.famfamfam.com/lab/icons/silk/")
-
     def get_db_overview_rst(self):
         """
         Returns a reStructredText-formatted "database overview" report.
@@ -880,7 +865,6 @@ class Site(Site):
 
     #~ admin_prefix = 'admin'
     admin_prefix = ''
-    use_extjs = True
 
     time_format_extjs = 'H:i'
     """
@@ -1478,10 +1462,11 @@ class Site(Site):
         return None
 
     def get_main_html(self, request):
-        """
-        Return a chunk of html to be displayed in the main area of the admin index.
-        This is being called only if :meth:`get_main_action` returns `None`.
-        The default implementation renders the :xfile:`admin_main.html` template.
+        """Return a chunk of html to be displayed in the main area of the
+        admin index.  This is being called only if
+        :meth:`get_main_action` returns `None`.  The default
+        implementation renders the :xfile:`admin_main.html` template.
+
         """
         from lino.core import web
         return web.render_from_request(request, 'admin_main.html')
@@ -1522,6 +1507,7 @@ class Site(Site):
         #~ 'django.contrib.markup',
         #~ yield 'django_extensions'
         yield 'lino.modlib.about'
+        yield 'lino.extjs'
         #~ if self.admin_prefix:
             #~ yield 'lino.modlib.pages'
         yield "lino"

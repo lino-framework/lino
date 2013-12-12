@@ -48,7 +48,6 @@ from django.utils.translation import ugettext as _
 from django.utils import translation
 
 from django.contrib.contenttypes.models import ContentType
-from django.contrib.contenttypes import generic
 from django.conf.urls import patterns, url, include
 
 
@@ -56,6 +55,7 @@ import lino
 from lino.core import constants as ext_requests
 from lino.ui import elems as ext_elems
 from lino.ui.render import HtmlRenderer
+from . import views
 
 from lino import dd
 from lino.core import actions
@@ -284,6 +284,87 @@ class ExtRenderer(HtmlRenderer):
             py2js(obj.pk),
             py2js(put_data))
         return self.href_button(url, text, **kw)
+
+    def quick_upload_buttons(self, rr):
+        """
+        Returns a HTML chunk that displays "quick upload buttons":
+        either one button :guilabel:`Upload` 
+        (if the given :class:`TableTequest <lino.core.dbtables.TableRequest>`
+        has no rows)
+        or two buttons :guilabel:`Show` and :guilabel:`Edit` 
+        if it has one row.
+        
+        See also :doc:`/tickets/56`.
+        
+        """
+        if rr.get_total_count() == 0:
+            if True:  # after 20130809
+                return rr.insert_button(_("Upload"),
+                                        icon_name='page_add',
+                                        title=_("Upload a file from your PC to the server."))
+            else:
+                a = rr.actor.insert_action
+                if a is not None:
+                    after_show = rr.get_status()
+                    elem = rr.create_instance()
+                    after_show.update(
+                        data_record=views.elem2rec_insert(rr, rr.ah, elem))
+                    #~ after_show.update(record_id=-99999)
+                    # see tickets/56
+                    return self.window_action_button(
+                        rr.request, a, after_show, _("Upload"),
+                        #~ icon_file='attach.png',
+                        #~ icon_file='world_add.png',
+                        icon_name='page_add',
+                        title=_("Upload a file from your PC to the server."))
+                      #~ icon_name='x-tbar-upload')
+        if rr.get_total_count() == 1:
+            after_show = rr.get_status()
+            obj = rr.data_iterator[0]
+            chunks = []
+            #~ chunks.append(xghtml.E.a(_("show"),
+              #~ href=self.ui.media_url(obj.file.name),target='_blank'))
+            chunks.append(self.href_button(
+                settings.SITE.build_media_url(obj.file.name), _("show"),
+                target='_blank',
+                #~ icon_file='world_go.png',
+                icon_name='page_go',
+                style="vertical-align:-30%;",
+                title=_("Open the uploaded file in a new browser window")))
+            chunks.append(' ')
+            after_show.update(record_id=obj.pk)
+            chunks.append(self.window_action_button(rr.request,
+                                                    rr.ah.actor.detail_action,
+                                                    after_show,
+                                                    _("Edit"), icon_name='application_form', title=_("Edit metadata of the uploaded file.")))
+            return xghtml.E.p(*chunks)
+
+            #~ s = ''
+            #~ s += ' [<a href="%s" target="_blank">show</a>]' % (self.ui.media_url(obj.file.name))
+            #~ if True:
+                #~ after_show.update(record_id=obj.pk)
+                #~ s += ' ' + self.window_action_button(rr.ah.actor.detail_action,after_show,_("Edit"))
+            #~ else:
+                #~ after_show.update(record_id=obj.pk)
+                #~ s += ' ' + self.action_href_http(rr.ah.actor.detail_action,_("Edit"),params,after_show)
+            #~ return s
+        return '[?!]'
+
+    def insert_button(self, ar, text, known_values={}, **options):
+        """
+        Returns the HTML of a button which will call the `insert_action`.
+        """
+        a = ar.actor.insert_action
+        if a is None:
+            #~ raise Exception("20130924 a is None")
+            return
+        if not a.get_bound_action_permission(ar, ar.master_instance, None):
+            #~ raise Exception("20130924 no permission")
+            return
+        elem = ar.create_instance(**known_values)
+        st = ar.get_status()
+        st.update(data_record=views.elem2rec_insert(ar, ar.ah, elem))
+        return self.window_action_button(ar.request, a, st, text, **options)
 
     def action_call_on_instance(self, obj, request, ba, **st):
         if request is None:
@@ -658,8 +739,6 @@ tinymce.init({
                     authorities = [(a.user.id, unicode(a.user))
                                    for a in users.Authority.objects.filter(authorized=user)]
 
-                #~ handler = self.ext_renderer.instance_handler(user)
-                #~ a = users.MySettings.get_url_action('default_action')
                 a = users.MySettings.default_action
                 handler = self.action_call(None, a, dict(record_id=user.pk))
                 handler = "function(){%s}" % handler
