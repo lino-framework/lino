@@ -13,3 +13,5 @@ Traceback (most recent call last):
     from django.core.servers.basehttp import WSGIServerException, get_internal_wsgi_application
 ImportError: cannot import name WSGIServerException
 /home/luc/hgwork/lino/lino/lino_site.py:docstring of lino.lino_site.Site.webdav_url:7: WARNING: term not in glossary: runserver
+None:1: WARNING: undefined label: luc (if the link has no caption the label must precede a section header)
+/home/luc/hgwork/lino/docs/releases/index.rst:1: WARNING: unknown document: 1.6.13
