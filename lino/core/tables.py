@@ -54,6 +54,7 @@ from django.db import models
 from django.conf import settings
 from django.contrib.contenttypes.models import ContentType
 from django.contrib.contenttypes import generic
+from django.core.exceptions import PermissionDenied
 
 from django.db.models.query import QuerySet
 from django.utils.translation import ugettext_lazy as _
@@ -1144,8 +1145,12 @@ class AbstractTable(actors.Actor):
                 master_instance = master_instance.get_typed_instance(
                     self.master)
                 if not isinstance(master_instance, self.master):
-                    raise Exception("%r is not a %s (%s.master_key = '%s')" % (
-                        master_instance.__class__, self.master, self, self.master_key))
+                    # e.g. a ByUser table descendant called by AnonymousUser
+                    raise PermissionDenied(
+                        "%r is not a %s (%s.master_key = '%s')" % (
+                            master_instance.__class__,
+                            self.master, self,
+                            self.master_key))
             kw[self.master_field.name] = master_instance
 
         #~ logger.info('20120519 %s.get_filter_kw(%r) --> %r',self,master_instance,kw)

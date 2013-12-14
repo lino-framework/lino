@@ -42,3 +42,6 @@ Converted `use_extjs` into an
 - Moved the ExtJS-specific part from :mod:`lino.ui.views`
   to :mod:`lino.extjs.views`
 
+- Removed the files under `lino/obsolete`.
+
+Upgraded :ref:`demos` again.

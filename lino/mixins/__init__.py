@@ -167,19 +167,16 @@ class UserAuthored(model.Model):
 
         workflow_owner_field = 'user'
 
-        user = models.ForeignKey(settings.SITE.user_model,
-                                 verbose_name=_("Author"),
-                                 related_name="%(app_label)s_%(class)s_set_by_user",
-                                 blank=True, null=True
-                                 )
+        user = models.ForeignKey(
+            settings.SITE.user_model,
+            verbose_name=_("Author"),
+            related_name="%(app_label)s_%(class)s_set_by_user",
+            blank=True, null=True
+        )
 
     else:
 
         user = fields.DummyField()
-
-    #~ def on_duplicate(self,ar):
-        #~ self.user = ar.get_user()
-        #~ super(AutoUser,self).on_duplicate(ar)
 
     def on_create(self, ar):
         """
@@ -196,25 +193,19 @@ class UserAuthored(model.Model):
                 self.user = u
         super(UserAuthored, self).on_create(ar)
 
-    #~ def update_owned_instance(self,other):
-        #~ print '20120627 AutoUser.update_owned_instance'
-        #~ other.user = self.user
-        #~ super(UserAuthored,self).update_owned_instance(other)
-
     manager_level_field = 'level'
-    """
-    Only system managers can edit other users' work. 
-    But if the application defines customized UserGroups, 
-    then we may want to permit it also to department managers.
-    If an application defines a UserGroup `foo`, 
-    then it can set this attribute to `'foo_level'` 
-    on a model to specify that a manager level for 
-    the foo department is enough to get edit permission on other users' instances.
+    """Only system managers can edit other users' work.  But if the
+    application defines customized UserGroups, then we may want to
+    permit it also to department managers.  If an application defines
+    a UserGroup `foo`, then it can set this attribute to `'foo_level'`
+    on a model to specify that a manager level for the foo department
+    is enough to get edit permission on other users' instances.
     
-    Usage examples see 
+    Usage examples see
     :class:`lino.modlib.notes.models.Note`
     or
     :class:`lino.modlib.cal.models.Component`.
+
     """
 
     def get_row_permission(self, ar, state, ba):
@@ -232,6 +223,37 @@ class UserAuthored(model.Model):
 AutoUser = UserAuthored  # backwards compatibility
 
 
+if settings.SITE.user_model:
+
+    class ByUser(dbtables.Table):
+        master_key = 'user'
+        #~ details_of_master_template = _("%(details)s of %(master)s")
+        details_of_master_template = _("%(details)s")
+
+        @classmethod
+        def get_actor_label(self):
+            if self.model is None:
+                return self._label or self.__name__
+            return self._label or \
+                _("My %s") % self.model._meta.verbose_name_plural
+
+        @classmethod
+        def setup_request(self, ar):
+            #~ logger.info("mixins.ByUser.setup_request")
+            if ar.master_instance is None:
+                ar.master_instance = ar.get_user()
+
+
+else:
+
+    # dummy Table for userless sites
+    class ByUser(dbtables.Table):
+        pass
+
+
+
+
+
 class AuthorAction(actions.Action):
 
     """
@@ -243,65 +265,6 @@ class AuthorAction(actions.Action):
         if obj.user != user and getattr(user.profile, self.manager_level_field) < UserLevels.manager:
             return self.readonly
         return super(actions.AuthorAction, self).get_action_permission(ar, obj, state)
-
-if False:
-
-    class RegisterAction(actions.Action):
-        label = _("Register")
-        show_in_workflow = True
-        readonly = False
-        icon_name = 'accept'
-        #~ icon_file = 'flag_green.png'
-        #~ required = dict(states='draft')
-        help_text = _("Register this object.")
-
-        def attach_to_actor(self, actor, name):
-            if not issubclass(actor.model, Registrable):
-                raise Exception("%s is not a Registrable" % actor.model)
-            if actor.workflow_state_field is None:
-                # e.g. ledger.Voucher is an "abstract Registrable"
-                return False
-            self.target_model = actor.model
-            self.required = self.target_model.required_to_register
-            return super(RegisterAction, self).attach_to_actor(actor, name)
-
-        def run_from_ui(self, ar, **kw):
-            obj = ar.selected_rows[0]
-            ar.success(refresh=True)
-            #~ ar.confirm(self.help_text,_("Are you sure?"))
-            obj.register(ar)
-            obj.save()
-            obj.after_ui_save(ar)
-            #~ return kw
-
-    class DeregisterAction(actions.Action):
-        label = _("Deregister")
-        show_in_workflow = True
-        readonly = False
-        icon_name = 'pencil'
-
-        #~ icon_file = 'cancel.png'
-        #~ required = dict(states='registered paid')
-        help_text = _("Deregister this object.")
-
-        def attach_to_actor(self, actor, name):
-            if not issubclass(actor.model, Registrable):
-                raise Exception("%s is not a Registrable" % actor.model)
-            if actor.workflow_state_field is None:
-                # e.g. ledger.Voucher is an "abstract Registrable"
-                return False
-            self.target_model = actor.model
-            self.required = self.target_model.required_to_deregister
-            #~ logger.info("20121208 DeregisterAction.attach_to_actor() %s %s",actor,actor.model.required_to_deregister)
-            return super(DeregisterAction, self).attach_to_actor(actor, name)
-
-        def run_from_ui(self, ar, **kw):
-            obj = ar.selected_rows[0]
-            #~ ar.confirm(self.help_text,_("Are you sure?"))
-            ar.success(refresh=True)
-            obj.deregister(ar)
-            obj.save()
-            obj.after_ui_save(ar)
 
 
 class Registrable(model.Model):
@@ -320,12 +283,6 @@ class Registrable(model.Model):
         abstract = True
 
     workflow_state_field = 'state'
-
-    #~ required_to_register = dict(states='draft')
-    #~ required_to_deregister = dict(states='registered')
-
-    #~ register_action = RegisterAction()
-    #~ deregister_action = DeregisterAction()
 
     _registrable_fields = None
 
@@ -387,36 +344,6 @@ class Registrable(model.Model):
         #~ if self.state != state_field.choicelist.registered:
             #~ self.register(None)
             #~ self.save()
-
-
-if settings.SITE.user_model:
-
-    class ByUser(dbtables.Table):
-        master_key = 'user'
-        #~ can_view = perms.is_authenticated
-        #~ details_of_master_template = _("%(details)s of %(master)s")
-        details_of_master_template = _("%(details)s")
-
-        @classmethod
-        def get_actor_label(self):
-            if self.model is None:
-                return self._label or self.__name__
-            #~ return self._label or string_concat(_("My "),self.model._meta.verbose_name_plural)
-            return self._label or _("My %s") % self.model._meta.verbose_name_plural
-            #~ return _("My %s") % self.model._meta.verbose_name_plural
-
-        @classmethod
-        def setup_request(self, ar):
-            #~ logger.info("mixins.ByUser.setup_request")
-            if ar.master_instance is None:
-                ar.master_instance = ar.get_user()
-
-
-else:
-
-    # dummy Table for userless sites
-    class ByUser(dbtables.Table):
-        pass
 
 
 class CreatedModified(model.Model):

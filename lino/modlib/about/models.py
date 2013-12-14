@@ -93,8 +93,9 @@ class Models(dd.VirtualTable):
 
     @dd.requestfield(_("Rows"))
     def rows(self, obj, ar):
-        return obj.get_default_table().request(ar.ui,
-                                               user=ar.get_user(), renderer=ar.renderer)
+        return obj.get_default_table().request(
+            ar.ui,
+            user=ar.get_user(), renderer=ar.renderer)
 
 
 class FieldsByModel(dd.VirtualTable):

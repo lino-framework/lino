@@ -1,0 +1,22 @@
+=====================================
+20131214 (Saturday, 14 December 2013)
+=====================================
+
+
+Importing contacts data into a Lino application
+-----------------------------------------------
+
+Started with new module :mod:`lino.apps.importfilters`.
+
+
+I often received :ref:`ise` messages like the following:
+
+  Exception at /api/polls/MyPolls/-99999
+  <class 'lino.core.perms.AnonymousUser'> is not a <class 'lino.modlib.users.models.User'> (polls.MyPolls.master_key = 'user')
+
+I guess that such messages are caused when somebody had been playing 
+on a demo site, saved some permalink somewhere, and reused it later, 
+after the session has timed out or the database had been reinitialized.
+
+e.g. a ByUser table descendant called by AnonymousUser
+

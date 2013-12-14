@@ -233,8 +233,8 @@ if settings.SITE.is_installed('contenttypes'):
                                      blank=True, null=True, format='plain')
 
         def __unicode__(self):
-            return self.content_type.app_label + '.' + self.content_type.model + '.' + self.field
-            #~ return self.content_type.app_label + '.' + self.content_type.name + '.' + self.field
+            return self.content_type.app_label + '.' \
+                + self.content_type.model + '.' + self.field
 
         @chooser(simple_values=True)
         def field_choices(cls, content_type):
@@ -242,9 +242,6 @@ if settings.SITE.is_installed('contenttypes'):
             if content_type is not None:
                 model = content_type.model_class()
                 meta = model._meta
-                #~ for f in meta.fields: yield f.name
-                #~ for f in meta.many_to_many: yield f.name
-                #~ for f in meta.virtual_fields: yield f.name
                 for f in meta.fields:
                     if not getattr(f, '_lino_babel_field', False):
                         l.append(f.name)
@@ -262,21 +259,16 @@ if settings.SITE.is_installed('contenttypes'):
 
         @dd.virtualfield(models.CharField(_("Verbose name"), max_length=200))
         def verbose_name(self, request):
-            #~ return unicode(self)
-            #~ m = dd.resolve_model(self.content_type.app_label + '.' + self.content_type.name)
             m = self.content_type.model_class()
-            #~ if isinstance(m,UnresolvedModel):
-                #~ return str(m)
             de = m.get_default_table().get_data_elem(self.field)
             if isinstance(de, models.Field):
-                #~ return unicode(de.verbose_name)
-                return "%s (%s)" % (unicode(de.verbose_name), unicode(_("database field")))
+                return "%s (%s)" % (unicode(de.verbose_name),
+                                    unicode(_("database field")))
             if isinstance(de, dd.VirtualField):
                 return unicode(de.return_type.verbose_name)
             if isinstance(de, actions.Action):
                 return unicode(de.label)
             return str(de)
-            #~ return unicode(resolve_field(unicode(self)).verbose_name)
 
     class HelpTexts(dd.Table):
         required = dd.required(user_level='manager')
@@ -291,8 +283,9 @@ if settings.SITE.user_model:
 
     class TextFieldTemplate(mixins.AutoUser):
 
-        """A reusable block of text that can be selected from a text editor to be
-        inserted into the text being edited.
+        """A reusable block of text that can be selected from a text editor to
+        be inserted into the text being edited.
+
         """
 
         class Meta:
@@ -315,7 +308,7 @@ if settings.SITE.user_model:
         model = TextFieldTemplate
         required = dd.required(user_groups='office', user_level='admin')
         insert_layout = dd.FormLayout("""
-        name 
+        name
         user team
         """, window_size=(60, 'auto'))
 

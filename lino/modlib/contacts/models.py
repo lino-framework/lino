@@ -768,14 +768,11 @@ class OldCompanyContact(dd.Model):
 
 class ContactRelated(dd.Model):
 
-    """
-    Abstract class for things that relate to a company represented
-    by a person as a given role.
-    
-    .. local_fields:: lino.modlib.contacts.models.ContactRelated
-    
-        Adds 3 fields `company`, `contact_person` and `contact_role`.
-        
+    """Abstract class for things that relate to a company represented by
+    a person as a given role.
+
+    Adds 3 fields `company`, `contact_person` and `contact_role`.
+
     """
 
     class Meta:
